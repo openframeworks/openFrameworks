@@ -33,7 +33,7 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		ofPixelsRef     getPixelsRef();
 		void            setVerbose(bool bTalkToMe);
 
-		void            listDevices(); // would be better if this returned a vector of devices too, but requires updating base class
+		vector <ofVideoDevice> listDevices(); 
 		vector <string> & listAudioDevices();
 		vector <string> & listVideoDevices();
 
@@ -63,8 +63,8 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		void            setAudioDeviceID(string audioDeviceIDString);
 		int             getAudioDeviceID();
 
-		void            setDesiredFrameRate(int framerate){ ofLog(OF_LOG_WARNING, "ofQTKitGrabber -- Cannot specify framerate."); }
-		void            setPixelFormat(ofPixelFormat pixelFormat);
+		void            setDesiredFrameRate(int framerate);
+		bool            setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat   getPixelFormat();
 	    bool			hasPreview();
 		void            videoSettings();

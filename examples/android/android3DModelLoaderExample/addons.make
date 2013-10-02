@@ -1,0 +1,3 @@
+ofxAndroid
+ofxAccelerometer
+ofx3DModelLoader

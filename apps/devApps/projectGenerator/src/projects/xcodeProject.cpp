@@ -73,6 +73,28 @@ STRINGIFY(
 );
 
 //-----------------------------------------------------------------
+const char PBXFileReferenceXib[] =
+STRINGIFY(
+
+        <key>FILEUUID</key>
+        <dict>
+            <key>lastKnownFileType</key>
+            <string>FILETYPE</string>
+            <key>fileEncoding</key>
+            <string>4</string>
+            <key>isa</key>
+            <string>PBXFileReference</string>
+            <key>name</key>
+            <string>FILENAME</string>
+            <key>path</key>
+            <string>FILEPATH</string>
+            <key>sourceTree</key>
+            <string>SOURCE_ROOT</string>
+        </dict>
+
+);
+
+//-----------------------------------------------------------------
 const char PBXBuildFile[] =
 STRINGIFY(
 
@@ -133,11 +155,13 @@ void xcodeProject::setup(){
 		addonUUID		= "BB16F26B0F2B646B00518274";
 		buildPhaseUUID	= "E4D8936E11527B74007E1F53";
 		resourcesUUID   = "BB24DD8F10DA77E000E9C588";
+        buildPhaseResourcesUUID = "BB24DDCA10DA781C00E9C588"; 
 	}
 }
 
 
 void xcodeProject::saveScheme(){
+
 	string schemeFolder = projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/";
     ofDirectory::removeDirectory(schemeFolder, true);
 	ofDirectory::createDirectory(schemeFolder, false, true);
@@ -152,23 +176,35 @@ void xcodeProject::saveScheme(){
     findandreplaceInTexfile(schemeToR, "emptyExample", projectName);
 	
 	//TODO: do we still need this?
-    string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
-    ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
+    //string xcsettings = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/WorkspaceSettings.xcsettings";
+    //ofFile::copyFromTo(templatePath + "emptyExample.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings", xcsettings);
+
 }
 
 
 void xcodeProject::saveWorkspaceXML(){
+
 	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
+	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
+
+	ofFile::removeFile(xcodeProjectWorkspace);
 	ofDirectory::removeDirectory(workspaceFolder, true);
 	ofDirectory::createDirectory(workspaceFolder, false, true);
-	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
     ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
     findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
+
+}
+
+void xcodeProject::saveMakefile(){
+    string makefile = ofFilePath::join(projectDir,"Makefile");
+    ofFile::copyFromTo(templatePath + "Makefile", makefile);
+
+    string configmake = ofFilePath::join(projectDir,"config.make");
+    ofFile::copyFromTo(templatePath + "config.make", configmake);
 }
 
 
 bool xcodeProject::createProjectFile(){
-
     // todo: some error checking.
 
     string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
@@ -199,8 +235,8 @@ bool xcodeProject::createProjectFile(){
 		}
 
     }else{
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiphone-Info.plist"),projectDir, true, true);
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"iPhone_Prefix.pch"),projectDir, true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiOS-Info.plist"),projectDir, true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"ofxiOS_Prefix.pch"),projectDir, true, true);
 
 		ofDirectory binDirectory(ofFilePath::join(projectDir, "bin"));
 		if (!binDirectory.exists()){
@@ -213,14 +249,24 @@ bool xcodeProject::createProjectFile(){
 				dataDirectory.create(false);
 			}
 		}
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default-568h@2x~iphone.png"),projectDir + "/bin/data/Default-568h@2x~iphone.png", true, true);
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default.png"),projectDir + "/bin/data/Default.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default@2x.png"),projectDir + "/bin/data/Default@2x.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default@2x~ipad.png"),projectDir + "/bin/data/Default@2x~ipad.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default@2x~iphone.png"),projectDir + "/bin/data/Default@2x~iphone.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default~ipad.png"),projectDir + "/bin/data/Default~ipad.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Default~iphone.png"),projectDir + "/bin/data/Default~iphone.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon-72.png"),projectDir + "/bin/data/Icon-72.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon-72@2x.png"),projectDir + "/bin/data/Icon-72@2x.png", true, true);
 		ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon.png"),projectDir + "/bin/data/Icon.png", true, true);
+        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin/data/Icon@2x.png"),projectDir + "/bin/data/Icon@2x.png", true, true);
     }
 
     // this is for xcode 4 scheme issues. but I'm not sure this is right.
 
     saveWorkspaceXML();
     saveScheme();
+    saveMakefile();
 
     // make everything relative the right way.
     string relRoot = getOFRelPath(ofFilePath::removeTrailingSlash(projectDir));
@@ -232,13 +278,13 @@ bool xcodeProject::createProjectFile(){
         findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
     }
 
-
     return true;
 }
 
 
 
 void xcodeProject::renameProject(){
+
     pugi::xpath_node_set uuidSet = doc.select_nodes("//string[contains(.,'emptyExample')]");
     for (pugi::xpath_node_set::const_iterator it = uuidSet.begin(); it != uuidSet.end(); ++it){
         pugi::xpath_node node = *it;
@@ -269,10 +315,12 @@ bool xcodeProject::saveProjectFile(){
     renameProject();
 
     // save the project out:
-
+    
     string fileName = projectDir + projectName + ".xcodeproj/project.pbxproj";
     bool bOk =  doc.save_file(ofToDataPath(fileName).c_str());
+
     return bOk;
+
 }
 
 
@@ -393,7 +441,6 @@ pugi::xml_node xcodeProject::findOrMakeFolderSet(pugi::xml_node nodeToAddTo, vec
 
 void xcodeProject::addSrc(string srcFile, string folder){
 
-
     string buildUUID;
 
     //-----------------------------------------------------------------
@@ -409,6 +456,7 @@ void xcodeProject::addSrc(string srcFile, string folder){
 
     bool addToResources = true;
     bool addToBuild = true;
+    bool addToBuildResource = false; 
     string fileKind = "file";
     bool bAddFolder = true;
 
@@ -432,6 +480,7 @@ void xcodeProject::addSrc(string srcFile, string folder){
     else if(ext == "xib"){
 		fileKind = "file.xib";
         addToBuild	= false;
+        addToBuildResource = true; 
         addToResources = true;		
     }else if( target == "ios" ){
 		fileKind = "file";	
@@ -448,6 +497,11 @@ void xcodeProject::addSrc(string srcFile, string folder){
     //-----------------------------------------------------------------
 
     string pbxfileref = string(PBXFileReference);
+    if(ext == "xib"){
+        pbxfileref = string(PBXFileReferenceXib);
+    }
+    
+    
     string UUID = generateUUID(srcFile);   // replace with theo's smarter system.
 
     string name, path;
@@ -469,20 +523,29 @@ void xcodeProject::addSrc(string srcFile, string folder){
     // (B) BUILD REF
     //-----------------------------------------------------------------
 
-    if (addToBuild == true){
+    if (addToBuild || addToBuildResource ){
 
         buildUUID = generateUUID(srcFile + "-build");
         string pbxbuildfile = string(PBXBuildFile);
         findandreplace( pbxbuildfile, "FILEUUID", UUID);
         findandreplace( pbxbuildfile, "BUILDUUID", buildUUID);
+        
         fileRefDoc.load_buffer(pbxbuildfile.c_str(), strlen(pbxbuildfile.c_str()));
         doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child().next_sibling());   // UUID FIRST
         doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child());                  // DICT SECOND
 
         // add it to the build array.
-        pugi::xml_node array;
-        findArrayForUUID(buildPhaseUUID, array);    // this is the build array (all build refs get added here)
-        array.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID.c_str());
+        if( addToBuildResource ){
+            pugi::xml_node array;
+            findArrayForUUID(buildPhaseResourcesUUID, array);    // this is the build array (all build refs get added here)
+            array.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID.c_str());
+        }
+        if( addToBuild ){
+            pugi::xml_node array;
+            findArrayForUUID(buildPhaseUUID, array);    // this is the build array (all build refs get added here)
+            array.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID.c_str());
+
+        }
     }
 
     //-----------------------------------------------------------------
@@ -568,7 +631,7 @@ void xcodeProject::addInclude(string includeName){
 
 
 
-    char query[255];
+    char query[256];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'HEADER_SEARCH_PATHS')]/following-sibling::node()[1]");
     pugi::xpath_node_set headerArray = doc.select_nodes(query);
 
@@ -583,7 +646,6 @@ void xcodeProject::addInclude(string includeName){
     } else {
 
         //printf("we don't have HEADER_SEARCH_PATHS, so we're adding them... and calling this function again \n");
-        query[255];
         sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'buildSettings')]/following-sibling::node()[1]");
         pugi::xpath_node_set dictArray = doc.select_nodes(query);
 
@@ -612,9 +674,6 @@ void xcodeProject::addInclude(string includeName){
 
 
 void xcodeProject::addLibrary(string libraryName, LibType libType){
-
-    cout << " adding libraryName " << libraryName << endl;
-
 
     char query[255];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'OTHER_LDFLAGS')]/following-sibling::node()[1]");

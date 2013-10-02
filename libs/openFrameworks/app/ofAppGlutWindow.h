@@ -5,6 +5,10 @@
 #include "ofEvents.h"
 #include "ofTypes.h"
 
+#ifdef TARGET_LINUX
+#include "ofPixels.h"
+#endif
+
 //class ofPoint;
 class ofBaseApp;
 
@@ -47,14 +51,12 @@ public:
 	
 	int			getWindowMode();
 
-	int			getFrameNum();
-	float		getFrameRate();
-	double		getLastFrameTime();
-	void		setFrameRate(float targetRate);
-
 	void		enableSetupScreen();
 	void		disableSetupScreen();
 
+	void		setVerticalSync(bool enabled);
+
+private:
 	static void display(void);
 	static void mouse_cb(int button, int state, int x, int y);
 	static void motion_cb(int x, int y);
@@ -68,7 +70,12 @@ public:
 	static void entry_cb(int state);
 	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
 	string displayString;
-	
+
+	bool iconSet;
+#ifdef TARGET_LINUX
+	void setWindowIcon(const string & path);
+	void setWindowIcon(const ofPixels & iconPixels);
+#endif
 	
 		 
 };

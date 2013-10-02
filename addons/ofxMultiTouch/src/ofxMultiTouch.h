@@ -60,10 +60,10 @@ public:
 	
 };
 
-class ofxiPhoneApp;
+class ofxiOSApp;
 
-void ofxRegisterMultitouch(ofxiPhoneApp * app);
-void ofxUnregisterMultitouch(ofxiPhoneApp * app);
+void ofxRegisterMultitouch(ofxiOSApp * app);
+void ofxUnregisterMultitouch(ofxiOSApp * app);
 
 extern ofxMultiTouchHandler ofxMultiTouch;
 

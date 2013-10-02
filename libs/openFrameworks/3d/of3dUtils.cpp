@@ -1,5 +1,6 @@
 #include "of3dUtils.h"
 #include "ofGraphics.h"
+#include "of3dGraphics.h"
 
 void ofDrawAxis(float size) {
 	ofPushStyle();
@@ -119,12 +120,12 @@ void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
 	
 	//draw cone
 	ofMatrix4x4 mat;
-	mat.makeRotationMatrix(ofVec3f(0,0,1), end - start);
+	mat.makeRotationMatrix(end - start, ofVec3f(0,1,0));
 	ofPushMatrix();
 	ofTranslate(end);
-	glMultMatrixf(mat.getPtr());
-	ofTranslate(0,0,-headSize);
-	ofCone(headSize, headSize);	
+	ofMultMatrix(mat.getPtr());
+	ofTranslate(0, headSize*0.5 ,0);
+	ofDrawCone(headSize, headSize);
 	ofPopMatrix();
 }
 //--------------------------------------------------------------
@@ -158,12 +159,13 @@ void ofDrawRotationAxes(float radius, float stripWidth, int circleRes){
 		axisZMesh.addVertex(ofVec3f( stripWidth, x*radius, y*radius));
 	}
 	
-	glEnable(GL_DEPTH_TEST);
+	ofPushStyle();
+	ofEnableDepthTest();
 	axisXMesh.draw();
 	axisYMesh.draw();
 	axisZMesh.draw();
 	ofDrawAxis(radius);
-	glDisable(GL_DEPTH_TEST);
+	ofPopStyle();
 	
 }
 

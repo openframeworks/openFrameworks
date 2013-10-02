@@ -1,17 +1,23 @@
 
 #include "ofxAndroidUtils.h"
 
+// fix for undefined symbols from ndk r8c
+extern "C" {
+  extern void *__dso_handle __attribute__((__visibility__ ("hidden")));
+  void *__dso_handle;
+}
+
 bool ofxAndroidIsOnline(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidIsOnline(): couldn't find OFAndroid java class";
 		return false;
 	}
 
 	jmethodID isOnline = ofGetJNIEnv()->GetStaticMethodID(javaClass,"isOnline","()Z");
 	if(!isOnline){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid isOnline method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidIsOnline(): couldn't find OFAndroid isOnline method";
 		return false;
 	}
 	return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,isOnline);
@@ -21,13 +27,13 @@ bool ofxAndroidIsWifiOnline(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidIsWifiOnline(): couldn't find OFAndroid java class";
 		return false;
 	}
 
 	jmethodID isWifiOnline = ofGetJNIEnv()->GetStaticMethodID(javaClass,"isWifiOnline","()Z");
 	if(!isWifiOnline){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid isWifiOnline method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidIsWifiOnline(): couldn't find OFAndroid isWifiOnline method";
 		return false;
 	}
 	return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,isWifiOnline);
@@ -38,13 +44,13 @@ bool ofxAndroidIsMobileOnline(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidIsMobileOnline(): couldn't find OFAndroid java class";
 		return false;
 	}
 
 	jmethodID isMobileOnline = ofGetJNIEnv()->GetStaticMethodID(javaClass,"isMobileOnline","()Z");
 	if(!isMobileOnline){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid isMobileOnline method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidIsMobileOnline(): couldn't find OFAndroid isMobileOnline method";
 		return false;
 	}
 	return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,isMobileOnline);
@@ -54,13 +60,13 @@ string ofxAndroidGetStringRes(string id){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidGetStringRes(): couldn't find OFAndroid java class";
 		return "";
 	}
 
 	jmethodID getStringRes = ofGetJNIEnv()->GetStaticMethodID(javaClass,"getStringRes","(Ljava/lang/String;)Ljava/lang/String;");
 	if(!getStringRes){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid getStringRes method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidGetStringRes(): couldn't find OFAndroid getStringRes method";
 		return "";
 	}
 	jstring jId = ofGetJNIEnv()->NewStringUTF(id.c_str());
@@ -77,13 +83,13 @@ void ofxAndroidPauseApp(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidPauseApp(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID pauseApp = ofGetJNIEnv()->GetStaticMethodID(javaClass,"pauseApp","()V");
 	if(!pauseApp){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid pauseApp method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidPauseApp(): couldn't find OFAndroid pauseApp method";
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,pauseApp);
@@ -93,13 +99,13 @@ void ofxAndroidAlertBox(string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidAlertBox(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID alertBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"alertBox","(Ljava/lang/String;)V");
 	if(!alertBox){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid alertBox method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidAlertBox(): couldn't find OFAndroid alertBox method";
 		return;
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
@@ -112,13 +118,13 @@ int ofxAndroidProgressBox(string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidProgressBox(): couldn't find OFAndroid java class";
 		return -1;
 	}
 
 	jmethodID progressBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"progressBox","(Ljava/lang/String;)I");
 	if(!progressBox){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid alertBox method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidProgressBox(): couldn't find OFAndroid alertBox method";
 		return -1;
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
@@ -131,13 +137,13 @@ void ofxAndroidDismissProgressBox(int id){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidDismissProgressBox(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID dismissProgressBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"dismissProgressBox","(I)V");
 	if(!dismissProgressBox){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid dismissProgressBox method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidDismissProgressBox(): couldn't find OFAndroid dismissProgressBox method";
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,dismissProgressBox,id);
@@ -149,13 +155,13 @@ void ofxAndroidOkCancelBox(string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidOkCancelBox(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID okCancelBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"okCancelBox","(Ljava/lang/String;)V");
 	if(!okCancelBox){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid okCancelBox method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidOkCancelBox(): couldn't find OFAndroid okCancelBox method";
 		return;
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
@@ -167,13 +173,13 @@ void ofxAndroidYesNoBox(string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidYesNoBox(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"yesNoBox","(Ljava/lang/String;)V");
 	if(!method){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid okCancelBox method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidYesNoBox(): couldn't find OFAndroid okCancelBox method";
 		return;
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
@@ -186,13 +192,13 @@ void ofxAndroidAlertTextBox(string question, string text){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidAlertTextBox(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID alertTextBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"alertTextBox","(Ljava/lang/String;Ljava/lang/String;)V");
 	if(!alertTextBox){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid alertTextBox method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidAlertTextBox(): couldn't find OFAndroid alertTextBox method";
 		return;
 	}
 	jstring jQuestion = ofGetJNIEnv()->NewStringUTF(question.c_str());
@@ -206,13 +212,13 @@ bool ofxAndroidAlertListBox(string title, const vector<string> & list){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidAlertListBox(): couldn't find OFAndroid java class";
 		return "";
 	}
 
 	jmethodID alertListBox = ofGetJNIEnv()->GetStaticMethodID(javaClass,"alertListBox","(Ljava/lang/String;[Ljava/lang/String;)Z");
 	if(!alertListBox){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid alertListBox method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidAlertListBox(): couldn't find OFAndroid alertListBox method";
 		return "";
 	}
 	jstring jTitle = ofGetJNIEnv()->NewStringUTF(title.c_str());
@@ -235,13 +241,13 @@ void ofxAndroidToast(string msg){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidToast(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID toast = ofGetJNIEnv()->GetStaticMethodID(javaClass,"toast","(Ljava/lang/String;)V");
 	if(!toast){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid toast method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidToast(): couldn't find OFAndroid toast method";
 		return;
 	}
 	jstring jMsg = ofGetJNIEnv()->NewStringUTF(msg.c_str());
@@ -253,13 +259,13 @@ void ofxAndroidLockScreenSleep(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidLockScreenSleep(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID lockScreenSleep = ofGetJNIEnv()->GetStaticMethodID(javaClass,"lockScreenSleep","()V");
 	if(!lockScreenSleep){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid lockScreenSleep method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidLockScreenSleep(): couldn't find OFAndroid lockScreenSleep method";
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,lockScreenSleep);
@@ -269,13 +275,13 @@ void ofxAndroidUnlockScreenSleep(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidUnlockScreenSleep(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID unlockScreenSleep = ofGetJNIEnv()->GetStaticMethodID(javaClass,"unlockScreenSleep","()V");
 	if(!unlockScreenSleep){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid unlockScreenSleep method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidUnlockScreenSleep(): couldn't find OFAndroid unlockScreenSleep method";
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,unlockScreenSleep);
@@ -285,31 +291,65 @@ bool ofxAndroidCheckSDCardMounted(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidCheckSDCardMounted(): couldn't find OFAndroid java class";
 		return false;
 	}
 
 	jmethodID unlockScreenSleep = ofGetJNIEnv()->GetStaticMethodID(javaClass,"checkSDCardMounted","()Z");
 	if(!unlockScreenSleep){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid checkSDCardMounted method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidCheckSDCardMounted(): couldn't find OFAndroid checkSDCardMounted method";
 		return false;
 	}
 	return ofGetJNIEnv()->CallStaticBooleanMethod(javaClass,unlockScreenSleep);
 
 }
 
+void ofxAndroidEnableMulticast(){
+
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidEnableMulticast(): couldn't find OFAndroid java class";
+		return;
+	}
+
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"enableMulticast","()V");
+	if(!method){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidEnableMulticast(): couldn't find OFAndroid enableMulticast method";
+		return;
+	}
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method);
+}
+
+void ofxAndroidDisableMulticast(){
+
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidDisableMulticast(): couldn't find OFAndroid java class";
+		return;
+	}
+
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"disableMulticast","()V");
+	if(!method){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidDisableMulticast(): couldn't find OFAndroid disableMulticast method";
+		return;
+	}
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method);
+}
+
 string ofxAndroidRandomUUID(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return false;
+		ofLogError("ofxAndroidUtils") << "ofxAndroidRandomUUID(): couldn't find OFAndroid java class";
+		return "";
 	}
 
 
 	jmethodID randomUUID = ofGetJNIEnv()->GetStaticMethodID(javaClass,"getRandomUUID","()Ljava/lang/String;");
 	if(!randomUUID){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid randomUUID method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidRandomUUID(): couldn't find OFAndroid randomUUID method";
 		return "";
 	}
 	jstring str = (jstring)	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,randomUUID);
@@ -322,13 +362,13 @@ void ofxAndroidMonitorNetworkState(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidMonitorNetworkState(): couldn't find OFAndroid java class";
 		return;
 	}
 
 	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"monitorNetworkState","()V");
 	if(!method){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid monitorNetworkState method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidMonitorNetworkState(): couldn't find OFAndroid monitorNetworkState method";
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method);
@@ -338,20 +378,45 @@ string ofxAndroidGetTextBoxResult(){
 	jclass javaClass = ofGetJavaOFAndroid();
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid java class");
-		return false;
+		ofLogError("ofxAndroidUtils") << "ofxAndroidGetTextBoxResult(): could't find OFAndroid java class";
+		return "";
 	}
 
 
 	jmethodID getLastTextBoxResult = ofGetJNIEnv()->GetStaticMethodID(javaClass,"getLastTextBoxResult","()Ljava/lang/String;");
 	if(!getLastTextBoxResult){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroid getLastTextBoxResult method");
+		ofLogError("ofxAndroidUtils") << "ofxAndroidGetTextBoxResult(): couldn't find OFAndroid getLastTextBoxResult method";
 		return "";
 	}
 	jstring str = (jstring)	ofGetJNIEnv()->CallStaticObjectMethod(javaClass,getLastTextBoxResult);
 
 	jboolean isCopy;
 	return ofGetJNIEnv()->GetStringUTFChars(str,&isCopy);
+}
+
+void ofxAndroidLaunchBrowser(string url){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidLaunchBrowser(): couldn't find OFAndroid java class";
+		return;
+	}
+
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"launchBrowser","(Ljava/lang/String;)V");
+	if(!method){
+		ofLogError("ofxAndroidUtils") << "ofxAndroidLaunchBrowser(): couldn't find OFAndroid launchBrowser method";
+		return;
+	}
+	jstring jUrl = ofGetJNIEnv()->NewStringUTF(url.c_str());
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,jUrl);
+	ofGetJNIEnv()->DeleteLocalRef((jobject)jUrl);
+}
+
+void ofxAndroidNotifyLoadPercent(float percent){
+	jobject activity = ofGetOFActivityObject();
+	jclass activityClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFActivity");
+	jmethodID onLoadPercent = ofGetJNIEnv()->GetMethodID(activityClass,"onLoadPercent","(F)V");
+	ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat)percent);
 }
 
 ofxAndroidEventsClass & ofxAndroidEvents(){

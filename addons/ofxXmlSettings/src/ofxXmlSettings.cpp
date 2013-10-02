@@ -4,6 +4,10 @@
 #include <string>
 #include <iostream>
 
+// this increases the accuracy of ofToString() when saving floating point values
+// but in the process of setting it also causes very small values to be ignored.
+const float floatPrecision = 9;
+
 //----------------------------------------
 // a pretty useful tokenization system:
 static vector<string> tokenize(const string & str, const string & delim);
@@ -95,6 +99,16 @@ bool ofxXmlSettings::saveFile(const string& xmlFile){
 //---------------------------------------------------------
 bool ofxXmlSettings::saveFile(){
 	return doc.SaveFile();
+}
+
+//---------------------------------------------------------
+bool ofxXmlSettings::load(const string & path){
+	return loadFile(path);
+}
+
+//---------------------------------------------------------
+bool ofxXmlSettings::save(const string & path){
+	return saveFile(path);
 }
 
 //---------------------------------------------------------
@@ -198,7 +212,7 @@ bool ofxXmlSettings::pushTag(const string&  tag, int which){
 		level++;
 		return true;
 	}else{
-        ofLog( OF_LOG_ERROR, "pushTag - <" + tag + "> tag not found");
+        ofLogError("ofxXmlSettings") << "pushTag(): tag \"" << tag << "\" not found";
 	}
 
 	return false;
@@ -272,7 +286,7 @@ int ofxXmlSettings::getNumTags(const string&  tag){
 
 	//grab the handle from the level we are at
 	//normally this is the doc but could be a pushed node
-	TiXmlHandle tagHandle = storedHandle;
+	//TiXmlHandle tagHandle = storedHandle;
 
 	int count = 0;
 
@@ -367,7 +381,7 @@ int ofxXmlSettings::setValue(const string& tag, int value, int which){
 
 //---------------------------------------------------------
 int ofxXmlSettings::setValue(const string& tag, double value, int which){
-	int tagID = writeTag(tag, ofToString(value).c_str(), which) -1;
+	int tagID = writeTag(tag, ofToString(value, floatPrecision).c_str(), which) -1;
 	return tagID;
 }
 
@@ -385,7 +399,7 @@ int ofxXmlSettings::addValue(const string& tag, int value){
 
 //---------------------------------------------------------
 int ofxXmlSettings::addValue(const string&  tag, double value){
-	int tagID = writeTag(tag, ofToString(value).c_str(), -1) -1;
+	int tagID = writeTag(tag, ofToString(value, floatPrecision).c_str(), -1) -1;
 	return tagID;
 }
 
@@ -399,6 +413,57 @@ int ofxXmlSettings::addValue(const string& tag, const string& value){
 int ofxXmlSettings::addTag(const string& tag){
 	int tagID = writeTag(tag, "", -1) -1;
 	return tagID;
+}
+
+void ofxXmlSettings::serialize(const ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()) return;
+	string name = parameter.getEscapedName();
+	if(name=="") name="UnknownName";
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		const ofParameterGroup & group = static_cast<const ofParameterGroup&>(parameter);
+		if(!tagExists(name)) addTag(name);
+		pushTag(name);
+		for(int i=0;i<group.size();i++){
+			serialize(group.get(i));
+		}
+		popTag();
+	}else{
+		string value = parameter.toString();
+		if(!tagExists(name))
+			addValue(name,value);
+		else
+			setValue(name,value);
+	}
+}
+
+void ofxXmlSettings::deserialize(ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()) return;
+	string name = parameter.getEscapedName();
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		ofParameterGroup & group = static_cast<ofParameterGroup&>(parameter);
+		if(tagExists(name)){
+			pushTag(name);
+			for(int i=0;i<group.size();i++){
+				deserialize(group.get(i));
+			}
+			popTag();
+		}
+	}else{
+		if(tagExists(name)){
+			if(parameter.type()==typeid(ofParameter<int>).name()){
+				parameter.cast<int>() = getValue(name,0);
+			}else if(parameter.type()==typeid(ofParameter<float>).name()){
+				parameter.cast<float>() = getValue(name,0.0f);
+			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
+				parameter.cast<bool>() = getValue(name,false);
+			}else if(parameter.type()==typeid(ofParameter<string>).name()){
+				parameter.cast<string>() = getValue(name,"");
+			}else{
+				parameter.fromString(getValue(name,""));
+			}
+		}
+	}
+
 }
 
 /*******************
@@ -418,7 +483,7 @@ int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, int
 
 //---------------------------------------------------------
 int ofxXmlSettings::addAttribute(const string& tag, const string& attribute, double value, int which){
-	int tagID = writeAttribute(tag, attribute, ofToString(value).c_str(), which) -1;
+	int tagID = writeAttribute(tag, attribute, ofToString(value, floatPrecision).c_str(), which) -1;
 	return tagID;
 }
 

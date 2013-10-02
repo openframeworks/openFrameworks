@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFAPPANDROIDWINDOW_H_
-#define OFAPPANDROIDWINDOW_H_
+#pragma once
 
 #include "ofAppBaseWindow.h"
 
@@ -15,7 +14,7 @@ public:
 	ofAppAndroidWindow();
 	virtual ~ofAppAndroidWindow();
 
-	void setupOpenGL(int w, int h, int screenMode) {}
+	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow() {}
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 
@@ -24,10 +23,6 @@ public:
 
 	void	setWindowPosition(int x, int y) {}
 	void	setWindowShape(int w, int h) {}
-
-	int		getFrameNum();
-	float	getFrameRate();
-	double  getLastFrameTime();
 
 	ofPoint	getWindowPosition() {return ofPoint(); }
 	ofPoint	getWindowSize();
@@ -38,7 +33,6 @@ public:
 
 	bool	doesHWOrientation(){return true;}
 
-	void	setFrameRate(float targetRate);
 	void	setWindowTitle(string title){}
 
 	int		getWindowMode() {return 0;}
@@ -55,5 +49,3 @@ public:
 	void	setThreadedEvents(bool threadedEvents);
 
 };
-
-#endif /* OFAPPANDROIDWINDOW_H_ */

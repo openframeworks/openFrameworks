@@ -153,7 +153,7 @@ public:
     // Length
     //
     float length() const;
-    float squareLength() const;
+    float lengthSquared() const;
 	
 	
     /**
@@ -191,9 +191,6 @@ public:
 	
     // getPerpendicular
     ofVec2f perpendiculared() const;
-	
-    // squareLength
-    OF_DEPRECATED_MSG("Use ofVec2f::squareLength() instead.", float lengthSquared() const);
 	
     // getInterpolated
     ofVec2f interpolated( const ofVec2f& pnt, float p ) const;
@@ -712,13 +709,8 @@ inline float ofVec2f::length() const {
 }
 
 inline float ofVec2f::lengthSquared() const {
-	return squareLength();
-}
-
-inline float ofVec2f::squareLength() const {
 	return (float)(x*x + y*y);
 }
-
 
 
 /**

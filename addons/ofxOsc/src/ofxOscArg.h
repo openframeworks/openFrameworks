@@ -26,8 +26,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _OFXOSCARG_H
-#define _OFXOSCARG_H
+#pragma once
 
 #include "ofConstants.h"
 #include <string>
@@ -70,11 +69,6 @@ private:
 subclasses for each possible argument type
 
 */
-
-#if defined TARGET_WIN32 && defined _MSC_VER
-	// required because MSVC isn't ANSI-C compliant
-	typedef long int32_t;
-#endif
 
 class ofxOscArgInt32 : public ofxOscArg
 {
@@ -151,5 +145,3 @@ public:
 private:
 	std::string value;
 };
-
-#endif

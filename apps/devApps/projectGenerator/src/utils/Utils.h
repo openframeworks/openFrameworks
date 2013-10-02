@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef UTILS_H_
-#define UTILS_H_
+#pragma once
 
 #include "ofConstants.h"
 
@@ -18,6 +17,7 @@
 string generateUUID(string input);
 
 string getOFRoot();
+string getAddonsRoot();
 void setOFRoot(string path);
 void findandreplace( std::string& tInput, std::string tFind, std::string tReplace );
 void findandreplaceInTexfile (string fileName, string tFind, string tReplace );
@@ -57,5 +57,3 @@ inline bool isInVector(T item, vector<T> & vec){
     }
     return bIsInVector;
 }
-
-#endif /* UTILS_H_ */

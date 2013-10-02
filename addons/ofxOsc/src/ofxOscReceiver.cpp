@@ -113,7 +113,8 @@ DWORD WINAPI
 #else
 void*
 #endif
-		ofxOscReceiver::startThread( void* receiverInstance )
+
+ofxOscReceiver::startThread( void* receiverInstance )
 {
 	// cast the instance
 	ofxOscReceiver* instance = (ofxOscReceiver*)receiverInstance;
@@ -157,7 +158,7 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 			ofMessage->addStringArg( arg->AsStringUnchecked() );
 		else
 		{
-			cout << "message argument is not int, float, or string" << endl;
+			ofLogError("ofxOscReceiver") << "ProcessMessage: argument in message " << m.AddressPattern() << " is not an int, float, or string";
 		}
 	}
 
@@ -220,6 +221,34 @@ bool ofxOscReceiver::getNextMessage( ofxOscMessage* message )
 	releaseMutex();
 
 	// return success
+	return true;
+}
+
+bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
+	ofxOscMessage msg;
+	if ( messages.size() == 0 ) return false;
+	while(hasWaitingMessages()){
+		ofAbstractParameter * p = &parameter;
+		getNextMessage(&msg);
+		vector<string> address = ofSplitString(msg.getAddress(),"/",true);
+		for(int i=0;i<address.size();i++){
+			if(address[i]==p->getEscapedName()){
+				if(p->type()==typeid(ofParameterGroup).name()){
+					if(address.size()>i+1 && static_cast<ofParameterGroup*>(p)->contains(address[i+1])){
+						p = &static_cast<ofParameterGroup*>(p)->get(address[i+1]);
+					}
+				}else if(p->type()==typeid(ofParameter<int>).name() && msg.getArgType(0)==OFXOSC_TYPE_INT32){
+					p->cast<int>() = msg.getArgAsInt32(0);
+				}else if(p->type()==typeid(ofParameter<float>).name() && msg.getArgType(0)==OFXOSC_TYPE_FLOAT){
+					p->cast<float>() = msg.getArgAsFloat(0);
+				}else if(p->type()==typeid(ofParameter<bool>).name() && msg.getArgType(0)==OFXOSC_TYPE_INT32){
+					p->cast<bool>() = msg.getArgAsInt32(0);
+				}else if(msg.getArgType(0)==OFXOSC_TYPE_STRING){
+					p->fromString(msg.getArgAsString(0));
+				}
+			}
+		}
+	}
 	return true;
 }
 

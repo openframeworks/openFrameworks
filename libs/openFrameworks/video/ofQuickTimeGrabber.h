@@ -20,10 +20,13 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		ofQuickTimeGrabber();
 		virtual ~ofQuickTimeGrabber();
 
-		void					listDevices();
+        vector<ofVideoDevice>	listDevices();
 		bool					initGrabber(int w, int h);
 		void					update();
 		bool					isFrameNew();
+
+		bool					setPixelFormat(ofPixelFormat pixelFormat);
+		ofPixelFormat			getPixelFormat();
 
 		unsigned char			* getPixels();
 		ofPixelsRef		 		getPixelsRef();

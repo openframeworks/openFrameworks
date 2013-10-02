@@ -4,8 +4,6 @@
 
 #include "baseProject.h"
 
-
-
 class xcodeProject : public baseProject {
 
 public:
@@ -19,6 +17,7 @@ private:
     bool createProjectFile();
     bool loadProjectFile();
     bool saveProjectFile();
+    void saveMakefile();
 
 public:
 
@@ -36,6 +35,7 @@ public:
 	string addonUUID;
 	string resourcesUUID;
 	string buildPhaseUUID;
+    string buildPhaseResourcesUUID; 
 
     pugi::xml_node findOrMakeFolderSet( pugi::xml_node nodeToAddTo, vector < string > & folders, string pathForHash);
 	pugi::xml_node insertPoint;         // where are we inserting items (at the second dict tag,

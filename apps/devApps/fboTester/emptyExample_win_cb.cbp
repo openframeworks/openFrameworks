@@ -10,7 +10,7 @@
 			<Target title="release">
 				<Option output="bin\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin" />
-				<Option object_output="obj\release" />
+				<Option object_output="obj\Release" />
 				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\openFrameworks.lib;" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -26,7 +26,7 @@
 			<Target title="debug">
 				<Option output="bin\$(PROJECT_NAME)_DEBUG" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin" />
-				<Option object_output="obj\debug\" />
+				<Option object_output="obj\Debug\" />
 				<Option external_deps="..\..\..\libs\openFrameworksCompiled\lib\win_cb\openFrameworksDebug.lib;" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -99,10 +99,10 @@
 		<Unit filename="src\main.cpp">
 			<Option virtualFolder="src\" />
 		</Unit>
-		<Unit filename="src\testApp.cpp">
+		<Unit filename="src\ofApp.cpp">
 			<Option virtualFolder="src\" />
 		</Unit>
-		<Unit filename="src\testApp.h">
+		<Unit filename="src\ofApp.h">
 			<Option virtualFolder="src\" />
 		</Unit>
 		<Extensions>

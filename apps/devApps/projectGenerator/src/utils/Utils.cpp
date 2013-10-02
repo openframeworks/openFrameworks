@@ -53,6 +53,8 @@ string generateUUID(string input){
 
     const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
     std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
+    
+    digestString = digestString.substr(0, 24); 
 
     return digestString;
 }
@@ -198,7 +200,7 @@ bool isFolderNotCurrentPlatform(string folderName, string platform){
 	if( platforms.size() == 0 ){
 		platforms.push_back("osx");
 		platforms.push_back("win_cb");
-		platforms.push_back("vs2010");
+		platforms.push_back("vs");
 		platforms.push_back("ios");
 		platforms.push_back("linux");
 		platforms.push_back("linux64");
@@ -415,6 +417,9 @@ string getOFRoot(){
 	return ofFilePath::removeTrailingSlash(OFRoot);
 }
 
+string getAddonsRoot(){
+	return ofFilePath::join(getOFRoot(), "addons");
+}
 
 void setOFRoot(string path){
 	OFRoot = path;
@@ -485,8 +490,8 @@ void parseAddonsDotMake(string path, vector < string > & addons){
 }
 
 bool checkConfigExists(){
-	ofFile config(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"));
-	return config.exists();
+	
+	return ofFile::doesFileExist(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"));
 }
 
 bool askOFRoot(){
