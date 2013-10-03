@@ -9,6 +9,8 @@
 VER=3.0
 SUB_VER=1270
 
+FORMULA_TYPES=( "osx" "osx-clang-libc++" )
+
 # download the source code and unpack it into LIB_NAME
 function download() {
 
@@ -58,12 +60,32 @@ function build() {
 
 		# 64 bit
 		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch x86_64" -DCMAKE_CXX_FLAGS="-arch x86_64" .
-		make assimp
+		make assimp 
 		mv lib/libassimp.a lib/libassimp-x86_64.a
 		make clean
 
 		# link into universal lib
 		lipo -c lib/libassimp-i386.a lib/libassimp-x86_64.a -o lib/libassimp.a
+
+	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
+
+		# warning, assimp on github uses the ASSIMP_ prefix for CMake options ...
+		# these may need to be updated for a new release
+		local buildOpts="--build build/$TYPE -DBUILD_STATIC_LIB=1 -DENABLE_BOOST_WORKAROUND=1"
+
+		export CPP=`xcrun -find clang++`
+		export CXX=`xcrun -find clang++`
+		export CXXCPP=`xcrun -find clang++`
+		export CC=`xcrun -find clang`
+		
+		# 32 bit
+		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch i386" -DCMAKE_CXX_FLAGS="-arch i386 -std=c++11 -stdlib=libc++ -O3 -DNDEBUG -funroll-loops" .
+		make assimp -j 
+		mv lib/libassimp.a lib/libassimp-i386.a
+		make clean
+
+		# rename lib
+		libtool -c lib/libassimp-i386.a -o lib/libassimp.a
 
 	elif [ "$TYPE" == "linux" ] ; then
 		echoWarning "TODO: linux build"
