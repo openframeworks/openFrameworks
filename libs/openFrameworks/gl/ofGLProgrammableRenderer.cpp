@@ -1681,7 +1681,7 @@ void ofGLProgrammableRenderer::setup(){
 		defaultUniqueShader().setupShaderFromSource(GL_FRAGMENT_SHADER,uniqueFragmentShader);
 		defaultUniqueShader().bindDefaults();
 		defaultUniqueShader().linkProgram();
-
+		beginDefaultShader();
 	}else{
 		defaultTexColor().setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
 		defaultTex2DColor().setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
