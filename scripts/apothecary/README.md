@@ -73,7 +73,7 @@ See the built in help for more info:
 ### Options
 
 * **-t**: specify libary type when building, detects type from OS by default
-  * valid types: osx, osx-clang-libc++, linux, linux64, vs2010, win_cb, ios, android
+  * valid types: osx, osx-clang-libc++, linux, linux64, vs, win_cb, ios, android
 
 * **-a**: specify architecture, either 32 or 64 (default is 32 bit)
   * note: not currently needed, reserved for future use
@@ -187,7 +187,7 @@ OpenFrameworks is cross platform and currently supports the following build type
 * osx-clang-libc++: Mac OSX, clang/libc++ 32 bit libs
 * linux: 32 bit linux
 * linux64: 64 bit linux
-* vs2010: Windows, Visual Studio 2010
+* vs: Windows, Visual Studio
 * win_cb: Windows, CodeBlocks+MinGW
 * ios: iOS (can only build on OSX), arm7, arm7s, & 32 bit simulator fat libs
 * android: (requires android sdk)
