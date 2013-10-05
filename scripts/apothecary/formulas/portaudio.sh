@@ -6,7 +6,7 @@
 #
 # build not currently needed on any platform
 
-FORMULA_TYPES=( "osx" "vs2010" "win_cb" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
 VER=stable_v19_20111121
 

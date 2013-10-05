@@ -12,7 +12,7 @@
 # prefix (install location) and use a custom copy of pkg-config which returns
 # the dependent lib cflags/ldflags for that prefix (cairo/apothecary-build)
 
-FORMULA_TYPES=( "osx" "vs2010" "win_cb" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
 VER=1.12.14
 
@@ -52,8 +52,8 @@ function build() {
    		export LDFLAGS="-arch i386 -arch x86_64 -isysroot $XCODE_DEV_ROOT/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$OSX_SDK_VER.sdk"
    		export CFLAGS="-Os -arch i386 -arch x86_64 -isysroot $XCODE_DEV_ROOT/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$OSX_SDK_VER.sdk"
 	
-	elif [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: vs2010 build settings here?"
+	elif [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: vs build settings here?"
 	
 	elif [ "$YTYPE" == "win_cb" ] ; then
 		echoWarning "TODO: win_cb build settings here?"
@@ -84,8 +84,8 @@ function copy() {
 
 	# lib
 	mkdir -p $1/lib/$TYPE
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "copy vs2010 lib"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "copy vs lib"
 
 	elif [ "$TYPE" == "osx" -o "$TYPE" == "win_cb" ] ; then
 		if [ "$TYPE" == "osx" ] ; then

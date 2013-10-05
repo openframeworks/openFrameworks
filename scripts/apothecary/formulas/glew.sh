@@ -10,7 +10,7 @@
 
 VER=1.9.0
 
-FORMULA_TYPES=( "osx" "vs2010" "win_cb" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -37,10 +37,10 @@ function build() {
 		# link into universal lib
 		lipo -c libGLEW-i386.a libGLEW-x86_64.a -o libGLEW.a
 
-	elif [ "$TYPE" == "vs2010" ] ; then
+	elif [ "$TYPE" == "vs" ] ; then
 		#cd build/vc10
 		#MSBuild.exe glew_static.vcxproj
-		echoWarning "TODO: build vs2010"
+		echoWarning "TODO: build vs"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		#make glew.lib
@@ -60,7 +60,7 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v libGLEW.a $1/lib/$TYPE/glew.a
 
-	elif [ "$TYPE" == "vs2010" ] ; then
+	elif [ "$TYPE" == "vs" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/glew32s.lib $1/lib/$TYPE
 
@@ -73,8 +73,8 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: clean vs"
 	
 	else
 		make clean

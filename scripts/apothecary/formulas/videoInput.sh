@@ -6,7 +6,7 @@
 #
 # Visual Studio & Code Blocks projects are provided
 
-FORMULA_TYPES=( "vs2010" "win_cb" )
+FORMULA_TYPES=( "vs" "win_cb" )
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -18,10 +18,10 @@ function build() {
 
 	cd videoInputSrcAndDemos
 
-	if [ "$TYPE" == "vs2010" ] ; then
+	if [ "$TYPE" == "vs" ] ; then
 		cd VS-videoInputcompileAsLib
 		# use MSBuild.exe on videoInput.sln
-		echoWarning "TODO: vs2010 build"
+		echoWarning "TODO: vs build"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		cd CodeBlocks-compileAsLib/videoInputLib
@@ -38,8 +38,8 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 	
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: clean vs"
 	
 	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: clean win_cb"
