@@ -218,8 +218,6 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 //							currently looking at who to turn off
 //							at the end of the application
 
-void ofStopURLLoader();
-
 void ofExitCallback(){
 
 	ofNotifyExit();
