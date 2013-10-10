@@ -3,16 +3,16 @@
 #include "of3dGraphics.h"
 
 
-ofPtr<ofVboMesh> cachedAxisVbo;
+ofVboMesh & cachedAxisVbo(){
+    static ofVboMesh * axis = new ofVboMesh(ofMesh::axis());
+    return *axis;
+}
 
 void ofDrawAxis(float size) {
 	if (ofGetGLProgrammableRenderer()){
-		if (!cachedAxisVbo.get()){
-			cachedAxisVbo = ofPtr<ofVboMesh>(new ofVboMesh(ofMesh::axis(1)));
-		}
 		ofPushMatrix();
 		ofScale(size, size,size);
-		cachedAxisVbo->draw();
+		cachedAxisVbo().draw();
 		ofPopMatrix();
 	} else {
 		ofPushStyle();
