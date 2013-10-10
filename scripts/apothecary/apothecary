@@ -128,6 +128,8 @@ options:
 
   -h	print this usage guide
 
+  -g	prefer git to download if available
+
 examples:
   # update all core libs and addon libs
   apothecary update core addons
@@ -210,7 +212,7 @@ echoVerbose() {
 #### PARSE COMMANDLINE
 
 # from http://www.mkssoftware.com/docs/man1/getopts.1.asp
-while getopts t:a:b:d:hv opt ; do
+while getopts t:a:b:d:g:hv opt ; do
 	case "$opt" in
 		t) # set the library build type
 		   TYPE="$OPTARG" ;;
@@ -220,6 +222,8 @@ while getopts t:a:b:d:hv opt ; do
 		   BUILD_DIR="$OPTARG" ;;
 		d) # set lib destination dir
 		   LIBS_DIR="$OPTARG" ;;
+		g) # set git usage
+		   USE_GIT=1 ;;
 		h) # print help and exit
 		   echo "$HELP" ; exit 0 ;;
 		v) # verbose mode = true
