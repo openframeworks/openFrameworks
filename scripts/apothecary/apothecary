@@ -82,7 +82,7 @@ REL_ADDONS_DIR=../../addons
 CON_DEFAULT="\033[0m"
 CON_BOLD="\033[1m"
 CON_RED="\033[31m"
-CON_YELLOW="\033[93m"
+CON_YELLOW="\033[33m"
 CON_GREEN="\033[32m"
 
 # used to filter out bad build types
