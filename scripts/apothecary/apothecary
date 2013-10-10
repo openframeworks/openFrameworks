@@ -31,6 +31,9 @@
 # see VALID_TYPES for list of strings, default: VALID_TYPES
 FORMULA_TYPES=
 
+# option to prefer git instead of download tarballs
+USE_GIT=0
+
 ### READ ONLY please!
 
 # build settings
