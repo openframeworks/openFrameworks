@@ -3,7 +3,12 @@
 # a helper tool used when compiling applications and libraries
 # http://www.freedesktop.org/wiki/Software/pkg-config/
 
+# define the version
 VER=0.28
+
+# tools for git use
+GIT_URL=http://anongit.freedesktop.org/git/pkg-config.git
+GIT_TAG=pkg-config-$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {

@@ -3,7 +3,12 @@
 # a low-level software library for pixel manipulation
 # http://pixman.org/
 
+# define the version
 VER=0.30.0
+
+# tools for git use
+GIT_URL=http://anongit.freedesktop.org/git/pixman.git
+GIT_TAG=pixman-$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
