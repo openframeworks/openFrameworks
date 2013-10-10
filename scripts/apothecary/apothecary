@@ -95,41 +95,40 @@ VALID_TYPES=( "osx" "osx-clang-libc++" "linux" "linux64" "vs" "win_cb" "ios" "an
 A_VERBOSE=0
 
 # nice, detailed help message
-HELP="Usage: apothecary [options] command core/addons/libName/addonName
+HELP="usage: apothecary [options] <command> [<library|addons|libName|addonName>]
 
- this is the OpenFrameworks library apothecary
- it mixes formulas and potions to build and update OF C/C++ lib dependencies
+about:
+  this is the OpenFrameworks library apothecary
+  it mixes formulas and potions to build and 
+  update OF C/C++ lib dependencies
 
- Commands:
-  update		download, build, and copy library files
-  
-  download 		download the library source
-  build 		build the library
-  copy 			copy library files into the libs dir
-  clean 		clean the library build
+commands:
+  update	download, build, and copy library files
+  download	download the library source
+  build		build the library
+  copy		copy library files into the libs dir
+  clean		clean the library build
+  remove	remove the library from the build cache
+  remove-lib	remove the library from the libs dir
+  remove-all	remove the library from the build cache and libs dir
 
-  remove		remove the library from the build cache
-  remove-lib		remove the library from the libs dir
-  remove-all		remove the library from the build cache and libs dir
-
- Options:
+options:
   -t	specify libary type when building, detects type from OS by default
 	valid types: osx, linux, linux64, vs, win_cb, ios, android
 
   -a	specify architecture, either 32 or 64 (default is 32 bit)
 	note: not currently needed, reserved for future use
 
-  -b 	set the lib build dir, default: \$APOTHECARY_DIR/build
+  -b	set the lib build dir, default: \$APOTHECARY_DIR/build
 
-  -d 	set the compiled libs destination dir,
-  	default: OF core libs dir or addons/addonName/libs for addons
+  -d	set the compiled libs destination dir,
+	default: OF core libs dir or addons/addonName/libs for addons
 
-  -v 	verbose mode, print out some extra info while mixing formulas
+  -v	verbose mode, print out some extra info while mixing formulas
 
-  -h    print this usage guide
+  -h	print this usage guide
 
- Examples:
-
+examples:
   # update all core libs and addon libs
   apothecary update core addons
 
@@ -235,14 +234,14 @@ shift $(expr $OPTIND - 1)
 if [ $# -gt 0 ] ; then
 	A_CMD=$1
 else
-	echoWarning " Missing command, see help: apothecary -h"
+	echoWarning " Missing command. See help: 'apothecary -h'."
 	exit 1
 fi
 shift 1
 
 # check for arguments
 if [ $# -lt 1 ] ; then
-	echoWarning " Missing lib build target (maybe you wanted \"core\"), see help: apothecary -h"
+	echoWarning " Missing lib build target (maybe you wanted \"core\"). See help: 'apothecary -h'."
 	exit 1
 fi
 
