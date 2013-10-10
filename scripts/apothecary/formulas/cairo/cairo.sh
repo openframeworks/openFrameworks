@@ -29,7 +29,7 @@ function download() {
 	rm cairo-$VER.tar.xz
 }
 
-function script() {
+function prebuild() {
 	# dependencies (some commented for now as they might be needed for other platforms)
 	local buildDir=$BUILD_DIR/cairo/apothecary-build
 	mkdir -p $buildDir

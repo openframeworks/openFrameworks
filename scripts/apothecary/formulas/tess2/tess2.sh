@@ -23,7 +23,7 @@ function download() {
 	rm libtess2-$VER.zip
 }
 
-function script() {
+function prebuild() {
 	# copy in build script and CMake toolchains adapted from Assimp
 	if [ "$OS" == "osx" ] ; then
 		mkdir -p tess2/build

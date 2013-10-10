@@ -478,7 +478,7 @@ function downloadFormula(){
 		else
 			download
 		fi
-		script
+		prebuild
 		if [ ! -e $1 ] ; then
 			echoError " It looks like downloading failed for \"$1\""
 			exit 1
@@ -593,8 +593,8 @@ function remove-all() {
 function download() {
 	echoWarning " Download function not implemented"
 }
-function script() {
-	echoVerbose " Script function not implemented"
+function prebuild() {
+	echoVerbose " Pre-build function not implemented"
 }
 function build() {
 	echoWarning " Build function not implemented"
