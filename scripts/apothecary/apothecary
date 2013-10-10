@@ -469,7 +469,12 @@ function downloadFormula(){
 	if [ -e $1 ] ; then
 		echo "... skipping, src dir already exists"
 	else
-		download
+		if [ $USE_GIT == 1 ] && [ "$GIT_URL" != "" ] ; then
+			gitclone $1 $GIT_URL $GIT_TAG
+		else
+			download
+		fi
+		script
 		if [ ! -e $1 ] ; then
 			echoError " It looks like downloading failed for \"$1\""
 			exit 1
@@ -592,7 +597,10 @@ function copy() {
 }
 function clean() {
 	echoWarning " Clean function not implemented"
-} 
+}
+function gitclone() {
+	git clone $2 -b $3 $1
+}
 
 ################################################################################
 ### GO
