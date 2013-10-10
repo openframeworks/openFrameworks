@@ -4,8 +4,8 @@
 
 
 ofVboMesh & cachedAxisVbo(){
-    static ofVboMesh * axis = new ofVboMesh(ofMesh::axis());
-    return *axis;
+    static ofVboMesh axis(ofMesh::axis());
+    return axis;
 }
 
 void ofDrawAxis(float size) {
