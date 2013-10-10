@@ -589,6 +589,9 @@ function remove-all() {
 function download() {
 	echoWarning " Download function not implemented"
 }
+function script() {
+	echoVerbose " Script function not implemented"
+}
 function build() {
 	echoWarning " Build function not implemented"
 }
