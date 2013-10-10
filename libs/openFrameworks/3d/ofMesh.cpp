@@ -2495,11 +2495,11 @@ ofMesh ofMesh::axis( float size ) {
 
 	ofVec3f vertices[6] = {
 		ofVec3f(0,0,0),
-		ofVec3f(1,0,0),
+		ofVec3f(size,0,0),
 		ofVec3f(0,0,0),
-		ofVec3f(0,1,0),
+		ofVec3f(0,size,0),
 		ofVec3f(0,0,0),
-		ofVec3f(0,0,1),
+		ofVec3f(0,0,size),
 	};
 	ofFloatColor colors[6] = {
 		ofColor::red,
