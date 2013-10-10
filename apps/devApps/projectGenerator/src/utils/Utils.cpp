@@ -19,6 +19,8 @@
 #include <fstream>
 #include <string>
 
+#include "Poco/String.h"
+
 #include "Poco/HMACEngine.h"
 #include "Poco/MD5Engine.h"
 using Poco::DigestEngine;
@@ -524,7 +526,7 @@ void parseAddonsDotMake(string path, vector < string > & addons){
 	addonsmake >> addonsmakebuff;
 	while(!addonsmakebuff.isLastLine() && addonsmakebuff.size() > 0){
         string line = addonsmakebuff.getNextLine();
-		if(line!=""){
+		if(line!="" && Poco::trim(line)[0]!='#'){
 			addons.push_back(line);
 		}
 	}
