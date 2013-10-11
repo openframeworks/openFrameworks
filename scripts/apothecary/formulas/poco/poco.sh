@@ -85,8 +85,8 @@ function build() {
 			fi
 		done	
 
-	elif [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: vs2010 build"
+	elif [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: vs build"
 	
 	elif [ "$TYPE" == "ios" ] ; then
 
@@ -182,8 +182,8 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: clean vs"
 	
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: clean android"

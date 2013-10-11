@@ -6,7 +6,7 @@
 #
 # an autotools project
 
-FORMULA_TYPES=( "osx" "vs2010" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
 VER=2.4.12
 
@@ -36,8 +36,8 @@ function build() {
 		# link into universal lib
 		lipo -c libfreetype-i386.a libfreetype-x86_64.a -o libfreetype.a
 	
-	elif [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: build vs2010"
+	elif [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: build vs"
 	
 	elif [ "$TYPE" == "win_cb" ] ; then
 		# configure with arch
@@ -94,8 +94,8 @@ function copy() {
 	mkdir -p $1/lib/$TYPE
 	if [ "$TYPE" == "osx" -o "$TYPE" == "ios" ] ; then
 		cp -v libfreetype.a $1/lib/$TYPE/freetype.a
-	elif [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: copy vs2010 lib"
+	elif [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: copy vs lib"
 	elif [ "$TYPE" == "win_cb" ] ; then
 		#cp -v objs/.libs/libfreetype.a $1/lib/$TYPE/freetype.a
 		echoWarning "TODO: copy win_cb lib"
@@ -107,8 +107,8 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: clean vs"
 	
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: clean android"

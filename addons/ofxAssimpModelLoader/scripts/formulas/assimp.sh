@@ -93,8 +93,8 @@ function build() {
 	elif [ "$TYPE" == "linux64" ] ; then
 		echoWarning "TODO: linux64 build"
 
-	elif [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: vs2010 build"
+	elif [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: vs build"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: win_cb build"
@@ -149,7 +149,7 @@ function copy() {
 
 	# libs
 	mkdir -p $1/lib/$TYPE
-	if [ "$TYPE" == "vs2010" ] ; then
+	if [ "$TYPE" == "vs" ] ; then
 		cp -Rv lib/libassimp.lib $1/lib/$TYPE/assimp.lib
 
 	elif [ "$TYPE" == "ios" ] ; then
@@ -163,10 +163,10 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: clean vs"
 
-	elif [ "$TYPE" == "vs2010" ] ; then
+	elif [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: clean android"
 
 	else
