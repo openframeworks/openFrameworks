@@ -8,7 +8,7 @@ rem
 rem Usage
 rem -----
 rem setupCommandLine VS_VERSION [ACTION] [CONFIGURATION] [TOOL]
-rem VS_VERSION:    80|90|100|110
+rem VS_VERSION:    80|90|100|110|120
 rem ACTION:        build|rebuild|clean
 rem CONFIGURATION: release|debug|both
 rem TOOL:          devenv|vcexpress|wdexpress|msbuild
@@ -31,8 +31,9 @@ if not defined VCINSTALLDIR (
 	if "%VS_VERSION%"=="80" (call "%VS80COMNTOOLS%vsvars32.bat") else (
 		if "%VS_VERSION%"=="90" (call "%VS90COMNTOOLS%vsvars32.bat") else (
 			if "%VS_VERSION%"=="100" (call "%VS100COMNTOOLS%vsvars32.bat") else (
-				if "%VS_VERSION%"=="110" (call "%VS110COMNTOOLS%vsvars32.bat")
-				)))
+				if "%VS_VERSION%"=="110" (call "%VS110COMNTOOLS%vsvars32.bat") else (
+					if "%VS_VERSION%"=="120" (call "%VS120COMNTOOLS%vsvars32.bat")
+					))))
 
 	if not defined VSINSTALLDIR (
 		echo Error: No Visual C++ environment found.
@@ -50,14 +51,17 @@ if "%4"=="" (
 	set BUILD_TOOL=devenv
 	if "%VS_VERSION%"=="100" (set BUILD_TOOL=msbuild)
 	if "%VS_VERSION%"=="110" (set BUILD_TOOL=msbuild)
+	if "%VS_VERSION%"=="120" (set BUILD_TOOL=msbuild)
 ) else (set BUILD_TOOL=%4)
 if "%VS_VERSION%"==100 (goto action)
 if "%VS_VERSION%"==110 (goto action)
+if "%VS_VERSION%"==120 (goto action)
 if "%BUILD_TOOL%"=="msbuild" (
-	if not "%VS_VERSION%"=="110" (
-		if not "%VS_VERSION%"=="100" (
-			echo "Cannot use msbuild with Visual Studio 2008 or earlier."
-			exit)))
+	if not "%VS_VERSION%"=="120" (
+		if not "%VS_VERSION%"=="110" (
+			if not "%VS_VERSION%"=="100" (
+				echo "Cannot use msbuild with Visual Studio 2008 or earlier."
+				exit)))
 
 rem ACTION [build|rebuild|clean]
 set ACTION=%2
