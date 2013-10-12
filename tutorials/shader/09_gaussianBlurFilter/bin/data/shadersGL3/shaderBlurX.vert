@@ -10,15 +10,12 @@ in vec4 normal;
 in vec4 color;
 
 out vec2 texCoordVarying;
-out vec4 colorVarying;
-out vec4 normalVarying;
-
 
 void main()
 {
+	color = vec4(1.0); // for intel HD cards
+    normal = vec4(1.0); // for intel HD cards
+
     texCoordVarying = texcoord;
-        colorVarying = color;
-    normalVarying = normal;
-    
 	gl_Position = modelViewProjectionMatrix * position;
 }
