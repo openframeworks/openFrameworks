@@ -3,17 +3,11 @@
 uniform sampler2DRect tex0;
 uniform float blurAmnt;
 
-in vec4 colorVarying;
-in vec4 normalVarying;
-
 in vec2 texCoordVarying;
 out vec4 outputColor;
 
 void main()
 {
-
-    vec4 useFakeNormal = normalVarying;
-    vec4 useFakeColor = colorVarying;
 
     vec4 color;
 	
