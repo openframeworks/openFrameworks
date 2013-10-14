@@ -280,11 +280,11 @@ void ofSerial::close(){
 
 //----------------------------------------------------------------
 bool ofSerial::setup(){
-	return setup(0,9600);		// the first one, at 9600 is a good choice...
+	return setup(0,9600,'N');		// the first one, at 9600 is a good choice...
 }
 
 //----------------------------------------------------------------
-bool ofSerial::setup(int deviceNumber, int baud){
+bool ofSerial::setup(int deviceNumber, int baud, int parity){
 
 	buildDeviceList();
 	if( deviceNumber < (int)devices.size() ){
@@ -297,7 +297,7 @@ bool ofSerial::setup(int deviceNumber, int baud){
 }
 
 //----------------------------------------------------------------
-bool ofSerial::setup(string portName, int baud){
+bool ofSerial::setup(string portName, int baud, int parity){
 
 	bInited = false;
 
@@ -414,7 +414,7 @@ bool ofSerial::setup(string portName, int baud){
 	cfgSize=sizeof(cfg);
 	GetCommConfig(hComm,&cfg,&cfgSize);
 	int bps = baud;
-	sprintf(buf,"baud=%d parity=N data=8 stop=1",bps);
+	sprintf(buf,"baud=%d parity=%c data=8 stop=1",bps,parity);	//@terry edit
 
 	#if (_MSC_VER)       // microsoft visual studio
 		// msvc doesn't like BuildCommDCB,

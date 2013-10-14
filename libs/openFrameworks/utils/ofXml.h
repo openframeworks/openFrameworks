@@ -39,6 +39,8 @@ public:
 	bool load(const string & path);
 	bool save(const string & path);
 
+	void			addInstruction(string target,string data); //@terry add
+	void			addComment( const string& str); //@terry add
     bool            addChild( const string& path );
     void            addXml( ofXml& xml, bool copyAll = false);
 
