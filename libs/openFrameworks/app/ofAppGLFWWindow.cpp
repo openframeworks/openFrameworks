@@ -1011,9 +1011,6 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 
 	if(action == GLFW_PRESS || action == GLFW_REPEAT){
 		ofNotifyKeyPressed(key);
-		if (key == OF_KEY_ESC){				// "escape"
-			exitApp();
-		}
 	}else if (action == GLFW_RELEASE){
 		ofNotifyKeyReleased(key);
 	}
