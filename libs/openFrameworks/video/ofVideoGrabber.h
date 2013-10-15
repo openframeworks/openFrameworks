@@ -59,7 +59,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		
 		void				videoSettings();
 		unsigned char 	*	getPixels();
-		ofPixelsRef			getPixelsRef();
+        ofPixelsRef			getPixelsRef();
+        const ofPixelsRef   getPixelsRef() const;
 		ofTexture &			getTextureReference();
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);

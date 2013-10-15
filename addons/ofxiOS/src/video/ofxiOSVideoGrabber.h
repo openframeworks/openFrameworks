@@ -24,7 +24,8 @@ class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	
 	unsigned char * getPixels();
 	ofPixelsRef		getPixelsRef();
-	
+	const ofPixelsRef		getPixelsRef() const;
+
 	void close();	
 	
 	float getHeight() const;

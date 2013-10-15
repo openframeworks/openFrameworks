@@ -101,6 +101,11 @@ ofPixelsRef ofVideoPlayer::getPixelsRef(){
 	return player->getPixelsRef();
 }
 
+//---------------------------------------------------------------------------
+const ofPixelsRef ofVideoPlayer::getPixelsRef() const {
+	return player->getPixelsRef();
+}
+
 //
 //---------------------------------------------------------------------------
 //ofPixels ofVideoPlayer::getOFPixels(){

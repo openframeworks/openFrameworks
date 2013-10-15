@@ -158,6 +158,11 @@ ofPixelsRef ofVideoGrabber::getPixelsRef(){
 	return grabber->getPixelsRef();
 }
 
+//---------------------------------------------------------------------------
+const ofPixelsRef ofVideoGrabber::getPixelsRef() const {
+	return grabber->getPixelsRef();
+}
+
 //------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoGrabber::getTextureReference(){

@@ -55,7 +55,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		bool 				isFrameNew() const;
 		unsigned char * 	getPixels();
-		ofPixelsRef			getPixelsRef();
+        ofPixelsRef			getPixelsRef();
+        const ofPixelsRef   getPixelsRef() const;
 		float 				getPosition() const;
 		float 				getSpeed() const;
 		float 				getDuration() const;

@@ -29,8 +29,9 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		ofPixelFormat			getPixelFormat() const;
 
 		unsigned char			* getPixels();
-		ofPixelsRef		 		getPixelsRef();
-		
+        ofPixelsRef		 		getPixelsRef();
+        const ofPixelsRef       getPixelsRef() const;
+
 		void					close();
 		void					clearMemory();
 

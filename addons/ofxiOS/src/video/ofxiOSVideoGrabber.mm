@@ -30,6 +30,10 @@ ofPixelsRef ofxiOSVideoGrabber::getPixelsRef(){
     return dummy;
 }
 
+const ofPixelsRef ofxiOSVideoGrabber::getPixelsRef() const {
+    return getPixelsRef();
+}
+
 void ofxiOSVideoGrabber::close() {
 }
 

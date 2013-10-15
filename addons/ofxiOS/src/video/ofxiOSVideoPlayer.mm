@@ -322,6 +322,11 @@ ofPixelsRef ofxiOSVideoPlayer::getPixelsRef() {
 }
 
 //----------------------------------------
+const ofPixelsRef ofxiOSVideoPlayer::getPixelsRef() const {
+    return getPixelsRef();
+}
+
+//----------------------------------------
 ofTexture * ofxiOSVideoPlayer::getTexture() {
     
     if(!isLoaded()) {

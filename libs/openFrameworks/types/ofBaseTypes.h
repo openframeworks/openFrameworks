@@ -105,6 +105,7 @@ public:
 	virtual ~ofBaseHasPixels_<T>(){}
 	virtual T * getPixels()=0;
 	virtual ofPixels_<T> & getPixelsRef()=0;
+	virtual const ofPixels_<T> & getPixelsRef() const =0;
 };
 
 typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
