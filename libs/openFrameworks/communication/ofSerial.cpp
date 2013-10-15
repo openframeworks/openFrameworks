@@ -414,7 +414,7 @@ bool ofSerial::setup(string portName, int baud, char parity,int dataBits,int sto
 	cfgSize=sizeof(cfg);
 	GetCommConfig(hComm,&cfg,&cfgSize);
 	int bps = baud;
-	sprintf(buf,"baud=%d parity=%c data=d stop=d",bps,parity,dataBits,stopBits);
+	sprintf(buf,"baud=%d parity=%c data=%d stop=%d",bps,parity,dataBits,stopBits);
 
 	#if (_MSC_VER)       // microsoft visual studio
 		// msvc doesn't like BuildCommDCB,
