@@ -68,7 +68,7 @@ void ofMaterial::begin() {
 	glGetMaterialfv(GL_BACK,GL_DIFFUSE,&prev_diffuse_back.r);
 	glGetMaterialfv(GL_BACK,GL_SPECULAR,&prev_specular_back.r);
 	glGetMaterialfv(GL_BACK,GL_AMBIENT,&prev_ambient_back.r);
-	glGetMaterialfv(GL_BACK,GL_EMISSION,&prev_emissive.r);
+	glGetMaterialfv(GL_BACK,GL_EMISSION,&prev_emissive_back.r);
 	glGetMaterialfv(GL_BACK, GL_SHININESS, &prev_shininess_back);
 
     // Material colors and properties
