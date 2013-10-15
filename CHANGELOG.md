@@ -29,6 +29,7 @@ CORE
 ### Graphics
 ### Math
 ### GL
+	/ ofMaterial: fixed back emmisive material
 ### Sound
 ### Types
 ### Utils
