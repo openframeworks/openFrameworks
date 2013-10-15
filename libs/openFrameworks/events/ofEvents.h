@@ -44,6 +44,7 @@ class ofKeyEventArgs : public ofEventArgs {
 		Released,
 	} type;
 	int key;
+    int modifiers;
 };
 
 class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
@@ -55,6 +56,7 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 		Dragged
 	} type;
 	int button;
+    int modifiers;
 };
 
 class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
@@ -251,12 +253,12 @@ void ofNotifySetup();
 void ofNotifyUpdate();
 void ofNotifyDraw();
 
-void ofNotifyKeyPressed(int key);
-void ofNotifyKeyReleased(int key);
+void ofNotifyKeyPressed(int key, int modifiers = 0);
+void ofNotifyKeyReleased(int key, int modifiers = 0);
 void ofNotifyKeyEvent(const ofKeyEventArgs & keyEvent);
 
-void ofNotifyMousePressed(int x, int y, int button);
-void ofNotifyMouseReleased(int x, int y, int button);
+void ofNotifyMousePressed(int x, int y, int button, int modifiers = 0);
+void ofNotifyMouseReleased(int x, int y, int button, int modifiers = 0);
 void ofNotifyMouseDragged(int x, int y, int button);
 void ofNotifyMouseMoved(int x, int y);
 void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent);

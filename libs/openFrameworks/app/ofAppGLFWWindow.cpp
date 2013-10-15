@@ -837,6 +837,13 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
     }
 #endif
 
+    int modifiers = 0;
+
+    if(mods & GLFW_MOD_SHIFT)   modifiers |= OF_KEY_SHIFT;
+    if(mods & GLFW_MOD_CONTROL) modifiers |= OF_KEY_CONTROL;
+    if(mods & GLFW_MOD_ALT)     modifiers |= OF_KEY_ALT;
+    if(mods & GLFW_MOD_SUPER)   modifiers |= OF_KEY_SUPER;
+
 	switch(button){
 	case GLFW_MOUSE_BUTTON_LEFT:
 		button = OF_MOUSE_BUTTON_LEFT;
@@ -850,15 +857,13 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
 	}
 
 	if (state == GLFW_PRESS) {
-		ofNotifyMousePressed(ofGetMouseX(), ofGetMouseY(), button);
+		ofNotifyMousePressed(ofGetMouseX(), ofGetMouseY(), button, modifiers);
 		instance->buttonPressed=true;
 	} else if (state == GLFW_RELEASE) {
-		ofNotifyMouseReleased(ofGetMouseX(), ofGetMouseY(), button);
+		ofNotifyMouseReleased(ofGetMouseX(), ofGetMouseY(), button,  modifiers);
 		instance->buttonPressed=false;
 	}
 	instance->buttonInUse = button;
-
-
 }
 
 //------------------------------------------------------------
@@ -1009,10 +1014,17 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 		key += 32;
 	}
 
+    int modifiers = 0;
+
+    if(mods & GLFW_MOD_SHIFT)   modifiers |= OF_KEY_SHIFT;
+    if(mods & GLFW_MOD_CONTROL) modifiers |= OF_KEY_CONTROL;
+    if(mods & GLFW_MOD_ALT)     modifiers |= OF_KEY_ALT;
+    if(mods & GLFW_MOD_SUPER)   modifiers |= OF_KEY_SUPER;
+
 	if(action == GLFW_PRESS || action == GLFW_REPEAT){
-		ofNotifyKeyPressed(key);
+		ofNotifyKeyPressed(key,modifiers);
 	}else if (action == GLFW_RELEASE){
-		ofNotifyKeyReleased(key);
+		ofNotifyKeyReleased(key,modifiers);
 	}
 }
 
@@ -1063,9 +1075,9 @@ bool ofAppGLFWWindow::isWindowResizeable(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::iconify(bool bIconify){
 	if(bIconify)
-			glfwIconifyWindow(windowP);
+        glfwIconifyWindow(windowP);
 	else
-		glfwRestoreWindow(windowP);
+        glfwRestoreWindow(windowP);
 }
 
 

@@ -175,9 +175,12 @@ void ofNotifyDraw(){
 }
 
 //------------------------------------------
-void ofNotifyKeyPressed(int key){
+void ofNotifyKeyPressed(int key, int modifiers){
 	static ofKeyEventArgs keyEventArgs;
-	// FIXME: modifiers are being reported twice, for generic and for left/right
+
+    keyEventArgs.modifiers = modifiers;
+
+    // FIXME: modifiers are being reported twice, for generic and for left/right
 	// add operators to the arguments class so it can be checked for both
     if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
         pressedKeys.insert(OF_KEY_CONTROL);
@@ -214,8 +217,10 @@ void ofNotifyKeyPressed(int key){
 }
 
 //------------------------------------------
-void ofNotifyKeyReleased(int key){
+void ofNotifyKeyReleased(int key, int modifiers){
 	static ofKeyEventArgs keyEventArgs;
+
+    keyEventArgs.modifiers = modifiers;
 
 	// FIXME: modifiers are being reported twice, for generic and for left/right
 	// add operators to the arguments class so it can be checked for both
@@ -280,8 +285,11 @@ void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent){
 }
 
 //------------------------------------------
-void ofNotifyMousePressed(int x, int y, int button){
+void ofNotifyMousePressed(int x, int y, int button, int modifiers){
 	static ofMouseEventArgs mouseEventArgs;
+
+    mouseEventArgs.modifiers = modifiers;
+
     if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -304,8 +312,10 @@ void ofNotifyMousePressed(int x, int y, int button){
 }
 
 //------------------------------------------
-void ofNotifyMouseReleased(int x, int y, int button){
+void ofNotifyMouseReleased(int x, int y, int button, int modifiers){
 	static ofMouseEventArgs mouseEventArgs;
+
+    mouseEventArgs.modifiers = modifiers;
 
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
