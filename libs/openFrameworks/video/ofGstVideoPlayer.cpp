@@ -361,6 +361,10 @@ ofPixelsRef ofGstVideoPlayer::getPixelsRef(){
 	return videoUtils.getPixelsRef();
 }
 
+const ofPixelsRef ofGstVideoPlayer::getPixelsRef() const {
+	return videoUtils.getPixelsRef();
+}
+
 float ofGstVideoPlayer::getHeight() const {
 	return videoUtils.getHeight();
 }

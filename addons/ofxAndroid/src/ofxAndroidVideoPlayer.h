@@ -40,7 +40,8 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		float getHeight() const;
 
 		unsigned char * getPixels(){ return NULL;}; // no pixels in town!
-		ofPixels& getPixelsRef() const {return pixels;}  // no pixels in town!
+        ofPixels& getPixelsRef() {return pixels;}  // no pixels in town!
+        const ofPixels& getPixelsRef() const {return pixels;}  // no pixels in town!
 
 		bool setPixelFormat(ofPixelFormat pixelFormat){ return false;};  // no pixels in town!
 		ofPixelFormat getPixelFormat() const { return OF_PIXELS_RGBA;};  // no pixels in town!

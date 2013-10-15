@@ -249,6 +249,10 @@ ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
 	return pixels;	   
 }
 
+const ofPixelsRef ofQTKitPlayer::getPixelsRef() const {
+    return getPixelsRef();
+}
+
 //--------------------------------------------------------------------
 unsigned char* ofQTKitPlayer::getPixels() {
 	return getPixelsRef().getPixels();

@@ -31,16 +31,16 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		float           getHeight() const;
 		unsigned char * getPixels();
         ofPixelsRef     getPixelsRef();
-        const ofPixelsRef     getPixelsRef() const;
+        const ofPixelsRef getPixelsRef() const;
 		void            setVerbose(bool bTalkToMe);
 
 		vector <ofVideoDevice> listDevices() const;
-		vector <string> & listAudioDevices() const;
-		vector <string> & listVideoDevices() const;
+		const vector <string> & listAudioDevices() const;
+		const vector <string> & listVideoDevices() const;
 
 		bool            initRecording();
-		vector <string> & listVideoCodecs() const;
-		vector <string> & listAudioCodecs() const;
+		const vector <string> & listVideoCodecs() const;
+		const vector <string> & listAudioCodecs() const;
 		void            setVideoCodec(string videoCodecIDString);
 		void            setAudioCodec(string audioCodecIDString);
 		void            setUseAudio(bool bUseAudio);

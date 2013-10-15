@@ -26,6 +26,7 @@ public:
     bool isFrameNew() const;
     unsigned char * getPixels();
     ofPixelsRef	getPixelsRef();
+    const ofPixelsRef	getPixelsRef() const;
     ofTexture *	getTexture();
 	
     float getWidth() const;

@@ -194,6 +194,10 @@ ofPixelsRef	ofxAndroidVideoGrabber::getPixelsRef(){
 	return pixels;
 }
 
+const ofPixelsRef ofxAndroidVideoGrabber::getPixelsRef() const {
+    return pixels;
+}
+
 void ofxAndroidVideoGrabber::setVerbose(bool bTalkToMe){
 
 }
