@@ -60,6 +60,7 @@ public:
 protected:
 	virtual void render();
     void registerMouseEvents();
+    void unregisterMouseEvents();
     virtual bool setValue(float mx, float my, bool bCheck);
     void sizeChangedCB();
     

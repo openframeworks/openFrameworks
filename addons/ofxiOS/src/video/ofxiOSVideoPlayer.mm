@@ -20,7 +20,6 @@ ofxiOSVideoPlayer::ofxiOSVideoPlayer() {
     bUpdatePixels = false;
     bUpdatePixelsToRgb = false;
     bUpdateTexture = false;
-    bTextureHack = false;
     bTextureCacheSupported = false;
 #ifdef __IPHONE_5_0    
     bTextureCacheSupported = (CVOpenGLESTextureCacheCreate != NULL);
@@ -81,11 +80,7 @@ void ofxiOSVideoPlayer::close() {
 			pixelsRGB = NULL;
 		}
         
-        if(!bTextureHack) {
-            if(videoTexture.bAllocated()) {
-                videoTexture.clear();
-            }
-        }
+        videoTexture.clear();
 		
         ((AVFoundationVideoPlayer *)videoPlayer).delegate = nil;
 		[(AVFoundationVideoPlayer *)videoPlayer release];
@@ -364,26 +359,17 @@ ofTexture * ofxiOSVideoPlayer::getTexture() {
         /**
          *  CVOpenGLESTextureCache does this operation for us.
          *  it automatically returns a texture reference which means we don't have to create the texture ourselves.
-         *  but we do want to return an ofTexture object...
          *  this creates a slight problem because when we create an ofTexture objects, it also creates a opengl texture for us,
          *  which is unecessary in this case because the texture already exists.
-         *  so... the below is somewhat of a hack to reuse an existing texture and give it to a ofTexture object.
+         *  so... we can use ofTexture::setUseExternalTextureID() to get around this.
          */
         
-        bTextureHack = true;
-        
-        ofTextureData texData;
-        texData.tex_w = texData.width = [(AVFoundationVideoPlayer *)videoPlayer getWidth];
-        texData.tex_h = texData.height = [(AVFoundationVideoPlayer *)videoPlayer getHeight];
-        texData.tex_w = ofNextPow2(texData.tex_w);
-        texData.tex_h = ofNextPow2(texData.tex_h);
-        texData.tex_t = 1.0f;
-        texData.tex_u = 1.0f;
-        texData.textureTarget = GL_TEXTURE_2D;
-        texData.glTypeInternal = GL_RGBA; // opengl format
-        texData.bAllocated = true;
-        
-        glActiveTexture(GL_TEXTURE0);
+        int videoTextureW = [(AVFoundationVideoPlayer *)videoPlayer getWidth];
+        int videoTextureH = [(AVFoundationVideoPlayer *)videoPlayer getHeight];
+        videoTexture.allocate(videoTextureW, videoTextureH, GL_RGBA);
+        ofTextureData & texData = videoTexture.getTextureData();
+        texData.tex_t = 1.0f; // these values need to be reset to 1.0 to work properly.
+        texData.tex_u = 1.0f; // assuming this is something to do with the way ios creates the texture cache.
         
         /**
          *  create video texture from video image.
@@ -404,24 +390,15 @@ ofTexture * ofxiOSVideoPlayer::getTexture() {
                                                            0,                       // size_t planeIndex
                                                            &_videoTextureRef);      // CVOpenGLESTextureRef *textureOut
         
-        /**
-         *  get the generated textureID and textureTarget.
-         *  configure the texture (this is from inside ofTexture::allocate).
-         *  and add give it to an ofTexture object.
-         */
-        texData.textureID = CVOpenGLESTextureGetName(_videoTextureRef);
-        texData.textureTarget = CVOpenGLESTextureGetTarget(_videoTextureRef);
-        
-        glEnable(texData.textureTarget);
-        glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
-        glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        glDisable(texData.textureTarget);
-        
-        videoTexture.texData = texData;
+        unsigned int textureCacheID = CVOpenGLESTextureGetName(_videoTextureRef);
+        videoTexture.setUseExternalTextureID(textureCacheID);
+        videoTexture.setTextureMinMagFilter(GL_LINEAR, GL_LINEAR);
+        videoTexture.setTextureWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+        if(!ofIsGLProgrammableRenderer()){
+            videoTexture.bind();
+            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            videoTexture.unbind();
+        }
         
         if(err) {
             NSLog(@"Error at CVOpenGLESTextureCacheCreateTextureFromImage %d", err);
@@ -446,13 +423,7 @@ ofTexture * ofxiOSVideoPlayer::getTexture() {
             return NULL;
         }
         
-        bTextureHack = false;
-        
         if(bResetTexture) {
-            
-            if(videoTexture.bAllocated()) {
-                videoTexture.clear();
-            }
             
             videoTexture.allocate([(AVFoundationVideoPlayer *)videoPlayer getWidth], 
                                   [(AVFoundationVideoPlayer *)videoPlayer getHeight], 
