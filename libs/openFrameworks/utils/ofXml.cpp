@@ -166,7 +166,7 @@ string ofXml::toString() const
     return tmp;
 }
 
-void ofXml::addInstruction(string target,string data){
+void ofXml::addInstruction(const string& target,const string& data){
 
 	Poco::XML::ProcessingInstruction *docPI = getPocoDocument()->createProcessingInstruction(target,data);
 	getPocoDocument()->appendChild((Poco::XML::Node*)docPI);

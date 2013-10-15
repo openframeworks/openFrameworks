@@ -280,15 +280,15 @@ void ofSerial::close(){
 
 //----------------------------------------------------------------
 bool ofSerial::setup(){
-	return setup(0,9600,'N');		// the first one, at 9600 is a good choice...
+	return setup(0,9600,'N',8,1);		// the first one, at 9600 is a good choice...
 }
 
 //----------------------------------------------------------------
-bool ofSerial::setup(int deviceNumber, int baud, int parity){
+bool ofSerial::setup(int deviceNumber, int baud, char parity,int dataBits,int stopBits){
 
 	buildDeviceList();
 	if( deviceNumber < (int)devices.size() ){
-		return setup(devices[deviceNumber].devicePath, baud);
+		return setup(devices[deviceNumber].devicePath, baud, parity, dataBits, stopBits);
 	}else{
 		ofLogError("ofSerial") << "couldn't find device " << deviceNumber << ", only " << devices.size() << " devices found";
 		return false;
@@ -297,7 +297,7 @@ bool ofSerial::setup(int deviceNumber, int baud, int parity){
 }
 
 //----------------------------------------------------------------
-bool ofSerial::setup(string portName, int baud, int parity){
+bool ofSerial::setup(string portName, int baud, char parity,int dataBits,int stopBits){
 
 	bInited = false;
 
@@ -414,7 +414,7 @@ bool ofSerial::setup(string portName, int baud, int parity){
 	cfgSize=sizeof(cfg);
 	GetCommConfig(hComm,&cfg,&cfgSize);
 	int bps = baud;
-	sprintf(buf,"baud=%d parity=%c data=8 stop=1",bps,parity);	//@terry edit
+	sprintf(buf,"baud=%d parity=%c data=d stop=d",bps,parity,dataBits,stopBits);
 
 	#if (_MSC_VER)       // microsoft visual studio
 		// msvc doesn't like BuildCommDCB,
