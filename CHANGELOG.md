@@ -27,6 +27,7 @@ CORE
 ### Communication
 ### Events
 ### Graphics
+	/ ofCairoRenderer: fix for moveTo when drawing ofPaths
 ### Math
 ### GL
 	/ ofMaterial: fixed back emmisive material
