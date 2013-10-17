@@ -628,7 +628,7 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 }
 
 //----------------------------------------------------------
-void ofTexture::load3DData(vector<ofPixels> &texArray, int w, int h, int depth, int glFormat, int glType){
+void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, int glFormat, int glType){
     
 	/*if(w > texData.tex_w || h > texData.tex_h) {
 		allocate(w, h, glFormat, glFormat, glType);
@@ -715,7 +715,7 @@ void ofTexture::load3DData(vector<ofPixels> &texArray, int w, int h, int depth, 
 }
 
 //----------------------------------------------------------
-void ofTexture::load3DData(const void * data, int w, int h, int depth, int glFormat, int glType){
+void ofTexture::loadData(const void * data, int w, int h, int depth, int glFormat, int glType){
     
 	if(w > texData.tex_w || h > texData.tex_h) {
 		allocate(w, h, glFormat, glFormat, glType);
