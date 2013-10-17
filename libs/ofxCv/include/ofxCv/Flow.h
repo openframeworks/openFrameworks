@@ -134,13 +134,17 @@ namespace ofxCv {
 		ofVec2f getTotalFlowInRegion(ofRectangle region);
 		ofVec2f getAverageFlowInRegion(ofRectangle region);
 		
+
 		// size of flow
 		int getWidth();
 		int getHeight();
-		
+        
+        //call this if you switch to a new video file to reset internal caches
+        void resetFlow();
+    
 	protected:
 		cv::Mat flow;
-		
+
 		void drawFlow(ofRectangle rect);
 		void calcFlow();
 		
