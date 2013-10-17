@@ -168,9 +168,6 @@ class ofTexture : public ofBaseDraws {
 	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
     
-    void draw3D(const ofVec3f & p1, const ofVec3f & p2, const ofVec3f & p3, const ofVec3f & p4);
-    void drawSubsection3D(float x, float y, float z, float w, float h, float d, float sx, float sy, float sz, float sw, float sh, float sd);
-
 	void readToPixels(ofPixels & pixels);
 	void readToPixels(ofShortPixels & pixels);
 	void readToPixels(ofFloatPixels & pixels);

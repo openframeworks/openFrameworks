@@ -370,6 +370,9 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
         texData.tex_v = textureData.tex_v;
         texData.tex_z = textureData.tex_z;
         
+        //void glTexImage3D( GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
+
+        
         glTexImage3D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, (GLint)texData.depth, 0, glFormat, pixelType, 0);  // init to black...
     }
     else
@@ -627,7 +630,11 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 //----------------------------------------------------------
 void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, int glFormat, int glType){
     
-		// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
+	/*if(w > texData.tex_w || h > texData.tex_h) {
+		allocate(w, h, glFormat, glFormat, glType);
+	}*/
+	
+	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 		texData.tex_t = w;
@@ -640,6 +647,26 @@ void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, in
 	}
 	
 	
+	// 	ok this is an ultra annoying bug :
+	// 	opengl texels and linear filtering -
+	// 	when we have a sub-image, and we scale it
+	// 	we can clamp the border pixels to the border,
+	//  but the borders of the sub image get mixed with
+	//  neighboring pixels...
+	//  grr...
+	//
+	//  the best solution would be to pad out the image
+	// 	being uploaded with 2 pixels on all sides, and
+	//  recompute tex_t coordinates..
+	//  another option is a gl_arb non pow 2 textures...
+	//  the current hack is to alter the tex_t, tex_u calcs, but
+	//  that makes the image slightly off...
+	//  this is currently being done in draw...
+	//
+	// 	we need a good solution for this..
+	//
+	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
+	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
 	
 	
 	//Sosolimited: texture compression
@@ -651,6 +678,11 @@ void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, in
         
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
 		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
+        
+        // just do 0 depth to start?
+        //glTexSubImage3D(texData.textureTarget, 0, 0, 0, 0, w, h, depth, glFormat, glType, data);
+        
+        //void glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
         
         // when this texture needs to be shrunk to fit on small polygons, use linear interpolation of the texels to determine the color
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -670,6 +702,7 @@ void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, in
         cout << sizeof(texels) << endl;
         
         for ( int i = 0; i < texArray.size(); i++ ) {
+            cout << i << endl;
             memcpy( &(texels[w*h*3*i]), texArray[i].getPixels(), w*h*3*sizeof(unsigned char));
         }
         
@@ -731,6 +764,12 @@ void ofTexture::loadData(const void * data, int w, int h, int depth, int glForma
 		enableTextureTarget();
         
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
+        
+        // just do 0 depth to start?
+        //glTexSubImage3D(texData.textureTarget, 0, 0, 0, 0, w, h, depth, glFormat, glType, data);
+        
+        //void glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
         
         // when this texture needs to be shrunk to fit on small polygons, use linear interpolation of the texels to determine the color
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -1119,138 +1158,6 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	bind();
 	quad.draw();
 	unbind();
-}
-
-//----------------------------------------------------------
-void ofTexture::draw3D(const ofVec3f & p1, const ofVec3f & p2, const ofVec3f & p3, const ofVec3f & p4){
-/*
-	GLfloat tx0 = 0;
-	GLfloat ty0 = 0;
-    GLfloat tz0 = 0;
-	GLfloat tx1 = texData.tex_t;
-	GLfloat ty1 = texData.tex_u;
-    GLfloat tz1 = texData.tex_v;
-    
-	quad.getVertices()[0].set(p1.x, p1.y, p1.z);
-	quad.getVertices()[1].set(p2.x, p2.y, p1.z);
-	quad.getVertices()[2].set(p3.x, p3.y, p1.z);
-	quad.getVertices()[3].set(p4.x, p4.y, p1.z);
-	
-	quad.getTexCoords()[0].set(tx0,ty0,tz0);
-	quad.getTexCoords()[1].set(tx1,ty0,tz0);
-	quad.getTexCoords()[2].set(tx1,ty1,tz1);
-	quad.getTexCoords()[3].set(tx0,ty1,tz1);
-	
-	// make sure we are on unit 0 - we may change this when setting shader samplers
-	// before glEnable or else the shader gets confused
-	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
-	glActiveTexture(GL_TEXTURE0);
-	
-	bind();
-	quad.draw();
-	unbind(); */
-}
-
-//----------------------------------------------------------
-void ofTexture::drawSubsection3D(float x, float y, float z, float w, float h, float d, float sx, float sy, float sz, float sw, float sh, float sd) {
-	
-	
-//	GLfloat px0 = x;		// up to you to get the aspect ratio right
-//	GLfloat py0 = y;
-//    GLfloat pz0 = z;
-//	GLfloat px1 = w+x;
-//	GLfloat py1 = h+y;
-//    GLfloat pz1 = z+d;
-//    
-//	
-//	if (texData.bFlipTexture == ofIsVFlipped()){
-//		swap(py0,py1);
-//	}
-//	
-//	// for rect mode center, let's do this:
-//	if (ofGetRectMode() == OF_RECTMODE_CENTER){
-//		px0 = -w/2;
-//		py0 = -h/2;
-//		px1 = +w/2;
-//		py1 = +h/2;
-//	}
-//	
-//	//we translate our drawing points by our anchor point.
-//	//we still respect ofRectMode so if you have rect mode set to
-//	//OF_RECTMODE_CENTER your anchor will be relative to that.
-//	GLfloat anchorX;
-//	GLfloat anchorY;
-//	
-//	if(bAnchorIsPct){
-//		anchorX = anchor.x * w;
-//		anchorY = anchor.y * h;
-//	}else{
-//		anchorX = anchor.x;
-//		anchorY = anchor.y;
-//	}
-//	
-//	px0 -= anchorX;
-//	py0 -= anchorY;
-//	px1 -= anchorX;
-//	py1 -= anchorY;
-//	
-//	
-//	// -------------------------------------------------
-//	// complete hack to remove border artifacts.
-//	// slightly, slightly alters an image, scaling...
-//	// to remove the border.
-//	// we need a better solution for this, but
-//	// to constantly add a 2 pixel border on all uploaded images
-//	// is insane..
-//	
-//	GLfloat offsetw = 0.0f;
-//	GLfloat offseth = 0.0f;
-//	
-//	if (!ofGLSupportsNPOTTextures() && bTexHackEnabled) {
-//		offsetw = 1.0f / (texData.tex_w);
-//		offseth = 1.0f / (texData.tex_h);
-//	}
-//	// -------------------------------------------------
-//	
-//	ofPoint topLeft = getCoordFromPoint(sx, sy);
-//	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
-//    
-//	GLfloat tx0 = topLeft.x + offsetw;
-//	GLfloat ty0 = topLeft.y + offseth;
-//    GLfloat tz0 = topLeft.z;
-//	GLfloat tx1 = bottomRight.x - offsetw;
-//	GLfloat ty1 = bottomRight.y - offseth;
-//    GLfloat tz1 = bottomRight.z;
-//	
-//	/*if(z>0 || z<0){
-//     ofPushMatrix();
-//     
-//     ofTranslate(0,0,z);
-//     }*/
-//	quad.getVertices()[0].set(px0,py0,z);
-//	quad.getVertices()[1].set(px1,py0,z);
-//	quad.getVertices()[2].set(px1,py1,z);
-//	quad.getVertices()[3].set(px0,py1,z);
-//    
-//	quad.getTexCoords()[0].set(tx0,ty0,tz0);
-//	quad.getTexCoords()[1].set(tx1,ty0,tz0);
-//	quad.getTexCoords()[2].set(tx1,ty1,tz1);
-//	quad.getTexCoords()[3].set(tx0,ty1,tz1);
-//
-//    
-//	// make sure we are on unit 0 - we may change this when setting shader samplers
-//	// before glEnable or else the shader gets confused
-//	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
-//	glActiveTexture(GL_TEXTURE0);
-//	
-//	bind();
-//	quad.draw();
-//	unbind();
-//    
-//	/*if(z>0 || z<0){
-//     ofPopMatrix();
-//     }*/
-	
 }
 
 
