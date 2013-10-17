@@ -39,8 +39,8 @@ namespace ofxCv {
 	void Flow::calcOpticalFlow(ofPixelsRef nextImage){
 		curr.setFromPixels(nextImage);
 		curr.setImageType(OF_IMAGE_GRAYSCALE);
-		
-		if(last.isAllocated()){
+
+		if(last.isAllocated() && last.getWidth() == curr.getWidth() && last.getHeight() == curr.getHeight()){
 			calcFlow(); //will call concrete implementation
 			hasFlow = true;
 		}
@@ -71,7 +71,7 @@ namespace ofxCv {
 	int Flow::getWidth()  { return 0; }
 	int Flow::getHeight() { return 0; }
 	
-	
+    
 #pragma mark PYRLK IMPLEMENTATION
 	FlowPyrLK::FlowPyrLK()
 	:windowSize(32)
@@ -112,7 +112,7 @@ namespace ofxCv {
 				prevPts = nextPts;
 			}
 			nextPts.clear();
-			
+
 #if CV_MAJOR_VERSION>=2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
 			buildOpticalFlowPyramid(toCv(curr),pyramid,cv::Size(windowSize, windowSize),10);
 			calcOpticalFlowPyrLK(
@@ -214,6 +214,13 @@ namespace ofxCv {
 			}
 		}
 	}
+    
+    void FlowPyrLK::resetFlow(){
+        hasFlow = false;
+        last.clear();
+        resetFeaturesToTrack();
+        prevPts.clear();
+    }
 	
 #pragma mark FARNEBACK IMPLEMENTATION
 	FlowFarneback::FlowFarneback()
@@ -256,30 +263,44 @@ namespace ofxCv {
 		this->farnebackGaussian = gaussian;
 	}
 	
+	void FlowFarneback::resetFlow(){
+		hasFlow = false;
+		flow.setTo(0);
+		last.clear();
+	}
+
 	void FlowFarneback::calcFlow(){
-		int flags = OPTFLOW_USE_INITIAL_FLOW;
-		flags |= farnebackGaussian ? OPTFLOW_FARNEBACK_GAUSSIAN : 0;
-		
-		calcOpticalFlowFarneback(
-														 toCv(last),
-														 toCv(curr),
-														 flow,
-														 
-														 pyramidScale,
-														 numLevels,
-														 windowSize,
-														 numIterations,
-														 polyN,
-														 polySigma,
-														 flags
-														 );
+		int flags = 0;
+		if(hasFlow){
+			flags = OPTFLOW_USE_INITIAL_FLOW;
+		}
+		if(farnebackGaussian){
+			flags |= OPTFLOW_FARNEBACK_GAUSSIAN;
+		}
+
+		calcOpticalFlowFarneback(toCv(last),
+								 toCv(curr),
+								 flow,
+								 pyramidScale,
+								 numLevels,
+								 windowSize,
+								 numIterations,
+								 polyN,
+								 polySigma,
+								 flags);
 	}
 	
 	ofVec2f FlowFarneback::getFlowOffset(int x, int y){
+		if(!hasFlow){
+			return ofVec2f(0, 0);
+		}
 		const Vec2f& vec = flow.at<Vec2f>(y, x);
 		return ofVec2f(vec[0], vec[1]);
 	}
 	ofVec2f FlowFarneback::getFlowPosition(int x, int y){
+		if(!hasFlow){
+			return ofVec2f(0, 0);
+		}
 		const Vec2f& vec = flow.at<Vec2f>(y, x);
 		return ofVec2f(x + vec[0], y + vec[1]);
 	}
@@ -295,9 +316,10 @@ namespace ofxCv {
 	}
 	
 	ofVec2f FlowFarneback::getTotalFlowInRegion(ofRectangle region){
-		if(!hasFlow) {
-			return ofVec2f();
+		if(!hasFlow){
+			return ofVec2f(0, 0);
 		}
+		
 		const Scalar& sc = sum(flow(toCv(region)));
 		return ofVec2f(sc[0], sc[1]);
 	}
@@ -310,6 +332,9 @@ namespace ofxCv {
 	}
 	
 	void FlowFarneback::drawFlow(ofRectangle rect){
+		if(!hasFlow){
+			return;
+		}
 		ofVec2f offset(rect.x,rect.y);
 		ofVec2f scale(rect.width/flow.cols, rect.height/flow.rows);
 		int stepSize = 4; //TODO: make class-level parameteric
