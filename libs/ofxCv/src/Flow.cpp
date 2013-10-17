@@ -71,7 +71,7 @@ namespace ofxCv {
 	int Flow::getWidth()  { return 0; }
 	int Flow::getHeight() { return 0; }
 	
-	
+    
 #pragma mark PYRLK IMPLEMENTATION
 	FlowPyrLK::FlowPyrLK()
 	:windowSize(32)
@@ -112,7 +112,7 @@ namespace ofxCv {
 				prevPts = nextPts;
 			}
 			nextPts.clear();
-			
+
 #if CV_MAJOR_VERSION>=2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
 			buildOpticalFlowPyramid(toCv(curr),pyramid,cv::Size(windowSize, windowSize),10);
 			calcOpticalFlowPyrLK(
@@ -214,6 +214,13 @@ namespace ofxCv {
 			}
 		}
 	}
+    
+    void FlowPyrLK::resetFlow(){
+        hasFlow = false;
+        last.clear();
+        resetFeaturesToTrack();
+        prevPts.clear();
+    }
 	
 #pragma mark FARNEBACK IMPLEMENTATION
 	FlowFarneback::FlowFarneback()
