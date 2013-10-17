@@ -370,9 +370,6 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
         texData.tex_v = textureData.tex_v;
         texData.tex_z = textureData.tex_z;
         
-        //void glTexImage3D( GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
-
-        
         glTexImage3D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, (GLint)texData.depth, 0, glFormat, pixelType, 0);  // init to black...
     }
     else
@@ -630,11 +627,7 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 //----------------------------------------------------------
 void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, int glFormat, int glType){
     
-	/*if(w > texData.tex_w || h > texData.tex_h) {
-		allocate(w, h, glFormat, glFormat, glType);
-	}*/
-	
-	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
+		// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
 		texData.tex_t = w;
@@ -647,26 +640,6 @@ void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, in
 	}
 	
 	
-	// 	ok this is an ultra annoying bug :
-	// 	opengl texels and linear filtering -
-	// 	when we have a sub-image, and we scale it
-	// 	we can clamp the border pixels to the border,
-	//  but the borders of the sub image get mixed with
-	//  neighboring pixels...
-	//  grr...
-	//
-	//  the best solution would be to pad out the image
-	// 	being uploaded with 2 pixels on all sides, and
-	//  recompute tex_t coordinates..
-	//  another option is a gl_arb non pow 2 textures...
-	//  the current hack is to alter the tex_t, tex_u calcs, but
-	//  that makes the image slightly off...
-	//  this is currently being done in draw...
-	//
-	// 	we need a good solution for this..
-	//
-	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
-	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
 	
 	
 	//Sosolimited: texture compression
@@ -678,11 +651,6 @@ void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, in
         
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
 		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
-        
-        // just do 0 depth to start?
-        //glTexSubImage3D(texData.textureTarget, 0, 0, 0, 0, w, h, depth, glFormat, glType, data);
-        
-        //void glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
         
         // when this texture needs to be shrunk to fit on small polygons, use linear interpolation of the texels to determine the color
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -702,7 +670,6 @@ void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, in
         cout << sizeof(texels) << endl;
         
         for ( int i = 0; i < texArray.size(); i++ ) {
-            cout << i << endl;
             memcpy( &(texels[w*h*3*i]), texArray[i].getPixels(), w*h*3*sizeof(unsigned char));
         }
         
@@ -764,12 +731,6 @@ void ofTexture::loadData(const void * data, int w, int h, int depth, int glForma
 		enableTextureTarget();
         
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
-		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
-        
-        // just do 0 depth to start?
-        //glTexSubImage3D(texData.textureTarget, 0, 0, 0, 0, w, h, depth, glFormat, glType, data);
-        
-        //void glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
         
         // when this texture needs to be shrunk to fit on small polygons, use linear interpolation of the texels to determine the color
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
