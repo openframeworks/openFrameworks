@@ -358,7 +358,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
         // make sure we have the 3D data in there
         texData.depth = textureData.depth;
         texData.tex_v = textureData.tex_v;
-        texData.tex_z = textureData.tex_z;
+        texData.tex_d = textureData.tex_d;
 
         glTexImage3D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, (GLint)texData.depth, 0, glFormat, pixelType, 0);  // init to black...
     }
@@ -615,91 +615,69 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int d, int glFormat, int glType){
+void ofTexture::loadData(vector<ofShortPixels> &texArray){
     
-	if(w > texData.tex_w || h > texData.tex_h) {
-		//allocate(w, h, depth, glFormat, glFormat, glType);
-        allocate(texData, glFormat, glType);
-	}
 	
-	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-#ifndef TARGET_OPENGLES
-	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
-		texData.tex_t = w;
-		texData.tex_u = h;
-	} else
-#endif
-	{
-		texData.tex_t = (float)(w) / (float)texData.tex_w;
-		texData.tex_u = (float)(h) / (float)texData.tex_h;
-	}
+    texData.tex_w = texArray[0].getWidth();
+    texData.tex_h = texArray[0].getHeight();
+    texData.tex_d = texArray.size();
+    texData.textureTarget = GL_TEXTURE_2D_ARRAY;
+    allocate(texData, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
+    
+    int w = (int) texArray[0].getWidth();
+    int h = (int) texArray[0].getHeight();
+    int d = (int) texArray.size();
 	
+    GLubyte texels[ (int) texData.tex_w * (int) texData.tex_h * texArray[0].getNumChannels() * texArray.size() ];
+    for ( int i = 0; i < texArray.size(); i++ ) {
+        memcpy( &(texels[ w * h * texArray[0].getNumChannels()*i]), texArray[i].getPixels(), w*h*texArray[0].getNumChannels()*sizeof(unsigned char));
+    }
+    
+    loadData(&texels[0], texData.tex_w, texData.tex_h, texData.tex_d, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(vector<ofFloatPixels> &texArray){
+    
 	
-	// 	ok this is an ultra annoying bug :
-	// 	opengl texels and linear filtering -
-	// 	when we have a sub-image, and we scale it
-	// 	we can clamp the border pixels to the border,
-	//  but the borders of the sub image get mixed with
-	//  neighboring pixels...
-	//  grr...
-	//
-	//  the best solution would be to pad out the image
-	// 	being uploaded with 2 pixels on all sides, and
-	//  recompute tex_t coordinates..
-	//  another option is a gl_arb non pow 2 textures...
-	//  the current hack is to alter the tex_t, tex_u calcs, but
-	//  that makes the image slightly off...
-	//  this is currently being done in draw...
-	//
-	// 	we need a good solution for this..
-	//
-	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
-	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
+    texData.tex_w = texArray[0].getWidth();
+    texData.tex_h = texArray[0].getHeight();
+    texData.tex_d = texArray.size();
+    texData.textureTarget = GL_TEXTURE_2D_ARRAY;
+    allocate(texData, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
 	
+    int w = (int) texArray[0].getWidth();
+    int h = (int) texArray[0].getHeight();
+    int d = (int) texArray.size();
 	
-	//Sosolimited: texture compression
-	if (texData.compressionType == OF_COMPRESS_NONE) {
-		//STANDARD openFrameworks: no compression
-		
-		//update the texture image:
-		enableTextureTarget();
-        
-		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
-		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
-        
-        // just do 0 depth to start?
-        //glTexSubImage3D(texData.textureTarget, 0, 0, 0, 0, w, h, depth, glFormat, glType, data);
-        
-        //void glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
-        
-        // when this texture needs to be shrunk to fit on small polygons, use linear interpolation of the texels to determine the color
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        // when this texture needs to be magnified to fit on a big polygon, use linear interpolation of the texels to determine the color
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // we want the texture to repeat over the S axis, so if we specify coordinates out of range we still get textured.
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        // same as above for T axis
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        // same as above for R axis
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_R, GL_REPEAT);
-        
-        //glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB8, WIDTH, HEIGHT, DEPTH, 0, GL_RGB, GL_UNSIGNED_BYTE, texels);
-        
-        GLubyte texels[ w * h * 3 * texArray.size() ];
-        
-        cout << sizeof(texels) << endl;
-        
-        for ( int i = 0; i < texArray.size(); i++ ) {
-            cout << i << endl;
-            memcpy( &(texels[w*h*3*i]), texArray[i].getPixels(), w*h*3*sizeof(unsigned char));
-        }
-        
-        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, w, h, d, 0, GL_RGB, GL_UNSIGNED_BYTE, texels);
- 		disableTextureTarget();
-        
-	} else {
-		disableTextureTarget();
-	}
+    GLubyte texels[ (int) texData.tex_w * (int) texData.tex_h * texArray[0].getNumChannels() * texArray.size() ];
+    for ( int i = 0; i < texArray.size(); i++ ) {
+        memcpy( &(texels[ w * h * texArray[0].getNumChannels()*i]), texArray[i].getPixels(), w*h*texArray[0].getNumChannels()*sizeof(unsigned char));
+    }
+    
+    loadData(&texels[0], texData.tex_w, texData.tex_h, texData.tex_d, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(vector<ofPixels> &texArray){
+    
+	
+    texData.tex_w = texArray[0].getWidth();
+    texData.tex_h = texArray[0].getHeight();
+    texData.tex_d = texArray.size();
+    texData.textureTarget = GL_TEXTURE_2D_ARRAY;
+    allocate(texData, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
+	
+    int w = (int) texArray[0].getWidth();
+    int h = (int) texArray[0].getHeight();
+    int d = (int) texArray.size();
+	
+    GLubyte texels[ (int) texData.tex_w * (int) texData.tex_h * texArray[0].getNumChannels() * texArray.size() ];
+    for ( int i = 0; i < texArray.size(); i++ ) {
+        memcpy( &(texels[ w * h * texArray[0].getNumChannels()*i]), texArray[i].getPixels(), w*h*texArray[0].getNumChannels()*sizeof(unsigned char));
+    }
+    
+    loadData(&texels[0], texData.tex_w, texData.tex_h, texData.tex_d, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
 }
 
 //----------------------------------------------------------
@@ -707,70 +685,43 @@ void ofTexture::loadData(const void * data, int w, int h, int d, int glFormat, i
     
 	if(w > texData.tex_w || h > texData.tex_h) {
 		//allocate(w, h, d, glFormat, glFormat, glType);
-        texData.width = w;
-        texData.height = h;
+        texData.tex_w = w;
+        texData.tex_h = h;
+        texData.tex_d = d;
         texData.textureTarget = GL_TEXTURE_3D;
         allocate(texData, glFormat, glType);
 	}
 	
 	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
+    // 3d Texture coords are normalized only afaict
     texData.tex_t = (float)(w) / (float)texData.tex_w;
     texData.tex_u = (float)(h) / (float)texData.tex_h;
-	
-	// 	ok this is an ultra annoying bug :
-	// 	opengl texels and linear filtering -
-	// 	when we have a sub-image, and we scale it
-	// 	we can clamp the border pixels to the border,
-	//  but the borders of the sub image get mixed with
-	//  neighboring pixels...
-	//  grr...
-	//
-	//  the best solution would be to pad out the image
-	// 	being uploaded with 2 pixels on all sides, and
-	//  recompute tex_t coordinates..
-	//  another option is a gl_arb non pow 2 textures...
-	//  the current hack is to alter the tex_t, tex_u calcs, but
-	//  that makes the image slightly off...
-	//  this is currently being done in draw...
-	//
-	// 	we need a good solution for this..
-	//
-	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
-	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
-	
-	
-	//Sosolimited: texture compression
-	if (texData.compressionType == OF_COMPRESS_NONE) {
-		//STANDARD openFrameworks: no compression
-		
-		//update the texture image:
-		enableTextureTarget();
-        
-		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
-		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
-        
-        // just do 0 depth to start?
-        //glTexSubImage3D(texData.textureTarget, 0, 0, 0, 0, w, h, depth, glFormat, glType, data);
-        
-        //void glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
-        
-        // when this texture needs to be shrunk to fit on small polygons, use linear interpolation of the texels to determine the color
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        // when this texture needs to be magnified to fit on a big polygon, use linear interpolation of the texels to determine the color
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // we want the texture to repeat over the S axis, so if we specify coordinates out of range we still get textured.
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        // same as above for T axis
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        // same as above for R axis
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
-        
-        glTexImage3D(texData.textureTarget, 0, GL_RGB8, w, h, d, 0, GL_RGB, GL_UNSIGNED_BYTE, data );
- 		disableTextureTarget();
-        
-	} else {
-		disableTextureTarget();
-	}
+
+    //update the texture image:
+    enableTextureTarget();
+    
+    glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+    //glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
+    
+    // just do 0 depth to start?
+    //glTexSubImage3D(texData.textureTarget, 0, 0, 0, 0, w, h, depth, glFormat, glType, data);
+    
+    //void glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
+    
+    // when this texture needs to be shrunk to fit on small polygons, use linear interpolation of the texels to determine the color
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // when this texture needs to be magnified to fit on a big polygon, use linear interpolation of the texels to determine the color
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // we want the texture to repeat over the S axis, so if we specify coordinates out of range we still get textured.
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    // same as above for T axis
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // same as above for R axis
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_R, GL_REPEAT);
+    
+    glTexImage3D(texData.textureTarget, 0, glFormat, w, h, d, 0, glFormat, glType, data );
+    disableTextureTarget();
+
 }
 
 

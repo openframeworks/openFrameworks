@@ -53,7 +53,7 @@ public:
         tex_v = 0;
 		tex_w = 0;
 		tex_h = 0;
-        tex_z = 0;
+        tex_d = 0;
 		width = 0;
 		height = 0;
         depth = 0;
@@ -74,7 +74,7 @@ public:
     float tex_v;
 	float tex_w;
 	float tex_h;
-    float tex_z;
+    float tex_d;
 	float width, height, depth;
 	
 	bool bFlipTexture;
@@ -142,7 +142,9 @@ class ofTexture : public ofBaseDraws {
     
     // these are for 3D
     void loadData(const void * data, int w, int h, int d, int glFormat, int glType);
-    void loadData(vector<ofPixels> &texArray, int w, int h, int d, int glFormat, int glType);
+    void loadData(vector<ofPixels> &texArray);
+    void loadData(vector<ofShortPixels> &texArray);
+    void loadData(vector<ofFloatPixels> &texArray);
 	
 	// in openGL3+ use 1 channel GL_R as luminance instead of red channel
 	void setRGToRGBASwizzles(bool rToRGBSwizzles);
