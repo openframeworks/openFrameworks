@@ -141,8 +141,8 @@ class ofTexture : public ofBaseDraws {
 	void loadData(const ofFloatPixels & pix, int glFormat);
     
     // these are for 3D
-    void loadData(const void * data, int w, int h, int depth, int glFormat, int glType);
-    void loadData(vector<ofPixels> &texArray, int w, int h, int depth, int glFormat, int glType);
+    void loadData(const void * data, int w, int h, int d, int glFormat, int glType);
+    void loadData(vector<ofPixels> &texArray, int w, int h, int d, int glFormat, int glType);
 	
 	// in openGL3+ use 1 channel GL_R as luminance instead of red channel
 	void setRGToRGBASwizzles(bool rToRGBSwizzles);

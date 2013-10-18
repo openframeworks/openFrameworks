@@ -54,11 +54,6 @@ static bool bUseCustomTextureWrap = false;
 void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT){
 	bUseCustomTextureWrap = true;
     GLenum textureTarget = GL_TEXTURE_2D;
-//    if(bUse3D) {
-//        textureTarget = GL_TEXTURE_3D;
-//    } else {
-//        textureTarget = GL_TEXTURE_2D;
-//    }
 #ifndef TARGET_OPENGLES
 	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
@@ -81,12 +76,7 @@ void ofRestoreTextureWrap(){
 //----------------------------------------------------------
 void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
 	bUseCustomMinMagFilters = true;
-//    GLenum textureTarget;
-//    if(bUse3D) {
-//        textureTarget = GL_TEXTURE_3D;
-//    } else {
-        GLenum textureTarget = GL_TEXTURE_2D;
-//    }
+    GLenum textureTarget = GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
 	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
@@ -369,10 +359,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
         texData.depth = textureData.depth;
         texData.tex_v = textureData.tex_v;
         texData.tex_z = textureData.tex_z;
-        
-        //void glTexImage3D( GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
 
-        
         glTexImage3D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, (GLint)texData.depth, 0, glFormat, pixelType, 0);  // init to black...
     }
     else
@@ -628,11 +615,12 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, int glFormat, int glType){
+void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int d, int glFormat, int glType){
     
-	/*if(w > texData.tex_w || h > texData.tex_h) {
-		allocate(w, h, glFormat, glFormat, glType);
-	}*/
+	if(w > texData.tex_w || h > texData.tex_h) {
+		//allocate(w, h, depth, glFormat, glFormat, glType);
+        allocate(texData, glFormat, glType);
+	}
 	
 	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES
@@ -706,7 +694,7 @@ void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, in
             memcpy( &(texels[w*h*3*i]), texArray[i].getPixels(), w*h*3*sizeof(unsigned char));
         }
         
-        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, w, h, depth, 0, GL_RGB, GL_UNSIGNED_BYTE, texels);
+        glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, w, h, d, 0, GL_RGB, GL_UNSIGNED_BYTE, texels);
  		disableTextureTarget();
         
 	} else {
@@ -715,24 +703,19 @@ void ofTexture::loadData(vector<ofPixels> &texArray, int w, int h, int depth, in
 }
 
 //----------------------------------------------------------
-void ofTexture::loadData(const void * data, int w, int h, int depth, int glFormat, int glType){
+void ofTexture::loadData(const void * data, int w, int h, int d, int glFormat, int glType){
     
 	if(w > texData.tex_w || h > texData.tex_h) {
-		allocate(w, h, glFormat, glFormat, glType);
+		//allocate(w, h, d, glFormat, glFormat, glType);
+        texData.width = w;
+        texData.height = h;
+        texData.textureTarget = GL_TEXTURE_3D;
+        allocate(texData, glFormat, glType);
 	}
 	
 	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
-#ifndef TARGET_OPENGLES
-	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
-		texData.tex_t = w;
-		texData.tex_u = h;
-	} else
-#endif
-	{
-		texData.tex_t = (float)(w) / (float)texData.tex_w;
-		texData.tex_u = (float)(h) / (float)texData.tex_h;
-	}
-	
+    texData.tex_t = (float)(w) / (float)texData.tex_w;
+    texData.tex_u = (float)(h) / (float)texData.tex_h;
 	
 	// 	ok this is an ultra annoying bug :
 	// 	opengl texels and linear filtering -
@@ -782,9 +765,7 @@ void ofTexture::loadData(const void * data, int w, int h, int depth, int glForma
         // same as above for R axis
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
         
-        //glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB8, WIDTH, HEIGHT, DEPTH, 0, GL_RGB, GL_UNSIGNED_BYTE, texels);
-
-        glTexImage3D(texData.textureTarget, 0, GL_RGB8, w, h, depth, 0, GL_RGB, GL_UNSIGNED_BYTE, data );
+        glTexImage3D(texData.textureTarget, 0, GL_RGB8, w, h, d, 0, GL_RGB, GL_UNSIGNED_BYTE, data );
  		disableTextureTarget();
         
 	} else {
