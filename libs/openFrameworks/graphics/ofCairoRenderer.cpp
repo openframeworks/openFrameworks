@@ -415,6 +415,7 @@ void ofCairoRenderer::draw(ofPath::Command & command){
 	case ofPath::Command::moveTo:
 		curvePoints.clear();
 		cairo_new_sub_path(cr);
+		cairo_move_to(cr, command.to.x, command.to.y);
 		break;
 
 	case ofPath::Command::lineTo:
