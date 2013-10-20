@@ -26,7 +26,6 @@
 		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
 		668FE69917B6146F00FE3F40 /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668FE69717B6146F00FE3F40 /* ofSoundBuffer.cpp */; };
 		668FE69A17B6146F00FE3F40 /* ofSoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 668FE69817B6146F00FE3F40 /* ofSoundBuffer.h */; };
-		668FE69D17B617B600FE3F40 /* ofSoundUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668FE69B17B617B600FE3F40 /* ofSoundUtils.cpp */; };
 		668FE69E17B617B600FE3F40 /* ofSoundUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 668FE69C17B617B600FE3F40 /* ofSoundUtils.h */; };
 		668FE6A117B617D700FE3F40 /* ofSoundFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 668FE69F17B617D600FE3F40 /* ofSoundFile.cpp */; };
 		668FE6A217B617D700FE3F40 /* ofSoundFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 668FE6A017B617D600FE3F40 /* ofSoundFile.h */; };
@@ -184,7 +183,6 @@
 		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
 		668FE69717B6146F00FE3F40 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
 		668FE69817B6146F00FE3F40 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
-		668FE69B17B617B600FE3F40 /* ofSoundUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundUtils.cpp; sourceTree = "<group>"; };
 		668FE69C17B617B600FE3F40 /* ofSoundUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUtils.h; sourceTree = "<group>"; };
 		668FE69F17B617D600FE3F40 /* ofSoundFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundFile.cpp; sourceTree = "<group>"; };
 		668FE6A017B617D600FE3F40 /* ofSoundFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundFile.h; sourceTree = "<group>"; };
@@ -549,7 +547,6 @@
 				E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */,
 				E4F3BA8412F4C4C9002D19BB /* ofSoundStream.cpp */,
 				E4F3BA8512F4C4C9002D19BB /* ofSoundStream.h */,
-				668FE69B17B617B600FE3F40 /* ofSoundUtils.cpp */,
 				668FE69C17B617B600FE3F40 /* ofSoundUtils.h */,
 			);
 			name = sound;
@@ -855,7 +852,6 @@
 				E495DF7D178896A900994238 /* ofAppNoWindow.cpp in Sources */,
 				27DEA3111796F578000A9E90 /* ofXml.cpp in Sources */,
 				668FE69917B6146F00FE3F40 /* ofSoundBuffer.cpp in Sources */,
-				668FE69D17B617B600FE3F40 /* ofSoundUtils.cpp in Sources */,
 				668FE6A117B617D700FE3F40 /* ofSoundFile.cpp in Sources */,
 				EAD7A82C17B65B49007DA66D /* ofSoundObject.cpp in Sources */,
 				EAD7A82F17B663DC007DA66D /* ofBaseSoundStream.cpp in Sources */,

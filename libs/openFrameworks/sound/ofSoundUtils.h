@@ -11,9 +11,6 @@
 #include "ofMath.h"
 #include "ofSoundBuffer.h"
 
-void ofResampleLinear(const ofSoundBuffer &inBuffer, ofSoundBuffer &outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop);
-void ofResampleHermite(const ofSoundBuffer &inBuffer, ofSoundBuffer &outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop);
-
 inline void ofStereoVolumes(float volume, float pan, float & left, float & right){
 	pan = ofClamp(pan, -1, 1);
 	// calculates left/right volumes from pan-value (constant panning law)
@@ -25,7 +22,5 @@ inline void ofStereoVolumes(float volume, float pan, float & left, float & right
 	left  = (cosAngle - sinAngle) * 0.7071067811865475 * volume; // multiplied by sqrt(2)/2
 	right = (cosAngle + sinAngle) * 0.7071067811865475 * volume; // multiplied by sqrt(2)/2
 }
-
-
 
 #endif /* OFSOUNDUTILS_H_ */

@@ -163,6 +163,9 @@ public:
 	float getRMSAmplitude();
 	float getRMSAmplitudeChannel(unsigned int channel);
 	
+	void linearResampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop);
+	void hermiteResampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop);
+	
 	/// fills the buffer with random noise between -amplitude and amplitude. useful for debugging.
 	void fillWithNoise(float amplitude = 1);
 	
