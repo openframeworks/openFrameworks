@@ -31,9 +31,6 @@
 # see VALID_TYPES for list of strings, default: VALID_TYPES
 FORMULA_TYPES=
 
-# option to prefer git instead of download tarballs
-USE_GIT=0
-
 ### READ ONLY please!
 
 # build settings
@@ -93,6 +90,9 @@ VALID_TYPES=( "osx" "osx-clang-libc++" "linux" "linux64" "vs" "win_cb" "ios" "an
 
 # verbose mode bool
 A_VERBOSE=0
+
+# prefer git instead of download tarballs
+USE_GIT=0
 
 # nice, detailed help message
 HELP="usage: apothecary [options] <command> [<library|addons|libName|addonName>]
@@ -212,7 +212,7 @@ echoVerbose() {
 #### PARSE COMMANDLINE
 
 # from http://www.mkssoftware.com/docs/man1/getopts.1.asp
-while getopts t:a:b:d:g:hv opt ; do
+while getopts t:a:b:d:hgv opt ; do
 	case "$opt" in
 		t) # set the library build type
 		   TYPE="$OPTARG" ;;
@@ -607,6 +607,7 @@ function clean() {
 }
 function gitclone() {
 	{
+		echoVerbose " Try using Git to donwload"
 		git clone $2 -b $3 $1
 	} || {
 		echoWarning " Git cloning fails, trying classique download"
