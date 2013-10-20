@@ -74,22 +74,18 @@ static void restoreAppWindowFocus(){
 
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 #include <gtk/gtk.h>
-static gboolean closeGTK(GtkWidget *widget){
-	//gtk_widget_destroy(widget);
-    gtk_main_quit();
-    return (FALSE);
-}
+#include "ofGstUtils.h"
 
 static void initGTK(){
-	int argc=0; char **argv = NULL;
-	gtk_init (&argc, &argv);
+	static bool initialized = false;
+	if(!initialized){
+		ofGstUtils::startGstMainLoop();
+	    gdk_threads_init();
+		int argc=0; char **argv = NULL;
+		gtk_init (&argc, &argv);
+		initialized = true;
+	}
 
-}
-static void startGTK(GtkWidget *dialog){
-	gtk_init_add( (GSourceFunc) closeGTK, NULL );
-	gtk_quit_add_destroy(1,GTK_OBJECT(dialog));
-	//g_timeout_add(10, (GSourceFunc) destroyWidgetGTK, (gpointer) dialog);
-	gtk_main();
 }
 
 static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,string defaultName=""){
@@ -121,10 +117,14 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),defaultName.c_str());
 
+	gdk_threads_enter();
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 		results = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 	}
-	startGTK(dialog);
+	gtk_widget_destroy (dialog);
+	gdk_threads_leave();
+	//gtk_dialog_run(GTK_DIALOG(dialog));
+	//startGTK(dialog);
 	return results;
 }
 
@@ -186,8 +186,11 @@ void ofSystemAlertDialog(string errorMessage){
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		initGTK();
 		GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", errorMessage.c_str());
+
+		gdk_threads_enter();
 		gtk_dialog_run (GTK_DIALOG (dialog));
-		startGTK(dialog);
+		gtk_widget_destroy (dialog);
+		gdk_threads_leave();
 	#endif
 
 	#ifdef TARGET_ANDROID
@@ -468,11 +471,13 @@ string ofSystemTextBoxDialog(string question, string text){
 	GtkWidget* textbox = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(textbox),text.c_str());
 	gtk_container_add (GTK_CONTAINER (content_area), textbox);
+	gdk_threads_enter();
 	gtk_widget_show_all (dialog);
 	if(gtk_dialog_run (GTK_DIALOG (dialog))==GTK_RESPONSE_OK){
 		text = gtk_entry_get_text(GTK_ENTRY(textbox));
 	}
-	startGTK(dialog);
+	gtk_widget_destroy (dialog);
+	gdk_threads_leave();
 #endif
 
 #ifdef TARGET_OSX

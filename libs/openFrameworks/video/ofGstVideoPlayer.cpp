@@ -163,6 +163,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 
 
 	videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
+	videoUtils.startPipeline();
 	if(!bIsStream) return allocate(bpp);
 	else return true;
 }
