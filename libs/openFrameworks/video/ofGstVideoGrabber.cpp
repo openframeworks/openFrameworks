@@ -803,7 +803,7 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 	}
 
 
-	if(	videoUtils.setPipeline(pipeline_string,bpp,false,w,h) ){
+	if(	videoUtils.setPipeline(pipeline_string,bpp,false,w,h) && videoUtils.startPipeline()){
 		videoUtils.play();
 		return true;
 	}else{

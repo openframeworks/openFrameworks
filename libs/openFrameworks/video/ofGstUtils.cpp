@@ -23,6 +23,9 @@ void ofGstUtils::startGstMainLoop(){
 	}
 }
 
+GMainLoop * ofGstUtils::getGstMainLoop(){
+	return mainLoop->main_loop;
+}
 
 
 
@@ -182,7 +185,7 @@ bool ofGstUtils::setPipelineWithSink(GstElement * pipeline, GstElement * sink, b
 		isAppSink = false;
 	}
 
-	return startPipeline();
+	return true;
 }
 
 void ofGstUtils::setFrameByFrame(bool _bFrameByFrame){

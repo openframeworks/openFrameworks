@@ -839,13 +839,13 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	if (texData.bFlipTexture == ofIsVFlipped()){
 		swap(py0,py1);
 	}
-	
+
 	// for rect mode center, let's do this:
 	if (ofGetRectMode() == OF_RECTMODE_CENTER){
-		px0 = -w/2;
-		py0 = -h/2;
-		px1 = +w/2;
-		py1 = +h/2;
+		px0 -= w/2;
+		py0 -= h/2;
+		px1 -= w/2;
+		py1 -= h/2;
 	}
 	
 	//we translate our drawing points by our anchor point.
