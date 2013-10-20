@@ -83,6 +83,7 @@ public:
 	float	getPosition();
 	int		getPositionMS();
 	bool	getIsPlaying();
+	bool	getIsLooping();
 	float	getPitch();
 	float	getSpeed(){return getPitch();}; // same as pitch. mapped for ofSoundPlayer compatibility
 	float   getVolume();

@@ -41,6 +41,13 @@ void ofPASoundStream::setInput(ofBaseSoundInput * soundInput){
 void ofPASoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 	soundOutputPtr = soundOutput;
 }
+ofBaseSoundInput * ofRtAudioSoundStream::getInput(){
+	return soundInputPtr;
+}
+
+ofBaseSoundOutput * ofRtAudioSoundStream::getOutput(){
+	return soundOutputPtr;
+}
 
 bool ofPASoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers){
 	nInputChannels 		=  inChannels;
@@ -219,6 +226,9 @@ void ofPASoundStream::listDevices(){
 
 
 void ofPASoundStream::setDeviceID(int _deviceID){
+	if(audio) {
+		ofLogError("ofPASoundStream") << "setDeviceID must be called before setup";
+	}
 	deviceID = _deviceID;
 }
 

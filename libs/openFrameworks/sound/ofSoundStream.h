@@ -5,6 +5,8 @@
 #include "ofBaseApp.h"
 #include "ofTypes.h"
 #include "ofBaseSoundStream.h"
+#include "ofSoundBuffer.h"
+#include "ofSoundObject.h"
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
 	#include "ofRtAudioSoundStream.h"
@@ -27,7 +29,6 @@ void ofSoundStreamStop();
 void ofSoundStreamStart();
 void ofSoundStreamClose();
 void ofSoundStreamListDevices();
-
 class ofSoundStream{
 	public:
 		ofSoundStream();
@@ -42,6 +43,8 @@ class ofSoundStream{
 		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
+        ofBaseSoundInput * getInput();
+        ofBaseSoundOutput * getOutput();
 		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		
 		void start();
@@ -58,3 +61,4 @@ class ofSoundStream{
 		
 		ofPtr<ofBaseSoundStream> soundStream;
 };
+ofSoundStream & ofGetSoundStream();

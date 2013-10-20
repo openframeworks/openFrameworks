@@ -234,6 +234,11 @@ bool ofFmodSoundPlayer::getIsPlaying(){
 }
 
 //------------------------------------------------------------
+bool ofFmodSoundPlayer::getIsLooping(){
+	return bLoop;
+}
+
+//------------------------------------------------------------
 float ofFmodSoundPlayer::getSpeed(){
 	return speed;
 }

@@ -657,6 +657,11 @@ bool ofOpenALSoundPlayer::getIsPaused(){
 }
 
 //------------------------------------------------------------
+bool ofOpenALSoundPlayer::getIsLooping(){
+	return bLoop;
+}
+
+//------------------------------------------------------------
 float ofOpenALSoundPlayer::getSpeed(){
 	return speed;
 }

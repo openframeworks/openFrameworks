@@ -28,10 +28,12 @@ public:
 	float getSpeed();
 	float getPan();
 	bool getIsPaused();
+	bool getIsLooping();
 	float getVolume();
 	bool isLoaded();
 
 private:
 	jobject javaSoundPlayer;
 	jclass javaClass;
+	bool looping;
 };
