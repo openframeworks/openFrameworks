@@ -546,7 +546,13 @@ function cleanFormula() {
 	fi
 
 	cd $BUILD_DIR/$1
-	clean
+	if [ $USE_GIT == 1 ] && [ -d $BUILD_DIR/$1/.git ] ; then
+		git clean -d -f -q -x
+		git reset -q --hard HEAD
+		prebuild
+	else
+		clean
+	fi
 	cd $APOTHECARY_DIR
 }
 
