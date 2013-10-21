@@ -5,11 +5,11 @@ uniform sampler2DRect tex0;
 uniform float blurAmnt;
 
 in vec2 texCoordVarying;
-
 out vec4 outputColor;
 
 void main()
 {
+
     vec4 color;
 	
 	color += 1.0 * texture(tex0, texCoordVarying + vec2(0.0, blurAmnt * 4.0));
