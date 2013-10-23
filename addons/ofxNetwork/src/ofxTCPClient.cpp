@@ -225,12 +225,7 @@ string ofxTCPClient::receive(){
 
 	// check for connection reset or disconnection
 	int errorCode = ofxNetworkCheckError();
-#ifdef TARGET_WIN32
-	bool aborted = errorCode == WSAECONNABORTED;
-#else
-	bool aborted = false;
-#endif
-	if((length==-1 && ( errorCode == ECONNRESET || aborted )) || length == 0){
+	if((length==-1 && ( errorCode == ECONNRESET || errorCode == ECONNABORTED )) || length == 0){
 		close();
 		if(tmpStr.length()==0) // return if there's no more data left in the buffer
 			return "";
