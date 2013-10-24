@@ -366,6 +366,27 @@ cv::name(xMat, yMat, resultMat);\
 		warpAffine(srcMat, dstMat, rotationMatrix, srcMat.size(), interpolation, BORDER_CONSTANT, toCv(fill));
 	}
 	
+	// efficient version of rotate that only operates on 0, 90, 180, 270 degrees
+	// the output is allocated to contain all pixels of the input.
+	template <class S, class D>
+	void rotate90(S& src, D& dst, int angle) {
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
+		if(angle == 0) {
+			copy(src, dst);
+		} else if(angle == 90) {
+			allocate(dst, srcMat.rows, srcMat.cols, srcMat.type());
+			cv::transpose(srcMat, dstMat);
+			cv::flip(dstMat, dstMat, 1);
+		} else if(angle == 180) {
+			imitate(dst, src);
+			cv::flip(srcMat, dstMat, -1);
+		} else if(angle == 270) {
+			allocate(dst, srcMat.rows, srcMat.cols, srcMat.type());
+			cv::transpose(srcMat, dstMat);
+			cv::flip(dstMat, dstMat, 0);
+		}
+	}
+	
 	// finds the 3x4 matrix that best describes the (premultiplied) affine transformation between two point clouds
 	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to, float accuracy = .99);
 	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to, vector<unsigned char>& outliers, float accuracy = .99);

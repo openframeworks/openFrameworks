@@ -99,11 +99,20 @@ namespace ofxCv {
 	}
 	
 	// allocation
+	// only happens when necessary
 	template <class T> inline void allocate(T& img, int width, int height, int cvType) {
-		img.allocate(width, height, getOfImageType(cvType));
+		int iw = getWidth(img), ih = getHeight(img);
+		int it = getCvImageType(img);
+		if(iw != width || ih != height || it != cvType) {
+			img.allocate(width, height, getOfImageType(cvType));
+		}
 	}
 	inline void allocate(Mat& img, int width, int height, int cvType) {
-		img.create(height, width, cvType);
+		int iw = getWidth(img), ih = getHeight(img);
+		int it = getCvImageType(img);
+		if(iw != width || ih != height || it != cvType) {
+			img.create(height, width, cvType);
+		}
 	}
 	// ofVideoPlayer/Grabber can't be allocated, so we assume we don't need to do anything
 	inline void allocate(ofVideoPlayer& img, int width, int height, int cvType) {}
@@ -115,12 +124,8 @@ namespace ofxCv {
 	
 	// this version copies size, but manually specifies mirror's image type
 	template <class M, class O> void imitate(M& mirror, O& original, int mirrorCvImageType) {
-		int mw = getWidth(mirror), mh = getHeight(mirror);
 		int ow = getWidth(original), oh = getHeight(original);
-		int mt = getCvImageType(mirror);
-		if(mw != ow || mh != oh || mt != mirrorCvImageType) {
-			allocate(mirror, ow, oh, mirrorCvImageType);
-		}
+		allocate(mirror, ow, oh, mirrorCvImageType);
 	}
 	
 	// this version copies size and image type
