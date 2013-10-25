@@ -104,6 +104,7 @@ public:
 	ofVec3f getCentroid() const;
 
 	void setName(string name_);
+	void getName() const;
 
 	bool haveVertsChanged();
 	bool haveColorsChanged();

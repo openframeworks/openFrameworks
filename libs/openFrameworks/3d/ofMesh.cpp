@@ -618,6 +618,11 @@ void ofMesh::setName(string name_){
 }
 
 //--------------------------------------------------------------
+string ofMesh::getName() const {
+	return name;
+}
+
+//--------------------------------------------------------------
 void ofMesh::setupIndicesAuto(){
 	bIndicesChanged = true;
 	bFacesDirty = true;
