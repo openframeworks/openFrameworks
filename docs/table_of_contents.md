@@ -24,7 +24,7 @@ About
 
 Contributing
 ----
-* [Contributing](contributing.md) — How to help improve openFrameworks.
+* [Contributing](../contributing.md) — How to help improve openFrameworks.
 * [Git Workflow](git_workflow.md) — How we use git to work together.
 
 More
