@@ -1,0 +1,61 @@
+#pragma once
+
+#include "ofxBaseGui.h"
+#include "ofParameter.h"
+#include "ofParameterGroup.h"
+
+#define MOUSE_DISTANCE 3
+
+class ofxQuadWarp: public ofxBaseGui {
+public:
+    ofxQuadWarp();
+    ofxQuadWarp(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+    virtual ~ofxQuadWarp();
+
+    ofxQuadWarp * setup(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+    ofxQuadWarp * setup(string labelName, string label, ofBaseDraws &content,float width = defaultWidth, float height = defaultHeight);
+
+    // Abstract methods we must implement, but have no need for!
+    virtual bool mouseMoved(ofMouseEventArgs & args);
+    virtual bool mousePressed(ofMouseEventArgs & args);
+    virtual bool mouseDragged(ofMouseEventArgs & args);
+    virtual bool mouseReleased(ofMouseEventArgs & args);
+
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method){
+		label.addListener(listener,method);
+	}
+
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method){
+		label.removeListener(listener,method);
+	}
+
+    ofAbstractParameter & getParameter();
+	void InitQuadPos();
+
+	ofVec3f * getDstQuadPos();
+	ofVec3f * getSrcQuadPos();
+
+protected:
+    void render();
+    ofParameter<string> label;
+    void generateDraw();
+    void valueChanged(string & value);
+    bool setValue(float mx, float my, bool bCheckBounds);
+    ofPath bg;
+    ofVboMesh textMesh;
+	
+	bool bGuiActive;
+	vector<bool> bCircle;
+	ofRectangle rectCircumscribe;
+	float lastMousePressTime;
+	ofPoint * _dstQuadPos;
+	ofPoint * srcQuadPos;
+
+	ofPath circumscribe;
+	ofPath circle;
+	ofBaseDraws * content;
+    ofParameter<ofVec3f> * dstQuadPos;
+	ofParameterGroup dstQuadPosGroup;
+};
