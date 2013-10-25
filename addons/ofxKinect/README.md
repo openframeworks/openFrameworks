@@ -57,7 +57,7 @@ cd bin
 
 Also, you can add a set of udev rules which allow you to run a Kinect app without root privileges:
 
-   sudo libs\libfreenect\platform\linux\udev\51-kinect.rules /etc/udev/rules.d
+   sudo libs/libfreenect/platform/linux/udev/51-kinect.rules /etc/udev/rules.d
 
 ### Windows
 
