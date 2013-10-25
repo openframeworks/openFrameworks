@@ -38,9 +38,9 @@ class ofSerial {
 			vector <ofSerialDeviceInfo> getDeviceList();
 
 			void 			close();
-			bool			setup();	// use default port, baud (0,9600)
-			bool			setup(string portName, int baudrate);
-			bool			setup(int deviceNumber, int baudrate);
+			bool			setup();	// use default port, baud (0,9600,'N',8,1)
+			bool			setup(string portName, int baudrate, char parity = 'N',int dataBits = 8, int stopBits = 1);
+			bool			setup(int deviceNumber, int baudrate, char parity = 'N',int dataBits = 8, int stopBits = 1);
 
 
 			int 			readBytes(unsigned char * buffer, int length);
