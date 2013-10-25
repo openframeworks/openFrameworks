@@ -354,6 +354,12 @@ float ofColor_<PixelType>::getHue() const {
 	return hue;
 }
 
+template<typename PixelType>
+float ofColor_<PixelType>::getHueAngle() const {
+	float hue, saturation, brightness;
+	getHsb(hue, saturation, brightness);
+	return hue * 360. / 255. ;
+}
 
 template<typename PixelType>
 float ofColor_<PixelType>::getSaturation() const {
@@ -434,6 +440,12 @@ void ofColor_<PixelType>::setHue (float hue) {
 	setHsb(hue, saturation, brightness, a );
 }
 
+template<typename PixelType>
+void ofColor_<PixelType>::setHueAngle (float angle) {
+	float oldHue, saturation, brightness;
+	getHsb(oldHue, saturation, brightness);
+	setHsb(angle / 360. * 255., saturation, brightness, a );
+}
 
 template<typename PixelType>
 void ofColor_<PixelType>::setSaturation (float saturation) {
