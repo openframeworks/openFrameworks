@@ -68,9 +68,9 @@ If you are submitting a new feature, it's best if the feature has been discussed
 If in doubt, try and match the style and practices you find in the code you are working with.
 - Please write _descriptive commit messages_ for each of the commits that you make.
 They don't have to be in-depth, just a brief summary of what the commit contains. A page describing how well-written commit messages look like can be found [here](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
+- Note that we use [git submodules](http://git-scm.com/book/en/Git-Tools-Submodules) for the projectGenerator, so if you are wondering where that disappeared to, make sure to run `git submodule update --init --recursive` to grab the project generator.
 
 #### Organising your code
-
 
 - Submit from a dedicated branch on your own repository **branched off from current `master`**. Your branch should be only about a single topic or area of openFrameworks. 
 If you have multiple things to submit, make separate branches for each topic and submit multiple pull requests. 
