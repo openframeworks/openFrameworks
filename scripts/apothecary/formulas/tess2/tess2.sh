@@ -52,9 +52,8 @@ function build() {
 		lipo -c libtess2-i386.a libtess2-x86_64.a -o libtess2.a
 
 	elif [ "$TYPE" == "vs" ] ; then
-		#cmake -G "Visual Studio" --build build/$TYPE .
-		# call MSBuild on the generated sln here
-		echoWarning "TODO: vs build"
+		cmake -G "Visual Studio 12"
+		cmd.exe /c 'call "%VS120COMNTOOLS%vsvars32.bat" & devenv tess2.sln /Build Release'
 
 	elif [ "$TYPE" == "ios" ] ; then
 		cd build/ios
@@ -83,8 +82,7 @@ function copy() {
 	# lib
 	mkdir -p $1/lib/$TYPE
 	if [ "$TYPE" == "vs" ] ; then 
-		#cp -v libtess2.lib $1/lib/$TYPE/tess2.lib
-		echoWarning "TODO: copy vs lib"
+		cp -v Release/tess2.lib $1/lib/$TYPE/tess2.lib
 
 	elif [ "$TYPE" == "ios" ] ; then 
 		cp -v libtess2.a $1/lib/$TYPE/tess2.a
@@ -101,7 +99,7 @@ function copy() {
 function clean() {
 
 	if [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: clean vs"
+		rm -f CMakeCache.txt *.lib
 	
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: clean android"
