@@ -192,7 +192,7 @@ EXTERN_API( OSErr )
 GetNextProcess                  (ProcessSerialNumber *  PSN)                                THREEWORDINLINE(0x3F3C, 0x0038, 0xA88F);
 
 EXTERN_API( OSErr )
-GetProcessInformation           (const ProcessSerialNumber * PSN,
+GetQTProcessInformation          (const ProcessSerialNumber * PSN,
                                  ProcessInfoRec *       info)                               THREEWORDINLINE(0x3F3C, 0x003A, 0xA88F);
 
 EXTERN_API( OSErr )
