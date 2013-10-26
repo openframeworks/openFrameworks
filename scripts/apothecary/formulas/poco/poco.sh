@@ -11,7 +11,7 @@
 VER=1.4.6
 
 # tools for git use
-GIT_URL=#https://github.com/pocoproject/poco
+GIT_URL=
 GIT_TAG=poco-$VER
 
 # @tgfrerer: we need more fine-grained control over poco source code versions, 

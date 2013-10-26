@@ -33,10 +33,15 @@ function prebuild() {
 	# dependencies (some commented for now as they might be needed for other platforms)
 	local buildDir=$BUILD_DIR/cairo/apothecary-build
 	mkdir -p $buildDir
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/pixman.sh
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download freetype
+	if [ USE_GIT==1 ] ; then
+		GIT_ARGS=-g
+	else
+		GIT_ARGS=
+	fi
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/pixman.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download freetype
 }
 
 # executed inside the lib src dir
