@@ -126,9 +126,12 @@ options:
 
   -v	verbose mode, print out some extra info while mixing formulas
 
-  -h	print this usage guide
-
   -g	prefer git to download if available
+
+  -s	specify the git-tag to select another version of the library
+	note: availible only with git option
+
+  -h	print this usage guide
 
 examples:
   # update all core libs and addon libs
@@ -156,7 +159,10 @@ examples:
   apothecary update ofxAssimpModelLoader
 
   # update a formula script manually and set build and lib dest dirs
-  apothecary -b ../build -d ../libs path/to/formula.sh 
+  apothecary -b ../build -d ../libs path/to/formula.sh
+
+  # clean freetype via git and switch version to VER-2-5-0
+  apothecary -g -s VER-2-5-0 clean freetype
 "
 
 ################################################################################
@@ -212,7 +218,7 @@ echoVerbose() {
 #### PARSE COMMANDLINE
 
 # from http://www.mkssoftware.com/docs/man1/getopts.1.asp
-while getopts t:a:b:d:hgv opt ; do
+while getopts t:a:b:d:s:hgv opt ; do
 	case "$opt" in
 		t) # set the library build type
 		   TYPE="$OPTARG" ;;
@@ -222,6 +228,8 @@ while getopts t:a:b:d:hgv opt ; do
 		   BUILD_DIR="$OPTARG" ;;
 		d) # set lib destination dir
 		   LIBS_DIR="$OPTARG" ;;
+		s) # set the git tag to switch version
+		   SWITCH_VER="$OPTARG" ;;
 		g) # set git usage
 		   USE_GIT=1 ;;
 		h) # print help and exit
@@ -549,6 +557,11 @@ function cleanFormula() {
 	if [ $USE_GIT == 1 ] && [ -d $BUILD_DIR/$1/.git ] ; then
 		git clean -d -f -q -x
 		git reset -q --hard HEAD
+		if [[ ${SWITCH_VER+x} ]]; then
+			echoVerbose " Switching version (to $SWITCH_VER)"
+			git fetch origin
+			git checkout $SWITCH_VER
+		fi
 		prebuild
 	else
 		clean
@@ -614,7 +627,13 @@ function clean() {
 function gitclone() {
 	{
 		echoVerbose " Try using Git to donwload"
-		git clone $2 -b $3 $1
+		git clone $2 $1
+		if [[ ${SWITCH_VER+x} ]]; then
+			echoVerbose " Select a custom version ($SWITCH_VER)"
+			git checkout $SWITCH_VER
+		else
+			git checkout $3
+		fi
 	} || {
 		echoWarning " Git cloning fails, trying classique download"
 		download
