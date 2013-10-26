@@ -603,6 +603,23 @@ function remove-all() {
 	remove-lib $1
 }
 
+# git-clone a given library
+function gitclone() {
+	{
+		echoVerbose " Try using Git to donwload"
+		git clone $2 $1
+		if [[ ${SWITCH_VER+x} ]]; then
+			echoVerbose " Select a custom version ($SWITCH_VER)"
+			git checkout $SWITCH_VER
+		else
+			git checkout $3
+		fi
+	} || {
+		echoWarning " Git cloning fails, trying classique download"
+		download
+	}
+}
+
 ################################################################################
 ### FORMULA SCRIPT FUNCTIONS
 
@@ -623,21 +640,6 @@ function copy() {
 }
 function clean() {
 	echoWarning " Clean function not implemented"
-}
-function gitclone() {
-	{
-		echoVerbose " Try using Git to donwload"
-		git clone $2 $1
-		if [[ ${SWITCH_VER+x} ]]; then
-			echoVerbose " Select a custom version ($SWITCH_VER)"
-			git checkout $SWITCH_VER
-		else
-			git checkout $3
-		fi
-	} || {
-		echoWarning " Git cloning fails, trying classique download"
-		download
-	}
 }
 
 ################################################################################
