@@ -5,6 +5,7 @@
 # http://sourceforge.net/projects/kissfft/
 #
 # has a Makefile
+FORMULA_TYPES=( "osx" "linux" "linux64" "win_cb" "ios" "android" )
 
 VER=130
 VER_UNDERSCORE=1_3_0
