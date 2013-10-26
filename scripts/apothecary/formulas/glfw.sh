@@ -11,7 +11,7 @@
 FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" "ios" "android" )
 
 # define the version
-VER=3.0
+VER=3.0.2
 
 # tools for git use
 GIT_URL=https://github.com/glfw/glfw.git
