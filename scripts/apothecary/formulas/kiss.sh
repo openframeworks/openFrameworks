@@ -11,8 +11,8 @@ VER=130
 VER_UNDERSCORE=1_3_0
 
 # tools for git use
-GIT_URL=
-GIT_TAG=
+GIT_URL=http://hg.code.sf.net/p/kissfft/code
+GIT_TAG=v$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {

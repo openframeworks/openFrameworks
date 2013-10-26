@@ -8,12 +8,12 @@ MAJOR_VER=16
 VER=1.6.2
 
 # tools for git use
-GIT_URL=
-GIT_TAG=libpng-$VER
+GIT_URL=http://git.code.sf.net/p/libpng/code 
+GIT_TAG=v$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -LO https://downloads.sourceforge.net/project/libpng/libpng$MAJORVER/$VER/libpng-$VER.tar.gz
+	curl -LO https://downloads.sourceforge.net/project/libpng/libpng$MAJOR_VER/$VER/libpng-$VER.tar.gz
 	tar -xf libpng-$VER.tar.gz
 	mv libpng-$VER libpng
 	rm libpng-$VER.tar.gz
