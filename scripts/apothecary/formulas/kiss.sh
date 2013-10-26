@@ -6,8 +6,13 @@
 #
 # has a Makefile
 
+# define the version
 VER=130
 VER_UNDERSCORE=1_3_0
+
+# tools for git use
+GIT_URL=
+GIT_TAG=
 
 # download the source code and unpack it into LIB_NAME
 function download() {
