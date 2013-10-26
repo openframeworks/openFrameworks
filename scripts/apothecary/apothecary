@@ -617,8 +617,7 @@ function gitclone() {
 		fi
 		cd ..
 	} || {
-		echoWarning " Git cloning fails, trying classique download"
-		download
+		echoError " Git cloning fails, try default download"
 	}
 }
 
