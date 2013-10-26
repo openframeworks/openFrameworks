@@ -64,13 +64,15 @@ class ofColor_{
 		ofColor_<PixelType> getNormalized () const;
 		ofColor_<PixelType> getLerped(const ofColor_<PixelType>& target, float amount) const;
 		
-		float getHue () const;
+		float getHue () const; // 0-255
+		float getHueAngle () const; // 0-360
 		float getSaturation () const;
 		float getBrightness () const; // brightest component
 		float getLightness () const; // average of the components
 		void getHsb(float& hue, float& saturation, float& brightness) const;
 		
-		void setHue (float hue);
+		void setHue (float hue); // 0-255
+		void setHueAngle (float angle); // 0-360
 		void setSaturation (float saturation); // uses hsb, not hsl. so red desaturated is white, not gray http://en.wikipedia.org/wiki/HSL_and_HSV
 		void setBrightness (float brightness);
 		void setHsb(float hue, float saturation, float brightness, float alpha = limit() );
