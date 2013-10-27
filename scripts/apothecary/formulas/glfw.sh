@@ -2,12 +2,10 @@
 #
 # GLFW
 # creating windows with OpenGL contexts and managing input and events
-# http://librarywebsite.com
+# http://www.glfw.org
 #
 # uses a CMake build system
 
-# array of build types supported by this formula
-# you can delete this to implicitly support *all* types
 FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" "ios" "android" )
 
 # define the version
@@ -29,8 +27,8 @@ function download() {
 function build() {
 	
 	if [ "$TYPE" == "vs" ] ; then
-		cmake -G "Visual Studio 12"
-		cmd.exe /c 'call "%VS120COMNTOOLS%vsvars32.bat" & devenv GLFW.sln /Build Release'
+		cmake -G "Visual Studio $VS_VER"
+		vs-lib "GLFW.sln"
 
 	else
 		echoWarning "TODO: $TYPE build"

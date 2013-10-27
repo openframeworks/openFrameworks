@@ -52,8 +52,8 @@ function build() {
 		lipo -c libtess2-i386.a libtess2-x86_64.a -o libtess2.a
 
 	elif [ "$TYPE" == "vs" ] ; then
-		cmake -G "Visual Studio 12"
-		cmd.exe /c 'call "%VS120COMNTOOLS%vsvars32.bat" & devenv tess2.sln /Build Release'
+		cmake -G "Visual Studio $VS_VER"
+		vs-lib "tess2.sln"
 
 	elif [ "$TYPE" == "ios" ] ; then
 		cd build/ios

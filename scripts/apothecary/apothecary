@@ -65,6 +65,9 @@ OSX_MIN_SDK_VER=10.6
 IOS_SDK_VER=6.1
 IOS_MIN_SDK_VER=5.1
 
+# used when building for vs
+VS_VER=12
+
 ################################################################################
 ### PRIVATE VARS, for internal use
 ### DEFINITELY READ ONLY!
@@ -571,6 +574,14 @@ function remove-lib() {
 function remove-all() {
 	remove $1
 	remove-lib $1
+}
+
+# visual studio builder
+# args: <"path/to/sol.sln"> [action] [config]
+# example: vs-build "./tess2.sln" Build Debug
+# http://msdn.microsoft.com/library/vstudio/b20w810z.aspx
+function vs-build() {
+	cmd.exe /c 'call "%VS${VS_VER}0COMNTOOLS%vsvars32.bat" && devenv $1 /${2:+Build} ${3:+Release}'
 }
 
 ################################################################################
