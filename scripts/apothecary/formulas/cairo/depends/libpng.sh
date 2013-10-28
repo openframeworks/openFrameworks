@@ -7,7 +7,7 @@ VER=1.6.2
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -LO https://downloads.sourceforge.net/project/libpng/libpng16/$VER/libpng-$VER.tar.gz
+	curl -LO http://sourceforge.net/projects/libpng/files/libpng16/older-releases/$VER/libpng-$VER.tar.gz
 	tar -xf libpng-$VER.tar.gz
 	mv libpng-$VER libpng
 	rm libpng-$VER.tar.gz
