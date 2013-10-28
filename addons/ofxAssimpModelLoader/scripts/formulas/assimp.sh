@@ -6,8 +6,14 @@
 #
 # uses CMake
 
+# define the version
 VER=3.0
 SUB_VER=1270
+
+# tools for git use
+GIT_URL=
+# GIT_URL=https://github.com/assimp/assimp.git
+GIT_TAG=
 
 FORMULA_TYPES=( "osx" "osx-clang-libc++" )
 
