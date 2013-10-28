@@ -11,7 +11,7 @@
 VER=1.4.6
 
 # tools for git use
-GIT_URL=
+GIT_URL=https://github.com/pocoproject/poco
 GIT_TAG=poco-$VER
 
 # @tgfrerer: we need more fine-grained control over poco source code versions, 
@@ -23,14 +23,14 @@ SHA=526213c8199ca9f31e3c9d6b7341be11c90a5938
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-
 	git clone https://github.com/pocoproject/poco -b poco-$VER
-	cd poco
-	git reset --hard $SHA
-	cd ..
 }
 
 function prebuild() {
+	cd poco
+	git reset --hard $SHA
+	cd ..
+
 	# make backups of the ios config files since we need to edit them
 	if [ "$TYPE" == "ios" ] ; then
 		cd poco/build/config
