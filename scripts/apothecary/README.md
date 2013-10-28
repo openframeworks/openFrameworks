@@ -73,7 +73,7 @@ See the built in help for more info:
 ### Options
 
 * **-t**: specify libary type when building, detects type from OS by default
-  * valid types: osx, linux, linux64, vs2010, win_cb, ios, android
+  * valid types: osx, osx-clang-libc++, linux, linux64, vs2010, win_cb, ios, android
 
 * **-a**: specify architecture, either 32 or 64 (default is 32 bit)
   * note: not currently needed, reserved for future use
@@ -184,6 +184,7 @@ If any errors occur while running apothecary, it tells you in <span style="color
 OpenFrameworks is cross platform and currently supports the following build types:
 
 * osx: Mac OSX, 32 and 64 bit fat libs
+* osx-clang-libc++: Mac OSX, clang/libc++ 32 bit libs
 * linux: 32 bit linux
 * linux64: 64 bit linux
 * vs2010: Windows, Visual Studio 2010
