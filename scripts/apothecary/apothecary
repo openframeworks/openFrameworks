@@ -613,7 +613,7 @@ function gitclone() {
 			echoVerbose " Select a custom version ($SWITCH_VER)"
 			git checkout $SWITCH_VER
 		else
-			git checkout $3
+			git checkout ${3:+master}
 		fi
 		cd ..
 	} || {
