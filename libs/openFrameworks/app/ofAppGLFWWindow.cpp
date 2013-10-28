@@ -19,7 +19,6 @@
 	#include "Poco/URI.h"
 #elif defined(TARGET_OSX)
 	#include <Cocoa/Cocoa.h>
-	#include <Carbon/Carbon.h>
 	#define GLFW_EXPOSE_NATIVE_COCOA
 	#define GLFW_EXPOSE_NATIVE_NSGL
 	#include "GLFW/glfw3native.h"
@@ -633,7 +632,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		nonFullScreenH = getWindowSize().y;
  
 		//----------------------------------------------------
-		SetSystemUIMode(kUIModeAllHidden,NULL);
+		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
  
 		[cocoaWindow setStyleMask:NSBorderlessWindowMask];
@@ -681,7 +680,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         [cocoaWindow makeFirstResponder:cocoaWindow.contentView];
  
 	}else if( windowMode == OF_WINDOW ){
-		SetSystemUIMode(kUIModeNormal,NULL);
+		[NSApp setPresentationOptions:NSApplicationPresentationDefault];
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
 		[cocoaWindow setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
  
