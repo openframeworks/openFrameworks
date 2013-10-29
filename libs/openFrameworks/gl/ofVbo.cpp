@@ -384,15 +384,45 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 }
 
 //--------------------------------------------------------------
+void ofVbo::setTexCoordData(const ofVec4f * texCoords, int total, int usage) {
+	setTexCoordData(&texCoords[0].x,total,usage,sizeof(ofVec4f));
+}
+
+//--------------------------------------------------------------
 void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int stride) {
+
+	// maybe 2f tex coord data, so fill it out
+	if(stride == 2) {
+
+		float convertedTexCoord[total * 4];
+
+		int j = 0;
+		for( int i = 0; i < total; i+=2 ){
+			convertedTexCoord[j] = texCoord0x[i];
+			convertedTexCoord[j+1] = texCoord0x[i+1];
+			convertedTexCoord[j+2] = 0.f;
+			convertedTexCoord[j+3] = 0.f;
+			j += 4;
+		}
+
+		setTexCoordData4f( &convertedTexCoord[0], total, usage, 4);
+
+	} else {
+		setTexCoordData4f(texCoord0x, total, usage, stride);
+	}
+}
+
+void ofVbo::setTexCoordData4f(const float * texCoord0x, int total, int usage, int stride) {
+
 	if(texCoordId==0) {
 		glGenBuffers(1, &(texCoordId));
 		retain(texCoordId);
 		enableTexCoords();
 	}
 	texUsage = usage;
-	texCoordStride = stride==0?2*sizeof(float):stride;
-	
+
+	texCoordStride = stride==0?4*sizeof(float):stride;
+
 	glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 	glBufferData(GL_ARRAY_BUFFER, total * stride, texCoord0x, usage);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -488,11 +518,41 @@ void ofVbo::updateNormalData(const float * normal0x, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
-	updateTexCoordData(&texCoords[0].x,total);
+	//updateTexCoordData(&texCoords[0].x,total);
+
+	ofVec4f *convertedTexCoord = new ofVec4f[total];
+
+	for( int i = 0; i < total; i++ ){
+		convertedTexCoord[i] = texCoords[i];
+	}
+
+	updateTexCoordData4f( &convertedTexCoord[0].x, total);
+    delete[] convertedTexCoord;
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateTexCoordData(const ofVec4f * texCoords, int total) {
+	updateTexCoordData4f(&texCoords[0].x,total);
 }
 
 //--------------------------------------------------------------
 void ofVbo::updateTexCoordData(const float * texCoord0x, int total) {
+
+		float convertedTexCoord[total * 4];
+		int j = 0;
+		for( int i = 0; i < total; i+=2 ){
+			convertedTexCoord[j] = texCoord0x[i];
+			convertedTexCoord[j+1] = texCoord0x[i+1];
+			convertedTexCoord[j+2] = 0.f;
+			convertedTexCoord[j+3] = 0.f;
+			j += 4;
+		}
+
+	updateTexCoordData4f(&convertedTexCoord[0], total);
+}
+
+//--------------------------------------------------------------
+void ofVbo::updateTexCoordData4f(const float * texCoord0x, int total) {
 	if(texCoordId!=0) {
 		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, total*texCoordStride, texCoord0x);

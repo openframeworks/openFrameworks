@@ -124,7 +124,8 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	useTextures &= (vertexData.getNumTexCoords()>0);
 	if(useTextures){
 		glEnableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
-		glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE,2, GL_FLOAT, GL_FALSE, sizeof(ofVec2f), vertexData.getTexCoordsPointer());
+		//glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE,2, GL_FLOAT, GL_FALSE, sizeof(ofVec2f), vertexData.getTexCoordsPointer());
+		glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE,4, GL_FLOAT, GL_FALSE, sizeof(ofVec4f), vertexData.getTexCoordsPointer4f());
 	}else{
 		glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
 	}
