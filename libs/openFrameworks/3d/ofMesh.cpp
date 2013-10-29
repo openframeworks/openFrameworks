@@ -2571,4 +2571,3 @@ bool ofMeshFace::hasTexcoords() const{
 }
 
 
-
