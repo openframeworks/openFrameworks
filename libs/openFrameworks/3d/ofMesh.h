@@ -175,7 +175,6 @@ private:
 
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
-	string name;
     
     bool useColors;
     bool useTextures;
