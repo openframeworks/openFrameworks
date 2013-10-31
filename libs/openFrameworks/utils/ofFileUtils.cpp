@@ -314,7 +314,7 @@ bool ofFile::openStream(Mode _mode, bool binary){
 
 	 case ReadOnly:
 		 if(exists()){
-			 fstream::open(path().c_str(), ios::in | binary_mode);
+			 fstream::open(ofUtf8ToLocale(path().c_str()), ios::in | binary_mode);
 		 }
 		 break;
 
@@ -336,7 +336,7 @@ bool ofFile::openStream(Mode _mode, bool binary){
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::open(string _path, Mode _mode, bool binary){
 	close();
-	myFile = File(ofToDataPath(_path));
+	myFile = File(ofLocaleToUtf8(ofToDataPath(_path)));
 	return openStream(_mode, binary);
 }
 

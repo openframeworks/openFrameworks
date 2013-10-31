@@ -219,4 +219,5 @@ string ofSystem(string command);
 
 ofTargetPlatform ofGetTargetPlatform();
 
-
+string ofUtf8ToLocale(const string & utf8);
+string ofLocaleToUtf8(const string & locale);
