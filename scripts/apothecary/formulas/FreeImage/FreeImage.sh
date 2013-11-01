@@ -9,7 +9,12 @@
 
 FORMULA_TYPES=( "osx" "osx-clang-libc++" "vs" "win_cb" "ios" "android" )
 
+# define the version
 VER=3154 # 3.15.4
+
+# tools for git use
+GIT_URL=
+GIT_TAG=
 
 # download the source code and unpack it into LIB_NAME
 function download() {

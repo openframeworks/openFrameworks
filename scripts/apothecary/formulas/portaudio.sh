@@ -8,7 +8,12 @@
 
 FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
+# define the version
 VER=stable_v19_20111121
+
+# tools for git use
+GIT_URL=
+GIT_TAG=
 
 # download the source code and unpack it into LIB_NAME
 function download() {
