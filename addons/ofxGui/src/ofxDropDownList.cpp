@@ -16,7 +16,7 @@ ofxDropDownList * ofxDropDownList::setup(vector<string> toggleName, int index, f
     b.x = 0;
 	b.y = 0;
 	b.width = width;
-	b.height = height;
+	b.height = height*toggleName.size();
 	bGuiActive = false;
 	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 	for (int i = 0; i < toggleName.size(); i++){
@@ -153,7 +153,9 @@ bool ofxDropDownList::setValue(float mx, float my, bool bCheck){
 				itemValue[i] = false;
 			}
 			itemValue[i] = !itemValue[i];
-			value = i;
+			if (value != i){
+				value = i;
+			}
 			return true;
 		}
 	}
