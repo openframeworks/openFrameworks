@@ -9,8 +9,8 @@ class ofxDropDownList : public ofxBaseGui{
 public:
 	ofxDropDownList(){};
 	~ofxDropDownList();
-	ofxDropDownList(vector<string> toggleName, float width = defaultWidth, float height = defaultHeight);
-	ofxDropDownList * setup(vector<string> toggleName, float width = defaultWidth, float height = defaultHeight);
+	ofxDropDownList(vector<string> toggleName, int index = 0, float width = defaultWidth, float height = defaultHeight);
+	ofxDropDownList * setup(vector<string> toggleName, int index = 0, float width = defaultWidth, float height = defaultHeight);
 	
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);
@@ -21,6 +21,7 @@ public:
 	void addListener(ListenerClass * listener, ListenerMethod method){
 		value.addListener(listener,method);
 	}
+
 	template<class ListenerClass, typename ListenerMethod>
 	void removeListener(ListenerClass * listener, ListenerMethod method){
 		value.removeListener(listener,method);
@@ -30,17 +31,17 @@ public:
 	bool setValue(float mx, float my, bool bCheck);
 	void addData(ofAbstractParameter & parameter);
 	string getItemName(int index);
-	string getCurrentItem();
 
 protected:
 	void render();
 	void generateDraw();
 	void valueChanged(bool & value);
-	
+
 	ofVboMesh textMesh;
 	bool bGuiActive;
 
 	ofParameterGroup parameters;
+	ofParameter<int> value;
 	vector<ofParameter<string>> items;   
 	vector<ofParameter<bool>> itemValue;
 	vector<ofPath> background,foreground;

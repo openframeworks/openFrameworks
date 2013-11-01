@@ -2,8 +2,8 @@
 #include "ofGraphics.h"
 
 
-ofxDropDownList::ofxDropDownList(vector<string> toggleName, float width, float height){
-	setup(toggleName,width,height);
+ofxDropDownList::ofxDropDownList(vector<string> toggleName, int index, float width, float height){
+	setup(toggleName,index,width,height);
 }
 
 ofxDropDownList::~ofxDropDownList(){
@@ -12,14 +12,13 @@ ofxDropDownList::~ofxDropDownList(){
 	}
 }
 
-ofxDropDownList * ofxDropDownList::setup(vector<string> toggleName, float width, float height){
+ofxDropDownList * ofxDropDownList::setup(vector<string> toggleName, int index, float width, float height){
     b.x = 0;
 	b.y = 0;
 	b.width = width;
 	b.height = height;
 	bGuiActive = false;
 	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
-
 	for (int i = 0; i < toggleName.size(); i++){
 		ofParameter<string> item;
 		string name = "item";
@@ -30,7 +29,7 @@ ofxDropDownList * ofxDropDownList::setup(vector<string> toggleName, float width,
 		ofParameter<bool> value;
 		string _name = "itemValue";
 		_name = _name + ofToString(i);
-		if (i == 0){
+		if (i == index){
 			value.set(_name,true);
 		}else{
 			value.set(_name,false);
@@ -154,6 +153,7 @@ bool ofxDropDownList::setValue(float mx, float my, bool bCheck){
 				itemValue[i] = false;
 			}
 			itemValue[i] = !itemValue[i];
+			value = i;
 			return true;
 		}
 	}
@@ -179,12 +179,4 @@ void ofxDropDownList::addData(ofAbstractParameter & parameter){
 
 string ofxDropDownList::getItemName(int index){
 	return items[index];
-}
-
-string ofxDropDownList::getCurrentItem(){
-	for (int i = 0; i < items.size(); i++){
-		if (itemValue[i] == true){
-			return items[i];
-		}
-	}
 }
