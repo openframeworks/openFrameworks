@@ -8,10 +8,11 @@ void ofApp::setup(){
 	sizeArray.push_back("hello");
 	sizeArray.push_back("welcome");
 	sizeArray.push_back("nice");
-
+	
 	gui.setup();
+	
 	testGroup.setup("testDropDownList");
-	testGroup.add(testDropDownList.setup(sizeArray,200,18*sizeArray.size()));
+	testGroup.add(testDropDownList.setup(sizeArray,2,200,18*sizeArray.size()));
 	gui.add(&testGroup);
 
 	gui.add(testContent.setup("imageTestConten","aaa",image,image.getWidth(),image.getHeight()));
@@ -19,8 +20,13 @@ void ofApp::setup(){
 	gui.add(testQuadWarp.setup("imageTestQuadWarp","bbb",image,image.getWidth(),image.getHeight()));
 
 	gui.add(testToggle.setup("testToggle",false));
+
+	testDropDownList.addListener(this,&ofApp::valueChange);
 }
 
+void ofApp::exit(){
+	testDropDownList.removeListener(this,&ofApp::valueChange);
+}
 //--------------------------------------------------------------
 void ofApp::update(){
 
@@ -74,4 +80,9 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+void ofApp::valueChange(int & value){
+	string name = testDropDownList.getItemName(value);
+	cout<<name<<endl;
 }
