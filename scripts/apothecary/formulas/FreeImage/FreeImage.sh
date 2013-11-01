@@ -60,7 +60,7 @@ function build() {
 		make -j -f Makefile.osx
 	
 	elif [ "$TYPE" == "vs" ] ; then
-		#MSBuild.exe FreeImage.2008.sln
+		make -f Makefile.win32
 		echoWarning "TODO: vs build"
 
 	elif [ "$TYPE" == "win_cb" ] ; then

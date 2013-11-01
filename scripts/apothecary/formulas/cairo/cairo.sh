@@ -53,6 +53,7 @@ function build() {
    		export CFLAGS="-Os -arch i386 -arch x86_64 -isysroot $XCODE_DEV_ROOT/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$OSX_SDK_VER.sdk"
 	
 	elif [ "$TYPE" == "vs" ] ; then
+		#make -f Makefile.win32
 		echoWarning "TODO: vs build settings here?"
 	
 	elif [ "$YTYPE" == "win_cb" ] ; then
@@ -60,10 +61,10 @@ function build() {
 	fi
 
 	# build and install dependencies (some commented for now as they might be needed for other platforms)
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update $FORMULA_DIR/depends/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update $FORMULA_DIR/depends/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update $FORMULA_DIR/depends/pixman.sh
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update freetype
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/pixman.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build freetype
 
 	# build cairo
 	./configure --prefix=$buildDir --disable-dependency-tracking --disable-xlib --disable-ft
