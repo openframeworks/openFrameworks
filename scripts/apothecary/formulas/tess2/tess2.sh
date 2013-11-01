@@ -24,6 +24,8 @@ function download() {
 }
 
 function prebuild() {
+	patch -p1 -u < $FORMULA_DIR/tess2.patch
+
 	# copy in build script and CMake toolchains adapted from Assimp
 	if [ "$OS" == "osx" ] ; then
 		mkdir -p tess2/build
