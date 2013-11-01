@@ -28,7 +28,7 @@ function build() {
 	
 	if [ "$TYPE" == "vs" ] ; then
 		cmake -G "Visual Studio $VS_VER"
-		vs-lib "GLFW.sln"
+		vs-build "GLFW.sln"
 
 	else
 		echoWarning "TODO: $TYPE build"

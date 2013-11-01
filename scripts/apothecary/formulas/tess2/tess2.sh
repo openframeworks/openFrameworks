@@ -62,7 +62,7 @@ function build() {
 
 	elif [ "$TYPE" == "vs" ] ; then
 		cmake -G "Visual Studio $VS_VER"
-		vs-lib "tess2.sln"
+		vs-build "tess2.sln"
 
 	elif [ "$TYPE" == "ios" ] ; then
 		cd build/ios
