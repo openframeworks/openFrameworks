@@ -830,7 +830,9 @@ string ofUtf8ToLocale(const string & utf8)
                              NULL, // address of wide-character buffer
                              0) + 1;               // size of buffer
 
+
   WCHAR * pWideChar = new WCHAR[size];
+
 
   MultiByteToWideChar(CP_UTF8, // code page
                       MB_ERR_INVALID_CHARS, // character-type options
@@ -839,7 +841,9 @@ string ofUtf8ToLocale(const string & utf8)
                       pWideChar, // address of wide-character buffer
                       size);                // size of buffer
 
+
   int UsedDefaultChar = 0;
+
 
   size = WideCharToMultiByte(CP_THREAD_ACP, // code page
                              WC_COMPOSITECHECK |
@@ -851,7 +855,9 @@ string ofUtf8ToLocale(const string & utf8)
                              "?", // address of default for unmappable characters
                              & UsedDefaultChar) + 1; // address of flag set when default char used
 
+
   char * pLocal = new char[size];
+
 
   WideCharToMultiByte(CP_THREAD_ACP, // code page
                       WC_COMPOSITECHECK |
@@ -863,13 +869,17 @@ string ofUtf8ToLocale(const string & utf8)
                       "?", // address of default for unmappable characters
                       & UsedDefaultChar);     // address of flag set when default char used
 
+
   string Local = pLocal;
+
 
   delete [] pWideChar;
   delete [] pLocal;
 
+
   return Local;
 }
+
 
 string ofLocaleToUtf8(const string & locale)
 {
@@ -880,7 +890,9 @@ string ofLocaleToUtf8(const string & locale)
                              NULL, // address of wide-character buffer
                              0) + 1;               // size of buffer
 
+
   WCHAR * pWideChar = new WCHAR[size];
+
 
   MultiByteToWideChar(CP_THREAD_ACP, // code page
                       MB_ERR_INVALID_CHARS, // character-type options
@@ -888,6 +900,7 @@ string ofLocaleToUtf8(const string & locale)
                       -1, // NULL terminated
                       pWideChar, // address of wide-character buffer
                       size);                // size of buffer
+
 
   size = WideCharToMultiByte(CP_UTF8, // code page
                              0, // performance and mapping flags
@@ -898,7 +911,9 @@ string ofLocaleToUtf8(const string & locale)
                              NULL, // address of default for unmappable characters
                              NULL) + 1; // address of flag set when default char used
 
+
   char * pUtf8 = new char[size];
+
 
   WideCharToMultiByte(CP_UTF8, // code page
                       0, // address of wide-character string
@@ -909,11 +924,15 @@ string ofLocaleToUtf8(const string & locale)
                       NULL, // address of default for unmappable characters
                       NULL);     // address of flag set when default char used
 
+
   string Utf8 = pUtf8;
+
 
   delete [] pWideChar;
   delete [] pUtf8;
 
+
   return Utf8;
+
 
 }
