@@ -16,8 +16,6 @@ void ofApp::setup() {
 
     plane.set(800, 600, 10, 10);
     plane.mapTexCoords(0, 0, img.getWidth(), img.getHeight());
-    ofVec4f tcoords = plane.getTexCoords();
-    plane.mapTexCoords(tcoords.x, tcoords.y, tcoords.z, tcoords.w);
 }
 
 
