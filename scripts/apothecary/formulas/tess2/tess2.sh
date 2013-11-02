@@ -26,9 +26,9 @@ function download() {
 function prebuild() {
 	# copy in build script and CMake toolchains adapted from Assimp
 	if [ "$OS" == "osx" ] ; then
-		mkdir -p tess2/build
-		cp -Rv $FORMULA_DIR/ios tess2/build
-		chmod +x tess2/build/ios/build_ios.sh
+		mkdir -p build
+		cp -Rv $FORMULA_DIR/ios build
+		chmod +x build/ios/build_ios.sh
 	fi
 }
 

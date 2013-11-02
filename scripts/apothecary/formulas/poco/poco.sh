@@ -27,13 +27,11 @@ function download() {
 }
 
 function prebuild() {
-	cd poco
 	git reset --hard $SHA
-	cd ..
 
 	# make backups of the ios config files since we need to edit them
 	if [ "$TYPE" == "ios" ] ; then
-		cd poco/build/config
+		cd build/config
 		cp iPhone iPhone.orig
 		cp iPhoneSimulator iPhoneSimulator.orig
 	fi
