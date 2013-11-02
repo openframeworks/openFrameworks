@@ -108,15 +108,18 @@ function copy() {
 	
 	# headers
 	mkdir -p $1/include
-	#cp -v Dist/*.h $1/include
-	cp -v Source/FreeImage.h $1/include
+	cp -v Dist/*.h $1/include
 
 	# lib
-	if [ "$TYPE" == "osx" -o "osx-clang-libc++" ] ; then
+	if [ "$TYPE" == "osx" -o "$TYPE" == "osx-clang-libc++" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
 
-	elif [ "$TYPE" == "vs" -o  "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "vs" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v Dist/FreeImage.lib $1/lib/$TYPE/FreeImage.lib
+
+	elif [ "$TYPE" == "win_cb" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.lib $1/lib/$TYPE/freeimage.lib
 
