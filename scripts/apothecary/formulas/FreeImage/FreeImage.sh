@@ -65,7 +65,6 @@ function build() {
 		make -j -f Makefile.osx
 	
 	elif [ "$TYPE" == "vs" ] ; then
-		make -f Makefile.win32
 		echoWarning "TODO: vs build"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
@@ -109,7 +108,8 @@ function copy() {
 	
 	# headers
 	mkdir -p $1/include
-	cp -v Dist/*.h $1/include
+	#cp -v Dist/*.h $1/include
+	cp -v Source/FreeImage.h $1/include
 
 	# lib
 	if [ "$TYPE" == "osx" -o "osx-clang-libc++" ] ; then
@@ -141,4 +141,7 @@ function clean() {
 	else
 		make clean
 	fi
+
+	# run dedicated clean script
+	clean.sh
 }
