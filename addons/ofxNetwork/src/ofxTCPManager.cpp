@@ -51,7 +51,7 @@ bool ofxTCPManager::Close()
 		{
 			//	if it's reported we're not/no longer a socket, let it fall through and be invalidated
 			int Error = ofxNetworkCheckError();
-			if ( Error != TCP_ERROR(NOTSOCK) )
+			if ( Error != OFXNETWORK_ERROR(NOTSOCK) )
 			{
 				return(false);
 			}
@@ -332,7 +332,7 @@ int ofxTCPManager::PeekReceive(char* pBuff, const int iSize)
 	{
 		//	if socket is non-blocking, the result is likely to be EWOULDBLOCK (no data) so return zero-bytes
 		int NetError = ofxNetworkCheckError();
-		if ( NetError == TCP_ERROR(WOULDBLOCK) )
+		if ( NetError == OFXNETWORK_ERROR(WOULDBLOCK) )
 			return 0;
 		//	error
 		return SOCKET_ERROR;
