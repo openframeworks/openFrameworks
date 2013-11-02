@@ -51,12 +51,15 @@ void ofxTCPServer::setMessageDelimiter(string delim){
 //--------------------------
 bool ofxTCPServer::close(){
 
-	if(!connected) return true;
-
-	mConnectionsLock.lock();
-	map<int,ofPtr<ofxTCPClient> >::iterator it;
-	for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
-		it->second->close();
+	if(connected)
+	{
+		mConnectionsLock.lock();
+		map<int,ofPtr<ofxTCPClient> >::iterator it;
+		for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
+			it->second->close();
+		}
+		stopThread();
+		connected = false;
 	}
 	TCPConnections.clear();
 	mConnectionsLock.unlock();	//	unlock for thread
@@ -68,8 +71,7 @@ bool ofxTCPServer::close(){
 		waitForThread(false); //stop the thread
 		return false;
 	}else{
-		connected = false;
-
+		
 		waitForThread(false); //stop the thread
 		return true;
 	}
@@ -265,6 +267,7 @@ bool ofxTCPServer::isConnected(){
 
 //--------------------------
 bool ofxTCPServer::isClientSetup(int clientID){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	return TCPConnections.find(clientID)!=TCPConnections.end();
 }
 
