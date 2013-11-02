@@ -182,6 +182,7 @@ public:
 	int  Send(const char* pBuff, const int iSize);
 	//all data will be sent guaranteed.
 	int  SendAll(const char* pBuff, const int iSize);
+	int  PeekReceive(char* pBuff, const int iSize);
 	int  Receive(char* pBuff, const int iSize);
 	int  ReceiveAll(char* pBuff, const int iSize);
 	int  Write(const char* pBuff, const int iSize);
