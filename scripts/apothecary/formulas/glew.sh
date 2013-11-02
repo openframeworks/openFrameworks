@@ -43,8 +43,10 @@ function build() {
 		lipo -c libGLEW-i386.a libGLEW-x86_64.a -o libGLEW.a
 
 	elif [ "$TYPE" == "vs" ] ; then
-		#cd build/vc10
-		#MSBuild.exe glew_static.vcxproj
+		cd build/vc10
+		vs-build "glew.sln" Upgrade
+		vs-build "glew_static.vcxproj"
+		cd ../../
 		echoWarning "TODO: build vs"
 
 	elif [ "$TYPE" == "win_cb" ] ; then

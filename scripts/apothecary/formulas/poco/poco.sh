@@ -93,8 +93,13 @@ function build() {
 		done	
 
 	elif [ "$TYPE" == "vs" ] ; then
-		cmake -G "Visual Studio $VS_VER"
-		vs-lib "tess2.sln"
+		#cmd.exe /c "buildwin.cmd "$VS_VER" build all both Win32 nosamples devenv"
+		## OR
+		#cmd.exe /c "build_vs"$VS_VER"0.cmd"
+		## OR
+		#cmake -G "Visual Studio $VS_VER"
+		#vs-lib "tess2.sln"
+		echoWarning "TODO: vs build"
 	
 	elif [ "$TYPE" == "ios" ] ; then
 

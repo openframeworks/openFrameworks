@@ -42,6 +42,7 @@ function prebuild() {
 	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/libpng.sh
 	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/pixman.sh
 	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download freetype
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/pkg-config.sh
 }
 
 # executed inside the lib src dir
@@ -52,7 +53,8 @@ function build() {
 	rm -rf $buildDir/bin $buildDir/lib $buildDir/share
 	
 	# build a custom version of pkg-config
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update $FORMULA_DIR/depends/pkg-config.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/pkg-config.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir copy $FORMULA_DIR/depends/pkg-config.sh
 	export PKG_CONFIG=$buildDir/bin/pkg-config
 	export PKG_CONFIG_PATH=$buildDir/lib/pkgconfig
 
@@ -63,7 +65,7 @@ function build() {
    		export CFLAGS="-Os -arch i386 -arch x86_64 -isysroot $XCODE_DEV_ROOT/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$OSX_SDK_VER.sdk"
 	
 	elif [ "$TYPE" == "vs" ] ; then
-		#make -f Makefile.win32
+		make -f Makefile.win32
 		echoWarning "TODO: vs build settings here?"
 	
 	elif [ "$YTYPE" == "win_cb" ] ; then
