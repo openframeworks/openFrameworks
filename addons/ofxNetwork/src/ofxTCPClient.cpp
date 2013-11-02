@@ -224,7 +224,8 @@ string ofxTCPClient::receive(){
 	}
 
 	// check for connection reset or disconnection
-	if((length==-1 && (ofxNetworkCheckError() == ECONNRESET) ) || length == 0){
+	int errorCode = ofxNetworkCheckError();
+	if((length==-1 && ( errorCode == ECONNRESET || errorCode == ECONNABORTED )) || length == 0){
 		close();
 		if(tmpStr.length()==0) // return if there's no more data left in the buffer
 			return "";
