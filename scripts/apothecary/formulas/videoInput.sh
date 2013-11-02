@@ -27,7 +27,8 @@ function build() {
 
 	if [ "$TYPE" == "vs" ] ; then
 		cd VS-videoInputcompileAsLib
-		vs-build "videoInput.sln"
+		vs-build "videoInput.sln" Build Release
+		vs-build "videoInput.sln" Build Debug
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		cd CodeBlocks-compileAsLib/videoInputLib
@@ -38,6 +39,11 @@ function build() {
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
+
+	# headers
+	mkdir -p $1/include
+	cp -Rv videoInputSrcAndDemos/libs/videoInput/videoInput.h $1/include
+
 	if [ "$TYPE" == "vs" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v videoInputSrcAndDemos/VS-videoInputcompileAsLib/Debug/videoInputD.lib $1/lib/$TYPE/videoInputD.lib
