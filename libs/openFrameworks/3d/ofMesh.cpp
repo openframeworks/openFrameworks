@@ -45,6 +45,7 @@ void ofMesh::clear(){
 	if(!texCoords.empty()){
 		bTexCoordsChanged = true;
 		texCoords.clear();
+        texCoords2f.clear();
 	}
 	if(!indices.empty()){
 		bIndicesChanged = true;
@@ -197,7 +198,8 @@ void ofMesh::addNormals(const ofVec3f* norms, int amt){
 //--------------------------------------------------------------
 void ofMesh::addTexCoord(const ofVec2f& t){
 	//TODO: figure out if we add to all other arrays to match
-	texCoords.push_back(t);
+	texCoords.push_back((ofVec4f) t);
+    texCoords2f.push_back(t);
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 }
@@ -205,6 +207,7 @@ void ofMesh::addTexCoord(const ofVec2f& t){
 //--------------------------------------------------------------
 void ofMesh::addTexCoords(const vector<ofVec2f>& tCoords){
 	texCoords.insert(texCoords.end(),tCoords.begin(),tCoords.end());
+    texCoords2f.insert(texCoords2f.end(),tCoords.begin(),tCoords.end());
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 }
@@ -212,6 +215,32 @@ void ofMesh::addTexCoords(const vector<ofVec2f>& tCoords){
 //--------------------------------------------------------------
 void ofMesh::addTexCoords(const ofVec2f* tCoords, int amt){
 	texCoords.insert(texCoords.end(),tCoords,tCoords+amt);
+    texCoords2f.insert(texCoords2f.end(),tCoords,tCoords+amt);
+	bTexCoordsChanged = true;
+	bFacesDirty = true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::addTexCoord(const ofVec4f& t){
+	//TODO: figure out if we add to all other arrays to match
+	texCoords.push_back(t);
+    texCoords2f.push_back( (ofVec2f) t);
+	bTexCoordsChanged = true;
+	bFacesDirty = true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::addTexCoords(const vector<ofVec4f>& tCoords){
+	texCoords.insert(texCoords.end(),tCoords.begin(),tCoords.end());
+    texCoords2f.insert(texCoords2f.end(),tCoords.begin(),tCoords.end());
+	bTexCoordsChanged = true;
+	bFacesDirty = true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::addTexCoords(const ofVec4f* tCoords, int amt){
+	texCoords.insert(texCoords.end(),tCoords,tCoords+amt);
+    texCoords2f.insert(texCoords2f.end(),tCoords,tCoords+amt);
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 }
@@ -333,6 +362,11 @@ ofVec2f ofMesh::getTexCoord(ofIndexType i) const{
 }
 
 //--------------------------------------------------------------
+ofVec4f ofMesh::getTexCoord4f(ofIndexType i) const{
+	return texCoords[i];
+}
+
+//--------------------------------------------------------------
 int ofMesh::getNumVertices() const{
 	return (int)vertices.size();
 }
@@ -399,7 +433,16 @@ ofVec3f* ofMesh::getNormalsPointer(){
 //--------------------------------------------------------------
 ofVec2f* ofMesh::getTexCoordsPointer(){
 #ifdef TARGET_OSX
-		return &texCoords[0];
+		return &texCoords2f[0];
+#else
+	return texCoords2f.data();
+#endif
+}
+
+//--------------------------------------------------------------
+ofVec4f* ofMesh::getTexCoordsPointer4f(){
+#ifdef TARGET_OSX
+	return &texCoords[0];
 #else
 	return texCoords.data();
 #endif
@@ -445,6 +488,15 @@ const ofVec3f* ofMesh::getNormalsPointer() const{
 //--------------------------------------------------------------
 const ofVec2f* ofMesh::getTexCoordsPointer() const{
 #ifdef TARGET_OSX
+	return &texCoords2f[0];
+#else
+	return texCoords2f.data();
+#endif
+}
+
+//--------------------------------------------------------------
+const ofVec4f* ofMesh::getTexCoordsPointer4f() const{
+#ifdef TARGET_OSX
 	return &texCoords[0];
 #else
 	return texCoords.data();
@@ -478,7 +530,20 @@ vector<ofVec3f> & ofMesh::getNormals(){
 	return normals;
 }
 
+// only used for transform
+ofVec2f cast(ofVec4f v) {
+    return ofVec2f(v);
+}
+
 vector<ofVec2f> & ofMesh::getTexCoords(){
+	bTexCoordsChanged = true;
+	bFacesDirty = true;
+    texCoords2f.clear();
+    transform( texCoords.begin(), texCoords.end(), texCoords2f.begin(), cast);
+	return texCoords2f;
+}
+
+vector<ofVec4f> & ofMesh::getTexCoords4f(){
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 	return texCoords;
@@ -502,7 +567,12 @@ const vector<ofVec3f> & ofMesh::getNormals() const{
 	return normals;
 }
 
+// GLRenderer needs all these 2fs
 const vector<ofVec2f> & ofMesh::getTexCoords() const{
+	return texCoords2f;
+}
+
+const vector<ofVec4f> & ofMesh::getTexCoords4f() const{
 	return texCoords;
 }
 
@@ -599,8 +669,17 @@ void ofMesh::setColor(ofIndexType index, const ofFloatColor& c){
 }
 
 //--------------------------------------------------------------
-void ofMesh::setTexCoord(ofIndexType index, const ofVec2f& t){
+void ofMesh::setTexCoord4f(ofIndexType index, const ofVec4f& t){
 	texCoords[index] = t;
+    texCoords2f[index] = (ofVec2f) t;
+	bTexCoordsChanged = true;
+	bFacesDirty = true;
+}
+
+//--------------------------------------------------------------
+void ofMesh::setTexCoord(ofIndexType index, const ofVec2f& t){
+	texCoords[index] = (ofVec4f) t;
+    texCoords2f[index] = t;
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
 }
@@ -652,6 +731,7 @@ void ofMesh::clearColors(){
 //--------------------------------------------------------------
 void ofMesh::clearTexCoords(){
 	texCoords.clear();
+    texCoords2f.clear();
 	bTexCoordsChanged=true;
 	bFacesDirty = true;
 }
@@ -757,7 +837,8 @@ void ofMesh::append(ofMesh & mesh){
 		vertices.insert(vertices.end(),mesh.getVertices().begin(),mesh.getVertices().end());
 	}
 	if(mesh.getNumTexCoords()){
-		texCoords.insert(texCoords.end(),mesh.getTexCoords().begin(),mesh.getTexCoords().end());
+		texCoords.insert(texCoords.end(),mesh.getTexCoords4f().begin(),mesh.getTexCoords4f().end());
+        texCoords2f.insert(texCoords2f.end(),mesh.getTexCoords().begin(),mesh.getTexCoords().end());
 	}
 	if(mesh.getNumColors()){
 		colors.insert(colors.end(),mesh.getColors().begin(),mesh.getColors().end());
@@ -932,10 +1013,12 @@ void ofMesh::load(string path){
 			}
 
 			if(texCoordsFound>0){
-				ofVec2f uv;
+				ofVec4f uv;
 				sline >> uv.x;
 				sline >> uv.y;
-				data.getTexCoords()[currentVertex] = uv;
+                uv.z = 0;
+                uv.w = 0;
+				data.getTexCoords4f()[currentVertex] = uv;
 			}
 			
 			if (normalsCoordsFound>0){
@@ -1055,7 +1138,8 @@ void ofMesh::save(string path, bool useBinary) const{
 		}
 		if(data.getNumTexCoords()){
 			if(useBinary) {
-				os.write((char*) &data.getTexCoords()[i], sizeof(ofVec2f));
+				// not sure about this
+				os.write((char*) &data.getTexCoords4f()[i], sizeof(ofVec4f));
 			} else {
 				os << " " << data.getTexCoord(i).x << " " << data.getTexCoord(i).y;
 			}
@@ -1149,7 +1233,7 @@ ofMesh ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertInd
     }
     
     if( hasTexCoords() ) {
-        mesh.getTexCoords().assign( getTexCoords().begin()+startVertIndex, getTexCoords().begin()+endVertIndex );
+        mesh.getTexCoords().assign( getTexCoords4f().begin()+startVertIndex, getTexCoords4f().begin()+endVertIndex );
         if( usingTextures() ) mesh.enableTextures();
         else mesh.disableTextures();
     }
@@ -1211,8 +1295,8 @@ void ofMesh::mergeDuplicateVertices() {
     
     vector<ofFloatColor> newColors;
     vector<ofFloatColor>& colors    = getColors();
-    vector<ofVec2f> newTCoords;
-    vector<ofVec2f>& tcoords        = getTexCoords();
+    vector<ofVec4f> newTCoords;
+    vector<ofVec4f>& tcoords        = getTexCoords4f();
     vector<ofVec3f> newNormals;
     vector<ofVec3f>& normals        = getNormals();
     
@@ -1380,7 +1464,7 @@ void ofMesh::setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNorm
         for(int k = 0; k < 3; k++) {
             vertices[i] = it->getVertex(k);
             if(it->hasTexcoords())
-            	texCoords[i] = it->getTexCoord(k);
+            	texCoords[i] = it->getTexCoord4f(k);
             if(it->hasColors())
                 colors[i] = it->getColor(k);
 			if(bUseFaceNormal)
@@ -1592,7 +1676,7 @@ ofMesh ofMesh::sphere( float radius, int res, ofPrimitiveMode mode ) {
     mesh.setMode(mode);
     
     ofVec3f vert;
-    ofVec2f tcoord;
+    ofVec4f tcoord;
     
     for(float i = 0; i < res+1; i++) {
         
@@ -1805,7 +1889,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
     }
     
     /// Step 3 : generate texcoords
-    vector<ofVec2f> texCoords;
+    vector<ofVec4f> texCoords;
     for (unsigned short i=0;i<vertices.size();i++)
     {
         const ofVec3f& vec = vertices[i];
@@ -1817,7 +1901,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
         v = atan2f(vec.y, r0)/PI + .5f;
         // reverse the u coord, so the default is texture mapped left to
         // right on the outside of a sphere //
-        texCoords.push_back(ofVec2f(1.0-u,v));
+        texCoords.push_back(ofVec4f(1.0-u,v,0,0));
     }
     
     /// Step 4 : fix texcoords
@@ -1826,9 +1910,9 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
     
     for (unsigned int i=0;i<faces.size()/3;i++)
     {
-        ofVec2f& t0 = texCoords[faces[i*3+0]];
-        ofVec2f& t1 = texCoords[faces[i*3+1]];
-        ofVec2f& t2 = texCoords[faces[i*3+2]];
+        ofVec4f& t0 = texCoords[faces[i*3+0]];
+        ofVec4f& t1 = texCoords[faces[i*3+1]];
+        ofVec4f& t2 = texCoords[faces[i*3+2]];
         
         if (abs(t2.x-t0.x)>0.5)
         {
@@ -1859,7 +1943,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
         unsigned int index = indexToSplit[i];
         //duplicate vertex
         ofVec3f v = vertices[index];
-        ofVec2f t = texCoords[index] + ofVec2f(1.f, 0.f);
+        ofVec4f t = texCoords[index] + ofVec4f(1.f, 0.f, 0.f, 0.f);
         vertices.push_back(v);
         texCoords.push_back(t);
         int newIndex = vertices.size()-1;
@@ -1927,7 +2011,7 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
     
     float newRad;
     ofVec3f vert;
-    ofVec2f tcoord;
+    ofVec4f tcoord;
     ofVec3f normal;
     ofVec3f up(0,1,0);
     
@@ -2112,7 +2196,7 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     float newRad;
     ofVec3f vert;
     ofVec3f normal;
-    ofVec2f tcoord;
+    ofVec4f tcoord;
     ofVec3f up(0,1,0);
     
     
@@ -2249,7 +2333,7 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
     float halfD = depth * .5f;
     
     ofVec3f vert;
-    ofVec2f texcoord;
+    ofVec4f texcoord;
     ofVec3f normal;
     int vertOffset = 0;
     
@@ -2539,10 +2623,15 @@ const ofFloatColor& ofMeshFace::getColor(int index) const{
 }
 
 void ofMeshFace::setTexCoord( int index, const ofVec2f& tCoord ) {
+    texCoords[index] = ofVec4f(tCoord);
+    bHasTexcoords = true;
+}
+
+void ofMeshFace::setTexCoord( int index, const ofVec4f& tCoord ) {
     texCoords[index] = tCoord;
     bHasTexcoords = true;
 }
-const ofVec2f& ofMeshFace::getTexCoord( int index ) const{
+const ofVec4f& ofMeshFace::getTexCoord4f( int index ) const{
     return texCoords[index];
 }
 
@@ -2569,6 +2658,5 @@ bool ofMeshFace::hasNormals() const{
 bool ofMeshFace::hasTexcoords() const{
 	return bHasTexcoords;
 }
-
 
 

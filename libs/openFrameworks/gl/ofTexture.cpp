@@ -53,7 +53,7 @@ static bool bUseCustomTextureWrap = false;
 //----------------------------------------------------------
 void ofSetTextureWrap(GLfloat wrapS, GLfloat wrapT){
 	bUseCustomTextureWrap = true;
-	GLenum textureTarget = GL_TEXTURE_2D;
+    GLenum textureTarget = GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
 	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
@@ -76,7 +76,7 @@ void ofRestoreTextureWrap(){
 //----------------------------------------------------------
 void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
 	bUseCustomMinMagFilters = true;
-	GLenum textureTarget = GL_TEXTURE_2D;
+    GLenum textureTarget = GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
 	if (ofGetUsingArbTex() && GL_ARB_texture_rectangle){
 		textureTarget = GL_TEXTURE_RECTANGLE_ARB;
@@ -293,7 +293,7 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	texData.glTypeInternal = internalGlDataType;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-	if (bUseARBExtention && GL_ARB_texture_rectangle){
+    if (bUseARBExtention && GL_ARB_texture_rectangle){
 		texData.textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 	} else 
 #endif
@@ -313,7 +313,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 		ofLogError("ofTexture") << "allocate(): ofTextureData has 0 width and/or height: " << textureData.width << "x" << textureData.height;
 		return;
 	}
-
+    
 	texData = textureData;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
@@ -321,7 +321,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 		texData.tex_w = texData.width;
 		texData.tex_h = texData.height;
 		texData.tex_w = texData.width;
-		texData.tex_h = texData.height;		
+		texData.tex_h = texData.height;
 	}else
 #endif
 	{
@@ -334,41 +334,53 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 			texData.tex_w = ofNextPow2(texData.width);
 			texData.tex_h = ofNextPow2(texData.height);
 		}
-
+        
 		texData.tex_t = texData.width / texData.tex_w;
 		texData.tex_u = texData.height / texData.tex_h;
-
+        
 #ifndef TARGET_OPENGLES
 		if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB ) texData.textureTarget = GL_TEXTURE_2D;
 #endif
 	}
-
+    
 	// attempt to free the previous bound texture, if we can:
 	clear();
-
+    
 	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
 	retain(texData.textureID);
-
+    
 	enableTextureTarget();
-
+    
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
-	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
+    
+    if( texData.textureTarget == GL_TEXTURE_2D_ARRAY || texData.textureTarget == GL_TEXTURE_3D )
+    {
+        // make sure we have the 3D data in there
+        texData.depth = textureData.depth;
+        texData.tex_v = textureData.tex_v;
+        texData.tex_d = textureData.tex_d;
 
+        glTexImage3D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, (GLint)texData.depth, 0, glFormat, pixelType, 0);  // init to black...
+    }
+    else
+    {
+        glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
+    }
+    
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
+    
 	if (!ofIsGLProgrammableRenderer()){
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	}
 	disableTextureTarget();
-
-
-
+    
 	texData.bAllocated = true;
 
 }
+
 
 
 void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles){
@@ -521,7 +533,8 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
 		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
-		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
+        
+        glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
 
  		disableTextureTarget();
 	} else {
@@ -599,6 +612,116 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		
 	}
 	
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(vector<ofShortPixels> &texArray){
+    
+	
+    texData.tex_w = texArray[0].getWidth();
+    texData.tex_h = texArray[0].getHeight();
+    texData.tex_d = texArray.size();
+    texData.textureTarget = GL_TEXTURE_2D_ARRAY;
+    allocate(texData, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
+    
+    int w = (int) texArray[0].getWidth();
+    int h = (int) texArray[0].getHeight();
+    int d = (int) texArray.size();
+	
+    GLubyte texels[ (int) texData.tex_w * (int) texData.tex_h * texArray[0].getNumChannels() * texArray.size() ];
+    for ( int i = 0; i < texArray.size(); i++ ) {
+        memcpy( &(texels[ w * h * texArray[0].getNumChannels()*i]), texArray[i].getPixels(), w*h*texArray[0].getNumChannels()*sizeof(unsigned char));
+    }
+    
+    loadData(&texels[0], texData.tex_w, texData.tex_h, texData.tex_d, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(vector<ofFloatPixels> &texArray){
+    
+	
+    texData.tex_w = texArray[0].getWidth();
+    texData.tex_h = texArray[0].getHeight();
+    texData.tex_d = texArray.size();
+    texData.textureTarget = GL_TEXTURE_2D_ARRAY;
+    allocate(texData, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
+	
+    int w = (int) texArray[0].getWidth();
+    int h = (int) texArray[0].getHeight();
+    int d = (int) texArray.size();
+	
+    GLubyte texels[ (int) texData.tex_w * (int) texData.tex_h * texArray[0].getNumChannels() * texArray.size() ];
+    for ( int i = 0; i < texArray.size(); i++ ) {
+        memcpy( &(texels[ w * h * texArray[0].getNumChannels()*i]), texArray[i].getPixels(), w*h*texArray[0].getNumChannels()*sizeof(unsigned char));
+    }
+    
+    loadData(&texels[0], texData.tex_w, texData.tex_h, texData.tex_d, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(vector<ofPixels> &texArray){
+    
+	
+    texData.tex_w = texArray[0].getWidth();
+    texData.tex_h = texArray[0].getHeight();
+    texData.tex_d = texArray.size();
+    texData.textureTarget = GL_TEXTURE_2D_ARRAY;
+    allocate(texData, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
+	
+    int w = (int) texArray[0].getWidth();
+    int h = (int) texArray[0].getHeight();
+    int d = (int) texArray.size();
+	
+    GLubyte texels[ (int) texData.tex_w * (int) texData.tex_h * texArray[0].getNumChannels() * texArray.size() ];
+    for ( int i = 0; i < texArray.size(); i++ ) {
+        memcpy( &(texels[ w * h * texArray[0].getNumChannels()*i]), texArray[i].getPixels(), w*h*texArray[0].getNumChannels()*sizeof(unsigned char));
+    }
+    
+    loadData(&texels[0], texData.tex_w, texData.tex_h, texData.tex_d, ofGetGlFormat(texArray[0]), ofGetGlType(texArray[0]));
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const void * data, int w, int h, int d, int glFormat, int glType){
+    
+	if(w > texData.tex_w || h > texData.tex_h) {
+		//allocate(w, h, d, glFormat, glFormat, glType);
+        texData.tex_w = w;
+        texData.tex_h = h;
+        texData.tex_d = d;
+        texData.textureTarget = GL_TEXTURE_3D;
+        allocate(texData, glFormat, glType);
+	}
+	
+	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
+    // 3d Texture coords are normalized only afaict
+    texData.tex_t = (float)(w) / (float)texData.tex_w;
+    texData.tex_u = (float)(h) / (float)texData.tex_h;
+
+    //update the texture image:
+    enableTextureTarget();
+    
+    glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+    //glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
+    
+    // just do 0 depth to start?
+    //glTexSubImage3D(texData.textureTarget, 0, 0, 0, 0, w, h, depth, glFormat, glType, data);
+    
+    //void glTexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
+    
+    // when this texture needs to be shrunk to fit on small polygons, use linear interpolation of the texels to determine the color
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    // when this texture needs to be magnified to fit on a big polygon, use linear interpolation of the texels to determine the color
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // we want the texture to repeat over the S axis, so if we specify coordinates out of range we still get textured.
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    // same as above for T axis
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // same as above for R axis
+    glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_R, GL_REPEAT);
+    
+    glTexImage3D(texData.textureTarget, 0, glFormat, w, h, d, 0, glFormat, glType, data );
+    disableTextureTarget();
+
 }
 
 
@@ -839,13 +962,13 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	if (texData.bFlipTexture == ofIsVFlipped()){
 		swap(py0,py1);
 	}
-
+	
 	// for rect mode center, let's do this:
 	if (ofGetRectMode() == OF_RECTMODE_CENTER){
-		px0 -= w/2;
-		py0 -= h/2;
-		px1 -= w/2;
-		py1 -= h/2;
+		px0 = -w/2;
+		py0 = -h/2;
+		px1 = +w/2;
+		py1 = +h/2;
 	}
 	
 	//we translate our drawing points by our anchor point.
@@ -968,6 +1091,7 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	quad.draw();
 	unbind();
 }
+
 
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofPixels & pixels){

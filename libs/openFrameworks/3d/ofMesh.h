@@ -58,6 +58,12 @@ public:
 	void removeTexCoord(ofIndexType index);
 	void setTexCoord(ofIndexType index, const ofVec2f& t);
 	void clearTexCoords();
+
+	ofVec4f getTexCoord4f(ofIndexType i) const;
+	void addTexCoord(const ofVec4f& t);
+	void addTexCoords(const vector<ofVec4f>& tCoords);
+	void addTexCoords(const ofVec4f* tCoords, int amt);
+	void setTexCoord4f(ofIndexType index, const ofVec4f& t);
 	
 	ofIndexType getIndex(ofIndexType i) const;
 	void addIndex(ofIndexType i);
@@ -79,24 +85,28 @@ public:
 	ofFloatColor* getColorsPointer();
 	ofVec3f* getNormalsPointer();
 	ofVec2f* getTexCoordsPointer();
+	ofVec4f* getTexCoordsPointer4f();
 	ofIndexType* getIndexPointer();
 	
 	const ofVec3f* getVerticesPointer() const;
 	const ofFloatColor* getColorsPointer() const;
 	const ofVec3f* getNormalsPointer() const;
 	const ofVec2f* getTexCoordsPointer() const;
+	const ofVec4f* getTexCoordsPointer4f() const;
 	const ofIndexType* getIndexPointer() const;
 
 	vector<ofVec3f> & getVertices();
 	vector<ofFloatColor> & getColors();
 	vector<ofVec3f> & getNormals();
 	vector<ofVec2f> & getTexCoords();
+	vector<ofVec4f> & getTexCoords4f();
 	vector<ofIndexType> & getIndices();
 
 	const vector<ofVec3f> & getVertices() const;
 	const vector<ofFloatColor> & getColors() const;
 	const vector<ofVec3f> & getNormals() const;
 	const vector<ofVec2f> & getTexCoords() const;
+	const vector<ofVec4f> & getTexCoords4f() const;
 	const vector<ofIndexType> & getIndices() const;
 
 	vector<int>& getFace(int faceId);
@@ -167,7 +177,8 @@ private:
 	vector<ofVec3f> vertices;
 	vector<ofFloatColor> colors;
 	vector<ofVec3f> normals;
-	vector<ofVec2f> texCoords;
+	vector<ofVec4f> texCoords;
+    vector<ofVec2f> texCoords2f; // only used to return values for getTexCoords()
 	vector<ofIndexType> indices;
 
 	// this variables are only caches and returned always as const
@@ -204,7 +215,10 @@ public:
     const ofFloatColor& getColor(int index) const;
 
     void setTexCoord( int index, const ofVec2f& tCoord );
-    const ofVec2f& getTexCoord( int index ) const;
+//    const ofVec2f& getTexCoord( int index ) const; // not sure how to handle this
+    
+    void setTexCoord( int index, const ofVec4f& tCoord );
+    const ofVec4f& getTexCoord4f( int index ) const;
 
     void setHasColors( bool bColors );
     void setHasNormals( bool bNormals );
@@ -225,5 +239,5 @@ private:
     ofVec3f vertices[3];
     ofVec3f normals[3];
     ofFloatColor colors[3];
-    ofVec2f texCoords[3];
+    ofVec4f texCoords[3];
 };

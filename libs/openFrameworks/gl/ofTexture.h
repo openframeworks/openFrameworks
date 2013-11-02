@@ -50,10 +50,13 @@ public:
 
 		tex_t = 0;
 		tex_u = 0;
+        tex_v = 0;
 		tex_w = 0;
 		tex_h = 0;
+        tex_d = 0;
 		width = 0;
 		height = 0;
+        depth = 0;
 		
 		bFlipTexture = false;
 		compressionType = OF_COMPRESS_NONE;
@@ -68,9 +71,11 @@ public:
 	
 	float tex_t;
 	float tex_u;
+    float tex_v;
 	float tex_w;
 	float tex_h;
-	float width, height;
+    float tex_d;
+	float width, height, depth;
 	
 	bool bFlipTexture;
 	ofTexCompression compressionType;
@@ -134,6 +139,12 @@ class ofTexture : public ofBaseDraws {
 	void loadData(const ofPixels & pix, int glFormat);
 	void loadData(const ofShortPixels & pix, int glFormat);
 	void loadData(const ofFloatPixels & pix, int glFormat);
+    
+    // these are for 3D
+    void loadData(const void * data, int w, int h, int d, int glFormat, int glType);
+    void loadData(vector<ofPixels> &texArray);
+    void loadData(vector<ofShortPixels> &texArray);
+    void loadData(vector<ofFloatPixels> &texArray);
 	
 	// in openGL3+ use 1 channel GL_R as luminance instead of red channel
 	void setRGToRGBASwizzles(bool rToRGBSwizzles);
@@ -158,7 +169,7 @@ class ofTexture : public ofBaseDraws {
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy);
 	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-
+    
 	void readToPixels(ofPixels & pixels);
 	void readToPixels(ofShortPixels & pixels);
 	void readToPixels(ofFloatPixels & pixels);
@@ -196,6 +207,8 @@ protected:
 	void enableTextureTarget();
 	void disableTextureTarget();
 
+    bool bUse3D;
+    
 	ofPoint anchor;
 	bool bAnchorIsPct;
 	ofMesh quad;

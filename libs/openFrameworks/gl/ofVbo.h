@@ -26,12 +26,14 @@ public:
 	void setColorData(const ofFloatColor * colors, int total, int usage);
 	void setNormalData(const ofVec3f * normals, int total, int usage);	
 	void setTexCoordData(const ofVec2f * texCoords, int total, int usage);
+	void setTexCoordData(const ofVec4f * texCoords, int total, int usage);
 	void setIndexData(const ofIndexType * indices, int total, int usage);
 
 	void setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride=0);
 	void setColorData(const float * color0r, int total, int usage, int stride=0);
 	void setNormalData(const float * normal0x, int total, int usage, int stride=0);
 	void setTexCoordData(const float * texCoord0x, int total, int usage, int stride=0);
+	void setTexCoordData4f(const float * texCoord0x, int total, int usage, int stride=0); // we assume it's 2f
 	
 	void setAttributeData(int location, const float * vert0x, int numCoords, int total, int usage, int stride=sizeof(float));
 
@@ -42,12 +44,14 @@ public:
 	void updateColorData(const ofFloatColor * colors, int total);
 	void updateNormalData(const ofVec3f * normals, int total);	
 	void updateTexCoordData(const ofVec2f * texCoords, int total);
+	void updateTexCoordData(const ofVec4f * texCoords, int total);
 	void updateIndexData(const ofIndexType * indices, int total);
 	
 	void updateVertexData(const float * ver0x, int total);
 	void updateColorData(const float * color0r, int total);
 	void updateNormalData(const float * normal0x, int total);
 	void updateTexCoordData(const float * texCoord0x, int total);
+	void updateTexCoordData4f(const float * texCoord0x, int total); // we assume it's 2f
 	
 	void updateAttributeData(int location, const float * vert0x, int total);
 
