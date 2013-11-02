@@ -12,7 +12,7 @@ ofxDropDownList::~ofxDropDownList(){
 	}
 }
 
-ofxDropDownList * ofxDropDownList::setup(vector<string> toggleName, int index, float width, float height){
+ofxGuiGroup * ofxDropDownList::setup(vector<string> toggleName, int index, float width, float height){
     b.x = 0;
 	b.y = 0;
 	b.width = width;
@@ -40,9 +40,10 @@ ofxDropDownList * ofxDropDownList::setup(vector<string> toggleName, int index, f
 	for (int i = 0; i < itemValue.size(); i++){
 		itemValue[i].addListener(this,&ofxDropDownList::valueChanged);
 	}
-
 	generateDraw();
-	return this;
+	dropDownList.setup("dropDownList");
+	dropDownList.add(this);
+	return &dropDownList;
 }
 
 

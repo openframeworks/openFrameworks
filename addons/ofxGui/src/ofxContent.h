@@ -2,15 +2,14 @@
 
 #include "ofxBaseGui.h"
 #include "ofParameter.h"
-
+#include "ofxPanel.h"
 class ofxContent: public ofxBaseGui {
 public:
 	ofxContent(){}
-    ofxContent(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+    ofxContent(string contentName, ofBaseDraws &content, float width = defaultWidth, float height = defaultHeight);
 	virtual ~ofxContent();
 
-    ofxContent * setup(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
-    ofxContent * setup(string labelName, string label, ofBaseDraws &content,float width = defaultWidth, float height = defaultHeight);
+    ofxContent * setup(string contentName, ofBaseDraws &content, float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!
     virtual bool mouseMoved(ofMouseEventArgs & args){return false;}
@@ -24,29 +23,30 @@ public:
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method){
-		label.addListener(listener,method);
+		value.addListener(listener,method);
 	}
 
 	template<class ListenerClass, typename ListenerMethod>
 	void removeListener(ListenerClass * listener, ListenerMethod method){
-		label.removeListener(listener,method);
+		value.removeListener(listener,method);
 	}
 
-    string operator=(string v) { label = v; return v; }
-    operator const string & ()       { return label; }
     ofAbstractParameter & getParameter();
 
 protected:
     void render();
     ofParameter<string> label;
+	ofPath fg;
     void generateDraw();
-    void valueChanged(string & value);
+    void valueChanged(bool & value);
     bool setValue(float mx, float my, bool bCheckBounds){return false;}
     ofPath bg;
     ofVboMesh textMesh;
 	ofBaseDraws * content;
+	string name;
 
 public:
 	static ofBaseDraws * getCurrentContent();
 	static ofBaseDraws * contentSelect;
+	ofParameter<bool> value;
 };

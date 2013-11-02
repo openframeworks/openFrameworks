@@ -9,31 +9,26 @@ ofxQuadWarp::ofxQuadWarp(){
 	bCircle.push_back(false);
 }
 
-ofxQuadWarp::ofxQuadWarp(ofParameter<string> _label, float width, float height){
-	setup(_label,width,height);
+ofxQuadWarp::ofxQuadWarp(string quadWarpName, ofBaseDraws &content, float width, float height){
+	setup(quadWarpName,content,width,height);
 }
 
 ofxQuadWarp::~ofxQuadWarp(){
-    label.removeListener(this,&ofxQuadWarp::valueChanged);
+   
 }
 
-ofxQuadWarp* ofxQuadWarp::setup(ofParameter<string> _label, float width, float height) {
+
+ofxQuadWarp* ofxQuadWarp::setup(string quadWarpName, ofBaseDraws &content, float width, float height) {
 	b.x = 0;
 	b.y = 0;
 	b.width  = defaultWidth;
 	b.height = height * (defaultWidth/width) + defaultHeight;
-
-    label.addListener(this,&ofxQuadWarp::valueChanged);
+	name = quadWarpName;
 	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
+	this->content = &content;
 	InitQuadPos();
 	generateDraw();
     return this;
-}
-
-ofxQuadWarp* ofxQuadWarp::setup(string labelName, string _label, ofBaseDraws &content, float width, float height) {
-	this->content = &content;
-    label.set(labelName,_label);
-    return setup(label,width,height);
 }
 
 void ofxQuadWarp::generateDraw(){
@@ -44,12 +39,7 @@ void ofxQuadWarp::generateDraw(){
 
 	rectCircumscribe = ofRectangle(b.x,b.y,b.width,b.height-defaultHeight);
 
-    string name;
-    if(!getName().empty()){
-    	name = getName();
-    }
-
-	textMesh = getTextMesh(name + (string)label, b.x + textPadding, b.y + defaultHeight/2 + 4 + b.height-defaultHeight);
+	textMesh = getTextMesh(name, b.x + textPadding, b.y + defaultHeight/2 + 4 + b.height-defaultHeight);
 }
 
 void ofxQuadWarp::render() {
