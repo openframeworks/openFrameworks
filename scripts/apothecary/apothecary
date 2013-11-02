@@ -481,8 +481,8 @@ function downloadFormula(){
 	if [ -e $1 ] ; then
 		echo "... skipping, src dir already exists"
 	else
-		if [ $USE_GIT == 1 ] && [ "$GIT_URL" != "" ] ; then
-			gitclone $1 $GIT_URL $GIT_TAG
+		if [ $USE_GIT == 1 ] && [[ "${GIT_URL:+x}" ]] ; then
+			gitclone $1 $GIT_URL ${GIT_TAG:-master}
 		else
 			download
 		fi
@@ -557,7 +557,7 @@ function cleanFormula() {
 	if [ $USE_GIT == 1 ] && [ -d $BUILD_DIR/$1/.git ] ; then
 		git clean -d -f -q -x
 		git reset -q --hard HEAD
-		if [[ ${SWITCH_VER+x} ]]; then
+		if [[ ${SWITCH_VER:+x} ]]; then
 			echoVerbose " Switching version (to $SWITCH_VER)"
 			git fetch origin
 			git checkout $SWITCH_VER
@@ -609,11 +609,11 @@ function gitclone() {
 		echoVerbose " Try using Git to donwload"
 		git clone $2 $1
 		cd $1
-		if [[ ${SWITCH_VER+x} ]]; then
+		if [[ ${SWITCH_VER:+x} ]]; then
 			echoVerbose " Select a custom version ($SWITCH_VER)"
 			git checkout $SWITCH_VER
 		else
-			git checkout ${3:+master}
+			git checkout $3
 		fi
 		cd ..
 	} || {
