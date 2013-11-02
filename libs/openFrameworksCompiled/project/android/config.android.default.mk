@@ -76,7 +76,7 @@ ifndef $(SDK_TARGET)
 endif
 
 ifndef $(GCC_VERSION)
-	GCC_VERSION = 4.7
+	GCC_VERSION = 4.8
 endif
 
 PROJECT_PATH=$(PWD)

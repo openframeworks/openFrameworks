@@ -247,6 +247,10 @@ class OFGLSurfaceView extends GLSurfaceView{
     	OFAndroid.onSurfaceDestroyed();
 	}
     
+    boolean isSetup(){
+    	return mRenderer.isSetup();
+    }
+    
     private OFAndroidWindow mRenderer;
 }
 
@@ -301,6 +305,10 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
     		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
     		gl.glClearColor(.5f, .5f, .5f, 1.f);	
     	}
+    }
+    
+    public boolean isSetup(){
+    	return setup;
     }
 
     private static boolean setup;

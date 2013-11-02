@@ -313,7 +313,7 @@ public class OFAndroid {
 			object.onResume();
 		}
 		
-        onResume();
+        if(mGLView.isSetup()) onResume();
         
         if(OFAndroid.orientation!=-1) OFAndroid.setScreenOrientation(OFAndroid.orientation);
 		
