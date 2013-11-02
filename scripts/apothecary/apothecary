@@ -489,10 +489,12 @@ function downloadFormula(){
 		else
 		download
 		fi
-		prebuild
 		if [ ! -e $1 ] ; then
 			echoError " It looks like downloading failed for \"$1\""
 			exit 1
+		else
+			cd $BUILD_DIR/$1
+			prebuild
 		fi
 	fi
 	cd $APOTHECARY_DIR
