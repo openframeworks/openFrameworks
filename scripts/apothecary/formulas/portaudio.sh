@@ -9,7 +9,7 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
 # define the version
-VER=stable_v19_20111121
+VER=stable_v19_20110326
 
 # tools for git use
 GIT_URL=
