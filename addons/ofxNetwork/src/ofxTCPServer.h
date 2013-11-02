@@ -74,6 +74,9 @@ class ofxTCPServer : public ofThread{
 		//is at least as big as numBytes
 		int receiveRawBytes(int clientID, char * receiveBytes,  int numBytes);
 
+		//fill a buffer as much as possible but leave the data on the TCP stack
+		//amount of filled-bytes returned
+		int peekReceiveRawBytes(int clientID, char * receiveBytes,  int numBytes);
 
 
 

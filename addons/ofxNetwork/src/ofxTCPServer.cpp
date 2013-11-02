@@ -214,6 +214,17 @@ int ofxTCPServer::receiveRawBytes(int clientID, char * receiveBytes,  int numByt
 
 
 //--------------------------
+int ofxTCPServer::peekReceiveRawBytes(int clientID, char * receiveBytes,  int numBytes){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
+	if( !isClientSetup(clientID) ){
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
+		return 0;
+	}
+
+	return getClient(clientID).peekReceiveRawBytes(receiveBytes, numBytes);
+}
+
+//--------------------------
 int ofxTCPServer::receiveRawMsg(int clientID, char * receiveBytes,  int numBytes){
 	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
