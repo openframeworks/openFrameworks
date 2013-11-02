@@ -323,7 +323,7 @@ int	ofxUDPManager::Receive(char* pBuff, const int iSize)
 
 		//	if the network error is WOULDBLOCK, then return 0 instead of SOCKET_ERROR as it's not really a problem, just no data.
 		int SocketError = ofxNetworkCheckError();
-		if ( SocketError == TCP_ERROR(WOULDBLOCK) )
+		if ( SocketError == OFXNETWORK_ERROR(WOULDBLOCK) )
 			return 0;
 	}
 
