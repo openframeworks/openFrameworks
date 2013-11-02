@@ -4,11 +4,11 @@
 # http://libpng.org/pub/png/libpng.html
 
 # define the version
-MAJOR_VER=16
+MAJOR_VER=16/older-releases
 VER=1.6.2
 
 # tools for git use
-GIT_URL=http://git.code.sf.net/p/libpng/code 
+GIT_URL=http://git.code.sf.net/p/libpng/code
 GIT_TAG=v$VER
 
 # download the source code and unpack it into LIB_NAME
