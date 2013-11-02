@@ -41,6 +41,8 @@ CORE
 PLATFORM SPECIFIC
 -----------------
 ### Android
+	/ fix for texture reload
+	/ change to work with NDK r9b by default
 ### Mac OS X
 ### iOS
 ### Linux
