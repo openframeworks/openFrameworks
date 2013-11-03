@@ -96,11 +96,9 @@ function build() {
 	elif [ "$TYPE" == "vs" ] ; then
 		#cmd.exe /c "buildwin.cmd "$VS_VER" build all both Win32 nosamples devenv"
 		## OR
-		#cmd.exe /c "build_vs"$VS_VER"0.cmd"
-		## OR
-		#cmake -G "Visual Studio $VS_VER"
-		#vs-lib "tess2.sln"
-		echoWarning "TODO: vs build"
+		cmake -G "Visual Studio $VS_VER" -D"POCO_STATIC=1" -D"CMAKE_DEBUG_POSTFIX=mdd" -D"CMAKE_RELEASE_POSTFIX=md"
+		vs-build "Poco.sln" Build Release
+		vs-build "Poco.sln" Build Debug
 	
 	elif [ "$TYPE" == "ios" ] ; then
 
@@ -184,6 +182,11 @@ function copy() {
 	elif [ "$TYPE" == "ios" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/iPhoneOS/*.a $1/lib/$TYPE
+
+	elif [ "$TYPE" == "vs" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/Release/*.lib $1/lib/$TYPE
+		cp -v lib/Debug/*.lib $1/lib/$TYPE
 
 	else
 		echoWarning "TODO: copy $TYPE lib"
