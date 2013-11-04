@@ -4,3 +4,6 @@
 [submodule "addons/ofxFontStash"]
 	path = addons/ofxFontStash
 	url = https://github.com/armadillu/ofxFontStash.git
+[submodule "addons/ofxAnimatable"]
+	path = addons/ofxAnimatable
+	url = https://github.com/yty/ofxAnimatable.git
