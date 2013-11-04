@@ -12,7 +12,7 @@ ofxDropDownList::~ofxDropDownList(){
 	}
 }
 
-ofxDropDownList * ofxDropDownList::setup(vector<string> toggleName, int index, float width, float height){
+ofxGuiGroup * ofxDropDownList::setup(vector<string> toggleName, int index, float width, float height){
     b.x = 0;
 	b.y = 0;
 	b.width = width;
@@ -40,9 +40,14 @@ ofxDropDownList * ofxDropDownList::setup(vector<string> toggleName, int index, f
 	for (int i = 0; i < itemValue.size(); i++){
 		itemValue[i].addListener(this,&ofxDropDownList::valueChanged);
 	}
-
 	generateDraw();
-	return this;
+#ifdef SUPPORT_FONTSTASH
+	dropDownList.setup("ÏÂÀ­²Ëµ¥");
+#else
+	dropDownList.setup("DropDownList");
+#endif
+	dropDownList.add(this);
+	return &dropDownList;
 }
 
 
@@ -124,7 +129,11 @@ void ofxDropDownList::render(){
 		ofSetColor(thisTextColor);
 
 		bindFontTexture();
+#ifdef SUPPORT_FONTSTASH
+		unicodeFont.draw(getItemName(i),12, b.x+textPadding , b.y+(b.height /items.size())/2 + 4 + (i*defaultHeight));
+#else
 		textMH[i].draw();
+#endif
 		unbindFontTexture();
 
 		ofSetColor(c);

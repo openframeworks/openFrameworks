@@ -1,21 +1,21 @@
-<group>
-	<testDropDownList>
+<UI界面>
+	<dropDownList>
 		<dropDownList>
-			<item0>hello</item0>
-			<itemValue0>1</itemValue0>
-			<item1>welcome</item1>
+			<item0>你好</item0>
+			<itemValue0>0</itemValue0>
+			<item1>测试</item1>
 			<itemValue1>0</itemValue1>
-			<item2>nice</item2>
-			<itemValue2>0</itemValue2>
+			<item2>欢迎</item2>
+			<itemValue2>1</itemValue2>
 		</dropDownList>
-	</testDropDownList>
-	<imageTestConten>aaa</imageTestConten>
+	</dropDownList>
+	<Content>image测试2</Content>
 	<quadRevise>
-		<dstQuadPos0>77, 41.4, 0</dstQuadPos0>
-		<dstQuadPos1>166, 18.4, 0</dstQuadPos1>
-		<dstQuadPos2>150, 106.4, 0</dstQuadPos2>
-		<dstQuadPos3>51, 118.4, 0</dstQuadPos3>
+		<dstQuadPos0>0, 0, 0</dstQuadPos0>
+		<dstQuadPos1>200, 0, 0</dstQuadPos1>
+		<dstQuadPos2>200, 155.6, 0</dstQuadPos2>
+		<dstQuadPos3>0, 155.6, 0</dstQuadPos3>
 	</quadRevise>
-	<testToggle>0</testToggle>
-<group/>
-</group>
+	<测试>0</测试>
+<UI界面/>
+</UI界面>

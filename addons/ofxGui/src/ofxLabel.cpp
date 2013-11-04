@@ -50,7 +50,15 @@ void ofxLabel::render() {
     ofSetColor(textColor);
 
     bindFontTexture();
-    textMesh.draw();
+#ifdef SUPPORT_FONTSTASH
+	string name;
+    if(!getName().empty()){
+    	name = getName() + ": ";
+    }
+	unicodeFont.draw(name + (string)label,12, b.x + textPadding, b.y + b.height / 2 + 4);
+#else
+	textMesh.draw();
+#endif
     unbindFontTexture();
 
     ofSetColor(c);
