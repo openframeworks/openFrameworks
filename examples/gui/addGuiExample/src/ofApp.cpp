@@ -15,7 +15,7 @@ void ofApp::setup(){
 	gui.setUseTTF(true);
 	gui.setup("UI界面");
 	
-	gui.add(testDropDownList.setup(sizeArray,2));
+	gui.add(testDropDownList.setup("测试DropDownList",sizeArray,2));
 
 	gui.add(testContent0.setup("image测试0",image0,image0.getWidth(),image0.getHeight()));
 	gui.add(testContent1.setup("image测试1",image1,image1.getWidth(),image1.getHeight()/2));

@@ -4,8 +4,11 @@
 #include "ofBaseTypes.h"
 #include "ofParameter.h"
 #include "ofTrueTypeFont.h"
-#include "ofxFontStash.h"
+
 #define SUPPORT_FONTSTASH
+#ifdef SUPPORT_FONTSTASH
+#include "ofxFontStash.h"
+#endif
 
 
 class ofxBaseGui{

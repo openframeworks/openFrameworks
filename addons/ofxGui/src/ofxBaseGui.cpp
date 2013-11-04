@@ -57,7 +57,11 @@ int ofxBaseGui::defaultWidth = 200;
 int ofxBaseGui::defaultHeight = 18;
 
 ofTrueTypeFont ofxBaseGui::font;
+
+#ifdef SUPPORT_FONTSTASH
 ofxFontStash ofxBaseGui::unicodeFont;
+#endif
+
 bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 

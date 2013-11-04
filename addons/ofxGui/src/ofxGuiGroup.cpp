@@ -263,7 +263,7 @@ void ofxGuiGroup::render(){
 
 	bindFontTexture();
 #ifdef SUPPORT_FONTSTASH
-	unicodeFont.draw(ofLocaleToUtf8(getName()),12, textPadding + b.x, header / 2 + 4 + b.y+ spacingNextElement);
+	unicodeFont.draw(getName(),12, textPadding + b.x, header / 2 + 4 + b.y+ spacingNextElement);
 	if(minimized){
 		unicodeFont.draw("+",12, b.width-textPadding-8 + b.x, header / 2 + 4+ b.y+ spacingNextElement);
 	}else{
