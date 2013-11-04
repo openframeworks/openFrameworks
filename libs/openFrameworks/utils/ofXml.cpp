@@ -1,5 +1,5 @@
-
 #include "ofXml.h"
+#include "ofUtils.h"
 
 ofXml::~ofXml() {
 	releaseAll();
@@ -49,6 +49,7 @@ bool ofXml::save(const string & path){
 
 void ofXml::serialize(const ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()) return;
+	
 	string name = parameter.getEscapedName();
 	if(name=="") name="UnknownName";
 	if(parameter.type()==typeid(ofParameterGroup).name()){
@@ -167,15 +168,13 @@ string ofXml::toString() const
 }
 
 void ofXml::addInstruction(const string& target,const string& data){
-
 	Poco::XML::ProcessingInstruction *docPI = getPocoDocument()->createProcessingInstruction(target,data);
 	getPocoDocument()->appendChild((Poco::XML::Node*)docPI);
 }
 
 void ofXml::addComment( const string& str){
-
-	 Poco::XML::Comment* pe = getPocoDocument()->createComment(str);
-     document->appendChild((Poco::XML::Node*)pe);
+	Poco::XML::Comment* pe = getPocoDocument()->createComment(str);
+	document->appendChild((Poco::XML::Node*)pe);
 }
 
 void ofXml::addXml( ofXml& xml, bool copyAll ) {

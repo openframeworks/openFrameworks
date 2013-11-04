@@ -9,8 +9,8 @@ class ofxDropDownList : public ofxBaseGui{
 public:
 	ofxDropDownList(){};
 	~ofxDropDownList();
-	ofxDropDownList(vector<string> toggleName, int index = 0, float width = defaultWidth, float height = defaultHeight);
-	ofxDropDownList * setup(vector<string> toggleName, int index = 0, float width = defaultWidth, float height = defaultHeight);
+	ofxDropDownList(string dorpDownListName, vector<string> itemName, int index = 0, float width = defaultWidth, float height = defaultHeight);
+	ofxGuiGroup * setup(string dorpDownListName, vector<string> itemName, int index = 0, float width = defaultWidth, float height = defaultHeight);
 	
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);
@@ -40,6 +40,7 @@ protected:
 	ofVboMesh textMesh;
 	bool bGuiActive;
 
+	ofxGuiGroup dropDownList;
 	ofParameterGroup parameters;
 	ofParameter<int> value;
 	vector<ofParameter<string>> items;   

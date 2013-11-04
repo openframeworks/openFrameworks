@@ -7,3 +7,4 @@
 [submodule "addons/ofxAnimatable"]
 	path = addons/ofxAnimatable
 	url = https://github.com/yty/ofxAnimatable.git
+

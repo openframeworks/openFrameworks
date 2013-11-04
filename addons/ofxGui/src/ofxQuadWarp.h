@@ -9,11 +9,10 @@
 class ofxQuadWarp: public ofxBaseGui {
 public:
     ofxQuadWarp();
-    ofxQuadWarp(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+    ofxQuadWarp(string quadWarpName, ofBaseDraws &content,float width = defaultWidth, float height = defaultHeight);
     virtual ~ofxQuadWarp();
 
-    ofxQuadWarp * setup(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
-    ofxQuadWarp * setup(string labelName, string label, ofBaseDraws &content,float width = defaultWidth, float height = defaultHeight);
+    ofxQuadWarp * setup(string quadWarpName, ofBaseDraws &content,float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!
     virtual bool mouseMoved(ofMouseEventArgs & args);
@@ -39,13 +38,13 @@ public:
 
 protected:
     void render();
-    ofParameter<string> label;
     void generateDraw();
     void valueChanged(string & value);
     bool setValue(float mx, float my, bool bCheckBounds);
     ofPath bg;
     ofVboMesh textMesh;
-	
+	string name;
+
 	bool bGuiActive;
 	vector<bool> bCircle;
 	ofRectangle rectCircumscribe;

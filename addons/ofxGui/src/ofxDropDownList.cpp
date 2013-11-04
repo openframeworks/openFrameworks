@@ -2,8 +2,8 @@
 #include "ofGraphics.h"
 
 
-ofxDropDownList::ofxDropDownList(vector<string> toggleName, int index, float width, float height){
-	setup(toggleName,index,width,height);
+ofxDropDownList::ofxDropDownList(string dorpDownListName, vector<string> itemName, int index, float width, float height){
+	setup(dorpDownListName,itemName,index,width,height);
 }
 
 ofxDropDownList::~ofxDropDownList(){
@@ -12,18 +12,18 @@ ofxDropDownList::~ofxDropDownList(){
 	}
 }
 
-ofxDropDownList * ofxDropDownList::setup(vector<string> toggleName, int index, float width, float height){
+ofxGuiGroup * ofxDropDownList::setup(string dorpDownListName, vector<string> itemName, int index, float width, float height){
     b.x = 0;
 	b.y = 0;
 	b.width = width;
-	b.height = height*toggleName.size();
+	b.height = height*itemName.size();
 	bGuiActive = false;
 	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
-	for (int i = 0; i < toggleName.size(); i++){
+	for (int i = 0; i < itemName.size(); i++){
 		ofParameter<string> item;
 		string name = "item";
 		name = name + ofToString(i);
-		item.set(name,toggleName[i]);
+		item.set(name,itemName[i]);
 		items.push_back(item);
 
 		ofParameter<bool> value;
@@ -40,9 +40,11 @@ ofxDropDownList * ofxDropDownList::setup(vector<string> toggleName, int index, f
 	for (int i = 0; i < itemValue.size(); i++){
 		itemValue[i].addListener(this,&ofxDropDownList::valueChanged);
 	}
-
 	generateDraw();
-	return this;
+
+	dropDownList.setup(dorpDownListName);
+	dropDownList.add(this);
+	return &dropDownList;
 }
 
 
@@ -124,7 +126,11 @@ void ofxDropDownList::render(){
 		ofSetColor(thisTextColor);
 
 		bindFontTexture();
+#ifdef SUPPORT_FONTSTASH
+		unicodeFont.draw(getItemName(i),12, b.x+textPadding , b.y+(b.height /items.size())/2 + 4 + (i*defaultHeight));
+#else
 		textMH[i].draw();
+#endif
 		unbindFontTexture();
 
 		ofSetColor(c);
