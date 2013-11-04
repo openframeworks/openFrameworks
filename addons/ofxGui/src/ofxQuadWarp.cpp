@@ -82,7 +82,11 @@ void ofxQuadWarp::render() {
     ofSetColor(textColor);
 
     bindFontTexture();
-    textMesh.draw();
+#ifdef SUPPORT_FONTSTASH
+	unicodeFont.draw(name,12, b.x + textPadding, b.y + defaultHeight/2 + 4 + b.height-defaultHeight);
+#else
+	textMesh.draw();
+#endif
     unbindFontTexture();
 
     ofSetColor(c);

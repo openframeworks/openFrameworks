@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "ofxFontStash.h"
+
 
 
 class ofApp : public ofBaseApp{
@@ -11,6 +13,7 @@ class ofApp : public ofBaseApp{
 		void update();
 		void draw();
 		void valueChange(int & value);
+		void drawPoint(float x, float y);
 
 		void exit();
 		void keyPressed(int key);
@@ -23,13 +26,15 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
-		ofImage image;
+		ofImage image0,image1,image2;
 
 		ofxPanel gui;
 		ofxDropDownList testDropDownList;
 		ofxGuiGroup testGroup;
 		
-		ofxContent testContent;
+		ofxContent testContent0,testContent1,testContent2;
 		ofxQuadWarp testQuadWarp;
 		ofxToggle testToggle;
+
+		ofxFontStash unicodeFont;
 };

@@ -4,6 +4,9 @@
 #include "ofBaseTypes.h"
 #include "ofParameter.h"
 #include "ofTrueTypeFont.h"
+#include "ofxFontStash.h"
+#define SUPPORT_FONTSTASH
+
 
 class ofxBaseGui{
 public:
@@ -78,6 +81,10 @@ protected:
 	static ofTrueTypeFont font;
 	static bool fontLoaded;
 	static bool useTTF;
+#ifdef SUPPORT_FONTSTASH
+	static ofxFontStash unicodeFont;
+#endif
+
 	ofPtr<ofBaseFileSerializer> serializer;
 
 	static ofColor headerBackgroundColor;

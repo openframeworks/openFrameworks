@@ -2,24 +2,27 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	image.loadImage("F:/openFrameworks/examples/graphics/imageLoaderExample/bin/data/images/bikers.jpg");
+	image0.loadImage("F:/openFrameworks/examples/graphics/imageLoaderExample/bin/data/images/bikers.jpg");
+	image1.loadImage("F:/openFrameworks/examples/graphics/imageLoaderExample/bin/data/images/tdf_1972_poster.jpg");
+	image2.loadImage("F:/openFrameworks/examples/graphics/imageLoaderExample/bin/data/images/gears.gif");
 
 	vector<string> sizeArray;
-	sizeArray.push_back("hello");
-	sizeArray.push_back("welcome");
-	sizeArray.push_back("nice");
+	sizeArray.push_back("你好");
+	sizeArray.push_back("测试");
+	sizeArray.push_back("欢迎");
+
+	ofxGuiSetFont("simfang.ttf",12);
+	gui.setUseTTF(true);
+	gui.setup("UI界面");
 	
-	gui.setup();
-	
-	testGroup.setup("testDropDownList");
-	testGroup.add(testDropDownList.setup(sizeArray,2,200,18*sizeArray.size()));
-	gui.add(&testGroup);
+	gui.add(testDropDownList.setup(sizeArray,2));
 
-	gui.add(testContent.setup("imageTestConten","aaa",image,image.getWidth(),image.getHeight()));
+	gui.add(testContent0.setup("image测试0",image0,image0.getWidth(),image0.getHeight()));
+	gui.add(testContent1.setup("image测试1",image1,image1.getWidth(),image1.getHeight()/2));
+	gui.add(testContent2.setup("image测试2",image2,image2.getWidth(),image2.getHeight()));
+	gui.add(testQuadWarp.setup("image测试QuadWarp",image0,image0.getWidth(),image0.getHeight()));
 
-	gui.add(testQuadWarp.setup("imageTestQuadWarp","bbb",image,image.getWidth(),image.getHeight()));
-
-	gui.add(testToggle.setup("testToggle",false));
+	gui.add(testToggle.setup("测试",false));
 
 	testDropDownList.addListener(this,&ofApp::valueChange);
 }
@@ -35,6 +38,9 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	gui.draw();
+	if (ofxGetCurrentContent()!=NULL){
+		ofxGetCurrentContent()->draw(300,100);
+	}
 }
 
 //--------------------------------------------------------------
@@ -83,6 +89,11 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 void ofApp::valueChange(int & value){
-	string name = testDropDownList.getItemName(value);
+	string name = ofUtf8ToLocale(testDropDownList.getItemName(value));
 	cout<<name<<endl;
+}
+
+void ofApp::drawPoint(float x, float y){
+	ofSetColor(0, 255, 0, 128);	
+	ofCircle(x, y, 2);
 }

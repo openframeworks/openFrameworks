@@ -91,7 +91,11 @@ void ofxPanel::render(){
 	ofSetColor(thisTextColor);
 
 	bindFontTexture();
+#ifdef SUPPORT_FONTSTASH
+	unicodeFont.draw(getName(),12, textPadding + b.x, header / 2 + 4 + b.y);
+#else
 	textMesh.draw();
+#endif
 	unbindFontTexture();
 
 	bool texHackEnabled = ofIsTextureEdgeHackEnabled();

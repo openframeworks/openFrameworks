@@ -41,7 +41,11 @@ ofxGuiGroup * ofxDropDownList::setup(vector<string> toggleName, int index, float
 		itemValue[i].addListener(this,&ofxDropDownList::valueChanged);
 	}
 	generateDraw();
-	dropDownList.setup("dropDownList");
+#ifdef SUPPORT_FONTSTASH
+	dropDownList.setup("ÏÂÀ­²Ëµ¥");
+#else
+	dropDownList.setup("DropDownList");
+#endif
 	dropDownList.add(this);
 	return &dropDownList;
 }
@@ -125,7 +129,11 @@ void ofxDropDownList::render(){
 		ofSetColor(thisTextColor);
 
 		bindFontTexture();
+#ifdef SUPPORT_FONTSTASH
+		unicodeFont.draw(getItemName(i),12, b.x+textPadding , b.y+(b.height /items.size())/2 + 4 + (i*defaultHeight));
+#else
 		textMH[i].draw();
+#endif
 		unbindFontTexture();
 
 		ofSetColor(c);
