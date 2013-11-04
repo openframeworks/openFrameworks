@@ -86,4 +86,5 @@ void 		ofSetVerticalSync(bool bSync);
 #if defined(TARGET_WIN32)
 	HGLRC ofGetWGLContext();
 	HWND ofGetWin32Window();
+	extern void (*customWinProc)(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 #endif
