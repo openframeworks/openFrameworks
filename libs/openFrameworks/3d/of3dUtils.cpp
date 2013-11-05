@@ -3,16 +3,20 @@
 #include "of3dGraphics.h"
 
 
-ofVboMesh & cachedAxisVbo(){
-    static ofVboMesh axis(ofMesh::axis());
-    return axis;
+ofVboMesh & cachedAxesVbo(){
+    static ofVboMesh * axis = new ofVboMesh(ofMesh::axis());
+    return *axis;
 }
 
+/** @brief Draws x,y,z axes representing the current reference frame
+ *  @detail Axes are drawn in red (+x), green (+y) and blue (+z)
+ *	@param size size at which to draw the axes
+ **/
 void ofDrawAxis(float size) {
 	if (ofGetGLProgrammableRenderer()){
 		ofPushMatrix();
 		ofScale(size, size,size);
-		cachedAxisVbo().draw();
+		cachedAxesVbo().draw();
 		ofPopMatrix();
 	} else {
 		ofPushStyle();
