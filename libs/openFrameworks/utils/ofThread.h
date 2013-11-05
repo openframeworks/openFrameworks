@@ -13,7 +13,7 @@ class ofThread : protected Poco::Runnable{
 
 	public:
 	
-		ofThread();
+		ofThread(const char* threadName=nullptr);
 		virtual ~ofThread();
 	
 		/// returns true if the thread is currently running
@@ -26,6 +26,9 @@ class ofThread : protected Poco::Runnable{
 		
 		/// get the unique thread name, in the form of "Thread id#"
 		string getThreadName();
+
+		/// set the internal and OS thread name (if created)
+		void setThreadName(const string& threadName);
 		
 		/// start the thread
 		///
@@ -174,6 +177,9 @@ class ofThread : protected Poco::Runnable{
 		///
 		virtual void threadedFunction();
 		
+		///	set the OS thread name. Seperate function because [C2712] we can't use objects with try() that require unwinding (ie, std::string)
+		bool	setOSThreadName(const char* threadName);
+	
 		/// the internal mutex called through lock() & unlock()
 		ofMutex mutex;
 

@@ -8,10 +8,13 @@
 #endif
 
 //------------------------------------------------- 
-ofThread::ofThread(){ 
+ofThread::ofThread(const char* threadName){ 
    threadRunning = false;
    verbose = false;
-   thread.setName("Thread "+ofToString(thread.id()));
+   if ( threadName )
+	setThreadName( threadName );
+   else
+	setThreadName("Thread "+ofToString(thread.id()));
    blocking = true;
 } 
 
@@ -36,6 +39,57 @@ string ofThread::getThreadName(){
 	return thread.name();
 }
 
+void ofThread::setThreadName(const string& threadName){
+	//	update the internal thread name
+	thread.setName( threadName );
+
+	//	then external(os)
+	setOSThreadName( getPocoThread().getName().c_str() );
+}
+
+//------------------------------------------------- 
+bool ofThread::setOSThreadName(const char* name){
+
+	//	if the thread has been created, update the OS thread name
+	//	in win32, this name will be reflected in visual studio debugger
+	//	http://msdn.microsoft.com/en-gb/library/xcb2z8hs.aspx
+#if defined(TARGET_WIN32)
+	const DWORD MS_VC_EXCEPTION=0x406D1388;
+	#pragma pack(push,8)
+	typedef struct tagTHREADNAME_INFO
+	{
+		DWORD dwType; // Must be 0x1000.
+		LPCSTR szName; // Pointer to name (in user addr space).
+		DWORD dwThreadID; // Thread ID (-1=caller thread).
+		DWORD dwFlags; // Reserved for future use, must be zero.
+	} THREADNAME_INFO;
+	#pragma pack(pop)
+
+	THREADNAME_INFO info;
+	info.dwType = 0x1000;
+	info.szName = name;
+	info.dwThreadID = getPocoThread().tid();
+	info.dwFlags = 0;
+
+	//	this will fail if the OS thread hasn't started yet
+	if ( info.dwThreadID == 0 )
+		return false;
+	
+	__try
+	{
+		RaiseException( MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), (ULONG_PTR*)&info );
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		return false;
+	}
+	return true;
+#else
+	return false;
+#endif
+}
+
+
 //------------------------------------------------- 
 void ofThread::startThread(bool blocking, bool verbose){
 
@@ -59,6 +113,9 @@ void ofThread::startThread(bool blocking, bool verbose){
 	}
 
 	thread.start(*this);
+
+	//	re-apply threadname after it's been created to set the OS threadname
+	setThreadName( getThreadName() );
 } 
 
 //------------------------------------------------- 
