@@ -97,7 +97,9 @@ void ofxDropDownList::generateDraw(){
 		ofPath fg;
 		fg.clear();
 		if(itemValue[i]){
-			value = i;
+			if (value != i){
+				value = i;
+			}
 			fg.setFilled(true);
 			fg.setFillColor(thisFillColor);
 		}else{
