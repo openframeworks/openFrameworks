@@ -159,7 +159,8 @@ public:
     static ofMesh cylinder(float radius, float height, int radiusSegments=12, int heightSegments=6, int numCapSegments=2, bool bCapped = true, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh cone(float radius, float height, int radiusSegments=12, int heightSegments=6, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh box(float width, float height, float depth, int resX=2, int resY=2, int resZ=2);
-    
+    static ofMesh axis(float size=1.0);
+	
 	virtual void draw(ofPolyRenderMode renderType);
 
 private:
