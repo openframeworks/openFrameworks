@@ -348,18 +348,16 @@ int ofXml::getNumSiblings()
 {
     Poco::XML::Element *currentPosition = NULL;
     int numSiblings = 0;
-	if(!element){
+	if(!element) {
         return 0;
-    }else
-    {
+    }else {
          currentPosition = element;
     }
     if(!setToParent()) return 0;
     numSiblings = getNumChildren();
     if (numSiblings-1>0) {
         numSiblings-=1; //don't count ourselves
-    }else
-    {
+    }else {
         numSiblings = 0;
     }
     element = currentPosition;
