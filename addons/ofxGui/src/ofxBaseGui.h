@@ -5,7 +5,7 @@
 #include "ofParameter.h"
 #include "ofTrueTypeFont.h"
 
-#define SUPPORT_FONTSTASH
+//#define SUPPORT_FONTSTASH
 #ifdef SUPPORT_FONTSTASH
 #include "ofxFontStash.h"
 #endif

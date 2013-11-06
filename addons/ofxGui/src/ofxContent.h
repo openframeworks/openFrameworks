@@ -48,5 +48,6 @@ protected:
 public:
 	static ofBaseDraws * getCurrentContent();
 	static ofBaseDraws * contentSelect;
+	static string nameSelect;
 	ofParameter<bool> value;
 };
