@@ -1,8 +1,8 @@
 #include "ofxContent.h"
 #include "ofGraphics.h"
 
-ofBaseDraws* ofxContent::contentSelect = NULL;
-
+ofBaseDraws * ofxContent::contentSelect = NULL;
+string ofxContent::nameSelect = "";
 ofBaseDraws* ofxGetCurrentContent(){
 	return ofxContent::getCurrentContent();
 }
@@ -18,11 +18,10 @@ ofxContent::~ofxContent(){
 ofxContent* ofxContent::setup(string contentName, ofBaseDraws &_content, float width, float height) {
 	b.width  = defaultWidth;
 	b.height = height * (defaultWidth/width) + defaultHeight;
-	name = contentName;
-	content = &_content;
-	//contentSelect = &_content;
+	this->name = contentName;
+	this->content = &_content;
 	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
-	value.set("select",false);
+	value.set(contentName,false);
 	value.addListener(this,&ofxContent::valueChanged);
 	generateDraw();
     return this;
@@ -49,8 +48,9 @@ void ofxContent::generateDraw(){
 }
 
 void ofxContent::render() {
+	value = (nameSelect == this->name);
 	ofColor c = ofGetStyle().color;
-	content->draw(b.x , b.y,b.width,b.height - 18);
+	this->content->draw(b.x , b.y,b.width,b.height - 18);
 	bg.draw();
 	fg.draw();
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
@@ -77,23 +77,21 @@ ofAbstractParameter & ofxContent::getParameter(){
 }
 
 void ofxContent::valueChanged(bool & value){
+	
 	generateDraw();
 }
 
 bool ofxContent::mousePressed(ofMouseEventArgs & args){
-	value = false;
-
-	if (contentSelect == content){
-		value = true;
-	}
 	if (b.inside(args.x,args.y)){
 		if (args.button == 0){
-			contentSelect = content;
-			value = true;
+			contentSelect = this->content;
+			nameSelect = name;
 		}
+
 	    if (args.button == 2){
-			if (contentSelect == content){
+			if (contentSelect == this->content){
 				contentSelect = NULL;
+				nameSelect = "";
 			}
 		}
 	}

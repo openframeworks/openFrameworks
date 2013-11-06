@@ -96,7 +96,7 @@ void ofxQuadWarp::render() {
 }
 
 ofAbstractParameter & ofxQuadWarp::getParameter(){
-	dstQuadPosGroup.setName("quadRevise");
+	dstQuadPosGroup.setName(name);
 	dstQuadPosGroup.add(dstQuadPos[0]);
 	dstQuadPosGroup.add(dstQuadPos[1]);
 	dstQuadPosGroup.add(dstQuadPos[2]);
@@ -133,15 +133,18 @@ bool ofxQuadWarp::mouseDragged(ofMouseEventArgs & args){
 }
 
 bool ofxQuadWarp::mouseReleased(ofMouseEventArgs & args){
-	//if (ofDistSquared(args.x, args.y,quadPos[0]->x+b.x,quadPos[0]->y+b.y)<MOUSE_DISTANCE * MOUSE_DISTANCE && (ofGetElapsedTimef() -lastMousePressTime)<10.0f ){
-	//	switch (0){
-	//	case 0:  dstQuadPos[0] = ofVec3f(0,0);                                  break;
-	//	case 1:  dstQuadPos[1] = ofVec3f(0+b.width,0);                          break;
-	//	case 2:  dstQuadPos[2] = ofVec3f(0+b.width,0+b.height-defaultHeight);   break;
-	//	case 3:  dstQuadPos[3] = ofVec3f(0,0+b.height-defaultHeight);           break;
-	//	}
-	//}
-	//lastMousePressTime = ofGetElapsedTimef();
+	for (int i = 0; i < 4; i++){
+		if (ofDistSquared(args.x, args.y,dstQuadPos[i]->x+b.x,dstQuadPos[i]->y+b.y)<MOUSE_DISTANCE * MOUSE_DISTANCE && (ofGetElapsedTimef() -lastMousePressTime)<1.0f ){
+				switch (i){
+				case 0:  dstQuadPos[0] = ofVec3f(0,0);                                  break;
+				case 1:  dstQuadPos[1] = ofVec3f(0+b.width,0);                          break;
+				case 2:  dstQuadPos[2] = ofVec3f(0+b.width,0+b.height-defaultHeight);   break;
+				case 3:  dstQuadPos[3] = ofVec3f(0,0+b.height-defaultHeight);           break;
+				}
+		}
+	}
+	lastMousePressTime = ofGetElapsedTimef();
+
 	return false;
 }
 
@@ -185,6 +188,7 @@ void ofxQuadWarp::InitQuadPos(){
 }
 
 ofVec3f * ofxQuadWarp::getDstQuadPos(){ 
+	_dstQuadPos = new ofVec3f[4];
 	_dstQuadPos[0] = dstQuadPos[0];
 	_dstQuadPos[1] = dstQuadPos[1];
 	_dstQuadPos[2] = dstQuadPos[2];
