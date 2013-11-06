@@ -104,6 +104,8 @@ void ofXml::deserialize(ofAbstractParameter & parameter){
 
 }
 
+
+
 int ofXml::getNumChildren() const
 {
 	if(!element) return 0;
@@ -342,6 +344,28 @@ bool ofXml::setToParent(int numLevelsUp) {
     
 }
 
+int ofXml::getNumSiblings()
+{
+    Poco::XML::Element *currentPosition = NULL;
+    int numSiblings = 0;
+	if(!element){
+        return 0;
+    }else
+    {
+         currentPosition = element;
+    }
+    if(!setToParent()) return 0;
+    numSiblings = getNumChildren();
+    if (numSiblings-1>0) {
+        numSiblings-=1; //don't count ourselves
+    }else
+    {
+        numSiblings = 0;
+    }
+    element = currentPosition;
+    return numSiblings;
+}
+
 bool ofXml::setToSibling()
 {
     Poco::XML::Element *node;
@@ -362,6 +386,29 @@ bool ofXml::setToSibling()
     }
     
     // we're cool
+    element = node;
+    return true;
+}
+
+bool ofXml::setToNextSibling()
+{
+    Poco::XML::Element *node;
+    if(element) {
+        node = (Poco::XML::Element*) element->nextSibling();
+    } else {
+        ofLogWarning("ofXml") << "nextSibling(): no element set yet";
+        return false;
+    }
+    
+    // empty space in the XML doc is treated as text nodes. blerg.
+    while(node && node->nodeType() == Poco::XML::Node::TEXT_NODE) {
+        node = (Poco::XML::Element*) node->nextSibling();
+    }
+    
+    if(!node || node->nodeType() == Poco::XML::Node::TEXT_NODE) {
+        return false;
+    }
+    
     element = node;
     return true;
 }
