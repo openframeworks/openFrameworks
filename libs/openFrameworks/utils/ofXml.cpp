@@ -104,8 +104,6 @@ void ofXml::deserialize(ofAbstractParameter & parameter){
 
 }
 
-
-
 int ofXml::getNumChildren() const
 {
 	if(!element) return 0;
