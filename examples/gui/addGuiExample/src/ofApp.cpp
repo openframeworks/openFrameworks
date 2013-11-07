@@ -11,18 +11,17 @@ void ofApp::setup(){
 	sizeArray.push_back("测试");
 	sizeArray.push_back("欢迎");
 
-	ofxGuiSetFont("simfang.ttf",12);
+	ofxGuiSetFont("simfang.ttf",20);
+	ofxGuiSetDefaultWidth(300);
+	ofxGuiSetDefaultHeight(30);
 	gui.setUseTTF(true);
 	gui.setup("UI界面");
-	
+	gui.add(testToggle.setup("测试",false));
 	gui.add(testDropDownList.setup("测试DropDownList",sizeArray,2));
-
 	gui.add(testContent0.setup("image测试0",image0,image0.getWidth(),image0.getHeight()));
 	gui.add(testContent1.setup("image测试1",image1,image1.getWidth(),image1.getHeight()/2));
 	gui.add(testContent2.setup("image测试2",image2,image2.getWidth(),image2.getHeight()));
 	gui.add(testQuadWarp.setup("image测试QuadWarp",image0,image0.getWidth(),image0.getHeight()));
-
-	gui.add(testToggle.setup("测试",false));
 
 	testDropDownList.addListener(this,&ofApp::valueChange);
 }
@@ -93,7 +92,3 @@ void ofApp::valueChange(int & value){
 	cout<<name<<endl;
 }
 
-void ofApp::drawPoint(float x, float y){
-	ofSetColor(0, 255, 0, 128);	
-	ofCircle(x, y, 2);
-}

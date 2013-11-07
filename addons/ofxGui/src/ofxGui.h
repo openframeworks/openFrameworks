@@ -10,7 +10,7 @@
 #include "ofxDropDownList.h"
 #include "ofxQuadWarp.h"
 
-void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
+void ofxGuiSetFont(const string & fontPath,int fontsize = 12, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
 void ofxGuiSetBitmapFont();
 
 void ofxGuiSetHeaderColor(const ofColor & color);

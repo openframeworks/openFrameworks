@@ -130,7 +130,7 @@ void ofxDropDownList::render(){
 
 		bindFontTexture();
 #ifdef SUPPORT_FONTSTASH
-		unicodeFont.draw(getItemName(i),12, b.x+textPadding , b.y+(b.height /items.size())/2 + 4 + (i*defaultHeight));
+		unicodeFont.draw(getItemName(i),fontSize, b.x+textPadding , b.y+(b.height /items.size())/2 + fontSize/2 - (2 * (fontSize/12)) + (i*defaultHeight));
 #else
 		textMH[i].draw();
 #endif
