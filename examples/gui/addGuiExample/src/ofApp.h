@@ -13,7 +13,6 @@ class ofApp : public ofBaseApp{
 		void update();
 		void draw();
 		void valueChange(int & value);
-		void drawPoint(float x, float y);
 
 		void exit();
 		void keyPressed(int key);

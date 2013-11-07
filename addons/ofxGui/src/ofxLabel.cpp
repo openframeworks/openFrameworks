@@ -55,7 +55,7 @@ void ofxLabel::render() {
     if(!getName().empty()){
     	name = getName() + ": ";
     }
-	unicodeFont.draw(name + (string)label,12, b.x + textPadding, b.y + b.height / 2 + 4);
+	unicodeFont.draw(name + (string)label,fontSize, b.x + textPadding, b.y + b.height / 2 + fontSize/2 - (2 * (fontSize/12)));
 #else
 	textMesh.draw();
 #endif

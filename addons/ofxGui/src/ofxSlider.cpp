@@ -143,8 +143,8 @@ void ofxSlider<Type>::render(){
 	bindFontTexture();
 #ifdef SUPPORT_FONTSTASH
 	string valStr = ofToString((int)value);
-	unicodeFont.draw(getName(),12, b.x + textPadding, b.y + b.height / 2 + 4);
-	unicodeFont.draw(valStr,12, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4);
+	unicodeFont.draw(getName(),fontSize, b.x + textPadding, b.y + b.height / 2 + fontSize/2 - (2 * (fontSize/12)));
+	unicodeFont.draw(valStr,fontSize, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + fontSize/2 - (2 * (fontSize/12)));
 #else
 	textMesh.draw();
 #endif

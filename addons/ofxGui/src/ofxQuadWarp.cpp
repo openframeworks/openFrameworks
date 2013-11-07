@@ -83,7 +83,7 @@ void ofxQuadWarp::render() {
 
     bindFontTexture();
 #ifdef SUPPORT_FONTSTASH
-	unicodeFont.draw(name,12, b.x + textPadding, b.y + defaultHeight/2 + 4 + b.height-defaultHeight);
+	unicodeFont.draw(name,fontSize, b.x + textPadding, b.y + b.height / 2 + fontSize/2 - (2 * (fontSize/12)) + b.height-defaultHeight);
 #else
 	textMesh.draw();
 #endif

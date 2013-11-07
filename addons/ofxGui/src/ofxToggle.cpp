@@ -112,7 +112,7 @@ void ofxToggle::render(){
 
 	bindFontTexture();
 #ifdef SUPPORT_FONTSTASH
-	unicodeFont.draw(getName(),12, b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
+	unicodeFont.draw(getName(),fontSize, b.x+textPadding + checkboxRect.width, b.y + b.height / 2 + fontSize/2 - (2 * (fontSize/12))); 
 #else
 	textMesh.draw();
 #endif

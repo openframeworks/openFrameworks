@@ -55,6 +55,7 @@ ofxBaseGui::fillColor(128);
 int ofxBaseGui::textPadding = 4;
 int ofxBaseGui::defaultWidth = 200;
 int ofxBaseGui::defaultHeight = 18;
+int ofxBaseGui::fontSize = 12;
 
 ofTrueTypeFont ofxBaseGui::font;
 
@@ -88,6 +89,7 @@ void ofxBaseGui::loadFont(string filename, int fontsize, bool _bAntiAliased, boo
 	useTTF = true;
 #ifdef SUPPORT_FONTSTASH
 	unicodeFont.setup(filename);
+	fontSize = fontsize;
 #endif
 }
 
