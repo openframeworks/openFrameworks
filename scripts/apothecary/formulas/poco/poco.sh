@@ -35,9 +35,6 @@ function prebuild() {
 		cp iPhone iPhone.orig
 		cp iPhoneSimulator iPhoneSimulator.orig
 	fi
-
-	# @tgfrerer: apply header file patches necessary for events
-	patch -d $1/include/Poco -p1 < $FORMULA_DIR/poco.headers.patch
 }
 
 # executed inside the lib src dir
@@ -169,6 +166,9 @@ function copy() {
 	cp -Rv Util/include/Poco/Util $1/include/Poco
 	cp -Rv XML/include/Poco/* $1/include/Poco
 	cp -Rv Zip/include/Poco/Zip $1/include/Poco
+
+	# @tgfrerer: apply header file patches necessary for events
+	patch -d $1/include/Poco -p1 < $FORMULA_DIR/poco.headers.patch
 
 	# libs
 	if [ "$TYPE" == "osx" ] ; then		
