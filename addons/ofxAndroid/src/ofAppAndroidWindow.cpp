@@ -363,6 +363,7 @@ Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint
     sWindowWidth  = w;
     sWindowHeight = h;
 	ofNotifySetup();
+	appSetup = true;
 }
 
 void
