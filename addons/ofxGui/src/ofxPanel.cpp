@@ -92,7 +92,7 @@ void ofxPanel::render(){
 
 	bindFontTexture();
 #ifdef SUPPORT_FONTSTASH
-	unicodeFont.draw(getName(),fontSize, textPadding + b.x, b.y + header / 2 + fontSize/2 - (2 * (fontSize/12)));
+	unicodeFont.draw(getName(),fontSize+6, textPadding + b.x, b.y + header / 2 + fontSize/2 - (2 * (fontSize/12)));
 #else
 	textMesh.draw();
 #endif
