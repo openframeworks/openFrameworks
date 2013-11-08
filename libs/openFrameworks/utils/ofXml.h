@@ -82,7 +82,8 @@ public:
     bool            setToParent(int numLevelsUp);
     bool            setToSibling();
     bool            setToPrevSibling();
-    
+    bool            setToNextSibling();
+    int             getNumSiblings();
     bool            loadFromBuffer( const string& buffer );
     
     string          toString() const;
