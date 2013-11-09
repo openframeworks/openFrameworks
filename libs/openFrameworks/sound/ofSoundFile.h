@@ -11,7 +11,7 @@
 #include "ofConstants.h"
 #include "ofSoundBuffer.h"
 
-#if defined (TARGET_OSX) || defined (TARGET_WIN32) || defined (TARGET_OS_IPHONE)
+#if defined (TARGET_OSX) || defined (TARGET_WIN32)
 	#define OF_USING_LAD // libaudiodecoder
 #elif defined (TARGET_LINUX)
 	#define OF_USING_SNDFILE // libsndfile

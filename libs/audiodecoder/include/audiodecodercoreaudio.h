@@ -52,12 +52,7 @@
 #include "apple/CAStreamBasicDescription.h"
 
 #if !defined(__COREAUDIO_USE_FLAT_INCLUDES__)
-#include "TargetConditionals.h"
-#if TARGET_OS_IPHONE
-#include <CoreFoundation/CoreFoundation.h>
-#else
 #include <CoreServices/CoreServices.h>
-#endif
 #include <CoreAudio/CoreAudioTypes.h>
 #include <AudioToolbox/AudioFile.h>
 #include <AudioToolbox/AudioFormat.h>
@@ -66,6 +61,7 @@
 #include "AudioFile.h"
 #include "AudioFormat.h"
 #endif
+
 #include <fcntl.h>
 
 class AudioDecoderCoreAudio : public AudioDecoderBase {
