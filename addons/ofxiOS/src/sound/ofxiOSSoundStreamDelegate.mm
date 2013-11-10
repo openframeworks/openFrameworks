@@ -1,7 +1,7 @@
 //
-//  ofxiOSSoundStreamDelegate.m
-//  Created by Lukasz Karluk on 14/06/13.
-//  http://julapy.com/blog
+// ofxiOSSoundStreamDelegate.m
+// Created by Lukasz Karluk on 14/06/13.
+// http://julapy.com/blog
 //
 
 #import "ofxiOSSoundStreamDelegate.h"
@@ -14,6 +14,8 @@
     if(self) {
         soundInputApp = NULL;
         soundOutputApp = NULL;
+		outputBuffer = new ofSoundBuffer();
+		inputBuffer = new ofSoundBuffer();
     }
     return self;
 }
@@ -21,6 +23,8 @@
 - (void)dealloc {
     soundInputApp = NULL;
     soundOutputApp = NULL;
+	outputBuffer = NULL;
+	inputBuffer = NULL;
     [super dealloc];
 }
 
@@ -39,6 +43,12 @@
     }
     return self;
 }
+- (void)setInput:(ofBaseSoundInput *)input{
+	soundInputApp = input;
+}
+- (void)setOutput:(ofBaseSoundOutput *)output{
+	soundOutputApp = output;
+}
 
 - (void)soundStreamRequested:(id)sender
                       output:(float *)output
@@ -47,7 +57,22 @@
     if(soundOutputApp == NULL) {
         return;
     }
-    soundOutputApp->audioOut(output, bufferSize, numOfChannels);
+    //soundOutputApp->audioOut(output, bufferSize, numOfChannels);
+	outputBuffer->resize(bufferSize*numOfChannels);
+	soundOutputApp->audioOut(*outputBuffer);
+	
+	outputBuffer->setNumChannels(numOfChannels);
+	outputBuffer->copyTo(output, bufferSize, numOfChannels,0);
+	//outputBuffer->set(0);
+	/*
+	 float mm = 0;
+	 for (int i = 0; i < bufferSize; i++) {
+	 if (mm < (*outputBuffer)[i]) {
+	 mm = (*outputBuffer)[i];
+	 }
+	 }
+	 cout << mm << ", ";
+	 //*/
 }
 
 - (void)soundStreamReceived:(id)sender
