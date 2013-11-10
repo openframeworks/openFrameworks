@@ -1,7 +1,7 @@
 //
-// SoundInputStream.h
-// Created by Lukasz Karluk on 13/06/13.
-// http://julapy.com/blog
+//  SoundInputStream.h
+//  Created by Lukasz Karluk on 13/06/13.
+//  http://julapy.com/blog
 //
 
 #include "ofxiOSSoundStream.h"
@@ -16,7 +16,7 @@
 ofxiOSSoundStream::ofxiOSSoundStream() {
     soundInputStream = NULL;
     soundOutputStream = NULL;
-	
+
 	soundInputPtr = NULL;
 	soundOutputPtr = NULL;
     
@@ -141,7 +141,7 @@ void ofxiOSSoundStream::close(){
         [(SoundOutputStream *)soundOutputStream release];
         soundOutputStream = NULL;
     }
-	
+        
     numOfInChannels = 0;
     numOfOutChannels = 0;
     sampleRate = 0;
@@ -184,7 +184,7 @@ bool ofxiOSSoundStream::setMixWithOtherApps(bool bMix){
 	AVAudioSession * audioSession = [AVAudioSession sharedInstance];
 	bool success = false;
 	
-#ifdef __IPHONE_6_0
+    #ifdef __IPHONE_6_0
 	if(bMix) {
 		if([audioSession respondsToSelector:@selector(setCategory:withOptions:error:)]) {
 			if([audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
@@ -194,17 +194,17 @@ bool ofxiOSSoundStream::setMixWithOtherApps(bool bMix){
 			}
 		}
 	} else {
-#endif
-		
+    #endif
+    
 		// this is the default category + options setup
 		// Note: using a sound input stream will set the category to PlayAndRecord
 		if([audioSession setCategory:AVAudioSessionCategorySoloAmbient error:nil]) {
 			success = true;
 		}
         
-#ifdef __IPHONE_6_0
+    #ifdef __IPHONE_6_0
 	}
-#endif
+    #endif
     
 	if(!success) {
 		ofLogError("ofxiOSSoundStream") << "setMixWithOtherApps(): couldn't set app audio session category";

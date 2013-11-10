@@ -1,7 +1,7 @@
 //
-// ofxiOSSoundStreamDelegate.m
-// Created by Lukasz Karluk on 14/06/13.
-// http://julapy.com/blog
+//  ofxiOSSoundStreamDelegate.m
+//  Created by Lukasz Karluk on 14/06/13.
+//  http://julapy.com/blog
 //
 
 #import "ofxiOSSoundStreamDelegate.h"
@@ -63,16 +63,7 @@
 	
 	outputBuffer->setNumChannels(numOfChannels);
 	outputBuffer->copyTo(output, bufferSize, numOfChannels,0);
-	//outputBuffer->set(0);
-	/*
-	 float mm = 0;
-	 for (int i = 0; i < bufferSize; i++) {
-	 if (mm < (*outputBuffer)[i]) {
-	 mm = (*outputBuffer)[i];
-	 }
-	 }
-	 cout << mm << ", ";
-	 //*/
+
 }
 
 - (void)soundStreamReceived:(id)sender
