@@ -78,8 +78,6 @@ svgtiny_code svgtiny_parse_linear_gradient(Poco::XML::Element *linear,
 {
 	unsigned int i = 0;
     
-	Poco::XML::Element *stop;
-	Poco::XML::Attr *attr;
 	//Poco::XML::Attribute *href = xmlHasProp(linear, (const xmlChar *) "href");
 	//if (href && href->children->content[0] == '#')
 	//	svgtiny_find_gradient((const char *) href->children->content
@@ -184,9 +182,6 @@ svgtiny_code svgtiny_parse_linear_gradient(Poco::XML::Element *linear,
     Poco::XML::Element *pNode;
     for( pNode = (Poco::XML::Element*) linear->firstChild(); pNode; pNode = (Poco::XML::Element*) pNode->nextSibling() )
     {
-        
-		svgtiny_code code = svgtiny_OK;
-        
         //pNode = (Poco::XML::Element *) cnl->item(i);
         
         std::cout << pNode->localName() << std::endl;

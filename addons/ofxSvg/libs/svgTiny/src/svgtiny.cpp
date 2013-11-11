@@ -539,8 +539,6 @@ svgtiny_code svgtiny_parse_circle(Poco::XML::Element *circle,
 {
 	float x = 0, y = 0, r = -1;
 	float *p;
-	//xmlAttr *attr;
-    Poco::XML::Attr *attr;
 
 	//for (attr = circle->properties; attr; attr = attr->next) {
     //for( attr = circle->FirstAttribute(); attr; attr = attr->Next() ) {
@@ -630,7 +628,6 @@ svgtiny_code svgtiny_parse_ellipse(Poco::XML::Element *ellipse,
 {
 	float x = 0, y = 0, rx = -1, ry = -1;
 	float *p;
-	Poco::XML::Attr *attr;
 
 	//for (attr = ellipse->properties; attr; attr = attr->next) {
     //for( attr = ellipse->FirstAttribute(); attr; attr = attr->Next() ) {
@@ -722,8 +719,6 @@ svgtiny_code svgtiny_parse_line(Poco::XML::Element *line,
 {
 	float x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 	float *p;
-	//xmlAttr *attr;
-    Poco::XML::Attr *attr;
 
 	//for (attr = line->properties; attr; attr = attr->next) {
     //for( attr = line->FirstAttribute(); attr; attr = attr->Next() ) {
@@ -913,9 +908,6 @@ void svgtiny_parse_position_attributes(const Poco::XML::Element *node,
 		const struct svgtiny_parse_state state,
 		float *x, float *y, float *width, float *height)
 {
-	//xmlAttr *attr;
-    const Poco::XML::Attr *attr;
-
 	*x = 0;
 	*y = 0;
 	*width = state.viewport_width;
@@ -1131,9 +1123,6 @@ void svgtiny_parse_color(const char *s, svgtiny_colour *c,
 void svgtiny_parse_font_attributes(const Poco::XML::Element *node,
 		struct svgtiny_parse_state *state)
 {
-	//const xmlAttr *attr;
-    const Poco::XML::Attr *attr;
-
 	UNUSED(state);
 
 	//for (attr = node->properties; attr; attr = attr->next) {
