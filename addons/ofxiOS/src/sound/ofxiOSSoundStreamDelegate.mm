@@ -14,6 +14,8 @@
     if(self) {
         soundInputApp = NULL;
         soundOutputApp = NULL;
+		outputBuffer = new ofSoundBuffer();
+		inputBuffer = new ofSoundBuffer();
     }
     return self;
 }
@@ -21,6 +23,8 @@
 - (void)dealloc {
     soundInputApp = NULL;
     soundOutputApp = NULL;
+	outputBuffer = NULL;
+	inputBuffer = NULL;
     [super dealloc];
 }
 
@@ -39,6 +43,12 @@
     }
     return self;
 }
+- (void)setInput:(ofBaseSoundInput *)input{
+	soundInputApp = input;
+}
+- (void)setOutput:(ofBaseSoundOutput *)output{
+	soundOutputApp = output;
+}
 
 - (void)soundStreamRequested:(id)sender
                       output:(float *)output
@@ -47,7 +57,13 @@
     if(soundOutputApp == NULL) {
         return;
     }
-    soundOutputApp->audioOut(output, bufferSize, numOfChannels);
+    //soundOutputApp->audioOut(output, bufferSize, numOfChannels);
+	outputBuffer->resize(bufferSize*numOfChannels);
+	soundOutputApp->audioOut(*outputBuffer);
+	
+	outputBuffer->setNumChannels(numOfChannels);
+	outputBuffer->copyTo(output, bufferSize, numOfChannels,0);
+
 }
 
 - (void)soundStreamReceived:(id)sender
