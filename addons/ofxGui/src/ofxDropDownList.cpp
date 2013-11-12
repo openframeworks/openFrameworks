@@ -191,3 +191,18 @@ void ofxDropDownList::addData(ofAbstractParameter & parameter){
 string ofxDropDownList::getItemName(int index){
 	return items[index];
 }
+
+void ofxDropDownList::minimize(){
+	dropDownList.minimize();
+}
+void ofxDropDownList::maximize(){
+	dropDownList.maximize();
+}
+
+void ofxDropDownList::minimizeAll(){
+	dropDownList.minimizeAll();
+}
+
+void ofxDropDownList::maximizeAll(){
+	dropDownList.maximizeAll();
+}

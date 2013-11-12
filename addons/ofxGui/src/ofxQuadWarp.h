@@ -3,6 +3,7 @@
 #include "ofxBaseGui.h"
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
+#include "ofxGuiGroup.h"
 
 #define MOUSE_DISTANCE 3
 
@@ -12,7 +13,7 @@ public:
     ofxQuadWarp(string quadWarpName, ofBaseDraws &content,float width = defaultWidth, float height = defaultHeight);
     virtual ~ofxQuadWarp();
 
-    ofxQuadWarp * setup(string quadWarpName, ofBaseDraws &content,float width = defaultWidth, float height = defaultHeight);
+	ofxGuiGroup * setup(string quadWarpName, ofBaseDraws &content,float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!
     virtual bool mouseMoved(ofMouseEventArgs & args);
@@ -36,9 +37,13 @@ public:
 	ofVec3f * getDstQuadPos();
 	ofVec3f * getSrcQuadPos();
 
+	void minimize();
+    void maximize();
+    void minimizeAll();
+    void maximizeAll();
+
 protected:
     void render();
-    void generateDraw();
     void valueChanged(string & value);
     bool setValue(float mx, float my, bool bCheckBounds);
     ofPath bg;
@@ -57,4 +62,9 @@ protected:
 	ofBaseDraws * content;
     ofParameter<ofVec3f> * dstQuadPos;
 	ofParameterGroup dstQuadPosGroup;
+	
+	ofxGuiGroup quadWarpGroup;
+
+	float width;
+	float height;
 };

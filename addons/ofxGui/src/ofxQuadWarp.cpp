@@ -17,46 +17,39 @@ ofxQuadWarp::~ofxQuadWarp(){
    
 }
 
-
-ofxQuadWarp* ofxQuadWarp::setup(string quadWarpName, ofBaseDraws &content, float width, float height) {
+ofxGuiGroup* ofxQuadWarp::setup(string quadWarpName, ofBaseDraws &content, float width, float height) {
 	b.x = 0;
 	b.y = 0;
-	b.width  = defaultWidth;
-	b.height = height * (defaultWidth/width) + defaultHeight;
+	b.width  = defaultWidth - defaultWidth * 0.02;
+	b.height = height * (defaultWidth/width);
 	name = quadWarpName;
 	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 	this->content = &content;
+
+	this->width = b.width/this->content->getWidth();
+	this->height = b.height/this->content->getHeight();
+
 	InitQuadPos();
-	generateDraw();
-    return this;
-}
-
-void ofxQuadWarp::generateDraw(){
-	bg.clear();
-	bg.setFillColor(thisBackgroundColor);
-	bg.setFilled(true);
-	bg.rectangle(ofRectangle(b.x,b.y+b.height-defaultHeight,b.width,defaultHeight));
-
-	rectCircumscribe = ofRectangle(b.x,b.y,b.width,b.height-defaultHeight);
-
-	textMesh = getTextMesh(name, b.x + textPadding, b.y + defaultHeight/2 + 4 + b.height-defaultHeight);
+	quadWarpGroup.setup(quadWarpName);
+	quadWarpGroup.add(this);
+	return &quadWarpGroup;
 }
 
 void ofxQuadWarp::render() {
 	ofColor c = ofGetStyle().color;
-	content->draw(b.x , b.y,b.width,b.height-defaultHeight);
+	content->draw(b.x , b.y,b.width,b.height);
 	bg.draw();
 	circumscribe.clear();
 	circumscribe.setStrokeWidth(3);
 	circumscribe.setColor(ofColor(0,0,255));
-	circumscribe.moveTo(dstQuadPos[0]->x + b.x,dstQuadPos[0]->y + b.y);
-	circumscribe.lineTo(dstQuadPos[1]->x + b.x,dstQuadPos[1]->y + b.y);
-	circumscribe.moveTo(dstQuadPos[1]->x + b.x,dstQuadPos[1]->y + b.y);
-	circumscribe.lineTo(dstQuadPos[2]->x + b.x,dstQuadPos[2]->y + b.y);
-	circumscribe.moveTo(dstQuadPos[2]->x + b.x,dstQuadPos[2]->y + b.y);
-	circumscribe.lineTo(dstQuadPos[3]->x + b.x,dstQuadPos[3]->y + b.y);
-	circumscribe.moveTo(dstQuadPos[3]->x + b.x,dstQuadPos[3]->y + b.y);
-	circumscribe.lineTo(dstQuadPos[0]->x + b.x,dstQuadPos[0]->y + b.y);
+	circumscribe.moveTo(dstQuadPos[0]->x * width + b.x,dstQuadPos[0]->y * height + b.y);
+	circumscribe.lineTo(dstQuadPos[1]->x * width + b.x,dstQuadPos[1]->y * height + b.y);
+	circumscribe.moveTo(dstQuadPos[1]->x * width + b.x,dstQuadPos[1]->y * height + b.y);
+	circumscribe.lineTo(dstQuadPos[2]->x * width + b.x,dstQuadPos[2]->y * height + b.y);
+	circumscribe.moveTo(dstQuadPos[2]->x * width + b.x,dstQuadPos[2]->y * height + b.y);
+	circumscribe.lineTo(dstQuadPos[3]->x * width + b.x,dstQuadPos[3]->y * height + b.y);
+	circumscribe.moveTo(dstQuadPos[3]->x * width + b.x,dstQuadPos[3]->y * height + b.y);
+	circumscribe.lineTo(dstQuadPos[0]->x * width + b.x,dstQuadPos[0]->y * height + b.y);
 	circumscribe.draw();
 
 	for (int i = 0; i < 4; i++){
@@ -65,13 +58,13 @@ void ofxQuadWarp::render() {
 			circle.setFillColor(ofColor(255,0,0));
 			circle.setFilled(true);
 			circle.circle(0,0,4);
-			circle.draw(dstQuadPos[i]->x+b.x,dstQuadPos[i]->y+b.y);
+			circle.draw(dstQuadPos[i]->x * width + b.x, dstQuadPos[i]->y * height + b.y);
 		}else {
 			circle.clear();
 			circle.setFillColor(ofColor(0,255,0));
 			circle.setFilled(true);
 			circle.circle(0,0,3);
-			circle.draw(dstQuadPos[i]->x+b.x,dstQuadPos[i]->y+b.y);
+			circle.draw(dstQuadPos[i]->x * width + b.x, dstQuadPos[i]->y * height + b.y);
 		}
 	}
 
@@ -80,14 +73,6 @@ void ofxQuadWarp::render() {
 		ofEnableAlphaBlending();
 	}
     ofSetColor(textColor);
-
-    bindFontTexture();
-#ifdef SUPPORT_FONTSTASH
-	unicodeFont.draw(name,fontSize, b.x + textPadding, b.y + b.height / 2 + fontSize/2 - (2 * (fontSize/12)) + b.height-defaultHeight);
-#else
-	textMesh.draw();
-#endif
-    unbindFontTexture();
 
     ofSetColor(c);
 	if(blendMode!=OF_BLENDMODE_ALPHA){
@@ -123,9 +108,9 @@ bool ofxQuadWarp::mousePressed(ofMouseEventArgs & args){
 bool ofxQuadWarp::mouseDragged(ofMouseEventArgs & args){
 	for (int i = 0; i < 4; i++){
 		if (bCircle[i]){
-			ofRectangle check = ofRectangle(b.x,b.y,b.width,b.height-defaultHeight);
+			ofRectangle check = ofRectangle(b.x,b.y,b.width,b.height);
 			if (check.inside(args.x,args.y)){
-				dstQuadPos[i]= ofVec3f(args.x - b.x, args.y - b.y);
+				dstQuadPos[i]= ofVec3f((args.x - b.x)/width, (args.y - b.y)/height);
 			}
 		}
 	}
@@ -134,12 +119,12 @@ bool ofxQuadWarp::mouseDragged(ofMouseEventArgs & args){
 
 bool ofxQuadWarp::mouseReleased(ofMouseEventArgs & args){
 	for (int i = 0; i < 4; i++){
-		if (ofDistSquared(args.x, args.y,dstQuadPos[i]->x+b.x,dstQuadPos[i]->y+b.y)<MOUSE_DISTANCE * MOUSE_DISTANCE && (ofGetElapsedTimef() -lastMousePressTime)<1.0f ){
+		if (ofDistSquared(args.x, args.y,dstQuadPos[i]->x * width +b.x,dstQuadPos[i]->y * height + b.y)<MOUSE_DISTANCE * MOUSE_DISTANCE && (ofGetElapsedTimef() -lastMousePressTime)<1.0f ){
 				switch (i){
-				case 0:  dstQuadPos[0] = ofVec3f(0,0);                                  break;
-				case 1:  dstQuadPos[1] = ofVec3f(0+b.width,0);                          break;
-				case 2:  dstQuadPos[2] = ofVec3f(0+b.width,0+b.height-defaultHeight);   break;
-				case 3:  dstQuadPos[3] = ofVec3f(0,0+b.height-defaultHeight);           break;
+				case 0:  dstQuadPos[0] = ofVec3f(0,0);                                        break;
+				case 1:  dstQuadPos[1] = ofVec3f(content->getWidth(),0);                      break;
+				case 2:  dstQuadPos[2] = ofVec3f(content->getWidth(),content->getHeight());   break;
+				case 3:  dstQuadPos[3] = ofVec3f(0,content->getHeight());                     break;
 				}
 		}
 	}
@@ -159,7 +144,7 @@ bool ofxQuadWarp::setValue(float mx, float my, bool bCheck){
 	for (int i = 0; i < 4; i++)
 	{
 		if( bCheck ){
-			if(ofDistSquared(mx,my,dstQuadPos[i]->x+b.x,dstQuadPos[i]->y+b.y)<MOUSE_DISTANCE * MOUSE_DISTANCE){
+			if(ofDistSquared(mx,my,dstQuadPos[i]->x * width + b.x,dstQuadPos[i]->y * height + b.y)<MOUSE_DISTANCE * MOUSE_DISTANCE){
 				bGuiActive = true;
 			}else{
 				bGuiActive = false;
@@ -176,15 +161,15 @@ bool ofxQuadWarp::setValue(float mx, float my, bool bCheck){
 void ofxQuadWarp::InitQuadPos(){
 	dstQuadPos = new ofParameter<ofVec3f>[4];
 	dstQuadPos[0].set("dstQuadPos0",ofVec3f(0,0));
-	dstQuadPos[1].set("dstQuadPos1",ofVec3f(0+b.width,0));
-	dstQuadPos[2].set("dstQuadPos2",ofVec3f(0+b.width,0+b.height-defaultHeight));
-	dstQuadPos[3].set("dstQuadPos3",ofVec3f(0,0+b.height-defaultHeight));
+	dstQuadPos[1].set("dstQuadPos1",ofVec3f(content->getWidth(),0));
+	dstQuadPos[2].set("dstQuadPos2",ofVec3f(content->getWidth(),content->getHeight()));
+	dstQuadPos[3].set("dstQuadPos3",ofVec3f(0,content->getHeight()));
 	
 	srcQuadPos = new ofPoint[4];
 	srcQuadPos[0] = ofVec3f(0,0);
-	srcQuadPos[1] = ofVec3f(0+b.width,0);
-	srcQuadPos[2] = ofVec3f(0+b.width,0+b.height-defaultHeight);
-	srcQuadPos[3] = ofVec3f(0,0+b.height-defaultHeight);
+	srcQuadPos[1] = ofVec3f(content->getWidth(),0);
+	srcQuadPos[2] = ofVec3f(content->getWidth(),content->getHeight());
+	srcQuadPos[3] = ofVec3f(0,content->getHeight());
 }
 
 ofVec3f * ofxQuadWarp::getDstQuadPos(){ 
@@ -198,4 +183,18 @@ ofVec3f * ofxQuadWarp::getDstQuadPos(){
 
 ofVec3f * ofxQuadWarp::getSrcQuadPos(){
 	return srcQuadPos; 
+}
+
+void ofxQuadWarp::minimize(){
+	quadWarpGroup.minimize();
+}
+void ofxQuadWarp::maximize(){
+	quadWarpGroup.maximize();
+}
+
+void ofxQuadWarp::minimizeAll(){
+	quadWarpGroup.minimizeAll();
+}
+void ofxQuadWarp::maximizeAll(){
+	quadWarpGroup.maximizeAll();
 }

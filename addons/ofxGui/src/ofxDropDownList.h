@@ -32,6 +32,11 @@ public:
 	void addData(ofAbstractParameter & parameter);
 	string getItemName(int index);
 
+	void minimize();
+    void maximize();
+    void minimizeAll();
+    void maximizeAll();
+
 protected:
 	void render();
 	void generateDraw();
