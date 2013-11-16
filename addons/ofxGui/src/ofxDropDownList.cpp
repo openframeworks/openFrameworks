@@ -191,7 +191,21 @@ void ofxDropDownList::addData(ofAbstractParameter & parameter){
 string ofxDropDownList::getItemName(int index){
 	return items[index];
 }
+int ofxDropDownList::getCurItemId(){
+	return value;
+}
 
+int ofxDropDownList::getItemNum(){
+	return items.size();
+}
+
+void ofxDropDownList::setCurItemId(int id){
+	for(int i=0;i<itemValue.size();i++){
+		itemValue[i] = false;
+	}
+	itemValue[id] = true;
+	value = id;
+}
 void ofxDropDownList::minimize(){
 	dropDownList.minimize();
 }

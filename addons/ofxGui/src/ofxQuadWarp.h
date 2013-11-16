@@ -5,7 +5,7 @@
 #include "ofParameterGroup.h"
 #include "ofxGuiGroup.h"
 
-#define MOUSE_DISTANCE 3
+#define MOUSE_DISTANCE 5
 
 class ofxQuadWarp: public ofxBaseGui {
 public:

@@ -41,7 +41,7 @@ void ofxQuadWarp::render() {
 	bg.draw();
 	circumscribe.clear();
 	circumscribe.setStrokeWidth(3);
-	circumscribe.setColor(ofColor(0,0,255));
+	circumscribe.setColor(ofColor::darkRed);
 	circumscribe.moveTo(dstQuadPos[0]->x * width + b.x,dstQuadPos[0]->y * height + b.y);
 	circumscribe.lineTo(dstQuadPos[1]->x * width + b.x,dstQuadPos[1]->y * height + b.y);
 	circumscribe.moveTo(dstQuadPos[1]->x * width + b.x,dstQuadPos[1]->y * height + b.y);

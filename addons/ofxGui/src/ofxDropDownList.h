@@ -31,7 +31,10 @@ public:
 	bool setValue(float mx, float my, bool bCheck);
 	void addData(ofAbstractParameter & parameter);
 	string getItemName(int index);
-
+	int getItemNum();
+	int getCurItemId();
+	void setCurItemId(int id);
+	
 	void minimize();
     void maximize();
     void minimizeAll();
