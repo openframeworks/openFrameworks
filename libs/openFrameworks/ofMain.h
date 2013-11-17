@@ -88,3 +88,11 @@
 #include "ofMesh.h"
 #include "ofNode.h"
 
+// undef <windows.h> near & far macros
+#ifdef near
+	#undef near
+#endif
+
+#ifdef far
+	#undef far
+#endif
