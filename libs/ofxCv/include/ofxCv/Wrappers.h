@@ -355,6 +355,13 @@ cv::name(xMat, yMat, resultMat);\
 		fillPoly(dstMat, ppt, npt, 1, Scalar(255));
 	}
 	
+	template <class S, class D>
+	void flip(S& src, D& dst, int code) {
+		imitate(dst, src);
+		Mat srcMat = toCv(src), dstMat = toCv(dst);
+		cv::flip(srcMat, dstMat, code);
+	}
+	
 	// if you're doing the same rotation multiple times, it's better to precompute
 	// the displacement and use remap.
 	template <class S, class D>
