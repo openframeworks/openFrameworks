@@ -15,9 +15,9 @@ namespace ofxCv {
 
 	}
     
-    void Intrinsics::setImageSize(cv::Size imgSize) {
-        imageSize = imgSize;
-    }
+	void Intrinsics::setImageSize(cv::Size imgSize) {
+		imageSize = imgSize;
+	}
 	
 	Mat Intrinsics::getCameraMatrix() const {
 		return cameraMatrix;
