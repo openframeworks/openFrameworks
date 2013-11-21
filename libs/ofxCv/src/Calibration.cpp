@@ -14,6 +14,10 @@ namespace ofxCv {
 														fov.x, fov.y, focalLength, principalPoint, aspectRatio);
 
 	}
+    
+    void Intrinsics::setImageSize(cv::Size imgSize) {
+        imageSize = imgSize;
+    }
 	
 	Mat Intrinsics::getCameraMatrix() const {
 		return cameraMatrix;

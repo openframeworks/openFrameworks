@@ -29,6 +29,7 @@ namespace ofxCv {
 	public:
 		// kinect is 6.66mm(H) x 5.32mm(V)
 		void setup(Mat cameraMatrix, cv::Size imageSize, cv::Size sensorSize = cv::Size(0, 0));
+        void setImageSize(cv::Size imgSize);
 		Mat getCameraMatrix() const;
 		cv::Size getImageSize() const;
 		cv::Size getSensorSize() const;
