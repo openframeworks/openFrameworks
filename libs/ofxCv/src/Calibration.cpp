@@ -46,17 +46,13 @@ namespace ofxCv {
 	Point2d Intrinsics::getPrincipalPoint() const {
 		return principalPoint;
 	}
-
-	void Intrinsics::loadProjectionMatrix(float nearDist, float farDist) const {
-        loadProjectionMatrix(ofRectangle(0,0,imageSize.width, imageSize.height), nearDist, farDist);
-    }
     
-	void Intrinsics::loadProjectionMatrix(ofRectangle viewportRect, float nearDist, float farDist) const {
-		glViewport(viewportRect.x, viewportRect.y, viewportRect.width, viewportRect.height);
+	void Intrinsics::loadProjectionMatrix(float nearDist, float farDist, cv::Point2d viewportOffset) const {
+		glViewport(viewportOffset.x, viewportOffset.y, imageSize.width, imageSize.height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		float w = viewportRect.width;
-		float h = viewportRect.height;
+		float w = imageSize.width;
+		float h = imageSize.height;
 		float fx = cameraMatrix.at<double>(0, 0);
 		float fy = cameraMatrix.at<double>(1, 1);
 		float cx = principalPoint.x;
