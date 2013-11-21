@@ -55,8 +55,8 @@ namespace ofxCv {
 		glViewport(viewportRect.x, viewportRect.y, viewportRect.width, viewportRect.height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		float w = imageSize.width;
-		float h = imageSize.height;
+		float w = viewportRect.width;
+		float h = viewportRect.height;
 		float fx = cameraMatrix.at<double>(0, 0);
 		float fy = cameraMatrix.at<double>(1, 1);
 		float cx = principalPoint.x;
