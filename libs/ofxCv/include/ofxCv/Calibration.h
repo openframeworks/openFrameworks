@@ -37,6 +37,7 @@ namespace ofxCv {
 		double getAspectRatio() const;
 		Point2d getPrincipalPoint() const;
 		void loadProjectionMatrix(float nearDist = 10., float farDist = 10000.) const;
+		void loadProjectionMatrix(ofRectangle viewportRect, float nearDist = 10., float farDist = 10000.) const;
 	protected:
 		Mat cameraMatrix;
 		cv::Size imageSize, sensorSize;
