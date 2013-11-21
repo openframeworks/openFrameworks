@@ -29,6 +29,7 @@ namespace ofxCv {
 	public:
 		// kinect is 6.66mm(H) x 5.32mm(V)
 		void setup(Mat cameraMatrix, cv::Size imageSize, cv::Size sensorSize = cv::Size(0, 0));
+		void setImageSize(cv::Size imgSize);
 		Mat getCameraMatrix() const;
 		cv::Size getImageSize() const;
 		cv::Size getSensorSize() const;
@@ -36,7 +37,7 @@ namespace ofxCv {
 		double getFocalLength() const;
 		double getAspectRatio() const;
 		Point2d getPrincipalPoint() const;
-		void loadProjectionMatrix(float nearDist = 10., float farDist = 10000.) const;
+		void loadProjectionMatrix(float nearDist = 10., float farDist = 10000., cv::Point2d viewportOffset = cv::Point2d(0, 0)) const;
 	protected:
 		Mat cameraMatrix;
 		cv::Size imageSize, sensorSize;

@@ -14,6 +14,10 @@ namespace ofxCv {
 														fov.x, fov.y, focalLength, principalPoint, aspectRatio);
 
 	}
+    
+	void Intrinsics::setImageSize(cv::Size imgSize) {
+		imageSize = imgSize;
+	}
 	
 	Mat Intrinsics::getCameraMatrix() const {
 		return cameraMatrix;
@@ -42,9 +46,9 @@ namespace ofxCv {
 	Point2d Intrinsics::getPrincipalPoint() const {
 		return principalPoint;
 	}
-	
-	void Intrinsics::loadProjectionMatrix(float nearDist, float farDist) const {
-		glViewport(0, 0, imageSize.width, imageSize.height);
+    
+	void Intrinsics::loadProjectionMatrix(float nearDist, float farDist, cv::Point2d viewportOffset) const {
+		glViewport(viewportOffset.x, viewportOffset.y, imageSize.width, imageSize.height);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		float w = imageSize.width;
