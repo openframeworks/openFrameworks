@@ -74,7 +74,7 @@ class AVFoundationVideoGrabber{
 		ofPixelFormat getPixelFormat();
 	
 		unsigned char * getPixels(){
-			return pixels;
+			return pixels.getPixels();
 		}
 		float getWidth(){
 			return width;
@@ -82,9 +82,10 @@ class AVFoundationVideoGrabber{
 		float getHeight(){
 			return height;
 		}
-	
+		ofPixelsRef getPixelsRef();
 		GLint internalGlDataType;
-		unsigned char * pixels;
+	ofPixels pixels;
+	//		unsigned char * pixels;
 		bool newFrame;
 	
 		int width, height;

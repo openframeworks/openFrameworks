@@ -190,7 +190,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 			
 			unsigned int *isrc4 = (unsigned int *)CVPixelBufferGetBaseAddress(imageBuffer); 
 			
-			unsigned int *idst4 = (unsigned int *)grabberPtr->pixels;
+			unsigned int *idst4 = (unsigned int *)grabberPtr->getPixels();
 			unsigned int *ilast4 = &isrc4[width*height-1];
 			while (isrc4 < ilast4){
 				*(idst4++) = *(isrc4++);
@@ -249,7 +249,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 AVFoundationVideoGrabber::AVFoundationVideoGrabber(){
 	fps		= 60;
 	grabber = [iOSVideoGrabber alloc];
-	pixels	= NULL;
+	//pixels	= NULL;
 	
 	internalGlDataType = GL_RGB;
 	newFrame=false;
@@ -263,11 +263,17 @@ AVFoundationVideoGrabber::~AVFoundationVideoGrabber(){
 }
 		
 void AVFoundationVideoGrabber::clear(){
+	pixels.clear();
+	if( pixelsTmp != NULL ){
+		pixelsTmp = NULL;
+		free(pixelsTmp);
+	}
+	/*
 	if( pixels != NULL ){
 		free(pixels);
 		pixels = NULL;
 		free(pixelsTmp);
-	}
+	}//*/
 	//tex.clear();
 }
 
@@ -294,11 +300,14 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 		pixelsTmp	= (GLubyte *) malloc(width * height * 4);
 
 		if(internalGlDataType == GL_RGB)
-			pixels = (GLubyte *) malloc(width * height * 3);//new unsigned char[width * width * 3];//memset(pixels, 0, width*height*3);
+			pixels.allocate(width, height, 3);
+			//pixels = (GLubyte *) malloc(width * height * 3);//new unsigned char[width * width * 3];//memset(pixels, 0, width*height*3);
 		else if(internalGlDataType == GL_RGBA)
-			pixels = (GLubyte *) malloc(width * height * 4);
+			pixels.allocate(width, height, 4);
+			//pixels = (GLubyte *) malloc(width * height * 4);
 		else if(internalGlDataType == GL_BGRA)
-			pixels = (GLubyte *) malloc(width * height * 4);
+			pixels.allocate(width, height, 4);
+			//pixels = (GLubyte *) malloc(width * height * 4);
 			
 		[grabber startCapture];
 		
@@ -345,8 +354,8 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 		CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), ref);
 	}
 	else { // landscape RIGHT
-		transform = CGAffineTransformMakeTranslation(width, height);
-		transform = CGAffineTransformScale(transform, -1.0, -1.0);
+		transform = CGAffineTransformMakeTranslation(width, 0);
+		transform = CGAffineTransformScale(transform, -1.0, 1.0);
 		
 		CGContextConcatCTM(spriteContext, transform);
 		CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), ref);
@@ -357,7 +366,7 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 	if(internalGlDataType == GL_RGB)
 	{
 		unsigned int *isrc4 = (unsigned int *)pixelsTmp;
-		unsigned int *idst3 = (unsigned int *)pixels;
+		unsigned int *idst3 = (unsigned int *)pixels.getPixels();
 		unsigned int *ilast4 = &isrc4[width*height-1];
 		while (isrc4 < ilast4){
 			*(idst3++) = *(isrc4++);
@@ -365,7 +374,7 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 		}
 	}
 	else if(internalGlDataType == GL_RGBA || internalGlDataType == GL_BGRA)
-		memcpy(pixels, pixelsTmp, width*height*4);
+		memcpy(pixels.getPixels(), pixelsTmp, width*height*4);
 	
 	bHavePixelsChanged=true;
 }
@@ -418,6 +427,10 @@ ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
         return OF_PIXELS_BGRA;
     else
         return OF_PIXELS_RGB;
+}
+ofPixelsRef AVFoundationVideoGrabber::getPixelsRef() {
+	return pixels;
+	
 }
 
 #endif	// (__arm__) compile only for ARM
