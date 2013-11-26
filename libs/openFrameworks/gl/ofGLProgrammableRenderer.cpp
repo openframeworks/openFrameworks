@@ -294,8 +294,10 @@ void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, floa
 void ofGLProgrammableRenderer::setCurrentFBO(ofFbo * fbo){
 	if(fbo!=NULL){
 		matrixStack.setRenderSurface(*fbo);
+		uploadMatrices();
 	}else{
 		matrixStack.setRenderSurface(*ofGetWindowPtr());
+		uploadMatrices();
 	}
 }
 
