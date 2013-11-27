@@ -324,6 +324,7 @@ public:
 	//our openGL wrappers
 	virtual void pushMatrix(){};
 	virtual void popMatrix(){};
+	virtual ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const { return ofMatrix4x4();};
 	virtual void translate(float x, float y, float z = 0){};
 	virtual void translate(const ofPoint & p){};
 	virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1){};

@@ -564,7 +564,7 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
  *
  *	@param	matrixMode_  Which matrix mode to query
  */
-const ofMatrix4x4 & ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
+ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:
 			return matrixStack.getModelViewMatrix();
