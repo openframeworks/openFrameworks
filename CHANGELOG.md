@@ -23,6 +23,7 @@ DEPRECATIONS & REMOVALS
 CORE
 ----
 ### 3d
+    + ofGetCurrentMatrix() - returns current OpenGL matrix state (modelView-, projection- or textureMatrix) for ofGLProgrammableRenderer, ofGLRenderer.
 ### App
 ### Communication
 ### Events
