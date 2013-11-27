@@ -75,6 +75,15 @@ public:
 	}
 
 
+	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const{
+		static ofMatrix4x4 identityMatrix;
+		if (!renderers.empty()) {
+			return renderers.front()->getCurrentMatrix(matrixMode_);
+		} else {
+			ofLogWarning() << "No renderer in renderer collection, but current matrix requested. Returning identity matrix.";
+			return identityMatrix;
+		}
+	};
 
 	//--------------------------------------------
 	// transformations
