@@ -83,6 +83,9 @@ public:
 	void loadMatrix (const float * m);
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
+
+	// read-only access to current matrices
+	const ofMatrix4x4 & getCurrentMatrix(ofMatrixMode matrixMode_) const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
