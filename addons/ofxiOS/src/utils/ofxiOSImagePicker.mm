@@ -210,7 +210,7 @@ void ofxiOSImagePicker::saveImage()
     [_imagePicker.view removeFromSuperview];
     [_imagePicker release];
     
-    //bug fixed,for "On iPad, UIImagePickerController must be presented via UIPopoverController"
+
     if(popoverController)
     {
         [popoverController release];
@@ -377,11 +377,11 @@ void ofxiOSImagePicker::saveImage()
 	if(photoLibraryIsAvailable) {
 	    _imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
 	    
-	    //bug fixed,for "On iPad, UIImagePickerController must be presented via UIPopoverController"
+
 	    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
             	UIPopoverController *popover = [[UIPopoverController alloc] initWithContentViewController:_imagePicker];
             	
-            	//u can change this rect
+            	//change this rect
             	int w = [UIScreen mainScreen].bounds.size.width;
             	int h = [UIScreen mainScreen].bounds.size.height;
             
@@ -412,7 +412,7 @@ void ofxiOSImagePicker::saveImage()
 
 //--------------------------------------------------------------
 - (void)close {
-	//bug fixed,for "On iPad, UIImagePickerController must be presented via UIPopoverController"
+
 	if(photoLibraryIsAvailable)
 	{
         	if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
@@ -420,9 +420,6 @@ void ofxiOSImagePicker::saveImage()
             		{
                 		[popoverController dismissPopoverAnimated:YES];
             		}
-        	}
-        	else{
-            		//[_imagePicker.parentViewController dismissModalViewControllerAnimated:YES];
         	}
     	}
     	
