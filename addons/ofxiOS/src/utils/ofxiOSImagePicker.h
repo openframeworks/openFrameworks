@@ -35,7 +35,7 @@ public:
 {
 
 	UIImagePickerController*			_imagePicker;
-	UIPopoverController *                           popoverController;//bug fixed ,for iPad crash
+	UIPopoverController *                           popoverController;
 	OverlayView *						overlay;
 	UIImage*							_image;
 	bool								cameraIsAvailable;
