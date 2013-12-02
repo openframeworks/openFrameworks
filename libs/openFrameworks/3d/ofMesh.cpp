@@ -2484,7 +2484,39 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 }
 
 
+//--------------------------------------------------------------
 
+/// Returns an ofMesh representing an XYZ coordinate system.
+ofMesh ofMesh::axis( float size ) {
+    ofMesh mesh;
+
+    // mesh only available as wireframe //
+	mesh.setMode(OF_PRIMITIVE_LINES);
+
+	ofVec3f vertices[6] = {
+		ofVec3f(0,0,0),
+		ofVec3f(size,0,0),
+		ofVec3f(0,0,0),
+		ofVec3f(0,size,0),
+		ofVec3f(0,0,0),
+		ofVec3f(0,0,size),
+	};
+	ofFloatColor colors[6] = {
+		ofColor::red,
+		ofColor::red,
+		ofColor::green,
+		ofColor::green,
+		ofColor::blue,
+		ofColor::blue,
+	};
+	
+	mesh.addVertices(vertices, 6);
+	mesh.addColors(colors, 6);
+	
+	return mesh;
+}
+
+//--------------------------------------------------------------
 
 
 ofMeshFace::ofMeshFace()

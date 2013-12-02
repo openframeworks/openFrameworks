@@ -294,8 +294,10 @@ void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, floa
 void ofGLProgrammableRenderer::setCurrentFBO(ofFbo * fbo){
 	if(fbo!=NULL){
 		matrixStack.setRenderSurface(*fbo);
+		uploadMatrices();
 	}else{
 		matrixStack.setRenderSurface(*ofGetWindowPtr());
+		uploadMatrices();
 	}
 }
 
@@ -1681,7 +1683,7 @@ void ofGLProgrammableRenderer::setup(){
 		defaultUniqueShader().setupShaderFromSource(GL_FRAGMENT_SHADER,uniqueFragmentShader);
 		defaultUniqueShader().bindDefaults();
 		defaultUniqueShader().linkProgram();
-
+		beginDefaultShader();
 	}else{
 		defaultTexColor().setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
 		defaultTex2DColor().setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
