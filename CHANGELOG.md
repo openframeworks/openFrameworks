@@ -27,8 +27,11 @@ CORE
 ### Communication
 ### Events
 ### Graphics
+	/ ofCairoRenderer: fix for moveTo when drawing ofPaths
 ### Math
+        / ofMatrix3x3: fix incorrect multiplication
 ### GL
+	/ ofMaterial: fixed back emmisive material
 ### Sound
 ### Types
 ### Utils
@@ -39,6 +42,8 @@ CORE
 PLATFORM SPECIFIC
 -----------------
 ### Android
+	/ fix for texture reload
+	/ change to work with NDK r9b by default
 ### Mac OS X
 ### iOS
 ### Linux

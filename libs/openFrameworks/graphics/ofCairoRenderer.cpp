@@ -414,7 +414,7 @@ void ofCairoRenderer::draw(ofPath::Command & command){
 	switch(command.type){
 	case ofPath::Command::moveTo:
 		curvePoints.clear();
-		cairo_new_sub_path(cr);
+		cairo_move_to(cr,command.to.x,command.to.y);
 		break;
 
 	case ofPath::Command::lineTo:
@@ -1034,6 +1034,7 @@ void ofCairoRenderer::clear(float r, float g, float b, float a) {
 	if(!surface || ! cr) return;
 	cairo_set_source_rgba(cr,r/255., g/255., b/255., a/255.);
 	cairo_paint(cr);
+
 }
 
 //----------------------------------------------------------
