@@ -750,10 +750,12 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enablePointSprites(){
+	glEnable(GL_PROGRAM_POINT_SIZE);
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disablePointSprites(){
+	glDisable(GL_PROGRAM_POINT_SIZE);
 }
 
 
