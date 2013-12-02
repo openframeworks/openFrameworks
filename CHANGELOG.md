@@ -261,7 +261,7 @@ PLATFORM SPECIFIC
         / ofxiOS-Info.plist no longer being copied into project bundle
         / deprecated ofxiPhoneSetOrientation and ofxiPhoneGetOrientation
         / deprecated ofxOpenALSoundPlayer
-        + ofxiOSSetNetworkActivityIndicatorVisibililty(bool), ofxiOSGetNetworkActivityIndicatorVisibility()
+        + ofxiOSSetNetworkActivityIndicatorVisibility(bool), ofxiOSGetNetworkActivityIndicatorVisibility()
 
 ### Linux
         / Add glfw3.0 for Linux 32bit

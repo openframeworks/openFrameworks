@@ -195,7 +195,7 @@ string ofxiOSGetClipboardString();
 
 // utility function for network activity indicator on status bar
 
-void ofxiOSSetNetworkActivityIndicatorVisibililty(bool bVisible);
+void ofxiOSSetNetworkActivityIndicatorVisibility(bool bVisible);
 bool ofxiOSGetNetworkActivityIndicatorVisibility();
 
 //-------------------------------------------------------------------------------

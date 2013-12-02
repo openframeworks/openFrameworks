@@ -514,7 +514,7 @@ void ofxiOSScreenGrab(id delegate) {
 
 // show network activity indicator on status bar
 
-void ofxiOSSetNetworkActivityIndicatorVisibililty(bool bVisible) {
+void ofxiOSSetNetworkActivityIndicatorVisibility(bool bVisible) {
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:(BOOL)bVisible];
 }
 
