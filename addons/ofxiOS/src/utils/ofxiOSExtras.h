@@ -193,6 +193,11 @@ void ofxiOSLaunchBrowser(string url);
 void ofxiOSSetClipboardString(string clipboardString);
 string ofxiOSGetClipboardString();
 
+// utility function for network activity indicator on status bar
+
+void ofxiOSSetNetworkActivityIndicatorVisibility(bool bVisible);
+bool ofxiOSGetNetworkActivityIndicatorVisibility();
+
 //-------------------------------------------------------------------------------
 // backwards compatibility
 //

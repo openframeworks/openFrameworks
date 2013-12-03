@@ -514,4 +514,12 @@ void ofxiOSScreenGrab(id delegate) {
 	UIImageWriteToSavedPhotosAlbum(imageLossless, saveDelegate, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
 
+// show network activity indicator on status bar
 
+void ofxiOSSetNetworkActivityIndicatorVisibility(bool bVisible) {
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:(BOOL)bVisible];
+}
+
+bool ofxiOSGetNetworkActivityIndicatorVisibility() {
+    return [[UIApplication sharedApplication] isNetworkActivityIndicatorVisible];
+}
