@@ -29,6 +29,7 @@ CORE
 ### Graphics
 	/ ofCairoRenderer: fix for moveTo when drawing ofPaths
 ### Math
+        / ofMatrix3x3: fix incorrect multiplication
 ### GL
 	/ ofMaterial: fixed back emmisive material
 ### Sound

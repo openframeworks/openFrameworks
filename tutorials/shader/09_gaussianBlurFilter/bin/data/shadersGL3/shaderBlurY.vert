@@ -13,8 +13,10 @@ out vec2 texCoordVarying;
 
 void main()
 {
-	color = vec4(1.0); // for intel HD cards
+    #ifdef INTEL_CARD
+    color = vec4(1.0); // for intel HD cards
     normal = vec4(1.0); // for intel HD cards
+    #endif
 
     texCoordVarying = texcoord;
 	gl_Position = modelViewProjectionMatrix * position;
