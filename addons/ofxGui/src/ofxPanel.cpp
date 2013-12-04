@@ -126,6 +126,16 @@ bool ofxPanel::mouseReleased(ofMouseEventArgs & args){
     }
 }
 
+bool ofxPanel::isInside(int x,int y){
+	//this->bGrabbed = false;
+ //   if(ofxGuiGroup::mouseReleased(args)) return true;
+	if(isGuiDrawing() && b.inside(ofPoint(x,y))){
+    	return true;
+    }else{
+    	return false;
+    }
+}
+
 bool ofxPanel::setValue(float mx, float my, bool bCheck){
 
 	if( !isGuiDrawing() ){

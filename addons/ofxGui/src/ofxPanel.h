@@ -14,9 +14,9 @@ public:
 	ofxPanel * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
 
 	bool mouseReleased(ofMouseEventArgs & args);
-
 	ofEvent<void> loadPressedE;
 	ofEvent<void> savePressedE;
+	bool isInside(int x,int y);
 protected:
 	void render();
 	bool setValue(float mx, float my, bool bCheck);
