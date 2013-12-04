@@ -28,7 +28,7 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream(){
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::listDevices(){	
+void ofRtAudioSoundStream::listDevices(){
 	ofPtr<RtAudio> audioTemp;
 	try {
 		audioTemp = ofPtr<RtAudio>(new RtAudio());
@@ -91,11 +91,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	bufferSize			= ofNextPow2(_bufferSize);	// must be pow2
 
 	try {
-#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
-		audio = ofPtr<RtAudio>(new RtAudio(RtAudio::LINUX_PULSE));
-#else
 		audio = ofPtr<RtAudio>(new RtAudio);
-#endif
 	}	catch (RtError &error) {
 		error.printMessage();
 		return false;
@@ -149,7 +145,7 @@ bool ofRtAudioSoundStream::setup(ofBaseApp * app, int outChannels, int inChannel
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::start(){
 	if( audio == NULL ) return;
-	
+
 	try{
 		audio->startStream();
 	} catch (RtError &error) {
@@ -160,7 +156,7 @@ void ofRtAudioSoundStream::start(){
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::stop(){
 	if( audio == NULL ) return;
-	
+
 	try {
 		if(audio->isStreamRunning()) {
     		audio->stopStream();
@@ -173,7 +169,7 @@ void ofRtAudioSoundStream::stop(){
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::close(){
 	if( audio == NULL ) return;
-	
+
 	try {
 		if(audio->isStreamOpen()) {
     		audio->closeStream();
@@ -198,7 +194,7 @@ int ofRtAudioSoundStream::getNumInputChannels(){
 
 //------------------------------------------------------------------------------
 int ofRtAudioSoundStream::getNumOutputChannels(){
-	return nOutputChannels;		
+	return nOutputChannels;
 }
 
 //------------------------------------------------------------------------------
@@ -214,7 +210,7 @@ int ofRtAudioSoundStream::getBufferSize(){
 //------------------------------------------------------------------------------
 int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data){
 	ofRtAudioSoundStream * rtStreamPtr = (ofRtAudioSoundStream *)data;
-	
+
 	if ( status ) {
 		ofLogWarning("ofRtAudioSoundStream") << "stream over/underflow detected";
 	}
@@ -229,7 +225,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	// this is because of how rtAudio works: duplex w/ one callback
 	// you need to cut in the middle. if the simpleApp
 	// doesn't produce audio, we pass silence instead of duplex...
-	
+
 	int nInputChannels = rtStreamPtr->getNumInputChannels();
 	int nOutputChannels = rtStreamPtr->getNumOutputChannels();
 
@@ -246,7 +242,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 			rtStreamPtr->soundOutputPtr->audioOut((float*)outputBuffer, bufferSize, nOutputChannels, rtStreamPtr->outDeviceID, rtStreamPtr->tickCount);
 		}
 	}
-	
+
 	// increment tick count
 	rtStreamPtr->tickCount++;
 

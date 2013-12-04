@@ -261,7 +261,9 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 		this.h = h;
 	}
 	
+	@Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+		Log.i("OF","onSurfaceCreated");
 		OFAndroid.onSurfaceCreated();
 		try{
 			((OFActivity)OFAndroid.getContext()).onGLSurfaceCreated();
@@ -271,7 +273,8 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 		return;
     	
     }
-
+	
+	@Override
     public void onSurfaceChanged(GL10 gl, int w, int h) {
 		this.w = w;
 		this.h = h;
@@ -295,7 +298,8 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 			Log.e("OF","couldn call onGLSurfaceCreated",e);
 		}
     }
-
+    
+    @Override
     public void onDrawFrame(GL10 gl) {
     	if(setup && OFAndroid.unpackingDone){
     		OFAndroid.render();
