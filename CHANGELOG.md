@@ -24,6 +24,7 @@ CORE
 ----
 ### 3d
 ### App
+	/ updated GLFW to latest master (20121204)
 ### Communication
 ### Events
 ### Graphics
