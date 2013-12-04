@@ -216,6 +216,9 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
 	virtual ofPixelFormat getPixelFormat() = 0;
 
+	// implement only if internal API can upload directly to texture
+	virtual ofTexture * getTexture(){ return NULL; }
+
 	//should implement!
 	virtual void setVerbose(bool bTalkToMe);
 	virtual void setDeviceID(int _deviceID);
