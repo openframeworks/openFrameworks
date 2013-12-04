@@ -750,14 +750,18 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enablePointSprites(){
-#ifndef TARGET_OPENGLES
+#ifdef TARGET_OPENGLES
+        glEnable(GL_POINT_SPRITE_OES);
+#else
 	glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disablePointSprites(){
-#ifndef TARGET_OPENGLES
+#ifdef TARGET_OPENGLES
+        glEnable(GL_POINT_SPRITE_OES);
+#else
 	glDisable(GL_PROGRAM_POINT_SIZE);
 #endif
 }
