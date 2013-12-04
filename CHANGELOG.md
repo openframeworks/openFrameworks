@@ -44,9 +44,16 @@ PLATFORM SPECIFIC
 ### Android
 	/ fix for texture reload
 	/ change to work with NDK r9b by default
+	/ zip uncompress moved to java
+	/ several fixes in pause / resume workflow
+	+ support for x86
+
 ### Mac OS X
 ### iOS
 ### Linux
+	/ alsa as default instead of pulseaudio lower latency
+	/ makefile fixes for better eclipse parsing
+	+ install_dependencies installs libusb so ofxKinect compiles
 ### Windows
  
 CORE ADDONS

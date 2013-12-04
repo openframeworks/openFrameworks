@@ -21,7 +21,10 @@ public abstract class OFAndroidObject {
 	
 	public OFAndroidObject(){
 		state = State.Created;
-		ofObjects.add(this);
+
+		synchronized (ofObjects) {
+			ofObjects.add(this);
+		}
 	}
 	
     public void onPause(){
@@ -37,7 +40,9 @@ public abstract class OFAndroidObject {
     	state = State.Stopped;
     }
     public void release(){
-    	ofObjects.remove(this);
+		synchronized (OFAndroidObject.ofObjects) {
+			ofObjects.remove(this);
+		}
     }
     
     public void onActivityResult(int requestCode, int resultCode,Intent intent){

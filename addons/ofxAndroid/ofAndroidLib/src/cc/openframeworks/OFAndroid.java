@@ -5,12 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -88,6 +87,9 @@ public class OFAndroid {
 		return dataPath;
 	}
 	
+	Thread resourcesExtractorThread;
+	Thread appInitThread;
+	
 	public OFAndroid(String appPackageName, OFActivity activity){
 		Log.i("OF","OFAndorid init...");
 		OFAndroid.ofActivity = activity;
@@ -95,11 +97,19 @@ public class OFAndroid {
 		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
 		OFAndroid.packageName = appPackageName;
 		OFAndroidObject.setActivity(ofActivity);
-		unpackingDone = false;
+		instance = this;
+		//unpackingDone = false;
 		
-		new Thread(new Runnable(){
+		if(unpackingDone){
+			initView();
+			return;
+		}
+		
+		
+		resourcesExtractorThread = new Thread(new Runnable(){
 			@Override
 			public void run() {
+				Log.i("OF","starting resources extractor");
 				Class<?> raw = null;
 		        boolean copydata = false;
 		        Field[] files = null;
@@ -157,48 +167,6 @@ public class OFAndroid {
 						Log.e("OF","error creating dir " + dataPath,e);
 					}
 			        ofActivity.onLoadPercent(.10f);
-					
-					if(copydata){							
-		    			for(int i=0; i<files.length; i++){
-		    	        	int fileId;
-		    	        	String fileName="";
-		    				
-		    				InputStream from=null;
-		    				File toFile=null;
-		    				FileOutputStream to=null;
-		    	        	try {
-		    					fileId = files[i].getInt(null);
-		    					String resName = ofActivity.getResources().getText(fileId).toString();
-		    					fileName = resName.substring(resName.lastIndexOf("/"));
-		    					
-		    					from = ofActivity.getResources().openRawResource(fileId);
-		    					Log.i("OF","copying file " + fileName + " to " + dataPath);
-		    					toFile = new File(dataPath + "/" + fileName);
-		    					to = new FileOutputStream(toFile);
-		    					byte[] buffer = new byte[4096];
-		    					int bytesRead;
-		    					
-		    					while ((bytesRead = from.read(buffer)) != -1)
-		    					    to.write(buffer, 0, bytesRead); // write
-		    	        	}catch (Exception e) {
-		    					Log.e("OF","error copying file",e);
-		    				} finally {
-		    					if (from != null)
-		    					  try {
-		    					    from.close();
-		    					  } catch (IOException e) { }
-		    					  
-		    			        if (to != null)
-		    			          try {
-		    			            to.close();
-		    			          } catch (IOException e) { }
-		    				}
-
-					        ofActivity.onLoadPercent(.10f+.30f/files.length*i);
-		    	        }
-					}else{
-				        ofActivity.onLoadPercent(.40f);
-					}
 	    		}catch(Exception e){
 	    			Log.e("OF","couldn't move app resources to data directory " + dataPath,e);
 	    		}
@@ -212,44 +180,100 @@ public class OFAndroid {
 						StatFs stat = new StatFs(getRealExternalStorageDirectory());
 						double sdAvailSize = (double)stat.getAvailableBlocks()
 				                   * (double)stat.getBlockSize();
-						
-						try{
-							ZipFile resourceszip = new ZipFile(dataPath+"/"+app_name+"resources.zip");
-							Enumeration entries=resourceszip.entries();
-							int totalZipSize = 0;
-							while(entries.hasMoreElements()){
-								ZipEntry zipentry = (ZipEntry)entries.nextElement();
-								totalZipSize+=zipentry.getSize();
-							}
-							resourceszip.close();
-							Log.i("OF","size of uncompressed resources: " + totalZipSize + " avaliable space:" + sdAvailSize);
-							if(totalZipSize>=sdAvailSize){
-								final int mbsize = totalZipSize/1024/1024;
-								fatalErrorDialog("Error while copying resources to sdcard:\nNot enough space available.("+mbsize+"Mb)\nMake more space by deleting some file in your sdcard");
-							}else{
-								OFAndroid.setAppDataDir(dataPath,app_name);
-						        OFAndroid.onUnpackingResourcesDone();
-						        ofActivity.onLoadPercent(.80f);
-							}
-						}catch(Exception e){
-							fatalErrorDialog("Error while copying resources to sdcard:\nCheck that you have enough space available.\n");
+						for(int i=0; i<files.length; i++){
+		    	        	int fileId;
+		    	        	String fileName="";
+		    				
+		    				InputStream from=null;
+		    				FileOutputStream to=null;
+		    	        	try {
+		    					fileId = files[i].getInt(null);
+		    					String resName = ofActivity.getResources().getText(fileId).toString();
+		    					fileName = resName.substring(resName.lastIndexOf("/"));
+		    					Log.i("OF","checking " + fileName);
+		    					if(fileName.equals("/" + app_name+"resources.zip")){
+		    						
+			    					from = ofActivity.getResources().openRawResource(fileId);
+									try{
+										ZipInputStream resourceszip = new ZipInputStream(from);
+										int totalZipSize = 0;
+										ZipEntry entry;
+										File outdir = new File(dataPath);
+										while ((entry = resourceszip.getNextEntry()) != null){
+											totalZipSize+=entry.getSize();
+										}
+										resourceszip.close();
+										Log.i("OF","size of uncompressed resources: " + totalZipSize + " avaliable space:" + sdAvailSize);
+										if(totalZipSize>=sdAvailSize){
+											final int mbsize = totalZipSize/1024/1024;
+											fatalErrorDialog("Error while copying resources to sdcard:\nNot enough space available.("+mbsize+"Mb)\nMake more space by deleting some file in your sdcard");
+										}else{
+											from = ofActivity.getResources().openRawResource(fileId);
+											resourceszip = new ZipInputStream(from);
+											
+
+											while ((entry = resourceszip.getNextEntry()) != null){
+												String name = entry.getName();
+										        if( entry.isDirectory() )
+										        {
+										        	OFZipUtil.mkdirs(outdir,name);
+										          continue;
+										        }
+										        String dir = OFZipUtil.dirpart(name);
+										        if( dir != null )
+										        	OFZipUtil.mkdirs(outdir,dir);
+	
+										        OFZipUtil.extractFile(resourceszip, outdir, name);
+										        ofActivity.onLoadPercent((float)(.10+i*.01));
+											}
+
+											resourceszip.close();
+											OFAndroid.setAppDataDir(dataPath,app_name);
+									        ofActivity.onLoadPercent(.80f);
+										}
+									}catch(Exception e){
+										fatalErrorDialog("Error while copying resources to sdcard:\nCheck that you have enough space available.\n");
+									}
+		    					}
+		    	        	}catch (Exception e) {
+		    					Log.e("OF","error copying file",e);
+		    				} finally {
+		    					if (from != null)
+		    					  try {
+		    					    from.close();
+		    					  } catch (IOException e) { }
+		    					  
+		    			        if (to != null)
+		    			          try {
+		    			            to.close();
+		    			          } catch (IOException e) { }
+		    				}
 						}
 					}else{
 						OFAndroid.setAppDataDir(dataPath,app_name);
-				        OFAndroid.onUnpackingResourcesDone();
 				        ofActivity.onLoadPercent(.80f);
 					}
 				} catch (Exception e) {
 					Log.e("OF","error retrieving app name",e);
 				} 	
+
 			}
-		}).start();
+		});
+
+    	appInitThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				OFAndroid.init();
+				OFAndroid.onUnpackingResourcesDone();
+				
+			}
+		});
+
+    	resourcesExtractorThread.start();
+    	appInitThread.start();
 		
-
-    	OFAndroid.init();
-    	
     }
-
+	
 	private void fatalErrorDialog(final String msg){
 		ofActivity.runOnUiThread(new Runnable(){
 			public void run() {
@@ -283,14 +307,18 @@ public class OFAndroid {
         	OFAndroidSoundStream.getInstance().start();*/
 	}
 	
+	private boolean resumed;
+	
 	public void pause(){
 		Log.i("OF","onPause");
 		disableTouchEvents();
-		mGLView.onPause();
+		if(mGLView!=null) mGLView.onPause();
 		onPause();
 
-		for(OFAndroidObject object : OFAndroidObject.ofObjects){
-			object.onPause();
+		synchronized (OFAndroidObject.ofObjects) {
+			for(OFAndroidObject object : OFAndroidObject.ofObjects){
+				object.onPause();
+			}
 		}
 
 		if(networkStateReceiver!=null){
@@ -302,18 +330,28 @@ public class OFAndroid {
 		}
 
 		sleepLocked=false;
+		resumed = false;
 	}
 	
 	public void resume(){
+		if(mGLView==null || resumed) return;
+		resumed = true;
 		Log.i("OF","onResume");
 		enableTouchEvents();
-        mGLView.onResume();
 		
-		for(OFAndroidObject object : OFAndroidObject.ofObjects){
-			object.onResume();
+		synchronized (OFAndroidObject.ofObjects) {
+			for(OFAndroidObject object : OFAndroidObject.ofObjects){
+				object.onResume();
+			}
+			
 		}
 		
-        if(mGLView.isSetup()) onResume();
+    	mGLView.onResume();
+		
+        if(mGLView.isSetup()){
+        	Log.i("OF","resume view and native");
+        	onResume();
+        }
         
         if(OFAndroid.orientation!=-1) OFAndroid.setScreenOrientation(OFAndroid.orientation);
 		
@@ -324,11 +362,15 @@ public class OFAndroid {
 	}
 	
 	public void stop(){
+		resumed = false;
 		Log.i("OF","onStop");
 		disableTouchEvents();
 		onStop();
-		for(OFAndroidObject object : OFAndroidObject.ofObjects){
-			object.onStop();
+		
+		synchronized (OFAndroidObject.ofObjects) {
+			for(OFAndroidObject object : OFAndroidObject.ofObjects){
+				object.onStop();
+			}
 		}
 		
 
@@ -350,6 +392,7 @@ public class OFAndroid {
 	
 	static public void onUnpackingResourcesDone(){
 		unpackingDone = true;
+        ofActivity.onUnpackingResourcesDone();
 	}
 	
 	static public boolean menuItemSelected(int id){
@@ -534,8 +577,10 @@ public class OFAndroid {
 	
 	public static void onActivityResult(int requestCode, int resultCode,Intent intent){
 
-		for(OFAndroidObject object : OFAndroidObject.ofObjects){
-			object.onActivityResult(requestCode,resultCode,intent);
+		synchronized (OFAndroidObject.ofObjects) {
+			for(OFAndroidObject object : OFAndroidObject.ofObjects){
+				object.onActivityResult(requestCode,resultCode,intent);
+			}
 		}
 	}
 
@@ -911,11 +956,15 @@ public class OFAndroid {
 		return UUID.randomUUID().toString();
 	}
 	
+	public static boolean isApplicationSetup(){
+		return mGLView!=null && mGLView.isSetup();
+	}
     
     private static OFGLSurfaceView mGLView;
     private static OFAndroidAccelerometer accelerometer;
     private static OFAndroidGPS gps;
     private static OFActivity ofActivity;
+    private static OFAndroid instance;
     private static OFGestureListener gestureListener;
 	private static String packageName;
 	private static String dataPath;
@@ -948,19 +997,20 @@ public class OFAndroid {
 	}
 	
 	public static void disableTouchEvents(){
-        mGLView.setOnClickListener(null); 
-        mGLView.setOnTouchListener(null);
+		if(mGLView!=null){
+	        mGLView.setOnClickListener(null); 
+	        mGLView.setOnTouchListener(null);
+		}
 	}
 	
 	public static void enableTouchEvents(){
-        mGLView.setOnClickListener(gestureListener); 
-        mGLView.setOnTouchListener(gestureListener.touchListener);
+		if(mGLView!=null){
+	        mGLView.setOnClickListener(gestureListener); 
+	        mGLView.setOnTouchListener(gestureListener.touchListener);
+		}
 	}
 	
-	public static void setupGL(int version){		
-		gestureListener = new OFGestureListener(ofActivity);
-        OFEGLConfigChooser.setGLESVersion(version);
-        
+	public static void initView(){        
         try {
         	Log.v("OF","trying to find class: "+packageName+".R$layout");
 			Class<?> layout = Class.forName(packageName+".R$layout");
@@ -969,13 +1019,34 @@ public class OFAndroid {
 			
 			Class<?> id = Class.forName(packageName+".R$id");
 			mGLView = (OFGLSurfaceView)ofActivity.findViewById(id.getField("of_gl_surface").getInt(null));
-			enableTouchEvents();
 			
 		} catch (Exception e) {
 			Log.e("OF", "couldn't create view from layout falling back to GL only",e);
 	        mGLView = new OFGLSurfaceView(ofActivity);
 	        ofActivity.setContentView(mGLView);
-	        enableTouchEvents();
+		}
+	}
+	
+	public static void setupGL(int version){	
+		final int finalversion = version;
+		ofActivity.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				gestureListener = new OFGestureListener(ofActivity);
+		        OFEGLConfigChooser.setGLESVersion(finalversion);
+		        initView();
+		        instance.resume();
+				
+			}
+		});
+        
+        try {
+        	Log.i("OF","joining");
+			instance.resourcesExtractorThread.join();
+			Log.i("OF","joined");
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
         
 	}
