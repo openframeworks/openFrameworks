@@ -32,6 +32,7 @@ CORE
         / ofMatrix3x3: fix incorrect multiplication
 ### GL
 	/ ofMaterial: fixed back emmisive material
+	/ Fix point sprites in openGL 3+
 ### Sound
 ### Types
 ### Utils
