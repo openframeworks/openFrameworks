@@ -47,6 +47,7 @@ PLATFORM SPECIFIC
 	/ change to work with NDK r9b by default
 	/ zip uncompress moved to java
 	/ several fixes in pause / resume workflow
+	/ fix camera not working on some devices + use external texture, should be faster
 	+ support for x86
 
 ### Mac OS X
