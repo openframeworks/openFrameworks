@@ -242,49 +242,12 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 void
-Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jstring data_dir, jstring app_name )
+Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jstring data_dir)
 {
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
 	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile) + "\"").c_str());
     ofSetDataPathRoot(string(mfile)+"/");
-    /*string appname = env->GetStringUTFChars(app_name, &iscopy);
-    __android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("app name: " + appname).c_str());
-    if(appname!=""){
-		string resources_name = ofToLower(appname + "resources.zip");
-		ofFile resources(resources_name);
-		jobject activity = ofGetOFActivityObject();
-		jclass activityClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFActivity");
-		jmethodID onLoadPercent = ofGetJNIEnv()->GetMethodID(activityClass,"onLoadPercent","(F)V");
-		if(resources.exists()){
-			__android_log_print(ANDROID_LOG_DEBUG,"ofAppAndroidWindow",("uncompressing " + resources.getAbsolutePath()).c_str());
-			unzFile zip = unzOpen(resources.getAbsolutePath().c_str());
-			char current_dir[1000];
-			getcwd(current_dir,1000);
-			chdir(ofToDataPath("",true).c_str());
-
-
-		    unz_global_info gi;
-		    int err = unzGetGlobalInfo (zip,&gi);
-		    if (err!=UNZ_OK){
-		    	__android_log_print(ANDROID_LOG_ERROR,"ofAppAndroidWindow","error %d with zipfile in unzGetGlobalInfo\n",err);
-		    }else{
-				for (uLong i=0;i<gi.number_entry;i++){
-					__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow","uncompressing entry %d",(int)i);
-					do_extract_one_entry(zip,0,1,NULL,&gi,i);
-					ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat).40f+(.40/gi.number_entry*i));
-				}
-		    }
-			__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow","changing dir");
-			chdir(current_dir);
-
-			__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow","removing resources");
-			resources.remove();
-		}else{
-			ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat).80f);
-			__android_log_print(ANDROID_LOG_DEBUG,"ofAppAndroidWindow",("no resources found in " + resources.getAbsolutePath()).c_str());
-		}
-    }*/
 }
 
 void

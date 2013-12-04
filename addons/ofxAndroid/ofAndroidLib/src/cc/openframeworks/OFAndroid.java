@@ -166,10 +166,13 @@ public class OFAndroid {
 						fatalErrorDialog("Error while copying resources to sdcard:\nCouldn't create directory " + dataPath + "\n"+e.getMessage());
 						Log.e("OF","error creating dir " + dataPath,e);
 					}
+					OFAndroid.setAppDataDir(dataPath);
 			        ofActivity.onLoadPercent(.10f);
 	    		}catch(Exception e){
 	    			Log.e("OF","couldn't move app resources to data directory " + dataPath,e);
 	    		}
+	    		
+	    		
 	    		String app_name="";
 				try {
 					int app_name_id = Class.forName(packageName+".R$string").getField("app_name").getInt(null);
@@ -228,7 +231,6 @@ public class OFAndroid {
 											}
 
 											resourceszip.close();
-											OFAndroid.setAppDataDir(dataPath,app_name);
 									        ofActivity.onLoadPercent(.80f);
 										}
 									}catch(Exception e){
@@ -250,7 +252,6 @@ public class OFAndroid {
 		    				}
 						}
 					}else{
-						OFAndroid.setAppDataDir(dataPath,app_name);
 				        ofActivity.onLoadPercent(.80f);
 					}
 				} catch (Exception e) {
@@ -585,7 +586,7 @@ public class OFAndroid {
 	}
 
 	// native methods to call OF c++ callbacks
-    public static native void setAppDataDir(String data_dir,String app_name);
+    public static native void setAppDataDir(String data_dir);
     public static native void init();
     public static native void onRestart();
     public static native void onPause();
