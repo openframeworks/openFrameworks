@@ -53,6 +53,7 @@ PLATFORM SPECIFIC
 ### Linux
 	/ alsa as default instead of pulseaudio lower latency
 	/ makefile fixes for better eclipse parsing
+	/ videoplayer: fix alpha formats for gstreamer 0.10
 	+ install_dependencies installs libusb so ofxKinect compiles
 ### Windows
  
