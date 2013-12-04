@@ -64,16 +64,19 @@ bool ofGstVideoPlayer::loadMovie(string name){
 
 #if GST_VERSION_MAJOR==0
 	GstCaps *caps;
+	int bpp;
 	switch(internalPixelFormat){
 	case OF_PIXELS_MONO:
+		bpp = 8;
 		caps = gst_caps_new_simple("video/x-raw-gray",
-			"bpp", G_TYPE_INT, 8,
+			"bpp", G_TYPE_INT, bpp,
 			"depth", G_TYPE_INT, 8,
 			NULL);
 		break;
 	case OF_PIXELS_RGB:
+		bpp = 24;
 		caps = gst_caps_new_simple("video/x-raw-rgb",
-			"bpp", G_TYPE_INT, 24,
+			"bpp", G_TYPE_INT, bpp,
 			"depth", G_TYPE_INT, 24,
 			"endianness",G_TYPE_INT,4321,
 			"red_mask",G_TYPE_INT,0xff0000,
@@ -82,6 +85,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 			NULL);
 		break;
 	case OF_PIXELS_RGBA:
+		bpp = 32;
 		caps = gst_caps_new_simple("video/x-raw-rgb",
 			"bpp", G_TYPE_INT, bpp,
 			"depth", G_TYPE_INT, 32,
@@ -92,8 +96,9 @@ bool ofGstVideoPlayer::loadMovie(string name){
 			"alpha_mask",G_TYPE_INT,0x000000ff,
 			NULL);
 	case OF_PIXELS_BGRA:
+		bpp = 32;
 		caps = gst_caps_new_simple("video/x-raw-rgb",
-			"bpp", G_TYPE_INT, 32,
+			"bpp", G_TYPE_INT, bpp,
 			"depth", G_TYPE_INT, 32,
 			"endianness",G_TYPE_INT,4321,
 			"red_mask",G_TYPE_INT,0x0000ff00,
@@ -103,6 +108,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 			NULL);
 		break;
 	default:
+		bpp = 32;
 		caps = gst_caps_new_simple("video/x-raw-rgb",
 			"bpp", G_TYPE_INT, bpp,
 			"depth", G_TYPE_INT, 24,
