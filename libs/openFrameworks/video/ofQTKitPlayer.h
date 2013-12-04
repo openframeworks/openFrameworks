@@ -38,7 +38,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		virtual ~ofQTKitPlayer();
 
 		bool                loadMovie(string path); //default mode is PIXELS_ONLY
-		bool                loadMovie(string path, ofQTKitDecodeMode mode);
+		bool                loadMovie(string path, ofQTKitDecodeMode mode, bool expectResize = false);
 
 		void                closeMovie();
 		void                close();
@@ -109,6 +109,10 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                firstFrame();
 		void                nextFrame();
 		void                previousFrame();
+    
+        // enables us to wait in app until resize has happened
+        // only after that get actual movie size ans start to draw
+        bool                getResizeHappened();
 
 	protected:
     
@@ -136,6 +140,15 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		
         ofPixels pixels;
 		ofPixelFormat pixelFormat;
+    
+        // make these accessible for resize
+        bool useTexture;
+        bool usePixels;
+        bool useAlpha;
+    
+        // resize handlers
+        bool bExpectResize;
+        bool bReizeHappened;
 		
         // This #ifdef is so you can include this .h file in .cpp files
 		// and avoid ugly casts in the .m file
@@ -144,5 +157,5 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		#else
 			void * moviePlayer;
 		#endif
-
+    
 };

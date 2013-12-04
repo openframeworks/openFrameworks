@@ -50,6 +50,11 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 @synthesize justSetFrame;
 @synthesize synchronousSeek;
 
+@synthesize bExpectResize;
+@synthesize bRenderResizeHappened;
+@synthesize movieSizeRenderStartup;
+@synthesize movieSizeRenderResize;
+
 - (NSDictionary*) pixelBufferAttributes
 {
     return [NSDictionary dictionaryWithObjectsAndKeys:
@@ -59,7 +64,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
             nil];
 }
 
-- (BOOL) loadMovie:(NSString*)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels allowAlpha:(BOOL)doUseAlpha
+- (BOOL) loadMovie:(NSString*)moviePath pathIsURL:(BOOL)isURL allowTexture:(BOOL)doUseTexture allowPixels:(BOOL)doUsePixels allowAlpha:(BOOL)doUseAlpha expectResize:(BOOL)doExpectResize
 {
     // if the path is local, make sure the file exists before proceeding
     if (!isURL && ![[NSFileManager defaultManager] fileExistsAtPath:moviePath])
@@ -100,6 +105,15 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	movieSize = [[_movie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
     //	NSLog(@"movie size %f %f", movieSize.width, movieSize.height);
 	
+    // resize handler
+    movieSizeRenderStartup = movieSize;
+    movieSizeRenderResize = movieSize;
+    bRenderResizeHappened = NO;
+    bExpectResize = doExpectResize;
+    if (bExpectResize) {
+        NSLog(@"Movie renderer will expect resize");
+    }
+    
 	movieDuration = [_movie duration];
     
 	[_movie gotoBeginning];
@@ -286,6 +300,40 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		if(_visualContext == NULL){
 			return;
 		}
+        
+        if(self.bExpectResize && !self.bRenderResizeHappened) {
+            movieSizeRenderResize = [[_movie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
+            if (
+                (NSInteger)movieSizeRenderStartup.width != (NSInteger)movieSizeRenderResize.width ||
+                (NSInteger)movieSizeRenderStartup.height != (NSInteger)movieSizeRenderResize.height
+                )
+            {
+                    NSLog(@"Expecting Movie resize and it banged.");
+                    NSLog(@"Resizing in renderer from %d x %d to %d x %d",
+                          (NSInteger)movieSizeRenderStartup.width, (NSInteger)movieSizeRenderStartup.height,
+                          (NSInteger)movieSizeRenderResize.width, (NSInteger)movieSizeRenderResize.height);
+//                    if(self.usePixels){
+//                        NSLog(@"Using pixelbuffer");
+//                        if(_latestPixelFrame != NULL){
+//                            NSLog(@"CoreVideo pixel buffer is %ld x %ld",CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame));
+//                        }
+//                        else {
+//                            NSLog(@"Latest CoreVideo pixel buffer is NULL");
+//                        }
+//                    }
+//                    else {
+//                        NSLog(@"Not using pixelbuffer");
+//                    }
+//                    if(self.useTexture){
+//                        NSLog(@"Using texture");
+//                    }
+//                    else {
+//                        NSLog(@"Not texture");
+//                    }
+                movieSize = [[_movie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
+                bRenderResizeHappened = YES;
+            }  
+        }
 
 		if(self.usePixels){
 			if(_latestPixelFrame != NULL){
@@ -404,7 +452,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 		   (NSInteger)movieSize.height != CVPixelBufferGetHeight(_latestPixelFrame)){
 			NSLog(@"CoreVideo pixel buffer is %ld x %ld while QTKit Movie reports size of %d x %d. This is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
 				  CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (NSInteger)movieSize.width, (NSInteger)movieSize.height);
-			return;
+            return;
 		}
 		
 		if(CVPixelBufferGetPixelFormatType(_latestPixelFrame) != kCVPixelFormatType_32ARGB){
