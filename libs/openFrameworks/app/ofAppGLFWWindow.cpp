@@ -75,6 +75,8 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
     setNumSamples(4);
 	iconSet = false;
 
+	glfwSetErrorCallback(error_cb);
+
 }
 
 
@@ -235,7 +237,7 @@ void ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
 void ofAppGLFWWindow::initializeWindow(){
 	 //----------------------
 	 // setup the callbacks
-
+	if(!windowP) return;
 	glfwSetMouseButtonCallback(windowP, mouse_cb);
 	glfwSetCursorPosCallback(windowP, motion_cb);
 	glfwSetKeyCallback(windowP, keyboard_cb);
@@ -889,6 +891,11 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, const char* dropString) {
 	}
 #endif
 	ofNotifyDragEvent(drag);
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::error_cb(int errorCode, const char* errorDescription){
+	ofLogError("ofAppGLFWWindow") << errorCode << ": " << errorDescription;
 }
 
 //------------------------------------------------------------
