@@ -19,6 +19,7 @@ MAJOR CHANGES
 	
 DEPRECATIONS & REMOVALS
 -----------------------
+	- ofxOpenCv: removed deprecated ofxCvMain.h. Use ofxOpenCv.h instead.
 
 CORE
 ----
@@ -63,9 +64,6 @@ PLATFORM SPECIFIC
  
 CORE ADDONS
 -----------
-
-### ofxOpenCv
-    - removed ofxCvMain.h
 
 PROJECT GENERATOR
 -----------------
