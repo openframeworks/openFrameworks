@@ -64,6 +64,9 @@ PLATFORM SPECIFIC
 CORE ADDONS
 -----------
 
+### ofxOpenCv
+    - removed ofxCvMain.h
+
 PROJECT GENERATOR
 -----------------
 
