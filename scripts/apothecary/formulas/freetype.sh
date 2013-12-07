@@ -8,7 +8,12 @@
 
 FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
+# define the version
 VER=2.4.12
+
+# tools for git use
+GIT_URL=http://git.savannah.gnu.org/r/freetype/freetype2.git
+GIT_TAG=VER-2-4-12
 
 # download the source code and unpack it into LIB_NAME
 function download() {

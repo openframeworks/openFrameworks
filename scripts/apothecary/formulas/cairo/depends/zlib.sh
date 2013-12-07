@@ -3,7 +3,12 @@
 # A Massively Spiffy Yet Delicately Unobtrusive Compression Library
 # http://zlib.net/
 
+# define the version
 VER=1.2.8
+
+# tools for git use
+GIT_URL=https://github.com/madler/zlib.git
+GIT_TAG=v$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {

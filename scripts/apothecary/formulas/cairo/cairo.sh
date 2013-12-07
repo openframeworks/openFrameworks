@@ -14,24 +14,29 @@
 
 FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
+# define the version
 VER=1.12.14
+
+# tools for git use
+GIT_URL=http://anongit.freedesktop.org/git/cairo
+GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-
-	# cairo
 	curl -LO http://cairographics.org/releases/cairo-$VER.tar.xz
 	tar -xf cairo-$VER.tar.xz
 	mv cairo-$VER cairo
 	rm cairo-$VER.tar.xz
+}
 
+function prebuild() {
 	# dependencies (some commented for now as they might be needed for other platforms)
 	local buildDir=$BUILD_DIR/cairo/apothecary-build
 	mkdir -p $buildDir
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/pixman.sh
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download freetype
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir${USE_GIT:+ -g} download $FORMULA_DIR/depends/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir${USE_GIT:+ -g} download $FORMULA_DIR/depends/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir${USE_GIT:+ -g} download $FORMULA_DIR/depends/pixman.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir${USE_GIT:+ -g} download freetype
 }
 
 # executed inside the lib src dir

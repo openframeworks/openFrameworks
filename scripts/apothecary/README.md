@@ -22,7 +22,7 @@ Requirements
 * Xcode and the iOS SDK (to compile for iOS)
 * Android SDK (to compile for android)
 
-Mac OSX & Linux users already have a Bash environment installed. Windows users are recommended to use Git Bash that comes with [Git for Windows](http://msysgit.github.io) or the MinGW shell included with [Codeblocks+MiniGW](http://www.codeblocks.org/downloads/26).
+Mac OSX & Linux users already have a Bash environment installed. Windows users are recommended to use Git Bash that comes with [Git for Windows](http://windows.github.com) or [MSysGit](http://msysgit.github.io) or the MinGW shell included with [Codeblocks+MiniGW](http://www.codeblocks.org/downloads/26).
 
 Quick Start
 ----------
@@ -85,6 +85,11 @@ See the built in help for more info:
 
 * **-v**: verbose mode, print out some extra info while mixing formulas
 
+* **-g**: git mode, prefer using git as much as possible
+
+* **-s**: specify a git-tag to select a custom version of the library
+  * note: note: availible only with git option
+
 * **-h**: print the usage guide
 
 ### Command/Option Order
@@ -98,7 +103,7 @@ Detailed Usage
 
 Your interface to the build system is the `apothecary` script:
 
-	apothecary [options] command core/addons/libName/addonName
+	apothecary [options] <command> [<library|addons|libName|addonName>]
 
 You can run it from any location, but it's probably easiest to change to this directory:
 

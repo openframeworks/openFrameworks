@@ -7,7 +7,12 @@
 # uses an autotools build system,
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
+# define the version
 VER=1.4.6
+
+# tools for git use
+GIT_URL=https://github.com/pocoproject/poco
+GIT_TAG=poco-$VER
 
 # @tgfrerer: we need more fine-grained control over poco source code versions, 
 # which is why we specify the specific poco source code commit we want to use -
@@ -18,15 +23,15 @@ SHA=526213c8199ca9f31e3c9d6b7341be11c90a5938
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-
 	git clone https://github.com/pocoproject/poco -b poco-$VER
-	cd poco
+}
+
+function prebuild() {
 	git reset --hard $SHA
-	cd ..
 
 	# make backups of the ios config files since we need to edit them
 	if [ "$TYPE" == "ios" ] ; then
-		cd poco/build/config
+		cd build/config
 		cp iPhone iPhone.orig
 		cp iPhoneSimulator iPhoneSimulator.orig
 	fi

@@ -82,7 +82,7 @@ REL_ADDONS_DIR=../../addons
 CON_DEFAULT="\033[0m"
 CON_BOLD="\033[1m"
 CON_RED="\033[31m"
-CON_YELLOW="\033[93m"
+CON_YELLOW="\033[33m"
 CON_GREEN="\033[32m"
 
 # used to filter out bad build types
@@ -91,42 +91,49 @@ VALID_TYPES=( "osx" "osx-clang-libc++" "linux" "linux64" "vs" "win_cb" "ios" "an
 # verbose mode bool
 A_VERBOSE=0
 
+# prefer git instead of download tarballs
+USE_GIT=0
+
 # nice, detailed help message
-HELP="Usage: apothecary [options] command core/addons/libName/addonName
+HELP="usage: apothecary [options] <command> [<library|addons|libName|addonName>]
 
- this is the OpenFrameworks library apothecary
- it mixes formulas and potions to build and update OF C/C++ lib dependencies
+about:
+  this is the OpenFrameworks library apothecary
+  it mixes formulas and potions to build and 
+  update OF C/C++ lib dependencies
 
- Commands:
-  update		download, build, and copy library files
-  
-  download 		download the library source
-  build 		build the library
-  copy 			copy library files into the libs dir
-  clean 		clean the library build
+commands:
+  update	download, build, and copy library files
+  download	download the library source
+  build		build the library
+  copy		copy library files into the libs dir
+  clean		clean the library build
+  remove	remove the library from the build cache
+  remove-lib	remove the library from the libs dir
+  remove-all	remove the library from the build cache and libs dir
 
-  remove		remove the library from the build cache
-  remove-lib		remove the library from the libs dir
-  remove-all		remove the library from the build cache and libs dir
-
- Options:
+options:
   -t	specify libary type when building, detects type from OS by default
 	valid types: osx, linux, linux64, vs, win_cb, ios, android
 
   -a	specify architecture, either 32 or 64 (default is 32 bit)
 	note: not currently needed, reserved for future use
 
-  -b 	set the lib build dir, default: \$APOTHECARY_DIR/build
+  -b	set the lib build dir, default: \$APOTHECARY_DIR/build
 
-  -d 	set the compiled libs destination dir,
-  	default: OF core libs dir or addons/addonName/libs for addons
+  -d	set the compiled libs destination dir,
+	default: OF core libs dir or addons/addonName/libs for addons
 
-  -v 	verbose mode, print out some extra info while mixing formulas
+  -v	verbose mode, print out some extra info while mixing formulas
 
-  -h    print this usage guide
+  -g	prefer git to download if available
 
- Examples:
+  -s	specify the git-tag to select another version of the library
+	note: availible only with git option
 
+  -h	print this usage guide
+
+examples:
   # update all core libs and addon libs
   apothecary update core addons
 
@@ -152,7 +159,10 @@ HELP="Usage: apothecary [options] command core/addons/libName/addonName
   apothecary update ofxAssimpModelLoader
 
   # update a formula script manually and set build and lib dest dirs
-  apothecary -b ../build -d ../libs path/to/formula.sh 
+  apothecary -b ../build -d ../libs path/to/formula.sh
+
+  # clean freetype via git and switch version to VER-2-5-0
+  apothecary -g -s VER-2-5-0 clean freetype
 "
 
 ################################################################################
@@ -208,7 +218,7 @@ echoVerbose() {
 #### PARSE COMMANDLINE
 
 # from http://www.mkssoftware.com/docs/man1/getopts.1.asp
-while getopts t:a:b:d:hv opt ; do
+while getopts t:a:b:d:s:hgv opt ; do
 	case "$opt" in
 		t) # set the library build type
 		   TYPE="$OPTARG" ;;
@@ -218,6 +228,10 @@ while getopts t:a:b:d:hv opt ; do
 		   BUILD_DIR="$OPTARG" ;;
 		d) # set lib destination dir
 		   LIBS_DIR="$OPTARG" ;;
+		s) # set the git tag to switch version
+		   SWITCH_VER="$OPTARG" ;;
+		g) # set git usage
+		   USE_GIT=1 ;;
 		h) # print help and exit
 		   echo "$HELP" ; exit 0 ;;
 		v) # verbose mode = true
@@ -232,14 +246,14 @@ shift $(expr $OPTIND - 1)
 if [ $# -gt 0 ] ; then
 	A_CMD=$1
 else
-	echoWarning " Missing command, see help: apothecary -h"
+	echoWarning " Missing command. See help: 'apothecary -h'."
 	exit 1
 fi
 shift 1
 
 # check for arguments
 if [ $# -lt 1 ] ; then
-	echoWarning " Missing lib build target (maybe you wanted \"core\"), see help: apothecary -h"
+	echoWarning " Missing lib build target (maybe you wanted \"core\"). See help: 'apothecary -h'."
 	exit 1
 fi
 
@@ -467,10 +481,17 @@ function downloadFormula(){
 	if [ -e $1 ] ; then
 		echo "... skipping, src dir already exists"
 	else
-		download
+		if [ $USE_GIT == 1 ] && [[ "${GIT_URL:+x}" ]] ; then
+			gitclone $1 $GIT_URL ${GIT_TAG:-master}
+		else
+			download
+		fi
 		if [ ! -e $1 ] ; then
 			echoError " It looks like downloading failed for \"$1\""
 			exit 1
+		else
+			cd $BUILD_DIR/$1
+			prebuild
 		fi
 	fi
 	cd $APOTHECARY_DIR
@@ -535,7 +556,18 @@ function cleanFormula() {
 	fi
 
 	cd $BUILD_DIR/$1
-	clean
+	if [ $USE_GIT == 1 ] && [ -d $BUILD_DIR/$1/.git ] ; then
+		git clean -d -f -q -x
+		git reset -q --hard HEAD
+		if [[ ${SWITCH_VER:+x} ]]; then
+			echoVerbose " Switching version (to $SWITCH_VER)"
+			git fetch origin
+			git checkout $SWITCH_VER
+		fi
+		prebuild
+	else
+		clean
+	fi
 	cd $APOTHECARY_DIR
 }
 
@@ -573,6 +605,24 @@ function remove-all() {
 	remove-lib $1
 }
 
+# git-clone a given library
+function gitclone() {
+	{
+		echoVerbose " Try using Git to donwload"
+		git clone $2 $1
+		cd $1
+		if [[ ${SWITCH_VER:+x} ]]; then
+			echoVerbose " Select a custom version ($SWITCH_VER)"
+			git checkout $SWITCH_VER
+		else
+			git checkout $3
+		fi
+		cd ..
+	} || {
+		echoError " Git cloning fails, try default download"
+	}
+}
+
 ################################################################################
 ### FORMULA SCRIPT FUNCTIONS
 
@@ -582,6 +632,9 @@ function remove-all() {
 function download() {
 	echoWarning " Download function not implemented"
 }
+function prebuild() {
+	echoVerbose " Pre-build function not implemented"
+}
 function build() {
 	echoWarning " Build function not implemented"
 }
@@ -590,7 +643,7 @@ function copy() {
 }
 function clean() {
 	echoWarning " Clean function not implemented"
-} 
+}
 
 ################################################################################
 ### GO

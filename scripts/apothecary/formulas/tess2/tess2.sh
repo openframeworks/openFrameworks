@@ -8,7 +8,12 @@
 # we follow the Homebrew approach which is to use CMake via a custom CMakeLists.txt
 # on ios, use some build scripts adapted from the Assimp project
 
+# define the version
 VER=1.0
+
+# tools for git use
+GIT_URL=https://github.com/memononen/libtess2.git
+GIT_TAG=master
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -16,12 +21,14 @@ function download() {
 	unzip -oq libtess2-$VER.zip
 	mv libtess2 tess2
 	rm libtess2-$VER.zip
+}
 
+function prebuild() {
 	# copy in build script and CMake toolchains adapted from Assimp
 	if [ "$OS" == "osx" ] ; then
-		mkdir -p tess2/build
-		cp -Rv $FORMULA_DIR/ios tess2/build
-		chmod +x tess2/build/ios/build_ios.sh
+		mkdir -p build
+		cp -Rv $FORMULA_DIR/ios build
+		chmod +x build/ios/build_ios.sh
 	fi
 }
 
