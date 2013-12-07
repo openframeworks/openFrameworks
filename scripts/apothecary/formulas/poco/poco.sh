@@ -93,9 +93,9 @@ function build() {
 	elif [ "$TYPE" == "vs" ] ; then
 		#cmd.exe /c "buildwin.cmd "$VS_VER" build all both Win32 nosamples devenv"
 		## OR
-		cmake -G "Visual Studio $VS_VER" -D"POCO_STATIC=1" -D"CMAKE_DEBUG_POSTFIX=mdd" -D"CMAKE_RELEASE_POSTFIX=md"
-		vs-build "Poco.sln" Build Release
+		cmake -G "Visual Studio $VS_VER" -DPOCO_STATIC="1" -DCMAKE_DEBUG_POSTFIX="mdd" -DCMAKE_RELEASE_POSTFIX="md"
 		vs-build "Poco.sln" Build Debug
+		vs-build "Poco.sln" Build Release
 	
 	elif [ "$TYPE" == "ios" ] ; then
 
