@@ -8,7 +8,7 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=1.4.6
+VER=1.5.3-release
 
 # tools for git use
 GIT_URL=https://github.com/pocoproject/poco
@@ -19,15 +19,25 @@ GIT_TAG=poco-$VER
 # When updating poco/this recipe, make sure to specify the proper hash here,
 # and check if the header patches still apply cleanly.
 
-SHA=526213c8199ca9f31e3c9d6b7341be11c90a5938
+# @TODO: New commit ref?
+SHA=
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	git clone https://github.com/pocoproject/poco -b poco-$VER
+	if [ "$SHA" == "" ] ; then
+		curl -Lk https://github.com/pocoproject/poco/archive/$GIT_TAG.tar.gz -o poco-$GIT_TAG.tar.gz
+		tar -xf poco-$GIT_TAG.tar.gz
+		mv poco-$GIT_TAG poco
+		rm poco*.tar.gz
+	else
+		git clone https://github.com/pocoproject/poco -b poco-$VER
+	fi
 }
 
 function prebuild() {
-	git reset --hard $SHA
+	if [ "$SHA" != "" ] ; then
+		git reset --hard $SHA
+	fi
 
 	# make backups of the ios config files since we need to edit them
 	if [ "$TYPE" == "ios" ] ; then
