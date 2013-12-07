@@ -17,9 +17,9 @@ GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -Lk https://github.com/glfw/glfw/archive/$VER.tar.gz -o glfw-$VER.tar.gz
-	tar -xf glfw-$VER.tar.gz
-	mv glfw-$VER glfw
+	curl -Lk https://github.com/glfw/glfw/archive/$GIT_TAG.tar.gz -o glfw-$GIT_TAG.tar.gz
+	tar -xf glfw-$GIT_TAG.tar.gz
+	mv glfw-$GIT_TAG glfw
 	rm glfw*.tar.gz
 }
 
