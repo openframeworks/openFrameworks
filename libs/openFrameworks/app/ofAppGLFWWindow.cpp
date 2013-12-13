@@ -208,12 +208,6 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 	windowMode = requestedMode;
 
-	setVerticalSync(false);
-	// Set window title
-//	glfwSetWindowTitle( " " );
-
-//	glfwEnable( windowP, GLFW_KEY_REPEAT );
-
 	requestedHeight = requestedHeight < 1 ? 1 : requestedHeight;
 	glfwGetWindowSize( windowP, &requestedWidth, &requestedHeight );
 
@@ -876,7 +870,7 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
-	// ofSendMessage("scroll|"+ofToString(x,5) + "|" + ofToString(y,5));
+	//TODO: implement scroll events
 }
 
 //------------------------------------------------------------
