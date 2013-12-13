@@ -7,11 +7,6 @@
 
 #include "ofAppAndroidWindow.h"
 
-extern "C"{
-#include "unzip.h"
-#include "miniunz.h"
-}
-
 #include <jni.h>
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
