@@ -135,7 +135,80 @@ protected:
 	Delegates _delegates;
 };
 
+template <class TDelegate>
+class PriorityStrategy<void, TDelegate>
+	/// NotificationStrategy for PriorityEvent.
+	///
+	/// Delegates are kept in a std::vector<>, ordered
+	/// by their priority.
+{
+public:
+	typedef SharedPtr<TDelegate>         DelegatePtr;
+	typedef std::vector<DelegatePtr>     Delegates;
+	typedef typename Delegates::iterator Iterator;
 
+public:
+
+	void notify(const void* sender)
+	{
+		for (Iterator it = _delegates.begin(); it != _delegates.end(); ++it)
+		{
+			(*it)->notify(sender);
+		}
+	}
+
+	void add(const TDelegate& delegate)
+	{
+		for (Iterator it = _delegates.begin(); it != _delegates.end(); ++it)
+		{
+			if ((*it)->priority() > delegate.priority())
+			{
+				_delegates.insert(it, DelegatePtr(static_cast<TDelegate*>(delegate.clone())));
+				return;
+			}
+		}
+		_delegates.push_back(DelegatePtr(static_cast<TDelegate*>(delegate.clone())));
+	}
+
+	void remove(const TDelegate& delegate)
+	{
+		for (Iterator it = _delegates.begin(); it != _delegates.end(); ++it)
+		{
+			if (delegate.equals(**it))
+			{
+				(*it)->disable();
+				_delegates.erase(it);
+				return;
+			}
+		}
+	}
+
+	PriorityStrategy& operator = (const PriorityStrategy& s)
+	{
+		if (this != &s)
+		{
+			_delegates = s._delegates;
+		}
+		return *this;
+	}
+
+	void clear()
+	{
+		for (Iterator it = _delegates.begin(); it != _delegates.end(); ++it)
+		{
+			(*it)->disable();
+		}
+		_delegates.clear();
+	}
+
+	bool empty() const
+	{
+		return _delegates.empty();
+	}
+
+protected:
+	Delegates _delegates;
+};
 } // namespace Poco
 
 

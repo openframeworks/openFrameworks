@@ -7,7 +7,7 @@
 	<key>classes</key>
 	<dict/>
 	<key>objectVersion</key>
-	<string>42</string>
+	<string>46</string>
 	<key>objects</key>
 	<dict>
 		<key>BB4B014C10F69532006C3DED</key>
@@ -353,10 +353,15 @@
 		</dict>
 		<key>E4B69B4C0A3A1720003C02F2</key>
 		<dict>
+			<key>attributes</key>
+			<dict>
+				<key>LastUpgradeCheck</key>
+				<string>0460</string>
+			</dict>
 			<key>buildConfigurationList</key>
 			<string>E4B69B4D0A3A1720003C02F2</string>
 			<key>compatibilityVersion</key>
-			<string>Xcode 2.4</string>
+			<string>Xcode 3.2</string>
 			<key>developmentRegion</key>
 			<string>English</string>
 			<key>hasScannedForEncodings</key>
@@ -444,6 +449,8 @@
 				<string>NO</string>
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.6</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -498,6 +505,8 @@
 				<string>NO</string>
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.6</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -614,6 +623,8 @@
 		<dict>
 			<key>buildSettings</key>
 			<dict>
+				<key>COMBINE_HIDPI_IMAGES</key>
+				<string>YES</string>
 				<key>COPY_PHASE_STRIP</key>
 				<string>NO</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
@@ -625,16 +636,14 @@
 				<string>"$(SRCROOT)/../../../libs/glut/lib/osx"</string>
 				<key>GCC_DYNAMIC_NO_PIC</key>
 				<string>NO</string>
-				<key>GCC_ENABLE_FIX_AND_CONTINUE</key>
-				<string>YES</string>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
 				<string>YES</string>
 				<key>GCC_MODEL_TUNING</key>
 				<string>NONE</string>
-				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
-				<string>YES</string>
-				<key>GCC_PREFIX_HEADER</key>
-				<string>$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h</string>
+				<key>ICON</key>
+				<string>$(ICON_NAME_DEBUG)</string>
+				<key>ICON_FILE</key>
+				<string>$(ICON_FILE_PATH)$(ICON)</string>
 				<key>INFOPLIST_FILE</key>
 				<string>openFrameworks-Info.plist</string>
 				<key>INSTALL_PATH</key>
@@ -704,8 +713,6 @@
 					<string>$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_51)</string>
 					<string>$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_52)</string>
 				</array>
-				<key>PREBINDING</key>
-				<string>NO</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)Debug</string>
 				<key>WRAPPER_EXTENSION</key>
@@ -720,6 +727,8 @@
 		<dict>
 			<key>buildSettings</key>
 			<dict>
+				<key>COMBINE_HIDPI_IMAGES</key>
+				<string>YES</string>
 				<key>COPY_PHASE_STRIP</key>
 				<string>YES</string>
 				<key>FRAMEWORK_SEARCH_PATHS</key>
@@ -729,16 +738,14 @@
 				</array>
 				<key>FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1</key>
 				<string>"$(SRCROOT)/../../../libs/glut/lib/osx"</string>
-				<key>GCC_ENABLE_FIX_AND_CONTINUE</key>
-				<string>NO</string>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
 				<string>YES</string>
 				<key>GCC_MODEL_TUNING</key>
 				<string>NONE</string>
-				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
-				<string>YES</string>
-				<key>GCC_PREFIX_HEADER</key>
-				<string>$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h</string>
+				<key>ICON</key>
+				<string>$(ICON_NAME_RELEASE)</string>
+				<key>ICON_FILE</key>
+				<string>$(ICON_FILE_PATH)$(ICON)</string>
 				<key>INFOPLIST_FILE</key>
 				<string>openFrameworks-Info.plist</string>
 				<key>INSTALL_PATH</key>
@@ -808,8 +815,6 @@
 					<string>$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_50)</string>
 					<string>$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_51)</string>
 				</array>
-				<key>PREBINDING</key>
-				<string>NO</string>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
 				<key>WRAPPER_EXTENSION</key>
@@ -859,9 +864,9 @@
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>name</key>
-			<string>testApp.cpp</string>
+			<string>ofApp.cpp</string>
 			<key>path</key>
-			<string>src/testApp.cpp</string>
+			<string>src/ofApp.cpp</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>
@@ -874,9 +879,9 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>testApp.h</string>
+			<string>ofApp.h</string>
 			<key>path</key>
-			<string>src/testApp.h</string>
+			<string>src/ofApp.h</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>
@@ -924,7 +929,10 @@
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string>cp -f ../../../libs/fmodex/lib/osx/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmodex.dylib"; install_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";</string>
+			<string>cp -f ../../../libs/fmodex/lib/osx/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmodex.dylib"; install_name_tool -change ./libfmodex.dylib @executable_path/libfmodex.dylib "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME";
+mkdir -p "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
+cp -f "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
+</string>
 		</dict>
 		<key>E4C2424410CC5A17004149E2</key>
 		<dict>

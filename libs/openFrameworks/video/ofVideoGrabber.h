@@ -7,9 +7,9 @@
 #include "ofTypes.h"
 
 
-#ifdef OF_VIDEO_CAPTURE_IPHONE
-	#include "ofiPhoneVideoGrabber.h"
-	#define OF_VID_GRABBER_TYPE ofiPhoneVideoGrabber
+#ifdef OF_VIDEO_CAPTURE_IOS
+	#include "ofxiOSVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofxiOSVideoGrabber
 #endif
 
 #ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -47,10 +47,9 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void					setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber);
 		ofPtr<ofBaseVideoGrabber> getGrabber();
 
-		void				listDevices();
+		vector<ofVideoDevice> listDevices();
 		bool				isFrameNew();
 		void				update();
-		OF_DEPRECATED_MSG("Use ofVideoGrabber::update() instead.", void grabFrame());
 		void				close();	
 		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
 		bool				initGrabber(int w, int h, bool bTexture);

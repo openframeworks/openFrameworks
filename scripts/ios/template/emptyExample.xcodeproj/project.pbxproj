@@ -7,7 +7,7 @@
 	<key>classes</key>
 	<dict/>
 	<key>objectVersion</key>
-	<string>45</string>
+	<string>46</string>
 	<key>objects</key>
 	<dict>
 		<key>19C28FACFE9D520D11CA2CBB</key>
@@ -42,11 +42,13 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>BB24DD8F10DA77E000E9C588</string>
-				<string>BB24DD9010DA77E000E9C588</string>
-				<string>BB24DDCA10DA781C00E9C588</string>
 				<string>E41D3ED713B38FB500A75A5D</string>
 				<string>E41D3EE613B3906D00A75A5D</string>
+				<string>678E130817951530005B6D19</string>
+				<string>678E130A17951536005B6D19</string>
+				<string>678E130C1795153C005B6D19</string>
+				<string>678E130E17951540005B6D19</string>
+				<string>678E131017951549005B6D19</string>
 			</array>
 			<key>isa</key>
 			<string>PBXResourcesBuildPhase</string>
@@ -143,12 +145,12 @@
 				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
-				<string>iPhone_Prefix.pch</string>
+				<string>ofxiOS_Prefix.pch</string>
 				<key>INFOPLIST_FILE</key>
-				<string>ofxiphone-Info.plist</string>
+				<string>ofxiOS-Info.plist</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
-                <key>VALID_ARCHS</key>
+				<key>VALID_ARCHS</key>
 				<string>armv6 armv7</string>
 			</dict>
 			<key>isa</key>
@@ -163,12 +165,12 @@
 				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
-				<string>iPhone_Prefix.pch</string>
+				<string>ofxiOS_Prefix.pch</string>
 				<key>INFOPLIST_FILE</key>
-				<string>ofxiphone-Info.plist</string>
+				<string>ofxiOS-Info.plist</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
-                <key>VALID_ARCHS</key>
+				<key>VALID_ARCHS</key>
 				<string>armv6 armv7</string>
 			</dict>
 			<key>isa</key>
@@ -239,10 +241,15 @@
 		</dict>
 		<key>29B97313FDCFA39411CA2CEA</key>
 		<dict>
+			<key>attributes</key>
+			<dict>
+				<key>LastUpgradeCheck</key>
+				<string>0460</string>
+			</dict>
 			<key>buildConfigurationList</key>
 			<string>C01FCF4E08A954540054247B</string>
 			<key>compatibilityVersion</key>
-			<string>Xcode 3.1</string>
+			<string>Xcode 3.2</string>
 			<key>developmentRegion</key>
 			<string>English</string>
 			<key>hasScannedForEncodings</key>
@@ -280,8 +287,12 @@
 		<dict>
 			<key>children</key>
 			<array>
+				<string>678E130917951536005B6D19</string>
+				<string>678E130717951530005B6D19</string>
+				<string>678E130B1795153C005B6D19</string>
+				<string>678E130D17951540005B6D19</string>
+				<string>678E130F17951549005B6D19</string>
 				<string>E4D8936A11527B74007E1F53</string>
-				<string>BB24DD8B10DA77E000E9C588</string>
 				<string>BB24E1F710DAA51900E9C588</string>
 				<string>BB16F26B0F2B646B00518274</string>
 				<string>BB16E9930F2B1E5900518274</string>
@@ -328,7 +339,7 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>path</key>
-			<string>iPhone_Prefix.pch</string>
+			<string>ofxiOS_Prefix.pch</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
@@ -369,6 +380,106 @@
 		<dict>
 			<key>fileRef</key>
 			<string>53F323EA10A20EDB00E0DAE4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>678E130717951530005B6D19</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>name</key>
+			<string>Icon@2x.png</string>
+			<key>path</key>
+			<string>bin/data/Icon@2x.png</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>678E130817951530005B6D19</key>
+		<dict>
+			<key>fileRef</key>
+			<string>678E130717951530005B6D19</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>678E130917951536005B6D19</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>name</key>
+			<string>Icon.png</string>
+			<key>path</key>
+			<string>bin/data/Icon.png</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>678E130A17951536005B6D19</key>
+		<dict>
+			<key>fileRef</key>
+			<string>678E130917951536005B6D19</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>678E130B1795153C005B6D19</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>name</key>
+			<string>Default.png</string>
+			<key>path</key>
+			<string>bin/data/Default.png</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>678E130C1795153C005B6D19</key>
+		<dict>
+			<key>fileRef</key>
+			<string>678E130B1795153C005B6D19</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>678E130D17951540005B6D19</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>name</key>
+			<string>Default@2x.png</string>
+			<key>path</key>
+			<string>bin/data/Default@2x.png</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>678E130E17951540005B6D19</key>
+		<dict>
+			<key>fileRef</key>
+			<string>678E130D17951540005B6D19</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>678E130F17951549005B6D19</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>image.png</string>
+			<key>name</key>
+			<string>Default-568h@2x~iphone.png</string>
+			<key>path</key>
+			<string>bin/data/Default-568h@2x~iphone.png</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>678E131017951549005B6D19</key>
+		<dict>
+			<key>fileRef</key>
+			<string>678E130F17951549005B6D19</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
@@ -456,20 +567,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>BB24DD8F10DA77E000E9C588</key>
-		<dict>
-			<key>fileRef</key>
-			<string>BB24DD8C10DA77E000E9C588</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>BB24DD9010DA77E000E9C588</key>
-		<dict>
-			<key>fileRef</key>
-			<string>BB24DD8D10DA77E000E9C588</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
 		<key>BB24DDC910DA781C00E9C588</key>
 		<dict>
 			<key>fileEncoding</key>
@@ -479,16 +576,9 @@
 			<key>lastKnownFileType</key>
 			<string>text.plist.xml</string>
 			<key>path</key>
-			<string>ofxiphone-Info.plist</string>
+			<string>ofxiOS-Info.plist</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
-		</dict>
-		<key>BB24DDCA10DA781C00E9C588</key>
-		<dict>
-			<key>fileRef</key>
-			<string>BB24DDC910DA781C00E9C588</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>BB24E1F710DAA51900E9C588</key>
 		<dict>
@@ -576,8 +666,6 @@
 				<string>0</string>
 				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
 				<string>NO</string>
-				<key>GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS</key>
-				<string>NO</string>
 				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
 				<string>NO</string>
 				<key>GCC_WARN_ABOUT_POINTER_SIGNEDNESS</key>
@@ -593,8 +681,6 @@
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 				<string>3.1</string>
 				<key>ONLY_ACTIVE_ARCH</key>
-				<string>NO</string>
-				<key>PREBINDING</key>
 				<string>NO</string>
 				<key>PROVISIONING_PROFILE[sdk=iphoneos*]</key>
 				<string></string>
@@ -645,8 +731,6 @@
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
 				<string>3.1</string>
 				<key>ONLY_ACTIVE_ARCH</key>
-				<string>NO</string>
-				<key>PREBINDING</key>
 				<string>NO</string>
 				<key>SDKROOT</key>
 				<string>iphoneos</string>
@@ -828,7 +912,7 @@
 			<key>isa</key>
 			<string>PBXReferenceProxy</string>
 			<key>path</key>
-			<string>libofxiPhone_iphoneos_Release.a</string>
+			<string>libofxiPhone_iphoneos_Debug.a</string>
 			<key>remoteRef</key>
 			<string>E41D410113B3A0D800A75A5D</string>
 			<key>sourceTree</key>
@@ -922,9 +1006,9 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>testApp.h</string>
+			<string>ofApp.h</string>
 			<key>path</key>
-			<string>src/testApp.h</string>
+			<string>src/ofApp.h</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>
@@ -937,9 +1021,9 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.cpp.objcpp</string>
 			<key>name</key>
-			<string>testApp.mm</string>
+			<string>ofApp.mm</string>
 			<key>path</key>
-			<string>src/testApp.mm</string>
+			<string>src/ofApp.mm</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>

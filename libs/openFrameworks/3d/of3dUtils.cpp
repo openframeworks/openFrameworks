@@ -1,23 +1,40 @@
 #include "of3dUtils.h"
 #include "ofGraphics.h"
+#include "of3dGraphics.h"
 
+
+ofVboMesh & cachedAxesVbo(){
+    static ofVboMesh * axis = new ofVboMesh(ofMesh::axis());
+    return *axis;
+}
+
+/** @brief Draws x,y,z axes representing the current reference frame
+ *  @detail Axes are drawn in red (+x), green (+y) and blue (+z)
+ *	@param size size at which to draw the axes
+ **/
 void ofDrawAxis(float size) {
-	ofPushStyle();
-	ofSetLineWidth(3);
-
-	// draw x axis
-	ofSetColor(ofColor::red);
-	ofLine(0, 0, 0, size, 0, 0);
-	
-	// draw y axis
-	ofSetColor(ofColor::green);
-	ofLine(0, 0, 0, 0, size, 0);
-
-	// draw z axis
-	ofSetColor(ofColor::blue);
-	ofLine(0, 0, 0, 0, 0, size);
-	
-	ofPopStyle();
+	if (ofGetGLProgrammableRenderer()){
+		ofPushMatrix();
+		ofScale(size, size,size);
+		cachedAxesVbo().draw();
+		ofPopMatrix();
+	} else {
+		ofPushStyle();
+		ofSetLineWidth(3);
+		
+		// draw x axis
+		ofSetColor(ofColor::red);
+		ofLine(0, 0, 0, size, 0, 0);
+		
+		// draw y axis
+		ofSetColor(ofColor::green);
+		ofLine(0, 0, 0, 0, size, 0);
+		
+		// draw z axis
+		ofSetColor(ofColor::blue);
+		ofLine(0, 0, 0, 0, 0, size);
+		ofPopStyle();
+	}
 }
 
 //--------------------------------------------------------------
@@ -119,12 +136,12 @@ void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
 	
 	//draw cone
 	ofMatrix4x4 mat;
-	mat.makeRotationMatrix(ofVec3f(0,0,1), end - start);
+	mat.makeRotationMatrix(end - start, ofVec3f(0,1,0));
 	ofPushMatrix();
 	ofTranslate(end);
 	ofMultMatrix(mat.getPtr());
-	ofTranslate(0,0,-headSize);
-	ofCone(headSize, headSize);	
+	ofTranslate(0, headSize*0.5 ,0);
+	ofDrawCone(headSize, headSize);
 	ofPopMatrix();
 }
 //--------------------------------------------------------------
@@ -158,12 +175,13 @@ void ofDrawRotationAxes(float radius, float stripWidth, int circleRes){
 		axisZMesh.addVertex(ofVec3f( stripWidth, x*radius, y*radius));
 	}
 	
-	glEnable(GL_DEPTH_TEST);
+	ofPushStyle();
+	ofEnableDepthTest();
 	axisXMesh.draw();
 	axisYMesh.draw();
 	axisZMesh.draw();
 	ofDrawAxis(radius);
-	glDisable(GL_DEPTH_TEST);
+	ofPopStyle();
 	
 }
 

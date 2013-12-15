@@ -30,7 +30,7 @@ bool ofQTKitPlayer::loadMovie(string path){
 //--------------------------------------------------------------------
 bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
-		ofLogError("ofQTKitPlayer") << "Invalid ofQTKitDecodeMode mode specified while loading movie.";
+		ofLogError("ofQTKitPlayer") << "loadMovie(): unknown ofQTKitDecodeMode mode";
 		return false;
 	}
 	
@@ -74,7 +74,7 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 		firstFrame(); //will load the first frame
 	}
 	else {
-		ofLogError("ofQTKitPlayer") << "Loading file " << movieFilePath << " failed.";
+		ofLogError("ofQTKitPlayer") << "loadMovie(): couldn't load \"" << movieFilePath << "\"";
 		[moviePlayer release];
 		moviePlayer = NULL;
 	}
@@ -218,19 +218,6 @@ void ofQTKitPlayer::update() {
 bool ofQTKitPlayer::isFrameNew() {
 	return bNewFrame;
 }
-		
-//--------------------------------------------------------------------
-void ofQTKitPlayer::bind() {
-	if(!isLoaded() || !moviePlayer.useTexture) return;
-	updateTexture();
-	tex.bind();
-}
-
-//--------------------------------------------------------------------
-void ofQTKitPlayer::unbind(){
-	if(!isLoaded() || !moviePlayer.useTexture) return;
-	tex.unbind();
-}
 
 //--------------------------------------------------------------------
 void ofQTKitPlayer::draw(float x, float y) {
@@ -255,7 +242,7 @@ ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
 	   }
 	}
     else{
-        ofLogError("ofQTKitPlayer") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
+        ofLogError("ofQTKitPlayer") << "getPixelsRef(): returning pixels that may be unallocated, make sure to initialize the video player before calling this function";
     }
 
     [pool release];
@@ -371,7 +358,7 @@ ofLoopType ofQTKitPlayer::getLoopState(){
     	state = OF_LOOP_PALINDROME;
 	}
 	else{
-		ofLogError("ofQTKitPlayer") << "Invalid loop state " << state << ".";
+		ofLogError("ofQTKitPlayer") << "unknown loop state";
 	}
 	
 	return state;
@@ -417,7 +404,7 @@ float ofQTKitPlayer::getHeight() {
 //--------------------------------------------------------------------
 bool ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
     if(newPixelFormat != OF_PIXELS_RGB && newPixelFormat != OF_PIXELS_RGBA) {
-        ofLogWarning("ofQTKitPlayer") << "Pixel format " << newPixelFormat << " is not supported.";
+        ofLogWarning("ofQTKitPlayer") << "setPixelFormat(): pixel format " << newPixelFormat << " is not supported";
         return false;
     }
 

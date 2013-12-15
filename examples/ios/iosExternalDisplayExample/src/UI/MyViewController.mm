@@ -7,12 +7,12 @@
 //
 
 #import "MyViewController.h"
-#import "ofxiPhoneExternalDisplay.h"
+#import "ofxiOSExternalDisplay.h"
 
 @implementation MyViewController
 
 -(IBAction)displayOnDeviceScreenButtonPressed:(id)sender {
-    ofxiPhoneExternalDisplay::displayOnDeviceScreen();
+    ofxiOSExternalDisplay::displayOnDeviceScreen();
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

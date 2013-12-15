@@ -4,6 +4,7 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofUtils.h"
+#include "ofAppRunner.h"
 
 #ifdef TARGET_WIN32
 #include <winuser.h>
@@ -19,14 +20,12 @@
 
 #ifdef TARGET_OSX
 	// ofSystemUtils.cpp is configured to build as
-	// objective-c++ so as able to use NSAutoreleasePool.
+	// objective-c++ so as able to use Cocoa dialog panels
 	// This is done with this compiler flag
 	//		-x objective-c++
 	// http://www.yakyak.org/viewtopic.php?p=1475838&sid=1e9dcb5c9fd652a6695ac00c5e957822#p1475838
 
-	#include <Carbon/Carbon.h>
-	#include <sys/param.h> // for MAXPATHLEN
-	#include <Cocoa/Cocoa.h>  // for NSAutoreleasePool
+	#include <Cocoa/Cocoa.h>
 #endif
 
 #ifdef TARGET_WIN32
@@ -62,27 +61,31 @@ std::wstring convertNarrowToWide( const std::string& as ){
     return ret;
 }
 
+#endif
 
+#if defined( TARGET_OSX )
+static void restoreAppWindowFocus(){
+	NSWindow * appWindow = (NSWindow *)ofGetCocoaWindow();
+	if(appWindow) {
+		[appWindow makeKeyAndOrderFront:nil];
+	}
+}
 #endif
 
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 #include <gtk/gtk.h>
-static gboolean closeGTK(GtkWidget *widget){
-	//gtk_widget_destroy(widget);
-    gtk_main_quit();
-    return (FALSE);
-}
+#include "ofGstUtils.h"
 
 static void initGTK(){
-	int argc=0; char **argv = NULL;
-	gtk_init (&argc, &argv);
+	static bool initialized = false;
+	if(!initialized){
+		ofGstUtils::startGstMainLoop();
+	    gdk_threads_init();
+		int argc=0; char **argv = NULL;
+		gtk_init (&argc, &argv);
+		initialized = true;
+	}
 
-}
-static void startGTK(GtkWidget *dialog){
-	gtk_init_add( (GSourceFunc) closeGTK, NULL );
-	gtk_quit_add_destroy(1,GTK_OBJECT(dialog));
-	//g_timeout_add(10, (GSourceFunc) destroyWidgetGTK, (gpointer) dialog);
-	gtk_main();
 }
 
 static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,string defaultName=""){
@@ -114,10 +117,14 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),defaultName.c_str());
 
+	gdk_threads_enter();
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 		results = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 	}
-	startGTK(dialog);
+	gtk_widget_destroy (dialog);
+	gdk_threads_leave();
+	//gtk_dialog_run(GTK_DIALOG(dialog));
+	//startGTK(dialog);
 	return results;
 }
 
@@ -165,126 +172,31 @@ void ofSystemAlertDialog(string errorMessage){
 
 
 	#ifdef TARGET_OSX
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];  // The StandardAlert requires a NSAutoreleasePool to avoid memory leaks
-
-		CFStringRef msgStrRef = CFStringCreateWithCString(NULL, errorMessage.c_str(), kCFStringEncodingASCII);
-		DialogRef theItem;
-		DialogItemIndex itemIndex;
-		CreateStandardAlert(kAlertNoteAlert, msgStrRef, NULL, NULL, &theItem);
-		RunStandardAlert(theItem, NULL, &itemIndex);
-
+		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+		NSAlert *alertDialog = [NSAlert alertWithMessageText:[NSString stringWithUTF8String:errorMessage.c_str()]
+											   defaultButton:nil
+											 alternateButton:nil
+												 otherButton:nil
+								   informativeTextWithFormat:@""];
+		[alertDialog runModal];
+		restoreAppWindowFocus();
 		[pool drain];
 	#endif
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		initGTK();
 		GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", errorMessage.c_str());
+
+		gdk_threads_enter();
 		gtk_dialog_run (GTK_DIALOG (dialog));
-		startGTK(dialog);
+		gtk_widget_destroy (dialog);
+		gdk_threads_leave();
 	#endif
 
 	#ifdef TARGET_ANDROID
 		ofxAndroidAlertBox(errorMessage);
 	#endif
 }
-
-
-//----------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------       OSX
-//----------------------------------------------------------------------------------------
-#ifdef TARGET_OSX
-//---------------------------------------------------------------------
-
-pascal void modernEventProc(NavEventCallbackMessage callBackSelector,
-                            NavCBRecPtr callBackParms, void* callBackUD)
-{
-    switch(callBackSelector)
-    {
-        case kNavCBStart:
-        {
-			string defaultPath = *(string*)callBackUD;
-			if(defaultPath!=""){
-				OSErr err;
-
-				//  get an FSRef for the starting location
-				FSRef srcRef;
-				FSPathMakeRef((const UInt8*)ofToDataPath(defaultPath).c_str(), &srcRef, NULL);
-
-				//  make an AEDesc out of it.
-				AEDesc theDesc;
-				err = AECreateDesc(typeFSRef, &srcRef, sizeof (FSRef), &theDesc);
-
-				//  set it.
-				err = NavCustomControl ( callBackParms->context, kNavCtlSetLocation, (void*)&theDesc);
-			}
-        }
-			break;
-    }
-}
-
-// Gets a file to open from the user. Caller must release the CFURLRef.
-CFURLRef GetOpenFileFromUser(bool bFolder, string defaultPath)
-{
-	NavDialogCreationOptions dialogOptions;
-	NavDialogRef dialog;
-	NavReplyRecord replyRecord;
-	CFURLRef fileAsCFURLRef = NULL;
-	FSRef fileAsFSRef;
-	OSStatus status;
-
-	// Get the standard set of defaults
-	status = NavGetDefaultDialogCreationOptions(&dialogOptions);
-
-	require_noerr( status, CantGetNavOptions );
-
-	// Make the window app-wide modal
-	dialogOptions.modality = kWindowModalityAppModal;
-	dialogOptions.optionFlags != kNavAllowOpenPackages;
-
-	// Create the dialog
-	if( bFolder ){
-		status = NavCreateChooseFolderDialog(&dialogOptions, &modernEventProc, NULL, &defaultPath, &dialog);
-	}else{
-		status = NavCreateGetFileDialog(&dialogOptions, NULL, &modernEventProc, NULL, NULL, &defaultPath, &dialog);
-	}
-
-	require_noerr( status, CantCreateDialog );
-
-	// Show it
-	status = NavDialogRun(dialog);
-	require_noerr( status, CantRunDialog );
-
-	// Get the reply
-	status = NavDialogGetReply(dialog, &replyRecord);
-	require( ((status == noErr) || (status == userCanceledErr)), CantGetReply );
-
-	// If the user clicked "Cancel", just bail
-	if ( status == userCanceledErr ) goto UserCanceled;
-
-	// Get the file
-	//TODO: for multiple files - 1 specifies index
-	status = AEGetNthPtr(&(replyRecord.selection), 1, typeFSRef, NULL, NULL, &fileAsFSRef, sizeof(FSRef), NULL);
-	require_noerr( status, CantExtractFSRef );
-
-	// Convert it to a CFURL
-	fileAsCFURLRef = CFURLCreateFromFSRef(NULL, &fileAsFSRef);
-
-	// Cleanup
-CantExtractFSRef:
-UserCanceled:
-	verify_noerr( NavDisposeReply(&replyRecord) );
-CantGetReply:
-CantRunDialog:
-	NavDialogDispose(dialog);
-CantCreateDialog:
-CantGetNavOptions:
-    return fileAsCFURLRef;
-}
-#endif
-//----------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------
-
 
 //----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
@@ -315,27 +227,32 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
-	CFURLRef cfUrl = GetOpenFileFromUser(bFolderSelection,defaultPath);
-
-	CFStringRef cfString = NULL;
-
-	if ( cfUrl != NULL ){
-		cfString = CFURLCopyFileSystemPath( cfUrl, kCFURLPOSIXPathStyle );
-		CFRelease( cfUrl );
-
-		// copy from a CFString into a local c string (http://www.carbondev.com/site/?page=CStrings+)
-		const int kBufferSize = MAXPATHLEN;
-
-		char fileUrl[kBufferSize];
-		Boolean bool1 = CFStringGetCString(cfString,fileUrl,kBufferSize,kCFStringEncodingMacRoman);
-
-		//char fileName[kBufferSize];
-		//Boolean bool2 = CFStringGetCString(reply.saveFileName,fileName,kBufferSize,kCFStringEncodingMacRoman);
-
-		// append strings together
-		CFRelease(cfString);
-		results.filePath = fileUrl;
+	
+	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+	NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
+	[loadDialog setAllowsMultipleSelection:NO];
+	[loadDialog setCanChooseDirectories:bFolderSelection];
+	[loadDialog setResolvesAliases:YES];
+	
+	if(!windowTitle.empty()) {
+		[loadDialog setTitle:[NSString stringWithUTF8String:windowTitle.c_str()]];
 	}
+	
+	if(!defaultPath.empty()) {
+		NSString * s = [NSString stringWithUTF8String:defaultPath.c_str()];
+		s = [[s stringByExpandingTildeInPath] stringByResolvingSymlinksInPath];
+		NSURL * defaultPathUrl = [NSURL fileURLWithPath:s];
+		[loadDialog setDirectoryURL:defaultPathUrl];
+	}
+	
+	NSInteger buttonClicked = [loadDialog runModal];
+	restoreAppWindowFocus();
+	
+	if(buttonClicked == NSFileHandlingPanelOKButton) {
+		NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
+		results.filePath = string([[selectedFileURL path] UTF8String]);
+	}
+	[pool drain];
 
 #endif
 	//----------------------------------------------------------------------------------------
@@ -364,7 +281,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 
 		ofn.lpstrFilter = "All\0";
 		ofn.lpstrFile = szFileName;
-#else // VS2010
+#else // Visual Studio
 		wchar_t szFileName[MAX_PATH];
 		if(defaultPath!=""){
             wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
@@ -457,85 +374,18 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
 
-	short fRefNumOut;
-	FSRef output_file;
-	OSStatus err;
-
-	NavDialogCreationOptions options;
-	NavGetDefaultDialogCreationOptions( &options );
-
-	options.optionFlags = kNavNoTypePopup + kNavSupportPackages + kNavAllowOpenPackages;
-	options.modality = kWindowModalityAppModal;
-
-	options.optionFlags = kNavDefaultNavDlogOptions;
-	options.message = CFStringCreateWithCString(NULL, messageName.c_str(), kCFStringEncodingASCII);;
-	options.saveFileName = CFStringCreateWithCString(NULL, defaultName.c_str(), kCFStringEncodingASCII);
-	NavDialogRef dialog;
-
-	err = NavCreatePutFileDialog(&options, '.mov', 'Moov', NULL, NULL, &dialog);
-
-	//printf("NavCreatePutFileDialog returned %i\n", err );
-
-	err = NavDialogRun(dialog);
-	//printf("NavDialogRun returned %i\n", err );
-
-	NavUserAction action;
-	action = NavDialogGetUserAction( dialog );
-	//printf("got action %i\n", action);
-	if (action == kNavUserActionNone || action == kNavUserActionCancel) {
-
-		return results;
+	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+	NSSavePanel * saveDialog = [NSSavePanel savePanel];
+	[saveDialog setMessage:[NSString stringWithUTF8String:messageName.c_str()]];
+	[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
+	
+	NSInteger buttonClicked = [saveDialog runModal];
+	restoreAppWindowFocus();
+	
+	if(buttonClicked == NSFileHandlingPanelOKButton){
+		results.filePath = string([[[saveDialog URL] path] UTF8String]);
 	}
-
-	// get dialog reply
-	NavReplyRecord reply;
-	err = NavDialogGetReply(dialog, &reply);
-	if ( err != noErr )
-		return results;
-
-	if ( reply.replacing ) {
-		ofLog(OF_LOG_WARNING, "ofSystemSaveDialog: need to replace");
-	}
-
-	AEKeyword keyword;
-	DescType actual_type;
-	Size actual_size;
-	FSRef output_dir;
-	err = AEGetNthPtr(&(reply.selection), 1, typeFSRef, &keyword, &actual_type,
-					  &output_dir, sizeof(output_file), &actual_size);
-
-	//printf("AEGetNthPtr returned %i\n", err );
-
-
-	CFURLRef cfUrl = CFURLCreateFromFSRef( kCFAllocatorDefault, &output_dir );
-	CFStringRef cfString = NULL;
-	if ( cfUrl != NULL )
-	{
-		cfString = CFURLCopyFileSystemPath( cfUrl, kCFURLPOSIXPathStyle );
-		CFRelease( cfUrl );
-	}
-
-	// copy from a CFString into a local c string (http://www.carbondev.com/site/?page=CStrings+)
-	const int kBufferSize = 255;
-
-	char folderURL[kBufferSize];
-	Boolean bool1 = CFStringGetCString(cfString,folderURL,kBufferSize,kCFStringEncodingMacRoman);
-
-	char fileName[kBufferSize];
-	Boolean bool2 = CFStringGetCString(reply.saveFileName,fileName,kBufferSize,kCFStringEncodingMacRoman);
-
-	// append strings together
-
-	string url1 = folderURL;
-	string url2 = fileName;
-	string finalURL = url1 + "/" + url2;
-
-	results.filePath = finalURL.c_str();
-
-	//printf("url %s\n", finalURL.c_str());
-
-	// cleanup dialog
-	NavDialogDispose(dialog);
+	[pool drain];
 
 #endif
 	//----------------------------------------------------------------------------------------
@@ -616,16 +466,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 string ofSystemTextBoxDialog(string question, string text){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 	initGTK();
-	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, (GtkButtonsType) GTK_BUTTONS_OK_CANCEL, question.c_str() );
+	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, (GtkButtonsType) GTK_BUTTONS_OK_CANCEL, "%s", question.c_str() );
 	GtkWidget* content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	GtkWidget* textbox = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(textbox),text.c_str());
 	gtk_container_add (GTK_CONTAINER (content_area), textbox);
+	gdk_threads_enter();
 	gtk_widget_show_all (dialog);
 	if(gtk_dialog_run (GTK_DIALOG (dialog))==GTK_RESPONSE_OK){
 		text = gtk_entry_get_text(GTK_ENTRY(textbox));
 	}
-	startGTK(dialog);
+	gtk_widget_destroy (dialog);
+	gdk_threads_leave();
 #endif
 
 #ifdef TARGET_OSX

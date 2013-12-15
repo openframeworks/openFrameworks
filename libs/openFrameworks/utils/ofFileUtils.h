@@ -21,6 +21,7 @@ public:
 	void set(const char * _buffer, unsigned int _size);
 	void set(const string & text);
 	bool set(istream & stream);
+	void append(const string& _buffer);
 	void append(const char * _buffer, unsigned int _size);
 
 	bool writeTo(ostream & stream) const;
@@ -75,6 +76,7 @@ public:
 	static string getBaseName(string filePath); // filename without extension
 
 	static string getEnclosingDirectory(string filePath, bool bRelativeToData = true);
+	static bool createEnclosingDirectory(string filePath, bool bRelativeToData = true, bool bRecursive = true); 
 	static string getCurrentWorkingDirectory();
 	static string join(string path1,string path2);
 	
@@ -85,6 +87,12 @@ public:
 };
 
 class ofFile: public fstream{
+
+#ifdef _MSC_VER
+	// http://stackoverflow.com/questions/14487241/avoiding-an-inheritance-by-dominance-warning-for-a-mocked-stdfstream-class
+	void _Add_vtordisp1() { }
+	void _Add_vtordisp2() { }
+#endif
 
 public:
 	
@@ -163,12 +171,12 @@ public:
 
 	//helper functions to read/write a whole file to/from an ofBuffer
 	ofBuffer readToBuffer();
-	bool writeFromBuffer(ofBuffer & buffer);
+	bool writeFromBuffer(const ofBuffer & buffer);
 
 	
 	// this can be used to read the whole stream into an output stream. ie:
 	// it's equivalent to rdbuf() just here to make it easier to use
-	// cout << file.getFileBuffer() << endl;
+	// ofLogNotice() << file.getFileBuffer();
 	// write_file << file.getFileBuffer();
 	filebuf * getFileBuffer() const;
 	
