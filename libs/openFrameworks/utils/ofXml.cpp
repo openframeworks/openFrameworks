@@ -589,11 +589,6 @@ void ofXml::releaseAll(){
         document->release();
         document = 0;
     }
-
-    if(element) {
-        element->release();
-        element = 0;
-    }
 }
 
 bool ofXml::remove(const string& path) // works for both attributes and tags
