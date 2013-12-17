@@ -14,6 +14,11 @@
 #include "ofGraphics.h"
 #include "ofMatrix4x4.h"
 
+using std::stack;
+using std::pair;
+
+
+
 class ofAppBaseWindow;
 class ofFbo;
 

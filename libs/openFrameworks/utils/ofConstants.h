@@ -350,7 +350,39 @@ typedef ofBaseApp ofSimpleApp;
 #include <fstream>
 #include <algorithm>
 #include <cfloat>
-using namespace std;
+
+using std::istream;
+using std::istream;
+using std::ostream;
+using std::ifstream;
+using std::ofstream;
+using std::string;
+using std::filebuf;
+using std::fstream;
+using std::istringstream;
+using std::ostringstream;
+using std::stringstream;
+using std::exception_ptr;
+using std::exception;
+using std::numeric_limits;
+using std::vector;
+using std::unary_function;
+using std::bitset;
+using std::setw;
+using std::swap;
+using std::endl;
+using std::make_pair;
+using std::hex;
+using std::cout;
+using std::cerr;
+using std::setfill;
+using std::ios_base;
+using std::ios;
+using std::make_shared;
+using std::min;
+using std::fmin;
+using std::setprecision;
+using std::fixed;
 
 #ifndef PI
 	#define PI       3.14159265358979323846

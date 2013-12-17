@@ -7,6 +7,8 @@
 // ofPolyline
 // A line composed of straight line segments.
 
+using std::deque;
+
 class ofRectangle;
 
 class ofPolyline {
