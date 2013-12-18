@@ -302,7 +302,7 @@ typedef TESSindex ofIndexType;
 		#define OF_SOUNDSTREAM_RTAUDIO
 	#elif defined(TARGET_ANDROID)
 		#define OF_SOUNDSTREAM_ANDROID
-	#else
+	#elif defined(TARGET_OF_IOS)
 		#define OF_SOUNDSTREAM_IOS
 	#endif
 #endif
