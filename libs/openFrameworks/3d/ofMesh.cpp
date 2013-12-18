@@ -1,6 +1,7 @@
 #include "ofMesh.h"
 #include "ofGraphics.h"
 #include <map>
+using std::map;
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(){

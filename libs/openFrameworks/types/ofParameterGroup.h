@@ -14,6 +14,8 @@
 #include "ofLog.h"
 #include "ofParameter.h"
 
+using std::map;
+
 class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();

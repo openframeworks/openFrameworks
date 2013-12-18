@@ -7,6 +7,8 @@
 #include "ofBaseTypes.h"
 #include "ofRendererCollection.h"
 
+using std::set;
+
 //---------------------------------
 int ofGetGlInternalFormat(const ofPixels& pix) {
 #ifndef TARGET_OPENGLES

@@ -9,6 +9,8 @@
 #include "ofGLUtils.h"
 #include <map>
 
+using std::map;
+
 class ofVbo {
 public:
 	
