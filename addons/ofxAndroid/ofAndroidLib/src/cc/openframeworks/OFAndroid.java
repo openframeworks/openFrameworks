@@ -57,12 +57,13 @@ public class OFAndroid {
 			"/mnt/sdcard/bpemmctest", 
 			"/mnt/sdcard/_ExternalSD",  
 			"/mnt/Removable/MicroSD",
-			"/Removable/MicroSD" };
+			"/Removable/MicroSD",
+			"/sdcard"};
 	
-	public static String getRealExternalStorageDirectory()
+	public static String getRealExternalStorageDirectory(Context context)
 	{				
 		// Standard way to get the external storage directory
-		String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();	
+		String externalPath = context.getExternalFilesDir(null).getPath();	
 		File SDCardDir = new File(externalPath);		
     	if(SDCardDir.exists() && SDCardDir.canWrite()) {		
     		return externalPath;
@@ -81,6 +82,47 @@ public class OFAndroid {
 		
 		Log.i("OF", "Using storage location: " + externalPath);
 		return externalPath;		
+	}
+	
+	public static String getOldExternalStorageDirectory(String packageName)
+	{				
+		// Standard way to get the external storage directory
+		String externalPath = Environment.getExternalStorageDirectory().getPath();	
+		File SDCardDir = new File(externalPath);		
+    	if(SDCardDir.exists() && SDCardDir.canWrite()) {		
+    		return externalPath + "/Android/data/"+packageName;
+    	}
+		
+		// This checks if any of the directories from mExternalStorageDirectories exist, if it does, it uses that one instead
+		for(int i = 0; i < mExternalStorageDirectories.length; i++)
+		{
+			//Log.i("OF", "Checking: " + mExternalStorageDirectories[i]);	
+			SDCardDir = new File(mExternalStorageDirectories[i]);		
+	    	if(SDCardDir.exists() && SDCardDir.canWrite()) {				
+	    		externalPath = mExternalStorageDirectories[i];	// Found writable location
+				break;
+	    	}	    	
+		}
+		
+		Log.i("OF", "Using storage location: " + externalPath);
+		return externalPath + "/Android/data/"+packageName;
+	}
+	
+	public static void moveOldData(String src, String dst){
+		File srcFile = new File(src);
+		File dstFile = new File(dst);
+		
+		if(srcFile.equals(dstFile)) return;
+		
+		if(srcFile.isDirectory() && srcFile.listFiles().length>1){
+			for(File f: srcFile.listFiles()){
+				if(f.equals(dstFile)){
+					moveOldData(f.getAbsolutePath(),dst+"/"+f.getName());
+					continue;
+				}
+				f.renameTo(new File(dst+"/"+f.getName()));
+			}
+		}
 	}
 	
 	public static String getAppDataDirectory(){
@@ -148,15 +190,15 @@ public class OFAndroid {
 		        dataPath="";
 	    		try{
 	    			Log.i("OF", "sd mounted: " + checkSDCardMounted());
-					dataPath = getRealExternalStorageDirectory();
-					dataPath += "/Android/data/"+packageName;
+					dataPath = getRealExternalStorageDirectory(ofActivity);
 
 	    			Log.i("OF","creating app directory: " + dataPath);
 					try{
 						File dir = new File(dataPath);
-						if(!dir.exists() && dir.mkdirs()!=true){
+						if(!(dir.mkdirs() || dir.isDirectory())){
 							if(copydata){
 								fatalErrorDialog("Error while copying resources to sdcard:\nCouldn't create directory " + dataPath);
+								Log.e("OF","error creating dir " + dataPath);
 								return;
 							}else{
 								throw new Exception();
@@ -166,6 +208,7 @@ public class OFAndroid {
 						fatalErrorDialog("Error while copying resources to sdcard:\nCouldn't create directory " + dataPath + "\n"+e.getMessage());
 						Log.e("OF","error creating dir " + dataPath,e);
 					}
+					moveOldData(getOldExternalStorageDirectory(packageName), dataPath);
 					OFAndroid.setAppDataDir(dataPath);
 			        ofActivity.onLoadPercent(.10f);
 	    		}catch(Exception e){
@@ -180,7 +223,7 @@ public class OFAndroid {
 					Log.i("OF","app name: " + app_name);
 					
 					if(copydata){
-						StatFs stat = new StatFs(getRealExternalStorageDirectory());
+						StatFs stat = new StatFs(dataPath);
 						double sdAvailSize = (double)stat.getAvailableBlocks()
 				                   * (double)stat.getBlockSize();
 						for(int i=0; i<files.length; i++){
