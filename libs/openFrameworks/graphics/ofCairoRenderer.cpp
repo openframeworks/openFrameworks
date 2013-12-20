@@ -701,6 +701,12 @@ void ofCairoRenderer::setHexColor( int hexColor ){
 //--------------------------------------------
 // transformations
 //our openGL wrappers
+
+ofMatrix4x4 ofCairoRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const{
+	ofLogWarning() << "getCurrentMatrix not yet implemented for Cairo Renderer.";
+	return ofMatrix4x4();
+}
+
 void ofCairoRenderer::pushMatrix(){
 	if(!surface || !cr) return;
 	cairo_get_matrix(cr,&tmpMatrix);
