@@ -45,7 +45,7 @@ void ofApp::searchGoogleImages() {
         // in the webpage there is a table for all the images. we
         // want to get the content in the table using 
         // the <table> (.*?) </table> expression
-        RegularExpression regEx("<table width=\"100%\" class=\"images_table\" style=\"table-layout:fixed\">(.*?)</table>");
+        RegularExpression regEx("<table class=\"images_table\" width=\"100%\" style=\"table-layout:fixed\">(.*?)</table>");
         RegularExpression::Match match;
         int found = regEx.match(rawData, match);
         
