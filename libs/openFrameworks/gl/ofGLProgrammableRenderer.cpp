@@ -294,8 +294,10 @@ void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, floa
 void ofGLProgrammableRenderer::setCurrentFBO(ofFbo * fbo){
 	if(fbo!=NULL){
 		matrixStack.setRenderSurface(*fbo);
+		uploadMatrices();
 	}else{
 		matrixStack.setRenderSurface(*ofGetWindowPtr());
+		uploadMatrices();
 	}
 }
 
@@ -748,10 +750,20 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enablePointSprites(){
+#ifdef TARGET_OPENGLES
+        glEnable(GL_POINT_SPRITE_OES);
+#else
+	glEnable(GL_PROGRAM_POINT_SIZE);
+#endif
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disablePointSprites(){
+#ifdef TARGET_OPENGLES
+        glEnable(GL_POINT_SPRITE_OES);
+#else
+	glDisable(GL_PROGRAM_POINT_SIZE);
+#endif
 }
 
 

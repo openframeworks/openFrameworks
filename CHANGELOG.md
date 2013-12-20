@@ -19,18 +19,22 @@ MAJOR CHANGES
 	
 DEPRECATIONS & REMOVALS
 -----------------------
+	- ofxOpenCv: removed deprecated ofxCvMain.h. Use ofxOpenCv.h instead.
 
 CORE
 ----
 ### 3d
 ### App
+	/ updated GLFW to latest master (20131204)
 ### Communication
 ### Events
 ### Graphics
 	/ ofCairoRenderer: fix for moveTo when drawing ofPaths
 ### Math
+        / ofMatrix3x3: fix incorrect multiplication
 ### GL
 	/ ofMaterial: fixed back emmisive material
+	/ Fix point sprites in openGL 3+
 ### Sound
 ### Types
 ### Utils
@@ -43,10 +47,20 @@ PLATFORM SPECIFIC
 ### Android
 	/ fix for texture reload
 	/ change to work with NDK r9b by default
+	/ zip uncompress moved to java
+	/ several fixes in pause / resume workflow
+	/ fix camera not working on some devices + use external texture, should be faster
+	+ support for x86
+
 ### Mac OS X
 ### iOS
 ### Linux
+	/ alsa as default instead of pulseaudio lower latency
+	/ makefile fixes for better eclipse parsing
+	/ videoplayer: fix alpha formats for gstreamer 0.10
+	+ install_dependencies installs libusb so ofxKinect compiles
 ### Windows
+	/ fixed disable vertical sync through update in glfw
  
 CORE ADDONS
 -----------

@@ -42,7 +42,7 @@ public:
 	ofAbstractParameter & getParameter();
 
 protected:
-	void render();
+	virtual void render();
 	ofParameter<Type> value;
 	bool bUpdateOnReleaseOnly;
 	bool bGuiActive;
