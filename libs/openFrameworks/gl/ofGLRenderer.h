@@ -78,6 +78,8 @@ public:
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
 
+	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
 	void setupScreen();

@@ -502,6 +502,36 @@ void ofGLRenderer::loadMatrix (const float *m){
 }
 
 //----------------------------------------------------------
+
+/** @brief	Queries the current OpenGL matrix state
+ *  @detail Returns the specified matrix as held by the renderer's current matrix stack.
+ *
+ *			You can query one of the following:
+ *
+ *			[OF_MATRIX_MODELVIEW | OF_MATRIX_PROJECTION | OF_MATRIX_TEXTURE]
+ *
+ *			Each query will return the state of the matrix
+ *			as it was uploaded to the shader currently bound.
+ *
+ *	@param	matrixMode_  Which matrix mode to query
+ */
+ofMatrix4x4 ofGLRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
+	ofMatrix4x4 mat;
+	switch (matrixMode_) {
+		case OF_MATRIX_MODELVIEW:
+			glGetFloatv(GL_MODELVIEW_MATRIX, mat.getPtr());
+			break;
+		case OF_MATRIX_PROJECTION:
+			glGetFloatv(GL_PROJECTION_MATRIX, mat.getPtr());
+			break;
+		case OF_MATRIX_TEXTURE:
+			glGetFloatv(GL_TEXTURE_MATRIX, mat.getPtr());
+			break;
+	}
+	return mat;
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::multMatrix (const ofMatrix4x4 & m){
 	multMatrix( m.getPtr() );
 }
