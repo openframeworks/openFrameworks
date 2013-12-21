@@ -219,7 +219,7 @@ public class OFAndroid {
 	    		String app_name="";
 				try {
 					int app_name_id = Class.forName(packageName+".R$string").getField("app_name").getInt(null);
-					app_name = ofActivity.getResources().getText(app_name_id).toString();
+					app_name = ofActivity.getResources().getText(app_name_id).toString().toLowerCase();
 					Log.i("OF","app name: " + app_name);
 					
 					if(copydata){
