@@ -552,6 +552,35 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 }
 
 //----------------------------------------------------------
+/** @brief	Queries the current OpenGL matrix state
+ *  @detail Returns the specified matrix as held by the renderer's current matrix stack.
+ *
+ *			You can query one of the following:
+ *
+ *			[OF_MATRIX_MODELVIEW | OF_MATRIX_PROJECTION | OF_MATRIX_TEXTURE]
+ *
+ *			Each query will return the state of the matrix
+ *			as it was uploaded to the shader currently bound.
+ *
+ *	@param	matrixMode_  Which matrix mode to query
+ */
+ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
+	switch (matrixMode_) {
+		case OF_MATRIX_MODELVIEW:
+			return matrixStack.getModelViewMatrix();
+			break;
+		case OF_MATRIX_PROJECTION:
+			return matrixStack.getProjectionMatrix();
+			break;
+		case OF_MATRIX_TEXTURE:
+			return matrixStack.getTextureMatrix();
+			break;
+	}
+}
+
+//----------------------------------------------------------
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::setColor(const ofColor & color){
 	setColor(color.r,color.g,color.b,color.a);
 }
