@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemGroup Label="ProjectConfigurations">
 		<ProjectConfiguration Include="Debug|Win32">
@@ -20,20 +20,22 @@
 		<ConfigurationType>Application</ConfigurationType>
 		<CharacterSet>Unicode</CharacterSet>
 		<WholeProgramOptimization>true</WholeProgramOptimization>
+		<PlatformToolset>v110</PlatformToolset>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
 		<ConfigurationType>Application</ConfigurationType>
 		<CharacterSet>Unicode</CharacterSet>
+		<PlatformToolset>v110</PlatformToolset>
 	</PropertyGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 	<ImportGroup Label="ExtensionSettings" />
 	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
 		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-		<Import Project="..\..\..\libs\openFrameworksCompiled\project\vs2010\openFrameworksRelease.props" />
+		<Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksRelease.props" />
 	</ImportGroup>
 	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
 		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-		<Import Project="..\..\..\libs\openFrameworksCompiled\project\vs2010\openFrameworksDebug.props" />
+		<Import Project="..\..\..\libs\openFrameworksCompiled\project\vs\openFrameworksDebug.props" />
 	</ImportGroup>
 	<PropertyGroup Label="UserMacros" />
 	<PropertyGroup>
@@ -57,7 +59,7 @@
 			<PrecompiledHeader />
 			<WarningLevel>Level3</WarningLevel>
 			<DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-			<AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010;..\..\..\addons\ofxOpenCv\src</AdditionalIncludeDirectories>
+			<AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxOpenCv\src</AdditionalIncludeDirectories>
 		</ClCompile>
 		<Link>
 			<OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -68,7 +70,7 @@
 			<DataExecutionPrevention />
 			<TargetMachine>MachineX86</TargetMachine>
 			<AdditionalDependencies>%(AdditionalDependencies);opencv_calib3d231d.lib;opencv_contrib231d.lib;opencv_core231d.lib;opencv_features2d231d.lib;opencv_flann231d.lib;opencv_gpu231d.lib;opencv_haartraining_engined.lib;opencv_highgui231d.lib;opencv_imgproc231d.lib;opencv_legacy231d.lib;opencv_ml231d.lib;opencv_objdetect231d.lib;opencv_video231d.lib;zlibd.lib</AdditionalDependencies>
-			<AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010</AdditionalLibraryDirectories>
+			<AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs</AdditionalLibraryDirectories>
 		</Link>
 		<PostBuildEvent />
 	</ItemDefinitionGroup>
@@ -80,7 +82,7 @@
 			<PrecompiledHeader />
 			<WarningLevel>Level3</WarningLevel>
 			<DebugInformationFormat />
-			<AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010;..\..\..\addons\ofxOpenCv\src</AdditionalIncludeDirectories>
+			<AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\addons\ofxCv\libs;..\..\..\addons\ofxCv\libs\CLD;..\..\..\addons\ofxCv\libs\CLD\include;..\..\..\addons\ofxCv\libs\CLD\include\CLD;..\..\..\addons\ofxCv\libs\CLD\src;..\..\..\addons\ofxCv\libs\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\include;..\..\..\addons\ofxCv\libs\ofxCv\include\ofxCv;..\..\..\addons\ofxCv\libs\ofxCv\src;..\..\..\addons\ofxCv\src;..\..\..\addons\ofxOpenCv\libs;..\..\..\addons\ofxOpenCv\libs\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\calib3d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\contrib;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\core;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\features2d;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\flann;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\gpu;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\highgui;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\imgproc;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\legacy;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ml;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\objdetect;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\ts;..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video;..\..\..\addons\ofxOpenCv\libs\opencv\lib;..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs;..\..\..\addons\ofxOpenCv\src</AdditionalIncludeDirectories>
 		</ClCompile>
 		<Link>
 			<IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -93,7 +95,7 @@
 			<TargetMachine>MachineX86</TargetMachine>
 			<LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
 			<AdditionalDependencies>%(AdditionalDependencies);opencv_calib3d231.lib;opencv_contrib231.lib;opencv_core231.lib;opencv_features2d231.lib;opencv_flann231.lib;opencv_gpu231.lib;opencv_haartraining_engine.lib;opencv_highgui231.lib;opencv_imgproc231.lib;opencv_legacy231.lib;opencv_ml231.lib;opencv_objdetect231.lib;opencv_video231.lib;zlib.lib</AdditionalDependencies>
-			<AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs2010</AdditionalLibraryDirectories>
+			<AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);..\..\..\addons\ofxOpenCv\libs\opencv\lib\vs</AdditionalLibraryDirectories>
 		</Link>
 		<PostBuildEvent />
 	</ItemDefinitionGroup>
@@ -232,7 +234,7 @@
 		<ClInclude Include="..\..\..\addons\ofxOpenCv\libs\opencv\include\opencv2\video\video.hpp" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs2010\openframeworksLib.vcxproj">
+		<ProjectReference Include="..\..\..\libs\openFrameworksCompiled\project\vs\openframeworksLib.vcxproj">
 			<Project>{5837595d-aca9-485c-8e76-729040ce4b0b}</Project>
 		</ProjectReference>
 	</ItemGroup>
