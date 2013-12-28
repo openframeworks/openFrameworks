@@ -69,10 +69,16 @@ namespace ofxCv {
 			nearDist, farDist);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
+#ifdef TARGET_OPENGLES
+		ofMatrix4x4 lookAt;
+		lookAt.makeLookAtMatrix(ofVec3f(0,0,0), ofVec3f(0,0,1), ofVec3f(0,-1,0));
+		glMultMatrixf(lookAt.getPtr());
+#else
 		gluLookAt(
 			0, 0, 0,
 			0, 0, 1,
 			0, -1, 0);
+#endif
 	}
 	
 	Calibration::Calibration() :
