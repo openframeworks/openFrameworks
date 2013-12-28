@@ -335,7 +335,7 @@ namespace ofxCv {
 			while(smoothedItr != smoothed.end()) {
 				unsigned int label = smoothedItr->first;
 				if(!existsCurrent(label)) {
-					smoothedItr = smoothed.erase(smoothedItr);
+					smoothed.erase(smoothedItr++);
 				} else {
 					++smoothedItr;
 				}
