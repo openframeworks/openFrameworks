@@ -35,6 +35,7 @@ ifeq ($(shell uname),Darwin)
 	HOST_PLATFORM = darwin-x86
 else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
 	HOST_PLATFORM = windows
+	PWD = $(shell pwd)
 else
 	HOST_PLATFORM = linux-$(shell uname -m)
 endif
