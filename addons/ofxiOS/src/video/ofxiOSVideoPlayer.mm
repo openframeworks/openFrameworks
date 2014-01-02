@@ -130,7 +130,7 @@ bool ofxiOSVideoPlayer::setPixelFormat(ofPixelFormat _internalPixelFormat) {
 
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofxiOSVideoPlayer::getPixelFormat(){
+ofPixelFormat ofxiOSVideoPlayer::getPixelFormat() const {
 	return internalPixelFormat;
 }
 
@@ -179,7 +179,7 @@ void ofxiOSVideoPlayer::stop() {
 }		
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::isFrameNew() {
+bool ofxiOSVideoPlayer::isFrameNew() const {
 	if(videoPlayer != NULL) {
 		return bFrameNew;
 	}	
@@ -322,6 +322,11 @@ ofPixelsRef ofxiOSVideoPlayer::getPixelsRef() {
 }
 
 //----------------------------------------
+const ofPixelsRef ofxiOSVideoPlayer::getPixelsRef() const {
+    return getPixelsRef();
+}
+
+//----------------------------------------
 ofTexture * ofxiOSVideoPlayer::getTexture() {
     
     if(!isLoaded()) {
@@ -447,7 +452,7 @@ ofTexture * ofxiOSVideoPlayer::getTexture() {
 }
 
 //----------------------------------------
-float ofxiOSVideoPlayer::getWidth() {
+float ofxiOSVideoPlayer::getWidth() const {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -456,7 +461,7 @@ float ofxiOSVideoPlayer::getWidth() {
 }
 
 //----------------------------------------
-float ofxiOSVideoPlayer::getHeight() {
+float ofxiOSVideoPlayer::getHeight() const {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -465,7 +470,7 @@ float ofxiOSVideoPlayer::getHeight() {
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::isPaused() {
+bool ofxiOSVideoPlayer::isPaused() const {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -474,7 +479,7 @@ bool ofxiOSVideoPlayer::isPaused() {
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::isLoaded() {
+bool ofxiOSVideoPlayer::isLoaded() const {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -483,7 +488,7 @@ bool ofxiOSVideoPlayer::isLoaded() {
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::isPlaying() {
+bool ofxiOSVideoPlayer::isPlaying() const {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -492,7 +497,7 @@ bool ofxiOSVideoPlayer::isPlaying() {
 }
 
 //----------------------------------------
-float ofxiOSVideoPlayer::getPosition() {
+float ofxiOSVideoPlayer::getPosition() const {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -501,7 +506,7 @@ float ofxiOSVideoPlayer::getPosition() {
 }
 
 //----------------------------------------
-float ofxiOSVideoPlayer::getSpeed() {
+float ofxiOSVideoPlayer::getSpeed() const {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -510,7 +515,7 @@ float ofxiOSVideoPlayer::getSpeed() {
 }
 
 //----------------------------------------
-float ofxiOSVideoPlayer::getDuration() {
+float ofxiOSVideoPlayer::getDuration() const {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -519,7 +524,7 @@ float ofxiOSVideoPlayer::getDuration() {
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::getIsMovieDone() {
+bool ofxiOSVideoPlayer::getIsMovieDone() const {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -594,7 +599,7 @@ void ofxiOSVideoPlayer::setFrame(int frame) {
 }
 
 //----------------------------------------
-int	ofxiOSVideoPlayer::getCurrentFrame() {
+int	ofxiOSVideoPlayer::getCurrentFrame() const {
     if(videoPlayer == NULL){
         return 0;
     }
@@ -602,7 +607,7 @@ int	ofxiOSVideoPlayer::getCurrentFrame() {
 }
 
 //----------------------------------------
-int	ofxiOSVideoPlayer::getTotalNumFrames() {
+int	ofxiOSVideoPlayer::getTotalNumFrames() const {
     if(videoPlayer == NULL){
         return 0;
     }
@@ -610,7 +615,7 @@ int	ofxiOSVideoPlayer::getTotalNumFrames() {
 }
 
 //----------------------------------------
-ofLoopType	ofxiOSVideoPlayer::getLoopState() {
+ofLoopType	ofxiOSVideoPlayer::getLoopState() const {
     if(videoPlayer == NULL) {
         return OF_LOOP_NONE;
     }

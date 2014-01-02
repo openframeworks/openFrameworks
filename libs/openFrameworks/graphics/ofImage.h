@@ -135,7 +135,8 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 
 		// getting the data
 		PixelType * 				getPixels();			// up to you to get this right
-		ofPixels_<PixelType> &	 	getPixelsRef();
+        ofPixels_<PixelType>&	 	getPixelsRef();
+        const ofPixels_<PixelType>&	getPixelsRef() const;
 
 		operator ofPixels_<PixelType>&();
 

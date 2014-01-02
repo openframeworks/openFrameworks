@@ -251,6 +251,11 @@ ofPixelsRef ofDirectShowGrabber::getPixelsRef(){
 	return pixels;
 }
 
+//---------------------------------------------------------------------------
+const ofPixelsRef ofDirectShowGrabber::getPixelsRef() const {
+	return pixels;
+}
+
 //--------------------------------------------------------------------
 float ofDirectShowGrabber::getWidth() const {
 	return width;

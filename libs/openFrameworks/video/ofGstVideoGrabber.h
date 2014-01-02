@@ -52,6 +52,7 @@ public:
 
 	unsigned char * getPixels();
 	ofPixelsRef		getPixelsRef();
+	const ofPixelsRef		getPixelsRef() const;
 
 	float 			getHeight() const;
 	float 			getWidth() const;

@@ -243,7 +243,7 @@ void ofxAndroidVideoPlayer::stop(){
 
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::isPaused(){
+bool ofxAndroidVideoPlayer::isPaused() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "isPaused(): java VideoPlayer not loaded";
@@ -268,7 +268,7 @@ bool ofxAndroidVideoPlayer::isPaused(){
 
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::isLoaded(){
+bool ofxAndroidVideoPlayer::isLoaded() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "isLoaded(): java VideoPlayer not loaded";
@@ -292,7 +292,7 @@ bool ofxAndroidVideoPlayer::isLoaded(){
 };
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::isPlaying(){
+bool ofxAndroidVideoPlayer::isPlaying() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "isPlaying(): java VideoPlayer not loaded";
@@ -321,17 +321,17 @@ ofTexture * ofxAndroidVideoPlayer::getTexture(){
 }
 
 //---------------------------------------------------------------------------
-float ofxAndroidVideoPlayer::getWidth(){
+float ofxAndroidVideoPlayer::getWidth() const {
 	return width;
 };
 
 //---------------------------------------------------------------------------
-float ofxAndroidVideoPlayer::getHeight(){
+float ofxAndroidVideoPlayer::getHeight() const {
 	return height;
 };
 
 //---------------------------------------------------------------------------
-float ofxAndroidVideoPlayer::getPosition(){
+float ofxAndroidVideoPlayer::getPosition() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "getPosition(): java VideoPlayer not loaded";
@@ -355,7 +355,7 @@ float ofxAndroidVideoPlayer::getPosition(){
 };
 
 //---------------------------------------------------------------------------
-float ofxAndroidVideoPlayer::getDuration(){
+float ofxAndroidVideoPlayer::getDuration() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "getDuration(): java VideoPlayer not loaded";
@@ -379,7 +379,7 @@ float ofxAndroidVideoPlayer::getDuration(){
 };
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::getIsMovieDone(){
+bool ofxAndroidVideoPlayer::getIsMovieDone() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "getIsMovieDone(): java VideoPlayer not loaded";
@@ -509,7 +509,7 @@ void ofxAndroidVideoPlayer::setLoopState(ofLoopType state){
 };
 
 //------------------------------------------------------------
-ofLoopType ofxAndroidVideoPlayer::getLoopState(){
+ofLoopType ofxAndroidVideoPlayer::getLoopState() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "getLoopState(): java VideoPlayer not loaded";
