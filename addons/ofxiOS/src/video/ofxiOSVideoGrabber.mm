@@ -8,7 +8,7 @@ ofxiOSVideoGrabber::ofxiOSVideoGrabber() {
 }
 
 //needs implementing
-vector <ofVideoDevice> ofxiOSVideoGrabber::listDevices() {
+vector <ofVideoDevice> ofxiOSVideoGrabber::listDevices() const {
 	return grabber->listDevices();
 }
 
@@ -16,7 +16,7 @@ bool ofxiOSVideoGrabber::initGrabber(int w, int h) {
 	return grabber->initGrabber(w, h);
 }
 
-bool ofxiOSVideoGrabber::isFrameNew() {
+bool ofxiOSVideoGrabber::isFrameNew() const {
 	return grabber->isFrameNew();
 }
 
@@ -30,14 +30,18 @@ ofPixelsRef ofxiOSVideoGrabber::getPixelsRef(){
     return dummy;
 }
 
+const ofPixelsRef ofxiOSVideoGrabber::getPixelsRef() const {
+    return getPixelsRef();
+}
+
 void ofxiOSVideoGrabber::close() {
 }
 
-float ofxiOSVideoGrabber::getHeight() {
+float ofxiOSVideoGrabber::getHeight() const {
 	return grabber->getHeight();
 }
 
-float ofxiOSVideoGrabber::getWidth() {
+float ofxiOSVideoGrabber::getWidth() const {
 	return grabber->getWidth();
 }
 
@@ -58,7 +62,7 @@ bool ofxiOSVideoGrabber::setPixelFormat(ofPixelFormat internalPixelFormat) {
 }
 
 
-ofPixelFormat ofxiOSVideoGrabber::getPixelFormat(){
+ofPixelFormat ofxiOSVideoGrabber::getPixelFormat() const {
     return grabber->getPixelFormat();
 }
 

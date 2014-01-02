@@ -402,6 +402,11 @@ ofPixelsRef ofQuickTimeGrabber::getPixelsRef(){
 }
 
 //---------------------------------------------------------------------------
+const ofPixelsRef ofQuickTimeGrabber::getPixelsRef() const {
+	return pixels;
+}
+
+//---------------------------------------------------------------------------
 bool  ofQuickTimeGrabber::isFrameNew() const {
 	return bIsFrameNew;
 }

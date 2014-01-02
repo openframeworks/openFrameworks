@@ -732,7 +732,7 @@ bool ofQTKitGrabber::initRecording(){
     return success;
 }
 
-vector<string>& ofQTKitGrabber::listVideoCodecs() const {
+const vector<string>& ofQTKitGrabber::listVideoCodecs() const {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSArray* videoCodecs = [QTKitVideoGrabber listVideoCodecs];
 	videoCodecsVec.clear();
@@ -744,7 +744,7 @@ vector<string>& ofQTKitGrabber::listVideoCodecs() const {
 	return videoCodecsVec;
 }
 
-vector<string>& ofQTKitGrabber::listAudioCodecs() const {
+const vector<string>& ofQTKitGrabber::listAudioCodecs() const {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSArray* audioCodecs = [QTKitVideoGrabber listAudioCodecs];
 	audioCodecsVec.clear();
@@ -853,7 +853,7 @@ ofPixelFormat ofQTKitGrabber::getPixelFormat() const {
 }
 
 //---------------------------------------------------------------------------
-vector<string>& ofQTKitGrabber::listVideoDevices() const {
+const vector<string>& ofQTKitGrabber::listVideoDevices() const {
     
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
@@ -868,7 +868,7 @@ vector<string>& ofQTKitGrabber::listVideoDevices() const {
 	return videoDeviceVec;
 }
 
-vector<string>& ofQTKitGrabber::listAudioDevices() const {
+const vector<string>& ofQTKitGrabber::listAudioDevices() const {
     
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
@@ -908,6 +908,10 @@ ofPixelsRef ofQTKitGrabber::getPixelsRef(){
 	    ofLogError("ofQTKitGrabber") << "getPixelsRef(): asking for pixels on unitialized grabber";
 	}
 	return pixels;
+}
+
+const ofPixelsRef ofQTKitGrabber::getPixelsRef() const {
+    return getPixelsRef();
 }
 
 void ofQTKitGrabber::setUseAudio(bool _bUseAudio){

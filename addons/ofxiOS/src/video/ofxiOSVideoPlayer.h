@@ -26,19 +26,20 @@ public:
     bool isFrameNew() const;
     unsigned char * getPixels();
     ofPixelsRef	getPixelsRef();
+    const ofPixelsRef	getPixelsRef() const;
     ofTexture *	getTexture();
 	
     float getWidth() const;
     float getHeight() const;
 	
-    bool isPaused();
-    bool isLoaded();
-    bool isPlaying();
+    bool isPaused() const;
+    bool isLoaded() const;
+    bool isPlaying() const;
 	
-    float getPosition();
-    float getSpeed();
-    float getDuration();
-    bool getIsMovieDone();
+    float getPosition() const;
+    float getSpeed() const;
+    float getDuration() const;
+    bool getIsMovieDone() const;
 	
     void setPaused(bool bPause);
     void setPosition(float pct);
@@ -47,9 +48,9 @@ public:
     void setSpeed(float speed);
     void setFrame(int frame);  // frame 0 = first frame...
 	
-    int	getCurrentFrame();
-    int	getTotalNumFrames();
-    ofLoopType	getLoopState();
+    int	getCurrentFrame() const;
+    int	getTotalNumFrames() const;
+    ofLoopType	getLoopState() const;
 	
     void firstFrame();
     void nextFrame();

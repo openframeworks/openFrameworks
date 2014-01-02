@@ -158,6 +158,11 @@ ofPixelsRef ofVideoGrabber::getPixelsRef(){
 	return grabber->getPixelsRef();
 }
 
+//---------------------------------------------------------------------------
+const ofPixelsRef ofVideoGrabber::getPixelsRef() const {
+	return grabber->getPixelsRef();
+}
+
 //------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoGrabber::getTextureReference(){
@@ -177,6 +182,7 @@ void ofVideoGrabber::update(){
 	if(	grabber != NULL ){
 		grabber->update();
 		if( bUseTexture && grabber->isFrameNew() ){
+//            cout << "in here" << endl;
 			tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 		}
 	}
