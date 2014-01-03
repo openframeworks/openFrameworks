@@ -229,7 +229,10 @@ bool ofxAndroidVideoGrabber::supportsTextureRendering(){
 	static bool supportChecked = false;
 	if(!supportChecked){
 		JNIEnv *env = ofGetJNIEnv();
-		if(!env) return false;
+		if(!env){
+			ofLogError("ofxAndroidVideoGrabber") << "init grabber failed :  couldn't get environment using GetEnv()";
+			return false;
+		}
 
 		jmethodID supportsTextureMethod = env->GetStaticMethodID(getJavaClass(),"supportsTextureRendering","()Z");
 		supportsTexture = env->CallStaticBooleanMethod(getJavaClass(),supportsTextureMethod);
