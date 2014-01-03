@@ -356,7 +356,7 @@ public class OFAndroid {
 	public void pause(){
 		Log.i("OF","onPause");
 		disableTouchEvents();
-		if(mGLView!=null) mGLView.onPause();
+		
 		onPause();
 
 		synchronized (OFAndroidObject.ofObjects) {
@@ -364,7 +364,7 @@ public class OFAndroid {
 				object.onPause();
 			}
 		}
-
+		if(mGLView!=null) mGLView.onPause();
 		if(networkStateReceiver!=null){
 			try{
 				ofActivity.unregisterReceiver(networkStateReceiver);
@@ -382,7 +382,7 @@ public class OFAndroid {
 		resumed = true;
 		Log.i("OF","onResume");
 		enableTouchEvents();
-		
+		mGLView.onResume();
 		synchronized (OFAndroidObject.ofObjects) {
 			for(OFAndroidObject object : OFAndroidObject.ofObjects){
 				object.onResume();
@@ -390,7 +390,7 @@ public class OFAndroid {
 			
 		}
 		
-    	mGLView.onResume();
+    	
 		
         if(mGLView.isSetup()){
         	Log.i("OF","resume view and native");
