@@ -76,7 +76,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	height			= (int)grabber->getHeight();
 
 	if( grabberRunning && bUseTexture ){
-		tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
+		if(!grabber->getTexture()) tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
 		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
 			tex.setRGToRGBASwizzles(true);
 		}
@@ -161,7 +161,12 @@ ofPixelsRef ofVideoGrabber::getPixelsRef(){
 //------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoGrabber::getTextureReference(){
-	return tex;
+	if(grabber->getTexture() == NULL){
+		return tex;
+	}
+	else{
+		return *grabber->getTexture();
+	}
 }
 
 //---------------------------------------------------------------------------
@@ -176,7 +181,7 @@ bool  ofVideoGrabber::isFrameNew(){
 void ofVideoGrabber::update(){
 	if(	grabber != NULL ){
 		grabber->update();
-		if( bUseTexture && grabber->isFrameNew() ){
+		if( bUseTexture && !grabber->getTexture() && grabber->isFrameNew() ){
 			tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 		}
 	}
@@ -189,7 +194,7 @@ void ofVideoGrabber::close(){
 		bInitialized=false;
 		grabberRunning = false;
 	}
-	tex.clear();
+	if(!grabber->getTexture()) tex.clear();
 }
 
 //--------------------------------------------------------------------
@@ -207,27 +212,27 @@ void ofVideoGrabber::setUseTexture(bool bUse){
 
 //----------------------------------------------------------
 void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
-	tex.setAnchorPercent(xPct, yPct);
+	getTextureReference().setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
 void ofVideoGrabber::setAnchorPoint(float x, float y){
-	tex.setAnchorPoint(x, y);
+	getTextureReference().setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------
 void ofVideoGrabber::resetAnchor(){
-	tex.resetAnchor();
+	getTextureReference().resetAnchor();
 }
 
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y, float _w, float _h){
-	tex.draw(_x, _y, _w, _h);
+	getTextureReference().draw(_x, _y, _w, _h);
 }
 
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y){
-	tex.draw(_x, _y);
+	getTextureReference().draw(_x, _y);
 }
 
 //----------------------------------------------------------

@@ -247,13 +247,13 @@ ofMatrix3x3 ofMatrix3x3::operator*(const ofMatrix3x3& B) {
 	ofMatrix3x3 C;
 	C.a = a * B.a + b * B.d + c * B.g;
 	C.b = a * B.b + b * B.e + c * B.h;
-	C.c = a * B.c + b * B.h + c * B.i;
+	C.c = a * B.c + b * B.f + c * B.i;
 	C.d = d * B.a + e * B.d + f * B.g;
 	C.e = d * B.b + e * B.e + f * B.h;
-	C.f = d * B.c + e * B.h + f * B.i;
+	C.f = d * B.c + e * B.f + f * B.i;
 	C.g = g * B.a + h * B.d + i * B.g;
 	C.h = g * B.b + h * B.e + i * B.h;
-	C.i = g * B.c + h * B.h + i * B.i;
+	C.i = g * B.c + h * B.f + i * B.i;
 	return C;
 }
 
