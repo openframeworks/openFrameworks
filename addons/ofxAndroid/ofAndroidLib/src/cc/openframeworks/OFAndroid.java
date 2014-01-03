@@ -133,7 +133,7 @@ public class OFAndroid {
 	Thread appInitThread;
 	
 	public OFAndroid(String appPackageName, OFActivity activity){
-		Log.i("OF","OFAndorid init...");
+		Log.i("OF","OFAndroid init...");
 		OFAndroid.ofActivity = activity;
 		ofActivity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
 		//Log.i("OF","external files dir: "+ ofActivity.getApplicationContext().getExternalFilesDir(null));
