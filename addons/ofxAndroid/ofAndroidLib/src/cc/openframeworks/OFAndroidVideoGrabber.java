@@ -283,14 +283,12 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 			Log.i("OF","setting camera callback with buffer");
 		} catch (SecurityException e) {
 			Log.e("OF","security exception, check permissions in your AndroidManifest to acces to the camera",e);
-			Log.e("OF","security exception, check permissions to acces to the camera",e);
 		} catch (NoSuchMethodException e) {
 			try {
 				Camera.class.getMethod("setPreviewCallback", Camera.PreviewCallback.class).invoke(camera, this);
 				Log.i("OF","setting camera callback without buffer");
 			} catch (SecurityException e1) {
 				Log.e("OF","security exception, check permissions in your AndroidManifest to acces to the camera",e1);
-				Log.e("OF","security exception, check permissions to acces to the camera",e1);
 			} catch (Exception e1) {
 				Log.e("OF","cannot create callback, the camera can only be used from api v7",e1);
 			} 
