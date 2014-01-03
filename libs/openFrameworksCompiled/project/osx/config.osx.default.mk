@@ -362,17 +362,17 @@ afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
 	
 	@echo '<?xml version="1.0" encoding="UTF-8"?>' > bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '<plist version="1.0">' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '<dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleGetInfoString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>bin/$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleExecutable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>bin/$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleIdentifier</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <string>com.your-company-name.www</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>bin/$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <string>0.01</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
