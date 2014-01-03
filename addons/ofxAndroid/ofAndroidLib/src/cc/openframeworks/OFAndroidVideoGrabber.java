@@ -231,7 +231,6 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 				Log.e("OF", "problem trying to close camera thread", e);
 			}
 			camera.setPreviewCallback(null);
-			camera.release();
 			if(supportsTextureRendering()){
 				try {
 					Class<?> surfaceTextureClass = Class.forName("android.graphics.SurfaceTexture");
@@ -240,6 +239,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 				} catch (Exception e) {
 				}
 			}
+			camera.release();
 			orientationListener.disable();
 		}
 	}
@@ -253,7 +253,6 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	@Override
 	public void appResume(){
 		if(initialized){
-			initGrabber(width,height,targetFps);
 			orientationListener.enable();
 		}
 	}
