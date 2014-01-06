@@ -60,6 +60,7 @@ PLATFORM SPECIFIC
 	/ makefile fixes for better eclipse parsing
 	/ videoplayer: fix alpha formats for gstreamer 0.10
 	+ install_dependencies installs libusb so ofxKinect compiles
+	- removed portaudio soundstream and all dependencies
 ### Windows
 	/ fixed disable vertical sync through update in glfw
  
