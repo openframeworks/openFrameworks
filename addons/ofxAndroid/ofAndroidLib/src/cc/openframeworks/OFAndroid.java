@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -219,7 +220,7 @@ public class OFAndroid {
 	    		String app_name="";
 				try {
 					int app_name_id = Class.forName(packageName+".R$string").getField("app_name").getInt(null);
-					app_name = ofActivity.getResources().getText(app_name_id).toString().toLowerCase();
+					app_name = ofActivity.getResources().getText(app_name_id).toString().toLowerCase(Locale.US);
 					Log.i("OF","app name: " + app_name);
 					
 					if(copydata){
@@ -237,7 +238,7 @@ public class OFAndroid {
 		    					String resName = ofActivity.getResources().getText(fileId).toString();
 		    					fileName = resName.substring(resName.lastIndexOf("/"));
 		    					Log.i("OF","checking " + fileName);
-		    					if(fileName.equals("/" + app_name+"resources.zip")){
+		    					if(fileName.equals("/" + app_name + "resources.zip")){
 		    						
 			    					from = ofActivity.getResources().openRawResource(fileId);
 									try{
