@@ -28,6 +28,7 @@ CORE
 ### App
 	/ updated GLFW to latest master (20131204)
 ### Communication
+	/ use binary mode (don't convert breaklines)
 ### Events
 ### Graphics
 	/ ofCairoRenderer: fix for moveTo when drawing ofPaths
