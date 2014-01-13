@@ -238,7 +238,7 @@ namespace ofxCv {
 	}
 	
 	void FlowFarneback::setPyramidScale(float scale){
-		if(scale < 0.0 || scale > 1.0){
+		if(scale < 0.0 || scale >= 1.0){
 			ofLogWarning("ofxCvFlowFarneback -- Warning setting scale to a number outside of 0 - 1");
 		}
 		this->pyramidScale = scale;
