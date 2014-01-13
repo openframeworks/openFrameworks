@@ -47,6 +47,7 @@ public:
 	bool setAutoFocus(bool autofocus);
 
 	ofTexture *	getTexture();
+	void loadTexture();
 	void reloadTexture();
 	void unloadTexture();
 
@@ -54,16 +55,16 @@ public:
 
 	// only to be used internally to resize;
 	ofPixelsRef getAuxBuffer();
-private:
-	void loadTexture();
-	bool supportsTextureRendering();
+
 	int attemptFramerate;
+private:
+
+	bool supportsTextureRendering();
 	bool bIsFrameNew;
 	bool bGrabberInited;
 	ofPixelFormat internalPixelFormat;
 	ofPixels pixels;
 	ofPixels auxBuffer;
 	ofTexture texture;
-
 	jfloatArray matrixJava;
 };
