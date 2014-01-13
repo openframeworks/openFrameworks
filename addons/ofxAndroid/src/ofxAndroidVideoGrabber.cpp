@@ -21,7 +21,7 @@ static map<int,ofVideoGrabber*> instances;
 static bool paused=true;
 
 
-
+jobject getCamera(JNIEnv *env, jclass javaClass, jint id);
 static jclass getJavaClass(){
 	JNIEnv *env = ofGetJNIEnv();
 
@@ -73,15 +73,30 @@ void ofPauseVideoGrabbers(){
 	ofLogVerbose("ofxAndroidVideoGrabber") << "ofPauseVideoGrabbers(): releasing textures";
 	map<int,ofVideoGrabber*>::iterator it;
 	for(it=instances.begin(); it!=instances.end(); it++){
-		it->second->getTextureReference().texData.textureID=0;
+		((ofxAndroidVideoGrabber*)it->second->getGrabber().get())->unloadTexture();
 	}
 }
 
 void ofResumeVideoGrabbers(){
 	ofLogVerbose("ofxAndroidVideoGrabber") << "ofResumeVideoGrabbers(): trying to allocate textures";
 	map<int,ofVideoGrabber*>::iterator it;
+
+	JNIEnv *env = ofGetJNIEnv();
+	if(!env){
+		ofLogError("ofxAndroidVideoGrabber") << "init grabber failed : couldn't get environment using GetEnv()";
+		return;
+	}
+	jclass javaClass = getJavaClass();
+	jmethodID javaInitGrabber = env->GetMethodID(javaClass,"initGrabber","(IIII)V");
 	for(it=instances.begin(); it!=instances.end(); it++){
-		it->second->getTextureReference().allocate(it->second->getWidth(),it->second->getHeight(),GL_RGB);
+		jobject camera = getCamera(env, javaClass, it->first);
+		((ofxAndroidVideoGrabber*)it->second->getGrabber().get())->loadTexture();
+
+		int texID= it->second->getTextureReference().texData.textureID;
+		int w=it->second->getTextureReference().texData.width;
+		int h=it->second->getTextureReference().texData.height;
+		int framerate= ((ofxAndroidVideoGrabber*)it->second->getGrabber().get())->attemptFramerate;
+		env->CallVoidMethod(camera,javaInitGrabber,w,h,framerate,texID);
 	}
 	ofLogVerbose("ofxAndroidVideoGrabber") << "ofResumeVideoGrabbers(): textures allocated";
 	paused = false;
@@ -205,7 +220,6 @@ void ofxAndroidVideoGrabber::loadTexture(){
 }
 
 void ofxAndroidVideoGrabber::reloadTexture(){
-	loadTexture();
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
@@ -229,7 +243,10 @@ bool ofxAndroidVideoGrabber::supportsTextureRendering(){
 	static bool supportChecked = false;
 	if(!supportChecked){
 		JNIEnv *env = ofGetJNIEnv();
-		if(!env) return false;
+		if(!env){
+			ofLogError("ofxAndroidVideoGrabber") << "init grabber failed :  couldn't get environment using GetEnv()";
+			return false;
+		}
 
 		jmethodID supportsTextureMethod = env->GetStaticMethodID(getJavaClass(),"supportsTextureRendering","()Z");
 		supportsTexture = env->CallStaticBooleanMethod(getJavaClass(),supportsTextureMethod);
