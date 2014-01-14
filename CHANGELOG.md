@@ -32,6 +32,7 @@ CORE
 ### Events
 ### Graphics
 	/ ofCairoRenderer: fix for moveTo when drawing ofPaths
+	/ ofDrawBox: on wireframe mode was recreating vertices on every call
 ### Math
         / ofMatrix3x3: fix incorrect multiplication
 ### GL
