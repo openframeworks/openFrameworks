@@ -8,8 +8,8 @@
 - GLEW 1.7?? (System on linux) (Not used on iOS, android or arm linux)
 - GLFW 3.0.3 + drag and drop patch from https://github.com/arturoc/glfw/tree/feature-dnd (Not used on iOS, android or arm linux v6)
 - GLU  desktop: no version?
-       iOS: glu for iOS 2.0
-       android: glu for iOS 2.0 patched to work on android
+       iOS: iphone-glu 1.0.0 http://code.google.com/p/iphone-glu/
+       android: iphone-glu 1.0.0 patched to work on android, no sources available
        linux: system
        arm linux: not used
 - GLUT osx: OS version modified by theo to add drag and drop, no code available publicly?
