@@ -1,7 +1,7 @@
 #List of versions of libraries used by OF
 
 - Assimp 2.0
-- Cairo 1.10.2  (System on linux)
+- Cairo 1.10.2  (System on linux, not used on android and iOS)
 - Fmodex 4.22.0
 - FreeImage 3.15.3 (System on linux)
 - FreeType 2.4.4 (System on linux)
