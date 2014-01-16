@@ -13,10 +13,6 @@
 #include <gst/gst.h>
 #include <gst/gstpad.h>
 
-#ifdef TARGET_WIN32
-//typedef unsigned long long u_int64_t;
-#endif
-
 class ofGstAppSink;
 typedef struct _GstElement GstElement;
 typedef struct _GstBuffer GstBuffer;
