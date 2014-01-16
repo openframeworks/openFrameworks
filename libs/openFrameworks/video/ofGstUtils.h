@@ -13,6 +13,10 @@
 #include <gst/gst.h>
 #include <gst/gstpad.h>
 
+#ifdef TARGET_WIN32
+//typedef unsigned long long u_int64_t;
+#endif
+
 class ofGstAppSink;
 typedef struct _GstElement GstElement;
 typedef struct _GstBuffer GstBuffer;
@@ -56,8 +60,8 @@ public:
 	GstElement 	* getPipeline();
 	GstElement 	* getSink();
 	GstElement 	* getGstElementByName(const string & name);
-	u_int64_t getMinLatencyNanos();
-	u_int64_t getMaxLatencyNanos();
+	uint64_t getMinLatencyNanos();
+	uint64_t getMaxLatencyNanos();
 
 	virtual void close();
 
