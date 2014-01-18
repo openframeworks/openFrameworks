@@ -9,13 +9,12 @@
 + The magician of the future will use mathematical formulas. **--Aleister Crowley**
 
 
----
 
 ##Look Alive!
 
 This chapter introduces you to writing small computer programs using the C++ language. Although I assume very little about your previous knowledge, the literacy you gain from this chapter will directly influence your comprehension in subsequent chapters of the book, as most other topics stand on the shoulders of this one. Furthermore, the lessons herein are cumulative, meaning you can't skip one of the topics or you will get lost. If you get stuck on one of the concepts, please seek help in understanding specifically the part that did not make sense before moving on to the next topic. Following the lessons with this sort of rigor will insure that you will get the most out of OpenFrameworks, but also computers in general.
 
----
+
 
 ##Progress Not Perfection
 
@@ -34,7 +33,7 @@ The cycle I just described (write code, run app, re-think program's behavior,  r
 
 For those just now familiarizing themselves with what it means to write small programs, it is important to understand the iterative nature of the code writing process. The anecdote in Figure 3 shows what this process is *not*. Rarely would you ever enter some code into the editor just once, and expect to hit compile and see your finished outcome. It is natural, and commonly accepted for programs to start small, have plenty of mistakes (bugs), and evolve slowly toward a goal of desired outcome or behavior. In fact it is so commonplace that to make the former assumption is a downright programmer's mistake. Even in older days when programs were hand-written on paper, the author still needed to eyeball the code obsessively in order to work out the mistakes, and therefore the process was iterative. In learning the C++ language, I will provide tiny code examples that you will be compiling on your machine. The abnormal part is typing the code from the book into the editor, and (provided your fingers did not slip), the program magically runs. I am deliberately removing the troubleshooting experience in order to isolate out the subject matter of the C++ language itself. Later on, we will tackle the black art of *debugging* as a topic all its own.
 
----
+
 
 ##Compiling My First App
 
@@ -59,7 +58,7 @@ This is just an empty code template that does nothing, and creates no errors. Th
 
 Computer programming code is generally presented in fixed-width typesetting, because it is a form of ascii-art. The indentation, white space characters, and repetitive patterns are all important to preserve and easily eyeball for comparison. Every coder I know except artist Jeremy Rotsztain uses some manner of monospaced font for their code. Some typeface suggestions are Courier, Andale Mono, Monaco, Profont, Monofur, Proggy, Droid Sans Mono, Deja Vu Sans Mono, Consolas, and Inconsolata. From now on, you will see the font style switch to `this style` . . .
 
-```
+```C++
 or this style ...
 ```
 
@@ -72,14 +71,14 @@ Now please press *Edit* (Figure 7) at the top left of the code editor.
 
 You will see a slightly different editing configuration but the same template code will still be editable at the top. We will now edit the code. Find line 5, where it says:
 
-```
+```C++
 // your code goes here .
 ```
 
 A line beginning with a double forward slash is called a comment. You may type anything you need to in order to annotate your code in a way you understand. Sometimes a it's useful to “comment out code” by placing two forward-slashes before it, because that deactivates the C++ without deleting it. Comments in C++ can also take up multiple lines, or happen inside of some code on 1 line, but the syntax for beginning and ending comment-mode is different. Everything between the /* and the */ becomes a comment:
 
 
-```
+```C++
 /* 
 this is a multi-line comment. 
 still in comment mode.
@@ -88,7 +87,7 @@ still in comment mode.
 
 Please delete the code on line 5 and replace it with the following statement:
 
-```
+```C++
 cout << "Hello World" << endl;
 ```
 
@@ -98,7 +97,7 @@ You may put almost anything between those quotes. The quoted phrase is a called 
 
 While you typed, perhaps you noticed the text became multi-colored all by itself. This convenient feature is called *syntax-coloring* and can subconsciously enhance ones ability to read the code, troubleshoot malformed syntax, and assist in searching. Each tool will have its own syntax coloring system so if you wish to change the colors, please expect that it's not the same thing as a word processor. It will not let me assign the font "TRON.TTF" with a glowing aqua color to *just* to `endl` (which means end-of-line). Instead, I can choose a special style for a whole category of syntax, and see all parts of my code styled that way as long as it's that type of code. In this case, both `cout` and `endl` are considered keywords and so the tool colors them black. If these things show up as different colors elsewhere, please trust that it's the same code as before. The entire code should now look like this:
 
-```
+```C++
 include <iostream.h>
 using namespace std;
 
@@ -115,19 +114,18 @@ Now press the green "ideone it!" button at the bottom right corner and watch the
 If you made it this far, then give yourself a great big hug. You just wrote your first line of C++ code, you analyzed it, compiled it, ran it, and saw the output. Please send word of your recent success so that we may heed your triumph. Tweet the following: **cout << "Hello World" << endl; #ofBook
 **
 
----
 
 ##Beyond Hello World
 
 Now that we've gotten our feet wet, let's go back and analyze the other parts of the code. The first line is an include statement:
 
-```
+```C++
 #include <iostream.h>
 ```
 
 Similar to *import* in Java and CSS, `#include` is like telling the compiler to cut and paste some other useful code from a file called *iostream.h* at that position in the file, so you can depend on its code in your new code. In this case, iostream.h *provides* `cout` and `endl` as tools I can use in my code, just by typing their names. In C++, a filename ending in **.h** is called a header file, and it contains code you would include in an actual C++ implementation file, whose filename would end in **.cpp**. There are many standard headers built into C++ that provide various basic services – in fact too many to mention here. If that wasn't enough, it's also commonplace to add an external library to your project, including its headers. You may also define your own header files as part of the code you write, but the syntax is slightly different:
 
-```
+```C++
 #include "MyCustomInclude.h"
 ```
 
@@ -152,7 +150,7 @@ It's a whole story, but worth understanding conceptually. The include statement 
 
 Let's do an experiment. In the code editor, please comment out the include directive on line 1, then run the code. To comment out the line of code, insert two adjacent forward-slashes at the beginning of the line.
 
-```
+```C++
 //#include <iostream>
 ```
 
@@ -170,7 +168,7 @@ prog.cpp:5:27: error: ‘endl’ was not declared in this scope
 
 The compiler found an error and did not run the program. Instead, it's showing you  where it got confused in attempt to help you fix it. The first part, *prog.cpp*: tells you the file that contains the error. In this case, ideone.com saved your code into that default file name. Next, it says `In function ‘int main()’`: file showing you the specific section of the code that contains the error, in this case, between the {curly brackets} of a function called *main*. (We will talk about functions and curly brackets later). On the next line, we see `prog.cpp:5:2:`. The 5 is how many lines from the top of the file, and 2 is how many characters rightward from the beginning of the line. Next, we see `error: ‘cout’ was not declared in this scope`. That is a message describing what it believes it wrong in the code. In this case, it's fairly correct. iostream.h is gone, and therefore no `cout` is provided to us, and so when we try to send "Hello World", the compile fails. On the next couple of lines, you see the line of code containing the fallacious `cout`, plus an extra little up-caret character on the line beneath it, and that is supposed to be an arrow pointing at a character in the code. In this case, the arrow should be sitting beneath the 'c' in `cout`. The system is showing you visually which token is at fault. A second error is shown, and this time, the compiler complains that there is no endl. Of course, we know that in order to fix the error, we need to include <iostream.h> so let us do that now. Please un-comment line 1 and re-run the code.
 
-```
+```C++
 #include <iostream>
 ```
 
@@ -178,7 +176,7 @@ When using OpenFrameworks, you have choice of tools and platforms. Each one show
 
 Moving on to line 2, we see:
 
-```
+```C++
 using namespace std;
 ```
 
