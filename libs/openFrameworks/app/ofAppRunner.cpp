@@ -152,15 +152,15 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 
 	if(ofIsGLProgrammableRenderer()){
         #if defined(TARGET_RASPBERRY_PI)
-			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
+		static_cast<ofAppEGLWindow*>(window.get())->setGLESVersion(2);
 		#elif defined(TARGET_LINUX_ARM)
-			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(2,0);
+		static_cast<ofAppGLFWWindow*>(window.get())->setOpenGLVersion(2,0);
 		#elif !defined(TARGET_OPENGLES)
-			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
+		static_cast<ofAppGLFWWindow*>(window.get())->setOpenGLVersion(3,2);
 		#endif
 	}else{
 	    #if defined(TARGET_LINUX_ARM) && !defined(TARGET_RASPBERRY_PI)
-			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(1,0);
+		static_cast<ofAppGLFWWindow*>(window.get())->setOpenGLVersion(1,0);
 		#endif
 	}
 
