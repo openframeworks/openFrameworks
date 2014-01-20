@@ -486,7 +486,7 @@ enum ofBlendMode{
 };
 
 //this is done to match the iPhone defaults 
-//we don't say landscape, portrait etc becuase iPhone apps default to portrait while desktop apps are typically landscape
+//we don't say landscape, portrait etc because iPhone apps default to portrait while desktop apps are typically landscape
 enum ofOrientation{
 	OF_ORIENTATION_DEFAULT = 1,	
 	OF_ORIENTATION_180 = 2,
@@ -506,7 +506,7 @@ enum ofGradientMode {
 // for convenience
 //
 // we don't mean to wrap the whole glu library (or any other library for that matter)
-// but these defines are useful to give people flexability over the polygonizer
+// but these defines are useful to give people flexibility over the polygonizer
 //
 // some info:
 // http://glprogramming.com/red/images/Image128.gif
