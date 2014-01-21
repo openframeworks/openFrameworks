@@ -290,18 +290,33 @@ int ofGetGlType(const ofFloatPixels & pixels) {
 ofImageType ofGetImageTypeFromGLType(int glType){
 	switch(glType){
 	case GL_LUMINANCE:
-		return OF_IMAGE_GRAYSCALE;
-	case GL_RGB:
-		return OF_IMAGE_COLOR;
-	case GL_RGBA:
-		return OF_IMAGE_COLOR_ALPHA;
 #ifndef TARGET_OPENGLES
+	case GL_LUMINANCE16:
+	case GL_LUMINANCE32F_ARB:
+	case GL_R16:
+	case GL_R32F:
 	case GL_DEPTH_COMPONENT32:
 	case GL_DEPTH_COMPONENT16:
 	case GL_DEPTH_COMPONENT24:
 	case GL_DEPTH_COMPONENT:
-		return OF_IMAGE_GRAYSCALE;
 #endif
+		return OF_IMAGE_GRAYSCALE;
+
+
+	case GL_RGB:
+#ifndef TARGET_OPENGLES
+	case GL_RGB16:
+	case GL_RGB32F:
+#endif
+		return OF_IMAGE_COLOR;
+
+
+	case GL_RGBA:
+#ifndef TARGET_OPENGLES
+	case GL_RGBA16:
+	case GL_RGBA32F:
+#endif
+		return OF_IMAGE_COLOR_ALPHA;
 	}
 	return OF_IMAGE_UNDEFINED;
 }

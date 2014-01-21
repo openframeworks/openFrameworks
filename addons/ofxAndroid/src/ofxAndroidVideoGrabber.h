@@ -11,6 +11,8 @@
 #include "ofPixels.h"
 #include "ofEvents.h"
 #include "ofTypes.h"
+#include "ofTexture.h"
+#include <jni.h>
 
 class ofxAndroidVideoGrabber: public ofBaseVideoGrabber{
 public:
@@ -44,15 +46,25 @@ public:
 
 	bool setAutoFocus(bool autofocus);
 
+	ofTexture *	getTexture();
+	void loadTexture();
+	void reloadTexture();
+	void unloadTexture();
+
 	ofEvent<ofPixels> newFrameE;
 
 	// only to be used internally to resize;
 	ofPixelsRef getAuxBuffer();
-private:
+
 	int attemptFramerate;
+private:
+
+	bool supportsTextureRendering();
 	bool bIsFrameNew;
 	bool bGrabberInited;
 	ofPixelFormat internalPixelFormat;
 	ofPixels pixels;
 	ofPixels auxBuffer;
+	ofTexture texture;
+	jfloatArray matrixJava;
 };
