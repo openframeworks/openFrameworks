@@ -65,6 +65,12 @@ PLATFORM_DEFINES += HAVE_LIBBCM_HOST
 PLATFORM_DEFINES += USE_EXTERNAL_LIBBCM_HOST
 PLATFORM_DEFINES += USE_VCHIQ_ARM
 
+# Fix for firmware update @
+# https://github.com/Hexxeh/rpi-firmware/commit/ca3703d2d282ac96a97650e2e496276727e1b65b
+ifeq ($(strip $(shell cat /opt/vc/include/interface/vmcs_host/vc_dispmanx.h | grep VC_IMAGE_TRANSFORM_T)),) 
+PLATFORM_DEFINES += USE_DISPMANX_TRANSFORM_T
+endif
+
 ################################################################################
 # PLATFORM REQUIRED ADDONS
 #   This is a list of addons required for this platform.  This list is used to 

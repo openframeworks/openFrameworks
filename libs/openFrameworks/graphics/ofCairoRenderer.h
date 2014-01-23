@@ -82,6 +82,7 @@ public:
 	//our openGL wrappers
 	void pushMatrix();
 	void popMatrix();
+	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
 	void translate(float x, float y, float z = 0);
 	void translate(const ofPoint & p);
 	void scale(float xAmnt, float yAmnt, float zAmnt = 1);

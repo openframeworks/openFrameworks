@@ -302,6 +302,8 @@ bool ofxiOSUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int targe
 		return false;
 	}
 
+    CGContextSetBlendMode(spriteContext, kCGBlendModeCopy);
+    
 	// After you create the context, you can draw the sprite image to the context.
 	ofLogVerbose("ofxiOSExtras") << "ofxiOSUIImageToOFImage(): about to CGContextDrawImage";
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);
@@ -419,6 +421,15 @@ string ofxiOSGetDocumentsDirectory()
 
 void ofxiOSLaunchBrowser(string url) {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ofxStringToNSString(url)]];
+}
+
+//--------------------------------------------------------------
+void ofxiOSSetClipboardString(string clipboardString) {
+    [UIPasteboard generalPasteboard].string = [NSString stringWithUTF8String:clipboardString.c_str()];
+}
+
+string ofxiOSGetClipboardString() {
+    return [[UIPasteboard generalPasteboard].string UTF8String];
 }
 
 /******************** ofxiOSScreenGrab *********************/

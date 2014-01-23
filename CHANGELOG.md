@@ -1,14 +1,79 @@
+OF 0.8.1
+========
+
 ```
-_______/\\\\\_______/\\\\\\\\\\\\\\\_______________/\\\\\\\______________/\\\\\\\\\______________/\\\\\\\____        
- _____/\\\///\\\____\/\\\///////////______________/\\\/////\\\__________/\\\///////\\\__________/\\\/////\\\__       
-  ___/\\\/__\///\\\__\/\\\________________________/\\\____\//\\\________\/\\\_____\/\\\_________/\\\____\//\\\_      
-   __/\\\______\//\\\_\/\\\\\\\\\\\_______________\/\\\_____\/\\\________\///\\\\\\\\\/_________\/\\\_____\/\\\_     
-    _\/\\\_______\/\\\_\/\\\///////________________\/\\\_____\/\\\_________/\\\///////\\\________\/\\\_____\/\\\_    
-     _\//\\\______/\\\__\/\\\_______________________\/\\\_____\/\\\________/\\\______\//\\\_______\/\\\_____\/\\\_   
-      __\///\\\__/\\\____\/\\\_______________________\//\\\____/\\\________\//\\\______/\\\________\//\\\____/\\\__  
-       ____\///\\\\\/_____\/\\\________________________\///\\\\\\\/____/\\\__\///\\\\\\\\\/____/\\\__\///\\\\\\\/___ 
-        ______\/////_______\///___________________________\///////_____\///_____\/////////_____\///_____\///////_____
+_____/\\\\\\\______________/\\\\\\\\\_______________/\\\_        
+ ___/\\\/////\\\__________/\\\///////\\\_________/\\\\\\\_       
+  __/\\\____\//\\\________\/\\\_____\/\\\________\/////\\\_      
+   _\/\\\_____\/\\\________\///\\\\\\\\\/_____________\/\\\_     
+    _\/\\\_____\/\\\_________/\\\///////\\\____________\/\\\_    
+     _\/\\\_____\/\\\________/\\\______\//\\\___________\/\\\_   
+      _\//\\\____/\\\________\//\\\______/\\\____________\/\\\_  
+       __\///\\\\\\\/____/\\\__\///\\\\\\\\\/____/\\\_____\/\\\_ 
+        ____\///////_____\///_____\/////////_____\///______\///_ 
+
 ```
+MAJOR CHANGES
+-------------
+	/ "testApp" changed to "ofApp" everywhere.
+	
+DEPRECATIONS & REMOVALS
+-----------------------
+	- ofxOpenCv: removed deprecated ofxCvMain.h. Use ofxOpenCv.h instead.
+
+CORE
+----
+### 3d
+    + ofGetCurrentMatrix() - returns current OpenGL matrix state (modelView-, projection- or textureMatrix) for ofGLProgrammableRenderer, ofGLRenderer.
+### App
+	/ updated GLFW to latest master (20131204)
+### Communication
+	/ use binary mode (don't convert breaklines)
+### Events
+### Graphics
+	/ ofCairoRenderer: fix for moveTo when drawing ofPaths
+	/ ofDrawBox: on wireframe mode was recreating vertices on every call
+### Math
+        / ofMatrix3x3: fix incorrect multiplication
+### GL
+	/ ofMaterial: fixed back emmisive material
+	/ Fix point sprites in openGL 3+
+### Sound
+### Types
+### Utils
+	+ ofXml(const& string) constructor added
+
+### Video	
+
+PLATFORM SPECIFIC
+-----------------
+### Android
+	/ fix for texture reload
+	/ change to work with NDK r9b by default
+	/ zip uncompress moved to java
+	/ several fixes in pause / resume workflow
+	/ fix camera not working on some devices + use external texture, should be faster
+	+ support for x86
+
+### Mac OS X
+### iOS
+### Linux
+	/ alsa as default instead of pulseaudio lower latency
+	/ makefile fixes for better eclipse parsing
+	/ videoplayer: fix alpha formats for gstreamer 0.10
+	+ install_dependencies installs libusb so ofxKinect compiles
+	- removed portaudio soundstream and all dependencies
+### Windows
+	/ fixed disable vertical sync through update in glfw
+ 
+CORE ADDONS
+-----------
+
+PROJECT GENERATOR
+-----------------
+
+EXAMPLES
+--------
 
 OF 0.8.0
 ========

@@ -19,6 +19,8 @@
 #include <fstream>
 #include <string>
 
+#include "Poco/String.h"
+
 #include "Poco/HMACEngine.h"
 #include "Poco/MD5Engine.h"
 using Poco::DigestEngine;
@@ -44,6 +46,13 @@ using namespace Poco;
 #include "ofUtils.h"
 
 
+string StringToUpper(string strToConvert)
+{
+    std::transform(strToConvert.begin(), strToConvert.end(), strToConvert.begin(), ::toupper);
+    
+    return strToConvert;
+}
+
 string generateUUID(string input){
 
     std::string passphrase("openFrameworks"); // HMAC needs a passphrase
@@ -53,9 +62,9 @@ string generateUUID(string input){
 
     const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
     std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
-    
-    digestString = digestString.substr(0, 24); 
 
+    digestString = digestString.substr(0,24);
+    digestString = StringToUpper(digestString);
     return digestString;
 }
 
@@ -243,6 +252,34 @@ void getFoldersRecursively(const string & path, vector < string > & folderNames,
 }
 
 
+void getFrameworksRecursively( const string & path, vector < string > & frameworks, string platform){
+    
+    
+    ofDirectory dir;
+    dir.listDir(path);
+    
+    for (int i = 0; i < dir.size(); i++){
+        
+        ofFile temp(dir.getFile(i));
+        
+        if (temp.isDirectory()){
+            //getLibsRecursively(dir.getPath(i), folderNames);
+            
+            // on osx, framework is a directory, let's not parse it....
+            string ext = "";
+            string first = "";
+            splitFromLast(dir.getPath(i), ".", first, ext);
+            if (ext != "framework")
+                getFrameworksRecursively(dir.getPath(i), frameworks, platform);
+            else
+                frameworks.push_back(dir.getPath(i));
+        }
+        
+    }
+}
+
+
+
 
 void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform ){
     
@@ -305,7 +342,13 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
             
             if (temp.isDirectory()){
                 //getLibsRecursively(dir.getPath(i), folderNames);
-                getLibsRecursively(dir.getPath(i), libFiles, libLibs, platform);
+                
+                // on osx, framework is a directory, let's not parse it....
+                string ext = "";
+                string first = "";
+                splitFromLast(dir.getPath(i), ".", first, ext);
+                if (ext != "framework")
+                    getLibsRecursively(dir.getPath(i), libFiles, libLibs, platform);
                 
             } else {
                 
@@ -467,7 +510,7 @@ string getOFRelPath(string from){
 		}
 	}
 
-    ofLogVerbose() << " returning path " << relPath << endl;
+	ofLogVerbose() << "returning path " << relPath << endl;
 
     return relPath;
 }
@@ -483,15 +526,15 @@ void parseAddonsDotMake(string path, vector < string > & addons){
 	addonsmake >> addonsmakebuff;
 	while(!addonsmakebuff.isLastLine() && addonsmakebuff.size() > 0){
         string line = addonsmakebuff.getNextLine();
-		if(line!=""){
+		if(line!="" && Poco::trim(line)[0]!='#'){
 			addons.push_back(line);
 		}
 	}
 }
 
 bool checkConfigExists(){
-	
-	return ofFile::doesFileExist(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"));
+	ofFile config(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator/config"));
+	return config.exists();
 }
 
 bool askOFRoot(){

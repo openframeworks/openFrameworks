@@ -53,10 +53,10 @@ bool baseProject::create(string path){
 #else
             splitFromLast(fileNames[i], "/", first, last);
 #endif
-            if (fileNames[i] != "src/testApp.cpp" &&
-                fileNames[i] != "src/testApp.h" &&
+            if (fileNames[i] != "src/ofApp.cpp" &&
+                fileNames[i] != "src/ofApp.h" &&
                 fileNames[i] != "src/main.cpp" &&
-                fileNames[i] != "src/testApp.mm" &&
+                fileNames[i] != "src/ofApp.mm" &&
                 fileNames[i] != "src/main.mm"){
                 addSrc(fileNames[i], first);
             }
@@ -71,9 +71,9 @@ bool baseProject::create(string path){
 //				string first, last;
 //				splitFromLast(fileNames[i], "/", first, last);
 //				if (fileNames[i] != "Default.png" &&
-//					fileNames[i] != "src/testApp.h" &&
+//					fileNames[i] != "src/ofApp.h" &&
 //					fileNames[i] != "src/main.cpp" &&
-//					fileNames[i] != "src/testApp.mm" &&
+//					fileNames[i] != "src/ofApp.mm" &&
 //					fileNames[i] != "src/main.mm"){
 //					addSrc(fileNames[i], first);
 //				}
@@ -140,6 +140,14 @@ void baseProject::addAddon(ofAddon & addon){
     for(int i=0;i<(int)addon.libs.size();i++){
         ofLogVerbose() << "adding addon libs: " << addon.libs[i];
         addLibrary(addon.libs[i]);
+    }
+    for(int i=0;i<(int)addon.cflags.size();i++){
+        ofLogVerbose() << "adding addon cflags: " << addon.cflags[i];
+        addCFLAG(addon.cflags[i]);
+    }
+    for(int i=0;i<(int)addon.ldflags.size();i++){
+        ofLogVerbose() << "adding addon ldflags: " << addon.ldflags[i];
+        addLDFLAG(addon.ldflags[i]);
     }
     for(int i=0;i<(int)addon.srcFiles.size(); i++){
         ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];

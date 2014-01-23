@@ -858,9 +858,9 @@
 				<key>isa</key>
 				<string>PBXFileReference</string>
 				<key>name</key>
-				<string>testApp.cpp</string>
+				<string>ofApp.cpp</string>
 				<key>path</key>
-				<string>src/testApp.cpp</string>
+				<string>src/ofApp.cpp</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>
@@ -873,9 +873,9 @@
 				<key>lastKnownFileType</key>
 				<string>sourcecode.c.h</string>
 				<key>name</key>
-				<string>testApp.h</string>
+				<string>ofApp.h</string>
 				<key>path</key>
-				<string>src/testApp.h</string>
+				<string>src/ofApp.h</string>
 				<key>sourceTree</key>
 				<string>SOURCE_ROOT</string>
 			</dict>

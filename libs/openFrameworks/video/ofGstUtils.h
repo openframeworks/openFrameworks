@@ -29,6 +29,7 @@ public:
 
 	bool 	setPipelineWithSink(string pipeline, string sinkname="sink", bool isStream=false);
 	bool 	setPipelineWithSink(GstElement * pipeline, GstElement * sink, bool isStream=false);
+	bool	startPipeline();
 
 	void 	play();
 	void 	stop();
@@ -55,8 +56,8 @@ public:
 	GstElement 	* getPipeline();
 	GstElement 	* getSink();
 	GstElement 	* getGstElementByName(const string & name);
-	unsigned long getMinLatencyNanos();
-	unsigned long getMaxLatencyNanos();
+	uint64_t getMinLatencyNanos();
+	uint64_t getMaxLatencyNanos();
 
 	virtual void close();
 
@@ -73,6 +74,7 @@ public:
 	virtual void 		  eos_cb();
 
 	static void startGstMainLoop();
+	static GMainLoop * getGstMainLoop();
 protected:
 	ofGstAppSink * 		appsink;
 	bool				isStream;
@@ -80,7 +82,6 @@ protected:
 private:
 	static bool			busFunction(GstBus * bus, GstMessage * message, ofGstUtils * app);
 	bool				gstHandleMessage(GstBus * bus, GstMessage * message);
-	bool				startPipeline();
 
 	bool 				bPlaying;
 	bool 				bPaused;
@@ -97,13 +98,19 @@ private:
 	bool				isAppSink;
 
 	class ofGstMainLoopThread: public ofThread{
-		GMainLoop *main_loop;
 	public:
+		GMainLoop *main_loop;
+		ofGstMainLoopThread()
+		:main_loop(NULL)
+		{
+
+		}
+
 		void start(){
+			main_loop = g_main_loop_new (NULL, FALSE);
 			startThread();
 		}
 		void threadedFunction(){
-			main_loop = g_main_loop_new (NULL, FALSE);
 			g_main_loop_run (main_loop);
 		}
 	};

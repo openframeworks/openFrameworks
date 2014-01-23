@@ -84,6 +84,8 @@ public:
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
 	
+	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
 	void setupScreen();
@@ -145,7 +147,6 @@ public:
 
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
-
 
 	ofShader & defaultTexColor();
 	ofShader & defaultTexNoColor();
