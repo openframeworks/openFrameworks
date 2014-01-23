@@ -30,11 +30,20 @@
 ///     able to spawn a thread and "run" the contents of a class that extends
 ///     the Poco::Runnable interface (which ofThread does).  Poco::FastMutex,
 ///     (aka ofMutex) is a "mutual exclusion" object that prevents two threads
-///     from accessing the same data at the same time.  The situation that
-///     arises from two threads simultanously reading or writing from the same
-///     shared data (shared data occupies the same physical location in memory)
-///     leads to something called a "race condition", which can lead to
-///     deadlocks.  A deadlock is as bad as it sounds.  It means your program
+///     from accessing the same data at the same time.  It is important to know
+///     that Poco::FastMutex (aka ofMutex) is not "recursive" while Poco::Mutex
+///     is. This means that if the same thread attempts to lock a thread while
+///     it ALREADY has a lock on the mutex, the program will lock up and go
+///     nowhere.  Thus, it is important that ofThread subclasses carefully
+///     their use of the mutex.  Currently ofThread does not lock its own mutex
+///     at any point (e.g. ofThread's internal variables are not thread safe).
+///     This is a somewhat dangerous convenience that is (theoretically)
+///     supposed to make it easier for subclasses to avoid the recursive mutex
+///     "problem". The situation that arises from two threads simultanously
+///     reading or writing from the same shared data (shared data
+///     occupies the same physical location in memory) leads to something
+///     called a "race condition", which can lead to deadlocks.
+///     A deadlock is as bad as it sounds.  It means your program
 ///     just stops.  ofMutex prevents race conditions, deadlocks and crashes by
 ///     permitting only one thread access to shared data at a time.  When using
 ///     mutexes to protect data, the trick is to always be sure to unlock the
@@ -67,11 +76,11 @@ public:
     
     /// \brief Get the unique thread id.
     /// \note This is NOT the the same as the operating thread id!
-    int getThreadId();
+    int getThreadId() const;
     
     /// \brief Get the unique thread name, in the form of "Thread id#"
     /// \returns the Thread ID string.
-    std::string getThreadName();
+    std::string getThreadName() const;
 
     /// \deprecated
     /// \brief Start the thread with options.
@@ -211,14 +220,21 @@ public:
     ///         send copy some ofPixels to an ofTexture on the graphics
     ///         card.
     /// \returns True iff this ofThread the currently active thread.
-    bool isCurrentThread();
+    bool isCurrentThread() const;
 
-    /// \brief Get the underlying Poco thread.
+    /// \brief Get a reference to the underlying Poco thread.
     /// \details Poco::Thread provides a clean cross-platform wrapper for
     ///         threads.  On occasion, it may be useful to interact with the
     ///         underlying Poco::Thread directly.
     /// \returns A reference to the backing Poco thread.
     Poco::Thread& getPocoThread();
+
+    /// \brief Get a const reference to the underlying Poco thread.
+    /// \details Poco::Thread provides a clean cross-platform wrapper for
+    ///         threads.  On occasion, it may be useful to interact with the
+    ///         underlying Poco::Thread directly.
+    /// \returns A reference to the backing Poco thread.
+    const Poco::Thread& getPocoThread() const;
 
     /// \brief A query to see if the current thread is the main thread.
     /// \details Some functions (e.g. OpenGL calls) can only be executed
@@ -304,13 +320,12 @@ protected:
     virtual void threadedFunction();
 
     bool threadRunning; ///< \brief Is the thread running?
-    bool blocking;      ///< \brief Should the mutex block?
-    bool verbose;       ///< \deprecated Get more detailed information.
+    bool mutexesBlock;  ///< \brief Should the mutex block?
 
 private:
     void run();
         ///< \brief Implements Poco::Runnable::run().
-    
+
     Poco::Thread thread;
         ///< \brief The Poco::Thread that runs the Poco::Runnable.
 };
