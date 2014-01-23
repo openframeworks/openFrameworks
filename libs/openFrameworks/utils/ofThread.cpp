@@ -10,8 +10,7 @@
 //------------------------------------------------- 
 ofThread::ofThread():
     threadRunning(false),
-    verbose(false),
-    blocking(true)
+    mutexesBlock(true)
 {
    thread.setName("Thread " + ofToString(thread.id()));
 } 
@@ -21,50 +20,48 @@ ofThread::~ofThread(){
 }
 
 //------------------------------------------------- 
-bool ofThread::isThreadRunning(){ 
-   return threadRunning;
+bool ofThread::isThreadRunning()
+{
+    return threadRunning;
 }
 
 //------------------------------------------------- 
-int ofThread::getThreadId(){
+int ofThread::getThreadId() const
+{
 	return thread.id();
 }
 
 //------------------------------------------------- 
-string ofThread::getThreadName(){
+std::string ofThread::getThreadName() const
+{
 	return thread.name();
 }
 
 //-------------------------------------------------
-void ofThread::startThread(bool blocking){
-    startThread(blocking, false);
+void ofThread::startThread(bool _mutexesBlock){
+
+	if(thread.isRunning()){
+		ofLogWarning(thread.name()) << "Cannot start, thread already running.";
+		return;
+	}
+
+    threadRunning = true;
+    mutexesBlock = true;
+
+	thread.start(*this);
 }
 
 //-------------------------------------------------
 void ofThread::startThread(bool blocking, bool verbose){
-
-	if(thread.isRunning()){ 
-		ofLogWarning(thread.name()) << "Cannot start, thread already running.";
-		return; 
-	} 
-
-	// have to put this here because the thread can be running 
-	// before the call to create it returns 
-	threadRunning = true; 
-
-	this->blocking = blocking;
-	this->verbose = verbose;
-
-    ofLog(verbose ? OF_LOG_VERBOSE : OF_LOG_NOTICE, thread.name());
-
-	thread.start(*this);
-} 
+    ofLogWarning("ofThread::startThread") << "Calling startThread with verbose is deprecated.";
+    startThread(blocking);
+}
 
 //------------------------------------------------- 
 bool ofThread::lock(){ 
 
-	if(blocking){
-        if(Poco::Thread::current() == &thread) {
+	if(mutexesBlock){
+        if(isCurrentThread()) {
             ofLogVerbose(thread.name()) << "ofThread waiting for its own mutex to be unlocked.";
         } else {
             ofLogVerbose(thread.name()) << "External thread waiting for ofThread mutex to be unlocked";
@@ -78,7 +75,7 @@ bool ofThread::lock(){
 		}
 	}
 
-    if(Poco::Thread::current() == &thread) {
+    if(isCurrentThread()) {
         ofLogVerbose(thread.name()) << "ofThread locked its own mutex.";
     } else {
         ofLogVerbose(thread.name()) << "External thread locked the ofThread mutex.";
@@ -91,19 +88,18 @@ bool ofThread::lock(){
 void ofThread::unlock(){ 
 	mutex.unlock();
 	
-    if(Poco::Thread::current() == &thread) {
+    if(isCurrentThread()) {
         ofLogVerbose(thread.name()) << "ofThread unlocked its own mutex.";
     } else {
         ofLogVerbose(thread.name()) << "External thread unlocked the ofThread mutex.";
     }
-
-	return;
-} 
+}
 
 //------------------------------------------------- 
 void ofThread::stopThread(){
-	if(thread.isRunning()) {
-		threadRunning = false;
+	if(thread.isRunning())
+    {
+        threadRunning = false;
 	}
 }
 
@@ -112,15 +108,18 @@ void ofThread::waitForThread(bool stop, long milliseconds){
 	if(thread.isRunning()){
 		
 		// tell thread to stop
-		if(stop){
-			threadRunning = false;
-			ofLogVerbose(thread.name()) << "signaled to stop";
+		if(stop)
+        {
+            threadRunning = false;
+			ofLogVerbose(thread.name()) << "Signaled to stop.";
 		}
 		
 		// wait for the thread to finish
 		ofLogVerbose(thread.name()) << "waiting to stop";
-		if(Poco::Thread::current() == &thread){
-			ofLogWarning(thread.name()) << "waitForThread should only be called from outside the thread";
+
+        if(isCurrentThread())
+        {
+			ofLogWarning(thread.name()) << "waitForThread should only be called from outside the thread.";
 			return;
 		}
 
@@ -149,12 +148,17 @@ void ofThread::yield(){
 }
 
 //-------------------------------------------------
-bool ofThread::isCurrentThread(){
+bool ofThread::isCurrentThread() const {
     return ofThread::getCurrentPocoThread() == &getPocoThread();
 }
 
 //-------------------------------------------------
 Poco::Thread& ofThread::getPocoThread(){
+	return thread;
+}
+
+//-------------------------------------------------
+const Poco::Thread& ofThread::getPocoThread() const {
 	return thread;
 }
 
@@ -167,9 +171,6 @@ bool ofThread::isMainThread(){
 ofThread* ofThread::getCurrentThread(){
 	// assumes all created threads are ofThreads ...
 	// might be dangerous if people are using Poco::Threads directly
-    
-
-
 	return (ofThread*) Poco::Thread::current();
 }
 
@@ -184,6 +185,7 @@ Poco::Thread* ofThread::getCurrentPocoThread(){
 void ofThread::threadedFunction(){
 	ofLogWarning(thread.name()) << "Override ofThread::threadedFunction() in your ofThread subclass.";
 }
+
 
 // PRIVATE
 //-------------------------------------------------
@@ -201,6 +203,7 @@ void ofThread::run(){
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
 
-	threadRunning = false;
+    threadRunning = false;
+
 	ofLogVerbose(thread.name()) << "stopped";
 }
