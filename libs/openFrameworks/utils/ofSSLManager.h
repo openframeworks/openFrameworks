@@ -250,6 +250,7 @@ private:
 template<class ListenerClass>
 void ofSSLManager::registerAllEvents(ListenerClass* listener)
 {
+    ofSSLManager::instance();
     Poco::Net::SSLManager& manager = Poco::Net::SSLManager::instance();
     manager.ServerVerificationError      += Poco::delegate(listener, &ListenerClass::onSSLServerVerificationError);
     manager.ClientVerificationError      += Poco::delegate(listener, &ListenerClass::onSSLClientVerificationError);
@@ -260,6 +261,7 @@ void ofSSLManager::registerAllEvents(ListenerClass* listener)
 template<class ListenerClass>
 void ofSSLManager::unregisterAllEvents(ListenerClass* listener)
 {
+    ofSSLManager::instance();
     Poco::Net::SSLManager& manager = Poco::Net::SSLManager::instance();
     manager.ServerVerificationError      -= Poco::delegate(listener, &ListenerClass::onSSLServerVerificationError);
     manager.ClientVerificationError      -= Poco::delegate(listener, &ListenerClass::onSSLClientVerificationError);
@@ -270,6 +272,7 @@ void ofSSLManager::unregisterAllEvents(ListenerClass* listener)
 template<class ListenerClass>
 void ofSSLManager::registerClientEvents(ListenerClass* listener)
 {
+    ofSSLManager::instance();
     Poco::Net::SSLManager& manager = Poco::Net::SSLManager::instance();
     manager.ClientVerificationError      += Poco::delegate(listener, &ListenerClass::onSSLClientVerificationError);
     manager.PrivateKeyPassphraseRequired += Poco::delegate(listener, &ListenerClass::onSSLPrivateKeyPassphraseRequired);
@@ -279,6 +282,7 @@ void ofSSLManager::registerClientEvents(ListenerClass* listener)
 template<class ListenerClass>
 void ofSSLManager::unregisterClientEvents(ListenerClass* listener)
 {
+    ofSSLManager::instance();
     Poco::Net::SSLManager& manager = Poco::Net::SSLManager::instance();
     manager.ClientVerificationError      -= Poco::delegate(listener, &ListenerClass::onSSLClientVerificationError);
     manager.PrivateKeyPassphraseRequired -= Poco::delegate(listener, &ListenerClass::onSSLPrivateKeyPassphraseRequired);
@@ -288,6 +292,7 @@ void ofSSLManager::unregisterClientEvents(ListenerClass* listener)
 template<class ListenerClass>
 void ofSSLManager::registerServerEvents(ListenerClass* listener)
 {
+    ofSSLManager::instance();
     Poco::Net::SSLManager& manager = Poco::Net::SSLManager::instance();
     manager.ServerVerificationError      += Poco::delegate(listener, &ListenerClass::onSSLServerVerificationError);
     manager.PrivateKeyPassphraseRequired += Poco::delegate(listener, &ListenerClass::onSSLPrivateKeyPassphraseRequired);
@@ -297,6 +302,7 @@ void ofSSLManager::registerServerEvents(ListenerClass* listener)
 template<class ListenerClass>
 void ofSSLManager::unregisterServerEvents(ListenerClass* listener)
 {
+    ofSSLManager::instance();
     Poco::Net::SSLManager& manager = Poco::Net::SSLManager::instance();
     manager.ServerVerificationError      -= Poco::delegate(listener, &ListenerClass::onSSLServerVerificationError);
     manager.PrivateKeyPassphraseRequired -= Poco::delegate(listener, &ListenerClass::onSSLPrivateKeyPassphraseRequired);
