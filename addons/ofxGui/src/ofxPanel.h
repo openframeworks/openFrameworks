@@ -8,18 +8,20 @@ class ofxPanel : public ofxGuiGroup {
 public:
 	ofxPanel();
 	ofxPanel(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
+	~ofxPanel();
 
 	ofxPanel * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
 	ofxPanel * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
 
-	void draw();
-	void mouseReleased(ofMouseEventArgs & args);
+	bool mouseReleased(ofMouseEventArgs & args);
 
 	ofEvent<void> loadPressedE;
 	ofEvent<void> savePressedE;
 protected:
-	void setValue(float mx, float my, bool bCheck);
+	void render();
+	bool setValue(float mx, float my, bool bCheck);
 	void generateDraw();
+	void loadIcons();
 private:
 	ofRectangle loadBox, saveBox;
 	static ofImage loadIcon, saveIcon;

@@ -7,6 +7,7 @@
 #include "ofPixels.h"
 #include "ofTypes.h"
 #include "ofEvents.h"
+#include "ofThread.h"
 
 #define GST_DISABLE_DEPRECATED
 #include <gst/gst.h>
@@ -28,6 +29,7 @@ public:
 
 	bool 	setPipelineWithSink(string pipeline, string sinkname="sink", bool isStream=false);
 	bool 	setPipelineWithSink(GstElement * pipeline, GstElement * sink, bool isStream=false);
+	bool	startPipeline();
 
 	void 	play();
 	void 	stop();
@@ -53,8 +55,9 @@ public:
 
 	GstElement 	* getPipeline();
 	GstElement 	* getSink();
-	unsigned long getMinLatencyNanos();
-	unsigned long getMaxLatencyNanos();
+	GstElement 	* getGstElementByName(const string & name);
+	uint64_t getMinLatencyNanos();
+	uint64_t getMaxLatencyNanos();
 
 	virtual void close();
 
@@ -71,14 +74,14 @@ public:
 	virtual void 		  eos_cb();
 
 	static void startGstMainLoop();
+	static GMainLoop * getGstMainLoop();
 protected:
 	ofGstAppSink * 		appsink;
 	bool				isStream;
 
 private:
-	void 				gstHandleMessage();
-	void				update(ofEventArgs & args);
-	bool				startPipeline();
+	static bool			busFunction(GstBus * bus, GstMessage * message, ofGstUtils * app);
+	bool				gstHandleMessage(GstBus * bus, GstMessage * message);
 
 	bool 				bPlaying;
 	bool 				bPaused;
@@ -91,8 +94,29 @@ private:
 	GstElement 	*		gstPipeline;
 
 	float				speed;
-	int64_t				durationNanos;
+	gint64				durationNanos;
 	bool				isAppSink;
+
+	class ofGstMainLoopThread: public ofThread{
+	public:
+		GMainLoop *main_loop;
+		ofGstMainLoopThread()
+		:main_loop(NULL)
+		{
+
+		}
+
+		void start(){
+			main_loop = g_main_loop_new (NULL, FALSE);
+			startThread();
+		}
+		void threadedFunction(){
+			g_main_loop_run (main_loop);
+		}
+	};
+
+	static ofGstMainLoopThread * mainLoop;
+	GstBus * bus;
 };
 
 

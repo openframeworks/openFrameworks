@@ -59,8 +59,9 @@ static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofxAssimpMeshHelper *
 	// just one for now
 	if(aim->GetNumUVChannels()>0){
 		for (int i=0; i < (int)aim->mNumVertices;i++){
-			if( helper != NULL && helper->texture.getWidth() > 0.0 ){
-				ofVec2f texCoord = helper->texture.getCoordFromPercent(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y);
+			if(helper != NULL && helper->hasTexture()){
+                ofTexture * tex = helper->getTexturePtr();
+				ofVec2f texCoord = tex->getCoordFromPercent(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y);
 				ofm.addTexCoord(texCoord);
 			}else{
 				ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y));
@@ -78,7 +79,7 @@ static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofxAssimpMeshHelper *
     
 	for (int i=0; i <(int) aim->mNumFaces;i++){
 		if(aim->mFaces[i].mNumIndices>3){
-			ofLog(OF_LOG_WARNING,"non-triangular face found: model face # " + ofToString(i));
+			ofLogWarning("ofxAssimpUtils") << "aiMeshToOfMesh(): non triangular face found: model face " << i;
 		}
 		for (int j=0; j<(int)aim->mFaces[i].mNumIndices; j++){
 			ofm.addIndex(aim->mFaces[i].mIndices[j]);

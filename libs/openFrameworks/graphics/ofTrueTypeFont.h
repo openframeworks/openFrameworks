@@ -68,13 +68,16 @@ public:
 	//			get the num chars in the loaded char set
 	int			getNumCharacters();	
 	
-	ofTTFCharacter getCharacterAsPoints(int character);
-	vector<ofTTFCharacter> getStringAsPoints(string str);
+	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=ofIsVFlipped());
+	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=ofIsVFlipped());
 	ofMesh & getStringMesh(string s, float x, float y);
 	ofTexture & getFontTexture();
 
 	void bind();
 	void unbind();
+
+	ofTextEncoding getEncoding() const;
+	void setEncoding(ofTextEncoding encoding);
 
 protected:
 	bool			bLoadedOk;
@@ -83,6 +86,7 @@ protected:
 	int 			nCharacters;
 	
 	vector <ofTTFCharacter> charOutlines;
+	vector <ofTTFCharacter> charOutlinesNonVFlipped;
 
 	float 			lineHeight;
 	float			letterSpacing;
@@ -107,15 +111,16 @@ protected:
 	ofMesh stringQuads;
 
 private:
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IPHONE)
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	friend void ofUnloadAllFontTextures();
 	friend void ofReloadAllFontTextures();
 #endif
-#ifdef TARGET_OPENGLES
+
 	GLint blend_src, blend_dst;
 	GLboolean blend_enabled;
 	GLboolean texture_2d_enabled;
-#endif
+
+	ofTextEncoding encoding;
 	void		unloadTextures();
 	void		reloadTextures();
 	static bool	initLibraries();

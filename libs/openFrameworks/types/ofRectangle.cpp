@@ -244,13 +244,13 @@ void ofRectangle::scaleTo(const ofRectangle& targetRect,
                 scale(MIN(wRatio,hRatio));
             }
         } else {
-            ofLogWarning("ofRectangle") << "scaleTo: this rectangle has 0 width or 0 height. No scaling applied to avoid divide by zero.";
+            ofLogWarning("ofRectangle") << "scaleTo(): no scaling applied to avoid divide by zero, rectangle has 0 width and/or height: " << sw << "x" << sh;
         }
     } else if(aspectRatioMode == OF_ASPECT_RATIO_IGNORE) {
         width  = tw;
         height = th;
     } else {
-        ofLogWarning("ofRectangle") << "scaleTo: Unknown ofAspectRatioMode = " << aspectRatioMode << ". Using OF_ASPECT_RATIO_IGNORE.";
+        ofLogWarning("ofRectangle") << "scaleTo(): unknown ofAspectRatioMode = " << aspectRatioMode << ", using OF_ASPECT_RATIO_IGNORE";
         width  = tw;
         height = th;
     }
@@ -271,7 +271,7 @@ void ofRectangle::alignToHorz(const float& targetX,
     if(thisHorzAnchor != OF_ALIGN_HORZ_IGNORE) {
         translateX(targetX - getHorzAnchor(thisHorzAnchor));
     } else {
-        ofLogVerbose("ofRectangle") << "alignToHorz: thisHorzAnchor == OF_ALIGN_HORZ_IGNORE. No alignment applied.";
+        ofLogVerbose("ofRectangle") << "alignToHorz(): thisHorzAnchor == OF_ALIGN_HORZ_IGNORE, no alignment applied";
     }
 }
 
@@ -292,9 +292,9 @@ void ofRectangle::alignToHorz(const ofRectangle& targetRect,
         alignToHorz(targetRect.getHorzAnchor(targetHorzAnchor),thisHorzAnchor);
     } else {
         if(targetHorzAnchor == OF_ALIGN_HORZ_IGNORE) {
-            ofLogVerbose("ofRectangle") << "alignToHorz: targetHorzAnchor == OF_ALIGN_HORZ_IGNORE. No alignment applied.";
+            ofLogVerbose("ofRectangle") << "alignToHorz(): targetHorzAnchor == OF_ALIGN_HORZ_IGNORE, no alignment applied";
         } else {
-            ofLogVerbose("ofRectangle") << "alignToHorz: thisHorzAnchor == OF_ALIGN_HORZ_IGNORE. No alignment applied.";
+            ofLogVerbose("ofRectangle") << "alignToHorz(): thisHorzAnchor == OF_ALIGN_HORZ_IGNORE, no alignment applied";
         }
     }
     
@@ -307,7 +307,7 @@ void ofRectangle::alignToVert(const float& targetY,
     if(thisVertAnchor != OF_ALIGN_VERT_IGNORE) {
         translateY(targetY - getVertAnchor(thisVertAnchor));
     } else {
-        ofLogVerbose("ofRectangle") << "alignToVert: thisVertAnchor == OF_ALIGN_VERT_IGNORE. No alignment applied.";
+        ofLogVerbose("ofRectangle") << "alignToVert(): thisVertAnchor == OF_ALIGN_VERT_IGNORE, no alignment applied";
     }
 }
 
@@ -328,9 +328,9 @@ void ofRectangle::alignToVert(const ofRectangle& targetRect,
         alignToVert(targetRect.getVertAnchor(targetVertAnchor),thisVertAnchor);
     } else {
         if(targetVertAnchor == OF_ALIGN_VERT_IGNORE) {
-            ofLogVerbose("ofRectangle") << "alignToVert: targetVertAnchor == OF_ALIGN_VERT_IGNORE. No alignment applied.";
+            ofLogVerbose("ofRectangle") << "alignToVert(): targetVertAnchor == OF_ALIGN_VERT_IGNORE, no alignment applied";
         } else {
-            ofLogVerbose("ofRectangle") << "alignToVert: thisVertAnchor == OF_ALIGN_VERT_IGNORE. No alignment applied.";
+            ofLogVerbose("ofRectangle") << "alignToVert(): thisVertAnchor == OF_ALIGN_VERT_IGNORE, no alignment applied";
         }
         
     }
@@ -596,7 +596,7 @@ ofPoint ofRectangle::getBottomRight() const {
 float ofRectangle::getHorzAnchor(ofAlignHorz anchor) const {
     switch (anchor) {
         case OF_ALIGN_HORZ_IGNORE:
-            ofLogError("ofRectangle") << "getHorzAnchor: Unable to get anchor for OF_ALIGN_HORZ_IGNORE.  Returning 0.";
+            ofLogError("ofRectangle") << "getHorzAnchor(): unable to get anchor for OF_ALIGN_HORZ_IGNORE, returning 0";
             return 0.0f;
         case OF_ALIGN_HORZ_LEFT:
             return getLeft();
@@ -605,7 +605,7 @@ float ofRectangle::getHorzAnchor(ofAlignHorz anchor) const {
         case OF_ALIGN_HORZ_CENTER:
             return getCenter().x;
         default:
-            ofLogError("ofRectangle") << "getHorzAnchor: Unknown ofAlignHorz = " << anchor << ". Returning 0.0";
+            ofLogError("ofRectangle") << "getHorzAnchor(): unknown ofAlignHorz = " << anchor << ", returning 0.0";
             return 0.0f;
     }
 }
@@ -614,7 +614,7 @@ float ofRectangle::getHorzAnchor(ofAlignHorz anchor) const {
 float ofRectangle::getVertAnchor(ofAlignVert anchor) const {
     switch (anchor) {
         case OF_ALIGN_VERT_IGNORE:
-            ofLogError("ofRectangle") << "getVertAnchor: Unable to get anchor for OF_ALIGN_VERT_IGNORE.  Returning 0.0";
+            ofLogError("ofRectangle") << "getVertAnchor(): unable to get anchor for OF_ALIGN_VERT_IGNORE, returning 0.0";
             return 0.0f;
         case OF_ALIGN_VERT_TOP:
             return getTop();
@@ -623,7 +623,7 @@ float ofRectangle::getVertAnchor(ofAlignVert anchor) const {
         case OF_ALIGN_VERT_CENTER:
             return getCenter().y;
         default:
-            ofLogError("ofRectangle") << "getVertAnchor: Unknown ofAlignVert = " << anchor << ". Returning 0.0";
+            ofLogError("ofRectangle") << "getVertAnchor(): unknown ofAlignVert = " << anchor << ", returning 0.0";
             return 0.0f;
     }
 }
@@ -675,10 +675,11 @@ ofRectangle& ofRectangle::operator = (const ofRectangle& rect) {
 }
 
 //----------------------------------------------------------
-ofRectangle& ofRectangle::operator + (const ofPoint & point){
-	x += point.x;
-	y += point.y;
-	return *this;
+ofRectangle ofRectangle::operator + (const ofPoint & point){
+	ofRectangle rect=*this;
+	rect.x += point.x;
+	rect.y += point.y;
+	return rect;
 }
 
 //----------------------------------------------------------
@@ -686,3 +687,18 @@ bool ofRectangle::operator == (const ofRectangle& rect) const {
 	return (x == rect.x) && (y == rect.y) && (width == rect.width) && (height == rect.height);
 }
 
+//----------------------------------------------------------
+ostream& operator<<(ostream& os, const ofRectangle& rect){
+	os << rect.position << ", " << rect.width << ", " << rect.height;
+	return os;
+}
+
+//----------------------------------------------------------
+istream& operator>>(istream& is, ofRectangle& rect){
+	is >> rect.position;
+	is.ignore(2);
+	is >> rect.width;
+	is.ignore(2);
+	is >> rect.height;
+	return is;
+}

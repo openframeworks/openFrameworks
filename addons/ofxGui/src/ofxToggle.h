@@ -12,22 +12,22 @@ public:
 	ofxToggle * setup(string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
 	
 
-	virtual void mouseMoved(ofMouseEventArgs & args);
-	virtual void mousePressed(ofMouseEventArgs & args);
-	virtual void mouseDragged(ofMouseEventArgs & args);
-	virtual void mouseReleased(ofMouseEventArgs & args);
+	virtual bool mouseMoved(ofMouseEventArgs & args);
+	virtual bool mousePressed(ofMouseEventArgs & args);
+	virtual bool mouseDragged(ofMouseEventArgs & args);
+	virtual bool mouseReleased(ofMouseEventArgs & args);
 	
-	void draw();
 
-	template<class ListenerClass>
-	void addListener(ListenerClass * listener, void ( ListenerClass::*method )(bool&)){
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method){
 		value.addListener(listener,method);
 	}
 
-	template<class ListenerClass>
-	void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(bool&)){
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method){
 		value.removeListener(listener,method);
 	}
+
 
 
 	bool operator=(bool v);
@@ -36,10 +36,12 @@ public:
 	virtual ofAbstractParameter & getParameter();
 
 protected:
+	virtual void render();
 	ofRectangle checkboxRect;
 	ofParameter<bool> value;
+	bool bGuiActive;
 	
-	void setValue(float mx, float my, bool bCheck);
+	bool setValue(float mx, float my, bool bCheck);
 	void generateDraw();
 	void valueChanged(bool & value);
 	ofPath bg,fg,cross;

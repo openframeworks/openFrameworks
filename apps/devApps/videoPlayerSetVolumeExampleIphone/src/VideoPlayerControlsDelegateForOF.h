@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import "VideoPlayerControls.h"
-#import "testApp.h"
+#import "ofApp.h"
 
 /**
  *  this is a bit of obj-c that will help connect the OF app with the VideoPlayerControls UI.
@@ -15,10 +15,10 @@
  */
 
 @interface VideoPlayerControlsDelegateForOF : NSObject <VideoPlayerControlsDelegate> {
-    testApp * app;
+    ofApp * app;
 }
 
-- (id)initWithApp:(testApp *)app;
+- (id)initWithApp:(ofApp *)app;
 - (void)playPressed;
 - (void)pausePressed;
 - (void)scrubBegin;

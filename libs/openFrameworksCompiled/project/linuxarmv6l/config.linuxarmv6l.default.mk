@@ -65,6 +65,12 @@ PLATFORM_DEFINES += HAVE_LIBBCM_HOST
 PLATFORM_DEFINES += USE_EXTERNAL_LIBBCM_HOST
 PLATFORM_DEFINES += USE_VCHIQ_ARM
 
+# Fix for firmware update @
+# https://github.com/Hexxeh/rpi-firmware/commit/ca3703d2d282ac96a97650e2e496276727e1b65b
+ifeq ($(strip $(shell cat /opt/vc/include/interface/vmcs_host/vc_dispmanx.h | grep VC_IMAGE_TRANSFORM_T)),) 
+PLATFORM_DEFINES += USE_DISPMANX_TRANSFORM_T
+endif
+
 ################################################################################
 # PLATFORM REQUIRED ADDONS
 #   This is a list of addons required for this platform.  This list is used to 
@@ -79,7 +85,7 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_REQUIRED_ADDONS = ofxRaspberryPi
+#PLATFORM_REQUIRED_ADDONS = ofxRaspberryPi
 
 ################################################################################
 # PLATFORM CFLAGS
@@ -121,6 +127,7 @@ PLATFORM_CFLAGS += -pipe
 
 # raspberry pi specific
 PLATFORM_LIBRARIES += GLESv2
+PLATFORM_LIBRARIES += GLESv1_CM
 PLATFORM_LIBRARIES += EGL
 PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
@@ -158,5 +165,58 @@ PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
 PLATFORM_LIBRARY_SEARCH_PATHS += /opt/vc/lib
 
 
+################################################################################
+# PLATFORM CORE EXCLUSIONS
+#   During compilation, these makefiles will generate lists of sources, headers 
+#   and third party libraries to be compiled and linked into a program or core 
+#   library. The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file 
+#   paths that will be used to exclude matching paths and files during list 
+#   generation.
+#
+#   Each item in the PLATFORM_CORE_EXCLUSIONS list will be treated as a complete
+#   string unless teh user adds a wildcard (%) operator to match subdirectories.
+#   GNU make only allows one wildcard for matching.  The second wildcard (%) is
+#   treated literally.
+#
+#   Note: Leave a leading space when adding list items with the += operator
+################################################################################
 
-
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
+$(info $(PLATFORM_ARCH))
+ifeq ($(CROSS_COMPILING),1)
+	#TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin
+	TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin
+	#GCC_PREFIX =arm-bcm2708hardfp-linux-gnueabi
+	GCC_PREFIX=arm-linux-gnueabihf
+    PLATFORM_CXX = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-g++
+	PLATFORM_CC = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-gcc
+	PLATFORM_AR = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ar
+	PLATFORM_LD = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ld
+	
+	SYSROOT=$(RPI_ROOT)
+	#$(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/arm-linux-gnueabihf/libc/
+	
+	# Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
+	PLATFORM_CFLAGS += --sysroot=$(SYSROOT)
+	
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vcos/pthreads
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/linux
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/
+	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/arm-linux-gnueabihf
+	
+	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
+	
+	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -pthread 
+	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/usr/lib
+	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/usr/lib/arm-linux-gnueabihf
+	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/lib
+	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/lib/arm-linux-gnueabihf
+	
+	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	
+	PLATFORM_LIBRARIES += pcre
+	PLATFORM_LIBRARIES += rt 
+	PLATFORM_LIBRARIES += X11 
+	PLATFORM_LIBRARIES += dl
+endif

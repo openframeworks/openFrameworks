@@ -142,7 +142,9 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		ofColor_<PixelType> getColor(int x, int y) const;
 
 		// alter the image
-		void				setColor(int x, int y, ofColor_<PixelType> color);
+		void				setColor(int x, int y, const ofColor_<PixelType>& color);
+		void				setColor(int index, const ofColor_<PixelType>& color);
+		void				setColor(const ofColor_<PixelType>& color);
 		void 				setFromPixels(const PixelType * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
 		void				setFromPixels(const ofPixels_<PixelType> & pixels);
 		void 				setImageType(ofImageType type);
@@ -240,7 +242,7 @@ void ofImage_<PixelType>::clone(const ofImage_<SrcType> &mom){
 
 	tex.clear();
 	bUseTexture = nonConst.isUsingTexture();
-	if (bUseTexture == true){
+	if (bUseTexture == true && nonConst.getTextureReference().isAllocated()){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
 

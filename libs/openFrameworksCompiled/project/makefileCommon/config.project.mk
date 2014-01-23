@@ -14,18 +14,6 @@ endif
 # define the OF_SHARED_MAKEFILES location
 OF_SHARED_MAKEFILES_PATH=$(OF_ROOT)/libs/openFrameworksCompiled/project/makefileCommon
 
-############################## FLAGS ###########################################
-# OF CORE LIBRARIES SEARCH PATHS (-L ...) (not used during core compilation, but 
-#    variables are used during project compilation)
-################################################################################
-
-# generate a list of all third party libs, excluding the compiled openFrameworkslibrary.
-# grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS = $(shell find $(OF_LIBS_PATH)/*/lib/$(ABI_LIB_SUBPATH) -type d -not -path "*/openFrameworksCompiled/*" | grep -v "/\.[^\.]")
-
-# filter out all excluded paths defined in the platform config files.
-OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS = $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_LIB_SEARCH_PATHS))
-
 
 ################################################################################
 # OF CORE LIBRARIES (-l ...) (not used during core compilation, but variables are 
@@ -85,18 +73,18 @@ endif
 OF_CORE_THIRDPARTY_STATIC_LIBS := $(filter-out $(CORE_EXCLUSIONS),$(OF_CORE_LIBS_PLATFORM_LIBS_STATICS))
 OF_CORE_THIRDPARTY_STATIC_LIBS += $(PLATFORM_STATIC_LIBRARIES)
 
-# add in any libraries that were explicitly listed in the platform config files.
-OF_CORE_THIRDPARTY_SHARED_LIBS := $(PLATFORM_SHARED_LIBRARIES)
-
 #TODO what to do with shared libs?
-OF_CORE_THIRDPARTY_SHARED_LIBS += $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
+OF_CORE_THIRDPARTY_SHARED_LIBS := $(filter-out $(CORE_EXCLUSIONS),$(ALL_OF_CORE_THIRDPARTY_SHARED_LIBS))
 
 
 ################################################################################
 # OF PLATFORM LDFLAGS
 ################################################################################
 
-OF_CORE_LIBRARY_LDFLAGS = $(addprefix -L,$(OF_CORE_THIRDPARTY_LIBS_SEARCH_PATHS))
+ifeq ($(PLATFORM_OS),Linux) 
+	OF_CORE_LIBRARY_LDFLAGS = $(addprefix -L,$(dir $(OF_CORE_THIRDPARTY_SHARED_LIBS)))
+	OF_CORE_LIBRARY_LDFLAGS += $(addprefix -l,$(patsubst lib%,%,$(basename $(notdir $(OF_CORE_THIRDPARTY_SHARED_LIBS)))))
+endif
 OF_CORE_LIBRARY_LDFLAGS += $(addprefix -L,$(PLATFORM_LIBRARY_SEARCH_PATHS))
 
 
@@ -213,21 +201,35 @@ ifdef B_PROCESS_ADDONS
 endif
 
 # generate the list of core libraries
-# 2. Add all of the third party static libs defined by the platform config files.
+# 1. Add all of the third party static libs defined by the platform config files.
 OF_CORE_LIBS := $(OF_CORE_THIRDPARTY_STATIC_LIBS)
+
 # 2. Add all of the third party shared libs defined by the platform config files.
-OF_CORE_LIBS += $(OF_CORE_THIRDPARTY_SHARED_LIBS)
+ifneq ($(PLATFORM_OS),Linux)
+	OF_CORE_LIBS += $(OF_CORE_THIRDPARTY_SHARED_LIBS)
+endif
+OF_CORE_LIBS += $(PLATFORM_SHARED_LIBRARIES)
+
 # 3. Add all of the core pkg-config OF libs defined by the platform config files.
 CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
-	OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+	ifeq ($(CROSS_COMPILING),1)
+		OF_CORE_LIBS += $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+	else
+		OF_CORE_LIBS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --libs)
+	endif
 endif
+
 # 4. Add the libraries defined in the platform config files.
 OF_CORE_LIBS += $(addprefix -l,$(PLATFORM_LIBRARIES))
 
 # add the list of addon includes
 ifneq ($(strip $(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)),)
-	OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(PROJECT_ADDONS_PKG_CONFIG_LIBRARIES)" --cflags)
+	ifeq ($(CROSS_COMPILING),1)
+		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
+	else
+		OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
+	endif
 endif
 
 ################################################################################
@@ -256,19 +258,13 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
 # source directories 
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
 ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d | grep -v "/\.[^\.]")
+ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
+	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
+	ALL_OF_PROJECT_SOURCE_PATHS += $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
+endif
 
 # be included as locations for header searches via 
-TMP_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
-
-# legacy exclusion
-#ifdef EXCLUDE_FROM_SOURCE
-#    SED_EXCLUDE_FROM_SRC = $(shell echo  $(EXCLUDE_FROM_SOURCE) | sed 's/\,/\\|/g')\|^\..*\|\/\..*
-#    OF_PROJECT_SOURCE_PATHS = $(shell echo $(TMP_SOURCE_PATHS) | sed s/.\\/// | grep -v "$(SED_EXCLUDE_FROM_SRC)")
-#else
-#    OF_PROJECT_SOURCE_PATHS = $(TMP_SOURCE_PATHS)
-#endif
-    
-OF_PROJECT_SOURCE_PATHS = $(TMP_SOURCE_PATHS)
+OF_PROJECT_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
 
 ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_SOURCE_PATHS---)
@@ -322,13 +318,16 @@ OF_PROJECT_DEFINES_CFLAGS = $(addprefix -D,$(OF_PROJECT_DEFINES))
 ################################################################################
 
 # gather any project CFLAGS
-OF_PROJECT_CFLAGS := $(PROJECT_CFLAGS)
+OF_PROJECT_CFLAGS = $(OF_CORE_BASE_CFLAGS)
+OF_PROJECT_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
+OF_PROJECT_CFLAGS += $(PROJECT_CFLAGS)
+OF_PROJECT_CFLAGS += $(PROJECT_ADDONS_CFLAGS)
 OF_PROJECT_CFLAGS += $(USER_CFLAGS) # legacy
 OF_PROJECT_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
-OF_PROJECT_CFLAGS += $(OF_CORE_BASE_CFLAGS)
-OF_PROJECT_CFLAGS += $(OF_CORE_DEFINES_CFLAGS)
 OF_PROJECT_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
+
+OF_PROJECT_CXXFLAGS = $(OF_CORE_BASE_CXXFLAGS)
 
 
 ################################################################################
@@ -340,6 +339,7 @@ OF_PROJECT_LDFLAGS += $(OF_CORE_LIBRARY_LDFLAGS)
 OF_PROJECT_LDFLAGS += $(USER_LDFLAGS) # legacy
 OF_PROJECT_LDFLAGS += $(USER_LIBS)   # legacy
 OF_PROJECT_LDFLAGS += $(OF_PROJECT_LIBS_LDFLAGS)
+OF_PROJECT_LDFLAGS += $(PROJECT_ADDONS_LDFLAGS)
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_FRAMEWORKS))
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PLATFORM_FRAMEWORKS))
 OF_PROJECT_LDFLAGS += $(addprefix -framework ,$(PROJECT_ADDONS_FRAMEWORKS))
@@ -385,8 +385,16 @@ ALL_CFLAGS =
 # add the CFLAGS from Makefiles.examples
 ALL_CFLAGS += $(OF_PROJECT_CFLAGS)
 
+# clean it
+ALL_CXXFLAGS =
+# add the CFLAGS from Makefiles.examples
+ALL_CXXFLAGS += $(OF_PROJECT_CXXFLAGS)
+
 # clean up all extra whitespaces in the CFLAGS
 CFLAGS = $(strip $(ALL_CFLAGS))
+
+# clean up all extra whitespaces in the CFLAGS
+CXXFLAGS = $(strip $(ALL_CXXFLAGS))
 
 ################################################################################
 # LDFLAGS
@@ -396,8 +404,8 @@ CFLAGS = $(strip $(ALL_CFLAGS))
 ALL_LDFLAGS =
 
 # add the include LDFLAGS from Makefiles.examples
-ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
 ALL_LDFLAGS += $(PLATFORM_LDFLAGS)
+ALL_LDFLAGS += $(OF_PROJECT_LDFLAGS)
 
 # clean up all extra whitespaces in the LDFLAGS
 LDFLAGS = $(strip $(ALL_LDFLAGS))
@@ -457,13 +465,15 @@ ifdef MAKEFILE_DEBUG
 endif
 
 ifdef ABI
-	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(ABI)/$(TARGET_NAME)
+	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(ABI)/$(TARGET_NAME)/
 else
-	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)
+	OF_PROJECT_OBJ_OUPUT_PATH = obj/$(PLATFORM_LIB_SUBPATH)/$(TARGET_NAME)/
 endif
 
 OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(patsubst %.S,%.o,$(OF_PROJECT_SOURCE_FILES))))))
-OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH)/,$(OF_PROJECT_OBJ_FILES)))
+OBJS_WITH_PREFIX = $(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH),$(OF_PROJECT_OBJ_FILES))
+OBJS_WITHOUT_EXTERNAL = $(subst $(strip $(PROJECT_EXTERNAL_SOURCE_PATHS)),,$(OBJS_WITH_PREFIX))
+OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(OBJS_WITHOUT_EXTERNAL))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
 OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_ADDONS_SOURCE_FILES)))))
@@ -471,7 +481,7 @@ OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst
 OF_PROJECT_ADDONS_OBJS = 
 $(foreach addon_obj, $(OF_PROJECT_ADDONS_OBJ_FILES), \
      $(eval OF_PROJECT_ADDONS_OBJS+= $(patsubst $(OF_ROOT)/addons/$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
-                                          $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)/$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
+                                          $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$(word 1, $(subst /, ,$(subst $(OF_ROOT)/addons/,,$(addon_obj))))/%, \
                                           $(addon_obj))) \
 )
 

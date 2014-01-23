@@ -21,6 +21,8 @@ ofVideoGrabber::ofVideoGrabber(){
 	RequestedDeviceID	= -1;
 	internalPixelFormat = OF_PIXELS_RGB;
 	desiredFramerate 	= -1;
+	height				= 0;
+	width				= 0;
 
 #ifdef TARGET_ANDROID
 	if(!ofxAndroidInitGrabber(this)) return;
@@ -74,18 +76,10 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	height			= (int)grabber->getHeight();
 
 	if( grabberRunning && bUseTexture ){
-		if(internalPixelFormat == OF_PIXELS_RGB)
-			tex.allocate(width, height, GL_RGB);
-		else if(internalPixelFormat == OF_PIXELS_RGBA)
-			tex.allocate(width, height, GL_RGBA);
-		else if(internalPixelFormat == OF_PIXELS_BGRA)
-			tex.allocate(width, height, GL_RGBA); // for some reason if we allcoate as GL_BGRA we get a white texture
-#ifdef TARGET_ANDROID
-		else if(internalPixelFormat == OF_PIXELS_RGB565)
-			tex.allocate(width, height, GL_RGB565_OES);
-		else if(internalPixelFormat == OF_PIXELS_MONO)
-			tex.allocate(width, height, GL_LUMINANCE);
-#endif
+		if(!grabber->getTexture()) tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
+		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
+			tex.setRGToRGBASwizzles(true);
+		}
 	}
 
 	return grabberRunning;
@@ -95,7 +89,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
 	if( grabber != NULL ){
 		if( grabberRunning ){
-			ofLogWarning("ofVideoGrabber") << "setPixelFormat - can't be called while the grabber is running ";
+			ofLogWarning("ofVideoGrabber") << "setPixelFormat(): can't set pixel format while grabber is running";
 			internalPixelFormat = grabber->getPixelFormat(); 
 			return false;
 		}else{
@@ -121,10 +115,11 @@ ofPixelFormat ofVideoGrabber::getPixelFormat(){
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::listDevices(){
-	if(	grabber != NULL ){
-		grabber->listDevices();
+vector<ofVideoDevice> ofVideoGrabber::listDevices(){
+	if( grabber == NULL ){
+		setGrabber( ofPtr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
+	return grabber->listDevices();
 }
 
 //--------------------------------------------------------------------
@@ -138,7 +133,7 @@ void ofVideoGrabber::setVerbose(bool bTalkToMe){
 void ofVideoGrabber::setDeviceID(int _deviceID){
 	RequestedDeviceID = _deviceID;
 	if( bInitialized ){
-		ofLog(OF_LOG_WARNING, "call setDeviceID before grabber is started!");
+		ofLogWarning("ofxVideoGrabber") << "setDeviceID(): can't set device while grabber is running";
 	}
 }
 
@@ -166,7 +161,12 @@ ofPixelsRef ofVideoGrabber::getPixelsRef(){
 //------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoGrabber::getTextureReference(){
-	return tex;
+	if(grabber->getTexture() == NULL){
+		return tex;
+	}
+	else{
+		return *grabber->getTexture();
+	}
 }
 
 //---------------------------------------------------------------------------
@@ -181,25 +181,10 @@ bool  ofVideoGrabber::isFrameNew(){
 void ofVideoGrabber::update(){
 	if(	grabber != NULL ){
 		grabber->update();
-		if( bUseTexture && grabber->isFrameNew() ){
-
-#ifndef TARGET_ANDROID
-			//NOTE: keeping this for now as ofGetGLTypeFromPixelFormat return GL_RGBA for OF_PIXELS_BGRA
-			//TODO: once ofGetGLTypeFromPixelFormat is fixed then we just need the single line below. Could be to do with line 81 above?
-			if(internalPixelFormat == OF_PIXELS_BGRA){
-				tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), GL_BGRA);
-			}else
-#endif
-			{
-				tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
-			}
+		if( bUseTexture && !grabber->getTexture() && grabber->isFrameNew() ){
+			tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 		}
 	}
-}
-
-//--------------------------------------------------------------------
-void ofVideoGrabber::grabFrame(){
-	update();
 }
 
 //--------------------------------------------------------------------
@@ -209,7 +194,7 @@ void ofVideoGrabber::close(){
 		bInitialized=false;
 		grabberRunning = false;
 	}
-	tex.clear();
+	if(!grabber->getTexture()) tex.clear();
 }
 
 //--------------------------------------------------------------------
@@ -227,27 +212,27 @@ void ofVideoGrabber::setUseTexture(bool bUse){
 
 //----------------------------------------------------------
 void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
-	tex.setAnchorPercent(xPct, yPct);
+	getTextureReference().setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
 void ofVideoGrabber::setAnchorPoint(float x, float y){
-	tex.setAnchorPoint(x, y);
+	getTextureReference().setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------
 void ofVideoGrabber::resetAnchor(){
-	tex.resetAnchor();
+	getTextureReference().resetAnchor();
 }
 
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y, float _w, float _h){
-	tex.draw(_x, _y, _w, _h);
+	getTextureReference().draw(_x, _y, _w, _h);
 }
 
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y){
-	tex.draw(_x, _y);
+	getTextureReference().draw(_x, _y);
 }
 
 //----------------------------------------------------------

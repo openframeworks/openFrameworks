@@ -35,12 +35,11 @@ public:
 
 	void clear();
 	
-	virtual void mouseMoved(ofMouseEventArgs & args);
-	virtual void mousePressed(ofMouseEventArgs & args);
-	virtual void mouseDragged(ofMouseEventArgs & args);
-	virtual void mouseReleased(ofMouseEventArgs & args);
+	virtual bool mouseMoved(ofMouseEventArgs & args);
+	virtual bool mousePressed(ofMouseEventArgs & args);
+	virtual bool mouseDragged(ofMouseEventArgs & args);
+	virtual bool mouseReleased(ofMouseEventArgs & args);
 	
-	virtual void draw();
 	
 	vector<string> getControlNames();
 	int getNumControls();
@@ -59,8 +58,10 @@ public:
 	virtual void setPosition(ofPoint p);
 	virtual void setPosition(float x, float y);
 protected:
+	virtual void render();
     void registerMouseEvents();
-    virtual void setValue(float mx, float my, bool bCheck);
+    void unregisterMouseEvents();
+    virtual bool setValue(float mx, float my, bool bCheck);
     void sizeChangedCB();
     
 	float spacing,spacingNextElement;
@@ -76,6 +77,7 @@ protected:
 	
 	string filename;
 	bool minimized;
+	bool bGuiActive;
 
 	ofxGuiGroup * parent;
 	ofPath border, headerBg;

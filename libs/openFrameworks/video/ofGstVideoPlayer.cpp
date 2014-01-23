@@ -38,12 +38,17 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	if( name.find( "file://",0 ) != string::npos){
 		bIsStream		= false;
 	}else if( name.find( "://",0 ) == string::npos){
+#ifndef TARGET_WIN32
 		name 			= "file://"+ofToDataPath(name,true);
+#else
+		name 			= "file:///"+ofToDataPath(name,true);
+		std::replace(name.begin(), name.end(), '\\', '/');
+#endif
 		bIsStream		= false;
 	}else{
 		bIsStream		= true;
 	}
-	ofLog(OF_LOG_VERBOSE,"loading "+name);
+	ofLogVerbose("ofGstVideoPlayer") << "loadMovie(): loading \"" << name << "\"";
 
 	ofGstUtils::startGstMainLoop();
 
@@ -63,37 +68,62 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	gst_base_sink_set_max_lateness  (GST_BASE_SINK(gstSink), -1);
 
 #if GST_VERSION_MAJOR==0
+	GstCaps *caps;
 	int bpp;
-	string mime;
 	switch(internalPixelFormat){
 	case OF_PIXELS_MONO:
-		mime = "video/x-raw-gray";
 		bpp = 8;
+		caps = gst_caps_new_simple("video/x-raw-gray",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 8,
+			NULL);
 		break;
 	case OF_PIXELS_RGB:
-		mime = "video/x-raw-rgb";
 		bpp = 24;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 24,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0xff0000,
+			"green_mask",G_TYPE_INT,0x00ff00,
+			"blue_mask",G_TYPE_INT,0x0000ff,
+			NULL);
 		break;
 	case OF_PIXELS_RGBA:
-	case OF_PIXELS_BGRA:
-		mime = "video/x-raw-rgb";
 		bpp = 32;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 32,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0xff000000,
+			"green_mask",G_TYPE_INT,0x00ff0000,
+			"blue_mask",G_TYPE_INT,0x0000ff00,
+			"alpha_mask",G_TYPE_INT,0x000000ff,
+			NULL);
+	case OF_PIXELS_BGRA:
+		bpp = 32;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 32,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0x0000ff00,
+			"green_mask",G_TYPE_INT,0x00ff0000,
+			"blue_mask",G_TYPE_INT,0xff000000,
+			"alpha_mask",G_TYPE_INT,0x000000ff,
+			NULL);
 		break;
 	default:
-		mime = "video/x-raw-rgb";
-		bpp=24;
+		bpp = 32;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 24,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0xff0000,
+			"green_mask",G_TYPE_INT,0x00ff00,
+			"blue_mask",G_TYPE_INT,0x0000ff,
+			NULL);
 		break;
 	}
-
-	GstCaps *caps = gst_caps_new_simple(mime.c_str(),
-										"bpp", G_TYPE_INT, bpp,
-										"depth", G_TYPE_INT, 24,
-										"endianness",G_TYPE_INT,4321,
-										"red_mask",G_TYPE_INT,0xff0000,
-										"green_mask",G_TYPE_INT,0x00ff00,
-										"blue_mask",G_TYPE_INT,0x0000ff,
-										"alpha_mask",G_TYPE_INT,0x000000ff,
-										NULL);
 #else
 	int bpp;
 	string mime="video/x-raw";
@@ -163,6 +193,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 
 
 	videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
+	videoUtils.startPipeline();
 	if(!bIsStream) return allocate(bpp);
 	else return true;
 }
@@ -184,7 +215,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
 			if(!videoUtils.allocate(width,height,bpp)) return false;
 		}else{
-			ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
+			ofLogError("ofGstVideoPlayer") << "allocate(): couldn't query width and height";
 			return false;
 		}
 
@@ -195,9 +226,9 @@ bool ofGstVideoPlayer::allocate(int bpp){
 			fps_n = gst_value_get_fraction_numerator (framerate);
 			fps_d = gst_value_get_fraction_denominator (framerate);
 			nFrames = (float)(durationNanos / GST_SECOND) * (float)fps_n/(float)fps_d;
-			ofLog(OF_LOG_VERBOSE,"ofGstUtils: framerate: %i/%i",fps_n,fps_d);
+			ofLogVerbose("ofGstVideoPlayer") << "allocate(): framerate: " << fps_n << "/" << fps_d;
 		}else{
-			ofLog(OF_LOG_WARNING,"Gstreamer: cannot get framerate, frame seek won't work");
+			ofLogWarning("ofGstVideoPlayer") << "allocate(): cannot get framerate, frame seek won't work";
 		}
 		bIsAllocated = true;
 #else
@@ -207,7 +238,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 			if (gst_video_info_from_caps (&info, caps)){
 				if(!videoUtils.allocate(info.width,info.height,bpp)) return false;
 			}else{
-				ofLog(OF_LOG_ERROR,"GStreamer: cannot query width and height");
+				ofLogError("ofGstVideoPlayer") << "allocate(): couldn't query width and height";
 				return false;
 			}
 
@@ -217,13 +248,13 @@ bool ofGstVideoPlayer::allocate(int bpp){
 			gst_caps_unref(caps);
 			bIsAllocated = true;
 		}else{
-			ofLog(OF_LOG_ERROR,"GStreamer: cannot get pipeline caps");
+			ofLogError("ofGstVideoPlayer") << "allocate(): cannot get pipeline caps";
 			bIsAllocated = false;
 		}
 #endif
 		gst_object_unref(GST_OBJECT(pad));
 	}else{
-		ofLog(OF_LOG_ERROR,"GStreamer: cannot get sink pad");
+		ofLogError("ofGstVideoPlayer") << "allocate(): cannot get sink pad";
 		bIsAllocated = false;
 	}
 

@@ -8,6 +8,7 @@ public:
 	using ofMesh::draw;
 	ofVboMesh();
 	ofVboMesh(const ofMesh & mom);
+	void operator=(const ofMesh & mom);
 	void setUsage(int usage);
 
     void enableColors();
@@ -20,13 +21,16 @@ public:
     void disableNormals();
     void disableIndices();
 
-    bool usingColors();
-    bool usingTextures();
-    bool usingNormals();
-    bool usingIndices();
+    virtual bool usingColors() const;
+    virtual bool usingTextures() const;
+    virtual bool usingNormals() const;
+    virtual bool usingIndices() const;
 
 	void draw(ofPolyRenderMode drawMode);
-
+	void drawInstanced(ofPolyRenderMode drawMode, int primCount);
+	
+	ofVbo & getVbo();
+	
 private:
 	void updateVbo();
 	ofVbo vbo;

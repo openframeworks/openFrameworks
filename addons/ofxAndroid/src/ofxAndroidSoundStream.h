@@ -68,5 +68,3 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		void pause();
 		void resume();
 };
-
-

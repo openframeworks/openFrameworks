@@ -3,8 +3,8 @@
 //  Created by lukasz karluk on 8/02/12.
 //
 
-#import "ofxiPhoneViewController.h"
+#import "ofxiOSViewController.h"
 
-@interface TriangleAppViewController : ofxiPhoneViewController
+@interface TriangleAppViewController : ofxiOSViewController
 
 @end

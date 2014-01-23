@@ -16,8 +16,9 @@ ofThread::ofThread(){
 }
 
 //------------------------------------------------- 
-ofThread::~ofThread(){ 
-   stopThread();
+ofThread::~ofThread(){
+   //by passing true we're also telling the thread to stop 
+   waitForThread(true);
 } 
 
 //------------------------------------------------- 
@@ -133,6 +134,11 @@ void ofThread::waitForThread(bool stop){
 		}
 		thread.join();
     }
+        //wait for 10 seconds for thread to finish 
+		if( !thread.tryJoin(10000) ){
+            ofLogError( thread.name() ) << "unable to end/join thread " << endl; 
+        }
+   }
 }
 
 //-------------------------------------------------
