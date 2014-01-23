@@ -124,7 +124,7 @@ void ofSSLManager::initializeServer(Poco::Net::Context::Ptr pContext)
 namespace
 {
     static Poco::SingletonHolder<ofSSLManager> singleton;
-    // We keep this in an anonymouse namespace to ensure that everything is
+    // We keep this in an anonymous namespace to ensure that everything is
     // shut down correctly at the very end of the application lifecycle.
 }
 

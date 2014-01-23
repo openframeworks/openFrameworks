@@ -63,10 +63,11 @@ class ofSSLManager
     ///
     ///         ofSSLManager allows the user to either accept the default
     ///         ofSSLManager Client and Server Contexts or provide a custom
-    ///         Context during by calling ofSSLManager::initializeClient(...) or
-    ///         ofSSLManager::initializeServer(...).  The user must take care
-    ///         to interact with the default SSL Context management system via
-    ///         the ofSSLManager singleton, rather than calling
+    ///         Context during application setup by calling
+    ///         ofSSLManager::initializeClient(...) or take care
+    ///         ofSSLManager::initializeServer(...).  The user must to interact
+    ///         with the default SSL Context management system via the
+    ///         ofSSLManager singleton, rather than calling
     ///         Poco::Net::SSLManager directly.
     ///
     ///         Finally, in order to simplify the certificate verification
