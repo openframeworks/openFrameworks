@@ -8,18 +8,17 @@
 #endif
 
 //------------------------------------------------- 
-ofThread::ofThread(){ 
-   threadRunning = false;
-   verbose = false;
-   thread.setName("Thread "+ofToString(thread.id()));
-   blocking = true;
+ofThread::ofThread():
+    threadRunning(false),
+    verbose(false),
+    blocking(true)
+{
+   thread.setName("Thread " + ofToString(thread.id()));
 } 
 
 //------------------------------------------------- 
 ofThread::~ofThread(){
-   //by passing true we're also telling the thread to stop 
-   waitForThread(true);
-} 
+}
 
 //------------------------------------------------- 
 bool ofThread::isThreadRunning(){ 
@@ -36,11 +35,16 @@ string ofThread::getThreadName(){
 	return thread.name();
 }
 
-//------------------------------------------------- 
+//-------------------------------------------------
+void ofThread::startThread(bool blocking){
+    startThread(blocking, false);
+}
+
+//-------------------------------------------------
 void ofThread::startThread(bool blocking, bool verbose){
 
 	if(thread.isRunning()){ 
-		ofLogWarning(thread.name()) << "cannot start, thread already running";
+		ofLogWarning(thread.name()) << "Cannot start, thread already running.";
 		return; 
 	} 
 
@@ -50,13 +54,8 @@ void ofThread::startThread(bool blocking, bool verbose){
 
 	this->blocking = blocking;
 	this->verbose = verbose;
-	
-	if(verbose){
-		ofSetLogLevel(thread.name(), OF_LOG_VERBOSE);
-	}
-	else{
-		ofSetLogLevel(thread.name(), OF_LOG_NOTICE);
-	}
+
+    ofLog(verbose ? OF_LOG_VERBOSE : OF_LOG_NOTICE, thread.name());
 
 	thread.start(*this);
 } 
@@ -65,32 +64,26 @@ void ofThread::startThread(bool blocking, bool verbose){
 bool ofThread::lock(){ 
 
 	if(blocking){
-		if(verbose){
-			if(Poco::Thread::current() == &thread){
-				ofLogVerbose(thread.name()) << "thread waiting for own mutex to be unlocked";
-			}
-			else{
-				ofLogVerbose(thread.name()) << "external waiting for thread mutex to be unlocked";
-			}
-		}
+        if(Poco::Thread::current() == &thread) {
+            ofLogVerbose(thread.name()) << "ofThread waiting for its own mutex to be unlocked.";
+        } else {
+            ofLogVerbose(thread.name()) << "External thread waiting for ofThread mutex to be unlocked";
+        }
 		mutex.lock();
-	}
-	else{
-		if(!mutex.tryLock()){
-			ofLogVerbose(thread.name()) << "mutex is busy - already locked"; 
+	} else {
+		if(!mutex.tryLock())
+        {
+			ofLogVerbose(thread.name()) << "Mutex is already locked, tryLock failed.";
 			return false; 
 		}
 	}
-	
-	if(verbose){
-		if(Poco::Thread::current() == &thread){
-			ofLogVerbose(thread.name()) << "thread locked own mutex";
-		}
-		else{
-			ofLogVerbose(thread.name()) << "external locked thread mutex";
-		}
-	}
-	
+
+    if(Poco::Thread::current() == &thread) {
+        ofLogVerbose(thread.name()) << "ofThread locked its own mutex.";
+    } else {
+        ofLogVerbose(thread.name()) << "External thread locked the ofThread mutex.";
+    }
+
 	return true; 
 } 
 
@@ -98,15 +91,13 @@ bool ofThread::lock(){
 void ofThread::unlock(){ 
 	mutex.unlock();
 	
-	if(verbose){
-		if(Poco::Thread::current() == &thread){
-			ofLogVerbose(thread.name()) << "thread unlocked own mutex";
-		}
-		else{
-			ofLogVerbose(thread.name()) << "external unlocked thread mutex";
-		}
-	}
-	return; 
+    if(Poco::Thread::current() == &thread) {
+        ofLogVerbose(thread.name()) << "ofThread unlocked its own mutex.";
+    } else {
+        ofLogVerbose(thread.name()) << "External thread unlocked the ofThread mutex.";
+    }
+
+	return;
 } 
 
 //------------------------------------------------- 
@@ -117,7 +108,7 @@ void ofThread::stopThread(){
 }
 
 //-------------------------------------------------
-void ofThread::waitForThread(bool stop, long waitMS){
+void ofThread::waitForThread(bool stop, long milliseconds){
 	if(thread.isRunning()){
 		
 		// tell thread to stop
@@ -132,16 +123,24 @@ void ofThread::waitForThread(bool stop, long waitMS){
 			ofLogWarning(thread.name()) << "waitForThread should only be called from outside the thread";
 			return;
 		}
-        //wait for "waitMS" milliseconds for thread to finish 
-		if( !thread.tryJoin(waitMS) ){
-            ofLogError( thread.name() ) << "unable to end/join thread " << endl; 
+
+        if (INFINITE_JOIN_TIMEOUT == milliseconds)
+        {
+            thread.join();
+        }
+        else
+        {
+            // Wait for "joinWaitMillis" milliseconds for thread to finish
+            if(!thread.tryJoin(milliseconds)) {
+                ofLogError( thread.name() ) << "unable to end/join thread " << endl;
+            }
         }
    }
 }
 
 //-------------------------------------------------
-void ofThread::sleep(long sleepMS){
-	Poco::Thread::sleep(sleepMS);
+void ofThread::sleep(long milliseconds){
+	Poco::Thread::sleep(milliseconds);
 }
 
 //-------------------------------------------------
@@ -151,34 +150,39 @@ void ofThread::yield(){
 
 //-------------------------------------------------
 bool ofThread::isCurrentThread(){
-	if(ofThread::getCurrentThread() == this)
-		return true;
-	return false;
+    return ofThread::getCurrentPocoThread() == &getPocoThread();
 }
 
 //-------------------------------------------------
-Poco::Thread & ofThread::getPocoThread(){
+Poco::Thread& ofThread::getPocoThread(){
 	return thread;
 }
 
 //-------------------------------------------------
 bool ofThread::isMainThread(){
-	if(Poco::Thread::current() == NULL)
-		return true;
-	return false;
+    return !Poco::Thread::current();
 }
 
 //-------------------------------------------------
-ofThread * ofThread::getCurrentThread(){
+ofThread* ofThread::getCurrentThread(){
 	// assumes all created threads are ofThreads ...
 	// might be dangerous if people are using Poco::Threads directly
-	return (ofThread *) Poco::Thread::current();
+    
+
+
+	return (ofThread*) Poco::Thread::current();
 }
+
+//-------------------------------------------------
+Poco::Thread* ofThread::getCurrentPocoThread(){
+	return Poco::Thread::current();
+}
+
 
 // PROTECTED
 //-------------------------------------------------
 void ofThread::threadedFunction(){
-	ofLogWarning(thread.name()) << "override threadedFunction with your own";
+	ofLogWarning(thread.name()) << "Override ofThread::threadedFunction() in your ofThread subclass.";
 }
 
 // PRIVATE
