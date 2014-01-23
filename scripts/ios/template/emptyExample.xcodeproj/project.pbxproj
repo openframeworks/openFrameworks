@@ -654,6 +654,8 @@
 				<string>YES</string>
 				<key>ARCHS</key>
 				<string>$(ARCHS_STANDARD_32_BIT)</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libstdc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
@@ -706,6 +708,8 @@
 				<string>YES</string>
 				<key>ARCHS</key>
 				<string>$(ARCHS_STANDARD_32_BIT)</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libstdc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
@@ -912,7 +916,7 @@
 			<key>isa</key>
 			<string>PBXReferenceProxy</string>
 			<key>path</key>
-			<string>libofxiPhone_iphoneos_Debug.a</string>
+			<string>libofxiOS_iphoneos_Debug.a</string>
 			<key>remoteRef</key>
 			<string>E41D410113B3A0D800A75A5D</string>
 			<key>sourceTree</key>
@@ -1006,9 +1010,9 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>testApp.h</string>
+			<string>ofApp.h</string>
 			<key>path</key>
-			<string>src/testApp.h</string>
+			<string>src/ofApp.h</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>
@@ -1021,9 +1025,9 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.cpp.objcpp</string>
 			<key>name</key>
-			<string>testApp.mm</string>
+			<string>ofApp.mm</string>
 			<key>path</key>
-			<string>src/testApp.mm</string>
+			<string>src/ofApp.mm</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>

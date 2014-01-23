@@ -12,7 +12,7 @@
     //
 }
 
-- (id)initWithApp:(testApp *)myApp {
+- (id)initWithApp:(ofApp *)myApp {
     self = [super init];
     if(self) {
         app = myApp;

@@ -23,6 +23,9 @@ void ofGstUtils::startGstMainLoop(){
 	}
 }
 
+GMainLoop * ofGstUtils::getGstMainLoop(){
+	return mainLoop->main_loop;
+}
 
 
 
@@ -182,7 +185,7 @@ bool ofGstUtils::setPipelineWithSink(GstElement * pipeline, GstElement * sink, b
 		isAppSink = false;
 	}
 
-	return startPipeline();
+	return true;
 }
 
 void ofGstUtils::setFrameByFrame(bool _bFrameByFrame){
@@ -643,7 +646,7 @@ void ofGstUtils::setSinkListener(ofGstAppSink * appsink_){
 	appsink = appsink_;
 }
 
-unsigned long ofGstUtils::getMinLatencyNanos(){
+uint64_t ofGstUtils::getMinLatencyNanos(){
 	GstClockTime minlat=0, maxlat=0;
 	GstQuery * q = gst_query_new_latency();
 	if (gst_element_query (gstPipeline, q)) {
@@ -654,7 +657,7 @@ unsigned long ofGstUtils::getMinLatencyNanos(){
 	return minlat;
 }
 
-unsigned long ofGstUtils::getMaxLatencyNanos(){
+uint64_t ofGstUtils::getMaxLatencyNanos(){
 	GstClockTime minlat=0, maxlat=0;
 	GstQuery * q = gst_query_new_latency();
 	if (gst_element_query (gstPipeline, q)) {

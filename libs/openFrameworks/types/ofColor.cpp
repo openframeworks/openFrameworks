@@ -354,6 +354,10 @@ float ofColor_<PixelType>::getHue() const {
 	return hue;
 }
 
+template<typename PixelType>
+float ofColor_<PixelType>::getHueAngle() const {
+	return getHue() * 360. / 255. ;
+}
 
 template<typename PixelType>
 float ofColor_<PixelType>::getSaturation() const {
@@ -434,6 +438,10 @@ void ofColor_<PixelType>::setHue (float hue) {
 	setHsb(hue, saturation, brightness, a );
 }
 
+template<typename PixelType>
+void ofColor_<PixelType>::setHueAngle (float angle) {
+	setHue(angle / 360. * 255.);
+}
 
 template<typename PixelType>
 void ofColor_<PixelType>::setSaturation (float saturation) {
@@ -542,13 +550,13 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator = (float const & val){
 
 template<typename PixelType>
 bool ofColor_<PixelType>::operator == (ofColor_<PixelType> const & color){
-	return (r == color.r) && (g == color.g) && (b == color.b);
+	return (r == color.r) && (g == color.g) && (b == color.b) && (a == color.a);
 }
 
 
 template<typename PixelType>
 bool ofColor_<PixelType>::operator != (ofColor_<PixelType> const & color){
-	return (r != color.r) || (g != color.g) || (b != color.b);
+	return (r != color.r) || (g != color.g) || (b != color.b) || (a != color.a);
 }
 
 
