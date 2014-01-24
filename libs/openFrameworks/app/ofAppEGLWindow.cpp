@@ -1189,15 +1189,13 @@ void ofAppEGLWindow::idle() {
 void ofAppEGLWindow::display() {
 
   // take care of any requests for a new screen mode
-  if (windowMode != OF_GAME_MODE){
-    if ( bNewScreenMode ){
-      if( windowMode == OF_FULLSCREEN){
-        setWindowRect(getScreenRect());
-      } else if( windowMode == OF_WINDOW ){
-        setWindowRect(nonFullscreenWindowRect);
-      }
-      bNewScreenMode = false;
+  if (windowMode != OF_GAME_MODE && bNewScreenMode){
+    if( windowMode == OF_FULLSCREEN){
+      setWindowRect(getScreenRect());
+    } else if( windowMode == OF_WINDOW ){
+      setWindowRect(nonFullscreenWindowRect);
     }
+    bNewScreenMode = false;
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////
