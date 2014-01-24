@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include "Poco/AtomicCounter.h"
 #include "Poco/Thread.h"
 #include "Poco/Runnable.h"
 #include "ofConstants.h"
@@ -72,7 +73,7 @@ public:
 
     /// \brief Check the running status of the thread.
     /// \returns true iff the thread is currently running.
-    bool isThreadRunning();
+    bool isThreadRunning() const;
     
     /// \brief Get the unique thread id.
     /// \note This is NOT the the same as the operating thread id!
@@ -84,16 +85,18 @@ public:
 
     /// \deprecated
     /// \brief Start the thread with options.
-    /// \param blocking Set blocking to true if you want the mutex to
+    /// \param mutexesBlock Set blocking to true if you want the mutex to
     ///         block when lock() is called.
     /// \param verbose use verbose logging methods.
     OF_DEPRECATED_MSG("Use startThread(bool blocking = true) instead.",
-                      void startThread(bool blocking, bool verbose) );
+                      void startThread(bool mutexesBlock, bool verbose) );
 
     /// \brief Start the thread with options.
-    /// \param blocking Set blocking to true if you want the mutex to
+    /// \param mutexBlocks Set blocking to true if you want the mutex to
     ///         block when lock() is called.
-    void startThread(bool blocking = true);
+    /// \note Subclasses can directly access the mutex and employ thier
+    ///       own locking strategy.
+    void startThread(bool mutexBlocks = true);
 
     /// \brief Try to lock the mutex.
     /// \details If the thread was started startThread(true), then this call
@@ -124,13 +127,13 @@ public:
     ///     downloading data from the web.  Destroying an ofThread subclass
     ///     without releasing those sockets (or other resources), may result in
     ///     segmentation faults, error signals or other undefined behaviors.
-    /// \param stop Set stop to true if you want to signal the thread to exit
-    ///     before waiting.  This is the equivalent to calling stopThread().
-    ///     If you your threadedFunction uses a while-loop that depends on
-    ///     isThreadRunning() and you do not call stopThread() or set stop ==
-    ///     true, waitForThread will hang indefinitely.  Set stop == false ONLY
-    ///     if you have already called stopThread() and you simply need to
-    ///     be sure your thread has finished its tasks.
+    /// \param callStopThread Set stop to true if you want to signal the thread
+    ///     to exit before waiting.  This is the equivalent to calling
+    ///     stopThread(). If you your threadedFunction uses a while-loop that
+    ///     depends on isThreadRunning() and you do not call stopThread() or set
+    ///     stop == true, waitForThread will hang indefinitely.  Set stop ==
+    ///     false ONLY if you have already called stopThread() and you simply
+    ///     need to be sure your thread has finished its tasks.
     /// \param milliseconds If millseconds is set to INFINITE_JOIN_TIMEOUT, the
     ///     waitForThread will wait indefinitely for the thread to complete.  If
     ///     milliseconds is set to a lower number (e.g. 10000 for 10 seconds),
@@ -145,7 +148,8 @@ public:
     /// \sa http://pocoproject.org/docs/Poco.Condition.html
     /// \sa http://pocoproject.org/docs/Poco.Event.html
     /// \sa http://pocoproject.org/docs/Poco.Semaphore.html
-    void waitForThread(bool stop = true, long milliseconds = INFINITE_JOIN_TIMEOUT);
+    void waitForThread(bool callStopThread = true,
+                       long milliseconds = INFINITE_JOIN_TIMEOUT);
     
     /// \brief Tell the thread to sleep for a certain amount of milliseconds.
     /// \details This is useful inside the threadedFunction() when a thread is
@@ -269,14 +273,6 @@ public:
     //          application thread is active.
     static Poco::Thread* getCurrentPocoThread();
 
-    /// \brief The internal mutex called through lock() & unlock().
-    /// \note This mutext can also be used with ofScopedLock within
-    ///        the threaded function by calling:
-    ///
-    ///        ofScopedLock lock(mutex);
-    ///
-    mutable ofMutex mutex;
-
     enum
     {
         INFINITE_JOIN_TIMEOUT = LONG_MAX
@@ -319,13 +315,23 @@ protected:
     ///
     virtual void threadedFunction();
 
-    bool threadRunning; ///< \brief Is the thread running?
-    bool mutexesBlock;  ///< \brief Should the mutex block?
+    /// \brief The Poco::Thread that runs the Poco::Runnable.
+    Poco::Thread thread;
+
+    /// \brief The internal mutex called through lock() & unlock().
+    /// \note This mutext can also be used with ofScopedLock within
+    ///        the threaded function by calling:
+    ///
+    ///        ofScopedLock lock(mutex);
+    mutable ofMutex mutex;
 
 private:
     void run();
         ///< \brief Implements Poco::Runnable::run().
 
-    Poco::Thread thread;
-        ///< \brief The Poco::Thread that runs the Poco::Runnable.
+    Poco::AtomicCounter _threadRunning;
+        ///< \brief Is the thread running?
+
+    Poco::AtomicCounter _mutexBlocks;
+        ///< \brief Should the mutex block?
 };
