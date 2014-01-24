@@ -227,7 +227,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	
 	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getBinaryBuffer(), buffer.size());
 	if (hmem == NULL){
-		ofLogError("ofImage") << "loadImage(): couldn't laod image from ofBuffer, opening FreeImage memory failed";
+		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, opening FreeImage memory failed";
 		return false;
 	}
 
