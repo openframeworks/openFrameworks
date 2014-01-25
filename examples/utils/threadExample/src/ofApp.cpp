@@ -1,16 +1,18 @@
 #include "ofApp.h"
 
-
-void ofApp::setup(){
+void ofApp::setup()
+{
 	mainAppsCount = 0;
 	threadedObject.start();
 }
 
-void ofApp::update(){
+void ofApp::update()
+{
 	mainAppsCount++;
 }
 
-void ofApp::draw(){
+void ofApp::draw()
+{
     ofBackground(ofColor::black);
 	ofSetColor(ofColor::white);
 
@@ -28,8 +30,8 @@ void ofApp::draw(){
     ofDrawBitmapString("Press 's' to stop the thread and 'a' to start it", 50, 160);
 }
 
-void ofApp::keyPressed(int key){
-
+void ofApp::keyPressed(int key)
+{
     if (key == 'a')
     {
         threadedObject.start();

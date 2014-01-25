@@ -36,7 +36,6 @@ public:
     /// Our implementation of threadedFunction.
     void threadedFunction()
     {
-
         while(isThreadRunning())
         {
             // Attempt to lock the mutex.  If blocking is turned on,
@@ -68,8 +67,8 @@ public:
 
     /// This drawing function cannot be called from the thread itself because
     /// it includes OpenGL calls (ofDrawBitmapString).
-    void draw(){
-
+    void draw()
+    {
         std::stringstream ss;
 
         ss << "I am a slowly increasing thread. " << std::endl;
@@ -97,7 +96,8 @@ public:
     }
 
     // Use ofScopedLock to protect a copy of count while getting a copy.
-    int getCount() {
+    int getCount()
+    {
         ofScopedLock lock(mutex);
         return count;
     }
