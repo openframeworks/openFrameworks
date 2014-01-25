@@ -61,8 +61,8 @@ void ofThread::startThread(bool mutexBlocks, bool verbose)
 }
 
 
-bool ofThread::lock(){
-
+bool ofThread::lock()
+{
 	if(_mutexBlocks)
     {
         if(isCurrentThread())
@@ -98,7 +98,8 @@ bool ofThread::lock(){
 } 
 
 
-void ofThread::unlock(){
+void ofThread::unlock()
+{
 	mutex.unlock();
 	
     if(isCurrentThread()) {
@@ -147,7 +148,7 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds)
                 ofLogError(thread.name()) << "Unable to completely waitForThread.";
             }
         }
-   }
+    }
 }
 
 

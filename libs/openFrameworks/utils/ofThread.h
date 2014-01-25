@@ -155,10 +155,9 @@ public:
     /// \details This is useful inside the threadedFunction() when a thread is
     ///         waiting for input to process:
     ///
-    /// void MyThreadedClass::threadedFunction(){
-    ///
+    /// void MyThreadedClass::threadedFunction()
+    /// {
     ///		// start
-    ///
     ///		while(isThreadRunning())
     ///     {
     ///         // bReadyToProcess can be set from outside the threadedFuntion.
@@ -176,7 +175,6 @@ public:
     ///				sleep(20);
     ///			}
     ///		}
-    ///
     ///		// done
     /// }
     ///
@@ -263,14 +261,13 @@ public:
     OF_DEPRECATED_MSG("use ofThread::getCurrentPocoThread() == &yourThread.getPocoThread() to compare threads.",
                       static ofThread* getCurrentThread());
 
-    
     /// \brief Get the current Poco thread.
     /// \details In most cases, it is more appropriate to query the current
     ///         thread by calling isCurrentThread() on an active thread or
     ///         by calling ofThread::isMainThread().  See the method
     ///         documentation for more information on those methods.
     /// \returns A pointer to the current active thread OR 0 iff the main
-    //          application thread is active.
+    ///         application thread is active.
     static Poco::Thread* getCurrentPocoThread();
 
     enum
@@ -292,10 +289,12 @@ protected:
     ///         loop that will run repeatedly until the thread's
     ///         threadRunning is set to false via the stopThread() method.
     ///
-    ///         void MyThreadedClass::threadedFunction(){
+    ///         void MyThreadedClass::threadedFunction()
+    ///         {
     ///             // Start the loop and continue until
     ///             // isThreadRunning() returns false.
-    ///             while(isThreadRunning()){
+    ///             while(isThreadRunning())
+    ///             {
     ///                 // Do activity repeatedly here:
     ///
     ///                 // int j = 1 + 1;
@@ -310,9 +309,7 @@ protected:
     ///
     ///                 // sleep(100);
     ///             }
-    ///		// done
-    ///	}
-    ///
+    ///         }
     virtual void threadedFunction();
 
     /// \brief The Poco::Thread that runs the Poco::Runnable.
@@ -334,4 +331,5 @@ private:
 
     Poco::AtomicCounter _mutexBlocks;
         ///< \brief Should the mutex block?
+
 };
