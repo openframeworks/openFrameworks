@@ -34,6 +34,7 @@
 #include "freenect_internal.h"
 #include "registration.h"
 #include "cameras.h"
+
 #ifdef BUILD_AUDIO
 #include "loader.h"
 #endif
@@ -293,3 +294,17 @@ FN_INTERNAL void fn_log(freenect_context *ctx, freenect_loglevel level, const ch
 		va_end(ap);
 	}
 }
+
+
+FREENECTAPI void freenect_set_fw_address_nui(freenect_context * ctx, unsigned char * fw_ptr, unsigned int num_bytes)
+{
+    ctx->fn_fw_nui_ptr = fw_ptr;
+    ctx->fn_fw_nui_size = num_bytes;
+}
+
+FREENECTAPI void freenect_set_fw_address_k4w(freenect_context * ctx, unsigned char * fw_ptr, unsigned int num_bytes)
+{
+    ctx->fn_fw_k4w_ptr = fw_ptr;
+    ctx->fn_fw_k4w_size = num_bytes;
+}
+

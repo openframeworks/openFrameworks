@@ -24,8 +24,7 @@
  * either License.
  */
 
-#ifndef FREENECT_INTERNAL_H
-#define FREENECT_INTERNAL_H
+#pragma once
 
 #include <stdint.h>
 
@@ -54,6 +53,13 @@ struct _freenect_context {
 	freenect_device_flags enabled_subdevices;
 	freenect_device *first;
 	int zero_plane_res;
+    
+    //if you want to load firmware from memory rather than disk
+    unsigned char *     fn_fw_nui_ptr;
+    unsigned int        fn_fw_nui_size;
+
+    unsigned char *     fn_fw_k4w_ptr;
+    unsigned int        fn_fw_k4w_size;
 };
 
 #define LL_FATAL FREENECT_LOG_FATAL
@@ -213,6 +219,8 @@ struct _freenect_device {
 
 	freenect_depth_cb depth_cb;
 	freenect_video_cb video_cb;
+	freenect_chunk_cb depth_chunk_cb;
+	freenect_chunk_cb video_chunk_cb;
 	freenect_video_format video_format;
 	freenect_depth_format depth_format;
 	freenect_resolution video_resolution;
@@ -226,7 +234,7 @@ struct _freenect_device {
 
 	// Registration
 	freenect_registration registration;
-
+    
 #ifdef BUILD_AUDIO
 	// Audio
 	fnusb_dev usb_audio;
@@ -242,6 +250,7 @@ struct _freenect_device {
 	// Motor
 	fnusb_dev usb_motor;
 	freenect_raw_tilt_state raw_state;
+    
+    int device_does_motor_control_with_audio;
+    int motor_control_with_audio_enabled;
 };
-
-#endif
