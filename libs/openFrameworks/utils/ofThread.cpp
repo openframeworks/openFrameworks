@@ -8,6 +8,7 @@
 #endif
 
 
+//-------------------------------------------------
 ofThread::ofThread():
     _threadRunning(false),
     _mutexBlocks(true)
@@ -16,31 +17,31 @@ ofThread::ofThread():
 }
 
 
-ofThread::~ofThread()
-{
+//-------------------------------------------------
+ofThread::~ofThread(){
 }
 
 
-bool ofThread::isThreadRunning() const
-{
+//-------------------------------------------------
+bool ofThread::isThreadRunning() const{
     return _threadRunning;
 }
 
 
-int ofThread::getThreadId() const
-{
+//-------------------------------------------------
+int ofThread::getThreadId() const{
 	return thread.id();
 }
 
 
-std::string ofThread::getThreadName() const
-{
+//-------------------------------------------------
+std::string ofThread::getThreadName() const{
 	return thread.name();
 }
 
 
-void ofThread::startThread(bool mutexBlocks)
-{
+//-------------------------------------------------
+void ofThread::startThread(bool mutexBlocks){
 	if(thread.isRunning())
     {
 		ofLogWarning(thread.name()) << "Cannot start, thread already running.";
