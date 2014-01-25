@@ -157,7 +157,7 @@ static int set_led(libusb_device_handle* dev, int state) {
 void freenect_extra_keep_alive(int pid){
 
 	int res;
-	int state_to_set = 4;
+	int state_to_set = 3;
 
 	libusb_context* ctx = NULL;
 	libusb_init(&ctx);
