@@ -508,19 +508,27 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 
 
 void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint) {
-	// bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
-	GLint temp;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &temp);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
-
 	ofTexture tex;
 	tex.allocate(settings.width, settings.height, internalFormat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	tex.texData.bFlipTexture = false;
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
+    
+    createAndAttachTexture(tex, internalFormat, attachmentPoint);
+}
 
+void ofFbo::createAndAttachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachmentPoint) {
+	// bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
+	GLint temp;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &temp);
+	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
+    
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
-	textures.push_back(tex);
+    if(attachmentPoint < textures.size()) {
+        textures[attachmentPoint] = tex;
+    } else {
+        textures.push_back(tex);
+    }
 	
 	settings.colorFormats.resize(attachmentPoint + 1);
 	settings.colorFormats[attachmentPoint] = internalFormat;
