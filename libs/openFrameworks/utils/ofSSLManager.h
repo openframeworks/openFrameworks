@@ -41,200 +41,220 @@
 #include "ofEvents.h"
 
 
+/// \class ofSSLManager
+/// \brief A class to simplify client and server SSL Context management.
+///
+/// Default OpenSSL security contexts are represented by the Poco::Net:Context
+/// class and managed by the managed by the Poco::Net::SSLManager class.  Poco
+/// Sockets, Streams and Sessions can be explicity instantiated with a
+/// Poco::Net::Context or they can (more conveniently) employ a default SSL
+/// Client or Server Context.  For applications that implement
+/// Poco::Util::Application, default Context setup and configuration trivially
+/// done via config files. But, since ofBaseApp does not extend
+/// Poco::Util::Application, special care must be taken when creating and using
+/// Poco's default Client and Server Contexts.
+///
+/// ofSSLManager adds a layer between the openFrameworks user and
+/// the Poco::Net::SSLManager to ensure that the default contexts are configured
+/// in an openFrameworks-friendly way (e.g. providing a default location for
+/// certificate authority files, SSL certificate and Private Key files, the
+/// default security settings and mechanisms for registering SSL verification
+/// event callbacks.
+///
+/// ofSSLManager allows the user to either accept the default ofSSLManager
+/// Client and Server Contexts or provide a custom Context during application
+/// setup by calling:
+///
+///     ofSSLManager::initializeClient(...)
+///
+/// or:
+///
+///     ofSSLManager::initializeServer(...)
+///
+/// The user must to interact with the default SSL Context management system via
+/// the ofSSLManager singleton, rather than calling Poco::Net::SSLManager
+/// directly.
+///
+/// Finally, in order to simplify the certificate verification process,
+/// ofSSLManager configures Contexts to seek their verification and private key
+/// passwords via an event callback. Thus, users wishing to manually verify
+/// Client and Server private key passwords, SSL certificates that are not
+/// automatically accepted based on the certificate authority settings, etc must
+/// add listeners for SSL verification callbacks BEFORE any calls to any of the
+/// following methods:
+///
+///     ofSSLManager::defaultServerContext();
+///     ofSSLManager::defaultServerContext();
+///     ofSSLManager::initializeServer(...);
+///     ofSSLManager::initializeClient(...);
+///
+/// Further information about registering these event callbacks can be found in
+/// the ofSSLManager::registerAllEvents(), ofSSLManager::registerClientEvents()
+/// and ofSSLManager::registerServerEvents() method documentation.
 class ofSSLManager
-    /// \brief A class to simplify client and server SSL Context management.
-    /// \details Default OpenSSL security contexts are represented by the
-    ///         Poco::Net:Context class and managed by the managed by the
-    ///         Poco::Net::SSLManager class.  Poco Sockets, Streams and Sessions
-    ///         can be explicity instantiated with a Poco::Net::Context or
-    ///         they can (more conveniently) employ a default SSL Client or
-    ///         Server Context.  For applications that implement
-    ///         Poco::Util::Application, default Context setup and configuration
-    ///         trivially done via config files. But, since ofBaseApp does not
-    ///         extend Poco::Util::Application, special care must be taken when
-    ///         creating and using Poco's default Client and Server Contexts.
-    ///
-    ///         ofSSLManager adds a layer between the openFrameworks user and
-    ///         the Poco::Net::SSLManager to ensure that the default contexts
-    ///         are configured in an openFrameworks-friendly way (e.g. providing
-    ///         a default location for certificate authority files, SSL
-    ///         certificate and Private Key files, the default security settings
-    ///         and mechanisms for registering SSL verification event callbacks.
-    ///
-    ///         ofSSLManager allows the user to either accept the default
-    ///         ofSSLManager Client and Server Contexts or provide a custom
-    ///         Context during application setup by calling
-    ///         ofSSLManager::initializeClient(...) or take care
-    ///         ofSSLManager::initializeServer(...).  The user must to interact
-    ///         with the default SSL Context management system via the
-    ///         ofSSLManager singleton, rather than calling
-    ///         Poco::Net::SSLManager directly.
-    ///
-    ///         Finally, in order to simplify the certificate verification
-    ///         process, ofSSLManager configures Contexts to seek their
-    ///         verification and private key passwords via an event callback.
-    ///         Thus, users wishing to manually verify Client and Server private
-    ///         key passwords, SSL certificates that are not automatically
-    ///         accepted based on the certificate authority settings, etc
-    ///         must add listeners for SSL verification callbacks BEFORE
-    ///         any calls to any of the following methods:
-    ///
-    ///             ofSSLManager::defaultServerContext();
-    ///             ofSSLManager::defaultServerContext();
-    ///             ofSSLManager::initializeServer(...);
-    ///             ofSSLManager::initializeClient(...);
-    ///
-    ///         Further information about registering these event callbacks can
-    ///         be found in the ofSSLManager::registerAllEvents(),
-    ///         ofSSLManager::registerClientEvents(), and
-    ///         ofSSLManager::registerServerEvents() method documentation.
-    ///
 {
 public:
+    /// \brief Get the default Server Context via the ofSSLManager.
+    ///
+    /// This is the same context that is returned via:
+    ///
+    ///     Poco::Net::SSLManager::instance().defaultServerContext();
+    ///
+    /// But unlike that call, the ofSSLManager::defaultServerContext() call
+    /// ensures that ofSSLManager::initializeServer() is called prior to the
+    /// Poco::Net::SSLManager call.  This ensures that the default Server
+    /// Context has been configured first by ofSSLManager, rather than
+    /// Poco::Net::SSLManager.
+    ///
+    /// \returns A pointer to the default Server Context.
     static Poco::Net::Context::Ptr getDefaultServerContext();
-        ///< \brief Get the default Server Context via the ofSSLManager.
-        ///< \returns A pointer to the default Server Context.
-        ///< \note This is the same context that is returned via
-        ///<        Poco::Net::SSLManager::instance().defaultServerContext();
-        ///<        but unlike that call, ofSSLManager::defaultServerContext();
-        ///<        calls ensures that ofSSLManager::initializeServer(); is
-        ///<        called prior to the Poco::Net::SSLManager call.  This
-        ///<        ensures that the default Server Context has been configured
-        ///<        first by ofSSLManager, rather than Poco::Net::SSLManager.
 
+    /// \brief Get the default Server Context via the ofSSLManager.
+    ///
+    /// This is the same context that is returned via:
+    ///
+    ///     Poco::Net::SSLManager::instance().defaultClientContext();
+    ///
+    /// But unlike that call, the ofSSLManager::defaultClientContext() call
+    /// ensures that ofSSLManager::initializeClient() is called prior to the
+    /// Poco::Net::SSLManager call.  This ensures that the default Client
+    /// Context has been configured first by ofSSLManager, rather than
+    /// Poco::Net::SSLManager.
+    ///
+    /// \returns A pointer to the default Client Context.
     static Poco::Net::Context::Ptr getDefaultClientContext();
-        ///< \brief Get the default Client Context via the ofSSLManager.
-        ///< \returns A pointer to the default Client Context.
-        ///< \note This is the same context that is returned via
-        ///<        Poco::Net::SSLManager::instance().defaultClientContext();
-        ///<        but unlike that call, ofSSLManager::defaultClientContext();
-        ///<        calls ensures that ofSSLManager::initializeClient(); is
-        ///<        called prior to the Poco::Net::SSLManager call.  This
-        ///<        ensures that the default Client Context has been configured
-        ///<        first by ofSSLManager, rather than Poco::Net::SSLManager.
 
+    /// \brief Initialize a SSL Server Context.
+    ///
+    /// If the user wishes to use non-default Context (see Poco::Net::Context
+    /// for a list of options), the user must create a Context and initialize it
+    /// with this function immediately in the ofBaseApp::setup() function.
+    /// Otherwise, ofSSLManager::initializeSlient() will be configured with the
+    /// ofSSLManager default settings.
+    ///
+    /// \param pContext A Poco::Net::Context::Ptr to set as the default.
     static void initializeServer(Poco::Net::Context::Ptr pContext = 0);
-        ///< \brief Initialize a SSL Server Context.
-        ///< \param pContext A Poco::Net::Context::Ptr to set as the default.
-        ///< \note  If the user wishes to use non-default Context (see
-        ///<        Poco::Net::Context for a list of options), the
-        ///<        user must create a Context and initialize it with this
-        ///<        function immediately in the ofBaseApp::setup() function.
-        ///<        Otherwise, ofSSLManager::initializeSlient() will be
-        ///<        configured with the ofSSLManager default settings.
 
+    /// \brief Initialize a SSL Client Context.
+    ///
+    /// If the user wishes to use non-default Context (see Poco::Net::Context
+    /// for a list of options), the user must create a Context and initialize it
+    /// with this function immediately in the ofBaseApp::setup() function.
+    /// Otherwise, ofSSLManager::initializeClient() will be configured with the
+    /// ofSSLManager default settings.
+    ///
+    /// \param pContext A Poco::Net::Context::Ptr to set as the default.
     static void initializeClient(Poco::Net::Context::Ptr pContext = 0);
-        ///< \brief Initialize a SSL Client Context.
-        ///< \param pContext A Poco::Net::Context::Ptr to set as the default.
-        ///< \note  If the user wishes to use non-default Context (see
-        ///<        Poco::Net::Context for a list of options), the
-        ///<        user must create a Context and initialize it with this
-        ///<        function immediately in the ofBaseApp::setup() function.
-        ///<        Otherwise, ofSSLManager::initializeClient() will be
-        ///<        configured with the ofSSLManager default settings.
 
+
+    /// \brief Register the listener class for all Client and Server SSL events.
+    /// Applications that do not implement these callbacks will not be given the
+    /// opportunity to manually approve SSL cert errors.  Listening classes must
+    /// have callbacks in the form:
+    ///
+    ///     void onSSLServerVerificationError(Poco::Net::VerificationErrorArgs& args);
+    ///     void onSSLClientVerificationError(Poco::Net::VerificationErrorArgs& args);
+    ///     void onSSLPrivateKeyPassphraseRequired(std::string& args);
+    ///
+    ///
+    /// A listener might call this class in the ofBaseApp::setup() method like
+    /// this:
+    ///
+    ///    ofSSLManager::registerAllEvents(this);
+    ///
+    /// \param listener A pointer to the class containing all callbacks.
     template<class ListenerClass>
     static void registerAllEvents(ListenerClass* listener);
-        ///< \brief Register the listener class for all Client and Server SSL events.
-        ///< \param listener A pointer to the class containing all callbacks.
-        ///< \note Applications that do not implement these callbacks will not be
-        ///<         given the opportunity to manually approve SSL cert errors.
-        ///<         Listening classes must have callbacks in the form:
-        ///<
-        ///<     void onSSLServerVerificationError(Poco::Net::VerificationErrorArgs& args);
-        ///<     void onSSLClientVerificationError(Poco::Net::VerificationErrorArgs& args);
-        ///<     void onSSLPrivateKeyPassphraseRequired(std::string& args);
-        ///<
-        ///<
-        ///<        A listener might call this class in the ofBaseApp::setup()
-        ///<        method like this:
-        ///<
-        ///<    ofSSLManager::registerAllEvents(this);
-        ///<
 
+    /// \brief Unregister the listener for all Client and Server SSL events.
+    /// \param listener A pointer to the class containing all callbacks.
     template<class ListenerClass>
     static void unregisterAllEvents(ListenerClass* listener);
-        ///< \brief Unregister the listener class for all Client and Server SSL events.
-        ///< \param listener A pointer to the class containing all callbacks.
 
+    /// \brief Register the listener class for all Client SSL events.
+    ///
+    /// Applications that do not implement these callbacks will not be given the
+    /// opportunity to manually approve SSL cert errors.  Listening classes must
+    /// have callbacks in the form:
+    ///
+    ///     void onSSLClientVerificationError(Poco::Net::VerificationErrorArgs& args);
+    ///     void onSSLPrivateKeyPassphraseRequired(std::string& args);
+    ///
+    /// A listener might call this class in the ofBaseApp::setup() method like
+    /// this:
+    ///
+    ///    ofSSLManager::registerClientEvents(this);
+    ///
+    /// \param listener A pointer to the class containing client callbacks.
     template<class ListenerClass>
     static void registerClientEvents(ListenerClass* listener);
-        ///< \brief Register the listener class for all Client SSL events.
-        ///< \param listener A pointer to the class containing client callbacks.
-        ///< \note Applications that do not implement these callbacks will not be
-        ///<         given the opportunity to manually approve SSL cert errors.
-        ///<         Listening classes must have callbacks in the form:
-        ///<
-        ///<     void onSSLClientVerificationError(Poco::Net::VerificationErrorArgs& args);
-        ///<     void onSSLPrivateKeyPassphraseRequired(std::string& args);
-        ///<
-        ///<        A listener might call this class in the ofBaseApp::setup()
-        ///<        method like this:
-        ///<
-        ///<    ofSSLManager::registerClientEvents(this);
-        ///<
 
+    /// \brief Unregister the listener class for all Client SSL events.
+    /// \param listener A pointer to the class containing all callbacks.
     template<class ListenerClass>
     static void unregisterClientEvents(ListenerClass* listener);
-        ///< \brief Unregister the listener class for all Client SSL events.
-        ///< \param listener A pointer to the class containing all callbacks.
 
+    /// \brief Register the listener class for all Server SSL events.
+    ///
+    /// Applications that do not implement these callbacks will not be
+    /// given the opportunity to manually approve SSL cert errors. Listening
+    /// classes must have callbacks in the form:
+    ///
+    ///     void onSSLServerVerificationError(Poco::Net::VerificationErrorArgs& args);
+    ///     void onSSLPrivateKeyPassphraseRequired(std::string& args);
+    ///
+    ///
+    /// A listener might call this class in the ofBaseApp::setup() method like
+    /// this:
+    ///
+    ///    ofSSLManager::registerServerEvents(this);
+    ///
+    /// \param listener A pointer to the class containing client callbacks.
     template<class ListenerClass>
     static void registerServerEvents(ListenerClass* listener);
-        ///< \brief Register the listener class for all Server SSL events.
-        ///< \param listener A pointer to the class containing client callbacks.
-        ///< \note Applications that do not implement these callbacks will not be
-        ///<         given the opportunity to manually approve SSL cert errors.
-        ///<         Listening classes must have callbacks in the form:
-        ///<
-        ///<     void onSSLServerVerificationError(Poco::Net::VerificationErrorArgs& args);
-        ///<     void onSSLPrivateKeyPassphraseRequired(std::string& args);
-        ///<
-        ///<
-        ///<        A listener might call this class in the ofBaseApp::setup()
-        ///<        method like this:
-        ///<
-        ///<    ofSSLManager::registerServerEvents(this);
-        ///<
 
+    /// \brief Unregister the listener class for all Server SSL events.
+    /// \param listener A pointer to the class containing all callbacks.
     template<class ListenerClass>
     static void unregisterServerEvents(ListenerClass* listener);
-        ///< \brief Unregister the listener class for all Server SSL events.
-        ///< \param listener A pointer to the class containing all callbacks.
 
+    /// \brief The default location of the certificate authority bundle.
+    ///
+    /// The certificate authority bundle can be extracted from the cURL website.
+    /// More information is here: http://curl.haxx.se/docs/caextract.html
     static const std::string DEFAULT_CA_LOCATION;
-        ///< \brief The default location of the certificate authority bundle.
-        ///< \details The certificate authority bundle can be extracted from
-        ///<        The cURL website.  More information is here:
-        ///<        http://curl.haxx.se/docs/caextract.html
 
+    /// \brief The default location of the private key pem file.
+    ///
+    /// SSL Certificate files and their private key counterparts can be
+    /// purchased or self-signed.  More information on generating self-signed
+    /// certificates is here:
+    /// https://devcenter.heroku.com/articles/ssl-certificate-self
     static const std::string DEFAULT_PRIVATE_KEY_FILE;
-        ///< \brief The default location of the private key pem file.
-        ///< \details SSL Certificate files and their private key counterparts
-        ///<        can be purchased or self-signed.  More information on
-        ///<        generating self-signed certificates is here:
-        ///<        https://devcenter.heroku.com/articles/ssl-certificate-self
 
+    /// \brief The default location of the private key pem file.
+    ///
+    /// SSL Certificate files and their private key counterparts can be
+    /// purchased or self-signed.  More information on generating self-signed
+    /// certificates is here:
+    /// https://devcenter.heroku.com/articles/ssl-certificate-self
     static const std::string DEFAULT_CERTIFICATE_FILE;
-        ///< \brief The default location of the certificate pem file.
-        ///< \details SSL Certificate files and their private key counterparts
-        ///<        can be purchased or self-signed.  More information on
-        ///<        generating self-signed certificates is here:
-        ///<        https://devcenter.heroku.com/articles/ssl-certificate-self
 
 private:
     ofSSLManager();
     ofSSLManager(const ofSSLManager&);
     ofSSLManager& operator = (const ofSSLManager&);
 
+    /// \brief Destroys the ofSSLManager.
     ~ofSSLManager();
-        ///< \brief Destroys the ofSSLManager.
 
+    /// \brief An instance of the ofSSLManager.
+    ///
+    /// All static methods access the singleton via this method. Usually there
+    /// is no need for a user to call this method.
+    ///
+    /// \returns A reference to the singleton.
     static ofSSLManager& instance();
-        ///< \brief An instance of the ofSSLManager.
-        ///< \details All static methods access the singleton via this method.
-        ///<        Usually there is no need for a user to call this method.
-        ///< \returns A reference to the singleton.
 
     bool _clientContextInitialized;
         ///< \brief True iff ofSSLManager initialized its own Client Context.
@@ -310,7 +330,10 @@ void ofSSLManager::unregisterServerEvents(ListenerClass* listener)
 }
 
 
-/// \brief Allows users to easily view the contents of Poco::Net::VerificationErrorArgs.
+/// \brief Convert a Poco::Net::VerificationErrorArgs to a std::string.
+///
+/// \param args The Poco::Net::VerificationErrorArgs to convert.
+/// \returns An easy-to-read representation of the error arguments.
 template <>
 inline std::string ofToString(const Poco::Net::VerificationErrorArgs& args)
 {
