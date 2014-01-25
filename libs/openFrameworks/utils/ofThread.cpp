@@ -55,15 +55,15 @@ void ofThread::startThread(bool mutexBlocks){
 }
 
 
-void ofThread::startThread(bool mutexBlocks, bool verbose)
-{
+//-------------------------------------------------
+void ofThread::startThread(bool mutexBlocks, bool verbose){
     ofLogWarning("ofThread::startThread") << "Calling startThread with verbose is deprecated.";
     startThread(mutexBlocks);
 }
 
 
-bool ofThread::lock()
-{
+//-------------------------------------------------
+bool ofThread::lock(){
 	if(_mutexBlocks)
     {
         if(isCurrentThread())
@@ -99,8 +99,8 @@ bool ofThread::lock()
 } 
 
 
-void ofThread::unlock()
-{
+//-------------------------------------------------
+void ofThread::unlock(){
 	mutex.unlock();
 	
     if(isCurrentThread()) {
@@ -111,14 +111,14 @@ void ofThread::unlock()
 }
 
 
-void ofThread::stopThread()
-{
+//-------------------------------------------------
+void ofThread::stopThread(){
     _threadRunning = false;
 }
 
 
-void ofThread::waitForThread(bool callStopThread, long milliseconds)
-{
+//-------------------------------------------------
+void ofThread::waitForThread(bool callStopThread, long milliseconds){
 	if(thread.isRunning())
     {
 		// tell thread to stop
@@ -153,64 +153,64 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds)
 }
 
 
-void ofThread::sleep(long milliseconds)
-{
+//-------------------------------------------------
+void ofThread::sleep(long milliseconds){
 	Poco::Thread::sleep(milliseconds);
 }
 
 
-void ofThread::yield()
-{
+//-------------------------------------------------
+void ofThread::yield(){
 	Poco::Thread::yield();
 }
 
 
-bool ofThread::isCurrentThread() const
-{
+//-------------------------------------------------
+bool ofThread::isCurrentThread() const{
     return ofThread::getCurrentPocoThread() == &getPocoThread();
 }
 
 
-Poco::Thread& ofThread::getPocoThread()
-{
+//-------------------------------------------------
+Poco::Thread& ofThread::getPocoThread(){
 	return thread;
 }
 
 
-const Poco::Thread& ofThread::getPocoThread() const
-{
+//-------------------------------------------------
+const Poco::Thread& ofThread::getPocoThread() const {
 	return thread;
 }
 
 
-bool ofThread::isMainThread()
-{
+//-------------------------------------------------
+bool ofThread::isMainThread(){
     return !Poco::Thread::current();
 }
 
 
-ofThread* ofThread::getCurrentThread()
-{
+//-------------------------------------------------
+ofThread* ofThread::getCurrentThread(){
 	// assumes all created threads are ofThreads ...
 	// might be dangerous if people are using Poco::Threads directly
 	return (ofThread*) Poco::Thread::current();
 }
 
 
-Poco::Thread* ofThread::getCurrentPocoThread()
-{
+//-------------------------------------------------
+Poco::Thread* ofThread::getCurrentPocoThread(){
 	return Poco::Thread::current();
 }
 
 
-void ofThread::threadedFunction()
-{
+//-------------------------------------------------
+void ofThread::threadedFunction(){
 	ofLogWarning(thread.name()) << "Override ofThread::threadedFunction() in your ofThread subclass.";
 }
 
 
-void ofThread::run()
-{
+//-------------------------------------------------
+void ofThread::run(){
 	ofLogVerbose(thread.name()) << "Started Thread.";
 #ifdef TARGET_ANDROID
 	JNIEnv * env;
