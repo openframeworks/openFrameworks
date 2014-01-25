@@ -209,7 +209,9 @@ static int CALLBACK loadDialogBrowseCallback(
 ){
     string defaultPath = *(string*)lpData;
     if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
-        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)ofToDataPath(defaultPath).c_str());
+		wchar_t         wideCharacterBuffer[MAX_PATH];
+		wcscpy(wideCharacterBuffer, convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
     }
 
 	return 0;
@@ -283,12 +285,21 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.lpstrFile = szFileName;
 #else // Visual Studio
 		wchar_t szFileName[MAX_PATH];
+		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-            wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+			wcscpy_s(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
 		}else{
 		    //szFileName = L"";
-			memset(&szFileName,  0, sizeof(szFileName));
+			memset(szFileName,  0, sizeof(szFileName));
 		}
+
+		if (windowTitle != "") {
+			wcscpy_s(szTitle, convertNarrowToWide(windowTitle).c_str());
+			ofn.lpstrTitle = szTitle;
+		} else {
+			ofn.lpstrTitle = NULL;
+		}
+
 		ofn.lpstrFilter = L"All\0";
 		ofn.lpstrFile = szFileName;
 #endif
@@ -309,8 +320,15 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 
 		BROWSEINFOW      bi;
 		wchar_t         wideCharacterBuffer[MAX_PATH];
+		wchar_t			wideWindowTitle[MAX_PATH];
 		LPITEMIDLIST    pidl;
 		LPMALLOC		lpMalloc;
+
+		if (windowTitle != "") {
+			wcscpy(wideWindowTitle, convertNarrowToWide(windowTitle).c_str());
+		} else {
+			wcscpy(wideWindowTitle, L"Select Directory");
+		}
 
 		// Get a pointer to the shell memory allocator
 		if(SHGetMalloc(&lpMalloc) != S_OK){
@@ -319,8 +337,8 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		bi.hwndOwner        =   NULL;
 		bi.pidlRoot         =   NULL;
 		bi.pszDisplayName   =   wideCharacterBuffer;
-		bi.lpszTitle        =   L"Select Directory";
-		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS;
+		bi.lpszTitle        =   wideWindowTitle;
+		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 		bi.lpfn             =   &loadDialogBrowseCallback;
 		bi.lParam           =   (LPARAM) &defaultPath;
 
