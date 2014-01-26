@@ -74,22 +74,18 @@ static void restoreAppWindowFocus(){
 
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 #include <gtk/gtk.h>
-static gboolean closeGTK(GtkWidget *widget){
-	//gtk_widget_destroy(widget);
-    gtk_main_quit();
-    return (FALSE);
-}
+#include "ofGstUtils.h"
 
 static void initGTK(){
-	int argc=0; char **argv = NULL;
-	gtk_init (&argc, &argv);
+	static bool initialized = false;
+	if(!initialized){
+		ofGstUtils::startGstMainLoop();
+	    gdk_threads_init();
+		int argc=0; char **argv = NULL;
+		gtk_init (&argc, &argv);
+		initialized = true;
+	}
 
-}
-static void startGTK(GtkWidget *dialog){
-	gtk_init_add( (GSourceFunc) closeGTK, NULL );
-	gtk_quit_add_destroy(1,GTK_OBJECT(dialog));
-	//g_timeout_add(10, (GSourceFunc) destroyWidgetGTK, (gpointer) dialog);
-	gtk_main();
 }
 
 static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,string defaultName=""){
@@ -121,10 +117,14 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),defaultName.c_str());
 
+	gdk_threads_enter();
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 		results = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 	}
-	startGTK(dialog);
+	gtk_widget_destroy (dialog);
+	gdk_threads_leave();
+	//gtk_dialog_run(GTK_DIALOG(dialog));
+	//startGTK(dialog);
 	return results;
 }
 
@@ -186,8 +186,11 @@ void ofSystemAlertDialog(string errorMessage){
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		initGTK();
 		GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", errorMessage.c_str());
+
+		gdk_threads_enter();
 		gtk_dialog_run (GTK_DIALOG (dialog));
-		startGTK(dialog);
+		gtk_widget_destroy (dialog);
+		gdk_threads_leave();
 	#endif
 
 	#ifdef TARGET_ANDROID
@@ -206,7 +209,9 @@ static int CALLBACK loadDialogBrowseCallback(
 ){
     string defaultPath = *(string*)lpData;
     if(defaultPath!="" && uMsg==BFFM_INITIALIZED){
-        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)ofToDataPath(defaultPath).c_str());
+		wchar_t         wideCharacterBuffer[MAX_PATH];
+		wcscpy(wideCharacterBuffer, convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+        SendMessage(hwnd,BFFM_SETSELECTION,1,(LPARAM)wideCharacterBuffer);
     }
 
 	return 0;
@@ -280,12 +285,21 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.lpstrFile = szFileName;
 #else // Visual Studio
 		wchar_t szFileName[MAX_PATH];
+		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-            wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+			wcscpy_s(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
 		}else{
 		    //szFileName = L"";
-			memset(&szFileName,  0, sizeof(szFileName));
+			memset(szFileName,  0, sizeof(szFileName));
 		}
+
+		if (windowTitle != "") {
+			wcscpy_s(szTitle, convertNarrowToWide(windowTitle).c_str());
+			ofn.lpstrTitle = szTitle;
+		} else {
+			ofn.lpstrTitle = NULL;
+		}
+
 		ofn.lpstrFilter = L"All\0";
 		ofn.lpstrFile = szFileName;
 #endif
@@ -306,8 +320,15 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 
 		BROWSEINFOW      bi;
 		wchar_t         wideCharacterBuffer[MAX_PATH];
+		wchar_t			wideWindowTitle[MAX_PATH];
 		LPITEMIDLIST    pidl;
 		LPMALLOC		lpMalloc;
+
+		if (windowTitle != "") {
+			wcscpy(wideWindowTitle, convertNarrowToWide(windowTitle).c_str());
+		} else {
+			wcscpy(wideWindowTitle, L"Select Directory");
+		}
 
 		// Get a pointer to the shell memory allocator
 		if(SHGetMalloc(&lpMalloc) != S_OK){
@@ -316,8 +337,8 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		bi.hwndOwner        =   NULL;
 		bi.pidlRoot         =   NULL;
 		bi.pszDisplayName   =   wideCharacterBuffer;
-		bi.lpszTitle        =   L"Select Directory";
-		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS;
+		bi.lpszTitle        =   wideWindowTitle;
+		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 		bi.lpfn             =   &loadDialogBrowseCallback;
 		bi.lParam           =   (LPARAM) &defaultPath;
 
@@ -468,11 +489,13 @@ string ofSystemTextBoxDialog(string question, string text){
 	GtkWidget* textbox = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(textbox),text.c_str());
 	gtk_container_add (GTK_CONTAINER (content_area), textbox);
+	gdk_threads_enter();
 	gtk_widget_show_all (dialog);
 	if(gtk_dialog_run (GTK_DIALOG (dialog))==GTK_RESPONSE_OK){
 		text = gtk_entry_get_text(GTK_ENTRY(textbox));
 	}
-	startGTK(dialog);
+	gtk_widget_destroy (dialog);
+	gdk_threads_leave();
 #endif
 
 #ifdef TARGET_OSX

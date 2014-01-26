@@ -142,9 +142,9 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 		}
 		
 		UInt32 overrideAudioRoute = kAudioSessionOverrideAudioRoute_Speaker;
-		success = AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute,
-												   sizeof(UInt32),
-												   &overrideAudioRoute);
+		success = AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryDefaultToSpeaker,
+										  sizeof(UInt32),
+										  &overrideAudioRoute);
 		if(success != noErr) {
 			if([self.delegate respondsToSelector:@selector(soundStreamError:error:)]) {
 				[self.delegate soundStreamError:self error:@"Couldn't override audio route"];
