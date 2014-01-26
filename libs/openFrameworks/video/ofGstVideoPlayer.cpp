@@ -38,7 +38,12 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	if( name.find( "file://",0 ) != string::npos){
 		bIsStream		= false;
 	}else if( name.find( "://",0 ) == string::npos){
+#ifndef TARGET_WIN32
 		name 			= "file://"+ofToDataPath(name,true);
+#else
+		name 			= "file:///"+ofToDataPath(name,true);
+		std::replace(name.begin(), name.end(), '\\', '/');
+#endif
 		bIsStream		= false;
 	}else{
 		bIsStream		= true;
@@ -63,37 +68,62 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	gst_base_sink_set_max_lateness  (GST_BASE_SINK(gstSink), -1);
 
 #if GST_VERSION_MAJOR==0
+	GstCaps *caps;
 	int bpp;
-	string mime;
 	switch(internalPixelFormat){
 	case OF_PIXELS_MONO:
-		mime = "video/x-raw-gray";
 		bpp = 8;
+		caps = gst_caps_new_simple("video/x-raw-gray",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 8,
+			NULL);
 		break;
 	case OF_PIXELS_RGB:
-		mime = "video/x-raw-rgb";
 		bpp = 24;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 24,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0xff0000,
+			"green_mask",G_TYPE_INT,0x00ff00,
+			"blue_mask",G_TYPE_INT,0x0000ff,
+			NULL);
 		break;
 	case OF_PIXELS_RGBA:
-	case OF_PIXELS_BGRA:
-		mime = "video/x-raw-rgb";
 		bpp = 32;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 32,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0xff000000,
+			"green_mask",G_TYPE_INT,0x00ff0000,
+			"blue_mask",G_TYPE_INT,0x0000ff00,
+			"alpha_mask",G_TYPE_INT,0x000000ff,
+			NULL);
+	case OF_PIXELS_BGRA:
+		bpp = 32;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 32,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0x0000ff00,
+			"green_mask",G_TYPE_INT,0x00ff0000,
+			"blue_mask",G_TYPE_INT,0xff000000,
+			"alpha_mask",G_TYPE_INT,0x000000ff,
+			NULL);
 		break;
 	default:
-		mime = "video/x-raw-rgb";
-		bpp=24;
+		bpp = 32;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 24,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0xff0000,
+			"green_mask",G_TYPE_INT,0x00ff00,
+			"blue_mask",G_TYPE_INT,0x0000ff,
+			NULL);
 		break;
 	}
-
-	GstCaps *caps = gst_caps_new_simple(mime.c_str(),
-										"bpp", G_TYPE_INT, bpp,
-										"depth", G_TYPE_INT, 24,
-										"endianness",G_TYPE_INT,4321,
-										"red_mask",G_TYPE_INT,0xff0000,
-										"green_mask",G_TYPE_INT,0x00ff00,
-										"blue_mask",G_TYPE_INT,0x0000ff,
-										"alpha_mask",G_TYPE_INT,0x000000ff,
-										NULL);
 #else
 	int bpp;
 	string mime="video/x-raw";

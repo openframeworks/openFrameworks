@@ -163,10 +163,13 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 		ofLogError("ofShader") << "setupShaderFromSource(): failed creating " << nameForType(type) << " shader";
 		return false;
 	}
+
+  // parse for includes
+  string src = parseForIncludes( source );
 	
 	// compile shader
-	const char * sptr = source.c_str();
-	int ssize = source.size();
+	const char* sptr = src.c_str();
+	int ssize = src.size();
 	glShaderSource(shader, 1, &sptr, &ssize);
 	glCompileShader(shader);
 	
@@ -194,6 +197,59 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	retainShader(shader);
 
 	return true;
+}
+
+/*
+ * Parse for GLSL includes based on
+ * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
+ */
+
+string ofShader::parseForIncludes( const string& source ) {
+  vector<string> included;
+  return parseForIncludes( source, included ); 
+}
+
+string ofShader::parseForIncludes( const string& source, vector<string>& included, int level ) {
+    
+  if ( level > 32 ) {
+    ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
+    return "";
+  }
+
+  stringstream output;
+  stringstream input;
+  input << source;
+
+  Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
+  Poco::RegularExpression::MatchVec matches;
+
+  string line;
+  while( std::getline( input, line ) ) {
+
+    if ( re.match( line, 0, matches ) < 2 ) {
+      output << line << endl;
+      continue;
+    } 
+
+    string include = line.substr(matches[1].offset, matches[1].length);
+
+    if ( std::find( included.begin(), included.end(), include ) != included.end() ) { 
+      ofLog( OF_LOG_VERBOSE, include + " already included" );
+      continue;
+     }
+
+    included.push_back( include );
+
+    ofBuffer buffer = ofBufferFromFile( include );
+    if ( !buffer.size() ) {
+      ofLog( OF_LOG_ERROR, "Could not open glsl include file "+include );
+      continue;
+    }
+
+    output << parseForIncludes( buffer.getText(), included, level + 1 ) << endl;
+  }
+
+  return output.str();
 }
 
 //--------------------------------------------------------------
