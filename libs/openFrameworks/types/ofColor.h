@@ -30,7 +30,7 @@
 /// | `ofShortColor`| `unsigned short` | 16        | 0          | 65535       |
 /// | `ofFloatColor`| `float`          | _varies_  | 0.0        | 1.0         |
 ///
-/// For integral PixelTypes (e.g. `unsigned char` and `unsigned short`, the
+/// For integral PixelTypes (e.g. `unsigned char` and `unsigned short`), the
 /// minimum is zero and the maximum is given by:
 ///
 ///     std::numeric_limits<PixelType>::max();
@@ -402,7 +402,10 @@ public:
     /// \param hue A hue value to set in the range of 0 - limit().
     /// \param saturation A saturation value to set in the range of 0 - limit().
     /// \param brightness A brightness value to set in the range of 0 - limit().
-    void setHsb(float hue, float saturation, float brightness, float alpha = limit());
+    void setHsb(float hue,
+                float saturation,
+                float brightness,
+                float alpha = limit());
     
     ofColor_<PixelType>& operator = (const ofColor_<PixelType>& color);
 
@@ -532,14 +535,17 @@ private:
     void copyFrom(const ofColor_<SrcType>& mom);
 };
 
+/// \typedef ofColor
+/// \brief A typedef representing an 8-bit RGBA color.
 typedef ofColor_<unsigned char> ofColor;
-    ///< \brief A typedef representing an 8-bit RGBA color.
 
+/// \typedef ofShortColor
+/// \brief A typedef representing a 16-bit RGBA color.
 typedef ofColor_<unsigned short> ofShortColor;
-    ///< \brief A typedef representing a 16-bit RGBA color.
 
+/// \typedef ofFloatColor
+/// \brief A typedef representing a floating point RGBA color.
 typedef ofColor_<float> ofFloatColor;
-    ///< \brief A typedef representing a floating point RGBA color.
 
 template<typename PixelType>
 template<typename SrcType>
