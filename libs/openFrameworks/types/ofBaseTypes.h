@@ -216,6 +216,9 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
 	virtual ofPixelFormat getPixelFormat() = 0;
 
+	// implement only if internal API can upload directly to texture
+	virtual ofTexture * getTexture(){ return NULL; }
+
 	//should implement!
 	virtual void setVerbose(bool bTalkToMe);
 	virtual void setDeviceID(int _deviceID);
@@ -324,6 +327,7 @@ public:
 	//our openGL wrappers
 	virtual void pushMatrix(){};
 	virtual void popMatrix(){};
+	virtual ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const { return ofMatrix4x4();};
 	virtual void translate(float x, float y, float z = 0){};
 	virtual void translate(const ofPoint & p){};
 	virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1){};

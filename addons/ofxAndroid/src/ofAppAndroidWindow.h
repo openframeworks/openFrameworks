@@ -47,5 +47,5 @@ public:
 	ofOrientation	getOrientation();
 
 	void	setThreadedEvents(bool threadedEvents);
-
+	void 	setAccumulateTouchEvents(bool accumEvents);
 };

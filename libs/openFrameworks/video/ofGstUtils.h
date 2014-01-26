@@ -56,8 +56,8 @@ public:
 	GstElement 	* getPipeline();
 	GstElement 	* getSink();
 	GstElement 	* getGstElementByName(const string & name);
-	unsigned long getMinLatencyNanos();
-	unsigned long getMaxLatencyNanos();
+	uint64_t getMinLatencyNanos();
+	uint64_t getMaxLatencyNanos();
 
 	virtual void close();
 

@@ -2,23 +2,39 @@
 #include "ofGraphics.h"
 #include "of3dGraphics.h"
 
+
+ofVboMesh & cachedAxesVbo(){
+    static ofVboMesh * axis = new ofVboMesh(ofMesh::axis());
+    return *axis;
+}
+
+/** @brief Draws x,y,z axes representing the current reference frame
+ *  @detail Axes are drawn in red (+x), green (+y) and blue (+z)
+ *	@param size size at which to draw the axes
+ **/
 void ofDrawAxis(float size) {
-	ofPushStyle();
-	ofSetLineWidth(3);
-
-	// draw x axis
-	ofSetColor(ofColor::red);
-	ofLine(0, 0, 0, size, 0, 0);
-	
-	// draw y axis
-	ofSetColor(ofColor::green);
-	ofLine(0, 0, 0, 0, size, 0);
-
-	// draw z axis
-	ofSetColor(ofColor::blue);
-	ofLine(0, 0, 0, 0, 0, size);
-	
-	ofPopStyle();
+	if (ofGetGLProgrammableRenderer()){
+		ofPushMatrix();
+		ofScale(size, size,size);
+		cachedAxesVbo().draw();
+		ofPopMatrix();
+	} else {
+		ofPushStyle();
+		ofSetLineWidth(3);
+		
+		// draw x axis
+		ofSetColor(ofColor::red);
+		ofLine(0, 0, 0, size, 0, 0);
+		
+		// draw y axis
+		ofSetColor(ofColor::green);
+		ofLine(0, 0, 0, 0, size, 0);
+		
+		// draw z axis
+		ofSetColor(ofColor::blue);
+		ofLine(0, 0, 0, 0, 0, size);
+		ofPopStyle();
+	}
 }
 
 //--------------------------------------------------------------
