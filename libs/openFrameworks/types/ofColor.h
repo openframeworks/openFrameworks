@@ -406,15 +406,53 @@ public:
                 float saturation,
                 float brightness,
                 float alpha = limit());
-    
+
+    /// \brief Assign a color using an existing color.
+    ///
+    /// R, G, B and A components are set to the the values of the assigned
+    /// color.
+    ///
+    /// \param color The color to assign.
+    /// \returns A reference to itself.
     ofColor_<PixelType>& operator = (const ofColor_<PixelType>& color);
 
+    /// \brief Assign a color using an existing color.
+    ///
+    /// R, G, B and A components are set to the the values of the assigned
+    /// color.
+    ///
+    /// \warning Depending on the PixelType and SrcType used, color precision
+    ///     may be lost when converting a higher precision to a lower precision
+    ///     representation.
+    ///
+    /// \param color The color to assign.
+    /// \returns A reference to itself.
     template<typename SrcType>
     ofColor_<PixelType>& operator = (const ofColor_<SrcType>& color);
 
+    /// \brief Assign a color using a grayscale value.
+    ///
+    /// R, G and B components are set to the grayscale value and alpha is
+    /// set to limit().
+    ///
+    ///     ofColor myColor = 127;
+    ///
+    /// is equivalent to:
+    ///
+    ///     ofColor myColor(127, 127, 127, 255);
+    ///
+    /// \param val The grayscale value.
+    /// \returns A reference to itself.
     ofColor_<PixelType>& operator = (const float& val);
+
+    /// \brief Test two colors for equality.
+    /// \returns true iff the R, G, B and A components are all equal.
     bool operator == (const ofColor_<PixelType>& color);
+
+    /// \brief Test two colors for inequality.
+    /// \returns true iff any of the R, G, B or A components are not equal.
     bool operator != (const ofColor_<PixelType>& color);
+
     ofColor_<PixelType>  operator +  (const ofColor_<PixelType>& color) const;
     ofColor_<PixelType>  operator +  (const float& val) const;
     ofColor_<PixelType>& operator += (const ofColor_<PixelType>& color);
