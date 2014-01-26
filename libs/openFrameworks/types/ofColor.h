@@ -82,7 +82,7 @@ public:
 
     /// \brief Construct an ofColor_ from an existing ofColor_.
     ///
-    /// This constructor will use the r, g, and b components from the passed
+    /// This constructor will use the R, G and B components from the passed
     /// color ignoring its alpha channel.  The provided alpha channel will be
     /// used instead.
     ///
@@ -93,7 +93,7 @@ public:
     /// \brief Construct a grayscale ofColor_ by specifiying a single number.
     ///
     /// This constructor will use a single value to describe a grayscale color.
-    /// This single value will be taken by each of the r, g, and b components.
+    /// This single value will be taken by each of the R, G and B components.
     /// The alpha channel is specified separately and will and will default to
     /// the PixelType's maximum resulting in an opaque color.
     ///
@@ -196,7 +196,7 @@ public:
     ///
     /// When modifying an instance of ofColor_ you can use a single value to
     /// describe a grayscale color. This single value will be taken by each of
-    /// the r, g, and b components. The alpha channel is specified separately
+    /// the R, G and B components. The alpha channel is specified separately
     /// and will and will default to the PixelType's maximum resulting in an
     /// opaque color.
     ///
@@ -206,10 +206,10 @@ public:
 
     /// \brief Set an ofColor_ from an existing ofColor_.
     ///
-    /// This will use the r, g, b and a components from the passed color.
+    /// This will use the R, G, B and A components from the passed color.
     ///
     /// \param color The ofColor_ to copy.
-    /// \param _a The new alpha value to replace the alpha value in color.
+    /// \param alpha The new alpha value to replace the alpha value in color.
     void set(const ofColor_<PixelType>& color);
 
     /// \brief Set an ofColor_ from a hexadecimal representation.
@@ -221,22 +221,29 @@ public:
     /// The alpha channel is specified separately and will default to the
     /// PixelType's maximum, resulting in an opaque color.
     ///
-    /// \param hexColor A color in hexadecimal form.
+    /// \warning The alpha value _should not_ be packed in the hexColor and
+    ///     must be specified separately.
+    ///
+    /// \param hexColor An RGB color in hexadecimal form.
     /// \param alpha The alpha value of the color.
     void setHex(int hexColor, float alpha = limit());
 
-    /// \returns A hexadecimal representation of the ofColor_.
+    /// \brief Get a hexadecimal representation of the RGB color.
+    ///
+    /// \warning This method does _not_ encode the alpha component.
+    ///
+    /// \returns An integer representing an RGB color.
     int getHex() const;
 
     /// \brief Clamp values between 0 and the limit().
     ///
-    /// Clamps the value of each component, r, g, b and a to a maximum of
+    /// Clamps the value of each component, R, G, B and A to a maximum of
     /// limit() and a minimum of zero.
     ///
     /// \returns A reference to itself.
     ofColor_<PixelType>& clamp();
 
-    /// \brief Invert the r, g and b components.
+    /// \brief Invert the R, G and B components.
     ///
     /// Performs an inversion operation on the color by replacing the red, green
     /// and blue components with their original value subtracted from the
@@ -257,7 +264,7 @@ public:
     /// \returns A reference to itself.
     ofColor_<PixelType>& invert();
 
-    /// \brief Normalize the r, g and b components.
+    /// \brief Normalize the R, G and B components.
     ///
     /// Performs a normalization operation on the red, green and blue components
     /// by scaling them by brightness of the original color divided by the
@@ -277,45 +284,124 @@ public:
     /// \returns A reference to itself.
     ofColor_<PixelType>& normalize();
 
+    /// \brief A linear interpolation between all components of two colors.
+    ///
+    /// The lerp method performs a linear interpolation (or [lerp][1]) between
+    /// this color and a target color.  In contrast to many of the mathematical
+    /// functions found in ofColor_, The linear interpolation is carried out
+    /// on _all_ components, R, G, B _and_ A.  The amount is typically a value
+    /// between 0.0 and 1.0, with 0.0 yielding an unchanged color and 1.0
+    /// yielding a color identical to the target color.
+    ///
+    /// [1]: http://en.wikipedia.org/wiki/Lerp_(computing) "Lerp"
+    ///
+    /// \param target The target color corresponding to an amount of 1.0.
+    /// \param amount The amount (between 0.0 and 1.0) to interpolate.
+    ///     A value of 0.0 will yield an unchanged color.  A value of 1.0
+    ///     will yield the target color.
+    /// \returns A reference to itself.
     ofColor_<PixelType>& lerp(const ofColor_<PixelType>& target, float amount);
-    
+
+    /// \brief A non-destructive version of clamp().
+    /// \returns A copy of this color, clamped.
+    /// \sa clamp()
     ofColor_<PixelType> getClamped() const;
+
+    /// \brief A non-destructive version of invert().
+    /// \returns A copy of this color, inverted.
+    /// \sa invert()
     ofColor_<PixelType> getInverted() const;
+
+    /// \brief A non-destructive version of normalize().
+    /// \returns A copy of this color, normalized.
+    /// \sa normalize()
     ofColor_<PixelType> getNormalized() const;
+
+
+    /// \brief A non-destructive version of lerp().
+    /// \returns A copy of this color, lerped.
+    /// \sa lerp()
     ofColor_<PixelType> getLerped(const ofColor_<PixelType>& target,
                                   float amount) const;
-    
-    float getHue() const; // 0-255
-    float getHueAngle() const; // 0-360
+
+    /// \brief Get the Hue of this color.
+    ///
+    /// The color is converted from the default RGB to an HSB colorspace and the
+    /// resulting Hue value is returned.  The resulting hue value will always be
+    /// returned in the range 0 - limit().
+    ///
+    /// \returns The Hue value in the range 0 - limit().
+    float getHue() const;
+
+    /// \brief Get the Hue angle of this color.
+    ///
+    /// The color is converted from the default RGB to an HSB colorspace and the
+    /// resulting Hue angle is returned.  The resulting hue value will always be
+    /// returned in degrees in the range 0 - 360.
+    ///
+    /// \returns The Hue angle in the range 0 - 360.
+    float getHueAngle() const;
+
+    /// \brief Get the Saturation of this color.
+    ///
+    /// The color is converted from the default RGB to an HSB colorspace and the
+    /// resulting saturation is returned.  The resulting saturation value will
+    /// always be returned in the range 0 - limit().
+    ///
+    /// \returns The saturation in the range 0 - limit().
     float getSaturation() const;
 
-    // brightest component
-    /*
-     Brightness is simply the maximum of the three color components.
-     This is used by Photoshop (HSB) and Processing (HSB).
-     Brightness is also called "value".
-     */
-    
-
+    /// \brief Calculate the brightness of of the R, G and B components.
+    ///
+    /// Brightness is simply the maximum of the three color components. This
+    /// method of calculating brightness is used by Photoshop (HSB) and
+    /// Processing (HSB).  Note that brightness is also called "Value".
+    ///
+    /// \brief returns the brightness in the range 0 - limit().
     float getBrightness() const;
 
-    /*
-     Lightness is the average of the three color components.
-     This is used by the Lab and HSL color spaces.
-     */
-    
+    /// \brief Calculate the lightness of the R, G and B components.
+    ///
+    /// Lightness is simply the average of the three color components. This
+    /// method of calculating lightness is used by the Lab and HSL color spaces.
+    ///
+    /// \brief returns the lightness in the range 0 - limit().
     float getLightness() const;
+
+    /// \brief Extract the hue, saturation and brightness from this color.
+    /// \param hue A reference to the hue to fill.  Will be in the range of
+    ///     0 - limit().
+    /// \param hue A reference to the saturation to fill.  Will be in the range
+    ///     of 0 - limit().
+    /// \param brightness A reference to the brightness to fill.  Will be in the
+    ///     range of 0 - limit().
     void getHsb(float& hue, float& saturation, float& brightness) const;
 
-    // 0-255
+    /// \brief Set the hue of this color.
+    /// \param hue A hue value to set in the range of 0 - limit().
     void setHue(float hue);
 
-    // 0-360
+    /// \brief Set the hue angle of this color.
+    /// \param hue A hue angle value to set in the range of 0 - 360 degrees.
     void setHueAngle(float angle);
 
-    // uses hsb, not hsl. so red desaturated is white, not gray http://en.wikipedia.org/wiki/HSL_and_HSV
+    /// \brief Set the saturation this color.
+    ///
+    /// This method uses HSB not HSL. So red desaturated is white, not gray
+    ///
+    /// \param saturation A saturation value value in the range of 0 - limit().
+    /// \sa http://en.wikipedia.org/wiki/HSL_and_HSV
     void setSaturation(float saturation);
+
+    /// \brief Set the brightness of this color.
+    /// \param brightness A brightness value to set in the range of 0 - limit().
     void setBrightness(float brightness);
+
+    /// \brief Set the color using HSB components.
+    ///
+    /// \param hue A hue value to set in the range of 0 - limit().
+    /// \param saturation A saturation value to set in the range of 0 - limit().
+    /// \param brightness A brightness value to set in the range of 0 - limit().
     void setHsb(float hue, float saturation, float brightness, float alpha = limit());
     
     ofColor_<PixelType>& operator = (const ofColor_<PixelType>& color);
@@ -431,9 +517,7 @@ public:
     /// \return The value associated with a fully saturated color component.
     static float limit();
 
-    /// \union A union.
-    union  {
-        /// \struct A struct
+    union {
         struct {
             PixelType r; //< \brief The red color component.
             PixelType g; //< \brief The green color component.
