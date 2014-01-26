@@ -654,6 +654,8 @@
 				<string>YES</string>
 				<key>ARCHS</key>
 				<string>$(ARCHS_STANDARD_32_BIT)</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libstdc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
@@ -706,6 +708,8 @@
 				<string>YES</string>
 				<key>ARCHS</key>
 				<string>$(ARCHS_STANDARD_32_BIT)</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libstdc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
@@ -912,7 +916,7 @@
 			<key>isa</key>
 			<string>PBXReferenceProxy</string>
 			<key>path</key>
-			<string>libofxiPhone_iphoneos_Debug.a</string>
+			<string>libofxiOS_iphoneos_Debug.a</string>
 			<key>remoteRef</key>
 			<string>E41D410113B3A0D800A75A5D</string>
 			<key>sourceTree</key>

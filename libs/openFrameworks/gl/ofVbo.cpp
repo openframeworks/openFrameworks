@@ -653,7 +653,7 @@ void ofVbo::bind(){
 				glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
 			}else{
 				glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
-				glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, vertStride, 0);
+				glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, vertSize, GL_FLOAT, GL_FALSE, vertStride, 0);
 			}
 		}else if(supportVAOs){
 			if(!programmable){

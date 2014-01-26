@@ -7,6 +7,7 @@ ofxToggle::ofxToggle(ofParameter<bool> _bVal, float width, float height){
 
 ofxToggle::~ofxToggle(){
 	value.removeListener(this,&ofxToggle::valueChanged);
+	ofUnregisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 }
 
 ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height){

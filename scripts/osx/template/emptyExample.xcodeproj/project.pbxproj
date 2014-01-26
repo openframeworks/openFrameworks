@@ -419,6 +419,8 @@
 			<dict>
 				<key>ARCHS</key>
 				<string>$(NATIVE_ARCH)</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libstdc++</string>
 				<key>CONFIGURATION_BUILD_DIR</key>
 				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>
@@ -473,6 +475,8 @@
 			<dict>
 				<key>ARCHS</key>
 				<string>$(NATIVE_ARCH)</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libstdc++</string>
 				<key>CONFIGURATION_BUILD_DIR</key>
 				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>
