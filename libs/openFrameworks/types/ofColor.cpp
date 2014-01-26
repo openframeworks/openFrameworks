@@ -365,7 +365,9 @@ ofColor_<PixelType> ofColor_<PixelType>::getLerped(const ofColor_<PixelType>& ta
 
 template<typename PixelType>
 float ofColor_<PixelType>::getHue() const {
-	float hue, saturation, brightness;
+	float hue = 0;
+    float saturation = 0;
+    float brightness = 0;
 	getHsb(hue, saturation, brightness);
 	return hue;
 }
@@ -377,7 +379,9 @@ float ofColor_<PixelType>::getHueAngle() const {
 
 template<typename PixelType>
 float ofColor_<PixelType>::getSaturation() const {
-	float hue, saturation, brightness;
+	float hue = 0;
+    float saturation = 0;
+    float brightness = 0;
 	getHsb(hue, saturation, brightness);
 	return saturation;
 }
@@ -400,7 +404,9 @@ float ofColor_<PixelType>::getLightness() const {
 }
 
 template<typename PixelType>
-void ofColor_<PixelType>::getHsb(float& hue, float& saturation, float& brightness) const {
+void ofColor_<PixelType>::getHsb(float& hue,
+                                 float& saturation,
+                                 float& brightness) const {
 	float max = getBrightness();
 	
 	float min = r;
@@ -517,7 +523,6 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
     // finally assign the alpha
     a = alpha;
 }
-
 
 template<>
 int ofColor_<unsigned char>::getHex() const {
