@@ -374,7 +374,7 @@ float ofColor_<PixelType>::getHue() const {
 
 template<typename PixelType>
 float ofColor_<PixelType>::getHueAngle() const {
-	return getHue() * 360. / 255. ;
+	return getHue() * 360. / limit();
 }
 
 template<typename PixelType>
