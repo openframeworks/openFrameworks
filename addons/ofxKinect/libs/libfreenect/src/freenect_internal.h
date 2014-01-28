@@ -140,7 +140,13 @@ static inline int32_t fn_le32s(int32_t s)
 #define PID_NUI_CAMERA 0x02ae
 #define PID_NUI_MOTOR 0x02b0
 #define PID_K4W_CAMERA 0x02bf
+
+// For K4W: first pid is what it starts out as,
+// second is how it appears with lastest firmware from SDK,
+// third is from beta SDK firmware ( which is what is unpacked by the fw script and doesn't support motor control )
 #define PID_K4W_AUDIO 0x02be
+#define PID_K4W_AUDIO_ALT_1 0x02c3
+#define PID_K4W_AUDIO_ALT_2 0x02bb
 
 typedef struct {
 	int running;

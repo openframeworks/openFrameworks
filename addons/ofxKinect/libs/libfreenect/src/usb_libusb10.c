@@ -158,6 +158,14 @@ FN_INTERNAL int fnusb_process_events_timeout(fnusb_ctx *ctx, struct timeval* tim
 	return libusb_handle_events_timeout(ctx->ctx, timeout);
 }
 
+//there are a bunch of different PIDs to check for - this function makes it easier
+FN_INTERNAL int fn_is_pid_k4w_audio(int pid){
+    if( pid == PID_K4W_AUDIO || pid == PID_K4W_AUDIO_ALT_1 | pid == PID_K4W_AUDIO_ALT_2 ){
+        return 0;
+    }
+    return -1;
+}
+
 FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 {
 	freenect_context *ctx = dev->parent;
@@ -301,7 +309,7 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 #ifdef BUILD_AUDIO
 		// TODO: check that the firmware has already been loaded; if not, upload firmware.
 		// Search for the audio
-		if ((ctx->enabled_subdevices & FREENECT_DEVICE_AUDIO) && !dev->usb_audio.dev && (desc.idProduct == PID_NUI_AUDIO || desc.idProduct == PID_K4W_AUDIO)) {
+		if ((ctx->enabled_subdevices & FREENECT_DEVICE_AUDIO) && !dev->usb_audio.dev && (desc.idProduct == PID_NUI_AUDIO || fn_is_pid_k4w_audio(desc.idProduct) != -1 )) {
 			// If the index given by the user matches our audio index
             
 			if (nr_audio == index) {
@@ -327,7 +335,7 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 				// reappear.
 				int num_interfaces = fnusb_num_interfaces(&dev->usb_audio);
                 
-                if( num_interfaces == 2 ){
+                if( num_interfaces >= 2 ){
                     if( dev->device_does_motor_control_with_audio ){
                         dev->motor_control_with_audio_enabled = 1;
                     }
@@ -378,7 +386,7 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 							if (r < 0)
 								continue;
 							// If this dev is a Kinect audio device, open device, read serial, and compare.
-							if (new_dev_desc.idVendor == VID_MICROSOFT && (new_dev_desc.idProduct == PID_NUI_AUDIO || new_dev_desc.idProduct == PID_K4W_AUDIO) ){
+							if (new_dev_desc.idVendor == VID_MICROSOFT && (new_dev_desc.idProduct == PID_NUI_AUDIO || fn_is_pid_k4w_audio(desc.idProduct) != -1) ){
 								FN_SPEW("Matched VID/PID!\n");
 								libusb_device_handle* new_dev_handle;
 								// Open device
@@ -408,7 +416,7 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
                                     // Verify that we've actually found a device running the right firmware.
 									num_interfaces = fnusb_num_interfaces(&dev->usb_audio);
                                     
-                                    if( num_interfaces == 2 ){
+                                    if( num_interfaces >= 2 ){
                                         if( dev->device_does_motor_control_with_audio ){
                                             dev->motor_control_with_audio_enabled = 1;
                                         }

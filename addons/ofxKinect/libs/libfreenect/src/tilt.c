@@ -74,10 +74,13 @@ int get_reply(libusb_device_handle* dev, freenect_context *ctx){
 			FN_ERROR("Bad magic: %08X (expected 0A6FE000\n", reply.magic);
 			res = -1;
 		}
-		if (reply.tag != tag_next_ack) {
-			FN_ERROR("Reply tag out of order: expected %d, got %d\n", tag_next_ack, reply.tag);
-			res = -1;
-		}
+
+        //can't really do this as tag_seq is static. with two cameras this is not going to match. could put in as part of libusb_device but I don't think it really matters.
+//		if (reply.tag != tag_next_ack) {
+//			FN_ERROR("Reply tag out of order: expected %d, got %d\n", tag_next_ack, reply.tag);
+//			res = -1;
+//		}
+
 		if (reply.status != 0) {
 			FN_ERROR("reply status != 0: failure?\n");
 			res = -1;
