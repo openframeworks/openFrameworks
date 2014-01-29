@@ -98,6 +98,10 @@ ofGstUtils::ofGstUtils() {
 #endif
 
 	if(!gst_inited){
+#ifdef TARGET_WIN32
+		string gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
+		putenv(("GST_PLUGIN_PATH_1_0=" + ofFilePath::join(gst_path, "lib\\gstreamer-1.0") + ";.").c_str());
+#endif
 		gst_init (NULL, NULL);
 		gst_inited=true;
 		ofLogVerbose("ofGstUtils") << "gstreamer inited";
