@@ -47,18 +47,10 @@ freenect_raw_tilt_state* freenect_get_tilt_state(freenect_device *dev)
 int freenect_update_tilt_state(freenect_device *dev)
 {
 	freenect_context *ctx = dev->parent;
-
+	if(!(ctx->enabled_subdevices & FREENECT_DEVICE_MOTOR))
+		return 0;
     uint8_t buf[10];
 	uint16_t ux, uy, uz;
-    
-	if(!(ctx->enabled_subdevices & FREENECT_DEVICE_MOTOR)){
-        //this is needed for OS X. without it the camera timesout within 2-3 seconds
-        #ifdef TARGET_OS_MAC
-    	int ret = fnusb_control(&dev->usb_cam, 0xC0, 0x32, 0x0, 0x0, buf, 10);
-        #endif 
-		return 0;
-	}
-
 	int ret = fnusb_control(&dev->usb_motor, 0xC0, 0x32, 0x0, 0x0, buf, 10);
 	if (ret != 10) {
 		FN_ERROR("Error in accelerometer reading, libusb_control_transfer returned %d\n", ret);
@@ -77,6 +69,7 @@ int freenect_update_tilt_state(freenect_device *dev)
 
 	return ret;
 }
+
 int freenect_set_tilt_degs(freenect_device *dev, double angle)
 {
 	freenect_context *ctx = dev->parent;

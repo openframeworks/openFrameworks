@@ -1,4 +1,7 @@
-!ofAddons.h
+#########################
+# core addons
+#########################
+
 !.project
 !ofx3DModelLoader
 !ofxAccelerometer
