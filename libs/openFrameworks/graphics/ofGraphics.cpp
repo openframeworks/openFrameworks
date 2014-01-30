@@ -590,6 +590,7 @@ void ofSetCurveResolution(int res){
 void ofSetCircleResolution(int res){
 	renderer->setCircleResolution(res);
 	currentStyle.circleResolution = res;
+	shape.setCircleResolution(res);
 }
 
 //----------------------------------------------------------
