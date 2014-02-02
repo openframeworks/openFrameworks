@@ -5,11 +5,8 @@
  *      Author: arturo
  */
 
-#ifndef OFXANDROID_H_
-#define OFXANDROID_H_
+#pragma once
 
 #include "ofAppAndroidWindow.h"
 #include "ofxAndroidApp.h"
 #include "ofxAndroidUtils.h"
-
-#endif /* OFXANDROID_H_ */

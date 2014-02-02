@@ -4,12 +4,7 @@
 #include "ofRectangle.h"
 #include "ofBaseTypes.h"
 #include "ofConstants.h"
-
-int ofGetGlInternalFormat(const ofPixels& pix);
-int ofGetGlInternalFormat(const ofShortPixels& pix);
-int ofGetGlInternalFormat(const ofFloatPixels& pix);
-void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType);
-ofImageType ofGetImageTypeFromGLType(int glType);
+#include "ofVboMesh.h"
 
 //set whether OF uses ARB rectangular texture or the more traditonal GL_TEXTURE_2D
 bool ofGetUsingArbTex();
@@ -51,9 +46,7 @@ public:
 		glTypeInternal = GL_RGB;
 		textureTarget = GL_TEXTURE_2D;
 #endif
-		glType = GL_RGB;
-		pixelType = GL_UNSIGNED_BYTE;
-		
+
 
 		tex_t = 0;
 		tex_u = 0;
@@ -66,13 +59,12 @@ public:
 		compressionType = OF_COMPRESS_NONE;
 		bAllocated = false;
 		bUseExternalTextureID = false;
+		useTextureMatrix = false;
 	}
 
 	unsigned int textureID;
 	int textureTarget;
 	int glTypeInternal; // internalFormat, e.g., GL_RGB8.
-	int glType; // format, e.g., GL_RGB. should be named glFormat
-	int pixelType;  // type, e.g., GL_UNSIGNED_BYTE. should be named glType
 	
 	float tex_t;
 	float tex_u;
@@ -84,12 +76,15 @@ public:
 	ofTexCompression compressionType;
 	bool bAllocated;
 	bool bUseExternalTextureID; //if you need to assign ofTexture's id to an externally texture. 
+	ofMatrix4x4 textureMatrix;
+	bool useTextureMatrix;
 };
 
 //enable / disable the slight offset we add to ofTexture's texture coords to compensate for bad edge artifiacts
 //enabled by default
 void ofEnableTextureEdgeHack();
 void ofDisableTextureEdgeHack();
+bool ofIsTextureEdgeHackEnabled();
 
 class ofTexture : public ofBaseDraws {
 	public :
@@ -100,23 +95,50 @@ class ofTexture : public ofBaseDraws {
 	virtual ~ofTexture();
 
 	// -----------------------------------------------------------------------
-
+	// glInternalFormat: the format the texture will have in the graphics card (specified on allocate)
+	// http://www.opengl.org/wiki/Image_Format
+	//
+	// glFormat: format of the uploaded data, has to match the internal format although can change order
+	// pixelType: type of the uploaded data, depends on the pixels on cpu memory.
+	// http://www.opengl.org/wiki/Pixel_Transfer
+	//
+	// for most cases is not necessary to specify glFormat and pixelType on allocate
+	// and if needed for some cases like depth textures it'll be automatically guessed
+	// from the internal format if not specified
 	virtual void allocate(const ofTextureData & textureData);
+	virtual void allocate(const ofTextureData & textureData, int glFormat, int pixelType);
 	virtual void allocate(int w, int h, int glInternalFormat); //uses the currently set OF texture type - default ARB texture
+	virtual void allocate(int w, int h, int glInternalFormat, int glFormat, int pixelType); //uses the currently set OF texture type - default ARB texture
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention, int glFormat, int pixelType); //lets you overide the default OF texture type
 	virtual void allocate(const ofPixels& pix);
+	virtual void allocate(const ofPixels& pix, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(const ofShortPixels& pix);
+	virtual void allocate(const ofShortPixels& pix, bool bUseARBExtention); //lets you overide the default OF texture type
+	virtual void allocate(const ofFloatPixels& pix);
+	virtual void allocate(const ofFloatPixels& pix, bool bUseARBExtention); //lets you overide the default OF texture type
 	void clear();
 
 	void setUseExternalTextureID(GLuint externTexID); //allows you to point ofTexture's texture id to an externally allocated id. 
 													  //its up to you to set the rest of the textData params manually. 
 
+	// glFormat can be different to the internal format of the texture in each load
+	// for example to a GL_RGBA texture we can upload a  GL_BGRA pixels
+	// but the number of channels need to match according to the standard
 	void loadData(const unsigned char* const data, int w, int h, int glFormat);
 	void loadData(const unsigned short* data, int w, int h, int glFormat);
 	void loadData(const float* data, int w, int h, int glFormat);
 	void loadData(const ofPixels & pix);		
 	void loadData(const ofShortPixels & pix);
 	void loadData(const ofFloatPixels & pix);
+	void loadData(const ofPixels & pix, int glFormat);
+	void loadData(const ofShortPixels & pix, int glFormat);
+	void loadData(const ofFloatPixels & pix, int glFormat);
 	
+	// in openGL3+ use 1 channel GL_R as luminance instead of red channel
+	void setRGToRGBASwizzles(bool rToRGBSwizzles);
+
+
 	void loadScreenData(int x, int y, int w, int h);
 
 	//the anchor is the point the image is drawn around.
@@ -170,8 +192,11 @@ class ofTexture : public ofBaseDraws {
 	float getWidth();
 
 protected:
-	void loadData(void * data, int w, int h, int glFormat);
+	void loadData(const void * data, int w, int h, int glFormat, int glType);
+	void enableTextureTarget();
+	void disableTextureTarget();
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
+	ofMesh quad;
 };

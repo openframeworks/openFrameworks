@@ -1,37 +1,68 @@
 #include "ofxLabel.h"
 #include "ofGraphics.h"
 
-ofxLabel* ofxLabel::setup(string labelName, ofxParameter<string> _label, float width, float height) {
-    name     = labelName;
-    label    = _label;
+ofxLabel::ofxLabel(ofParameter<string> _label, float width, float height){
+	setup(_label,width,height);
+}
+
+ofxLabel::~ofxLabel(){
+    label.removeListener(this,&ofxLabel::valueChanged);
+}
+
+ofxLabel* ofxLabel::setup(ofParameter<string> _label, float width, float height) {
+    label.makeReferenceTo(_label);
     b.width  = width;
     b.height = height;
+    generateDraw();
+    label.addListener(this,&ofxLabel::valueChanged);
     return this;
 }
 
 ofxLabel* ofxLabel::setup(string labelName, string _label, float width, float height) {
-    name     = labelName;
-    label    = _label;
-    b.width  = width;
-    b.height = height;
-    return this;
+    label.set(labelName,_label);
+    return setup(label,width,height);
 }
 
-void ofxLabel::draw() {
-    currentFrame = ofGetFrameNum();
+void ofxLabel::generateDraw(){
+	bg.clear();
 
-    ofPushStyle();
-    ofPushMatrix();
+	bg.setFillColor(thisBackgroundColor);
+	bg.setFilled(true);
+	bg.rectangle(b);
 
-    ofSetColor(backgroundColor);
-    ofRect(b);
+    string name;
+    if(!getName().empty()){
+    	name = getName() + ": ";
+    }
 
-    ofTranslate(b.x, b.y);
+    textMesh = getTextMesh(name + (string)label, b.x + textPadding, b.y + b.height / 2 + 4);
+}
+
+void ofxLabel::render() {
+	ofColor c = ofGetStyle().color;
+
+	bg.draw();
+
+	ofBlendMode blendMode = ofGetStyle().blendingMode;
+	if(blendMode!=OF_BLENDMODE_ALPHA){
+		ofEnableAlphaBlending();
+	}
     ofSetColor(textColor);
-    ofTranslate(0, b.height / 2 + 4);
-    ofDrawBitmapString(label, textPadding, 0);
 
-    ofPopMatrix();
-    ofPopStyle();
+    bindFontTexture();
+    textMesh.draw();
+    unbindFontTexture();
+
+    ofSetColor(c);
+	if(blendMode!=OF_BLENDMODE_ALPHA){
+		ofEnableBlendMode(blendMode);
+	}
 }
 
+ofAbstractParameter & ofxLabel::getParameter(){
+	return label;
+}
+
+void ofxLabel::valueChanged(string & value){
+	generateDraw();
+}

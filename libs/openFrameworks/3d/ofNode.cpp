@@ -2,6 +2,7 @@
 #include "ofNode.h"
 #include "ofMath.h"
 #include "ofLog.h"
+#include "of3dGraphics.h"
 
 ofNode::ofNode() : 
 	parent(NULL) {
@@ -11,13 +12,25 @@ ofNode::ofNode() :
 }
 
 //----------------------------------------
-void ofNode::setParent(ofNode& parent) {
-	this->parent = &parent;
+void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
+    if(bMaintainGlobalTransform) {
+        ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
+        this->parent = &parent;
+        setTransformMatrix(globalTransform);
+    } else {
+        this->parent = &parent;
+    }
 }
 
 //----------------------------------------
-void ofNode::clearParent() {
-	this->parent = NULL;
+void ofNode::clearParent(bool bMaintainGlobalTransform) {
+    if(bMaintainGlobalTransform) {
+        ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
+        this->parent = NULL;
+        setTransformMatrix(globalTransform);
+    } else {
+        this->parent = NULL;
+    }
 }
 
 //----------------------------------------
@@ -198,7 +211,7 @@ void ofNode::rotate(float degrees, float vx, float vy, float vz) {
 
 //----------------------------------------
 void ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) {
-	//	ofLog(OF_LOG_VERBOSE, "ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) not implemented yet");
+	//	ofLogVerbose("ofNode") << "rotateAround(const ofQuaternion& q, const ofVec3f& point) not implemented yet";
 	//	ofMatrix4x4 m = getLocalTransformMatrix();
 	//	m.setTranslation(point);
 	//	m.rotate(q);
@@ -338,6 +351,12 @@ void ofNode::draw() {
 	transformGL();
 	customDraw();
 	restoreTransformGL();
+}
+
+//----------------------------------------
+void ofNode::customDraw() {
+	ofDrawBox(10);
+	ofDrawAxis(20);
 }
 
 //----------------------------------------

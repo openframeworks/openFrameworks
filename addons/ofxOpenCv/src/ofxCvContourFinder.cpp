@@ -5,11 +5,11 @@
 
 //--------------------------------------------------------------------------------
 static bool sort_carea_compare( const CvSeq* a, const CvSeq* b) {
+	
 	// use opencv to calc size, then sort based on size
 	float areaa = cvContourArea(a, CV_WHOLE_SEQ);
 	float areab = cvContourArea(b, CV_WHOLE_SEQ);
-
-    //return 0;
+	
 	return (areaa > areab);
 }
 
@@ -85,9 +85,12 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 
 	// put the contours from the linked list, into an array for sorting
 	while( (contour_ptr != NULL) ) {
-		float area = cvContourArea(contour_ptr, CV_WHOLE_SEQ);
-		if( (area > minArea) && (area < maxArea) ) {
-            cvSeqBlobs.push_back(contour_ptr);
+		float area = cvContourArea(contour_ptr, CV_WHOLE_SEQ, bFindHoles); // oriented=true for holes
+		if(bFindHoles && area < 0) { // areas can be non negative in the case of holes
+			area = fabs(area);
+		}
+		if((area > minArea) && (area < maxArea)) {
+			cvSeqBlobs.push_back(contour_ptr);
 		}
 		contour_ptr = contour_ptr->h_next;
 	}
@@ -103,12 +106,11 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
     // cvSeqBlobs let's get the data out and into our structures that we like
 	for( int i = 0; i < MIN(nConsidered, (int)cvSeqBlobs.size()); i++ ) {
 		blobs.push_back( ofxCvBlob() );
-		float area = cvContourArea( cvSeqBlobs[i], CV_WHOLE_SEQ, true ); // oriented=true for holes
+		float area = cvContourArea( cvSeqBlobs[i], CV_WHOLE_SEQ, bFindHoles ); // oriented=true for holes
 		CvRect rect	= cvBoundingRect( cvSeqBlobs[i], 0 );
 		cvMoments( cvSeqBlobs[i], myMoments );
 
-		blobs[i].area                     = fabs(area);
-		blobs[i].hole                     = area < 0 ? true : false;
+		blobs[i].area                     = bFindHoles ? fabs(area) : area; // only return positive areas
 		blobs[i].length 			      = cvArcLength(cvSeqBlobs[i]);
 		blobs[i].boundingRect.x           = rect.x;
 		blobs[i].boundingRect.y           = rect.y;
@@ -116,6 +118,17 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 		blobs[i].boundingRect.height      = rect.height;
 		blobs[i].centroid.x 			  = (myMoments->m10 / myMoments->m00);
 		blobs[i].centroid.y 			  = (myMoments->m01 / myMoments->m00);
+
+		if(bFindHoles) {
+			// for some reason, changing the orientation when looking for holes
+			// yields negative areas for non holes and positive areas for holes
+			//
+			// negating the value here works, even though it feels like a hack
+			blobs[i].hole                 = -area < 0 ? true : false; // negative area denotes a hole
+		}
+		else {
+			blobs[i].hole                 = false; // no holes
+		}
 
 		// get the points for the blob:
 		CvPoint           pt;

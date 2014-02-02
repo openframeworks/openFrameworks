@@ -15,6 +15,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 		loop = false;
 		soundID = -1;
 		streamID = -1;
+		multiPlay = false;
 	}
 	
 	void loadSound(String fileName, boolean stream){
@@ -59,8 +60,9 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 			if(getIsPlaying()) setPosition(0);	
 			player.start();
 		}else{
-			if(!multiPlay)
+			if(!multiPlay){
 				pool.stop(streamID);
+			}
 			streamID = pool.play(soundID,leftVolume,rightVolume,1,loop?-1:0,speed);
 			bIsPlaying = true;
 		}
@@ -77,14 +79,14 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	void setVolume(float vol){
 		volume = vol;
-        // calculates left/right volumes from pan-value (constant panning law) 
-        // see: Curtis Roads: Computer Music Tutorial p 460
+		// calculates left/right volumes from pan-value (constant panning law) 
+		// see: Curtis Roads: Computer Music Tutorial p 460
 		// thanks to jasch
-        float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
-        float cosAngle = FloatMath.cos(angle);
-        float sinAngle = FloatMath.sin(angle);
-        leftVolume  = (float)((cosAngle - sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
-        rightVolume = (float)((cosAngle + sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+		float angle = pan * 0.7853981633974483f; // in radians from -45. to +45.
+		float cosAngle = FloatMath.cos(angle);
+		float sinAngle = FloatMath.sin(angle);
+		leftVolume  = (float)((cosAngle - sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
+		rightVolume = (float)((cosAngle + sinAngle) * 0.7071067811865475) * vol; // multiplied by sqrt(2)/2
 		if(stream){
 			if(player!=null) player.setVolume(leftVolume, rightVolume);
 		}else if(streamID!=-1){
@@ -98,6 +100,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	void setPan(float vol){
 		pan = vol;
+		// in Android, panning is done by setting the volume on individual channels
 		setVolume(volume);
 	}
 	
@@ -136,12 +139,12 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	}
 	
 	void setMultiPlay(boolean bMp){
-		if(multiPlay==bMp) return;
 		multiPlay = bMp;
-		if(fileName!=null){
+		if(fileName!=null && multiPlay && stream){
+			Log.w("OF", "multiplay only supported as no stream, reloading " + fileName + " as no stream");
 			String currFileName = fileName;
 			unloadSound();
-			loadSound(currFileName, !bMp);
+			loadSound(currFileName, false);
 		}
 	}
 	
@@ -179,7 +182,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	}
 	
 	float getPan(){
-		return pan/2.f+1;
+		return pan;
 	}
 	
 	boolean isLoaded(){
@@ -199,7 +202,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	@Override
 	protected void appResume() {
 		if(bIsLoaded){
-			loadSound(fileName, !multiPlay);
+			loadSound(fileName, stream);
 		}
 	}
 

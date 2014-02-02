@@ -7,16 +7,27 @@ class ofxButton : public ofxToggle{
 	friend class ofPanel;
 	
 public:
-
+	ofxButton();
+	~ofxButton();
 	ofxButton* setup(string toggleName, float width = defaultWidth, float height = defaultHeight);
 
-	virtual void mouseReleased(ofMouseEventArgs & args);
-	virtual void mouseMoved(ofMouseEventArgs & args);
-	virtual void mousePressed(ofMouseEventArgs & args);
-	virtual void mouseDragged(ofMouseEventArgs & args);
-	
+	virtual bool mouseReleased(ofMouseEventArgs & args);
+	virtual bool mouseMoved(ofMouseEventArgs & args);
+	virtual bool mousePressed(ofMouseEventArgs & args);
+	virtual bool mouseDragged(ofMouseEventArgs & args);
 
-	virtual void saveToXml(ofxXmlSettings& xml) {} // does't make sense to save buttons;
-	virtual void loadFromXml(ofxXmlSettings& xml) {}
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method){
+		ofAddListener(triggerEvent,listener,method);
+	}
+
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method){
+		ofRemoveListener(triggerEvent,listener,method);
+	}
+
+private:
+	ofEvent<void> triggerEvent;
+	void valueChanged(bool & v);
 
 };

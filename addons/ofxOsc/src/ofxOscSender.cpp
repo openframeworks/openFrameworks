@@ -29,6 +29,7 @@
 
 #include "ofxOscSender.h"
 #include "ofUtils.h"
+#include "ofParameterGroup.h"
 
 
 #include "UdpSocket.h"
@@ -87,6 +88,64 @@ void ofxOscSender::sendMessage( ofxOscMessage& message )
 	socket->Send( p.Data(), p.Size() );
 }
 
+void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()) return;
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		string address = "/";
+		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+		for(int i=0;i<(int)hierarchy.size()-1;i++){
+			address+=hierarchy[i] + "/";
+		}
+		ofxOscBundle bundle;
+		appendParameter(bundle,parameter,address);
+		sendBundle(bundle);
+	}else{
+		string address = "";
+		const vector<string> hierarchy = parameter.getGroupHierarchyNames();
+		for(int i=0;i<(int)hierarchy.size()-1;i++){
+			address+= "/" + hierarchy[i];
+		}
+		if(address.length()) address += "/";
+		ofxOscMessage msg;
+		appendParameter(msg,parameter,address);
+		sendMessage(msg);
+	}
+}
+
+
+void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractParameter & parameter, string address){
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		ofxOscBundle bundle;
+		const ofParameterGroup & group = static_cast<const ofParameterGroup &>(parameter);
+		for(int i=0;i<group.size();i++){
+			const ofAbstractParameter & p = group[i];
+			if(p.isSerializable()){
+				appendParameter(bundle,p,address+group.getEscapedName()+"/");
+			}
+		}
+		_bundle.addBundle(bundle);
+	}else{
+		if(parameter.isSerializable()){
+			ofxOscMessage msg;
+			appendParameter(msg,parameter,address);
+			_bundle.addMessage(msg);
+		}
+	}
+}
+
+void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, string address){
+	msg.setAddress(address+parameter.getEscapedName());
+	if(parameter.type()==typeid(ofParameter<int>).name()){
+		msg.addIntArg(parameter.cast<int>());
+	}else if(parameter.type()==typeid(ofParameter<float>).name()){
+		msg.addFloatArg(parameter.cast<float>());
+	}else if(parameter.type()==typeid(ofParameter<bool>).name()){
+		msg.addIntArg(parameter.cast<bool>());
+	}else{
+		msg.addStringArg(parameter.toString());
+	}
+}
+
 void ofxOscSender::appendBundle( ofxOscBundle& bundle, osc::OutboundPacketStream& p )
 {
 	// recursively serialise the bundle
@@ -117,7 +176,7 @@ void ofxOscSender::appendMessage( ofxOscMessage& message, osc::OutboundPacketStr
 			p << message.getArgAsString( i ).c_str();
 		else
 		{
-			ofLogError() << "bad argument type" + ofToString(message.getArgType( i ));
+			ofLogError("ofxOscSender") << "appendMessage(): bad argument type " << message.getArgType( i );
 			assert( false );
 		}
 	}

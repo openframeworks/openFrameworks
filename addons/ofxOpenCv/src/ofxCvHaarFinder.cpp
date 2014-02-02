@@ -61,7 +61,7 @@ void ofxCvHaarFinder::setup(string haarFile) {
 	#endif
 
 	if (!cascade)
-        ofLog(OF_LOG_ERROR, "ofxCvHaarFinder:setup: Could not load Haar cascade " + haarFile );
+        ofLogError("ofxCvHaarFinder") << "setup(): couldn't load Haar cascade file: \"" << haarFile << "\"";
 }
 
 
@@ -86,7 +86,7 @@ int ofxCvHaarFinder::findHaarObjects(ofImage& input, int minWidth, int minHeight
 	}else if( input.type == OF_IMAGE_GRAYSCALE ){
 		gray = input.getPixels();
 	}else{
-		ofLog(OF_LOG_ERROR, "ofxCvHaarFinder::findHaarObjects doesn't support OF_IMAGE_RGBA ofImage");
+		ofLogError("ofxCvHaarFinder") << "findHaarObjects(): OF_IMAGE_RGBA image type not supported";
 		return 0;
 	}
 	
@@ -106,7 +106,7 @@ int ofxCvHaarFinder::findHaarObjects(ofPixels& input, int minWidth, int minHeigh
 	}else if( input.getImageType() == OF_IMAGE_GRAYSCALE ){
 		gray.setFromPixels(input);
 	}else{
-		ofLog(OF_LOG_ERROR, "ofxCvHaarFinder::findHaarObjects doesn't support OF_IMAGE_RGBA ofImage");
+		ofLogError("ofxCvHaarFinder") << "findHaarObjects(): OF_IMAGE_RGBA image type not supported";
 		return 0;
 	}
 
@@ -138,7 +138,7 @@ void ofxCvHaarFinder::draw( float x, float y ) {
 	glTranslatef( x, y, 0.0 );
 	
 	ofNoFill();
-	for( int i=0; i<blobs.size(); i++ ) {
+	for(unsigned int i=0; i<blobs.size(); i++ ) {
 		ofRect( blobs[i].boundingRect.x, blobs[i].boundingRect.y, 
 			   blobs[i].boundingRect.width, blobs[i].boundingRect.height );
 	}
@@ -200,7 +200,7 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 		nHaarResults = haarResults->total;
 
 		for (int i = 0; i < nHaarResults; i++ ) {
-			//printf("%i objects\n", i);
+			//ofLogNotice("ofxCvHaarFinder") << "findHaarObjects(): " << i << " objects";
 			
 			ofxCvBlob blob;
 

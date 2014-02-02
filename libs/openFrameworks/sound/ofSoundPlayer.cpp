@@ -26,7 +26,7 @@ void ofSoundUpdate(){
 	#endif
 }
 
-#ifndef TARGET_ANDROID
+#if !defined(TARGET_ANDROID) && !defined(TARGET_LINUX_ARM)
 //--------------------
 void ofSoundShutdown(){
 	#ifdef OF_SOUND_PLAYER_FMOD
@@ -42,7 +42,7 @@ float * ofSoundGetSpectrum(int nBands){
 	#elif defined(OF_SOUND_PLAYER_OPENAL)
 		return ofOpenALSoundPlayer::getSystemSpectrum(nBands);
 	#else
-		ofLog(OF_LOG_ERROR, "ofSoundGetSpectrum returning NULL - no implementation!");
+		ofLogError("ofSoundPlayer") << "ofSoundGetSpectrum(): not implemented, returning NULL";
 		return NULL;
 	#endif
 }

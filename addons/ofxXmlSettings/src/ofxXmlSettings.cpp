@@ -102,6 +102,16 @@ bool ofxXmlSettings::saveFile(){
 }
 
 //---------------------------------------------------------
+bool ofxXmlSettings::load(const string & path){
+	return loadFile(path);
+}
+
+//---------------------------------------------------------
+bool ofxXmlSettings::save(const string & path){
+	return saveFile(path);
+}
+
+//---------------------------------------------------------
 void ofxXmlSettings::clearTagContents(const string& tag, int which){
 	//we check it first to see if it exists
 	//otherwise setValue will make a new empty tag
@@ -202,7 +212,7 @@ bool ofxXmlSettings::pushTag(const string&  tag, int which){
 		level++;
 		return true;
 	}else{
-        ofLog( OF_LOG_ERROR, "pushTag - <" + tag + "> tag not found");
+        ofLogError("ofxXmlSettings") << "pushTag(): tag \"" << tag << "\" not found";
 	}
 
 	return false;
@@ -276,7 +286,7 @@ int ofxXmlSettings::getNumTags(const string&  tag){
 
 	//grab the handle from the level we are at
 	//normally this is the doc but could be a pushed node
-	TiXmlHandle tagHandle = storedHandle;
+	//TiXmlHandle tagHandle = storedHandle;
 
 	int count = 0;
 
@@ -403,6 +413,57 @@ int ofxXmlSettings::addValue(const string& tag, const string& value){
 int ofxXmlSettings::addTag(const string& tag){
 	int tagID = writeTag(tag, "", -1) -1;
 	return tagID;
+}
+
+void ofxXmlSettings::serialize(const ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()) return;
+	string name = parameter.getEscapedName();
+	if(name=="") name="UnknownName";
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		const ofParameterGroup & group = static_cast<const ofParameterGroup&>(parameter);
+		if(!tagExists(name)) addTag(name);
+		pushTag(name);
+		for(int i=0;i<group.size();i++){
+			serialize(group.get(i));
+		}
+		popTag();
+	}else{
+		string value = parameter.toString();
+		if(!tagExists(name))
+			addValue(name,value);
+		else
+			setValue(name,value);
+	}
+}
+
+void ofxXmlSettings::deserialize(ofAbstractParameter & parameter){
+	if(!parameter.isSerializable()) return;
+	string name = parameter.getEscapedName();
+	if(parameter.type()==typeid(ofParameterGroup).name()){
+		ofParameterGroup & group = static_cast<ofParameterGroup&>(parameter);
+		if(tagExists(name)){
+			pushTag(name);
+			for(int i=0;i<group.size();i++){
+				deserialize(group.get(i));
+			}
+			popTag();
+		}
+	}else{
+		if(tagExists(name)){
+			if(parameter.type()==typeid(ofParameter<int>).name()){
+				parameter.cast<int>() = getValue(name,0);
+			}else if(parameter.type()==typeid(ofParameter<float>).name()){
+				parameter.cast<float>() = getValue(name,0.0f);
+			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
+				parameter.cast<bool>() = getValue(name,false);
+			}else if(parameter.type()==typeid(ofParameter<string>).name()){
+				parameter.cast<string>() = getValue(name,"");
+			}else{
+				parameter.fromString(getValue(name,""));
+			}
+		}
+	}
+
 }
 
 /*******************

@@ -18,6 +18,7 @@
 string generateUUID(string input);
 
 string getOFRoot();
+string getAddonsRoot();
 void setOFRoot(string path);
 void findandreplace( std::string& tInput, std::string tFind, std::string tReplace );
 void findandreplaceInTexfile (string fileName, string tFind, string tReplace );
@@ -31,6 +32,8 @@ pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribut
 void getFoldersRecursively(const string & path, vector < string > & folderNames, string platform);
 void getFilesRecursively(const string & path, vector < string > & fileNames);
 void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform = "" );
+void getFrameworksRecursively( const string & path, vector < string > & frameworks,  string platform = "" );
+
 
 void splitFromLast(string toSplit, string deliminator, string & first, string & second);
 void splitFromFirst(string toSplit, string deliminator, string & first, string & second);
