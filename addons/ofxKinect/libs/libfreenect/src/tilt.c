@@ -260,15 +260,15 @@ int freenect_set_led_alt(freenect_device *dev, freenect_led_options state)
     
     //The LED states are different between K4W/1473 and older 1414 
     if( state == LED_GREEN ){
-        state = LED_ALT_SOLID_GREEN;
+        state = (freenect_led_options)LED_ALT_SOLID_GREEN;
     }else if( state == LED_RED ){
-        state = LED_ALT_SOLID_RED;
+        state = (freenect_led_options)LED_ALT_SOLID_RED;
     }else if( state == LED_YELLOW ){
-        state = LED_ALT_SOLID_GREEN;
+        state = (freenect_led_options)LED_ALT_SOLID_GREEN;
     }else if( state == LED_OFF ){
-        state = LED_ALT_OFF;
+        state = (freenect_led_options)LED_ALT_OFF;
     }else if( state == LED_BLINK_GREEN ){
-        state = LED_ALT_BLINK_GREEN;
+        state = (freenect_led_options)LED_ALT_BLINK_GREEN;
     }else{
         state = LED_GREEN;
     }

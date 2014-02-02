@@ -152,7 +152,7 @@ FN_INTERNAL int upload_firmware(fnusb_dev* dev, char * filename) {
 				if (!envpath)
 					continue;
 				int pathlen = strlen(envpath);
-				fwfile = malloc(pathlen + filenamelen + 1);
+				fwfile = (char *)malloc(pathlen + filenamelen + 1);
 				strcpy(fwfile, envpath);
 				strcat(fwfile, fw_filename);
 				needs_free = 1;
@@ -160,7 +160,7 @@ FN_INTERNAL int upload_firmware(fnusb_dev* dev, char * filename) {
 				break;
 			case 1:
 				//fwfile = "./audios.bin";
-				fwfile = malloc(2048);
+				fwfile = (char *)malloc(2048);
                 needs_free = 1;
                 sprintf(fwfile, ".%s", fw_filename);
 				break;
@@ -186,13 +186,13 @@ FN_INTERNAL int upload_firmware(fnusb_dev* dev, char * filename) {
 				break;
 			case 4:
 				//fwfile = "/usr/share/libfreenect/audios.bin";
-				fwfile = malloc(2048);
+				fwfile = (char *)malloc(2048);
                 needs_free = 1;
                 sprintf(fwfile, "/usr/share/libfreenect%s", fw_filename);
 				break;
 			case 5:
                 //fwfile = "./../Resources/audios.bin"; //default for OS X equivilant to: "./audios.bin";
-				fwfile = malloc(2048);
+				fwfile = (char *)malloc(2048);
                 needs_free = 1;
                 sprintf(fwfile, "./../Resources%s", fw_filename);
 				break;
@@ -219,7 +219,7 @@ FN_INTERNAL int upload_firmware(fnusb_dev* dev, char * filename) {
 		return -errno;
     }
     
-    unsigned char * fw_bytes = malloc(fw_num_bytes);
+    unsigned char * fw_bytes = (unsigned char *)malloc(fw_num_bytes);
     int numRead = fread(fw_bytes, 1, fw_num_bytes, fw);
     fw_num_bytes = numRead; // just in case
 
