@@ -31,22 +31,22 @@
 
 
 #include "ofxMultiTouch.h"
-#include "ofxiPhoneApp.h"
+#include "ofxiOSApp.h"
 
 ofxMultiTouchHandler ofxMultiTouch;
 
-void ofxRegisterMultitouch(ofxiPhoneApp * app){
-	ofAddListener(ofEvents().touchDown, app, &ofxiPhoneApp::touchDown);
-	ofAddListener(ofEvents().touchUp, app, &ofxiPhoneApp::touchUp);
-	ofAddListener(ofEvents().touchMoved, app, &ofxiPhoneApp::touchMoved);
-	ofAddListener(ofEvents().touchDoubleTap, app, &ofxiPhoneApp::touchDoubleTap);
-	ofAddListener(ofEvents().touchCancelled, app, &ofxiPhoneApp::touchCancelled);
+void ofxRegisterMultitouch(ofxiOSApp * app){
+	ofAddListener(ofEvents().touchDown, app, &ofxiOSApp::touchDown);
+	ofAddListener(ofEvents().touchUp, app, &ofxiOSApp::touchUp);
+	ofAddListener(ofEvents().touchMoved, app, &ofxiOSApp::touchMoved);
+	ofAddListener(ofEvents().touchDoubleTap, app, &ofxiOSApp::touchDoubleTap);
+	ofAddListener(ofEvents().touchCancelled, app, &ofxiOSApp::touchCancelled);
 }
 
-void ofxUnregisterMultitouch(ofxiPhoneApp * app){
-	ofRemoveListener(ofEvents().touchDown, app, &ofxiPhoneApp::touchDown);
-	ofRemoveListener(ofEvents().touchUp, app, &ofxiPhoneApp::touchUp);
-	ofRemoveListener(ofEvents().touchMoved, app, &ofxiPhoneApp::touchMoved);
-	ofRemoveListener(ofEvents().touchDoubleTap, app, &ofxiPhoneApp::touchDoubleTap);
-	ofRemoveListener(ofEvents().touchCancelled, app, &ofxiPhoneApp::touchCancelled);
+void ofxUnregisterMultitouch(ofxiOSApp * app){
+	ofRemoveListener(ofEvents().touchDown, app, &ofxiOSApp::touchDown);
+	ofRemoveListener(ofEvents().touchUp, app, &ofxiOSApp::touchUp);
+	ofRemoveListener(ofEvents().touchMoved, app, &ofxiOSApp::touchMoved);
+	ofRemoveListener(ofEvents().touchDoubleTap, app, &ofxiOSApp::touchDoubleTap);
+	ofRemoveListener(ofEvents().touchCancelled, app, &ofxiOSApp::touchCancelled);
 }

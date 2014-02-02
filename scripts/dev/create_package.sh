@@ -1,5 +1,5 @@
 #!/bin/bash
-# $1 -> platform: win_cb, linux, linux64, vs2008, osx, osxSL, ios, all
+# $1 -> platform: win_cb, linux, linux64, vs, osx, ios, all
 # $2 -> version number: 006
 
 platform=$1
@@ -7,7 +7,7 @@ version=$2
 
 REPO=https://github.com/openframeworks/openFrameworks
 REPO_ALIAS=upstreamhttps
-BRANCH=develop
+BRANCH=master
 
 PG_REPO=https://github.com/ofZach/projectGeneratorSimple.git
 PG_REPO_ALIAS=originhttps
@@ -15,17 +15,11 @@ PG_BRANCH=master
 
 hostArch=`uname`
 
-#if [ "$platform" = "osxSL" ]; then
-#    platform="osx"
-#    runOSXSLScript=1
-#    echo "will make changes for snow leopard"
-#fi
-
-if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "vs2008" ] && [ "$platform" != "vs2010" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
+if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs2008, vs2010, osx, android, ios, all
+    echo win_cb, linux, linux64, linuxarmv6l, linuxarmv7l, vs, osx, android, ios, all
     exit 1
 fi
 
@@ -33,7 +27,7 @@ if [ "$version" == "" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
-    echo win_cb, linux, linux64, vs2008, osx, android, all
+    echo win_cb, linux, linux64, vs, osx, android, ios, all
     exit 1
 fi
 
@@ -91,23 +85,8 @@ function deleteMakefiles {
     rm *.make
 }
 
-function deleteVS2008 {
-    #delete vs2008 files
-    rm *.vcproj
-    rm *.vcproj.user
-    rm *_vs2008.sln
-}
-
-function deleteVS2010 {
-    #delete vs2010 files
-    rm *.vcxproj
-    rm *.vcxproj.user
-    rm *.vcxproj.filters
-    rm *_vs2010.sln
-}
-
 function deleteVS {
-    #delete vs2010 files
+    #delete VS files
     rm *.vcxproj
     rm *.vcxproj.user
     rm *.vcxproj.filters
@@ -138,12 +117,8 @@ function createPackage {
     
     #remove previously created package 
     cd $pkg_ofroot/..
-	#if [ $runOSXSLScript = 1 ]; then
-	#	rm -Rf of_v${pkg_version}_osxSL*
-	#else
-	    rm -Rf of_v${pkg_version}_${pkg_platform}.*
-		rm -Rf of_v${pkg_version}_${pkg_platform}_*
-    #fi
+	rm -Rf of_v${pkg_version}_${pkg_platform}.*
+	rm -Rf of_v${pkg_version}_${pkg_platform}_*
     echo "creating package $pkg_platform $version in $pkg_ofroot"
     
     #remove devApps folder
@@ -179,18 +154,53 @@ function createPackage {
 		rm -Rf sound
 		rm -Rf utils
 		rm -Rf video
+		rm -Rf gles
+		rm -Rf gui
 	fi 
 	
-	#delete drag & drop examples in linux, still not working
-	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
-	    rm -Rf utils/dragDropExample
+	#delete osx examples in linux
+	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ] || [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
 	fi
 	
-	if [ "$pkg_platform" == "win_cb" ] || [ "$pkg_platform" == "vs2010" ]; then
+	if [ "$pkg_platform" == "linux" ] || [ "$pkg_platform" == "linux64" ]; then
+	    rm -Rf gles
+	fi
+	
+	if [ "$pkg_platform" == "linuxarmv6l" ] || [ "$pkg_platform" == "linuxarmv7l" ]; then
+	    rm -Rf addons/3DModelLoaderExample
+        rm -Rf addons/allAddonsExample
+        rm -Rf addons/assimpExample
+        rm -Rf addons/kinectExample
+        rm -Rf addons/vectorGraphicsExample
+        
+	    rm -Rf gl/glInfoExample
+        rm -Rf gl/alphaMaskingShaderExample
+        rm -Rf gl/billboardExample
+        rm -Rf gl/billboardRotationExample
+        rm -Rf gl/multiLightExample
+        rm -Rf gl/multiTextureShaderExample
+        rm -Rf gl/pointsAsTextures
+        rm -Rf gl/gpuParticleSystemExample
+        rm -Rf gl/vboMeshDrawInstancedExample
+        
+        rm -Rf 3d/modelNoiseExample
+    fi
+    
+    if [ "$pkg_platform" == "linuxarmv6l" ]; then
+        rm -Rf utils/dragDropExample
+        rm -Rf utils/fileOpenSaveDialogExample
+	fi
+	
+	if [ "$pkg_platform" == "win_cb" ] || [ "$pkg_platform" == "vs" ]; then
 	    rm -Rf video/osxHighPerformanceVideoPlayerExample
 	    rm -Rf video/osxVideoRecorderExample
+	    rm -Rf gles
+	fi
+	
+	if [ "$pkg_platform" == "osx" ]; then
+	    rm -Rf gles
 	fi
     
 	
@@ -201,73 +211,81 @@ function createPackage {
 
     #delete other platform libraries
     if [ "$pkg_platform" = "linux" ]; then
-        otherplatforms="linux64 osx win_cb vs2008 vs2010 ios android"
+        otherplatforms="linux64 linuxarmv6l linuxarmv7l osx win_cb vs ios android"
     fi
 
     if [ "$pkg_platform" = "linux64" ]; then
-        otherplatforms="linux osx win_cb vs2008 vs2010 ios android"
+        otherplatforms="linux linuxarmv6l linuxarmv7l osx win_cb vs ios android"
     fi
 
+    if [ "$pkg_platform" = "linuxarmv6l" ]; then
+        otherplatforms="linux64 linux linuxarmv7l osx win_cb vs ios android"
+    fi
+    
+    if [ "$pkg_platform" = "linuxarmv7l" ]; then
+        otherplatforms="linux64 linux linuxarmv6l osx win_cb vs ios android"
+    fi
+    
     if [ "$pkg_platform" = "osx" ]; then
-        otherplatforms="linux linux64 win_cb vs2008 vs2010 ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l win_cb vs ios android"
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 osx vs2008 vs2010 ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios android makefileCommon"
     fi
 
-    if [ "$pkg_platform" = "vs2008" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2010 ios android makefileCommon"
-    fi
-
-    if [ "$pkg_platform" = "vs2010" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2008 ios android makefileCommon"
+    if [ "$pkg_platform" = "vs" ]; then
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx win_cb ios android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 win_cb vs2008 vs2010 android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l win_cb vs android makefileCommon"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
-        otherplatforms="linux linux64 osx win_cb vs2008 vs2010 ios"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx win_cb vs ios"
     fi
     
     
 	#download and uncompress PG
 	cd $pkg_ofroot
+	rm -rf projectGenerator
     if [ "$pkg_platform" = "win_cb" ]; then
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_wincb.zip
+		rm projectGenerator_wincb.zip
+		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v02/projectGenerator_wincb.zip
 		unzip projectGenerator_wincb.zip
 		rm projectGenerator_wincb.zip
 		rm -Rf __MACOSX
 	fi
-    if [ "$pkg_platform" = "vs2010" ]; then
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_winvs.zip
+    if [ "$pkg_platform" = "vs" ]; then
+		rm projectGenerator_winvs.zip
+		wget http://www.openframeworks.cc/pgSimple/projectGenerator_winvs.zip
 		unzip projectGenerator_winvs.zip
 		rm projectGenerator_winvs.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "osx" ]; then
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_osx.zip
+		rm projectGenerator_osx.zip
+		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v02/projectGenerator_osx.zip
 		unzip projectGenerator_osx.zip
 		rm projectGenerator_osx.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "ios" ]; then
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v01/projectGenerator_ios.zip
+		rm projectGenerator_ios.zip
+		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v02/projectGenerator_ios.zip
 		unzip projectGenerator_ios.zip
 		rm projectGenerator_ios.zip
 		rm -Rf __MACOSX
 	fi
 	
 	# linux remove other platform projects from PG source and copy ofxGui
-	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
 		cd apps/projectGenerator/projectGeneratorSimple
 		deleteCodeblocks
 		deleteVS
 		deleteXcode
 		rm -Rf .git*
-		cp -R $pkg_ofroot/addons/ofxGui src/
 	fi
 
     #delete libraries for other platforms
@@ -282,9 +300,9 @@ function createPackage {
     done
     if [ "$pkg_platform" = "osx" ]; then
         rm -Rf $libsnotinmac
-    elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ]; then
+    elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         rm -Rf $libsnotinlinux
-    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs2008" ] || [ "$pkg_platform" = "vs2010" ]; then
+    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs" ]; then
         rm -Rf $libsnotinwindows
     elif [ "$pkg_platform" = "android" ]; then
         rm -Rf $libsnotinandroid
@@ -304,7 +322,6 @@ function createPackage {
     
 	#delete ofxSynth addon, still not stable
 	rm -Rf ofxSynth
-	rm -Rf ofxGui
     
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
@@ -313,6 +330,7 @@ function createPackage {
 	#delete ofxiPhone in non ios
 	if [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxiPhone
+		rm -Rf ofxiOS
 	fi
 	
 	#delete ofxMultiTouch & ofxAccelerometer in non mobile
@@ -322,7 +340,7 @@ function createPackage {
 	fi
 
 	#delete eclipse projects
-	if [ "$pkg_platform" != "android" ]; then
+	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
 		cd ${pkg_ofroot}
 		deleteEclipse
 		rm -R libs/openFrameworks/.settings
@@ -367,11 +385,22 @@ function createPackage {
 
     #delete scripts
     cd $pkg_ofroot/scripts
-	if [ "$pkg_platform" != "linux64" ]; then
+	if [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
     	rm -Rf $otherplatforms
 	else
-    	rm -Rf win_cb vs2008 vs2010 osx ios
+    	rm -Rf win_cb vs osx ios
 	fi
+	
+    #delete omap4 scripts for non armv7l
+	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv6l" ]; then
+	    rm -Rf linux/ubuntu-omap4
+	fi
+	
+    #delete armv6 scripts for non armv6l
+	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
+	    rm -Rf linux/debian_armv6l
+	fi
+	
 	if [ "$pkg_platform" == "ios" ]; then
 		rm -Rf osx
 	fi
@@ -414,28 +443,25 @@ function createPackage {
     
     #choose readme
     cd $pkg_ofroot
-    if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ]; then
-        mv readme.linux readme
+    if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ]; then
+        cp docs/linux.md INSTALL.md
     fi
     
-    if [ "$platform" = "vs2008" ]; then
-        mv readme.vs2008 readme
+    if [ "$platform" = "vs" ]; then
+        cp docs/visualstudio.md INSTALL.md
     fi
     
     if [ "$platform" = "win_cb" ]; then
-        mv readme.win_cb readme
+        cp docs/codeblocks.md INSTALL.md
     fi
     
     if [ "$platform" = "osx" ] || [ "$platform" = "ios" ]; then
-        mv readme.osx readme
+        cp docs/osx.md INSTALL.md
     fi
 
     if [ "$platform" = "android" ]; then
-        mv readme.android readme
+        cp docs/android.md INSTALL.md
     fi
-    
-    rm readme.*
-    mv readme readme.txt
     
     rm CONTRIBUTING.md
 
@@ -451,7 +477,7 @@ function createPackage {
     fi
     
     #create compressed package
-    if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ]; then
+    if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
         tar czf of_v${pkg_version}_${pkg_platform}_release.tar.gz of_v${pkg_version}_${pkg_platform}_release
@@ -467,7 +493,7 @@ function createPackage {
 
 
 if [ "$platform" = "all" ]; then
-    for eachplatform in win_cb linux linux64 vs2008 vs2010 osx 
+    for eachplatform in win_cb linux linux64 vs osx 
     do
         cd $packageroot
         mkdir of_v${version}_${eachplatform}

@@ -18,6 +18,7 @@
 class ofMaterial {
 public:
 	ofMaterial();
+	virtual ~ofMaterial(){};
 	
 	// set colors
 	void setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor emissive);
@@ -45,9 +46,9 @@ private:
 	float shininess;
 
 
-	ofFloatColor prev_diffuse;
-	ofFloatColor prev_ambient;
-	ofFloatColor prev_specular;
-	ofFloatColor prev_emissive;
-	float prev_shininess;
+	ofFloatColor prev_diffuse, prev_diffuse_back;
+	ofFloatColor prev_ambient, prev_ambient_back;
+	ofFloatColor prev_specular, prev_specular_back;
+	ofFloatColor prev_emissive, prev_emissive_back;
+	float prev_shininess, prev_shininess_back;
 };

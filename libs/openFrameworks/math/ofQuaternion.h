@@ -108,7 +108,6 @@ public:
     // METHODS RELATED TO ROTATIONS
     // Set a quaternion which will perform a rotation of an
     // angle around the axis given by the vector(x,y,z).
-    // Should be written to also accept an angle and a Vec3?
     
     // Define Spherical Linear interpolation method also
     void makeRotate(float angle, float x, float y, float z);

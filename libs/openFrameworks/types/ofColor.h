@@ -24,8 +24,29 @@ class ofColor_{
 		static ofColor_<PixelType> fromHsb (float hue, float saturation, float brightness, float alpha = limit());
 		static ofColor_<PixelType> fromHex (int hexColor, float alpha = limit());
 		
-		static const ofColor_<PixelType> white, gray, black, red, green, blue, cyan, magenta, yellow;
-	
+        // these are based on CSS named colors
+        // http://www.w3schools.com/cssref/css_colornames.asp
+    
+        static const ofColor_<PixelType> white, gray, black, red, green, blue, cyan, magenta,
+        yellow,aliceBlue,antiqueWhite,aqua,aquamarine,azure,beige,bisque,blanchedAlmond,
+        blueViolet,brown,burlyWood,cadetBlue,chartreuse,chocolate,coral,cornflowerBlue,cornsilk,
+        crimson,darkBlue,darkCyan,darkGoldenRod,darkGray,darkGrey,darkGreen,darkKhaki,
+        darkMagenta,darkOliveGreen,darkorange,darkOrchid,darkRed,darkSalmon,darkSeaGreen,
+        darkSlateBlue,darkSlateGray,darkSlateGrey,darkTurquoise,darkViolet,deepPink,
+        deepSkyBlue,dimGray,dimGrey,dodgerBlue,fireBrick,floralWhite,forestGreen,fuchsia,
+        gainsboro,ghostWhite,gold,goldenRod,grey,greenYellow,honeyDew,hotPink,indianRed,indigo,
+        ivory,khaki,lavender,lavenderBlush,lawnGreen,lemonChiffon,lightBlue,lightCoral,
+        lightCyan,lightGoldenRodYellow,lightGray,lightGrey,lightGreen,lightPink,lightSalmon,
+        lightSeaGreen,lightSkyBlue,lightSlateGray,lightSlateGrey,lightSteelBlue,lightYellow,
+        lime,limeGreen,linen,maroon,mediumAquaMarine,mediumBlue,mediumOrchid,mediumPurple,
+        mediumSeaGreen,mediumSlateBlue,mediumSpringGreen,mediumTurquoise,mediumVioletRed,
+        midnightBlue,mintCream,mistyRose,moccasin,navajoWhite,navy,oldLace,olive,oliveDrab,
+        orange,orangeRed,orchid,paleGoldenRod,paleGreen,paleTurquoise,paleVioletRed,papayaWhip,
+        peachPuff,peru,pink,plum,powderBlue,purple,rosyBrown,royalBlue,saddleBrown,salmon,
+        sandyBrown,seaGreen,seaShell,sienna,silver,skyBlue,slateBlue,slateGray,slateGrey,snow,
+        springGreen,steelBlue,blueSteel,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
+        yellowGreen;
+    
 		void set (float _r, float _g, float _b, float _a = limit());
 		void set (float _gray, float _a = limit());
 		void set (ofColor_<PixelType> const & color);
@@ -43,14 +64,16 @@ class ofColor_{
 		ofColor_<PixelType> getNormalized () const;
 		ofColor_<PixelType> getLerped(const ofColor_<PixelType>& target, float amount) const;
 		
-		float getHue () const;
+		float getHue () const; // 0-255
+		float getHueAngle () const; // 0-360
 		float getSaturation () const;
 		float getBrightness () const; // brightest component
 		float getLightness () const; // average of the components
 		void getHsb(float& hue, float& saturation, float& brightness) const;
 		
-		void setHue (float hue);
-		void setSaturation (float saturation);
+		void setHue (float hue); // 0-255
+		void setHueAngle (float angle); // 0-360
+		void setSaturation (float saturation); // uses hsb, not hsl. so red desaturated is white, not gray http://en.wikipedia.org/wiki/HSL_and_HSV
 		void setBrightness (float brightness);
 		void setHsb(float hue, float saturation, float brightness, float alpha = limit() );
 		

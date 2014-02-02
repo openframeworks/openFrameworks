@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFXANDROIDAPP_H_
-#define OFXANDROIDAPP_H_
+#pragma once
 
 #include "ofBaseApp.h"
 #include "ofEvents.h"
@@ -26,6 +25,7 @@ public:
 	virtual void stop(){};
 	virtual void resume(){};
 	virtual void reloadTextures(){}
+	virtual void unloadTextures(){}
 
 	virtual void touchDown(int x, int y, int id) {};
 	virtual void touchMoved(int x, int y, int id) {};
@@ -68,6 +68,3 @@ public:
 	virtual void cancelPressed(){};
 	virtual void networkConnected(bool connected){};
 };
-
-
-#endif /* OFXANDROIDAPP_H_ */

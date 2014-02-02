@@ -7,6 +7,7 @@
 #include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofGLUtils.h"
+#include <map>
 
 class ofVbo {
 public:
@@ -17,7 +18,8 @@ public:
 	~ofVbo();
 
 	void setMesh(const ofMesh & mesh, int usage);
-
+	void setMesh(const ofMesh & mesh, int usage, bool useColors, bool useTextures, bool useNormals);
+	
 	void setVertexData(const ofVec3f * verts, int total, int usage);
 	void setVertexData(const ofVec2f * verts, int total, int usage);
 
@@ -31,6 +33,8 @@ public:
 	void setNormalData(const float * normal0x, int total, int usage, int stride=0);
 	void setTexCoordData(const float * texCoord0x, int total, int usage, int stride=0);
 	
+	void setAttributeData(int location, const float * vert0x, int numCoords, int total, int usage, int stride=sizeof(float));
+
 	void updateMesh(const ofMesh & mesh);
 
 	void updateVertexData(const ofVec3f * verts, int total);
@@ -45,6 +49,8 @@ public:
 	void updateNormalData(const float * normal0x, int total);
 	void updateTexCoordData(const float * texCoord0x, int total);
 	
+	void updateAttributeData(int location, const float * vert0x, int total);
+
 	void enableColors();
 	void enableNormals();
 	void enableTexCoords();
@@ -55,21 +61,25 @@ public:
 	void disableTexCoords();
 	void disableIndices();
 
-	GLuint getVertId();
-	GLuint getColorId();
-	GLuint getNormalId();
-	GLuint getTexCoordId();
-	GLuint getIndexId();
+	GLuint getVertId() const;
+	GLuint getColorId() const;
+	GLuint getNormalId() const;
+	GLuint getTexCoordId() const;
+	GLuint getIndexId() const;
 	
-	bool getIsAllocated();
-	bool getUsingVerts();
-	bool getUsingColors();
-	bool getUsingNormals();
-	bool getUsingTexCoords();
-	bool getUsingIndices();
+	bool getIsAllocated() const;
+	bool getUsingVerts() const;
+	bool getUsingColors() const;
+	bool getUsingNormals() const;
+	bool getUsingTexCoords() const;
+	bool getUsingIndices() const;
 	
 	void draw(int drawMode, int first, int total);
 	void drawElements(int drawMode, int amt);
+	
+	void drawInstanced(int drawMode, int first, int total, int primCount);
+	void drawElementsInstanced(int drawMode, int amt, int primCount);
+	
 	void bind();
 	void unbind();
 
@@ -81,7 +91,16 @@ public:
 	void clearTexCoords();
 	void clearIndices();
 
+	int getNumVertices() const;
+	int getNumIndices() const;
+	
+
+	static void disableVAOs();
+	static void enableVAOs();
+
 private:
+	GLuint vaoID;
+	bool vaoChanged;
 
 	GLuint indexId;
 
@@ -105,11 +124,19 @@ private:
 
 	int		vertSize;
 	int		totalVerts;
+	int		totalIndices;
 
 	int vertUsage;
 	int colorUsage;
 	int normUsage;
 	int texUsage;
 
+	bool bBound;
 
+	map<int,GLuint> attributeIds;
+	map<int,int> attributeStrides;
+	map<int,int> attributeNumCoords;
+
+	static bool vaoChecked;
+	static bool supportVAOs;
 };

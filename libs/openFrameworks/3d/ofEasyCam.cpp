@@ -26,7 +26,7 @@ ofEasyCam::ofEasyCam(){
 	bInsideArcball = true;
 	bValidClick = false;
 	bEnableMouseMiddleButton = true;
-	
+	bAutoDistance = true;
 	doTranslationKey = 'm';
 	
 	reset();
@@ -40,10 +40,11 @@ ofEasyCam::~ofEasyCam(){
 }
 //----------------------------------------
 void ofEasyCam::update(ofEventArgs & args){
-	if(bMouseInputEnabled){
-		if(!bDistanceSet){
-			setDistance(getImagePlaneDistance(viewport), true);
-		}
+    if(!bDistanceSet && bAutoDistance){
+        setDistance(getImagePlaneDistance(viewport), true);
+    }
+    if(bMouseInputEnabled){
+	
 		rotationFactor = sensitivityRot * 180 / min(viewport.width, viewport.height);
 		if (bMouseInputEnabled) {
 			updateMouse();
@@ -112,6 +113,13 @@ void ofEasyCam::setDistance(float distance, bool save){//should this be the dist
 //----------------------------------------
 float ofEasyCam::getDistance() const {
 	return target.getPosition().distance(getPosition());
+}
+//----------------------------------------
+void ofEasyCam::setAutoDistance(bool bAutoDistance){
+    this->bAutoDistance = bAutoDistance;
+    if (bAutoDistance) {
+        bDistanceSet = false;
+    }
 }
 //----------------------------------------
 void ofEasyCam::setDrag(float drag){
@@ -198,11 +206,12 @@ void ofEasyCam::updateMouse(){
 		if(lastTap != 0 && curTap - lastTap < doubleclickTime){
 			reset();
 		}
-		if ((bEnableMouseMiddleButton && ofGetMousePressed(1)) || ofGetKeyPressed(doTranslationKey)  || ofGetMousePressed(2)){
+                
+		if ((bEnableMouseMiddleButton && ofGetMousePressed(OF_MOUSE_BUTTON_MIDDLE)) || ofGetKeyPressed(doTranslationKey)  || ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)){
 			bDoTranslate = true;
 			bDoRotate = false;
 			bApplyInertia = false;
-		}else if (ofGetMousePressed(0)) {
+		}else if (ofGetMousePressed(OF_MOUSE_BUTTON_LEFT)) {
 			bDoTranslate = false;
 			bDoRotate = true;
 			bApplyInertia = false;
@@ -224,28 +233,35 @@ void ofEasyCam::updateMouse(){
 			bApplyInertia = true;
 			bValidClick = false;
 		}else {
+			int vFlip;
+			if(isVFlipped()){
+				vFlip = -1;
+			}else{
+				vFlip =  1;
+			}
+
 			mouseVel = mouse  - lastMouse;
 			
 			if (bDoTranslate) {
 				moveX = 0;
 				moveY = 0;
 				moveZ = 0;
-				if (ofGetMousePressed(2)) {
-					moveZ = mouseVel.y * sensitivityZ * getDistance() / viewport.height;				
+				if (ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)) {
+					moveZ = mouseVel.y * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;				
 				}else {
-					moveX = -mouseVel.x * sensitivityXY * getDistance() /viewport.width;
-					moveY =  mouseVel.y * sensitivityXY * getDistance() /viewport.height;
+					moveX = -mouseVel.x * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.width;
+					moveY = vFlip * mouseVel.y * sensitivityXY * (getDistance() + FLT_EPSILON)/viewport.height;
 				}
 			}else {
 				xRot = 0;
 				yRot = 0;
 				zRot = 0;
 				if (bInsideArcball) {
-					xRot = -mouseVel.y * rotationFactor;
+					xRot = vFlip * -mouseVel.y * rotationFactor;
 					yRot = -mouseVel.x * rotationFactor;
 				}else {
 					ofVec2f center(viewport.width/2, viewport.height/2);
-					zRot = - ofVec2f(mouse.x - viewport.x - center.x, mouse.y -viewport.y -center.y).angle(lastMouse - ofVec2f(viewport.x, viewport.y) - center);
+					zRot = - vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(lastMouse - ofVec2f(viewport.x, viewport.y) - center);
 				}
 			}
 			lastMouse = mouse;

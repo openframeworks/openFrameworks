@@ -65,7 +65,7 @@ void ofxAndroidSoundStream::setOutput(ofBaseSoundOutput * _soundOutput){
 
 bool ofxAndroidSoundStream::setup(int outChannels, int _inChannels, int _sampleRate, int bufferSize, int nBuffers){
 	if(instance!=NULL && instance!=this){
-		ofLog(OF_LOG_ERROR,"ofxAndroidSoundStream: error, only one instance allowed by now");
+		ofLogError("ofxAndroidSoundStream") << "setup(): multiple instances detected, only one instance allowed";
 		return false;
 	}
 
@@ -92,24 +92,24 @@ bool ofxAndroidSoundStream::setup(int outChannels, int _inChannels, int _sampleR
 
 	// JNI: Try to find and call OFAndroidSoundStream.getInstance().setup(outChannels,inChannels,sampleRate,bufferSize,nBuffers)
 	if(!ofGetJavaVMPtr()){
-		ofLog(OF_LOG_ERROR,"ofSoundStreamSetup: Cannot find java virtual machine");
+		ofLogError("ofxAndroidSoundStream") << "setup(): couldn't find java virtual machine";
 		return false;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundStream") << "setup(): couldn't get environment using GetEnv()";
 		return false;
 	}
 	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroidSoundStream");
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroidSoundStream java class");
+		ofLogError("ofxAndroidSoundStream") << "setup(): couldn't find OFAndroidSoundStream java class";
 		return false;
 	}
 
 	jmethodID soundStreamSingleton = env->GetStaticMethodID(javaClass,"getInstance","()Lcc/openframeworks/OFAndroidSoundStream;");
 	if(!soundStreamSingleton){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroidSoundStream singleton method");
+		ofLogError("ofxAndroidSoundStream") << "setup(): couldn't find OFAndroidSoundStream singleton method";
 		return false;
 	}
 	jobject javaObject = env->CallStaticObjectMethod(javaClass,soundStreamSingleton);
@@ -118,7 +118,7 @@ bool ofxAndroidSoundStream::setup(int outChannels, int _inChannels, int _sampleR
 	if(javaObject && javaSetup)
 		env->CallVoidMethod(javaObject,javaSetup,outChannels,inChannels,sampleRate,bufferSize,nBuffers);
 	else
-		ofLog(OF_LOG_ERROR, "cannot get OFAndroidSoundStream instance or setup method");
+		ofLogError("ofxAndroidSoundStream") << "setup(): couldn't get OFAndroidSoundStream instance or setup method";
 
 	// Store instance pointer to ofxAndroidSoundStream (singleton pattern)
 	instance = this;
@@ -147,24 +147,24 @@ void ofxAndroidSoundStream::close(){
 
 	// JNI: Try to find and call OFAndroidSoundStream.getInstance().stop()
 	if(!ofGetJavaVMPtr()){
-		ofLog(OF_LOG_ERROR,"ofSoundStreamSetup: Cannot find java virtual machine");
+		ofLogError("ofxAndroidSoundStream") << "close(): couldn't find java virtual machine";
 		return;
 	}
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
-		ofLog(OF_LOG_ERROR,"Failed to get the environment using GetEnv()");
+		ofLogError("ofxAndroidSoundStream") << "close(): couldn't get environment using GetEnv()";
 		return;
 	}
 	jclass javaClass = env->FindClass("cc/openframeworks/OFAndroidSoundStream");
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroidSoundStream java class");
+		ofLogError("ofxAndroidSoundStream") << "close(): couldn't find OFAndroidSoundStream java class";
 		return;
 	}
 
 	jmethodID soundStreamSingleton = env->GetStaticMethodID(javaClass,"getInstance","()Lcc/openframeworks/OFAndroidSoundStream;");
 	if(!soundStreamSingleton){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroidSoundStream singleton method");
+		ofLogError("ofxAndroidSoundStream") << "close(): couldn't find OFAndroidSoundStream singleton method";
 		return;
 	}
 	jobject javaObject = env->CallStaticObjectMethod(javaClass,soundStreamSingleton);
@@ -173,7 +173,7 @@ void ofxAndroidSoundStream::close(){
 	if(javaObject && javaStop)
 		env->CallVoidMethod(javaObject,javaStop);
 	else
-		ofLog(OF_LOG_ERROR, "cannot get OFAndroidSoundStream instance or stop method");
+		ofLogError("ofxAndroidSoundStream") << "close(): couldn't get OFAndroidSoundStream instance or stop method";
 }
 
 long unsigned long ofxAndroidSoundStream::getTickCount(){
@@ -188,6 +188,13 @@ int ofxAndroidSoundStream::getNumOutputChannels(){
 	return outChannels;
 }
 
+int ofxAndroidSoundStream::getSampleRate(){
+	return sampleRate;
+}
+
+int ofxAndroidSoundStream::getBufferSize(){
+	return inBufferSize;
+}
 
 void ofxAndroidSoundStream::pause(){
 	isPaused = true;
@@ -295,13 +302,13 @@ int ofxAndroidSoundStream::getMinOutBufferSize(int samplerate, int nchannels){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroidSoundStream");
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroidSoundStream java class");
+		ofLogError("ofxAndroidSoundStream") << "getMinOutBufferSize(): couldn't find OFAndroidSoundStream java class";
 		return false;
 	}
 
 	jmethodID getMinBuffSize = ofGetJNIEnv()->GetStaticMethodID(javaClass,"getMinOutBufferSize","(II)I");
 	if(!getMinBuffSize){
-		ofLog(OF_LOG_ERROR,"cannot find getMinOutBufferSize method");
+		ofLogError("ofxAndroidSoundStream") << "getMinOutBufferSize(): couldn't find getMinOutBufferSize method";
 		return false;
 	}
 	int minBuff = ofGetJNIEnv()->CallStaticIntMethod(javaClass,getMinBuffSize,samplerate,nchannels);
@@ -312,13 +319,13 @@ int ofxAndroidSoundStream::getMinInBufferSize(int samplerate, int nchannels){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroidSoundStream");
 
 	if(javaClass==0){
-		ofLog(OF_LOG_ERROR,"cannot find OFAndroidSoundStream java class");
+		ofLogError("ofxAndroidSoundStream") << "getMinInBufferSize(): couldn't find OFAndroidSoundStream java class";
 		return false;
 	}
 
 	jmethodID getMinBuffSize = ofGetJNIEnv()->GetStaticMethodID(javaClass,"getMinInBufferSize","(II)I");
 	if(!getMinBuffSize){
-		ofLog(OF_LOG_ERROR,"cannot find getMinInBufferSize method");
+		ofLogError("ofxAndroidSoundStream") << "getMinInBufferSize(): couldn't find getMinInBufferSize method";
 		return false;
 	}
 	return ofGetJNIEnv()->CallStaticIntMethod(javaClass,getMinBuffSize,samplerate,nchannels);
