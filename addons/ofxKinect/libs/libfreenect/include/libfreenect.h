@@ -28,12 +28,11 @@
 
 #include <stdint.h>
 
-#define BUILD_AUDIO
-
 /* We need struct timeval */
 #ifdef _WIN32
 #include <winsock.h>
 #else
+#define BUILD_AUDIO
 #include <sys/time.h>
 #endif
 

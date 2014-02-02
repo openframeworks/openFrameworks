@@ -37,6 +37,10 @@
 
 #include "ofxKinectExtras.h"
 
+#ifndef BUILD_AUDIO
+	#undef OFX_KINECT_EXTRA_FW //Audio / Motor via Audio support is not currently working with libfreenect on win32
+#endif 
+
 #define OFX_KINECT_GRAVITY 9.80665
 
 // context static
