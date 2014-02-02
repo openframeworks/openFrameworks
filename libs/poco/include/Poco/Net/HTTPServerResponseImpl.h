@@ -1,7 +1,7 @@
 //
 // HTTPServerResponseImpl.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPServerResponseImpl.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPServerResponseImpl.h#2 $
 //
 // Library: Net
 // Package: HTTPServer
@@ -49,7 +49,7 @@ namespace Net {
 
 
 class HTTPServerSession;
-class HTTPCookie;
+class HTTPServerRequestImpl;
 
 
 class Net_API HTTPServerResponseImpl: public HTTPServerResponse
@@ -128,9 +128,15 @@ public:
 	bool sent() const;
 		/// Returns true if the response (header) has been sent.
 
+protected:
+	void attachRequest(HTTPServerRequestImpl* pRequest);
+	
 private:
 	HTTPServerSession& _session;
+	HTTPServerRequestImpl* _pRequest;
 	std::ostream*      _pStream;
+	
+	friend class HTTPServerRequestImpl;
 };
 
 
@@ -140,6 +146,12 @@ private:
 inline bool HTTPServerResponseImpl::sent() const
 {
 	return _pStream != 0;
+}
+
+
+inline void HTTPServerResponseImpl::attachRequest(HTTPServerRequestImpl* pRequest)
+{
+	_pRequest = pRequest;
 }
 
 

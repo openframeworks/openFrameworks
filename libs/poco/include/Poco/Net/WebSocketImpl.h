@@ -1,7 +1,7 @@
 //
 // WebSocketImpl.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/WebSocketImpl.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/WebSocketImpl.h#6 $
 //
 // Library: Net
 // Package: WebSocket
@@ -66,7 +66,7 @@ public:
 	virtual SocketImpl* acceptConnection(SocketAddress& clientAddr);
 	virtual void connect(const SocketAddress& address);
 	virtual void connect(const SocketAddress& address, const Poco::Timespan& timeout);
-	virtual void connectNB(const SocketAddress& address, const Poco::Timespan& timeout);
+	virtual void connectNB(const SocketAddress& address);
 	virtual void bind(const SocketAddress& address, bool reuseAddress = false);
 	virtual void bind6(const SocketAddress& address, bool reuseAddress = false, bool ipV6Only = false);
 	virtual void listen(int backlog = 64);
@@ -78,6 +78,10 @@ public:
 	virtual int receiveFrom(void* buffer, int length, SocketAddress& address, int flags = 0);
 	virtual void sendUrgent(unsigned char data);
 	virtual bool secure() const;
+	virtual void setSendTimeout(const Poco::Timespan& timeout);	
+	virtual Poco::Timespan getSendTimeout();
+	virtual void setReceiveTimeout(const Poco::Timespan& timeout);
+	virtual Poco::Timespan getReceiveTimeout();
 
 	// Internal
 	int frameFlags() const;
@@ -93,6 +97,7 @@ protected:
 		MAX_HEADER_LENGTH = 14
 	};
 	
+	int receiveNBytes(void* buffer, int bytes);
 	virtual ~WebSocketImpl();
 
 private:

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
@@ -8,6 +8,8 @@
 	<string>GLUT</string>
 	<key>CFBundleGetInfoString</key>
 	<string>3.4.0, Copyright (c) 2001-2008 Apple Inc., All Rights Reserved</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.glut</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -20,5 +22,7 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>GLUT-3.4.0</string>
+	<key>NSPrincipalClass</key>
+	<string></string>
 </dict>
 </plist>

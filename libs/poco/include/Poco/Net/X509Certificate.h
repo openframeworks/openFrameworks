@@ -47,9 +47,6 @@
 #include "Poco/SharedPtr.h"
 #include <set>
 
-#ifdef verify 
-#undef verify 
-#endif
 
 namespace Poco {
 namespace Net {
@@ -90,7 +87,9 @@ public:
 
 	~X509Certificate();
 		/// Destroys the X509Certificate.
-
+#ifdef verify
+#undef verify
+#endif
 	bool verify(const std::string& hostName) const;
 		/// Verifies the validity of the certificate against the host name.
 		///

@@ -1,7 +1,7 @@
 //
 // Compress.h
 //
-// $Id: //poco/1.4/Zip/include/Poco/Zip/Compress.h#1 $
+// $Id: //poco/1.4/Zip/include/Poco/Zip/Compress.h#2 $
 //
 // Library: Zip
 // Package: Zip
@@ -73,6 +73,10 @@ public:
 		/// Adds a directory entry excluding all children to the Zip file, entryName must not be empty.
 
 	void addRecursive(const Poco::Path& entry, ZipCommon::CompressionLevel cl = ZipCommon::CL_MAXIMUM, bool excludeRoot = true, const Poco::Path& name = Poco::Path());
+		/// Adds a directory entry recursively to the zip file, set excludeRoot to false to exclude the parent directory.
+		/// If excludeRoot is true you can specify an empty name to add the files as relative files
+
+	void addRecursive(const Poco::Path& entry, ZipCommon::CompressionMethod cm, ZipCommon::CompressionLevel cl = ZipCommon::CL_MAXIMUM, bool excludeRoot = true, const Poco::Path& name = Poco::Path());
 		/// Adds a directory entry recursively to the zip file, set excludeRoot to false to exclude the parent directory.
 		/// If excludeRoot is true you can specify an empty name to add the files as relative files
 

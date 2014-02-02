@@ -483,4 +483,5 @@ inline FunctionPriorityDelegate<void, false> priorityDelegate(void (*NotifyMetho
 
 } // namespace Poco
 
+
 #endif // Foundation_PriorityDelegate_INCLUDED

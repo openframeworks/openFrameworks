@@ -1,7 +1,7 @@
 //
 // HTTPMessage.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPMessage.h#3 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPMessage.h#4 $
 //
 // Library: Net
 // Package: HTTP
@@ -94,6 +94,9 @@ public:
 		/// In contrast to getContentLength(), this method
 		/// always returns a 64-bit integer for content length.
 #endif // defined(POCO_HAVE_INT64)
+
+	bool hasContentLength() const;
+		/// Returns true iff a Content-Length header is present.
 
 	void setTransferEncoding(const std::string& transferEncoding);
 		/// Sets the transfer encoding for this message.
@@ -189,6 +192,12 @@ private:
 inline const std::string& HTTPMessage::getVersion() const
 {
 	return _version;
+}
+
+
+inline bool HTTPMessage::hasContentLength() const
+{
+	return has(CONTENT_LENGTH);
 }
 
 

@@ -1,7 +1,7 @@
 //
 // UUID.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/UUID.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/UUID.h#2 $
 //
 // Library: Foundation
 // Package: UUID
@@ -54,14 +54,14 @@ class Foundation_API UUID
 	/// used). A UUID can be used for multiple purposes, from tagging
 	/// objects with an extremely short lifetime, to reliably identifying
 	/// very persistent objects across a network.
+	///
 	/// This class implements a Universal Unique Identifier,
 	/// as specified in Appendix A of the DCE 1.1 Remote Procedure
 	/// Call Specification (http://www.opengroup.org/onlinepubs/9629399/),
 	/// RFC 2518 (WebDAV), section 6.4.1 and the UUIDs and GUIDs internet
 	/// draft by Leach/Salz from February, 1998 
-	/// (http://ftp.ics.uci.edu/pub/ietf/webdav/uuid-guid/draft-leach-uuids-guids-01.txt)
-	/// and also
-	/// http://www.ietf.org/internet-drafts/draft-mealling-uuid-urn-03.txt
+	/// (http://www.ics.uci.edu/~ejw/authoring/uuid-guid/draft-leach-uuids-guids-01.txt)
+	/// and also http://tools.ietf.org/html/draft-mealling-uuid-urn-05
 {
 public:
 	enum Version

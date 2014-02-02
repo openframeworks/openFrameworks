@@ -1,7 +1,7 @@
 //
 // HTTPSSessionInstantiator.h
 //
-// $Id: //poco/1.4/NetSSL_OpenSSL/include/Poco/Net/HTTPSSessionInstantiator.h#1 $
+// $Id: //poco/1.4/NetSSL_OpenSSL/include/Poco/Net/HTTPSSessionInstantiator.h#2 $
 //
 // Library: NetSSL_OpenSSL
 // Package: HTTPSClient
@@ -41,6 +41,7 @@
 
 
 #include "Poco/Net/NetSSL.h"
+#include "Poco/Net/Context.h"
 #include "Poco/Net/Utility.h"
 #include "Poco/Net/HTTPSessionInstantiator.h"
 #include "Poco/URI.h"
@@ -57,6 +58,9 @@ public:
 	HTTPSSessionInstantiator();
 		/// Creates the HTTPSSessionInstantiator.
 
+	HTTPSSessionInstantiator(Context::Ptr pContext);
+		/// Creates the HTTPSSessionInstantiator using the given SSL context.
+
 	~HTTPSSessionInstantiator();
 		/// Destroys the HTTPSSessionInstantiator.
 
@@ -66,8 +70,14 @@ public:
 	static void registerInstantiator();
 		/// Registers the instantiator with the global HTTPSessionFactory.
 
+	static void registerInstantiator(Context::Ptr pContext);
+		/// Registers the instantiator with the global HTTPSessionFactory using the given SSL context.
+
 	static void unregisterInstantiator();
 		/// Unregisters the factory with the global HTTPSessionFactory.
+
+private:
+	Context::Ptr _pContext;
 };
 
 

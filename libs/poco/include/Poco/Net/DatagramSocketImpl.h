@@ -1,7 +1,7 @@
 //
 // DatagramSocketImpl.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/DatagramSocketImpl.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/DatagramSocketImpl.h#2 $
 //
 // Library: Net
 // Package: Sockets
@@ -53,7 +53,7 @@ class Net_API DatagramSocketImpl: public SocketImpl
 {
 public:
 	DatagramSocketImpl();
-		/// Creates a StreamSocketImpl.
+		/// Creates a DatagramSocketImpl.
 		///
 		/// If the system supports IPv6, the socket will
 		/// be an IPv6 socket. Otherwise, it will be

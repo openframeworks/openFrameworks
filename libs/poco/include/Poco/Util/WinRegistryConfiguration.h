@@ -1,7 +1,7 @@
 //
 // WinRegistryConfiguration.h
 //
-// $Id: //poco/1.4/Util/include/Poco/Util/WinRegistryConfiguration.h#2 $
+// $Id: //poco/1.4/Util/include/Poco/Util/WinRegistryConfiguration.h#3 $
 //
 // Library: Util
 // Package: Windows
@@ -76,7 +76,7 @@ protected:
 	void enumerate(const std::string& key, Keys& range) const;
 	void removeRaw(const std::string& key);
 
-	std::string ConvertToRegFormat(const std::string& key, std::string& keyName) const;
+	std::string convertToRegFormat(const std::string& key, std::string& keyName) const;
 		/// takes a key in the format of A.B.C and converts it to
 		/// registry format A\B\C, the last entry is the keyName, the rest is returned as path
 

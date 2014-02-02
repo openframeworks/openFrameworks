@@ -1,7 +1,7 @@
 //
 // UnicodeConverter.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/UnicodeConverter.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/UnicodeConverter.h#2 $
 //
 // Library: Foundation
 // Package: Text
@@ -34,6 +34,9 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+
+#ifndef POCO_NO_WSTRING
 
 
 #ifndef Foundation_UnicodeConverter_INCLUDED
@@ -79,3 +82,6 @@ public:
 
 
 #endif // Foundation_UnicodeConverter_INCLUDED
+
+
+#endif // POCO_NO_WSTRING

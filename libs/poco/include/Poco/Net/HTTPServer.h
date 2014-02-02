@@ -1,7 +1,7 @@
 //
 // HTTPServer.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPServer.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPServer.h#3 $
 //
 // Library: Net
 // Package: HTTPServer
@@ -85,6 +85,19 @@ public:
 
 	~HTTPServer();
 		/// Destroys the HTTPServer and its HTTPRequestHandlerFactory.
+	
+	void stopAll(bool abortCurrent = false);
+		/// Stops the server. In contrast to TCPServer::stop(), which also
+		/// stops the server, but allows all client connections to finish at
+		/// their pace, this allows finer control over client connections.
+		///
+		/// If abortCurrent is false, all current requests are allowed to
+		/// complete. If abortCurrent is false, the underlying sockets of
+		/// all client connections are shut down, causing all requests
+		/// to abort.
+		
+private:
+	HTTPRequestHandlerFactory::Ptr _pFactory;
 };
 
 

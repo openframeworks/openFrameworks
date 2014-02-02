@@ -1,7 +1,7 @@
 //
 // LogFile_WIN32.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/LogFile_WIN32.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/LogFile_WIN32.h#2 $
 //
 // Library: Foundation
 // Package: Logging
@@ -56,7 +56,7 @@ class Foundation_API LogFileImpl
 public:
 	LogFileImpl(const std::string& path);
 	~LogFileImpl();
-	void writeImpl(const std::string& text);
+	void writeImpl(const std::string& text, bool flush);
 	UInt64 sizeImpl() const;
 	Timestamp creationDateImpl() const;
 	const std::string& pathImpl() const;

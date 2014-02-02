@@ -1,7 +1,7 @@
 //
 // HTTPRequest.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPRequest.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPRequest.h#3 $
 //
 // Library: Net
 // Package: HTTP
@@ -125,6 +125,21 @@ public:
 		/// Sets the authentication scheme and information for
 		/// this request.
 
+	bool hasProxyCredentials() const;
+		/// Returns true iff the request contains proxy authentication
+		/// information in the form of an Proxy-Authorization header.
+		
+	void getProxyCredentials(std::string& scheme, std::string& authInfo) const;
+		/// Returns the proxy authentication scheme and additional proxy authentication
+		/// information contained in this request.
+		///
+		/// Throws a NotAuthenticatedException if no proxy authentication information
+		/// is contained in the request.
+		
+	void setProxyCredentials(const std::string& scheme, const std::string& authInfo);
+		/// Sets the proxy authentication scheme and information for
+		/// this request.
+
 	void write(std::ostream& ostr) const;
 		/// Writes the HTTP request to the given
 		/// output stream.
@@ -145,6 +160,20 @@ public:
 	static const std::string HOST;
 	static const std::string COOKIE;
 	static const std::string AUTHORIZATION;
+	static const std::string PROXY_AUTHORIZATION;
+	static const std::string UPGRADE;
+
+protected:
+	void getCredentials(const std::string& header, std::string& scheme, std::string& authInfo) const;
+		/// Returns the authentication scheme and additional authentication
+		/// information contained in the given header of request.
+		///
+		/// Throws a NotAuthenticatedException if no authentication information
+		/// is contained in the request.
+		
+	void setCredentials(const std::string& header, const std::string& scheme, const std::string& authInfo);
+		/// Writes the authentication scheme and information for
+		/// this request to the given header.
 
 private:
 	enum Limits

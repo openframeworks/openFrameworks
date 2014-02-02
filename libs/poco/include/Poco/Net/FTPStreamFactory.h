@@ -1,7 +1,7 @@
 //
 // FTPStreamFactory.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/FTPStreamFactory.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/FTPStreamFactory.h#2 $
 //
 // Library: Net
 // Package: FTP
@@ -120,6 +120,10 @@ public:
 	static void registerFactory();
 		/// Registers the FTPStreamFactory with the
 		/// default URIStreamOpener instance.
+
+	static void unregisterFactory();
+		/// Unregisters the FTPStreamFactory with the
+		/// default URIStreamOpener instance.	
 
 protected:
 	static void splitUserInfo(const std::string& userInfo, std::string& username, std::string& password);

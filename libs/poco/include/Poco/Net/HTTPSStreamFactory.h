@@ -1,7 +1,7 @@
 //
 // HTTPSStreamFactory.h
 //
-// $Id: //poco/1.4/NetSSL_OpenSSL/include/Poco/Net/HTTPSStreamFactory.h#1 $
+// $Id: //poco/1.4/NetSSL_OpenSSL/include/Poco/Net/HTTPSStreamFactory.h#2 $
 //
 // Library: NetSSL_OpenSSL
 // Package: HTTPSClient
@@ -80,6 +80,10 @@ public:
 		
 	static void registerFactory();
 		/// Registers the HTTPSStreamFactory with the
+		/// default URIStreamOpener instance.	
+
+	static void unregisterFactory();
+		/// Unregisters the HTTPSStreamFactory with the
 		/// default URIStreamOpener instance.	
 		
 private:

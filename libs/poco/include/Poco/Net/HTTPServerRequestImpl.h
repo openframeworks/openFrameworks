@@ -1,7 +1,7 @@
 //
 // HTTPServerRequestImpl.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPServerRequestImpl.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPServerRequestImpl.h#2 $
 //
 // Library: Net
 // Package: HTTPServer
@@ -42,6 +42,7 @@
 
 #include "Poco/Net/Net.h"
 #include "Poco/Net/HTTPServerRequest.h"
+#include "Poco/Net/HTTPServerResponseImpl.h"
 #include "Poco/Net/SocketAddress.h"
 #include "Poco/AutoPtr.h"
 #include <istream>
@@ -64,7 +65,7 @@ class Net_API HTTPServerRequestImpl: public HTTPServerRequest
 	/// handleRequest() method of HTTPRequestHandler.
 {
 public:
-	HTTPServerRequestImpl(HTTPServerResponse& response, HTTPServerSession& session, HTTPServerParams* pParams);
+	HTTPServerRequestImpl(HTTPServerResponseImpl& response, HTTPServerSession& session, HTTPServerParams* pParams);
 		/// Creates the HTTPServerRequestImpl, using the
 		/// given HTTPServerSession.
 
@@ -105,7 +106,7 @@ protected:
 	static const std::string EXPECT;
 	
 private:
-	HTTPServerResponse&             _response;
+	HTTPServerResponseImpl&         _response;
 	HTTPServerSession&              _session;
 	std::istream*                   _pStream;
 	Poco::AutoPtr<HTTPServerParams> _pParams;

@@ -1,7 +1,7 @@
 //
 // CipherKeyImpl.h
 //
-// $Id: //poco/1.4/Crypto/include/Poco/Crypto/CipherKeyImpl.h#2 $
+// $Id: //poco/1.4/Crypto/include/Poco/Crypto/CipherKeyImpl.h#3 $
 //
 // Library: Crypto
 // Package: Cipher
@@ -162,7 +162,7 @@ inline const CipherKeyImpl::ByteVec& CipherKeyImpl::getKey() const
 
 inline void CipherKeyImpl::setKey(const ByteVec& key)
 {
-	poco_assert(key.size() == keySize());
+	poco_assert(key.size() == static_cast<ByteVec::size_type>(keySize()));
 	_key = key;
 }
 
@@ -175,7 +175,7 @@ inline const CipherKeyImpl::ByteVec& CipherKeyImpl::getIV() const
 
 inline void CipherKeyImpl::setIV(const ByteVec& iv)
 {
-	poco_assert(iv.size() == ivSize());
+	poco_assert(iv.size() == static_cast<ByteVec::size_type>(ivSize()));
 	_iv = iv;
 }
 

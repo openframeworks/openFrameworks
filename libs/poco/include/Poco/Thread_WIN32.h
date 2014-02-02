@@ -1,7 +1,7 @@
 //
 // Thread_WIN32.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Thread_WIN32.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Thread_WIN32.h#3 $
 //
 // Library: Foundation
 // Package: Threading
@@ -79,16 +79,21 @@ public:
 		PRIO_HIGHEST_IMPL = THREAD_PRIORITY_HIGHEST
 	};
 
+	enum Policy
+	{
+		POLICY_DEFAULT_IMPL = 0
+	};
+
 	ThreadImpl();				
 	~ThreadImpl();
 
 	TIDImpl tidImpl() const;
 	void setPriorityImpl(int prio);
 	int getPriorityImpl() const;
-	void setOSPriorityImpl(int prio);
+	void setOSPriorityImpl(int prio, int policy = 0);
 	int getOSPriorityImpl() const;
-	static int getMinOSPriorityImpl();
-	static int getMaxOSPriorityImpl();
+	static int getMinOSPriorityImpl(int policy);
+	static int getMaxOSPriorityImpl(int policy);
 	void setStackSizeImpl(int size);
 	int getStackSizeImpl() const;
 	void startImpl(Runnable& target);
@@ -170,13 +175,13 @@ inline int ThreadImpl::getOSPriorityImpl() const
 }
 
 
-inline int ThreadImpl::getMinOSPriorityImpl()
+inline int ThreadImpl::getMinOSPriorityImpl(int /* policy */)
 {
 	return PRIO_LOWEST_IMPL;
 }
 
 
-inline int ThreadImpl::getMaxOSPriorityImpl()
+inline int ThreadImpl::getMaxOSPriorityImpl(int /* policy */)
 {
 	return PRIO_HIGHEST_IMPL;
 }

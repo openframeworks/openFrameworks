@@ -1,7 +1,7 @@
 //
 // HTTPCredentials.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPCredentials.h#3 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPCredentials.h#4 $
 //
 // Library: Net
 // Package: HTTP
@@ -125,16 +125,28 @@ public:
 		/// Returns the password.
 
 	void authenticate(HTTPRequest& request, const HTTPResponse& response);
-		/// Inspects authenticate header of the response, initializes
+		/// Inspects WWW-Authenticate header of the response, initializes
 		/// the internal state (in case of digest authentication) and
 		/// adds required information to the given HTTPRequest.
 		///
-		/// Does nothing if there is no authentication header in the
+		/// Does nothing if there is no WWW-Authenticate header in the
 		/// HTTPResponse.
 
 	void updateAuthInfo(HTTPRequest& request);
 		/// Updates internal state (in case of digest authentication) and
 		/// replaces authentication information in the request accordingly.
+
+	void proxyAuthenticate(HTTPRequest& request, const HTTPResponse& response);
+		/// Inspects Proxy-Authenticate header of the response, initializes
+		/// the internal state (in case of digest authentication) and
+		/// adds required information to the given HTTPRequest.
+		///
+		/// Does nothing if there is no Proxy-Authenticate header in the
+		/// HTTPResponse.
+
+	void updateProxyAuthInfo(HTTPRequest& request);
+		/// Updates internal state (in case of digest authentication) and
+		/// replaces proxy authentication information in the request accordingly.
 
 	static bool isBasicCredentials(const std::string& header);
 		/// Returns true if authentication header is for Basic authentication.
@@ -146,6 +158,12 @@ public:
 		/// Returns true if Authorization with Basic credentials header is present in the request.
 
 	static bool hasDigestCredentials(const HTTPRequest& request);
+		/// Returns true if Authorization with Digest credentials header is present in the request.
+
+	static bool hasProxyBasicCredentials(const HTTPRequest& request);
+		/// Returns true if Authorization with Basic credentials header is present in the request.
+
+	static bool hasProxyDigestCredentials(const HTTPRequest& request);
 		/// Returns true if Authorization with Digest credentials header is present in the request.
 
 	static void extractCredentials(const std::string& userInfo, std::string& username, std::string& password);

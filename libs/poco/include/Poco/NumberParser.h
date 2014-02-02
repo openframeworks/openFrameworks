@@ -1,7 +1,7 @@
 //
 // NumberParser.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/NumberParser.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/NumberParser.h#2 $
 //
 // Library: Foundation
 // Package: Core
@@ -58,6 +58,7 @@ public:
 	static bool tryParse(const std::string& s, int& value);
 		/// Parses an integer value in decimal notation from the given string.
 		/// Returns true if a valid integer has been found, false otherwise. 
+		/// If parsing was not successful, value is undefined.
 	
 	static unsigned parseUnsigned(const std::string& s);
 		/// Parses an unsigned integer value in decimal notation from the given string.
@@ -66,6 +67,7 @@ public:
 	static bool tryParseUnsigned(const std::string& s, unsigned& value);
 		/// Parses an unsigned integer value in decimal notation from the given string.
 		/// Returns true if a valid integer has been found, false otherwise. 
+		/// If parsing was not successful, value is undefined.
 
 	static unsigned parseHex(const std::string& s);
 		/// Parses an integer value in hexadecimal notation from the given string.
@@ -75,6 +77,7 @@ public:
 	static bool tryParseHex(const std::string& s, unsigned& value);
 		/// Parses an unsigned integer value in hexadecimal notation from the given string.
 		/// Returns true if a valid integer has been found, false otherwise. 
+		/// If parsing was not successful, value is undefined.
 
 #if defined(POCO_HAVE_INT64)
 
@@ -85,6 +88,7 @@ public:
 	static bool tryParse64(const std::string& s, Int64& value);
 		/// Parses a 64-bit integer value in decimal notation from the given string.
 		/// Returns true if a valid integer has been found, false otherwise. 
+		/// If parsing was not successful, value is undefined.
 
 	static UInt64 parseUnsigned64(const std::string& s);
 		/// Parses an unsigned 64-bit integer value in decimal notation from the given string.
@@ -93,6 +97,7 @@ public:
 	static bool tryParseUnsigned64(const std::string& s, UInt64& value);
 		/// Parses an unsigned 64-bit integer value in decimal notation from the given string.
 		/// Returns true if a valid integer has been found, false otherwise. 
+		/// If parsing was not successful, value is undefined.
 
 	static UInt64 parseHex64(const std::string& s);
 		/// Parses a 64 bit-integer value in hexadecimal notation from the given string.
@@ -101,6 +106,7 @@ public:
 	static bool tryParseHex64(const std::string& s, UInt64& value);
 		/// Parses an unsigned 64-bit integer value in hexadecimal notation from the given string.
 		/// Returns true if a valid integer has been found, false otherwise. 
+		/// If parsing was not successful, value is undefined.
 
 #endif // defined(POCO_HAVE_INT64)
 
@@ -115,6 +121,7 @@ public:
 		/// from the given string. 
 		/// Returns true if a valid floating point number has been found, 
 		/// false otherwise. 
+		/// If parsing was not successful, value is undefined.
 };
 
 

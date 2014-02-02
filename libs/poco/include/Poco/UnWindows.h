@@ -1,7 +1,7 @@
 //
 // UnWindows.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/UnWindows.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/UnWindows.h#2 $
 //
 // Library: Foundation
 // Package: Core
@@ -88,7 +88,7 @@
 #undef UpdateResource
 #undef FindAtom
 #undef AddAtom
-#undef GetSystemDirector
+#undef GetSystemDirectory
 #undef GetTempPath
 #undef GetTempFileName
 #undef SetCurrentDirectory

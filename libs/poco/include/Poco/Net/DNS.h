@@ -1,7 +1,7 @@
 //
 // DNS.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/DNS.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/DNS.h#3 $
 //
 // Library: Net
 // Package: NetCore
@@ -44,7 +44,6 @@
 #include "Poco/Net/SocketDefs.h"
 #include "Poco/Net/IPAddress.h"
 #include "Poco/Net/HostEntry.h"
-#include "Poco/Mutex.h"
 
 
 namespace Poco {
@@ -114,6 +113,13 @@ public:
 		/// Throws a DNSException in case of a general DNS error.
 		///
 		/// Throws an IOException in case of any other error.
+
+	static void reload();
+		/// Reloads the resolver configuration.
+		///
+		/// This method will call res_init() if the Net library
+		/// has been compiled with -DPOCO_HAVE_LIBRESOLV. Otherwise
+		/// it will do nothing.
 
 	//@ deprecated
 	static void flushCache();

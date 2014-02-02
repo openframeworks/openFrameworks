@@ -1,7 +1,7 @@
 //
 // Version.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Version.h#9 $
+// $Id: //poco/1.4/Foundation/include/Poco/Version.h#14 $
 //
 // Library: Foundation
 // Package: Core
@@ -54,7 +54,7 @@
 //      Ax are alpha releases
 //      Bx are beta releases
 //
-#define POCO_VERSION 0x01040300
+#define POCO_VERSION 0x01040601
 
 
 #endif // Foundation_Version_INCLUDED

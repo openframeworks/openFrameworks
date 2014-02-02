@@ -1,7 +1,7 @@
 //
 // HTTPDigestCredentials.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPDigestCredentials.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPDigestCredentials.h#3 $
 //
 // Library: Net
 // Package: HTTP
@@ -85,7 +85,7 @@ public:
 		/// Returns the password.
 
 	void authenticate(HTTPRequest& request, const HTTPResponse& response);
-		/// Parses authentication header of the HTTPResponse, initializes
+		/// Parses WWW-Authenticate header of the HTTPResponse, initializes
 		/// internal state, and adds authentication information to the given HTTPRequest.
 
 	void authenticate(HTTPRequest& request, const HTTPAuthenticationParams& responseAuthParams);
@@ -100,6 +100,24 @@ public:
 
 	void updateAuthInfo(HTTPRequest& request);
 		/// Updates internal state and adds authentication information to
+		/// the given HTTPRequest.
+
+	void proxyAuthenticate(HTTPRequest& request, const HTTPResponse& response);
+		/// Parses Proxy-Authenticate header of the HTTPResponse, initializes
+		/// internal state, and adds proxy authentication information to the given HTTPRequest.
+
+	void proxyAuthenticate(HTTPRequest& request, const HTTPAuthenticationParams& responseAuthParams);
+		/// Initializes internal state according to information from the
+		/// HTTPAuthenticationParams of the response, and adds proxy authentication
+		/// information to the given HTTPRequest.
+		///
+		/// Throws InvalidArgumentException if HTTPAuthenticationParams is
+		/// invalid or some required parameter is missing.
+		/// Throws NotImplementedException in case of unsupported digest
+		/// algorithm or quality of protection method.
+
+	void updateProxyAuthInfo(HTTPRequest& request);
+		/// Updates internal state and adds proxy authentication information to
 		/// the given HTTPRequest.
 
 	bool verifyAuthInfo(const HTTPRequest& request) const;

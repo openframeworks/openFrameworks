@@ -1,7 +1,7 @@
 //
 // Socket.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/Socket.h#2 $
+// $Id: //poco/1.4/Net/include/Poco/Net/Socket.h#3 $
 //
 // Library: Net
 // Package: Sockets
@@ -305,6 +305,16 @@ public:
 		
 	static bool supportsIPv6();
 		/// Returns true if the system supports IPv6.
+	
+	void init(int af);
+		/// Creates the underlying system socket for the given
+		/// address family. 
+		///
+		/// Normally, this method should not be called directly, as
+		/// socket creation will be handled automatically. There are
+		/// a few situations where calling this method after creation
+		/// of the Socket object makes sense. One example is setting
+		/// a socket option before calling bind() on a ServerSocket.
 
 protected:
 	Socket(SocketImpl* pImpl);

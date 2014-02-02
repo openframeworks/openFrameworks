@@ -1,7 +1,7 @@
 //
 // Process.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Process.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/Process.h#4 $
 //
 // Library: Foundation
 // Package: Processes
@@ -110,6 +110,7 @@ class Foundation_API Process: public ProcessImpl
 public:
 	typedef PIDImpl  PID;
 	typedef ArgsImpl Args;
+	typedef EnvImpl  Env;
 	
 	static PID id();
 		/// Returns the process ID of the current process.
@@ -123,7 +124,21 @@ public:
 		/// a ProcessHandle of the new process. The given arguments are
 		/// passed to the command on the command line.
 
-	static ProcessHandle launch(const std::string& command, const Args& args, Pipe* inPipe, Pipe* outPipe, Pipe* errPipe);
+	static ProcessHandle launch(
+		const std::string& command, 
+		const Args& args, 
+		const std::string& initialDirectory);
+		/// Creates a new process for the given command and returns
+		/// a ProcessHandle of the new process. The given arguments are
+		/// passed to the command on the command line.
+		/// The process starts executing in the specified initial directory.
+
+	static ProcessHandle launch(
+		const std::string& command, 
+		const Args& args, 
+		Pipe* inPipe, 
+		Pipe* outPipe, 
+		Pipe* errPipe);
 		/// Creates a new process for the given command and returns
 		/// a ProcessHandle of the new process. The given arguments are
 		/// passed to the command on the command line.
@@ -149,7 +164,75 @@ public:
 		///     PipeInputStream istr(outPipe);
 		///     ... // read output of ps from istr
 		///     int rc = ph.wait();
+
+	static ProcessHandle launch(
+		const std::string& command, 
+		const Args& args, 
+		const std::string& initialDirectory,
+		Pipe* inPipe, 
+		Pipe* outPipe, 
+		Pipe* errPipe);
+		/// Creates a new process for the given command and returns
+		/// a ProcessHandle of the new process. The given arguments are
+		/// passed to the command on the command line.
+		/// The process starts executing in the specified initial directory.
+		///
+		/// If inPipe, outPipe or errPipe is non-null, the corresponding
+		/// standard input, standard output or standard error stream
+		/// of the launched process is redirected to the Pipe.
+		/// PipeInputStream or PipeOutputStream can be used to
+		/// send receive data from, or send data to the process.
+		///
+		/// Note: the same Pipe can be used for both outPipe and errPipe.
+		///
+		/// After a Pipe has been passed as inPipe, only write operations
+		/// are valid. After a Pipe has been passed as outPipe or errPipe,
+		/// only read operations are valid.
+		///
+		/// It is forbidden to pass the same pipe as inPipe and outPipe or errPipe.
+		///
+		/// Usage example:
+		///     Pipe outPipe;
+		///     Process::Args args;
+		///     ProcessHandle ph(launch("/bin/ps", args, 0, &outPipe, 0));
+		///     PipeInputStream istr(outPipe);
+		///     ... // read output of ps from istr
+		///     int rc = ph.wait();
 		
+	static ProcessHandle launch(
+		const std::string& command, 
+		const Args& args, 
+		Pipe* inPipe, 
+		Pipe* outPipe, 
+		Pipe* errPipe,
+		const Env& env);
+		/// Creates a new process for the given command and returns
+		/// a ProcessHandle of the new process. The given arguments are
+		/// passed to the command on the command line.
+		///
+		/// If inPipe, outPipe or errPipe is non-null, the corresponding
+		/// standard input, standard output or standard error stream
+		/// of the launched process is redirected to the Pipe.
+		///
+		/// The launched process is given the specified environment variables.
+
+	static ProcessHandle launch(
+		const std::string& command, 
+		const Args& args, 
+		const std::string& initialDirectory,
+		Pipe* inPipe, 
+		Pipe* outPipe, 
+		Pipe* errPipe,
+		const Env& env);
+		/// Creates a new process for the given command and returns
+		/// a ProcessHandle of the new process. The given arguments are
+		/// passed to the command on the command line.
+		/// The process starts executing in the specified initial directory.
+		/// If inPipe, outPipe or errPipe is non-null, the corresponding
+		/// standard input, standard output or standard error stream
+		/// of the launched process is redirected to the Pipe.
+		/// The launched process is given the specified environment variables.
+
 	static int wait(const ProcessHandle& handle);
 		/// Waits for the process specified by handle to terminate
 		/// and returns the exit code of the process.

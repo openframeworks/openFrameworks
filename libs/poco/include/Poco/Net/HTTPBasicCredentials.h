@@ -1,7 +1,7 @@
 //
 // HTTPBasicCredentials.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPBasicCredentials.h#3 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPBasicCredentials.h#4 $
 //
 // Library: Net
 // Package: HTTP
@@ -89,8 +89,11 @@ public:
 	const std::string& getPassword() const;
 		/// Returns the password.
 		
-	void authenticate(HTTPRequest& request);
+	void authenticate(HTTPRequest& request) const;
 		/// Adds authentication information to the given HTTPRequest.
+
+	void proxyAuthenticate(HTTPRequest& request) const;
+		/// Adds proxy authentication information to the given HTTPRequest.
 
 	static const std::string SCHEME;
 

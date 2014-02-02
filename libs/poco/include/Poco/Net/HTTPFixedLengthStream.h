@@ -1,7 +1,7 @@
 //
 // HTTPFixedLengthStream.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPFixedLengthStream.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPFixedLengthStream.h#3 $
 //
 // Library: Net
 // Package: HTTP
@@ -63,7 +63,13 @@ class Net_API HTTPFixedLengthStreamBuf: public HTTPBasicStreamBuf
 public:
 	typedef HTTPBasicStreamBuf::openmode openmode;
 
-	HTTPFixedLengthStreamBuf(HTTPSession& session, std::streamsize length, openmode mode);
+#if defined(POCO_HAVE_INT64)
+	typedef Poco::Int64 ContentLength;
+#else
+	typedef std::streamsize ContentLength;
+#endif
+
+	HTTPFixedLengthStreamBuf(HTTPSession& session, ContentLength length, openmode mode);
 	~HTTPFixedLengthStreamBuf();
 	
 protected:
@@ -72,8 +78,8 @@ protected:
 
 private:
 	HTTPSession&    _session;
-	std::streamsize _length;
-	std::streamsize _count;
+	ContentLength _length;
+	ContentLength _count;
 };
 
 
@@ -81,7 +87,7 @@ class Net_API HTTPFixedLengthIOS: public virtual std::ios
 	/// The base class for HTTPFixedLengthInputStream.
 {
 public:
-	HTTPFixedLengthIOS(HTTPSession& session, std::streamsize length, HTTPFixedLengthStreamBuf::openmode mode);
+	HTTPFixedLengthIOS(HTTPSession& session, HTTPFixedLengthStreamBuf::ContentLength length, HTTPFixedLengthStreamBuf::openmode mode);
 	~HTTPFixedLengthIOS();
 	HTTPFixedLengthStreamBuf* rdbuf();
 
@@ -94,7 +100,7 @@ class Net_API HTTPFixedLengthInputStream: public HTTPFixedLengthIOS, public std:
 	/// This class is for internal use by HTTPSession only.
 {
 public:
-	HTTPFixedLengthInputStream(HTTPSession& session, std::streamsize length);
+	HTTPFixedLengthInputStream(HTTPSession& session, HTTPFixedLengthStreamBuf::ContentLength length);
 	~HTTPFixedLengthInputStream();
 	
 	void* operator new(std::size_t size);
@@ -109,7 +115,7 @@ class Net_API HTTPFixedLengthOutputStream: public HTTPFixedLengthIOS, public std
 	/// This class is for internal use by HTTPSession only.
 {
 public:
-	HTTPFixedLengthOutputStream(HTTPSession& session, std::streamsize length);
+	HTTPFixedLengthOutputStream(HTTPSession& session, HTTPFixedLengthStreamBuf::ContentLength length);
 	~HTTPFixedLengthOutputStream();
 
 	void* operator new(std::size_t size);

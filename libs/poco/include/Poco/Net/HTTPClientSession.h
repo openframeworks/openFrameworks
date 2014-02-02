@@ -1,7 +1,7 @@
 //
 // HTTPClientSession.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPClientSession.h#4 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPClientSession.h#5 $
 //
 // Library: Net
 // Package: HTTPClient
@@ -43,6 +43,7 @@
 #include "Poco/Net/Net.h"
 #include "Poco/Net/HTTPSession.h"
 #include "Poco/Net/SocketAddress.h"
+#include "Poco/SharedPtr.h"
 #include <istream>
 #include <ostream>
 
@@ -234,33 +235,6 @@ protected:
 		/// Returns the prefix prepended to the URI for proxy requests
 		/// (e.g., "http://myhost.com").
 
-	void deleteResponseStream();
-		/// Deletes the response stream and sets it to 0.
-
-	void deleteRequestStream();
-		/// Deletes the request stream and sets it to 0.
-
-	void setResponseStream(std::istream* pRespStream);
-		/// Sets the response stream iff _pResponseStream is 0.
-
-	void setRequestStream(std::ostream* pRequestStream);
-		/// Sets the request stream iff _pRequestStream is 0.
-
-	std::istream* getResponseStream() const;
-		/// Returns the currently set response stream. Can return 0.
-
-	std::ostream* getRequestStream() const;
-		/// Returns the currently set request stream. Can return 0.
-
-	void setReconnect(bool recon);
-		/// Sets _reconnect.
-	
-	void setExpectResponseBody(bool expect);
-		/// Sets _expectResponseBody.
-
-	bool getExpectResponseBody() const;
-		/// Returns _expectResponseBody.
-
 	virtual bool mustReconnect() const;
 		/// Checks if we can reuse a persistent connection.
 		
@@ -292,8 +266,8 @@ private:
 	bool            _reconnect;
 	bool            _mustReconnect;
 	bool            _expectResponseBody;
-	std::ostream*   _pRequestStream;
-	std::istream*   _pResponseStream;
+	Poco::SharedPtr<std::ostream> _pRequestStream;
+	Poco::SharedPtr<std::istream> _pResponseStream;
 	
 	HTTPClientSession(const HTTPClientSession&);
 	HTTPClientSession& operator = (const HTTPClientSession&);
@@ -338,36 +312,6 @@ inline const std::string& HTTPClientSession::getProxyUsername() const
 inline const std::string& HTTPClientSession::getProxyPassword() const
 {
 	return _proxyPassword;
-}
-
-
-inline std::istream* HTTPClientSession::getResponseStream() const
-{
-	return _pResponseStream;
-}
-
-
-inline std::ostream* HTTPClientSession::getRequestStream() const
-{
-	return _pRequestStream;
-}
-
-
-inline void HTTPClientSession::setReconnect(bool recon)
-{
-	_reconnect = recon;
-}
-
-
-inline void HTTPClientSession::setExpectResponseBody(bool expect)
-{
-	_expectResponseBody = expect;
-}
-
-
-inline bool HTTPClientSession::getExpectResponseBody() const
-{
-	return _expectResponseBody;
 }
 
 

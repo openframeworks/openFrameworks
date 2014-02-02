@@ -1,7 +1,7 @@
 //
 // XMLWriter.h
 //
-// $Id: //poco/1.4/XML/include/Poco/XML/XMLWriter.h#1 $
+// $Id: //poco/1.4/XML/include/Poco/XML/XMLWriter.h#3 $
 //
 // Library: XML
 // Package: XML
@@ -279,6 +279,24 @@ public:
 	static const std::string NEWLINE_CRLF;
 	static const std::string NEWLINE_LF;
 
+	// Namespace support.
+	XMLString uniquePrefix();
+		/// Creates and returns a unique namespace prefix that
+		/// can be used with startPrefixMapping().
+
+	bool isNamespaceMapped(const std::string& namespc) const;
+		/// Returns true if the given namespace has been mapped
+		/// to a prefix in the current element or its ancestors.
+		
+	// Misc.
+	int depth() const;
+		/// Return the number of nested XML elements.
+		///
+		/// Will be -1 if no document or fragment has been started, 
+		/// 0 if the document or fragment has been started,
+		/// 1 if the document element has been written and
+		/// > 1 for every element nested within the document element.
+
 protected:
 	typedef std::map<XMLString, XMLString> AttributeMap;
 
@@ -298,7 +316,6 @@ protected:
 	void addAttributes(AttributeMap& attributeMap, const Attributes& attributes, const XMLString& elementNamespaceURI);
 	void writeAttributes(const AttributeMap& attributeMap);
 	void prettyPrint() const;
-	XMLString newPrefix();
 	static std::string nameToString(const XMLString& localName, const XMLString& qname);
 
 private:
@@ -355,6 +372,15 @@ private:
 	static const std::string MARKUP_BEGIN_CDATA;
 	static const std::string MARKUP_END_CDATA;
 };
+
+
+//
+// inlines
+//
+inline int XMLWriter::depth() const
+{
+	return _depth;
+}
 
 
 } } // namespace Poco::XML

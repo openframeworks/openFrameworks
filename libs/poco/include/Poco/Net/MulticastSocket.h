@@ -1,7 +1,7 @@
 //
 // MulticastSocket.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/MulticastSocket.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/MulticastSocket.h#2 $
 //
 // Library: Net
 // Package: Sockets
@@ -59,20 +59,20 @@ public:
 		/// Creates the MulticastSocket.
 
 	explicit MulticastSocket(IPAddress::Family family);
-		/// Creates an unconnected datagram socket.
+		/// Creates an unconnected multicast socket.
 		///
 		/// The socket will be created for the
 		/// given address family.
 
 	MulticastSocket(const SocketAddress& address, bool reuseAddress = false);
-		/// Creates a datagram socket and binds it
+		/// Creates a multicast socket and binds it
 		/// to the given address.
 		///
 		/// Depending on the address family, the socket
 		/// will be either an IPv4 or an IPv6 socket.
 
 	MulticastSocket(const Socket& socket);
-		/// Creates the DatagramSocket with the SocketImpl
+		/// Creates the MulticastSocket with the SocketImpl
 		/// from another socket. The SocketImpl must be
 		/// a DatagramSocketImpl, otherwise an InvalidArgumentException
 		/// will be thrown.

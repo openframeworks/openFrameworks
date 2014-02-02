@@ -1,7 +1,7 @@
 //
 // OpenSSLInitializer.h
 //
-// $Id: //poco/1.4/Crypto/include/Poco/Crypto/OpenSSLInitializer.h#1 $
+// $Id: //poco/1.4/Crypto/include/Poco/Crypto/OpenSSLInitializer.h#2 $
 //
 // Library: Crypto
 // Package: CryptoCore
@@ -119,12 +119,16 @@ inline bool OpenSSLInitializer::isFIPSEnabled()
 }
 
 
+#ifdef OPENSSL_FIPS
 inline void OpenSSLInitializer::enableFIPSMode(bool enabled)
 {
-#ifdef OPENSSL_FIPS
 	FIPS_mode_set(enabled);
-#endif
 }
+#else
+inline void OpenSSLInitializer::enableFIPSMode(bool /*enabled*/)
+{
+}
+#endif
 
 
 } } // namespace Poco::Crypto

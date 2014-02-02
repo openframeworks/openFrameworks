@@ -1,7 +1,7 @@
 //
 // Unicode.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Unicode.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/Unicode.h#2 $
 //
 // Library: Foundation
 // Package: Text
@@ -186,6 +186,11 @@ public:
 		UCP_SAURASHTRA,
 		UCP_SUNDANESE,
 		UCP_VAI
+	};
+	
+	enum
+	{
+		UCP_MAX_CODEPOINT = 0x10FFFF
 	};
 	
 	struct CharacterProperties

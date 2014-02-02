@@ -1,7 +1,7 @@
 //
 // CryptoTransform.h
 //
-// $Id: //poco/1.4/Crypto/include/Poco/Crypto/CryptoTransform.h#1 $
+// $Id: //poco/1.4/Crypto/include/Poco/Crypto/CryptoTransform.h#2 $
 //
 // Library: Crypto
 // Package: Cipher
@@ -66,6 +66,12 @@ public:
 	virtual std::size_t blockSize() const = 0;
 		/// Returns the block size for this CryptoTransform.
 
+	virtual int setPadding(int padding);
+		/// Enables or disables padding. By default encryption operations are padded using standard block 
+		/// padding and the padding is checked and removed when decrypting. If the padding parameter is zero then 
+		/// no padding is performed, the total amount of data encrypted or decrypted must then be a multiple of 
+		/// the block size or an error will occur.
+		
 	virtual std::streamsize transform(
 		const unsigned char* input,
 		std::streamsize		 inputLength,

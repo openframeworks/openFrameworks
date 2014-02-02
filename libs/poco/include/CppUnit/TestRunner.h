@@ -1,7 +1,7 @@
 //
 // TestRunner.h
 //
-// $Id: //poco/1.3/CppUnit/include/CppUnit/TestRunner.h#1 $
+// $Id: //poco/1.4/CppUnit/include/CppUnit/TestRunner.h#2 $
 //
 
 
@@ -12,6 +12,10 @@
 #include "CppUnit/CppUnit.h"
 #include <vector>
 #include <string>
+#include <ostream>
+#if defined(POCO_VXWORKS)
+#include <cstdarg>
+#endif
 
 
 namespace CppUnit {
@@ -41,6 +45,7 @@ class CppUnit_API TestRunner
 
 public:
 	TestRunner();
+	TestRunner(std::ostream& ostr);
 	~TestRunner();
 
 	bool run(const std::vector<std::string>& args);
@@ -53,6 +58,7 @@ protected:
 	Test* find(const std::string& name, Test* pTest, const std::string& testName);
 
 private:
+	std::ostream& _ostr;
 	Mappings _mappings;
 };
 
@@ -60,6 +66,27 @@ private:
 } // namespace CppUnit
 
 
+#if defined(POCO_VXWORKS)
+#define CppUnitMain(testCase) \
+	int testCase##Runner(const char* arg0, ...) \
+	{ \
+		std::vector<std::string> args; \
+		args.push_back(#testCase "Runner"); \
+		args.push_back(std::string(arg0)); \
+		va_list vargs; \
+		va_start(vargs, arg0); \
+		const char* arg = va_arg(vargs, const char*); \
+		while (arg) \
+		{ \
+			args.push_back(std::string(arg)); \
+			arg = va_arg(vargs, const char*); \
+		} \
+		va_end(vargs); \
+		CppUnit::TestRunner runner; \
+		runner.addTest(#testCase, testCase::suite()); \
+		return runner.run(args) ? 0 : 1; \
+	}
+#else
 #define CppUnitMain(testCase) \
 	int main(int ac, char **av)							\
 	{													\
@@ -70,6 +97,7 @@ private:
 		runner.addTest(#testCase, testCase::suite());	\
 		return runner.run(args) ? 0 : 1;				\
 	}
+#endif
 
 
 #endif // CppUnit_TestRunner_INCLUDED

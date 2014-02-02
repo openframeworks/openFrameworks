@@ -1,7 +1,7 @@
 //
 // CppUnit.h
 //
-// $Id: //poco/1.3/CppUnit/include/CppUnit/CppUnit.h#1 $
+// $Id: //poco/1.4/CppUnit/include/CppUnit/CppUnit.h#1 $
 //
 
 

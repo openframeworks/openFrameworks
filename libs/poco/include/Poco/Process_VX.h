@@ -1,7 +1,7 @@
 //
 // Process_VX.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Process_VX.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Process_VX.h#3 $
 //
 // Library: Foundation
 // Package: Processes
@@ -43,6 +43,7 @@
 #include "Poco/Foundation.h"
 #include "Poco/RefCountedObject.h"
 #include <vector>
+#include <map>
 
 
 #undef PID
@@ -73,10 +74,18 @@ class Foundation_API ProcessImpl
 public:
 	typedef int PIDImpl;
 	typedef std::vector<std::string> ArgsImpl;
+	typedef std::map<std::string, std::string> EnvImpl;
 	
 	static PIDImpl idImpl();
 	static void timesImpl(long& userTime, long& kernelTime);
-	static ProcessHandleImpl* launchImpl(const std::string& command, const ArgsImpl& args, Pipe* inPipe, Pipe* outPipe, Pipe* errPipe);		
+	static ProcessHandleImpl* launchImpl(
+		const std::string& command, 
+		const ArgsImpl& args, 
+		const std::string& initialDirectory,
+		Pipe* inPipe, 
+		Pipe* outPipe, 
+		Pipe* errPipe,
+		const EnvImpl& env);
 	static void killImpl(const ProcessHandleImpl& handle);
 	static void killImpl(PIDImpl pid);
 	static void requestTerminationImpl(PIDImpl pid);

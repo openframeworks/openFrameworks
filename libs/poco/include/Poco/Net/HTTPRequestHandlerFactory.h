@@ -1,7 +1,7 @@
 //
 // HTTPRequestHandlerFactory.h
 //
-// $Id: //poco/1.4/Net/include/Poco/Net/HTTPRequestHandlerFactory.h#1 $
+// $Id: //poco/1.4/Net/include/Poco/Net/HTTPRequestHandlerFactory.h#2 $
 //
 // Library: Net
 // Package: HTTPServer
@@ -42,6 +42,7 @@
 
 #include "Poco/Net/Net.h"
 #include "Poco/SharedPtr.h"
+#include "Poco/BasicEvent.h"
 
 
 namespace Poco {
@@ -72,9 +73,15 @@ public:
 		///
 		/// Creates a new request handler for the given HTTP request.
 
+protected:
+	Poco::BasicEvent<const bool> serverStopped;
+
 private:
 	HTTPRequestHandlerFactory(const HTTPRequestHandlerFactory&);
 	HTTPRequestHandlerFactory& operator = (const HTTPRequestHandlerFactory&);
+	
+	friend class HTTPServer;
+	friend class HTTPServerConnection;
 };
 
 

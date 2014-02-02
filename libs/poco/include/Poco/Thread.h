@@ -1,7 +1,7 @@
 //
 // Thread.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Thread.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/Thread.h#6 $
 //
 // Library: Foundation
 // Package: Threading
@@ -87,6 +87,11 @@ public:
 		PRIO_HIGH    = PRIO_HIGH_IMPL,   /// A higher than normal thread priority.
 		PRIO_HIGHEST = PRIO_HIGHEST_IMPL /// The highest thread priority.
 	};
+	
+	enum Policy
+	{
+		POLICY_DEFAULT = POLICY_DEFAULT_IMPL
+	};
 
 	Thread();
 		/// Creates a thread. Call start() to start it.
@@ -121,10 +126,13 @@ public:
 	Priority getPriority() const;
 		/// Returns the thread's priority.
 
-	void setOSPriority(int prio);
+	void setOSPriority(int prio, int policy = POLICY_DEFAULT);
 		/// Sets the thread's priority, using an operating system specific
 		/// priority value. Use getMinOSPriority() and getMaxOSPriority() to
-		/// obtain mininum and maximum priority values.
+		/// obtain mininum and maximum priority values. Additionally,
+		/// a scheduling policy can be specified. The policy is currently
+		/// only used on POSIX platforms where the values SCHED_OTHER (default),
+		/// SCHED_FIFO and SCHED_RR are supported.
 		
 	int getOSPriority() const;
 		/// Returns the thread's priority, expressed as an operating system
@@ -132,13 +140,13 @@ public:
 		///
 		/// May return 0 if the priority has not been explicitly set.
 		
-	static int getMinOSPriority();
+	static int getMinOSPriority(int policy = POLICY_DEFAULT);
 		/// Returns the mininum operating system-specific priority value,
-		/// which can be passed to setOSPriority().
+		/// which can be passed to setOSPriority() for the given policy.
 		
-	static int getMaxOSPriority();
+	static int getMaxOSPriority(int policy = POLICY_DEFAULT);
 		/// Returns the maximum operating system-specific priority value,
-		/// which can be passed to setOSPriority().
+		/// which can be passed to setOSPriority() for the given policy.
 
 	void setStackSize(int size);
 		/// Sets the thread's stack size in bytes.
@@ -152,6 +160,10 @@ public:
 
 	void start(Runnable& target);
 		/// Starts the thread with the given target.
+		///
+		/// Note that the given Runnable object must be
+		/// valid during the entire lifetime of the thread, as
+		/// only a reference to it is stored internally.
 
 	void start(Callable target, void* pData = 0);
 		/// Starts the thread with the given target and parameter.
@@ -270,9 +282,9 @@ inline Thread* Thread::current()
 }
 
 
-inline void Thread::setOSPriority(int prio)
+inline void Thread::setOSPriority(int prio, int policy)
 {
-	setOSPriorityImpl(prio);	
+	setOSPriorityImpl(prio, policy);	
 }
 
 	
@@ -282,15 +294,15 @@ inline int Thread::getOSPriority() const
 }
 
 	
-inline int Thread::getMinOSPriority()
+inline int Thread::getMinOSPriority(int policy)
 {
-	return ThreadImpl::getMinOSPriorityImpl();
+	return ThreadImpl::getMinOSPriorityImpl(policy);
 }
 
 	
-inline int Thread::getMaxOSPriority()
+inline int Thread::getMaxOSPriority(int policy)
 {
-	return ThreadImpl::getMaxOSPriorityImpl();
+	return ThreadImpl::getMaxOSPriorityImpl(policy);
 }
 
 

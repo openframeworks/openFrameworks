@@ -1,7 +1,7 @@
 //
 // FPEnvironment_DUMMY.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/FPEnvironment_DUMMY.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/FPEnvironment_DUMMY.h#4 $
 //
 // Library: Foundation
 // Package: Core
@@ -42,7 +42,7 @@
 
 
 #include "Poco/Foundation.h"
-#include <math.h>
+#include <cmath>
 
 
 namespace Poco {
@@ -95,37 +95,37 @@ private:
 //
 inline bool FPEnvironmentImpl::isInfiniteImpl(float value)
 {
-	return isinf(value) != 0;
+	return std::isinf(value) != 0;
 }
 
 
 inline bool FPEnvironmentImpl::isInfiniteImpl(double value)
 {
-	return isinf(value) != 0;
+	return std::isinf(value) != 0;
 }
 
 
 inline bool FPEnvironmentImpl::isInfiniteImpl(long double value)
 {
-	return isinf((double) value) != 0;
+	return std::isinf((double) value) != 0;
 }
 
 
 inline bool FPEnvironmentImpl::isNaNImpl(float value)
 {
-	return isnan(value) != 0;
+	return std::isnan(value) != 0;
 }
 
 
 inline bool FPEnvironmentImpl::isNaNImpl(double value)
 {
-	return isnan(value) != 0;
+	return std::isnan(value) != 0;
 }
 
 
 inline bool FPEnvironmentImpl::isNaNImpl(long double value)
 {
-	return isnan((double) value) != 0;
+	return std::isnan((double) value) != 0;
 }
 
 

@@ -1,7 +1,7 @@
 //
 // Foundation.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/Foundation.h#2 $
+// $Id: //poco/1.4/Foundation/include/Poco/Foundation.h#3 $
 //
 // Library: Foundation
 // Package: Core
@@ -122,6 +122,20 @@
 	#include "Poco/Platform_VX.h"
 #elif defined(POCO_OS_FAMILY_UNIX)
 	#include "Poco/Platform_POSIX.h"
+#endif
+
+
+//
+// Cleanup inconsistencies
+//
+#ifdef POCO_OS_FAMILY_WINDOWS
+	#if defined(POCO_WIN32_UTF8) && defined(POCO_NO_WSTRING)
+		#error POCO_WIN32_UTF8 and POCO_NO_WSTRING are mutually exclusive.
+	#endif
+#else
+	#ifdef POCO_WIN32_UTF8
+		#undef POCO_WIN32_UTF8
+	#endif
 #endif
 
 

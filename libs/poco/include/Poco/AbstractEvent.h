@@ -1,7 +1,7 @@
 //
 // AbstractEvent.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/AbstractEvent.h#3 $
+// $Id: //poco/1.4/Foundation/include/Poco/AbstractEvent.h#4 $
 //
 // Library: Foundation
 // Package: Events
@@ -171,6 +171,8 @@ class AbstractEvent
 	/// to create the PriorityDelegate.
 {
 public:
+	typedef TArgs Args;
+
 	AbstractEvent(): 
 		_executeAsync(this, &AbstractEvent::executeAsyncImpl),
 		_enabled(true)

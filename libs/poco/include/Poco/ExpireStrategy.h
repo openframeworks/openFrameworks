@@ -1,7 +1,7 @@
 //
 // ExpireStrategy.h
 //
-// $Id: //poco/1.4/Foundation/include/Poco/ExpireStrategy.h#1 $
+// $Id: //poco/1.4/Foundation/include/Poco/ExpireStrategy.h#2 $
 //
 // Library: Foundation
 // Package: Cache
@@ -82,8 +82,10 @@ public:
 	void onAdd(const void*, const KeyValueArgs <TKey, TValue>& args)
 	{
 		Timestamp now;
-		IndexIterator it = _keyIndex.insert(typename TimeIndex::value_type(now, args.key()));
-		std::pair<Iterator, bool> stat = _keys.insert(typename Keys::value_type(args.key(), it));
+		typename TimeIndex::value_type tiValue(now, args.key());
+		IndexIterator it = _keyIndex.insert(tiValue);
+		typename Keys::value_type kValue(args.key(), it);
+		std::pair<Iterator, bool> stat = _keys.insert(kValue);
 		if (!stat.second)
 		{
 			_keyIndex.erase(stat.first->second);
