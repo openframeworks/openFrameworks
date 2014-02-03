@@ -2,20 +2,20 @@
 
 
 
-string HOST = "http://httpbin.org";
+//string HOST = "";
 
 // /user-agent Returns user-agent.
-string USER_AGENT = "/user-agent";
+string USER_AGENT = "http://httpbin.org/user-agent";
 // /headers Returns header dict.
-string HEADER = "/headers";
+string HEADER = "http://httpbin.org/headers";
 // /get Returns GET data.
-string GET = "/get";
+string GET = "http://httpbin.org/get";
 // /post Returns POST data.
-string POST = "/post";
+string POST = "http://httpbin.org/post";
 // /put Returns PUT data.
-string PUT = "/put";
+string PUT = "http://httpbin.org/put";
 // /delete Returns DELETE data
-string DELETE = "/delete";
+string DELETE = "http://httpbin.org/delete";
 
 ofHttpRequest httpPut, httpPost, httpGet, httpDelete, httpUserAgent, httpHeaders;
 ofHttpResponse currentResponse;
@@ -29,41 +29,42 @@ void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
     
 
-    httpPut.url = HOST+PUT;
-    httpPut.method = ofHttpRequest::OF_HTTP_PUT;
+    httpPut.url = PUT;
+    httpPut.type = OF_HTTP_PUT;
     httpPut.addData("data 1", "foobar data 1");
     httpPut.addData("data 2", "foobar data 2");
     httpPut.name = "put";
     
 
-    httpGet.method = ofHttpRequest::OF_HTTP_GET;
-    httpGet.url = HOST+GET;
-    httpGet.addData("data 1", "foobar data 1");
-    httpGet.addData("data 2", "foobar data 2");
+    
+    httpGet.url = "https://grind-back-end-production-0.herokuapp.com/api/v1/zones/active?remote_zone_key=front_desk&location_id=15";
+    httpGet.type = OF_HTTP_GET;
+    httpGet.addHeader("Authorization",
+                      "Token token=\"488528dfae35c6825ba2030e6a759099\"");
     httpGet.name = "get";
     
 
-    httpPost.method = ofHttpRequest::OF_HTTP_POST;
-    httpPost.url = HOST+POST;
+    httpPost.type = OF_HTTP_POST;
+    httpPost.url = POST;
     httpPost.addData("data 1", "foobar data 1");
     httpPost.addData("data 2", "foobar data 2");
     httpPost.name = "post";
     
 
-    httpUserAgent.method = ofHttpRequest::OF_HTTP_GET;
-    httpUserAgent.url = HOST+USER_AGENT;
+    httpUserAgent.type = OF_HTTP_GET;
+    httpUserAgent.url = USER_AGENT;
     httpUserAgent.setUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36");
     httpUserAgent.name = "user-agent";
     
 
-    httpDelete.url = HOST+DELETE;
-    httpDelete.method = ofHttpRequest::OF_HTTP_DELETE;
+    httpDelete.url = DELETE;
+    httpDelete.type = OF_HTTP_DELETE;
     httpDelete.addData("data 1", "foobar data 1");
     httpDelete.addData("data 2", "foobar data 2");
     httpDelete.name = "delete";
     
-    httpHeaders.url = HOST+HEADER;
-    httpHeaders.method = ofHttpRequest::OF_HTTP_GET;
+    httpHeaders.url = HEADER;
+    httpHeaders.type = OF_HTTP_GET;
     httpHeaders.addCookie("_gauges_unique_hour", "1");
     httpHeaders.addCookie("_gauges_unique_day", "1");
     httpHeaders.addCookie("_gauges_unique_month", "1");
@@ -79,8 +80,9 @@ void ofApp::setup(){
 
 void ofApp::urlResponse(ofHttpResponse & response)
 {
-    if(response.status > 300){
+    if(response.status >  300){
         ofLogError()<<"status: "<<response.status<<" name: "<<response.request.name<<endl;
+        ofLogError()<<"data: "<<response.data<<endl;
     }
     currentResponse = response;
     

@@ -15,9 +15,7 @@
 #include "Poco/Net/SSLManager.h"
 #include "Poco/Net/KeyConsoleHandler.h"
 #include "Poco/Net/ConsoleCertificateHandler.h"
-
-
-
+#include "Poco/Net/HTTPRequest.h"
 #include "ofURLFileLoader.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
@@ -64,6 +62,15 @@ ofHttpResponse ofURLFileLoader::get(string url) {
 }
 
 ofHttpResponse ofURLFileLoader::get(ofHttpRequest request){
+    if(request.type == OF_HTTP_DELETE)
+        request.method == HTTPRequest::HTTP_DELETE;
+    else if(request.type == OF_HTTP_GET)
+        request.method == HTTPRequest::HTTP_GET;
+    else if(request.type == OF_HTTP_POST)
+        request.method == HTTPRequest::HTTP_POST;
+    else if(request.type == OF_HTTP_PUT)
+        request.method == HTTPRequest::HTTP_PUT;
+    
     return handleRequest(request);
 }
 
@@ -82,6 +89,16 @@ int ofURLFileLoader::getAsync(string url, string name){
 int ofURLFileLoader::getAsync(ofHttpRequest req){
     if(req.url != ""){
         if(req.name=="") req.name = req.url;
+        
+        if(req.type == OF_HTTP_DELETE)
+            req.method == HTTPRequest::HTTP_DELETE;
+        else if(req.type == OF_HTTP_GET)
+            req.method == HTTPRequest::HTTP_GET;
+        else if(req.type == OF_HTTP_POST)
+            req.method == HTTPRequest::HTTP_POST;
+        else if(req.type == OF_HTTP_PUT)
+            req.method == HTTPRequest::HTTP_PUT;
+        
         lock();
         requests.push_back(req);
         unlock();
@@ -182,7 +199,18 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
         std::string path(uri.getPathAndQuery());
         if (path.empty()) path = "/";
         
-        HTTPRequest req(request.method, path, HTTPMessage::HTTP_1_1);
+        
+        
+        string method;
+        if(request.type == OF_HTTP_GET)
+            method = HTTPRequest::HTTP_GET;
+        if(request.type == OF_HTTP_PUT)
+            method = HTTPRequest::HTTP_PUT;
+        if(request.type == OF_HTTP_POST)
+            method = HTTPRequest::HTTP_POST;
+
+        HTTPRequest req(method, path, HTTPMessage::HTTP_1_1);
+        
         bool usesForm = false;
         if(request.header.size() > 0){
             map<string, string>::iterator iter;

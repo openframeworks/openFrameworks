@@ -10,7 +10,7 @@
 #include "ofFileUtils.h"
 
 #include "Poco/Condition.h"
-#include "Poco/Net/HTTPRequest.h"
+
 
 class ofHttpRequest{
     
@@ -23,11 +23,14 @@ public:
 	:url(url)
 	,name(name)
 	,saveTo(saveTo)
-	,id(nextID++){};
+	,id(nextID++){
+
+    };
     
     
 	string				url;
 	string				name;
+    ofHttpRequestType   type;
     string              method;
 	bool				saveTo;
     
@@ -37,7 +40,7 @@ public:
     void addData(string key, string value){data.insert(make_pair(key, value));}
     void addFile(string key, string path){files.insert(make_pair(key, path));}
     void setUserAgent(string value){header.insert(make_pair("User-Agent", value));}
-    
+
     
     map<string, string> cookies;
     map<string, string> header;
