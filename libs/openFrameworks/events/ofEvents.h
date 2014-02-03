@@ -52,7 +52,8 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 		Pressed,
 		Moved,
 		Released,
-		Dragged
+		Dragged,
+        Scrolled
 	} type;
 	int button;
 };
@@ -117,6 +118,7 @@ class ofCoreEvents {
 	ofEvent<ofMouseEventArgs> 	mouseDragged;
 	ofEvent<ofMouseEventArgs> 	mousePressed;
 	ofEvent<ofMouseEventArgs> 	mouseReleased;
+	ofEvent<ofMouseEventArgs> 	mouseScrolled;
 
 	ofEvent<ofAudioEventArgs> 	audioReceived;
 	ofEvent<ofAudioEventArgs> 	audioRequested;
@@ -141,6 +143,7 @@ class ofCoreEvents {
 		mouseReleased.disable();
 		mousePressed.disable();
 		mouseMoved.disable();
+		mouseScrolled.disable();
 		audioReceived.disable();
 		audioRequested.disable();
 		touchDown.disable();
@@ -163,6 +166,7 @@ class ofCoreEvents {
 		mouseReleased.enable();
 		mousePressed.enable();
 		mouseMoved.enable();
+		mouseScrolled.enable();
 		audioReceived.enable();
 		audioRequested.enable();
 		touchDown.enable();
@@ -186,6 +190,7 @@ void ofRegisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFT
 	ofAddListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
 	ofAddListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
 	ofAddListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
+	ofAddListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
 }
 
 template<class ListenerClass>
@@ -219,6 +224,7 @@ void ofUnregisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_A
 	ofRemoveListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
 	ofRemoveListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
 	ofRemoveListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
+	ofRemoveListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
 }
 
 template<class ListenerClass>
@@ -259,6 +265,7 @@ void ofNotifyMousePressed(int x, int y, int button);
 void ofNotifyMouseReleased(int x, int y, int button);
 void ofNotifyMouseDragged(int x, int y, int button);
 void ofNotifyMouseMoved(int x, int y);
+void ofNotifyMouseScrolled(double x, double y);
 void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent);
 
 void ofNotifyExit();
