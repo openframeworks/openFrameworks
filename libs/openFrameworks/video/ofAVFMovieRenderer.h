@@ -14,7 +14,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <OpenGL/OpenGL.h>
 
-@interface AVFVideoRenderer : NSObject
+@interface AVFMovieRenderer : NSObject
 {
     BOOL _bTheFutureIsNow;
     

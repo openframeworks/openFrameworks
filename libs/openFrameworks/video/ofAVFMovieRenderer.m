@@ -6,10 +6,10 @@
 //
 //
 
-#import "ofxAVFVideoRenderer.h"
+#import "ofAVFMovieRenderer.h"
 #import <Accelerate/Accelerate.h>
 
-@interface AVFVideoRenderer ()
+@interface AVFMovieRenderer ()
 
 - (void)playerItemDidReachEnd:(NSNotification *) notification;
 - (NSDictionary *)pixelBufferAttributes;
@@ -20,7 +20,7 @@
 
 @end
 
-@implementation AVFVideoRenderer
+@implementation AVFMovieRenderer
 
 @synthesize player = _player;
 @synthesize playerItem = _playerItem;

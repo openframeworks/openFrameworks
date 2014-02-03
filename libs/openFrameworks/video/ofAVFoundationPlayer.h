@@ -1,5 +1,5 @@
 //
-//  ofxAVFVideoPlayer.h
+//  ofAVFoundationPlayer.h
 //  AVFoundationTest
 //
 //  Created by Sam Kronick on 5/31/13.
@@ -11,15 +11,15 @@
 #include "ofMain.h"
 
 #ifdef __OBJC__
-#import "ofxAVFVideoRenderer.h"
+#import "ofAVFMovieRenderer.h"
 #endif
 
-class ofxAVFVideoPlayer  : public ofBaseVideoPlayer {
+class ofAVFoundationPlayer  : public ofBaseVideoPlayer {
     
 public:
     
-    ofxAVFVideoPlayer();
-    ~ofxAVFVideoPlayer();
+    ofAVFoundationPlayer();
+    ~ofAVFoundationPlayer();
     
     bool                loadMovie(string path);
     
@@ -79,7 +79,7 @@ public:
     void                setLoopState(ofLoopType state);
     void                setVolume(float volume);
     
-    // ofxAVFVideoPlayer only supports OF_PIXELS_RGB and OF_PIXELS_RGBA.
+    // ofAVFoundationPlayer only supports OF_PIXELS_RGB and OF_PIXELS_RGBA.
     bool                setPixelFormat(ofPixelFormat pixelFormat);
     ofPixelFormat       getPixelFormat();
     
@@ -125,7 +125,7 @@ protected:
     // This #ifdef is so you can include this .h file in .cpp files
     // and avoid ugly casts in the .m file
 #ifdef __OBJC__
-    AVFVideoRenderer* moviePlayer;
+    AVFMovieRenderer* moviePlayer;
 #else
     void * moviePlayer;
 #endif

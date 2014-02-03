@@ -6,11 +6,11 @@
 //
 //
 
-#include "ofxAVFVideoPlayer.h"
+#include "ofAVFoundationPlayer.h"
 #include "Poco/String.h"
 
 //--------------------------------------------------------------
-ofxAVFVideoPlayer::ofxAVFVideoPlayer()
+ofAVFoundationPlayer::ofAVFoundationPlayer()
 {
     moviePlayer = NULL;
 	bNewFrame = false;
@@ -28,13 +28,13 @@ ofxAVFVideoPlayer::ofxAVFVideoPlayer()
 }
 
 //--------------------------------------------------------------
-ofxAVFVideoPlayer::~ofxAVFVideoPlayer()
+ofAVFoundationPlayer::~ofAVFoundationPlayer()
 {
 	close();
 }
 
 //--------------------------------------------------------------
-bool ofxAVFVideoPlayer::loadMovie(string path)
+bool ofAVFoundationPlayer::loadMovie(string path)
 {
 
     if (bInitialized) {
@@ -43,7 +43,7 @@ bool ofxAVFVideoPlayer::loadMovie(string path)
 	
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
-    moviePlayer = [[AVFVideoRenderer alloc] init];
+    moviePlayer = [[AVFMovieRenderer alloc] init];
     [moviePlayer setUseAlpha:(pixelFormat == OF_PIXELS_RGBA)];
     [moviePlayer setUseTexture:YES];
     
@@ -65,13 +65,13 @@ bool ofxAVFVideoPlayer::loadMovie(string path)
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::closeMovie()
+void ofAVFoundationPlayer::closeMovie()
 {
     close();
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::close()
+void ofAVFoundationPlayer::close()
 {
     pixels.clear();
 	
@@ -88,13 +88,13 @@ void ofxAVFVideoPlayer::close()
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::idleMovie()
+void ofAVFoundationPlayer::idleMovie()
 {
     update();
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::update()
+void ofAVFoundationPlayer::update()
 {
     if (!moviePlayer) return;
     
@@ -132,15 +132,15 @@ void ofxAVFVideoPlayer::update()
         bHavePixelsChanged = bNewFrame;
     }
     else {
-        ofLogNotice("ofxAVFVideoPlayer::update()") << "Movie player not ready";
+        ofLogNotice("ofAVFoundationPlayer::update()") << "Movie player not ready";
     }
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::play()
+void ofAVFoundationPlayer::play()
 {
 	if (bInitialized) {
-        ofLogVerbose("ofxAVFVideoPlayer::play()") << "Initialized and playing at time " << getCurrentTime();
+        ofLogVerbose("ofAVFoundationPlayer::play()") << "Initialized and playing at time " << getCurrentTime();
 		[moviePlayer play];
 	}
 	else {
@@ -149,25 +149,25 @@ void ofxAVFVideoPlayer::play()
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::stop()
+void ofAVFoundationPlayer::stop()
 {
     [moviePlayer stop];
 }
 
 //--------------------------------------------------------------
-bool ofxAVFVideoPlayer::isFrameNew()
+bool ofAVFoundationPlayer::isFrameNew()
 {
     return bNewFrame;
 }
 
 //--------------------------------------------------------------
-float ofxAVFVideoPlayer::getAmplitude(int channel)
+float ofAVFoundationPlayer::getAmplitude(int channel)
 {
     return getAmplitudeAt(getPosition(), channel);
 }
 
 //--------------------------------------------------------------
-float ofxAVFVideoPlayer::getAmplitudeAt(float pos, int channel)
+float ofAVFoundationPlayer::getAmplitudeAt(float pos, int channel)
 {
     if (bTheFutureIsNow == false) return 0;
     
@@ -195,13 +195,13 @@ float ofxAVFVideoPlayer::getAmplitudeAt(float pos, int channel)
 }
 
 //--------------------------------------------------------------
-int ofxAVFVideoPlayer::getNumAmplitudes()
+int ofAVFoundationPlayer::getNumAmplitudes()
 {
     return [moviePlayer numAmplitudes];
 }
 
 //--------------------------------------------------------------
-float * ofxAVFVideoPlayer::getAllAmplitudes()
+float * ofAVFoundationPlayer::getAllAmplitudes()
 {
     if (bTheFutureIsNow == false) return NULL;
     
@@ -209,7 +209,7 @@ float * ofxAVFVideoPlayer::getAllAmplitudes()
 }
 
 //--------------------------------------------------------------
-unsigned char * ofxAVFVideoPlayer::getPixels()
+unsigned char * ofAVFoundationPlayer::getPixels()
 {
     if (bTheFutureIsNow) {
         return getPixelsRef().getPixels();
@@ -225,7 +225,7 @@ unsigned char * ofxAVFVideoPlayer::getPixels()
 }
 
 //--------------------------------------------------------------
-ofPixelsRef ofxAVFVideoPlayer::getPixelsRef()
+ofPixelsRef ofAVFoundationPlayer::getPixelsRef()
 {
     if (bTheFutureIsNow) {
         if (isLoaded()) {
@@ -236,7 +236,7 @@ ofPixelsRef ofxAVFVideoPlayer::getPixelsRef()
             }
         }
         else {
-            ofLogError("ofxAVFVideoPlayer::getPixelsRef()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
+            ofLogError("ofAVFoundationPlayer::getPixelsRef()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
         }
     }
     else {
@@ -247,7 +247,7 @@ ofPixelsRef ofxAVFVideoPlayer::getPixelsRef()
 }
 
 //--------------------------------------------------------------
-ofTexture* ofxAVFVideoPlayer::getTexture()
+ofTexture* ofAVFoundationPlayer::getTexture()
 {
     if (bTheFutureIsNow) {
         if (moviePlayer.textureAllocated) {
@@ -264,7 +264,7 @@ ofTexture* ofxAVFVideoPlayer::getTexture()
 }
 
 //--------------------------------------------------------------
-ofTexture& ofxAVFVideoPlayer::getTextureReference()
+ofTexture& ofAVFoundationPlayer::getTextureReference()
 {
     if (bTheFutureIsNow) {
         getTexture();
@@ -277,25 +277,25 @@ ofTexture& ofxAVFVideoPlayer::getTextureReference()
 }
 
 //--------------------------------------------------------------
-bool ofxAVFVideoPlayer::isLoading()
+bool ofAVFoundationPlayer::isLoading()
 {
     return moviePlayer && [moviePlayer isLoading];
 }
 
 //--------------------------------------------------------------
-bool ofxAVFVideoPlayer::isLoaded()
+bool ofAVFoundationPlayer::isLoaded()
 {
     return bInitialized;
 }
 
 //--------------------------------------------------------------
-bool ofxAVFVideoPlayer::isAudioLoaded()
+bool ofAVFoundationPlayer::isAudioLoaded()
 {
     return moviePlayer && [moviePlayer isAudioLoaded];
 }
 
 //--------------------------------------------------------------
-bool ofxAVFVideoPlayer::errorLoading()
+bool ofAVFoundationPlayer::errorLoading()
 {
     if (!moviePlayer) return false;
     
@@ -304,61 +304,61 @@ bool ofxAVFVideoPlayer::errorLoading()
 }
 
 //--------------------------------------------------------------
-bool ofxAVFVideoPlayer::isPlaying()
+bool ofAVFoundationPlayer::isPlaying()
 {
     return moviePlayer && [moviePlayer isPlaying];
 }
 
 //--------------------------------------------------------------
-bool ofxAVFVideoPlayer::getIsMovieDone()
+bool ofAVFoundationPlayer::getIsMovieDone()
 {
     return moviePlayer.isMovieDone;
 }
 
 //--------------------------------------------------------------
-float ofxAVFVideoPlayer::getPosition()
+float ofAVFoundationPlayer::getPosition()
 {
     return moviePlayer.position;
 }
 
 //--------------------------------------------------------------
-float ofxAVFVideoPlayer::getCurrentTime()
+float ofAVFoundationPlayer::getCurrentTime()
 {
     return moviePlayer.currentTime;
 }
 
 //--------------------------------------------------------------
-float ofxAVFVideoPlayer::getPositionInSeconds()
+float ofAVFoundationPlayer::getPositionInSeconds()
 {
     return getCurrentTime();
 }
 
 //--------------------------------------------------------------
-int ofxAVFVideoPlayer::getCurrentFrame()
+int ofAVFoundationPlayer::getCurrentFrame()
 {
     return moviePlayer.currentFrame;
 }
 
 //--------------------------------------------------------------
-float ofxAVFVideoPlayer::getDuration()
+float ofAVFoundationPlayer::getDuration()
 {
     return moviePlayer.duration;
 }
 
 //--------------------------------------------------------------
-int ofxAVFVideoPlayer::getTotalNumFrames()
+int ofAVFoundationPlayer::getTotalNumFrames()
 {
     return moviePlayer.totalFrames;
 }
 
 //--------------------------------------------------------------
-bool ofxAVFVideoPlayer::isPaused()
+bool ofAVFoundationPlayer::isPaused()
 {
     return moviePlayer && [moviePlayer isPaused];
 }
 
 //--------------------------------------------------------------
-float ofxAVFVideoPlayer::getSpeed()
+float ofAVFoundationPlayer::getSpeed()
 {
     if (moviePlayer) {
         return moviePlayer.playbackRate;
@@ -368,7 +368,7 @@ float ofxAVFVideoPlayer::getSpeed()
 }
 
 //--------------------------------------------------------------
-ofLoopType ofxAVFVideoPlayer::getLoopState()
+ofLoopType ofAVFoundationPlayer::getLoopState()
 {
     if (moviePlayer && [moviePlayer loops])
         return OF_LOOP_NORMAL;
@@ -377,7 +377,7 @@ ofLoopType ofxAVFVideoPlayer::getLoopState()
 }
 
 //--------------------------------------------------------------
-float ofxAVFVideoPlayer::getVolume()
+float ofAVFoundationPlayer::getVolume()
 {
     if (moviePlayer) {
         return moviePlayer.volume;
@@ -387,16 +387,16 @@ float ofxAVFVideoPlayer::getVolume()
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::setPosition(float pct)
+void ofAVFoundationPlayer::setPosition(float pct)
 {
     [moviePlayer setPosition:pct];
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::setTime(float position)
+void ofAVFoundationPlayer::setTime(float position)
 {
 	if (![moviePlayer isLoaded]) {
-		ofLogNotice("ofxAVFVideoPlayer::setCurrentTime()") << "Video player not ready, declaring to scrub to time " << scrubToTime;
+		ofLogNotice("ofAVFoundationPlayer::setCurrentTime()") << "Video player not ready, declaring to scrub to time " << scrubToTime;
 		scrubToTime = position;
 	}
 	else {
@@ -405,58 +405,58 @@ void ofxAVFVideoPlayer::setTime(float position)
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::setPositionInSeconds(float seconds)
+void ofAVFoundationPlayer::setPositionInSeconds(float seconds)
 {
     setTime(seconds);
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::setFrame(int frame)
+void ofAVFoundationPlayer::setFrame(int frame)
 {
     [moviePlayer setCurrentFrame:frame];
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::setVolume(float volume)
+void ofAVFoundationPlayer::setVolume(float volume)
 {
     [moviePlayer setVolume:volume];
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::setBalance(float balance)
+void ofAVFoundationPlayer::setBalance(float balance)
 {
 
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::setPaused(bool bPaused)
+void ofAVFoundationPlayer::setPaused(bool bPaused)
 {
     [moviePlayer setPaused:bPaused];
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::setLoopState(ofLoopType state)
+void ofAVFoundationPlayer::setLoopState(ofLoopType state)
 {
     if (moviePlayer) {
         [moviePlayer setLoops:(state == OF_LOOP_NORMAL)];
     }
     
     if (state == OF_LOOP_PALINDROME) {
-        ofLogWarning("ofxAVFVideoPlayer::setLoopState") << "No palindrome yet, sorry!";
+        ofLogWarning("ofAVFoundationPlayer::setLoopState") << "No palindrome yet, sorry!";
     }
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::setSpeed(float speed)
+void ofAVFoundationPlayer::setSpeed(float speed)
 {
     [moviePlayer setPlaybackRate:speed];
 }
 
 //--------------------------------------------------------------
-bool ofxAVFVideoPlayer::setPixelFormat(ofPixelFormat newPixelFormat)
+bool ofAVFoundationPlayer::setPixelFormat(ofPixelFormat newPixelFormat)
 {
     if (newPixelFormat != OF_PIXELS_RGB && newPixelFormat != OF_PIXELS_RGBA) {
-        ofLogWarning("ofxAVFVideoPlayer::setPixelFormat") << "Pixel format " << newPixelFormat << " is not supported.";
+        ofLogWarning("ofAVFoundationPlayer::setPixelFormat") << "Pixel format " << newPixelFormat << " is not supported.";
         return false;
     }
     
@@ -472,13 +472,13 @@ bool ofxAVFVideoPlayer::setPixelFormat(ofPixelFormat newPixelFormat)
 }
 
 //--------------------------------------------------------------
-ofPixelFormat ofxAVFVideoPlayer::getPixelFormat()
+ofPixelFormat ofAVFoundationPlayer::getPixelFormat()
 {
     return pixelFormat;
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::draw(float x, float y)
+void ofAVFoundationPlayer::draw(float x, float y)
 {
     if (!bInitialized) return;
     
@@ -491,7 +491,7 @@ void ofxAVFVideoPlayer::draw(float x, float y)
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::draw(float x, float y, float w, float h)
+void ofAVFoundationPlayer::draw(float x, float y, float w, float h)
 {
     if (!bInitialized) return;
     
@@ -505,37 +505,37 @@ void ofxAVFVideoPlayer::draw(float x, float y, float w, float h)
 }
 
 //--------------------------------------------------------------
-float ofxAVFVideoPlayer::getWidth()
+float ofAVFoundationPlayer::getWidth()
 {
     return moviePlayer.width;
 }
 
 //--------------------------------------------------------------
-float ofxAVFVideoPlayer::getHeight()
+float ofAVFoundationPlayer::getHeight()
 {
     return moviePlayer.height;
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::firstFrame()
+void ofAVFoundationPlayer::firstFrame()
 {
     
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::nextFrame()
+void ofAVFoundationPlayer::nextFrame()
 {
     
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::previousFrame()
+void ofAVFoundationPlayer::previousFrame()
 {
     
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::updateTexture()
+void ofAVFoundationPlayer::updateTexture()
 {
     if (bTheFutureIsNow == false) return;
     
@@ -554,7 +554,7 @@ void ofxAVFVideoPlayer::updateTexture()
 }
 
 //--------------------------------------------------------------
-void ofxAVFVideoPlayer::reallocatePixels()
+void ofAVFoundationPlayer::reallocatePixels()
 {
     if (bTheFutureIsNow == false) return;
     
