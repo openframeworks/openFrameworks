@@ -31,6 +31,11 @@ function build() {
 			patch -p1 -u < $FORMULA_DIR/Makefile.osx.patch
 		fi
 
+		# @tgfrerer patch FreeImage source - clang is much less forgiving about
+		# type overruns and missing standard header files. 
+		# this patch replicates gcc's behaviour
+		patch -p1 -u  < $FORMULA_DIR/freeimage.clang.source.patch
+
 		# set SDK
 		sed -i tmp "s|MACOSX_SDK =.*|MACOSX_SDK = $OSX_SDK_VER|" Makefile.osx
 		sed -i tmp "s|MACOSX_MIN_SDK =.*|MACOSX_MIN_SDK = $OSX_MIN_SDK_VER|" Makefile.osx
@@ -51,7 +56,7 @@ function build() {
 		# @tgfrerer patch FreeImage source - clang is much less forgiving about
 		# type overruns and missing standard header files. 
 		# this patch replicates gcc's behaviour
-		patch -p1 -u  < $FORMULA_DIR/freeimage.osx-clang-libc++.source.patch
+		patch -p1 -u  < $FORMULA_DIR/freeimage.clang.source.patch
 
 		# set SDK
 		sed -i tmp "s|MACOSX_SDK =.*|MACOSX_SDK = $OSX_SDK_VER|" Makefile.osx
@@ -76,6 +81,11 @@ function build() {
 		else
 			patch -p1 -u < $FORMULA_DIR/Makefile.iphone.patch
 		fi
+
+		# @tgfrerer patch FreeImage source - clang is much less forgiving about
+		# type overruns and missing standard header files. 
+		# this patch replicates gcc's behaviour
+		patch -p1 -u  < $FORMULA_DIR/freeimage.clang.source.patch
 
 		# set SDKs
 		sed -i tmp "s|MACOSX_DEPLOYMENT_TARGET =.*|MACOSX_DEPLOYMENT_TARGET = $OSX_SDK_VER|" Makefile.iphone
