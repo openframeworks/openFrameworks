@@ -55,7 +55,7 @@
 
 @property (nonatomic, retain) AVPlayer * player;
 
-@property (nonatomic, assign, readonly, getter = theFutureIsNow) BOOL bTheFutureIsNow;
+//@property (nonatomic, assign, readonly, getter = theFutureIsNow) BOOL bTheFutureIsNow;
 
 @property (nonatomic, assign, readonly) double width;
 @property (nonatomic, assign, readonly) double height;

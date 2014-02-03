@@ -97,7 +97,7 @@ protected:
     
     ofLoopType currentLoopState;
     
-    bool bTheFutureIsNow;
+    //bool bTheFutureIsNow;
     
     bool bPaused;
 	bool bShouldPlay;
@@ -112,7 +112,6 @@ protected:
     string moviePath;
     
     bool bInitialized;
-    void exit(ofEventArgs& args);
     
     void updateTexture();
     void reallocatePixels();

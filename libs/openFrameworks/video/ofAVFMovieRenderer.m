@@ -25,7 +25,7 @@
 @synthesize player = _player;
 @synthesize playerItem = _playerItem;
 @synthesize playerItemVideoOutput = _playerItemVideoOutput;
-@synthesize bTheFutureIsNow = _bTheFutureIsNow;
+//@synthesize bTheFutureIsNow = _bTheFutureIsNow;
 
 @synthesize useTexture = _useTexture;
 @synthesize useAlpha = _useAlpha;
@@ -50,14 +50,12 @@ int count = 0;
 {
     self = [super init];
     if (self) {
-        _bTheFutureIsNow = (NSClassFromString(@"AVPlayerItemVideoOutput") != nil);
-        NSLog(@"Is this the future? %d", _bTheFutureIsNow);
         
-        if (self.theFutureIsNow) {
+//        if (self.theFutureIsNow) {
             self.player = [[AVPlayer alloc] init];
 			[self.player autorelease];
             _amplitudes = [[NSMutableData data] retain];
-        }
+//        }
         
         _bLoading = NO;
         _bLoaded = NO;
@@ -81,7 +79,8 @@ int count = 0;
     // kCVPixelFormatType_32ARGB, kCVPixelFormatType_32BGRA, kCVPixelFormatType_422YpCbCr8
     return @{
              (NSString *)kCVPixelBufferOpenGLCompatibilityKey : [NSNumber numberWithBool:self.useTexture],
-             (NSString *)kCVPixelBufferPixelFormatTypeKey     : [NSNumber numberWithInt:kCVPixelFormatType_32ARGB]  //[NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr8]
+             (NSString *)kCVPixelBufferPixelFormatTypeKey     : [NSNumber numberWithInt:kCVPixelFormatType_32ARGB]
+			 //[NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr8]
             };
 }
 
@@ -150,7 +149,7 @@ int count = 0;
                                                              name:AVPlayerItemDidPlayToEndTimeNotification
                                                            object:self.playerItem];
                 
-                if (self.theFutureIsNow) {
+//                if (self.theFutureIsNow) {
                     [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
 
                     // Create and attach video output. 10.8 Only!!!
@@ -171,20 +170,20 @@ int count = 0;
                             NSLog(@"Error at CVOpenGLTextureCacheCreate %d", err);
                         }
                     }
-                }
-                else {
-                    self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
-                    
-                    AVPlayerLayer * playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-                    _layerRenderer = [CARenderer rendererWithCGLContext:CGLGetCurrentContext() options:nil];
-                    _layerRenderer.layer = playerLayer;
-                    
-                    // Video is centered on 0,0 for some reason so layer bounds have to start at -width/2,-height/2
-                    _layerRenderer.bounds = CGRectMake(_videoSize.width * -0.5, _videoSize.height * -0.5, _videoSize.width, _videoSize.height);
-                    playerLayer.bounds = _layerRenderer.bounds;
-                }
+//                }
+//                else {
+//                    self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
+//                    
+//                    AVPlayerLayer * playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
+//                    _layerRenderer = [CARenderer rendererWithCGLContext:CGLGetCurrentContext() options:nil];
+//                    _layerRenderer.layer = playerLayer;
+//                    
+//                    // Video is centered on 0,0 for some reason so layer bounds have to start at -width/2,-height/2
+//                    _layerRenderer.bounds = CGRectMake(_videoSize.width * -0.5, _videoSize.height * -0.5, _videoSize.width, _videoSize.height);
+//                    playerLayer.bounds = _layerRenderer.bounds;
+//                }
                 
-                if (self.theFutureIsNow) {
+//                if (self.theFutureIsNow) {
                     // Only monitor audio if the file is local and has audio tracks.
                     NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
                     if ([url isFileURL] && [audioTracks count] > 0) {
@@ -272,7 +271,7 @@ int count = 0;
                                                                                          }];
                         }
                     }
-                }
+//                }
                 
                 _bLoading = NO;
                 _bLoaded = YES;
@@ -291,7 +290,7 @@ int count = 0;
 {
     [self stop];
             
-    if (self.theFutureIsNow) {
+//    if (self.theFutureIsNow) {
         self.playerItemVideoOutput = nil;
     
         if (_textureCache != NULL) {
@@ -312,8 +311,8 @@ int count = 0;
             _amplitudes = nil;
         }
         _numAmplitudes = 0;
-    }
-    else {
+//    }
+//    else {
         // SK: Releasing the CARenderer is slow for some reason
         //     It will freeze the main thread for a few dozen mS.
         //     If you're swapping in and out videos a lot, the loadFile:
@@ -321,12 +320,12 @@ int count = 0;
         //     these layers/objects rather than releasing and reallocating
         //     them every time a new file is needed.
         
-        if (_layerRenderer) {
-            [_layerRenderer release];
-            _layerRenderer = nil;
-        }
-    }
-    
+//        if (_layerRenderer) {
+//            [_layerRenderer release];
+//            _layerRenderer = nil;
+//        }
+//    }
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     if (self.playerItem) {
         [self.playerItem removeObserver:self forKeyPath:@"status"];
@@ -397,7 +396,7 @@ int count = 0;
 //--------------------------------------------------------------
 - (BOOL)update
 {
-    if (self.theFutureIsNow == NO) return YES;
+//    if (self.theFutureIsNow == NO) return YES;
     
     if (![self isLoaded]) return NO;
 
@@ -439,43 +438,43 @@ int count = 0;
 //--------------------------------------------------------------
 - (void)render
 {
-    if (self.theFutureIsNow) return;
+//    if (self.theFutureIsNow) return;
     
     // From https://qt.gitorious.org/qt/qtmultimedia/blobs/700b4cdf42335ad02ff308cddbfc37b8d49a1e71/src/plugins/avfoundation/mediaplayer/avfvideoframerenderer.mm
     
-    glPushAttrib(GL_ENABLE_BIT);
-    glDisable(GL_DEPTH_TEST);
-    
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    glViewport(0, 0, _videoSize.width, _videoSize.height);
-    
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    
-    glOrtho(0.0f, _videoSize.width, _videoSize.height, 0.0f, 0.0f, 1.0f);
-    
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    
-    glTranslatef(_videoSize.width * 0.5, _videoSize.height * 0.5, 0);
-    
-    [_layerRenderer beginFrameAtTime:CACurrentMediaTime() timeStamp:NULL];
-    [_layerRenderer addUpdateRect:_layerRenderer.layer.bounds];
-    [_layerRenderer render];
-    [_layerRenderer endFrame];
-    
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    
-    glPopAttrib();
-    
-    glFinish(); //Rendering needs to be done before passing texture to video frame
+//    glPushAttrib(GL_ENABLE_BIT);
+//    glDisable(GL_DEPTH_TEST);
+//    
+//    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+//    glClear(GL_COLOR_BUFFER_BIT);
+//    
+//    glViewport(0, 0, _videoSize.width, _videoSize.height);
+//    
+//    glMatrixMode(GL_PROJECTION);
+//    glPushMatrix();
+//    glLoadIdentity();
+//    
+//    glOrtho(0.0f, _videoSize.width, _videoSize.height, 0.0f, 0.0f, 1.0f);
+//    
+//    glMatrixMode(GL_MODELVIEW);
+//    glPushMatrix();
+//    glLoadIdentity();
+//    
+//    glTranslatef(_videoSize.width * 0.5, _videoSize.height * 0.5, 0);
+//    
+//    [_layerRenderer beginFrameAtTime:CACurrentMediaTime() timeStamp:NULL];
+//    [_layerRenderer addUpdateRect:_layerRenderer.layer.bounds];
+//    [_layerRenderer render];
+//    [_layerRenderer endFrame];
+//    
+//    glMatrixMode(GL_MODELVIEW);
+//    glPopMatrix();
+//    glMatrixMode(GL_PROJECTION);
+//    glPopMatrix();
+//    
+//    glPopAttrib();
+//    
+//    glFinish(); //Rendering needs to be done before passing texture to video frame
 }
 
 #pragma mark - Pixels and Texture
@@ -495,7 +494,7 @@ int count = 0;
 //--------------------------------------------------------------
 - (void)pixels:(unsigned char *)outbuf
 {
-    if (self.theFutureIsNow == NO) return;
+//    if (self.theFutureIsNow == NO) return;
     
     if (_latestPixelFrame == NULL) return;
 		
@@ -549,7 +548,7 @@ int count = 0;
 //--------------------------------------------------------------
 - (BOOL)textureAllocated
 {
-    if (self.theFutureIsNow == NO) return NO;
+//    if (self.theFutureIsNow == NO) return NO;
     
     return self.useTexture && _latestTextureFrame != NULL;
 }
@@ -557,7 +556,7 @@ int count = 0;
 //--------------------------------------------------------------
 - (GLuint)textureID
 {
-    if (self.theFutureIsNow == NO) return -1;
+//    if (self.theFutureIsNow == NO) return -1;
     
     return CVOpenGLTextureGetName(_latestTextureFrame);
 }
@@ -565,7 +564,7 @@ int count = 0;
 //--------------------------------------------------------------
 - (GLenum)textureTarget
 {
-    if (self.theFutureIsNow == NO) return 0;
+//    if (self.theFutureIsNow == NO) return 0;
 
     return CVOpenGLTextureGetTarget(_latestTextureFrame);
 }
@@ -573,7 +572,7 @@ int count = 0;
 //--------------------------------------------------------------
 - (void)bindTexture
 {
-    if (self.theFutureIsNow == NO) return;
+//    if (self.theFutureIsNow == NO) return;
     
     if (!self.textureAllocated) return;
     
@@ -587,7 +586,7 @@ int count = 0;
 //--------------------------------------------------------------
 - (void)unbindTexture
 {
-    if (self.theFutureIsNow == NO) return;
+//    if (self.theFutureIsNow == NO) return;
 
     if (!self.textureAllocated) return;
 	
@@ -612,11 +611,11 @@ int count = 0;
 //--------------------------------------------------------------
 - (double)currentTime
 {
-    if (self.theFutureIsNow) {
+//    if (self.theFutureIsNow) {
         return CMTimeGetSeconds(_currentTime);
-    }
-
-    return CMTimeGetSeconds(self.player.currentTime);
+//    }
+//
+//    return CMTimeGetSeconds(self.player.currentTime);
 }
 
 //--------------------------------------------------------------

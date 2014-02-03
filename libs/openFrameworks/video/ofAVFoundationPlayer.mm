@@ -23,8 +23,7 @@ ofAVFoundationPlayer::ofAVFoundationPlayer()
     
     pixelFormat = OF_PIXELS_RGB;
     currentLoopState = OF_LOOP_NORMAL;
-    
-    bTheFutureIsNow = false;
+
 }
 
 //--------------------------------------------------------------
@@ -46,8 +45,7 @@ bool ofAVFoundationPlayer::loadMovie(string path)
     moviePlayer = [[AVFMovieRenderer alloc] init];
     [moviePlayer setUseAlpha:(pixelFormat == OF_PIXELS_RGBA)];
     [moviePlayer setUseTexture:YES];
-    
-    bTheFutureIsNow = moviePlayer.theFutureIsNow;
+
 
 	if (Poco::icompare(path.substr(0, 7), "http://")  == 0 ||
         Poco::icompare(path.substr(0, 8), "https://") == 0 ||
@@ -76,10 +74,10 @@ void ofAVFoundationPlayer::close()
     pixels.clear();
 	
     if (moviePlayer != nil) {
-		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-        [moviePlayer autorelease];
+//		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+        [moviePlayer release];
         moviePlayer = nil;
-		[pool release];
+//		[pool release];
 
     }
     
@@ -100,12 +98,7 @@ void ofAVFoundationPlayer::update()
     
     if ([moviePlayer isLoaded]) {
         if (!bInitialized) {
-            if (bTheFutureIsNow) {
-                reallocatePixels();
-            }
-            else {
-                fbo.allocate(moviePlayer.width, moviePlayer.height);
-            }
+			reallocatePixels();
             bInitialized = true;
 
             if (scrubToTime != 0.0f) {
@@ -119,16 +112,7 @@ void ofAVFoundationPlayer::update()
 			}
         }
         
-        if (bTheFutureIsNow) {
-            bNewFrame = [moviePlayer update];
-        }
-        else {
-            // Render movie into FBO so we can get a texture
-            fbo.begin();
-            [moviePlayer render];
-            fbo.end();
-            bNewFrame = true;
-        }
+		bNewFrame = [moviePlayer update];
         bHavePixelsChanged = bNewFrame;
     }
     else {
@@ -169,8 +153,6 @@ float ofAVFoundationPlayer::getAmplitude(int channel)
 //--------------------------------------------------------------
 float ofAVFoundationPlayer::getAmplitudeAt(float pos, int channel)
 {
-    if (bTheFutureIsNow == false) return 0;
-    
     pos = ofClamp(pos, 0, 1);
     channel = ofClamp(channel, 0, 1);
     
@@ -201,9 +183,8 @@ int ofAVFoundationPlayer::getNumAmplitudes()
 }
 
 //--------------------------------------------------------------
-float * ofAVFoundationPlayer::getAllAmplitudes()
+float* ofAVFoundationPlayer::getAllAmplitudes()
 {
-    if (bTheFutureIsNow == false) return NULL;
     
     return (float *)[moviePlayer.amplitudes bytes];
 }
@@ -211,23 +192,13 @@ float * ofAVFoundationPlayer::getAllAmplitudes()
 //--------------------------------------------------------------
 unsigned char * ofAVFoundationPlayer::getPixels()
 {
-    if (bTheFutureIsNow) {
-        return getPixelsRef().getPixels();
-    }
-    
-    if (!moviePlayer || ![moviePlayer isLoaded] || !bInitialized) return NULL;
-    
-    if (bHavePixelsChanged) {
-        fbo.readToPixels(pixels);
-        bHavePixelsChanged = false; // Don't read pixels until next update() is called
-    }
-    return pixels.getPixels();
+	return getPixelsRef().getPixels();
 }
 
 //--------------------------------------------------------------
 ofPixelsRef ofAVFoundationPlayer::getPixelsRef()
 {
-    if (bTheFutureIsNow) {
+//    if (bTheFutureIsNow) {
         if (isLoaded()) {
             // Don't get the pixels every frame if it hasn't updated
             if (bHavePixelsChanged) {
@@ -238,10 +209,10 @@ ofPixelsRef ofAVFoundationPlayer::getPixelsRef()
         else {
             ofLogError("ofAVFoundationPlayer::getPixelsRef()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
         }
-    }
-    else {
-        getPixels();
-    }
+//    }
+//    else {
+//        getPixels();
+//    }
     
 	return pixels;
 }
@@ -249,31 +220,22 @@ ofPixelsRef ofAVFoundationPlayer::getPixelsRef()
 //--------------------------------------------------------------
 ofTexture* ofAVFoundationPlayer::getTexture()
 {
-    if (bTheFutureIsNow) {
-        if (moviePlayer.textureAllocated) {
-            updateTexture();
-            return &tex;
-        }
+	//TODO: Allow AVF's direct to texture
 
-        return NULL;
-    }
-    
-    if (!moviePlayer || ![moviePlayer isLoaded] || !bInitialized) return NULL;
-    
-    return &fbo.getTextureReference();
+//        if (moviePlayer.textureAllocated) {
+//            updateTexture();
+//        }
+//        return &tex;
+
+    return NULL;
 }
 
 //--------------------------------------------------------------
 ofTexture& ofAVFoundationPlayer::getTextureReference()
 {
-    if (bTheFutureIsNow) {
-        getTexture();
-        return tex;
-    }
-
-//    if (!moviePlayer || ![moviePlayer isLoaded] || !bInitialized) return;
-    
-    return fbo.getTextureReference();
+//	getTexture();
+	updateTexture();
+	return tex;
 }
 
 //--------------------------------------------------------------
@@ -482,12 +444,7 @@ void ofAVFoundationPlayer::draw(float x, float y)
 {
     if (!bInitialized) return;
     
-    if (bTheFutureIsNow) {
-        draw(x, y, getWidth(), getHeight());
-    }
-    else {
-        fbo.draw(x, y);
-    }
+	draw(x, y, getWidth(), getHeight());
 }
 
 //--------------------------------------------------------------
@@ -495,13 +452,8 @@ void ofAVFoundationPlayer::draw(float x, float y, float w, float h)
 {
     if (!bInitialized) return;
     
-    if (bTheFutureIsNow) {
-        updateTexture();
-        tex.draw(x, y, w, h);
-    }
-    else {
-        fbo.draw(x, y, w, h);
-    }
+	updateTexture();
+	tex.draw(x, y, w, h);
 }
 
 //--------------------------------------------------------------
@@ -519,45 +471,43 @@ float ofAVFoundationPlayer::getHeight()
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::firstFrame()
 {
-    
+    //TODO:
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::nextFrame()
 {
-    
+    //TODO:
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::previousFrame()
 {
-    
+	//TODO:
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::updateTexture()
 {
-    if (bTheFutureIsNow == false) return;
-    
-    if (moviePlayer.textureAllocated) {
-		tex.setUseExternalTextureID(moviePlayer.textureID);
-		
-		ofTextureData& data = tex.getTextureData();
-		data.textureTarget = moviePlayer.textureTarget;
-		data.width = getWidth();
-		data.height = getHeight();
-		data.tex_w = getWidth();
-		data.tex_h = getHeight();
-		data.tex_t = getWidth();
-		data.tex_u = getHeight();
+    if(!moviePlayer.textureAllocated) {
+		return;
 	}
+	
+	tex.setUseExternalTextureID(moviePlayer.textureID);
+	ofTextureData& data = tex.getTextureData();
+	data.textureTarget = moviePlayer.textureTarget;
+	data.width = getWidth();
+	data.height = getHeight();
+	data.tex_w = getWidth();
+	data.tex_h = getHeight();
+	data.tex_t = getWidth();
+	data.tex_u = getHeight();
+
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::reallocatePixels()
 {
-    if (bTheFutureIsNow == false) return;
-    
     if (pixelFormat == OF_PIXELS_RGBA) {
         pixels.allocate(getWidth(), getHeight(), OF_IMAGE_COLOR_ALPHA);
     }
