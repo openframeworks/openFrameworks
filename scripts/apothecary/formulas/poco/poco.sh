@@ -34,7 +34,8 @@ function download() {
 	fi
 }
 
-function prebuild() {
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
 	if [ "$SHA" != "" ] ; then
 		git reset --hard $SHA
 	fi
@@ -178,7 +179,9 @@ function copy() {
 	cp -Rv Zip/include/Poco/Zip $1/include/Poco
 
 	# @tgfrerer: apply header file patches necessary for events
-	patch -d $1/include/Poco -p1 < $FORMULA_DIR/poco.headers.patch
+	if patch -d $1/include/Poco -p1 -d -N --dry-run --silent < $FORMULA_DIR/poco.headers.patch 2>/dev/null ; then
+		patch -d $1/include/Poco -p1 < $FORMULA_DIR/poco.headers.patch
+	fi
 
 	# libs
 	if [ "$TYPE" == "osx" ] ; then		

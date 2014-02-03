@@ -20,6 +20,11 @@ function download() {
 	git clone https://github.com/ofTheo/videoInput.git -b update2013
 }
 
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
+	: # noop
+}
+
 # executed inside the lib src dir
 function build() {
 

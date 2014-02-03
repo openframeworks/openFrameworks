@@ -46,11 +46,51 @@ function download() {
 	rm -rf assimp-git
 }
 
-# executed inside the lib src dir
-function build() {
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
 
 	# fix bad version # (needed for now), see https://github.com/assimp/assimp/issues/47
 	sed -i .tmp "s|ASSIMP_SV_REVISION 1264|ASSIMP_SV_REVISION $SUB_VER|" CMakeLists.txt
+
+	if [ "$TYPE" == "ios" ] ; then
+		# ref: http://stackoverflow.com/questions/6691927/how-to-build-assimp-library-for-ios-device-and-simulator-with-boost-library
+
+		# this is basically updating an old build system with correct xcode paths
+		# and armv7s instead of armv6, hopefully the assimp project fixes this
+		# in the future ...
+
+		cd port/iOS
+		cp build_ios.sh.orig build_ios.sh
+
+		# convert the armv6 toolchain to armv7s, the output will say "arm6"
+		# but the arch will build for armv7s
+		sed -i .tmp "s|CMAKE_SYSTEM_PROCESSOR.*\"armv6\"|CMAKE_SYSTEM_PROCESSOR \"armv7s\"|" IPHONEOS_ARM6_TOOLCHAIN.cmake
+		sed -i .tmp "s|armv6|armv7s|" build_ios.sh
+
+		# set SDK and update xcode dev root
+		for toolchain in $( ls -1 *.cmake) ; do
+			sed -i .tmp \
+				-e "s|SDKVER.*\"5.0\"|SDKVER	\"$IOS_SDK_VER\"|" \
+				-e "s|\"/Developer|\"$XCODE_DEV_ROOT|" $toolchain
+		done
+		sed -i .tmp \
+			-e "s|IOS_BASE_SDK=.*|IOS_BASE_SDK=\"$IOS_SDK_VER\"|" \
+			-e "s|IOS_DEPLOY_TGT=.*|IOS_DEPLOY_TGT=\"$IOS_MIN_SDK_VER\"|" \
+			-e "s|=/Developer|=$XCODE_DEV_ROOT|" build_ios.sh
+
+		# fix bad lipo line (due to switch to armv7s)
+		sed -i .tmp 's|lipo.*|lipo -c $lib_arm6 $lib_arm7 $lib_i386 -o $lib|' build_ios.sh
+
+		# fix old var names (missing ASSIMP_ prefix), keep this commented for now
+		# bleeding edge assimp on git uses the ASSIMP_ prefix, so this may need to updated in the future
+		#sed -i .tmp "s|-DENABLE_BOOST_WORKAROUND=|-DASSIMP_ENABLE_BOOST_WORKAROUND=|" build_ios.sh
+		#sed -i .tmp "s|-DBUILD_STATIC_LIB=|-DASSIMP_BUILD_STATIC_LIB=|" build_ios.sh
+
+	fi
+}
+
+# executed inside the lib src dir
+function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
 
@@ -106,39 +146,6 @@ function build() {
 		echoWarning "TODO: win_cb build"
 
 	elif [ "$TYPE" == "ios" ] ; then
-		# ref: http://stackoverflow.com/questions/6691927/how-to-build-assimp-library-for-ios-device-and-simulator-with-boost-library
-
-		# this is basically updating an old build system with correct xcode paths
-		# and armv7s instead of armv6, hopefully the assimp project fixes this
-		# in the future ...
-
-		cd port/iOS
-		cp build_ios.sh.orig build_ios.sh
-
-		# convert the armv6 toolchain to armv7s, the output will say "arm6"
-		# but the arch will build for armv7s
-		sed -i .tmp "s|CMAKE_SYSTEM_PROCESSOR.*\"armv6\"|CMAKE_SYSTEM_PROCESSOR \"armv7s\"|" IPHONEOS_ARM6_TOOLCHAIN.cmake
-		sed -i .tmp "s|armv6|armv7s|" build_ios.sh
-
-		# set SDK and update xcode dev root
-		for toolchain in $( ls -1 *.cmake) ; do
-			sed -i .tmp \
-				-e "s|SDKVER.*\"5.0\"|SDKVER	\"$IOS_SDK_VER\"|" \
-				-e "s|\"/Developer|\"$XCODE_DEV_ROOT|" $toolchain
-		done
-		sed -i .tmp \
-			-e "s|IOS_BASE_SDK=.*|IOS_BASE_SDK=\"$IOS_SDK_VER\"|" \
-			-e "s|IOS_DEPLOY_TGT=.*|IOS_DEPLOY_TGT=\"$IOS_MIN_SDK_VER\"|" \
-			-e "s|=/Developer|=$XCODE_DEV_ROOT|" build_ios.sh
-
-		# fix bad lipo line (due to switch to armv7s)
-		sed -i .tmp 's|lipo.*|lipo -c $lib_arm6 $lib_arm7 $lib_i386 -o $lib|' build_ios.sh
-
-		# fix old var names (missing ASSIMP_ prefix), keep this commented for now
-		# bleeding edge assimp on git uses the ASSIMP_ prefix, so this may need to updated in the future
-		#sed -i .tmp "s|-DENABLE_BOOST_WORKAROUND=|-DASSIMP_ENABLE_BOOST_WORKAROUND=|" build_ios.sh
-		#sed -i .tmp "s|-DBUILD_STATIC_LIB=|-DASSIMP_BUILD_STATIC_LIB=|" build_ios.sh
-
 		./build_ios.sh
 	
 	elif [ "$TYPE" == "android" ] ; then
