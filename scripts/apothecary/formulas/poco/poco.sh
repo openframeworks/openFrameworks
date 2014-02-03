@@ -36,7 +36,7 @@ function download() {
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
 		
 		# 32 bit
 		./configure $BUILD_OPTS --config=Darwin32

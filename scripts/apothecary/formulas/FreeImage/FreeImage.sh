@@ -51,7 +51,6 @@ function build() {
 		else
 			patch -p1 -u < $FORMULA_DIR/Makefile.osx-clang-libc++.patch
 		fi
-
 		
 		# @tgfrerer patch FreeImage source - clang is much less forgiving about
 		# type overruns and missing standard header files. 
