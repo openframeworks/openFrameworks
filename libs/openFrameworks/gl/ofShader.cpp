@@ -140,7 +140,8 @@ bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
 	// we need to make absolutely sure to have an absolute path here, so that any #includes
 	// within the shader files have a root directory to traverse from.
-	string sourceDirectoryPath = ofFile(ofFile(filename).getAbsolutePath()).getEnclosingDirectory();
+	string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
+	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
 		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath);
 	} else {
