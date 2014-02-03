@@ -75,6 +75,9 @@ VS_VER=12
 # has the user set a custom libs dest dir?
 IS_CUSTOM_LIBS_DIR=0
 
+# dependency formula & build subdir name
+DEPENDS_SUBDIR=_depends
+
 # paths relative to this script
 REL_FORMULAS_DIR=formulas
 REL_BUILD_DIR=build
@@ -98,7 +101,7 @@ A_VERBOSE=0
 USE_GIT=0
 
 # nice, detailed help message
-HELP="usage: apothecary [options] <command> [<library|addons|libName|addonName>]
+HELP="usage: apothecary [options] <command> [<core|addons|libName|addonName>]
 
 about:
  this is the OpenFrameworks library apothecary
@@ -374,7 +377,7 @@ function doCommand() {
 		# process all formulas in formulas dir
 		if [ "$1" == "core" ] ; then
 			local formula
-			for formula in $( ls -1 $REL_FORMULAS_DIR) ; do
+			for formula in $( ls -1 $REL_FORMULAS_DIR | grep -v $DEPENDS_SUBDIR) ; do
 				doCommand $shouldSource $cmd "${formula%.*}" # remove extension
 			done
 
@@ -481,6 +484,7 @@ function downloadFormula(){
 	echo
 
 	mkdir -p $BUILD_DIR
+	mkdir -p $DEPENDS_BUILD_DIR
 	cd $BUILD_DIR
 
 	if [ -e $1 ] ; then
@@ -722,6 +726,7 @@ echoVerbose "Architecture: $ARCH"
 # use default build dir?
 if [ "$BUILD_DIR" == "" ] ; then
 	BUILD_DIR=$APOTHECARY_DIR/$REL_BUILD_DIR
+	
 else # manually set
 	case $BUILD_DIR in
 		/*) : ;; # absolute path
@@ -741,6 +746,10 @@ else # manually set
 	IS_CUSTOM_LIBS_DIR=1
 fi
 echoVerbose "Libs dest dir: $LIBS_DIR"
+
+# dependency dirs
+DEPENDS_FORMULA_DIR=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$DEPENDS_SUBDIR
+DEPENDS_BUILD_DIR=$BUILD_DIR/$DEPENDS_SUBDIR
 
 # handle commands
 echoVerbose "Running: $A_CMD $*"

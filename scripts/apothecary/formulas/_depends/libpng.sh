@@ -30,7 +30,6 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
-	
 	./configure --prefix=$BUILD_DIR --disable-dependency-tracking
 	make clean; make
 }

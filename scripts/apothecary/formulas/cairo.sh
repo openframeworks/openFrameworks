@@ -39,33 +39,31 @@ function prepare() {
 	fi
 
 	# dependencies (some commented for now as they might be needed for other platforms)
-	local buildDir=$BUILD_DIR/cairo/apothecary-build
-	mkdir -p $buildDir
 	
 	# download dependencies here for when using git for cairo
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/pixman.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/pkg-config.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR $GIT_ARGS download $DEPENDS_FORMULA_DIR/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR $GIT_ARGS download $DEPENDS_FORMULA_DIR/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR $GIT_ARGS download $DEPENDS_FORMULA_DIR/pixman.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR $GIT_ARGS download $DEPENDS_FORMULA_DIR/pkg-config.sh
 
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir prepare $FORMULA_DIR/depends/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir prepare $FORMULA_DIR/depends/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir prepare $FORMULA_DIR/depends/pixman.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir prepare $FORMULA_DIR/depends/pkg-config.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR prepare $DEPENDS_FORMULA_DIR/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR prepare $DEPENDS_FORMULA_DIR/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR prepare $DEPENDS_FORMULA_DIR/pixman.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR prepare $DEPENDS_FORMULA_DIR/pkg-config.sh
 }
 
 # executed inside the lib src dir
 function build() {
 
 	# build dependencies and install into $BUILD_DIR/cairo/build
-	local buildDir=$BUILD_DIR/cairo/apothecary-build
-	rm -rf $buildDir/bin $buildDir/lib $buildDir/share
+	#local buildDir=$BUILD_DIR/cairo/apothecary-build
+	#rm -rf $buildDir/bin $buildDir/lib $buildDir/share
 	
 	# build a custom version of pkg-config
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/pkg-config.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir copy $FORMULA_DIR/depends/pkg-config.sh
-	export PKG_CONFIG=$buildDir/bin/pkg-config
-	export PKG_CONFIG_PATH=$buildDir/lib/pkgconfig
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR build $DEPENDS_FORMULA_DIR/pkg-config.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR copy $DEPENDS_FORMULA_DIR/pkg-config.sh
+	export PKG_CONFIG=$DEPENDS_BUILD_DIR/bin/pkg-config
+	export PKG_CONFIG_PATH=$DEPENDS_BUILD_DIR/lib/pkgconfig
 
 	# set flags for osx 32 & 64 bit fat lib
 	if [ "$TYPE" == "osx" ] ; then
@@ -82,17 +80,17 @@ function build() {
 	fi
 
 	# build dependencies (some commented for now as they might be needed for other platforms)
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/pixman.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR build $DEPENDS_FORMULA_DIR/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR build $DEPENDS_FORMULA_DIR/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR build $DEPENDS_FORMULA_DIR/pixman.sh
 
 	# install dependencies to local build dir
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir copy $FORMULA_DIR/depends/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir copy $FORMULA_DIR/depends/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir copy $FORMULA_DIR/depends/pixman.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR copy $DEPENDS_FORMULA_DIR/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR copy $DEPENDS_FORMULA_DIR/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR copy $DEPENDS_FORMULA_DIR/pixman.sh
 
 	# build cairo
-	./configure --prefix=$buildDir --disable-dependency-tracking --disable-xlib --disable-ft
+	./configure --prefix=$DEPENDS_BUILD_DIR --disable-dependency-tracking --disable-xlib --disable-ft
 	make install
 
 	# clean up env vars
@@ -124,14 +122,12 @@ function copy() {
 
 # executed inside the lib src dir
 function clean() {
-	
-	local buildDir=$BUILD_DIR/cairo/apothecary-build
 
 	# dependencies
 	# don't clean pkg-config as we only need to use the built binary
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir clean $FORMULA_DIR/depends/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir clean $FORMULA_DIR/depends/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir clean $FORMULA_DIR/depends/pixman.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR clean $DEPENDS_FORMULA_DIR/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR clean $DEPENDS_FORMULA_DIR/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR clean $DEPENDS_FORMULA_DIR/pixman.sh
 	
 	# cairo
 	make clean
