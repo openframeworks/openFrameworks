@@ -13,7 +13,6 @@
 
 - (void)playerItemDidReachEnd:(NSNotification *) notification;
 - (NSDictionary *)pixelBufferAttributes;
-- (void)render;
 
 @property (nonatomic, retain) AVPlayerItem * playerItem;
 @property (nonatomic, retain) id playerItemVideoOutput;
@@ -25,7 +24,6 @@
 @synthesize player = _player;
 @synthesize playerItem = _playerItem;
 @synthesize playerItemVideoOutput = _playerItemVideoOutput;
-//@synthesize bTheFutureIsNow = _bTheFutureIsNow;
 
 @synthesize useTexture = _useTexture;
 @synthesize useAlpha = _useAlpha;
@@ -51,11 +49,9 @@ int count = 0;
     self = [super init];
     if (self) {
         
-//        if (self.theFutureIsNow) {
-            self.player = [[AVPlayer alloc] init];
-			[self.player autorelease];
-            _amplitudes = [[NSMutableData data] retain];
-//        }
+        self.player = [[AVPlayer alloc] init];
+        [self.player autorelease];
+        _amplitudes = [[NSMutableData data] retain];
         
         _bLoading = NO;
         _bLoaded = NO;
@@ -149,129 +145,114 @@ int count = 0;
                                                              name:AVPlayerItemDidPlayToEndTimeNotification
                                                            object:self.playerItem];
                 
-//                if (self.theFutureIsNow) {
-                    [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
-
-                    // Create and attach video output. 10.8 Only!!!
-                    self.playerItemVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:[self pixelBufferAttributes]];
-					[self.playerItemVideoOutput autorelease];
-                    if (self.playerItemVideoOutput) {
-                        [(AVPlayerItemVideoOutput *)self.playerItemVideoOutput setSuppressesPlayerRendering:YES];
-                    }
-                    [self.player.currentItem addOutput:self.playerItemVideoOutput];
-                    
-                    // Create CVOpenGLTextureCacheRef for optimal CVPixelBufferRef to GL texture conversion.
-                    if (self.useTexture && !_textureCache) {
-                        CVReturn err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, NULL,
-                                                                  CGLGetCurrentContext(), CGLGetPixelFormat(CGLGetCurrentContext()),
-                                                                  NULL, &_textureCache);
-                                                                  //(CFDictionaryRef)ctxAttributes, &_textureCache);
-                        if (err != noErr) {
-                            NSLog(@"Error at CVOpenGLTextureCacheCreate %d", err);
-                        }
-                    }
-//                }
-//                else {
-//                    self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
-//                    
-//                    AVPlayerLayer * playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-//                    _layerRenderer = [CARenderer rendererWithCGLContext:CGLGetCurrentContext() options:nil];
-//                    _layerRenderer.layer = playerLayer;
-//                    
-//                    // Video is centered on 0,0 for some reason so layer bounds have to start at -width/2,-height/2
-//                    _layerRenderer.bounds = CGRectMake(_videoSize.width * -0.5, _videoSize.height * -0.5, _videoSize.width, _videoSize.height);
-//                    playerLayer.bounds = _layerRenderer.bounds;
-//                }
+                [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
                 
-//                if (self.theFutureIsNow) {
-                    // Only monitor audio if the file is local and has audio tracks.
-                    NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-                    if ([url isFileURL] && [audioTracks count] > 0) {
-                        AVAssetTrack *audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
-
-                        NSError *error = nil;
-                        AVAssetReader *assetReader = [[AVAssetReader alloc] initWithAsset:asset error:&error];
-                        if (error != nil) {
-                            NSLog(@"Unable to create asset reader %@", [error localizedDescription]);
-                        }
-                        else if (audioTrack != nil) {
-                            // Read the audio track data
-                            NSMutableDictionary *bufferOptions = [NSMutableDictionary dictionary];
-                            [bufferOptions setObject:[NSNumber numberWithInt:kAudioFormatLinearPCM] forKey:AVFormatIDKey];
-                            [bufferOptions setObject:@44100 forKey:AVSampleRateKey];
-                            [bufferOptions setObject:@2 forKey:AVNumberOfChannelsKey];
-    //                        [bufferOptions setObject:[NSData dataWithBytes:&channelLayout length:sizeof(AudioChannelLayout)] forKey:AVChannelLayoutKey];
-                            [bufferOptions setObject:@32 forKey:AVLinearPCMBitDepthKey];
-                            [bufferOptions setObject:@NO forKey:AVLinearPCMIsBigEndianKey];
-                            [bufferOptions setObject:@YES forKey:AVLinearPCMIsFloatKey];
-                            [bufferOptions setObject:@NO forKey:AVLinearPCMIsNonInterleaved];
-                            [assetReader addOutput:[AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack
-                                                                                              outputSettings:bufferOptions]];
-                            [assetReader startReading];
-                            
-                            count = 0;
-                        
-                            // Add a periodic time observer that will store the audio track data in a buffer that we can access later
-                            _periodicTimeObserver = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1001, [audioTrack nominalFrameRate] * 1001)
-                                                                                              queue:dispatch_queue_create("eventQueue", NULL)
-                                                                                         usingBlock:^(CMTime time) {
-                                                                                             if ([assetReader status] == AVAssetReaderStatusCompleted) {
-                                                                                                 // Got all the data we need, kill this block.
-                                                                                                 [self.player removeTimeObserver:_periodicTimeObserver];
-                                                                                                 
-                                                                                                 _numAmplitudes = [_amplitudes length] / sizeof(float);
-                                                                                                 _bAudioLoaded = YES;
-                                                                                                 
-                                                                                                 return;
-                                                                                             }
-                                                                                             
-                                                                                             if ([assetReader status] == AVAssetReaderStatusReading) {
-                                                                                                 AVAssetReaderTrackOutput *output = [[assetReader outputs] objectAtIndex:0];
-                                                                                                 CMSampleBufferRef sampleBuffer = [output copyNextSampleBuffer];
-                                                                                                 
-                                                                                                 while (sampleBuffer != NULL) {
-                                                                                                     sampleBuffer = [output copyNextSampleBuffer];
-                                                                                                     
-                                                                                                     if (sampleBuffer == NULL)
-                                                                                                         continue;
-                                                                                                     
-                                                                                                     CMBlockBufferRef buffer = CMSampleBufferGetDataBuffer(sampleBuffer);
-                                                                                                     
-                                                                                                     size_t lengthAtOffset;
-                                                                                                     size_t totalLength;
-                                                                                                     char* data;
-                                                                                                     
-                                                                                                     if (CMBlockBufferGetDataPointer(buffer, 0, &lengthAtOffset, &totalLength, &data) != noErr) {
-                                                                                                         NSLog(@"error!");
-                                                                                                         break;
-                                                                                                     }
-                                                                                                     
-                                                                                                     CMItemCount numSamplesInBuffer = CMSampleBufferGetNumSamples(sampleBuffer);
-                                                                                                     
-                                                                                                     AudioBufferList audioBufferList;
-                                                                                                     
-                                                                                                     CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer,
-                                                                                                                                                             NULL,
-                                                                                                                                                             &audioBufferList,
-                                                                                                                                                             sizeof(audioBufferList),
-                                                                                                                                                             NULL,
-                                                                                                                                                             NULL,
-                                                                                                                                                             kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment,  // pass in something else
-                                                                                                                                                             &buffer);
-                                                                                                     
-                                                                                                     for (int bufferCount = 0; bufferCount < audioBufferList.mNumberBuffers; bufferCount++) {
-                                                                                                         [_amplitudes appendBytes:audioBufferList.mBuffers[bufferCount].mData
-                                                                                                                           length:audioBufferList.mBuffers[bufferCount].mDataByteSize];
-                                                                                                     }
-                                                                                                     
-                                                                                                     CFRelease(buffer);
-                                                                                                     CFRelease(sampleBuffer);
-                                                                                                 }
-                                                                                             }
-                                                                                         }];
-                        }
+                // Create and attach video output. 10.8 Only!!!
+                self.playerItemVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:[self pixelBufferAttributes]];
+                [self.playerItemVideoOutput autorelease];
+                if (self.playerItemVideoOutput) {
+                    [(AVPlayerItemVideoOutput *)self.playerItemVideoOutput setSuppressesPlayerRendering:YES];
+                }
+                [self.player.currentItem addOutput:self.playerItemVideoOutput];
+                
+                // Create CVOpenGLTextureCacheRef for optimal CVPixelBufferRef to GL texture conversion.
+                if (self.useTexture && !_textureCache) {
+                    CVReturn err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, NULL,
+                                                              CGLGetCurrentContext(), CGLGetPixelFormat(CGLGetCurrentContext()),
+                                                              NULL, &_textureCache);
+                    //(CFDictionaryRef)ctxAttributes, &_textureCache);
+                    if (err != noErr) {
+                        NSLog(@"Error at CVOpenGLTextureCacheCreate %d", err);
                     }
-//                }
+                }
+                
+                // Only monitor audio if the file is local and has audio tracks.
+                NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
+                if ([url isFileURL] && [audioTracks count] > 0) {
+                    AVAssetTrack *audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+                    
+                    NSError *error = nil;
+                    AVAssetReader *assetReader = [[AVAssetReader alloc] initWithAsset:asset error:&error];
+                    if (error != nil) {
+                        NSLog(@"Unable to create asset reader %@", [error localizedDescription]);
+                    }
+                    else if (audioTrack != nil) {
+                        // Read the audio track data
+                        NSMutableDictionary *bufferOptions = [NSMutableDictionary dictionary];
+                        [bufferOptions setObject:[NSNumber numberWithInt:kAudioFormatLinearPCM] forKey:AVFormatIDKey];
+                        [bufferOptions setObject:@44100 forKey:AVSampleRateKey];
+                        [bufferOptions setObject:@2 forKey:AVNumberOfChannelsKey];
+                        //                        [bufferOptions setObject:[NSData dataWithBytes:&channelLayout length:sizeof(AudioChannelLayout)] forKey:AVChannelLayoutKey];
+                        [bufferOptions setObject:@32 forKey:AVLinearPCMBitDepthKey];
+                        [bufferOptions setObject:@NO forKey:AVLinearPCMIsBigEndianKey];
+                        [bufferOptions setObject:@YES forKey:AVLinearPCMIsFloatKey];
+                        [bufferOptions setObject:@NO forKey:AVLinearPCMIsNonInterleaved];
+                        [assetReader addOutput:[AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack
+                                                                                          outputSettings:bufferOptions]];
+                        [assetReader startReading];
+                        
+                        count = 0;
+                        
+                        // Add a periodic time observer that will store the audio track data in a buffer that we can access later
+                        _periodicTimeObserver = [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1001, [audioTrack nominalFrameRate] * 1001)
+                                                                                          queue:dispatch_queue_create("eventQueue", NULL)
+                                                                                     usingBlock:^(CMTime time) {
+                                                                                         if ([assetReader status] == AVAssetReaderStatusCompleted) {
+                                                                                             // Got all the data we need, kill this block.
+                                                                                             [self.player removeTimeObserver:_periodicTimeObserver];
+                                                                                             
+                                                                                             _numAmplitudes = [_amplitudes length] / sizeof(float);
+                                                                                             _bAudioLoaded = YES;
+                                                                                             
+                                                                                             return;
+                                                                                         }
+                                                                                         
+                                                                                         if ([assetReader status] == AVAssetReaderStatusReading) {
+                                                                                             AVAssetReaderTrackOutput *output = [[assetReader outputs] objectAtIndex:0];
+                                                                                             CMSampleBufferRef sampleBuffer = [output copyNextSampleBuffer];
+                                                                                             
+                                                                                             while (sampleBuffer != NULL) {
+                                                                                                 sampleBuffer = [output copyNextSampleBuffer];
+                                                                                                 
+                                                                                                 if (sampleBuffer == NULL)
+                                                                                                     continue;
+                                                                                                 
+                                                                                                 CMBlockBufferRef buffer = CMSampleBufferGetDataBuffer(sampleBuffer);
+                                                                                                 
+                                                                                                 size_t lengthAtOffset;
+                                                                                                 size_t totalLength;
+                                                                                                 char* data;
+                                                                                                 
+                                                                                                 if (CMBlockBufferGetDataPointer(buffer, 0, &lengthAtOffset, &totalLength, &data) != noErr) {
+                                                                                                     NSLog(@"error!");
+                                                                                                     break;
+                                                                                                 }
+                                                                                                 
+                                                                                                 CMItemCount numSamplesInBuffer = CMSampleBufferGetNumSamples(sampleBuffer);
+                                                                                                 
+                                                                                                 AudioBufferList audioBufferList;
+                                                                                                 
+                                                                                                 CMSampleBufferGetAudioBufferListWithRetainedBlockBuffer(sampleBuffer,
+                                                                                                                                                         NULL,
+                                                                                                                                                         &audioBufferList,
+                                                                                                                                                         sizeof(audioBufferList),
+                                                                                                                                                         NULL,
+                                                                                                                                                         NULL,
+                                                                                                                                                         kCMSampleBufferFlag_AudioBufferList_Assure16ByteAlignment,  // pass in something else
+                                                                                                                                                         &buffer);
+                                                                                                 
+                                                                                                 for (int bufferCount = 0; bufferCount < audioBufferList.mNumberBuffers; bufferCount++) {
+                                                                                                     [_amplitudes appendBytes:audioBufferList.mBuffers[bufferCount].mData
+                                                                                                                       length:audioBufferList.mBuffers[bufferCount].mDataByteSize];
+                                                                                                 }
+                                                                                                 
+                                                                                                 CFRelease(buffer);
+                                                                                                 CFRelease(sampleBuffer);
+                                                                                             }
+                                                                                         }
+                                                                                     }];
+                    }
+                }
                 
                 _bLoading = NO;
                 _bLoaded = YES;
@@ -383,8 +364,6 @@ int count = 0;
 //--------------------------------------------------------------
 - (BOOL)update
 {
-//    if (self.theFutureIsNow == NO) return YES;
-    
     if (![self isLoaded]) return NO;
 
     // Check our video output for new frames.
@@ -439,8 +418,6 @@ int count = 0;
 //--------------------------------------------------------------
 - (void)pixels:(unsigned char *)outbuf
 {
-//    if (self.theFutureIsNow == NO) return;
-    
     if (_latestPixelFrame == NULL) return;
 		
 //    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld, movie size is %d x %d ",
@@ -511,8 +488,6 @@ int count = 0;
 //--------------------------------------------------------------
 - (void)bindTexture
 {
-//    if (self.theFutureIsNow == NO) return;
-    
     if (!self.textureAllocated) return;
     
 	GLuint texID = [self textureID];
@@ -525,8 +500,6 @@ int count = 0;
 //--------------------------------------------------------------
 - (void)unbindTexture
 {
-//    if (self.theFutureIsNow == NO) return;
-
     if (!self.textureAllocated) return;
 	
 	GLenum target = [self textureTarget];
@@ -550,11 +523,7 @@ int count = 0;
 //--------------------------------------------------------------
 - (double)currentTime
 {
-//    if (self.theFutureIsNow) {
-        return CMTimeGetSeconds(_currentTime);
-//    }
-//
-//    return CMTimeGetSeconds(self.player.currentTime);
+    return CMTimeGetSeconds(_currentTime);
 }
 
 //--------------------------------------------------------------

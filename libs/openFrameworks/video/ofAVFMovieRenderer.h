@@ -21,15 +21,11 @@
     AVPlayer * _player;
     AVPlayerItem * _playerItem;
 
-    // New school video stuff
     id _playerItemVideoOutput;
     CVOpenGLTextureCacheRef _textureCache;
 	CVOpenGLTextureRef _latestTextureFrame;
 	CVPixelBufferRef _latestPixelFrame;
 
-    // Old school video stuff
-//    CARenderer * _layerRenderer;
-    
 	BOOL _useTexture;
     BOOL _useAlpha;
     
@@ -47,15 +43,13 @@
     BOOL _bPaused;
     BOOL _bMovieDone;
     	
-    // New school audio stuff
+    // audio stuff
     NSMutableData *_amplitudes;
     int _numAmplitudes;
     id _periodicTimeObserver;
 }
 
 @property (nonatomic, retain) AVPlayer * player;
-
-//@property (nonatomic, assign, readonly, getter = theFutureIsNow) BOOL bTheFutureIsNow;
 
 @property (nonatomic, assign, readonly) double width;
 @property (nonatomic, assign, readonly) double height;
