@@ -15,7 +15,7 @@ Supported by the CMU [Studio for Creative Inquiry](http://studioforcreativeinqui
 Requirements
 ------------
 
-* Bash shell environment with: curl, tar, unzip, patch, sed, Make
+* Bash shell environment with: curl, tar, unzip, patch, sed, Make, automake
 * C/C++ compiler: gcc and/or llvm (OSX)
 * [CMake](http://www.cmake.org)
 * git
@@ -64,6 +64,7 @@ See the built in help for more info:
 * **update**		download, build, and copy library files
 * **download** 		download the library source
 * **build** 		build the library
+* **prepare**		prepare the library source for building
 * **copy** 			copy library files into the libs dir
 * **clean** 		clean the library build
 * **remove**		remove the library from the build cache
@@ -309,17 +310,11 @@ Make sure to delete the downloaded packages (.tar.gz, .zip, etc).
 
 The formula template comes with a $VER variable. It's recommended to use that when downloading/unpacking so as to make version updates easier in the future.
 
-### Building
+**Note**: Download dependencies in the formula's prepare function since download may not be called when using the -g git option.
 
-*Note: Every library will probably be different, so consult it's website and readme on how to build it.*
+### Preparing
 
-Use the $TYPE variable to determine which commands you need to run when building the library. For example, some library build systems have different makefiles based on OS type.
-
-#### Cleaning when Cross Compiling
-
-If the library can be cross compiled, you may want to make sure to clean the lib build before running another architecture build. For autotools/Makefile build systems, this would be something like:
-
-	make clean; make 
+Prepare the library build system here. This could be running ./autogen.sh to create a configure script or applying custom patches to fix a build for a particular library. You basically want to run things which only nee to be applied once after downloading here.
 
 #### Fixing/Modifying Build Files
 
@@ -348,11 +343,26 @@ You generally have to do this by unpacking two copies of the library source tree
 
 Save the patch into your formula directory and then apply it as part of the build process in your formula script:
 
-	patch -p1 -u < $FORMULA_DIR/patchfile.patch
+	# check if patch was applied before patching
+	if if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/patchfile.patch 2>/dev/null ; then
+		patch -p1 -u < $FORMULA_DIR/patchfile.patch
+	fi
 
 See the [10 Minute Guide to diff and patch](http://stephenjungels.com/jungels.net/articles/diff-patch-ten-minutes.html) and the FreeImage formula for an example of this.
 
 *Note: If you do manage to fix a broken build system, consider submitting your modifications to the library maintainers. Share the Open Source love, y'all.*
+
+### Building
+
+*Note: Every library will probably be different, so consult it's website and readme on how to build it.*
+
+Use the $TYPE variable to determine which commands you need to run when building the library. For example, some library build systems have different makefiles based on OS type.
+
+#### Cleaning when Cross Compiling
+
+If the library can be cross compiled, you may want to make sure to clean the lib build before running another architecture build. For autotools/Makefile build systems, this would be something like:
+
+	make clean; make 
 
 #### Creating Fat Libs for OSX & iOS
 

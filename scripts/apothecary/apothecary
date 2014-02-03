@@ -108,6 +108,7 @@ about:
 commands:
   update	download, build, and copy library files
   download	download the library source
+  prepare	prepare the library source for building
   build		build the library
   copy		copy library files into the libs dir
   clean		clean the library build
@@ -461,6 +462,7 @@ function updateFormula() {
 	# 	cleanFormula $1
 	# fi
 	downloadFormula $1
+	prepareFormula $1
 	buildFormula $1
 	copyFormula $1
 
@@ -487,16 +489,33 @@ function downloadFormula(){
 		if [ $USE_GIT == 1 ] && [[ "${GIT_URL:+x}" ]] ; then
 			gitclone $1 $GIT_URL ${GIT_TAG:-master}
 		else
-		download
+			download
 		fi
 		if [ ! -e $1 ] ; then
 			echoError " It looks like downloading failed for \"$1\""
 			exit 1
-		else
-			cd $BUILD_DIR/$1
-			prebuild
 		fi
 	fi
+	cd $APOTHECARY_DIR
+}
+
+# prepare a given library, arg is library name
+function prepareFormula() {
+
+	# run prepare command in src dir
+	echo
+	echoInfo " Preparing \"$1\""
+	echoVerbose " Lib src dir: $BUILD_DIR/$1"
+	echo
+
+	if [ ! -e $BUILD_DIR/$1 ] ; then
+		echoError " Lib src dir missing for \"$1\": $BUILD_DIR/$1"
+		echoError " Did you download the formula?"
+		exit 1
+	fi
+
+	cd $BUILD_DIR/$1
+	prepare
 	cd $APOTHECARY_DIR
 }
 
@@ -643,8 +662,8 @@ function vs-build() {
 function download() {
 	echoWarning " Download function not implemented"
 }
-function prebuild() {
-	echoVerbose " Pre-build function not implemented"
+function prepare() {
+	echoVerbose " Prepare function not implemented"
 }
 function build() {
 	echoWarning " Build function not implemented"
@@ -733,6 +752,9 @@ case "$A_CMD" in
 	download)
 		doCommand 1 downloadFormula $@ ;;
 
+	prepare)
+		doCommand 1 prepareFormula $@ ;;
+	
 	build)
 		doCommand 1 buildFormula $@ ;;
 

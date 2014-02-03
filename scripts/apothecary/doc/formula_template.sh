@@ -22,6 +22,11 @@ function download() {
 	echoWarning "TODO: download" # denote unfinished things using echoWarning
 }
 
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
+	: # noop
+}
+
 # executed inside the lib src dir
 function build() {
 	echoWarning "TODO: $TYPE build"

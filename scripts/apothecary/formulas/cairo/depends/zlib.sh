@@ -18,6 +18,11 @@ function download() {
 	rm zlib-$VER.tar.gz
 }
 
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
+	: # noop
+}
+
 # executed inside the lib src dir
 function build() {
 	if [ "$TYPE" == "osx" ] ; then

@@ -19,13 +19,17 @@ function download() {
 	rm libpng-$VER.tar.gz
 }
 
-# executed inside the lib src dir
-function build() {
-
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
+	
 	# generate the configure script if it's not there
 	if [ ! -f configure ] ; then
 		./autogen.sh
 	fi
+}
+
+# executed inside the lib src dir
+function build() {
 	
 	./configure --prefix=$BUILD_DIR --disable-dependency-tracking
 	make clean; make

@@ -23,16 +23,13 @@ function download() {
 	rm FreeImage"$VER".zip
 }
 
-# executed inside the lib src dir
-function build() {
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
 	
 	if [ "$TYPE" == "osx" ] ; then
-		
-		# patch outdated Makefile.osx,
-		# use "# patched" string to determine if patch was applied
-		if grep -Fq "# patched" Makefile.osx ; then
-			: # noop, skip if patch was already applied
-		else
+
+		# patch outdated Makefile.osx, check if patch was appllied first
+		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/Makefile.osx.patch 2>/dev/null ; then
 			patch -p1 -u < $FORMULA_DIR/Makefile.osx.patch
 		fi
 
@@ -47,15 +44,10 @@ function build() {
 		sed -i tmp "s|MACOSX_SDK =.*|MACOSX_SDK = $OSX_SDK_VER|" Makefile.osx
 		sed -i tmp "s|MACOSX_MIN_SDK =.*|MACOSX_MIN_SDK = $OSX_MIN_SDK_VER|" Makefile.osx
 
-		make -f Makefile.osx
-
 	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
 
-		# patch Makefile.osx,
-		# use "# patched" string to determine if patch was applied
-		if grep -Fq "# patched" Makefile.osx ; then
-			: # noop, skip if patch was already applied
-		else
+		# patch outdated Makefile.osx
+		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/Makefile.osx-clang-libc++.patch 2>/dev/null ; then
 			patch -p1 -u < $FORMULA_DIR/Makefile.osx-clang-libc++.patch
 		fi
 		
@@ -70,22 +62,10 @@ function build() {
 		sed -i tmp "s|MACOSX_SDK =.*|MACOSX_SDK = $OSX_SDK_VER|" Makefile.osx
 		sed -i tmp "s|MACOSX_MIN_SDK =.*|MACOSX_MIN_SDK = $OSX_MIN_SDK_VER|" Makefile.osx
 
-		make -j -f Makefile.osx
-	
-	elif [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: vs build"
-
-	elif [ "$TYPE" == "win_cb" ] ; then
-		#make -f Makefile.minigw
-		echoWarning "TODO: win_cb build"
-
 	elif [ "$TYPE" == "ios" ] ; then
 
-		# patch outdated Makefile.iphone to build universal sim/armv7/armv7s lib,
-		# use "# patched" string to determine if patch was applied
-		if grep -Fq "# patched" Makefile.iphone ; then
-			: # noop, skip if patch was already applied
-		else
+		# patch outdated Makefile.iphone to build universal sim/armv7/armv7s lib
+		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/Makefile.iphone.patch 2>/dev/null ; then
 			patch -p1 -u < $FORMULA_DIR/Makefile.iphone.patch
 		fi
 
@@ -101,6 +81,26 @@ function build() {
 		sed -i tmp "s|MACOSX_MIN_SDK =.*|MACOSX_MIN_SDK = $OSX_MIN_SDK_VER|" Makefile.iphone
 		sed -i tmp "s|IPHONEOS_SDK =.*|IPHONEOS_SDK = $IOS_SDK_VER|" Makefile.iphone
 		sed -i tmp "s|IPHONEOS_MIN_SDK =.*|IPHONEOS_MIN_SDK = $IOS_MIN_SDK_VER|" Makefile.iphone
+	fi
+}
+
+# executed inside the lib src dir
+function build() {
+	
+	if [ "$TYPE" == "osx" ] ; then
+		make -f Makefile.osx
+
+	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
+		make -j -f Makefile.osx
+	
+	elif [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: vs build"
+
+	elif [ "$TYPE" == "win_cb" ] ; then
+		#make -f Makefile.minigw
+		echoWarning "TODO: win_cb build"
+
+	elif [ "$TYPE" == "ios" ] ; then
 
 		# armv7 (+ simulator)
 		sed -i tmp "s|ARCH_PHONE =.*|ARCH_PHONE = armv7|" Makefile.iphone

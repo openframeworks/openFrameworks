@@ -23,6 +23,11 @@ function download() {
 	rm glfw*.tar.gz
 }
 
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
+	: # noop
+}
+
 # executed inside the lib src dir
 function build() {
 	
@@ -48,7 +53,7 @@ function copy() {
 		cp -v src/Release/glfw3.lib $1/lib/$TYPE/glfw3.lib
 
 	else
-		echoWarning "TODO: copy"
+		echoWarning "TODO: $TYPE copy"
 
 	fi
 }
@@ -58,6 +63,6 @@ function clean() {
 	if [ "$TYPE" == "vs" ] ; then
 		rm -f *.lib
 	else
-		echoWarning "TODO: clean"
+		echoWarning "TODO: $TYPE clean"
 	fi
 }

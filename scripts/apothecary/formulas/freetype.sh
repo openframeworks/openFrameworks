@@ -23,6 +23,11 @@ function download() {
 	rm freetype*.tar.gz
 }
 
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
+	: # noop
+}
+
 # executed inside the lib src dir
 function build() {
 	

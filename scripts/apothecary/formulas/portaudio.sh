@@ -22,6 +22,11 @@ function download() {
 	rm pa_$VER.tgz
 }
 
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
+	: # noop
+}
+
 # executed inside the lib src dir
 function build() {
 	echo "build not needed for $TYPE"

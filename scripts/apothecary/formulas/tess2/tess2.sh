@@ -23,8 +23,13 @@ function download() {
 	rm libtess2-$VER.zip
 }
 
-function prebuild() {
-	patch -p1 -u < $FORMULA_DIR/tess2.patch
+# prepare the build environment, executed inside the lib src dir
+function prepare() {
+	
+	# check if the patch was applied, if not then patch
+	if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/tess2.patch 2>/dev/null ; then
+		patch -p1 -u -N  < $FORMULA_DIR/tess2.patch
+	fi
 
 	# copy in build script and CMake toolchains adapted from Assimp
 	if [ "$OS" == "osx" ] ; then
@@ -48,13 +53,13 @@ function build() {
 		# 32 bit
 		rm -f CMakeCache.txt
 		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch i386" -DCMAKE_CXX_FLAGS="-arch i386" .
-		make
+		make clean; make
 		mv libtess2.a libtess2-i386.a
 
 		# 64 bit
 		rm -f CMakeCache.txt
 		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch x86_64" -DCMAKE_CXX_FLAGS="-arch x86_64" .
-		make
+		make clean; make
 		mv libtess2.a libtess2-x86_64.a
 
 		# link into universal lib
