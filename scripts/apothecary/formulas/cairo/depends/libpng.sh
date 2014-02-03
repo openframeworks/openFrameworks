@@ -26,7 +26,7 @@ function build() {
 	if [ ! -f configure ] ; then
 		./autogen.sh
 	fi
-	echo "BUILD_DIR $BUILD_DIR"
+	
 	./configure --prefix=$BUILD_DIR --disable-dependency-tracking
 	make clean; make
 }

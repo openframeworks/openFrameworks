@@ -611,7 +611,7 @@ function remove-all() {
 # git-clone a given library
 function gitclone() {
 	{
-		echoVerbose " Try using Git to donwload"
+		echoVerbose " Try using Git to download"
 		git clone $2 $1
 		cd $1
 		if [[ ${SWITCH_VER:+x} ]]; then
