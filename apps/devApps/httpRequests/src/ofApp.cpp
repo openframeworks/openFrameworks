@@ -37,10 +37,8 @@ void ofApp::setup(){
     
 
     
-    httpGet.url = "https://grind-back-end-production-0.herokuapp.com/api/v1/zones/active?remote_zone_key=front_desk&location_id=15";
+    httpGet.url = GET;
     httpGet.type = OF_HTTP_GET;
-    httpGet.addHeader("Authorization",
-                      "Token token=\"488528dfae35c6825ba2030e6a759099\"");
     httpGet.name = "get";
     
 
