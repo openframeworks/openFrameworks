@@ -72,11 +72,15 @@ function build() {
 		echoWarning "TODO: win_cb build settings here?"
 	fi
 
-	# build and install dependencies (some commented for now as they might be needed for other platforms)
+	# build dependencies (some commented for now as they might be needed for other platforms)
 	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/zlib.sh
 	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/libpng.sh
 	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/pixman.sh
 	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build freetype
+
+	# install dependencies to local build dir
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir copy $FORMULA_DIR/depends/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir copy $FORMULA_DIR/depends/pixman.sh
 
 	# build cairo
 	./configure --prefix=$buildDir --disable-dependency-tracking --disable-xlib --disable-ft

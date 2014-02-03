@@ -20,6 +20,12 @@ function download() {
 
 # executed inside the lib src dir
 function build() {
+
+	# generate the configure script if it's not there
+	if [ ! -f configure ] ; then
+		./autogen.sh
+	fi
+
 	# setting empty flags so it ignores an existing pkg-config install
 	./configure --prefix=$BUILD_DIR --with-internal-glib GLIB_CFLAGS="" GLIB_LIBS=""
 	make
