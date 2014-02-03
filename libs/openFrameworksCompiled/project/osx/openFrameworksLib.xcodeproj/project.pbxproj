@@ -24,6 +24,10 @@
 		2E6EA7081603AAD600B7ADF3 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */; };
 		53EEEF4B130766EF0027C199 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
 		53EEEF4C130766EF0027C199 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
+		644982A0189F1F8400E6AB7D /* ofxAVFVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6449829C189F1F8400E6AB7D /* ofxAVFVideoPlayer.h */; };
+		644982A1189F1F8400E6AB7D /* ofxAVFVideoPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6449829D189F1F8400E6AB7D /* ofxAVFVideoPlayer.mm */; };
+		644982A2189F1F8400E6AB7D /* ofxAVFVideoRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6449829E189F1F8400E6AB7D /* ofxAVFVideoRenderer.h */; };
+		644982A3189F1F8400E6AB7D /* ofxAVFVideoRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6449829F189F1F8400E6AB7D /* ofxAVFVideoRenderer.m */; };
 		67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67D96B941651AF6D00D5242D /* ofGLUtils.cpp */; };
 		772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */; };
 		772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */; };
@@ -146,13 +150,7 @@
 		E4F3BB2F12F4C752002D19BB /* ofTrueTypeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */; };
 		E703368A15D4AF13009A3FDE /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E703368915D4AF13009A3FDE /* CoreVideo.framework */; };
 		E703368C15D4AF1A009A3FDE /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E703368B15D4AF1A009A3FDE /* QTKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		E703369315D4B03E009A3FDE /* ofQTKitGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E703368D15D4B03E009A3FDE /* ofQTKitGrabber.h */; };
-		E703369415D4B03E009A3FDE /* ofQTKitGrabber.mm in Sources */ = {isa = PBXBuildFile; fileRef = E703368E15D4B03E009A3FDE /* ofQTKitGrabber.mm */; };
-		E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */; };
-		E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E703369015D4B03E009A3FDE /* ofQTKitPlayer.mm */; };
 		E7F985E315E0DC6A003869B5 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985E115E0DC54003869B5 /* Accelerate.framework */; };
-		FDFC9EF21600D70700EDD797 /* ofQTKitMovieRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */; };
-		FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -173,6 +171,10 @@
 		2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dPrimitives.cpp; sourceTree = "<group>"; };
 		53EEEF49130766EF0027C199 /* ofMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMesh.h; sourceTree = "<group>"; };
 		53EEEF4A130766EF0027C199 /* ofMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMesh.cpp; sourceTree = "<group>"; };
+		6449829C189F1F8400E6AB7D /* ofxAVFVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxAVFVideoPlayer.h; path = ../../../../../Workspace/CLOUDS/openFrameworks/addons/ofxAVFVideoPlayer/src/ofxAVFVideoPlayer.h; sourceTree = "<group>"; };
+		6449829D189F1F8400E6AB7D /* ofxAVFVideoPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ofxAVFVideoPlayer.mm; path = ../../../../../Workspace/CLOUDS/openFrameworks/addons/ofxAVFVideoPlayer/src/ofxAVFVideoPlayer.mm; sourceTree = "<group>"; };
+		6449829E189F1F8400E6AB7D /* ofxAVFVideoRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxAVFVideoRenderer.h; path = ../../../../../Workspace/CLOUDS/openFrameworks/addons/ofxAVFVideoPlayer/src/ofxAVFVideoRenderer.h; sourceTree = "<group>"; };
+		6449829F189F1F8400E6AB7D /* ofxAVFVideoRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ofxAVFVideoRenderer.m; path = ../../../../../Workspace/CLOUDS/openFrameworks/addons/ofxAVFVideoPlayer/src/ofxAVFVideoRenderer.m; sourceTree = "<group>"; };
 		67D96B941651AF6D00D5242D /* ofGLUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLUtils.cpp; path = gl/ofGLUtils.cpp; sourceTree = "<group>"; };
 		772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofOpenALSoundPlayer.cpp; sourceTree = "<group>"; };
 		772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofOpenALSoundPlayer.h; sourceTree = "<group>"; };
@@ -471,6 +473,10 @@
 				E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */,
 				FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */,
 				FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */,
+				6449829C189F1F8400E6AB7D /* ofxAVFVideoPlayer.h */,
+				6449829D189F1F8400E6AB7D /* ofxAVFVideoPlayer.mm */,
+				6449829E189F1F8400E6AB7D /* ofxAVFVideoRenderer.h */,
+				6449829F189F1F8400E6AB7D /* ofxAVFVideoRenderer.m */,
 			);
 			name = video;
 			path = ../../../openFrameworks/video;
@@ -687,18 +693,17 @@
 				E4C5E387131AC1B10050F992 /* ofRtAudioSoundStream.h in Headers */,
 				E4C5E38B131AC1BE0050F992 /* ofBaseSoundStream.h in Headers */,
 				772BDF74146928600030F0EE /* ofOpenALSoundPlayer.h in Headers */,
-				E703369315D4B03E009A3FDE /* ofQTKitGrabber.h in Headers */,
-				E703369515D4B03E009A3FDE /* ofQTKitPlayer.h in Headers */,
 				E42732B015F10E7A00BBC533 /* ofQuickTimePlayer.h in Headers */,
-				FDFC9EF21600D70700EDD797 /* ofQTKitMovieRenderer.h in Headers */,
 				DAC22D4016E7A4AF0020226D /* ofParameter.h in Headers */,
 				DAC22D4216E7A4AF0020226D /* ofParameterGroup.h in Headers */,
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
 				2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */,
 				22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */,
+				644982A0189F1F8400E6AB7D /* ofxAVFVideoPlayer.h in Headers */,
 				22769592170D9DD200604FC3 /* ofMatrixStack.h in Headers */,
 				22246D94176C9987008A8AF4 /* ofGLProgrammableRenderer.h in Headers */,
 				22246D98176C9AA0008A8AF4 /* ofAppGlutWindow.h in Headers */,
+				644982A2189F1F8400E6AB7D /* ofxAVFVideoRenderer.h in Headers */,
 				E495DF7E178896A900994238 /* ofAppNoWindow.h in Headers */,
 				27DEA3121796F578000A9E90 /* ofXml.h in Headers */,
 			);
@@ -799,7 +804,9 @@
 				DA48FE77131D85A6000062BC /* ofPolyline.cpp in Sources */,
 				DACFA8DA132D09E8008D4B7A /* ofFbo.cpp in Sources */,
 				DACFA8DC132D09E8008D4B7A /* ofGLRenderer.cpp in Sources */,
+				644982A1189F1F8400E6AB7D /* ofxAVFVideoPlayer.mm in Sources */,
 				2E6EA7081603AAD600B7ADF3 /* of3dPrimitives.cpp in Sources */,
+				644982A3189F1F8400E6AB7D /* ofxAVFVideoRenderer.m in Sources */,
 				DACFA8DF132D09E8008D4B7A /* ofLight.cpp in Sources */,
 				DACFA8E1132D09E8008D4B7A /* ofMaterial.cpp in Sources */,
 				DACFA8E3132D09E8008D4B7A /* ofShader.cpp in Sources */,
@@ -809,10 +816,7 @@
 				92C55F88132DA7DD00EC2631 /* ofPath.cpp in Sources */,
 				E4C5E388131AC1B10050F992 /* ofRtAudioSoundStream.cpp in Sources */,
 				772BDF73146928600030F0EE /* ofOpenALSoundPlayer.cpp in Sources */,
-				E703369415D4B03E009A3FDE /* ofQTKitGrabber.mm in Sources */,
-				E703369615D4B03E009A3FDE /* ofQTKitPlayer.mm in Sources */,
 				E42732AF15F10E7A00BBC533 /* ofQuickTimePlayer.cpp in Sources */,
-				FDFC9EF31600D70700EDD797 /* ofQTKitMovieRenderer.m in Sources */,
 				DAC22D3F16E7A4AF0020226D /* ofParameter.cpp in Sources */,
 				DAC22D4116E7A4AF0020226D /* ofParameterGroup.cpp in Sources */,
 				67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */,

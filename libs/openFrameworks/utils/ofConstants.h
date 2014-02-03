@@ -288,7 +288,8 @@ typedef TESSindex ofIndexType;
 		#ifndef MAC_OS_X_VERSION_10_7
 			#define OF_VIDEO_PLAYER_QUICKTIME
 		#else
-			#define OF_VIDEO_PLAYER_QTKIT
+            #define OF_VIDEO_PLAYER_AVFOUNDATION
+//			#define OF_VIDEO_PLAYER_QTKIT
 		#endif
 	#else
 		#define OF_VIDEO_PLAYER_QUICKTIME
