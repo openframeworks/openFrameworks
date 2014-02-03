@@ -34,7 +34,9 @@ function build() {
 		# @tgfrerer patch FreeImage source - clang is much less forgiving about
 		# type overruns and missing standard header files. 
 		# this patch replicates gcc's behaviour
-		patch -p1 -u  < $FORMULA_DIR/freeimage.clang.source.patch
+		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/freeimage.clang.source.patch 2>/dev/null ; then
+			patch -p1 -u -N  < $FORMULA_DIR/freeimage.clang.source.patch
+		fi
 
 		# set SDK
 		sed -i tmp "s|MACOSX_SDK =.*|MACOSX_SDK = $OSX_SDK_VER|" Makefile.osx
@@ -55,7 +57,9 @@ function build() {
 		# @tgfrerer patch FreeImage source - clang is much less forgiving about
 		# type overruns and missing standard header files. 
 		# this patch replicates gcc's behaviour
-		patch -p1 -u  < $FORMULA_DIR/freeimage.clang.source.patch
+		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/freeimage.clang.source.patch 2>/dev/null ; then
+			patch -p1 -u -N  < $FORMULA_DIR/freeimage.clang.source.patch
+		fi
 
 		# set SDK
 		sed -i tmp "s|MACOSX_SDK =.*|MACOSX_SDK = $OSX_SDK_VER|" Makefile.osx
@@ -84,7 +88,9 @@ function build() {
 		# @tgfrerer patch FreeImage source - clang is much less forgiving about
 		# type overruns and missing standard header files. 
 		# this patch replicates gcc's behaviour
-		patch -p1 -u  < $FORMULA_DIR/freeimage.clang.source.patch
+		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/freeimage.clang.source.patch 2>/dev/null ; then
+			patch -p1 -u -N  < $FORMULA_DIR/freeimage.clang.source.patch
+		fi
 
 		# set SDKs
 		sed -i tmp "s|MACOSX_DEPLOYMENT_TARGET =.*|MACOSX_DEPLOYMENT_TARGET = $OSX_SDK_VER|" Makefile.iphone
