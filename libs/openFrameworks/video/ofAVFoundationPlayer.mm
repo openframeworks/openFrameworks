@@ -114,9 +114,6 @@ void ofAVFoundationPlayer::update()
         
 		bNewFrame = [moviePlayer update];
         bHavePixelsChanged = bNewFrame;
-		if(bNewFrame){
-			updateTexture();
-		}
     }
     else {
         ofLogNotice("ofAVFoundationPlayer::update()") << "Movie player not ready";
@@ -201,22 +198,16 @@ unsigned char * ofAVFoundationPlayer::getPixels()
 //--------------------------------------------------------------
 ofPixelsRef ofAVFoundationPlayer::getPixelsRef()
 {
-//    if (bTheFutureIsNow) {
-        if (isLoaded()) {
-            // Don't get the pixels every frame if it hasn't updated
-            if (bHavePixelsChanged) {
-                [moviePlayer pixels:pixels.getPixels()];
-                bHavePixelsChanged = false;
-            }
-        }
-        else {
-            ofLogError("ofAVFoundationPlayer::getPixelsRef()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
-        }
-//    }
-//    else {
-//        getPixels();
-//    }
-    
+	if (isLoaded()) {
+		// Don't get the pixels every frame if it hasn't updated
+		if (bHavePixelsChanged) {
+			[moviePlayer pixels:pixels.getPixels()];
+			bHavePixelsChanged = false;
+		}
+	}
+	else {
+		ofLogError("ofAVFoundationPlayer::getPixelsRef()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
+	}
 	return pixels;
 }
 
