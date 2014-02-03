@@ -8,9 +8,14 @@
 # use "make glew.lib" to build only the lib without demos/tests
 # the OPT flag is used for CFLAGS (& LDFLAGS I think?)
 
+FORMULA_TYPES=( "osx" "vs" "win_cb" )
+
+# define the version
 VER=1.9.0
 
-FORMULA_TYPES=( "osx" "vs2010" "win_cb" )
+# tools for git use
+GIT_URL=https://github.com/nigels-com/glew.git
+GIT_TAG=glew-$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -37,10 +42,12 @@ function build() {
 		# link into universal lib
 		lipo -c libGLEW-i386.a libGLEW-x86_64.a -o libGLEW.a
 
-	elif [ "$TYPE" == "vs2010" ] ; then
-		#cd build/vc10
-		#MSBuild.exe glew_static.vcxproj
-		echoWarning "TODO: build vs2010"
+	elif [ "$TYPE" == "vs" ] ; then
+		cd build/vc10
+		vs-build "glew.sln" Upgrade
+		vs-build "glew_static.vcxproj"
+		cd ../../
+		echoWarning "TODO: build vs"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		#make glew.lib
@@ -60,7 +67,7 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v libGLEW.a $1/lib/$TYPE/glew.a
 
-	elif [ "$TYPE" == "vs2010" ] ; then
+	elif [ "$TYPE" == "vs" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/glew32s.lib $1/lib/$TYPE
 
@@ -73,8 +80,8 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: clean vs"
 	
 	else
 		make clean

@@ -7,9 +7,14 @@
 # Makefile build system, 
 # some Makefiles are out of date so patching/modification may be required
 
-FORMULA_TYPES=( "osx" "osx-clang-libc++" "vs2010" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "osx-clang-libc++" "vs" "win_cb" "ios" "android" )
 
+# define the version
 VER=3154 # 3.15.4
+
+# tools for git use
+GIT_URL=
+GIT_TAG=
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -67,9 +72,8 @@ function build() {
 
 		make -j -f Makefile.osx
 	
-	elif [ "$TYPE" == "vs2010" ] ; then
-		#MSBuild.exe FreeImage.2008.sln
-		echoWarning "TODO: vs2010 build"
+	elif [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: vs build"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		#make -f Makefile.minigw
@@ -122,11 +126,15 @@ function copy() {
 	cp -v Dist/*.h $1/include
 
 	# lib
-	if [ "$TYPE" == "osx" -o "osx-clang-libc++" ] ; then
+	if [ "$TYPE" == "osx" -o "$TYPE" == "osx-clang-libc++" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
 
-	elif [ "$TYPE" == "vs2010" -o  "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "vs" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v Dist/FreeImage.lib $1/lib/$TYPE/FreeImage.lib
+
+	elif [ "$TYPE" == "win_cb" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.lib $1/lib/$TYPE/freeimage.lib
 
@@ -142,8 +150,8 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 	
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: clean vs"
 
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: clean android"
@@ -151,4 +159,7 @@ function clean() {
 	else
 		make clean
 	fi
+
+	# run dedicated clean script
+	clean.sh
 }

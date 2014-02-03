@@ -5,9 +5,15 @@
 # http://sourceforge.net/projects/kissfft/
 #
 # has a Makefile
+FORMULA_TYPES=( "osx" "linux" "linux64" "win_cb" "ios" "android" )
 
+# define the version
 VER=130
 VER_UNDERSCORE=1_3_0
+
+# tools for git use
+GIT_URL=
+GIT_TAG=v$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {

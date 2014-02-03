@@ -6,8 +6,16 @@
 #
 # uses CMake
 
+# define the version
 VER=3.0
 SUB_VER=1270
+
+# tools for git use
+GIT_URL=
+# GIT_URL=https://github.com/assimp/assimp.git
+GIT_TAG=
+
+FORMULA_TYPES=( "osx" "osx-clang-libc++" )
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -58,12 +66,32 @@ function build() {
 
 		# 64 bit
 		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch x86_64" -DCMAKE_CXX_FLAGS="-arch x86_64" .
-		make assimp
+		make assimp 
 		mv lib/libassimp.a lib/libassimp-x86_64.a
 		make clean
 
 		# link into universal lib
 		lipo -c lib/libassimp-i386.a lib/libassimp-x86_64.a -o lib/libassimp.a
+
+	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
+
+		# warning, assimp on github uses the ASSIMP_ prefix for CMake options ...
+		# these may need to be updated for a new release
+		local buildOpts="--build build/$TYPE -DBUILD_STATIC_LIB=1 -DENABLE_BOOST_WORKAROUND=1"
+
+		export CPP=`xcrun -find clang++`
+		export CXX=`xcrun -find clang++`
+		export CXXCPP=`xcrun -find clang++`
+		export CC=`xcrun -find clang`
+		
+		# 32 bit
+		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch i386" -DCMAKE_CXX_FLAGS="-arch i386 -std=c++11 -stdlib=libc++ -O3 -DNDEBUG -funroll-loops" .
+		make assimp -j 
+		mv lib/libassimp.a lib/libassimp-i386.a
+		make clean
+
+		# rename lib
+		libtool -c lib/libassimp-i386.a -o lib/libassimp.a
 
 	elif [ "$TYPE" == "linux" ] ; then
 		echoWarning "TODO: linux build"
@@ -71,8 +99,8 @@ function build() {
 	elif [ "$TYPE" == "linux64" ] ; then
 		echoWarning "TODO: linux64 build"
 
-	elif [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: vs2010 build"
+	elif [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: vs build"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: win_cb build"
@@ -127,7 +155,7 @@ function copy() {
 
 	# libs
 	mkdir -p $1/lib/$TYPE
-	if [ "$TYPE" == "vs2010" ] ; then
+	if [ "$TYPE" == "vs" ] ; then
 		cp -Rv lib/libassimp.lib $1/lib/$TYPE/assimp.lib
 
 	elif [ "$TYPE" == "ios" ] ; then
@@ -141,10 +169,10 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: clean vs"
 
-	elif [ "$TYPE" == "vs2010" ] ; then
+	elif [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: clean android"
 
 	else

@@ -7,26 +7,41 @@
 # uses an autotools build system,
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
-VER=1.4.6
+# define the version
+VER=1.5.3-release
+
+# tools for git use
+GIT_URL=https://github.com/pocoproject/poco
+GIT_TAG=poco-$VER
 
 # @tgfrerer: we need more fine-grained control over poco source code versions, 
 # which is why we specify the specific poco source code commit we want to use -
 # When updating poco/this recipe, make sure to specify the proper hash here,
 # and check if the header patches still apply cleanly.
 
-SHA=526213c8199ca9f31e3c9d6b7341be11c90a5938
+# @TODO: New commit ref?
+SHA=
 
 # download the source code and unpack it into LIB_NAME
 function download() {
+	if [ "$SHA" == "" ] ; then
+		curl -Lk https://github.com/pocoproject/poco/archive/$GIT_TAG.tar.gz -o poco-$GIT_TAG.tar.gz
+		tar -xf poco-$GIT_TAG.tar.gz
+		mv poco-$GIT_TAG poco
+		rm poco*.tar.gz
+	else
+		git clone https://github.com/pocoproject/poco -b poco-$VER
+	fi
+}
 
-	git clone https://github.com/pocoproject/poco -b poco-$VER
-	cd poco
-	git reset --hard $SHA
-	cd ..
+function prebuild() {
+	if [ "$SHA" != "" ] ; then
+		git reset --hard $SHA
+	fi
 
 	# make backups of the ios config files since we need to edit them
 	if [ "$TYPE" == "ios" ] ; then
-		cd poco/build/config
+		cd build/config
 		cp iPhone iPhone.orig
 		cp iPhoneSimulator iPhoneSimulator.orig
 	fi
@@ -85,8 +100,12 @@ function build() {
 			fi
 		done	
 
-	elif [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: vs2010 build"
+	elif [ "$TYPE" == "vs" ] ; then
+		#cmd.exe /c "buildwin.cmd "$VS_VER" build all both Win32 nosamples devenv"
+		## OR
+		cmake -G "Visual Studio $VS_VER" -DPOCO_STATIC="1" -DCMAKE_DEBUG_POSTFIX="mdd" -DCMAKE_RELEASE_POSTFIX="md"
+		vs-build "Poco.sln" Build Debug
+		vs-build "Poco.sln" Build Release
 	
 	elif [ "$TYPE" == "ios" ] ; then
 
@@ -174,6 +193,11 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/iPhoneOS/*.a $1/lib/$TYPE
 
+	elif [ "$TYPE" == "vs" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/Release/*.lib $1/lib/$TYPE
+		cp -v lib/Debug/*.lib $1/lib/$TYPE
+
 	else
 		echoWarning "TODO: copy $TYPE lib"
 	fi
@@ -182,8 +206,8 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: clean vs"
 	
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: clean android"

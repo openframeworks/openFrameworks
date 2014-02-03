@@ -3,11 +3,17 @@
 # the official PNG reference library
 # http://libpng.org/pub/png/libpng.html
 
+# define the version
+MAJOR_VER=16/older-releases
 VER=1.6.2
+
+# tools for git use
+GIT_URL=http://git.code.sf.net/p/libpng/code
+GIT_TAG=v$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -LO http://sourceforge.net/projects/libpng/files/libpng16/older-releases/$VER/libpng-$VER.tar.gz
+	curl -LO https://downloads.sourceforge.net/project/libpng/libpng$MAJOR_VER/$VER/libpng-$VER.tar.gz
 	tar -xf libpng-$VER.tar.gz
 	mv libpng-$VER libpng
 	rm libpng-$VER.tar.gz

@@ -8,9 +8,14 @@
 
 # array of build types supported by this formula
 # you can delete this to implicitly support *all* types
-FORMULA_TYPES=( "osx" "linux" "linux64" "vs2010" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" "ios" "android" )
 
+# define the version
 VER=#.#.#
+
+# tools for git use
+GIT_URL=
+GIT_TAG=
 
 # download the source code and unpack it into LIB_NAME
 function download() {

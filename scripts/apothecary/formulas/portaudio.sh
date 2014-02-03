@@ -6,9 +6,14 @@
 #
 # build not currently needed on any platform
 
-FORMULA_TYPES=( "osx" "vs2010" "win_cb" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
-VER=stable_v19_20111121
+# define the version
+VER=stable_v19_20110326
+
+# tools for git use
+GIT_URL=
+GIT_TAG=
 
 # download the source code and unpack it into LIB_NAME
 function download() {

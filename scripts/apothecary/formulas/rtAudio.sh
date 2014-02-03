@@ -6,9 +6,14 @@
 #
 # uses an autotools build system
 
-FORMULA_TYPES=( "osx" "linux" "linux64" "vs2010" "win_cb" )
+FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" )
 
+# define the version
 VER=4.0.12
+
+# tools for git use
+GIT_URL=
+GIT_TAG=
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -45,7 +50,7 @@ function build() {
 			local API="--with-alsa" # jack or pulse as well?
 			echoWarning "TODO: build linux"
 			
-		elif [ "$TYPE" == "vs2010" -o "$TYPE" == "win_cb" ] ; then
+		elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
 			local API="--with-ds" # asio as well?
 			echoWarning "TODO: build $TYPE"
 		fi
@@ -62,8 +67,8 @@ function copy() {
 
 	# libs
 	mkdir -p $1/lib/$TYPE
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: copy vs2010 lib"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: copy vs lib"
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: copy win_cb lib"
@@ -75,8 +80,8 @@ function copy() {
 
 # executed inside the lib src dir
 function clean() {
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "TODO: clean vs"
 	else
 		make clean
 	fi

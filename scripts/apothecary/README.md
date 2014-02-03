@@ -22,7 +22,7 @@ Requirements
 * Xcode and the iOS SDK (to compile for iOS)
 * Android SDK (to compile for android)
 
-Mac OSX & Linux users already have a Bash environment installed. Windows users are recommended to use Git Bash that comes with [Git for Windows](http://msysgit.github.io) or the MinGW shell included with [Codeblocks+MiniGW](http://www.codeblocks.org/downloads/26).
+Mac OSX & Linux users already have a Bash environment installed. Windows users are recommended to use Git Bash that comes with [Git for Windows](http://windows.github.com) or [MSysGit](http://msysgit.github.io) or the MinGW shell included with [Codeblocks+MiniGW](http://www.codeblocks.org/downloads/26).
 
 Quick Start
 ----------
@@ -73,7 +73,7 @@ See the built in help for more info:
 ### Options
 
 * **-t**: specify libary type when building, detects type from OS by default
-  * valid types: osx, osx-clang-libc++, linux, linux64, vs2010, win_cb, ios, android
+  * valid types: osx, osx-clang-libc++, linux, linux64, vs, win_cb, ios, android
 
 * **-a**: specify architecture, either 32 or 64 (default is 32 bit)
   * note: not currently needed, reserved for future use
@@ -84,6 +84,11 @@ See the built in help for more info:
   * default: OF core libs dir or addons/addonName/libs for addons
 
 * **-v**: verbose mode, print out some extra info while mixing formulas
+
+* **-g**: git mode, prefer using git as much as possible
+
+* **-s**: specify a git-tag to select a custom version of the library
+  * note: note: availible only with git option
 
 * **-h**: print the usage guide
 
@@ -98,7 +103,7 @@ Detailed Usage
 
 Your interface to the build system is the `apothecary` script:
 
-	apothecary [options] command core/addons/libName/addonName
+	apothecary [options] <command> [<library|addons|libName|addonName>]
 
 You can run it from any location, but it's probably easiest to change to this directory:
 
@@ -187,7 +192,7 @@ OpenFrameworks is cross platform and currently supports the following build type
 * osx-clang-libc++: Mac OSX, clang/libc++ 32 bit libs
 * linux: 32 bit linux
 * linux64: 64 bit linux
-* vs2010: Windows, Visual Studio 2010
+* vs: Windows, Visual Studio
 * win_cb: Windows, CodeBlocks+MinGW
 * ios: iOS (can only build on OSX), arm7, arm7s, & 32 bit simulator fat libs
 * android: (requires android sdk)

@@ -8,7 +8,12 @@
 # we follow the Homebrew approach which is to use CMake via a custom CMakeLists.txt
 # on ios, use some build scripts adapted from the Assimp project
 
+# define the version
 VER=1.0
+
+# tools for git use
+GIT_URL=https://github.com/memononen/libtess2.git
+GIT_TAG=master
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -16,12 +21,16 @@ function download() {
 	unzip -oq libtess2-$VER.zip
 	mv libtess2 tess2
 	rm libtess2-$VER.zip
+}
+
+function prebuild() {
+	patch -p1 -u < $FORMULA_DIR/tess2.patch
 
 	# copy in build script and CMake toolchains adapted from Assimp
 	if [ "$OS" == "osx" ] ; then
-		mkdir -p tess2/build
-		cp -Rv $FORMULA_DIR/ios tess2/build
-		chmod +x tess2/build/ios/build_ios.sh
+		mkdir -p build
+		cp -Rv $FORMULA_DIR/ios build
+		chmod +x build/ios/build_ios.sh
 	fi
 }
 
@@ -51,10 +60,9 @@ function build() {
 		# link into universal lib
 		lipo -c libtess2-i386.a libtess2-x86_64.a -o libtess2.a
 
-	elif [ "$TYPE" == "vs2010" ] ; then
-		#cmake -G "Visual Studio 10" --build build/$TYPE .
-		# call MSBuild on the generated sln here
-		echoWarning "TODO: vs2010 build"
+	elif [ "$TYPE" == "vs" ] ; then
+		cmake -G "Visual Studio $VS_VER"
+		vs-build "tess2.sln"
 
 	elif [ "$TYPE" == "ios" ] ; then
 		cd build/ios
@@ -82,9 +90,8 @@ function copy() {
 
 	# lib
 	mkdir -p $1/lib/$TYPE
-	if [ "$TYPE" == "vs2010" ] ; then 
-		#cp -v libtess2.lib $1/lib/$TYPE/tess2.lib
-		echoWarning "TODO: copy vs2010 lib"
+	if [ "$TYPE" == "vs" ] ; then 
+		cp -v Release/tess2.lib $1/lib/$TYPE/tess2.lib
 
 	elif [ "$TYPE" == "ios" ] ; then 
 		cp -v libtess2.a $1/lib/$TYPE/tess2.a
@@ -100,8 +107,8 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: clean vs2010"
+	if [ "$TYPE" == "vs" ] ; then
+		rm -f CMakeCache.txt *.lib
 	
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: clean android"

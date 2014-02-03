@@ -12,26 +12,37 @@
 # prefix (install location) and use a custom copy of pkg-config which returns
 # the dependent lib cflags/ldflags for that prefix (cairo/apothecary-build)
 
-FORMULA_TYPES=( "osx" "vs2010" "win_cb" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
+# define the version
 VER=1.12.14
+
+# tools for git use
+GIT_URL=http://anongit.freedesktop.org/git/cairo
+GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-
-	# cairo
 	curl -LO http://cairographics.org/releases/cairo-$VER.tar.xz
 	tar -xf cairo-$VER.tar.xz
 	mv cairo-$VER cairo
 	rm cairo-$VER.tar.xz
+}
 
+function prebuild() {
 	# dependencies (some commented for now as they might be needed for other platforms)
 	local buildDir=$BUILD_DIR/cairo/apothecary-build
 	mkdir -p $buildDir
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download $FORMULA_DIR/depends/pixman.sh
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir download freetype
+	if [ USE_GIT==1 ] ; then
+		GIT_ARGS=-g
+	else
+		GIT_ARGS=
+	fi
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/pixman.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download freetype
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir $GIT_ARGS download $FORMULA_DIR/depends/pkg-config.sh
 }
 
 # executed inside the lib src dir
@@ -42,7 +53,8 @@ function build() {
 	rm -rf $buildDir/bin $buildDir/lib $buildDir/share
 	
 	# build a custom version of pkg-config
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update $FORMULA_DIR/depends/pkg-config.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/pkg-config.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir copy $FORMULA_DIR/depends/pkg-config.sh
 	export PKG_CONFIG=$buildDir/bin/pkg-config
 	export PKG_CONFIG_PATH=$buildDir/lib/pkgconfig
 
@@ -52,18 +64,19 @@ function build() {
    		export LDFLAGS="-arch i386 -arch x86_64 -isysroot $XCODE_DEV_ROOT/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$OSX_SDK_VER.sdk"
    		export CFLAGS="-Os -arch i386 -arch x86_64 -isysroot $XCODE_DEV_ROOT/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$OSX_SDK_VER.sdk"
 	
-	elif [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "TODO: vs2010 build settings here?"
+	elif [ "$TYPE" == "vs" ] ; then
+		make -f Makefile.win32
+		echoWarning "TODO: vs build settings here?"
 	
 	elif [ "$YTYPE" == "win_cb" ] ; then
 		echoWarning "TODO: win_cb build settings here?"
 	fi
 
 	# build and install dependencies (some commented for now as they might be needed for other platforms)
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update $FORMULA_DIR/depends/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update $FORMULA_DIR/depends/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update $FORMULA_DIR/depends/pixman.sh
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir update freetype
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/zlib.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/libpng.sh
+	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build $FORMULA_DIR/depends/pixman.sh
+	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $buildDir build freetype
 
 	# build cairo
 	./configure --prefix=$buildDir --disable-dependency-tracking --disable-xlib --disable-ft
@@ -84,8 +97,8 @@ function copy() {
 
 	# lib
 	mkdir -p $1/lib/$TYPE
-	if [ "$TYPE" == "vs2010" ] ; then
-		echoWarning "copy vs2010 lib"
+	if [ "$TYPE" == "vs" ] ; then
+		echoWarning "copy vs lib"
 
 	elif [ "$TYPE" == "osx" -o "$TYPE" == "win_cb" ] ; then
 		if [ "$TYPE" == "osx" ] ; then
