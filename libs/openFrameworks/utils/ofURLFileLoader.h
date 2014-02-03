@@ -19,19 +19,19 @@ public:
 	:saveTo(false)
 	,id(nextID++){};
     
-	ofHttpRequest(string url,string name,bool saveTo=false)
+	ofHttpRequest(string url,string name, bool saveTo=false, ofHttpRequestType type = OF_HTTP_GET)
 	:url(url)
 	,name(name)
 	,saveTo(saveTo)
-	,id(nextID++){
-
+	,id(nextID++)
+    {
+        
     };
     
     
 	string				url;
 	string				name;
     ofHttpRequestType   type;
-    string              method;
 	bool				saveTo;
     
     int getID(){return id;}

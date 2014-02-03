@@ -57,20 +57,10 @@ ofURLFileLoader::ofURLFileLoader() {
 
 ofHttpResponse ofURLFileLoader::get(string url) {
     ofHttpRequest request(url,url);
-    request.method =  HTTPRequest::HTTP_GET;
     return handleRequest(request);
 }
 
 ofHttpResponse ofURLFileLoader::get(ofHttpRequest request){
-    if(request.type == OF_HTTP_DELETE)
-        request.method == HTTPRequest::HTTP_DELETE;
-    else if(request.type == OF_HTTP_GET)
-        request.method == HTTPRequest::HTTP_GET;
-    else if(request.type == OF_HTTP_POST)
-        request.method == HTTPRequest::HTTP_POST;
-    else if(request.type == OF_HTTP_PUT)
-        request.method == HTTPRequest::HTTP_PUT;
-    
     return handleRequest(request);
 }
 
@@ -78,7 +68,6 @@ ofHttpResponse ofURLFileLoader::get(ofHttpRequest request){
 int ofURLFileLoader::getAsync(string url, string name){
     if(name=="") name=url;
     ofHttpRequest request(url,name);
-    request.method = HTTPRequest::HTTP_GET;
     lock();
     requests.push_back(request);
     unlock();
@@ -89,16 +78,6 @@ int ofURLFileLoader::getAsync(string url, string name){
 int ofURLFileLoader::getAsync(ofHttpRequest req){
     if(req.url != ""){
         if(req.name=="") req.name = req.url;
-        
-        if(req.type == OF_HTTP_DELETE)
-            req.method == HTTPRequest::HTTP_DELETE;
-        else if(req.type == OF_HTTP_GET)
-            req.method == HTTPRequest::HTTP_GET;
-        else if(req.type == OF_HTTP_POST)
-            req.method == HTTPRequest::HTTP_POST;
-        else if(req.type == OF_HTTP_PUT)
-            req.method == HTTPRequest::HTTP_PUT;
-        
         lock();
         requests.push_back(req);
         unlock();
@@ -115,7 +94,6 @@ ofHttpResponse ofURLFileLoader::saveTo(string url, string path){
 
 int ofURLFileLoader::saveAsync(string url, string path){
     ofHttpRequest request(url,path,true);
-    request.method= HTTPRequest::HTTP_GET;
     lock();
     requests.push_back(request);
     unlock();
@@ -202,13 +180,19 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
         
         
         string method;
-        if(request.type == OF_HTTP_GET)
+        if(request.type == OF_HTTP_GET){
             method = HTTPRequest::HTTP_GET;
-        if(request.type == OF_HTTP_PUT)
+        }else if(request.type == OF_HTTP_PUT){
             method = HTTPRequest::HTTP_PUT;
-        if(request.type == OF_HTTP_POST)
+        }else if(request.type == OF_HTTP_POST){
             method = HTTPRequest::HTTP_POST;
-
+        }else if(request.type == OF_HTTP_DELETE){
+            method = HTTPRequest::HTTP_DELETE;
+        }else{
+            method = HTTPRequest::HTTP_GET;
+        }
+        
+        
         HTTPRequest req(method, path, HTTPMessage::HTTP_1_1);
         
         bool usesForm = false;
