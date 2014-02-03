@@ -68,12 +68,15 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 		}else if(type==typeid(ofParameter<ofFloatColor>).name()){
 			ofParameter<ofFloatColor> p = _parameters.getFloatColor(i);
 			add(p);
+		}else if(type==typeid(ofParameter<string>).name()){
+        		ofParameter<string> p = _parameters.getString(i);
+			add(p);
 		}else if(type==typeid(ofParameterGroup).name()){
 			ofParameterGroup p = _parameters.getGroup(i);
 			ofxGuiGroup * panel = new ofxGuiGroup(p);
 			add(panel);
 		}else{
-			ofLogError() << "ofxBaseGroup; can't add control of type " << type;
+			ofLogWarning() << "ofxBaseGroup; no control for parameter of type " << type;
 		}
 	}
 
@@ -313,6 +316,10 @@ ofxBaseGui * ofxGuiGroup::getControl(string name){
 
 void ofxGuiGroup::registerMouseEvents(){
 	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
+}
+
+void ofxGuiGroup::unregisterMouseEvents(){
+	ofUnregisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 }
 
 bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){

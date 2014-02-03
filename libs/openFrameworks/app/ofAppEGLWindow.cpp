@@ -863,9 +863,13 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
                                                 &dst_rect,
                                                 &src_rect,
                                                 0, // mask (we aren't changing it here)
-                                                (VC_IMAGE_TRANSFORM_T)0); // we aren't changing it here
+          #ifdef USE_DISPMANX_TRANSFORM_T
+                                                (DISPMANX_TRANSFORM_T)0);
+          #else
+                                                (VC_IMAGE_TRANSFORM_T)0);
+          #endif
 
-          vc_dispmanx_update_submit_sync(dispman_update);
+	  vc_dispmanx_update_submit_sync(dispman_update);
 
           // next time swapBuffers is called, it will be resized based on this eglwindow size data
           dispman_native_window.element = dispman_element;
@@ -1085,7 +1089,11 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
                                           &dst_rect,
                                           NULL,
                                           0,
+    #ifdef USE_DISPMANX_TRANSFORM_T
+                                          (DISPMANX_TRANSFORM_T)0);
+    #else
                                           (VC_IMAGE_TRANSFORM_T)0);
+    #endif
 
     vc_dispmanx_update_submit_sync(dispman_update);
 
@@ -1181,15 +1189,13 @@ void ofAppEGLWindow::idle() {
 void ofAppEGLWindow::display() {
 
   // take care of any requests for a new screen mode
-  if (windowMode != OF_GAME_MODE){
-    if ( bNewScreenMode ){
-      if( windowMode == OF_FULLSCREEN){
-        setWindowRect(getScreenRect());
-      } else if( windowMode == OF_WINDOW ){
-        setWindowRect(nonFullscreenWindowRect);
-      }
-      bNewScreenMode = false;
+  if (windowMode != OF_GAME_MODE && bNewScreenMode){
+    if( windowMode == OF_FULLSCREEN){
+      setWindowRect(getScreenRect());
+    } else if( windowMode == OF_WINDOW ){
+      setWindowRect(nonFullscreenWindowRect);
     }
+    bNewScreenMode = false;
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////

@@ -302,6 +302,8 @@ bool ofxiOSUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int targe
 		return false;
 	}
 
+    CGContextSetBlendMode(spriteContext, kCGBlendModeCopy);
+    
 	// After you create the context, you can draw the sprite image to the context.
 	ofLogVerbose("ofxiOSExtras") << "ofxiOSUIImageToOFImage(): about to CGContextDrawImage";
 	CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), cgImage);

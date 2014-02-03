@@ -40,7 +40,6 @@ void ofGLReadyCallback();
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
-	ofLogVerbose("ofAppGLFWWindow") << "creating GLFW window";
 	bEnableSetupScreen	= true;
 	buttonInUse			= 0;
 	buttonPressed		= false;
@@ -75,6 +74,8 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
     //default to 4 times antialiasing. 
     setNumSamples(4);
 	iconSet = false;
+
+	glfwSetErrorCallback(error_cb);
 
 }
 
@@ -207,12 +208,6 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 	windowMode = requestedMode;
 
-	setVerticalSync(false);
-	// Set window title
-//	glfwSetWindowTitle( " " );
-
-//	glfwEnable( windowP, GLFW_KEY_REPEAT );
-
 	requestedHeight = requestedHeight < 1 ? 1 : requestedHeight;
 	glfwGetWindowSize( windowP, &requestedWidth, &requestedHeight );
 
@@ -236,7 +231,7 @@ void ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
 void ofAppGLFWWindow::initializeWindow(){
 	 //----------------------
 	 // setup the callbacks
-
+	if(!windowP) return;
 	glfwSetMouseButtonCallback(windowP, mouse_cb);
 	glfwSetCursorPosCallback(windowP, motion_cb);
 	glfwSetKeyCallback(windowP, keyboard_cb);
@@ -793,8 +788,6 @@ ofOrientation ofAppGLFWWindow::getOrientation(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::exitApp(){
-	ofLogVerbose("ofAppGLFWWindow") << "terminating GLFW app!";
-
 	// Terminate GLFW
 	glfwTerminate();
 
@@ -830,8 +823,6 @@ static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
-	ofLogVerbose("ofAppGLFWWindow") << "mouse button: " << button;
-
 #ifdef TARGET_OSX
     //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
     if( ofGetKeyPressed(OF_KEY_CONTROL) && button == GLFW_MOUSE_BUTTON_LEFT){
@@ -879,7 +870,7 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
-	// ofSendMessage("scroll|"+ofToString(x,5) + "|" + ofToString(y,5));
+	//TODO: implement scroll events
 }
 
 //------------------------------------------------------------
@@ -897,10 +888,12 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, const char* dropString) {
 }
 
 //------------------------------------------------------------
+void ofAppGLFWWindow::error_cb(int errorCode, const char* errorDescription){
+	ofLogError("ofAppGLFWWindow") << errorCode << ": " << errorDescription;
+}
+
+//------------------------------------------------------------
 void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods) {
-
-	ofLogVerbose("ofAppGLFWWindow") << "key: " << key << " state: " << action;
-
 	switch (key) {
 		case GLFW_KEY_ESCAPE:
 			key = OF_KEY_ESC;
@@ -1019,9 +1012,6 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 
 	if(action == GLFW_PRESS || action == GLFW_REPEAT){
 		ofNotifyKeyPressed(key);
-		if (key == OF_KEY_ESC){				// "escape"
-			exitApp();
-		}
 	}else if (action == GLFW_RELEASE){
 		ofNotifyKeyReleased(key);
 	}

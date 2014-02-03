@@ -141,6 +141,14 @@ void baseProject::addAddon(ofAddon & addon){
         ofLogVerbose() << "adding addon libs: " << addon.libs[i];
         addLibrary(addon.libs[i]);
     }
+    for(int i=0;i<(int)addon.cflags.size();i++){
+        ofLogVerbose() << "adding addon cflags: " << addon.cflags[i];
+        addCFLAG(addon.cflags[i]);
+    }
+    for(int i=0;i<(int)addon.ldflags.size();i++){
+        ofLogVerbose() << "adding addon ldflags: " << addon.ldflags[i];
+        addLDFLAG(addon.ldflags[i]);
+    }
     for(int i=0;i<(int)addon.srcFiles.size(); i++){
         ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
         addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);

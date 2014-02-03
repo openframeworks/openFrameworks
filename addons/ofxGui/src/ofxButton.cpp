@@ -4,6 +4,10 @@ ofxButton::ofxButton(){
 	value.setSerializable(false);
 }
 
+ofxButton::~ofxButton(){
+	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
+}
+
 ofxButton* ofxButton::setup(string toggleName, float width, float height){
 	setName(toggleName);
 	b.x = 0;

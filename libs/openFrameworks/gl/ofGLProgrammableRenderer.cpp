@@ -294,8 +294,10 @@ void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, floa
 void ofGLProgrammableRenderer::setCurrentFBO(ofFbo * fbo){
 	if(fbo!=NULL){
 		matrixStack.setRenderSurface(*fbo);
+		uploadMatrices();
 	}else{
 		matrixStack.setRenderSurface(*ofGetWindowPtr());
+		uploadMatrices();
 	}
 }
 
@@ -550,6 +552,35 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 }
 
 //----------------------------------------------------------
+/** @brief	Queries the current OpenGL matrix state
+ *  @detail Returns the specified matrix as held by the renderer's current matrix stack.
+ *
+ *			You can query one of the following:
+ *
+ *			[OF_MATRIX_MODELVIEW | OF_MATRIX_PROJECTION | OF_MATRIX_TEXTURE]
+ *
+ *			Each query will return the state of the matrix
+ *			as it was uploaded to the shader currently bound.
+ *
+ *	@param	matrixMode_  Which matrix mode to query
+ */
+ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
+	switch (matrixMode_) {
+		case OF_MATRIX_MODELVIEW:
+			return matrixStack.getModelViewMatrix();
+			break;
+		case OF_MATRIX_PROJECTION:
+			return matrixStack.getProjectionMatrix();
+			break;
+		case OF_MATRIX_TEXTURE:
+			return matrixStack.getTextureMatrix();
+			break;
+	}
+}
+
+//----------------------------------------------------------
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::setColor(const ofColor & color){
 	setColor(color.r,color.g,color.b,color.a);
 }
@@ -748,10 +779,20 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enablePointSprites(){
+#ifdef TARGET_OPENGLES
+        glEnable(GL_POINT_SPRITE_OES);
+#else
+	glEnable(GL_PROGRAM_POINT_SIZE);
+#endif
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disablePointSprites(){
+#ifdef TARGET_OPENGLES
+        glEnable(GL_POINT_SPRITE_OES);
+#else
+	glDisable(GL_PROGRAM_POINT_SIZE);
+#endif
 }
 
 
@@ -776,7 +817,7 @@ void ofGLProgrammableRenderer::setAlphaBitmapText(bool bitmapText){
 	bitmapStringEnabled = bitmapText;
 
 	if(wasBitmapStringEnabled!=bitmapText){
-		currentShader->setUniform1f(BITMAP_STRING_UNIFORM,bitmapText);
+		if(currentShader) currentShader->setUniform1f(BITMAP_STRING_UNIFORM,bitmapText);
 	}
 }
 
@@ -923,7 +964,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::endCustomShader(){
 	usingCustomShader = false;
-	if(uniqueShader) beginDefaultShader();
+	if(!uniqueShader) beginDefaultShader();
 }
 
 //----------------------------------------------------------
@@ -1681,7 +1722,7 @@ void ofGLProgrammableRenderer::setup(){
 		defaultUniqueShader().setupShaderFromSource(GL_FRAGMENT_SHADER,uniqueFragmentShader);
 		defaultUniqueShader().bindDefaults();
 		defaultUniqueShader().linkProgram();
-
+		beginDefaultShader();
 	}else{
 		defaultTexColor().setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);
 		defaultTex2DColor().setupShaderFromSource(GL_VERTEX_SHADER,defaultVertexShader);

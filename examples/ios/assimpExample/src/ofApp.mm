@@ -72,14 +72,17 @@ void ofApp::draw(){
     
 	//note we have to enable depth buffer in main.mm
 	//see: window->enableDepthBuffer(); in main.mm
+    
+    ofEnableDepthTest();
 
-	ofDisableDepthTest();
     ofPushMatrix();
     ofTranslate(model.getPosition().x, model.getPosition().y, 0);
     ofRotate(-mouseX, 0, 1, 0);
     ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
     model.drawFaces();
     ofPopMatrix();
+    
+    ofDisableDepthTest();
 
     ofDrawBitmapString("fps: " + ofToString(ofGetFrameRate(), 2), 10, 15);
     ofDrawBitmapString("num animations for this model: " + ofToString(model.getAnimationCount()), 10, 30);
