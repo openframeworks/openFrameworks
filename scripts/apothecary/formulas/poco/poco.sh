@@ -8,7 +8,7 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=1.5.3-release
+VER=1.5.2-release
 
 # tools for git use
 GIT_URL=https://github.com/pocoproject/poco
@@ -25,12 +25,12 @@ SHA=
 # download the source code and unpack it into LIB_NAME
 function download() {
 	if [ "$SHA" == "" ] ; then
-		curl -Lk https://github.com/pocoproject/poco/archive/$GIT_TAG.tar.gz -o poco-$GIT_TAG.tar.gz
+		curl -Lk $GIT_URL/archive/$GIT_TAG.tar.gz -o poco-$GIT_TAG.tar.gz
 		tar -xf poco-$GIT_TAG.tar.gz
 		mv poco-$GIT_TAG poco
 		rm poco*.tar.gz
 	else
-		git clone https://github.com/pocoproject/poco -b poco-$VER
+		git clone $GIT_URL -b poco-$VER
 	fi
 }
 

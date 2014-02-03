@@ -21,6 +21,11 @@ function download() {
 # executed inside the lib src dir
 function build() {
 
+	# generate the configure script if it's not there
+	if [ ! -f configure ] ; then
+		./autogen.sh
+	fi
+
 	./configure --prefix=$BUILD_DIR --disable-dependency-tracking --disable-gtk --disable-shared
 	
 	# only build & install lib, ignore demos/tests
