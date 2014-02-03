@@ -28,7 +28,7 @@
 	CVPixelBufferRef _latestPixelFrame;
 
     // Old school video stuff
-    CARenderer * _layerRenderer;
+//    CARenderer * _layerRenderer;
     
 	BOOL _useTexture;
     BOOL _useAlpha;
@@ -94,13 +94,9 @@
 - (void)play;
 - (void)stop;
 
-// New school video stuff
 - (BOOL)update;
 - (void)bindTexture;
 - (void)unbindTexture;
 - (void)pixels:(unsigned char *)outbuf;
-
-// Old school video stuff
-- (void)render;
 
 @end

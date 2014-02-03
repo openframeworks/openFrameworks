@@ -173,6 +173,11 @@ void ofVideoPlayer::update(){
 					tex.loadData(pxls, width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
 				}
 			}
+			else{
+				width	 = playerTex->getWidth();
+				height	 = playerTex->getHeight();
+			}
+
 		}
 	}
 }

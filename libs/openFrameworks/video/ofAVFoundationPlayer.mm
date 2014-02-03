@@ -114,6 +114,9 @@ void ofAVFoundationPlayer::update()
         
 		bNewFrame = [moviePlayer update];
         bHavePixelsChanged = bNewFrame;
+		if(bNewFrame){
+			updateTexture();
+		}
     }
     else {
         ofLogNotice("ofAVFoundationPlayer::update()") << "Movie player not ready";
@@ -221,13 +224,12 @@ ofPixelsRef ofAVFoundationPlayer::getPixelsRef()
 ofTexture* ofAVFoundationPlayer::getTexture()
 {
 	//TODO: Allow AVF's direct to texture
+	if (moviePlayer.textureAllocated) {
+		updateTexture();
+	}
+	return &tex;
 
-//        if (moviePlayer.textureAllocated) {
-//            updateTexture();
-//        }
-//        return &tex;
-
-    return NULL;
+//    return NULL;
 }
 
 //--------------------------------------------------------------
@@ -254,15 +256,6 @@ bool ofAVFoundationPlayer::isLoaded()
 bool ofAVFoundationPlayer::isAudioLoaded()
 {
     return moviePlayer && [moviePlayer isAudioLoaded];
-}
-
-//--------------------------------------------------------------
-bool ofAVFoundationPlayer::errorLoading()
-{
-    if (!moviePlayer) return false;
-    
-    // Error if movie player is not loading and is not ready.
-    return ![moviePlayer isLoading] && ![moviePlayer isLoaded];
 }
 
 //--------------------------------------------------------------

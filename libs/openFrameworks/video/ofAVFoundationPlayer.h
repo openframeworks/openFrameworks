@@ -40,7 +40,6 @@ public:
     
     // Returns openFrameworks compatible RGBA pixels.
     // Be aware of your current render mode.
-    
     unsigned char *     getPixels();
     ofPixelsRef         getPixelsRef();
     
@@ -53,7 +52,6 @@ public:
     bool                isLoading();
     bool                isLoaded();
     bool                isAudioLoaded();
-    bool                errorLoading();
     
     bool                isPlaying();
     bool                getIsMovieDone();
@@ -116,7 +114,7 @@ protected:
     void updateTexture();
     void reallocatePixels();
     
-    ofFbo fbo;
+//    ofFbo fbo;
     ofTexture tex;
     ofPixels pixels;
     ofPixelFormat pixelFormat;

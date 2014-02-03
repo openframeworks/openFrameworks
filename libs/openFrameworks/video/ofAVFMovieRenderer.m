@@ -290,43 +290,30 @@ int count = 0;
 {
     [self stop];
             
-//    if (self.theFutureIsNow) {
-        self.playerItemVideoOutput = nil;
-    
-        if (_textureCache != NULL) {
-            CVOpenGLTextureCacheRelease(_textureCache);
-            _textureCache = NULL;
-        }
-        if (_latestTextureFrame != NULL) {
-            CVOpenGLTextureRelease(_latestTextureFrame);
-            _latestTextureFrame = NULL;
-        }
-        if (_latestPixelFrame != NULL) {
-            CVPixelBufferRelease(_latestPixelFrame);
-            _latestPixelFrame = NULL;
-        }
-        
-        if (_amplitudes) {
-            [_amplitudes release];
-            _amplitudes = nil;
-        }
-        _numAmplitudes = 0;
-//    }
-//    else {
-        // SK: Releasing the CARenderer is slow for some reason
-        //     It will freeze the main thread for a few dozen mS.
-        //     If you're swapping in and out videos a lot, the loadFile:
-        //     method should be re-written to just re-use and re-size
-        //     these layers/objects rather than releasing and reallocating
-        //     them every time a new file is needed.
-        
-//        if (_layerRenderer) {
-//            [_layerRenderer release];
-//            _layerRenderer = nil;
-//        }
-//    }
+
+	self.playerItemVideoOutput = nil;
+
+	if (_textureCache != NULL) {
+		CVOpenGLTextureCacheRelease(_textureCache);
+		_textureCache = NULL;
+	}
+	if (_latestTextureFrame != NULL) {
+		CVOpenGLTextureRelease(_latestTextureFrame);
+		_latestTextureFrame = NULL;
+	}
+	if (_latestPixelFrame != NULL) {
+		CVPixelBufferRelease(_latestPixelFrame);
+		_latestPixelFrame = NULL;
+	}
+	
+	if (_amplitudes) {
+		[_amplitudes release];
+		_amplitudes = nil;
+	}
+	_numAmplitudes = 0;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+	
     if (self.playerItem) {
         [self.playerItem removeObserver:self forKeyPath:@"status"];
         self.playerItem = nil;
@@ -435,48 +422,6 @@ int count = 0;
     return NO;
 }
 
-//--------------------------------------------------------------
-- (void)render
-{
-//    if (self.theFutureIsNow) return;
-    
-    // From https://qt.gitorious.org/qt/qtmultimedia/blobs/700b4cdf42335ad02ff308cddbfc37b8d49a1e71/src/plugins/avfoundation/mediaplayer/avfvideoframerenderer.mm
-    
-//    glPushAttrib(GL_ENABLE_BIT);
-//    glDisable(GL_DEPTH_TEST);
-//    
-//    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-//    glClear(GL_COLOR_BUFFER_BIT);
-//    
-//    glViewport(0, 0, _videoSize.width, _videoSize.height);
-//    
-//    glMatrixMode(GL_PROJECTION);
-//    glPushMatrix();
-//    glLoadIdentity();
-//    
-//    glOrtho(0.0f, _videoSize.width, _videoSize.height, 0.0f, 0.0f, 1.0f);
-//    
-//    glMatrixMode(GL_MODELVIEW);
-//    glPushMatrix();
-//    glLoadIdentity();
-//    
-//    glTranslatef(_videoSize.width * 0.5, _videoSize.height * 0.5, 0);
-//    
-//    [_layerRenderer beginFrameAtTime:CACurrentMediaTime() timeStamp:NULL];
-//    [_layerRenderer addUpdateRect:_layerRenderer.layer.bounds];
-//    [_layerRenderer render];
-//    [_layerRenderer endFrame];
-//    
-//    glMatrixMode(GL_MODELVIEW);
-//    glPopMatrix();
-//    glMatrixMode(GL_PROJECTION);
-//    glPopMatrix();
-//    
-//    glPopAttrib();
-//    
-//    glFinish(); //Rendering needs to be done before passing texture to video frame
-}
-
 #pragma mark - Pixels and Texture
 
 //--------------------------------------------------------------
@@ -504,13 +449,13 @@ int count = 0;
 //      CVPixelBufferGetBytesPerRow(_latestPixelFrame),
 //      (NSInteger)movieSize.width, (NSInteger)movieSize.height);
     if ((NSInteger)self.width != CVPixelBufferGetWidth(_latestPixelFrame) || (NSInteger)self.height != CVPixelBufferGetHeight(_latestPixelFrame)) {
-        NSLog(@"CoreVideo pixel buffer is %ld x %ld while self reports size of %d x %d. This is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
-              CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (NSInteger)self.width, (NSInteger)self.height);
+        NSLog(@"CoreVideo pixel buffer is %ld x %ld while self reports size of %ld x %ld. This is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
+              CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (long)self.width, (long)self.height);
         return;
     }
     
     if (CVPixelBufferGetPixelFormatType(_latestPixelFrame) != kCVPixelFormatType_32ARGB) {
-        NSLog(@"QTKitMovieRenderer - Frame pixelformat not kCVPixelFormatType_32ARGB: %d, instead %ld", kCVPixelFormatType_32ARGB, CVPixelBufferGetPixelFormatType(_latestPixelFrame));
+        NSLog(@"QTKitMovieRenderer - Frame pixelformat not kCVPixelFormatType_32ARGB: %d, instead %ld", kCVPixelFormatType_32ARGB, (long)CVPixelBufferGetPixelFormatType(_latestPixelFrame));
         return;
     }
     
@@ -548,24 +493,18 @@ int count = 0;
 //--------------------------------------------------------------
 - (BOOL)textureAllocated
 {
-//    if (self.theFutureIsNow == NO) return NO;
-    
     return self.useTexture && _latestTextureFrame != NULL;
 }
 
 //--------------------------------------------------------------
 - (GLuint)textureID
 {
-//    if (self.theFutureIsNow == NO) return -1;
-    
     return CVOpenGLTextureGetName(_latestTextureFrame);
 }
 
 //--------------------------------------------------------------
 - (GLenum)textureTarget
 {
-//    if (self.theFutureIsNow == NO) return 0;
-
     return CVOpenGLTextureGetTarget(_latestTextureFrame);
 }
 
