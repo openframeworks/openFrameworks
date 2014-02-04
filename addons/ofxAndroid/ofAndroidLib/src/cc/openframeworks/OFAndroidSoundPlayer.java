@@ -41,6 +41,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	
 	void unloadSound(){
 		if(player!=null){
+			player.reset();
 			player.release();
 			player = null;
 		}
