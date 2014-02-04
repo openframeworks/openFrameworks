@@ -13,6 +13,7 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 		bIsLoaded = false;
 		bIsPlaying = false;
 		loop = false;
+		speed = 1.0f;
 		soundID = -1;
 		streamID = -1;
 		multiPlay = false;
