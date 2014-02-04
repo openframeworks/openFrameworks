@@ -33,6 +33,8 @@
 #include "freenect_internal.h"
 #include "loader.h"
 
+#include "keep_alive.h"
+
 FN_INTERNAL int fnusb_num_devices(fnusb_ctx *ctx)
 {
 	libusb_device **devs; 
@@ -204,6 +206,15 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 					/* Not the old kinect so we only set up the camera*/ 
 					ctx->enabled_subdevices = FREENECT_DEVICE_CAMERA;
 					ctx->zero_plane_res = 334;
+                    
+                    //lets also set the LED ON
+                    //this keeps the camera alive for some systems which get freezes
+                    if( desc.idProduct == PID_K4W_CAMERA ){
+                        freenect_extra_keep_alive(PID_K4W_AUDIO);
+                    }else{
+                        freenect_extra_keep_alive(PID_NUI_AUDIO);
+                    }
+                    
 				}else{
 					/* The good old kinect that tilts and tweets */
 					ctx->zero_plane_res = 322;
