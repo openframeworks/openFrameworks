@@ -34,17 +34,21 @@ function build() {
 	if [ "$TYPE" == "osx" ] ; then
 
 		# 32 bit
-		./configure CFLAGS="-arch i386"
+		./configure --prefix=$BUILD_ROOT_DIR CFLAGS="-arch i386"
 		make clean; make
 		cp objs/.libs/libfreetype.a libfreetype-i386.a
 
 		# 64 bit
-		./configure CFLAGS="-arch x86_64"
+		./configure --prefix=$BUILD_ROOT_DIR CFLAGS="-arch x86_64"
 		make clean; make
 		cp objs/.libs/libfreetype.a libfreetype-x86_64.a
 
 		# link into universal lib
 		lipo -c libfreetype-i386.a libfreetype-x86_64.a -o libfreetype.a
+		cp libfreetype.a ./libs
+
+		# install
+		make install
 	
 	elif [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: build vs"
@@ -52,9 +56,9 @@ function build() {
 	elif [ "$TYPE" == "win_cb" ] ; then
 		# configure with arch
 		if [ $ARCH ==  32 ] ; then
-			./configure CFLAGS="-arch i386"
+			./configure --prefix=$BUILD_ROOT_DIR CFLAGS="-arch i386"
 		elif [ $ARCH == 64 ] ; then
-			./configure CFLAGS="-arch x86_64"
+			./configure --prefix=$BUILD_ROOT_DIR CFLAGS="-arch x86_64"
 		fi
 		make clean; make
 
@@ -96,6 +100,11 @@ function build() {
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 
+	# make install to BUILD_ROOT_DIR
+	if [ "$TYPE" == "osx" -o "$TYPE" == "win_cb" ] ; then
+		make install
+	fi
+
 	# headers
 	mkdir -p $1/include/freetype2 # not sure why we need the freetype2 subdir
 	cp -Rv include/* $1/include/freetype2
@@ -124,6 +133,7 @@ function clean() {
 		echoWarning "TODO: clean android"
 	
 	else
+		make uninstall
 		make clean
 		rm -f *.a *.lib
 	fi
