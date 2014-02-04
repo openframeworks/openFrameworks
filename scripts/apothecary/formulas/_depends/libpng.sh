@@ -1,21 +1,22 @@
 #! /bin/bash
 #
-# a helper tool used when compiling applications and libraries
-# http://www.freedesktop.org/wiki/Software/pkg-config/
+# the official PNG reference library
+# http://libpng.org/pub/png/libpng.html
 
 # define the version
-VER=0.28
+MAJOR_VER=16/older-releases
+VER=1.6.2
 
 # tools for git use
-GIT_URL=http://anongit.freedesktop.org/git/pkg-config.git
-GIT_TAG=pkg-config-$VER
+GIT_URL=http://git.code.sf.net/p/libpng/code
+GIT_TAG=v$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -LO http://pkgconfig.freedesktop.org/releases/pkg-config-$VER.tar.gz
-	tar -xf pkg-config-$VER.tar.gz
-	mv pkg-config-$VER pkg-config
-	rm pkg-config-$VER.tar.gz
+	curl -LO https://downloads.sourceforge.net/project/libpng/libpng$MAJOR_VER/$VER/libpng-$VER.tar.gz
+	tar -xf libpng-$VER.tar.gz
+	mv libpng-$VER libpng
+	rm libpng-$VER.tar.gz
 }
 
 # prepare the build environment, executed inside the lib src dir
@@ -29,10 +30,8 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
-
-	# setting empty flags so it ignores an existing pkg-config install
-	./configure --prefix=$BUILD_DIR --with-internal-glib GLIB_CFLAGS="" GLIB_LIBS=""
-	make
+	./configure --prefix=$BUILD_ROOT_DIR --disable-dependency-tracking
+	make clean; make
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root

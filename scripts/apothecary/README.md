@@ -54,6 +54,10 @@ Update all add ons:
 Update all core libraries for iOS (on OSX only):
 
 	apothecary -t ios update core
+	
+Update all core lib dependency libraries:
+
+    apothecary update depends
 
 See the built in help for more info:
 
@@ -237,17 +241,22 @@ Addon formulas should be placed in a `scripts/formulas` directory inside the add
 
     addons/ofxAssimpModelLoader/scripts/formulas
     
-When apothecary detects an addon, it sets the lib install directory to the `libs` directory inside the addon and then runs all formulas found in the addon's formal dir. 
+When apothecary detects an addon, it sets the lib install directory to the `libs` directory inside the addon and then runs all formulas found in the addon's formal dir.
 
 ### Variables
 
 apothecary shares a number of variables with it's formula scripts when running them including
 
 * $FORMULA_TYPES: the build types supported by the formula (**Read/Write**)
+* $FORMULA_DEPENDS: the formulas dependencies (**Read/Write**) 
+* $FORMULA_DEPENDS_MANUAL: set to 1 to manually handle dependency commands
 * $OS, $TYPE, & $ARCH: the current OS, build type, and architecture
 * $APOTHECARY_DIR: path to the apothecary script dir
+* $APOTHECARY_SCRIPT: path to the apothecary script itself
 * $FORMULA_DIR: path to the current formula's parent dir
-* $BUILD_DIR & $LIB_DIR: current build and lib destination dir
+* $BUILD_DIR & $LIB_DIR: current build and lib destination die
+* $BUILD_ROOT_DIR: path to the local build prefix for auto tools projects
+* $DEPENDS_FORMULA_DIR: path to the dependency formulas dir
 * Xcode dev root & OSX/SDK versions
 
 Look inside the apothecary script for more info.
@@ -380,7 +389,7 @@ Both methods work, but one may be easier than the other based on the library's b
 
 *Note: `libpo -info` can tell you the architectures currently in a compiled lib: `lipo -info libsomelib.a`*
 
-#### Build Command/Modificaton Examples
+#### Build Command/Modification Examples
 
 Here's some great script examples to look to when figuring out how to build a library:
 
@@ -422,6 +431,37 @@ For CMake projects, delete the CMakeCache and any build subdirectories you've cr
 	rm -f CMakeCache.txt
 
 These are just a few narrow examples. Consult the library build documentation for more info.
+
+### Dependencies
+
+Simple dependency management is handled by separate formulas in the `formulas/_depends` folder. Dependencies can be formula scripts or formula folders as well as existing main OF lib formula (ex: free type).
+
+A formula that has dependencies should list them in the $FORMULA_DEPENDS array and  they will be handled automatically when the main formula is downloaded, prepared, built, etc. The build and copy commands are called on the dependencies before the main formula is built to make sure the dependency libs are installed so the main formula can find them.
+
+Example:
+
+    FORMULA_DEPENDS=( "pkg-config" "freetype" )
+
+Autotools dependency formulas should be written to install (make install) to the $BUILD_ROOT_DIR via --prefix=$BUILD_ROOT_DIR. This way other formulas have a basic install path to set header and lib search directories.
+
+In some situations, you may need to set environment variables etc before building the dependencies. You can tell apothecary you want to manually handle the dependence commands by setting FORMULA_DEPENDS_MANUAL=1. You can then use the following functions within your formula script:
+
+    # do a command on a given dependency in a separate apothecary run
+    # $1 = command
+    # $2 = dependency name
+    function apothecaryDepend()
+    
+    # do a command on all formula dependencies in separate apothecary runs
+    # $1 = command
+    function apothecaryDependencies()
+    
+Example usage:
+
+    apothecaryDepend build pkg-config
+    ...
+    apothecaryDependencies clean
+
+**Note:** Main OF lib dependencies are not removed by the parent formula as they might have been built separately.
 
 ### Debugging, Commenting, & TODO's 
 
