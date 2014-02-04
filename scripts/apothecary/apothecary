@@ -652,14 +652,6 @@ function cleanFormula() {
 			git fetch origin
 			git checkout $SWITCH_VER
 		fi
-		
-		# dependencies
-		if [ FORMULA_DEPENDS_MANUAL == 0 ] ; then
-			apothecaryDependencies prepare
-		fi
-
-		prepare
-
 	else
 		
 		# dependencies
