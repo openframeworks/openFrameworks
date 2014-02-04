@@ -53,7 +53,7 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 		Moved,
 		Released,
 		Dragged,
-        Scrolled
+		Scrolled
 	} type;
 	int button;
 };
