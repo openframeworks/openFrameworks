@@ -524,11 +524,10 @@ void ofFbo::createAndAttachTexture(ofTexture & tex, GLenum internalFormat, GLenu
 	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
     
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
-    if(attachmentPoint < textures.size()) {
-        textures[attachmentPoint] = tex;
-    } else {
-        textures.push_back(tex);
+    if(attachmentPoint >= textures.size()) {
+        textures.resize(attachmentPoint+1);
     }
+    textures[attachmentPoint] = tex;
 	
 	settings.colorFormats.resize(attachmentPoint + 1);
 	settings.colorFormats[attachmentPoint] = internalFormat;
