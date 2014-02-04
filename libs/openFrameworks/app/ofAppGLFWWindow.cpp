@@ -870,7 +870,7 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
-    rotateMouseXY(ofGetOrientation(), x, y);
+	rotateMouseXY(ofGetOrientation(), x, y);
 	ofNotifyMouseScrolled(x, y);
 }
 

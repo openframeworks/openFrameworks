@@ -379,7 +379,7 @@ void ofNotifyMouseScrolled(double x, double y){
 
 	mouseEventArgs.x = x;
 	mouseEventArgs.y = y;
-    mouseEventArgs.type = ofMouseEventArgs::Scrolled;
+	mouseEventArgs.type = ofMouseEventArgs::Scrolled;
 	ofNotifyEvent( ofEvents().mouseScrolled, mouseEventArgs );
 }
 
