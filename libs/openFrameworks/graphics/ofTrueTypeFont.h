@@ -11,14 +11,14 @@
 
 //--------------------------------------------------
 typedef struct {
-	int character;
+	int characterIndex;
+	int glyph;
 	int height;
 	int width;
-	int setWidth;
-	int topExtent;
-	int leftExtent;
+	int bearingX, bearingY;
+	int xmin, xmax, ymin, ymax;
+	int advance;
 	float tW,tH;
-	float x1,x2,y1,y2;
 	float t1,t2,v1,v2;
 } charProps;
 
@@ -26,11 +26,13 @@ typedef struct {
 typedef ofPath ofTTFCharacter;
 
 //--------------------------------------------------
-#define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.
+#define NUM_CHARACTER_TO_START		32		// 0 - 32 are control characters, no graphics needed.
 
 const static string OF_TTF_SANS = "sans-serif";
 const static string OF_TTF_SERIF = "serif";
 const static string OF_TTF_MONO = "monospace";
+
+typedef struct FT_FaceRec_*  FT_Face;
 
 class ofTrueTypeFont{
 
@@ -92,13 +94,14 @@ protected:
 	float			letterSpacing;
 	float			spaceSize;
 
-	vector<charProps> 	cps;			// properties for each character
+	vector<charProps> 	cps;			// properties for each characterIndex
 
 	int				fontSize;
 	bool			bMakeContours;
 	float 			simplifyAmt;
 	int 			dpi;
 
+    int             getKerning(int c, int prevC);
 	void 			drawChar(int c, float x, float y);
 	void			drawCharAsShape(int c, float x, float y);
 	void			createStringMesh(string s, float x, float y);
@@ -121,6 +124,7 @@ private:
 	GLboolean texture_2d_enabled;
 
 	ofTextEncoding encoding;
+	FT_Face		face;
 	void		unloadTextures();
 	void		reloadTextures();
 	static bool	initLibraries();
