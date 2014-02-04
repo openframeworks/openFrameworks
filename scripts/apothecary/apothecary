@@ -29,7 +29,14 @@
 
 # an array of build type strings supported by the forumla (optional)
 # see VALID_TYPES for list of strings, default: VALID_TYPES
-FORMULA_TYPES=
+FORMULA_TYPES=()
+
+# an array of dependency libraries required by the formula (optional)
+FORMULA_DEPENDS=()
+
+# controls whether apothecary runs dependencies commands automatically (default),
+# set this if you need to do it manually
+FORMULA_DEPENDS_MANUAL=0
 
 ### READ ONLY please!
 
@@ -75,8 +82,11 @@ VS_VER=12
 # has the user set a custom libs dest dir?
 IS_CUSTOM_LIBS_DIR=0
 
-# dependency formula & build subdir name
+# dependency formula subdir name
 DEPENDS_SUBDIR=_depends
+
+# local build root subdir name
+BUILDROOT_SUBDIR=_buildroot
 
 # paths relative to this script
 REL_FORMULAS_DIR=formulas
@@ -170,6 +180,9 @@ examples:
 
   # clean freetype via git and switch version to VER-2-5-0
   apothecary -g -s VER-2-5-0 clean freetype
+
+  # update core dependencies
+  apothecary update depends
 "
 
 ################################################################################
@@ -299,7 +312,7 @@ function isFormulaType() {
 # sets isAddon arg if given string is an addon in the addons dir, script & parent dir
 # will be empty if the addon does not contain any formulas
 #
-# args: formula string, formula script, formula script parent dir, isAddon bool
+# args: formula string, formula script, formula script parent dir, isAddon bool, isDepend bool
 function checkFormula() {
 	local script
 	local parentDir
@@ -329,10 +342,20 @@ function checkFormula() {
 		script=$1.sh
 		parentDir=$APOTHECARY_DIR/$REL_FORMULAS_DIR 
 	
-	# is the given formula dir in the formuals a dir?
+	# is the given formula name a dir in the formulas dir?
 	elif [ -e $REL_FORMULAS_DIR/$1 -a -d $REL_FORMULAS_DIR/$1 ] ; then
 		script=$1.sh
 		parentDir=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$1
+
+	# is the given formula name a script in the depends formulas dir?
+	elif [ -e $REL_FORMULAS_DIR/$DEPENDS_SUBDIR/$1.sh ] ; then
+		
+		echoVerbose " Detected dependency: \"$1\""
+
+		script=$1.sh
+		parentDir=$APOTHECARY_DIR/$REL_FORMULAS_DIR
+
+		eval $5=1 
 
 	# is the given formula name an addon in the addons dir?
 	elif [ -e $REL_ADDONS_DIR/$1 ] ; then 
@@ -374,7 +397,7 @@ function doCommand() {
 	# process given lib targets
 	while [ $# -gt 0 ] ; do
 
-		# process all formulas in formulas dir
+		# process all formulas in formulas dir, ignore depends subdir
 		if [ "$1" == "core" ] ; then
 			local formula
 			for formula in $( ls -1 $REL_FORMULAS_DIR | grep -v $DEPENDS_SUBDIR) ; do
@@ -390,12 +413,21 @@ function doCommand() {
 				fi
 			done
 
-		else # process given lib or addon
+		# process all formulas in the dependencies dir
+		elif [ "$1" == "depends" ] ; then
+			local depend
+			for depends in $( ls -1 $REL_FORMULAS_DIR/$DEPENDS_SUBDIR) ; do
+				doCommand $shouldSource $cmd "${depend%.*}" # remove extension
+			done
+
+		else # process given lib, addon, or dependency
 
 			local formula
 			local isAddon=0
-			checkFormula $1 formula FORMULA_DIR isAddon
+			local isDepend=0
+			checkFormula $1 formula FORMULA_DIR isAddon isDepend
 
+			# an addon
 			if [ $isAddon == 1 ] ; then
 				local tmpLibsDir=$LIBS_DIR
 
@@ -420,12 +452,16 @@ function doCommand() {
 				else
 					echoInfo " Skipping addon \"$1\": no formulas found"					
 				fi
-			
-			else # not an addon
+
+			else # OF lib or dependency formula
 
 				# load a script & it's function implementations
 				if [ $shouldSource == 1 ] ; then
-					source $FORMULA_DIR/$formula
+					if [ $isDepend == 1 ] ; then
+						source $FORMULA_DIR/$DEPENDS_SUBDIR/$formula
+					else
+						source $FORMULA_DIR/$formula
+					fi
 				fi
 				formula=$(basename $1)
 				local currentLib="${formula%.*}"
@@ -449,8 +485,9 @@ function doCommand() {
 
 		shift 1
 
-		# reset to all types
+		# reset to all types & depends
 		FORMULA_TYPES=("${VALID_TYPES[@]}") # copy array
+		FORMULA_DEPENDS=()
 
 	done
 }
@@ -481,10 +518,14 @@ function downloadFormula(){
 	echoVerbose " Formula dir: $FORMULA_DIR"
 	echoVerbose " Formula build types: ${FORMULA_TYPES[*]}"
 	echoVerbose " Build dir: $BUILD_DIR"
+	echoVerbose " Depends formula dir: $DEPENDS_FORMULA_DIR"
+	if [ ${#FORMULA_DEPENDS[@]} -gt 0 ] ; then 
+		echoVerbose " Dependencies: ${FORMULA_DEPENDS[*]}"
+	fi
 	echo
 
 	mkdir -p $BUILD_DIR
-	mkdir -p $DEPENDS_BUILD_DIR
+	mkdir -p $BUILD_ROOT_DIR
 	cd $BUILD_DIR
 
 	if [ -e $1 ] ; then
@@ -500,6 +541,12 @@ function downloadFormula(){
 			exit 1
 		fi
 	fi
+
+	# dependencies
+	if [ FORMULA_DEPENDS_MANUAL == 0 ] ; then
+		apothecaryDependencies download
+	fi
+
 	cd $APOTHECARY_DIR
 }
 
@@ -519,7 +566,14 @@ function prepareFormula() {
 	fi
 
 	cd $BUILD_DIR/$1
+	
+	# dependencies
+	if [ FORMULA_DEPENDS_MANUAL == 0 ] ; then
+		apothecaryDependencies prepare
+	fi
+	
 	prepare
+	
 	cd $APOTHECARY_DIR
 }
 
@@ -539,7 +593,15 @@ function buildFormula() {
 	fi
 
 	cd $BUILD_DIR/$1
+
+	# dependencies
+	if [ FORMULA_DEPENDS_MANUAL == 0 ] ; then
+		apothecaryDependencies build
+		apothecaryDependencies copy
+	fi
+
 	build
+
 	cd $APOTHECARY_DIR
 }
 
@@ -590,9 +652,22 @@ function cleanFormula() {
 			git fetch origin
 			git checkout $SWITCH_VER
 		fi
-		prebuild
+		
+		# dependencies
+		if [ FORMULA_DEPENDS_MANUAL == 0 ] ; then
+			apothecaryDependencies prepare
+		fi
+
+		prepare
+
 	else
-	clean
+		
+		# dependencies
+		if [ FORMULA_DEPENDS_MANUAL == 0 ] ; then
+			apothecaryDependencies clean
+		fi
+
+		clean
 	fi
 	cd $APOTHECARY_DIR
 }
@@ -608,6 +683,10 @@ function remove() {
 		rm -rf $1*
 		echoSuccess " Removed from build cache: \"$1\""
 	fi
+
+	# dependencies
+	apothecaryDependencies remove
+
 	cd $APOTHECARY_DIR
 }
 
@@ -622,6 +701,10 @@ function remove-lib() {
 		rm -rf $1
 		echoSuccess " Removed from lib dest dir: \"$1\""
 	fi
+
+	# dependencies
+	apothecaryDependencies remove-lib
+
 	cd $APOTHECARY_DIR
 }
 
@@ -660,6 +743,8 @@ function vs-build() {
 ################################################################################
 ### FORMULA SCRIPT FUNCTIONS
 
+# these are the only functions you should call from your formula directly
+
 # basic implementations of the formula script functions,
 # overrriden when sourcing a formula script
 
@@ -679,6 +764,51 @@ function clean() {
 	echoWarning " Clean function not implemented"
 } 
 
+# do a command on a given dependency in a separate apothecary run
+# $1 = command
+# $2 = dependency name
+function apothecaryDepend() {
+	local depend="${2%.*}" # removes extension
+	local gitArgs
+
+	# pass along git argument for downloading
+	if [ "$1" == "download" ] ; then
+		if [ USE_GIT==1 ] ; then
+			gitArgs=-g
+		fi
+	fi
+
+	# detect if dependency is a main OF lib
+	if [ -f $APOTHECARY_DIR/$REL_FORMULAS_DIR/$depend.sh -o -d $APOTHECARY_DIR/$REL_FORMULAS_DIR/$depend ] ; then
+
+		# don't remove main OF libs if they are dependencies
+		if [ "$1" == "remove" -o "$1" == "remove-lib" -o "$1" == "remove-all" ] ; then
+			echoVerbose " ... skipping main lib dependency $depend"
+			return
+		fi
+	
+	# a dependency
+	elif [ -f $DEPENDS_FORMULA_DIR/$depend.sh -o -d $DEPENDS_FORMULA_DIR/$depend ] ; then
+		: # noop
+
+	else
+		echoError " Cannot $1, no formula for dependency \"$depend\""
+		exit 1
+	fi
+
+	$APOTHECARY_SCRIPT -t $TYPE -a $ARCH $gitArgs $1 $depend
+}
+
+# do a command on all formula dependencies in separate apothecary runs
+# $1 = command
+function apothecaryDependencies() {
+	if [ ${#FORMULA_DEPENDS[@]} -gt 0 ] ; then
+		for depend in "${FORMULA_DEPENDS[@]}" ; do
+			apothecaryDepend $1 $depend
+		done
+	fi
+}
+
 ################################################################################
 ### GO
 
@@ -688,6 +818,7 @@ WD=$(pwd)
 # change to the dir of this script
 cd $(dirname $0)
 APOTHECARY_DIR=$(pwd)
+APOTHECARY_SCRIPT=$APOTHECARY_DIR/apothecary
 
 # set OS & build types
 OS=`./ostype.sh`
@@ -747,9 +878,9 @@ else # manually set
 fi
 echoVerbose "Libs dest dir: $LIBS_DIR"
 
-# dependency dirs
+# dependency & build root dirs
 DEPENDS_FORMULA_DIR=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$DEPENDS_SUBDIR
-DEPENDS_BUILD_DIR=$BUILD_DIR/$DEPENDS_SUBDIR
+BUILD_ROOT_DIR=$BUILD_DIR/$BUILDROOT_SUBDIR
 
 # handle commands
 echoVerbose "Running: $A_CMD $*"
@@ -778,17 +909,17 @@ case "$A_CMD" in
 			echoInfo " Nothing to remove"
 			exit 0
 		fi
-		doCommand 0 remove $@ ;;
+		doCommand 1 remove $@ ;;
 
 	remove-lib)
 		if [ ! -e $LIBS_DIR ] ; then
 			echoInfo " Nothing to remove"
 			exit 0
 		fi
-		doCommand 0 remove-lib $@ ;;
+		doCommand 1 remove-lib $@ ;;
 
 	remove-all)
-		doCommand 0 remove-all $@ ;;
+		doCommand 1 remove-all $@ ;;
 
 	*)
 		echoError " Unknown command \"$A_CMD\""

@@ -31,12 +31,18 @@ function prepare() {
 function build() {
 
 	# setting empty flags so it ignores an existing pkg-config install
-	./configure --prefix=$BUILD_DIR --with-internal-glib GLIB_CFLAGS="" GLIB_LIBS=""
+	./configure --prefix=$BUILD_ROOT_DIR --with-internal-glib GLIB_CFLAGS="" GLIB_LIBS=""
 	make
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
+
+	# rm link if it exists as this can cause the install to fail 
+	if [ -f $BUILD_ROOT_DIR/bin/*-pkg-config ] ; then
+		rm $BUILD_ROOT_DIR/bin/*-pkg-config
+	fi
+
 	make install
 }
 

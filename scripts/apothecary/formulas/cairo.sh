@@ -14,6 +14,12 @@
 
 FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
+FORMULA_DEPENDS=( "pkg-config" "libpng" "pixman" "freetype" )
+
+# tell apothecary we want to manually call the dependency commands
+# as we set some env vars for osx the depends need to know about
+FORMULA_DEPENDS_MANUAL=1
+
 # define the version
 VER=1.12.14
 
@@ -23,47 +29,33 @@ GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
+	
 	curl -LO http://cairographics.org/releases/cairo-$VER.tar.xz
 	tar -xf cairo-$VER.tar.xz
 	mv cairo-$VER cairo
 	rm cairo-$VER.tar.xz
+
+	# manually download dependencies
+	apothecaryDependencies download
 }
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	
-	if [ USE_GIT==1 ] ; then
-		GIT_ARGS=-g
-	else
-		GIT_ARGS=
-	fi
 
-	# dependencies (some commented for now as they might be needed for other platforms)
-	
-	# download dependencies here for when using git for cairo
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR $GIT_ARGS download $DEPENDS_FORMULA_DIR/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR $GIT_ARGS download $DEPENDS_FORMULA_DIR/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR $GIT_ARGS download $DEPENDS_FORMULA_DIR/pixman.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR $GIT_ARGS download $DEPENDS_FORMULA_DIR/pkg-config.sh
-
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR prepare $DEPENDS_FORMULA_DIR/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR prepare $DEPENDS_FORMULA_DIR/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR prepare $DEPENDS_FORMULA_DIR/pixman.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR prepare $DEPENDS_FORMULA_DIR/pkg-config.sh
+	# manually prepare dependencies
+	apothecaryDependencies prepare
 }
 
 # executed inside the lib src dir
 function build() {
-
-	# build dependencies and install into $BUILD_DIR/cairo/build
-	#local buildDir=$BUILD_DIR/cairo/apothecary-build
-	#rm -rf $buildDir/bin $buildDir/lib $buildDir/share
 	
-	# build a custom version of pkg-config
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR build $DEPENDS_FORMULA_DIR/pkg-config.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR copy $DEPENDS_FORMULA_DIR/pkg-config.sh
-	export PKG_CONFIG=$DEPENDS_BUILD_DIR/bin/pkg-config
-	export PKG_CONFIG_PATH=$DEPENDS_BUILD_DIR/lib/pkgconfig
+	# manually build pkg-config first
+	apothecaryDepend build pkg-config
+	apothecaryDepend copy pkg-config
+
+	# we're using a custom version of pkg-config, so let the cairo build system know
+	export PKG_CONFIG=$BUILD_ROOT_DIR/bin/pkg-config
+	export PKG_CONFIG_PATH=$BUILD_ROOT_DIR/lib/pkgconfig
 
 	# set flags for osx 32 & 64 bit fat lib
 	if [ "$TYPE" == "osx" ] ; then
@@ -75,32 +67,33 @@ function build() {
 		make -f Makefile.win32
 		echoWarning "TODO: vs build settings here?"
 	
-	elif [ "$YTYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: win_cb build settings here?"
 	fi
 
-	# build dependencies (some commented for now as they might be needed for other platforms)
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR build $DEPENDS_FORMULA_DIR/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR build $DEPENDS_FORMULA_DIR/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR build $DEPENDS_FORMULA_DIR/pixman.sh
-
-	# install dependencies to local build dir
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR copy $DEPENDS_FORMULA_DIR/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR copy $DEPENDS_FORMULA_DIR/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR copy $DEPENDS_FORMULA_DIR/pixman.sh
+	# manually build & copy other dependencies here so they are built with the env vars set on if on osx
+	apothecaryDepend build libpng
+	apothecaryDepend build pixman
+	apothecaryDepend copy libpng
+	apothecaryDepend copy pixman
 
 	# build cairo
-	./configure --prefix=$DEPENDS_BUILD_DIR --disable-dependency-tracking --disable-xlib --disable-ft
+	./configure --prefix=$BUILD_ROOT_DIR --disable-dependency-tracking --disable-xlib --disable-ft
 	make install
 
 	# clean up env vars
-	unset PKG_CONFIG PKG_CONFIG_PATH CFLAGS LDFLAGS MACOSX_DEPLOYMENT_TARGET
+	unset PKG_CONFIG PKG_CONFIG_PATH
+
+	if [ "$TYPE" == "osx" ] ; then
+		unset MACOSX_DEPLOYMENT_TARGET CFLAGS LDFLAGS
+	fi
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
-	
-	cd apothecary-build
+
+	# change to prefix location
+	cd $BUILD_ROOT_DIR
 
 	# headers
 	mkdir -p $1/include
@@ -122,13 +115,10 @@ function copy() {
 
 # executed inside the lib src dir
 function clean() {
-
-	# dependencies
-	# don't clean pkg-config as we only need to use the built binary
-	#$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR clean $DEPENDS_FORMULA_DIR/zlib.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR clean $DEPENDS_FORMULA_DIR/libpng.sh
-	$APOTHECARY_DIR/apothecary -t $TYPE -a $ARCH -b $DEPENDS_BUILD_DIR clean $DEPENDS_FORMULA_DIR/pixman.sh
 	
+	# manually clean dependencies
+	apothecaryDependencies clean
+
 	# cairo
 	make clean
 }
