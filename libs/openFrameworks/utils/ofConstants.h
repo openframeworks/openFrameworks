@@ -66,6 +66,14 @@ enum ofTargetPlatform{
 		#define TARGET_OPENGLES
 	#else
 		#define TARGET_OSX
+//        #ifdef __i386__
+        // check for 64bit, assume the rest is 32 bit //
+//        #if __GNUC__
+        #ifdef __x86_64__
+            #define TARGET_64_BIT
+        #else
+            #define TARGET_32_BIT
+        #endif
 	#endif
 #elif defined (__ANDROID__)
 	#define TARGET_ANDROID
