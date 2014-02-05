@@ -292,14 +292,18 @@ typedef TESSindex ofIndexType;
 	#elif defined(TARGET_OF_IOS)
 		#define OF_VIDEO_PLAYER_IOS
 	#elif defined(TARGET_OSX)
-		//10.8 and 10.9 users get AVF, 10.7 users get QTKit for 10.6 users we use olschool QuickTime
-		#ifndef MAC_OS_X_VERSION_10_7
-			#define OF_VIDEO_PLAYER_QUICKTIME
-		#elseif MAC_OS_X_VERSION_10_8
-			#define OF_VIDEO_PLAYER_QTKIT
-		#else
+        #ifdef TARGET_64_BIT
             #define OF_VIDEO_PLAYER_AVFOUNDATION
-		#endif
+        #else
+            //10.8 and 10.9 users get AVF, 10.7 users get QTKit for 10.6 users we use olschool QuickTime
+            #ifndef MAC_OS_X_VERSION_10_7
+                #define OF_VIDEO_PLAYER_QUICKTIME
+            #elseif MAC_OS_X_VERSION_10_8
+                #define OF_VIDEO_PLAYER_QTKIT
+            #else
+                #define OF_VIDEO_PLAYER_AVFOUNDATION
+            #endif
+        #endif
 	#else
 		#define OF_VIDEO_PLAYER_QUICKTIME
 	#endif
