@@ -238,7 +238,8 @@ void ofAppGLFWWindow::initializeWindow(){
 	glfwSetWindowSizeCallback(windowP, resize_cb);
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
-	glfwSetDropCallback(windowP, drop_cb);
+//JG 64 bit incompatible
+//	glfwSetDropCallback(windowP, drop_cb);
 
 }
 
