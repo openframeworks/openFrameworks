@@ -48,6 +48,7 @@ public:
 
 	bool checkStatus();
 	void createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint);
+    void createAndAttachTexture(ofTexture & texture, GLenum internalFormat, GLenum attachmentPoint);
 	GLuint createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint);
 	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum attachment );
 	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum attachment, GLenum transferFormat, GLenum transferType );
