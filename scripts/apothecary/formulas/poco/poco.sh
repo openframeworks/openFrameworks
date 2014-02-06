@@ -84,7 +84,7 @@ function build() {
 
 		# 32 bit
 		./configure $BUILD_OPTS --config=Darwin32-clang-libc++
-		make -j 8
+		make
 
 		cd lib/Darwin
 
