@@ -12,7 +12,16 @@ if [ "$OS" == "darwin" ]; then
 elif [ "$OS" == "windowsnt" -o "${OS:0:5}" == "mingw" ] ; then
 	OS="windows"
 elif [ "$OS" == "linux" ]; then
-	OS="linux"
+        ARCH=`uname -m`
+	if [ "$ARCH" == "x86_64" ] ; then
+		OS="linux64"
+	elif [ "$ARCH" == "armv6l" ] ; then
+		OS="linuxarmv6l"
+	elif [ "$ARCH" == "armv7l" ] ; then
+		OS="linuxarmv7l"
+	else
+		OS="linux"	
+	fi
 fi
 
 echo "$OS"
