@@ -247,16 +247,16 @@ When apothecary detects an addon, it sets the lib install directory to the `libs
 
 apothecary shares a number of variables with it's formula scripts when running them including
 
-* $FORMULA_TYPES: the build types supported by the formula (**Read/Write**)
-* $FORMULA_DEPENDS: the formulas dependencies (**Read/Write**) 
-* $FORMULA_DEPENDS_MANUAL: set to 1 to manually handle dependency commands
-* $OS, $TYPE, & $ARCH: the current OS, build type, and architecture
-* $APOTHECARY_DIR: path to the apothecary script dir
-* $APOTHECARY_SCRIPT: path to the apothecary script itself
-* $FORMULA_DIR: path to the current formula's parent dir
-* $BUILD_DIR & $LIB_DIR: current build and lib destination die
-* $BUILD_ROOT_DIR: path to the local build prefix for auto tools projects
-* $DEPENDS_FORMULA_DIR: path to the dependency formulas dir
+* `$FORMULA_TYPES`: the build types supported by the formula (**Read/Write**)
+* `$FORMULA_DEPENDS`: the formulas dependencies (**Read/Write**) 
+* `$FORMULA_DEPENDS_MANUAL`: set to 1 to manually handle dependency commands
+* `$OS`, `$TYPE`, & `$ARCH`: the current OS, build type, and architecture
+* `$APOTHECARY_DIR`: path to the apothecary script dir
+* `$APOTHECARY_SCRIPT`: path to the apothecary script itself
+* `$FORMULA_DIR`: path to the current formula's parent dir
+* `$BUILD_DIR` & `$LIB_DIR`: current build and lib destination die
+* `$BUILD_ROOT_DIR`: path to the local build prefix for auto tools projects
+* `$DEPENDS_FORMULA_DIR`: path to the dependency formulas dir
 * Xcode dev root & OSX/SDK versions
 
 Look inside the apothecary script for more info.
@@ -478,4 +478,13 @@ Last, if you write a formula but can't finish/test it on all platforms, etc make
 
 Then we at least know what we're missing if the build process fails ...
 
-Happy Scripting
+### Additional Tips
+
+If you are using a platform that supports `make`, you might find speedups by setting the following environmental variable before using apothecary:
+
+    export MAKEFLAGS="-j8 -s"
+
+Each time `make` is run within the apothecary scripts, `make` will attempt to run 8 jobs (`-j8`), one on each core simultanously, allowing multi-core processors to be leveraged.    `-s` will attempt to silence the output, making it easier to spot apothecary debug messages.
+
+
+_Happy Scripting!_
