@@ -12,7 +12,7 @@ if [ "$OS" == "darwin" ]; then
 elif [ "$OS" == "windowsnt" -o "${OS:0:5}" == "mingw" ] ; then
 	OS="windows"
 elif [ "$OS" == "linux" ]; then
-        local ARCH=`uname -m`
+        ARCH=`uname -m`
 	if [ "$ARCH" == "i386" ] ; then
 		OS="linux"	
 	elif [ "$ARCH" == "x86_64" ] ; then
