@@ -28,8 +28,10 @@ function build() {
 	if [ "$TYPE" == "osx" ] ; then
 		echo "build not needed for $TYPE"
 	else
-		./configure --static
-		make clean; make
+		./configure --static \
+					--prefix=$BUILD_ROOT_DIR \
+		make clean; 
+		make
 	fi
 }
 
