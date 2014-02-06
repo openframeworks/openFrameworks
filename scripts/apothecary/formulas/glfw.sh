@@ -38,12 +38,16 @@ function build() {
 
 	else
 		# *nix build system
+
+		# NOTE: DGLFW_BUILD_UNIVERSAL will be ignored on non OSX systems.
+		# Rather than creating a seperate if/then branch, we just let cmake
+		# ignore the warning on non OSX platforms.
 		cmake . -DCMAKE_INSTALL_PREFIX=$BUILD_ROOT_DIR \
-				-DGLFW_BUILD_UNIVERSAL=ON \
 				-DGLFW_BUILD_DOCS=OFF \
 				-DGLFW_BUILD_TESTS=OFF \
 				-DGLFW_BUILD_EXAMPLES=OFF \
-				-DBUILD_SHARED_LIBS=OFF
+				-DBUILD_SHARED_LIBS=OFF \
+				-DGLFW_BUILD_UNIVERSAL=ON 
 
  		make clean
  		make
