@@ -9,7 +9,7 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
 # TODO upgrade to 2.5.2+
-# requires libpng to be build in the $BUILD_ROOT_DIR
+# requires libpng to be built in the $BUILD_ROOT_DIR
 
 # define the version
 VER=2.4.12
