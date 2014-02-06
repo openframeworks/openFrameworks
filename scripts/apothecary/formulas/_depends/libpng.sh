@@ -30,8 +30,11 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
-	./configure --prefix=$BUILD_ROOT_DIR --disable-dependency-tracking
-	make clean; make
+	./configure --prefix=$BUILD_ROOT_DIR \
+				--disable-dependency-tracking
+
+	make clean
+	make
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root

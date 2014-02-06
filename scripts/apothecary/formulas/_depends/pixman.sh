@@ -30,11 +30,15 @@ function prepare() {
 # executed inside the lib src dir
 function build() {
 
-	./configure --prefix=$BUILD_ROOT_DIR --disable-dependency-tracking --disable-gtk --disable-shared
+	./configure --prefix=$BUILD_ROOT_DIR \
+				--disable-dependency-tracking \
+				--disable-gtk \
+				--disable-shared
 	
 	# only build & install lib, ignore demos/tests
 	cd pixman
-	make clean; make
+	make clean
+	make
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
