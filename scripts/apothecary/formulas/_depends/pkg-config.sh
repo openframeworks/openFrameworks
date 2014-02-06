@@ -32,8 +32,9 @@ function build() {
 
 	# setting empty flags so it ignores an existing pkg-config install
 	./configure --prefix=$BUILD_ROOT_DIR \
-				--with-internal-glib GLIB_CFLAGS="" \
-				--GLIB_LIBS=""
+				--with-internal-glib \
+				GLIB_CFLAGS="" \
+				GLIB_LIBS=""
 
 	make
 }
