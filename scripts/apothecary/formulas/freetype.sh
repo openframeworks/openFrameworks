@@ -53,9 +53,11 @@ function build() {
 	elif [ "$TYPE" == "win_cb" ] ; then
 		# configure with arch
 		if [ $ARCH ==  32 ] ; then
-			./configure CFLAGS="-arch i386"
+			./configure CFLAGS="-arch i386" \
+						--prefix=$BUILD_ROOT_DIR
 		elif [ $ARCH == 64 ] ; then
-			./configure CFLAGS="-arch x86_64"
+			./configure CFLAGS="-arch x86_64" \
+						--prefix=$BUILD_ROOT_DIR
 		fi
 		
 		make clean; 
@@ -99,7 +101,8 @@ function build() {
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 
-	# copy headers 
+	# copy headers.  
+	# the following command will create all required subdirectories at once
 	mkdir -p $1/include/freetype2/freetype/config
 
 	# copy files from the build root
