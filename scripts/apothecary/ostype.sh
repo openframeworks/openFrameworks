@@ -19,7 +19,10 @@ elif [ "$OS" == "linux" ]; then
 		OS="linuxarmv6l"
 	elif [ "$ARCH" == "armv7l" ] ; then
 		OS="linuxarmv7l"
+	elif [ "$ARCH" == "i386" ] ; then
+		OS="linux"	
 	else
+		# TODO: Throw a warning here of an unrecognized architecture type.
 		OS="linux"	
 	fi
 fi
