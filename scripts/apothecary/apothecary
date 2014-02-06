@@ -131,7 +131,7 @@ commands:
   
 options:
   -t	specify libary type when building, detects type from OS by default
-	valid types: osx, linux, linux64, vs, win_cb, ios, android
+	valid types: osx, linux, linux64, linuxarm6l, linuxarm7l, vs, win_cb, ios, android
 
   -a	specify architecture, either 32 or 64 (default is 32 bit)
 	note: not currently needed, reserved for future use
