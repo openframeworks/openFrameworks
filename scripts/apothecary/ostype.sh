@@ -22,8 +22,8 @@ elif [ "$OS" == "linux" ]; then
 	elif [ "$ARCH" == "i386" ] ; then
 		OS="linux"	
 	else
-		# TODO: Throw a warning here of an unrecognized architecture type.
-		OS="linux"	
+		# A value of UNKNOWN will cause ./apothecary to fail.
+		OS="UNKNOWN"	
 	fi
 fi
 
