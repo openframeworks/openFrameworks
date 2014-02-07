@@ -160,13 +160,13 @@ function build() {
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
-		rm lib/linux/x86_64/*d.a
+		rm lib/linux/i386/*d.a
 	elif [ "$TYPE" == "linux64" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
-		rm lib/linux/i386/*d.a
+		rm lib/linux/x86_64/*d.a
 	else 
 		echoWarning "TODO: build $TYPE lib"
 	fi
