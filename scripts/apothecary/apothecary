@@ -623,8 +623,6 @@ function copyFormula() {
 		exit 1
 	fi
 
-	mkdir -p $LIBS_DIR/$1
-
 	cd $BUILD_DIR/$1
 	copy $LIBS_DIR/$1
 	cd $APOTHECARY_DIR
