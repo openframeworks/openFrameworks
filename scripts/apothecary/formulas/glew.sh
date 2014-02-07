@@ -11,7 +11,7 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
 # define the version
-VER=1.9.0
+VER=1.10.0
 
 # tools for git use
 GIT_URL=https://github.com/nigels-com/glew.git
@@ -36,6 +36,9 @@ function build() {
 	if [ "$TYPE" == "osx" ] ; then
 		# help from http://stackoverflow.com/questions/12229714/building-glew-for-mac-osx
 		
+		# GLEW will not allow one to simply supply OPT="-arch i386 -arch x86_64"
+		# so we build them separately.
+
 		# 32 bit
 		make clean; make glew.lib OPT="-arch i386"
 		mv lib/libGLEW.a libGLEW-i386.a
