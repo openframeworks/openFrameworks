@@ -7,13 +7,6 @@
 #include <limits>
 
 
-#if (_MSC_VER)       
-		// make microsoft visual studio complain less about double / float conversion and
-		// truncation
-		#pragma warning(disable : 4244)
-		#pragma warning(disable : 4305)
-#endif
-
 //---------------------------------------
 enum ofInterpolationMethod {
 	OF_INTERPOLATE_NEAREST_NEIGHBOR =1,
