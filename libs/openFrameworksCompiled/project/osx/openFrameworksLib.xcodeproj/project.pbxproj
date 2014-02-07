@@ -18,6 +18,153 @@
 		22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
 		27DEA3111796F578000A9E90 /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DEA30F1796F578000A9E90 /* ofXml.cpp */; };
 		27DEA3121796F578000A9E90 /* ofXml.h in Headers */ = {isa = PBXBuildFile; fileRef = 27DEA3101796F578000A9E90 /* ofXml.h */; };
+		2E3D4F0D18A45475007DED10 /* ofQuickTimeGrabber.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B5AE1712D94F9B00BA355D /* ofQuickTimeGrabber.h */; };
+		2E3D4F0E18A45475007DED10 /* of3dUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5412F4C4BF002D19BB /* of3dUtils.h */; };
+		2E3D4F0F18A45475007DED10 /* ofCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5612F4C4BF002D19BB /* ofCamera.h */; };
+		2E3D4F1018A45475007DED10 /* ofAVFMovieRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = E73DA80A189F2573006C9E4E /* ofAVFMovieRenderer.h */; };
+		2E3D4F1118A45475007DED10 /* ofEasyCam.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA5812F4C4BF002D19BB /* ofEasyCam.h */; };
+		2E3D4F1218A45475007DED10 /* ofNode.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA6012F4C4BF002D19BB /* ofNode.h */; };
+		2E3D4F1318A45475007DED10 /* ofBaseSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA7D12F4C4C9002D19BB /* ofBaseSoundPlayer.h */; };
+		2E3D4F1418A45475007DED10 /* ofFmodSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA7F12F4C4C9002D19BB /* ofFmodSoundPlayer.h */; };
+		2E3D4F1518A45475007DED10 /* ofSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA8312F4C4C9002D19BB /* ofSoundPlayer.h */; };
+		2E3D4F1618A45475007DED10 /* ofSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BA8512F4C4C9002D19BB /* ofSoundStream.h */; };
+		2E3D4F1718A45475007DED10 /* ofMath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAB412F4C72E002D19BB /* ofMath.h */; };
+		2E3D4F1818A45475007DED10 /* ofMatrix3x3.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAB612F4C72E002D19BB /* ofMatrix3x3.h */; };
+		2E3D4F1918A45475007DED10 /* ofMatrix4x4.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAB812F4C72E002D19BB /* ofMatrix4x4.h */; };
+		2E3D4F1A18A45475007DED10 /* ofQuaternion.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BABA12F4C72F002D19BB /* ofQuaternion.h */; };
+		2E3D4F1B18A45475007DED10 /* ofVec2f.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BABC12F4C72F002D19BB /* ofVec2f.h */; };
+		2E3D4F1C18A45475007DED10 /* ofVec3f.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BABD12F4C72F002D19BB /* ofVec3f.h */; };
+		2E3D4F1D18A45475007DED10 /* ofVec4f.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BABF12F4C72F002D19BB /* ofVec4f.h */; };
+		2E3D4F1E18A45475007DED10 /* ofVectorMath.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAC012F4C72F002D19BB /* ofVectorMath.h */; };
+		2E3D4F1F18A45475007DED10 /* ofBaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAD112F4C73C002D19BB /* ofBaseTypes.h */; };
+		2E3D4F2018A45475007DED10 /* ofColor.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAD312F4C73C002D19BB /* ofColor.h */; };
+		2E3D4F2118A45475007DED10 /* ofPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAD512F4C73C002D19BB /* ofPoint.h */; };
+		2E3D4F2218A45475007DED10 /* ofRectangle.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAD712F4C73C002D19BB /* ofRectangle.h */; };
+		2E3D4F2318A45475007DED10 /* ofTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAD812F4C73C002D19BB /* ofTypes.h */; };
+		2E3D4F2418A45475007DED10 /* ofConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAE312F4C745002D19BB /* ofConstants.h */; };
+		2E3D4F2518A45475007DED10 /* ofFileUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAE512F4C745002D19BB /* ofFileUtils.h */; };
+		2E3D4F2618A45475007DED10 /* ofLog.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAE712F4C745002D19BB /* ofLog.h */; };
+		2E3D4F2718A45475007DED10 /* ofNoise.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAE812F4C745002D19BB /* ofNoise.h */; };
+		2E3D4F2818A45475007DED10 /* ofSystemUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAEA12F4C745002D19BB /* ofSystemUtils.h */; };
+		2E3D4F2918A45475007DED10 /* ofThread.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAEC12F4C745002D19BB /* ofThread.h */; };
+		2E3D4F2A18A45475007DED10 /* ofURLFileLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAEE12F4C745002D19BB /* ofURLFileLoader.h */; };
+		2E3D4F2B18A45475007DED10 /* ofAVFoundationPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E73DA808189F2573006C9E4E /* ofAVFoundationPlayer.h */; };
+		2E3D4F2C18A45475007DED10 /* ofUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BAF012F4C745002D19BB /* ofUtils.h */; };
+		2E3D4F2D18A45475007DED10 /* ofBitmapFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB0112F4C751002D19BB /* ofBitmapFont.h */; };
+		2E3D4F2E18A45475007DED10 /* ofGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB0512F4C752002D19BB /* ofGraphics.h */; };
+		2E3D4F2F18A45475007DED10 /* ofImage.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB0712F4C752002D19BB /* ofImage.h */; };
+		2E3D4F3018A45475007DED10 /* ofPixels.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB0912F4C752002D19BB /* ofPixels.h */; };
+		2E3D4F3118A45475007DED10 /* ofTessellator.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1312F4C752002D19BB /* ofTessellator.h */; };
+		2E3D4F3218A45475007DED10 /* ofTrueTypeFont.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F3BB1712F4C752002D19BB /* ofTrueTypeFont.h */; };
+		2E3D4F3318A45475007DED10 /* ofCairoRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = DA97FD3712F5A61A005C9991 /* ofCairoRenderer.h */; };
+		2E3D4F3418A45475007DED10 /* ofRendererCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = DA94C2ED1301D32200CCC773 /* ofRendererCollection.h */; };
+		2E3D4F3518A45475007DED10 /* ofMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EEEF49130766EF0027C199 /* ofMesh.h */; };
+		2E3D4F3618A45475007DED10 /* ofPolyline.h in Headers */ = {isa = PBXBuildFile; fileRef = DA48FE74131D85A6000062BC /* ofPolyline.h */; };
+		2E3D4F3718A45475007DED10 /* ofFbo.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8CA132D09E8008D4B7A /* ofFbo.h */; };
+		2E3D4F3818A45475007DED10 /* ofGLRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8CC132D09E8008D4B7A /* ofGLRenderer.h */; };
+		2E3D4F3918A45475007DED10 /* ofGLUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8CD132D09E8008D4B7A /* ofGLUtils.h */; };
+		2E3D4F3A18A45475007DED10 /* ofLight.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8CF132D09E8008D4B7A /* ofLight.h */; };
+		2E3D4F3B18A45475007DED10 /* ofMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D1132D09E8008D4B7A /* ofMaterial.h */; };
+		2E3D4F3C18A45475007DED10 /* ofShader.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D3132D09E8008D4B7A /* ofShader.h */; };
+		2E3D4F3D18A45475007DED10 /* ofTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D5132D09E8008D4B7A /* ofTexture.h */; };
+		2E3D4F3E18A45475007DED10 /* ofVbo.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D7132D09E8008D4B7A /* ofVbo.h */; };
+		2E3D4F3F18A45475007DED10 /* ofVboMesh.h in Headers */ = {isa = PBXBuildFile; fileRef = DACFA8D9132D09E8008D4B7A /* ofVboMesh.h */; };
+		2E3D4F4018A45475007DED10 /* ofPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 92C55F87132DA7DD00EC2631 /* ofPath.h */; };
+		2E3D4F4118A45475007DED10 /* ofRtAudioSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C5E385131AC1B10050F992 /* ofRtAudioSoundStream.h */; };
+		2E3D4F4218A45475007DED10 /* ofBaseSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E4C5E389131AC1BE0050F992 /* ofBaseSoundStream.h */; };
+		2E3D4F4318A45475007DED10 /* ofOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 772BDF72146928600030F0EE /* ofOpenALSoundPlayer.h */; };
+		2E3D4F4418A45475007DED10 /* ofQuickTimePlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = E42732AE15F10E7A00BBC533 /* ofQuickTimePlayer.h */; };
+		2E3D4F4518A45475007DED10 /* ofParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = DAC22D3C16E7A4AF0020226D /* ofParameter.h */; };
+		2E3D4F4618A45475007DED10 /* ofParameterGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = DAC22D3E16E7A4AF0020226D /* ofParameterGroup.h */; };
+		2E3D4F4718A45475007DED10 /* of3dGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
+		2E3D4F4818A45475007DED10 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
+		2E3D4F4918A45475007DED10 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
+		2E3D4F4A18A45475007DED10 /* ofMatrixStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 22769590170D9DD200604FC3 /* ofMatrixStack.h */; };
+		2E3D4F4B18A45475007DED10 /* ofGLProgrammableRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 22246D92176C9987008A8AF4 /* ofGLProgrammableRenderer.h */; };
+		2E3D4F4C18A45475007DED10 /* ofAppGlutWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22246D96176C9AA0008A8AF4 /* ofAppGlutWindow.h */; };
+		2E3D4F4D18A45475007DED10 /* ofAppNoWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = E495DF7C178896A900994238 /* ofAppNoWindow.h */; };
+		2E3D4F4E18A45475007DED10 /* ofXml.h in Headers */ = {isa = PBXBuildFile; fileRef = 27DEA3101796F578000A9E90 /* ofXml.h */; };
+		2E3D4F5018A45475007DED10 /* ofAppRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AAF10CBE92A00536013 /* ofAppRunner.cpp */; };
+		2E3D4F5118A45475007DED10 /* ofArduino.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB310CBE92A00536013 /* ofArduino.cpp */; };
+		2E3D4F5218A45475007DED10 /* ofSerial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AB510CBE92A00536013 /* ofSerial.cpp */; };
+		2E3D4F5318A45475007DED10 /* ofQtUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27AD610CBE92A00536013 /* ofQtUtils.cpp */; };
+		2E3D4F5418A45475007DED10 /* ofVideoGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADB10CBE92A00536013 /* ofVideoGrabber.cpp */; };
+		2E3D4F5518A45475007DED10 /* ofVideoPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B27ADD10CBE92A00536013 /* ofVideoPlayer.cpp */; };
+		2E3D4F5618A45475007DED10 /* ofEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4998A25128A39480094AC3F /* ofEvents.cpp */; };
+		2E3D4F5718A45475007DED10 /* ofQuickTimeGrabber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B5AE1612D94F9B00BA355D /* ofQuickTimeGrabber.cpp */; };
+		2E3D4F5818A45475007DED10 /* of3dUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5312F4C4BF002D19BB /* of3dUtils.cpp */; };
+		2E3D4F5918A45475007DED10 /* ofCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5512F4C4BF002D19BB /* ofCamera.cpp */; };
+		2E3D4F5A18A45475007DED10 /* ofEasyCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5712F4C4BF002D19BB /* ofEasyCam.cpp */; };
+		2E3D4F5B18A45475007DED10 /* ofNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA5F12F4C4BF002D19BB /* ofNode.cpp */; };
+		2E3D4F5C18A45475007DED10 /* ofFmodSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA7E12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp */; };
+		2E3D4F5D18A45475007DED10 /* ofSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8212F4C4C9002D19BB /* ofSoundPlayer.cpp */; };
+		2E3D4F5E18A45475007DED10 /* ofSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BA8412F4C4C9002D19BB /* ofSoundStream.cpp */; };
+		2E3D4F5F18A45475007DED10 /* ofAVFMovieRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = E73DA80B189F2573006C9E4E /* ofAVFMovieRenderer.m */; };
+		2E3D4F6018A45475007DED10 /* ofMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB312F4C72E002D19BB /* ofMath.cpp */; };
+		2E3D4F6118A45475007DED10 /* ofMatrix3x3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB512F4C72E002D19BB /* ofMatrix3x3.cpp */; };
+		2E3D4F6218A45475007DED10 /* ofMatrix4x4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB712F4C72E002D19BB /* ofMatrix4x4.cpp */; };
+		2E3D4F6318A45475007DED10 /* ofQuaternion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAB912F4C72F002D19BB /* ofQuaternion.cpp */; };
+		2E3D4F6418A45475007DED10 /* ofVec2f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABB12F4C72F002D19BB /* ofVec2f.cpp */; };
+		2E3D4F6518A45475007DED10 /* ofVec4f.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BABE12F4C72F002D19BB /* ofVec4f.cpp */; };
+		2E3D4F6618A45475007DED10 /* ofBaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD012F4C73C002D19BB /* ofBaseTypes.cpp */; };
+		2E3D4F6718A45475007DED10 /* ofColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD212F4C73C002D19BB /* ofColor.cpp */; };
+		2E3D4F6818A45475007DED10 /* ofRectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAD612F4C73C002D19BB /* ofRectangle.cpp */; };
+		2E3D4F6918A45475007DED10 /* ofFileUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE412F4C745002D19BB /* ofFileUtils.cpp */; };
+		2E3D4F6A18A45475007DED10 /* ofLog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE612F4C745002D19BB /* ofLog.cpp */; };
+		2E3D4F6B18A45475007DED10 /* ofSystemUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAE912F4C745002D19BB /* ofSystemUtils.cpp */; settings = {COMPILER_FLAGS = "-x objective-c++"; }; };
+		2E3D4F6C18A45475007DED10 /* ofThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEB12F4C745002D19BB /* ofThread.cpp */; };
+		2E3D4F6D18A45475007DED10 /* ofURLFileLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAED12F4C745002D19BB /* ofURLFileLoader.cpp */; };
+		2E3D4F6E18A45475007DED10 /* ofUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BAEF12F4C745002D19BB /* ofUtils.cpp */; };
+		2E3D4F6F18A45475007DED10 /* ofBitmapFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0012F4C751002D19BB /* ofBitmapFont.cpp */; };
+		2E3D4F7018A45475007DED10 /* ofGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0412F4C752002D19BB /* ofGraphics.cpp */; };
+		2E3D4F7118A45475007DED10 /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
+		2E3D4F7218A45475007DED10 /* ofImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0612F4C752002D19BB /* ofImage.cpp */; };
+		2E3D4F7318A45475007DED10 /* ofPixels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB0812F4C752002D19BB /* ofPixels.cpp */; };
+		2E3D4F7418A45475007DED10 /* ofTessellator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1212F4C752002D19BB /* ofTessellator.cpp */; };
+		2E3D4F7518A45475007DED10 /* ofTrueTypeFont.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4F3BB1612F4C752002D19BB /* ofTrueTypeFont.cpp */; };
+		2E3D4F7618A45475007DED10 /* ofCairoRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA97FD3612F5A61A005C9991 /* ofCairoRenderer.cpp */; };
+		2E3D4F7718A45475007DED10 /* ofMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53EEEF4A130766EF0027C199 /* ofMesh.cpp */; };
+		2E3D4F7818A45475007DED10 /* ofPolyline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA48FE73131D85A6000062BC /* ofPolyline.cpp */; };
+		2E3D4F7918A45475007DED10 /* ofFbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */; };
+		2E3D4F7A18A45475007DED10 /* ofGLRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CB132D09E8008D4B7A /* ofGLRenderer.cpp */; };
+		2E3D4F7B18A45475007DED10 /* of3dPrimitives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7071603AAD600B7ADF3 /* of3dPrimitives.cpp */; };
+		2E3D4F7C18A45475007DED10 /* ofLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8CE132D09E8008D4B7A /* ofLight.cpp */; };
+		2E3D4F7D18A45475007DED10 /* ofMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D0132D09E8008D4B7A /* ofMaterial.cpp */; };
+		2E3D4F7E18A45475007DED10 /* ofShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D2132D09E8008D4B7A /* ofShader.cpp */; };
+		2E3D4F7F18A45475007DED10 /* ofTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D4132D09E8008D4B7A /* ofTexture.cpp */; };
+		2E3D4F8018A45475007DED10 /* ofVbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D6132D09E8008D4B7A /* ofVbo.cpp */; };
+		2E3D4F8118A45475007DED10 /* ofVboMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DACFA8D8132D09E8008D4B7A /* ofVboMesh.cpp */; };
+		2E3D4F8218A45475007DED10 /* ofPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 92C55F86132DA7DD00EC2631 /* ofPath.cpp */; };
+		2E3D4F8318A45475007DED10 /* ofRtAudioSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4C5E386131AC1B10050F992 /* ofRtAudioSoundStream.cpp */; };
+		2E3D4F8418A45475007DED10 /* ofOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 772BDF71146928600030F0EE /* ofOpenALSoundPlayer.cpp */; };
+		2E3D4F8518A45475007DED10 /* ofQuickTimePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E42732AD15F10E7A00BBC533 /* ofQuickTimePlayer.cpp */; };
+		2E3D4F8618A45475007DED10 /* ofParameter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3B16E7A4AF0020226D /* ofParameter.cpp */; };
+		2E3D4F8718A45475007DED10 /* ofParameterGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DAC22D3D16E7A4AF0020226D /* ofParameterGroup.cpp */; };
+		2E3D4F8818A45475007DED10 /* ofGLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67D96B941651AF6D00D5242D /* ofGLUtils.cpp */; };
+		2E3D4F8918A45475007DED10 /* ofAppGLFWWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */; };
+		2E3D4F8A18A45475007DED10 /* ofRendererCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */; };
+		2E3D4F8B18A45475007DED10 /* ofMatrixStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */; };
+		2E3D4F8C18A45475007DED10 /* ofGLProgrammableRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */; };
+		2E3D4F8D18A45475007DED10 /* ofAppGlutWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22246D95176C9AA0008A8AF4 /* ofAppGlutWindow.cpp */; };
+		2E3D4F8E18A45475007DED10 /* ofAppNoWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E495DF7B178896A900994238 /* ofAppNoWindow.cpp */; };
+		2E3D4F8F18A45475007DED10 /* ofAVFoundationPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = E73DA809189F2573006C9E4E /* ofAVFoundationPlayer.mm */; };
+		2E3D4F9018A45475007DED10 /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DEA30F1796F578000A9E90 /* ofXml.cpp */; };
+		2E3D4F9218A45475007DED10 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E73DA812189F2583006C9E4E /* AVFoundation.framework */; };
+		2E3D4F9318A45475007DED10 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7F985E115E0DC54003869B5 /* Accelerate.framework */; };
+		2E3D4F9418A45475007DED10 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
+		2E3D4F9518A45475007DED10 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */; };
+		2E3D4F9618A45475007DED10 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */; };
+		2E3D4F9718A45475007DED10 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9740E8CC7DD009D7055 /* Carbon.framework */; };
+		2E3D4F9818A45475007DED10 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E73DA811189F2583006C9E4E /* QuartzCore.framework */; };
+		2E3D4F9918A45475007DED10 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9750E8CC7DD009D7055 /* CoreAudio.framework */; };
+		2E3D4F9A18A45475007DED10 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E73DA810189F2583006C9E4E /* CoreMedia.framework */; };
+		2E3D4F9B18A45475007DED10 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9760E8CC7DD009D7055 /* CoreFoundation.framework */; };
+		2E3D4F9C18A45475007DED10 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9770E8CC7DD009D7055 /* CoreServices.framework */; };
+		2E3D4F9D18A45475007DED10 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E703368915D4AF13009A3FDE /* CoreVideo.framework */; };
+		2E3D4F9E18A45475007DED10 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9790E8CC7DD009D7055 /* OpenGL.framework */; };
+		2E3D4F9F18A45475007DED10 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE97A0E8CC7DD009D7055 /* QuickTime.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		2E3D4FA018A45475007DED10 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E703368B15D4AF1A009A3FDE /* QTKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		2E3D4FA118A45475007DED10 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBAB23BC13894D2600AA2426 /* GLUT.framework */; };
 		2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */; };
 		2E6EA7041603AA7A00B7ADF3 /* of3dGraphics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */; };
 		2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */; };
@@ -168,6 +315,7 @@
 		22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGLFWWindow.h; sourceTree = "<group>"; };
 		27DEA30F1796F578000A9E90 /* ofXml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofXml.cpp; sourceTree = "<group>"; };
 		27DEA3101796F578000A9E90 /* ofXml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofXml.h; sourceTree = "<group>"; };
+		2E3D4FA518A45475007DED10 /* openFrameworks64Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = openFrameworks64Debug.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E6EA7001603A9E400B7ADF3 /* of3dGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dGraphics.h; sourceTree = "<group>"; };
 		2E6EA7031603AA7A00B7ADF3 /* of3dGraphics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = of3dGraphics.cpp; sourceTree = "<group>"; };
 		2E6EA7051603AABD00B7ADF3 /* of3dPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = of3dPrimitives.h; sourceTree = "<group>"; };
@@ -329,6 +477,29 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2E3D4F9118A45475007DED10 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2E3D4F9218A45475007DED10 /* AVFoundation.framework in Frameworks */,
+				2E3D4F9318A45475007DED10 /* Accelerate.framework in Frameworks */,
+				2E3D4F9418A45475007DED10 /* AGL.framework in Frameworks */,
+				2E3D4F9518A45475007DED10 /* ApplicationServices.framework in Frameworks */,
+				2E3D4F9618A45475007DED10 /* AudioToolbox.framework in Frameworks */,
+				2E3D4F9718A45475007DED10 /* Carbon.framework in Frameworks */,
+				2E3D4F9818A45475007DED10 /* QuartzCore.framework in Frameworks */,
+				2E3D4F9918A45475007DED10 /* CoreAudio.framework in Frameworks */,
+				2E3D4F9A18A45475007DED10 /* CoreMedia.framework in Frameworks */,
+				2E3D4F9B18A45475007DED10 /* CoreFoundation.framework in Frameworks */,
+				2E3D4F9C18A45475007DED10 /* CoreServices.framework in Frameworks */,
+				2E3D4F9D18A45475007DED10 /* CoreVideo.framework in Frameworks */,
+				2E3D4F9E18A45475007DED10 /* OpenGL.framework in Frameworks */,
+				2E3D4F9F18A45475007DED10 /* QuickTime.framework in Frameworks */,
+				2E3D4FA018A45475007DED10 /* QTKit.framework in Frameworks */,
+				2E3D4FA118A45475007DED10 /* GLUT.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E4B27C1310CBEB8E00536013 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -504,6 +675,7 @@
 				E4B27AAA10CBE92A00536013 /* openFrameworks */,
 				E45BE5980E8CC70C009D7055 /* frameworks */,
 				E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */,
+				2E3D4FA518A45475007DED10 /* openFrameworks64Debug.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -648,6 +820,79 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		2E3D4F0C18A45475007DED10 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2E3D4F0D18A45475007DED10 /* ofQuickTimeGrabber.h in Headers */,
+				2E3D4F0E18A45475007DED10 /* of3dUtils.h in Headers */,
+				2E3D4F0F18A45475007DED10 /* ofCamera.h in Headers */,
+				2E3D4F1018A45475007DED10 /* ofAVFMovieRenderer.h in Headers */,
+				2E3D4F1118A45475007DED10 /* ofEasyCam.h in Headers */,
+				2E3D4F1218A45475007DED10 /* ofNode.h in Headers */,
+				2E3D4F1318A45475007DED10 /* ofBaseSoundPlayer.h in Headers */,
+				2E3D4F1418A45475007DED10 /* ofFmodSoundPlayer.h in Headers */,
+				2E3D4F1518A45475007DED10 /* ofSoundPlayer.h in Headers */,
+				2E3D4F1618A45475007DED10 /* ofSoundStream.h in Headers */,
+				2E3D4F1718A45475007DED10 /* ofMath.h in Headers */,
+				2E3D4F1818A45475007DED10 /* ofMatrix3x3.h in Headers */,
+				2E3D4F1918A45475007DED10 /* ofMatrix4x4.h in Headers */,
+				2E3D4F1A18A45475007DED10 /* ofQuaternion.h in Headers */,
+				2E3D4F1B18A45475007DED10 /* ofVec2f.h in Headers */,
+				2E3D4F1C18A45475007DED10 /* ofVec3f.h in Headers */,
+				2E3D4F1D18A45475007DED10 /* ofVec4f.h in Headers */,
+				2E3D4F1E18A45475007DED10 /* ofVectorMath.h in Headers */,
+				2E3D4F1F18A45475007DED10 /* ofBaseTypes.h in Headers */,
+				2E3D4F2018A45475007DED10 /* ofColor.h in Headers */,
+				2E3D4F2118A45475007DED10 /* ofPoint.h in Headers */,
+				2E3D4F2218A45475007DED10 /* ofRectangle.h in Headers */,
+				2E3D4F2318A45475007DED10 /* ofTypes.h in Headers */,
+				2E3D4F2418A45475007DED10 /* ofConstants.h in Headers */,
+				2E3D4F2518A45475007DED10 /* ofFileUtils.h in Headers */,
+				2E3D4F2618A45475007DED10 /* ofLog.h in Headers */,
+				2E3D4F2718A45475007DED10 /* ofNoise.h in Headers */,
+				2E3D4F2818A45475007DED10 /* ofSystemUtils.h in Headers */,
+				2E3D4F2918A45475007DED10 /* ofThread.h in Headers */,
+				2E3D4F2A18A45475007DED10 /* ofURLFileLoader.h in Headers */,
+				2E3D4F2B18A45475007DED10 /* ofAVFoundationPlayer.h in Headers */,
+				2E3D4F2C18A45475007DED10 /* ofUtils.h in Headers */,
+				2E3D4F2D18A45475007DED10 /* ofBitmapFont.h in Headers */,
+				2E3D4F2E18A45475007DED10 /* ofGraphics.h in Headers */,
+				2E3D4F2F18A45475007DED10 /* ofImage.h in Headers */,
+				2E3D4F3018A45475007DED10 /* ofPixels.h in Headers */,
+				2E3D4F3118A45475007DED10 /* ofTessellator.h in Headers */,
+				2E3D4F3218A45475007DED10 /* ofTrueTypeFont.h in Headers */,
+				2E3D4F3318A45475007DED10 /* ofCairoRenderer.h in Headers */,
+				2E3D4F3418A45475007DED10 /* ofRendererCollection.h in Headers */,
+				2E3D4F3518A45475007DED10 /* ofMesh.h in Headers */,
+				2E3D4F3618A45475007DED10 /* ofPolyline.h in Headers */,
+				2E3D4F3718A45475007DED10 /* ofFbo.h in Headers */,
+				2E3D4F3818A45475007DED10 /* ofGLRenderer.h in Headers */,
+				2E3D4F3918A45475007DED10 /* ofGLUtils.h in Headers */,
+				2E3D4F3A18A45475007DED10 /* ofLight.h in Headers */,
+				2E3D4F3B18A45475007DED10 /* ofMaterial.h in Headers */,
+				2E3D4F3C18A45475007DED10 /* ofShader.h in Headers */,
+				2E3D4F3D18A45475007DED10 /* ofTexture.h in Headers */,
+				2E3D4F3E18A45475007DED10 /* ofVbo.h in Headers */,
+				2E3D4F3F18A45475007DED10 /* ofVboMesh.h in Headers */,
+				2E3D4F4018A45475007DED10 /* ofPath.h in Headers */,
+				2E3D4F4118A45475007DED10 /* ofRtAudioSoundStream.h in Headers */,
+				2E3D4F4218A45475007DED10 /* ofBaseSoundStream.h in Headers */,
+				2E3D4F4318A45475007DED10 /* ofOpenALSoundPlayer.h in Headers */,
+				2E3D4F4418A45475007DED10 /* ofQuickTimePlayer.h in Headers */,
+				2E3D4F4518A45475007DED10 /* ofParameter.h in Headers */,
+				2E3D4F4618A45475007DED10 /* ofParameterGroup.h in Headers */,
+				2E3D4F4718A45475007DED10 /* of3dGraphics.h in Headers */,
+				2E3D4F4818A45475007DED10 /* of3dPrimitives.h in Headers */,
+				2E3D4F4918A45475007DED10 /* ofAppGLFWWindow.h in Headers */,
+				2E3D4F4A18A45475007DED10 /* ofMatrixStack.h in Headers */,
+				2E3D4F4B18A45475007DED10 /* ofGLProgrammableRenderer.h in Headers */,
+				2E3D4F4C18A45475007DED10 /* ofAppGlutWindow.h in Headers */,
+				2E3D4F4D18A45475007DED10 /* ofAppNoWindow.h in Headers */,
+				2E3D4F4E18A45475007DED10 /* ofXml.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E4B27C1110CBEB8E00536013 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -724,6 +969,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		2E3D4F0B18A45475007DED10 /* openFrameworks64 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2E3D4FA218A45475007DED10 /* Build configuration list for PBXNativeTarget "openFrameworks64" */;
+			buildPhases = (
+				2E3D4F0C18A45475007DED10 /* Headers */,
+				2E3D4F4F18A45475007DED10 /* Sources */,
+				2E3D4F9118A45475007DED10 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = openFrameworks64;
+			productName = openFrameworksLib;
+			productReference = 2E3D4FA518A45475007DED10 /* openFrameworks64Debug.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		E4B27C1410CBEB8E00536013 /* openFrameworks */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworks" */;
@@ -765,11 +1027,84 @@
 			projectRoot = "";
 			targets = (
 				E4B27C1410CBEB8E00536013 /* openFrameworks */,
+				2E3D4F0B18A45475007DED10 /* openFrameworks64 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2E3D4F4F18A45475007DED10 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2E3D4F5018A45475007DED10 /* ofAppRunner.cpp in Sources */,
+				2E3D4F5118A45475007DED10 /* ofArduino.cpp in Sources */,
+				2E3D4F5218A45475007DED10 /* ofSerial.cpp in Sources */,
+				2E3D4F5318A45475007DED10 /* ofQtUtils.cpp in Sources */,
+				2E3D4F5418A45475007DED10 /* ofVideoGrabber.cpp in Sources */,
+				2E3D4F5518A45475007DED10 /* ofVideoPlayer.cpp in Sources */,
+				2E3D4F5618A45475007DED10 /* ofEvents.cpp in Sources */,
+				2E3D4F5718A45475007DED10 /* ofQuickTimeGrabber.cpp in Sources */,
+				2E3D4F5818A45475007DED10 /* of3dUtils.cpp in Sources */,
+				2E3D4F5918A45475007DED10 /* ofCamera.cpp in Sources */,
+				2E3D4F5A18A45475007DED10 /* ofEasyCam.cpp in Sources */,
+				2E3D4F5B18A45475007DED10 /* ofNode.cpp in Sources */,
+				2E3D4F5C18A45475007DED10 /* ofFmodSoundPlayer.cpp in Sources */,
+				2E3D4F5D18A45475007DED10 /* ofSoundPlayer.cpp in Sources */,
+				2E3D4F5E18A45475007DED10 /* ofSoundStream.cpp in Sources */,
+				2E3D4F5F18A45475007DED10 /* ofAVFMovieRenderer.m in Sources */,
+				2E3D4F6018A45475007DED10 /* ofMath.cpp in Sources */,
+				2E3D4F6118A45475007DED10 /* ofMatrix3x3.cpp in Sources */,
+				2E3D4F6218A45475007DED10 /* ofMatrix4x4.cpp in Sources */,
+				2E3D4F6318A45475007DED10 /* ofQuaternion.cpp in Sources */,
+				2E3D4F6418A45475007DED10 /* ofVec2f.cpp in Sources */,
+				2E3D4F6518A45475007DED10 /* ofVec4f.cpp in Sources */,
+				2E3D4F6618A45475007DED10 /* ofBaseTypes.cpp in Sources */,
+				2E3D4F6718A45475007DED10 /* ofColor.cpp in Sources */,
+				2E3D4F6818A45475007DED10 /* ofRectangle.cpp in Sources */,
+				2E3D4F6918A45475007DED10 /* ofFileUtils.cpp in Sources */,
+				2E3D4F6A18A45475007DED10 /* ofLog.cpp in Sources */,
+				2E3D4F6B18A45475007DED10 /* ofSystemUtils.cpp in Sources */,
+				2E3D4F6C18A45475007DED10 /* ofThread.cpp in Sources */,
+				2E3D4F6D18A45475007DED10 /* ofURLFileLoader.cpp in Sources */,
+				2E3D4F6E18A45475007DED10 /* ofUtils.cpp in Sources */,
+				2E3D4F6F18A45475007DED10 /* ofBitmapFont.cpp in Sources */,
+				2E3D4F7018A45475007DED10 /* ofGraphics.cpp in Sources */,
+				2E3D4F7118A45475007DED10 /* of3dGraphics.cpp in Sources */,
+				2E3D4F7218A45475007DED10 /* ofImage.cpp in Sources */,
+				2E3D4F7318A45475007DED10 /* ofPixels.cpp in Sources */,
+				2E3D4F7418A45475007DED10 /* ofTessellator.cpp in Sources */,
+				2E3D4F7518A45475007DED10 /* ofTrueTypeFont.cpp in Sources */,
+				2E3D4F7618A45475007DED10 /* ofCairoRenderer.cpp in Sources */,
+				2E3D4F7718A45475007DED10 /* ofMesh.cpp in Sources */,
+				2E3D4F7818A45475007DED10 /* ofPolyline.cpp in Sources */,
+				2E3D4F7918A45475007DED10 /* ofFbo.cpp in Sources */,
+				2E3D4F7A18A45475007DED10 /* ofGLRenderer.cpp in Sources */,
+				2E3D4F7B18A45475007DED10 /* of3dPrimitives.cpp in Sources */,
+				2E3D4F7C18A45475007DED10 /* ofLight.cpp in Sources */,
+				2E3D4F7D18A45475007DED10 /* ofMaterial.cpp in Sources */,
+				2E3D4F7E18A45475007DED10 /* ofShader.cpp in Sources */,
+				2E3D4F7F18A45475007DED10 /* ofTexture.cpp in Sources */,
+				2E3D4F8018A45475007DED10 /* ofVbo.cpp in Sources */,
+				2E3D4F8118A45475007DED10 /* ofVboMesh.cpp in Sources */,
+				2E3D4F8218A45475007DED10 /* ofPath.cpp in Sources */,
+				2E3D4F8318A45475007DED10 /* ofRtAudioSoundStream.cpp in Sources */,
+				2E3D4F8418A45475007DED10 /* ofOpenALSoundPlayer.cpp in Sources */,
+				2E3D4F8518A45475007DED10 /* ofQuickTimePlayer.cpp in Sources */,
+				2E3D4F8618A45475007DED10 /* ofParameter.cpp in Sources */,
+				2E3D4F8718A45475007DED10 /* ofParameterGroup.cpp in Sources */,
+				2E3D4F8818A45475007DED10 /* ofGLUtils.cpp in Sources */,
+				2E3D4F8918A45475007DED10 /* ofAppGLFWWindow.cpp in Sources */,
+				2E3D4F8A18A45475007DED10 /* ofRendererCollection.cpp in Sources */,
+				2E3D4F8B18A45475007DED10 /* ofMatrixStack.cpp in Sources */,
+				2E3D4F8C18A45475007DED10 /* ofGLProgrammableRenderer.cpp in Sources */,
+				2E3D4F8D18A45475007DED10 /* ofAppGlutWindow.cpp in Sources */,
+				2E3D4F8E18A45475007DED10 /* ofAppNoWindow.cpp in Sources */,
+				2E3D4F8F18A45475007DED10 /* ofAVFoundationPlayer.mm in Sources */,
+				2E3D4F9018A45475007DED10 /* ofXml.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E4B27C1210CBEB8E00536013 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -845,10 +1180,100 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		2E3D4FA318A45475007DED10 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
+				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/System/Library/Frameworks,
+				);
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
+				);
+				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
+				OTHER_LDFLAGS = (
+					"$(LIB_POCOFOUNDATION)",
+					"$(LIB_POCONET)",
+					"$(LIB_POCOXML)",
+					"$(LIB_POCOUTIL)",
+					"$(LIB_TESS)",
+					"$(LIB_GLEW)",
+					"$(LIB_ASSIMP)",
+					"$(LIB_FREEIMAGE)",
+					"$(LIB_FREETYPE)",
+					"$(LIB_GLUT)",
+					"$(LIB_FMODEX)",
+				);
+				PRODUCT_NAME = openFrameworks64Debug;
+				SDKROOT = macosx10.8;
+			};
+			name = Debug;
+		};
+		2E3D4FA418A45475007DED10 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				EXECUTABLE_PREFIX = "";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/System/Library/Frameworks,
+				);
+				GCC_FAST_MATH = YES;
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_7)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_8)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
+				);
+				OBJROOT = "$(SRCROOT)/../../lib/osx/build/release/";
+				OTHER_LDFLAGS = (
+					"$(LIB_POCOFOUNDATION)",
+					"$(LIB_POCONET)",
+					"$(LIB_POCOXML)",
+					"$(LIB_POCOUTIL)",
+					"$(LIB_TESS)",
+					"$(LIB_GLEW)",
+					"$(LIB_ASSIMP)",
+					"$(LIB_FREEIMAGE)",
+					"$(LIB_FREETYPE)",
+					"$(LIB_GLUT)",
+					"$(LIB_FMODEX)",
+				);
+				PRODUCT_NAME = openFrameworks64;
+				SDKROOT = macosx10.8;
+			};
+			name = Release;
+		};
 		E4B27C1610CBEB8E00536013 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				COPY_PHASE_STRIP = NO;
@@ -892,7 +1317,7 @@
 		E4B27C1710CBEB8E00536013 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COMBINE_HIDPI_IMAGES = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				COPY_PHASE_STRIP = YES;
@@ -964,6 +1389,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		2E3D4FA218A45475007DED10 /* Build configuration list for PBXNativeTarget "openFrameworks64" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2E3D4FA318A45475007DED10 /* Debug */,
+				2E3D4FA418A45475007DED10 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E4B27C3210CBEBB200536013 /* Build configuration list for PBXNativeTarget "openFrameworks" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
