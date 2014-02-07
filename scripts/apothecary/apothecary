@@ -769,7 +769,7 @@ function clean() {
 # $2 = dependency name
 function apothecaryDepend() {
 	local depend="${2%.*}" # removes extension
-	local gitArgs
+	local gitArgs = 0;
 
 	# pass along git argument for downloading
 	if [ "$1" == "download" ] ; then
