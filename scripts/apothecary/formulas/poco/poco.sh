@@ -156,9 +156,9 @@ function build() {
 		echoWarning "TODO: android build"
 
 	else
-		#./configure $BUILD_OPTS
-		#make
-		echoWarning "TODO: $TYPE build"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
+		./configure $BUILD_OPTS
+		make
 	fi
 }
 
