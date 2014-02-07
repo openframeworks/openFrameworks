@@ -25,7 +25,11 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	: # noop
+	if [ "$TYPE" == "linux" ] ; then
+		cp -Rv $FORMULA_DIR/Makefile.linux .
+	elif [ "$TYPE" == "linux64" ] ; then
+		cp -Rv $FORMULA_DIR/Makefile.linux64 .
+	else
 }
 
 # executed inside the lib src dir
