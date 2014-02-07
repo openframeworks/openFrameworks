@@ -28,25 +28,21 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	: # noop
+	./autogen.sh
 }
 
 # executed inside the lib src dir
 function build() {
 	
 	if [ "$TYPE" == "osx" ] ; then
-
-		export CFLAGS="-arch i386 -arch x86_64"
-
 		# 32 + 64 bit
-		./configure --prefix=$BUILD_ROOT_DIR
+		./configure CFLAGS="-arch i386 -arch x86_64" \
+					--prefix=$BUILD_ROOT_DIR
 
 		make clean; 
 		make;
 		make install;
 
-		unset CFLAGS
-	
 	elif [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: build vs"
 	

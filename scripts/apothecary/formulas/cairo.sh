@@ -29,18 +29,22 @@ GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	
 	curl -LO http://cairographics.org/releases/cairo-$VER.tar.xz
 	tar -xf cairo-$VER.tar.xz
 	mv cairo-$VER cairo
 	rm cairo-$VER.tar.xz
 
-	# manually download dependencies
-	apothecaryDependencies download
 }
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
+	./autogen.sh
+
+	# We place the downloads in the prepare section in case 
+	# cairo was already was already downloaded.
+
+	# manually download dependencies
+	apothecaryDependencies download
 
 	# manually prepare dependencies
 	apothecaryDependencies prepare
@@ -62,24 +66,31 @@ function build() {
 		export MACOSX_DEPLOYMENT_TARGET=$OSX_MIN_SDK_VER
    		export LDFLAGS="-arch i386 -arch x86_64 -isysroot $XCODE_DEV_ROOT/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$OSX_SDK_VER.sdk"
    		export CFLAGS="-Os -arch i386 -arch x86_64 -isysroot $XCODE_DEV_ROOT/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$OSX_SDK_VER.sdk"
-	
-	elif [ "$TYPE" == "vs" ] ; then
-		make -f Makefile.win32
-		echoWarning "TODO: vs build settings here?"
-	
-	elif [ "$TYPE" == "win_cb" ] ; then
-		echoWarning "TODO: win_cb build settings here?"
 	fi
 
-	# manually build & copy other dependencies here so they are built with the env vars set on if on osx
 	apothecaryDepend build libpng
-	apothecaryDepend build pixman
 	apothecaryDepend copy libpng
+	apothecaryDepend build pixman
 	apothecaryDepend copy pixman
+	apothecaryDepend build freetype
+	apothecaryDepend copy freetype
 
-	# build cairo
-	./configure --prefix=$BUILD_ROOT_DIR --disable-dependency-tracking --disable-xlib --disable-ft
-	make install
+
+	if [ "$TYPE" == "vs" ] ; then
+		make -f Makefile.win32
+	else 
+		./configure --prefix=$BUILD_ROOT_DIR \
+				--disable-gtk-doc \
+				--disable-gtk-doc-html \
+				--disable-gtk-doc-pdf \
+				--disable-full-testing \
+				--disable-dependency-tracking \
+				--disable-xlib \
+				--disable-qt 
+
+		make
+		make install
+	fi
 
 	# clean up env vars
 	unset PKG_CONFIG PKG_CONFIG_PATH
@@ -111,6 +122,8 @@ function copy() {
 		cp -v lib/libcairo.a $1/lib/$TYPE/cairo.a
 		cp -v lib/libpixman-1.a $1/lib/$TYPE/pixman-1.a
 	fi
+
+	cd -
 }
 
 # executed inside the lib src dir

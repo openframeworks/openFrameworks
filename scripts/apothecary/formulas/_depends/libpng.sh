@@ -21,16 +21,15 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	
-	# generate the configure script if it's not there
-	if [ ! -f configure ] ; then
-		./autogen.sh
-	fi
+	: #noop
 }
 
 # executed inside the lib src dir
 function build() {
-	./configure --prefix=$BUILD_ROOT_DIR \
+	
+	./configure LDFLAGS="-arch i386 -arch x86_64" \
+				CFLAGS="-Os -arch i386 -arch x86_64" \
+				--prefix=$BUILD_ROOT_DIR \
 				--disable-dependency-tracking
 
 	make clean
