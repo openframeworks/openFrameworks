@@ -212,10 +212,10 @@ function copy() {
 		cp -v lib/Debug/*.lib $1/lib/$TYPE
 	elif [ "$TYPE" == "linux" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/linux/i386/*.a $1/lib/$TYPE
+		cp -v lib/Linux/i386/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "linux64" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/linux/x86_64/*.a $1/lib/$TYPE
+		cp -v lib/Linux/x86_64/*.a $1/lib/$TYPE
 	else
 		echoWarning "TODO: copy $TYPE lib"
 	fi
