@@ -32,7 +32,7 @@ function prepare() {
 	fi
 
 	# copy in build script and CMake toolchains adapted from Assimp
-	if [ "$OS" == "osx" ] ; then
+	if [ "$OS" == "ios" ] ; then
 		mkdir -p build
 		cp -Rv $FORMULA_DIR/ios build
 		chmod +x build/ios/build_ios.sh
