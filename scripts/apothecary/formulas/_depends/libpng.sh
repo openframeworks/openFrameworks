@@ -21,7 +21,10 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	: #noop
+	# generate the configure script if it's not there
+	if [ ! -f configure ] ; then
+		./autogen.sh
+	fi
 }
 
 # executed inside the lib src dir
