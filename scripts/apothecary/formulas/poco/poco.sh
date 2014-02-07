@@ -161,7 +161,7 @@ function build() {
 		make
 		# delete debug builds
 		rm lib/linux/x86_64/*d.a
-	else [ "$TYPE" == "linux64" ] ; then
+	elif [ "$TYPE" == "linux64" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
 		./configure $BUILD_OPTS
 		make
