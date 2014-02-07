@@ -76,7 +76,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 			ofxGuiGroup * panel = new ofxGuiGroup(p);
 			add(panel);
 		}else{
-			ofLogError() << "ofxBaseGroup; can't add control of type " << type;
+			ofLogWarning() << "ofxBaseGroup; no control for parameter of type " << type;
 		}
 	}
 

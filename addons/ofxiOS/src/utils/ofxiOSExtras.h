@@ -171,7 +171,7 @@ bool ofxiOSUIImageToGLTexture(UIImage *uiImage, GLuint *spriteTexture);
 // TODO: take into consideration UI image orentation
 bool ofxiOSUIImageToOFImage(UIImage *uiImage, ofImage &outImage, int targetWidth = 0, int targetHeight = 0);
 
-bool ofxiOSUIImageToPixels(UIImage *uiImage, unsigned char * pix, int targetWidth = 0, int targetHeight = 0);
+bool ofxiOSUIImageToOFTexture(UIImage *uiImage, ofTexture &outTexture, int targetWidth, int targetHeight);
 
 bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
 

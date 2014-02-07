@@ -75,6 +75,8 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
     setNumSamples(4);
 	iconSet = false;
 
+	glfwSetErrorCallback(error_cb);
+
 }
 
 
@@ -206,12 +208,6 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 	windowMode = requestedMode;
 
-	setVerticalSync(false);
-	// Set window title
-//	glfwSetWindowTitle( " " );
-
-//	glfwEnable( windowP, GLFW_KEY_REPEAT );
-
 	requestedHeight = requestedHeight < 1 ? 1 : requestedHeight;
 	glfwGetWindowSize( windowP, &requestedWidth, &requestedHeight );
 
@@ -235,7 +231,7 @@ void ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
 void ofAppGLFWWindow::initializeWindow(){
 	 //----------------------
 	 // setup the callbacks
-
+	if(!windowP) return;
 	glfwSetMouseButtonCallback(windowP, mouse_cb);
 	glfwSetCursorPosCallback(windowP, motion_cb);
 	glfwSetKeyCallback(windowP, keyboard_cb);
@@ -874,7 +870,7 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
-	// ofSendMessage("scroll|"+ofToString(x,5) + "|" + ofToString(y,5));
+	//TODO: implement scroll events
 }
 
 //------------------------------------------------------------
@@ -889,6 +885,11 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, const char* dropString) {
 	}
 #endif
 	ofNotifyDragEvent(drag);
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::error_cb(int errorCode, const char* errorDescription){
+	ofLogError("ofAppGLFWWindow") << errorCode << ": " << errorDescription;
 }
 
 //------------------------------------------------------------

@@ -124,37 +124,37 @@ endif
 	
 Release: 
 	@echo Compiling OF library for Release
-	@$(MAKE) --no-print-directory -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
+	@$(MAKE) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
 	@echo
 	@echo
 	@echo Compiling $(APPNAME) for Release
 ifndef ABIS_TO_COMPILE_RELEASE
-	@$(MAKE) --no-print-directory ReleaseABI
+	@$(MAKE) ReleaseABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory ReleaseABI ABI=$(abi) &&) echo 
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) ReleaseABI ABI=$(abi) &&) echo 
 endif
 ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
 	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
 endif
-	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
+	@$(MAKE) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_RELEASE)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 
 
 
 Debug: 
 	@echo Compiling OF library for Debug
-	$(MAKE) --no-print-directory -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Debug PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
+	$(MAKE) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Debug PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_DEBUG="$(ABIS_TO_COMPILE_DEBUG)"
 	@echo
 	@echo
 	@echo Compiling $(APPNAME) for Debug
 ifndef ABIS_TO_COMPILE_DEBUG
-	@$(MAKE) --no-print-directory DebugABI
+	@$(MAKE) DebugABI
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory DebugABI ABI=$(abi) &&) echo 
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) DebugABI ABI=$(abi) &&) echo 
 endif
 ifneq ($(strip $(PROJECT_ADDONS_DATA)),)
 	@$(MAKE) copyaddonsdata PROJECT_ADDONS_DATA=$(PROJECT_ADDONS_DATA)
 endif
-	@$(MAKE) --no-print-directory afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
+	@$(MAKE) afterplatform BIN_NAME=$(BIN_NAME) ABIS_TO_COMPILE="$(ABIS_TO_COMPILE_DEBUG)" RUN_TARGET=$(RUN_TARGET) TARGET=$(TARGET)
 
 ReleaseABI: $(TARGET)
 
@@ -299,8 +299,8 @@ $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS) $(TAR
 
 
 clean:
-	@$(MAKE) --no-print-directory CleanDebug
-	@$(MAKE) --no-print-directory CleanRelease
+	@$(MAKE) CleanDebug
+	@$(MAKE) CleanRelease
 
 $(CLEANTARGET)ABI:
 ifneq ($(OF_PROJECT_ADDONS_OBJS),)
@@ -312,12 +312,12 @@ endif
 	
 $(CLEANTARGET):
 ifndef ABIS_TO_COMPILE
-	@$(MAKE) --no-print-directory $(CLEANTARGET)ABI
+	@$(MAKE) $(CLEANTARGET)ABI
 else
 ifeq ($(TARGET_NAME),Debug)
-	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) --no-print-directory $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_DEBUG),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
 else
-	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) --no-print-directory $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
+	@$(foreach abi,$(ABIS_TO_COMPILE_RELEASE),$(MAKE) $(CLEANTARGET)ABI ABI=$(abi) &&) echo done
 endif
 endif
 	@rm -rf bin/libs

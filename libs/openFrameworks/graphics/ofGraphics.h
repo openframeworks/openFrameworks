@@ -55,6 +55,7 @@ ofHandednessType ofGetCoordHandedness();
 //our openGL wrappers
 void ofPushMatrix();
 void ofPopMatrix();
+ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode_);
 void ofTranslate(float x, float y, float z = 0);
 void ofTranslate(const ofPoint & p);
 void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
