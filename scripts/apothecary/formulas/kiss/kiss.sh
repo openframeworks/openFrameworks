@@ -32,9 +32,15 @@ function prepare() {
 function build() {
 
 	if [ "$TYPE" == "linux" ] ; then
-		make -f Makefile.linux	
+		gcc -I./include -c src/kiss_fft.c -o kiss_fft.o
+		gcc -I./include -c src/kiss_fftr.c -o kiss_fftr.o
+		ar r libkiss.a kiss.o
+		echoWarning "TODO: linux build"
+
+	
 	elif [ "$TYPE" == "linux64" ] ; then
-		make -f Makefile.linux64	
+		echoWarning "TODO: linux64 build"
+	
 	else
 		echo "build not needed for $TYPE"
 	fi
