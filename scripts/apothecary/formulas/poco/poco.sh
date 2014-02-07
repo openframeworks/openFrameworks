@@ -155,10 +155,20 @@ function build() {
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: android build"
 
-	else
+	elif [ "$TYPE" == "linux" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
 		./configure $BUILD_OPTS
 		make
+		# delete debug builds
+		rm lib/linux/x86_64/*d.a
+	else [ "$TYPE" == "linux64" ] ; then
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
+		./configure $BUILD_OPTS
+		make
+		# delete debug builds
+		rm lib/linux/i386/*d.a
+	else 
+		echoWarning "TODO: build $TYPE lib"
 	fi
 }
 
@@ -200,7 +210,12 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Release/*.lib $1/lib/$TYPE
 		cp -v lib/Debug/*.lib $1/lib/$TYPE
-
+	elif [ "$TYPE" == "linux" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/linux/i386/*.a $1/lib/$TYPE
+	elif [ "$TYPE" == "linux64" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/linux/x86_64/*.a $1/lib/$TYPE
 	else
 		echoWarning "TODO: copy $TYPE lib"
 	fi
