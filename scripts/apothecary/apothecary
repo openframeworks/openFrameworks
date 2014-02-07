@@ -108,7 +108,9 @@ VALID_TYPES=( "osx" "osx-clang-libc++" "linux" "linux64" "vs" "win_cb" "ios" "an
 A_VERBOSE=0
 
 # prefer git instead of download tarballs
-USE_GIT=0
+# This remains _UNSET_ if git is not in use.
+# To use, set USE_GIT=1
+USE_GIT=
 
 # nice, detailed help message
 HELP="usage: apothecary [options] <command> [<core|addons|libName|addonName>]
@@ -769,14 +771,6 @@ function clean() {
 # $2 = dependency name
 function apothecaryDepend() {
 	local depend="${2%.*}" # removes extension
-	local gitArgs = 0;
-
-	# pass along git argument for downloading
-	if [ "$1" == "download" ] ; then
-		if [ USE_GIT==1 ] ; then
-			gitArgs=-g
-		fi
-	fi
 
 	# detect if dependency is a main OF lib
 	if [ -f $APOTHECARY_DIR/$REL_FORMULAS_DIR/$depend.sh -o -d $APOTHECARY_DIR/$REL_FORMULAS_DIR/$depend ] ; then
@@ -796,7 +790,8 @@ function apothecaryDepend() {
 		exit 1
 	fi
 
-	$APOTHECARY_SCRIPT -t $TYPE -a $ARCH $gitArgs $1 $depend
+	# Uses git IF the USE_GIT variable is set
+	$APOTHECARY_SCRIPT -t $TYPE -a $ARCH ${USE_GIT:+-g} $1 $depend 
 }
 
 # do a command on all formula dependencies in separate apothecary runs
