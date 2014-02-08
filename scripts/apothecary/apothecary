@@ -533,7 +533,7 @@ function downloadFormula(){
 	if [ -e $1 ] ; then
 		echo "... skipping, src dir already exists"
 	else
-		if [ $USE_GIT == 1 ] && [[ "${GIT_URL:+x}" ]] ; then
+		if [ -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
 			gitclone $1 $GIT_URL ${GIT_TAG:-master}
 		else
 			download
