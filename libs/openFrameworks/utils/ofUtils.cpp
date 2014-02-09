@@ -655,6 +655,54 @@ string ofVAArgsToString(const char * format, va_list args){
 }
 
 //--------------------------------------------------
+bool ofLaunchDefaultApp(const string& path){
+#ifdef TARGET_WIN32
+	int ret;
+	#if (_MSC_VER)
+	// microsoft visual studio yaks about strings, wide chars, unicode, etc
+	ret = (int)ShellExecuteA(NULL, "open", ofToDataPath(path).c_str(),
+            NULL, NULL, SW_SHOWNORMAL);
+	#else
+	ret = (int)ShellExecute(NULL, "open", ofToDataPath(path).c_str(),
+            NULL, NULL, SW_SHOWNORMAL);
+	#endif
+	
+	if (ret == ERROR_FILE_NOT_FOUND) {
+		ofLogError("ofUtils") << "ofLaunchDefaultApp(): file not found, path \"" << path << "\"";
+		return false;
+	} else if (ret < 32) {
+		ofLogError("ofUtils") << "ofLaunchDefaultApp(): couldn't launch file, path \"" << path << "\"";
+		return false;
+	}
+
+	return true;
+#elif defined TARGET_OSX || defined TARGET_LINUX
+	if (!ofFile::doesFileExist(path))
+	{
+		ofLogError("ofUtils") << "ofLaunchDefaultApp(): file not found, path \"" << path << "\"";
+		return false;
+	}
+
+	#if defined TARGET_OSX
+	string commandStr = "open";
+	#elif defined TARGET_LINUX
+	string commandStr = "xdg-open";
+	#endif
+
+	commandStr += " \"" + ofToDataPath(path) + "\"";
+	int ret = system(commandStr.c_str());
+	if(ret!=0) {
+		ofLogError("ofUtils") << "ofLaunchDefaultApp(): couldn't launch file, path \"" << path << "\"";
+		return false;
+	}
+
+	return true;
+#endif
+	
+	return false;
+}
+
+//--------------------------------------------------
 void ofLaunchBrowser(string _url, bool uriEncodeQuery){
 
     Poco::URI uri;
