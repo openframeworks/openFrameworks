@@ -69,6 +69,10 @@ PLATFORM SPECIFIC
  
 CORE ADDONS
 -----------
+### ofxOsc
+        / Upgrade oscpack to version 1.1.0
+        + ofxOscReceiver::setup() learns a new optional parameter allowReuse (default false) which allows multiple receivers to listen to the same port if sender uses broadcast
+        + ofxOscSender::setup() learns a new optional parameter enableBroadcast (default false) which allows broadcasting messages.
 
 PROJECT GENERATOR
 -----------------

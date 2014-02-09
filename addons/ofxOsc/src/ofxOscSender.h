@@ -54,7 +54,7 @@ public:
 	~ofxOscSender();
 
 	/// send messages to hostname and port
-	void setup( std::string hostname, int port );
+	void setup( std::string hostname, int port, bool enableBroadcast = false );
 
 	/// send the given message
 	void sendMessage( ofxOscMessage& message );
@@ -66,7 +66,9 @@ public:
 
 private:
 	void shutdown();
-		
+	/// Enable broadcast addresses (e.g. x.x.x.255)
+	void setEnableBroadcast(bool enableBroadcast);
+
 	// helper methods for constructing messages
 	void appendBundle( ofxOscBundle& bundle, osc::OutboundPacketStream& p );
 	void appendMessage( ofxOscMessage& message, osc::OutboundPacketStream& p );

@@ -39,7 +39,7 @@ ofxOscReceiver::ofxOscReceiver()
 	listen_socket = NULL;
 }
 
-void ofxOscReceiver::setup( int listen_port )
+void ofxOscReceiver::setup( int listen_port, bool allowReuse )
 {
 	// if we're already running, shutdown before running again
 	if ( listen_socket )
@@ -55,6 +55,7 @@ void ofxOscReceiver::setup( int listen_port )
 	// create socket
 	socketHasShutdown = false;
 	listen_socket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, listen_port ), this );
+	setAllowReuse(allowReuse);
 
 	// start thread
 	#ifdef TARGET_WIN32
@@ -101,6 +102,10 @@ void ofxOscReceiver::shutdown()
 		delete listen_socket;
 		listen_socket = NULL;
 	}
+}
+
+void ofxOscReceiver::setAllowReuse(bool allowReuse){
+	listen_socket->SetAllowReuse(allowReuse);
 }
 
 ofxOscReceiver::~ofxOscReceiver()
@@ -232,9 +237,8 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
         
         getNextMessage(&msg);
         vector<string> address = ofSplitString(msg.getAddress(),"/",true);
-                
-        for(int i=0;i<address.size();i++){
-            
+        for(unsigned int i=0;i<address.size();i++){
+           
             if(p) {
                 if(address[i]==p->getEscapedName()){
                     if(p->type()==typeid(ofParameterGroup).name()){
