@@ -63,6 +63,7 @@
 
 
 #include "keep_alive.h"
+#include "freenect_internal.h"
 
 #include <libusb-1.0/libusb.h>
 #include <stdio.h>
@@ -157,14 +158,30 @@ static int set_led(libusb_device_handle* dev, int state) {
 void freenect_extra_keep_alive(int pid){
 
 	int res;
-	int state_to_set = 4;
+	int state_to_set = 3;
 
 	libusb_context* ctx = NULL;
 	libusb_init(&ctx);
 
 	libusb_device_handle* dev = NULL;
+
+    //check the default audio device
+    dev = libusb_open_device_with_vid_pid(ctx, 0x045e, pid);
+    
+    //K4W only:
+    //if the firmware is uploaded the device could have a two different PIDs based on which firmware was uploaded.
+    //so we have to check for both
+    //note: it might be better if we pass in the PID of the camera and then find the audio device that is in the same usb tree/hub - might be more reliable when multiple devices are plugged in
+    if( dev == NULL && pid == PID_K4W_AUDIO ){
+        pid = PID_K4W_AUDIO_ALT_1;
+        dev = libusb_open_device_with_vid_pid(ctx, 0x045e, pid);
+    }
+    if( dev == NULL && pid == PID_K4W_AUDIO_ALT_1 ){
+        pid = PID_K4W_AUDIO_ALT_2;
 	dev = libusb_open_device_with_vid_pid(ctx, 0x045e, pid);
-	if (dev == NULL) {
+    }
+        
+    if(dev == NULL) {
 		LOG("freenect extra keepAlive: Failed to open audio device\n");
 		libusb_exit(ctx);
         return;
