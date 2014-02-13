@@ -239,6 +239,7 @@ void ofAppGLFWWindow::initializeWindow(){
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
 	glfwSetDropCallback(windowP, drop_cb);
+	glfwSetCursorEnterCallback(windowP, entry_cb);
 
 }
 
