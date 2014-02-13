@@ -265,7 +265,7 @@ void ofNotifyMouseReleased(int x, int y, int button);
 void ofNotifyMouseDragged(int x, int y, int button);
 void ofNotifyMouseMoved(int x, int y);
 void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent);
-void ofNotiftWindowEntry(int state);
+void ofNotifyWindowEntry(int state);
 
 void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
