@@ -87,6 +87,7 @@ public:
 		int		numSamples;				// number of samples for multisampling (set 0 to disable)
 
 		Settings();
+		bool operator!=(const Settings & other);
 	};
 private:
 	Settings 			settings;
