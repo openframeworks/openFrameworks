@@ -57,6 +57,7 @@ ofURLFileLoader::ofURLFileLoader() {
 
 ofHttpResponse ofURLFileLoader::get(string url) {
     ofHttpRequest request(url,url);
+    request.type = OF_HTTP_GET;
     return handleRequest(request);
 }
 
@@ -68,6 +69,7 @@ ofHttpResponse ofURLFileLoader::get(ofHttpRequest request){
 int ofURLFileLoader::getAsync(string url, string name){
     if(name=="") name=url;
     ofHttpRequest request(url,name);
+    request.type = OF_HTTP_GET;
     lock();
     requests.push_back(request);
     unlock();
@@ -173,28 +175,35 @@ void ofURLFileLoader::threadedFunction() {
 
 ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
     try {
-        URI uri(request.url);
+        URI uri;
+        if(request.redirect)
+            uri = URI(request.redirecturl);
+        else
+            uri = URI(request.url);
+
         std::string path(uri.getPathAndQuery());
         if (path.empty()) path = "/";
         
-        
-        
-        string method;
+        string method = "";
         if(request.type == OF_HTTP_GET){
             method = HTTPRequest::HTTP_GET;
-        }else if(request.type == OF_HTTP_PUT){
+        }
+        if(request.type == OF_HTTP_PUT){
             method = HTTPRequest::HTTP_PUT;
-        }else if(request.type == OF_HTTP_POST){
+        }
+        if(request.type == OF_HTTP_POST){
             method = HTTPRequest::HTTP_POST;
-        }else if(request.type == OF_HTTP_DELETE){
+        }
+        if(request.type == OF_HTTP_DELETE){
             method = HTTPRequest::HTTP_DELETE;
-        }else{
+        }
+        if(method == ""){
             method = HTTPRequest::HTTP_GET;
         }
         
         
         HTTPRequest req(method, path, HTTPMessage::HTTP_1_1);
-        
+
         bool usesForm = false;
         if(request.header.size() > 0){
             map<string, string>::iterator iter;
@@ -232,6 +241,8 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
             }
             
             form.prepareSubmit(req);
+        }else{
+            usesForm = false;
         }
         
         
@@ -251,7 +262,7 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
             session = ofPtr<HTTPSession>(httpsSession);
         }else{
             HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
-            httpSession->setTimeout(Poco::Timespan(20,0));
+            httpSession->setTimeout(Poco::Timespan(30,0));
             if(usesForm)
                 form.write(httpSession->sendRequest(req));
             else
@@ -260,6 +271,17 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
             rs = &httpSession->receiveResponse(res);
             session = ofPtr<HTTPSession>(httpSession);
         }
+
+        
+        if(res.getStatus() > 300 && res.getStatus() < 400 && request.redirectCount < 10){
+            cout<<"REDIRECT "<<endl;
+            request.redirecturl = res.get("Location", "");
+            request.redirect = true;
+            request.redirectCount++;
+            cout<<"REDIRECT "<<request.url<<endl;
+            return handleRequest(request);
+        }
+        
         if(!request.saveTo){
             return ofHttpResponse(request,*rs,res.getStatus(),res.getReason());
         }else{
@@ -276,6 +298,7 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
                 }
                 else n = 0;
             }
+    
             return ofHttpResponse(request,res.getStatus(),res.getReason());
         }
         

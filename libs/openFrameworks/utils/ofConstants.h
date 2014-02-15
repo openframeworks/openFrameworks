@@ -26,12 +26,11 @@ enum ofTargetPlatform{
 	OF_TARGET_LINUXARMV7L, // arm v7 little endian
 };
 
-
 enum ofHttpRequestType{
-    OF_HTTP_POST,
-    OF_HTTP_PUT,
-    OF_HTTP_GET,
-    OF_HTTP_DELETE
+    OF_HTTP_POST = 1,
+    OF_HTTP_PUT = 2,
+    OF_HTTP_GET = 3,
+    OF_HTTP_DELETE = 4
 };
 
 #ifndef OF_TARGET_IPHONE

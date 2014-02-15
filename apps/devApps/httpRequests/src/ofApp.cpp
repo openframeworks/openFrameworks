@@ -16,6 +16,11 @@ string POST = "http://httpbin.org/post";
 string PUT = "http://httpbin.org/put";
 // /delete Returns DELETE data
 string DELETE = "http://httpbin.org/delete";
+// /re
+string REDIRECT_30 = "http://httpbin.org/redirect/30";
+string REDIRECT_15 = "http://httpbin.org/redirect/15";
+string REDIRECT_10 = "http://httpbin.org/redirect/10";
+string REDIRECT_5 = "http://httpbin.org/redirect/5";
 
 ofHttpRequest httpPut, httpPost, httpGet, httpDelete, httpUserAgent, httpHeaders;
 ofHttpResponse currentResponse;
@@ -37,9 +42,10 @@ void ofApp::setup(){
     
 
     
-    httpGet.url = GET;
+    httpGet.url = REDIRECT_15;
     httpGet.type = OF_HTTP_GET;
     httpGet.name = "get";
+    
     
 
     httpPost.type = OF_HTTP_POST;

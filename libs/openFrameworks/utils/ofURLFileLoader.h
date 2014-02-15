@@ -17,22 +17,29 @@ class ofHttpRequest{
 public:
     ofHttpRequest()
 	:saveTo(false)
-	,id(nextID++){};
+	,id(nextID++)
+    ,redirectCount(0)
+    ,redirect(false)
+    {};
     
 	ofHttpRequest(string url,string name, bool saveTo=false, ofHttpRequestType type = OF_HTTP_GET)
 	:url(url)
 	,name(name)
 	,saveTo(saveTo)
+    ,redirectCount(0)
+    ,redirect(false)
 	,id(nextID++)
     {
-        
+
     };
     
-    
 	string				url;
+    string              redirecturl;
 	string				name;
+    bool                redirect;
     ofHttpRequestType   type;
 	bool				saveTo;
+    int                 redirectCount;
     
     int getID(){return id;}
     void addCookie(string key, string value){cookies.insert(make_pair(key, value));}
@@ -51,6 +58,73 @@ private:
 	static int			nextID;
     
 };
+
+
+class ofHttpPut : public ofHttpRequest{
+    
+public:
+    ofHttpPut()
+    :ofHttpRequest()
+    {};
+    
+	ofHttpPut(string url,string name, bool saveTo=false)
+	:ofHttpRequest(url, name, saveTo, OF_HTTP_PUT)
+	{};
+
+private:
+	int					id;
+	static int			nextID;
+};
+
+class ofHttpGet : public ofHttpRequest{
+    
+public:
+    ofHttpGet()
+    :ofHttpRequest()
+    {};
+    
+	ofHttpGet(string url,string name, bool saveTo=false)
+	:ofHttpRequest(url, name, saveTo, OF_HTTP_GET)
+	{};
+    
+private:
+	int					id;
+	static int			nextID;
+};
+
+
+class ofHttpPost : public ofHttpRequest{
+    
+public:
+    ofHttpPost()
+    :ofHttpRequest()
+    {};
+    
+	ofHttpPost(string url,string name, bool saveTo=false)
+	:ofHttpRequest(url, name, saveTo, OF_HTTP_POST)
+	{};
+    
+private:
+	int					id;
+	static int			nextID;
+};
+
+class ofHttpDelete : public ofHttpRequest{
+    
+public:
+    ofHttpDelete()
+    :ofHttpRequest()
+    {};
+    
+	ofHttpDelete(string url,string name, bool saveTo=false)
+	:ofHttpRequest(url, name, saveTo, OF_HTTP_DELETE)
+	{};
+    
+private:
+	int					id;
+	static int			nextID;
+};
+
 
 class ofHttpResponse{
 public:
@@ -89,6 +163,10 @@ void ofRemoveAllURLRequests();
 void ofStopURLLoader();
 
 ofEvent<ofHttpResponse> & ofURLResponseEvent();
+ofEvent<ofHttpResponse> & ofHTTPSuccessEvent();
+ofEvent<ofHttpResponse> & ofHTTPErrorEvent();
+ofEvent<ofHttpResponse> & ofHTTPRedirectEvent();
+
 
 template<class T>
 void ofRegisterURLNotification(T * obj){
@@ -100,6 +178,19 @@ void ofUnregisterURLNotification(T * obj){
 	ofRemoveListener(ofURLResponseEvent(),obj,&T::urlResponse);
 }
 
+template <class T>
+void ofRegisterHTTPEvents(T * obj){
+    ofAddListener(ofHTTPSuccessEvent(), obj, &T::httpSuccess);
+    ofAddListener(ofHTTPErrorEvent(), obj, &T::httpError);
+    ofAddListener(ofHTTPRedirectEvent(), obj, &T::httpRedirect);
+}
+
+template <class T>
+void ofUnregisterHTTPEvents(T * obj){
+    ofRemoveListener(ofHTTPSuccessEvent(), obj, &T::httpSuccess);
+    ofRemoveListener(ofHTTPErrorEvent(), obj, &T::httpError);
+    ofRemoveListener(ofHTTPRedirectEvent(), obj, &T::httpRedirect);
+}
 
 class ofURLFileLoader : public ofThread  {
     
