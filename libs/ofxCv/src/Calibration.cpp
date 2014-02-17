@@ -144,6 +144,13 @@ namespace ofxCv {
 		updateUndistortion();
 		this->ready = true;
 	}
+	void Calibration::reset(){
+		this->ready = false;
+		this->reprojectionError = 0.0;
+		this->imagePoints.clear();
+		this->objectPoints.clear();
+		this->perViewErrors.clear();
+	}
 	void Calibration::setPatternType(CalibrationPattern patternType) {
 		this->patternType = patternType;
 	}
