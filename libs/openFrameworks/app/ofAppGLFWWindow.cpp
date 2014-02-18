@@ -1030,7 +1030,7 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 //------------------------------------------------------------
 
 void ofAppGLFWWindow::entry_cb(GLFWwindow* windowP_, int state){
-	ofNotiftWindowEntry(int state);
+	ofNotifyWindowEntry(state);
 }
 
 //------------------------------------------------------------

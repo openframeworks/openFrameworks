@@ -113,7 +113,7 @@ private:
 	static void	scroll_cb(GLFWwindow* windowP_, double x, double y);
 	static void 	drop_cb(GLFWwindow* windowP_, const char* dropString);
 	static void	error_cb(int errorCode, const char* errorDescription);
-	static void	entry_cb(GLFWwindow* windowP, int state);
+	static void	entry_cb(GLFWwindow* windowP_, int state);
 	static void 	exitApp();
 
 #ifdef TARGET_LINUX
