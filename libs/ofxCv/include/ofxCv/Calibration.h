@@ -54,7 +54,8 @@ namespace ofxCv {
 		
 		void save(string filename, bool absolute = false) const;
 		void load(string filename, bool absolute = false);
-		
+		void reset();
+
 		void setPatternType(CalibrationPattern patternType);
 		void setPatternSize(int xCount, int yCount);
 		void setSquareSize(float squareSize);
