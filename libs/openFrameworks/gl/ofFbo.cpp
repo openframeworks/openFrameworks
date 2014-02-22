@@ -89,6 +89,25 @@ ofFbo::Settings::Settings() {
 	numSamples				= 0;
 }
 
+bool ofFbo::Settings::operator!=(const Settings & other){
+	return
+	width					!= other.width ||
+	height					!= other.height ||
+	numColorbuffers			!= other.numColorbuffers ||
+	colorFormats			!= other.colorFormats ||
+	useDepth				!= other.useDepth ||
+	useStencil				!= other.useStencil ||
+	depthStencilAsTexture	!= other.depthStencilAsTexture ||
+	textureTarget			!= other.textureTarget ||
+	internalformat			!= other.internalformat ||
+	depthStencilInternalFormat	!= other.depthStencilInternalFormat ||
+	wrapModeHorizontal		!= other.wrapModeHorizontal ||
+	wrapModeVertical		!= other.wrapModeVertical ||
+	minFilter				!= other.minFilter ||
+	maxFilter				!= other.maxFilter ||
+	numSamples				!= other.numSamples;
+}
+
 static map<GLuint,int> & getIdsFB(){
 	static map<GLuint,int> * idsFB = new map<GLuint,int>;
 	return *idsFB;
@@ -371,13 +390,52 @@ void ofFbo::allocate(Settings _settings) {
 
 	destroy();
 
+	// check that passed values are correct
 	if(_settings.width == 0) _settings.width = ofGetWidth();
 	if(_settings.height == 0) _settings.height = ofGetHeight();
 	if(_settings.numSamples > maxSamples() && maxSamples() > -1) {
 		ofLogWarning("ofFbo") << "allocate(): clamping numSamples " << _settings.numSamples << " to maxSamples " << maxSamples() << " for frame buffer object" << fbo;
 		_settings.numSamples = maxSamples();
 	}
-	settings = _settings;
+
+	if(_settings.depthStencilAsTexture && _settings.numSamples){
+		ofLogWarning("ofFbo") << "allocate(): multisampling not supported with depthStencilAsTexture, setting 0 samples for frame buffer object " << fbo;
+		_settings.numSamples = 0;
+	}
+
+	//currently depth only works if stencil is enabled. 
+	// http://forum.openframeworks.cc/index.php/topic,6837.0.html
+#ifdef TARGET_OPENGLES
+	if(_settings.useDepth){
+	  	_settings.useStencil = true;
+	}
+    if( _settings.depthStencilAsTexture ){
+        _settings.depthStencilAsTexture = false;
+        ofLogWarning("ofFbo") << "allocate(): depthStencilAsTexture is not available for iOS";
+    }
+#endif
+    
+	GLenum depthAttachment = GL_DEPTH_ATTACHMENT;
+
+	if( _settings.useDepth && _settings.useStencil ){
+		_settings.depthStencilInternalFormat = GL_DEPTH_STENCIL;
+		#ifdef TARGET_OPENGLES
+			depthAttachment = GL_DEPTH_ATTACHMENT;
+		#else
+			depthAttachment = GL_DEPTH_STENCIL_ATTACHMENT;
+		#endif
+	}else if(_settings.useDepth){
+		depthAttachment = GL_DEPTH_ATTACHMENT;
+	}else if(_settings.useStencil){
+		depthAttachment = GL_STENCIL_ATTACHMENT;
+		_settings.depthStencilInternalFormat = GL_STENCIL_INDEX;
+	}
+
+	// set needed values for allocation on instance settings
+	// the rest will be set by the corresponding methods during allocation
+	settings.width = _settings.width;
+	settings.height = _settings.height;
+	settings.numSamples = _settings.numSamples;
 
 	// create main fbo
 	// this is the main one we bind for drawing into
@@ -386,72 +444,39 @@ void ofFbo::allocate(Settings _settings) {
 	retainFB(fbo);
 	bind();
 
-	if(settings.depthStencilAsTexture && settings.numSamples){
-		ofLogWarning("ofFbo") << "allocate(): multisampling not supported with depthStencilAsTexture, setting 0 samples for frame buffer object " << fbo;
-		settings.numSamples = 0;
-	}
-
-	//currently depth only works if stencil is enabled. 
-	// http://forum.openframeworks.cc/index.php/topic,6837.0.html
-#ifdef TARGET_OPENGLES
-	if(settings.useDepth){
-	  	settings.useStencil = true;
-	}
-    if( settings.depthStencilAsTexture ){
-        settings.depthStencilAsTexture = false;
-        ofLogWarning("ofFbo") << "allocate(): depthStencilAsTexture is not available for iOS";
-    }
-#endif
-    
-	GLenum depthAttachment = GL_DEPTH_ATTACHMENT;
-
-	if( settings.useDepth && settings.useStencil ){
-		settings.depthStencilInternalFormat = GL_DEPTH_STENCIL;
-		#ifdef TARGET_OPENGLES
-			depthAttachment = GL_DEPTH_ATTACHMENT;
-		#else
-			depthAttachment = GL_DEPTH_STENCIL_ATTACHMENT;
-		#endif
-	}else if(settings.useDepth){
-		depthAttachment = GL_DEPTH_ATTACHMENT;
-	}else if(settings.useStencil){
-		depthAttachment = GL_STENCIL_ATTACHMENT;
-		settings.depthStencilInternalFormat = GL_STENCIL_INDEX;
-	}
-
 	//- USE REGULAR RENDER BUFFER
-	if(!settings.depthStencilAsTexture){
-		if(settings.useDepth && settings.useStencil){
-			stencilBuffer = depthBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, depthAttachment);
+	if(!_settings.depthStencilAsTexture){
+		if(_settings.useDepth && _settings.useStencil){
+			stencilBuffer = depthBuffer = createAndAttachRenderbuffer(_settings.depthStencilInternalFormat, depthAttachment);
 			retainRB(stencilBuffer);
 			retainRB(depthBuffer);	
-		}else if(settings.useDepth){
-			depthBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, depthAttachment);
+		}else if(_settings.useDepth){
+			depthBuffer = createAndAttachRenderbuffer(_settings.depthStencilInternalFormat, depthAttachment);
 			retainRB(depthBuffer);
-		}else if(settings.useStencil){
-			stencilBuffer = createAndAttachRenderbuffer(settings.depthStencilInternalFormat, depthAttachment);
+		}else if(_settings.useStencil){
+			stencilBuffer = createAndAttachRenderbuffer(_settings.depthStencilInternalFormat, depthAttachment);
 			retainRB(stencilBuffer);
 		}
 	//- INSTEAD USE TEXTURE
 	}else{
-		if(settings.useDepth || settings.useStencil){
-		createAndAttachDepthStencilTexture(settings.textureTarget,settings.depthStencilInternalFormat,depthAttachment);
-#ifdef TARGET_OPENGLES
-		// if there's depth and stencil the texture should be attached as
-		// depth and stencil attachments
-		// http://www.khronos.org/registry/gles/extensions/OES/OES_packed_depth_stencil.txt
-		if(settings.useDepth && settings.useStencil){
-	        glFramebufferTexture2D(GL_FRAMEBUFFER,
-	                               GL_STENCIL_ATTACHMENT,
-	                               GL_TEXTURE_2D, depthBufferTex.texData.textureID, 0);
+		if(_settings.useDepth || _settings.useStencil){
+			createAndAttachDepthStencilTexture(_settings.textureTarget,_settings.depthStencilInternalFormat,depthAttachment);
+			#ifdef TARGET_OPENGLES
+				// if there's depth and stencil the texture should be attached as
+				// depth and stencil attachments
+				// http://www.khronos.org/registry/gles/extensions/OES/OES_packed_depth_stencil.txt
+				if(_settings.useDepth && _settings.useStencil){
+					glFramebufferTexture2D(GL_FRAMEBUFFER,
+										   GL_STENCIL_ATTACHMENT,
+										   GL_TEXTURE_2D, depthBufferTex.texData.textureID, 0);
+				}
+			#endif
 		}
-#endif
-	}
 	}
 
 	// if we want MSAA, create a new fbo for textures
 	#ifndef TARGET_OPENGLES
-		if(settings.numSamples){
+		if(_settings.numSamples){
 			glGenFramebuffers(1, &fboTextures);
 			retainFB(fboTextures);
 		}else{
@@ -459,19 +484,17 @@ void ofFbo::allocate(Settings _settings) {
 		}
 	#else
 		fboTextures = fbo;
-		if(settings.numSamples){
+		if(_settings.numSamples){
 			ofLogWarning("ofFbo") << "allocate(): multisampling not supported in OpenGL ES";
 		}
 	#endif
 
 	// now create all textures and color buffers
-	if(settings.colorFormats.size() > 0) {
-		for(int i=0; i<(int)settings.colorFormats.size(); i++) createAndAttachTexture(settings.colorFormats[i], i);
-	}
-	else if(settings.numColorbuffers > 0) {
-		for(int i=0; i<settings.numColorbuffers; i++) createAndAttachTexture(settings.internalformat, i);
-	}
-	else {
+	if(_settings.colorFormats.size() > 0) {
+		for(int i=0; i<(int)_settings.colorFormats.size(); i++) createAndAttachTexture(_settings.colorFormats[i], i);
+	} else if(_settings.numColorbuffers > 0) {
+		for(int i=0; i<_settings.numColorbuffers; i++) createAndAttachTexture(_settings.internalformat, i);
+	} else {
 		ofLogWarning("ofFbo") << "allocate(): no color buffers specified for frame buffer object " << fbo;
 	}
 
@@ -486,6 +509,10 @@ void ofFbo::allocate(Settings _settings) {
 
 	// unbind it
 	unbind();
+
+
+	// this should never happen
+	if(settings != _settings) ofLogWarning("ofFbo") << "allocation not complete, passed settings not equal to created ones, this is an internal OF bug";
 }
 
 bool ofFbo::isAllocated(){
