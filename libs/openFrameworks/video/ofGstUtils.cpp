@@ -469,6 +469,7 @@ void ofGstUtils::close(){
 		gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_NULL);
 		gst_element_get_state(gstPipeline,NULL,NULL,2*GST_SECOND);
 		// gst_object_unref(gstSink); this crashes, why??
+		if(bus) gst_bus_remove_signal_watch(bus);
 
 		gst_object_unref(gstPipeline);
 		gstPipeline = NULL;
