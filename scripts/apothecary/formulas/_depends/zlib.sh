@@ -20,7 +20,7 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	: # noop
+	: #noop
 }
 
 # executed inside the lib src dir
@@ -28,8 +28,10 @@ function build() {
 	if [ "$TYPE" == "osx" ] ; then
 		echo "build not needed for $TYPE"
 	else
-		./configure --static
-		make clean; make
+		./configure --static \
+					--prefix=$BUILD_ROOT_DIR \
+		make clean; 
+		make
 	fi
 }
 

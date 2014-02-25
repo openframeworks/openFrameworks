@@ -21,7 +21,6 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	
 	# generate the configure script if it's not there
 	if [ ! -f configure ] ; then
 		./autogen.sh
@@ -30,8 +29,14 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
-	./configure --prefix=$BUILD_ROOT_DIR --disable-dependency-tracking
-	make clean; make
+	
+	./configure LDFLAGS="-arch i386 -arch x86_64" \
+				CFLAGS="-Os -arch i386 -arch x86_64" \
+				--prefix=$BUILD_ROOT_DIR \
+				--disable-dependency-tracking
+
+	make clean
+	make
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root

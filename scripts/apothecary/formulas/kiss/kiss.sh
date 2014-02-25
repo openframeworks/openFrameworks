@@ -25,20 +25,22 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	if [ "$TYPE" == "linux" ] ; then
-		cp -Rv $FORMULA_DIR/Makefile.linux .
-	elif [ "$TYPE" == "linux64" ] ; then
-		cp -Rv $FORMULA_DIR/Makefile.linux64 .
-	else
+	: # noop
 }
 
 # executed inside the lib src dir
 function build() {
 
 	if [ "$TYPE" == "linux" ] ; then
-		make -f Makefile.linux	
+		gcc -I./include -c src/kiss_fft.c -o kiss_fft.o
+		gcc -I./include -c src/kiss_fftr.c -o kiss_fftr.o
+		ar r libkiss.a kiss.o
+		echoWarning "TODO: linux build"
+
+	
 	elif [ "$TYPE" == "linux64" ] ; then
-		make -f Makefile.linux64	
+		echoWarning "TODO: linux64 build"
+	
 	else
 		echo "build not needed for $TYPE"
 	fi

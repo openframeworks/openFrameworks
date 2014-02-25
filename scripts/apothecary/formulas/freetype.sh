@@ -33,22 +33,16 @@ function build() {
 	
 	if [ "$TYPE" == "osx" ] ; then
 
-		# 32 bit
-		./configure --prefix=$BUILD_ROOT_DIR CFLAGS="-arch i386"
-		make clean; make
-		cp objs/.libs/libfreetype.a libfreetype-i386.a
+		export CFLAGS="-arch i386 -arch x86_64"
 
-		# 64 bit
-		./configure --prefix=$BUILD_ROOT_DIR CFLAGS="-arch x86_64"
-		make clean; make
-		cp objs/.libs/libfreetype.a libfreetype-x86_64.a
+		# 32 + 64 bit
+		./configure --prefix=$BUILD_ROOT_DIR
 
-		# link into universal lib
-		lipo -c libfreetype-i386.a libfreetype-x86_64.a -o libfreetype.a
-		cp libfreetype.a ./libs
+		make clean; 
+		make;
+		make install;
 
-		# install
-		make install
+		unset CFLAGS
 	
 	elif [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: build vs"
@@ -56,11 +50,13 @@ function build() {
 	elif [ "$TYPE" == "win_cb" ] ; then
 		# configure with arch
 		if [ $ARCH ==  32 ] ; then
-			./configure --prefix=$BUILD_ROOT_DIR CFLAGS="-arch i386"
+			./configure CFLAGS="-arch i386"
 		elif [ $ARCH == 64 ] ; then
-			./configure --prefix=$BUILD_ROOT_DIR CFLAGS="-arch x86_64"
+			./configure CFLAGS="-arch x86_64"
 		fi
-		make clean; make
+		
+		make clean; 
+		make
 
 	elif [ "$TYPE" == "ios" ] ; then
 		# http://shift.net.nz/2010/09/compiling-freetype-for-iphoneios/
@@ -100,19 +96,21 @@ function build() {
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 
-	# make install to BUILD_ROOT_DIR
-	if [ "$TYPE" == "osx" -o "$TYPE" == "win_cb" ] ; then
-		make install
-	fi
+	# copy headers 
+	mkdir -p $1/include/freetype2/freetype/config
 
-	# headers
-	mkdir -p $1/include/freetype2 # not sure why we need the freetype2 subdir
-	cp -Rv include/* $1/include/freetype2
+	# copy files from the build root
+	cp -Rv $BUILD_ROOT_DIR/include/freetype2/* $1/include/freetype2/
+	cp -Rv $BUILD_ROOT_DIR/include/ft2build.h $1/include/freetype2/
 
-	# lib
+	# copy lib
 	mkdir -p $1/lib/$TYPE
+
 	if [ "$TYPE" == "osx" -o "$TYPE" == "ios" ] ; then
-		cp -v libfreetype.a $1/lib/$TYPE/freetype.a
+		# TODO use the lib prefix.  
+		# Required CoreOF.xcconfig mod.
+		# Required ios CoreOF.xcconfig mod.
+		cp -v $BUILD_ROOT_DIR/lib/libfreetype.a $1/lib/$TYPE/freetype.a
 	elif [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: copy vs lib"
 	elif [ "$TYPE" == "win_cb" ] ; then
@@ -133,7 +131,6 @@ function clean() {
 		echoWarning "TODO: clean android"
 	
 	else
-		make uninstall
 		make clean
 		rm -f *.a *.lib
 	fi

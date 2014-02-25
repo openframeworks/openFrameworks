@@ -108,7 +108,9 @@ VALID_TYPES=( "osx" "osx-clang-libc++" "linux" "linux64" "vs" "win_cb" "ios" "an
 A_VERBOSE=0
 
 # prefer git instead of download tarballs
-USE_GIT=0
+# This remains _UNSET_ if git is not in use.
+# To use, set USE_GIT=1
+USE_GIT=
 
 # nice, detailed help message
 HELP="usage: apothecary [options] <command> [<core|addons|libName|addonName>]
@@ -131,7 +133,7 @@ commands:
   
 options:
   -t	specify libary type when building, detects type from OS by default
-	valid types: osx, linux, linux64, vs, win_cb, ios, android
+	valid types: osx, linux, linux64, linuxarm6l, linuxarm7l, vs, win_cb, ios, android
 
   -a	specify architecture, either 32 or 64 (default is 32 bit)
 	note: not currently needed, reserved for future use
@@ -531,7 +533,7 @@ function downloadFormula(){
 	if [ -e $1 ] ; then
 		echo "... skipping, src dir already exists"
 	else
-		if [ $USE_GIT == 1 ] && [[ "${GIT_URL:+x}" ]] ; then
+		if [ -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
 			gitclone $1 $GIT_URL ${GIT_TAG:-master}
 		else
 			download
@@ -620,8 +622,6 @@ function copyFormula() {
 		echoError " Did you download the formula?"
 		exit 1
 	fi
-
-	mkdir -p $LIBS_DIR/$1
 
 	cd $BUILD_DIR/$1
 	copy $LIBS_DIR/$1
@@ -761,14 +761,6 @@ function clean() {
 # $2 = dependency name
 function apothecaryDepend() {
 	local depend="${2%.*}" # removes extension
-	local gitArgs
-
-	# pass along git argument for downloading
-	if [ "$1" == "download" ] ; then
-		if [ USE_GIT==1 ] ; then
-			gitArgs=-g
-		fi
-	fi
 
 	# detect if dependency is a main OF lib
 	if [ -f $APOTHECARY_DIR/$REL_FORMULAS_DIR/$depend.sh -o -d $APOTHECARY_DIR/$REL_FORMULAS_DIR/$depend ] ; then
@@ -788,7 +780,8 @@ function apothecaryDepend() {
 		exit 1
 	fi
 
-	$APOTHECARY_SCRIPT -t $TYPE -a $ARCH $gitArgs $1 $depend
+	# Uses git IF the USE_GIT variable is set
+	$APOTHECARY_SCRIPT -t $TYPE -a $ARCH ${USE_GIT:+-g} $1 $depend 
 }
 
 # do a command on all formula dependencies in separate apothecary runs

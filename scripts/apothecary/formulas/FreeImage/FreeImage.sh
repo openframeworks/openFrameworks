@@ -91,7 +91,7 @@ function build() {
 		make -f Makefile.osx
 
 	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
-		make -j -f Makefile.osx
+		make -f Makefile.osx
 	
 	elif [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: vs build"

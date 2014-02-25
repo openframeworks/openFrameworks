@@ -8,6 +8,12 @@
 
 FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" )
 
+#FORMULA_DEPENDS=( "pkg-config" )
+
+# tell apothecary we want to manually call the dependency commands
+# as we set some env vars for osx the depends need to know about
+#FORMULA_DEPENDS_MANUAL=1
+
 # define the version
 VER=4.0.12
 
@@ -30,36 +36,43 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
+	# The ./configure / MAKEFILE sequence is broken for OSX, making it 
+	# impossible to create universal libs in one pass.  As a result, we compile
+	# the project manually according to the author's page:
+	# https://www.music.mcgill.ca/~gary/rtaudio/compiling.html
 
-	# choose audio api for configure
 	if [ "$TYPE" == "osx" ] ; then
-		# with help from http://stackoverflow.com/questions/3350107/how-to-compile-universal-libraries-on-mac-os-x
-		local API="--with-core"
 
-		# 32 bit
-		./configure $API CFLAGS="-arch i386" CPPFLAGS="-arch i386" LDFLAGS="-arch i386" 
-		make clean; make
-		mv librtaudio.a librtaudio-i386.a
+		# Compile the program
+		/usr/bin/g++ -O2 \
+					 -Wall \
+					 -fPIC \
+					 -arch i386 \
+					 -arch x86_64 \
+					 -Iinclude \
+					 -DHAVE_GETTIMEOFDAY \
+					 -D__MACOSX_CORE__ \
+					 -c RtAudio.cpp \
+					 -o RtAudio.o
 
-		# 64 bit
-		./configure $API CFLAGS="-arch x86_64" CPPFLAGS="-arch x86_64" LDFLAGS="-arch x86_64" 
-		make clean; make
-		mv librtaudio.a librtaudio-x86_64.a
-
-		# link into universal lib
-		lipo -c librtaudio-i386.a librtaudio-x86_64.a -o librtaudio.a
+		/usr/bin/ar ruv librtaudio.a RtAudio.o
+		/usr/bin/ranlib librtaudio.a
 
 	else
 
 		if [ "$TYPE" == "linux" -o "$TYPE" == "linux64" ] ; then
 			local API="--with-alsa" # jack or pulse as well?
-			echoWarning "TODO: build linux"
-			
+			./configure --with-alsa
+			make 
 		elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
 			local API="--with-ds" # asio as well?
 			echoWarning "TODO: build $TYPE"
 		fi
 	fi
+
+	# clean up env vars
+	# unset PKG_CONFIG PKG_CONFIG_PATH
+
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
@@ -81,6 +94,7 @@ function copy() {
 	else
 		cp -v librtaudio.a $1/lib/$TYPE/rtaudio.a
 	fi
+
 }
 
 # executed inside the lib src dir
@@ -90,4 +104,9 @@ function clean() {
 	else
 		make clean
 	fi
+
+	# manually clean dependencies
+	#apothecaryDependencies clean
+
+
 }

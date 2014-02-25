@@ -32,7 +32,7 @@ function prepare() {
 	fi
 
 	# copy in build script and CMake toolchains adapted from Assimp
-	if [ "$OS" == "osx" ] ; then
+	if [ "$OS" == "ios" ] ; then
 		mkdir -p build
 		cp -Rv $FORMULA_DIR/ios build
 		chmod +x build/ios/build_ios.sh
@@ -52,18 +52,13 @@ function build() {
 
 		# 32 bit
 		rm -f CMakeCache.txt
-		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch i386" -DCMAKE_CXX_FLAGS="-arch i386" .
-		make clean; make
-		mv libtess2.a libtess2-i386.a
-
-		# 64 bit
-		rm -f CMakeCache.txt
-		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch x86_64" -DCMAKE_CXX_FLAGS="-arch x86_64" .
-		make clean; make
-		mv libtess2.a libtess2-x86_64.a
-
-		# link into universal lib
-		lipo -c libtess2-i386.a libtess2-x86_64.a -o libtess2.a
+		cmake -G 'Unix Makefiles' \
+			$buildOpts \
+			-DCMAKE_C_FLAGS="-arch i386 -arch x86_64" \
+			-DCMAKE_CXX_FLAGS="-arch i386 -arch x86_64" \
+			.
+		make clean 
+		make
 
 	elif [ "$TYPE" == "vs" ] ; then
 		cmake -G "Visual Studio $VS_VER"

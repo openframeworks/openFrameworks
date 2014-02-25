@@ -20,7 +20,6 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	
 	# generate the configure script if it's not there
 	if [ ! -f configure ] ; then
 		./autogen.sh
@@ -31,7 +30,10 @@ function prepare() {
 function build() {
 
 	# setting empty flags so it ignores an existing pkg-config install
-	./configure --prefix=$BUILD_ROOT_DIR --with-internal-glib GLIB_CFLAGS="" GLIB_LIBS=""
+	# PKG-CONFIG does not need the typical architecture flags because 
+	# it is a tool and does not contribute static lib objects to the core
+    ./configure --prefix=$BUILD_ROOT_DIR --with-internal-glib GLIB_CFLAGS="" GLIB_LIBS=""
+
 	make
 }
 

@@ -29,7 +29,6 @@ GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	
 	curl -LO http://cairographics.org/releases/cairo-$VER.tar.xz
 	tar -xf cairo-$VER.tar.xz
 	mv cairo-$VER cairo
@@ -41,76 +40,89 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
+	# generate the configure script if it's not there
+	if [ ! -f configure ] ; then
+		./autogen.sh
+	fi
 
 	# manually prepare dependencies
 	apothecaryDependencies prepare
+
+	# Build and copy all dependencies in preparation
+	apothecaryDepend build pkg-config
+	apothecaryDepend copy pkg-config
+	apothecaryDepend build libpng
+	apothecaryDepend copy libpng
+	apothecaryDepend build pixman
+	apothecaryDepend copy pixman
+	apothecaryDepend build freetype
+	apothecaryDepend copy freetype
+
 }
 
 # executed inside the lib src dir
 function build() {
-	
-	# manually build pkg-config first
-	apothecaryDepend build pkg-config
-	apothecaryDepend copy pkg-config
 
-	# we're using a custom version of pkg-config, so let the cairo build system know
-	export PKG_CONFIG=$BUILD_ROOT_DIR/bin/pkg-config
-	export PKG_CONFIG_PATH=$BUILD_ROOT_DIR/lib/pkgconfig
-
-	# set flags for osx 32 & 64 bit fat lib
-	if [ "$TYPE" == "osx" ] ; then
-		export MACOSX_DEPLOYMENT_TARGET=$OSX_MIN_SDK_VER
-   		export LDFLAGS="-arch i386 -arch x86_64 -isysroot $XCODE_DEV_ROOT/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$OSX_SDK_VER.sdk"
-   		export CFLAGS="-Os -arch i386 -arch x86_64 -isysroot $XCODE_DEV_ROOT/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$OSX_SDK_VER.sdk"
-	
-	elif [ "$TYPE" == "vs" ] ; then
+	if [ "$TYPE" == "vs" ] ; then
 		make -f Makefile.win32
-		echoWarning "TODO: vs build settings here?"
-	
-	elif [ "$TYPE" == "win_cb" ] ; then
-		echoWarning "TODO: win_cb build settings here?"
+	else 
+		./configure PKG_CONFIG="$BUILD_ROOT_DIR/bin/pkg-config" \
+					PKG_CONFIG_PATH="$BUILD_ROOT_DIR/lib/pkgconfig" \
+					LDFLAGS="-arch i386 -arch x86_64" \
+					CFLAGS="-Os -arch i386 -arch x86_64" \
+					--prefix=$BUILD_ROOT_DIR \
+					--disable-gtk-doc \
+					--disable-gtk-doc-html \
+					--disable-gtk-doc-pdf \
+					--disable-full-testing \
+					--disable-dependency-tracking \
+					--disable-xlib \
+					--disable-qt 
+
+		make
+		make install
 	fi
 
-	# manually build & copy other dependencies here so they are built with the env vars set on if on osx
-	apothecaryDepend build libpng
-	apothecaryDepend build pixman
-	apothecaryDepend copy libpng
-	apothecaryDepend copy pixman
-
-	# build cairo
-	./configure --prefix=$BUILD_ROOT_DIR --disable-dependency-tracking --disable-xlib --disable-ft
-	make install
-
-	# clean up env vars
-	unset PKG_CONFIG PKG_CONFIG_PATH
-
-	if [ "$TYPE" == "osx" ] ; then
-		unset MACOSX_DEPLOYMENT_TARGET CFLAGS LDFLAGS
-	fi
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 
-	# change to prefix location
-	cd $BUILD_ROOT_DIR
+	# make the path in the libs dir
+	mkdir -p $1/include/cairo
 
-	# headers
-	mkdir -p $1/include
-	cp -Rv include/* $1/include
+	# copy the cairo headers
+	cp -Rv $BUILD_ROOT_DIR/include/cairo/* $1/include/cairo
 
-	# lib
+	# make the path in the libs dir
+	mkdir -p $1/include/libpng16
+
+	# copy the cairo headers
+	cp -Rv $BUILD_ROOT_DIR/include/libpng16/* $1/include/libpng16
+
+	# make the path in the libs dir
+	mkdir -p $1/include/pixman-1
+
+	# copy the cairo headers
+	cp -Rv $BUILD_ROOT_DIR/include/pixman-1/* $1/include/pixman-1
+
+	# copy the png symlinks
+	cp -v $BUILD_ROOT_DIR/include/png* $1/include/
+
+	# make the libs path 
 	mkdir -p $1/lib/$TYPE
+
 	if [ "$TYPE" == "vs" ] ; then
 		echoWarning "copy vs lib"
 
 	elif [ "$TYPE" == "osx" -o "$TYPE" == "win_cb" ] ; then
 		if [ "$TYPE" == "osx" ] ; then
-			cp -v lib/libcairo-script-interpreter.a $1/lib/$TYPE/cairo-script-interpreter.a
+			cp -v $BUILD_ROOT_DIR/lib/libcairo-script-interpreter.a $1/lib/$TYPE/libcairo-script-interpreter.a
 		fi
-		cp -v lib/libcairo.a $1/lib/$TYPE/cairo.a
-		cp -v lib/libpixman-1.a $1/lib/$TYPE/pixman-1.a
+		cp -v $BUILD_ROOT_DIR/lib/libcairo.a $1/lib/$TYPE/cairo.a
+		cp -v $BUILD_ROOT_DIR/lib/libpixman-1.a $1/lib/$TYPE/pixman-1.a
 	fi
+
 }
 
 # executed inside the lib src dir
