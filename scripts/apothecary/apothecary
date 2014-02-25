@@ -533,7 +533,7 @@ function downloadFormula(){
 	if [ -e $1 ] ; then
 		echo "... skipping, src dir already exists"
 	else
-		if [ -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
+		if [ ! -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
 			gitclone $1 $GIT_URL ${GIT_TAG:-master}
 		else
 			download
@@ -644,7 +644,7 @@ function cleanFormula() {
 	fi
 
 	cd $BUILD_DIR/$1
-	if [ $USE_GIT == 1 ] && [ -d $BUILD_DIR/$1/.git ] ; then
+	if  [! -z "$USE_GIT" ] && [ -d $BUILD_DIR/$1/.git ] ; then
 		git clean -d -f -q -x
 		git reset -q --hard HEAD
 		if [[ ${SWITCH_VER:+x} ]]; then
