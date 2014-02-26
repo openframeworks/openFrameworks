@@ -11,6 +11,7 @@
 | Lib                             | osx | linux | linux64 | linuxarmv6l | linuxarmv7l | vs | win_cb | ios | android |
 |---------------------------------|-----|-------|---------|-------------|-------------|----|--------|-----|---------|
 | FreeImage                       | ✓?  | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | ✓?  | ✗       |
+| FreeType                        | ✓   | N/A   | N/A     | N/A         | N/A         | ?  | ?      | ?   | ?       |
 | cairo                           | ✓?  | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | fmodex                          | ✗   | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
 | glew                            | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
