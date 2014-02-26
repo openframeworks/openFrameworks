@@ -14,7 +14,7 @@
 | cairo                           | ✓?  | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | fmodex                          | ✗   | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
 | glew                            | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
-| glfw                            | ✗   | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
+| glfw                            | ✗   | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | N/A | N/A     |
 | glu                             | N/A | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | ✗   | ✗       |
 | glut                            | ✗   | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | kiss                            | ✓C  | ✗     | ✗       | ✗           | ✗           | ✓C | ✓C     | ✓C  | ✓C      |
@@ -23,7 +23,7 @@
 | quicktime                       | N/A | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | rtAudio                         | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
 | tess2                           | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ✓?  | ✗       |
-| videoInput                      | N/A | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
+| videoInput                      | N/A | N/A   | N/A     | N/A         | N/A         | ✓  | ✗      | N/A | N/A     |
 | ofxAssimpModelLoader -> assimp  | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ✓?  | ✗       |
 | ofxOpenCV -> opencv             | ✗   | ✗     |         | ✗           | ✗           | ✗  | ✗      | ✗   | ✗       |
 | ofxOsc -> oscpack               | ✗C  | ✗C    | ✗C      | ✗C          | ✗C          | ✗C | ✗C     | ✗C  | ✗C      |
