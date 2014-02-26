@@ -19,10 +19,10 @@
 | glut                            | ✗   | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | kiss                            | ✓C  | ✗     | ✗       | ✗           | ✗           | ✓C | ✓C     | ✓C  | ✓C      |
 | portaudio                       | ✓C  | ✓C    | ✓C      | ✗           | ✗           | ✓C | ✓C     | N/A | N/A     |
-| poco                            | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ✓?  | ✗       |
+| poco                            | ✓?  | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | ✓?  | ✗       |
 | quicktime                       | N/A | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | rtAudio                         | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
-| tess2                           | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ✓?  | ✗       |
+| tess2                           | ✓?  | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | ✓?  | ✗       |
 | videoInput                      | N/A | N/A   | N/A     | N/A         | N/A         | ✓  | ✗      | N/A | N/A     |
 | ofxAssimpModelLoader -> assimp  | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ✓?  | ✗       |
 | ofxOpenCV -> opencv             | ✗   | ✗     |         | ✗           | ✗           | ✗  | ✗      | ✗   | ✗       |
