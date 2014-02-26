@@ -102,7 +102,7 @@ CON_YELLOW="\033[33m"
 CON_GREEN="\033[32m"
 
 # used to filter out bad build types
-VALID_TYPES=( "osx" "osx-clang-libc++" "linux" "linux64" "linuxarmv7l" "vs" "win_cb" "ios" "android" )
+VALID_TYPES=( "osx" "osx-clang-libc++" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "vs" "win_cb" "ios" "android" )
 
 # verbose mode bool
 A_VERBOSE=0
@@ -133,7 +133,7 @@ commands:
   
 options:
   -t	specify libary type when building, detects type from OS by default
-	valid types: osx, linux, linux64, linuxarm6l, linuxarm7l, vs, win_cb, ios, android
+	valid types: osx, linux, linux64, linuxarmv6l, linuxarmv7l, vs, win_cb, ios, android
 
   -a	specify architecture, either 32 or 64 (default is 32 bit)
 	note: not currently needed, reserved for future use
