@@ -649,8 +649,13 @@ function cleanFormula() {
 		git reset -q --hard HEAD
 		if [[ ${SWITCH_VER:+x} ]]; then
 			echoVerbose " Switching version (to $SWITCH_VER)"
-			git fetch origin
-			git checkout $SWITCH_VER
+			{
+                git checkout $SWITCH_VER
+            } || {
+			    echoInfo " Local version missing. Fetching distant changes..."
+            	git fetch origin
+                git checkout $SWITCH_VER
+            }
 		fi
 	else
 		
