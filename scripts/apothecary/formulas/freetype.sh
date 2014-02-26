@@ -45,7 +45,10 @@ function build() {
 		unset CFLAGS
 	
 	elif [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: build vs"
+   		make clean
+        # Force config: auto detection is wrong
+        cp -v builds/win32/w32-vcc.mk config.mk
+        make
 	
 	elif [ "$TYPE" == "win_cb" ] ; then
 		# configure with arch
