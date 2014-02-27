@@ -23,6 +23,10 @@ int 	ofGetSeconds();
 int 	ofGetMinutes();
 int 	ofGetHours();
 
+
+string  ofParseDateTime(string input, string STRING_FORMAT, string OUTPUT_FORMAT);
+
+
 //number of seconds since 1970
 unsigned int ofGetUnixTime();
 
@@ -102,6 +106,10 @@ string ofToString(const T& value, int width, char fill ){
 	out << fixed << setfill(fill) << setw(width) << value;
 	return out.str();
 }
+
+
+
+
 
 /// like sprintf "%04.2d" or "%04.2f" format, in this example precision=2, width=4, fill='0'
 template <class T>
