@@ -2,7 +2,23 @@
 #include "ofxCv/Wrappers.h"
 
 namespace ofxCv {
-	
+
+	struct CompareContourArea
+	{
+		CompareContourArea(const std::vector<double>& areaVec)
+		: mAreaVec(areaVec) {}
+
+		// Sort contour indices into decreasing order, based on a vector of
+		// contour areas.  Later, we will use these indices to order the
+		// contours (which are stored in a separate vector).
+		bool operator()(size_t a, size_t b) const
+		{
+			return mAreaVec[a] > mAreaVec[b];
+		}
+
+		const std::vector<double>& mAreaVec;
+	};
+
 	using namespace cv;
 	
 	ContourFinder::ContourFinder()
@@ -11,7 +27,8 @@ namespace ofxCv {
 	,simplify(true)
 	,thresholdValue(128.)
 	,useTargetColor(false)
-	,contourFindingMode(CV_RETR_EXTERNAL){
+	,contourFindingMode(CV_RETR_EXTERNAL)
+	,sortBySize(false) {
 		resetMinArea();
 		resetMaxArea();
 	}
@@ -58,32 +75,42 @@ namespace ofxCv {
 		// filter the contours
 		bool needMinFilter = (minArea > 0);
 		bool needMaxFilter = maxAreaNorm ? (maxArea < 1) : (maxArea < numeric_limits<float>::infinity());
+		vector<size_t> allIndices;
+		vector<double> allAreas;
 		if(needMinFilter || needMaxFilter) {
-			contours.clear();
 			double imgArea = img.rows * img.cols;
 			double imgMinArea = minAreaNorm ? (minArea * imgArea) : minArea;
 			double imgMaxArea = maxAreaNorm ? (maxArea * imgArea) : maxArea;
-			for(int i = 0; i < (int)allContours.size(); i++) {
+			for(size_t i = 0; i < allContours.size(); i++) {
 				double curArea = contourArea(Mat(allContours[i]));
+				allAreas.push_back(curArea);
 				if((!needMinFilter || curArea >= imgMinArea) &&
 					 (!needMaxFilter || curArea <= imgMaxArea)) {
-					contours.push_back(allContours[i]);
+					allIndices.push_back(i);
 				}
 			}
 		} else {
-			contours = allContours;
+			for(size_t i = 0; i < allContours.size(); i++) {
+				if (sortBySize) {
+					allAreas.push_back(contourArea(allContours[i]));
+				}
+				allIndices.push_back(i);
+			}
 		}
-		
-		// generate polylines from the contours
+
+		if (allIndices.size() > 1 && sortBySize) {
+			// Sort contour indices, based on a separate vector of areas.
+			std::sort(allIndices.begin(), allIndices.end(), CompareContourArea(allAreas));
+		}
+
+		// generate polylines and bounding boxes from the contours
+		contours.clear();
 		polylines.clear();
-		for(int i = 0; i < (int)size(); i++) {
-			polylines.push_back(toOf(contours[i]));
-		}
-		
-		// generate bounding boxes from the contours
 		boundingRects.clear();
-		for(int i = 0; i < (int)size(); i++) {
-			boundingRects.push_back(boundingRect(Mat(contours[i])));
+		for(size_t i = 0; i < allIndices.size(); i++) {
+			contours.push_back(allContours[allIndices[i]]);
+			polylines.push_back(toOf(contours[i]));
+			boundingRects.push_back(boundingRect(contours[i]));
 		}
 		
 		// track bounding boxes
@@ -97,6 +124,10 @@ namespace ofxCv {
 		}else{
 			contourFindingMode = CV_RETR_EXTERNAL;
 		}
+	}
+
+	void ContourFinder::setSortBySize(bool sizeSort) {
+		sortBySize = sizeSort;
 	}
 
 	const vector<vector<cv::Point> >& ContourFinder::getContours() const {
@@ -133,12 +164,12 @@ namespace ofxCv {
 	}
 	
 	cv::Point2f ContourFinder::getCentroid(unsigned int i) const {
-		Moments m = moments(Mat(contours[i]));
+		Moments m = moments(contours[i]);
 		return cv::Point2f(m.m10 / m.m00, m.m01 / m.m00);
 	}
 	
 	cv::Point2f ContourFinder::getAverage(unsigned int i) const {
-		Scalar average = mean(Mat(contours[i]));
+		Scalar average = mean(contours[i]);
 		return cv::Point2f(average[0], average[1]);
 	}
 	
@@ -147,16 +178,16 @@ namespace ofxCv {
 	}
 	
 	double ContourFinder::getContourArea(unsigned int i) const {
-		return contourArea(Mat(contours[i]));
+		return contourArea(contours[i]);
 	}
 	
 	double ContourFinder::getArcLength(unsigned int i) const {
-		return arcLength(Mat(contours[i]), true);
+		return arcLength(contours[i], true);
 	}
 	
 	vector<cv::Point> ContourFinder::getConvexHull(unsigned int i) const {
 		vector<cv::Point> hull;
-		convexHull(Mat(contours[i]), hull);
+		convexHull(contours[i], hull);
 		return hull;
 	}
 	
@@ -165,12 +196,12 @@ namespace ofxCv {
 	}
 	
 	cv::RotatedRect ContourFinder::getMinAreaRect(unsigned int i) const {
-		return minAreaRect(Mat(contours[i]));
+		return minAreaRect(contours[i]);
 	}
 	
 	cv::Point2f ContourFinder::getMinEnclosingCircle(unsigned int i, float& radius) const {
 		cv::Point2f center;
-		minEnclosingCircle(Mat(contours[i]), center, radius);
+		minEnclosingCircle(contours[i], center, radius);
 		return center;
 	}
 	
@@ -178,7 +209,7 @@ namespace ofxCv {
 		if(contours[i].size() < 5) {
 			return getMinAreaRect(i);
 		}
-		return fitEllipse(Mat(contours[i]));
+		return fitEllipse(contours[i]);
 	}
 	
 	vector<cv::Point> ContourFinder::getFitQuad(unsigned int i) const {

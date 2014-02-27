@@ -75,6 +75,7 @@ namespace ofxCv {
 		void setInvert(bool invert);
 		void setTargetColor(ofColor targetColor, TrackingColorMode trackingColorMode = TRACK_COLOR_RGB);
 		void setFindHoles(bool findHoles);
+		void setSortBySize(bool sortBySize);
 		
 		void resetMinArea();
 		void resetMaxArea();
@@ -88,7 +89,7 @@ namespace ofxCv {
 		void setSimplify(bool simplify);
 		
 		void draw();
-		
+
 	protected:
 		cv::Mat hsvBuffer, thresh;
 		bool autoThreshold, invert, simplify;
@@ -108,6 +109,7 @@ namespace ofxCv {
 		vector<cv::Rect> boundingRects;
 
 		int contourFindingMode;
+		bool sortBySize;
 	};	
 	
 }
