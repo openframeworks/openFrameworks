@@ -138,8 +138,12 @@ bool ofShader::load(string vertName, string fragName, string geomName) {
 //--------------------------------------------------------------
 bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
+	// we need to make absolutely sure to have an absolute path here, so that any #includes
+	// within the shader files have a root directory to traverse from.
+	string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
+	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
-		return setupShaderFromSource(type, buffer.getText());
+		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath);
 	} else {
 		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << filename << "\"";
 		return false;
@@ -147,7 +151,7 @@ bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 }
 
 //--------------------------------------------------------------
-bool ofShader::setupShaderFromSource(GLenum type, string source) {
+bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath) {
     unload();
     
 	// create program if it doesn't exist already
@@ -164,8 +168,11 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 		return false;
 	}
 
-  // parse for includes
-  string src = parseForIncludes( source );
+	// parse for includes
+	string src = parseForIncludes( source , sourceDirectoryPath);
+	
+	// store source code (that's the expanded source with all includes copied in)
+	shaderSource[type] = src;
 	
 	// compile shader
 	const char* sptr = src.c_str();
@@ -204,52 +211,67 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
  * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
  */
 
-string ofShader::parseForIncludes( const string& source ) {
-  vector<string> included;
-  return parseForIncludes( source, included ); 
+string ofShader::parseForIncludes( const string& source, const string& sourceDirectoryPath) {
+	vector<string> included;
+	return parseForIncludes( source, included, 0, sourceDirectoryPath);
 }
 
-string ofShader::parseForIncludes( const string& source, vector<string>& included, int level ) {
+string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const string& sourceDirectoryPath) {
     
-  if ( level > 32 ) {
-    ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
-    return "";
-  }
+	if ( level > 32 ) {
+		ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
+		return "";
+	}
+	
+	stringstream output;
+	stringstream input;
+	input << source;
+	
+	Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
+	Poco::RegularExpression::MatchVec matches;
+	
+	string line;
+	while( std::getline( input, line ) ) {
+		
+		if ( re.match( line, 0, matches ) < 2 ) {
+			output << line << endl;
+			continue;
+		}
+		
+		string include = line.substr(matches[1].offset, matches[1].length);
+		
+		if ( std::find( included.begin(), included.end(), include ) != included.end() ) {
+			ofLogVerbose() << include << " already included";
+			continue;
+		}
+		
+		// we store the absolute paths so as have (more) unique file identifiers.
+		
+		include = ofFile(sourceDirectoryPath + include).getAbsolutePath();
+		included.push_back( include );
+		
+		
+		ofBuffer buffer = ofBufferFromFile( include );
+		if ( !buffer.size() ) {
+			ofLogError() <<"Could not open glsl include file " << include;
+			continue;
+		}
+		
+		string currentDir = ofFile(include).getEnclosingDirectory();
+		output << parseForIncludes( buffer.getText(), included, level + 1, currentDir ) << endl;
+	}
+	
+	return output.str();
+}
 
-  stringstream output;
-  stringstream input;
-  input << source;
-
-  Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
-  Poco::RegularExpression::MatchVec matches;
-
-  string line;
-  while( std::getline( input, line ) ) {
-
-    if ( re.match( line, 0, matches ) < 2 ) {
-      output << line << endl;
-      continue;
-    } 
-
-    string include = line.substr(matches[1].offset, matches[1].length);
-
-    if ( std::find( included.begin(), included.end(), include ) != included.end() ) { 
-      ofLog( OF_LOG_VERBOSE, include + " already included" );
-      continue;
-     }
-
-    included.push_back( include );
-
-    ofBuffer buffer = ofBufferFromFile( include );
-    if ( !buffer.size() ) {
-      ofLog( OF_LOG_ERROR, "Could not open glsl include file "+include );
-      continue;
-    }
-
-    output << parseForIncludes( buffer.getText(), included, level + 1 ) << endl;
-  }
-
-  return output.str();
+//--------------------------------------------------------------
+string ofShader::getShaderSource(GLenum type) {
+	if (shaderSource.find(type) != shaderSource.end()) {
+		return shaderSource[type];
+	} else {
+		ofLogError() << "No shader source for shader of type: " << nameForType(type);
+		return "";
+	}
 }
 
 //--------------------------------------------------------------

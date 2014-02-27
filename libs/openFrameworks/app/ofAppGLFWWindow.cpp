@@ -266,6 +266,7 @@ void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 
 	XChangeProperty(getX11Display(), getX11Window(), XInternAtom(getX11Display(), "_NET_WM_ICON", False), XA_CARDINAL, 32,
 						 PropModeReplace,  (const unsigned char*)buffer,  length);
+	delete[] buffer;
 	XFlush(getX11Display());
 }
 #endif
