@@ -5,7 +5,9 @@ namespace ofxCv {
 	using namespace cv;
 	
 #pragma mark FLOW IMPLEMENTATION
-	Flow::Flow(){
+	Flow::Flow()
+		:forcedImageType(OF_IMAGE_GRAYSCALE) //force to gray
+	{
 		hasFlow = false;
 		last.setUseTexture(false);
 		curr.setUseTexture(false);
@@ -21,10 +23,10 @@ namespace ofxCv {
 	
 	void Flow::calcOpticalFlow(ofPixelsRef lastImage, ofPixelsRef currentImage){
 		last = lastImage;
-		last.setImageType(OF_IMAGE_GRAYSCALE); //force to gray
+		last.setImageType(forcedImageType);
 
 		curr.setFromPixels(currentImage);
-		curr.setImageType(OF_IMAGE_GRAYSCALE);
+		curr.setImageType(forcedImageType);
 		
 		calcFlow(); //will call concrete implementation
 		hasFlow = true;
@@ -38,7 +40,7 @@ namespace ofxCv {
 	
 	void Flow::calcOpticalFlow(ofPixelsRef nextImage){
 		curr.setFromPixels(nextImage);
-		curr.setImageType(OF_IMAGE_GRAYSCALE);
+		curr.setImageType(forcedImageType);
 
 		if(last.isAllocated() && last.getWidth() == curr.getWidth() && last.getHeight() == curr.getHeight()){
 			calcFlow(); //will call concrete implementation
