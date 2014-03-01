@@ -106,7 +106,7 @@ namespace ofxCv {
 	}
 	
 	void FlowPyrLK::calcFlow(){
-		if(!nextPts.empty()){
+		if(!nextPts.empty() || calcFeaturesNextFrame){
 			if(calcFeaturesNextFrame){
 				calcFeaturesToTrack(prevPts);
 				calcFeaturesNextFrame = false;
@@ -116,6 +116,9 @@ namespace ofxCv {
 			nextPts.clear();
 
 #if CV_MAJOR_VERSION>=2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
+			if (prevPyramid.empty()) {
+				buildOpticalFlowPyramid(toCv(last),prevPyramid,cv::Size(windowSize, windowSize),10);
+			}
 			buildOpticalFlowPyramid(toCv(curr),pyramid,cv::Size(windowSize, windowSize),10);
 			calcOpticalFlowPyrLK(
 													 prevPyramid,
@@ -129,6 +132,7 @@ namespace ofxCv {
 													 maxLevel
 													 );
 			prevPyramid = pyramid;
+			pyramid.clear();
 #else
 			calcOpticalFlowPyrLK(
 													 toCv(last),
@@ -144,9 +148,6 @@ namespace ofxCv {
 			status.resize(nextPts.size(),0);
 		}else{
 			calcFeaturesToTrack(nextPts);
-#if CV_MAJOR_VERSION==2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
-			buildOpticalFlowPyramid(toCv(curr),prevPyramid,cv::Size(windowSize, windowSize),10);
-#endif
 		}
 	}
 	
@@ -169,10 +170,12 @@ namespace ofxCv {
 		for(int i=0;i<(int)features.size();i++){
 			nextPts[i]=toCv(features[i]);
 		}
+		calcFeaturesNextFrame = false;
 	}
 	
 	void FlowPyrLK::setFeaturesToTrack(const vector<cv::Point2f> & features){
 		nextPts = features;
+		calcFeaturesNextFrame = false;
 	}
 	
 	int FlowPyrLK::getWidth() {
