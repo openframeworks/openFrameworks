@@ -544,6 +544,7 @@ void ofFbo::allocate(Settings _settings) {
 	} else {
 		ofLogWarning("ofFbo") << "allocate(): no color buffers specified for frame buffer object " << fbo;
 	}
+	settings.internalformat = _settings.internalformat;
 
 
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
