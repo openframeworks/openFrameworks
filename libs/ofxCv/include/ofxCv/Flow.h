@@ -35,6 +35,7 @@ namespace ofxCv {
         virtual void resetFlow() = 0;
 	protected:
 		ofImage last, curr;
+		ofImageType forcedImageType;
 		bool hasFlow;
 		
 		//specific flow implementation
