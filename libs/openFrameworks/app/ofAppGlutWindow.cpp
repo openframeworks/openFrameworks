@@ -356,6 +356,7 @@ void ofAppGlutWindow::setWindowIcon(const ofPixels & iconPixels){
 
 	XChangeProperty(m_display, m_window, XInternAtom(m_display, "_NET_WM_ICON", False), XA_CARDINAL, 32,
 						 PropModeReplace,  (const unsigned char*)buffer,  length);
+	delete[] buffer;
 	XFlush(m_display);
 }
 #endif
