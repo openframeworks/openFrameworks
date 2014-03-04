@@ -426,7 +426,7 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 	attributeNumCoords[location] = numCoords;
 
 	glBindBuffer(GL_ARRAY_BUFFER, attributeIds[location]);
-	glBufferData(GL_ARRAY_BUFFER, total * stride, attrib0x, usage);
+	glBufferData(GL_ARRAY_BUFFER, total * numCoords * sizeof(float), attrib0x, usage);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
@@ -512,7 +512,7 @@ void ofVbo::updateIndexData(const ofIndexType * indices, int total) {
 void ofVbo::updateAttributeData(int location, const float * attr0x, int total){
 	if(attributeIds.find(location)!=attributeIds.end() && attributeIds[location]!=0) {
 		glBindBuffer(GL_ARRAY_BUFFER, attributeIds[location]);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*attributeStrides[location], attr0x);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, total*attributeNumCoords[location]*sizeof(float), attr0x);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 }
