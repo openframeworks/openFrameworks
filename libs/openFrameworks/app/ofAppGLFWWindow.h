@@ -79,7 +79,6 @@ public:
     int         getPixelScreenCoordScale();
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
-	Display*#if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 	Display* 	getX11Display();
 	Window  	getX11Window();
 #endif
