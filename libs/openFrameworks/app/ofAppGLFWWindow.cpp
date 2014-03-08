@@ -231,7 +231,8 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
         //have to update the windowShape to account for retina coords
         if( windowMode == OF_WINDOW ){
             setWindowShape(windowW, windowH);
-        }    }
+        }
+	}
     
     ofGLReadyCallback();
 
