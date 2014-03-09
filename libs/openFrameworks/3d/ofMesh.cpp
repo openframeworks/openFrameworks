@@ -613,6 +613,11 @@ void ofMesh::setIndex(ofIndexType index, ofIndexType  val){
 }
 
 //--------------------------------------------------------------
+void ofMesh::setName(string name_){
+	name = name_;
+}
+
+//--------------------------------------------------------------
 void ofMesh::setupIndicesAuto(){
 	bIndicesChanged = true;
 	bFacesDirty = true;
