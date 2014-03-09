@@ -781,7 +781,11 @@ void ofMesh::load(string path){
 	string line;
 	string error;
 	ofBuffer buffer(is);
-	ofMesh backup = data;
+	ofMesh backup;
+	if (this != NULL)
+	{
+		backup = data;
+	}
 
 	int orderVertices=-1;
 	int orderIndices=-1;
@@ -991,7 +995,10 @@ void ofMesh::load(string path){
 	clean:
 	ofLogError("ofMesh") << "load(): " << lineNum << ":" << error;
 	ofLogError("ofMesh") << "load(): \"" << line << "\"";
-	data = backup;
+	if (this != NULL)
+	{
+		data = backup;
+	}
 }
 
 void ofMesh::save(string path, bool useBinary) const{
@@ -1071,9 +1078,9 @@ void ofMesh::save(string path, bool useBinary) const{
 			os << endl;
 		}
 	}
-
-	if(data.getNumIndices()) {
-		for(int i = 0; i < data.getNumIndices(); i += faceSize) {
+	int numIndices = data.getNumIndices();
+	if(numIndices) {
+		for(int i = 0; i < numIndices; i += faceSize) {
 			if(useBinary) {
 				os.write((char*) &faceSize, sizeof(unsigned char));
 				for(int j = 0; j < faceSize; j++) {
@@ -1081,11 +1088,17 @@ void ofMesh::save(string path, bool useBinary) const{
 					os.write((char*) &curIndex, sizeof(int));
 				}
 			} else {
+				if(i+2 >= numIndices) {
+					break;
+				}
 				os << (int) faceSize << " " << data.getIndex(i) << " " << data.getIndex(i+1) << " " << data.getIndex(i+2) << endl;
 			}
 		}
 	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLES) {
-		for(int i = 0; i < data.getNumVertices(); i += faceSize) {
+		for(int i = 0; i < numIndices; i += faceSize) {
+			if(i+2 >= numIndices) {
+				break;
+			}
 			int indices[] = {i, i + 1, i + 2};
 			if(useBinary) {
 				os.write((char*) &faceSize, sizeof(unsigned char));
