@@ -781,11 +781,7 @@ void ofMesh::load(string path){
 	string line;
 	string error;
 	ofBuffer buffer(is);
-	ofMesh backup;
-	if (this != NULL)
-	{
-		backup = data;
-	}
+	ofMesh backup = data;
 
 	int orderVertices=-1;
 	int orderIndices=-1;
@@ -995,10 +991,7 @@ void ofMesh::load(string path){
 	clean:
 	ofLogError("ofMesh") << "load(): " << lineNum << ":" << error;
 	ofLogError("ofMesh") << "load(): \"" << line << "\"";
-	if (this != NULL)
-	{
-		data = backup;
-	}
+	data = backup;
 }
 
 void ofMesh::save(string path, bool useBinary) const{
