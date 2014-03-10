@@ -4,6 +4,7 @@
 #include "ofEvents.h"
 #include "ofBaseTypes.h"
 
+
 class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 
 	public:

@@ -55,8 +55,14 @@ ofxBaseGui::fillColor(128);
 int ofxBaseGui::textPadding = 4;
 int ofxBaseGui::defaultWidth = 200;
 int ofxBaseGui::defaultHeight = 18;
+int ofxBaseGui::fontSize = 12;
 
 ofTrueTypeFont ofxBaseGui::font;
+
+#ifdef SUPPORT_FONTSTASH
+ofxFontStash ofxBaseGui::unicodeFont;
+#endif
+
 bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 
@@ -81,6 +87,10 @@ void ofxBaseGui::loadFont(string filename, int fontsize, bool _bAntiAliased, boo
 	font.loadFont(filename,fontsize,_bAntiAliased,_bFullCharacterSet,dpi);
 	fontLoaded = true;
 	useTTF = true;
+#ifdef SUPPORT_FONTSTASH
+	unicodeFont.setup(filename);
+	fontSize = fontsize;
+#endif
 }
 
 void ofxBaseGui::setUseTTF(bool bUseTTF){

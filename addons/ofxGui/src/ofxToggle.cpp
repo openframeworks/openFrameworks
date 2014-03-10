@@ -111,7 +111,11 @@ void ofxToggle::render(){
 	ofSetColor(thisTextColor);
 
 	bindFontTexture();
+#ifdef SUPPORT_FONTSTASH
+	unicodeFont.draw(getName(),fontSize, b.x+textPadding + checkboxRect.width, b.y + b.height / 2 + fontSize/2 - (2 * (fontSize/12))); 
+#else
 	textMesh.draw();
+#endif
 	unbindFontTexture();
 
 	ofSetColor(c);

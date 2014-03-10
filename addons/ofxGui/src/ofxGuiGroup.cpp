@@ -262,7 +262,16 @@ void ofxGuiGroup::render(){
 	ofSetColor(thisTextColor);
 
 	bindFontTexture();
+#ifdef SUPPORT_FONTSTASH
+	unicodeFont.draw(getName(),fontSize+4, textPadding + b.x, b.y + header / 2 + fontSize/2 - (2 * (fontSize/12))+spacingNextElement);
+	if(minimized){
+		unicodeFont.draw("+",fontSize, b.width-textPadding-11 + b.x, header / 2 + 4+ b.y+ spacingNextElement);
+	}else{
+		unicodeFont.draw("-",fontSize, b.width-textPadding-8 + b.x, header / 2 + 4 + b.y+ spacingNextElement);
+	}
+#else
 	textMesh.draw();
+#endif
 	unbindFontTexture();
     
 	if(!minimized){

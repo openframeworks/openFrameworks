@@ -1,5 +1,5 @@
-
 #include "ofXml.h"
+#include "ofUtils.h"
 
 ofXml::~ofXml() {
 	releaseAll();
@@ -49,28 +49,29 @@ bool ofXml::save(const string & path){
 
 void ofXml::serialize(const ofAbstractParameter & parameter){
 	if(!parameter.isSerializable()) return;
+	
 	string name = parameter.getEscapedName();
 	if(name=="") name="UnknownName";
 	if(parameter.type()==typeid(ofParameterGroup).name()){
 		const ofParameterGroup & group = static_cast<const ofParameterGroup&>(parameter);
 		if(!exists(name)){
 			addChild(name);
-			ofLogVerbose("ofXml") << "creating group " << name;
+			ofLogVerbose("ofXml") << "creating group " << ofUtf8ToLocale(name);
 		}
 		setTo(name);
-		ofLogVerbose("ofXml") << "group " << name;
+		ofLogVerbose("ofXml") << "group " << ofUtf8ToLocale(name);
 		for(int i=0;i<group.size();i++){
 			serialize(group.get(i));
 		}
-		ofLogVerbose("ofXml") << "end group " << name;
+		ofLogVerbose("ofXml") << "end group " << ofUtf8ToLocale(name);
 		setToParent();
 	}else{
 		string value = parameter.toString();
 		if(!exists(name)){
 			addChild(name);
-			ofLogVerbose("ofXml") << "creating tag " << name;
+			ofLogVerbose("ofXml") << "creating tag " << ofUtf8ToLocale(name);
 		}
-		ofLogVerbose("ofXml") << "setting tag " << name << ": " << value;
+		ofLogVerbose("ofXml") << "setting tag " << ofUtf8ToLocale(name) << ": " << value;
 		setValue(name,value);
 	}
 }
@@ -164,6 +165,16 @@ string ofXml::toString() const
     ofStringReplace(tmp, "</#text>", "");
     
     return tmp;
+}
+
+void ofXml::addInstruction(const string& target,const string& data){
+	Poco::XML::ProcessingInstruction *docPI = getPocoDocument()->createProcessingInstruction(target,data);
+	getPocoDocument()->appendChild((Poco::XML::Node*)docPI);
+}
+
+void ofXml::addComment( const string& str){
+	Poco::XML::Comment* pe = getPocoDocument()->createComment(str);
+	document->appendChild((Poco::XML::Node*)pe);
 }
 
 void ofXml::addXml( ofXml& xml, bool copyAll ) {

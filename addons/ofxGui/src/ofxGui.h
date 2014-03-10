@@ -6,8 +6,11 @@
 #include "ofxPanel.h"
 #include "ofxButton.h"
 #include "ofxLabel.h"
+#include "ofxContent.h"
+#include "ofxDropDownList.h"
+#include "ofxQuadWarp.h"
 
-void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
+void ofxGuiSetFont(const string & fontPath,int fontsize = 12, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
 void ofxGuiSetBitmapFont();
 
 void ofxGuiSetHeaderColor(const ofColor & color);
@@ -19,3 +22,5 @@ void ofxGuiSetFillColor(const ofColor & color);
 void ofxGuiSetTextPadding(int padding);
 void ofxGuiSetDefaultWidth(int width);
 void ofxGuiSetDefaultHeight(int height);
+
+ofBaseDraws* ofxGetCurrentContent();

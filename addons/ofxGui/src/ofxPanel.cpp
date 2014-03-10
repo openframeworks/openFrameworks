@@ -91,7 +91,11 @@ void ofxPanel::render(){
 	ofSetColor(thisTextColor);
 
 	bindFontTexture();
+#ifdef SUPPORT_FONTSTASH
+	unicodeFont.draw(getName(),fontSize+6, textPadding + b.x, b.y + header / 2 + fontSize/2 - (2 * (fontSize/12)));
+#else
 	textMesh.draw();
+#endif
 	unbindFontTexture();
 
 	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
@@ -116,6 +120,16 @@ bool ofxPanel::mouseReleased(ofMouseEventArgs & args){
     this->bGrabbed = false;
     if(ofxGuiGroup::mouseReleased(args)) return true;
     if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
+    	return true;
+    }else{
+    	return false;
+    }
+}
+
+bool ofxPanel::isInside(int x,int y){
+	//this->bGrabbed = false;
+ //   if(ofxGuiGroup::mouseReleased(args)) return true;
+	if(isGuiDrawing() && b.inside(ofPoint(x,y))){
     	return true;
     }else{
     	return false;
