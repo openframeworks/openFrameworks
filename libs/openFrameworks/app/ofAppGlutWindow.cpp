@@ -45,7 +45,7 @@ static ofOrientation	orientation;
 static ofBaseApp *  ofAppPtr;
 
 #ifdef TARGET_WIN32
-
+void (*customWinProc)(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam) = NULL;
 //------------------------------------------------
 
 // this is to fix a bug with glut that doesn't properly close the app
@@ -136,7 +136,7 @@ static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lPara
 
    //we catch close and destroy messages
    //and send them to OF
-
+	if(customWinProc != NULL) customWinProc(hwnd, Msg,wParam,lParam);
    switch(Msg){
 
       case WM_CLOSE:
