@@ -166,6 +166,18 @@ string ofXml::toString() const
     return tmp;
 }
 
+void ofXml::addInstruction(const string& target,const string& data){
+
+	Poco::XML::ProcessingInstruction *docPI = getPocoDocument()->createProcessingInstruction(target,data);
+	getPocoDocument()->appendChild((Poco::XML::Node*)docPI);
+}
+
+void ofXml::addComment( const string& str){
+
+	 Poco::XML::Comment* pe = getPocoDocument()->createComment(str);
+     document->appendChild((Poco::XML::Node*)pe);
+}
+
 void ofXml::addXml( ofXml& xml, bool copyAll ) {
     
     Poco::XML::Node *n = 0;
