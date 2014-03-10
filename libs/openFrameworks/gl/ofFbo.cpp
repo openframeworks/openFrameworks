@@ -90,22 +90,67 @@ ofFbo::Settings::Settings() {
 }
 
 bool ofFbo::Settings::operator!=(const Settings & other){
-	return
-	width					!= other.width ||
-	height					!= other.height ||
-	numColorbuffers			!= other.numColorbuffers ||
-	colorFormats			!= other.colorFormats ||
-	useDepth				!= other.useDepth ||
-	useStencil				!= other.useStencil ||
-	depthStencilAsTexture	!= other.depthStencilAsTexture ||
-	textureTarget			!= other.textureTarget ||
-	internalformat			!= other.internalformat ||
-	depthStencilInternalFormat	!= other.depthStencilInternalFormat ||
-	wrapModeHorizontal		!= other.wrapModeHorizontal ||
-	wrapModeVertical		!= other.wrapModeVertical ||
-	minFilter				!= other.minFilter ||
-	maxFilter				!= other.maxFilter ||
-	numSamples				!= other.numSamples;
+	if(width != other.width){
+		ofLogError() << "settings width differs from source";
+		return true;
+	}
+	if(height != other.height){
+		ofLogError() << "settings height differs from source";
+		return true;
+	}
+	if(numColorbuffers != other.numColorbuffers){
+		ofLogError() << "settings numColorbuffers differs from source";
+		return true;
+	}
+	if(colorFormats != other.colorFormats){
+		ofLogError() << "settings colorFormats differs from source";
+		return true;
+	}
+	if(useDepth != other.useDepth){
+		ofLogError() << "settings useDepth differs from source";
+		return true;
+	}
+	if(useStencil != other.useStencil){
+		ofLogError() << "settings useStencil differs from source";
+		return true;
+	}
+	if(depthStencilAsTexture != other.depthStencilAsTexture){
+		ofLogError() << "settings depthStencilAsTexture differs from source";
+		return true;
+	}
+	if(textureTarget != other.textureTarget){
+		ofLogError() << "settings textureTarget differs from source";
+		return true;
+	}
+	if(internalformat != other.internalformat){
+		ofLogError() << "settings internalformat differs from source";
+		return true;
+	}
+	if(depthStencilInternalFormat != other.depthStencilInternalFormat){
+		ofLogError() << "settings depthStencilInternalFormat differs from source";
+		return true;
+	}
+	if(wrapModeHorizontal != other.wrapModeHorizontal){
+		ofLogError() << "settings wrapModeHorizontal differs from source";
+		return true;
+	}
+	if(wrapModeVertical != other.wrapModeVertical){
+		ofLogError() << "settings wrapModeVertical differs from source";
+		return true;
+	}
+	if(minFilter != other.minFilter){
+		ofLogError() << "settings minFilter differs from source";
+		return true;
+	}
+	if(maxFilter != other.maxFilter){
+		ofLogError() << "settings maxFilter differs from source";
+		return false;
+	}
+	if(numSamples != other.numSamples){
+		ofLogError() << "settings numSamples differs from source";
+		return true;
+	}
+	return false;
 }
 
 static map<GLuint,int> & getIdsFB(){
@@ -473,6 +518,7 @@ void ofFbo::allocate(Settings _settings) {
 			#endif
 		}
 	}
+	settings.depthStencilInternalFormat = _settings.depthStencilInternalFormat;
 
 	// if we want MSAA, create a new fbo for textures
 	#ifndef TARGET_OPENGLES
@@ -494,9 +540,11 @@ void ofFbo::allocate(Settings _settings) {
 		for(int i=0; i<(int)_settings.colorFormats.size(); i++) createAndAttachTexture(_settings.colorFormats[i], i);
 	} else if(_settings.numColorbuffers > 0) {
 		for(int i=0; i<_settings.numColorbuffers; i++) createAndAttachTexture(_settings.internalformat, i);
+		_settings.colorFormats = settings.colorFormats;
 	} else {
 		ofLogWarning("ofFbo") << "allocate(): no color buffers specified for frame buffer object " << fbo;
 	}
+	settings.internalformat = _settings.internalformat;
 
 
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
