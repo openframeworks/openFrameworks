@@ -55,21 +55,21 @@ float ofRandom(float x, float y) {
 	if (x == y) return x; 			// float == ?, wise? epsilon?
 	high = MAX(x,y);
 	low = MIN(x,y);
-	randNum = low + ((high-low) * rand()/(RAND_MAX + 1.0));
+	randNum = low + ((high-low) * rand()/(RAND_MAX + 1.0f));
 	return randNum;
 }
 
 //--------------------------------------------------
 float ofRandomf() {
 	float randNum = 0;
-	randNum = (rand()/(RAND_MAX + 1.0)) * 2.0 - 1.0;
+	randNum = (rand()/(RAND_MAX + 1.0f)) * 2.0f - 1.0f;
 	return randNum;
 }
 
 //--------------------------------------------------
 float ofRandomuf() {
 	float randNum = 0;
-	randNum = rand()/(RAND_MAX + 1.0);
+	randNum = rand()/(RAND_MAX + 1.0f);
 	return randNum;
 }
 
@@ -107,7 +107,7 @@ float ofMap(float value, float inputMin, float inputMax, float outputMin, float 
 
 //--------------------------------------------------
 float ofDist(float x1, float y1, float x2, float y2) {
-	return sqrt(double((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
 //--------------------------------------------------
@@ -181,12 +181,12 @@ float ofLerpRadians(float currentAngle, float targetAngle, float pct) {
 
 //--------------------------------------------------
 float ofRandomWidth() {
-	return ofRandom(0, ofGetWidth());
+	return ofRandom(0.f, ofGetWidth());
 }
 
 //--------------------------------------------------
 float ofRandomHeight() {
-	return ofRandom(0, ofGetHeight());
+	return ofRandom(0.f, ofGetHeight());
 }
 
 //--------------------------------------------------
@@ -271,7 +271,7 @@ bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint lin
 
 //--------------------------------------------------
 ofPoint ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
-    float tp = 1.0 - t;
+    float tp = 1.0f - t;
     return a*tp*tp*tp + b*3*t*tp*tp + c*3*t*t*tp + d*t*t*t;
 }
 

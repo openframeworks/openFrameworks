@@ -103,8 +103,6 @@ public:
 	
 	ofVec3f getCentroid() const;
 
-	void setName(string name_);
-
 	bool haveVertsChanged();
 	bool haveColorsChanged();
 	bool haveNormalsChanged();
@@ -178,7 +176,6 @@ private:
 
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
-	string name;
     
     bool useColors;
     bool useTextures;
