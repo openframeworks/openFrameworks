@@ -1,5 +1,6 @@
 #include "ofApp.h"
 
+#include "fmod.h"
 //--------------------------------------------------------------
 void ofApp::setup(){
 	player.loadMovie("fingers.mov");
@@ -20,6 +21,11 @@ void ofApp::setup(){
 #ifdef OF_VIDEO_PLAYER_QTKIT
     cout << "USing the QTKit video player" << endl;
 #endif
+    
+    int major = FMOD_VERSION >> 16;
+    int minor = FMOD_VERSION >> 8 & 0xFF;
+    int dev = FMOD_VERSION & 0xFF;
+    cout << major << "." << minor << "." << dev << endl;;
 }
 
 //--------------------------------------------------------------
