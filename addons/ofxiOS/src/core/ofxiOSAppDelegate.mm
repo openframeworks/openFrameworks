@@ -56,20 +56,9 @@
     
     currentScreenIndex = 0;
     
-	//----- DAMIAN
-	// set data path root for ofToDataPath()
-	// path on iPhone will be ~/Applications/{application GUID}/openFrameworks.app/data
-	// get the resource path for the bundle (ie '~/Applications/{application GUID}/openFrameworks.app')
-	NSString *bundle_path_ns = [[NSBundle mainBundle] resourcePath];
-	// convert to UTF8 STL string
-	string path = [bundle_path_ns UTF8String];
-	// append data
-	//path.append( "/data/" ); // ZACH
-	path.append( "/" ); // ZACH
-	ofLogVerbose("ofxiOSAppDelegate") << "setting data path root: \"" << path << "\"";
-	ofSetDataPathRoot( path );
-	//-----
-	
+    // set the root application path
+    ofSetDataPathRoot([[NSString stringWithFormat:@"%@/", [[NSBundle mainBundle] resourcePath]] cStringUsingEncoding:NSUTF8StringEncoding]);
+    
 	// show or hide status bar depending on OF_WINDOW or OF_FULLSCREEN
     [[UIApplication sharedApplication] setStatusBarHidden:(ofxiOSGetOFWindow()->getWindowMode() == OF_FULLSCREEN)];
 	

@@ -7,7 +7,7 @@ ofMaterial::ofMaterial() {
     specular.set(0.0f, 0.0f, 0.0f, 1.0f);
     ambient.set(0.2f, 0.2f, 0.2f, 1.0f);
     emissive.set(0.0f, 0.0f, 0.0f, 1.0f);
-    shininess = 0.2;
+    shininess = 0.2f;
 }
 
 void ofMaterial::setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor oEmissive) {
