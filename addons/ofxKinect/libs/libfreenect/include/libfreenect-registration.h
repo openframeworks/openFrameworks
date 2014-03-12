@@ -24,8 +24,7 @@
  * either License.
  */
 
-#ifndef LIBFREENECT_REGISTRATION_H
-#define LIBFREENECT_REGISTRATION_H
+#pragma once
 
 #include <libfreenect.h>
 #include <stdint.h>
@@ -125,5 +124,3 @@ FREENECTAPI void freenect_camera_to_world(freenect_device* dev,
 #ifdef __cplusplus
 }
 #endif
-
-#endif // LIBFREENECT_REGISTRATION_H

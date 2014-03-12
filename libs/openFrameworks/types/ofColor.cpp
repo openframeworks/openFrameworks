@@ -468,7 +468,7 @@ void ofColor_<PixelType>::setHsb(float hue, float saturation, float brightness, 
 	} else if(saturation == 0) { // grays
 		set(brightness);
 	} else {
-		float hueSix = hue * 6. / limit();
+		float hueSix = hue * 6.f / limit();
 		float saturationNorm = saturation / limit();
 		int hueSixCategory = (int) floorf(hueSix);
 		float hueSixRemainder = hueSix - hueSixCategory;
