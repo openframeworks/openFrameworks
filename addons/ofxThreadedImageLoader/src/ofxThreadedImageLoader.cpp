@@ -58,12 +58,13 @@ void ofxThreadedImageLoader::threadedFunction() {
 
 	while( isThreadRunning() ) {
 		lock();
-		if(images_to_load_buffer.empty()) condition.wait(mutex);
-		images_to_load.insert( images_to_load.end(),
-							images_to_load_buffer.begin(),
-							images_to_load_buffer.end() );
+		if(images_to_load_buffer.size() ){
+            images_to_load.insert( images_to_load.end(),
+                                images_to_load_buffer.begin(),
+                                images_to_load_buffer.end() );
 
-		images_to_load_buffer.clear();
+            images_to_load_buffer.clear();
+        }
 		unlock();
         
         
