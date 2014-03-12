@@ -181,6 +181,14 @@ ofVbo::ofVbo(const ofVbo & mom){
 		vaoChanged = mom.vaoChanged;
 	}
 
+	attributeIds = mom.attributeIds;
+	for (map<int, GLuint>::iterator it = attributeIds.begin(); it != attributeIds.end(); it++){
+		retain(it->second);
+	}
+	
+	attributeNumCoords = mom.attributeNumCoords;
+	attributeStrides = mom.attributeStrides;
+	attributeSize = mom.attributeSize;
 
 	totalVerts = mom.totalVerts;
 	totalIndices = mom.totalIndices;
@@ -230,6 +238,15 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 		vaoChanged = mom.vaoChanged;
 	}
 
+	attributeIds = mom.attributeIds;
+	for (map<int, GLuint>::iterator it = attributeIds.begin(); it != attributeIds.end(); it++){
+		retain(it->second);
+	}
+	
+	attributeNumCoords = mom.attributeNumCoords;
+	attributeStrides = mom.attributeStrides;
+	attributeSize = mom.attributeSize;
+	
 	totalVerts = mom.totalVerts;
 	totalIndices = mom.totalIndices;
 
