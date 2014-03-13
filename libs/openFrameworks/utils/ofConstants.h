@@ -111,6 +111,12 @@ enum ofTargetPlatform{
 		#pragma warning(disable : 4311)		// type cast pointer truncation (qt vp)
 		#pragma warning(disable : 4312)		// type cast conversion (in qt vp)
 		#pragma warning(disable : 4800)		// 'Boolean' : forcing value to bool 'true' or 'false'
+
+		// make microsoft visual studio complain less about double / float conversion and
+		// truncation
+		#pragma warning(disable : 4244)
+		#pragma warning(disable : 4305)
+
 		// warnings: http://msdn.microsoft.com/library/2c8f766e.aspx
 	#endif
 

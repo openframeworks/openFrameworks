@@ -6,6 +6,7 @@
 #include "ofMath.h"
 #include <limits>
 
+
 //---------------------------------------
 enum ofInterpolationMethod {
 	OF_INTERPOLATE_NEAREST_NEIGHBOR =1,

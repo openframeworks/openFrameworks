@@ -32,6 +32,7 @@
 #include "freenect_internal.h"
 #include "registration.h"
 #include "cameras.h"
+#include "flags.h"
 
 #define MAKE_RESERVED(res, fmt) (uint32_t)(((res & 0xff) << 8) | (((fmt & 0xff))))
 #define RESERVED_TO_RESOLUTION(reserved) (freenect_resolution)((reserved >> 8) & 0xff)
@@ -83,7 +84,7 @@ struct pkt_hdr {
 	uint32_t timestamp;
 };
 
-static int stream_process(freenect_context *ctx, packet_stream *strm, uint8_t *pkt, int len)
+static int stream_process(freenect_context *ctx, packet_stream *strm, uint8_t *pkt, int len, freenect_chunk_cb cb, void *user_data)
 {
 	if (len < 12)
 		return 0;
@@ -193,9 +194,13 @@ static int stream_process(freenect_context *ctx, packet_stream *strm, uint8_t *p
 		}
 	}
 
-	// copy data
+	// copy or chunk process the data
 	uint8_t *dbuf = strm->raw_buf + strm->pkt_num * strm->pkt_size;
-	memcpy(dbuf, data, datalen);
+	if(cb){
+		cb(strm->raw_buf,data,strm->pkt_num,datalen,user_data);
+	}else{
+		memcpy(dbuf, data, datalen);
+	}
 
 	strm->pkt_num++;
 	strm->seq++;
@@ -373,7 +378,7 @@ static void depth_process(freenect_device *dev, uint8_t *pkt, int len)
 	if (!dev->depth.running)
 		return;
 
-	int got_frame_size = stream_process(ctx, &dev->depth, pkt, len);
+	int got_frame_size = stream_process(ctx, &dev->depth, pkt, len,dev->depth_chunk_cb,dev->user_data);
 
 	if (!got_frame_size)
 		return;
@@ -613,7 +618,7 @@ static void video_process(freenect_device *dev, uint8_t *pkt, int len)
 	if (!dev->video.running)
 		return;
 
-	int got_frame_size = stream_process(ctx, &dev->video, pkt, len);
+	int got_frame_size = stream_process(ctx, &dev->video, pkt, len,dev->video_chunk_cb,dev->user_data);
 
 	if (!got_frame_size)
 		return;
@@ -648,122 +653,6 @@ static void video_process(freenect_device *dev, uint8_t *pkt, int len)
 
 	if (dev->video_cb)
 		dev->video_cb(dev, dev->video.proc_buf, dev->video.timestamp);
-}
-
-typedef struct {
-	uint8_t magic[2];
-	uint16_t len;
-	uint16_t cmd;
-	uint16_t tag;
-} cam_hdr;
-
-static int send_cmd(freenect_device *dev, uint16_t cmd, void *cmdbuf, unsigned int cmd_len, void *replybuf, int reply_len)
-{
-	freenect_context *ctx = dev->parent;
-	int res, actual_len;
-	uint8_t obuf[0x400];
-	uint8_t ibuf[0x200];
-	cam_hdr *chdr = (cam_hdr*)obuf;
-	cam_hdr *rhdr = (cam_hdr*)ibuf;
-
-	if (cmd_len & 1 || cmd_len > (0x400 - sizeof(*chdr))) {
-		FN_ERROR("send_cmd: Invalid command length (0x%x)\n", cmd_len);
-		return -1;
-	}
-
-	chdr->magic[0] = 0x47;
-	chdr->magic[1] = 0x4d;
-	chdr->cmd = fn_le16(cmd);
-	chdr->tag = fn_le16(dev->cam_tag);
-	chdr->len = fn_le16(cmd_len / 2);
-
-	memcpy(obuf+sizeof(*chdr), cmdbuf, cmd_len);
-
-	res = fnusb_control(&dev->usb_cam, 0x40, 0, 0, 0, obuf, cmd_len + sizeof(*chdr));
-	FN_SPEW("Control cmd=%04x tag=%04x len=%04x: %d\n", cmd, dev->cam_tag, cmd_len, res);
-	if (res < 0) {
-		FN_ERROR("send_cmd: Output control transfer failed (%d)\n", res);
-		return res;
-	}
-
-	do {
-		actual_len = fnusb_control(&dev->usb_cam, 0xc0, 0, 0, 0, ibuf, 0x200);
-		FN_FLOOD("actual_len: %d\n", actual_len);
-	} while ((actual_len == 0) || (actual_len == 0x200));
-	FN_SPEW("Control reply: %d\n", res);
-	if (actual_len < (int)sizeof(*rhdr)) {
-		FN_ERROR("send_cmd: Input control transfer failed (%d)\n", res);
-		return res;
-	}
-	actual_len -= sizeof(*rhdr);
-
-	if (rhdr->magic[0] != 0x52 || rhdr->magic[1] != 0x42) {
-		FN_ERROR("send_cmd: Bad magic %02x %02x\n", rhdr->magic[0], rhdr->magic[1]);
-		return -1;
-	}
-	if (rhdr->cmd != chdr->cmd) {
-		FN_ERROR("send_cmd: Bad cmd %02x != %02x\n", rhdr->cmd, chdr->cmd);
-		return -1;
-	}
-	if (rhdr->tag != chdr->tag) {
-		FN_ERROR("send_cmd: Bad tag %04x != %04x\n", rhdr->tag, chdr->tag);
-		return -1;
-	}
-	if (fn_le16(rhdr->len) != (actual_len/2)) {
-		FN_ERROR("send_cmd: Bad len %04x != %04x\n", fn_le16(rhdr->len), (int)(actual_len/2));
-		return -1;
-	}
-
-	if (actual_len > reply_len) {
-		FN_WARNING("send_cmd: Data buffer is %d bytes long, but got %d bytes\n", reply_len, actual_len);
-		memcpy(replybuf, ibuf+sizeof(*rhdr), reply_len);
-	} else {
-		memcpy(replybuf, ibuf+sizeof(*rhdr), actual_len);
-	}
-
-	dev->cam_tag++;
-
-	return actual_len;
-}
-
-static int write_register(freenect_device *dev, uint16_t reg, uint16_t data)
-{
-	freenect_context *ctx = dev->parent;
-	uint16_t reply[2];
-	uint16_t cmd[2];
-	int res;
-
-	cmd[0] = fn_le16(reg);
-	cmd[1] = fn_le16(data);
-
-	FN_DEBUG("Write Reg 0x%04x <= 0x%02x\n", reg, data);
-	res = send_cmd(dev, 0x03, cmd, 4, reply, 4);
-	if (res < 0)
-		return res;
-	if (res != 2) {
-		FN_WARNING("send_cmd returned %d [%04x %04x], 0000 expected\n", res, reply[0], reply[1]);
-	}
-	return 0;
-}
-
-// This function is here for completeness.  We don't actually use it for anything right now.
-static uint16_t read_register(freenect_device *dev, uint16_t reg)
-{
-	freenect_context *ctx = dev->parent;
-	uint16_t reply[2];
-	uint16_t cmd;
-	int res;
-
-	cmd = fn_le16(reg);
-
-	FN_DEBUG("Read Reg 0x%04x =>\n", reg);
-	res = send_cmd(dev, 0x02, &cmd, 2, reply, 4);
-	if (res < 0)
-		FN_ERROR("read_register: send_cmd() failed: %d\n", res);
-	if (res != 4)
-		FN_WARNING("send_cmd returned %d [%04x %04x], 0000 expected\n", res, reply[0], reply[1]);
-
-	return reply[1];
 }
 
 static int freenect_fetch_reg_info(freenect_device *dev)
@@ -1201,6 +1090,17 @@ void freenect_set_depth_callback(freenect_device *dev, freenect_depth_cb cb)
 void freenect_set_video_callback(freenect_device *dev, freenect_video_cb cb)
 {
 	dev->video_cb = cb;
+}
+
+
+void freenect_set_depth_chunk_callback(freenect_device *dev, freenect_chunk_cb cb)
+{
+	dev->depth_chunk_cb = cb;
+}
+
+void freenect_set_video_chunk_callback(freenect_device *dev, freenect_chunk_cb cb)
+{
+	dev->video_chunk_cb = cb;
 }
 
 int freenect_get_video_mode_count()

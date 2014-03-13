@@ -134,6 +134,7 @@ private:
 	bool bBound;
 
 	map<int,GLuint> attributeIds;
+	map<int,int> attributeSize;
 	map<int,int> attributeStrides;
 	map<int,int> attributeNumCoords;
 
