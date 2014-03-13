@@ -19,13 +19,7 @@ void ofApp::setup(){
         model.setPausedForAllAnimations(true);
     }
     
-    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-
-	ofEnableDepthTest();
-
-    glShadeModel(GL_SMOOTH); //some model / light stuff
-    light.enable();
-    ofEnableSeparateSpecularLight();
+    
 }
 
 //--------------------------------------------------------------
@@ -42,6 +36,14 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofSetColor(255);
+    
+    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+    
+	ofEnableDepthTest();
+    
+    glShadeModel(GL_SMOOTH); //some model / light stuff
+    light.enable();
+    ofEnableSeparateSpecularLight();
 
     ofPushMatrix();
     ofTranslate(model.getPosition().x+100, model.getPosition().y, 0);
@@ -81,7 +83,13 @@ void ofApp::draw(){
     if(ofGetGLProgrammableRenderer()){
     	glPopAttrib();
     }
-
+    
+    ofDisableDepthTest();
+    light.disable();
+    ofDisableLighting();
+    ofDisableSeparateSpecularLight();
+    
+    ofSetColor(255, 255, 255 );
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
     ofDrawBitmapString("keys 1-5 load models, spacebar to trigger animation", 10, 30);
     ofDrawBitmapString("drag to control animation with mouseY", 10, 45);

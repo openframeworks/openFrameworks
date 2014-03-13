@@ -150,7 +150,10 @@ void ofNotifyUpdate(){
 			oneSec  = timeNow;
 			nFramesForFPS = 0;
 		}else{
-			fps = fps*.99 + nFramesForFPS/(oneSecDiff*MICROS_TO_SEC)*.01;
+			double deltaTime = ((double)oneSecDiff)*MICROS_TO_SEC;
+			if( deltaTime > 0.0 ){
+				fps = fps*0.99 + (nFramesForFPS/deltaTime)*0.01;
+			}
 		}
 		nFramesForFPS++;
 
