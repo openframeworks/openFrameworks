@@ -9,10 +9,7 @@
 
 
 //-------------------------------------------------
-ofThread::ofThread():
-    _threadRunning(false),
-    _mutexBlocks(true)
-{
+ofThread::ofThread(): _threadRunning(false), _mutexBlocks(true){
    thread.setName("Thread " + ofToString(thread.id()));
 }
 
@@ -42,8 +39,7 @@ std::string ofThread::getThreadName() const{
 
 //-------------------------------------------------
 void ofThread::startThread(bool mutexBlocks){
-	if(thread.isRunning())
-    {
+	if(thread.isRunning()){
 		ofLogWarning(thread.name()) << "Cannot start, thread already running.";
 		return;
 	}
@@ -64,34 +60,24 @@ void ofThread::startThread(bool mutexBlocks, bool verbose){
 
 //-------------------------------------------------
 bool ofThread::lock(){
-	if(_mutexBlocks)
-    {
-        if(isCurrentThread())
-        {
+	if(_mutexBlocks){
+        if(isCurrentThread()){
             ofLogVerbose(thread.name()) << "ofThread waiting for its own mutex to be unlocked.";
-        }
-        else
-        {
+        }else{
             ofLogVerbose(thread.name()) << "External thread waiting for ofThread mutex to be unlocked";
         }
 		mutex.lock();
 
-	}
-    else
-    {
-		if(!mutex.tryLock())
-        {
+	}else{
+		if(!mutex.tryLock()){
 			ofLogVerbose(thread.name()) << "Mutex is already locked, tryLock failed.";
 			return false; 
 		}
 	}
 
-    if(isCurrentThread())
-    {
+    if(isCurrentThread()){
         ofLogVerbose(thread.name()) << "ofThread locked its own mutex.";
-    }
-    else
-    {
+    }else{
         ofLogVerbose(thread.name()) << "External thread locked the ofThread mutex.";
     }
 
@@ -103,7 +89,7 @@ bool ofThread::lock(){
 void ofThread::unlock(){
 	mutex.unlock();
 	
-    if(isCurrentThread()) {
+    if(isCurrentThread()){
         ofLogVerbose(thread.name()) << "ofThread unlocked its own mutex.";
     } else {
         ofLogVerbose(thread.name()) << "External thread unlocked the ofThread mutex.";
@@ -119,11 +105,9 @@ void ofThread::stopThread(){
 
 //-------------------------------------------------
 void ofThread::waitForThread(bool callStopThread, long milliseconds){
-	if(thread.isRunning())
-    {
+	if(thread.isRunning()){
 		// tell thread to stop
-		if(callStopThread)
-        {
+		if(callStopThread){
             stopThread();
 			ofLogVerbose(thread.name()) << "Signaled to stop.";
 		}
@@ -131,21 +115,16 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds){
 		// wait for the thread to finish
 		ofLogVerbose(thread.name()) << "waiting to stop";
 
-        if(isCurrentThread())
-        {
+        if(isCurrentThread()){
 			ofLogWarning(thread.name()) << "waitForThread should only be called from outside the this ofThread.";
 			return;
 		}
 
-        if (INFINITE_JOIN_TIMEOUT == milliseconds)
-        {
+        if (INFINITE_JOIN_TIMEOUT == milliseconds){
             thread.join();
-        }
-        else
-        {
+        }else{
             // Wait for "joinWaitMillis" milliseconds for thread to finish
-            if(!thread.tryJoin(milliseconds))
-            {
+            if(!thread.tryJoin(milliseconds)){
                 ofLogError(thread.name()) << "Unable to completely waitForThread.";
             }
         }
@@ -178,7 +157,7 @@ Poco::Thread& ofThread::getPocoThread(){
 
 
 //-------------------------------------------------
-const Poco::Thread& ofThread::getPocoThread() const {
+const Poco::Thread& ofThread::getPocoThread() const{
 	return thread;
 }
 

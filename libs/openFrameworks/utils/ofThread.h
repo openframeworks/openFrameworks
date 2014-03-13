@@ -58,8 +58,7 @@
 /// Poco::FastMutex directly rather than using ofThread.  Further, cross
 /// platform thread management will be alleviated with the std::thread
 /// support library included with C++11.
-class ofThread: protected Poco::Runnable
-{
+class ofThread: protected Poco::Runnable {
 public:
     /// \brief Create an ofThread.
     ofThread();
@@ -295,8 +294,7 @@ public:
     ///     application thread is active.
     static Poco::Thread* getCurrentPocoThread();
 
-    enum
-    {
+    enum {
         INFINITE_JOIN_TIMEOUT = LONG_MAX
             ///< \brief An sentinal value for an infinite join timeout.
             ///<
