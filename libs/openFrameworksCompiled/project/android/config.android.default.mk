@@ -31,15 +31,6 @@
 
 include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 ARCH = android
-ifeq ($(shell uname),Darwin)
-	HOST_PLATFORM = darwin-x86
-else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
-	HOST_PLATFORM = windows
-	PWD = $(shell pwd)
-else
-	HOST_PLATFORM = linux-$(shell uname -m)
-endif
-
 
 ifndef ABIS_TO_COMPILE_RELEASE
 	ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon x86
@@ -91,6 +82,19 @@ else
 ANDROID_PREFIX=arm-linux-androideabi-
 TOOLCHAIN=$(ANDROID_PREFIX)$(GCC_VERSION)
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
+endif
+
+ifeq ($(shell uname),Darwin)
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/darwin-x86_64),)
+	HOST_PLATFORM = darwin-x86_64
+else
+	HOST_PLATFORM = darwin-x86
+endif
+else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
+	HOST_PLATFORM = windows
+	PWD = $(shell pwd)
+else
+	HOST_PLATFORM = linux-$(shell uname -m)
 endif
 
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/

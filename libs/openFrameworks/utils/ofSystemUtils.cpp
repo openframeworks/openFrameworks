@@ -81,8 +81,8 @@ static void initGTK(){
 	if(!initialized){
 		ofGstUtils::startGstMainLoop();
 	    gdk_threads_init();
-		int argc=0; char **argv = NULL;
-		gtk_init (&argc, &argv);
+	int argc=0; char **argv = NULL;
+	gtk_init (&argc, &argv);
 		initialized = true;
 	}
 
@@ -229,27 +229,27 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
-	
+
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
 	[loadDialog setAllowsMultipleSelection:NO];
 	[loadDialog setCanChooseDirectories:bFolderSelection];
 	[loadDialog setResolvesAliases:YES];
-	
+
 	if(!windowTitle.empty()) {
 		[loadDialog setTitle:[NSString stringWithUTF8String:windowTitle.c_str()]];
 	}
-	
+
 	if(!defaultPath.empty()) {
 		NSString * s = [NSString stringWithUTF8String:defaultPath.c_str()];
 		s = [[s stringByExpandingTildeInPath] stringByResolvingSymlinksInPath];
 		NSURL * defaultPathUrl = [NSURL fileURLWithPath:s];
 		[loadDialog setDirectoryURL:defaultPathUrl];
 	}
-	
+
 	NSInteger buttonClicked = [loadDialog runModal];
 	restoreAppWindowFocus();
-	
+
 	if(buttonClicked == NSFileHandlingPanelOKButton) {
 		NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
 		results.filePath = string([[selectedFileURL path] UTF8String]);
@@ -265,6 +265,8 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
+	wstring windowTitleW;
+	windowTitleW.assign(windowTitle.begin(), windowTitle.end());
 
 	if (bFolderSelection == false){
 
@@ -306,6 +308,12 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
+        
+#ifdef __MINGW32_VERSION
+		ofn.lpstrTitle = windowTitle.c_str();
+#else
+		ofn.lpstrTitle = windowTitleW.c_str();
+#endif 
 
 		if(GetOpenFileName(&ofn)) {
 #ifdef __MINGW32_VERSION
@@ -341,6 +349,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 		bi.lpfn             =   &loadDialogBrowseCallback;
 		bi.lParam           =   (LPARAM) &defaultPath;
+		bi.lpszTitle        =   windowTitleW.c_str();
 
 		if(pidl = SHBrowseForFolderW(&bi)){
 			// Copy the path directory to the buffer
@@ -396,10 +405,10 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	NSSavePanel * saveDialog = [NSSavePanel savePanel];
 	[saveDialog setMessage:[NSString stringWithUTF8String:messageName.c_str()]];
 	[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
-	
+
 	NSInteger buttonClicked = [saveDialog runModal];
 	restoreAppWindowFocus();
-	
+
 	if(buttonClicked == NSFileHandlingPanelOKButton){
 		results.filePath = string([[[saveDialog URL] path] UTF8String]);
 	}
@@ -465,18 +474,17 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 #ifdef TARGET_WIN32
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    switch(msg)
-    {
-        /*case WM_CLOSE:
-            DestroyWindow(hwnd);
-        break;
-        case WM_DESTROY:
-            PostQuitMessage(0);
-        break;*/
-        default:
+    //switch(msg)
+    //{
+    //    case WM_CLOSE:
+    //        DestroyWindow(hwnd);
+    //    break;
+    //    case WM_DESTROY:
+    //        PostQuitMessage(0);
+    //    break;
+    //    default:
             return DefWindowProc(hwnd, msg, wParam, lParam);
-    }
-    return 0;
+    //}
 }
 #endif
 
