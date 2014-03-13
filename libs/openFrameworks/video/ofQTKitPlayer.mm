@@ -256,7 +256,6 @@ unsigned char* ofQTKitPlayer::getPixels() {
 
 //--------------------------------------------------------------------
 ofTexture* ofQTKitPlayer::getTexture() {
-    ofTexture* texPtr = NULL;
 	if(moviePlayer.textureAllocated){
 		updateTexture();
         return &tex;
