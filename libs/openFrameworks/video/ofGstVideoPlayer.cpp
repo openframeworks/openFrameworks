@@ -38,12 +38,8 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	if( name.find( "file://",0 ) != string::npos){
 		bIsStream		= false;
 	}else if( name.find( "://",0 ) == string::npos){
-#ifndef TARGET_WIN32
-		name 			= "file://"+ofToDataPath(name,true);
-#else
-		name 			= "file:///"+ofToDataPath(name,true);
-		std::replace(name.begin(), name.end(), '\\', '/');
-#endif
+		GError * err = NULL;
+		name = gst_filename_to_uri(ofToDataPath(name).c_str(),&err);
 		bIsStream		= false;
 	}else{
 		bIsStream		= true;

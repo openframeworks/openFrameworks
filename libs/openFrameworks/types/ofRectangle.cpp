@@ -477,12 +477,12 @@ ofRectangle ofRectangle::getUnion(const ofRectangle& rect) const {
 void ofRectangle::standardize() {
     if(width < 0.0f) {
         x += width;
-        width = -1.0 * width;
+        width = -1.0f * width;
     } 
     
     if(height < 0.0f) {
         y += height;
-        height = -1.0 * height;
+        height = -1.0f * height;
     }
 }
 

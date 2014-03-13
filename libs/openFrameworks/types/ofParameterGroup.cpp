@@ -201,7 +201,7 @@ ofAbstractParameter & ofParameterGroup::operator[](int pos) const{
 }
 
 ostream& operator<<(ostream& os, const ofParameterGroup& group) {
-	int width = os.width();
+	std::streamsize width = os.width();
 	for(int i=0;i<group.size();i++){
 		if(group.getType(i)==typeid(ofParameterGroup).name()){
 			os << group.getName(i) << ":" << endl;

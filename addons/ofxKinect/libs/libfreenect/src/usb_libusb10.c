@@ -25,13 +25,18 @@
  */
 
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <libusb.h>
 #include "freenect_internal.h"
 #include "loader.h"
+#include "keep_alive.h"
+
+#ifdef _MSC_VER
+	# define sleep(x) Sleep((x)*1000) 
+#endif 
+
 
 FN_INTERNAL int fnusb_num_devices(fnusb_ctx *ctx)
 {
@@ -157,10 +162,19 @@ FN_INTERNAL int fnusb_process_events_timeout(fnusb_ctx *ctx, struct timeval* tim
 	return libusb_handle_events_timeout(ctx->ctx, timeout);
 }
 
+// Returns 1 if `pid` identifies K4W audio, 0 otherwise
+FN_INTERNAL int fnusb_is_pid_k4w_audio(int pid)
+{
+	return (pid == PID_K4W_AUDIO || pid == PID_K4W_AUDIO_ALT_1 || pid == PID_K4W_AUDIO_ALT_2);
+}
+
 FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 {
 	freenect_context *ctx = dev->parent;
 
+    dev->device_does_motor_control_with_audio = 0;
+    dev->motor_control_with_audio_enabled = 0;
+    
 	dev->usb_cam.parent = dev;
 	dev->usb_cam.dev = NULL;
 	dev->usb_motor.parent = dev;
@@ -201,9 +215,30 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 					break;
 				}
 				if(desc.idProduct == PID_K4W_CAMERA || desc.bcdDevice != fn_le32(267)){
+
+					freenect_device_flags requested_devices = ctx->enabled_subdevices; 
+
 					/* Not the old kinect so we only set up the camera*/ 
 					ctx->enabled_subdevices = FREENECT_DEVICE_CAMERA;
 					ctx->zero_plane_res = 334;
+                    dev->device_does_motor_control_with_audio = 1;
+
+                    //lets also set the LED ON
+                    //this keeps the camera alive for some systems which get freezes
+                    if( desc.idProduct == PID_K4W_CAMERA ){
+                        freenect_extra_keep_alive(PID_K4W_AUDIO);
+                    }else{
+                        freenect_extra_keep_alive(PID_NUI_AUDIO);
+                    }
+                    
+#ifdef BUILD_AUDIO
+                    //for newer devices we need to enable the audio device for motor control
+					//we only do this though if motor has been requested.
+                    if( (requested_devices & FREENECT_DEVICE_MOTOR) && (requested_devices & FREENECT_DEVICE_AUDIO) == 0 ){
+                        ctx->enabled_subdevices = (freenect_device_flags)(ctx->enabled_subdevices | FREENECT_DEVICE_AUDIO);
+                    }
+#endif
+                    
 				}else{
 					/* The good old kinect that tilts and tweets */
 					ctx->zero_plane_res = 322;
@@ -280,8 +315,9 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 #ifdef BUILD_AUDIO
 		// TODO: check that the firmware has already been loaded; if not, upload firmware.
 		// Search for the audio
-		if ((ctx->enabled_subdevices & FREENECT_DEVICE_AUDIO) && !dev->usb_audio.dev && (desc.idProduct == PID_NUI_AUDIO || desc.idProduct == PID_K4W_AUDIO)) {
+		if ((ctx->enabled_subdevices & FREENECT_DEVICE_AUDIO) && !dev->usb_audio.dev && (desc.idProduct == PID_NUI_AUDIO || fnusb_is_pid_k4w_audio(desc.idProduct))) {
 			// If the index given by the user matches our audio index
+            
 			if (nr_audio == index) {
 				res = libusb_open (devs[i], &dev->usb_audio.dev);
 				if (res < 0 || !dev->usb_audio.dev) {
@@ -296,6 +332,7 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 					dev->usb_audio.dev = NULL;
 					break;
 				}
+                
 				// Using the device handle that we've claimed, see if this
 				// device has already uploaded firmware (has 2 interfaces).  If
 				// not, save the serial number (by reading the appropriate
@@ -303,7 +340,13 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 				// waiting for a device with the same serial number to
 				// reappear.
 				int num_interfaces = fnusb_num_interfaces(&dev->usb_audio);
-				if (num_interfaces == 1) {
+                
+                if( num_interfaces >= 2 ){
+                    if( dev->device_does_motor_control_with_audio ){
+                        dev->motor_control_with_audio_enabled = 1;
+                    }
+                }else{
+                
 					// Read the serial number from the string descriptor and save it.
 					unsigned char string_desc[256]; // String descriptors are at most 256 bytes
 					res = libusb_get_string_descriptor_ascii(dev->usb_audio.dev, desc.iSerialNumber, string_desc, 256);
@@ -312,10 +355,23 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 						break;
 					}
 					char* audio_serial = strdup((char*)string_desc);
-
+                
 					FN_SPEW("Uploading firmware to audio device in bootloader state.\n");
-					res = upload_firmware(&dev->usb_audio);
-					if (res < 0) {
+                    
+                    // Check if we can load from memory - otherwise load from disk 
+                    if( desc.idProduct == PID_NUI_AUDIO && ctx->fn_fw_nui_ptr && ctx->fn_fw_nui_size > 0){
+                        FN_SPEW("loading firmware from memory\n");
+                        res = upload_firmware_from_memory(&dev->usb_audio, ctx->fn_fw_nui_ptr, ctx->fn_fw_nui_size);
+                    }
+                    else if( desc.idProduct == PID_K4W_AUDIO && ctx->fn_fw_k4w_ptr && ctx->fn_fw_k4w_size > 0 ){
+                        FN_SPEW("loading firmware from memory\n");
+                        res = upload_firmware_from_memory(&dev->usb_audio, ctx->fn_fw_k4w_ptr, ctx->fn_fw_k4w_size);
+                    }
+                    else{
+                        res = upload_firmware(&dev->usb_audio, "audios.bin");
+                    }
+					
+                    if (res < 0) {
 						FN_ERROR("upload_firmware failed: %d\n", res);
 						break;
 					}
@@ -336,7 +392,7 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 							if (r < 0)
 								continue;
 							// If this dev is a Kinect audio device, open device, read serial, and compare.
-							if (new_dev_desc.idVendor == VID_MICROSOFT && new_dev_desc.idProduct == PID_NUI_AUDIO) {
+							if (new_dev_desc.idVendor == VID_MICROSOFT && (new_dev_desc.idProduct == PID_NUI_AUDIO || fnusb_is_pid_k4w_audio(desc.idProduct))) {
 								FN_SPEW("Matched VID/PID!\n");
 								libusb_device_handle* new_dev_handle;
 								// Open device
@@ -362,14 +418,20 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 									}
 									// Save the device handle.
 									dev->usb_audio.dev = new_dev_handle;
-									// Verify that we've actually found a device running the right firmware.
-									if (fnusb_num_interfaces(&dev->usb_audio) != 2) {
-										FN_SPEW("Opened audio with matching serial but too few interfaces.\n");
+									
+                                    // Verify that we've actually found a device running the right firmware.
+									num_interfaces = fnusb_num_interfaces(&dev->usb_audio);
+                                    
+                                    if( num_interfaces >= 2 ){
+                                        if( dev->device_does_motor_control_with_audio ){
+                                            dev->motor_control_with_audio_enabled = 1;
+                                        }
+                                    }else{
+                                        FN_SPEW("Opened audio with matching serial but too few interfaces.\n");
 										dev->usb_audio.dev = NULL;
 										libusb_close(new_dev_handle);
 										continue;
-									}
-									break;
+									}									break;
 								} else {
 									FN_SPEW("Got serial %s, expected serial %s\n", (char*)string_desc, audio_serial);
 								}
@@ -407,15 +469,23 @@ FN_INTERNAL int fnusb_open_subdevices(freenect_device *dev, int index)
 		if (dev->usb_cam.dev) {
 			libusb_release_interface(dev->usb_cam.dev, 0);
 			libusb_close(dev->usb_cam.dev);
+		} else {
+			FN_ERROR("Failed to open camera subdevice or it is not disabled.");
 		}
+
 		if (dev->usb_motor.dev) {
 			libusb_release_interface(dev->usb_motor.dev, 0);
 			libusb_close(dev->usb_motor.dev);
+		} else {
+			FN_ERROR("Failed to open motor subddevice or it is not disabled.");
 		}
+
 #ifdef BUILD_AUDIO
 		if (dev->usb_audio.dev) {
 			libusb_release_interface(dev->usb_audio.dev, 0);
 			libusb_close(dev->usb_audio.dev);
+		} else {
+			FN_ERROR("Failed to open audio subdevice or it is not disabled.");
 		}
 #endif
 		return -1;
@@ -593,7 +663,6 @@ FN_INTERNAL int fnusb_stop_iso(fnusb_dev *dev, fnusb_isoc_stream *strm)
 	free(strm->xfers);
 
 	FN_FLOOD("fnusb_stop_iso() freed buffers and stream\n");
-	memset(strm, 0, sizeof(*strm));
 	FN_FLOOD("fnusb_stop_iso() done\n");
 	return 0;
 }
