@@ -183,8 +183,7 @@ ofColor_<PixelType>::ofColor_():
     r(limit()),
     g(limit()),
     b(limit()),
-    a(limit())
-{
+    a(limit()){
 }
 
 template<typename PixelType>
@@ -195,8 +194,7 @@ ofColor_<PixelType>::ofColor_(float _r, float _g, float _b, float _a):
     r(_r),
     g(_g),
     b(_b),
-    a(_a)
-{
+    a(_a){
 }
 
 template<typename PixelType>
@@ -204,8 +202,7 @@ ofColor_<PixelType>::ofColor_(const ofColor_<PixelType>& color):
     r(color.r),
     g(color.g),
     b(color.b),
-    a(color.a)
-{
+    a(color.a){
 }
 
 template<typename PixelType>
@@ -213,8 +210,7 @@ ofColor_<PixelType>::ofColor_ (const ofColor_<PixelType>& color, float _a):
     r(color.r),
     g(color.g),
     b(color.b),
-    a(_a)
-{
+    a(_a){
 }
 
 template<typename PixelType>
@@ -222,16 +218,14 @@ ofColor_<PixelType>::ofColor_(float gray, float _a):
     r(gray),
     g(gray),
     b(gray),
-    a(_a)
-{
+    a(_a){
 }
 
 template<typename PixelType>
 ofColor_<PixelType> ofColor_<PixelType>::fromHsb(float hue,
                                                  float saturation,
                                                  float brightness,
-                                                 float alpha)
-{
+                                                 float alpha){
 	ofColor_<PixelType> cur;
 	cur.setHsb(hue, saturation, brightness, alpha);
 	return cur;
@@ -360,8 +354,6 @@ ofColor_<PixelType> ofColor_<PixelType>::getLerped(const ofColor_<PixelType>& ta
 	cur.lerp(target, amount);
 	return cur;
 }
-
-
 
 template<typename PixelType>
 float ofColor_<PixelType>::getHue() const {
