@@ -45,6 +45,9 @@ ofURLFileLoader::ofURLFileLoader() {
 		catch (Poco::SystemException & PS) {
 			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
 		}
+		catch (Poco::ExistsException & PS) {
+			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
+		}
 	}
 }
 
