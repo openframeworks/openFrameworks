@@ -64,6 +64,8 @@ int ofSaveURLAsync(string url, string path);
 void ofRemoveURLRequest(int id);
 void ofRemoveAllURLRequests();
 
+void ofStopURLLoader();
+
 ofEvent<ofHttpResponse> & ofURLResponseEvent();
 
 template<class T>

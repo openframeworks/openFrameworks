@@ -38,6 +38,7 @@ CORE
 ### GL
 	/ ofMaterial: fixed back emmisive material
 	/ Fix point sprites in openGL 3+
+    / ofShader: #pragma include directive can now deal with relative paths for include files
 ### Sound
 ### Types
 ### Utils

@@ -18,7 +18,7 @@
 #include "ofTrueTypeFont.h"
 #include "ofErrors.h"
 #include "ofURLFileLoader.h"
-#include "Poco/Net/SSLManager.h"
+#include "Poco/Net/NetSSL.h"
 
 
 // TODO: closing seems wonky.
@@ -155,15 +155,15 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 
 	if(ofIsGLProgrammableRenderer()){
         #if defined(TARGET_RASPBERRY_PI)
-			((ofAppEGLWindow*)window.get())->setGLESVersion(2);
+		static_cast<ofAppEGLWindow*>(window.get())->setGLESVersion(2);
 		#elif defined(TARGET_LINUX_ARM)
-			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(2,0);
+		static_cast<ofAppGLFWWindow*>(window.get())->setOpenGLVersion(2,0);
 		#elif !defined(TARGET_OPENGLES)
-			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(3,2);
+		static_cast<ofAppGLFWWindow*>(window.get())->setOpenGLVersion(3,2);
 		#endif
 	}else{
 	    #if defined(TARGET_LINUX_ARM) && !defined(TARGET_RASPBERRY_PI)
-			((ofAppGLFWWindow*)window.get())->setOpenGLVersion(1,0);
+		static_cast<ofAppGLFWWindow*>(window.get())->setOpenGLVersion(1,0);
 		#endif
 	}
 
@@ -221,15 +221,13 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 //							currently looking at who to turn off
 //							at the end of the application
 
-void ofStopURLLoader();
-
 void ofExitCallback(){
 
 	ofNotifyExit();
 
 	ofRemoveAllURLRequests();
 	ofStopURLLoader();
-	Poco::Net::SSLManager::instance().shutdown();
+	Poco::Net::uninitializeSSL();
 
     ofRemoveListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofRemoveListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
