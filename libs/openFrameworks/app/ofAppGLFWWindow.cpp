@@ -238,6 +238,7 @@ void ofAppGLFWWindow::initializeWindow(){
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
 	glfwSetDropCallback(windowP, drop_cb);
+	glfwSetCursorEnterCallback(windowP, entry_cb);
 
 }
 
@@ -1024,6 +1025,12 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	ofNotifyWindowResized(w, h);
 
 	instance->nFramesSinceWindowResized = 0;
+}
+
+//------------------------------------------------------------
+
+void ofAppGLFWWindow::entry_cb(GLFWwindow* windowP_, int state){
+	ofNotifyWindowEntry(state);
 }
 
 //------------------------------------------------------------

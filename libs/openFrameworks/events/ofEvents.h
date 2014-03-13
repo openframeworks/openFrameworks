@@ -141,6 +141,7 @@ class ofCoreEvents {
 		mouseReleased.disable();
 		mousePressed.disable();
 		mouseMoved.disable();
+		windowEntered.disable();
 		audioReceived.disable();
 		audioRequested.disable();
 		touchDown.disable();
@@ -163,6 +164,7 @@ class ofCoreEvents {
 		mouseReleased.enable();
 		mousePressed.enable();
 		mouseMoved.enable();
+		windowEntered.enable();
 		audioReceived.enable();
 		audioRequested.enable();
 		touchDown.enable();
@@ -186,6 +188,8 @@ void ofRegisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFT
 	ofAddListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
 	ofAddListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
 	ofAddListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
+	ofAddListener(ofEvents().windowEntered, listener, &ListenerClass::windowEntered,prio);
+
 }
 
 template<class ListenerClass>
@@ -219,6 +223,7 @@ void ofUnregisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_A
 	ofRemoveListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
 	ofRemoveListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
 	ofRemoveListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
+	ofRemoveListener(ofEvents().windowEntered,listener,&ListenerClass::windowEntered,prio);
 }
 
 template<class ListenerClass>
@@ -260,6 +265,7 @@ void ofNotifyMouseReleased(int x, int y, int button);
 void ofNotifyMouseDragged(int x, int y, int button);
 void ofNotifyMouseMoved(int x, int y);
 void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent);
+
 
 void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
