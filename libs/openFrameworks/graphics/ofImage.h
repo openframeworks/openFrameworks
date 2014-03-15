@@ -213,8 +213,21 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		ofColor_<PixelType> getColor(int x, int y) const;
 
 		// alter the image
+		/// \brief Sets the pixel at the x,y position passed in. 
+		/// 
+		/// The ofColor type needs to match the ofImage type, i.e. ofFloatImage requires that you use ofFloatPixels.
+		///
+		/// \param x x position of pixel
+		/// \param y y position of pixel
+		/// \param color Color to set pixel to.
 		void				setColor(int x, int y, const ofColor_<PixelType>& color);
+		/// \brief Sets the pixel at the given pixel buffer index
+		/// 
+		/// \param index Index of pixel to set.
+		/// \param color Color to set pixel to. 
 		void				setColor(int index, const ofColor_<PixelType>& color);
+		/// \brief Sets all pixels to a color
+		/// \param color Color to set pixel to. 
 		void				setColor(const ofColor_<PixelType>& color);
 		void 				setFromPixels(const PixelType * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
 		void				setFromPixels(const ofPixels_<PixelType> & pixels);
