@@ -72,7 +72,10 @@ void ofSetConeResolution( int radiusSegments, int heightSegments, int capSegment
 /// \brief Retrieve a data structure describing the resolution with which cones are polygonized. 
 ///
 /// Allows you to fetch the resolution with which cones are polygonized.
-/// See ofSetConeResolution() for more information. 
+/// Returns an ofVec3f containing the following data: 
+/// Encoded as "x": radiusSegments, the number of facets (subdivisions) around the cone's circular footprint. 
+/// Encoded as "y": heightSegments, the number of subdivisions from the cone's top to bottom. 
+/// Encoded as "z": capSegments, the number of annular (ring-shaped) subdivisions of the cone's endcap. 
 ///
 /// \returns An ofVec3f containing (radiusSegments, heightSegments, capSegments) for cone polygonization. 
 ofVec3f ofGetConeResolution();
