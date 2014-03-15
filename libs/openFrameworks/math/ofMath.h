@@ -182,26 +182,25 @@ float ofRadToDeg(float radians);
 /// \returns the angle in radians.
 float ofDegToRad(float degrees);
 
-
 /// \brief Linearly interpolate a value between two angles in degrees.
 /// 
-/// Calculates a number between two numbers (start,stop) at a specific increment (amt).
+/// Calculates a number between two numbers (start, stop) at a specific increment (amt).
 /// This does constrain the result into a single rotation, but does not clamp the values
 ///
 /// \param currentAngle The floor of the range in degrees.
 /// \param targetAngle The ceiling of the range in degrees.
-/// \param pct An amount between 0.0..1.0 within the range to return, .
+/// \param pct An amount between 0.0..1.0 within the range to return.
 /// \returns An angle in degrees between currentAngle and targetAngle.
 float ofLerpDegrees(float currentAngle, float targetAngle, float pct);
 
 /// \brief Linearly interpolate a value between two angles in radians.
 /// 
-/// Calculates a number between two numbers (start,stop) at a specific increment (amt).
+/// Calculates a number between two numbers (start, stop) at a specific increment (amt).
 /// This does constrain the result into a single rotation, but does not clamp the values
 ///
 /// \param currentAngle The floor of the range in radians.
 /// \param targetAngle The ceiling of the range in radians.
-/// \param pct An amount between 0.0..1.0 within the range to return, .
+/// \param pct An amount between 0.0..1.0 within the range to return.
 /// \returns An angle in radians between currentAngle and targetAngle.
 float ofLerpRadians(float currentAngle, float targetAngle, float pct);
 
@@ -209,6 +208,7 @@ float ofLerpRadians(float currentAngle, float targetAngle, float pct);
 ///
 /// This will calculate the actual difference, taking into account multiple revolutions.
 /// For example:
+///
 ///     ofAngleDifferenceDegrees(0,90); // returns 90;
 ///     ofAngleDifferenceDegrees(0,450); // also returns 90;
 ///
@@ -221,6 +221,7 @@ float ofAngleDifferenceDegrees(float currentAngle, float targetAngle);
 ///
 /// This will calculate the actual difference, taking into account multiple revolutions.
 /// For example:
+///
 ///     ofAngleDifferenceRadians(0,PI); // returns -PI;
 ///     ofAngleDifferenceRadians(0,3*PI); // also returns -PI;
 ///
@@ -235,6 +236,7 @@ float ofAngleDifferenceRadians(float currentAngle, float targetAngle);
 /// If a value is NOT within that range, wrap it.
 ///
 /// For example:
+/// 
 ///     ofWrap(5,0,10); // returns 5;
 ///     ofWrap(15,0,10); // also returns 5;
 ///     ofWrap(-5,0,10); // also returns 5;
@@ -257,28 +259,28 @@ float ofRandomWidth();
 float ofRandomHeight();
 
 /// \brief Calculates a one dimensional Perlin noise value between 0.0...1.0.
-float		ofNoise(float x);
+float ofNoise(float x);
 
 /// \brief Calculates a two dimensional Perlin noise value between 0.0...1.0.
-float		ofNoise(float x, float y);
+float ofNoise(float x, float y);
 
 /// \brief Calculates a three dimensional Perlin noise value between 0.0...1.0.
-float		ofNoise(float x, float y, float z);
+float ofNoise(float x, float y, float z);
 
 /// \brief Calculates a four dimensional Perlin noise value between 0.0...1.0.
-float		ofNoise(float x, float y, float z, float w);
+float ofNoise(float x, float y, float z, float w);
 
 /// \brief Calculates a one dimensional Perlin noise value between -1.0...1.0.
-float		ofSignedNoise(float x);
+float ofSignedNoise(float x);
 
 /// \brief Calculates a two dimensional Perlin noise value between -1.0...1.0.
-float		ofSignedNoise(float x, float y);
+float ofSignedNoise(float x, float y);
 
 /// \brief Calculates a three dimensional Perlin noise value between -1.0...1.0.
-float		ofSignedNoise(float x, float y, float z);
+float ofSignedNoise(float x, float y, float z);
 
 /// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
-float		ofSignedNoise(float x, float y, float z, float w);
+float ofSignedNoise(float x, float y, float z, float w);
 
 /// \brief Determine if an (x,y) coordinate is within the polygon defined by a vector of ofPoints.
 /// \param x The x dimension of the coordinate.
@@ -293,7 +295,6 @@ bool ofInsidePoly(float x, float y, const vector<ofPoint> & poly);
 /// \returns True if the ofPoint is enclosed, false otherwise.
 bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly);
 
-/// \brief Determine if an ofPoint is within an ofPolygon.
 bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint line2Start, ofPoint line2End, ofPoint & intersection);
 
 /// \brief Given the four points that determine a bezier curve, return an interpolated point on the curve.
@@ -313,7 +314,6 @@ ofPoint ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 /// \param t an offset along the curve, normalized between 0 and 1.
 /// \returns A ofPoint on the curve.
 ofPoint ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
-
 
 /// Given the four points that determine a bezier curve and an offset along the curve, return an tangent vector to a point on the curve.
 /// Currently this is not a normalized point, and will need to be normalized.
