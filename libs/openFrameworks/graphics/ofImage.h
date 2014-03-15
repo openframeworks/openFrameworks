@@ -229,8 +229,25 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// \brief Sets all pixels to a color
 		/// \param color Color to set pixel to. 
 		void				setColor(const ofColor_<PixelType>& color);
+		/// \brief Sets the pixels of the image from an array of values.
+		///
+		/// Set the pixels of the image from an array of values, for an ofFloatImage these need to be floats, for an ofImage 
+		/// these need to be unsigned chars. The w and h values are important so that the correct dimensions are set in the 
+		/// image. This assumes that you're setting the pixels from 0,0 or the upper left hand corner of the image. The 
+		/// bOrderIsRGB flag allows you pass in pixel data that is BGR by setting bOrderIsRGB=false.
+		///
+		/// \param pixels Array of pixel values
+		/// \param w Width of image being passed in
+		/// \param h Height of image being passed in
+		/// \param type The image type can be OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, or OF_IMAGE_COLOR_ALPHA.
+		/// \param bOrderIsRGB Pass in pixel data that is BGR by setting bOrderIsRGB=false
 		void 				setFromPixels(const PixelType * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
+		/// \brief Set the pixels of the image from an ofPixels instance
+		///
+		/// Set the pixels of the image from an ofPixels instance, for an ofFloatImage these need to be ofFloatPixels, for an
+		/// ofImage these need to be unsigned chars. 
 		void				setFromPixels(const ofPixels_<PixelType> & pixels);
+		
 		void 				setImageType(ofImageType type);
 		void 				resize(int newWidth, int newHeight);
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
