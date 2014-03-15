@@ -7,9 +7,15 @@
 
 
 #ifdef TARGET_OSX
+	#define Point MacTypesPoint
+	#define Rect MacTypesRect
+
 	#include <QuickTime/QuickTime.h>
 	#include <CoreServices/CoreServices.h>
 	#include <ApplicationServices/ApplicationServices.h>
+
+	#undef Point
+	#undef Rect
 #else
 	#include <QTML.h>
 	#include <FixMath.h>

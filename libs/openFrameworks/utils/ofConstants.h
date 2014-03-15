@@ -148,8 +148,15 @@ enum ofTargetPlatform{
 	#endif
 	#include <unistd.h>
 	#include "GL/glew.h"
+
+	#define Point MacTypesPoint
+	#define Rect MacTypesRect
+
 	#include <OpenGL/gl.h>
 	#include <ApplicationServices/ApplicationServices.h>
+
+	#undef Point
+	#undef Rect
 
 	#undef check
 	#if defined(__LITTLE_ENDIAN__)
