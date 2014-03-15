@@ -72,7 +72,7 @@ public:
         ///
         /// Note the line height is automatically computed based on the font size, when you load in the font.
 	///
-	/// \returns Returns line height for text drawn on screen.
+	/// \param height Line height for text drawn on screen
   	void 		setLineHeight(float height);
   	/// \brief Returns letter spacing of font object.
   	///
@@ -84,6 +84,7 @@ public:
 	/// \brief Sets the letter spacing of the font object.
 	/// 
 	/// 1.0 = default spacing, less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
+	/// \param spacing Spacing of font object. 
 	void 		setLetterSpacing(float spacing);
 	/// \brief Returns a variable that represents how wide spaces are.
 	///
@@ -92,8 +93,25 @@ public:
 	///
 	/// \returns Returns a variable that represents how wide spaces are.
 	float 		getSpaceSize();
+	/// \brief Sets the size of the space ' ' character. 
+	/// 
+	/// This number, which defaults to 1.0, scales the width of the letter 'p' for the space.
+	///
+	/// \param size Scales the width of the letter 'p' for the space. 
 	void 		setSpaceSize(float size);
+	/// \brief Returns the string width.
+	///
+	/// This is essentially the width component of the ofTrueTypeFont::getStringBoundingBox() rectangle.
+	///
+	/// \param s The string to get the width of.
+	/// \returns Returns the string width. 
 	float 		stringWidth(string s);
+	/// \brief Returns the string height.
+	///
+	/// This is essentially the height component of the ofTrueTypeFont::getStringBoundingBox() rectangle.
+	///
+	/// \param s The string to get the height of.
+	/// \returns Returns the string height. 
 	float 		stringHeight(string s);
 	
 	ofRectangle    getStringBoundingBox(string s, float x, float y);
