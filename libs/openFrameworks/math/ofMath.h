@@ -178,8 +178,8 @@ float ofRadToDeg(float radians);
 ///     float result;
 ///     result = ofDegToRad(90); // result will be PI/2 
 ///
-/// \returns float the angle in radians.
-/// \param float degrees An angle in degrees.
+/// \param degrees An angle in degrees.
+/// \returns the angle in radians.
 float ofDegToRad(float degrees);
 
 float ofLerpDegrees(float currentAngle, float targetAngle, float pct);
