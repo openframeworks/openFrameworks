@@ -188,6 +188,14 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		void				setCompression(ofTexCompression compression);
 
 		// getting the data
+		/// \brief Returns a raw pointer to the pixel data.
+		///
+		/// This function will give you access to a continuous block of pixels. you can grab the data
+		/// and do what you like with it. If you have a grayscale image, you will have (widthheight) 
+		/// number of pixels. Color images will have (widthheight3) number of pixels (interlaced R,G,B), 
+		/// and coloralpha images will have (widthheight*4) number of pixels (interlaced R,G,B,A).
+		///
+		/// \return Returns a raw pointer to the pixel data.
 		PixelType * 				getPixels();			// up to you to get this right
 		ofPixels_<PixelType> &	 	getPixelsRef();
 
