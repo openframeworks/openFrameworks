@@ -81,9 +81,10 @@ public:
 	
 	/// \brief Obtain the screen coordinates of a point in the 3D world. 
 	///
-	/// Takes a three-dimensional (X,Y,Z) position, encoded as an ofVec3f, 
-	/// and returns the location where it would appear on your (two-dimensional) display.
-	/// Function returns this location as an ofVec3f, whose Z value is zero. 
+	/// Takes an (X,Y,Z) point in your 3D world, encoded as an ofVec3f, 
+	/// and returns the location (also as an ofVec3f) where this point would appear 
+	/// on your (two-dimensional) display. The screen position's "Z coordinate" 
+	/// is set to be the same as your camera's. 
 	///
 	/// \param WorldXYZ A 3D point in the world, whose screen coordinates you wish to know. 
 	/// \param viewport (Optional) A viewport. The default is ofGetCurrentViewport(). 
