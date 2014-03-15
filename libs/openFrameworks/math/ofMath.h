@@ -1,4 +1,3 @@
-
 // notes:
 // -----------------------------------------------------------
 // for fast things look here: http://musicdsp.org/archive.php?classid=5#115
@@ -10,7 +9,6 @@
 // -----------------------------------------------------------
 
 #pragma once
-
 
 #include "ofPoint.h"
 #include "ofConstants.h"
@@ -26,37 +24,39 @@
 ///
 /// \param value.
 /// \returns value^2.
-int 		ofNextPow2 ( int a );
+int ofNextPow2(int a);
 
 /// \brief Randomly seeds the random number generator.
 ///
 /// This seeds the random number generator with an acceptably random value, generated from clock time and the PID.
-void 		ofSeedRandom();
+void ofSeedRandom();
 
 /// \brief Seeds the random number generator with a value for consistent randomness.
 ///
 /// \param int The value with which to seed the generator.
-void 		ofSeedRandom(int val);
+void ofSeedRandom(int val);
 
 /// \brief Returns a random floating point number between 0 and max.
 ///
 /// \param float The maximum value of the random number.
-float 		ofRandom(float max); 
+float ofRandom(float max); 
 
 /// \brief returns a random number between two values.
+///
 /// Example:
 ///
 ///    ofRandom(-30,20); // will return a random floating point number between -30 and 20.
+///
 /// \param val0 the minimum value of the random number.
 /// \param val1 The maximum value of the random number.
 /// \returns A random floating point number between val0 and val1.
-float 		ofRandom(float val0, float val1);		// random (x - y)
+float ofRandom(float val0, float val1);
 
 /// \returns A random floating point number between -1 and 1.
-float 		ofRandomf();							// random (-1 - 1)
+float ofRandomf();
 
 /// \Returns a random floating point number between 0 and 1.
-float 		ofRandomuf();							// random (0 - 1) 
+float ofRandomuf();
 
 /// \brief Given a value and a range, remap the value to be within 0 and 1.
 ///
@@ -68,7 +68,7 @@ float 		ofRandomuf();							// random (0 - 1)
 /// \param min The floor of the range.
 /// \param max The ceiling of the range.
 /// \returns A float between 0 and 1.
-float		ofNormalize(float value, float min, float max);
+float ofNormalize(float value, float min, float max);
 
 /// \brief Given a value and an input range, remap the value to be within an output range.
 /// 
@@ -78,19 +78,20 @@ float		ofNormalize(float value, float min, float max);
 /// Results are not clamped by default.
 ///
 /// Example:
+///
 ///     float x, newx;
-///     x=5;
-//      //0 < x < 10
-//      newx = ofMap(x, 0, 10, 21, 22) //newx = 21.5 a value between 21 and 22
-//
-/// \param  value The number to be mapped.
-/// \param  inputMin The floor of the input range.
-/// \param  inputMax The ceiling of the input range.
-/// \param  outputMin The floor of the output range.
-/// \param  outputMax The ceiling of the output range.
-/// \param  clamp Should the value be clamped between outputMin and outputMax or allowed to extend beyond?
+///     x = 5;
+///     // 0 < x < 10
+///     newx = ofMap(x, 0, 10, 21, 22); // newx = 21.5 a value between 21 and 22
+///
+/// \param value The number to be mapped.
+/// \param inputMin The floor of the input range.
+/// \param inputMax The ceiling of the input range.
+/// \param outputMin The floor of the output range.
+/// \param outputMax The ceiling of the output range.
+/// \param clamp Should the value be clamped between outputMin and outputMax or allowed to extend beyond?
 /// \returns a float, mapped between outputMin and outputMax.
-float		ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp = false);
+float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp = false);
 
 /// \brief Clamp a value between min and max.
 /// 
@@ -99,16 +100,16 @@ float		ofMap(float value, float inputMin, float inputMax, float outputMin, float
 /// If the value is greater than max, return max; if the value is less than min, return min.
 ///        
 ///     float val, newval;
-///     val=10;
-///     newval=ofClamp(val,30,40); //newval = 30
-///     newval=ofClamp(val,0,5); //newval = 5
-///     newval=ofClamp(val,0,20); //newval = 10
+///     val = 10;
+///     newval = ofClamp(val,30,40); // newval = 30
+///     newval = ofClamp(val,0,5); // newval = 5
+///     newval = ofClamp(val,0,20); // newval = 10
 ///
-/// \param  value The number to be clamped.
-/// \param  min The floor of the range.
-/// \param  max The ceiling of the range.
+/// \param value The number to be clamped.
+/// \param min The floor of the range.
+/// \param max The ceiling of the range.
 /// \returns A float between min and max.
-float		ofClamp(float value, float min, float max);
+float ofClamp(float value, float min, float max);
 
 /// \brief Linearly interpolate a value be within a range.
 /// 
@@ -117,117 +118,116 @@ float		ofClamp(float value, float min, float max);
 /// ofLerp() does not clamp the values.
 ///
 ////     float init,end,increment,result;
-///      increment=0.2;
+///      increment = 0.2;
 ///      init = 1;
-///      end =2;
-///      result=ofLerp(init, end, increment); //result = 1.2
+///      end = 2;
+///      result = ofLerp(init, end, increment); // result = 1.2
 ///      // Values outside 0...1 work as well.
-///      increment=2;
-///      result=ofLerp(init, end, increment); //result = 3
+///      increment = 2;
+///      result = ofLerp(init, end, increment); // result = 3
 ///
-/// \param  start The floor of the range.
-/// \param  stop The ceiling of the range.
-/// \param  amt The position within the range to return.
+/// \param start The floor of the range.
+/// \param stop The ceiling of the range.
+/// \param amt The position within the range to return.
 /// \returns A float between start and stop.
-float		ofLerp(float start, float stop, float amt);
+float ofLerp(float start, float stop, float amt);
 
 /// \brief Calculates the distance between two points.
 ///
 /// Uses <http://en.wikipedia.org/wiki/Pythagorean_theorem>
 ///
-/// \param  x1 X position of first point.
-/// \param  y1 Y position of first point.
-/// \param  x2 X position of second point.
-/// \param  y2 Y position of second point.
+/// \param x1 X position of first point.
+/// \param y1 Y position of first point.
+/// \param x2 X position of second point.
+/// \param y2 Y position of second point.
 /// \returns float Distance between points.
-float		ofDist(float x1, float y1, float x2, float y2);
+float ofDist(float x1, float y1, float x2, float y2);
 
 /// \brief Calculates the distance between two points, without taking the square root of the result
 ///
 /// Same as ofMath::ofDist() but doesn't take the sqrt() of the result, 
 /// which is a faster operation if you need to calculate and compare multiple distances. 
 ///
-/// \param  x1 X position of first point.
-/// \param  y1 Y position of first point.
-/// \param  x2 X position of second point.
-/// \param  y2 Y position of second point.
+/// \param x1 X position of first point.
+/// \param y1 Y position of first point.
+/// \param x2 X position of second point.
+/// \param y2 Y position of second point.
 /// \returns distance^2 between two points.
-float		ofDistSquared(float x1, float y1, float x2, float y2);
+float ofDistSquared(float x1, float y1, float x2, float y2);
 
 /// \brief Returns the sign of a number.
 /// \returns int -1 if n is negative, 1 if n is positive, and 0 is n == 0;
-int			ofSign(float n);
+int ofSign(float n);
 
 /// \brief Returns true if the number t is the range of [min - max], false if it's not.
-/// \param  t  The value to determine
-/// \param  min The floor of the range.
-/// \param  max The ceiling of the range.
-/// \returns true if min<=t<=max.
-bool		ofInRange(float t, float min, float max);
+/// \param t The value to determine
+/// \param minThe floor of the range.
+/// \param max The ceiling of the range.
+/// \returns true if min <= t <= max.
+bool ofInRange(float t, float min, float max);
 
 /// \brief Convert radians to degrees.
-/// \param  radians  An angle in radians.
-/// \returns  the angle in degrees.
-float		ofRadToDeg(float radians);
+/// \param radians An angle in radians.
+/// \returns the angle in degrees.
+float ofRadToDeg(float radians);
 
 /// \brief Convert degrees to radiant.
 ///
-/// For example:
+/// Example:
+///
 ///     float result;
 ///     result = ofDegToRad(90); // result will be PI/2 
 ///
 /// \returns float the angle in radians.
-/// \param float degrees  An angle in degrees.
-float		ofDegToRad(float degrees);
+/// \param float degrees An angle in degrees.
+float ofDegToRad(float degrees);
 
-
-``
-float 		ofLerpDegrees(float currentAngle, float targetAngle, float pct);
-float 		ofLerpRadians(float currentAngle, float targetAngle, float pct);
-float 		ofAngleDifferenceDegrees(float currentAngle, float targetAngle);
-float 		ofAngleDifferenceRadians(float currentAngle, float targetAngle);
-float		ofWrap(float value, float from, float to);
-float		ofWrapRadians(float angle, float from = -PI, float to=+PI);
-float		ofWrapDegrees(float angle, float from = -180, float to=+180);
+float ofLerpDegrees(float currentAngle, float targetAngle, float pct);
+float ofLerpRadians(float currentAngle, float targetAngle, float pct);
+float ofAngleDifferenceDegrees(float currentAngle, float targetAngle);
+float ofAngleDifferenceRadians(float currentAngle, float targetAngle);
+float ofWrap(float value, float from, float to);
+float ofWrapRadians(float angle, float from = -PI, float to=+PI);
+float ofWrapDegrees(float angle, float from = -180, float to=+180);
 
 /// \returns a random number between 0 and the width of the screen. 
-float		ofRandomWidth();
+float ofRandomWidth();
 
 /// \returns a random number between 0 and the height of the screen. 
-float		ofRandomHeight();
+float ofRandomHeight();
 
-			//returns noise in 0.0 to 1.0 range
-float		ofNoise(float x);
-float		ofNoise(float x, float y);
-float		ofNoise(float x, float y, float z);
-float		ofNoise(float x, float y, float z, float w);
+// returns noise in 0.0 to 1.0 range
+float ofNoise(float x);
+float ofNoise(float x, float y);
+float ofNoise(float x, float y, float z);
+float ofNoise(float x, float y, float z, float w);
 
-			//returns noise in -1.0 to 1.0 range
-float		ofSignedNoise(float x);
-float		ofSignedNoise(float x, float y);
-float		ofSignedNoise(float x, float y, float z);
-float		ofSignedNoise(float x, float y, float z, float w);
+// returns noise in -1.0 to 1.0 range
+float ofSignedNoise(float x);
+float ofSignedNoise(float x, float y);
+float ofSignedNoise(float x, float y, float z);
+float ofSignedNoise(float x, float y, float z, float w);
 
-bool        ofInsidePoly(float x, float y, const vector<ofPoint> & poly);
-bool        ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly);
+bool ofInsidePoly(float x, float y, const vector<ofPoint> & poly);
+bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly);
 
-bool 		ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint line2Start, ofPoint line2End, ofPoint & intersection);
+bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint line2Start, ofPoint line2End, ofPoint & intersection);
 
-ofPoint 	ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
-ofPoint 	ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
-ofPoint 	ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
-ofPoint 	ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 
 template<typename Type>
-Type		ofInterpolateCosine(Type y1, Type y2, float pct);
+Type ofInterpolateCosine(Type y1, Type y2, float pct);
 template<typename Type>
-Type		ofInterpolateCubic(Type y0, Type y1, Type y2, Type y3, float pct);
+Type ofInterpolateCubic(Type y0, Type y1, Type y2, Type y3, float pct);
 template<typename Type>
-Type		ofInterpolateCatmullRom(Type y0, Type y1, Type y2, Type y3, float pct);
+Type ofInterpolateCatmullRom(Type y0, Type y1, Type y2, Type y3, float pct);
 template<typename Type>
-Type		ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct);
+Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct);
 template<typename Type>
-Type		ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias);
+Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias);
 
 
 
