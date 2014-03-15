@@ -8,7 +8,11 @@
 
 //TODO: FIX THIS SHIT!!!!!!
 //#warning FIX THIS.
+
+/// \brief Stops all active sound players on FMOD-based systems (windows, osx)
 void ofSoundStopAll();
+
+/// \brief Cleans up FMOD (windows, osx)
 void ofSoundShutdown();
 
 /// \brief Sets global volume for FMOD-based sound players (windows, osx)
