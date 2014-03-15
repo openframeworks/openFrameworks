@@ -178,7 +178,6 @@ float ofRadToDeg(float radians);
 ///     float result;
 ///     result = ofDegToRad(90); // result will be PI/2 
 ///
-
 /// \param degrees An angle in degrees.
 /// \returns the angle in radians.
 float ofDegToRad(float degrees);
@@ -229,8 +228,6 @@ float ofAngleDifferenceDegrees(float currentAngle, float targetAngle);
 /// \param targetAngle the angle to be compared to in radians.
 /// \returns The difference between two angles in radians.
 float ofAngleDifferenceRadians(float currentAngle, float targetAngle);
-
-
 
 /// \brief Find a value within a given range, wrapping the value if it overflows.
 ///
