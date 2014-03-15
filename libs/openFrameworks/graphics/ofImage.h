@@ -206,6 +206,10 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 
 		operator ofPixels_<PixelType>&();
 		
+		/// \brief This returns the ofColor representing the pixels at the x and y position passed in.
+		/// \param x x position of pixel
+		/// \param y y position of pixel
+		/// \returns This returns the ofColor representing the pixels at the x and y position passed in.
 		ofColor_<PixelType> getColor(int x, int y) const;
 
 		// alter the image
