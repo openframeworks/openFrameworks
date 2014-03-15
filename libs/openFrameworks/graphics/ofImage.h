@@ -388,8 +388,11 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// \brief Returns width of image as a float. 
 		/// \returns Returns width of image as float.
 		float 				getWidth();
-		
+		/// \brief Whether the image has been allocated either by a call to allocate or by loading pixel data into the image.
+		/// \returns Returns true if the image has been allocated.
 		bool 				bAllocated() {return pixels.isAllocated();};	// legacy function
+		/// \brief Whether the image has been allocated either by a call to allocate or by loading pixel data into the image.
+		/// \returns Returns true if the image has been allocated.
 		bool 				isAllocated() {return pixels.isAllocated();};
 
 		void				reloadTexture();
