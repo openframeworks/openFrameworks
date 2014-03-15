@@ -87,7 +87,7 @@ public:
 	///
 	/// \param WorldXYZ A 3D point in the world, whose screen coordinates you wish to know. 
 	/// \param viewport (Optional) A viewport. The default is ofGetCurrentViewport(). 
-	/// \returns An ofVec3f containing the screen coordinates of your point of interest. 
+	/// \returns An ofVec3f containing the screen coordinates of your 3D point of interest. 
 	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	
 	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
