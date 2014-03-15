@@ -76,6 +76,18 @@ OF_DEPRECATED_MSG("Use ofDrawCone instead.", void ofCone(float radius, float hei
 void ofSetBoxResolution( int res );
 void ofSetBoxResolution( int resWidth, int resHeight, int resDepth );
 ofVec3f ofGetBoxResolution();
+
+/// \brief Draws a rectangular box with the specified dimensions, starting from the specified location. 
+///
+/// A box is a rectangular solid. 
+/// It is drawn starting from a 3D reference coordinate. 
+/// It has a width (in x), a height (in y), and a depth (in z).
+///
+/// \param x The x-coordinate of the box's origin. 
+/// \param y The y-coordinate of the box's origin. 
+/// \param z The z-coordinate of the box's origin. 
+/// \param width The width of the box. 
+/// \param width The width of the box. 
 void ofDrawBox( float x, float y, float z, float width, float height, float depth);
 void ofDrawBox(float x, float y, float z, float size);
 void ofDrawBox(const ofPoint& position, float width, float height, float depth);
