@@ -334,9 +334,13 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 
 		// draw:
 		using ofBaseDraws::draw;
+		/// \brief Draws the ofImage from x,y using the default width and height of the image.
 		void draw(float x, float y);
+		/// \brief Draws the ofImage from x,y,z using the default width and height of the image.
 		void draw(float x, float y, float z);
+		/// \brief Draws the ofImage from x,y using width specified by w and height specified by h.
 		void draw(float x, float y, float w, float h);
+		/// \brief Draws the ofImage from x,y,z using width specified by w and height specified by h.
 		void draw(float x, float y, float z, float w, float h);
 		
 		void drawSubsection(float x, float y, float w, float h, float sx, float sy);
