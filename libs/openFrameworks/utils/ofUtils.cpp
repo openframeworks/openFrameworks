@@ -7,6 +7,7 @@
 #include "Poco/String.h"
 #include "Poco/LocalDateTime.h"
 #include "Poco/DateTimeFormatter.h"
+#include "Poco/URI.h"
 
 #include <cctype> // for toupper
 
@@ -20,12 +21,12 @@
 #endif
 
 
-#if defined(TARGET_OF_IPHONE) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
+#if defined(TARGET_OF_IOS) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
 	#include <sys/time.h>
 #endif
 
 #ifdef TARGET_OSX
-	#ifndef TARGET_OF_IPHONE
+	#ifndef TARGET_OF_IOS
 		#include <mach-o/dyld.h>
 		#include <sys/param.h> // for MAXPATHLEN
 	#endif
@@ -39,8 +40,8 @@
 
 #endif
 
-#ifdef TARGET_OF_IPHONE
-#include "ofxiPhoneExtras.h"
+#ifdef TARGET_OF_IOS
+#include "ofxiOSExtras.h"
 #endif
 
 #ifdef TARGET_ANDROID
@@ -211,116 +212,130 @@ void ofDisableDataPath(){
 }
 
 //--------------------------------------------------
-//use ofSetDataPathRoot() to override this
-static string & dataPathRoot(){
+string defaultDataPath(){
 #if defined TARGET_OSX
-	static string * dataPathRoot = new string("../../../data/");
+	return string("../../../data/");
 #elif defined TARGET_ANDROID
-	static string * dataPathRoot = new string("sdcard/");
-#elif defined(TARGET_LINUX)
-	static string * dataPathRoot = new string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
+	return string("sdcard/");
+#elif defined(TARGET_LINUX) || defined(TARGET_WIN32)
+	return string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
 #else
-	static string * dataPathRoot = new string("data/");
+	return string("data/");
 #endif
-	return *dataPathRoot;
-}
-
-static bool & isDataPathSet(){
-	static bool * dataPathSet = new bool(false);
-	return * dataPathSet;
 }
 
 //--------------------------------------------------
-void ofSetDataPathRoot(string newRoot){
-	string newPath = "";
+static Poco::Path & defaultWorkingDirectory(){
+	static Poco::Path * defaultWorkingDirectory = new Poco::Path();
+	return * defaultWorkingDirectory;
+}
 
-	#ifdef TARGET_OSX
-		#ifndef TARGET_OF_IPHONE
-			char path[MAXPATHLEN];
-			uint32_t size = sizeof(path);
+//--------------------------------------------------
+static Poco::Path & dataPathRoot(){
+	static Poco::Path * dataPathRoot = new Poco::Path(defaultDataPath());
+	return *dataPathRoot;
+}
 
-			if (_NSGetExecutablePath(path, &size) == 0){
-				//printf("executable path is %s\n", path);
-				string pathStr = string(path);
+//--------------------------------------------------
+Poco::Path getWorkingDir(){
+	char charWorkingDir[MAXPATHLEN];
+	char* ret = getcwd(charWorkingDir, MAXPATHLEN);
+	if(ret)
+		return Poco::Path(charWorkingDir);
+	else
+		return Poco::Path();
+}
 
-				//theo: check this with having '/' as a character in a folder name - OSX treats the '/' as a ':'
-				//checked with spaces too!
-
-				vector < string> pathBrokenUp = ofSplitString( pathStr, "/");
-
-				newPath = "";
-
-				for(int i = 0; i < pathBrokenUp.size()-1; i++){
-					newPath += pathBrokenUp[i];
-					newPath += "/";
-				}
-
-				//cout << newPath << endl;   // some sanity checks here
-				//system( "pwd" );
-
-				chdir ( newPath.c_str() );
-				//system("pwd");
-			}else{
-				ofLog(OF_LOG_FATAL_ERROR, "buffer too small; need size %u\n", size);
-			}
-		#endif
+//--------------------------------------------------
+void ofSetWorkingDirectoryToDefault(){
+#ifdef TARGET_OSX
+	#ifndef TARGET_OF_IOS
+		string newPath = "";
+		char path[MAXPATHLEN];
+		uint32_t size = sizeof(path);
+		
+		if (_NSGetExecutablePath(path, &size) == 0){
+			Poco::Path classPath(path);
+			classPath.makeParent();
+			chdir( classPath.toString().c_str() );
+		}else{
+			ofLogFatalError("ofUtils") << "ofSetDataPathRoot(): path buffer too small, need size " << (unsigned int) size;
+		}
 	#endif
+#endif
+
+	defaultWorkingDirectory() = getWorkingDir();
+	defaultWorkingDirectory().makeAbsolute();
+}
 	
-	dataPathRoot() = newRoot;
-	isDataPathSet() = true;
+//--------------------------------------------------
+void ofSetDataPathRoot(string newRoot){
+	dataPathRoot() = Poco::Path(newRoot);
 }
 
 //--------------------------------------------------
 string ofToDataPath(string path, bool makeAbsolute){
+	if (!enableDataPath)
+		return path;
 	
-	if (!isDataPathSet())
-		ofSetDataPathRoot(dataPathRoot());
-	
-	if( enableDataPath ){
-
-        //we create dataPath as a string for the check, on windows we modify it to check both types of slashes
-        //however we use the original value from dataPathRoot() to prepend the string if needed.  
-        string dataPath = dataPathRoot(); 
-        string enclosingFolder = path.substr(0,dataPath.length());
-        
-        #ifdef TARGET_WIN32
-            //this is so we can check both "data\" and "data/" on windows
-            std::replace( enclosingFolder.begin(), enclosingFolder.end(), '\\', '/' );
-            std::replace( dataPath.begin(), dataPath.end(), '\\', '/' );
-        #endif // TARGET_WIN32
-
-		//check if absolute path has been passed or if data path has already been applied
-		//do we want to check for C: D: etc ?? like  substr(1, 2) == ':' ??
-		if( path.length()==0 || (path.substr(0,1) != "/" &&  path.substr(1,1) != ":" && enclosingFolder != dataPath)){
-			path = dataPathRoot()+path;
+	// if our Current Working Directory has changed (e.g. file open dialog)
+#ifdef TARGET_WIN32
+	if (defaultWorkingDirectory().toString() != getWorkingDir().toString()) {
+		// change our cwd back to where it was on app load
+		int ret = chdir(defaultWorkingDirectory().toString().c_str());
+		if(ret==-1){
+			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory().toString();
 		}
-
-		if(makeAbsolute && (path.length()==0 || path.substr(0,1) != "/")){
-			#if !defined( TARGET_OF_IPHONE) & !defined(TARGET_ANDROID)
-
-			#ifndef TARGET_WIN32
-				char currDir[1024];
-				path = "/"+path;
-                path = getcwd(currDir, 1024)+path;
-
-			#else
-
-				char currDir[1024];
-				path = "\\"+path;
-				path = _getcwd(currDir, 1024)+path;
-				std::replace( path.begin(), path.end(), '/', '\\' ); // fix any unixy paths...
-
-
-			#endif
-
-
-			#else
-				//do we need iphone specific code here?
-			#endif
-		}
-
 	}
-	return path;
+#endif
+	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
+	
+	Poco::Path const  & dataPath(dataPathRoot());
+	Poco::Path inputPath(path);
+	Poco::Path outputPath;
+	
+	// if path is already absolute, just return it
+	if (inputPath.isAbsolute()) {
+		return path;
+	}
+	
+	// here we check whether path already refers to the data folder by looking for common elements
+	// if the path begins with the full contents of dataPathRoot then the data path has already been added
+	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
+	string strippedDataPath = dataPath.toString();
+	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
+	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
+	
+	if (inputPath.toString().find(strippedDataPath) != 0) {
+		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
+		outputPath = dataPath;
+		outputPath.resolve(inputPath);
+	} else {
+		// inputPath already contains data path, so no need to change
+		outputPath = inputPath;
+	}
+	
+	// finally, if we do want an absolute path and we don't already have one
+	if (makeAbsolute) {
+		// then we return the absolute form of the path
+		return outputPath.absolute().toString();
+	} else {
+		// or output the relative path
+		return outputPath.toString();
+	}
+}
+
+
+//----------------------------------------
+template<>
+string ofFromString(const string & value){
+	return value;
+}
+
+//----------------------------------------
+template<>
+const char * ofFromString(const string & value){
+	return value.c_str();
 }
 
 //----------------------------------------
@@ -559,6 +574,20 @@ bool ofIsStringInString(string haystack, string needle){
 	return ( strstr(haystack.c_str(), needle.c_str() ) != NULL );
 }
 
+int ofStringTimesInString(string haystack, string needle){
+	const size_t step = needle.size();
+
+	size_t count(0);
+	size_t pos(0) ;
+
+	while( (pos=haystack.find(needle, pos)) != std::string::npos) {
+		pos +=step;
+		++count ;
+	}
+
+	return count;
+}
+
 //--------------------------------------------------
 string ofToLower(const string & src){
 	string dst(src);
@@ -626,53 +655,64 @@ string ofVAArgsToString(const char * format, va_list args){
 }
 
 //--------------------------------------------------
-void ofLaunchBrowser(string url){
+void ofLaunchBrowser(string _url, bool uriEncodeQuery){
 
+    Poco::URI uri;
+    
+    try {
+        uri = Poco::URI(_url);
+    } catch(const Poco::SyntaxException& exc) {
+        ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << _url << "\": " << exc.displayText();
+        return;
+    }
+    
+    if(uriEncodeQuery) {
+        uri.setQuery(uri.getRawQuery()); // URI encodes during set
+    }
+        
 	// http://support.microsoft.com/kb/224816
-
 	// make sure it is a properly formatted url:
 	//   some platforms, like Android, require urls to start with lower-case http/https
-	if(Poco::icompare(url.substr(0,8), "https://") == 0){
-		url.replace(0,5,"https");
-	}
-	else if(Poco::icompare(url.substr(0,7), "http://") == 0){
-		url.replace(0,4,"http");
-	}
-	else{
-		ofLog(OF_LOG_WARNING, "ofLaunchBrowser: url must begin with http:// or https://");
+    //   Poco::URI automatically converts the scheme to lower case
+	if(uri.getScheme() != "http" && uri.getScheme() != "https"){
+		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.toString() << "\"";
 		return;
 	}
 
 	#ifdef TARGET_WIN32
 		#if (_MSC_VER)
 		// microsoft visual studio yaks about strings, wide chars, unicode, etc
-		ShellExecuteA(NULL, "open", url.c_str(),
+		ShellExecuteA(NULL, "open", uri.toString().c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#else
-		ShellExecute(NULL, "open", url.c_str(),
+		ShellExecute(NULL, "open", uri.toString().c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#endif
 	#endif
 
 	#ifdef TARGET_OSX
-		// ok gotta be a better way then this,
-		// this is what I found...
-		string commandStr = "open "+url;
-		system(commandStr.c_str());
+        // could also do with LSOpenCFURLRef
+		string commandStr = "open \"" + uri.toString() + "\"";
+		int ret = system(commandStr.c_str());
+        if(ret!=0) {
+			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
+		}
 	#endif
 
 	#ifdef TARGET_LINUX
-		string commandStr = "xdg-open "+url;
+		string commandStr = "xdg-open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
-		if(ret!=0) ofLog(OF_LOG_ERROR,"ofLaunchBrowser: couldn't open browser");
+		if(ret!=0) {
+			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
+		}
 	#endif
 
-	#ifdef TARGET_OF_IPHONE
-		ofxiPhoneLaunchBrowser(url);
+	#ifdef TARGET_OF_IOS
+		ofxiOSLaunchBrowser(uri.toString());
 	#endif
 
 	#ifdef TARGET_ANDROID
-		ofxAndroidLaunchBrowser(url);
+		ofxAndroidLaunchBrowser(uri.toString());
 	#endif
 }
 
@@ -681,6 +721,18 @@ string ofGetVersionInfo(){
 	stringstream sstr;
 	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH << endl;
 	return sstr.str();
+}
+
+unsigned int ofGetVersionMajor() {
+	return OF_VERSION_MAJOR;
+}
+
+unsigned int ofGetVersionMinor() {
+	return OF_VERSION_MINOR;
+}
+
+unsigned int ofGetVersionPatch() {
+	return OF_VERSION_PATCH;
 }
 
 //---- new to 006
@@ -729,7 +781,7 @@ string ofSystem(string command){
 	char c;
 
 	if (ret == NULL){
-		ofLogError() << "ofSystem: error opening return file";
+		ofLogError("ofUtils") << "ofSystem(): error opening return file for command \"" << command  << "\"";
 	}else{
 		do {
 		      c = fgetc (ret);
@@ -744,21 +796,27 @@ string ofSystem(string command){
 //--------------------------------------------------
 ofTargetPlatform ofGetTargetPlatform(){
 #ifdef TARGET_LINUX
-	if(ofSystem("uname -m").find("x86_64")==0)
-		return OF_TARGET_LINUX64;
-	else
-		return OF_TARGET_LINUX;
+    string arch = ofSystem("uname -m");
+    if(ofIsStringInString(arch,"x86_64")) {
+        return OF_TARGET_LINUX64;
+    } else if(ofIsStringInString(arch,"armv6l")) {
+        return OF_TARGET_LINUXARMV6L;
+    } else if(ofIsStringInString(arch,"armv6l")) {
+        return OF_TARGET_LINUXARMV6L;
+    } else {
+        return OF_TARGET_LINUX;
+    }
 #elif defined(TARGET_OSX)
-	return OF_TARGET_OSX;
+    return OF_TARGET_OSX;
 #elif defined(TARGET_WIN32)
-	#if (_MSC_VER)
-		return OF_TARGET_WINVS;
-	#else
-		return OF_TARGET_WINGCC;
-	#endif
+    #if (_MSC_VER)
+        return OF_TARGET_WINVS;
+    #else
+        return OF_TARGET_WINGCC;
+    #endif
 #elif defined(TARGET_ANDROID)
-	return OF_TARGET_ANDROID;
-#elif defined(TARGET_OF_IPHONE)
-	return OF_TARGET_IPHONE;
+    return OF_TARGET_ANDROID;
+#elif defined(TARGET_OF_IOS)
+    return OF_TARGET_IOS;
 #endif
 }

@@ -1,9 +1,9 @@
-#ifndef _OFX_TCP_CLIENT_
-#define _OFX_TCP_CLIENT_
+#pragma once
 
 #include "ofConstants.h"
 #include "ofxTCPManager.h"
 #include "ofFileUtils.h"
+#include "ofTypes.h"
 
 #define TCP_MAX_MSG_SIZE 512
 //#define STR_END_MSG "[/TCP]"
@@ -87,9 +87,15 @@ class ofxTCPClient{
 		bool setup(int _index, bool blocking);
 
 
-		ofxTCPManager	TCPClient;
 
-protected:
+private:
+		// private copy so this can't be copied to avoid problems with destruction
+		ofxTCPClient(const ofxTCPManager & mom){};
+		ofxTCPClient & operator=(const ofxTCPClient & mom){return *this;}
+
+		friend class ofxTCPServer;
+
+		ofxTCPManager	TCPClient;
 
 		char			tmpBuff[TCP_MAX_MSG_SIZE+1];
 		ofBuffer 		tmpBuffReceive;
@@ -100,8 +106,3 @@ protected:
 		string 			partialPrevMsg;
 		string			messageDelimiter;
 };
-
-#endif
-
-
-

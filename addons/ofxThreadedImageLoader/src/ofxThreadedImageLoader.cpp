@@ -58,12 +58,13 @@ void ofxThreadedImageLoader::threadedFunction() {
 
 	while( isThreadRunning() ) {
 		lock();
-		if(images_to_load_buffer.empty()) condition.wait(mutex);
-		images_to_load.insert( images_to_load.end(),
-							images_to_load_buffer.begin(),
-							images_to_load_buffer.end() );
+		if(images_to_load_buffer.size() ){
+            images_to_load.insert( images_to_load.end(),
+                                images_to_load_buffer.begin(),
+                                images_to_load_buffer.end() );
 
-		images_to_load_buffer.clear();
+            images_to_load_buffer.clear();
+        }
 		unlock();
         
         
@@ -72,7 +73,7 @@ void ofxThreadedImageLoader::threadedFunction() {
             
             if(entry.type == OF_LOAD_FROM_DISK) {
                 if(! entry.image->loadImage(entry.filename) )  { 
-                    ofLogError() << "ofxThreadedImageLoader error loading image " << entry.filename;
+                    ofLogError("ofxThreadedImageLoader") << "couldn't load file: \"" << entry.filename << "\"";
                 }
                 
                 lock();
@@ -111,7 +112,7 @@ void ofxThreadedImageLoader::urlResponse(ofHttpResponse & response) {
 		unlock();
 	}else{
 		// log error.
-		ofLogError()<< "Could not get image from url, response status: " << response.status;
+		ofLogError("ofxThreadedImageLoader") << "couldn't load url, response status: " << response.status;
 		ofRemoveURLRequest(response.request.getID());
 		// remove the entry from the queue
 		lock();

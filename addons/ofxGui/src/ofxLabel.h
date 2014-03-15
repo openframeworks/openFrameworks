@@ -1,43 +1,49 @@
 #pragma once
 
-#include "ofParameter.h"
 #include "ofxBaseGui.h"
+#include "ofParameter.h"
 
 class ofxLabel: public ofxBaseGui {
 public:
     ofxLabel(){}
-    virtual ~ofxLabel() {}
-    // We need a string version here as literals are not getting converted to
-    // ofxParameter<string>. For status.setup("Status", "") we get:
-    // error: no matching function for call to ‘ofxLabel::setup(const char [7], const char [1])’
-    // note:   no known conversion for argument 2 from ‘const char [1]’ to ‘ofxParameter<std::basic_string<char> >’
-    ofxLabel * setup(string labelName, string _label, float width = defaultWidth, float height = defaultHeight);
-    ofxLabel * setup(string labelName, ofxParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+    ofxLabel(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+    virtual ~ofxLabel();
+
+    ofxLabel * setup(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+    ofxLabel * setup(string labelName, string label, float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!
-    virtual void mouseMoved(ofMouseEventArgs & args){}
-    virtual void mousePressed(ofMouseEventArgs & args){}
-    virtual void mouseDragged(ofMouseEventArgs & args){}
-    virtual void mouseReleased(ofMouseEventArgs & args){}
-    virtual void saveToXml(ofxXmlSettings& xml){}
-    virtual void loadFromXml(ofxXmlSettings& xml){}
-    virtual void setValue(float mx, float my, bool bCheckBounds){}
+    virtual bool mouseMoved(ofMouseEventArgs & args){return false;}
+    virtual bool mousePressed(ofMouseEventArgs & args){return false;}
+    virtual bool mouseDragged(ofMouseEventArgs & args){return false;}
+    virtual bool mouseReleased(ofMouseEventArgs & args){return false;}
 
-    void draw();
+	virtual void saveTo(ofBaseSerializer& serializer){};
+	virtual void loadFrom(ofBaseSerializer& serializer){};
 
-    template<class ListenerClass>
-    void addListener(ListenerClass * listener, void ( ListenerClass::*method )(string&)){
-        label.addListener(listener,method);
-    }
 
-    template<class ListenerClass>
-    void removeListener(ListenerClass * listener, void ( ListenerClass::*method )(string&)){
-        label.removeListener(listener,method);
-    }
+	template<class ListenerClass, typename ListenerMethod>
+	void addListener(ListenerClass * listener, ListenerMethod method){
+		label.addListener(listener,method);
+	}
+
+	template<class ListenerClass, typename ListenerMethod>
+	void removeListener(ListenerClass * listener, ListenerMethod method){
+		label.removeListener(listener,method);
+	}
+
 
     string operator=(string v) { label = v; return v; }
-    operator string & ()       { return label; }
+    operator const string & ()       { return label; }
+
+    ofAbstractParameter & getParameter();
 
 protected:
-    ofxParameter<string> label;
+    void render();
+    ofParameter<string> label;
+    void generateDraw();
+    void valueChanged(string & value);
+    bool setValue(float mx, float my, bool bCheckBounds){return false;}
+    ofPath bg;
+    ofVboMesh textMesh;
 };

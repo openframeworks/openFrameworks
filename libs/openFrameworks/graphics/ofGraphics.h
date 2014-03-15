@@ -7,14 +7,13 @@
 #include "ofRectangle.h"
 #include "ofTypes.h"
 #include "ofBaseTypes.h"
-#include "ofGLRenderer.h"
 
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
 
-void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer);
+void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer,bool setDefaults=false);
+void ofSetCurrentRenderer(const string & rendererType,bool setDefaults=false);
 ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
-ofPtr<ofGLRenderer> ofGetGLRenderer();
 
 //for pdf screenshot
 void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
@@ -30,10 +29,22 @@ void ofPopView();
 // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 void ofViewport(ofRectangle viewport);
-void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
-void ofSetupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0);
-void ofSetupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation = OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = -1);
+void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped());
+
+bool ofIsVFlipped();
+
+void ofSetupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0);
+void ofSetupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1);
+
+OF_DEPRECATED_MSG("ofSetupScreenPerspective() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
+		void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0)
+);
+OF_DEPRECATED_MSG("ofSetupScreenOrtho() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
+		void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1)
+);
+
 ofRectangle ofGetCurrentViewport();
+ofRectangle ofGetNativeViewport();
 int ofGetViewportWidth();
 int ofGetViewportHeight();
 int ofOrientationToDegrees(ofOrientation orientation);
@@ -44,6 +55,7 @@ ofHandednessType ofGetCoordHandedness();
 //our openGL wrappers
 void ofPushMatrix();
 void ofPopMatrix();
+ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode_);
 void ofTranslate(float x, float y, float z = 0);
 void ofTranslate(const ofPoint & p);
 void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
@@ -57,7 +69,7 @@ void ofLoadMatrix (const ofMatrix4x4 & m);   // Andreas: I've included both a of
 void ofLoadMatrix (const float *m);			// ideally we would always use ofMatrix4x4, but in a lot of temporary
 void ofMultMatrix (const ofMatrix4x4 & m);	// ofMatrix4x4 objects when interacting with non-OF code
 void ofMultMatrix (const float *m);
-void ofSetMatrixMode (ofMatrixMode matrixMode);
+void ofSetMatrixMode(ofMatrixMode matrixMode);
 
 // screen coordinate things / default gl values
 void ofSetupGraphicDefaults();
@@ -77,7 +89,6 @@ ofRectMode 	ofGetRectMode();				// default is OF_RECTMODE_CORNER
 
 void ofSetCircleResolution(int res);  		// if there 22 is a problem, you can change it here
 void ofSetCurveResolution(int res);
-void ofSetSphereResolution(int res);
 
 
 // drawing options
@@ -86,6 +97,9 @@ void ofFill();
 ofFillFlag ofGetFill();
 
 void ofSetLineWidth(float lineWidth);
+void ofSetDepthTest(bool depthTest);
+void ofEnableDepthTest();
+void ofDisableDepthTest();
 
 // color options
 void ofSetColor(int r, int g, int b); // 0-255
@@ -111,6 +125,10 @@ void ofDisableAlphaBlending();
 void ofEnableSmoothing();
 void ofDisableSmoothing();
 
+// antialiasing
+void ofEnableAntiAliasing();
+void ofDisableAntiAliasing();
+
 // drawing style - combines color, fill, blending and smoothing
 ofStyle ofGetStyle();
 void ofSetStyle(ofStyle style);
@@ -129,6 +147,7 @@ void ofSetRectMode(ofRectMode mode);		// set the mode, either to OF_RECTMODE_COR
 
 // bg color
 float * ofBgColorPtr();
+ofColor ofGetBackground();
 void ofBackground(int r, int g, int b, int a=255);
 void ofBackground(int brightness, int alpha = 255);
 void ofBackground(const ofColor & c);
@@ -183,10 +202,26 @@ void ofRect(const ofRectangle & r);
 void ofRect(const ofPoint & p,float w,float h);
 void ofRect(float x,float y,float z,float w,float h);
 
-void ofRectRounded(const ofRectangle & b,float r);
-void ofRectRounded(const ofPoint & p,float w,float h,float r);
-void ofRectRounded(float x,float y,float w,float h,float r);
-void ofRectRounded(float x,float y,float z,float w,float h,float r);
+void ofRectRounded(const ofRectangle & b, float r);
+void ofRectRounded(const ofPoint & p, float w, float h, float r);
+void ofRectRounded(float x, float y, float w, float h, float r);
+void ofRectRounded(float x, float y, float z, float w, float h, float r);
+
+//----------------------------------------------------------
+void ofRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
+                                                        float topRightRadius,
+                                                        float bottomRightRadius,
+                                                        float bottomLeftRadius);
+
+void ofRectRounded(const ofRectangle & b, float topLeftRadius,
+                                          float topRightRadius,
+                                          float bottomRightRadius,
+                                          float bottomLeftRadius);
+
+void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
+                                                                float topRightRadius,
+                                                                float bottomRightRadius,
+                                                                float bottomLeftRadius);
 
 void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
 void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
@@ -200,14 +235,11 @@ void ofVertex(float x, float y);
 void ofVertex(float x, float y, float z);
 void ofVertex(ofPoint & p);
 void ofVertices(const vector <ofPoint> & polyPoints);
-OF_DEPRECATED_MSG("Use ofVertices instead.", void ofVertexes(const vector <ofPoint> & polyPoints));
-
 
 void ofCurveVertex(float x, float y);
 void ofCurveVertex(float x, float y, float z);
 void ofCurveVertex(ofPoint & p);
 void ofCurveVertices(const vector <ofPoint> & curvePoints);
-OF_DEPRECATED_MSG("Use ofCurveVertices instead.", void ofCurveVertexes(const vector <ofPoint> & curvePoints));
 
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3);
 void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
@@ -216,22 +248,6 @@ void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, 
 void ofEndShape(bool bClose = false);
 void ofNextContour(bool bClose = false);  // for multi contour shapes!
 
-
-//3d
-void ofSphere(float x, float y, float z, float radius);
-void ofSphere(float x, float y, float radius);
-void ofSphere(const ofPoint& position, float radius);
-void ofSphere(float radius);
-
-void ofBox(float x, float y, float z, float size);
-void ofBox(float x, float y, float size);
-void ofBox(const ofPoint& position, float size);
-void ofBox(float size);
-
-void ofCone(float x, float y, float z, float radius, float height);
-void ofCone(float x, float y, float radius, float height);
-void ofCone(const ofPoint& position, float radius, float height);
-void ofCone(float radius, float height);
 
 // bitmapped type
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);

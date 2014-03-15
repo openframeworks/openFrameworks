@@ -9,6 +9,7 @@
 	#include <shellapi.h>
 #endif
 
+#include "Poco/Path.h"
 
 int 	ofNextPow2(int input);
 
@@ -38,7 +39,7 @@ int     ofGetMonth();
 int     ofGetDay();
 int     ofGetWeekday();
 
-void 	ofLaunchBrowser(string url);
+void 	ofLaunchBrowser(string url, bool uriEncodeQuery=false);
 
 void	ofEnableDataPath();
 void	ofDisableDataPath();
@@ -73,9 +74,11 @@ bool ofContains(const vector<T>& values, const T& target) {
 	return ofFind(values, target) != values.size();
 }
 
+void ofSetWorkingDirectoryToDefault();
+
 //set the root path that ofToDataPath will use to search for files relative to the app
 //the path must have a trailing slash (/) !!!!
-void	ofSetDataPathRoot( string root );
+void ofSetDataPathRoot( string root );
 
 template <class T>
 string ofToString(const T& value){
@@ -122,6 +125,21 @@ string ofToString(const vector<T>& values) {
 	out << "}";
 	return out.str();
 }
+
+template<class T>
+T ofFromString(const string & value){
+	T data;
+    stringstream ss;
+    ss << value;
+    ss >> data;
+    return data;
+}
+
+template<>
+string ofFromString(const string & value);
+
+template<>
+const char * ofFromString(const string & value);
 
 template <class T>
 string ofToHex(const T& value) {
@@ -174,7 +192,11 @@ char ofBinaryToChar(const string& value);
 float ofBinaryToFloat(const string& value);
 string ofBinaryToString(const string& value);
 
+
 string 	ofGetVersionInfo();
+unsigned int ofGetVersionMajor();
+unsigned int ofGetVersionMinor();
+unsigned int ofGetVersionPatch();
 
 void	ofSaveScreen(string filename);
 void	ofSaveFrame(bool bUseViewport = false);
@@ -185,6 +207,7 @@ vector <string> ofSplitString(const string & source, const string & delimiter, b
 string ofJoinString(vector <string> stringElements, const string & delimiter);
 void ofStringReplace(string& input, string searchStr, string replaceStr);
 bool ofIsStringInString(string haystack, string needle);
+int ofStringTimesInString(string haystack, string needle);
 
 string ofToLower(const string & src);
 string ofToUpper(const string & src);

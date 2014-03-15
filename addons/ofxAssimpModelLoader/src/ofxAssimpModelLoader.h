@@ -17,6 +17,7 @@
 #include "ofMain.h"
 #include "ofxAssimpMeshHelper.h"
 #include "ofxAssimpAnimation.h"
+#include "ofxAssimpTexture.h"
 
 class aiScene;
 class aiNode;
@@ -113,6 +114,7 @@ class ofxAssimpModelLoader{
          
     protected:
     
+		void onAppExit(ofEventArgs & args);
         void updateAnimations();
         void updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix);
         void updateBones();
@@ -147,6 +149,7 @@ class ofxAssimpModelLoader{
         ofMatrix4x4 modelMatrix;
 
         vector<ofLight> lights;
+        vector<ofxAssimpTexture *> textures;
         vector<ofxAssimpMeshHelper> modelMeshes;
         vector<ofxAssimpAnimation> animations;
         int currentAnimation; // DEPRECATED - to be removed with deprecated animation functions.

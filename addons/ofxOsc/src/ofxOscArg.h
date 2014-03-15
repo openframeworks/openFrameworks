@@ -26,8 +26,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _OFXOSCARG_H
-#define _OFXOSCARG_H
+#pragma once
 
 #include "ofConstants.h"
 #include <string>
@@ -146,5 +145,3 @@ public:
 private:
 	std::string value;
 };
-
-#endif

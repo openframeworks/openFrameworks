@@ -31,6 +31,7 @@ ofxTCPManager::ofxTCPManager()
   m_dwTimeoutAccept= OF_TCP_DEFAULT_TIMEOUT;
   m_iListenPort= -1;
   m_closing = false;
+  m_iMaxConnections = 100;
 };
 
 //--------------------------------------------------------------------------------
@@ -104,7 +105,7 @@ bool ofxTCPManager::Bind(unsigned short usPort)
 	//Port MUST be in Network Byte Order
 	local.sin_port = htons(usPort);
 
-	if (bind(m_hSocket,(struct sockaddr*)&local,sizeof(local))){
+	if (::bind(m_hSocket,(struct sockaddr*)&local,sizeof(local))){
 		ofxNetworkCheckError();
 		return false;
 	}
@@ -293,7 +294,7 @@ int ofxTCPManager::Receive(char* pBuff, const int iSize)
 {
   if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
-  if (m_dwTimeoutSend	!= NO_TIMEOUT)
+  if (m_dwTimeoutReceive	!= NO_TIMEOUT)
   	{
   		fd_set fd;
   		FD_ZERO(&fd);
@@ -320,7 +321,7 @@ int ofxTCPManager::ReceiveAll(char* pBuff, const int iSize)
 
 	unsigned long timestamp= GetTickCount();
 
-	if (m_dwTimeoutSend	!= NO_TIMEOUT)
+	if (m_dwTimeoutReceive	!= NO_TIMEOUT)
 	{
 		fd_set fd;
 		FD_ZERO(&fd);

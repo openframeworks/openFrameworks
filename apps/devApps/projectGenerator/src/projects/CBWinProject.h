@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef CBWINPROJECT_H_
-#define CBWINPROJECT_H_
+#pragma once
 
 #include "ofConstants.h"
 #include "pugixml.hpp"
@@ -34,5 +33,3 @@ public:
 private:
 
 };
-
-#endif /* CBLINUXPROJECT_H_ */

@@ -3,6 +3,7 @@
 #include "ofAppRunner.h"	// for getWidth()
 #include "ofGraphics.h"
 #include "ofPixels.h"
+#include "ofGLUtils.h"
 #include <map>
 
 //----------------------------------------------------------
@@ -12,196 +13,6 @@ static bool	bUsingArbTex		= true;
 static bool bUsingNormalizedTexCoords = false;
 static bool bUseCustomMinMagFilters = false;
 
-//---------------------------------
-template <class T>
-int ofGetGlFormat(const T& pix) {
-	int glFormat, glType;
-	ofGetGlFormatAndType(ofGetGlInternalFormat(pix), glFormat, glType);
-	return glFormat;
-}
-
-//---------------------------------
-int ofGetGlInternalFormat(const ofPixels& pix) {
-	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB;
-		case 4: return GL_RGBA;
-		default: return GL_LUMINANCE;
-	}
-}
-
-//---------------------------------
-int ofGetGlInternalFormat(const ofShortPixels& pix) {
-#ifndef TARGET_OPENGLES
-	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB16;
-		case 4: return GL_RGBA16;
-		default: return GL_LUMINANCE16;
-	}
-#else
-	ofLogWarning()<< "16bit textures not supported in GLES";
-	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB;
-		case 4: return GL_RGBA;
-		default: return GL_LUMINANCE;
-	}
-#endif
-}
-
-//---------------------------------
-int ofGetGlInternalFormat(const ofFloatPixels& pix) {
-#ifndef TARGET_OPENGLES
-	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB32F_ARB;
-		case 4: return GL_RGBA32F_ARB;
-		default: return GL_LUMINANCE32F_ARB;
-	}
-#else
-	ofLogWarning()<< "float textures not supported in GLES";
-	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB;
-		case 4: return GL_RGBA;
-		default: return GL_LUMINANCE;
-	}
-#endif
-}
-
-//---------------------------------
-// this is helpful for debugging ofTexture
-string ofGetGlInternalFormatName(int glInternalFormat) {
-	switch(glInternalFormat) {
-		case GL_RGBA: return "GL_RGBA";
-#ifndef TARGET_OPENGLES
-		case GL_RGBA8: return "GL_RGBA8";
-#endif
-		case GL_RGB: return "GL_RGB";
-#ifndef TARGET_OPENGLES
-		case GL_RGB8: return "GL_RGB8";
-#endif
-		case GL_LUMINANCE: return "GL_LUMINANCE";
-#ifndef TARGET_OPENGLES
-		case GL_LUMINANCE8: return "GL_LUMINANCE8";
-		case GL_RGBA16: return "GL_RGBA16";
-		case GL_RGB16: return "GL_RGB16";
-		case GL_LUMINANCE16: return "GL_LUMINANCE16";
-		case GL_RGBA32F_ARB: return "GL_RGBA32F_ARB";
-		case GL_RGB32F_ARB: return "GL_RGB32F_ARB";
-		case GL_LUMINANCE32F_ARB: return "GL_LUMINANCE32F_ARB";
-#endif
-		case GL_LUMINANCE_ALPHA: return "GL_LUMINANCE_ALPHA";
-#ifndef TARGET_OPENGLES
-		case GL_LUMINANCE8_ALPHA8: return "GL_LUMINANCE8_ALPHA8";
-#endif
-		default: return "unknown glInternalFormat";
-	}
-}
-
-//---------------------------------
-void ofGetGlFormatAndType(int glInternalFormat, int& glFormat, int& glType) {
-	switch(glInternalFormat) {
-
-			
-		case GL_RGBA:
-#ifndef TARGET_OPENGLES
-		case GL_RGBA8:
-#endif
-			glFormat = GL_RGBA;
-			glType = GL_UNSIGNED_BYTE;
-			break;
-		case GL_RGB:
-#ifndef TARGET_OPENGLES
-		case GL_RGB8:
-#endif
-			glFormat = GL_RGB;
-			glType = GL_UNSIGNED_BYTE;
-			break;
-		case GL_LUMINANCE:
-#ifndef TARGET_OPENGLES
-		case GL_LUMINANCE8:
-#endif
-			glFormat = GL_LUMINANCE;
-			glType = GL_UNSIGNED_BYTE;
-			break;
-			
-#ifndef TARGET_OPENGLES
-		// 16-bit unsigned short formats
-		case GL_RGBA16:
-			glFormat = GL_RGBA;
-			glType = GL_UNSIGNED_SHORT;
-			break;
-		case GL_RGB16:
-			glFormat = GL_RGB;
-			glType = GL_UNSIGNED_SHORT;
-			break;
-		case GL_LUMINANCE16:
-			glFormat = GL_LUMINANCE;
-			glType = GL_UNSIGNED_SHORT;
-			break;
-			
-		// 32-bit float formats
-		case GL_RGBA32F_ARB:
-			glFormat = GL_RGBA;
-			glType = GL_FLOAT;
-			break;
-		case GL_RGB32F_ARB:
-			glFormat = GL_RGB;
-			glType = GL_FLOAT;
-			break;
-		case GL_LUMINANCE32F_ARB:
-			glFormat = GL_LUMINANCE;
-			glType = GL_FLOAT;
-			break;
-
-
-		// 16-bit float formats
-		case GL_RGBA16F_ARB:
-			glFormat = GL_RGBA;
-			glType = GL_FLOAT;
-			break;
-		case GL_RGB16F_ARB:
-			glFormat = GL_RGB;
-			glType = GL_FLOAT;
-			break;
-		case GL_LUMINANCE16F_ARB:
-			glFormat = GL_LUMINANCE;
-			glType = GL_FLOAT;
-			break;
-#endif
-
-		// used by prepareBitmapTexture(), not supported by ofPixels
-		case GL_LUMINANCE_ALPHA:
-#ifndef TARGET_OPENGLES
-		case GL_LUMINANCE8_ALPHA8:
-#endif
-			glFormat = GL_LUMINANCE_ALPHA;
-			glType = GL_UNSIGNED_BYTE;
-			break;
-		
-		default:
-			glFormat = glInternalFormat;
-			glType = GL_UNSIGNED_BYTE;
-			ofLogError() << "ofGetGlFormatAndType(): glInternalFormat not recognized returning glFormat as glInternalFormat";
-			break;
-	}
-}
-
-ofImageType ofGetImageTypeFromGLType(int glType){
-	switch(glType){
-	case GL_LUMINANCE:
-		return OF_IMAGE_GRAYSCALE;
-	case GL_RGB:
-		return OF_IMAGE_COLOR;
-	case GL_RGBA:
-		return OF_IMAGE_COLOR_ALPHA;
-#ifndef TARGET_OPENGLES
-	case GL_DEPTH_COMPONENT32:
-	case GL_DEPTH_COMPONENT16:
-	case GL_DEPTH_COMPONENT24:
-	case GL_DEPTH_COMPONENT:
-		return OF_IMAGE_GRAYSCALE;
-#endif
-	}
-	return OF_IMAGE_UNDEFINED;
-}
 
 //---------------------------------
 void ofEnableTextureEdgeHack(){
@@ -213,14 +24,22 @@ void ofDisableTextureEdgeHack(){
 	bTexHackEnabled = false;
 }
 
+//---------------------------------
+bool ofIsTextureEdgeHackEnabled(){
+	return bTexHackEnabled;
+}
+
+//---------------------------------
 bool ofGetUsingNormalizedTexCoords(){
 	return bUsingNormalizedTexCoords;
 }
 
+//---------------------------------
 void ofEnableNormalizedTexCoords(){
 	bUsingNormalizedTexCoords = true;
 }
 
+//---------------------------------
 void ofDisableNormalizedTexCoords(){
 	bUsingNormalizedTexCoords = false;
 }
@@ -322,16 +141,18 @@ static void release(GLuint id){
 				getTexturesIndex().erase(id);
 			}
 		}else{
-			ofLog(OF_LOG_ERROR, "trying to delete a non indexed texture, something weird is happening. Deleting anyway");
+			ofLogError("ofTexture") << "release(): something's wrong here, releasing unknown texture id " << id;
 			glDeleteTextures(1, (GLuint *)&id);
 		}
 	}
 }
 
 //----------------------------------------------------------
-ofTexture::ofTexture()
-{
+ofTexture::ofTexture(){
 	resetAnchor();
+	quad.getVertices().resize(4);
+	quad.getTexCoords().resize(4);
+	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 }
 
 //----------------------------------------------------------
@@ -339,6 +160,7 @@ ofTexture::ofTexture(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
+	quad = mom.quad;
 	retain(texData.textureID);
 }
 
@@ -350,6 +172,7 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
+	quad = mom.quad;
 	retain(texData.textureID);
 	return *this;
 }
@@ -368,7 +191,7 @@ bool ofTexture::isAllocated(){
 //----------------------------------------------------------
 ofTextureData& ofTexture::getTextureData(){
 	if(!texData.bAllocated){
-		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
+		ofLogError("ofTexture") << "getTextureData(): texture has not been allocated";
 	}
 	
 	return texData;
@@ -376,7 +199,7 @@ ofTextureData& ofTexture::getTextureData(){
 
 const ofTextureData& ofTexture::getTextureData() const {
 	if(!texData.bAllocated){
-		ofLog(OF_LOG_ERROR, "getTextureData() - texture has not been allocated");
+		ofLogError("ofTexture") << "getTextureData(): texture has not been allocated";
 	}
 	
 	return texData;
@@ -407,102 +230,117 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 	texData.bUseExternalTextureID = true;
 }
 
-//----------------------------------------------------------
-void ofTexture::allocate(int w, int h, int internalGlDataType){
-	allocate(w, h, internalGlDataType, ofGetUsingArbTex());
+
+void ofTexture::enableTextureTarget(){
+	if(ofGetGLRenderer()) ofGetGLRenderer()->enableTextureTarget(texData.textureTarget);
+}
+
+void ofTexture::disableTextureTarget(){
+	if(ofGetGLRenderer()) ofGetGLRenderer()->disableTextureTarget(texData.textureTarget);
 }
 
 //----------------------------------------------------------
-void ofTexture::allocate(const ofPixels& pix){
-	allocate(pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetUsingArbTex());
+void ofTexture::allocate(int w, int h, int internalGlDataType){
+	allocate(w, h, internalGlDataType, ofGetUsingArbTex(), ofGetGLFormatFromInternal(internalGlDataType), ofGetGlTypeFromInternal(internalGlDataType));
 }
 
 //----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
+	allocate(w, h, internalGlDataType, bUseARBExtention, ofGetGLFormatFromInternal(internalGlDataType), ofGetGlTypeFromInternal(internalGlDataType));
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(int w, int h, int internalGlDataType, int glFormat, int pixelType){
+	allocate(w, h, internalGlDataType, ofGetUsingArbTex(), glFormat, pixelType);
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofPixels& pix){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofPixels& pix, bool bUseARBExtention){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofShortPixels& pix){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofShortPixels& pix, bool bUseARBExtention){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofFloatPixels& pix){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
+	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention, int glFormat, int pixelType){
+	texData.width = w;
+	texData.height = h;
+	texData.bFlipTexture = false;
+	texData.glTypeInternal = internalGlDataType;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
 	if (bUseARBExtention && GL_ARB_texture_rectangle){
-		texData.tex_w = w;
-		texData.tex_h = h;
-		texData.tex_t = w;
-		texData.tex_u = h;
 		texData.textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 	} else 
 #endif
 	{
-		//otherwise we need to calculate the next power of 2 for the requested dimensions
-		//ie (320x240) becomes (512x256)
-		texData.tex_w = ofNextPow2(w);
-		texData.tex_h = ofNextPow2(h);
-		texData.tex_t = w / texData.tex_w;
-		texData.tex_u = h / texData.tex_h;
 		texData.textureTarget = GL_TEXTURE_2D;
 	}
 	
-	texData.glTypeInternal = internalGlDataType;
-	// get the glType (format) and pixelType (type) corresponding to the glTypeInteral (internalFormat)
-	ofGetGlFormatAndType(texData.glTypeInternal, texData.glType, texData.pixelType);
-	
-	// attempt to free the previous bound texture, if we can:
-	clear();
-	
-	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
-	retain(texData.textureID);
-	
-	glEnable(texData.textureTarget);
-	
-	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
-#ifndef TARGET_OPENGLES
-	// can't do this on OpenGL ES: on full-blown OpenGL, 
-	// glInternalFormat and glFormat (GL_LUMINANCE below)
-	// can be different; on ES they must be exactly the same.
-	//		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, GL_LUMINANCE, PIXEL_TYPE, 0);  // init to black...
-	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, texData.glType, texData.pixelType, 0);  // init to black...
-#else
-	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, texData.glTypeInternal, texData.pixelType, 0);
-#endif
-	
-	
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	
-	glDisable(texData.textureTarget);
-	
-	texData.width = w;
-	texData.height = h;
-	texData.bFlipTexture = false;
-	texData.bAllocated = true;
+	allocate(texData,glFormat,pixelType);
 }
 
 void ofTexture::allocate(const ofTextureData & textureData){
+	allocate(textureData,ofGetGLFormatFromInternal(textureData.glTypeInternal),ofGetGlTypeFromInternal(textureData.glTypeInternal));
+}
+
+void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pixelType){
 	if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
-		ofLogError() << "ofTexture::allocate - the ofTextureData structure passed must be set with a width and height.";
+		ofLogError("ofTexture") << "allocate(): ofTextureData has 0 width and/or height: " << textureData.width << "x" << textureData.height;
 		return;
 	}
 
 	texData = textureData;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && GL_ARB_texture_rectangle ){
-		texData.tex_t = texData.width;
-		texData.tex_u = texData.height;
+	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
+		texData.tex_w = texData.width;
+		texData.tex_h = texData.height;
 		texData.tex_w = texData.width;
 		texData.tex_h = texData.height;		
 	}else
 #endif
 	{
-		//otherwise we need to calculate the next power of 2 for the requested dimensions
-		//ie (320x240) becomes (512x256)
-		texData.tex_w = ofNextPow2(texData.width);
-		texData.tex_h = ofNextPow2(texData.height);
+		if(ofGLSupportsNPOTTextures()){
+			texData.tex_w = texData.width;
+			texData.tex_h = texData.height;
+		}else{
+			//otherwise we need to calculate the next power of 2 for the requested dimensions
+			//ie (320x240) becomes (512x256)
+			texData.tex_w = ofNextPow2(texData.width);
+			texData.tex_h = ofNextPow2(texData.height);
+		}
+
 		texData.tex_t = texData.width / texData.tex_w;
 		texData.tex_u = texData.height / texData.tex_h;
 
-		texData.textureTarget = GL_TEXTURE_2D;
+#ifndef TARGET_OPENGLES
+		if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB ) texData.textureTarget = GL_TEXTURE_2D;
+#endif
 	}
 
 	// attempt to free the previous bound texture, if we can:
@@ -511,91 +349,133 @@ void ofTexture::allocate(const ofTextureData & textureData){
 	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
 	retain(texData.textureID);
 
-	glEnable(texData.textureTarget);
+	enableTextureTarget();
 
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
-#ifndef TARGET_OPENGLES
-	// can't do this on OpenGL ES: on full-blown OpenGL,
-	// glInternalFormat and glFormat (GL_LUMINANCE below)
-	// can be different; on ES they must be exactly the same.
-	//		glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, GL_LUMINANCE, PIXEL_TYPE, 0);  // init to black...
-	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, texData.glType, texData.pixelType, 0);  // init to black...
-#else
-	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, texData.tex_w, texData.tex_h, 0, texData.glTypeInternal, texData.pixelType, 0);
-#endif
+	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
 
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	if (!ofIsGLProgrammableRenderer()){
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	}
+	disableTextureTarget();
 
-	glDisable(texData.textureTarget);
+
 
 	texData.bAllocated = true;
 
 }
 
+
+void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles){
+#ifndef TARGET_OPENGLES
+	enableTextureTarget();
+
+	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+	if(rToRGBSwizzles){
+		if(texData.glTypeInternal==GL_R8 ||
+				texData.glTypeInternal==GL_R16 ||
+				texData.glTypeInternal==GL_R32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_RED);
+
+		}else if(texData.glTypeInternal==GL_RG8 ||
+				texData.glTypeInternal==GL_RG16 ||
+				texData.glTypeInternal==GL_RG32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_A, GL_GREEN);
+		}
+	}else{
+		if(texData.glTypeInternal==GL_R8 ||
+				texData.glTypeInternal==GL_R16 ||
+				texData.glTypeInternal==GL_R32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+
+		}else if(texData.glTypeInternal==GL_RG8 ||
+				texData.glTypeInternal==GL_RG16 ||
+				texData.glTypeInternal==GL_RG32F){
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_R, GL_RED);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_G, GL_GREEN);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_B, GL_BLUE);
+			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
+		}
+	}
+
+	glBindTexture( texData.textureTarget, 0);
+	disableTextureTarget();
+#endif
+}
+
 //----------------------------------------------------------
 void ofTexture::loadData(const unsigned char * data, int w, int h, int glFormat){
-	loadData( (void *)data, w, h, glFormat);
+	ofSetPixelStorei(w,1,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_UNSIGNED_BYTE);
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const unsigned short * data, int w, int h, int glFormat){
-	loadData( (void *)data, w, h, glFormat);
+	ofSetPixelStorei(w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_UNSIGNED_SHORT);
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const float * data, int w, int h, int glFormat){
-	loadData( (void *)data, w, h, glFormat);
+	ofSetPixelStorei(w,4,ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(data, w, h, glFormat, GL_FLOAT);
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofPixels & pix){
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofShortPixels & pix){
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofFloatPixels & pix){
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix));
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const ofPixels & pix, int glFormat){
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const ofShortPixels & pix, int glFormat){
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
+}
+
+//----------------------------------------------------------
+void ofTexture::loadData(const ofFloatPixels & pix, int glFormat){
+	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
 }
 
 
-
-
 //----------------------------------------------------------
-void ofTexture::loadData(void * data, int w, int h, int glFormat){
-	
-	//	can we allow for uploads bigger then texture and
-	//	just take as much as the texture can?
-	//
-	//	ie:
-	//	int uploadW = MIN(w, tex_w);
-	//	int uploadH = MIN(h, tex_h);
-	//  but with a "step" size of w?
-	// 	check "glTexSubImage2D"
-	texData.glType = glFormat;
-	
-	/*if(glFormat!=texData.glType) {
-		ofLogError() << "ofTexture::loadData() failed to upload format " <<  ofGetGlInternalFormatName(glFormat) << " data to " << ofGetGlInternalFormatName(texData.glType) << " texture" <<endl;
-		return;
-	}*/
-	
+void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glType){
+
 	if(w > texData.tex_w || h > texData.tex_h) {
-		ofLogError() << "ofTexture::loadData() failed to upload " <<  w << "x" << h << " data to " << texData.tex_w << "x" << texData.tex_h << " texture";
-		return;
+		allocate(w, h, glFormat, glFormat, glType);
 	}
-	
-	// update our size with the new dimensions
-	texData.width = w;
-	texData.height = h;
 	
 	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES
@@ -631,21 +511,19 @@ void ofTexture::loadData(void * data, int w, int h, int glFormat){
 	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
 	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
 	
-	//------------------------ likely, we are uploading continuous data
-	GLint prevAlignment;
-	glGetIntegerv(GL_UNPACK_ALIGNMENT, &prevAlignment);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	
 	
 	//Sosolimited: texture compression
 	if (texData.compressionType == OF_COMPRESS_NONE) {
 		//STANDARD openFrameworks: no compression
 		
 		//update the texture image: 
-		glEnable(texData.textureTarget);
+		enableTextureTarget();
+
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
- 		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, texData.glType, texData.pixelType, data);
-		glDisable(texData.textureTarget);
+		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
+		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
+
+ 		disableTextureTarget();
 	} else {
 		//SOSOLIMITED: setup mipmaps and use compression
 		//TODO: activate at least mimaps for OPENGL_ES
@@ -663,15 +541,15 @@ void ofTexture::loadData(void * data, int w, int h, int glFormat){
 			int next_w = ofNextPow2(texData.width);
 			if ((texData.width - last_w) < (next_w - texData.width)) texData.tex_t = last_w;
 			else texData.tex_t = next_w;
-			
-			//printf("ofTexture::loadData w:%.1f, h:%.1f, tex_t:%.1f, tex_u:%.1f \n", texData.width,texData.height,texData.tex_t,texData.tex_u);
 		}
 #endif
-		glEnable(texData.textureTarget);
+		enableTextureTarget();
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 		
 		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		if(!ofGetGLProgrammableRenderer()){
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		}
 #ifndef TARGET_OPENGLES		
 		glTexParameteri(texData.textureTarget, GL_GENERATE_MIPMAP_SGIS, true);
 #endif
@@ -686,44 +564,40 @@ void ofTexture::loadData(void * data, int w, int h, int glFormat){
 		//using sRGB compression
 		if (texData.compressionType == OF_COMPRESS_SRGB)
 		{
-			if(texData.glType == GL_RGBA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, texData.pixelType, data);
+			if(texData.glTypeInternal == GL_RGBA)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
 			
-			else if(texData.glType == GL_RGB)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, texData.pixelType, data);
+			else if(texData.glTypeInternal == GL_RGB)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
 			
-			else if(texData.glType == GL_LUMINANCE_ALPHA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, texData.pixelType, data);
+			else if(texData.glTypeInternal == GL_LUMINANCE_ALPHA)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
 			
-			else if(texData.glType == GL_LUMINANCE)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, texData.glType, texData.pixelType, data);
+			else if(texData.glTypeInternal == GL_LUMINANCE)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
 		}
 		
 		//using ARB compression: default
 		else
 		{
-			if(texData.glType == GL_RGBA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGBA_ARB, w, h, texData.glType, texData.pixelType, data);
+			if(texData.glTypeInternal == GL_RGBA)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGBA_ARB, w, h, glFormat, glType, data);
 			
-			else if(texData.glType == GL_RGB)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGB_ARB, w, h, texData.glType, texData.pixelType, data);
+			else if(texData.glTypeInternal == GL_RGB)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGB_ARB, w, h, glFormat, glType, data);
 			
-			else if(texData.glType == GL_LUMINANCE_ALPHA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ALPHA_ARB, w, h, texData.glType, texData.pixelType, data);
+			else if(texData.glTypeInternal == GL_LUMINANCE_ALPHA)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ALPHA_ARB, w, h, glFormat, glType, data);
 			
-			else if(texData.glType == GL_LUMINANCE)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ARB, w, h, texData.glType, texData.pixelType, data);
+			else if(texData.glTypeInternal == GL_LUMINANCE)
+				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ARB, w, h, glFormat, glType, data);
 		}
 #endif
 		
-		
-		glDisable(texData.textureTarget);
+
+		disableTextureTarget();
 		
 	}
-	//------------------------ back to normal.
-	glPixelStorei(GL_UNPACK_ALIGNMENT, prevAlignment);
-	
-	texData.bFlipTexture = false;
 	
 }
 
@@ -737,7 +611,8 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	texData.bFlipTexture = true;
 	
 	if ( w > texData.tex_w || h > texData.tex_h) {
-		ofLog(OF_LOG_ERROR,"image data too big for allocated texture. not uploading...");
+		ofLogError("ofTexture") << "loadScreenData(): " << w << "x" << h << " image data too big for "
+		<< texData.tex_w << "x " << texData.tex_h << " allocated texture, not uploading";
 		return;
 	}
 	
@@ -759,10 +634,12 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	}
 	
 	
-	glEnable(texData.textureTarget);
+	enableTextureTarget();
+
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glCopyTexSubImage2D(texData.textureTarget, 0,0,0,x,y,w,h);
-	glDisable(texData.textureTarget);
+
+	disableTextureTarget();
 }
 
 
@@ -794,33 +671,42 @@ void ofTexture::resetAnchor(){
 //----------------------------------------------------------
 void ofTexture::bind(){
 	//we could check if it has been allocated - but we don't do that in draw() 
-	glEnable(texData.textureTarget);
+	enableTextureTarget();
 	glBindTexture( texData.textureTarget, (GLuint)texData.textureID);
 	
 	if(ofGetUsingNormalizedTexCoords()) {
-		glMatrixMode(GL_TEXTURE);
-		glPushMatrix();
-		glLoadIdentity();
+		ofSetMatrixMode(OF_MATRIX_TEXTURE);
+		ofPushMatrix();
+		ofMatrix4x4 m;
 		
 #ifndef TARGET_OPENGLES	
 		if(texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
-			glScalef(texData.width, texData.height, 1.0f);
+			m.makeScaleMatrix(texData.width, texData.height, 1.0f);
 		else 
 #endif			
-			glScalef(texData.width / texData.tex_w, texData.height / texData.tex_h, 1.0f);
+			m.makeScaleMatrix(texData.width / texData.tex_w, texData.height / texData.tex_h, 1.0f);
 		
-		glMatrixMode(GL_MODELVIEW);  		
+		ofLoadMatrix(m);
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+	}
+	if(texData.useTextureMatrix){
+		ofSetMatrixMode(OF_MATRIX_TEXTURE);
+		if(!ofGetUsingNormalizedTexCoords()) ofPushMatrix();
+		ofMultMatrix(texData.textureMatrix);
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	}
 }
 
 //----------------------------------------------------------
 void ofTexture::unbind(){
-	glDisable(texData.textureTarget);
-	
-	if(ofGetUsingNormalizedTexCoords()) {
-		glMatrixMode(GL_TEXTURE);
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW); 
+
+	glBindTexture( texData.textureTarget, 0);
+	disableTextureTarget();
+
+	if(texData.useTextureMatrix || ofGetUsingNormalizedTexCoords()) {
+		ofSetMatrixMode(OF_MATRIX_TEXTURE);
+		ofPopMatrix();
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	}
 }
 
@@ -944,34 +830,22 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 //----------------------------------------------------------
 void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
 	
-	// make sure we are on unit 0 - we may change this when setting shader samplers
-	// before glEnable or else the shader gets confused
-	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
-	glActiveTexture(GL_TEXTURE0);
 	
-	// Enable texturing
-	glEnable(texData.textureTarget);
+	GLfloat px0 = x;		// up to you to get the aspect ratio right
+	GLfloat py0 = y;
+	GLfloat px1 = w+x;
+	GLfloat py1 = h+y;
 	
-	// bind the texture
-	glBindTexture( texData.textureTarget, (GLuint)texData.textureID );
-	
-	GLfloat px0 = 0.0f;		// up to you to get the aspect ratio right
-	GLfloat py0 = 0.0f;
-	GLfloat px1 = w;
-	GLfloat py1 = h;
-	
-	if (texData.bFlipTexture == true){
-		GLint temp = (GLint)py0;
-		py0 = py1;
-		py1 = temp;
+	if (texData.bFlipTexture == ofIsVFlipped()){
+		swap(py0,py1);
 	}
-	
+
 	// for rect mode center, let's do this:
 	if (ofGetRectMode() == OF_RECTMODE_CENTER){
-		px0 = -w/2;
-		py0 = -h/2;
-		px1 = +w/2;
-		py1 = +h/2;
+		px0 -= w/2;
+		py0 -= h/2;
+		px1 -= w/2;
+		py1 -= h/2;
 	}
 	
 	//we translate our drawing points by our anchor point.
@@ -1005,7 +879,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat offsetw = 0.0f;
 	GLfloat offseth = 0.0f;
 	
-	if (texData.textureTarget == GL_TEXTURE_2D && bTexHackEnabled) {
+	if (!ofGLSupportsNPOTTextures() && bTexHackEnabled) {
 		offsetw = 1.0f / (texData.tex_w);
 		offseth = 1.0f / (texData.tex_h);
 	}
@@ -1013,38 +887,39 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	
 	ofPoint topLeft = getCoordFromPoint(sx, sy);
 	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
-	
+
 	GLfloat tx0 = topLeft.x + offsetw;
 	GLfloat ty0 = topLeft.y + offseth;
 	GLfloat tx1 = bottomRight.x - offsetw;
 	GLfloat ty1 = bottomRight.y - offseth;
 	
-	glPushMatrix(); 
+	/*if(z>0 || z<0){
+		ofPushMatrix();
+
+		ofTranslate(0,0,z);
+	}*/
+	quad.getVertices()[0].set(px0,py0,z);
+	quad.getVertices()[1].set(px1,py0,z);
+	quad.getVertices()[2].set(px1,py1,z);
+	quad.getVertices()[3].set(px0,py1,z);
 	
-	glTranslatef(x,y,z);
+	quad.getTexCoords()[0].set(tx0,ty0);
+	quad.getTexCoords()[1].set(tx1,ty0);
+	quad.getTexCoords()[2].set(tx1,ty1);
+	quad.getTexCoords()[3].set(tx0,ty1);
+
+	// make sure we are on unit 0 - we may change this when setting shader samplers
+	// before glEnable or else the shader gets confused
+	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
+	glActiveTexture(GL_TEXTURE0);
 	
-	GLfloat tex_coords[] = {
-		tx0,ty0,
-		tx1,ty0,
-		tx1,ty1,
-		tx0,ty1
-	};
-	GLfloat verts[] = {
-		px0,py0,
-		px1,py0,
-		px1,py1,
-		px0,py1
-	};
-	
-	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
-	glEnableClientState(GL_VERTEX_ARRAY);		
-	glVertexPointer(2, GL_FLOAT, 0, verts );
-	glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
-	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-	
-	glPopMatrix();
-	glDisable(texData.textureTarget);
+	bind();
+	quad.draw();
+	unbind();
+
+	/*if(z>0 || z<0){
+		ofPopMatrix();
+	}*/
 	
 }
 
@@ -1052,24 +927,6 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 // ROGER
 //----------------------------------------------------------
 void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4){
-	
-	// Enable alpha channel if has one
-	bool blending = ofGetStyle().blendingMode;
-	if (texData.glType == GL_RGBA && blending == OF_BLENDMODE_DISABLED) {
-		ofEnableAlphaBlending();
-	}
-	
-	// make sure we are on unit 0 - we may change this when setting shader samplers
-	// before glEnable or else the shader gets confused
-	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
-	glActiveTexture(GL_TEXTURE0);
-	
-	// Enable texturing
-	glEnable(texData.textureTarget);
-	
-	// bind the texture
-	glBindTexture( texData.textureTarget, (GLuint)texData.textureID );
-	
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
 	// slightly, slightly alters an image, scaling...
@@ -1091,44 +948,33 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	GLfloat ty0 = 0+offseth;
 	GLfloat tx1 = texData.tex_t - offsetw;
 	GLfloat ty1 = texData.tex_u - offseth;
+
+	quad.getVertices()[0].set(p1.x, p1.y);
+	quad.getVertices()[1].set(p2.x, p2.y);
+	quad.getVertices()[2].set(p3.x, p3.y);
+	quad.getVertices()[3].set(p4.x, p4.y);
 	
-	glPushMatrix(); 
+	quad.getTexCoords()[0].set(tx0,ty0);
+	quad.getTexCoords()[1].set(tx1,ty0);
+	quad.getTexCoords()[2].set(tx1,ty1);
+	quad.getTexCoords()[3].set(tx0,ty1);
 	
-	GLfloat tex_coords[] = {
-		tx0,ty0,
-		tx1,ty0,
-		tx1,ty1,
-		tx0,ty1
-	};
-	GLfloat verts[] = {
-		p1.x, p1.y,
-		p2.x, p2.y,
-		p3.x, p3.y,
-		p4.x, p4.y
-	};
+	// make sure we are on unit 0 - we may change this when setting shader samplers
+	// before glEnable or else the shader gets confused
+	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
+	glActiveTexture(GL_TEXTURE0);
 	
-	glEnableClientState( GL_TEXTURE_COORD_ARRAY );
-	glTexCoordPointer(2, GL_FLOAT, 0, tex_coords );
-	glEnableClientState(GL_VERTEX_ARRAY);		
-	glVertexPointer(2, GL_FLOAT, 0, verts );
-	glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
-	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
-	
-	glPopMatrix();
-	glDisable(texData.textureTarget);
-	
-	// Disable alpha channel if it was disabled
-	if (texData.glType == GL_RGBA && blending == OF_BLENDMODE_DISABLED) {
-		ofDisableAlphaBlending();
-	}
+	bind();
+	quad.draw();
+	unbind();
 }
 
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofPixels & pixels){
 #ifndef TARGET_OPENGLES
-	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
+	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
 	bind();
-	glGetTexImage(texData.textureTarget,0,texData.glType,GL_UNSIGNED_BYTE, pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_UNSIGNED_BYTE, pixels.getPixels());
 	unbind();
 #endif
 }
@@ -1136,9 +982,9 @@ void ofTexture::readToPixels(ofPixels & pixels){
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofShortPixels & pixels){
 #ifndef TARGET_OPENGLES
-	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
+	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
 	bind();
-	glGetTexImage(texData.textureTarget,0,texData.glType,GL_UNSIGNED_SHORT,pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_UNSIGNED_SHORT,pixels.getPixels());
 	unbind();
 #endif
 }
@@ -1146,9 +992,9 @@ void ofTexture::readToPixels(ofShortPixels & pixels){
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofFloatPixels & pixels){
 #ifndef TARGET_OPENGLES
-	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glType));
+	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
 	bind();
-	glGetTexImage(texData.textureTarget,0,texData.glType,GL_FLOAT,pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_FLOAT,pixels.getPixels());
 	unbind();
 #endif
 }

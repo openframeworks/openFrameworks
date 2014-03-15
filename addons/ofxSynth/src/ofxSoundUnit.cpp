@@ -16,7 +16,7 @@ using namespace std;
 /*
 vector<ofSoundSource*> ofSoundUnit::getInputs()
 {
-ofLog(OF_LOG_WARNING, "ofSoundUnit::getInputs() called");
+ofLogWarning("ofxSoundUnit") << "getInputs(): called";
 // no inputs
 return vector<ofSoundSource*>();
 }*/
@@ -39,15 +39,17 @@ bool ofxSoundSink::addInputFrom( ofxSoundSource* from )
 	// check for existing input
 	if ( input != NULL )
 	{
-		ofLog( OF_LOG_ERROR, "ofSoundUnit: can't connect '%s' (%x) to '%s' (%x): it already has an input",
-				from->getName().c_str(), from, this->getName().c_str(), this );
+		ofLogError("ofxSoundSink") << "addInputFrom(): can't connect \"" << from->getName() << "\""" "
+			<< "(" << ios::hex << from << ios::dec << ") to \"" << this->getName() << "\" "
+			<< "(" << ios::hex << this << ios::dec << "): it already has an input";
 		return false;
 	}
 	// check for branches/cycles
 	if ( addingInputWouldCreateCycle( from ) )
 	{
-		ofLog( OF_LOG_ERROR, "ofSoundUnit: can't connect '%s' (%x) to '%s' (%x): this would create a cycle in the DSP graph",
-				from->getName().c_str(), from, this->getName().c_str(), this );
+		ofLogError("ofxSoundSink") << "addInputFrom(): can't connect \"" << from->getName() << "\""" "
+			<< "(" << ios::hex << from << ios::dec << ") to \"" << this->getName() << "\" "
+			<< "(" << ios::hex << this << ios::dec << "): this would create a cycle in the DSP graph";
 		return false;
 	}
 
@@ -202,12 +204,12 @@ void ofxSoundBuffer::copyChannel( int channel, float* output ) const {
 /// Copy safely to out. Copy as many frames as possible, repeat channels as necessary.
 void ofxSoundBuffer::copyTo( float* outBuffer, int outNumFrames, int outNumChannels ) {
 	if ( numFrames == 0 || numChannels == 0 ) {
-		ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: copy requested on empty buffer, returning nothing (check your addInputTo() methods!)" );
+		ofLogWarning("ofxSoundBuffer") << "copyTo(): copy requested on empty buffer, returning nothing (check your addInputTo() methods!)";
 		memset( outBuffer, 0, sizeof(float)*outNumFrames*outNumChannels );
 	}
 	if ( outNumFrames>numFrames || outNumChannels>numChannels ) {
-		ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: %i frames requested but only %i are available", outNumFrames, numFrames );
-		ofLog( OF_LOG_WARNING, "ofSoundBuffer::copyTo: %i channels requested but only %i are available, looping to make up the difference", outNumChannels, numChannels );
+		ofLogWarning("ofxSoundBuffer") << "copyTo(): " << outNumFrames << " frames requested but only " << numFrames << " are available";
+		ofLogWarning("ofxSoundBuffer") << "copyTo(): " << outNumChannels << " channels requested but only " << numChannels << " are available, looping to make up the difference";
 
 		for ( int i=0; i<min(numFrames,outNumFrames); i++ ) {
 			for ( int j=0; j<outNumChannels; j++ ) {
@@ -233,7 +235,7 @@ ofxSoundMixer::~ofxSoundMixer() {
 }
 
 void ofxSoundMixer::copyFrom( const ofxSoundMixer& other ) {
-	ofLog( OF_LOG_WARNING, "Copying ofSoundMixer, this will probably make things break" );
+	ofLogWarning("ofxSoundMixer") << "copyFrom(): copying an ofSoundMixer will probably make things break";
 	working = NULL;
 	for ( int i=0; i<(int)other.inputs.size(); i++ ) {
 		addInputFrom( other.inputs[i]->input );
@@ -267,8 +269,8 @@ void ofxSoundMixer::setPan( ofxSoundSource* input, float pan ) {
 		}
 	}
 	if ( !found ) {
-		ofLog( OF_LOG_WARNING, "ofSoundMixer: setPan couldn't find input for '%s' (%x), not setting pan", input->getName().c_str(), input );
-
+		ofLogWarning("ofxSoundMixer") << "setPan(): couldn't find input for \"" << input->getName() << "\" "
+			<< "(" << ios::hex << input << ios::dec << ")";
 	}
 }
 
@@ -277,11 +279,11 @@ void ofxSoundMixer::setPan( ofxSoundSource* input, float pan ) {
 
 // Render the DSP chain. output is interleaved and has space for
 // numFrames*numChannels floats.
-void ofxSoundMixer::audioOut( float* output, int numFrames, int numChannels,long unsigned long tickCount )
+void ofxSoundMixer::audioOut( float* output, int numFrames, int numChannels, long unsigned long tickCount )
 {
 	// advance DSP
 	if ( numChannels != 1 && numChannels != 2 ) {
-		ofLog( OF_LOG_ERROR, "only 1 or 2 channels supported");
+		ofLogError("ofxSoundMixer") << "audioOut(): only 1 or 2 channels supported, requested " << numChannels;
 		return;
 	}
 	// write to output
@@ -320,7 +322,7 @@ void ofxSoundMixer::audioOut( float* output, int numFrames, int numChannels,long
 	}
 	if(source){
 		memset( working, 0, numFrames*numChannels*sizeof(float) );
-		source->audioOut( working, numFrames, numChannels, tickCount );
+		source->audioOut( working, numFrames, numChannels, 0, tickCount ); // TODO fix: deviceId is hardcoded here
 		float *working_ptr = working;
 		float *output_ptr = output;
 		for ( int j=0; j<numFrames; j++ ) {
@@ -341,7 +343,7 @@ bool ofxSoundMixer::addInputFrom( ofxSoundSource* source )
 	// check for branches/cycles
 	if ( addingInputWouldCreateCycle( source ) )
 	{
-		ofLog( OF_LOG_ERROR, "ofSoundMixer: can't connect '%s' (%x) to '%s' (%x): this would create a cycle in the DSP graph",
+		ofLogError("ofxSoundMixer") << "addInputFrom(): can't connect '%s' (%x) to '%s' (%x): this would create a cycle in the DSP graph",
 				source->getName().c_str(), source, this->getName().c_str(), this );
 		return false;
 	}
@@ -382,7 +384,7 @@ void ofxSoundMixer::setSampleRate( int rate )
 
 void ofxSoundSourceTestTone::setSampleRate( int rate )
 {
-	// ofLog( OF_LOG_NOTICE, "ofSoundSourceTestTone got sample rate: %i", rate );
+	// ofLogNotice("ofxSoundSourceTestTone") << "setSampleRate(): new sample rate: " << rate;
 	sampleRate = rate;
 	setFrequency( frequency );
 }
@@ -397,12 +399,14 @@ void ofxSoundSourceTestTone::setFrequency( float freq )
 	// for the sawtooth, we want to go from -1..1
 	sawAdvancePerFrame = (1.0f/sampleRate)*frequency;
 
-	// ofLog( OF_LOG_NOTICE, "ofSoundSourceTestTone(%x) setFrequency, freq %f, sampleRate %i, advance %f", this, frequency, sampleRate, phaseAdvancePerFrame );
+	// ofLogNotice("ofxSoundSourceTestTone") << "setFrequency(): " << "(" << ios::hex << this << ios::dec << ") "
+	//	<< "freq " << frequency << ", sampleRate " << sampleRate << ", advance " << phaseAdvancePerFrame;
 }
 
-void ofxSoundSourceTestTone::audioOut( float* output, int numFrames, int numChannels,long unsigned long tickCount )
+void ofxSoundSourceTestTone::audioOut( float* output, int numFrames, int numChannels, long unsigned long tickCount )
 {
-	// ofLog( OF_LOG_NOTICE, "ofSoundSourceTestTone(%x) audioRequested, freq %f, sampleRate %i", this, frequency, sampleRate );
+	// ofLogNotice("ofxSoundSourceTestTone") << "audioOut(): " << "(" << ios::hex << this << ios::dec << ") "
+	//	<< "freq " << frequency << ", sampleRate " << sampleRate;
 	// loop through all the frames
 	if ( waveform == TESTTONE_SINE ) {
 		for ( int i=0; i<numFrames; i++ ) {
@@ -435,18 +439,19 @@ void ofxSoundSourceTestTone::audioOut( float* output, int numFrames, int numChan
 
 
 
-void ofxSoundSinkMicrophone::audioOut( float* output, int numFrames, int numChannels,long unsigned long tickCount )
+void ofxSoundSinkMicrophone::audioOut( float* output, int numFrames, int numChannels, long unsigned long tickCount )
 {
 	// copy from inputBuffer to output; upmix from microphone
 	if ( numFrames != inputBuffer.numFrames ) {
-		ofLog( OF_LOG_WARNING, "ofSoundSinkMicrophone: microphone frame count seems different to output frame count; this is probably bad" );
+		ofLogWarning("ofxSoundSinkMicrophone") << "audioOut(): microphone frame count of " << numFrames
+			<< " seems different to output frame count of " << inputBuffer.numFrames << ", this is probably bad";
 	}
 	inputBuffer.copyTo( output, numFrames, numChannels );
 }
 
 
 
-void ofxSoundSourceMultiplexor::audioOut( float* output, int numFrames, int numChannels,long unsigned long tickCount ) {
+void ofxSoundSourceMultiplexor::audioOut( float* output, int numFrames, int numChannels, long unsigned long tickCount ) {
 
 	// new tick: render upstream into input buffer
 	if ( tickCount != lastRenderedTick ) {

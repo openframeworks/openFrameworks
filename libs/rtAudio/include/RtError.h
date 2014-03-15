@@ -41,13 +41,13 @@ class RtError : public std::exception
   virtual ~RtError( void ) throw() {}
 
   //! Prints thrown error message to stderr.
-  virtual void printMessage( void ) throw() { std::cerr << '\n' << message_ << "\n\n"; }
+  virtual void printMessage( void ) const throw() { std::cerr << '\n' << message_ << "\n\n"; }
 
   //! Returns the thrown error message type.
-  virtual const Type& getType(void) throw() { return type_; }
+  virtual const Type& getType(void) const throw() { return type_; }
 
   //! Returns the thrown error message string.
-  virtual const std::string& getMessage(void) throw() { return message_; }
+  virtual const std::string& getMessage(void) const throw() { return message_; }
 
   //! Returns the thrown error message as a c-style string.
   virtual const char* what( void ) const throw() { return message_.c_str(); }
