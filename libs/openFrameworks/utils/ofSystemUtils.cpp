@@ -308,7 +308,12 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
+        
+#ifdef __MINGW32_VERSION
+		ofn.lpstrTitle = windowTitle.c_str();
+#else
 		ofn.lpstrTitle = windowTitleW.c_str();
+#endif 
 
 		if(GetOpenFileName(&ofn)) {
 #ifdef __MINGW32_VERSION

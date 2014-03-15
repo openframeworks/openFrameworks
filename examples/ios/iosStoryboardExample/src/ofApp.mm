@@ -2,6 +2,9 @@
 
 //NOTE: in this example ofApp ( this class ) is not used. 
 //      look inside Apps/ to see the native iOS implementation
+//      If the app is not compiling, try removing the storyboard reference
+//      from the xcode project and adding it back to the project.
+//      Set the deployment target in project / General / Deployment Target >= 5.1
 
 //--------------------------------------------------------------
 void ofApp::setup(){	
