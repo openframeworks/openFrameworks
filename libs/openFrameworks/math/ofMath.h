@@ -171,7 +171,7 @@ bool ofInRange(float t, float min, float max);
 /// \returns the angle in degrees.
 float ofRadToDeg(float radians);
 
-/// \brief Convert degrees to radiant.
+/// \brief Convert degrees to radians.
 ///
 /// Example:
 ///
@@ -295,6 +295,13 @@ bool ofInsidePoly(float x, float y, const vector<ofPoint> & poly);
 /// \returns True if the ofPoint is enclosed, false otherwise.
 bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly);
 
+/// \brief Determine the intersection between two lines.
+/// \param line1Start Starting point for first line.
+/// \param line1End End point for first line.
+/// \param line2Start Starting point for second line.
+/// \param line2End End point for second line.
+/// \param intersection ofPoint reference in which to store the computed intersection point.
+/// \returns True if the lines intersect.
 bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint line2Start, ofPoint line2End, ofPoint & intersection);
 
 /// \brief Given the four points that determine a bezier curve, return an interpolated point on the curve.
