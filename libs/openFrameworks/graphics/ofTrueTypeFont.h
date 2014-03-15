@@ -65,14 +65,14 @@ public:
 	/// \brief Returns the size of the font.
 	/// \returns Size of font, set when font was loaded.
         int             getSize();
-        /// \brief Computes line height based on font size
-        /// \returns Returns current line height
+        /// \brief Computes line height based on font size.
+        /// \returns Returns current line height.
         float           getLineHeight();
         /// \brief Sets line height for text drawn on screen. 
         ///
         /// Note the line height is automatically computed based on the font size, when you load in the font.
 	///
-	/// \param height Line height for text drawn on screen
+	/// \param height Line height for text drawn on screen.
   	void 		setLineHeight(float height);
   	/// \brief Returns letter spacing of font object.
   	///
