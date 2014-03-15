@@ -17,6 +17,7 @@ void ofDrawAxis(float size);
 /// Parameters allow each of the grid planes (yz,xz, and xy) to be turned on or off. 
 /// Optionally, the function can include white numeric labels for grid subdivisions. 
 /// (Numeric labels are drawn using ofDrawBitmapString internally.)
+/// 
 /// The yz plane (at x=0) is drawn in red.
 /// The xz plane (at y=0) is drawn in green.
 /// The xy plane (at z=0) is drawn in blue.
