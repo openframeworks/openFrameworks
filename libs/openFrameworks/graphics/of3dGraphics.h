@@ -59,8 +59,24 @@ void ofDrawCylinder(const ofPoint& position, float radius, float height);
 void ofDrawCylinder(float radius, float height);
 
 // Cone
+
+/// \brief Set the resolution of a polygonized cone. 
+///
+/// Allows you to set the polygonization resolution of any cones you subsequently draw with ofDrawCone(). 
+///
+/// \param radiusSegments The number of facets (subdivisions) around the cone's circular footprint. 
+/// \param heightSegments The number of subdivisions from the cone's top to bottom. 
+/// \param capSegments The number of annular (ring-shaped) subdivisions of the cone's endcap. 
 void ofSetConeResolution( int radiusSegments, int heightSegments, int capSegments=2);
+
+/// \brief Retrieve a data structure describing the resolution with which cones are polygonized. 
+///
+/// Allows you to fetch the resolution with which cones are polygonized.
+/// See ofSetConeResolution() for more information. 
+///
+/// \returns An ofVec3f containing (radiusSegments, heightSegments, capSegments) for cone polygonization. 
 ofVec3f ofGetConeResolution();
+
 void ofDrawCone(float x, float y, float z, float radius, float height);
 void ofDrawCone(float x, float y, float radius, float height);
 void ofDrawCone(const ofPoint& position, float radius, float height);
