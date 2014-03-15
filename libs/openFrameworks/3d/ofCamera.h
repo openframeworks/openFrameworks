@@ -26,10 +26,28 @@ public:
 	virtual ~ofCamera(){};
 	
 	// projection properties:
+	
+	/// \brief Set the field of view for a perspective camera.
+	///
+	/// This sets the horizontal field of view for the camera, in degrees.
+	/// This only operates with perspective cameras, and will have no effect 
+	/// with cameras in orthographic mode. 
+	///
+	/// \param f The desired field of view for the camera, in degrees.
 	void setFov(float f);
+	
+	
 	void setNearClip(float f);
 	void setFarClip(float f);
 	void setLensOffset(const ofVec2f & lensOffset);
+	
+	/// \brief Set the recommended aspect ratio for a perspective camera.
+	///
+	/// Sets the aspect ratio of the camera to the desired float, and forces the use of aspect ratio calculations. 
+	/// Currently only used with perspective cameras. The default value (and the value used with orthographic cameras)
+	/// is the ratio of the viewport's width to the viewport's height. 
+	/// 
+	/// \param aspectRatio The desired aspect ratio, e.g. 1.3333, 1.6, 1.7777, etc. 
 	void setAspectRatio(float aspectRatio);
 	void setForceAspectRatio(bool forceAspectRatio);
 
