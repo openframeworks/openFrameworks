@@ -171,9 +171,16 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// \param compressionLevel The different compression levels are: OF_IMAGE_QUALITY_BEST, OF_IMAGE_QUALITY_HIGH, 
 		/// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
 		void 				saveImage(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+		/// \brief This saves the image to the ofBuffer passed with the image quality specified by compressionLevel. 
+		/// \param buffer ofBuffer to save image to
+		/// \param compressionLevel The different compression levels are: OF_IMAGE_QUALITY_BEST, OF_IMAGE_QUALITY_HIGH, 
+		/// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
 		void 				saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+		/// \brief This saves the image to the ofFile passed with the image quality specified by compressionLevel. 
+		/// \param file ofFile to save image to
+		/// \param compressionLevel The different compression levels are: OF_IMAGE_QUALITY_BEST, OF_IMAGE_QUALITY_HIGH, 
+		/// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
 		void 				saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
-
 		// Sosolimited: texture compression and mipmaps
 		void				setCompression(ofTexCompression compression);
 
