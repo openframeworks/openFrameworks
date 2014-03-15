@@ -85,8 +85,6 @@ static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofxAssimpMeshHelper *
 			ofm.addIndex(aim->mFaces[i].mIndices[j]);
 		}
 	}
-    
-	ofm.setName(string(aim->mName.data));
 }
 
 //--------------------------------------------------------------
