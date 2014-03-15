@@ -309,7 +309,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 
 		// the anchor is the point the image is drawn around.
 		// this can be useful if you want to rotate an image around a particular point.
-		/// \brief Change the drawing position from top-left corner to a position specified by xPct and yPct.
+		/// \brief Change the drawing anchor from top-left corner to a position specified by xPct and yPct.
 		///
 		/// Changes the drawing position specified by draw() from the normal top-left corner of the image to a
 		/// position specified by xPct and yPct in relation to the dimensions of the image. This can be useful 
@@ -317,10 +317,19 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// xPct and yPct is 0.0 to 1.0. For xPct, 1.0 represents the width of the image. For yPct, 1.0 represents 
 		/// the height of the image. These values are not capped.
 		///
-		/// \param xPct X position of the archor, specified as a percent of the width of the image
-		/// \param yPct Y position of the archor, specified as a percent of the height of the image
+		/// \param xPct X position of the new anchor, specified as a percent of the width of the image
+		/// \param yPct Y position of the new anchor, specified as a percent of the height of the image
         void				setAnchorPercent(float xPct, float yPct);	// set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
+        	/// \brief Changes drawing position from top-left corner to position specified by x,y.
+        	///
+        	/// Changes the drawing position specified by draw() from the normal top-left corner of the image to a 
+        	/// position specified by x and y, measured in pixels. This can be useful for aligning and centering 
+        	/// images as well as rotating an image around its center.
+		///
+		/// \param x X position of the new anchor
+		/// \param y Y position of the new anchor
         void				setAnchorPoint(float x, float y);			// set the anchor point in pixels
+     		/// \brief Removes anchor positioning, so the ofImage will be drawn from its upper left hand corner.
         void				resetAnchor();								// resets the anchor to (0, 0)
 
 		// draw:
