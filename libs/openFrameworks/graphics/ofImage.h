@@ -185,6 +185,8 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
 		void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
+		/// \brief Returns height of image as a float. 
+		/// \return float
 		float 				getHeight();
 		float 				getWidth();
 		
