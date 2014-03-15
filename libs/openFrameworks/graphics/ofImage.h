@@ -182,6 +182,9 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
 		void 				saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
 		// Sosolimited: texture compression and mipmaps
+		/// \brief This sets the compression level used when creating mipmaps for the ofTexture contained by the ofImage. 
+		/// \param compression The different texture compression levels are: OF_COMPRESS_NONE, 
+		/// \param OF_COMPRESS_SRGB, OF_COMPRESS_ARB
 		void				setCompression(ofTexCompression compression);
 
 		// getting the data
