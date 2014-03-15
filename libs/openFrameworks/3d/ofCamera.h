@@ -79,7 +79,18 @@ public:
 	ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport()) const;
 	
 	// convert between spaces
+	
+	/// \brief Obtain the screen coordinates of a point in the 3D world. 
+	///
+	/// Takes a three-dimensional (X,Y,Z) position, encoded as an ofVec3f, 
+	/// and returns the location where it would appear on your (two-dimensional) display.
+	/// Function returns this location as an ofVec3f, whose Z value is zero. 
+	///
+	/// \param WorldXYZ A 3D point in the world, whose screen coordinates you wish to know. 
+	/// \param viewport (Optional) A viewport. The default is ofGetCurrentViewport(). 
+	/// \returns An ofVec3f containing the screen coordinates of your point of interest. 
 	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
+	
 	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
