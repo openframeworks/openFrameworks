@@ -44,10 +44,22 @@ public:
 	static void setGlobalDpi(int newDpi);
 			
 	// 			-- default (without dpi), non-full char set, anti aliased, 96 dpi:
+	/// \brief Loads the font specified by filename, allows you to control size, aliasing, and other parameters.
+	///
+	/// loads a font, and allows you to set the following parameters: the filename, the size, if the font is anti-aliased,
+	/// if it has a full character set, if you need it to have contrours (for getStringPoints) and paramters that control 
+	/// the simplification amount for those contours and the dpi of the font.
+	/// 
+	/// \returns Returns true if the font was loaded correctly.
 	bool 		loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3, int dpi=0);
-	
+	/// \brief Returns true if the font is loaded properly.
+	/// \returns Returns true if the font is loaded properly.
 	bool		isLoaded();
+	/// \brief Returns true if the font was set to be anti-aliased.
+	/// \returns Returns true if the font was set to be anti-aliased.
 	bool		isAntiAliased();
+	/// \brief Returns true if the font was allocated with a full character set.
+	/// \returns Returns true if the font was allocated with a full character set.
 	bool		hasFullCharacterSet();
 
     int         getSize();
