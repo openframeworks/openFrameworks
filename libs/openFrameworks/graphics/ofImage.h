@@ -258,10 +258,22 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// \param newWidth New width of image
 		/// \param newHeight New height of image
 		void 				resize(int newWidth, int newHeight);
-		
+		/// \brief Grabs pixels from the opengl window specified by the region (x, y, w, h) and turns them into an image. 
+		///
+		/// It resizes or allocates the ofImage if it's necessary.
+		///
+		/// \param x x position of upper-left corner of region
+		/// \param y y position of upper-left corner of region
+		/// \param w Width of region
+		/// \param h Height of region
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
 		// this does an inplace crop. 
 		// NOTE: this reallocates memory.
+		/// \brief This crops the image to the w,h passed in from the x,y position.
+		/// \param x x position of upper-left corner of region to crop
+		/// \param y y position of upper-left corner of region to crop
+		/// \param w Width of region to crop
+		/// \param h Height of region to crop
 		void				crop(int x, int y, int w, int h); 
 		// this does a crop from another image.
 		// NOTE: this will reallocate memory if the image types are different, or if the w & h do not
