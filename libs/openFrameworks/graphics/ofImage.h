@@ -195,12 +195,17 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// number of pixels. Color images will have (widthheight3) number of pixels (interlaced R,G,B), 
 		/// and coloralpha images will have (widthheight*4) number of pixels (interlaced R,G,B,A).
 		///
-		/// \return Returns a raw pointer to the pixel data.
+		/// \returns Returns a raw pointer to the pixel data.
 		PixelType * 				getPixels();			// up to you to get this right
+		/// \brief This returns an ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
+		/// 
+		/// Make sure you call either update() or reloadTexture() after making changes to the ofPixels.
+		///
+		/// \returns Returns an ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
 		ofPixels_<PixelType> &	 	getPixelsRef();
 
 		operator ofPixels_<PixelType>&();
-
+		
 		ofColor_<PixelType> getColor(int x, int y) const;
 
 		// alter the image
