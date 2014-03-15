@@ -62,10 +62,28 @@ public:
 	/// \returns Returns true if the font was allocated with a full character set.
 	bool		hasFullCharacterSet();
 
-    int         getSize();
-    float       getLineHeight();
+	/// \brief Returns the size of the font.
+	/// \returns Size of font, set when font was loaded.
+        int             getSize();
+        /// \brief Computes line height based on font size
+        /// \returns Returns current line height
+        float           getLineHeight();
+        /// \brief Sets line height for text drawn on screen. 
+        ///
+        /// Note the line height is automatically computed based on the font size, when you load in the font.
+	///
+	/// \returns Returns line height for text drawn on screen.
   	void 		setLineHeight(float height);
+  	/// \brief Returns letter spacing of font object.
+  	///
+  	/// You can control this by the ofTrueTypeFont::setLetterSpacing() function. 1.0 = default spacing, 
+  	/// less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
+  	///
+  	/// \returns Returns letter spacing of font object.
 	float 		getLetterSpacing();
+	/// \brief Sets the letter spacing of the font object.
+	/// 
+	/// 1.0 = default spacing, less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
 	void 		setLetterSpacing(float spacing);
 	float 		getSpaceSize();
 	void 		setSpaceSize(float size);
