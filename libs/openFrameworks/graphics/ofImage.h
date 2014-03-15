@@ -247,9 +247,18 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// Set the pixels of the image from an ofPixels instance, for an ofFloatImage these need to be ofFloatPixels, for an
 		/// ofImage these need to be unsigned chars. 
 		void				setFromPixels(const ofPixels_<PixelType> & pixels);
-		
+		/// \brief Set type of image to one of the following: OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
+		///
+		/// This does cause the image to be reallocated and the texture to be updated, so it can be an expensive operation 
+		/// if done frequently. Converting down, for example from color to grayscale, loses information and is a destructive change.
+		///
+		/// \param type The type of image, one of the following: OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 		void 				setImageType(ofImageType type);
+		/// \brief Resizes the image to a new size (w, h); Can be used to scale up or down an image.
+		/// \param newWidth New width of image
+		/// \param newHeight New height of image
 		void 				resize(int newWidth, int newHeight);
+		
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
 		// this does an inplace crop. 
 		// NOTE: this reallocates memory.
