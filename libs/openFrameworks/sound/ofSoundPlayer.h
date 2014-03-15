@@ -19,7 +19,9 @@ void ofSoundSetVolume(float vol);
 void ofSoundUpdate();
 
 /// \brief Gets a frequency spectrum sample, taking all current sound players into account.
+///
 /// Each band will be represented as a float between 0 and 1.
+///
 /// \warning This isn't implemented on mobile & embedded platforms
 /// \param nBands number of spectrum bands to return, max 512
 /// \return pointer to an FFT sample, sample size is equal to the nBands parameter
@@ -61,10 +63,12 @@ inline void ofSoundShutdown(){}
 
 /// \class ofSoundPlayer
 /// \brief Plays sound files
+///
 /// ofSoundPlayer handles simple playback of sound files, with controls for
 /// volume, pan, speed, seeking and multiplay.
 /// This is a common cross-platform sound player interface which is inherited by
 /// each of the platform-specific sound player implementations.
+///
 
 //---------------------------------------------
 class ofSoundPlayer : public ofBaseSoundPlayer {
@@ -77,12 +81,14 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		ofPtr<ofBaseSoundPlayer> getPlayer();
 
 		/// \brief Tells the sound player which file to play
+		///
 		/// Codec support varies by platform but wav, aif, and mp3 are safe
+		///
 		/// \param fileName Path to the sound file, relative to your app's data folder
 		/// \param stream set "true" to enable streaming from disk (for large files)
 		bool loadSound(string fileName, bool stream = false);
 
-		/// \brief Stops and unloads the current sound.
+		/// \brief Stops and unloads the current sound
 		void unloadSound();
 		
 		/// \brief Starts playback
