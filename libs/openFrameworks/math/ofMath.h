@@ -16,34 +16,40 @@
 #include "ofConstants.h"
 
 /// \brief Calculates the next larger power of 2.
-/// \param int value.
-/// \returns int value^2.
+///
 /// If the input is already a power of 2, it will return itself.  
 /// Example:
 ///
 ///    ofNextPow2(50); // returns 64
 ///    ofNextPow2(64); // returns 64
 ///    ofNextPow(401)); // returns 512
+///
+/// \param value.
+/// \returns value^2.
 int 		ofNextPow2 ( int a );
 
 /// \brief Randomly seeds the random number generator.
+///
 /// This seeds the random number generator with an acceptably random value, generated from clock time and the PID.
 void 		ofSeedRandom();
 
 /// \brief Seeds the random number generator with a value for consistent randomness.
+///
 /// \param int The value with which to seed the generator.
 void 		ofSeedRandom(int val);
 
 /// \brief Returns a random floating point number between 0 and max.
+///
 /// \param float The maximum value of the random number.
 float 		ofRandom(float max); 
 
-/// \returns A random floating point number between val0 and val1.
-/// \param float val0 the minimum value of the random number.
-/// \param float val1 The maximum value of the random number.
+/// \brief returns a random number between two values.
 /// Example:
 ///
 ///    ofRandom(-30,20); // will return a random floating point number between -30 and 20.
+/// \param val0 the minimum value of the random number.
+/// \param val1 The maximum value of the random number.
+/// \returns A random floating point number between val0 and val1.
 float 		ofRandom(float val0, float val1);		// random (x - y)
 
 /// \returns A random floating point number between -1 and 1.
@@ -53,22 +59,18 @@ float 		ofRandomf();							// random (-1 - 1)
 float 		ofRandomuf();							// random (0 - 1) 
 
 /// \brief Given a value and a range, remap the value to be within 0 and 1.
-/// \param float value The number to be normalized.
-/// \param float min The floor of the range.
-/// \param float max The ceiling of the range.
+///
 /// Often, you'll need to work with percentages or other methods that expect a value between 0 and 1.
 /// This function will take a minimum and maximum, and then finds where within that range a value sits.
 /// If the value is outside the range, it will be mapped to 0 or 1.
+///
+/// \param value The number to be normalized.
+/// \param min The floor of the range.
+/// \param max The ceiling of the range.
 /// \returns A float between 0 and 1.
 float		ofNormalize(float value, float min, float max);
 
 /// \brief Given a value and an input range, remap the value to be within an output range.
-/// \param float value The number to be mapped.
-/// \param float inputMin The floor of the input range.
-/// \param float inputMax The ceiling of the input range.
-/// \param float outputMin The floor of the output range.
-/// \param float outputMax The ceiling of the output range.
-/// \param bool clamp Should the value be clamped between outputMin and outputMax or allowed to extend beyond?
 /// 
 /// ofMap remaps the value passed in "value", calculating it's linear distance between inputMin and inputMax, 
 /// and remapping it based on that percentage to outputMin and outputMax.
@@ -80,13 +82,17 @@ float		ofNormalize(float value, float min, float max);
 ///     x=5;
 //      //0 < x < 10
 //      newx = ofMap(x, 0, 10, 21, 22) //newx = 21.5 a value between 21 and 22
+//
+/// \param  value The number to be mapped.
+/// \param  inputMin The floor of the input range.
+/// \param  inputMax The ceiling of the input range.
+/// \param  outputMin The floor of the output range.
+/// \param  outputMax The ceiling of the output range.
+/// \param  clamp Should the value be clamped between outputMin and outputMax or allowed to extend beyond?
 /// \returns a float, mapped between outputMin and outputMax.
 float		ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp = false);
 
 /// \brief Clamp a value between min and max.
-/// \param float value The number to be clamped.
-/// \param float min The floor of the range.
-/// \param float max The ceiling of the range.
 /// 
 /// Restricts a value to be within a specified range defined by values min and max.   
 /// If the value is min <= value <= max, returns value.
@@ -98,13 +104,13 @@ float		ofMap(float value, float inputMin, float inputMax, float outputMin, float
 ///     newval=ofClamp(val,0,5); //newval = 5
 ///     newval=ofClamp(val,0,20); //newval = 10
 ///
+/// \param  value The number to be clamped.
+/// \param  min The floor of the range.
+/// \param  max The ceiling of the range.
 /// \returns A float between min and max.
 float		ofClamp(float value, float min, float max);
 
 /// \brief Linearly interpolate a value be within a range.
-/// \param float start The floor of the range.
-/// \param float stop The ceiling of the range.
-/// \param float amt The position within the range to return.
 /// 
 /// Calculates a number between two numbers (start,stop) at a specific increment (amt).
 /// If we want the new number to be between start and stop numbers, amt needs to be a number between 0 and 1. 
@@ -119,26 +125,32 @@ float		ofClamp(float value, float min, float max);
 ///      increment=2;
 ///      result=ofLerp(init, end, increment); //result = 3
 ///
+/// \param  start The floor of the range.
+/// \param  stop The ceiling of the range.
+/// \param  amt The position within the range to return.
 /// \returns A float between start and stop.
 float		ofLerp(float start, float stop, float amt);
 
 /// \brief Calculates the distance between two points.
-/// \param float x1 X position of first point.
-/// \param float y1 Y position of first point.
-/// \param float x2 X position of second point.
-/// \param float y2 Y position of second point.
+///
 /// Uses <http://en.wikipedia.org/wiki/Pythagorean_theorem>
 ///
+/// \param  x1 X position of first point.
+/// \param  y1 Y position of first point.
+/// \param  x2 X position of second point.
+/// \param  y2 Y position of second point.
 /// \returns float Distance between points.
 float		ofDist(float x1, float y1, float x2, float y2);
 
 /// \brief Calculates the distance between two points, without taking the square root of the result
-/// \param float x1 X position of first point.
-/// \param float y1 Y position of first point.
-/// \param float x2 X position of second point.
-/// \param float y2 Y position of second point.
+///
 /// Same as ofMath::ofDist() but doesn't take the sqrt() of the result, 
 /// which is a faster operation if you need to calculate and compare multiple distances. 
+///
+/// \param  x1 X position of first point.
+/// \param  y1 Y position of first point.
+/// \param  x2 X position of second point.
+/// \param  y2 Y position of second point.
 /// \returns distance^2 between two points.
 float		ofDistSquared(float x1, float y1, float x2, float y2);
 
@@ -147,23 +159,25 @@ float		ofDistSquared(float x1, float y1, float x2, float y2);
 int			ofSign(float n);
 
 /// \brief Returns true if the number t is the range of [min - max], false if it's not.
-/// \param float t  The value to determine
-/// \param float min The floor of the range.
-/// \param float max The ceiling of the range.
+/// \param  t  The value to determine
+/// \param  min The floor of the range.
+/// \param  max The ceiling of the range.
 /// \returns true if min<=t<=max.
 bool		ofInRange(float t, float min, float max);
 
 /// \brief Convert radians to degrees.
-/// \param float radians  An angle in radians.
-/// \returns float the angle in degrees.
+/// \param  radians  An angle in radians.
+/// \returns  the angle in degrees.
 float		ofRadToDeg(float radians);
 
 /// \brief Convert degrees to radiant.
-/// \param float degrees  An angle in degrees.
-/// \returns float the angle in radians.
+///
 /// For example:
 ///     float result;
 ///     result = ofDegToRad(90); // result will be PI/2 
+///
+/// \returns float the angle in radians.
+/// \param float degrees  An angle in degrees.
 float		ofDegToRad(float degrees);
 
 
