@@ -278,15 +278,33 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		// this does a crop from another image.
 		// NOTE: this will reallocate memory if the image types are different, or if the w & h do not
 		// equal this images w & h
+		/// \brief Replaces region in caller image specified by w,h,x,y with pixels from otherImage.
+		/// 
+		/// The w,h are measured from the x,y, so passing 100, 100, 300, 300 will grab
+		/// a 300x300 pixel block of data starting from 100, 100.
+		///
+		/// \param otherImage Image to crop from.
+		/// \param x x position of upper-left corner of region to crop
+		/// \param y y position of upper-left corner of region to crop
+		/// \param w Width of region to crop
+		/// \param h Height of region to crop
 		void				cropFrom(ofImage_<PixelType> & otherImage, int x, int y, int w, int h);
 		// perform rotation of 90 degress clockwise rotation amont times. 
+		/// \brief Rotates the image by a multiple of 90 degrees.
+		/// \param rotation Amount to rotate in multiples of 90. For instance, if you pass 
+		/// in 2, then the image will be rotated 180 degrees.
 		void				rotate90(int rotation);
+		/// \brief This reflects the pixels of the image across the vertical and/or horizontal axis.
+		/// \param vertical Set to true to reflect image across vertical axis.
+		/// \param horizontal Set to true to reflect image across horizontal axis.
 		void				mirror(bool vertical, bool horizontal); 
-	
-	
-	
 		// if you've altered the pixels (e.g., from getPixels())
 		// call update() to see a change (move the pixels to the texture)
+		/// \brief Call to ensure that changes to pixels are reflected in the ofTexture of the image.
+		/// 
+		/// Many of the ofImage methods call this after they change the pixels, but if you directly manipulate 
+		/// the pixels of the ofImage, then you should make sure to call update() before trying to draw the 
+		/// texture of the image to the screen.
 		void update();
 
 		// the anchor is the point the image is drawn around.
