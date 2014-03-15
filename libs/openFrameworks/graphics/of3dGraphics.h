@@ -77,22 +77,81 @@ void ofSetBoxResolution( int res );
 void ofSetBoxResolution( int resWidth, int resHeight, int resDepth );
 ofVec3f ofGetBoxResolution();
 
-/// \brief Draws a rectangular box with the specified dimensions, starting from the specified location. 
+/// \brief Draws a rectangular box with the specified dimensions, starting from the specified coordinates. 
 ///
-/// A box is a rectangular solid. 
+/// A box is a rectangular solid: an extruded rectangle. 
 /// It is drawn starting from a 3D reference coordinate. 
 /// It has a width (in x), a height (in y), and a depth (in z).
+/// The box is drawn with the current color, e.g. set with ofSetColor().
+/// The box is drawn filled by default; change this with ofFill();
 ///
 /// \param x The x-coordinate of the box's origin. 
 /// \param y The y-coordinate of the box's origin. 
 /// \param z The z-coordinate of the box's origin. 
 /// \param width The width of the box. 
-/// \param width The width of the box. 
+/// \param height The height of the box.
+/// \param height The depth of the box. 
 void ofDrawBox( float x, float y, float z, float width, float height, float depth);
+
+/// \brief Draws a cube with the specified size, starting from the specified coordinates. 
+///
+/// A cube is a rectangular solid bounded by six square faces of equal size.
+/// It is also known as a regular hexahedron, a square parallelepiped, an equilateral cuboid 
+/// and a right rhombohedron. It is a regular square prism in three orientations.
+///
+/// It is drawn starting from a 3D reference coordinate, with the specified size.
+/// The cube is drawn with the current color, e.g. set with ofSetColor().
+/// The cube is drawn filled by default; change this with ofFill();
+///
+/// \param x The x-coordinate of the cube's origin. 
+/// \param y The y-coordinate of the cube's origin. 
+/// \param z The z-coordinate of the cube's origin. 
+/// \param size The size of the cube. 
 void ofDrawBox(float x, float y, float z, float size);
+
+/// \brief Draws a rectangular box with the specified dimensions, starting from the specified position. 
+///
+/// A box is a rectangular solid: an extruded rectangle. 
+/// It is drawn starting from a 3D reference coordinate. 
+/// It has a width (in x), a height (in y), and a depth (in z).
+/// The box is drawn with the current color, e.g. set with ofSetColor().
+/// The box is drawn filled by default; change this with ofFill();
+///
+/// \param position an ofPoint which contains the (x,y,z) coordinates for the box's reference corner. 
+/// \param width The width of the box. 
+/// \param height The height of the box.
+/// \param height The depth of the box. 
 void ofDrawBox(const ofPoint& position, float width, float height, float depth);
+
+/// \brief Draws a cube with the specified size, starting from the specified position. 
+///
+/// A cube is drawn starting from a 3D reference position, with the specified size.
+/// The cube is drawn with the current color, e.g. set with ofSetColor().
+/// The cube is drawn filled by default; change this with ofFill();
+///
+/// \param position an ofPoint which contains the (x,y,z) coordinates for the cube's reference corner.  
+/// \param size The size of the cube. 
 void ofDrawBox(const ofPoint& position, float size);
+
+/// \brief Draws a cube with the specified size, starting from the origin. 
+///
+/// The cube is drawn with the current color, e.g. set with ofSetColor().
+/// The cube is drawn filled by default; change this with ofFill();
+///
+/// \param size The size of the cube. 
 void ofDrawBox(float size);
+
+/// \brief Draws a rectangular box with the specified dimensions, starting from the origin. 
+///
+/// A box is a rectangular solid: an extruded rectangle. 
+/// It is drawn starting from the origin of the current reference frame. 
+/// It has a width (in x), a height (in y), and a depth (in z).
+/// The box is drawn with the current color, e.g. set with ofSetColor().
+/// The box is drawn filled by default; change this with ofFill();
+///
+/// \param width The width of the box. 
+/// \param height The height of the box.
+/// \param height The depth of the box. 
 void ofDrawBox( float width, float height, float depth );
 
 // deprecated methods //
