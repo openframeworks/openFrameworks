@@ -85,6 +85,12 @@ public:
 	/// 
 	/// 1.0 = default spacing, less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
 	void 		setLetterSpacing(float spacing);
+	/// \brief Returns a variable that represents how wide spaces are.
+	///
+	/// It's a scalar for the width of the letter 'p', so 1.0 means that a space will be the size of the lower 
+	/// case 'p' of that font. 2.0 means that it's 2 times the size of the lower case 'p', etc.
+	///
+	/// \returns Returns a variable that represents how wide spaces are.
 	float 		getSpaceSize();
 	void 		setSpaceSize(float size);
 	float 		stringWidth(string s);
