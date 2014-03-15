@@ -96,7 +96,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		// allocation / deallocation routines
 		/// \brief This allocates space in the ofImage, both the ofPixels and the ofTexture that the ofImage contains.
 		/// 
-		/// You don't need to call this before loading an image, but for when you want to allocate 
+		/// You don't need to call this before loading an image, but for when you want to allocate.
 		/// space ahead of when you are going to use the image.
 		///
 		/// \param w Width of image to allocate.
@@ -127,7 +127,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		// enable or disable using the texture of this image
 		/// \brief Turns on or off the allocation and use of a texture. 
 		///
-		/// \param bUse Allocate and use a texture or not 
+		/// \param bUse Allocate and use a texture or not. 
 		void 				setUseTexture(bool bUse);
 		/// \brief Returns whether the ofImage has a texture or not. 
 		///
@@ -217,8 +217,8 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// 
 		/// The ofColor type needs to match the ofImage type, i.e. ofFloatImage requires that you use ofFloatPixels.
 		///
-		/// \param x x position of pixel
-		/// \param y y position of pixel
+		/// \param x x position of pixel.
+		/// \param y y position of pixel.
 		/// \param color Color to set pixel to.
 		void				setColor(int x, int y, const ofColor_<PixelType>& color);
 		/// \brief Sets the pixel at the given pixel buffer index
@@ -226,7 +226,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// \param index Index of pixel to set.
 		/// \param color Color to set pixel to. 
 		void				setColor(int index, const ofColor_<PixelType>& color);
-		/// \brief Sets all pixels to a color
+		/// \brief Sets all pixels to a color.
 		/// \param color Color to set pixel to. 
 		void				setColor(const ofColor_<PixelType>& color);
 		/// \brief Sets the pixels of the image from an array of values.
@@ -236,13 +236,13 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// image. This assumes that you're setting the pixels from 0,0 or the upper left hand corner of the image. The 
 		/// bOrderIsRGB flag allows you pass in pixel data that is BGR by setting bOrderIsRGB=false.
 		///
-		/// \param pixels Array of pixel values
-		/// \param w Width of image being passed in
-		/// \param h Height of image being passed in
+		/// \param pixels Array of pixel values.
+		/// \param w Width of image being passed in.
+		/// \param h Height of image being passed in.
 		/// \param type The image type can be OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, or OF_IMAGE_COLOR_ALPHA.
-		/// \param bOrderIsRGB Pass in pixel data that is BGR by setting bOrderIsRGB=false
+		/// \param bOrderIsRGB Pass in pixel data that is BGR by setting bOrderIsRGB=false.
 		void 				setFromPixels(const PixelType * pixels, int w, int h, ofImageType type, bool bOrderIsRGB = true);
-		/// \brief Set the pixels of the image from an ofPixels instance
+		/// \brief Set the pixels of the image from an ofPixels instance.
 		///
 		/// Set the pixels of the image from an ofPixels instance, for an ofFloatImage these need to be ofFloatPixels, for an
 		/// ofImage these need to be unsigned chars. 
@@ -255,25 +255,25 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// \param type The type of image, one of the following: OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 		void 				setImageType(ofImageType type);
 		/// \brief Resizes the image to a new size (w, h); Can be used to scale up or down an image.
-		/// \param newWidth New width of image
-		/// \param newHeight New height of image
+		/// \param newWidth New width of image.
+		/// \param newHeight New height of image.
 		void 				resize(int newWidth, int newHeight);
 		/// \brief Grabs pixels from the opengl window specified by the region (x, y, w, h) and turns them into an image. 
 		///
 		/// It resizes or allocates the ofImage if it's necessary.
 		///
-		/// \param x x position of upper-left corner of region
-		/// \param y y position of upper-left corner of region
-		/// \param w Width of region
-		/// \param h Height of region
+		/// \param x x position of upper-left corner of region.
+		/// \param y y position of upper-left corner of region.
+		/// \param w Width of region.
+		/// \param h Height of region.
 		void 				grabScreen(int x, int y, int w, int h);		// grab pixels from opengl, using glreadpixels
 		// this does an inplace crop. 
 		// NOTE: this reallocates memory.
 		/// \brief This crops the image to the w,h passed in from the x,y position.
-		/// \param x x position of upper-left corner of region to crop
-		/// \param y y position of upper-left corner of region to crop
-		/// \param w Width of region to crop
-		/// \param h Height of region to crop
+		/// \param x x position of upper-left corner of region to crop.
+		/// \param y y position of upper-left corner of region to crop.
+		/// \param w Width of region to crop.
+		/// \param h Height of region to crop.
 		void				crop(int x, int y, int w, int h); 
 		// this does a crop from another image.
 		// NOTE: this will reallocate memory if the image types are different, or if the w & h do not
@@ -284,10 +284,10 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// a 300x300 pixel block of data starting from 100, 100.
 		///
 		/// \param otherImage Image to crop from.
-		/// \param x x position of upper-left corner of region to crop
-		/// \param y y position of upper-left corner of region to crop
-		/// \param w Width of region to crop
-		/// \param h Height of region to crop
+		/// \param x x position of upper-left corner of region to crop.
+		/// \param y y position of upper-left corner of region to crop.
+		/// \param w Width of region to crop.
+		/// \param h Height of region to crop.
 		void				cropFrom(ofImage_<PixelType> & otherImage, int x, int y, int w, int h);
 		// perform rotation of 90 degress clockwise rotation amont times. 
 		/// \brief Rotates the image by a multiple of 90 degrees.
@@ -317,8 +317,8 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// xPct and yPct is 0.0 to 1.0. For xPct, 1.0 represents the width of the image. For yPct, 1.0 represents 
 		/// the height of the image. These values are not capped.
 		///
-		/// \param xPct X position of the new anchor, specified as a percent of the width of the image
-		/// \param yPct Y position of the new anchor, specified as a percent of the height of the image
+		/// \param xPct X position of the new anchor, specified as a percent of the width of the image.
+		/// \param yPct Y position of the new anchor, specified as a percent of the height of the image.
         void				setAnchorPercent(float xPct, float yPct);	// set the anchor as a percentage of the image width/height ( 0.0-1.0 range )
         	/// \brief Changes drawing position from top-left corner to position specified by x,y.
         	///
@@ -326,8 +326,8 @@ class ofImage_ : public ofBaseImage_<PixelType>{
         	/// position specified by x and y, measured in pixels. This can be useful for aligning and centering 
         	/// images as well as rotating an image around its center.
 		///
-		/// \param x X position of the new anchor
-		/// \param y Y position of the new anchor
+		/// \param x X position of the new anchor.
+		/// \param y Y position of the new anchor.
         void				setAnchorPoint(float x, float y);			// set the anchor point in pixels
      		/// \brief Removes anchor positioning, so the ofImage will be drawn from its upper left hand corner.
         void				resetAnchor();								// resets the anchor to (0, 0)
@@ -343,42 +343,42 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// \brief Draws the ofImage from x,y,z using width specified by w and height specified by h.
 		void draw(float x, float y, float z, float w, float h);
 		/// \brief Draws a subsection of the image (functions like a clipping mask) without altering any pixel data.
-		/// \param x X position to draw cropped image at 
-		/// \param y Y position to draw cropped image at
-		/// \param w Width of subsection to draw
-		/// \param h Height of subsection to draw
-		/// \param sx X position in image to begin cropping from
-		/// \param sy Y position in image to begin cropping from
+		/// \param x X position to draw cropped image at. 
+		/// \param y Y position to draw cropped image at.
+		/// \param w Width of subsection to draw.
+		/// \param h Height of subsection to draw.
+		/// \param sx X position in image to begin cropping from.
+		/// \param sy Y position in image to begin cropping from.
 		void drawSubsection(float x, float y, float w, float h, float sx, float sy);
 		/// \brief Draws a subsection of the image (functions like a clipping mask) without altering any pixel data.
-		/// \param x X position to draw cropped image at 
-		/// \param y Y position to draw cropped image at
-		/// \param z Z position to draw cropped image at
-		/// \param w Width of subsection to draw
-		/// \param h Height of subsection to draw
-		/// \param sx X position in image to begin cropping from
-		/// \param sy Y position in image to begin cropping from
+		/// \param x X position to draw cropped image at. 
+		/// \param y Y position to draw cropped image at.
+		/// \param z Z position to draw cropped image at.
+		/// \param w Width of subsection to draw.
+		/// \param h Height of subsection to draw.
+		/// \param sx X position in image to begin cropping from.
+		/// \param sy Y position in image to begin cropping from.
 		void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy);
 		/// \brief Draws a subsection of the image (functions like a clipping mask) without altering any pixel data.
-		/// \param x X position to draw cropped image at 
-		/// \param y Y position to draw cropped image at
-		/// \param w Width of subsection to draw
-		/// \param h Height of subsection to draw
-		/// \param sx X position in image to begin cropping from
-		/// \param sy Y position in image to begin cropping from
-		/// \param sw Source width of cropped area
-		/// \param sh Source height of cropped area
+		/// \param x X position to draw cropped image at. 
+		/// \param y Y position to draw cropped image at.
+		/// \param w Width of subsection to draw.
+		/// \param h Height of subsection to draw.
+		/// \param sx X position in image to begin cropping from.
+		/// \param sy Y position in image to begin cropping from.
+		/// \param sw Source width of cropped area.
+		/// \param sh Source height of cropped area.
 		void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
 		/// \brief Draws a subsection of the image (functions like a clipping mask) without altering any pixel data.
-		/// \param x X position to draw cropped image at 
-		/// \param y Y position to draw cropped image at
-		/// \param z Z position to draw cropped image at
-		/// \param w Width of subsection to draw
-		/// \param h Height of subsection to draw
-		/// \param sx X position in image to begin cropping from
-		/// \param sy Y position in image to begin cropping from
-		/// \param sw Source width of cropped area
-		/// \param sh Source height of cropped area
+		/// \param x X position to draw cropped image at. 
+		/// \param y Y position to draw cropped image at.
+		/// \param z Z position to draw cropped image at.
+		/// \param w Width of subsection to draw.
+		/// \param h Height of subsection to draw.
+		/// \param sx X position in image to begin cropping from.
+		/// \param sy Y position in image to begin cropping from.
+		/// \param sw Source width of cropped area.
+		/// \param sh Source height of cropped area.
 		void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 		/// \brief Returns height of image as a float. 
