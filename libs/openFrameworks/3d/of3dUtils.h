@@ -58,4 +58,9 @@ void ofDrawGridPlane(float scale, float ticks = 8.0f, bool labels = false);
 /// \param headSize The size of the arrowhead. 
 void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize = 0.05f);
 
+/// \brief This function renders a set of 3 axis-aligned circular bands, centered at the origin.
+///
+/// \param radius The radius of the circular bands. 
+/// \param stripWidth The width of the circular bands. The default is 10 units. 
+/// \param circleRes The resolution of the circular bands. The default is 60 segments.
 void ofDrawRotationAxes(float radius, float stripWidth = 10, int circleRes = 60);
