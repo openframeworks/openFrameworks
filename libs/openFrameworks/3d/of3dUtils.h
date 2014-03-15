@@ -46,6 +46,7 @@ void ofDrawGridPlane(float scale, float ticks = 8.0f, bool labels = false);
 /// This function draws an arrow from a start (tail) point to an end (head) point, with a conical arrowhead at the end point.
 /// The arrow is drawn in the current color (e.g. set with ofSetColor). 
 /// Example: 
+///
 /// \code
 /// ofSetColor(0,0,0);
 /// ofVec3f arrowTailPoint (0,0,0);
