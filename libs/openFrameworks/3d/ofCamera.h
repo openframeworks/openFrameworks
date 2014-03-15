@@ -142,7 +142,16 @@ public:
 	/// \returns An ofVec3f containing the screen coordinates of your 3D point of interest. 
 	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	
+	/// \brief Obtain the coordinates, in the 3D world, of a 2D point presumed to be on your screen.
+	///
+	/// Takes a pixel location on your screen, encoded in an ofVec3f, 
+	/// and returns (also as an ofVec3f) the 3D world coordinates of that point.
+	/// You'll also need to specify a Z value when providing your screen point. 
+	/// This Z value is interpreted as a distance into or away from the screen. 
+	///
+	/// \param ScreenXYZ A point on your screen, whose 3D world coordinates you wish to know.
 	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
+	
 	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	
