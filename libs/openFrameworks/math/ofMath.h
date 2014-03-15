@@ -181,7 +181,7 @@ float		ofRadToDeg(float radians);
 float		ofDegToRad(float degrees);
 
 
-``
+
 float 		ofLerpDegrees(float currentAngle, float targetAngle, float pct);
 float 		ofLerpRadians(float currentAngle, float targetAngle, float pct);
 float 		ofAngleDifferenceDegrees(float currentAngle, float targetAngle);
@@ -196,16 +196,28 @@ float		ofRandomWidth();
 /// \returns a random number between 0 and the height of the screen. 
 float		ofRandomHeight();
 
-			//returns noise in 0.0 to 1.0 range
+/// \brief Calculates a one dimensional Perlin noise value between 0.0...1.0.
 float		ofNoise(float x);
+
+/// \brief Calculates a two dimensional Perlin noise value between 0.0...1.0.
 float		ofNoise(float x, float y);
+
+/// \brief Calculates a three dimensional Perlin noise value between 0.0...1.0.
 float		ofNoise(float x, float y, float z);
+
+/// \brief Calculates a four dimensional Perlin noise value between 0.0...1.0.
 float		ofNoise(float x, float y, float z, float w);
 
-			//returns noise in -1.0 to 1.0 range
+/// \brief Calculates a one dimensional Perlin noise value between -1.0...1.0.
 float		ofSignedNoise(float x);
+
+/// \brief Calculates a two dimensional Perlin noise value between -1.0...1.0.
 float		ofSignedNoise(float x, float y);
+
+/// \brief Calculates a three dimensional Perlin noise value between -1.0...1.0.
 float		ofSignedNoise(float x, float y, float z);
+
+/// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
 float		ofSignedNoise(float x, float y, float z, float w);
 
 bool        ofInsidePoly(float x, float y, const vector<ofPoint> & poly);
