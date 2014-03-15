@@ -18,9 +18,10 @@ void ofSoundSetVolume(float vol);
 /// \brief Call in your app's update() to update FMOD-based sound players
 void ofSoundUpdate();
 
-/// \brief Gets an FFT sample taking all current sound players into account
-/// This is only implemented for FMOD and OpenAL sound players
-/// \param nBands number of FFT bands to return, max 512
+/// \brief Gets a frequency spectrum sample, taking all current sound players into account.
+/// Each band will be represented as a float between 0 and 1.
+/// \warning This isn't implemented on mobile & embedded platforms
+/// \param nBands number of spectrum bands to return, max 512
 /// \return pointer to an FFT sample, sample size is equal to the nBands parameter
 float * ofSoundGetSpectrum(int nBands);
 
