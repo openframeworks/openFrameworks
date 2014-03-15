@@ -382,8 +382,11 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 		/// \brief Returns height of image as a float. 
-		/// \returns float
+		/// \returns Returns height of image as float.
 		float 				getHeight();
+		
+		/// \brief Returns width of image as a float. 
+		/// \returns Returns width of image as float.
 		float 				getWidth();
 		
 		bool 				bAllocated() {return pixels.isAllocated();};	// legacy function
