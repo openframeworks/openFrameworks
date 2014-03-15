@@ -41,5 +41,21 @@ void ofDrawGrid(float scale = 10.0f, float ticks = 8.0f, bool labels = false, bo
 /// \param labels Whether or not labels are drawn. 
 void ofDrawGridPlane(float scale, float ticks = 8.0f, bool labels = false);
 
+/// \brief Draws an arrow with the current color. 
+///
+/// This function draws an arrow from a start (tail) point to an end (head) point, with a conical arrowhead at the end point.
+/// The arrow is drawn in the current color (e.g. set with ofSetColor). 
+/// Example: 
+/// \code
+/// ofSetColor(0,0,0);
+/// ofVec3f arrowTailPoint (0,0,0);
+/// ofVec3f arrowHeadPoint (100, 150,0);
+/// ofDrawArrow (arrowTailPoint, arrowHeadPoint, 20.0);
+/// \endcode
+///
+/// \param start The start point (tail) of the arrow, expressed as an ofVec3f.
+/// \param end The end point (head) of the arrow, expressed as an ofVec3f. 
+/// \param headSize The size of the arrowhead. 
 void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize = 0.05f);
+
 void ofDrawRotationAxes(float radius, float stripWidth = 10, int circleRes = 60);
