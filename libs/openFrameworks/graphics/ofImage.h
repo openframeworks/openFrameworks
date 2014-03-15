@@ -342,10 +342,43 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		void draw(float x, float y, float w, float h);
 		/// \brief Draws the ofImage from x,y,z using width specified by w and height specified by h.
 		void draw(float x, float y, float z, float w, float h);
-		
+		/// \brief Draws a subsection of the image (functions like a clipping mask) without altering any pixel data.
+		/// \param x X position to draw cropped image at 
+		/// \param y Y position to draw cropped image at
+		/// \param w Width of subsection to draw
+		/// \param h Height of subsection to draw
+		/// \param sx X position in image to begin cropping from
+		/// \param sy Y position in image to begin cropping from
 		void drawSubsection(float x, float y, float w, float h, float sx, float sy);
+		/// \brief Draws a subsection of the image (functions like a clipping mask) without altering any pixel data.
+		/// \param x X position to draw cropped image at 
+		/// \param y Y position to draw cropped image at
+		/// \param z Z position to draw cropped image at
+		/// \param w Width of subsection to draw
+		/// \param h Height of subsection to draw
+		/// \param sx X position in image to begin cropping from
+		/// \param sy Y position in image to begin cropping from
 		void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy);
+		/// \brief Draws a subsection of the image (functions like a clipping mask) without altering any pixel data.
+		/// \param x X position to draw cropped image at 
+		/// \param y Y position to draw cropped image at
+		/// \param w Width of subsection to draw
+		/// \param h Height of subsection to draw
+		/// \param sx X position in image to begin cropping from
+		/// \param sy Y position in image to begin cropping from
+		/// \param sw Source width of cropped area
+		/// \param sh Source height of cropped area
 		void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
+		/// \brief Draws a subsection of the image (functions like a clipping mask) without altering any pixel data.
+		/// \param x X position to draw cropped image at 
+		/// \param y Y position to draw cropped image at
+		/// \param z Z position to draw cropped image at
+		/// \param w Width of subsection to draw
+		/// \param h Height of subsection to draw
+		/// \param sx X position in image to begin cropping from
+		/// \param sy Y position in image to begin cropping from
+		/// \param sw Source width of cropped area
+		/// \param sh Source height of cropped area
 		void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 		/// \brief Returns height of image as a float. 
