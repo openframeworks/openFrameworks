@@ -94,7 +94,16 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		ofImage_(const string & filename);
 
 		// allocation / deallocation routines
+		/// \brief This allocates space in the ofImage, both the ofPixels and the ofTexture that the ofImage contains.
+		/// 
+		/// You don't need to call this before loading an image, but for when you want to allocate 
+		/// space ahead of when you are going to use the image.
+		///
+		/// \param w Width of image to allocate.
+		/// \param h Height of image to allocate.
+		/// \param type The type can be of three types: OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA.
 		void 				allocate(int w, int h, ofImageType type);
+		/// \brief This clears the texture and pixels contained within the ofImage.
 		void 				clear();
 
 		// default copy overwriting (for = or std::vector)
@@ -109,23 +118,58 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 
 		// copying:
 		template<typename SrcType>
+		/// \brief Create an ofImage from another ofImage instance.
+		///
+		/// This allows you to create an ofImage from another ofImage instance, 
+		/// copying all the pixels and the texture data while creating a new textureID.
 		void 				clone(const ofImage_<SrcType> &mom);
 
 		// enable or disable using the texture of this image
+		/// \brief Turns on or off the allocation and use of a texture. 
+		///
+		/// \param bUse Allocate and use a texture or not 
 		void 				setUseTexture(bool bUse);
+		/// \brief Returns whether the ofImage has a texture or not. 
+		///
+		/// If the ofImage doesn't have a texture, nothing will be drawn to the screen.
+		/// \returns Returns whether the ofImage has a texture or not. 
 		bool				isUsingTexture();
 
 		// for getting a reference to the texture
+		/// \brief Returns the texture reference that the ofImage contains. 
+		///
+		/// You can use this to directly manipulate the texture itself, but keep in 
+		/// mind that if you manipulate the texture directly, there is no simple way 
+		/// to copy the data from the texture back to the pixels and keep the ofImage in sync.
+		///
+		/// \returns Returns the texture reference that the ofImage contains. 
 		ofTexture & getTextureReference();
 
 		// quick texture binding shortcut
+		/// \brief Binds the oftexture instance that the ofImage contains so that it can be used for advanced drawing.
 		void bind();
+		/// \brief Unbinds the ofTexture instance that the ofImage contains. 
+		///
+		/// Call this after you call bind().
 		void unbind();
 
 		// file loading / saving
+		/// \brief Loads an image given by fileName.
+		/// \param fileName Program looks for image given by fileName, relative to the data folder.
+		/// \returns Returns true if image loaded correctly.
 		bool 				loadImage(string fileName);
+		/// \brief Loads an image from an ofBuffer instance created by, for instance, ofFile::readToBuffer(). 
+		///
+		/// This actually loads the image data into an ofPixels object and then into the texture.
 		bool				loadImage(const ofBuffer & buffer);
+		/// \brief Loads an image from an ofFile instance created by, for instance, ofDirectory::getFiles().
+		///
+		/// This actually loads the image data into an ofPixels object and then into the texture.
 		bool 				loadImage(const ofFile & file);
+		/// \brief Saves the image to the file path in fileName with the image quality specified by compressionLevel.
+		/// \param fileName Saves image to this path, relative to the data folder.
+		/// \param compressionLevel The different compression levels are: OF_IMAGE_QUALITY_BEST, OF_IMAGE_QUALITY_HIGH, 
+		/// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
 		void 				saveImage(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
 		void 				saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
 		void 				saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
@@ -186,7 +230,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 		/// \brief Returns height of image as a float. 
-		/// \return float
+		/// \returns float
 		float 				getHeight();
 		float 				getWidth();
 		
