@@ -113,13 +113,31 @@ public:
 	/// \param s The string to get the height of.
 	/// \returns Returns the string height. 
 	float 		stringHeight(string s);
-	
+	/// \brief Returns the bounding box of a string as a rectangle.
+	/// \param s The string to get bounding box of.
+	/// \param x X position of returned rectangle.
+	/// \param y Y position of returned rectangle.
+	/// \returns Returns the bounding box of a string as a rectangle.
 	ofRectangle    getStringBoundingBox(string s, float x, float y);
-	
+	/// \brief Draw a string s at position x,y
+	/// \param s String to draw
+	/// \param x X position of string
+	/// \param y Y position of string
 	void 		drawString(string s, float x, float y);
+	/// \brief Draws the string as if it was geometrical shapes.
+	/// 
+	/// Uses the information contained in ofTTFContour and ofTTFCharacter.
+	/// 
+	/// \param x X position of shapes
+	/// \param y Y position of shapes
 	void		drawStringAsShapes(string s, float x, float y);
-	
 	//			get the num chars in the loaded char set
+	/// \brief Returns the number ofcharacters in the loaded character set.
+	/// 
+	/// If you allocate the font using different paramters, you can load in partial 
+	/// and full character sets, this helps you know how many characters it can represent.
+	///
+	/// \returns Number of characters in loaded character set.
 	int			getNumCharacters();	
 	
 	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=ofIsVFlipped());
@@ -130,7 +148,25 @@ public:
 	void bind();
 	void unbind();
 
+	/// \brief Returns encoding used by the font object.
+	/// 
+	/// This is set by ofTrueTypeFont::setEncoding() to either OF_ENCODING_UTF8 or 
+	/// OF_ENCODING_ISO_8859_15. OF_ENCODING_ISO_8859_15 is for an 8-bit single-byte
+	/// coded graphic character sets, like ASCII while OF_ENCODING_UTF8 is a variable-width 
+	/// encoding that can represent every character in the Unicode character set.
+	///
+	/// \returns Returns encoding used by the font object.
 	ofTextEncoding getEncoding() const;
+	/// \brief
+	/// Sets the encoding used by the font object.
+	///
+	/// Can be set to either OF_ENCODING_UTF8 or OF_ENCODING_ISO_8859_15. OF_ENCODING_ISO_8859_15 
+	/// is for an 8-bit single-byte coded graphic character sets, like ASCII while OF_ENCODING_UTF8 
+	/// is a variable-width encoding that can represent every character in the Unicode character set. 
+	/// This function is useful if you are trying to draw unicode strings.
+	///
+	/// \param encoding The encoding used by the font object, either OF_ENCODING_UTF8 or 
+	/// \param OF_ENCODING_ISO_8859_15
 	void setEncoding(ofTextEncoding encoding);
 
 protected:
