@@ -394,7 +394,7 @@ class ofImage_ : public ofBaseImage_<PixelType>{
 		/// \brief Whether the image has been allocated either by a call to allocate or by loading pixel data into the image.
 		/// \returns Returns true if the image has been allocated.
 		bool 				isAllocated() {return pixels.isAllocated();};
-
+		/// \brief Loads ofPixels data into ofTexture so that draw() calls reflect changes to the pixels.
 		void				reloadTexture();
 
 		int 				width, height, bpp;		// w,h, bits per pixel
