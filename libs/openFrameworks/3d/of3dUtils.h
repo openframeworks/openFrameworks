@@ -1,22 +1,24 @@
 #pragma once
-#include "ofVectorMath.h"
 
+#include "ofVectorMath.h"
 
 /// \brief Draws x,y,z axes representing the current reference frame.
 ///
-/// This function draws a set of x,y,z axes, which can be helpful for understanding which way is up. 
-/// There are no unit markings nor arrowheads. Axes are not drawn in the negative directions.  
-/// Axes are drawn in red (+x), green (+y) and blue (+z), starting from the origin. 
+/// This function draws a set of x,y,z axes, which can be helpful for
+/// understanding which way is up. There are no unit markings nor arrowheads.
+/// Axes are not drawn in the negative directions. Axes are drawn in red (+x),
+/// green (+y) and blue (+z), starting from the origin. 
 //
 /// \param size The size at which to draw the axes.
 void ofDrawAxis(float size);
 
-/// \brief Draws grid planes representing the current reference frame, with subdivisions.
+/// \brief Draws grid planes representing the current reference frame.
 ///
-/// This function draws a set of three double-ended grid planes centered at the origin. 
-/// Parameters allow each of the grid planes (yz,xz, and xy) to be turned on or off. 
-/// Optionally, the function can include white numeric labels for grid subdivisions. 
-/// (Numeric labels are drawn using ofDrawBitmapString internally.)
+/// This function draws a set of three double-ended grid planes centered at the
+/// origin. Parameters allow each of the grid planes (yz,xz, and xy) to be
+/// turned on or off. Optionally, the function can include white numeric labels
+/// for grid subdivisions. (Numeric labels are drawn using ofDrawBitmapString
+/// internally.)
 /// 
 /// The yz plane (at x=0) is drawn in red.
 /// The xz plane (at y=0) is drawn in green.
@@ -30,12 +32,13 @@ void ofDrawAxis(float size);
 /// \param z Whether or not the xy plane (at z=0) is drawn.
 void ofDrawGrid(float scale = 10.0f, float ticks = 8.0f, bool labels = false, bool x = true, bool y = true, bool z = true);
 
-/// \brief Draws the YZ grid plane representing the current reference frame, with subdivisions.
+/// \brief Draws the YZ grid plane representing the current reference frame.
 ///
-/// This function draws the YZ grid plane, at x=0, in a double-ended manner centered at the origin. 
-/// Optionally, the function can include white numeric labels for grid subdivisions. 
-/// (Numeric labels are drawn using ofDrawBitmapString internally.)
-/// The grid is drawn with the current color (i.e. set with ofSetColor). 
+/// This function draws the YZ grid plane, at x=0, in a double-ended manner
+/// centered at the origin. Optionally, the function can include white numeric
+/// labels for grid subdivisions. (Numeric labels are drawn using
+/// ofDrawBitmapString internally.) The grid is drawn with the current color
+/// (i.e. set with ofSetColor). 
 ///
 /// \param scale The extent of each grid plane, on each side of the origin. A scale of 10 will produce a grid which is 20 units wide (10 on the positive side of the origin, 10 on the negative side).
 /// \param ticks The number of ticks (i.e. subdivisions) on each side of the origin. 
@@ -44,16 +47,16 @@ void ofDrawGridPlane(float scale, float ticks = 8.0f, bool labels = false);
 
 /// \brief Draws an arrow with the current color. 
 ///
-/// This function draws an arrow from a start (tail) point to an end (head) point, with a conical arrowhead at the end point.
-/// The arrow is drawn in the current color (e.g. set with ofSetColor). 
+/// This function draws an arrow from a start (tail) point to an end (head)
+/// point, with a conical arrowhead at the end point. The arrow is drawn in the
+/// current color (e.g. set with ofSetColor). 
+///
 /// Example: 
 ///
-/// \code
-/// ofSetColor(0,0,0);
-/// ofVec3f arrowTailPoint (0,0,0);
-/// ofVec3f arrowHeadPoint (100, 150,0);
-/// ofDrawArrow (arrowTailPoint, arrowHeadPoint, 20.0);
-/// \endcode
+///     ofSetColor(0,0,0);
+///     ofVec3f arrowTailPoint (0,0,0);
+///     ofVec3f arrowHeadPoint (100, 150,0);
+///     ofDrawArrow(arrowTailPoint, arrowHeadPoint, 20.0);
 ///
 /// \param start The start point (tail) of the arrow, expressed as an ofVec3f.
 /// \param end The end point (head) of the arrow, expressed as an ofVec3f. 
