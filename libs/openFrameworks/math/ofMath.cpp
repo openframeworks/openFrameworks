@@ -120,7 +120,6 @@ float ofClamp(float value, float min, float max) {
 	return value < min ? min : value > max ? max : value;
 }
 
-// return sign of the number
 //--------------------------------------------------
 int ofSign(float n) {
 	if( n > 0 ) return 1;
