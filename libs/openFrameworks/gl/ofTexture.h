@@ -134,7 +134,7 @@ public:
 		useTextureMatrix = false;
 	}
 
-	unsigned int textureID; ///< GL internal texture ID/
+	unsigned int textureID; ///< GL internal texture ID
 	int textureTarget; ///< GL texture type, either GL_TEXTURE_2D or
 	                   ///< GL_TEXTURE_RECTANGLE_ARB.
 	int glTypeInternal; ///< GL internal format, e.g. GL_RGB8.
@@ -168,7 +168,7 @@ void ofDisableTextureEdgeHack();
 
 /// \brief Check whether OF is using the "texture edge hack".
 /// \sa ofEnableTextureEdgeHack()
-/// \returns true if OF is currently using the "textue edge hack".
+/// \returns true if OF is currently using the "texture edge hack".
 bool ofIsTextureEdgeHackEnabled();
 
 /// \class ofTexture
