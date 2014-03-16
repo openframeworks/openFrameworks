@@ -13,11 +13,11 @@
 
 #pragma once
 
-
 #include "ofRectangle.h"
 #include "ofAppRunner.h"
 #include "ofNode.h"
 
+/// \todo
 // Use the public API of ofNode for all transformations
 //class ofCamera : public ofNodeWithTarget {
 class ofCamera : public ofNode {
@@ -36,7 +36,7 @@ public:
 	/// \param f The desired field of view for the camera, in degrees.
 	void setFov(float f);
 	
-	
+	/// \todo
 	void setNearClip(float f);
 	void setFarClip(float f);
 	
@@ -70,7 +70,7 @@ public:
 	/// \param forceAspectRatio Whether or not this camera should use an aspect ratio you have set yourself.  
 	void setForceAspectRatio(bool forceAspectRatio);
 
-        /// \brief Get the camera's field of view, in degrees.
+	/// \brief Get the camera's field of view, in degrees.
 	///
 	/// Get the horizontal camera's field of view, in degrees.
 	/// This is only meaningful for perspective cameras.
@@ -78,7 +78,7 @@ public:
 	/// \returns The camera's field of view, in degrees.
 	float getFov() const { return fov; };
 	
-	
+	/// \todo
 	float getNearClip() const { return nearClip; };
 	float getFarClip() const { return farClip; };
 	
@@ -98,31 +98,37 @@ public:
 	/// 
 	/// \returns A boolean: whether or not this camera's aspect ratio is set to a non-default value. 
 	bool getForceAspectRatio() const {return forceAspectRatio;};
-    
-    	/// \brief Get the aspect ratio of this camera's viewport.
+	
+	/// \brief Get the aspect ratio of this camera's viewport.
 	///
 	/// Returns the aspect ratio of this camera's viewport. Usually this will be the ratio
 	/// of the width to height of your display. Intended for perspective cameras. 
 	/// 
 	/// \returns The aspect ratio of this camera's viewport.
 	float getAspectRatio() const {return aspectRatio; };
-    
+	
+	/// \todo
 	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const ofVec2f & lensOffset = ofVec2f(0.0f, 0.0f));
 	void setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight);
 	
+	/// \todo
 	void setVFlip(bool vflip);
 	bool isVFlipped();
 
+	/// \todo
 	void enableOrtho();
 	void disableOrtho();
 	bool getOrtho() const;
 	
+	/// \todo
 	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
 	
+	/// \todo
 	// set the matrices
 	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
 	virtual void end();
 	
+	/// \todo
 	// for hardcore peeps, access to the projection matrix
 	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport()) const;
 	ofMatrix4x4 getModelViewMatrix() const;
@@ -152,9 +158,9 @@ public:
 	/// \param ScreenXYZ A point on your screen, whose 3D world coordinates you wish to know.
 	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	
+	/// \todo
 	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
-	
 	
 protected:
 	void calcClipPlanes(ofRectangle viewport);
