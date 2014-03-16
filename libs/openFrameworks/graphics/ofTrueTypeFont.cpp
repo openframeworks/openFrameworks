@@ -368,8 +368,9 @@ void ofTrueTypeFont::finishLibraries(){
 
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(){
-	bLoadedOk		= false;
-	bMakeContours	= false;
+	bLoadedOk           = false;
+    bLastFontLoadedOk   = false;
+	bMakeContours       = false;
 	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 		all_fonts().insert(this);
 	#endif
@@ -407,6 +408,9 @@ void ofTrueTypeFont::unloadTextures(){
 }
 
 void ofTrueTypeFont::reloadTextures(){
+    if(bLastFontLoadedOk == false) {
+        return;
+    }
 	loadFont(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
 }
 
@@ -476,6 +480,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 
 	bLoadedOk 			= false;
+    bLastFontLoadedOk	= false;
 	bAntiAliased 		= _bAntiAliased;
 	bFullCharacterSet 	= _bFullCharacterSet;
 	fontSize			= _fontSize;
@@ -728,6 +733,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	// ------------- close the library and typeface
 	FT_Done_Face(face);
   	bLoadedOk = true;
+    bLastFontLoadedOk = true;
 	return true;
 }
 

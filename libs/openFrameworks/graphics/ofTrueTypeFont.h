@@ -81,6 +81,7 @@ public:
 
 protected:
 	bool			bLoadedOk;
+    bool            bLastFontLoadedOk;
 	bool 			bAntiAliased;
 	bool 			bFullCharacterSet;
 	int 			nCharacters;
