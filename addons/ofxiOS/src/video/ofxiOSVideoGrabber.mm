@@ -25,9 +25,10 @@ unsigned char * ofxiOSVideoGrabber::getPixels() {
 }
 
 ofPixelsRef ofxiOSVideoGrabber::getPixelsRef(){
-    static ofPixels dummy;
+   // static ofPixels dummy;
     //@TODO implement me
-    return dummy;
+    //return dummy;,
+	return grabber->getPixelsRef();	
 }
 
 void ofxiOSVideoGrabber::close() {
