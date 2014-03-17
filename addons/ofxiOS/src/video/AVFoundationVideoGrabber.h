@@ -1,6 +1,5 @@
 /*
  *  AVFoundationVideoGrabber.h
-*
  */
 
 #pragma once

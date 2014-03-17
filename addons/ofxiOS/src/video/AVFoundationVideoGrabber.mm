@@ -32,6 +32,7 @@
 	if (self) {
 		captureInput = nil;
 		captureOutput = nil;
+		device = nil;
 
 		bInitCalled = NO;
 		grabberPtr = NULL;
@@ -43,20 +44,15 @@
 - (BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h{
 	NSArray * devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
 	
-	if([devices count] > 0)
-	{
+	if([devices count] > 0) {
 		if(deviceID>[devices count]-1)
 			deviceID = [devices count]-1;
 		
-		/*We setup the input*/
-		/*captureInput						= [AVCaptureDeviceInput 
-											  deviceInputWithDevice:[AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo] 
-											  error:nil];*/
 		
+		// We set the device
 		device = [devices objectAtIndex:deviceID];
 		
-		
-		//------------------------------------------------------------------- iOS 7+ way of dealing with framerates.
+		// iOS 7+ way of dealing with framerates.
 		if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) {
 			NSError *error = nil;
 			[device lockForConfiguration:&error];
@@ -85,20 +81,20 @@
 			}
 		}
 		
-		
+		// We setup the input
 		captureInput						= [AVCaptureDeviceInput 
 											   deviceInputWithDevice:device
 											   error:nil];
 												
-		/*We setupt the output*/
+		// We setup the output
 		captureOutput = [[AVCaptureVideoDataOutput alloc] init];
-		/*While a frame is processes in -captureOutput:didOutputSampleBuffer:fromConnection: delegate methods no other frames are added in the queue.
-		 If you don't want this behaviour set the property to NO */
+		// While a frame is processes in -captureOutput:didOutputSampleBuffer:fromConnection: delegate methods no other frames are added in the queue.
+		// If you don't want this behaviour set the property to NO
 		captureOutput.alwaysDiscardsLateVideoFrames = YES; 
 	
 		
 		
-		/*We create a serial queue to handle the processing of our frames*/
+		// We create a serial queue to handle the processing of our frames
 		dispatch_queue_t queue;
 		queue = dispatch_queue_create("cameraQueue", NULL);
 		[captureOutput setSampleBufferDelegate:self queue:queue];
@@ -111,7 +107,7 @@
 		NSDictionary* videoSettings = [NSDictionary dictionaryWithObject:value forKey:key]; 
 		[captureOutput setVideoSettings:videoSettings]; 
 
-		/*And we create a capture session*/	
+		// And we create a capture session
 		if(self.captureSession) {
 			self.captureSession = nil;
 		}
@@ -153,28 +149,29 @@
 		}
 		[self.captureSession setSessionPreset:preset]; 
 		
-		/*We add input and output*/
+		// We add input and output
 		[self.captureSession addInput:captureInput];
 		[self.captureSession addOutput:captureOutput];
 		
-		/*We specify a minimum duration for each frame (play with this settings to avoid having too many frames waiting
-		 in the queue because it can cause memory issues). It is similar to the inverse of the maximum framerate.
-		 In this example we set a min frame duration of 1/10 seconds so a maximum framerate of 10fps. We say that
-		 we are not able to process more than 10 frames per second. */
+		// We specify a minimum duration for each frame (play with this settings to avoid having too many frames waiting
+		// in the queue because it can cause memory issues). It is similar to the inverse of the maximum framerate.
+		// In this example we set a min frame duration of 1/10 seconds so a maximum framerate of 10fps. We say that
+		// we are not able to process more than 10 frames per second.
+		// Called after added to captureSession
 		if (NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_6_1) {
 			if (NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_5_1) {
 				[captureOutput setMinFrameDuration:CMTimeMake(1, framerate)];
 			} else {
 				AVCaptureConnection *conn = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
 				if ([conn isVideoMinFrameDurationSupported] == YES &&
-					[conn isVideoMaxFrameDurationSupported] == YES) {	// iOS 6+
+					[conn isVideoMaxFrameDurationSupported] == YES) { // iOS 6+
 					[conn setVideoMinFrameDuration:CMTimeMake(1, framerate)];
 					[conn setVideoMaxFrameDuration:CMTimeMake(1, framerate)];
 				}
 			}
 		}
 		 
-		
+		// We start the capture Session
 		[self.captureSession commitConfiguration];		
 		[self.captureSession startRunning];
 
@@ -187,7 +184,7 @@
 -(void) startCapture{
 
 	if( !bInitCalled ){
-		[self initCapture:60 capWidth:480 capHeight:320];
+		[self initCapture:30 capWidth:480 capHeight:320];
 	}
 
 	[self.captureSession startRunning];
@@ -258,7 +255,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 	if(grabberPtr != NULL) {
 		@autoreleasepool {
 			CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer); 
-			/*Lock the image buffer*/
+			// Lock the image buffer
 			CVPixelBufferLockBaseAddress(imageBuffer,0); 
 
 			if(grabberPtr != NULL && grabberPtr->internalGlDataType == GL_BGRA) {
@@ -273,16 +270,14 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 				grabberPtr->newFrame=true;
 				CVPixelBufferUnlockBaseAddress(imageBuffer,0);
 				
-			}
-			else {
-				/*Get information about the image*/
+			} else {
+				// Get information about the image
 				uint8_t *baseAddress	= (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer); 
 				size_t bytesPerRow		= CVPixelBufferGetBytesPerRow(imageBuffer); 
 				size_t widthIn			= CVPixelBufferGetWidth(imageBuffer); 
 				size_t heightIn			= CVPixelBufferGetHeight(imageBuffer);  
 					
-				/*Create a CGImageRef from the CVImageBufferRef*/
-				
+				// Create a CGImageRef from the CVImageBufferRef
 				CGColorSpaceRef colorSpace	= CGColorSpaceCreateDeviceRGB(); 
 				
 				CGContextRef newContext		= CGBitmapContextCreate(baseAddress, widthIn, heightIn, 8, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
@@ -291,14 +286,14 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 				CGImageRelease(currentFrame);	
 				currentFrame = CGImageCreateCopy(newImage);		
 					
-				/*We release some components*/
+				// We release some components
 				CGContextRelease(newContext); 
 				CGColorSpaceRelease(colorSpace);
 
-				/*We relase the CGImageRef*/
+				// We relase the CGImageRef
 				CGImageRelease(newImage);
 					
-				/*We unlock the  image buffer*/
+				// We unlock the  image buffer
 				CVPixelBufferUnlockBaseAddress(imageBuffer,0);
 				
 				if(grabberPtr != NULL && grabberPtr->bLock != true) {
@@ -318,8 +313,6 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		[self stopCapture];
 		self.captureSession = nil;
 	}
-
-
 	if(captureOutput){
 		if(captureOutput.sampleBufferDelegate != nil) {
 			[captureOutput setSampleBufferDelegate:nil queue:NULL];
@@ -327,19 +320,16 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 		[captureOutput release];
 		captureOutput = nil;
 	}
-	if(captureInput) {
-//		[captureInput release];
-		captureInput = nil;
-	}
-	if(device) {
-		device = nil;
-	}
 	
-
+	captureInput = nil;
+	device = nil;
+	
 	if(grabberPtr) {
 		[self eraseGrabberPtr];
 	}
+	grabberPtr = nil;
 	if(currentFrame) {
+		// release the currentFrame image
 		CGImageRelease(currentFrame);
 		currentFrame = nil;
 	}
@@ -365,15 +355,15 @@ AVFoundationVideoGrabber::AVFoundationVideoGrabber(){
 }
 
 AVFoundationVideoGrabber::~AVFoundationVideoGrabber(){
-	ofLog(OF_LOG_NOTICE, "AVFoundationVideoGrabber dtor");
+	ofLog(OF_LOG_VERBOSE, "AVFoundationVideoGrabber dtor");
 	bLock = true;
 	if(grabber) {
+		// Stop and release the the iOSVideoGrabber
 		[grabber stopCapture];
 		[grabber eraseGrabberPtr];
 		[grabber release];
 		grabber = nil;
 	}
-	
 	clear();
 
 }
@@ -399,8 +389,7 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 		if(ofGetOrientation() == OF_ORIENTATION_DEFAULT || ofGetOrientation() == OF_ORIENTATION_180) {
 			width = grabber->height;
 			height = grabber->width;
-		}
-		else {
+		} else {
 			width	= grabber->width;
 			height	= grabber->height;
 		}
@@ -409,21 +398,22 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 		
 		pixelsTmp	= (GLubyte *) malloc(width * height * 4);
 
-		if(internalGlDataType == GL_RGB)
+		if(internalGlDataType == GL_RGB) {
 			pixels = (GLubyte *) malloc(width * height * 3);//new unsigned char[width * width * 3];//memset(pixels, 0, width*height*3);
-		else if(internalGlDataType == GL_RGBA)
+		} else if(internalGlDataType == GL_RGBA) {
 			pixels = (GLubyte *) malloc(width * height * 4);
-		else if(internalGlDataType == GL_BGRA)
+		} else if(internalGlDataType == GL_BGRA) {
 			pixels = (GLubyte *) malloc(width * height * 4);
+		}
 			
 		[grabber startCapture];
 		
 		newFrame=false;
 		
 		return true;
-	}
-	else
+	} else {
 		return false;
+	}
 }
 
 void AVFoundationVideoGrabber::update(){
@@ -453,18 +443,15 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 				
 			CGContextConcatCTM(spriteContext, transform);
 			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
-		}
-		else if(ofGetOrientation() == OF_ORIENTATION_180) {
+		} else if(ofGetOrientation() == OF_ORIENTATION_180) {
 			transform = CGAffineTransformMakeTranslation(width, 0.0);
 			transform = CGAffineTransformRotate(transform, M_PI / 2.0);
 			
 			CGContextConcatCTM(spriteContext, transform);
 			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)height, (CGFloat)width), ref);
-		}
-		else if(ofGetOrientation() == OF_ORIENTATION_90_LEFT) {
+		} else if(ofGetOrientation() == OF_ORIENTATION_90_LEFT) {
 			CGContextDrawImage(spriteContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), ref);
-		}
-		else { // landscape RIGHT
+		} else { // landscape RIGHT
 			transform = CGAffineTransformMakeTranslation(width, height);
 			transform = CGAffineTransformScale(transform, -1.0, -1.0);
 			
@@ -478,8 +465,7 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 		
 		CGContextRelease(spriteContext);
 		
-		if(internalGlDataType == GL_RGB)
-		{
+		if(internalGlDataType == GL_RGB) {
 			unsigned int *isrc4 = (unsigned int *)pixelsTmp;
 			unsigned int *idst3 = (unsigned int *)pixels;
 			unsigned int *ilast4 = &isrc4[width*height-1];
@@ -502,8 +488,7 @@ void AVFoundationVideoGrabber::updatePixelsCB( CGImageRef & ref ){
 	}
 }
 
-bool AVFoundationVideoGrabber::isFrameNew()
-{
+bool AVFoundationVideoGrabber::isFrameNew() {
 	return newFrame;
 }
 
@@ -531,10 +516,10 @@ bool AVFoundationVideoGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
 	if(PixelFormat == OF_PIXELS_RGB){
 		internalGlDataType = GL_RGB;
 		return true;
-	}else if(PixelFormat == OF_PIXELS_RGBA){
+	} else if(PixelFormat == OF_PIXELS_RGBA){
 		internalGlDataType = GL_RGBA;
 		return true;
-	}else if(PixelFormat == OF_PIXELS_BGRA){
+	} else if(PixelFormat == OF_PIXELS_BGRA){
 		internalGlDataType = GL_BGRA;
 		return true;
 	}
@@ -542,14 +527,15 @@ bool AVFoundationVideoGrabber::setPixelFormat(ofPixelFormat PixelFormat) {
 }
 
 ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
-	if(internalGlDataType == GL_RGB)
+	if(internalGlDataType == GL_RGB){
         return OF_PIXELS_RGB;
-	else if(internalGlDataType == GL_RGBA)
+	} else if(internalGlDataType == GL_RGBA){
         return OF_PIXELS_RGBA;
-	else if(internalGlDataType == GL_BGRA)
+	} else if(internalGlDataType == GL_BGRA){
         return OF_PIXELS_BGRA;
-    else
+    } else {
         return OF_PIXELS_RGB;
+	}
 }
 
 #endif	// (__arm__) compile only for ARM
