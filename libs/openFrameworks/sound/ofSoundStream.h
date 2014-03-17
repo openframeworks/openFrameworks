@@ -34,7 +34,8 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * app
 /// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
 /// \param nInputChannels number of requested input channels.
 /// \param sampleRate requested sample rate (44100 is typical).
-/// \param bufferSize requested buffer size (256 is typical). Smaller values will be more responsive, but less stable.
+/// \param bufferSize requested buffer size (256 is typical). Smaller values
+///        will be more responsive, but less stable.
 /// \param nBuffers number of buffers to queue. Less buffers will be more responsive, but less stable.
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers);
 
@@ -43,8 +44,10 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate,
 /// \param nInputChannels number of requested input channels.
 /// \param appPtr pointer to the app which will own the sound stream (optional).
 /// \param sampleRate requested sample rate (44100 is typical).
-/// \param bufferSize requested buffer size (256 is typical). Smaller values will be more responsive, but less stable.
-/// \param nBuffers number of buffers to queue. Less buffers will be more responsive, but less stable.
+/// \param bufferSize requested buffer size (256 is typical). Smaller values
+///        will be more responsive, but less stable.
+/// \param nBuffers number of buffers to queue. Less buffers will be more
+///        responsive, but less stable.
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers);
 
 /// \brief Stops the sound stream (audioIn() / audioOut() will stop being called)
@@ -82,83 +85,86 @@ void ofSoundStreamListDevices();
 ///
 /// \warning Be aware that audioIn() and audioOut() will be called on a different
 /// thread from your app's update() / draw() thread.
-///
-
 class ofSoundStream{
-	public:
-		ofSoundStream();
-		
-		void setSoundStream(ofPtr<ofBaseSoundStream> soundStreamPtr);
-		ofPtr<ofBaseSoundStream> getSoundStream();
+public:
+    ofSoundStream();
+    
+    void setSoundStream(ofPtr<ofBaseSoundStream> soundStreamPtr);
+    ofPtr<ofBaseSoundStream> getSoundStream();
 
-		/// \brief prints a list of available audio devices to the console.
-		void listDevices();
+    /// \brief prints a list of available audio devices to the console.
+    void listDevices();
 
-		/// \brief sets the device represented by the stream, see ofSoundStream::listDevices().
-		void setDeviceID(int deviceID);
+    /// \brief sets the device represented by the stream, see ofSoundStream::listDevices().
+    void setDeviceID(int deviceID);
 
-		/// \brief Sets up and starts the stream.
-		/// \param app pointer to the app which will own the sound stream.
-		/// \param outChannels number of requested output channels (i.e. 2 for stereo).
-		/// \param inChannels number of requested input channels.
-		/// \param sampleRate requested sample rate (44100 is typical).
-		/// \param bufferSize requested buffer size (256 is typical). Smaller values will be more responsive, but less stable.
-		/// \param nBuffers number of buffers to queue. Less buffers will be more responsive, but less stable.
-		/// \return true on success
-		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
-	
-		/// \brief Sets up and starts the stream.
-		/// \param outChannels number of requested output channels (i.e. 2 for stereo).
-		/// \param inChannels number of requested input channels.
-		/// \param sampleRate requested sample rate (44100 is typical).
-		/// \param bufferSize requested buffer size (256 is typical). Smaller values will be more responsive, but less stable.
-		/// \param nBuffers number of buffers to queue. Less buffers will be more responsive, but less stable.
-		/// \return true on success
-		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+    /// \brief Sets up and starts the stream.
+    /// \param app pointer to the app which will own the sound stream.
+    /// \param outChannels number of requested output channels (i.e. 2 for stereo).
+    /// \param inChannels number of requested input channels.
+    /// \param sampleRate requested sample rate (44100 is typical).
+    /// \param bufferSize requested buffer size (256 is typical). Smaller
+    ///        values will be more responsive, but less stable.
+    /// \param nBuffers number of buffers to queue. Less buffers will be more
+    ///        responsive, but less stable.
+    /// \return true on success
+    bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 
-		/// \brief sets the object which will have audioIn() called when the device receives audio.
-		void setInput(ofBaseSoundInput * soundInput);
+    /// \brief Sets up and starts the stream.
+    /// \param outChannels number of requested output channels (i.e. 2 for stereo).
+    /// \param inChannels number of requested input channels.
+    /// \param sampleRate requested sample rate (44100 is typical).
+    /// \param bufferSize requested buffer size (256 is typical). Smaller values
+    ///        will be more responsive, but less stable.
+    /// \param nBuffers number of buffers to queue. Less buffers will be more
+    ///        responsive, but less stable.
+    /// \return true on success
+    bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 
-		/// \brief sets the object which will have audioOut() called when the device requests audio.
-		void setOutput(ofBaseSoundOutput * soundOutput);
+    /// \brief Sets the object which will have audioIn() called when the device receives audio.
+    void setInput(ofBaseSoundInput * soundInput);
 
-		/// \brief starts a stream (note that setup() will start the stream on its own).
-		void start();
+    /// \brief Sets the object which will have audioOut() called when the device requests audio.
+    void setOutput(ofBaseSoundOutput * soundOutput);
 
-		/// \brief stops the stream.
-		void stop();
+    /// \brief Starts a stream (note that setup() will start the stream on its own).
+    void start();
 
-		/// \brief stops the stream and cleans up its resources.
-		void close();
+    /// \brief Stops the stream.
+    void stop();
 
-		/// \brief Queries the number of "ticks" passed since the stream started.
-		///
-		/// This is a representation of how many buffers have passed through the
-		/// stream since it started. This can be converted to seconds with the
-		/// following formula:
-		///
-		///    secondsOfPlayback = (tickCount * bufferSize) / sampleRate
-		///
-		/// \return number of buffers passed through the stream since it started
-		long unsigned long getTickCount();
-	
-		/// \brief Queries the stream's number of input channels.
-		/// \return the number of input channels (e.g. 2 for stereo).
-		int getNumInputChannels();
-		
-		/// \brief Queries the stream's number of output channels.
-		/// \return the number of output channels (e.g. 2 for stereo).
-		int getNumOutputChannels();
-	
-		/// \brief Queries the stream's sample rate
-		/// \return the current sample rate of the stream (note: it may differ from the requested sample rate)
-		int getSampleRate();
-	
-		/// \brief Queries the stream's buffer size
-		/// \return the current buffer size of the stream
-		int getBufferSize();
-		
-	protected:
-		
-		ofPtr<ofBaseSoundStream> soundStream;
+    /// \brief stops the stream and cleans up its resources.
+    void close();
+
+    /// \brief Queries the number of "ticks" passed since the stream started.
+    ///
+    /// This is a representation of how many buffers have passed through the
+    /// stream since it started. This can be converted to seconds with the
+    /// following formula:
+    ///
+    ///    secondsOfPlayback = (tickCount * bufferSize) / sampleRate
+    ///
+    /// \return number of buffers passed through the stream since it started.
+    long unsigned long getTickCount();
+
+    /// \brief Queries the stream's number of input channels.
+    /// \return the number of input channels (e.g. 2 for stereo).
+    int getNumInputChannels();
+    
+    /// \brief Queries the stream's number of output channels.
+    /// \return the number of output channels (e.g. 2 for stereo).
+    int getNumOutputChannels();
+
+    /// \brief Queries the stream's sample rate
+    /// \return the current sample rate of the stream
+    /// \note The returned sample rate may differ from the requested sample rate.
+    int getSampleRate();
+
+    /// \brief Queries the stream's buffer size.
+    /// \return the current buffer size of the stream.
+    int getBufferSize();
+    
+protected:
+    ofPtr<ofBaseSoundStream> soundStream;
+
 };
