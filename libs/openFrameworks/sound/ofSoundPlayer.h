@@ -3,11 +3,8 @@
 #include "ofConstants.h"
 #include "ofTypes.h"
 
-
-// --------------------- global functions:
-
-//TODO: FIX THIS SHIT!!!!!!
-//#warning FIX THIS.
+/// \todo: FIX THIS!!!!!!
+/// #warning FIX THIS.
 
 /// \brief Stops all active sound players on FMOD-based systems (windows, osx).
 void ofSoundStopAll();
@@ -69,102 +66,94 @@ inline void ofSoundShutdown(){}
 /// \brief Plays sound files.
 ///
 /// ofSoundPlayer handles simple playback of sound files, with controls for
-/// volume, pan, speed, seeking and multiplay.
-/// This is a common cross-platform sound player interface which is inherited by
-/// each of the platform-specific sound player implementations.
-///
-
-//---------------------------------------------
+/// volume, pan, speed, seeking and multiplay.  This is a common cross-platform
+/// sound player interface which is inherited by each of the platform-specific
+/// sound player implementations.
 class ofSoundPlayer : public ofBaseSoundPlayer {
+public:
+    ofSoundPlayer();
 
-	public:
+    void setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer);
+    ofPtr<ofBaseSoundPlayer> getPlayer();
 
-		ofSoundPlayer();
+    /// \brief Tells the sound player which file to play.
+    ///
+    /// Codec support varies by platform but wav, aif, and mp3 are safe.
+    ///
+    /// \param fileName Path to the sound file, relative to your app's data folder.
+    /// \param stream set "true" to enable streaming from disk (for large files).
+    bool loadSound(string fileName, bool stream = false);
 
-		void setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer);
-		ofPtr<ofBaseSoundPlayer> getPlayer();
+    /// \brief Stops and unloads the current sound.
+    void unloadSound();
+    
+    /// \brief Starts playback.
+    void play();
 
-		/// \brief Tells the sound player which file to play.
-		///
-		/// Codec support varies by platform but wav, aif, and mp3 are safe.
-		///
-		/// \param fileName Path to the sound file, relative to your app's data folder.
-		/// \param stream set "true" to enable streaming from disk (for large files).
-		bool loadSound(string fileName, bool stream = false);
+    /// \brief Stops playback.
+    void stop();
 
-		/// \brief Stops and unloads the current sound.
-		void unloadSound();
-		
-		/// \brief Starts playback.
-		void play();
+    /// \brief Sets playback volume.
+    /// \param vol range is 0 to 1.
+    void setVolume(float vol);
 
-		/// \brief Stops playback.
-		void stop();
+    /// \brief Sets stereo pan.
+    /// \param pan range is -1 to 1 (-1 is full left, 1 is full right).
+    void setPan(float pan);
 
-		/// \brief Sets playback volume.
-		/// \param vol range is 0 to 1.
-		void setVolume(float vol);
+    /// \brief Sets playback speed.
+    /// \param speed set > 1 for faster playback, < 1 for slower playback.
+    void setSpeed(float speed);
 
-		/// \brief Sets stereo pan.
-		/// \param pan range is -1 to 1 (-1 is full left, 1 is full right).
-		void setPan(float pan);
+    /// \brief Enables pause / resume.
+    /// \param paused "true" to pause, "false" to resume.
+    void setPaused(bool paused);
 
-		/// \brief Sets playback speed.
-		/// \param speed set > 1 for faster playback, < 1 for slower playback.
-		void setSpeed(float speed);
+    /// \brief Sets whether to loop once the end of the file is reached.
+    /// \param loop "true" to loop, default is false.
+    void setLoop(bool loop);
+    
+    /// \brief Enables playing multiple simultaneous copies of the sound.
+    /// \param multiplay "true" to enable, default is false.
+    void setMultiPlay(bool multiplay);
 
-		/// \brief Enables pause / resume.
-		/// \param paused "true" to pause, "false" to resume.
-		void setPaused(bool paused);
+    /// \brief Sets position of the playhead within the file (aka "seeking").
+    /// \param percent range is 0 (beginning of file) to 1 (end of file).
+    void setPosition(float percent);
+    
+    /// \brief Sets position of the playhead within the file (aka "seeking").
+    /// \param ms number of milliseconds from the start of the file.
+    void setPositionMS(int ms);
 
-		/// \brief Sets whether to loop once the end of the file is reached.
-		/// \param loop "true" to loop, default is false.
-		void setLoop(bool loop);
-		
-		/// \brief Enables playing multiple simultaneous copies of the sound.
-		/// \param multiplay "true" to enable, default is false.
-		void setMultiPlay(bool multiplay);
+    /// \brief Gets position of the playhead.
+    /// \return playhead position in milliseconds.
+    int getPositionMS();
 
-		/// \brief Sets position of the playhead within the file (aka "seeking").
-		/// \param percent range is 0 (beginning of file) to 1 (end of file).
-		void setPosition(float percent);
-		
-		/// \brief Sets position of the playhead within the file (aka "seeking").
-		/// \param ms number of milliseconds from the start of the file.
-		void setPositionMS(int ms);
+    /// \brief Gets position of the playhead.
+    /// \return playhead position as a float between 0 and 1.
+    float getPosition();
 
-		/// \brief Gets position of the playhead.
-		/// \return playhead position in milliseconds.
-		int getPositionMS();
+    /// \brief Gets current playback state.
+    /// \return true if the player is currently playing a file.
+    bool getIsPlaying();
 
-		/// \brief Gets position of the playhead.
-		/// \return playhead position as a float between 0 and 1.
-		float getPosition();
+    /// \brief Gets playback speed.
+    /// \return playback speed (see ofSoundPlayer::setSpeed()).
+    float getSpeed();
+    
+    /// \brief Gets stereo pan.
+    /// \return stereo pan in the range -1 to 1.
+    float getPan();
 
-		/// \brief Gets current playback state.
-		/// \return true if the player is currently playing a file.
-		bool getIsPlaying();
+    /// \brief Gets current volume.
+    /// \return current volume in the range 0 to 1.
+    float getVolume();
 
-		/// \brief Gets playback speed.
-		/// \return playback speed (see ofSoundPlayer::setSpeed()).
-		float getSpeed();
-		
-		/// \brief Gets stereo pan.
-		/// \return stereo pan in the range -1 to 1.
-		float getPan();
+    /// \brief Queries the player to see if its file was loaded successfully.
+    /// \return whether or not the player is ready to begin playback.
+    bool isLoaded(); 		
 
-		/// \brief Gets current volume.
-		/// \return current volume in the range 0 to 1.
-		float getVolume();
-	
-		/// \brief Queries the player to see if its file was loaded successfully.
-		/// \return whether or not the player is ready to begin playback.
-		bool isLoaded(); 		
-
-	protected:
-
-		ofPtr<ofBaseSoundPlayer> player;
-
+protected:
+    ofPtr<ofBaseSoundPlayer> player;
 
 };
-
