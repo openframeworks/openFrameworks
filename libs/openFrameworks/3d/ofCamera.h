@@ -1,31 +1,20 @@
-/*
- *  ofCamera.h
- *  openFrameworksLib
- *
- *  Created by Memo Akten on 10/01/2011.
- *  Copyright 2011 MSA Visuals Ltd. All rights reserved.
- *
- */
-
-// TODO: 
-// add set projection matrix
-// support for left handed or right handed?
-
 #pragma once
+
 
 #include "ofRectangle.h"
 #include "ofAppRunner.h"
 #include "ofNode.h"
 
-/// \todo
-// Use the public API of ofNode for all transformations
-//class ofCamera : public ofNodeWithTarget {
+
+/// \brief A basic comera object for interacting with objects in 3D space.
+/// \todo Use the public API of ofNode for all transformations
+/// \todo add set projection matrix
+/// \todo support for left handed or right handed?
+/// \author Memo Akten, MSA Visuals Ltd. 2011
 class ofCamera : public ofNode {
 public:
 	ofCamera();
 	virtual ~ofCamera(){};
-	
-	// projection properties:
 	
 	/// \brief Set the field of view for a perspective camera.
 	///
@@ -36,8 +25,10 @@ public:
 	/// \param f The desired field of view for the camera, in degrees.
 	void setFov(float f);
 	
-	/// \todo
+	/// \todo setNearClip()
 	void setNearClip(float f);
+
+    /// \todo setFarClip()
 	void setFarClip(float f);
 	
 	/// \brief Set the "lens offset" applied to this camera.
@@ -78,8 +69,10 @@ public:
 	/// \returns The camera's field of view, in degrees.
 	float getFov() const { return fov; };
 	
-	/// \todo
+    /// \todo getNearClip()
 	float getNearClip() const { return nearClip; };
+
+    /// \todo getFarClip()
 	float getFarClip() const { return farClip; };
 	
 	/// \brief Get the "lens offset" applied to this camera, encoded as an ofVec2f.
@@ -107,36 +100,48 @@ public:
 	/// \returns The aspect ratio of this camera's viewport.
 	float getAspectRatio() const {return aspectRatio; };
 	
-	/// \todo
+	/// \todo setupPerspective()
 	void setupPerspective(bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0, const ofVec2f & lensOffset = ofVec2f(0.0f, 0.0f));
-	void setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight);
-	
-	/// \todo
-	void setVFlip(bool vflip);
-	bool isVFlipped();
 
-	/// \todo
-	void enableOrtho();
-	void disableOrtho();
-	bool getOrtho() const;
+    /// \todo setupOffAxisViewPortal()
+    void setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight);
 	
-	/// \todo
+	/// \todo setVFlip()
+	void setVFlip(bool vflip);
+
+    /// \todo isVFlipped()
+    bool isVFlipped();
+
+	/// \todo enableOrtho()
+	void enableOrtho();
+
+    /// \todo disableOrtho()
+    void disableOrtho();
+
+    /// \todo getOrtho()
+    bool getOrtho() const;
+	
+	/// \todo getImagePlaneDistance
 	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
 	
-	/// \todo
-	// set the matrices
+	/// \todo begin()
 	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
+
+	/// \todo end()
 	virtual void end();
 	
-	/// \todo
-	// for hardcore peeps, access to the projection matrix
+	/// \brief Access the projection matrix.
+    /// \returns the current 4x4 projection matrix.
 	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport()) const;
-	ofMatrix4x4 getModelViewMatrix() const;
-	ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport()) const;
+
+    /// \brief Access the model view matrix.
+    /// \returns the current 4x4 model view matrix.
+    ofMatrix4x4 getModelViewMatrix() const;
+
+    /// \todo getModelViewProjectionMatrix()
+    ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport()) const;
 	
-	// convert between spaces
-	
-	/// \brief Obtain the screen coordinates of a point in the 3D world. 
+    /// \brief Obtain the screen coordinates of a point in the 3D world.
 	///
 	/// Takes an (X,Y,Z) point in your 3D world, encoded as an ofVec3f, 
 	/// and returns the location (also as an ofVec3f) where this point would appear 
@@ -158,8 +163,10 @@ public:
 	/// \param ScreenXYZ A point on your screen, whose 3D world coordinates you wish to know.
 	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	
-	/// \todo
+	/// \todo worldToCamera()
 	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
+
+	/// \todo cameraToWorld()
 	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
 	
 protected:
