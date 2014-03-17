@@ -45,7 +45,8 @@ float ofRandom(float max);
 ///
 /// Example:
 ///
-///    ofRandom(-30,20); // will return a random floating point number between -30 and 20.
+///    // Return a random floating point number between -30 and 20.
+///    ofRandom(-30, 20);
 ///
 /// \param val0 the minimum value of the random number.
 /// \param val1 The maximum value of the random number.
@@ -60,9 +61,10 @@ float ofRandomuf();
 
 /// \brief Given a value and a range, remap the value to be within 0 and 1.
 ///
-/// Often, you'll need to work with percentages or other methods that expect a value between 0 and 1.
-/// This function will take a minimum and maximum, and then finds where within that range a value sits.
-/// If the value is outside the range, it will be mapped to 0 or 1.
+/// Often, you'll need to work with percentages or other methods that expect a
+/// value between 0 and 1.  This function will take a minimum and maximum, and
+/// then finds where within that range a value sits.  If the value is outside
+/// the range, it will be mapped to 0 or 1.
 ///
 /// \param value The number to be normalized.
 /// \param min The floor of the range.
@@ -72,10 +74,11 @@ float ofNormalize(float value, float min, float max);
 
 /// \brief Given a value and an input range, remap the value to be within an output range.
 /// 
-/// ofMap remaps the value passed in "value", calculating it's linear distance between inputMin and inputMax, 
-/// and remapping it based on that percentage to outputMin and outputMax.
-/// You can choose to clamp the results, which will constrain the results between outputMin and outputMax.  
-/// Results are not clamped by default.
+/// ofMap remaps the value passed in "value", calculating it's linear distance
+/// between inputMin and inputMax, and remapping it based on that percentage to
+/// outputMin and outputMax.  You can choose to clamp the results, which will
+/// constrain the results between outputMin and outputMax.  Results are not
+/// clamped by default.
 ///
 /// Example:
 ///
@@ -89,15 +92,15 @@ float ofNormalize(float value, float min, float max);
 /// \param inputMax The ceiling of the input range.
 /// \param outputMin The floor of the output range.
 /// \param outputMax The ceiling of the output range.
-/// \param clamp Should the value be clamped between outputMin and outputMax or allowed to extend beyond?
+/// \param clamp true iff the value should be clamped between outputMin and outputMax.
 /// \returns a float, mapped between outputMin and outputMax.
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp = false);
 
 /// \brief Clamp a value between min and max.
 /// 
-/// Restricts a value to be within a specified range defined by values min and max.   
-/// If the value is min <= value <= max, returns value.
-/// If the value is greater than max, return max; if the value is less than min, return min.
+/// Restricts a value to be within a specified range defined by values min and
+/// max.  If the value is min <= value <= max, returns value.  If the value is
+/// greater than max, return max; if the value is less than min, return min.
 ///        
 ///     float val, newval;
 ///     val = 10;
@@ -113,18 +116,17 @@ float ofClamp(float value, float min, float max);
 
 /// \brief Linearly interpolate a value be within a range.
 /// 
-/// Calculates a number between two numbers (start,stop) at a specific increment (amt).
-/// If we want the new number to be between start and stop numbers, amt needs to be a number between 0 and 1. 
-/// ofLerp() does not clamp the values.
+/// Calculates a number between two numbers (start,stop) at a specific increment
+/// (amt).  If we want the new number to be between start and stop numbers, amt
+/// needs to be a number between 0 and 1.  ofLerp() does not clamp the values.
 ///
-////     float init,end,increment,result;
-///      increment = 0.2;
-///      init = 1;
-///      end = 2;
-///      result = ofLerp(init, end, increment); // result = 1.2
-///      // Values outside 0...1 work as well.
-///      increment = 2;
-///      result = ofLerp(init, end, increment); // result = 3
+///     float init = 1;
+///     float end = 2;
+///     float increment = 0.2;
+///     float result = ofLerp(init, end, increment); // result = 1.2
+///     // Values outside 0...1 work as well.
+///     increment = 2;
+///     result = ofLerp(init, end, increment); // result = 3
 ///
 /// \param start The floor of the range.
 /// \param stop The ceiling of the range.
@@ -146,7 +148,8 @@ float ofDist(float x1, float y1, float x2, float y2);
 /// \brief Calculates the distance between two points, without taking the square root of the result
 ///
 /// Same as ofMath::ofDist() but doesn't take the sqrt() of the result, 
-/// which is a faster operation if you need to calculate and compare multiple distances. 
+/// which is a faster operation if you need to calculate and compare multiple
+/// distances.
 ///
 /// \param x1 X position of first point.
 /// \param y1 Y position of first point.
@@ -159,11 +162,11 @@ float ofDistSquared(float x1, float y1, float x2, float y2);
 /// \returns int -1 if n is negative, 1 if n is positive, and 0 is n == 0;
 int ofSign(float n);
 
-/// \brief Returns true if the number t is the range of [min - max], false if it's not.
-/// \param t The value to determine
-/// \param minThe floor of the range.
+/// \brief Determines if a number is inside of a given range.
+/// \param t The value to test.
+/// \param min The floor of the range.
 /// \param max The ceiling of the range.
-/// \returns true if min <= t <= max.
+/// \returns true iff the number t is the range of [min - max].
 bool ofInRange(float t, float min, float max);
 
 /// \brief Convert radians to degrees.
@@ -175,8 +178,7 @@ float ofRadToDeg(float radians);
 ///
 /// Example:
 ///
-///     float result;
-///     result = ofDegToRad(90); // result will be PI/2 
+///     float result = ofDegToRad(90); // result will be PI/2
 ///
 /// \param degrees An angle in degrees.
 /// \returns the angle in radians.
@@ -184,8 +186,9 @@ float ofDegToRad(float degrees);
 
 /// \brief Linearly interpolate a value between two angles in degrees.
 /// 
-/// Calculates a number between two numbers (start, stop) at a specific increment (amt).
-/// This does constrain the result into a single rotation, but does not clamp the values
+/// Calculates a number between two numbers (start, stop) at a specific
+/// increment (amt). This does constrain the result into a single rotation,
+/// but does not clamp the values
 ///
 /// \param currentAngle The floor of the range in degrees.
 /// \param targetAngle The ceiling of the range in degrees.
@@ -195,8 +198,9 @@ float ofLerpDegrees(float currentAngle, float targetAngle, float pct);
 
 /// \brief Linearly interpolate a value between two angles in radians.
 /// 
-/// Calculates a number between two numbers (start, stop) at a specific increment (amt).
-/// This does constrain the result into a single rotation, but does not clamp the values
+/// Calculates a number between two numbers (start, stop) at a specific
+/// increment (amt).  This does constrain the result into a single rotation, but
+/// does not clamp the values
 ///
 /// \param currentAngle The floor of the range in radians.
 /// \param targetAngle The ceiling of the range in radians.
@@ -206,8 +210,8 @@ float ofLerpRadians(float currentAngle, float targetAngle, float pct);
 
 /// \brief Calculates the difference between two angles in degrees.
 ///
-/// This will calculate the actual difference, taking into account multiple revolutions.
-/// For example:
+/// This will calculate the actual difference, taking into account multiple
+/// revolutions. For example:
 ///
 ///     ofAngleDifferenceDegrees(0,90); // returns 90;
 ///     ofAngleDifferenceDegrees(0,450); // also returns 90;
@@ -219,8 +223,8 @@ float ofAngleDifferenceDegrees(float currentAngle, float targetAngle);
 
 /// \brief Calculates the difference between two angles in radians.
 ///
-/// This will calculate the actual difference, taking into account multiple revolutions.
-/// For example:
+/// This will calculate the actual difference, taking into account multiple
+/// revolutions. For example:
 ///
 ///     ofAngleDifferenceRadians(0,PI); // returns -PI;
 ///     ofAngleDifferenceRadians(0,3*PI); // also returns -PI;
