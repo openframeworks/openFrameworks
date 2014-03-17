@@ -15,7 +15,9 @@ public:
 	ofxSlider* setup(string sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	
 	void setMin(Type min);
+	Type getMin();
 	void setMax(Type max);
+	Type getMax();
 
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);

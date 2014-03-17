@@ -45,8 +45,18 @@ void ofxSlider<Type>::setMin(Type min){
 }
 
 template<typename Type>
+Type ofxSlider<Type>::getMin(){
+    value.getMin();
+}
+
+template<typename Type>
 void ofxSlider<Type>::setMax(Type max){
-    value.setMax(max);
+    return value.setMax(max);
+}
+
+template<typename Type>
+Type ofxSlider<Type>::getMax(){
+    return value.getMax();
 }
 
 template<typename Type>
