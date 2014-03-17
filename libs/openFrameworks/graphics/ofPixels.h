@@ -14,6 +14,8 @@ enum ofInterpolationMethod {
 	OF_INTERPOLATE_BICUBIC			=3
 };
 
+
+/// \brief A class representing a collection of pixels.
 template <typename PixelType>
 class ofPixels_ {
 public:
