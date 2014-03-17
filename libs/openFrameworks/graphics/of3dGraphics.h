@@ -180,12 +180,3 @@ OF_DEPRECATED_MSG("Use ofDrawBox instead.", void ofBox(const ofPoint& position, 
 OF_DEPRECATED_MSG("Use ofDrawBox instead.", void ofBox(const ofPoint& position, float size) );
 OF_DEPRECATED_MSG("Use ofDrawBox instead.", void ofBox(float size) );
 OF_DEPRECATED_MSG("Use ofDrawBox instead.", void ofBox( float width, float height, float depth ) );
-
-
-
-
-
-
-
-
-
