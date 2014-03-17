@@ -5,16 +5,19 @@
 #include "ofAppRunner.h"
 #include "ofNode.h"
 
-
-/// \brief A basic comera object for interacting with objects in 3D space.
 /// \todo Use the public API of ofNode for all transformations
 /// \todo add set projection matrix
 /// \todo support for left handed or right handed?
+
+/// \brief A basic comera object for interacting with objects in 3D space.
 /// \author Memo Akten, MSA Visuals Ltd. 2011
 class ofCamera : public ofNode {
 public:
+    /// \brief Construct a default camera.
 	ofCamera();
-	virtual ~ofCamera(){};
+
+    /// \brief Destroy the camera.
+    virtual ~ofCamera(){};
 	
 	/// \brief Set the field of view for a perspective camera.
 	///
@@ -33,38 +36,42 @@ public:
 	
 	/// \brief Set the "lens offset" applied to this camera.
 	/// 
-	/// Ordinarily, the camera is pointed straight down the center of its view frustum. 
-	/// However, it is possible to orient the camera towards a location offset from the center of its frustum. 
-	/// This is called an "assymetric frustum" and is used (for example) in stereo views. 
-	/// It is acheived by applying an offset to the center of projection. 
-	/// This function sets this offset from an ofVec2f argument. 
-	/// For more information see http://www.orthostereo.com/geometryopengl.html.
+	/// Ordinarily, the camera is pointed straight down the center of its view
+    /// frustum. However, it is possible to orient the camera towards a location
+    /// offset from the center of its frustum. This is called an "assymetric
+    /// frustum" and is used (for example) in stereo views.  It is acheived by
+    /// applying an offset to the center of projection.  This function sets this
+    /// offset from an ofVec2f argument.  For more information see
+    /// <http://www.orthostereo.com/geometryopengl.html>.
 	///
-	/// \param lensOffset The "lens offset" to apply to this camera, encoded in an ofVec2f.
+	/// \param lensOffset The "lens offset" to apply to this camera, encoded in
+    ///     an ofVec2f.
 	void setLensOffset(const ofVec2f & lensOffset);
 	
 	/// \brief Set the recommended aspect ratio for a perspective camera.
 	///
-	/// Sets the aspect ratio of the camera to the desired float, and forces the use of aspect ratio calculations. 
-	/// Currently only used with perspective cameras. The default value (and the value used with orthographic cameras)
-	/// is the ratio of the viewport's width to the viewport's height. 
+	/// Sets the aspect ratio of the camera to the desired float, and forces the
+    /// use of aspect ratio calculations.  Currently only used with perspective
+    /// cameras. The default value (and the value used with orthographic
+    /// cameras) is the ratio of the viewport's width to the viewport's height.
 	/// 
-	/// \param aspectRatio The desired aspect ratio, e.g. 1.3333, 1.6, 1.7777, etc. 
+	/// \param aspectRatio The desired aspect ratio, e.g. 1.3333, 1.6, etc.
 	void setAspectRatio(float aspectRatio);
 	
 	/// \brief Set whether or not the aspect ratio of this camera is forced to a non-default setting.
 	/// 
-	/// The camera's aspect ratio, by default, is the aspect ratio of your viewport. 
-	/// If you have set a non-default value (with setAspectRatio()), 
-	/// you can toggle whether or not this value is applied. 
+	/// The camera's aspect ratio, by default, is the aspect ratio of your
+    /// viewport.  If you have set a non-default value (with
+    /// ofCamera::setAspectRatio()), you can toggle whether or not this value is
+    /// applied.
 	/// 
 	/// \param forceAspectRatio Whether or not this camera should use an aspect ratio you have set yourself.  
 	void setForceAspectRatio(bool forceAspectRatio);
 
 	/// \brief Get the camera's field of view, in degrees.
 	///
-	/// Get the horizontal camera's field of view, in degrees.
-	/// This is only meaningful for perspective cameras.
+	/// Get the horizontal camera's field of view, in degrees.  This is only
+    /// meaningful for perspective cameras.
 	///
 	/// \returns The camera's field of view, in degrees.
 	float getFov() const { return fov; };
@@ -77,12 +84,13 @@ public:
 	
 	/// \brief Get the "lens offset" applied to this camera, encoded as an ofVec2f.
 	/// 
-	/// Ordinarily, the camera is pointed straight down the center of its view frustum. 
-	/// However, it is possible to orient the camera towards a location offset from the center of its frustum. 
-	/// This is called an "assymetric frustum" and is used (for example) in stereo views. 
-	/// It is acheived by applying an offset to the center of projection. 
-	/// This function returns the offset that has been applied, as an ofVec2f. 
-	/// For more information see http://www.orthostereo.com/geometryopengl.html.
+	/// Ordinarily, the camera is pointed straight down the center of its view
+    /// frustum.  However, it is possible to orient the camera towards a
+    /// location offset from the center of its frustum.  This is called an
+    /// "asymetric frustum" and is used (for example) in stereo views.  It is
+    /// acheived by applying an offset to the center of projection.  This
+    /// function returns the offset that has been applied, as an ofVec2f.  For
+    /// more information see http://www.orthostereo.com/geometryopengl.html.
 	///
 	/// \returns The "lens offset" applied to this camera, encoded in an ofVec2f.
 	ofVec2f getLensOffset() const { return lensOffset; };
@@ -94,8 +102,9 @@ public:
 	
 	/// \brief Get the aspect ratio of this camera's viewport.
 	///
-	/// Returns the aspect ratio of this camera's viewport. Usually this will be the ratio
-	/// of the width to height of your display. Intended for perspective cameras. 
+	/// Returns the aspect ratio of this camera's viewport. Usually this will be
+    /// the ratio of the width to height of your display. Intended for
+    /// perspective cameras.
 	/// 
 	/// \returns The aspect ratio of this camera's viewport.
 	float getAspectRatio() const {return aspectRatio; };
@@ -144,9 +153,9 @@ public:
     /// \brief Obtain the screen coordinates of a point in the 3D world.
 	///
 	/// Takes an (X,Y,Z) point in your 3D world, encoded as an ofVec3f, 
-	/// and returns the location (also as an ofVec3f) where this point would appear 
-	/// on your (two-dimensional) display. The screen position's "Z coordinate" 
-	/// is set to be the same as your camera's. 
+	/// and returns the location (also as an ofVec3f) where this point would
+    /// appear on your (two-dimensional) display. The screen position's "Z
+    /// coordinate" is set to be the same as your camera's.
 	///
 	/// \param WorldXYZ A 3D point in the world, whose screen coordinates you wish to know. 
 	/// \param viewport (Optional) A viewport. The default is ofGetCurrentViewport(). 
