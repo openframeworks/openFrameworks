@@ -55,9 +55,22 @@ public:
 	/// the simplification amount for those contours and the dpi of the font.
 	/// 
 	/// default (without dpi), non-full char set, anti aliased, 96 dpi
-	///
+    ///
+	/// \param filename The name of the font file to load.
+    /// \param fontsize The size in pixels to load the font.
+    /// \param _bAntiAliased true iff the font should be anti-aliased.
+    /// \param _bFullCharacterSet true iff the full character set should be cached.
+    /// \param makeControus true iff the vector contours should be cached.
+    /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
+    /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
-	bool loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3, int dpi=0);
+	bool loadFont(string filename,
+                  int fontsize,
+                  bool _bAntiAliased=true,
+                  bool _bFullCharacterSet=false,
+                  bool makeContours=false,
+                  float simplifyAmt=0.3,
+                  int dpi=0);
 	
 	/// \brief Has the font been loaded successfully?
 	/// \returns true if the font was loaded.
