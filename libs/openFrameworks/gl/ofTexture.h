@@ -18,7 +18,6 @@ bool ofGetUsingArbTex();
 /// in certain cases.
 ///
 /// \warning ARB textures are not available in OpenGL ES.
-///
 void ofEnableArbTex();
 
 /// \brief Use square GL_TEXTURE_2D textures.
@@ -41,7 +40,6 @@ bool ofGetUsingNormalizedTexCoords();
 /// This overrides individual ofTexture wrap settings.
 ///
 /// \sa http://www.opengl.org/sdk/docs/man4/html/glTexParameter.xhtml
-///
 void ofEnableNormalizedTexCoords();
 
 /// \brief Use pixel based texture coordinates.
@@ -80,8 +78,8 @@ void ofRestoreTextureWrap();
 ///
 /// This setting allows global control over how OpenGL scales textures. It
 /// overrides individual ofTexture min & mag filter settings.
-/// \sa ofTexture::setTextureMinMagFilter()
 ///
+/// \sa ofTexture::setTextureMinMagFilter()
 /// \param minFilter minifying filter for scaling a pixel to a smaller area.
 /// \param maxFilter maxifying filter for scaling a pixel to a larger area.
 void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR);
@@ -138,6 +136,7 @@ public:
 	int textureTarget; ///< GL texture type, either GL_TEXTURE_2D or
 	                   ///< GL_TEXTURE_RECTANGLE_ARB.
 	int glTypeInternal; ///< GL internal format, e.g. GL_RGB8.
+                        ///< \sa http://www.opengl.org/wiki/Image_Format
 	
 	float tex_t; ///< Texture horiz coordinate, ratio of width to display width. 
 	float tex_u; ///< Texture vert coordinate, ratio of height to display height.
@@ -151,16 +150,17 @@ public:
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
+
 };
 
 /// \brief Enable global texture "edge hacking" to compensate for edge artifacts.
 ///
 /// Adds a 2 pixel offset to avoid possible edge artifacts (typically a black or
-/// white border). This *very slightly* alters the image by scaling.
-///
-/// This is enabled by default.
-///
+/// white border). This *very slightly* alters the image by scaling.  This is
+/// enabled by default.
 void ofEnableTextureEdgeHack();
+
+/// \todo Add docs on why the "edge hacking" is needed.
 
 /// \brief Disable global texture "edge hacking".
 /// \sa ofEnableTextureEdgeHack()
@@ -178,7 +178,6 @@ bool ofIsTextureEdgeHackEnabled();
 /// non-power of 2 textures and to upload and draw graphical data.
 ///
 /// \sa https://www.opengl.org/wiki/Texture
-///
 class ofTexture : public ofBaseDraws {
 	public :
 
@@ -199,18 +198,6 @@ class ofTexture : public ofBaseDraws {
 	/// using it.
 	virtual ~ofTexture();
 
-	// -----------------------------------------------------------------------
-	// glInternalFormat: the format the texture will have in the graphics card (specified on allocate)
-	// http://www.opengl.org/wiki/Image_Format
-	//
-	// glFormat: format of the uploaded data, has to match the internal format although can change order
-	// pixelType: type of the uploaded data, depends on the pixels on cpu memory.
-	// http://www.opengl.org/wiki/Pixel_Transfer
-	//
-	// for most cases is not necessary to specify glFormat and pixelType on allocate
-	// and if needed for some cases like depth textures it'll be automatically guessed
-	// from the internal format if not specified
-	
 	/// \brief Allocate texture using the given settings.
 	///
 	/// This is useful if you need manual control over loading a number of
@@ -370,7 +357,9 @@ class ofTexture : public ofBaseDraws {
 	/// Similar to loadData(ofPixels &, int).
 	///
 	void loadData(const ofFloatPixels & pix, int glFormat);
-	
+
+    /// \todo Define Swizzle in the documentation.
+
 	/// \brief Swizzle RGBA to grayscale with alpha in the red channel.
 	///
 	/// Use 1 channel GL_R as luminance instead of red channel in OpenGL 3+.
@@ -619,7 +608,9 @@ class ofTexture : public ofBaseDraws {
 	float getWidth();
 
 protected:
-	void loadData(const void * data, int w, int h, int glFormat, int glType);
+    void loadData(const void * data, int w, int h, int glFormat, int glType);
+
+
 	void enableTextureTarget();
 	void disableTextureTarget();
 
