@@ -13,7 +13,7 @@ ofThread::ofThread(){
    verbose = false;
    thread.setName("Thread "+ofToString(thread.id()));
    blocking = true;
-} 
+}
 
 //------------------------------------------------- 
 ofThread::~ofThread(){
@@ -57,9 +57,9 @@ void ofThread::startThread(bool blocking, bool verbose){
 	else{
 		ofSetLogLevel(thread.name(), OF_LOG_NOTICE);
 	}
-
+    
 	thread.start(*this);
-} 
+}
 
 //------------------------------------------------- 
 bool ofThread::lock(){ 
@@ -132,6 +132,8 @@ void ofThread::waitForThread(bool stop){
 			ofLogWarning(thread.name()) << "waitForThread should only be called from outside the thread";
 			return;
 		}
+		thread.join();
+    }
         //wait for 10 seconds for thread to finish 
 		if( !thread.tryJoin(10000) ){
             ofLogError( thread.name() ) << "unable to end/join thread " << endl; 

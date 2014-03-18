@@ -6,6 +6,8 @@
 #include "Poco/Thread.h"
 #include "Poco/Runnable.h"
 
+#include "Poco/ErrorHandler.h"
+
 /// a thread base class with a built in mutex
 ///
 /// derive this class and implement threadedFunction()
@@ -187,4 +189,5 @@ class ofThread : protected Poco::Runnable{
 		void run(); 
 		
 		Poco::Thread thread;
+
 };

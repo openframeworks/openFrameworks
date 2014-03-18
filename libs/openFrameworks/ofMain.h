@@ -9,6 +9,7 @@
 #include "ofThread.h"
 #include "ofURLFileLoader.h"
 #include "ofUtils.h"
+#include "ofErrors.h"
 
 //--------------------------
 // types

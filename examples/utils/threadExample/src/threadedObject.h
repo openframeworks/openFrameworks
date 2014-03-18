@@ -27,6 +27,7 @@ class threadedObject : public ofThread{
 		//--------------------------
 		threadedObject(){
 			count = 0;
+            bTestThrowError = false;
 		}
 
 		void start(){
@@ -47,6 +48,17 @@ class threadedObject : public ofThread{
 					unlock();
 					ofSleepMillis(1 * 1000);
 				}
+                
+                if(bTestThrowError) {
+                    mutex.lock();
+                    bTestThrowError = false;
+                    mutex.unlock();
+                    
+                    // this will stop the thread, but the exception will be caught
+                    // by the built-in ofThreadErrorHandler.
+                    throw Poco::ApplicationException("We just threw a test exception!");
+                    
+                }
 			}
 		}
 
@@ -64,7 +76,28 @@ class threadedObject : public ofThread{
 			ofDrawBitmapString(str, 50, 56);
 		}
 
+        // this fucntion simply demonstates that ofThreadErrorHandler
+        // will catch exceptions thrown from within our threaded function.
+        void throwErrorTest() {
+            ofScopedLock lock(mutex); // here we use a scoped lock, instead of mutex.lock() / unlock()
+            // when an ofScopedLock is constructed, it locks the mutex that is passed to it.
+            bTestThrowError = true;
+            // when ofScopedLock called "lock" goes out of scope (that is -- when it's destructor
+            // is called), it will unlock the mutex that was locked in its constructor.
+        }
 
+        // an equivalent function would look like this
+        /*
+         void throwErrorTest() {
+            mutex.lock();
+            bTestThrowError = true;
+            mutex.unlock();
+         }
+         */
+    
+    
+protected:
+    bool bTestThrowError;
 
 };
 

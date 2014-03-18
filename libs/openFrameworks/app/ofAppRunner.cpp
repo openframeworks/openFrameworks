@@ -16,6 +16,7 @@
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
+#include "ofErrors.h"
 #include "ofURLFileLoader.h"
 #include "Poco/Net/NetSSL.h"
 
@@ -75,6 +76,8 @@ void ofExitCallback();
 // the same hack but in this case the shared_ptr will delete, old versions created the testApp as new...
 //--------------------------------------
 void ofRunApp(ofBaseApp * OFSA){
+
+    ofInitErrorHandler();
 
 	OFSAptr = ofPtr<ofBaseApp>(OFSA);
 	if(OFSAptr){
@@ -270,6 +273,8 @@ void ofExitCallback(){
 
 //--------------------------------------
 void ofRunApp(ofPtr<ofBaseApp> OFSA){
+
+    ofInitErrorHandler();
 
 	OFSAptr = OFSA;
 	if(OFSAptr){
