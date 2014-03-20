@@ -452,7 +452,7 @@ void ofApp::keyPressed(int key) {
             plane.setResolution(3, 2);
             cylinder.setResolution(4,2,0);
             cone.setResolution(4, 1, 0);
-            box.setResolution(2);
+            box.setResolution(1);
             break;
         case '2':
             bSplitFaces=false;
@@ -461,7 +461,7 @@ void ofApp::keyPressed(int key) {
             plane.setResolution(6, 4);
             cylinder.setResolution(8,4,1);
             cone.setResolution(7, 2, 1);
-            box.setResolution(4);
+            box.setResolution(2);
             break;
         case '3':
             bSplitFaces=false;
@@ -470,7 +470,7 @@ void ofApp::keyPressed(int key) {
             plane.setResolution(8,5);
             cylinder.setResolution(12, 9, 2);
             cone.setResolution(10, 5, 2);
-            box.setResolution(7);
+            box.setResolution(6);
             break;
         case '4':
             bSplitFaces=false;
@@ -479,7 +479,7 @@ void ofApp::keyPressed(int key) {
             plane.setResolution(12, 9);
             cylinder.setResolution(20, 13, 4);
             cone.setResolution(20, 9, 3);
-            box.setResolution(12);
+            box.setResolution(10);
             break;
         case 'n':
             bDrawNormals = !bDrawNormals;
