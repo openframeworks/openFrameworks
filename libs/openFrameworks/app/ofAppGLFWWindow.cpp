@@ -67,6 +67,8 @@ ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
 	ofAppPtr			= NULL;
 	instance			= this;
 
+    pixelScreenCoordScale = 1;
+
 	glVersionMinor=glVersionMajor=-1;
 	nFramesSinceWindowResized = 0;
     
@@ -217,6 +219,20 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
     glfwMakeContextCurrent(windowP);
 
     glfwGetWindowSize(windowP, &windowW, &windowH );
+
+    int framebufferW, framebufferH;
+    glfwGetFramebufferSize(windowP, &framebufferW, &framebufferH);
+    
+    //this lets us detect if the window is running in a retina mode
+    if( framebufferW != windowW ){
+        pixelScreenCoordScale = framebufferW / windowW;
+        
+        //have to update the windowShape to account for retina coords
+        if( windowMode == OF_WINDOW ){
+            setWindowShape(windowW, windowH);
+        }
+	}
+    
     ofGLReadyCallback();
 
 }
@@ -359,18 +375,23 @@ void ofAppGLFWWindow::setWindowTitle(string title){
 }
 
 //------------------------------------------------------------
+int ofAppGLFWWindow::getPixelScreenCoordScale(){
+    return pixelScreenCoordScale;
+}
+
+//------------------------------------------------------------
 ofPoint ofAppGLFWWindow::getWindowSize(){
 	if(windowMode == OF_GAME_MODE)
 	{
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(glfwGetWindowMonitor(windowP));
 		if(desktopMode){
-			return ofVec3f(desktopMode->width, desktopMode->height,0);
+			return ofVec3f(desktopMode->width*pixelScreenCoordScale, desktopMode->height*pixelScreenCoordScale,0);
 		}else{
-			return ofPoint(windowW,windowH);
+			return ofPoint(windowW*pixelScreenCoordScale,windowH*pixelScreenCoordScale);
 		}
 	}else{
 	    glfwGetWindowSize(windowP,&windowW,&windowH);
-		return ofPoint(windowW,windowH);
+		return ofPoint(windowW*pixelScreenCoordScale,windowH*pixelScreenCoordScale);
 	}
 }
 
@@ -384,10 +405,13 @@ ofPoint ofAppGLFWWindow::getWindowPosition(){
         nonFullScreenY = y; 
     }   
     
+    x *= pixelScreenCoordScale;
+    y *= pixelScreenCoordScale;
+
 	if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 		return ofPoint(x,y,0);
 	}else{
-		return ofPoint(x,y,0);
+		return ofPoint(x,y,0); //NOTE: shouldn't this be (y,x) ??????
 	}
 }
 
@@ -423,9 +447,9 @@ ofPoint ofAppGLFWWindow::getScreenSize(){
 		const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[currentMonitor]);
 		if(desktopMode){
 			if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-				return ofVec3f(desktopMode->width, desktopMode->height,0);
+				return ofVec3f(desktopMode->width*pixelScreenCoordScale, desktopMode->height*pixelScreenCoordScale,0);
 			}else{
-				return ofPoint(0,0);
+				return ofPoint(0,0); //NOTE: shouldn't this be ofVec3f(desktopMode->height*pixelScreenCoordScale, desktopMode->width*pixelScreenCoordScale, 0);
 			}
 		}else{
 			return ofPoint(0,0);
@@ -443,9 +467,9 @@ int ofAppGLFWWindow::getWidth(){
 	}
 	else {
 		if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-			return windowW;
+			return windowW * pixelScreenCoordScale;
 		}else{
-			return windowH;
+			return windowH * pixelScreenCoordScale;
 		}
 	}
 
@@ -460,9 +484,9 @@ int ofAppGLFWWindow::getHeight()
 	}
 	else {
 		if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
-			return windowH;
+			return windowH * pixelScreenCoordScale;
 		}else{
-			return windowW;
+			return windowW * pixelScreenCoordScale;
 		}
 	}
 }
@@ -474,7 +498,7 @@ int	ofAppGLFWWindow::getWindowMode(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowPosition(int x, int y){
-    glfwSetWindowPos(windowP,x,y);
+    glfwSetWindowPos(windowP,x/pixelScreenCoordScale,y/pixelScreenCoordScale);
     
     if( windowMode == OF_WINDOW ){
         nonFullScreenX=x;
@@ -484,7 +508,7 @@ void ofAppGLFWWindow::setWindowPosition(int x, int y){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowShape(int w, int h){
-	glfwSetWindowSize(windowP,w,h);
+	glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
 	// this is useful, esp if we are in the first frame (setup):
 	requestedWidth  = w;
 	requestedHeight = h;
@@ -846,10 +870,10 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
 	}
 
 	if (state == GLFW_PRESS) {
-		ofNotifyMousePressed(ofGetMouseX(), ofGetMouseY(), button);
+		ofNotifyMousePressed(ofGetMouseX()*instance->pixelScreenCoordScale, ofGetMouseY()*instance->pixelScreenCoordScale, button);
 		instance->buttonPressed=true;
 	} else if (state == GLFW_RELEASE) {
-		ofNotifyMouseReleased(ofGetMouseX(), ofGetMouseY(), button);
+		ofNotifyMouseReleased(ofGetMouseX()*instance->pixelScreenCoordScale, ofGetMouseY()*instance->pixelScreenCoordScale, button);
 		instance->buttonPressed=false;
 	}
 	instance->buttonInUse = button;
@@ -862,9 +886,9 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 	rotateMouseXY(ofGetOrientation(), x, y);
 
 	if(!instance->buttonPressed){
-		ofNotifyMouseMoved(x, y);
+		ofNotifyMouseMoved(x*instance->pixelScreenCoordScale, y*instance->pixelScreenCoordScale);
 	}else{
-		ofNotifyMouseDragged(x, y, instance->buttonInUse);
+		ofNotifyMouseDragged(x*instance->pixelScreenCoordScale, y*instance->pixelScreenCoordScale, instance->buttonInUse);
 	}
 }
 
@@ -877,7 +901,7 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, const char* dropString) {
 	string drop = dropString;
 	ofDragInfo drag;
-	drag.position.set(ofGetMouseX(),ofGetMouseY());
+	drag.position.set(ofGetMouseX()*instance->pixelScreenCoordScale, ofGetMouseY()*instance->pixelScreenCoordScale);
 	drag.files = ofSplitString(drop,"\n",true);
 #ifdef TARGET_LINUX
 	for(int i=0; i<(int)drag.files.size(); i++){
@@ -1021,7 +1045,7 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, i
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	instance->windowW = w;
 	instance->windowH = h;
-	ofNotifyWindowResized(w, h);
+	ofNotifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
 
 	instance->nFramesSinceWindowResized = 0;
 }
