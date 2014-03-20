@@ -871,7 +871,7 @@ unsigned char*  ofxCvImage::getPixels(){
 ofPixelsRef ofxCvImage::getPixelsRef(){
 	if(!bAllocated) {
 		ofLogWarning("ofxCvImage") << "getPixelsRef(): image not allocated";	
-	} else if(bRoiPixelsDirty) {
+	} else if(bPixelsDirty) {
 		IplImage * cv8bit= getCv8BitsImage();
 
 		//Note this possible introduces a bug where pixels doesn't contain the current image.
