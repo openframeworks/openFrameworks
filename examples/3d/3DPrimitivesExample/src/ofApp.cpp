@@ -450,8 +450,8 @@ void ofApp::keyPressed(int key) {
             // icosahedron //
             icoSphere.setResolution(0); // number of subdivides //
             plane.setResolution(3, 2);
-            cylinder.setResolution(4,2,2);
-            cone.setResolution(5, 2, 2);
+            cylinder.setResolution(4,2,0);
+            cone.setResolution(4, 1, 0);
             box.setResolution(2);
             break;
         case '2':
@@ -459,8 +459,8 @@ void ofApp::keyPressed(int key) {
             sphere.setResolution(8);
             icoSphere.setResolution(1);
             plane.setResolution(6, 4);
-            cylinder.setResolution(8,5);
-            cone.setResolution(7, 3, 2);
+            cylinder.setResolution(8,4,1);
+            cone.setResolution(7, 2, 1);
             box.setResolution(4);
             break;
         case '3':
@@ -468,8 +468,8 @@ void ofApp::keyPressed(int key) {
             sphere.setResolution(16);
             icoSphere.setResolution(2);
             plane.setResolution(8,5);
-            cylinder.setResolution(12, 9, 3);
-            cone.setResolution(10, 5, 3);
+            cylinder.setResolution(12, 9, 2);
+            cone.setResolution(10, 5, 2);
             box.setResolution(7);
             break;
         case '4':
