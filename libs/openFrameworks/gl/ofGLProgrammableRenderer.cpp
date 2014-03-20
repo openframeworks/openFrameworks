@@ -1710,7 +1710,7 @@ void ofGLProgrammableRenderer::setup(){
 	glGetError();
 
 #ifdef TARGET_RASPBERRY_PI
-	uniqueShader = false;
+	uniqueShader = true;
 #else
 	uniqueShader = false;
 #endif
