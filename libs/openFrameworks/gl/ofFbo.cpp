@@ -524,6 +524,8 @@ void ofFbo::allocate(Settings _settings) {
     settings.depthStencilInternalFormat = _settings.depthStencilInternalFormat;
     settings.depthStencilAsTexture = _settings.depthStencilAsTexture;
     settings.textureTarget = _settings.textureTarget;
+    settings.wrapModeHorizontal = _settings.wrapModeHorizontal;
+    settings.wrapModeVertical = _settings.wrapModeVertical;
 
 	// if we want MSAA, create a new fbo for textures
 	#ifndef TARGET_OPENGLES
@@ -563,9 +565,12 @@ void ofFbo::allocate(Settings _settings) {
 	// unbind it
 	unbind();
 
-
-	// this should never happen
+    /* UNCOMMENT OUTSIDE OF DOING RELEASES
+	
+    // this should never happen
 	if(settings != _settings) ofLogWarning("ofFbo") << "allocation not complete, passed settings not equal to created ones, this is an internal OF bug";
+    
+    */
 }
 
 bool ofFbo::isAllocated(){
