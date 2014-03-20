@@ -494,7 +494,7 @@ void ofFbo::allocate(Settings _settings) {
 		if(_settings.useDepth && _settings.useStencil){
 			stencilBuffer = depthBuffer = createAndAttachRenderbuffer(_settings.depthStencilInternalFormat, depthAttachment);
 			retainRB(stencilBuffer);
-			retainRB(depthBuffer);	
+			retainRB(depthBuffer);
 		}else if(_settings.useDepth){
 			depthBuffer = createAndAttachRenderbuffer(_settings.depthStencilInternalFormat, depthAttachment);
 			retainRB(depthBuffer);
@@ -518,7 +518,12 @@ void ofFbo::allocate(Settings _settings) {
 			#endif
 		}
 	}
-	settings.depthStencilInternalFormat = _settings.depthStencilInternalFormat;
+    
+    settings.useDepth = _settings.useDepth;
+    settings.useStencil = _settings.useStencil;
+    settings.depthStencilInternalFormat = _settings.depthStencilInternalFormat;
+    settings.depthStencilAsTexture = _settings.depthStencilAsTexture;
+    settings.textureTarget = _settings.textureTarget;
 
 	// if we want MSAA, create a new fbo for textures
 	#ifndef TARGET_OPENGLES
