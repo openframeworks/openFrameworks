@@ -11,6 +11,7 @@ class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	public :
 	
 	ofxiOSVideoGrabber();
+	~ofxiOSVideoGrabber();
 	
 	//needs implementing
 	vector <ofVideoDevice> listDevices();	
