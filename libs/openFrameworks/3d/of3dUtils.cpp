@@ -1,23 +1,40 @@
 #include "of3dUtils.h"
 #include "ofGraphics.h"
+#include "of3dGraphics.h"
 
+
+ofVboMesh & cachedAxesVbo(){
+    static ofVboMesh * axis = new ofVboMesh(ofMesh::axis());
+    return *axis;
+}
+
+/** @brief Draws x,y,z axes representing the current reference frame
+ *  @detail Axes are drawn in red (+x), green (+y) and blue (+z)
+ *	@param size size at which to draw the axes
+ **/
 void ofDrawAxis(float size) {
-	ofPushStyle();
-	ofSetLineWidth(3);
-
-	// draw x axis
-	ofSetColor(ofColor::red);
-	ofLine(0, 0, 0, size, 0, 0);
-	
-	// draw y axis
-	ofSetColor(ofColor::green);
-	ofLine(0, 0, 0, 0, size, 0);
-
-	// draw z axis
-	ofSetColor(ofColor::blue);
-	ofLine(0, 0, 0, 0, 0, size);
-	
-	ofPopStyle();
+	if (ofGetGLProgrammableRenderer()){
+		ofPushMatrix();
+		ofScale(size, size,size);
+		cachedAxesVbo().draw();
+		ofPopMatrix();
+	} else {
+		ofPushStyle();
+		ofSetLineWidth(3);
+		
+		// draw x axis
+		ofSetColor(ofColor::red);
+		ofLine(0, 0, 0, size, 0, 0);
+		
+		// draw y axis
+		ofSetColor(ofColor::green);
+		ofLine(0, 0, 0, 0, size, 0);
+		
+		// draw z axis
+		ofSetColor(ofColor::blue);
+		ofLine(0, 0, 0, 0, 0, size);
+		ofPopStyle();
+	}
 }
 
 //--------------------------------------------------------------
@@ -119,11 +136,52 @@ void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
 	
 	//draw cone
 	ofMatrix4x4 mat;
-	mat.makeRotationMatrix(ofVec3f(0,0,1), end - start);
+	mat.makeRotationMatrix( ofVec3f(0,1,0), start - end );
 	ofPushMatrix();
 	ofTranslate(end);
-	glMultMatrixf(mat.getPtr());
-	ofTranslate(0,0,-headSize);
-	ofCone(headSize, headSize);	
+	ofMultMatrix(mat.getPtr());
+	ofTranslate(0, headSize*0.5 ,0);
+    ofDrawCone(headSize, headSize*2.);
 	ofPopMatrix();
 }
+//--------------------------------------------------------------
+void ofDrawRotationAxes(float radius, float stripWidth, int circleRes){
+	
+	ofMesh axisXMesh;
+	axisXMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	
+	ofMesh axisYMesh;
+	axisYMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	
+	ofMesh axisZMesh;
+	axisZMesh.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
+	
+	for (int j = 0; j<=circleRes; j++) {
+		float x = cos(TWO_PI * j/circleRes);
+		float y = sin(TWO_PI * j/circleRes);
+		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));
+		axisXMesh.addVertex(ofVec3f(x*radius, y*radius, -stripWidth));
+		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));
+		axisXMesh.addVertex(ofVec3f(x*radius, y*radius,  stripWidth));
+		
+		axisYMesh.addColor(ofFloatColor(ofFloatColor::blue));
+		axisYMesh.addVertex(ofVec3f(x*radius, -stripWidth, y*radius));
+		axisYMesh.addColor(ofFloatColor(ofFloatColor::blue));
+		axisYMesh.addVertex(ofVec3f(x*radius,  stripWidth, y*radius));
+		
+		axisZMesh.addColor(ofFloatColor(ofFloatColor::green));
+		axisZMesh.addVertex(ofVec3f(-stripWidth, x*radius, y*radius));
+		axisZMesh.addColor(ofFloatColor(ofFloatColor::green));
+		axisZMesh.addVertex(ofVec3f( stripWidth, x*radius, y*radius));
+	}
+	
+	ofPushStyle();
+	ofEnableDepthTest();
+	axisXMesh.draw();
+	axisYMesh.draw();
+	axisZMesh.draw();
+	ofDrawAxis(radius);
+	ofPopStyle();
+	
+}
+

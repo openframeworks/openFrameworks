@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
 // openFrameworks wizard for Codeblocks on Linux
-// Created By: Pierre Proske pierre@digitalstar.net
-// www.digitalstar.net
+// Created By: Pierre Proske (http://www.digitalstar.net)
+// Original Windows CB Wizard created by Roxlu (http://www.roxlu.com/)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -65,8 +65,8 @@ function SetupCustom()
 	
 	// create project
 	g_full_proj_path = g_of_project_dir + _T("/") + g_of_project_name +_T("/");
-	local commands_string = g_of_project_dir + _T("/../../scripts/linux/createProjects.py ") + g_full_proj_path; 
-	//ShowMessage(commands_string);
+	local commands_string = _T("projectGenerator ") + g_full_proj_path; 
+	ShowMessage(commands_string);
 	
 	// add Addons		
 	local addon_count = g_selected_addons.GetCount();
@@ -94,7 +94,6 @@ function SetupCustom()
 			
 return true;	
 }
-
 
 
 

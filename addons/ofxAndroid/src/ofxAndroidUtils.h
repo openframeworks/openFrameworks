@@ -5,8 +5,7 @@
  *      Author: arturo
  */
 
-#ifndef OFANDROIDUTILS_H_
-#define OFANDROIDUTILS_H_
+#pragma once
 
 #include <jni.h>
 #include "ofxAndroidApp.h"
@@ -26,6 +25,10 @@ void ofxAndroidAlertBox(string msg);
 int ofxAndroidProgressBox(string msg);
 void ofxAndroidDismissProgressBox(int id);
 void ofxAndroidOkCancelBox(string msg);
+void ofxAndroidYesNoBox(string msg);
+void ofxAndroidAlertTextBox(string question, string text);
+string ofxAndroidGetTextBoxResult();
+bool ofxAndroidAlertListBox(string title, const vector<string> & list);
 
 void ofxAndroidToast(string msg);
 
@@ -40,27 +43,16 @@ string ofxAndroidGetStringRes(string id);
 
 string ofxAndroidRandomUUID();
 
-//-------------------------------------
-// this functions are only for internal use
-void ofPauseVideoGrabbers();
-void ofResumeVideoGrabbers();
+void ofxAndroidMonitorNetworkState();
 
-void ofReloadAllImageTextures();
+void ofxAndroidLaunchBrowser(string url);
 
-void ofUnloadAllFontTextures();
-void ofReloadAllFontTextures();
-
-void  ofUpdateBitmapCharacterTexture();
-
-void ofxAndroidSoundStreamPause();
-void ofxAndroidSoundStreamResume();
+void ofxAndroidNotifyLoadPercent(float percent);
 
 bool ofxAndroidCheckSDCardMounted();
 
-//this is just to fix a problem with undefined symbols
-inline void ofFixSoundStreamInclude(){
-	ofSoundStreamClose();
-}
+void ofxAndroidEnableMulticast();
+void ofxAndroidDisableMulticast();
 
 inline void ofxAndroidSetViewItemChecked(string item_name, bool checked){
 	jclass javaClass = ofGetJavaOFAndroid();
@@ -77,4 +69,12 @@ inline void ofxAndroidSetViewItemChecked(string item_name, bool checked){
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setViewItemChecked,ofGetJNIEnv()->NewStringUTF(item_name.c_str()),checked);
 }
-#endif /* OFANDROIDUTILS_H_ */
+
+class ofxAndroidEventsClass{
+public:
+	ofEvent<bool> okPressed;
+	ofEvent<bool> cancelPressed;
+	ofEvent<bool> networkConnected;
+};
+
+ofxAndroidEventsClass & ofxAndroidEvents();

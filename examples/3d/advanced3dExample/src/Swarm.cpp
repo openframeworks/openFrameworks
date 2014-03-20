@@ -63,11 +63,11 @@ void swarm::customDraw(){
 	light.enable();
 	light.setPosition(particles[0].position);
 
-	for(int i = 0; i < particles.size(); i++){
+	for(unsigned int i = 0; i < particles.size(); i++){
 		ofPushStyle();
 		ofSetColor(particles[i].color);
 
-		ofSphere(particles[i].position, 1.0);
+		ofDrawSphere(particles[i].position, 1.0);
 
 		ofPopStyle();
 	}
@@ -82,7 +82,7 @@ void swarm::customDraw(){
 
 	// Render light as white sphere
 	ofSetColor(255, 255, 255);
-	ofSphere(light.getPosition(), 2.0);
+	ofDrawSphere(light.getPosition(), 2.0);
 	ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL);
 	ofDrawBitmapString(" light", particles[0].position);
 	ofPopStyle();
@@ -94,7 +94,7 @@ void swarm::update(){
 	float dt = ofGetLastFrameTime();
 
 	// Update positions, velocities
-	for(int i = 0; i < particles.size(); i++){
+	for(unsigned int i = 0; i < particles.size(); i++){
 
 		// -----------
 		//

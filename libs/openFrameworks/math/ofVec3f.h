@@ -13,7 +13,10 @@ public:
     
     static const int DIM = 3;
 	
-	ofVec3f( float _x=0.f, float _y=0.f, float _z=0.f );
+	ofVec3f();
+	ofVec3f( float _x, float _y, float _z=0 );
+	/// assigns scalar to x, y, and z
+	explicit ofVec3f( float _scalar );
 	
     ofVec3f( const ofVec2f& vec );
     ofVec3f( const ofVec4f& vec );
@@ -38,6 +41,7 @@ public:
     //
     void set( float _x, float _y, float _z = 0 );
     void set( const ofVec3f& vec );
+	void set( float _scalar );
 	
     // Check similarity/equality.
     //
@@ -78,7 +82,7 @@ public:
     ofVec3f& operator/=( const float f );
 	
 	friend ostream& operator<<(ostream& os, const ofVec3f& vec);
-	friend istream& operator>>(istream& is, const ofVec3f& vec);
+	friend istream& operator>>(istream& is, ofVec3f& vec);
 	
     //Scale
     //
@@ -163,7 +167,8 @@ public:
     // Length
     //
     float length() const;
-    float squareLength() const;
+    float lengthSquared() const;
+
     /**
 	 * Angle (deg) between two vectors.
 	 * This is an unsigned relative angle from 0 to 180.
@@ -205,9 +210,6 @@ public:
 	
     // getPerpendicular
     ofVec3f perpendiculared( const ofVec3f& vec ) const;
-	
-    // squareLength
-    float lengthSquared() const;
     
     // use getMapped
     ofVec3f  mapped( const ofVec3f& origin,
@@ -255,12 +257,20 @@ ofVec3f operator/( float f, const ofVec3f& vec );
 
 inline ofVec3f::ofVec3f( const ofVec2f& vec ):x(vec.x), y(vec.y), z(0) {}
 inline ofVec3f::ofVec3f( const ofVec4f& vec ):x(vec.x), y(vec.y), z(vec.z) {}
+inline ofVec3f::ofVec3f(): x(0), y(0), z(0) {};
+inline ofVec3f::ofVec3f( float _all ): x(_all), y(_all), z(_all) {};
 inline ofVec3f::ofVec3f( float _x, float _y, float _z ):x(_x), y(_y), z(_z) {}
 
 
 // Getters and Setters.
 //
 //
+inline void ofVec3f::set( float _scalar ) {
+	x = _scalar;
+	y = _scalar;
+	z = _scalar;
+}
+
 inline void ofVec3f::set( float _x, float _y, float _z ) {
 	x = _x;
 	y = _y;
@@ -1004,10 +1014,6 @@ inline float ofVec3f::length() const {
 }
 
 inline float ofVec3f::lengthSquared() const {
-	return squareLength();
-}
-
-inline float ofVec3f::squareLength() const {
 	return (float)(x*x + y*y + z*z);
 }
 

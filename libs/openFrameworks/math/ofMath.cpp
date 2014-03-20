@@ -55,21 +55,21 @@ float ofRandom(float x, float y) {
 	if (x == y) return x; 			// float == ?, wise? epsilon?
 	high = MAX(x,y);
 	low = MIN(x,y);
-	randNum = low + ((high-low) * rand()/(RAND_MAX + 1.0));
+	randNum = low + ((high-low) * rand()/(RAND_MAX + 1.0f));
 	return randNum;
 }
 
 //--------------------------------------------------
 float ofRandomf() {
 	float randNum = 0;
-	randNum = (rand()/(RAND_MAX + 1.0)) * 2.0 - 1.0;
+	randNum = (rand()/(RAND_MAX + 1.0f)) * 2.0f - 1.0f;
 	return randNum;
 }
 
 //--------------------------------------------------
 float ofRandomuf() {
 	float randNum = 0;
-	randNum = rand()/(RAND_MAX + 1.0);
+	randNum = rand()/(RAND_MAX + 1.0f);
 	return randNum;
 }
 
@@ -86,7 +86,7 @@ float ofNormalize(float value, float min, float max){
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
 
 	if (fabs(inputMin - inputMax) < FLT_EPSILON){
-		ofLog(OF_LOG_WARNING, "ofMap: avoiding possible divide by zero, check inputMin and inputMax\n");
+		ofLogWarning("ofMath") << "ofMap(): avoiding possible divide by zero, check inputMin and inputMax: " << inputMin << " " << inputMax;
 		return outputMin;
 	} else {
 		float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
@@ -107,7 +107,7 @@ float ofMap(float value, float inputMin, float inputMax, float outputMin, float 
 
 //--------------------------------------------------
 float ofDist(float x1, float y1, float x2, float y2) {
-	return sqrt(double((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
 //--------------------------------------------------
@@ -148,19 +148,25 @@ float ofLerp(float start, float stop, float amt) {
 	return start + (stop-start) * amt;
 }
 
-//--------------------------------------------------
-float ofWrapRadians(float angle, float from, float to){
-	while (angle > to ) angle -= TWO_PI;
-	while (angle < from ) angle += TWO_PI;
-	return angle;
+float ofWrap(float value, float from, float to){
+	// algorithm from http://stackoverflow.com/a/5852628/599884
+	if(from > to){
+		swap(from, to);
+	}
+	float cycle = to - from;
+	if(cycle == 0){
+		return to;
+	}
+	return value - cycle * floor((value - from) / cycle);
 }
 
+//--------------------------------------------------
+float ofWrapRadians(float angle, float from, float to){
+	return ofWrap(angle, from, to);
+}
 
 float ofWrapDegrees(float angle, float from, float to){
-	while (angle > to ) angle-=360;
-	while (angle < from ) angle+=360;
-	return angle;
-
+	return ofWrap(angle, from, to);
 }
 
 //--------------------------------------------------
@@ -175,12 +181,12 @@ float ofLerpRadians(float currentAngle, float targetAngle, float pct) {
 
 //--------------------------------------------------
 float ofRandomWidth() {
-	return ofRandom(0, ofGetWidth());
+	return ofRandom(0.f, ofGetWidth());
 }
 
 //--------------------------------------------------
 float ofRandomHeight() {
-	return ofRandom(0, ofGetHeight());
+	return ofRandom(0.f, ofGetHeight());
 }
 
 //--------------------------------------------------
@@ -265,7 +271,7 @@ bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint lin
 
 //--------------------------------------------------
 ofPoint ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
-    float tp = 1.0 - t;
+    float tp = 1.0f - t;
     return a*tp*tp*tp + b*3*t*tp*tp + c*3*t*t*tp + d*t*t*t;
 }
 
@@ -307,3 +313,5 @@ float ofAngleDifferenceDegrees(float currentAngle, float targetAngle) {
 float ofAngleDifferenceRadians(float currentAngle, float targetAngle) {
 	return  ofWrapRadians(targetAngle - currentAngle);
 }
+
+

@@ -33,14 +33,18 @@ void ofSoundShutdown();
 #define OF_SOUND_PLAYER_TYPE ofOpenALSoundPlayer
 #endif
 
-#ifdef TARGET_OF_IPHONE
-#include "ofxOpenALSoundPlayer.h"
-#define OF_SOUND_PLAYER_TYPE ofxOpenALSoundPlayer
+#ifdef TARGET_OF_IOS
+#include "ofxiOSSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxiOSSoundPlayer
 #endif
 
 #ifdef TARGET_ANDROID
 #include "ofxAndroidSoundPlayer.h"
 #define OF_SOUND_PLAYER_TYPE ofxAndroidSoundPlayer
+inline void ofSoundShutdown(){}
+#endif
+
+#ifdef TARGET_LINUX_ARM
 inline void ofSoundShutdown(){}
 #endif
 
@@ -54,13 +58,13 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 		void setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer);
 		ofPtr<ofBaseSoundPlayer> getPlayer();
 
-		void loadSound(string fileName, bool stream = false);
+		bool loadSound(string fileName, bool stream = false);
 		void unloadSound();
 		void play();
 		void stop();
 
 		void setVolume(float vol);
-		void setPan(float vol);
+		void setPan(float vol); // -1 to 1 
 		void setSpeed(float spd);
 		void setPaused(bool bP);
 		void setLoop(bool bLp);

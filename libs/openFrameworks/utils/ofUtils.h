@@ -9,13 +9,14 @@
 	#include <shellapi.h>
 #endif
 
+#include "Poco/Path.h"
 
 int 	ofNextPow2(int input);
 
 void	ofResetElapsedTimeCounter();		// this happens on the first frame
 float 	ofGetElapsedTimef();
-int		ofGetElapsedTimeMillis();
-unsigned long ofGetElapsedTimeMicros();
+unsigned long long ofGetElapsedTimeMillis();
+unsigned long long ofGetElapsedTimeMicros();
 int 	ofGetFrameNum();
 
 int 	ofGetSeconds();
@@ -25,8 +26,8 @@ int 	ofGetHours();
 //number of seconds since 1970
 unsigned int ofGetUnixTime();
 
-unsigned long ofGetSystemTime( );			// system time in milliseconds;
-unsigned long ofGetSystemTimeMicros( );			// system time in microseconds;
+unsigned long long ofGetSystemTime( );			// system time in milliseconds;
+unsigned long long ofGetSystemTimeMicros( );			// system time in microseconds;
 
 		//returns 
 string ofGetTimestampString();
@@ -38,7 +39,7 @@ int     ofGetMonth();
 int     ofGetDay();
 int     ofGetWeekday();
 
-void 	ofLaunchBrowser(string url);
+void 	ofLaunchBrowser(string url, bool uriEncodeQuery=false);
 
 void	ofEnableDataPath();
 void	ofDisableDataPath();
@@ -73,9 +74,11 @@ bool ofContains(const vector<T>& values, const T& target) {
 	return ofFind(values, target) != values.size();
 }
 
+void ofSetWorkingDirectoryToDefault();
+
 //set the root path that ofToDataPath will use to search for files relative to the app
 //the path must have a trailing slash (/) !!!!
-void	ofSetDataPathRoot( string root );
+void ofSetDataPathRoot( string root );
 
 template <class T>
 string ofToString(const T& value){
@@ -84,10 +87,27 @@ string ofToString(const T& value){
 	return out.str();
 }
 
+/// like sprintf "%4f" format, in this example precision=4
 template <class T>
 string ofToString(const T& value, int precision){
 	ostringstream out;
 	out << fixed << setprecision(precision) << value;
+	return out.str();
+}
+
+/// like sprintf "% 4d" or "% 4f" format, in this example width=4, fill=' '
+template <class T>
+string ofToString(const T& value, int width, char fill ){
+	ostringstream out;
+	out << fixed << setfill(fill) << setw(width) << value;
+	return out.str();
+}
+
+/// like sprintf "%04.2d" or "%04.2f" format, in this example precision=2, width=4, fill='0'
+template <class T>
+string ofToString(const T& value, int precision, int width, char fill ){
+	ostringstream out;
+	out << fixed << setfill(fill) << setw(width) << setprecision(precision) << value;
 	return out.str();
 }
 
@@ -105,6 +125,21 @@ string ofToString(const vector<T>& values) {
 	out << "}";
 	return out.str();
 }
+
+template<class T>
+T ofFromString(const string & value){
+	T data;
+    stringstream ss;
+    ss << value;
+    ss >> data;
+    return data;
+}
+
+template<>
+string ofFromString(const string & value);
+
+template<>
+const char * ofFromString(const string & value);
 
 template <class T>
 string ofToHex(const T& value) {
@@ -132,6 +167,7 @@ string ofHexToString(const string& stringHexString);
 int ofToInt(const string& intString);
 char ofToChar(const string& charString);
 float ofToFloat(const string& floatString);
+double ofToDouble(const string& doubleString);
 bool ofToBool(const string& boolString);
 
 template <class T>
@@ -156,7 +192,11 @@ char ofBinaryToChar(const string& value);
 float ofBinaryToFloat(const string& value);
 string ofBinaryToString(const string& value);
 
+
 string 	ofGetVersionInfo();
+unsigned int ofGetVersionMajor();
+unsigned int ofGetVersionMinor();
+unsigned int ofGetVersionPatch();
 
 void	ofSaveScreen(string filename);
 void	ofSaveFrame(bool bUseViewport = false);
@@ -167,6 +207,7 @@ vector <string> ofSplitString(const string & source, const string & delimiter, b
 string ofJoinString(vector <string> stringElements, const string & delimiter);
 void ofStringReplace(string& input, string searchStr, string replaceStr);
 bool ofIsStringInString(string haystack, string needle);
+int ofStringTimesInString(string haystack, string needle);
 
 string ofToLower(const string & src);
 string ofToUpper(const string & src);

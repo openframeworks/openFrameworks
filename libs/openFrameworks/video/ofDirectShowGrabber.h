@@ -17,10 +17,13 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		ofDirectShowGrabber();
 		virtual ~ofDirectShowGrabber();
 
-		void					listDevices();
+		vector<ofVideoDevice>	listDevices();
 		bool					initGrabber(int w, int h);
 		void					update();
 		bool					isFrameNew();
+		
+		bool					setPixelFormat(ofPixelFormat pixelFormat);
+		ofPixelFormat			getPixelFormat();		
 
 		unsigned char		* 	getPixels();
 		ofPixelsRef				getPixelsRef();

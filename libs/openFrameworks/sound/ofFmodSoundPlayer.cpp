@@ -51,10 +51,11 @@ float * ofFmodSoundGetSpectrum(int nBands){
 
 	// 	check what the user wants vs. what we can do:
 	if (nBands > 8192){
-		ofLog(OF_LOG_ERROR, "error in ofFmodSoundGetSpectrum, the maximum number of bands is 8192 - you asked for %i we will return 8192", nBands);
+		ofLogWarning("ofFmodSoundPlayer") << "ofFmodGetSpectrum(): requested number of bands " << nBands << ", using maximum of 8192";
 		nBands = 8192;
 	} else if (nBands <= 0){
-		ofLog(OF_LOG_ERROR, "error in ofFmodSoundSpectrum, you've asked for %i bands, minimum is 1", nBands);
+		ofLogWarning("ofFmodSoundPlayer") << "ofFmodGetSpectrum(): requested number of bands " << nBands << ", using minimum of 1";
+		nBands = 1;
 		return fftInterpValues_;
 	}
 
@@ -101,7 +102,7 @@ float * ofFmodSoundGetSpectrum(int nBands){
 				currentBand++;
 				// safety check:
 				if (currentBand >= nBands){
-					ofLog(OF_LOG_ERROR, "ofFmodSoundGetSpectrum - currentBand >= nBands");
+					ofLogWarning("ofFmodSoundPlayer") << "ofFmodGetSpectrum(): currentBand >= nBands";
 				}
 
 				fftInterpValues_[currentBand] += one_m_fraction * fftValues_[i];
@@ -132,7 +133,7 @@ float * ofFmodSoundGetSpectrum(int nBands){
 ofFmodSoundPlayer::ofFmodSoundPlayer(){
 	bLoop 			= false;
 	bLoadedOk 		= false;
-	pan 			= 0;
+	pan 			= 0.0; // range for oF is -1 to 1
 	volume 			= 1.0f;
 	internalFreq 	= 44100;
 	speed 			= 1;
@@ -170,7 +171,7 @@ void ofFmodSoundPlayer::closeFmod(){
 }
 
 //------------------------------------------------------------
-void ofFmodSoundPlayer::loadSound(string fileName, bool stream){
+bool ofFmodSoundPlayer::loadSound(string fileName, bool stream){
 
 	fileName = ofToDataPath(fileName);
 
@@ -203,13 +204,14 @@ void ofFmodSoundPlayer::loadSound(string fileName, bool stream){
 
 	if (result != FMOD_OK){
 		bLoadedOk = false;
-		ofLog(OF_LOG_ERROR,"ofFmodSoundPlayer: Could not load sound file %s", fileName.c_str() );
+		ofLogError("ofFmodSoundPlayer") << "loadSound(): could not load \"" << fileName << "\"";
 	} else {
 		bLoadedOk = true;
 		FMOD_Sound_GetLength(sound, &length, FMOD_TIMEUNIT_PCM);
 		isStreaming = stream;
 	}
 
+	return bLoadedOk;
 }
 
 //------------------------------------------------------------
@@ -305,10 +307,11 @@ int ofFmodSoundPlayer::getPositionMS(){
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setPan(float p){
+	pan = p;
+	p = ofClamp(p, -1, 1);
 	if (getIsPlaying() == true){
 		FMOD_Channel_SetPan(channel,p);
 	}
-	pan = p;
 }
 
 
@@ -362,7 +365,7 @@ void ofFmodSoundPlayer::play(){
 
 	FMOD_Channel_GetFrequency(channel, &internalFreq);
 	FMOD_Channel_SetVolume(channel,volume);
-	FMOD_Channel_SetPan(channel,pan);
+	setPan(pan);
 	FMOD_Channel_SetFrequency(channel, internalFreq * speed);
 	FMOD_Channel_SetMode(channel,  (bLoop == true) ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
 
