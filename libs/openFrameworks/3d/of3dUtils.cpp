@@ -136,12 +136,12 @@ void ofDrawArrow(const ofVec3f& start, const ofVec3f& end, float headSize) {
 	
 	//draw cone
 	ofMatrix4x4 mat;
-	mat.makeRotationMatrix(end - start, ofVec3f(0,1,0));
+	mat.makeRotationMatrix( ofVec3f(0,1,0), start - end );
 	ofPushMatrix();
 	ofTranslate(end);
 	ofMultMatrix(mat.getPtr());
 	ofTranslate(0, headSize*0.5 ,0);
-	ofDrawCone(headSize, headSize);
+    ofDrawCone(headSize, headSize*2.);
 	ofPopMatrix();
 }
 //--------------------------------------------------------------
