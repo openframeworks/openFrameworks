@@ -10,7 +10,9 @@ public:
 	~ofGstVideoPlayer();
 
 	/// needs to be called before loadMovie
-	void 	setPixelFormat(ofPixelFormat pixelFormat);
+	bool 	setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat	getPixelFormat();
+	
 	bool 	loadMovie(string uri);
 
 	void 	update();
@@ -38,9 +40,9 @@ public:
 	bool  	getIsMovieDone();
 
 	void 	setPosition(float pct);
-	void 	setVolume(int volume);
+	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
-	int		getLoopState();
+	ofLoopType 	getLoopState();
 	void 	setSpeed(float speed);
 	void 	close();
 

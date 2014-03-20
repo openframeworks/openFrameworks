@@ -332,7 +332,7 @@ typedef OSType                          BigEndianOSType;
 
 
 /*
-    Implement ÅLtoB and ÅBtoL
+    Implement ~LtoB and ~BtoL
 */
 #define EndianS16_LtoB(value)              ((SInt16)Endian16_Swap(value))
 #define EndianS16_BtoL(value)                ((SInt16)Endian16_Swap(value))
@@ -351,7 +351,7 @@ typedef OSType                          BigEndianOSType;
 
 
 /*
-    Implement low level Å_Swap functions.
+    Implement low level ~_Swap functions.
   
        extern UInt16 Endian16_Swap(UInt16 value);
      extern UInt32 Endian32_Swap(UInt32 value);

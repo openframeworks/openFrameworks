@@ -95,7 +95,7 @@ void demoParticle::update(){
 			int closest = -1; 
 			float closestDist = 9999999;
 			
-			for(int i = 0; i < attractPoints->size(); i++){
+			for(unsigned int i = 0; i < attractPoints->size(); i++){
 				float lenSq = ( attractPoints->at(i)-pos ).lengthSquared();
 				if( lenSq < closestDist ){
 					closestDist = lenSq;
@@ -136,7 +136,7 @@ void demoParticle::update(){
 	
 	
 	//3 - (optional) LIMIT THE PARTICLES TO STAY ON SCREEN 
-	//we could also pass in bounds to check - or alternatively do this at the testApp level
+	//we could also pass in bounds to check - or alternatively do this at the ofApp level
 	if( pos.x > ofGetWidth() ){
 		pos.x = ofGetWidth();
 		vel.x *= -1.0;

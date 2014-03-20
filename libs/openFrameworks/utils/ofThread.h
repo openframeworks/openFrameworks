@@ -51,13 +51,7 @@ class ofThread : protected Poco::Runnable{
 		void unlock();
 		
 		/// stop the thread
-		///
-		/// set close to true if you want the thread to exit immediately
-		///
-		/// set close to false if you want to signal the thread to exit but not
-		/// have it stop immediately, you will need to wait for it to finish
-		/// manually by calling waitForThread()
-		void stopThread(bool close = true);
+		void stopThread();
 		
 		/// wait for the thread to exit
 		///
@@ -65,10 +59,10 @@ class ofThread : protected Poco::Runnable{
 		/// sure the thread is cleaned up, otherwise you will get errors on exit
 		///
 		/// set stop to true if you want to signal the thread to exit before
-		/// waiting, this is the equivalent to calling stopThread(false)
+		/// waiting, this is the equivalent to calling stopThread()
 		///
 		/// set stop to false if you have already signalled the thread to exit 
-		/// by calling stopThread(false) and only need to wait for it to finish
+		/// by calling stopThread() and only need to wait for it to finish
 		///
 		void waitForThread(bool stop = true);
 		
@@ -133,6 +127,9 @@ class ofThread : protected Poco::Runnable{
 		/// returns true if this the currently active thread
 		bool isCurrentThread();
 		
+
+		Poco::Thread & getPocoThread();
+
 		/// returns true if the main app thread is the currently active thread
 		static bool isMainThread();
 		

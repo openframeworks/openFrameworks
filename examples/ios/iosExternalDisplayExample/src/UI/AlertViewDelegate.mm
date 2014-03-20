@@ -7,8 +7,8 @@
 //
 
 #import "AlertViewDelegate.h"
-#import "ofxiPhoneExternalDisplay.h"
-#import "testApp.h"
+#import "ofxiOSExternalDisplay.h"
+#import "ofApp.h"
 
 @implementation AlertViewDelegate
 
@@ -17,20 +17,20 @@
     if(buttonIndex == 0){
         // do nothing.
     } else if(buttonIndex == 1){
-        ofxiPhoneExternalDisplay::displayOnExternalScreenWithPreferredDisplayMode();
+        ofxiOSExternalDisplay::displayOnExternalScreenWithPreferredDisplayMode();
     } else {
-        vector<ofxiPhoneExternalDisplayMode> displayModes;
-        displayModes = ofxiPhoneExternalDisplay::getExternalDisplayModes();
+        vector<ofxiOSExternalDisplayMode> displayModes;
+        displayModes = ofxiOSExternalDisplay::getExternalDisplayModes();
         
         if(displayModes.size()==0){
             return; // no display modes found.
         }
         
         int i = buttonIndex - 2;
-        ofxiPhoneExternalDisplay::displayOnExternalScreen(displayModes[i]);
+        ofxiOSExternalDisplay::displayOnExternalScreen(displayModes[i]);
     }
     
-    ((testApp *)ofGetAppPtr())->popupDismissed();
+    ((ofApp *)ofGetAppPtr())->popupDismissed();
 }
 
 @end

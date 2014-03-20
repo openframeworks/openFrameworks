@@ -1,6 +1,6 @@
 #include "ofQtUtils.h"
 
-#if defined (TARGET_WIN32) || defined (TARGET_OSX)
+#if defined (TARGET_WIN32) || (defined TARGET_OSX && !defined(MAC_OS_X_VERSION_10_7))
 #include "ofUtils.h"
 #include "ofGraphics.h"
 static bool bQuicktimeInitialized = false;
@@ -18,15 +18,15 @@ void initializeQuicktime(){
 		#ifdef TARGET_WIN32
 			myErr = InitializeQTML(0);
 			if (myErr != noErr){
-				ofLog(OF_LOG_ERROR, "-----------------------------------------------------");
-				ofLog(OF_LOG_ERROR, "sorry, there is a problem with quicktime starting up... please check!");
+				ofLogFatalError("ofQtUtils.h") << "------------------------------------------------------";
+				ofLogFatalError("ofQtUtils.h") << "sorry, there wasa problem initing quicktime... exiting";
                 OF_EXIT_APP(0);
 			}
 		#endif
 		myErr = EnterMovies ();
 		if (myErr != noErr){
-			ofLog(OF_LOG_ERROR, "-----------------------------------------------------");
-			ofLog(OF_LOG_ERROR, "sorry, there is a problem with quicktime starting up... please check!");
+			ofLogFatalError("ofQtUtils.h") << "------------------------------------------------------";
+			ofLogFatalError("ofQtUtils.h") << "sorry, there is a problem initing quicktime... exiting";
 			OF_EXIT_APP(0);
 		}
 
@@ -151,7 +151,9 @@ void MovieGetStaticFrameRate(Movie inMovie, double *outStaticFrameRate)
       else  /* working with non-MPEG-1/MPEG-2 media */
       {
         OSErr err = MediaGetStaticFrameRate(movieMedia, outStaticFrameRate);
-        if (err != noErr) ofLog(OF_LOG_ERROR, "error in MediaGetStaticFrameRate, ofQtUtils");
+        if (err != noErr) {
+			ofLogError("ofQtUtils") << "MovieGetStaticFrameRate(): couldn't get static frame rate: OSErr " << err;
+		}
         //assert(err == noErr);
       }
     }

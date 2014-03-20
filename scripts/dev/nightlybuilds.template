@@ -1,0 +1,15 @@
+<h1>nightly builds</h1>
+<p>Here you can find a daily build of the develop branch of openFrameworks. This downloads can be unstable, if you want the latest stable release look in the <a href="http://openframeworks.cc/download">downloads page</a></p>
+
+<h2>Latest Nightly</h2>
+<a href="versions/nightly/of_latest_linux_nightly.tar.gz">linux</a><br/>
+<a href="versions/nightly/of_latest_linux64_nightly.tar.gz">linux64</a><br/>
+<a href="versions/nightly/of_latest_win_cb_nightly.zip">windows codeblocks</a><br/>
+<a href="versions/nightly/of_latest_vs_nightly.zip">windows visual studio</a><br/>
+<a href="versions/nightly/of_latest_osx_nightly.zip">osx</a><br/>
+<a href="versions/nightly/of_latest_ios_nightly.zip">iOS</a><br/>
+<a href="versions/nightly/of_latest_android_nightly.tar.gz">android</a><br/>
+<a href="versions/nightly/of_latest_linuxarmv6l_nightly.tar.gz">linuxarmv6</a><br/>
+<a href="versions/nightly/of_latest_linuxarmv7l_nightly.tar.gz">linuxarmv7</a><br/>
+
+<p>Nightly builds are generated only whenever there's a new commit</p>

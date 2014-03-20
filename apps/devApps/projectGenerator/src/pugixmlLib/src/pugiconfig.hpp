@@ -11,8 +11,7 @@
  * Copyright (C) 2003, by Kristen Wegner (kristen@tima.net)
  */
 
-#ifndef HEADER_PUGICONFIG_HPP
-#define HEADER_PUGICONFIG_HPP
+#pragma once
 
 // Uncomment this to enable wchar_t mode
 // #define PUGIXML_WCHAR_MODE
@@ -34,7 +33,6 @@
 // #define PUGIXML_FUNCTION __fastcall // to set calling conventions to all public functions to fastcall
 // In absence of PUGIXML_CLASS/PUGIXML_FUNCTION definitions PUGIXML_API is used instead
 
-#endif
 
 /**
  * Copyright (c) 2006-2010 Arseny Kapoulkine

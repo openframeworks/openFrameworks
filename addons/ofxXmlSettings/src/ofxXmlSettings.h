@@ -1,9 +1,12 @@
-#ifndef __ofxXmlSettings__
-#define __ofxXmlSettings__
+#pragma once
 
 #include "ofMain.h"
 #include <string.h>
+#if (_MSC_VER)
+#include "../libs/tinyxml.h"
+#else
 #include "tinyxml.h"
+#endif
 
 using namespace std;
 
@@ -41,7 +44,7 @@ using namespace std;
 
 #define MAX_TAG_VALUE_LENGTH_IN_CHARS		1024
 
-class ofxXmlSettings{
+class ofxXmlSettings: public ofBaseFileSerializer{
 
 	public:
         ofxXmlSettings();
@@ -54,6 +57,9 @@ class ofxXmlSettings{
 		bool loadFile(const string& xmlFile);
 		bool saveFile(const string& xmlFile);
 		bool saveFile();
+
+		bool load(const string & path);
+		bool save(const string & path);
 
 		void clearTagContents(const string& tag, int which = 0);
 		void removeTag(const string& tag, int which = 0);
@@ -106,6 +112,9 @@ class ofxXmlSettings{
 		int 	addValue(const string&  tag, const string& 	value);
 
 		int		addTag(const string& tag); //adds an empty tag at the current level
+
+		void serialize(const ofAbstractParameter & parameter);
+		void deserialize(ofAbstractParameter & parameter);
 
 
         // Attribute-related methods
@@ -160,7 +169,4 @@ class ofxXmlSettings{
         bool readIntAttribute(const string& tag, const string& attribute, int& valueString, int which);
         bool readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which);
         bool readStringAttribute(const string& tag, const string& attribute, string& outValue, int which);
-};
-
-#endif
-
+};   

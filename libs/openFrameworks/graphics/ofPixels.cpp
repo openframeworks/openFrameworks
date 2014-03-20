@@ -2,6 +2,19 @@
 #include "ofMath.h"
 
 
+static ofImageType getImageTypeFromChannels(int channels){
+	switch(channels){
+	case 1:
+		return OF_IMAGE_GRAYSCALE;
+	case 3:
+		return OF_IMAGE_COLOR;
+	case 4:
+		return OF_IMAGE_COLOR_ALPHA;
+	default:
+		return OF_IMAGE_UNDEFINED;
+	}
+}
+
 template<typename PixelType>
 ofPixels_<PixelType>::ofPixels_(){
 	bAllocated = false;
@@ -23,6 +36,8 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<PixelType> & mom){
 	pixelsOwner = false;
 	channels = 0;
 	pixels = NULL;
+	width = 0;
+	height = 0;
 	copyFrom( mom );
 }
 
@@ -60,13 +75,13 @@ void ofPixels_<PixelType>::set(int channel,PixelType val){
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int h, int channels){
+void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, int channels){
 	allocate(w, h, channels);
 	memcpy(pixels, newPixels, w * h * getBytesPerPixel());
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type){
+void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, ofImageType type){
 	allocate(w,h,type);
 	switch(type){
 	case OF_IMAGE_GRAYSCALE:
@@ -79,13 +94,13 @@ void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels,int w, int 
 		setFromPixels(newPixels,w,h,4);
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+		ofLogError("ofPixels") << "setFromPixels(): image type " << type << " not supported, not copying";
 		break;
 	}
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels,int w, int h, int _channels){
+void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels, int w, int h, int _channels){
 	clear();
 	channels = _channels;
 	width= w;
@@ -133,13 +148,6 @@ const PixelType * ofPixels_<PixelType>::getPixels() const{
 	return &pixels[0];
 }
 
-
-/*template<typename PixelType>
-void ofPixels_<PixelType>::allocate(int w, int h, int bitsPerPixel){
-	ofImageType type = getImageTypeFromBits(bitsPerPixel);
-	allocate(w,h,type);
-}*/
-
 template<typename PixelType>
 void ofPixels_<PixelType>::allocate(int w, int h, int _channels){
 	if (w < 0 || h < 0) {
@@ -182,7 +190,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 			imgType = OF_IMAGE_GRAYSCALE;
 			break;
 		default:
-			ofLog(OF_LOG_ERROR,"ofPixels: format not supported, not allocating");
+			ofLogError("ofPixels") << "allocate(): unknown pixel format, not allocating";
 			return;
 			break;
 
@@ -203,7 +211,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofImageType type){
 		allocate(w,h,4);
 		break;
 	default:
-		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+		ofLogError("ofPixels") << "allocate(): unknown image type, not allocating";
 		break;
 
 	}
@@ -258,9 +266,7 @@ ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
 }
 
 template<typename PixelType>
-void ofPixels_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
-	int index = getPixelIndex(x, y);
-
+void ofPixels_<PixelType>::setColor(int index, const ofColor_<PixelType>& color) {
 	if( channels == 1 ){
 		pixels[index] = color.getBrightness();
 	}else if( channels == 3 ){
@@ -272,6 +278,21 @@ void ofPixels_<PixelType>::setColor(int x, int y, ofColor_<PixelType> color) {
 		pixels[index+1] = color.g;
 		pixels[index+2] = color.b;
 		pixels[index+3] = color.a;
+	}
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setColor(int x, int y, const ofColor_<PixelType>& color) {
+	setColor(getPixelIndex(x, y), color);
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
+	int i = 0;
+	while(i < size()) {
+		for(int j = 0; j < channels; j++) {
+			pixels[i++] = color[j];
+		}
 	}
 }
 
@@ -327,16 +348,40 @@ int ofPixels_<PixelType>::getNumChannels() const{
 
 template<typename PixelType>
 ofImageType ofPixels_<PixelType>::getImageType() const{
-	switch(getNumChannels()){
-	case 1:
-		return OF_IMAGE_GRAYSCALE;
-	case 3:
-		return OF_IMAGE_COLOR;
-	case 4:
-		return OF_IMAGE_COLOR_ALPHA;
-	default:
-		return OF_IMAGE_UNDEFINED;
+	return getImageTypeFromChannels(getNumChannels());
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setImageType(ofImageType imageType){
+	if(!isAllocated() || imageType==getImageType()) return;
+	ofPixels_<PixelType> dst;
+	dst.allocate(width,height,imageType);
+	PixelType * dstPtr = &dst[0];
+	PixelType * srcPtr = &pixels[0];
+	int diffNumChannels = 0;
+	if(dst.getNumChannels()<getNumChannels()){
+		diffNumChannels = getNumChannels()-dst.getNumChannels();
 	}
+	for(int i=0;i<width*height;i++){
+		const PixelType & gray = *srcPtr;
+		for(int j=0;j<dst.getNumChannels();j++){
+			if(j<getNumChannels()){
+				*dstPtr++ =  *srcPtr++;
+			}else if(j<3){
+				*dstPtr++ = gray;
+			}else{
+				*dstPtr++ = ofColor_<PixelType>::limit();
+			}
+		}
+		srcPtr+=diffNumChannels;
+	}
+	swap(dst);
+}
+
+template<typename PixelType>
+void ofPixels_<PixelType>::setNumChannels(int numChannels){
+	if(!isAllocated() || numChannels==getNumChannels()) return;
+	setImageType(getImageTypeFromChannels(numChannels));
 }
 
 template<typename PixelType>
@@ -706,13 +751,13 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 		return true;
 	}
 
-	if (!(isAllocated()) || !(dst.isAllocated()) || getBytesPerPixel() != dst.getBytesPerPixel()) return false;
+	if (!(isAllocated()) || !(dst.isAllocated()) || getBytesPerPixel() != dst.getBytesPerPixel() || getNumChannels()!=dst.getNumChannels()) return false;
 
 	int srcWidth      = getWidth();
 	int srcHeight     = getHeight();
 	int dstWidth	  = dst.getWidth();
 	int dstHeight	  = dst.getHeight();
-	int bytesPerPixel = getBytesPerPixel();
+	int channels 	  = getNumChannels();
 
 
 	PixelType * dstPixels = dst.getPixels();
@@ -729,8 +774,8 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 				float srcx = 0.5;
 				int srcIndex = int(srcy)*srcWidth;
 				for (int dstx=0; dstx<dstWidth; dstx++){
-					int pixelIndex = int(srcIndex + srcx) * bytesPerPixel;
-					for (int k=0; k<bytesPerPixel; k++){
+					int pixelIndex = int(srcIndex + srcx) * channels;
+					for (int k=0; k<channels; k++){
 						dstPixels[dstIndex] = pixels[pixelIndex];
 						dstIndex++;
 						pixelIndex++;
@@ -744,7 +789,7 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			//----------------------------------------
 		case OF_INTERPOLATE_BILINEAR:
 			// not implemented yet
-			ofLogError(" Bilinear resize not implemented ");
+			ofLogError("ofPixels") << "resizeTo(): bilinear resize not implemented, not resizing";
 			break;
 
 			//----------------------------------------
@@ -759,19 +804,19 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			int patchIndex;
 			float patch[16];
 
-			int srcRowBytes = srcWidth*bytesPerPixel;
+			int srcRowBytes = srcWidth*channels;
 			int loIndex = (srcRowBytes)+1;
-			int hiIndex = (srcWidth*srcHeight*bytesPerPixel)-(srcRowBytes)-1;
+			int hiIndex = (srcWidth*srcHeight*channels)-(srcRowBytes)-1;
 
 			for (int dsty=0; dsty<dstHeight; dsty++){
 				for (int dstx=0; dstx<dstWidth; dstx++){
 
-					int   dstIndex0 = (dsty*dstWidth + dstx) * bytesPerPixel;
+					int   dstIndex0 = (dsty*dstWidth + dstx) * channels;
 					float srcxf = srcWidth  * (float)dstx/(float)dstWidth;
 					float srcyf = srcHeight * (float)dsty/(float)dstHeight;
 					int   srcx = (int) MIN(srcWidth-1,   srcxf);
 					int   srcy = (int) MIN(srcHeight-1,  srcyf);
-					int   srcIndex0 = (srcy*srcWidth + srcx) * bytesPerPixel;
+					int   srcIndex0 = (srcy*srcWidth + srcx) * channels;
 
 					px1 = srcxf - srcx;
 					py1 = srcyf - srcy;
@@ -780,14 +825,14 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 					py2 = py1 * py1;
 					py3 = py2 * py1;
 
-					for (int k=0; k<bytesPerPixel; k++){
+					for (int k=0; k<channels; k++){
 						int   dstIndex = dstIndex0+k;
 						int   srcIndex = srcIndex0+k;
 
 						for (int dy=0; dy<4; dy++) {
 							patchRow = srcIndex + ((dy-1)*srcRowBytes);
 							for (int dx=0; dx<4; dx++) {
-								patchIndex = patchRow + (dx-1)*bytesPerPixel;
+								patchIndex = patchRow + (dx-1)*channels;
 								if ((patchIndex >= loIndex) && (patchIndex < hiIndex)) {
 									srcColor = pixels[patchIndex];
 								}

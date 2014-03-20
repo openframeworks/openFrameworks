@@ -296,7 +296,7 @@ extern "C" {
 #define kDETPrTypeString         -2  /* A string */
 #define kDETPrTypeBinary         -3  /* A binary block */
 
-/* Rez-compatible tag definitions (These are the same as in OCE.h, but they're enums there and can't be rezed¥¥¥) */
+/* Rez-compatible tag definitions (These are the same as in OCE.h, but they're enums there and can't be rezed...) */
 #ifdef REZ
 #define typeRString           'rstr'
 #define typePackedDSSpec 'dspc'

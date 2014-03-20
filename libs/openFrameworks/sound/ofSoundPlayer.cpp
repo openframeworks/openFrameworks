@@ -26,7 +26,7 @@ void ofSoundUpdate(){
 	#endif
 }
 
-#ifndef TARGET_ANDROID
+#if !defined(TARGET_ANDROID) && !defined(TARGET_LINUX_ARM)
 //--------------------
 void ofSoundShutdown(){
 	#ifdef OF_SOUND_PLAYER_FMOD
@@ -42,7 +42,7 @@ float * ofSoundGetSpectrum(int nBands){
 	#elif defined(OF_SOUND_PLAYER_OPENAL)
 		return ofOpenALSoundPlayer::getSystemSpectrum(nBands);
 	#else
-		ofLog(OF_LOG_ERROR, "ofSoundGetSpectrum returning NULL - no implementation!");
+		ofLogError("ofSoundPlayer") << "ofSoundGetSpectrum(): not implemented, returning NULL";
 		return NULL;
 	#endif
 }
@@ -66,10 +66,11 @@ ofPtr<ofBaseSoundPlayer> ofSoundPlayer::getPlayer(){
 }
 
 //--------------------------------------------------------------------
-void ofSoundPlayer::loadSound(string fileName, bool stream){
+bool ofSoundPlayer::loadSound(string fileName, bool stream){
 	if( player != NULL ){
-		player->loadSound(fileName, stream);
+		return player->loadSound(fileName, stream);
 	}
+	return false;
 }
 
 //--------------------------------------------------------------------
@@ -103,7 +104,7 @@ void ofSoundPlayer::setVolume(float vol){
 //--------------------------------------------------------------------
 void ofSoundPlayer::setPan(float pan){
 	if( player != NULL ){
-		player->setPan(pan);
+		player->setPan(CLAMP(pan,-1.0f,1.0f));
 	}
 }
 
@@ -207,5 +208,7 @@ float ofSoundPlayer::getPan(){
 float ofSoundPlayer::getVolume(){
 	if( player != NULL ){
 		return player->getVolume();
+	} else {
+		return 0;
 	}
 }
