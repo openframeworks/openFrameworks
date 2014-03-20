@@ -2,13 +2,18 @@
 //--------------------------
 
 #include "ft2build.h"
+
+#ifdef TARGET_LINUX
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
+#include FT_OUTLINE_H
+#include FT_TRIGONOMETRY_H
+#include <fontconfig/fontconfig.h>
+#else
 #include "freetype2/freetype/freetype.h"
 #include "freetype2/freetype/ftglyph.h"
 #include "freetype2/freetype/ftoutln.h"
 #include "freetype2/freetype/fttrigon.h"
-
-#ifdef TARGET_LINUX
-#include <fontconfig/fontconfig.h>
 #endif
 
 #include <algorithm>

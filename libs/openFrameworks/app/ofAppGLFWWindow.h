@@ -76,6 +76,8 @@ public:
 
 	void		setVerticalSync(bool bSync);
 
+    int         getPixelScreenCoordScale();
+
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 	Display* 	getX11Display();
 	Window  	getX11Window();
@@ -150,6 +152,8 @@ private:
 	
 	static ofAppGLFWWindow	* instance;
 	static ofBaseApp *	ofAppPtr;
+
+    int pixelScreenCoordScale; 
 
 	ofOrientation orientation;
 

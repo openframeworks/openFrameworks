@@ -202,6 +202,11 @@ function createPackage {
 	if [ "$pkg_platform" == "osx" ]; then
 	    rm -Rf gles
 	fi
+	
+	
+	
+	#delete tutorials by now
+	rm -Rf $pkg_ofroot/tutorials
     
 	
 	
