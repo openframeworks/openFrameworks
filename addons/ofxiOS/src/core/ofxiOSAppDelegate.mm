@@ -230,10 +230,13 @@
 
 //------------------------------------------------------------------------------------------- device rotation callback.
 - (void)receivedRotate:(NSNotification*)notification {
-	UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
-    ofLogVerbose("ofxiOSAppDelegate") << "device orientation changed to " << interfaceOrientation;
-	if(interfaceOrientation != UIDeviceOrientationUnknown && [self.glViewController isReadyToRotate] ) {
-        ofxiOSAlerts.deviceOrientationChanged(interfaceOrientation);
+	UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
+    ofLogVerbose("ofxiOSAppDelegate") << "device orientation changed to " << deviceOrientation;
+	if(deviceOrientation != UIDeviceOrientationUnknown && deviceOrientation != UIDeviceOrientationFaceUp && deviceOrientation != UIDeviceOrientationFaceDown ) {
+        if([self.glViewController isReadyToRotate]) {
+            ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
+        }
+        
     }
 }
 
