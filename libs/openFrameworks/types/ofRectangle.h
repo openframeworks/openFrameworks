@@ -6,7 +6,6 @@
 #include "ofLog.h"
 
 
-
 /// \brief A class representing a 2D rectangle.
 ///
 /// ofRectangle is a simple container for describing the position and size of a
