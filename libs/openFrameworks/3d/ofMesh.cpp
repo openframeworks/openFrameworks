@@ -2256,6 +2256,14 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
     ofMesh mesh;
     mesh.setMode( OF_PRIMITIVE_TRIANGLES );
     
+    resX = resX + 1;
+    resY = resY + 1;
+    resZ = resZ + 1;
+    
+    if( resX < 2 ) resX = 0;
+    if( resY < 2 ) resY = 0;
+    if( resZ < 2 ) resZ = 0;
+    
     // halves //
     float halfW = width * .5f;
     float halfH = height * .5f;
