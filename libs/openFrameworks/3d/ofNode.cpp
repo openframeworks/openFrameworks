@@ -105,7 +105,7 @@ void ofNode::setOrientation(const ofQuaternion& q) {
 
 //----------------------------------------
 void ofNode::setOrientation(const ofVec3f& eulerAngles) {
-	setOrientation(ofQuaternion(eulerAngles.y, ofVec3f(0, 1, 0), eulerAngles.x, ofVec3f(1, 0, 0), eulerAngles.z, ofVec3f(0, 0, 1)));
+	setOrientation(ofQuaternion(eulerAngles.x, ofVec3f(1, 0, 0), eulerAngles.z, ofVec3f(0, 0, 1), eulerAngles.y, ofVec3f(0, 1, 0)));
 }
 
 //----------------------------------------
