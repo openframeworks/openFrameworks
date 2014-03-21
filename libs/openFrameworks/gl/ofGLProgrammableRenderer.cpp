@@ -1707,7 +1707,6 @@ static string uniqueFragmentShader = "#version 150\n" STRINGIFY(
 #endif
 
 void ofGLProgrammableRenderer::setup(){
-	glGetError();
 
 #ifdef TARGET_RASPBERRY_PI
 	uniqueShader = true;
