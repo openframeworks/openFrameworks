@@ -257,7 +257,7 @@ function createPackage {
 	rm -rf projectGenerator
     if [ "$pkg_platform" = "win_cb" ]; then
 		rm projectGenerator_wincb.zip
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v02/projectGenerator_wincb.zip
+		wget http://www.openframeworks.cc/pgSimple/projectGenerator_wincb.zip
 		unzip projectGenerator_wincb.zip
 		rm projectGenerator_wincb.zip
 		rm -Rf __MACOSX
@@ -271,14 +271,14 @@ function createPackage {
 	fi
     if [ "$pkg_platform" = "osx" ]; then
 		rm projectGenerator_osx.zip
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v02/projectGenerator_osx.zip
+		wget http://www.openframeworks.cc/pgSimple/projectGenerator_osx.zip
 		unzip projectGenerator_osx.zip
 		rm projectGenerator_osx.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "ios" ]; then
 		rm projectGenerator_ios.zip
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v02/projectGenerator_ios.zip
+		wget http://www.openframeworks.cc/pgSimple/projectGenerator_ios.zip
 		unzip projectGenerator_ios.zip
 		rm projectGenerator_ios.zip
 		rm -Rf __MACOSX
