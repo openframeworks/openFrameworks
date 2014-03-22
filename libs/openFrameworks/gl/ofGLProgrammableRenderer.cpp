@@ -72,8 +72,10 @@ void ofGLProgrammableRenderer::startRender() {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::finishRender() {
-	glUseProgram(0);
-	if(!usingCustomShader) currentShader = NULL;
+	if (!uniqueShader) {
+		glUseProgram(0);
+		if(!usingCustomShader) currentShader = NULL;
+	}
 	
 	matrixStack.clearStacks();
 }
