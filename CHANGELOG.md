@@ -54,6 +54,7 @@ PLATFORM SPECIFIC
 	/ zip uncompress moved to java
 	/ several fixes in pause / resume workflow
 	/ fix camera not working on some devices + use external texture, should be faster
+	/ camera: add recording hint for fastest fps on newest devices
 	+ support for x86
 
 ### Mac OS X

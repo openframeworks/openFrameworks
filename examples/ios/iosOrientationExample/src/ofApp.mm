@@ -7,6 +7,7 @@ void ofApp::setup(){
 	ofBackground(70);
     
     ofSetOrientation(OF_ORIENTATION_90_LEFT);
+    
     bAuto = false;
 }
 
@@ -76,7 +77,7 @@ void ofApp::draw(){
     string currentOrientation = "";
     string currentOrientationSyntax = "";
     
-    switch (ofxiOSGetOrientation()) {
+    switch (ofGetOrientation()) {
         case OF_ORIENTATION_DEFAULT:
             currentOrientation = "Portrait";
             currentOrientationSyntax = "OF_ORIENTATION_DEFAULT";
@@ -193,7 +194,7 @@ void ofApp::gotMemoryWarning(){
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    if(bAuto) {
+    if( bAuto ) {
         ofSetOrientation((ofOrientation)newOrientation);
     }
 }
