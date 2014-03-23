@@ -72,8 +72,10 @@ void ofGLProgrammableRenderer::startRender() {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::finishRender() {
-	glUseProgram(0);
-	if(!usingCustomShader) currentShader = NULL;
+	if (!uniqueShader) {
+		glUseProgram(0);
+		if(!usingCustomShader) currentShader = NULL;
+	}
 	
 	matrixStack.clearStacks();
 }
@@ -964,7 +966,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::endCustomShader(){
 	usingCustomShader = false;
-	if(!uniqueShader) beginDefaultShader();
+	beginDefaultShader();
 }
 
 //----------------------------------------------------------
@@ -1710,7 +1712,7 @@ void ofGLProgrammableRenderer::setup(){
 	glGetError();
 
 #ifdef TARGET_RASPBERRY_PI
-	uniqueShader = false;
+	uniqueShader = true;
 #else
 	uniqueShader = false;
 #endif
