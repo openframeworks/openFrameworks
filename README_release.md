@@ -38,7 +38,7 @@ Our github site is active:
 
 https://github.com/openframeworks/openFrameworks
 
-if you have bugs, feature requests, consider opening an issue.  If you are a develope and want to help, pull requests are warmly welcome.  Please read the contributing guide for guidelines: 
+if you have bugs, feature requests, consider opening an issue.  If you are a developer and want to help, pull requests are warmly welcome.  Please read the contributing guide for guidelines: 
 
 https://github.com/openframeworks/openFrameworks/blob/master/CONTRIBUTING.md
 
