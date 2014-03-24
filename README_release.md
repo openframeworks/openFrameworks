@@ -2,7 +2,7 @@
 
 # welcome
 
-Thanks for downloading OF.  If you are new to OF, welcome!
+Thanks for downloading openFrameworks.  If you are new to OF, welcome!
 
 ## how to get started
 
