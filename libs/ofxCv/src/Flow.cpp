@@ -47,7 +47,7 @@ namespace ofxCv {
 		
 		last.setFromPixels(curr.getPixelsRef());
 	}
-	
+    
 	void Flow::draw(){
 		if(hasFlow) {
 			drawFlow(ofRectangle(0,0, last.getWidth(), last.getHeight() ));
@@ -239,7 +239,7 @@ namespace ofxCv {
 	
 	void FlowFarneback::setPyramidScale(float scale){
 		if(scale < 0.0 || scale >= 1.0){
-			ofLogWarning("ofxCvFlowFarneback -- Warning setting scale to a number outside of 0 - 1");
+			ofLogWarning("FlowFarneback::setPyramidScale") << "setting scale to a number outside of 0 - 1";
 		}
 		this->pyramidScale = scale;
 	}
@@ -289,7 +289,12 @@ namespace ofxCv {
 								 polySigma,
 								 flags);
 	}
-	
+	Mat& FlowFarneback::getFlow() {
+        if(!hasFlow) {
+            flow = Mat::zeros(1, 1, CV_32FC2);
+        }
+        return flow;
+    }
 	ofVec2f FlowFarneback::getFlowOffset(int x, int y){
 		if(!hasFlow){
 			return ofVec2f(0, 0);

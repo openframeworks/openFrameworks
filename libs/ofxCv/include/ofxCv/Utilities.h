@@ -190,7 +190,6 @@ namespace ofxCv {
 		}
 		copy(src, dst, dstDepth);
 	}
-		
 	
 	// toOf functions
 	ofVec2f toOf(Point2f point);

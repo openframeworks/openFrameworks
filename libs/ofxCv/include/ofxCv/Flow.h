@@ -128,6 +128,7 @@ namespace ofxCv {
 		void setPolySigma(float polySigma);
 		void setUseGaussian(bool gaussian);
 		
+        Mat& getFlow();
 		ofVec2f getTotalFlow();
 		ofVec2f getAverageFlow();		
 		ofVec2f getFlowOffset(int x, int y);

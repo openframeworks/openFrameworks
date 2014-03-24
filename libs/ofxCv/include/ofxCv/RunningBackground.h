@@ -18,7 +18,7 @@
  guessing a learningRate can be hard, because it's related to the threshold and
  your camera framerate. setLearningTime() will let you set the learningRate
  in terms of frames. larger values meaning the background takes longer to learn.
- a learning time of 900 means a 30 fps camera would take 30 seconds before
+ a learning time of 900 means	 a 30 fps camera would take 30 seconds before
  a foreground object could leave a "shadow", or "trace" in the background
  that appears as foreground after thresholding. in practice, it will only take
  this amount of time exactly when the background is completely black and the
