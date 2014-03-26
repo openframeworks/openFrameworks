@@ -159,6 +159,8 @@ enum ofTargetPlatform{
 	#undef Rect
 
 	#undef check
+	#undef nil
+
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu
 	#endif
