@@ -136,6 +136,11 @@ CORE ADDONS
 PROJECT GENERATOR
 -----------------
 
+	/ PG recompiled against 0.8.1
+	+ retina enabled for OSX
+	+ added support for adding frameworks on OSX
+
+
 EXAMPLES
 --------
 
