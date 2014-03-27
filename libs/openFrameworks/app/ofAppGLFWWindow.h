@@ -54,6 +54,8 @@ public:
 
 	int getHeight();
 	int getWidth();
+    
+    GLFWwindow* getGLFWWindow();
 
 	ofVec3f		getWindowSize();
 	ofVec3f		getScreenSize();
