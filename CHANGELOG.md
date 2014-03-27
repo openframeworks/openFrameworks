@@ -27,23 +27,50 @@ CORE
     + ofGetCurrentMatrix() - returns current OpenGL matrix state (modelView-, projection- or textureMatrix) for ofGLProgrammableRenderer, ofGLRenderer.
 ### App
 	/ updated GLFW to latest master (20131204)
+	- delete temporary buffer in ofAppGlutWindow
+	+ GLFW now detects when an OF app has been launched as Retina
+	/ Fixed unset variables in ofMouseEventArgs
+	- remove early, unnecessary ESC check
+	/ ofxAppEGLWindow fix
 ### Communication
 	/ use binary mode (don't convert breaklines)
 ### Events
 ### Graphics
 	/ ofCairoRenderer: fix for moveTo when drawing ofPaths
 	/ ofDrawBox: on wireframe mode was recreating vertices on every call
+	/ fix ofImageType retrieval issue in ofTexture.readToPixels()
+	+ ofColor: added setHueAngle and getHueAngle
+	/ Fix for (ofColor == and != operators ignoring alpha)
 ### Math
         / ofMatrix3x3: fix incorrect multiplication
+	+ Added read-only access to current Matrix Stack
+	/ fix critical ModelViewMatrix issue when ofFbo::begin(setupScreen==false)
 ### GL
 	/ ofMaterial: fixed back emmisive material
 	/ Fix point sprites in openGL 3+
-    / ofShader: #pragma include directive can now deal with relative paths for include files
+        / ofShader: #pragma include directive can now deal with relative paths for include files
+	/ Fix for mesh resolution parameters
+	/ Fix for the drawing of ofDrawArrow
+	/ fix critical issue w/ ofVbo shallow copies (custom attributes)
+        / ofVbo custom attribute stride
+        / fix ofShader include path behaviour
+	/ Modify ofVbo bind method to allow 2d vertices
+	/ Enabling GL_PROGRAM_POINT_SIZE in ofGLProgrammableRenderer
+	- remove setName from ofMesh
+	/ Assign allocated flag to true after allocating offscreenGWorldPixels
+	/ Fix gl programmable renderer of draw axis
+	/ fixed ofMaterial for opengl ES1
+	/ check if currentShader exists - prevents segfault	
+	/ add more sophisticated openGL capability checks
+	+ displacement map example
 ### Sound
 ### Types
 ### Utils
 	+ ofXml(const& string) constructor added
-
+	/ Fixed loadDialogBrowseCallback to return UNICODE string
+	/ ofXml addressing seg errors when clearing
+	/ tiny log fix in ofSerial
+	+ ofXml get attribute to work with paths && non-paths
 ### Video	
 
 PLATFORM SPECIFIC
@@ -56,23 +83,63 @@ PLATFORM SPECIFIC
 	/ fix camera not working on some devices + use external texture, should be faster
 	/ camera: add recording hint for fastest fps on newest devices
 	+ support for x86
-
+	/ Android building script error when building from Windows
+	/ Bug fixed, Compile error in ofxAndroidSoundPlayer
 ### Mac OS X
+	/ tr1/memory compile issue on OS X 10.9
+	/ use cc.openframeworks.ofapp as identifier on osx
+	/ ES3 + xcode5 fix for missing GL_STENCIL_INDEX
 ### iOS
+	/ iOSVideoGrabber memory leak fixes
+	/ iOS Example Fixes
+	+ added iosStoryboardExample
+	/ iOS-Storyboard Example Fix for <iOS7
+	/ Fix iOS SoundEngine memory leak
+	/ Use correct audio category for routing audio to speaker
+	+ Enabled pointsprites for OpenGLES
+	/ ofxiOSUIImageToOFTexture fix inside ofxiOSExtras
+	/ fixed depth issue with ios assimp example
+	/ texture cache fix for ofxiOSVideoPlayer
+	/ ios movie player example fix
+	/ ios feature for getting / setting clipboard string
 ### Linux
 	/ alsa as default instead of pulseaudio lower latency
 	/ makefile fixes for better eclipse parsing
 	/ videoplayer: fix alpha formats for gstreamer 0.10
 	+ install_dependencies installs libusb so ofxKinect compiles
 	- removed portaudio soundstream and all dependencies
+	/ Fix install_dependencies.sh for Fedora
+	/ project generator simple/linux: compile in release mode instead of debug
 ### Windows
 	/ fixed disable vertical sync through update in glfw
+	/ fix for ofGetFrameRate() going to infinity at high fps on windows
+	/ replaced poco 1.4.6 libs with 1.4.3p libs for vs2012
+	/ Changes to ofGstVideo files to compile with 0.10 gstreamer and fixup file names in Win32
+	/ Improve Dialog Win32
+### Linux Arm 
+	/ re-enabling the uniqueShader for the RPi due to large texture performance
+	/ bind defaultShader in setup() for RPi/GLProgrammable
+
  
 CORE ADDONS
 -----------
+### ofxAssimpModelLoader
+	/ Remove ofMesh setName() in ofxAssimpModelLoader
+### ofxKinect
+	+ Support for k4w and 1473 kinect with motor / accel / led control
+	/ Bugfix for disconnecting 1473 and K4W devices on OS X
+	/ Fixes typo in ofxCvImage that broke getRoiPixelsRef
+	+ added Windows driver install info to kinectExample header
+### ofxGui
+	+ added ofParameter in the setup routine of ofxGuiGroup
 
 PROJECT GENERATOR
 -----------------
+
+	/ PG recompiled against 0.8.1
+	+ retina enabled for OSX
+	+ added support for adding frameworks on OSX
+
 
 EXAMPLES
 --------
@@ -213,7 +280,7 @@ CORE
 ### Math
         + 1D interpolation functions: ofCosine|Cubic|Catmull|HermiteInterpolate
         + generic wrapping function float ofWrap(float value, float from, float to)
-        / ofWrapDegrees, ofWrapRadians only wrap the new ofWrap, don't enforce a 360°/2Pi cycle anymore.
+        / ofWrapDegrees, ofWrapRadians only wrap the new ofWrap, don't enforce a 360Â°/2Pi cycle anymore.
         / ofxVectorMath now included in core (as ofVectorMath)
 
 ### GL
