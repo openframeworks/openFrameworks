@@ -239,7 +239,6 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 //--------------------------------------------
 void ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
-	OF_EXIT_APP(0);
 }
 
 //--------------------------------------------
@@ -293,10 +292,12 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	glfwMakeContextCurrent(windowP);
 
 	ofNotifySetup();
-	while(true){
+	while(!glfwWindowShouldClose(windowP)){
 		ofNotifyUpdate();
 		display();
 	}
+    glfwDestroyWindow(windowP);
+    glfwTerminate();
 }
 
 //------------------------------------------------------------
@@ -489,6 +490,11 @@ int ofAppGLFWWindow::getHeight()
 			return windowW * pixelScreenCoordScale;
 		}
 	}
+}
+
+//------------------------------------------------------------
+GLFWwindow* ofAppGLFWWindow::getGLFWWindow(){
+    return windowP;
 }
 
 //------------------------------------------------------------
