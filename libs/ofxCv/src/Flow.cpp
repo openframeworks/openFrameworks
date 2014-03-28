@@ -10,40 +10,27 @@ namespace ofxCv {
 	
 	Flow::~Flow(){
 	}
-    
-    template <class T>
-    void copyGray(T& src, T& dst) {
-        int channels = getChannels(src);
-        if(channels == 4) {
-            ofxCv::cvtColor(src, dst, CV_RGBA2GRAY);
-        } else if(channels == 3) {
-            ofxCv::cvtColor(src, dst, CV_RGB2GRAY);
-        } else if(channels == 1) {
-            ofxCv::copy(src, dst);
-        }
-    }
 	
 	//call with two images
 	void Flow::calcOpticalFlow(Mat lastImage, Mat currentImage){
-        // todo: don't make a copy unless necessary
-        copyGray(lastImage, last);
-        copyGray(currentImage, curr);
-		
-		calcFlow(); //will call concrete implementation
-		hasFlow = true; // is this true for farneback?
+        if(lastImage.channels() == 1 && currentImage.channels() == 1) {
+            calcFlow(lastImage, currentImage);
+        } else {
+            copyGray(lastImage, last);
+            copyGray(currentImage, curr);
+            calcFlow(last, curr);
+        }
+		hasFlow = true;
 	}
 	
-	//you can add subsequent images this way without having to store 
+	//you can add subsequent images this way without having to store
 	//the previous one yourself
 	void Flow::calcOpticalFlow(Mat nextImage){
-        // todo: don't make a copy unless necessary
         copyGray(nextImage, curr);
-
 		if(last.size == curr.size){
-			calcFlow(); //will call concrete implementation
+			calcFlow(last, curr);
 			hasFlow = true;
 		}
-		
         swap(curr, last);
 	}
     
@@ -109,60 +96,55 @@ namespace ofxCv {
 		this->minDistance = minDistance;
 	}
 	
-	void FlowPyrLK::calcFlow(){
+	void FlowPyrLK::calcFlow(Mat prev, Mat next){
 		if(!nextPts.empty() || calcFeaturesNextFrame){
 			if(calcFeaturesNextFrame){
-				calcFeaturesToTrack(prevPts);
+				calcFeaturesToTrack(prevPts, next);
 				calcFeaturesNextFrame = false;
 			}else{
-				prevPts = nextPts;
+                swap(prevPts, nextPts);
 			}
 			nextPts.clear();
-
+            
 #if CV_MAJOR_VERSION>=2 && (CV_MINOR_VERSION>4 || (CV_MINOR_VERSION==4 && CV_SUBMINOR_VERSION>=1))
 			if (prevPyramid.empty()) {
-				buildOpticalFlowPyramid(toCv(last),prevPyramid,cv::Size(windowSize, windowSize),10);
+				buildOpticalFlowPyramid(prev,prevPyramid,cv::Size(windowSize, windowSize),10);
 			}
-			buildOpticalFlowPyramid(toCv(curr),pyramid,cv::Size(windowSize, windowSize),10);
-			calcOpticalFlowPyrLK(
-													 prevPyramid,
-													 pyramid,
-													 prevPts,
-													 nextPts,
-													 status,
-													 err,
-													 
-													 cv::Size(windowSize, windowSize),
-													 maxLevel
-													 );
+			buildOpticalFlowPyramid(next,pyramid,cv::Size(windowSize, windowSize),10);
+			calcOpticalFlowPyrLK(prevPyramid,
+                                 pyramid,
+                                 prevPts,
+                                 nextPts,
+                                 status,
+                                 err,
+                                 cv::Size(windowSize, windowSize),
+                                 maxLevel);
 			prevPyramid = pyramid;
 			pyramid.clear();
 #else
-			calcOpticalFlowPyrLK(
-													 last,
-													 curr,
-													 prevPts,
-													 nextPts,
-													 status,
-													 err,
-													 cv::Size(windowSize, windowSize),
-													 maxLevel
-													 );
+			calcOpticalFlowPyrLK(prev,
+                                 next,
+                                 prevPts,
+                                 nextPts,
+                                 status,
+                                 err,
+                                 cv::Size(windowSize, windowSize),
+                                 maxLevel);
 #endif
 			status.resize(nextPts.size(),0);
 		}else{
-			calcFeaturesToTrack(nextPts);
+			calcFeaturesToTrack(nextPts, next);
 		}
 	}
 	
-	void FlowPyrLK::calcFeaturesToTrack(vector<cv::Point2f> & features){
+	void FlowPyrLK::calcFeaturesToTrack(vector<cv::Point2f> & features, Mat next){
 		goodFeaturesToTrack(
-												toCv(curr),
-												features,
-												maxFeatures,
-												qualityLevel,
-												minDistance
-												);
+                            next,
+                            features,
+                            maxFeatures,
+                            qualityLevel,
+                            minDistance
+                            );
 	}
 	
 	void FlowPyrLK::resetFeaturesToTrack(){
@@ -258,7 +240,7 @@ namespace ofxCv {
 	}
 	void FlowFarneback::setPolySigma(float polySigma){
 		this->polySigma = polySigma;
-	}	
+	}
 	void FlowFarneback::setUseGaussian(bool gaussian){
 		this->farnebackGaussian = gaussian;
 	}
@@ -267,8 +249,8 @@ namespace ofxCv {
         Flow::resetFlow();
 		flow.setTo(0);
 	}
-
-	void FlowFarneback::calcFlow(){
+    
+	void FlowFarneback::calcFlow(Mat prev, Mat next){
 		int flags = 0;
 		if(hasFlow){
 			flags = OPTFLOW_USE_INITIAL_FLOW;
@@ -276,9 +258,9 @@ namespace ofxCv {
 		if(farnebackGaussian){
 			flags |= OPTFLOW_FARNEBACK_GAUSSIAN;
 		}
-
-		calcOpticalFlowFarneback(last,
-								 curr,
+        
+		calcOpticalFlowFarneback(prev,
+								 next,
 								 flow,
 								 pyramidScale,
 								 numLevels,
@@ -339,7 +321,7 @@ namespace ofxCv {
 			for(int x = 0; x < flow.cols; x += stepSize) {
 				ofVec2f cur = ofVec2f(x, y) * scale + offset;
 				ofLine(cur, getFlowPosition(x, y) * scale + offset);
-			} 
+			}
 		}
 	}
 }

@@ -36,8 +36,8 @@ public:
         
         mesh.setMode(OF_PRIMITIVE_TRIANGLES);
         this->stepSize = stepSize;
-        xSteps = ((rescale * w) / stepSize);
-        ySteps = ((rescale * h) / stepSize);
+        xSteps = 1+((rescale * w) / stepSize);
+        ySteps = 1+((rescale * h) / stepSize);
         for(int y = 0; y < ySteps; y++) {
             for(int x = 0; x < xSteps; x++) {
                 mesh.addVertex(ofVec2f(x, y) * stepSize / rescale);
@@ -73,6 +73,8 @@ public:
             ofxCv::copy(flow3, accumulator);
 		}
 		cv::accumulateWeighted(flow3, accumulator, learningRate);
+        // zero the edges
+        cv::rectangle(accumulator, cv::Point(0, 0), cv::Point(w-1, h-1), cv::Scalar(.5, .5, 0));
         flowTexture.loadData((float*) accumulator.ptr(), w, h, GL_RGB);
     }
     

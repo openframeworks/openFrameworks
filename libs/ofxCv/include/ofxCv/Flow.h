@@ -40,14 +40,14 @@ namespace ofxCv {
         
         virtual void resetFlow();
         
-//	private:
-    protected:
+    private:
 		Mat last, curr;
         
+    protected:
 		bool hasFlow;
 		
 		//specific flow implementation
-		virtual void calcFlow() = 0;
+		virtual void calcFlow(Mat prev, Mat next) = 0;
 		//specific drawing implementation
 		virtual void drawFlow(ofRectangle r) = 0;
 	};
@@ -91,8 +91,8 @@ namespace ofxCv {
 	protected:
 		
 		void drawFlow(ofRectangle r);
-		void calcFlow();
-		void calcFeaturesToTrack(vector<cv::Point2f> & features);
+		void calcFlow(Mat prev, Mat next);
+		void calcFeaturesToTrack(vector<cv::Point2f> & features, Mat next);
 		
 		vector<cv::Point2f> prevPts, nextPts;
 		
@@ -154,7 +154,7 @@ namespace ofxCv {
 		cv::Mat flow;
 
 		void drawFlow(ofRectangle rect);
-		void calcFlow();
+		void calcFlow(Mat prev, Mat next);
 		
 		float pyramidScale;
 		int numLevels;

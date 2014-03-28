@@ -190,6 +190,20 @@ namespace ofxCv {
 		}
 		copy(src, dst, dstDepth);
 	}
+    
+    // a common cv task is to convert something to grayscale. this function will
+    // do that quickly for RGBA, RGB, and 1-channel images.
+    template <class T>
+    void copyGray(T& src, T& dst) {
+        int channels = getChannels(src);
+        if(channels == 4) {
+            cvtColor(src, dst, CV_RGBA2GRAY);
+        } else if(channels == 3) {
+            cvtColor(src, dst, CV_RGB2GRAY);
+        } else if(channels == 1) {
+            copy(src, dst);
+        }
+    }
 	
 	// toOf functions
 	ofVec2f toOf(Point2f point);

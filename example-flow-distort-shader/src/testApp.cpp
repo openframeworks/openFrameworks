@@ -9,9 +9,9 @@ void testApp::setup() {
 }
 
 void testApp::update() {
-    motionAmplifier.setStrength(ofMap(mouseX, 0, ofGetWidth(), -8, 8));
+    motionAmplifier.setStrength(ofMap(mouseX, 0, ofGetWidth(), -10, 10));
     motionAmplifier.setLearningRate(ofMap(mouseY, 0, ofGetHeight(), 0, 1, true));
-    motionAmplifier.setBlurAmount(7);
+    motionAmplifier.setBlurAmount(0);
     motionAmplifier.setWindowSize(8);
     
 	cam.update();
@@ -29,6 +29,4 @@ void testApp::draw() {
     motionAmplifier.draw(cam);
 //    motionAmplifier.drawMesh();
     ofDisableDepthTest();
-    ofDrawBitmapString(ofToString(appRate.getFrameRate()), 10, 20);
-    ofDrawBitmapString(ofToString(camRate.getFrameRate()), 10, 40);
 }
