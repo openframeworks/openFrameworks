@@ -90,8 +90,9 @@
 		114b872696817cc33990fc83feb1259e /* imgproc.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = imgproc.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/imgproc/imgproc.hpp; sourceTree = SOURCE_ROOT; };
 		178547e33ce398c7b59f08abb9417787 /* ContourFinder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ContourFinder.h; path = ../../../addons/ofxCv/libs/ofxCv/include/ofxCv/ContourFinder.h; sourceTree = SOURCE_ROOT; };
 		1e95efd35ed9c5d97f2f015ed292592d /* timer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = timer.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/flann/timer.h; sourceTree = SOURCE_ROOT; };
-		2794E21C18E091C400CFDAB2 /* shader.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = shader.frag; sourceTree = "<group>"; };
-		2794E21D18E091C400CFDAB2 /* shader.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = shader.vert; sourceTree = "<group>"; };
+		27544BA018E58A7100F0A6D9 /* MotionAmplifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionAmplifier.h; sourceTree = "<group>"; };
+		275BBB8A18E62AD100A3178E /* MotionAmplifier.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = MotionAmplifier.frag; sourceTree = "<group>"; };
+		275BBB8B18E62AD100A3178E /* MotionAmplifier.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = MotionAmplifier.vert; sourceTree = "<group>"; };
 		2e411f99e3ab7154484b4f96165f5cff /* kmeans_index.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = kmeans_index.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/flann/kmeans_index.h; sourceTree = SOURCE_ROOT; };
 		30884ecd9c171ab1b1bdfc3f6449c692 /* cv.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = cv.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cv.hpp; sourceTree = SOURCE_ROOT; };
 		319268d200f1ba567e4ccff97a1babd8 /* cxeigen.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = cxeigen.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cxeigen.hpp; sourceTree = SOURCE_ROOT; };
@@ -360,15 +361,15 @@
 			name = flann;
 			sourceTree = "<group>";
 		};
-		2794E21B18E091C400CFDAB2 /* data */ = {
+		275BBB8918E62AD100A3178E /* data */ = {
 			isa = PBXGroup;
 			children = (
-				2794E21C18E091C400CFDAB2 /* shader.frag */,
-				2794E21D18E091C400CFDAB2 /* shader.vert */,
+				275BBB8A18E62AD100A3178E /* MotionAmplifier.frag */,
+				275BBB8B18E62AD100A3178E /* MotionAmplifier.vert */,
 			);
 			name = data;
 			path = bin/data;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		37cf39b443acb0f86b1351ed5c62e3f4 /* src */ = {
 			isa = PBXGroup;
@@ -585,7 +586,7 @@
 			children = (
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
-				2794E21B18E091C400CFDAB2 /* data */,
+				275BBB8918E62AD100A3178E /* data */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
@@ -600,6 +601,7 @@
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1E0A3A1BDC003C02F2 /* testApp.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* testApp.h */,
+				27544BA018E58A7100F0A6D9 /* MotionAmplifier.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

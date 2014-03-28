@@ -2,13 +2,13 @@
 
 #include "ofxCv.h"
 
-#pragma mark FLOW 
 namespace ofxCv {
 	
 	using namespace cv;
 	
 	class Flow {
 	public:
+        // should constructor be protected?
 		Flow();
 		virtual ~Flow();
 		
@@ -17,25 +17,33 @@ namespace ofxCv {
 		//subsequent calls to getFlow() will be updated
 		
 		//call with two contiguous images
-		void calcOpticalFlow(ofBaseHasPixels& lastImage, ofBaseHasPixels& currentImage);
-		void calcOpticalFlow(ofPixelsRef lastImage, ofPixelsRef currentImage);
+        template <class T>
+		void calcOpticalFlow(T& lastImage, T& currentImage) {
+            calcOpticalFlow(toCv(lastImage), toCv(currentImage));
+        }
+		void calcOpticalFlow(Mat lastImage, Mat currentImage);
 		
 		//call with subsequent images to do running optical flow. 
 		//the Flow class internally stores the last image for convenience
-		void calcOpticalFlow(ofBaseHasPixels& nextImage);
-		void calcOpticalFlow(ofPixelsRef nextImage);
+        template <class T>
+		void calcOpticalFlow(T& currentImage) {
+            calcOpticalFlow(toCv(currentImage));
+        }
+		void calcOpticalFlow(Mat nextImage);
 		
 		void draw();
 		void draw(float x, float y);
 		void draw(float x, float y, float width, float height);
 		void draw(ofRectangle rect);
-		int  getWidth();
-		int  getHeight();
-        //specific reset implementation
-        virtual void resetFlow() = 0;
-	protected:
-		ofImage last, curr;
-		ofImageType forcedImageType;
+		int getWidth();
+		int getHeight();
+        
+        virtual void resetFlow();
+        
+//	private:
+    protected:
+		Mat last, curr;
+        
 		bool hasFlow;
 		
 		//specific flow implementation
@@ -51,7 +59,6 @@ namespace ofxCv {
 	//see http://opencv.willowgarage.com/documentation/cpp/motion_analysis_and_object_tracking.html
 	//for more info on the meaning of these parameters
 	
-#pragma mark FLOW - PYR LK
 	class FlowPyrLK : public Flow {
 	public:
 		FlowPyrLK();
@@ -109,8 +116,6 @@ namespace ofxCv {
 		vector<uchar> status;
 		vector<float> err;
 	};
-	
-#pragma mark FLOW FARNEBACK	
 	
 	class FlowFarneback : public Flow {
 	public:

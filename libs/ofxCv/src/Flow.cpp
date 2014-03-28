@@ -4,60 +4,57 @@ namespace ofxCv {
 	
 	using namespace cv;
 	
-#pragma mark FLOW IMPLEMENTATION
 	Flow::Flow()
-		:forcedImageType(OF_IMAGE_GRAYSCALE) //force to gray
-	{
-		hasFlow = false;
-		last.setUseTexture(false);
-		curr.setUseTexture(false);
+    :hasFlow(false) {
 	}
 	
 	Flow::~Flow(){
 	}
+    
+    template <class T>
+    void copyGray(T& src, T& dst) {
+        int channels = getChannels(src);
+        if(channels == 4) {
+            ofxCv::cvtColor(src, dst, CV_RGBA2GRAY);
+        } else if(channels == 3) {
+            ofxCv::cvtColor(src, dst, CV_RGB2GRAY);
+        } else if(channels == 1) {
+            ofxCv::copy(src, dst);
+        }
+    }
 	
 	//call with two images
-	void Flow::calcOpticalFlow(ofBaseHasPixels& lastImage, ofBaseHasPixels& currentImage){
-		calcOpticalFlow(lastImage.getPixelsRef(), currentImage.getPixelsRef());
-	}
-	
-	void Flow::calcOpticalFlow(ofPixelsRef lastImage, ofPixelsRef currentImage){
-		last = lastImage;
-		last.setImageType(forcedImageType);
-
-		curr.setFromPixels(currentImage);
-		curr.setImageType(forcedImageType);
+	void Flow::calcOpticalFlow(Mat lastImage, Mat currentImage){
+        // todo: don't make a copy unless necessary
+        copyGray(lastImage, last);
+        copyGray(currentImage, curr);
 		
 		calcFlow(); //will call concrete implementation
-		hasFlow = true;
+		hasFlow = true; // is this true for farneback?
 	}
 	
 	//you can add subsequent images this way without having to store 
 	//the previous one yourself
-	void Flow::calcOpticalFlow(ofBaseHasPixels& nextImage){
-		calcOpticalFlow(nextImage.getPixelsRef());
-	}
-	
-	void Flow::calcOpticalFlow(ofPixelsRef nextImage){
-		curr.setFromPixels(nextImage);
-		curr.setImageType(forcedImageType);
+	void Flow::calcOpticalFlow(Mat nextImage){
+        // todo: don't make a copy unless necessary
+        copyGray(nextImage, curr);
 
-		if(last.isAllocated() && last.getWidth() == curr.getWidth() && last.getHeight() == curr.getHeight()){
+		if(last.size == curr.size){
 			calcFlow(); //will call concrete implementation
 			hasFlow = true;
 		}
 		
-		last.setFromPixels(curr.getPixelsRef());
+        swap(curr, last);
 	}
     
 	void Flow::draw(){
 		if(hasFlow) {
-			drawFlow(ofRectangle(0,0, last.getWidth(), last.getHeight() ));
+			drawFlow(ofRectangle(0, 0, getWidth(), getHeight()));
 		}
 	}
 	void Flow::draw(float x, float y){
 		if(hasFlow){
-			drawFlow(ofRectangle(x,y,last.getWidth(),last.getHeight()));
+			drawFlow(ofRectangle(x, y, getWidth(), getHeight()));
 		}
 	}
 	void Flow::draw(float x, float y, float width, float height){
@@ -70,11 +67,18 @@ namespace ofxCv {
 			drawFlow(rect);
 		}
 	}
-	int Flow::getWidth()  { return 0; }
-	int Flow::getHeight() { return 0; }
+	int Flow::getWidth()  {
+        return curr.cols;
+    }
+	int Flow::getHeight() {
+        return curr.rows;
+    }
+    void Flow::resetFlow() {
+        last = Mat();
+        curr = Mat();
+        hasFlow = false;
+    }
 	
-    
-#pragma mark PYRLK IMPLEMENTATION
 	FlowPyrLK::FlowPyrLK()
 	:windowSize(32)
 	,maxLevel(3)
@@ -135,8 +139,8 @@ namespace ofxCv {
 			pyramid.clear();
 #else
 			calcOpticalFlowPyrLK(
-													 toCv(last),
-													 toCv(curr),
+													 last,
+													 curr,
 													 prevPts,
 													 nextPts,
 													 status,
@@ -178,13 +182,6 @@ namespace ofxCv {
 		calcFeaturesNextFrame = false;
 	}
 	
-	int FlowPyrLK::getWidth() {
-		return last.getWidth();
-	}
-	int FlowPyrLK::getHeight() {
-		return last.getHeight();
-	}
-	
 	vector<ofPoint> FlowPyrLK::getFeatures(){
 		ofPolyline poly =toOf(prevPts);
 		return poly.getVertices();
@@ -212,7 +209,7 @@ namespace ofxCv {
 	
 	void FlowPyrLK::drawFlow(ofRectangle rect) {
 		ofVec2f offset(rect.x,rect.y);
-		ofVec2f scale(rect.width/last.getWidth(),rect.height/last.getHeight());
+		ofVec2f scale(rect.width/getWidth(),rect.height/getHeight());
 		for(int i = 0; i < (int)prevPts.size(); i++) {
 			if(status[i]){
 				ofLine(toOf(prevPts[i])*scale+offset, toOf(nextPts[i])*scale+offset);
@@ -221,14 +218,12 @@ namespace ofxCv {
 	}
     
     void FlowPyrLK::resetFlow(){
-        hasFlow = false;
-        last.clear();
+        Flow::resetFlow();
         resetFeaturesToTrack();
         prevPts.clear();
     }
-	
-#pragma mark FARNEBACK IMPLEMENTATION
-	FlowFarneback::FlowFarneback()
+    
+    FlowFarneback::FlowFarneback()
 	:pyramidScale(0.5)
 	,numLevels(4)
 	,windowSize(8)
@@ -269,9 +264,8 @@ namespace ofxCv {
 	}
 	
 	void FlowFarneback::resetFlow(){
-		hasFlow = false;
+        Flow::resetFlow();
 		flow.setTo(0);
-		last.clear();
 	}
 
 	void FlowFarneback::calcFlow(){
@@ -283,8 +277,8 @@ namespace ofxCv {
 			flags |= OPTFLOW_FARNEBACK_GAUSSIAN;
 		}
 
-		calcOpticalFlowFarneback(toCv(last),
-								 toCv(curr),
+		calcOpticalFlowFarneback(last,
+								 curr,
 								 flow,
 								 pyramidScale,
 								 numLevels,
@@ -332,13 +326,6 @@ namespace ofxCv {
 		
 		const Scalar& sc = sum(flow(toCv(region)));
 		return ofVec2f(sc[0], sc[1]);
-	}
-	
-	int FlowFarneback::getWidth() {
-		return flow.cols;
-	}
-	int FlowFarneback::getHeight() {
-		return flow.rows;
 	}
 	
 	void FlowFarneback::drawFlow(ofRectangle rect){
