@@ -8,6 +8,7 @@ example-pulse/
 *.DS_*
 *.xcworkspacedata
 xcuserdata/
+project.xcworkspace
 
 *.opensdf
 *.sdf
