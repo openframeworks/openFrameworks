@@ -432,14 +432,6 @@ function createPackage {
 	if [ "$pkg_platform" != "osx" ] && [ "$pkg_platform" != "ios" ]; then
 		rm -Rf "xcode templates"
 	fi
-	
-	
-	#download and copy OF compiled
-	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
-    if [ "$pkg_platform" = "win_cb" ]; then
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
-	fi
 
 
     #if snow leopard change 10.4u to 10.5
