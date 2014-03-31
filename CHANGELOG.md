@@ -117,8 +117,9 @@ PLATFORM SPECIFIC
 	/ Changes to ofGstVideo files to compile with 0.10 gstreamer and fixup file names in Win32
 	/ Improve Dialog Win32
 ### Linux Arm 
-	/ re-enabling the uniqueShader for the RPi due to large texture performance
-	/ bind defaultShader in setup() for RPi/GLProgrammable
+	/ Fbo with ofClear now works properly
+	/ Fbo/Shader behavior now consistent with other platforms (can be used in update and draw)
+	/ Shaders used in draw() no longer cause GL Errors and corrupt display
 
  
 CORE ADDONS

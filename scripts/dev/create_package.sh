@@ -184,6 +184,10 @@ function createPackage {
         rm -Rf gl/pointsAsTextures
         rm -Rf gl/gpuParticleSystemExample
         rm -Rf gl/vboMeshDrawInstancedExample
+        rm -Rf gl/shaderExample
+        
+        rm -Rf utils/systemSpeakExample
+        rm -Rf utils/fileBufferLoadingCSVExample
         
         rm -Rf 3d/modelNoiseExample
     fi

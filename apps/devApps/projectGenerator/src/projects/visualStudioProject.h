@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef VSWINPROJECT_H_
+#define VSWINPROJECT_H_
 
 #include "ofConstants.h"
 #include "pugixml.hpp"
@@ -18,9 +19,10 @@ public:
     bool loadProjectFile();
     bool saveProjectFile();
 
-    void addSrc(string srcFile, string folder);
+    void addSrc(string srcFile, string folder, SrcType type=DEFAULT);
     void addInclude(string includeName);
     void addLibrary(string libraryName, LibType libType);
+    void addCFLAG(string cflag, LibType libType = RELEASE_LIB);
 
     void addAddon(ofAddon & addon);
 
@@ -34,3 +36,5 @@ public:
 private:
 
 };
+
+#endif
