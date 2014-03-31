@@ -538,7 +538,7 @@ bool checkConfigExists(){
 }
 
 bool askOFRoot(){
-	ofFileDialogResult res = ofSystemLoadDialog("Select the folder of your openFrameworks install", true);
+	ofFileDialogResult res = ofSystemLoadDialog("OF project generator", "choose the folder of your OF install");
 	if (res.fileName == "" || res.filePath == "") return false;
 
 	ofDirectory config(ofFilePath::join(ofFilePath::getUserHomeDir(),".ofprojectgenerator"));
