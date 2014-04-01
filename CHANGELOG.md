@@ -1,3 +1,12 @@
+OF 0.8.2
+========
+
+CORE
+----
+### 3d
+	/ fix of3DPrimitive copy constructor not copying node
+
+
 OF 0.8.1
 ========
 
