@@ -79,10 +79,6 @@ namespace ofxCv {
 		vector<ofPoint> getCurrent();
 		vector<ofVec2f> getMotion();
 		
-		// size of flow
-		int getWidth();
-		int getHeight();
-		
 		// recalculates features to track
 		void resetFeaturesToTrack();
 		void setFeaturesToTrack(const vector<ofVec2f> & features);
@@ -142,11 +138,6 @@ namespace ofxCv {
 		ofVec2f getTotalFlowInRegion(ofRectangle region);
 		ofVec2f getAverageFlowInRegion(ofRectangle region);
 		
-
-		// size of flow
-		int getWidth();
-		int getHeight();
-        
         //call this if you switch to a new video file to reset internal caches
         void resetFlow();
     

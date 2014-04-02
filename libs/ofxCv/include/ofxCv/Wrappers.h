@@ -185,6 +185,20 @@ cv::name(xMat, yMat, resultMat);\
 	// ...or single colors.
 	Vec3b convertColor(Vec3b color, int code);
 	ofColor convertColor(ofColor color, int code);
+    
+    // a common cv task is to convert something to grayscale. this function will
+    // do that quickly for RGBA, RGB, and 1-channel images.
+    template <class S, class D>
+    void copyGray(S& src, D& dst) {
+        int channels = getChannels(src);
+        if(channels == 4) {
+            convertColor(src, dst, CV_RGBA2GRAY);
+        } else if(channels == 3) {
+            convertColor(src, dst, CV_RGB2GRAY);
+        } else if(channels == 1) {
+            copy(src, dst);
+        }
+    }
 	
 	int forceOdd(int x);
 	
