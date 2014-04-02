@@ -1364,7 +1364,7 @@ void ofAppEGLWindow::setupNativeMouse() {
     if(mouse_fd < 0) {
         ofLogError("ofAppEGLWindow") << "setupMouse(): did not open mouse, mouse_fd < 0";
     }else {
-		mouseDetected = true;
+        mouseDetected = true;
 	}
 
 
@@ -1410,9 +1410,8 @@ void ofAppEGLWindow::setupNativeKeyboard() {
     
     if(keyboard_fd < 0) {
         ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard, keyboard_fd < 0";
-    }else
-	{
-		keyboardDetected = true;
+    }else {
+        keyboardDetected = true;
 	}
 }
 

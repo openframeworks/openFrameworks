@@ -76,7 +76,7 @@ public:
 	virtual ~ofAppEGLWindow();
 
 	void exit(ofEventArgs &e);
-	void setThreadTimeout(long timeOut){ threadTimeout = timeOut; }
+    void setThreadTimeout(long timeOut){ threadTimeout = timeOut; }
     void setGLESVersion(int glesVersion);
 	virtual void setupOpenGL(int w, int h, int screenMode);
 
