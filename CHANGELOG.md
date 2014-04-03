@@ -12,6 +12,10 @@ CORE
 ----
 ### 3d
 	/ fix of3DPrimitive copy constructor not copying node
+	
+### app
+	+ ofAppEGLWindow added new methods hasMouse()/hasKeyboard() to provide info on whether mouse/keyboard were detected
+	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
 
 ### Utils
 	/ ofThread now uses Class name for logging channel (was thread name)
