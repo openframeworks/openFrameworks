@@ -509,7 +509,6 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 	// 	we need a good solution for this..
 	//
 	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
-	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
 	
 	
 	//Sosolimited: texture compression
@@ -731,7 +730,7 @@ ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
 		float pctx = xPos / texData.width;
 		float pcty = yPos / texData.height;
 		
-		// (b) mult by our internal pct (since we might not be 0-1 insternally)
+		// (b) mult by our internal pct (since we might not be 0-1 internally)
 		
 		pctx *= texData.tex_t;
 		pcty *= texData.tex_u;
