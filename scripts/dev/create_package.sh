@@ -354,6 +354,12 @@ function createPackage {
 		deleteEclipse
 		rm -R libs/openFrameworks/.settings
 	fi
+	
+	#android, move paths.default.make to paths.make
+	if [ "$pkg_platform" = "android" ]
+	    cd ${pkg_root}
+	    mv libs/openFrameworksCompiled/android/paths.default.make libs/openFrameworksCompiled/android/paths.make
+	fi
 
     #delete other platforms OF project files
     cd ${pkg_ofroot}/libs/openFrameworksCompiled/lib
