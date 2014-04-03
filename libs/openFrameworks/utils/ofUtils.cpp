@@ -540,18 +540,7 @@ vector <string> ofSplitString(const string & source, const string & delimiter, b
 
 //--------------------------------------------------
 string ofJoinString(vector <string> stringElements, const string & delimiter){
-	string resultString = "";
-	int numElements = stringElements.size();
-
-	for(int k = 0; k < numElements; k++){
-		if( k < numElements-1 ){
-			resultString += stringElements[k] + delimiter;
-		} else {
-			resultString += stringElements[k];
-		}
-	}
-
-	return resultString;
+    return Poco::cat(delimiter, stringElements.begin(), stringElements.end());
 }
 
 //--------------------------------------------------
