@@ -7,6 +7,13 @@ CORE
 	/ fix of3DPrimitive copy constructor not copying node
 
 
+PLATFORM SPECIFIC
+-----------------
+### Android
+	/ fix package generation, was missing paths.make
+
+
+
 OF 0.8.1
 ========
 
