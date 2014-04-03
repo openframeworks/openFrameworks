@@ -5,6 +5,7 @@
 #include "ofAppRunner.h"
 
 #include "Poco/String.h"
+#include "Poco/UTF8String.h"
 #include "Poco/LocalDateTime.h"
 #include "Poco/DateTimeFormatter.h"
 #include "Poco/URI.h"
@@ -590,16 +591,12 @@ int ofStringTimesInString(string haystack, string needle){
 
 //--------------------------------------------------
 string ofToLower(const string & src){
-	string dst(src);
-	transform(src.begin(),src.end(),dst.begin(),::tolower);
-	return dst;
+    return Poco::UTF8::toLower(src);
 }
 
 //--------------------------------------------------
 string ofToUpper(const string & src){
-	string dst(src);
-	transform(src.begin(),src.end(),dst.begin(),::toupper);
-	return dst;
+    return Poco::UTF8::toUpper(src);
 }
 
 //--------------------------------------------------
