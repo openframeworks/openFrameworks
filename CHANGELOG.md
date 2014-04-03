@@ -1,12 +1,21 @@
 OF 0.8.2
 ========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
 
 CORE
 ----
 ### 3d
 	/ fix of3DPrimitive copy constructor not copying node
 
-
+### Utils
+	/ ofThread now uses Class name for logging channel (was thread name)
+	
 PLATFORM SPECIFIC
 -----------------
 ### Android
@@ -16,6 +25,13 @@ PLATFORM SPECIFIC
 
 OF 0.8.1
 ========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
 
 ```
 _____/\\\\\\\______________/\\\\\\\\\_______________/\\\_        
