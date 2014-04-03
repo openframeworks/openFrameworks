@@ -550,9 +550,10 @@ void ofStringReplace(string& input, string searchStr, string replaceStr){
 
 //--------------------------------------------------
 bool ofIsStringInString(string haystack, string needle){
-	return ( strstr(haystack.c_str(), needle.c_str() ) != NULL );
+    return haystack.find(needle) != std::string::npos;
 }
 
+//--------------------------------------------------
 int ofStringTimesInString(string haystack, string needle){
 	const size_t step = needle.size();
 
