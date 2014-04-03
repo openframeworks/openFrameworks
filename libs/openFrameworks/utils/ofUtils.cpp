@@ -545,18 +545,7 @@ string ofJoinString(vector <string> stringElements, const string & delimiter){
 
 //--------------------------------------------------
 void ofStringReplace(string& input, string searchStr, string replaceStr){
-	size_t uPos = 0; 
-	size_t uFindLen = searchStr.length(); 
-	size_t uReplaceLen = replaceStr.length();
-		
-	if( uFindLen == 0 ){
-		return;
-	}
-
-	for( ;(uPos = input.find( searchStr, uPos )) != std::string::npos; ){
-		input.replace( uPos, uFindLen, replaceStr );
-		uPos += uReplaceLen;
-	}	
+    input = Poco::replace(input, searchStr, replaceStr);
 }
 
 //--------------------------------------------------
