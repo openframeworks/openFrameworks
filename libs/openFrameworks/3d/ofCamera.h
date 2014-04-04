@@ -9,7 +9,7 @@
 /// \todo add set projection matrix
 /// \todo support for left handed or right handed?
 
-/// \brief A basic comera object for interacting with objects in 3D space.
+/// \brief A basic camera object for interacting with objects in 3D space.
 /// \author Memo Akten, MSA Visuals Ltd. 2011
 class ofCamera : public ofNode {
 public:
