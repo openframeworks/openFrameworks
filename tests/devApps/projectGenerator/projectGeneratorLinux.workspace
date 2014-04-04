@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="emptyExample">
+		<Project filename="../../../libs/openFrameworksCompiled/project/linux/libopenFrameworks.cbp" />
+		<Project filename="projectGeneratorLinux.cbp" active="1" />
+	</Workspace>
+</CodeBlocks_workspace_file>
