@@ -31,7 +31,7 @@ unsigned long long ofGetSystemTimeMicros( );			// system time in microseconds;
 
 		//returns 
 string ofGetTimestampString();
-string ofGetTimestampString(string timestampFormat);
+string ofGetTimestampString(const string& timestampFormat);
 
 
 int     ofGetYear();
@@ -39,11 +39,11 @@ int     ofGetMonth();
 int     ofGetDay();
 int     ofGetWeekday();
 
-void 	ofLaunchBrowser(string url, bool uriEncodeQuery=false);
+void 	ofLaunchBrowser(const string& url, bool uriEncodeQuery=false);
 
 void	ofEnableDataPath();
 void	ofDisableDataPath();
-string 	ofToDataPath(string path, bool absolute=false);
+string 	ofToDataPath(const string& path, bool absolute=false);
 
 template<class T>
 void ofRandomize(vector<T>& values) {
@@ -78,7 +78,7 @@ void ofSetWorkingDirectoryToDefault();
 
 //set the root path that ofToDataPath will use to search for files relative to the app
 //the path must have a trailing slash (/) !!!!
-void ofSetDataPathRoot( string root );
+void ofSetDataPathRoot(const string& root);
 
 template <class T>
 string ofToString(const T& value){
@@ -198,24 +198,24 @@ unsigned int ofGetVersionMajor();
 unsigned int ofGetVersionMinor();
 unsigned int ofGetVersionPatch();
 
-void	ofSaveScreen(string filename);
+void	ofSaveScreen(const string& filename);
 void	ofSaveFrame(bool bUseViewport = false);
-void	ofSaveViewport(string filename);
+void	ofSaveViewport(const string& filename);
 
 //--------------------------------------------------
-vector <string> ofSplitString(const string & source, const string & delimiter, bool ignoreEmpty = false, bool trim = false);
-string ofJoinString(vector <string> stringElements, const string & delimiter);
-void ofStringReplace(string& input, string searchStr, string replaceStr);
-bool ofIsStringInString(string haystack, string needle);
-int ofStringTimesInString(string haystack, string needle);
+vector<string> ofSplitString(const string& source, const string& delimiter, bool ignoreEmpty = false, bool trim = false);
+string ofJoinString(const vector<string>& stringElements, const string& delimiter);
+void ofStringReplace(string& input, const string& searchStr, const string& replaceStr);
+bool ofIsStringInString(const string& haystack, const string& needle);
+int ofStringTimesInString(const string& haystack, const string& needle);
 
-string ofToLower(const string & src);
-string ofToUpper(const string & src);
+string ofToLower(const string& src);
+string ofToUpper(const string& src);
 
 string ofVAArgsToString(const char * format, ...);
 string ofVAArgsToString(const char * format, va_list args);
 
-string ofSystem(string command);
+string ofSystem(const string& command);
 
 ofTargetPlatform ofGetTargetPlatform();
 
