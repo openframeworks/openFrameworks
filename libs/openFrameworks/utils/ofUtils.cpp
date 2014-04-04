@@ -138,67 +138,37 @@ string ofGetTimestampString(string timestampFormat){
 
 //--------------------------------------------------
 int ofGetSeconds(){
-	time_t 	curr;
-	tm 		local;
-	time(&curr);
-	local	=*(localtime(&curr));
-	return local.tm_sec;
+    return Poco::LocalDateTime().second();
 }
 
 //--------------------------------------------------
 int ofGetMinutes(){
-	time_t 	curr;
-	tm 		local;
-	time(&curr);
-	local	=*(localtime(&curr));
-	return local.tm_min;
+	return Poco::LocalDateTime().minute();
 }
 
 //--------------------------------------------------
 int ofGetHours(){
-	time_t 	curr;
-	tm 		local;
-	time(&curr);
-	local	=*(localtime(&curr));
-	return local.tm_hour;
+    return Poco::LocalDateTime().hour();
 }
 
 //--------------------------------------------------
 int ofGetYear(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  int year = local.tm_year + 1900;
-  return year;
+    return Poco::LocalDateTime().year();
 }
 
 //--------------------------------------------------
 int ofGetMonth(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  int month = local.tm_mon + 1;
-  return month;
+    return Poco::LocalDateTime().month();
 }
 
 //--------------------------------------------------
 int ofGetDay(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  return local.tm_mday;
+    return Poco::LocalDateTime().day();
 }
 
 //--------------------------------------------------
 int ofGetWeekday(){
-  time_t    curr;
-  tm       local;
-  time(&curr);
-  local   =*(localtime(&curr));
-  return local.tm_wday;
+    return Poco::LocalDateTime().dayOfWeek();
 }
 
 //--------------------------------------------------
