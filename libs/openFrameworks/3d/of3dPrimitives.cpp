@@ -22,7 +22,7 @@ of3dPrimitive::~of3dPrimitive() {
 }
 
 //----------------------------------------------------------
-of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom){
+of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom):ofNode(mom){
     texCoords = mom.texCoords;
     usingVbo = mom.usingVbo;
 	if(usingVbo){
@@ -36,6 +36,7 @@ of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom){
 //----------------------------------------------------------
 of3dPrimitive & of3dPrimitive::operator=(const of3dPrimitive & mom){
 	if(&mom!=this){
+		(*(ofNode*)this)=mom;
 		texCoords = mom.texCoords;
 		setUseVbo(mom.usingVbo);
 		*mesh = *mom.mesh;

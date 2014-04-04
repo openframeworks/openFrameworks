@@ -184,6 +184,10 @@ function createPackage {
         rm -Rf gl/pointsAsTextures
         rm -Rf gl/gpuParticleSystemExample
         rm -Rf gl/vboMeshDrawInstancedExample
+        rm -Rf gl/shaderExample
+        
+        rm -Rf utils/systemSpeakExample
+        rm -Rf utils/fileBufferLoadingCSVExample
         
         rm -Rf 3d/modelNoiseExample
     fi
@@ -350,6 +354,12 @@ function createPackage {
 		deleteEclipse
 		rm -R libs/openFrameworks/.settings
 	fi
+	
+	#android, move paths.default.make to paths.make
+	if [ "$pkg_platform" = "android" ]
+	    cd ${pkg_root}
+	    mv libs/openFrameworksCompiled/android/paths.default.make libs/openFrameworksCompiled/android/paths.make
+	fi
 
     #delete other platforms OF project files
     cd ${pkg_ofroot}/libs/openFrameworksCompiled/lib
@@ -431,11 +441,11 @@ function createPackage {
 	
 	
 	#download and copy OF compiled
-	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
-    if [ "$pkg_platform" = "win_cb" ]; then
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
-	fi
+	#cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
+    	#if [ "$pkg_platform" = "win_cb" ]; then
+	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
+	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
+	#fi
 
 
     #if snow leopard change 10.4u to 10.5
