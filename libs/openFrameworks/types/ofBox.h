@@ -76,6 +76,9 @@ public:
 	
     void setPosition(float px, float py, float pz);
     void setPosition(const ofPoint& p);
+
+    void setSize(float sx, float sy, float sz);
+    void setSize(const ofPoint& s);
     
     void setFromCenter(float px, float py, float pz, float w, float h, float d);
     void setFromCenter(const ofPoint& p, float w, float h, float d);
@@ -203,6 +206,9 @@ public:
     ofPoint  getPosition() const;
     ofPoint& getPositionRef();
 	
+    ofPoint  getSize() const;
+    ofPoint& getSizeRef();
+	
     ofPoint getCenter() const;
     
     float getX() const;
@@ -222,9 +228,10 @@ public:
     float& x;
     float& y;
     float& z;
-    float width;
-    float height;
-    float depth;
+    ofPoint size;
+    float& width;
+    float& height;
+    float& depth;
 };
 
 ostream& operator<<(ostream& os, const ofBox& box);

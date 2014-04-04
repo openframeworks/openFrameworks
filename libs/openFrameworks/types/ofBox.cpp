@@ -2,7 +2,9 @@
 #include "ofBox.h"
 
 //----------------------------------------------------------
-ofBox::ofBox() : x(position.x), y(position.y), z(position.z) {
+ofBox::ofBox()
+		: x(position.x), y(position.y), z(position.z),
+		width(size.x), height(size.y), depth(size.z){
     set(0,0,0,0,0,0);
 }
 
@@ -10,22 +12,30 @@ ofBox::ofBox() : x(position.x), y(position.y), z(position.z) {
 ofBox::~ ofBox(){}
 
 //----------------------------------------------------------
-ofBox::ofBox(float px, float py, float pz, float w, float h, float d) : x(position.x), y(position.y), z(position.z) {
+ofBox::ofBox(float px, float py, float pz, float w, float h, float d)
+			: x(position.x), y(position.y), z(position.z),
+			width(size.x), height(size.y), depth(size.z){
 	set(px,py,pz,w,h,d);
 }
 
 //----------------------------------------------------------
-ofBox::ofBox(const ofPoint& p, float w, float h, float d) : x(position.x), y(position.y), z(position.z) {
+ofBox::ofBox(const ofPoint& p, float w, float h, float d)
+			: x(position.x), y(position.y), z(position.z),
+			width(size.x), height(size.y), depth(size.z){
     set(p,w,h,d);
 }
 
 //----------------------------------------------------------
-ofBox::ofBox(const ofBox& box) : x(position.x), y(position.y), z(position.z) {
+ofBox::ofBox(const ofBox& box)
+			: x(position.x), y(position.y), z(position.z),
+			width(size.x), height(size.y), depth(size.z){
     set(box);
 }
 
 //----------------------------------------------------------
-ofBox::ofBox(const ofPoint& p0, const ofPoint& p1) : x(position.x), y(position.y), z(position.z) {
+ofBox::ofBox(const ofPoint& p0, const ofPoint& p1)
+			: x(position.x), y(position.y), z(position.z),
+			width(size.x), height(size.y), depth(size.z){
     set(p0,p1);
 }
 
@@ -107,6 +117,18 @@ void ofBox::setPosition(float px, float py, float pz) {
 //----------------------------------------------------------
 void ofBox::setPosition(const ofPoint& p) {
     position = p;
+}
+
+//----------------------------------------------------------
+void ofBox::setSize(float sx, float sy, float sz) {
+    size.x = sx;
+    size.y = sy;
+    size.z = sz;
+}
+
+//----------------------------------------------------------
+void ofBox::setSize(const ofPoint& s) {
+    size = s;
 }
 
 //----------------------------------------------------------
@@ -209,6 +231,7 @@ void ofBox::scaleFromCenter(const ofPoint& s) {
     height = newHeight;
     depth = newDepth;
 }
+
 /* //TODO
 //----------------------------------------------------------
 void ofBox::scaleTo(const ofBox& targetRect,
@@ -703,10 +726,17 @@ bool ofBox::operator != (const ofBox& box) const {
 ofPoint ofBox::getPosition() const {
     return position;
 }
-
 //----------------------------------------------------------
 ofPoint& ofBox::getPositionRef() {
     return position;
+}
+//----------------------------------------------------------
+ofPoint ofBox::getSize() const {
+    return size;
+}
+//----------------------------------------------------------
+ofPoint& ofBox::getSizeRef() {
+    return size;
 }
 
 //----------------------------------------------------------
