@@ -12,8 +12,6 @@
 #include "Poco/Path.h"
 
 
-int 	ofNextPow2(int input);
-
 /// \brief Reset the elapsed time counter.
 ///
 /// This method resets the times returned by ofGetElapsedTimef(),
