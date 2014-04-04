@@ -15,7 +15,7 @@
 /// \brief Reset the elapsed time counter.
 ///
 /// This method resets the times returned by ofGetElapsedTimef(),
-/// ofGetElapsedTimeMillis() and ofGetElapsedTimeMicros().
+/// ofGetElapsedTimeMillis() and ofGetElapsedTimeMicros() to zero.
 ///
 /// \note This is called on the first frame during app startup.
 void ofResetElapsedTimeCounter();
@@ -23,8 +23,8 @@ void ofResetElapsedTimeCounter();
 /// \brief Return the elapsed time in seconds.
 ///
 /// This returns the elapsed time since ofResetElapsedTimeCounter() was called.
-/// Usually ofResetElapsedTimeCounter() is called automatically upon program
-/// startup.
+/// Usually ofResetElapsedTimeCounter() is called automatically once during
+/// program startup.
 ///
 /// \returns the floating point elapsed time in seconds.
 float ofGetElapsedTimef();
@@ -32,8 +32,8 @@ float ofGetElapsedTimef();
 /// \brief Return the elapsed time in milliseconds.
 ///
 /// This returns the elapsed time since ofResetElapsedTimeCounter() was called.
-/// Usually ofResetElapsedTimeCounter() is called automatically upon program
-/// startup.
+/// Usually ofResetElapsedTimeCounter() is called automatically once during
+/// program startup.
 ///
 /// \returns the elapsed time in milliseconds.
 unsigned long long ofGetElapsedTimeMillis();
@@ -47,8 +47,8 @@ unsigned long long ofGetElapsedTimeMillis();
 /// \returns the elapsed time in milliseconds.
 unsigned long long ofGetElapsedTimeMicros();
 
-/// \brief Get the number of frames rendered since the program startup.
-/// \returns the number of frames rendered since the program startup.
+/// \brief Get the number of frames rendered since the program started.
+/// \returns the number of frames rendered since the program started.
 int ofGetFrameNum();
 
 /// \brief Get the seconds after the minute.
@@ -75,7 +75,7 @@ unsigned long long ofGetSystemTime();
 /// \returns the system time in microseconds.
 unsigned long long ofGetSystemTimeMicros();
 
-/// \brief Formats the current time according to the given format.
+/// \brief Formats the current system time according to the given format.
 ///
 /// The default timestamp format is "%Y-%m-%d-%H-%M-%S-%i" (e.g.
 /// 2011-01-15-18-29-35-299).
@@ -83,11 +83,11 @@ unsigned long long ofGetSystemTimeMicros();
 /// \returns the current time with the given format.
 string ofGetTimestampString();
 
-/// \brief Formats the current time according to the given format.
+/// \brief Formats the current system time according to the given format.
 ///
 /// The format string is used as a template to format the date and
-/// is copied character by character except for the following special characters,
-/// which are replaced by the corresponding value.
+/// is copied character by character except for the following special
+/// characters, which are replaced by the corresponding value.
 ///
 ///   * %w - abbreviated weekday (Mon, Tue, ...)
 ///   * %W - full weekday (Monday, Tuesday, ...)
@@ -163,7 +163,7 @@ void ofDisableDataPath();
 /// are unaware of the data/ path's location.
 ///
 /// \param path The path to prepend.
-/// \param absolute true iff the user requres an absolute path.
+/// \param absolute Set to true to return an absolute path.
 /// \returns the converted path.
 string ofToDataPath(string path, bool absolute=false);
 
@@ -189,7 +189,7 @@ void ofRandomize(vector<T>& values) {
 ///
 /// To call the function, one might use:
 ///
-///    vector<int> myInts;
+///    std::vector<int> myInts;
 ///
 ///    // Fill the vector with integers.
 ///    for (int i = 0; i < 10; ++i)
@@ -233,9 +233,16 @@ void ofSort(vector<T>& values) {
 ///        return (j < i);
 ///    }
 ///
+/// This binary function must accept two
+/// elements in the range as arguments and return a value convertible to bool.
+/// The value returned indicates whether the element passed as first argument is
+/// considered to go before the second in the specific strict weak ordering it
+/// defines.  The function shall not modify any of its arguments.  This can
+/// either be a function pointer or a function object.
+///
 /// To call the function, one might use:
 ///
-///    vector<int> myInts;
+///    std::vector<int> myInts;
 ///
 ///    // Fill the vector with integers.
 ///    for (int i = 0; i < 10; ++i)
@@ -250,12 +257,7 @@ void ofSort(vector<T>& values) {
 ///    9, 8, 7, 6, 5, 4, 3, 2, 1, 0.
 ///
 /// \param The vector of values to be sorted.
-/// \param The comparison function.  This binary function must accept two
-/// elements in the range as arguments, and return a value convertible to bool.
-/// The value returned indicates whether the element passed as first argument is
-/// considered to go before the second in the specific strict weak ordering it
-/// defines.  The function shall not modify any of its arguments.  This can
-/// either be a function pointer or a function object.
+/// \param The comparison function.
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
 template<class T, class BoolFunction>
 void ofSort(vector<T>& values, BoolFunction compare) {
