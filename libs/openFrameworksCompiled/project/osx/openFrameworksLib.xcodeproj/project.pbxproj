@@ -850,19 +850,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
-				OTHER_LDFLAGS = (
-					"$(LIB_POCOFOUNDATION)",
-					"$(LIB_POCONET)",
-					"$(LIB_POCOXML)",
-					"$(LIB_POCOUTIL)",
-					"$(LIB_TESS)",
-					"$(LIB_GLEW)",
-					"$(LIB_ASSIMP)",
-					"$(LIB_FREEIMAGE)",
-					"$(LIB_FREETYPE)",
-					"$(LIB_GLUT)",
-					"$(LIB_FMODEX)",
-				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = openFrameworksDebug;
 				SDKROOT = "";
 			};
@@ -895,19 +883,7 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_9)",
 				);
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/release/";
-				OTHER_LDFLAGS = (
-					"$(LIB_POCOFOUNDATION)",
-					"$(LIB_POCONET)",
-					"$(LIB_POCOXML)",
-					"$(LIB_POCOUTIL)",
-					"$(LIB_TESS)",
-					"$(LIB_GLEW)",
-					"$(LIB_ASSIMP)",
-					"$(LIB_FREEIMAGE)",
-					"$(LIB_FREETYPE)",
-					"$(LIB_GLUT)",
-					"$(LIB_FMODEX)",
-				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = "";
 			};
