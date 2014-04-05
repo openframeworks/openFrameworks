@@ -131,7 +131,7 @@ string ofGetTimestampString(){
 
 //specify the string format - eg: %Y-%m-%d-%H-%M-%S-%i ( 2011-01-15-18-29-35-299 )
 //--------------------------------------------------
-string ofGetTimestampString(string timestampFormat){
+string ofGetTimestampString(const string& timestampFormat){
 	Poco::LocalDateTime now;
 	return Poco::DateTimeFormatter::format(now, timestampFormat);
 }
@@ -269,12 +269,12 @@ void ofSetWorkingDirectoryToDefault(){
 }
 	
 //--------------------------------------------------
-void ofSetDataPathRoot(string newRoot){
+void ofSetDataPathRoot(const string& newRoot){
 	dataPathRoot() = Poco::Path(newRoot);
 }
 
 //--------------------------------------------------
-string ofToDataPath(string path, bool makeAbsolute){
+string ofToDataPath(const string& path, bool makeAbsolute){
 	if (!enableDataPath)
 		return path;
 	
@@ -328,13 +328,13 @@ string ofToDataPath(string path, bool makeAbsolute){
 
 //----------------------------------------
 template<>
-string ofFromString(const string & value){
+string ofFromString(const string& value){
 	return value;
 }
 
 //----------------------------------------
 template<>
-const char * ofFromString(const string & value){
+const char * ofFromString(const string& value){
 	return value.c_str();
 }
 
@@ -538,7 +538,7 @@ vector <string> ofSplitString(const string & source, const string & delimiter, b
 }
 
 //--------------------------------------------------
-string ofJoinString(vector <string> stringElements, const string & delimiter){
+string ofJoinString(const vector<string>& stringElements, const string& delimiter){
 	string resultString = "";
 	int numElements = stringElements.size();
 
@@ -554,7 +554,7 @@ string ofJoinString(vector <string> stringElements, const string & delimiter){
 }
 
 //--------------------------------------------------
-void ofStringReplace(string& input, string searchStr, string replaceStr){
+void ofStringReplace(string& input, const string& searchStr, const string& replaceStr){
 	size_t uPos = 0; 
 	size_t uFindLen = searchStr.length(); 
 	size_t uReplaceLen = replaceStr.length();
@@ -570,11 +570,11 @@ void ofStringReplace(string& input, string searchStr, string replaceStr){
 }
 
 //--------------------------------------------------
-bool ofIsStringInString(string haystack, string needle){
+bool ofIsStringInString(const string& haystack, const string& needle){
 	return ( strstr(haystack.c_str(), needle.c_str() ) != NULL );
 }
 
-int ofStringTimesInString(string haystack, string needle){
+int ofStringTimesInString(const string& haystack, const string& needle){
 	const size_t step = needle.size();
 
 	size_t count(0);
@@ -655,7 +655,7 @@ string ofVAArgsToString(const char * format, va_list args){
 }
 
 //--------------------------------------------------
-void ofLaunchBrowser(string _url, bool uriEncodeQuery){
+void ofLaunchBrowser(const string& _url, bool uriEncodeQuery){
 
     Poco::URI uri;
     
@@ -739,7 +739,7 @@ unsigned int ofGetVersionPatch() {
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
 
 //--------------------------------------------------
-void ofSaveScreen(string filename) {
+void ofSaveScreen(const string& filename) {
    ofImage screen;
    screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
    screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
@@ -747,7 +747,7 @@ void ofSaveScreen(string filename) {
 }
 
 //--------------------------------------------------
-void ofSaveViewport(string filename) {
+void ofSaveViewport(const string& filename) {
 	// because ofSaveScreen doesn't related to viewports
 	ofImage screen;
 	ofRectangle view = ofGetCurrentViewport();
@@ -769,7 +769,7 @@ void ofSaveFrame(bool bUseViewport){
 }
 
 //--------------------------------------------------
-string ofSystem(string command){
+string ofSystem(const string& command){
 	FILE * ret = NULL;
 #ifdef TARGET_WIN32
 	 ret = _popen(command.c_str(),"r");
