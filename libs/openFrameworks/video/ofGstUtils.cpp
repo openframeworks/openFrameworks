@@ -905,7 +905,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
 	buffer = sample;
 
 	if(pixels.isAllocated()){
-        if(stride != (pixels.getWidth() * pixels.getHeight() * pixels.getBytesPerPixel())) {
+        if(stride > 0) {
             backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
             eventPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
         }
@@ -997,7 +997,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
 	if(bBackPixelsChanged && buffer) gst_sample_unref (buffer);
 	buffer = sample;
 	if(pixels.isAllocated()){
-        if(stride != (pixels.getWidth() * pixels.getHeight() * pixels.getBytesPerPixel())) {
+        if(stride > 0)) {
             backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
             eventPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
         }
