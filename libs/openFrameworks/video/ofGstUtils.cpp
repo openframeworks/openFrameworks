@@ -10,8 +10,6 @@
 
 
 
-
-
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
 
 void ofGstUtils::startGstMainLoop(){
@@ -846,18 +844,27 @@ bool ofGstVideoUtils::allocate(int w, int h, int _bpp){
 #if GST_VERSION_MAJOR==0
 GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * _buffer){
 	guint size = GST_BUFFER_SIZE (_buffer);
+	int stride = 0;
 	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLogError("ofGstVideoUtils") << "preproll_cb(): error preroll buffer size: " << size
-			<< "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
-		gst_buffer_unref (_buffer);
-		return GST_FLOW_ERROR;
+        stride = gst_video_format_get_row_stride( GST_VIDEO_FORMAT_RGB,0, pixels.getWidth());
+        if(stride == (pixels.getWidth() * pixels.getHeight() *  pixels.getBytesPerPixel())) {
+            ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
+            gst_buffer_unref (_buffer);
+            return GST_FLOW_ERROR;
+        }
 	}
 	mutex.lock();
 	if(bBackPixelsChanged && buffer) gst_buffer_unref (buffer);
 	if(pixels.isAllocated()){
 		buffer = _buffer;
-		backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-		eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+        if(stride > 0) {
+            backPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
+            eventPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
+        }
+        else {
+            backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+            eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+        }
 		bBackPixelsChanged=true;
 		mutex.unlock();
 		ofNotifyEvent(prerollEvent,eventPixels);
@@ -876,18 +883,37 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
 	GstBuffer * _buffer = gst_sample_get_buffer(sample);
 	gst_buffer_map (_buffer, &mapinfo, GST_MAP_READ);
 	guint size = mapinfo.size;
+
+    int stride = 0;
 	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLogError("ofGstVideoUtils") << "preproll_cb(): error preroll buffer size: " << size
-			<< "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
-		gst_sample_unref (sample);
-		return GST_FLOW_ERROR;
+        GstCaps *caps = gst_sample_get_caps(sample);
+        GstVideoInfo vinfo;
+        gst_video_info_init (&vinfo);
+        gst_video_info_from_caps (&vinfo, caps);
+        GstVideoFrame f;
+        gst_video_frame_map(&f,&vinfo,_buffer,GST_MAP_READ);
+        stride = f.info.stride[0];
+
+        if(stride == (pixels.getWidth() * pixels.getHeight() *  pixels.getBytesPerPixel())) {
+            ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
+            gst_sample_unref (sample);
+            return GST_FLOW_ERROR;
+        }
 	}
 	mutex.lock();
 	if(bBackPixelsChanged && buffer) gst_sample_unref (buffer);
 	buffer = sample;
+
 	if(pixels.isAllocated()){
-		backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-		eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+        if(stride > 0) {
+            backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
+            eventPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
+        }
+        else {
+            backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+            eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+        }
+
 		bBackPixelsChanged=true;
 		mutex.unlock();
 		ofNotifyEvent(prerollEvent,eventPixels);
@@ -910,18 +936,27 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * _buffer){
 	guint size;
 
 	size = GST_BUFFER_SIZE (_buffer);
+	int stride = 0;
 	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size
-			<< " != init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
-		gst_buffer_unref (_buffer);
-		return GST_FLOW_ERROR;
+        stride = gst_video_format_get_row_stride( GST_VIDEO_FORMAT_RGB,0, pixels.getWidth());
+        if(stride == (pixels.getWidth() * pixels.getHeight() *  pixels.getBytesPerPixel())) {
+            ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
+            gst_buffer_unref (_buffer);
+            return GST_FLOW_ERROR;
+        }
 	}
 	mutex.lock();
 	if(bBackPixelsChanged && buffer) gst_buffer_unref (buffer);
 	if(pixels.isAllocated()){
 		buffer = _buffer;
-		backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-		eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+        if(stride > 0) {
+            backPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
+            eventPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
+        }
+        else {
+            backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+            eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+        }
 		bBackPixelsChanged=true;
 		mutex.unlock();
 		ofNotifyEvent(bufferEvent,eventPixels);
@@ -941,18 +976,36 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
 	GstBuffer * _buffer = gst_sample_get_buffer(sample);
 	gst_buffer_map (_buffer, &mapinfo, GST_MAP_READ);
 	guint size = mapinfo.size;
+
+    int stride = 0;
 	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-		ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size
-			<< "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
-		gst_sample_unref (sample);
-		return GST_FLOW_ERROR;
+        GstCaps *caps = gst_sample_get_caps(sample);
+        GstVideoInfo vinfo;
+        gst_video_info_init (&vinfo);
+        gst_video_info_from_caps (&vinfo, caps);
+        GstVideoFrame f;
+        gst_video_frame_map(&f,&vinfo,_buffer,GST_MAP_READ);
+        stride = f.info.stride[0];
+
+        if(stride == (pixels.getWidth() * pixels.getHeight() *  pixels.getBytesPerPixel())) {
+            ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
+            gst_sample_unref (sample);
+            return GST_FLOW_ERROR;
+        }
 	}
 	mutex.lock();
 	if(bBackPixelsChanged && buffer) gst_sample_unref (buffer);
 	buffer = sample;
 	if(pixels.isAllocated()){
-		backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-		eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+        if(stride > 0)) {
+            backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
+            eventPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
+        }
+        else {
+            backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+            eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
+        }
+
 		bBackPixelsChanged=true;
 		mutex.unlock();
 		ofNotifyEvent(bufferEvent,eventPixels);
