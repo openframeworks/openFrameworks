@@ -24,6 +24,8 @@ PLATFORM SPECIFIC
 -----------------
 ### Android
 	/ fix package generation, was missing paths.make
+### Linux
+       / video: fixes for videos which pixels have padding
 
 
 
