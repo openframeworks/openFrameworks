@@ -886,8 +886,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
 
     int stride = 0;
 	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-        GstPad* pad = gst_element_get_static_pad(getSink(), "sink");
-        GstCaps *caps = gst_pad_get_current_caps (GST_PAD (pad));
+        GstCaps *caps = gst_sample_get_caps(sample);
         GstVideoInfo vinfo;
         gst_video_info_init (&vinfo);
         gst_video_info_from_caps (&vinfo, caps);
@@ -906,7 +905,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
 	buffer = sample;
 
 	if(pixels.isAllocated()){
-        if(stride > 0) {
+        if(stride != (pixels.getWidth() * pixels.getHeight() * pixels.getBytesPerPixel())) {
             backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
             eventPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
         }
@@ -980,8 +979,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
 
     int stride = 0;
 	if(pixels.isAllocated() && pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel()!=(int)size){
-        GstPad* pad = gst_element_get_static_pad(getSink(), "sink");
-        GstCaps *caps = gst_pad_get_current_caps (GST_PAD (pad));
+        GstCaps *caps = gst_sample_get_caps(sample);
         GstVideoInfo vinfo;
         gst_video_info_init (&vinfo);
         gst_video_info_from_caps (&vinfo, caps);
@@ -999,7 +997,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
 	if(bBackPixelsChanged && buffer) gst_sample_unref (buffer);
 	buffer = sample;
 	if(pixels.isAllocated()){
-        if(stride > 0) {
+        if(stride != (pixels.getWidth() * pixels.getHeight() * pixels.getBytesPerPixel())) {
             backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
             eventPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
         }
