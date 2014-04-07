@@ -24,6 +24,7 @@ PLATFORM SPECIFIC
 -----------------
 ### Android
 	/ fix package generation, was missing paths.make
+	/ fix 32 bits ndk path
 ### Linux
        / video: fixes for videos which pixels have padding
 
