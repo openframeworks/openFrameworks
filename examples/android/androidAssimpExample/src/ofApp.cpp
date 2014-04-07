@@ -138,7 +138,13 @@ void ofApp::resume(){
 }
 
 void ofApp::reloadTextures(){
-
+    model.loadModel("astroBoy_walk.dae", true);
+    model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75 , 0);
+    model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
+    model.playAllAnimations();
+    if(!bAnimate) {
+        model.setPausedForAllAnimations(true);
+    }
 }
 
 
