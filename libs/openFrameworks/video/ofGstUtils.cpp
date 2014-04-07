@@ -893,6 +893,7 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
         GstVideoFrame f;
         gst_video_frame_map(&f,&vinfo,_buffer,GST_MAP_READ);
         stride = f.info.stride[0];
+        gst_video_frame_unmap(&f);
 
         if(stride == (pixels.getWidth() * pixels.getHeight() *  pixels.getBytesPerPixel())) {
             ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
@@ -952,8 +953,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * _buffer){
         if(stride > 0) {
             backPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
             eventPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
-        }
-        else {
+        } else {
             backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
             eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
         }
@@ -986,7 +986,7 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
         GstVideoFrame f;
         gst_video_frame_map(&f,&vinfo,_buffer,GST_MAP_READ);
         stride = f.info.stride[0];
-
+        gst_video_frame_unmap(&f);
         if(stride == (pixels.getWidth() * pixels.getHeight() *  pixels.getBytesPerPixel())) {
             ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getWidth()*pixels.getHeight()*pixels.getBytesPerPixel();
             gst_sample_unref (sample);
@@ -997,11 +997,10 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
 	if(bBackPixelsChanged && buffer) gst_sample_unref (buffer);
 	buffer = sample;
 	if(pixels.isAllocated()){
-        if(stride > 0)) {
+        if(stride > 0) {
             backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
             eventPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels(),stride);
-        }
-        else {
+        } else {
             backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
             eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
         }
