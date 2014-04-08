@@ -26,6 +26,9 @@ PLATFORM SPECIFIC
 	/ fix package generation, was missing paths.make
 	/ fix 32 bits ndk path
 	/ update project files to latest SDK/ADT (20140321)
+	/ fixed shader in shader example
+	/ disable x86 in assimp and opencv examples
+	/ shader and assimp examples reload gl resources when the app resumes
 ### Linux
        / video: fixes for videos which pixels have padding
 
