@@ -16,7 +16,8 @@ CORE
 ### app
 	+ ofAppEGLWindow added new methods hasMouse()/hasKeyboard() to provide info on whether mouse/keyboard were detected
 	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
-
+### Math
+	/ fix ofQuaternion setOrientation and getEulerOrientation
 ### Utils
 	/ ofThread now uses Class name for logging channel (was thread name)
 	
