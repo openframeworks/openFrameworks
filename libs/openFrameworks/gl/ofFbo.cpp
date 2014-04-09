@@ -599,10 +599,10 @@ void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 
-    createAndAttachTexture(tex, internalFormat, attachmentPoint);
+    attachTexture(tex, internalFormat, attachmentPoint);
 }
 
-void ofFbo::createAndAttachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachmentPoint) {
+void ofFbo::attachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachmentPoint) {
     // bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
 	GLint temp;
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &temp);
@@ -613,7 +613,7 @@ void ofFbo::createAndAttachTexture(ofTexture & tex, GLenum internalFormat, GLenu
         textures.resize(attachmentPoint+1);
     }
     textures[attachmentPoint] = tex;
-    	
+    
 	settings.colorFormats.resize(attachmentPoint + 1);
 	settings.colorFormats[attachmentPoint] = internalFormat;
 	settings.numColorbuffers = settings.colorFormats.size();
