@@ -1,21 +1,49 @@
 OF 0.8.2
 ========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
 
 CORE
 ----
 ### 3d
 	/ fix of3DPrimitive copy constructor not copying node
-
-
+	
+### app
+	+ ofAppEGLWindow added new methods hasMouse()/hasKeyboard() to provide info on whether mouse/keyboard were detected
+	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
+### Math
+	/ fix ofQuaternion setOrientation and getEulerOrientation
+### Utils
+	/ ofThread now uses Class name for logging channel (was thread name)
+	
 PLATFORM SPECIFIC
 -----------------
 ### Android
 	/ fix package generation, was missing paths.make
+	/ fix 32 bits ndk path
+	/ update project files to latest SDK/ADT (20140321)
+	/ fixed shader in shader example
+	/ disable x86 in assimp and opencv examples
+	/ shader and assimp examples reload gl resources when the app resumes
+### Linux
+       / video: fixes for videos which pixels have padding
 
 
 
 OF 0.8.1
 ========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
 
 ```
 _____/\\\\\\\______________/\\\\\\\\\_______________/\\\_        

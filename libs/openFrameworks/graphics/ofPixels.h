@@ -14,6 +14,8 @@ enum ofInterpolationMethod {
 	OF_INTERPOLATE_BICUBIC			=3
 };
 
+
+/// \brief A class representing a collection of pixels.
 template <typename PixelType>
 class ofPixels_ {
 public:
@@ -62,6 +64,10 @@ public:
 	void clear();
 	
 	PixelType * getPixels();
+	
+	/// \brief Retrieves pixel data from the ofPixel object.
+	/// 
+	/// \returns A raw pointer to the pixel data.
 	const PixelType * getPixels() const;
 
 	int getPixelIndex(int x, int y) const;
@@ -85,10 +91,18 @@ public:
 	int getNumChannels() const;
 
 	ofPixels_<PixelType> getChannel(int channel) const;
+	
 	void setChannel(int channel, const ofPixels_<PixelType> channelPixels);
 
 	ofImageType getImageType() const;
+	
+	/// \brief Changes the image type for the ofPixels object
+	///
+	/// \param imageType Can be one of the following: OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 	void setImageType(ofImageType imageType);
+	/// \brief Sets the number of color channels for the ofPixel object.
+	///
+	/// \param channel The number of color channels you would like the ofPixel object to have. Conventional values would be 1 (grayscale), 3 (RGB), and 4 (CMYK).
 	void setNumChannels(int numChannels);
 
 	int size() const;

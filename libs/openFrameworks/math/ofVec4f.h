@@ -72,50 +72,101 @@ public:
 	friend ostream& operator<<(ostream& os, const ofVec4f& vec);
 	friend istream& operator>>(istream& is, const ofVec4f& vec);
 	
-	
+    /// \brief Returns a new ofVec4f that is the result of scaling this vector up or down so that it has the requested length.
+    ///
+    /// \param length The desired length of the new ofVec4f object.
+    /// \returns The result of scaling the this vector up or down.
     ofVec4f  getScaled( const float length ) const;
+    
+    /// \brief Scales this vector up or down so that it has the requested length.
+    ///
+    /// \param length The desired length of the vector.
     ofVec4f& scale( const float length );
 	
 	
-    // Distance between two points.
-    //
+    /// \brief Treats this vector and 'pnt' as points in 4D space and calculates the distance between them.
+    ///
+    /// \param pnt The vector used in the distance calculation with the current vector.
+    /// \returns The distance between the two vectors in 4D space.
     float distance( const ofVec4f& pnt) const;
     float squareDistance( const ofVec4f& pnt ) const;
 	
 	
-    // Linear interpolation.
-    //
-    /**
-	 * p==0.0 results in this point, p==0.5 results in the
-	 * midpoint, and p==1.0 results in pnt being returned.
-	 */
+    /// \brief Performs a linear interpolation of this vector towards 'pnt'.
+    ///
+    /// \param pnt The vector the interpolation will be performed on. 
+    /// \param p The amount to move towards 'pnt'; 'p' is normally between 0 and 1 and where 0 means stay the original position and 1 means move all the way to 'pnt', but you can also have 'p' greater than 1 overshoot 'pnt', or less than 0 to move backwards away from 'pnt'.
+    /// \returns The interpolation as an ofVec4f. 
     ofVec4f   getInterpolated( const ofVec4f& pnt, float p ) const;
+    
+    /// \brief Performs a linear interpolation of this vector towards 'pnt'. This modifies the current vector to the interpolated value.
+    ///
+    /// \param pnt The vector the interpolation will be performed on. 
+    /// \param p The amount to move towards 'pnt'; 'p' is normally between 0 and 1 and where 0 means stay the original position and 1 means move all the way to 'pnt', but you can also have 'p' greater than 1 overshoot 'pnt', or less than 0 to move backwards away from 'pnt'.
     ofVec4f&  interpolate( const ofVec4f& pnt, float p );
+    
+    /// \brief Calculates and returns the midpoint (as a vector) between this vector and 'pnt'.
+    ///
+    /// \param pnt The vector used in the midpoint calculation with this vector.
+    /// \returns The midpoint between this vector and 'pnt' as an ofVec4f.
     ofVec4f   getMiddle( const ofVec4f& pnt ) const;
+    
+    /// \brief Calculates and returns the midpoint (as a vector) between this vector and 'pnt'. This modifies the current vector to the midpoint value.
+    ///
+    /// \param pnt The vector used in the midpoint calculation with this vector.
+    /// \returns The midpoint between this vector and 'pnt' as an ofVec4f.
     ofVec4f&  middle( const ofVec4f& pnt );
+    
+    /// \brief Sets this vector to be the average (center of gravity or centroid) of a given array of 'ofVec4f's.
+    /// 
+    /// \param points The array of 'ofVec4f's used in the average calculation.
+    /// \param num The number of ofVec4f objects in the array.
     ofVec4f&  average( const ofVec4f* points, int num );
     
-	
-    // Normalization
-    //
+    /// \brief Returns a normalized copy of this vector.
+    ///
+    /// Normalization means to scale the vector so that its length (magnitude) is exactly 1, 
+    /// at which stage all that is left is the direction. A normalized vector is usually called 
+    /// a unit vector, and can be used to represent a pure direction (heading).
+    ///
+    /// \returns The normalized copy of the current vector.
     ofVec4f  getNormalized() const;
+    
+    /// \brief Normalizes the vector. This changes the current vector to its normalized value. 
+    ///
+    /// Normalization means to scale the vector so that its length (magnitude) is exactly 1, 
+    /// at which stage all that is left is the direction. A normalized vector is usually called 
+    /// a unit vector, and can be used to represent a pure direction (heading).
     ofVec4f& normalize();
 	
 	
-    // Limit length.
-    //
-	ofVec4f  getLimited(float max) const;
+    /// \brief Returns a copy of this vector with its length (magnitude) restricted to a maximum of 'max' units by scaling down if necessary.
+    ///
+    /// \param max The maximum length of the new vector. 
+    /// \returns A copy of the current vector that is at most 'max' units long. 
+    ofVec4f  getLimited(float max) const;
+    /// \brief Restrict the length (magnitude) of this vector to a maximum of 'max' units by scaling down if necessary.
+    ///
+    /// \param max The maximum length of the current vector.
     ofVec4f& limit(float max);
 	
 	
-    // Length
-    //
+    /// \brief Returns the length (magnitude) of this vector.
+    ///
+    /// \returns The magnitude of the current vector. 
     float length() const;
     float lengthSquared() const;
 
-    /**
-	 * Dot Product.
-	 */
+    /// \brief Calculates and returns the dot product of this vector with 'vec'.
+    ///
+    /// Dot product (less commonly known as Euclidean inner product) expresses the angular 
+    /// relationship between two vectors. In other words it is a measure of how parallel two vectors 
+    /// are. If they are completely perpendicular the dot product is 0; if they are completely parallel 
+    /// their dot product is either 1 if they are pointing in the same direction, or -1 if they are pointing 
+    /// in opposite directions.
+    /// 
+    /// \param vec The vector used in the dot product calculation with this vector.
+    /// \returns The dot product of this vector with 'vec'. 
     float dot( const ofVec4f& vec ) const;
 	
 	
