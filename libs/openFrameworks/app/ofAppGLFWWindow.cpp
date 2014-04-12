@@ -758,8 +758,8 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 				maxX = max(maxX,tempXPos + desktopMode->width);
 				maxY = max(maxY,tempYPos + desktopMode->height);
 
-				xpos = min(xpos,temp_xpos);
-				ypos = min(ypos,temp_ypos);
+				xpos = min(xpos,tempXPos);
+				ypos = min(ypos,tempYPos);
 			}
 
 			fullscreenW = maxX-minX;
