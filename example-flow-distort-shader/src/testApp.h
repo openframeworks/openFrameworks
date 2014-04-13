@@ -10,7 +10,6 @@ public:
 	void update();
 	void draw();
 	
-    RateTimer appRate, camRate;
 	ofVideoGrabber cam;
     MotionAmplifier motionAmplifier;
 };

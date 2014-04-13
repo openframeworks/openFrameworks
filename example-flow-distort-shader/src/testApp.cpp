@@ -17,9 +17,7 @@ void testApp::update() {
 	cam.update();
 	if(cam.isFrameNew()) {
         motionAmplifier.update(cam);
-        camRate.tick();
 	}
-    appRate.tick();
 }
 
 void testApp::draw() {
