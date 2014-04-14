@@ -21,8 +21,10 @@ namespace ofxCv {
 		}
 	}
 	void ObjectFinder::update(cv::Mat img) {
-		convertColor(img, gray, CV_RGB2GRAY);
-		resize(gray, graySmall, rescale, rescale);
+        cv::Mat gray;
+        if(getChannels(img) == 1) gray = img;
+        else                      copyGray(img,gray);
+        resize(gray, graySmall, rescale, rescale);
 		cv::Mat graySmallMat = toCv(graySmall);
 		if(useHistogramEqualization) {
 			equalizeHist(graySmallMat, graySmallMat);
