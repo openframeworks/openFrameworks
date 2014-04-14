@@ -28,7 +28,7 @@ ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, flo
 	bGuiActive = false;
 
 	value.addListener(this,&ofxSlider::valueChanged);
-	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
+	registerMouseEvents();
 	generateDraw();
 	return this;
 }

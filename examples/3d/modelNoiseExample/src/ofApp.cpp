@@ -101,8 +101,8 @@ void ofApp::drawWithMesh(){
 	ofScale(scale.x,scale.y,scale.z);
 	
 	//modify mesh with some noise
-	float liquidness = 5;
-	float amplitude = mouseY/100.0;
+	float liquidness = 10;
+	float amplitude = 1.0;
 	float speedDampen = 5;		
 	vector<ofVec3f>& verts = mesh.getVertices();
 	for(unsigned int i = 0; i < verts.size(); i++){

@@ -739,24 +739,31 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         int ypos = 0;
  
         if( bMultiWindowFullscreen ){
- 
-            float totalWidth = 0.0;
-            float maxHeight  = 0.0;
-            int monitorCount;
-            GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
- 
-            //lets find the total width of all the monitors
-            //and we'll make the window height the height of the largest monitor.
-            for(int i = 0; i < monitorCount; i++){
-                const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
-                totalWidth += desktopMode->width;
-                if( i == 0 || desktopMode->height > maxHeight ){
-                    maxHeight = desktopMode->height;
-                }
-            }
- 
-            fullscreenW = totalWidth;
-            fullscreenH = maxHeight;
+
+			int minX = 0;
+			int maxX = 0;
+			int minY = 0;
+			int maxY = 0;
+			int monitorCount;
+			GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
+			int tempXPos = 0;
+			int tempYPos = 0;
+			//lets find the total width of all the monitors
+			//and we'll make the window height the height of the largest monitor.
+			for(int i = 0; i < monitorCount; i++){
+				const GLFWvidmode * desktopMode = glfwGetVideoMode(monitors[i]);
+				glfwGetMonitorPos(monitors[i], &tempXPos, &tempYPos);
+				minX = min(tempXPos,minX);
+				minY = min(tempYPos,minY);
+				maxX = max(maxX,tempXPos + desktopMode->width);
+				maxY = max(maxY,tempYPos + desktopMode->height);
+
+				xpos = min(xpos,tempXPos);
+				ypos = min(ypos,tempYPos);
+			}
+
+			fullscreenW = maxX-minX;
+			fullscreenH = maxY-minY;
         }else{
  
             int monitorCount;
