@@ -913,6 +913,21 @@ string ofDirectory::getAbsolutePath() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
+bool ofDirectory::canRead() const {
+	return myDir.canRead();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::canWrite() const {
+	return myDir.canWrite();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::canExecute() const {
+	return myDir.canExecute();
+}
+
+//------------------------------------------------------------------------------------------------------------
 bool ofDirectory::isHidden() const {
 	try{
 		return myDir.isHidden();
