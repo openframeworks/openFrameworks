@@ -200,15 +200,19 @@ void xcodeProject::saveScheme(){
 
 void xcodeProject::saveWorkspaceXML(){
 
-	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
-	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
+    // in 0.8.1 we deleted this file, but having the folder generated caused problems in older xcode.
+    // keeping this code around just to test in case we need it.
+    // relevant -- https://github.com/openframeworks/openFrameworks/issues/2931
+    
+    //	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
+    //	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";
+    //	ofFile::removeFile(xcodeProjectWorkspace);
+    //	ofDirectory::removeDirectory(workspaceFolder, true);
+    //	ofDirectory::createDirectory(workspaceFolder, false, true);
+    //    ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
+    //    findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
 
-	ofFile::removeFile(xcodeProjectWorkspace);
-	ofDirectory::removeDirectory(workspaceFolder, true);
-	ofDirectory::createDirectory(workspaceFolder, false, true);
-    ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
-    findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
-
+    
 }
 
 void xcodeProject::saveMakefile(){
