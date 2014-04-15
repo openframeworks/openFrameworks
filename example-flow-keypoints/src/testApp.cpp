@@ -38,7 +38,8 @@ void testApp::mouseReleased(int x, int y, int button){
 	vector<KeyPoint> keypoints;
 	vector<KeyPoint> keypointsInside;
 	vector<cv::Point2f> featuresToTrack;
-	FAST(toCv(grabber),keypoints,2);
+    copyGray(grabber, grabberGray);
+	FAST(grabberGray,keypoints,2);
 	for(int i=0;i<keypoints.size();i++){
 		if(rect.inside(toOf(keypoints[i].pt))){
 			keypointsInside.push_back(keypoints[i]);
