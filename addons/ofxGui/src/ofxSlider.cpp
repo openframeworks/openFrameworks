@@ -40,6 +40,26 @@ ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, Type _val, Type _min,
 }
 
 template<typename Type>
+void ofxSlider<Type>::setMin(Type min){
+    value.setMin(min);
+}
+
+template<typename Type>
+Type ofxSlider<Type>::getMin(){
+    value.getMin();
+}
+
+template<typename Type>
+void ofxSlider<Type>::setMax(Type max){
+    return value.setMax(max);
+}
+
+template<typename Type>
+Type ofxSlider<Type>::getMax(){
+    return value.getMax();
+}
+
+template<typename Type>
 bool ofxSlider<Type>::mouseMoved(ofMouseEventArgs & args){
 	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
 		return true;
