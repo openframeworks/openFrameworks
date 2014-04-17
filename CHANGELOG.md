@@ -16,6 +16,8 @@ CORE
 ### app
 	+ ofAppEGLWindow added new methods hasMouse()/hasKeyboard() to provide info on whether mouse/keyboard were detected
 	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
+### gl
+	+ ofFbo: added new method to attach an external texture
 ### Math
 	/ fix ofQuaternion setOrientation and getEulerOrientation
 ### Utils
@@ -33,7 +35,13 @@ PLATFORM SPECIFIC
 ### Linux
        / video: fixes for videos which pixels have padding
 
+ORE ADDONS
+-----------
+### ofxGui
+	+ ofxSlider: added get/setMin/Max
 
+### ofxNetwork
+	/ fix port reuse on osx
 
 OF 0.8.1
 ========
