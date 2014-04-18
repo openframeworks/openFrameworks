@@ -18,6 +18,7 @@ CORE
 	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
 ### gl
 	+ ofFbo: added new method to attach an external texture
+	+ ofFbo: fix regression on min/max filter settings
 ### Math
 	/ fix ofQuaternion setOrientation and getEulerOrientation
 ### Utils

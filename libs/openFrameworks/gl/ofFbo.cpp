@@ -526,6 +526,8 @@ void ofFbo::allocate(Settings _settings) {
     settings.textureTarget = _settings.textureTarget;
     settings.wrapModeHorizontal = _settings.wrapModeHorizontal;
     settings.wrapModeVertical = _settings.wrapModeVertical;
+    settings.maxFilter = _settings.maxFilter;
+    settings.minFilter = _settings.minFilter;
 
 	// if we want MSAA, create a new fbo for textures
 	#ifndef TARGET_OPENGLES
