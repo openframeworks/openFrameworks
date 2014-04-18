@@ -8,8 +8,7 @@ It's basically a simple build system using Bash scripting inspired by [Homebrew]
 One advantage to this approach is that the libraries and/or library binaries can be removed from the OF core repository and only built for the distribution zip packages. Git users would simply need to build all the libraries after doing a clone, which is not that much of a stretch since they already have to generate project files using the OF Project Generator.
 
 2014 OpenFrameworks team  
-2013 Dan Wilcox <danomatika@gmail.com>  
-Supported by the CMU [Studio for Creative Inquiry](http://studioforcreativeinquiry.org/)
+2013 Dan Wilcox <danomatika@gmail.com> supported by the CMU [Studio for Creative Inquiry](http://studioforcreativeinquiry.org/)
 
 **<span style="color: #F00">This is currently experimental. See the [Apothecary Lib Support spreadsheet](https://docs.google.com/spreadsheet/ccc?key=0Ao8N9g3ekXTydGtzZUxya0IxMTNkdUNiT05laTJieXc&usp=sharing) for current status of the apothecary lib formulas.</span>**
 
