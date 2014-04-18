@@ -5,6 +5,6 @@ This is the [OpenFrameworks](http://openframeworks.cc) library apothecary. It mi
 
 See `scripts/apothecary/README.md` for detailed info.
 
-2014 OpenFrameworks team<br>
-2013 Dan Wilcox <danomatika@gmail.com><br>  
+2014 OpenFrameworks team  
+2013 Dan Wilcox <danomatika@gmail.com>   
 Supported by the CMU [Studio for Creative Inquiry](http://studioforcreativeinquiry.org/)
