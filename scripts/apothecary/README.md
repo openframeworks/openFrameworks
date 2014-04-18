@@ -7,6 +7,7 @@ It's basically a simple build system using Bash scripting inspired by [Homebrew]
 
 One advantage to this approach is that the libraries and/or library binaries can be removed from the OF core repository and only built for the distribution zip packages. Git users would simply need to build all the libraries after doing a clone, which is not that much of a stretch since they already have to generate project files using the OF Project Generator.
 
+2014 OpenFrameworks team<br>
 2013 Dan Wilcox <danomatika@gmail.com><br>
 Supported by the CMU [Studio for Creative Inquiry](http://studioforcreativeinquiry.org/)
 

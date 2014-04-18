@@ -10,6 +10,7 @@
 # Core OF lib formulas are located in the formulas dir and addon formulas should
 # be in addons/ofxMyAddon/scripts/formulas 
 #
+# 2014 OpenFrameworks team
 # 2013 Dan Wilcox <danomatika@gmail.com>
 # Supported by the CMU Studio for Creative Inquiry: http://studioforcreativeinquiry.org
 #
