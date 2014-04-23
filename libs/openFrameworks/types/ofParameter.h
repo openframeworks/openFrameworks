@@ -58,6 +58,7 @@ class ofParameter: public ofAbstractParameter{
 public:
 	ofParameter();
 	ofParameter(ParameterType v);
+	ofParameter(const ofParameter<ParameterType> & other);
 	ofParameter(string name, ParameterType v);
 	ofParameter(string name, ParameterType v, ParameterType min, ParameterType max);
 
@@ -183,6 +184,11 @@ template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(ParameterType v)
 :obj(ofPtr<Value>(new Value(v)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue) {}
+
+template<typename ParameterType>
+ofParameter<ParameterType>::ofParameter(const ofParameter<ParameterType> & other):
+obj(ofPtr<Value>(new Value(other.obj->name,other.obj->value,other.obj->min,other.obj->max))),
+setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(string name, ParameterType v)
