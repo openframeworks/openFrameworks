@@ -13,6 +13,9 @@
 
 #if defined  __arm__
 
+#define IS_IOS_7_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+#define IS_IOS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+
 @interface iOSVideoGrabber() <AVCaptureVideoDataOutputSampleBufferDelegate> {
 	AVCaptureDeviceInput		*captureInput;	
 	AVCaptureVideoDataOutput    *captureOutput;
@@ -53,7 +56,8 @@
 		device = [devices objectAtIndex:deviceID];
 		
 		// iOS 7+ way of dealing with framerates.
-		if (NSFoundationVersionNumber > NSFoundationVersionNumber_iOS_6_1) {
+        if(IS_IOS_7_OR_LATER) {
+            #ifdef __IPHONE_7_0
 			NSError *error = nil;
 			[device lockForConfiguration:&error];
 			if(!error) {
@@ -79,8 +83,9 @@
 			} else {
 				NSLog(@"iOSVideoGrabber Init Error: %@", error);
 			}
-		}
-		
+            #endif
+        }
+
 		// We setup the input
 		captureInput						= [AVCaptureDeviceInput 
 											   deviceInputWithDevice:device
@@ -158,19 +163,21 @@
 		// In this example we set a min frame duration of 1/10 seconds so a maximum framerate of 10fps. We say that
 		// we are not able to process more than 10 frames per second.
 		// Called after added to captureSession
-		if (NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_6_1) {
-			if (NSFoundationVersionNumber <= NSFoundationVersionNumber_iOS_5_1) {
-				[captureOutput setMinFrameDuration:CMTimeMake(1, framerate)];
-			} else {
-				AVCaptureConnection *conn = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
-				if ([conn isVideoMinFrameDurationSupported] == YES &&
-					[conn isVideoMaxFrameDurationSupported] == YES) { // iOS 6+
-					[conn setVideoMinFrameDuration:CMTimeMake(1, framerate)];
-					[conn setVideoMaxFrameDuration:CMTimeMake(1, framerate)];
-				}
-			}
-		}
-		 
+        
+        if(IS_IOS_7_OR_LATER == false) {
+            if(IS_IOS_6_OR_LATER) {
+                #ifdef __IPHONE_6_0
+                AVCaptureConnection *conn = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
+                if ([conn isVideoMinFrameDurationSupported] == YES &&
+                    [conn isVideoMaxFrameDurationSupported] == YES) { // iOS 6+
+                        [conn setVideoMinFrameDuration:CMTimeMake(1, framerate)];
+                        [conn setVideoMaxFrameDuration:CMTimeMake(1, framerate)];
+                }
+                #endif
+            } else { // iOS 5 or earlier
+                [captureOutput setMinFrameDuration:CMTimeMake(1, framerate)];
+            }
+        }
 		// We start the capture Session
 		[self.captureSession commitConfiguration];		
 		[self.captureSession startRunning];
