@@ -158,3 +158,7 @@ float ofxiOSSoundPlayer::getVolume() {
     }
     return [(AVSoundPlayer *)soundPlayer volume];
 }
+
+void * ofxiOSSoundPlayer::getAVSoundPlayer() {
+    return soundPlayer;
+}
