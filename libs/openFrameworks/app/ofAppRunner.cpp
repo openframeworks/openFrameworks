@@ -183,8 +183,16 @@ void ofGLReadyCallback(){
 	ofLogVerbose("ofAppRunner") << "GL ready";
 	ofLogVerbose("ofAppRunner") << "Vendor:   " << (char*)glGetString(GL_VENDOR);
 	ofLogVerbose("ofAppRunner") << "Renderer: " << (char*)glGetString(GL_RENDERER);
-	ofLogVerbose("ofAppRunner") << "Version:  " << (char*)glGetString(GL_VERSION);
-	ofLogVerbose("ofAppRunner") << "GLSL:     " << (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+	std::string openGlVersionString = (char*)glGetString(GL_VERSION);
+	std::vector<std::string> versionParts = ofSplitString(openGlVersionString, ".");
+	
+	ofLogVerbose("ofAppRunner") << "Version:  " << openGlVersionString;
+	if (ofFromString<int>(versionParts.front()) >= 2) {
+	    ofLogVerbose("ofAppRunner") << "GLSL:     " << (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	} else {
+	    ofLogVerbose("ofAppRunner") << "GLSL:     GLSL not available with OpenGL versions < 2.0.";
+	}
 
     if(ofGetGLProgrammableRenderer()){
     	ofGetGLProgrammableRenderer()->setup();
