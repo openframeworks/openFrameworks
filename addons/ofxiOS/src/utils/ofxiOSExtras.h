@@ -50,33 +50,65 @@
 
 
 enum ofxiOSDeviceType {
-	ofxiOS_DEVICE_IPHONE,
-	ofxiOS_DEVICE_IPODTOUCH,
-	ofxiOS_DEVICE_IPAD,
-    ofxiOS_UNKNOWN_DEVICE
+    OFXIOS_DEVICE_IPHONE = 0,
+    OFXIOS_DEVICE_IPODTOUCH,
+    OFXIOS_DEVICE_IPAD,
+    OFXIOS_DEVICE_UNKNOWN
 };
 
+// Possible return values for ofxiOSGetDeviceRevision (Last Updated March 2014)
+//-------------------------------------------------------------------------------
+// iPhones
+#define OFXIOS_DEVICE_IPHONE_2G         "iPhone1,1"     // iPhone (Original/1st Gen/EDGE) - January 2007
+#define OFXIOS_DEVICE_IPHONE_3G         "iPhone1,2"     // iPhone 3G - June 2008
+#define OFXIOS_DEVICE_IPHONE_3G_CHINA   "iPhone1,2*"    // iPhone 3G (China/No Wi-Fi) - June 2008
+#define OFXIOS_DEVICE_IPHONE_3GS        "iPhone2,1"     // iPhone 3GS - June 2009
+#define OFXIOS_DEVICE_IPHONE_3GS_CHINA  "iPhone2,1*"    // iPhone 3GS (China/No Wi-Fi) - June 2009
+#define OFXIOS_DEVICE_IPHONE_4          "iPhone3,1"     // iPhone 4 (GSM) - June 2010
+#define OFXIOS_DEVICE_IPHONE_4_CDMA     "iPhone3,3"     // iPhone 4 (CDMA/Verizon/Sprint) - June 2010
+#define OFXIOS_DEVICE_IPHONE_4S         "iPhone4,1"     // iPhone 4S (GSM/CDMA) - October 2011
+#define OFXIOS_DEVICE_IPHONE_4S_CHINA   "iPhone4,1*"    // iPhone 4S (GSM China/WAPI) - October 2011
+#define OFXIOS_DEVICE_IPHONE_5          "iPhone5,1"     // iPhone 5 (GSM/LTE 4) - September 2012
+#define OFXIOS_DEVICE_IPHONE_5_CDMA     "iPhone5,2"     // iPhone 5 (CDMA/LTE) - September 2012
+#define OFXIOS_DEVICE_IPHONE_5C         "iPhone5,3"     // iPhone 5C - September 2013
+#define OFXIOS_DEVICE_IPHONE_5C_ALT     "iPhone5,4"     // iPhone 5C (Alternate Model) - September 2013
+#define OFXIOS_DEVICE_IPHONE_5S         "iPhone6,1"     // iPhone 5S (64bit, North America/Japan/China) - September 2013
+#define OFXIOS_DEVICE_IPHONE_5S_ALT     "iPhone6,2"     // iPhone 5S (64bit, UK/Europe/Middle East/Asia) - September 2013
+// iPods (touch)
+#define OFXIOS_DEVICE_IPOD_1STGEN       "iPod1,1"       // iPod touch (Original/1st Gen) - September 2007
+#define OFXIOS_DEVICE_IPOD_2NDGEN       "iPod2,1"       // iPod touch (2nd Gen) - September 2008
+#define OFXIOS_DEVICE_IPOD_3RDGEN       "iPod3,1"       // iPod touch (3rd Gen/32 & 64 GB) - September 2009
+#define OFXIOS_DEVICE_IPOD_4THGEN       "iPod4,1"       // iPod touch (4th Gen/FaceTime) - September 2010
+#define OFXIOS_DEVICE_IPOD_5THGEN       "iPod5,1"       // iPod touch (5th Gen) - September 2012
+// iPads
+#define OFXIOS_DEVICE_IPAD_1STGEN               "iPad1,1"       // iPad Wi-Fi/3G/GPS (Original/1st Gen) - January 2010
+#define OFXIOS_DEVICE_IPAD_2NDGEN               "iPad2,1"       // iPad 2 (Wi-Fi Only) - March 2011
+#define OFXIOS_DEVICE_IPAD_2NDGEN_GSM           "iPad2,2"       // iPad 2 (Wi-Fi/GSM/GPS) - March 2011
+#define OFXIOS_DEVICE_IPAD_2NDGEN_CDMA          "iPad2,3"       // iPad 2 (Wi-Fi/CDMA/GPS) - March 2011
+#define OFXIOS_DEVICE_IPAD_2NDGEN_WIFI          "iPad2,4"       // iPad 2 (Wi-Fi Only) (Minor Hardware revision) - March 2012
+#define OFXIOS_DEVICE_IPAD_3RDGEN               "iPad3,1"       // iPad 3rd Gen (Retina, Wi-Fi Only) - March 2012
+#define OFXIOS_DEVICE_IPAD_3RDGEN_CELLULAR      "iPad3,2"       // iPad 3rd Gen (Retina, Wi-Fi/Cellular/GPS) - March 2012
+#define OFXIOS_DEVICE_IPAD_3RDGEN_CELLULAR_ALT  "iPad3,3"       // iPad 3rd Gen (Retina, Wi-Fi/Cellular Alt/GPS) - March 2012
+#define OFXIOS_DEVICE_IPAD_4THGEN               "iPad3,4"       // iPad 4th Gen (Retina, Wi-Fi Only) - October 2012
+#define OFXIOS_DEVICE_IPAD_4THGEN_CELLULAR      "iPad3,5"       // iPad 4th Gen (Retina, Wi-Fi/Cellular/GPS) - October 2012
+#define OFXIOS_DEVICE_IPAD_4THGEN_CELLULAR_ALT  "iPad3,6"       // iPad 4th Gen (Retina, Wi-Fi/Cellular Alt/GPS) - October 2012
+#define OFXIOS_DEVICE_IPAD_AIR                  "iPad4,1"       // iPad Air (64bit, Wi-Fi Only) - October 2013
+#define OFXIOS_DEVICE_IPAD_AIR_CELLULAR         "iPad4,2"       // iPad Air (64bit, Wi-Fi/Cellular) - October 2013
 
-// possible return values for ofxiOSGetDeviceRevision
-#define ofxiOS_DEVICE_IPHONE_2G		"iPhone1,1"
-#define ofxiOS_DEVICE_IPHONE_3G		"iPhone1,2"
-#define ofxiOS_DEVICE_IPHONE_3GS		"iPhone2,1"
-#define ofxiOS_DEVICE_IPHONE_4		"iPhone3,1"
-
-#define ofxiOS_DEVICE_IPOD_1STGEN	"iPod1,1"
-#define ofxiOS_DEVICE_IPOD_2NDGEN	"iPod2,1"
-#define ofxiOS_DEVICE_IPOD_3RDGEN	"iPod3,1"
-#define ofxiOS_DEVICE_IPOD_4THGEN	"iPod4,1"
-
-#define ofxiOS_DEVICE_IPAD_1STGEN	"iPad1,1"
-
+// iPad Minis
+#define OFXIOS_DEVICE_IPAD_MINI_1STGEN              "iPad2,5"       // iPad mini (Wi-Fi Only/1st Gen) - October 2012
+#define OFXIOS_DEVICE_IPAD_MINI_1STGEN_CELLULAR     "iPad2,6"       // iPad mini (Wi-Fi/Cellular/GPS) - October 2012
+#define OFXIOS_DEVICE_IPAD_MINI_1STGEN_CELLULAR_ALT "iPad2,7"       // iPad mini (Wi-Fi/Cellular Alt/GPS) - October 2012
+#define OFXIOS_DEVICE_IPAD_MINI_2NDGEN              "iPad4,4"       // iPad mini (Retina/2nd Gen - Wi-Fi Only) - October 2013
+#define OFXIOS_DEVICE_IPAD_MINI_2NDGEN_CELLULAR     "iPad4,5"       // iPad mini (Retina/2nd Gen - Wi-Fi/Cellular) - October 2013
+//-------------------------------------------------------------------------------
 
 // possible values for iPhoneSetOrientation or iPhoneGetOrientation
-#define ofxiOS_ORIENTATION_PORTRAIT          OF_ORIENTATION_DEFAULT  // UIDeviceOrientationPortrait
-#define ofxiOS_ORIENTATION_UPSIDEDOWN        OF_ORIENTATION_180      // UIDeviceOrientationPortraitUpsideDown
-#define ofxiOS_ORIENTATION_LANDSCAPE_RIGHT   OF_ORIENTATION_90_RIGHT // UIDeviceOrientationLandscapeRight
-#define ofxiOS_ORIENTATION_LANDSCAPE_LEFT    OF_ORIENTATION_90_LEFT  // UIDeviceOrientationLandscapeLeft
- 
+#define OFXIOS_ORIENTATION_PORTRAIT          OF_ORIENTATION_DEFAULT  // UIDeviceOrientationPortrait
+#define OFXIOS_ORIENTATION_UPSIDEDOWN        OF_ORIENTATION_180      // UIDeviceOrientationPortraitUpsideDown
+#define OFXIOS_ORIENTATION_LANDSCAPE_RIGHT   OF_ORIENTATION_90_RIGHT // UIDeviceOrientationLandscapeRight
+#define OFXIOS_ORIENTATION_LANDSCAPE_LEFT    OF_ORIENTATION_90_LEFT  // UIDeviceOrientationLandscapeLeft
+
 // whether device has audio in
 bool ofxiOSHasAudioIn();
 
@@ -84,7 +116,7 @@ bool ofxiOSHasAudioIn();
 float ofxiOSGetMicAverageLevel();
 
 // return device type
-ofxiOSDeviceType	ofxiOSGetDeviceType();
+ofxiOSDeviceType ofxiOSGetDeviceType();
 
 // return device revision
 string ofxiOSGetDeviceRevision();
@@ -194,11 +226,49 @@ void ofxiOSSetClipboardString(string clipboardString);
 string ofxiOSGetClipboardString();
 
 //-------------------------------------------------------------------------------
-// backwards compatibility
-//
+// backwards compatibility < 0.8.0
+#define ofxiPhone_DEVICE_IPHONE                 OFXIOS_DEVICE_IPHONE
+#define ofxiPhone_DEVICE_IPODTOUCH              OFXIOS_DEVICE_IPODTOUCH
+#define ofxiPhone_DEVICE_IPAD                   OFXIOS_DEVICE_IPAD
+#define ofxiPhone_UNKNOWN_DEVICE                OFXIOS_DEVICE_UNKNOWN
+#define ofxiPhone_DEVICE_IPHONE_2G              OFXIOS_DEVICE_IPHONE_2G
+#define ofxiPhone_DEVICE_IPHONE_3G              OFXIOS_DEVICE_IPHONE_3G
+#define ofxiPhone_DEVICE_IPHONE_3GS             OFXIOS_DEVICE_IPHONE_3GS
+#define ofxiPhone_DEVICE_IPHONE_4               OFXIOS_DEVICE_IPHONE_4
+#define ofxiPhone_DEVICE_IPOD_1STGEN            OFXIOS_DEVICE_IPOD_1STGEN
+#define ofxiPhone_DEVICE_IPOD_2NDGEN            OFXIOS_DEVICE_IPOD_2NDGEN
+#define ofxiPhone_DEVICE_IPOD_3RDGEN            OFXIOS_DEVICE_IPOD_3RDGEN
+#define ofxiPhone_DEVICE_IPOD_4THGEN            OFXIOS_DEVICE_IPOD_4THGEN
+#define ofxiPhone_DEVICE_IPAD_1STGEN            OFXIOS_DEVICE_IPAD_1STGEN
 
+#define ofxiPhone_ORIENTATION_PORTRAIT          OFXIOS_ORIENTATION_PORTRAIT
+#define ofxiPhone_ORIENTATION_UPSIDEDOWN        OFXIOS_ORIENTATION_UPSIDEDOWN
+#define ofxiPhone_ORIENTATION_LANDSCAPE_RIGHT   OFXIOS_ORIENTATION_LANDSCAPE_RIGHT
+#define ofxiPhone_ORIENTATION_LANDSCAPE_LEFT    OFXIOS_ORIENTATION_LANDSCAPE_LEFT
+
+// backwards compatibility == 0.8.1
+#define ofxiOS_DEVICE_IPHONE                    OFXIOS_DEVICE_IPHONE
+#define ofxiOS_DEVICE_IPODTOUCH                 OFXIOS_DEVICE_IPODTOUCH
+#define ofxiOS_DEVICE_IPAD                      OFXIOS_DEVICE_IPAD
+#define ofxiOS_UNKNOWN_DEVICE                   OFXIOS_DEVICE_UNKNOWN
+#define ofxiOS_DEVICE_IPHONE_2G                 OFXIOS_DEVICE_IPHONE_2G
+#define ofxiOS_DEVICE_IPHONE_3G                 OFXIOS_DEVICE_IPHONE_3G
+#define ofxiOS_DEVICE_IPHONE_3GS                OFXIOS_DEVICE_IPHONE_3GS
+#define ofxiOS_DEVICE_IPHONE_4                  OFXIOS_DEVICE_IPHONE_4
+#define ofxiOS_DEVICE_IPOD_1STGEN               OFXIOS_DEVICE_IPOD_1STGEN
+#define ofxiOS_DEVICE_IPOD_2NDGEN               OFXIOS_DEVICE_IPOD_2NDGEN
+#define ofxiOS_DEVICE_IPOD_3RDGEN               OFXIOS_DEVICE_IPOD_3RDGEN
+#define ofxiOS_DEVICE_IPOD_4THGEN               OFXIOS_DEVICE_IPOD_4THGEN
+#define ofxiOS_DEVICE_IPAD_1STGEN               OFXIOS_DEVICE_IPAD_1STGEN
+
+#define ofxiOS_ORIENTATION_PORTRAIT             OFXIOS_ORIENTATION_PORTRAIT
+#define ofxiOS_ORIENTATION_UPSIDEDOWN           OFXIOS_ORIENTATION_UPSIDEDOWN
+#define ofxiOS_ORIENTATION_LANDSCAPE_RIGHT      OFXIOS_ORIENTATION_LANDSCAPE_RIGHT
+#define ofxiOS_ORIENTATION_LANDSCAPE_LEFT       OFXIOS_ORIENTATION_LANDSCAPE_LEFT
+
+// backwards compatibility < 0.8.0
 #define ofxiPhoneHasAudioIn ofxiOSHasAudioIn
-#define ofxiPhoneGetMicAverageLevel  ofxiOSGetMicAverageLevel
+#define ofxiPhoneGetMicAverageLevel ofxiOSGetMicAverageLevel
 #define ofxiPhoneGetDeviceType ofxiOSGetDeviceType
 #define ofxiPhoneGetDeviceRevision ofxiOSGetDeviceRevision
 #define ofxiPhoneGetUIWindow ofxiOSGetUIWindow
@@ -228,4 +298,3 @@ string ofxiOSGetClipboardString();
 #define ofxiPhoneLaunchBrowser ofxiOSLaunchBrowser
 #define ofxNSStringToString ofxiOSNSStringToString
 #define ofxStringToNSString ofxiOSStringToNSString
-
