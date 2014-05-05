@@ -19,6 +19,8 @@ CORE
 ### gl
 	+ ofFbo: added new method to attach an external texture
 	+ ofFbo: fix regression on min/max filter settings
+### Graphics
+	/ ofImage: convert format when loading different image types
 ### Math
 	/ fix ofQuaternion setOrientation and getEulerOrientation
 ### Utils
