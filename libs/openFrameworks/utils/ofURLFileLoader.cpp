@@ -102,7 +102,7 @@ void ofURLFileLoader::clear(){
 void ofURLFileLoader::start() {
      if (isThreadRunning() == false){
 		ofAddListener(ofEvents().update,this,&ofURLFileLoader::update);
-        startThread(true, false);   // blocking, verbose
+        startThread();
     }else{
     	ofLogVerbose("ofURLFileLoader") << "start(): signaling new request condition";
     	condition.signal();
@@ -114,6 +114,7 @@ void ofURLFileLoader::stop() {
     stopThread();
     condition.signal();
     unlock();
+    waitForThread();
 }
 
 void ofURLFileLoader::threadedFunction() {
@@ -222,8 +223,10 @@ void ofURLFileLoader::update(ofEventArgs & args){
 
 }
 
+static bool initialized = false;
 static ofURLFileLoader & getFileLoader(){
 	static ofURLFileLoader * fileLoader = new ofURLFileLoader;
+	initialized = true;
 	return *fileLoader;
 }
 
@@ -253,4 +256,12 @@ void ofRemoveAllURLRequests(){
 
 void ofStopURLLoader(){
 	getFileLoader().stop();
+}
+
+void ofURLFileLoaderShutdown(){
+	if(initialized){
+		ofRemoveAllURLRequests();
+		ofStopURLLoader();
+		Poco::Net::uninitializeSSL();
+	}
 }
