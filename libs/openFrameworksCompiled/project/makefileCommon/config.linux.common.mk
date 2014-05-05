@@ -76,7 +76,10 @@ endif
 PLATFORM_DEFINES =
 
 # add OF_USING_GTK define IF we have it defined as a system library
-ifeq ($(HAS_SYSTEM_GTK),0)
+ifeq ($(HAS_SYSTEM_GTK2),0)
+    PLATFORM_DEFINES += OF_USING_GTK
+endif
+ifeq ($(HAS_SYSTEM_GTK3),0)
     PLATFORM_DEFINES += OF_USING_GTK
 endif
 
