@@ -34,11 +34,16 @@
 
 //--------------------------------------------------------------
 ofxiOSDeviceType ofxiOSGetDeviceType() {
-    NSString * dev = [[[UIDevice currentDevice] model] lowercaseString];    
-    if( [dev hasPrefix:@"iphone"] ) return ofxiOS_DEVICE_IPHONE;
-    if( [dev hasPrefix:@"ipad"] ) return ofxiOS_DEVICE_IPAD;
-    if( [dev hasPrefix:@"ipod"] ) return ofxiOS_DEVICE_IPODTOUCH;
-    return ofxiOS_UNKNOWN_DEVICE;   //this would need to be declared 
+    NSString * dev = [[[UIDevice currentDevice] model] lowercaseString];
+    if( [dev hasPrefix:@"iphone"] ) {
+        return OFXIOS_DEVICE_IPHONE;
+    } else if( [dev hasPrefix:@"ipad"] ) {
+        return OFXIOS_DEVICE_IPAD;
+    } else if( [dev hasPrefix:@"ipod"] ) {
+        return OFXIOS_DEVICE_IPODTOUCH;
+    } else {
+        return OFXIOS_DEVICE_UNKNOWN;   // this would need to be declared
+    }
 }
 
 
