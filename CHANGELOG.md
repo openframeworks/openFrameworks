@@ -34,7 +34,8 @@ PLATFORM SPECIFIC
 	/ disable x86 in assimp and opencv examples
 	/ shader and assimp examples reload gl resources when the app resumes
 ### Linux
-       / video: fixes for videos which pixels have padding
+	/ video: fixes for videos which pixels have padding
+	/ system: fix dialog boxes
 
 ORE ADDONS
 -----------
