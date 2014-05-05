@@ -527,6 +527,10 @@ ofMatrix4x4 ofGLRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
 		case OF_MATRIX_TEXTURE:
 			glGetFloatv(GL_TEXTURE_MATRIX, mat.getPtr());
 			break;
+		default:
+			ofLogWarning() << "Invalid getCurrentMatrix query";
+			mat = ofMatrix4x4();
+			break;
 	}
 	return mat;
 }

@@ -566,6 +566,8 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
  *
  *	@param	matrixMode_  Which matrix mode to query
  */
+/// \note   If an invalid matrixMode is queried, this method will return the identity matrix, and
+///         print an error message.
 ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:
@@ -576,6 +578,10 @@ ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_)
 			break;
 		case OF_MATRIX_TEXTURE:
 			return matrixStack.getTextureMatrix();
+			break;
+		default:
+			ofLogWarning() << "Invalid getCurrentMatrix query";
+			return ofMatrix4x4();
 			break;
 	}
 }
