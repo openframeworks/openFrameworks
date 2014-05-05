@@ -142,13 +142,30 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 //----------------------------------------------------
 template<typename PixelType>
 void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLittleEndian = true) {
-	// some images use a palette, or <8 bpp, so convert them to raster 8-bit channels
+	// convert to correct type depending on type of input bmp and PixelType
 	FIBITMAP* bmpConverted = NULL;
-	if(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8) {
+	FREE_IMAGE_TYPE imgType = FreeImage_GetImageType(bmp);
+	if(sizeof(PixelType)==1 &&
+		(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8
+		||  imgType!=FIT_BITMAP)) {
 		if(FreeImage_IsTransparent(bmp)) {
 			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
 		} else {
 			bmpConverted = FreeImage_ConvertTo24Bits(bmp);
+		}
+		bmp = bmpConverted;
+	}else if(sizeof(PixelType)==2 && imgType!=FIT_UINT16 && imgType!=FIT_RGB16 && imgType!=FIT_RGBA16){
+		if(FreeImage_IsTransparent(bmp)) {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGBA16);
+		} else {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGB16);
+		}
+		bmp = bmpConverted;
+	}else if(sizeof(PixelType)==4 && imgType!=FIT_FLOAT && imgType!=FIT_RGBF && imgType!=FIT_RGBAF){
+		if(FreeImage_IsTransparent(bmp)) {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGBAF);
+		} else {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGBF);
 		}
 		bmp = bmpConverted;
 	}
