@@ -7,6 +7,7 @@
 #include "ofLog.h"
 #include "ofSystemUtils.h"
 #include "ofThread.h"
+#include "ofSSLManager.h"
 #include "ofURLFileLoader.h"
 #include "ofUtils.h"
 

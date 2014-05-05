@@ -3,6 +3,7 @@
 #include "Poco/Net/HTTPSClientSession.h"
 #include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/HTTPResponse.h"
+#include "Poco/SingletonHolder.h"
 #include "Poco/StreamCopier.h"
 #include "Poco/Path.h"
 #include "Poco/URI.h"
@@ -10,45 +11,47 @@
 #include "Poco/URIStreamOpener.h"
 #include "Poco/Net/HTTPStreamFactory.h"
 #include "Poco/Net/HTTPSStreamFactory.h"
-#include "Poco/Net/SSLManager.h"
-#include "Poco/Net/KeyConsoleHandler.h"
-#include "Poco/Net/ConsoleCertificateHandler.h"
 
 #include "ofURLFileLoader.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
-
-using namespace Poco::Net;
-
-using namespace Poco;
-
+#include "ofSSLManager.h"
 #include "ofConstants.h"
 
 static bool factoryLoaded = false;
+
 int	ofHttpRequest::nextID = 0;
-ofEvent<ofHttpResponse> & ofURLResponseEvent(){
-	static ofEvent<ofHttpResponse> * event = new ofEvent<ofHttpResponse>;
-	return *event;
+
+namespace
+{
+    static Poco::SingletonHolder<ofEvent<ofHttpResponse> > eventSingleton;
+    static Poco::SingletonHolder<ofURLFileLoader> fileLoaderSingleton;
+}
+
+ofEvent<ofHttpResponse>& ofURLResponseEvent(){
+    return *eventSingleton.get();
 }
 
 ofURLFileLoader::ofURLFileLoader() {
 	if(!factoryLoaded){
 		try {
-			HTTPStreamFactory::registerFactory();
-			HTTPSStreamFactory::registerFactory();
-			SharedPtr<PrivateKeyPassphraseHandler> pConsoleHandler = new KeyConsoleHandler(false);
-			SharedPtr<InvalidCertificateHandler> pInvalidCertHandler = new ConsoleCertificateHandler(true);
-			Context::Ptr pContext = new Context(Context::CLIENT_USE, "", Context::VERIFY_NONE);
-			SSLManager::instance().initializeClient(pConsoleHandler, pInvalidCertHandler, pContext);
+            ofSSLManager::initializeClient();
+			Poco::Net::HTTPStreamFactory::registerFactory();
+			Poco::Net::HTTPSStreamFactory::registerFactory();
 			factoryLoaded = true;
 		}
-		catch (Poco::SystemException & PS) {
-			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
+		catch (Poco::SystemException & exc) {
+			ofLogError("ofURLFileLoader") << "couldn't create factory: " << exc.displayText();
 		}
 		catch (Poco::ExistsException & PS) {
 			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
 		}
 	}
+}
+
+ofURLFileLoader::~ofURLFileLoader()
+{
+    stop();
 }
 
 ofHttpResponse ofURLFileLoader::get(string url) {
@@ -154,48 +157,43 @@ void ofURLFileLoader::threadedFunction() {
 
 ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 	try {
-		URI uri(request.url);
+        Poco::URI uri(request.url);
 		std::string path(uri.getPathAndQuery());
 		if (path.empty()) path = "/";
 
-		HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
-		HTTPResponse res;
-		ofPtr<HTTPSession> session;
-		istream * rs;
+		Poco::Net::HTTPRequest req(Poco::Net::HTTPRequest::HTTP_GET,
+                                   path,
+                                   Poco::Net::HTTPMessage::HTTP_1_1);
+
+        Poco::Net::HTTPResponse res;
+
+        ofPtr<Poco::Net::HTTPSession> session;
+
+		istream* rs;
 		if(uri.getScheme()=="https"){
-			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
-			HTTPSClientSession * httpsSession = new HTTPSClientSession(uri.getHost(), uri.getPort());//,context);
+			Poco::Net::HTTPSClientSession* httpsSession = new Poco::Net::HTTPSClientSession(uri.getHost(),
+                                                                                             uri.getPort());
 			httpsSession->setTimeout(Poco::Timespan(20,0));
 			httpsSession->sendRequest(req);
 			rs = &httpsSession->receiveResponse(res);
-			session = ofPtr<HTTPSession>(httpsSession);
+			session = ofPtr<Poco::Net::HTTPSession>(httpsSession);
 		}else{
-			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
+			Poco::Net::HTTPClientSession* httpSession = new Poco::Net::HTTPClientSession(uri.getHost(),
+                                                                                         uri.getPort());
 			httpSession->setTimeout(Poco::Timespan(20,0));
 			httpSession->sendRequest(req);
 			rs = &httpSession->receiveResponse(res);
-			session = ofPtr<HTTPSession>(httpSession);
+			session = ofPtr<Poco::Net::HTTPSession>(httpSession);
 		}
 		if(!request.saveTo){
 			return ofHttpResponse(request,*rs,res.getStatus(),res.getReason());
 		}else{
 			ofFile saveTo(request.name,ofFile::WriteOnly,true);
-			char aux_buffer[1024];
-			rs->read(aux_buffer, 1024);
-			std::streamsize n = rs->gcount();
-			while (n > 0){
-				// we resize to size+1 initialized to 0 to have a 0 at the end for strings
-				saveTo.write(aux_buffer,n);
-				if (rs->good()){
-					rs->read(aux_buffer, 1024);
-					n = rs->gcount();
-				}
-				else n = 0;
-			}
+            Poco::StreamCopier::copyStream(*rs, saveTo);
 			return ofHttpResponse(request,res.getStatus(),res.getReason());
 		}
 
-	} catch (const Exception& exc) {
+	} catch (const Poco::Exception& exc) {
         ofLogError("ofURLFileLoader") << "handleRequest(): "+ exc.displayText();
 
         return ofHttpResponse(request,-1,exc.displayText());
@@ -222,9 +220,8 @@ void ofURLFileLoader::update(ofEventArgs & args){
 
 }
 
-static ofURLFileLoader & getFileLoader(){
-	static ofURLFileLoader * fileLoader = new ofURLFileLoader;
-	return *fileLoader;
+static ofURLFileLoader& getFileLoader(){
+    return *fileLoaderSingleton.get();
 }
 
 ofHttpResponse ofLoadURL(string url){

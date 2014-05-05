@@ -1,13 +1,12 @@
 #pragma once
 
+
 #include <deque>
 #include <queue>
-
+#include "Poco/Condition.h"
 #include "ofThread.h"
 #include "ofEvents.h"
 #include "ofFileUtils.h"
-
-#include "Poco/Condition.h"
 
 
 class ofHttpRequest{
@@ -83,7 +82,8 @@ class ofURLFileLoader : public ofThread  {
 
     public:
 
-        ofURLFileLoader();	
+        ofURLFileLoader();
+        virtual ~ofURLFileLoader();
         ofHttpResponse get(string url);
         int getAsync(string url, string name=""); // returns id
         ofHttpResponse saveTo(string url, string path);
