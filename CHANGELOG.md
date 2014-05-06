@@ -40,6 +40,8 @@ PLATFORM SPECIFIC
 	/ video: fixes for videos which pixels have padding
 	/ system: fix dialog boxes
 	/ install & make: detect and use gtk 3 instead of 2 if it's available
+###OSX
+	/ Reduce warnings on OSX
 
 ORE ADDONS
 -----------
