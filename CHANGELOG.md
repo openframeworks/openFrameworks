@@ -38,6 +38,7 @@ PLATFORM SPECIFIC
 	/ shader and assimp examples reload gl resources when the app resumes
 ### Linux
 	/ video: fixes for videos which pixels have padding
+	/ video: close pipeline properly by sending and waiting for EOS event
 	/ system: fix dialog boxes
 	/ install & make: detect and use gtk 3 instead of 2 if it's available
 ###OSX
