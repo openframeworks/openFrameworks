@@ -94,7 +94,11 @@ else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
 	HOST_PLATFORM = windows
 	PWD = $(shell pwd)
 else
-	HOST_PLATFORM = linux-$(shell uname -m)
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/linux-x86_64),)
+	HOST_PLATFORM = linux-x86_64
+else
+	HOST_PLATFORM = linux-x86
+endif
 endif
 
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
@@ -329,6 +333,7 @@ PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/addons/ofxAndroid/src"
 ################################################################################
 
 PLATFORM_LIBRARIES = 
+PLATFORM_LIBRARIES += OpenSLES
 PLATFORM_LIBRARIES += supc++ 
 PLATFORM_LIBRARIES += z 
 PLATFORM_LIBRARIES += GLESv1_CM 

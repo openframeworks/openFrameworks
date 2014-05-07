@@ -285,10 +285,16 @@ bool ofContains(const vector<T>& values, const T& target) {
 /// \brief Reset the working directory to the platform default.
 void ofSetWorkingDirectoryToDefault();
 
+<<<<<<< HEAD
 /// \brief Set the relative path to the data/ folder from the executable.
 /// \warning The provided path must have a trailing slash (/).
 /// \param root The path to the data/ folder relative to the app executable.
 void ofSetDataPathRoot( string root );
+=======
+//set the root path that ofToDataPath will use to search for files relative to the app
+//the path must have a trailing slash (/) !!!!
+void ofSetDataPathRoot(const string& root);
+>>>>>>> master
 
 template <class T>
 string ofToString(const T& value){
@@ -408,24 +414,24 @@ unsigned int ofGetVersionMajor();
 unsigned int ofGetVersionMinor();
 unsigned int ofGetVersionPatch();
 
-void	ofSaveScreen(string filename);
+void	ofSaveScreen(const string& filename);
 void	ofSaveFrame(bool bUseViewport = false);
-void	ofSaveViewport(string filename);
+void	ofSaveViewport(const string& filename);
 
 //--------------------------------------------------
-vector <string> ofSplitString(const string & source, const string & delimiter, bool ignoreEmpty = false, bool trim = false);
-string ofJoinString(vector <string> stringElements, const string & delimiter);
-void ofStringReplace(string& input, string searchStr, string replaceStr);
-bool ofIsStringInString(string haystack, string needle);
-int ofStringTimesInString(string haystack, string needle);
+vector<string> ofSplitString(const string& source, const string& delimiter, bool ignoreEmpty = false, bool trim = false);
+string ofJoinString(const vector<string>& stringElements, const string& delimiter);
+void ofStringReplace(string& input, const string& searchStr, const string& replaceStr);
+bool ofIsStringInString(const string& haystack, const string& needle);
+int ofStringTimesInString(const string& haystack, const string& needle);
 
-string ofToLower(const string & src);
-string ofToUpper(const string & src);
+string ofToLower(const string& src);
+string ofToUpper(const string& src);
 
 string ofVAArgsToString(const char * format, ...);
 string ofVAArgsToString(const char * format, va_list args);
 
-string ofSystem(string command);
+string ofSystem(const string& command);
 
 ofTargetPlatform ofGetTargetPlatform();
 
