@@ -165,7 +165,7 @@ void ofDisableDataPath();
 /// \param path The path to prepend.
 /// \param absolute Set to true to return an absolute path.
 /// \returns the converted path.
-string ofToDataPath(string path, bool absolute=false);
+string ofToDataPath(const string& path, bool absolute=false);
 
 /// \brief Randomly reorder the values in a vector.
 /// \param values The vector of values to modify.
@@ -285,16 +285,10 @@ bool ofContains(const vector<T>& values, const T& target) {
 /// \brief Reset the working directory to the platform default.
 void ofSetWorkingDirectoryToDefault();
 
-<<<<<<< HEAD
 /// \brief Set the relative path to the data/ folder from the executable.
 /// \warning The provided path must have a trailing slash (/).
 /// \param root The path to the data/ folder relative to the app executable.
 void ofSetDataPathRoot( string root );
-=======
-//set the root path that ofToDataPath will use to search for files relative to the app
-//the path must have a trailing slash (/) !!!!
-void ofSetDataPathRoot(const string& root);
->>>>>>> master
 
 template <class T>
 string ofToString(const T& value){
