@@ -560,10 +560,10 @@ public:
 
     union {
         struct {
-            PixelType r; //< \brief The red color component.
-            PixelType g; //< \brief The green color component.
-            PixelType b; //< \brief The blue color component.
-            PixelType a; //< \brief The alpha color component.
+            PixelType r; ///< \brief The red color component.
+            PixelType g; ///< \brief The green color component.
+            PixelType b; ///< \brief The blue color component.
+            PixelType a; ///< \brief The alpha color component.
         };
         PixelType v[4]; ///< \brief The pixel values as an array.
     };
