@@ -554,16 +554,18 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 }
 
 //----------------------------------------------------------
-/// \brief	Queries the current OpenGL matrix state
-///
-/// \detail Returns the current state of the matrix from the top of the renderer's current matrix stack.
-///
-///	        You can query one of the following:
-///
-///	        [OF_MATRIX_MODELVIEW | OF_MATRIX_PROJECTION | OF_MATRIX_TEXTURE | OF_MATRIX_ORIENTATION]
-///
-/// \param	matrixMode_  Which matrix mode to query
-///
+/** @brief	Queries the current OpenGL matrix state
+ *  @detail Returns the specified matrix as held by the renderer's current matrix stack.
+ *
+ *			You can query one of the following:
+ *
+ *			[OF_MATRIX_MODELVIEW | OF_MATRIX_PROJECTION | OF_MATRIX_TEXTURE]
+ *
+ *			Each query will return the state of the matrix
+ *			as it was uploaded to the shader currently bound.
+ *
+ *	@param	matrixMode_  Which matrix mode to query
+ */
 /// \note   If an invalid matrixMode is queried, this method will return the identity matrix, and
 ///         print an error message.
 ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
@@ -576,9 +578,6 @@ ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_)
 			break;
 		case OF_MATRIX_TEXTURE:
 			return matrixStack.getTextureMatrix();
-			break;
-		case OF_MATRIX_ORIENTATION:
-			return matrixStack.getOrientationMatrix();
 			break;
 		default:
 			ofLogWarning() << "Invalid getCurrentMatrix query";
