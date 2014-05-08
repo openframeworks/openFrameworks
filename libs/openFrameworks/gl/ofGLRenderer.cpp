@@ -536,6 +536,11 @@ ofMatrix4x4 ofGLRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
 }
 
 //----------------------------------------------------------
+ofMatrix4x4 ofGLRenderer::getCurrentOrientationMatrix() const {
+	return matrixStack.getOrientationMatrix();
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::multMatrix (const ofMatrix4x4 & m){
 	multMatrix( m.getPtr() );
 }
