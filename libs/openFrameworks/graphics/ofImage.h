@@ -473,8 +473,13 @@ public:
     /// \brief Loads ofPixels data into ofTexture so that draw() calls reflect changes to the pixels.
     void reloadTexture();
 
-    int width, height, bpp; ///< w,h, bits per pixel
-    int type; ///< OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
+    int width;  ///< \brief Image width.
+    int height; ///< \brief Image Height.
+    int bpp;    ///< \brief Image bits per pixel.
+    int type;   ///< \brief Image type
+                ///< \sa OF_IMAGE_GRAYSCALE
+                ///< \sa OF_IMAGE_COLOR
+                ///< \sa OF_IMAGE_COLOR_ALPHA
 
     ofImage_<PixelType> & operator=(ofPixels_<PixelType> & pixels);
 
