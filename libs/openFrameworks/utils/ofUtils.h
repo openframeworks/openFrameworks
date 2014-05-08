@@ -288,7 +288,7 @@ void ofSetWorkingDirectoryToDefault();
 /// \brief Set the relative path to the data/ folder from the executable.
 /// \warning The provided path must have a trailing slash (/).
 /// \param root The path to the data/ folder relative to the app executable.
-void ofSetDataPathRoot( string root );
+void ofSetDataPathRoot(const string& root);
 
 template <class T>
 string ofToString(const T& value){
