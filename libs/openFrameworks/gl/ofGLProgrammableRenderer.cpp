@@ -587,7 +587,9 @@ ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_)
 }
 
 //----------------------------------------------------------
-
+ofMatrix4x4 ofGLProgrammableRenderer::getCurrentOrientationMatrix() const {
+	return matrixStack.getOrientationMatrix();
+}
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setColor(const ofColor & color){
 	setColor(color.r,color.g,color.b,color.a);
