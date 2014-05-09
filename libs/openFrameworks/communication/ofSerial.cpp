@@ -371,6 +371,8 @@ bool ofSerial::setup(string portName, int baud){
 		options.c_iflag &= (tcflag_t) ~(INLCR | IGNCR | ICRNL | IGNBRK);
 		options.c_oflag &= (tcflag_t) ~(OPOST);
 		options.c_cflag |= CS8;
+	        options.c_cflag |= CRTSCTS;  // disables hardware flow control
+                options.c_lflag &= ~(ICANON | ECHO | ISIG); // enables data to be processed as raw input
 		tcsetattr(fd,TCSANOW,&options);
 
 		bInited = true;
