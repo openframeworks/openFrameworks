@@ -112,9 +112,10 @@ private:
 	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods);
 	static void 	resize_cb(GLFWwindow* windowP_, int w, int h);
 	static void 	exit_cb(GLFWwindow* windowP_);
-	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
+	static void	scroll_cb(GLFWwindow* windowP_, double x, double y);
 	static void 	drop_cb(GLFWwindow* windowP_, const char* dropString);
-	static void		error_cb(int errorCode, const char* errorDescription);
+	static void	error_cb(int errorCode, const char* errorDescription);
+	static void	entry_cb(GLFWwindow* windowP_, int state);
 	static void 	exitApp();
 
 #ifdef TARGET_LINUX
