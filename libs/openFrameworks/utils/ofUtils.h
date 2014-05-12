@@ -117,7 +117,7 @@ string ofGetTimestampString();
 ///
 /// \param timestampFormat The formatting pattern.
 /// \returns the formatted timestamp as a std::string.
-string ofGetTimestampString(string timestampFormat);
+string ofGetTimestampString(const string& timestampFormat);
 
 /// \brief Get the current year.
 /// \returns the current year.
