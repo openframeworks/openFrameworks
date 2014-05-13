@@ -150,7 +150,7 @@ namespace ofxCv {
 		bool existsCurrent(unsigned int label) const;
 		bool existsPrevious(unsigned int label) const;
 		int getAge(unsigned int label) const;
-        int getLastSeen(unsigned int label) const;
+		int getLastSeen(unsigned int label) const;
 	};
 	
 	template <class T>
@@ -302,7 +302,7 @@ namespace ofxCv {
 		return currentLabelMap.find(label)->second->getAge();
 	}
     
-    template <class T>
+	template <class T>
 	int Tracker<T>::getLastSeen(unsigned int label) const{
 		return currentLabelMap.find(label)->second->getLastSeen();
 	}
