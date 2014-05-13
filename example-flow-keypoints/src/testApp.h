@@ -14,6 +14,7 @@ public:
     void mouseReleased(int x, int y, int button);
     
     ofVideoGrabber grabber;
+    cv::Mat grabberGray;
     ofxCv::FlowPyrLK flow;
     ofVec2f p1;
     ofRectangle rect;
