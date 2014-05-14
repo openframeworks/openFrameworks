@@ -73,6 +73,7 @@ namespace ofxCv {
 		void setThreshold(float thresholdValue);
 		void setAutoThreshold(bool autoThreshold);
 		void setInvert(bool invert);
+        void setUseTargetColor(bool useTargetColor);
 		void setTargetColor(ofColor targetColor, TrackingColorMode trackingColorMode = TRACK_COLOR_RGB);
 		void setFindHoles(bool findHoles);
 		void setSortBySize(bool sortBySize);
