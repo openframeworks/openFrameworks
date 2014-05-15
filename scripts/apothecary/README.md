@@ -387,7 +387,7 @@ You can do this by using one of two methods:
 
 Both methods work, but one may be easier than the other based on the library's build system. For method one, you probably need to copy the built lib file after each build step and rename it based on the architecture or it may be overwritten by the next build.
 
-*Note: `libpo -info` can tell you the architectures currently in a compiled lib: `lipo -info libsomelib.a`*
+*Note: `lipo -info` can tell you the architectures currently in a compiled lib: `lipo -info libsomelib.a`*
 
 #### Build Command/Modification Examples
 

@@ -70,7 +70,7 @@ OSX_MIN_SDK_VER=10.6
 
 # used when building for ios, the sdks you have installed are found in:
 # $XCODE_DEV_ROOT/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#.#.sdk
-IOS_SDK_VER=6.1
+IOS_SDK_VER=7.1
 IOS_MIN_SDK_VER=5.1
 
 # used when building for vs
@@ -868,6 +868,10 @@ else # manually set
 	IS_CUSTOM_LIBS_DIR=1
 fi
 echoVerbose "Libs dest dir: $LIBS_DIR"
+if [ ! -e $LIBS_DIR ] ; then
+	mkdir -p $LIBS_DIR
+	echoInfo "Created libs dest dir: $LIBS_DIR"
+fi
 
 # dependency & build root dirs
 DEPENDS_FORMULA_DIR=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$DEPENDS_SUBDIR

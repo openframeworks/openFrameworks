@@ -32,10 +32,10 @@ function prepare() {
 	fi
 
 	# copy in build script and CMake toolchains adapted from Assimp
-	if [ "$OS" == "ios" ] ; then
+	if [ "$OS" == "osx" ] ; then
 		mkdir -p build
 		cp -Rv $FORMULA_DIR/ios build
-		chmod +x build/ios/build_ios.sh
+		chmod +x build/ios/build.sh
 	fi
 }
 
@@ -66,7 +66,7 @@ function build() {
 
 	elif [ "$TYPE" == "ios" ] ; then
 		cd build/ios
-		./build_ios.sh # build fat lib
+		./build.sh # build fat lib
 
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: android build"
