@@ -271,6 +271,10 @@ namespace ofxCv {
 	void ContourFinder::setInvert(bool invert) {
 		this->invert = invert;
 	}
+    
+    void ContourFinder::setUseTargetColor(bool useTargetColor) {
+        this->useTargetColor = useTargetColor;
+    }
 	
 	void ContourFinder::setTargetColor(ofColor targetColor, TrackingColorMode trackingColorMode) {
 		useTargetColor = true;
