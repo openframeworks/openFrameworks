@@ -37,6 +37,8 @@ public:
     bool isLoaded();
     float getVolume();
     
+    void * getAVSoundPlayer();
+    
 protected:
     
     void * soundPlayer;

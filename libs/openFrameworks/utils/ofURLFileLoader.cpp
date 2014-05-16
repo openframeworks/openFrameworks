@@ -121,9 +121,9 @@ void ofURLFileLoader::clear(){
 }
 
 void ofURLFileLoader::start() {
-    if (isThreadRunning() == false){
-        ofAddListener(ofEvents().update,this,&ofURLFileLoader::update);
-        startThread(true, false);   // blocking, verbose
+     if (isThreadRunning() == false){
+		ofAddListener(ofEvents().update,this,&ofURLFileLoader::update);
+        startThread();
     }else{
         ofLogVerbose("ofURLFileLoader") << "start(): signaling new request condition";
         condition.signal();
@@ -135,6 +135,7 @@ void ofURLFileLoader::stop() {
     stopThread();
     condition.signal();
     unlock();
+    waitForThread();
 }
 
 void ofURLFileLoader::threadedFunction() {
@@ -225,11 +226,11 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
         if(request.files.size() > 0 || request.data.size() > 0){
             usesForm = true;
             // create the form data to send
-            if(request.files.size()>0)
+            if(request.files.size()>0){
                 form.setEncoding(HTMLForm::ENCODING_MULTIPART);
-            else
+            }else{
                 form.setEncoding(HTMLForm::ENCODING_URL);
-            
+            }
             map<string, string>::iterator dataIter;
             for(dataIter = request.data.begin(); dataIter != request.data.end(); dataIter++){
                 form.add(dataIter->first, dataIter->second);
@@ -329,9 +330,12 @@ void ofURLFileLoader::update(ofEventArgs & args){
     
 }
 
+static bool initialized = false;
 static ofURLFileLoader & getFileLoader(){
-    static ofURLFileLoader * fileLoader = new ofURLFileLoader;
-    return *fileLoader;
+	static ofURLFileLoader * fileLoader = new ofURLFileLoader;
+	initialized = true;
+	return *fileLoader;
+
 }
 
 ofHttpResponse ofLoadURL(string url){
@@ -368,4 +372,12 @@ void ofRemoveAllURLRequests(){
 
 void ofStopURLLoader(){
     getFileLoader().stop();
+}
+
+void ofURLFileLoaderShutdown(){
+	if(initialized){
+		ofRemoveAllURLRequests();
+		ofStopURLLoader();
+		Poco::Net::uninitializeSSL();
+	}
 }

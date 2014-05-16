@@ -6,6 +6,9 @@ OF 0.8.2
 	  - removed  
 	  / modified  
 
+### Graphics
+	+ ofGetCurrentOrientationMatrix(): query current orientation matrix state (supported by ofGLProgrammableRenderer, ofGLRenderer)
+
 ------------------------------------------------------------------------------
 
 CORE
@@ -18,10 +21,14 @@ CORE
 	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
 ### gl
 	+ ofFbo: added new method to attach an external texture
+	+ ofFbo: fix regression on min/max filter settings
+### Graphics
+	/ ofImage: convert format when loading different image types
 ### Math
 	/ fix ofQuaternion setOrientation and getEulerOrientation
 ### Utils
 	/ ofThread now uses Class name for logging channel (was thread name)
+	/ ofURLFileLoader: better shutdown, don't shutdown if it wasn't initialized + wait thread
 	
 PLATFORM SPECIFIC
 -----------------
@@ -33,7 +40,12 @@ PLATFORM SPECIFIC
 	/ disable x86 in assimp and opencv examples
 	/ shader and assimp examples reload gl resources when the app resumes
 ### Linux
-       / video: fixes for videos which pixels have padding
+	/ video: fixes for videos which pixels have padding
+	/ video: close pipeline properly by sending and waiting for EOS event
+	/ system: fix dialog boxes
+	/ install & make: detect and use gtk 3 instead of 2 if it's available
+###OSX
+	/ Reduce warnings on OSX
 
 ORE ADDONS
 -----------

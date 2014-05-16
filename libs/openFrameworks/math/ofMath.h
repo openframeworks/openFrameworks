@@ -256,10 +256,10 @@ float ofWrapRadians(float angle, float from = -PI, float to=+PI);
 // \brief Convenience function for ofMath::ofWrap(), constrained between -180...180
 float ofWrapDegrees(float angle, float from = -180, float to=+180);
 
-/// \returns a random number between 0 and the width of the screen. 
+/// \returns a random number between 0 and the width of the window.
 float ofRandomWidth();
 
-/// \returns a random number between 0 and the height of the screen. 
+/// \returns a random number between 0 and the height of the window. 
 float ofRandomHeight();
 
 /// \brief Calculates a one dimensional Perlin noise value between 0.0...1.0.

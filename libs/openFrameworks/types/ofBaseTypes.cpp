@@ -141,3 +141,9 @@ void ofBaseVideoPlayer::previousFrame(){
 //	ofLogWarning("ofBaseVideoPlayer") << "getPixelFormat() not implemented";
 //	return OF_PIXELS_RGB;
 //}
+
+//---------------------------------------------------------------------------
+ofMatrix4x4 ofBaseRenderer::getCurrentOrientationMatrix() const {
+	ofLogWarning() << "getCurrentOrientationMatrix() Not implemented for this renderer. Returning Identity matrix.";
+	return ofMatrix4x4();
+}
