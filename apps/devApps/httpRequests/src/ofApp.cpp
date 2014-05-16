@@ -31,7 +31,7 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     ofBackground(4, 5, 6);
     ofRegisterURLNotification(this);
-    ofSetLogLevel(OF_LOG_VERBOSE);
+    ofSetLogLevel(OF_LOG_SILENT);
     
 
     httpPut.url = PUT;
@@ -42,7 +42,7 @@ void ofApp::setup(){
     
 
     
-    httpGet.url = REDIRECT_15;
+    httpGet.url = "http://www.google.com";
     httpGet.type = OF_HTTP_GET;
     httpGet.name = "get";
     
