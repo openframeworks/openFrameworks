@@ -685,6 +685,41 @@ void ofMesh::draw(ofPolyRenderMode renderType){
 }
 
 //--------------------------------------------------------------
+void ofMesh::drawFaceNormals(float length){
+	if(!hasNormals()){
+		ofLogNotice("ofMesh") << "drawFaceNormals(): mesh does not have normals";
+		return;
+	}
+
+	if(getMode() != OF_PRIMITIVE_TRIANGLES){
+		ofLogWarning("ofMesh") << "drawFaceNormals(): only works with primitive mode OF_PRIMITIVE_TRIANGLES";
+		return;
+	}
+
+	vector<ofMeshFace> faces = getUniqueFaces();
+	for(unsigned int i=0; i<faces.size(); i++){
+		ofMeshFace& face = faces[i];
+
+		if(face.hasNormals()){
+			ofVec3f center = (face.getVertex(0) + face.getVertex(1) + face.getVertex(2)) / 3.f;
+			ofLine(center, center + face.getFaceNormal() * length);
+		}
+	}
+}
+
+//--------------------------------------------------------------
+void ofMesh::drawVertNormals(float length){
+	if(!hasNormals()){
+		ofLogNotice("ofMesh") << "drawFaceNormals(): mesh does not have normals";
+		return;
+	}
+
+	for(int i=0; i<getNumVertices(); i++){
+		ofLine(getVertex(i), getVertex(i) + getNormal(i) * length);
+	}
+}
+
+//--------------------------------------------------------------
 void ofMesh::enableColors(){
     useColors = true;
 }

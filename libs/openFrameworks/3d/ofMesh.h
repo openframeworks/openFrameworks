@@ -118,6 +118,8 @@ public:
 	void drawVertices();
 	void drawWireframe();
 	void drawFaces();
+	void drawFaceNormals(float length = 10.f);
+	void drawVertNormals(float length = 10.f);
 	void draw();
 
 	void load(string path);
