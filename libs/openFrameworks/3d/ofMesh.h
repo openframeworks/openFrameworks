@@ -118,9 +118,15 @@ public:
 	void drawVertices();
 	void drawWireframe();
 	void drawFaces();
-	void drawFaceNormals(float length = 10.f);
-	void drawVertNormals(float length = 10.f);
 	void draw();
+	
+    /// \brief Draws calculated face normals. Only works with meshes of type OF_PRIMITIVE_TRIANGLES.
+    /// \param length Length of normals to draw.
+	void drawFaceNormals(float length = 10.f);
+
+    /// \brief Draws vertex normals.
+    /// \param length Length of normals to draw.
+	void drawVertNormals(float length = 10.f);
 
 	void load(string path);
 	void save(string path, bool useBinary = false) const;
