@@ -643,6 +643,17 @@ void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m) {
 	}
 }
 
+//--------------------------------------------------------------
+void ofShader::setUniformMatrix3f(const string & name, const ofMatrix3x3 & m) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1){
+			float send[9] = {m.a, m.b, m.c, m.d, m.e, m.f, m.g, m.h, m.i};
+			glUniformMatrix3fv(loc, 1, GL_FALSE, send);
+		}
+	}
+}
+
 #ifndef TARGET_OPENGLES
 //--------------------------------------------------------------
 void ofShader::setAttribute1s(GLint location, short v1) {

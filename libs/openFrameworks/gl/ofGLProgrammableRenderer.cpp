@@ -14,6 +14,7 @@
 static const int OF_NO_TEXTURE=-1;
 
 static const string MODELVIEW_MATRIX_UNIFORM="modelViewMatrix";
+static const string MODELVIEW_MATRIX_NORMAL="normalMatrix";
 static const string PROJECTION_MATRIX_UNIFORM="projectionMatrix";
 static const string MODELVIEW_PROJECTION_MATRIX_UNIFORM="modelViewProjectionMatrix";
 static const string TEXTURE_MATRIX_UNIFORM="textureMatrix";
@@ -540,6 +541,7 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 	switch(matrixStack.getCurrentMatrixMode()){
 	case OF_MATRIX_MODELVIEW:
 		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
+		currentShader->setUniformMatrix3f(MODELVIEW_MATRIX_NORMAL, matrixStack.getNormalMatrix());
 		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
 		break;
 	case OF_MATRIX_PROJECTION:

@@ -13,6 +13,7 @@
 #include "ofRectangle.h"
 #include "ofGraphics.h"
 #include "ofMatrix4x4.h"
+#include "ofMatrix3x3.h"
 
 class ofAppBaseWindow;
 class ofFbo;
@@ -34,6 +35,7 @@ public:
 
 	const ofMatrix4x4 & getProjectionMatrix() const;
 	const ofMatrix4x4 & getModelViewMatrix() const;
+	const ofMatrix3x3 & getNormalMatrix() const;
 	const ofMatrix4x4 & getModelViewProjectionMatrix() const;
 	const ofMatrix4x4 & getTextureMatrix() const;
 	const ofMatrix4x4 & getCurrentMatrix() const;
@@ -75,6 +77,7 @@ private:
     ofMatrixMode currentMatrixMode;
 
 	ofMatrix4x4	modelViewMatrix;
+	ofMatrix3x3 normalMatrix;
 	ofMatrix4x4	projectionMatrix;
 	ofMatrix4x4	textureMatrix;
 	ofMatrix4x4 modelViewProjectionMatrix;

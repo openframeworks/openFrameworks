@@ -11,6 +11,7 @@
 #include "ofBaseTypes.h"
 #include "ofTexture.h"
 #include "ofMatrix4x4.h"
+#include "ofMatrix3x3.h"
 #include "Poco/RegularExpression.h"
 #include <map>
 #include "ofAppBaseWindow.h"
@@ -70,6 +71,7 @@ public:
 	void setUniform4fv(const string & name, float* v, int count = 1);
 	
 	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m);
+	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m);
 
 	// set attributes that vary per vertex (look up the location before glBegin)
 	GLint getAttributeLocation(const string & name);
