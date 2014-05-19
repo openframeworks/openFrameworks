@@ -227,7 +227,7 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
             usesForm = true;
             // create the form data to send
             if(request.files.size()>0){
-                form.setEncoding(HTMLForm::ENCODING_MULTIPART);
+                form.setEncoding("multipart/form-data");
             }else{
                 form.setEncoding(HTMLForm::ENCODING_URL);
             }
@@ -237,7 +237,8 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
             }
             map<string, string>::iterator fileIter;
             for(fileIter = request.files.begin(); fileIter!=request.files.end(); fileIter++){
-                string fileName = fileIter->second.substr(fileIter->second.find_last_of('/')+1);
+                string fileName = fileIter->second;
+                cout<<fileName<<endl;
                 form.addPart(fileIter->first,new FilePartSource(fileIter->second));
             }
             

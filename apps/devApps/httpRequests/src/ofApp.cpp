@@ -31,7 +31,7 @@ void ofApp::setup(){
     ofSetVerticalSync(true);
     ofBackground(4, 5, 6);
     ofRegisterURLNotification(this);
-    ofSetLogLevel(OF_LOG_SILENT);
+    ofSetLogLevel(OF_LOG_ERROR);
     
 
     httpPut.url = PUT;
@@ -49,9 +49,8 @@ void ofApp::setup(){
     
 
     httpPost.type = OF_HTTP_POST;
-    httpPost.url = POST;
-    httpPost.addData("data 1", "foobar data 1");
-    httpPost.addData("data 2", "foobar data 2");
+    httpPost.url = "http://127.0.0.1:5800/upload";
+    httpPost.addFile("upload-file", ofToDataPath("2014-05-16-14-14-24-575.gif"));
     httpPost.name = "post";
     
 
