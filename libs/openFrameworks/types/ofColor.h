@@ -52,6 +52,7 @@
 ///
 /// [1]: http://en.wikipedia.org/wiki/RGB_color_model "RGB Model"
 ///
+/// \tparam PixelType The data type used to represent a single pixel value.
 template<typename PixelType>
 class ofColor_{
 public:
