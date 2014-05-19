@@ -92,6 +92,7 @@ void ofCloseFreeImage();
 
 
 /// \brief A class representing an image using memory and gpu based pixels.
+/// \tparam PixelType The data type used to represent a single pixel value.
 template<typename PixelType>
 class ofImage_ : public ofBaseImage_<PixelType>{
 public:
