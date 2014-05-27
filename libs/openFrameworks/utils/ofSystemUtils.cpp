@@ -72,7 +72,7 @@ static void restoreAppWindowFocus(){
 }
 #endif
 
-#if defined( TARGET_LINUX ) && defined (OF_USING_GTK) && !defined( TARGET_RASPBERRY_PI )
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 #include <gtk/gtk.h>
 #include "ofGstUtils.h"
 #include "Poco/Condition.h"
@@ -273,7 +273,7 @@ void ofSystemAlertDialog(string errorMessage){
 		[pool drain];
 	#endif
 
-	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK) && !defined( TARGET_RASPBERRY_PI )
+	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		initGTK();
 		TextDialogData dialogData;
 		dialogData.text = errorMessage;
@@ -464,7 +464,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------   linux
 	//----------------------------------------------------------------------------------------
-#if defined( TARGET_LINUX ) && defined (OF_USING_GTK) && !defined( TARGET_RASPBERRY_PI )
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		if(bFolderSelection) results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,windowTitle,defaultPath);
 		else results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_OPEN,windowTitle,defaultPath);
 #endif
@@ -546,7 +546,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------   linux
 	//----------------------------------------------------------------------------------------
-#if defined( TARGET_LINUX ) && defined (OF_USING_GTK) && !defined( TARGET_RASPBERRY_PI )
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 
 	results.filePath = gtkFileDialog(GTK_FILE_CHOOSER_ACTION_SAVE, messageName,defaultName);
 
@@ -582,7 +582,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 
 string ofSystemTextBoxDialog(string question, string text){
-#if defined( TARGET_LINUX ) && defined (OF_USING_GTK) && !defined( TARGET_RASPBERRY_PI )
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 	initGTK();
 	TextDialogData dialogData;
 	dialogData.text = text;
