@@ -191,7 +191,9 @@ gboolean text_dialog_gtk(gpointer userdata){
 static void initGTK(){
 	static bool initialized = false;
 	if(!initialized){
+		#if !defined(TARGET_RASPBERRY_PI) 
 		XInitThreads();
+		#endif
 		int argc=0; char **argv = NULL;
 		gtk_init (&argc, &argv);
 		ofGstUtils::startGstMainLoop();
