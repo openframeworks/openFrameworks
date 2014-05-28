@@ -72,7 +72,7 @@ ifeq ($(findstring clean,$(MAKECMDGOALS)),clean)
     ifdef PLATFORM_CORELIB_DEBUG_TARGET
     	TARGET += $(PLATFORM_CORELIB_DEBUG_TARGET)
     else
-    	TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
+    	TARGET += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
     endif
     
     ifdef PLATFORM_CORELIB_RELEASE_TARGET
