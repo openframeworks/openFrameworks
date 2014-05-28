@@ -3,7 +3,7 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 
-#if (_MSC_VER)
+#if (_MSC_VER) || defined(__EMSCRIPTEN__)
 #include <memory>
 #else
 #include <tr1/memory>
@@ -187,7 +187,7 @@ public:
 	template<typename Tp1>
 	ofPtr(const ofPtr<Tp1>& __r, std::_Dynamic_tag)
 	: std::shared_ptr<T>(__r, std:::_Dynamic_tag()) { }
-#else
+#elif !defined(__EMSCRIPTEN__)
 	template<typename Tp1>
 	ofPtr(const ofPtr<Tp1>& __r, std::__dynamic_cast_tag)
 	: std::shared_ptr<T>(__r, std::__dynamic_cast_tag()) { }
@@ -208,7 +208,7 @@ template<typename _Tp, typename _Tp1>
 ofPtr<_Tp>
 	dynamic_pointer_cast(const ofPtr<_Tp1>& __r)
 { return ofPtr<_Tp>(__r, std::_Dynamic_tag()); }
-#else
+#elif !defined(__EMSCRIPTEN__)
 template<typename _Tp, typename _Tp1>
 ofPtr<_Tp>
 	dynamic_pointer_cast(const ofPtr<_Tp1>& __r)

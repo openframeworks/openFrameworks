@@ -58,6 +58,11 @@ float * ofSoundGetSpectrum(int nBands);
 inline void ofSoundShutdown(){}
 #endif
 
+#ifdef OF_SOUND_PLAYER_EMSCRIPTEN
+#include "ofxEmscriptenSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxEmscriptenSoundPlayer
+#endif
+
 #ifdef TARGET_LINUX_ARM
 inline void ofSoundShutdown(){}
 #endif

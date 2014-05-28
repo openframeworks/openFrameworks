@@ -700,7 +700,9 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
 		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 	#endif
+	#ifndef USE_PROGRAMMABLE_GL
 		glEnable(GL_NORMALIZE);
+	#endif
     }
     
     ofPushMatrix();

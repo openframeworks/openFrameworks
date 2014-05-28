@@ -14,7 +14,7 @@
 #include "ofUtils.h"
 #include <map>
 
-
+#ifndef TARGET_PROGRAMMABLE_GL
 static bool normalsEnabled=false;
 
 //----------------------------------------
@@ -456,3 +456,150 @@ void ofLight::onOrientationChanged() {
 		}
 	}
 }
+#else
+
+void ofEnableLighting(){}
+void ofDisableLighting(){}
+void ofEnableSeparateSpecularLight(){}
+void ofDisableSeparateSpecularLight(){}
+bool ofGetLightingEnabled(){}
+void ofSetSmoothLighting(bool b){}
+void ofSetGlobalAmbientColor(const ofColor& c){}
+
+ofLight::ofLight(){
+
+}
+
+ofLight::ofLight(const ofLight & mom){
+
+}
+
+ofLight & ofLight::operator=(const ofLight & mom){
+
+}
+
+ofLight::~ofLight(){
+
+}
+
+void ofLight::destroy(){
+
+}
+
+void ofLight::setup(){
+
+}
+
+void ofLight::enable(){
+
+}
+
+void ofLight::disable(){
+
+}
+
+bool ofLight::getIsEnabled() const{
+
+}
+
+void ofLight::setDirectional(){
+
+}
+
+bool ofLight::getIsDirectional() const{
+
+}
+
+void ofLight::setSpotlight( float spotCutOff, float exponent ){
+
+}
+
+bool ofLight::getIsSpotlight(){
+
+}
+
+void ofLight::setSpotlightCutOff( float spotCutOff ){
+
+}
+
+float ofLight::getSpotlightCutOff(){
+
+}
+
+void ofLight::setSpotConcentration( float exponent ){
+
+}
+
+float ofLight::getSpotConcentration(){
+
+}
+
+void ofLight::setPointLight(){
+
+}
+
+bool ofLight::getIsPointLight(){
+
+}
+
+void ofLight::setAttenuation( float constant, float linear, float quadratic ){
+
+}
+
+float ofLight::getAttenuationConstant(){
+
+}
+
+float ofLight::getAttenuationLinear(){
+
+}
+
+float ofLight::getAttenuationQuadratic(){
+
+}
+
+int ofLight::getType(){
+
+}
+
+void ofLight::setAmbientColor(const ofFloatColor& c){
+
+}
+
+void ofLight::setDiffuseColor(const ofFloatColor& c){
+
+}
+
+void ofLight::setSpecularColor(const ofFloatColor& c){
+
+}
+
+ofFloatColor ofLight::getAmbientColor() const{
+
+}
+
+ofFloatColor ofLight::getDiffuseColor() const{
+
+}
+
+ofFloatColor ofLight::getSpecularColor() const{
+
+}
+
+int ofLight::getLightID() const{
+
+}
+
+void ofLight::customDraw(){
+
+}
+
+void ofLight::onPositionChanged(){
+
+}
+
+void ofLight::onOrientationChanged(){
+
+}
+
+#endif

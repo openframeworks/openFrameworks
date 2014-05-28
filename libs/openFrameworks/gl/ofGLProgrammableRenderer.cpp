@@ -103,7 +103,7 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	
 	if (bSmoothHinted) startSmoothing();
 
-#ifdef TARGET_OPENGLES
+#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), vertexData.getVerticesPointer());
 	
@@ -156,21 +156,33 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 		glDrawArrays(drawMode, 0, vertexData.getNumVertices());
 	}
 #else
-
-	// OpenGL
-	/*  some things are internally still using ofMesh
-	if(!wrongUseLoggedOnce){
-		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh";
-		wrongUseLoggedOnce = true;
-	}*/
 	
-	meshVbo.setMesh(vertexData, GL_DYNAMIC_DRAW, useColors, useTextures, useNormals);
+	meshVbo.setMesh(vertexData, GL_STATIC_DRAW, useColors, useTextures, useNormals);
 
+#ifndef TARGET_OPENGLES
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+	GLenum drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+#else
+	GLenum drawMode;
+	switch(renderType){
+	case OF_MESH_POINTS:
+		drawMode = GL_POINTS;
+		break;
+	case OF_MESH_WIREFRAME:
+		drawMode = GL_LINE_STRIP;
+		break;
+	case OF_MESH_FILL:
+		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+		break;
+	default:
+		drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
+		break;
+	}
+#endif
 	if(meshVbo.getUsingIndices()) {
-		meshVbo.drawElements(ofGetGLPrimitiveMode(vertexData.getMode()), meshVbo.getNumIndices());
+		meshVbo.drawElements(drawMode, meshVbo.getNumIndices());
 	} else {
-		meshVbo.draw(ofGetGLPrimitiveMode(vertexData.getMode()), 0, meshVbo.getNumVertices());
+		meshVbo.draw(drawMode, 0, meshVbo.getNumVertices());
 	}
 	
 	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
@@ -178,8 +190,10 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	// after we're finished drawing, following the principle of least surprise.
 	// ideally the glPolygonMode (or the polygon draw mode) should be part of ofStyle so that we can keep track
 	// of its state on the client side...
-	
+
+#ifndef TARGET_OPENGLES
 	glPolygonMode(GL_FRONT_AND_BACK, (ofGetFill() == OF_OUTLINE) ?  GL_LINE : GL_FILL);
+#endif
 	
 #endif
 	
@@ -203,7 +217,7 @@ void ofGLProgrammableRenderer::draw(ofPolyline & poly){
 	// use smoothness, if requested:
 	if (bSmoothHinted) startSmoothing();
 
-#ifdef TARGET_OPENGLES
+#if defined( TARGET_OPENGLES ) && !defined(TARGET_EMSCRIPTEN)
 
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &poly[0]);
@@ -789,7 +803,9 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enablePointSprites(){
 #ifdef TARGET_OPENGLES
-        glEnable(GL_POINT_SPRITE_OES);
+	#ifndef TARGET_PROGRAMMABLE_GL
+		glEnable(GL_POINT_SPRITE_OES);
+	#endif
 #else
 	glEnable(GL_PROGRAM_POINT_SIZE);
 #endif
@@ -798,7 +814,9 @@ void ofGLProgrammableRenderer::enablePointSprites(){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disablePointSprites(){
 #ifdef TARGET_OPENGLES
-        glEnable(GL_POINT_SPRITE_OES);
+	#ifndef TARGET_PROGRAMMABLE_GL
+		glEnable(GL_POINT_SPRITE_OES);
+	#endif
 #else
 	glDisable(GL_PROGRAM_POINT_SIZE);
 #endif
@@ -807,12 +825,16 @@ void ofGLProgrammableRenderer::disablePointSprites(){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::enableAntiAliasing(){
+#if !defined(TARGET_PROGRAMMABLE_GL) || !defined(TARGET_OPENGLES)
 	glEnable(GL_MULTISAMPLE);
+#endif
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::disableAntiAliasing(){
+#if !defined(TARGET_PROGRAMMABLE_GL) || !defined(TARGET_OPENGLES)
 	glDisable(GL_MULTISAMPLE);
+#endif
 }
 
 //----------------------------------------------------------
@@ -1275,7 +1297,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 #ifdef TARGET_OPENGLES
 static string defaultVertexShader = STRINGIFY(
-		precision lowp float;
+		precision mediump float;
 		attribute vec4 position;
 		attribute vec4 color;
 		attribute vec4 normal;
@@ -1297,7 +1319,7 @@ static string defaultVertexShader = STRINGIFY(
 );
 
 static string defaultFragmentShaderTexColor = STRINGIFY(
-		precision lowp float;
+		precision mediump float;
 
 		uniform sampler2D src_tex_unit0;
 		uniform float usingTexture;
@@ -1314,7 +1336,7 @@ static string defaultFragmentShaderTexColor = STRINGIFY(
 );
 
 static string defaultFragmentShaderTexNoColor =  STRINGIFY(
-		precision lowp float;
+		precision mediump float;
 
 		uniform sampler2D src_tex_unit0;
 		uniform float usingTexture;
@@ -1331,7 +1353,7 @@ static string defaultFragmentShaderTexNoColor =  STRINGIFY(
 );
 
 static string defaultFragmentShaderNoTexColor = STRINGIFY(
-		precision lowp float;
+		precision mediump float;
 
 		uniform sampler2D src_tex_unit0;
 		uniform float usingTexture;
@@ -1348,7 +1370,7 @@ static string defaultFragmentShaderNoTexColor = STRINGIFY(
 );
 
 static string defaultFragmentShaderNoTexNoColor  =  STRINGIFY(
-		precision lowp float;
+		precision mediump float;
 
 		uniform sampler2D src_tex_unit0;
 		uniform float usingTexture;
@@ -1365,7 +1387,7 @@ static string defaultFragmentShaderNoTexNoColor  =  STRINGIFY(
 );
 
 static string bitmapStringVertexShader =  STRINGIFY(
-		precision lowp float;
+		precision mediump float;
 
 		uniform mat4 projectionMatrix;
 		uniform mat4 modelViewMatrix;
@@ -1384,7 +1406,7 @@ static string bitmapStringVertexShader =  STRINGIFY(
 );
 
 static string bitmapStringFragmentShader =  STRINGIFY(
-		precision lowp float;
+		precision mediump float;
 
 		uniform sampler2D src_tex_unit0;
 		uniform vec4 globalColor;

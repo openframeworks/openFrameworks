@@ -2,6 +2,7 @@
 
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
 
 class ofRendererCollection: public ofBaseRenderer{
 public:
@@ -16,7 +17,11 @@ public:
 				 return (ofPtr<ofBaseGLRenderer>&)renderers[i];
 			 }
 		 }
-		 return ofPtr<ofGLRenderer>();
+		#ifndef TARGET_PROGRAMMABLE_GL
+		 	 return ofPtr<ofGLRenderer>();
+		#else
+		 	 return ofPtr<ofGLProgrammableRenderer>();
+		#endif
 	 }
 
 	 bool rendersPathPrimitives(){return true;}

@@ -517,8 +517,13 @@ void ofSetPixelStorei(int w, int bpc, int numChannels){
 }
 
 vector<string> ofGLSupportedExtensions(){
-	string extensions = (char*)glGetString(GL_EXTENSIONS);
-	return ofSplitString(extensions," ");
+	char* extensions = (char*)glGetString(GL_EXTENSIONS);
+	if(extensions){
+		string extensions_str = extensions;
+		return ofSplitString(extensions_str," ");
+	}else{
+		return vector<string>();
+	}
 }
 
 bool ofGLCheckExtension(string searchName){
@@ -535,7 +540,7 @@ bool ofGLCheckExtension(string searchName){
 bool ofGLSupportsNPOTTextures(){
 #ifndef TARGET_OPENGLES
 	return GL_ARB_texture_rectangle;
-#else
+#elif !defined(TARGET_EMSCRIPTEN)
 	static bool npotChecked = false;
 	static bool npotSupported = false;
 	if(!npotChecked){
@@ -552,6 +557,8 @@ bool ofGLSupportsNPOTTextures(){
 	}
 
 	return npotSupported;
+#else
+	return true;
 #endif
 }
 
@@ -567,6 +574,7 @@ bool ofIsGLProgrammableRenderer(){
 	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE;
 }
 
+#ifndef TARGET_PROGRAMMABLE_GL
 ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
 	if(ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE || ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
 		return (ofPtr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
@@ -576,6 +584,17 @@ ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
 		return ofPtr<ofGLRenderer>();
 	}
 }
+#else
+ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
+	if(ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
+		return (ofPtr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
+	}else if(ofGetCurrentRenderer()->getType()==ofRendererCollection::TYPE){
+		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
+	}else{
+		return ofPtr<ofGLProgrammableRenderer>();
+	}
+}
+#endif
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 void ofUpdateBitmapCharacterTexture();
