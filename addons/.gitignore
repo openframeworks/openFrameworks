@@ -21,6 +21,7 @@ ofxAndroid/ofAndroidLib/gen
 !ofxThreadedImageLoader
 !ofxVectorGraphics
 !ofxXmlSettings
+!ofxEmscripten
 
 # don't ignore the .gitignore file
 !.gitignore
