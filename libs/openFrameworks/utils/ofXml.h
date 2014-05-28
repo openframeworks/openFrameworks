@@ -1,7 +1,10 @@
 
 #pragma once
 
-#include "ofMain.h"
+#include "ofConstants.h"
+#include "ofParameter.h"
+#include "ofParameterGroup.h"
+#include "ofBaseTypes.h"
 
 #include <numeric>
 
@@ -35,7 +38,7 @@ public:
     ofXml( const string & path );
     ofXml( const ofXml& rhs );
     const ofXml& operator =( const ofXml& rhs );
-    
+
 	bool load(const string & path);
 	bool save(const string & path);
 

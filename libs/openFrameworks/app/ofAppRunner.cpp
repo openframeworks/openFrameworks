@@ -17,7 +17,6 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
 #include "ofURLFileLoader.h"
-#include "Poco/Net/NetSSL.h"
 
 
 // TODO: closing seems wonky.
@@ -32,8 +31,6 @@
 static ofPtr<ofBaseApp>				OFSAptr;
 static ofPtr<ofAppBaseWindow> 		window;
 
-//#define USE_PROGRAMMABLE_GL
-
 //========================================================================
 // default windowing
 #ifdef TARGET_NODISPLAY
@@ -44,6 +41,8 @@ static ofPtr<ofAppBaseWindow> 		window;
 	#include "ofAppAndroidWindow.h"
 #elif defined(TARGET_RASPBERRY_PI)
 	#include "ofAppEGLWindow.h"
+#elif defined(TARGET_EMSCRIPTEN)
+	#include "ofxAppEmscriptenWindow.h"
 #else
 	#include "ofAppGLFWWindow.h"
 #endif
@@ -141,7 +140,7 @@ void ofRunApp(ofBaseApp * OFSA){
 //--------------------------------------
 void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
     if(!ofGetCurrentRenderer()) {
-	#ifdef USE_PROGRAMMABLE_GL
+	#ifdef TARGET_PROGRAMMABLE_GL
 	    ofPtr<ofBaseRenderer> renderer(new ofGLProgrammableRenderer(false));
 	#else
 	    ofPtr<ofBaseRenderer> renderer(new ofGLRenderer(false));
@@ -208,6 +207,8 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
 	#elif defined(TARGET_RASPBERRY_PI)
 		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
+	#elif defined(TARGET_EMSCRIPTEN)
+		window = ofPtr<ofAppBaseWindow>(new ofxAppEmscriptenWindow);
     #else
 		window = ofPtr<ofAppBaseWindow>(new ofAppGLFWWindow());
 	#endif
@@ -223,7 +224,9 @@ void ofExitCallback(){
 
 	ofNotifyExit();
 
+#ifndef TARGET_EMSCRIPTEN
 	ofURLFileLoaderShutdown();
+#endif
 
     ofRemoveListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofRemoveListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
@@ -339,7 +342,7 @@ void ofExit(int status){
 void ofSleepMillis(int millis){
 	#ifdef TARGET_WIN32
 		Sleep(millis);			//windows sleep in milliseconds
-	#else
+	#elif !defined(TARGET_EMSCRIPTEN)
 		usleep(millis * 1000);	//mac sleep in microseconds - cooler :)
 	#endif
 }

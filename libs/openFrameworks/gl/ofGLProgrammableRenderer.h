@@ -161,7 +161,7 @@ private:
 
 
 	ofPolyline circlePolyline;
-#ifdef TARGET_OPENGLES
+#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	ofMesh circleMesh;
 	ofMesh triangleMesh;
 	ofMesh rectMesh;

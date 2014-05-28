@@ -84,7 +84,7 @@ void ofMaterial::begin() {
 	glMaterialfv(GL_BACK, GL_AMBIENT, &ambient.r);
 	glMaterialfv(GL_BACK, GL_EMISSION, &emissive.r);
 	glMaterialfv(GL_BACK, GL_SHININESS, &shininess);
-#else
+#elif !defined(TARGET_PROGRAMMABLE_GL)
     // opengl es 1.1 implementation must use GL_FRONT_AND_BACK.
     
 	glGetMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &prev_diffuse.r);
@@ -115,7 +115,7 @@ void ofMaterial::end() {
 	glMaterialfv(GL_BACK, GL_AMBIENT, &prev_ambient_back.r);
 	glMaterialfv(GL_BACK, GL_EMISSION, &prev_emissive_back.r);
 	glMaterialfv(GL_BACK, GL_SHININESS, &prev_shininess_back);
-#else
+#elif !defined(TARGET_PROGRAMMABLE_GL)
     // opengl es 1.1 implementation must use GL_FRONT_AND_BACK.
     
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &prev_diffuse.r);
