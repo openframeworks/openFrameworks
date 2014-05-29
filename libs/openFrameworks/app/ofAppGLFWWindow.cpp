@@ -877,10 +877,10 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
 	}
 
 	if (state == GLFW_PRESS) {
-		ofNotifyMousePressed(ofGetMouseX()*instance->pixelScreenCoordScale, ofGetMouseY()*instance->pixelScreenCoordScale, button);
+		ofNotifyMousePressed(ofGetMouseX(), ofGetMouseY(), button);
 		instance->buttonPressed=true;
 	} else if (state == GLFW_RELEASE) {
-		ofNotifyMouseReleased(ofGetMouseX()*instance->pixelScreenCoordScale, ofGetMouseY()*instance->pixelScreenCoordScale, button);
+		ofNotifyMouseReleased(ofGetMouseX(), ofGetMouseY(), button);
 		instance->buttonPressed=false;
 	}
 	instance->buttonInUse = button;
