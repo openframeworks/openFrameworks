@@ -16,7 +16,7 @@ static unsigned long long	lastFrameTime = 0;
 static bool      			bFrameRateSet = 0;
 static int      			nFramesForFPS = 0;
 static int      			nFrameCount	  = 0;
-static unsigned long long   prevMicro = 0;
+static unsigned long long   prevMicrosForFPS = 0;
 
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
@@ -126,11 +126,11 @@ void ofNotifyUpdate(){
 	// calculate sleep time to adjust to target fps
 	unsigned long long timeNow = ofGetElapsedTimeMicros();
 	if (nFrameCount != 0 && bFrameRateSet == true){
-		unsigned long long diffMicros = timeNow - prevMicro;
-        prevMicro = timeNow;
+		unsigned long long diffMicros = timeNow - prevMicrosForFPS;
+		prevMicrosForFPS = timeNow;
 		if(diffMicros < microsForFrame){
 			unsigned long long waitMicros = microsForFrame - diffMicros;
-            // Theoretical value
+            // Theoretical value to compensate for the extra time that it might sleep
             prevMicro += waitMicros;
 			#ifdef TARGET_WIN32
 				Sleep(waitMicros*MICROS_TO_MILLIS);
@@ -138,6 +138,8 @@ void ofNotifyUpdate(){
 				usleep(waitMicros);
 			#endif
 		}
+	}else{
+		prevMicrosForFPS = timeNow;
 	}
 
 	// calculate fps
