@@ -44,7 +44,7 @@ var LibraryHTML5Video = {
 		            		array[i++] = srcPixels[j++];
 		            		array[i++] = srcPixels[j++];
 		            		array[i++] = srcPixels[j++];
-		            		j++;
+		            		++j;
 		            	}
 		                GLctx.bindTexture(GLctx.TEXTURE_2D, GL.textures[video.textureId]);
 		                GLctx.texImage2D(GLctx.TEXTURE_2D, 0, GLctx.RGB, video.width, video.height, 0, GLctx.RGB, GLctx.UNSIGNED_BYTE, array);
@@ -53,7 +53,7 @@ var LibraryHTML5Video = {
 		            	array = Module.HEAPU8.subarray(dstPixels, dstPixels+(video.width*video.height));
 		            	for(var i=0, j=0; i<array.length; ){
 		            		array[i++] = (((srcPixels[j++]|0) << 1) + ((srcPixels[j]|0) << 2) + (srcPixels[j++]|0) + (srcPixels[j++]|0)) >> 3;
-		            		j++;
+		            		++j;
 		            	}
 		            	
 		                GLctx.bindTexture(GLctx.TEXTURE_2D, GL.textures[video.textureId]);
