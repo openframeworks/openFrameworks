@@ -89,14 +89,14 @@ public:
     /// \brief Start the thread with options.
     ///
     /// \param mutexesBlock Set blocking to true if you want the mutex to
-    ///     block when lock() is called.
+    ///        block when lock() is called.
     /// \param verbose use verbose logging methods.
     OF_DEPRECATED_MSG("Use startThread(bool blocking = true) instead.",
                       void startThread(bool mutexesBlock, bool verbose) );
 
     /// \brief Start the thread with options.
     /// \param mutexBlocks Set blocking to true if you want the mutex to
-    ///         block when lock() is called.
+    ///        block when lock() is called.
     /// \note Subclasses can directly access the mutex and employ thier
     ///       own locking strategy.
     void startThread(bool mutexBlocks = true);
@@ -296,7 +296,7 @@ public:
 
     enum {
         INFINITE_JOIN_TIMEOUT = LONG_MAX
-            ///< \brief An sentinal value for an infinite join timeout.
+            ///< \brief A sentinal value for an infinite join timeout.
             ///<
             ///< Primarily used with the waitForThread() method.
     };
