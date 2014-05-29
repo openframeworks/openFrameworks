@@ -16,6 +16,7 @@ static unsigned long long	lastFrameTime = 0;
 static bool      			bFrameRateSet = 0;
 static int      			nFramesForFPS = 0;
 static int      			nFrameCount	  = 0;
+static unsigned long long   prevMicrosForFPS = 0;
 
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
@@ -126,15 +127,20 @@ void ofNotifyUpdate(){
 	unsigned long long timeNow = ofGetElapsedTimeMicros();
 #ifndef TARGET_EMSCRIPTEN
 	if (nFrameCount != 0 && bFrameRateSet == true){
-		unsigned long long diffMicros = timeNow - timeThen;
+		unsigned long long diffMicros = timeNow - prevMicrosForFPS;
+		prevMicrosForFPS = timeNow;
 		if(diffMicros < microsForFrame){
 			unsigned long long waitMicros = microsForFrame - diffMicros;
+            // Theoretical value to compensate for the extra time that it might sleep
+			prevMicrosForFPS += waitMicros;
 			#ifdef TARGET_WIN32
 				Sleep(waitMicros*MICROS_TO_MILLIS);
 			#else
 				usleep(waitMicros);
 			#endif
 		}
+	}else{
+		prevMicrosForFPS = timeNow;
 	}
 #endif
 
