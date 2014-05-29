@@ -19,6 +19,8 @@ CORE
 ### app
 	+ ofAppEGLWindow added new methods hasMouse()/hasKeyboard() to provide info on whether mouse/keyboard were detected
 	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
+### events
+	+ fix ofSetFrameRate to be more accurate
 ### gl
 	+ ofFbo: added new method to attach an external texture
 	+ ofFbo: fix regression on min/max filter settings
