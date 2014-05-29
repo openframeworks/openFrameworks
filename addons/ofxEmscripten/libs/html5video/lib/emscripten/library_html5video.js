@@ -49,7 +49,7 @@ var LibraryHTML5Video = {
 		                GLctx.bindTexture(GLctx.TEXTURE_2D, GL.textures[video.textureId]);
 		                GLctx.texImage2D(GLctx.TEXTURE_2D, 0, GLctx.RGB, video.width, video.height, 0, GLctx.RGB, GLctx.UNSIGNED_BYTE, array);
 		                GLctx.bindTexture(GLctx.TEXTURE_2D, null);
-	            	}else if(video.pixelFormat=="MONO"){
+	            	}else if(video.pixelFormat=="GRAY"){
 		            	array = Module.HEAPU8.subarray(dstPixels, dstPixels+(video.width*video.height));
 		            	for(var i=0, j=0; i<array.length; ){
 		            		array[i++] = 0.2126*srcPixels[j++] + 0.7152*srcPixels[j++] + 0.0722*srcPixels[j++];
