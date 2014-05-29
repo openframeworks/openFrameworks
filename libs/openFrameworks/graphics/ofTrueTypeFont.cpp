@@ -387,9 +387,21 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	// 1 pixels is hidden because we don't want to see the real edge of the texture
 
 	border			= 3;
-	//visibleBorder	= 2;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	binded = false;
+
+	dpi = ttfGlobalDpi;
+	fontSize = 0;
+	blend_src = GL_SRC_ALPHA;
+	blend_dst = GL_ONE_MINUS_SRC_ALPHA;
+	simplifyAmt = 0.3;
+	nCharacters = 0;
+	blend_enabled = true;
+	lineHeight = 0;
+	bAntiAliased = true;
+	texture_2d_enabled = true;
+	encoding = OF_ENCODING_UTF8;
+	bFullCharacterSet = true;
 }
 
 //------------------------------------------------------------------
