@@ -131,7 +131,7 @@ void ofNotifyUpdate(){
 		if(diffMicros < microsForFrame){
 			unsigned long long waitMicros = microsForFrame - diffMicros;
             // Theoretical value to compensate for the extra time that it might sleep
-            prevMicro += waitMicros;
+			prevMicrosForFPS += waitMicros;
 			#ifdef TARGET_WIN32
 				Sleep(waitMicros*MICROS_TO_MILLIS);
 			#else
