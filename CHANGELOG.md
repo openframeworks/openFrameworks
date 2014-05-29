@@ -6,6 +6,9 @@ OF 0.8.2
 	  - removed  
 	  / modified  
 
+### Graphics
+	+ ofGetCurrentOrientationMatrix(): query current orientation matrix state (supported by ofGLProgrammableRenderer, ofGLRenderer)
+
 ------------------------------------------------------------------------------
 
 CORE

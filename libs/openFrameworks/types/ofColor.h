@@ -52,6 +52,7 @@
 ///
 /// [1]: http://en.wikipedia.org/wiki/RGB_color_model "RGB Model"
 ///
+/// \tparam PixelType The data type used to represent a single pixel value.
 template<typename PixelType>
 class ofColor_{
 public:
@@ -560,10 +561,10 @@ public:
 
     union {
         struct {
-            PixelType r; //< \brief The red color component.
-            PixelType g; //< \brief The green color component.
-            PixelType b; //< \brief The blue color component.
-            PixelType a; //< \brief The alpha color component.
+            PixelType r; ///< \brief The red color component.
+            PixelType g; ///< \brief The green color component.
+            PixelType b; ///< \brief The blue color component.
+            PixelType a; ///< \brief The alpha color component.
         };
         PixelType v[4]; ///< \brief The pixel values as an array.
     };
