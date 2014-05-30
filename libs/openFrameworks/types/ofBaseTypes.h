@@ -7,6 +7,7 @@
 #include "ofPixels.h"
 #include "ofMatrix4x4.h"
 #include "ofTypes.h"
+#include "ofURLFileLoader.h"
 
 class ofAbstractParameter;
 
@@ -412,4 +413,14 @@ public:
 	virtual bool save(const string & path)=0;
 };
 
-
+class ofBaseURLFileLoader{
+public:
+	virtual ~ofBaseURLFileLoader(){};
+    virtual ofHttpResponse get(string url)=0;
+    virtual int getAsync(string url, string name="")=0;
+    virtual ofHttpResponse saveTo(string url, string path)=0;
+    virtual int saveAsync(string url, string path)=0;
+    virtual void remove(int id)=0;
+    virtual void clear()=0;
+    virtual void stop()=0;
+};
