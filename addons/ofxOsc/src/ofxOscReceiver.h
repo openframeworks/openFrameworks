@@ -56,6 +56,10 @@ public:
 	/// listen_port is the port to listen for messages on
 	void setup( int listen_port );
 
+	/// listen_port is the port to listen for messages on,
+    /// multicastGroup is an IP string in the multicast range (224.0.0.0 to 239.255.255.255)
+    void setup( int listen_port, string multicastGroup );
+
 	/// returns true if there are any messages waiting for collection
 	bool hasWaitingMessages();
 	/// take the next message on the queue of received messages, copy its details into message, and
@@ -70,6 +74,7 @@ protected:
 	virtual void ProcessMessage( const osc::ReceivedMessage &m, const IpEndpointName& remoteEndpoint );
 
 private:
+    void start( IpEndpointName endPoint );
 	// shutdown the listener
 	void shutdown();
 

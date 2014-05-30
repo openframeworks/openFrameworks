@@ -207,6 +207,16 @@ public:
 		struct sockaddr_in bindSockAddr;
 		SockaddrFromIpEndpointName( bindSockAddr, localEndpoint );
 
+        if (localEndpoint.IsMulticastAddress()) {
+            group.imr_interface.s_addr = htonl(INADDR_ANY);
+            group.imr_multiaddr.s_addr = bindSockAddr.sin_addr.s_addr;
+            if (setsockopt(socket_, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&group, sizeof(group)) < 0) {
+                throw std::runtime_error("error adding multicast group\n");
+                close(socket_);
+                exit(1);
+            }
+        }
+        
         if (bind(socket_, (struct sockaddr *)&bindSockAddr, sizeof(bindSockAddr)) < 0) {
             throw std::runtime_error("unable to bind udp socket\n");
         }
