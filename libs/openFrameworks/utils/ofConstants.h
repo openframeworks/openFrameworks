@@ -80,6 +80,7 @@ enum ofTargetPlatform{
 	#define TARGET_OPENGLES
 	#define TARGET_NO_THREADS
 	#define TARGET_PROGRAMMABLE_GL
+	#define TARGET_IMPLEMENTS_URL_LOADER
 #else
 	#define TARGET_LINUX
 #endif
