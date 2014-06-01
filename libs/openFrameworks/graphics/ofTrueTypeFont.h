@@ -99,6 +99,34 @@ public:
 	/// \param height Line height for text drawn on screen.
 	void setLineHeight(float height);
 
+	/// \brief Get the ascender distance for this font.
+	///
+	/// The ascender is the vertical distance from the baseline to the highest "character" coordinate.
+	/// The meaning of "character" coordinate depends on the font. Some fonts take accents into account,
+	/// others do not, and still others define it simply to be the highest coordinate over all glyphs.
+	///
+	/// \returns Returns font ascender height in pixels.
+	float		getAscenderHeight() const;
+
+	/// \brief Get the descender distance for this font.
+	///
+	/// The descender is the vertical distance from the baseline to the lowest "character" coordinate.
+	/// The meaning of "character" coordinate depends on the font. Some fonts take accents into account,
+	/// others do not, and still others define it simply to be the lowest coordinate over all glyphs.
+	/// This value will be negative for descenders below the baseline (which is typical).
+	///
+	/// \returns Returns font descender height in pixels.
+	float		getDescenderHeight() const;
+
+	/// \brief Get the global bounding box for this font.
+	///
+	/// The global bounding box is the rectangle inside of which all glyphs in the font can fit.
+    /// Glyphs are drawn starting from (0,0) in the returned box (though note that the box can
+    /// extend in any direction out from the origin).
+    ///
+	/// \returns Returns font descender height in pixels.
+    const ofRectangle & getGlyphBBox() const;
+
 	/// \brief Returns letter spacing of font object.
 	///
 	/// You can control this by the ofTrueTypeFont::setLetterSpacing() function. 1.0 = default spacing, 
@@ -214,6 +242,9 @@ protected:
 	vector <ofTTFCharacter> charOutlinesNonVFlipped;
 
 	float lineHeight;
+	float ascenderHeight;
+	float descenderHeight;
+	ofRectangle glyphBBox;
 	float letterSpacing;
 	float spaceSize;
 
