@@ -510,7 +510,8 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 
 	FT_Set_Char_Size( face, fontSize << 6, fontSize << 6, dpi, dpi);
-	lineHeight = fontSize * 1.43f;
+	float fontUnitScale = ((float)fontSize * dpi) / (72 * face->units_per_EM);
+	lineHeight = face->height * fontUnitScale;
 
 	//------------------------------------------------------
 	//kerning would be great to support:
