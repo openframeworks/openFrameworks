@@ -56,6 +56,17 @@ enum ofxiOSDeviceType {
     OFXIOS_DEVICE_UNKNOWN
 };
 
+// this is the new way for getting device info.
+// we can add other parameters later.
+// maybe also methods for checking if device is newer or older than a certain model.
+class ofxiOSDeviceInfo{
+    public:
+    
+        ofxiOSDeviceType deviceType;
+        string deviceString;
+        int versionMajor;
+        int versionMinor;
+};
 
 
 // Possible return values for ofxiOSGetDeviceRevision
@@ -97,6 +108,9 @@ ofxiOSDeviceType ofxiOSGetDeviceType();
 
 // return device revision
 string ofxiOSGetDeviceRevision();
+
+// return device revision and type parsd from string
+ofxiOSDeviceInfo ofxiOSGetDeviceInfo();
 
 // return application key UIWindow
 UIWindow *ofxiOSGetUIWindow();
