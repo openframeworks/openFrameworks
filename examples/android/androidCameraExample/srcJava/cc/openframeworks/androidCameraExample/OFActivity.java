@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import cc.openframeworks.OFAndroid;
 
 
@@ -14,7 +15,7 @@ public class OFActivity extends cc.openframeworks.OFActivity{
     { 
         super.onCreate(savedInstanceState);
         String packageName = getPackageName();
-
+        getWindow().setType(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ofApp = new OFAndroid(packageName,this);
     }
 	

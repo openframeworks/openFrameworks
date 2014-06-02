@@ -10,7 +10,7 @@ void main(){
 	//this is where the pixel level drawing happens
 	//gl_FragCoord gives us the x and y of the current pixel its drawing
 	
-	//we grab the x and y and store them in an int
+	//we grab the x and y and store them in an float
 	float xVal = gl_FragCoord.x;
 	float yVal = gl_FragCoord.y;
     
@@ -19,7 +19,7 @@ void main(){
 	 if( mod(xVal, 2.0) == 0.0 && mod(yVal, 4.0) == 0.0 ){
 		gl_FragColor = globalColor;    
     }else{
-		discard;
+		gl_FragColor = vec4(0, 0, 0, 0);
 	}
 	
 }

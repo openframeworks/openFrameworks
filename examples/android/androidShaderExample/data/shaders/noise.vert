@@ -26,17 +26,20 @@ vec4 rand(vec2 A,vec2 B,vec2 C,vec2 D){
 //this is similar to a perlin noise function
 float noise(vec2 coord,float d){ 
 
-	vec2 C[4]; 
+	vec2 C0 = vec2(0, 0);
+    vec2 C1 = vec2(0, 0);
+    vec2 C2 = vec2(0, 0);
+    vec2 C3 = vec2(0, 0);
 
 	float d1 = 1.0/d;
 
-	C[0]=floor(coord*d)*d1; 
+	C0=floor(coord*d)*d1;
 
-	C[1]=C[0]+vec2(d1,0.0); 
+	C1=C0+vec2(d1,0.0);
 
-	C[2]=C[0]+vec2(d1,d1); 
+	C2=C1+vec2(d1,d1);
 
-	C[3]=C[0]+vec2(0.0,d1);
+	C3=C2+vec2(0.0,d1);
 
 
 	vec2 p=fract(coord*d); 
@@ -45,7 +48,7 @@ float noise(vec2 coord,float d){
 
 	vec4 w=vec4(q.x*q.y,p.x*q.y,p.x*p.y,q.x*p.y); 
 
-	return dot(vec4(rand(C[0],C[1],C[2],C[3])),w); 
+	return dot(vec4(rand(C0,C1,C2,C3)),w);
 } 
 
 
