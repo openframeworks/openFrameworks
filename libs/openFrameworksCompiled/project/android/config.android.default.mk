@@ -103,7 +103,7 @@ endif
 
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
 
-DATA_FILES = $(shell find bin/data -type f 2>/dev/null)
+DATA_FILES = $(shell find data -type f 2>/dev/null)
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 RESFILE=$(RESNAME).zip
 
@@ -523,14 +523,14 @@ afterplatform:$(RESFILE)
 	#fi
 	
 $(RESFILE): $(DATA_FILES)
-	@echo compressing and copying resources from bin/data into res
+	@echo compressing and copying resources from data into res
 	cd $(PROJECT_PATH); \
-	if [ -d "bin/data" ]; then \
+	if [ -d "data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
-		cd bin/data; \
-		zip -r ../../res/raw/$(RESNAME).zip *; \
-		cd ../..; \
+		cd data; \
+		zip -r ../res/raw/$(RESNAME).zip *; \
+		cd ..; \
 	fi
 
 install:	
@@ -542,12 +542,12 @@ install:
 	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	fi 
 	cd $(PROJECT_PATH); \
-	if [ -d "bin/data" ]; then \
+	if [ -d "data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
-		cd bin/data; \
-		zip -r ../../res/raw/$(RESNAME).zip *; \
-		cd ../..; \
+		cd data; \
+		zip -r ../res/raw/$(RESNAME).zip *; \
+		cd ..; \
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
@@ -557,7 +557,7 @@ install:
 	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	fi
 	
-	#rm -r $(addprefix bin/,$(shell ls bin/ | grep -v ^data$))
+	#rm -r $(addprefix bin/,$(shell ls | grep -v ^data$))
 	
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 	#$(ANT_BIN)/ant clean; \
