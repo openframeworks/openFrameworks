@@ -694,17 +694,6 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
     
     ofPushStyle();
     
-    if(!ofGetGLProgrammableRenderer()){
-	#ifndef TARGET_OPENGLES
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-	#endif
-	#ifndef USE_PROGRAMMABLE_GL
-		glEnable(GL_NORMALIZE);
-	#endif
-    }
-    
     ofPushMatrix();
     ofMultMatrix(modelMatrix);
     
@@ -713,7 +702,7 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         
         ofPushMatrix();
         ofMultMatrix(mesh.matrix);
-        
+
         if(bUsingTextures){
             if(mesh.hasTexture()) {
                 ofTexture * tex = mesh.getTexturePtr();
@@ -726,7 +715,7 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         if(bUsingMaterials){
             mesh.material.begin();
         }
-        
+
         if(mesh.twoSided) {
             glEnable(GL_CULL_FACE);
         }
@@ -766,15 +755,8 @@ void ofxAssimpModelLoader::draw(ofPolyRenderMode renderType) {
         
         ofPopMatrix();
     }
-    
-    ofPopMatrix();
 
-    if(!ofGetGLProgrammableRenderer()){
-	#ifndef TARGET_OPENGLES
-		glPopClientAttrib();
-		glPopAttrib();
-	#endif
-    }
+    ofPopMatrix();
     ofPopStyle();
 }
 

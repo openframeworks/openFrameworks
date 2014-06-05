@@ -10,7 +10,8 @@ farClip(0),
 lensOffset(0.0f, 0.0f),
 forceAspectRatio(false),
 isActive(false),
-vFlip(false)
+vFlip(false),
+aspectRatio(4./3.)
 {
 }
 
@@ -138,7 +139,7 @@ void ofCamera::begin(ofRectangle viewport) {
 	ofLoadMatrix( getProjectionMatrix(viewport) );
 
 	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-	ofLoadMatrix( getModelViewMatrix() );
+	ofLoadViewMatrix( getModelViewMatrix() );
 }
 
 // if begin(); pushes first, then we need an end to pop

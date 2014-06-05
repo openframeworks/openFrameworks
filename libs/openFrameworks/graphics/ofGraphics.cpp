@@ -377,6 +377,18 @@ void ofSetMatrixMode(ofMatrixMode matrixMode){
 	renderer->matrixMode(matrixMode);
 }
 
+void ofLoadViewMatrix(const ofMatrix4x4 & m){
+	renderer->loadViewMatrix(m);
+}
+
+void ofMultViewMatrix(const ofMatrix4x4 & m){
+	renderer->multViewMatrix(m);
+}
+
+ofMatrix4x4 ofGetCurrentViewMatrix(){
+	return renderer->getCurrentViewMatrix();
+}
+
 // end transformation matrix related functions
 //----------------------------------------------------------
 

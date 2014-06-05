@@ -12,6 +12,8 @@ class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
 class ofVbo;
+class ofMaterial;
+static const int OF_NO_TEXTURE=-1;
 
 class ofGLProgrammableRenderer: public ofBaseGLRenderer{
 public:
@@ -83,6 +85,9 @@ public:
 	void loadMatrix (const float * m);
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
+	void loadViewMatrix(const ofMatrix4x4 & m);
+	void multViewMatrix(const ofMatrix4x4 & m);
+	ofMatrix4x4 getCurrentViewMatrix() const;
 	
 	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
 	ofMatrix4x4 getCurrentOrientationMatrix() const;
@@ -142,9 +147,12 @@ public:
 
 	void enableTextureTarget(int textureTarget);
 	void disableTextureTarget(int textureTarget);
+	GLenum getCurrentTextureTarget();
 
 	void beginCustomShader(ofShader & shader);
 	void endCustomShader();
+
+	void setCurrentMaterial(ofBaseMaterial * material);
 
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
@@ -206,4 +214,6 @@ private:
 
 	bool wrongUseLoggedOnce;
 	bool uniqueShader;
+
+	ofBaseMaterial * currentMaterial;
 };
