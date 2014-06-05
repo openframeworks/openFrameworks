@@ -79,6 +79,9 @@ void ofLoadMatrix (const float *m);			// ideally we would always use ofMatrix4x4
 void ofMultMatrix (const ofMatrix4x4 & m);	// ofMatrix4x4 objects when interacting with non-OF code
 void ofMultMatrix (const float *m);
 void ofSetMatrixMode(ofMatrixMode matrixMode);
+void ofLoadViewMatrix(const ofMatrix4x4 & m);
+void ofMultViewMatrix(const ofMatrix4x4 & m);
+ofMatrix4x4 ofGetCurrentViewMatrix();
 
 // screen coordinate things / default gl values
 void ofSetupGraphicDefaults();

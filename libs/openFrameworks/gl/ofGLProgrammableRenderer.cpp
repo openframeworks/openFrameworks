@@ -10,9 +10,11 @@
 #include "ofFbo.h"
 #include "ofVbo.h"
 #include "of3dPrimitives.h"
+#include "ofLight.h"
+#include "ofMaterial.h"
 
-static const int OF_NO_TEXTURE=-1;
 
+static const string VIEW_MATRIX_UNIFORM="viewMatrix";
 static const string MODELVIEW_MATRIX_UNIFORM="modelViewMatrix";
 static const string PROJECTION_MATRIX_UNIFORM="projectionMatrix";
 static const string MODELVIEW_PROJECTION_MATRIX_UNIFORM="modelViewProjectionMatrix";
@@ -58,6 +60,7 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(bool useShapeColor)
 	currentShader = NULL;
 
 	currentTextureTarget = OF_NO_TEXTURE;
+	currentMaterial = NULL;
 }
 
 ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
@@ -415,7 +418,7 @@ void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height,
 	matrixMode(OF_MATRIX_MODELVIEW);
 	ofMatrix4x4 lookAt;
 	lookAt.makeLookAtViewMatrix( ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0) );
-	loadMatrix(lookAt);
+	loadViewMatrix(lookAt);
 	
 }
 
@@ -434,7 +437,7 @@ void ofGLProgrammableRenderer::setupScreenOrtho(float width, float height, float
 	loadMatrix(ortho); // make ortho our new projection matrix.
 
 	matrixMode(OF_MATRIX_MODELVIEW);
-	loadIdentityMatrix();
+	loadViewMatrix(ofMatrix4x4::newIdentityMatrix());
 }
 
 //----------------------------------------------------------
@@ -545,6 +548,31 @@ void ofGLProgrammableRenderer::multMatrix (const ofMatrix4x4 & m){
 void ofGLProgrammableRenderer::multMatrix (const float *m){
 	matrixStack.multMatrix(m);
 	uploadCurrentMatrix();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::loadViewMatrix(const ofMatrix4x4 & m){
+	matrixStack.loadViewMatrix(m);
+	if(currentShader){
+		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
+		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
+		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
+	}
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::multViewMatrix(const ofMatrix4x4 & m){
+	matrixStack.multViewMatrix(m);
+	if(currentShader){
+		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
+		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
+		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
+	}
+}
+
+//----------------------------------------------------------
+ofMatrix4x4 ofGLProgrammableRenderer::getCurrentViewMatrix() const{
+	return matrixStack.getViewMatrix();
 }
 
 //----------------------------------------------------------
@@ -862,7 +890,7 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 	colorsEnabled=color;
 	normalsEnabled = normals;
 
-	if(!uniqueShader){
+	if(!uniqueShader || currentMaterial){
 		beginDefaultShader();
 	}
 
@@ -880,7 +908,7 @@ void ofGLProgrammableRenderer::enableTextureTarget(int textureTarget){
 	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	currentTextureTarget = textureTarget;
 
-	if(!uniqueShader){
+	if(!uniqueShader || currentMaterial){
 		beginDefaultShader();
 	}
 
@@ -895,7 +923,7 @@ void ofGLProgrammableRenderer::disableTextureTarget(int textureTarget){
 	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	currentTextureTarget = OF_NO_TEXTURE;
 
-	if(!uniqueShader){
+	if(!uniqueShader || currentMaterial){
 		beginDefaultShader();
 	}
 
@@ -903,6 +931,11 @@ void ofGLProgrammableRenderer::disableTextureTarget(int textureTarget){
 	if(wasUsingTexture!=usingTexture){
 		if(currentShader) currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	}
+}
+
+//----------------------------------------------------------
+GLenum ofGLProgrammableRenderer::getCurrentTextureTarget(){
+	return currentTextureTarget;
 }
 
 //----------------------------------------------------------
@@ -936,12 +969,14 @@ void ofGLProgrammableRenderer::setDefaultUniforms(){
 }
 
 void ofGLProgrammableRenderer::beginDefaultShader(){
-	if(usingCustomShader)	return;
+	if(usingCustomShader && !currentMaterial)	return;
 
 	ofShader * nextShader = NULL;
 
 	if(!uniqueShader){
-		if(bitmapStringEnabled){
+		if(currentMaterial){
+			currentMaterial->beginShader(currentTextureTarget);
+		}else if(bitmapStringEnabled){
 			nextShader = &bitmapStringShader();
 
 		}else if(colorsEnabled && texCoordsEnabled){
@@ -997,6 +1032,11 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 void ofGLProgrammableRenderer::endCustomShader(){
 	usingCustomShader = false;
 	beginDefaultShader();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::setCurrentMaterial(ofBaseMaterial * material){
+	currentMaterial = material;
 }
 
 //----------------------------------------------------------
