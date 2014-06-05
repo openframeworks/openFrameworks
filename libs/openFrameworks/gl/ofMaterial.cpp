@@ -555,22 +555,21 @@ void main (void){
     ////////////////////////////////////////////////////////////
     // now add the material info
     \n#ifdef TARGET_OPENGLES\n
-		 \n#ifdef HAS_TEXTURE\n
+		\n#ifdef HAS_TEXTURE\n
 			vec4 tex = texture2D(tex0, outtexcoord);
-			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0)  * tex * vec4(specular,1.0) * mat_specular + mat_emissive;
-			gl_FragColor = clamp( localColor, 0.0, 1.0 );
-		 \n#else\n
+			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0)  * tex + vec4(specular,1.0) * mat_specular + mat_emissive;
+		\n#else\n
 			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive;
-			gl_FragColor = clamp( localColor, 0.0, 1.0 );
-		 \n#endif\n
+		\n#endif\n
+		gl_FragColor = clamp( localColor, 0.0, 1.0 );
 	 \n#else\n
-		 \n#ifdef HAS_TEXTURE\n
+		\n#ifdef HAS_TEXTURE\n
 			vec4 tex = texture(tex0, outtexcoord);
 			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * tex + vec4(specular,1.0) * mat_specular + mat_emissive;
-		 \n#else\n
+		\n#else\n
 			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive;
-		 \n#endif\n
-			finalColor = clamp( localColor, 0.0, 1.0 );
+		\n#endif\n
+		finalColor = clamp( localColor, 0.0, 1.0 );
 	 \n#endif\n
 });
 
