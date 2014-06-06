@@ -129,7 +129,12 @@ static int stream_process(freenect_context *ctx, packet_stream *strm, uint8_t *p
 	// handle lost packets
 	if (strm->seq != hdr->seq) {
 		uint8_t lost = hdr->seq - strm->seq;
+		strm->lost_pkts += lost;
 		FN_LOG(l_info, "[Stream %02x] Lost %d packets\n", strm->flag, lost);
+
+		FN_DEBUG("[Stream %02x] Lost %d total packets in %d frames (%f lppf)\n",
+			strm->flag, strm->lost_pkts, strm->valid_frames, (float)strm->lost_pkts / strm->valid_frames);
+
 		if (lost > 5 || strm->variable_length) {
 			FN_LOG(l_notice, "[Stream %02x] Lost too many packets, resyncing...\n", strm->flag);
 			strm->synced = 0;
@@ -219,6 +224,7 @@ static int stream_process(freenect_context *ctx, packet_stream *strm, uint8_t *p
 		strm->timestamp = strm->last_timestamp;
 		strm->valid_frames++;
 	}
+
 	return got_frame_size;
 }
 
@@ -827,7 +833,7 @@ static int freenect_fetch_zero_plane_info(freenect_device *dev)
 	FN_SPEW("reference_pixel_size:   %f\n", dev->registration.zero_plane_info.reference_pixel_size);
 
 	// FIXME: OpenNI seems to use a hardcoded value of 2.4 instead of 2.3 as reported by Kinect
-	dev->registration.zero_plane_info.dcmos_rcmos_dist = 2.4;
+	dev->registration.zero_plane_info.dcmos_rcmos_dist = 2.4f;
 
 	return 0;
 }
@@ -1048,7 +1054,6 @@ int freenect_stop_depth(freenect_device *dev)
 		return -1;
 
 	dev->depth.running = 0;
-	freenect_destroy_registration(&(dev->registration));
 	write_register(dev, 0x06, 0x00); // stop depth stream
 
 	res = fnusb_stop_iso(&dev->usb_cam, &dev->depth_isoc);
@@ -1057,6 +1062,7 @@ int freenect_stop_depth(freenect_device *dev)
 		return res;
 	}
 
+	freenect_destroy_registration(&(dev->registration));
 	stream_freebufs(ctx, &dev->depth);
 	return 0;
 }
