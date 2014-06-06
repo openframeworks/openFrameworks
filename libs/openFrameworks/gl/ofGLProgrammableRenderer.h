@@ -20,7 +20,7 @@ public:
 	ofGLProgrammableRenderer(bool useShapeColor=true);
 	~ofGLProgrammableRenderer();
 
-	void setup();
+	void setup(const string & glslVersion);
 
     static const string TYPE;
 	const string & getType(){ return TYPE; }
@@ -157,8 +157,8 @@ public:
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
 
-	ofShader & defaultTexColor();
-	ofShader & defaultTexNoColor();
+	ofShader & defaultTexRectColor();
+	ofShader & defaultTexRectNoColor();
 	ofShader & defaultTex2DColor();
 	ofShader & defaultTex2DNoColor();
 	ofShader & defaultNoTexColor();

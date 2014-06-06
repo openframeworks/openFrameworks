@@ -13,7 +13,7 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 
-class ofxAppEmscriptenWindow: public ofAppBaseWindow {
+class ofxAppEmscriptenWindow: public ofAppBaseGLESWindow {
 public:
 	ofxAppEmscriptenWindow();
 	~ofxAppEmscriptenWindow();

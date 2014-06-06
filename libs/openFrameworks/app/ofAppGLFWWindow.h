@@ -17,7 +17,7 @@
 //class ofVec3f;
 class ofBaseApp;
 
-class ofAppGLFWWindow : public ofAppBaseWindow {
+class ofAppGLFWWindow : public ofAppBaseGLWindow {
 
 	static GLFWwindow* windowP;
 
