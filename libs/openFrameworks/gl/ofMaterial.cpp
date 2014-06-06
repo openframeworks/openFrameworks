@@ -3,6 +3,7 @@
 #include "ofGLUtils.h"
 #include "ofLight.h"
 #include "ofGLProgrammableRenderer.h"
+#include "ofAppRunner.h"
 
 ofShader ofMaterial::shaderNoTexture;
 ofShader ofMaterial::shaderTexture2D;
@@ -154,44 +155,27 @@ void ofMaterial::end() {
 }
 
 void ofMaterial::initShaders(){
-#ifndef TARGET_OPENGLES
 	if(!shadersInitialized || ofLightsData().size()!=shaderLights){
 		shaderLights = ofLightsData().size();
-	    string numLights = ofToString(shaderLights);
-		shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,"#version 150\n"+vertexShader);
-		shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,"#version 150\n#define MAX_LIGHTS "+numLights+"\n"+fragmentShader);
+		shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(shaderLights,false,false));
+		shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(shaderLights,false,false));
 		shaderNoTexture.bindDefaults();
 		shaderNoTexture.linkProgram();
 
-		shaderTexture2D.setupShaderFromSource(GL_VERTEX_SHADER,"#version 150\n"+vertexShader);
-		shaderTexture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,"#version 150\n#define MAX_LIGHTS "+numLights+"\n#define HAS_TEXTURE\n"+fragmentShader);
+		shaderTexture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(shaderLights,true,false));
+		shaderTexture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(shaderLights,true,false));
 		shaderTexture2D.bindDefaults();
 		shaderTexture2D.linkProgram();
 
-		shaderTextureRect.setupShaderFromSource(GL_VERTEX_SHADER,"#version 150\n"+vertexShader);
-		shaderTextureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,"#version 150\n#define MAX_LIGHTS "+numLights+"\n#define HAS_TEXTURE\n#define TEXTURE_RECT\n"+fragmentShader);
+#ifndef TARGET_OPENGLES
+		shaderTextureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(shaderLights,true,true));
+		shaderTextureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(shaderLights,true,true));
 		shaderTextureRect.bindDefaults();
 		shaderTextureRect.linkProgram();
-
-		shadersInitialized = true;
-	}
-#else
-	if(!shadersInitialized || ofLightsData().size()!=shaderLights){
-		shaderLights = ofLightsData().size();
-	    string numLights = ofToString(shaderLights);
-		shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,"#define TARGET_OPENGLES\n"+vertexShader);
-		shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,"#define TARGET_OPENGLES\n#define MAX_LIGHTS "+numLights+"\n"+fragmentShader);
-		shaderNoTexture.bindDefaults();
-		shaderNoTexture.linkProgram();
-
-		shaderTexture2D.setupShaderFromSource(GL_VERTEX_SHADER,"#define TARGET_OPENGLES\n"+vertexShader);
-		shaderTexture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,"#define TARGET_OPENGLES\n#define MAX_LIGHTS "+numLights+"\n#define HAS_TEXTURE\n"+fragmentShader);
-		shaderTexture2D.bindDefaults();
-		shaderTexture2D.linkProgram();
-
-		shadersInitialized = true;
-	}
 #endif
+
+		shadersInitialized = true;
+	}
 }
 
 void ofMaterial::beginShader(int texType){
@@ -221,13 +205,13 @@ void ofMaterial::beginShader(int texType){
 	for(size_t i=0;i<ofLightsData().size();i++){
 		string idx = ofToString(i);
 		if(ofLightsData()[i].expired() || !ofLightsData()[i].lock()->isEnabled){
-			currentShader->setUniform1f("lights["+idx+"].active",0);
+			currentShader->setUniform1f("lights["+idx+"].enabled",0);
 			continue;
 		}
 
 		shared_ptr<ofLight::Data> light = ofLightsData()[i].lock();
 		ofVec4f lightEyePosition = light->position * ofGetCurrentViewMatrix();
-		currentShader->setUniform1f("lights["+idx+"].active",1);
+		currentShader->setUniform1f("lights["+idx+"].enabled",1);
 		currentShader->setUniform1f("lights["+idx+"].type", light->lightType);
 		currentShader->setUniform4fv("lights["+idx+"].position", &lightEyePosition.x);
 		currentShader->setUniform4fv("lights["+idx+"].ambient", &light->ambientColor.r);
@@ -270,306 +254,326 @@ void ofMaterial::beginShader(int texType){
 
 #define STRINGIFY(x) #x
 
+#ifdef TARGET_OPENGLES
+static string vertex_shader_header =
+		"precision mediump float;\n"
+		"#define IN attribute\n"
+		"#define OUT varying\n"
+		"#define TEXTURE texture2D\n"
+		"#define TARGET_OPENGLES\n"
+		"#define MAX_LIGHTS %max_lights%\n";
+static string fragment_shader_header =
+		"precision mediump float;\n"
+		"#define IN varying\n"
+		"#define OUT\n"
+		"#define TEXTURE texture2D\n"
+		"#define FRAG_COLOR gl_FragColor\n"
+		"#define TARGET_OPENGLES\n"
+		"#define MAX_LIGHTS %max_lights%\n";
+#else
+static string vertex_shader_header =
+		"#version %glsl_version%\n"
+		"#extension GL_ARB_texture_rectangle : enable\n"
+		"#define IN in\n"
+		"#define OUT out\n"
+		"#define TEXTURE texture\n"
+		"#define MAX_LIGHTS %max_lights%\n";
+static string fragment_shader_header =
+		"#version %glsl_version%\n"
+		"#extension GL_ARB_texture_rectangle : enable\n"
+		"#define IN in\n"
+		"#define OUT out\n"
+		"#define TEXTURE texture\n"
+		"#define FRAG_COLOR fragColor\n"
+		"out vec4 fragColor;\n"
+		"#define MAX_LIGHTS %max_lights%\n";
+#endif
+
 string ofMaterial::vertexShader = STRINGIFY(
-\n#ifdef TARGET_OPENGLES\n
-	precision mediump float;
+	OUT vec4 outColor; // this is the ultimate color for this vertex
+	OUT vec2 outtexcoord; // pass the texCoord if needed
+	OUT vec3 transformedNormal;
+	OUT vec3 eyePosition3;
 
-	varying vec4 outColor; // this is the ultimate color for this vertex
-	varying vec2 outtexcoord; // pass the texCoord if needed
-	varying vec3 transformedNormal;
-	varying vec3 eyePosition3;
+	IN vec4 position;
+	IN vec4 color;
+	IN vec4 normal;
+	IN vec2 texcoord;
 
-	attribute vec4 position;
-	attribute vec4 color;
-	attribute vec4 normal;
-	attribute vec2 texcoord;
-\n#else\n
-	out vec4 outColor; // this is the ultimate color for this vertex
-	out vec2 outtexcoord; // pass the texCoord if needed
-	out vec3 transformedNormal;
-	out vec3 eyePosition3;
-
-	in vec4 position;
-	in vec4 color;
-	in vec4 normal;
-	in vec2 texcoord;
-\n#endif\n
-
-// these are passed in from OF programmable renderer
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-uniform mat4 textureMatrix;
-uniform mat4 modelViewProjectionMatrix;
-uniform mat4 normalMatrix;
+	// these are passed in from OF programmable renderer
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+	uniform mat4 textureMatrix;
+	uniform mat4 modelViewProjectionMatrix;
+	uniform mat4 normalMatrix;
 
 
-void main (void){
-    float alphaFade = 1.0;
-    vec4 eyePosition = modelViewMatrix * position;
-    vec3 tempNormal = (normalMatrix * normal).xyz;
-    transformedNormal = normalize(tempNormal);
-    eyePosition3 = (eyePosition.xyz) / eyePosition.w;
+	void main (void){
+		float alphaFade = 1.0;
+		vec4 eyePosition = modelViewMatrix * position;
+		vec3 tempNormal = (normalMatrix * normal).xyz;
+		transformedNormal = normalize(tempNormal);
+		eyePosition3 = (eyePosition.xyz) / eyePosition.w;
 
-    outtexcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
-    gl_Position = modelViewProjectionMatrix * position;
-});
+		outtexcoord = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
+		gl_Position = modelViewProjectionMatrix * position;
+	}
+);
 
 
 string ofMaterial::fragmentShader = STRINGIFY(
-\n#ifdef TARGET_OPENGLES\n
-	precision mediump float;
-	varying vec4 outColor; // this is the ultimate color for this vertex
-	varying vec2 outtexcoord; // pass the texCoord if needed
-	varying vec3 transformedNormal;
+	IN vec4 outColor; // this is the ultimate color for this vertex
+	IN vec2 outtexcoord; // pass the texCoord if needed
+	IN vec3 transformedNormal;
 	// Eye-coordinate position of vertex
-	varying vec4 eyePosition;
-	varying vec3 eyePosition3;
-\n#else\n
-	out vec4 finalColor;
-	in vec4 outColor; // this is the ultimate color for this vertex
-	in vec2 outtexcoord; // pass the texCoord if needed
-	in vec3 transformedNormal;
-	// Eye-coordinate position of vertex
-	in vec4 eyePosition;
-	in vec3 eyePosition3;
-\n#endif\n
+	IN vec4 eyePosition;
+	IN vec3 eyePosition3;
 
 
-struct light
-{
-	float active;
-    vec4 ambient;
-    float type; // 0 = pointlight 1 = directionlight
-    vec4 position; // where are we
-    vec4 diffuse; // how diffuse
-    vec4 specular; // what kinda specular stuff we got going on?
-    // attenuation
-    float constantAttenuation;
-    float linearAttenuation;
-    float quadraticAttenuation;
-    // only for spot
-    float spotCutoff;
-    float spotCosCutoff;
-    float spotExponent;
-    // spot and area
-    vec3 spotDirection;
-    // only for directional
-    vec3 halfVector;
-    // only for area
-    float width;
-    float height;
-    vec3 right;
-    vec3 up;
-};
+	struct lightData
+	{
+		float enabled;
+		vec4 ambient;
+		float type; // 0 = pointlight 1 = directionlight
+		vec4 position; // where are we
+		vec4 diffuse; // how diffuse
+		vec4 specular; // what kinda specular stuff we got going on?
+		// attenuation
+		float constantAttenuation;
+		float linearAttenuation;
+		float quadraticAttenuation;
+		// only for spot
+		float spotCutoff;
+		float spotCosCutoff;
+		float spotExponent;
+		// spot and area
+		vec3 spotDirection;
+		// only for directional
+		vec3 halfVector;
+		// only for area
+		float width;
+		float height;
+		vec3 right;
+		vec3 up;
+	};
 
-\n#ifdef TEXTURE_RECT\n
-uniform sampler2DRect tex0;
-\n#else\n
-uniform sampler2D tex0;
-\n#endif\n
+	uniform SAMPLER tex0;
 
-uniform vec4 mat_ambient;
-uniform vec4 mat_diffuse;
-uniform vec4 mat_specular;
-uniform vec4 mat_emissive;
-uniform float mat_shininess;
-uniform vec4 global_ambient;
+	uniform vec4 mat_ambient;
+	uniform vec4 mat_diffuse;
+	uniform vec4 mat_specular;
+	uniform vec4 mat_emissive;
+	uniform float mat_shininess;
+	uniform vec4 global_ambient;
 
-// these are passed in from OF programmable renderer
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-uniform mat4 textureMatrix;
-uniform mat4 modelViewProjectionMatrix;
+	// these are passed in from OF programmable renderer
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+	uniform mat4 textureMatrix;
+	uniform mat4 modelViewProjectionMatrix;
 
-uniform light lights[MAX_LIGHTS];
+	uniform lightData lights[MAX_LIGHTS];
 
 
-void pointLight( in light light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){
-    float nDotVP;       // normal . light direction
-    float nDotHV;       // normal . light half vector
-    float pf;           // power factor
-    float attenuation;  // computed attenuation factor
-    float d;            // distance from surface to light source
-    vec3  VP;           // direction from surface to light position
-    vec3  halfVector;   // direction of maximum highlights
-    vec3 eye = vec3 (0.0, 0.0, 1.0);
+	void pointLight( in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular ){
+		float nDotVP;       // normal . light direction
+		float nDotHV;       // normal . light half vector
+		float pf;           // power factor
+		float attenuation;  // computed attenuation factor
+		float d;            // distance from surface to light source
+		vec3  VP;           // direction from surface to light position
+		vec3  halfVector;   // direction of maximum highlights
+		vec3 eye = vec3 (0.0, 0.0, 1.0);
 
-    // Compute vector from surface to light position
-    VP = vec3 (light.position.xyz) - ecPosition3;
+		// Compute vector from surface to light position
+		VP = vec3 (light.position.xyz) - ecPosition3;
 
-    // Compute distance between surface and light position
-    d = length(VP);
-
-
-    // Compute attenuation
-    attenuation = 1.0 / (light.constantAttenuation + light.linearAttenuation * d + light.quadraticAttenuation * d * d);
-
-    // Normalize the vector from surface to light position
-    VP = normalize(VP);
-    halfVector = normalize(VP + eye);
-
-    nDotVP = max(0.0, dot(normal, VP));
-    nDotHV = max(0.0, dot(normal, halfVector));
-
-    // ha! no branching :)
-    // fresnel factor, produces artifacts on spot lights
-    // http://en.wikibooks.org/wiki/GLSL_Programming/Unity/Specular_Highlights_at_Silhouettes
-	/*float w = pow(1.0 - max(0.0, dot(halfVector, VP)), 5.0);
-	vec3 specularReflection = attenuation * vec3(light.specular.rgb)
-	  * mix(vec3(mat_specular.rgb), vec3(1.0), w)
-	  * pow(nDotHV, mat_shininess);
-	specular += mix(vec3(0.0), specularReflection, step(0.0000001, nDotVP));*/
-    pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
-
-    ambient += light.ambient.rgb * attenuation;
-    diffuse += light.diffuse.rgb * nDotVP * attenuation;
-    specular += light.specular.rgb * pf * nDotVP * attenuation;
-}
-
-void directionalLight(in light light, in vec3 normal, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
-    float nDotVP;         // normal . light direction
-    float nDotHV;         // normal . light half vector
-    float pf;             // power factor
-
-    nDotVP = max(0.0, dot(normal, normalize(vec3(light.position))));
-    nDotHV = max(0.0, dot(normal, light.halfVector));
-
-    pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
-
-    ambient += light.ambient.rgb;
-    diffuse += light.diffuse.rgb * nDotVP;
-    specular += light.specular.rgb * pf * nDotVP;
-}
-
-void spotLight(in light light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
-	float nDotVP;// = max(dot(normal,normalize(vec3(light.position))),0.0);
-    float nDotHV;       // normal . light half vector
-    float pf;
-    float d;            // distance from surface to light source
-    vec3  VP;           // direction from surface to light position
-    vec3 eye = vec3 (0.0, 0.0, 1.0);
-    float spotEffect;
-    float attenuation;
-    vec3  halfVector;   // direction of maximum highlights
-	// Compute vector from surface to light position
-	VP = vec3 (light.position.xyz) - ecPosition3;
-	spotEffect = dot(normalize(light.spotDirection), -normalize(VP));
-
-	if (spotEffect > light.spotCosCutoff) {
 		// Compute distance between surface and light position
 		d = length(VP);
-		spotEffect = pow(spotEffect, light.spotExponent);
-		attenuation = spotEffect / d;
 
+
+		// Compute attenuation
+		attenuation = 1.0 / (light.constantAttenuation + light.linearAttenuation * d + light.quadraticAttenuation * d * d);
+
+		// Normalize the vector from surface to light position
+		VP = normalize(VP);
 		halfVector = normalize(VP + eye);
-		nDotHV = max(0.0, dot(normal, halfVector));
+
 		nDotVP = max(0.0, dot(normal, VP));
+		nDotHV = max(0.0, dot(normal, halfVector));
+
+		// ha! no branching :)
+		// fresnel factor, produces artifacts on spot lights
+		// http://en.wikibooks.org/wiki/GLSL_Programming/Unity/Specular_Highlights_at_Silhouettes
+		/*float w = pow(1.0 - max(0.0, dot(halfVector, VP)), 5.0);
+		vec3 specularReflection = attenuation * vec3(light.specular.rgb)
+		  * mix(vec3(mat_specular.rgb), vec3(1.0), w)
+		  * pow(nDotHV, mat_shininess);
+		specular += mix(vec3(0.0), specularReflection, step(0.0000001, nDotVP));*/
+		pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
+
+		ambient += light.ambient.rgb * attenuation;
+		diffuse += light.diffuse.rgb * nDotVP * attenuation;
+		specular += light.specular.rgb * pf * nDotVP * attenuation;
+	}
+
+	void directionalLight(in lightData light, in vec3 normal, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
+		float nDotVP;         // normal . light direction
+		float nDotHV;         // normal . light half vector
+		float pf;             // power factor
+
+		nDotVP = max(0.0, dot(normal, normalize(vec3(light.position))));
+		nDotHV = max(0.0, dot(normal, light.halfVector));
 
 		pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
 
-	    diffuse += light.diffuse.rgb * nDotVP * attenuation;
-	    specular += light.specular.rgb * pf * nDotVP * attenuation;
+		ambient += light.ambient.rgb;
+		diffuse += light.diffuse.rgb * nDotVP;
+		specular += light.specular.rgb * pf * nDotVP;
 	}
 
-    ambient += light.ambient.rgb * attenuation;
-}
+	void spotLight(in lightData light, in vec3 normal, in vec3 ecPosition3, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
+		float nDotVP;// = max(dot(normal,normalize(vec3(light.position))),0.0);
+		float nDotHV;       // normal . light half vector
+		float pf;
+		float d;            // distance from surface to light source
+		vec3  VP;           // direction from surface to light position
+		vec3 eye = vec3 (0.0, 0.0, 1.0);
+		float spotEffect;
+		float attenuation;
+		vec3  halfVector;   // direction of maximum highlights
+		// Compute vector from surface to light position
+		VP = vec3 (light.position.xyz) - ecPosition3;
+		spotEffect = dot(normalize(light.spotDirection), -normalize(VP));
+
+		if (spotEffect > light.spotCosCutoff) {
+			// Compute distance between surface and light position
+			d = length(VP);
+			spotEffect = pow(spotEffect, light.spotExponent);
+			attenuation = spotEffect / d;
+
+			halfVector = normalize(VP + eye);
+			nDotHV = max(0.0, dot(normal, halfVector));
+			nDotVP = max(0.0, dot(normal, VP));
+
+			pf = mix(0.0, pow(nDotHV, mat_shininess), step(0.0000001, nDotVP));
+
+			diffuse += light.diffuse.rgb * nDotVP * attenuation;
+			specular += light.specular.rgb * pf * nDotVP * attenuation;
+		}
+
+		ambient += light.ambient.rgb * attenuation;
+	}
 
 
-vec3 projectOnPlane(in vec3 point, in vec3 planeCenter, in vec3 planeNormal){
-	return point - dot( point - planeCenter, planeNormal ) * planeNormal;
-}
+	vec3 projectOnPlane(in vec3 point, in vec3 planeCenter, in vec3 planeNormal){
+		return point - dot( point - planeCenter, planeNormal ) * planeNormal;
+	}
 
-vec3 linePlaneIntersect(in vec3 lp, in vec3 lv, in vec3 pc, in vec3 pn){
-   return lp+lv*(dot(pn,pc-lp)/dot(pn,lv));
-}
+	vec3 linePlaneIntersect(in vec3 lp, in vec3 lv, in vec3 pc, in vec3 pn){
+	   return lp+lv*(dot(pn,pc-lp)/dot(pn,lv));
+	}
 
-void areaLight(in light light, in vec3 N, in vec3 V, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
-    vec3 right = normalize(light.right);
-    vec3 pnormal = normalize(light.spotDirection);
-    vec3 up = normalize(light.up);
+	void areaLight(in lightData light, in vec3 N, in vec3 V, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular){
+		vec3 right = normalize(light.right);
+		vec3 pnormal = normalize(light.spotDirection);
+		vec3 up = normalize(light.up);
 
-    //width and height of the area light:
-    float width = light.width*0.5;
-    float height = light.height*0.5;
-    float attenuation;
+		//width and height of the area light:
+		float width = light.width*0.5;
+		float height = light.height*0.5;
+		float attenuation;
 
-    //project onto plane and calculate direction from center to the projection.
-    vec3 projection = projectOnPlane(V,light.position.xyz,pnormal);// projection in plane
-    vec3 dir = projection-light.position.xyz;
+		//project onto plane and calculate direction from center to the projection.
+		vec3 projection = projectOnPlane(V,light.position.xyz,pnormal);// projection in plane
+		vec3 dir = projection-light.position.xyz;
 
-    //calculate distance from area:
-    vec2 diagonal = vec2(dot(dir,right),dot(dir,up));
-    vec2 nearest2D = vec2(clamp( diagonal.x,-width,width  ),clamp(  diagonal.y,-height,height));
-    vec3 nearestPointInside = vec3(light.position.xyz)+(right*nearest2D.x+up*nearest2D.y);
-    float dist = distance(V,nearestPointInside);//real distance to area rectangle
+		//calculate distance from area:
+		vec2 diagonal = vec2(dot(dir,right),dot(dir,up));
+		vec2 nearest2D = vec2(clamp( diagonal.x,-width,width  ),clamp(  diagonal.y,-height,height));
+		vec3 nearestPointInside = vec3(light.position.xyz)+(right*nearest2D.x+up*nearest2D.y);
+		float dist = distance(V,nearestPointInside);//real distance to area rectangle
 
-	vec3 lightDir = normalize(nearestPointInside - V);
-	attenuation = 1.0 / (light.constantAttenuation + light.linearAttenuation * dist + light.quadraticAttenuation * dist * dist);
+		vec3 lightDir = normalize(nearestPointInside - V);
+		attenuation = 1.0 / (light.constantAttenuation + light.linearAttenuation * dist + light.quadraticAttenuation * dist * dist);
 
-	float NdotL = max( dot( pnormal, -lightDir ), 0.0 );
-	float NdotL2 = max( dot( N, lightDir ), 0.0 );
-    if ( NdotL * NdotL2 > 0.0 ) {
-    	float diffuseFactor = sqrt( NdotL * NdotL2 );
-    	vec3 R = reflect( normalize( -V ), N );
-    	vec3 E = linePlaneIntersect( V, R, light.position.xyz, pnormal );
-    	float specAngle = dot( R, pnormal );
-        if (specAngle > 0.0){
-			vec3 dirSpec = E - light.position.xyz;
-			vec2 dirSpec2D = vec2(dot(dirSpec,right),dot(dirSpec,up));
-			vec2 nearestSpec2D = vec2(clamp( dirSpec2D.x,-width,width  ),clamp(  dirSpec2D.y,-height,height));
-			float specFactor = 1.0-clamp(length(nearestSpec2D-dirSpec2D) * 0.05 * mat_shininess,0.0,1.0);
-			specular += light.specular.rgb * specFactor * specAngle * diffuseFactor * attenuation;
-        }
-        diffuse  += light.diffuse.rgb  * diffuseFactor * attenuation;
-    }
-    ambient += light.ambient.rgb * attenuation;
-}
-
-
+		float NdotL = max( dot( pnormal, -lightDir ), 0.0 );
+		float NdotL2 = max( dot( N, lightDir ), 0.0 );
+		if ( NdotL * NdotL2 > 0.0 ) {
+			float diffuseFactor = sqrt( NdotL * NdotL2 );
+			vec3 R = reflect( normalize( -V ), N );
+			vec3 E = linePlaneIntersect( V, R, light.position.xyz, pnormal );
+			float specAngle = dot( R, pnormal );
+			if (specAngle > 0.0){
+				vec3 dirSpec = E - light.position.xyz;
+				vec2 dirSpec2D = vec2(dot(dirSpec,right),dot(dirSpec,up));
+				vec2 nearestSpec2D = vec2(clamp( dirSpec2D.x,-width,width  ),clamp(  dirSpec2D.y,-height,height));
+				float specFactor = 1.0-clamp(length(nearestSpec2D-dirSpec2D) * 0.05 * mat_shininess,0.0,1.0);
+				specular += light.specular.rgb * specFactor * specAngle * diffuseFactor * attenuation;
+			}
+			diffuse  += light.diffuse.rgb  * diffuseFactor * attenuation;
+		}
+		ambient += light.ambient.rgb * attenuation;
+	}
 
 
-//////////////////////////////////////////////////////
-// here's the main method
-//////////////////////////////////////////////////////
 
 
-void main (void){
+	//////////////////////////////////////////////////////
+	// here's the main method
+	//////////////////////////////////////////////////////
 
-    vec3 ambient = global_ambient.rgb;
-    vec3 diffuse = vec3(0.0,0.0,0.0);
-    vec3 specular = vec3(0.0,0.0,0.0);
 
-    for( int i = 0; i < MAX_LIGHTS; i++ ){
-    	if(lights[i].active<0.5) continue;
-        if(lights[i].type<0.5){
-            pointLight(lights[i], transformedNormal, eyePosition3, ambient, diffuse, specular);
-        }else if(lights[i].type<1.5){
-            directionalLight(lights[i], transformedNormal, ambient, diffuse, specular);
-        }else if(lights[i].type<2.5){
-            spotLight(lights[i], transformedNormal, eyePosition3, ambient, diffuse, specular);
-        }else{
-            areaLight(lights[i], transformedNormal, eyePosition3, ambient, diffuse, specular);
-        }
-    }
+	void main (void){
 
-    ////////////////////////////////////////////////////////////
-    // now add the material info
-    \n#ifdef TARGET_OPENGLES\n
+		vec3 ambient = global_ambient.rgb;
+		vec3 diffuse = vec3(0.0,0.0,0.0);
+		vec3 specular = vec3(0.0,0.0,0.0);
+
+		for( int i = 0; i < MAX_LIGHTS; i++ ){
+			if(lights[i].enabled<0.5) continue;
+			if(lights[i].type<0.5){
+				pointLight(lights[i], transformedNormal, eyePosition3, ambient, diffuse, specular);
+			}else if(lights[i].type<1.5){
+				directionalLight(lights[i], transformedNormal, ambient, diffuse, specular);
+			}else if(lights[i].type<2.5){
+				spotLight(lights[i], transformedNormal, eyePosition3, ambient, diffuse, specular);
+			}else{
+				areaLight(lights[i], transformedNormal, eyePosition3, ambient, diffuse, specular);
+			}
+		}
+
+		////////////////////////////////////////////////////////////
+		// now add the material info
 		\n#ifdef HAS_TEXTURE\n
-			vec4 tex = texture2D(tex0, outtexcoord);
-			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0)  * tex + vec4(specular,1.0) * mat_specular + mat_emissive;
-		\n#else\n
-			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive;
-		\n#endif\n
-		gl_FragColor = clamp( localColor, 0.0, 1.0 );
-	 \n#else\n
-		\n#ifdef HAS_TEXTURE\n
-			vec4 tex = texture(tex0, outtexcoord);
+			vec4 tex = TEXTURE(tex0, outtexcoord);
 			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * tex + vec4(specular,1.0) * mat_specular + mat_emissive;
 		\n#else\n
 			vec4 localColor = vec4(ambient,1.0) * mat_ambient + vec4(diffuse,1.0) * mat_diffuse + vec4(specular,1.0) * mat_specular + mat_emissive;
 		\n#endif\n
-		finalColor = clamp( localColor, 0.0, 1.0 );
-	 \n#endif\n
-});
+		FRAG_COLOR = clamp( localColor, 0.0, 1.0 );
+	}
+);
 
+
+static string shaderHeader(string header, const string & glslVersion, int maxLights, bool hasTexture, bool textureRect){
+	ofStringReplace(header,"%glsl_version%",glslVersion);
+	ofStringReplace(header,"%max_lights%",ofToString(maxLights));
+	if(hasTexture){
+		header += "#define HAS_TEXTURE\n";
+	}
+	if(textureRect){
+		header += "#define SAMPLER sampler2DRect\n";
+	}else{
+		header += "#define SAMPLER sampler2D\n";
+	}
+	return header;
+}
+
+string ofMaterial::vertexSource(int maxLights, bool hasTexture, bool textureRect){
+	return shaderHeader(vertex_shader_header,ofGetGLSLVersion(),maxLights,hasTexture,textureRect) + vertexShader;
+}
+
+string ofMaterial::fragmentSource(int maxLights, bool hasTexture, bool textureRect){
+	return shaderHeader(fragment_shader_header,ofGetGLSLVersion(),maxLights,hasTexture,textureRect) + fragmentShader;
+}

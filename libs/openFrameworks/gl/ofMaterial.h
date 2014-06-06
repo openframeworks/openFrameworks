@@ -43,6 +43,8 @@ public:
 private:
 	void initShaders();
 	void beginShader(int texType);
+	string vertexSource(int maxLights, bool hasTexture, bool textureRect);
+	string fragmentSource(int maxLights, bool hasTexture, bool textureRect);
 
 	ofFloatColor diffuse;
 	ofFloatColor ambient;

@@ -66,7 +66,7 @@ enum ofAppEGLWindowType {
 typedef map<EGLint,EGLint> ofEGLAttributeList;
 typedef map<EGLint,EGLint>::iterator ofEGLAttributeListIterator;
 
-class ofAppEGLWindow : public ofAppBaseWindow, public ofThread {
+class ofAppEGLWindow : public ofAppBaseGLESWindow, public ofThread {
 public:
 
 	struct Settings;

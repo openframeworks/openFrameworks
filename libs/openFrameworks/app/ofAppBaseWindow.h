@@ -76,3 +76,12 @@ public:
 #endif
 };
 
+class ofAppBaseGLWindow: public ofAppBaseWindow{
+public:
+	virtual void setOpenGLVersion(int glVersionMajor,int glVersionMinor){};
+};
+
+class ofAppBaseGLESWindow: public ofAppBaseWindow{
+public:
+	virtual void setGLESVersion(int glesVersion){};
+};
