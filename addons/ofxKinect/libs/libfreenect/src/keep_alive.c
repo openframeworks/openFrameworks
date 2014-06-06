@@ -58,14 +58,10 @@
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of Drew Fisher.
  */
-
-
-
-
 #include "keep_alive.h"
 #include "freenect_internal.h"
 
-#include <libusb-1.0/libusb.h>
+#include <libusb.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

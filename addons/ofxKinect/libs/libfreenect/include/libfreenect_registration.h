@@ -23,10 +23,9 @@
  * Binary distributions must follow the binary distribution requirements of
  * either License.
  */
-
 #pragma once
 
-#include <libfreenect.h>
+#include "libfreenect.h"
 #include <stdint.h>
 
 #ifdef __cplusplus

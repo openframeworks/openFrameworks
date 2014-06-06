@@ -23,16 +23,15 @@
  * Binary distributions must follow the binary distribution requirements of
  * either License.
  */
-
 #pragma once
 
 #include <stdint.h>
 
 #include "libfreenect.h"
-#include "libfreenect-registration.h"
+#include "libfreenect_registration.h"
 
 #ifdef BUILD_AUDIO
-#include "libfreenect-audio.h"
+  #include "libfreenect_audio.h"
 #endif
 
 #ifdef __ELF__
@@ -45,6 +44,9 @@
 typedef void (*fnusb_iso_cb)(freenect_device *dev, uint8_t *buf, int len);
 
 #include "usb_libusb10.h"
+
+//needed to set the led state for non 1414 devices - replaces keep_alive.c
+FN_INTERNAL int fnusb_set_led_alt(libusb_device_handle * dev, freenect_context * ctx, freenect_led_options state);
 
 struct _freenect_context {
 	freenect_loglevel log_level;
@@ -160,6 +162,7 @@ typedef struct {
 	int frame_size;
 	int last_pkt_size;
 	int valid_pkts;
+	unsigned int lost_pkts;
 	int valid_frames;
 	int variable_length;
 	uint32_t last_timestamp;
