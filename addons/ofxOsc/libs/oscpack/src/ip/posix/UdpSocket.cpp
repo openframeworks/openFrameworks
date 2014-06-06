@@ -58,6 +58,7 @@
 typedef ssize_t socklen_t;
 #endif
 
+static int MAX_BUFFER_SIZE = 292000;
 
 static void SockaddrFromIpEndpointName( struct sockaddr_in& sockAddr, const IpEndpointName& endpoint )
 {
@@ -121,7 +122,21 @@ public:
 			int reusePort = 1; // int on posix
 			setsockopt(socket_, SOL_SOCKET, SO_REUSEPORT, &reusePort, sizeof(reusePort));
 		#endif
-		
+        
+        // lets increase the size of the buffer if possible.
+        int maxBufferSize = 0;
+        socklen_t optlen = sizeof(maxBufferSize);
+        int res = getsockopt(socket_, SOL_SOCKET, SO_SNDBUF, &maxBufferSize, &optlen);
+        
+        if( maxBufferSize < MAX_BUFFER_SIZE ){
+            maxBufferSize = MAX_BUFFER_SIZE;
+            setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, &maxBufferSize, sizeof(maxBufferSize));
+            setsockopt(socket_, SOL_SOCKET, SO_RCVBUF, &maxBufferSize, sizeof(maxBufferSize));
+        }else{
+            //if we are natively supporting a larger buffer size then increase our value;
+            MAX_BUFFER_SIZE = maxBufferSize;
+        }
+        
 		memset( &sendToAddr_, 0, sizeof(sendToAddr_) );
         sendToAddr_.sin_family = AF_INET;
 	}
@@ -415,7 +430,6 @@ public:
 			timerQueue_.push_back( std::make_pair( currentTimeMs + i->initialDelayMs, *i ) );
 		std::sort( timerQueue_.begin(), timerQueue_.end(), CompareScheduledTimerCalls );
 
-		const int MAX_BUFFER_SIZE = 4098;
 		char *data = new char[ MAX_BUFFER_SIZE ];
 		IpEndpointName remoteEndpoint;
 

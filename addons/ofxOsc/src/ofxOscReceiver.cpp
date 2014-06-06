@@ -132,12 +132,13 @@ ofxOscReceiver::startThread( void* receiverInstance )
 
 void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndpointName& remoteEndpoint )
 {
+
 	// convert the message to an ofxOscMessage
 	ofxOscMessage* ofMessage = new ofxOscMessage();
 
 	// set the address
 	ofMessage->setAddress( m.AddressPattern() );
-
+    
 	// set the sender ip/host
 	char endpoint_host[ IpEndpointName::ADDRESS_STRING_LENGTH ];
 	remoteEndpoint.AddressAsString( endpoint_host );
