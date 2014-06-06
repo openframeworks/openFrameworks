@@ -392,6 +392,23 @@ GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
 		case OF_PRIMITIVE_POINTS:
 			return GL_POINTS;
 			break;
+#ifndef TARGET_OPENGLES
+		case OF_PRIMITIVE_LINES_ADJACENCY:
+			return GL_LINES_ADJACENCY;
+			break;
+		case OF_PRIMITIVE_LINE_STRIP_ADJACENCY:
+			return GL_LINE_STRIP_ADJACENCY;
+			break;
+		case OF_PRIMITIVE_TRIANGLES_ADJACENCY:
+			return GL_TRIANGLES_ADJACENCY;
+			break;
+		case OF_PRIMITIVE_TRIANGLE_STRIP_ADJACENCY:
+			return GL_TRIANGLE_STRIP_ADJACENCY;
+			break;
+		case OF_PRIMITIVE_PATCHES:
+			return GL_PATCHES;
+			break;
+#endif
 		default:
 			ofLogError("ofGLUtils") << "ofGetGLPrimitiveMode(): unknown OF primitive mode " << ofToString(mode) << ", returning GL_TRIANGLES";
 			return GL_TRIANGLES;
@@ -422,6 +439,23 @@ ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 		case GL_POINTS:
 			return OF_PRIMITIVE_POINTS;
 			break;
+#ifndef TARGET_OPENGLES
+		case GL_LINES_ADJACENCY:
+			return OF_PRIMITIVE_LINES_ADJACENCY;
+			break;
+		case GL_LINE_STRIP_ADJACENCY:
+			return OF_PRIMITIVE_LINE_STRIP_ADJACENCY;
+			break;
+		case GL_TRIANGLES_ADJACENCY:
+			return OF_PRIMITIVE_TRIANGLES_ADJACENCY;
+			break;
+		case GL_TRIANGLE_STRIP_ADJACENCY:
+			return OF_PRIMITIVE_TRIANGLE_STRIP_ADJACENCY;
+			break;
+		case GL_PATCHES:
+			return OF_PRIMITIVE_PATCHES;
+			break;
+#endif
 		default:
 			ofLogError("ofGLUtils") << "ofGetOFPrimitiveMode(): unknown GL primitive mode " << ofToString(mode) << ", returning OF_PRIMITIVE_TRIANGLES";
 			return OF_PRIMITIVE_TRIANGLES;
