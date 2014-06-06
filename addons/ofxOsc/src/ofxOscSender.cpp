@@ -174,7 +174,11 @@ void ofxOscSender::appendMessage( ofxOscMessage& message, osc::OutboundPacketStr
 			p << message.getArgAsFloat( i );
 		else if ( message.getArgType( i ) == OFXOSC_TYPE_STRING )
 			p << message.getArgAsString( i ).c_str();
-		else
+        else if ( message.getArgType( i ) == OFXOSC_TYPE_BLOB ){
+            ofBuffer buff = message.getArgAsBlob(i);
+            osc::Blob b(buff.getBinaryBuffer(), (unsigned long)buff.size());
+            p << b; 
+		}else
 		{
 			ofLogError("ofxOscSender") << "appendMessage(): bad argument type " << message.getArgType( i );
 			assert( false );

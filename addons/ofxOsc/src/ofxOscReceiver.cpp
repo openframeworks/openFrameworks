@@ -156,7 +156,13 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 			ofMessage->addFloatArg( arg->AsFloatUnchecked() );
 		else if ( arg->IsString() )
 			ofMessage->addStringArg( arg->AsStringUnchecked() );
-		else
+		else if ( arg->IsBlob() ){
+            const char * dataPtr;
+            unsigned long len = 0;
+            arg->AsBlobUnchecked((const void*&)dataPtr, len);
+            ofBuffer buffer(dataPtr, len);
+			ofMessage->addBlobArg( buffer );
+		}else
 		{
 			ofLogError("ofxOscReceiver") << "ProcessMessage: argument in message " << m.AddressPattern() << " is not an int, float, or string";
 		}
@@ -223,6 +229,7 @@ bool ofxOscReceiver::getNextMessage( ofxOscMessage* message )
 	// return success
 	return true;
 }
+
 
 bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
 	ofxOscMessage msg;
