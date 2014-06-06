@@ -35,6 +35,7 @@ public:
 {
 
 	UIImagePickerController*			_imagePicker;
+	UIPopoverController *                           popoverController;
 	OverlayView *						overlay;
 	UIImage*							_image;
 	bool								cameraIsAvailable;

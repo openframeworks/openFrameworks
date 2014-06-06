@@ -207,9 +207,15 @@ void ofxiOSImagePicker::saveImage()
 
     _imagePicker.delegate = nil;
     _imagePicker.cameraOverlayView = nil;
-	[_imagePicker.view removeFromSuperview];
-	[_imagePicker release];
-	
+    [_imagePicker.view removeFromSuperview];
+    [_imagePicker release];
+    
+
+    if(popoverController)
+    {
+        [popoverController release];
+    }
+    
     if(_image) {
         [_image release];
         _image = nil;
@@ -369,8 +375,25 @@ void ofxiOSImagePicker::saveImage()
 //--------------------------------------------------------------
 - (BOOL) openLibrary {
 	if(photoLibraryIsAvailable) {
-		_imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-		[[[UIApplication sharedApplication] keyWindow] addSubview:_imagePicker.view];
+	    _imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+	    
+
+	    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            	UIPopoverController *popover = [[UIPopoverController alloc] initWithContentViewController:_imagePicker];
+            	
+            	//change this rect
+            	int w = [UIScreen mainScreen].bounds.size.width;
+            	int h = [UIScreen mainScreen].bounds.size.height;
+            
+            	popoverController = popover;
+
+            	[popoverController presentPopoverFromRect:CGRectMake(1, h/4, w, 1)
+                                               inView:[UIApplication sharedApplication].keyWindow
+                                    permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+ 
+        	} else {
+            		[[[UIApplication sharedApplication] keyWindow] addSubview:_imagePicker.view];
+        	}
 	
         return true;
 	} 
@@ -389,6 +412,17 @@ void ofxiOSImagePicker::saveImage()
 
 //--------------------------------------------------------------
 - (void)close {
+
+	if(photoLibraryIsAvailable)
+	{
+        	if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            		if(popoverController)
+            		{
+                		[popoverController dismissPopoverAnimated:YES];
+            		}
+        	}
+    	}
+    	
 	[_imagePicker.view removeFromSuperview];
 }
 
