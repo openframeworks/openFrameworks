@@ -3,6 +3,7 @@
 #include "ofBaseApp.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "ofAppGLFWWindow.h"
 #include <set>
 
 static const double MICROS_TO_SEC = .000001;
@@ -216,8 +217,13 @@ void ofNotifyKeyPressed(int key){
 	
 	
 	if (key == OF_KEY_ESC && bEscQuits == true){				// "escape"
-		exitApp();
-	}
+        ofAppGLFWWindow *appGLFWWindow = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
+        if (appGLFWWindow) {
+            glfwSetWindowShouldClose(appGLFWWindow->getGLFWWindow(), true);
+        }else{
+            exitApp();
+        }
+    }
 	
 	
 }
