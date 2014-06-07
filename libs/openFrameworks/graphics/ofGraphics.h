@@ -29,12 +29,12 @@ void ofPopView();
 // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 void ofViewport(ofRectangle viewport);
-void ofViewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped());
+void ofViewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped());
 
 bool ofIsVFlipped();
 
-void ofSetupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0);
-void ofSetupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1);
+void ofSetupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
+void ofSetupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 
 OF_DEPRECATED_MSG("ofSetupScreenPerspective() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
 		void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0)

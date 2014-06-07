@@ -26,6 +26,7 @@ CORE
 	+ ofFbo: fix regression on min/max filter settings
 ### Graphics
 	/ ofImage: convert format when loading different image types
+	/ Fix ofSetupPerspective not using passed width and height
 ### Math
 	/ fix ofQuaternion setOrientation and getEulerOrientation
 ### Utils
