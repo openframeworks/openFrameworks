@@ -71,7 +71,7 @@ bool ofThread::lock(){
 	}else{
 		if(!mutex.tryLock()){
 			ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Mutex is already locked, tryLock failed.";
-			return false; 
+			return false;
 		}
 	}
 
@@ -81,14 +81,14 @@ bool ofThread::lock(){
         ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - External thread locked the ofThread mutex.";
     }
 
-	return true; 
-} 
+	return true;
+}
 
 
 //-------------------------------------------------
 void ofThread::unlock(){
 	mutex.unlock();
-	
+
     if(isCurrentThread()){
         ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - ofThread unlocked its own mutex.";
     } else {
@@ -111,7 +111,7 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds){
             stopThread();
 			ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Signaled to stop.";
 		}
-		
+
 		// wait for the thread to finish
 		ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - waiting to stop";
 
@@ -198,7 +198,7 @@ void ofThread::run(){
 	// user function
     // should loop endlessly.
 	threadedFunction();
-	
+
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
