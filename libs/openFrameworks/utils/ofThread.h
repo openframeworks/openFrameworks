@@ -360,4 +360,6 @@ private:
     Poco::AtomicCounter _mutexBlocks;
         ///< \brief Should the mutex block?
 
+    bool threadBeingWaitedFor;
+
 };
