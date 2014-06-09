@@ -7,7 +7,7 @@
 #include "assimp.h"
 #include "aiScene.h"
 
-ofxAssimpAnimation::ofxAssimpAnimation(const aiScene * scene, aiAnimation * animation) {
+ofxAssimpAnimation::ofxAssimpAnimation(shared_ptr<const aiScene> scene, aiAnimation * animation) {
     this->scene = scene;
     this->animation = animation;
     animationCurrTime = 0;
