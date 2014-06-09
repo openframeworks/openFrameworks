@@ -38,12 +38,8 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	if( name.find( "file://",0 ) != string::npos){
 		bIsStream		= false;
 	}else if( name.find( "://",0 ) == string::npos){
-#ifndef TARGET_WIN32
-		name 			= "file://"+ofToDataPath(name,true);
-#else
-		name 			= "file:///"+ofToDataPath(name,true);
-		std::replace(name.begin(), name.end(), '\\', '/');
-#endif
+		GError * err = NULL;
+		name = gst_filename_to_uri(ofToDataPath(name).c_str(),&err);
 		bIsStream		= false;
 	}else{
 		bIsStream		= true;
@@ -225,7 +221,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 		if(framerate && GST_VALUE_HOLDS_FRACTION (framerate)){
 			fps_n = gst_value_get_fraction_numerator (framerate);
 			fps_d = gst_value_get_fraction_denominator (framerate);
-			nFrames = (float)(durationNanos / GST_SECOND) * (float)fps_n/(float)fps_d;
+			nFrames = (float)(durationNanos / (float)GST_SECOND) * (float)fps_n/(float)fps_d;
 			ofLogVerbose("ofGstVideoPlayer") << "allocate(): framerate: " << fps_n << "/" << fps_d;
 		}else{
 			ofLogWarning("ofGstVideoPlayer") << "allocate(): cannot get framerate, frame seek won't work";
@@ -244,7 +240,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 
 			fps_n = info.fps_n;
 			fps_d = info.fps_d;
-			nFrames = (float)(durationNanos / GST_SECOND) * (float)fps_n/(float)fps_d;
+			nFrames = (float)(durationNanos / (float)GST_SECOND) * (float)fps_n/(float)fps_d;
 			gst_caps_unref(caps);
 			bIsAllocated = true;
 		}else{

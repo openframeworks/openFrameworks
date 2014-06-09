@@ -21,7 +21,7 @@ ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x
 }
 
 ofxPanel::~ofxPanel(){
-	unregisterMouseEvents();
+	//
 }
 
 ofxPanel * ofxPanel::setup(string collectionName, string filename, float x, float y){

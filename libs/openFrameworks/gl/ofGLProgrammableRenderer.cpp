@@ -72,8 +72,10 @@ void ofGLProgrammableRenderer::startRender() {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::finishRender() {
-	glUseProgram(0);
-	if(!usingCustomShader) currentShader = NULL;
+	if (!uniqueShader) {
+		glUseProgram(0);
+		if(!usingCustomShader) currentShader = NULL;
+	}
 	
 	matrixStack.clearStacks();
 }
@@ -375,10 +377,16 @@ void ofGLProgrammableRenderer::setOrientation(ofOrientation orientation, bool vF
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist) {
-	ofRectangle currentViewport = getCurrentViewport();
-	
-	float viewW = currentViewport.width;
-	float viewH = currentViewport.height;
+	float viewW, viewH;
+	if(width<0 || height<0){
+		ofRectangle currentViewport = getCurrentViewport();
+
+		viewW = currentViewport.width;
+		viewH = currentViewport.height;
+	}else{
+		viewW = width;
+		viewH = height;
+	}
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -405,10 +413,16 @@ void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height,
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist) {
-	ofRectangle currentViewport = getCurrentViewport();
+	float viewW, viewH;
+	if(width<0 || height<0){
+		ofRectangle currentViewport = getCurrentViewport();
 
-	float viewW = currentViewport.width;
-	float viewH = currentViewport.height;
+		viewW = currentViewport.width;
+		viewH = currentViewport.height;
+	}else{
+		viewW = width;
+		viewH = height;
+	}
 
 	ofMatrix4x4 ortho;
 
@@ -564,6 +578,8 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
  *
  *	@param	matrixMode_  Which matrix mode to query
  */
+/// \note   If an invalid matrixMode is queried, this method will return the identity matrix, and
+///         print an error message.
 ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:
@@ -575,11 +591,17 @@ ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_)
 		case OF_MATRIX_TEXTURE:
 			return matrixStack.getTextureMatrix();
 			break;
+		default:
+			ofLogWarning() << "Invalid getCurrentMatrix query";
+			return ofMatrix4x4();
+			break;
 	}
 }
 
 //----------------------------------------------------------
-
+ofMatrix4x4 ofGLProgrammableRenderer::getCurrentOrientationMatrix() const {
+	return matrixStack.getOrientationMatrix();
+}
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setColor(const ofColor & color){
 	setColor(color.r,color.g,color.b,color.a);
@@ -964,7 +986,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::endCustomShader(){
 	usingCustomShader = false;
-	if(!uniqueShader) beginDefaultShader();
+	beginDefaultShader();
 }
 
 //----------------------------------------------------------

@@ -119,7 +119,7 @@ void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectan
 	rendererCollection->renderers.push_back(ofGetGLRenderer());
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	
-	ofSetCurrentRenderer(rendererCollection,true);
+	ofSetCurrentRenderer(cairoScreenshot, true);
 	bScreenShotStarted = true;
 }
 
@@ -292,6 +292,11 @@ void ofPopMatrix(){
  */
 ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode_){
 	return renderer->getCurrentMatrix(matrixMode_);
+}
+
+//----------------------------------------------------------
+ofMatrix4x4 ofGetCurrentOrientationMatrix(){
+	return renderer->getCurrentOrientationMatrix();
 }
 
 //----------------------------------------------------------
@@ -590,6 +595,7 @@ void ofSetCurveResolution(int res){
 void ofSetCircleResolution(int res){
 	renderer->setCircleResolution(res);
 	currentStyle.circleResolution = res;
+	shape.setCircleResolution(res);
 }
 
 //----------------------------------------------------------

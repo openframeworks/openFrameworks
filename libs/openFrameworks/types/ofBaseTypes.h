@@ -311,9 +311,9 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	virtual void viewport(ofRectangle viewport){}
-	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped()){}
-	virtual void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){}
-	virtual void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){}
+	virtual void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped()){}
+	virtual void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){}
+	virtual void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1){}
 	virtual void setOrientation(ofOrientation orientation, bool vFlip){};
 	virtual ofRectangle getCurrentViewport(){return ofRectangle();}
 	virtual ofRectangle getNativeViewport(){return getCurrentViewport();}
@@ -328,6 +328,7 @@ public:
 	virtual void pushMatrix(){};
 	virtual void popMatrix(){};
 	virtual ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const { return ofMatrix4x4();};
+	virtual ofMatrix4x4 getCurrentOrientationMatrix() const;
 	virtual void translate(float x, float y, float z = 0){};
 	virtual void translate(const ofPoint & p){};
 	virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1){};

@@ -184,6 +184,10 @@ function createPackage {
         rm -Rf gl/pointsAsTextures
         rm -Rf gl/gpuParticleSystemExample
         rm -Rf gl/vboMeshDrawInstancedExample
+        rm -Rf gl/shaderExample
+        
+        rm -Rf utils/systemSpeakExample
+        rm -Rf utils/fileBufferLoadingCSVExample
         
         rm -Rf 3d/modelNoiseExample
     fi
@@ -202,6 +206,11 @@ function createPackage {
 	if [ "$pkg_platform" == "osx" ]; then
 	    rm -Rf gles
 	fi
+	
+	
+	
+	#delete tutorials by now
+	rm -Rf $pkg_ofroot/tutorials
     
 	
 	
@@ -252,7 +261,7 @@ function createPackage {
 	rm -rf projectGenerator
     if [ "$pkg_platform" = "win_cb" ]; then
 		rm projectGenerator_wincb.zip
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v02/projectGenerator_wincb.zip
+		wget http://www.openframeworks.cc/pgSimple/projectGenerator_wincb.zip
 		unzip projectGenerator_wincb.zip
 		rm projectGenerator_wincb.zip
 		rm -Rf __MACOSX
@@ -266,14 +275,14 @@ function createPackage {
 	fi
     if [ "$pkg_platform" = "osx" ]; then
 		rm projectGenerator_osx.zip
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v02/projectGenerator_osx.zip
+		wget http://www.openframeworks.cc/pgSimple/projectGenerator_osx.zip
 		unzip projectGenerator_osx.zip
 		rm projectGenerator_osx.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "ios" ]; then
 		rm projectGenerator_ios.zip
-		wget http://visiblevisible.org/deliver/OF/projectGeneratorSimple_v02/projectGenerator_ios.zip
+		wget http://www.openframeworks.cc/pgSimple/projectGenerator_ios.zip
 		unzip projectGenerator_ios.zip
 		rm projectGenerator_ios.zip
 		rm -Rf __MACOSX
@@ -344,6 +353,12 @@ function createPackage {
 		cd ${pkg_ofroot}
 		deleteEclipse
 		rm -R libs/openFrameworks/.settings
+	fi
+	
+	#android, move paths.default.make to paths.make
+	if [ "$pkg_platform" = "android" ]
+	    cd ${pkg_root}
+	    mv libs/openFrameworksCompiled/android/paths.default.make libs/openFrameworksCompiled/android/paths.make
 	fi
 
     #delete other platforms OF project files
@@ -426,11 +441,11 @@ function createPackage {
 	
 	
 	#download and copy OF compiled
-	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
-    if [ "$pkg_platform" = "win_cb" ]; then
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
-	fi
+	#cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
+    	#if [ "$pkg_platform" = "win_cb" ]; then
+	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
+	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
+	#fi
 
 
     #if snow leopard change 10.4u to 10.5

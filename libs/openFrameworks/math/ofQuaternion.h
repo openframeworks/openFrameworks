@@ -31,6 +31,8 @@ public:
     inline ofQuaternion(float x, float y, float z, float w);
     inline ofQuaternion(const ofVec4f& v);
     inline ofQuaternion(float angle, const ofVec3f& axis);
+    
+    // rotation order is axis3,axis2,axis1
     inline ofQuaternion(float angle1, const ofVec3f& axis1, float angle2, const ofVec3f& axis2, float angle3, const ofVec3f& axis3);
     
     inline ofQuaternion& operator =(const ofQuaternion& q);
