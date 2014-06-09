@@ -204,6 +204,8 @@ void ofThread::run(){
     // should loop endlessly.
 	threadedFunction();
 
+    _threadRunning = false;
+
 #if !defined(TARGET_WIN32) && !defined(TARGET_ANDROID)
 	// FIXME: this won't be needed once we update POCO https://github.com/pocoproject/poco/issues/79
 	if(!threadBeingWaitedFor){ //if threadedFunction() ended and the thread is not being waited for, detach it before exiting.
@@ -213,8 +215,6 @@ void ofThread::run(){
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
-
-    _threadRunning = false;
 
 	ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Thread Finished.";
 }
