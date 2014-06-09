@@ -107,7 +107,7 @@ public:
 	void Bind( const IpEndpointName& localEndpoint );
 	bool IsBound() const;
 
-	int ReceiveFrom( IpEndpointName& remoteEndpoint, char *data, int size );
+	int ReceiveFrom( IpEndpointName& remoteEndpoint, char *data, int size );    
 };
 
 

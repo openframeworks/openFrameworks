@@ -45,7 +45,6 @@
 				<string>E45BE9710E8CC7DD009D7055</string>
 				<string>E45BE9720E8CC7DD009D7055</string>
 				<string>E45BE9730E8CC7DD009D7055</string>
-				<string>E45BE9740E8CC7DD009D7055</string>
 				<string>E45BE9750E8CC7DD009D7055</string>
 				<string>E45BE9760E8CC7DD009D7055</string>
 				<string>E45BE9770E8CC7DD009D7055</string>
@@ -193,19 +192,6 @@
 			<key>sourceTree</key>
 			<string>&lt;absolute&gt;</string>
 		</dict>
-		<key>E45BE9740E8CC7DD009D7055</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>Carbon.framework</string>
-			<key>path</key>
-			<string>/System/Library/Frameworks/Carbon.framework</string>
-			<key>sourceTree</key>
-			<string>&lt;absolute&gt;</string>
-		</dict>
 		<key>E45BE9750E8CC7DD009D7055</key>
 		<dict>
 			<key>isa</key>
@@ -289,13 +275,6 @@
 		<dict>
 			<key>fileRef</key>
 			<string>E45BE9730E8CC7DD009D7055</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E45BE97E0E8CC7DD009D7055</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E45BE9740E8CC7DD009D7055</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
@@ -419,8 +398,6 @@
 			<dict>
 				<key>ARCHS</key>
 				<string>$(NATIVE_ARCH)</string>
-				<key>CLANG_CXX_LIBRARY</key>
-				<string>libstdc++</string>
 				<key>CONFIGURATION_BUILD_DIR</key>
 				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>
@@ -475,8 +452,6 @@
 			<dict>
 				<key>ARCHS</key>
 				<string>$(NATIVE_ARCH)</string>
-				<key>CLANG_CXX_LIBRARY</key>
-				<string>libstdc++</string>
 				<key>CONFIGURATION_BUILD_DIR</key>
 				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>
@@ -552,7 +527,6 @@
 				<string>E45BE97B0E8CC7DD009D7055</string>
 				<string>E45BE97C0E8CC7DD009D7055</string>
 				<string>E45BE97D0E8CC7DD009D7055</string>
-				<string>E45BE97E0E8CC7DD009D7055</string>
 				<string>E45BE97F0E8CC7DD009D7055</string>
 				<string>E45BE9800E8CC7DD009D7055</string>
 				<string>E45BE9810E8CC7DD009D7055</string>

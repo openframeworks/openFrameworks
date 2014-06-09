@@ -75,14 +75,128 @@ static void restoreAppWindowFocus(){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 #include <gtk/gtk.h>
 #include "ofGstUtils.h"
+#include "Poco/Condition.h"
+
+#if GTK_MAJOR_VERSION>=3
+#define OPEN_BUTTON "_Open"
+#define SELECT_BUTTON "_Select All"
+#define SAVE_BUTTON "_Save"
+#define CANCEL_BUTTON "_Cancel"
+#else
+#define OPEN_BUTTON GTK_STOCK_OPEN
+#define SELECT_BUTTON GTK_STOCK_SELECT_ALL
+#define SAVE_BUTTON GTK_STOCK_SAVE
+#define CANCEL_BUTTON GTK_STOCK_CANCEL
+#endif
+
+gboolean init_gtk(gpointer userdata){
+	int argc=0; char **argv = NULL;
+	gtk_init (&argc, &argv);
+
+	return FALSE;
+}
+
+struct FileDialogData{
+	GtkFileChooserAction action;
+	string windowTitle;
+	string defaultName;
+	string results;
+	bool done;
+	Poco::Condition condition;
+	ofMutex mutex;
+};
+
+gboolean file_dialog_gtk(gpointer userdata){
+	FileDialogData * dialogData = (FileDialogData*)userdata;
+	const gchar* button_name = NULL;
+	switch(dialogData->action){
+	case GTK_FILE_CHOOSER_ACTION_OPEN:
+		button_name = OPEN_BUTTON;
+		break;
+	case GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER:
+		button_name = SELECT_BUTTON;
+		break;
+	case GTK_FILE_CHOOSER_ACTION_SAVE:
+		button_name = SAVE_BUTTON;
+		break;
+	default:
+		break;
+	}
+
+	if(button_name!=NULL){
+		GtkWidget *dialog = gtk_file_chooser_dialog_new (dialogData->windowTitle.c_str(),
+							  NULL,
+							  dialogData->action,
+							  button_name, GTK_RESPONSE_ACCEPT,
+							  CANCEL_BUTTON, GTK_RESPONSE_CANCEL,
+							  NULL);
+
+		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),dialogData->defaultName.c_str());
+
+		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+			dialogData->results = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+		}
+		gtk_widget_destroy (dialog);
+	}
+
+	dialogData->mutex.lock();
+	dialogData->condition.signal();
+	dialogData->done = true;
+	dialogData->mutex.unlock();
+	return FALSE;
+}
+
+struct TextDialogData{
+	string text;
+	string question;
+	bool done;
+	Poco::Condition condition;
+	ofMutex mutex;
+};
+
+gboolean alert_dialog_gtk(gpointer userdata){
+	TextDialogData * dialogData = (TextDialogData*)userdata;
+	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", dialogData->text.c_str());
+	gtk_widget_grab_focus(gtk_dialog_get_widget_for_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK));
+	gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+	dialogData->mutex.lock();
+	dialogData->condition.signal();
+	dialogData->done = true;
+	dialogData->mutex.unlock();
+
+	return FALSE;
+}
+
+gboolean text_dialog_gtk(gpointer userdata){
+	TextDialogData * dialogData = (TextDialogData*)userdata;
+	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, (GtkButtonsType) GTK_BUTTONS_OK_CANCEL, "%s", dialogData->question.c_str() );
+	GtkWidget* content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+	GtkWidget* textbox = gtk_entry_new();
+	gtk_entry_set_text(GTK_ENTRY(textbox),dialogData->text.c_str());
+	gtk_container_add (GTK_CONTAINER (content_area), textbox);
+	gtk_widget_show_all (dialog);
+	if(gtk_dialog_run (GTK_DIALOG (dialog))==GTK_RESPONSE_OK){
+		dialogData->text = gtk_entry_get_text(GTK_ENTRY(textbox));
+	}
+	gtk_widget_destroy (dialog);
+	dialogData->mutex.lock();
+	dialogData->condition.signal();
+	dialogData->done = true;
+	dialogData->mutex.unlock();
+
+	return FALSE;
+}
 
 static void initGTK(){
 	static bool initialized = false;
 	if(!initialized){
-		ofGstUtils::startGstMainLoop();
-	    gdk_threads_init();
+		#if !defined(TARGET_RASPBERRY_PI) 
+		XInitThreads();
+		#endif
 		int argc=0; char **argv = NULL;
 		gtk_init (&argc, &argv);
+		ofGstUtils::startGstMainLoop();
 		initialized = true;
 	}
 
@@ -90,42 +204,18 @@ static void initGTK(){
 
 static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,string defaultName=""){
 	initGTK();
-	string results;
+	FileDialogData dialogData;
+	dialogData.action = action;
+	dialogData.windowTitle = windowTitle;
+	dialogData.defaultName = defaultName;
+	dialogData.done = false;
 
-	const gchar* button_name = "";
-	switch(action){
-	case GTK_FILE_CHOOSER_ACTION_OPEN:
-		button_name = GTK_STOCK_OPEN;
-		break;
-	case GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER:
-		button_name = GTK_STOCK_SELECT_ALL;
-		break;
-	case GTK_FILE_CHOOSER_ACTION_SAVE:
-		button_name = GTK_STOCK_SAVE;
-		break;
-	default:
-		return "";
-		break;
+	g_main_context_invoke(g_main_loop_get_context(ofGstUtils::getGstMainLoop()), &file_dialog_gtk, &dialogData);
+	if(!dialogData.done){
+		dialogData.mutex.lock();
+		dialogData.condition.wait(dialogData.mutex);
 	}
-
-	GtkWidget *dialog = gtk_file_chooser_dialog_new (windowTitle.c_str(),
-						  NULL,
-						  action,
-						  button_name, GTK_RESPONSE_ACCEPT,
-						  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						  NULL);
-
-	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),defaultName.c_str());
-
-	gdk_threads_enter();
-	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
-		results = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-	}
-	gtk_widget_destroy (dialog);
-	gdk_threads_leave();
-	//gtk_dialog_run(GTK_DIALOG(dialog));
-	//startGTK(dialog);
-	return results;
+	return dialogData.results;
 }
 
 #endif
@@ -185,12 +275,14 @@ void ofSystemAlertDialog(string errorMessage){
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 		initGTK();
-		GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", errorMessage.c_str());
-
-		gdk_threads_enter();
-		gtk_dialog_run (GTK_DIALOG (dialog));
-		gtk_widget_destroy (dialog);
-		gdk_threads_leave();
+		TextDialogData dialogData;
+		dialogData.text = errorMessage;
+		dialogData.done = false;
+		g_main_context_invoke(g_main_loop_get_context(ofGstUtils::getGstMainLoop()), &alert_dialog_gtk, &dialogData);
+		if(!dialogData.done){
+			dialogData.mutex.lock();
+			dialogData.condition.wait(dialogData.mutex);
+		}
 	#endif
 
 	#ifdef TARGET_ANDROID
@@ -229,27 +321,27 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
-	
+
 	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
 	[loadDialog setAllowsMultipleSelection:NO];
 	[loadDialog setCanChooseDirectories:bFolderSelection];
 	[loadDialog setResolvesAliases:YES];
-	
+
 	if(!windowTitle.empty()) {
 		[loadDialog setTitle:[NSString stringWithUTF8String:windowTitle.c_str()]];
 	}
-	
+
 	if(!defaultPath.empty()) {
 		NSString * s = [NSString stringWithUTF8String:defaultPath.c_str()];
 		s = [[s stringByExpandingTildeInPath] stringByResolvingSymlinksInPath];
 		NSURL * defaultPathUrl = [NSURL fileURLWithPath:s];
 		[loadDialog setDirectoryURL:defaultPathUrl];
 	}
-	
+
 	NSInteger buttonClicked = [loadDialog runModal];
 	restoreAppWindowFocus();
-	
+
 	if(buttonClicked == NSFileHandlingPanelOKButton) {
 		NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
 		results.filePath = string([[selectedFileURL path] UTF8String]);
@@ -265,6 +357,8 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
+	wstring windowTitleW;
+	windowTitleW.assign(windowTitle.begin(), windowTitle.end());
 
 	if (bFolderSelection == false){
 
@@ -306,6 +400,12 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
+        
+#ifdef __MINGW32_VERSION
+		ofn.lpstrTitle = windowTitle.c_str();
+#else
+		ofn.lpstrTitle = windowTitleW.c_str();
+#endif 
 
 		if(GetOpenFileName(&ofn)) {
 #ifdef __MINGW32_VERSION
@@ -341,6 +441,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 		bi.lpfn             =   &loadDialogBrowseCallback;
 		bi.lParam           =   (LPARAM) &defaultPath;
+		bi.lpszTitle        =   windowTitleW.c_str();
 
 		if(pidl = SHBrowseForFolderW(&bi)){
 			// Copy the path directory to the buffer
@@ -396,10 +497,10 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	NSSavePanel * saveDialog = [NSSavePanel savePanel];
 	[saveDialog setMessage:[NSString stringWithUTF8String:messageName.c_str()]];
 	[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
-	
+
 	NSInteger buttonClicked = [saveDialog runModal];
 	restoreAppWindowFocus();
-	
+
 	if(buttonClicked == NSFileHandlingPanelOKButton){
 		results.filePath = string([[[saveDialog URL] path] UTF8String]);
 	}
@@ -465,18 +566,17 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 #ifdef TARGET_WIN32
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    switch(msg)
-    {
-        /*case WM_CLOSE:
-            DestroyWindow(hwnd);
-        break;
-        case WM_DESTROY:
-            PostQuitMessage(0);
-        break;*/
-        default:
+    //switch(msg)
+    //{
+    //    case WM_CLOSE:
+    //        DestroyWindow(hwnd);
+    //    break;
+    //    case WM_DESTROY:
+    //        PostQuitMessage(0);
+    //    break;
+    //    default:
             return DefWindowProc(hwnd, msg, wParam, lParam);
-    }
-    return 0;
+    //}
 }
 #endif
 
@@ -484,18 +584,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 string ofSystemTextBoxDialog(string question, string text){
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
 	initGTK();
-	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, (GtkButtonsType) GTK_BUTTONS_OK_CANCEL, "%s", question.c_str() );
-	GtkWidget* content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-	GtkWidget* textbox = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(textbox),text.c_str());
-	gtk_container_add (GTK_CONTAINER (content_area), textbox);
-	gdk_threads_enter();
-	gtk_widget_show_all (dialog);
-	if(gtk_dialog_run (GTK_DIALOG (dialog))==GTK_RESPONSE_OK){
-		text = gtk_entry_get_text(GTK_ENTRY(textbox));
+	TextDialogData dialogData;
+	dialogData.text = text;
+	dialogData.done = false;
+	dialogData.question = question;
+	g_main_context_invoke(g_main_loop_get_context(ofGstUtils::getGstMainLoop()), &text_dialog_gtk, &dialogData);
+	if(!dialogData.done){
+		dialogData.mutex.lock();
+		dialogData.condition.wait(dialogData.mutex);
 	}
-	gtk_widget_destroy (dialog);
-	gdk_threads_leave();
+	text = dialogData.text;
 #endif
 
 #ifdef TARGET_OSX

@@ -291,6 +291,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 	switch(glType){
 	case GL_LUMINANCE:
 #ifndef TARGET_OPENGLES
+	case GL_LUMINANCE8:
 	case GL_LUMINANCE16:
 	case GL_LUMINANCE32F_ARB:
 	case GL_R16:
@@ -305,6 +306,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 
 	case GL_RGB:
 #ifndef TARGET_OPENGLES
+	case GL_RGB8:
 	case GL_RGB16:
 	case GL_RGB32F:
 #endif
@@ -313,6 +315,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 
 	case GL_RGBA:
 #ifndef TARGET_OPENGLES
+	case GL_RGBA8:
 	case GL_RGBA16:
 	case GL_RGBA32F:
 #endif

@@ -119,6 +119,12 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		Log.i("OF", "Grabber default preview size: " + config.getPreviewSize().width + "," + config.getPreviewSize().height);
 		config.setPreviewSize(w, h);
 		config.setPreviewFormat(ImageFormat.NV21);
+        try{
+			Method setRecordingHint = config.getClass().getMethod("setRecordingHint",boolean.class);
+			setRecordingHint.invoke(config, true);
+        }catch(Exception e){
+        	Log.i("OF","couldn't set recording hint");
+        }
 		try{
 			camera.setParameters(config);
 		}catch(Exception e){

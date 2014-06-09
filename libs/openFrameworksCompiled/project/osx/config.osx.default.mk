@@ -69,8 +69,11 @@ PLATFORM_REQUIRED_ADDONS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
+# Link against libstdc++ to silence tr1/memory errors on latest versions of osx
+PLATFORM_CFLAGS = -stdlib=libstdc++
+
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS = -Wall
+PLATFORM_CFLAGS += -Wall
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
@@ -290,7 +293,6 @@ PLATFORM_FRAMEWORKS += GLUT
 PLATFORM_FRAMEWORKS += AGL
 PLATFORM_FRAMEWORKS += ApplicationServices
 PLATFORM_FRAMEWORKS += AudioToolbox
-PLATFORM_FRAMEWORKS += Carbon
 PLATFORM_FRAMEWORKS += CoreAudio
 PLATFORM_FRAMEWORKS += CoreFoundation
 PLATFORM_FRAMEWORKS += CoreServices

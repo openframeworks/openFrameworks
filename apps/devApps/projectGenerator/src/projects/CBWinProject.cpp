@@ -75,12 +75,11 @@ bool CBWinProject::saveProjectFile(){
     return doc.save_file((projectDir + projectName + ".cbp").c_str());
 }
 
-void CBWinProject::addSrc(string srcName, string folder){
+void CBWinProject::addSrc(string srcName, string folder, SrcType type){
 	pugi::xml_node node = appendValue(doc, "Unit", "filename", srcName);
 	if(!node.empty()){
 		node.child("Option").attribute("virtualFolder").set_value(folder.c_str());
 	}
-    doc.save_file((projectDir + projectName + ".cbp").c_str());
 }
 
 void CBWinProject::addInclude(string includeName){

@@ -2,13 +2,18 @@
 //--------------------------
 
 #include "ft2build.h"
+
+#ifdef TARGET_LINUX
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
+#include FT_OUTLINE_H
+#include FT_TRIGONOMETRY_H
+#include <fontconfig/fontconfig.h>
+#else
 #include "freetype2/freetype/freetype.h"
 #include "freetype2/freetype/ftglyph.h"
 #include "freetype2/freetype/ftoutln.h"
 #include "freetype2/freetype/fttrigon.h"
-
-#ifdef TARGET_LINUX
-#include <fontconfig/fontconfig.h>
 #endif
 
 #include <algorithm>
@@ -382,9 +387,21 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	// 1 pixels is hidden because we don't want to see the real edge of the texture
 
 	border			= 3;
-	//visibleBorder	= 2;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	binded = false;
+
+	dpi = ttfGlobalDpi;
+	fontSize = 0;
+	blend_src = GL_SRC_ALPHA;
+	blend_dst = GL_ONE_MINUS_SRC_ALPHA;
+	simplifyAmt = 0.3;
+	nCharacters = 0;
+	blend_enabled = true;
+	lineHeight = 0;
+	bAntiAliased = true;
+	texture_2d_enabled = true;
+	encoding = OF_ENCODING_UTF8;
+	bFullCharacterSet = true;
 }
 
 //------------------------------------------------------------------

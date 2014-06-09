@@ -139,3 +139,6 @@
 ################################################################################
 # PROJECT_CXX = 
 # PROJECT_CC = 
+
+ABIS_TO_COMPILE_RELEASE = armv7
+ABIS_TO_COMPILE_DEBUG = armv7

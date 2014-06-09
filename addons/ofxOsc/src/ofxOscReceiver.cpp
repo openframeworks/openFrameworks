@@ -132,12 +132,13 @@ ofxOscReceiver::startThread( void* receiverInstance )
 
 void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndpointName& remoteEndpoint )
 {
+
 	// convert the message to an ofxOscMessage
 	ofxOscMessage* ofMessage = new ofxOscMessage();
 
 	// set the address
 	ofMessage->setAddress( m.AddressPattern() );
-
+    
 	// set the sender ip/host
 	char endpoint_host[ IpEndpointName::ADDRESS_STRING_LENGTH ];
 	remoteEndpoint.AddressAsString( endpoint_host );
@@ -156,7 +157,13 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 			ofMessage->addFloatArg( arg->AsFloatUnchecked() );
 		else if ( arg->IsString() )
 			ofMessage->addStringArg( arg->AsStringUnchecked() );
-		else
+		else if ( arg->IsBlob() ){
+            const char * dataPtr;
+            unsigned long len = 0;
+            arg->AsBlobUnchecked((const void*&)dataPtr, len);
+            ofBuffer buffer(dataPtr, len);
+			ofMessage->addBlobArg( buffer );
+		}else
 		{
 			ofLogError("ofxOscReceiver") << "ProcessMessage: argument in message " << m.AddressPattern() << " is not an int, float, or string";
 		}
@@ -223,6 +230,7 @@ bool ofxOscReceiver::getNextMessage( ofxOscMessage* message )
 	// return success
 	return true;
 }
+
 
 bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
 	ofxOscMessage msg;

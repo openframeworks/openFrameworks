@@ -3,6 +3,7 @@
 #include "ofBaseApp.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
+#include "ofAppGLFWWindow.h"
 #include <set>
 
 static const double MICROS_TO_SEC = .000001;
@@ -16,6 +17,7 @@ static unsigned long long	lastFrameTime = 0;
 static bool      			bFrameRateSet = 0;
 static int      			nFramesForFPS = 0;
 static int      			nFrameCount	  = 0;
+static unsigned long long   prevMicrosForFPS = 0;
 
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
@@ -125,15 +127,20 @@ void ofNotifyUpdate(){
 	// calculate sleep time to adjust to target fps
 	unsigned long long timeNow = ofGetElapsedTimeMicros();
 	if (nFrameCount != 0 && bFrameRateSet == true){
-		unsigned long long diffMicros = timeNow - timeThen;
+		unsigned long long diffMicros = timeNow - prevMicrosForFPS;
+		prevMicrosForFPS = timeNow;
 		if(diffMicros < microsForFrame){
 			unsigned long long waitMicros = microsForFrame - diffMicros;
+            // Theoretical value to compensate for the extra time that it might sleep
+			prevMicrosForFPS += waitMicros;
 			#ifdef TARGET_WIN32
 				Sleep(waitMicros*MICROS_TO_MILLIS);
 			#else
 				usleep(waitMicros);
 			#endif
 		}
+	}else{
+		prevMicrosForFPS = timeNow;
 	}
 
 	// calculate fps
@@ -150,7 +157,10 @@ void ofNotifyUpdate(){
 			oneSec  = timeNow;
 			nFramesForFPS = 0;
 		}else{
-			fps = fps*.99 + nFramesForFPS/(oneSecDiff*MICROS_TO_SEC)*.01;
+			double deltaTime = ((double)oneSecDiff)*MICROS_TO_SEC;
+			if( deltaTime > 0.0 ){
+				fps = fps*0.99 + (nFramesForFPS/deltaTime)*0.01;
+			}
 		}
 		nFramesForFPS++;
 
@@ -207,8 +217,13 @@ void ofNotifyKeyPressed(int key){
 	
 	
 	if (key == OF_KEY_ESC && bEscQuits == true){				// "escape"
-		exitApp();
-	}
+        ofAppGLFWWindow *appGLFWWindow = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
+        if (appGLFWWindow) {
+            glfwSetWindowShouldClose(appGLFWWindow->getGLFWWindow(), true);
+        }else{
+            exitApp();
+        }
+    }
 	
 	
 }

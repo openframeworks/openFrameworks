@@ -1,6 +1,5 @@
 /*
  *  AVFoundationVideoGrabber.h
-*
  */
 
 #pragma once
@@ -8,9 +7,6 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CoreGraphics/CoreGraphics.h>
-
-//#if __IPHONE_OS_VERSION_MIN_REQUIRED > __IPHONE_3_2
-
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
 #include "ofxiOS.h"
@@ -24,21 +20,18 @@ class AVFoundationVideoGrabber;
 @interface iOSVideoGrabber : UIViewController <AVCaptureVideoDataOutputSampleBufferDelegate> {
 
 	@public
-	
-	AVCaptureDeviceInput		*captureInput;	
-	AVCaptureSession			*_captureSession;
 	CGImageRef currentFrame;	
 	
 	int width;
 	int height;
 	
+	BOOL bInitCalled;
+	int deviceID;
+
 	AVFoundationVideoGrabber * grabberPtr;
-	
-	bool bInitCalled;
-	int device;
 }
 
--(bool)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h;
+-(BOOL)initCapture:(int)framerate capWidth:(int)w capHeight:(int)h;
 -(void)startCapture;
 -(void)stopCapture;
 -(void)lockExposureAndFocus;
@@ -47,8 +40,6 @@ class AVFoundationVideoGrabber;
 -(void)eraseGrabberPtr;
 
 -(CGImageRef)getCurrentFrame;
-
-@property (nonatomic, retain) AVCaptureSession *captureSession;
 
 @end
 
@@ -86,6 +77,7 @@ class AVFoundationVideoGrabber{
 		GLint internalGlDataType;
 		unsigned char * pixels;
 		bool newFrame;
+		bool bLock;
 	
 		int width, height;
 	
@@ -105,8 +97,3 @@ class AVFoundationVideoGrabber{
 
 #endif	// (__arm__) compile only for ARM
 
-//#else   // (> 3.2 SDK) compile for 4.0+
-//
-//#warning "skipping AVFoundationVideoGrabber compilation because you need > 3.2 iOS SDK"
-//
-//#endif

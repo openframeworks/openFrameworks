@@ -56,9 +56,9 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
-	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true);
-	void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0);
-	void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1);
+	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool invertY = true);
+	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
+	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 	ofRectangle getCurrentViewport();
 	int getViewportWidth();
 	int getViewportHeight();

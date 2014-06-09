@@ -1,7 +1,5 @@
 # Default paths.make file.
 # Enter the correct paths for your system and save this file as paths.make
 
-NDK_ROOT=<path-to-NDK-location>
-SDK_ROOT=<path-to-SDK-location>
-ANT_HOME=/usr
-ANT_BIN=$(ANT_HOME)/bin/
+NDK_ROOT=path_to/android-ndk-r9c
+SDK_ROOT=path_to/android-sdk-linux
