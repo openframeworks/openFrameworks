@@ -9,7 +9,10 @@
 
 
 //-------------------------------------------------
-ofThread::ofThread(): _threadRunning(false), _mutexBlocks(true){
+ofThread::ofThread()
+:_threadRunning(false)
+,_mutexBlocks(true)
+,threadBeingWaitedFor(false){
    thread.setName("Thread " + ofToString(thread.id()));
 }
 
@@ -106,6 +109,8 @@ void ofThread::stopThread(){
 //-------------------------------------------------
 void ofThread::waitForThread(bool callStopThread, long milliseconds){
 	if(thread.isRunning()){
+		threadBeingWaitedFor = true;
+
 		// tell thread to stop
 		if(callStopThread){
             stopThread();
@@ -199,6 +204,12 @@ void ofThread::run(){
     // should loop endlessly.
 	threadedFunction();
 
+#if !defined(TARGET_WIN32) && !defined(TARGET_ANDROID)
+	// FIXME: this won't be needed once we update POCO https://github.com/pocoproject/poco/issues/79
+	if(!threadBeingWaitedFor){ //if threadedFunction() ended and the thread is not being waited for, detach it before exiting.
+		pthread_detach(pthread_self());
+	}
+#endif
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
