@@ -59,9 +59,9 @@ static void aiMeshToOfMesh(const aiMesh* aim, ofMesh& ofm, ofxAssimpMeshHelper *
 	// just one for now
 	if(aim->GetNumUVChannels()>0){
 		for (int i=0; i < (int)aim->mNumVertices;i++){
-			if(helper != NULL && helper->hasTexture()){
-                ofTexture * tex = helper->getTexturePtr();
-				ofVec2f texCoord = tex->getCoordFromPercent(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y);
+			if(helper && helper->hasTexture()){
+                ofTexture & tex = helper->getTextureRef();
+				ofVec2f texCoord = tex.getCoordFromPercent(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y);
 				ofm.addTexCoord(texCoord);
 			}else{
 				ofm.addTexCoord(ofVec2f(aim->mTextureCoords[0][i].x ,aim->mTextureCoords[0][i].y));

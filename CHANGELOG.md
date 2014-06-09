@@ -52,6 +52,8 @@ PLATFORM SPECIFIC
 
 ORE ADDONS
 -----------
+### ofxAssimpModelLoader
+	/ fix to be able to put loaders on vectors
 ### ofxGui
 	+ ofxSlider: added get/setMin/Max
 
