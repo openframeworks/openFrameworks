@@ -7,7 +7,6 @@
 #include "aiPostProcess.h"
 
 ofxAssimpModelLoader::ofxAssimpModelLoader(){
-	scene = NULL;
 	clear();
 }
 
@@ -51,7 +50,7 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
 			aiProcess_RemoveRedundantMaterials;
 
-	scene = aiImportFileFromMemory(buffer.getBinaryBuffer(), buffer.size(), flags, extension);
+	scene = shared_ptr<const aiScene>(aiImportFileFromMemory(buffer.getBinaryBuffer(), buffer.size(), flags, extension),aiReleaseImport);
     
 	if(scene){
 		calculateDimensions();
@@ -81,14 +80,15 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
 //-------------------------------------------
 void ofxAssimpModelLoader::onAppExit(ofEventArgs & args){
 	clear();
+	scene.reset();
 }
 
 //-------------------------------------------
 void ofxAssimpModelLoader::createEmptyModel(){
 	if(scene){
 		clear();
+		scene.reset();
 	}
-	scene = new aiScene;
 }
 
 
@@ -138,7 +138,7 @@ void ofxAssimpModelLoader::createLightsFromAiModel(){
 }
 
 void ofxAssimpModelLoader::optimizeScene(){
-	aiApplyPostProcessing(scene,aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+	aiApplyPostProcessing(scene.get(),aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
 			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
 			aiProcess_RemoveRedundantMaterials);
 }
@@ -327,20 +327,16 @@ void ofxAssimpModelLoader::clear(){
     lights.clear();
 
     scale = ofPoint(1, 1, 1);
-	if(scene){
-		aiReleaseImport(scene);
-		scene = NULL;
-	}
     normalizeScale = true;
     bUsingMaterials = true;
     bUsingNormals = true;
     bUsingTextures = true;
     bUsingColors = true;
-    
+
     currentAnimation = -1;
-    
+
     textures.clear();
-    
+
     updateModelMatrix();
     ofRemoveListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
 }
@@ -965,7 +961,7 @@ float ofxAssimpModelLoader::getRotationAngle(int which){
 
 //-------------------------------------------
 const aiScene* ofxAssimpModelLoader::getAssimpScene(){
-	return scene;
+	return scene.get();
 }
 
 //--------------------------------------------------------------

@@ -14,7 +14,7 @@ class ofxAssimpAnimation {
 
 public:
     
-    ofxAssimpAnimation(const aiScene * scene, aiAnimation * animation);
+    ofxAssimpAnimation(shared_ptr<const aiScene> scene, aiAnimation * animation);
     ~ofxAssimpAnimation();
     
     aiAnimation * getAnimation();
@@ -46,7 +46,7 @@ protected:
     
     void updateAnimationNodes();
     
-    const aiScene * scene;
+    shared_ptr<const aiScene> scene;
     aiAnimation * animation;
     float animationCurrTime;
     float animationPrevTime;
