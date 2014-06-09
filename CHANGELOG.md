@@ -57,6 +57,9 @@ ORE ADDONS
 ### ofxNetwork
 	/ fix port reuse on osx
 
+### ofxAssimpModelLoader
+    + ofxAssimpModelLoader: added copy constructor
+
 OF 0.8.1
 ========
  
