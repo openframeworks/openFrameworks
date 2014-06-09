@@ -164,7 +164,7 @@ private:
 		bool bInNotify;
 		bool serializable;
 	};
-	ofPtr<Value> obj;
+	shared_ptr<Value> obj;
 	void (ofParameter<ParameterType>::*setMethod)(ParameterType v);
 
 	void eventsSetValue(ParameterType v);
@@ -181,17 +181,17 @@ ofParameter<ParameterType>::ofParameter()
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(ParameterType v)
-:obj(ofPtr<Value>(new Value(v)))
+:obj(shared_ptr<Value>(new Value(v)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue) {}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(string name, ParameterType v)
-:obj(ofPtr<Value>(new Value(name, v)))
+:obj(shared_ptr<Value>(new Value(name, v)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(string name, ParameterType v, ParameterType min, ParameterType max)
-:obj(ofPtr<Value>(new Value(name, v, min, max)))
+:obj(shared_ptr<Value>(new Value(name, v, min, max)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 
