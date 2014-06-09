@@ -15,6 +15,17 @@ ofxAssimpModelLoader::~ofxAssimpModelLoader(){
     clear();
 }
 
+ofxAssimpModelLoader::ofxAssimpModelLoader(const ofxAssimpModelLoader& orig) {
+	scene = NULL;
+	clear();
+
+	if(orig.file.exists()) {
+		loadModel(orig.file.getAbsolutePath());
+	} else if(orig.scene != NULL) {
+		ofLogWarning("ofxAssimpModelLoader") << "can't copy loader without a file reference";
+	}
+}
+
 //------------------------------------------
 bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     file.open(modelName, ofFile::ReadOnly, true); // Since it may be a binary file we should read it in binary -Ed
