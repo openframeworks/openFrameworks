@@ -300,6 +300,10 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
     glfwTerminate();
 }
 
+void ofAppGLFWWindow::windowShouldClose(){
+	glfwSetWindowShouldClose(windowP,1);
+}
+
 //------------------------------------------------------------
 void ofAppGLFWWindow::display(void){
 
@@ -827,8 +831,7 @@ ofOrientation ofAppGLFWWindow::getOrientation(){
 void ofAppGLFWWindow::exitApp(){
 	// Terminate GLFW
 	glfwTerminate();
-
-	OF_EXIT_APP(0);
+	std::exit(0);
 }
 
 //------------------------------------------------------------

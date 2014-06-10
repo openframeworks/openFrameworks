@@ -16,8 +16,6 @@ int			ofGetPreviousMouseY();
 
 void		ofSetEscapeQuitsApp(bool bQuitOnEsc);
 
-void		exitApp(); 
-
 //-----------------------------------------------
 class ofDragInfo{
 	public:

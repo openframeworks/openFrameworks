@@ -47,6 +47,7 @@ public:
 	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	void windowShouldClose();
 
 
 	void hideCursor();
