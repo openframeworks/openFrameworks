@@ -8,8 +8,8 @@ ofParameterGroup::ofParameterGroup()
 
 }
 
-void ofParameterGroup::add(ofParameterGroup & param){
-	shared_ptr<ofParameterGroup> group(new ofParameterGroup(param));
+void ofParameterGroup::add(ofAbstractParameter & param){
+	shared_ptr<ofAbstractParameter> group = param.newReference();
 	obj->parameters.push_back(group);
 	obj->parametersIndex[group->getEscapedName()] = obj->parameters.size()-1;
 	group->setParent(this);
@@ -247,4 +247,8 @@ void ofParameterGroup::setSerializable(bool _serializable){
 
 bool ofParameterGroup::isSerializable() const{
 	return obj->serializable;
+}
+
+shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
+	return shared_ptr<ofAbstractParameter>(new ofParameterGroup(*this));
 }

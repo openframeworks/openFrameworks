@@ -19,13 +19,7 @@ class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();
 
-	template<typename ParameterType>
-	void add(ofParameter<ParameterType> & param);
-
-	template<typename ParameterType,typename Friend>
-	void add(ofReadOnlyParameter<ParameterType,Friend> & param);
-
-	void add(ofParameterGroup & param);
+	void add(ofAbstractParameter & param);
 
 
 	void clear();
@@ -97,6 +91,8 @@ public:
 
 	void setSerializable(bool serializable);
 	bool isSerializable() const;
+	shared_ptr<ofAbstractParameter> newReference() const;
+
 
 private:
 	class Value{
@@ -120,21 +116,5 @@ ofParameter<ParameterType> ofParameterGroup::get(string name) const{
 template<typename ParameterType>
 ofParameter<ParameterType> ofParameterGroup::get(int pos) const{
 	return static_cast<ofParameter<ParameterType>& >(get(pos));
-}
-
-template<class ParameterType>
-void ofParameterGroup::add(ofParameter<ParameterType> & param){
-	shared_ptr<ofParameter<ParameterType> > p(new ofParameter<ParameterType>(param));
-	obj->parameters.push_back(p);
-	obj->parametersIndex[p->getEscapedName()] = obj->parameters.size()-1;
-	p->setParent(this);
-}
-
-template<typename ParameterType,typename Friend>
-void ofParameterGroup::add(ofReadOnlyParameter<ParameterType,Friend> & param){
-	shared_ptr<ofReadOnlyParameter<ParameterType,Friend> > p(new ofReadOnlyParameter<ParameterType,Friend>(param));
-	obj->parameters.push_back(p);
-	obj->parametersIndex[p->getEscapedName()] = obj->parameters.size()-1;
-	p->setParent(this);
 }
 #endif /* OFXPARAMETERGROUP_H_ */
