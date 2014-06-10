@@ -93,7 +93,7 @@ void ofAppiOSWindow::startAppWithDelegate(string appDelegateClassName) {
     bAppCreated = true;
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    cout << " trying to lauunch delegate " << appDelegateClassName << endl; 
+    cout << " trying to launch delegate " << appDelegateClassName << endl; 
     UIApplicationMain(nil, nil, nil, [NSString stringWithUTF8String:appDelegateClassName.c_str()]);
     [pool release];
 }
