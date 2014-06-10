@@ -122,23 +122,22 @@ public:
 #endif
 	
 	void loadPixels(); //never call this. this is called by the obj-c class.
-	bool imageUpdated; //when a new image is loaded in, this is set to true
 	
-	int width;
-	int height;
-	int type;
-	int glType;
-	int texType;
-	int bpp;
+    bool getImageUpdated();
+    unsigned char * 	getPixels();
+    ofPixelsRef			getPixelsRef();
+    int getWidth();
+    int getHeight();
+    
+    protected:
+    
+    ofPixels pixels;
+    int maxDimension;
 	
-	bool pixelsAllocated;
-	
-	int maxDimension;
-	
-	unsigned char * pixels;
+//	unsigned char * pixels;
 	
 protected:
-	
+	bool imageUpdated; //when a new image is loaded in, this is set to true
 	ofxiOSImagePickerDelegate *	imagePicker;
 };
 
