@@ -3,7 +3,7 @@
 #include "ofBaseApp.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
-#include "ofAppGLFWWindow.h"
+#include "ofAppBaseWindow.h"
 #include <set>
 
 static const double MICROS_TO_SEC = .000001;
@@ -110,13 +110,6 @@ void ofSetEscapeQuitsApp(bool bQuitOnEsc){
 	bEscQuits = bQuitOnEsc;
 }
 
-void exitApp(){
-	ofLogVerbose("ofEvents") << "OF app is being terminated!";
-	OF_EXIT_APP(0);
-}
-
-
-
 //------------------------------------------
 void ofNotifySetup(){
 	ofNotifyEvent( ofEvents().setup, voidEventArgs );
@@ -217,12 +210,7 @@ void ofNotifyKeyPressed(int key){
 	
 	
 	if (key == OF_KEY_ESC && bEscQuits == true){				// "escape"
-        ofAppGLFWWindow *appGLFWWindow = dynamic_cast<ofAppGLFWWindow*>(ofGetWindowPtr());
-        if (appGLFWWindow) {
-            glfwSetWindowShouldClose(appGLFWWindow->getGLFWWindow(), true);
-        }else{
-            exitApp();
-        }
+		ofGetWindowPtr()->windowShouldClose();
     }
 	
 	
