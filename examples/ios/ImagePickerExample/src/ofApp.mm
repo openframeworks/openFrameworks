@@ -50,7 +50,7 @@ void ofApp::touchDown(ofTouchEventArgs & touch){
         camera.openCamera();
     }else if( libRect.inside(touch.x, touch.y) ){
         camera.setMaxDimension(MAX(1024, ofGetHeight()));
-        camera.openLibrary( );
+        camera.openLibrary();
     }else{
         prePoint.x = touch.x;
         prePoint.y = touch.y;

@@ -106,7 +106,8 @@ public:
 	void hideCameraOverlay();
 #endif
 	bool openSavedPhotos();
-    void close();
+    void close(); //closes the image picker interface
+    void clear(); //clears the internal ofPixels - useful if you need to free the memory without deleting the object. 
 	
 	bool cameraIsAvailable; //variables to see if specific functions are available for a specific device.
 	bool photoLibraryIsAvailable;
