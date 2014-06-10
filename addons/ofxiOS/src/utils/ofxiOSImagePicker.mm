@@ -76,6 +76,12 @@ void ofxiOSImagePicker::close() {
 }
 
 //----------------------------------------------------------------
+void ofxiOSImagePicker::clear() {
+    pixels.clear();
+    imageUpdated = false;
+}
+
+//----------------------------------------------------------------
 int ofxiOSImagePicker::getOrientation()
 {
 	switch( [imagePicker getImageOrientation] )
