@@ -24,7 +24,7 @@
  * either License.
  */
 #include "libfreenect.h"
-#include "libfreenect-audio.h"
+#include "libfreenect_audio.h"
 #include "freenect_internal.h"
 
 #include <string.h>

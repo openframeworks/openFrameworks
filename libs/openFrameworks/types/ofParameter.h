@@ -43,6 +43,7 @@ public:
 	friend istream& operator>>(istream& is, ofAbstractParameter& p);
 
 	virtual bool isSerializable() const;
+	virtual shared_ptr<ofAbstractParameter> newReference() const;
 
 protected:
 	virtual void setSerializable(bool serializable);
@@ -131,6 +132,7 @@ public:
 	void fromString(string str);
 
 	void setSerializable(bool serializable);
+	shared_ptr<ofAbstractParameter> newReference() const;
 private:
 	class Value{
 	public:
@@ -164,7 +166,7 @@ private:
 		bool bInNotify;
 		bool serializable;
 	};
-	ofPtr<Value> obj;
+	shared_ptr<Value> obj;
 	void (ofParameter<ParameterType>::*setMethod)(ParameterType v);
 
 	void eventsSetValue(ParameterType v);
@@ -181,17 +183,17 @@ ofParameter<ParameterType>::ofParameter()
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(ParameterType v)
-:obj(ofPtr<Value>(new Value(v)))
+:obj(shared_ptr<Value>(new Value(v)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue) {}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(string name, ParameterType v)
-:obj(ofPtr<Value>(new Value(name, v)))
+:obj(shared_ptr<Value>(new Value(name, v)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(string name, ParameterType v, ParameterType min, ParameterType max)
-:obj(ofPtr<Value>(new Value(name, v, min, max)))
+:obj(shared_ptr<Value>(new Value(name, v, min, max)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 
@@ -443,6 +445,11 @@ void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> mom)
 	obj = mom.obj;
 }
 
+template<typename ParameterType>
+shared_ptr<ofAbstractParameter> ofParameter<ParameterType>::newReference() const{
+	return shared_ptr<ofAbstractParameter>(new ofParameter<ParameterType>(*this));
+}
+
 
 
 template <typename T>
@@ -474,6 +481,7 @@ public:
 
 	template<class ListenerClass, typename ListenerMethod>
 	void removeListener(ListenerClass * listener, ListenerMethod method);
+	shared_ptr<ofAbstractParameter> newReference() const;
 
 protected:
 	void setName(string name);
@@ -784,4 +792,9 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::setMax(ParameterType max)
 template<typename ParameterType,typename Friend>
 inline void ofReadOnlyParameter<ParameterType,Friend>::fromString(string str){
 	parameter.fromString(str);
+}
+
+template<typename ParameterType,typename Friend>
+shared_ptr<ofAbstractParameter> ofReadOnlyParameter<ParameterType,Friend>::newReference() const{
+	return shared_ptr<ofAbstractParameter>(new ofParameter<ParameterType>(*this));
 }

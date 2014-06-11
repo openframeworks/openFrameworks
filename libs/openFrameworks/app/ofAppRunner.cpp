@@ -74,7 +74,7 @@ void ofURLFileLoaderShutdown();
 		ofLogVerbose("ofAppRunner") << "sighandler caught: " << sig;
 		if(!bExitCalled) {
 			bExitCalled = true;
-			exitApp();
+			std::exit(0);
 		}
 	}
 #endif

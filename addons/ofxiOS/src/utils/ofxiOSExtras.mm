@@ -60,11 +60,60 @@ string ofxiOSGetDeviceRevision() {
 	string device(machine);
 	
 		delete[] machine;
+        
+    //the simulator comes in as x86_64 - lets get it to be a bit more specific
+    //this should detect that and instead return iPhone Simualtor
+    if( device.substr(0, 3) == "x86"){
+        NSString * dev = [[UIDevice currentDevice] model];
+        device = ofxNSStringToString(dev);
+    }
 			
 	return device;
 	}else{
 		return "";
 	}
+}
+
+//--------------------------------------------------------------
+// TODO: could this be safe to just cache once? Device type shouldn't change while app is running.
+ofxiOSDeviceInfo ofxiOSGetDeviceInfo(){
+    ofxiOSDeviceInfo info;
+    
+    info.deviceType = ofxiOSGetDeviceType();
+    info.deviceString = ofxiOSGetDeviceRevision();
+    vector <string> split = ofSplitString(info.deviceString, ",");
+    
+    if( split.size() == 2 ){
+        if( split[0].size() ){
+            
+            //this is a safe way to get the major number while allowing for a two digit major value.
+            //ie: iPhone10,1
+            //we default to looking for one digit but by removing the device from the string it could allow for two or more.
+            
+            int startOffset = split[0].size()-1;
+            if( split[0].substr(0, 6) == "iPhone" ){
+                startOffset = 6;
+            }else if( split[0].substr(0, 4) == "iPad" ){
+                startOffset = 4;
+            }else if( split[0].substr(0, 4) == "iPod" ){
+                startOffset = 4;
+            }
+        
+            info.versionMajor = ofToInt(split[0].substr(startOffset));
+        }else{
+            info.versionMajor = 0;
+        }
+        if( split[1].size() ){
+            info.versionMinor = ofToInt(split[1]);
+        }else{
+            info.versionMinor = 0;
+        }
+    }else{
+        info.versionMajor = 0;
+        info.versionMinor = 0;
+    }
+        
+    return info;
 }
 
 //--------------------------------------------------------------
