@@ -119,9 +119,6 @@ class ofxAssimpModelLoader{
         void updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix);
         void updateBones();
         void updateModelMatrix();
-    
-        // the main Asset Import scene that does the magic.
-        const aiScene * scene;
 
         // Initial VBO creation, etc
         void loadGLResources();
@@ -136,12 +133,12 @@ class ofxAssimpModelLoader{
         void getBoundingBoxForNode(const struct aiNode* nd,  struct aiVector3D* min, struct aiVector3D* max, struct aiMatrix4x4* trafo);
 
         ofFile file;
-        
+
         aiVector3D scene_min, scene_max, scene_center;
-    
+
         bool normalizeScale;
-        double normalizedScale;    
-        
+        double normalizedScale;
+
         vector<float> rotAngle;
         vector<ofPoint> rotAxis;
         ofPoint scale;
@@ -149,7 +146,7 @@ class ofxAssimpModelLoader{
         ofMatrix4x4 modelMatrix;
 
         vector<ofLight> lights;
-        vector<ofxAssimpTexture *> textures;
+        vector<ofxAssimpTexture> textures;
         vector<ofxAssimpMeshHelper> modelMeshes;
         vector<ofxAssimpAnimation> animations;
         int currentAnimation; // DEPRECATED - to be removed with deprecated animation functions.
@@ -159,4 +156,7 @@ class ofxAssimpModelLoader{
         bool bUsingColors;
         bool bUsingMaterials;
         float normalizeFactor;
+
+        // the main Asset Import scene that does the magic.
+        shared_ptr<const aiScene> scene;
 };

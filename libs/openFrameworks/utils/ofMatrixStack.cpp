@@ -125,7 +125,7 @@ void ofMatrixStack::viewport(float x, float y, float width, float height, bool v
 		swap(x,y);
 	}
 
-	if(width == 0 || height == 0){
+	if(width < 0 || height < 0){
 		width = getRenderSurfaceWidth();
 		height = getRenderSurfaceHeight();
 	}

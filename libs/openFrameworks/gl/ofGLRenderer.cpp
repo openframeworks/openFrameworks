@@ -356,10 +356,16 @@ bool ofGLRenderer::texturesNeedVFlip() const{
 
 //----------------------------------------------------------
 void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist) {
-	ofRectangle currentViewport = getCurrentViewport();
+	float viewW, viewH;
+	if(width<0 || height<0){
+		ofRectangle currentViewport = getCurrentViewport();
 
-	float viewW = currentViewport.width;
-	float viewH = currentViewport.height;
+		viewW = currentViewport.width;
+		viewH = currentViewport.height;
+	}else{
+		viewW = width;
+		viewH = height;
+	}
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -385,11 +391,16 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, 
 
 //----------------------------------------------------------
 void ofGLRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist) {
+	float viewW, viewH;
+	if(width<0 || height<0){
+		ofRectangle currentViewport = getCurrentViewport();
 
-	ofRectangle currentViewport = getCurrentViewport();
-
-	float viewW = currentViewport.width;
-	float viewH = currentViewport.height;
+		viewW = currentViewport.width;
+		viewH = currentViewport.height;
+	}else{
+		viewW = width;
+		viewH = height;
+	}
 
 	ofMatrix4x4 ortho;
 

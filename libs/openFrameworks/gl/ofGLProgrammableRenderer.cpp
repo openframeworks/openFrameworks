@@ -394,10 +394,16 @@ void ofGLProgrammableRenderer::setOrientation(ofOrientation orientation, bool vF
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist) {
-	ofRectangle currentViewport = getCurrentViewport();
-	
-	float viewW = currentViewport.width;
-	float viewH = currentViewport.height;
+	float viewW, viewH;
+	if(width<0 || height<0){
+		ofRectangle currentViewport = getCurrentViewport();
+
+		viewW = currentViewport.width;
+		viewH = currentViewport.height;
+	}else{
+		viewW = width;
+		viewH = height;
+	}
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -424,10 +430,16 @@ void ofGLProgrammableRenderer::setupScreenPerspective(float width, float height,
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist) {
-	ofRectangle currentViewport = getCurrentViewport();
+	float viewW, viewH;
+	if(width<0 || height<0){
+		ofRectangle currentViewport = getCurrentViewport();
 
-	float viewW = currentViewport.width;
-	float viewH = currentViewport.height;
+		viewW = currentViewport.width;
+		viewH = currentViewport.height;
+	}else{
+		viewW = width;
+		viewH = height;
+	}
 
 	ofMatrix4x4 ortho;
 
