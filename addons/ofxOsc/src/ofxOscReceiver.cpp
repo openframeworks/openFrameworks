@@ -71,6 +71,48 @@ void ofxOscReceiver::setup( int listen_port )
 	#endif
 }
 
+void ofxOscReceiver::setup( int listen_port )
+{
+    start(IpEndpointName( IpEndpointName::ANY_ADDRESS, listen_port ));
+}
+
+void ofxOscReceiver::setup( int listen_port, string multicastGroup )
+{
+    start(IpEndpointName( multicastGroup.c_str(), listen_port ));
+}
+
+void ofxOscReceiver::start( IpEndpointName endPoint )
+{
+	// if we're already running, shutdown before running again
+	if ( listen_socket )
+		shutdown();
+	
+	// create the mutex
+#ifdef TARGET_WIN32
+	mutex = CreateMutexA( NULL, FALSE, NULL );
+#else
+	pthread_mutex_init( &mutex, NULL );
+#endif
+	
+	// create socket
+	socketHasShutdown = false;
+	listen_socket = new UdpListeningReceiveSocket( endPoint, this );
+    
+	// start thread
+#ifdef TARGET_WIN32
+	thread	= CreateThread(
+                           NULL,              // default security attributes
+                           0,                 // use default stack size
+                           &ofxOscReceiver::startThread,        // thread function
+                           (void*)this,             // argument to thread function
+                           0,                 // use default creation flags
+                           NULL);             // we don't the the thread id
+    
+#else
+	pthread_create( &thread, NULL, &ofxOscReceiver::startThread, (void*)this );
+#endif
+}
+
 void ofxOscReceiver::shutdown()
 {
 	if ( listen_socket )
