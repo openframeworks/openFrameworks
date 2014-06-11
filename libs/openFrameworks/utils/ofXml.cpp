@@ -770,7 +770,7 @@ bool ofXml::loadFromBuffer( const string& buffer )
     	element = (Poco::XML::Element*) document->firstChild();
     	document->normalize();
     	return true;
-    } catch( exception e ) {
+    } catch( const exception & e ) {
         short msg = atoi(e.what());
         ofLogError("ofXml") << "loadFromBuffer(): " << DOMErrorMessage(msg);
         document = new Poco::XML::Document;
