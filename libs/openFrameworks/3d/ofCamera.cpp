@@ -9,9 +9,9 @@ nearClip(0),
 farClip(0),
 lensOffset(0.0f, 0.0f),
 forceAspectRatio(false),
+aspectRatio(4./3.),
 isActive(false),
-vFlip(false),
-aspectRatio(4./3.)
+vFlip(false)
 {
 }
 
