@@ -3,8 +3,11 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	// listen on the given port
-	cout << "listening for osc messages on port " << PORT << "\n";
 	receiver.setup(PORT);
+	cout << "listening for osc messages on port " << PORT << "\n";
+    
+//	receiver.setup(PORT, "239.0.0.1");
+//	cout << "listening for osc messages for multicast group 239.0.0.1 on port " << PORT << "\n";
 
 	current_msg_string = 0;
 	mouseX = 0;

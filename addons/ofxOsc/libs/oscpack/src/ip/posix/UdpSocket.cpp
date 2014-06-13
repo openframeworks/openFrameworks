@@ -56,7 +56,10 @@
 #if defined(__APPLE__) && !defined(_SOCKLEN_T)
 // pre system 10.3 didn have socklen_t
 typedef ssize_t socklen_t;
+
 #endif
+
+struct ip_mreq        group;
 
 
 static void SockaddrFromIpEndpointName( struct sockaddr_in& sockAddr, const IpEndpointName& endpoint )
@@ -213,7 +216,6 @@ public:
             if (setsockopt(socket_, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&group, sizeof(group)) < 0) {
                 throw std::runtime_error("error adding multicast group\n");
                 close(socket_);
-                exit(1);
             }
         }
         
