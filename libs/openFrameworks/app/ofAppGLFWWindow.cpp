@@ -916,7 +916,7 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 //------------------------------------------------------------
 void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString) {
 	ofDragInfo drag;
-	drag.position.set(ofGetMouseX()*instance->pixelScreenCoordScale, ofGetMouseY()*instance->pixelScreenCoordScale);
+	drag.position.set(ofGetMouseX(), ofGetMouseY());
 	drag.files.resize(numFiles);
 #ifdef TARGET_LINUX
 	for(int i=0; i<(int)drag.files.size(); i++){
