@@ -19,8 +19,10 @@ CORE
 ### app
 	+ ofAppEGLWindow added new methods hasMouse()/hasKeyboard() to provide info on whether mouse/keyboard were detected
 	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
+	/ ofAppGLFWWindow: fix key mappings on non english keyboards
 ### events
 	+ fix ofSetFrameRate to be more accurate
+	+ add keycode, scancode and unicode codepoint to ofKeyEventArgs
 ### gl
 	+ ofFbo: added new method to attach an external texture
 	+ ofFbo: fix regression on min/max filter settings
@@ -32,6 +34,7 @@ CORE
 ### Utils
 	/ ofThread now uses Class name for logging channel (was thread name)
 	/ ofURLFileLoader: better shutdown, don't shutdown if it wasn't initialized + wait thread
+	/ ofXml: fixes crash on empty document
 	
 PLATFORM SPECIFIC
 -----------------
@@ -42,6 +45,8 @@ PLATFORM SPECIFIC
 	/ fixed shader in shader example
 	/ disable x86 in assimp and opencv examples
 	/ shader and assimp examples reload gl resources when the app resumes
+### iOS
+    + implement setSpeed() for video player
 ### Linux
 	/ video: fixes for videos which pixels have padding
 	/ video: close pipeline properly by sending and waiting for EOS event
