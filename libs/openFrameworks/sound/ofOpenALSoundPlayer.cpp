@@ -880,7 +880,7 @@ void ofOpenALSoundPlayer::play(){
 	if(isStreaming){
 		setPosition(0);
 		stream_end = false;
-		startThread(true,false);
+		startThread(true);
 	}
 
 }
