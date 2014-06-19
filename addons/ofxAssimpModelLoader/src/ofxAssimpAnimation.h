@@ -6,9 +6,8 @@
 #pragma once
 
 #include "ofMain.h"
-
-class aiScene;
-class aiAnimation;
+#include "assimp.h"
+#include "aiScene.h"
 
 class ofxAssimpAnimation {
 
