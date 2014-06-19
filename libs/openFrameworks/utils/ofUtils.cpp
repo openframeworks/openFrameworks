@@ -784,7 +784,7 @@ void ofSaveFrame(bool bUseViewport){
 string ofSystem(const string& command){
 	FILE * ret = NULL;
 #ifdef TARGET_WIN32
-	 ret = _popen(command.c_str(),"r");
+	ret = _popen(command.c_str(),"r");
 #else 
 	ret = popen(command.c_str(),"r");
 #endif
@@ -799,7 +799,11 @@ string ofSystem(const string& command){
 		      c = fgetc (ret);
 		      strret += c;
 		} while (c != EOF);
-		fclose (ret);
+#ifdef TARGET_WIN32
+		_pclose (ret);
+#else
+		pclose (ret);
+#endif
 	}
 
 	return strret;
