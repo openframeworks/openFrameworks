@@ -35,6 +35,7 @@ CORE
 	/ ofThread now uses Class name for logging channel (was thread name)
 	/ ofURLFileLoader: better shutdown, don't shutdown if it wasn't initialized + wait thread
 	/ ofXml: fixes crash on empty document
+	/ ofSystem: fix for second and later calls failing
 	
 PLATFORM SPECIFIC
 -----------------
