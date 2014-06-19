@@ -150,6 +150,9 @@ void ofApp::keyReleased(int key){
 			case OF_KEY_RIGHT_CONTROL:
 				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT CONTROL");
 				break;
+			case OF_KEY_LEFT_ALT:
+				sprintf(eventString, "keyReleased = (%i) %s", key, "LEFT ALT");
+				break;
 			case OF_KEY_RIGHT_ALT:
 				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT ALT");
 				break;
