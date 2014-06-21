@@ -167,6 +167,12 @@ function build() {
 		make
 		# delete debug builds
 		rm lib/Linux/x86_64/*d.a
+	elif [ "$TYPE" == "linuxarmv6l" ] ; then
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
+		./configure $BUILD_OPTS
+		make
+		# delete debug builds
+		rm lib/Linux/armv6l/*d.a
 	elif [ "$TYPE" == "linuxarmv7l" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
 		./configure $BUILD_OPTS
@@ -222,6 +228,9 @@ function copy() {
 	elif [ "$TYPE" == "linux64" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/x86_64/*.a $1/lib/$TYPE
+	elif [ "$TYPE" == "linuxarmv6l" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/Linux/armv6l/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "linuxarmv7l" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/armv7l/*.a $1/lib/$TYPE
