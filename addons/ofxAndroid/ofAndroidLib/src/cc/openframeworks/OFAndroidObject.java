@@ -17,11 +17,14 @@ public abstract class OFAndroidObject {
 	}
 	
 	protected State state;
-	public static Set<OFAndroidObject> ofObjects = new HashSet<OFAndroidObject>();
-	
+	public static Set<OFAndroidObject> ofObjects;
 	public OFAndroidObject(){
 		state = State.Created;
-
+		
+		if(ofObjects == null){
+			ofObjects = new HashSet<OFAndroidObject>();
+		}
+		
 		synchronized (ofObjects) {
 			ofObjects.add(this);
 		}
