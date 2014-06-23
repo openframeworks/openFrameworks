@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Poco/ErrorHandler.h"
 #include "ofConstants.h"
 #include "ofFileUtils.h"
 #include "ofTypes.h"
@@ -188,4 +189,21 @@ public:
 
 private:
 	ofFile file;
+};
+
+class ofThreadErrorLogger: public Poco::ErrorHandler{
+public:
+    virtual ~ofThreadErrorLogger(){}
+
+    virtual void exception(const Poco::Exception& exc){
+        ofLogFatalError("ofBaseErrorHandler::exception") << "Uncaught thread exception: " << exc.displayText();
+    }
+
+    virtual void exception(const std::exception& exc){
+        ofLogFatalError("ofBaseErrorHandler::exception") << "Uncaught thread exception: " << exc.what();
+    }
+
+    virtual void exception(){
+        ofLogFatalError("ofBaseErrorHandler::exception") << "Uncaught thread exception: Unknown exception.";
+    }
 };
