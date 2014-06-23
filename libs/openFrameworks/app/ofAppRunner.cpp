@@ -32,6 +32,8 @@
 static ofPtr<ofBaseApp>				OFSAptr;
 static ofPtr<ofAppBaseWindow> 		window;
 
+static ofThreadErrorLogger threadErrorLogger;
+
 //#define USE_PROGRAMMABLE_GL
 
 //========================================================================
@@ -76,6 +78,7 @@ void ofURLFileLoaderShutdown();
 // the same hack but in this case the shared_ptr will delete, old versions created the testApp as new...
 //--------------------------------------
 void ofRunApp(ofBaseApp * OFSA){
+    Poco::ErrorHandler::set(&threadErrorLogger);
 
 	OFSAptr = ofPtr<ofBaseApp>(OFSA);
 	if(OFSAptr){
@@ -269,6 +272,7 @@ void ofExitCallback(){
 
 //--------------------------------------
 void ofRunApp(ofPtr<ofBaseApp> OFSA){
+    Poco::ErrorHandler::set(&threadErrorLogger);
 
 	OFSAptr = OFSA;
 	if(OFSAptr){
