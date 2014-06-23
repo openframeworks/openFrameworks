@@ -38,7 +38,6 @@ CORE
 	/ fix ofQuaternion setOrientation and getEulerOrientation
 	/ ofMatrix: add case to catch invalid matrix queries
 	+ ofGetCurrentOrientationMatrix(): query current orientation matrix state (supported by ofGLProgrammableRenderer, ofGLRenderer)
-(); 
 ### Utils
 	/ ofThread now uses Class name for logging channel (was thread name)
 	/ ofURLFileLoader: better shutdown, don't shutdown if it wasn't initialized + wait thread
