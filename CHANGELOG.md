@@ -29,6 +29,7 @@ CORE
 ### Graphics
 	/ ofImage: convert format when loading different image types
 	/ Fix ofSetupPerspective not using passed width and height
+	+ Added destroyPixels option to clean up pixel buffer memory after pixels are loaded into texture memory
 ### Math
 	/ fix ofQuaternion setOrientation and getEulerOrientation
 ### Utils

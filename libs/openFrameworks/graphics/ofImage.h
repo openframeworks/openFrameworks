@@ -166,17 +166,17 @@ public:
     /// \brief Loads an image given by fileName.
     /// \param fileName Program looks for image given by fileName, relative to the data folder.
     /// \returns Returns true if image loaded correctly.
-    bool loadImage(string fileName);
+    bool loadImage(string fileName, bool destroyPixels=true);
     
     /// \brief Loads an image from an ofBuffer instance created by, for instance, ofFile::readToBuffer(). 
     ///
     /// This actually loads the image data into an ofPixels object and then into the texture.
-    bool loadImage(const ofBuffer & buffer);
+    bool loadImage(const ofBuffer & buffer, bool destroyPixels=true);
     
     /// \brief Loads an image from an ofFile instance created by, for instance, ofDirectory::getFiles().
     ///
     /// This actually loads the image data into an ofPixels object and then into the texture.
-    bool loadImage(const ofFile & file);
+    bool loadImage(const ofFile & file, bool destroyPixels=true);
     
     /// \brief Saves the image to the file path in fileName with the image quality specified by compressionLevel.
     /// \param fileName Saves image to this path, relative to the data folder.
@@ -489,8 +489,8 @@ protected:
 
     ofPixels_<PixelType> pixels;
     bool bUseTexture;
+    bool bDestroyPixels;  // Option to free up pixel buffer memory after pixels are loaded into texture memory.
     ofTexture tex;
-
 };
 
 typedef ofImage_<unsigned char> ofImage;

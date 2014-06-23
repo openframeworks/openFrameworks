@@ -542,7 +542,8 @@ ofImage_<PixelType>::ofImage_(){
 	height						= 0;
 	bpp							= 0;
 	type						= OF_IMAGE_UNDEFINED;
-	bUseTexture					= true;		// the default is, yes, use a texture
+	bUseTexture			= true;		// the default is, yes, use a texture
+  bDestroyPixels  = false;  // By default, keep pixels around.
 
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
@@ -553,11 +554,12 @@ ofImage_<PixelType>::ofImage_(){
 template<typename PixelType>
 ofImage_<PixelType>::ofImage_(const ofPixels_<PixelType> & pix){
 	width						= 0;
-	height						= 0;
+	height					= 0;
 	bpp							= 0;
 	type						= OF_IMAGE_UNDEFINED;
-	bUseTexture					= true;		// the default is, yes, use a texture
-
+	bUseTexture			= true;		// the default is, yes, use a texture
+  bDestroyPixels  = false;  // By default, keep pixels around.
+  
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
 
@@ -568,10 +570,11 @@ ofImage_<PixelType>::ofImage_(const ofPixels_<PixelType> & pix){
 template<typename PixelType>
 ofImage_<PixelType>::ofImage_(const ofFile & file){
 	width						= 0;
-	height						= 0;
+	height					= 0;
 	bpp							= 0;
 	type						= OF_IMAGE_UNDEFINED;
-	bUseTexture					= true;		// the default is, yes, use a texture
+	bUseTexture			= true;		// the default is, yes, use a texture
+  bDestroyPixels  = false;  // By default, keep pixels around.
 
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
@@ -583,10 +586,11 @@ ofImage_<PixelType>::ofImage_(const ofFile & file){
 template<typename PixelType>
 ofImage_<PixelType>::ofImage_(const string & filename){
 	width						= 0;
-	height						= 0;
+	height					= 0;
 	bpp							= 0;
 	type						= OF_IMAGE_UNDEFINED;
-	bUseTexture					= true;		// the default is, yes, use a texture
+	bUseTexture			= true;		// the default is, yes, use a texture
+  bDestroyPixels  = false;  // By default, keep pixels around.
 
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
@@ -633,13 +637,13 @@ void ofImage_<PixelType>::reloadTexture(){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(const ofFile & file){
-	return loadImage(file.getAbsolutePath());
+bool ofImage_<PixelType>::loadImage(const ofFile & file, bool destroyPixels){
+	return loadImage(file.getAbsolutePath(), destroyPixels);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(string fileName){
+bool ofImage_<PixelType>::loadImage(string fileName, bool destroyPixels){
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	registerImage(this);
 #endif
@@ -655,12 +659,13 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 			tex.setRGToRGBASwizzles(true);
 		}
 	}
+  bDestroyPixels = destroyPixels;
 	update();
 	return bLoadedOk;
 }
 
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
+bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer, bool destroyPixels){
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	registerImage(this);
 #endif
@@ -676,6 +681,7 @@ bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 			tex.setRGToRGBASwizzles(true);
 		}
 	}
+  bDestroyPixels = destroyPixels;
 	update();
 	return bLoadedOk;
 }
@@ -923,6 +929,14 @@ void ofImage_<PixelType>::update(){
 			}
 		}
 		tex.loadData(pixels);
+    
+    // Once pixels are loaded into texture memory, optionally
+    // destroy pixel data to free up memory.
+		if(bDestroyPixels) {
+			if (pixels.isAllocated()) {
+				pixels.clear();
+			}
+		}
 	}
 }
 
