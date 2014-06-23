@@ -196,14 +196,14 @@ public:
     virtual ~ofThreadErrorLogger(){}
 
     virtual void exception(const Poco::Exception& exc){
-        ofLogFatalError("ofBaseErrorHandler::exception") << "Uncaught thread exception: " << exc.displayText();
+        ofLogFatalError("ofThreadErrorLogger::exception") << exc.displayText();
     }
 
     virtual void exception(const std::exception& exc){
-        ofLogFatalError("ofBaseErrorHandler::exception") << "Uncaught thread exception: " << exc.what();
+        ofLogFatalError("ofThreadErrorLogger::exception") << exc.what();
     }
 
     virtual void exception(){
-        ofLogFatalError("ofBaseErrorHandler::exception") << "Uncaught thread exception: Unknown exception.";
+        ofLogFatalError("ofThreadErrorLogger::exception") << "Unknown exception.";
     }
 };
