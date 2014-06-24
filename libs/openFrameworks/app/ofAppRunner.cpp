@@ -62,22 +62,22 @@ void ofURLFileLoaderShutdown();
 
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
 	#include <signal.h>
-    #include <string.h>
+	#include <string.h>
 
-    static bool bExitCalled = false;
+	static bool bExitCalled = false;
 
 	void ofSignalHandler(int signum){
 
-        char* pSignalString = strsignal(signum);
+		char* pSignalString = strsignal(signum);
 
-        if(pSignalString){
-            ofLogVerbose("ofSignalHandler") << pSignalString;
-        }else{
-            ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
-        }
+		if(pSignalString){
+			ofLogVerbose("ofSignalHandler") << pSignalString;
+		}else{
+			ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
+		}
 
 		if(!bExitCalled){
-            bExitCalled = true;
+			bExitCalled = true;
 			std::exit(signum);
 		}
 	}
@@ -100,14 +100,14 @@ void ofRunApp(ofBaseApp * OFSA){
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
 	// see http://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html#Termination-Signals
 	signal(SIGTERM, &ofSignalHandler);
-    signal(SIGQUIT, &ofSignalHandler);
+	signal(SIGQUIT, &ofSignalHandler);
 	signal(SIGINT,  &ofSignalHandler);
 
 	signal(SIGKILL, &ofSignalHandler); // not much to be done here
 	signal(SIGHUP,  &ofSignalHandler); // not much to be done here
 
 	// http://www.gnu.org/software/libc/manual/html_node/Program-Error-Signals.html#Program-Error-Signals
-    signal(SIGABRT, &ofSignalHandler);  // abort signal
+	signal(SIGABRT, &ofSignalHandler);  // abort signal
 #endif
 
 
@@ -128,7 +128,6 @@ void ofRunApp(ofBaseApp * OFSA){
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
 	ofSetWorkingDirectoryToDefault();
-	
 
     ofAddListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofAddListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
