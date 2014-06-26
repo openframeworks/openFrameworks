@@ -4,8 +4,6 @@
 //
 
 #include "ofxAssimpAnimation.h"
-#include "assimp.h"
-#include "aiScene.h"
 
 ofxAssimpAnimation::ofxAssimpAnimation(shared_ptr<const aiScene> scene, aiAnimation * animation) {
     this->scene = scene;
