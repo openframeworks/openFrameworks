@@ -146,6 +146,7 @@ Debug:
 	@echo
 	@echo
 	@echo Compiling $(APPNAME) for Debug
+
 ifndef ABIS_TO_COMPILE_DEBUG
 	@$(MAKE) DebugABI
 else
@@ -185,13 +186,14 @@ else
 endif
 	
 
+
+
 #This rule does the compilation
 #$(OBJS): $(SOURCES)
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cpp
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cxx
 	@echo "Compiling" $<
 	@mkdir -p $(@D)

@@ -391,10 +391,10 @@ ALL_CXXFLAGS =
 ALL_CXXFLAGS += $(OF_PROJECT_CXXFLAGS)
 
 # clean up all extra whitespaces in the CFLAGS
-CFLAGS = $(strip $(ALL_CFLAGS))
+CFLAGS += $(strip $(ALL_CFLAGS))
 
 # clean up all extra whitespaces in the CFLAGS
-CXXFLAGS = $(strip $(ALL_CXXFLAGS))
+CXXFLAGS += $(strip $(ALL_CXXFLAGS))
 
 ################################################################################
 # LDFLAGS
