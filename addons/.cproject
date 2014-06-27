@@ -29,6 +29,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.base.539273223" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.1745096672" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base">
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1531461593" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
+
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
 								</inputType>
@@ -55,5 +56,9 @@
 			<resource resourceType="PROJECT" workspacePath="/addons"/>
 		</configuration>
 	</storageModule>
+<<<<<<< Updated upstream
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+=======
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+>>>>>>> Stashed changes
 </cproject>
