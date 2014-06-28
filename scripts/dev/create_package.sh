@@ -206,12 +206,6 @@ function createPackage {
 	if [ "$pkg_platform" == "osx" ]; then
 	    rm -Rf gles
 	fi
-    
-    cd $pkg_ofroot
-	if [ "$pkg_platform" == "ios" ] || [ "$pkg_platform" == "android" ]; then
-	    rm -Rf $pkg_ofroot/addons/ofxVectorGraphics
-   	    rm -Rf $pkg_ofroot/addons/ofxKinect
-	fi
 	
 	
 	
@@ -352,6 +346,12 @@ function createPackage {
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxMultiTouch
 		rm -Rf ofxAccelerometer
+	fi
+	
+	
+	if [ "$pkg_platform" == "ios" ] || [ "$pkg_platform" == "android" ]; then
+	    rm -Rf ofxVectorGraphics
+   	    rm -Rf ofxKinect
 	fi
 
 	#delete eclipse projects
