@@ -348,7 +348,6 @@ function createPackage {
 		rm -Rf ofxAccelerometer
 	fi
 	
-	
 	if [ "$pkg_platform" == "ios" ] || [ "$pkg_platform" == "android" ]; then
 	    rm -Rf ofxVectorGraphics
    	    rm -Rf ofxKinect
@@ -362,7 +361,7 @@ function createPackage {
 	fi
 	
 	#android, move paths.default.make to paths.make
-	if [ "$pkg_platform" = "android" ]
+	if [ "$pkg_platform" == "android" ]; then
 	    cd ${pkg_root}
 	    mv libs/openFrameworksCompiled/android/paths.default.make libs/openFrameworksCompiled/android/paths.make
 	fi
