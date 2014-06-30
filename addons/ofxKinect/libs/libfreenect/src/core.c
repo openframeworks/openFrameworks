@@ -34,7 +34,6 @@
 #include "freenect_internal.h"
 #include "registration.h"
 #include "cameras.h"
-
 #ifdef BUILD_AUDIO
 #include "loader.h"
 #endif
@@ -44,7 +43,7 @@ FREENECTAPI int freenect_init(freenect_context **ctx, freenect_usb_context *usb_
 	int res;
 
 	*ctx = (freenect_context*)malloc(sizeof(freenect_context));
-	if (!ctx)
+	if (*ctx == NULL)
 		return -1;
 
 	memset(*ctx, 0, sizeof(freenect_context));

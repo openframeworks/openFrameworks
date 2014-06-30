@@ -16,16 +16,15 @@ class ofxAssimpMeshHelper {
 public:
 
 	ofxAssimpMeshHelper();
-    ~ofxAssimpMeshHelper();
     
     bool hasTexture();
-    ofTexture * getTexturePtr();
+    ofTexture & getTextureRef();
     
     aiMesh * mesh; // pointer to the aiMesh we represent.
 
     ofVbo vbo;
     
-    ofxAssimpTexture * assimpTexture;
+    ofxAssimpTexture assimpTexture;
     vector<ofIndexType> indices;
     
     ofMaterial material;

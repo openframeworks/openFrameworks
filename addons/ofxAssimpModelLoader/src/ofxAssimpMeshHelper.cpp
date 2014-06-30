@@ -9,27 +9,16 @@
 
 ofxAssimpMeshHelper::ofxAssimpMeshHelper() {
     mesh = NULL;
-    assimpTexture = NULL;
     blendMode = OF_BLENDMODE_ALPHA;
     twoSided = false;
     hasChanged = false;
     validCache = false;
 }
 
-ofxAssimpMeshHelper::~ofxAssimpMeshHelper() {
-    //
-}
-
 bool ofxAssimpMeshHelper::hasTexture() {
-    if(assimpTexture != NULL) {
-        return assimpTexture->hasTexture();
-    }
-    return false;
+    return assimpTexture.hasTexture();
 }
 
-ofTexture * ofxAssimpMeshHelper::getTexturePtr() {
-    if(hasTexture()) {
-        return assimpTexture->getTexturePtr();
-    }
-    return NULL;
+ofTexture & ofxAssimpMeshHelper::getTextureRef() {
+	return assimpTexture.getTextureRef();
 }
