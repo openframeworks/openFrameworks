@@ -8,7 +8,11 @@
 #include "Poco/LocalDateTime.h"
 #include "Poco/DateTimeFormatter.h"
 #include "Poco/URI.h"
-
+#include "Poco/DateTime.h"
+#include "Poco/DateTimeParser.h"
+#include "Poco/Timestamp.h"
+#include "Poco/Timezone.h"
+#include "Poco/DateTimeFormat.h"
 #include <cctype> // for toupper
 
 
@@ -211,6 +215,15 @@ int ofGetWeekday(){
   time(&curr);
   local   =*(localtime(&curr));
   return local.tm_wday;
+}
+
+
+string ofParseDateTime(string input, string STRING_FORMAT, string OUTPUT_FORMAT){
+    int tzd;
+    Poco::DateTime dt;
+    Poco::DateTimeParser::parse(STRING_FORMAT, input, dt, tzd);
+    dt.makeLocal(Poco::Timezone::tzd());
+    return Poco::DateTimeFormatter::format(dt.timestamp(), OUTPUT_FORMAT);
 }
 
 //--------------------------------------------------

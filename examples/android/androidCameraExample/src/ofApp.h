@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxAndroid.h"
-
+#include "ofxHTTP.h"
 class ofApp : public ofxAndroidApp{
 	
 	public:
@@ -36,5 +36,7 @@ class ofApp : public ofxAndroidApp{
 		int one_second_time;
 		int camera_fps;
 		int frames_one_sec;
+		
+		ofx::HTTP::BasicIPVideoServer::SharedPtr server;
 
 };

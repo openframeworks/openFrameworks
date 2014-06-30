@@ -2,6 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    ofSetVerticalSync(true);
     ofSetLogLevel(OF_LOG_VERBOSE);
     ofBackground(50, 0);
 
@@ -11,7 +12,7 @@ void ofApp::setup(){
     bAnimateMouse = false;
     animationPosition = 0;
     
-    model.loadModel("astroBoy_walk.dae", true);
+    model.loadModel("potus3012.dae", true);
     model.setPosition(ofGetWidth() * 0.5, (float)ofGetHeight() * 0.75 , 0);
     model.setLoopStateForAllAnimations(OF_LOOP_NORMAL);
     model.playAllAnimations();

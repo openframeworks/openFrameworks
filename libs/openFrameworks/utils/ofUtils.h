@@ -51,9 +51,18 @@ unsigned long long ofGetElapsedTimeMicros();
 /// \returns the number of frames rendered since the program started.
 int ofGetFrameNum();
 
+
+
+string  ofParseDateTime(const string &input, const string &STRING_FORMAT, const string &OUTPUT_FORMAT);
+
+
+//number of seconds since 1970
+unsigned int ofGetUnixTime();
+
 /// \brief Get the seconds after the minute.
 /// \returns the seconds after the minute [0-59].
 int ofGetSeconds();
+
 
 /// \brief Get minutes after the hour.
 /// \returns the minutes after the hour [0-59].
@@ -312,6 +321,10 @@ string ofToString(const T& value, int width, char fill ){
 	out << fixed << setfill(fill) << setw(width) << value;
 	return out.str();
 }
+
+
+
+
 
 /// like sprintf "%04.2d" or "%04.2f" format, in this example precision=2, width=4, fill='0'
 template <class T>
