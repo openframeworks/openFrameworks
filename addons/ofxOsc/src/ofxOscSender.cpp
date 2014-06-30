@@ -85,9 +85,10 @@ void ofxOscSender::sendMessage( ofxOscMessage& message )
     osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
 
 	// serialise the message
-	p << osc::BeginBundleImmediate;
+    //FIXME: TB removing the bundle dependancy for simple messages (so arduino can use)
+	//p << osc::BeginBundleImmediate;
 	appendMessage( message, p );
-	p << osc::EndBundle;
+	//p << osc::EndBundle;
     
 	socket->Send( p.Data(), p.Size() );
 }
