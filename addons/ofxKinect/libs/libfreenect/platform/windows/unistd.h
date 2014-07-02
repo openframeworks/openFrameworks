@@ -28,10 +28,10 @@
 
 #include <stdint.h>
 
-// MinGW defines _SSIZE_T_DEFINED in sys/types.h when it defines ssize_t to be a long.
+// MinGW defines _SSIZE_T_ in sys/types.h when it defines ssize_t to be a long.
 // Redefining it causes an error.
 // MSVC does not define this.
-#ifndef _SSIZE_T_DEFINED
-#define _SSIZE_T_DEFINED
+#ifndef _SSIZE_T_
+#define _SSIZE_T_
 typedef long ssize_t;
-#endif // _SSIZE_T_DEFINED
+#endif // _SSIZE_T_
