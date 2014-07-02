@@ -1,3 +1,28 @@
+OF 0.8.3
+========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
+        
+PLATFORM SPECIFIC
+-----------------
+###OSX
+	/ ofAppGLFWWindow: Drag drop files were coming in empty
+### Windows 
+	/ ofAppGLFWWindow: Drag drop files were coming in empty
+
+
+CORE ADDONS
+-----------
+### ofxKinect
+	/ small fixes for CodeBlocks compilation on Windows
+
+
+
 OF 0.8.2
 ========
  
