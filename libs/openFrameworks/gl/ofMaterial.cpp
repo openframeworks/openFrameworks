@@ -192,7 +192,7 @@ void ofMaterial::beginShader(int texType){
 		break;
 	}
 
-	ofMatrix4x4 normalMatrix = ofMatrix4x4::getTransposedOf(ofGetCurrentMatrix(OF_MATRIX_MODELVIEW).getInverse());
+	const ofMatrix4x4 & normalMatrix = ofGetCurrentNormalMatrix();
 	currentShader->begin();
 	currentShader->setUniformMatrix4f("normalMatrix",normalMatrix);
 	currentShader->setUniform4fv("mat_ambient", &ambient.r);

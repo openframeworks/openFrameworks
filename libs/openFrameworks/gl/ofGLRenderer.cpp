@@ -576,6 +576,7 @@ void ofGLRenderer::multMatrix (const float *m){
 	}
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::loadViewMatrix(const ofMatrix4x4 & m){
 	int matrixMode;
 	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
@@ -594,12 +595,19 @@ void ofGLRenderer::loadViewMatrix(const ofMatrix4x4 & m){
 	}
 }
 
+//----------------------------------------------------------
 void ofGLRenderer::multViewMatrix(const ofMatrix4x4 & m){
 	ofLogError() << "mutlViewMatrix not implemented on fixed GL renderer";
 }
 
+//----------------------------------------------------------
 ofMatrix4x4 ofGLRenderer::getCurrentViewMatrix() const{
 	return matrixStack.getViewMatrix();
+}
+
+//----------------------------------------------------------
+ofMatrix4x4 ofGLRenderer::getCurrentNormalMatrix() const{
+	return ofMatrix4x4::getTransposedOf(getCurrentMatrix(OF_MATRIX_MODELVIEW).getInverse());
 }
 
 //----------------------------------------------------------

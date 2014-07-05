@@ -306,6 +306,11 @@ ofMatrix4x4 ofGetCurrentOrientationMatrix(){
 }
 
 //----------------------------------------------------------
+ofMatrix4x4 ofGetCurrentNormalMatrix(){
+	return renderer->getCurrentNormalMatrix();
+}
+
+//----------------------------------------------------------
 void ofTranslate(const ofPoint& p){
 	renderer->translate(p);
 }

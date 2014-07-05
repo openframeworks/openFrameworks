@@ -63,8 +63,17 @@ ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode_);
 ///        passed on to the GPU.
 ///
 ///        Currently, only GL Programmable Renderer and GL Renderer
-///        implement getCurrentMatrix.
+///        implement ofGetCurrentOrientationMatrix.
 ofMatrix4x4 ofGetCurrentOrientationMatrix();
+
+/// \brief Query the current (oF internal) Normal Matrix state.
+/// \note  The matrix returned is the transposed of the inverse of the
+///        view matrix
+///
+///        Currently, only GL Programmable Renderer and GL Renderer
+///        implement ofGetCurrentNormalMatrix.
+ofMatrix4x4 ofGetCurrentNormalMatrix();
+
 void ofTranslate(float x, float y, float z = 0);
 void ofTranslate(const ofPoint & p);
 void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);

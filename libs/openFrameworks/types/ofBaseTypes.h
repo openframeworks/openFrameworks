@@ -339,6 +339,7 @@ public:
 	virtual void loadViewMatrix(const ofMatrix4x4 & m){};
 	virtual void multViewMatrix(const ofMatrix4x4 & m){}
 	virtual ofMatrix4x4 getCurrentViewMatrix() const { return ofMatrix4x4();};
+	virtual ofMatrix4x4 getCurrentNormalMatrix() const { return ofMatrix4x4();};
 	
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults(){};

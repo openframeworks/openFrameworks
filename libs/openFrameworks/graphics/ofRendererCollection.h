@@ -90,6 +90,28 @@ public:
 		}
 	};
 
+
+	ofMatrix4x4 getCurrentOrientationMatrix() const{
+		static ofMatrix4x4 identityMatrix;
+		if (!renderers.empty()) {
+			return renderers.front()->getCurrentOrientationMatrix();
+		} else {
+			ofLogWarning() << "No renderer in renderer collection, but current matrix requested. Returning identity matrix.";
+			return identityMatrix;
+		}
+	};
+
+
+	ofMatrix4x4 getCurrentNormalMatrix() const{
+		static ofMatrix4x4 identityMatrix;
+		if (!renderers.empty()) {
+			return renderers.front()->getCurrentNormalMatrix();
+		} else {
+			ofLogWarning() << "No renderer in renderer collection, but current matrix requested. Returning identity matrix.";
+			return identityMatrix;
+		}
+	};
+
 	//--------------------------------------------
 	// transformations
 	 void pushView(){
