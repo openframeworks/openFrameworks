@@ -588,6 +588,11 @@ ofMatrix4x4 ofGLProgrammableRenderer::getCurrentViewMatrix() const{
 }
 
 //----------------------------------------------------------
+ofMatrix4x4 ofGLProgrammableRenderer::getCurrentNormalMatrix() const{
+	return ofMatrix4x4::getTransposedOf(getCurrentMatrix(OF_MATRIX_MODELVIEW).getInverse());
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 	if(!currentShader) return;
 	// uploads the current matrix to the current shader.
