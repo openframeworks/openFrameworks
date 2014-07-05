@@ -4,6 +4,7 @@
 #include "ofBaseApp.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofAppRunner.h"
+#include "Poco/URI.h"
 
 #ifdef TARGET_LINUX
 	#include "ofIcon.h"
@@ -16,7 +17,6 @@
 	#endif
 	#include "GLFW/glfw3native.h"
 	#include <X11/Xatom.h>
-	#include "Poco/URI.h"
 #elif defined(TARGET_OSX)
 	#include <Cocoa/Cocoa.h>
 	#define GLFW_EXPOSE_NATIVE_COCOA
@@ -916,13 +916,11 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 //------------------------------------------------------------
 void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString) {
 	ofDragInfo drag;
-	drag.position.set(ofGetMouseX()*instance->pixelScreenCoordScale, ofGetMouseY()*instance->pixelScreenCoordScale);
+	drag.position.set(ofGetMouseX(), ofGetMouseY());
 	drag.files.resize(numFiles);
-#ifdef TARGET_LINUX
 	for(int i=0; i<(int)drag.files.size(); i++){
 		drag.files[i] = Poco::URI(dropString[i]).getPath();
 	}
-#endif
 	ofNotifyDragEvent(drag);
 }
 
