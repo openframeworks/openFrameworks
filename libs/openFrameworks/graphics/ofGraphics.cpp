@@ -7,12 +7,12 @@
 #include "ofRendererCollection.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
-#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID)
+#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 #include "ofCairoRenderer.h"
 #endif
 
 
-#ifndef TARGET_LINUX_ARM
+#if !defined(TARGET_LINUX_ARM) && !defined(TARGET_EMSCRIPTEN)
 	#ifdef TARGET_OSX
 		#include <OpenGL/glu.h>
 	#endif
@@ -60,16 +60,22 @@ static ofVboMesh gradientMesh;
 void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
 	if(rendererType==ofGLProgrammableRenderer::TYPE){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
+#ifndef TARGET_PROGRAMMABLE_GL
 	}else if(rendererType==ofGLRenderer::TYPE){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
-#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID)
+#endif
+#if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 	}else if(rendererType==ofCairoRenderer::TYPE){
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofCairoRenderer),setDefaults);
 #endif
 	}else{
 		ofLogError("ofGraphics") << "ofSetCurrentRenderer(): unknown renderer type " << rendererType << ", setting an ofGLRenderer";
 		ofLogError("ofGraphics") << "if you want to use a custom renderer, pass an ofPtr to a new instance of it";
+#ifndef TARGET_PROGRAMMABLE_GL
 		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+#else
+		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
+#endif
 	}
 }
 
@@ -119,7 +125,7 @@ void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectan
 	rendererCollection->renderers.push_back(ofGetGLRenderer());
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	
-	ofSetCurrentRenderer(rendererCollection,true);
+	ofSetCurrentRenderer(cairoScreenshot, true);
 	bScreenShotStarted = true;
 }
 
@@ -295,6 +301,11 @@ ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode_){
 }
 
 //----------------------------------------------------------
+ofMatrix4x4 ofGetCurrentOrientationMatrix(){
+	return renderer->getCurrentOrientationMatrix();
+}
+
+//----------------------------------------------------------
 void ofTranslate(const ofPoint& p){
 	renderer->translate(p);
 }
@@ -364,6 +375,18 @@ void ofMultMatrix (const float *m){
 //----------------------------------------------------------
 void ofSetMatrixMode(ofMatrixMode matrixMode){
 	renderer->matrixMode(matrixMode);
+}
+
+void ofLoadViewMatrix(const ofMatrix4x4 & m){
+	renderer->loadViewMatrix(m);
+}
+
+void ofMultViewMatrix(const ofMatrix4x4 & m){
+	renderer->multViewMatrix(m);
+}
+
+ofMatrix4x4 ofGetCurrentViewMatrix(){
+	return renderer->getCurrentViewMatrix();
 }
 
 // end transformation matrix related functions
@@ -439,10 +462,12 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 	float w = ofGetWidth(), h = ofGetHeight();
 	gradientMesh.clear();
 	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
-#ifdef TARGET_OPENGLES
-	if(ofIsGLProgrammableRenderer()) gradientMesh.setUsage(GL_STREAM_DRAW);
-#else
-	gradientMesh.setUsage(GL_STREAM_DRAW);
+#ifndef TARGET_EMSCRIPTEN
+	#ifdef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()) gradientMesh.setUsage(GL_STREAM_DRAW);
+	#else
+		gradientMesh.setUsage(GL_STREAM_DRAW);
+	#endif
 #endif
 	if(mode == OF_GRADIENT_CIRCULAR) {
 		// this could be optimized by building a single mesh once, then copying

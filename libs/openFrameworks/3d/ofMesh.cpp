@@ -613,11 +613,6 @@ void ofMesh::setIndex(ofIndexType index, ofIndexType  val){
 }
 
 //--------------------------------------------------------------
-void ofMesh::setName(string name_){
-	name = name_;
-}
-
-//--------------------------------------------------------------
 void ofMesh::setupIndicesAuto(){
 	bIndicesChanged = true;
 	bFacesDirty = true;
@@ -1916,9 +1911,12 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
     }
     mesh.setMode(mode);
     
+    radiusSegments = radiusSegments+1;
     int capSegs = numCapSegments;
+    capSegs = capSegs+1;
+    heightSegments = heightSegments+1;
     if(heightSegments < 2) heightSegments = 2;
-    if(capSegs < 2) capSegs = 2;
+    if( capSegs < 2 ) bCapped = false;
     if(!bCapped) capSegs=1;
     
     float angleIncRadius = -1 * (TWO_PI/((float)radiusSegments-1.f));
@@ -1933,11 +1931,14 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
     
     int vertOffset = 0;
     
-    float maxTexY           = heightSegments-1.f + (capSegs*2)-2.f;
+    float maxTexY   = heightSegments-1.f;
+    if(capSegs > 0) {
+        maxTexY += (capSegs*2)-2.f;
+    }
     float maxTexYNormalized = (capSegs-1.f) / maxTexY;
     
     // add the top cap //
-    if(bCapped) {
+    if(bCapped && capSegs > 0) {
         normal.set(0,-1,0);
         for(int iy = 0; iy < capSegs; iy++) {
             for(int ix = 0; ix < radiusSegments; ix++) {
@@ -2038,7 +2039,7 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
     vertOffset = mesh.getNumVertices();
     
     // add the bottom cap
-    if(bCapped) {
+    if(bCapped && capSegs > 0) {
         minTexYNormalized = maxTexYNormalized;
         maxTexYNormalized   = 1.f;
         
@@ -2100,9 +2101,14 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     }
     mesh.setMode(mode);
     
+    radiusSegments  = radiusSegments+1;
+    capSegments     = capSegments+1;
+    heightSegments  = heightSegments+1;
     if(heightSegments < 2) heightSegments = 2;
     int capSegs = capSegments;
-    if(capSegs < 2) capSegs = 2;
+    if( capSegs < 2 ) {
+        capSegs = 0;
+    }
     
     
     float angleIncRadius    = -1.f * ((TWO_PI/((float)radiusSegments-1.f)));
@@ -2118,7 +2124,10 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     
     int vertOffset = 0;
     
-    float maxTexY = heightSegments-1.f + capSegs-1.f;
+    float maxTexY = heightSegments-1.f;
+    if(capSegs > 0) {
+        maxTexY += capSegs-1.f;
+    }
     
     ofVec3f startVec(0, -halfH-1.f, 0);
     
@@ -2205,28 +2214,32 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     }
     
     if(mode == OF_PRIMITIVE_TRIANGLES) {
-        for(int y = 0; y < capSegs-1; y++) {
-            for(int x = 0; x < radiusSegments-1; x++) {
-                //if(y > 0) {
-                // first triangle //
-                mesh.addIndex( (y)*radiusSegments + x + vertOffset );
-                mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
-                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
-                //}
-                
-                if(y < capSegs-1) {
-                    // second triangle //
+        if( capSegs > 0 ) {
+            for(int y = 0; y < capSegs-1; y++) {
+                for(int x = 0; x < radiusSegments-1; x++) {
+                    //if(y > 0) {
+                    // first triangle //
+                    mesh.addIndex( (y)*radiusSegments + x + vertOffset );
                     mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
-                    mesh.addIndex( (y+1)*radiusSegments + x+1 + vertOffset);
                     mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                    //}
+                    
+                    if(y < capSegs-1) {
+                        // second triangle //
+                        mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
+                        mesh.addIndex( (y+1)*radiusSegments + x+1 + vertOffset);
+                        mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                    }
                 }
             }
         }
     } else {
-        for(int y = 0; y < capSegs-1; y++) {
-            for(int x = 0; x < radiusSegments; x++) {
-                mesh.addIndex( (y)*radiusSegments + x + vertOffset );
-                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+        if(capSegs > 0 ) {
+            for(int y = 0; y < capSegs-1; y++) {
+                for(int x = 0; x < radiusSegments; x++) {
+                    mesh.addIndex( (y)*radiusSegments + x + vertOffset );
+                    mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                }
             }
         }
     }
@@ -2242,6 +2255,14 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
     // mesh only available as triangles //
     ofMesh mesh;
     mesh.setMode( OF_PRIMITIVE_TRIANGLES );
+    
+    resX = resX + 1;
+    resY = resY + 1;
+    resZ = resZ + 1;
+    
+    if( resX < 2 ) resX = 0;
+    if( resY < 2 ) resY = 0;
+    if( resZ < 2 ) resZ = 0;
     
     // halves //
     float halfW = width * .5f;

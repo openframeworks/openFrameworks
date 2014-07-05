@@ -7,6 +7,9 @@ ofxiOSVideoGrabber::ofxiOSVideoGrabber() {
 	grabber = ofPtr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
 }
 
+ofxiOSVideoGrabber::~ofxiOSVideoGrabber() {
+}
+
 //needs implementing
 vector <ofVideoDevice> ofxiOSVideoGrabber::listDevices() {
 	return grabber->listDevices();

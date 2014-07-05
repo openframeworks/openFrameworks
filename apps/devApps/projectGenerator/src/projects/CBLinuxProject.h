@@ -5,7 +5,8 @@
  *      Author: arturo
  */
 
-#pragma once
+#ifndef CBLINUXPROJECT_H_
+#define CBLINUXPROJECT_H_
 
 #include "ofConstants.h"
 #include "pugixml.hpp"
@@ -17,8 +18,7 @@ public:
 
 	enum Arch{
 		Linux,
-		Linux64,
-        LinuxArmv6l
+		Linux64
 	};
 
     void setup();
@@ -33,3 +33,5 @@ private:
 
 	Arch arch;
 };
+
+#endif /* CBLINUXPROJECT_H_ */

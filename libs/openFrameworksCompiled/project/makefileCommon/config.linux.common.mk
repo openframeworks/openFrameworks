@@ -24,9 +24,11 @@ endif
 
 #check if gtk exists and add it
 ifeq ($(CROSS_COMPILING),1)
-	HAS_SYSTEM_GTK = $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gtk+-2.0 --exists; echo $$?)
+	HAS_SYSTEM_GTK3 = $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gtk+-3.0 --exists; echo $$?)
+	HAS_SYSTEM_GTK2 = $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gtk+-2.0 --exists; echo $$?)
 else
-	HAS_SYSTEM_GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
+	HAS_SYSTEM_GTK3 = $(shell pkg-config gtk+-3.0 --exists; echo $$?)
+	HAS_SYSTEM_GTK2 = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
 endif
 
 #check if mpg123 exists and add it
@@ -74,7 +76,10 @@ endif
 PLATFORM_DEFINES =
 
 # add OF_USING_GTK define IF we have it defined as a system library
-ifeq ($(HAS_SYSTEM_GTK),0)
+ifeq ($(HAS_SYSTEM_GTK2),0)
+    PLATFORM_DEFINES += OF_USING_GTK
+endif
+ifeq ($(HAS_SYSTEM_GTK3),0)
     PLATFORM_DEFINES += OF_USING_GTK
 endif
 
@@ -143,7 +148,7 @@ PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-section
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
@@ -241,6 +246,7 @@ ifneq ($(PLATFORM_ARCH),armv6l)
     PLATFORM_LIBRARIES += Xrandr
     PLATFORM_LIBRARIES += Xxf86vm 
     PLATFORM_LIBRARIES += Xi 
+    PLATFORM_LIBRARIES += Xcursor 
     PLATFORM_LIBRARIES += dl 
     PLATFORM_LIBRARIES += pthread
 endif
@@ -285,8 +291,12 @@ PLATFORM_SHARED_LIBRARIES =
 	endif
 	
 	# conditionally add GTK
-	ifeq ($(HAS_SYSTEM_GTK),0)
-	    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
+	ifeq ($(HAS_SYSTEM_GTK3),0)
+	    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-3.0
+	else
+		ifeq ($(HAS_SYSTEM_GTK2),0)
+		    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
+		endif
 	endif
 	
 	# conditionally add mpg123

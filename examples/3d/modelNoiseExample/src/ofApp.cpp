@@ -80,7 +80,13 @@ void ofApp::drawWithMesh(){
 	ofVec3f position = model.getPosition();
 	float normalizedScale = model.getNormalizedScale();
 	ofVboMesh mesh = model.getMesh(0);
-	ofTexture texture = model.getTextureForMesh(0);
+	ofTexture texture;
+    ofxAssimpMeshHelper& meshHelper = model.getMeshHelper( 0 );
+    bool bHasTexture = meshHelper.hasTexture();
+    if( bHasTexture ) {
+        texture = model.getTextureForMesh(0);
+    }
+    
 	ofMaterial material = model.getMaterialForMesh(0);
 	
     ofPushMatrix();
@@ -106,12 +112,12 @@ void ofApp::drawWithMesh(){
 	}
 		
 	//draw the model manually
-	texture.bind();
+	if(bHasTexture) texture.bind();
 	material.begin();
 	//mesh.drawWireframe(); //you can draw wireframe too
 	mesh.drawFaces();
 	material.end();
-	texture.unbind();
+	if(bHasTexture) texture.unbind();
 	
 	ofPopMatrix();
 

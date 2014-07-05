@@ -1,4 +1,7 @@
-!ofAddons.h
+#########################
+# core addons
+#########################
+
 !.project
 !ofx3DModelLoader
 !ofxAccelerometer
@@ -18,6 +21,7 @@ ofxAndroid/ofAndroidLib/gen
 !ofxThreadedImageLoader
 !ofxVectorGraphics
 !ofxXmlSettings
+!ofxEmscripten
 
 # don't ignore the .gitignore file
 !.gitignore

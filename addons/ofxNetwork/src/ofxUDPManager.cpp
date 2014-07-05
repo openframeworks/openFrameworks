@@ -61,6 +61,9 @@ bool ofxUDPManager::Create()
 	{
 		int unused = true;
 		setsockopt(m_hSocket, SOL_SOCKET, SO_REUSEADDR, (char*)&unused, sizeof(unused));
+		#ifdef __APPLE__   // MacOS/X requires an additional call
+			setsockopt(m_hSocket, SOL_SOCKET, SO_REUSEPORT, (char*)&unused, sizeof(unused));
+		#endif
 	}
 	bool ret = m_hSocket !=	INVALID_SOCKET;
 	if(!ret) ofxNetworkCheckError();

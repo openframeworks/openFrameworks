@@ -33,7 +33,7 @@ void ofApp::searchGoogleImages() {
     // create the google url string
     string term         = "openframeworks";
     string googleImgURL = "http://www.google.com/search?q="+term+"&tbm=isch&sout=1&tbs=isz&&start="+ofToString(page);
-    cout << "seraching for " << googleImgURL << endl;
+    cout << "searching for " << googleImgURL << endl;
     
     ofHttpResponse res = ofLoadURL(googleImgURL);
     if(res.status > 0) {

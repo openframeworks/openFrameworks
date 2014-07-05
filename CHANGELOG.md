@@ -1,5 +1,138 @@
+OF 0.8.3
+========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
+        
+PLATFORM SPECIFIC
+-----------------
+###OSX
+	/ ofAppGLFWWindow: Drag drop files were coming in empty
+### Windows 
+	/ ofAppGLFWWindow: Drag drop files were coming in empty
+
+
+CORE ADDONS
+-----------
+### ofxKinect
+	/ small fixes for CodeBlocks compilation on Windows
+
+
+
+OF 0.8.2
+========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
+
+CORE
+----
+### 3d
+	/ fix of3DPrimitive copy constructor not copying node
+        
+### app
+	+ ofAppEGLWindow added new methods hasMouse()/hasKeyboard() to provide info on whether mouse/keyboard were detected
+	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
+	/ ofAppGLFWWindow: fix key mappings on non english keyboards
+	/ ofAppGLFWWindow: Cleaner exit code for GLFW based apps. 
+	/ ofAppGLFWWindow: fixes for better Retina support. 
+	/ Updated GLFW to latest master branch
+	/ ofAppGLFWWindow: added patch to handle special keys and cases. 
+	/ ofAppGLFWWindow: better support for non-english keyboards. 
+	/ ofAppGLFWWindow: small bugfix for GLFW drag drop callback for retina screens. Closes
+	/ ofSystem bugfix for successive calls. Now uses pclose instead of fclose.
+### events
+	+ fix ofSetFrameRate to be more accurate
+	+ add keycode, scancode and unicode codepoint to ofKeyEventArgs
+### gl
+	+ ofFbo: added new method to attach an external texture
+	+ ofFbo: fix regression on min/max filter settings
+### Graphics
+	/ ofImage: convert format when loading different image types
+	/ Fix ofSetupPerspective not using passed width and height
+	/ of3DPrimitives: fix copy constructor
+### Math
+	/ fix ofQuaternion setOrientation and getEulerOrientation
+	/ ofMatrix: add case to catch invalid matrix queries
+	+ ofGetCurrentOrientationMatrix(): query current orientation matrix state (supported by ofGLProgrammableRenderer, ofGLRenderer)
+### Utils
+	/ ofThread now uses Class name for logging channel (was thread name)
+	/ ofURLFileLoader: better shutdown, don't shutdown if it wasn't initialized + wait thread
+	/ ofXml: fixes crash on empty document
+	/ ofSystem: fix for second and later calls failing
+	+ ofThread argument for tryJoin time.
+	/ ofThread overall, documentation and example fixes
+	/ ofThread change to infinite wait. 
+	/ ofParameterGroup: fix to allow nested ofParameterGroups
+	/ ofParameterGroup: memory leak fix
+	/ ofThread: detach thread on stop if it's not being waited.
+	/ ofParameter(Group) fix polymorphism on parameter groups
+        
+PLATFORM SPECIFIC
+-----------------
+### Android
+	/ fix package generation, was missing paths.make
+	/ fix 32 bits ndk path
+	/ update project files to latest SDK/ADT (20140321)
+	/ fixed shader in shader example
+	/ disable x86 in assimp and opencv examples
+	/ shader and assimp examples reload gl resources when the app resumes
+### iOS
+	+ implement setSpeed() for video player
+	+ ofxiOSGetDeviceInfo for querying major / minor versions, device type and device string
+	+ move to cleaner NSAutoreleasePool for iOS projects. 
+	/ iOS-VideoGrabber memory related fixes
+	/ ofxiOSVideoPlayer: setSpeed functionality. 
+	+ ofxiOSSoundPlayer: added getAVSoundPlayer() method
+	/ bugfix for ofxiOSImagePicker crashing on exit. 
+	/ ofxiOSImagePicker: switch to using ofPixels.
+### Linux
+	/ video: fixes for videos which pixels have padding
+	/ video: close pipeline properly by sending and waiting for EOS event
+	/ system: fix dialog boxes
+	/ install & make: detect and use gtk 3 instead of 2 if it's available
+###OSX
+	/ Reduce warnings on OSX
+	/ ofxOsc: Fix for issue with UDP multicast socket on OSX.
+### Windows
+	/ ofAppGLFWWindow: Correct fullscreen multi monitor display on Windows
+
+
+CORE ADDONS
+-----------
+### ofxAssimpModelLoader
+	/ fix to be able to put loaders on vectors
+	/ use shared_ptr for assimp scene
+### ofxGui
+	+ ofxSlider: added get/setMin/Max
+	/ ofxGui: fixed for mouse registration issues with ofxGui. ofxPanel was registering for mouse events 3 times on setup! - ofxButton was registering for events in setup and registering again in the destructor. - ofxSlider was never unregistering mouse events.
+### ofxKinect
+	/ bugfix to fix Kinect not being able to re-open if device was not correctly shutdown. 
+	/ bugfix for Kinect IR image crashing. Now sets the correct image sizes. 
+### ofxNetwork
+	/ fix port reuse on osx
+### ofxOsc
+	+ added blob support. ability to send ofBuffers as blobs. Note: max data size limited by network buffer sizes. 
+        
+        
+
 OF 0.8.1
 ========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
 
 ```
 _____/\\\\\\\______________/\\\\\\\\\_______________/\\\_        
@@ -27,22 +160,50 @@ CORE
     + ofGetCurrentMatrix() - returns current OpenGL matrix state (modelView-, projection- or textureMatrix) for ofGLProgrammableRenderer, ofGLRenderer.
 ### App
 	/ updated GLFW to latest master (20131204)
+	- delete temporary buffer in ofAppGlutWindow
+	+ GLFW now detects when an OF app has been launched as Retina
+	/ Fixed unset variables in ofMouseEventArgs
+	- remove early, unnecessary ESC check
+	/ ofxAppEGLWindow fix
 ### Communication
 	/ use binary mode (don't convert breaklines)
 ### Events
 ### Graphics
 	/ ofCairoRenderer: fix for moveTo when drawing ofPaths
 	/ ofDrawBox: on wireframe mode was recreating vertices on every call
+	/ fix ofImageType retrieval issue in ofTexture.readToPixels()
+	+ ofColor: added setHueAngle and getHueAngle
+	/ Fix for (ofColor == and != operators ignoring alpha)
 ### Math
         / ofMatrix3x3: fix incorrect multiplication
+	+ Added read-only access to current Matrix Stack
+	/ fix critical ModelViewMatrix issue when ofFbo::begin(setupScreen==false)
 ### GL
 	/ ofMaterial: fixed back emmisive material
 	/ Fix point sprites in openGL 3+
+        / ofShader: #pragma include directive can now deal with relative paths for include files
+	/ Fix for mesh resolution parameters
+	/ Fix for the drawing of ofDrawArrow
+	/ fix critical issue w/ ofVbo shallow copies (custom attributes)
+        / ofVbo custom attribute stride
+        / fix ofShader include path behaviour
+	/ Modify ofVbo bind method to allow 2d vertices
+	/ Enabling GL_PROGRAM_POINT_SIZE in ofGLProgrammableRenderer
+	- remove setName from ofMesh
+	/ Assign allocated flag to true after allocating offscreenGWorldPixels
+	/ Fix gl programmable renderer of draw axis
+	/ fixed ofMaterial for opengl ES1
+	/ check if currentShader exists - prevents segfault	
+	/ add more sophisticated openGL capability checks
+	+ displacement map example
 ### Sound
 ### Types
 ### Utils
 	+ ofXml(const& string) constructor added
-
+	/ Fixed loadDialogBrowseCallback to return UNICODE string
+	/ ofXml addressing seg errors when clearing
+	/ tiny log fix in ofSerial
+	+ ofXml get attribute to work with paths && non-paths
 ### Video	
 
 PLATFORM SPECIFIC
@@ -53,24 +214,66 @@ PLATFORM SPECIFIC
 	/ zip uncompress moved to java
 	/ several fixes in pause / resume workflow
 	/ fix camera not working on some devices + use external texture, should be faster
+	/ camera: add recording hint for fastest fps on newest devices
 	+ support for x86
-
+	/ Android building script error when building from Windows
+	/ Bug fixed, Compile error in ofxAndroidSoundPlayer
 ### Mac OS X
+	/ tr1/memory compile issue on OS X 10.9
+	/ use cc.openframeworks.ofapp as identifier on osx
+	/ ES3 + xcode5 fix for missing GL_STENCIL_INDEX
 ### iOS
+	/ iOSVideoGrabber memory leak fixes
+	/ iOS Example Fixes
+	+ added iosStoryboardExample
+	/ iOS-Storyboard Example Fix for <iOS7
+	/ Fix iOS SoundEngine memory leak
+	/ Use correct audio category for routing audio to speaker
+	+ Enabled pointsprites for OpenGLES
+	/ ofxiOSUIImageToOFTexture fix inside ofxiOSExtras
+	/ fixed depth issue with ios assimp example
+	/ texture cache fix for ofxiOSVideoPlayer
+	/ ios movie player example fix
+	/ ios feature for getting / setting clipboard string
 ### Linux
 	/ alsa as default instead of pulseaudio lower latency
 	/ makefile fixes for better eclipse parsing
 	/ videoplayer: fix alpha formats for gstreamer 0.10
 	+ install_dependencies installs libusb so ofxKinect compiles
 	- removed portaudio soundstream and all dependencies
+	/ Fix install_dependencies.sh for Fedora
+	/ project generator simple/linux: compile in release mode instead of debug
 ### Windows
 	/ fixed disable vertical sync through update in glfw
+	/ fix for ofGetFrameRate() going to infinity at high fps on windows
+	/ replaced poco 1.4.6 libs with 1.4.3p libs for vs2012
+	/ Changes to ofGstVideo files to compile with 0.10 gstreamer and fixup file names in Win32
+	/ Improve Dialog Win32
+### Linux Arm 
+	/ Fbo with ofClear now works properly
+	/ Fbo/Shader behavior now consistent with other platforms (can be used in update and draw)
+	/ Shaders used in draw() no longer cause GL Errors and corrupt display
+
  
 CORE ADDONS
 -----------
+### ofxAssimpModelLoader
+	/ Remove ofMesh setName() in ofxAssimpModelLoader
+### ofxKinect
+	+ Support for k4w and 1473 kinect with motor / accel / led control
+	/ Bugfix for disconnecting 1473 and K4W devices on OS X
+	/ Fixes typo in ofxCvImage that broke getRoiPixelsRef
+	+ added Windows driver install info to kinectExample header
+### ofxGui
+	+ added ofParameter in the setup routine of ofxGuiGroup
 
 PROJECT GENERATOR
 -----------------
+
+	/ PG recompiled against 0.8.1
+	+ retina enabled for OSX
+	+ added support for adding frameworks on OSX
+
 
 EXAMPLES
 --------
@@ -211,7 +414,7 @@ CORE
 ### Math
         + 1D interpolation functions: ofCosine|Cubic|Catmull|HermiteInterpolate
         + generic wrapping function float ofWrap(float value, float from, float to)
-        / ofWrapDegrees, ofWrapRadians only wrap the new ofWrap, don't enforce a 360°/2Pi cycle anymore.
+        / ofWrapDegrees, ofWrapRadians only wrap the new ofWrap, don't enforce a 360Â°/2Pi cycle anymore.
         / ofxVectorMath now included in core (as ofVectorMath)
 
 ### GL

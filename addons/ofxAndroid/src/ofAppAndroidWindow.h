@@ -9,7 +9,7 @@
 
 #include "ofAppBaseWindow.h"
 
-class ofAppAndroidWindow: public ofAppBaseWindow {
+class ofAppAndroidWindow: public ofAppBaseGLESWindow {
 public:
 	ofAppAndroidWindow();
 	virtual ~ofAppAndroidWindow();

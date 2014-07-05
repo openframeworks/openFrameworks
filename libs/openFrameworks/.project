@@ -87,7 +87,7 @@
 		<link>
 			<name>ofxAndroid</name>
 			<type>2</type>
-			<location>/Users/welovecode/Documents/openFrameworks_git/addons/ofxAndroid</location>
+			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/addons/ofxAndroid</locationURI>
 		</link>
 		<link>
 			<name>project</name>

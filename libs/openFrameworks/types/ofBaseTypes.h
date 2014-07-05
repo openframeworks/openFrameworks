@@ -1,14 +1,3 @@
-/*
- *  ofBaseTypes.h
- *  openFrameworksLib
- *
- *  Created by zachary lieberman on 1/9/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- *
- */
-
-
-
 #pragma once
 #include "ofPoint.h"
 #include "ofRectangle.h"
@@ -18,6 +7,7 @@
 #include "ofPixels.h"
 #include "ofMatrix4x4.h"
 #include "ofTypes.h"
+#include "ofURLFileLoader.h"
 
 class ofAbstractParameter;
 
@@ -32,7 +22,10 @@ class ofPath;
 class ofPolyline;
 class ofFbo;
 class of3dPrimitive;
+class ofLight;
+class ofMaterial;
 typedef ofPixels& ofPixelsRef;
+class ofBaseMaterial;
 
 bool ofIsVFlipped();
 
@@ -311,9 +304,9 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	virtual void viewport(ofRectangle viewport){}
-	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped()){}
-	virtual void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){}
-	virtual void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){}
+	virtual void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped()){}
+	virtual void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){}
+	virtual void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1){}
 	virtual void setOrientation(ofOrientation orientation, bool vFlip){};
 	virtual ofRectangle getCurrentViewport(){return ofRectangle();}
 	virtual ofRectangle getNativeViewport(){return getCurrentViewport();}
@@ -328,6 +321,7 @@ public:
 	virtual void pushMatrix(){};
 	virtual void popMatrix(){};
 	virtual ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const { return ofMatrix4x4();};
+	virtual ofMatrix4x4 getCurrentOrientationMatrix() const;
 	virtual void translate(float x, float y, float z = 0){};
 	virtual void translate(const ofPoint & p){};
 	virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1){};
@@ -342,6 +336,9 @@ public:
 	virtual void loadMatrix (const float *m){};
 	virtual void multMatrix (const ofMatrix4x4 & m){};
 	virtual void multMatrix (const float *m){};
+	virtual void loadViewMatrix(const ofMatrix4x4 & m){};
+	virtual void multViewMatrix(const ofMatrix4x4 & m){}
+	virtual ofMatrix4x4 getCurrentViewMatrix() const { return ofMatrix4x4();};
 	
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults(){};
@@ -403,6 +400,28 @@ public:
 
 	virtual void enableTextureTarget(int textureTarget)=0;
 	virtual void disableTextureTarget(int textureTarget)=0;
+
+	// lighting
+	virtual void enableLighting(){}
+	virtual void disableLighting(){}
+	virtual void enableSeparateSpecularLight(){}
+	virtual void disableSeparateSpecularLight(){}
+	virtual bool getLightingEnabled(){ return false; }
+	virtual void setSmoothLighting(bool b){}
+	virtual void setGlobalAmbientColor(const ofColor& c){}
+	virtual void enableLight(int lightIndex){};
+	virtual void disableLight(int lightIndex){};
+	virtual void setLightSpotlightCutOff(int lightIndex, float spotCutOff){};
+	virtual void setLightSpotConcentration(int lightIndex, float exponent){};
+	virtual void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic ){};
+	virtual void setLightAmbientColor(int lightIndex, const ofFloatColor& c){};
+	virtual void setLightDiffuseColor(int lightIndex, const ofFloatColor& c){};
+	virtual void setLightSpecularColor(int lightIndex, const ofFloatColor& c){};
+	virtual void setLightPosition(int lightIndex, const ofVec4f & position){};
+	virtual void setLightSpotDirection(int lightIndex, const ofVec4f & direction){};
+
+	// materials
+	virtual void setCurrentMaterial(ofBaseMaterial * material){};
 };
 
 
@@ -422,4 +441,22 @@ public:
 	virtual bool save(const string & path)=0;
 };
 
+class ofBaseURLFileLoader{
+public:
+	virtual ~ofBaseURLFileLoader(){};
+    virtual ofHttpResponse get(string url)=0;
+    virtual int getAsync(string url, string name="")=0;
+    virtual ofHttpResponse saveTo(string url, string path)=0;
+    virtual int saveAsync(string url, string path)=0;
+    virtual void remove(int id)=0;
+    virtual void clear()=0;
+    virtual void stop()=0;
+};
 
+class ofBaseMaterial{
+public:
+	virtual ~ofBaseMaterial(){};
+	virtual void begin();
+	virtual void end();
+	virtual void beginShader(int textureTarget)=0;
+};
