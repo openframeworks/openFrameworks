@@ -12,14 +12,14 @@ ofVideoPlayer::ofVideoPlayer (){
 }
 
 //---------------------------------------------------------------------------
-void ofVideoPlayer::setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer){
+void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer){
 	player = newPlayer;
 	setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you have been using before. 
 											//if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
 }
 
 //---------------------------------------------------------------------------
-ofPtr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
+shared_ptr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
 	return player;
 }
 

@@ -772,7 +772,7 @@ void ofVbo::bind(){
 	}
 
 
-	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+	shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 	if(renderer){
 		renderer->setAttributes(bUsingVerts,bUsingColors,bUsingTexCoords,bUsingNormals);
 	}

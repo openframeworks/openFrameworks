@@ -68,7 +68,7 @@ protected:
     
     ofVec4f texCoords;
     bool usingVbo;
-    ofPtr<ofMesh>  mesh;
+    shared_ptr<ofMesh>  mesh;
     ofMesh normalsMesh;
     
     vector<ofIndexType> getIndices( int startIndex, int endIndex );
