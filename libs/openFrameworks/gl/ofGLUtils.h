@@ -49,8 +49,8 @@ string ofGetGlInternalFormatName(int glInternalFormat);
 int ofGetGLFormatFromInternal(int glInternalFormat);
 int ofGetGlTypeFromInternal(int glInternalFormat);
 
-ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
-ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
+shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
+shared_ptr<ofBaseGLRenderer> ofGetGLRenderer();
 
 template<class T>
 int ofGetGlFormat(const ofPixels_<T> & pixels) {

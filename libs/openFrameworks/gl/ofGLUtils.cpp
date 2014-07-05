@@ -596,11 +596,11 @@ bool ofGLSupportsNPOTTextures(){
 #endif
 }
 
-ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer(){
+shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer(){
 	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
-		return (ofPtr<ofGLProgrammableRenderer>&)ofGetCurrentRenderer();
+		return (shared_ptr<ofGLProgrammableRenderer>&)ofGetCurrentRenderer();
 	}else{
-		return ofPtr<ofGLProgrammableRenderer>();
+		return shared_ptr<ofGLProgrammableRenderer>();
 	}
 }
 
@@ -609,23 +609,23 @@ bool ofIsGLProgrammableRenderer(){
 }
 
 #ifndef TARGET_PROGRAMMABLE_GL
-ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
+shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 	if(ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE || ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
-		return (ofPtr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
+		return (shared_ptr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
 	}else if(ofGetCurrentRenderer()->getType()==ofRendererCollection::TYPE){
-		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
+		return ((shared_ptr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
 	}else{
-		return ofPtr<ofGLRenderer>();
+		return shared_ptr<ofGLRenderer>();
 	}
 }
 #else
-ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
+shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 	if(ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
-		return (ofPtr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
+		return (shared_ptr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
 	}else if(ofGetCurrentRenderer()->getType()==ofRendererCollection::TYPE){
-		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
+		return ((shared_ptr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
 	}else{
-		return ofPtr<ofGLProgrammableRenderer>();
+		return shared_ptr<ofGLProgrammableRenderer>();
 	}
 }
 #endif
