@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <vector>
 #include "ofPoint.h"
 #include "ofRectangle.h"
@@ -28,6 +27,7 @@ typedef ofPath ofTTFCharacter;
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		32		// 0 - 32 are control characters, no graphics needed.
 
+/// \todo?
 const static string OF_TTF_SANS = "sans-serif";
 const static string OF_TTF_SERIF = "serif";
 const static string OF_TTF_MONO = "monospace";
@@ -39,10 +39,14 @@ class ofTrueTypeFont{
 public:
 
 
+	/// \todo
 	ofTrueTypeFont();
+
+	/// \todo
 	virtual ~ofTrueTypeFont();
 	
-	//set the default dpi for all typefaces.
+	// set the default dpi for all typefaces.
+	/// \todo
 	static void setGlobalDpi(int newDpi);
 			
 	/// \brief Loads the font specified by filename, allows you to control size, aliasing, and other parameters.
@@ -95,6 +99,34 @@ public:
 	///
 	/// \param height Line height for text drawn on screen.
 	void setLineHeight(float height);
+
+	/// \brief Get the ascender distance for this font.
+	///
+	/// The ascender is the vertical distance from the baseline to the highest "character" coordinate.
+	/// The meaning of "character" coordinate depends on the font. Some fonts take accents into account,
+	/// others do not, and still others define it simply to be the highest coordinate over all glyphs.
+	///
+	/// \returns Returns font ascender height in pixels.
+	float		getAscenderHeight() const;
+
+	/// \brief Get the descender distance for this font.
+	///
+	/// The descender is the vertical distance from the baseline to the lowest "character" coordinate.
+	/// The meaning of "character" coordinate depends on the font. Some fonts take accents into account,
+	/// others do not, and still others define it simply to be the lowest coordinate over all glyphs.
+	/// This value will be negative for descenders below the baseline (which is typical).
+	///
+	/// \returns Returns font descender height in pixels.
+	float		getDescenderHeight() const;
+
+	/// \brief Get the global bounding box for this font.
+	///
+	/// The global bounding box is the rectangle inside of which all glyphs in the font can fit.
+    /// Glyphs are drawn starting from (0,0) in the returned box (though note that the box can
+    /// extend in any direction out from the origin).
+    ///
+	/// \returns Returns font descender height in pixels.
+    const ofRectangle & getGlyphBBox() const;
 
 	/// \brief Returns letter spacing of font object.
 	///
@@ -176,6 +208,7 @@ public:
 	ofMesh & getStringMesh(string s, float x, float y);
 	ofTexture & getFontTexture();
 
+	/// \todo
 	void bind();
 	void unbind();
 
@@ -201,32 +234,36 @@ public:
 	void setEncoding(ofTextEncoding encoding);
 
 protected:
-	bool			bLoadedOk;
-	bool 			bAntiAliased;
-	bool 			bFullCharacterSet;
-	int 			nCharacters;
+	bool bLoadedOk;
+	bool bAntiAliased;
+	bool bFullCharacterSet;
+	int nCharacters;
 	
 	vector <ofTTFCharacter> charOutlines;
 	vector <ofTTFCharacter> charOutlinesNonVFlipped;
 
-	float 			lineHeight;
-	float			letterSpacing;
-	float			spaceSize;
+	float lineHeight;
+	float ascenderHeight;
+	float descenderHeight;
+	ofRectangle glyphBBox;
+	float letterSpacing;
+	float spaceSize;
 
-	vector<charProps> 	cps;			// properties for each characterIndex
+	vector<charProps> cps; // properties for each character
 
-	int				fontSize;
-	bool			bMakeContours;
-	float 			simplifyAmt;
-	int 			dpi;
+	int fontSize;
+	bool bMakeContours;
+	float simplifyAmt;
+	int dpi;
 
-    int             getKerning(int c, int prevC);
-	void 			drawChar(int c, float x, float y);
-	void			drawCharAsShape(int c, float x, float y);
-	void			createStringMesh(string s, float x, float y);
+
+    int getKerning(int c, int prevC);
+	void drawChar(int c, float x, float y);
+	void drawCharAsShape(int c, float x, float y);
+	void createStringMesh(string s, float x, float y);
 	
-	int				border;//, visibleBorder;
-	string			filename;
+	int border;
+	string filename;
 
 	ofTexture texAtlas;
 	bool binded;

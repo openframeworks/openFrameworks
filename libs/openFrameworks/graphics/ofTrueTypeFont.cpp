@@ -1,5 +1,6 @@
 #include "ofTrueTypeFont.h"
 //--------------------------
+
 #include "ft2build.h"
 
 #ifdef TARGET_LINUX
@@ -493,7 +494,14 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 
 	FT_Set_Char_Size( face, fontSize << 6, fontSize << 6, dpi, dpi);
-	lineHeight = fontSize * 1.43f;
+	float fontUnitScale = ((float)fontSize * dpi) / (72 * face->units_per_EM);
+	lineHeight = face->height * fontUnitScale;
+	ascenderHeight = face->ascender * fontUnitScale;
+	descenderHeight = face->descender * fontUnitScale;
+	glyphBBox.set(face->bbox.xMin * fontUnitScale,
+				  face->bbox.yMin * fontUnitScale,
+				  (face->bbox.xMax - face->bbox.xMin) * fontUnitScale,
+				  (face->bbox.yMax - face->bbox.yMin) * fontUnitScale);
 
 	//------------------------------------------------------
 	//kerning would be great to support:
@@ -730,6 +738,21 @@ void ofTrueTypeFont::setLineHeight(float _newLineHeight) {
 //-----------------------------------------------------------
 float ofTrueTypeFont::getLineHeight(){
 	return lineHeight;
+}
+
+//-----------------------------------------------------------
+float ofTrueTypeFont::getAscenderHeight() const {
+	return ascenderHeight;
+}
+
+//-----------------------------------------------------------
+float ofTrueTypeFont::getDescenderHeight() const {
+	return descenderHeight;
+}
+
+//-----------------------------------------------------------
+const ofRectangle & ofTrueTypeFont::getGlyphBBox() const {
+	return glyphBBox;
 }
 
 //-----------------------------------------------------------
