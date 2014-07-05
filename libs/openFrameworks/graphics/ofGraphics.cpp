@@ -53,33 +53,33 @@ static deque <ofStyle> styleHistory;
 static deque <ofRectangle> viewportHistory;
 
 static ofPath shape;
-static ofPtr<ofBaseRenderer> renderer;
+static shared_ptr<ofBaseRenderer> renderer;
 static ofVboMesh gradientMesh;
 
 
 void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
 	if(rendererType==ofGLProgrammableRenderer::TYPE){
-		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
+		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
 #ifndef TARGET_PROGRAMMABLE_GL
 	}else if(rendererType==ofGLRenderer::TYPE){
-		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
 #endif
 #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 	}else if(rendererType==ofCairoRenderer::TYPE){
-		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofCairoRenderer),setDefaults);
+		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofCairoRenderer),setDefaults);
 #endif
 	}else{
 		ofLogError("ofGraphics") << "ofSetCurrentRenderer(): unknown renderer type " << rendererType << ", setting an ofGLRenderer";
 		ofLogError("ofGraphics") << "if you want to use a custom renderer, pass an ofPtr to a new instance of it";
 #ifndef TARGET_PROGRAMMABLE_GL
-		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
 #else
-		ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
+		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
 #endif
 	}
 }
 
-void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_,bool setDefaults){
+void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer_,bool setDefaults){
 	renderer = renderer_;
 	if(renderer->rendersPathPrimitives()){
 		shape.setMode(ofPath::COMMANDS);
@@ -96,7 +96,7 @@ void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer_,bool setDefaults){
 	}
 }
 
-ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
+shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return renderer;
 }
 
@@ -107,9 +107,9 @@ ofPtr<ofBaseRenderer> & ofGetCurrentRenderer(){
 #include "ofCairoRenderer.h"
 #include "ofGLRenderer.h"
 
-static ofPtr<ofCairoRenderer> cairoScreenshot;
-static ofPtr<ofBaseRenderer> storedRenderer;
-static ofPtr<ofRendererCollection> rendererCollection;
+static shared_ptr<ofCairoRenderer> cairoScreenshot;
+static shared_ptr<ofBaseRenderer> storedRenderer;
+static shared_ptr<ofRendererCollection> rendererCollection;
 static bool bScreenShotStarted = false;
 
 //-----------------------------------------------------------------------------------
@@ -118,10 +118,10 @@ void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectan
 	
 	storedRenderer = ofGetCurrentRenderer();
 	
-	cairoScreenshot = ofPtr<ofCairoRenderer>(new ofCairoRenderer);
+	cairoScreenshot = shared_ptr<ofCairoRenderer>(new ofCairoRenderer);
 	cairoScreenshot->setup(filename, ofCairoRenderer::PDF, bMultipage, b3D, viewport); 		
 
-	rendererCollection = ofPtr<ofRendererCollection>(new ofRendererCollection);
+	rendererCollection = shared_ptr<ofRendererCollection>(new ofRendererCollection);
 	rendererCollection->renderers.push_back(ofGetGLRenderer());
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	

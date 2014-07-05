@@ -54,16 +54,16 @@ float * ofSoundGetSpectrum(int nBands){
 #include "ofSoundPlayer.h"
 //---------------------------------------------------------------------------
 ofSoundPlayer::ofSoundPlayer (){
-	player	= ofPtr<OF_SOUND_PLAYER_TYPE>(new OF_SOUND_PLAYER_TYPE);
+	player	= shared_ptr<OF_SOUND_PLAYER_TYPE>(new OF_SOUND_PLAYER_TYPE);
 }
 
 //---------------------------------------------------------------------------
-void ofSoundPlayer::setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer){
+void ofSoundPlayer::setPlayer(shared_ptr<ofBaseSoundPlayer> newPlayer){
 	player = newPlayer;
 }
 
 //--------------------------------------------------------------------
-ofPtr<ofBaseSoundPlayer> ofSoundPlayer::getPlayer(){
+shared_ptr<ofBaseSoundPlayer> ofSoundPlayer::getPlayer(){
 	return player;
 }
 

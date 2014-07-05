@@ -42,8 +42,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		ofVideoPlayer ();
 
-		void						setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer);
-		ofPtr<ofBaseVideoPlayer>	getPlayer();
+		void						setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer);
+		shared_ptr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
 	    string				getMoviePath();
@@ -106,7 +106,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		int					width;
 
 	private:
-		ofPtr<ofBaseVideoPlayer>		player;
+		shared_ptr<ofBaseVideoPlayer>		player;
 		
 		ofTexture tex;
 		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.

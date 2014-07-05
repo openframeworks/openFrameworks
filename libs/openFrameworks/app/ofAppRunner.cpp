@@ -83,7 +83,7 @@ void ofURLFileLoaderShutdown();
 //--------------------------------------
 void ofRunApp(ofBaseApp * OFSA){
 
-	OFSAptr = ofPtr<ofBaseApp>(OFSA);
+	OFSAptr = shared_ptr<ofBaseApp>(OFSA);
 	if(OFSAptr){
 		OFSAptr->mouseX = 0;
 		OFSAptr->mouseY = 0;
@@ -220,7 +220,7 @@ void ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, int sc
 	#ifdef TARGET_PROGRAMMABLE_GL
 	    ofPtr<ofBaseRenderer> renderer(new ofGLProgrammableRenderer(false));
 	#else
-	    ofPtr<ofBaseRenderer> renderer(new ofGLRenderer(false));
+	    shared_ptr<ofBaseRenderer> renderer(new ofGLRenderer(false));
 	#endif
 	    ofSetCurrentRenderer(renderer,false);
     }
@@ -357,7 +357,7 @@ void ofExitCallback(){
 }
 
 //--------------------------------------
-void ofRunApp(ofPtr<ofBaseApp> OFSA){
+void ofRunApp(shared_ptr<ofBaseApp> OFSA){
 
 	OFSAptr = OFSA;
 	if(OFSAptr){
@@ -415,7 +415,7 @@ ofAppBaseWindow * ofGetWindowPtr(){
 }
 
 //--------------------------------------
-void ofSetAppPtr(ofPtr<ofBaseApp> appPtr) {
+void ofSetAppPtr(shared_ptr<ofBaseApp> appPtr) {
 	OFSAptr = appPtr;
 }
 

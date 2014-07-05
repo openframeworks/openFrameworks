@@ -448,7 +448,7 @@ bool ofShader::isLoaded(){
 void ofShader::begin() {
 	if (bLoaded){
 		glUseProgram(program);
-		ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 		if(renderer){
 			renderer->beginCustomShader(*this);
 		}
@@ -460,7 +460,7 @@ void ofShader::begin() {
 //--------------------------------------------------------------
 void ofShader::end() {
 	if (bLoaded){
-		ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 		if(renderer){
 			renderer->endCustomShader();
 		}else{

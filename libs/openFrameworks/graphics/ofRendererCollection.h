@@ -11,14 +11,14 @@ public:
 	 static const string TYPE;
 	 const string & getType(){ return TYPE; }
 
-	 ofPtr<ofBaseGLRenderer> getGLRenderer(){
+	 shared_ptr<ofBaseGLRenderer> getGLRenderer(){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
-				 return (ofPtr<ofBaseGLRenderer>&)renderers[i];
+				 return (shared_ptr<ofBaseGLRenderer>&)renderers[i];
 			 }
 		 }
 		#ifndef TARGET_PROGRAMMABLE_GL
-		 	 return ofPtr<ofGLRenderer>();
+		 	 return shared_ptr<ofGLRenderer>();
 		#else
 		 	 return ofPtr<ofGLProgrammableRenderer>();
 		#endif
@@ -473,5 +473,5 @@ public:
 		 }
 	}
 
-	vector<ofPtr<ofBaseRenderer> > renderers;
+	vector<shared_ptr<ofBaseRenderer> > renderers;
 };
