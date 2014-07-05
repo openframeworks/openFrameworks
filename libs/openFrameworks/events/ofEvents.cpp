@@ -119,6 +119,7 @@ void ofNotifySetup(){
 void ofNotifyUpdate(){
 	// calculate sleep time to adjust to target fps
 	unsigned long long timeNow = ofGetElapsedTimeMicros();
+#ifndef TARGET_EMSCRIPTEN
 	if (nFrameCount != 0 && bFrameRateSet == true){
 		unsigned long long diffMicros = timeNow - prevMicrosForFPS;
 		prevMicrosForFPS = timeNow;
@@ -135,6 +136,7 @@ void ofNotifyUpdate(){
 	}else{
 		prevMicrosForFPS = timeNow;
 	}
+#endif
 
 	// calculate fps
 	timeNow = ofGetElapsedTimeMicros();

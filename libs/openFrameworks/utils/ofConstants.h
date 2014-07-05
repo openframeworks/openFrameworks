@@ -24,6 +24,7 @@ enum ofTargetPlatform{
 	OF_TARGET_LINUX64,
 	OF_TARGET_LINUXARMV6L, // arm v6 little endian
 	OF_TARGET_LINUXARMV7L, // arm v7 little endian
+	OF_TARGET_EMSCRIPTEN
 };
 
 #ifndef OF_TARGET_IPHONE
@@ -74,6 +75,12 @@ enum ofTargetPlatform{
 	#define TARGET_LINUX
 	#define TARGET_OPENGLES
 	#define TARGET_LINUX_ARM
+#elif defined(__EMSCRIPTEN__)
+	#define TARGET_EMSCRIPTEN
+	#define TARGET_OPENGLES
+	#define TARGET_NO_THREADS
+	#define TARGET_PROGRAMMABLE_GL
+	#define TARGET_IMPLEMENTS_URL_LOADER
 #else
 	#define TARGET_LINUX
 #endif
@@ -219,11 +226,13 @@ enum ofTargetPlatform{
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
-#ifdef TARGET_OPENGLES
-//	#include "glu.h"
-	//typedef GLushort ofIndexType ;
-#else
-	//typedef GLuint ofIndexType;
+#ifdef TARGET_EMSCRIPTEN
+	#include <GLES2/gl2.h>
+	#include <GLES2/gl2ext.h>
+	#include "EGL/egl.h"
+	#include "EGL/eglext.h"
+
+	#define TARGET_LITTLE_ENDIAN
 #endif
 
 #include "tesselator.h"
@@ -273,6 +282,10 @@ typedef TESSindex ofIndexType;
 
 		#define OF_VIDEO_CAPTURE_ANDROID
 
+	#elif defined(TARGET_EMSCRIPTEN)
+
+		#define OF_VIDEO_CAPTURE_EMSCRIPTEN
+
 	#elif defined(TARGET_OF_IOS)
 
 		#define OF_VIDEO_CAPTURE_IOS
@@ -282,7 +295,7 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
 	#ifdef TARGET_LINUX
 		#define OF_VIDEO_PLAYER_GSTREAMER
 	#elif defined(TARGET_ANDROID)
@@ -296,6 +309,8 @@ typedef TESSindex ofIndexType;
 		#else
 			#define OF_VIDEO_PLAYER_QTKIT
 		#endif
+	#elif defined(TARGET_EMSCRIPTEN)
+		#define OF_VIDEO_PLAYER_EMSCRIPTEN
 	#else
 		#define OF_VIDEO_PLAYER_QUICKTIME
 	#endif
@@ -303,23 +318,27 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------ soundstream
 // check if any soundstream api is defined from the compiler
-#if !defined(OF_SOUNDSTREAM_PORTAUDIO) && !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID)
+#if !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID) && !defined(OF_SOUNDSTREAM_IOS) && !defined(OF_SOUNDSTREAM_EMSCRIPTEN)
 	#if defined(TARGET_LINUX) || defined(TARGET_WIN32) || defined(TARGET_OSX)
 		#define OF_SOUNDSTREAM_RTAUDIO
 	#elif defined(TARGET_ANDROID)
 		#define OF_SOUNDSTREAM_ANDROID
 	#elif defined(TARGET_OF_IOS)
 		#define OF_SOUNDSTREAM_IOS
+	#elif defined(TARGET_EMSCRIPTEN)
+		#define OF_SOUNDSTREAM_EMSCRIPTEN
 	#endif
 #endif
 
 //------------------------------------------------ soundplayer
 // check if any soundplayer api is defined from the compiler
-#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL)
+#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined TARGET_LINUX
+  #elif defined(TARGET_LINUX)
   	#define OF_SOUND_PLAYER_OPENAL
+  #elif defined(TARGET_EMSCRIPTEN)
+	#define OF_SOUND_PLAYER_EMSCRIPTEN
   #elif !defined(TARGET_ANDROID)
   	#define OF_SOUND_PLAYER_FMOD
   #endif

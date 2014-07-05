@@ -219,8 +219,13 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 }
 
 #endif
+
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
+#endif
+
+#ifdef TARGET_EMSCRIPTEN
+#include <emscripten/emscripten.h>
 #endif
 
 //------------------------------------------------------------------------------
@@ -287,6 +292,10 @@ void ofSystemAlertDialog(string errorMessage){
 
 	#ifdef TARGET_ANDROID
 		ofxAndroidAlertBox(errorMessage);
+	#endif
+
+	#ifdef TARGET_EMSCRIPTEN
+		emscripten_run_script((string("alert(")+errorMessage+");").c_str());
 	#endif
 }
 
@@ -876,5 +885,8 @@ string ofSystemTextBoxDialog(string question, string text){
      ofxAndroidAlertTextBox(question,text);
 #endif
 
+#ifdef TARGET_EMSCRIPTEN
+     text = emscripten_run_script_string((string("prompt('") + question + "','')").c_str());
+#endif
 	return text;
 }
