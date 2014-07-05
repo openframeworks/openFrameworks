@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <vector>
 #include "ofPoint.h"
 #include "ofRectangle.h"
@@ -10,14 +11,14 @@
 
 //--------------------------------------------------
 typedef struct {
-	int character;
+	int characterIndex;
+	int glyph;
 	int height;
 	int width;
-	int setWidth;
-	int topExtent;
-	int leftExtent;
+	int bearingX, bearingY;
+	int xmin, xmax, ymin, ymax;
+	int advance;
 	float tW,tH;
-	float x1,x2,y1,y2;
 	float t1,t2,v1,v2;
 } charProps;
 
@@ -25,27 +26,23 @@ typedef struct {
 typedef ofPath ofTTFCharacter;
 
 //--------------------------------------------------
-#define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.
+#define NUM_CHARACTER_TO_START		32		// 0 - 32 are control characters, no graphics needed.
 
-/// \todo?
 const static string OF_TTF_SANS = "sans-serif";
 const static string OF_TTF_SERIF = "serif";
 const static string OF_TTF_MONO = "monospace";
 
-/// \todo
+typedef struct FT_FaceRec_*  FT_Face;
+
 class ofTrueTypeFont{
 
 public:
 
 
-	/// \todo
 	ofTrueTypeFont();
-
-	/// \todo
 	virtual ~ofTrueTypeFont();
 	
-	// set the default dpi for all typefaces.
-	/// \todo
+	//set the default dpi for all typefaces.
 	static void setGlobalDpi(int newDpi);
 			
 	/// \brief Loads the font specified by filename, allows you to control size, aliasing, and other parameters.
@@ -179,7 +176,6 @@ public:
 	ofMesh & getStringMesh(string s, float x, float y);
 	ofTexture & getFontTexture();
 
-	/// \todo
 	void bind();
 	void unbind();
 
@@ -205,31 +201,32 @@ public:
 	void setEncoding(ofTextEncoding encoding);
 
 protected:
-	bool bLoadedOk;
-	bool bAntiAliased;
-	bool bFullCharacterSet;
-	int nCharacters;
+	bool			bLoadedOk;
+	bool 			bAntiAliased;
+	bool 			bFullCharacterSet;
+	int 			nCharacters;
 	
 	vector <ofTTFCharacter> charOutlines;
 	vector <ofTTFCharacter> charOutlinesNonVFlipped;
 
-	float lineHeight;
-	float letterSpacing;
-	float spaceSize;
+	float 			lineHeight;
+	float			letterSpacing;
+	float			spaceSize;
 
-	vector<charProps> cps; // properties for each character
+	vector<charProps> 	cps;			// properties for each characterIndex
 
-	int fontSize;
-	bool bMakeContours;
-	float simplifyAmt;
-	int dpi;
+	int				fontSize;
+	bool			bMakeContours;
+	float 			simplifyAmt;
+	int 			dpi;
 
-	void drawChar(int c, float x, float y);
-	void drawCharAsShape(int c, float x, float y);
-	void createStringMesh(string s, float x, float y);
+    int             getKerning(int c, int prevC);
+	void 			drawChar(int c, float x, float y);
+	void			drawCharAsShape(int c, float x, float y);
+	void			createStringMesh(string s, float x, float y);
 	
-	int border;
-	string filename;
+	int				border;//, visibleBorder;
+	string			filename;
 
 	ofTexture texAtlas;
 	bool binded;
@@ -246,8 +243,9 @@ private:
 	GLboolean texture_2d_enabled;
 
 	ofTextEncoding encoding;
-	void unloadTextures();
-	void reloadTextures();
+	FT_Face		face;
+	void		unloadTextures();
+	void		reloadTextures();
 	static bool	initLibraries();
 	static void finishLibraries();
 
