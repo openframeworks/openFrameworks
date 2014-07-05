@@ -9,15 +9,15 @@
 #ifdef OF_SOUNDSTREAM_RTAUDIO
 	#include "ofRtAudioSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream
-#elif defined(OF_SOUNDSTREAM_PORTAUDIO)
-	#include "ofPASoundStream.h"
-	#define OF_SOUND_STREAM_TYPE ofPASoundStream
 #elif defined(OF_SOUNDSTREAM_ANDROID)
 	#include "ofxAndroidSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
 #elif defined(OF_SOUNDSTREAM_IOS)
 	#include "ofxiOSSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxiOSSoundStream
+#elif defined(OF_SOUNDSTREAM_EMSCRIPTEN)
+	#include "ofxEmscriptenSoundStream.h"
+	#define OF_SOUND_STREAM_TYPE ofxEmscriptenSoundStream
 #endif 
 
 /// \brief Sets up and starts a global ofSoundStream.

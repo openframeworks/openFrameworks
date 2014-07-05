@@ -37,6 +37,11 @@
 	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber
 #endif
 
+#ifdef OF_VIDEO_CAPTURE_EMSCRIPTEN
+	#include "ofxEmscriptenVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofxEmscriptenVideoGrabber
+#endif
+
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 	public :

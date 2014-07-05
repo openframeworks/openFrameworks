@@ -1122,8 +1122,14 @@ void ofTrueTypeFont::bind(){
 
 		blend_enabled = glIsEnabled(GL_BLEND);
 		texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+#ifndef TARGET_PROGRAMMABLE_GL
 		glGetIntegerv( GL_BLEND_SRC, &blend_src );
 		glGetIntegerv( GL_BLEND_DST, &blend_dst );
+#else
+		//TODO: use blending mode to set it back afterwards
+		blend_src = GL_SRC_ALPHA;
+		blend_dst = GL_ONE_MINUS_SRC_ALPHA;
+#endif
 
 	    // (b) enable our regular ALPHA blending!
 	    glEnable(GL_BLEND);

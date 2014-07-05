@@ -903,9 +903,11 @@ bool ofFbo::checkStatus() {
 		case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
 			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
 			break;
+#ifndef TARGET_PROGRAMMABLE_GL
 		case GL_FRAMEBUFFER_INCOMPLETE_FORMATS:
 			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_FORMATS";
 			break;
+#endif
 		case GL_FRAMEBUFFER_UNSUPPORTED:
 			ofLogError("ofFbo") << "FRAMEBUFFER_UNSUPPORTED";
 			break;
