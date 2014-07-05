@@ -267,7 +267,8 @@ void ofGLReadyCallback(){
 	ofLogVerbose("ofAppRunner") << "Vendor:   " << (char*)glGetString(GL_VENDOR);
 	ofLogVerbose("ofAppRunner") << "Renderer: " << (char*)glGetString(GL_RENDERER);
 	ofLogVerbose("ofAppRunner") << "Version:  " << (char*)glGetString(GL_VERSION);
-	ofLogVerbose("ofAppRunner") << "GLSL:     " << (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	char* glslVer = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	ofLogVerbose("ofAppRunner") << "GLSL:     " << (glslVer ? glslVer : "Error getting GLSL version.");
 
     if(ofGetGLProgrammableRenderer()){
     	ofGetGLProgrammableRenderer()->setup(glslVersionFromGL(glVersionMajor,glVersionMinor));
