@@ -29,7 +29,7 @@ class ofBaseLoggerChannel;
 void ofLogToFile(const string & path, bool append=false);
 void ofLogToConsole();
 
-void ofSetLoggerChannel(ofPtr<ofBaseLoggerChannel> loggerChannel);
+void ofSetLoggerChannel(shared_ptr<ofBaseLoggerChannel> loggerChannel);
 
 //------------------------------------------------------------------------------
 /// \class ofLog
@@ -87,7 +87,7 @@ class ofLog{
 		static void setAutoSpace(bool autoSpace);
 		
 		/// set the logging channel destinations for messages
-		static void setChannel(ofPtr<ofBaseLoggerChannel> channel);
+		static void setChannel(shared_ptr<ofBaseLoggerChannel> channel);
 	
 	protected:
 		ofLogLevel level;			///< log level
@@ -98,7 +98,7 @@ class ofLog{
 		void _log(ofLogLevel level, const string & module, const string & message);
 		bool checkLog(ofLogLevel level, const string & module);
 	
-		static ofPtr<ofBaseLoggerChannel> channel;	///< the message destination
+		static shared_ptr<ofBaseLoggerChannel> channel;	///< the message destination
 	
 	private:
 		std::ostringstream message;	///< temp buffer

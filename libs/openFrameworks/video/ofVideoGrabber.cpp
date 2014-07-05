@@ -38,12 +38,12 @@ ofVideoGrabber::~ofVideoGrabber(){
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber){
+void ofVideoGrabber::setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber){
 	grabber = newGrabber;
 }
 
 //--------------------------------------------------------------------
-ofPtr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber(){
+shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber(){
 	return grabber;
 }
 
@@ -55,7 +55,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 #endif
     
 	if(!grabber){
-		setGrabber( ofPtr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
 
 	bInitialized = true;
@@ -117,7 +117,7 @@ ofPixelFormat ofVideoGrabber::getPixelFormat(){
 //--------------------------------------------------------------------
 vector<ofVideoDevice> ofVideoGrabber::listDevices(){
 	if(!grabber){
-		setGrabber( ofPtr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
 	return grabber->listDevices();
 }

@@ -141,13 +141,11 @@ class ofPtr: public std::shared_ptr<T>
 
 public:
 
-	ofPtr()
-	  : std::shared_ptr<T>() { }
+	OF_DEPRECATED_MSG("Use shared_ptr instead",ofPtr());
 
 	  template<typename Tp1>
 		explicit
-		ofPtr(Tp1* __p)
-	: std::shared_ptr<T>(__p) { }
+		OF_DEPRECATED_MSG("Use shared_ptr instead",ofPtr(Tp1* __p));
 
 	  template<typename Tp1, typename _Deleter>
 		ofPtr(Tp1* __p, _Deleter __d)
@@ -170,13 +168,6 @@ public:
 		ofPtr(const std::shared_ptr<Tp1>& __r)
 	: std::shared_ptr<T>(__r) { }
 
-	  /*ofPtr(ofPtr&& __r)
-	  : std::tr1::shared_ptr<T>(std::move(__r)) { }
-
-	  template<typename Tp1>
-		ofPtr(ofPtr<Tp1>&& __r)
-		: std::tr1::shared_ptr<T>(std::move(__r)) { }*/
-
 	  template<typename Tp1>
 		explicit
 		ofPtr(const std::weak_ptr<Tp1>& __r)
@@ -192,15 +183,16 @@ public:
 	ofPtr(const ofPtr<Tp1>& __r, std::__dynamic_cast_tag)
 	: std::shared_ptr<T>(__r, std::__dynamic_cast_tag()) { }
 #endif
-	  /*template<typename Tp1, typename Del>
-		explicit
-		ofPtr(const std::tr1::unique_ptr<Tp1, Del>&) = delete;
-
-	  template<typename Tp1, typename Del>
-		explicit
-		ofPtr(std::tr1::unique_ptr<Tp1, Del>&& __r)
-	: std::tr1::shared_ptr<T>(std::move(__r)) { }*/
 };
+
+template<typename T>
+ofPtr<T>::ofPtr()
+: std::shared_ptr<T>() { }
+
+template<typename T>
+template<typename Tp1>
+ofPtr<T>::ofPtr(Tp1* __p)
+: std::shared_ptr<T>(__p) { }
 
 // tgfrerer: extends ofPtr facade to allow dynamic_pointer_cast, pt. 2
 #if (_MSC_VER)

@@ -89,8 +89,8 @@ class ofSoundStream{
 public:
     ofSoundStream();
     
-    void setSoundStream(ofPtr<ofBaseSoundStream> soundStreamPtr);
-    ofPtr<ofBaseSoundStream> getSoundStream();
+    void setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr);
+    shared_ptr<ofBaseSoundStream> getSoundStream();
 
     /// \brief prints a list of available audio devices to the console.
     void listDevices();
@@ -165,6 +165,6 @@ public:
     int getBufferSize();
     
 protected:
-    ofPtr<ofBaseSoundStream> soundStream;
+    shared_ptr<ofBaseSoundStream> soundStream;
 
 };

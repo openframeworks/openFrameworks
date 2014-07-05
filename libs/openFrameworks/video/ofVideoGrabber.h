@@ -49,8 +49,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
 		
-		void					setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber);
-		ofPtr<ofBaseVideoGrabber> getGrabber();
+		void					setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber);
+		shared_ptr<ofBaseVideoGrabber> getGrabber();
 
 		vector<ofVideoDevice> listDevices();
 		bool				isFrameNew();
@@ -94,7 +94,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		ofTexture tex;
 		bool bUseTexture;
 		bool bInitialized;
-		ofPtr<ofBaseVideoGrabber> grabber;
+		shared_ptr<ofBaseVideoGrabber> grabber;
 		int RequestedDeviceID;
 		
 		bool grabberRunning; //this keeps track of whether the grabber opened sucessfully and is still open. //TODO: maybe expose this in a method? 
