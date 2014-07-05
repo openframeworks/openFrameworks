@@ -106,7 +106,8 @@ public:
 	void hideCameraOverlay();
 #endif
 	bool openSavedPhotos();
-    void close();
+    void close(); //closes the image picker interface
+    void clear(); //clears the internal ofPixels - useful if you need to free the memory without deleting the object. 
 	
 	bool cameraIsAvailable; //variables to see if specific functions are available for a specific device.
 	bool photoLibraryIsAvailable;
@@ -122,23 +123,22 @@ public:
 #endif
 	
 	void loadPixels(); //never call this. this is called by the obj-c class.
-	bool imageUpdated; //when a new image is loaded in, this is set to true
 	
-	int width;
-	int height;
-	int type;
-	int glType;
-	int texType;
-	int bpp;
+    bool getImageUpdated();
+    unsigned char * 	getPixels();
+    ofPixelsRef			getPixelsRef();
+    int getWidth();
+    int getHeight();
+    
+    protected:
+    
+    ofPixels pixels;
+    int maxDimension;
 	
-	bool pixelsAllocated;
-	
-	int maxDimension;
-	
-	unsigned char * pixels;
+//	unsigned char * pixels;
 	
 protected:
-	
+	bool imageUpdated; //when a new image is loaded in, this is set to true
 	ofxiOSImagePickerDelegate *	imagePicker;
 };
 

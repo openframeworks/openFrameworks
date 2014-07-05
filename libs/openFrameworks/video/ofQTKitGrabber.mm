@@ -11,6 +11,13 @@
 //All you wanted to know and more about QTKit Capture can be found here:
 // http://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/QTKitApplicationProgrammingGuide/UsingQTKit/UsingQTKit.html
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+#if defined(MAC_OS_X_VERSION_10_9)
+	#warning Using QTKit, which is deprecated in OSX 10.9
+#endif
+
 @interface QTKitVideoGrabber : QTCaptureVideoPreviewOutput
 {
     QTCaptureSession *session;
@@ -969,3 +976,5 @@ bool ofQTKitGrabber::confirmInit(){
 void ofQTKitGrabber::setDesiredFrameRate(int framerate){
 	ofLogWarning("ofQTKitGrabber") << "setDesiredFrameRate(): cannot set framerate for QTKitGrabber";
 }
+
+#pragma clang diagnostic pop

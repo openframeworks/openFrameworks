@@ -69,8 +69,8 @@ class ofNoopRenderer: public ofBaseRenderer{
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	virtual void viewport(ofRectangle viewport){};
 	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
-	virtual void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){}
-	virtual void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1){};
+	virtual void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){}
+	virtual void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){};
 	virtual ofRectangle getCurrentViewport(){return ofRectangle();};
 	virtual int getViewportWidth(){return 0;};
 	virtual int getViewportHeight(){return 0;};

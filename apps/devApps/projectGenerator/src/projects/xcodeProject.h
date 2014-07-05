@@ -21,7 +21,7 @@ private:
 
 public:
 
-    void addSrc(string srcFile, string folder);
+    void addSrc(string srcFile, string folder, SrcType type=DEFAULT);
     void addInclude(string includeName);
     void addLibrary(string libraryName, LibType libType = RELEASE_LIB);
     void addLDFLAG(string ldflag, LibType libType = RELEASE_LIB);

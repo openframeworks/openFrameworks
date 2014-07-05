@@ -4,7 +4,7 @@
 
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.
-float minDifference = 0.1e-5;
+float minDifference = 0.1e-5f;
 
 // this is the default on windows os
 unsigned long doubleclickTime = 200;
@@ -15,8 +15,8 @@ ofEasyCam::ofEasyCam(){
 	lastDistance = 0;
 	drag = 0.9f;
 	sensitivityRot = 1.0f;//when 1 moving the mouse from one side to the other of the arcball (min(viewport.width, viewport.height)) will rotate 180degrees. when .5, 90 degrees.
-	sensitivityXY = .5;
-	sensitivityZ= .7;
+	sensitivityXY = .5f;
+	sensitivityZ= .7f;
 	
 	bDistanceSet = false; 
 	bMouseInputEnabled = false;
@@ -142,7 +142,7 @@ void ofEasyCam::enableMouseInput(){
 	if(!bMouseInputEnabled){
 		bMouseInputEnabled = true;
 	//	ofRegisterMouseEvents(this);
-		ofAddListener(ofEvents().update , this, &ofEasyCam::update);
+		ofAddListener(ofEvents().update , this, &ofEasyCam::update, OF_EVENT_ORDER_BEFORE_APP);
 	}
 }
 //----------------------------------------
@@ -150,7 +150,7 @@ void ofEasyCam::disableMouseInput(){
 	if(bMouseInputEnabled){
 		bMouseInputEnabled = false;
 		//ofUnregisterMouseEvents(this);
-		ofRemoveListener(ofEvents().update, this, &ofEasyCam::update);
+		ofRemoveListener(ofEvents().update, this, &ofEasyCam::update, OF_EVENT_ORDER_BEFORE_APP);
 	}
 }
 //----------------------------------------

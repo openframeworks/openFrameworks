@@ -12,13 +12,15 @@ class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
 class ofVbo;
+class ofMaterial;
+static const int OF_NO_TEXTURE=-1;
 
 class ofGLProgrammableRenderer: public ofBaseGLRenderer{
 public:
 	ofGLProgrammableRenderer(bool useShapeColor=true);
 	~ofGLProgrammableRenderer();
 
-	void setup();
+	void setup(const string & glslVersion);
 
     static const string TYPE;
 	const string & getType(){ return TYPE; }
@@ -53,9 +55,9 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
-	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped());
-	void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0);
-	void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1);
+	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped());
+	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
+	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	ofRectangle getCurrentViewport();
 	ofRectangle getNativeViewport();
@@ -83,8 +85,12 @@ public:
 	void loadMatrix (const float * m);
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
+	void loadViewMatrix(const ofMatrix4x4 & m);
+	void multViewMatrix(const ofMatrix4x4 & m);
+	ofMatrix4x4 getCurrentViewMatrix() const;
 	
 	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	ofMatrix4x4 getCurrentOrientationMatrix() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -141,15 +147,18 @@ public:
 
 	void enableTextureTarget(int textureTarget);
 	void disableTextureTarget(int textureTarget);
+	GLenum getCurrentTextureTarget();
 
 	void beginCustomShader(ofShader & shader);
 	void endCustomShader();
 
+	void setCurrentMaterial(ofBaseMaterial * material);
+
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
 
-	ofShader & defaultTexColor();
-	ofShader & defaultTexNoColor();
+	ofShader & defaultTexRectColor();
+	ofShader & defaultTexRectNoColor();
 	ofShader & defaultTex2DColor();
 	ofShader & defaultTex2DNoColor();
 	ofShader & defaultNoTexColor();
@@ -161,7 +170,7 @@ private:
 
 
 	ofPolyline circlePolyline;
-#ifdef TARGET_OPENGLES
+#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	ofMesh circleMesh;
 	ofMesh triangleMesh;
 	ofMesh rectMesh;
@@ -205,4 +214,6 @@ private:
 
 	bool wrongUseLoggedOnce;
 	bool uniqueShader;
+
+	ofBaseMaterial * currentMaterial;
 };
