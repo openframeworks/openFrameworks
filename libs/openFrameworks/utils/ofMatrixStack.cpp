@@ -180,6 +180,10 @@ const ofMatrix4x4 & ofMatrixStack::getModelViewMatrix() const{
 	return modelViewMatrix;
 }
 
+const ofMatrix3x3 & ofMatrixStack::getNormalMatrix() const{
+	return normalMatrix;
+}
+
 const ofMatrix4x4 & ofMatrixStack::getModelViewProjectionMatrix() const{
 	return modelViewProjectionMatrix;
 }
@@ -289,7 +293,7 @@ void ofMatrixStack::clearStacks(){
 	if (tmpCounter > 0 ){
 		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra modelview matrices on the stack, did you forget to pop somewhere?";
 	}
-	
+
 	tmpCounter = 0;
 	while (!projectionMatrixStack.empty()){
 		projectionMatrixStack.pop();
@@ -381,11 +385,15 @@ void ofMatrixStack::multMatrix (const float * m){
 	updatedRelatedMatrices();
 }
 
-
 void ofMatrixStack::updatedRelatedMatrices(){
 	switch(currentMatrixMode){
 	case OF_MATRIX_MODELVIEW:
 		modelViewProjectionMatrix = modelViewMatrix * orientedProjectionMatrix;
+		normalMatrix.set(modelViewMatrix._mat[0][0], modelViewMatrix._mat[0][1], modelViewMatrix._mat[0][2],
+						modelViewMatrix._mat[1][0], modelViewMatrix._mat[1][1], modelViewMatrix._mat[1][2],
+						modelViewMatrix._mat[2][0], modelViewMatrix._mat[2][1], modelViewMatrix._mat[2][2]);
+		normalMatrix.invert();
+		normalMatrix.transpose();
 		break;
 	case OF_MATRIX_PROJECTION:
 		orientedProjectionMatrix = projectionMatrix * orientationMatrix;
