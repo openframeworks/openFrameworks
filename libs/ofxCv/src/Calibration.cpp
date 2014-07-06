@@ -48,9 +48,9 @@ namespace ofxCv {
 	}
     
 	void Intrinsics::loadProjectionMatrix(float nearDist, float farDist, cv::Point2d viewportOffset) const {
-		glViewport(viewportOffset.x, viewportOffset.y, imageSize.width, imageSize.height);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
+		ofViewport(viewportOffset.x, viewportOffset.y, imageSize.width, imageSize.height);
+		ofSetMatrixMode(OF_MATRIX_PROJECTION);
+		ofLoadIdentityMatrix();
 		float w = imageSize.width;
 		float h = imageSize.height;
 		float fx = cameraMatrix.at<double>(0, 0);
@@ -58,27 +58,19 @@ namespace ofxCv {
 		float cx = principalPoint.x;
 		float cy = principalPoint.y;
 		
-// Macro required for OpenGLES as it using different function name for frustrum
-#ifdef TARGET_OPENGLES
-		glFrustumf(
-#else
-		glFrustum(
-#endif
+		ofMatrix4x4 frustum;
+		frustum.makeFrustumMatrix(
 			nearDist * (-cx) / fx, nearDist * (w - cx) / fx,
-			nearDist * (cy - h) / fy, nearDist * (cy) / fy,
+			nearDist * (cy) / fy, nearDist * (cy - h) / fy,
 			nearDist, farDist);
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-#ifdef TARGET_OPENGLES
+		ofMultMatrix(frustum);
+
+		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+		ofLoadIdentityMatrix();
+
 		ofMatrix4x4 lookAt;
-		lookAt.makeLookAtMatrix(ofVec3f(0,0,0), ofVec3f(0,0,1), ofVec3f(0,-1,0));
-		glMultMatrixf(lookAt.getPtr());
-#else
-		gluLookAt(
-			0, 0, 0,
-			0, 0, 1,
-			0, -1, 0);
-#endif
+		lookAt.makeLookAtViewMatrix(ofVec3f(0,0,0), ofVec3f(0,0,1), ofVec3f(0,-1,0));
+		ofMultMatrix(lookAt);
 	}
 	
 	Calibration::Calibration() :
