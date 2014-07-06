@@ -101,7 +101,7 @@
 	</ItemDefinitionGroup>
 	<ItemGroup>
 		<ClCompile Include="src\main.cpp" />
-		<ClCompile Include="src\testApp.cpp" />
+		<ClCompile Include="src\ofApp.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\ETF.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxCv\libs\CLD\src\fdog.cpp" />
 		<ClCompile Include="..\..\..\addons\ofxCv\libs\ofxCv\src\Calibration.cpp" />
@@ -123,7 +123,7 @@
 		<ClCompile Include="..\..\..\addons\ofxOpenCv\src\ofxCvShortImage.cpp" />
 	</ItemGroup>
 	<ItemGroup>
-		<ClInclude Include="src\testApp.h" />
+		<ClInclude Include="src\ofApp.h" />
 		<ClInclude Include="..\..\..\addons\ofxCv\src\ofxCv.h" />
 		<ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\ETF.h" />
 		<ClInclude Include="..\..\..\addons\ofxCv\libs\CLD\include\CLD\fdog.h" />

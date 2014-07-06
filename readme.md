@@ -53,7 +53,7 @@ Your linker will also need to know where the OpenCv headers are. In XCode this m
 
 ## Including ofxCv
 
-Inside your testApp.h you will need one include:
+Inside your ofApp.h you will need one include:
 
 	#include "ofxCv.h"
 

@@ -5,38 +5,38 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>E283B02A-8199-4AC3-A28C-159EEDA6DB7F</string>
+	<string>E2D4EE83-BDC3-4F8D-A702-E9862934BFF6</string>
 	<key>IDESourceControlProjectName</key>
 	<string>ofApp</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>470C9A28-A290-4B25-B83A-E7CFB2184F4F</key>
-		<string>ssh://github.com/kylemcdonald/ofxCv.git</string>
-		<key>70E9D27D-692C-470C-AF1B-2536C341B304</key>
+		<key>4D0EB26A-DA8B-4539-A0C8-7CA52A494C5B</key>
 		<string>ssh://github.com/kylemcdonald/openFrameworks.git</string>
+		<key>4E908B94-31B9-4F9A-BA33-EA4768364D09</key>
+		<string>ssh://github.com/kylemcdonald/ofxCv.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>addons/ofxCv/example-flow-distort/ofApp.xcodeproj/project.xcworkspace</string>
+	<string>addons/ofxCv/example-empty/ofApp.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>470C9A28-A290-4B25-B83A-E7CFB2184F4F</key>
-		<string>../../..</string>
-		<key>70E9D27D-692C-470C-AF1B-2536C341B304</key>
+		<key>4D0EB26A-DA8B-4539-A0C8-7CA52A494C5B</key>
 		<string>../../../../..</string>
+		<key>4E908B94-31B9-4F9A-BA33-EA4768364D09</key>
+		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>ssh://github.com/kylemcdonald/ofxCv.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>70E9D27D-692C-470C-AF1B-2536C341B304</string>
+	<string>4D0EB26A-DA8B-4539-A0C8-7CA52A494C5B</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>470C9A28-A290-4B25-B83A-E7CFB2184F4F</string>
+			<string>4E908B94-31B9-4F9A-BA33-EA4768364D09</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxCv</string>
 		</dict>
@@ -44,7 +44,7 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>70E9D27D-692C-470C-AF1B-2536C341B304</string>
+			<string>4D0EB26A-DA8B-4539-A0C8-7CA52A494C5B</string>
 			<key>IDESourceControlWCCName</key>
 			<string>openFrameworks</string>
 		</dict>
