@@ -7,7 +7,7 @@
 #include "ofEvents.h"
 #include "ofThread.h"
 
-#if defined (TARGET_OF_IPHONE) || defined (TARGET_OSX)
+#if defined (TARGET_OF_IOS) || defined (TARGET_OSX)
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>
 #else
