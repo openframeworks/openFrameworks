@@ -871,6 +871,7 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
     if( ofGetKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
         button = GLFW_MOUSE_BUTTON_MIDDLE; 
     }
+    
 #endif
 
 	switch(button){
@@ -910,7 +911,12 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
-	//TODO: implement scroll events
+#ifdef TARGET_WIN32
+    OF_INPUT_SCROLLING_VALUE_DELTA_ = (float)y;
+#endif
+    
+    
+	//jakob's code should go here
 }
 
 //------------------------------------------------------------

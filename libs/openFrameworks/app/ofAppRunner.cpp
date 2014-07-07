@@ -604,3 +604,4 @@ HWND ofGetWin32Window(){
 	return window->getWin32Window();
 }
 #endif
+float OF_INPUT_SCROLLING_VALUE_DELTA_=0;
