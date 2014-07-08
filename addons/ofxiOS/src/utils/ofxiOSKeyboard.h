@@ -15,7 +15,6 @@
 {
 	UITextField*			_textField;
 	bool					open;
-	char *					_ctext;
 	int						_x;
 	int						_y;
 	int						_w;
