@@ -58,7 +58,7 @@ ofPixelFormat ofVideoPlayer::getPixelFormat(){
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::loadMovie(string name){
 	if( !player ){
-		setPlayer( ofPtr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
 		player->setPixelFormat(internalPixelFormat);
 	}
 	

@@ -400,8 +400,6 @@ bool ofFbo::checkGLSupport() {
 		ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
 		return false;
 	}
-	string extensions = (char*)glGetString(GL_EXTENSIONS);
-	ofLogVerbose("ofFbo") << extensions;
 #endif
 
 	return true;
