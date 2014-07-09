@@ -77,9 +77,13 @@ public:
 	void loadMatrix (const float * m);
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
+	void loadViewMatrix(const ofMatrix4x4 & m);
+	void multViewMatrix(const ofMatrix4x4 & m);
 
 	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
 	ofMatrix4x4 getCurrentOrientationMatrix() const;
+	ofMatrix4x4 getCurrentViewMatrix() const;
+	ofMatrix4x4 getCurrentNormalMatrix() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -137,6 +141,27 @@ public:
 	void enableTextureTarget(int textureTarget);
 	void disableTextureTarget(int textureTarget);
 
+	// lighting globals
+	void enableLighting();
+	void disableLighting();
+	void enableSeparateSpecularLight();
+	void disableSeparateSpecularLight();
+	bool getLightingEnabled();
+	void setSmoothLighting(bool b);
+	void setGlobalAmbientColor(const ofColor& c);
+
+	// lighting per light
+	void enableLight(int lightIndex);
+	void disableLight(int lightIndex);
+	void setLightSpotlightCutOff(int lightIndex, float spotCutOff);
+	void setLightSpotConcentration(int lightIndex, float exponent);
+	void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic );
+	void setLightAmbientColor(int lightIndex, const ofFloatColor& c);
+	void setLightDiffuseColor(int lightIndex, const ofFloatColor& c);
+	void setLightSpecularColor(int lightIndex, const ofFloatColor& c);
+	void setLightPosition(int lightIndex, const ofVec4f & position);
+	void setLightSpotDirection(int lightIndex, const ofVec4f & direction);
+
 private:
 	void startSmoothing();
 	void endSmoothing();
@@ -156,5 +181,7 @@ private:
 	ofRectMode rectMode;
 
 	ofMatrixStack matrixStack;
+	bool normalsEnabled;
+	bool lightingEnabled;
 
 };

@@ -37,6 +37,11 @@
 	# define sleep(x) Sleep((x)*1000) 
 #endif 
 
+//fix for CodeBlocks
+#ifndef LIBUSB_CALL
+    #define LIBUSB_CALL
+#endif // LIBUSB_CALL
+
 
 FN_INTERNAL int fnusb_num_devices(fnusb_ctx *ctx)
 {

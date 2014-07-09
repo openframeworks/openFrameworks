@@ -51,12 +51,12 @@ static ofxiOSEAGLView * _instanceRef = nil;
         
         if(rendererVersion == ESRendererVersion_20) {
             if(ofAppiOSWindow::getInstance()->isRendererES2() == false) {
-                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
+                ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
             }
-            ((ofGLProgrammableRenderer *)ofGetCurrentRenderer().get())->setup();
+            ofGetGLProgrammableRenderer()->setup("120");
         } else if(rendererVersion == ESRendererVersion_11) {
             if(ofAppiOSWindow::getInstance()->isRendererES1() == false) {
-                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+                ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer(false)));
             }
         }
         
@@ -69,7 +69,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         [self updateDimensions];
         
         if(app != ofGetAppPtr()) {              // check if already running.
-            ofRunApp(ofPtr<ofBaseApp>(app));    // this case occurs when app is created in main().
+            ofRunApp(shared_ptr<ofBaseApp>(app));    // this case occurs when app is created in main().
         }
         ofRegisterTouchEvents(app);
         ofxiOSAlerts.addListener(app);
@@ -130,7 +130,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     ofUnregisterTouchEvents(app);
     ofxiOSAlerts.removeListener(app);
-    ofSetAppPtr(ofPtr<ofBaseApp>((app = NULL)));
+    ofSetAppPtr(shared_ptr<ofBaseApp>((app = NULL)));
     
     _instanceRef = nil;
     

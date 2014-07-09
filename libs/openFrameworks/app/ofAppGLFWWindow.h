@@ -17,7 +17,7 @@
 //class ofVec3f;
 class ofBaseApp;
 
-class ofAppGLFWWindow : public ofAppBaseWindow {
+class ofAppGLFWWindow : public ofAppBaseGLWindow {
 
 	static GLFWwindow* windowP;
 
@@ -47,6 +47,7 @@ public:
 	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	void windowShouldClose();
 
 
 	void hideCursor();

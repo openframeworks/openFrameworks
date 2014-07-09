@@ -1,10 +1,10 @@
 #pragma once
-
+#include "ofConstants.h"
+#ifndef TARGET_NO_THREADS
 
 #include "Poco/AtomicCounter.h"
 #include "Poco/Thread.h"
 #include "Poco/Runnable.h"
-#include "ofConstants.h"
 #include "ofTypes.h"
 
 
@@ -363,3 +363,19 @@ private:
     bool threadBeingWaitedFor;
 
 };
+
+#else
+
+class ofThread{
+public:
+	void lock(){}
+	void unlock(){}
+	void startThread(){}
+	void stopThread(){};
+	bool isThreadRunning(){return false;}
+
+    enum {
+        INFINITE_JOIN_TIMEOUT = LONG_MAX
+    };
+};
+#endif
