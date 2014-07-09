@@ -360,7 +360,7 @@ void ofShader::checkAndCreateProgram() {
 #ifndef TARGET_OPENGLES
 	if(GL_ARB_shader_objects) {
 #else
-	if(true){
+	if(ofIsGLProgrammableRenderer()){
 #endif
 		if(program == 0) {
 			ofLogVerbose("ofShader") << "checkAndCreateProgram(): creating GLSL program";
@@ -375,28 +375,28 @@ void ofShader::checkAndCreateProgram() {
 
 //--------------------------------------------------------------
 bool ofShader::linkProgram() {
-		if(shaders.empty()) {
-			ofLogError("ofShader") << "linkProgram(): trying to link GLSL program, but no shaders created yet";
-		} else {
-			checkAndCreateProgram();
+	if(shaders.empty()) {
+		ofLogError("ofShader") << "linkProgram(): trying to link GLSL program, but no shaders created yet";
+	} else {
+		checkAndCreateProgram();
 
-			for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
-				GLuint shader = it->second;
-				if(shader) {
-					ofLogVerbose() << "linkProgram(): attaching " << nameForType(it->first) << " shader to program " << program;
-					glAttachShader(program, shader);
-				}
+		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+			GLuint shader = it->second;
+			if(shader) {
+				ofLogVerbose() << "linkProgram(): attaching " << nameForType(it->first) << " shader to program " << program;
+				glAttachShader(program, shader);
 			}
-			
-			glLinkProgram(program);
-            
-            checkProgramLinkStatus(program);
-
-            // bLoaded means we have loaded shaders onto the graphics card;
-            // it doesn't necessarily mean that these shaders have compiled and linked successfully.
-			bLoaded = true;
 		}
-		return bLoaded;
+
+		glLinkProgram(program);
+
+		checkProgramLinkStatus(program);
+
+		// bLoaded means we have loaded shaders onto the graphics card;
+		// it doesn't necessarily mean that these shaders have compiled and linked successfully.
+		bLoaded = true;
+	}
+	return bLoaded;
 }
 
 void ofShader::bindAttribute(GLuint location, const string & name){
@@ -448,7 +448,7 @@ bool ofShader::isLoaded(){
 void ofShader::begin() {
 	if (bLoaded){
 		glUseProgram(program);
-		ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 		if(renderer){
 			renderer->beginCustomShader(*this);
 		}
@@ -460,7 +460,7 @@ void ofShader::begin() {
 //--------------------------------------------------------------
 void ofShader::end() {
 	if (bLoaded){
-		ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 		if(renderer){
 			renderer->endCustomShader();
 		}else{
@@ -572,7 +572,7 @@ void ofShader::setUniform4f(const string & name, float v1, float v2, float v3, f
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1iv(const string & name, int* v, int count) {
+void ofShader::setUniform1iv(const string & name, const int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1iv(loc, count, v);
@@ -580,7 +580,7 @@ void ofShader::setUniform1iv(const string & name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2iv(const string & name, int* v, int count) {
+void ofShader::setUniform2iv(const string & name, const int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2iv(loc, count, v);
@@ -588,7 +588,7 @@ void ofShader::setUniform2iv(const string & name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3iv(const string & name, int* v, int count) {
+void ofShader::setUniform3iv(const string & name, const int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3iv(loc, count, v);
@@ -596,7 +596,7 @@ void ofShader::setUniform3iv(const string & name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4iv(const string & name, int* v, int count) {
+void ofShader::setUniform4iv(const string & name, const int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4iv(loc, count, v);
@@ -604,7 +604,7 @@ void ofShader::setUniform4iv(const string & name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1fv(const string & name, float* v, int count) {
+void ofShader::setUniform1fv(const string & name, const float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1fv(loc, count, v);
@@ -612,7 +612,7 @@ void ofShader::setUniform1fv(const string & name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2fv(const string & name, float* v, int count) {
+void ofShader::setUniform2fv(const string & name, const float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2fv(loc, count, v);
@@ -620,7 +620,7 @@ void ofShader::setUniform2fv(const string & name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3fv(const string & name, float* v, int count) {
+void ofShader::setUniform3fv(const string & name, const float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3fv(loc, count, v);
@@ -628,7 +628,7 @@ void ofShader::setUniform3fv(const string & name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4fv(const string & name, float* v, int count) {
+void ofShader::setUniform4fv(const string & name, const float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4fv(loc, count, v);
@@ -693,7 +693,7 @@ void ofShader::setAttribute4f(GLint location, float v1, float v2, float v3, floa
 		glVertexAttrib4f(location, v1, v2, v3, v4);
 }
 
-void ofShader::setAttribute1fv(const string & name, float* v, GLsizei stride){
+void ofShader::setAttribute1fv(const string & name, const float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -703,7 +703,7 @@ void ofShader::setAttribute1fv(const string & name, float* v, GLsizei stride){
 	}
 }
 
-void ofShader::setAttribute2fv(const string & name, float* v, GLsizei stride){
+void ofShader::setAttribute2fv(const string & name, const float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -714,7 +714,7 @@ void ofShader::setAttribute2fv(const string & name, float* v, GLsizei stride){
 
 }
 
-void ofShader::setAttribute3fv(const string & name, float* v, GLsizei stride){
+void ofShader::setAttribute3fv(const string & name, const float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -724,7 +724,7 @@ void ofShader::setAttribute3fv(const string & name, float* v, GLsizei stride){
 	}
 }
 
-void ofShader::setAttribute4fv(const string & name, float* v, GLsizei stride){
+void ofShader::setAttribute4fv(const string & name, const float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {

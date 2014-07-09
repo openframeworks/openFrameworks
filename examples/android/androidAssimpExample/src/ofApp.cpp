@@ -63,13 +63,13 @@ void ofApp::draw(){
 
     ofMaterial & material = meshHelper.material;
     if(meshHelper.hasTexture()){
-        meshHelper.getTexturePtr()->bind();
+        meshHelper.getTextureRef().bind();
     }
     material.begin();
     mesh.drawWireframe();
     material.end();
     if(meshHelper.hasTexture()){
-        meshHelper.getTexturePtr()->unbind();
+        meshHelper.getTextureRef().unbind();
     }
     ofPopMatrix();
 

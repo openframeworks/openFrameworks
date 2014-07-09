@@ -459,7 +459,7 @@ static const NSString * ItemStatusContext;
         return;
     }
     
-    [super observeValueForKeyPath:keyPath 
+    [super observeValueForKeyPath:keyPath
                          ofObject:object
                            change:change 
                           context:context];
@@ -676,7 +676,7 @@ static const NSString * ItemStatusContext;
             [self seekToStart];
             bFinished = NO;
         }
-        [_player play];
+        [_player setRate:speed];
     } else {
         [_player pause];
     }
@@ -874,6 +874,7 @@ static const NSString * ItemStatusContext;
 
 - (void)setSpeed:(float)value {
     speed = value;
+    [_player setRate:value];
 }
 
 - (float)getSpeed {

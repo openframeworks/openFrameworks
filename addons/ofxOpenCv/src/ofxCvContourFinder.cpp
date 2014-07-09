@@ -173,9 +173,9 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
     ofPushStyle();
 	// ---------------------------- draw the bounding rectangle
 	ofSetHexColor(0xDD00CC);
-    glPushMatrix();
-    glTranslatef( x, y, 0.0 );
-    glScalef( scalex, scaley, 0.0 );
+    ofPushMatrix();
+    ofTranslate( x, y, 0.0 );
+    ofScale( scalex, scaley, 0.0 );
 
 	ofNoFill();
 	for( int i=0; i<(int)blobs.size(); i++ ) {
@@ -195,7 +195,7 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
 		ofEndShape();
 
 	}
-	glPopMatrix();
+	ofPopMatrix();
 	ofPopStyle();
 }
 

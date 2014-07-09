@@ -4,6 +4,7 @@
 #include "ofBaseApp.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofAppRunner.h"
+#include "Poco/URI.h"
 
 #ifdef TARGET_LINUX
 	#include "ofIcon.h"
@@ -16,7 +17,6 @@
 	#endif
 	#include "GLFW/glfw3native.h"
 	#include <X11/Xatom.h>
-	#include "Poco/URI.h"
 #elif defined(TARGET_OSX)
 	#include <Cocoa/Cocoa.h>
 	#define GLFW_EXPOSE_NATIVE_COCOA
@@ -38,7 +38,7 @@ GLFWwindow* ofAppGLFWWindow::windowP = NULL;
 void ofGLReadyCallback();
 
 //-------------------------------------------------------
-ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
+ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseGLWindow(){
 	bEnableSetupScreen	= true;
 	buttonInUse			= 0;
 	buttonPressed		= false;
@@ -161,7 +161,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersionMinor);
-		if(glVersionMajor>=3){
+		if((glVersionMajor>=3 && glVersionMinor>=2) || glVersionMajor>=4){
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		}
@@ -300,10 +300,14 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
     glfwTerminate();
 }
 
+void ofAppGLFWWindow::windowShouldClose(){
+	glfwSetWindowShouldClose(windowP,1);
+}
+
 //------------------------------------------------------------
 void ofAppGLFWWindow::display(void){
 
-	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+	shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 	if(renderer){
 		renderer->startRender();
 	}
@@ -827,8 +831,7 @@ ofOrientation ofAppGLFWWindow::getOrientation(){
 void ofAppGLFWWindow::exitApp(){
 	// Terminate GLFW
 	glfwTerminate();
-
-	OF_EXIT_APP(0);
+	std::exit(0);
 }
 
 //------------------------------------------------------------
@@ -913,13 +916,11 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 //------------------------------------------------------------
 void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString) {
 	ofDragInfo drag;
-	drag.position.set(ofGetMouseX()*instance->pixelScreenCoordScale, ofGetMouseY()*instance->pixelScreenCoordScale);
+	drag.position.set(ofGetMouseX(), ofGetMouseY());
 	drag.files.resize(numFiles);
-#ifdef TARGET_LINUX
 	for(int i=0; i<(int)drag.files.size(); i++){
 		drag.files[i] = Poco::URI(dropString[i]).getPath();
 	}
-#endif
 	ofNotifyDragEvent(drag);
 }
 
@@ -929,8 +930,9 @@ void ofAppGLFWWindow::error_cb(int errorCode, const char* errorDescription){
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, unsigned int codepoint, int action, int mods) {
-	switch (key) {
+void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancode, unsigned int codepoint, int action, int mods) {
+	int key;
+	switch (keycode) {
 		case GLFW_KEY_ESCAPE:
 			key = OF_KEY_ESC;
 			break;
@@ -1042,9 +1044,9 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int key, int scancode, u
 	}
 
 	if(action == GLFW_PRESS || action == GLFW_REPEAT){
-		ofNotifyKeyPressed(key);
+		ofNotifyKeyPressed(key,keycode,scancode,codepoint);
 	}else if (action == GLFW_RELEASE){
-		ofNotifyKeyReleased(key);
+		ofNotifyKeyReleased(key,keycode,scancode,codepoint);
 	}
 }
 

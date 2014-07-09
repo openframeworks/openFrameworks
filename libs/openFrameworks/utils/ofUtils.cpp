@@ -21,7 +21,7 @@
 #endif
 
 
-#if defined(TARGET_OF_IOS) || defined(TARGET_OSX ) || defined(TARGET_LINUX)
+#if defined(TARGET_OF_IOS) || defined(TARGET_OSX ) || defined(TARGET_LINUX) || defined(TARGET_EMSCRIPTEN)
 	#include <sys/time.h>
 #endif
 
@@ -85,7 +85,7 @@ void ofResetElapsedTimeCounter(){
  * 32-bit, where the GLUT API return value is also overflowed.
  */
 unsigned long long ofGetSystemTime( ) {
-	#ifdef TARGET_LINUX
+	#if defined(TARGET_LINUX) || defined(TARGET_EMSCRIPTEN)
 		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		return
@@ -107,7 +107,7 @@ unsigned long long ofGetSystemTime( ) {
 }
 
 unsigned long long ofGetSystemTimeMicros( ) {
-	#ifdef TARGET_LINUX
+	#if defined(TARGET_LINUX) || defined(TARGET_EMSCRIPTEN)
 		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		return
@@ -250,12 +250,16 @@ static Poco::Path & dataPathRoot(){
 
 //--------------------------------------------------
 Poco::Path getWorkingDir(){
+#ifndef TARGET_EMSCRIPTEN
 	char charWorkingDir[MAXPATHLEN];
 	char* ret = getcwd(charWorkingDir, MAXPATHLEN);
 	if(ret)
 		return Poco::Path(charWorkingDir);
 	else
 		return Poco::Path();
+#else
+	return Poco::Path();
+#endif
 }
 
 //--------------------------------------------------
@@ -277,7 +281,9 @@ void ofSetWorkingDirectoryToDefault(){
 #endif
 
 	defaultWorkingDirectory() = getWorkingDir();
+#ifndef TARGET_EMSCRIPTEN
 	defaultWorkingDirectory().makeAbsolute();
+#endif
 }
 	
 //--------------------------------------------------
@@ -784,7 +790,7 @@ void ofSaveFrame(bool bUseViewport){
 string ofSystem(const string& command){
 	FILE * ret = NULL;
 #ifdef TARGET_WIN32
-	 ret = _popen(command.c_str(),"r");
+	ret = _popen(command.c_str(),"r");
 #else 
 	ret = popen(command.c_str(),"r");
 #endif
@@ -799,7 +805,11 @@ string ofSystem(const string& command){
 		      c = fgetc (ret);
 		      strret += c;
 		} while (c != EOF);
-		fclose (ret);
+#ifdef TARGET_WIN32
+		_pclose (ret);
+#else
+		pclose (ret);
+#endif
 	}
 
 	return strret;
@@ -830,5 +840,7 @@ ofTargetPlatform ofGetTargetPlatform(){
     return OF_TARGET_ANDROID;
 #elif defined(TARGET_OF_IOS)
     return OF_TARGET_IOS;
+#elif defined(TARGET_EMSCRIPTEN)
+    return OF_TARGET_EMSCRIPTEN;
 #endif
 }
