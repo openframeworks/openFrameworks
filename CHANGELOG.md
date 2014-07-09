@@ -11,10 +11,8 @@ OF 0.9.0
 CORE
 ----
 ### utils
-	+ Added ofGetMouseScroll(), allows fast scroll values form trackpad and mouse on GLUT & GLFW
+	+ ofGetMouseScroll
 	
-
-
 ### gl
 	+ Programmable lights and materials
 	+ New area light type on programmable renderer
@@ -23,7 +21,7 @@ CORE
 	+ ofSetOpenGL(ES)Version, allows to set any specific GL version
 
 ### graphics
-	+ ofTruetypeFont: kerning and better hintinga and spacing
+	+ ofTruetypeFont: kerning and better hinting and spacing
 
 PLATFORM SPECIFIC
 -----------------
