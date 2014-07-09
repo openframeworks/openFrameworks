@@ -689,6 +689,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		x+= sortedCopy[i].tW + border*2;
 	}
 	texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
+	texAtlas.setRGToRGBASwizzles(true);
 
 	if(bAntiAliased && fontSize>20){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
