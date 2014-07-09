@@ -49,7 +49,6 @@ public:
     
     void removeMesh( int index );
     void removeTexture( int index );
-    void clear();
     
     void drawVertices();
     void drawWireframe();
