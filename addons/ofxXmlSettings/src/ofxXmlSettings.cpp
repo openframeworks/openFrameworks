@@ -180,6 +180,16 @@ string ofxXmlSettings::getValue(const string& tag, const string& defaultValue, i
 }
 
 //---------------------------------------------------------
+long long ofxXmlSettings::getValue(const string& tag, long long defaultValue, int which){
+    TiXmlHandle valHandle(NULL);
+	if (readTag(tag, valHandle, which)){
+		string longStr = valHandle.ToText()->ValueStr();
+		return atoll(longStr.c_str());
+	}
+	return defaultValue;
+}
+
+//---------------------------------------------------------
 bool ofxXmlSettings::readTag(const string&  tag, TiXmlHandle& valHandle, int which){
 
 	vector<string> tokens = tokenize(tag,":");
