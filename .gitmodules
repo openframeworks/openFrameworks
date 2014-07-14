@@ -1,3 +1,6 @@
 [submodule "apps/projectGenerator/projectGeneratorSimple"]
 	path = apps/projectGenerator/projectGeneratorSimple
 	url = https://github.com/ofZach/projectGeneratorSimple.git
+[submodule "addons/ofxOpenNI"]
+	path = addons/ofxOpenNI
+	url = https://github.com/loudcube/ofxOpenNI.git
