@@ -860,8 +860,6 @@
 					"$(LIB_ASSIMP)",
 					"$(LIB_FREEIMAGE)",
 					"$(LIB_FREETYPE)",
-					"$(LIB_GLUT)",
-					"$(LIB_FMODEX)",
 				);
 				PRODUCT_NAME = openFrameworksDebug;
 				SDKROOT = "";
@@ -905,8 +903,6 @@
 					"$(LIB_ASSIMP)",
 					"$(LIB_FREEIMAGE)",
 					"$(LIB_FREETYPE)",
-					"$(LIB_GLUT)",
-					"$(LIB_FMODEX)",
 				);
 				PRODUCT_NAME = openFrameworks;
 				SDKROOT = "";
