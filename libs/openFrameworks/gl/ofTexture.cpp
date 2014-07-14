@@ -563,7 +563,14 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 2);
 		
 		
-#ifndef TARGET_OPENGLES		
+#ifndef TARGET_OPENGLES
+		
+#if defined(MAC_OS_X_VERSION_10_9)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+	#warning Using gluBuild2DMipmaps, which is deprecated in OSX 10.9
+#endif
+		
 		//using sRGB compression
 		if (texData.compressionType == OF_COMPRESS_SRGB)
 		{
@@ -595,8 +602,12 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 			else if(texData.glTypeInternal == GL_LUMINANCE)
 				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ARB, w, h, glFormat, glType, data);
 		}
+		
+#if defined(MAC_OS_X_VERSION_10_9)
+#pragma clang diagnostic pop
 #endif
 		
+#endif
 
 		disableTextureTarget();
 		
