@@ -60,8 +60,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		bool 				isFrameNew() const;
 		unsigned char * 	getPixels();
-        ofPixelsRef			getPixelsRef();
-        const ofPixelsRef   getPixelsRef() const;
+        ofPixels&			getPixelsRef();
+        const ofPixels&     getPixelsRef() const;
 		float 				getPosition() const;
 		float 				getSpeed() const;
 		float 				getDuration() const;
@@ -76,6 +76,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		void 				setUseTexture(bool bUse);
 		ofTexture &			getTextureReference();
+		const ofTexture &	getTextureReference() const;
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
 		using ofBaseDraws::draw;

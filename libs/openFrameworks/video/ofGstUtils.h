@@ -95,7 +95,7 @@ private:
 	GstElement 	*		gstPipeline;
 
 	float				speed;
-	mutable uint64_t	durationNanos;
+	mutable int64_t		durationNanos;
 	bool				isAppSink;
 	Poco::Condition		eosCondition;
 	ofMutex				eosMutex;
@@ -148,8 +148,8 @@ public:
 
 	bool 			isFrameNew() const;
 	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
-	const ofPixelsRef	getPixelsRef() const;
+	ofPixels&		getPixelsRef();
+	const ofPixels& getPixelsRef() const;
 	void 			update();
 
 	float 			getHeight() const;

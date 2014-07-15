@@ -835,11 +835,11 @@ unsigned char * ofGstVideoGrabber::getPixels(){
 	return videoUtils.getPixels();
 }
 
-ofPixelsRef ofGstVideoGrabber::getPixelsRef(){
+ofPixels& ofGstVideoGrabber::getPixelsRef(){
 	return videoUtils.getPixelsRef();
 }
 
-const ofPixelsRef ofGstVideoGrabber::getPixelsRef() const {
+const ofPixels & ofGstVideoGrabber::getPixelsRef() const {
 	return videoUtils.getPixelsRef();
 }
 

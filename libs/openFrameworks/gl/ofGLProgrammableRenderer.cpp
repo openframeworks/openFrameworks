@@ -89,12 +89,12 @@ void ofGLProgrammableRenderer::update(){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
+void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)  const{
 	draw(vertexData, OF_MESH_FILL, useColors, useTextures, useNormals); // tig: use default mode if no render mode specified.
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
+void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
 	if (vertexData.getVertices().empty()) return;
 	
 	
@@ -104,7 +104,7 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	// Also gles2 still supports vertex array syntax for uploading data to attributes and it seems to be faster than
 	// vbo's for meshes that are updated frequently so let's use that instead
 	
-	if (bSmoothHinted) startSmoothing();
+	//if (bSmoothHinted) startSmoothing();
 
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
@@ -200,16 +200,16 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	
 #endif
 	
-	if (bSmoothHinted) endSmoothing();
+	//if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
+void ofGLProgrammableRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType) const {
 	model.getMesh().draw(renderType);
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofPolyline & poly){
+void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
 	/*  some things are internally still using ofPolyline
 	if(!wrongUseLoggedOnce){
 		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh or ofPath";
@@ -218,7 +218,7 @@ void ofGLProgrammableRenderer::draw(ofPolyline & poly){
 	if(poly.getVertices().empty()) return;
 
 	// use smoothness, if requested:
-	if (bSmoothHinted) startSmoothing();
+	//if (bSmoothHinted) startSmoothing();
 
 #if defined( TARGET_OPENGLES ) && !defined(TARGET_EMSCRIPTEN)
 
@@ -238,43 +238,44 @@ void ofGLProgrammableRenderer::draw(ofPolyline & poly){
 
 #endif
 	// use smoothness, if requested:
-	if (bSmoothHinted) endSmoothing();
+	//if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofPath & shape){
+void ofGLProgrammableRenderer::draw(const ofPath & shape) const{
 	ofColor prevColor;
 	if(shape.getUseShapeColor()){
 		prevColor = ofGetStyle().color;
 	}
+	ofGLProgrammableRenderer* mut_this = const_cast<ofGLProgrammableRenderer*>(this);
 	if(shape.isFilled()){
-		ofMesh & mesh = shape.getTessellation();
+		const ofMesh & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
-			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
+			mut_this->setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
 		}
 		draw(mesh);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
+			mut_this->setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
 		}
-		setLineWidth( shape.getStrokeWidth() );
-		vector<ofPolyline> & outlines = shape.getOutline();
+		mut_this->setLineWidth( shape.getStrokeWidth() );
+		const vector<ofPolyline> & outlines = shape.getOutline();
 		for(int i=0; i<(int)outlines.size(); i++)
 			draw(outlines[i]);
-		setLineWidth(lineWidth);
+		mut_this->setLineWidth(lineWidth);
 	}
 	if(shape.getUseShapeColor()){
-		setColor(prevColor);
+		mut_this->setColor(prevColor);
 	}
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		setAttributes(true,false,true,false);
-		ofTexture& tex = image.getTextureReference();
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
+		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
@@ -284,10 +285,10 @@ void ofGLProgrammableRenderer::draw(ofImage & image, float x, float y, float z, 
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		setAttributes(true,false,true,false);
-		ofTexture& tex = image.getTextureReference();
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
+		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
@@ -297,10 +298,10 @@ void ofGLProgrammableRenderer::draw(ofFloatImage & image, float x, float y, floa
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLProgrammableRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		setAttributes(true,false,true,false);
-		ofTexture& tex = image.getTextureReference();
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
+		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
@@ -904,7 +905,7 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 
 	texCoordsEnabled = tex;
-	colorsEnabled=color;
+	colorsEnabled = color;
 	normalsEnabled = normals;
 
 	if(!uniqueShader || currentMaterial){

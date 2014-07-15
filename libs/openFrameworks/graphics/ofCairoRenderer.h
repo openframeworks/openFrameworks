@@ -32,16 +32,16 @@ public:
 
 	void update();
 
-	void draw(ofPath & shape);
-	void draw(ofPath::Command & path);
-	void draw(ofPolyline & poly);
-	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true);
-	void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false);
-    void draw(of3dPrimitive& model, ofPolyRenderMode renderType );
-	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
-	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(const ofPath & shape) const;
+	void draw(const ofPath::Command & path) const;
+	void draw(const ofPolyline & poly) const;
+	void draw(const ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false) const;
+    void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
+	void draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const;
+	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
 	bool rendersPathPrimitives(){
 		return true;
@@ -141,19 +141,16 @@ public:
 
 private:
 	void setStyle(const ofStyle & style);
-	cairo_matrix_t * getCairoMatrix();
-	void setCairoMatrix();
-	ofVec3f transform(ofVec3f vec);
+	ofVec3f transform(ofVec3f vec) const;
 	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
 
-	deque<ofPoint> curvePoints;
+	mutable deque<ofPoint> curvePoints;
 	cairo_t * cr;
 	cairo_surface_t * surface;
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
 
 	stack<cairo_matrix_t> matrixStack;
-	cairo_matrix_t tmpMatrix;
 
 	Type type;
 	int page;

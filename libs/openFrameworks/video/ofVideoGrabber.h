@@ -64,15 +64,16 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		
 		void				videoSettings();
 		unsigned char 	*	getPixels();
-        ofPixelsRef			getPixelsRef();
-        const ofPixelsRef   getPixelsRef() const;
+        ofPixels&			getPixelsRef();
+        const ofPixels&     getPixelsRef() const;
 		ofTexture &			getTextureReference();
+		const ofTexture &	getTextureReference() const;
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
 		void				setUseTexture(bool bUse);
-		void				draw(float x, float y, float w, float h);
-		void				draw(float x, float y);
+		void				draw(float x, float y, float w, float h) const;
+		void				draw(float x, float y) const;
 		using ofBaseDraws::draw;
 
 		//the anchor is the point the image is drawn around.
@@ -99,8 +100,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		int RequestedDeviceID;
 		
 		bool grabberRunning; //this keeps track of whether the grabber opened sucessfully and is still open. //TODO: maybe expose this in a method? 
-		
-		ofPixelFormat internalPixelFormat;
+
+		mutable ofPixelFormat internalPixelFormat;
 		int desiredFramerate;
 };
 

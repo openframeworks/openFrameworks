@@ -49,15 +49,15 @@ class ofNoopRenderer: public ofBaseRenderer{
 
 	virtual void update(){}
 
-	virtual void draw(ofPolyline & poly){}
-	virtual void draw(ofPath & shape){}
-	virtual void draw(of3dPrimitive&, ofPolyRenderMode){}
-	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){}
-	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){}
-	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){}
-	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){}
-	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){}
-	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){}
+	virtual void draw(const ofPolyline & poly) const{}
+	virtual void draw(const ofPath & shape) const{}
+	virtual void draw(const of3dPrimitive&, ofPolyRenderMode) const{}
+	virtual void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{}
+	virtual void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{}
+	virtual void draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const{}
+	virtual void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
+	virtual void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
+	virtual void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
 
 	//--------------------------------------------
 	// transformations

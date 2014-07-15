@@ -33,47 +33,47 @@ public:
 	 }
 
 
-	 void draw(ofPolyline & poly){
+	 void draw(const ofPolyline & poly) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(poly);
 		 }
 	 }
-	 void draw(ofPath & shape){
+	 void draw(const ofPath & shape) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(shape);
 		 }
 	 }
-	 void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
+	 void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(vertexData,useColors, useTextures, useNormals);
 		 }
 	 }
 
-	 void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals){
+	 void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(vertexData,mode,useColors,useTextures,useNormals);
 		 }
 	 }
 
-    void draw( of3dPrimitive& model, ofPolyRenderMode renderType ) {
+    void draw(const  of3dPrimitive& model, ofPolyRenderMode renderType ) const {
         for(int i=0;i<(int)renderers.size();i++) {
             renderers[i]->draw( model, renderType );
         }
     }
 
-	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		 }
 	}
 
-	void draw(ofFloatImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	void draw(const ofFloatImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 		for(int i=0;i<(int)renderers.size();i++){
 			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}
 	}
 
-	void draw(ofShortImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	void draw(const ofShortImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 		for(int i=0;i<(int)renderers.size();i++){
 			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}

@@ -95,12 +95,12 @@ unsigned char * ofVideoPlayer::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofVideoPlayer::getPixelsRef(){
+ofPixels& ofVideoPlayer::getPixelsRef(){
 	return player->getPixelsRef();
 }
 
 //---------------------------------------------------------------------------
-const ofPixelsRef ofVideoPlayer::getPixelsRef() const {
+const ofPixels& ofVideoPlayer::getPixelsRef() const {
 	return player->getPixelsRef();
 }
 
@@ -122,8 +122,17 @@ const ofPixelsRef ofVideoPlayer::getPixelsRef() const {
 //}
 
 //---------------------------------------------------------------------------
-//for getting a reference to the texture
 ofTexture & ofVideoPlayer::getTextureReference(){
+	if(playerTex == NULL){
+		return tex;
+	}
+	else{
+		return *playerTex;
+	}
+}
+
+//---------------------------------------------------------------------------
+const ofTexture & ofVideoPlayer::getTextureReference() const{
 	if(playerTex == NULL){
 		return tex;
 	}
@@ -394,7 +403,8 @@ bool ofVideoPlayer::isPaused() const{
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isLoaded() const
+bool ofVideoPlayer::isLoaded() const{
+	if( player ){
 		return player->isLoaded();
 	}
 	return false;

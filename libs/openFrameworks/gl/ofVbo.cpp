@@ -647,10 +647,10 @@ GLuint ofVbo::getIndexId() const {
 }
 
 //--------------------------------------------------------------
-void ofVbo::bind(){
+void ofVbo::bind() const{
 	if(supportVAOs){
 		if(vaoID==0){
-			glGenVertexArrays(1, &vaoID);
+			glGenVertexArrays(1, &const_cast<ofVbo*>(this)->vaoID);
 			if(vaoID!=0){
 				retainVAO(vaoID);
 			}else{
@@ -755,11 +755,11 @@ void ofVbo::bind(){
 			}
 		}
 
-		map<int,GLuint>::iterator it;
+		map<int,GLuint>::const_iterator it;
 		for(it=attributeIds.begin();it!=attributeIds.end();it++){
-			glBindBuffer(GL_ARRAY_BUFFER, attributeIds[it->first]);
+			glBindBuffer(GL_ARRAY_BUFFER, it->second);
 			glEnableVertexAttribArray(it->first);
-			glVertexAttribPointer(it->first, attributeNumCoords[it->first], GL_FLOAT, GL_FALSE, attributeStrides[it->first], 0);
+			glVertexAttribPointer(it->first, attributeNumCoords.find(it->first)->second, GL_FLOAT, GL_FALSE, attributeStrides.find(it->first)->second, 0);
 			if(ofIsGLProgrammableRenderer()){
 				bUsingVerts |= it->first == ofShader::POSITION_ATTRIBUTE;
 				bUsingColors |= it->first == ofShader::COLOR_ATTRIBUTE;
@@ -780,7 +780,7 @@ void ofVbo::bind(){
 }
 
 //--------------------------------------------------------------
-void ofVbo::unbind() {
+void ofVbo::unbind() const{
 	if(supportVAOs){
 		glBindVertexArray(0);
 		if(!ofIsGLProgrammableRenderer()){
@@ -833,7 +833,7 @@ void ofVbo::unbind() {
 }
 
 //--------------------------------------------------------------
-void ofVbo::draw(int drawMode, int first, int total) {
+void ofVbo::draw(int drawMode, int first, int total) const{
 	if(bAllocated) {
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
@@ -843,7 +843,7 @@ void ofVbo::draw(int drawMode, int first, int total) {
 }
 
 //--------------------------------------------------------------
-void ofVbo::drawElements(int drawMode, int amt) {
+void ofVbo::drawElements(int drawMode, int amt) const{
 	if(bAllocated){
 		bool hadVAOChnaged = vaoChanged;
 		bool wasBinded = bBound;
@@ -864,7 +864,7 @@ void ofVbo::drawElements(int drawMode, int amt) {
 // tig: this, being a key feature of OpenGL VBOs, allows to render massive
 // amounts of geometry simultaneously without clogging the memory bus;
 // as discussed in: http://poniesandlight.co.uk/code/ofxVboMeshInstanced/
-void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) {
+void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) const{
 	if(bAllocated) {
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
@@ -882,7 +882,7 @@ void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) {
 }
 
 //--------------------------------------------------------------
-void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) {
+void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) const{
 	if(bAllocated){
 		bool hadVAOChnaged = vaoChanged;
 		bool wasBinded = bBound;

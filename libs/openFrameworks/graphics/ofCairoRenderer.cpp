@@ -181,9 +181,9 @@ void ofCairoRenderer::setStyle(const ofStyle & style){
 	//setDrawBitmapMode(style.drawBitmapMode);
 }
 
-void ofCairoRenderer::draw(ofPath & shape){
+void ofCairoRenderer::draw(const ofPath & shape) const{
 	cairo_new_path(cr);
-	vector<ofPath::Command> & commands = shape.getCommands();
+	const vector<ofPath::Command> & commands = shape.getCommands();
 	for(int i=0;i<(int)commands.size();i++){
 		draw(commands[i]);
 	}
@@ -226,11 +226,11 @@ void ofCairoRenderer::draw(ofPath & shape){
 	}
 
 	if(shape.getUseShapeColor()){
-		setColor(prevColor);
+		const_cast<ofCairoRenderer*>(this)->setColor(prevColor);
 	}
 }
 
-void ofCairoRenderer::draw(ofPolyline & poly){
+void ofCairoRenderer::draw(const ofPolyline & poly) const{
 	cairo_new_path(cr);
 	for(int i=0;i<(int)poly.size();i++){
 		cairo_line_to(cr,poly.getVertices()[i].x,poly.getVertices()[i].y);
@@ -240,10 +240,13 @@ void ofCairoRenderer::draw(ofPolyline & poly){
 	cairo_stroke( cr );
 }
 
-void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){
+void ofCairoRenderer::draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const{
 	if(vertexData.size()==0) return;
-	pushMatrix();
-	cairo_matrix_init_identity(getCairoMatrix());
+	ofCairoRenderer * mut_this = const_cast<ofCairoRenderer*>(this);
+	mut_this->pushMatrix();
+
+	cairo_matrix_t matrix;
+	cairo_matrix_init_identity(&matrix);
 	cairo_new_path(cr);
 	//if(indices.getNumIndices()){
 
@@ -296,11 +299,11 @@ void ofCairoRenderer::draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMod
 
 	cairo_move_to(cr,vertexData[vertexData.size()-1].x,vertexData[vertexData.size()-1].y);
 	cairo_stroke( cr );
-	popMatrix();
+	mut_this->popMatrix();
 }
 
 
-ofVec3f ofCairoRenderer::transform(ofVec3f vec){
+ofVec3f ofCairoRenderer::transform(ofVec3f vec) const{
 	if(!b3D) return vec;
 	vec = modelView.preMult(vec);
 	vec = projection.preMult(vec);
@@ -310,7 +313,7 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec){
 	return vec;
 }
 
-void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures, bool useNormals){
+void ofCairoRenderer::draw(const ofMesh & primitive, bool useColors, bool useTextures, bool useNormals) const{
 	if(primitive.getNumVertices() == 0){
 		return;
 	}
@@ -320,9 +323,6 @@ void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures,
 		draw(indexedMesh, useColors, useTextures, useNormals);
 		return;
 	}
-
-	pushMatrix();
-	cairo_matrix_init_identity(getCairoMatrix());
 	cairo_new_path(cr);
 
 		int i = 1;
@@ -378,10 +378,9 @@ void ofCairoRenderer::draw(ofMesh & primitive, bool useColors, bool useTextures,
 
 		cairo_stroke( cr );
 	}
-	popMatrix();
 }
 
-void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals){
+void ofCairoRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
     if(useColors || useTextures || useNormals){
         ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support colors, textures, or normals. drawing wireframe ...";
     }
@@ -389,7 +388,7 @@ void ofCairoRenderer::draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useC
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType  ) {
+void ofCairoRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType  )  const{
 
     if(model.hasScaling()) {
         ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support scaling";
@@ -399,7 +398,7 @@ void ofCairoRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType  )
         //glScalef( scale.x, scale.y, scale.z);
     }
 
-    ofMesh& mesh = model.getMesh();
+    const ofMesh& mesh = model.getMesh();
     draw( mesh, renderType, mesh.usingColors(), mesh.usingTextures(), mesh.usingNormals() );
 
     if(model.hasScaling()) {
@@ -409,8 +408,9 @@ void ofCairoRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType  )
 
 }
 
-void ofCairoRenderer::draw(ofPath::Command & command){
+void ofCairoRenderer::draw(const ofPath::Command & command) const{
 	if(!surface || !cr) return;
+	ofCairoRenderer * mut_this = const_cast<ofCairoRenderer*>(this);
 	switch(command.type){
 	case ofPath::Command::moveTo:
 		curvePoints.clear();
@@ -459,13 +459,13 @@ void ofCairoRenderer::draw(ofPath::Command & command){
 		// elliptic arcs not directly supported in cairo, lets scale y
 		if(command.radiusX!=command.radiusY){
 			float ellipse_ratio = command.radiusY/command.radiusX;
-			pushMatrix();
-			translate(0,-command.to.y*ellipse_ratio);
-			scale(1,ellipse_ratio);
-			translate(0,command.to.y/ellipse_ratio);
+			mut_this->pushMatrix();
+			mut_this->translate(0,-command.to.y*ellipse_ratio);
+			mut_this->scale(1,ellipse_ratio);
+			mut_this->translate(0,command.to.y/ellipse_ratio);
 			cairo_arc(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
 			//cairo_set_matrix(cr,&stored_matrix);
-			popMatrix();
+			mut_this->popMatrix();
 		}else{
 			cairo_arc(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
 		}
@@ -476,13 +476,13 @@ void ofCairoRenderer::draw(ofPath::Command & command){
 		// elliptic arcs not directly supported in cairo, lets scale y
 		if(command.radiusX!=command.radiusY){
 			float ellipse_ratio = command.radiusY/command.radiusX;
-			pushMatrix();
-			translate(0,-command.to.y*ellipse_ratio);
-			scale(1,ellipse_ratio);
-			translate(0,command.to.y/ellipse_ratio);
+			mut_this->pushMatrix();
+			mut_this->translate(0,-command.to.y*ellipse_ratio);
+			mut_this->scale(1,ellipse_ratio);
+			mut_this->translate(0,command.to.y/ellipse_ratio);
 			cairo_arc_negative(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
 			//cairo_set_matrix(cr,&stored_matrix);
-			popMatrix();
+			mut_this->popMatrix();
 		}else{
 			cairo_arc_negative(cr,command.to.x,command.to.y,command.radiusX,command.angleBegin*DEG_TO_RAD,command.angleEnd*DEG_TO_RAD);
 		}
@@ -498,23 +498,24 @@ void ofCairoRenderer::draw(ofPath::Command & command){
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	ofPixelsRef raw = img.getPixelsRef();
+void ofCairoRenderer::draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+	const ofPixels & raw = img.getPixelsRef();
 	bool shouldCrop = sx != 0 || sy != 0 || sw != w || sh != h;
 	ofPixels cropped;
 	if(shouldCrop) {
 		cropped.allocate(sw, sh, raw.getImageType());
 		raw.cropTo(cropped, sx, sy, sw, sh);
 	}
-	ofPixelsRef pix = shouldCrop ? cropped : raw;
+	const ofPixels & pix = shouldCrop ? cropped : raw;
 
-	pushMatrix();
-	translate(x,y,z);
-	scale(w/pix.getWidth(),h/pix.getHeight());
+	ofCairoRenderer * mut_this = const_cast<ofCairoRenderer*>(this);
+	mut_this->pushMatrix();
+	mut_this->translate(x,y,z);
+	mut_this->scale(w/pix.getWidth(),h/pix.getHeight());
 	cairo_surface_t *image;
 	int stride=0;
 	int picsize = pix.getWidth()* pix.getHeight();
-	unsigned char *imgPix = pix.getPixels();
+	const unsigned char *imgPix = pix.getPixels();
 
 	static vector<unsigned char> swapPixels;
 
@@ -571,7 +572,7 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 	case OF_IMAGE_UNDEFINED:
 	default:
 		ofLogError("ofCairoRenderer") << "draw(): trying to draw undefined image type " << pix.getImageType();
-		popMatrix();
+		mut_this->popMatrix();
 		return;
 		break;
 	}
@@ -579,17 +580,17 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 	cairo_paint (cr);
 	cairo_surface_flush(image);
 	cairo_surface_destroy (image);
-	popMatrix();
+	mut_this->popMatrix();
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofCairoRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	ofImage tmp = image;
 	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofCairoRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	ofImage tmp = image;
 	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
@@ -709,8 +710,9 @@ ofMatrix4x4 ofCairoRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const{
 
 void ofCairoRenderer::pushMatrix(){
 	if(!surface || !cr) return;
-	cairo_get_matrix(cr,&tmpMatrix);
-	matrixStack.push(tmpMatrix);
+	cairo_matrix_t matrix;
+	cairo_get_matrix(cr,&matrix);
+	matrixStack.push(matrix);
 
 	if(!b3D) return;
 	modelViewStack.push(modelView);
@@ -728,8 +730,10 @@ void ofCairoRenderer::popMatrix(){
 
 void ofCairoRenderer::translate(float x, float y, float z ){
 	if(!surface || !cr) return;
-	cairo_matrix_translate(getCairoMatrix(),x,y);
-	setCairoMatrix();
+	cairo_matrix_t matrix;
+	cairo_get_matrix(cr,&matrix);
+	cairo_matrix_translate(&matrix,x,y);
+	cairo_set_matrix(cr,&matrix);
 
 	if(!b3D) return;
 	modelView.glTranslate(ofVec3f(x,y,z));
@@ -742,8 +746,10 @@ void ofCairoRenderer::translate(const ofPoint & p){
 
 void ofCairoRenderer::scale(float xAmnt, float yAmnt, float zAmnt ){
 	if(!surface || !cr) return;
-	cairo_matrix_scale(getCairoMatrix(),xAmnt,yAmnt);
-	setCairoMatrix();
+	cairo_matrix_t matrix;
+	cairo_get_matrix(cr,&matrix);
+	cairo_matrix_scale(&matrix,xAmnt,yAmnt);
+	cairo_set_matrix(cr,&matrix);
 
 	if(!b3D) return;
 	modelView.glScale(xAmnt,yAmnt,zAmnt);
@@ -764,8 +770,9 @@ void ofCairoRenderer::matrixMode(ofMatrixMode mode){
 void ofCairoRenderer::loadIdentityMatrix (void){
 	if(!surface || !cr) return;
 	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
-		cairo_matrix_init_identity(getCairoMatrix());
-		setCairoMatrix();
+		cairo_matrix_t matrix;
+		cairo_matrix_init_identity(&matrix);
+		cairo_set_matrix(cr,&matrix);
 	}
 
 	if(!b3D) return;
@@ -823,8 +830,10 @@ void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
 
     // we can only do Z-axis rotations via cairo_matrix_rotate.
     if(vecZ == 1.0f) {
-        cairo_matrix_rotate(getCairoMatrix(),degrees*DEG_TO_RAD);
-        setCairoMatrix();
+    	cairo_matrix_t matrix;
+    	cairo_get_matrix(cr,&matrix);
+        cairo_matrix_rotate(&matrix,degrees*DEG_TO_RAD);
+        cairo_set_matrix(cr,&matrix);
     }
 
     if(!b3D) return;
@@ -1317,15 +1326,6 @@ cairo_t * ofCairoRenderer::getCairoContext(){
 
 cairo_surface_t * ofCairoRenderer::getCairoSurface(){
 	return surface;
-}
-
-cairo_matrix_t * ofCairoRenderer::getCairoMatrix(){
-	cairo_get_matrix(cr,&tmpMatrix);
-	return &tmpMatrix;
-}
-
-void ofCairoRenderer::setCairoMatrix(){
-	cairo_set_matrix(cr,&tmpMatrix);
 }
 
 ofPixels & ofCairoRenderer::getImageSurfacePixels(){
