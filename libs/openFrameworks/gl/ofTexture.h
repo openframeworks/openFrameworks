@@ -485,21 +485,21 @@ class ofTexture : public ofBaseDraws {
 	/// \warning This is not supported in OpenGL ES and does nothing.
 	///
 	/// \param pixels Target ofPixels reference.
-	void readToPixels(ofPixels & pixels);
+	void readToPixels(ofPixels & pixels) const;
 
 	/// \brief Read current texture data from the GPU into pixels.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.
 	///
 	/// \param pixels Target pixels reference.
-	void readToPixels(ofShortPixels & pixels);
+	void readToPixels(ofShortPixels & pixels) const;
 
 	/// \brief Read current texture data from the GPU into pixels.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.
 	///
 	/// \param pixels Target pixels reference.
-	void readToPixels(ofFloatPixels & pixels);
+	void readToPixels(ofFloatPixels & pixels) const;
 
 	/// \brief Bind the texture.
 	///
@@ -523,13 +523,13 @@ class ofTexture : public ofBaseDraws {
 	/// \param xPos Horizontal position in pixels.
 	/// \param yPos Vertical position in pixels.
 	/// \returns Texture coordinate or (0, 0) if texture is not allocated.
-	ofPoint getCoordFromPoint(float xPos, float yPos);		
+	ofPoint getCoordFromPoint(float xPos, float yPos) const;		
 	
 	/// \brief Helper to convert display coordinate to texture coordinate.
 	/// \param xPts Horizontal position in a normalized percentage (0 - 1).
 	/// \param yPts Vertical position in a normalized percentage (0 - 1).
 	/// \returns Texture coordinate or (0, 0) if texture is not allocated.
-	ofPoint getCoordFromPercent(float xPts, float yPts);		
+	ofPoint getCoordFromPercent(float xPts, float yPts) const;		
 	
 	/// \brief Set texture wrapping.
 	///
@@ -572,11 +572,11 @@ class ofTexture : public ofBaseDraws {
 	/// Legacy function for backwards compatibility.
 	///
 	/// \returns true if the texture has been allocated.
-	bool bAllocated();
+	bool bAllocated() const;
 	
 	/// \brief Has the texture been allocated?
 	/// \returns true if the texture has been allocated.
-	bool isAllocated();
+	bool isAllocated() const;
 
 	/// \brief Internal texture data access.
 	/// \returns a reference to the internal texture data struct.
@@ -596,7 +596,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa ofEnabledNormalizedTextures()
 	///
 	/// \returns Display height of texture in pixels.
-	float getHeight();
+	float getHeight() const;
 
 	/// \brief Display width of texture.
 	///
@@ -605,14 +605,14 @@ class ofTexture : public ofBaseDraws {
 	/// \sa ofEnabledNormalizedTextures()
 	///
 	/// \returns Display width of texture in pixels.
-	float getWidth();
+	float getWidth() const;
 
 protected:
     void loadData(const void * data, int w, int h, int glFormat, int glType);
 
 
-	void enableTextureTarget();
-	void disableTextureTarget();
+	void enableTextureTarget() const;
+	void disableTextureTarget() const;
 
 	ofPoint anchor;
 	bool bAnchorIsPct;

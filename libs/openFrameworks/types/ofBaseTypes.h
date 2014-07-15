@@ -49,8 +49,8 @@ public:
 		draw(point.x, point.y, w, h);
 	}
 	
-	virtual float getHeight()=0;
-	virtual float getWidth()=0;
+	virtual float getHeight() const = 0;
+	virtual float getWidth() const = 0;
 	
 	virtual void setAnchorPercent(float xPct, float yPct){};
 	virtual void setAnchorPoint(float x, float y){};
@@ -98,6 +98,7 @@ public:
 	virtual ~ofBaseHasPixels_<T>(){}
 	virtual T * getPixels()=0;
 	virtual ofPixels_<T> & getPixelsRef()=0;
+	virtual const ofPixels_<T> & getPixelsRef() const =0;
 };
 
 typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
@@ -172,8 +173,8 @@ class ofBaseSoundOutput{
 class ofBaseVideo: virtual public ofBaseHasPixels, public ofBaseUpdates{
 public:
 	virtual ~ofBaseVideo(){}
-	virtual bool isFrameNew()=0;
-	virtual void close()=0;
+	virtual bool isFrameNew() const = 0;
+	virtual void close() = 0;
 };
 
 
@@ -194,20 +195,20 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual ~ofBaseVideoGrabber();
 
 	//needs implementing
-	virtual vector<ofVideoDevice>	listDevices() = 0;
+	virtual vector<ofVideoDevice>	listDevices() const = 0;
 	virtual bool	initGrabber(int w, int h) = 0;
 	virtual void	update() = 0;
-	virtual bool	isFrameNew() = 0;
+	virtual bool	isFrameNew() const = 0;
 	
 	virtual unsigned char 	* getPixels() = 0;
 	
 	virtual void	close() = 0;	
 	
-	virtual float	getHeight() = 0;
-	virtual float	getWidth() = 0;
+	virtual float	getHeight() const = 0;
+	virtual float	getWidth() const = 0;
 	
 	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
-	virtual ofPixelFormat getPixelFormat() = 0;
+	virtual ofPixelFormat getPixelFormat() const = 0;
 
 	// implement only if internal API can upload directly to texture
 	virtual ofTexture * getTexture(){ return NULL; }
@@ -237,25 +238,25 @@ public:
 	virtual void				play() = 0;
 	virtual void				stop() = 0;		
 	
-	virtual bool 				isFrameNew() = 0;
+	virtual bool 				isFrameNew() const = 0;
 	virtual unsigned char * 	getPixels() = 0;
 	virtual ofTexture *			getTexture(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 	
-	virtual float 				getWidth() = 0;
-	virtual float 				getHeight() = 0;
+	virtual float 				getWidth() const = 0;
+	virtual float 				getHeight() const = 0;
 	
-	virtual bool				isPaused() = 0;
-	virtual bool				isLoaded() = 0;
-	virtual bool				isPlaying() = 0;
+	virtual bool				isPaused() const = 0;
+	virtual bool				isLoaded() const = 0;
+	virtual bool				isPlaying() const = 0;
 	
 	virtual bool				setPixelFormat(ofPixelFormat pixelFormat) = 0;
-	virtual ofPixelFormat 		getPixelFormat() = 0;
+	virtual ofPixelFormat 		getPixelFormat() const = 0;
 		
 	//should implement!
-	virtual float 				getPosition();
-	virtual float 				getSpeed();
-	virtual float 				getDuration();
-	virtual bool				getIsMovieDone();
+	virtual float 				getPosition() const;
+	virtual float 				getSpeed() const;
+	virtual float 				getDuration() const;
+	virtual bool				getIsMovieDone() const;
 	
 	virtual void 				setPaused(bool bPause);
 	virtual void 				setPosition(float pct);
@@ -264,9 +265,9 @@ public:
 	virtual void   				setSpeed(float speed);
 	virtual void				setFrame(int frame);  // frame 0 = first frame...
 	
-	virtual int					getCurrentFrame();
-	virtual int					getTotalNumFrames();
-	virtual ofLoopType			getLoopState();
+	virtual int					getCurrentFrame() const;
+	virtual int					getTotalNumFrames() const;
+	virtual ofLoopType			getLoopState() const;
 	
 	virtual void				firstFrame();
 	virtual void				nextFrame();
@@ -308,10 +309,10 @@ public:
 	virtual void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){}
 	virtual void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1){}
 	virtual void setOrientation(ofOrientation orientation, bool vFlip){};
-	virtual ofRectangle getCurrentViewport(){return ofRectangle();}
-	virtual ofRectangle getNativeViewport(){return getCurrentViewport();}
-	virtual int getViewportWidth(){return 0;}
-	virtual int getViewportHeight(){return 0;}
+	virtual ofRectangle getCurrentViewport() const {return ofRectangle();}
+	virtual ofRectangle getNativeViewport() const {return getCurrentViewport();}
+	virtual int getViewportWidth() const {return 0;}
+	virtual int getViewportHeight() const {return 0;}
 	virtual bool isVFlipped() const{return true;}
 
 	virtual void setCoordHandedness(ofHandednessType handedness){};

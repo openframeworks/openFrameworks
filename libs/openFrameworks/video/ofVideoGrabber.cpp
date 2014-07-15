@@ -107,7 +107,7 @@ bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofVideoGrabber::getPixelFormat(){
+ofPixelFormat ofVideoGrabber::getPixelFormat() const{
 	if(grabber){
 		internalPixelFormat = grabber->getPixelFormat();
 	}
@@ -115,7 +115,7 @@ ofPixelFormat ofVideoGrabber::getPixelFormat(){
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofVideoGrabber::listDevices(){
+vector<ofVideoDevice> ofVideoGrabber::listDevices() const{
 	if(!grabber){
 		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
@@ -158,6 +158,11 @@ ofPixelsRef ofVideoGrabber::getPixelsRef(){
 	return grabber->getPixelsRef();
 }
 
+//---------------------------------------------------------------------------
+const ofPixelsRef ofVideoGrabber::getPixelsRef() const {
+	return grabber->getPixelsRef();
+}
+
 //------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoGrabber::getTextureReference(){
@@ -170,7 +175,7 @@ ofTexture & ofVideoGrabber::getTextureReference(){
 }
 
 //---------------------------------------------------------------------------
-bool  ofVideoGrabber::isFrameNew(){
+bool  ofVideoGrabber::isFrameNew() const{
 	if(grabber){
 		return grabber->isFrameNew();
 	}
@@ -236,7 +241,7 @@ void ofVideoGrabber::draw(float _x, float _y){
 }
 
 //----------------------------------------------------------
-float ofVideoGrabber::getHeight(){
+float ofVideoGrabber::getHeight() const{
 	if(grabber){
 		height = grabber->getHeight();
 	}
@@ -244,7 +249,7 @@ float ofVideoGrabber::getHeight(){
 }
 
 //----------------------------------------------------------
-float ofVideoGrabber::getWidth(){
+float ofVideoGrabber::getWidth() const{
 	if(grabber){
 		width = grabber->getWidth();
 	}
@@ -252,6 +257,6 @@ float ofVideoGrabber::getWidth(){
 }
 
 //----------------------------------------------------------
-bool ofVideoGrabber::isInitialized(){
+bool ofVideoGrabber::isInitialized() const{
 	return bInitialized;
 }

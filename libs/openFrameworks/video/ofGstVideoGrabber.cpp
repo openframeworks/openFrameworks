@@ -597,7 +597,7 @@ bool ofGstVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	return true;
 }
 
-ofPixelFormat ofGstVideoGrabber::getPixelFormat(){
+ofPixelFormat ofGstVideoGrabber::getPixelFormat() const {
 	return internalPixelFormat;
 }
 
@@ -622,7 +622,7 @@ ofPixelFormat ofPixelFormatFromGstFormat(string format){
 #endif
 }
 
-vector<ofVideoDevice> ofGstVideoGrabber::listDevices(){
+vector<ofVideoDevice> ofGstVideoGrabber::listDevices() const {
 #if GST_VERSION_MAJOR>=1
 	if(!camData.bInited) get_video_devices(camData);
 	vector<ofVideoDevice> devices(camData.webcam_devices.size());
@@ -827,7 +827,7 @@ void ofGstVideoGrabber::update(){
 	videoUtils.update();
 }
 
-bool ofGstVideoGrabber::isFrameNew(){
+bool ofGstVideoGrabber::isFrameNew() const {
 	return videoUtils.isFrameNew();
 }
 
@@ -839,11 +839,15 @@ ofPixelsRef ofGstVideoGrabber::getPixelsRef(){
 	return videoUtils.getPixelsRef();
 }
 
-float ofGstVideoGrabber::getHeight(){
+const ofPixelsRef ofGstVideoGrabber::getPixelsRef() const {
+	return videoUtils.getPixelsRef();
+}
+
+float ofGstVideoGrabber::getHeight() const {
 	return videoUtils.getHeight();
 }
 
-float ofGstVideoGrabber::getWidth(){
+float ofGstVideoGrabber::getWidth() const {
 	return videoUtils.getWidth();
 }
 

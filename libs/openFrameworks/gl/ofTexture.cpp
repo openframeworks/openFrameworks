@@ -178,12 +178,12 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 }
 
 //----------------------------------------------------------
-bool ofTexture::bAllocated(){
+bool ofTexture::bAllocated() const {
 	return texData.bAllocated;
 }
 
 //----------------------------------------------------------
-bool ofTexture::isAllocated(){
+bool ofTexture::isAllocated() const {
 	return texData.bAllocated;
 }
 
@@ -231,11 +231,11 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 }
 
 
-void ofTexture::enableTextureTarget(){
+void ofTexture::enableTextureTarget() const {
 	if(ofGetGLRenderer()) ofGetGLRenderer()->enableTextureTarget(texData.textureTarget);
 }
 
-void ofTexture::disableTextureTarget(){
+void ofTexture::disableTextureTarget() const {
 	if(ofGetGLRenderer()) ofGetGLRenderer()->disableTextureTarget(texData.textureTarget);
 }
 
@@ -672,7 +672,7 @@ void ofTexture::resetAnchor(){
 }
 
 //----------------------------------------------------------
-void ofTexture::bind(){
+void ofTexture::bind() const {
 	//we could check if it has been allocated - but we don't do that in draw() 
 	enableTextureTarget();
 	glBindTexture( texData.textureTarget, (GLuint)texData.textureID);
@@ -701,7 +701,7 @@ void ofTexture::bind(){
 }
 
 //----------------------------------------------------------
-void ofTexture::unbind(){
+void ofTexture::unbind() const {
 
 	glBindTexture( texData.textureTarget, 0);
 	disableTextureTarget();
@@ -965,7 +965,7 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 }
 
 //----------------------------------------------------------
-void ofTexture::readToPixels(ofPixels & pixels){
+void ofTexture::readToPixels(ofPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
 	bind();
@@ -975,7 +975,7 @@ void ofTexture::readToPixels(ofPixels & pixels){
 }
 
 //----------------------------------------------------------
-void ofTexture::readToPixels(ofShortPixels & pixels){
+void ofTexture::readToPixels(ofShortPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
 	bind();
@@ -985,7 +985,7 @@ void ofTexture::readToPixels(ofShortPixels & pixels){
 }
 
 //----------------------------------------------------------
-void ofTexture::readToPixels(ofFloatPixels & pixels){
+void ofTexture::readToPixels(ofFloatPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
 	bind();
@@ -995,11 +995,11 @@ void ofTexture::readToPixels(ofFloatPixels & pixels){
 }
 
 //----------------------------------------------------------
-float ofTexture::getHeight(){
+float ofTexture::getHeight() const {
 	return texData.height;
 }
 
 //----------------------------------------------------------
-float ofTexture::getWidth(){
+float ofTexture::getWidth() const {
 	return texData.width;
 }
