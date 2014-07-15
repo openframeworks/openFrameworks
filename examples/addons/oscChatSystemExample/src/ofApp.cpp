@@ -165,7 +165,7 @@ void ofApp::keyPressed(int key){
 		ofxOscMessage m;
 		m.setAddress("/typing");
 		m.addStringArg(clientTyping);
-		clientSender.sendMessage(m);
+		clientSender.sendMessage(m, false);
 
 		// clear out "typing"
 		clientTyping = "";
@@ -250,7 +250,7 @@ void ofApp::broadcastReceivedMessage(string chatmessage){
 	for(unsigned int i = 0; i < knownClients.size(); i++){
 		serverSender.setup(knownClients[i], serverRecvPort + 1);
 		m.setRemoteEndpoint(knownClients[i], serverRecvPort + 1);
-		serverSender.sendMessage(m);
+		serverSender.sendMessage(m, false);
 		ofLogVerbose("Server broadcast message " + m.getArgAsString(0) + " to " + m.getRemoteIp()
 					 + ":" + ofToString(m.getRemotePort()));
 	}

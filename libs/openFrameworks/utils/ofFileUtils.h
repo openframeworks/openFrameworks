@@ -134,9 +134,9 @@ public:
 	bool isDevice() const;
 	bool isHidden() const;
 
-	void setWriteable(bool writeable);
-	void setReadOnly(bool readable);
-	void setExecutable(bool executable);
+	void setWriteable(bool writeable=true);
+	void setReadOnly(bool readable=true);
+	void setExecutable(bool executable=true);
 	
 	//these all work for files and directories
 	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
@@ -198,6 +198,7 @@ private:
 	void copyFrom(const ofFile & mom);
 	Poco::File myFile;
 	Mode mode;
+	bool binary;
 };
 
 class ofDirectory{
@@ -221,9 +222,9 @@ public:
 	bool isDirectory() const;
 	bool isHidden() const;
 
-	void setWriteable(bool writeable);
-	void setReadOnly(bool readable);
-	void setExecutable(bool executable);
+	void setWriteable(bool writeable=true);
+	void setReadOnly(bool readable=true);
+	void setExecutable(bool executable=true);
 	void setShowHidden(bool showHidden);
 
 	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);

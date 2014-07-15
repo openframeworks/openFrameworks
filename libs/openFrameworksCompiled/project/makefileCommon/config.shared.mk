@@ -30,12 +30,17 @@ ifndef PLATFORM_VARIANT
     PLATFORM_VARIANT = default
 endif
 
+ifdef EMSCRIPTEN
+	PLATFORM_OS=emscripten
+endif
+
 # if not defined, determine this platform's operating system via uname -s
 ifndef PLATFORM_OS 
     # determine from the uname if not defined manually
     PLATFORM_OS=$(shell uname -s)
 endif
 HOST_OS=$(shell uname -s)
+$(info HOST_OS=${HOST_OS})
 
 # if not defined, determine this platform's architecture via uname -m
 ifndef PLATFORM_ARCH
@@ -43,6 +48,7 @@ ifndef PLATFORM_ARCH
     PLATFORM_ARCH=$(shell uname -m)
 endif
 HOST_ARCH=$(shell uname -m)
+$(info HOST_ARCH=${HOST_ARCH})
 
 ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
 	CROSS_COMPILING=1
@@ -77,6 +83,8 @@ ifndef PLATFORM_LIB_SUBPATH
         PLATFORM_LIB_SUBPATH=android
     else ifeq ($(PLATFORM_OS),Darwin)
         PLATFORM_LIB_SUBPATH=osx
+    else ifeq ($(PLATFORM_OS),emscripten)
+        PLATFORM_LIB_SUBPATH=emscripten
     else
         $(error This makefile does not support your operating system)
     endif

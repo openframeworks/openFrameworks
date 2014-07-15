@@ -6,6 +6,7 @@
 #include "ofMath.h"
 #include <limits>
 
+
 //---------------------------------------
 enum ofInterpolationMethod {
 	OF_INTERPOLATE_NEAREST_NEIGHBOR =1,
@@ -13,6 +14,8 @@ enum ofInterpolationMethod {
 	OF_INTERPOLATE_BICUBIC			=3
 };
 
+
+/// \brief A class representing a collection of pixels.
 template <typename PixelType>
 class ofPixels_ {
 public:
@@ -45,22 +48,26 @@ public:
 	void crop(int x, int y, int width, int height);
 	// not in place
 	
-	void cropTo(ofPixels_<PixelType> &toPix, int x, int y, int _width, int _height);
+	void cropTo(ofPixels_<PixelType> &toPix, int x, int y, int _width, int _height) const;
 
 	// crop to a new width and height, this reallocates memory.
 	void rotate90(int nClockwiseRotations);
-	void rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations);
-	void mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal);
+	void rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations) const;
+	void mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal) const;
 	void mirror(bool vertically, bool horizontal);
 	bool resize(int dstWidth, int dstHeight, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);	
-	bool resizeTo(ofPixels_<PixelType> & dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);
-	bool pasteInto(ofPixels_<PixelType> &dst, int x, int y);
+	bool resizeTo(ofPixels_<PixelType> & dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR) const;
+	bool pasteInto(ofPixels_<PixelType> &dst, int x, int y) const;
 
 	void swapRgb();
 
 	void clear();
 	
 	PixelType * getPixels();
+	
+	/// \brief Retrieves pixel data from the ofPixel object.
+	/// 
+	/// \returns A raw pointer to the pixel data.
 	const PixelType * getPixels() const;
 
 	int getPixelIndex(int x, int y) const;
@@ -84,16 +91,24 @@ public:
 	int getNumChannels() const;
 
 	ofPixels_<PixelType> getChannel(int channel) const;
+	
 	void setChannel(int channel, const ofPixels_<PixelType> channelPixels);
 
 	ofImageType getImageType() const;
+	
+	/// \brief Changes the image type for the ofPixels object
+	///
+	/// \param imageType Can be one of the following: OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 	void setImageType(ofImageType imageType);
+	/// \brief Sets the number of color channels for the ofPixel object.
+	///
+	/// \param channel The number of color channels you would like the ofPixel object to have. Conventional values would be 1 (grayscale), 3 (RGB), and 4 (CMYK).
 	void setNumChannels(int numChannels);
 
 	int size() const;
 
 private:
-	float bicubicInterpolate(const float *patch, float x,float y, float x2,float y2, float x3,float y3);
+	static float bicubicInterpolate(const float *patch, float x,float y, float x2,float y2, float x3,float y3);
 
 	void copyFrom( const ofPixels_<PixelType>& mom );
 

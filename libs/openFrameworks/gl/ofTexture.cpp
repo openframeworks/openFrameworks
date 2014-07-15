@@ -320,8 +320,8 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
 		texData.tex_w = texData.width;
 		texData.tex_h = texData.height;
-		texData.tex_w = texData.width;
-		texData.tex_h = texData.height;		
+		texData.tex_t = texData.width;
+		texData.tex_u = texData.height;
 	}else
 #endif
 	{
@@ -359,9 +359,11 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	if (!ofIsGLProgrammableRenderer()){
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	}
+	#ifndef TARGET_PROGRAMMABLE_GL
+		if (!ofIsGLProgrammableRenderer()){
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		}
+	#endif
 	disableTextureTarget();
 
 
@@ -509,7 +511,6 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 	// 	we need a good solution for this..
 	//
 	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
-	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
 	
 	
 	//Sosolimited: texture compression
@@ -547,9 +548,11 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 		
 		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
+#ifndef TARGET_PROGRAMMABLE_GL
 		if(!ofGetGLProgrammableRenderer()){
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		}
+#endif
 #ifndef TARGET_OPENGLES		
 		glTexParameteri(texData.textureTarget, GL_GENERATE_MIPMAP_SGIS, true);
 #endif
@@ -712,7 +715,7 @@ void ofTexture::unbind() const {
 
 
 //----------------------------------------------------------
-ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
+ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 	
 	ofPoint temp;
 	
@@ -731,7 +734,7 @@ ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
 		float pctx = xPos / texData.width;
 		float pcty = yPos / texData.height;
 		
-		// (b) mult by our internal pct (since we might not be 0-1 insternally)
+		// (b) mult by our internal pct (since we might not be 0-1 internally)
 		
 		pctx *= texData.tex_t;
 		pcty *= texData.tex_u;
@@ -747,7 +750,7 @@ ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
 }
 
 //----------------------------------------------------------
-ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
+ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct) const{
 	
 	ofPoint temp;
 	
@@ -793,44 +796,46 @@ void ofTexture::setCompression(ofTexCompression compression){
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y){
+void ofTexture::draw(float x, float y) const{
 	draw(x,y,0,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float z){
+void ofTexture::draw(float x, float y, float z) const{
 	draw(x,y,z,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float w, float h){
+void ofTexture::draw(float x, float y, float w, float h) const{
 	draw(x,y,0,w,h);
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float z, float w, float h){
+void ofTexture::draw(float x, float y, float z, float w, float h) const{
 	drawSubsection(x,y,z,w,h,0,0,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy){
-	drawSubsection(x,y,0,w,h,sx,sy,w,h);
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy) const{
+	drawSubsection(x,y,0,w,h,sx,sy,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh){
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh) const{
 	drawSubsection(x,y,0,w,h,sx,sy,_sw,_sh);
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
-	drawSubsection(x,y,z,w,h,sx,sy,w,h);
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const{
+	drawSubsection(x,y,z,w,h,sx,sy,getWidth(),getHeight());
 }
 
 //----------------------------------------------------------
-void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
-	
-	
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+	if(!texData.bAllocated){
+		return;
+	}
+
 	GLfloat px0 = x;		// up to you to get the aspect ratio right
 	GLfloat py0 = y;
 	GLfloat px1 = w+x;
@@ -892,12 +897,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat ty0 = topLeft.y + offseth;
 	GLfloat tx1 = bottomRight.x - offsetw;
 	GLfloat ty1 = bottomRight.y - offseth;
-	
-	/*if(z>0 || z<0){
-		ofPushMatrix();
 
-		ofTranslate(0,0,z);
-	}*/
 	quad.getVertices()[0].set(px0,py0,z);
 	quad.getVertices()[1].set(px1,py0,z);
 	quad.getVertices()[2].set(px1,py1,z);
@@ -916,17 +916,12 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	bind();
 	quad.draw();
 	unbind();
-
-	/*if(z>0 || z<0){
-		ofPopMatrix();
-	}*/
-	
 }
 
 
 // ROGER
 //----------------------------------------------------------
-void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4){
+void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const{
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
 	// slightly, slightly alters an image, scaling...

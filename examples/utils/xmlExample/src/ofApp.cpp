@@ -266,15 +266,15 @@ void ofApp::mouseReleased(int x, int y, int button){
     }
     else
     {
-        
         // otherwise, we haven't made one, so let's go ahead
         // and do that! First make a <BACKGROUND> and <COLOR>
         
-        XML.addChild("BACKGROUND/COLOR");
-        XML.setTo("BACKGROUND/COLOR");
+        XML.addChild("BACKGROUND");
+        XML.setTo("BACKGROUND");
+        XML.addChild("COLOR");
+        XML.setTo("COLOR");
         
         // now add a RED, GREEN, and BLUE to it.
-        
         XML.addValue("RED", ofToString(red));
         XML.addValue("GREEN", ofToString(green));
         XML.addValue("BLUE", ofToString(blue));

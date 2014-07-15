@@ -12,13 +12,15 @@ class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
 class ofVbo;
+class ofMaterial;
+static const int OF_NO_TEXTURE=-1;
 
 class ofGLProgrammableRenderer: public ofBaseGLRenderer{
 public:
 	ofGLProgrammableRenderer(bool useShapeColor=true);
 	~ofGLProgrammableRenderer();
 
-	void setup();
+	void setup(const string & glslVersion);
 
     static const string TYPE;
 	const string & getType(){ return TYPE; }
@@ -29,14 +31,14 @@ public:
 	void setCurrentFBO(ofFbo * fbo);
     
 	void update();
-	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
-	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
-    void draw(of3dPrimitive& model, ofPolyRenderMode renderType);
-	void draw(ofPolyline & poly);
-	void draw(ofPath & path);
-	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(const ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true) const;
+    void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
+	void draw(const ofPolyline & poly) const;
+	void draw(const ofPath & path) const;
+	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
     
 	bool rendersPathPrimitives(){
 		return false;
@@ -53,9 +55,9 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
-	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped());
-	void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0);
-	void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1);
+	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped());
+	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
+	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	ofRectangle getCurrentViewport();
 	ofRectangle getNativeViewport();
@@ -83,6 +85,13 @@ public:
 	void loadMatrix (const float * m);
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
+	void loadViewMatrix(const ofMatrix4x4 & m);
+	void multViewMatrix(const ofMatrix4x4 & m);
+	
+	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	ofMatrix4x4 getCurrentOrientationMatrix() const;
+	ofMatrix4x4 getCurrentViewMatrix() const;
+	ofMatrix4x4 getCurrentNormalMatrix() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -139,15 +148,18 @@ public:
 
 	void enableTextureTarget(int textureTarget);
 	void disableTextureTarget(int textureTarget);
+	GLenum getCurrentTextureTarget();
 
 	void beginCustomShader(ofShader & shader);
 	void endCustomShader();
 
+	void setCurrentMaterial(ofBaseMaterial * material);
+
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
 
-	ofShader & defaultTexColor();
-	ofShader & defaultTexNoColor();
+	ofShader & defaultTexRectColor();
+	ofShader & defaultTexRectNoColor();
 	ofShader & defaultTex2DColor();
 	ofShader & defaultTex2DNoColor();
 	ofShader & defaultNoTexColor();
@@ -158,20 +170,20 @@ public:
 private:
 
 
-	ofPolyline circlePolyline;
-#ifdef TARGET_OPENGLES
-	ofMesh circleMesh;
-	ofMesh triangleMesh;
-	ofMesh rectMesh;
-	ofMesh lineMesh;
-	ofVbo meshVbo;
+	mutable ofPolyline circlePolyline;
+#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+	mutable ofMesh circleMesh;
+	mutable ofMesh triangleMesh;
+	mutable ofMesh rectMesh;
+	mutable ofMesh lineMesh;
+	mutable ofVbo meshVbo;
 #else
-	ofVboMesh circleMesh;
-	ofVboMesh triangleMesh;
-	ofVboMesh rectMesh;
-	ofVboMesh lineMesh;
-	ofVbo meshVbo;
-	ofVbo vertexDataVbo;
+	mutable ofVboMesh circleMesh;
+	mutable ofVboMesh triangleMesh;
+	mutable ofVboMesh rectMesh;
+	mutable ofVboMesh lineMesh;
+	mutable ofVbo meshVbo;
+	mutable ofVbo vertexDataVbo;
 #endif
 
 	void uploadCurrentMatrix();
@@ -203,4 +215,6 @@ private:
 
 	bool wrongUseLoggedOnce;
 	bool uniqueShader;
+
+	ofBaseMaterial * currentMaterial;
 };

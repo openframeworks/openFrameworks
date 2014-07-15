@@ -22,14 +22,14 @@ public:
 	void setCurrentFBO(ofFbo * fbo);
 
 	void update();
-	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
-	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
-    void draw(of3dPrimitive& model, ofPolyRenderMode renderType);
-	void draw(ofPolyline & poly);
-	void draw(ofPath & path);
-	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(const ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true) const;
+    void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
+	void draw(const ofPolyline & poly) const;
+	void draw(const ofPath & path) const;
+	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
 	bool rendersPathPrimitives(){
 		return false;
@@ -46,10 +46,10 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
-	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped());
+	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped());
 	void setOrientation(ofOrientation orientation, bool vFlip);
-	void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0);
-	void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1);
+	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
+	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 	ofRectangle getCurrentViewport();
 	ofRectangle getNativeViewport();
 	int getViewportWidth();
@@ -77,7 +77,14 @@ public:
 	void loadMatrix (const float * m);
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
+	void loadViewMatrix(const ofMatrix4x4 & m);
+	void multViewMatrix(const ofMatrix4x4 & m);
 
+	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
+	ofMatrix4x4 getCurrentOrientationMatrix() const;
+	ofMatrix4x4 getCurrentViewMatrix() const;
+	ofMatrix4x4 getCurrentNormalMatrix() const;
+	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
 	void setupScreen();
@@ -134,6 +141,27 @@ public:
 	void enableTextureTarget(int textureTarget);
 	void disableTextureTarget(int textureTarget);
 
+	// lighting globals
+	void enableLighting();
+	void disableLighting();
+	void enableSeparateSpecularLight();
+	void disableSeparateSpecularLight();
+	bool getLightingEnabled();
+	void setSmoothLighting(bool b);
+	void setGlobalAmbientColor(const ofColor& c);
+
+	// lighting per light
+	void enableLight(int lightIndex);
+	void disableLight(int lightIndex);
+	void setLightSpotlightCutOff(int lightIndex, float spotCutOff);
+	void setLightSpotConcentration(int lightIndex, float exponent);
+	void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic );
+	void setLightAmbientColor(int lightIndex, const ofFloatColor& c);
+	void setLightDiffuseColor(int lightIndex, const ofFloatColor& c);
+	void setLightSpecularColor(int lightIndex, const ofFloatColor& c);
+	void setLightPosition(int lightIndex, const ofVec4f & position);
+	void setLightSpotDirection(int lightIndex, const ofVec4f & direction);
+
 private:
 	void startSmoothing();
 	void endSmoothing();
@@ -153,5 +181,7 @@ private:
 	ofRectMode rectMode;
 
 	ofMatrixStack matrixStack;
+	bool normalsEnabled;
+	bool lightingEnabled;
 
 };

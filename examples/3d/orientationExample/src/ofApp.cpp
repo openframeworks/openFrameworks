@@ -79,7 +79,9 @@ void ofApp::draw(){
 	
 	// translate and rotate to the current position and orientation
 	ofTranslate(current.x, current.y, current.z);
-	rotateToNormal(current - previous);
+    if( (current - previous ).length() > 0.0 ){
+        rotateToNormal(current - previous);
+    }
 	ofSetColor(255);
 	ofDrawBox(32);
 	ofDrawAxis(32);

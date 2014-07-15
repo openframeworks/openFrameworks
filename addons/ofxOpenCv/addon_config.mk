@@ -69,8 +69,8 @@ linux64:
 	ADDON_LIBS += libs/opencv/lib/linux64/libopencv_calib3d.a
 	ADDON_LIBS += libs/opencv/lib/linux64/libopencv_objdetect.a 
 	ADDON_LIBS += libs/opencv/lib/linux64/libopencv_features2d.a
-	ADDON_LIBS += libs/opencv/lib/linux64/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/linux64/libopencv_video.a
+	ADDON_LIBS += libs/opencv/lib/linux64/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/linux64/libopencv_highgui.a 
 	ADDON_LIBS += libs/opencv/lib/linux64/libopencv_ml.a
 	ADDON_LIBS += libs/opencv/lib/linux64/libopencv_legacy.a 
@@ -86,8 +86,8 @@ linux:
 	ADDON_LIBS += libs/opencv/lib/linux/libopencv_calib3d.a
 	ADDON_LIBS += libs/opencv/lib/linux/libopencv_objdetect.a 
 	ADDON_LIBS += libs/opencv/lib/linux/libopencv_features2d.a
-	ADDON_LIBS += libs/opencv/lib/linux/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/linux/libopencv_video.a
+	ADDON_LIBS += libs/opencv/lib/linux/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/linux/libopencv_highgui.a 
 	ADDON_LIBS += libs/opencv/lib/linux/libopencv_ml.a
 	ADDON_LIBS += libs/opencv/lib/linux/libopencv_legacy.a 
@@ -103,8 +103,8 @@ win_cb:
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_calib3d231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_features2d231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_objdetect231.a
-	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_imgproc231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_video231.a
+	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_imgproc231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_highgui231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_ml231.a
 	ADDON_LIBS += libs/opencv/lib/win_cb/libopencv_core231.a
@@ -120,8 +120,8 @@ linuxarmv6l:
 	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_calib3d.a
 	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_objdetect.a 
 	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_features2d.a
-	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_video.a
+	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_highgui.a 
 	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_ml.a
 	ADDON_LIBS += libs/opencv/lib/linuxarmv6l/libopencv_legacy.a 
@@ -137,8 +137,8 @@ linuxarmv7l:
 	ADDON_LIBS += libs/opencv/lib/linuxarmv7l/libopencv_calib3d.a
 	ADDON_LIBS += libs/opencv/lib/linuxarmv7l/libopencv_objdetect.a 
 	ADDON_LIBS += libs/opencv/lib/linuxarmv7l/libopencv_features2d.a
-	ADDON_LIBS += libs/opencv/lib/linuxarmv7l/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/linuxarmv7l/libopencv_video.a
+	ADDON_LIBS += libs/opencv/lib/linuxarmv7l/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/linuxarmv7l/libopencv_highgui.a 
 	ADDON_LIBS += libs/opencv/lib/linuxarmv7l/libopencv_ml.a
 	ADDON_LIBS += libs/opencv/lib/linuxarmv7l/libopencv_legacy.a 
@@ -153,8 +153,8 @@ android/armeabi:
 	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_calib3d.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_features2d.a 
 	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_objdetect.a 
-	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_video.a  
+	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_highgui.a 
 	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_ml.a 
 	ADDON_LIBS += libs/opencv/lib/android/armeabi/libopencv_core.a 
@@ -167,8 +167,8 @@ android/armeabi-v7a:
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_calib3d.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_features2d.a 
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_objdetect.a 
-	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_video.a  
+	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_imgproc.a
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_highgui.a 
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_ml.a 
 	ADDON_LIBS += libs/opencv/lib/android/armeabi-v7a/libopencv_core.a 

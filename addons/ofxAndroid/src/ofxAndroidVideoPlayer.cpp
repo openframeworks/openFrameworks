@@ -120,6 +120,7 @@ ofxAndroidVideoPlayer::~ofxAndroidVideoPlayer(){
 	if(matrixJava) env->DeleteGlobalRef(matrixJava);
 }
 
+
 //---------------------------------------------------------------------------
 bool ofxAndroidVideoPlayer::loadMovie(string fileName){
 

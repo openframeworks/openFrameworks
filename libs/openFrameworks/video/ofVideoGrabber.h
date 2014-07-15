@@ -37,6 +37,11 @@
 	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber
 #endif
 
+#ifdef OF_VIDEO_CAPTURE_EMSCRIPTEN
+	#include "ofxEmscriptenVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofxEmscriptenVideoGrabber
+#endif
+
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 	public :
@@ -44,8 +49,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
 		
-		void					setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber) const;
-		ofPtr<ofBaseVideoGrabber> getGrabber();
+		void					setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber);
+		shared_ptr<ofBaseVideoGrabber> getGrabber();
 
 		vector<ofVideoDevice> listDevices() const;
 		bool				isFrameNew() const;
@@ -59,15 +64,16 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		
 		void				videoSettings();
 		unsigned char 	*	getPixels();
-        ofPixelsRef			getPixelsRef();
-        const ofPixelsRef   getPixelsRef() const;
+        ofPixels&			getPixelsRef();
+        const ofPixels&     getPixelsRef() const;
 		ofTexture &			getTextureReference();
+		const ofTexture &	getTextureReference() const;
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
 		void				setUseTexture(bool bUse);
-		void				draw(float x, float y, float w, float h);
-		void				draw(float x, float y);
+		void				draw(float x, float y, float w, float h) const;
+		void				draw(float x, float y) const;
 		using ofBaseDraws::draw;
 
 		//the anchor is the point the image is drawn around.
@@ -90,11 +96,11 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		ofTexture tex;
 		bool bUseTexture;
 		bool bInitialized;
-		mutable ofPtr<ofBaseVideoGrabber> grabber;
+		shared_ptr<ofBaseVideoGrabber> grabber;
 		int RequestedDeviceID;
 		
 		bool grabberRunning; //this keeps track of whether the grabber opened sucessfully and is still open. //TODO: maybe expose this in a method? 
-		
+
 		mutable ofPixelFormat internalPixelFormat;
 		int desiredFramerate;
 };

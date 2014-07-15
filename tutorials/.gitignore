@@ -1,64 +1,61 @@
-android/*/test link
-android/*/gen
-android/*/res/raw
-libOFAndroidApp.so
-libOFAndroidApp_neon.so
-gdbserver
-gdb.setup
-libneondetection.so
-Application.mk
-Android.mk
+#########################
+# core examples
+#########################
 
 */*/bin/*
 !*/*/bin/data/
 
-# IDE-specific ignore patterns
+#########################
+# IDE
+#########################
 
-#XCode
+# XCode
 /*/*/*.xcodeproj
 /*/*/Project.xcconfig
 /*/*/openFrameworks-Info.plist
 /*/*/ofxiOS-Info.plist
 /*/*/ofxiOS_Prefix.pch
-/*/*/*/*/Default-568h@2x~iphone.png
-/*/*/*/*/Default.png
-/*/*/*/*/Default@2x.png
-/*/*/*/*/Default@2x~ipad.png
-/*/*/*/*/Default@2x~iphone.png
-/*/*/*/*/Default~ipad.png
-/*/*/*/*/Default~iphone.png
-/*/*/*/*/Icon-72.png
-/*/*/*/*/Icon-72@2x.png
-/*/*/*/*/Icon.png
-/*/*/*/*/Icon@2x.png
+/*/*/*/*/Default*.png
+/*/*/*/*/Icon*.png
 
-#Code::Blocks
+# Code::Blocks
 /*/*/*.cbp
 /*/*/*.workspace
 
-#Visual Studio
+# Visual Studio
 /*/*/*.sln
 /*/*/*.vcxproj
 /*/*/*.vcxproj.user
 /*/*/*.vcxproj.filters
 /*/*/icon.rc
 
-#Eclipse
+# Eclipse
 /*/*/.cproject
 /*/*/.project
 /*/*/.settings/
 
-# OS-specific ignore patterns
+#########################
+# operating system
+#########################
 
-#Linux
+# Linux
 /*/*/Makefile
 /*/*/config.make
 # Leave Android files in until project generation works
 !/android/*/Makefile
 !/android/*/config.make
 
-#Android
-/*/*/test link
+# Android
+android/*/test link
+android/*/gen
+android/*/res/raw
+libOFAndroidApp*.so
+gdbserver
+gdb.setup
+libneondetection.so
+Application.mk
+Android.mk
+
 !/android/*/.cproject
 !/android/*/.project
 !/android/*/.settings

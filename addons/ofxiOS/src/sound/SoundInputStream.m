@@ -71,7 +71,7 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 
     if([context->stream.delegate respondsToSelector:@selector(soundStreamReceived:input:bufferSize:numOfChannels:)]) {
         [context->stream.delegate soundStreamReceived:context->stream
-												input:bufferList->mBuffers[0].mData
+												input:(float *)bufferList->mBuffers[0].mData
 										   bufferSize:bufferList->mBuffers[0].mDataByteSize / sizeof(Float32)
 										numOfChannels:bufferList->mBuffers[0].mNumberChannels];
     }
@@ -142,9 +142,9 @@ static OSStatus soundInputStreamRenderCallback(void *inRefCon,
 		}
 		
 		UInt32 overrideAudioRoute = kAudioSessionOverrideAudioRoute_Speaker;
-		success = AudioSessionSetProperty(kAudioSessionProperty_OverrideAudioRoute,
-												   sizeof(UInt32),
-												   &overrideAudioRoute);
+		success = AudioSessionSetProperty(kAudioSessionProperty_OverrideCategoryDefaultToSpeaker,
+										  sizeof(UInt32),
+										  &overrideAudioRoute);
 		if(success != noErr) {
 			if([self.delegate respondsToSelector:@selector(soundStreamError:error:)]) {
 				[self.delegate soundStreamError:self error:@"Couldn't override audio route"];

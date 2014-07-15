@@ -12,6 +12,7 @@
 #define GST_DISABLE_DEPRECATED
 #include <gst/gst.h>
 #include <gst/gstpad.h>
+#include "Poco/Condition.h"
 
 class ofGstAppSink;
 typedef struct _GstElement GstElement;
@@ -56,8 +57,8 @@ public:
 	GstElement 	* getPipeline() const;
 	GstElement 	* getSink() const;
 	GstElement 	* getGstElementByName(const string & name) const;
-	unsigned long getMinLatencyNanos() const;
-	unsigned long getMaxLatencyNanos() const;
+	uint64_t getMinLatencyNanos() const;
+	uint64_t getMaxLatencyNanos() const;
 
 	virtual void close();
 
@@ -94,12 +95,14 @@ private:
 	GstElement 	*		gstPipeline;
 
 	float				speed;
-	mutable gint64      durationNanos;
+	mutable int64_t		durationNanos;
 	bool				isAppSink;
+	Poco::Condition		eosCondition;
+	ofMutex				eosMutex;
+	bool				closing;
 
 	class ofGstMainLoopThread: public ofThread{
 	public:
-		GMainLoop *main_loop;
 		ofGstMainLoopThread()
 		:main_loop(NULL)
 		{
@@ -113,6 +116,12 @@ private:
 		void threadedFunction(){
 			g_main_loop_run (main_loop);
 		}
+
+		GMainLoop * getMainLoop(){
+			return main_loop;
+		}
+	private:
+		GMainLoop *main_loop;
 	};
 
 	static ofGstMainLoopThread * mainLoop;
@@ -139,8 +148,8 @@ public:
 
 	bool 			isFrameNew() const;
 	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
-	const ofPixelsRef	getPixelsRef() const;
+	ofPixels&		getPixelsRef();
+	const ofPixels& getPixelsRef() const;
 	void 			update();
 
 	float 			getHeight() const;

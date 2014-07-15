@@ -49,15 +49,15 @@ class ofNoopRenderer: public ofBaseRenderer{
 
 	virtual void update(){}
 
-	virtual void draw(ofPolyline & poly){}
-	virtual void draw(ofPath & shape){}
-	virtual void draw(of3dPrimitive&, ofPolyRenderMode){}
-	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){}
-	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){}
-	virtual void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode){}
-	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){}
-	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){}
-	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){}
+	virtual void draw(const ofPolyline & poly) const{}
+	virtual void draw(const ofPath & shape) const{}
+	virtual void draw(const of3dPrimitive&, ofPolyRenderMode) const{}
+	virtual void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{}
+	virtual void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{}
+	virtual void draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const{}
+	virtual void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
+	virtual void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
+	virtual void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
 
 	//--------------------------------------------
 	// transformations
@@ -69,8 +69,8 @@ class ofNoopRenderer: public ofBaseRenderer{
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	virtual void viewport(ofRectangle viewport){};
 	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
-	virtual void setupScreenPerspective(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float fov = 60, float nearDist = 0, float farDist = 0){}
-	virtual void setupScreenOrtho(float width = 0, float height = 0, ofOrientation orientation=OF_ORIENTATION_UNKNOWN, bool vFlip = true, float nearDist = -1, float farDist = 1){};
+	virtual void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){}
+	virtual void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){};
 	virtual ofRectangle getCurrentViewport(){return ofRectangle();};
 	virtual int getViewportWidth(){return 0;};
 	virtual int getViewportHeight(){return 0;};

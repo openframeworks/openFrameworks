@@ -78,12 +78,18 @@ bool ofVboMesh::usingIndices() const {
 }
 
 ofVbo & ofVboMesh::getVbo() {
+	updateVbo();
 	return vbo;
 };
 
-void ofVboMesh::drawInstanced(ofPolyRenderMode drawMode, int primCount){
+const ofVbo & ofVboMesh::getVbo() const{
+	const_cast<ofVboMesh*>(this)->updateVbo();
+	return vbo;
+}
+
+void ofVboMesh::drawInstanced(ofPolyRenderMode drawMode, int primCount) const{
 	if(getNumVertices()==0) return;
-	updateVbo();
+	const_cast<ofVboMesh*>(this)->updateVbo();
 	GLuint mode = ofGetGLPrimitiveMode(getMode());
 #ifndef TARGET_OPENGLES
 	if (!ofIsGLProgrammableRenderer()) {
@@ -126,7 +132,7 @@ void ofVboMesh::drawInstanced(ofPolyRenderMode drawMode, int primCount){
 #endif
 }
 
-void ofVboMesh::draw(ofPolyRenderMode drawMode){
+void ofVboMesh::draw(ofPolyRenderMode drawMode) const{
 	if(getNumVertices()==0) return;
 	drawInstanced(drawMode, 1);
 }

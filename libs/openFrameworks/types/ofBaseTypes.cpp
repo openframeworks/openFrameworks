@@ -1,5 +1,7 @@
 #include "ofBaseTypes.h"
 #include "ofUtils.h"
+#include "ofGLUtils.h"
+#include "ofGLProgrammableRenderer.h"
 
 
 //---------------------------------------------------------------------------
@@ -130,6 +132,26 @@ void ofBaseVideoPlayer::nextFrame(){
 //---------------------------------------------------------------------------
 void ofBaseVideoPlayer::previousFrame(){
 	ofLogWarning("ofBaseVideoPlayer") << "previousFrame() not implemented";
+}
+
+//---------------------------------------------------------------------------
+ofMatrix4x4 ofBaseRenderer::getCurrentOrientationMatrix() const {
+	ofLogWarning() << "getCurrentOrientationMatrix() Not implemented for this renderer. Returning Identity matrix.";
+	return ofMatrix4x4();
+}
+
+
+//---------------------------------------------------------------------------
+void ofBaseMaterial::begin(){
+	if(ofIsGLProgrammableRenderer()){
+		ofGetGLProgrammableRenderer()->setCurrentMaterial(this);
+	}
+}
+
+void ofBaseMaterial::end(){
+	if(ofIsGLProgrammableRenderer()){
+		ofGetGLProgrammableRenderer()->setCurrentMaterial(NULL);
+	}
 }
 
 //---------------------------------------------------------------------------

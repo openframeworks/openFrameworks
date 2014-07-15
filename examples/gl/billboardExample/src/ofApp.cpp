@@ -31,7 +31,7 @@ void ofApp::setup() {
 	//billboardVbo.setVertexData(billboardVerts, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
 	//billboardVbo.setColorData(billboardColor, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
 	
-	// load the bilboard shader 
+	// load the billboard shader
 	// this is used to change the
 	// size of the particle
 	if(ofGetGLProgrammableRenderer()){

@@ -28,7 +28,7 @@ ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, flo
 	bGuiActive = false;
 
 	value.addListener(this,&ofxSlider::valueChanged);
-	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
+	registerMouseEvents();
 	generateDraw();
 	return this;
 }
@@ -37,6 +37,26 @@ template<typename Type>
 ofxSlider<Type>* ofxSlider<Type>::setup(string sliderName, Type _val, Type _min, Type _max, float width, float height){
 	value.set(sliderName,_val,_min,_max);
 	return setup(value,width,height);
+}
+
+template<typename Type>
+void ofxSlider<Type>::setMin(Type min){
+    value.setMin(min);
+}
+
+template<typename Type>
+Type ofxSlider<Type>::getMin(){
+    return value.getMin();
+}
+
+template<typename Type>
+void ofxSlider<Type>::setMax(Type max){
+    value.setMax(max);
+}
+
+template<typename Type>
+Type ofxSlider<Type>::getMax(){
+    return value.getMax();
 }
 
 template<typename Type>

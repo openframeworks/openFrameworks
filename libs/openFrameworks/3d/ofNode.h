@@ -137,13 +137,13 @@ public:
 	
 
 	// if you extend ofNode and wish to change the way it draws, extend this
-	virtual void customDraw();
+	virtual void customDraw() const;
 
 	
 	// draw function. do NOT override this
 	// transforms the node to its position+orientation+scale
 	// and calls the virtual 'customDraw' method above which you CAN override
-	void draw();
+	void draw() const;
 	
 protected:
 	ofNode *parent;

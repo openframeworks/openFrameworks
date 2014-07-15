@@ -33,7 +33,7 @@ public:
 	void setNormalData(const float * normal0x, int total, int usage, int stride=0);
 	void setTexCoordData(const float * texCoord0x, int total, int usage, int stride=0);
 	
-	void setAttributeData(int location, const float * vert0x, int numCoords, int total, int usage, int stride=sizeof(float));
+	void setAttributeData(int location, const float * vert0x, int numCoords, int total, int usage, int stride=0);
 
 	void updateMesh(const ofMesh & mesh);
 
@@ -74,14 +74,14 @@ public:
 	bool getUsingTexCoords() const;
 	bool getUsingIndices() const;
 	
-	void draw(int drawMode, int first, int total);
-	void drawElements(int drawMode, int amt);
+	void draw(int drawMode, int first, int total) const;
+	void drawElements(int drawMode, int amt) const;
 	
-	void drawInstanced(int drawMode, int first, int total, int primCount);
-	void drawElementsInstanced(int drawMode, int amt, int primCount);
+	void drawInstanced(int drawMode, int first, int total, int primCount) const;
+	void drawElementsInstanced(int drawMode, int amt, int primCount) const;
 	
-	void bind();
-	void unbind();
+	void bind() const;
+	void unbind() const;
 
 	void clear();
 
@@ -100,7 +100,7 @@ public:
 
 private:
 	GLuint vaoID;
-	bool vaoChanged;
+	mutable bool vaoChanged;
 
 	GLuint indexId;
 
@@ -111,11 +111,11 @@ private:
 
 	bool bAllocated;
 
-	bool bUsingVerts;		// need at least vertex data
-	bool bUsingTexCoords;
-	bool bUsingColors;
-	bool bUsingNormals;
-	bool bUsingIndices;
+	mutable bool bUsingVerts;		// need at least vertex data
+	mutable bool bUsingTexCoords;
+	mutable bool bUsingColors;
+	mutable bool bUsingNormals;
+	mutable bool bUsingIndices;
 
 	GLsizei vertStride;
 	GLsizei colorStride;
@@ -131,9 +131,10 @@ private:
 	int normUsage;
 	int texUsage;
 
-	bool bBound;
+	mutable bool bBound;
 
 	map<int,GLuint> attributeIds;
+	map<int,int> attributeSize;
 	map<int,int> attributeStrides;
 	map<int,int> attributeNumCoords;
 

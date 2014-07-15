@@ -38,7 +38,8 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	if( name.find( "file://",0 ) != string::npos){
 		bIsStream		= false;
 	}else if( name.find( "://",0 ) == string::npos){
-		name 			= "file://"+ofToDataPath(name,true);
+		GError * err = NULL;
+		name = gst_filename_to_uri(ofToDataPath(name).c_str(),&err);
 		bIsStream		= false;
 	}else{
 		bIsStream		= true;
@@ -63,37 +64,62 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	gst_base_sink_set_max_lateness  (GST_BASE_SINK(gstSink), -1);
 
 #if GST_VERSION_MAJOR==0
+	GstCaps *caps;
 	int bpp;
-	string mime;
 	switch(internalPixelFormat){
 	case OF_PIXELS_MONO:
-		mime = "video/x-raw-gray";
 		bpp = 8;
+		caps = gst_caps_new_simple("video/x-raw-gray",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 8,
+			NULL);
 		break;
 	case OF_PIXELS_RGB:
-		mime = "video/x-raw-rgb";
 		bpp = 24;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 24,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0xff0000,
+			"green_mask",G_TYPE_INT,0x00ff00,
+			"blue_mask",G_TYPE_INT,0x0000ff,
+			NULL);
 		break;
 	case OF_PIXELS_RGBA:
-	case OF_PIXELS_BGRA:
-		mime = "video/x-raw-rgb";
 		bpp = 32;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 32,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0xff000000,
+			"green_mask",G_TYPE_INT,0x00ff0000,
+			"blue_mask",G_TYPE_INT,0x0000ff00,
+			"alpha_mask",G_TYPE_INT,0x000000ff,
+			NULL);
+	case OF_PIXELS_BGRA:
+		bpp = 32;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 32,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0x0000ff00,
+			"green_mask",G_TYPE_INT,0x00ff0000,
+			"blue_mask",G_TYPE_INT,0xff000000,
+			"alpha_mask",G_TYPE_INT,0x000000ff,
+			NULL);
 		break;
 	default:
-		mime = "video/x-raw-rgb";
-		bpp=24;
+		bpp = 32;
+		caps = gst_caps_new_simple("video/x-raw-rgb",
+			"bpp", G_TYPE_INT, bpp,
+			"depth", G_TYPE_INT, 24,
+			"endianness",G_TYPE_INT,4321,
+			"red_mask",G_TYPE_INT,0xff0000,
+			"green_mask",G_TYPE_INT,0x00ff00,
+			"blue_mask",G_TYPE_INT,0x0000ff,
+			NULL);
 		break;
 	}
-
-	GstCaps *caps = gst_caps_new_simple(mime.c_str(),
-										"bpp", G_TYPE_INT, bpp,
-										"depth", G_TYPE_INT, 24,
-										"endianness",G_TYPE_INT,4321,
-										"red_mask",G_TYPE_INT,0xff0000,
-										"green_mask",G_TYPE_INT,0x00ff00,
-										"blue_mask",G_TYPE_INT,0x0000ff,
-										"alpha_mask",G_TYPE_INT,0x000000ff,
-										NULL);
 #else
 	int bpp;
 	string mime="video/x-raw";
@@ -195,7 +221,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 		if(framerate && GST_VALUE_HOLDS_FRACTION (framerate)){
 			fps_n = gst_value_get_fraction_numerator (framerate);
 			fps_d = gst_value_get_fraction_denominator (framerate);
-			nFrames = (float)(durationNanos / GST_SECOND) * (float)fps_n/(float)fps_d;
+			nFrames = (float)(durationNanos / (float)GST_SECOND) * (float)fps_n/(float)fps_d;
 			ofLogVerbose("ofGstVideoPlayer") << "allocate(): framerate: " << fps_n << "/" << fps_d;
 		}else{
 			ofLogWarning("ofGstVideoPlayer") << "allocate(): cannot get framerate, frame seek won't work";
@@ -214,7 +240,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 
 			fps_n = info.fps_n;
 			fps_d = info.fps_d;
-			nFrames = (float)(durationNanos / GST_SECOND) * (float)fps_n/(float)fps_d;
+			nFrames = (float)(durationNanos / (float)GST_SECOND) * (float)fps_n/(float)fps_d;
 			gst_caps_unref(caps);
 			bIsAllocated = true;
 		}else{
@@ -357,11 +383,11 @@ unsigned char * ofGstVideoPlayer::getPixels(){
 	return videoUtils.getPixels();
 }
 
-ofPixelsRef ofGstVideoPlayer::getPixelsRef(){
+ofPixels& ofGstVideoPlayer::getPixelsRef(){
 	return videoUtils.getPixelsRef();
 }
 
-const ofPixelsRef ofGstVideoPlayer::getPixelsRef() const {
+const ofPixels& ofGstVideoPlayer::getPixelsRef() const {
 	return videoUtils.getPixelsRef();
 }
 

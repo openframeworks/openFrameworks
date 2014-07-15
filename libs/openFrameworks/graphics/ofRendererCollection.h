@@ -2,6 +2,7 @@
 
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
+#include "ofGLProgrammableRenderer.h"
 
 class ofRendererCollection: public ofBaseRenderer{
 public:
@@ -10,13 +11,17 @@ public:
 	 static const string TYPE;
 	 const string & getType(){ return TYPE; }
 
-	 ofPtr<ofBaseGLRenderer> getGLRenderer(){
+	 shared_ptr<ofBaseGLRenderer> getGLRenderer(){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
-				 return (ofPtr<ofBaseGLRenderer>&)renderers[i];
+				 return (shared_ptr<ofBaseGLRenderer>&)renderers[i];
 			 }
 		 }
-		 return ofPtr<ofGLRenderer>();
+		#ifndef TARGET_PROGRAMMABLE_GL
+		 	 return shared_ptr<ofGLRenderer>();
+		#else
+		 	 return ofPtr<ofGLProgrammableRenderer>();
+		#endif
 	 }
 
 	 bool rendersPathPrimitives(){return true;}
@@ -28,53 +33,84 @@ public:
 	 }
 
 
-	 void draw(ofPolyline & poly){
+	 void draw(const ofPolyline & poly) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(poly);
 		 }
 	 }
-	 void draw(ofPath & shape){
+	 void draw(const ofPath & shape) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(shape);
 		 }
 	 }
-	 void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
+	 void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(vertexData,useColors, useTextures, useNormals);
 		 }
 	 }
 
-	 void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals){
+	 void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(vertexData,mode,useColors,useTextures,useNormals);
 		 }
 	 }
 
-    void draw( of3dPrimitive& model, ofPolyRenderMode renderType ) {
+    void draw(const  of3dPrimitive& model, ofPolyRenderMode renderType ) const {
         for(int i=0;i<(int)renderers.size();i++) {
             renderers[i]->draw( model, renderType );
         }
     }
 
-	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		 }
 	}
 
-	void draw(ofFloatImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	void draw(const ofFloatImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 		for(int i=0;i<(int)renderers.size();i++){
 			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}
 	}
 
-	void draw(ofShortImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	void draw(const ofShortImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 		for(int i=0;i<(int)renderers.size();i++){
 			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}
 	}
 
 
+	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const{
+		static ofMatrix4x4 identityMatrix;
+		if (!renderers.empty()) {
+			return renderers.front()->getCurrentMatrix(matrixMode_);
+		} else {
+			ofLogWarning() << "No renderer in renderer collection, but current matrix requested. Returning identity matrix.";
+			return identityMatrix;
+		}
+	};
+
+
+	ofMatrix4x4 getCurrentOrientationMatrix() const{
+		static ofMatrix4x4 identityMatrix;
+		if (!renderers.empty()) {
+			return renderers.front()->getCurrentOrientationMatrix();
+		} else {
+			ofLogWarning() << "No renderer in renderer collection, but current matrix requested. Returning identity matrix.";
+			return identityMatrix;
+		}
+	};
+
+
+	ofMatrix4x4 getCurrentNormalMatrix() const{
+		static ofMatrix4x4 identityMatrix;
+		if (!renderers.empty()) {
+			return renderers.front()->getCurrentNormalMatrix();
+		} else {
+			ofLogWarning() << "No renderer in renderer collection, but current matrix requested. Returning identity matrix.";
+			return identityMatrix;
+		}
+	};
 
 	//--------------------------------------------
 	// transformations
@@ -97,17 +133,17 @@ public:
 			 renderers[i]->viewport(viewport);
 		 }
 	}
-	 void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped()){
+	 void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped()){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->viewport(x,y,width,height);
 		 }
 	 }
-	 void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){
+	 void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->setupScreenPerspective(width,height,fov,nearDist,farDist);
 		 }
 	 }
-	 void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){
+	 void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->setupScreenOrtho(width,height,nearDist,farDist);
 		 }
@@ -459,5 +495,5 @@ public:
 		 }
 	}
 
-	vector<ofPtr<ofBaseRenderer> > renderers;
+	vector<shared_ptr<ofBaseRenderer> > renderers;
 };

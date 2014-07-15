@@ -368,6 +368,8 @@ bool ofSerial::setup(string portName, int baud){
 		options.c_cflag &= ~PARENB;
 		options.c_cflag &= ~CSTOPB;
 		options.c_cflag &= ~CSIZE;
+		options.c_iflag &= (tcflag_t) ~(INLCR | IGNCR | ICRNL | IGNBRK);
+		options.c_oflag &= (tcflag_t) ~(OPOST);
 		options.c_cflag |= CS8;
 		tcsetattr(fd,TCSANOW,&options);
 

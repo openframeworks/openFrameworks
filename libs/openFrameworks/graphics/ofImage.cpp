@@ -1,9 +1,12 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
 #include "ofTypes.h"
-#include "ofURLFileLoader.h"
 #include "ofGraphics.h"
 #include "FreeImage.h"
+
+#ifndef TARGET_EMSCRIPTEN
+#include "ofURLFileLoader.h"
+#endif
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 #include <set>
@@ -142,13 +145,30 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 //----------------------------------------------------
 template<typename PixelType>
 void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLittleEndian = true) {
-	// some images use a palette, or <8 bpp, so convert them to raster 8-bit channels
+	// convert to correct type depending on type of input bmp and PixelType
 	FIBITMAP* bmpConverted = NULL;
-	if(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8) {
+	FREE_IMAGE_TYPE imgType = FreeImage_GetImageType(bmp);
+	if(sizeof(PixelType)==1 &&
+		(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8
+		||  imgType!=FIT_BITMAP)) {
 		if(FreeImage_IsTransparent(bmp)) {
 			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
 		} else {
 			bmpConverted = FreeImage_ConvertTo24Bits(bmp);
+		}
+		bmp = bmpConverted;
+	}else if(sizeof(PixelType)==2 && imgType!=FIT_UINT16 && imgType!=FIT_RGB16 && imgType!=FIT_RGBA16){
+		if(FreeImage_IsTransparent(bmp)) {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGBA16);
+		} else {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGB16);
+		}
+		bmp = bmpConverted;
+	}else if(sizeof(PixelType)==4 && imgType!=FIT_FLOAT && imgType!=FIT_RGBF && imgType!=FIT_RGBAF){
+		if(FreeImage_IsTransparent(bmp)) {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGBAF);
+		} else {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGBF);
 		}
 		bmp = bmpConverted;
 	}
@@ -183,9 +203,11 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 	ofInitFreeImage();
+#ifndef TARGET_EMSCRIPTEN
 	if(fileName.substr(0, 7) == "http://") {
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
+#endif
 	
 	fileName = ofToDataPath(fileName);
 	bool bLoaded = false;
@@ -227,7 +249,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	
 	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getBinaryBuffer(), buffer.size());
 	if (hmem == NULL){
-		ofLogError("ofImage") << "loadImage(): couldn't laod image from ofBuffer, opening FreeImage memory failed";
+		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, opening FreeImage memory failed";
 		return false;
 	}
 
@@ -704,49 +726,49 @@ void ofImage_<PixelType>::resetAnchor(){
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float x, float y){
+void ofImage_<PixelType>::draw(float x, float y) const{
 	draw(x,y,0,getWidth(),getHeight());
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float x, float y, float z){
+void ofImage_<PixelType>::draw(float x, float y, float z) const{
 	draw(x,y,z,getWidth(),getHeight());
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float x, float y, float w, float h){
+void ofImage_<PixelType>::draw(float x, float y, float w, float h) const{
 	draw(x,y,0,w,h);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float x, float y, float z, float w, float h){
+void ofImage_<PixelType>::draw(float x, float y, float z, float w, float h) const{
 	drawSubsection(x,y,z,w,h,0,0,getWidth(),getHeight());
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::drawSubsection(float x, float y, float w, float h, float sx, float sy){
+void ofImage_<PixelType>::drawSubsection(float x, float y, float w, float h, float sx, float sy) const{
 	drawSubsection(x,y,0,w,h,sx,sy,w,h);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh){
+void ofImage_<PixelType>::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh) const{
 	drawSubsection(x,y,0,w,h,sx,sy,_sw,_sh);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
+void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const{
 	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	ofGetCurrentRenderer()->draw(*this,x,y,z,w,h,sx,sy,sw,sh);
 }
 
@@ -818,29 +840,27 @@ ofImage_<PixelType>::operator ofPixels_<PixelType>&(){
 }
 
 //------------------------------------
-// for getting a reference to the texture
 template<typename PixelType>
 ofTexture & ofImage_<PixelType>::getTextureReference(){
-/*
-	// it should be the responsibility of anything using getTextureReference()
-	// to check that it's allocated
-	if(!tex.bAllocated() ){
-		ofLogWarning("ofImage") << "getTextureReference(): texture is not allocated";
-	}
-	*/
+	return tex;
+}
+
+//------------------------------------
+template<typename PixelType>
+const ofTexture & ofImage_<PixelType>::getTextureReference() const{
 	return tex;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::bind(){
+void ofImage_<PixelType>::bind() const{
 	if (bUseTexture && tex.bAllocated())
 		tex.bind();
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::unbind(){
+void ofImage_<PixelType>::unbind() const{
 	if (bUseTexture && tex.bAllocated())
 		tex.unbind();
 }
@@ -923,7 +943,7 @@ void ofImage_<PixelType>::setUseTexture(bool bUse){
 
 //------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::isUsingTexture(){
+bool ofImage_<PixelType>::isUsingTexture() const{
 	return bUseTexture;
 }
 
@@ -1239,13 +1259,13 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getHeight() const {
+float ofImage_<PixelType>::getHeight() const{
 	return height;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getWidth() const {
+float ofImage_<PixelType>::getWidth() const{
 	return width;
 }
 

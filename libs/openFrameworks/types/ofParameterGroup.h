@@ -13,16 +13,11 @@
 #include "ofConstants.h"
 #include "ofLog.h"
 #include "ofParameter.h"
+#include "ofTypes.h"
 
 class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();
-
-	template<typename ParameterType>
-	void add(ofParameter<ParameterType> param);
-
-	template<typename ParameterType,typename Friend>
-	void add(ofReadOnlyParameter<ParameterType,Friend> & param);
 
 	void add(ofAbstractParameter & param);
 
@@ -96,6 +91,8 @@ public:
 
 	void setSerializable(bool serializable);
 	bool isSerializable() const;
+	shared_ptr<ofAbstractParameter> newReference() const;
+
 
 private:
 	class Value{
@@ -103,11 +100,11 @@ private:
 		Value():serializable(true){}
 
 		map<string,int> parametersIndex;
-		vector<ofAbstractParameter*> parameters;
+		vector<shared_ptr<ofAbstractParameter> > parameters;
 		string name;
 		bool serializable;
 	};
-	ofPtr<Value> obj;
+	shared_ptr<Value> obj;
 };
 
 
@@ -119,23 +116,5 @@ ofParameter<ParameterType> ofParameterGroup::get(string name) const{
 template<typename ParameterType>
 ofParameter<ParameterType> ofParameterGroup::get(int pos) const{
 	return static_cast<ofParameter<ParameterType>& >(get(pos));
-}
-
-template<class ParameterType>
-void ofParameterGroup::add(ofParameter<ParameterType> param){
-	ofParameter<ParameterType> * p = new ofParameter<ParameterType>;
-	p->makeReferenceTo(param);
-	obj->parameters.push_back(p);
-	obj->parametersIndex[p->getEscapedName()] = obj->parameters.size()-1;
-	p->setParent(this);
-}
-
-template<typename ParameterType,typename Friend>
-void ofParameterGroup::add(ofReadOnlyParameter<ParameterType,Friend> & param){
-	ofReadOnlyParameter<ParameterType,Friend> * p = new ofReadOnlyParameter<ParameterType,Friend>;
-	p->makeReferenceTo(param);
-	obj->parameters.push_back(p);
-	obj->parametersIndex[p->getEscapedName()] = obj->parameters.size()-1;
-	p->setParent(this);
 }
 #endif /* OFXPARAMETERGROUP_H_ */

@@ -10,7 +10,7 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
-pacman -Sy --needed make pkg-config gcc openal python-lxml glew freeglut freeimage jack gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav portaudio
+pacman -Sy --needed make pkg-config gcc openal python-lxml glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav 
 
 exit_code=$?
 if [ $exit_code != 0 ]; then

@@ -12,14 +12,14 @@ ofVideoPlayer::ofVideoPlayer (){
 }
 
 //---------------------------------------------------------------------------
-void ofVideoPlayer::setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer){
+void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer){
 	player = newPlayer;
 	setPixelFormat(internalPixelFormat);	//this means that it will try to set the pixel format you have been using before. 
 											//if the format is not supported ofVideoPlayer's internalPixelFormat will be updated to that of the player's
 }
 
 //---------------------------------------------------------------------------
-ofPtr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
+shared_ptr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
 	return player;
 }
 
@@ -28,7 +28,7 @@ ofPtr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
 //also if the format is not supported we get the format from the player instead.
 //--------------------------------------------------------------------
 bool ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
-	if( player != NULL ){
+	if( player ){
 		if( player->isLoaded() ){
 			ofLogWarning("ofVideoPlayer") << "setPixelFormat(): can't set pixel format of a loaded movie";
 			internalPixelFormat = player->getPixelFormat(); 
@@ -48,8 +48,8 @@ bool ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofVideoPlayer::getPixelFormat() const {
-	if( player != NULL ){
+ofPixelFormat ofVideoPlayer::getPixelFormat() const{
+	if( player ){
 		internalPixelFormat = player->getPixelFormat();
 	}
 	return internalPixelFormat;
@@ -57,12 +57,10 @@ ofPixelFormat ofVideoPlayer::getPixelFormat() const {
 
 //---------------------------------------------------------------------------
 bool ofVideoPlayer::loadMovie(string name){
-	//#ifndef TARGET_ANDROID
-		if( player == NULL ){
-			setPlayer( ofPtr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
-			player->setPixelFormat(internalPixelFormat);
-		}
-	//#endif
+	if( !player ){
+		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+		player->setPixelFormat(internalPixelFormat);
+	}
 	
 	bool bOk = player->loadMovie(name);
 	width	 = player->getWidth();
@@ -84,32 +82,32 @@ bool ofVideoPlayer::loadMovie(string name){
 }
 
 //---------------------------------------------------------------------------
-string ofVideoPlayer::getMoviePath() const {
+string ofVideoPlayer::getMoviePath() const{
     return moviePath;	
 }
 
 //---------------------------------------------------------------------------
 unsigned char * ofVideoPlayer::getPixels(){
-	if( player != NULL ){
+	if( player ){
 		return player->getPixels();
 	}
 	return NULL;	
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofVideoPlayer::getPixelsRef(){
+ofPixels& ofVideoPlayer::getPixelsRef(){
 	return player->getPixelsRef();
 }
 
 //---------------------------------------------------------------------------
-const ofPixelsRef ofVideoPlayer::getPixelsRef() const {
+const ofPixels& ofVideoPlayer::getPixelsRef() const {
 	return player->getPixelsRef();
 }
 
 //
 //---------------------------------------------------------------------------
 //ofPixels ofVideoPlayer::getOFPixels(){
-//	if( player != NULL ){
+//	if( player ){
 //		return player->getOFPixels();
 //	}
 //	return ofPixels();
@@ -117,15 +115,24 @@ const ofPixelsRef ofVideoPlayer::getPixelsRef() const {
 //
 //---------------------------------------------------------------------------
 //ofPixels ofVideoPlayer::getOFPixels() const{
-//	if( player != NULL ){
+//	if( player ){
 //		return player->getOFPixels();
 //	}
 //	return ofPixels();
 //}
 
 //---------------------------------------------------------------------------
-//for getting a reference to the texture
 ofTexture & ofVideoPlayer::getTextureReference(){
+	if(playerTex == NULL){
+		return tex;
+	}
+	else{
+		return *playerTex;
+	}
+}
+
+//---------------------------------------------------------------------------
+const ofTexture & ofVideoPlayer::getTextureReference() const{
 	if(playerTex == NULL){
 		return tex;
 	}
@@ -136,8 +143,8 @@ ofTexture & ofVideoPlayer::getTextureReference(){
 
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::isFrameNew() const {
-	if( player != NULL ){
+bool ofVideoPlayer::isFrameNew() const{
+	if( player ){
 		return player->isFrameNew();
 	}
 	return false;
@@ -145,9 +152,11 @@ bool ofVideoPlayer::isFrameNew() const {
 
 //--------------------------------------------------------------------
 void ofVideoPlayer::update(){
-	if(	player != NULL ){
+	if( player ){
 
 		player->update();
+		width = player->getWidth();
+		height = player->getHeight();
 		
 		if( bUseTexture && player->isFrameNew() ) {
 			
@@ -161,9 +170,6 @@ void ofVideoPlayer::update(){
 				//TODO: we might be able to do something smarter here for not re-allocating movies of the same size and type. 
 				if(width==0 || height==0 || bDiffPixFormat ){ //added a check if the pixel format and the texture don't match
 					if(player->getWidth() != 0 && player->getHeight() != 0) {
-						
-						width = player->getWidth();
-						height = player->getHeight();
 					
 						if(tex.bAllocated())
 							tex.clear();
@@ -189,7 +195,7 @@ void ofVideoPlayer::closeMovie(){
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::close(){
-	if( player != NULL ){
+	if( player ){
 		player->close();
 	}
 	tex.clear();
@@ -197,21 +203,21 @@ void ofVideoPlayer::close(){
 
 //--------------------------------------------------------
 void ofVideoPlayer::play(){
-	if( player != NULL ){
+	if( player ){
 		player->play();
 	}
 }
 
 //--------------------------------------------------------
 void ofVideoPlayer::stop(){
-	if( player != NULL ){
+	if( player ){
 		player->stop();
 	}
 }
 
 //--------------------------------------------------------
 void ofVideoPlayer::setVolume(float volume){
-	if( player != NULL ){
+	if( player ){
 		if ( volume > 1.0f ){
 			ofLogWarning("ofVideoPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0";
 			volume = 1.0f;
@@ -223,14 +229,13 @@ void ofVideoPlayer::setVolume(float volume){
 
 //--------------------------------------------------------
 void ofVideoPlayer::setLoopState(ofLoopType state){
-	if( player != NULL ){
+	if( player ){
 		player->setLoopState(state);
 	}
 }
 
-//---------------------------------------------------------------------------
-ofLoopType ofVideoPlayer::getLoopState() const {
-	if( player != NULL ){
+ofLoopType ofVideoPlayer::getLoopState() const{
+	if( player ){
 		return player->getLoopState();
 	}else{
 		return OF_LOOP_NONE;
@@ -239,22 +244,22 @@ ofLoopType ofVideoPlayer::getLoopState() const {
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setPosition(float pct){
-	if( player != NULL ){
+	if( player ){
 		player->setPosition(pct);
 	}
 }
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setFrame(int frame){
-	if( player != NULL ){
+	if( player ){
 		player->setFrame(frame);
 	}
 }
 
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getDuration() const {
-	if( player != NULL ){
+float ofVideoPlayer::getDuration() const{
+	if( player ){
 		return player->getDuration();
 	}
 	
@@ -262,16 +267,16 @@ float ofVideoPlayer::getDuration() const {
 }
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getPosition() const {
-	if( player != NULL ){
+float ofVideoPlayer::getPosition() const{
+	if( player ){
 		return player->getPosition();
 	}
 	return 0.0;
 }
 
 //---------------------------------------------------------------------------
-int ofVideoPlayer::getCurrentFrame() const {
-	if( player != NULL ){
+int ofVideoPlayer::getCurrentFrame() const{
+	if( player ){
 		return player->getCurrentFrame();
 	}
 	return 0;
@@ -279,8 +284,8 @@ int ofVideoPlayer::getCurrentFrame() const {
 
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::getIsMovieDone() const {
-	if( player != NULL ){
+bool ofVideoPlayer::getIsMovieDone() const{
+	if( player ){
 		return player->getIsMovieDone();
 	}
 	return false;
@@ -288,35 +293,35 @@ bool ofVideoPlayer::getIsMovieDone() const {
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::firstFrame(){
-	if( player != NULL ){
+	if( player ){
 		player->firstFrame();
 	}
 }
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::nextFrame(){
-	if( player != NULL ){
+	if( player ){
 		player->nextFrame();
 	}
 }
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::previousFrame(){
-	if( player != NULL ){
+	if( player ){
 		player->previousFrame();
 	}
 }
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setSpeed(float _speed){
-	if( player != NULL ){
+	if( player ){
 		player->setSpeed(_speed);
 	}
 }
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getSpeed() const {
-	if( player != NULL ){
+float ofVideoPlayer::getSpeed() const{
+	if( player ){
 		return player->getSpeed();
 	}
 	return 0.0;
@@ -324,7 +329,7 @@ float ofVideoPlayer::getSpeed() const {
 
 //---------------------------------------------------------------------------
 void ofVideoPlayer::setPaused(bool _bPause){
-	if( player != NULL ){
+	if( player ){
 		player->setPaused(_bPause);
 	}
 }
@@ -332,8 +337,8 @@ void ofVideoPlayer::setPaused(bool _bPause){
 //------------------------------------
 void ofVideoPlayer::setUseTexture(bool bUse){
 	bUseTexture = bUse;
-	if(bUse && width!=0 && height!=0 && !tex.isAllocated()){
-		tex.allocate(width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
+	if(bUse && player && !player->getTexture() && getWidth()!=0 && getHeight()!=0 && !tex.isAllocated()){
+		tex.allocate(getWidth(), getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
 		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
 			tex.setRGToRGBASwizzles(true);
 		}
@@ -362,52 +367,52 @@ void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y){
-	draw(_x, _y, width, height);
+	getTextureReference().draw(_x, _y);
 }
 
 //------------------------------------
-int ofVideoPlayer::getTotalNumFrames() const {
-	if( player != NULL ){
+int ofVideoPlayer::getTotalNumFrames() const{
+	if( player ){
 		return player->getTotalNumFrames();
 	}
 	return 0;
 }
 
 //----------------------------------------------------------
-float ofVideoPlayer::getWidth() const {
-	if(	player != NULL ){
+float ofVideoPlayer::getWidth() const{
+	if( player ){
 		width = player->getWidth();
 	}
 	return (float)width;
 }
 
 //----------------------------------------------------------
-float ofVideoPlayer::getHeight() const {
-	if(	player != NULL ){
+float ofVideoPlayer::getHeight() const{
+	if( player ){
 		height = player->getHeight();
 	}
 	return (float)height;
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isPaused() const {
-	if(	player != NULL ){
+bool ofVideoPlayer::isPaused() const{
+	if( player ){
 		return player->isPaused();
 	}
 	return false;
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isLoaded() const {
-	if(	player != NULL ){
+bool ofVideoPlayer::isLoaded() const{
+	if( player ){
 		return player->isLoaded();
 	}
 	return false;
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isPlaying() const {
-	if(	player != NULL ){
+bool ofVideoPlayer::isPlaying() const{
+	if( player ){
 		return player->isPlaying();
 	}
 	return false;

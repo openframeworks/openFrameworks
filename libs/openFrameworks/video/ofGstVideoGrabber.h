@@ -51,8 +51,8 @@ public:
 	bool 			isFrameNew() const;
 
 	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
-	const ofPixelsRef		getPixelsRef() const;
+	ofPixels&		getPixelsRef();
+	const ofPixels &		getPixelsRef() const;
 
 	float 			getHeight() const;
 	float 			getWidth() const;
@@ -64,7 +64,7 @@ public:
 private:
 	ofGstVideoFormat&	selectFormat(int w, int h, int desired_framerate);
 
-	ofGstCamData		camData;
+	mutable ofGstCamData camData;
 	bool				bIsCamera;
 	int					attemptFramerate;
 	int					deviceID;

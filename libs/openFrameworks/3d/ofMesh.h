@@ -103,8 +103,6 @@ public:
 	
 	ofVec3f getCentroid() const;
 
-	void setName(string name_);
-
 	bool haveVertsChanged();
 	bool haveColorsChanged();
 	bool haveNormalsChanged();
@@ -117,10 +115,12 @@ public:
 	bool hasTexCoords() const;
 	bool hasIndices() const;
 	
-	void drawVertices();
-	void drawWireframe();
-	void drawFaces();
-	void draw();
+	void drawVertices() const;
+	void drawWireframe() const;
+	void drawFaces() const;
+	void draw() const;
+
+	virtual void draw(ofPolyRenderMode renderType) const;
 
 	void load(string path);
 	void save(string path, bool useBinary = false) const;
@@ -159,8 +159,7 @@ public:
     static ofMesh cylinder(float radius, float height, int radiusSegments=12, int heightSegments=6, int numCapSegments=2, bool bCapped = true, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh cone(float radius, float height, int radiusSegments=12, int heightSegments=6, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh box(float width, float height, float depth, int resX=2, int resY=2, int resZ=2);
-    
-	virtual void draw(ofPolyRenderMode renderType);
+    static ofMesh axis(float size=1.0);
 
 private:
 
@@ -177,7 +176,6 @@ private:
 
 	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
 	ofPrimitiveMode mode;
-	string name;
     
     bool useColors;
     bool useTextures;
