@@ -151,6 +151,11 @@ ofPixelsRef ofQuickTimePlayer::getPixelsRef(){
 }
 
 //---------------------------------------------------------------------------
+const ofPixelsRef ofQuickTimePlayer::getPixelsRef() const {
+	return pixels;
+}
+
+//---------------------------------------------------------------------------
 void ofQuickTimePlayer::update(){
 
 	if (bLoaded == true){

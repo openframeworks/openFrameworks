@@ -573,7 +573,7 @@ void ofFbo::allocate(Settings _settings) {
     */
 }
 
-bool ofFbo::isAllocated(){
+bool ofFbo::isAllocated() const {
 	return bIsAllocated;
 }
 
@@ -698,7 +698,7 @@ void ofFbo::unbind() {
 	}
 }
 
-int ofFbo::getNumTextures() {
+int ofFbo::getNumTextures() const {
 	return textures.size();
 }
 
@@ -754,7 +754,7 @@ void ofFbo::setDefaultTextureIndex(int defaultTexture)
 	defaultTextureIndex = defaultTexture;
 }
 
-int ofFbo::getDefaultTextureIndex()
+int ofFbo::getDefaultTextureIndex() const
 {
 	return defaultTextureIndex;
 }
@@ -872,21 +872,21 @@ void ofFbo::draw(float x, float y, float width, float height) {
 }
 
 
-GLuint ofFbo::getFbo() {
+GLuint ofFbo::getFbo() const {
 	return fbo;
 }
 
-float ofFbo::getWidth() {
+float ofFbo::getWidth() const {
 	return settings.width;
 }
 
 
-float ofFbo::getHeight() {
+float ofFbo::getHeight() const {
 	return settings.height;
 }
 
 
-bool ofFbo::checkStatus() {
+bool ofFbo::checkStatus() const {
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	switch(status) {
 		case GL_FRAMEBUFFER_COMPLETE:

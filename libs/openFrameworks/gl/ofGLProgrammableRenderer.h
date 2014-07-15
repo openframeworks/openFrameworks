@@ -31,14 +31,14 @@ public:
 	void setCurrentFBO(ofFbo * fbo);
     
 	void update();
-	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
-	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
-    void draw(of3dPrimitive& model, ofPolyRenderMode renderType);
-	void draw(ofPolyline & poly);
-	void draw(ofPath & path);
-	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(const ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true) const;
+    void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
+	void draw(const ofPolyline & poly) const;
+	void draw(const ofPath & path) const;
+	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
     
 	bool rendersPathPrimitives(){
 		return false;
@@ -170,20 +170,20 @@ public:
 private:
 
 
-	ofPolyline circlePolyline;
+	mutable ofPolyline circlePolyline;
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
-	ofMesh circleMesh;
-	ofMesh triangleMesh;
-	ofMesh rectMesh;
-	ofMesh lineMesh;
-	ofVbo meshVbo;
+	mutable ofMesh circleMesh;
+	mutable ofMesh triangleMesh;
+	mutable ofMesh rectMesh;
+	mutable ofMesh lineMesh;
+	mutable ofVbo meshVbo;
 #else
-	ofVboMesh circleMesh;
-	ofVboMesh triangleMesh;
-	ofVboMesh rectMesh;
-	ofVboMesh lineMesh;
-	ofVbo meshVbo;
-	ofVbo vertexDataVbo;
+	mutable ofVboMesh circleMesh;
+	mutable ofVboMesh triangleMesh;
+	mutable ofVboMesh rectMesh;
+	mutable ofVboMesh lineMesh;
+	mutable ofVbo meshVbo;
+	mutable ofVbo vertexDataVbo;
 #endif
 
 	void uploadCurrentMatrix();

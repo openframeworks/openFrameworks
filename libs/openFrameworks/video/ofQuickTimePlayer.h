@@ -25,26 +25,26 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		 void			clearMemory();
 		 
 		bool            setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat   getPixelFormat();		 
+		ofPixelFormat   getPixelFormat() const;		 
 	
-		 bool 			isFrameNew();
+		 bool 			isFrameNew() const;
 		 unsigned char * 	getPixels();
 		 ofPixelsRef		getPixelsRef();
 		 const ofPixels&	getPixelsRef() const;
 		
-		 float 			getWidth();
-		 float 			getHeight();
+		 float 			getWidth() const;
+		 float 			getHeight() const;
 
-		 bool			isPaused();
-		 bool			isLoaded();
-		 bool			isPlaying();		 
+		 bool			isPaused() const;
+		 bool			isLoaded() const;
+		 bool			isPlaying() const;		 
 
-		 float 			getPosition();
-		 float 			getDuration();
-		 int			getTotalNumFrames();
-		 float			getSpeed();
-		 bool			getIsMovieDone();
-		 ofLoopType 	getLoopState();
+		 float 			getPosition() const;
+		 float 			getDuration() const;
+		 int			getTotalNumFrames() const;
+		 float			getSpeed() const;
+		 bool			getIsMovieDone() const;
+		 ofLoopType 	getLoopState() const;
 
 		 void 			setPosition(float pct);
 		 void 			setVolume(float volume);
@@ -53,13 +53,13 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		 void			setFrame(int frame);  // frame 0 = first frame...
 		 void 			setPaused(bool bPause);
 
-		 int			getCurrentFrame();
+		 int			getCurrentFrame() const;
 
 		 void			firstFrame();
 		 void			nextFrame();
 		 void			previousFrame();
 		 
-		bool 				bHavePixelsChanged;
+		 mutable bool	bHavePixelsChanged;
 		 
 		 
 		
