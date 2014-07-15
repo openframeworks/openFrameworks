@@ -29,7 +29,7 @@ bool ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	return true;
 }
 
-ofPixelFormat ofGstVideoPlayer::getPixelFormat(){
+ofPixelFormat ofGstVideoPlayer::getPixelFormat() const {
 	return internalPixelFormat;
 }
 
@@ -261,7 +261,7 @@ void ofGstVideoPlayer::on_stream_prepared(){
 	if(!bIsAllocated) allocate(24);
 }
 
-int	ofGstVideoPlayer::getCurrentFrame(){
+int	ofGstVideoPlayer::getCurrentFrame() const {
 	int frame = 0;
 
 	// zach I think this may fail on variable length frames...
@@ -279,7 +279,7 @@ int	ofGstVideoPlayer::getCurrentFrame(){
 	return frame;
 }
 
-int	ofGstVideoPlayer::getTotalNumFrames(){
+int	ofGstVideoPlayer::getTotalNumFrames() const {
 	return nFrames;
 }
 
@@ -302,7 +302,7 @@ void ofGstVideoPlayer::setFrame(int frame){ // frame 0 = first frame...
 	setPosition(pct);
 }
 
-bool ofGstVideoPlayer::isStream(){
+bool ofGstVideoPlayer::isStream() const {
 	return bIsStream;
 }
 
@@ -322,31 +322,31 @@ void ofGstVideoPlayer::setPaused(bool bPause){
 	videoUtils.setPaused(bPause);
 }
 
-bool ofGstVideoPlayer::isPaused(){
+bool ofGstVideoPlayer::isPaused() const {
 	return videoUtils.isPaused();
 }
 
-bool ofGstVideoPlayer::isLoaded(){
+bool ofGstVideoPlayer::isLoaded() const {
 	return videoUtils.isLoaded();
 }
 
-bool ofGstVideoPlayer::isPlaying(){
+bool ofGstVideoPlayer::isPlaying() const {
 	return videoUtils.isPlaying();
 }
 
-float ofGstVideoPlayer::getPosition(){
+float ofGstVideoPlayer::getPosition() const {
 	return videoUtils.getPosition();
 }
 
-float ofGstVideoPlayer::getSpeed(){
+float ofGstVideoPlayer::getSpeed() const {
 	return videoUtils.getSpeed();
 }
 
-float ofGstVideoPlayer::getDuration(){
+float ofGstVideoPlayer::getDuration() const {
 	return videoUtils.getDuration();
 }
 
-bool ofGstVideoPlayer::getIsMovieDone(){
+bool ofGstVideoPlayer::getIsMovieDone() const {
 	return videoUtils.getIsMovieDone();
 }
 
@@ -362,7 +362,7 @@ void ofGstVideoPlayer::setLoopState(ofLoopType state){
 	videoUtils.setLoopState(state);
 }
 
-ofLoopType ofGstVideoPlayer::getLoopState(){
+ofLoopType ofGstVideoPlayer::getLoopState() const {
 	return videoUtils.getLoopState();
 }
 
@@ -375,7 +375,7 @@ void ofGstVideoPlayer::close(){
 	videoUtils.close();
 }
 
-bool ofGstVideoPlayer::isFrameNew(){
+bool ofGstVideoPlayer::isFrameNew() const {
 	return videoUtils.isFrameNew();
 }
 
@@ -387,11 +387,15 @@ ofPixelsRef ofGstVideoPlayer::getPixelsRef(){
 	return videoUtils.getPixelsRef();
 }
 
-float ofGstVideoPlayer::getHeight(){
+const ofPixelsRef ofGstVideoPlayer::getPixelsRef() const {
+	return videoUtils.getPixelsRef();
+}
+
+float ofGstVideoPlayer::getHeight() const {
 	return videoUtils.getHeight();
 }
 
-float ofGstVideoPlayer::getWidth(){
+float ofGstVideoPlayer::getWidth() const {
 	return videoUtils.getWidth();
 }
 

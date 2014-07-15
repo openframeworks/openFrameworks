@@ -219,6 +219,7 @@ public:
     ///
     /// \returns Returns an ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
     ofPixels_<PixelType> &	 	getPixelsRef();
+	const ofPixels_<PixelType> & getPixelsRef() const;
 
     operator ofPixels_<PixelType>&();
     
@@ -459,17 +460,17 @@ public:
 
     /// \brief Returns height of image as a float. 
     /// \returns Returns height of image as float.
-    float getHeight();
+    float getHeight() const;
     
     /// \brief Returns width of image as a float. 
     /// \returns Returns width of image as float.
-    float  getWidth();
+    float  getWidth() const;
     /// \brief Whether the image has been allocated either by a call to allocate or by loading pixel data into the image.
     /// \returns Returns true if the image has been allocated.
-    bool bAllocated() {return pixels.isAllocated();};	// legacy function
+    bool bAllocated() const {return pixels.isAllocated();};	// legacy function
     /// \brief Whether the image has been allocated either by a call to allocate or by loading pixel data into the image.
     /// \returns Returns true if the image has been allocated.
-    bool isAllocated() {return pixels.isAllocated();};
+    bool isAllocated() const {return pixels.isAllocated();};
     
     /// \brief Loads ofPixels data into ofTexture so that draw() calls reflect changes to the pixels.
     void reloadTexture();

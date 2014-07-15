@@ -829,6 +829,12 @@ ofPixels_<PixelType> & ofImage_<PixelType>::getPixelsRef(){
 
 //----------------------------------------------------------
 template<typename PixelType>
+const ofPixels_<PixelType> & ofImage_<PixelType>::getPixelsRef() const {
+	return pixels;
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
 ofImage_<PixelType>::operator ofPixels_<PixelType>&(){
 	return pixels;
 }
@@ -1255,13 +1261,13 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getHeight() {
+float ofImage_<PixelType>::getHeight() const {
 	return height;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getWidth() {
+float ofImage_<PixelType>::getWidth() const {
 	return width;
 }
 

@@ -46,10 +46,10 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		shared_ptr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
-	    string				getMoviePath();
+	    string				getMoviePath() const;
 
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat		getPixelFormat(); 
+		ofPixelFormat		getPixelFormat() const;
 		
 		void 				closeMovie();
 		void 				close();		
@@ -58,18 +58,19 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				play();
 		void 				stop();
 
-		bool 				isFrameNew();
+		bool 				isFrameNew() const;
 		unsigned char * 	getPixels();
-		ofPixelsRef			getPixelsRef();
-		float 				getPosition();
-		float 				getSpeed();
-		float 				getDuration();
-		bool				getIsMovieDone();
+        ofPixelsRef			getPixelsRef();
+        const ofPixelsRef   getPixelsRef() const;
+		float 				getPosition() const;
+		float 				getSpeed() const;
+		float 				getDuration() const;
+		bool				getIsMovieDone() const;
 
 		void 				setPosition(float pct);
 		void 				setVolume(float volume); // 0..1
 		void 				setLoopState(ofLoopType state);
-		ofLoopType			getLoopState();
+		ofLoopType			getLoopState() const;
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 
@@ -87,23 +88,23 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		void 				setPaused(bool bPause);
 
-		int					getCurrentFrame();
-		int					getTotalNumFrames();
+		int					getCurrentFrame() const;
+		int					getTotalNumFrames() const;
 
 		void				firstFrame();
 		void				nextFrame();
 		void				previousFrame();
 
-		float 				getHeight();
-		float 				getWidth();
+		float 				getHeight() const;
+		float 				getWidth() const;
 
-		bool				isPaused();
-		bool				isLoaded();
-		bool				isPlaying();
+		bool				isPaused() const;
+		bool				isLoaded() const;
+		bool				isPlaying() const;
 
 		//this is kept as legacy to support people accessing width and height directly. 
-		int					height;
-		int					width;
+		mutable int         height;
+		mutable int         width;
 
 	private:
 		shared_ptr<ofBaseVideoPlayer>		player;
@@ -111,7 +112,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		ofTexture tex;
 		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
-		ofPixelFormat internalPixelFormat;
+		mutable ofPixelFormat internalPixelFormat;
 	    string moviePath;
 };
 
