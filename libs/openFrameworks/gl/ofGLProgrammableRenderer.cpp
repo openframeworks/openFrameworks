@@ -135,7 +135,7 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	}
 
 
-	setAttributes(true,useColors,useTextures,useNormals);
+	const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,useColors,useTextures,useNormals);
 
 	GLenum drawMode;
 	switch(renderType){
@@ -225,7 +225,7 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &poly[0]);
 
-	setAttributes(true,false,false,false);
+	const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,false,false);
 
 	GLenum drawMode = poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP;
 

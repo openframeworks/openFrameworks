@@ -28,6 +28,8 @@ public:
 
 	unsigned char 	* getPixels();
 	ofPixelsRef		getPixelsRef();
+	const unsigned char 	* getPixels() const;
+	const ofPixelsRef		getPixelsRef() const;
 
 	void	close();
 
