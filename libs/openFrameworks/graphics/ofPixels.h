@@ -48,16 +48,16 @@ public:
 	void crop(int x, int y, int width, int height);
 	// not in place
 	
-	void cropTo(ofPixels_<PixelType> &toPix, int x, int y, int _width, int _height);
+	void cropTo(ofPixels_<PixelType> &toPix, int x, int y, int _width, int _height) const;
 
 	// crop to a new width and height, this reallocates memory.
 	void rotate90(int nClockwiseRotations);
-	void rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations);
-	void mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal);
+	void rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations) const;
+	void mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal) const;
 	void mirror(bool vertically, bool horizontal);
 	bool resize(int dstWidth, int dstHeight, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);	
-	bool resizeTo(ofPixels_<PixelType> & dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR);
-	bool pasteInto(ofPixels_<PixelType> &dst, int x, int y);
+	bool resizeTo(ofPixels_<PixelType> & dst, ofInterpolationMethod interpMethod=OF_INTERPOLATE_NEAREST_NEIGHBOR) const;
+	bool pasteInto(ofPixels_<PixelType> &dst, int x, int y) const;
 
 	void swapRgb();
 
@@ -108,7 +108,7 @@ public:
 	int size() const;
 
 private:
-	float bicubicInterpolate(const float *patch, float x,float y, float x2,float y2, float x3,float y3);
+	static float bicubicInterpolate(const float *patch, float x,float y, float x2,float y2, float x3,float y3);
 
 	void copyFrom( const ofPixels_<PixelType>& mom );
 

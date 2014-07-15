@@ -715,7 +715,7 @@ void ofTexture::unbind() const {
 
 
 //----------------------------------------------------------
-ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
+ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 	
 	ofPoint temp;
 	
@@ -750,7 +750,7 @@ ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
 }
 
 //----------------------------------------------------------
-ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
+ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct) const{
 	
 	ofPoint temp;
 	
@@ -796,42 +796,42 @@ void ofTexture::setCompression(ofTexCompression compression){
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y){
+void ofTexture::draw(float x, float y) const{
 	draw(x,y,0,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float z){
+void ofTexture::draw(float x, float y, float z) const{
 	draw(x,y,z,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float w, float h){
+void ofTexture::draw(float x, float y, float w, float h) const{
 	draw(x,y,0,w,h);
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float z, float w, float h){
+void ofTexture::draw(float x, float y, float z, float w, float h) const{
 	drawSubsection(x,y,z,w,h,0,0,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy){
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy) const{
 	drawSubsection(x,y,0,w,h,sx,sy,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh){
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh) const{
 	drawSubsection(x,y,0,w,h,sx,sy,_sw,_sh);
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const{
 	drawSubsection(x,y,z,w,h,sx,sy,getWidth(),getHeight());
 }
 
 //----------------------------------------------------------
-void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(!texData.bAllocated){
 		return;
 	}
@@ -921,7 +921,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 
 // ROGER
 //----------------------------------------------------------
-void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4){
+void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const{
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
 	// slightly, slightly alters an image, scaling...

@@ -49,8 +49,8 @@ public:
 	bool 			isFrameNew() const;
 
 	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
-	const ofPixelsRef getPixelsRef() const;
+	ofPixels&		getPixelsRef();
+	const ofPixels& getPixelsRef() const;
 
 	float 			getHeight() const;
 	float 			getWidth() const;

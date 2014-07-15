@@ -383,11 +383,11 @@ unsigned char * ofGstVideoPlayer::getPixels(){
 	return videoUtils.getPixels();
 }
 
-ofPixelsRef ofGstVideoPlayer::getPixelsRef(){
+ofPixels& ofGstVideoPlayer::getPixelsRef(){
 	return videoUtils.getPixelsRef();
 }
 
-const ofPixelsRef ofGstVideoPlayer::getPixelsRef() const {
+const ofPixels& ofGstVideoPlayer::getPixelsRef() const {
 	return videoUtils.getPixelsRef();
 }
 

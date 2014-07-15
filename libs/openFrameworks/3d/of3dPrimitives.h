@@ -32,12 +32,18 @@ public:
     
     ofMesh* getMeshPtr();
     ofMesh& getMesh();
+
+    const ofMesh* getMeshPtr() const;
+    const ofMesh& getMesh() const;
     
     ofVec4f* getTexCoordsPtr();
     ofVec4f& getTexCoords();
     
-    bool hasScaling();
-    bool hasNormalsEnabled();
+    const ofVec4f* getTexCoordsPtr() const;
+    const ofVec4f& getTexCoords() const;
+
+    bool hasScaling() const;
+    bool hasNormalsEnabled() const;
     
     void enableNormals();
     void enableTextures();
@@ -50,16 +56,16 @@ public:
     void removeMesh( int index );
     void removeTexture( int index );
     
-    void drawVertices();
-    void drawWireframe();
-    void drawFaces();
-    void draw();
-    void draw(ofPolyRenderMode renderType);
-    void drawNormals( float length, bool bFaceNormals=false );
-    void drawAxes(float a_size);
+    void drawVertices() const;
+    void drawWireframe() const;
+    void drawFaces() const;
+    void draw() const;
+    void draw(ofPolyRenderMode renderType) const;
+    void drawNormals( float length, bool bFaceNormals=false ) const;
+    void drawAxes(float a_size) const;
     
     void setUseVbo(bool useVbo);
-    bool isUsingVbo();
+    bool isUsingVbo() const;
 protected:
     
     // useful when creating a new model, since it uses normalized tex coords //
@@ -68,9 +74,9 @@ protected:
     ofVec4f texCoords;
     bool usingVbo;
     shared_ptr<ofMesh>  mesh;
-    ofMesh normalsMesh;
+    mutable ofMesh normalsMesh;
     
-    vector<ofIndexType> getIndices( int startIndex, int endIndex );
+    vector<ofIndexType> getIndices( int startIndex, int endIndex ) const;
     
 };
 
@@ -91,13 +97,13 @@ public:
     void setResolution( int columns, int rows );
     void setMode( ofPrimitiveMode mode );
     
-    int getNumColumns();
-    int getNumRows();
+    int getNumColumns() const;
+    int getNumRows() const;
     // x = columns, y = rows //
-    ofVec2f getResolution();
+    ofVec2f getResolution() const;
     
-    float getWidth();
-    float getHeight();
+    float getWidth() const;
+    float getHeight() const;
     
 protected:
     float width;
@@ -116,8 +122,8 @@ public:
     void setRadius(float radius);
     void setMode( ofPrimitiveMode mode );
     
-    float getRadius();
-    int getResolution();
+    float getRadius() const;
+    int getResolution() const;
     
 protected:
     float radius;
@@ -135,8 +141,8 @@ public:
     void setRadius( float radius );
     void setMode( ofPrimitiveMode mode );
     
-    float getRadius();
-    int getResolution();
+    float getRadius() const;
+    int getResolution() const;
     
 protected:
     float radius;
@@ -165,21 +171,21 @@ public:
     void setCylinderColor( ofColor color );
     void setBottomCapColor( ofColor color );
     
-    vector<ofIndexType> getTopCapIndices();
-    ofMesh getTopCapMesh();
-    vector<ofIndexType> getCylinderIndices();
-    ofMesh getCylinderMesh();
-    vector<ofIndexType> getBottomCapIndices();
-    ofMesh getBottomCapMesh();
+    vector<ofIndexType> getTopCapIndices() const;
+    ofMesh getTopCapMesh() const;
+    vector<ofIndexType> getCylinderIndices() const;
+    ofMesh getCylinderMesh() const;
+    vector<ofIndexType> getBottomCapIndices() const;
+    ofMesh getBottomCapMesh() const;
     
-    int getResolutionRadius();
-    int getResolutionHeight();
-    int getResolutionCap();
-    ofVec3f getResolution();
+    int getResolutionRadius() const;
+    int getResolutionHeight() const;
+    int getResolutionCap() const;
+    ofVec3f getResolution() const;
     
-    float getHeight();
-    float getRadius();
-    bool getCapped();
+    float getHeight() const;
+    float getRadius() const;
+    bool getCapped() const;
 protected:
     float radius;
     float height;
@@ -210,18 +216,18 @@ public:
     void setTopColor( ofColor color );
     void setCapColor( ofColor color );
     
-    vector<ofIndexType> getConeIndices();
-    ofMesh getConeMesh();
-    vector<ofIndexType> getCapIndices();
-    ofMesh getCapMesh();
+    vector<ofIndexType> getConeIndices() const;
+    ofMesh getConeMesh() const;
+    vector<ofIndexType> getCapIndices() const;
+    ofMesh getCapMesh() const;
     
-    int getResolutionRadius();
-    int getResolutionHeight();
-    int getResolutionCap();
-    ofVec3f getResolution();
+    int getResolutionRadius() const;
+    int getResolutionHeight() const;
+    int getResolutionCap() const;
+    ofVec3f getResolution() const;
     
-    float getRadius();
-    float getHeight();
+    float getRadius() const;
+    float getHeight() const;
     
 protected:
     float radius;
@@ -259,8 +265,8 @@ public:
     
     void resizeToTexture( ofTexture& inTexture );
     
-    vector<ofIndexType> getSideIndices( int sideIndex );
-    ofMesh getSideMesh( int sideIndex );
+    vector<ofIndexType> getSideIndices( int sideIndex ) const;
+    ofMesh getSideMesh( int sideIndex ) const;
     
     void setResolution( int res ); // same resolution for all sides //
     void setResolutionWidth( int widthRes );
@@ -271,14 +277,14 @@ public:
     void setMode( ofPrimitiveMode mode );
     void setSideColor( int sideIndex, ofColor color );
     
-    int getResolutionWidth();
-    int getResolutionHeight();
-    int getResolutionDepth();
-    ofVec3f getResolution();
+    int getResolutionWidth() const;
+    int getResolutionHeight() const;
+    int getResolutionDepth() const;
+    ofVec3f getResolution() const;
     
-    float getWidth();
-    float getHeight();
-    float getDepth();
+    float getWidth() const;
+    float getHeight() const;
+    float getDepth() const;
     ofVec3f getSize() const;
 protected:
     ofVec3f size;

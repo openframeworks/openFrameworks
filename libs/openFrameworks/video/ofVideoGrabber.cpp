@@ -90,7 +90,7 @@ bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
 	if(grabber){
 		if( grabberRunning ){
 			ofLogWarning("ofVideoGrabber") << "setPixelFormat(): can't set pixel format while grabber is running";
-			internalPixelFormat = grabber->getPixelFormat(); 
+			internalPixelFormat = grabber->getPixelFormat();
 			return false;
 		}else{
 			if( grabber->setPixelFormat(pixelFormat) ){		
@@ -101,7 +101,7 @@ bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
 			}
 		}
 	}else{
-		internalPixelFormat = pixelFormat;	
+		internalPixelFormat = pixelFormat;
 	}
 	return true;
 }
@@ -117,7 +117,7 @@ ofPixelFormat ofVideoGrabber::getPixelFormat() const{
 //--------------------------------------------------------------------
 vector<ofVideoDevice> ofVideoGrabber::listDevices() const{
 	if(!grabber){
-		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+		const_cast<ofVideoGrabber*>(this)->setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
 	return grabber->listDevices();
 }
@@ -154,18 +154,29 @@ unsigned char * ofVideoGrabber::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofVideoGrabber::getPixelsRef(){
+ofPixels& ofVideoGrabber::getPixelsRef(){
 	return grabber->getPixelsRef();
 }
 
 //---------------------------------------------------------------------------
-const ofPixelsRef ofVideoGrabber::getPixelsRef() const {
+const ofPixels& ofVideoGrabber::getPixelsRef() const {
 	return grabber->getPixelsRef();
 }
 
 //------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoGrabber::getTextureReference(){
+	if(grabber->getTexture() == NULL){
+		return tex;
+	}
+	else{
+		return *grabber->getTexture();
+	}
+}
+
+//------------------------------------
+//for getting a reference to the texture
+const ofTexture & ofVideoGrabber::getTextureReference() const{
 	if(grabber->getTexture() == NULL){
 		return tex;
 	}
@@ -231,12 +242,12 @@ void ofVideoGrabber::resetAnchor(){
 }
 
 //------------------------------------
-void ofVideoGrabber::draw(float _x, float _y, float _w, float _h){
+void ofVideoGrabber::draw(float _x, float _y, float _w, float _h) const{
 	getTextureReference().draw(_x, _y, _w, _h);
 }
 
 //------------------------------------
-void ofVideoGrabber::draw(float _x, float _y){
+void ofVideoGrabber::draw(float _x, float _y) const{
 	getTextureReference().draw(_x, _y);
 }
 

@@ -659,27 +659,27 @@ void ofMesh::clearIndices(){
 }
 
 //--------------------------------------------------------------
-void ofMesh::drawVertices(){
+void ofMesh::drawVertices() const{
 	draw(OF_MESH_POINTS);
 }
 
 //--------------------------------------------------------------
-void ofMesh::drawWireframe(){
+void ofMesh::drawWireframe() const{
 	draw(OF_MESH_WIREFRAME);
 }
 
 //--------------------------------------------------------------
-void ofMesh::drawFaces(){
+void ofMesh::drawFaces() const{
 	draw(OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------
-void ofMesh::draw(){
+void ofMesh::draw() const{
 	draw(OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------
-void ofMesh::draw(ofPolyRenderMode renderType){
+void ofMesh::draw(ofPolyRenderMode renderType) const{
 	if(getNumVertices()==0) return;
 	ofGetCurrentRenderer()->draw(*this,renderType,useColors,useTextures,useNormals);
 }

@@ -37,15 +37,15 @@ bool ofIsVFlipped();
 class ofBaseDraws{
 public:
 	virtual ~ofBaseDraws(){}
-	virtual void draw(float x, float y)=0;
-	virtual void draw(float x, float y, float w, float h)=0;
-	virtual void draw(const ofPoint & point) {
+	virtual void draw(float x, float y) const=0;
+	virtual void draw(float x, float y, float w, float h) const=0;
+	virtual void draw(const ofPoint & point) const {
 		draw(point.x, point.y);
 	}
-	virtual void draw(const ofRectangle & rect) {
+	virtual void draw(const ofRectangle & rect) const {
 		draw(rect.x, rect.y, rect.width, rect.height);
 	}
-	virtual void draw(const ofPoint & point, float w, float h) {
+	virtual void draw(const ofPoint & point, float w, float h) const {
 		draw(point.x, point.y, w, h);
 	}
 	
@@ -287,14 +287,14 @@ public:
 
 	virtual void update()=0;
 
-	virtual void draw(ofPolyline & poly)=0;
-	virtual void draw(ofPath & shape)=0;
-	virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)=0;
-	virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals)=0;
-    virtual void draw(of3dPrimitive& model, ofPolyRenderMode renderType)=0;
-	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
-	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
-	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
+	virtual void draw(const ofPolyline & poly) const=0;
+	virtual void draw(const ofPath & shape) const=0;
+	virtual void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const=0;
+	virtual void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const=0;
+    virtual void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const=0;
+	virtual void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
+	virtual void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
+	virtual void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
 
 	//--------------------------------------------
 	// transformations

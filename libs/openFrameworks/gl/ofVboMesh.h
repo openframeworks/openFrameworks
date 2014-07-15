@@ -26,10 +26,11 @@ public:
     virtual bool usingNormals() const;
     virtual bool usingIndices() const;
 
-	void draw(ofPolyRenderMode drawMode);
-	void drawInstanced(ofPolyRenderMode drawMode, int primCount);
+	void draw(ofPolyRenderMode drawMode) const;
+	void drawInstanced(ofPolyRenderMode drawMode, int primCount) const;
 	
 	ofVbo & getVbo();
+	const ofVbo & getVbo() const;
 	
 private:
 	void updateVbo();

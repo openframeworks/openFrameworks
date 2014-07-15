@@ -35,7 +35,7 @@ void ofGLRenderer::update(){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
+void ofGLRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
 	if(vertexData.getNumVertices()){
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData.getVerticesPointer()->x);
@@ -76,8 +76,8 @@ void ofGLRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, b
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
-		if (bSmoothHinted) startSmoothing();
+void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
+		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->startSmoothing();
 #ifndef TARGET_OPENGLES
 		glPushAttrib(GL_POLYGON_BIT);
 		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
@@ -133,11 +133,11 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 #endif
-		if (bSmoothHinted) endSmoothing();
+		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
+void ofGLRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType)  const{
 	// FIXME: we don't need this anymore since GL_NORMALIZE is enabled on lighting
 	// leaving it comented just in case. it's also safe to remove this method completely
 	// from the renderers hierarchy
@@ -156,53 +156,54 @@ void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofPolyline & poly){
+void ofGLRenderer::draw(const ofPolyline & poly) const{
 	if(!poly.getVertices().empty()) {
 		// use smoothness, if requested:
-		if (bSmoothHinted) startSmoothing();
+		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
 		// use smoothness, if requested:
-		if (bSmoothHinted) endSmoothing();
+		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->endSmoothing();
 	}
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofPath & shape){
+void ofGLRenderer::draw(const ofPath & shape) const{
 	ofColor prevColor;
 	if(shape.getUseShapeColor()){
 		prevColor = ofGetStyle().color;
 	}
+	ofGLRenderer * mut_this = const_cast<ofGLRenderer*>(this);
 	if(shape.isFilled()){
-		ofMesh & mesh = shape.getTessellation();
+		const ofMesh & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
-			setColor( shape.getFillColor(),shape.getFillColor().a);
+			mut_this->setColor( shape.getFillColor(),shape.getFillColor().a);
 		}
 		draw(mesh);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			setColor( shape.getStrokeColor(), shape.getStrokeColor().a);
+			mut_this->setColor( shape.getStrokeColor(), shape.getStrokeColor().a);
 		}
-		setLineWidth( shape.getStrokeWidth() );
-		vector<ofPolyline> & outlines = shape.getOutline();
+		mut_this->setLineWidth( shape.getStrokeWidth() );
+		const vector<ofPolyline> & outlines = shape.getOutline();
 		for(int i=0; i<(int)outlines.size(); i++)
 			draw(outlines[i]);
-		setLineWidth(lineWidth);
+		mut_this->setLineWidth(lineWidth);
 	}
 	if(shape.getUseShapeColor()){
-		setColor(prevColor);
+		mut_this->setColor(prevColor);
 	}
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		ofTexture& tex = image.getTextureReference();
+		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
@@ -212,9 +213,9 @@ void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, flo
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		ofTexture& tex = image.getTextureReference();
+		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
@@ -224,9 +225,9 @@ void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		ofTexture& tex = image.getTextureReference();
+		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
 			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
 		} else {
