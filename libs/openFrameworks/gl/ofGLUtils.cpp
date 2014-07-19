@@ -195,6 +195,12 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 				return GL_RG;
 #endif
 
+#ifndef TARGET_OPENGLES
+			case GL_ALPHA8:
+#endif
+			case GL_ALPHA:
+				return GL_ALPHA;
+
 			default:
 				ofLogError("ofGLUtils") << "ofGetGLFormatFromInternal(): unknown internal format " << glInternalFormat << ", returning GL_RGBA";
 				return GL_RGBA;
@@ -209,6 +215,7 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_RGBA:
 		case GL_LUMINANCE:
 		case GL_LUMINANCE_ALPHA:
+		case GL_ALPHA:
 #ifndef TARGET_OPENGLES
 		case GL_RGB8:
 		case GL_RGBA8:
@@ -216,6 +223,7 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_LUMINANCE8_ALPHA8:
 		case GL_R8:
 		case GL_RG8:
+		case GL_ALPHA8:
 #endif
 			 return GL_UNSIGNED_BYTE;
 

@@ -130,6 +130,8 @@ public:
 		bAllocated = false;
 		bUseExternalTextureID = false;
 		useTextureMatrix = false;
+		isBound = false;
+		alphaMask = NULL;
 	}
 
 	unsigned int textureID; ///< GL internal texture ID
@@ -147,9 +149,15 @@ public:
 	bool bFlipTexture; ///< Should the texture be flipped vertically?
 	ofTexCompression compressionType; ///< Texture compression type.
 	bool bAllocated; ///< Has the texture been allocated?
+
+private:
+	bool isBound;  ///< Is the texture already bound
+	ofTexture * alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
+
+	friend class ofTexture;
 
 };
 
@@ -368,6 +376,16 @@ class ofTexture : public ofBaseDraws {
 	///
 	void setRGToRGBASwizzles(bool rToRGBSwizzles);
 
+	/// \brief Swizzle a channel to another
+	///
+	/// Example:
+	/// tex.setSwizzle(GL_TEXTURE_SWIZZLE_R,GL_ALPHA)
+	/// will make channel 0 appear as alpha in the shader
+	///
+	/// \warning This is not supported in OpenGL ES and does nothing.
+	///
+	void setSwizzle(GLenum srcSwizzle, GLenum dstChannel);
+
 	/// \brief Copy an area of the screen into this texture.
 	///
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glCopyTexSubImage2D.xhtml
@@ -508,7 +526,7 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
 	///
-	void bind();
+	void bind(int textureLocation=0);
 	
 	/// \brief Unbind the texture.
 	///
@@ -517,8 +535,11 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
 	///
-	void unbind();
+	void unbind(int textureLocation=0);
 	
+	void setAlphaMask(ofTexture & mask);
+	void disableAlphaMask();
+
 	/// \brief Helper to convert display coordinate to texture coordinate.
 	/// \param xPos Horizontal position in pixels.
 	/// \param yPos Vertical position in pixels.
@@ -611,8 +632,8 @@ protected:
     void loadData(const void * data, int w, int h, int glFormat, int glType);
 
 
-	void enableTextureTarget();
-	void disableTextureTarget();
+	void enableTextureTarget(int textureLocation);
+	void disableTextureTarget(int textureLocation);
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
