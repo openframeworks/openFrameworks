@@ -921,7 +921,7 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::enableTextureTarget(int textureTarget){
+void ofGLProgrammableRenderer::enableTextureTarget(int textureTarget, int textureID, int textureLocation){
 	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	currentTextureTarget = textureTarget;
 
@@ -933,10 +933,14 @@ void ofGLProgrammableRenderer::enableTextureTarget(int textureTarget){
 	if(wasUsingTexture!=usingTexture){
 		if(currentShader) currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	}
+
+	if((currentTextureTarget!=OF_NO_TEXTURE) && currentShader){
+		currentShader->setUniformTexture("src_tex_unit"+ofToString(textureLocation),textureTarget,textureID,textureLocation);
+	}
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::disableTextureTarget(int textureTarget){
+void ofGLProgrammableRenderer::disableTextureTarget(int textureTarget, int textureLocation){
 	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	currentTextureTarget = OF_NO_TEXTURE;
 
@@ -948,11 +952,35 @@ void ofGLProgrammableRenderer::disableTextureTarget(int textureTarget){
 	if(wasUsingTexture!=usingTexture){
 		if(currentShader) currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	}
+	glActiveTexture(GL_TEXTURE0+textureLocation);
+	glBindTexture(textureTarget, 0);
+	glActiveTexture(GL_TEXTURE0);
 }
 
 //----------------------------------------------------------
 GLenum ofGLProgrammableRenderer::getCurrentTextureTarget(){
 	return currentTextureTarget;
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::setAlphaMaskTex(ofTexture & tex){
+	alphaMaskTextureTarget = tex.getTextureData().textureTarget;
+	if(alphaMaskTextureTarget==GL_TEXTURE_2D){
+		alphaMask2DShader().begin();
+	}else{
+		alphaMaskRectShader().begin();
+	}
+	enableTextureTarget(alphaMaskTextureTarget, tex.getTextureData().textureID, 1);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::disableAlphaMask(){
+	disableTextureTarget(alphaMaskTextureTarget,1);
+	if(alphaMaskTextureTarget==GL_TEXTURE_2D){
+		alphaMask2DShader().end();
+	}else{
+		alphaMaskRectShader().end();
+	}
 }
 
 //----------------------------------------------------------
@@ -1445,7 +1473,45 @@ static string defaultFragmentShaderTexRectNoColor = fragment_shader_header + STR
 	IN vec2 texCoordVarying;
 
 	void main(){
-		FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying) * globalColor;
+		FRAG_COLOR = TEXTURE(src_tex_unit0, texCoordVarying)* globalColor;
+	}
+);
+
+// ----------------------------------------------------------------------
+
+static string alphaMaskFragmentShaderTexRectNoColor = fragment_shader_header + STRINGIFY(
+
+	uniform sampler2DRect src_tex_unit0;
+	uniform sampler2DRect src_tex_unit1;
+	uniform float usingTexture;
+	uniform float usingColors;
+	uniform vec4 globalColor;
+
+	IN float depth;
+	IN vec4 colorVarying;
+	IN vec2 texCoordVarying;
+
+	void main(){
+		FRAG_COLOR = vec4(TEXTURE(src_tex_unit0, texCoordVarying).rgb,  TEXTURE(src_tex_unit1, texCoordVarying).r)* globalColor;
+	}
+);
+
+// ----------------------------------------------------------------------
+
+static string alphaMaskFragmentShaderTex2DNoColor = fragment_shader_header + STRINGIFY(
+
+	uniform sampler2D src_tex_unit0;
+	uniform sampler2D src_tex_unit1;
+	uniform float usingTexture;
+	uniform float usingColors;
+	uniform vec4 globalColor;
+
+	IN float depth;
+	IN vec4 colorVarying;
+	IN vec2 texCoordVarying;
+
+	void main(){
+		FRAG_COLOR = vec4(TEXTURE(src_tex_unit0, texCoordVarying).rgb,  TEXTURE(src_tex_unit1, texCoordVarying).r)* globalColor;
 	}
 );
 
@@ -1649,6 +1715,8 @@ void ofGLProgrammableRenderer::setup(const string & glslVersion){
 		defaultNoTexColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
 		defaultTex2DNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
 		defaultNoTexNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
+		alphaMaskRectShader().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
+		alphaMask2DShader().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
 
 	#ifndef TARGET_OPENGLES
 		defaultTexRectColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectColor,glslVersion));
@@ -1664,6 +1732,8 @@ void ofGLProgrammableRenderer::setup(const string & glslVersion){
 		defaultTex2DNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,glslVersion));
 	#endif
 		defaultNoTexNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexNoColor,glslVersion));
+		alphaMaskRectShader().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTexRectNoColor,glslVersion));
+		alphaMask2DShader().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTex2DNoColor,glslVersion));
 
 
 		bitmapStringShader().setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(bitmapStringVertexShader,glslVersion));
@@ -1677,6 +1747,8 @@ void ofGLProgrammableRenderer::setup(const string & glslVersion){
 		defaultNoTexColor().bindDefaults();
 		defaultTex2DNoColor().bindDefaults();
 		defaultNoTexNoColor().bindDefaults();
+		alphaMaskRectShader().bindDefaults();
+		alphaMask2DShader().bindDefaults();
 
 #ifndef TARGET_OPENGLES
 		defaultTexRectColor().linkProgram();
@@ -1686,6 +1758,8 @@ void ofGLProgrammableRenderer::setup(const string & glslVersion){
 		defaultNoTexColor().linkProgram();
 		defaultTex2DNoColor().linkProgram();
 		defaultNoTexNoColor().linkProgram();
+		alphaMaskRectShader().linkProgram();
+		alphaMask2DShader().linkProgram();
 
 		bitmapStringShader().bindDefaults();
 		bitmapStringShader().linkProgram();
@@ -1731,6 +1805,16 @@ ofShader & ofGLProgrammableRenderer::defaultNoTexColor(){
 }
 
 ofShader & ofGLProgrammableRenderer::defaultNoTexNoColor(){
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::alphaMaskRectShader(){
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::alphaMask2DShader(){
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
