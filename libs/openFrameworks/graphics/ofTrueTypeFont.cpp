@@ -361,15 +361,6 @@ bool ofTrueTypeFont::initLibraries(){
     return true;
 }
 
-void ofTrueTypeFont::finishLibraries(){
-	if(librariesInitialized){
-#ifdef TARGET_LINUX
-		//FcFini();
-#endif
-		FT_Done_FreeType(library);
-	}
-}
-
 
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(){
