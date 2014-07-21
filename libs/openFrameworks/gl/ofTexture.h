@@ -131,7 +131,6 @@ public:
 		bUseExternalTextureID = false;
 		useTextureMatrix = false;
 		isBound = false;
-		alphaMask = NULL;
 	}
 
 	unsigned int textureID; ///< GL internal texture ID
@@ -152,7 +151,7 @@ public:
 
 private:
 	bool isBound;  ///< Is the texture already bound
-	ofTexture * alphaMask; ///< Optional alpha mask to bind
+	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
@@ -579,6 +578,15 @@ class ofTexture : public ofBaseDraws {
 	/// \param minFilter minifying filter for scaling a pixel to a smaller area.
 	/// \param maxFilter maxifying filter for scaling a pixel to a larger area.
 	void setTextureMinMagFilter(GLint minFilter, GLint maxFilter);
+
+
+
+	/// Sets a texture matrix that will be uploaded whenever the texture is
+	/// binded.
+	void setTextureMatrix(const ofMatrix4x4 & m);
+
+	/// Disable the texture matrix.
+	void disableTextureMatrix();
 
 	/// \brief Set the texture compression.
 	///
