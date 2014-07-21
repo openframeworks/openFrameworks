@@ -849,16 +849,16 @@ ofTexture & ofImage_<PixelType>::getTextureReference(){
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::bind(){
+void ofImage_<PixelType>::bind(int textureLocation){
 	if (bUseTexture && tex.bAllocated())
-		tex.bind();
+		tex.bind(textureLocation);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::unbind(){
+void ofImage_<PixelType>::unbind(int textureLocation){
 	if (bUseTexture && tex.bAllocated())
-		tex.unbind();
+		tex.unbind(textureLocation);
 }
 
 //------------------------------------
