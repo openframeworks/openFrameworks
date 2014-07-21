@@ -736,14 +736,13 @@ void ofTexture::setAlphaMask(ofTexture & mask){
 	if(mask.texData.textureTarget!=this->texData.textureTarget){
 		ofLogError("ofTexture") << "Cannot set alpha mask with different texture target";
 	}else{
-		texData.alphaMask = new ofTexture(mask);
+		texData.alphaMask = shared_ptr<ofTexture>(new ofTexture(mask));
 	}
 }
 
 void ofTexture::disableAlphaMask(){
 	if(texData.alphaMask){
-		delete texData.alphaMask;
-		texData.alphaMask = NULL;
+		texData.alphaMask.reset();
 	}
 }
 
@@ -781,6 +780,18 @@ ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
 	
 	return temp;
 	
+}
+
+/// Sets a texture matrix that will be uploaded whenever the texture is
+/// binded.
+void ofTexture::setTextureMatrix(const ofMatrix4x4 & m){
+	texData.textureMatrix = m;
+	texData.useTextureMatrix = true;
+}
+
+/// Disable the texture matrix.
+void ofTexture::disableTextureMatrix(){
+	texData.useTextureMatrix = false;
 }
 
 //----------------------------------------------------------
