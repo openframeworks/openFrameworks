@@ -285,6 +285,8 @@ void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent){
 			break;
 		case ofMouseEventArgs::Released:
 			ofNotifyMouseReleased(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+		case ofMouseEventArgs::Scrolled:
+			ofNotifyMouseScrolled(mouseEvent.x,mouseEvent.y);
 			break;
 		
 	}
@@ -380,6 +382,15 @@ void ofNotifyMouseMoved(int x, int y){
 	mouseEventArgs.y = y;
     mouseEventArgs.type = ofMouseEventArgs::Moved;
 	ofNotifyEvent( ofEvents().mouseMoved, mouseEventArgs );
+}
+
+void ofNotifyMouseScrolled(float x, float y){
+	static ofMouseEventArgs mouseEventArgs;
+	
+	mouseEventArgs.x = x;
+	mouseEventArgs.y = y;
+    mouseEventArgs.type = ofMouseEventArgs::Scrolled;
+	ofNotifyEvent( ofEvents().mouseScrolled, mouseEventArgs );
 }
 
 //------------------------------------------
