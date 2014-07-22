@@ -17,7 +17,7 @@
 //class ofVec3f;
 class ofBaseApp;
 
-class ofAppGLFWWindow : public ofAppBaseGLWindow {
+class ofAppGLFWWindow : public ofAppBaseGLWindow, public ofAppBaseGLESWindow {
 
 	static GLFWwindow* windowP;
 
@@ -44,6 +44,7 @@ public:
 
     // this functions are only meant to be called from inside OF don't call them from your code
 	void setOpenGLVersion(int major, int minor);
+	void setGLESVersion(int glesVersion);
 	void setupOpenGL(int w, int h, int screenMode);
 	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
