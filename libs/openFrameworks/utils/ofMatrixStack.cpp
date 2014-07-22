@@ -158,6 +158,20 @@ void ofMatrixStack::nativeViewport(ofRectangle viewport){
 	currentViewport=viewport;
 }
 
+void ofMatrixStack::loadViewMatrix(const ofMatrix4x4 & matrix){
+	viewMatrix = matrix;
+	modelViewMatrix = matrix;
+}
+
+void ofMatrixStack::multViewMatrix(const ofMatrix4x4 & matrix){
+	viewMatrix.preMult(matrix);
+	modelViewMatrix.preMult(matrix);
+}
+
+const ofMatrix4x4 & ofMatrixStack::getViewMatrix() const{
+	return viewMatrix;
+}
+
 const ofMatrix4x4 & ofMatrixStack::getProjectionMatrix() const{
 	return orientedProjectionMatrix;
 }
@@ -203,13 +217,22 @@ void ofMatrixStack::pushView(){
 
 	matrixMode(currentMode);
 
+	viewMatrixStack.push(viewMatrix);
+
 	orientationStack.push(make_pair(orientation,vFlipped));
 }
 
 void ofMatrixStack::popView(){
-	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
-	setOrientation(orientationFlip.first,orientationFlip.second);
-	orientationStack.pop();
+	if(!viewMatrixStack.empty()){
+		viewMatrix = viewMatrixStack.top();
+		viewMatrixStack.pop();
+	}
+
+	if(!orientationStack.empty()){
+		pair<ofOrientation,bool> orientationFlip = orientationStack.top();
+		setOrientation(orientationFlip.first,orientationFlip.second);
+		orientationStack.pop();
+	}
 
 	if( viewportHistory.size() ){
 		currentViewport = viewportHistory.top();
@@ -301,6 +324,15 @@ void ofMatrixStack::clearStacks(){
 	}
 	if (tmpCounter > 0 ){
 		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra orientations on the stack, did you forget to popView() somewhere?";
+	}
+
+	tmpCounter = 0;
+	while (!viewMatrixStack.empty()){
+		viewMatrixStack.pop();
+		tmpCounter++;
+	}
+	if (tmpCounter > 0 ){
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra view matrices on the stack, did you forget to popView() somewhere?";
 	}
 }
 

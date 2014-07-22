@@ -1,3 +1,59 @@
+OF 0.9.0
+========
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+CORE
+----
+### gl
+	+ Programmable lights and materials
+	+ New area light type on programmable renderer
+	+ Separate model matrix
+	+ ofGetCurrentNormalMatrix
+	+ ofSetOpenGL(ES)Version, allows to set any specific GL version
+
+### graphics
+	+ ofTruetypeFont: kerning and better hinting and spacing
+
+PLATFORM SPECIFIC
+-----------------
+
+### Emscripten
+	+ New platform!
+
+
+
+
+OF 0.8.3
+========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
+        
+PLATFORM SPECIFIC
+-----------------
+###OSX
+	/ ofAppGLFWWindow: Drag drop files were coming in empty
+### Windows 
+	/ ofAppGLFWWindow: Drag drop files were coming in empty
+
+
+CORE ADDONS
+-----------
+### ofxKinect
+	/ small fixes for CodeBlocks compilation on Windows
+
+
+
 OF 0.8.2
 ========
  
