@@ -169,12 +169,8 @@ void ofxiOSKeyboard::updateOrientation()
 }
 
 //--------------------------------------------------------------
-- (void)textFieldDidEndEditing:(UITextField*)textField 
-{
-	delete[] _ctext;
-	_ctext = new char[[[textField text] length]+1];
-	[[textField text] getCString:_ctext maxLength:[[textField text] length]+1 encoding:NSASCIIStringEncoding];
-	open = false;
+- (void)textFieldDidEndEditing:(UITextField*)textField {
+    open = false;
 }
 
 //--------------------------------------------------------------
@@ -277,25 +273,20 @@ void ofxiOSKeyboard::updateOrientation()
 }
 
 //--------------------------------------------------------------
-- (void)dealloc 
-{ 
+- (void)dealloc {
 	[_textField release];
-	delete[] _ctext;
-	
 	[super dealloc];
 }
 
 //--------------------------------------------------------------
-- (char *) getText
-{
-	return _ctext;
+- (const char *) getText {
+    return [[_textField text] UTF8String];
 }
 
 //--------------------------------------------------------------
-- (const char*) getLabelText
-{
-        NSString *text=[_textField text];
-        return [text UTF8String]; 
+- (const char*) getLabelText {
+    // this method is deprecated, use getText instead.
+    return [self getText];
 }
 
 //--------------------------------------------------------------
