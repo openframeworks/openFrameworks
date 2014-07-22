@@ -126,6 +126,12 @@ void ofAppGLFWWindow::setOpenGLVersion(int major, int minor){
 	glVersionMinor = minor;
 }
 
+
+void ofAppGLFWWindow::setGLESVersion(int glesVersion){
+	glVersionMajor = glesVersion;
+	glVersionMinor = 0;
+}
+
 //------------------------------------------------------------
 void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
@@ -161,12 +167,13 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersionMinor);
-		if((glVersionMajor>=3 && glVersionMinor>=2) || glVersionMajor>=4){
-			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		}
 		#ifdef TARGET_OPENGLES
-		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
+			glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
+		#else
+			if((glVersionMajor>=3 && glVersionMinor>=2) || glVersionMajor>=4){
+				glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+				glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+			}
 		#endif
 	}
 
