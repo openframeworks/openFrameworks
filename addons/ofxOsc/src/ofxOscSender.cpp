@@ -76,7 +76,7 @@ void ofxOscSender::sendBundle( ofxOscBundle& bundle )
 	socket->Send( p.Data(), p.Size() );
 }
 
-void ofxOscSender::sendMessage( ofxOscMessage& message )
+void ofxOscSender::sendMessage( ofxOscMessage& message, bool wrapInBundle )
 {
     //setting this much larger as it gets trimmed down to the size its using before being sent.
     //TODO: much better if we could make this dynamic? Maybe have ofxOscMessage return its size?
@@ -85,11 +85,10 @@ void ofxOscSender::sendMessage( ofxOscMessage& message )
     osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
 
 	// serialise the message
-    //FIXME: TB removing the bundle dependancy for simple messages (so arduino can use)
-	//p << osc::BeginBundleImmediate;
+	if(wrapInBundle) p << osc::BeginBundleImmediate;
 	appendMessage( message, p );
-	//p << osc::EndBundle;
-    
+	if(wrapInBundle) p << osc::EndBundle;
+
 	socket->Send( p.Data(), p.Size() );
 }
 
@@ -113,7 +112,7 @@ void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 		if(address.length()) address += "/";
 		ofxOscMessage msg;
 		appendParameter(msg,parameter,address);
-		sendMessage(msg);
+		sendMessage(msg, false);
 	}
 }
 
