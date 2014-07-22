@@ -142,7 +142,7 @@ void ofEasyCam::enableMouseInput(){
 	if(!bMouseInputEnabled){
 		bMouseInputEnabled = true;
 	//	ofRegisterMouseEvents(this);
-		ofAddListener(ofEvents().update , this, &ofEasyCam::update);
+		ofAddListener(ofEvents().update , this, &ofEasyCam::update, OF_EVENT_ORDER_BEFORE_APP);
 	}
 }
 //----------------------------------------
@@ -150,7 +150,7 @@ void ofEasyCam::disableMouseInput(){
 	if(bMouseInputEnabled){
 		bMouseInputEnabled = false;
 		//ofUnregisterMouseEvents(this);
-		ofRemoveListener(ofEvents().update, this, &ofEasyCam::update);
+		ofRemoveListener(ofEvents().update, this, &ofEasyCam::update, OF_EVENT_ORDER_BEFORE_APP);
 	}
 }
 //----------------------------------------

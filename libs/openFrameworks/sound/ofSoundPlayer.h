@@ -58,6 +58,11 @@ float * ofSoundGetSpectrum(int nBands);
 inline void ofSoundShutdown(){}
 #endif
 
+#ifdef OF_SOUND_PLAYER_EMSCRIPTEN
+#include "ofxEmscriptenSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxEmscriptenSoundPlayer
+#endif
+
 #ifdef TARGET_LINUX_ARM
 inline void ofSoundShutdown(){}
 #endif
@@ -73,8 +78,8 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 public:
     ofSoundPlayer();
 
-    void setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer);
-    ofPtr<ofBaseSoundPlayer> getPlayer();
+    void setPlayer(shared_ptr<ofBaseSoundPlayer> newPlayer);
+    shared_ptr<ofBaseSoundPlayer> getPlayer();
 
     /// \brief Tells the sound player which file to play.
     ///
@@ -154,6 +159,6 @@ public:
     bool isLoaded(); 		
 
 protected:
-    ofPtr<ofBaseSoundPlayer> player;
+    shared_ptr<ofBaseSoundPlayer> player;
 
 };

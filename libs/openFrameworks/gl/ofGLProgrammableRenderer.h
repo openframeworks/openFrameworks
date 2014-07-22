@@ -12,13 +12,15 @@ class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
 class ofVbo;
+class ofMaterial;
+static const int OF_NO_TEXTURE=-1;
 
 class ofGLProgrammableRenderer: public ofBaseGLRenderer{
 public:
 	ofGLProgrammableRenderer(bool useShapeColor=true);
 	~ofGLProgrammableRenderer();
 
-	void setup();
+	void setup(const string & glslVersion);
 
     static const string TYPE;
 	const string & getType(){ return TYPE; }
@@ -83,9 +85,13 @@ public:
 	void loadMatrix (const float * m);
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
+	void loadViewMatrix(const ofMatrix4x4 & m);
+	void multViewMatrix(const ofMatrix4x4 & m);
 	
 	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
 	ofMatrix4x4 getCurrentOrientationMatrix() const;
+	ofMatrix4x4 getCurrentViewMatrix() const;
+	ofMatrix4x4 getCurrentNormalMatrix() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -142,15 +148,18 @@ public:
 
 	void enableTextureTarget(int textureTarget);
 	void disableTextureTarget(int textureTarget);
+	GLenum getCurrentTextureTarget();
 
 	void beginCustomShader(ofShader & shader);
 	void endCustomShader();
 
+	void setCurrentMaterial(ofBaseMaterial * material);
+
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
 
-	ofShader & defaultTexColor();
-	ofShader & defaultTexNoColor();
+	ofShader & defaultTexRectColor();
+	ofShader & defaultTexRectNoColor();
 	ofShader & defaultTex2DColor();
 	ofShader & defaultTex2DNoColor();
 	ofShader & defaultNoTexColor();
@@ -162,7 +171,7 @@ private:
 
 
 	ofPolyline circlePolyline;
-#ifdef TARGET_OPENGLES
+#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	ofMesh circleMesh;
 	ofMesh triangleMesh;
 	ofMesh rectMesh;
@@ -206,4 +215,6 @@ private:
 
 	bool wrongUseLoggedOnce;
 	bool uniqueShader;
+
+	ofBaseMaterial * currentMaterial;
 };
