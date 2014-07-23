@@ -73,7 +73,9 @@ vector<string> ofAbstractParameter::getGroupHierarchyNames() const{
 
 
 void ofAbstractParameter::notifyParent(){
-	if(getParent()) getParent()->notifyParameterChanged(*this);
+	if(getParent()) {
+        getParent()->notifyParameterChanged(*this);
+    }
 }
 
 void ofAbstractParameter::setSerializable(bool serializable){

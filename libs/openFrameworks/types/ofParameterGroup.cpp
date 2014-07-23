@@ -10,9 +10,10 @@ ofParameterGroup::ofParameterGroup()
 
 void ofParameterGroup::add(ofAbstractParameter & param){
 	shared_ptr<ofAbstractParameter> group = param.newReference();
+    group->setParent(this);
+	param.setParent(this);        
 	obj->parameters.push_back(group);
 	obj->parametersIndex[group->getEscapedName()] = obj->parameters.size()-1;
-	group->setParent(this);
 }
 
 void ofParameterGroup::clear(){
