@@ -67,6 +67,47 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     return false;
 }
 
+bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
+    normalizeFactor = ofGetWidth() / 2.0;
+    
+    if(scene != NULL){
+        clear();
+    }
+    
+    // only ever give us triangles.
+    aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
+    aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
+    
+    // aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
+    unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_FlipUVs;
+    if(optimize) flags |=  aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
+        aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
+        aiProcess_RemoveRedundantMaterials;
+    
+    scene = shared_ptr<const aiScene>(aiImportFileFromMemory(buffer.getBinaryBuffer(), buffer.size(), flags, extension),aiReleaseImport);
+    
+    if(scene){
+        calculateDimensions();
+        loadGLResources();
+        update();
+        
+        if(getAnimationCount())
+            ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): scene has " << getAnimationCount() << "animations";
+        else {
+            ofLogVerbose("ofxAssimpModelLoader") << "loadMode(): no animations";
+        }
+        
+        ofAddListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
+        
+        
+        return true;
+    }else{
+        ofLogError("ofxAssimpModelLoader") << "loadModel(): " + (string) aiGetErrorString();
+        clear();
+        return false;
+    }
+}
+
 // automatic destruction on app exit makes the app crash because of some bug in assimp
 // this is a hack to clear every object on the exit callback of the application
 // FIXME: review when there's an update of assimp
