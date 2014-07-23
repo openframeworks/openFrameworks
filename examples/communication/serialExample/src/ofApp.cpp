@@ -17,7 +17,7 @@ void ofApp::setup(){
 	// (ie, COM4 on a pc, /dev/tty.... on linux, /dev/tty... on a mac)
 	// arduino users check in arduino app....
 	int baud = 9600;
-	serial.setup("/dev/ttyACM3", baud); //open the first device
+	serial.setup(0, baud); //open the first device
 	//serial.setup("COM4", baud); // windows example
 	//serial.setup("/dev/tty.usbserial-A4001JEC", baud); // mac osx example
 	//serial.setup("/dev/ttyUSB0", baud); //linux example
@@ -48,17 +48,17 @@ void ofApp::update(){
 		nBytesRead = 0;
 		int nRead  = 0;  // a temp variable to keep count per read
 
-		unsigned char bytesReturned[6];
+		unsigned char bytesReturned[4];
 
-		memset(bytesReadString, 0, 7);
-		memset(bytesReturned, 0, 6);
+		memset(bytesReadString, 0, 4);
+		memset(bytesReturned, 0, 3);
 
-		while( (nRead = serial.readBytes( bytesReturned, 6)) > 0){
+		while( (nRead = serial.readBytes( bytesReturned, 3)) > 0){
 			nTimesRead++;
 			nBytesRead = nRead;
 		};
 
-		memcpy(bytesReadString, bytesReturned, 6);
+		memcpy(bytesReadString, bytesReturned, 3);
 
 		bSendSerialMessage = false;
 		readTime = ofGetElapsedTimef();
