@@ -58,6 +58,13 @@ ofArduino::ofArduino(){
 	_majorFirmwareVersion = 0;
 	_minorFirmwareVersion = 0;
 	_firmwareName = "Unknown";
+	_firmwareVersionSum = 0;
+	connected = false;
+	_totalDigitalPins = 0;
+	connectTime = 0;
+	_initialized = false;
+	_executeMultiByteCommand = 0;
+	_multiByteChannel = 0;
 
 	bUseDelay = true;
 }
@@ -253,12 +260,14 @@ void ofArduino::sendDigital(int pin, int value, bool force){
 	}
 }
 
-void ofArduino::sendPwm(int pin, int value, bool force){
+bool ofArduino::sendPwm(int pin, int value, bool force){
+	bool ret = true;
 	if(_digitalPinMode[pin]==ARD_PWM && (_digitalPinValue[pin]!=value || force)){
-		sendByte(FIRMATA_ANALOG_MESSAGE+pin);
-		sendValueAsTwo7bitBytes(value);
+		ret &= sendByte(FIRMATA_ANALOG_MESSAGE+pin);
+		ret &= sendValueAsTwo7bitBytes(value);
 		_digitalPinValue[pin] = value;
 	}
+	return ret;
 }
 
 void ofArduino::sendSysEx(int command, vector<unsigned char> data){
@@ -720,19 +729,19 @@ void ofArduino::sendDigitalPinReporting(int pin, int mode){
 	}
 }
 
-void ofArduino::sendByte(unsigned char byte){
+bool ofArduino::sendByte(unsigned char byte){
 	//char msg[100];
 	//sprintf(msg, "Sending Byte: %i", byte);
 	//Logger::get("Application").information(msg);
-	_port.writeByte(byte);
+	return _port.writeByte(byte);
 }
 
 // in Firmata (and MIDI) data bytes are 7-bits. The 8th bit serves as a flag to mark a byte as either command or data.
 // therefore you need two data bytes to send 8-bits (a char).
-void ofArduino::sendValueAsTwo7bitBytes(int value)
+bool ofArduino::sendValueAsTwo7bitBytes(int value)
 {
-	sendByte(value & 127); // LSB
-	sendByte(value >> 7 & 127); // MSB
+	return sendByte(value & 127) & // LSB
+			sendByte(value >> 7 & 127); // MSB
 }
 
 // SysEx data is sent as 8-bit bytes split into two 7-bit bytes, this function merges two 7-bit bytes back into one 8-bit byte.
@@ -778,6 +787,13 @@ void ofArduino::sendServoAttach(int pin, int minPulse, int maxPulse, int angle) 
 	sendValueAsTwo7bitBytes(maxPulse);
 	sendByte(FIRMATA_END_SYSEX);
 	_digitalPinMode[pin]=ARD_SERVO;
+
+	/*uint8_t buf[4];
+	buf[0] = 0xF4;
+	buf[1] = pin;
+	buf[2] = ARD_SERVO;
+	_port.writeBytes(buf, 3);
+	_digitalPinMode[pin]=ARD_SERVO;*/
 }
 
 // sendServoDetach depricated as of Firmata 2.2

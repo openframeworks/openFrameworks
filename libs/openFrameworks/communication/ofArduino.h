@@ -90,16 +90,19 @@
 #define ARD_TOTAL_DIGITAL_PINS							22 // total number of pins currently supported
 #define ARD_TOTAL_ANALOG_PINS							6
 #define ARD_TOTAL_PORTS                                 3 // total number of ports for the board
+
 // pin modes
-#define ARD_INPUT                                       0x00
-#define ARD_OUTPUT                                      0x01
-#define ARD_ANALOG                                      0x02 // analog pin in analogInput mode
-#define ARD_PWM                                         0x03 // digital pin in PWM output mode
-#define ARD_SERVO                                       0x04 // digital pin in Servo output mode
-#define ARD_HIGH                                        1
-#define ARD_LOW                                         0
-#define ARD_ON                                          1
-#define ARD_OFF                                         0
+enum ofFirmataPinModes{
+	ARD_INPUT = 0x00,
+	ARD_OUTPUT = 0x01,
+	ARD_ANALOG = 0x02, // analog pin in analogInput mode
+	ARD_PWM = 0x03, // digital pin in PWM output mode
+	ARD_SERVO = 0x04, // digital pin in Servo output mode
+	ARD_HIGH = 1,
+	ARD_LOW = 0,
+	ARD_ON = 1,
+	ARD_OFF = 0
+};
 
 /*
  #if defined(__AVR_ATmega168__)  // Arduino NG and Diecimila
@@ -192,7 +195,7 @@ class ofArduino{
 				// the pins mode has to be set to ARD_OUTPUT or ARD_INPUT (in the latter mode pull-up resistors are enabled/disabled)
 				// Note: pin 16-21 can also be used if analog inputs 0-5 are used as digital pins
 
-				void sendPwm(int pin, int value, bool force = false);
+				bool sendPwm(int pin, int value, bool force = false);
 				// pin: 3, 5, 6, 9, 10 and 11
 				// value: 0 (always off) to 255 (always on).
 				// the pins mode has to be set to ARD_PWM
@@ -217,11 +220,11 @@ class ofArduino{
 				void sendSysExEnd();
 				// sends the FIRMATA_END_SYSEX command
 
-				void sendByte(unsigned char byte);
+				bool sendByte(unsigned char byte);
 				// sends a byte without wrapping it in a firmata message, data has to be in the 0-127 range,
 				// values > 127 will be interpreted as commands.
 
-				void sendValueAsTwo7bitBytes(int value);
+				bool sendValueAsTwo7bitBytes(int value);
 				// sends a value as two 7-bit bytes without wrapping it in a firmata message
 				// values in the range 0 - 16384 will be sent as two bytes within the 0-127 data range.
 
