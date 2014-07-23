@@ -29,7 +29,6 @@ class ofxAssimpModelLoader{
         ofxAssimpModelLoader();
 
         bool loadModel(string modelName, bool optimize=false);
-        bool loadModel(ofBuffer & buffer, bool optimize=false, const char * extension="");
         void createEmptyModel();
         void createLightsFromAiModel();
         void optimizeScene();
