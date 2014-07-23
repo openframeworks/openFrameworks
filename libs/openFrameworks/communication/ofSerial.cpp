@@ -561,6 +561,27 @@ bool ofSerial::writeByte(unsigned char singleByte){
 	writeBytes(&singleByte,1);
 }
 
+int ofSerial::readBytes(char * buffer, int length){
+	return readBytes((unsigned char*) buffer, length);
+}
+
+int ofSerial::writeBytes(char * buffer, int length){
+	return writeBytes((unsigned char*)buffer, length);
+}
+
+bool ofSerial::writeByte(char singleByte){
+	return writeByte((unsigned char)singleByte);
+}
+
+int ofSerial::readBytes(ofBuffer & buffer, int length){
+	buffer.allocate(length);
+	return readBytes(buffer.getBinaryBuffer(),length);
+}
+
+int ofSerial::writeBytes(ofBuffer & buffer){
+	return writeBytes(buffer.getBinaryBuffer(),buffer.size());
+}
+
 //----------------------------------------------------------------
 int ofSerial::readByte(){
 

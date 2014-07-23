@@ -116,8 +116,9 @@ void ofBuffer::clear(){
 
 //--------------------------------------------------
 void ofBuffer::allocate(long _size){
-	clear();
-	buffer.resize(_size);
+	buffer.resize(_size+1);
+	buffer.back() = 0;
+	nextLinePos = 0;
 }
 
 //--------------------------------------------------

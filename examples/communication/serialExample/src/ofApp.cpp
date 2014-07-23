@@ -25,7 +25,6 @@ void ofApp::setup(){
 	nTimesRead = 0;
 	nBytesRead = 0;
 	readTime = 0;
-	memset(bytesReadString, 0, 4);
 }
 
 //--------------------------------------------------------------
@@ -48,17 +47,11 @@ void ofApp::update(){
 		nBytesRead = 0;
 		int nRead  = 0;  // a temp variable to keep count per read
 
-		unsigned char bytesReturned[4];
 
-		memset(bytesReadString, 0, 4);
-		memset(bytesReturned, 0, 3);
-
-		while( (nRead = serial.readBytes( bytesReturned, 3)) > 0){
+		while( (nRead = serial.readBytes(bytesReadString, 3)) > 0){
 			nTimesRead++;
 			nBytesRead = nRead;
 		};
-
-		memcpy(bytesReadString, bytesReturned, 3);
 
 		bSendSerialMessage = false;
 		readTime = ofGetElapsedTimef();
@@ -76,7 +69,7 @@ void ofApp::draw(){
 	msg += "click to test serial:\n";
 	msg += "nBytes read " + ofToString(nBytesRead) + "\n";
 	msg += "nTimes read " + ofToString(nTimesRead) + "\n";
-	msg += "read: " + ofToString(bytesReadString) + "\n";
+	msg += "read: " + bytesReadString.getText() + "\n";
 	msg += "(at time " + ofToString(readTime, 3) + ")";
 	font.drawString(msg, 50, 100);
 }
