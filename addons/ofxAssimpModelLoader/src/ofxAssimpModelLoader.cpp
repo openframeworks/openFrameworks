@@ -25,53 +25,46 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): loading \"" << file.getFileName()
 		<< "\" from \"" << file.getEnclosingDirectory() << "\"";
     
-    ofBuffer buffer = file.readToBuffer();
-    
-    bool bOk = loadModel(buffer, optimize, file.getExtension().c_str());
-
-    return bOk;
-}
-
-//-------------------------------------------
-bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
-	normalizeFactor = ofGetWidth() / 2.0;
+    normalizeFactor = ofGetWidth() / 2.0;
     
     if(scene != NULL){
         clear();
     }
     
-	// only ever give us triangles.
+    // only ever give us triangles.
 	aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
 	aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
-
+    
 	// aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
 	unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_FlipUVs;
 	if(optimize) flags |=  aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
-			aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
-			aiProcess_RemoveRedundantMaterials;
-
-	scene = shared_ptr<const aiScene>(aiImportFileFromMemory(buffer.getBinaryBuffer(), buffer.size(), flags, extension),aiReleaseImport);
+        aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
+        aiProcess_RemoveRedundantMaterials;
+    
+    scene = shared_ptr<const aiScene>(aiImportFile(file.getAbsolutePath().c_str(), flags),aiReleaseImport);
     
 	if(scene){
 		calculateDimensions();
 		loadGLResources();
         update();
-
+        
 		if(getAnimationCount())
 			ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): scene has " << getAnimationCount() << "animations";
 		else {
 			ofLogVerbose("ofxAssimpModelLoader") << "loadMode(): no animations";
 		}
-
+        
 		ofAddListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
-
-
+        
+        
 		return true;
 	}else{
 		ofLogError("ofxAssimpModelLoader") << "loadModel(): " + (string) aiGetErrorString();
 		clear();
 		return false;
 	}
+
+    return false;
 }
 
 // automatic destruction on app exit makes the app crash because of some bug in assimp
