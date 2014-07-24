@@ -431,6 +431,12 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
     else
     	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
     endif
+    
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)),)
+		OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG)
+	else
+		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)
+	endif
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
@@ -445,6 +451,12 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
     else
     	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
     endif
+    
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)),)
+	    OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE)
+	else
+		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)
+	endif
 endif
 
 

@@ -37,6 +37,8 @@ aiAnimation * ofxAssimpAnimation::getAnimation() {
 void ofxAssimpAnimation::update() {
     animationPrevTime = animationCurrTime;
     animationCurrTime = ofGetElapsedTimef();
+    double tps = animation->mTicksPerSecond ? animation->mTicksPerSecond : 25.f;
+    animationCurrTime *= tps;
     
     if(!bPlay || bPause) {
         return;

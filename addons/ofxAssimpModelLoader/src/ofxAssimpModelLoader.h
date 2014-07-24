@@ -119,6 +119,10 @@ class ofxAssimpModelLoader{
         void updateMeshes(aiNode * node, ofMatrix4x4 parentMatrix);
         void updateBones();
         void updateModelMatrix();
+    
+        // ai scene setup
+        unsigned int initImportProperties(bool optimize);
+        bool processScene();
 
         // Initial VBO creation, etc
         void loadGLResources();

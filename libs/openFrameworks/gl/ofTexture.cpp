@@ -231,12 +231,12 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 }
 
 
-void ofTexture::enableTextureTarget(){
-	if(ofGetGLRenderer()) ofGetGLRenderer()->enableTextureTarget(texData.textureTarget);
+void ofTexture::enableTextureTarget(int textureLocation){
+	if(ofGetGLRenderer()) ofGetGLRenderer()->enableTextureTarget(texData.textureTarget, texData.textureID, textureLocation);
 }
 
-void ofTexture::disableTextureTarget(){
-	if(ofGetGLRenderer()) ofGetGLRenderer()->disableTextureTarget(texData.textureTarget);
+void ofTexture::disableTextureTarget(int textureLocation){
+	if(ofGetGLRenderer()) ofGetGLRenderer()->disableTextureTarget(texData.textureTarget, textureLocation);
 }
 
 //----------------------------------------------------------
@@ -320,8 +320,8 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
 		texData.tex_w = texData.width;
 		texData.tex_h = texData.height;
-		texData.tex_w = texData.width;
-		texData.tex_h = texData.height;		
+		texData.tex_t = texData.width;
+		texData.tex_u = texData.height;
 	}else
 #endif
 	{
@@ -349,7 +349,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
 	retain(texData.textureID);
 
-	enableTextureTarget();
+	enableTextureTarget(0);
 
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
@@ -359,10 +359,12 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	if (!ofIsGLProgrammableRenderer()){
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	}
-	disableTextureTarget();
+	#ifndef TARGET_PROGRAMMABLE_GL
+		if (!ofIsGLProgrammableRenderer()){
+			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		}
+	#endif
+	disableTextureTarget(0);
 
 
 
@@ -373,9 +375,9 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 
 void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles){
 #ifndef TARGET_OPENGLES
-	enableTextureTarget();
+	enableTextureTarget(0);
 
-	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+	//glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	if(rToRGBSwizzles){
 		if(texData.glTypeInternal==GL_R8 ||
 				texData.glTypeInternal==GL_R16 ||
@@ -410,8 +412,18 @@ void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles){
 		}
 	}
 
-	glBindTexture( texData.textureTarget, 0);
-	disableTextureTarget();
+	//glBindTexture( texData.textureTarget, 0);
+	disableTextureTarget(0);
+#endif
+}
+
+void ofTexture::setSwizzle(GLenum srcSwizzle, GLenum dstChannel){
+#ifndef TARGET_OPENGLES
+	enableTextureTarget(0);
+
+	//glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+	glTexParameteri(texData.textureTarget, srcSwizzle, dstChannel);
+	disableTextureTarget(0);
 #endif
 }
 
@@ -516,13 +528,13 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		//STANDARD openFrameworks: no compression
 		
 		//update the texture image: 
-		enableTextureTarget();
+		enableTextureTarget(0);
 
 		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
 		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
 		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
 
- 		disableTextureTarget();
+ 		disableTextureTarget(0);
 	} else {
 		//SOSOLIMITED: setup mipmaps and use compression
 		//TODO: activate at least mimaps for OPENGL_ES
@@ -542,13 +554,15 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 			else texData.tex_t = next_w;
 		}
 #endif
-		enableTextureTarget();
+		enableTextureTarget(0);
 		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 		
 		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
+#ifndef TARGET_PROGRAMMABLE_GL
 		if(!ofGetGLProgrammableRenderer()){
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		}
+#endif
 #ifndef TARGET_OPENGLES		
 		glTexParameteri(texData.textureTarget, GL_GENERATE_MIPMAP_SGIS, true);
 #endif
@@ -594,7 +608,7 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 #endif
 		
 
-		disableTextureTarget();
+		disableTextureTarget(0);
 		
 	}
 	
@@ -633,12 +647,12 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	}
 	
 	
-	enableTextureTarget();
+	enableTextureTarget(0);
 
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glCopyTexSubImage2D(texData.textureTarget, 0,0,0,x,y,w,h);
 
-	disableTextureTarget();
+	disableTextureTarget(0);
 }
 
 
@@ -668,11 +682,14 @@ void ofTexture::resetAnchor(){
 }
 
 //----------------------------------------------------------
-void ofTexture::bind(){
+void ofTexture::bind(int textureLocation){
 	//we could check if it has been allocated - but we don't do that in draw() 
-	enableTextureTarget();
-	glBindTexture( texData.textureTarget, (GLuint)texData.textureID);
+	if(texData.alphaMask){
+		ofGetGLRenderer()->setAlphaMaskTex(*texData.alphaMask);
+	}
+	enableTextureTarget(textureLocation);
 	
+
 	if(ofGetUsingNormalizedTexCoords()) {
 		ofSetMatrixMode(OF_MATRIX_TEXTURE);
 		ofPushMatrix();
@@ -694,18 +711,38 @@ void ofTexture::bind(){
 		ofMultMatrix(texData.textureMatrix);
 		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
 	}
+
+	texData.isBound = true;
 }
 
 //----------------------------------------------------------
-void ofTexture::unbind(){
+void ofTexture::unbind(int textureLocation){
 
-	glBindTexture( texData.textureTarget, 0);
-	disableTextureTarget();
+	disableTextureTarget(textureLocation);
+	if(texData.alphaMask){
+		ofGetGLRenderer()->disableAlphaMask();
+	}
 
 	if(texData.useTextureMatrix || ofGetUsingNormalizedTexCoords()) {
 		ofSetMatrixMode(OF_MATRIX_TEXTURE);
 		ofPopMatrix();
 		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
+	}
+
+	texData.isBound = false;
+}
+
+void ofTexture::setAlphaMask(ofTexture & mask){
+	if(mask.texData.textureTarget!=this->texData.textureTarget){
+		ofLogError("ofTexture") << "Cannot set alpha mask with different texture target";
+	}else{
+		texData.alphaMask = shared_ptr<ofTexture>(new ofTexture(mask));
+	}
+}
+
+void ofTexture::disableAlphaMask(){
+	if(texData.alphaMask){
+		texData.alphaMask.reset();
 	}
 }
 
@@ -743,6 +780,18 @@ ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
 	
 	return temp;
 	
+}
+
+/// Sets a texture matrix that will be uploaded whenever the texture is
+/// binded.
+void ofTexture::setTextureMatrix(const ofMatrix4x4 & m){
+	texData.textureMatrix = m;
+	texData.useTextureMatrix = true;
+}
+
+/// Disable the texture matrix.
+void ofTexture::disableTextureMatrix(){
+	texData.useTextureMatrix = false;
 }
 
 //----------------------------------------------------------
@@ -813,7 +862,7 @@ void ofTexture::draw(float x, float y, float z, float w, float h){
 
 //------------------------------------
 void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy){
-	drawSubsection(x,y,0,w,h,sx,sy,w,h);
+	drawSubsection(x,y,0,w,h,sx,sy,getWidth(),getHeight());
 }
 
 //------------------------------------
@@ -823,13 +872,15 @@ void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, flo
 
 //------------------------------------
 void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
-	drawSubsection(x,y,z,w,h,sx,sy,w,h);
+	drawSubsection(x,y,z,w,h,sx,sy,getWidth(),getHeight());
 }
 
 //----------------------------------------------------------
 void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
-	
-	
+	if(!texData.bAllocated){
+		return;
+	}
+
 	GLfloat px0 = x;		// up to you to get the aspect ratio right
 	GLfloat py0 = y;
 	GLfloat px1 = w+x;
@@ -891,12 +942,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat ty0 = topLeft.y + offseth;
 	GLfloat tx1 = bottomRight.x - offsetw;
 	GLfloat ty1 = bottomRight.y - offseth;
-	
-	/*if(z>0 || z<0){
-		ofPushMatrix();
 
-		ofTranslate(0,0,z);
-	}*/
 	quad.getVertices()[0].set(px0,py0,z);
 	quad.getVertices()[1].set(px1,py0,z);
 	quad.getVertices()[2].set(px1,py1,z);
@@ -910,16 +956,12 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	// make sure we are on unit 0 - we may change this when setting shader samplers
 	// before glEnable or else the shader gets confused
 	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
-	glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE0);
 	
-	bind();
+	bool wasBound = texData.isBound;
+	if(!wasBound) bind(0);
 	quad.draw();
-	unbind();
-
-	/*if(z>0 || z<0){
-		ofPopMatrix();
-	}*/
-	
+	if(!wasBound) unbind(0);
 }
 
 
@@ -961,11 +1003,12 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	// make sure we are on unit 0 - we may change this when setting shader samplers
 	// before glEnable or else the shader gets confused
 	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
-	glActiveTexture(GL_TEXTURE0);
+	//glActiveTexture(GL_TEXTURE0);
 	
-	bind();
+	bool wasBound = texData.isBound;
+	if(!wasBound) bind(0);
 	quad.draw();
-	unbind();
+	if(!wasBound) unbind(0);
 }
 
 //----------------------------------------------------------
