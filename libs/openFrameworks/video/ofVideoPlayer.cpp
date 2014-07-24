@@ -48,7 +48,7 @@ bool ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofVideoPlayer::getPixelFormat(){
+ofPixelFormat ofVideoPlayer::getPixelFormat() const{
 	if( player ){
 		internalPixelFormat = player->getPixelFormat();
 	}
@@ -82,7 +82,7 @@ bool ofVideoPlayer::loadMovie(string name){
 }
 
 //---------------------------------------------------------------------------
-string ofVideoPlayer::getMoviePath(){
+string ofVideoPlayer::getMoviePath() const{
     return moviePath;	
 }
 
@@ -95,7 +95,12 @@ unsigned char * ofVideoPlayer::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofVideoPlayer::getPixelsRef(){
+ofPixels& ofVideoPlayer::getPixelsRef(){
+	return player->getPixelsRef();
+}
+
+//---------------------------------------------------------------------------
+const ofPixels& ofVideoPlayer::getPixelsRef() const {
 	return player->getPixelsRef();
 }
 
@@ -117,8 +122,17 @@ ofPixelsRef ofVideoPlayer::getPixelsRef(){
 //}
 
 //---------------------------------------------------------------------------
-//for getting a reference to the texture
 ofTexture & ofVideoPlayer::getTextureReference(){
+	if(playerTex == NULL){
+		return tex;
+	}
+	else{
+		return *playerTex;
+	}
+}
+
+//---------------------------------------------------------------------------
+const ofTexture & ofVideoPlayer::getTextureReference() const{
 	if(playerTex == NULL){
 		return tex;
 	}
@@ -129,7 +143,7 @@ ofTexture & ofVideoPlayer::getTextureReference(){
 
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::isFrameNew(){
+bool ofVideoPlayer::isFrameNew() const{
 	if( player ){
 		return player->isFrameNew();
 	}
@@ -220,7 +234,7 @@ void ofVideoPlayer::setLoopState(ofLoopType state){
 	}
 }
 
-ofLoopType ofVideoPlayer::getLoopState(){
+ofLoopType ofVideoPlayer::getLoopState() const{
 	if( player ){
 		return player->getLoopState();
 	}else{
@@ -244,7 +258,7 @@ void ofVideoPlayer::setFrame(int frame){
 
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getDuration(){
+float ofVideoPlayer::getDuration() const{
 	if( player ){
 		return player->getDuration();
 	}
@@ -253,7 +267,7 @@ float ofVideoPlayer::getDuration(){
 }
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getPosition(){
+float ofVideoPlayer::getPosition() const{
 	if( player ){
 		return player->getPosition();
 	}
@@ -261,7 +275,7 @@ float ofVideoPlayer::getPosition(){
 }
 
 //---------------------------------------------------------------------------
-int ofVideoPlayer::getCurrentFrame(){
+int ofVideoPlayer::getCurrentFrame() const{
 	if( player ){
 		return player->getCurrentFrame();
 	}
@@ -270,7 +284,7 @@ int ofVideoPlayer::getCurrentFrame(){
 
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::getIsMovieDone(){
+bool ofVideoPlayer::getIsMovieDone() const{
 	if( player ){
 		return player->getIsMovieDone();
 	}
@@ -306,7 +320,7 @@ void ofVideoPlayer::setSpeed(float _speed){
 }
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getSpeed(){
+float ofVideoPlayer::getSpeed() const{
 	if( player ){
 		return player->getSpeed();
 	}
@@ -357,7 +371,7 @@ void ofVideoPlayer::draw(float _x, float _y){
 }
 
 //------------------------------------
-int ofVideoPlayer::getTotalNumFrames(){
+int ofVideoPlayer::getTotalNumFrames() const{
 	if( player ){
 		return player->getTotalNumFrames();
 	}
@@ -365,7 +379,7 @@ int ofVideoPlayer::getTotalNumFrames(){
 }
 
 //----------------------------------------------------------
-float ofVideoPlayer::getWidth(){
+float ofVideoPlayer::getWidth() const{
 	if( player ){
 		width = player->getWidth();
 	}
@@ -373,7 +387,7 @@ float ofVideoPlayer::getWidth(){
 }
 
 //----------------------------------------------------------
-float ofVideoPlayer::getHeight(){
+float ofVideoPlayer::getHeight() const{
 	if( player ){
 		height = player->getHeight();
 	}
@@ -381,7 +395,7 @@ float ofVideoPlayer::getHeight(){
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isPaused(){
+bool ofVideoPlayer::isPaused() const{
 	if( player ){
 		return player->isPaused();
 	}
@@ -389,7 +403,7 @@ bool ofVideoPlayer::isPaused(){
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isLoaded(){
+bool ofVideoPlayer::isLoaded() const{
 	if( player ){
 		return player->isLoaded();
 	}
@@ -397,7 +411,7 @@ bool ofVideoPlayer::isLoaded(){
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isPlaying(){
+bool ofVideoPlayer::isPlaying() const{
 	if( player ){
 		return player->isPlaying();
 	}

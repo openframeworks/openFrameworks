@@ -407,20 +407,20 @@ class ofTexture : public ofBaseDraws {
 	/// \param p2 Upper left position on the y axis.
 	/// \param p3 Lower right position on the x axis.
 	/// \param p4 Lower right position on the y axis.
-	void draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4);
+	void draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const;
 	
 	/// \brief Draw the texture at it's normal size.
 	///
 	/// \param x Draw position on the x axis.
 	/// \param y Draw position on the y axis.
-	void draw(float x, float y);
+	void draw(float x, float y) const;
 
 	/// \brief Draw the texture at it's normal size with depth.
 	///
 	/// \param x Draw position on the x axis.
 	/// \param y Draw position on the y axis.
 	/// \param z Draw position on the z axis.
-	void draw(float x, float y, float z);
+	void draw(float x, float y, float z) const;
 
 	/// \brief Draw the texture at a given size.
 	///
@@ -428,7 +428,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param y Draw position on the y axis.
 	/// \param w Draw width.
 	/// \param h Draw height.
-	void draw(float x, float y, float w, float h);
+	void draw(float x, float y, float w, float h) const;
 
 	/// \brief Draw the texture at a given size with depth.
 	///
@@ -437,7 +437,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param z Draw position on the z axis.
 	/// \param w Draw width.
 	/// \param h Draw height.
-	void draw(float x, float y, float z, float w, float h);
+	void draw(float x, float y, float z, float w, float h) const;
 	
 	/// \brief Draw a subsection of the texture.
 	///
@@ -454,14 +454,14 @@ class ofTexture : public ofBaseDraws {
 	/// \param h Draw height.
 	/// \param sx Subsection x axis offset within the texture.
 	/// \param sy Subsection y axis offset within the texture.
-	void drawSubsection(float x, float y, float w, float h, float sx, float sy);
+	void drawSubsection(float x, float y, float w, float h, float sx, float sy) const;
 
 	/// \brief Draw a subsection of the texture with depth.
 	///
 	/// Same as drawSubsection(x, y, w, h, sx, sy) with the addition of:
 	///
 	/// \param z Draw position on the z axis.
-	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy);
+	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const;
 
 	/// \brief Draw a subsection of the texture with an offset.
 	///
@@ -469,7 +469,7 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \param sw Subsection width within the texture.
 	/// \param sh Subsection height within the texture.
-	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh);
+	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh) const;
 	
 	/// \brief Draw a subsection of the texture with an offset and depth.
 	///
@@ -478,28 +478,28 @@ class ofTexture : public ofBaseDraws {
 	/// \param sw Subsection width within the texture.
 	/// \param sh Subsection height within the texture.
 	/// \param z Draw position on the z axis.
-	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
 	/// \brief Read current texture data from the GPU into pixels.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.
 	///
 	/// \param pixels Target ofPixels reference.
-	void readToPixels(ofPixels & pixels);
+	void readToPixels(ofPixels & pixels) const;
 
 	/// \brief Read current texture data from the GPU into pixels.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.
 	///
 	/// \param pixels Target pixels reference.
-	void readToPixels(ofShortPixels & pixels);
+	void readToPixels(ofShortPixels & pixels) const;
 
 	/// \brief Read current texture data from the GPU into pixels.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.
 	///
 	/// \param pixels Target pixels reference.
-	void readToPixels(ofFloatPixels & pixels);
+	void readToPixels(ofFloatPixels & pixels) const;
 
 	/// \brief Bind the texture.
 	///
@@ -508,7 +508,7 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
 	///
-	void bind();
+	void bind() const;
 	
 	/// \brief Unbind the texture.
 	///
@@ -517,19 +517,19 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
 	///
-	void unbind();
+	void unbind() const;
 	
 	/// \brief Helper to convert display coordinate to texture coordinate.
 	/// \param xPos Horizontal position in pixels.
 	/// \param yPos Vertical position in pixels.
 	/// \returns Texture coordinate or (0, 0) if texture is not allocated.
-	ofPoint getCoordFromPoint(float xPos, float yPos);		
+	ofPoint getCoordFromPoint(float xPos, float yPos) const;		
 	
 	/// \brief Helper to convert display coordinate to texture coordinate.
 	/// \param xPts Horizontal position in a normalized percentage (0 - 1).
 	/// \param yPts Vertical position in a normalized percentage (0 - 1).
 	/// \returns Texture coordinate or (0, 0) if texture is not allocated.
-	ofPoint getCoordFromPercent(float xPts, float yPts);		
+	ofPoint getCoordFromPercent(float xPts, float yPts) const;		
 	
 	/// \brief Set texture wrapping.
 	///
@@ -572,11 +572,11 @@ class ofTexture : public ofBaseDraws {
 	/// Legacy function for backwards compatibility.
 	///
 	/// \returns true if the texture has been allocated.
-	bool bAllocated();
+	bool bAllocated() const;
 	
 	/// \brief Has the texture been allocated?
 	/// \returns true if the texture has been allocated.
-	bool isAllocated();
+	bool isAllocated() const;
 
 	/// \brief Internal texture data access.
 	/// \returns a reference to the internal texture data struct.
@@ -596,7 +596,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa ofEnabledNormalizedTextures()
 	///
 	/// \returns Display height of texture in pixels.
-	float getHeight();
+	float getHeight() const;
 
 	/// \brief Display width of texture.
 	///
@@ -605,16 +605,16 @@ class ofTexture : public ofBaseDraws {
 	/// \sa ofEnabledNormalizedTextures()
 	///
 	/// \returns Display width of texture in pixels.
-	float getWidth();
+	float getWidth() const;
 
 protected:
     void loadData(const void * data, int w, int h, int glFormat, int glType);
 
 
-	void enableTextureTarget();
-	void disableTextureTarget();
+	void enableTextureTarget() const;
+	void disableTextureTarget() const;
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
-	ofMesh quad;
+	mutable ofMesh quad;
 };
