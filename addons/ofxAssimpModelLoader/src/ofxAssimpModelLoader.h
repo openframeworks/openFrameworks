@@ -120,7 +120,7 @@ class ofxAssimpModelLoader{
         void updateBones();
         void updateModelMatrix();
     
-        //
+        // ai scene setup
         unsigned int initImportProperties(bool optimize);
         bool processScene();
 
