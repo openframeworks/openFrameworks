@@ -16,6 +16,7 @@ ofxAssimpModelLoader::~ofxAssimpModelLoader(){
 
 //------------------------------------------
 bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
+    
     file.open(modelName, ofFile::ReadOnly, true); // Since it may be a binary file we should read it in binary -Ed
     if(!file.exists()) {
         ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): model does not exist: \"" << modelName << "\"";
@@ -25,54 +26,40 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): loading \"" << file.getFileName()
 		<< "\" from \"" << file.getEnclosingDirectory() << "\"";
     
-    normalizeFactor = ofGetWidth() / 2.0;
-    
     if(scene != NULL){
         clear();
     }
     
-    // only ever give us triangles.
-	aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
-	aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
+    // sets various properties & flags to a default preference
+    unsigned int flags = initImportProperties(optimize);
     
-	// aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
-	unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_FlipUVs;
-	if(optimize) flags |=  aiProcess_ImproveCacheLocality | aiProcess_OptimizeGraph |
-        aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
-        aiProcess_RemoveRedundantMaterials;
-    
+    // loads scene from file
     scene = shared_ptr<const aiScene>(aiImportFile(file.getAbsolutePath().c_str(), flags),aiReleaseImport);
     
-	if(scene){
-		calculateDimensions();
-		loadGLResources();
-        update();
-        
-		if(getAnimationCount())
-			ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): scene has " << getAnimationCount() << "animations";
-		else {
-			ofLogVerbose("ofxAssimpModelLoader") << "loadMode(): no animations";
-		}
-        
-		ofAddListener(ofEvents().exit,this,&ofxAssimpModelLoader::onAppExit);
-        
-        
-		return true;
-	}else{
-		ofLogError("ofxAssimpModelLoader") << "loadModel(): " + (string) aiGetErrorString();
-		clear();
-		return false;
-	}
-
-    return false;
+    bool bOk = processScene();
+    return bOk;
 }
 
+
 bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const char * extension){
-    normalizeFactor = ofGetWidth() / 2.0;
+    
+    ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): loading from memory buffer \"." << extension << "\"";
     
     if(scene != NULL){
         clear();
     }
+    
+    // sets various properties & flags to a default preference
+    unsigned int flags = initImportProperties(optimize);
+    
+    // loads scene from memory buffer - note this will not work for multipart files (obj, md3, etc)
+    scene = shared_ptr<const aiScene>(aiImportFileFromMemory(buffer.getBinaryBuffer(), buffer.size(), flags, extension),aiReleaseImport);
+    
+    bool bOk = processScene();
+    return bOk;
+}
+
+unsigned int ofxAssimpModelLoader::initImportProperties(bool optimize) {
     
     // only ever give us triangles.
     aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
@@ -84,7 +71,12 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
         aiProcess_OptimizeMeshes | aiProcess_JoinIdenticalVertices |
         aiProcess_RemoveRedundantMaterials;
     
-    scene = shared_ptr<const aiScene>(aiImportFileFromMemory(buffer.getBinaryBuffer(), buffer.size(), flags, extension),aiReleaseImport);
+    return flags;
+}
+
+bool ofxAssimpModelLoader::processScene() {
+    
+    normalizeFactor = ofGetWidth() / 2.0;
     
     if(scene){
         calculateDimensions();
@@ -106,6 +98,8 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
         clear();
         return false;
     }
+    
+    return false;
 }
 
 // automatic destruction on app exit makes the app crash because of some bug in assimp
