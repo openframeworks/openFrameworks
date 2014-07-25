@@ -10,12 +10,16 @@ OF 0.9.0
 
 CORE
 ----
+### communication
+	/ fixes for ofSerial::writeBytes which fixes firmata's PWM and servo
+
 ### gl
 	+ Programmable lights and materials
 	+ New area light type on programmable renderer
 	+ Separate model matrix
 	+ ofGetCurrentNormalMatrix
 	+ ofSetOpenGL(ES)Version, allows to set any specific GL version
+	/ ofVboMesh: update vbo before returning reference
 
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing

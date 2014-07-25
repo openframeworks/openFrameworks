@@ -8,6 +8,10 @@
 	#include <dirent.h>
 #endif
 
+#ifdef TARGET_LINUX
+	#include <linux/serial.h>
+#endif
+
 
 #include <fcntl.h>
 #include <errno.h>
@@ -164,10 +168,7 @@ void ofSerial::buildDeviceList(){
 		prefixMatch.push_back("tty.");
 	#endif
 	#ifdef TARGET_LINUX
-		#ifdef TARGET_RASPBERRY_PI
-			prefixMatch.push_back("ttyACM");
-		#endif
-
+		prefixMatch.push_back("ttyACM");
 		prefixMatch.push_back("ttyS");
 		prefixMatch.push_back("ttyUSB");
 		prefixMatch.push_back("rfc");
@@ -372,6 +373,13 @@ bool ofSerial::setup(string portName, int baud){
 		options.c_oflag &= (tcflag_t) ~(OPOST);
 		options.c_cflag |= CS8;
 		tcsetattr(fd,TCSANOW,&options);
+		#ifdef TARGET_LINUX
+			struct serial_struct kernel_serial_settings;
+			if (ioctl(fd, TIOCGSERIAL, &kernel_serial_settings) == 0) {
+				kernel_serial_settings.flags |= ASYNC_LOW_LATENCY;
+				ioctl(fd, TIOCSSERIAL, &kernel_serial_settings);
+			}
+		#endif
 
 		bInited = true;
 		ofLogNotice("ofSerial") << "opened " << portName << " sucessfully @ " << baud << " bps";
@@ -468,17 +476,27 @@ int ofSerial::writeBytes(unsigned char * buffer, int length){
 
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-	    int numWritten = write(fd, buffer, length);
-		if(numWritten <= 0){
-			if ( errno == EAGAIN )
-				return 0;
-			ofLogError("ofSerial") << "writeBytes(): couldn't write to port: " << errno << " " << strerror(errno);
-			return OF_SERIAL_ERROR;
+		int n, written=0;
+		fd_set wfds;
+		struct timeval tv;
+		while (written < length) {
+			n = write(fd, (const char *)buffer + written, length - written);
+			if (n < 0 && (errno == EAGAIN || errno == EINTR)) n = 0;
+			//printf("Write, n = %d\n", n);
+			if (n < 0) return OF_SERIAL_ERROR;
+			if (n > 0) {
+				written += n;
+			} else {
+				tv.tv_sec = 10;
+				tv.tv_usec = 0;
+				FD_ZERO(&wfds);
+				FD_SET(fd, &wfds);
+				n = select(fd+1, NULL, &wfds, NULL, &tv);
+				if (n < 0 && errno == EINTR) n = 1;
+				if (n <= 0) return OF_SERIAL_ERROR;
+			}
 		}
-
-		ofLogVerbose("ofSerial") << "wrote " << (int) numWritten << " bytes";
-
-	    return numWritten;
+		return written;
     #endif
     //---------------------------------------------
 
@@ -540,41 +558,28 @@ bool ofSerial::writeByte(unsigned char singleByte){
 		return false;
 	}
 
-	unsigned char tmpByte[1];
-	tmpByte[0] = singleByte;
+	writeBytes(&singleByte,1);
+}
 
-	//---------------------------------------------
-	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-	    int numWritten = 0;
-	    numWritten = write(fd, tmpByte, 1);
-		if(numWritten <= 0 ){
-			if ( errno == EAGAIN )
-				return 0;
-			 ofLogError("ofSerial") << "writeByte(): couldn't write to port: " << errno << " " << strerror(errno);
-			 //return OF_SERIAL_ERROR; // this looks wrong.
-			 return false;
-		}
-		ofLogVerbose("ofSerial") << "wrote byte";
+int ofSerial::readBytes(char * buffer, int length){
+	return readBytes((unsigned char*) buffer, length);
+}
 
-		return (numWritten > 0 ? true : false);
-    #endif
-    //---------------------------------------------
+int ofSerial::writeBytes(char * buffer, int length){
+	return writeBytes((unsigned char*)buffer, length);
+}
 
-    //---------------------------------------------
-	#ifdef TARGET_WIN32
-		DWORD written = 0;
-		if(!WriteFile(hComm, tmpByte, 1, &written,0)){
-			 ofLogError("ofSerial") << "writeByte(): couldn't write to port";
-			 //return OF_SERIAL_ERROR; // this looks wrong.
-			 return false;
-		}
+bool ofSerial::writeByte(char singleByte){
+	return writeByte((unsigned char)singleByte);
+}
 
-		ofLogVerbose("ofSerial") << "wrote byte";
+int ofSerial::readBytes(ofBuffer & buffer, int length){
+	buffer.allocate(length);
+	return readBytes(buffer.getBinaryBuffer(),length);
+}
 
-		return ((int)written > 0 ? true : false);
-	#endif
-	//---------------------------------------------
-
+int ofSerial::writeBytes(ofBuffer & buffer){
+	return writeBytes(buffer.getBinaryBuffer(),buffer.size());
 }
 
 //----------------------------------------------------------------
