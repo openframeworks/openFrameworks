@@ -59,15 +59,15 @@ public:
 	void setUniform4f(const string & name, float v1, float v2, float v3, float v4);
 	
 	// set an array of uniform values
-	void setUniform1iv(const string & name, int* v, int count = 1);
-	void setUniform2iv(const string & name, int* v, int count = 1);
-	void setUniform3iv(const string & name, int* v, int count = 1);
-	void setUniform4iv(const string & name, int* v, int count = 1);
+	void setUniform1iv(const string & name, const int* v, int count = 1);
+	void setUniform2iv(const string & name, const int* v, int count = 1);
+	void setUniform3iv(const string & name, const int* v, int count = 1);
+	void setUniform4iv(const string & name, const int* v, int count = 1);
 	
-	void setUniform1fv(const string & name, float* v, int count = 1);
-	void setUniform2fv(const string & name, float* v, int count = 1);
-	void setUniform3fv(const string & name, float* v, int count = 1);
-	void setUniform4fv(const string & name, float* v, int count = 1);
+	void setUniform1fv(const string & name, const float* v, int count = 1);
+	void setUniform2fv(const string & name, const float* v, int count = 1);
+	void setUniform3fv(const string & name, const float* v, int count = 1);
+	void setUniform4fv(const string & name, const float* v, int count = 1);
 	
 	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m);
 
@@ -93,10 +93,10 @@ public:
 	void setAttribute4d(GLint location, double v1, double v2, double v3, double v4);
 #endif
 
-	void setAttribute1fv(const string & name, float* v, GLsizei stride=sizeof(float));
-	void setAttribute2fv(const string & name, float* v, GLsizei stride=sizeof(float)*2);
-	void setAttribute3fv(const string & name, float* v, GLsizei stride=sizeof(float)*3);
-	void setAttribute4fv(const string & name, float* v, GLsizei stride=sizeof(float)*4);
+	void setAttribute1fv(const string & name, const float* v, GLsizei stride=sizeof(float));
+	void setAttribute2fv(const string & name, const float* v, GLsizei stride=sizeof(float)*2);
+	void setAttribute3fv(const string & name, const float* v, GLsizei stride=sizeof(float)*3);
+	void setAttribute4fv(const string & name, const float* v, GLsizei stride=sizeof(float)*4);
 	
 	void bindAttribute(GLuint location, const string & name);
 

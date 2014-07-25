@@ -4,6 +4,7 @@
 #include "ofBaseApp.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofAppRunner.h"
+#include "Poco/URI.h"
 
 #ifdef TARGET_LINUX
 	#include "ofIcon.h"
@@ -16,7 +17,6 @@
 	#endif
 	#include "GLFW/glfw3native.h"
 	#include <X11/Xatom.h>
-	#include "Poco/URI.h"
 #elif defined(TARGET_OSX)
 	#include <Cocoa/Cocoa.h>
 	#define GLFW_EXPOSE_NATIVE_COCOA
@@ -38,7 +38,7 @@ GLFWwindow* ofAppGLFWWindow::windowP = NULL;
 void ofGLReadyCallback();
 
 //-------------------------------------------------------
-ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseWindow(){
+ofAppGLFWWindow::ofAppGLFWWindow():ofAppBaseGLWindow(){
 	bEnableSetupScreen	= true;
 	buttonInUse			= 0;
 	buttonPressed		= false;
@@ -126,6 +126,12 @@ void ofAppGLFWWindow::setOpenGLVersion(int major, int minor){
 	glVersionMinor = minor;
 }
 
+
+void ofAppGLFWWindow::setGLESVersion(int glesVersion){
+	glVersionMajor = glesVersion;
+	glVersionMinor = 0;
+}
+
 //------------------------------------------------------------
 void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
@@ -161,12 +167,13 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersionMinor);
-		if(glVersionMajor>=3){
-			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-		}
 		#ifdef TARGET_OPENGLES
-		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
+			glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
+		#else
+			if((glVersionMajor>=3 && glVersionMinor>=2) || glVersionMajor>=4){
+				glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+				glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+			}
 		#endif
 	}
 
@@ -307,7 +314,7 @@ void ofAppGLFWWindow::windowShouldClose(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::display(void){
 
-	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+	shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 	if(renderer){
 		renderer->startRender();
 	}
@@ -918,11 +925,9 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** d
 	ofDragInfo drag;
 	drag.position.set(ofGetMouseX(), ofGetMouseY());
 	drag.files.resize(numFiles);
-#ifdef TARGET_LINUX
 	for(int i=0; i<(int)drag.files.size(); i++){
 		drag.files[i] = Poco::URI(dropString[i]).getPath();
 	}
-#endif
 	ofNotifyDragEvent(drag);
 }
 

@@ -37,7 +37,7 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		
 	private:
 		long unsigned long	tickCount;
-		ofPtr<RtAudio>		audio;
+		shared_ptr<RtAudio>		audio;
 		int					sampleRate;
 		int					outDeviceID, inDeviceID;
 		int					bufferSize;
