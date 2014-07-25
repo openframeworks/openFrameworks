@@ -15,6 +15,7 @@
 class ofShader;
 class ofGLProgrammableRenderer;
 class ofBaseGLRenderer;
+class ofTexture;
 
 enum ofPrimitiveMode{
 	OF_PRIMITIVE_TRIANGLES,
