@@ -40,9 +40,9 @@ void ofGLReadyCallback();
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow():
 #ifdef TARGET_OPENGLES
-ofAppBaseGLESWindow
+ofAppBaseGLESWindow()
 #else
-ofAppBaseGLWindow
+ofAppBaseGLWindow()
 #endif
 {
 	bEnableSetupScreen	= true;
