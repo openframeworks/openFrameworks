@@ -294,7 +294,7 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofAppEGLWindow());
 		#elif defined(TARGET_EMSCRIPTEN)
 			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofxAppEmscriptenWindow);
-		#elif defined(TARGET_LINUX_ARM)
+		#elif defined(TARGET_OPENGLES)
 			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofAppGLFWWindow());
 		#else
 			shared_ptr<ofAppBaseGLWindow> glWindow = shared_ptr<ofAppBaseGLWindow>(new ofAppGLFWWindow());
