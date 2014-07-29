@@ -8,7 +8,7 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=1.5.2-release
+VER=1.5.3-release
 
 # tools for git use
 GIT_URL=https://github.com/pocoproject/poco
@@ -52,7 +52,7 @@ function prepare() {
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
 		
 		# 32 bit
 		./configure $BUILD_OPTS --config=Darwin32
@@ -77,7 +77,7 @@ function build() {
 		done
 
 	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
 		
 		# @tgfrerer: osx libraries in openFrameworks/master are currently "lean" 32 bit libraries.
 		# so we omit the 64 bit compilation target for now.
@@ -111,7 +111,7 @@ function build() {
 	elif [ "$TYPE" == "ios" ] ; then
 
 		# maybe --poquito is a good idea?
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC,NetSSL_OpenSSL,Crypto"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC,NetSSL_OpenSSL,Crypto"
 
 		cp build/config/iPhone.orig build/config/iPhone
 		cp build/config/iPhoneSimulator.orig build/config/iPhoneSimulator
@@ -156,25 +156,25 @@ function build() {
 		echoWarning "TODO: android build"
 
 	elif [ "$TYPE" == "linux" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
 		rm lib/Linux/i386/*d.a
 	elif [ "$TYPE" == "linux64" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
 		rm lib/Linux/x86_64/*d.a
 	elif [ "$TYPE" == "linuxarmv6l" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
 		rm lib/Linux/armv6l/*d.a
 	elif [ "$TYPE" == "linuxarmv7l" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/SQLite,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
