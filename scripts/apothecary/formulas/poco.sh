@@ -160,7 +160,7 @@ function build() {
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
-		rm lib/Linux/i386/*d.a
+		rm lib/Linux/$(uname -m)/*d.a
 	elif [ "$TYPE" == "linux64" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
 		./configure $BUILD_OPTS
@@ -223,7 +223,7 @@ function copy() {
 		cp -v lib/Debug/*.lib $1/lib/$TYPE
 	elif [ "$TYPE" == "linux" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/Linux/i386/*.a $1/lib/$TYPE
+		cp -v lib/Linux/$(uname -m)/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "linux64" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/x86_64/*.a $1/lib/$TYPE
