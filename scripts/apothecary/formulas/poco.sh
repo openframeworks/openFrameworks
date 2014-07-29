@@ -14,6 +14,11 @@ VER=1.5.3-release
 GIT_URL=https://github.com/pocoproject/poco
 GIT_TAG=poco-$VER
 
+# For Poco Builds, we omit both Data/MySQL and Data/ODBC because they require
+# 3rd Party libraries.  See https://github.com/pocoproject/poco/blob/develop/README
+# for more information.
+
+
 # @tgfrerer: we need more fine-grained control over poco source code versions, 
 # which is why we specify the specific poco source code commit we want to use -
 # When updating poco/this recipe, make sure to specify the proper hash here,
@@ -52,7 +57,8 @@ function prepare() {
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
+		# For OS 10.9+ we must explicitly set libstdc++ for the 32-bit OSX build.
+		local BUILD_OPTS="--cflags=-stdlib=libstdc++ --no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
 		
 		# 32 bit
 		./configure $BUILD_OPTS --config=Darwin32
