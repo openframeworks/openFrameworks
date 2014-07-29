@@ -185,7 +185,7 @@ function build() {
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
-function c/opy() {
+function copy() {
 
 	# headers
 	#mkdir -p $1/include/CppUnit
