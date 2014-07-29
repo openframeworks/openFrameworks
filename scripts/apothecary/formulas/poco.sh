@@ -185,17 +185,24 @@ function build() {
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
-function copy() {
+function c/opy() {
 
 	# headers
-	mkdir -p $1/include/CppUnit
-	cp -Rv CppUnit/include/CppUnit/* $1/include/CppUnit
+	#mkdir -p $1/include/CppUnit
+	#cp -Rv CppUnit/include/CppUnit/* $1/include/CppUnit
 	mkdir -p $1/include/Poco
-	cp -Rv Foundation/include/Poco/* $1/include/Poco
+	
 	cp -Rv Crypto/include/Poco/Crypto $1/include/Poco
-	cp -Rv Data/include/Poco/Data $1/include/Poco
+	cp -Rv CppParser/include/Poco/CppParser $1/include/Poco
+	cp -Rv Data/include/Poco/Data/ $1/include/Poco
+	cp -Rv Data/include/Poco/Data/SQLite $1/include/Poco/Data
+	cp -Rv Foundation/include/Poco/* $1/include/Poco
+	cp -Rv JSON/include/Poco/JSON $1/include/Poco
+	cp -Rv MongoDB/include/Poco/MongoDB $1/include/Poco
 	cp -Rv Net/include/Poco/Net $1/include/Poco
 	cp -Rv NetSSL_OpenSSL/include/Poco/Net/* $1/include/Poco/Net
+	cp -Rv PDF/include/Poco/PDF $1/include/Poco
+	cp -Rv SevenZip/include/Poco/SevenZip $1/include/Poco
 	cp -Rv Util/include/Poco/Util $1/include/Poco
 	cp -Rv XML/include/Poco/* $1/include/Poco
 	cp -Rv Zip/include/Poco/Zip $1/include/Poco
