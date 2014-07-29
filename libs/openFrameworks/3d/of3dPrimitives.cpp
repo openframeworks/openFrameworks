@@ -869,8 +869,6 @@ ofMesh ofConePrimitive::getCapMesh() {
         return ofMesh();
     }
     
-//    getMesh().setColorForIndices( strides[1][0], strides[1][0]+strides[1][1], color );
-    
     return getMesh().getMeshForIndices( startIndex, endIndex, startVertIndex, endVertIndex );
 }
 
