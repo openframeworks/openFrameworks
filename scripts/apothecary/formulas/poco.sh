@@ -188,14 +188,11 @@ function build() {
 function copy() {
 
 	# headers
-	#mkdir -p $1/include/CppUnit
-	#cp -Rv CppUnit/include/CppUnit/* $1/include/CppUnit
 	mkdir -p $1/include/Poco
-	
 	cp -Rv Crypto/include/Poco/Crypto $1/include/Poco
 	cp -Rv CppParser/include/Poco/CppParser $1/include/Poco
 	cp -Rv Data/include/Poco/Data/ $1/include/Poco
-	cp -Rv Data/include/Poco/Data/SQLite $1/include/Poco/Data
+	cp -Rv Data/SQLite/include/Poco/Data/SQLite $1/include/Poco/Data
 	cp -Rv Foundation/include/Poco/* $1/include/Poco
 	cp -Rv JSON/include/Poco/JSON $1/include/Poco
 	cp -Rv MongoDB/include/Poco/MongoDB $1/include/Poco
