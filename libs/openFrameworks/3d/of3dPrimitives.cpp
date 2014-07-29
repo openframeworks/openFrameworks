@@ -508,9 +508,9 @@ void ofCylinderPrimitive::set(float _radius, float _height, int radiusSegments, 
     bCapped = _bCapped;
     resolution.set( radiusSegments, heightSegments, capSegments );
     
-    int resX = getResolution().x;
-    int resY = getResolution().y-1;
-    int resZ = getResolution().z-1;
+    int resX = getResolution().x+1;
+    int resY = getResolution().y;
+    int resZ = getResolution().z;
     
     int indexStep = 2;
     if(mode == OF_PRIMITIVE_TRIANGLES) {
@@ -520,9 +520,9 @@ void ofCylinderPrimitive::set(float _radius, float _height, int radiusSegments, 
     
     // 0 -> top cap
     strides[0][0] = 0;
-    strides[0][1] = resX * resZ * indexStep;
+    strides[0][1] = resX * (resZ) * indexStep;
     vertices[0][0] = 0;
-    vertices[0][1] = getResolution().x * getResolution().z;
+    vertices[0][1] = resX * (resZ+1);
     
     // 1 -> cylinder //
     if(bCapped) {
@@ -533,13 +533,13 @@ void ofCylinderPrimitive::set(float _radius, float _height, int radiusSegments, 
         vertices[1][0] = 0;
     }
     strides[1][1] = resX * resY * indexStep;
-    vertices[1][1] = getResolution().x * getResolution().y;
+    vertices[1][1] = resX * (resY+1);
     
     // 2 -> bottom cap
     strides[2][0] = strides[1][0] + strides[1][1];
     strides[2][1] = resX * resZ * indexStep;
     vertices[2][0] = vertices[1][0]+vertices[1][1];
-    vertices[2][1] = getResolution().x * getResolution().z;
+    vertices[2][1] = resX * (resZ+1);
     
     
     getMesh() = ofMesh::cylinder( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, getCapped(), mode );
@@ -738,8 +738,8 @@ void ofConePrimitive::set( float _radius, float _height, int radiusSegments, int
     resolution.set(radiusSegments, heightSegments, capSegments);
     
     int resX = getResolution().x;
-    int resY = getResolution().y-1;
-    int resZ = getResolution().z-1;
+    int resY = getResolution().y;
+    int resZ = getResolution().z;
     
     int indexStep = 2;
     if(mode == OF_PRIMITIVE_TRIANGLES) {
@@ -748,14 +748,15 @@ void ofConePrimitive::set( float _radius, float _height, int radiusSegments, int
     }
     
     strides[ 0 ][0] = 0;
-    strides[ 0 ][1] = (resX)*(resY) * indexStep;
+    strides[ 0 ][1] = (resX+1)*(resY) * indexStep;
     vertices[0][0] = 0;
-    vertices[0][1] = getResolution().x * getResolution().y;
+    vertices[0][1] = (resX+1) * (resY+1);
     
     strides[ 1 ][0] = strides[ 0 ][0] + strides[ 0 ][1];
-    strides[ 1 ][1] = (resX)*(resZ) * indexStep;
+    strides[ 1 ][1] = (resX)*(resZ) * indexStep + (resZ) * indexStep;
     vertices[1][0] = vertices[0][0] + vertices[0][1];
-    vertices[1][1] = getResolution().x * getResolution().z;
+    vertices[1][1] = (resX+1) * (resZ+1);
+    
     
     getMesh() = ofMesh::cone( getRadius(), getHeight(), getResolution().x, getResolution().y, getResolution().z, mode );
     
@@ -867,6 +868,9 @@ ofMesh ofConePrimitive::getCapMesh() {
         ofLogWarning("ofConePrimitive") << "getCapMesh(): must be in triangle strip mode";
         return ofMesh();
     }
+    
+//    getMesh().setColorForIndices( strides[1][0], strides[1][0]+strides[1][1], color );
+    
     return getMesh().getMeshForIndices( startIndex, endIndex, startVertIndex, endVertIndex );
 }
 
@@ -929,9 +933,9 @@ void ofBoxPrimitive::set( float width, float height, float depth, int resWidth, 
     
     resolution.set( resWidth, resHeight, resDepth );
     
-    int resX = getResolution().x;
-    int resY = getResolution().y;
-    int resZ = getResolution().z;
+    int resX = getResolution().x+1;
+    int resY = getResolution().y+1;
+    int resZ = getResolution().z+1;
     
     //FRONT, resY, resX
     strides[ SIDE_FRONT ][0] = 0;
