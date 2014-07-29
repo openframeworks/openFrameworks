@@ -151,6 +151,11 @@ static LRESULT CALLBACK winProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lPara
             // We pass the wParam because it's the HDROP handle.
             HandleFiles(wParam);
             break;
+       case WM_MOUSEWHEEL:   
+           
+           OF_INPUT_SCROLLING_VALUE_DELTA_ += ((short)HIWORD(wParam))/2;
+           
+           break;
       default:
          return CallWindowProc(currentWndProc, handle, Msg, wParam, lParam);
       break;

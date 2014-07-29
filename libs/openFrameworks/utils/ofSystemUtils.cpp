@@ -890,3 +890,51 @@ string ofSystemTextBoxDialog(string question, string text){
 #endif
 	return text;
 }
+
+
+
+
+
+
+float ofGetMouseScroll(){
+
+
+
+
+#ifdef TARGET_OSX
+
+__block float  scroll =0;
+
+NSString * standardAppName =[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleExecutable"];
+for(NSWindow * aWindow in [NSApp windows])
+{
+    if([aWindow.miniwindowTitle isEqual: standardAppName]){
+        continue;
+    }else{
+        
+        NSEvent *  _eventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:
+                                    (NSScrollWheelMask)
+                                                                         handler:^(NSEvent *incomingEvent) {
+                                    NSEvent *result = incomingEvent;
+                                    NSWindow *targetWindowForEvent = aWindow;
+                                    if (targetWindowForEvent != aWindow) {
+                                    } else if ([incomingEvent type] == NSScrollWheel) {
+                                    scroll = (float)incomingEvent.scrollingDeltaY ;
+                                    OF_INPUT_SCROLLING_VALUE_DELTA_ = scroll*4;
+                                    
+                                    }
+                                    return result;
+                                    }];
+    }
+}
+
+
+#endif
+    
+//an attempt to make scrolling similar in mac - pc - trackpad - mouse
+if(abs(OF_INPUT_SCROLLING_VALUE_DELTA_)>240)OF_INPUT_SCROLLING_VALUE_DELTA_ /=2;
+if(OF_INPUT_SCROLLING_VALUE_DELTA_!=0)OF_INPUT_SCROLLING_VALUE_DELTA_ += (OF_INPUT_SCROLLING_VALUE_DELTA_/2)*-1;
+
+return OF_INPUT_SCROLLING_VALUE_DELTA_;
+
+}

@@ -105,3 +105,7 @@ void 		ofSetVerticalSync(bool bSync);
 	HGLRC ofGetWGLContext();
 	HWND ofGetWin32Window();
 #endif
+//--------------------------------------------
+//raw scrolling values from glut and glfw
+
+extern float OF_INPUT_SCROLLING_VALUE_DELTA_;

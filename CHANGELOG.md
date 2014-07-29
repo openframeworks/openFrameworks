@@ -10,6 +10,9 @@ OF 0.9.0
 
 CORE
 ----
+### utils
+	+ ofGetMouseScroll
+	
 ### gl
 	+ Programmable lights and materials
 	+ New area light type on programmable renderer
