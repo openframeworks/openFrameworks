@@ -200,11 +200,6 @@ function copy() {
 	cp -Rv XML/include/Poco/* $1/include/Poco
 	cp -Rv Zip/include/Poco/Zip $1/include/Poco
 
-	# @tgfrerer: apply header file patches necessary for events
-	if patch -d $1/include/Poco -p1 -d -N --dry-run --silent < $FORMULA_DIR/poco.headers.patch 2>/dev/null ; then
-		patch -d $1/include/Poco -p1 < $FORMULA_DIR/poco.headers.patch
-	fi
-
 	# libs
 	if [ "$TYPE" == "osx" ] ; then		
 		mkdir -p $1/lib/$TYPE
