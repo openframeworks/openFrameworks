@@ -248,6 +248,8 @@ void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 	mouseVel = mouse  - prevMouse;
 
 	updateMouse(mouse);
+	ofVec2f center(viewport.width/2, viewport.height/2);
+	zRot = - vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(prevMouse - ofVec2f(viewport.x, viewport.y) - center);
 }
 
 void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
