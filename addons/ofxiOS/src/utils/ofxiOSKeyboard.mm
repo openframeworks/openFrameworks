@@ -389,7 +389,7 @@ void ofxiOSKeyboard::updateOrientation()
                 
             case OF_ORIENTATION_DEFAULT:
                 x = rect.origin.x;
-                y = rect.origin.y;//-rect.size.height;
+                y = rect.origin.y;
                 w = rect.size.width;
                 h = rect.size.height;
                 break;
