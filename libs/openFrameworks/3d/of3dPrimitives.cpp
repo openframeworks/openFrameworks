@@ -525,7 +525,7 @@ void ofCylinderPrimitive::set(float _radius, float _height, int radiusSegments, 
     vertices[0][1] = resX * (resZ+1);
     
     // 1 -> cylinder //
-    if(bCapped) {
+    if( (bCapped && getResolution().z > 0) ) {
         strides[1][0] = strides[0][0] + strides[0][1];
         vertices[1][0] = vertices[0][0] + vertices[0][1];
     } else {
@@ -606,6 +606,12 @@ void ofCylinderPrimitive::setTopCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofCylinderPrimitive") << "setTopCapColor(): must be in triangle strip mode";
     }
+    
+    if( getResolution().z == 0 ) {
+        ofLogWarning("ofCylinderPrimitive") << "setTopCapColor(): cap resolution is set to 0 returning";
+        return;
+    }
+    
     getMesh().setColorForIndices( strides[0][0], strides[0][0]+strides[0][1], color );
 }
 
@@ -622,6 +628,12 @@ void ofCylinderPrimitive::setBottomCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofCylinderPrimitive") << "setBottomCapColor(): must be in triangle strip mode";
     }
+    
+    if( getResolution().z == 0 ) {
+        ofLogWarning("ofCylinderPrimitive") << "setBottomCapColor(): cap resolution is set to 0 returning";
+        return;
+    }
+    
     getMesh().setColorForIndices( strides[2][0], strides[2][0]+strides[2][1], color );
 }
 
@@ -636,6 +648,12 @@ ofMesh ofCylinderPrimitive::getTopCapMesh() {
         ofLogWarning("ofCylinderPrimitive") << "getTopCapMesh(): must be in triangle strip mode";
         return ofMesh();
     }
+    
+    if( getResolution().z == 0 ) {
+        ofLogWarning("ofCylinderPrimitive") << "getTopCapMesh(): cap resolution is set to 0 returning empty mesh";
+        return ofMesh();
+    }
+    
     return getMesh().getMeshForIndices( strides[0][0], strides[0][0]+strides[0][1],
                              vertices[0][0], vertices[0][0]+vertices[0][1] );
 }
@@ -670,6 +688,10 @@ vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndices() {
 ofMesh ofCylinderPrimitive::getBottomCapMesh() {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofCylinderPrimitive") << "getBottomCapMesh(): must be in triangle strip mode";
+        return ofMesh();
+    }
+    if( getResolution().z == 0 ) {
+        ofLogWarning("ofCylinderPrimitive") << "getBottomCapMesh(): cap resolution is set to 0 returning empty mesh";
         return ofMesh();
     }
     return getMesh().getMeshForIndices( strides[2][0], strides[2][0]+strides[2][1],
@@ -824,6 +846,10 @@ void ofConePrimitive::setCapColor( ofColor color ) {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofConePrimitive") << "setCapColor(): must be in triangle strip mode";
     }
+    if( getResolution().z == 0 ) {
+        ofLogWarning("ofConePrimitive") << "setCapColor(): cap resolution is set to 0";
+        return;
+    }
     getMesh().setColorForIndices( strides[1][0], strides[1][0]+strides[1][1], color );
 }
 
@@ -866,6 +892,11 @@ ofMesh ofConePrimitive::getCapMesh() {
     int endVertIndex    = startVertIndex + vertices[1][1];
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofConePrimitive") << "getCapMesh(): must be in triangle strip mode";
+        return ofMesh();
+    }
+    
+    if( getResolution().z == 0 ) {
+        ofLogWarning("ofConePrimitive") << "getCapMesh(): cap resolution is set to 0 returning empty mesh";
         return ofMesh();
     }
     
