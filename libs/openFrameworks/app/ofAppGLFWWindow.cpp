@@ -156,10 +156,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 	glfwWindowHint(GLFW_ALPHA_BITS, aBits);
 	glfwWindowHint(GLFW_DEPTH_BITS, depthBits);
 	glfwWindowHint(GLFW_STENCIL_BITS, stencilBits);
-#ifdef TARGET_LINUX
-	// start the window hidden so we can set the icon before it shows
 	glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
-#endif
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS,bDoubleBuffered?1:0);
 #endif
@@ -204,7 +201,6 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
 				#endif
 				setWindowIcon(iconPixels);
-				glfwShowWindow(windowP);
 			}
 		#endif
 		if(requestedMode==OF_FULLSCREEN){
@@ -301,6 +297,7 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	glfwMakeContextCurrent(windowP);
 
 	ofNotifySetup();
+	glfwShowWindow(windowP);
 	while(!glfwWindowShouldClose(windowP)){
 		ofNotifyUpdate();
 		display();
