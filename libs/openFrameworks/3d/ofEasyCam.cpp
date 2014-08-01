@@ -45,6 +45,8 @@ void ofEasyCam::update(ofEventArgs & args){
     if(bMouseInputEnabled){
 	
 		rotationFactor = sensitivityRot * 180 / min(viewport.width, viewport.height);
+
+		if(ofGetMousePressed()) prevMouse = ofVec2f(ofGetMouseX(),ofGetMouseY());
 		
 		if (bDoRotate) {
 			updateRotation();
@@ -254,7 +256,6 @@ void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 
 void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
 	mouseVel = mouse  - lastMouse;
-	prevMouse = ofVec2f(ofGetPreviousMouseX(),ofGetPreviousMouseY());
 
 	updateMouse(mouse);
 }
