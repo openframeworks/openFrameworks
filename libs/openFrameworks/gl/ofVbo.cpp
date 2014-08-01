@@ -754,6 +754,10 @@ void ofVbo::bind(){
 				glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
 			}
 		}
+        
+        if (bUsingIndices) {
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
+        }
 
 		map<int,GLuint>::iterator it;
 		for(it=attributeIds.begin();it!=attributeIds.end();it++){
@@ -848,14 +852,12 @@ void ofVbo::drawElements(int drawMode, int amt) {
 		bool hadVAOChnaged = vaoChanged;
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
-		if(bUsingIndices){
-			if((supportVAOs && hadVAOChnaged) || !supportVAOs) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 #ifdef TARGET_OPENGLES
-			glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
 #else
-			glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
 #endif
-		}
+		
 		if(!wasBinded) unbind();
 	}
 }
@@ -887,18 +889,16 @@ void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) {
 		bool hadVAOChnaged = vaoChanged;
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
-		if(bUsingIndices){
-			if((supportVAOs && hadVAOChnaged) || !supportVAOs) glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
 #ifdef TARGET_OPENGLES
-			// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-			// unfortunately there is currently no easy way within oF to query the current OpenGL version.
-			// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-			ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-			// glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
+        // todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
+        // unfortunately there is currently no easy way within oF to query the current OpenGL version.
+        // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+        ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
 #else
-			glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
+        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
 #endif
-		}
+		
 		if(!wasBinded) unbind();
 	}
 }
