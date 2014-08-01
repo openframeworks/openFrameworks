@@ -327,7 +327,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 	}
 #else
 	if(!vaoChecked){
-		supportVAOs = ofGetGLProgrammableRenderer();// || glewIsSupported("GL_ARB_vertex_array_object"); <- this should work but has false positives on some cards like emulation in vm's
+		supportVAOs = ofIsGLProgrammableRenderer();// || glewIsSupported("GL_ARB_vertex_array_object"); <- this should work but has false positives on some cards like emulation in vm's
 		vaoChecked = true;
 	}
 #endif
