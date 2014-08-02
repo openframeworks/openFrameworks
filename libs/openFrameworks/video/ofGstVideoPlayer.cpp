@@ -185,7 +185,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 #ifdef TARGET_WIN32
 	GstElement *audioSink = gst_element_factory_make("directsoundsink", NULL);
 	g_object_set (G_OBJECT(gstPipeline),"audio-sink",audioSink,(void*)NULL);
-	gst_object_unref(audioSink);
+	//gst_object_unref(audioSink);
 #endif
 
 
