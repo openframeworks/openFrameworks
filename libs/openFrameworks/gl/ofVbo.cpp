@@ -849,7 +849,6 @@ void ofVbo::draw(int drawMode, int first, int total) {
 //--------------------------------------------------------------
 void ofVbo::drawElements(int drawMode, int amt) {
 	if(bAllocated){
-		bool hadVAOChnaged = vaoChanged;
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
 #ifdef TARGET_OPENGLES
@@ -886,7 +885,6 @@ void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) {
 //--------------------------------------------------------------
 void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) {
 	if(bAllocated){
-		bool hadVAOChnaged = vaoChanged;
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
 #ifdef TARGET_OPENGLES
