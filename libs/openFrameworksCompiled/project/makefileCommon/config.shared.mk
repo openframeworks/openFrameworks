@@ -79,6 +79,8 @@ ifndef PLATFORM_LIB_SUBPATH
         else
             $(error This makefile does not support your architecture $(PLATFORM_ARCH))
         endif
+    else ifeq ($(PLATFORM_OS),MINGW32_NT-6.2)
+        PLATFORM_LIB_SUBPATH=win_cb
     else ifeq ($(PLATFORM_OS),Android)
         PLATFORM_LIB_SUBPATH=android
     else ifeq ($(PLATFORM_OS),Darwin)
