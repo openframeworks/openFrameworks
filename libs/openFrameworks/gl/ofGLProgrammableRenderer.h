@@ -146,8 +146,10 @@ public:
 
 	ofShader & getCurrentShader();
 
-	void enableTextureTarget(int textureTarget);
-	void disableTextureTarget(int textureTarget);
+	void enableTextureTarget(int textureTarget, int textureID, int textureLocation);
+	void disableTextureTarget(int textureTarget, int textureLocation);
+	void setAlphaMaskTex(ofTexture & tex);
+	void disableAlphaMask();
 	GLenum getCurrentTextureTarget();
 
 	void beginCustomShader(ofShader & shader);
@@ -164,6 +166,8 @@ public:
 	ofShader & defaultTex2DNoColor();
 	ofShader & defaultNoTexColor();
 	ofShader & defaultNoTexNoColor();
+	ofShader & alphaMaskRectShader();
+	ofShader & alphaMask2DShader();
 	ofShader & bitmapStringShader();
 	ofShader & defaultUniqueShader();
     
@@ -217,4 +221,5 @@ private:
 	bool uniqueShader;
 
 	ofBaseMaterial * currentMaterial;
+	int alphaMaskTextureTarget;
 };
