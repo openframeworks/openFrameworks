@@ -256,8 +256,12 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
 
 # create a list of all dirs in the project root that might be valid project
 # source directories 
-# grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d | grep -v "/\.[^\.]")
+ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 \
+                                                           -type d \
+                                                           -not -path "./bin/*" \
+                                                           -not -path "./obj/*" \
+                                                           -not -path "./*.xcodeproj/*" \
+                                                           -not -path "*/\.*")
 ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
