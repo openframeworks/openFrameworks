@@ -39,7 +39,10 @@ bool ofGstVideoPlayer::loadMovie(string name){
 		bIsStream		= false;
 	}else if( name.find( "://",0 ) == string::npos){
 		GError * err = NULL;
-		name = gst_filename_to_uri(ofToDataPath(name).c_str(),&err);
+		gchar* name_ptr = gst_filename_to_uri(ofToDataPath(name).c_str(),&err);
+		name = name_ptr;
+		g_free(name_ptr);
+		if(err) g_free(err);
 		bIsStream		= false;
 	}else{
 		bIsStream		= true;
@@ -149,13 +152,6 @@ bool ofGstVideoPlayer::loadMovie(string name){
 
 	GstCaps *caps = gst_caps_new_simple(mime.c_str(),
 										"format", G_TYPE_STRING, format.c_str(),
-										/*"bpp", G_TYPE_INT, bpp,
-										"depth", G_TYPE_INT, 24,
-										"endianness",G_TYPE_INT,4321,
-										"red_mask",G_TYPE_INT,0xff0000,
-										"green_mask",G_TYPE_INT,0x00ff00,
-										"blue_mask",G_TYPE_INT,0x0000ff,
-										"alpha_mask",G_TYPE_INT,0x000000ff,*/
 										NULL);
 #endif
 
@@ -177,6 +173,11 @@ bool ofGstVideoPlayer::loadMovie(string name){
 		gst_element_link_many(appQueue, gstSink, NULL);
 
 		g_object_set (G_OBJECT(gstPipeline),"video-sink",appBin,(void*)NULL);
+		gst_object_unref(appQueue);
+		gst_object_unref(appBin);
+		gst_object_unref(appQueuePad);
+		gst_object_unref(ghostPad);
+
 	}else{
 		g_object_set (G_OBJECT(gstPipeline),"video-sink",gstSink,(void*)NULL);
 	}
@@ -184,14 +185,13 @@ bool ofGstVideoPlayer::loadMovie(string name){
 #ifdef TARGET_WIN32
 	GstElement *audioSink = gst_element_factory_make("directsoundsink", NULL);
 	g_object_set (G_OBJECT(gstPipeline),"audio-sink",audioSink,(void*)NULL);
-
+	gst_object_unref(audioSink);
 #endif
 
 
-	videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
-	videoUtils.startPipeline();
-	if(!bIsStream) return allocate(bpp);
-	else return true;
+	return videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream) &&
+				videoUtils.startPipeline() &&
+				(bIsStream || allocate(bpp));
 }
 
 void ofGstVideoPlayer::setThreadAppSink(bool threaded){
