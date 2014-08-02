@@ -238,26 +238,27 @@ endif
 
 OF_PROJECT_EXCLUSIONS := $(strip $(PROJECT_EXCLUSIONS))
 
-# add defaults here TODO: should these always be 
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin%
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj%
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git/%
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
-
-
 ################################################################################
 # PROJECT SOURCE FILES
 ################################################################################
 
+# NOTE: Source folder names that include spaces will not be parsed correctly.
+
 # exclude all items from source according to the config.make file
 
 # create a list of all dirs in the project root that might be valid project
-# source directories 
+# source directories.
+# grep -v "$(PROJECT_ROOT)/obj" excludes object files/folders.
+# grep -v "$(PROJECT_ROOT)/bin" excludes bin directory files/folders.
+# grep -v "$(PROJECT_ROOT)/*.xcodeproj" excludes xcode project folders
 # grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d | grep -v "/\.[^\.]")
+
+ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d | \
+                                      grep -v "$(PROJECT_ROOT)/obj" | \
+                                      grep -v "$(PROJECT_ROOT)/bin" | \
+                                      grep -v "$(PROJECT_ROOT)/*.xcodeproj" | \
+                                      grep -v "/\.[^\.]")
+
 ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
@@ -267,6 +268,9 @@ endif
 OF_PROJECT_SOURCE_PATHS = $(filter-out $(OF_PROJECT_EXCLUSIONS),$(ALL_OF_PROJECT_SOURCE_PATHS))
 
 ifdef MAKEFILE_DEBUG
+    $(info ---ALL_OF_PROJECT_SOURCE_PATHS---)
+    $(foreach v, $(ALL_OF_PROJECT_SOURCE_PATHS),$(info $(v)))
+
     $(info ---OF_PROJECT_SOURCE_PATHS---)
     $(foreach v, $(OF_PROJECT_SOURCE_PATHS),$(info $(v)))
 
