@@ -29,7 +29,7 @@ void 		ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, int screenMode
 void		ofSetWindow(ofAppBaseWindow * windowPtr);
 void		ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr);
 void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode));
-void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode));
+//void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode));
 
 void 		ofRunApp(shared_ptr<ofBaseApp> OFSA);
 void 		ofRunApp(ofBaseApp * OFSA = NULL); // will be deprecated
