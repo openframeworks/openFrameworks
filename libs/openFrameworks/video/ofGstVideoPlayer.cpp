@@ -173,10 +173,6 @@ bool ofGstVideoPlayer::loadMovie(string name){
 		gst_element_link_many(appQueue, gstSink, NULL);
 
 		g_object_set (G_OBJECT(gstPipeline),"video-sink",appBin,(void*)NULL);
-		gst_object_unref(appQueue);
-		gst_object_unref(appBin);
-		gst_object_unref(appQueuePad);
-		gst_object_unref(ghostPad);
 
 	}else{
 		g_object_set (G_OBJECT(gstPipeline),"video-sink",gstSink,(void*)NULL);
@@ -185,7 +181,6 @@ bool ofGstVideoPlayer::loadMovie(string name){
 #ifdef TARGET_WIN32
 	GstElement *audioSink = gst_element_factory_make("directsoundsink", NULL);
 	g_object_set (G_OBJECT(gstPipeline),"audio-sink",audioSink,(void*)NULL);
-	//gst_object_unref(audioSink);
 #endif
 
 
