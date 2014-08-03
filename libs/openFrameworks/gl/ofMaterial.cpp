@@ -273,14 +273,14 @@ static string fragment_shader_header =
 #else
 static string vertex_shader_header =
 		"#version %glsl_version%\n"
-		"#extension GL_ARB_texture_rectangle : enable\n"
+		"%extensions%\n"
 		"#define IN in\n"
 		"#define OUT out\n"
 		"#define TEXTURE texture\n"
 		"#define MAX_LIGHTS %max_lights%\n";
 static string fragment_shader_header =
 		"#version %glsl_version%\n"
-		"#extension GL_ARB_texture_rectangle : enable\n"
+		"%extensions%\n"
 		"#define IN in\n"
 		"#define OUT out\n"
 		"#define TEXTURE texture\n"
@@ -558,6 +558,13 @@ string ofMaterial::fragmentShader = STRINGIFY(
 
 static string shaderHeader(string header, const string & glslVersion, int maxLights, bool hasTexture, bool textureRect){
 	ofStringReplace(header,"%glsl_version%",glslVersion);
+#ifndef TARGET_OPENGLES
+	if(ofGetOpenGLVersionMajor()<4 && ofGetOpenGLVersionMinor()<2){
+		ofStringReplace(header,"%extensions%","#extension GL_ARB_texture_rectangle : enable");
+	}else{
+		ofStringReplace(header,"%extensions%","");
+	}
+#endif
 	ofStringReplace(header,"%max_lights%",ofToString(maxLights));
 	if(hasTexture){
 		header += "#define HAS_TEXTURE\n";
