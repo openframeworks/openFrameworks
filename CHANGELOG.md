@@ -24,6 +24,9 @@ CORE
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
 
+### video
+	/ gstreamer: fix memory leaks when closing a video element
+
 PLATFORM SPECIFIC
 -----------------
 
