@@ -823,8 +823,8 @@ ofTargetPlatform ofGetTargetPlatform(){
         return OF_TARGET_LINUX64;
     } else if(ofIsStringInString(arch,"armv6l")) {
         return OF_TARGET_LINUXARMV6L;
-    } else if(ofIsStringInString(arch,"armv6l")) {
-        return OF_TARGET_LINUXARMV6L;
+    } else if(ofIsStringInString(arch,"armv7l")) {
+        return OF_TARGET_LINUXARMV7L;
     } else {
         return OF_TARGET_LINUX;
     }

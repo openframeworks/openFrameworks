@@ -252,3 +252,15 @@ bool ofParameterGroup::isSerializable() const{
 shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
 	return shared_ptr<ofAbstractParameter>(new ofParameterGroup(*this));
 }
+
+void ofParameterGroup::setParent(ofParameterGroup * _parent){
+	obj->parent = _parent;
+}
+
+const ofParameterGroup * ofParameterGroup::getParent() const{
+	return obj->parent;
+}
+
+ofParameterGroup * ofParameterGroup::getParent(){
+	return obj->parent;
+}

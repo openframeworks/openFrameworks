@@ -93,16 +93,23 @@ public:
 	bool isSerializable() const;
 	shared_ptr<ofAbstractParameter> newReference() const;
 
+	void setParent(ofParameterGroup * _parent);
+	const ofParameterGroup * getParent() const;
+	ofParameterGroup * getParent();
+
 
 private:
 	class Value{
 	public:
-		Value():serializable(true){}
+		Value()
+		:serializable(true)
+		,parent(NULL){}
 
 		map<string,int> parametersIndex;
 		vector<shared_ptr<ofAbstractParameter> > parameters;
 		string name;
 		bool serializable;
+		ofParameterGroup * parent;
 	};
 	shared_ptr<Value> obj;
 };

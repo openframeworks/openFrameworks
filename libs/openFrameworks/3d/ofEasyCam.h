@@ -51,7 +51,6 @@ private:
 	bool bApplyInertia;
 	bool bDoTranslate;
 	bool bDoRotate;
-	bool bValidClick;
 	bool bInsideArcball;
 	bool bMouseInputEnabled;
 	bool bDistanceSet;
@@ -74,20 +73,25 @@ private:
 	
 	float rotationFactor;
 
-	ofVec2f mouse;
-	ofVec2f lastMouse;
+	ofVec2f lastMouse, prevMouse;
 	ofVec2f mouseVel;
 	
 	void updateRotation();
 	void updateTranslation();
 	void update(ofEventArgs & args);
-	void updateMouse();
+	void mousePressed(ofMouseEventArgs & mouse);
+	void mouseReleased(ofMouseEventArgs & mouse);
+	void mouseDragged(ofMouseEventArgs & mouse);
+	void updateMouse(const ofMouseEventArgs & mouse);
 	
 	char doTranslationKey;
 	
 	unsigned long lastTap;
 		
 	ofQuaternion curRot;  
+	ofVec3f prevAxisX, prevAxisY, prevAxisZ;
+	ofVec3f prevPosition;
+	ofQuaternion prevOrientation;
     
 	ofRectangle viewport;// having the  viewport saved localy will make it easier for all the needed maths dealing with viewport.
 };
