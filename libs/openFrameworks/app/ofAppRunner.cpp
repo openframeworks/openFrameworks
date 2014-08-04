@@ -294,6 +294,8 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofAppEGLWindow());
 		#elif defined(TARGET_EMSCRIPTEN)
 			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofxAppEmscriptenWindow);
+		#elif defined(TARGET_OPENGLES)
+			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofAppGLFWWindow());
 		#else
 			shared_ptr<ofAppBaseGLWindow> glWindow = shared_ptr<ofAppBaseGLWindow>(new ofAppGLFWWindow());
 		#endif
@@ -301,6 +303,22 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 		ofSetupOpenGL(glWindow,w,h,screenMode);
 	#endif
 }
+
+void ofSetWindow(ofAppBaseWindow * windowPtr){
+	ofSetWindow(shared_ptr<ofAppBaseWindow>(windowPtr));
+}
+
+void ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr){
+	window = windowPtr;
+}
+
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+	ofSetWindow(windowPtr);
+}
+
+/*void ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
+	ofSetWindow(windowPtr);
+}*/
 
 //-----------------------	gets called when the app exits
 //							currently looking at who to turn off
@@ -346,9 +364,6 @@ void ofExitCallback(){
 	// try to close freeImage:
 	ofCloseFreeImage();
 
-	//------------------------
-	// try to close free type:
-	ofTrueTypeFont::finishLibraries();
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeEndPeriod(1);

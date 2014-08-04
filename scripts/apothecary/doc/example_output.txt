@@ -1,0 +1,111 @@
+danomatika:scripts dano$ ./apothecary update 
+
+ ----- assimp -----
+ Downloading "assimp"
+
+Cloning into 'assimp'...
+remote: Counting objects: 16337, done.
+remote: Compressing objects: 100% (4075/4075), done.
+remote: Total 16337 (delta 12058), reused 16170 (delta 11912)
+Receiving objects: 100% (16337/16337), 60.40 MiB | 10.31 MiB/s, done.
+Resolving deltas: 100% (12058/12058), done.
+
+ Building "assimp"
+
+-- The C compiler identification is GNU 4.2.1
+-- The CXX compiler identification is Clang 4.2.0
+...
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/dano/src/OFLibs/scripts/cache/assimp
+Scanning dependencies of target assimp
+[  0%] Building CXX object code/CMakeFiles/assimp.dir/Assimp.cpp.o
+[  1%] Building CXX object code/CMakeFiles/assimp.dir/BaseImporter.cpp.o
+[  1%] Building CXX object code/CMakeFiles/assimp.dir/BaseProcess.cpp.o
+...
+[100%] Building CXX object code/CMakeFiles/assimp.dir/AssimpPCH.cpp.o
+Linking CXX static library ../lib/libassimp.a
+[100%] Built target assimp
+
+ Copying "assimp"
+
+include/assimp/Compiler -> ../../../assimp/include/Compiler
+include/assimp/Compiler/poppack1.h -> ../../../assimp/include/Compiler/poppack1.h
+include/assimp/Compiler/pushpack1.h -> ../../../assimp/include/Compiler/pushpack1.h
+include/assimp/DefaultLogger.hpp -> ../../../assimp/include/DefaultLogger.hpp
+include/assimp/Exporter.hpp -> ../../../assimp/include/Exporter.hpp
+include/assimp/IOStream.hpp -> ../../../assimp/include/IOStream.hpp
+include/assimp/IOSystem.hpp -> ../../../assimp/include/IOSystem.hpp
+include/assimp/Importer.hpp -> ../../../assimp/include/Importer.hpp
+include/assimp/LogStream.hpp -> ../../../assimp/include/LogStream.hpp
+include/assimp/Logger.hpp -> ../../../assimp/include/Logger.hpp
+include/assimp/NullLogger.hpp -> ../../../assimp/include/NullLogger.hpp
+include/assimp/ProgressHandler.hpp -> ../../../assimp/include/ProgressHandler.hpp
+include/assimp/ai_assert.h -> ../../../assimp/include/ai_assert.h
+include/assimp/anim.h -> ../../../assimp/include/anim.h
+include/assimp/camera.h -> ../../../assimp/include/camera.h
+include/assimp/cexport.h -> ../../../assimp/include/cexport.h
+include/assimp/cfileio.h -> ../../../assimp/include/cfileio.h
+include/assimp/cimport.h -> ../../../assimp/include/cimport.h
+include/assimp/color4.h -> ../../../assimp/include/color4.h
+include/assimp/color4.inl -> ../../../assimp/include/color4.inl
+include/assimp/config.h -> ../../../assimp/include/config.h
+include/assimp/defs.h -> ../../../assimp/include/defs.h
+include/assimp/importerdesc.h -> ../../../assimp/include/importerdesc.h
+include/assimp/light.h -> ../../../assimp/include/light.h
+include/assimp/material.h -> ../../../assimp/include/material.h
+include/assimp/material.inl -> ../../../assimp/include/material.inl
+include/assimp/matrix3x3.h -> ../../../assimp/include/matrix3x3.h
+include/assimp/matrix3x3.inl -> ../../../assimp/include/matrix3x3.inl
+include/assimp/matrix4x4.h -> ../../../assimp/include/matrix4x4.h
+include/assimp/matrix4x4.inl -> ../../../assimp/include/matrix4x4.inl
+include/assimp/mesh.h -> ../../../assimp/include/mesh.h
+include/assimp/metadata.h -> ../../../assimp/include/metadata.h
+include/assimp/postprocess.h -> ../../../assimp/include/postprocess.h
+include/assimp/quaternion.h -> ../../../assimp/include/quaternion.h
+include/assimp/quaternion.inl -> ../../../assimp/include/quaternion.inl
+include/assimp/scene.h -> ../../../assimp/include/scene.h
+include/assimp/texture.h -> ../../../assimp/include/texture.h
+include/assimp/types.h -> ../../../assimp/include/types.h
+include/assimp/vector2.h -> ../../../assimp/include/vector2.h
+include/assimp/vector2.inl -> ../../../assimp/include/vector2.inl
+include/assimp/vector3.h -> ../../../assimp/include/vector3.h
+include/assimp/vector3.inl -> ../../../assimp/include/vector3.inl
+include/assimp/version.h -> ../../../assimp/include/version.h
+lib/libassimp.a -> ../../../assimp/lib/osx/assimp.a
+
+ ----- glew -----
+ Downloading "glew"
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100  531k  100  531k    0     0  22554      0  0:00:24  0:00:24 --:--:--  136k
+
+ Building "glew"
+
+cc -DGLEW_NO_GLU -O2 -Wall -W -Iinclude -dynamic -fno-common -fPIC  -o tmp/darwin/default/shared/glew.o -c src/glew.c
+cc -dynamiclib -install_name /usr/lib/libGLEW.1.9.0.dylib -current_version 1.9.0 -compatibility_version 1.9 -o lib/libGLEW.1.9.0.dylib tmp/darwin/default/shared/glew.o  -framework AGL -framework OpenGL 
+ln -sf libGLEW.1.9.0.dylib lib/libGLEW.1.9.dylib
+ln -sf libGLEW.1.9.0.dylib lib/libGLEW.dylib
+strip -x lib/libGLEW.1.9.0.dylib
+cc -DGLEW_NO_GLU -DGLEW_STATIC -O2 -Wall -W -Iinclude -dynamic -fno-common  -o tmp/darwin/default/static/glew.o -c src/glew.c
+ar cr lib/libGLEW.a tmp/darwin/default/static/glew.o
+strip -x lib/libGLEW.a
+sed \
+		-e "s|@prefix@|/usr|g" \
+		-e "s|@libdir@|/usr/lib|g" \
+		-e "s|@exec_prefix@|/usr/bin|g" \
+		-e "s|@includedir@|/usr/include/GL|g" \
+		-e "s|@version@|1.9.0|g" \
+		-e "s|@cflags@||g" \
+		-e "s|@libname@|GLEW|g" \
+		< glew.pc.in > glew.pc
+
+ Copying "glew"
+
+include/GL -> ../../../glew/include/GL
+include/GL/glew.h -> ../../../glew/include/GL/glew.h
+include/GL/glxew.h -> ../../../glew/include/GL/glxew.h
+include/GL/wglew.h -> ../../../glew/include/GL/wglew.h
+lib/libGLEW.a -> ../../../glew/lib/osx/glew.a
