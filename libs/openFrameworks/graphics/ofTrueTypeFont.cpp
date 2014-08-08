@@ -956,11 +956,11 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
 		int cy = ((unsigned char)c[index]) - NUM_CHARACTER_TO_START;
  	    if (cy < nCharacters){ 			// full char set or not?
 	       if (c[index] == '\n') {
-				yoffset += lineHeight;
-				xoffset = 0 ; //reset X Pos back to zero
-				prevCy = -1;
-                index++;
-				continue;
+               yoffset += lineHeight;
+               xoffset = 0 ; //reset X Pos back to zero
+               prevCy = -1;
+               index++;
+               continue;
 	       }
 
 	       if(cy > -1){
