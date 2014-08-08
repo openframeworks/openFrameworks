@@ -10,6 +10,10 @@ OF 0.9.0
 
 CORE
 ----
+### 3d
+	/ ofEasyCam: removes roll rotation when rotating inside the arcball
+	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
+	
 ### gl
 	+ Programmable lights and materials
 	+ New area light type on programmable renderer
@@ -19,6 +23,9 @@ CORE
 
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
+
+### video
+	/ gstreamer: fix memory leaks when closing a video element
 
 PLATFORM SPECIFIC
 -----------------

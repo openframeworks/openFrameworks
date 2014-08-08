@@ -719,14 +719,13 @@ int ofxXmlSettings::writeAttribute(const string& tag, const string& attribute, c
 //---------------------------------------------------------
 bool ofxXmlSettings::loadFromBuffer( string buffer )
 {
-
     int size = buffer.size();
-
     bool loadOkay = doc.ReadFromMemory( buffer.c_str(), size);//, TiXmlEncoding encoding = TIXML_DEFAULT_ENCODING);
-
+    storedHandle = TiXmlHandle(&doc);
+    level = 0;
     return loadOkay;
-
 }
+
 //---------------------------------------------------------
 void ofxXmlSettings::copyXmlToString(string & str)
 {
