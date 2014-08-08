@@ -959,6 +959,7 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
 				yoffset += lineHeight;
 				xoffset = 0 ; //reset X Pos back to zero
 				prevCy = -1;
+                index++;
 				continue;
 	       }
 
