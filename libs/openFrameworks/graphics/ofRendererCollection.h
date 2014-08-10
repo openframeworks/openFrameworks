@@ -20,7 +20,7 @@ public:
 		#ifndef TARGET_PROGRAMMABLE_GL
 		 	 return shared_ptr<ofGLRenderer>();
 		#else
-		 	 return ofPtr<ofGLProgrammableRenderer>();
+		 	 return shared_ptr<ofGLProgrammableRenderer>();
 		#endif
 	 }
 

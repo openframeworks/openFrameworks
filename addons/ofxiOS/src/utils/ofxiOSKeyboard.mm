@@ -198,29 +198,32 @@ void ofxiOSKeyboard::updateOrientation()
 		_xOriginal = x;
 		_yOriginal = y;
 		
-		switch (ofGetOrientation())
-		{
-            // TODO: Move all these positions transformations to setFrame
-			case OF_ORIENTATION_90_LEFT:
-				_x = ofGetWidth() - _xOriginal - _w; 
-				_y = ofGetHeight() - _yOriginal;
-				break;
-				
-			case OF_ORIENTATION_90_RIGHT:
-				_x = ofGetWidth() - _xOriginal - _w; 
-				_y = ofGetHeight() - _yOriginal;
-				break;
-				
-			case OF_ORIENTATION_180:
-				 _x = ofGetWidth() - _xOriginal - _w; 
-				 _y = ofGetHeight() - _yOriginal;
-				 break;
-				
-			case OF_ORIENTATION_DEFAULT:
-                _x = _xOriginal;
-				_y = _h;
-				break;
-		}
+        if(!ofxiOSGetOFWindow()->doesHWOrientation()) {
+            switch (ofGetOrientation())
+            {
+                // TODO: Move all these positions transformations to setFrame
+                case OF_ORIENTATION_90_LEFT:
+                    _x = ofGetWidth() - _xOriginal - _w;
+                    _y = ofGetHeight() - _yOriginal;
+                    break;
+                    
+                case OF_ORIENTATION_90_RIGHT:
+                    _x = ofGetWidth() - _xOriginal - _w;
+                    _y = ofGetHeight() - _yOriginal;
+                    break;
+                    
+                case OF_ORIENTATION_180:
+                    _x = ofGetWidth() - _xOriginal - _w;
+                    _y = ofGetHeight() - _yOriginal;
+                    break;
+                    
+                case OF_ORIENTATION_DEFAULT:
+                    _x = _xOriginal;
+                    _y = _h;
+                    break;
+            }
+        }
+		
 		
 		[self setFrame:CGRectMake(_x,_y,_w,_h)];
 		
@@ -239,29 +242,32 @@ void ofxiOSKeyboard::updateOrientation()
 {
 	_textField.transform = CGAffineTransformMakeRotation(0.0f);
 	
-	switch (ofGetOrientation())
-	{
-        // TODO: Move all these positions transformations to setFrame
-		case OF_ORIENTATION_90_LEFT:
-			_x = ofGetWidth() - _xOriginal - _w; 
-			_y = ofGetHeight() - _yOriginal;
-			break;
-			
-		case OF_ORIENTATION_90_RIGHT:
-			_x = ofGetWidth() - _xOriginal - _w; 
-			_y = ofGetHeight() - _yOriginal;
-			break;
-			
-		case OF_ORIENTATION_180:
-			_x = ofGetWidth() - _xOriginal - _w; 
-			_y = ofGetHeight() - _yOriginal;
-			break;
-			
-		case OF_ORIENTATION_DEFAULT:
-            _x = _xOriginal;
-			_y = _h;
-			break;
-	}
+    if(!ofxiOSGetOFWindow()->doesHWOrientation()) {
+        switch (ofGetOrientation())
+        {
+                // TODO: Move all these positions transformations to setFrame
+            case OF_ORIENTATION_90_LEFT:
+                _x = ofGetWidth() - _xOriginal - _w;
+                _y = ofGetHeight() - _yOriginal;
+                break;
+                
+            case OF_ORIENTATION_90_RIGHT:
+                _x = ofGetWidth() - _xOriginal - _w;
+                _y = ofGetHeight() - _yOriginal;
+                break;
+                
+            case OF_ORIENTATION_180:
+                _x = ofGetWidth() - _xOriginal - _w;
+                _y = ofGetHeight() - _yOriginal;
+                break;
+                
+            case OF_ORIENTATION_DEFAULT:
+                _x = _xOriginal;
+                _y = _h;
+                break;
+        }
+    }
+	
 	
 	[self setFrame:CGRectMake(_x,_y,_w,_h)];
 	
@@ -354,39 +360,48 @@ void ofxiOSKeyboard::updateOrientation()
 	
     int x, y, w, h;
     
-	switch (ofGetOrientation()) 
-	{
-		case OF_ORIENTATION_90_LEFT:
-            _textField.transform = CGAffineTransformMakeRotation(M_PI_2);
-            x = rect.origin.y-rect.size.height;
-            y = s.height-rect.size.width-rect.origin.x;
-            w = rect.size.height;
-            h = rect.size.width;
-			break;
-			
-		case OF_ORIENTATION_90_RIGHT:
-            _textField.transform = CGAffineTransformMakeRotation(-M_PI_2);
-            x = s.width-rect.origin.y;
-            y = rect.origin.x;
-            w = rect.size.height;
-            h = rect.size.width;
-			break;
-			
-		case OF_ORIENTATION_180:
-			_textField.transform = CGAffineTransformMakeRotation(M_PI);
-            x = rect.origin.x;
-            y = rect.origin.y-rect.size.height;
-            w = rect.size.width;
-            h = rect.size.height;
-            break;
-			
-		case OF_ORIENTATION_DEFAULT:
-            x = rect.origin.x;
-            y = rect.origin.y-rect.size.height;
-            w = rect.size.width;
-            h = rect.size.height;
-			break;
-	}
+    if(!ofxiOSGetOFWindow()->doesHWOrientation()) {
+        switch (ofGetOrientation())
+        {
+            case OF_ORIENTATION_90_LEFT:
+                _textField.transform = CGAffineTransformMakeRotation(M_PI_2);
+                x = rect.origin.y-rect.size.height;
+                y = s.height-rect.size.width-rect.origin.x;
+                w = rect.size.height;
+                h = rect.size.width;
+                break;
+                
+            case OF_ORIENTATION_90_RIGHT:
+                _textField.transform = CGAffineTransformMakeRotation(-M_PI_2);
+                x = s.width-rect.origin.y;
+                y = rect.origin.x;
+                w = rect.size.height;
+                h = rect.size.width;
+                break;
+                
+            case OF_ORIENTATION_180:
+                _textField.transform = CGAffineTransformMakeRotation(M_PI);
+                x = rect.origin.x;
+                y = rect.origin.y-rect.size.height;
+                w = rect.size.width;
+                h = rect.size.height;
+                break;
+                
+            case OF_ORIENTATION_DEFAULT:
+                x = rect.origin.x;
+                y = rect.origin.y;
+                w = rect.size.width;
+                h = rect.size.height;
+                break;
+        }
+    } else {
+        x = rect.origin.x;
+        y = rect.origin.y;
+        w = rect.size.width;
+        h = rect.size.height;
+    }
+    
+    
     [_textField setFrame: CGRectMake(x,y,w,h)];
 }
 

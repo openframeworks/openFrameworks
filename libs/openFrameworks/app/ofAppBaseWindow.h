@@ -79,10 +79,12 @@ public:
 
 class ofAppBaseGLWindow: public ofAppBaseWindow{
 public:
+	virtual ~ofAppBaseGLWindow(){}
 	virtual void setOpenGLVersion(int glVersionMajor,int glVersionMinor){};
 };
 
 class ofAppBaseGLESWindow: public ofAppBaseWindow{
 public:
+	virtual ~ofAppBaseGLESWindow(){}
 	virtual void setGLESVersion(int glesVersion){};
 };

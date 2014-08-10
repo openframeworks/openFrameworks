@@ -361,15 +361,6 @@ bool ofTrueTypeFont::initLibraries(){
     return true;
 }
 
-void ofTrueTypeFont::finishLibraries(){
-	if(librariesInitialized){
-#ifdef TARGET_LINUX
-		//FcFini();
-#endif
-		FT_Done_FreeType(library);
-	}
-}
-
 
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(){
@@ -689,6 +680,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		x+= sortedCopy[i].tW + border*2;
 	}
 	texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
+	texAtlas.setRGToRGBASwizzles(true);
 
 	if(bAntiAliased && fontSize>20){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
@@ -964,10 +956,11 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
 		int cy = ((unsigned char)c[index]) - NUM_CHARACTER_TO_START;
  	    if (cy < nCharacters){ 			// full char set or not?
 	       if (c[index] == '\n') {
-				yoffset += lineHeight;
-				xoffset = 0 ; //reset X Pos back to zero
-				prevCy = -1;
-				continue;
+               yoffset += lineHeight;
+               xoffset = 0 ; //reset X Pos back to zero
+               prevCy = -1;
+               index++;
+               continue;
 	       }
 
 	       if(cy > -1){
