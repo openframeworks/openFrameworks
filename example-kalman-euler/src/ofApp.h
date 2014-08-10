@@ -9,9 +9,8 @@ public:
 	void update();
 	void draw();
 	
-	ofxCv::KalmanPosition kalman;
+	ofxCv::KalmanEuler kalman;
 	
-	ofMesh predicted, line, estimated;
-	ofVec2f point;
-	float speed;
+	ofMatrix4x4 m, mPredicted;
+	ofEasyCam cam;
 };
