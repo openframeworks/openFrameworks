@@ -9,9 +9,9 @@ public:
 	void update();
 	void draw();
 	
-	cv::KalmanFilter KF;
-	cv::Mat_<float> measurement;
+	ofxCv::KalmanPosition kalman;
 	
-	ofPolyline predicted, line;
+	ofMesh predicted, line, estimated;
 	ofVec2f point;
+	float speed;
 };

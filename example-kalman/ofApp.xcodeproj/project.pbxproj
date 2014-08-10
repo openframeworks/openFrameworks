@@ -10,6 +10,7 @@
 		10B69DE456AED1288FC9316B /* Tracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A810DF70319A10353588F5DB /* Tracker.cpp */; };
 		2023EF517ED2D8B397511D4B /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B9076967F8C54A04362C04AA /* Helpers.cpp */; };
 		45CC483A999BF1065A6B926C /* Distance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD717072C35D324E101669 /* Distance.cpp */; };
+		5C5E00D11997C3320024BE17 /* Kalman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C5E00D01997C3320024BE17 /* Kalman.cpp */; };
 		5CC34D433F5806179935B89D /* Flow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03A75A648BC4CF1D9DEDD0CE /* Flow.cpp */; };
 		6AABAB39E82AF5CFEA23A205 /* ContourFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FBB4A8427353AED09174BE5 /* ContourFinder.cpp */; };
 		7CDAD32BE4FA46701E3552C7 /* RunningBackground.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CBF6AED6A17AC0C17F63CC4 /* RunningBackground.cpp */; };
@@ -97,6 +98,8 @@
 		586A8EC141BDFA82B3B0518C /* config.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = config.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/flann/config.h; sourceTree = SOURCE_ROOT; };
 		59626D03C690200AD4E8B3A6 /* ml.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ml.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/ml/ml.hpp; sourceTree = SOURCE_ROOT; };
 		5A59183C98FC5E69FC90F138 /* contrib.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = contrib.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/contrib/contrib.hpp; sourceTree = SOURCE_ROOT; };
+		5C5E00D01997C3320024BE17 /* Kalman.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Kalman.cpp; path = ../libs/ofxCv/src/Kalman.cpp; sourceTree = SOURCE_ROOT; };
+		5C5E00D21997C33C0024BE17 /* Kalman.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Kalman.h; path = ../libs/ofxCv/include/ofxCv/Kalman.h; sourceTree = SOURCE_ROOT; };
 		5CBF6AED6A17AC0C17F63CC4 /* RunningBackground.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = RunningBackground.cpp; path = ../../../addons/ofxCv/libs/ofxCv/src/RunningBackground.cpp; sourceTree = SOURCE_ROOT; };
 		5D966EA1AA66E2D55D047733 /* blobtrack.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = blobtrack.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/legacy/blobtrack.hpp; sourceTree = SOURCE_ROOT; };
 		5FBB4A8427353AED09174BE5 /* ContourFinder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ContourFinder.cpp; path = ../../../addons/ofxCv/libs/ofxCv/src/ContourFinder.cpp; sourceTree = SOURCE_ROOT; };
@@ -373,6 +376,7 @@
 				D29DD28C195CD81267F3C8A1 /* Distance.h */,
 				8326CDEDA153D242D924D2B6 /* Flow.h */,
 				8738DE90218B1E9054A88B54 /* Helpers.h */,
+				5C5E00D21997C33C0024BE17 /* Kalman.h */,
 				4524C0ED0C2DD3E085CE3350 /* ObjectFinder.h */,
 				6B3CDFD1A15E92F074E7D5AE /* RunningBackground.h */,
 				70046E043EDDB466ED625C3B /* Tracker.h */,
@@ -572,6 +576,7 @@
 				9DBD717072C35D324E101669 /* Distance.cpp */,
 				03A75A648BC4CF1D9DEDD0CE /* Flow.cpp */,
 				B9076967F8C54A04362C04AA /* Helpers.cpp */,
+				5C5E00D01997C3320024BE17 /* Kalman.cpp */,
 				AE75A3FBA2C2D87D14F06FE6 /* ObjectFinder.cpp */,
 				5CBF6AED6A17AC0C17F63CC4 /* RunningBackground.cpp */,
 				A810DF70319A10353588F5DB /* Tracker.cpp */,
@@ -751,6 +756,7 @@
 				10B69DE456AED1288FC9316B /* Tracker.cpp in Sources */,
 				A6668C5B1272D7FCD5B5A16F /* Utilities.cpp in Sources */,
 				DBCB84A37F9AECC254870D79 /* Wrappers.cpp in Sources */,
+				5C5E00D11997C3320024BE17 /* Kalman.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
