@@ -82,7 +82,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     
 
     // build the movie URL
-    NSString *movieURL;
+    NSURL *movieURL;
     if (isURL) {
         movieURL = [NSURL URLWithString:moviePath];
     }
