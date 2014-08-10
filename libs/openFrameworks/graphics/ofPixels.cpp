@@ -21,7 +21,8 @@ ofPixels_<PixelType>::ofPixels_(){
 	pixelsOwner = false;
 	channels = 0;
 	pixels = NULL;
-	clear();
+	width = 0;
+	height = 0;
 }
 
 
@@ -60,17 +61,17 @@ void ofPixels_<PixelType>::copyFrom(const ofPixels_<PixelType> & mom){
 
 template<typename PixelType>
 void ofPixels_<PixelType>::set(PixelType val){
-	int size = width * height * channels;
-	for(int i = 0; i < size; i++){
-		pixels[i] = val;
+	iterator _end = end();
+	for(iterator i=begin();i!=_end;++i){
+		*i = val;
 	}
 }
 
 template<typename PixelType>
 void ofPixels_<PixelType>::set(int channel,PixelType val){
-	int size = width*height*channels;
-	for(int i=channel;i<size;i+=channels){
-		pixels[i] = val;
+	iterator _end = end();
+	for(iterator i=begin()+channels;i!=_end;i+=channels){
+		*i = val;
 	}
 }
 
@@ -220,9 +221,9 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofImageType type){
 template<typename PixelType>
 void ofPixels_<PixelType>::swapRgb(){
 	if (channels >= 3){
-		int sizePixels = width*height*channels;
-		for (int i=0; i< sizePixels; i+=channels){
-			std::swap(pixels[i],pixels[i+2]);
+		iterator _end = end();
+		for(iterator i=begin();i!=_end;i+=channels){
+			std::swap(*i,*(i+2));
 		}
 	}
 }
@@ -288,10 +289,11 @@ void ofPixels_<PixelType>::setColor(int x, int y, const ofColor_<PixelType>& col
 
 template<typename PixelType>
 void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
-	int i = 0;
-	while(i < size()) {
+	iterator i = begin();
+	iterator _end = end();
+	while(i != _end) {
 		for(int j = 0; j < channels; j++) {
-			pixels[i++] = color[j];
+			*i++ = color[j];
 		}
 	}
 }
@@ -394,9 +396,10 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(int channel) const{
 	ofPixels_<PixelType> channelPixels;
 	channelPixels.allocate(width,height,1);
 	channel = ofClamp(channel,0,channels-1);
-	int j=0;
-	for(int i=channel;i<size();i+=channels, ++j){
-		channelPixels[j]=pixels[i];
+	iterator channelPixel = channelPixels.begin();
+	const_iterator _end = end();
+	for(const_iterator i=begin()+channel;i!=_end;i+=channels,++channelPixel){
+		*channelPixel = *i;
 	}
 	return channelPixels;
 }
@@ -404,9 +407,10 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(int channel) const{
 template<typename PixelType>
 void ofPixels_<PixelType>::setChannel(int channel, const ofPixels_<PixelType> channelPixels){
 	channel = ofClamp(channel,0,channels-1);
-	int j=0;
-	for(int i=channel;i<size();i+=channels, ++j){
-		pixels[i]=channelPixels[j];
+	const_iterator channelPixel = channelPixels.begin();
+	iterator _end = end();
+	for(iterator i=begin()+channel;i!=_end;i+=channels,++channelPixel){
+		*i = *channelPixel;
 	}
 
 }
@@ -415,87 +419,46 @@ void ofPixels_<PixelType>::setChannel(int channel, const ofPixels_<PixelType> ch
 //----------------------------------------------------------------------
 template<typename PixelType>
 void ofPixels_<PixelType>::crop(int x, int y, int _width, int _height){
-
-	if (bAllocated == true){
-
-		_width = ofClamp(_width,1,getWidth());
-		_height = ofClamp(_height,1,getHeight());
-
-		int bytesPerPixel = channels;
-
-		int newWidth = _width;
-		int newHeight = _height;
-		
-		PixelType * newPixels = new PixelType[newWidth*newHeight*bytesPerPixel];
-		memset(newPixels, 0, newWidth*newHeight*channels*sizeof(PixelType));
-
-		// this prevents having to do a check for bounds in the for loop;
-		int minX = MAX(x, 0);
-		int maxX = MIN(x+_width, width);
-		int minY = MAX(y, 0);
-		int maxY = MIN(y+_height, height);
-
-		// TODO: point math can help speed this up:
-		for (int i = minX; i < maxX; i++){
-			for (int j = minY; j < maxY; j++){
-
-				int newPixel = (j-y) * newWidth + (i-x);
-				int oldPixel = (j) * width + (i);
-
-				for (int k = 0; k < bytesPerPixel; k++){
-					newPixels[newPixel*bytesPerPixel + k] = pixels[oldPixel*bytesPerPixel + k];
-				}
-			}
-		}
-
-		delete [] pixels;
-		pixels = newPixels;
-		width = newWidth;
-		height = newHeight;
+	if (bAllocated){
+		ofPixels_<PixelType> crop;
+		cropTo(crop,x,y,_width,_height);
+		std::swap(crop.pixels,pixels);
+		width = crop.width;
+		height = crop.height;
 	}
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int _width, int _height){
+	if (bAllocated){
 
-
-	if (bAllocated == true){
+		if(&toPix == this){
+			crop(x,y,_width,_height);
+			return;
+		}
 
 		_width = ofClamp(_width,1,getWidth());
 		_height = ofClamp(_height,1,getHeight());
-
-		int bytesPerPixel = channels;
 
 		if ((toPix.width != _width) || (toPix.height != _height) || (toPix.channels != channels)){
 			toPix.allocate(_width, _height, channels);
 		}
 
-		int newWidth = _width;
-		PixelType * newPixels = toPix.pixels;
-
 		// this prevents having to do a check for bounds in the for loop;
-		int minX = MAX(x, 0);
-		int maxX = MIN(x+_width, width);
-		int minY = MAX(y, 0);
-		int maxY = MIN(y+_height, height);
+		int minX = MAX(x, 0) * channels;
+		int maxX = MIN(x+_width, width) * channels;
+		int minY = MAX(y, 0) * channels;
+		int maxY = MIN(y+_height, height) * channels;
 
-		// TODO: point math can help speed this up:
-		for (int i = minX; i < maxX; i++){
-			for (int j = minY; j < maxY; j++){
 
-				int newPixel = (j-y) * newWidth + (i-x);
-				int oldPixel = (j) * width + (i);
-
-				for (int k = 0; k < bytesPerPixel; k++){
-					newPixels[newPixel*bytesPerPixel + k] = pixels[oldPixel*bytesPerPixel + k];
-				}
+		iterator newPixel = toPix.begin();
+		for(Line line = getLines().begin()+minY; line!=getLines().begin()+maxY; ++line ){
+			for(const_iterator pixel = line.begin()+minX; pixel<line.begin()+maxX; ++pixel){
+				*newPixel++ = *pixel;
 			}
 		}
-
-
 	}
-
 }
 
 //----------------------------------------------------------------------
@@ -528,17 +491,18 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 	}
 
 	// otherwise, we will need to do some new allocaiton.
-	dst.allocate(height,width,getImageType());
+	dst.allocate(height,width,channels);
     
 	int strideSrc = width * channels;
 	int strideDst = dst.width * channels;
 
 	if(rotation == 1){
 		PixelType * srcPixels = pixels;
-		for (int i = 0; i < height; i++){
-			PixelType * dstPixels = dst.getPixels() + (strideDst - channels*(i+1));
-			for (int j = 0; j < width; j++){
-				for (int k = 0; k < channels; k++){
+		PixelType * startPixels = dst.getPixels() + (strideDst - channels);
+		for (int i = 0; i < height; ++i, --startPixels){
+			PixelType * dstPixels = startPixels;
+			for (int j = 0; j < width; ++j){
+				for (int k = 0; k < channels; ++k){
 					dstPixels[k] = srcPixels[k];
 				}
 				srcPixels += channels;
@@ -547,10 +511,11 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 		}
 	} else if(rotation == 3){
 		PixelType * dstPixels = dst.pixels;
-		for (int i = 0; i < dst.height; i++){
-			PixelType * srcPixels = pixels + (strideSrc - channels*(i+1));
-			for (int j = 0; j < dst.width; j++){
-				for (int k = 0; k < channels; k++){
+		PixelType * startPixels = pixels + (strideSrc - channels);
+		for (int i = 0; i < dst.height; ++i, --startPixels){
+			PixelType * srcPixels = startPixels;
+			for (int j = 0; j < dst.width; ++j){
+				for (int k = 0; k < channels; ++k){
 					dstPixels[k] = srcPixels[k];
 				}
 				srcPixels += strideSrc;
@@ -587,11 +552,9 @@ void ofPixels_<PixelType>::rotate90(int nClockwiseRotations){
 
 	ofPixels_<PixelType> newPixels;
 	rotate90To(newPixels,nClockwiseRotations);
-	delete [] pixels;
-	pixels = newPixels.pixels;
+	std::swap(newPixels.pixels,pixels);
 	width = newPixels.width;
 	height = newPixels.height;
-	newPixels.pixelsOwner = false;
 
 }
 
@@ -645,7 +608,7 @@ void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically,
 		dst = *this;
 		return;
 	}
-
+	dst.allocate(width, height, channels);
 	int bytesPerPixel = channels;
 
 	if (! (vertically && horizontal)){
@@ -872,6 +835,7 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo
 
 	return true;
 }
+
 
 template class ofPixels_<char>;
 template class ofPixels_<unsigned char>;

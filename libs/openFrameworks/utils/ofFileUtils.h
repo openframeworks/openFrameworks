@@ -14,9 +14,6 @@ public:
 	ofBuffer(const char * buffer, unsigned int size);
 	ofBuffer(const string & text);
 	ofBuffer(istream & stream);
-	ofBuffer(const ofBuffer & buffer_);
-
-	~ofBuffer();
 
 	void set(const char * _buffer, unsigned int _size);
 	void set(const string & text);
@@ -38,13 +35,50 @@ public:
 	ofBuffer & operator=(const string & text);
 
 	long size() const;
-	string getNextLine();
-    string getFirstLine();
-	bool isLastLine();
-    void resetLineReader();
+
+	OF_DEPRECATED_MSG("use a lines iterator instead",string getNextLine());
+	OF_DEPRECATED_MSG("use a lines iterator instead",string getFirstLine());
+	OF_DEPRECATED_MSG("use a lines iterator instead",bool isLastLine());
+	OF_DEPRECATED_MSG("use a lines iterator instead",void resetLineReader());
     
 	friend ostream & operator<<(ostream & ostr, const ofBuffer & buf);
 	friend istream & operator>>(istream & istr, ofBuffer & buf);
+
+	vector<char>::iterator begin();
+	vector<char>::iterator end();
+	vector<char>::const_iterator begin() const;
+	vector<char>::const_iterator end() const;
+	vector<char>::reverse_iterator rbegin();
+	vector<char>::reverse_iterator rend();
+	vector<char>::const_reverse_iterator rbegin() const;
+	vector<char>::const_reverse_iterator rend() const;
+
+	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
+		Line(vector<char> & buffer, vector<char>::iterator _begin);
+        const string & operator*() const;
+        const string * operator->() const;
+        Line& operator++();
+        Line operator++(int);
+        bool operator!=(Line const& rhs) const;
+        int getLineNum();
+
+	private:
+		void operator=(const Line & _line);
+        vector<char> & buffer;
+        string line;
+        vector<char>::iterator _begin, _end;
+	};
+
+	struct Lines{
+		Lines(vector<char> & buffer);
+        Line begin();
+        Line end();
+
+	private:
+        vector<char> & buffer;
+	};
+
+	Lines getLines();
 
 private:
 	vector<char> 	buffer;
@@ -280,6 +314,14 @@ public:
 	static bool doesDirectoryExist(string dirPath, bool bRelativeToData = true);
 	static bool removeDirectory(string path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
+	vector<ofFile>::iterator begin();
+	vector<ofFile>::iterator end();
+	vector<ofFile>::const_iterator begin() const;
+	vector<ofFile>::const_iterator end() const;
+	vector<ofFile>::reverse_iterator rbegin();
+	vector<ofFile>::reverse_iterator rend();
+	vector<ofFile>::const_reverse_iterator rbegin() const;
+	vector<ofFile>::const_reverse_iterator rend() const;
 
 private:
 	Poco::File myDir;
