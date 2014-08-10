@@ -61,4 +61,53 @@ namespace ofxCv {
 	
 	template class KalmanPosition_<float>;
 	
+	template <class T>
+	void KalmanEuler_<T>::init(T smoothness, T rapidness) {
+		KalmanPosition_<T>::init(smoothness, rapidness);
+		eulerPrev.x = 0.f;
+		eulerPrev.y = 0.f;
+		eulerPrev.z = 0.f;
+	}
+	
+	template <class T>
+	void KalmanEuler_<T>::update(const ofQuaternion& q) {
+		// warp to appropriate dimension
+		ofVec3f euler = q.getEuler();
+		for( int i = 0; i < 3; i++ ) {
+			float rev = floorf((eulerPrev[i] + 180) / 360.f) * 360;
+			euler[i] += rev;
+			if( euler[i] < -90 + rev && eulerPrev[i] > 90 + rev ) euler[i] += 360;
+			else if( euler[i] > 90 + rev && eulerPrev[i] < -90 + rev ) euler[i] -= 360;
+		}
+		
+		KalmanPosition_<T>::update(euler);
+		eulerPrev = euler;
+	}
+	
+	template <class T>
+	ofQuaternion KalmanEuler_<T>::getPrediction()
+	{
+		ofQuaternion q;
+		q.set(0, 0, 0, 1);
+		ofVec3f euler = KalmanPosition_<T>::getPrediction();
+		
+		q.makeRotate(euler.x, ofVec3f(1, 0, 0), euler.z, ofVec3f(0, 0, 1), euler.y, ofVec3f(0, 1, 0));
+		
+		return q;
+	}
+	
+	template <class T>
+	ofQuaternion KalmanEuler_<T>::getEstimation()
+	{
+		ofQuaternion q;
+		q.set(0, 0, 0, 1);
+		ofVec3f euler = KalmanPosition_<T>::getEstimation();
+		
+		q.makeRotate(euler.x, ofVec3f(1, 0, 0), euler.z, ofVec3f(0, 0, 1), euler.y, ofVec3f(0, 1, 0));
+		
+		return q;
+	}
+	
+	template class KalmanEuler_<float>;
+	
 }

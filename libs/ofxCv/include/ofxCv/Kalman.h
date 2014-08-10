@@ -28,8 +28,9 @@ namespace ofxCv {
 	public:
 		void init(T smoothness = 0.1, T rapidness = 0.1); // smaller is more smooth/rapid
 		void update(const ofQuaternion&);
+		ofQuaternion getPrediction();
 		ofQuaternion getEstimation();
-		ofQuaternion getVelocity();
+		//ofQuaternion getVelocity();
 	};
 	
 	typedef KalmanEuler_<float> KalmanEuler;	
