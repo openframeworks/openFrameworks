@@ -67,6 +67,7 @@ void ofxAndroidVideoPlayer::reloadTexture(){
 //---------------------------------------------------------------------------
 void ofxAndroidVideoPlayer::unloadTexture(){
 	texture.texData.textureID=0;
+	texture.texData.bAllocated = false;
 }
 
 
