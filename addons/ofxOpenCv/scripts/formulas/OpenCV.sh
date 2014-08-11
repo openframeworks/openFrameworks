@@ -267,6 +267,9 @@ function build() {
     rm -f CMakeCache.txt
     build_ios "armv7";
 
+	mkdir -p $LIB_FOLDER/include
+	mkdir -p $LIB_FOLDER/lib
+
     make_universal_binary "$LIB_FOLDER_IOS" "$LIB_FOLDER_IOS_SIM" "$LIB_FOLDER"
 
     # copy headers
