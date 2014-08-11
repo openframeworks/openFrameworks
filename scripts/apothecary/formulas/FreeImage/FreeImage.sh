@@ -18,9 +18,16 @@ GIT_TAG=
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER".zip
-	unzip -qo FreeImage"$VER".zip
-	rm FreeImage"$VER".zip
+	if [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
+		# For win32, we simply download the pre-compiled binaries.
+		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER"Win32.zip
+		unzip -qo FreeImage"$VER".zip
+		rm FreeImage"$VER".zip
+	else
+		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER".zip
+		unzip -qo FreeImage"$VER".zip
+		rm FreeImage"$VER".zip
+	fi
 }
 
 # prepare the build environment, executed inside the lib src dir
@@ -65,13 +72,6 @@ function build() {
 	if [ "$TYPE" == "osx" ] ; then
 		make -f Makefile.osx
 
-	elif [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: vs build"
-
-	elif [ "$TYPE" == "win_cb" ] ; then
-		#make -f Makefile.minigw
-		echoWarning "TODO: win_cb build"
-
 	elif [ "$TYPE" == "ios" ] ; then
 
 		# armv7 (+ simulator)
@@ -102,14 +102,9 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
 
-	elif [ "$TYPE" == "vs" ] ; then
+	elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/FreeImage.lib $1/lib/$TYPE/FreeImage.lib
-
-	elif [ "$TYPE" == "win_cb" ] ; then
-		mkdir -p $1/lib/$TYPE
-		cp -v Dist/libfreeimage.lib $1/lib/$TYPE/freeimage.lib
-
 	elif [ "$TYPE" == "ios" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage-ios.a $1/lib/$TYPE/freeimage.a
@@ -122,16 +117,13 @@ function copy() {
 # executed inside the lib src dir
 function clean() {
 	
-	if [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: clean vs"
-
-	elif [ "$TYPE" == "android" ] ; then
+	if [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: clean android"
 		
 	else
 		make clean
+		# run dedicated clean script
+		clean.sh
 	fi
 
-	# run dedicated clean script
-	clean.sh
 }
