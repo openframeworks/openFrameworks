@@ -6,21 +6,22 @@
 #include "ofConstants.h"
 #include "ofVboMesh.h"
 
-/// \brief Check whether OF is using ARB rectangular or square textures.
+/// \brief Check whether OF is using GL_TEXTURE_RECTANGLE rectangular or GL_TEXTURE_2D textures.
 /// \sa ofEnableArbTex()
-/// \returns true if using GL ARB textures, false if square textures.
+/// \returns true if using GL_TEXTURE_RECTANGLE textures, false if using GL_TEXTURE_2D textures.
 bool ofGetUsingArbTex();
 
-/// \brief Use GL ARB rectangular textures.
+/// \brief Use GL_TEXTURE_RECTANGLE rectangular textures.
 ///
-/// Rectangular textures are generally more useful and are enabled by default.
-/// Traditional GL_TEXTURE_2D square textures are faster on older hardware and
-/// in certain cases.
-///
+/// Rectangular textures are more intuitive since they allow pixel based coordinates
+/// and are enabled by default.
+/// GL_TEXTURE_2D textures are faster on older hardware and allow texture compression.
 /// \warning ARB textures are not available in OpenGL ES.
 void ofEnableArbTex();
 
-/// \brief Use square GL_TEXTURE_2D textures.
+/// \brief Use GL_TEXTURE_2D textures.
+/// GL_TEXTURE_2D is OpenGL's default way of handling with textures and support
+/// more OpenGL features.
 /// \sa ofEnableArbTex()
 void ofDisableArbTex();
 
