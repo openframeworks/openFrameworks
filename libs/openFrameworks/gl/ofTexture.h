@@ -130,6 +130,12 @@ public:
 		bAllocated = false;
 		bUseExternalTextureID = false;
 		useTextureMatrix = false;
+		
+		minFilter = GL_LINEAR;
+		magFilter = GL_LINEAR;
+		
+		wrapModeHorizontal = GL_CLAMP_TO_EDGE;
+		wrapModeVertical = GL_CLAMP_TO_EDGE;
 	}
 
 	unsigned int textureID; ///< GL internal texture ID
@@ -150,6 +156,11 @@ public:
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
+	
+	GLint minFilter; ///< Filter to use for minification (reduction)
+	GLint magFilter; ///< Filter to use for magnification (enlargement)
+	GLint wrapModeHorizontal; ///< How will the texture wrap around horizontally?
+	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
 
 };
 
