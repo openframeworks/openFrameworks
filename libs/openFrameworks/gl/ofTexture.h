@@ -60,19 +60,19 @@ void ofDisableNormalizedTexCoords();
 ///
 /// \param wrapS wrap parameter for texture coordinate s.
 /// \param wrapT wrap parameter for texture coordinate t.
-void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE);
+OF_DEPRECATED_MSG("Use member function ofTexture::setTextureWrap() instead.",void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE));
 
 /// \brief Check whether OF is using custom global texture wrapping.
 /// \sa ofSetTextureWrap()
 /// \returns true if OF is currently using custom global texture wrapping. 
-bool ofGetUsingCustomTextureWrap();
+OF_DEPRECATED_MSG("Use member function ofTexture::setTextureWrap() instead.",bool ofGetUsingCustomTextureWrap());
 
 /// \brief Removes global custom texture wrapping.
 ///
 /// Restores individual ofTexture wrap settings.
 ///
 /// \sa ofSetTextureWrap() 
-void ofRestoreTextureWrap();
+OF_DEPRECATED_MSG("Use member function ofTexture::setTextureWrap() instead.",void ofRestoreTextureWrap());
 
 /// \brief Set custom global texture minification/magnification scaling filters.
 ///
@@ -82,16 +82,16 @@ void ofRestoreTextureWrap();
 /// \sa ofTexture::setTextureMinMagFilter()
 /// \param minFilter minifying filter for scaling a pixel to a smaller area.
 /// \param maxFilter maxifying filter for scaling a pixel to a larger area.
-void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR);
+OF_DEPRECATED_MSG("Use member function ofTexture::setTextureMinMagFilter() instead.",void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR));
 
 /// \brief Check whether OF is using custom global texture scaling filters.
 /// \returns true if OF is currently using custom texture scaling filters.
-bool ofGetUsingCustomMinMagFilters();
+OF_DEPRECATED_MSG("Use member function ofTexture::setTextureMinMagFilter() instead.",bool ofGetUsingCustomMinMagFilters());
 
 /// \brief Removes global custom texture wrapping.
 ///
 /// Restores individual ofTexture min mag filter settings.
-void ofRestoreMinMagFilters();
+OF_DEPRECATED_MSG("Use member function ofTexture::setTextureMinMagFilter() instead.",void ofRestoreMinMagFilters());
 
 /// \brief Texture compression types.
 ///
