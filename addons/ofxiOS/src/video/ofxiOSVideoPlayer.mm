@@ -219,59 +219,60 @@ unsigned char * ofxiOSVideoPlayer::getPixels() {
     }
     
     CGImageRef currentFrameRef;
-    
-    @autoreleasepool {    
-		CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame];
+    size_t width, height;
 
-		/*Lock the image buffer*/
-		CVPixelBufferLockBaseAddress(imageBuffer,0);
+    @autoreleasepool {
+        CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame];
 
-		/*Get information about the image*/
-		uint8_t *baseAddress	= (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer);
-		size_t bytesPerRow		= CVPixelBufferGetBytesPerRow(imageBuffer);
-		size_t width			= CVPixelBufferGetWidth(imageBuffer);
-		size_t height			= CVPixelBufferGetHeight(imageBuffer);
+        /*Lock the image buffer*/
+        CVPixelBufferLockBaseAddress(imageBuffer,0);
 
-		/*Create a CGImageRef from the CVImageBufferRef*/
-		CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-		CGContextRef newContext = CGBitmapContextCreate(baseAddress,
-														width,
-														height,
-														8,
-														bytesPerRow,
-														colorSpace,
-														kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-		CGImageRef newImage	= CGBitmapContextCreateImage(newContext);
+        /*Get information about the image*/
+        uint8_t *baseAddress    = (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer);
+        size_t bytesPerRow      = CVPixelBufferGetBytesPerRow(imageBuffer);
+        width                   = CVPixelBufferGetWidth(imageBuffer);
+        height                  = CVPixelBufferGetHeight(imageBuffer);
 
-		currentFrameRef = CGImageCreateCopy(newImage);
+        /*Create a CGImageRef from the CVImageBufferRef*/
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGContextRef newContext = CGBitmapContextCreate(baseAddress,
+                                                        width,
+                                                        height,
+                                                        8,
+                                                        bytesPerRow,
+                                                        colorSpace,
+                                                        kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+        CGImageRef newImage = CGBitmapContextCreateImage(newContext);
 
-		/*We release some components*/
-		CGContextRelease(newContext);
-		CGColorSpaceRelease(colorSpace);
+        currentFrameRef = CGImageCreateCopy(newImage);
 
-		/*We relase the CGImageRef*/
-		CGImageRelease(newImage);
+        /*We release some components*/
+        CGContextRelease(newContext);
+        CGColorSpaceRelease(colorSpace);
 
-		/*We unlock the  image buffer*/
-		CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+        /*We relase the CGImageRef*/
+        CGImageRelease(newImage);
 
-		if(bResetPixels) {
+        /*We unlock the  image buffer*/
+        CVPixelBufferUnlockBaseAddress(imageBuffer,0);
 
-			if(pixelsRGBA != NULL) {
-				free(pixelsRGBA);
-				pixelsRGBA = NULL;
-			}
+        if(bResetPixels) {
 
-			if(pixelsRGB != NULL) {
-				free(pixelsRGB);
-				pixelsRGB = NULL;
-			}
+            if(pixelsRGBA != NULL) {
+                free(pixelsRGBA);
+                pixelsRGBA = NULL;
+            }
 
-			pixelsRGBA = (GLubyte *) malloc(width * height * 4);
-			pixelsRGB  = (GLubyte *) malloc(width * height * 3);
+            if(pixelsRGB != NULL) {
+                free(pixelsRGB);
+                pixelsRGB = NULL;
+            }
 
-			bResetPixels = false;
-		}
+            pixelsRGBA = (GLubyte *) malloc(width * height * 4);
+            pixelsRGB  = (GLubyte *) malloc(width * height * 3);
+
+            bResetPixels = false;
+        }
     }
     
     CGContextRef spriteContext;
