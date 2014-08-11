@@ -7,10 +7,10 @@
 # Makefile build system, 
 # some Makefiles are out of date so patching/modification may be required
 
-FORMULA_TYPES=( "osx" "osx-clang-libc++" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
 # define the version
-VER=3154 # 3.15.4
+VER=3160 # 3.16.0
 
 # tools for git use
 GIT_URL=
@@ -28,37 +28,12 @@ function prepare() {
 	
 	if [ "$TYPE" == "osx" ] ; then
 
-		# patch outdated Makefile.osx, check if patch was appllied first
-		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/Makefile.osx.patch 2>/dev/null ; then
-			patch -p1 -u < $FORMULA_DIR/Makefile.osx.patch
+		# patch outdated Makefile.osx provided with FreeImage, check if patch was applied first
+		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/Makefile.osx.patch 2>/dev/null ; then
+			patch -p0 -u < $FORMULA_DIR/Makefile.osx.patch
 		fi
 
-		# @tgfrerer patch FreeImage source - clang is much less forgiving about
-		# type overruns and missing standard header files. 
-		# this patch replicates gcc's behaviour
-		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/freeimage.clang.source.patch 2>/dev/null ; then
-			patch -p1 -u -N  < $FORMULA_DIR/freeimage.clang.source.patch
-		fi
-
-		# set SDK
-		sed -i tmp "s|MACOSX_SDK =.*|MACOSX_SDK = $OSX_SDK_VER|" Makefile.osx
-		sed -i tmp "s|MACOSX_MIN_SDK =.*|MACOSX_MIN_SDK = $OSX_MIN_SDK_VER|" Makefile.osx
-
-	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
-
-		# patch outdated Makefile.osx
-		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/Makefile.osx-clang-libc++.patch 2>/dev/null ; then
-			patch -p1 -u < $FORMULA_DIR/Makefile.osx-clang-libc++.patch
-		fi
-		
-		# @tgfrerer patch FreeImage source - clang is much less forgiving about
-		# type overruns and missing standard header files. 
-		# this patch replicates gcc's behaviour
-		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/freeimage.clang.source.patch 2>/dev/null ; then
-			patch -p1 -u -N  < $FORMULA_DIR/freeimage.clang.source.patch
-		fi
-
-		# set SDK
+		# set SDK using apothecary settings
 		sed -i tmp "s|MACOSX_SDK =.*|MACOSX_SDK = $OSX_SDK_VER|" Makefile.osx
 		sed -i tmp "s|MACOSX_MIN_SDK =.*|MACOSX_MIN_SDK = $OSX_MIN_SDK_VER|" Makefile.osx
 
@@ -90,9 +65,6 @@ function build() {
 	if [ "$TYPE" == "osx" ] ; then
 		make -f Makefile.osx
 
-	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
-		make -f Makefile.osx
-	
 	elif [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: vs build"
 
@@ -126,7 +98,7 @@ function copy() {
 	cp -v Dist/*.h $1/include
 
 	# lib
-	if [ "$TYPE" == "osx" -o "$TYPE" == "osx-clang-libc++" ] ; then
+	if [ "$TYPE" == "osx" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
 
