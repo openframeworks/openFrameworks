@@ -81,8 +81,8 @@ OF_DEPRECATED_MSG("Use member function ofTexture::setTextureWrap() instead.",voi
 ///
 /// \sa ofTexture::setTextureMinMagFilter()
 /// \param minFilter minifying filter for scaling a pixel to a smaller area.
-/// \param maxFilter maxifying filter for scaling a pixel to a larger area.
-OF_DEPRECATED_MSG("Use member function ofTexture::setTextureMinMagFilter() instead.",void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR));
+/// \param magFilter magnifying filter for scaling a pixel to a larger area.
+OF_DEPRECATED_MSG("Use member function ofTexture::setTextureMinMagFilter() instead.",void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat magFilter = GL_LINEAR));
 
 /// \brief Check whether OF is using custom global texture scaling filters.
 /// \returns true if OF is currently using custom texture scaling filters.
@@ -556,8 +556,8 @@ class ofTexture : public ofBaseDraws {
 	/// \warning May be overridden.
 	///
 	/// \param minFilter minifying filter for scaling a pixel to a smaller area.
-	/// \param maxFilter maxifying filter for scaling a pixel to a larger area.
-	void setTextureMinMagFilter(GLint minFilter, GLint maxFilter);
+	/// \param magFilter magnifying filter for scaling a pixel to a larger area.
+	void setTextureMinMagFilter(GLint minFilter, GLint magFilter);
 
 	/// \brief Set the texture compression.
 	///
