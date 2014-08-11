@@ -174,7 +174,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_HEADER_SEARCH_PATHS =
+PLATFORM_HEADER_SEARCH_PATHS = 
 
 ##########################################################################################
 # PLATFORM LIBRARIES
@@ -194,10 +194,20 @@ PLATFORM_HEADER_SEARCH_PATHS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_LIBRARIES =
+PLATFORM_LIBRARIES += opengl32 gdi32 msimg32 glu32 dsound winmm dxguid strmbase strmiids 
+PLATFORM_LIBRARIES += z uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
 
 #static libraries (fully qualified paths)
-PLATFORM_STATIC_LIBRARIES =
+# First two lines are hacks. libssl and libcrypto need to come *after* Poco libs for the
+# linker. All platform libs get put into the linker call *after* core libs. By putting
+# libssl and libcrypto here, they get pulled out of core and grouped into platform libs.
+PLATFORM_STATIC_LIBRARIES += ../../../libs/openssl/lib/win_cb/libssl.a
+PLATFORM_STATIC_LIBRARIES += ../../../libs/openssl/lib/win_cb/libcrypto.a
+PLATFORM_STATIC_LIBRARIES += ../../../libs/videoInput/lib/win_cb/videoInputLib.a 
+PLATFORM_STATIC_LIBRARIES += ../../../libs/FreeImage/lib/win_cb/FreeImage.lib 
+PLATFORM_STATIC_LIBRARIES += ../../../libs/quicktime/lib/win_cb/qtmlClient.lib 
+PLATFORM_STATIC_LIBRARIES += ../../../libs/glew/lib/win_cb/glew32s.lib 
+PLATFORM_STATIC_LIBRARIES += ../../../libs/glu/lib/win_cb/glu32.lib
 
 # shared libraries 
 PLATFORM_SHARED_LIBRARIES =
@@ -215,7 +225,7 @@ PLATFORM_SHARED_LIBRARIES =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_LIBRARY_SEARCH_PATHS =
+PLATFORM_LIBRARY_SEARCH_PATHS = 
 
 ##########################################################################################
 # LOW LEVEL CONFIGURATION BELOW
@@ -248,56 +258,5 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CC=
 
-
-afterplatform: $(TARGET_NAME)
-	@rm -rf bin/$(BIN_NAME).app
-	@mkdir -p bin/$(BIN_NAME).app
-	@mkdir -p bin/$(BIN_NAME).app/Contents
-	@mkdir -p bin/$(BIN_NAME).app/Contents/MacOS
-	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
-	
-	@echo '<?xml version="1.0" encoding="UTF-8"?>' > bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<plist version="1.0">' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '<dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleGetInfoString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME).app</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleExecutable</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleIdentifier</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>com.your-company-name.www</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>0.01</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>6.0</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>CFBundlePackageType</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>APPL</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>IFMajorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <integer>0</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <key>IFMinorVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	
-	@echo TARGET=$(TARGET)
-	
-	@install_name_tool -change ./libfmodex.dylib @executable_path/libs/libfmodex.dylib $(TARGET)
-	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT $(TARGET)
-	
-	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
-	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/$(BIN_NAME).app/Contents/MacOS
-	
-	@echo
-	@echo "     compiling done"
-	@echo "     to launch the application"
-	@echo
-	@echo "     cd bin/$(BIN_NAME).app/Contents/MacOS/"
-	@echo "     ./$(BIN_NAME)"
-	@echo "     "
-	@echo "     - or -"
-	@echo "     "
-	@echo "     make $(RUN_TARGET)"
-	@echo
-	
+afterplatform: after
+	@echo 
