@@ -396,6 +396,71 @@ float ofxKinect::getZeroPlaneDistance() {
 	return kinectDevice->registration.zero_plane_info.reference_distance;
 }
 
+#define REG_X_VAL_SCALE 256 // "fixed-point" precision for double -> int32_t conversion
+
+//------------------------------------
+int ofxKinect::sensorToColorIndex(int i) {
+	return sensorToColorIndex(i, getDistanceAt(i % width, i / width));
+}
+
+//------------------------------------
+int ofxKinect::sensorToColorIndex(int i, float distance) {
+	if( bUseRegistration == true ) {
+		ofLogError() << "Registration must be disabled for index conversion";
+		return -1;
+	}
+
+	uint32_t x, y;
+	x = i % width;
+	y = i / width;
+
+	freenect_registration* reg = &(kinectDevice->registration);
+	uint32_t target_offset = height * reg->reg_pad_info.start_lines;
+	uint16_t metric_depth = distance;
+	uint32_t reg_index = i;
+	uint32_t nx = (reg->registration_table[reg_index][0] + reg->depth_to_rgb_shift[metric_depth]) / REG_X_VAL_SCALE;
+	uint32_t ny =  reg->registration_table[reg_index][1];
+
+	// ignore anything outside the image bounds
+	if (nx >= width) return -1;
+
+	// convert nx, ny to an index in the depth image array
+	uint32_t target_index = (ny * width + nx) - target_offset;
+
+	return target_index;
+}
+
+//------------------------------------
+ofPoint ofxKinect::sensorToColorCoordinate(const ofPoint & p) {
+	return sensorToColorCoordinate(p, getDistanceAt(p));
+}
+
+//------------------------------------
+ofPoint ofxKinect::sensorToColorCoordinate(const ofPoint & p, float distance) {
+	if( bUseRegistration == true ) {
+		ofLogError() << "Registration must be disabled for coordinate conversion";
+		return ofPoint(-1, -1);
+	}
+
+	uint32_t x, y;
+	x = p.x;
+	y = p.y;
+
+	freenect_registration* reg = &(kinectDevice->registration);
+	uint32_t target_offset = height * reg->reg_pad_info.start_lines;
+	uint16_t metric_depth = distance;
+	uint32_t reg_index = y * width + x;
+	uint32_t nx = (reg->registration_table[reg_index][0] + reg->depth_to_rgb_shift[metric_depth]) / REG_X_VAL_SCALE;
+	uint32_t ny =  reg->registration_table[reg_index][1];
+
+	// ignore anything outside the image bounds
+	if (nx >= width) return ofPoint(-1, -1);
+
+	return ofPoint(nx - target_offset, ny);
+}
+
+#undef REG_X_VAL_SCALE
+
 //------------------------------------
 ofColor ofxKinect::getColorAt(int x, int y) {
 	int index = (y * width + x) * videoBytesPerPixel;

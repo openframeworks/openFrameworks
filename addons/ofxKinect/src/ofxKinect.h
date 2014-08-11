@@ -143,6 +143,12 @@ public:
 	
 	/// get the focal length of the IR sensor in mm
 	float getZeroPlaneDistance();
+	
+	/// convert sensor index to color image index; only valid when registration is disabled
+	int sensorToColorIndex(int i);
+	int sensorToColorIndex(int i, float distance);
+	ofPoint sensorToColorCoordinate(const ofPoint & p);
+	ofPoint sensorToColorCoordinate(const ofPoint & p, float distance);
 
 /// \section RGB Data
 
