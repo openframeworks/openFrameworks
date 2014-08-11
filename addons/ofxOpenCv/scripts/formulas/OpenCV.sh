@@ -14,6 +14,11 @@ VER=2.4.9
 # tools for git use
 GIT_URL=https://github.com/Itseez/opencv.git
 GIT_TAG=$VER
+
+local LIB_FOLDER="$BUILD_ROOT_DIR/OpenCv"
+local LIB_FOLDER32="$LIB_FOLDER-32"
+local LIB_FOLDER64="$LIB_FOLDER-64"
+
  
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -29,8 +34,9 @@ function prepare() {
 }
  
 function build_osx() {
+  
   if [ "$1" == "64" ] ; then
-    cmake . -DCMAKE_INSTALL_PREFIX=$BUILD_ROOT_DIR \
+    cmake . -DCMAKE_INSTALL_PREFIX=$LIB_FOLDER64 \
       -DGLFW_BUILD_UNIVERSAL=ON \
       -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 \
       -DCMAKE_OSX_ARCHITECTURES="x86_64" \
@@ -68,7 +74,7 @@ function build_osx() {
       -DBUILD_PERF_TESTS=OFF
   elif [ "$1" == "32" ] ; then
     # NB - using a special BUILD_ROOT_DIR
-    cmake . -DCMAKE_INSTALL_PREFIX=$BUILD_ROOT_DIR-32 \
+    cmake . -DCMAKE_INSTALL_PREFIX=$LIB_FOLDER32 \
       -DGLFW_BUILD_UNIVERSAL=ON \
       -DCMAKE_OSX_DEPLOYMENT_TARGET=10.6 \
       -DCMAKE_OSX_ARCHITECTURES="i386" \
@@ -114,48 +120,64 @@ function build_osx() {
 function make_universal_binary() {
   shopt -s nullglob
   
-  libs="$BUILD_ROOT_DIR/lib/libopencv*.a"
+  libs="$LIB_FOLDER64/lib/libopencv*.a"
 
   for lib in $libs
   do
     fname=$(basename "$lib"); 
-    otherLib="$BUILD_ROOT_DIR-32/lib/$fname"
+    otherLib="$LIB_FOLDER32/lib/$fname"
     echo "lipoing $fname"
-    lipo -create $lib $otherLib -o "$BUILD_ROOT_DIR/lib/$fname" || true
+    lipo -create $lib $otherLib -o "$LIB_FOLDER/lib/$fname" || true
   done
 
-  thirdparty="$BUILD_ROOT_DIR/share/OpenCV/3rdparty/lib/*.a"
+  thirdparty="$LIB_FOLDER64/share/OpenCV/3rdparty/lib/*.a"
 
   for lib in $thirdparty
   do
     fname=$(basename "$lib"); 
-    otherLib="$BUILD_ROOT_DIR-32/share/OpenCV/3rdparty/lib/$fname"
+    otherLib="$LIB_FOLDER32/share/OpenCV/3rdparty/lib/$fname"
     echo "lipoing $fname"
-    lipo -create $lib $otherLib -o "$BUILD_ROOT_DIR/lib/$fname" || true
+    lipo -create $lib $otherLib -o "$LIB_FOLDER/lib/$fname" || true
   done
 
-  outputlist="$BUILD_ROOT_DIR/lib/lib*.a" 
+  outputlist="$LIB_FOLDER/lib/lib*.a" 
 
-  libtool -static $outputlist -o "$BUILD_ROOT_DIR/lib/opencv.a" 
+  libtool -static $outputlist -o "$LIB_FOLDER/lib/opencv.a"
 }
  
 # executed inside the lib src dir
 function build() {
   rm -f CMakeCache.txt
  
+  LIB_FOLDER="$BUILD_ROOT_DIR/$TYPE/FAT/OpenCv"
+  LIB_FOLDER32="$BUILD_ROOT_DIR/$TYPE/32bit/OpenCv"
+  LIB_FOLDER64="$BUILD_ROOT_DIR/$TYPE/64bit/OpenCv"
+
   if [ "$TYPE" == "osx" ] ; then
     # 64-bit OF transition, build x86-64 and i386 separately
     build_osx "64";
     rm -f CMakeCache.txt
     build_osx "32";
+
+	mkdir -p $LIB_FOLDER/include
+	mkdir -p $LIB_FOLDER/lib
  
     # lipo shit together
     make_universal_binary
+
+    # copy headers
+    cp -R $LIB_FOLDER64/include/opencv $LIB_FOLDER/include/opencv
+    cp -R $LIB_FOLDER64/include/opencv2 $LIB_FOLDER/include/opencv2
   fi
 }
  
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
+
+  LIB_FOLDER="$BUILD_ROOT_DIR/$TYPE/FAT/OpenCv"
+  LIB_FOLDER32="$BUILD_ROOT_DIR/$TYPE/32bit/OpenCv"
+  LIB_FOLDER64="$BUILD_ROOT_DIR/$TYPE/64bit/OpenCv"
+
   # prepare headers directory if needed
   mkdir -p $1/include
  
@@ -165,11 +187,10 @@ function copy() {
   if [ "$TYPE" == "osx" ] ; then
     # Standard *nix style copy.
     # copy headers
-    cp -Rv $BUILD_ROOT_DIR/include/opencv $1/include/opencv
-    cp -Rv $BUILD_ROOT_DIR/include/opencv2 $1/include/opencv2
+    cp -R $LIB_FOLDER/include/ $1/include/
  
     # copy lib
-    cp -Rv $BUILD_ROOT_DIR/lib/opencv.a $1/lib/$TYPE/
+    cp -R $LIB_FOLDER/lib/opencv.a $1/lib/$TYPE/
   fi
 }
  
