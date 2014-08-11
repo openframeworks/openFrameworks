@@ -96,11 +96,12 @@ OF_DEPRECATED_MSG("Use member function ofTexture::setTextureMinMagFilter() inste
 
 /// \brief Texture compression types.
 ///
-/// Tells OF to generate GL mipmaps when creating a texture.
+/// Compression is only available through OpenGL
+/// for textures using GL_TEXTURE_2D, *not* GL_TEXTURE_RECTANGLE
 enum ofTexCompression {
 	OF_COMPRESS_NONE,	///< no compression
-	OF_COMPRESS_SRGB,	///< generate mipmaps with sRGB compression
-	OF_COMPRESS_ARB		///< generate mipmaps with ARB compression
+	OF_COMPRESS_SRGB,	///< sRGB compression
+	OF_COMPRESS_ARB		///< ARB compression
 };
 
 /// \class ofTextureData
