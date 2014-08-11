@@ -101,10 +101,10 @@ function copy() {
 	if [ "$TYPE" == "osx" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
-
 	elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/FreeImage.lib $1/lib/$TYPE/FreeImage.lib
+		cp -v Dist/FreeImage.dll $1/../../export/$TYPE/FreeImage.dll
 	elif [ "$TYPE" == "ios" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage-ios.a $1/lib/$TYPE/freeimage.a
