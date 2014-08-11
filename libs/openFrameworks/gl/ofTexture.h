@@ -184,6 +184,30 @@ void ofDisableTextureEdgeHack();
 /// \returns true if OF is currently using the "texture edge hack".
 bool ofIsTextureEdgeHackEnabled();
 
+/// \brief Enable mipmap generation for textures which support mipmaps.
+///
+/// Mipmaps will be generated on load. Note that by default, ofTexture
+/// will not auto-generate mipmaps.
+///
+/// \warning ofTexture uses GL_TEXTURE_RECTANGLE by default, which *does not*
+/// support mipmaps, therefore you need to call ofDisableArbTex() *before*
+/// calling ofEnableTextureGenerateMipmaps(). ofDisableArbTex() allows you
+/// to load textures as GL_TEXTURE_2D, a texture target which supports mipmaps.
+///
+/// \sa ofDisableArbTex()
+/// \sa ofDisableTextureGenerateMipmaps()
+/// \sa ofGetTextureGenerateMipmaps()
+void ofEnableTextureGenerateMipmaps();
+
+/// \brief Disable automatic texture mipmap generation
+/// No mipmaps will be auto-generated for textures loaded after this call.
+/// \sa ofEnableTextureGenerateMipmaps()
+void ofDisableTextureGenerateMipmaps();
+
+/// \brief Returns whether texture mipmap generation is currently enabled.
+/// \sa ofEnableTextureGenerateMipmaps()
+bool ofGetTextureGenerateMipmaps();
+
 /// \class ofTexture
 /// \brief An OpenGL image on the the graphics card.
 ///
@@ -630,4 +654,12 @@ protected:
 	ofPoint anchor;
 	bool bAnchorIsPct;
 	ofMesh quad;
+
+private:
+
+	static bool bShouldGenerateMipmaps; ///< whether ofTexture should generate mipmaps by default. Default == false.
+
+	friend bool ofGetTextureGenerateMipmaps();
+	friend void ofEnableTextureGenerateMipmaps();
+	friend void ofDisableTextureGenerateMipmaps();
 };

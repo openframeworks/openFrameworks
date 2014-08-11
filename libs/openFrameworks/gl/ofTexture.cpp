@@ -13,6 +13,7 @@ static bool	bUsingArbTex		= true;
 static bool bUsingNormalizedTexCoords = false;
 static bool bUseCustomMinMagFilters = false;
 
+bool ofTexture::bShouldGenerateMipmaps = false;
 
 //---------------------------------
 void ofEnableTextureEdgeHack(){
@@ -44,6 +45,20 @@ void ofDisableNormalizedTexCoords(){
 	bUsingNormalizedTexCoords = false;
 }
 
+//---------------------------------
+void ofEnableTextureGenerateMipmaps(){
+	ofTexture::bShouldGenerateMipmaps = true;
+};
+
+//---------------------------------
+void ofDisableTextureGenerateMipmaps(){
+	ofTexture::bShouldGenerateMipmaps = false;
+};
+
+/// \brief Returns whether texture mipmaps are currently enabled.
+bool ofGetTextureGenerateMipmaps(){
+	return ofTexture::bShouldGenerateMipmaps;
+};
 
 
 //***** add global functions to override texture settings
