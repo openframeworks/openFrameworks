@@ -325,6 +325,8 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
 	@autoreleasepool {
+		NSOpenGLContext *context = [NSOpenGLContext currentContext];
+
 		NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
 		[loadDialog setAllowsMultipleSelection:NO];
 		[loadDialog setCanChooseDirectories:bFolderSelection];
@@ -342,6 +344,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		}
 
 		NSInteger buttonClicked = [loadDialog runModal];
+		[context makeCurrentContext];
 		restoreAppWindowFocus();
 
 		if(buttonClicked == NSFileHandlingPanelOKButton) {
@@ -495,11 +498,13 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 #ifdef TARGET_OSX
 	@autoreleasepool {
 		NSSavePanel * saveDialog = [NSSavePanel savePanel];
+		NSOpenGLContext *context = [NSOpenGLContext currentContext];
 		[saveDialog setMessage:[NSString stringWithUTF8String:messageName.c_str()]];
 		[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
 
 		NSInteger buttonClicked = [saveDialog runModal];
 		restoreAppWindowFocus();
+		[context makeCurrentContext];
 
 		if(buttonClicked == NSFileHandlingPanelOKButton){
 			results.filePath = string([[[saveDialog URL] path] UTF8String]);
