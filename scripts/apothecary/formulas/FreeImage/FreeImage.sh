@@ -21,8 +21,8 @@ function download() {
 	if [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
 		# For win32, we simply download the pre-compiled binaries.
 		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER"Win32.zip
-		unzip -qo FreeImage"$VER".zip
-		rm FreeImage"$VER".zip
+		unzip -qo FreeImage"$VER"Win32.zip
+		rm FreeImage"$VER"Win32.zip
 	else
 		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER".zip
 		unzip -qo FreeImage"$VER".zip
