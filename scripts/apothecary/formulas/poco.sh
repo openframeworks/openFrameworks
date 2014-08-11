@@ -57,21 +57,22 @@ function prepare() {
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		# For OS 10.9+ we must explicitly set libstdc++ for the 32-bit OSX build.
-		local BUILD_OPTS="--cflags=-stdlib=libstdc++ --no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
 		
 		# 32 bit
-		./configure $BUILD_OPTS --config=Darwin32
+		# For OS 10.9+ we must explicitly set libstdc++ for the 32-bit OSX build.
+		./configure $BUILD_OPTS --cflags=-stdlib=libstdc++ --config=Darwin32
 		make
 
 		# 64 bit
-		./configure $BUILD_OPTS --config=Darwin64
+		./configure $BUILD_OPTS --config=Darwin64-clang-libc++
 		make
 
 		cd lib/Darwin
 
 		# delete debug builds
-		rm i386/*d.a x86_64/*d.a
+		rm i386/*d.a
+		rm x86_64/*d.a
 
 		# link into universal lib, strip "lib" from filename
 		local lib
@@ -81,31 +82,6 @@ function build() {
 				lipo -c i386/$lib x86_64/$lib -o $renamedLib
 			fi
 		done
-
-	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
-		
-		# @tgfrerer: osx libraries in openFrameworks/master are currently "lean" 32 bit libraries.
-		# so we omit the 64 bit compilation target for now.
-
-		# 32 bit
-		./configure $BUILD_OPTS --config=Darwin32-clang-libc++
-		make
-
-		cd lib/Darwin
-
-		# delete debug builds
-		rm i386/*d.a
-
-		# link into universal lib, strip "lib" from filename
-		local lib
-		for lib in $( ls -1 i386) ; do
-			local renamedLib=$(echo $lib | sed 's|lib||')
-			if [ ! -e $renamedLib ] ; then
-				#lipo -c i386/$lib x86_64/$lib -o $renamedLib
-				libtool -static -o $renamedLib i386/$lib
-			fi
-		done	
 
 	elif [ "$TYPE" == "vs" ] ; then
 		#cmd.exe /c "buildwin.cmd "$VS_VER" build all both Win32 nosamples devenv"
@@ -212,10 +188,6 @@ function copy() {
 
 	# libs
 	if [ "$TYPE" == "osx" ] ; then		
-		mkdir -p $1/lib/$TYPE
-		cp -v lib/Darwin/*.a $1/lib/$TYPE
-
-	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Darwin/*.a $1/lib/$TYPE
 
