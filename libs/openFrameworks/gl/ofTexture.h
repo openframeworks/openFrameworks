@@ -138,6 +138,13 @@ public:
 		bUseExternalTextureID = false;
 		useTextureMatrix = false;
 		isBound = false;
+		
+		minFilter = GL_LINEAR;
+		magFilter = GL_LINEAR;
+		
+		wrapModeHorizontal = GL_CLAMP_TO_EDGE;
+		wrapModeVertical = GL_CLAMP_TO_EDGE;
+
 	}
 
 	unsigned int textureID; ///< GL internal texture ID
@@ -148,14 +155,20 @@ public:
 	
 	float tex_t; ///< Texture horiz coordinate, ratio of width to display width. 
 	float tex_u; ///< Texture vert coordinate, ratio of height to display height.
-	float tex_w; ///< Texture width.
-	float tex_h; ///< Texture height.
+	float tex_w; ///< Texture width (in pixels).
+	float tex_h; ///< Texture height (in pixels).
 	float width, height; ///< Texture display size.
 	
 	bool bFlipTexture; ///< Should the texture be flipped vertically?
 	ofTexCompression compressionType; ///< Texture compression type.
 	bool bAllocated; ///< Has the texture been allocated?
 
+	GLint minFilter; ///< Filter to use for minification (reduction)
+	GLint magFilter; ///< Filter to use for magnification (enlargement)
+
+	GLint wrapModeHorizontal; ///< How will the texture wrap around horizontally?
+	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
+	
 private:
 	bool isBound;  ///< Is the texture already bound
 	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
