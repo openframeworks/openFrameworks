@@ -456,8 +456,8 @@ void ofQTKitPlayer::updateTexture(){
 		data.height = getHeight();
 		data.tex_w = getWidth();
 		data.tex_h = getHeight();
-		data.tex_t = getWidth();
-		data.tex_u = getHeight();
+		data.tex_s = getWidth();
+		data.tex_t = getHeight();
 	}
 }
 
