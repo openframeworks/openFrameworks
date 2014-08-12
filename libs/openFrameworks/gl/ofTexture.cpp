@@ -797,12 +797,36 @@ void ofTexture::setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical)
 
 //----------------------------------------------------------
 void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter){
-	bind();
+
+	// Issue warning if mipmaps not present for mipmap based min filter.
+	
+	if ( (minFilter > GL_LINEAR) && texData.hasMipmaps == false ){
+		static bool hasWarnedNoMipmapsForMinFilter = false;
+		if(!hasWarnedNoMipmapsForMinFilter) {
+			ofLogWarning() << "Texture has no mipmaps - but minFilter 0x"<< hex << minFilter << " requires mipmaps."
+			<< endl << "Call ofTexture::generateMipmaps() first.";
+		}
+		hasWarnedNoMipmapsForMinFilter = true;
+		return;
+	}
+
+	// Issue warning if invalid magFilter specified.
+	
+	if ( (magFilter > GL_LINEAR ) ) {
+		static bool hasWarnedInvalidMagFilter = false;
+		if (!hasWarnedInvalidMagFilter) {
+			ofLogWarning() << "magFilter must be either GL_LINEAR or GL_NEAREST.";
+		}
+		hasWarnedInvalidMagFilter = true;
+		return;
+	}
+	
+	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
 	texData.magFilter = magFilter;
 	texData.minFilter = minFilter;
-	unbind();
+	glBindTexture(texData.textureTarget, 0);
 }
 
 //----------------------------------------------------------
