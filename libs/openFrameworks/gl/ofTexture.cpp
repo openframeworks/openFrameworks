@@ -354,10 +354,10 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
 
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, texData.magFilter);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, texData.minFilter);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, texData.wrapModeHorizontal);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, texData.wrapModeVertical);
 
 	#ifndef TARGET_PROGRAMMABLE_GL
 		if (!ofIsGLProgrammableRenderer()){
@@ -822,8 +822,10 @@ ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
 //----------------------------------------------------------
 void ofTexture::setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical) {
 	bind();
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, wrapModeHorizontal);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, wrapModeVertical);
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_S, wrapModeHorizontal);
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_T, wrapModeVertical);
+	texData.wrapModeVertical = wrapModeVertical;
+	texData.wrapModeHorizontal = wrapModeHorizontal;
 	unbind();
 }
 
@@ -832,6 +834,8 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter){
 	bind();
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
+	texData.magFilter = magFilter;
+	texData.minFilter = minFilter;
 	unbind();
 }
 
