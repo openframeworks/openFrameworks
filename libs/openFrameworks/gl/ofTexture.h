@@ -6,21 +6,32 @@
 #include "ofConstants.h"
 #include "ofVboMesh.h"
 
-/// \brief Check whether OF is using ARB rectangular or square textures.
+/// \brief Check whether OF is using GL_TEXTURE_RECTANGLE rectangular or GL_TEXTURE_2D textures.
 /// \sa ofEnableArbTex()
-/// \returns true if using GL ARB textures, false if square textures.
+/// \returns true if using GL_TEXTURE_RECTANGLE textures, false if using GL_TEXTURE_2D textures.
 bool ofGetUsingArbTex();
 
-/// \brief Use GL ARB rectangular textures.
+/// \brief Use GL_TEXTURE_RECTANGLE textures.
 ///
-/// Rectangular textures are generally more useful and are enabled by default.
-/// Traditional GL_TEXTURE_2D square textures are faster on older hardware and
-/// in certain cases.
+/// GL_TEXTURE_RECTANGLE textures are more intuitive since they allow pixel based coordinates
+/// and are enabled by default.
 ///
-/// \warning ARB textures are not available in OpenGL ES.
+/// GL_TEXTURE_2D textures use normalised texture coordinates (a float value between 0 and 1
+/// is used to express texture coordinates along width and height.)
+///
+/// GL_TEXTURE_2D textures are more widely supported and allow advanced features such as
+/// mipmaps and texture compression.
+///
+/// \sa ofDisableArbTex()
+/// \warning GL_TEXTURE_RECTANGLE is not available in OpenGL ES.
+/// \warning GL_TEXTURE_RECTANGLE does not support mipmaps.
 void ofEnableArbTex();
 
-/// \brief Use square GL_TEXTURE_2D textures.
+/// \brief Use GL_TEXTURE_2D textures.
+///
+/// GL_TEXTURE_2D is OpenGL's default way of handling textures and does support
+/// a wider range of core OpenGL features such as mipmaps.
+///
 /// \sa ofEnableArbTex()
 void ofDisableArbTex();
 
