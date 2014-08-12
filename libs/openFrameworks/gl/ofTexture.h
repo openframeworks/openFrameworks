@@ -622,8 +622,6 @@ class ofTexture : public ofBaseDraws {
 
 	/// \brief Set the texture compression.
 	///
-	/// Generates mimaps depending on the compression type.
-	///
 	/// \sa ofTexCompression
 	///
 	void setCompression(ofTexCompression compression);
