@@ -638,6 +638,17 @@ class ofTexture : public ofBaseDraws {
 	///
 	void setCompression(ofTexCompression compression);
 
+	/// \brief Sets flag allowing texture to auto-generate mipmaps
+	///
+	/// If set to true, mipmaps are auto-generated when the texture
+	/// is loaded.
+	///
+	///	If you want to generate mipmaps later, or at a specific
+	/// point in your code, use ofTexture::generateMipmaps() instead.
+	///
+	/// \sa generateMipmaps()
+	void setMipmapAuto(bool shouldGenerateMipmaps_ = true);
+	
 	/// \brief Has the texture been allocated?
 	///
 	/// Legacy function for backwards compatibility.
@@ -681,11 +692,15 @@ class ofTexture : public ofBaseDraws {
 protected:
     void loadData(const void * data, int w, int h, int glFormat, int glType);
 
-
 	void enableTextureTarget(int textureLocation);
 	void disableTextureTarget(int textureLocation);
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
 	ofMesh quad;
+
+private:
+	
+	bool bAutoMipmaps;
+	
 };

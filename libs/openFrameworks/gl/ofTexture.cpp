@@ -153,6 +153,7 @@ ofTexture::ofTexture(){
 	quad.getVertices().resize(4);
 	quad.getTexCoords().resize(4);
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	bAutoMipmaps = false;
 }
 
 //----------------------------------------------------------
@@ -161,6 +162,7 @@ ofTexture::ofTexture(const ofTexture & mom){
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
 	quad = mom.quad;
+	bAutoMipmaps = mom.bAutoMipmaps;
 	retain(texData.textureID);
 }
 
@@ -173,6 +175,7 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
 	quad = mom.quad;
+	bAutoMipmaps = mom.bAutoMipmaps;
 	retain(texData.textureID);
 	return *this;
 }
@@ -508,6 +511,10 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 	// unbind texture target by binding 0
 	glBindTexture(texData.textureTarget, 0);
 	
+	if (bAutoMipmaps) {
+		// auto-generate mipmaps, since this ofTexture wants us to.
+		generateMipmaps();
+	}
 	
 }
 
@@ -608,6 +615,10 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	glCopyTexSubImage2D(texData.textureTarget, 0,0,0,x,y,w,h);
 
 	disableTextureTarget(0);
+	
+	if (bAutoMipmaps) {
+		generateMipmaps();
+	}
 }
 
 
@@ -797,6 +808,11 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter){
 //----------------------------------------------------------
 void ofTexture::setCompression(ofTexCompression compression){
 	texData.compressionType = compression;
+}
+
+//------------------------------------
+void ofTexture::setMipmapAuto(bool shouldGenerateMipmaps_){
+	bAutoMipmaps = shouldGenerateMipmaps_;
 }
 
 //------------------------------------
