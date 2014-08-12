@@ -501,17 +501,16 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		texData.tex_t = (float)(h) / (float)texData.tex_h;
 	}
 	
-	if (texData.compressionType == OF_COMPRESS_NONE) {
-		//STANDARD openFrameworks: no compression
-		
-		//update the texture image: 
-		enableTextureTarget(0);
+	// bind texture
+	glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+	//update the texture image:
+	glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
+	// unbind texture target by binding 0
+	glBindTexture(texData.textureTarget, 0);
+	
+	
 
-		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
-		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
-		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
 
- 		disableTextureTarget(0);
 	}
 	
 }
