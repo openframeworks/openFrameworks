@@ -501,29 +501,6 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		texData.tex_t = (float)(h) / (float)texData.tex_h;
 	}
 	
-	
-	// 	ok this is an ultra annoying bug :
-	// 	opengl texels and linear filtering -
-	// 	when we have a sub-image, and we scale it
-	// 	we can clamp the border pixels to the border,
-	//  but the borders of the sub image get mixed with
-	//  neighboring pixels...
-	//  grr...
-	//
-	//  the best solution would be to pad out the image
-	// 	being uploaded with 2 pixels on all sides, and
-	//  recompute tex_t coordinates..
-	//  another option is a gl_arb non pow 2 textures...
-	//  the current hack is to alter the tex_t, tex_u calcs, but
-	//  that makes the image slightly off...
-	//  this is currently being done in draw...
-	//
-	// 	we need a good solution for this..
-	//
-	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
-	
-	
-	//Sosolimited: texture compression
 	if (texData.compressionType == OF_COMPRESS_NONE) {
 		//STANDARD openFrameworks: no compression
 		
@@ -535,81 +512,6 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
 
  		disableTextureTarget(0);
-	} else {
-		//SOSOLIMITED: setup mipmaps and use compression
-		//TODO: activate at least mimaps for OPENGL_ES
-		//need proper tex_u and tex_t positions, with mipmaps they are the nearest power of 2
-#ifndef TARGET_OPENGLES		
-		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
-			
-			//need to find closest powers of two
-			int last_h = ofNextPow2(texData.height)>>1;
-			int next_h = ofNextPow2(texData.height);
-			if ((texData.height - last_h) < (next_h - texData.height)) texData.tex_u = last_h;
-			else texData.tex_u = next_h;
-			
-			int last_w = ofNextPow2(texData.width)>>1;
-			int next_w = ofNextPow2(texData.width);
-			if ((texData.width - last_w) < (next_w - texData.width)) texData.tex_t = last_w;
-			else texData.tex_t = next_w;
-		}
-#endif
-		enableTextureTarget(0);
-		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
-		
-		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-#ifndef TARGET_PROGRAMMABLE_GL
-		if(!ofGetGLProgrammableRenderer()){
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		}
-#endif
-#ifndef TARGET_OPENGLES		
-		glTexParameteri(texData.textureTarget, GL_GENERATE_MIPMAP_SGIS, true);
-#endif
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 2);
-		
-		
-#ifndef TARGET_OPENGLES		
-		//using sRGB compression
-		if (texData.compressionType == OF_COMPRESS_SRGB)
-		{
-			if(texData.glTypeInternal == GL_RGBA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_RGB)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_LUMINANCE_ALPHA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_LUMINANCE)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
-		}
-		
-		//using ARB compression: default
-		else
-		{
-			if(texData.glTypeInternal == GL_RGBA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGBA_ARB, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_RGB)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGB_ARB, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_LUMINANCE_ALPHA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ALPHA_ARB, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_LUMINANCE)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ARB, w, h, glFormat, glType, data);
-		}
-#endif
-		
-
-		disableTextureTarget(0);
-		
 	}
 	
 }
