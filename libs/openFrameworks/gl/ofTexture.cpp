@@ -74,7 +74,7 @@ void ofRestoreTextureWrap(){
 }
 
 //----------------------------------------------------------
-void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
+void ofSetMinMagFilters(GLfloat minFilter, GLfloat magFilter){
 	bUseCustomMinMagFilters = true;
 	GLenum textureTarget = GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
@@ -83,7 +83,7 @@ void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
 	};
 #endif
 	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
+	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
 }
 
 //----------------------------------------------------------
@@ -828,9 +828,9 @@ void ofTexture::setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical)
 }
 
 //----------------------------------------------------------
-void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint maxFilter){
+void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter){
 	bind();
-	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
 	unbind();
 }
