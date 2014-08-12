@@ -45,6 +45,7 @@ function build_osx() {
       -DCMAKE_OSX_ARCHITECTURES="x86_64" \
       -DENABLE_FAST_MATH=ON \
       -DCMAKE_CXX_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
+      -DCMAKE_C_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
       -DCMAKE_BUILD_TYPE="Release" \
       -DBUILD_SHARED_LIBS=OFF \
       -DBUILD_DOCS=OFF \
@@ -83,6 +84,7 @@ function build_osx() {
       -DCMAKE_OSX_ARCHITECTURES="i386" \
       -DENABLE_FAST_MATH=ON \
       -DCMAKE_CXX_FLAGS="-fvisibility-inlines-hidden -stdlib=libstdc++ -O3" \
+      -DCMAKE_C_FLAGS="-fvisibility-inlines-hidden -stdlib=libstdc++ -O3" \
       -DCMAKE_BUILD_TYPE="Release" \
       -DBUILD_SHARED_LIBS=OFF \
       -DBUILD_DOCS=OFF \
@@ -248,7 +250,7 @@ function build() {
 	mkdir -p $LIB_FOLDER/lib
  
     # lipo shit together
-    make_universal_binary "$LIB_FOLDER_IOS" "$LIB_FOLDER64" "$LIB_FOLDER32"
+    make_universal_binary "$LIB_FOLDER64" "$LIB_FOLDER32" "$LIB_FOLDER" 
 
     # copy headers
     cp -R $LIB_FOLDER64/include/opencv $LIB_FOLDER/include/opencv
