@@ -194,20 +194,26 @@ PLATFORM_HEADER_SEARCH_PATHS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_LIBRARIES += opengl32 gdi32 msimg32 glu32 dsound winmm dxguid strmbase strmiids 
-PLATFORM_LIBRARIES += z uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
+PLATFORM_LIBRARIES += opengl32 gdi32 msimg32 glu32 dsound winmm dxguid strmiids 
+PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
 
 #static libraries (fully qualified paths)
-# First two lines are hacks. libssl and libcrypto need to come *after* Poco libs for the
-# linker. All platform libs get put into the linker call *after* core libs. By putting
-# libssl and libcrypto here, they get pulled out of core and grouped into platform libs.
-PLATFORM_STATIC_LIBRARIES += ../../../libs/openssl/lib/win_cb/libssl.a
-PLATFORM_STATIC_LIBRARIES += ../../../libs/openssl/lib/win_cb/libcrypto.a
-PLATFORM_STATIC_LIBRARIES += ../../../libs/videoInput/lib/win_cb/videoInputLib.a 
-PLATFORM_STATIC_LIBRARIES += ../../../libs/FreeImage/lib/win_cb/FreeImage.lib 
-PLATFORM_STATIC_LIBRARIES += ../../../libs/quicktime/lib/win_cb/qtmlClient.lib 
-PLATFORM_STATIC_LIBRARIES += ../../../libs/glew/lib/win_cb/glew32s.lib 
-PLATFORM_STATIC_LIBRARIES += ../../../libs/glu/lib/win_cb/glu32.lib
+# libssl and libcrypto need to come *after* Poco libs for the linker, and the Poco libs 
+# need to be linked in the right order.
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoZip.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libssl.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libcrypto.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/videoInput/lib/$(ABI_LIB_SUBPATH)/videoInputLib.a 
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/FreeImage/lib/$(ABI_LIB_SUBPATH)/FreeImage.lib 
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/quicktime/lib/$(ABI_LIB_SUBPATH)/qtmlClient.lib 
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/glew/lib/$(ABI_LIB_SUBPATH)/glew32s.lib 
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/glu/lib/$(ABI_LIB_SUBPATH)/glu32.lib
 
 # shared libraries 
 PLATFORM_SHARED_LIBRARIES =
