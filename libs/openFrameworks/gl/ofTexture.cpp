@@ -509,12 +509,67 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 	glBindTexture(texData.textureTarget, 0);
 	
 	
-
-
-	}
-	
 }
 
+//----------------------------------------------------------
+void ofTexture::generateMipmaps(){
+
+	// Generate mipmaps using hardware-accelerated core GL methods.
+	
+	// 1. Check whether the current OpenGL version supports mipmap generation:
+	//    glGenerateMipmaps() was introduced to OpenGL core in 3.0, but earlier
+	//    versions support it if they support extension GL_EXT_framebuffer_object
+
+	if (ofGetOpenGLVersionMajor() < 3 && !ofGLCheckExtension("GL_EXT_framebuffer_object")) {
+		static bool versionWarningIssued = false;
+		if (!versionWarningIssued) ofLogWarning() << "Your current OpenGL version does not support mipmap generation via glGenerateMipmap().";
+		versionWarningIssued = true;
+		texData.hasMipmaps = false;
+		return;
+	}
+
+	// 2. Check whether the texture's texture target supports mipmap generation.
+	
+	switch (texData.textureTarget) {
+			/// OpenGL ES only supports mipmaps for the following two texture targets:
+		case GL_TEXTURE_2D:
+		case GL_TEXTURE_CUBE_MAP:
+#ifndef TARGET_OPENGLES
+			/// OpenGL supports mipmaps for additional texture targets:
+		case GL_TEXTURE_1D:
+		case GL_TEXTURE_3D:
+		case GL_TEXTURE_1D_ARRAY:
+		case GL_TEXTURE_2D_ARRAY:
+#endif
+		{
+			// All good, this particular texture target supports mipmaps.
+			
+			// glEnable(texData.textureTarget);	/// < uncomment this hack if you are unlucky enough to run an older ATI card.
+			// See also: https://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
+
+			glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+			glGenerateMipmap(texData.textureTarget);
+			glBindTexture(texData.textureTarget, 0);
+			texData.hasMipmaps = true;
+			break;
+		}
+		default:
+		{
+			// This particular texture target does not support mipmaps.
+			static bool warningIssuedAlready = false;
+			
+			if (!warningIssuedAlready){
+				ofLogWarning() << "Mipmaps are not supported for textureTarget 0x" << hex << texData.textureTarget << endl
+				<< "Most probably you are trying to create mipmaps from a GL_TEXTURE_RECTANGLE texture." << endl
+				<< "Try ofDisableArbTex() before loading this texture.";
+				warningIssuedAlready = true;
+			}
+			texData.hasMipmaps = false;
+			break;
+		}
+	} // end switch(texData.textureTarget)
+		
+}
 
 //----------------------------------------------------------
 void ofTexture::loadScreenData(int x, int y, int w, int h){

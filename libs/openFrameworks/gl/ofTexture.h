@@ -156,6 +156,7 @@ public:
 		
 		wrapModeHorizontal = GL_CLAMP_TO_EDGE;
 		wrapModeVertical = GL_CLAMP_TO_EDGE;
+		hasMipmaps = false;
 
 	}
 
@@ -187,7 +188,7 @@ private:
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
-
+	bool hasMipmaps; ///< True if mipmaps have been generated for this texture, false by default.
 	friend class ofTexture;
 
 };
@@ -397,6 +398,17 @@ class ofTexture : public ofBaseDraws {
 	///
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
+	/// \brief Generate mipmaps for the current texture.
+	///
+	/// \warning Only GL_TEXTURE_RECTANGLE - which is the default openFrameworks
+	/// texture target - does *not* support mipmaps, so make sure to call
+	/// ofDisableArbTex() before loading texture
+	/// data for a texture you want to generate mipmaps for.
+	///
+	/// \sa ofEnableArbTex()
+	/// \sa ofDisableArbTex()
+	void generateMipmaps();
+	
     /// \todo Define Swizzle in the documentation.
 
 	/// \brief Swizzle RGBA to grayscale with alpha in the red channel.
