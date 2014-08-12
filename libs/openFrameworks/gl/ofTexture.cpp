@@ -320,8 +320,8 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB && ofGLSupportsNPOTTextures() ){
 		texData.tex_w = texData.width;
 		texData.tex_h = texData.height;
-		texData.tex_t = texData.width;
-		texData.tex_u = texData.height;
+		texData.tex_s = texData.width;
+		texData.tex_t = texData.height;
 	}else
 #endif
 	{
@@ -335,8 +335,8 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 			texData.tex_h = ofNextPow2(texData.height);
 		}
 
-		texData.tex_t = texData.width / texData.tex_w;
-		texData.tex_u = texData.height / texData.tex_h;
+		texData.tex_s = texData.width / texData.tex_w;
+		texData.tex_t = texData.height / texData.tex_h;
 
 #ifndef TARGET_OPENGLES
 		if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB ) texData.textureTarget = GL_TEXTURE_2D;
@@ -492,13 +492,13 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
-		texData.tex_t = w;
-		texData.tex_u = h;
+		texData.tex_s = w;
+		texData.tex_t = h;
 	} else 
 #endif
 	{
-		texData.tex_t = (float)(w) / (float)texData.tex_w;
-		texData.tex_u = (float)(h) / (float)texData.tex_h;
+		texData.tex_s = (float)(w) / (float)texData.tex_w;
+		texData.tex_t = (float)(h) / (float)texData.tex_h;
 	}
 	
 	
@@ -637,15 +637,14 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES // DAMIAN
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
-		texData.tex_t = (float)(w);
-		texData.tex_u = (float)(h);
+		texData.tex_s = (float)(w);
+		texData.tex_t = (float)(h);
 	} else 
 #endif
 	{
-		texData.tex_t = (float)(w) / (float)texData.tex_w;
-		texData.tex_u = (float)(h) / (float)texData.tex_h;
+		texData.tex_s = (float)(w) / (float)texData.tex_w;
+		texData.tex_t = (float)(h) / (float)texData.tex_h;
 	}
-	
 	
 	enableTextureTarget(0);
 
@@ -769,8 +768,8 @@ ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
 		
 		// (b) mult by our internal pct (since we might not be 0-1 internally)
 		
-		pctx *= texData.tex_t;
-		pcty *= texData.tex_u;
+		pctx *= texData.tex_s;
+		pcty *= texData.tex_t;
 		
 		temp.set(pctx, pcty);
 		
@@ -808,8 +807,8 @@ ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
 		
 	} else {
 #endif	
-		xPct *= texData.tex_t;
-		yPct *= texData.tex_u;
+		xPct *= texData.tex_s;
+		yPct *= texData.tex_t;
 		temp.set(xPct, yPct);
 		
 #ifndef TARGET_OPENGLES	
@@ -991,8 +990,8 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	
 	GLfloat tx0 = 0+offsetw;
 	GLfloat ty0 = 0+offseth;
-	GLfloat tx1 = texData.tex_t - offsetw;
-	GLfloat ty1 = texData.tex_u - offseth;
+	GLfloat tx1 = texData.tex_s - offsetw;
+	GLfloat ty1 = texData.tex_t - offseth;
 
 	quad.getVertices()[0].set(p1.x, p1.y);
 	quad.getVertices()[1].set(p2.x, p2.y);
