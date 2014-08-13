@@ -118,8 +118,8 @@ public:
 		textureTarget = GL_TEXTURE_2D;
 #endif
 
+		tex_s = 0;
 		tex_t = 0;
-		tex_u = 0;
 		tex_w = 0;
 		tex_h = 0;
 		width = 0;
@@ -139,8 +139,8 @@ public:
 	int glTypeInternal; ///< GL internal format, e.g. GL_RGB8.
                         ///< \sa http://www.opengl.org/wiki/Image_Format
 	
-	float tex_t; ///< Texture horiz coordinate, ratio of width to display width. 
-	float tex_u; ///< Texture vert coordinate, ratio of height to display height.
+	float tex_s; ///< Texture horiz coordinate, ratio of width to display width.
+	float tex_t; ///< Texture vert coordinate, ratio of height to display height.
 	float tex_w; ///< Texture width.
 	float tex_h; ///< Texture height.
 	float width, height; ///< Texture display size.
