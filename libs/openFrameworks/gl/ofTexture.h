@@ -156,7 +156,7 @@ public:
 		
 		wrapModeHorizontal = GL_CLAMP_TO_EDGE;
 		wrapModeVertical = GL_CLAMP_TO_EDGE;
-		hasMipmaps = false;
+		hasMipmap = false;
 
 	}
 
@@ -188,7 +188,7 @@ private:
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
-	bool hasMipmaps; ///< True if mipmaps have been generated for this texture, false by default.
+	bool hasMipmap; ///< True if mipmap has been generated for this texture, false by default.
 	friend class ofTexture;
 
 };
@@ -398,7 +398,7 @@ class ofTexture : public ofBaseDraws {
 	///
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
-	/// \brief Generate mipmaps for the current texture.
+	/// \brief Generate mipmap for the current texture.
 	///
 	/// \warning Only GL_TEXTURE_RECTANGLE - which is the default openFrameworks
 	/// texture target - does *not* support mipmaps, so make sure to call
@@ -407,7 +407,7 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \sa ofEnableArbTex()
 	/// \sa ofDisableArbTex()
-	void generateMipmaps();
+	void generateMipmap();
 	
     /// \todo Define Swizzle in the documentation.
 
@@ -623,8 +623,6 @@ class ofTexture : public ofBaseDraws {
 	/// \param magFilter magnifying filter for scaling a pixel to a larger area.
 	void setTextureMinMagFilter(GLint minFilter, GLint magFilter);
 
-
-
 	/// Sets a texture matrix that will be uploaded whenever the texture is
 	/// binded.
 	void setTextureMatrix(const ofMatrix4x4 & m);
@@ -638,16 +636,31 @@ class ofTexture : public ofBaseDraws {
 	/// \sa ofTexCompression
 	void setCompression(ofTexCompression compression);
 
-	/// \brief Sets flag allowing texture to auto-generate mipmaps
+	/// \brief Sets flag allowing texture to auto-generate mipmap
 	///
-	/// If set to true, mipmaps are auto-generated when the texture
-	/// is loaded.
+	/// By default, this will set your minFilter to GL_LINEAR_MIPMAP_LINEAR.
+	/// If you want to change your minFilter later use setTextureMinMagFilter()
 	///
-	///	If you want to generate mipmaps later, or at a specific
-	/// point in your code, use ofTexture::generateMipmaps() instead.
+	///	If you want to generate a mipmap later, or at a specific
+	/// point in your code, use ofTexture::generateMipmap() instead.
 	///
-	/// \sa generateMipmaps()
-	void setMipmapAuto(bool shouldGenerateMipmaps_ = true);
+	/// \sa generateMipmap()
+	/// \sa disableMipmap()
+	/// \sa setTextureMinMagFilter()
+	void enableMipmap();
+
+	/// \brief Sets flag allowing texture to auto-generate mipmap
+	///
+	/// By default, this will set your minFilter to GL_LINEAR_MIPMAP_LINEAR.
+	/// If you want to change your minFilter later use setTextureMinMagFilter()
+	///
+	///	If you want to generate a mipmap later, or at a specific
+	/// point in your code, use ofTexture::generateMipmap() instead.
+	///
+	/// \sa generateMipmap()
+	/// \sa enableMipmap()
+	/// \sa setTextureMinMagFilter()
+	void disableMipmap();
 	
 	/// \brief Has the texture been allocated?
 	///
@@ -701,6 +714,6 @@ protected:
 
 private:
 	
-	bool bAutoMipmaps;
+	bool bWantsMipmap;
 	
 };
