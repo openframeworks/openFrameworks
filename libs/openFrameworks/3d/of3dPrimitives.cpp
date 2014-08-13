@@ -137,7 +137,7 @@ void of3dPrimitive::mapTexCoordsFromTexture( ofTexture& inTexture ) {
     
     ofTextureData& tdata = inTexture.getTextureData();
     if(bNormalized)
-        mapTexCoords( 0, 0, tdata.tex_s, tdata.tex_t );
+        mapTexCoords( 0, 0, tdata.tex_t, tdata.tex_u );
     else
         mapTexCoords(0, 0, inTexture.getWidth(), inTexture.getHeight());
     
