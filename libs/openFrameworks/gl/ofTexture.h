@@ -634,8 +634,8 @@ class ofTexture : public ofBaseDraws {
 
 	/// \brief Set the texture compression.
 	///
+	/// \warning: not yet implemented.
 	/// \sa ofTexCompression
-	///
 	void setCompression(ofTexCompression compression);
 
 	/// \brief Sets flag allowing texture to auto-generate mipmaps
