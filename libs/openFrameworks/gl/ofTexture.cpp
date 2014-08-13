@@ -822,12 +822,13 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter){
 		return;
 	}
 	
-	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+	bool wasBound = texData.isBound;
+	if (!wasBound) bind();
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
 	texData.magFilter = magFilter;
 	texData.minFilter = minFilter;
-	glBindTexture(texData.textureTarget, 0);
+	if (!wasBound) unbind();
 }
 
 //----------------------------------------------------------
