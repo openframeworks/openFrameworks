@@ -153,7 +153,7 @@ ofTexture::ofTexture(){
 	quad.getVertices().resize(4);
 	quad.getTexCoords().resize(4);
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
-	bAutoMipmaps = false;
+	bWantsMipmap = false;
 }
 
 //----------------------------------------------------------
@@ -162,7 +162,7 @@ ofTexture::ofTexture(const ofTexture & mom){
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
 	quad = mom.quad;
-	bAutoMipmaps = mom.bAutoMipmaps;
+	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
 }
 
@@ -175,7 +175,7 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
 	quad = mom.quad;
-	bAutoMipmaps = mom.bAutoMipmaps;
+	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
 	return *this;
 }
@@ -511,34 +511,34 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 	// unbind texture target by binding 0
 	glBindTexture(texData.textureTarget, 0);
 	
-	if (bAutoMipmaps) {
-		// auto-generate mipmaps, since this ofTexture wants us to.
-		generateMipmaps();
+	if (bWantsMipmap) {
+		// auto-generate mipmap, since this ofTexture wants us to.
+		generateMipmap();
 	}
 	
 }
 
 //----------------------------------------------------------
-void ofTexture::generateMipmaps(){
+void ofTexture::generateMipmap(){
 
 	// Generate mipmaps using hardware-accelerated core GL methods.
 	
 	// 1. Check whether the current OpenGL version supports mipmap generation:
-	//    glGenerateMipmaps() was introduced to OpenGL core in 3.0, but earlier
+	//    glGenerateMipmap() was introduced to OpenGL core in 3.0, but earlier
 	//    versions support it if they support extension GL_EXT_framebuffer_object
 
 	if (ofGetOpenGLVersionMajor() < 3 && !ofGLCheckExtension("GL_EXT_framebuffer_object")) {
 		static bool versionWarningIssued = false;
 		if (!versionWarningIssued) ofLogWarning() << "Your current OpenGL version does not support mipmap generation via glGenerateMipmap().";
 		versionWarningIssued = true;
-		texData.hasMipmaps = false;
+		texData.hasMipmap = false;
 		return;
 	}
 
 	// 2. Check whether the texture's texture target supports mipmap generation.
 	
 	switch (texData.textureTarget) {
-			/// OpenGL ES only supports mipmaps for the following two texture targets:
+			/// OpenGL ES only supports mipmap for the following two texture targets:
 		case GL_TEXTURE_2D:
 		case GL_TEXTURE_CUBE_MAP:
 #ifndef TARGET_OPENGLES
@@ -557,7 +557,7 @@ void ofTexture::generateMipmaps(){
 			glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
 			glGenerateMipmap(texData.textureTarget);
 			glBindTexture(texData.textureTarget, 0);
-			texData.hasMipmaps = true;
+			texData.hasMipmap = true;
 			break;
 		}
 		default:
@@ -571,7 +571,7 @@ void ofTexture::generateMipmaps(){
 				<< "Try ofDisableArbTex() before loading this texture.";
 				warningIssuedAlready = true;
 			}
-			texData.hasMipmaps = false;
+			texData.hasMipmap = false;
 			break;
 		}
 	} // end switch(texData.textureTarget)
@@ -617,8 +617,8 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 
 	disableTextureTarget(0);
 	
-	if (bAutoMipmaps) {
-		generateMipmaps();
+	if (bWantsMipmap) {
+		generateMipmap();
 	}
 }
 
@@ -801,7 +801,7 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter){
 
 	// Issue warning if mipmaps not present for mipmap based min filter.
 	
-	if ( (minFilter > GL_LINEAR) && texData.hasMipmaps == false ){
+	if ( (minFilter > GL_LINEAR) && texData.hasMipmap == false ){
 		static bool hasWarnedNoMipmapsForMinFilter = false;
 		if(!hasWarnedNoMipmapsForMinFilter) {
 			ofLogWarning() << "Texture has no mipmaps - but minFilter 0x"<< hex << minFilter << " requires mipmaps."
@@ -836,8 +836,15 @@ void ofTexture::setCompression(ofTexCompression compression){
 }
 
 //------------------------------------
-void ofTexture::setMipmapAuto(bool shouldGenerateMipmaps_){
-	bAutoMipmaps = shouldGenerateMipmaps_;
+void ofTexture::enableMipmap(){
+	bWantsMipmap = true;
+	texData.minFilter = GL_LINEAR_MIPMAP_LINEAR;
+}
+
+//------------------------------------
+void ofTexture::disableMipmap(){
+	bWantsMipmap = false;
+	texData.minFilter = GL_LINEAR;
 }
 
 //------------------------------------
