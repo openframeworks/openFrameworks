@@ -12,7 +12,9 @@ namespace ofxCv {
 		KalmanFilter KF;
 		Mat_<T> measurement, prediction, estimated;
 	public:
-		void init(T smoothness = 0.1, T rapidness = 0.1); // smaller is more smooth/rapid
+		// smoothness, rapidness: smaller is more smooth/rapid
+		// bUseAccel: set true to smooth out velocity
+		void init(T smoothness = 0.1, T rapidness = 0.1, bool bUseAccel = false);
 		void update(const ofVec3f&);
 		ofVec3f getPrediction();
 		ofVec3f getEstimation();
@@ -26,7 +28,7 @@ namespace ofxCv {
 	class KalmanEuler_ : public KalmanPosition_<T> {
 		ofVec3f eulerPrev; // used for finding appropriate dimension
 	public:
-		void init(T smoothness = 0.1, T rapidness = 0.1); // smaller is more smooth/rapid
+		void init(T smoothness = 0.1, T rapidness = 0.1, bool bUseAccel = false);
 		void update(const ofQuaternion&);
 		ofQuaternion getPrediction();
 		ofQuaternion getEstimation();
