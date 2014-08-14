@@ -37,50 +37,49 @@ bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
 	if(isLoaded()){
 		close(); //auto released 
 	}
-    
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    
-    decodeMode = mode;
-	bool useTexture = (mode == OF_QTKIT_DECODE_TEXTURE_ONLY || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
-	bool usePixels  = (mode == OF_QTKIT_DECODE_PIXELS_ONLY  || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
-	bool useAlpha = (pixelFormat == OF_PIXELS_RGBA);
 
-    bool isURL = false;
-	
-    if (Poco::icompare(movieFilePath.substr(0,7), "http://")  == 0 ||
-        Poco::icompare(movieFilePath.substr(0,8), "https://") == 0 ||
-        Poco::icompare(movieFilePath.substr(0,7), "rtsp://")  == 0) {
-        isURL = true;
-    }
-    else {
-        movieFilePath = ofToDataPath(movieFilePath, false);
-    }
+	BOOL success = NO;
+	@autoreleasepool {
+		decodeMode = mode;
+		bool useTexture = (mode == OF_QTKIT_DECODE_TEXTURE_ONLY || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
+		bool usePixels  = (mode == OF_QTKIT_DECODE_PIXELS_ONLY  || mode == OF_QTKIT_DECODE_PIXELS_AND_TEXTURE);
+		bool useAlpha = (pixelFormat == OF_PIXELS_RGBA);
 
-	moviePlayer = [[QTKitMovieRenderer alloc] init];
-	BOOL success = [moviePlayer loadMovie:[NSString stringWithCString:movieFilePath.c_str() encoding:NSUTF8StringEncoding]
-								pathIsURL:isURL
-							 allowTexture:useTexture 
-							  allowPixels:usePixels
-                               allowAlpha:useAlpha];
-	
-	if(success){
-		moviePlayer.synchronousSeek = bSynchronousSeek;
-        reallocatePixels();
-        moviePath = movieFilePath;
-		duration = moviePlayer.duration;
+		bool isURL = false;
 
-        setLoopState(currentLoopState);
-        setSpeed(1.0f);
-		firstFrame(); //will load the first frame
+		if (Poco::icompare(movieFilePath.substr(0,7), "http://")  == 0 ||
+			Poco::icompare(movieFilePath.substr(0,8), "https://") == 0 ||
+			Poco::icompare(movieFilePath.substr(0,7), "rtsp://")  == 0) {
+			isURL = true;
+		}
+		else {
+			movieFilePath = ofToDataPath(movieFilePath, false);
+		}
+
+		moviePlayer = [[QTKitMovieRenderer alloc] init];
+		success = [moviePlayer loadMovie:[NSString stringWithCString:movieFilePath.c_str() encoding:NSUTF8StringEncoding]
+                               pathIsURL:isURL
+                            allowTexture:useTexture
+                             allowPixels:usePixels
+                              allowAlpha:useAlpha];
+
+		if(success){
+			moviePlayer.synchronousSeek = bSynchronousSeek;
+			reallocatePixels();
+			moviePath = movieFilePath;
+			duration = moviePlayer.duration;
+
+			setLoopState(currentLoopState);
+			setSpeed(1.0f);
+			firstFrame(); //will load the first frame
+		}
+		else {
+			ofLogError("ofQTKitPlayer") << "loadMovie(): couldn't load \"" << movieFilePath << "\"";
+			[moviePlayer release];
+			moviePlayer = NULL;
+		}
 	}
-	else {
-		ofLogError("ofQTKitPlayer") << "loadMovie(): couldn't load \"" << movieFilePath << "\"";
-		[moviePlayer release];
-		moviePlayer = NULL;
-	}
-	
-	[pool release];
-	
+
 	return success;
 }
 
@@ -98,10 +97,10 @@ bool ofQTKitPlayer::isLoaded() {
 void ofQTKitPlayer::close() {
 	
 	if(isLoaded()){
-        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-		[moviePlayer release];
-		moviePlayer = NULL;
-        [pool release];
+		@autoreleasepool {
+			[moviePlayer release];
+			moviePlayer = NULL;
+		}
 	}
 	
 	pixels.clear();
@@ -110,20 +109,17 @@ void ofQTKitPlayer::close() {
 
 //--------------------------------------------------------------------
 void ofQTKitPlayer::setPaused(bool _bPaused){
-    if(!isLoaded()) return;
+	if(!isLoaded()) return;
 
-    bPaused = _bPaused;
-    
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+	bPaused = _bPaused;
 
-	if (bPaused) {
-		[moviePlayer setRate:0.0f];
-	} else {
-		[moviePlayer setRate:speed];
+	@autoreleasepool {
+		if (bPaused) {
+			[moviePlayer setRate:0.0f];
+		} else {
+			[moviePlayer setRate:speed];
+		}
 	}
-
-	[pool release];
-    
 }
 
 //--------------------------------------------------------------------
@@ -147,55 +143,54 @@ bool ofQTKitPlayer::isPlaying(){
 void ofQTKitPlayer::firstFrame(){
 	if(!isLoaded()) return;
 
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [moviePlayer gotoBeginning];
-	bHavePixelsChanged = bNewFrame = bSynchronousSeek;
-    [pool release];
+	@autoreleasepool {
+		[moviePlayer gotoBeginning];
+		bHavePixelsChanged = bNewFrame = bSynchronousSeek;
+	}
 }
 
 //--------------------------------------------------------------------
 void ofQTKitPlayer::nextFrame(){
-    if(!isLoaded()) return;
+	if(!isLoaded()) return;
 
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [moviePlayer stepForward];
-	bHavePixelsChanged = bNewFrame = bSynchronousSeek;
-    [pool release];
+	@autoreleasepool {
+		[moviePlayer stepForward];
+		bHavePixelsChanged = bNewFrame = bSynchronousSeek;
+	}
 }
 
 //--------------------------------------------------------------------
 void ofQTKitPlayer::previousFrame(){
-    if(!isLoaded()) return;
+	if(!isLoaded()) return;
 
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [moviePlayer stepBackward];
-	bHavePixelsChanged = bNewFrame = bSynchronousSeek;
-    [pool release];
-    
+	@autoreleasepool {
+		[moviePlayer stepBackward];
+		bHavePixelsChanged = bNewFrame = bSynchronousSeek;
+	}
 }
 
 //--------------------------------------------------------------------
 void ofQTKitPlayer::setSpeed(float rate){
 	if(!isLoaded()) return;
 
-    speed = rate;
+	speed = rate;
 
-    if(isPlaying()) {
-        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-        [moviePlayer setRate:rate];
-        [pool release];
-    }
+	if(isPlaying()) {
+		@autoreleasepool {
+			[moviePlayer setRate:rate];
+		}
+	}
 }
 
 //--------------------------------------------------------------------
 void ofQTKitPlayer::play(){
 	if(!isLoaded()) return;
-    
-    bPaused = false;
-    
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [moviePlayer setRate:speed];
-	[pool release];
+
+	bPaused = false;
+
+	@autoreleasepool {
+		[moviePlayer setRate:speed];
+	}
 }
 
 //--------------------------------------------------------------------
@@ -206,12 +201,13 @@ void ofQTKitPlayer::idleMovie() {
 //--------------------------------------------------------------------
 void ofQTKitPlayer::update() {
 	if(!isLoaded()) return;
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	bNewFrame = [moviePlayer update];
-	if (bNewFrame) {
-		bHavePixelsChanged = true;
+
+	@autoreleasepool {
+		bNewFrame = [moviePlayer update];
+		if (bNewFrame) {
+			bHavePixelsChanged = true;
+		}
 	}
-    [pool release];
 }
 
 //--------------------------------------------------------------------
@@ -232,21 +228,19 @@ void ofQTKitPlayer::draw(float x, float y, float w, float h) {
 
 //--------------------------------------------------------------------
 ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
-	if(isLoaded() && moviePlayer.usePixels) {
-	   //don't get the pixels every frame if it hasn't updated
-	   if(bHavePixelsChanged){
-		   [moviePlayer pixels:pixels.getPixels()];
-		   bHavePixelsChanged = false;
-	   }
+	@autoreleasepool {
+		if(isLoaded() && moviePlayer.usePixels) {
+			//don't get the pixels every frame if it hasn't updated
+			if(bHavePixelsChanged){
+				[moviePlayer pixels:pixels.getPixels()];
+				bHavePixelsChanged = false;
+			}
+		}
+		else{
+			ofLogError("ofQTKitPlayer") << "getPixelsRef(): returning pixels that may be unallocated, make sure to initialize the video player before calling this function";
+		}
 	}
-    else{
-        ofLogError("ofQTKitPlayer") << "getPixelsRef(): returning pixels that may be unallocated, make sure to initialize the video player before calling this function";
-    }
-
-    [pool release];
-	return pixels;	   
+	return pixels;
 }
 
 //--------------------------------------------------------------------
@@ -269,40 +263,40 @@ ofTexture* ofQTKitPlayer::getTexture() {
 void ofQTKitPlayer::setPosition(float pct) {
 	if(!isLoaded()) return;
 
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [moviePlayer setPosition:pct];
-	[pool release];
-    
-    bHavePixelsChanged = bNewFrame = bSynchronousSeek;
+	@autoreleasepool {
+		[moviePlayer setPosition:pct];
+	}
+
+	bHavePixelsChanged = bNewFrame = bSynchronousSeek;
 }
 
 //--------------------------------------------------------------------
 void ofQTKitPlayer::setVolume(float volume) {
 	if(!isLoaded()) return;
-	
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	[moviePlayer setVolume:volume];
-	[pool release];
+
+	@autoreleasepool {
+		[moviePlayer setVolume:volume];
+	}
 }
 
 //--------------------------------------------------------------------
 void ofQTKitPlayer::setBalance(float balance) {
 	if(!isLoaded()) return;
 	
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	[moviePlayer setBalance:balance];
-	[pool release];
+	@autoreleasepool {
+		[moviePlayer setBalance:balance];
+	}
 }
 
 //--------------------------------------------------------------------
 void ofQTKitPlayer::setFrame(int frame) {
 	if(!isLoaded()) return;
-    
-    frame %= [moviePlayer frameCount];
-    
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    [moviePlayer setFrame:frame];
-	[pool release];
+
+	frame %= [moviePlayer frameCount];
+
+	@autoreleasepool {
+		[moviePlayer setFrame:frame];
+	}
 
 	bHavePixelsChanged = bNewFrame = bSynchronousSeek;
 }
@@ -322,24 +316,23 @@ int ofQTKitPlayer::getTotalNumFrames() {
 //--------------------------------------------------------------------
 void ofQTKitPlayer::setLoopState(ofLoopType state) {
 	if(!isLoaded()) return;
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
-    currentLoopState = state;
+	@autoreleasepool {
+		currentLoopState = state;
 
-	if(state == OF_LOOP_NONE){
-        [moviePlayer setLoops:false];
-        [moviePlayer setPalindrome:false];
+		if(state == OF_LOOP_NONE){
+			[moviePlayer setLoops:false];
+			[moviePlayer setPalindrome:false];
+		}
+		else if(state == OF_LOOP_NORMAL){
+			[moviePlayer setLoops:true];
+			[moviePlayer setPalindrome:false];
+		}
+		else if(state == OF_LOOP_PALINDROME) {
+			[moviePlayer setLoops:false];
+			[moviePlayer setPalindrome:true];
+		}
 	}
-	else if(state == OF_LOOP_NORMAL){
-        [moviePlayer setLoops:true];
-        [moviePlayer setPalindrome:false];
-	}
-	else if(state == OF_LOOP_PALINDROME) {
-        [moviePlayer setLoops:false];
-        [moviePlayer setPalindrome:true];
-    }
-
-    [pool release];
 }
 
 //--------------------------------------------------------------------

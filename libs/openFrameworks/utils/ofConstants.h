@@ -103,8 +103,8 @@ enum ofTargetPlatform{
 
 	#include <windows.h>
 	#define GLEW_STATIC
-	#include "GL\glew.h"
-	#include "GL\wglew.h"
+	#include "GL/glew.h"
+	#include "GL/wglew.h"
    	#include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
