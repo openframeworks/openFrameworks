@@ -524,10 +524,20 @@ void ofTexture::generateMipmap(){
 	// Generate mipmaps using hardware-accelerated core GL methods.
 	
 	// 1. Check whether the current OpenGL version supports mipmap generation:
-	//    glGenerateMipmap() was introduced to OpenGL core in 3.0, but earlier
-	//    versions support it if they support extension GL_EXT_framebuffer_object
+	//    glGenerateMipmap() was introduced to OpenGL core in 3.0, and
+	//    OpenGLES core in 2.0 but earlier versions may support it if they
+	//	  support extension GL_EXT_framebuffer_object
 
-	if (ofGetOpenGLVersionMajor() < 3 && !ofGLCheckExtension("GL_EXT_framebuffer_object")) {
+	bool isGlGenerateMipmapAvailable = false;
+	
+#ifdef TARGET_OPENGLES
+	if (ofGetOpenGLESVersion() >= 2) isGlGenerateMipmapAvailable = true;
+#else
+	if (ofGetOpenGLVersionMajor() >= 3) isGlGenerateMipmapAvailable = true;
+#endif
+	
+	
+	if (!isGlGenerateMipmapAvailable && !ofGLCheckExtension("GL_EXT_framebuffer_object")) {
 		static bool versionWarningIssued = false;
 		if (!versionWarningIssued) ofLogWarning() << "Your current OpenGL version does not support mipmap generation via glGenerateMipmap().";
 		versionWarningIssued = true;
