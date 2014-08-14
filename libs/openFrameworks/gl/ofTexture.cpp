@@ -74,7 +74,7 @@ void ofRestoreTextureWrap(){
 }
 
 //----------------------------------------------------------
-void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
+void ofSetMinMagFilters(GLfloat minFilter, GLfloat magFilter){
 	bUseCustomMinMagFilters = true;
 	GLenum textureTarget = GL_TEXTURE_2D;
 #ifndef TARGET_OPENGLES
@@ -83,7 +83,7 @@ void ofSetMinMagFilters(GLfloat minFilter, GLfloat maxFilter){
 	};
 #endif
 	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
+	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
 }
 
 //----------------------------------------------------------
@@ -153,6 +153,7 @@ ofTexture::ofTexture(){
 	quad.getVertices().resize(4);
 	quad.getTexCoords().resize(4);
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	bWantsMipmap = false;
 }
 
 //----------------------------------------------------------
@@ -161,6 +162,7 @@ ofTexture::ofTexture(const ofTexture & mom){
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
 	quad = mom.quad;
+	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
 }
 
@@ -173,6 +175,7 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
 	quad = mom.quad;
+	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
 	return *this;
 }
@@ -354,10 +357,10 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
 
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, texData.magFilter);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_MIN_FILTER, texData.minFilter);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, texData.wrapModeHorizontal);
+	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, texData.wrapModeVertical);
 
 	#ifndef TARGET_PROGRAMMABLE_GL
 		if (!ofIsGLProgrammableRenderer()){
@@ -501,119 +504,89 @@ void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glTy
 		texData.tex_u = (float)(h) / (float)texData.tex_h;
 	}
 	
+	// bind texture
+	glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+	//update the texture image:
+	glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
+	// unbind texture target by binding 0
+	glBindTexture(texData.textureTarget, 0);
 	
-	// 	ok this is an ultra annoying bug :
-	// 	opengl texels and linear filtering -
-	// 	when we have a sub-image, and we scale it
-	// 	we can clamp the border pixels to the border,
-	//  but the borders of the sub image get mixed with
-	//  neighboring pixels...
-	//  grr...
-	//
-	//  the best solution would be to pad out the image
-	// 	being uploaded with 2 pixels on all sides, and
-	//  recompute tex_t coordinates..
-	//  another option is a gl_arb non pow 2 textures...
-	//  the current hack is to alter the tex_t, tex_u calcs, but
-	//  that makes the image slightly off...
-	//  this is currently being done in draw...
-	//
-	// 	we need a good solution for this..
-	//
-	//  http://www.opengl.org/discussion_boards/ubb/ultimatebb.php?ubb=get_topic;f=3;t=014770#000001
-	
-	
-	//Sosolimited: texture compression
-	if (texData.compressionType == OF_COMPRESS_NONE) {
-		//STANDARD openFrameworks: no compression
-		
-		//update the texture image: 
-		enableTextureTarget(0);
-
-		glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
-		//glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)w, (GLint)h, 0, glFormat, glType, data);
-		glTexSubImage2D(texData.textureTarget, 0, 0, 0, w, h, glFormat, glType, data);
-
- 		disableTextureTarget(0);
-	} else {
-		//SOSOLIMITED: setup mipmaps and use compression
-		//TODO: activate at least mimaps for OPENGL_ES
-		//need proper tex_u and tex_t positions, with mipmaps they are the nearest power of 2
-#ifndef TARGET_OPENGLES		
-		if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
-			
-			//need to find closest powers of two
-			int last_h = ofNextPow2(texData.height)>>1;
-			int next_h = ofNextPow2(texData.height);
-			if ((texData.height - last_h) < (next_h - texData.height)) texData.tex_u = last_h;
-			else texData.tex_u = next_h;
-			
-			int last_w = ofNextPow2(texData.width)>>1;
-			int next_w = ofNextPow2(texData.width);
-			if ((texData.width - last_w) < (next_w - texData.width)) texData.tex_t = last_w;
-			else texData.tex_t = next_w;
-		}
-#endif
-		enableTextureTarget(0);
-		glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
-		
-		glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
-#ifndef TARGET_PROGRAMMABLE_GL
-		if(!ofGetGLProgrammableRenderer()){
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		}
-#endif
-#ifndef TARGET_OPENGLES		
-		glTexParameteri(texData.textureTarget, GL_GENERATE_MIPMAP_SGIS, true);
-#endif
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri( texData.textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 2);
-		
-		
-#ifndef TARGET_OPENGLES		
-		//using sRGB compression
-		if (texData.compressionType == OF_COMPRESS_SRGB)
-		{
-			if(texData.glTypeInternal == GL_RGBA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_RGB)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_LUMINANCE_ALPHA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_LUMINANCE)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_SRGB_ALPHA, w, h, glFormat, glType, data);
-		}
-		
-		//using ARB compression: default
-		else
-		{
-			if(texData.glTypeInternal == GL_RGBA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGBA_ARB, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_RGB)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_RGB_ARB, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_LUMINANCE_ALPHA)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ALPHA_ARB, w, h, glFormat, glType, data);
-			
-			else if(texData.glTypeInternal == GL_LUMINANCE)
-				gluBuild2DMipmaps(texData.textureTarget, GL_COMPRESSED_LUMINANCE_ARB, w, h, glFormat, glType, data);
-		}
-#endif
-		
-
-		disableTextureTarget(0);
-		
+	if (bWantsMipmap) {
+		// auto-generate mipmap, since this ofTexture wants us to.
+		generateMipmap();
 	}
 	
 }
 
+//----------------------------------------------------------
+void ofTexture::generateMipmap(){
+
+	// Generate mipmaps using hardware-accelerated core GL methods.
+	
+	// 1. Check whether the current OpenGL version supports mipmap generation:
+	//    glGenerateMipmap() was introduced to OpenGL core in 3.0, and
+	//    OpenGLES core in 2.0 but earlier versions may support it if they
+	//	  support extension GL_EXT_framebuffer_object
+
+	bool isGlGenerateMipmapAvailable = false;
+	
+#ifdef TARGET_OPENGLES
+	if (ofGetOpenGLESVersion() >= 2) isGlGenerateMipmapAvailable = true;
+#else
+	if (ofGetOpenGLVersionMajor() >= 3) isGlGenerateMipmapAvailable = true;
+#endif
+	
+	
+	if (!isGlGenerateMipmapAvailable && !ofGLCheckExtension("GL_EXT_framebuffer_object")) {
+		static bool versionWarningIssued = false;
+		if (!versionWarningIssued) ofLogWarning() << "Your current OpenGL version does not support mipmap generation via glGenerateMipmap().";
+		versionWarningIssued = true;
+		texData.hasMipmap = false;
+		return;
+	}
+
+	// 2. Check whether the texture's texture target supports mipmap generation.
+	
+	switch (texData.textureTarget) {
+			/// OpenGL ES only supports mipmap for the following two texture targets:
+		case GL_TEXTURE_2D:
+		case GL_TEXTURE_CUBE_MAP:
+#ifndef TARGET_OPENGLES
+			/// OpenGL supports mipmaps for additional texture targets:
+		case GL_TEXTURE_1D:
+		case GL_TEXTURE_3D:
+		case GL_TEXTURE_1D_ARRAY:
+		case GL_TEXTURE_2D_ARRAY:
+#endif
+		{
+			// All good, this particular texture target supports mipmaps.
+			
+			// glEnable(texData.textureTarget);	/// < uncomment this hack if you are unlucky enough to run an older ATI card.
+			// See also: https://www.opengl.org/wiki/Common_Mistakes#Automatic_mipmap_generation
+
+			glBindTexture(texData.textureTarget, (GLuint) texData.textureID);
+			glGenerateMipmap(texData.textureTarget);
+			glBindTexture(texData.textureTarget, 0);
+			texData.hasMipmap = true;
+			break;
+		}
+		default:
+		{
+			// This particular texture target does not support mipmaps.
+			static bool warningIssuedAlready = false;
+			
+			if (!warningIssuedAlready){
+				ofLogWarning() << "Mipmaps are not supported for textureTarget 0x" << hex << texData.textureTarget << endl
+				<< "Most probably you are trying to create mipmaps from a GL_TEXTURE_RECTANGLE texture." << endl
+				<< "Try ofDisableArbTex() before loading this texture.";
+				warningIssuedAlready = true;
+			}
+			texData.hasMipmap = false;
+			break;
+		}
+	} // end switch(texData.textureTarget)
+		
+}
 
 //----------------------------------------------------------
 void ofTexture::loadScreenData(int x, int y, int w, int h){
@@ -653,6 +626,10 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	glCopyTexSubImage2D(texData.textureTarget, 0,0,0,x,y,w,h);
 
 	disableTextureTarget(0);
+	
+	if (bWantsMipmap) {
+		generateMipmap();
+	}
 }
 
 
@@ -822,22 +799,63 @@ ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
 //----------------------------------------------------------
 void ofTexture::setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical) {
 	bind();
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_S, wrapModeHorizontal);
-	glTexParameterf(texData.textureTarget, GL_TEXTURE_WRAP_T, wrapModeVertical);
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_S, wrapModeHorizontal);
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_T, wrapModeVertical);
+	texData.wrapModeVertical = wrapModeVertical;
+	texData.wrapModeHorizontal = wrapModeHorizontal;
 	unbind();
 }
 
 //----------------------------------------------------------
-void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint maxFilter){
-	bind();
-	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, maxFilter);
+void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter){
+
+	// Issue warning if mipmaps not present for mipmap based min filter.
+	
+	if ( (minFilter > GL_LINEAR) && texData.hasMipmap == false ){
+		static bool hasWarnedNoMipmapsForMinFilter = false;
+		if(!hasWarnedNoMipmapsForMinFilter) {
+			ofLogWarning() << "Texture has no mipmaps - but minFilter 0x"<< hex << minFilter << " requires mipmaps."
+			<< endl << "Call ofTexture::generateMipmaps() first.";
+		}
+		hasWarnedNoMipmapsForMinFilter = true;
+		return;
+	}
+
+	// Issue warning if invalid magFilter specified.
+	
+	if ( (magFilter > GL_LINEAR ) ) {
+		static bool hasWarnedInvalidMagFilter = false;
+		if (!hasWarnedInvalidMagFilter) {
+			ofLogWarning() << "magFilter must be either GL_LINEAR or GL_NEAREST.";
+		}
+		hasWarnedInvalidMagFilter = true;
+		return;
+	}
+	
+	bool wasBound = texData.isBound;
+	if (!wasBound) bind();
+	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
-	unbind();
+	texData.magFilter = magFilter;
+	texData.minFilter = minFilter;
+	if (!wasBound) unbind();
 }
 
 //----------------------------------------------------------
 void ofTexture::setCompression(ofTexCompression compression){
 	texData.compressionType = compression;
+}
+
+//------------------------------------
+void ofTexture::enableMipmap(){
+	bWantsMipmap = true;
+	texData.minFilter = GL_LINEAR_MIPMAP_LINEAR;
+}
+
+//------------------------------------
+void ofTexture::disableMipmap(){
+	bWantsMipmap = false;
+	texData.minFilter = GL_LINEAR;
 }
 
 //------------------------------------
