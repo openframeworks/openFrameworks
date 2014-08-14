@@ -20,6 +20,19 @@ CORE
 	+ Separate model matrix
 	+ ofGetCurrentNormalMatrix
 	+ ofSetOpenGL(ES)Version, allows to set any specific GL version
+	+ ofTexture::enableMipmap() auto-generate mipmaps on load - for textures which support
+	  mipmaps (that's TEXTURE_2D textures loaded after ofDisableArbTex() )
+	+ ofTexture::generateMipmap() generate mipmap after a texture was loaded,
+	  if the texture target supports mipmaps (see above).
+	+ ofTexture::disableMipmap() disables auto-generation of mipmap for texture
+	- removed compressed mipmaps based on deprecated glu methods
+	- ofSetTextureWrap() : deprecated (use corresponding ofTexture member method) 
+	- ofGetUsingCustomTextureWrap() : deprecated
+	- ofRestoreTextureWrap() : deprecated
+	- ofSetMinMagFilters() : deprecated (use corresponding ofTexture member method) 
+	- ofGetUsingCustomMinMagFilters() : deprecated
+	- ofRestoreMinMagFilters() : deprecated	  
+
 
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
