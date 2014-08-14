@@ -32,14 +32,24 @@ setenv_all() {
 	
 	export CPPFLAGS=$CFLAGS
 	export CXXFLAGS=$CFLAGS
+
+	if [ "$1" == "libc++" ] ; then
+		unset CXXFLAGS
+		export LINKFLAGS="$CFLAGS -stdlib=libc++"
+		export CXXFLAGS="$CFLAGS -fvisibility-inlines-hidden -stdlib=libc++"
+	elif [ "$1" == "libstdc++" ] ; then
+		unset CXXFLAGS
+		export LINKFLAGS="$CFLAGS -stdlib=libstdc++"
+	 	export CXXFLAGS="$CFLAGS -fvisibility-inlines-hidden -stdlib=libstdc++"
+	fi
 }
 
 setenv_armv7() {
 	unset DEVROOT SDKROOT CFLAGS CC LD CPP CXX AR AS NM CXXCPP RANLIB LDFLAGS CPPFLAGS CXXFLAGS
 	export DEVROOT=$(xcode-select --print-path)/Platforms/iPhoneOS.platform/Developer
 	export SDKROOT=$DEVROOT/SDKs/iPhoneOS$IOS_BASE_SDK.sdk
-	export CFLAGS="-arch armv7 -pipe -no-cpp-precomp -isysroot $SDKROOT -miphoneos-version-min=$IOS_DEPLOY_TGT -I$SDKROOT/usr/include/"
-	setenv_all
+	export CFLAGS="-arch armv7 -pipe -no-cpp-precomp -isysroot $SDKROOT -miphoneos-version-min=$IOS_DEPLOY_TGT -I$SDKROOT/usr/include/" 
+	setenv_all "libc++"
 	rm -f CMakeCache.txt
 	cmake -G 'Unix Makefiles'
 }
@@ -49,7 +59,7 @@ setenv_armv7s() {
 	export DEVROOT=$(xcode-select --print-path)/Platforms/iPhoneOS.platform/Developer
 	export SDKROOT=$DEVROOT/SDKs/iPhoneOS$IOS_BASE_SDK.sdk
 	export CFLAGS="-arch armv7s -pipe -no-cpp-precomp -isysroot $SDKROOT -miphoneos-version-min=$IOS_DEPLOY_TGT -I$SDKROOT/usr/include/"
-	setenv_all
+	setenv_all "libc++"
 	rm -f CMakeCache.txt
 	cmake -G 'Unix Makefiles'
 }
@@ -59,7 +69,7 @@ setenv_arm64() {
 	export DEVROOT=$(xcode-select --print-path)/Platforms/iPhoneOS.platform/Developer
 	export SDKROOT=$DEVROOT/SDKs/iPhoneOS$IOS_BASE_SDK.sdk
 	export CFLAGS="-arch arm64 -pipe -no-cpp-precomp -isysroot $SDKROOT -miphoneos-version-min=$IOS_DEPLOY_TGT -I$SDKROOT/usr/include/"
-	setenv_all
+	setenv_all "libc++"
 	rm -f CMakeCache.txt
 	cmake -G 'Unix Makefiles'
 }
@@ -69,7 +79,7 @@ setenv_i386() {
 	export DEVROOT=$(xcode-select --print-path)/Platforms/iPhoneSimulator.platform/Developer
 	export SDKROOT=$DEVROOT/SDKs/iPhoneSimulator$IOS_BASE_SDK.sdk
 	export CFLAGS="-arch i386 -pipe -no-cpp-precomp -isysroot $SDKROOT -miphoneos-version-min=$IOS_DEPLOY_TGT"
-	setenv_all
+	setenv_all "libc++"
 	rm -f CMakeCache.txt
 	cmake -G 'Unix Makefiles'
 }
@@ -79,7 +89,7 @@ setenv_x86_64() {
 	export DEVROOT=$(xcode-select --print-path)/Platforms/iPhoneSimulator.platform/Developer
 	export SDKROOT=$DEVROOT/SDKs/iPhoneSimulator$IOS_BASE_SDK.sdk
 	export CFLAGS="-arch x86_64 -pipe -no-cpp-precomp -isysroot $SDKROOT -miphoneos-version-min=$IOS_DEPLOY_TGT"
-	setenv_all
+	setenv_all "libc++"
 	rm -f CMakeCache.txt
 	cmake -G 'Unix Makefiles'
 }
@@ -121,3 +131,5 @@ mv libtess2.a libtess2-x86_64.a
 # link into universal lib
 echo 'Creating fat binary...'
 lipo -c libtess2-armv7.a libtess2-armv7s.a libtess2-arm64.a libtess2-i386.a libtess2-x86_64.a -o libtess2.a
+
+unset DEVROOT SDKROOT CFLAGS CC LD CPP CXX AR AS NM CXXCPP RANLIB LDFLAGS CPPFLAGS CXXFLAGS
