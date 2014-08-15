@@ -79,14 +79,14 @@ public:
 	void rotateY(float degrees);
 	void rotateZ(float degrees);
 	void rotate(float degrees);
-	void matrixMode(ofMatrixMode mode);
-	void loadIdentityMatrix (void);
-	void loadMatrix (const ofMatrix4x4 & m);
-	void loadMatrix (const float * m);
-	void multMatrix (const ofMatrix4x4 & m);
-	void multMatrix (const float * m);
-	void loadViewMatrix(const ofMatrix4x4 & m);
-	void multViewMatrix(const ofMatrix4x4 & m);
+	inline void matrixMode(ofMatrixMode mode);
+	inline void loadIdentityMatrix (void);
+	inline void loadMatrix (const ofMatrix4x4 & m);
+	inline void loadMatrix (const float * m);
+	inline void multMatrix (const ofMatrix4x4 & m);
+	inline void multMatrix (const float * m);
+	inline void loadViewMatrix(const ofMatrix4x4 & m);
+	inline void multViewMatrix(const ofMatrix4x4 & m);
 	
 	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
 	ofMatrix4x4 getCurrentOrientationMatrix() const;

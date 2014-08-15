@@ -99,7 +99,7 @@ private:
 	int getRenderSurfaceWidth() const;
 	int getRenderSurfaceHeight() const;
 	bool doesHWOrientation() const;
-	void updatedRelatedMatrices();
+	inline void updatedRelatedMatrices();
 
 };
 
