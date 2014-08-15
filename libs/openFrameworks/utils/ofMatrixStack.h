@@ -32,9 +32,6 @@ public:
 	ofRectangle getCurrentViewport();
 	ofRectangle getNativeViewport();
 
-	void loadViewMatrix(const ofMatrix4x4 & matrix);
-	void multViewMatrix(const ofMatrix4x4 & matrix);
-
 	const ofMatrix4x4 & getProjectionMatrix() const;
 	const ofMatrix4x4 & getViewMatrix() const;
 	const ofMatrix4x4 & getModelViewMatrix() const;
@@ -62,8 +59,12 @@ public:
 	void rotate(float degrees, float vecX, float vecY, float vecZ);
 	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
+	
 	void loadMatrix (const float * m);
 	void multMatrix (const float * m);
+
+	void loadViewMatrix(const ofMatrix4x4 & matrix);
+	void multViewMatrix(const ofMatrix4x4 & matrix);
 
 	void clearStacks();
 
