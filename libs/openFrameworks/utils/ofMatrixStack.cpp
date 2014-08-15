@@ -372,21 +372,19 @@ void ofMatrixStack::multMatrix (const float * m){
 }
 
 void ofMatrixStack::loadViewMatrix(const ofMatrix4x4 & matrix){
-	if ( currentMatrixMode != OF_MATRIX_MODELVIEW ) {
-		ofLogWarning() << "You need to set MatrixMode to OF_MATRIX_MODELVIEW to change the View Matrix." ;
-		return;
-	}
+	ofMatrixMode lastMatrixMode = currentMatrixMode;
+	currentMatrixMode = OF_MATRIX_MODELVIEW;
 	viewMatrix = matrix;
 	loadMatrix(matrix.getPtr());
+	currentMatrixMode = lastMatrixMode;
 }
 
 void ofMatrixStack::multViewMatrix(const ofMatrix4x4 & matrix){
-	if ( currentMatrixMode != OF_MATRIX_MODELVIEW ) {
-		ofLogWarning() << "You need to set MatrixMode to OF_MATRIX_MODELVIEW to change the View Matrix." ;
-		return;
-	}
+	ofMatrixMode lastMatrixMode = currentMatrixMode;
+	currentMatrixMode = OF_MATRIX_MODELVIEW;
 	viewMatrix.preMult(matrix);
 	multMatrix(matrix.getPtr());
+	currentMatrixMode = lastMatrixMode;
 }
 
 
