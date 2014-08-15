@@ -62,7 +62,7 @@ void ofPixels_<PixelType>::copyFrom(const ofPixels_<PixelType> & mom){
 template<typename PixelType>
 void ofPixels_<PixelType>::set(PixelType val){
 	iterator _end = end();
-	for(iterator i=begin();i!=_end;++i){
+	for(iterator i=begin();i<_end;++i){
 		*i = val;
 	}
 }
@@ -70,7 +70,7 @@ void ofPixels_<PixelType>::set(PixelType val){
 template<typename PixelType>
 void ofPixels_<PixelType>::set(int channel,PixelType val){
 	iterator _end = end();
-	for(iterator i=begin()+channels;i!=_end;i+=channels){
+	for(iterator i=begin()+channel;i<_end;i+=channels){
 		*i = val;
 	}
 }
@@ -222,7 +222,7 @@ template<typename PixelType>
 void ofPixels_<PixelType>::swapRgb(){
 	if (channels >= 3){
 		iterator _end = end();
-		for(iterator i=begin();i!=_end;i+=channels){
+		for(iterator i=begin();i<_end;i+=channels){
 			std::swap(*i,*(i+2));
 		}
 	}
@@ -398,7 +398,7 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(int channel) const{
 	channel = ofClamp(channel,0,channels-1);
 	iterator channelPixel = channelPixels.begin();
 	const_iterator _end = end();
-	for(const_iterator i=begin()+channel;i!=_end;i+=channels,++channelPixel){
+	for(const_iterator i=begin()+channel;i<_end;i+=channels,++channelPixel){
 		*channelPixel = *i;
 	}
 	return channelPixels;
@@ -409,7 +409,7 @@ void ofPixels_<PixelType>::setChannel(int channel, const ofPixels_<PixelType> ch
 	channel = ofClamp(channel,0,channels-1);
 	const_iterator channelPixel = channelPixels.begin();
 	iterator _end = end();
-	for(iterator i=begin()+channel;i!=_end;i+=channels,++channelPixel){
+	for(iterator i=begin()+channel;i<_end;i+=channels,++channelPixel){
 		*i = *channelPixel;
 	}
 
