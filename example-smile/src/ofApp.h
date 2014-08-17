@@ -10,7 +10,7 @@ protected:
     ofRectangle roi;
     
 public:
-	ofxCv::ObjectFinder faceFinder, smileFinder;
+    ofxCv::ObjectFinder faceFinder, smileFinder;
     
     void setup() {
         faceFinder.setup("haarcascade_frontalface_default.xml");
@@ -104,11 +104,11 @@ public:
 
 class ofApp : public ofBaseApp {
 public:
-	void setup();
-	void update();
-	void draw();
-	
-	ofVideoGrabber cam;
+    void setup();
+    void update();
+    void draw();
+    
+    ofVideoGrabber cam;
     SmileDetector smile;
     LineGraph graph;
 };
