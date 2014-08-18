@@ -58,6 +58,8 @@ function build_osx() {
       -DBUILD_FAT_JAVA_LIB=OFF \
       -DBUILD_JASPER=OFF \
       -DBUILD_PACKAGE=OFF \
+      -DBUILD_JPEG=OFF \
+      -DBUILD_PNG=OFF \
       -DBUILD_opencv_java=OFF \
       -DBUILD_opencv_python=OFF \
       -DBUILD_opencv_apps=OFF \
@@ -76,6 +78,8 @@ function build_osx() {
       -DWITH_IPP=OFF \
       -DWITH_OPENNI=OFF \
       -DWITH_QT=OFF \
+      -DWITH_JPEG=OFF \
+      -DWITH_PNG=OFF \
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
@@ -136,6 +140,8 @@ function build_ios() {
       -DBUILD_FAT_JAVA_LIB=OFF \
       -DBUILD_JASPER=OFF \
       -DBUILD_PACKAGE=OFF \
+      -DBUILD_JPEG=OFF \
+      -DBUILD_PNG=OFF \
       -DBUILD_opencv_java=OFF \
       -DBUILD_opencv_python=OFF \
       -DBUILD_opencv_apps=OFF \
@@ -154,6 +160,8 @@ function build_ios() {
       -DWITH_IPP=OFF \
       -DWITH_OPENNI=OFF \
       -DWITH_QT=OFF \
+      -DWITH_JPEG=OFF \
+      -DWITH_PNG=OFF \
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
       -DWITH_PVAPI=OFF \
@@ -180,48 +188,38 @@ function make_universal_binary() {
   src_list="$LIB_FOLDER/$src_archs"
 
   libs="$src_list/lib/lib*.a"
+  thirdparty="$src_list/share/OpenCV/3rdparty/lib/*.a"
+
   allArchs=""
+  libsToLipo=""
 
   echo "src_list $libs"
 
-  for lib in $libs
+  for arch in "${src_archs[@]}"
   do
-    fname=$(basename "$lib")
     allArchs=""
 
-    for arch in "${src_archs[@]}"
+    for lib in $libs
     do
+        fname=$(basename "$lib")
         allArchs="$allArchs$LIB_FOLDER/$arch/lib/$fname "
     done
 
-    echo "lipoing $fname"
-    output="${fname/lib/}"
-
-    command="lipo -create $allArchs -o $dst/lib/$output"
-    $command || true
-  done
-
-  thirdparty="$src_list/share/OpenCV/3rdparty/lib/*.a"
-
-  for lib in $thirdparty
-  do
-    fname=$(basename "$lib")
-    allArchs=""
-
-    for arch in "${src_archs[@]}"
+    for lib in $thirdparty
     do
+        fname=$(basename "$lib")
         allArchs="$allArchs$LIB_FOLDER/$arch/share/OpenCV/3rdparty/lib/$fname "
     done
 
-    echo "lipoing $fname"
+    echo "libtooling $arch"
 
-    #remove the lib prefix
-    output="${fname/lib/}"
-
-    command="lipo -create $allArchs -o $dst/lib/$output"
+    command="libtool -static $allArchs -o $LIB_FOLDER/$arch/lib/opencv.a"
     $command || true
+    libsToLipo="$libsToLipo$LIB_FOLDER/$arch/lib/opencv.a "
   done
 
+  command="lipo -create $libsToLipo -o $dst/lib/opencv.a"
+  $command || true
 }
 
 # executed inside the lib src dir
