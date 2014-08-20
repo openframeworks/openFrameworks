@@ -158,16 +158,6 @@ void ofMatrixStack::nativeViewport(ofRectangle viewport){
 	currentViewport=viewport;
 }
 
-void ofMatrixStack::loadViewMatrix(const ofMatrix4x4 & matrix){
-	viewMatrix = matrix;
-	modelViewMatrix = matrix;
-}
-
-void ofMatrixStack::multViewMatrix(const ofMatrix4x4 & matrix){
-	viewMatrix.preMult(matrix);
-	modelViewMatrix.preMult(matrix);
-}
-
 const ofMatrix4x4 & ofMatrixStack::getViewMatrix() const{
 	return viewMatrix;
 }
@@ -379,6 +369,22 @@ void ofMatrixStack::loadMatrix (const float * m){
 void ofMatrixStack::multMatrix (const float * m){
 	currentMatrix->preMult(m);
 	updatedRelatedMatrices();
+}
+
+void ofMatrixStack::loadViewMatrix(const ofMatrix4x4 & matrix){
+	ofMatrixMode lastMatrixMode = currentMatrixMode;
+	currentMatrixMode = OF_MATRIX_MODELVIEW;
+	viewMatrix = matrix;
+	loadMatrix(matrix.getPtr());
+	currentMatrixMode = lastMatrixMode;
+}
+
+void ofMatrixStack::multViewMatrix(const ofMatrix4x4 & matrix){
+	ofMatrixMode lastMatrixMode = currentMatrixMode;
+	currentMatrixMode = OF_MATRIX_MODELVIEW;
+	viewMatrix.preMult(matrix);
+	multMatrix(matrix.getPtr());
+	currentMatrixMode = lastMatrixMode;
 }
 
 
