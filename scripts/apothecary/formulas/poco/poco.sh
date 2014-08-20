@@ -227,15 +227,12 @@ function copy() {
 	if [ "$TYPE" == "osx" ] ; then		
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Darwin/*.a $1/lib/$TYPE
-
 	elif [ "$TYPE" == "ios" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/iPhoneOS/*.a $1/lib/$TYPE
-
 	elif [ "$TYPE" == "vs" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/Release/*.lib $1/lib/$TYPE
-		cp -v lib/Debug/*.lib $1/lib/$TYPE
+		cp -v lib/*.lib $1/lib/$TYPE
 	elif [ "$TYPE" == "linux" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/$(uname -m)/*.a $1/lib/$TYPE
