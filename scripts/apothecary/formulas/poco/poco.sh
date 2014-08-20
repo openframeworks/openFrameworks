@@ -50,14 +50,43 @@ function prepare() {
 		cd build/config
 		cp iPhone iPhone.orig
 		cp iPhoneSimulator iPhoneSimulator.orig
+	elif [ "$TYPE" == "vs" ] ; then
+		# Patch the components to exclude those that we aren't using.  
+		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/components.patch 2>/dev/null ; then
+			patch -p0 -u < $FORMULA_DIR/components.patch
+		fi
+
+		# Locate the path of the openssl libs distributed with openFrameworks.
+		local OF_LIBS_OPENSSL="../../../../libs/openssl/"
+
+		# get the absolute path to the included openssl libs
+		local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
+
+		# convert the absolute path from unix to windows
+		local OPENSSL_DIR=$(echo $OF_LIBS_OPENSSL_ABS_PATH | sed 's/^\///' | sed 's/\//\\/g' | sed 's/^./\0:/')
+
+		# escape windows slashes and a few common escape sequences before passing to sed
+		local OPENSSL_DIR=$(echo $OPENSSL_DIR | sed 's/\\/\\\\\\/g' | sed 's/\\\U/\\\\U/g' | sed 's/\\\l/\\\\l/g')
+
+		# replace OPENSSL_DIR=C:\OpenSSL with our OPENSSL_DIR
+		sed -i.tmp "s|C:\\\OpenSSL|$OPENSSL_DIR|g" buildwin.cmd
+
+		# replace OPENSSL_LIB=%OPENSSL_DIR%\lib;%OPENSSL_DIR%\lib\VC with OPENSSL_LIB=%OPENSSL_DIR%\lib\vs
+		sed -i.tmp "s|%OPENSSL_DIR%\\\lib;.*|%OPENSSL_DIR%\\\lib\\\vs|g" buildwin.cmd
+	
+	elif [ "$TYPE" == "win_cb" ] ; then
+		# Use the mingw equivalent of mc to compile the pocomsg.mc file into a pocomsg.h.
+		cd Foundation/src
+		windmc pocomsg.mc
 	fi
+
 }
 
 # executed inside the lib src dir
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 		
 		# 32 bit
 		# For OS 10.9+ we must explicitly set libstdc++ for the 32-bit OSX build.
@@ -84,16 +113,25 @@ function build() {
 		done
 
 	elif [ "$TYPE" == "vs" ] ; then
-		#cmd.exe /c "buildwin.cmd "$VS_VER" build all both Win32 nosamples devenv"
-		## OR
-		cmake -G "Visual Studio $VS_VER" -DPOCO_STATIC="1" -DCMAKE_DEBUG_POSTFIX="mdd" -DCMAKE_RELEASE_POSTFIX="md"
-		vs-build "Poco.sln" Build Debug
-		vs-build "Poco.sln" Build Release
-	
+		cmd //c buildwin.cmd ${VS_VER}0 build static_md both Win32 nosamples notests
+
+	elif [ "$TYPE" == "win_cb" ] ; then
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+
+		local OPENSSL_INCLUDE="/c/Users/bakercp/openFrameworks/libs/openssl/include"
+		local OPENSSL_LIBS="/c/Users/bakercp/openFrameworks/libs/openssl/lib/win_cb"
+
+		./configure $BUILD_OPTS \
+					--cflags="-D_WIN32 -DMINGW32 -DWINVER=0x500 -DODBCVER=0x0300 -O3 -std=c++11 -DPOCO_ENABLE_CPP11 -DPOCO_NO_SOO -DPOCO_NO_AUTOMATIC_LIB_INIT" \
+					--include-path=$OPENSSL_INCLUDE \
+					--library-path=$OPENSSL_LIBS \
+					--config=MinGW
+		make
+
 	elif [ "$TYPE" == "ios" ] ; then
 
 		# maybe --poquito is a good idea?
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC,NetSSL_OpenSSL,Crypto"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen,NetSSL_OpenSSL,Crypto"
 
 		cp build/config/iPhone.orig build/config/iPhone
 		cp build/config/iPhoneSimulator.orig build/config/iPhoneSimulator
@@ -138,25 +176,25 @@ function build() {
 		echoWarning "TODO: android build"
 
 	elif [ "$TYPE" == "linux" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
 		rm lib/Linux/$(uname -m)/*d.a
 	elif [ "$TYPE" == "linux64" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
 		rm lib/Linux/x86_64/*d.a
 	elif [ "$TYPE" == "linuxarmv6l" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
 		rm lib/Linux/armv6l/*d.a
 	elif [ "$TYPE" == "linuxarmv7l" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=Data/MySQL,Data/ODBC"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
@@ -174,7 +212,7 @@ function copy() {
 	cp -Rv Crypto/include/Poco/Crypto $1/include/Poco
 	cp -Rv CppParser/include/Poco/CppParser $1/include/Poco
 	cp -Rv Data/include/Poco/Data/ $1/include/Poco
-	cp -Rv Data/SQLite/include/Poco/Data/SQLite $1/include/Poco/Data
+	cp -Rv Data/SQLite/include/Poco/Data/SQLite $1/include/Poco/Data/SQLite
 	cp -Rv Foundation/include/Poco/* $1/include/Poco
 	cp -Rv JSON/include/Poco/JSON $1/include/Poco
 	cp -Rv MongoDB/include/Poco/MongoDB $1/include/Poco
@@ -220,11 +258,9 @@ function copy() {
 function clean() {
 
 	if [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: clean vs"
-	
+		cmd //c buildwin.cmd ${VS_VER}0 clean static_md both Win32 nosamples notests
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: clean android"
-	
 	else
 		make clean
 	fi
