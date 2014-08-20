@@ -74,7 +74,7 @@ IOS_SDK_VER=7.1
 IOS_MIN_SDK_VER=5.1
 
 # used when building for vs
-VS_VER=12
+VS_VER=11
 
 ################################################################################
 ### PRIVATE VARS, for internal use
