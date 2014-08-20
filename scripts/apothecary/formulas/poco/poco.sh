@@ -118,11 +118,17 @@ function build() {
 	elif [ "$TYPE" == "win_cb" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 
-		local OPENSSL_INCLUDE="/c/Users/bakercp/openFrameworks/libs/openssl/include"
-		local OPENSSL_LIBS="/c/Users/bakercp/openFrameworks/libs/openssl/lib/win_cb"
+		# Locate the path of the openssl libs distributed with openFrameworks.
+		local OF_LIBS_OPENSSL="../../../../libs/openssl/"
+
+		# get the absolute path to the included openssl libs
+		local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
+
+		local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
+		local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/win_cb
 
 		./configure $BUILD_OPTS \
-					--cflags="-D_WIN32 -DMINGW32 -DWINVER=0x500 -DODBCVER=0x0300 -O3 -std=c++11 -DPOCO_ENABLE_CPP11 -DPOCO_NO_SOO -DPOCO_NO_AUTOMATIC_LIB_INIT" \
+					--cflags="-DODBCVER=0x0300 -O3 -std=c++11 -DPOCO_ENABLE_CPP11 -DPOCO_NO_SOO -DPOCO_NO_AUTOMATIC_LIB_INIT" \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS \
 					--config=MinGW
