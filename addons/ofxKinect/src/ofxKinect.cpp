@@ -32,7 +32,7 @@
 #include "ofxKinect.h"
 #include "ofMain.h"
 
-#include "libfreenect-registration.h"
+#include "libfreenect_registration.h"
 #include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info
 
 #include "ofxKinectExtras.h"
@@ -113,10 +113,17 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 	depthPixelsRaw.allocate(width, height, 1);
 	depthPixelsRawBack.allocate(width, height, 1);
 	depthPixelsRawIntra.allocate(width, height, 1);
-
+    
+    //We have to do this as freenect has 488 pixels for the IR image height.
+    //Instead of having slightly different sizes depending on capture we will crop the last 8 rows of pixels which are empty.
+    int videoHeight = height;
+    if( infrared ){
+        videoHeight = 488;
+    }
+    
 	videoPixels.allocate(width, height, videoBytesPerPixel);
-	videoPixelsBack.allocate(width, height, videoBytesPerPixel);
-	videoPixelsIntra.allocate(width, height, videoBytesPerPixel);
+	videoPixelsBack.allocate(width, videoHeight, videoBytesPerPixel);
+	videoPixelsIntra.allocate(width, videoHeight, videoBytesPerPixel);
 
 	depthPixels.allocate(width, height, 1);
 	distancePixels.allocate(width, height, 1);
@@ -309,7 +316,12 @@ void ofxKinect::update() {
 		bGotData = true;
 		tryCount = 0;
 		if(this->lock()) {
-			swap(videoPixels,videoPixelsIntra);
+            if( videoPixels.getHeight() == videoPixelsIntra.getHeight() ){
+                swap(videoPixels,videoPixelsIntra);
+            }else{
+                int minimumSize = MIN(videoPixels.size(), videoPixelsIntra.size());
+                memcpy(videoPixels.getPixels(), videoPixelsIntra.getPixels(), minimumSize);
+            }
 			bNeedsUpdateVideo = false;
 			this->unlock();
 		}

@@ -116,7 +116,7 @@ PLATFORM_REQUIRED_ADDONS =
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -Wall 
+PLATFORM_CFLAGS = -Wall -std=c++0x
 
 
 ################################################################################
@@ -246,6 +246,7 @@ ifneq ($(PLATFORM_ARCH),armv6l)
     PLATFORM_LIBRARIES += Xrandr
     PLATFORM_LIBRARIES += Xxf86vm 
     PLATFORM_LIBRARIES += Xi 
+    PLATFORM_LIBRARIES += Xcursor 
     PLATFORM_LIBRARIES += dl 
     PLATFORM_LIBRARIES += pthread
 endif

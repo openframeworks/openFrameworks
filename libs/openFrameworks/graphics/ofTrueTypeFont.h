@@ -10,14 +10,14 @@
 
 //--------------------------------------------------
 typedef struct {
-	int character;
+	int characterIndex;
+	int glyph;
 	int height;
 	int width;
-	int setWidth;
-	int topExtent;
-	int leftExtent;
+	int bearingX, bearingY;
+	int xmin, xmax, ymin, ymax;
+	int advance;
 	float tW,tH;
-	float x1,x2,y1,y2;
 	float t1,t2,v1,v2;
 } charProps;
 
@@ -25,14 +25,15 @@ typedef struct {
 typedef ofPath ofTTFCharacter;
 
 //--------------------------------------------------
-#define NUM_CHARACTER_TO_START		33		// 0 - 32 are control characters, no graphics needed.
+#define NUM_CHARACTER_TO_START		32		// 0 - 32 are control characters, no graphics needed.
 
 /// \todo?
 const static string OF_TTF_SANS = "sans-serif";
 const static string OF_TTF_SERIF = "serif";
 const static string OF_TTF_MONO = "monospace";
 
-/// \todo
+typedef struct FT_FaceRec_*  FT_Face;
+
 class ofTrueTypeFont{
 
 public:
@@ -98,6 +99,34 @@ public:
 	///
 	/// \param height Line height for text drawn on screen.
 	void setLineHeight(float height);
+
+	/// \brief Get the ascender distance for this font.
+	///
+	/// The ascender is the vertical distance from the baseline to the highest "character" coordinate.
+	/// The meaning of "character" coordinate depends on the font. Some fonts take accents into account,
+	/// others do not, and still others define it simply to be the highest coordinate over all glyphs.
+	///
+	/// \returns Returns font ascender height in pixels.
+	float		getAscenderHeight() const;
+
+	/// \brief Get the descender distance for this font.
+	///
+	/// The descender is the vertical distance from the baseline to the lowest "character" coordinate.
+	/// The meaning of "character" coordinate depends on the font. Some fonts take accents into account,
+	/// others do not, and still others define it simply to be the lowest coordinate over all glyphs.
+	/// This value will be negative for descenders below the baseline (which is typical).
+	///
+	/// \returns Returns font descender height in pixels.
+	float		getDescenderHeight() const;
+
+	/// \brief Get the global bounding box for this font.
+	///
+	/// The global bounding box is the rectangle inside of which all glyphs in the font can fit.
+    /// Glyphs are drawn starting from (0,0) in the returned box (though note that the box can
+    /// extend in any direction out from the origin).
+    ///
+	/// \returns Returns font descender height in pixels.
+    const ofRectangle & getGlyphBBox() const;
 
 	/// \brief Returns letter spacing of font object.
 	///
@@ -214,6 +243,9 @@ protected:
 	vector <ofTTFCharacter> charOutlinesNonVFlipped;
 
 	float lineHeight;
+	float ascenderHeight;
+	float descenderHeight;
+	ofRectangle glyphBBox;
 	float letterSpacing;
 	float spaceSize;
 
@@ -224,6 +256,8 @@ protected:
 	float simplifyAmt;
 	int dpi;
 
+
+    int getKerning(int c, int prevC);
 	void drawChar(int c, float x, float y);
 	void drawCharAsShape(int c, float x, float y);
 	void createStringMesh(string s, float x, float y);
@@ -246,8 +280,9 @@ private:
 	GLboolean texture_2d_enabled;
 
 	ofTextEncoding encoding;
-	void unloadTextures();
-	void reloadTextures();
+	FT_Face		face;
+	void		unloadTextures();
+	void		reloadTextures();
 	static bool	initLibraries();
 	static void finishLibraries();
 

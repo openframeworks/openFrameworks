@@ -17,7 +17,6 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofTrueTypeFont.h"
 #include "ofURLFileLoader.h"
-#include "Poco/Net/NetSSL.h"
 
 
 // TODO: closing seems wonky.
@@ -29,10 +28,8 @@
 //========================================================================
 // static variables:
 
-static ofPtr<ofBaseApp>				OFSAptr;
-static ofPtr<ofAppBaseWindow> 		window;
-
-//#define USE_PROGRAMMABLE_GL
+static shared_ptr<ofBaseApp>				OFSAptr;
+static shared_ptr<ofAppBaseWindow> 		window;
 
 //========================================================================
 // default windowing
@@ -44,6 +41,8 @@ static ofPtr<ofAppBaseWindow> 		window;
 	#include "ofAppAndroidWindow.h"
 #elif defined(TARGET_RASPBERRY_PI)
 	#include "ofAppEGLWindow.h"
+#elif defined(TARGET_EMSCRIPTEN)
+	#include "ofxAppEmscriptenWindow.h"
 #else
 	#include "ofAppGLFWWindow.h"
 #endif
@@ -52,10 +51,17 @@ static ofPtr<ofAppBaseWindow> 		window;
 // it shouldn't be a problem since it's only called from main and never deleted from outside
 // also since old versions created the window in the stack, if this function is called we create a shared_ptr that never deletes
 //--------------------------------------
-static void noopDeleter(ofAppBaseWindow*){}
-void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
-	ofSetupOpenGL(ofPtr<ofAppBaseWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
+#ifdef TARGET_OPENGLES
+static void noopDeleter(ofAppBaseGLESWindow*){}
+void ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, int screenMode){
+	ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
 }
+#else
+static void noopDeleter(ofAppBaseGLWindow*){}
+void ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, int screenMode){
+	ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
+}
+#endif
 
 void ofExitCallback();
 void ofURLFileLoaderShutdown();
@@ -68,7 +74,7 @@ void ofURLFileLoaderShutdown();
 		ofLogVerbose("ofAppRunner") << "sighandler caught: " << sig;
 		if(!bExitCalled) {
 			bExitCalled = true;
-			exitApp();
+			std::exit(0);
 		}
 	}
 #endif
@@ -77,7 +83,7 @@ void ofURLFileLoaderShutdown();
 //--------------------------------------
 void ofRunApp(ofBaseApp * OFSA){
 
-	OFSAptr = ofPtr<ofBaseApp>(OFSA);
+	OFSAptr = shared_ptr<ofBaseApp>(OFSA);
 	if(OFSAptr){
 		OFSAptr->mouseX = 0;
 		OFSAptr->mouseY = 0;
@@ -138,13 +144,83 @@ void ofRunApp(ofBaseApp * OFSA){
 	window->runAppViaInfiniteLoop(OFSAptr.get());
 }
 
+#ifdef TARGET_OPENGLES
+static int glVersionMajor = 1;
+static int glVersionMinor = 0;
+#else
+static int glVersionMajor = 2;
+static int glVersionMinor = 1;
+#endif
+
+static string glslVersionFromGL(int major, int minor){
+	switch(major){
+	case 3:
+		if(minor==0){
+			return "130";
+		}else if(minor==1){
+			return "140";
+		}else if(minor==2){
+			return "150";
+		}else{
+			return ofToString(major*100+minor*10);
+		}
+	case 4:
+		return ofToString(major*100+minor*10);
+	default:
+		return "120";
+	}
+}
+
 //--------------------------------------
-void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
+#ifdef TARGET_OPENGLES
+void ofSetOpenGLESVersion(int version){
+	glVersionMajor = version;
+	glVersionMinor = 0;
+	if(version>1){
+		ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
+	}
+}
+
+int	ofGetOpenGLESVersion(){
+	return glVersionMajor;
+}
+
+string ofGetGLSLVersion(){
+	return "1ES";
+}
+#else
+void ofSetOpenGLVersion(int major, int minor){
+	glVersionMajor = major;
+	glVersionMinor = minor;
+	if(major>2){
+		ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
+	}
+}
+
+int	ofGetOpenGLVersionMajor(){
+	return glVersionMajor;
+}
+
+int	ofGetOpenGLVersionMinor(){
+	return glVersionMinor;
+}
+
+string ofGetGLSLVersion(){
+	return glslVersionFromGL(glVersionMajor,glVersionMinor);
+}
+#endif
+
+//--------------------------------------
+#ifdef TARGET_OPENGLES
+void ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, int screenMode){
+#else
+void ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, int screenMode){
+#endif
     if(!ofGetCurrentRenderer()) {
-	#ifdef USE_PROGRAMMABLE_GL
+	#ifdef TARGET_PROGRAMMABLE_GL
 	    ofPtr<ofBaseRenderer> renderer(new ofGLProgrammableRenderer(false));
 	#else
-	    ofPtr<ofBaseRenderer> renderer(new ofGLRenderer(false));
+	    shared_ptr<ofBaseRenderer> renderer(new ofGLRenderer(false));
 	#endif
 	    ofSetCurrentRenderer(renderer,false);
     }
@@ -152,20 +228,26 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	window = windowPtr;
 
 	if(ofIsGLProgrammableRenderer()){
-        #if defined(TARGET_RASPBERRY_PI)
-		static_cast<ofAppEGLWindow*>(window.get())->setGLESVersion(2);
-		#elif defined(TARGET_LINUX_ARM)
-		static_cast<ofAppGLFWWindow*>(window.get())->setOpenGLVersion(2,0);
-		#elif !defined(TARGET_OPENGLES)
-		static_cast<ofAppGLFWWindow*>(window.get())->setOpenGLVersion(3,2);
-		#endif
-	}else{
-	    #if defined(TARGET_LINUX_ARM) && !defined(TARGET_RASPBERRY_PI)
-		static_cast<ofAppGLFWWindow*>(window.get())->setOpenGLVersion(1,0);
+		#ifdef TARGET_OPENGLES
+			if(glVersionMajor<2){
+				glVersionMajor=2;
+				glVersionMinor=0;
+			}
+		#else
+			if(glVersionMajor<3){
+				glVersionMajor=3;
+				glVersionMinor=2;
+			}
 		#endif
 	}
 
-	window->setupOpenGL(w, h, screenMode);
+	#if defined(TARGET_OPENGLES)
+		windowPtr->setGLESVersion(glVersionMajor);
+	#else
+		windowPtr->setOpenGLVersion(glVersionMajor,glVersionMinor);
+	#endif
+
+	windowPtr->setupOpenGL(w, h, screenMode);
 }
 
 void ofGLReadyCallback(){
@@ -185,10 +267,11 @@ void ofGLReadyCallback(){
 	ofLogVerbose("ofAppRunner") << "Vendor:   " << (char*)glGetString(GL_VENDOR);
 	ofLogVerbose("ofAppRunner") << "Renderer: " << (char*)glGetString(GL_RENDERER);
 	ofLogVerbose("ofAppRunner") << "Version:  " << (char*)glGetString(GL_VERSION);
-	ofLogVerbose("ofAppRunner") << "GLSL:     " << (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	char* glslVer = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	ofLogVerbose("ofAppRunner") << "GLSL:     " << (glslVer ? glslVer : "Error getting GLSL version.");
 
     if(ofGetGLProgrammableRenderer()){
-    	ofGetGLProgrammableRenderer()->setup();
+    	ofGetGLProgrammableRenderer()->setup(glslVersionFromGL(glVersionMajor,glVersionMinor));
     }
 
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
@@ -201,19 +284,41 @@ void ofGLReadyCallback(){
 //--------------------------------------
 void ofSetupOpenGL(int w, int h, int screenMode){
 	#ifdef TARGET_NODISPLAY
-		window = ofPtr<ofAppBaseWindow>(new ofAppNoWindow());
-	#elif defined(TARGET_OF_IOS)
-		window = ofPtr<ofAppBaseWindow>(new ofAppiOSWindow());
-	#elif defined(TARGET_ANDROID)
-		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
-	#elif defined(TARGET_RASPBERRY_PI)
-		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
-    #else
-		window = ofPtr<ofAppBaseWindow>(new ofAppGLFWWindow());
+		shared_ptr<ofAppBaseWindow> window = shared_ptr<ofAppBaseWindow>(new ofAppNoWindow());
+	#else
+		#if defined(TARGET_OF_IOS)
+			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofAppiOSWindow());
+		#elif defined(TARGET_ANDROID)
+			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofAppAndroidWindow());
+		#elif defined(TARGET_RASPBERRY_PI)
+			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofAppEGLWindow());
+		#elif defined(TARGET_EMSCRIPTEN)
+			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofxAppEmscriptenWindow);
+		#elif defined(TARGET_OPENGLES)
+			shared_ptr<ofAppBaseGLESWindow> glWindow = shared_ptr<ofAppBaseGLESWindow>(new ofAppGLFWWindow());
+		#else
+			shared_ptr<ofAppBaseGLWindow> glWindow = shared_ptr<ofAppBaseGLWindow>(new ofAppGLFWWindow());
+		#endif
+		window = glWindow;
+		ofSetupOpenGL(glWindow,w,h,screenMode);
 	#endif
-
-	ofSetupOpenGL(window,w,h,screenMode);
 }
+
+void ofSetWindow(ofAppBaseWindow * windowPtr){
+	ofSetWindow(shared_ptr<ofAppBaseWindow>(windowPtr));
+}
+
+void ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr){
+	window = windowPtr;
+}
+
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+	ofSetWindow(windowPtr);
+}
+
+/*void ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
+	ofSetWindow(windowPtr);
+}*/
 
 //-----------------------	gets called when the app exits
 //							currently looking at who to turn off
@@ -223,7 +328,9 @@ void ofExitCallback(){
 
 	ofNotifyExit();
 
+#ifndef TARGET_EMSCRIPTEN
 	ofURLFileLoaderShutdown();
+#endif
 
     ofRemoveListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofRemoveListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
@@ -257,9 +364,6 @@ void ofExitCallback(){
 	// try to close freeImage:
 	ofCloseFreeImage();
 
-	//------------------------
-	// try to close free type:
-	ofTrueTypeFont::finishLibraries();
 
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeEndPeriod(1);
@@ -268,7 +372,7 @@ void ofExitCallback(){
 }
 
 //--------------------------------------
-void ofRunApp(ofPtr<ofBaseApp> OFSA){
+void ofRunApp(shared_ptr<ofBaseApp> OFSA){
 
 	OFSAptr = OFSA;
 	if(OFSAptr){
@@ -326,7 +430,7 @@ ofAppBaseWindow * ofGetWindowPtr(){
 }
 
 //--------------------------------------
-void ofSetAppPtr(ofPtr<ofBaseApp> appPtr) {
+void ofSetAppPtr(shared_ptr<ofBaseApp> appPtr) {
 	OFSAptr = appPtr;
 }
 
@@ -339,7 +443,7 @@ void ofExit(int status){
 void ofSleepMillis(int millis){
 	#ifdef TARGET_WIN32
 		Sleep(millis);			//windows sleep in milliseconds
-	#else
+	#elif !defined(TARGET_EMSCRIPTEN)
 		usleep(millis * 1000);	//mac sleep in microseconds - cooler :)
 	#endif
 }

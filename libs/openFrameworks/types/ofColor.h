@@ -52,6 +52,7 @@
 ///
 /// [1]: http://en.wikipedia.org/wiki/RGB_color_model "RGB Model"
 ///
+/// \tparam PixelType The data type used to represent a single pixel value.
 template<typename PixelType>
 class ofColor_{
 public:
@@ -531,25 +532,25 @@ public:
     friend istream& operator >> (istream& is, ofColor_<PixelType>& color) {
         if(sizeof(PixelType) == 1) {
             int component;
-            is >> component;
+            is >> std::skipws >> component;
             color.r = component;
-            is.ignore(2);
-            is >> component;
+            is.ignore(1);
+            is >> std::skipws >> component;
             color.g = component;
-            is.ignore(2);
-            is >> component;
+            is.ignore(1);
+            is >> std::skipws >> component;
             color.b = component;
-            is.ignore(2);
-            is >> component;
+            is.ignore(1);
+            is >> std::skipws >> component;
             color.a = component;
         }else{
-            is >> color.r;
-            is.ignore(2);
-            is >> color.g;
-            is.ignore(2);
-            is >> color.b;
-            is.ignore(2);
-            is >> color.a;
+            is >> std::skipws >> color.r;
+            is.ignore(1);
+            is >> std::skipws >> color.g;
+            is.ignore(1);
+            is >> std::skipws >> color.b;
+            is.ignore(1);
+            is >> std::skipws >> color.a;
         }
         return is;
     }

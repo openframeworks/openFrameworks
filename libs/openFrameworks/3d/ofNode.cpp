@@ -197,6 +197,7 @@ void ofNode::roll(float degrees) {
 void ofNode::rotate(const ofQuaternion& q) {
 	orientation *= q;
 	createMatrix();
+	onOrientationChanged();
 }
 
 //----------------------------------------
@@ -218,7 +219,7 @@ void ofNode::rotateAround(const ofQuaternion& q, const ofVec3f& point) {
 	
 	setGlobalPosition((getGlobalPosition() - point)* q + point); 
 	
-//	onOrientationChanged();
+	onOrientationChanged();
 	onPositionChanged();
 }
 

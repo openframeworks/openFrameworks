@@ -1,10 +1,10 @@
 #pragma once
-
+#include "ofConstants.h"
+#ifndef TARGET_NO_THREADS
 
 #include "Poco/AtomicCounter.h"
 #include "Poco/Thread.h"
 #include "Poco/Runnable.h"
-#include "ofConstants.h"
 #include "ofTypes.h"
 
 
@@ -76,11 +76,11 @@ public:
     /// \brief Check the running status of the thread.
     /// \returns true iff the thread is currently running.
     bool isThreadRunning() const;
-    
+
     /// \brief Get the unique thread id.
     /// \note This is NOT the the same as the operating thread id!
     int getThreadId() const;
-    
+
     /// \brief Get the unique thread name, in the form of "Thread id#"
     /// \returns the Thread ID string.
     std::string getThreadName() const;
@@ -110,13 +110,13 @@ public:
     ///
     /// \returns true iff the lock was successfully acquired.
     bool lock();
-    
+
     /// \brief Unlock the mutex.
     ///
     /// This will only unlocks the mutex if it was previously by the same
     /// calling thread.
     void unlock();
-    
+
     /// \brief Stop the thread.
     ///
     /// This does immediately stop the thread from processing, but
@@ -125,7 +125,7 @@ public:
     /// to both stop the thread AND wait for the thread to finish
     /// processing, the user should call waitForThread(true, ...).
     void stopThread();
-    
+
     /// \brief Wait for the thread to exit (aka "joining" the thread).
     ///
     /// This method waits for a thread will "block" and wait for the
@@ -161,7 +161,7 @@ public:
     /// \sa http://pocoproject.org/docs/Poco.Semaphore.html
     void waitForThread(bool callStopThread = true,
                        long milliseconds = INFINITE_JOIN_TIMEOUT);
-    
+
     /// \brief Tell the thread to sleep for a certain amount of milliseconds.
     ///
     /// This is useful inside the threadedFunction() when a thread is waiting
@@ -197,7 +197,7 @@ public:
     ///
     /// \param milliseconds The number of milliseconds to sleep.
     void sleep(long milliseconds);
-    
+
     /// \brief Tell the thread to give up its CPU time other threads.
     ///
     /// This method is similar to sleep() and can often be used in
@@ -295,7 +295,7 @@ public:
     static Poco::Thread* getCurrentPocoThread();
 
     enum {
-        INFINITE_JOIN_TIMEOUT = LONG_MAX
+        INFINITE_JOIN_TIMEOUT = -1
             ///< \brief A sentinal value for an infinite join timeout.
             ///<
             ///< Primarily used with the waitForThread() method.
@@ -360,4 +360,22 @@ private:
     Poco::AtomicCounter _mutexBlocks;
         ///< \brief Should the mutex block?
 
+    bool threadBeingWaitedFor;
+
 };
+
+#else
+
+class ofThread{
+public:
+	void lock(){}
+	void unlock(){}
+	void startThread(){}
+	void stopThread(){};
+	bool isThreadRunning(){return false;}
+
+    enum {
+        INFINITE_JOIN_TIMEOUT = LONG_MAX
+    };
+};
+#endif

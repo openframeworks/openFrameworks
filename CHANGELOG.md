@@ -1,3 +1,79 @@
+OF 0.9.0
+========
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+CORE
+----
+### 3d
+	/ ofEasyCam: removes roll rotation when rotating inside the arcball
+	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
+	
+### gl
+	+ Programmable lights and materials
+	+ New area light type on programmable renderer
+	+ Separate model matrix
+	+ ofGetCurrentNormalMatrix
+	+ ofSetOpenGL(ES)Version, allows to set any specific GL version
+	+ ofTexture::enableMipmap() auto-generate mipmaps on load - for textures which support
+	  mipmaps (that's TEXTURE_2D textures loaded after ofDisableArbTex() )
+	+ ofTexture::generateMipmap() generate mipmap after a texture was loaded,
+	  if the texture target supports mipmaps (see above).
+	+ ofTexture::disableMipmap() disables auto-generation of mipmap for texture
+	- removed compressed mipmaps based on deprecated glu methods
+	- ofSetTextureWrap() : deprecated (use corresponding ofTexture member method) 
+	- ofGetUsingCustomTextureWrap() : deprecated
+	- ofRestoreTextureWrap() : deprecated
+	- ofSetMinMagFilters() : deprecated (use corresponding ofTexture member method) 
+	- ofGetUsingCustomMinMagFilters() : deprecated
+	- ofRestoreMinMagFilters() : deprecated	  
+
+
+### graphics
+	+ ofTruetypeFont: kerning and better hinting and spacing
+
+### video
+	/ gstreamer: fix memory leaks when closing a video element
+
+PLATFORM SPECIFIC
+-----------------
+
+### Emscripten
+	+ New platform!
+
+
+
+
+OF 0.8.3
+========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
+        
+PLATFORM SPECIFIC
+-----------------
+###OSX
+	/ ofAppGLFWWindow: Drag drop files were coming in empty
+### Windows 
+	/ ofAppGLFWWindow: Drag drop files were coming in empty
+
+
+CORE ADDONS
+-----------
+### ofxKinect
+	/ small fixes for CodeBlocks compilation on Windows
+
+
+
 OF 0.8.2
 ========
  
@@ -6,30 +82,51 @@ OF 0.8.2
 	  - removed  
 	  / modified  
 
-### Graphics
-	+ ofGetCurrentOrientationMatrix(): query current orientation matrix state (supported by ofGLProgrammableRenderer, ofGLRenderer)
-
 ------------------------------------------------------------------------------
 
 CORE
 ----
 ### 3d
 	/ fix of3DPrimitive copy constructor not copying node
-	
+        
 ### app
 	+ ofAppEGLWindow added new methods hasMouse()/hasKeyboard() to provide info on whether mouse/keyboard were detected
 	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
+	/ ofAppGLFWWindow: fix key mappings on non english keyboards
+	/ ofAppGLFWWindow: Cleaner exit code for GLFW based apps. 
+	/ ofAppGLFWWindow: fixes for better Retina support. 
+	/ Updated GLFW to latest master branch
+	/ ofAppGLFWWindow: added patch to handle special keys and cases. 
+	/ ofAppGLFWWindow: better support for non-english keyboards. 
+	/ ofAppGLFWWindow: small bugfix for GLFW drag drop callback for retina screens. Closes
+	/ ofSystem bugfix for successive calls. Now uses pclose instead of fclose.
+### events
+	+ fix ofSetFrameRate to be more accurate
+	+ add keycode, scancode and unicode codepoint to ofKeyEventArgs
 ### gl
 	+ ofFbo: added new method to attach an external texture
 	+ ofFbo: fix regression on min/max filter settings
 ### Graphics
 	/ ofImage: convert format when loading different image types
+	/ Fix ofSetupPerspective not using passed width and height
+	/ of3DPrimitives: fix copy constructor
 ### Math
 	/ fix ofQuaternion setOrientation and getEulerOrientation
+	/ ofMatrix: add case to catch invalid matrix queries
+	+ ofGetCurrentOrientationMatrix(): query current orientation matrix state (supported by ofGLProgrammableRenderer, ofGLRenderer)
 ### Utils
 	/ ofThread now uses Class name for logging channel (was thread name)
 	/ ofURLFileLoader: better shutdown, don't shutdown if it wasn't initialized + wait thread
-	
+	/ ofXml: fixes crash on empty document
+	/ ofSystem: fix for second and later calls failing
+	+ ofThread argument for tryJoin time.
+	/ ofThread overall, documentation and example fixes
+	/ ofThread change to infinite wait. 
+	/ ofParameterGroup: fix to allow nested ofParameterGroups
+	/ ofParameterGroup: memory leak fix
+	/ ofThread: detach thread on stop if it's not being waited.
+	/ ofParameter(Group) fix polymorphism on parameter groups
+        
 PLATFORM SPECIFIC
 -----------------
 ### Android
@@ -39,6 +136,15 @@ PLATFORM SPECIFIC
 	/ fixed shader in shader example
 	/ disable x86 in assimp and opencv examples
 	/ shader and assimp examples reload gl resources when the app resumes
+### iOS
+	+ implement setSpeed() for video player
+	+ ofxiOSGetDeviceInfo for querying major / minor versions, device type and device string
+	+ move to cleaner NSAutoreleasePool for iOS projects. 
+	/ iOS-VideoGrabber memory related fixes
+	/ ofxiOSVideoPlayer: setSpeed functionality. 
+	+ ofxiOSSoundPlayer: added getAVSoundPlayer() method
+	/ bugfix for ofxiOSImagePicker crashing on exit. 
+	/ ofxiOSImagePicker: switch to using ofPixels.
 ### Linux
 	/ video: fixes for videos which pixels have padding
 	/ video: close pipeline properly by sending and waiting for EOS event
@@ -46,14 +152,28 @@ PLATFORM SPECIFIC
 	/ install & make: detect and use gtk 3 instead of 2 if it's available
 ###OSX
 	/ Reduce warnings on OSX
+	/ ofxOsc: Fix for issue with UDP multicast socket on OSX.
+### Windows
+	/ ofAppGLFWWindow: Correct fullscreen multi monitor display on Windows
 
-ORE ADDONS
+
+CORE ADDONS
 -----------
+### ofxAssimpModelLoader
+	/ fix to be able to put loaders on vectors
+	/ use shared_ptr for assimp scene
 ### ofxGui
 	+ ofxSlider: added get/setMin/Max
-
+	/ ofxGui: fixed for mouse registration issues with ofxGui. ofxPanel was registering for mouse events 3 times on setup! - ofxButton was registering for events in setup and registering again in the destructor. - ofxSlider was never unregistering mouse events.
+### ofxKinect
+	/ bugfix to fix Kinect not being able to re-open if device was not correctly shutdown. 
+	/ bugfix for Kinect IR image crashing. Now sets the correct image sizes. 
 ### ofxNetwork
 	/ fix port reuse on osx
+### ofxOsc
+	+ added blob support. ability to send ofBuffers as blobs. Note: max data size limited by network buffer sizes. 
+        
+        
 
 OF 0.8.1
 ========

@@ -38,12 +38,12 @@ ofVideoGrabber::~ofVideoGrabber(){
 }
 
 //--------------------------------------------------------------------
-void ofVideoGrabber::setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber){
+void ofVideoGrabber::setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber){
 	grabber = newGrabber;
 }
 
 //--------------------------------------------------------------------
-ofPtr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber(){
+shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber(){
 	return grabber;
 }
 
@@ -54,8 +54,8 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 #error OF_VID_GRABBER_TYPE is not #defined! 
 #endif
     
-	if( grabber == NULL ){
-		setGrabber( ofPtr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+	if(!grabber){
+		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
 
 	bInitialized = true;
@@ -87,7 +87,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 //--------------------------------------------------------------------
 bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
-	if( grabber != NULL ){
+	if(grabber){
 		if( grabberRunning ){
 			ofLogWarning("ofVideoGrabber") << "setPixelFormat(): can't set pixel format while grabber is running";
 			internalPixelFormat = grabber->getPixelFormat(); 
@@ -108,7 +108,7 @@ bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
 
 //---------------------------------------------------------------------------
 ofPixelFormat ofVideoGrabber::getPixelFormat(){
-	if( grabber != NULL ){
+	if(grabber){
 		internalPixelFormat = grabber->getPixelFormat();
 	}
 	return internalPixelFormat;
@@ -116,15 +116,15 @@ ofPixelFormat ofVideoGrabber::getPixelFormat(){
 
 //--------------------------------------------------------------------
 vector<ofVideoDevice> ofVideoGrabber::listDevices(){
-	if( grabber == NULL ){
-		setGrabber( ofPtr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+	if(!grabber){
+		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
 	return grabber->listDevices();
 }
 
 //--------------------------------------------------------------------
 void ofVideoGrabber::setVerbose(bool bTalkToMe){
-	if(	grabber != NULL ){
+	if(grabber){
 		grabber->setVerbose(bTalkToMe);
 	}
 }
@@ -140,14 +140,14 @@ void ofVideoGrabber::setDeviceID(int _deviceID){
 //--------------------------------------------------------------------
 void ofVideoGrabber::setDesiredFrameRate(int framerate){
 	desiredFramerate = framerate;
-	if(	grabber != NULL ){
+	if(grabber){
 		grabber->setDesiredFrameRate(framerate);
 	}
 }
 
 //---------------------------------------------------------------------------
 unsigned char * ofVideoGrabber::getPixels(){
-	if(	grabber != NULL ){
+	if(grabber){
 		return grabber->getPixels();
 	}
 	return NULL;
@@ -171,7 +171,7 @@ ofTexture & ofVideoGrabber::getTextureReference(){
 
 //---------------------------------------------------------------------------
 bool  ofVideoGrabber::isFrameNew(){
-	if(	grabber != NULL ){
+	if(grabber){
 		return grabber->isFrameNew();
 	}
 	return false;
@@ -179,7 +179,7 @@ bool  ofVideoGrabber::isFrameNew(){
 
 //--------------------------------------------------------------------
 void ofVideoGrabber::update(){
-	if(	grabber != NULL ){
+	if(grabber){
 		grabber->update();
 		if( bUseTexture && !grabber->getTexture() && grabber->isFrameNew() ){
 			tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
@@ -189,7 +189,7 @@ void ofVideoGrabber::update(){
 
 //--------------------------------------------------------------------
 void ofVideoGrabber::close(){
-	if(	grabber != NULL ){
+	if(grabber){
 		grabber->close();
 		bInitialized=false;
 		grabberRunning = false;
@@ -199,7 +199,7 @@ void ofVideoGrabber::close(){
 
 //--------------------------------------------------------------------
 void ofVideoGrabber::videoSettings(void){
-	if(	grabber != NULL ){
+	if(grabber){
 		grabber->videoSettings();
 	}
 }
@@ -237,7 +237,7 @@ void ofVideoGrabber::draw(float _x, float _y){
 
 //----------------------------------------------------------
 float ofVideoGrabber::getHeight(){
-	if(	grabber != NULL ){
+	if(grabber){
 		height = grabber->getHeight();
 	}
 	return (float)height;
@@ -245,7 +245,7 @@ float ofVideoGrabber::getHeight(){
 
 //----------------------------------------------------------
 float ofVideoGrabber::getWidth(){
-	if(	grabber != NULL ){
+	if(grabber){
 		width = grabber->getWidth();
 	}
 	return (float)width;
