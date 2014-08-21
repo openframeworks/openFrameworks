@@ -257,8 +257,8 @@ ofVec3f operator/( float f, const ofVec3f& vec );
 
 inline ofVec3f::ofVec3f( const ofVec2f& vec ):x(vec.x), y(vec.y), z(0) {}
 inline ofVec3f::ofVec3f( const ofVec4f& vec ):x(vec.x), y(vec.y), z(vec.z) {}
-inline ofVec3f::ofVec3f(): x(0), y(0), z(0) {};
-inline ofVec3f::ofVec3f( float _all ): x(_all), y(_all), z(_all) {};
+inline ofVec3f::ofVec3f(): x(0), y(0), z(0) {}
+inline ofVec3f::ofVec3f( float _all ): x(_all), y(_all), z(_all) {}
 inline ofVec3f::ofVec3f( float _x, float _y, float _z ):x(_x), y(_y), z(_z) {}
 
 
