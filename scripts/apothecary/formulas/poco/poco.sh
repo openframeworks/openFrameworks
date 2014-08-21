@@ -74,10 +74,6 @@ function prepare() {
 		# replace OPENSSL_LIB=%OPENSSL_DIR%\lib;%OPENSSL_DIR%\lib\VC with OPENSSL_LIB=%OPENSSL_DIR%\lib\vs
 		sed -i.tmp "s|%OPENSSL_DIR%\\\lib;.*|%OPENSSL_DIR%\\\lib\\\vs|g" buildwin.cmd
 	
-	elif [ "$TYPE" == "win_cb" ] ; then
-		# Use the mingw equivalent of mc to compile the pocomsg.mc file into a pocomsg.h.
-		cd Foundation/src
-		windmc pocomsg.mc
 	fi
 
 }
