@@ -649,8 +649,9 @@ public class OFAndroid {
     public static native void onTouchUp(int id,float x,float y,float pressure);
     public static native void onTouchMoved(int id,float x,float y,float pressure);
     public static native void onTouchCancelled(int id,float x,float y);
-    
-    public static native void onSwipe(int id, int swipeDir);
+    public static native void onTouchDragged(int id, int dragDir, float x,float y);    
+    public static native void onSwipe(int id, int swipeDir, float velocityX, float velocityY);
+
     
     public static native void onKeyDown(int keyCode);
     public static native void onKeyUp(int keyCode);
