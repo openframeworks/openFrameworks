@@ -11,7 +11,7 @@
 VER=1.5.3-release
 
 # tools for git use
-GIT_URL=https://github.com/pocoproject/poco
+GIT_URL=https://github.com/bakercp/poco
 GIT_TAG=poco-$VER
 
 # For Poco Builds, we omit both Data/MySQL and Data/ODBC because they require
@@ -121,11 +121,13 @@ function build() {
 		local OPENSSL_INCLUDE="/c/Users/bakercp/openFrameworks/libs/openssl/include"
 		local OPENSSL_LIBS="/c/Users/bakercp/openFrameworks/libs/openssl/lib/win_cb"
 
+		# we must include -std=c++11 with CFLAGS, which is not compatible with c, but we can handle the warnings.
+
 		./configure $BUILD_OPTS \
-					--cflags="-D_WIN32 -DMINGW32 -DWINVER=0x500 -DODBCVER=0x0300 -O3 -std=c++11 -DPOCO_ENABLE_CPP11 -DPOCO_NO_SOO -DPOCO_NO_AUTOMATIC_LIB_INIT" \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS \
 					--config=MinGW
+
 		make
 
 	elif [ "$TYPE" == "ios" ] ; then
@@ -233,6 +235,9 @@ function copy() {
 	elif [ "$TYPE" == "vs" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/*.lib $1/lib/$TYPE
+	elif [ "$TYPE" == "win_cb" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/MinGW/$(uname -m)/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "linux" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/$(uname -m)/*.a $1/lib/$TYPE
