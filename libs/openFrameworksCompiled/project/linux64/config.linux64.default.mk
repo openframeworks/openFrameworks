@@ -40,3 +40,4 @@ include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
 
 PLATFORM_CFLAGS += -march=native
 PLATFORM_CFLAGS += -mtune=native
+#PLATFORM_CFLAGS += -std=c++11

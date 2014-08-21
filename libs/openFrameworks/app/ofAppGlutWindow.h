@@ -12,7 +12,7 @@
 //class ofPoint;
 class ofBaseApp;
 
-class ofAppGlutWindow : public ofAppBaseWindow {
+class ofAppGlutWindow : public ofAppBaseGLWindow {
 
 public:
 

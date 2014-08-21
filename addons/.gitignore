@@ -3,6 +3,7 @@
 #########################
 
 !.project
+!.cproject
 !ofx3DModelLoader
 !ofxAccelerometer
 !ofxAndroid
@@ -21,6 +22,7 @@ ofxAndroid/ofAndroidLib/gen
 !ofxThreadedImageLoader
 !ofxVectorGraphics
 !ofxXmlSettings
+!ofxEmscripten
 
 # don't ignore the .gitignore file
 !.gitignore

@@ -2,7 +2,7 @@
 #include "ofParameterGroup.h"
 
 ofAbstractParameter::ofAbstractParameter(){
-	parent = NULL;
+
 }
 
 ofAbstractParameter::~ofAbstractParameter(){
@@ -51,15 +51,15 @@ string ofAbstractParameter::type() const{
 }
 
 void ofAbstractParameter::setParent(ofParameterGroup * _parent){
-	parent = _parent;
+
 }
 
 const ofParameterGroup * ofAbstractParameter::getParent() const{
-	return parent;
+	return NULL;
 }
 
 ofParameterGroup * ofAbstractParameter::getParent(){
-	return parent;
+	return NULL;
 }
 
 vector<string> ofAbstractParameter::getGroupHierarchyNames() const{
@@ -82,6 +82,10 @@ void ofAbstractParameter::setSerializable(bool serializable){
 
 bool ofAbstractParameter::isSerializable() const{
 	return true;
+}
+
+shared_ptr<ofAbstractParameter> ofAbstractParameter::newReference() const{
+	return shared_ptr<ofAbstractParameter>(new ofAbstractParameter(*this));
 }
 
 ostream& operator<<(ostream& os, const ofAbstractParameter& p){

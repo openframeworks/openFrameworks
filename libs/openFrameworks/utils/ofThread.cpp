@@ -9,7 +9,10 @@
 
 
 //-------------------------------------------------
-ofThread::ofThread(): _threadRunning(false), _mutexBlocks(true){
+ofThread::ofThread()
+:_threadRunning(false)
+,_mutexBlocks(true)
+,threadBeingWaitedFor(false){
    thread.setName("Thread " + ofToString(thread.id()));
 }
 
@@ -71,7 +74,7 @@ bool ofThread::lock(){
 	}else{
 		if(!mutex.tryLock()){
 			ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Mutex is already locked, tryLock failed.";
-			return false; 
+			return false;
 		}
 	}
 
@@ -81,14 +84,14 @@ bool ofThread::lock(){
         ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - External thread locked the ofThread mutex.";
     }
 
-	return true; 
-} 
+	return true;
+}
 
 
 //-------------------------------------------------
 void ofThread::unlock(){
 	mutex.unlock();
-	
+
     if(isCurrentThread()){
         ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - ofThread unlocked its own mutex.";
     } else {
@@ -106,12 +109,14 @@ void ofThread::stopThread(){
 //-------------------------------------------------
 void ofThread::waitForThread(bool callStopThread, long milliseconds){
 	if(thread.isRunning()){
+		threadBeingWaitedFor = true;
+
 		// tell thread to stop
 		if(callStopThread){
             stopThread();
 			ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Signaled to stop.";
 		}
-		
+
 		// wait for the thread to finish
 		ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - waiting to stop";
 
@@ -198,12 +203,18 @@ void ofThread::run(){
 	// user function
     // should loop endlessly.
 	threadedFunction();
-	
+
+    _threadRunning = false;
+
+#if !defined(TARGET_WIN32) && !defined(TARGET_ANDROID)
+	// FIXME: this won't be needed once we update POCO https://github.com/pocoproject/poco/issues/79
+	if(!threadBeingWaitedFor){ //if threadedFunction() ended and the thread is not being waited for, detach it before exiting.
+		pthread_detach(pthread_self());
+	}
+#endif
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
-
-    _threadRunning = false;
 
 	ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Thread Finished.";
 }

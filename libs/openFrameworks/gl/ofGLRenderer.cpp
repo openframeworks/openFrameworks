@@ -9,6 +9,8 @@
 #include "ofGLUtils.h"
 #include "ofImage.h"
 #include "ofFbo.h"
+#include "ofLight.h"
+#include "ofMaterial.h"
 
 const string ofGLRenderer::TYPE="GL";
 
@@ -22,6 +24,8 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor)
 	triPoints.resize(3);
 	fillFlag = OF_FILLED;
 	bSmoothHinted = false;
+	normalsEnabled = false;
+	lightingEnabled = true;
 	rectMode = OF_RECTMODE_CORNER;
 }
 
@@ -46,8 +50,15 @@ void ofGLRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, b
 	}
 
 	if(vertexData.getNumTexCoords() && useTextures){
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+		set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+		for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+			glActiveTexture(GL_TEXTURE0+*textureLocation);
+			glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+		}
+		glActiveTexture(GL_TEXTURE0);
+		glClientActiveTexture(GL_TEXTURE0);
 	}
 
 	if(vertexData.getNumIndices()){
@@ -94,8 +105,15 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 		}
 
 		if(vertexData.getNumTexCoords() && useTextures){
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(2, GL_FLOAT, 0, vertexData.getTexCoordsPointer());
+			set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+			for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+				glActiveTexture(GL_TEXTURE0+*textureLocation);
+				glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+			}
+			glActiveTexture(GL_TEXTURE0);
+			glClientActiveTexture(GL_TEXTURE0);
 		}
 
 		GLenum drawMode;
@@ -352,10 +370,16 @@ bool ofGLRenderer::texturesNeedVFlip() const{
 
 //----------------------------------------------------------
 void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist) {
-	ofRectangle currentViewport = getCurrentViewport();
+	float viewW, viewH;
+	if(width<0 || height<0){
+		ofRectangle currentViewport = getCurrentViewport();
 
-	float viewW = currentViewport.width;
-	float viewH = currentViewport.height;
+		viewW = currentViewport.width;
+		viewH = currentViewport.height;
+	}else{
+		viewW = width;
+		viewH = height;
+	}
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -376,16 +400,21 @@ void ofGLRenderer::setupScreenPerspective(float width, float height, float fov, 
 	matrixMode(OF_MATRIX_MODELVIEW);
 	ofMatrix4x4 lookAt;
 	lookAt.makeLookAtViewMatrix( ofVec3f(eyeX, eyeY, dist),  ofVec3f(eyeX, eyeY, 0),  ofVec3f(0, 1, 0) );
-	loadMatrix(lookAt);
+	loadViewMatrix(lookAt);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist) {
+	float viewW, viewH;
+	if(width<0 || height<0){
+		ofRectangle currentViewport = getCurrentViewport();
 
-	ofRectangle currentViewport = getCurrentViewport();
-
-	float viewW = currentViewport.width;
-	float viewH = currentViewport.height;
+		viewW = currentViewport.width;
+		viewH = currentViewport.height;
+	}else{
+		viewW = width;
+		viewH = height;
+	}
 
 	ofMatrix4x4 ortho;
 
@@ -395,7 +424,7 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, float nearDist, f
 	loadMatrix(ortho); // make ortho our new projection matrix.
 
 	matrixMode(OF_MATRIX_MODELVIEW);
-	loadIdentityMatrix();
+	loadViewMatrix(ofMatrix4x4::newIdentityMatrix());
 
 }
 
@@ -559,6 +588,40 @@ void ofGLRenderer::multMatrix (const float *m){
 	}else{
 		glMultMatrixf(m);
 	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::loadViewMatrix(const ofMatrix4x4 & m){
+	int matrixMode;
+	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
+	matrixStack.loadViewMatrix(m);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadMatrixf(m.getPtr());
+	glMatrixMode(matrixMode);
+
+	if(lightingEnabled){
+		for(size_t i=0;i<ofLightsData().size();i++){
+			shared_ptr<ofLight::Data> lightData = ofLightsData()[i].lock();
+			if(lightData && lightData->isEnabled){
+				glLightfv(GL_LIGHT0 + lightData->glIndex, GL_POSITION, &lightData->position.x);
+			}
+		}
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::multViewMatrix(const ofMatrix4x4 & m){
+	ofLogError() << "mutlViewMatrix not implemented on fixed GL renderer";
+}
+
+//----------------------------------------------------------
+ofMatrix4x4 ofGLRenderer::getCurrentViewMatrix() const{
+	return matrixStack.getViewMatrix();
+}
+
+//----------------------------------------------------------
+ofMatrix4x4 ofGLRenderer::getCurrentNormalMatrix() const{
+	return ofMatrix4x4::getTransposedOf(getCurrentMatrix(OF_MATRIX_MODELVIEW).getInverse());
 }
 
 //----------------------------------------------------------
@@ -1124,10 +1187,156 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	glBlendFunc(blend_src, blend_dst);
 }
 
-void ofGLRenderer::enableTextureTarget(int textureTarget){
+//----------------------------------------------------------
+void ofGLRenderer::enableTextureTarget(int textureTarget, int textureID, int textureLocation){
+	glActiveTexture(GL_TEXTURE0+textureLocation);
+	glClientActiveTexture(GL_TEXTURE0+textureLocation);
 	glEnable(textureTarget);
+	glBindTexture( textureTarget, (GLuint)textureID);
+	textureLocationsEnabled.insert(textureLocation);
 }
 
-void ofGLRenderer::disableTextureTarget(int textureTarget){
+//----------------------------------------------------------
+void ofGLRenderer::disableTextureTarget(int textureTarget, int textureLocation){
+	glActiveTexture(GL_TEXTURE0+textureLocation);
+	//glClientActiveTexture(GL_TEXTURE0+textureLocation);
+	glBindTexture( textureTarget, 0);
 	glDisable(textureTarget);
+	glActiveTexture(GL_TEXTURE0);
+	//glClientActiveTexture(GL_TEXTURE0);
+	textureLocationsEnabled.erase(textureLocation);
+}
+
+void ofGLRenderer::setAlphaMaskTex(ofTexture & tex){
+	enableTextureTarget(tex.getTextureData().textureTarget, tex.getTextureData().textureID, 1);
+	alphaMaskTextureTarget = tex.getTextureData().textureTarget;
+}
+
+void ofGLRenderer::disableAlphaMask(){
+	disableTextureTarget(alphaMaskTextureTarget,1);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::enableLighting(){
+	glEnable(GL_LIGHTING);
+#ifndef TARGET_OPENGLES  //TODO: fix this
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+#endif
+	glEnable(GL_COLOR_MATERIAL);
+
+	// FIXME: we do this so the 3d ofDraw* functions work with lighting
+	// but if someone enables it between ofEnableLighting it'll be disabled
+	// on ofDisableLighting. by now it seems the best option to not loose
+	// performance when drawing lots of primitives
+	normalsEnabled = glIsEnabled( GL_NORMALIZE );
+	glEnable(GL_NORMALIZE);
+	lightingEnabled = true;
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::disableLighting(){
+	glDisable(GL_LIGHTING);
+	if(!normalsEnabled){
+		glDisable(GL_NORMALIZE);
+	}
+	lightingEnabled = false;
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::enableSeparateSpecularLight(){
+#ifndef TARGET_OPENGLES
+	glLightModeli (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
+#endif
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::disableSeparateSpecularLight(){
+#ifndef TARGET_OPENGLES
+	glLightModeli (GL_LIGHT_MODEL_COLOR_CONTROL,GL_SINGLE_COLOR);
+#endif
+}
+
+//----------------------------------------------------------
+bool ofGLRenderer::getLightingEnabled(){
+	return glIsEnabled(GL_LIGHTING);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setSmoothLighting(bool b){
+	if (b) glShadeModel(GL_SMOOTH);
+	else glShadeModel(GL_FLAT);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setGlobalAmbientColor(const ofColor& c){
+	GLfloat cc[] = {c.r/255.f, c.g/255.f, c.b/255.f, c.a/255.f};
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, cc);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::enableLight(int lightIndex){
+	enableLighting();
+	glEnable(GL_LIGHT0 + lightIndex);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::disableLight(int lightIndex){
+	if(lightIndex!=-1) {
+		glDisable(GL_LIGHT0 + lightIndex);
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setLightSpotlightCutOff(int lightIndex, float spotCutOff){
+	glLightf(GL_LIGHT0 + lightIndex, GL_SPOT_CUTOFF, spotCutOff );
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setLightSpotConcentration(int lightIndex, float exponent){
+	glLightf(GL_LIGHT0 + lightIndex, GL_SPOT_EXPONENT, exponent);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setLightAttenuation(int lightIndex, float constant, float linear, float quadratic ){
+    if(lightIndex==-1) return;
+	glLightf(GL_LIGHT0 + lightIndex, GL_CONSTANT_ATTENUATION, constant);
+	glLightf(GL_LIGHT0 + lightIndex, GL_LINEAR_ATTENUATION, linear);
+	glLightf(GL_LIGHT0 + lightIndex, GL_QUADRATIC_ATTENUATION, quadratic);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setLightAmbientColor(int lightIndex, const ofFloatColor& c){
+    if(lightIndex==-1) return;
+	glLightfv(GL_LIGHT0 + lightIndex, GL_AMBIENT, &c.r);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setLightDiffuseColor(int lightIndex, const ofFloatColor& c){
+    if(lightIndex==-1) return;
+	glLightfv(GL_LIGHT0 + lightIndex, GL_DIFFUSE, &c.r);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setLightSpecularColor(int lightIndex, const ofFloatColor& c){
+    if(lightIndex==-1) return;
+	glLightfv(GL_LIGHT0 + lightIndex, GL_SPECULAR, &c.r);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setLightPosition(int lightIndex, const ofVec4f & position){
+	if(lightIndex==-1) return;
+	int matrixMode;
+	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadMatrixf(matrixStack.getViewMatrix().getPtr());
+	glLightfv(GL_LIGHT0 + lightIndex, GL_POSITION, &position.x);
+	glPopMatrix();
+	glMatrixMode(matrixMode);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setLightSpotDirection(int lightIndex, const ofVec4f & direction){
+	if(lightIndex==-1) return;
+	glLightfv(GL_LIGHT0 + lightIndex, GL_SPOT_DIRECTION, &direction.x);
 }

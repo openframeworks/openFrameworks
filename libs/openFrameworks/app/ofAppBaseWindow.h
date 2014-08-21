@@ -19,6 +19,7 @@ public:
 	virtual void setupOpenGL(int w, int h, int screenMode) {}
 	virtual void initializeWindow() {}
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr) {}
+	virtual void windowShouldClose(){std::exit(0);}
 
 	virtual void hideCursor() {}
 	virtual void showCursor() {}
@@ -76,3 +77,14 @@ public:
 #endif
 };
 
+class ofAppBaseGLWindow: public ofAppBaseWindow{
+public:
+	virtual ~ofAppBaseGLWindow(){}
+	virtual void setOpenGLVersion(int glVersionMajor,int glVersionMinor){};
+};
+
+class ofAppBaseGLESWindow: public ofAppBaseWindow{
+public:
+	virtual ~ofAppBaseGLESWindow(){}
+	virtual void setGLESVersion(int glesVersion){};
+};

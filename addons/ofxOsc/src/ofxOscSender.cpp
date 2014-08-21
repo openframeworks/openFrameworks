@@ -64,7 +64,9 @@ void ofxOscSender::shutdown()
 
 void ofxOscSender::sendBundle( ofxOscBundle& bundle )
 {
-	static const int OUTPUT_BUFFER_SIZE = 32768;
+    //setting this much larger as it gets trimmed down to the size its using before being sent.
+    //TODO: much better if we could make this dynamic? Maybe have ofxOscBundle return its size?
+	static const int OUTPUT_BUFFER_SIZE = 327680;
 	char buffer[OUTPUT_BUFFER_SIZE];
 	osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE );
 
@@ -74,16 +76,18 @@ void ofxOscSender::sendBundle( ofxOscBundle& bundle )
 	socket->Send( p.Data(), p.Size() );
 }
 
-void ofxOscSender::sendMessage( ofxOscMessage& message )
+void ofxOscSender::sendMessage( ofxOscMessage& message, bool wrapInBundle )
 {
-	static const int OUTPUT_BUFFER_SIZE = 16384;
+    //setting this much larger as it gets trimmed down to the size its using before being sent.
+    //TODO: much better if we could make this dynamic? Maybe have ofxOscMessage return its size?
+    static const int OUTPUT_BUFFER_SIZE = 327680;
 	char buffer[OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
 
 	// serialise the message
-	p << osc::BeginBundleImmediate;
+	if(wrapInBundle) p << osc::BeginBundleImmediate;
 	appendMessage( message, p );
-	p << osc::EndBundle;
+	if(wrapInBundle) p << osc::EndBundle;
 
 	socket->Send( p.Data(), p.Size() );
 }
@@ -108,7 +112,7 @@ void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 		if(address.length()) address += "/";
 		ofxOscMessage msg;
 		appendParameter(msg,parameter,address);
-		sendMessage(msg);
+		sendMessage(msg, false);
 	}
 }
 
@@ -174,7 +178,11 @@ void ofxOscSender::appendMessage( ofxOscMessage& message, osc::OutboundPacketStr
 			p << message.getArgAsFloat( i );
 		else if ( message.getArgType( i ) == OFXOSC_TYPE_STRING )
 			p << message.getArgAsString( i ).c_str();
-		else
+        else if ( message.getArgType( i ) == OFXOSC_TYPE_BLOB ){
+            ofBuffer buff = message.getArgAsBlob(i);
+            osc::Blob b(buff.getBinaryBuffer(), (unsigned long)buff.size());
+            p << b; 
+		}else
 		{
 			ofLogError("ofxOscSender") << "appendMessage(): bad argument type " << message.getArgType( i );
 			assert( false );

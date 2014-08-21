@@ -191,7 +191,9 @@ gboolean text_dialog_gtk(gpointer userdata){
 static void initGTK(){
 	static bool initialized = false;
 	if(!initialized){
+		#if !defined(TARGET_RASPBERRY_PI) 
 		XInitThreads();
+		#endif
 		int argc=0; char **argv = NULL;
 		gtk_init (&argc, &argv);
 		ofGstUtils::startGstMainLoop();
@@ -217,8 +219,13 @@ static string gtkFileDialog(GtkFileChooserAction action,string windowTitle,strin
 }
 
 #endif
+
 #ifdef TARGET_ANDROID
 #include "ofxAndroidUtils.h"
+#endif
+
+#ifdef TARGET_EMSCRIPTEN
+#include <emscripten/emscripten.h>
 #endif
 
 //------------------------------------------------------------------------------
@@ -241,8 +248,6 @@ string ofFileDialogResult::getPath(){
 
 //------------------------------------------------------------------------------
 void ofSystemAlertDialog(string errorMessage){
-
-
 	#ifdef TARGET_WIN32
 		// we need to convert error message to a wide char message.
 		// first, figure out the length and allocate a wchar_t at that length + 1 (the +1 is for a terminating character)
@@ -258,17 +263,13 @@ void ofSystemAlertDialog(string errorMessage){
 		delete widearray;
 	#endif
 
-
 	#ifdef TARGET_OSX
-		NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-		NSAlert *alertDialog = [NSAlert alertWithMessageText:[NSString stringWithUTF8String:errorMessage.c_str()]
-											   defaultButton:nil
-											 alternateButton:nil
-												 otherButton:nil
-								   informativeTextWithFormat:@""];
-		[alertDialog runModal];
-		restoreAppWindowFocus();
-		[pool drain];
+		@autoreleasepool {
+			NSAlert* alertDialog = [[[NSAlert alloc] init] autorelease];
+			alertDialog.messageText = [NSString stringWithUTF8String:errorMessage.c_str()];
+			[alertDialog runModal];
+			restoreAppWindowFocus();
+		}
 	#endif
 
 	#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
@@ -285,6 +286,10 @@ void ofSystemAlertDialog(string errorMessage){
 
 	#ifdef TARGET_ANDROID
 		ofxAndroidAlertBox(errorMessage);
+	#endif
+
+	#ifdef TARGET_EMSCRIPTEN
+		emscripten_run_script((string("alert(")+errorMessage+");").c_str());
 	#endif
 }
 
@@ -319,33 +324,34 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
+	@autoreleasepool {
+		NSOpenGLContext *context = [NSOpenGLContext currentContext];
 
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
-	[loadDialog setAllowsMultipleSelection:NO];
-	[loadDialog setCanChooseDirectories:bFolderSelection];
-	[loadDialog setResolvesAliases:YES];
+		NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
+		[loadDialog setAllowsMultipleSelection:NO];
+		[loadDialog setCanChooseDirectories:bFolderSelection];
+		[loadDialog setResolvesAliases:YES];
 
-	if(!windowTitle.empty()) {
-		[loadDialog setTitle:[NSString stringWithUTF8String:windowTitle.c_str()]];
+		if(!windowTitle.empty()) {
+			[loadDialog setTitle:[NSString stringWithUTF8String:windowTitle.c_str()]];
+		}
+
+		if(!defaultPath.empty()) {
+			NSString * s = [NSString stringWithUTF8String:defaultPath.c_str()];
+			s = [[s stringByExpandingTildeInPath] stringByResolvingSymlinksInPath];
+			NSURL * defaultPathUrl = [NSURL fileURLWithPath:s];
+			[loadDialog setDirectoryURL:defaultPathUrl];
+		}
+
+		NSInteger buttonClicked = [loadDialog runModal];
+		[context makeCurrentContext];
+		restoreAppWindowFocus();
+
+		if(buttonClicked == NSFileHandlingPanelOKButton) {
+			NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
+			results.filePath = string([[selectedFileURL path] UTF8String]);
+		}
 	}
-
-	if(!defaultPath.empty()) {
-		NSString * s = [NSString stringWithUTF8String:defaultPath.c_str()];
-		s = [[s stringByExpandingTildeInPath] stringByResolvingSymlinksInPath];
-		NSURL * defaultPathUrl = [NSURL fileURLWithPath:s];
-		[loadDialog setDirectoryURL:defaultPathUrl];
-	}
-
-	NSInteger buttonClicked = [loadDialog runModal];
-	restoreAppWindowFocus();
-
-	if(buttonClicked == NSFileHandlingPanelOKButton) {
-		NSURL * selectedFileURL = [[loadDialog URLs] objectAtIndex:0];
-		results.filePath = string([[selectedFileURL path] UTF8String]);
-	}
-	[pool drain];
-
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
@@ -490,20 +496,20 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_OSX
+	@autoreleasepool {
+		NSSavePanel * saveDialog = [NSSavePanel savePanel];
+		NSOpenGLContext *context = [NSOpenGLContext currentContext];
+		[saveDialog setMessage:[NSString stringWithUTF8String:messageName.c_str()]];
+		[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
 
-	NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-	NSSavePanel * saveDialog = [NSSavePanel savePanel];
-	[saveDialog setMessage:[NSString stringWithUTF8String:messageName.c_str()]];
-	[saveDialog setNameFieldStringValue:[NSString stringWithUTF8String:defaultName.c_str()]];
+		NSInteger buttonClicked = [saveDialog runModal];
+		restoreAppWindowFocus();
+		[context makeCurrentContext];
 
-	NSInteger buttonClicked = [saveDialog runModal];
-	restoreAppWindowFocus();
-
-	if(buttonClicked == NSFileHandlingPanelOKButton){
-		results.filePath = string([[[saveDialog URL] path] UTF8String]);
+		if(buttonClicked == NSFileHandlingPanelOKButton){
+			results.filePath = string([[[saveDialog URL] path] UTF8String]);
+		}
 	}
-	[pool drain];
-
 #endif
 	//----------------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
@@ -595,22 +601,24 @@ string ofSystemTextBoxDialog(string question, string text){
 #endif
 
 #ifdef TARGET_OSX
-	// create alert dialog
-	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
-	[alert addButtonWithTitle:@"OK"];
-	[alert addButtonWithTitle:@"Cancel"];
-	[alert setMessageText:[NSString stringWithCString:question.c_str()
-											 encoding:NSUTF8StringEncoding]];
-	// create text field
-	NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))];
-	[label setStringValue:[NSString stringWithCString:text.c_str()
-											 encoding:NSUTF8StringEncoding]];
-	// add text field to alert dialog
-	[alert setAccessoryView:label];
-	NSInteger returnCode = [alert runModal];
-	// if OK was clicked, assign value to text
-	if ( returnCode == NSAlertFirstButtonReturn )
-		text = [[label stringValue] UTF8String];
+	@autoreleasepool {
+		// create alert dialog
+		NSAlert *alert = [[[NSAlert alloc] init] autorelease];
+		[alert addButtonWithTitle:@"OK"];
+		[alert addButtonWithTitle:@"Cancel"];
+		[alert setMessageText:[NSString stringWithCString:question.c_str()
+												 encoding:NSUTF8StringEncoding]];
+		// create text field
+		NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))];
+		[label setStringValue:[NSString stringWithCString:text.c_str()
+												 encoding:NSUTF8StringEncoding]];
+		// add text field to alert dialog
+		[alert setAccessoryView:label];
+		NSInteger returnCode = [alert runModal];
+		// if OK was clicked, assign value to text
+		if ( returnCode == NSAlertFirstButtonReturn )
+			text = [[label stringValue] UTF8String];
+	}
 #endif
 
 #ifdef TARGET_WIN32
@@ -874,5 +882,8 @@ string ofSystemTextBoxDialog(string question, string text){
      ofxAndroidAlertTextBox(question,text);
 #endif
 
+#ifdef TARGET_EMSCRIPTEN
+     text = emscripten_run_script_string((string("prompt('") + question + "','')").c_str());
+#endif
 	return text;
 }

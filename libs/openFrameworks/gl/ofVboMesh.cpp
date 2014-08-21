@@ -78,6 +78,7 @@ bool ofVboMesh::usingIndices() const {
 }
 
 ofVbo & ofVboMesh::getVbo() {
+	updateVbo();
 	return vbo;
 };
 
