@@ -225,8 +225,8 @@ ofVec4f operator/( float f, const ofVec4f& vec );
 // Implementation
 /////////////////
 
-inline ofVec4f::ofVec4f(): x(0), y(0), z(0), w(0) {};
-inline ofVec4f::ofVec4f(float _s): x(_s), y(_s), z(_s), w(_s) {};
+inline ofVec4f::ofVec4f(): x(0), y(0), z(0), w(0) {}
+inline ofVec4f::ofVec4f(float _s): x(_s), y(_s), z(_s), w(_s) {}
 inline ofVec4f::ofVec4f( float _x,
 						float _y,
 						float _z,
