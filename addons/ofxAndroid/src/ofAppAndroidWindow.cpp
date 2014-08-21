@@ -530,6 +530,15 @@ Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyC
 	ofNotifyKeyReleased(keyCode);
 }
 
+void
+Java_cc_openframeworks_OFAndroid_onTouchDragged(JNIEnv* env, jclass thiz,
+		jint id, jint dragDir, jfloat x, jfloat y) {
+	if (androidApp) {
+		androidApp->touchDragged((ofxAndroidDragDir) dragDir, id, x, y);
+	}
+}
+
+
 jboolean
 Java_cc_openframeworks_OFAndroid_onBackPressed(){
 	ofLogVerbose("ofAppAndroidWindow") << "back pressed";

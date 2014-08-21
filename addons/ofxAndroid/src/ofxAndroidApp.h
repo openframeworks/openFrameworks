@@ -19,6 +19,14 @@ enum ofxAndroidSwipeDir{
 	OFX_ANDROID_SWIPE_RIGHT = 4
 };
 
+enum ofxAndroidDragDir{
+	OFX_ANDROID_DRAG_UP    = 5,
+	OFX_ANDROID_DRAG_DOWN  = 6,
+	OFX_ANDROID_DRAG_LEFT  = 7,
+	OFX_ANDROID_DRAG_RIGHT = 8
+};
+
+
 class ofxAndroidApp: public ofBaseApp{
 public:
 	virtual void pause(){};
@@ -47,6 +55,10 @@ public:
 	};
 	virtual void touchCancelled(ofTouchEventArgs & touch){
 		touchCancelled(touch.x, touch.y, touch.id);
+	};
+
+    virtual void touchDragged(ofxAndroidDragDir swipeDir, int id, float dx, float dy) {
+
 	}
 	virtual void swipe(ofxAndroidSwipeDir swipeDir, int id){
 
