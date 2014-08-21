@@ -514,9 +514,9 @@ Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, ji
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, jint swipeDir){
+Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, jint swipeDir, jfloat vX, jfloat vY){
 	if(androidApp){
-		androidApp->swipe((ofxAndroidSwipeDir)swipeDir,id);
+		androidApp->swipe((ofxAndroidSwipeDir)swipeDir,id, vX, vY);
 	}
 }
 
