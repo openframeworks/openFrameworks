@@ -1,5 +1,7 @@
 #include "ofAppRunner.h"
 
+#include "Poco/Net/Net.h"
+
 #include "ofBaseApp.h"
 #include "ofAppBaseWindow.h"
 
@@ -82,6 +84,7 @@ void ofURLFileLoaderShutdown();
 // the same hack but in this case the shared_ptr will delete, old versions created the testApp as new...
 //--------------------------------------
 void ofRunApp(ofBaseApp * OFSA){
+	Poco::Net::initializeNetwork();
 
 	OFSAptr = shared_ptr<ofBaseApp>(OFSA);
 	if(OFSAptr){
@@ -332,6 +335,8 @@ void ofExitCallback(){
 	ofURLFileLoaderShutdown();
 #endif
 
+	Poco::Net::uninitializeNetwork();
+
     ofRemoveListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofRemoveListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
     ofRemoveListener(ofEvents().draw,OFSAptr.get(),&ofBaseApp::draw,OF_EVENT_ORDER_APP);
@@ -373,6 +378,7 @@ void ofExitCallback(){
 
 //--------------------------------------
 void ofRunApp(shared_ptr<ofBaseApp> OFSA){
+	Poco::Net::initializeNetwork();
 
 	OFSAptr = OFSA;
 	if(OFSAptr){
