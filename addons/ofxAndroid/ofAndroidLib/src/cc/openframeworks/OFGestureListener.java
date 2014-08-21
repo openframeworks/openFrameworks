@@ -129,7 +129,7 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 		final int action = event.getAction();
 		final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
 		final int pointerId = event.getPointerId(pointerIndex);
-		boolean result = true;
+		boolean result = false;
 
 		float absDX = Math.abs(distanceX);
 		float absDY = Math.abs(distanceY);
