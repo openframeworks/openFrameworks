@@ -92,6 +92,7 @@ void ofCloseFreeImage();
 
 
 /// \brief A class representing an image using memory and gpu based pixels.
+/// \tparam PixelType The data type used to represent a single pixel value.
 template<typename PixelType>
 class ofImage_ : public ofBaseImage_<PixelType>{
 public:
@@ -155,12 +156,12 @@ public:
 
     // quick texture binding shortcut
     /// \brief Binds the oftexture instance that the ofImage contains so that it can be used for advanced drawing.
-    void bind();
+    void bind(int textureLocation=0);
 
     /// \brief Unbinds the ofTexture instance that the ofImage contains. 
     ///
     /// Call this after you call bind().
-    void unbind();
+    void unbind(int textureLocation=0);
 
     /// \brief Loads an image given by fileName.
     /// \param fileName Program looks for image given by fileName, relative to the data folder.
@@ -473,8 +474,11 @@ public:
     /// \brief Loads ofPixels data into ofTexture so that draw() calls reflect changes to the pixels.
     void reloadTexture();
 
-    int width, height, bpp; ///< w,h, bits per pixel
-    int type; ///< OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
+    int width;  ///< \brief Image width in pixels.
+    int height; ///< \brief Image Height in pixels.
+    int bpp;    ///< \brief Bits per image pixel.
+    int type;   ///< \brief Image type.
+                ///< \sa ofImageType
 
     ofImage_<PixelType> & operator=(ofPixels_<PixelType> & pixels);
 

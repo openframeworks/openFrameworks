@@ -11,74 +11,284 @@
 
 #include "Poco/Path.h"
 
-int 	ofNextPow2(int input);
 
-void	ofResetElapsedTimeCounter();		// this happens on the first frame
-float 	ofGetElapsedTimef();
+/// \brief Reset the elapsed time counter.
+///
+/// This method resets the times returned by ofGetElapsedTimef(),
+/// ofGetElapsedTimeMillis() and ofGetElapsedTimeMicros() to zero.
+///
+/// \note This is called on the first frame during app startup.
+void ofResetElapsedTimeCounter();
+
+/// \brief Return the elapsed time in seconds.
+///
+/// This returns the elapsed time since ofResetElapsedTimeCounter() was called.
+/// Usually ofResetElapsedTimeCounter() is called automatically once during
+/// program startup.
+///
+/// \returns the floating point elapsed time in seconds.
+float ofGetElapsedTimef();
+
+/// \brief Return the elapsed time in milliseconds.
+///
+/// This returns the elapsed time since ofResetElapsedTimeCounter() was called.
+/// Usually ofResetElapsedTimeCounter() is called automatically once during
+/// program startup.
+///
+/// \returns the elapsed time in milliseconds.
 unsigned long long ofGetElapsedTimeMillis();
+
+/// \brief Return the elapsed time in microseconds.
+///
+/// This returns the elapsed time since ofResetElapsedTimeCounter() was called.
+/// Usually ofResetElapsedTimeCounter() is called automatically upon program
+/// startup.
+///
+/// \returns the elapsed time in milliseconds.
 unsigned long long ofGetElapsedTimeMicros();
-int 	ofGetFrameNum();
 
-int 	ofGetSeconds();
-int 	ofGetMinutes();
-int 	ofGetHours();
+/// \brief Get the number of frames rendered since the program started.
+/// \returns the number of frames rendered since the program started.
+int ofGetFrameNum();
 
-//number of seconds since 1970
+/// \brief Get the seconds after the minute.
+/// \returns the seconds after the minute [0-59].
+int ofGetSeconds();
+
+/// \brief Get minutes after the hour.
+/// \returns the minutes after the hour [0-59].
+int ofGetMinutes();
+
+/// \brief Get the hour of the day.
+/// \returns the hour of the day [0-23].
+int ofGetHours();
+
+/// \brief Get the number of seconds since 1970.
+/// \returns the number of seconds since 1970 (aka epoch time).
 unsigned int ofGetUnixTime();
 
-unsigned long long ofGetSystemTime( );			// system time in milliseconds;
-unsigned long long ofGetSystemTimeMicros( );			// system time in microseconds;
+/// \brief Get the system time in milliseconds.
+/// \returns the system time in milliseconds.
+unsigned long long ofGetSystemTime();
 
-		//returns 
+/// \brief Get the system time in microseconds.
+/// \returns the system time in microseconds.
+unsigned long long ofGetSystemTimeMicros();
+
+/// \brief Formats the current system time according to the given format.
+///
+/// The default timestamp format is "%Y-%m-%d-%H-%M-%S-%i" (e.g.
+/// 2011-01-15-18-29-35-299).
+///
+/// \returns the current time with the given format.
 string ofGetTimestampString();
-string ofGetTimestampString(string timestampFormat);
 
+/// \brief Formats the current system time according to the given format.
+///
+/// The format string is used as a template to format the date and
+/// is copied character by character except for the following special
+/// characters, which are replaced by the corresponding value.
+///
+///   * %w - abbreviated weekday (Mon, Tue, ...)
+///   * %W - full weekday (Monday, Tuesday, ...)
+///   * %b - abbreviated month (Jan, Feb, ...)
+///   * %B - full month (January, February, ...)
+///   * %d - zero-padded day of month (01 .. 31)
+///   * %e - day of month (1 .. 31)
+///   * %f - space-padded day of month ( 1 .. 31)
+///   * %m - zero-padded month (01 .. 12)
+///   * %n - month (1 .. 12)
+///   * %o - space-padded month ( 1 .. 12)
+///   * %y - year without century (70)
+///   * %Y - year with century (1970)
+///   * %H - hour (00 .. 23)
+///   * %h - hour (00 .. 12)
+///   * %a - am/pm
+///   * %A - AM/PM
+///   * %M - minute (00 .. 59)
+///   * %S - second (00 .. 59)
+///   * %s - seconds and microseconds (equivalent to %S.%F)
+///   * %i - millisecond (000 .. 999)
+///   * %c - centisecond (0 .. 9)
+///   * %F - fractional seconds/microseconds (000000 - 999999)
+///   * %z - time zone differential in ISO 8601 format (Z or +NN.NN)
+///   * %Z - time zone differential in RFC format (GMT or +NNNN)
+///   * %% - percent sign
+///
+/// \param timestampFormat The formatting pattern.
+/// \returns the formatted timestamp as a std::string.
+string ofGetTimestampString(const string& timestampFormat);
 
-int     ofGetYear();
-int     ofGetMonth();
-int     ofGetDay();
-int     ofGetWeekday();
+/// \brief Get the current year.
+/// \returns the current year.
+int ofGetYear();
 
-void 	ofLaunchBrowser(string url, bool uriEncodeQuery=false);
+/// \brief Get the current month.
+/// \returns the current month [1-12].
+int ofGetMonth();
 
-void	ofEnableDataPath();
-void	ofDisableDataPath();
-string 	ofToDataPath(string path, bool absolute=false);
+/// \brief Get the current day within the month.
+/// \returns the day witin the month [1-31].
+int ofGetDay();
 
+/// \brief Get the current weekday.
+///
+/// Values 0 = Sunday, 1 = Monday, ..., 6 = Saturday.
+///
+/// \returns the current weekday [0-6].
+int ofGetWeekday();
+
+/// \brief Launch the given URL in the browser.
+/// \param url the URL to open.
+/// \param uriEncodeQuery true iff the query parameters in the given URL have
+/// already been URL encoded.
+void ofLaunchBrowser(const string& url, bool uriEncodeQuery=false);
+
+/// \brief Enable the use of the data path.
+///
+/// This function causes ofToDataPath() to respect the relative path set
+/// with ofSetDataPathRoot().  This is enabled by default.
+void ofEnableDataPath();
+
+/// \brief Disable the use of the data path.
+///
+/// This function causes ofToDataPath() to ignore the relative path set
+/// with ofSetDataPathRoot().
+void ofDisableDataPath();
+
+/// \brief Convert a given path to a path relative to the location of the data/ folder.
+///
+/// This funtion returns path unchanged if ofDisableDataPath() was called first.
+/// Users might want absolute paths for non-openFrameworks functions that
+/// are unaware of the data/ path's location.
+///
+/// \param path The path to prepend.
+/// \param absolute Set to true to return an absolute path.
+/// \returns the converted path.
+string ofToDataPath(const string& path, bool absolute=false);
+
+/// \brief Randomly reorder the values in a vector.
+/// \param values The vector of values to modify.
 template<class T>
 void ofRandomize(vector<T>& values) {
 	random_shuffle(values.begin(), values.end());
 }
 
+/// \brief Conditionally remove values from a vector.
+///
+/// Values are removed if, when passed to the BoolFunction, the BoolFunction
+/// function returns true.  The give BoolFunction can be a custom function
+/// or a built-in function.
+///
+/// Example of a custom function to remove odd numbers from a vector<int>
+/// of integers:
+///
+///    bool IsOdd(int i) {
+///        return ((i % 2) == 1);
+///    }
+///
+/// To call the function, one might use:
+///
+///    std::vector<int> myInts;
+///
+///    // Fill the vector with integers.
+///    for (int i = 0; i < 10; ++i)
+///    {
+///        myInts.push_back(i);
+///    }
+///
+///    ofRemove(myInts, IsOdd);
+///
+/// The resulting vector will contain the following values:
+///
+///    0, 2, 4, 6, 8
+///
+/// \param values the vector of values to modify.
+/// \param shouldErase a boolean function as described above.
+/// \sa http://www.cplusplus.com/reference/algorithm/remove_if/
 template<class T, class BoolFunction>
 void ofRemove(vector<T>& values, BoolFunction shouldErase) {
 	values.erase(remove_if(values.begin(), values.end(), shouldErase), values.end());
 }
 
+/// \brief Sort a vector of values into ascending order.
+///
+/// The elements are compared using operator< for the first version.
+/// Equivalent elements are not guaranteed to keep their original relative
+/// order.
+///
+/// \param The vector of values to be sorted.
+/// \sa http://www.cplusplus.com/reference/algorithm/sort/
 template<class T>
 void ofSort(vector<T>& values) {
 	sort(values.begin(), values.end());
 }
+
+/// \brief Sort a vector of values into an order defined by a comparator.
+///
+/// Example of a custom function to sort descending of integers:
+///
+///    bool sortDescending(int i,int j)
+///    {
+///        return (j < i);
+///    }
+///
+/// This binary function must accept two
+/// elements in the range as arguments and return a value convertible to bool.
+/// The value returned indicates whether the element passed as first argument is
+/// considered to go before the second in the specific strict weak ordering it
+/// defines.  The function shall not modify any of its arguments.  This can
+/// either be a function pointer or a function object.
+///
+/// To call the function, one might use:
+///
+///    std::vector<int> myInts;
+///
+///    // Fill the vector with integers.
+///    for (int i = 0; i < 10; ++i)
+///    {
+///        myInts.push_back(i);
+///    }
+///
+///    ofSort(myInts, sortDescending);
+///
+/// The resulting vector will contain the following values:
+///
+///    9, 8, 7, 6, 5, 4, 3, 2, 1, 0.
+///
+/// \param The vector of values to be sorted.
+/// \param The comparison function.
+/// \sa http://www.cplusplus.com/reference/algorithm/sort/
 template<class T, class BoolFunction>
 void ofSort(vector<T>& values, BoolFunction compare) {
 	sort(values.begin(), values.end(), compare);
 }
 
+/// \brief Search for a target value in a vector of values.
+/// \param values The vector of values to be searched.
+/// \param target The target value to be found.
+/// \returns true the index of the first target value found.
 template <class T>
 unsigned int ofFind(const vector<T>& values, const T& target) {
 	return distance(values.begin(), find(values.begin(), values.end(), target));
 }
 
+/// \brief Search for a target value in a vector of values.
+/// \param values The vector of values to be searched.
+/// \param target The target value to be found.
+/// \returns true iff at least one value equal to the target value is found.
 template <class T>
 bool ofContains(const vector<T>& values, const T& target) {
 	return ofFind(values, target) != values.size();
 }
 
+/// \brief Reset the working directory to the platform default.
 void ofSetWorkingDirectoryToDefault();
 
-//set the root path that ofToDataPath will use to search for files relative to the app
-//the path must have a trailing slash (/) !!!!
-void ofSetDataPathRoot( string root );
+/// \brief Set the relative path to the data/ folder from the executable.
+/// \warning The provided path must have a trailing slash (/).
+/// \param root The path to the data/ folder relative to the app executable.
+void ofSetDataPathRoot(const string& root);
 
 template <class T>
 string ofToString(const T& value){
@@ -198,24 +408,24 @@ unsigned int ofGetVersionMajor();
 unsigned int ofGetVersionMinor();
 unsigned int ofGetVersionPatch();
 
-void	ofSaveScreen(string filename);
+void	ofSaveScreen(const string& filename);
 void	ofSaveFrame(bool bUseViewport = false);
-void	ofSaveViewport(string filename);
+void	ofSaveViewport(const string& filename);
 
 //--------------------------------------------------
-vector <string> ofSplitString(const string & source, const string & delimiter, bool ignoreEmpty = false, bool trim = false);
-string ofJoinString(vector <string> stringElements, const string & delimiter);
-void ofStringReplace(string& input, string searchStr, string replaceStr);
-bool ofIsStringInString(string haystack, string needle);
-int ofStringTimesInString(string haystack, string needle);
+vector<string> ofSplitString(const string& source, const string& delimiter, bool ignoreEmpty = false, bool trim = false);
+string ofJoinString(const vector<string>& stringElements, const string& delimiter);
+void ofStringReplace(string& input, const string& searchStr, const string& replaceStr);
+bool ofIsStringInString(const string& haystack, const string& needle);
+int ofStringTimesInString(const string& haystack, const string& needle);
 
-string ofToLower(const string & src);
-string ofToUpper(const string & src);
+string ofToLower(const string& src);
+string ofToUpper(const string& src);
 
 string ofVAArgsToString(const char * format, ...);
 string ofVAArgsToString(const char * format, va_list args);
 
-string ofSystem(string command);
+string ofSystem(const string& command);
 
 ofTargetPlatform ofGetTargetPlatform();
 

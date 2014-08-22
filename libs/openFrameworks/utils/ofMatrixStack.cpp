@@ -125,7 +125,7 @@ void ofMatrixStack::viewport(float x, float y, float width, float height, bool v
 		swap(x,y);
 	}
 
-	if(width == 0 || height == 0){
+	if(width < 0 || height < 0){
 		width = getRenderSurfaceWidth();
 		height = getRenderSurfaceHeight();
 	}
@@ -156,6 +156,10 @@ ofRectangle ofMatrixStack::getNativeViewport(){
 
 void ofMatrixStack::nativeViewport(ofRectangle viewport){
 	currentViewport=viewport;
+}
+
+const ofMatrix4x4 & ofMatrixStack::getViewMatrix() const{
+	return viewMatrix;
 }
 
 const ofMatrix4x4 & ofMatrixStack::getProjectionMatrix() const{
@@ -203,13 +207,22 @@ void ofMatrixStack::pushView(){
 
 	matrixMode(currentMode);
 
+	viewMatrixStack.push(viewMatrix);
+
 	orientationStack.push(make_pair(orientation,vFlipped));
 }
 
 void ofMatrixStack::popView(){
-	pair<ofOrientation,bool> orientationFlip = orientationStack.top();
-	setOrientation(orientationFlip.first,orientationFlip.second);
-	orientationStack.pop();
+	if(!viewMatrixStack.empty()){
+		viewMatrix = viewMatrixStack.top();
+		viewMatrixStack.pop();
+	}
+
+	if(!orientationStack.empty()){
+		pair<ofOrientation,bool> orientationFlip = orientationStack.top();
+		setOrientation(orientationFlip.first,orientationFlip.second);
+		orientationStack.pop();
+	}
 
 	if( viewportHistory.size() ){
 		currentViewport = viewportHistory.top();
@@ -302,6 +315,15 @@ void ofMatrixStack::clearStacks(){
 	if (tmpCounter > 0 ){
 		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra orientations on the stack, did you forget to popView() somewhere?";
 	}
+
+	tmpCounter = 0;
+	while (!viewMatrixStack.empty()){
+		viewMatrixStack.pop();
+		tmpCounter++;
+	}
+	if (tmpCounter > 0 ){
+		ofLogWarning("ofMatrixStack") << "clearStacks(): found " << tmpCounter << "extra view matrices on the stack, did you forget to popView() somewhere?";
+	}
 }
 
 void ofMatrixStack::translate(float x, float y, float z){
@@ -347,6 +369,22 @@ void ofMatrixStack::loadMatrix (const float * m){
 void ofMatrixStack::multMatrix (const float * m){
 	currentMatrix->preMult(m);
 	updatedRelatedMatrices();
+}
+
+void ofMatrixStack::loadViewMatrix(const ofMatrix4x4 & matrix){
+	ofMatrixMode lastMatrixMode = currentMatrixMode;
+	currentMatrixMode = OF_MATRIX_MODELVIEW;
+	viewMatrix = matrix;
+	loadMatrix(matrix.getPtr());
+	currentMatrixMode = lastMatrixMode;
+}
+
+void ofMatrixStack::multViewMatrix(const ofMatrix4x4 & matrix){
+	ofMatrixMode lastMatrixMode = currentMatrixMode;
+	currentMatrixMode = OF_MATRIX_MODELVIEW;
+	viewMatrix.preMult(matrix);
+	multMatrix(matrix.getPtr());
+	currentMatrixMode = lastMatrixMode;
 }
 
 

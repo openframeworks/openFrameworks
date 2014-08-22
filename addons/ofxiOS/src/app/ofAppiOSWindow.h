@@ -34,7 +34,7 @@
 
 #import "ofAppBaseWindow.h"
 
-class ofAppiOSWindow : public ofAppBaseWindow {
+class ofAppiOSWindow : public ofAppBaseGLESWindow {
 public:
     
     static ofAppiOSWindow * getInstance();
