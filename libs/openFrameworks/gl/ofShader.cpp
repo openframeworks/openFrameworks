@@ -227,7 +227,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 	stringstream input;
 	input << source;
 	
-	Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
+	Poco::RegularExpression re("^\\s*#\\s*pragma\\s+include\\s+[\"<](.*)[\">].*");
 	Poco::RegularExpression::MatchVec matches;
 	
 	string line;
