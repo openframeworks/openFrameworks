@@ -110,7 +110,7 @@ struct SQLite_API SQLiteConnectorRegistrator
 
 
 #if !defined(POCO_NO_AUTOMATIC_LIB_INIT)
-	#if defined(POCO_OS_FAMILY_WINDOWS)
+	#if defined(POCO_OS_FAMILY_WINDOWS) && !defined(__GNUC__)
 		extern "C" const struct SQLite_API SQLiteConnectorRegistrator pocoSQLiteConnectorRegistrator;
 		#if defined(SQLite_EXPORTS)
 			#if defined(_WIN64) || defined(_WIN32_WCE)

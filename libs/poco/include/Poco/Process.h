@@ -217,6 +217,15 @@ public:
 		/// Waits for the process specified by handle to terminate
 		/// and returns the exit code of the process.
 		
+	static bool isRunning(const ProcessHandle& handle);
+		/// check if the process specified by handle is running or not
+		///
+		/// This is preferable on Windows where process IDs
+		/// may be reused.
+
+	static bool isRunning(PID pid);
+		/// Check if the process specified by given pid is running or not.
+		
 	static void kill(ProcessHandle& handle);
 		/// Kills the process specified by handle.
 		///
