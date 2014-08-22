@@ -47,9 +47,11 @@ function prepare() {
 
 	# make backups of the ios config files since we need to edit them
 	if [ "$TYPE" == "ios" ] ; then
+		mkdir -p lib/$TYPE
 		cd build/config
-		cp iPhone iPhone.orig
-		cp iPhoneSimulator iPhoneSimulator.orig
+		cp iPhoneSimulator-clang-libc++ iPhoneSimulator-clang-libc++.orig
+		# fix using sed i636 reference and allow overloading variable
+		sed -i .tmp "s|POCO_TARGET_OSARCH.* = .*|POCO_TARGET_OSARCH ?= i386|" iPhoneSimulator-clang-libc++
 	elif [ "$TYPE" == "vs" ] ; then
 		# Patch the components to exclude those that we aren't using.  
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/components.patch 2>/dev/null ; then
@@ -73,7 +75,6 @@ function prepare() {
 
 		# replace OPENSSL_LIB=%OPENSSL_DIR%\lib;%OPENSSL_DIR%\lib\VC with OPENSSL_LIB=%OPENSSL_DIR%\lib\vs
 		sed -i.tmp "s|%OPENSSL_DIR%\\\lib;.*|%OPENSSL_DIR%\\\lib\\\vs|g" buildwin.cmd
-	
 	fi
 
 }
@@ -130,44 +131,102 @@ function build() {
 	elif [ "$TYPE" == "ios" ] ; then
 
 		# maybe --poquito is a good idea?
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen,NetSSL_OpenSSL,Crypto"
 
-		cp build/config/iPhone.orig build/config/iPhone
-		cp build/config/iPhoneSimulator.orig build/config/iPhoneSimulator
+		local BUILD_POCO_CONFIG_IPHONE=iPhone-clang-libc++
+		local BUILD_POCO_CONFIG_SIMULATOR=iPhoneSimulator-clang-libc++
 
-		# set SDK
-		sed -i .tmp "s|#.*IPHONE_SDK_VERSION =.*|IPHONE_SDK_VERSION = $IOS_SDK_VER|" build/config/iPhone
+		# Locate the path of the openssl libs distributed with openFrameworks.
+		local OF_LIBS_OPENSSL="../../../../libs/openssl/"
 
-		# fix any xcode path issues (currently fixed in newer poco, done here manually for now)
-		sed -i .tmp 's|= /Developer|= $(shell xcode-select -print-path)|' build/config/iPhone
-		sed -i .tmp 's|= /Developer|= $(shell xcode-select -print-path)|' build/config/iPhoneSimulator
+		# get the absolute path to the included openssl libs
+		local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
 
-		# armv7
-		sed -i .tmp "s|POCO_TARGET_OSARCH.*?=.*|POCO_TARGET_OSARCH ?= armv7|" build/config/iPhone
-		./configure $BUILD_OPTS --config=iPhone
+		local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
+		local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/ios
+
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen --include-path=$OPENSSL_INCLUDE --library-path=$OPENSSL_LIBS"
+		local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
+		
+		export IPHONE_SDK="iPhoneOS"
+		local IOS_DEVROOT=$XCODE_DEV_ROOT/Platforms/$IPHONE_SDK.platform/Developer
+		export IPHONE_SDK_ROOT=$IOS_DEVROOT/SDKs
+		
+		# armv7 
+		export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
+		export POCO_TARGET_OSARCH="armv7"
+
+		# configure and make
+		./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_IPHONE
 		make
+		# remove debug builds
+		rm lib/$IPHONE_SDK/$POCO_TARGET_OSARCH/*d.a 
+
+		unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN
 
 		# armv7s
-		sed -i .tmp "s|POCO_TARGET_OSARCH.*?=.*|POCO_TARGET_OSARCH ?= armv7s|" build/config/iPhone
-		./configure $BUILD_OPTS --config=iPhone
+		export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
+		export POCO_TARGET_OSARCH="armv7s"
+
+		# configure and make
+		./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_IPHONE
 		make
+		# remove debug builds
+		rm lib/$IPHONE_SDK/$POCO_TARGET_OSARCH/*d.a 
 
-		# simulator
-		sed -i .tmp "s|POCO_TARGET_OSARCH.* = .*|POCO_TARGET_OSARCH = i386|" build/config/iPhoneSimulator
-		./configure $BUILD_OPTS --config=iPhoneSimulator
+		unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN
+
+		# arm64
+		local IPHONE_SDK_VERSION_64_MIN="7.0" # arm64 min is iOS 7.0
+		export IPHONE_SDK_VERSION_MIN=$IPHONE_SDK_VERSION_64_MIN
+		export POCO_TARGET_OSARCH="arm64"
+
+		# configure and make
+		./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_IPHONE
 		make
+		# remove debug builds
+		rm lib/$IPHONE_SDK/$POCO_TARGET_OSARCH/*d.a 
 
-		cd lib/iPhoneOS
+		unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN
+		
+		unset IPHONE_SDK IPHONE_SDK_ROOT
 
-		# delete debug builds
-		rm armv7/*d.a armv7s/*d.a ../iPhoneSimulator/i386/*d.a
+		export IPHONE_SDK="iPhoneSimulator"
+		local IOS_DEVROOT=$XCODE_DEV_ROOT/Platforms/$IPHONE_SDK.platform/Developer
+		export IPHONE_SDK_ROOT=$IOS_DEVROOT/SDKs
+		
+		# i386 simulator
+		export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
+		export POCO_TARGET_OSARCH="i386"
 
+		# configure and make
+		./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_SIMULATOR
+		make
+		# remove debug builds
+		rm lib/$IPHONE_SDK/$POCO_TARGET_OSARCH/*d.a 
+
+		unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN
+
+		# x86_64 simulator
+		export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
+		export POCO_TARGET_OSARCH="x86_64"
+
+		# configure and make
+		./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_SIMULATOR
+		make
+		# remove debug builds
+		rm lib/$IPHONE_SDK/$POCO_TARGET_OSARCH/*d.a 
+
+		unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN
+
+		unset IPHONE_SDK IPHONE_SDK_ROOT
+
+		cd lib/$TYPE
 		# link into universal lib, strip "lib" from filename
 		local lib
 		for lib in $( ls -1 ../iPhoneSimulator/i386) ; do
 			local renamedLib=$(echo $lib | sed 's|lib||')
 			if [ ! -e $renamedLib ] ; then
-				lipo -c armv7/$lib armv7s/$lib ../iPhoneSimulator/i386/$lib -o $renamedLib
+				lipo -c ../iPhoneOS/armv7/$lib ../iPhoneOS/armv7s/$lib ../iPhoneOS/arm64/$lib ../iPhoneSimulator/i386/$lib ../iPhoneSimulator/x86_64/$lib -o $renamedLib
 			fi
 		done
 
@@ -228,7 +287,7 @@ function copy() {
 		cp -v lib/Darwin/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "ios" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/iPhoneOS/*.a $1/lib/$TYPE
+		cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "vs" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/*.lib $1/lib/$TYPE
