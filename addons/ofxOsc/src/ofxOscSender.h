@@ -66,6 +66,8 @@ public:
 	void sendBundle( ofxOscBundle& bundle );
 	/// creates a message using an ofParameter
 	void sendParameter( const ofAbstractParameter & parameter);
+	/// return the local port used for the connection
+	int getLocalPort();
 
 	/// disables broadcast capabilities, usually call this before setup
 	void disableBroadcast();

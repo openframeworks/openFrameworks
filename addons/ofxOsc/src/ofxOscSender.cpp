@@ -155,6 +155,14 @@ void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 	}
 }
 
+int ofxOscSender::getLocalPort()
+{
+	if ( socket ) {
+		IpEndpointName localEndpoint = socket->LocalEndpointForConnectedRemoteEndpoint();
+		return localEndpoint.port;
+	}
+	return -1;
+}
 
 void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractParameter & parameter, string address){
 	if(parameter.type()==typeid(ofParameterGroup).name()){
