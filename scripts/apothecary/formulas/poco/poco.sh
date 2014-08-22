@@ -8,7 +8,7 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=apothecary-1.0
+VER=apothecary-1.1
 
 # tools for git use
 GIT_URL=https://github.com/bakercp/poco
