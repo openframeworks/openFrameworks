@@ -40,30 +40,36 @@ public:
 	virtual void touchUp(int x, int y, int id) {};
 	virtual void touchDoubleTap(int x, int y, int id) {};
 	virtual void touchCancelled(int x, int y, int id) {};
+	virtual void swipe(ofxAndroidSwipeDir swipeDir, int id){};
 
 	virtual void touchDown(ofTouchEventArgs & touch) {
 		touchDown(touch.x, touch.y, touch.id);
 	};
+	
 	virtual void touchMoved(ofTouchEventArgs & touch) {
 		touchMoved(touch.x, touch.y, touch.id);
 	};
+	
 	virtual void touchUp(ofTouchEventArgs & touch) {
 		touchUp(touch.x, touch.y, touch.id);
 	};
+
 	virtual void touchDoubleTap(ofTouchEventArgs & touch) {
 		touchDoubleTap(touch.x, touch.y, touch.id);
 	};
+	
 	virtual void touchCancelled(ofTouchEventArgs & touch){
 		touchCancelled(touch.x, touch.y, touch.id);
 	};
-
-    virtual void touchDragged(ofxAndroidDragDir swipeDir, int id, float dx, float dy) {
-
-	}
+	
 	virtual void swipe(ofxAndroidSwipeDir swipeDir, int id, float velocityX, float velocityY){
+		swipe(swipeDir, id);
+	};
+	
+	virtual void touchDragged(ofxAndroidDragDir swipeDir, int id, float dx, float dy) {
 
-	}
-
+	};
+	
 	virtual bool backPressed(){
 		return false;
 	}
