@@ -256,8 +256,12 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
 
 # create a list of all dirs in the project root that might be valid project
 # source directories 
-# grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d | grep -v "/\.[^\.]")
+ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 \
+                                                           -type d \
+                                                           -not -path "./bin/*" \
+                                                           -not -path "./obj/*" \
+                                                           -not -path "./*.xcodeproj/*" \
+                                                           -not -path "*/\.*")
 ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
@@ -427,6 +431,12 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
     else
     	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
     endif
+    
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)),)
+		OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG)
+	else
+		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)
+	endif
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
@@ -441,6 +451,12 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
     else
     	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
     endif
+    
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)),)
+	    OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE)
+	else
+		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)
+	endif
 endif
 
 
@@ -471,7 +487,9 @@ else
 endif
 
 OF_PROJECT_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(patsubst %.S,%.o,$(OF_PROJECT_SOURCE_FILES))))))
-OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(subst $(PROJECT_EXTERNAL_SOURCE_PATHS),,$(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH),$(OF_PROJECT_OBJ_FILES))))
+OBJS_WITH_PREFIX = $(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH),$(OF_PROJECT_OBJ_FILES))
+OBJS_WITHOUT_EXTERNAL = $(subst $(strip $(PROJECT_EXTERNAL_SOURCE_PATHS)),,$(OBJS_WITH_PREFIX))
+OF_PROJECT_OBJS = $(subst $(PROJECT_ROOT)/,,$(OBJS_WITHOUT_EXTERNAL))
 OF_PROJECT_DEPS = $(patsubst %.o,%.d,$(OF_PROJECT_OBJS))
 
 OF_PROJECT_ADDONS_OBJ_FILES = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,$(PROJECT_ADDONS_SOURCE_FILES)))))

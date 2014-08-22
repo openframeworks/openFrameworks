@@ -6,7 +6,7 @@ WHO=`who am i`;ID=`echo ${WHO%% *}`
 GROUP_ID=`id --group -n ${ID}`
 
 cd ../../apps/projectGenerator/projectGeneratorSimple
-make Debug 
+make Release
 ret=$?
 if [ $ret -ne 0 ]; then
   echo "there has been a problem compiling the projectGenerator"

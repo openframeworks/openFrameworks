@@ -9,7 +9,7 @@
 
 #include "ofAppBaseWindow.h"
 
-class ofAppAndroidWindow: public ofAppBaseWindow {
+class ofAppAndroidWindow: public ofAppBaseGLESWindow {
 public:
 	ofAppAndroidWindow();
 	virtual ~ofAppAndroidWindow();
@@ -47,5 +47,5 @@ public:
 	ofOrientation	getOrientation();
 
 	void	setThreadedEvents(bool threadedEvents);
-
+	void 	setAccumulateTouchEvents(bool accumEvents);
 };

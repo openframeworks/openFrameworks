@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5FA32B4C12E4BC0600813895 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FA32B4712E4BC0600813895 /* main.cpp */; };
-		5FA32B4E12E4BC0600813895 /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FA32B4A12E4BC0600813895 /* testApp.cpp */; };
+		5FA32B4E12E4BC0600813895 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5FA32B4A12E4BC0600813895 /* ofApp.cpp */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
 		E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */; };
 		E45BE97D0E8CC7DD009D7055 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */; };
@@ -58,8 +58,8 @@
 
 /* Begin PBXFileReference section */
 		5FA32B4712E4BC0600813895 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		5FA32B4A12E4BC0600813895 /* testApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = testApp.cpp; sourceTree = "<group>"; };
-		5FA32B4B12E4BC0600813895 /* testApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = testApp.h; sourceTree = "<group>"; };
+		5FA32B4A12E4BC0600813895 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofApp.cpp; sourceTree = "<group>"; };
+		5FA32B4B12E4BC0600813895 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
 		E45BE9720E8CC7DD009D7055 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		E45BE9730E8CC7DD009D7055 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
@@ -107,8 +107,8 @@
 			isa = PBXGroup;
 			children = (
 				5FA32B4712E4BC0600813895 /* main.cpp */,
-				5FA32B4A12E4BC0600813895 /* testApp.cpp */,
-				5FA32B4B12E4BC0600813895 /* testApp.h */,
+				5FA32B4A12E4BC0600813895 /* ofApp.cpp */,
+				5FA32B4B12E4BC0600813895 /* ofApp.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -253,7 +253,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5FA32B4C12E4BC0600813895 /* main.cpp in Sources */,
-				5FA32B4E12E4BC0600813895 /* testApp.cpp in Sources */,
+				5FA32B4E12E4BC0600813895 /* ofApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -5,7 +5,7 @@
 
 #import "MyAppViewController.h"
 #import "ofxiOSViewController.h"
-#import "testApp.h"
+#import "ofApp.h"
 
 @implementation MyAppViewController
 
@@ -87,25 +87,25 @@
 - (void)button1Pressed:(id)sender {
     CGSize screenSize = [[UIScreen mainScreen] bounds].size;
     CGRect appFrame = CGRectMake(0, 0, screenSize.width, screenSize.height);
-    [self launchApp:new testApp() withFrame:appFrame andTitle:@"full"];
+    [self launchApp:new ofApp() withFrame:appFrame andTitle:@"full"];
 }
 
 - (void)button2Pressed:(id)sender {
     CGSize screenSize = [[UIScreen mainScreen] bounds].size;
     CGRect appFrame = CGRectMake(screenSize.width*0.25, screenSize.height*0.25, screenSize.width*0.5, screenSize.height*0.5);
-    [self launchApp:new testApp() withFrame:appFrame andTitle:@"small"];
+    [self launchApp:new ofApp() withFrame:appFrame andTitle:@"small"];
 }
 
 - (void)button3Pressed:(id)sender {
     CGSize screenSize = [[UIScreen mainScreen] bounds].size;
     CGRect appFrame = CGRectMake(screenSize.width*0.25, 0, screenSize.width*0.5, screenSize.height);
-    [self launchApp:new testApp() withFrame:appFrame andTitle:@"tall"];
+    [self launchApp:new ofApp() withFrame:appFrame andTitle:@"tall"];
 }
 
 - (void)button4Pressed:(id)sender {
     CGSize screenSize = [[UIScreen mainScreen] bounds].size;
     CGRect appFrame = CGRectMake(0, screenSize.height*0.25, screenSize.width, screenSize.height*0.5);
-    [self launchApp:new testApp() withFrame:appFrame andTitle:@"long"];
+    [self launchApp:new ofApp() withFrame:appFrame andTitle:@"long"];
 }
 
 - (void)launchApp:(ofxiOSApp *)app 

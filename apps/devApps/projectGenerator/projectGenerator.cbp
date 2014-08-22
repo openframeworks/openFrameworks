@@ -166,10 +166,10 @@
 		<Unit filename="src/pugixmlLib/src/pugiconfig.hpp" />
 		<Unit filename="src/pugixmlLib/src/pugixml.cpp" />
 		<Unit filename="src/pugixmlLib/src/pugixml.hpp" />
-		<Unit filename="src/testApp.cpp">
+		<Unit filename="src/ofApp.cpp">
 			<Option virtualFolder="src" />
 		</Unit>
-		<Unit filename="src/testApp.h">
+		<Unit filename="src/ofApp.h">
 			<Option virtualFolder="src" />
 		</Unit>
 		<Unit filename="src/utils/Utils.cpp" />

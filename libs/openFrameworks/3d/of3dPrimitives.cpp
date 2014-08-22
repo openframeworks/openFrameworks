@@ -22,13 +22,13 @@ of3dPrimitive::~of3dPrimitive() {
 }
 
 //----------------------------------------------------------
-of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom){
+of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom):ofNode(mom){
     texCoords = mom.texCoords;
     usingVbo = mom.usingVbo;
 	if(usingVbo){
-		mesh = ofPtr<ofMesh>(new ofVboMesh);
+		mesh = shared_ptr<ofMesh>(new ofVboMesh);
 	}else{
-		mesh = ofPtr<ofMesh>(new ofMesh);
+		mesh = shared_ptr<ofMesh>(new ofMesh);
 	}
 	*mesh = *mom.mesh;
 }
@@ -36,6 +36,7 @@ of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom){
 //----------------------------------------------------------
 of3dPrimitive & of3dPrimitive::operator=(const of3dPrimitive & mom){
 	if(&mom!=this){
+		(*(ofNode*)this)=mom;
 		texCoords = mom.texCoords;
 		setUseVbo(mom.usingVbo);
 		*mesh = *mom.mesh;
@@ -239,11 +240,11 @@ void of3dPrimitive::drawAxes(float a_size) {
 //--------------------------------------------------------------
 void of3dPrimitive::setUseVbo(bool useVbo){
 	if(useVbo!=usingVbo){
-		ofPtr<ofMesh> newMesh;
+		shared_ptr<ofMesh> newMesh;
 		if(useVbo){
-			newMesh = ofPtr<ofMesh>(new ofVboMesh);
+			newMesh = shared_ptr<ofMesh>(new ofVboMesh);
 		}else{
-			newMesh = ofPtr<ofMesh>(new ofMesh);
+			newMesh = shared_ptr<ofMesh>(new ofMesh);
 		}
 		*newMesh = *mesh;
 		mesh = newMesh;

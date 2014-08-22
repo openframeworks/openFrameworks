@@ -1,9 +1,12 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
 #include "ofTypes.h"
-#include "ofURLFileLoader.h"
 #include "ofGraphics.h"
 #include "FreeImage.h"
+
+#ifndef TARGET_EMSCRIPTEN
+#include "ofURLFileLoader.h"
+#endif
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 #include <set>
@@ -142,13 +145,30 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 //----------------------------------------------------
 template<typename PixelType>
 void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLittleEndian = true) {
-	// some images use a palette, or <8 bpp, so convert them to raster 8-bit channels
+	// convert to correct type depending on type of input bmp and PixelType
 	FIBITMAP* bmpConverted = NULL;
-	if(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8) {
+	FREE_IMAGE_TYPE imgType = FreeImage_GetImageType(bmp);
+	if(sizeof(PixelType)==1 &&
+		(FreeImage_GetColorType(bmp) == FIC_PALETTE || FreeImage_GetBPP(bmp) < 8
+		||  imgType!=FIT_BITMAP)) {
 		if(FreeImage_IsTransparent(bmp)) {
 			bmpConverted = FreeImage_ConvertTo32Bits(bmp);
 		} else {
 			bmpConverted = FreeImage_ConvertTo24Bits(bmp);
+		}
+		bmp = bmpConverted;
+	}else if(sizeof(PixelType)==2 && imgType!=FIT_UINT16 && imgType!=FIT_RGB16 && imgType!=FIT_RGBA16){
+		if(FreeImage_IsTransparent(bmp)) {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGBA16);
+		} else {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGB16);
+		}
+		bmp = bmpConverted;
+	}else if(sizeof(PixelType)==4 && imgType!=FIT_FLOAT && imgType!=FIT_RGBF && imgType!=FIT_RGBAF){
+		if(FreeImage_IsTransparent(bmp)) {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGBAF);
+		} else {
+			bmpConverted = FreeImage_ConvertToType(bmp,FIT_RGBF);
 		}
 		bmp = bmpConverted;
 	}
@@ -183,9 +203,11 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 	ofInitFreeImage();
+#ifndef TARGET_EMSCRIPTEN
 	if(fileName.substr(0, 7) == "http://") {
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
+#endif
 	
 	fileName = ofToDataPath(fileName);
 	bool bLoaded = false;
@@ -227,7 +249,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	
 	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getBinaryBuffer(), buffer.size());
 	if (hmem == NULL){
-		ofLogError("ofImage") << "loadImage(): couldn't laod image from ofBuffer, opening FreeImage memory failed";
+		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, opening FreeImage memory failed";
 		return false;
 	}
 
@@ -827,16 +849,16 @@ ofTexture & ofImage_<PixelType>::getTextureReference(){
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::bind(){
+void ofImage_<PixelType>::bind(int textureLocation){
 	if (bUseTexture && tex.bAllocated())
-		tex.bind();
+		tex.bind(textureLocation);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::unbind(){
+void ofImage_<PixelType>::unbind(int textureLocation){
 	if (bUseTexture && tex.bAllocated())
-		tex.unbind();
+		tex.unbind(textureLocation);
 }
 
 //------------------------------------

@@ -48,17 +48,17 @@ void ofSoundStreamListDevices(){
 //------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
 	#ifdef OF_SOUND_STREAM_TYPE
-		setSoundStream( ofPtr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
+		setSoundStream( shared_ptr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
 	#endif
 }
 
 //------------------------------------------------------------
-void ofSoundStream::setSoundStream(ofPtr<ofBaseSoundStream> soundStreamPtr){
+void ofSoundStream::setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr){
 	soundStream = soundStreamPtr;
 }
 
 //------------------------------------------------------------
-ofPtr<ofBaseSoundStream> ofSoundStream::getSoundStream(){
+shared_ptr<ofBaseSoundStream> ofSoundStream::getSoundStream(){
 	return soundStream;
 }
 

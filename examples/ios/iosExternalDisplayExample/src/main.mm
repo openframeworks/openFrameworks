@@ -1,8 +1,8 @@
 #include "ofMain.h"
-#include "testApp.h"
+#include "ofApp.h"
 
 int main(){
     ofAppiOSWindow * window = new ofAppiOSWindow();
 	ofSetupOpenGL(window, 1024, 768, OF_FULLSCREEN);
-	ofRunApp(new testApp);
+	ofRunApp(new ofApp);
 }

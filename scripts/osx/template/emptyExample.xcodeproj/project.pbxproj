@@ -45,7 +45,6 @@
 				<string>E45BE9710E8CC7DD009D7055</string>
 				<string>E45BE9720E8CC7DD009D7055</string>
 				<string>E45BE9730E8CC7DD009D7055</string>
-				<string>E45BE9740E8CC7DD009D7055</string>
 				<string>E45BE9750E8CC7DD009D7055</string>
 				<string>E45BE9760E8CC7DD009D7055</string>
 				<string>E45BE9770E8CC7DD009D7055</string>
@@ -193,19 +192,6 @@
 			<key>sourceTree</key>
 			<string>&lt;absolute&gt;</string>
 		</dict>
-		<key>E45BE9740E8CC7DD009D7055</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>Carbon.framework</string>
-			<key>path</key>
-			<string>/System/Library/Frameworks/Carbon.framework</string>
-			<key>sourceTree</key>
-			<string>&lt;absolute&gt;</string>
-		</dict>
 		<key>E45BE9750E8CC7DD009D7055</key>
 		<dict>
 			<key>isa</key>
@@ -289,13 +275,6 @@
 		<dict>
 			<key>fileRef</key>
 			<string>E45BE9730E8CC7DD009D7055</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E45BE97E0E8CC7DD009D7055</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E45BE9740E8CC7DD009D7055</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
@@ -548,7 +527,6 @@
 				<string>E45BE97B0E8CC7DD009D7055</string>
 				<string>E45BE97C0E8CC7DD009D7055</string>
 				<string>E45BE97D0E8CC7DD009D7055</string>
-				<string>E45BE97E0E8CC7DD009D7055</string>
 				<string>E45BE97F0E8CC7DD009D7055</string>
 				<string>E45BE9800E8CC7DD009D7055</string>
 				<string>E45BE9810E8CC7DD009D7055</string>
@@ -864,9 +842,9 @@
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>name</key>
-			<string>testApp.cpp</string>
+			<string>ofApp.cpp</string>
 			<key>path</key>
-			<string>src/testApp.cpp</string>
+			<string>src/ofApp.cpp</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>
@@ -879,9 +857,9 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>testApp.h</string>
+			<string>ofApp.h</string>
 			<key>path</key>
-			<string>src/testApp.h</string>
+			<string>src/ofApp.h</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
 		</dict>

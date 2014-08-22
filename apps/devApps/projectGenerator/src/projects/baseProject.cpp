@@ -53,10 +53,10 @@ bool baseProject::create(string path){
 #else
             splitFromLast(fileNames[i], "/", first, last);
 #endif
-            if (fileNames[i] != "src/testApp.cpp" &&
-                fileNames[i] != "src/testApp.h" &&
+            if (fileNames[i] != "src/ofApp.cpp" &&
+                fileNames[i] != "src/ofApp.h" &&
                 fileNames[i] != "src/main.cpp" &&
-                fileNames[i] != "src/testApp.mm" &&
+                fileNames[i] != "src/ofApp.mm" &&
                 fileNames[i] != "src/main.mm"){
                 addSrc(fileNames[i], first);
             }
@@ -71,9 +71,9 @@ bool baseProject::create(string path){
 //				string first, last;
 //				splitFromLast(fileNames[i], "/", first, last);
 //				if (fileNames[i] != "Default.png" &&
-//					fileNames[i] != "src/testApp.h" &&
+//					fileNames[i] != "src/ofApp.h" &&
 //					fileNames[i] != "src/main.cpp" &&
-//					fileNames[i] != "src/testApp.mm" &&
+//					fileNames[i] != "src/ofApp.mm" &&
 //					fileNames[i] != "src/main.mm"){
 //					addSrc(fileNames[i], first);
 //				}
@@ -141,9 +141,33 @@ void baseProject::addAddon(ofAddon & addon){
         ofLogVerbose() << "adding addon libs: " << addon.libs[i];
         addLibrary(addon.libs[i]);
     }
+    for(int i=0;i<(int)addon.cflags.size();i++){
+        ofLogVerbose() << "adding addon cflags: " << addon.cflags[i];
+        addCFLAG(addon.cflags[i]);
+    }
+    for(int i=0;i<(int)addon.ldflags.size();i++){
+        ofLogVerbose() << "adding addon ldflags: " << addon.ldflags[i];
+        addLDFLAG(addon.ldflags[i]);
+    }
     for(int i=0;i<(int)addon.srcFiles.size(); i++){
         ofLogVerbose() << "adding addon srcFiles: " << addon.srcFiles[i];
         addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
+    }
+    for(int i=0;i<(int)addon.csrcFiles.size(); i++){
+        ofLogVerbose() << "adding addon c srcFiles: " << addon.srcFiles[i];
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]],C);
+    }
+    for(int i=0;i<(int)addon.cppsrcFiles.size(); i++){
+        ofLogVerbose() << "adding addon c srcFiles: " << addon.srcFiles[i];
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]],CPP);
+    }
+    for(int i=0;i<(int)addon.objcsrcFiles.size(); i++){
+        ofLogVerbose() << "adding addon c srcFiles: " << addon.srcFiles[i];
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]],OBJC);
+    }
+    for(int i=0;i<(int)addon.headersrcFiles.size(); i++){
+        ofLogVerbose() << "adding addon c srcFiles: " << addon.srcFiles[i];
+        addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]],HEADER);
     }
 }
 
@@ -152,11 +176,13 @@ void baseProject::parseAddons(){
 	ofBuffer addonsMakeMem;
 	addonsMake >> addonsMakeMem;
 	while(!addonsMakeMem.isLastLine()){
+	    string line = addonsMakeMem.getNextLine();
+	    if(line[0] == '#') continue;
 		ofAddon addon;
 		cout << projectDir << endl;
 		addon.pathToOF = getOFRelPath(projectDir);
 		cout << addon.pathToOF << endl;
-		addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsMakeMem.getNextLine()),target);
+		addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), line),target);
 		addAddon(addon);
 	}
 }

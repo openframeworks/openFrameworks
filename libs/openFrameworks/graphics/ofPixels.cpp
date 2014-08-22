@@ -751,13 +751,13 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 		return true;
 	}
 
-	if (!(isAllocated()) || !(dst.isAllocated()) || getBytesPerPixel() != dst.getBytesPerPixel()) return false;
+	if (!(isAllocated()) || !(dst.isAllocated()) || getBytesPerPixel() != dst.getBytesPerPixel() || getNumChannels()!=dst.getNumChannels()) return false;
 
 	int srcWidth      = getWidth();
 	int srcHeight     = getHeight();
 	int dstWidth	  = dst.getWidth();
 	int dstHeight	  = dst.getHeight();
-	int bytesPerPixel = getBytesPerPixel();
+	int channels 	  = getNumChannels();
 
 
 	PixelType * dstPixels = dst.getPixels();
@@ -774,8 +774,8 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 				float srcx = 0.5;
 				int srcIndex = int(srcy)*srcWidth;
 				for (int dstx=0; dstx<dstWidth; dstx++){
-					int pixelIndex = int(srcIndex + srcx) * bytesPerPixel;
-					for (int k=0; k<bytesPerPixel; k++){
+					int pixelIndex = int(srcIndex + srcx) * channels;
+					for (int k=0; k<channels; k++){
 						dstPixels[dstIndex] = pixels[pixelIndex];
 						dstIndex++;
 						pixelIndex++;
@@ -804,19 +804,19 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 			int patchIndex;
 			float patch[16];
 
-			int srcRowBytes = srcWidth*bytesPerPixel;
+			int srcRowBytes = srcWidth*channels;
 			int loIndex = (srcRowBytes)+1;
-			int hiIndex = (srcWidth*srcHeight*bytesPerPixel)-(srcRowBytes)-1;
+			int hiIndex = (srcWidth*srcHeight*channels)-(srcRowBytes)-1;
 
 			for (int dsty=0; dsty<dstHeight; dsty++){
 				for (int dstx=0; dstx<dstWidth; dstx++){
 
-					int   dstIndex0 = (dsty*dstWidth + dstx) * bytesPerPixel;
+					int   dstIndex0 = (dsty*dstWidth + dstx) * channels;
 					float srcxf = srcWidth  * (float)dstx/(float)dstWidth;
 					float srcyf = srcHeight * (float)dsty/(float)dstHeight;
 					int   srcx = (int) MIN(srcWidth-1,   srcxf);
 					int   srcy = (int) MIN(srcHeight-1,  srcyf);
-					int   srcIndex0 = (srcy*srcWidth + srcx) * bytesPerPixel;
+					int   srcIndex0 = (srcy*srcWidth + srcx) * channels;
 
 					px1 = srcxf - srcx;
 					py1 = srcyf - srcy;
@@ -825,14 +825,14 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 					py2 = py1 * py1;
 					py3 = py2 * py1;
 
-					for (int k=0; k<bytesPerPixel; k++){
+					for (int k=0; k<channels; k++){
 						int   dstIndex = dstIndex0+k;
 						int   srcIndex = srcIndex0+k;
 
 						for (int dy=0; dy<4; dy++) {
 							patchRow = srcIndex + ((dy-1)*srcRowBytes);
 							for (int dx=0; dx<4; dx++) {
-								patchIndex = patchRow + (dx-1)*bytesPerPixel;
+								patchIndex = patchRow + (dx-1)*channels;
 								if ((patchIndex >= loIndex) && (patchIndex < hiIndex)) {
 									srcColor = pixels[patchIndex];
 								}

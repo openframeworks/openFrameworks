@@ -12,7 +12,10 @@ public:
 	
 	ofxiOSVideoPlayer();
 	~ofxiOSVideoPlayer();
-	    
+	   
+    void enableTextureCache();
+    void disableTextureCache();
+    
     bool loadMovie(string name);
     void close();
     void update();
@@ -27,6 +30,8 @@ public:
     unsigned char * getPixels();
     ofPixelsRef	getPixelsRef();
     ofTexture *	getTexture();
+    void initTextureCache();
+    void killTextureCache();
 	
     float getWidth();
     float getHeight();
@@ -70,7 +75,7 @@ protected:
     bool bUpdatePixelsToRgb;
     bool bUpdateTexture;
     bool bTextureCacheSupported;
-    bool bTextureHack;
+    bool bTextureCacheEnabled;
 	
 	GLubyte * pixelsRGB;
     GLubyte * pixelsRGBA;

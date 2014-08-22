@@ -36,7 +36,7 @@ public:
 	virtual ofAbstractParameter & getParameter();
 
 protected:
-	void render();
+	virtual void render();
 	ofRectangle checkboxRect;
 	ofParameter<bool> value;
 	bool bGuiActive;

@@ -5,7 +5,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "testApp.h"
+#import "ofApp.h"
 
 /**
  *  this is a bit of obj-c that will help connect the OF app with the UIActionSheet.
@@ -13,9 +13,9 @@
  */
 
 @interface ActionSheetDelegateForOF : NSObject <UIActionSheetDelegate> {
-    testApp * app;
+    ofApp * app;
 }
 
-- (id)initWithApp:(testApp *)app;
+- (id)initWithApp:(ofApp *)app;
 
 @end

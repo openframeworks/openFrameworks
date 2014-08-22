@@ -49,7 +49,6 @@ public:
     
     void removeMesh( int index );
     void removeTexture( int index );
-    void clear();
     
     void drawVertices();
     void drawWireframe();
@@ -68,7 +67,7 @@ protected:
     
     ofVec4f texCoords;
     bool usingVbo;
-    ofPtr<ofMesh>  mesh;
+    shared_ptr<ofMesh>  mesh;
     ofMesh normalsMesh;
     
     vector<ofIndexType> getIndices( int startIndex, int endIndex );

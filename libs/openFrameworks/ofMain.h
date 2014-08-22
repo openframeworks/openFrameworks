@@ -28,7 +28,7 @@
 
 //--------------------------
 // communication
-#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID)
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
 	#include "ofSerial.h"
 	#include "ofArduino.h"
 #endif
@@ -45,11 +45,13 @@
 #include "ofVbo.h"
 #include "ofVboMesh.h"
 #include "ofGLProgrammableRenderer.h"
+#ifndef TARGET_PROGRAMMABLE_GL
 #include "ofGLRenderer.h"
+#endif
 
 //--------------------------
 // graphics
-#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID)
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
 #include "ofCairoRenderer.h"
 #endif
 #include "ofGraphics.h"
@@ -68,8 +70,10 @@
 
 //--------------------------
 // audio
+#ifndef TARGET_NO_SOUND
 #include "ofSoundStream.h"
 #include "ofSoundPlayer.h"
+#endif
 
 //--------------------------
 // video

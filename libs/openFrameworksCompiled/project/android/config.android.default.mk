@@ -31,17 +31,9 @@
 
 include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 ARCH = android
-ifeq ($(shell uname),Darwin)
-	HOST_PLATFORM = darwin-x86
-else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
-	HOST_PLATFORM = windows
-else
-	HOST_PLATFORM = linux-$(shell uname -m)
-endif
-
 
 ifndef ABIS_TO_COMPILE_RELEASE
-	ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon
+	ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon x86
 endif
 
 ifndef ABIS_TO_COMPILE_DEBUG
@@ -68,7 +60,7 @@ PLATFORM_DEFINES =
 PLATFORM_DEFINES = ANDROID
 
 ifndef $(NDK_PLATFORM)
-	NDK_PLATFORM = android-14
+	NDK_PLATFORM = android-17
 endif
 
 ifndef $(SDK_TARGET)
@@ -76,15 +68,41 @@ ifndef $(SDK_TARGET)
 endif
 
 ifndef $(GCC_VERSION)
-	GCC_VERSION = 4.7
+	GCC_VERSION = 4.8
 endif
 
 PROJECT_PATH=$(PWD)
 
-TOOLCHAIN=arm-linux-androideabi-$(GCC_VERSION)
-TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
+
+ifeq ($(ABI),x86)
+ANDROID_PREFIX=i686-linux-android-
+TOOLCHAIN=x86-$(GCC_VERSION)
+SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-x86/
+else
 ANDROID_PREFIX=arm-linux-androideabi-
+TOOLCHAIN=$(ANDROID_PREFIX)$(GCC_VERSION)
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
+endif
+
+ifeq ($(shell uname),Darwin)
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/darwin-x86_64),)
+	HOST_PLATFORM = darwin-x86_64
+else
+	HOST_PLATFORM = darwin-x86
+endif
+else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
+	HOST_PLATFORM = windows
+	PWD = $(shell pwd)
+else
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/linux-x86_64),)
+	HOST_PLATFORM = linux-x86_64
+else
+	HOST_PLATFORM = linux-x86
+endif
+endif
+
+TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
+
 DATA_FILES = $(shell find bin/data -type f 2>/dev/null)
 RESNAME=$(shell echo $(APPNAME)Resources | tr '[A-Z]' '[a-z]')
 RESFILE=$(RESNAME).zip
@@ -105,6 +123,12 @@ ifeq ($(ABI),neon)
 	ABI_PATH = armeabi-v7a
 	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
 	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp_neon.so
+endif
+
+ifeq ($(ABI),x86)
+	ABI_PATH = x86
+	PLATFORM_PROJECT_RELEASE_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
+	PLATFORM_PROJECT_DEBUG_TARGET = libs/$(ABI_PATH)/libOFAndroidApp.so
 endif
 
 PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/$(ABI)/libopenFrameworks.a
@@ -143,7 +167,7 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid
 ################################################################################
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS = -Wall
+PLATFORM_CFLAGS = -Wall -std=c++11
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
@@ -157,6 +181,10 @@ ifeq ($(ABI),neon)
 	PLATFORM_CFLAGS += -march=armv7-a -mfloat-abi=softfp -mfpu=neon
 endif
 
+ifeq ($(ABI),x86)
+	PLATFORM_CFLAGS += -march=i686 -msse3 -mstackrealign -mfpmath=sse -fno-stack-protector
+endif
+
 ################################################################################
 # PLATFORM LDFLAGS
 #   This is a list of fully qualified LDFLAGS required when linking for this 
@@ -167,11 +195,14 @@ endif
 
 PLATFORM_LDFLAGS =
 PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)"
-ifeq ($(HOST_PLATFORM),linux-x86)
-	PLATFORM_LDFLAGS += -fuse-ld=gold
-endif
+#ifeq ($(HOST_PLATFORM),linux-x86)
+#	PLATFORM_LDFLAGS += -fuse-ld=gold
+#endif
 
-PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
+ifneq ($(ABI),x86)
+PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 
+endif
+PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -273,7 +304,7 @@ PROJECT_EXCLUSIONS += ./libs
 ################################################################################
 
 PLATFORM_HEADER_SEARCH_PATHS =
-PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include/" 
+PLATFORM_HEADER_SEARCH_PATHS += "$(SYSROOT)/usr/include/" 
 PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/include" 
 PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/include" 
 PLATFORM_HEADER_SEARCH_PATHS += "$(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/libs/$(ABI_PATH)/include" 
@@ -302,6 +333,7 @@ PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/addons/ofxAndroid/src"
 ################################################################################
 
 PLATFORM_LIBRARIES = 
+PLATFORM_LIBRARIES += OpenSLES
 PLATFORM_LIBRARIES += supc++ 
 PLATFORM_LIBRARIES += z 
 PLATFORM_LIBRARIES += GLESv1_CM 
@@ -310,6 +342,7 @@ PLATFORM_LIBRARIES += log
 PLATFORM_LIBRARIES += dl 
 PLATFORM_LIBRARIES += m 
 PLATFORM_LIBRARIES += c 
+PLATFORM_LIBRARIES += gnustl_static
 PLATFORM_LIBRARIES += gcc
 
 #static libraries (fully qualified paths)
@@ -322,7 +355,6 @@ PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPoco
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libssl.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libcrypto.a
-PLATFORM_STATIC_LIBRARIES += $(NDK_ROOT)/sources/cxx-stl/gnu-libstdc++/$(GCC_VERSION)/libs/$(ABI_PATH)/libgnustl_static.a
 
 # shared libraries 
 PLATFORM_SHARED_LIBRARIES =
@@ -393,6 +425,9 @@ PLATFORM_CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(
 PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
 PLATFORM_AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 
+#ifeq (,$(findstring MINGW32_NT,$(shell uname)))
+ZIPWINDOWS=..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ./res/raw/$(RESFILE)
+#endif
 
 afterplatform:$(RESFILE)
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
@@ -409,6 +444,10 @@ afterplatform:$(RESFILE)
 	
 	@if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ]; then \
 		cp $(NDK_ROOT)/prebuilt/android-arm/gdbserver/gdbserver libs/armeabi-v7a; \
+	fi
+	
+	@if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "x86" ]; then \
+		cp $(NDK_ROOT)/prebuilt/android-x86/gdbserver/gdbserver libs/x86; \
 	fi
 	
 	
@@ -432,43 +471,43 @@ afterplatform:$(RESFILE)
 		echo "" >> libs/armeabi-v7a/gdb.setup; \
 	fi
 	
+	@if [ "$(findstring x86,$(ABIS_TO_COMPILE))" = "x86" ]; then \
+		echo create gdb.setup for x86; \
+		echo "set solib-search-path $(PWD)/obj/local/x86:$(PWD)/libs/x86" > libs/x86/gdb.setup; \
+		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/x86/gdb.setup; \
+		echo "directory $(PWD)/src" >> libs/x86/gdb.setup; \
+		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/x86/gdb.setup; \
+		echo "directory $(PWD)/libs/x86" >> libs/x86/gdb.setup ; \
+		echo "" >> libs/x86/gdb.setup; \
+	fi
+	
 	@echo creating Android.mk and Application.mk
 	@if [ ! -d jni ]; then mkdir jni; fi
-	@if [ "$(findstring armv5,$(ABIS_TO_COMPILE))" = "armv5" ]; then \
-		if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ]; then \
-			echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk; \
-			if [ "$(findstring neon,$(ABIS_TO_COMPILE))" != "neon" ]; then \
-				rm libs/armeabi-v7a/libOFAndroidApp_neon.so 2> /dev/null; \
-				rm libs/armeabi-v7a/libneondetection.so 2> /dev/null; \
-			fi; \
-		else \
-			if [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
-				echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk; \
-				rm libs/armeabi-v7a/libOFAndroidApp.so 2> /dev/null; \
-			else \
-				echo "APP_ABI := armeabi" > jni/Application.mk; \
-				rm -r libs/armeabi-v7a 2> /dev/null; \
-			fi; \
-		fi; \
+	@ABIS=""; \
+	if [ "$(findstring armv5,$(ABIS_TO_COMPILE))" = "armv5" ]; then \
+		ABIS="$$ABIS armeabi"; \
 	else \
-		if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ]; then \
-			echo "APP_ABI := armeabi-v7a" > jni/Application.mk; \
-			rm -r libs/armeabi 2> /dev/null; \
-			if [ "$(findstring neon,$(ABIS_TO_COMPILE))" != "neon" ]; then \
-				rm libs/armeabi-v7a/libOFAndroidApp_neon.so 2> /dev/null; \
-				rm libs/armeabi-v7a/libneondetection.so 2> /dev/null; \
-			fi; \
-		else \
-			if [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
-				echo "APP_ABI := armeabi-v7a" > jni/Application.mk; \
-				rm -r libs/armeabi 2> /dev/null; \
-				rm libs/armeabi-v7a/libOFAndroidApp.so 2> /dev/null; \
-			else \
-				echo "APP_ABI := armeabi armeabi-v7a" > jni/Application.mk; \
-			fi; \
-		fi; \
+		rm -r libs/armeabi 2> /dev/null; \
 	fi; \
-	echo "#LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
+	if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ] || [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
+		ABIS="$$ABIS armeabi-v7a"; \
+	elif [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ]; then \
+		rm libs/armeabi-v7a/libOFAndroidApp_neon.so 2> /dev/null; \
+		rm libs/armeabi-v7a/libneondetection.so 2> /dev/null; \
+	elif [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
+		rm libs/armeabi-v7a/libOFAndroidApp.so 2> /dev/null; \
+	else \
+		rm -r libs/armeabi-v7a 2> /dev/null; \
+	fi; \
+	if [ "$(findstring x86,$(ABIS_TO_COMPILE))" = "x86" ]; then \
+		ABIS="$$ABIS x86"; \
+	else \
+		rm -r libs/x86 2> /dev/null; \
+	fi; \
+	echo "APP_ABI := $$ABIS" > jni/Application.mk; \
+	echo "LOCAL_MODULE := OFAndroidApp" > jni/Android.mk
+		
+	
 	
 	#@echo updating ofAndroidLib project
 	#@cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
@@ -492,9 +531,14 @@ $(RESFILE): $(DATA_FILES)
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
-		cd bin/data; \
-		zip -r ../../res/raw/$(RESNAME).zip *; \
-		cd ../..; \
+		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+			echo "Windows Platform. Running Zip..."; \
+			cmd //c $(ZIPWINDOWS) ./bin/data/ && exit; \
+		else \
+			cd bin/data; \
+			zip -r ../../res/raw/$(RESNAME).zip *; \
+			cd ../..; \
+		fi; \
 	fi
 
 install:	
@@ -509,9 +553,14 @@ install:
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
-		cd bin/data; \
-		zip -r ../../res/raw/$(RESNAME).zip *; \
-		cd ../..; \
+		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+			echo "Windows Platform. Running Zip..."; \
+			cmd //c $(ZIPWINDOWS) ./bin/data/ && exit; \
+		else \
+			cd bin/data; \
+			zip -r ../../res/raw/$(RESNAME).zip; *; \
+			cd ../..; \
+		fi; \
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
