@@ -123,14 +123,15 @@ function build() {
 		local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
 		local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/win_cb
 
-		# we must include -std=c++11 with CFLAGS, which is not compatible with c, but we can handle the warnings.
-
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS \
 					--config=MinGW
 
 		make
+
+		# Delete debug libs.
+		lib/MinGW/i686/*d.a
 
 	elif [ "$TYPE" == "ios" ] ; then
 
@@ -239,7 +240,7 @@ function copy() {
 		cp -v lib/*.lib $1/lib/$TYPE
 	elif [ "$TYPE" == "win_cb" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/MinGW/$(uname -m)/*.a $1/lib/$TYPE
+		cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "linux" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/$(uname -m)/*.a $1/lib/$TYPE
