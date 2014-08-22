@@ -347,6 +347,11 @@ function createPackage {
 		rm -Rf ofxMultiTouch
 		rm -Rf ofxAccelerometer
 	fi
+	
+	if [ "$pkg_platform" == "ios" ] || [ "$pkg_platform" == "android" ]; then
+	    rm -Rf ofxVectorGraphics
+   	    rm -Rf ofxKinect
+	fi
 
 	#delete eclipse projects
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
@@ -356,7 +361,7 @@ function createPackage {
 	fi
 	
 	#android, move paths.default.make to paths.make
-	if [ "$pkg_platform" = "android" ]
+	if [ "$pkg_platform" == "android" ]; then
 	    cd ${pkg_root}
 	    mv libs/openFrameworksCompiled/android/paths.default.make libs/openFrameworksCompiled/android/paths.make
 	fi
@@ -441,11 +446,11 @@ function createPackage {
 	
 	
 	#download and copy OF compiled
-	cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
-    if [ "$pkg_platform" = "win_cb" ]; then
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
-		wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
-	fi
+	#cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
+    	#if [ "$pkg_platform" = "win_cb" ]; then
+	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
+	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
+	#fi
 
 
     #if snow leopard change 10.4u to 10.5

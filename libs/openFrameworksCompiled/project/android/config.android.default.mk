@@ -94,7 +94,11 @@ else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
 	HOST_PLATFORM = windows
 	PWD = $(shell pwd)
 else
-	HOST_PLATFORM = linux-$(shell uname -m)
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/linux-x86_64),)
+	HOST_PLATFORM = linux-x86_64
+else
+	HOST_PLATFORM = linux-x86
+endif
 endif
 
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
@@ -163,7 +167,7 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid
 ################################################################################
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS = -Wall
+PLATFORM_CFLAGS = -Wall -std=c++11
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
@@ -329,6 +333,7 @@ PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/addons/ofxAndroid/src"
 ################################################################################
 
 PLATFORM_LIBRARIES = 
+PLATFORM_LIBRARIES += OpenSLES
 PLATFORM_LIBRARIES += supc++ 
 PLATFORM_LIBRARIES += z 
 PLATFORM_LIBRARIES += GLESv1_CM 
@@ -420,6 +425,9 @@ PLATFORM_CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(
 PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
 PLATFORM_AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 
+#ifeq (,$(findstring MINGW32_NT,$(shell uname)))
+ZIPWINDOWS=..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ./res/raw/$(RESFILE)
+#endif
 
 afterplatform:$(RESFILE)
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
@@ -523,9 +531,14 @@ $(RESFILE): $(DATA_FILES)
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
-		cd bin/data; \
-		zip -r ../../res/raw/$(RESNAME).zip *; \
-		cd ../..; \
+		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+			echo "Windows Platform. Running Zip..."; \
+			cmd //c $(ZIPWINDOWS) ./bin/data/ && exit; \
+		else \
+			cd bin/data; \
+			zip -r ../../res/raw/$(RESNAME).zip *; \
+			cd ../..; \
+		fi; \
 	fi
 
 install:	
@@ -540,9 +553,14 @@ install:
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
-		cd bin/data; \
-		zip -r ../../res/raw/$(RESNAME).zip *; \
-		cd ../..; \
+		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+			echo "Windows Platform. Running Zip..."; \
+			cmd //c $(ZIPWINDOWS) ./bin/data/ && exit; \
+		else \
+			cd bin/data; \
+			zip -r ../../res/raw/$(RESNAME).zip; *; \
+			cd ../..; \
+		fi; \
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml

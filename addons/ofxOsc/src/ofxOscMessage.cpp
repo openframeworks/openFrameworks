@@ -170,6 +170,17 @@ string ofxOscMessage::getArgAsString( int index ) const
         return ((ofxOscArgString*)args[index])->get();
 }
 
+ofBuffer ofxOscMessage::getArgAsBlob( int index ) const
+{
+    if ( getArgType(index) != OFXOSC_TYPE_BLOB )
+	{
+        ofLogError("ofxOscMessage") << "getArgAsBlob(): argument " << index << " is not a blob";
+        return ofBuffer();
+	}
+	else
+        return ((ofxOscArgBlob*)args[index])->get();
+}
+
 
 
 /*
@@ -202,6 +213,10 @@ void ofxOscMessage::addStringArg( string argument )
 	args.push_back( new ofxOscArgString( argument ) );
 }
 
+void ofxOscMessage::addBlobArg( ofBuffer argument )
+{
+	args.push_back( new ofxOscArgBlob( argument ) );
+}
 
 /*
 
@@ -230,6 +245,8 @@ ofxOscMessage& ofxOscMessage::copy( const ofxOscMessage& other )
 			args.push_back( new ofxOscArgFloat( other.getArgAsFloat( i ) ) );
 		else if ( argType == OFXOSC_TYPE_STRING )
 			args.push_back( new ofxOscArgString( other.getArgAsString( i ) ) );
+		else if ( argType == OFXOSC_TYPE_BLOB )
+			args.push_back( new ofxOscArgBlob( other.getArgAsBlob( i ) ) );
 		else
 		{
 			assert( false && "bad argument type" );

@@ -288,6 +288,7 @@ bool ofXml::setToChild(int index)
             element = (Poco::XML::Element*) document->documentElement()->firstChild();
         } else {
             ofLogWarning("ofXml") << "setToChild(): no element created yet";
+            return false;
         }
     }
     
@@ -770,7 +771,7 @@ bool ofXml::loadFromBuffer( const string& buffer )
     	element = (Poco::XML::Element*) document->firstChild();
     	document->normalize();
     	return true;
-    } catch( exception e ) {
+    } catch( const exception & e ) {
         short msg = atoi(e.what());
         ofLogError("ofXml") << "loadFromBuffer(): " << DOMErrorMessage(msg);
         document = new Poco::XML::Document;
@@ -838,16 +839,22 @@ bool ofXml::setTo(const string& path)
             element = parent;
             return true;
             
-        } else {
+        } else if (parent) {
             
             string remainingPath = path.substr((count * 3), path.size() - (count * 3));
             
             element = (Poco::XML::Element*) parent->getNodeByPath(remainingPath);
+
              if(!element) {
                  element = prev;
                  ofLogWarning("ofXml") << "setCurrentElement(): passed invalid path \"" << remainingPath << "\"";
                  return false;
              }
+        }
+        else
+        {
+            ofLogWarning("ofXml") << "setCurrentElement(): parent is null.";
+            return false;
         }
     }  else if(path.find("//") != string::npos) {
         

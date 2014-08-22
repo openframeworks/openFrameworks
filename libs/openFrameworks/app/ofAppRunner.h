@@ -6,19 +6,37 @@
 #include "ofTypes.h"
 
 class ofAppBaseWindow;
+class ofAppBaseGLWindow;
+class ofAppBaseGLESWindow;
 class ofBaseApp;
 class ofBaseRenderer;
 
-void 		ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
 void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
-void 		ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode);  // will be deprecated
+#ifdef TARGET_OPENGLES
+void		ofSetOpenGLESVersion(int version);
+int			ofGetOpenGLESVersion();
+string		ofGetGLSLVersion();
+void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
+void 		ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, int screenMode);  // will be deprecated
+#else
+void		ofSetOpenGLVersion(int major, int minor);
+int			ofGetOpenGLVersionMajor();
+int			ofGetOpenGLVersionMinor();
+string		ofGetGLSLVersion();
+void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
+void 		ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, int screenMode);  // will be deprecated
+#endif
+void		ofSetWindow(ofAppBaseWindow * windowPtr);
+void		ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr);
+void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode));
+//void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode));
 
-void 		ofRunApp(ofPtr<ofBaseApp> OFSA);
+void 		ofRunApp(shared_ptr<ofBaseApp> OFSA);
 void 		ofRunApp(ofBaseApp * OFSA = NULL); // will be deprecated
 
 
 ofBaseApp * ofGetAppPtr();
-void ofSetAppPtr(ofPtr<ofBaseApp> appPtr);
+void ofSetAppPtr(shared_ptr<ofBaseApp> appPtr);
 
 void		ofExit(int status=0);
 

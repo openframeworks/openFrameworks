@@ -35,7 +35,7 @@ static OSStatus soundOutputStreamRenderCallback(void *inRefCon,
     
     if([stream.delegate respondsToSelector:@selector(soundStreamRequested:output:bufferSize:numOfChannels:)]) {
         [stream.delegate soundStreamRequested:stream
-                                       output:audioBuffer->mData
+                                       output:(float*)audioBuffer->mData
                                    bufferSize:bufferSize
                                 numOfChannels:audioBuffer->mNumberChannels];
     }
