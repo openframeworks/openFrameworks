@@ -240,6 +240,9 @@ ofAppEGLWindow::Settings::Settings() {
 
 //------------------------------------------------------------
 ofAppEGLWindow::ofAppEGLWindow() {
+  keyboardDetected = false;
+  mouseDetected	= false;
+  threadTimeout = ofThread::INFINITE_JOIN_TIMEOUT;
   init();
 }
 
@@ -808,7 +811,7 @@ void ofAppEGLWindow::destroyNativeEvents() {
   destroyNativeUDev();
   destroyNativeMouse(); 
   destroyNativeKeyboard(); 
-  waitForThread(true);
+  waitForThread(true, threadTimeout);
 }
 
 //------------------------------------------------------------
@@ -863,9 +866,13 @@ void ofAppEGLWindow::setWindowRect(const ofRectangle& requestedWindowRect) {
                                                 &dst_rect,
                                                 &src_rect,
                                                 0, // mask (we aren't changing it here)
-                                                (VC_IMAGE_TRANSFORM_T)0); // we aren't changing it here
+          #ifdef USE_DISPMANX_TRANSFORM_T
+                                                (DISPMANX_TRANSFORM_T)0);
+          #else
+                                                (VC_IMAGE_TRANSFORM_T)0);
+          #endif
 
-          vc_dispmanx_update_submit_sync(dispman_update);
+	  vc_dispmanx_update_submit_sync(dispman_update);
 
           // next time swapBuffers is called, it will be resized based on this eglwindow size data
           dispman_native_window.element = dispman_element;
@@ -1085,7 +1092,11 @@ void ofAppEGLWindow::setWindowPosition(int x, int y){
                                           &dst_rect,
                                           NULL,
                                           0,
+    #ifdef USE_DISPMANX_TRANSFORM_T
+                                          (DISPMANX_TRANSFORM_T)0);
+    #else
                                           (VC_IMAGE_TRANSFORM_T)0);
+    #endif
 
     vc_dispmanx_update_submit_sync(dispman_update);
 
@@ -1181,15 +1192,13 @@ void ofAppEGLWindow::idle() {
 void ofAppEGLWindow::display() {
 
   // take care of any requests for a new screen mode
-  if (windowMode != OF_GAME_MODE){
-    if ( bNewScreenMode ){
-      if( windowMode == OF_FULLSCREEN){
-        setWindowRect(getScreenRect());
-      } else if( windowMode == OF_WINDOW ){
-        setWindowRect(nonFullscreenWindowRect);
-      }
-      bNewScreenMode = false;
+  if (windowMode != OF_GAME_MODE && bNewScreenMode){
+    if( windowMode == OF_FULLSCREEN){
+      setWindowRect(getScreenRect());
+    } else if( windowMode == OF_WINDOW ){
+      setWindowRect(nonFullscreenWindowRect);
     }
+    bNewScreenMode = false;
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////
@@ -1354,7 +1363,10 @@ void ofAppEGLWindow::setupNativeMouse() {
 
     if(mouse_fd < 0) {
         ofLogError("ofAppEGLWindow") << "setupMouse(): did not open mouse, mouse_fd < 0";
-    }
+    }else {
+        mouseDetected = true;
+	}
+
 
 }
 
@@ -1370,6 +1382,7 @@ void ofAppEGLWindow::setupNativeKeyboard() {
         devicePathBuffer.append(eps[0]->d_name);
         keyboard_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
         ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard_fd= " <<  keyboard_fd << " devicePath=" << devicePathBuffer;
+		
     } else {
         ofLogWarning("ofAppEGLWindow") << "setupKeyboard(): unabled to find keyboard";
     }
@@ -1397,7 +1410,9 @@ void ofAppEGLWindow::setupNativeKeyboard() {
     
     if(keyboard_fd < 0) {
         ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard, keyboard_fd < 0";
-    }
+    }else {
+        keyboardDetected = true;
+	}
 }
 
 //------------------------------------------------------------

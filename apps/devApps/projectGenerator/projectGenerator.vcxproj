@@ -109,7 +109,7 @@
     <ClInclude Include="src\projects\xcodeProject.h" />
     <ClInclude Include="src\pugixmlLib\src\pugiconfig.hpp" />
     <ClInclude Include="src\pugixmlLib\src\pugixml.hpp" />
-    <ClInclude Include="src\testApp.h" />
+    <ClInclude Include="src\ofApp.h" />
     <ClInclude Include="src\utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -133,7 +133,7 @@
     <ClCompile Include="src\projects\visualStudioProject.cpp" />
     <ClCompile Include="src\projects\xcodeProject.cpp" />
     <ClCompile Include="src\pugixmlLib\src\pugixml.cpp" />
-    <ClCompile Include="src\testApp.cpp" />
+    <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="src\utils\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>

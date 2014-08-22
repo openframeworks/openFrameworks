@@ -33,7 +33,7 @@ public:
 	void setNormalData(const float * normal0x, int total, int usage, int stride=0);
 	void setTexCoordData(const float * texCoord0x, int total, int usage, int stride=0);
 	
-	void setAttributeData(int location, const float * vert0x, int numCoords, int total, int usage, int stride=sizeof(float));
+	void setAttributeData(int location, const float * vert0x, int numCoords, int total, int usage, int stride=0);
 
 	void updateMesh(const ofMesh & mesh);
 
@@ -134,6 +134,7 @@ private:
 	bool bBound;
 
 	map<int,GLuint> attributeIds;
+	map<int,int> attributeSize;
 	map<int,int> attributeStrides;
 	map<int,int> attributeNumCoords;
 

@@ -15,6 +15,7 @@
 class ofShader;
 class ofGLProgrammableRenderer;
 class ofBaseGLRenderer;
+class ofTexture;
 
 enum ofPrimitiveMode{
 	OF_PRIMITIVE_TRIANGLES,
@@ -23,7 +24,14 @@ enum ofPrimitiveMode{
 	OF_PRIMITIVE_LINES,
 	OF_PRIMITIVE_LINE_STRIP,
 	OF_PRIMITIVE_LINE_LOOP,
-	OF_PRIMITIVE_POINTS
+	OF_PRIMITIVE_POINTS,
+#ifndef TARGET_OPENGLES
+    OF_PRIMITIVE_LINES_ADJACENCY,
+    OF_PRIMITIVE_LINE_STRIP_ADJACENCY,
+    OF_PRIMITIVE_TRIANGLES_ADJACENCY,
+    OF_PRIMITIVE_TRIANGLE_STRIP_ADJACENCY,
+    OF_PRIMITIVE_PATCHES
+#endif
 };
 
 enum ofPolyRenderMode{
@@ -42,8 +50,8 @@ string ofGetGlInternalFormatName(int glInternalFormat);
 int ofGetGLFormatFromInternal(int glInternalFormat);
 int ofGetGlTypeFromInternal(int glInternalFormat);
 
-ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
-ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
+shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
+shared_ptr<ofBaseGLRenderer> ofGetGLRenderer();
 
 template<class T>
 int ofGetGlFormat(const ofPixels_<T> & pixels) {
@@ -121,6 +129,7 @@ bool ofIsGLProgrammableRenderer();
 		#define GL_UNSIGNED_INT_24_8						GL_UNSIGNED_INT_24_8_EXT
 	#endif
 #else
+    // ES1 - check if GL_FRAMEBUFFER is defined, if not assume ES1 is running.
 	#ifndef GL_FRAMEBUFFER
 		#define GL_FRAMEBUFFER									GL_FRAMEBUFFER_OES
 		#define GL_RENDERBUFFER									GL_RENDERBUFFER_OES
@@ -146,6 +155,14 @@ bool ofIsGLProgrammableRenderer();
 		#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE			GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_OES
 		#define GL_DEPTH_COMPONENT16							GL_DEPTH_COMPONENT16_OES
 	#endif
+
+    // ES2 + ES3 - GL_STENCIL_INDEX has been removed from gl header, and now replaced with GL_STENCIL_INDEX8.
+    #ifndef GL_STENCIL_INDEX
+        #ifdef GL_STENCIL_INDEX8
+            #define GL_STENCIL_INDEX                        GL_STENCIL_INDEX8
+        #endif
+    #endif
+
 	#define GL_FRAMEBUFFER_INCOMPLETE_FORMATS				GL_FRAMEBUFFER_INCOMPLETE_FORMATS_OES
 	#define GL_UNSIGNED_INT_24_8							GL_UNSIGNED_INT_24_8_OES
 

@@ -16,6 +16,7 @@ public:
 	void allocate(Settings settings = Settings());
 	bool isAllocated();
 
+	using ofBaseDraws::draw;
 	void draw(float x, float y);
 	void draw(float x, float y, float width, float height);
 
@@ -47,6 +48,7 @@ public:
 
 	bool checkStatus();
 	void createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint);
+    void attachTexture(ofTexture & texture, GLenum internalFormat, GLenum attachmentPoint);
 	GLuint createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint);
 	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum attachment );
 	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum attachment, GLenum transferFormat, GLenum transferType );
@@ -86,6 +88,7 @@ public:
 		int		numSamples;				// number of samples for multisampling (set 0 to disable)
 
 		Settings();
+		bool operator!=(const Settings & other);
 	};
 private:
 	Settings 			settings;

@@ -9,9 +9,10 @@ ofParameterGroup::ofParameterGroup()
 }
 
 void ofParameterGroup::add(ofAbstractParameter & param){
-	obj->parameters.push_back(&param);
-	obj->parametersIndex[param.getEscapedName()] = obj->parameters.size()-1;
-	param.setParent(this);
+	shared_ptr<ofAbstractParameter> group = param.newReference();
+	obj->parameters.push_back(group);
+	obj->parametersIndex[group->getEscapedName()] = obj->parameters.size()-1;
+	group->setParent(this);
 }
 
 void ofParameterGroup::clear(){
@@ -125,7 +126,7 @@ ofParameterGroup ofParameterGroup::getGroup(int pos) const{
 		return ofParameterGroup();
 	}else{
 		if(getType(pos)==typeid(ofParameterGroup).name()){
-			return *static_cast<ofParameterGroup* >(obj->parameters[pos]);
+			return *static_cast<ofParameterGroup* >(obj->parameters[pos].get());
 		}else{
 			ofLogError("ofParameterGroup") << "get(): bad type for pos " << pos << ", returning empty group";
 			return ofParameterGroup();
@@ -201,7 +202,7 @@ ofAbstractParameter & ofParameterGroup::operator[](int pos) const{
 }
 
 ostream& operator<<(ostream& os, const ofParameterGroup& group) {
-	int width = os.width();
+	std::streamsize width = os.width();
 	for(int i=0;i<group.size();i++){
 		if(group.getType(i)==typeid(ofParameterGroup).name()){
 			os << group.getName(i) << ":" << endl;
@@ -246,4 +247,20 @@ void ofParameterGroup::setSerializable(bool _serializable){
 
 bool ofParameterGroup::isSerializable() const{
 	return obj->serializable;
+}
+
+shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
+	return shared_ptr<ofAbstractParameter>(new ofParameterGroup(*this));
+}
+
+void ofParameterGroup::setParent(ofParameterGroup * _parent){
+	obj->parent = _parent;
+}
+
+const ofParameterGroup * ofParameterGroup::getParent() const{
+	return obj->parent;
+}
+
+ofParameterGroup * ofParameterGroup::getParent(){
+	return obj->parent;
 }

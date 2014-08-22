@@ -1,12 +1,3 @@
-/*
- *  ofCamera.cpp
- *  openFrameworksLib
- *
- *  Created by Memo Akten on 10/01/2011.
- *  Copyright 2011 MSA Visuals Ltd. All rights reserved.
- *
- */
-
 #include "ofCamera.h"
 #include "ofLog.h"
 
@@ -18,6 +9,7 @@ nearClip(0),
 farClip(0),
 lensOffset(0.0f, 0.0f),
 forceAspectRatio(false),
+aspectRatio(4./3.),
 isActive(false),
 vFlip(false)
 {
@@ -147,7 +139,7 @@ void ofCamera::begin(ofRectangle viewport) {
 	ofLoadMatrix( getProjectionMatrix(viewport) );
 
 	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-	ofLoadMatrix( getModelViewMatrix() );
+	ofLoadViewMatrix( getModelViewMatrix() );
 }
 
 // if begin(); pushes first, then we need an end to pop

@@ -5,6 +5,12 @@ ofXml::~ofXml() {
 	releaseAll();
 }
 
+ofXml::ofXml( const string & path ) {
+    document = new Poco::XML::Document(); // we create this so that they can be merged later
+    element = document->documentElement();
+    load(path);
+}
+
 ofXml::ofXml( const ofXml& rhs ) {
 
     document = new Poco::XML::Document();
@@ -282,6 +288,7 @@ bool ofXml::setToChild(int index)
             element = (Poco::XML::Element*) document->documentElement()->firstChild();
         } else {
             ofLogWarning("ofXml") << "setToChild(): no element created yet";
+            return false;
         }
     }
     
@@ -419,7 +426,14 @@ string ofXml::getAttribute(const string& path) const {
 
     Poco::XML::Node *e;
     if(element) {
-        e = element->getNodeByPath(path);
+
+        if(path.find("[@") == string::npos) {
+            // we need to create a proper path
+            string attributePath = "[@" + path + "]";
+            e = element->getNodeByPath(attributePath);
+        } else {
+            e = element->getNodeByPath(path);
+        }
     } else {
         ofLogWarning("ofXml") << "getAttribute(): no element set yet";
         return "";
@@ -431,11 +445,69 @@ string ofXml::getAttribute(const string& path) const {
     return "";
 }
 
+bool ofXml::removeAttribute(const string& path) 
+{
+
+    string attributeName, pathToAttribute;
+
+    Poco::XML::Element *e;
+    if(element) {
+        
+        bool hasPath = false;
+
+        // you can pass either /node[@attr] or just attr
+        if(path.find("[@") != string::npos)
+        {
+            int attrBegin = path.find("[@");
+            int start = attrBegin + 2;
+            int end = path.find("]", start);
+            attributeName = path.substr( start, end - start );
+            pathToAttribute = path.substr(0, attrBegin);
+            hasPath = true;
+        }
+        else
+        {
+            attributeName = path;
+        }
+        
+        if(hasPath) {
+            e = (Poco::XML::Element*) element->getNodeByPath(pathToAttribute);
+        } else {
+            e = element;
+        }
+
+    } else {
+        ofLogWarning("ofXml") << "clearAttributes(): no element set yet";
+        return false;
+    }
+    
+    if(e) {
+        Poco::XML::NamedNodeMap *map = e->attributes();
+        
+        for(int i = 0; i < (int)map->length(); i++) {
+            if(map->item(i)->nodeName() == attributeName) {
+                e->removeAttribute(map->item(i)->nodeName());
+            }
+        }
+        
+        map->release();
+        return true;
+    }
+    return false;
+}
+
 bool ofXml::removeAttributes(const string& path) 
 {
     Poco::XML::Element *e;
     if(element) {
-        e = (Poco::XML::Element*) element->getNodeByPath(path);
+        if(path.find("[@") == string::npos) {
+            // we need to create a proper path
+            string attributePath = "[@" + path + "]";
+            e = (Poco::XML::Element*) element->getNodeByPath(attributePath);
+        } else {
+            e = (Poco::XML::Element*) element->getNodeByPath(path);
+        }
+
     } else {
         ofLogWarning("ofXml") << "clearAttributes(): no element set yet";
         return false;
@@ -518,11 +590,8 @@ void ofXml::releaseAll(){
         document->release();
         document = 0;
     }
-
-    if(element) {
-        element->release();
-        element = 0;
-    }
+    
+    element = 0;
 }
 
 bool ofXml::remove(const string& path) // works for both attributes and tags
@@ -702,7 +771,7 @@ bool ofXml::loadFromBuffer( const string& buffer )
     	element = (Poco::XML::Element*) document->firstChild();
     	document->normalize();
     	return true;
-    } catch( exception e ) {
+    } catch( const exception & e ) {
         short msg = atoi(e.what());
         ofLogError("ofXml") << "loadFromBuffer(): " << DOMErrorMessage(msg);
         document = new Poco::XML::Document;
@@ -770,16 +839,22 @@ bool ofXml::setTo(const string& path)
             element = parent;
             return true;
             
-        } else {
+        } else if (parent) {
             
             string remainingPath = path.substr((count * 3), path.size() - (count * 3));
             
             element = (Poco::XML::Element*) parent->getNodeByPath(remainingPath);
+
              if(!element) {
                  element = prev;
                  ofLogWarning("ofXml") << "setCurrentElement(): passed invalid path \"" << remainingPath << "\"";
                  return false;
              }
+        }
+        else
+        {
+            ofLogWarning("ofXml") << "setCurrentElement(): parent is null.";
+            return false;
         }
     }  else if(path.find("//") != string::npos) {
         

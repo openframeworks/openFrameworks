@@ -67,6 +67,7 @@
 			<Add directory="..\..\..\libs\openFrameworks\video" />
 			<Add directory="..\..\..\libs\poco\include" />
 			<Add directory="..\..\..\libs\tess2\include" />
+			<Add directory="..\..\..\libs\openssl\include" />
 			<Add directory="..\..\..\libs\cairo\include\cairo" />
 		</Compiler>
 		<Linker>
@@ -121,10 +122,10 @@
 		<Unit filename="src\main.cpp">
 			<Option virtualFolder="src" />
 		</Unit>
-		<Unit filename="src\testApp.cpp">
+		<Unit filename="src\ofApp.cpp">
 			<Option virtualFolder="src" />
 		</Unit>
-		<Unit filename="src\testApp.h">
+		<Unit filename="src\ofApp.h">
 			<Option virtualFolder="src" />
 		</Unit>
 		<Extensions>

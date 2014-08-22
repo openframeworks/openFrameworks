@@ -53,59 +53,63 @@ static of3dPrimitive& getCached3dPrimitive( of3dPrimitiveType type ) {
             // special case for rendering with lines, so the triangles are not visible //
         case OF_3D_PRIMITIVE_BOX_WIREFRAME: {
             static ofBoxPrimitive * boxWireframe = new ofBoxPrimitive( 1.f, 1.f, 1.f );
+            static bool initialized = false;
             ofMesh* boxWireframeMesh = boxWireframe->getMeshPtr();
-            boxWireframeMesh->clear();
-            boxWireframeMesh->setMode( OF_PRIMITIVE_LINES );
             
-            boxWireframeMesh->addVertex(ofVec3f(-.5, -.5, -.5));
-            boxWireframeMesh->addVertex(ofVec3f(.5, -.5, -.5));
-            boxWireframeMesh->addVertex(ofVec3f(.5, .5, -.5));
-            boxWireframeMesh->addVertex(ofVec3f(-.5, .5, -.5));
-            
-            boxWireframeMesh->addVertex(ofVec3f(-.5, -.5, .5));
-            boxWireframeMesh->addVertex(ofVec3f(.5, -.5, .5));
-            boxWireframeMesh->addVertex(ofVec3f(.5, .5, .5));
-            boxWireframeMesh->addVertex(ofVec3f(-.5, .5, .5));
-            
-            // front face
-            boxWireframeMesh->addIndex(0);
-            boxWireframeMesh->addIndex(1);
-            
-            boxWireframeMesh->addIndex(1);
-            boxWireframeMesh->addIndex(2);
-            
-            boxWireframeMesh->addIndex(2);
-            boxWireframeMesh->addIndex(3);
-            
-            boxWireframeMesh->addIndex(3);
-            boxWireframeMesh->addIndex(0);
-            
-            // back face
-            boxWireframeMesh->addIndex(4);
-            boxWireframeMesh->addIndex(5);
-            
-            boxWireframeMesh->addIndex(5);
-            boxWireframeMesh->addIndex(6);
-            
-            boxWireframeMesh->addIndex(6);
-            boxWireframeMesh->addIndex(7);
-            
-            boxWireframeMesh->addIndex(7);
-            boxWireframeMesh->addIndex(4);
-            
-            
-            boxWireframeMesh->addIndex(0);
-            boxWireframeMesh->addIndex(4);
-            
-            boxWireframeMesh->addIndex(1);
-            boxWireframeMesh->addIndex(5);
-            
-            boxWireframeMesh->addIndex(2);
-            boxWireframeMesh->addIndex(6);
-            
-            boxWireframeMesh->addIndex(3);
-            boxWireframeMesh->addIndex(7);
-            
+            if(!initialized){
+				boxWireframeMesh->clear();
+				boxWireframeMesh->setMode( OF_PRIMITIVE_LINES );
+
+				boxWireframeMesh->addVertex(ofVec3f(-.5, -.5, -.5));
+				boxWireframeMesh->addVertex(ofVec3f(.5, -.5, -.5));
+				boxWireframeMesh->addVertex(ofVec3f(.5, .5, -.5));
+				boxWireframeMesh->addVertex(ofVec3f(-.5, .5, -.5));
+
+				boxWireframeMesh->addVertex(ofVec3f(-.5, -.5, .5));
+				boxWireframeMesh->addVertex(ofVec3f(.5, -.5, .5));
+				boxWireframeMesh->addVertex(ofVec3f(.5, .5, .5));
+				boxWireframeMesh->addVertex(ofVec3f(-.5, .5, .5));
+
+				// front face
+				boxWireframeMesh->addIndex(0);
+				boxWireframeMesh->addIndex(1);
+
+				boxWireframeMesh->addIndex(1);
+				boxWireframeMesh->addIndex(2);
+
+				boxWireframeMesh->addIndex(2);
+				boxWireframeMesh->addIndex(3);
+
+				boxWireframeMesh->addIndex(3);
+				boxWireframeMesh->addIndex(0);
+
+				// back face
+				boxWireframeMesh->addIndex(4);
+				boxWireframeMesh->addIndex(5);
+
+				boxWireframeMesh->addIndex(5);
+				boxWireframeMesh->addIndex(6);
+
+				boxWireframeMesh->addIndex(6);
+				boxWireframeMesh->addIndex(7);
+
+				boxWireframeMesh->addIndex(7);
+				boxWireframeMesh->addIndex(4);
+
+
+				boxWireframeMesh->addIndex(0);
+				boxWireframeMesh->addIndex(4);
+
+				boxWireframeMesh->addIndex(1);
+				boxWireframeMesh->addIndex(5);
+
+				boxWireframeMesh->addIndex(2);
+				boxWireframeMesh->addIndex(6);
+
+				boxWireframeMesh->addIndex(3);
+				boxWireframeMesh->addIndex(7);
+				initialized = true;
+            }
             
             return * boxWireframe;
         }break;

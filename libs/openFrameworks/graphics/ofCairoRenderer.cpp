@@ -414,7 +414,7 @@ void ofCairoRenderer::draw(ofPath::Command & command){
 	switch(command.type){
 	case ofPath::Command::moveTo:
 		curvePoints.clear();
-		cairo_new_sub_path(cr);
+		cairo_move_to(cr,command.to.x,command.to.y);
 		break;
 
 	case ofPath::Command::lineTo:
@@ -434,8 +434,8 @@ void ofCairoRenderer::draw(ofPath::Command & command){
 			ofPoint p4=curvePoints[3];
 
 			//SUPER WEIRD MAGIC CONSTANT = 1/6 (this works 100% can someone explain it?)
-			ofPoint cp1 = p2 + ( p3 - p1 ) * (1.0/6);
-			ofPoint cp2 = p3 + ( p2 - p4 ) * (1.0/6);
+			ofPoint cp1 = p2 + ( p3 - p1 ) * (1.0f/6.f);
+			ofPoint cp2 = p3 + ( p2 - p4 ) * (1.0f/6.f);
 
 			cairo_curve_to( cr, cp1.x, cp1.y, cp2.x, cp2.y, p3.x, p3.y );
 			curvePoints.pop_front();
@@ -701,6 +701,12 @@ void ofCairoRenderer::setHexColor( int hexColor ){
 //--------------------------------------------
 // transformations
 //our openGL wrappers
+
+ofMatrix4x4 ofCairoRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const{
+	ofLogWarning() << "getCurrentMatrix not yet implemented for Cairo Renderer.";
+	return ofMatrix4x4();
+}
+
 void ofCairoRenderer::pushMatrix(){
 	if(!surface || !cr) return;
 	cairo_get_matrix(cr,&tmpMatrix);
@@ -856,8 +862,8 @@ void ofCairoRenderer::viewport(ofRectangle v){
 }
 
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
-	if(width == 0) width = ofGetWindowWidth();
-	if(height == 0) height = ofGetWindowHeight();
+	if(width < 0) width = ofGetWindowWidth();
+	if(height < 0) height = ofGetWindowHeight();
 
 	if (invertY){
 		y = -y;
@@ -877,8 +883,8 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 
 void ofCairoRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
 	if(!b3D) return;
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
+	if(width < 0) width = ofGetWidth();
+	if(height < 0) height = ofGetHeight();
 	ofOrientation orientation = ofGetOrientation();
 
 	float viewW = viewportRect.width;
@@ -945,8 +951,8 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, float fo
 
 void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist){
 	if(!b3D) return;
-	if(width == 0) width = ofGetWidth();
-	if(height == 0) height = ofGetHeight();
+	if(width < 0) width = ofGetWidth();
+	if(height < 0) height = ofGetHeight();
 	ofOrientation orientation = ofGetOrientation();
 
 	float viewW = viewportRect.width;
@@ -1034,6 +1040,7 @@ void ofCairoRenderer::clear(float r, float g, float b, float a) {
 	if(!surface || ! cr) return;
 	cairo_set_source_rgba(cr,r/255., g/255., b/255., a/255.);
 	cairo_paint(cr);
+
 }
 
 //----------------------------------------------------------
