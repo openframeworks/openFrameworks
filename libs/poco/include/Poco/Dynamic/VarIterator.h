@@ -42,7 +42,7 @@ public:
 	typedef Var*                            pointer;
 	typedef Var&                            reference;
 
-	static const int POSITION_END;
+	static const std::size_t POSITION_END;
 		/// End position indicator.
 
 	VarIterator(Var* pVar, bool positionEnd);

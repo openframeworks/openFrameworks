@@ -66,6 +66,8 @@ public:
 		const EnvImpl& env);
 	static void killImpl(ProcessHandleImpl& handle);
 	static void killImpl(PIDImpl pid);
+	static bool isRunningImpl(const ProcessHandleImpl& handle);
+	static bool isRunningImpl(PIDImpl pid);
 	static void requestTerminationImpl(PIDImpl pid);
 
 private:

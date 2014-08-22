@@ -31,7 +31,7 @@ ifndef PLATFORM_VARIANT
 endif
 
 ifdef EMSCRIPTEN
-	PLATFORM_OS=emscripten
+    PLATFORM_OS=emscripten
 endif
 
 # if not defined, determine this platform's operating system via uname -s
@@ -51,9 +51,9 @@ HOST_ARCH=$(shell uname -m)
 $(info HOST_ARCH=${HOST_ARCH})
 
 ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
-	CROSS_COMPILING=1
+    CROSS_COMPILING=1
 else
-	CROSS_COMPILING=0
+    CROSS_COMPILING=0
 endif
 
 #$(info PLATFORM_ARCH=$(PLATFORM_ARCH))
@@ -79,6 +79,8 @@ ifndef PLATFORM_LIB_SUBPATH
         else
             $(error This makefile does not support your architecture $(PLATFORM_ARCH))
         endif
+    else ifneq (,$(findstring MINGW32_NT,$(PLATFORM_OS)))
+        PLATFORM_LIB_SUBPATH=win_cb
     else ifeq ($(PLATFORM_OS),Android)
         PLATFORM_LIB_SUBPATH=android
     else ifeq ($(PLATFORM_OS),Darwin)
@@ -206,9 +208,9 @@ endif
 include $(OF_PLATFORM_MAKEFILES)/config.$(PLATFORM_LIB_SUBPATH).$(PLATFORM_VARIANT).mk
 
 ifdef ABI_PATH
-	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
+    ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)/$(strip $(ABI_PATH))
 else
-	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
+    ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
 endif
 
 
@@ -264,14 +266,14 @@ CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-	ifneq ($(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --exists; echo $$?),0)
+    ifneq ($(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --exists; echo $$?),0)
 $(error couldn't find some pkg-config packages, did you run the latest install_dependencies.sh?)
-	endif
-	ifeq ($(CROSS_COMPILING),1)
-		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
-	else
-		OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
-	endif
+    endif
+    ifeq ($(CROSS_COMPILING),1)
+        OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
+    else
+        OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
+    endif
 endif
 
 # 3. Add all of the standard OF third party library headers (these have already been filtered above according to the platform config files)
@@ -331,5 +333,3 @@ ifdef MAKEFILE_DEBUG
     $(info ---PLATFORM_CORE_EXCLUSIONS---)
     $(foreach v, $(PLATFORM_CORE_EXCLUSIONS),$(info $(v)))
 endif
-
-
