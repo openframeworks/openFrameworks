@@ -768,7 +768,7 @@ GLint ofShader::getAttributeLocation(const string & name) {
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const string & name) {
 	GLint loc = -1;
-#ifdef TARGET_RASPBERRY_PI
+
 	// tig: caching uniform locations gives the RPi a 17% boost on average
 	map<string, GLint>::iterator it = uniformLocations.find(name);
 	if (it == uniformLocations.end()){
@@ -777,11 +777,6 @@ GLint ofShader::getUniformLocation(const string & name) {
 	} else {
 		loc = it->second;
 	}
-#else
-	// Desktop GL seems to be faster fetching the value from the GPU each time
-	// than retrieving it from cache.
-	loc = glGetUniformLocation(program, name.c_str());
-#endif
 	return loc;
 }
 
