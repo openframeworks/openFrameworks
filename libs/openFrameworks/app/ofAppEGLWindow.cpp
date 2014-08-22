@@ -240,6 +240,9 @@ ofAppEGLWindow::Settings::Settings() {
 
 //------------------------------------------------------------
 ofAppEGLWindow::ofAppEGLWindow() {
+  keyboardDetected = false;
+  mouseDetected	= false;
+  threadTimeout = ofThread::INFINITE_JOIN_TIMEOUT;
   init();
 }
 
@@ -808,7 +811,7 @@ void ofAppEGLWindow::destroyNativeEvents() {
   destroyNativeUDev();
   destroyNativeMouse(); 
   destroyNativeKeyboard(); 
-  waitForThread(true);
+  waitForThread(true, threadTimeout);
 }
 
 //------------------------------------------------------------
@@ -1360,7 +1363,10 @@ void ofAppEGLWindow::setupNativeMouse() {
 
     if(mouse_fd < 0) {
         ofLogError("ofAppEGLWindow") << "setupMouse(): did not open mouse, mouse_fd < 0";
-    }
+    }else {
+        mouseDetected = true;
+	}
+
 
 }
 
@@ -1376,6 +1382,7 @@ void ofAppEGLWindow::setupNativeKeyboard() {
         devicePathBuffer.append(eps[0]->d_name);
         keyboard_fd = open(devicePathBuffer.c_str(), O_RDONLY | O_NONBLOCK);
         ofLogNotice("ofAppEGLWindow") << "setupKeyboard(): keyboard_fd= " <<  keyboard_fd << " devicePath=" << devicePathBuffer;
+		
     } else {
         ofLogWarning("ofAppEGLWindow") << "setupKeyboard(): unabled to find keyboard";
     }
@@ -1403,7 +1410,9 @@ void ofAppEGLWindow::setupNativeKeyboard() {
     
     if(keyboard_fd < 0) {
         ofLogError("ofAppEGLWindow") << "setupKeyboard(): did not open keyboard, keyboard_fd < 0";
-    }
+    }else {
+        keyboardDetected = true;
+	}
 }
 
 //------------------------------------------------------------

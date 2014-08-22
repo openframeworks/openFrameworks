@@ -400,8 +400,6 @@ bool ofFbo::checkGLSupport() {
 		ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
 		return false;
 	}
-	string extensions = (char*)glGetString(GL_EXTENSIONS);
-	ofLogVerbose("ofFbo") << extensions;
 #endif
 
 	return true;
@@ -494,7 +492,7 @@ void ofFbo::allocate(Settings _settings) {
 		if(_settings.useDepth && _settings.useStencil){
 			stencilBuffer = depthBuffer = createAndAttachRenderbuffer(_settings.depthStencilInternalFormat, depthAttachment);
 			retainRB(stencilBuffer);
-			retainRB(depthBuffer);	
+			retainRB(depthBuffer);
 		}else if(_settings.useDepth){
 			depthBuffer = createAndAttachRenderbuffer(_settings.depthStencilInternalFormat, depthAttachment);
 			retainRB(depthBuffer);
@@ -518,7 +516,16 @@ void ofFbo::allocate(Settings _settings) {
 			#endif
 		}
 	}
-	settings.depthStencilInternalFormat = _settings.depthStencilInternalFormat;
+    
+    settings.useDepth = _settings.useDepth;
+    settings.useStencil = _settings.useStencil;
+    settings.depthStencilInternalFormat = _settings.depthStencilInternalFormat;
+    settings.depthStencilAsTexture = _settings.depthStencilAsTexture;
+    settings.textureTarget = _settings.textureTarget;
+    settings.wrapModeHorizontal = _settings.wrapModeHorizontal;
+    settings.wrapModeVertical = _settings.wrapModeVertical;
+    settings.maxFilter = _settings.maxFilter;
+    settings.minFilter = _settings.minFilter;
 
 	// if we want MSAA, create a new fbo for textures
 	#ifndef TARGET_OPENGLES
@@ -558,9 +565,12 @@ void ofFbo::allocate(Settings _settings) {
 	// unbind it
 	unbind();
 
-
-	// this should never happen
+    /* UNCOMMENT OUTSIDE OF DOING RELEASES
+	
+    // this should never happen
 	if(settings != _settings) ofLogWarning("ofFbo") << "allocation not complete, passed settings not equal to created ones, this is an internal OF bug";
+    
+    */
 }
 
 bool ofFbo::isAllocated(){
@@ -583,36 +593,42 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 
 
 void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint) {
-	// bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
-	GLint temp;
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &temp);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
-
 	ofTexture tex;
 	tex.allocate(settings.width, settings.height, internalFormat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
 	tex.texData.bFlipTexture = false;
 	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
 	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
-	textures.push_back(tex);
-	
+    attachTexture(tex, internalFormat, attachmentPoint);
+}
+
+void ofFbo::attachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachmentPoint) {
+    // bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
+	GLint temp;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &temp);
+	glBindFramebuffer(GL_FRAMEBUFFER, fboTextures);
+    
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachmentPoint, tex.texData.textureTarget, tex.texData.textureID, 0);
+    if(attachmentPoint >= textures.size()) {
+        textures.resize(attachmentPoint+1);
+    }
+    textures[attachmentPoint] = tex;
+    
 	settings.colorFormats.resize(attachmentPoint + 1);
 	settings.colorFormats[attachmentPoint] = internalFormat;
 	settings.numColorbuffers = settings.colorFormats.size();
-
-
+    
 	// if MSAA, bind main fbo and attach renderbuffer
 	if(settings.numSamples) {
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
+        
 		GLuint colorBuffer = createAndAttachRenderbuffer(internalFormat, GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		colorBuffers.push_back(colorBuffer);
 		retainRB(colorBuffer);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, temp);
-}
 
+}
 void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum  attachment, GLenum transferFormat, GLenum transferType){
 
 
@@ -885,9 +901,11 @@ bool ofFbo::checkStatus() {
 		case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
 			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
 			break;
+#ifndef TARGET_PROGRAMMABLE_GL
 		case GL_FRAMEBUFFER_INCOMPLETE_FORMATS:
 			ofLogError("ofFbo") << "FRAMEBUFFER_INCOMPLETE_FORMATS";
 			break;
+#endif
 		case GL_FRAMEBUFFER_UNSUPPORTED:
 			ofLogError("ofFbo") << "FRAMEBUFFER_UNSUPPORTED";
 			break;

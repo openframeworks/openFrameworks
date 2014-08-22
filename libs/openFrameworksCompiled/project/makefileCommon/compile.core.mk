@@ -29,6 +29,10 @@ ifdef PROJECT_AR
     AR = $(PROJECT_AR)
 endif
 
+ifeq ($strip($(PLATFORM_ARFLAGS)),)
+	ARFLAGS = -cr
+endif
+
 ################################################################################
 # CFLAGS
 ################################################################################
@@ -242,11 +246,17 @@ $(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.m
 # this target does the linking of the library
 # $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the 
 # $(OF_CORE_OBJ_FILES) must be processed first  
+ifeq ($(SHAREDCORE),1)
 $(TARGET) : $(OF_CORE_OBJ_FILES) 
 	@echo "Creating library " $(TARGET)
 	@mkdir -p $(@D)
-	$(AR) -cr "$@" $(OF_CORE_OBJ_FILES)
-
+	$(CC) -shared $(OF_CORE_OBJ_FILES) -o $@  
+else
+$(TARGET) : $(OF_CORE_OBJ_FILES) 
+	@echo "Creating library " $(TARGET)
+	@mkdir -p $(@D)
+	$(AR) ${ARFLAGS} "$@" $(OF_CORE_OBJ_FILES)
+endif
 -include $(OF_CORE_DEPENDENCY_FILES)
 
 #.PHONY: clean CleanDebug CleanRelease

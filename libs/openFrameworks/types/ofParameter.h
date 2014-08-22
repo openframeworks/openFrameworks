@@ -24,9 +24,9 @@ public:
 
 	virtual string getEscapedName() const;
 
-	void setParent(ofParameterGroup * _parent);
-	const ofParameterGroup * getParent() const;
-	ofParameterGroup * getParent();
+	virtual void setParent(ofParameterGroup * _parent);
+	virtual const ofParameterGroup * getParent() const;
+	virtual ofParameterGroup * getParent();
 	vector<string> getGroupHierarchyNames() const;
 
 	template<typename ParameterType>
@@ -43,13 +43,12 @@ public:
 	friend istream& operator>>(istream& is, ofAbstractParameter& p);
 
 	virtual bool isSerializable() const;
+	virtual shared_ptr<ofAbstractParameter> newReference() const;
 
 protected:
 	virtual void setSerializable(bool serializable);
 	void notifyParent();
 	virtual string escape(string str) const;
-private:
-	ofParameterGroup * parent;
 };
 
 
@@ -131,23 +130,31 @@ public:
 	void fromString(string str);
 
 	void setSerializable(bool serializable);
+	shared_ptr<ofAbstractParameter> newReference() const;
+
+	void setParent(ofParameterGroup * _parent);
+	const ofParameterGroup * getParent() const;
+	ofParameterGroup * getParent();
 private:
 	class Value{
 	public:
 		Value()
 		:bInNotify(false)
-		,serializable(true){};
+		,serializable(true)
+		,parent(NULL){};
 
 		Value(ParameterType v)
 		:value(v)
 		,bInNotify(false)
-		,serializable(true){};
+		,serializable(true)
+		,parent(NULL){};
 
 		Value(string name, ParameterType v)
 		:name(name)
 		,value(v)
 		,bInNotify(false)
-		,serializable(true){};
+		,serializable(true)
+		,parent(NULL){};
 
 		Value(string name, ParameterType v, ParameterType min, ParameterType max)
 		:name(name)
@@ -155,7 +162,8 @@ private:
 		,min(min)
 		,max(max)
 		,bInNotify(false)
-		,serializable(true){};
+		,serializable(true)
+		,parent(NULL){};
 
 		string name;
 		ParameterType value, prevValue;
@@ -163,8 +171,9 @@ private:
 		ofEvent<ParameterType> changedE;
 		bool bInNotify;
 		bool serializable;
+		ofParameterGroup * parent;
 	};
-	ofPtr<Value> obj;
+	shared_ptr<Value> obj;
 	void (ofParameter<ParameterType>::*setMethod)(ParameterType v);
 
 	void eventsSetValue(ParameterType v);
@@ -181,17 +190,17 @@ ofParameter<ParameterType>::ofParameter()
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(ParameterType v)
-:obj(ofPtr<Value>(new Value(v)))
+:obj(shared_ptr<Value>(new Value(v)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue) {}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(string name, ParameterType v)
-:obj(ofPtr<Value>(new Value(name, v)))
+:obj(shared_ptr<Value>(new Value(name, v)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(string name, ParameterType v, ParameterType min, ParameterType max)
-:obj(ofPtr<Value>(new Value(name, v, min, max)))
+:obj(shared_ptr<Value>(new Value(name, v, min, max)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 
@@ -443,6 +452,26 @@ void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> mom)
 	obj = mom.obj;
 }
 
+template<typename ParameterType>
+shared_ptr<ofAbstractParameter> ofParameter<ParameterType>::newReference() const{
+	return shared_ptr<ofAbstractParameter>(new ofParameter<ParameterType>(*this));
+}
+
+template<typename ParameterType>
+void ofParameter<ParameterType>::setParent(ofParameterGroup * _parent){
+	obj->parent = _parent;
+}
+
+template<typename ParameterType>
+const ofParameterGroup * ofParameter<ParameterType>::getParent() const{
+	return obj->parent;
+}
+
+template<typename ParameterType>
+ofParameterGroup * ofParameter<ParameterType>::getParent(){
+	return obj->parent;
+}
+
 
 
 template <typename T>
@@ -474,6 +503,8 @@ public:
 
 	template<class ListenerClass, typename ListenerMethod>
 	void removeListener(ListenerClass * listener, ListenerMethod method);
+	shared_ptr<ofAbstractParameter> newReference() const;
+	const ofParameterGroup * getParent() const;
 
 protected:
 	void setName(string name);
@@ -525,6 +556,9 @@ protected:
 	void setMax(ParameterType max);
 
 	void fromString(string str);
+
+	void setParent(ofParameterGroup * _parent);
+	ofParameterGroup * getParent();
 
 
 	ofParameter<ParameterType> parameter;
@@ -784,4 +818,24 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::setMax(ParameterType max)
 template<typename ParameterType,typename Friend>
 inline void ofReadOnlyParameter<ParameterType,Friend>::fromString(string str){
 	parameter.fromString(str);
+}
+
+template<typename ParameterType,typename Friend>
+shared_ptr<ofAbstractParameter> ofReadOnlyParameter<ParameterType,Friend>::newReference() const{
+	return shared_ptr<ofAbstractParameter>(new ofParameter<ParameterType>(*this));
+}
+
+template<typename ParameterType,typename Friend>
+void ofReadOnlyParameter<ParameterType,Friend>::setParent(ofParameterGroup * _parent){
+	parameter.setParent(_parent);
+}
+
+template<typename ParameterType,typename Friend>
+const ofParameterGroup * ofReadOnlyParameter<ParameterType,Friend>::getParent() const{
+	return parameter.getParent();
+}
+
+template<typename ParameterType,typename Friend>
+ofParameterGroup * ofReadOnlyParameter<ParameterType,Friend>::getParent(){
+	return parameter.getParent();
 }

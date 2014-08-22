@@ -18,22 +18,15 @@ ofxiOSImagePicker::ofxiOSImagePicker()
 	cameraIsAvailable = [imagePicker isCameraAvailable];
 	photoLibraryIsAvailable = [imagePicker isPhotoLibraryAvailable];
 	savedPhotosIsAvailable = [imagePicker isSavedPhotosAvailable];
-	pixels = NULL;
 	maxDimension = 0;
 	imageUpdated = false;
-	width = 0;
-	height = 0;
 	[imagePicker setMaxDimension: 640];
-	pixelsAllocated=false;
 }
 
 //--------------------------------------------------------------
 ofxiOSImagePicker::~ofxiOSImagePicker(){
-	[imagePicker release];
-	if( pixels != NULL ){
-		delete[] pixels;
-		pixels = NULL;
-	}
+	close(); 
+    [imagePicker release];
 }
 
 //--------------------------------------------------------------
@@ -79,6 +72,13 @@ bool ofxiOSImagePicker::openSavedPhotos()
 //----------------------------------------------------------------
 void ofxiOSImagePicker::close() {
     [imagePicker close];
+    imageUpdated = false;
+}
+
+//----------------------------------------------------------------
+void ofxiOSImagePicker::clear() {
+    pixels.clear();
+    imageUpdated = false;
 }
 
 //----------------------------------------------------------------
@@ -116,43 +116,23 @@ void ofxiOSImagePicker::loadPixels()
 	// load image texture
 	CGImageRef photo;
 	CGContextRef photoContext;
-	GLubyte *photoData;
 	
 	photo = [imagePicker getCGImage];
+    if(!photo){
+        ofLogError("ofxiOSImagePicker::loadPixels") << " photo is NULL " << endl;
+        return;
+    }
+    
+    pixels.allocate(CGImageGetWidth(photo), CGImageGetHeight(photo), 4);
+    int width = pixels.getWidth();
+    int height = pixels.getHeight();
+    int bpp = pixels.getNumChannels();
 	
-	int bpp = 4;
-	bool mallocPixels = false;
-	
-	if(width != (int) CGImageGetWidth(photo) || height != (int) CGImageGetHeight(photo))
-		mallocPixels = true;
-	
-	// Get the width and height of the image
-	width = (int) CGImageGetWidth(photo);
-	height = (int) CGImageGetHeight(photo);
-	
-	if(photo)
-	{
-		photoData = (GLubyte *) malloc(width * height * bpp);
-		
-		if(mallocPixels) {
-			if(pixelsAllocated)
-				free(pixels);
-				
-			pixels = (unsigned char *) malloc(width * height * bpp);
-			
-			pixelsAllocated = true;
-		}
-		
-		photoContext = CGBitmapContextCreate(photoData, width, height, 8, width * bpp, CGImageGetColorSpace(photo), kCGImageAlphaPremultipliedLast);
-		
-		CGContextDrawImage(photoContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), photo);
-		
-		memcpy(pixels, photoData, width*height*4);
-		
-		CGContextRelease(photoContext);
-		free(photoData);
-	}
-	
+    photoContext = CGBitmapContextCreate(pixels.getPixels(), width, height, 8, width * bpp, CGImageGetColorSpace(photo), kCGImageAlphaPremultipliedLast);
+    
+    CGContextDrawImage(photoContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), photo);
+    CGContextRelease(photoContext);
+
 	imageUpdated = true;
 	
 }
@@ -161,6 +141,32 @@ void ofxiOSImagePicker::saveImage()
 {
 	[imagePicker saveImageToPhotoAlbum];
 }
+
+//----------------------------------------------------------------
+unsigned char * ofxiOSImagePicker::getPixels(){
+    return pixels.getPixels();
+}
+
+//----------------------------------------------------------------
+ofPixelsRef	ofxiOSImagePicker::getPixelsRef(){
+    return pixels;
+}
+
+//----------------------------------------------------------------
+int ofxiOSImagePicker::getWidth(){
+    return pixels.getWidth();
+}
+
+//----------------------------------------------------------------
+int ofxiOSImagePicker::getHeight(){
+    return pixels.getHeight();
+}
+
+//----------------------------------------------------------------
+bool ofxiOSImagePicker::getImageUpdated(){
+    return imageUpdated; 
+}
+
 //----------------------------------------------------------------
 
 
@@ -206,7 +212,6 @@ void ofxiOSImagePicker::saveImage()
 - (void)dealloc { 
 
     _imagePicker.delegate = nil;
-    _imagePicker.cameraOverlayView = nil;
 	[_imagePicker.view removeFromSuperview];
 	[_imagePicker release];
 	

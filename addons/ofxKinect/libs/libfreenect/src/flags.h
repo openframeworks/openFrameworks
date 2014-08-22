@@ -31,8 +31,10 @@
 
 int send_cmd(freenect_device *dev, uint16_t cmd, void *cmdbuf, unsigned int cmd_len, void *replybuf, int reply_len);
 
+// returns UINT16_MAX on error
 uint16_t read_register(freenect_device *dev, uint16_t reg);
 int write_register(freenect_device *dev, uint16_t reg, uint16_t data);
 
+// returns UINT16_MAX on error
 uint16_t read_cmos_register(freenect_device *dev, uint16_t reg);
 int write_cmos_register(freenect_device *dev, uint16_t reg, uint16_t value);

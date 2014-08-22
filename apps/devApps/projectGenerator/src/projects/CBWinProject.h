@@ -5,7 +5,8 @@
  *      Author: arturo
  */
 
-#pragma once
+#ifndef CBWINPROJECT_H_
+#define CBWINPROJECT_H_
 
 #include "ofConstants.h"
 #include "pugixml.hpp"
@@ -21,7 +22,7 @@ public:
     bool loadProjectFile();
     bool saveProjectFile();
 
-	void addSrc(string srcName, string folder);
+	void addSrc(string srcName, string folder, SrcType type=DEFAULT);
 	void addInclude(string includeName);
 	void addLibrary(string libraryName, LibType libType = RELEASE_LIB);
 
@@ -33,3 +34,5 @@ public:
 private:
 
 };
+
+#endif /* CBLINUXPROJECT_H_ */

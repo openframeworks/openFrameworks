@@ -579,11 +579,7 @@ void ofAppGlutWindow::display(void){
 					[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
 					#ifdef MAC_OS_X_VERSION_10_7 //needed for Lion as when the machine reboots the app is not at front level
 						if( ofGetFrameNum() <= 10 ){  //is this long enough? too long?
-							ProcessSerialNumber psn;							
-							OSErr err = GetCurrentProcess( &psn );
-							if ( err == noErr ){
-								SetFrontProcess( &psn );
-							}
+							[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
 						}
 					#endif
 				#endif
@@ -609,7 +605,7 @@ void ofAppGlutWindow::display(void){
 	}
 
 
-	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+	shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 	if(renderer){
 		renderer->startRender();
 	}

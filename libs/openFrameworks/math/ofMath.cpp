@@ -26,11 +26,16 @@ void ofSeedRandom() {
 
 	#ifdef TARGET_WIN32
 		srand(GetTickCount());
-	#else
+	#elif !defined(TARGET_EMSCRIPTEN)
 		// use XOR'd second, microsecond precision AND pid as seed
 		struct timeval tv;
 		gettimeofday(&tv, 0);
 		long int n = (tv.tv_sec ^ tv.tv_usec) ^ getpid();
+		srand(n);
+	#else
+		struct timeval tv;
+		gettimeofday(&tv, 0);
+		long int n = (tv.tv_sec ^ tv.tv_usec);
 		srand(n);
 	#endif
 }
@@ -120,7 +125,6 @@ float ofClamp(float value, float min, float max) {
 	return value < min ? min : value > max ? max : value;
 }
 
-// return sign of the number
 //--------------------------------------------------
 int ofSign(float n) {
 	if( n > 0 ) return 1;

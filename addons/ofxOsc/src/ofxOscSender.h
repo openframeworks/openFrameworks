@@ -57,7 +57,7 @@ public:
 	void setup( std::string hostname, int port );
 
 	/// send the given message
-	void sendMessage( ofxOscMessage& message );
+	void sendMessage( ofxOscMessage& message, bool wrapInBundle = true );
 	/// send the given bundle
 	void sendBundle( ofxOscBundle& bundle );
 	/// creates a message using an ofParameter

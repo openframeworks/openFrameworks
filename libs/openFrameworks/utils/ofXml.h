@@ -1,7 +1,10 @@
 
 #pragma once
 
-#include "ofMain.h"
+#include "ofConstants.h"
+#include "ofParameter.h"
+#include "ofParameterGroup.h"
+#include "ofBaseTypes.h"
 
 #include <numeric>
 
@@ -35,7 +38,7 @@ public:
     ofXml( const string & path );
     ofXml( const ofXml& rhs );
     const ofXml& operator =( const ofXml& rhs );
-    
+
 	bool load(const string & path);
 	bool save(const string & path);
 
@@ -202,22 +205,21 @@ public:
     // templated to be anything
     template <class T> T getValue(const string& path, T returnVal=T()) const
     {
-        if(path == "")
-        {
-            if(element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
-                return ofFromString<T>(element->innerText());
-            } else {
-                ofLogWarning("ofXml") << "getValue(): path \"" << path<< "\" not found when getting value";
-                return returnVal; // hmm. this could be a problem
-            }
-        }
-        else
-        {
-            Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
-            if(e) {
-                return ofFromString<T>(e->innerText());
-            }
-        }
+    	if(element){
+			if(path == ""){
+				if(element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
+					return ofFromString<T>(element->innerText());
+				} else {
+					ofLogWarning("ofXml") << "getValue(): path \"" << path<< "\" not found when getting value";
+					return returnVal; // hmm. this could be a problem
+				}
+			} else {
+				Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+				if(e) {
+					return ofFromString<T>(e->innerText());
+				}
+			}
+    	}
         
         return T();
     }

@@ -32,34 +32,39 @@
 // freenect_set_flag is the only function exposed in libfreenect.h
 // The rest are available internally via #include flags.h
 
-FN_INTERNAL static int register_for_flag(int flag) {
-    switch(flag) {
-			case FREENECT_MIRROR_DEPTH:
-					return 0x17;
-			case FREENECT_MIRROR_VIDEO:
-					return 0x47;
-			default:
-					return -1;
+FN_INTERNAL int register_for_flag(int flag)
+{
+    switch(flag)
+    {
+		case FREENECT_MIRROR_DEPTH:
+			return 0x17;
+		case FREENECT_MIRROR_VIDEO:
+			return 0x47;
+		default:
+			return -1;
     }
 }
 
 int freenect_set_flag(freenect_device *dev, freenect_flag flag, freenect_flag_value value)
 {
-    if (flag >= (1 << 16)) {
+    if (flag >= (1 << 16))
+    {
         int reg = register_for_flag(flag);
         if (reg < 0)
             return reg;
         return write_register(dev, reg, value);
     }
 
-	uint16_t reg = read_cmos_register(dev, 0x0106);
-	if (reg < 0)
-		return reg;
+	uint16_t cmos_value = read_cmos_register(dev, 0x0106);
+	if (cmos_value == UINT16_MAX)
+	{
+		return -1;
+	}
 	if (value == FREENECT_ON)
-		reg |= flag;
+		cmos_value |= flag;
 	else
-		reg &= ~flag;
-	return write_cmos_register(dev, 0x0106, reg);
+		cmos_value &= ~flag;
+	return write_cmos_register(dev, 0x0106, cmos_value);
 }
 
 typedef struct {
@@ -138,22 +143,24 @@ FN_INTERNAL int send_cmd(freenect_device *dev, uint16_t cmd, void *cmdbuf, unsig
 	return actual_len;
 }
 
+// returns UINT16_MAX on error
 FN_INTERNAL uint16_t read_register(freenect_device *dev, uint16_t reg)
 {
 	freenect_context *ctx = dev->parent;
+
 	uint16_t reply[2];
-	uint16_t cmd;
-	int res;
+	uint16_t cmd = fn_le16(reg);
 
-	cmd = fn_le16(reg);
-
-	FN_DEBUG("read_register: 0x%04x =>\n", reg);
-	res = send_cmd(dev, 0x02, &cmd, 2, reply, 4);
+	int res = send_cmd(dev, 0x02, &cmd, 2, reply, 4);
 	if (res < 0)
+	{
 		FN_ERROR("read_register: send_cmd() failed: %d\n", res);
+		return UINT16_MAX;
+	}
 	if (res != 4)
 		FN_WARNING("read_register: send_cmd() returned %d [%04x %04x], 0000 expected\n", res, reply[0], reply[1]);
 
+	FN_DEBUG("read_register: 0x%04x => 0x%04x\n", reg, reply[1]);
 	return reply[1];
 }
 
@@ -162,34 +169,42 @@ FN_INTERNAL int write_register(freenect_device *dev, uint16_t reg, uint16_t data
 	freenect_context *ctx = dev->parent;
 	uint16_t reply[2];
 	uint16_t cmd[2];
-	int res;
 
 	cmd[0] = fn_le16(reg);
 	cmd[1] = fn_le16(data);
 
 	FN_DEBUG("write_register: 0x%04x <= 0x%02x\n", reg, data);
-	res = send_cmd(dev, 0x03, cmd, 4, reply, 4);
+	int res = send_cmd(dev, 0x03, cmd, 4, reply, 4);
 	if (res < 0)
+	{
+		FN_ERROR("write_register: send_cmd() returned %d\n", res);
 		return res;
-	if (res != 2) {
-		FN_WARNING("send_cmd() returned %d [%04x %04x], 0000 expected\n", res, reply[0], reply[1]);
 	}
+	if (res != 2)
+		FN_WARNING("write_register: send_cmd() returned %d [%04x %04x], 0000 expected\n", res, reply[0], reply[1]);
+
 	return 0;
 }
 
+// returns UINT16_MAX on error
 FN_INTERNAL uint16_t read_cmos_register(freenect_device *dev, uint16_t reg)
 {
 	freenect_context *ctx = dev->parent;
 	uint16_t replybuf[0x200];
 	uint16_t cmdbuf[3];
+
 	cmdbuf[0] = 1;
 	cmdbuf[1] = reg & 0x7fff;
 	cmdbuf[2] = 0;
+
 	int res = send_cmd(dev, 0x95, cmdbuf, 6, replybuf, 6);
-	if (res < 0) {
+	if (res < 0)
+	{
 		FN_ERROR("read_cmos_register: send_cmd() returned %d\n", res);
-		return res;
+		return UINT16_MAX;
 	}
+
+	FN_DEBUG("read_cmos_register: 0x%04x => 0x%04x\n", reg, replybuf[2]);
 	return replybuf[2];
 }
 
@@ -198,11 +213,14 @@ FN_INTERNAL int write_cmos_register(freenect_device *dev, uint16_t reg, uint16_t
 	freenect_context *ctx = dev->parent;
 	uint16_t replybuf[0x200];
 	uint16_t cmdbuf[3];
+
 	cmdbuf[0] = 1;
 	cmdbuf[1] = reg | 0x8000;
 	cmdbuf[2] = value;
+
+	FN_DEBUG("write_cmos_register: 0x%04x <= 0x%04x\n", reg, value);
 	int res = send_cmd(dev, 0x95, cmdbuf, 6, replybuf, 6);
 	if (res < 0)
-		FN_ERROR("read_cmos_register: send_cmd() returned %d\n", res);
+		FN_ERROR("write_cmos_register: send_cmd() returned %d\n", res);
 	return res;
 }

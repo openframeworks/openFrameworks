@@ -12,6 +12,7 @@
 #define GST_DISABLE_DEPRECATED
 #include <gst/gst.h>
 #include <gst/gstpad.h>
+#include "Poco/Condition.h"
 
 class ofGstAppSink;
 typedef struct _GstElement GstElement;
@@ -78,6 +79,7 @@ public:
 protected:
 	ofGstAppSink * 		appsink;
 	bool				isStream;
+	bool				closing;
 
 private:
 	static bool			busFunction(GstBus * bus, GstMessage * message, ofGstUtils * app);
@@ -96,10 +98,12 @@ private:
 	float				speed;
 	gint64				durationNanos;
 	bool				isAppSink;
+	Poco::Condition		eosCondition;
+	ofMutex				eosMutex;
+	guint				busWatchID;
 
 	class ofGstMainLoopThread: public ofThread{
 	public:
-		GMainLoop *main_loop;
 		ofGstMainLoopThread()
 		:main_loop(NULL)
 		{
@@ -113,10 +117,15 @@ private:
 		void threadedFunction(){
 			g_main_loop_run (main_loop);
 		}
+
+		GMainLoop * getMainLoop(){
+			return main_loop;
+		}
+	private:
+		GMainLoop *main_loop;
 	};
 
 	static ofGstMainLoopThread * mainLoop;
-	GstBus * bus;
 };
 
 
