@@ -419,8 +419,8 @@ bool ofFile::exists() const {
 		return myFile.exists();
 	}
 	catch(...){
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -459,8 +459,8 @@ bool ofFile::canRead() const {
 		return myFile.canRead();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check canRead" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -469,8 +469,8 @@ bool ofFile::canWrite() const {
 		return myFile.canWrite();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check canWrite" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -479,8 +479,8 @@ bool ofFile::canExecute() const {
 		return myFile.canExecute();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check canExecute" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -489,8 +489,8 @@ bool ofFile::isFile() const {
 		return myFile.isFile();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check isFile" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -499,8 +499,8 @@ bool ofFile::isLink() const {
 		return myFile.isLink();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check isLink" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -509,8 +509,8 @@ bool ofFile::isDirectory() const {
 		return myFile.isDirectory();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check isDirectory" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -519,8 +519,8 @@ bool ofFile::isDevice() const {
 		return myFile.isDevice();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check isDevice" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -529,8 +529,8 @@ bool ofFile::isHidden() const {
 		return myFile.isHidden();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check isHidden" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -933,8 +933,8 @@ bool ofDirectory::isHidden() const {
 		return myDir.isHidden();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofDirectory") << "Couldn't check isHidden" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -975,8 +975,8 @@ bool ofDirectory::isDirectory() const {
 		return myDir.isDirectory();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofDirectory") << "Couldn't check isDirectory" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
