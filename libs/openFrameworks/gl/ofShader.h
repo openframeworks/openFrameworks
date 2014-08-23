@@ -13,6 +13,11 @@
 #include "ofMatrix4x4.h"
 #include "Poco/RegularExpression.h"
 #include <map>
+#if __cplusplus>=200103L
+#include <unordered_map>
+#else
+#include <tr1/unordered_map>
+#endif
 #include "ofAppBaseWindow.h"
 
 class ofShader {
@@ -142,10 +147,11 @@ public:
 private:
 	GLuint program;
 	bool bLoaded;
-	map<GLenum, GLuint> shaders;
-	map<string, GLint> uniformLocations;
-	map<GLenum, string> shaderSource;
-	
+
+	unordered_map<GLenum, GLuint> shaders;
+	unordered_map<string, GLint> uniformLocations;
+	unordered_map<GLenum, string> shaderSource;
+
 	GLint getUniformLocation(const string & name);
 	
 	void checkProgramInfoLog(GLuint program);
