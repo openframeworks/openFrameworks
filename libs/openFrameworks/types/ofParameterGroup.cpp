@@ -264,3 +264,36 @@ const ofParameterGroup * ofParameterGroup::getParent() const{
 ofParameterGroup * ofParameterGroup::getParent(){
 	return obj->parent;
 }
+
+vector<shared_ptr<ofAbstractParameter> >::iterator ofParameterGroup::begin(){
+	return obj->parameters.begin();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::iterator ofParameterGroup::end(){
+	return obj->parameters.end();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::const_iterator ofParameterGroup::begin() const{
+	return obj->parameters.begin();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::const_iterator ofParameterGroup::end() const{
+	return obj->parameters.end();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::reverse_iterator ofParameterGroup::rbegin(){
+	return obj->parameters.rbegin();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::reverse_iterator ofParameterGroup::rend(){
+	return obj->parameters.rend();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGroup::rbegin() const{
+	return obj->parameters.rbegin();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGroup::rend() const{
+	return obj->parameters.rend();
+}
+
