@@ -907,13 +907,13 @@ float ofConePrimitive::getHeight() {
 // BOX PRIMITIVE //
 //--------------------------------------------------------------
 ofBoxPrimitive::ofBoxPrimitive() {
-    texCoords = ofVec4f(0,0,1,1);
+    texCoords = ofVec4f(0,1,1,0);
     set(100, 100, 100, 2, 2, 2);
 }
 
 //--------------------------------------------------------------
 ofBoxPrimitive::ofBoxPrimitive( float width, float height, float depth, int resWidth, int resHeight, int resDepth ) {
-    texCoords = ofVec4f(0,0,1,1);
+    texCoords = ofVec4f(0,1,1,0);
     set(width, height, depth, resWidth, resHeight, resDepth );
 }
 
