@@ -40,17 +40,6 @@ ofBuffer::ofBuffer(istream & stream){
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const ofBuffer & buffer_){
-	buffer = buffer_.buffer;
-	nextLinePos = buffer_.nextLinePos;
-}
-
-//--------------------------------------------------
-ofBuffer::~ofBuffer(){
-	clear();
-}
-
-//--------------------------------------------------
 bool ofBuffer::set(istream & stream){
 	clear();
 	if(stream.bad()){
@@ -205,6 +194,126 @@ bool ofBuffer::isLastLine(){
 //--------------------------------------------------
 void ofBuffer::resetLineReader(){
 	nextLinePos = 0;
+}
+
+//--------------------------------------------------
+vector<char>::iterator ofBuffer::begin(){ return buffer.begin(); }
+
+//--------------------------------------------------
+vector<char>::iterator ofBuffer::end(){
+	return buffer.end();
+}
+
+//--------------------------------------------------
+vector<char>::const_iterator ofBuffer::begin() const{
+	return buffer.begin();
+}
+
+//--------------------------------------------------
+vector<char>::const_iterator ofBuffer::end() const{
+	return buffer.end();
+}
+
+//--------------------------------------------------
+vector<char>::reverse_iterator ofBuffer::rbegin(){
+	return buffer.rbegin();
+}
+
+//--------------------------------------------------
+vector<char>::reverse_iterator ofBuffer::rend(){
+	return buffer.rend();
+}
+
+//--------------------------------------------------
+vector<char>::const_reverse_iterator ofBuffer::rbegin() const{
+	return buffer.rbegin();
+}
+
+//--------------------------------------------------
+vector<char>::const_reverse_iterator ofBuffer::rend() const{
+	return buffer.rend();
+}
+
+//--------------------------------------------------
+ofBuffer::Line::Line(vector<char> & buffer, vector<char>::iterator _begin)
+	:buffer(buffer)
+	,_begin(_begin)
+	,_end(_begin){
+	if(buffer.empty() || _begin == buffer.end()){
+		line =  "";
+		return;
+	}
+
+	bool lineEndWasCR = false;
+	while(_end != buffer.end() && *_end != '\n'){
+		if(*_end != '\r'){
+			_end++;
+		}else{
+			lineEndWasCR = true;
+			break;
+		}
+	}
+	line = string(_begin, _end);
+	if(_end != buffer.end()){
+		_end++;
+	}
+	// if lineEndWasCR check for CRLF
+	if(lineEndWasCR && _end != buffer.end() && *_end == '\n'){
+		_end++;
+	}
+}
+
+//--------------------------------------------------
+const string & ofBuffer::Line::operator*() const{
+	return line;
+}
+
+//--------------------------------------------------
+const string * ofBuffer::Line::operator->() const{
+	return &line;
+}
+
+//--------------------------------------------------
+ofBuffer::Line & ofBuffer::Line::operator++(){
+	*this = Line(buffer,_end);
+	return *this;
+}
+
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Line::operator++(int) {
+	Line tmp(*this);
+	operator++();
+	return tmp;
+}
+
+//--------------------------------------------------
+bool ofBuffer::Line::operator!=(Line const& rhs) const{
+	return rhs._begin != _begin || rhs._end != _end;
+}
+
+void ofBuffer::Line::operator=(const ofBuffer::Line & _line){
+	line = _line.line;
+	_begin = _line._begin;
+	_end = _line._end;
+}
+
+//--------------------------------------------------
+ofBuffer::Lines::Lines(vector<char> & buffer)
+		:buffer(buffer){}
+
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Lines::begin(){
+	return Line(buffer,buffer.begin());
+}
+
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Lines::end(){
+	return Line(buffer,buffer.end());
+}
+
+//--------------------------------------------------
+ofBuffer::Lines ofBuffer::getLines(){
+	return ofBuffer::Lines(buffer);
 }
 
 //--------------------------------------------------
@@ -1338,6 +1447,47 @@ bool ofDirectory::operator>(const ofDirectory & dir){
 bool ofDirectory::operator>=(const ofDirectory & dir){
 	return getAbsolutePath() >= dir.getAbsolutePath();
 }
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::iterator ofDirectory::begin(){
+	return files.begin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::iterator ofDirectory::end(){
+	return files.end();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_iterator ofDirectory::begin() const{
+	return files.begin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_iterator ofDirectory::end() const{
+	return files.end();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::reverse_iterator ofDirectory::rbegin(){
+	return files.rbegin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::reverse_iterator ofDirectory::rend(){
+	return files.rend();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_reverse_iterator ofDirectory::rbegin() const{
+	return files.rbegin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
+	return files.rend();
+}
+
 
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
