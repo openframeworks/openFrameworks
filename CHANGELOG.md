@@ -32,7 +32,7 @@ CORE
 	- ofSetMinMagFilters() : deprecated (use corresponding ofTexture member method) 
 	- ofGetUsingCustomMinMagFilters() : deprecated
 	- ofRestoreMinMagFilters() : deprecated	  
-
+	+ ofShader: report offending lines on compiling errors
 
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
