@@ -541,8 +541,7 @@ void ofGLProgrammableRenderer::loadIdentityMatrix (void){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::loadMatrix (const ofMatrix4x4 & m){
-	matrixStack.loadMatrix(m.getPtr());
-	uploadCurrentMatrix();
+	loadMatrix(m.getPtr());
 }
 
 //----------------------------------------------------------
@@ -565,21 +564,13 @@ void ofGLProgrammableRenderer::multMatrix (const float *m){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::loadViewMatrix(const ofMatrix4x4 & m){
 	matrixStack.loadViewMatrix(m);
-	if(currentShader){
-		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
-	}
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::multViewMatrix(const ofMatrix4x4 & m){
 	matrixStack.multViewMatrix(m);
-	if(currentShader){
-		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
-	}
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
@@ -598,6 +589,7 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 	// uploads the current matrix to the current shader.
 	switch(matrixStack.getCurrentMatrixMode()){
 	case OF_MATRIX_MODELVIEW:
+		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
 		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
 		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
 		break;
