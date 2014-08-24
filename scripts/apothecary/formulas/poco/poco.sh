@@ -8,7 +8,7 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=apothecary-1.1
+VER=apothecary-1.4
 
 # tools for git use
 GIT_URL=https://github.com/bakercp/poco
@@ -68,6 +68,8 @@ function prepare() {
 
 		# replace OPENSSL_LIB=%OPENSSL_DIR%\lib;%OPENSSL_DIR%\lib\VC with OPENSSL_LIB=%OPENSSL_DIR%\lib\vs
 		sed -i.tmp "s|%OPENSSL_DIR%\\\lib;.*|%OPENSSL_DIR%\\\lib\\\vs|g" buildwin.cmd
+	elif [ "$TYPE" == "android" ] ; then
+		installAndroidToolchain
 	fi
 
 }
@@ -224,7 +226,50 @@ function build() {
 		done
 
 	elif [ "$TYPE" == "android" ] ; then
-		echoWarning "TODO: android build"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+		
+		local OLD_PATH=$PATH
+
+		export PATH=$PATH:$BUILD_DIR/Toolchains/Android/androideabi/bin:$BUILD_DIR/Toolchains/Android/x86/bin
+
+		local OF_LIBS_OPENSSL="../../../../libs/openssl/"
+
+		# get the absolute path to the included openssl libs
+		local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
+
+		local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
+		local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/
+
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+
+		./configure $BUILD_OPTS \
+					--include-path=$OPENSSL_INCLUDE \
+					--library-path=$OPENSSL_LIBS/armeabi \
+					--config=Android
+
+		make ANDROID_ABI=armeabi
+
+		./configure $BUILD_OPTS \
+					--include-path=$OPENSSL_INCLUDE \
+					--library-path=$OPENSSL_LIBS/armeabi-v7a \
+					--config=Android
+
+		make ANDROID_ABI=armeabi-v7a
+
+		./configure $BUILD_OPTS \
+					--include-path=$OPENSSL_INCLUDE \
+					--library-path=$OPENSSL_LIBS/x86 \
+					--config=Android
+
+		make ANDROID_ABI=x86
+
+		echo `pwd`
+
+		rm -v lib/Android/armeabi/*d.a
+		rm -v lib/Android/armeabi-v7a/*d.a
+		rm -v lib/Android/x86/*d.a
+
+		export PATH=$OLD_PATH
 
 	elif [ "$TYPE" == "linux" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
@@ -299,6 +344,15 @@ function copy() {
 	elif [ "$TYPE" == "linuxarmv7l" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/armv7l/*.a $1/lib/$TYPE
+	elif [ "$TYPE" == "android" ] ; then
+		mkdir -p $1/lib/$TYPE/armeabi
+		cp -v lib/Android/armeabi/*.a $1/lib/$TYPE/armeabi
+
+		mkdir -p $1/lib/$TYPE/armeabi-v7a
+		cp -v lib/Android/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a
+
+		mkdir -p $1/lib/$TYPE/x86
+		cp -v lib/Android/x86/*.a $1/lib/$TYPE/x86
 	else
 		echoWarning "TODO: copy $TYPE lib"
 	fi
@@ -310,7 +364,11 @@ function clean() {
 	if [ "$TYPE" == "vs" ] ; then
 		cmd //c buildwin.cmd ${VS_VER}0 clean static_md both Win32 nosamples notests
 	elif [ "$TYPE" == "android" ] ; then
-		echoWarning "TODO: clean android"
+		export PATH=$PATH:$ANDROID_TOOLCHAIN_ANDROIDEABI/bin:$ANDROID_TOOLCHAIN_X86/bin
+		make clean ANDROID_ABI=armeabi
+		make clean ANDROID_ABI=armeabi-v7a
+		make clean ANDROID_ABI=x86
+		unset PATH
 	else
 		make clean
 	fi
