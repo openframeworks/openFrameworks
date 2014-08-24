@@ -79,7 +79,6 @@ IOS_MIN_SDK_VER=5.1
 VS_VER=11
 
 # used when compiling for android
-
 ANDROID_NDK_ROOT=path_to_ndk/root
 ANDROID_PLATFORM=android-19
 
