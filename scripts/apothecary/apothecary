@@ -77,8 +77,8 @@ IOS_MIN_SDK_VER=5.1
 VS_VER=11
 
 # used when compiling for android
-ANDROID_TOOLCHAIN_ANDROIDEABI=ABSOLUTE_PATH_TO_YOUR_STANDALONE_TOOLCHAIN_FOR_ANDROIDEABI
-ANDROID_TOOLCHAIN_X86=ABSOLUTE_PATH_TO_YOUR_STANDALONE_TOOLCHAIN_FOR_X86
+ANDROID_NDK_ROOT=path_to_ndk/root
+ANDROID_PLATFORM=android-19
 
 ################################################################################
 ### PRIVATE VARS, for internal use
