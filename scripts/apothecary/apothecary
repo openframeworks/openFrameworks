@@ -74,7 +74,11 @@ IOS_SDK_VER=7.1
 IOS_MIN_SDK_VER=5.1
 
 # used when building for vs
-VS_VER=12
+VS_VER=11
+
+# used when compiling for android
+ANDROID_NDK_ROOT=path_to_ndk/root
+ANDROID_PLATFORM=android-19
 
 ################################################################################
 ### PRIVATE VARS, for internal use
