@@ -283,6 +283,34 @@ fi
 ################################################################################
 ### FUNCTIONS
 
+
+function installAndroidToolchain() {
+
+	local WD=$(pwd)
+
+	cd $ANDROID_NDK_ROOT/build/tools
+
+	if [ ! -d "$BUILD_DIR/Toolchains/Android/androideabi" ]; then
+		./make-standalone-toolchain.sh \
+			--ndk-dir=$ANDROID_NDK_ROOT \
+			--platform=$ANDROID_PLATFORM \
+			--install-dir=$BUILD_DIR/Toolchains/Android/androideabi
+	fi
+
+
+	if [ ! -d "$BUILD_DIR/Toolchains/Android/x86" ]; then
+		./make-standalone-toolchain.sh \
+			--ndk-dir=$ANDROID_NDK_ROOT \
+			--platform=$ANDROID_PLATFORM \
+			--install-dir=$BUILD_DIR/Toolchains/Android/x86 \
+			--arch=x86 
+	fi
+
+	cd $WD
+
+}
+
+
 # check if a given string matches anything in VALID_TYPES,
 # bool result is set to second argument
 function isValidType() {
