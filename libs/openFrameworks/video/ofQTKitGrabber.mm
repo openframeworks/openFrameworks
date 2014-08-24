@@ -129,7 +129,6 @@
 
 + (NSInteger) getIndexofStringInArray:(NSArray*)someArray stringToFind:(NSString*)someStringDescription
 {
-	NSInteger count = 0;
 	NSInteger index = -1;
 	
 	for (id object in someArray) {
@@ -143,7 +142,8 @@
 + (NSArray*) listVideoDevices
 {
     //create a session for enumerating devices
-    QTCaptureSession * tmpSession = [[[QTCaptureSession alloc] init] autorelease];
+    QTCaptureSession * tmpSession = [[QTCaptureSession alloc] init];
+    [tmpSession autorelease];
     
 	NSArray* videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] 
 							 arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
@@ -152,13 +152,13 @@
 	[self enumerateArray:videoDevices];
 	
 	return videoDevices;
-	
 }
 
 + (NSArray*) listAudioDevices
 {
     //create a session for enumerating devices
-    QTCaptureSession * tmpSession = [[[QTCaptureSession alloc] init] autorelease];
+    QTCaptureSession * tmpSession = [[QTCaptureSession alloc] init];
+    [tmpSession autorelease];
 
 	NSArray* audioDevices = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeSound];
 	
@@ -434,8 +434,6 @@
 - (void) startRecording:(NSString*)filePath
 {
 	if (isRecordReady) {
-		
-		BOOL success = YES;
 		
         // make sure last movie has stopped
 		if (isRecording){

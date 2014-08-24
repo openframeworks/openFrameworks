@@ -577,7 +577,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	//QTTime t = QTMakeTime(frame*frameStep, movieDuration.timeScale);
 	QTTime t = QTMakeTime([[frameTimeValues objectAtIndex:frame%frameTimeValues.count] longLongValue], movieDuration.timeScale);
 	QTTime startTime =[_movie frameStartTime:t];
-	QTTime endTime =[_movie frameEndTime:t];
+//	QTTime endTime =[_movie frameEndTime:t];
 //	NSLog(@"calculated frame time %lld, frame start end [%lld, %lld]", t.timeValue, startTime.timeValue, endTime.timeValue);
 	if(QTTimeCompare(startTime, _movie.currentTime) != NSOrderedSame){
 		self.justSetFrame = YES;

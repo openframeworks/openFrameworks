@@ -7,7 +7,9 @@
 #include <set>
 
 static const double MICROS_TO_SEC = .000001;
+#ifdef TARGET_WIN32
 static const double MICROS_TO_MILLIS = .001;
+#endif
 
 static unsigned long long   timeThen = 0, oneSec = 0;
 static float    			targetRate = 0;
