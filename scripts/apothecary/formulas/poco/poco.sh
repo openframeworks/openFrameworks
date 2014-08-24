@@ -18,13 +18,6 @@ GIT_TAG=poco-$VER
 # 3rd Party libraries.  See https://github.com/pocoproject/poco/blob/develop/README
 # for more information.
 
-
-# @tgfrerer: we need more fine-grained control over poco source code versions, 
-# which is why we specify the specific poco source code commit we want to use -
-# When updating poco/this recipe, make sure to specify the proper hash here,
-# and check if the header patches still apply cleanly.
-
-# @TODO: New commit ref?
 SHA=
 
 # download the source code and unpack it into LIB_NAME
