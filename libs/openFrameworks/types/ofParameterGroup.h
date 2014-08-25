@@ -97,6 +97,14 @@ public:
 	const ofParameterGroup * getParent() const;
 	ofParameterGroup * getParent();
 
+	vector<shared_ptr<ofAbstractParameter> >::iterator begin();
+	vector<shared_ptr<ofAbstractParameter> >::iterator end();
+	vector<shared_ptr<ofAbstractParameter> >::const_iterator begin() const;
+	vector<shared_ptr<ofAbstractParameter> >::const_iterator end() const;
+	vector<shared_ptr<ofAbstractParameter> >::reverse_iterator rbegin();
+	vector<shared_ptr<ofAbstractParameter> >::reverse_iterator rend();
+	vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator rbegin() const;
+	vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator rend() const;
 
 private:
 	class Value{

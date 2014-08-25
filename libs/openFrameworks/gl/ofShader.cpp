@@ -89,7 +89,7 @@ bLoaded(mom.bLoaded),
 shaders(mom.shaders){
 	if(mom.bLoaded){
 		retainProgram(program);
-		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
 			GLuint shader = it->second;
 			retainShader(shader);
 		}
@@ -109,7 +109,7 @@ ofShader & ofShader::operator=(const ofShader & mom){
 	shaders = mom.shaders;
 	if(mom.bLoaded){
 		retainProgram(program);
-		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
 			GLuint shader = it->second;
 			retainShader(shader);
 		}
@@ -227,7 +227,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 	stringstream input;
 	input << source;
 	
-	Poco::RegularExpression re("^[ ]*#[ ]*pragma[ ]*include[ ]+[\"<](.*)[\">].*");
+	Poco::RegularExpression re("^\\s*#\\s*pragma\\s+include\\s+[\"<](.*)[\">].*");
 	Poco::RegularExpression::MatchVec matches;
 	
 	string line;
@@ -336,6 +336,28 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
 		ofLog(logLevel, "ofShader: " + nameForType(type) + " shader reports:\n" + infoBuffer);
+		if (shaderSource.find(type) != shaderSource.end()) {
+			// The following regexp should match shader compiler error messages by Nvidia and ATI.
+			// Unfortunately, each vendor's driver formats error messages slightly different.
+			Poco::RegularExpression re("^.*[(:]{1}(\\d+)[:)]{1}.*");
+			Poco::RegularExpression::MatchVec matches;
+			string infoString = (infoBuffer != NULL) ? string(infoBuffer): "";
+			re.match(infoString, 0, matches);
+			ofBuffer buf = shaderSource[type];
+			buf.resetLineReader();
+			if (!matches.empty()){
+			int  offendingLineNumber = ofToInt(infoString.substr(matches[1].offset, matches[1].length));
+				ostringstream msg;
+				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< endl;
+				for(int i=0; !buf.isLastLine(); i++ ){
+					string s = buf.getNextLine();
+					if ( i >= offendingLineNumber -3 && i < offendingLineNumber + 2 ){
+						msg << "\t" << setw(5) << (i+1) << s << endl;
+					}
+				}
+				ofLog(logLevel) << msg.str();
+			}
+		}
 		delete [] infoBuffer;
 	}
 }
@@ -380,7 +402,7 @@ bool ofShader::linkProgram() {
 	} else {
 		checkAndCreateProgram();
 
-		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
 			GLuint shader = it->second;
 			if(shader) {
 				ofLogVerbose() << "linkProgram(): attaching " << nameForType(it->first) << " shader to program " << program;
@@ -421,7 +443,7 @@ bool ofShader::bindDefaults(){
 //--------------------------------------------------------------
 void ofShader::unload() {
 	if(bLoaded) {
-		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
+		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
 			GLuint shader = it->second;
 			if(shader) {
 				ofLogVerbose("ofShader") << "unload(): detaching and deleting " << nameForType(it->first) << " shader from program " << program;
@@ -768,20 +790,15 @@ GLint ofShader::getAttributeLocation(const string & name) {
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const string & name) {
 	GLint loc = -1;
-#ifdef TARGET_RASPBERRY_PI
+
 	// tig: caching uniform locations gives the RPi a 17% boost on average
-	map<string, GLint>::iterator it = uniformLocations.find(name);
+	unordered_map<string, GLint>::iterator it = uniformLocations.find(name);
 	if (it == uniformLocations.end()){
 		loc = glGetUniformLocation(program, name.c_str());
 		if (loc != -1) uniformLocations[name] = loc;
 	} else {
 		loc = it->second;
 	}
-#else
-	// Desktop GL seems to be faster fetching the value from the GPU each time
-	// than retrieving it from cache.
-	loc = glGetUniformLocation(program, name.c_str());
-#endif
 	return loc;
 }
 
