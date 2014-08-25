@@ -33,7 +33,29 @@ function download() {
 function prepare() {
 	if [ "$TYPE" == "android" ] ; then
 		installAndroidToolchain
-	fi
+	elif [ "$TYPE" == "ios" ] ; then
+		# create output directories
+		mkdir -p lib/$TYPE
+		mkdir -p lib/include
+
+		mkdir -p build/$TYPE/i386
+		mkdir -p build/$TYPE/x86_64
+		mkdir -p build/$TYPE/armv7
+		mkdir -p build/$TYPE/armv7s
+		mkdir -p build/$TYPE/arm64
+
+		mkdir -p lib/$TYPE/i386
+		mkdir -p lib/$TYPE/x86_64
+		mkdir -p lib/$TYPE/armv7
+		mkdir -p lib/$TYPE/armv7s
+		mkdir -p lib/$TYPE/arm64
+
+		# make copies of the source files before modifying
+		cp Makefile Makefile.orig
+		cp "crypto/ui/ui_openssl.c" "crypto/ui/ui_openssl.c.orig"
+ 	fi
+
+
 
 }
 
@@ -93,107 +115,128 @@ function build() {
 	# 	# # Delete debug libs.
 	# 	# lib/MinGW/i686/*d.a
 
-	# elif [ "$TYPE" == "ios" ] ; then
+	if [ "$TYPE" == "ios" ] ; then
 
-	# 	# # maybe --poquito is a good idea?
+		# This was quite helpful as a reference: https://github.com/x2on/OpenSSL-for-iPhone
+		# Refer to the other script if anything drastic changes for future versions
 
-	# 	# local BUILD_POCO_CONFIG_IPHONE=iPhone-clang-libc++
-	# 	# local BUILD_POCO_CONFIG_SIMULATOR=iPhoneSimulator-clang-libc++
+		export TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
+		export DEVELOPER=$XCODE_DEV_ROOT
 
-	# 	# # Locate the path of the openssl libs distributed with openFrameworks.
-	# 	# local OF_LIBS_OPENSSL="../../../../libs/openssl/"
+		local IOS_ARCHS="i386 x86_64 armv7 armv7s arm64"
+		local STDLIB="libc++"
+		CURRENTPATH=`pwd`	
 
-	# 	# # get the absolute path to the included openssl libs
-	# 	# local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
+		# Validate environment
+		case $XCODE_DEV_ROOT in  
+		     *\ * )
+		           echo "Your Xcode path contains whitespaces, which is not supported."
+		           exit 1
+		          ;;
+		esac
+		case $CURRENTPATH in  
+		     *\ * )
+		           echo "Your path contains whitespaces, which is not supported by 'make install'."
+		           exit 1
+		          ;;
+		esac 
 
-	# 	# local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
-	# 	# local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/ios
+		# loop through architectures! yay for loops!
+		for IOS_ARCH in ${IOS_ARCHS}
+		do
+			unset RANLIB CC CFLAG CFLAGS 
+			unset IOS_PLATFORM CROSS_TOP CROSS_SDK BUILD_TOOLS
+			unset IOS_DEVROOT IOS_SDKROOT
+	
+			export RANLIB=$TOOLCHAIN/usr/bin/ranlib
 
-	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen --include-path=$OPENSSL_INCLUDE --library-path=$OPENSSL_LIBS"
-	# 	# local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
-		
-	# 	# export IPHONE_SDK="iPhoneOS"
-	# 	# local IOS_DEVROOT=$XCODE_DEV_ROOT/Platforms/$IPHONE_SDK.platform/Developer
-	# 	# export IPHONE_SDK_ROOT=$IOS_DEVROOT/SDKs
-		
-	# 	# # armv7 
-	# 	# export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
-	# 	# export POCO_TARGET_OSARCH="armv7"
+			
+			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
+			then
+				IOS_PLATFORM="iPhoneSimulator"
+			else
+				cp "crypto/ui/ui_openssl.c" "crypto/ui/ui_openssl.c.orig"
+				# need to change this file for iOS only
+				sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
+				IOS_PLATFORM="iPhoneOS"
+			fi
 
-	# 	# # configure and make
-	# 	# ./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_IPHONE
-	# 	# make
-	# 	# # remove debug builds
-	# 	# rm lib/$IPHONE_SDK/$POCO_TARGET_OSARCH/*d.a 
+			echo "Building OpenSSL $VER for $IOS_PLATFORM $IOS_SDK_VER $IOS_ARCH"
 
-	# 	# unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN
+			local IOS_DEVROOT=$XCODE_DEV_ROOT/Platforms/$IOS_PLATFORM.platform/Developer
+			local IOS_SDKROOT=$IOS_DEVROOT/SDKs/$IOS_PLATFORM$IOS_SDK_VER.sdk
 
-	# 	# # armv7s
-	# 	# export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
-	# 	# export POCO_TARGET_OSARCH="armv7s"
+			export CROSS_TOP=$IOS_DEVROOT
+			export CROSS_SDK="$IOS_PLATFORM$IOS_SDK_VER.sdk"
+			export BUILD_TOOLS="$XCODE_DEV_ROOT"
 
-	# 	# # configure and make
-	# 	# ./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_IPHONE
-	# 	# make
-	# 	# # remove debug builds
-	# 	# rm lib/$IPHONE_SDK/$POCO_TARGET_OSARCH/*d.a 
+			export CC="$TOOLCHAIN/usr/bin/cc -arch $IOS_ARCH"
 
-	# 	# unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN
+			if [[ "$VER" =~ 1.0.0. ]]; then
+				echo "Building for OpenSSL Version before 1.0.0"
+	    		./Configure BSD-generic32 --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH"
+			elif [ "$IOS_ARCH" == "x86_64" ]; then
+			    ./Configure darwin64-x86_64-cc --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH"
+		    else
+			    ./Configure iphoneos-cross --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH"
+		    fi
 
-	# 	# # arm64
-	# 	# local IPHONE_SDK_VERSION_64_MIN="7.0" # arm64 min is iOS 7.0
-	# 	# export IPHONE_SDK_VERSION_MIN=$IPHONE_SDK_VERSION_64_MIN
-	# 	# export POCO_TARGET_OSARCH="arm64"
+		    local MIN_IOS_VERSION=$IOS_MIN_SDK_VER
+		    # min iOS version for arm64 is iOS 7
 
-	# 	# # configure and make
-	# 	# ./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_IPHONE
-	# 	# make
-	# 	# # remove debug builds
-	# 	# rm lib/$IPHONE_SDK/$POCO_TARGET_OSARCH/*d.a 
+		    if [ "$IOS_ARCH" == "arm64" ] ; then
+		    	MIN_IOS_VERSION="7.0"
+		    fi
 
-	# 	# unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN
-		
-	# 	# unset IPHONE_SDK IPHONE_SDK_ROOT
+		    sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -stdlib=$STDLIB -miphoneos-version-min=$MIN_IOS_VERSION !" "Makefile"
 
-	# 	# export IPHONE_SDK="iPhoneSimulator"
-	# 	# local IOS_DEVROOT=$XCODE_DEV_ROOT/Platforms/$IPHONE_SDK.platform/Developer
-	# 	# export IPHONE_SDK_ROOT=$IOS_DEVROOT/SDKs
-		
-	# 	# # i386 simulator
-	# 	# export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
-	# 	# export POCO_TARGET_OSARCH="i386"
 
-	# 	# # configure and make
-	# 	# ./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_SIMULATOR
-	# 	# make
-	# 	# # remove debug builds
-	# 	# rm lib/$IPHONE_SDK/$POCO_TARGET_OSARCH/*d.a 
+			# Must run at -j 1 (single thread only else will fail)
+			make
+			make install
 
-	# 	# unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN
+			# copy libraries to lib folder
+			cp "build/$TYPE/$IOS_ARCH/lib/libssl.a" "lib/$TYPE/$IOS_ARCH/libssl.a"
+			cp "build/$TYPE/$IOS_ARCH/lib/libcrypto.a" "lib/$TYPE/$IOS_ARCH/libcrypto.a"
 
-	# 	# # x86_64 simulator
-	# 	# export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
-	# 	# export POCO_TARGET_OSARCH="x86_64"
+			# must clean between builds
+			make clean
 
-	# 	# # configure and make
-	# 	# ./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_SIMULATOR
-	# 	# make
-	# 	# # remove debug builds
-	# 	# rm lib/$IPHONE_SDK/$POCO_TARGET_OSARCH/*d.a 
+			# reset source file back.
+			cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
 
-	# 	# unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN
+		done
 
-	# 	# unset IPHONE_SDK IPHONE_SDK_ROOT
+		unset RANLIB CC CFLAG CFLAGS 
+		unset IOS_PLATFORM CROSS_TOP CROSS_SDK BUILD_TOOLS
+		unset IOS_DEVROOT IOS_SDKROOT 
 
-	# 	# cd lib/$TYPE
-	# 	# # link into universal lib, strip "lib" from filename
-	# 	# local lib
-	# 	# for lib in $( ls -1 ../iPhoneSimulator/i386) ; do
-	# 	# 	local renamedLib=$(echo $lib | sed 's|lib||')
-	# 	# 	if [ ! -e $renamedLib ] ; then
-	# 	# 		lipo -c ../iPhoneOS/armv7/$lib ../iPhoneOS/armv7s/$lib ../iPhoneOS/arm64/$lib ../iPhoneSimulator/i386/$lib ../iPhoneSimulator/x86_64/$lib -o $renamedLib
-	# 	# 	fi
-	# 	# done
+		cd lib/$TYPE/
+		# stripping the lib prefix to bypass any issues with existing sdk libraries
+		echo "Creating Fat Lib for crypto"
+		lipo -create armv7/libcrypto.a \
+					armv7s/libcrypto.a \
+					arm64/libcrypto.a \
+					i386/libcrypto.a \
+					x86_64/libcrypto.a \
+					-output crypto.a
+		echo "Creating Fat Lib for ssl"
+		lipo -create armv7/libssl.a \
+					armv7s/libssl.a \
+					arm64/libssl.a \
+					i386/libssl.a \
+					x86_64/libssl.a \
+					-output ssl.a
+		cd ../../
+
+		# copy includes
+		echo "Copying includes"
+
+		cp -R "build/$TYPE/x86_64/include/" "lib/include/"
+
+		unset TOOLCHAIN DEVELOPER
+
+	fi # end iOS Build
 
 	# elif [ "$TYPE" == "android" ] ; then
 	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
@@ -272,31 +315,22 @@ function build() {
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
-	echoWarning "TODO: copy $TYPE lib"
+	#echoWarning "TODO: copy $TYPE lib"
 
 	# # headers
-	# mkdir -pv $1/include/Poco
-	# cp -Rv Crypto/include/Poco/Crypto $1/include/Poco
-	# cp -Rv Data/include/Poco/Data $1/include/Poco
-	# cp -Rv Data/SQLite/include/Poco/Data $1/include/Poco
-	# cp -Rv Foundation/include/Poco/* $1/include/Poco
-	# cp -Rv JSON/include/Poco/JSON $1/include/Poco
-	# cp -Rv MongoDB/include/Poco/MongoDB $1/include/Poco
-	# cp -Rv Net/include/Poco/Net $1/include/Poco
-	# cp -Rv NetSSL_OpenSSL/include/Poco/Net/* $1/include/Poco/Net
-	# cp -Rv PDF/include/Poco/PDF $1/include/Poco
-	# cp -Rv SevenZip/include/Poco/SevenZip $1/include/Poco
-	# cp -Rv Util/include/Poco/Util $1/include/Poco
-	# cp -Rv XML/include/Poco/* $1/include/Poco
-	# cp -Rv Zip/include/Poco/Zip $1/include/Poco
+	mkdir -pv $1/include/
+	# storing a copy of the include in lib/include/
+	# set via: cp -R "build/$TYPE/x86_64/include/" "lib/include/"
+	cp -Rv lib/include/ $1/include/
 
 	# libs
-	# if [ "$TYPE" == "osx" ] ; then		
+	 if [ "$TYPE" == "osx" ] ; then	
+	 	echoWarning "TODO: copy $TYPE lib"
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/Darwin/*.a $1/lib/$TYPE
-	# elif [ "$TYPE" == "ios" ] ; then
-	# 	mkdir -p $1/lib/$TYPE
-	# 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
+	 elif [ "$TYPE" == "ios" ] ; then
+	 	mkdir -p $1/lib/$TYPE
+	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	# elif [ "$TYPE" == "vs" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/*.lib $1/lib/$TYPE
@@ -324,14 +358,20 @@ function copy() {
 
 	# 	mkdir -p $1/lib/$TYPE/x86
 	# 	cp -v lib/Android/x86/*.a $1/lib/$TYPE/x86
-	# else
-	# 	echoWarning "TODO: copy $TYPE lib"
-	# fi
+	else
+	 	echoWarning "TODO: copy $TYPE lib"
+	fi
 }
 
 # executed inside the lib src dir
 function clean() {
 	echoWarning "TODO: clean $TYPE lib"
+	if [ "$TYPE" == "ios" ] ; then
+		make clean
+		# clean up old build folder
+		rm -rf /build
+		# clean up compiled libraries
+		rm -rf /lib
 	# if [ "$TYPE" == "vs" ] ; then
 	# 	cmd //c buildwin.cmd ${VS_VER}0 clean static_md both Win32 nosamples notests
 	# elif [ "$TYPE" == "android" ] ; then
@@ -340,8 +380,8 @@ function clean() {
 	# 	make clean ANDROID_ABI=armeabi-v7a
 	# 	make clean ANDROID_ABI=x86
 	# 	unset PATH
-	# else
-	# 	make clean
-	# fi
+	else
+	 	make clean
+	fi
 }
 
