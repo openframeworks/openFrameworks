@@ -628,9 +628,25 @@ void ofOpenALSoundPlayer::update(ofEventArgs & args){
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::unloadSound(){
 	ofRemoveListener(ofEvents().update,this,&ofOpenALSoundPlayer::update);
-	alDeleteBuffers(buffers.size(),&buffers[0]);
+	
+	// Delete sources before buffers.
 	alDeleteSources(sources.size(),&sources[0]);
+	alDeleteBuffers(buffers.size(),&buffers[0]);
+
+	// Free resources and close file descriptors.
+#ifdef OF_USING_MPG123
+	if(mp3streamf){
+		mpg123_close(mp3streamf);
+		mpg123_delete(mp3streamf);
+	}
+	mp3streamf = 0;
+#endif
+
+	if(streamf){
+		sf_close(streamf);
+	}
 	streamf = 0;
+	
 	bLoadedOk = false;
 }
 
