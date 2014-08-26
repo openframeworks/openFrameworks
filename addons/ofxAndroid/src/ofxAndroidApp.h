@@ -40,7 +40,7 @@ public:
 	virtual void touchUp(int x, int y, int id) {};
 	virtual void touchDoubleTap(int x, int y, int id) {};
 	virtual void touchCancelled(int x, int y, int id) {};
-	virtual void swipe(ofxAndroidSwipeDir swipeDir, int id){};
+	OF_DEPRECATED_MSG("swipe(ofxAndroidSwipeDir swipeDir, int id) is deprecated, please update to swipe(ofxAndroidSwipeDir swipeDir, int id, float velocityX, float velocityY)",virtual void swipe(ofxAndroidSwipeDir swipeDir, int id){};)
 
 	virtual void touchDown(ofTouchEventArgs & touch) {
 		touchDown(touch.x, touch.y, touch.id);
