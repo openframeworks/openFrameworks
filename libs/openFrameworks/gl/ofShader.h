@@ -13,7 +13,7 @@
 #include "ofMatrix4x4.h"
 #include "Poco/RegularExpression.h"
 #include <map>
-#if __cplusplus>=200103L
+#if __cplusplus>=200103L || defined(_MSC_VER)
 	#include <unordered_map>
 #else
 	#include <tr1/unordered_map>
