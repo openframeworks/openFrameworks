@@ -10,6 +10,7 @@
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
 #include "ofTexture.h"
+#include "ofMatrix3x3.h"
 #include "ofMatrix4x4.h"
 #include "Poco/RegularExpression.h"
 #include <map>
@@ -75,6 +76,7 @@ public:
 	void setUniform3fv(const string & name, const float* v, int count = 1);
 	void setUniform4fv(const string & name, const float* v, int count = 1);
 	
+	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m);
 	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m);
 
 	// set attributes that vary per vertex (look up the location before glBegin)

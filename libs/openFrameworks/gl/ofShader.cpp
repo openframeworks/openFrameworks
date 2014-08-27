@@ -656,6 +656,15 @@ void ofShader::setUniform4fv(const string & name, const float* v, int count) {
 		if (loc != -1) glUniform4fv(loc, count, v);
 	}
 }
+	
+//--------------------------------------------------------------
+void ofShader::setUniformMatrix3f(const string & name, const ofMatrix3x3 & m) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		float mData[] = {m.a, m.b, m.c, m.d, m.e, m.f, m.g, m.h, m.i};
+		if (loc != -1) glUniformMatrix3fv(loc, 1, GL_FALSE, mData);
+	}
+}
 
 //--------------------------------------------------------------
 void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m) {
