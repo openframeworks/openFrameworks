@@ -344,15 +344,15 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 			string infoString = (infoBuffer != NULL) ? string(infoBuffer): "";
 			re.match(infoString, 0, matches);
 			ofBuffer buf = shaderSource[type];
-			buf.resetLineReader();
+			ofBuffer::Line line = buf.getLines().begin();
 			if (!matches.empty()){
 			int  offendingLineNumber = ofToInt(infoString.substr(matches[1].offset, matches[1].length));
 				ostringstream msg;
 				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< endl;
-				for(int i=0; !buf.isLastLine(); i++ ){
-					string s = buf.getNextLine();
+				for(int i=0; line != buf.getLines().end(); line++, i++ ){
+					string s = *line;
 					if ( i >= offendingLineNumber -3 && i < offendingLineNumber + 2 ){
-						msg << "\t" << setw(5) << (i+1) << s << endl;
+						msg << "\t" << setw(5) << (i+1) << "\t" << s << endl;
 					}
 				}
 				ofLog(logLevel) << msg.str();
