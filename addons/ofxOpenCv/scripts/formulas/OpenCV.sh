@@ -59,6 +59,7 @@ function build_osx() {
       -DBUILD_JASPER=OFF \
       -DBUILD_PACKAGE=OFF \
       -DBUILD_JPEG=OFF \
+      -DBUILD_TIFF=OFF \
       -DBUILD_PNG=OFF \
       -DBUILD_opencv_java=OFF \
       -DBUILD_opencv_python=OFF \
@@ -79,6 +80,7 @@ function build_osx() {
       -DWITH_OPENNI=OFF \
       -DWITH_QT=OFF \
       -DWITH_JPEG=OFF \
+      -DWITH_TIFF=OFF \
       -DWITH_PNG=OFF \
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
@@ -102,6 +104,7 @@ function build_ios() {
   arch="$1"
   isSimulator="FALSE";
   effectivePlatforms="-iphoneos;"
+  minOS="5.0"
 
   targetFolder="$LIB_FOLDER/$arch/"
 
@@ -109,6 +112,9 @@ function build_ios() {
     iosPlatform="iPhoneSimulator"
     isSimulator="TRUE"
     effectivePlatforms="-iphonesimulator;"
+  fi
+  if [ "$arch" == "arm64" ]; then
+    minOS="7.0"
   fi
 
   iosPlatSDK="$iosPlatform$iosSDK.sdk"
@@ -131,8 +137,8 @@ function build_ios() {
       -DCMAKE_XCODE_EFFECTIVE_PLATFORMS="$effectivePlatforms" \
       -DGLFW_BUILD_UNIVERSAL=ON \
       -DENABLE_FAST_MATH=ON \
-      -DCMAKE_CXX_FLAGS="-stdlib=libc++ -fvisibility=hidden -fvisibility-inlines-hidden -DNDEBUG -O3 -fomit-frame-pointer -ffast-math -miphoneos-version-min=5.0" \
-      -DCMAKE_C_FLAGS="-stdlib=libc++ -fvisibility=hidden -fvisibility-inlines-hidden -DNDEBUG -O3 -fomit-frame-pointer -ffast-math -miphoneos-version-min=5.0" \
+      -DCMAKE_CXX_FLAGS="-stdlib=libc++ -fvisibility=hidden -fvisibility-inlines-hidden -DNDEBUG -O3 -fomit-frame-pointer -ffast-math -miphoneos-version-min=$minOS" \
+      -DCMAKE_C_FLAGS="-stdlib=libc++ -fvisibility=hidden -fvisibility-inlines-hidden -DNDEBUG -O3 -fomit-frame-pointer -ffast-math -miphoneos-version-min=$minOS" \
       -DCMAKE_BUILD_TYPE="Release" \
       -DBUILD_SHARED_LIBS=OFF \
       -DBUILD_DOCS=OFF \
@@ -140,6 +146,7 @@ function build_ios() {
       -DBUILD_FAT_JAVA_LIB=OFF \
       -DBUILD_JASPER=OFF \
       -DBUILD_PACKAGE=OFF \
+      -DBUILD_TIFF=OFF \
       -DBUILD_JPEG=OFF \
       -DBUILD_PNG=OFF \
       -DBUILD_opencv_java=OFF \
@@ -161,6 +168,7 @@ function build_ios() {
       -DWITH_OPENNI=OFF \
       -DWITH_QT=OFF \
       -DWITH_JPEG=OFF \
+      -DWITH_TIFF=OFF \
       -DWITH_PNG=OFF \
       -DWITH_QUICKTIME=OFF \
       -DWITH_V4L=OFF \
