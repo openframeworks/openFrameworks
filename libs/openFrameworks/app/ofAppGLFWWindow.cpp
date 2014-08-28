@@ -928,7 +928,7 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** d
 	drag.position.set(ofGetMouseX(), ofGetMouseY());
 	drag.files.resize(numFiles);
 	for(int i=0; i<(int)drag.files.size(); i++){
-		drag.files[i] = Poco::URI(dropString[i]).getPath();
+		drag.files[i] = Poco::Path(dropString[i]).toString();
 	}
 	ofNotifyDragEvent(drag);
 }

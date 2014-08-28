@@ -146,20 +146,26 @@
     }
     
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
-    
     CGPoint center;
-    if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
-        center.x = screenSize.height * 0.5;
-        center.y = screenSize.width * 0.5;
+    CGRect bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
+
+    // Is the iOS version less than 8?
+    if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
+        if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+            center.x = screenSize.height * 0.5;
+            center.y = screenSize.width * 0.5;
+        } else {
+            center.x = screenSize.width * 0.5;
+            center.y = screenSize.height * 0.5;
+        }
+
+        if(UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
+            bounds.size.width = screenSize.height;
+            bounds.size.height = screenSize.width;
+        }
     } else {
         center.x = screenSize.width * 0.5;
         center.y = screenSize.height * 0.5;
-    }
-    
-    CGRect bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
-    if(UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
-        bounds.size.width = screenSize.height;
-        bounds.size.height = screenSize.width;
     }
     
     float rot1 = [self rotationForOrientation:currentInterfaceOrientation];
@@ -222,11 +228,17 @@
     // are animated at the same time as other animations that comprise the rotation.
     
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
-    
+
     CGPoint center;
-    if(UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
-        center.x = screenSize.height * 0.5;
-        center.y = screenSize.width * 0.5;
+    // Is the iOS version less than 8?
+    if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
+        if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+            center.x = screenSize.height * 0.5;
+            center.y = screenSize.width * 0.5;
+        } else {
+            center.x = screenSize.width * 0.5;
+            center.y = screenSize.height * 0.5;
+        }
     } else {
         center.x = screenSize.width * 0.5;
         center.y = screenSize.height * 0.5;

@@ -541,8 +541,7 @@ void ofGLProgrammableRenderer::loadIdentityMatrix (void){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::loadMatrix (const ofMatrix4x4 & m){
-	matrixStack.loadMatrix(m.getPtr());
-	uploadCurrentMatrix();
+	loadMatrix(m.getPtr());
 }
 
 //----------------------------------------------------------
@@ -565,21 +564,13 @@ void ofGLProgrammableRenderer::multMatrix (const float *m){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::loadViewMatrix(const ofMatrix4x4 & m){
 	matrixStack.loadViewMatrix(m);
-	if(currentShader){
-		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
-	}
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::multViewMatrix(const ofMatrix4x4 & m){
 	matrixStack.multViewMatrix(m);
-	if(currentShader){
-		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
-		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
-	}
+	uploadCurrentMatrix();
 }
 
 //----------------------------------------------------------
@@ -598,6 +589,7 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 	// uploads the current matrix to the current shader.
 	switch(matrixStack.getCurrentMatrixMode()){
 	case OF_MATRIX_MODELVIEW:
+		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
 		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
 		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
 		break;
@@ -1403,13 +1395,13 @@ static string fragment_shader_header =
 #else
 static string vertex_shader_header =
 		"#version %glsl_version%\n"
-		"#extension GL_ARB_texture_rectangle : enable\n"
+		"%extensions%\n"
 		"#define IN in\n"
 		"#define OUT out\n"
 		"#define TEXTURE texture\n";
 static string fragment_shader_header =
 		"#version %glsl_version%\n"
-		"#extension GL_ARB_texture_rectangle : enable\n"
+		"%extensions%\n"
 		"#define IN in\n"
 		"#define OUT out\n"
 		"#define TEXTURE texture\n"
@@ -1686,6 +1678,13 @@ static string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
 static string shaderSource(const string & src, const string & glslVersion){
 	string shaderSrc = src;
 	ofStringReplace(shaderSrc,"%glsl_version%",glslVersion);
+#ifndef TARGET_OPENGLES
+	if(ofGetOpenGLVersionMajor()<4 && ofGetOpenGLVersionMinor()<2){
+		ofStringReplace(shaderSrc,"%extensions%","#extension GL_ARB_texture_rectangle : enable");
+	}else{
+		ofStringReplace(shaderSrc,"%extensions%","");
+	}
+#endif
 	return shaderSrc;
 }
 

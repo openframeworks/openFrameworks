@@ -103,8 +103,8 @@ enum ofTargetPlatform{
 
 	#include <windows.h>
 	#define GLEW_STATIC
-	#include "GL\glew.h"
-	#include "GL\wglew.h"
+	#include "GL/glew.h"
+	#include "GL/wglew.h"
    	#include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
@@ -372,6 +372,16 @@ typedef ofBaseApp ofSimpleApp;
 #include <fstream>
 #include <algorithm>
 #include <cfloat>
+#include <map>
+#include <stack>
+#if __cplusplus>=201103L || defined(_MSC_VER)
+	#include <unordered_map>
+	#include <memory>
+#else
+	#include <tr1/unordered_map>
+	using std::tr1::unordered_map;
+#endif
+
 using namespace std;
 
 #ifndef PI

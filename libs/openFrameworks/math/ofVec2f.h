@@ -235,8 +235,8 @@ ofVec2f operator/( float f, const ofVec2f& vec );
 // Implementation
 /////////////////
 
-inline ofVec2f::ofVec2f(): x(0), y(0) {};
-inline ofVec2f::ofVec2f( float _scalar ): x(_scalar), y(_scalar) {};
+inline ofVec2f::ofVec2f(): x(0), y(0) {}
+inline ofVec2f::ofVec2f( float _scalar ): x(_scalar), y(_scalar) {}
 inline ofVec2f::ofVec2f( float _x, float _y ):x(_x), y(_y) {}
 
 // Getters and Setters.

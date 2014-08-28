@@ -9,11 +9,9 @@
 
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
-#include "ofTexture.h"
-#include "ofMatrix4x4.h"
-#include "Poco/RegularExpression.h"
-#include <map>
-#include "ofAppBaseWindow.h"
+#include "ofLog.h"
+class ofTexture;
+class ofMatrix4x4;
 
 class ofShader {
 public:
@@ -142,10 +140,11 @@ public:
 private:
 	GLuint program;
 	bool bLoaded;
-	map<GLenum, GLuint> shaders;
-	map<string, GLint> uniformLocations;
-	map<GLenum, string> shaderSource;
-	
+
+	unordered_map<GLenum, GLuint> shaders;
+	unordered_map<string, GLint> uniformLocations;
+	unordered_map<GLenum, string> shaderSource;
+
 	GLint getUniformLocation(const string & name);
 	
 	void checkProgramInfoLog(GLuint program);
