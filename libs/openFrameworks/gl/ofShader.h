@@ -9,17 +9,9 @@
 
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
-#include "ofTexture.h"
-#include "ofMatrix4x4.h"
-#include "Poco/RegularExpression.h"
-#include <map>
-#if __cplusplus>=201103L || defined(_MSC_VER)
-	#include <unordered_map>
-#else
-	#include <tr1/unordered_map>
-	using std::tr1::unordered_map;
-#endif
-#include "ofAppBaseWindow.h"
+#include "ofLog.h"
+class ofTexture;
+class ofMatrix4x4;
 
 class ofShader {
 public:
