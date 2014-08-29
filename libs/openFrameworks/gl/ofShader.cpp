@@ -3,7 +3,10 @@
 #include "ofFileUtils.h"
 #include "ofGraphics.h"
 #include "ofGLProgrammableRenderer.h"
-#include <map>
+#include "Poco/RegularExpression.h"
+#include "ofTexture.h"
+#include "ofMatrix4x4.h"
+#include "ofMatrix3x3.h"
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
