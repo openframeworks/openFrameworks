@@ -60,7 +60,6 @@ public:
         Line& operator++();
         Line operator++(int);
         bool operator!=(Line const& rhs) const;
-        int getLineNum();
 
 	private:
 		void operator=(const Line & _line);
