@@ -138,6 +138,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 	#ifndef TARGET_OPENGLES
 			case GL_RGBA8:
 			case GL_RGBA16:
+			case GL_RGBA16F:
 			case GL_RGBA32F_ARB:
 	#endif
 				 return GL_RGBA;
@@ -186,11 +187,13 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 #ifndef TARGET_OPENGLES
 			case GL_R8:
 			case GL_R16:
+			case GL_R16F:
 			case GL_R32F:
 				return GL_RED;
 
 			case GL_RG8:
 			case GL_RG16:
+			case GL_RG16F:
 			case GL_RG32F:
 				return GL_RG;
 #endif
@@ -246,6 +249,10 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 #ifndef TARGET_OPENGLES
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
+		case GL_RGBA16F:
+		case GL_RGB16F:
+		case GL_R16F:
+		case GL_RG16F:
 		case GL_RGB32F:
 		case GL_RGBA32F:
 		case GL_R32F:

@@ -153,10 +153,10 @@ public:
         Line operator++(int);
         Line operator+(int) const;
         bool operator!=(Line const& rhs) const;
-		iterator begin();
-		iterator end();
-		const_iterator begin() const;
-		const_iterator end() const;
+        PixelType * begin();
+        PixelType * end();
+        const PixelType * begin() const;
+        const PixelType * end() const;
 		int getLineNum() const;
 		ofPixels_<PixelType> asPixels();
 		const ofPixels_<PixelType> asPixels() const;
