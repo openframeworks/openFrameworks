@@ -1,4 +1,9 @@
-# devApps is the only official directory
+#########################
+# core apps
+#########################
+
+# include official directories
+!projectGenerator/
 !devApps/
 
 # ignore bin folders' contents, except data folder therein
@@ -12,5 +17,3 @@
 # don't ignore the .gitignore file
 !.gitignore
 
-# except the projectGenerator directory, too
-!projectGenerator/

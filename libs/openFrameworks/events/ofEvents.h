@@ -16,8 +16,6 @@ int			ofGetPreviousMouseY();
 
 void		ofSetEscapeQuitsApp(bool bQuitOnEsc);
 
-void		exitApp(); 
-
 //-----------------------------------------------
 class ofDragInfo{
 	public:
@@ -44,6 +42,9 @@ class ofKeyEventArgs : public ofEventArgs {
 		Released,
 	} type;
 	int key;
+	int keycode;
+	int scancode;
+	unsigned int codepoint;
 };
 
 class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
@@ -251,8 +252,8 @@ void ofNotifySetup();
 void ofNotifyUpdate();
 void ofNotifyDraw();
 
-void ofNotifyKeyPressed(int key);
-void ofNotifyKeyReleased(int key);
+void ofNotifyKeyPressed(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
+void ofNotifyKeyReleased(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
 void ofNotifyKeyEvent(const ofKeyEventArgs & keyEvent);
 
 void ofNotifyMousePressed(int x, int y, int button);

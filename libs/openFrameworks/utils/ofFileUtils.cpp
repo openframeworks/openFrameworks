@@ -40,17 +40,6 @@ ofBuffer::ofBuffer(istream & stream){
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const ofBuffer & buffer_){
-	buffer = buffer_.buffer;
-	nextLinePos = buffer_.nextLinePos;
-}
-
-//--------------------------------------------------
-ofBuffer::~ofBuffer(){
-	clear();
-}
-
-//--------------------------------------------------
 bool ofBuffer::set(istream & stream){
 	clear();
 	if(stream.bad()){
@@ -208,6 +197,126 @@ void ofBuffer::resetLineReader(){
 }
 
 //--------------------------------------------------
+vector<char>::iterator ofBuffer::begin(){ return buffer.begin(); }
+
+//--------------------------------------------------
+vector<char>::iterator ofBuffer::end(){
+	return buffer.end();
+}
+
+//--------------------------------------------------
+vector<char>::const_iterator ofBuffer::begin() const{
+	return buffer.begin();
+}
+
+//--------------------------------------------------
+vector<char>::const_iterator ofBuffer::end() const{
+	return buffer.end();
+}
+
+//--------------------------------------------------
+vector<char>::reverse_iterator ofBuffer::rbegin(){
+	return buffer.rbegin();
+}
+
+//--------------------------------------------------
+vector<char>::reverse_iterator ofBuffer::rend(){
+	return buffer.rend();
+}
+
+//--------------------------------------------------
+vector<char>::const_reverse_iterator ofBuffer::rbegin() const{
+	return buffer.rbegin();
+}
+
+//--------------------------------------------------
+vector<char>::const_reverse_iterator ofBuffer::rend() const{
+	return buffer.rend();
+}
+
+//--------------------------------------------------
+ofBuffer::Line::Line(vector<char> & buffer, vector<char>::iterator _begin)
+	:buffer(buffer)
+	,_begin(_begin)
+	,_end(_begin){
+	if(buffer.empty() || _begin == buffer.end()){
+		line =  "";
+		return;
+	}
+
+	bool lineEndWasCR = false;
+	while(_end != buffer.end() && *_end != '\n'){
+		if(*_end != '\r'){
+			_end++;
+		}else{
+			lineEndWasCR = true;
+			break;
+		}
+	}
+	line = string(_begin, _end);
+	if(_end != buffer.end()){
+		_end++;
+	}
+	// if lineEndWasCR check for CRLF
+	if(lineEndWasCR && _end != buffer.end() && *_end == '\n'){
+		_end++;
+	}
+}
+
+//--------------------------------------------------
+const string & ofBuffer::Line::operator*() const{
+	return line;
+}
+
+//--------------------------------------------------
+const string * ofBuffer::Line::operator->() const{
+	return &line;
+}
+
+//--------------------------------------------------
+ofBuffer::Line & ofBuffer::Line::operator++(){
+	*this = Line(buffer,_end);
+	return *this;
+}
+
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Line::operator++(int) {
+	Line tmp(*this);
+	operator++();
+	return tmp;
+}
+
+//--------------------------------------------------
+bool ofBuffer::Line::operator!=(Line const& rhs) const{
+	return rhs._begin != _begin || rhs._end != _end;
+}
+
+void ofBuffer::Line::operator=(const ofBuffer::Line & _line){
+	line = _line.line;
+	_begin = _line._begin;
+	_end = _line._end;
+}
+
+//--------------------------------------------------
+ofBuffer::Lines::Lines(vector<char> & buffer)
+		:buffer(buffer){}
+
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Lines::begin(){
+	return Line(buffer,buffer.begin());
+}
+
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Lines::end(){
+	return Line(buffer,buffer.end());
+}
+
+//--------------------------------------------------
+ofBuffer::Lines ofBuffer::getLines(){
+	return ofBuffer::Lines(buffer);
+}
+
+//--------------------------------------------------
 ostream & operator<<(ostream & ostr, const ofBuffer & buf){
 	buf.writeTo(ostr);
 	return ostr;
@@ -258,6 +367,7 @@ using namespace Poco;
 //------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(){
 	mode = Reference;
+	binary = false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -289,13 +399,14 @@ void ofFile::copyFrom(const ofFile & mom){
 			new_mode = ReadOnly;
 			ofLogWarning("ofFile") << "copyFrom(): copying a writable file, opening new copy as read only";
 		}
-		open(mom.myFile.path(), new_mode);
+		open(mom.myFile.path(), new_mode, mom.binary);
 	}
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::openStream(Mode _mode, bool binary){
+bool ofFile::openStream(Mode _mode, bool _binary){
 	mode = _mode;
+	binary = _binary;
 	ios_base::openmode binary_mode = binary ? ios::binary : (ios_base::openmode)0;
 	switch(_mode) {
 		case WriteOnly:
@@ -361,7 +472,7 @@ bool ofFile::isWriteMode(){
 //-------------------------------------------------------------------------------------------------------------
 void ofFile::close(){
 	myFile = File();
-	fstream::close();
+	if(mode!=Reference) fstream::close();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -417,8 +528,8 @@ bool ofFile::exists() const {
 		return myFile.exists();
 	}
 	catch(...){
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -453,57 +564,109 @@ string ofFile::getAbsolutePath() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canRead() const {
-	return myFile.canRead();
+	try{
+		return myFile.canRead();
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't check canRead" << e.what();
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canWrite() const {
-	return myFile.canWrite();
+	try{
+		return myFile.canWrite();
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't check canWrite" << e.what();
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canExecute() const {
-	return myFile.canExecute();
+	try{
+		return myFile.canExecute();
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't check canExecute" << e.what();
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isFile() const {
-	return myFile.isFile();
+	try{
+		return myFile.isFile();
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't check isFile" << e.what();
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isLink() const {
-	return myFile.isLink();
+	try{
+		return myFile.isLink();
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't check isLink" << e.what();
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isDirectory() const {
-	return myFile.isDirectory();
+	try{
+		return myFile.isDirectory();
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't check isDirectory" << e.what();
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isDevice() const {
-	return myFile.isDevice();
+	try{
+		return myFile.isDevice();
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't check isDevice" << e.what();
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isHidden() const {
-	return myFile.isHidden();
+	try{
+		return myFile.isHidden();
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't check isHidden" << e.what();
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofFile::setWriteable(bool flag = true){
-	myFile.setWriteable(flag);
+void ofFile::setWriteable(bool flag){
+	try{
+		myFile.setWriteable(flag);
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't setWriteable" << e.what();
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofFile::setReadOnly(bool flag = true){
-	myFile.setReadOnly(flag);
+void ofFile::setReadOnly(bool flag){
+	try{
+		myFile.setReadOnly(flag);
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't setReadOnly" << e.what();
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofFile::setExecutable(bool flag = true){
-	myFile.setExecutable(flag);
+void ofFile::setExecutable(bool flag){
+	try{
+		myFile.setExecutable(flag);
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofFile") << "Couldn't check setExecutable" << e.what();
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -859,23 +1022,55 @@ string ofDirectory::getAbsolutePath() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
+bool ofDirectory::canRead() const {
+	return myDir.canRead();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::canWrite() const {
+	return myDir.canWrite();
+}
+
+//------------------------------------------------------------------------------------------------------------
+bool ofDirectory::canExecute() const {
+	return myDir.canExecute();
+}
+
+//------------------------------------------------------------------------------------------------------------
 bool ofDirectory::isHidden() const {
-	return myDir.isHidden();
+	try{
+		return myDir.isHidden();
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofDirectory") << "Couldn't check isHidden" << e.what();
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::setWriteable(bool flag = true){
-	myDir.setWriteable(flag);
+void ofDirectory::setWriteable(bool flag){
+	try{
+		myDir.setWriteable(flag);
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofDirectory") << "Couldn't setWriteable" << e.what();
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::setReadOnly(bool flag = true){
-	myDir.setReadOnly(flag);
+void ofDirectory::setReadOnly(bool flag){
+	try{
+		myDir.setReadOnly(flag);
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofDirectory") << "Couldn't check isHidden" << e.what();
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::setExecutable(bool flag = true){
-	myDir.setExecutable(flag);
+void ofDirectory::setExecutable(bool flag){
+	try{
+		myDir.setExecutable(flag);
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofDirectory") << "Couldn't setExecutable" << e.what();
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -885,7 +1080,12 @@ void ofDirectory::setShowHidden(bool showHidden){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::isDirectory() const {
-	return myDir.isDirectory();
+	try{
+		return myDir.isDirectory();
+	}catch(Poco::Exception & e){
+		ofLogWarning("ofDirectory") << "Couldn't check isDirectory" << e.what();
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1043,7 +1243,11 @@ int ofDirectory::listDir(){
 	for(int i = 0; i < (int)fileStrings.size(); i++){
 		Path curPath(originalDirectory);
 		curPath.setFileName(fileStrings[i]);
-		files.push_back(ofFile(curPath.toString(), ofFile::Reference));
+		try{
+			files.push_back(ofFile(curPath.toString(), ofFile::Reference));
+		}catch(Poco::Exception & e){
+			ofLogWarning() << "couldn't add file " << e.what();
+		}
 	}
 
 	if(!showHidden){
@@ -1245,6 +1449,47 @@ bool ofDirectory::operator>=(const ofDirectory & dir){
 }
 
 //------------------------------------------------------------------------------------------------------------
+vector<ofFile>::iterator ofDirectory::begin(){
+	return files.begin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::iterator ofDirectory::end(){
+	return files.end();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_iterator ofDirectory::begin() const{
+	return files.begin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_iterator ofDirectory::end() const{
+	return files.end();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::reverse_iterator ofDirectory::rbegin(){
+	return files.rbegin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::reverse_iterator ofDirectory::rend(){
+	return files.rend();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_reverse_iterator ofDirectory::rbegin() const{
+	return files.rbegin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
+	return files.rend();
+}
+
+
+//------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 // -- ofFilePath
 //------------------------------------------------------------------------------------------------------------
@@ -1432,13 +1677,15 @@ string ofFilePath::getCurrentExeDir(){
 }
 
 string ofFilePath::getUserHomeDir(){
-	#ifndef TARGET_WIN32
-			struct passwd * pw = getpwuid(getuid());
-		return pw->pw_dir;
-	#else
+	#ifdef TARGET_WIN32
 		// getenv will return any Environent Variable on Windows
 		// USERPROFILE is the key on Windows 7 but it might be HOME
 		// in other flavours of windows...need to check XP and NT...
 		return string(getenv("USERPROFILE"));
+	#elif !defined(TARGET_EMSCRIPTEN)
+		struct passwd * pw = getpwuid(getuid());
+		return pw->pw_dir;
+	#else
+		return "";
 	#endif
 }

@@ -7,11 +7,6 @@
 
 #include "ofAppAndroidWindow.h"
 
-extern "C"{
-#include "unzip.h"
-#include "miniunz.h"
-}
-
 #include <jni.h>
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
@@ -42,6 +37,7 @@ static queue<ofTouchEventArgs> touchEventArgsQueue;
 static ofMutex mutex;
 static bool threadedTouchEvents = false;
 static bool appSetup = false;
+static bool accumulateTouchEvents = false;
 
 
 void ofExitCallback();
@@ -209,6 +205,11 @@ void ofAppAndroidWindow::setThreadedEvents(bool threadedEvents){
 	threadedTouchEvents = threadedEvents;
 }
 
+
+void ofAppAndroidWindow::setAccumulateTouchEvents(bool accumEvents){
+	accumulateTouchEvents = accumEvents;
+}
+
 void ofPauseVideoGrabbers();
 void ofResumeVideoGrabbers();
 
@@ -236,47 +237,12 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 void
-Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jstring data_dir, jstring app_name )
+Java_cc_openframeworks_OFAndroid_setAppDataDir( JNIEnv*  env, jobject  thiz, jstring data_dir)
 {
 	jboolean iscopy;
 	const char *mfile = env->GetStringUTFChars(data_dir, &iscopy);
 	__android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("setting app dir name to: \"" + string(mfile) + "\"").c_str());
     ofSetDataPathRoot(string(mfile)+"/");
-    string appname = env->GetStringUTFChars(app_name, &iscopy);
-    __android_log_print(ANDROID_LOG_INFO,"ofAppAndroidWindow",("app name: " + appname).c_str());
-    if(appname!=""){
-		string resources_name = ofToLower(appname + "resources.zip");
-		ofFile resources(resources_name);
-		jobject activity = ofGetOFActivityObject();
-		jclass activityClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFActivity");
-		jmethodID onLoadPercent = ofGetJNIEnv()->GetMethodID(activityClass,"onLoadPercent","(F)V");
-		if(resources.exists()){
-			__android_log_print(ANDROID_LOG_DEBUG,"ofAppAndroidWindow",("uncompressing " + resources.getAbsolutePath()).c_str());
-			unzFile zip = unzOpen(resources.getAbsolutePath().c_str());
-			char current_dir[1000];
-			getcwd(current_dir,1000);
-			chdir(ofToDataPath("",true).c_str());
-
-
-		    unz_global_info gi;
-		    int err = unzGetGlobalInfo (zip,&gi);
-		    if (err!=UNZ_OK){
-		    	__android_log_print(ANDROID_LOG_ERROR,"ofAppAndroidWindow","error %d with zipfile in unzGetGlobalInfo\n",err);
-		    }else{
-
-				for (uLong i=0;i<gi.number_entry;i++){
-					do_extract_one_entry(zip,0,1,NULL,&gi,i);
-					ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat).40f+(.40/gi.number_entry*i));
-				}
-		    }
-			chdir(current_dir);
-
-			resources.remove();
-		}else{
-			ofGetJNIEnv()->CallVoidMethod(activity,onLoadPercent,(jfloat).80f);
-			__android_log_print(ANDROID_LOG_DEBUG,"ofAppAndroidWindow",("no resources found in " + resources.getAbsolutePath()).c_str());
-		}
-    }
 }
 
 void
@@ -293,6 +259,7 @@ Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
 
 void
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
+	ofLogNotice("ofAppAndroidWindow") << "onResume";
 	if(paused){
 		if(androidApp){
 			androidApp->resume();
@@ -363,6 +330,7 @@ Java_cc_openframeworks_OFAndroid_setup( JNIEnv*  env, jclass  thiz, jint w, jint
     sWindowWidth  = w;
     sWindowHeight = h;
 	ofNotifySetup();
+	appSetup = true;
 }
 
 void
@@ -390,31 +358,34 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 
 	if(!threadedTouchEvents){
 		mutex.lock();
-		while(!touchEventArgsQueue.empty()){
-			switch(touchEventArgsQueue.front().type){
+		queue<ofTouchEventArgs> events = touchEventArgsQueue;
+		while(!touchEventArgsQueue.empty()) touchEventArgsQueue.pop();
+		mutex.unlock();
+
+		while(!events.empty()){
+			switch(events.front().type){
 			case ofTouchEventArgs::down:
-				ofNotifyMousePressed(touchEventArgsQueue.front().x,touchEventArgsQueue.front().y,0);
-				ofNotifyEvent(ofEvents().touchDown,touchEventArgsQueue.front());
+				ofNotifyMousePressed(events.front().x,events.front().y,0);
+				ofNotifyEvent(ofEvents().touchDown,events.front());
 				break;
 			case ofTouchEventArgs::up:
-				ofNotifyMouseReleased(touchEventArgsQueue.front().x,touchEventArgsQueue.front().y,0);
-				ofNotifyEvent(ofEvents().touchUp,touchEventArgsQueue.front());
+				ofNotifyMouseReleased(events.front().x,events.front().y,0);
+				ofNotifyEvent(ofEvents().touchUp,events.front());
 				break;
 			case ofTouchEventArgs::move:
-				ofNotifyMouseMoved(touchEventArgsQueue.front().x,touchEventArgsQueue.front().y);
-				ofNotifyMouseDragged(touchEventArgsQueue.front().x,touchEventArgsQueue.front().y,0);
-				ofNotifyEvent(ofEvents().touchMoved,touchEventArgsQueue.front());
+				ofNotifyMouseMoved(events.front().x,events.front().y);
+				ofNotifyMouseDragged(events.front().x,events.front().y,0);
+				ofNotifyEvent(ofEvents().touchMoved,events.front());
 				break;
 			case ofTouchEventArgs::doubleTap:
-				ofNotifyEvent(ofEvents().touchDoubleTap,touchEventArgsQueue.front());
+				ofNotifyEvent(ofEvents().touchDoubleTap,events.front());
 				break;
 			case ofTouchEventArgs::cancel:
-				ofNotifyEvent(ofEvents().touchCancelled,touchEventArgsQueue.front());
+				ofNotifyEvent(ofEvents().touchCancelled,events.front());
 				break;
 			}
-			touchEventArgsQueue.pop();
+			events.pop();
 		}
-		mutex.unlock();
 	}
 
 	ofNotifyUpdate();
@@ -515,7 +486,11 @@ Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint i
 		ofNotifyEvent(ofEvents().touchMoved,touch);
 	}else{
 		mutex.lock();
-		touchEventArgsQueue.push(touch);
+		if(accumulateTouchEvents && !touchEventArgsQueue.empty() && touchEventArgsQueue.back().type==ofTouchEventArgs::move){
+			touchEventArgsQueue.back() = touch;
+		}else{
+			touchEventArgsQueue.push(touch);
+		}
 		mutex.unlock();
 	}
 }

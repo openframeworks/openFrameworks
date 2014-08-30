@@ -30,6 +30,11 @@
 	#define OF_VID_PLAYER_TYPE ofxAndroidVideoPlayer
 #endif
 
+#ifdef OF_VIDEO_PLAYER_EMSCRIPTEN
+	#include "ofxEmscriptenVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofxEmscriptenVideoPlayer
+#endif
+
 //---------------------------------------------
 class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
@@ -37,8 +42,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		ofVideoPlayer ();
 
-		void						setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer);
-		ofPtr<ofBaseVideoPlayer>	getPlayer();
+		void						setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer);
+		shared_ptr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
 	    string				getMoviePath();
@@ -69,7 +74,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void				setFrame(int frame);  // frame 0 = first frame...
 
 		void 				setUseTexture(bool bUse);
-		ofTexture &			getTextureReference();
+		ofTexture &			getTextureReference(int plane=0);
+		ofVec2f 			getTextureScale(int plane);
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
 		using ofBaseDraws::draw;
@@ -101,13 +107,14 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		int					width;
 
 	private:
-		ofPtr<ofBaseVideoPlayer>		player;
+		shared_ptr<ofBaseVideoPlayer>		player;
 		
-		ofTexture tex;
-		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
+		vector<ofTexture> tex;
+		vector<ofTexture> * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
 		ofPixelFormat internalPixelFormat;
 	    string moviePath;
+	    ofShader * shader;
 };
 
 

@@ -46,6 +46,9 @@ Install the libusb-1.0 library. On Ubuntu, you can do this with:
 sudo apt-get install libusb-1.0-0-dev
 </pre>
 
+Note: as of OF 0.8.2 ofxKinect requires libusb 1.0.12 or newer. 
+This can be installed by updating or re-installing the libusb-1.0-0-dev package.  
+
 Open the Code::Blocks .cbp and hit F9 to build. Optionally, you can build the example with the Makefile.
 
 To run it, use the terminal:
@@ -56,8 +59,9 @@ cd bin
 </pre>
 
 Also, you can add a set of udev rules which allow you to run a Kinect app without root privileges:
-
-   sudo libs\libfreenect\platform\linux\udev\51-kinect.rules /etc/udev/rules.d
+<pre>
+   sudo cp libs/libfreenect/platform/linux/udev/51-kinect.rules /etc/udev/rules.d
+</pre>
 
 ### Windows
 

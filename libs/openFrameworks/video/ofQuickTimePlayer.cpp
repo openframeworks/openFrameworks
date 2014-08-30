@@ -241,6 +241,7 @@ void ofQuickTimePlayer::createImgMemAndGWorld(){
 	movieRect.bottom 		= height;
 	movieRect.right 		= width;
 	offscreenGWorldPixels = new unsigned char[4 * width * height + 32];
+	allocated				= true;
 	pixels.allocate(width,height,OF_IMAGE_COLOR);
 
 	#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)

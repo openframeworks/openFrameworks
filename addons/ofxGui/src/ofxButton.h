@@ -8,6 +8,7 @@ class ofxButton : public ofxToggle{
 	
 public:
 	ofxButton();
+	~ofxButton();
 	ofxButton* setup(string toggleName, float width = defaultWidth, float height = defaultHeight);
 
 	virtual bool mouseReleased(ofMouseEventArgs & args);
