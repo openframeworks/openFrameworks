@@ -980,7 +980,6 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * _buffer){
 		buffer = _buffer;
         if(stride > 0) {
             backPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
-            eventPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
         }
         else {
             backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
@@ -988,7 +987,9 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * _buffer){
         }
 		bBackPixelsChanged=true;
 		mutex.unlock();
-		ofNotifyEvent(prerollEvent,eventPixels);
+        if(stride == 0) {
+        	ofNotifyEvent(prerollEvent,eventPixels);
+        }
 	}else{
 		if(isStream && appsink){
 			appsink->on_stream_prepared();
@@ -1073,14 +1074,15 @@ GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * _buffer){
 		buffer = _buffer;
         if(stride > 0) {
             backPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
-            eventPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
         } else {
             backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
             eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
         }
 		bBackPixelsChanged=true;
 		mutex.unlock();
-		ofNotifyEvent(bufferEvent,eventPixels);
+        if(stride == 0) {
+        	ofNotifyEvent(bufferEvent,eventPixels);
+        }
 	}else{
 		if(isStream && appsink){
 			appsink->on_stream_prepared();
