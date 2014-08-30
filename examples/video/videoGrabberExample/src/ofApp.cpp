@@ -18,7 +18,6 @@ void ofApp::setup(){
         }
 	}
 
-    vidGrabber.setPixelFormat(OF_PIXELS_YUY2);
 	vidGrabber.setDeviceID(0);
 	vidGrabber.setDesiredFrameRate(60);
 	vidGrabber.initGrabber(camWidth,camHeight);
@@ -36,14 +35,14 @@ void ofApp::update(){
 	
 	vidGrabber.update();
 	
-	/*if (vidGrabber.isFrameNew()){
+	if (vidGrabber.isFrameNew()){
 		int totalPixels = camWidth*camHeight*3;
 		unsigned char * pixels = vidGrabber.getPixels();
 		for (int i = 0; i < totalPixels; i++){
 			videoInverted[i] = 255 - pixels[i];
 		}
 		videoTexture.loadData(videoInverted, camWidth,camHeight, GL_RGB);
-	}*/
+	}
 
 }
 
