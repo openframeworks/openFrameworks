@@ -9,10 +9,9 @@
 
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
-#include "ofTexture.h"
-#include "ofMatrix4x4.h"
-#include <map>
-#include "ofAppBaseWindow.h"
+#include "ofLog.h"
+class ofTexture;
+class ofMatrix4x4;
 
 class ofShader {
 public:
@@ -58,15 +57,15 @@ public:
 	void setUniform4f(const string & name, float v1, float v2, float v3, float v4);
 	
 	// set an array of uniform values
-	void setUniform1iv(const string & name, int* v, int count = 1);
-	void setUniform2iv(const string & name, int* v, int count = 1);
-	void setUniform3iv(const string & name, int* v, int count = 1);
-	void setUniform4iv(const string & name, int* v, int count = 1);
+	void setUniform1iv(const string & name, const int* v, int count = 1);
+	void setUniform2iv(const string & name, const int* v, int count = 1);
+	void setUniform3iv(const string & name, const int* v, int count = 1);
+	void setUniform4iv(const string & name, const int* v, int count = 1);
 	
-	void setUniform1fv(const string & name, float* v, int count = 1);
-	void setUniform2fv(const string & name, float* v, int count = 1);
-	void setUniform3fv(const string & name, float* v, int count = 1);
-	void setUniform4fv(const string & name, float* v, int count = 1);
+	void setUniform1fv(const string & name, const float* v, int count = 1);
+	void setUniform2fv(const string & name, const float* v, int count = 1);
+	void setUniform3fv(const string & name, const float* v, int count = 1);
+	void setUniform4fv(const string & name, const float* v, int count = 1);
 	
 	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m);
 
@@ -92,10 +91,10 @@ public:
 	void setAttribute4d(GLint location, double v1, double v2, double v3, double v4);
 #endif
 
-	void setAttribute1fv(const string & name, float* v, GLsizei stride=sizeof(float));
-	void setAttribute2fv(const string & name, float* v, GLsizei stride=sizeof(float)*2);
-	void setAttribute3fv(const string & name, float* v, GLsizei stride=sizeof(float)*3);
-	void setAttribute4fv(const string & name, float* v, GLsizei stride=sizeof(float)*4);
+	void setAttribute1fv(const string & name, const float* v, GLsizei stride=sizeof(float));
+	void setAttribute2fv(const string & name, const float* v, GLsizei stride=sizeof(float)*2);
+	void setAttribute3fv(const string & name, const float* v, GLsizei stride=sizeof(float)*3);
+	void setAttribute4fv(const string & name, const float* v, GLsizei stride=sizeof(float)*4);
 	
 	void bindAttribute(GLuint location, const string & name);
 
@@ -107,7 +106,7 @@ public:
 	
 	// these methods create and compile a shader from source or file
 	// type: GL_VERTEX_SHADER, GL_FRAGMENT_SHADER, GL_GEOMETRY_SHADER_EXT etc.
-	bool setupShaderFromSource(GLenum type, string source);
+	bool setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath = "");
 	bool setupShaderFromFile(GLenum type, string filename);
 	
 	// links program with all compiled shaders
@@ -133,14 +132,19 @@ public:
 		TEXCOORD_ATTRIBUTE
 	};
 
+	/// @brief returns the shader source as it was passed to the GLSL compiler
+	/// @param type (GL_VERTEX_SHADER | GL_FRAGMENT_SHADER | GL_GEOMETRY_SHADER_EXT) the shader source you'd like to inspect.
+	string getShaderSource(GLenum type);
 
 
 private:
 	GLuint program;
 	bool bLoaded;
-	map<GLenum, GLuint> shaders;
-	map<string, GLint> uniformLocations;
-	
+
+	unordered_map<GLenum, GLuint> shaders;
+	unordered_map<string, GLint> uniformLocations;
+	unordered_map<GLenum, string> shaderSource;
+
 	GLint getUniformLocation(const string & name);
 	
 	void checkProgramInfoLog(GLuint program);
@@ -148,6 +152,15 @@ private:
 	void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
 	
 	static string nameForType(GLenum type);
+	
+    /// @brief			Mimics the #include behaviour of the c preprocessor
+	/// @description	Includes files specified using the
+	///					'#pragma include <filepath>' directive.
+	/// @note			Include paths are always specified _relative to the including file's current path_
+	///	@note			Recursive #pragma include statements are possible
+	/// @note			Includes will be processed up to 32 levels deep
+    string parseForIncludes( const string& source, const string& sourceDirectoryPath = "");
+    string parseForIncludes( const string& source, vector<string>& included, int level = 0, const string& sourceDirectoryPath = "");
 	
 	void checkAndCreateProgram();
 	

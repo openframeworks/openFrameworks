@@ -19,7 +19,7 @@ ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height)
 	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
 
 	value.addListener(this,&ofxToggle::valueChanged);
-	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
+	registerMouseEvents();
 	generateDraw();
 
 	return this;

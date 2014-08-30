@@ -3,7 +3,9 @@
 #include "ofFileUtils.h"
 #include "ofGraphics.h"
 #include "ofGLProgrammableRenderer.h"
-#include <map>
+#include "Poco/RegularExpression.h"
+#include "ofTexture.h"
+#include "ofMatrix4x4.h"
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
@@ -89,7 +91,7 @@ bLoaded(mom.bLoaded),
 shaders(mom.shaders){
 	if(mom.bLoaded){
 		retainProgram(program);
-		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
 			GLuint shader = it->second;
 			retainShader(shader);
 		}
@@ -109,7 +111,7 @@ ofShader & ofShader::operator=(const ofShader & mom){
 	shaders = mom.shaders;
 	if(mom.bLoaded){
 		retainProgram(program);
-		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
 			GLuint shader = it->second;
 			retainShader(shader);
 		}
@@ -138,8 +140,12 @@ bool ofShader::load(string vertName, string fragName, string geomName) {
 //--------------------------------------------------------------
 bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 	ofBuffer buffer = ofBufferFromFile(filename);
+	// we need to make absolutely sure to have an absolute path here, so that any #includes
+	// within the shader files have a root directory to traverse from.
+	string absoluteFilePath = ofFilePath::getAbsolutePath(filename, true);
+	string sourceDirectoryPath = ofFilePath::getEnclosingDirectory(absoluteFilePath,false);
 	if(buffer.size()) {
-		return setupShaderFromSource(type, buffer.getText());
+		return setupShaderFromSource(type, buffer.getText(), sourceDirectoryPath);
 	} else {
 		ofLogError("ofShader") << "setupShaderFromFile(): couldn't load " << nameForType(type) << " shader " << " from \"" << filename << "\"";
 		return false;
@@ -147,7 +153,7 @@ bool ofShader::setupShaderFromFile(GLenum type, string filename) {
 }
 
 //--------------------------------------------------------------
-bool ofShader::setupShaderFromSource(GLenum type, string source) {
+bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDirectoryPath) {
     unload();
     
 	// create program if it doesn't exist already
@@ -163,10 +169,16 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 		ofLogError("ofShader") << "setupShaderFromSource(): failed creating " << nameForType(type) << " shader";
 		return false;
 	}
+
+	// parse for includes
+	string src = parseForIncludes( source , sourceDirectoryPath);
+	
+	// store source code (that's the expanded source with all includes copied in)
+	shaderSource[type] = src;
 	
 	// compile shader
-	const char * sptr = source.c_str();
-	int ssize = source.size();
+	const char* sptr = src.c_str();
+	int ssize = src.size();
 	glShaderSource(shader, 1, &sptr, &ssize);
 	glCompileShader(shader);
 	
@@ -194,6 +206,74 @@ bool ofShader::setupShaderFromSource(GLenum type, string source) {
 	retainShader(shader);
 
 	return true;
+}
+
+/*
+ * Parse for GLSL includes based on
+ * https://www.opengl.org/discussion_boards/showthread.php/169209-include-in-glsl?p=1192415&viewfull=1#post1192415
+ */
+
+string ofShader::parseForIncludes( const string& source, const string& sourceDirectoryPath) {
+	vector<string> included;
+	return parseForIncludes( source, included, 0, sourceDirectoryPath);
+}
+
+string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const string& sourceDirectoryPath) {
+    
+	if ( level > 32 ) {
+		ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
+		return "";
+	}
+	
+	stringstream output;
+	stringstream input;
+	input << source;
+	
+	Poco::RegularExpression re("^\\s*#\\s*pragma\\s+include\\s+[\"<](.*)[\">].*");
+	Poco::RegularExpression::MatchVec matches;
+	
+	string line;
+	while( std::getline( input, line ) ) {
+		
+		if ( re.match( line, 0, matches ) < 2 ) {
+			output << line << endl;
+			continue;
+		}
+		
+		string include = line.substr(matches[1].offset, matches[1].length);
+		
+		if ( std::find( included.begin(), included.end(), include ) != included.end() ) {
+			ofLogVerbose() << include << " already included";
+			continue;
+		}
+		
+		// we store the absolute paths so as have (more) unique file identifiers.
+		
+		include = ofFile(sourceDirectoryPath + include).getAbsolutePath();
+		included.push_back( include );
+		
+		
+		ofBuffer buffer = ofBufferFromFile( include );
+		if ( !buffer.size() ) {
+			ofLogError() <<"Could not open glsl include file " << include;
+			continue;
+		}
+		
+		string currentDir = ofFile(include).getEnclosingDirectory();
+		output << parseForIncludes( buffer.getText(), included, level + 1, currentDir ) << endl;
+	}
+	
+	return output.str();
+}
+
+//--------------------------------------------------------------
+string ofShader::getShaderSource(GLenum type) {
+	if (shaderSource.find(type) != shaderSource.end()) {
+		return shaderSource[type];
+	} else {
+		ofLogError() << "No shader source for shader of type: " << nameForType(type);
+		return "";
+	}
 }
 
 //--------------------------------------------------------------
@@ -258,6 +338,28 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
 		ofLog(logLevel, "ofShader: " + nameForType(type) + " shader reports:\n" + infoBuffer);
+		if (shaderSource.find(type) != shaderSource.end()) {
+			// The following regexp should match shader compiler error messages by Nvidia and ATI.
+			// Unfortunately, each vendor's driver formats error messages slightly different.
+			Poco::RegularExpression re("^.*[(:]{1}(\\d+)[:)]{1}.*");
+			Poco::RegularExpression::MatchVec matches;
+			string infoString = (infoBuffer != NULL) ? string(infoBuffer): "";
+			re.match(infoString, 0, matches);
+			ofBuffer buf = shaderSource[type];
+			ofBuffer::Line line = buf.getLines().begin();
+			if (!matches.empty()){
+			int  offendingLineNumber = ofToInt(infoString.substr(matches[1].offset, matches[1].length));
+				ostringstream msg;
+				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< endl;
+				for(int i=0; line != buf.getLines().end(); line++, i++ ){
+					string s = *line;
+					if ( i >= offendingLineNumber -3 && i < offendingLineNumber + 2 ){
+						msg << "\t" << setw(5) << (i+1) << "\t" << s << endl;
+					}
+				}
+				ofLog(logLevel) << msg.str();
+			}
+		}
 		delete [] infoBuffer;
 	}
 }
@@ -282,7 +384,7 @@ void ofShader::checkAndCreateProgram() {
 #ifndef TARGET_OPENGLES
 	if(GL_ARB_shader_objects) {
 #else
-	if(true){
+	if(ofIsGLProgrammableRenderer()){
 #endif
 		if(program == 0) {
 			ofLogVerbose("ofShader") << "checkAndCreateProgram(): creating GLSL program";
@@ -297,28 +399,28 @@ void ofShader::checkAndCreateProgram() {
 
 //--------------------------------------------------------------
 bool ofShader::linkProgram() {
-		if(shaders.empty()) {
-			ofLogError("ofShader") << "linkProgram(): trying to link GLSL program, but no shaders created yet";
-		} else {
-			checkAndCreateProgram();
+	if(shaders.empty()) {
+		ofLogError("ofShader") << "linkProgram(): trying to link GLSL program, but no shaders created yet";
+	} else {
+		checkAndCreateProgram();
 
-			for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
-				GLuint shader = it->second;
-				if(shader) {
-					ofLogVerbose() << "linkProgram(): attaching " << nameForType(it->first) << " shader to program " << program;
-					glAttachShader(program, shader);
-				}
+		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
+			GLuint shader = it->second;
+			if(shader) {
+				ofLogVerbose() << "linkProgram(): attaching " << nameForType(it->first) << " shader to program " << program;
+				glAttachShader(program, shader);
 			}
-			
-			glLinkProgram(program);
-            
-            checkProgramLinkStatus(program);
-
-            // bLoaded means we have loaded shaders onto the graphics card;
-            // it doesn't necessarily mean that these shaders have compiled and linked successfully.
-			bLoaded = true;
 		}
-		return bLoaded;
+
+		glLinkProgram(program);
+
+		checkProgramLinkStatus(program);
+
+		// bLoaded means we have loaded shaders onto the graphics card;
+		// it doesn't necessarily mean that these shaders have compiled and linked successfully.
+		bLoaded = true;
+	}
+	return bLoaded;
 }
 
 void ofShader::bindAttribute(GLuint location, const string & name){
@@ -343,7 +445,7 @@ bool ofShader::bindDefaults(){
 //--------------------------------------------------------------
 void ofShader::unload() {
 	if(bLoaded) {
-		for(map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
+		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
 			GLuint shader = it->second;
 			if(shader) {
 				ofLogVerbose("ofShader") << "unload(): detaching and deleting " << nameForType(it->first) << " shader from program " << program;
@@ -370,7 +472,7 @@ bool ofShader::isLoaded(){
 void ofShader::begin() {
 	if (bLoaded){
 		glUseProgram(program);
-		ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 		if(renderer){
 			renderer->beginCustomShader(*this);
 		}
@@ -382,7 +484,7 @@ void ofShader::begin() {
 //--------------------------------------------------------------
 void ofShader::end() {
 	if (bLoaded){
-		ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
+		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 		if(renderer){
 			renderer->endCustomShader();
 		}else{
@@ -494,7 +596,7 @@ void ofShader::setUniform4f(const string & name, float v1, float v2, float v3, f
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1iv(const string & name, int* v, int count) {
+void ofShader::setUniform1iv(const string & name, const int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1iv(loc, count, v);
@@ -502,7 +604,7 @@ void ofShader::setUniform1iv(const string & name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2iv(const string & name, int* v, int count) {
+void ofShader::setUniform2iv(const string & name, const int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2iv(loc, count, v);
@@ -510,7 +612,7 @@ void ofShader::setUniform2iv(const string & name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3iv(const string & name, int* v, int count) {
+void ofShader::setUniform3iv(const string & name, const int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3iv(loc, count, v);
@@ -518,7 +620,7 @@ void ofShader::setUniform3iv(const string & name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4iv(const string & name, int* v, int count) {
+void ofShader::setUniform4iv(const string & name, const int* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4iv(loc, count, v);
@@ -526,7 +628,7 @@ void ofShader::setUniform4iv(const string & name, int* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform1fv(const string & name, float* v, int count) {
+void ofShader::setUniform1fv(const string & name, const float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform1fv(loc, count, v);
@@ -534,7 +636,7 @@ void ofShader::setUniform1fv(const string & name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform2fv(const string & name, float* v, int count) {
+void ofShader::setUniform2fv(const string & name, const float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform2fv(loc, count, v);
@@ -542,7 +644,7 @@ void ofShader::setUniform2fv(const string & name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform3fv(const string & name, float* v, int count) {
+void ofShader::setUniform3fv(const string & name, const float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform3fv(loc, count, v);
@@ -550,7 +652,7 @@ void ofShader::setUniform3fv(const string & name, float* v, int count) {
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniform4fv(const string & name, float* v, int count) {
+void ofShader::setUniform4fv(const string & name, const float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4fv(loc, count, v);
@@ -615,7 +717,7 @@ void ofShader::setAttribute4f(GLint location, float v1, float v2, float v3, floa
 		glVertexAttrib4f(location, v1, v2, v3, v4);
 }
 
-void ofShader::setAttribute1fv(const string & name, float* v, GLsizei stride){
+void ofShader::setAttribute1fv(const string & name, const float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -625,7 +727,7 @@ void ofShader::setAttribute1fv(const string & name, float* v, GLsizei stride){
 	}
 }
 
-void ofShader::setAttribute2fv(const string & name, float* v, GLsizei stride){
+void ofShader::setAttribute2fv(const string & name, const float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -636,7 +738,7 @@ void ofShader::setAttribute2fv(const string & name, float* v, GLsizei stride){
 
 }
 
-void ofShader::setAttribute3fv(const string & name, float* v, GLsizei stride){
+void ofShader::setAttribute3fv(const string & name, const float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -646,7 +748,7 @@ void ofShader::setAttribute3fv(const string & name, float* v, GLsizei stride){
 	}
 }
 
-void ofShader::setAttribute4fv(const string & name, float* v, GLsizei stride){
+void ofShader::setAttribute4fv(const string & name, const float* v, GLsizei stride){
 	if(bLoaded){
 		GLint location = getAttributeLocation(name);
 		if (location != -1) {
@@ -690,20 +792,15 @@ GLint ofShader::getAttributeLocation(const string & name) {
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const string & name) {
 	GLint loc = -1;
-#ifdef TARGET_RASPBERRY_PI
+
 	// tig: caching uniform locations gives the RPi a 17% boost on average
-	map<string, GLint>::iterator it = uniformLocations.find(name);
+	unordered_map<string, GLint>::iterator it = uniformLocations.find(name);
 	if (it == uniformLocations.end()){
 		loc = glGetUniformLocation(program, name.c_str());
 		if (loc != -1) uniformLocations[name] = loc;
 	} else {
 		loc = it->second;
 	}
-#else
-	// Desktop GL seems to be faster fetching the value from the GPU each time
-	// than retrieving it from cache.
-	loc = glGetUniformLocation(program, name.c_str());
-#endif
 	return loc;
 }
 

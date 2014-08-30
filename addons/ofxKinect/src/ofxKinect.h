@@ -32,9 +32,8 @@
 #pragma once
 
 #include "ofMain.h"
-#include "libfreenect.h"
 
-#include "ofxBase3DVideo.h"
+#include "libfreenect.h"
 
 #if defined(_MSC_VER) || defined(_WIN32) || defined(WIN32) || defined(__MINGW32__)
     // do windows stuff
@@ -42,6 +41,9 @@
     // mac and linux need this
     #include <libusb.h>
 #endif
+
+
+#include "ofxBase3DVideo.h"
 
 class ofxKinectContext;
 

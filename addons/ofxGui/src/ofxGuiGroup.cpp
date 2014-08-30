@@ -76,12 +76,12 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 			ofxGuiGroup * panel = new ofxGuiGroup(p);
 			add(panel);
 		}else{
-			ofLogError() << "ofxBaseGroup; can't add control of type " << type;
+			ofLogWarning() << "ofxBaseGroup; no control for parameter of type " << type;
 		}
 	}
 
 	parameters = _parameters;
-	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
+    registerMouseEvents();
 
 	generateDraw();
     
@@ -97,7 +97,7 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 
 	//if(b.width<element->getWidth()) b.width = element->getWidth();
     
-	ofUnregisterMouseEvents(element);
+    element->unregisterMouseEvents();
     
 	ofxGuiGroup * subgroup = dynamic_cast<ofxGuiGroup*>(element);
 	if(subgroup!=NULL){
@@ -312,10 +312,6 @@ ofxBaseGui * ofxGuiGroup::getControl(string name){
 		}
 	}
 	return NULL;
-}
-
-void ofxGuiGroup::registerMouseEvents(){
-	ofRegisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
 }
 
 bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){

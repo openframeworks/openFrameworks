@@ -32,8 +32,14 @@
 #include "ofxKinect.h"
 #include "ofMain.h"
 
-#include "libfreenect-registration.h"
+#include "libfreenect_registration.h"
 #include "freenect_internal.h" // for access to freenect_device.registration.zero_plane_info
+
+#include "ofxKinectExtras.h"
+
+#ifndef BUILD_AUDIO
+	#undef OFX_KINECT_EXTRA_FW //Audio / Motor via Audio support is not currently working with libfreenect on win32
+#endif 
 
 #define OFX_KINECT_GRAVITY 9.80665
 
@@ -107,10 +113,17 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 	depthPixelsRaw.allocate(width, height, 1);
 	depthPixelsRawBack.allocate(width, height, 1);
 	depthPixelsRawIntra.allocate(width, height, 1);
-
+    
+    //We have to do this as freenect has 488 pixels for the IR image height.
+    //Instead of having slightly different sizes depending on capture we will crop the last 8 rows of pixels which are empty.
+    int videoHeight = height;
+    if( infrared ){
+        videoHeight = 488;
+    }
+    
 	videoPixels.allocate(width, height, videoBytesPerPixel);
-	videoPixelsBack.allocate(width, height, videoBytesPerPixel);
-	videoPixelsIntra.allocate(width, height, videoBytesPerPixel);
+	videoPixelsBack.allocate(width, videoHeight, videoBytesPerPixel);
+	videoPixelsIntra.allocate(width, videoHeight, videoBytesPerPixel);
 
 	depthPixels.allocate(width, height, 1);
 	distancePixels.allocate(width, height, 1);
@@ -180,9 +193,15 @@ bool ofxKinect::open(int id) {
 	}
 
 	if(serial == "0000000000000000") {
-		ofLogVerbose("ofxKinect") << "open(): device " << deviceId << " does not have motor control";
-		bHasMotorControl = false;
-	}
+        bHasMotorControl = false;
+        //if we do motor control via the audio device ( ie: 1473 or k4w ) and we have firmware uploaded
+        //then we can do motor stuff! :)
+        if( kinectDevice->motor_control_with_audio_enabled ){
+            bHasMotorControl = true;
+        }else{
+            ofLogVerbose("ofxKinect") << "open(): device " << deviceId << " does not have motor control";
+        }
+    }
 	else {
 		bHasMotorControl = true;
 	}
@@ -214,13 +233,19 @@ bool ofxKinect::open(string serial) {
 	}
 	
 	if(serial == "0000000000000000") {
-		ofLogVerbose("ofxKinect") << "open(): device " << deviceId << " does not have motor control";
-		bHasMotorControl = false;
-	}
+        bHasMotorControl = false;
+        //if we do motor control via the audio device ( ie: 1473 or k4w ) and we have firmware uploaded
+        //then we can do motor stuff! :)
+        if( kinectDevice->motor_control_with_audio_enabled ){
+            bHasMotorControl = true;
+        }else{
+            ofLogVerbose("ofxKinect") << "open(): device " << deviceId << " does not have motor control";
+        }
+    }
 	else {
 		bHasMotorControl = true;
 	}
-	
+    
 	lastDeviceId = deviceId;
 	timeSinceOpen = ofGetElapsedTimef();
 	bGotData = false;
@@ -291,7 +316,12 @@ void ofxKinect::update() {
 		bGotData = true;
 		tryCount = 0;
 		if(this->lock()) {
-			swap(videoPixels,videoPixelsIntra);
+            if( videoPixels.getHeight() == videoPixelsIntra.getHeight() ){
+                swap(videoPixels,videoPixelsIntra);
+            }else{
+                int minimumSize = MIN(videoPixels.size(), videoPixelsIntra.size());
+                memcpy(videoPixels.getPixels(), videoPixelsIntra.getPixels(), minimumSize);
+            }
 			bNeedsUpdateVideo = false;
 			this->unlock();
 		}
@@ -710,8 +740,7 @@ void ofxKinect::threadedFunction(){
 		freenect_start_video(kinectDevice);
 	}
 
-	while(isThreadRunning() && freenect_process_events(kinectContext.getContext()) >= 0) {
-		
+	while(isThreadRunning() && freenect_process_events(kinectContext.getContext()) >= 0) {        
 		if(bTiltNeedsApplying) {
 			freenect_set_tilt_degs(kinectDevice, targetTiltAngleDeg);
 			bTiltNeedsApplying = false;
@@ -737,19 +766,19 @@ void ofxKinect::threadedFunction(){
 		freenect_get_mks_accel(tilt, &dx, &dy, &dz);
 		mksAccel.set(dx, dy, dz);
 	}
-
+    
 	// finish up a tilt on exit
 	if(bTiltNeedsApplying) {
 		freenect_set_tilt_degs(kinectDevice, targetTiltAngleDeg);
 		bTiltNeedsApplying = false;
 	}
-
+    
 	freenect_stop_depth(kinectDevice);
 	freenect_stop_video(kinectDevice);
-	if(currentLed < 0) { 
-        freenect_set_led(kinectDevice, (freenect_led_options)ofxKinect::LED_YELLOW); 
+	if(currentLed < 0) {
+        freenect_set_led(kinectDevice, (freenect_led_options)ofxKinect::LED_RED);
     }
-
+    
 	kinectContext.close(*this);
 	ofLogVerbose("ofxKinect") << "device " << deviceId << " connection closed";
 }
@@ -781,6 +810,12 @@ bool ofxKinectContext::init() {
 		bInited = false;
 		return false;
 	}
+    
+    #ifdef OFX_KINECT_EXTRA_FW
+        freenect_set_fw_address_nui(kinectContext, ofxKinectExtras::getFWData1473(), ofxKinectExtras::getFWSize1473());
+        freenect_set_fw_address_k4w(kinectContext, ofxKinectExtras::getFWDatak4w(), ofxKinectExtras::getFWSizek4w());
+    #endif
+    
 	freenect_set_log_level(kinectContext, FREENECT_LOG_WARNING);
 	freenect_select_subdevices(kinectContext, (freenect_device_flags)(FREENECT_DEVICE_MOTOR | FREENECT_DEVICE_CAMERA));
 

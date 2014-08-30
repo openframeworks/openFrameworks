@@ -8,6 +8,7 @@ class ofxPanel : public ofxGuiGroup {
 public:
 	ofxPanel();
 	ofxPanel(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
+	~ofxPanel();
 
 	ofxPanel * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
 	ofxPanel * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);

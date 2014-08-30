@@ -69,6 +69,8 @@ ofxBaseGui::ofxBaseGui(){
 	thisBorderColor=borderColor;
 	thisTextColor=textColor;
 	thisFillColor=fillColor;
+    
+    bRegisteredForMouseEvents = false;
 
 	/*if(!fontLoaded){
 		loadFont(OF_TTF_MONO,10,true,true);
@@ -91,9 +93,24 @@ void ofxBaseGui::setUseTTF(bool bUseTTF){
 }
 
 ofxBaseGui::~ofxBaseGui(){
-	ofUnregisterMouseEvents(this,OF_EVENT_ORDER_BEFORE_APP);
+    unregisterMouseEvents();
 }
 
+void ofxBaseGui::registerMouseEvents(){
+    if(bRegisteredForMouseEvents == true) {
+        return; // already registered.
+    }
+    bRegisteredForMouseEvents = true;
+	ofRegisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+}
+
+void ofxBaseGui::unregisterMouseEvents(){
+    if(bRegisteredForMouseEvents == false) {
+        return; // not registered.
+    }
+	ofUnregisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+    bRegisteredForMouseEvents = false;
+}
 
 void ofxBaseGui::draw(){
 	currentFrame = ofGetFrameNum();

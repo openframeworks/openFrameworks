@@ -9,7 +9,9 @@ void ofApp::setup(){
 	// Uncomment this to show movies with alpha channels
 	// fingerMovie.setPixelFormat(OF_PIXELS_RGBA);
 
-	fingerMovie.loadMovie("movies/fingers.mov");
+	fingerMovie.setUseTexture(false);
+	fingerMovie.loadMovie("movies/fingers.mov");///home/arturo/Code/rin/rin/examples/video/data/video.mp4");
+	fingerMovie.setLoopState(OF_LOOP_NORMAL);
 	fingerMovie.play();
 }
 
@@ -22,11 +24,11 @@ void ofApp::update(){
 void ofApp::draw(){
 
 	ofSetHexColor(0xFFFFFF);
-
     fingerMovie.draw(20,20);
+
     ofSetHexColor(0x000000);
     unsigned char * pixels = fingerMovie.getPixels();
-    
+
     int nChannels = fingerMovie.getPixelsRef().getNumChannels();
     
     // let's move through the "RGB(A)" char array
@@ -84,12 +86,12 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-	if(!frameByframe){
+	/*if(!frameByframe){
         int width = ofGetWidth();
         float pct = (float)x / (float)width;
         float speed = (2 * pct - 1) * 5.0f;
         fingerMovie.setSpeed(speed);
-	}
+	}*/
 }
 
 //--------------------------------------------------------------

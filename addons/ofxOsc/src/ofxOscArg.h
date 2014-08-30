@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "ofConstants.h"
 #include <string>
+#include "ofMain.h"
 
 typedef enum _ofxOscArgType
 {
@@ -144,4 +144,25 @@ public:
 
 private:
 	std::string value;
+};
+
+class ofxOscArgBlob : public ofxOscArg
+{
+public:
+	ofxOscArgBlob( ofBuffer _value ){
+        value = _value;
+    }
+    ~ofxOscArgBlob(){};
+
+	/// return the type of this argument
+	ofxOscArgType getType() { return OFXOSC_TYPE_BLOB; }
+	string getTypeName() { return "blob"; }
+
+	/// return value
+	ofBuffer get() const { return value; }
+	/// set value
+	void set( const char * _value, unsigned int length ) { value.set(_value, length); }
+
+private:
+	ofBuffer value;
 };

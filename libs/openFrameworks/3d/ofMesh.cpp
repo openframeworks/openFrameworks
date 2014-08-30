@@ -613,11 +613,6 @@ void ofMesh::setIndex(ofIndexType index, ofIndexType  val){
 }
 
 //--------------------------------------------------------------
-void ofMesh::setName(string name_){
-	name = name_;
-}
-
-//--------------------------------------------------------------
 void ofMesh::setupIndicesAuto(){
 	bIndicesChanged = true;
 	bFacesDirty = true;
@@ -778,7 +773,7 @@ void ofMesh::load(string path){
 	ofFile is(path, ofFile::ReadOnly);
 	ofMesh& data = *this;
 
-	string line;
+
 	string error;
 	ofBuffer buffer(is);
 	ofMesh backup = data;
@@ -809,79 +804,79 @@ void ofMesh::load(string path){
 	State state = Header;
 
 	int lineNum = 0;
-
-	line = buffer.getFirstLine();
+	ofBuffer::Lines lines = buffer.getLines();
+	ofBuffer::Line line = lines.begin();
 	lineNum++;
-	if(line!="ply"){
+	if(*line!="ply"){
 		error = "wrong format, expecting 'ply'";
 		goto clean;
 	}
 
-	line = buffer.getNextLine();
+	line++;
 	lineNum++;
-	if(line!="format ascii 1.0"){
+	if(*line!="format ascii 1.0"){
 		error = "wrong format, expecting 'format ascii 1.0'";
 		goto clean;
 	}
 
-	while(!buffer.isLastLine()){
-		line = buffer.getNextLine();
+	for(;line != lines.end(); ++line){
 		lineNum++;
-		if(line.find("comment")==0){
+		string lineStr = *line;
+		if(lineStr.find("comment")==0){
 			continue;
 		}
 
-		if((state==Header || state==FaceDef) && line.find("element vertex")==0){
+		if((state==Header || state==FaceDef) && lineStr.find("element vertex")==0){
 			state = VertexDef;
 			orderVertices = MAX(orderIndices, 0)+1;
-			data.getVertices().resize(ofToInt(line.substr(15)));
+			data.getVertices().resize(ofToInt(lineStr.substr(15)));
 			continue;
 		}
 
-		if((state==Header || state==VertexDef) && line.find("element face")==0){
+		if((state==Header || state==VertexDef) && lineStr.find("element face")==0){
 			state = FaceDef;
 			orderIndices = MAX(orderVertices, 0)+1;
-			data.getIndices().resize(ofToInt(line.substr(13))*3);
+			data.getIndices().resize(ofToInt(lineStr.substr(13))*3);
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property float x")==0 || line.find("property float y")==0 || line.find("property float z")==0)){
+		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0)){
 			vertexCoordsFound++;
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property float r")==0 || line.find("property float g")==0 || line.find("property float b")==0 || line.find("property float a")==0)){
+		if(state==VertexDef && (lineStr.find("property float r")==0 || lineStr.find("property float g")==0 || lineStr.find("property float b")==0 || lineStr.find("property float a")==0)){
 			colorCompsFound++;
 			data.getColors().resize(data.getVertices().size());
 			floatColor = true;
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property uchar red")==0 || line.find("property uchar green")==0 || line.find("property uchar blue")==0 || line.find("property uchar alpha")==0)){
+		if(state==VertexDef && (lineStr.find("property uchar red")==0 || lineStr.find("property uchar green")==0 || lineStr.find("property uchar blue")==0 || lineStr.find("property uchar alpha")==0)){
 			colorCompsFound++;
 			data.getColors().resize(data.getVertices().size());
 			floatColor = false;
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property float u")==0 || line.find("property float v")==0)){
+		if(state==VertexDef && (lineStr.find("property float u")==0 || lineStr.find("property float v")==0)){
 			texCoordsFound++;
 			data.getTexCoords().resize(data.getVertices().size());
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property float nx")==0 || line.find("property float ny")==0 || line.find("property float nz")==0)){
+		if(state==VertexDef && (lineStr.find("property float nx")==0 || lineStr.find("property float ny")==0 || lineStr.find("property float nz")==0)){
 			normalsCoordsFound++;
 			if (normalsCoordsFound==3) data.getNormals().resize(data.getVertices().size());
 			continue;
 		}
 
-		if(state==FaceDef && line.find("property list")!=0 && line!="end_header"){
+		if(state==FaceDef && lineStr.find("property list")!=0 && lineStr!="end_header"){
 			error = "wrong face definition";
 			goto clean;
 		}
 
-		if(line=="end_header"){
+		if(lineStr=="end_header"){
 			if(data.hasColors() && colorCompsFound!=3 && colorCompsFound!=4){
 				error =  "data has color coordiantes but not correct number of components. Found " + ofToString(colorCompsFound) + " expecting 3 or 4";
 				goto clean;
@@ -906,7 +901,7 @@ void ofMesh::load(string path){
 
 		if(state==Vertices){
 			stringstream sline;
-			sline.str(line);
+			sline.str(lineStr);
 			ofVec3f v;
 			sline >> v.x;
 			sline >> v.y;
@@ -959,7 +954,7 @@ void ofMesh::load(string path){
 
 		if(state==Faces){
 			stringstream sline;
-			sline.str(line);
+			sline.str(lineStr);
 			int numV;
 			sline >> numV;
 			if(numV!=3){
@@ -990,7 +985,7 @@ void ofMesh::load(string path){
 	return;
 	clean:
 	ofLogError("ofMesh") << "load(): " << lineNum << ":" << error;
-	ofLogError("ofMesh") << "load(): \"" << line << "\"";
+	ofLogError("ofMesh") << "load(): \"" << *line << "\"";
 	data = backup;
 }
 
@@ -1916,9 +1911,12 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
     }
     mesh.setMode(mode);
     
+    radiusSegments = radiusSegments+1;
     int capSegs = numCapSegments;
+    capSegs = capSegs+1;
+    heightSegments = heightSegments+1;
     if(heightSegments < 2) heightSegments = 2;
-    if(capSegs < 2) capSegs = 2;
+    if( capSegs < 2 ) bCapped = false;
     if(!bCapped) capSegs=1;
     
     float angleIncRadius = -1 * (TWO_PI/((float)radiusSegments-1.f));
@@ -1933,11 +1931,14 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
     
     int vertOffset = 0;
     
-    float maxTexY           = heightSegments-1.f + (capSegs*2)-2.f;
+    float maxTexY   = heightSegments-1.f;
+    if(capSegs > 0) {
+        maxTexY += (capSegs*2)-2.f;
+    }
     float maxTexYNormalized = (capSegs-1.f) / maxTexY;
     
     // add the top cap //
-    if(bCapped) {
+    if(bCapped && capSegs > 0) {
         normal.set(0,-1,0);
         for(int iy = 0; iy < capSegs; iy++) {
             for(int ix = 0; ix < radiusSegments; ix++) {
@@ -2038,7 +2039,7 @@ ofMesh ofMesh::cylinder( float radius, float height, int radiusSegments, int hei
     vertOffset = mesh.getNumVertices();
     
     // add the bottom cap
-    if(bCapped) {
+    if(bCapped && capSegs > 0) {
         minTexYNormalized = maxTexYNormalized;
         maxTexYNormalized   = 1.f;
         
@@ -2100,9 +2101,14 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     }
     mesh.setMode(mode);
     
+    radiusSegments  = radiusSegments+1;
+    capSegments     = capSegments+1;
+    heightSegments  = heightSegments+1;
     if(heightSegments < 2) heightSegments = 2;
     int capSegs = capSegments;
-    if(capSegs < 2) capSegs = 2;
+    if( capSegs < 2 ) {
+        capSegs = 0;
+    }
     
     
     float angleIncRadius    = -1.f * ((TWO_PI/((float)radiusSegments-1.f)));
@@ -2118,7 +2124,10 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     
     int vertOffset = 0;
     
-    float maxTexY = heightSegments-1.f + capSegs-1.f;
+    float maxTexY = heightSegments-1.f;
+    if(capSegs > 0) {
+        maxTexY += capSegs-1.f;
+    }
     
     ofVec3f startVec(0, -halfH-1.f, 0);
     
@@ -2205,28 +2214,32 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
     }
     
     if(mode == OF_PRIMITIVE_TRIANGLES) {
-        for(int y = 0; y < capSegs-1; y++) {
-            for(int x = 0; x < radiusSegments-1; x++) {
-                //if(y > 0) {
-                // first triangle //
-                mesh.addIndex( (y)*radiusSegments + x + vertOffset );
-                mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
-                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
-                //}
-                
-                if(y < capSegs-1) {
-                    // second triangle //
+        if( capSegs > 0 ) {
+            for(int y = 0; y < capSegs-1; y++) {
+                for(int x = 0; x < radiusSegments-1; x++) {
+                    //if(y > 0) {
+                    // first triangle //
+                    mesh.addIndex( (y)*radiusSegments + x + vertOffset );
                     mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
-                    mesh.addIndex( (y+1)*radiusSegments + x+1 + vertOffset);
                     mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                    //}
+                    
+                    if(y < capSegs-1) {
+                        // second triangle //
+                        mesh.addIndex( (y)*radiusSegments + x+1 + vertOffset);
+                        mesh.addIndex( (y+1)*radiusSegments + x+1 + vertOffset);
+                        mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                    }
                 }
             }
         }
     } else {
-        for(int y = 0; y < capSegs-1; y++) {
-            for(int x = 0; x < radiusSegments; x++) {
-                mesh.addIndex( (y)*radiusSegments + x + vertOffset );
-                mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+        if(capSegs > 0 ) {
+            for(int y = 0; y < capSegs-1; y++) {
+                for(int x = 0; x < radiusSegments; x++) {
+                    mesh.addIndex( (y)*radiusSegments + x + vertOffset );
+                    mesh.addIndex( (y+1)*radiusSegments + x + vertOffset);
+                }
             }
         }
     }
@@ -2242,6 +2255,14 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
     // mesh only available as triangles //
     ofMesh mesh;
     mesh.setMode( OF_PRIMITIVE_TRIANGLES );
+    
+    resX = resX + 1;
+    resY = resY + 1;
+    resZ = resZ + 1;
+    
+    if( resX < 2 ) resX = 0;
+    if( resY < 2 ) resY = 0;
+    if( resZ < 2 ) resZ = 0;
     
     // halves //
     float halfW = width * .5f;
@@ -2484,7 +2505,39 @@ ofMesh ofMesh::box( float width, float height, float depth, int resX, int resY, 
 }
 
 
+//--------------------------------------------------------------
 
+/// Returns an ofMesh representing an XYZ coordinate system.
+ofMesh ofMesh::axis( float size ) {
+    ofMesh mesh;
+
+    // mesh only available as wireframe //
+	mesh.setMode(OF_PRIMITIVE_LINES);
+
+	ofVec3f vertices[6] = {
+		ofVec3f(0,0,0),
+		ofVec3f(size,0,0),
+		ofVec3f(0,0,0),
+		ofVec3f(0,size,0),
+		ofVec3f(0,0,0),
+		ofVec3f(0,0,size),
+	};
+	ofFloatColor colors[6] = {
+		ofColor::red,
+		ofColor::red,
+		ofColor::green,
+		ofColor::green,
+		ofColor::blue,
+		ofColor::blue,
+	};
+	
+	mesh.addVertices(vertices, 6);
+	mesh.addColors(colors, 6);
+	
+	return mesh;
+}
+
+//--------------------------------------------------------------
 
 
 ofMeshFace::ofMeshFace()

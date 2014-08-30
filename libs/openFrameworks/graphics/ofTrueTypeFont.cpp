@@ -2,13 +2,18 @@
 //--------------------------
 
 #include "ft2build.h"
+
+#ifdef TARGET_LINUX
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
+#include FT_OUTLINE_H
+#include FT_TRIGONOMETRY_H
+#include <fontconfig/fontconfig.h>
+#else
 #include "freetype2/freetype/freetype.h"
 #include "freetype2/freetype/ftglyph.h"
 #include "freetype2/freetype/ftoutln.h"
 #include "freetype2/freetype/fttrigon.h"
-
-#ifdef TARGET_LINUX
-#include <fontconfig/fontconfig.h>
 #endif
 
 #include <algorithm>
@@ -356,15 +361,6 @@ bool ofTrueTypeFont::initLibraries(){
     return true;
 }
 
-void ofTrueTypeFont::finishLibraries(){
-	if(librariesInitialized){
-#ifdef TARGET_LINUX
-		//FcFini();
-#endif
-		FT_Done_FreeType(library);
-	}
-}
-
 
 //------------------------------------------------------------------
 ofTrueTypeFont::ofTrueTypeFont(){
@@ -373,22 +369,19 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 		all_fonts().insert(this);
 	#endif
-	//cps				= NULL;
 	letterSpacing = 1;
 	spaceSize = 1;
 
-	// 3 pixel border around the glyph
-	// We show 2 pixels of this, so that blending looks good.
-	// 1 pixels is hidden because we don't want to see the real edge of the texture
-
-	border			= 3;
-	//visibleBorder	= 2;
+	border			= 1;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	binded = false;
+	face = NULL;
 }
 
 //------------------------------------------------------------------
 ofTrueTypeFont::~ofTrueTypeFont(){
+
+	if(face) FT_Done_Face(face);
 
 	if (bLoadedOk){
 		unloadTextures();
@@ -486,14 +479,20 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	//--------------- load the library and typeface
 
 
-	FT_Face face;
 	if(!loadFontFace(_filename,_fontSize,face,filename)){
         return false;
 	}
 
 
 	FT_Set_Char_Size( face, fontSize << 6, fontSize << 6, dpi, dpi);
-	lineHeight = fontSize * 1.43f;
+	float fontUnitScale = ((float)fontSize * dpi) / (72 * face->units_per_EM);
+	lineHeight = face->height * fontUnitScale;
+	ascenderHeight = face->ascender * fontUnitScale;
+	descenderHeight = face->descender * fontUnitScale;
+	glyphBBox.set(face->bbox.xMin * fontUnitScale,
+				  face->bbox.yMin * fontUnitScale,
+				  (face->bbox.xMax - face->bbox.xMin) * fontUnitScale,
+				  (face->bbox.yMax - face->bbox.yMin) * fontUnitScale);
 
 	//------------------------------------------------------
 	//kerning would be great to support:
@@ -523,7 +522,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		//------------------------------------------ anti aliased or not:
 		int glyph = (unsigned char)(i+NUM_CHARACTER_TO_START);
 		if (glyph == 0xA4) glyph = 0x20AC; // hack to load the euro sign, all codes in 8859-15 match with utf-32 except for this one
-		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, glyph ), FT_LOAD_DEFAULT );
+		err = FT_Load_Glyph( face, FT_Get_Char_Index( face, glyph ), bAntiAliased ?  FT_LOAD_FORCE_AUTOHINT : FT_LOAD_DEFAULT );
         if(err){
 			ofLogError("ofTrueTypeFont") << "loadFont(): FT_Load_Glyph failed for char " << i << ": FT_Error " << err;
 
@@ -533,20 +532,6 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		else FT_Render_Glyph(face->glyph, FT_RENDER_MODE_MONO);
 
 		//------------------------------------------
-		FT_Bitmap& bitmap= face->glyph->bitmap;
-
-
-		// prepare the texture:
-		/*int width  = ofNextPow2( bitmap.width + border*2 );
-		int height = ofNextPow2( bitmap.rows  + border*2 );
-
-
-		// ------------------------- this is fixing a bug with small type
-		// ------------------------- appearantly, opengl has trouble with
-		// ------------------------- width or height textures of 1, so we
-		// ------------------------- we just set it to 2...
-		if (width == 1) width = 2;
-		if (height == 1) height = 2;*/
 
 
 		if(bMakeContours){
@@ -574,40 +559,25 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 		// -------------------------
 		// info about the character:
-		cps[i].character		= i;
-		cps[i].height 			= face->glyph->bitmap_top;
-		cps[i].width 			= face->glyph->bitmap.width;
-		cps[i].setWidth 		= face->glyph->advance.x >> 6;
-		cps[i].topExtent 		= face->glyph->bitmap.rows;
-		cps[i].leftExtent		= face->glyph->bitmap_left;
-
-		int width  = cps[i].width;
+		FT_Bitmap& bitmap= face->glyph->bitmap;
+		int width  = bitmap.width;
 		int height = bitmap.rows;
 
+		cps[i].characterIndex	= i;
+		cps[i].glyph			= glyph;
+		cps[i].height 			= face->glyph->metrics.height>>6;
+		cps[i].width 			= face->glyph->metrics.width>>6;
+		cps[i].bearingX			= face->glyph->metrics.horiBearingX>>6;
+		cps[i].bearingY			= face->glyph->metrics.horiBearingY>>6;
+		cps[i].xmin				= face->glyph->bitmap_left;
+		cps[i].xmax				= cps[i].xmin + cps[i].width;
+		cps[i].ymin				= -face->glyph->bitmap_top;
+		cps[i].ymax				= cps[i].ymin + cps[i].height;
+		cps[i].advance			= face->glyph->metrics.horiAdvance>>6;
 
-		cps[i].tW				= width;
-		cps[i].tH				= height;
 
-
-
-		GLint fheight	= cps[i].height;
-		GLint bwidth	= cps[i].width;
-		GLint top		= cps[i].topExtent - cps[i].height;
-		GLint lextent	= cps[i].leftExtent;
-
-		GLfloat	corr, stretch;
-
-		//this accounts for the fact that we are showing 2*visibleBorder extra pixels
-		//so we make the size of each char that many pixels bigger
-		stretch = 0;//(float)(visibleBorder * 2);
-
-		corr	= (float)(( (fontSize - fheight) + top) - fontSize);
-
-		cps[i].x1		= lextent + bwidth + stretch;
-		cps[i].y1		= fheight + corr + stretch;
-		cps[i].x2		= (float) lextent;
-		cps[i].y2		= -top + corr;
-
+		cps[i].tW				= cps[i].width;
+		cps[i].tH				= cps[i].height;
 
 		// Allocate Memory For The Texture Data.
 		expanded_data[i].allocate(width, height, 2);
@@ -644,7 +614,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 			//-----------------------------------
 		}
 
-		areaSum += (cps[i].width+border*2)*(cps[i].height+border*2);
+		areaSum += (cps[i].tW+border*2)*(cps[i].tH+border*2);
 	}
 
 	vector<charProps> sortedCopy = cps;
@@ -694,7 +664,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 	int y=0;
 	int maxRowHeight = sortedCopy[0].tH + border*2;
 	for(int i=0;i<(int)cps.size();i++){
-		ofPixels & charPixels = expanded_data[sortedCopy[i].character];
+		ofPixels & charPixels = expanded_data[sortedCopy[i].characterIndex];
 
 		if(x+sortedCopy[i].tW + border*2>w){
 			x = 0;
@@ -702,31 +672,24 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 			maxRowHeight = sortedCopy[i].tH + border*2;
 		}
 
-		cps[sortedCopy[i].character].t2		= float(x + border)/float(w);
-		cps[sortedCopy[i].character].v2		= float(y + border)/float(h);
-		cps[sortedCopy[i].character].t1		= float(cps[sortedCopy[i].character].tW + x + border)/float(w);
-		cps[sortedCopy[i].character].v1		= float(cps[sortedCopy[i].character].tH + y + border)/float(h);
+		cps[sortedCopy[i].characterIndex].t1		= float(x + border)/float(w);
+		cps[sortedCopy[i].characterIndex].v1		= float(y + border)/float(h);
+		cps[sortedCopy[i].characterIndex].t2		= float(cps[sortedCopy[i].characterIndex].tW + x + border)/float(w);
+		cps[sortedCopy[i].characterIndex].v2		= float(cps[sortedCopy[i].characterIndex].tH + y + border)/float(h);
 		charPixels.pasteInto(atlasPixelsLuminanceAlpha,x+border,y+border);
 		x+= sortedCopy[i].tW + border*2;
 	}
-
-	ofPixels atlasPixels;
-	atlasPixels.allocate(atlasPixelsLuminanceAlpha.getWidth(),atlasPixelsLuminanceAlpha.getHeight(),4);
-	atlasPixels.setChannel(0,atlasPixelsLuminanceAlpha.getChannel(0));
-	atlasPixels.setChannel(1,atlasPixelsLuminanceAlpha.getChannel(0));
-	atlasPixels.setChannel(2,atlasPixelsLuminanceAlpha.getChannel(0));
-	atlasPixels.setChannel(3,atlasPixelsLuminanceAlpha.getChannel(1));
-	texAtlas.allocate(atlasPixels,false);
+	texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
+	texAtlas.setRGToRGBASwizzles(true);
 
 	if(bAntiAliased && fontSize>20){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
 	}else{
 		texAtlas.setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 	}
-	texAtlas.loadData(atlasPixels);
+	texAtlas.loadData(atlasPixelsLuminanceAlpha);
 
 	// ------------- close the library and typeface
-	FT_Done_Face(face);
   	bLoadedOk = true;
 	return true;
 }
@@ -770,6 +733,21 @@ float ofTrueTypeFont::getLineHeight(){
 }
 
 //-----------------------------------------------------------
+float ofTrueTypeFont::getAscenderHeight() const {
+	return ascenderHeight;
+}
+
+//-----------------------------------------------------------
+float ofTrueTypeFont::getDescenderHeight() const {
+	return descenderHeight;
+}
+
+//-----------------------------------------------------------
+const ofRectangle & ofTrueTypeFont::getGlyphBBox() const {
+	return glyphBBox;
+}
+
+//-----------------------------------------------------------
 void ofTrueTypeFont::setLetterSpacing(float _newletterSpacing) {
 	letterSpacing = _newletterSpacing;
 }
@@ -796,8 +774,7 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character, bool vflip){
 		return ofTTFCharacter();
 	}
     if (character - NUM_CHARACTER_TO_START >= nCharacters || character < NUM_CHARACTER_TO_START){
-        ofLogError("ofxTrueTypeFont") << "getCharacterAsPoint(): char " << character + NUM_CHARACTER_TO_START
-		<< " not allocated: line " << __LINE__ << " in " << __FILE__;
+        //ofLogError("ofxTrueTypeFont") << "getCharacterAsPoint(): char " << character + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
         
         return ofTTFCharacter();
     }
@@ -817,32 +794,33 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 		return;
 	}
 
-	GLfloat	x1, y1, x2, y2;
-	GLfloat t1, v1, t2, v2;
+
+	int	xmin, ymin, xmax, ymax;
+	float t1, v1, t2, v2;
 	t2		= cps[c].t2;
 	v2		= cps[c].v2;
 	t1		= cps[c].t1;
 	v1		= cps[c].v1;
 
-	x1		= cps[c].x1+x;
-	y1		= cps[c].y1;
-	x2		= cps[c].x2+x;
-	y2		= cps[c].y2;
+	xmin		= cps[c].xmin+x;
+	ymin		= cps[c].ymin;
+	xmax		= cps[c].xmax+x;
+	ymax		= cps[c].ymax;
+
+	if(!ofIsVFlipped()){
+       ymin *= -1;
+       ymax *= -1;
+	}
+
+    ymin += y;
+    ymax += y;
 
 	int firstIndex = stringQuads.getVertices().size();
 
-	if(!ofIsVFlipped()){
-       y1 *= -1;
-       y2 *= -1;  
-	}
-
-    y1 += y;
-    y2 += y; 
-
-	stringQuads.addVertex(ofVec3f(x1,y1));
-	stringQuads.addVertex(ofVec3f(x2,y1));
-	stringQuads.addVertex(ofVec3f(x2,y2));
-	stringQuads.addVertex(ofVec3f(x1,y2));
+	stringQuads.addVertex(ofVec3f(xmin,ymin));
+	stringQuads.addVertex(ofVec3f(xmax,ymin));
+	stringQuads.addVertex(ofVec3f(xmax,ymax));
+	stringQuads.addVertex(ofVec3f(xmin,ymax));
 
 	stringQuads.addTexCoord(ofVec2f(t1,v1));
 	stringQuads.addTexCoord(ofVec2f(t2,v1));
@@ -855,6 +833,16 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	stringQuads.addIndex(firstIndex+2);
 	stringQuads.addIndex(firstIndex+3);
 	stringQuads.addIndex(firstIndex);
+}
+
+int ofTrueTypeFont::getKerning(int c, int prevC){
+    if(FT_HAS_KERNING( face ) && prevC>0 && prevC<nCharacters && c>0 && c<nCharacters){
+        FT_Vector kerning;
+        FT_Get_Kerning(face, FT_Get_Char_Index(face, cps[prevC].glyph), FT_Get_Char_Index(face, cps[c].glyph), FT_KERNING_UNFITTED, &kerning);
+        return kerning.x>>6;
+    }else{
+        return 0;
+    }
 }
 
 //-----------------------------------------------------------
@@ -886,24 +874,25 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip)
 
 
 	int len = (int)str.length();
-
+    int prevCy = -1;
 	while(index < len){
 		int cy = (unsigned char)str[index] - NUM_CHARACTER_TO_START;
 		if (cy < nCharacters){ 			// full char set or not?
 			if (str[index] == '\n') {
 				Y += lineHeight*newLineDirection;
 				X = 0 ; //reset X Pos back to zero
-			}else if (str[index] == ' ') {
-				int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				X += cps[cy].setWidth * letterSpacing * spaceSize;
 			} else if(cy > -1){
 				shapes.push_back(getCharacterAsPoints((unsigned char)str[index],vflip));
+
+                X += getKerning(cy,prevCy);
+                
 				shapes.back().translate(ofPoint(X,Y));
 
-				X += cps[cy].setWidth * letterSpacing;
+				X += cps[cy].advance * letterSpacing;
 			}
 		}
 		index++;
+		prevCy = cy;
 	}
 	return shapes;
 
@@ -944,68 +933,67 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
     	return myRect;
     }
 
-	GLint		index	= 0;
-	GLfloat		xoffset	= 0;
-	GLfloat		yoffset	= 0;
-    int         len     = (int)c.length();
-    float       minx    = -1;
-    float       miny    = -1;
-    float       maxx    = -1;
-    float       maxy    = -1;
+	int		index	= 0;
+	int		xoffset	= 0;
+	int		yoffset	= 0;
+    int     len     = (int)c.length();
+    int     xmin    = -1;
+    int     ymin    = -1;
+    int     xmax    = -1;
+    int     ymax    = -1;
 
     if ( len < 1 || cps.empty() ){
-        myRect.x        = 0;
-        myRect.y        = 0;
+        myRect.x        = x;
+        myRect.y        = y;
         myRect.width    = 0;
         myRect.height   = 0;
         return myRect;
     }
 
     bool bFirstCharacter = true;
+    int prevCy=-1;
 	while(index < len){
-		int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
+		int cy = ((unsigned char)c[index]) - NUM_CHARACTER_TO_START;
  	    if (cy < nCharacters){ 			// full char set or not?
 	       if (c[index] == '\n') {
-				yoffset += lineHeight;
-				xoffset = 0 ; //reset X Pos back to zero
-	      } else if (c[index] == ' ') {
-	     		int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 xoffset += cps[cy].setWidth * letterSpacing * spaceSize;
-				 // zach - this is a bug to fix -- for now, we don't currently deal with ' ' in calculating string bounding box
-		  } else if(cy > -1){
-                GLint height	= cps[cy].height;
-            	GLint bwidth	= cps[cy].width * letterSpacing;
-            	GLint top		= cps[cy].topExtent - cps[cy].height;
-            	GLint lextent	= cps[cy].leftExtent;
-            	float	x1, y1, x2, y2, corr, stretch;
-            	stretch = 0;//(float)visibleBorder * 2;
-				corr = (float)(((fontSize - height) + top) - fontSize);
-				x1		= (x + xoffset + lextent + bwidth + stretch);
-            	y1		= (y + yoffset + height + corr + stretch);
-            	x2		= (x + xoffset + lextent);
-            	y2		= (y + yoffset + -top + corr);
-				xoffset += cps[cy].setWidth * letterSpacing;
-				if (bFirstCharacter == true){
-                    minx = x2;
-                    miny = y2;
-                    maxx = x1;
-                    maxy = y1;
-                    bFirstCharacter = false;
-                } else {
-                    if (x2 < minx) minx = x2;
-                    if (y2 < miny) miny = y2;
-                    if (x1 > maxx) maxx = x1;
-                    if (y1 > maxy) maxy = y1;
-            }
-		  }
+               yoffset += lineHeight;
+               xoffset = 0 ; //reset X Pos back to zero
+               prevCy = -1;
+               index++;
+               continue;
+	       }
+
+	       if(cy > -1){
+				if (bFirstCharacter){
+					xmin = cps[cy].xmin+x;
+					ymin = cps[cy].ymin+y;
+					xmax = cps[cy].xmax+x;
+					ymax = cps[cy].ymax+y;
+					bFirstCharacter = false;
+				} else {
+				   	xoffset += getKerning(cy,prevCy);
+				   	
+					int charxmin = cps[cy].xmin+xoffset+x;
+					int charymin = cps[cy].ymin+yoffset+y;
+					int charxmax = cps[cy].xmax+xoffset+x;
+					int charymax = cps[cy].ymax+yoffset+y;
+
+					if (charxmin < xmin) xmin = charxmin;
+					if (charymin < ymin) ymin = charymin;
+					if (charxmax > xmax) xmax = charxmax;
+					if (charymax > ymax) ymax = charymax;
+				}
+				xoffset += cps[cy].advance * letterSpacing;
+			}
 	  	}
     	index++;
+    	prevCy = cy;
     }
 
-    myRect.x        = minx;
-    myRect.y        = miny;
-    myRect.width    = maxx-minx;
-    myRect.height   = maxy-miny;
+    myRect.x        = min((int)x,xmin);
+    myRect.y        = min((int)y,ymin);
+    myRect.width    = xmax-x;
+    myRect.height   = ymax-ymin;
     return myRect;
 }
 
@@ -1016,6 +1004,13 @@ float ofTrueTypeFont::stringHeight(string c) {
 }
 
 void ofTrueTypeFont::createStringMesh(string c, float x, float y){
+	
+	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
+		string o;
+		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(c,o);
+		c=o;
+	}
+	
 	GLint		index	= 0;
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
@@ -1030,23 +1025,22 @@ void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 
 	int len = (int)c.length();
 
+	int prevCy = -1;
 	while(index < len){
 		int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
 		if (cy < nCharacters){ 			// full char set or not?
-		  if (c[index] == '\n') {
-
+			if (c[index] == '\n') {
 				Y += lineHeight*newLineDirection;
 				X = x ; //reset X Pos back to zero
-
-		  }else if (c[index] == ' ') {
-				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].setWidth * letterSpacing * spaceSize;
-		  } else if(cy > -1){
+				prevCy = -1;
+			} else if(cy > -1){
+	            X += getKerning(cy,prevCy);
 				drawChar(cy, X, Y);
-				X += cps[cy].setWidth * letterSpacing;
-		  }
+				X += cps[cy].advance * letterSpacing;
+			}
 		}
 		index++;
+		prevCy = cy;
 	}
 }
 
@@ -1061,18 +1055,7 @@ ofTexture & ofTrueTypeFont::getFontTexture(){
 }
 
 //=====================================================================
-void ofTrueTypeFont::drawString(string c, float x, float y) {
-	
-	/*glEnable(GL_BLEND);
-	 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	 texAtlas.draw(0,0);*/
-	
-	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
-		string o;
-		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(c,o);
-		c=o;
-	}
-	
+void ofTrueTypeFont::drawString(string c, float x, float y) {	
 	if (!bLoadedOk){
 		ofLogError("ofTrueTypeFont") << "drawString(): font not allocated: line " << __LINE__ << " in " << __FILE__;
 		return;
@@ -1105,8 +1088,14 @@ void ofTrueTypeFont::bind(){
 
 		blend_enabled = glIsEnabled(GL_BLEND);
 		texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
+#ifndef TARGET_PROGRAMMABLE_GL
 		glGetIntegerv( GL_BLEND_SRC, &blend_src );
 		glGetIntegerv( GL_BLEND_DST, &blend_dst );
+#else
+		//TODO: use blending mode to set it back afterwards
+		blend_src = GL_SRC_ALPHA;
+		blend_dst = GL_ONE_MINUS_SRC_ALPHA;
+#endif
 
 	    // (b) enable our regular ALPHA blending!
 	    glEnable(GL_BLEND);
@@ -1167,26 +1156,22 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 	}
 
 	int len = (int)c.length();
-
+    int prevCy = -1;
 	while(index < len){
 		int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
 		if (cy < nCharacters){ 			// full char set or not?
 		  if (c[index] == '\n') {
-
 				Y += lineHeight*newLineDirection;
 				X = x ; //reset X Pos back to zero
-
-		  }else if (c[index] == ' ') {
-				 int cy = (int)'p' - NUM_CHARACTER_TO_START;
-				 X += cps[cy].setWidth * letterSpacing * spaceSize;
-				 //glTranslated(cps[cy].width, 0, 0);
+				prevCy = -1;
 		  } else if(cy > -1){
+	            X += getKerning(cy,prevCy);
 				drawCharAsShape((unsigned char)c[index], X, Y);
-				X += cps[cy].setWidth * letterSpacing;
-				//glTranslated(cps[cy].setWidth, 0, 0);
+				X += cps[cy].advance * letterSpacing;
 		  }
 		}
 		index++;
+		prevCy = cy;
 	}
 
 }

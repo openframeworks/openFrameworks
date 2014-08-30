@@ -464,7 +464,7 @@ bool ofxAndroidSoundPlayer::isLoaded(){
 		return 0;
 	}
 
-	jmethodID javaIsLoadedMethod = env->GetMethodID(javaClass,"isLoaded","(V)Z");
+	jmethodID javaIsLoadedMethod = env->GetMethodID(javaClass,"isLoaded","()Z");
 	if(!javaIsLoadedMethod){
 		ofLogError("ofxAndroidSoundPlayer") << "isLoaded(): couldn't get java isLoaded for SoundPlayer";
 		return 0;

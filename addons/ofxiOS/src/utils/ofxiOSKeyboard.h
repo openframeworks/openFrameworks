@@ -15,7 +15,6 @@
 {
 	UITextField*			_textField;
 	bool					open;
-	char *					_ctext;
 	int						_x;
 	int						_y;
 	int						_w;
@@ -27,7 +26,7 @@
 - (id) init: (int)x y:(int)y width:(int)w height:(int)h;
 - (void) showText;
 - (void) hideText;
-- (char *) getText;
+- (const char *) getText;
 - (const char*) getLabelText;
 - (void) setText: (NSString *)text;
 - (void) setFontSize: (int)size;
@@ -69,7 +68,7 @@ public:
 	void setMaxChars(int max);
 	
 	string getText();
-	string getLabelText();
+    OF_DEPRECATED_MSG("Use getText() instead.", string getLabelText());
 	bool isKeyboardShowing();
 	
 	

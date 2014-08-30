@@ -1,5 +1,7 @@
 #pragma once
 #include "ofColor.h"
+#include "ofShader.h"
+#include "ofBaseTypes.h"
 
 /**
  * Material concept: "Anything graphical applied to the polygons"
@@ -15,7 +17,7 @@
  */
 
 
-class ofMaterial {
+class ofMaterial: public ofBaseMaterial {
 public:
 	ofMaterial();
 	virtual ~ofMaterial(){};
@@ -35,10 +37,15 @@ public:
 	float getShininess();
 	
 	// apply the material
-	virtual void begin();
-	virtual void end();
-	
+	void begin();
+	void end();
+
 private:
+	void initShaders();
+	void beginShader(int texType);
+	string vertexSource(int maxLights, bool hasTexture, bool textureRect);
+	string fragmentSource(int maxLights, bool hasTexture, bool textureRect);
+
 	ofFloatColor diffuse;
 	ofFloatColor ambient;
 	ofFloatColor specular;
@@ -51,4 +58,14 @@ private:
 	ofFloatColor prev_specular, prev_specular_back;
 	ofFloatColor prev_emissive, prev_emissive_back;
 	float prev_shininess, prev_shininess_back;
+
+	ofShader * currentShader;
+
+	static ofShader shaderNoTexture;
+	static ofShader shaderTexture2D;
+	static ofShader shaderTextureRect;
+	static bool shadersInitialized;
+	static size_t shaderLights;
+	static string vertexShader;
+	static string fragmentShader;
 };

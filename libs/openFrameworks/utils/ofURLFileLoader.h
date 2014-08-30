@@ -1,14 +1,7 @@
 #pragma once
-
-#include <deque>
-#include <queue>
-
-#include "ofThread.h"
 #include "ofEvents.h"
 #include "ofFileUtils.h"
-
-#include "Poco/Condition.h"
-
+#include "ofTypes.h"
 
 class ofHttpRequest{
 public:
@@ -34,7 +27,8 @@ private:
 
 class ofHttpResponse{
 public:
-	ofHttpResponse(){}
+	ofHttpResponse()
+	:status(0){}
 
 	ofHttpResponse(ofHttpRequest request,const ofBuffer & data,int status, string error)
 	:request(request)
@@ -64,6 +58,8 @@ int ofSaveURLAsync(string url, string path);
 void ofRemoveURLRequest(int id);
 void ofRemoveAllURLRequests();
 
+void ofStopURLLoader();
+
 ofEvent<ofHttpResponse> & ofURLResponseEvent();
 
 template<class T>
@@ -76,11 +72,10 @@ void ofUnregisterURLNotification(T * obj){
 	ofRemoveListener(ofURLResponseEvent(),obj,&T::urlResponse);
 }
 
+class ofBaseURLFileLoader;
 
-class ofURLFileLoader : public ofThread  {
-
+class ofURLFileLoader  {
     public:
-
         ofURLFileLoader();	
         ofHttpResponse get(string url);
         int getAsync(string url, string name=""); // returns id
@@ -90,21 +85,6 @@ class ofURLFileLoader : public ofThread  {
 		void clear();
         void stop();
 
-    protected:
-
-		// threading -----------------------------------------------
-		void threadedFunction();
-        void start();
-        void update(ofEventArgs & args);  // notify in update so the notification is thread safe
-
     private:
-
-		// perform the requests on the thread
-        ofHttpResponse handleRequest(ofHttpRequest request);
-
-		deque<ofHttpRequest> requests;
-		queue<ofHttpResponse> responses;
-
-		Poco::Condition condition;
-
+        shared_ptr<ofBaseURLFileLoader> impl;
 };

@@ -428,8 +428,6 @@ void ofPath::setPolyWindingMode(ofPolyWindingMode newMode){
 void ofPath::setFilled(bool hasFill){
 	if(bFill != hasFill){
 		bFill = hasFill;
-		if(bFill) strokeWidth = 0;
-		else if(strokeWidth==0) strokeWidth = 1;
 		if(!cachedTessellationValid) bNeedsTessellation = true;
 	}
 }

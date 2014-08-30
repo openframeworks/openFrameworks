@@ -59,7 +59,6 @@ public:
 	virtual void setPosition(float x, float y);
 protected:
 	virtual void render();
-    void registerMouseEvents();
     virtual bool setValue(float mx, float my, bool bCheck);
     void sizeChangedCB();
     

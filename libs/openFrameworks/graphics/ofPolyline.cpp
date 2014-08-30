@@ -162,7 +162,7 @@ void ofPolyline::setCircleResolution(int res){
 // should always be radians?  or should this take degrees?
 // used internally, so perhaps not as important
 float ofPolyline::wrapAngle(float angleRadians) {
-	return ofWrap(angleRadians, 0.0, TWO_PI);
+	return ofWrap(angleRadians, 0.0f, TWO_PI);
 }
 
 //----------------------------------------------------------
@@ -1007,5 +1007,46 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
         
         if(isClosed()) lengths.push_back(length);
     }
+}
+
+
+//--------------------------------------------------
+vector<ofPoint>::iterator ofPolyline::begin(){
+	return points.begin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::iterator ofPolyline::end(){
+	return points.end();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_iterator ofPolyline::begin() const{
+	return points.begin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_iterator ofPolyline::end() const{
+	return points.end();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::reverse_iterator ofPolyline::rbegin(){
+	return points.rbegin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::reverse_iterator ofPolyline::rend(){
+	return points.rend();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_reverse_iterator ofPolyline::rbegin() const{
+	return points.rbegin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_reverse_iterator ofPolyline::rend() const{
+	return points.rend();
 }
 

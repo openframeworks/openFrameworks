@@ -66,7 +66,7 @@ enum ofAppEGLWindowType {
 typedef map<EGLint,EGLint> ofEGLAttributeList;
 typedef map<EGLint,EGLint>::iterator ofEGLAttributeListIterator;
 
-class ofAppEGLWindow : public ofAppBaseWindow, public ofThread {
+class ofAppEGLWindow : public ofAppBaseGLESWindow, public ofThread {
 public:
 
 	struct Settings;
@@ -76,7 +76,7 @@ public:
 	virtual ~ofAppEGLWindow();
 
 	void exit(ofEventArgs &e);
-
+    void setThreadTimeout(long timeOut){ threadTimeout = timeOut; }
     void setGLESVersion(int glesVersion);
 	virtual void setupOpenGL(int w, int h, int screenMode);
 
@@ -192,6 +192,10 @@ protected:
 	// void setMouseScaleX(float x);
 	// float getMouseScaleY() const;
 	// void setMouseScaleY(float y);
+	
+	bool hasMouse() { return mouseDetected; }
+	bool hasKeyboard() { return keyboardDetected; }
+	
 
 //------------------------------------------------------------
 // EGL
@@ -271,7 +275,7 @@ protected:
 
 	void setupNativeUDev();
 	void destroyNativeUDev();
-
+	
 	void setupNativeMouse();
 	void setupNativeKeyboard();
 
@@ -287,5 +291,7 @@ protected:
 private:
 	Settings 			settings;
 	int glesVersion;
-
+	bool keyboardDetected;
+	bool mouseDetected;
+	long threadTimeout;
 };

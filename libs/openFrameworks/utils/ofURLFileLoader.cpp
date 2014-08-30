@@ -1,37 +1,75 @@
-#include "Poco/Net/HTTPSession.h"
-#include "Poco/Net/HTTPClientSession.h"
-#include "Poco/Net/HTTPSClientSession.h"
-#include "Poco/Net/HTTPRequest.h"
-#include "Poco/Net/HTTPResponse.h"
-#include "Poco/StreamCopier.h"
-#include "Poco/Path.h"
-#include "Poco/URI.h"
-#include "Poco/Exception.h"
-#include "Poco/URIStreamOpener.h"
-#include "Poco/Net/HTTPStreamFactory.h"
-#include "Poco/Net/HTTPSStreamFactory.h"
-#include "Poco/Net/SSLManager.h"
-#include "Poco/Net/KeyConsoleHandler.h"
-#include "Poco/Net/ConsoleCertificateHandler.h"
-
 #include "ofURLFileLoader.h"
+#include "ofBaseTypes.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
-using namespace Poco::Net;
-
-using namespace Poco;
-
 #include "ofConstants.h"
 
-static bool factoryLoaded = false;
+#ifndef TARGET_IMPLEMENTS_URL_LOADER
+	#include "Poco/Net/HTTPSession.h"
+	#include "Poco/Net/HTTPClientSession.h"
+	#include "Poco/Net/HTTPSClientSession.h"
+	#include "Poco/Net/HTTPRequest.h"
+	#include "Poco/Net/HTTPResponse.h"
+	#include "Poco/StreamCopier.h"
+	#include "Poco/Path.h"
+	#include "Poco/URI.h"
+	#include "Poco/Exception.h"
+	#include "Poco/URIStreamOpener.h"
+	#include "Poco/Net/HTTPStreamFactory.h"
+	#include "Poco/Net/HTTPSStreamFactory.h"
+	#include "Poco/Net/SSLManager.h"
+	#include "Poco/Net/KeyConsoleHandler.h"
+	#include "Poco/Net/ConsoleCertificateHandler.h"
+	#include "Poco/Condition.h"
+
+	#include <deque>
+	#include <queue>
+
+	#include "ofThread.h"
+
+	using namespace Poco::Net;
+	using namespace Poco;
+
+	static bool factoryLoaded = false;
+#endif
+
 int	ofHttpRequest::nextID = 0;
+
 ofEvent<ofHttpResponse> & ofURLResponseEvent(){
 	static ofEvent<ofHttpResponse> * event = new ofEvent<ofHttpResponse>;
 	return *event;
 }
 
-ofURLFileLoader::ofURLFileLoader() {
+#ifndef TARGET_IMPLEMENTS_URL_LOADER
+class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
+public:
+	ofURLFileLoaderImpl();
+    ofHttpResponse get(string url);
+    int getAsync(string url, string name=""); // returns id
+    ofHttpResponse saveTo(string url, string path);
+    int saveAsync(string url, string path);
+	void remove(int id);
+	void clear();
+    void stop();
+
+protected:
+	// threading -----------------------------------------------
+	void threadedFunction();
+    void start();
+    void update(ofEventArgs & args);  // notify in update so the notification is thread safe
+
+private:
+	// perform the requests on the thread
+	ofHttpResponse handleRequest(ofHttpRequest request);
+
+	deque<ofHttpRequest> requests;
+	queue<ofHttpResponse> responses;
+
+	Poco::Condition condition;
+};
+
+ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
 	if(!factoryLoaded){
 		try {
 			HTTPStreamFactory::registerFactory();
@@ -45,16 +83,19 @@ ofURLFileLoader::ofURLFileLoader() {
 		catch (Poco::SystemException & PS) {
 			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
 		}
+		catch (Poco::ExistsException & PS) {
+			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
+		}
 	}
 }
 
-ofHttpResponse ofURLFileLoader::get(string url) {
+ofHttpResponse ofURLFileLoaderImpl::get(string url) {
     ofHttpRequest request(url,url);
     return handleRequest(request);
 }
 
 
-int ofURLFileLoader::getAsync(string url, string name){
+int ofURLFileLoaderImpl::getAsync(string url, string name){
 	if(name=="") name=url;
 	ofHttpRequest request(url,name);
 	lock();
@@ -65,12 +106,12 @@ int ofURLFileLoader::getAsync(string url, string name){
 }
 
 
-ofHttpResponse ofURLFileLoader::saveTo(string url, string path){
+ofHttpResponse ofURLFileLoaderImpl::saveTo(string url, string path){
     ofHttpRequest request(url,path,true);
     return handleRequest(request);
 }
 
-int ofURLFileLoader::saveAsync(string url, string path){
+int ofURLFileLoaderImpl::saveAsync(string url, string path){
 	ofHttpRequest request(url,path,true);
 	lock();
 	requests.push_back(request);
@@ -79,7 +120,7 @@ int ofURLFileLoader::saveAsync(string url, string path){
 	return request.getID();
 }
 
-void ofURLFileLoader::remove(int id){
+void ofURLFileLoaderImpl::remove(int id){
 	Poco::ScopedLock<ofMutex> lock(mutex);
 	for(int i=0;i<(int)requests.size();i++){
 		if(requests[i].getID()==id){
@@ -90,30 +131,31 @@ void ofURLFileLoader::remove(int id){
 	ofLogError("ofURLFileLoader") << "remove(): request " <<  id << " not found";
 }
 
-void ofURLFileLoader::clear(){
+void ofURLFileLoaderImpl::clear(){
 	Poco::ScopedLock<ofMutex> lock(mutex);
 	requests.clear();
 	while(!responses.empty()) responses.pop();
 }
 
-void ofURLFileLoader::start() {
+void ofURLFileLoaderImpl::start() {
      if (isThreadRunning() == false){
-		ofAddListener(ofEvents().update,this,&ofURLFileLoader::update);
-        startThread(true, false);   // blocking, verbose
+		ofAddListener(ofEvents().update,this,&ofURLFileLoaderImpl::update);
+        startThread();
     }else{
     	ofLogVerbose("ofURLFileLoader") << "start(): signaling new request condition";
     	condition.signal();
     }
 }
 
-void ofURLFileLoader::stop() {
+void ofURLFileLoaderImpl::stop() {
     lock();
     stopThread();
     condition.signal();
     unlock();
+    waitForThread();
 }
 
-void ofURLFileLoader::threadedFunction() {
+void ofURLFileLoaderImpl::threadedFunction() {
 	ofLogVerbose("ofURLFileLoader") << "threadedFunction(): starting thread";
 	lock();
 	while( isThreadRunning() == true ){
@@ -149,7 +191,7 @@ void ofURLFileLoader::threadedFunction() {
 	}
 }
 
-ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
+ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 	try {
 		URI uri(request.url);
 		std::string path(uri.getPathAndQuery());
@@ -157,7 +199,7 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 
 		HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
 		HTTPResponse res;
-		ofPtr<HTTPSession> session;
+		shared_ptr<HTTPSession> session;
 		istream * rs;
 		if(uri.getScheme()=="https"){
 			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
@@ -165,13 +207,13 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 			httpsSession->setTimeout(Poco::Timespan(20,0));
 			httpsSession->sendRequest(req);
 			rs = &httpsSession->receiveResponse(res);
-			session = ofPtr<HTTPSession>(httpsSession);
+			session = shared_ptr<HTTPSession>(httpsSession);
 		}else{
 			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
 			httpSession->setTimeout(Poco::Timespan(20,0));
 			httpSession->sendRequest(req);
 			rs = &httpSession->receiveResponse(res);
-			session = ofPtr<HTTPSession>(httpSession);
+			session = shared_ptr<HTTPSession>(httpSession);
 		}
 		if(!request.saveTo){
 			return ofHttpResponse(request,*rs,res.getStatus(),res.getReason());
@@ -205,7 +247,7 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 	
 }	
 
-void ofURLFileLoader::update(ofEventArgs & args){
+void ofURLFileLoaderImpl::update(ofEventArgs & args){
 	lock();
 	while(!responses.empty()){
 		ofHttpResponse response(responses.front());
@@ -219,8 +261,47 @@ void ofURLFileLoader::update(ofEventArgs & args){
 
 }
 
+ofURLFileLoader::ofURLFileLoader()
+:impl(new ofURLFileLoaderImpl){}
+
+#elif defined(TARGET_EMSCRIPTEN)
+#include "ofxEmscriptenURLFileLoader.h"
+ofURLFileLoader::ofURLFileLoader()
+:impl(new ofxEmscriptenURLFileLoader){}
+#endif
+
+ofHttpResponse ofURLFileLoader::get(string url){
+	return impl->get(url);
+}
+
+int ofURLFileLoader::getAsync(string url, string name){
+	return impl->getAsync(url,name);
+}
+
+ofHttpResponse ofURLFileLoader::saveTo(string url, string path){
+	return impl->saveTo(url,path);
+}
+
+int ofURLFileLoader::saveAsync(string url, string path){
+	return impl->saveAsync(url,path);
+}
+
+void ofURLFileLoader::remove(int id){
+	impl->remove(id);
+}
+
+void ofURLFileLoader::clear(){
+	impl->clear();
+}
+
+void ofURLFileLoader::stop(){
+	impl->stop();
+}
+
+static bool initialized = false;
 static ofURLFileLoader & getFileLoader(){
 	static ofURLFileLoader * fileLoader = new ofURLFileLoader;
+	initialized = true;
 	return *fileLoader;
 }
 
@@ -250,4 +331,14 @@ void ofRemoveAllURLRequests(){
 
 void ofStopURLLoader(){
 	getFileLoader().stop();
+}
+
+void ofURLFileLoaderShutdown(){
+	if(initialized){
+		ofRemoveAllURLRequests();
+		ofStopURLLoader();
+		#ifndef TARGET_IMPLEMENTS_URL_LOADER
+			Poco::Net::uninitializeSSL();
+		#endif
+	}
 }

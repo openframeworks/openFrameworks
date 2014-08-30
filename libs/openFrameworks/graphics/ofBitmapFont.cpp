@@ -452,7 +452,7 @@ void ofDrawBitmapCharacterEnd(){
 		charMesh.getTexCoords().resize(vC);
 		bitmappedFontTexture.bind();
 
-		ofPtr<ofGLProgrammableRenderer> programmableRenderer = ofGetGLProgrammableRenderer();
+		shared_ptr<ofGLProgrammableRenderer> programmableRenderer = ofGetGLProgrammableRenderer();
 
 		if (!programmableRenderer){
 			#ifndef TARGET_OPENGLES
@@ -511,7 +511,6 @@ ofMesh & ofBitmapStringGetMesh(const string & text, int x, int y){
 		}
 	}
 	//We do this because its way faster
-	ofDrawBitmapCharacterEnd();
 	charMesh.getVertices().resize(vC);
 	charMesh.getTexCoords().resize(vC);
 	return charMesh;
