@@ -6,6 +6,8 @@
 #include "ofPixels.h"
 #include "ofTypes.h"
 
+class ofShader;
+
 
 #ifdef OF_VIDEO_CAPTURE_IOS
 	#include "ofxiOSVideoGrabber.h"
@@ -65,7 +67,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void				videoSettings();
 		unsigned char 	*	getPixels();
 		ofPixelsRef			getPixelsRef();
-		ofTexture &			getTextureReference();
+		ofTexture &			getTextureReference(int plane=0);
+		ofVec2f 			getTextureScale(int plane);
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
@@ -73,6 +76,9 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void				draw(float x, float y, float w, float h);
 		void				draw(float x, float y);
 		using ofBaseDraws::draw;
+
+		void 				bind();
+		void 				unbind();
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -91,7 +97,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 	private:
 		
-		ofTexture tex;
+		vector<ofTexture> tex;
 		bool bUseTexture;
 		bool bInitialized;
 		shared_ptr<ofBaseVideoGrabber> grabber;
@@ -101,6 +107,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		
 		ofPixelFormat internalPixelFormat;
 		int desiredFramerate;
+	    ofShader * shader;
 };
 
 

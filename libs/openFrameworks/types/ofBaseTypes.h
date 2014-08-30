@@ -194,6 +194,9 @@ public:
 class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexturePlanes,virtual public ofBaseHasPixels{
 public:
 	virtual ~ofBaseVideoDraws(){}
+
+	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
+	virtual ofPixelFormat getPixelFormat() = 0;
 };
 
 //----------------------------------------------------------
@@ -221,7 +224,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual ofPixelFormat getPixelFormat() = 0;
 
 	// implement only if internal API can upload directly to texture
-	virtual ofTexture *	getTexture(){return NULL;};
+	virtual vector<ofTexture>*	getTexture(){return NULL;};
 
 	//should implement!
 	virtual void setVerbose(bool bTalkToMe);

@@ -71,6 +71,28 @@ static int channelsFromPixelFormat(ofPixelFormat format){
 	case OF_PIXELS_GRAY:
 		return 1;
 		break;
+	case OF_PIXELS_GRAY_ALPHA:
+	case OF_PIXELS_RGB565:
+		return 2;
+		break;
+	case OF_PIXELS_NV12:
+	case OF_PIXELS_NV21:
+	case OF_PIXELS_YV12:
+	case OF_PIXELS_I420:
+		return 1;
+		break;
+	case OF_PIXELS_YUY2:
+		return 2;
+		break;
+	case OF_PIXELS_Y:
+	case OF_PIXELS_U:
+	case OF_PIXELS_V:
+		return 1;
+		break;
+	case OF_PIXELS_UV:
+	case OF_PIXELS_VU:
+		return 2;
+		break;
 	default:
 		ofLog(OF_LOG_ERROR,"ofPixels: format doesn't support channels");
 		return 1;
@@ -104,12 +126,14 @@ string ofToString(ofPixelFormat pixelFormat){
 			return "RGBA";
 		case OF_PIXELS_BGRA:
 			return "BGRA";
-		case OF_PIXELS_MONO:
-			return "MONO";
+		case OF_PIXELS_GRAY:
+			return "GRAY";
 		case OF_PIXELS_RGB565:
 			return "RGB565";
 		case OF_PIXELS_NV12:
 			return "NV12";
+		case OF_PIXELS_NV21:
+			return "NV21";
 		case OF_PIXELS_YV12:
 			return "YV12";
 		case OF_PIXELS_I420:
@@ -413,7 +437,7 @@ int ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
 			case OF_PIXELS_VU:
 			case OF_PIXELS_UNKOWN:
 			default:
-				ofLogWarning() << "setting channels not supported for " << ofToString(pixelFormat) << " format";
+				ofLogWarning() << "getting pixel index not supported for " << ofToString(pixelFormat) << " format";
 				return 0;
 				break;
 		}
