@@ -421,7 +421,7 @@ static void add_video_format (ofGstDevice &webcam_device,
 		else if(gst_video_format_from_string(webcam_device.video_formats[i].format_name.c_str()) != ofGstVideoUtils::getGstFormat(desiredPixelFormat)
 				&& gst_video_format_from_string(video_format.format_name.c_str()) == ofGstVideoUtils::getGstFormat(desiredPixelFormat)
 				&& new_framerate == curr_framerate){
-			ofLogVerbose("ofGstVideoGrabber") << "add_video_format(): rgb format with same framerate as other format, replacing existing format";
+			ofLogVerbose("ofGstVideoGrabber") << "add_video_format(): " << webcam_device.video_formats[i].format_name << " format with same framerate as other format, replacing existing format";
 			webcam_device.video_formats[i] = video_format;
 
 		}
