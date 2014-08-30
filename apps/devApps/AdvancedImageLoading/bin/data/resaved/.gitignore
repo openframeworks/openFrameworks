@@ -1,0 +1,3 @@
+# ignore resaved images, but not the folders they are in
+/*/*
+!/*/.gitkeep
