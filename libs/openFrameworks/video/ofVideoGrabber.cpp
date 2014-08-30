@@ -2,11 +2,8 @@
 #include "ofUtils.h"
 #include "ofBaseTypes.h"
 #include "ofConstants.h"
-
-//TODO: allow for non rgb pixel formats to work with textures
-//TODO: getImageBytes()
-//TODO: getBytesPerPixel()
-//TODO: add ofPixels support which would take care of the above
+#include "ofVideoShaderUtils.h"
+#include "ofShader.h"
 
 #ifdef TARGET_ANDROID
 	extern bool ofxAndroidInitGrabber(ofVideoGrabber * grabber);
@@ -23,6 +20,7 @@ ofVideoGrabber::ofVideoGrabber(){
 	desiredFramerate 	= -1;
 	height				= 0;
 	width				= 0;
+	shader 				= NULL;
 
 #ifdef TARGET_ANDROID
 	if(!ofxAndroidInitGrabber(this)) return;
@@ -76,9 +74,18 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	height			= (int)grabber->getHeight();
 
 	if( grabberRunning && bUseTexture ){
-		if(!grabber->getTexture()) tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
-		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
-			tex.setRGToRGBASwizzles(true);
+		if(!grabber->getTexture()){
+			for(int i=0;i<grabber->getPixelsRef().getNumPlanes();i++){
+				ofPixels plane = grabber->getPixelsRef().getPlane(i);
+				tex.push_back(ofTexture());
+				tex[i].allocate(plane);
+				if(ofGetGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
+					tex[i].setRGToRGBASwizzles(true);
+				}
+			}
+		}
+		if(ofIsGLProgrammableRenderer()){
+			shader = ofGetVideoShader(internalPixelFormat);
 		}
 	}
 
@@ -160,13 +167,19 @@ ofPixelsRef ofVideoGrabber::getPixelsRef(){
 
 //------------------------------------
 //for getting a reference to the texture
-ofTexture & ofVideoGrabber::getTextureReference(){
+ofTexture & ofVideoGrabber::getTextureReference(int plane){
 	if(grabber->getTexture() == NULL){
-		return tex;
+		return tex[plane];
 	}
 	else{
-		return *grabber->getTexture();
+		return grabber->getTexture()->at(plane);
 	}
+}
+
+//------------------------------------
+ofVec2f ofVideoGrabber::getTextureScale(int plane){
+	ofClamp(plane,0,tex.size()-1);
+	return ofVec2f(getTextureReference(plane).getWidth()/getWidth(),getTextureReference(plane).getHeight()/getHeight());
 }
 
 //---------------------------------------------------------------------------
@@ -182,7 +195,10 @@ void ofVideoGrabber::update(){
 	if(grabber){
 		grabber->update();
 		if( bUseTexture && !grabber->getTexture() && grabber->isFrameNew() ){
-			tex.loadData(grabber->getPixels(), (int)tex.getWidth(), (int)tex.getHeight(), ofGetGLFormatFromPixelFormat(internalPixelFormat));
+			for(int i=0;i<getPixelsRef().getNumPlanes();i++){
+				ofPixels plane = getPixelsRef().getPlane(i);
+				tex[i].loadData(plane);
+			}
 		}
 	}
 }
@@ -227,13 +243,42 @@ void ofVideoGrabber::resetAnchor(){
 
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y, float _w, float _h){
+	if(shader){
+		shader->begin();
+		ofSetVideoShaderUniforms(*this,*shader);
+	}
 	getTextureReference().draw(_x, _y, _w, _h);
+	if(shader){
+		shader->end();
+	}
 }
 
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y){
-	getTextureReference().draw(_x, _y);
+	draw(_x, _y,width,height);
 }
+
+
+//------------------------------------
+void ofVideoGrabber::bind(){
+	if(shader){
+		shader->begin();
+		ofSetVideoShaderUniforms(*this,*shader);
+	}else{
+		getTextureReference().bind();
+	}
+
+}
+
+//------------------------------------
+void ofVideoGrabber::unbind(){
+	if(shader){
+		shader->end();
+	}else{
+		getTextureReference().unbind();
+	}
+}
+
 
 //----------------------------------------------------------
 float ofVideoGrabber::getHeight(){

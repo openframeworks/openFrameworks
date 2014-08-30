@@ -5,6 +5,8 @@
 #include "ofBaseTypes.h"
 #include "ofTypes.h"
 
+class ofShader;
+
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include "ofGstVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
@@ -79,6 +81,9 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
 		using ofBaseDraws::draw;
+
+		void 				bind();
+		void 				unbind();
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
