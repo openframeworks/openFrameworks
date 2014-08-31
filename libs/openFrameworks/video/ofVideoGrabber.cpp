@@ -2,8 +2,7 @@
 #include "ofUtils.h"
 #include "ofBaseTypes.h"
 #include "ofConstants.h"
-#include "ofVideoShaderUtils.h"
-#include "ofShader.h"
+#include "ofGraphics.h"
 
 #ifdef TARGET_ANDROID
 	extern bool ofxAndroidInitGrabber(ofVideoGrabber * grabber);
@@ -20,7 +19,6 @@ ofVideoGrabber::ofVideoGrabber(){
 	desiredFramerate 	= -1;
 	height				= 0;
 	width				= 0;
-	shader 				= NULL;
 
 #ifdef TARGET_ANDROID
 	if(!ofxAndroidInitGrabber(this)) return;
@@ -83,9 +81,6 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 					tex[i].setRGToRGBASwizzles(true);
 				}
 			}
-		}
-		if(ofIsGLProgrammableRenderer()){
-			shader = ofGetVideoShader(internalPixelFormat);
 		}
 	}
 
@@ -225,6 +220,11 @@ void ofVideoGrabber::setUseTexture(bool bUse){
 	bUseTexture = bUse;
 }
 
+//------------------------------------
+bool ofVideoGrabber::isUsingTexture(){
+	return bUseTexture;
+}
+
 
 //----------------------------------------------------------
 void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
@@ -243,14 +243,7 @@ void ofVideoGrabber::resetAnchor(){
 
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y, float _w, float _h){
-	if(shader){
-		shader->begin();
-		ofSetVideoShaderUniforms(*this,*shader);
-	}
-	getTextureReference().draw(_x, _y, _w, _h);
-	if(shader){
-		shader->end();
-	}
+	ofGetCurrentRenderer()->draw(*this,_x,_y,_w,_h);
 }
 
 //------------------------------------
@@ -261,24 +254,13 @@ void ofVideoGrabber::draw(float _x, float _y){
 
 //------------------------------------
 void ofVideoGrabber::bind(){
-	if(shader){
-		shader->begin();
-		ofSetVideoShaderUniforms(*this,*shader);
-	}else{
-		getTextureReference().bind();
-	}
-
+	ofGetCurrentRenderer()->bind(*this);
 }
 
 //------------------------------------
 void ofVideoGrabber::unbind(){
-	if(shader){
-		shader->end();
-	}else{
-		getTextureReference().unbind();
-	}
+	ofGetCurrentRenderer()->unbind(*this);
 }
-
 
 //----------------------------------------------------------
 float ofVideoGrabber::getHeight(){
