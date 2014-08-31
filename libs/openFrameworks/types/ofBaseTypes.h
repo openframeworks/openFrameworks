@@ -79,6 +79,7 @@ public:
 	virtual ~ofBaseHasTexture(){}
 	virtual ofTexture & getTextureReference()=0;
 	virtual void setUseTexture(bool bUseTex)=0;
+	virtual bool isUsingTexture(){return true;};
 };
 
 class ofBaseHasTexturePlanes: public ofBaseHasTexture{
@@ -308,6 +309,10 @@ public:
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
+	virtual void draw(ofBaseVideoDraws & video, float x, float y, float w, float h)=0;
+
+	virtual void bind(ofBaseVideoDraws & video)=0;
+	virtual void unbind(ofBaseVideoDraws & video)=0;
 
 	//--------------------------------------------
 	// transformations

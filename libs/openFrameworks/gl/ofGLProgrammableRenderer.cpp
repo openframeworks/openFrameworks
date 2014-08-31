@@ -310,6 +310,67 @@ void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, floa
 }
 
 //----------------------------------------------------------
+void ofGLProgrammableRenderer::draw(ofBaseVideoDraws & video, float x, float y, float w, float h){
+	if(!video.isUsingTexture()){
+		return;
+	}
+	ofShader * shader = NULL;
+	if(!usingCustomShader){
+		shader = getVideoShader(video);
+		if(shader){
+			shader->begin();
+			setVideoShaderUniforms(video,*shader);
+		}
+	}
+	video.getTextureReference().draw(x,y,w,h);
+	if(shader){
+		shader->end();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::bind(ofBaseVideoDraws & video){
+	if(!video.isUsingTexture()){
+		return;
+	}
+	ofShader * shader = NULL;
+	bool binded = false;
+	if(!usingCustomShader){
+		shader = getVideoShader(video);
+		if(shader){
+			shader->begin();
+			setVideoShaderUniforms(video,*shader);
+			binded = true;
+		}
+	}
+
+	if(!binded){
+		video.getTextureReference().bind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::unbind(ofBaseVideoDraws & video){
+	if(!video.isUsingTexture()){
+		return;
+	}
+	ofShader * shader = NULL;
+	bool unbinded = false;
+	if(!usingCustomShader){
+		shader = getVideoShader(video);
+		if(shader){
+			shader->end();
+			unbinded = true;
+		}
+	}
+
+	if(!unbinded){
+		video.getTextureReference().unbind();
+	}
+
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::setCurrentFBO(ofFbo * fbo){
 	if(fbo!=NULL){
 		matrixStack.setRenderSurface(*fbo);
@@ -1650,7 +1711,6 @@ static string uniqueVertexShader = vertex_shader_header + STRINGIFY(
 );
 
 // ----------------------------------------------------------------------
-
 static string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
         
 	uniform sampler2D src_tex_unit0;
@@ -1675,6 +1735,100 @@ static string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
 	}
 );
 
+// ----------------------------------------------------------------------
+// video color space conversion shaders
+static string FRAGMENT_SHADER_YUY2 = STRINGIFY(
+	uniform SAMPLER src_tex_unit0;
+	uniform vec4 globalColor;
+
+	IN vec4 colorVarying;
+	IN vec2 texCoordVarying;
+
+    const vec3 offset = vec3(-0.0625, -0.5, -0.5);
+    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);
+    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);
+    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);
+
+
+	void main(){
+        vec3 yuv;
+	    int texX = int(texCoordVarying.x);
+	    yuv.x=texture(src_tex_unit0,texCoordVarying).r;
+	    if(texX%2==1){
+            yuv.y=TEXTURE(src_tex_unit0,vec2(texCoordVarying.x-1.0,texCoordVarying.y)).g;
+            yuv.z=TEXTURE(src_tex_unit0,texCoordVarying).g;
+	    }else{
+	        yuv.y=TEXTURE(src_tex_unit0,texCoordVarying).g;
+	        yuv.z=TEXTURE(src_tex_unit0,vec2(texCoordVarying.x+1.0,texCoordVarying.y)).g;
+	    }
+        yuv += offset;
+        float r = dot(yuv, rcoeff);
+        float g = dot(yuv, gcoeff);
+        float b = dot(yuv, bcoeff);
+        fragColor=vec4(r,g,b,1.0) * globalColor;
+	}
+);
+
+// ----------------------------------------------------------------------
+static string FRAGMENT_SHADER_NV12_NV21 = STRINGIFY(
+	uniform SAMPLER Ytex;
+	uniform SAMPLER UVtex;
+	uniform vec4 globalColor;
+
+	IN vec4 colorVarying;
+	IN vec2 texCoordVarying;
+
+    const vec3 offset = vec3(-0.0625, -0.5, -0.5);
+    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);
+    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);
+    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);
+
+
+	void main(){
+        vec3 yuv;
+	    yuv.x=TEXTURE(Ytex,texCoordVarying).r;
+	    yuv.yz=TEXTURE(UVtex,texCoordVarying * vec2(0.5,0.5)).%r%g;
+        yuv += offset;
+        float r = dot(yuv, rcoeff);
+        float g = dot(yuv, gcoeff);
+        float b = dot(yuv, bcoeff);
+        fragColor=vec4(r,g,b,1.0) * globalColor;
+	}
+);
+
+// ----------------------------------------------------------------------
+static string FRAGMENT_SHADER_PLANAR_YUV = STRINGIFY(
+	uniform SAMPLER Ytex;
+	uniform SAMPLER Utex;
+	uniform SAMPLER Vtex;
+    uniform vec2 tex_scaleY;
+    uniform vec2 tex_scaleU;
+    uniform vec2 tex_scaleV;
+	uniform vec4 globalColor;
+
+	IN vec4 colorVarying;
+	IN vec2 texCoordVarying;
+
+    const vec3 offset = vec3(-0.0625, -0.5, -0.5);
+    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);
+    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);
+    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);
+
+
+	void main(){
+        vec3 yuv;
+	    yuv.x=TEXTURE(Ytex,texCoordVarying * tex_scaleY).r;
+	    yuv.y=TEXTURE(Utex,texCoordVarying * tex_scaleU).r;
+	    yuv.z=TEXTURE(Vtex,texCoordVarying * tex_scaleV).r;
+        yuv += offset;
+        float r = dot(yuv, rcoeff);
+        float g = dot(yuv, gcoeff);
+        float b = dot(yuv, bcoeff);
+        fragColor=vec4(r,g,b,1.0) * globalColor;
+	}
+);
+
+
 static string shaderSource(const string & src, const string & glslVersion){
 	string shaderSrc = src;
 	ofStringReplace(shaderSrc,"%glsl_version%",glslVersion);
@@ -1686,6 +1840,47 @@ static string shaderSource(const string & src, const string & glslVersion){
 	}
 #endif
 	return shaderSrc;
+}
+
+string videoFragmentShaderSource(ofBaseVideoDraws & video, const string & glslVersion){
+	string src;
+	switch(video.getPixelFormat()){
+		case OF_PIXELS_YUY2:
+			src = FRAGMENT_SHADER_YUY2;
+			break;
+		case OF_PIXELS_NV12:
+			src = FRAGMENT_SHADER_NV12_NV21;
+			ofStringReplace(src,"%r%g","rg");
+			break;
+		case OF_PIXELS_NV21:
+			src = FRAGMENT_SHADER_NV12_NV21;
+			ofStringReplace(src,"%r%g","gr");
+			break;
+		case OF_PIXELS_YV12:
+		case OF_PIXELS_I420:
+			src = FRAGMENT_SHADER_PLANAR_YUV;
+			break;
+		case OF_PIXELS_RGB:
+		case OF_PIXELS_BGR:
+		case OF_PIXELS_RGB565:
+		case OF_PIXELS_RGBA:
+		case OF_PIXELS_BGRA:
+		case OF_PIXELS_GRAY:
+		default:
+			break;
+	}
+
+	string header = fragment_shader_header;
+	GLenum textureTarget = video.getTextureReference().getTextureData().textureTarget;
+	if(textureTarget==GL_TEXTURE_2D){
+		header += "#define SAMPLER sampler2D\n";
+	}
+#ifndef TARGET_OPENGLES
+	else if(textureTarget==GL_TEXTURE_RECTANGLE){
+		header += "#define SAMPLER sampler2DRect\n";
+	}
+#endif
+	return shaderSource(header + src,glslVersion);
 }
 
 void ofGLProgrammableRenderer::setup(const string & glslVersion){
@@ -1772,6 +1967,86 @@ void ofGLProgrammableRenderer::setup(const string & glslVersion){
 #endif
 }
 
+ofShader * ofGLProgrammableRenderer::getVideoShader(ofBaseVideoDraws & video){
+	ofShader * shader = NULL;
+	GLenum target = video.getTextureReference().getTextureData().textureTarget;
+	switch(video.getPixelFormat()){
+		case OF_PIXELS_YUY2:
+			if(target==GL_TEXTURE_2D){
+				shader = &getShaderPlanarYUY2();
+			}else{
+				shader = &getShaderPlanarYUY2Rect();
+			}
+			break;
+		case OF_PIXELS_NV12:
+			if(target==GL_TEXTURE_2D){
+				shader = &getShaderNV12();
+			}else{
+				shader = &getShaderNV12Rect();
+			}
+			break;
+		case OF_PIXELS_NV21:
+			if(target==GL_TEXTURE_2D){
+				shader = &getShaderNV21();
+			}else{
+				shader = &getShaderNV21Rect();
+			}
+			break;
+		case OF_PIXELS_YV12:
+		case OF_PIXELS_I420:
+			if(target==GL_TEXTURE_2D){
+				shader = &getShaderPlanarYUV();
+			}else{
+				shader = &getShaderPlanarYUVRect();
+			}
+			break;
+		case OF_PIXELS_RGB:
+		case OF_PIXELS_BGR:
+		case OF_PIXELS_RGB565:
+		case OF_PIXELS_RGBA:
+		case OF_PIXELS_BGRA:
+		case OF_PIXELS_GRAY:
+		default:
+			break;
+	}
+	if(shader && !shader->isLoaded()){
+		shader->setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,ofGetGLSLVersion()));
+		shader->setupShaderFromSource(GL_FRAGMENT_SHADER,videoFragmentShaderSource(video,ofGetGLSLVersion()));
+		shader->bindDefaults();
+		shader->linkProgram();
+	}
+	return shader;
+}
+
+void ofGLProgrammableRenderer::setVideoShaderUniforms(ofBaseVideoDraws & video, ofShader & shader){
+	switch(video.getPixelFormat()){
+		case OF_PIXELS_NV12:
+		case OF_PIXELS_NV21:
+			shader.setUniformTexture("Ytex",video.getTextureReference(0),0);
+			shader.setUniformTexture("UVtex",video.getTextureReference(1),1);
+			shader.setUniform2f("tex_scaleY",video.getTextureScale(0).x,video.getTextureScale(0).y);
+			shader.setUniform2f("tex_scaleUV",video.getTextureScale(1).x,video.getTextureScale(1).y);
+			break;
+		case OF_PIXELS_YV12:
+			shader.setUniformTexture("Ytex",video.getTextureReference(0),0);
+			shader.setUniformTexture("Utex",video.getTextureReference(2),1);
+			shader.setUniformTexture("Vtex",video.getTextureReference(1),2);
+			shader.setUniform2f("tex_scaleY",video.getTextureScale(0).x,video.getTextureScale(0).y);
+			shader.setUniform2f("tex_scaleU",video.getTextureScale(2).x,video.getTextureScale(2).y);
+			shader.setUniform2f("tex_scaleV",video.getTextureScale(1).x,video.getTextureScale(1).y);
+			break;
+		case OF_PIXELS_I420:
+			shader.setUniformTexture("Ytex",video.getTextureReference(0),0);
+			shader.setUniformTexture("Utex",video.getTextureReference(1),1);
+			shader.setUniformTexture("Vtex",video.getTextureReference(2),2);
+			shader.setUniform2f("tex_scaleY",video.getTextureScale(0).x,video.getTextureScale(0).y);
+			shader.setUniform2f("tex_scaleU",video.getTextureScale(1).x,video.getTextureScale(1).y);
+			shader.setUniform2f("tex_scaleV",video.getTextureScale(2).x,video.getTextureScale(2).y);
+			break;
+		default:
+			break;
+	}
+}
 
 ofShader & ofGLProgrammableRenderer::defaultUniqueShader(){
 	static ofShader * shader = new ofShader;
@@ -1819,6 +2094,46 @@ ofShader & ofGLProgrammableRenderer::alphaMask2DShader(){
 }
 
 ofShader & ofGLProgrammableRenderer::bitmapStringShader(){
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+
+ofShader & ofGLProgrammableRenderer::getShaderPlanarYUY2(){
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderNV12(){
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderNV21(){
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderPlanarYUV(){
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+ofShader & ofGLProgrammableRenderer::getShaderPlanarYUY2Rect(){
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderNV12Rect(){
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderNV21Rect(){
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderPlanarYUVRect(){
 	static ofShader * shader = new ofShader;
 	return *shader;
 }

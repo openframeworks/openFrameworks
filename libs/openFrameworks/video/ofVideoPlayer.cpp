@@ -1,8 +1,6 @@
 #include "ofVideoPlayer.h"
 #include "ofUtils.h"
 #include "ofGraphics.h"
-#include "ofShader.h"
-#include "ofVideoShaderUtils.h"
 
 
 
@@ -13,7 +11,6 @@ ofVideoPlayer::ofVideoPlayer (){
 	internalPixelFormat = OF_PIXELS_RGB;
 	height 				= 0;
 	width 				= 0;
-	shader 				= NULL;
 }
 
 //---------------------------------------------------------------------------
@@ -86,9 +83,6 @@ bool ofVideoPlayer::loadMovie(string name){
 				}
         	}else{
         		playerTex = player->getTexture();
-        	}
-        	if(ofIsGLProgrammableRenderer()){
-        		shader = ofGetVideoShader(internalPixelFormat);
         	}
         }
     }
@@ -334,6 +328,11 @@ void ofVideoPlayer::setUseTexture(bool bUse){
 	}
 }
 
+//------------------------------------
+bool ofVideoPlayer::isUsingTexture(){
+	return bUseTexture;
+}
+
 //----------------------------------------------------------
 void ofVideoPlayer::setAnchorPercent(float xPct, float yPct){
 	getTextureReference().setAnchorPercent(xPct, yPct);
@@ -351,14 +350,7 @@ void ofVideoPlayer::resetAnchor(){
 
 //------------------------------------
 void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
-	if(shader){
-		shader->begin();
-		ofSetVideoShaderUniforms(*this,*shader);
-	}
-	getTextureReference().draw(_x, _y, _w, _h);	
-	if(shader){
-		shader->end();
-	}
+	ofGetCurrentRenderer()->draw(*this,_x,_y,_w,_h);
 }
 
 //------------------------------------
@@ -369,22 +361,12 @@ void ofVideoPlayer::draw(float _x, float _y){
 
 //------------------------------------
 void ofVideoPlayer::bind(){
-	if(shader){
-		shader->begin();
-		ofSetVideoShaderUniforms(*this,*shader);
-	}else{
-		getTextureReference().bind();
-	}
-
+	ofGetCurrentRenderer()->bind(*this);
 }
 
 //------------------------------------
 void ofVideoPlayer::unbind(){
-	if(shader){
-		shader->end();
-	}else{
-		getTextureReference().unbind();
-	}
+	ofGetCurrentRenderer()->unbind(*this);
 }
 
 //------------------------------------

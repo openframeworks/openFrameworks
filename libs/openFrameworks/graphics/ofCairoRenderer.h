@@ -42,6 +42,10 @@ public:
 	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(ofBaseVideoDraws & video, float x, float y, float w, float h);
+
+	void bind(ofBaseVideoDraws & video);
+	void unbind(ofBaseVideoDraws & video);
 
 	bool rendersPathPrimitives(){
 		return true;
@@ -145,6 +149,7 @@ private:
 	void setCairoMatrix();
 	ofVec3f transform(ofVec3f vec);
 	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
+	void draw(ofPixels & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
 	deque<ofPoint> curvePoints;
 	cairo_t * cr;

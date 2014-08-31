@@ -6,8 +6,6 @@
 #include "ofPixels.h"
 #include "ofTypes.h"
 
-class ofShader;
-
 
 #ifdef OF_VIDEO_CAPTURE_IOS
 	#include "ofxiOSVideoGrabber.h"
@@ -73,6 +71,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
 		void				setUseTexture(bool bUse);
+		bool 				isUsingTexture();
 		void				draw(float x, float y, float w, float h);
 		void				draw(float x, float y);
 		using ofBaseDraws::draw;
@@ -107,7 +106,6 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		
 		ofPixelFormat internalPixelFormat;
 		int desiredFramerate;
-	    ofShader * shader;
 };
 
 

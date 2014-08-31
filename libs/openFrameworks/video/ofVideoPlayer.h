@@ -5,8 +5,6 @@
 #include "ofBaseTypes.h"
 #include "ofTypes.h"
 
-class ofShader;
-
 #ifdef OF_VIDEO_PLAYER_GSTREAMER
 	#include "ofGstVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofGstVideoPlayer
@@ -76,6 +74,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void				setFrame(int frame);  // frame 0 = first frame...
 
 		void 				setUseTexture(bool bUse);
+		bool 				isUsingTexture();
 		ofTexture &			getTextureReference(int plane=0);
 		ofVec2f 			getTextureScale(int plane);
 		void 				draw(float x, float y, float w, float h);
@@ -119,7 +118,6 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		bool bUseTexture;
 		ofPixelFormat internalPixelFormat;
 	    string moviePath;
-	    ofShader * shader;
 };
 
 
