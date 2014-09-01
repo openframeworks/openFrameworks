@@ -8,21 +8,39 @@ namespace ofxCv {
 	using namespace cv;
 	
 	template <class T>
-	void KalmanPosition_<T>::init(T smoothness, T rapidness) {
-		KF.init(6, 3, 0); // 6 variables (position+velocity) and 3 measurements (position)
-		
-		KF.transitionMatrix = *(Mat_<T>(6, 6) <<
-								1,0,0,1,0,0,
-								0,1,0,0,1,0,
-								0,0,1,0,0,1,
-								0,0,0,1,0,0,
-								0,0,0,0,1,0,
-								0,0,0,0,0,1);
-		
-		measurement = Mat_<T>::zeros(3, 1);
-		
-		KF.statePre = Mat_<T>::zeros(6, 1);
-		
+	void KalmanPosition_<T>::init(T smoothness, T rapidness, bool bUseAccel) {
+		if( bUseAccel ) {
+			KF.init(9, 3, 0); // 9 variables (position+velocity+accel) and 3 measurements (position)
+			
+			KF.transitionMatrix = *(Mat_<T>(9, 9) <<
+									1,0,0,1,0,0,0.5,0,0,
+									0,1,0,0,1,0,0,0.5,0,
+									0,0,1,0,0,1,0,0,0.5,
+									0,0,0,1,0,0,1,0,0,
+									0,0,0,0,1,0,0,1,0,
+									0,0,0,0,0,1,0,0,1,
+									0,0,0,0,0,0,1,0,0,
+									0,0,0,0,0,0,0,1,0,
+									0,0,0,0,0,0,0,0,1);
+			
+			measurement = Mat_<T>::zeros(3, 1);
+			
+			KF.statePre = Mat_<T>::zeros(9, 1);
+		} else {
+			KF.init(6, 3, 0); // 6 variables (position+velocity) and 3 measurements (position)
+			
+			KF.transitionMatrix = *(Mat_<T>(6, 6) <<
+									1,0,0,1,0,0,
+									0,1,0,0,1,0,
+									0,0,1,0,0,1,
+									0,0,0,1,0,0,
+									0,0,0,0,1,0,
+									0,0,0,0,0,1);
+			
+			measurement = Mat_<T>::zeros(3, 1);
+			
+			KF.statePre = Mat_<T>::zeros(6, 1);
+		}
 		setIdentity(KF.measurementMatrix);
 		setIdentity(KF.processNoiseCov, Scalar::all(smoothness));
 		setIdentity(KF.measurementNoiseCov, Scalar::all(rapidness));
@@ -62,8 +80,8 @@ namespace ofxCv {
 	template class KalmanPosition_<float>;
 	
 	template <class T>
-	void KalmanEuler_<T>::init(T smoothness, T rapidness) {
-		KalmanPosition_<T>::init(smoothness, rapidness);
+	void KalmanEuler_<T>::init(T smoothness, T rapidness, bool bUseAccel) {
+		KalmanPosition_<T>::init(smoothness, rapidness, bUseAccel);
 		eulerPrev.x = 0.f;
 		eulerPrev.y = 0.f;
 		eulerPrev.z = 0.f;
