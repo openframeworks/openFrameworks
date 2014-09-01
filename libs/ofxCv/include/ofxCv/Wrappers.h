@@ -382,7 +382,7 @@ cv::name(xMat, yMat, resultMat);\
 	void rotate(S& src, D& dst, double angle, ofColor fill = ofColor::black, int interpolation = INTER_LINEAR) {
 		imitate(dst, src);
 		Mat srcMat = toCv(src), dstMat = toCv(dst);
-		Point2f center(srcMat.rows / 2, srcMat.cols / 2);
+		Point2f center(srcMat.cols / 2, srcMat.rows / 2);
 		Mat rotationMatrix = getRotationMatrix2D(center, angle, 1);
 		warpAffine(srcMat, dstMat, rotationMatrix, srcMat.size(), interpolation, BORDER_CONSTANT, toCv(fill));
 	}
