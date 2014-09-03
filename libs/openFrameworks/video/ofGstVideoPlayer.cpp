@@ -10,6 +10,16 @@
 #include <gst/video/video.h>
 #include <gst/app/gstappsink.h>
 
+//#ifdef TARGET_RASPBERRYPI
+#if GST_VERSION_MAJOR==1 && GST_VERSION_MINOR>=4
+#include <gst/gl/egl/gstgldisplay_egl.h>
+#else
+#include <gst/egl/egl.h>
+#endif
+//#endif
+#include "ofAppEGLWindow.h"
+#include "ofAppRunner.h"
+
 
 ofGstVideoPlayer::ofGstVideoPlayer(){
 	nFrames						= 0;
@@ -56,7 +66,11 @@ bool ofGstVideoPlayer::loadMovie(string name){
 #else
 	GstElement * gstPipeline = gst_element_factory_make("playbin","player");
 #endif
-	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
+	if(internalPixelFormat==OF_PIXELS_NATIVE){
+		g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
+	}else{
+		g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
+	}
 
 	// create the oF appsink for video rgb without sync to clock
 	GstElement * gstSink = gst_element_factory_make("appsink", "app_sink");
@@ -125,11 +139,20 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	}
 #else
 	string mime="video/x-raw";
-	string format = ofGstVideoUtils::getGstFormatName(internalPixelFormat);
 
-	GstCaps *caps = gst_caps_new_simple(mime.c_str(),
-										"format", G_TYPE_STRING, format.c_str(),
-										NULL);
+	GstCaps *caps;
+	if(internalPixelFormat==OF_PIXELS_NATIVE){
+		//caps = gst_caps_new_any();
+		caps = gst_caps_from_string((mime + ",format={RGBA,BGRA,RGB,BGR,RGB16,GRAY8,YV12,I420,NV12,NV21,YUY2}").c_str());
+		/*
+		GstCapsFeatures *features = gst_caps_features_new (GST_CAPS_FEATURE_META_GST_VIDEO_GL_TEXTURE_UPLOAD_META, NULL);
+		gst_caps_set_features (caps, 0, features);*/
+	}else{
+		string format = ofGstVideoUtils::getGstFormatName(internalPixelFormat);
+		caps = gst_caps_new_simple(mime.c_str(),
+											"format", G_TYPE_STRING, format.c_str(),
+											NULL);
+	}
 #endif
 
 
@@ -146,11 +169,10 @@ bool ofGstVideoPlayer::loadMovie(string name){
 		gst_object_unref(appQueuePad);
 		gst_element_add_pad(appBin, ghostPad);
 
-		gst_bin_add_many(GST_BIN(appBin), gstSink, NULL);
-		gst_element_link_many(appQueue, gstSink, NULL);
+		gst_bin_add(GST_BIN(appBin), gstSink);
+		gst_element_link(appQueue, gstSink);
 
 		g_object_set (G_OBJECT(gstPipeline),"video-sink",appBin,(void*)NULL);
-
 	}else{
 		g_object_set (G_OBJECT(gstPipeline),"video-sink",gstSink,(void*)NULL);
 	}
@@ -160,10 +182,31 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	g_object_set (G_OBJECT(gstPipeline),"audio-sink",audioSink,(void*)NULL);
 #endif
 
+#ifdef TARGET_LINUX_ARM
+#if GST_VERSION_MINOR<4
+	/*if(dynamic_cast<ofAppEGLWindow*>(ofGetWindowPtr())){
+		EGLDisplay display = ((ofAppEGLWindow*)ofGetWindowPtr())->getEglDisplay();
+		GstEGLDisplay * gstEGLDisplay = gst_egl_display_new (display,NULL);
+		GstContext *context = gst_context_new_egl_display(gstEGLDisplay,true);
+		GstMessage * msg = gst_message_new_have_context (GST_OBJECT (gstPipeline), context);
+		gst_element_post_message (GST_ELEMENT_CAST (gstPipeline), msg);
+	}*/
+#else
+
+	/*if(dynamic_cast<ofAppEGLWindow*>(ofGetWindowPtr())){
+		EGLDisplay display = ((ofAppEGLWindow*)ofGetWindowPtr())->getEglDisplay();
+		GstGLDisplayEGL * gstEGLDisplay = gst_gl_display_egl_new_with_egl_display (display);
+		GstContext *context = gst_context_new();
+		gst_gl_display_create_context (context, gstEGLDisplay);
+		GstMessage * msg = gst_message_new_have_context (GST_OBJECT (gstPipeline), context);
+		gst_element_post_message (GST_ELEMENT_CAST (gstPipeline), msg);
+	}*/
+#endif
+#endif
 
 	return videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream) &&
 				videoUtils.startPipeline() &&
-				(bIsStream || allocate(internalPixelFormat));
+				(bIsStream || allocate());
 }
 
 void ofGstVideoPlayer::setThreadAppSink(bool threaded){
@@ -171,8 +214,11 @@ void ofGstVideoPlayer::setThreadAppSink(bool threaded){
 }
 
 
-bool ofGstVideoPlayer::allocate(ofPixelFormat pixelFormat){
-	if(bIsAllocated) return true;
+bool ofGstVideoPlayer::allocate(){
+	if(bIsAllocated){
+		ofLogWarning("ofGstVideoPlayer") << "already allocated";
+		return true;
+	}
 
 	guint64 durationNanos = videoUtils.getDurationNanos();
 
@@ -204,7 +250,12 @@ bool ofGstVideoPlayer::allocate(ofPixelFormat pixelFormat){
 			GstVideoInfo info;
 			gst_video_info_init (&info);
 			if (gst_video_info_from_caps (&info, caps)){
-				if(!videoUtils.allocate(info.width,info.height,pixelFormat)) return false;
+				ofPixelFormat format = ofGstVideoUtils::getOFFormat(GST_VIDEO_INFO_FORMAT(&info));
+				if(format!=internalPixelFormat){
+					ofLogNotice("ofGstVideoPlayer") << "allocating as" << info.width << "x" << info.height << " " << info.finfo->description << " " << info.finfo->name;
+					internalPixelFormat = format;
+				}
+				if(!videoUtils.allocate(info.width,info.height,format)) return false;
 			}else{
 				ofLogError("ofGstVideoPlayer") << "allocate(): couldn't query width and height";
 				return false;
@@ -225,12 +276,11 @@ bool ofGstVideoPlayer::allocate(ofPixelFormat pixelFormat){
 		ofLogError("ofGstVideoPlayer") << "allocate(): cannot get sink pad";
 		bIsAllocated = false;
 	}
-
 	return bIsAllocated;
 }
 
 void ofGstVideoPlayer::on_stream_prepared(){
-	if(!bIsAllocated) allocate(internalPixelFormat);
+	if(!bIsAllocated) allocate();
 }
 
 int	ofGstVideoPlayer::getCurrentFrame(){

@@ -58,6 +58,7 @@ public:
 	void 			close();
 
 	void			setVerbose(bool bVerbose);
+	bool			isInitialized();
 
 	ofGstVideoUtils *	getGstVideoUtils();
 private:

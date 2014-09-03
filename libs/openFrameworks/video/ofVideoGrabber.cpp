@@ -162,19 +162,22 @@ ofPixelsRef ofVideoGrabber::getPixelsRef(){
 
 //------------------------------------
 //for getting a reference to the texture
-ofTexture & ofVideoGrabber::getTextureReference(int plane){
+ofTexture & ofVideoGrabber::getTextureReference(){
 	if(grabber->getTexture() == NULL){
-		return tex[plane];
+		return tex[0];
 	}
 	else{
-		return grabber->getTexture()->at(plane);
+		return grabber->getTexture()->at(0);
 	}
 }
 
-//------------------------------------
-ofVec2f ofVideoGrabber::getTextureScale(int plane){
-	ofClamp(plane,0,tex.size()-1);
-	return ofVec2f(getTextureReference(plane).getWidth()/getWidth(),getTextureReference(plane).getHeight()/getHeight());
+vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
+	if(grabber->getTexture() == NULL){
+		return tex;
+	}
+	else{
+		return *grabber->getTexture();
+	}
 }
 
 //---------------------------------------------------------------------------
@@ -189,9 +192,21 @@ bool  ofVideoGrabber::isFrameNew(){
 void ofVideoGrabber::update(){
 	if(grabber){
 		grabber->update();
+		width = grabber->getWidth();
+		height = grabber->getHeight();
 		if( bUseTexture && !grabber->getTexture() && grabber->isFrameNew() ){
-			for(int i=0;i<getPixelsRef().getNumPlanes();i++){
-				ofPixels plane = getPixelsRef().getPlane(i);
+			if(int(tex.size())!=grabber->getPixelsRef().getNumPlanes()){
+				tex.resize(grabber->getPixelsRef().getNumPlanes());
+			}
+			for(int i=0;i<grabber->getPixelsRef().getNumPlanes();i++){
+				ofPixels plane = grabber->getPixelsRef().getPlane(i);
+				bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
+				if(width==0 || height==0 || bDiffPixFormat || !tex[i].isAllocated() ){
+					tex[i].allocate(plane);
+					if(ofGetGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
+						tex[i].setRGToRGBASwizzles(true);
+					}
+				}
 				tex[i].loadData(plane);
 			}
 		}

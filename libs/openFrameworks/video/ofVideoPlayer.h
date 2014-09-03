@@ -75,8 +75,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		void 				setUseTexture(bool bUse);
 		bool 				isUsingTexture();
-		ofTexture &			getTextureReference(int plane=0);
-		ofVec2f 			getTextureScale(int plane);
+		ofTexture &			getTextureReference();
+		vector<ofTexture> & getTexturePlanes();
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
 		using ofBaseDraws::draw;

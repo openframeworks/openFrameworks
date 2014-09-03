@@ -145,6 +145,8 @@ public:
 
 	bool 			setPipeline(string pipeline, ofPixelFormat pixelFormat=OF_PIXELS_RGB, bool isStream=false, int w=-1, int h=-1);
 
+	bool 			setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat 	getPixelFormat();
 	bool 			allocate(int w, int h, ofPixelFormat pixelFormat);
 
 	bool 			isFrameNew();
@@ -160,7 +162,10 @@ public:
 #if GST_VERSION_MAJOR>0
 	static string			getGstFormatName(ofPixelFormat format);
 	static GstVideoFormat	getGstFormat(ofPixelFormat format);
+	static ofPixelFormat	getOFFormat(GstVideoFormat format);
 #endif
+
+	bool			isInitialized();
 
 	// this events happen in a different thread
 	// do not use them for opengl stuff
@@ -170,9 +175,11 @@ public:
 
 protected:
 #if GST_VERSION_MAJOR==0
+	GstFlowReturn process_buffer(GstBuffer * buffer);
 	GstFlowReturn preroll_cb(GstBuffer * buffer);
 	GstFlowReturn buffer_cb(GstBuffer * buffer);
 #else
+	GstFlowReturn process_sample(GstSample * sample);
 	GstFlowReturn preroll_cb(GstSample * buffer);
 	GstFlowReturn buffer_cb(GstSample * buffer);
 #endif
@@ -193,6 +200,7 @@ private:
 	GstSample * 	buffer, *prevBuffer;
 	GstMapInfo mapinfo;
 #endif
+	ofPixelFormat	internalPixelFormat;
 };
 
 

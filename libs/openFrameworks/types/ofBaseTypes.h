@@ -1,13 +1,10 @@
 #pragma once
-#include "ofPoint.h"
-#include "ofRectangle.h"
 #include "ofConstants.h"
-#include "ofColor.h"
-#include "ofMesh.h"
-#include "ofPixels.h"
-#include "ofMatrix4x4.h"
 #include "ofTypes.h"
+#include "ofRectangle.h"
+#include "ofMatrix4x4.h"
 #include "ofURLFileLoader.h"
+#include "ofMesh.h"
 
 class ofAbstractParameter;
 
@@ -18,13 +15,28 @@ typedef ofImage_<unsigned char> ofImage;
 typedef ofImage_<float> ofFloatImage;
 typedef ofImage_<unsigned short> ofShortImage;
 
+template<typename T>
+class ofPixels_;
+
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<float> ofFloatPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+typedef ofPixels& ofPixelsRef;
+
+template<typename T>
+class ofColor_;
+
+typedef ofColor_<unsigned char> ofColor;
+
+class ofVec3f;
+typedef ofVec3f ofPoint;
+
 class ofPath;
 class ofPolyline;
 class ofFbo;
 class of3dPrimitive;
 class ofLight;
 class ofMaterial;
-typedef ofPixels& ofPixelsRef;
 class ofBaseMaterial;
 
 bool ofIsVFlipped();
@@ -85,11 +97,8 @@ public:
 class ofBaseHasTexturePlanes: public ofBaseHasTexture{
 public:
 	virtual ~ofBaseHasTexturePlanes(){}
-	virtual ofTexture & getTextureReference(){
-		return getTextureReference(0);
-	}
-	virtual ofTexture & getTextureReference(int plane)=0;
-	virtual ofVec2f getTextureScale(int plane)=0;
+	virtual ofTexture & getTextureReference()=0;
+	virtual vector<ofTexture> & getTexturePlanes()=0;
 	virtual void setUseTexture(bool bUseTex)=0;
 };
 
@@ -186,6 +195,10 @@ public:
 	virtual ~ofBaseVideo(){}
 	virtual bool isFrameNew()=0;
 	virtual void close()=0;
+	virtual bool isInitialized()=0;
+
+	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
+	virtual ofPixelFormat getPixelFormat() = 0;
 };
 
 
@@ -195,9 +208,6 @@ public:
 class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexturePlanes,virtual public ofBaseHasPixels{
 public:
 	virtual ~ofBaseVideoDraws(){}
-
-	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
-	virtual ofPixelFormat getPixelFormat() = 0;
 };
 
 //----------------------------------------------------------
@@ -220,9 +230,6 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	
 	virtual float	getHeight() = 0;
 	virtual float	getWidth() = 0;
-	
-	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
-	virtual ofPixelFormat getPixelFormat() = 0;
 
 	// implement only if internal API can upload directly to texture
 	virtual vector<ofTexture>*	getTexture(){return NULL;};
@@ -262,9 +269,9 @@ public:
 	virtual bool				isPaused() = 0;
 	virtual bool				isLoaded() = 0;
 	virtual bool				isPlaying() = 0;
-	
-	virtual bool				setPixelFormat(ofPixelFormat pixelFormat) = 0;
-	virtual ofPixelFormat 		getPixelFormat() = 0;
+	virtual bool 				isInitialized(){
+		return isLoaded();
+	}
 		
 	//should implement!
 	virtual float 				getPosition();

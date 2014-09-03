@@ -592,12 +592,20 @@ bool ofGstVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 ofPixelFormat ofGstVideoGrabber::getPixelFormat(){
-	return internalPixelFormat;
+	if(videoUtils.isInitialized()){
+		return videoUtils.getPixelFormat();
+	}else{
+		return internalPixelFormat;
+	}
 }
 
 void ofGstVideoGrabber::setVerbose(bool bVerbose){
 	if(bVerbose) ofSetLogLevel("ofGstVideoGrabber", OF_LOG_VERBOSE);
 	else ofSetLogLevel("ofGstVideoGrabber",OF_LOG_NOTICE);
+}
+
+bool ofGstVideoGrabber::isInitialized(){
+	return videoUtils.isInitialized();
 }
 
 ofPixelFormat ofPixelFormatFromGstFormat(string format){
@@ -682,10 +690,13 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 		return false;
 	}
 
-	ofGstVideoFormat & format = selectFormat(w, h, attemptFramerate, internalPixelFormat);
-	ofLogNotice("ofGstVideoGrabber") << "initGrabber(): selected device: " << camData.webcam_devices[deviceID].product_name;
-	ofLogNotice("ofGstVideoGrabber") << "initGrabber(): selected format: " << format.width << "x" << format.height
-		<< " " << format.mimetype << " " << format.format_name << " framerate: " << format.choosen_framerate.numerator << "/" << format.choosen_framerate.denominator;
+	ofGstVideoFormat format;
+	if(internalPixelFormat!=OF_PIXELS_NATIVE){
+		format = selectFormat(w, h, attemptFramerate, internalPixelFormat);
+		ofLogNotice("ofGstVideoGrabber") << "initGrabber(): selected device: " << camData.webcam_devices[deviceID].product_name;
+		ofLogNotice("ofGstVideoGrabber") << "initGrabber(): selected format: " << format.width << "x" << format.height
+			<< " " << format.mimetype << " " << format.format_name << " framerate: " << format.choosen_framerate.numerator << "/" << format.choosen_framerate.denominator;
+	}
 
 	bIsCamera = true;
 
@@ -714,54 +725,61 @@ bool ofGstVideoGrabber::initGrabber(int w, int h){
 		      format.choosen_framerate.denominator,
 		      decodebin, scale);
 #else
-	const char * decodebin = "";
-	if(format.mimetype == "video/x-bayer")
-		decodebin = "! bayer2rgb ";
-	else if(gst_video_format_from_string(format.format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED || gst_video_format_from_string(format.format_name.c_str()) ==GST_VIDEO_FORMAT_UNKNOWN)
-		decodebin = "! decodebin ";
-
-	const char * scale = "";
-	if(format.format_name!=ofGstVideoUtils::getGstFormatName(internalPixelFormat)){
-		scale = "! videoconvert ";
-	}
-
-	if( w!=format.width || h!=format.height ){
-		scale = "! videoscale method=2 ";
-	}
-
+	string pipeline_string;
 	string format_str_pipeline;
-	gchar* pipeline_string;
-	if(format.format_name==""){
-		format_str_pipeline = "%s name=video_source device=%s ! "
-								 "%s,width=%d,height=%d,framerate=%d/%d "
-								 "%s %s ";
+	if(internalPixelFormat!=OF_PIXELS_NATIVE){
+		string decodebin, scale;
+		if(format.mimetype == "video/x-bayer")
+			decodebin = "! bayer2rgb ";
+		else if(gst_video_format_from_string(format.format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED || gst_video_format_from_string(format.format_name.c_str()) ==GST_VIDEO_FORMAT_UNKNOWN)
+			decodebin = "! decodebin ";
 
-		pipeline_string=g_strdup_printf (
-					      format_str_pipeline.c_str(),
-					      camData.webcam_devices[deviceID].gstreamer_src.c_str(),
-					      camData.webcam_devices[deviceID].video_device.c_str(),
-					      format.mimetype.c_str(),
-					      format.width,
-					      format.height,
-					      format.choosen_framerate.numerator,
-					      format.choosen_framerate.denominator,
-					      decodebin, scale);
+		if(format.format_name!=ofGstVideoUtils::getGstFormatName(internalPixelFormat)){
+			scale = "! videoconvert ";
+		}
+
+		if( w!=format.width || h!=format.height ){
+			scale = "! videoscale method=2 ";
+		}
+		if(format.format_name==""){
+			format_str_pipeline = "%s name=video_source device=%s ! "
+									 "%s,width=%d,height=%d,framerate=%d/%d "
+									 "%s %s ";
+
+			pipeline_string=g_strdup_printf (
+							  format_str_pipeline.c_str(),
+							  camData.webcam_devices[deviceID].gstreamer_src.c_str(),
+							  camData.webcam_devices[deviceID].video_device.c_str(),
+							  format.mimetype.c_str(),
+							  format.width,
+							  format.height,
+							  format.choosen_framerate.numerator,
+							  format.choosen_framerate.denominator,
+							  decodebin.c_str(), scale.c_str());
+		}else{
+			format_str_pipeline = "%s name=video_source device=%s ! "
+									 "%s,format=%s,width=%d,height=%d,framerate=%d/%d "
+									 "%s %s ";
+
+			pipeline_string=g_strdup_printf (
+							  format_str_pipeline.c_str(),
+							  camData.webcam_devices[deviceID].gstreamer_src.c_str(),
+							  camData.webcam_devices[deviceID].video_device.c_str(),
+							  format.mimetype.c_str(),
+							  format.format_name.c_str(),
+							  format.width,
+							  format.height,
+							  format.choosen_framerate.numerator,
+							  format.choosen_framerate.denominator,
+							  decodebin.c_str(), scale.c_str());
+		}
 	}else{
-		format_str_pipeline = "%s name=video_source device=%s ! "
-								 "%s,format=%s,width=%d,height=%d,framerate=%d/%d "
-								 "%s %s ";
-
+		format_str_pipeline = "v4l2src name=video_source device=/dev/video%d ! video/x-raw,framerate=%d/1";
 		pipeline_string=g_strdup_printf (
-					      format_str_pipeline.c_str(),
-					      camData.webcam_devices[deviceID].gstreamer_src.c_str(),
-					      camData.webcam_devices[deviceID].video_device.c_str(),
-					      format.mimetype.c_str(),
-					      format.format_name.c_str(),
-					      format.width,
-					      format.height,
-					      format.choosen_framerate.numerator,
-					      format.choosen_framerate.denominator,
-					      decodebin, scale);
+				format_str_pipeline.c_str(),
+				deviceID,attemptFramerate);
+
+
 	}
 #endif
 

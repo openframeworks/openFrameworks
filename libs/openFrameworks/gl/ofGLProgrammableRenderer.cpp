@@ -311,7 +311,7 @@ void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, floa
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(ofBaseVideoDraws & video, float x, float y, float w, float h){
-	if(!video.isUsingTexture()){
+	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
 		return;
 	}
 	ofShader * shader = NULL;
@@ -330,7 +330,7 @@ void ofGLProgrammableRenderer::draw(ofBaseVideoDraws & video, float x, float y, 
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(ofBaseVideoDraws & video){
-	if(!video.isUsingTexture()){
+	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
 		return;
 	}
 	ofShader * shader = NULL;
@@ -351,7 +351,7 @@ void ofGLProgrammableRenderer::bind(ofBaseVideoDraws & video){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(ofBaseVideoDraws & video){
-	if(!video.isUsingTexture()){
+	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
 		return;
 	}
 	ofShader * shader = NULL;
@@ -1738,94 +1738,97 @@ static string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
 // ----------------------------------------------------------------------
 // video color space conversion shaders
 static string FRAGMENT_SHADER_YUY2 = STRINGIFY(
-	uniform SAMPLER src_tex_unit0;
-	uniform vec4 globalColor;
+	uniform SAMPLER src_tex_unit0;\n
+	uniform vec4 globalColor;\n
 
-	IN vec4 colorVarying;
-	IN vec2 texCoordVarying;
+	IN vec4 colorVarying;\n
+	IN vec2 texCoordVarying;\n
+	uniform float onePixel;\n
+	uniform float textureWidth;\n
 
-    const vec3 offset = vec3(-0.0625, -0.5, -0.5);
-    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);
-    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);
-    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);
+    const vec3 offset = vec3(-0.0625, -0.5, -0.5);\n
+    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n
+    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);\n
+    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
 
 
-	void main(){
-        vec3 yuv;
-	    int texX = int(texCoordVarying.x);
-	    yuv.x=texture(src_tex_unit0,texCoordVarying).r;
-	    if(texX%2==1){
-            yuv.y=TEXTURE(src_tex_unit0,vec2(texCoordVarying.x-1.0,texCoordVarying.y)).g;
-            yuv.z=TEXTURE(src_tex_unit0,texCoordVarying).g;
-	    }else{
-	        yuv.y=TEXTURE(src_tex_unit0,texCoordVarying).g;
-	        yuv.z=TEXTURE(src_tex_unit0,vec2(texCoordVarying.x+1.0,texCoordVarying.y)).g;
-	    }
-        yuv += offset;
-        float r = dot(yuv, rcoeff);
-        float g = dot(yuv, gcoeff);
-        float b = dot(yuv, bcoeff);
-        fragColor=vec4(r,g,b,1.0) * globalColor;
-	}
+	void main(){\n
+        vec3 yuv;\n
+	    yuv.x=TEXTURE(src_tex_unit0,texCoordVarying).r;\n
+		float x = texCoordVarying.x * textureWidth;\n
+		if(mod(x,2.0)>0.5){\n
+			yuv.y=TEXTURE(src_tex_unit0,vec2(texCoordVarying.x-onePixel,texCoordVarying.y)).%g;\n
+			yuv.z=TEXTURE(src_tex_unit0,texCoordVarying).%g;\n
+		}else{\n
+			yuv.y=TEXTURE(src_tex_unit0,texCoordVarying).%g;\n
+			yuv.z=TEXTURE(src_tex_unit0,vec2(texCoordVarying.x+onePixel,texCoordVarying.y)).%g;\n
+		}\n
+        yuv += offset;\n
+        float r = dot(yuv, rcoeff);\n
+        float g = dot(yuv, gcoeff);\n
+        float b = dot(yuv, bcoeff);\n
+        FRAG_COLOR=vec4(r,g,b,1.0) * globalColor;\n
+	}\n
 );
 
 // ----------------------------------------------------------------------
 static string FRAGMENT_SHADER_NV12_NV21 = STRINGIFY(
-	uniform SAMPLER Ytex;
-	uniform SAMPLER UVtex;
-	uniform vec4 globalColor;
+	uniform SAMPLER Ytex;\n
+	uniform SAMPLER UVtex;\n
+	uniform vec4 globalColor;\n
+    uniform vec2 tex_scaleUV;\n
 
-	IN vec4 colorVarying;
-	IN vec2 texCoordVarying;
+	IN vec4 colorVarying;\n
+	IN vec2 texCoordVarying;\n
 
-    const vec3 offset = vec3(-0.0625, -0.5, -0.5);
-    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);
-    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);
-    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);
+    const vec3 offset = vec3(-0.0625, -0.5, -0.5);\n
+    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n
+    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);\n
+    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
 
 
-	void main(){
-        vec3 yuv;
-	    yuv.x=TEXTURE(Ytex,texCoordVarying).r;
-	    yuv.yz=TEXTURE(UVtex,texCoordVarying * vec2(0.5,0.5)).%r%g;
-        yuv += offset;
-        float r = dot(yuv, rcoeff);
-        float g = dot(yuv, gcoeff);
-        float b = dot(yuv, bcoeff);
-        fragColor=vec4(r,g,b,1.0) * globalColor;
-	}
+	void main(){\n
+        vec3 yuv;\n
+	    yuv.x=TEXTURE(Ytex,texCoordVarying).r;\n
+	    yuv.yz=TEXTURE(UVtex,texCoordVarying * tex_scaleUV).%r%g;\n
+        yuv += offset;\n
+        float r = dot(yuv, rcoeff);\n
+        float g = dot(yuv, gcoeff);\n
+        float b = dot(yuv, bcoeff);\n
+        FRAG_COLOR=vec4(r,g,b,1.0) * globalColor;\n
+	}\n
 );
 
 // ----------------------------------------------------------------------
 static string FRAGMENT_SHADER_PLANAR_YUV = STRINGIFY(
-	uniform SAMPLER Ytex;
-	uniform SAMPLER Utex;
-	uniform SAMPLER Vtex;
-    uniform vec2 tex_scaleY;
-    uniform vec2 tex_scaleU;
-    uniform vec2 tex_scaleV;
-	uniform vec4 globalColor;
+	uniform SAMPLER Ytex;\n
+	uniform SAMPLER Utex;\n
+	uniform SAMPLER Vtex;\n
+    uniform vec2 tex_scaleY;\n
+    uniform vec2 tex_scaleU;\n
+    uniform vec2 tex_scaleV;\n
+	uniform vec4 globalColor;\n
 
-	IN vec4 colorVarying;
-	IN vec2 texCoordVarying;
+	IN vec4 colorVarying;\n
+	IN vec2 texCoordVarying;\n
 
-    const vec3 offset = vec3(-0.0625, -0.5, -0.5);
-    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);
-    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);
-    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);
+    const vec3 offset = vec3(-0.0625, -0.5, -0.5);\n
+    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n
+    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);\n
+    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
 
 
-	void main(){
-        vec3 yuv;
-	    yuv.x=TEXTURE(Ytex,texCoordVarying * tex_scaleY).r;
-	    yuv.y=TEXTURE(Utex,texCoordVarying * tex_scaleU).r;
-	    yuv.z=TEXTURE(Vtex,texCoordVarying * tex_scaleV).r;
-        yuv += offset;
-        float r = dot(yuv, rcoeff);
-        float g = dot(yuv, gcoeff);
-        float b = dot(yuv, bcoeff);
-        fragColor=vec4(r,g,b,1.0) * globalColor;
-	}
+	void main(){\n
+        vec3 yuv;\n
+	    yuv.x=TEXTURE(Ytex,texCoordVarying * tex_scaleY).r;\n
+	    yuv.y=TEXTURE(Utex,texCoordVarying * tex_scaleU).r;\n
+	    yuv.z=TEXTURE(Vtex,texCoordVarying * tex_scaleV).r;\n
+        yuv += offset;\n
+        float r = dot(yuv, rcoeff);\n
+        float g = dot(yuv, gcoeff);\n
+        float b = dot(yuv, bcoeff);\n
+        FRAG_COLOR=vec4(r,g,b,1.0) * globalColor;\n
+	}\n
 );
 
 
@@ -1847,14 +1850,27 @@ string videoFragmentShaderSource(ofBaseVideoDraws & video, const string & glslVe
 	switch(video.getPixelFormat()){
 		case OF_PIXELS_YUY2:
 			src = FRAGMENT_SHADER_YUY2;
+			#ifndef TARGET_OPENGLES
+				ofStringReplace(src,"%g","g");
+			#else
+				ofStringReplace(src,"%g","a");
+			#endif
 			break;
 		case OF_PIXELS_NV12:
 			src = FRAGMENT_SHADER_NV12_NV21;
-			ofStringReplace(src,"%r%g","rg");
+			#ifndef TARGET_OPENGLES
+				ofStringReplace(src,"%r%g","rg");
+			#else
+				ofStringReplace(src,"%r%g","ra");
+			#endif
 			break;
 		case OF_PIXELS_NV21:
 			src = FRAGMENT_SHADER_NV12_NV21;
-			ofStringReplace(src,"%r%g","gr");
+			#ifndef TARGET_OPENGLES
+				ofStringReplace(src,"%r%g","gr");
+			#else
+				ofStringReplace(src,"%r%g","ar");
+			#endif
 			break;
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
@@ -2018,30 +2034,86 @@ ofShader * ofGLProgrammableRenderer::getVideoShader(ofBaseVideoDraws & video){
 	return shader;
 }
 
+static float getTextureScaleX(ofBaseVideoDraws & video, int plane){
+	if(!video.getTexturePlanes().empty()){
+		return video.getTexturePlanes()[plane].getWidth()/video.getWidth();
+	}else{
+		return 1.0;
+	}
+}
+
+static float getTextureScaleY(ofBaseVideoDraws & video, int plane){
+	if(!video.getTexturePlanes().empty()){
+		return video.getTexturePlanes()[plane].getHeight()/video.getHeight();
+	}else{
+		return 1.0;
+	}
+}
+
 void ofGLProgrammableRenderer::setVideoShaderUniforms(ofBaseVideoDraws & video, ofShader & shader){
 	switch(video.getPixelFormat()){
+		case OF_PIXELS_YUY2:
+#ifndef TARGET_OPENGLES
+			if(video.getTextureReference().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+				shader.setUniform1f("onePixel",1.0);
+				shader.setUniform1f("textureWidth",1.0);
+			}else{
+#endif
+				shader.setUniform1f("onePixel",1.0/video.getWidth());
+				shader.setUniform1f("textureWidth",video.getWidth());
+#ifndef TARGET_OPENGLES
+			}
+#endif
+			break;
 		case OF_PIXELS_NV12:
 		case OF_PIXELS_NV21:
-			shader.setUniformTexture("Ytex",video.getTextureReference(0),0);
-			shader.setUniformTexture("UVtex",video.getTextureReference(1),1);
-			shader.setUniform2f("tex_scaleY",video.getTextureScale(0).x,video.getTextureScale(0).y);
-			shader.setUniform2f("tex_scaleUV",video.getTextureScale(1).x,video.getTextureScale(1).y);
+			shader.setUniformTexture("Ytex",video.getTexturePlanes()[0],0);
+			shader.setUniformTexture("UVtex",video.getTexturePlanes()[1],1);
+#ifndef TARGET_OPENGLES
+			if(video.getTextureReference().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+				shader.setUniform2f("tex_scaleUV",getTextureScaleX(video,1),getTextureScaleY(video,1));
+			}else{
+#endif
+				shader.setUniform2f("tex_scaleUV",1.0,1.0);
+#ifndef TARGET_OPENGLES
+			}
+#endif
 			break;
 		case OF_PIXELS_YV12:
-			shader.setUniformTexture("Ytex",video.getTextureReference(0),0);
-			shader.setUniformTexture("Utex",video.getTextureReference(2),1);
-			shader.setUniformTexture("Vtex",video.getTextureReference(1),2);
-			shader.setUniform2f("tex_scaleY",video.getTextureScale(0).x,video.getTextureScale(0).y);
-			shader.setUniform2f("tex_scaleU",video.getTextureScale(2).x,video.getTextureScale(2).y);
-			shader.setUniform2f("tex_scaleV",video.getTextureScale(1).x,video.getTextureScale(1).y);
+			shader.setUniformTexture("Ytex",video.getTexturePlanes()[0],0);
+			shader.setUniformTexture("Utex",video.getTexturePlanes()[2],1);
+			shader.setUniformTexture("Vtex",video.getTexturePlanes()[1],2);
+#ifndef TARGET_OPENGLES
+			if(video.getTextureReference().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+				shader.setUniform2f("tex_scaleY",getTextureScaleX(video,0),getTextureScaleY(video,0));
+				shader.setUniform2f("tex_scaleU",getTextureScaleX(video,2),getTextureScaleY(video,2));
+				shader.setUniform2f("tex_scaleV",getTextureScaleX(video,1),getTextureScaleY(video,1));
+			}else{
+#endif
+				shader.setUniform2f("tex_scaleY",1.0,1.0);
+				shader.setUniform2f("tex_scaleU",1.0,1.0);
+				shader.setUniform2f("tex_scaleV",1.0,1.0);
+#ifndef TARGET_OPENGLES
+			}
+#endif
 			break;
 		case OF_PIXELS_I420:
-			shader.setUniformTexture("Ytex",video.getTextureReference(0),0);
-			shader.setUniformTexture("Utex",video.getTextureReference(1),1);
-			shader.setUniformTexture("Vtex",video.getTextureReference(2),2);
-			shader.setUniform2f("tex_scaleY",video.getTextureScale(0).x,video.getTextureScale(0).y);
-			shader.setUniform2f("tex_scaleU",video.getTextureScale(1).x,video.getTextureScale(1).y);
-			shader.setUniform2f("tex_scaleV",video.getTextureScale(2).x,video.getTextureScale(2).y);
+			shader.setUniformTexture("Ytex",video.getTexturePlanes()[0],0);
+			shader.setUniformTexture("Utex",video.getTexturePlanes()[1],1);
+			shader.setUniformTexture("Vtex",video.getTexturePlanes()[2],2);
+#ifndef TARGET_OPENGLES
+			if(video.getTextureReference().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+				shader.setUniform2f("tex_scaleY",getTextureScaleX(video,0),getTextureScaleY(video,0));
+				shader.setUniform2f("tex_scaleU",getTextureScaleX(video,1),getTextureScaleY(video,1));
+				shader.setUniform2f("tex_scaleV",getTextureScaleX(video,2),getTextureScaleY(video,2));
+			}else{
+#endif
+				shader.setUniform2f("tex_scaleY",1.0,1.0);
+				shader.setUniform2f("tex_scaleU",1.0,1.0);
+				shader.setUniform2f("tex_scaleV",1.0,1.0);
+#ifndef TARGET_OPENGLES
+			}
+#endif
 			break;
 		default:
 			break;
@@ -2097,7 +2169,6 @@ ofShader & ofGLProgrammableRenderer::bitmapStringShader(){
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
-
 
 ofShader & ofGLProgrammableRenderer::getShaderPlanarYUY2(){
 	static ofShader * shader = new ofShader;

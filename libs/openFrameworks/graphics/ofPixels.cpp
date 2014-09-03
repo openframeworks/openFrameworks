@@ -237,6 +237,7 @@ void ofPixels_<PixelType>::set(int channel,PixelType val){
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
 		case OF_PIXELS_UNKOWN:
+		default:
 			ofLogWarning() << "setting channels not supported for " << ofToString(pixelFormat) << " format";
 			break;
 	}
@@ -480,6 +481,7 @@ ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
 		case OF_PIXELS_UNKOWN:
+		default:
 			ofLogWarning() << "returning color not supported yet for " << ofToString(pixelFormat) << " format";
 			return 0;
 			break;
@@ -533,6 +535,7 @@ void ofPixels_<PixelType>::setColor(int index, const ofColor_<PixelType>& color)
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
 		case OF_PIXELS_UNKOWN:
+		default:
 			ofLogWarning("ofPixels") << "setting color not supported yet for " << ofToString(pixelFormat) << " format";
 			break;
 	}
@@ -617,6 +620,7 @@ void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
 		case OF_PIXELS_UNKOWN:
+		default:
 			ofLogWarning("ofPixels") << "setting color not supported yet for " << ofToString(pixelFormat) << " format";
 		break;
 	}
