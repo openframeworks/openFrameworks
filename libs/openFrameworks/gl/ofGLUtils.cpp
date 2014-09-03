@@ -492,7 +492,7 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	#elif defined(GL_RGB565)
 		return GL_RGB565;
 	#else
-		return GL_RGB
+		return GL_RGB;
 	#endif
     case OF_PIXELS_GRAY:
     case OF_PIXELS_NV12:
