@@ -60,7 +60,7 @@ public:
 	ofGstVideoUtils * getGstVideoUtils();
 
 protected:
-	bool	allocate(ofPixelFormat pixelFormat);
+	bool	allocate();
 	void	on_stream_prepared();
 
 	// return true to set the message as attended so upstream doesn't try to process it

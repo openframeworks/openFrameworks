@@ -135,6 +135,7 @@ public:
         Pixel operator+(int) const;
         Pixel operator+=(int);
         bool operator!=(Pixel const& rhs) const;
+        bool operator<(Pixel const& rhs) const;
         PixelType & operator[](int idx);
 
 	private:
@@ -163,6 +164,7 @@ public:
         Line operator+(int) const;
         Line operator+=(int);
         bool operator!=(Line const& rhs) const;
+        bool operator<(Line const& rhs) const;
         PixelType * begin();
         PixelType * end();
         const PixelType * begin() const;
@@ -389,6 +391,12 @@ inline bool ofPixels_<PixelType>::Pixel::operator!=(Pixel const& rhs) const{
 
 //----------------------------------------------------------------------
 template<typename PixelType>
+inline bool ofPixels_<PixelType>::Pixel::operator<(Pixel const& rhs) const{
+	return pixel < rhs.pixel;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
 inline PixelType & ofPixels_<PixelType>::Pixel::operator[](int idx){
 	return pixel[idx];
 }
@@ -471,6 +479,12 @@ inline typename ofPixels_<PixelType>::Line  ofPixels_<PixelType>::Line::operator
 template<typename PixelType>
 inline bool ofPixels_<PixelType>::Line::operator!=(typename ofPixels_<PixelType>::Line const& rhs) const{
 	return rhs._begin != _begin || rhs._end != _end || rhs.stride != stride || rhs.lineNum!=lineNum;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline bool ofPixels_<PixelType>::Line::operator<(typename ofPixels_<PixelType>::Line const& rhs) const{
+	return _begin < rhs._begin || _end < rhs._end;
 }
 
 //----------------------------------------------------------------------

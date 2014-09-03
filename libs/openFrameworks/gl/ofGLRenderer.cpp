@@ -251,21 +251,21 @@ void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(ofBaseVideoDraws & video, float x, float y, float w, float h){
-	if(video.isUsingTexture()){
+	if(video.isInitialized() && video.isUsingTexture()){
 		video.getTextureReference().draw(x,y,w,h);
 	}
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::bind(ofBaseVideoDraws & video){
-	if(video.isUsingTexture()){
+	if(video.isInitialized() && video.isUsingTexture()){
 		video.getTextureReference().bind();
 	}
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::unbind(ofBaseVideoDraws & video){
-	if(video.isUsingTexture()){
+	if(video.isInitialized() && video.isUsingTexture()){
 		video.getTextureReference().unbind();
 	}
 }

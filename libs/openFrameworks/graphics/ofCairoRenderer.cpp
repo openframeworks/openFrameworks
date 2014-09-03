@@ -499,6 +499,9 @@ void ofCairoRenderer::draw(ofPath::Command & command){
 
 //--------------------------------------------
 void ofCairoRenderer::draw(ofPixels & raw, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	if(!raw.isAllocated()){
+		return;
+	}
 	bool shouldCrop = sx != 0 || sy != 0 || sw != w || sh != h;
 	ofPixels cropped;
 	if(shouldCrop) {

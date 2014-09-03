@@ -67,7 +67,7 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 
 # Fix for firmware update @
 # https://github.com/Hexxeh/rpi-firmware/commit/ca3703d2d282ac96a97650e2e496276727e1b65b
-ifeq ($(strip $(shell cat /opt/vc/include/interface/vmcs_host/vc_dispmanx.h | grep VC_IMAGE_TRANSFORM_T)),) 
+ifeq ($(strip $(shell cat $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/vc_dispmanx.h | grep VC_IMAGE_TRANSFORM_T)),) 
 PLATFORM_DEFINES += USE_DISPMANX_TRANSFORM_T
 endif
 
@@ -148,7 +148,7 @@ PLATFORM_LIBRARIES += vchiq_arm
 
 # Broadcom hardware interface library
 PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include
-#PLATFORM_HEADER_SEARCH_PATHS+=/opt/vc/include/IL
+PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/IL
 PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vcos/pthreads
 PLATFORM_HEADER_SEARCH_PATHS += /opt/vc/include/interface/vmcs_host/linux
 
@@ -181,13 +181,20 @@ PLATFORM_LIBRARY_SEARCH_PATHS += /opt/vc/lib
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+#PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-egl-$(GST_VERSION)
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGLFWWindow.cpp
 $(info $(PLATFORM_ARCH))
-ifeq ($(CROSS_COMPILING),1)
-	#TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/arm-bcm2708hardfp-linux-gnueabi/bin
-	TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin
-	#GCC_PREFIX =arm-bcm2708hardfp-linux-gnueabi
-	GCC_PREFIX=arm-linux-gnueabihf
+ifeq ($(CROSS_COMPILING),1)	
+	ifneq ($(wildcard $(RPI_ROOT)/etc/debian_version),)
+		#RASPBIAN
+		TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin
+		GCC_PREFIX=arm-linux-gnueabihf
+	else
+		#ARCH LINUX
+		TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-unknown-linux-gnueabihf/bin
+		GCC_PREFIX=arm-unknown-linux-gnueabihf
+	endif
+
     PLATFORM_CXX = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-g++
 	PLATFORM_CC = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-gcc
 	PLATFORM_AR = $(TOOLCHAIN_ROOT)/$(GCC_PREFIX)-ar
@@ -202,8 +209,14 @@ ifeq ($(CROSS_COMPILING),1)
 	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include
 	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vcos/pthreads
 	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/linux
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/
-	PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/arm-linux-gnueabihf
+	ifneq ($(wildcard $(RPI_ROOT)/etc/debian_version),)
+		PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/
+		PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.6/arm-linux-gnueabihf
+	else
+		PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.8.2/
+		PLATFORM_HEADER_SEARCH_PATHS += $(RPI_ROOT)/usr/include/c++/4.8.2/armv6l-unknown-linux-gnueabihf/
+	endif
+	
 	
 	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 	

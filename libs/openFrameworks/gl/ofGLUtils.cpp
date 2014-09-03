@@ -645,7 +645,7 @@ vector<string> ofGLSupportedExtensions(){
 }
 
 bool ofGLCheckExtension(string searchName){
-#ifdef TARGET_OPENGLES
+#if defined( TARGET_OPENGLES ) || defined( TARGET_LINUX )
 	vector<string> extensionsList = ofGLSupportedExtensions();
 	set<string> extensionsSet;
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());

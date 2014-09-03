@@ -65,8 +65,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void				videoSettings();
 		unsigned char 	*	getPixels();
 		ofPixelsRef			getPixelsRef();
-		ofTexture &			getTextureReference(int plane=0);
-		ofVec2f 			getTextureScale(int plane);
+		ofTexture &			getTextureReference();
+		vector<ofTexture> & getTexturePlanes();
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
