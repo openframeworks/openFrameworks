@@ -116,17 +116,16 @@ ofTexture & ofVideoPlayer::getTextureReference(){
 		return tex[0];
 	}
 	else{
-		return (*playerTex)[0];
+		return *playerTex;
 	}
 }
 
 vector<ofTexture> & ofVideoPlayer::getTexturePlanes(){
-	if(playerTex == NULL){
-		return tex;
+	if(playerTex != NULL){
+		tex.clear();
+		tex.push_back(*playerTex);
 	}
-	else{
-		return *playerTex;
-	}
+	return tex;
 }
 
 //---------------------------------------------------------------------------

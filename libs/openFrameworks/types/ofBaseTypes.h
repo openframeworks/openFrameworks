@@ -232,7 +232,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual float	getWidth() = 0;
 
 	// implement only if internal API can upload directly to texture
-	virtual vector<ofTexture>*	getTexture(){return NULL;};
+	virtual ofTexture * getTexture(){return NULL;};
 
 	//should implement!
 	virtual void setVerbose(bool bTalkToMe);
@@ -261,7 +261,7 @@ public:
 	
 	virtual bool 				isFrameNew() = 0;
 	virtual unsigned char * 	getPixels() = 0;
-	virtual vector<ofTexture>*	getTexture(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
+	virtual ofTexture * 		getTexture(){return NULL;};// if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 	
 	virtual float 				getWidth() = 0;
 	virtual float 				getHeight() = 0;
