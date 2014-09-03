@@ -215,7 +215,7 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 #endif
 			return GL_UNSIGNED_SHORT;
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) && defined(GL_RGB565)
 		case GL_RGB565:
 			return GL_UNSIGNED_SHORT_5_6_5;
 		break;
@@ -487,14 +487,12 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	case OF_PIXELS_BGR:
 		return GL_RGB;
     case OF_PIXELS_RGB565:
-	#ifdef TARGET_OPENGLES
-		#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
-			return GL_RGB565_OES;
-		#else
-			return GL_RGB;
-		#endif
-	#else
+	#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
+		return GL_RGB565_OES;
+	#elif defined(GL_RGB565)
 		return GL_RGB565;
+	#else
+		return GL_RGB
 	#endif
     case OF_PIXELS_GRAY:
     case OF_PIXELS_NV12:
