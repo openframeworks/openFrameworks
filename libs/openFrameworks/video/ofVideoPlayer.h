@@ -114,7 +114,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		shared_ptr<ofBaseVideoPlayer>		player;
 		
 		vector<ofTexture> tex;
-		vector<ofTexture> * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
+		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
 		ofPixelFormat internalPixelFormat;
 	    string moviePath;

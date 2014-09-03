@@ -167,17 +167,16 @@ ofTexture & ofVideoGrabber::getTextureReference(){
 		return tex[0];
 	}
 	else{
-		return grabber->getTexture()->at(0);
+		return *grabber->getTexture();
 	}
 }
 
 vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
-	if(grabber->getTexture() == NULL){
-		return tex;
+	if(grabber->getTexture() != NULL){
+		tex.clear();
+		tex.push_back(*grabber->getTexture());
 	}
-	else{
-		return *grabber->getTexture();
-	}
+	return tex;
 }
 
 //---------------------------------------------------------------------------
