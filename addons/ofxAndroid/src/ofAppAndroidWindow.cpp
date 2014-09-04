@@ -109,7 +109,7 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
-void ofAppAndroidWindow::setupOpenGL(int w, int h, int screenMode){
+void ofAppAndroidWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){

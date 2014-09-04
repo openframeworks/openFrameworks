@@ -6,6 +6,7 @@
 #include "Poco/RegularExpression.h"
 #include "ofTexture.h"
 #include "ofMatrix4x4.h"
+#include "ofMatrix3x3.h"
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
@@ -678,6 +679,14 @@ void ofShader::setUniform4fv(const string & name, const float* v, int count) {
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4fv(loc, count, v);
+	}
+}
+	
+//--------------------------------------------------------------
+void ofShader::setUniformMatrix3f(const string & name, const ofMatrix3x3 & m) {
+	if(bLoaded) {
+		int loc = getUniformLocation(name);
+		if (loc != -1) glUniformMatrix3fv(loc, 1, GL_FALSE, &m.a);
 	}
 }
 

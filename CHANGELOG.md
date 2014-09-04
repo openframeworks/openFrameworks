@@ -10,6 +10,9 @@ OF 0.9.0
 
 CORE
 ----
+### app
+	/ setupOpenGL and ofApp___Window use ofWindowMode instead of int
+
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball
 	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events

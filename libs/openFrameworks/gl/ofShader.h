@@ -12,6 +12,7 @@
 #include "ofLog.h"
 class ofTexture;
 class ofMatrix4x4;
+class ofMatrix3x3;
 
 class ofShader {
 public:
@@ -67,6 +68,8 @@ public:
 	void setUniform3fv(const string & name, const float* v, int count = 1);
 	void setUniform4fv(const string & name, const float* v, int count = 1);
 	
+	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
+	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m);
 	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m);
 
 	// set attributes that vary per vertex (look up the location before glBegin)
