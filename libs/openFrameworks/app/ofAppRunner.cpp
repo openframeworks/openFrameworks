@@ -53,12 +53,12 @@ static shared_ptr<ofAppBaseWindow> 		window;
 //--------------------------------------
 #ifdef TARGET_OPENGLES
 static void noopDeleter(ofAppBaseGLESWindow*){}
-void ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, ofWindowMode screenMode){
 	ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
 }
 #else
 static void noopDeleter(ofAppBaseGLWindow*){}
-void ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, ofWindowMode screenMode){
 	ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
 }
 #endif
@@ -212,9 +212,9 @@ string ofGetGLSLVersion(){
 
 //--------------------------------------
 #ifdef TARGET_OPENGLES
-void ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, ofWindowMode screenMode){
 #else
-void ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWindowMode screenMode){
 #endif
     if(!ofGetCurrentRenderer()) {
 	#ifdef TARGET_PROGRAMMABLE_GL
@@ -282,7 +282,7 @@ void ofGLReadyCallback(){
 }
 
 //--------------------------------------
-void ofSetupOpenGL(int w, int h, int screenMode){
+void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 	#ifdef TARGET_NODISPLAY
 		shared_ptr<ofAppBaseWindow> window = shared_ptr<ofAppBaseWindow>(new ofAppNoWindow());
 	#else
@@ -312,11 +312,11 @@ void ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr){
 	window = windowPtr;
 }
 
-void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode screenMode){
 	ofSetWindow(windowPtr);
 }
 
-/*void ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
+/*void ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, ofWindowMode screenMode){
 	ofSetWindow(windowPtr);
 }*/
 

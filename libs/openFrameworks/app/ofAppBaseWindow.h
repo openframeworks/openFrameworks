@@ -16,7 +16,7 @@ public:
 	ofAppBaseWindow(){};
 	virtual ~ofAppBaseWindow(){};
 
-	virtual void setupOpenGL(int w, int h, int screenMode) {}
+	virtual void setupOpenGL(int w, int h, ofWindowMode screenMode) {}
 	virtual void initializeWindow() {}
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr) {}
 	virtual void windowShouldClose(){std::exit(0);}
@@ -41,7 +41,7 @@ public:
 
 	virtual void	setWindowTitle(string title){}
 
-	virtual int		getWindowMode() {return 0;}
+	virtual ofWindowMode	getWindowMode() {return OF_WINDOW ;}
 
 	virtual void	setFullscreen(bool fullscreen){}
 	virtual void	toggleFullscreen(){}
