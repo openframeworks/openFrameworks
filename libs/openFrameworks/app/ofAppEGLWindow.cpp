@@ -440,7 +440,7 @@ void ofAppEGLWindow::setGLESVersion(int _glesVersion){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
+void ofAppEGLWindow::setupOpenGL(int w, int h, ofWindowMode screenMode) {
 
     // we set this here, and if we need to make a fullscreen 
     // app, we do it during the first loop.
@@ -1143,7 +1143,7 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
 }
 
 //------------------------------------------------------------
-int ofAppEGLWindow::getWindowMode(){
+ofWindowMode ofAppEGLWindow::getWindowMode(){
   return windowMode;
 }
 

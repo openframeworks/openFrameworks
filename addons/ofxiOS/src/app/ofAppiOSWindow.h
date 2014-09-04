@@ -42,7 +42,7 @@ public:
 	ofAppiOSWindow();
 	virtual ~ofAppiOSWindow();
     
-	virtual void setupOpenGL(int w, int h, int screenMode);
+	virtual void setupOpenGL(int w, int h, ofWindowMode screenMode);
 	virtual void initializeWindow();
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
     virtual void startAppWithDelegate(string appDelegateClassName);
@@ -66,7 +66,7 @@ public:
 	
 	virtual void setWindowTitle(string title);
 	
-	virtual int getWindowMode();
+	virtual ofWindowMode getWindowMode();
 	
 	virtual void setFullscreen(bool fullscreen);
 	virtual void toggleFullscreen();
@@ -105,7 +105,7 @@ public:
 	
 protected:
     
-    int windowMode;
+    ofWindowMode windowMode;
 
 	bool bEnableSetupScreen;
 	ofOrientation orientation;
