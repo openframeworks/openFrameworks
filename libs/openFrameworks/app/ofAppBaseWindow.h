@@ -19,7 +19,9 @@ public:
 	virtual void setupOpenGL(int w, int h, ofWindowMode screenMode) {}
 	virtual void initializeWindow() {}
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr) {}
-	virtual void windowShouldClose(){std::exit(0);}
+	virtual void windowShouldClose(){
+		std::exit(0);
+	}
 
 	virtual void hideCursor() {}
 	virtual void showCursor() {}
