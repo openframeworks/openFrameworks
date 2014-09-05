@@ -903,7 +903,7 @@ GstVideoFormat	ofGstVideoUtils::getGstFormat(ofPixelFormat format){
 	case OF_PIXELS_YUY2:
 		return GST_VIDEO_FORMAT_YUY2;
 
-	case OF_PIXELS_UNKOWN:
+	case OF_PIXELS_UNKNOWN:
 	case OF_PIXELS_GRAY_ALPHA:
 	case OF_PIXELS_Y:
 	case OF_PIXELS_U:
@@ -952,7 +952,7 @@ ofPixelFormat ofGstVideoUtils::getOFFormat(GstVideoFormat format){
 
 	default:
 		ofLogError() << "non supported format " << format;
-		return OF_PIXELS_UNKOWN;
+		return OF_PIXELS_UNKNOWN;
 	}
 }
 #endif

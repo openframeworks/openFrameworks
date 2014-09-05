@@ -616,7 +616,7 @@ ofPixelFormat ofPixelFormatFromGstFormat(string format){
 	case GST_VIDEO_FORMAT_BGRA: return OF_PIXELS_BGRA;
 	case GST_VIDEO_FORMAT_GRAY8: return OF_PIXELS_MONO;
 	case GST_VIDEO_FORMAT_RGB16: return OF_PIXELS_RGB565;
-	default: return OF_PIXELS_UNKOWN;
+	default: return OF_PIXELS_UNKNOWN;
 	}
 #else
 	ofLogWarning("ofGstVideoGrabber") << "ofPixelFormatFromGstFormat(): only supported for gstreamer 1.0";
