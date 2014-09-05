@@ -79,7 +79,17 @@ void ofURLFileLoaderShutdown();
 		}else{
 			ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
 		}
-		ofExitCallback();
+
+		signal(SIGTERM, NULL);
+		signal(SIGQUIT, NULL);
+		signal(SIGINT,  NULL);
+		signal(SIGHUP,  NULL);
+		signal(SIGABRT, NULL);
+
+		ofAppBaseWindow * w = window.get();
+		if(w){
+			w->windowShouldClose();
+		}
 	}
 #endif
 
@@ -327,12 +337,7 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode scree
 //							at the end of the application
 
 void ofExitCallback(){
-
 	ofNotifyExit();
-	ofAppBaseWindow * w = window.get();
-	if(w){
-		w->windowShouldClose();
-	}
 
 #ifndef TARGET_EMSCRIPTEN
 	ofURLFileLoaderShutdown();

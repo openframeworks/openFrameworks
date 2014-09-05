@@ -36,8 +36,6 @@ static set<int> pressedKeys;
 
 static bool bEscQuits = true;
 
-void ofExitCallback();
-
 
 //--------------------------------------
 void ofSetFrameRate(int _targetRate){
@@ -217,7 +215,7 @@ void ofNotifyKeyPressed(int key, int keycode, int scancode, int codepoint){
 	
 	
 	if (key == OF_KEY_ESC && bEscQuits == true){				// "escape"
-		ofExitCallback();
+		ofGetWindowPtr()->windowShouldClose();
     }
 	
 	
