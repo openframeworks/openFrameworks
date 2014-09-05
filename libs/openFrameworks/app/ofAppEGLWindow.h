@@ -75,13 +75,13 @@ public:
 	ofAppEGLWindow(Settings settings);
 	virtual ~ofAppEGLWindow();
 
-	void exit(ofEventArgs &e);
     void setThreadTimeout(long timeOut){ threadTimeout = timeOut; }
     void setGLESVersion(int glesVersion);
 	virtual void setupOpenGL(int w, int h, ofWindowMode screenMode);
 
 	virtual void initializeWindow();
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	virtual void windowShouldClose();
 
 	virtual void hideCursor();
 	virtual void showCursor();
