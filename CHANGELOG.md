@@ -12,6 +12,7 @@ CORE
 ----
 ### app
 	/ setupOpenGL and ofApp___Window use ofWindowMode instead of int
+	/ fix exit callbacks to allow for calling of the destructors, and better signal handling
 
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball

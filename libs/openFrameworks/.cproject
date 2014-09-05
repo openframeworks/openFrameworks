@@ -24,6 +24,12 @@
 								<option id="gnu.cpp.compiler.option.include.paths.1277340839" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs}&quot;"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.1246423939" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="__cplusplus=201103L"/>
+								</option>
+								<option id="gnu.cpp.compiler.option.preprocessor.undef.1386287801" superClass="gnu.cpp.compiler.option.preprocessor.undef" valueType="undefDefinedSymbols">
+									<listOptionValue builtIn="false" value="__cplusplus"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.518106271" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.98792688" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
