@@ -53,12 +53,12 @@ static shared_ptr<ofAppBaseWindow> 		window;
 //--------------------------------------
 #ifdef TARGET_OPENGLES
 static void noopDeleter(ofAppBaseGLESWindow*){}
-void ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, ofWindowMode screenMode){
 	ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
 }
 #else
 static void noopDeleter(ofAppBaseGLWindow*){}
-void ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, ofWindowMode screenMode){
 	ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
 }
 #endif
@@ -68,13 +68,23 @@ void ofURLFileLoaderShutdown();
 
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
 	#include <signal.h>
+	#include <string.h>
 
 	static bool bExitCalled = false;
-	void sighandler(int sig) {
-		ofLogVerbose("ofAppRunner") << "sighandler caught: " << sig;
-		if(!bExitCalled) {
+
+	void ofSignalHandler(int signum){
+
+		char* pSignalString = strsignal(signum);
+
+		if(pSignalString){
+			ofLogVerbose("ofSignalHandler") << pSignalString;
+		}else{
+			ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
+		}
+
+		if(!bExitCalled){
 			bExitCalled = true;
-			std::exit(0);
+			std::exit(signum);
 		}
 	}
 #endif
@@ -95,15 +105,15 @@ void ofRunApp(ofBaseApp * OFSA){
 
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
 	// see http://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html#Termination-Signals
-	signal(SIGTERM, &sighandler);
-    signal(SIGQUIT, &sighandler);
-	signal(SIGINT,  &sighandler);
+	signal(SIGTERM, &ofSignalHandler);
+	signal(SIGQUIT, &ofSignalHandler);
+	signal(SIGINT,  &ofSignalHandler);
 
-	signal(SIGKILL, &sighandler); // not much to be done here
-	signal(SIGHUP,  &sighandler); // not much to be done here
+	signal(SIGKILL, &ofSignalHandler); // not much to be done here
+	signal(SIGHUP,  &ofSignalHandler); // not much to be done here
 
 	// http://www.gnu.org/software/libc/manual/html_node/Program-Error-Signals.html#Program-Error-Signals
-    signal(SIGABRT, &sighandler);  // abort signal
+	signal(SIGABRT, &ofSignalHandler);  // abort signal
 #endif
 
 
@@ -124,7 +134,6 @@ void ofRunApp(ofBaseApp * OFSA){
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
 	ofSetWorkingDirectoryToDefault();
-	
 
     ofAddListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofAddListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
@@ -212,9 +221,9 @@ string ofGetGLSLVersion(){
 
 //--------------------------------------
 #ifdef TARGET_OPENGLES
-void ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, ofWindowMode screenMode){
 #else
-void ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWindowMode screenMode){
 #endif
     if(!ofGetCurrentRenderer()) {
 	#ifdef TARGET_PROGRAMMABLE_GL
@@ -282,7 +291,7 @@ void ofGLReadyCallback(){
 }
 
 //--------------------------------------
-void ofSetupOpenGL(int w, int h, int screenMode){
+void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 	#ifdef TARGET_NODISPLAY
 		shared_ptr<ofAppBaseWindow> window = shared_ptr<ofAppBaseWindow>(new ofAppNoWindow());
 	#else
@@ -312,11 +321,11 @@ void ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr){
 	window = windowPtr;
 }
 
-void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode){
+void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode screenMode){
 	ofSetWindow(windowPtr);
 }
 
-/*void ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode){
+/*void ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, ofWindowMode screenMode){
 	ofSetWindow(windowPtr);
 }*/
 

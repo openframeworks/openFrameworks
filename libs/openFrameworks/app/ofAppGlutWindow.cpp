@@ -28,7 +28,7 @@ void ofGLReadyCallback();
 
 // glut works with static callbacks UGH, so we need static variables here:
 
-static int			windowMode;
+static ofWindowMode windowMode;
 static bool			bNewScreenMode;
 static int			buttonInUse;
 static bool			bEnableSetupScreen;
@@ -214,7 +214,7 @@ void ofAppGlutWindow::setDoubleBuffering(bool _bDoubleBuffered){
 
 
 //------------------------------------------------------------
-void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
+void ofAppGlutWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 
 	int argc = 1;
 	char *argv = (char*)"openframeworks";
@@ -461,7 +461,7 @@ void ofAppGlutWindow::showCursor(){
 }
 
 //------------------------------------------------------------
-int ofAppGlutWindow::getWindowMode(){
+ofWindowMode ofAppGlutWindow::getWindowMode(){
 	return windowMode;
 }
 

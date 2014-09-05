@@ -135,7 +135,7 @@ void ofAppGLFWWindow::setOpenGLVersion(int major, int minor){
 #endif
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
+void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 
 	requestedWidth = w;
 	requestedHeight = h;
@@ -148,7 +148,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 //	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
-	int requestedMode = screenMode;
+	ofWindowMode requestedMode = screenMode;
 
 	glfwWindowHint(GLFW_RED_BITS, rBits);
 	glfwWindowHint(GLFW_GREEN_BITS, gBits);
@@ -511,7 +511,7 @@ GLFWwindow* ofAppGLFWWindow::getGLFWWindow(){
 }
 
 //------------------------------------------------------------
-int	ofAppGLFWWindow::getWindowMode(){
+ofWindowMode ofAppGLFWWindow::getWindowMode(){
 	return windowMode;
 }
 
@@ -556,7 +556,7 @@ void ofAppGLFWWindow::disableSetupScreen(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
-    int curWindowMode  = windowMode;
+	ofWindowMode curWindowMode = windowMode;
  
   if (fullscreen){
 		windowMode = OF_FULLSCREEN;
