@@ -18,7 +18,7 @@ public:
 	ofxAppEmscriptenWindow();
 	~ofxAppEmscriptenWindow();
 
-	void setupOpenGL(int w, int h, int screenMode);
+	void setupOpenGL(int w, int h, ofWindowMode screenMode);
 	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 
@@ -42,7 +42,7 @@ public:
 
 	void	setWindowTitle(string title);
 
-	int		getWindowMode();
+	ofWindowMode 	getWindowMode();
 
 	void	setFullscreen(bool fullscreen);
 	void	toggleFullscreen();

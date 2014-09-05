@@ -70,7 +70,7 @@ ofAppNoWindow::ofAppNoWindow(){
 }
 
 
-void ofAppNoWindow::setupOpenGL(int w, int h, int screenMode){
+void ofAppNoWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 	width = w;
 	height = h;
 }
