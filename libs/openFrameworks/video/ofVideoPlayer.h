@@ -105,6 +105,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		bool				isPaused();
 		bool				isLoaded();
 		bool				isPlaying();
+		bool				isInitialized();
 
 		//this is kept as legacy to support people accessing width and height directly. 
 		int					height;

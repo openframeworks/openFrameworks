@@ -98,11 +98,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		
 		vector<ofTexture> tex;
 		bool bUseTexture;
-		bool bInitialized;
 		shared_ptr<ofBaseVideoGrabber> grabber;
 		int RequestedDeviceID;
-		
-		bool grabberRunning; //this keeps track of whether the grabber opened sucessfully and is still open. //TODO: maybe expose this in a method? 
 		
 		ofPixelFormat internalPixelFormat;
 		int desiredFramerate;
