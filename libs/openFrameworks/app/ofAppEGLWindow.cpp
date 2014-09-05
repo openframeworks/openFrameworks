@@ -253,7 +253,6 @@ ofAppEGLWindow::ofAppEGLWindow(Settings _settings) {
 
 //------------------------------------------------------------
 ofAppEGLWindow::~ofAppEGLWindow() {
-  ofRemoveListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
 }
 
 //------------------------------------------------------------
@@ -364,22 +363,6 @@ void ofAppEGLWindow::init(Settings _settings) {
     ////////////////
 
     initNative();
-
-    ofAddListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
-}
-
-//------------------------------------------------------------
-void ofAppEGLWindow::exit(ofEventArgs &e) {
-  terminate = true; // TODO, it is unlikely that this will happen
-  if(!isUsingX11) {
-    destroyNativeEvents();
-  }   
-
-  // we got a terminate ... so clean up.
-  destroySurface();
-  destroyWindow();
-
-  exitNative();
 }
 
 //------------------------------------------------------------
@@ -795,7 +778,20 @@ void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
       display();
     }
 
+    if(!isUsingX11) {
+    	destroyNativeEvents();
+    }
+
+    // we got a terminate ... so clean up.
+    destroySurface();
+    destroyWindow();
+
+    exitNative();
     ofLogNotice("ofAppEGLWindow") << "runAppViaInfiniteLoop(): exiting infinite loop";
+}
+
+void ofAppEGLWindow::windowShouldClose(){
+	terminate = true;
 }
 
 //------------------------------------------------------------

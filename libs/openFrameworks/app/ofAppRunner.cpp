@@ -28,7 +28,7 @@
 //========================================================================
 // static variables:
 
-static shared_ptr<ofBaseApp>				OFSAptr;
+static shared_ptr<ofBaseApp>			OFSAptr;
 static shared_ptr<ofAppBaseWindow> 		window;
 
 //========================================================================
@@ -70,9 +70,7 @@ void ofURLFileLoaderShutdown();
 	#include <signal.h>
 	#include <string.h>
 
-	static bool bExitCalled = false;
-
-	void ofSignalHandler(int signum){
+	static void ofSignalHandler(int signum){
 
 		char* pSignalString = strsignal(signum);
 
@@ -81,11 +79,7 @@ void ofURLFileLoaderShutdown();
 		}else{
 			ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
 		}
-
-		if(!bExitCalled){
-			bExitCalled = true;
-			std::exit(signum);
-		}
+		ofExitCallback();
 	}
 #endif
 
@@ -109,7 +103,6 @@ void ofRunApp(ofBaseApp * OFSA){
 	signal(SIGQUIT, &ofSignalHandler);
 	signal(SIGINT,  &ofSignalHandler);
 
-	signal(SIGKILL, &ofSignalHandler); // not much to be done here
 	signal(SIGHUP,  &ofSignalHandler); // not much to be done here
 
 	// http://www.gnu.org/software/libc/manual/html_node/Program-Error-Signals.html#Program-Error-Signals
@@ -336,6 +329,10 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode scree
 void ofExitCallback(){
 
 	ofNotifyExit();
+	ofAppBaseWindow * w = window.get();
+	if(w){
+		w->windowShouldClose();
+	}
 
 #ifndef TARGET_EMSCRIPTEN
 	ofURLFileLoaderShutdown();
