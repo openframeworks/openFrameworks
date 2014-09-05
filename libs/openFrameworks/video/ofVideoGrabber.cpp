@@ -12,13 +12,12 @@
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){
 	bUseTexture			= false;
-	bInitialized		= false;
-	grabberRunning		= false;
 	RequestedDeviceID	= -1;
 	internalPixelFormat = OF_PIXELS_RGB;
 	desiredFramerate 	= -1;
 	height				= 0;
 	width				= 0;
+	tex.resize(1);
 
 #ifdef TARGET_ANDROID
 	if(!ofxAndroidInitGrabber(this)) return;
@@ -54,7 +53,6 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
 
-	bInitialized = true;
 	bUseTexture = setUseTexture;
 
 	if( RequestedDeviceID >= 0 ){
@@ -67,11 +65,11 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		grabber->setDesiredFrameRate(desiredFramerate);
 	}
 
-	grabberRunning	= grabber->initGrabber(w, h);
+	grabber->initGrabber(w, h);
 	width			= (int)grabber->getWidth();
 	height			= (int)grabber->getHeight();
 
-	if( grabberRunning && bUseTexture ){
+	if( grabber->isInitialized() && bUseTexture ){
 		if(!grabber->getTexture()){
 			for(int i=0;i<grabber->getPixelsRef().getNumPlanes();i++){
 				ofPixels plane = grabber->getPixelsRef().getPlane(i);
@@ -84,13 +82,13 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		}
 	}
 
-	return grabberRunning;
+	return grabber->isInitialized();
 }
 
 //--------------------------------------------------------------------
 bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
 	if(grabber){
-		if( grabberRunning ){
+		if( grabber->isInitialized() ){
 			ofLogWarning("ofVideoGrabber") << "setPixelFormat(): can't set pixel format while grabber is running";
 			internalPixelFormat = grabber->getPixelFormat(); 
 			return false;
@@ -134,7 +132,7 @@ void ofVideoGrabber::setVerbose(bool bTalkToMe){
 //--------------------------------------------------------------------
 void ofVideoGrabber::setDeviceID(int _deviceID){
 	RequestedDeviceID = _deviceID;
-	if( bInitialized ){
+	if( grabber->isInitialized() ){
 		ofLogWarning("ofxVideoGrabber") << "setDeviceID(): can't set device while grabber is running";
 	}
 }
@@ -216,8 +214,6 @@ void ofVideoGrabber::update(){
 void ofVideoGrabber::close(){
 	if(grabber){
 		grabber->close();
-		bInitialized=false;
-		grabberRunning = false;
 	}
 	if(!grabber->getTexture()) tex.clear();
 }
@@ -294,5 +290,5 @@ float ofVideoGrabber::getWidth(){
 
 //----------------------------------------------------------
 bool ofVideoGrabber::isInitialized(){
-	return bInitialized;
+	return grabber->isInitialized() && (!bUseTexture || tex[0].isAllocated());
 }

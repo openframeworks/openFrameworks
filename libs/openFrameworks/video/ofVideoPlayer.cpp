@@ -11,6 +11,7 @@ ofVideoPlayer::ofVideoPlayer (){
 	internalPixelFormat = OF_PIXELS_RGB;
 	height 				= 0;
 	width 				= 0;
+	tex.resize(1);
 }
 
 //---------------------------------------------------------------------------
@@ -420,6 +421,11 @@ bool ofVideoPlayer::isPlaying(){
 		return player->isPlaying();
 	}
 	return false;
+}
+
+//----------------------------------------------------------
+bool ofVideoPlayer::isInitialized(){
+	return player->isInitialized() && (!bUseTexture || tex[0].isAllocated());
 }
 
 
