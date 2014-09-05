@@ -112,7 +112,7 @@ static ofPixelFormat ofPixelFormatFromImageType(ofImageType type){
 		break;
 	default:
 		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
-		return OF_PIXELS_UNKOWN;
+		return OF_PIXELS_UNKNOWN;
 	}
 }
 
@@ -151,7 +151,7 @@ static ofPixelFormat pixelFormatFromNumChannels(int channels){
 	case 2: return OF_PIXELS_GRAY_ALPHA;
 	case 3: return OF_PIXELS_RGB;
 	case 4: return OF_PIXELS_RGBA;
-	default: return OF_PIXELS_UNKOWN;
+	default: return OF_PIXELS_UNKNOWN;
 	}
 }
 
@@ -159,7 +159,7 @@ template<typename PixelType>
 ofPixels_<PixelType>::ofPixels_(){
 	bAllocated = false;
 	pixelsOwner = false;
-	pixelFormat = OF_PIXELS_UNKOWN;
+	pixelFormat = OF_PIXELS_UNKNOWN;
 	pixels = NULL;
 	pixelsSize = 0;
 	width = 0;
@@ -180,7 +180,7 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<PixelType> & mom){
 	pixels = NULL;
 	width = 0;
 	height = 0;
-	pixelFormat = OF_PIXELS_UNKOWN;
+	pixelFormat = OF_PIXELS_UNKNOWN;
 	copyFrom( mom );
 }
 
@@ -236,7 +236,7 @@ void ofPixels_<PixelType>::set(int channel,PixelType val){
 		case OF_PIXELS_V:
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
-		case OF_PIXELS_UNKOWN:
+		case OF_PIXELS_UNKNOWN:
 		default:
 			ofLogWarning() << "setting channels not supported for " << ofToString(pixelFormat) << " format";
 			break;
@@ -334,7 +334,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, int _channels){
 
 template<typename PixelType>
 void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
-	if (w <= 0 || h <= 0 || format==OF_PIXELS_UNKOWN) {
+	if (w <= 0 || h <= 0 || format==OF_PIXELS_UNKNOWN) {
 		return;
 	}
 
@@ -393,7 +393,7 @@ void ofPixels_<PixelType>::clear(){
 
 	width			= 0;
 	height			= 0;
-	pixelFormat		= OF_PIXELS_UNKOWN;
+	pixelFormat		= OF_PIXELS_UNKNOWN;
 	pixelsSize		= 0;
 	bAllocated		= false;
 }
@@ -436,7 +436,7 @@ int ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
 			case OF_PIXELS_V:
 			case OF_PIXELS_UV:
 			case OF_PIXELS_VU:
-			case OF_PIXELS_UNKOWN:
+			case OF_PIXELS_UNKNOWN:
 			default:
 				ofLogWarning() << "getting pixel index not supported for " << ofToString(pixelFormat) << " format";
 				return 0;
@@ -480,7 +480,7 @@ ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
 		case OF_PIXELS_V:
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
-		case OF_PIXELS_UNKOWN:
+		case OF_PIXELS_UNKNOWN:
 		default:
 			ofLogWarning() << "returning color not supported yet for " << ofToString(pixelFormat) << " format";
 			return 0;
@@ -534,7 +534,7 @@ void ofPixels_<PixelType>::setColor(int index, const ofColor_<PixelType>& color)
 		case OF_PIXELS_V:
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
-		case OF_PIXELS_UNKOWN:
+		case OF_PIXELS_UNKNOWN:
 		default:
 			ofLogWarning("ofPixels") << "setting color not supported yet for " << ofToString(pixelFormat) << " format";
 			break;
@@ -619,7 +619,7 @@ void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 		case OF_PIXELS_V:
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
-		case OF_PIXELS_UNKOWN:
+		case OF_PIXELS_UNKNOWN:
 		default:
 			ofLogWarning("ofPixels") << "setting color not supported yet for " << ofToString(pixelFormat) << " format";
 		break;

@@ -252,7 +252,7 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
 	pixels = NULL;
 	width = 0;
 	height = 0;
-	pixelFormat = OF_PIXELS_UNKOWN;
+	pixelFormat = OF_PIXELS_UNKNOWN;
 	copyFrom( mom );
 }
 
