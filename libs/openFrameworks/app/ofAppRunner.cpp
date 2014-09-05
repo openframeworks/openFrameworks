@@ -28,7 +28,7 @@
 //========================================================================
 // static variables:
 
-static shared_ptr<ofBaseApp>				OFSAptr;
+static shared_ptr<ofBaseApp>			OFSAptr;
 static shared_ptr<ofAppBaseWindow> 		window;
 
 //========================================================================
@@ -68,13 +68,27 @@ void ofURLFileLoaderShutdown();
 
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
 	#include <signal.h>
+	#include <string.h>
 
-	static bool bExitCalled = false;
-	void sighandler(int sig) {
-		ofLogVerbose("ofAppRunner") << "sighandler caught: " << sig;
-		if(!bExitCalled) {
-			bExitCalled = true;
-			std::exit(0);
+	static void ofSignalHandler(int signum){
+
+		char* pSignalString = strsignal(signum);
+
+		if(pSignalString){
+			ofLogVerbose("ofSignalHandler") << pSignalString;
+		}else{
+			ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
+		}
+
+		signal(SIGTERM, NULL);
+		signal(SIGQUIT, NULL);
+		signal(SIGINT,  NULL);
+		signal(SIGHUP,  NULL);
+		signal(SIGABRT, NULL);
+
+		ofAppBaseWindow * w = window.get();
+		if(w){
+			w->windowShouldClose();
 		}
 	}
 #endif
@@ -95,15 +109,14 @@ void ofRunApp(ofBaseApp * OFSA){
 
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
 	// see http://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html#Termination-Signals
-	signal(SIGTERM, &sighandler);
-    signal(SIGQUIT, &sighandler);
-	signal(SIGINT,  &sighandler);
+	signal(SIGTERM, &ofSignalHandler);
+	signal(SIGQUIT, &ofSignalHandler);
+	signal(SIGINT,  &ofSignalHandler);
 
-	signal(SIGKILL, &sighandler); // not much to be done here
-	signal(SIGHUP,  &sighandler); // not much to be done here
+	signal(SIGHUP,  &ofSignalHandler); // not much to be done here
 
 	// http://www.gnu.org/software/libc/manual/html_node/Program-Error-Signals.html#Program-Error-Signals
-    signal(SIGABRT, &sighandler);  // abort signal
+	signal(SIGABRT, &ofSignalHandler);  // abort signal
 #endif
 
 
@@ -124,7 +137,6 @@ void ofRunApp(ofBaseApp * OFSA){
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
 	ofSetWorkingDirectoryToDefault();
-	
 
     ofAddListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
     ofAddListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
@@ -325,7 +337,6 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode scree
 //							at the end of the application
 
 void ofExitCallback(){
-
 	ofNotifyExit();
 
 #ifndef TARGET_EMSCRIPTEN

@@ -23,12 +23,10 @@ class ofAppGLFWWindow : public ofAppBaseGLESWindow{
 class ofAppGLFWWindow : public ofAppBaseGLWindow {
 #endif
 
-	static GLFWwindow* windowP;
-
 public:
 
 	ofAppGLFWWindow();
-	~ofAppGLFWWindow(){}
+	~ofAppGLFWWindow();
 
 
 	// window settings, this functions can be called from main before calling ofSetupOpenGL
@@ -116,6 +114,10 @@ public:
 #endif
 
 private:
+	// private copy construction
+	ofAppGLFWWindow(ofAppGLFWWindow & w){};
+	ofAppGLFWWindow & operator=(ofAppGLFWWindow & w){return w;};
+
 	// callbacks
 	void			display(void);
 
@@ -159,6 +161,8 @@ private:
 	int 			nFramesSinceWindowResized;
 	bool			bDoubleBuffered;
     bool            bMultiWindowFullscreen; 
+
+	GLFWwindow* 	windowP;
     
 	int				getCurrentMonitor();
 	

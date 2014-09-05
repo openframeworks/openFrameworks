@@ -33,7 +33,6 @@
 
 ofBaseApp *	ofAppGLFWWindow::ofAppPtr;
 ofAppGLFWWindow	* ofAppGLFWWindow::instance;
-GLFWwindow* ofAppGLFWWindow::windowP = NULL;
 
 void ofGLReadyCallback();
 
@@ -75,9 +74,15 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
     //default to 4 times antialiasing. 
     setNumSamples(4);
 	iconSet = false;
+	windowP = NULL;
 
 	glfwSetErrorCallback(error_cb);
+}
 
+ofAppGLFWWindow::~ofAppGLFWWindow(){
+	if(windowP){
+		glfwDestroyWindow(windowP);
+	}
 }
 
 
@@ -305,8 +310,6 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 		ofNotifyUpdate();
 		display();
 	}
-    glfwDestroyWindow(windowP);
-    glfwTerminate();
 }
 
 void ofAppGLFWWindow::windowShouldClose(){
