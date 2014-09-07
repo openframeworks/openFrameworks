@@ -35,6 +35,7 @@ public:
 	ofBuffer & operator=(const string & text);
 
 	long size() const;
+	static void setIOBufferSize(size_t ioSize);
 
 	OF_DEPRECATED_MSG("use a lines iterator instead",string getNextLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",string getFirstLine());
@@ -54,7 +55,7 @@ public:
 	vector<char>::const_reverse_iterator rend() const;
 
 	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
-		Line(vector<char> & buffer, vector<char>::iterator _begin);
+		Line(vector<char>::iterator _begin, vector<char>::iterator _end);
         const string & operator*() const;
         const string * operator->() const;
         Line& operator++();
@@ -62,10 +63,8 @@ public:
         bool operator!=(Line const& rhs) const;
 
 	private:
-		void operator=(const Line & _line);
-        vector<char> & buffer;
         string line;
-        vector<char>::iterator _begin, _end;
+        vector<char>::iterator _current, _begin, _end;
 	};
 
 	struct Lines{
@@ -74,7 +73,7 @@ public:
         Line end();
 
 	private:
-        vector<char> & buffer;
+        vector<char>::iterator _begin, _end;
 	};
 
 	Lines getLines();
@@ -82,6 +81,7 @@ public:
 private:
 	vector<char> 	buffer;
 	long 			nextLinePos;
+	static size_t	ioSize;
 };
 
 //--------------------------------------------------
