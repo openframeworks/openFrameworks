@@ -337,28 +337,19 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode scree
 //							at the end of the application
 
 void ofExitCallback(){
+	// first notify we are exiting so every object has a chance to
+	// stop threads, deallocate...
 	ofNotifyExit();
 
-    ofRemoveListener(ofEvents().setup,OFSAptr.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().update,OFSAptr.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().draw,OFSAptr.get(),&ofBaseApp::draw,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().exit,OFSAptr.get(),&ofBaseApp::exit,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().keyPressed,OFSAptr.get(),&ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().keyReleased,OFSAptr.get(),&ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().mouseMoved,OFSAptr.get(),&ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().mouseDragged,OFSAptr.get(),&ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().mousePressed,OFSAptr.get(),&ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().mouseReleased,OFSAptr.get(),&ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().windowResized,OFSAptr.get(),&ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().windowEntered,OFSAptr.get(),&ofBaseApp::windowEntry,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().messageEvent,OFSAptr.get(),&ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().fileDragEvent,OFSAptr.get(),&ofBaseApp::dragged,OF_EVENT_ORDER_APP);
+	// then disable all core events to avoid crashes
+	ofEvents().disable();
 
 	// controlled destruction of the app before
 	// any other deinitialization
 	OFSAptr.reset();
 
 
+	// finish every library and subsystem
 	#ifndef TARGET_EMSCRIPTEN
 		ofURLFileLoaderShutdown();
 	#endif
@@ -385,6 +376,9 @@ void ofExitCallback(){
 		timeEndPeriod(1);
 	#endif
 
+	// static deinitialization happens after this finishes
+	// every object should have ended by now and won't receive any
+	// events
 }
 
 //--------------------------------------
