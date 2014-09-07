@@ -854,16 +854,16 @@ const ofTexture & ofImage_<PixelType>::getTextureReference() const{
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::bind() const{
+void ofImage_<PixelType>::bind(int textureLocation) const{
 	if (bUseTexture && tex.bAllocated())
-		tex.bind();
+		tex.bind(textureLocation);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::unbind() const{
+void ofImage_<PixelType>::unbind(int textureLocation) const{
 	if (bUseTexture && tex.bAllocated())
-		tex.unbind();
+		tex.unbind(textureLocation);
 }
 
 //------------------------------------
@@ -944,7 +944,7 @@ void ofImage_<PixelType>::setUseTexture(bool bUse){
 
 //------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::isUsingTexture(){
+bool ofImage_<PixelType>::isUsingTexture() const{
 	return bUseTexture;
 }
 
@@ -1260,13 +1260,13 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getHeight() {
+float ofImage_<PixelType>::getHeight() const{
 	return height;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getWidth() {
+float ofImage_<PixelType>::getWidth() const{
 	return width;
 }
 

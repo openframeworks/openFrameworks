@@ -361,12 +361,12 @@ void ofVideoPlayer::resetAnchor(){
 }
 
 //------------------------------------
-void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
+void ofVideoPlayer::draw(float _x, float _y, float _w, float _h) const{
 	getTextureReference().draw(_x, _y, _w, _h);	
 }
 
 //------------------------------------
-void ofVideoPlayer::draw(float _x, float _y){
+void ofVideoPlayer::draw(float _x, float _y) const{
 	getTextureReference().draw(_x, _y);
 }
 

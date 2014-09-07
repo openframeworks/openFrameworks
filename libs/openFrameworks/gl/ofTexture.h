@@ -183,7 +183,7 @@ public:
 	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
 	
 private:
-	bool isBound;  ///< Is the texture already bound
+	mutable bool isBound;  ///< Is the texture already bound
 	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
@@ -710,7 +710,6 @@ protected:
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
-	ofMesh quad;
 
 private:
 	

@@ -34,8 +34,8 @@ class ofxCvImage : public ofBaseImage {
     virtual  ~ofxCvImage();
     virtual void  allocate( int w, int h );
     virtual void  clear();
-	virtual float getWidth();        // get width of this image or its ROI width
-	virtual float getHeight();       // get height of this image or its ROI height
+	virtual float getWidth() const;        // get width of this image or its ROI width
+	virtual float getHeight() const;       // get height of this image or its ROI height
     virtual void  setUseTexture( bool bUse );
     virtual ofTexture&  getTextureReference();
     virtual void flagImageChanged();  //mostly used internally
@@ -45,7 +45,7 @@ class ofxCvImage : public ofBaseImage {
     //
     virtual void  setROI( int x, int y, int w, int h );
     virtual void  setROI( const ofRectangle& rect );
-    virtual ofRectangle  getROI();
+    virtual ofRectangle  getROI() const;
     virtual void  resetROI();
     virtual ofRectangle  getIntersectionROI( const ofRectangle& rec1,
                                              const ofRectangle& rec2 );
@@ -82,17 +82,22 @@ class ofxCvImage : public ofBaseImage {
     virtual unsigned char*  getRoiPixels();
     virtual ofPixelsRef		getRoiPixelsRef();
     virtual IplImage*  getCvImage() { return cvImage; };
+    virtual const unsigned char*  getPixels() const;
+    virtual const ofPixelsRef		getPixelsRef() const;
+    virtual const unsigned char*  getRoiPixels() const;
+    virtual const ofPixelsRef		getRoiPixelsRef() const;
+    virtual const IplImage*  getCvImage() const { return cvImage; };
 
 
     // Draw Image
     //
     virtual void updateTexture();
-    virtual void draw( float x, float y );
-    virtual void draw( float x, float y, float w, float h );
-	virtual void draw(const ofPoint & point);
-	virtual void draw(const ofRectangle & rect);
-    virtual void drawROI( float x, float y );
-    virtual void drawROI( float x, float y, float w, float h );
+    virtual void draw( float x, float y ) const;
+    virtual void draw( float x, float y, float w, float h ) const;
+	virtual void draw(const ofPoint & point) const;
+	virtual void draw(const ofRectangle & rect) const;
+    virtual void drawROI( float x, float y ) const;
+    virtual void drawROI( float x, float y, float w, float h ) const;
     virtual void setAnchorPercent( float xPct, float yPct );
     virtual void setAnchorPoint( float x, float y );
     virtual void resetAnchor();
@@ -176,9 +181,11 @@ class ofxCvImage : public ofBaseImage {
     bool bPixelsDirty;        // pixels need to be reloaded
     bool bRoiPixelsDirty;        // pixels need to be reloaded
     
-    ofTexture  tex;		      // internal tex
+    // the texture in this class is usually only update in draw
+    // to allow draw to be const we mark the texture as mutable
+    mutable ofTexture  tex;		      // internal tex
+    mutable bool bTextureDirty;       // texture needs to be reloaded before drawing
     bool bUseTexture;
-    bool bTextureDirty;       // texture needs to be reloaded before drawing
     
     ofPoint  anchor;
     bool  bAnchorIsPct;    
