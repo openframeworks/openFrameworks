@@ -400,8 +400,10 @@ class ofBaseGLRenderer: public ofBaseRenderer{
 public:
 	virtual void setCurrentFBO(ofFbo * fbo)=0;
 
-	virtual void enableTextureTarget(int textureTarget)=0;
-	virtual void disableTextureTarget(int textureTarget)=0;
+	virtual void enableTextureTarget(int textureTarget, int textureID, int textureLocation)=0;
+	virtual void disableTextureTarget(int textureTarget, int textureLocation)=0;
+	virtual void setAlphaMaskTex(ofTexture & tex)=0;
+	virtual void disableAlphaMask()=0;
 
 	// lighting
 	virtual void enableLighting(){}

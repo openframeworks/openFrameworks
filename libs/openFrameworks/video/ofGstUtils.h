@@ -79,6 +79,7 @@ public:
 protected:
 	ofGstAppSink * 		appsink;
 	bool				isStream;
+	bool				closing;
 
 private:
 	static bool			busFunction(GstBus * bus, GstMessage * message, ofGstUtils * app);
@@ -99,7 +100,7 @@ private:
 	bool				isAppSink;
 	Poco::Condition		eosCondition;
 	ofMutex				eosMutex;
-	bool				closing;
+	guint				busWatchID;
 
 	class ofGstMainLoopThread: public ofThread{
 	public:
@@ -125,7 +126,6 @@ private:
 	};
 
 	static ofGstMainLoopThread * mainLoop;
-	GstBus * bus;
 };
 
 

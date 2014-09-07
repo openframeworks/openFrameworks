@@ -50,8 +50,15 @@ void ofGLRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextu
 	}
 
 	if(vertexData.getNumTexCoords() && useTextures){
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+		set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+		for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+			glActiveTexture(GL_TEXTURE0+*textureLocation);
+			glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+			glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+		}
+		glActiveTexture(GL_TEXTURE0);
+		glClientActiveTexture(GL_TEXTURE0);
 	}
 
 	if(vertexData.getNumIndices()){
@@ -98,8 +105,15 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		}
 
 		if(vertexData.getNumTexCoords() && useTextures){
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(2, GL_FLOAT, 0, vertexData.getTexCoordsPointer());
+			set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+			for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+				glActiveTexture(GL_TEXTURE0+*textureLocation);
+				glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+			}
+			glActiveTexture(GL_TEXTURE0);
+			glClientActiveTexture(GL_TEXTURE0);
 		}
 
 		GLenum drawMode;
@@ -1175,13 +1189,32 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::enableTextureTarget(int textureTarget){
+void ofGLRenderer::enableTextureTarget(int textureTarget, int textureID, int textureLocation){
+	glActiveTexture(GL_TEXTURE0+textureLocation);
+	glClientActiveTexture(GL_TEXTURE0+textureLocation);
 	glEnable(textureTarget);
+	glBindTexture( textureTarget, (GLuint)textureID);
+	textureLocationsEnabled.insert(textureLocation);
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::disableTextureTarget(int textureTarget){
+void ofGLRenderer::disableTextureTarget(int textureTarget, int textureLocation){
+	glActiveTexture(GL_TEXTURE0+textureLocation);
+	//glClientActiveTexture(GL_TEXTURE0+textureLocation);
+	glBindTexture( textureTarget, 0);
 	glDisable(textureTarget);
+	glActiveTexture(GL_TEXTURE0);
+	//glClientActiveTexture(GL_TEXTURE0);
+	textureLocationsEnabled.erase(textureLocation);
+}
+
+void ofGLRenderer::setAlphaMaskTex(ofTexture & tex){
+	enableTextureTarget(tex.getTextureData().textureTarget, tex.getTextureData().textureID, 1);
+	alphaMaskTextureTarget = tex.getTextureData().textureTarget;
+}
+
+void ofGLRenderer::disableAlphaMask(){
+	disableTextureTarget(alphaMaskTextureTarget,1);
 }
 
 //----------------------------------------------------------

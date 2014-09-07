@@ -54,7 +54,7 @@ ofxAppEmscriptenWindow::~ofxAppEmscriptenWindow() {
 }
 
 
-void ofxAppEmscriptenWindow::setupOpenGL(int w, int h, int screenMode){
+void ofxAppEmscriptenWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 	EGLint numConfigs;
 	EGLint majorVersion;
 	EGLint minorVersion;
@@ -287,7 +287,7 @@ void ofxAppEmscriptenWindow::setWindowTitle(string title){
 
 }
 
-int	ofxAppEmscriptenWindow::getWindowMode(){
+ofWindowMode ofxAppEmscriptenWindow::getWindowMode(){
 	return OF_WINDOW;
 }
 

@@ -157,12 +157,12 @@ public:
 
     // quick texture binding shortcut
     /// \brief Binds the oftexture instance that the ofImage contains so that it can be used for advanced drawing.
-    void bind() const;
+    void bind(int textureLocation=0) const;
 
     /// \brief Unbinds the ofTexture instance that the ofImage contains. 
     ///
     /// Call this after you call bind().
-    void unbind() const;
+    void unbind(int textureLocation=0) const;
 
     /// \brief Loads an image given by fileName.
     /// \param fileName Program looks for image given by fileName, relative to the data folder.

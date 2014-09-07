@@ -773,7 +773,7 @@ void ofMesh::load(string path){
 	ofFile is(path, ofFile::ReadOnly);
 	ofMesh& data = *this;
 
-	string line;
+
 	string error;
 	ofBuffer buffer(is);
 	ofMesh backup = data;
@@ -804,79 +804,79 @@ void ofMesh::load(string path){
 	State state = Header;
 
 	int lineNum = 0;
-
-	line = buffer.getFirstLine();
+	ofBuffer::Lines lines = buffer.getLines();
+	ofBuffer::Line line = lines.begin();
 	lineNum++;
-	if(line!="ply"){
+	if(*line!="ply"){
 		error = "wrong format, expecting 'ply'";
 		goto clean;
 	}
 
-	line = buffer.getNextLine();
+	line++;
 	lineNum++;
-	if(line!="format ascii 1.0"){
+	if(*line!="format ascii 1.0"){
 		error = "wrong format, expecting 'format ascii 1.0'";
 		goto clean;
 	}
 
-	while(!buffer.isLastLine()){
-		line = buffer.getNextLine();
+	for(;line != lines.end(); ++line){
 		lineNum++;
-		if(line.find("comment")==0){
+		string lineStr = *line;
+		if(lineStr.find("comment")==0){
 			continue;
 		}
 
-		if((state==Header || state==FaceDef) && line.find("element vertex")==0){
+		if((state==Header || state==FaceDef) && lineStr.find("element vertex")==0){
 			state = VertexDef;
 			orderVertices = MAX(orderIndices, 0)+1;
-			data.getVertices().resize(ofToInt(line.substr(15)));
+			data.getVertices().resize(ofToInt(lineStr.substr(15)));
 			continue;
 		}
 
-		if((state==Header || state==VertexDef) && line.find("element face")==0){
+		if((state==Header || state==VertexDef) && lineStr.find("element face")==0){
 			state = FaceDef;
 			orderIndices = MAX(orderVertices, 0)+1;
-			data.getIndices().resize(ofToInt(line.substr(13))*3);
+			data.getIndices().resize(ofToInt(lineStr.substr(13))*3);
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property float x")==0 || line.find("property float y")==0 || line.find("property float z")==0)){
+		if(state==VertexDef && (lineStr.find("property float x")==0 || lineStr.find("property float y")==0 || lineStr.find("property float z")==0)){
 			vertexCoordsFound++;
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property float r")==0 || line.find("property float g")==0 || line.find("property float b")==0 || line.find("property float a")==0)){
+		if(state==VertexDef && (lineStr.find("property float r")==0 || lineStr.find("property float g")==0 || lineStr.find("property float b")==0 || lineStr.find("property float a")==0)){
 			colorCompsFound++;
 			data.getColors().resize(data.getVertices().size());
 			floatColor = true;
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property uchar red")==0 || line.find("property uchar green")==0 || line.find("property uchar blue")==0 || line.find("property uchar alpha")==0)){
+		if(state==VertexDef && (lineStr.find("property uchar red")==0 || lineStr.find("property uchar green")==0 || lineStr.find("property uchar blue")==0 || lineStr.find("property uchar alpha")==0)){
 			colorCompsFound++;
 			data.getColors().resize(data.getVertices().size());
 			floatColor = false;
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property float u")==0 || line.find("property float v")==0)){
+		if(state==VertexDef && (lineStr.find("property float u")==0 || lineStr.find("property float v")==0)){
 			texCoordsFound++;
 			data.getTexCoords().resize(data.getVertices().size());
 			continue;
 		}
 
-		if(state==VertexDef && (line.find("property float nx")==0 || line.find("property float ny")==0 || line.find("property float nz")==0)){
+		if(state==VertexDef && (lineStr.find("property float nx")==0 || lineStr.find("property float ny")==0 || lineStr.find("property float nz")==0)){
 			normalsCoordsFound++;
 			if (normalsCoordsFound==3) data.getNormals().resize(data.getVertices().size());
 			continue;
 		}
 
-		if(state==FaceDef && line.find("property list")!=0 && line!="end_header"){
+		if(state==FaceDef && lineStr.find("property list")!=0 && lineStr!="end_header"){
 			error = "wrong face definition";
 			goto clean;
 		}
 
-		if(line=="end_header"){
+		if(lineStr=="end_header"){
 			if(data.hasColors() && colorCompsFound!=3 && colorCompsFound!=4){
 				error =  "data has color coordiantes but not correct number of components. Found " + ofToString(colorCompsFound) + " expecting 3 or 4";
 				goto clean;
@@ -900,29 +900,28 @@ void ofMesh::load(string path){
 		}
 
 		if(state==Vertices){
-			stringstream sline;
-			sline.str(line);
-			ofVec3f v;
-			sline >> v.x;
-			sline >> v.y;
-			if(vertexCoordsFound>2) sline >> v.z;
-			data.getVertices()[currentVertex] = v;
+			if(data.getNumVertices()<currentVertex){
+				error = "found more vertices than specified in header";
+				goto clean;
+			}
+			stringstream sline(lineStr);
+			sline >> data.getVertices()[currentVertex].x;
+			sline >> data.getVertices()[currentVertex].y;
+			if(vertexCoordsFound>2) sline >> data.getVertices()[currentVertex].z;
 
 			if(colorCompsFound>0){
 				if (floatColor){
-					ofFloatColor c;
+					sline >> data.getColors()[currentVertex].r;
+					sline >> data.getColors()[currentVertex].g;
+					sline >> data.getColors()[currentVertex].b;
+					if(colorCompsFound>3) sline >> data.getColors()[currentVertex].a;
+				}else{
+					ofColor c;
 					sline >> c.r;
 					sline >> c.g;
 					sline >> c.b;
 					if(colorCompsFound>3) sline >> c.a;
 					data.getColors()[currentVertex] = c;
-				}else{
-					int r, g, b, a = 255;
-					sline >> r;
-					sline >> g;
-					sline >> b;
-					if(colorCompsFound>3) sline >> a;
-					data.getColors()[currentVertex] = ofColor(r, g, b, a);
 				}
 			}
 
@@ -953,8 +952,11 @@ void ofMesh::load(string path){
 		}
 
 		if(state==Faces){
-			stringstream sline;
-			sline.str(line);
+			if(data.getNumIndices()/3<currentFace){
+				error = "found more faces than specified in header";
+				goto clean;
+			}
+			stringstream sline(lineStr);
 			int numV;
 			sline >> numV;
 			if(numV!=3){
@@ -985,7 +987,7 @@ void ofMesh::load(string path){
 	return;
 	clean:
 	ofLogError("ofMesh") << "load(): " << lineNum << ":" << error;
-	ofLogError("ofMesh") << "load(): \"" << line << "\"";
+	ofLogError("ofMesh") << "load(): \"" << *line << "\"";
 	data = backup;
 }
 

@@ -6,21 +6,32 @@
 #include "ofConstants.h"
 #include "ofVboMesh.h"
 
-/// \brief Check whether OF is using ARB rectangular or square textures.
+/// \brief Check whether OF is using GL_TEXTURE_RECTANGLE rectangular or GL_TEXTURE_2D textures.
 /// \sa ofEnableArbTex()
-/// \returns true if using GL ARB textures, false if square textures.
+/// \returns true if using GL_TEXTURE_RECTANGLE textures, false if using GL_TEXTURE_2D textures.
 bool ofGetUsingArbTex();
 
-/// \brief Use GL ARB rectangular textures.
+/// \brief Use GL_TEXTURE_RECTANGLE textures.
 ///
-/// Rectangular textures are generally more useful and are enabled by default.
-/// Traditional GL_TEXTURE_2D square textures are faster on older hardware and
-/// in certain cases.
+/// GL_TEXTURE_RECTANGLE textures are more intuitive since they allow pixel based coordinates
+/// and are enabled by default.
 ///
-/// \warning ARB textures are not available in OpenGL ES.
+/// GL_TEXTURE_2D textures use normalised texture coordinates (a float value between 0 and 1
+/// is used to express texture coordinates along width and height.)
+///
+/// GL_TEXTURE_2D textures are more widely supported and allow advanced features such as
+/// mipmaps and texture compression.
+///
+/// \sa ofDisableArbTex()
+/// \warning GL_TEXTURE_RECTANGLE is not available in OpenGL ES.
+/// \warning GL_TEXTURE_RECTANGLE does not support mipmaps.
 void ofEnableArbTex();
 
-/// \brief Use square GL_TEXTURE_2D textures.
+/// \brief Use GL_TEXTURE_2D textures.
+///
+/// GL_TEXTURE_2D is OpenGL's default way of handling textures and does support
+/// a wider range of core OpenGL features such as mipmaps.
+///
 /// \sa ofEnableArbTex()
 void ofDisableArbTex();
 
@@ -58,48 +69,56 @@ void ofDisableNormalizedTexCoords();
 /// This overrides individual ofTexture wrap settings.
 /// \sa ofTexture::setTextureWrap
 ///
+/// \warning Deprecated. Use member methods instead.
+///
 /// \param wrapS wrap parameter for texture coordinate s.
 /// \param wrapT wrap parameter for texture coordinate t.
-void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE);
+OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",void ofSetTextureWrap(GLfloat wrapS = GL_CLAMP_TO_EDGE, GLfloat wrapT = GL_CLAMP_TO_EDGE));
 
 /// \brief Check whether OF is using custom global texture wrapping.
+///
+/// \warning Deprecated. Use member methods instead.
 /// \sa ofSetTextureWrap()
 /// \returns true if OF is currently using custom global texture wrapping. 
-bool ofGetUsingCustomTextureWrap();
+OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",bool ofGetUsingCustomTextureWrap());
 
 /// \brief Removes global custom texture wrapping.
 ///
 /// Restores individual ofTexture wrap settings.
-///
-/// \sa ofSetTextureWrap() 
-void ofRestoreTextureWrap();
+/// \warning Deprecated. Use member methods instead.
+/// \sa ofSetTextureWrap()
+OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",void ofRestoreTextureWrap());
 
 /// \brief Set custom global texture minification/magnification scaling filters.
 ///
 /// This setting allows global control over how OpenGL scales textures. It
 /// overrides individual ofTexture min & mag filter settings.
 ///
+/// \warning Deprecated. Use member methods instead.
 /// \sa ofTexture::setTextureMinMagFilter()
 /// \param minFilter minifying filter for scaling a pixel to a smaller area.
-/// \param maxFilter maxifying filter for scaling a pixel to a larger area.
-void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat maxFilter = GL_LINEAR);
+/// \param magFilter magnifying filter for scaling a pixel to a larger area.
+OF_DEPRECATED_MSG("Use member method ofTexture::setTextureMinMagFilter() instead.",void ofSetMinMagFilters(GLfloat minFilter = GL_LINEAR, GLfloat magFilter = GL_LINEAR));
 
 /// \brief Check whether OF is using custom global texture scaling filters.
 /// \returns true if OF is currently using custom texture scaling filters.
-bool ofGetUsingCustomMinMagFilters();
+/// \warning Deprecated. Use member methods instead.
+OF_DEPRECATED_MSG("Use member method ofTexture::setTextureMinMagFilter() instead.",bool ofGetUsingCustomMinMagFilters());
 
 /// \brief Removes global custom texture wrapping.
 ///
 /// Restores individual ofTexture min mag filter settings.
-void ofRestoreMinMagFilters();
+/// \warning Deprecated. Use member methods instead.
+OF_DEPRECATED_MSG("Use member method ofTexture::setTextureMinMagFilter() instead.",void ofRestoreMinMagFilters());
 
-/// \brief Texture compression types.
-///
-/// Tells OF to generate GL mipmaps when creating a texture.
+/// Compression is only available through OpenGL
+/// for textures using GL_TEXTURE_2D, *not* GL_TEXTURE_RECTANGLE,
+/// also note that most compression algorithms work on blocks of 4x4 pixels,
+/// and therefore expect compressed textures to have multiple-of-four dimensions.
 enum ofTexCompression {
 	OF_COMPRESS_NONE,	///< no compression
-	OF_COMPRESS_SRGB,	///< generate mipmaps with sRGB compression
-	OF_COMPRESS_ARB		///< generate mipmaps with ARB compression
+	OF_COMPRESS_SRGB,	///< sRGB compression
+	OF_COMPRESS_ARB		///< ARB compression
 };
 
 /// \class ofTextureData
@@ -130,6 +149,15 @@ public:
 		bAllocated = false;
 		bUseExternalTextureID = false;
 		useTextureMatrix = false;
+		isBound = false;
+		
+		minFilter = GL_LINEAR;
+		magFilter = GL_LINEAR;
+		
+		wrapModeHorizontal = GL_CLAMP_TO_EDGE;
+		wrapModeVertical = GL_CLAMP_TO_EDGE;
+		hasMipmap = false;
+
 	}
 
 	unsigned int textureID; ///< GL internal texture ID
@@ -140,16 +168,28 @@ public:
 	
 	float tex_t; ///< Texture horiz coordinate, ratio of width to display width. 
 	float tex_u; ///< Texture vert coordinate, ratio of height to display height.
-	float tex_w; ///< Texture width.
-	float tex_h; ///< Texture height.
+	float tex_w; ///< Texture width (in pixels).
+	float tex_h; ///< Texture height (in pixels).
 	float width, height; ///< Texture display size.
 	
 	bool bFlipTexture; ///< Should the texture be flipped vertically?
 	ofTexCompression compressionType; ///< Texture compression type.
 	bool bAllocated; ///< Has the texture been allocated?
+
+	GLint minFilter; ///< Filter to use for minification (reduction)
+	GLint magFilter; ///< Filter to use for magnification (enlargement)
+
+	GLint wrapModeHorizontal; ///< How will the texture wrap around horizontally?
+	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
+	
+private:
+	bool isBound;  ///< Is the texture already bound
+	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
+	bool hasMipmap; ///< True if mipmap has been generated for this texture, false by default.
+	friend class ofTexture;
 
 };
 
@@ -358,6 +398,17 @@ class ofTexture : public ofBaseDraws {
 	///
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
+	/// \brief Generate mipmap for the current texture.
+	///
+	/// \warning Only GL_TEXTURE_RECTANGLE - which is the default openFrameworks
+	/// texture target - does *not* support mipmaps, so make sure to call
+	/// ofDisableArbTex() before loading texture
+	/// data for a texture you want to generate mipmaps for.
+	///
+	/// \sa ofEnableArbTex()
+	/// \sa ofDisableArbTex()
+	void generateMipmap();
+	
     /// \todo Define Swizzle in the documentation.
 
 	/// \brief Swizzle RGBA to grayscale with alpha in the red channel.
@@ -367,6 +418,16 @@ class ofTexture : public ofBaseDraws {
 	/// \warning This is not supported in OpenGL ES and does nothing.
 	///
 	void setRGToRGBASwizzles(bool rToRGBSwizzles);
+
+	/// \brief Swizzle a channel to another
+	///
+	/// Example:
+	/// tex.setSwizzle(GL_TEXTURE_SWIZZLE_R,GL_ALPHA)
+	/// will make channel 0 appear as alpha in the shader
+	///
+	/// \warning This is not supported in OpenGL ES and does nothing.
+	///
+	void setSwizzle(GLenum srcSwizzle, GLenum dstChannel);
 
 	/// \brief Copy an area of the screen into this texture.
 	///
@@ -508,7 +569,7 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
 	///
-	void bind() const;
+	void bind(int textureLocation=0) const;
 	
 	/// \brief Unbind the texture.
 	///
@@ -517,8 +578,11 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
 	///
-	void unbind() const;
+	void unbind(int textureLocation=0) const;
 	
+	void setAlphaMask(ofTexture & mask);
+	void disableAlphaMask();
+
 	/// \brief Helper to convert display coordinate to texture coordinate.
 	/// \param xPos Horizontal position in pixels.
 	/// \param yPos Vertical position in pixels.
@@ -556,17 +620,48 @@ class ofTexture : public ofBaseDraws {
 	/// \warning May be overridden.
 	///
 	/// \param minFilter minifying filter for scaling a pixel to a smaller area.
-	/// \param maxFilter maxifying filter for scaling a pixel to a larger area.
-	void setTextureMinMagFilter(GLint minFilter, GLint maxFilter);
+	/// \param magFilter magnifying filter for scaling a pixel to a larger area.
+	void setTextureMinMagFilter(GLint minFilter, GLint magFilter);
+
+	/// Sets a texture matrix that will be uploaded whenever the texture is
+	/// binded.
+	void setTextureMatrix(const ofMatrix4x4 & m);
+
+	/// Disable the texture matrix.
+	void disableTextureMatrix();
 
 	/// \brief Set the texture compression.
 	///
-	/// Generates mimaps depending on the compression type.
-	///
+	/// \warning: not yet implemented.
 	/// \sa ofTexCompression
-	///
 	void setCompression(ofTexCompression compression);
 
+	/// \brief Sets flag allowing texture to auto-generate mipmap
+	///
+	/// By default, this will set your minFilter to GL_LINEAR_MIPMAP_LINEAR.
+	/// If you want to change your minFilter later use setTextureMinMagFilter()
+	///
+	///	If you want to generate a mipmap later, or at a specific
+	/// point in your code, use ofTexture::generateMipmap() instead.
+	///
+	/// \sa generateMipmap()
+	/// \sa disableMipmap()
+	/// \sa setTextureMinMagFilter()
+	void enableMipmap();
+
+	/// \brief Sets flag allowing texture to auto-generate mipmap
+	///
+	/// By default, this will set your minFilter to GL_LINEAR_MIPMAP_LINEAR.
+	/// If you want to change your minFilter later use setTextureMinMagFilter()
+	///
+	///	If you want to generate a mipmap later, or at a specific
+	/// point in your code, use ofTexture::generateMipmap() instead.
+	///
+	/// \sa generateMipmap()
+	/// \sa enableMipmap()
+	/// \sa setTextureMinMagFilter()
+	void disableMipmap();
+	
 	/// \brief Has the texture been allocated?
 	///
 	/// Legacy function for backwards compatibility.
@@ -610,11 +705,15 @@ class ofTexture : public ofBaseDraws {
 protected:
     void loadData(const void * data, int w, int h, int glFormat, int glType);
 
-
-	void enableTextureTarget() const;
-	void disableTextureTarget() const;
+	void enableTextureTarget(int textureLocation) const;
+	void disableTextureTarget(int textureLocation) const;
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
-	mutable ofMesh quad;
+	ofMesh quad;
+
+private:
+	
+	bool bWantsMipmap;
+	
 };

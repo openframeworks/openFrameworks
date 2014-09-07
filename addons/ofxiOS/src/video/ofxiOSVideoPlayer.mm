@@ -219,62 +219,61 @@ unsigned char * ofxiOSVideoPlayer::getPixels() {
     }
     
     CGImageRef currentFrameRef;
-    
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    
-    CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame];
-    
-    /*Lock the image buffer*/
-    CVPixelBufferLockBaseAddress(imageBuffer,0);
-    
-    /*Get information about the image*/
-    uint8_t *baseAddress	= (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer);
-    size_t bytesPerRow		= CVPixelBufferGetBytesPerRow(imageBuffer);
-    size_t width			= CVPixelBufferGetWidth(imageBuffer);
-    size_t height			= CVPixelBufferGetHeight(imageBuffer);
-    
-    /*Create a CGImageRef from the CVImageBufferRef*/
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef newContext = CGBitmapContextCreate(baseAddress,
-                                                    width,
-                                                    height,
-                                                    8,
-                                                    bytesPerRow,
-                                                    colorSpace,
-                                                    kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-    CGImageRef newImage	= CGBitmapContextCreateImage(newContext);
-    
-    currentFrameRef = CGImageCreateCopy(newImage);
-    
-    /*We release some components*/
-    CGContextRelease(newContext);
-    CGColorSpaceRelease(colorSpace);
-    
-    /*We relase the CGImageRef*/
-    CGImageRelease(newImage);
-    
-    /*We unlock the  image buffer*/
-    CVPixelBufferUnlockBaseAddress(imageBuffer,0);
-    
-    if(bResetPixels) {
-        
-        if(pixelsRGBA != NULL) {
-            free(pixelsRGBA);
-            pixelsRGBA = NULL;
+    size_t width, height;
+
+    @autoreleasepool {
+        CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame];
+
+        /*Lock the image buffer*/
+        CVPixelBufferLockBaseAddress(imageBuffer,0);
+
+        /*Get information about the image*/
+        uint8_t *baseAddress    = (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer);
+        size_t bytesPerRow      = CVPixelBufferGetBytesPerRow(imageBuffer);
+        width                   = CVPixelBufferGetWidth(imageBuffer);
+        height                  = CVPixelBufferGetHeight(imageBuffer);
+
+        /*Create a CGImageRef from the CVImageBufferRef*/
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGContextRef newContext = CGBitmapContextCreate(baseAddress,
+                                                        width,
+                                                        height,
+                                                        8,
+                                                        bytesPerRow,
+                                                        colorSpace,
+                                                        kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+        CGImageRef newImage = CGBitmapContextCreateImage(newContext);
+
+        currentFrameRef = CGImageCreateCopy(newImage);
+
+        /*We release some components*/
+        CGContextRelease(newContext);
+        CGColorSpaceRelease(colorSpace);
+
+        /*We relase the CGImageRef*/
+        CGImageRelease(newImage);
+
+        /*We unlock the  image buffer*/
+        CVPixelBufferUnlockBaseAddress(imageBuffer,0);
+
+        if(bResetPixels) {
+
+            if(pixelsRGBA != NULL) {
+                free(pixelsRGBA);
+                pixelsRGBA = NULL;
+            }
+
+            if(pixelsRGB != NULL) {
+                free(pixelsRGB);
+                pixelsRGB = NULL;
+            }
+
+            pixelsRGBA = (GLubyte *) malloc(width * height * 4);
+            pixelsRGB  = (GLubyte *) malloc(width * height * 3);
+
+            bResetPixels = false;
         }
-        
-        if(pixelsRGB != NULL) {
-            free(pixelsRGB);
-            pixelsRGB = NULL;
-        }
-        
-        pixelsRGBA = (GLubyte *) malloc(width * height * 4);
-        pixelsRGB  = (GLubyte *) malloc(width * height * 3);
-        
-        bResetPixels = false;
     }
-    
-    [pool drain];
     
     CGContextRef spriteContext;
     spriteContext = CGBitmapContextCreate(pixelsRGBA,
