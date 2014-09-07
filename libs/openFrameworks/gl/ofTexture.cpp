@@ -150,9 +150,6 @@ static void release(GLuint id){
 //----------------------------------------------------------
 ofTexture::ofTexture(){
 	resetAnchor();
-	quad.getVertices().resize(4);
-	quad.getTexCoords().resize(4);
-	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	bWantsMipmap = false;
 }
 
@@ -161,7 +158,6 @@ ofTexture::ofTexture(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
-	quad = mom.quad;
 	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
 }
@@ -174,7 +170,6 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
-	quad = mom.quad;
 	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
 	return *this;
@@ -961,6 +956,10 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat tx1 = bottomRight.x - offsetw;
 	GLfloat ty1 = bottomRight.y - offseth;
 
+	ofMesh quad;
+	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	quad.getVertices().resize(4);
+	quad.getTexCoords().resize(4);
 	quad.getVertices()[0].set(px0,py0,z);
 	quad.getVertices()[1].set(px1,py0,z);
 	quad.getVertices()[2].set(px1,py1,z);
@@ -1008,6 +1007,10 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	GLfloat tx1 = texData.tex_t - offsetw;
 	GLfloat ty1 = texData.tex_u - offseth;
 
+	ofMesh quad;
+	quad.getVertices().resize(4);
+	quad.getTexCoords().resize(4);
+	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	quad.getVertices()[0].set(p1.x, p1.y);
 	quad.getVertices()[1].set(p2.x, p2.y);
 	quad.getVertices()[2].set(p3.x, p3.y);

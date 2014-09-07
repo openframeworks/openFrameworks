@@ -77,8 +77,8 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				setUseTexture(bool bUse);
 		ofTexture &			getTextureReference();
 		const ofTexture &	getTextureReference() const;
-		void 				draw(float x, float y, float w, float h);
-		void 				draw(float x, float y);
+		void 				draw(float x, float y, float w, float h) const;
+		void 				draw(float x, float y) const;
 		using ofBaseDraws::draw;
 
 		//the anchor is the point the image is drawn around.

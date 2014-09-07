@@ -431,31 +431,30 @@ void ofPixels_<PixelType>::crop(int x, int y, int _width, int _height){
 //----------------------------------------------------------------------
 template<typename PixelType>
 void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int _width, int _height) const{
+	if(&toPix == this){
+		ofPixels_<PixelType> * mutPixels = const_cast<ofPixels_<PixelType> *>(this);
+		mutPixels->crop(x,y,_width,_height);
+		return;
+	}
 
-		if(&toPix == this){
-			crop(x,y,_width,_height);
-			return;
-		}
+	_width = ofClamp(_width,1,getWidth());
+	_height = ofClamp(_height,1,getHeight());
 
-		_width = ofClamp(_width,1,getWidth());
-		_height = ofClamp(_height,1,getHeight());
+	if ((toPix.width != _width) || (toPix.height != _height) || (toPix.channels != channels)){
+		toPix.allocate(_width, _height, channels);
+	}
 
-		if ((toPix.width != _width) || (toPix.height != _height) || (toPix.channels != channels)){
-			toPix.allocate(_width, _height, channels);
-		}
-
-		// this prevents having to do a check for bounds in the for loop;
-		int minX = MAX(x, 0) * channels;
-		int maxX = MIN(x+_width, width) * channels;
-		int minY = MAX(y, 0) * channels;
-		int maxY = MIN(y+_height, height) * channels;
+	// this prevents having to do a check for bounds in the for loop;
+	int minX = MAX(x, 0) * channels;
+	int maxX = MIN(x+_width, width) * channels;
+	int minY = MAX(y, 0) * channels;
+	int maxY = MIN(y+_height, height) * channels;
 
 
-		iterator newPixel = toPix.begin();
-		for(Line line = getLines().begin()+minY; line!=getLines().begin()+maxY; ++line ){
-			for(const_iterator pixel = line.begin()+minX; pixel<line.begin()+maxX; ++pixel){
-				*newPixel++ = *pixel;
-			}
+	iterator newPixel = toPix.begin();
+	for(ConstLine line = getLines().begin()+minY; line!=getLines().begin()+maxY; ++line ){
+		for(const_iterator pixel = line.begin()+minX; pixel<line.begin()+maxX; ++pixel){
+			*newPixel++ = *pixel;
 		}
 	}
 }
@@ -468,7 +467,8 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 	}
 
 	if(&dst == this){
-		rotate90(nClockwiseRotations);
+		ofPixels_<PixelType> * mutPixels = const_cast<ofPixels_<PixelType> *>(this);
+		mutPixels->rotate90(nClockwiseRotations);
 		return;
 	}
 
@@ -599,7 +599,8 @@ void ofPixels_<PixelType>::mirror(bool vertically, bool horizontal){
 template<typename PixelType>
 void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal) const{
 	if(&dst == this){
-		mirror(vertically,horizontal);
+		ofPixels_<PixelType> * mutPixels = const_cast<ofPixels_<PixelType> *>(this);
+		mutPixels->mirror(vertically,horizontal);
 		return;
 	}
 
@@ -822,7 +823,7 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo
 	int bytesToCopyPerRow = (xTo + getWidth()<=dst.getWidth() ? getWidth() : dst.getWidth()-xTo) * getBytesPerPixel();
 	int columnsToCopy = yTo + getHeight() <= dst.getHeight() ? getHeight() : dst.getHeight()-yTo;
 	PixelType * dstPix = dst.getPixels() + ((xTo + yTo*dst.getWidth())*dst.getBytesPerPixel());
-	PixelType * srcPix = getPixels();
+	const PixelType * srcPix = getPixels();
 	int srcStride = getWidth()*getBytesPerPixel();
 	int dstStride = dst.getWidth()*dst.getBytesPerPixel();
 
