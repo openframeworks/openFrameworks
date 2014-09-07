@@ -502,7 +502,7 @@ void ofGstUtils::close(){
 	bLoaded = false;
 }
 
-static string getName(GstState state){
+/*static string getName(GstState state){
 	switch(state){
 	case   GST_STATE_VOID_PENDING:
 		return "void pending";
@@ -517,7 +517,7 @@ static string getName(GstState state){
 	default:
 		return "";
 	}
-}
+}*/
 
 bool ofGstUtils::busFunction(GstBus * bus, GstMessage * message, ofGstUtils * gstUtils){
 	return gstUtils->gstHandleMessage(bus,message);

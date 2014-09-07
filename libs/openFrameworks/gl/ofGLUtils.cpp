@@ -138,6 +138,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 	#ifndef TARGET_OPENGLES
 			case GL_RGBA8:
 			case GL_RGBA16:
+			case GL_RGBA16F:
 			case GL_RGBA32F_ARB:
 	#endif
 				 return GL_RGBA;
@@ -186,11 +187,13 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 #ifndef TARGET_OPENGLES
 			case GL_R8:
 			case GL_R16:
+			case GL_R16F:
 			case GL_R32F:
 				return GL_RED;
 
 			case GL_RG8:
 			case GL_RG16:
+			case GL_RG16F:
 			case GL_RG32F:
 				return GL_RG;
 #endif
@@ -217,24 +220,24 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_LUMINANCE_ALPHA:
 		case GL_ALPHA:
 #ifndef TARGET_OPENGLES
-		case GL_RGB8:
-		case GL_RGBA8:
 		case GL_LUMINANCE8:
 		case GL_LUMINANCE8_ALPHA8:
 		case GL_R8:
 		case GL_RG8:
+		case GL_RGB8:
+		case GL_RGBA8:
 		case GL_ALPHA8:
 #endif
 			 return GL_UNSIGNED_BYTE;
 
 
 #ifndef TARGET_OPENGLES
-		case GL_RGB16:
-		case GL_RGBA16:
 		case GL_LUMINANCE16:
 		case GL_LUMINANCE16_ALPHA16:
 		case GL_R16:
 		case GL_RG16:
+		case GL_RGB16:
+		case GL_RGBA16:
 #endif
 			return GL_UNSIGNED_SHORT;
 
@@ -246,10 +249,14 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 #ifndef TARGET_OPENGLES
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
-		case GL_RGB32F:
-		case GL_RGBA32F:
+		case GL_R16F:
+		case GL_RG16F:
+		case GL_RGB16F:
+		case GL_RGBA16F:
 		case GL_R32F:
 		case GL_RG32F:
+		case GL_RGB32F:
+		case GL_RGBA32F:
 #endif
 			return GL_FLOAT;
 
@@ -303,7 +310,13 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 	case GL_LUMINANCE16:
 	case GL_LUMINANCE32F_ARB:
 	case GL_R16:
+	case GL_R16F:
+	case GL_R16I:
+	case GL_R16UI:
 	case GL_R32F:
+	case GL_R32I:
+	case GL_R32UI:
+	case GL_DEPTH_COMPONENT32F:
 	case GL_DEPTH_COMPONENT32:
 	case GL_DEPTH_COMPONENT16:
 	case GL_DEPTH_COMPONENT24:
@@ -316,7 +329,12 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 #ifndef TARGET_OPENGLES
 	case GL_RGB8:
 	case GL_RGB16:
+	case GL_RGB16F:
+	case GL_RGB16I:
+	case GL_RGB16UI:
 	case GL_RGB32F:
+	case GL_RGB32I:
+	case GL_RGB32UI:
 #endif
 		return OF_IMAGE_COLOR;
 
@@ -325,7 +343,12 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 #ifndef TARGET_OPENGLES
 	case GL_RGBA8:
 	case GL_RGBA16:
+	case GL_RGBA16F:
+	case GL_RGBA16I:
+	case GL_RGBA16UI:
 	case GL_RGBA32F:
+	case GL_RGBA32I:
+	case GL_RGBA32UI:
 #endif
 		return OF_IMAGE_COLOR_ALPHA;
 	}

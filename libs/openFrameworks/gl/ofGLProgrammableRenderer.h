@@ -3,11 +3,10 @@
 #include "ofPolyline.h"
 #include "ofMatrix4x4.h"
 #include "ofShader.h"
-#include "ofGraphics.h"
 #include "ofMatrixStack.h"
+#include "ofVboMesh.h"
 
 
-#include <stack>
 class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
