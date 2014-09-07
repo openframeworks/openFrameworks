@@ -19,7 +19,7 @@ public:
 	ofAppGlutWindow();
 	~ofAppGlutWindow(){}
 
-	void setupOpenGL(int w, int h, int screenMode);
+	void setupOpenGL(int w, int h, ofWindowMode screenMode);
 	
 	void setDoubleBuffering(bool _bDoubleBuffered); 
 	
@@ -49,7 +49,7 @@ public:
 	int			getWidth();
 	int			getHeight();	
 	
-	int			getWindowMode();
+	ofWindowMode	getWindowMode();
 
 	void		enableSetupScreen();
 	void		disableSetupScreen();

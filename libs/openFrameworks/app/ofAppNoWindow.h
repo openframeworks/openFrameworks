@@ -27,7 +27,7 @@ public:
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 
 	static void exitApp();
-	void setupOpenGL(int w, int h, int screenMode);
+	void setupOpenGL(int w, int h, ofWindowMode screenMode);
 
 	ofPoint		getWindowPosition();
 	ofPoint		getWindowSize();

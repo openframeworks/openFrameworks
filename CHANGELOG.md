@@ -10,6 +10,10 @@ OF 0.9.0
 
 CORE
 ----
+### app
+	/ setupOpenGL and ofApp___Window use ofWindowMode instead of int
+	/ fix exit callbacks to allow for calling of the destructors, and better signal handling
+
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball
 	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
@@ -32,10 +36,12 @@ CORE
 	- ofSetMinMagFilters() : deprecated (use corresponding ofTexture member method) 
 	- ofGetUsingCustomMinMagFilters() : deprecated
 	- ofRestoreMinMagFilters() : deprecated	  
-
+	+ ofShader: report offending lines on compiling errors
+	+ ofGLUtils: better support for half float types
 
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
+	+ ofDrawBitmapString: can draw any type not only strings
 
 ### video
 	/ gstreamer: fix memory leaks when closing a video element
