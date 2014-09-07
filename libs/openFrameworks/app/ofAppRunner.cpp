@@ -328,10 +328,6 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode scree
 	ofSetWindow(windowPtr);
 }
 
-/*void ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, ofWindowMode screenMode){
-	ofSetWindow(windowPtr);
-}*/
-
 //-----------------------	gets called when the app exits
 //							currently looking at who to turn off
 //							at the end of the application
