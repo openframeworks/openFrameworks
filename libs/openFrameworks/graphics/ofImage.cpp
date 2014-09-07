@@ -840,6 +840,7 @@ ofImage_<PixelType>::operator ofPixels_<PixelType>&(){
 }
 
 //------------------------------------
+// for getting a reference to the texture
 template<typename PixelType>
 ofTexture & ofImage_<PixelType>::getTextureReference(){
 	return tex;
@@ -943,7 +944,7 @@ void ofImage_<PixelType>::setUseTexture(bool bUse){
 
 //------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::isUsingTexture() const{
+bool ofImage_<PixelType>::isUsingTexture(){
 	return bUseTexture;
 }
 
@@ -1259,13 +1260,13 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getHeight() const{
+float ofImage_<PixelType>::getHeight() {
 	return height;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getWidth() const{
+float ofImage_<PixelType>::getWidth() {
 	return width;
 }
 

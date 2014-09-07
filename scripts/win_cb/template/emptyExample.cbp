@@ -67,6 +67,7 @@
 			<Add directory="..\..\..\libs\openFrameworks\video" />
 			<Add directory="..\..\..\libs\poco\include" />
 			<Add directory="..\..\..\libs\tess2\include" />
+			<Add directory="..\..\..\libs\openssl\include" />
 			<Add directory="..\..\..\libs\cairo\include\cairo" />
 		</Compiler>
 		<Linker>

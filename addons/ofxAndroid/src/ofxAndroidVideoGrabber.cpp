@@ -173,14 +173,11 @@ void ofxAndroidVideoGrabber::update(){
 			ofGetJNIEnv()->CallVoidMethod(getCamera(ofGetJNIEnv(),getJavaClass(),cameraId),javaGetTextureMatrix,matrixJava);
 			jfloat * m = ofGetJNIEnv()->GetFloatArrayElements(matrixJava,0);
 
-			for(int i=0;i<16;i++) {
-				texture.texData.textureMatrix.getPtr()[i] = m[i];
-			}
-
 			ofMatrix4x4 vFlipTextureMatrix;
 			vFlipTextureMatrix.scale(1,-1,1);
 			vFlipTextureMatrix.translate(0,1,0);
-			texture.texData.textureMatrix = vFlipTextureMatrix * texture.texData.textureMatrix;
+			ofMatrix4x4 textureMatrix(m);
+			texture.setTextureMatrix( vFlipTextureMatrix * textureMatrix );
 
 			ofGetJNIEnv()->ReleaseFloatArrayElements(matrixJava,m,0);
 		}
@@ -282,7 +279,6 @@ bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 		td.textureTarget = GL_TEXTURE_EXTERNAL_OES;
 		td.glTypeInternal = GL_RGBA;
 		td.bFlipTexture = false;
-		td.useTextureMatrix = true;
 
 		// hack to initialize gl resources from outside ofTexture
 		texture.texData = td;

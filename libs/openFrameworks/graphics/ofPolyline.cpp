@@ -1009,3 +1009,44 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
     }
 }
 
+
+//--------------------------------------------------
+vector<ofPoint>::iterator ofPolyline::begin(){
+	return points.begin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::iterator ofPolyline::end(){
+	return points.end();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_iterator ofPolyline::begin() const{
+	return points.begin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_iterator ofPolyline::end() const{
+	return points.end();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::reverse_iterator ofPolyline::rbegin(){
+	return points.rbegin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::reverse_iterator ofPolyline::rend(){
+	return points.rend();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_reverse_iterator ofPolyline::rbegin() const{
+	return points.rbegin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_reverse_iterator ofPolyline::rend() const{
+	return points.rend();
+}
+

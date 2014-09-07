@@ -494,18 +494,16 @@ didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
 		 withSampleBuffer:(QTSampleBuffer *)sampleBuffer 
 		   fromConnection:(QTCaptureConnection *)connection
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-    @synchronized(self){
-        if(cvFrame != NULL){
-			CVBufferRelease(cvFrame);
+	@autoreleasepool {
+		@synchronized(self){
+			if(cvFrame != NULL){
+				CVBufferRelease(cvFrame);
+			}
+			cvFrame = videoFrame;
+			CVBufferRetain(cvFrame);
+			hasNewFrame = YES;
 		}
-		cvFrame = videoFrame;
-		CVBufferRetain(cvFrame);
-		hasNewFrame = YES;
 	}
-    
-    [pool release];
 }
 
 - (void) update
@@ -636,21 +634,21 @@ void ofQTKitGrabber::setDeviceID(int _videoDeviceID){
 }
 
 void ofQTKitGrabber::setVideoDeviceID(int _videoDeviceID){
-    videoDeviceID = _videoDeviceID;
+	videoDeviceID = _videoDeviceID;
 	if(isInited){
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		[grabber setVideoDeviceID:videoDeviceID];
-		[pool release];	
+		@autoreleasepool {
+			[grabber setVideoDeviceID:videoDeviceID];
+		}
 	}
 }
 
 void ofQTKitGrabber::setAudioDeviceID(int _audioDeviceID){
 	audioDeviceID = _audioDeviceID;
 	if(isInited){
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		[grabber setAudioDeviceID:audioDeviceID];
-		[pool release];	
-	}		
+		@autoreleasepool {
+			[grabber setAudioDeviceID:audioDeviceID];
+		}
+	}
 }
 
 void ofQTKitGrabber::setDeviceID(string _videoDeviceIDString){
@@ -658,42 +656,40 @@ void ofQTKitGrabber::setDeviceID(string _videoDeviceIDString){
 }
 
 void ofQTKitGrabber::setVideoDeviceID(string _videoDeviceIDString){
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
-	// set array filled with devices
-	NSArray* deviceArray = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] 
-							arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
-	
-	// convert device string to NSString
-	NSString* deviceIDString = [NSString stringWithUTF8String: _videoDeviceIDString.c_str()];
-	
-	// find the index of the device name in the array of devices
-	videoDeviceID = (NSInteger)[QTKitVideoGrabber getIndexofStringInArray:deviceArray
-															 stringToFind:deviceIDString];
-	
-	if(isInited){
-	     [grabber setVideoDeviceID:videoDeviceID];
-    }
-	[pool release];	
+	@autoreleasepool {	
+		// set array filled with devices
+		NSArray* deviceArray = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] 
+								arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
+
+		// convert device string to NSString
+		NSString* deviceIDString = [NSString stringWithUTF8String: _videoDeviceIDString.c_str()];
+
+		// find the index of the device name in the array of devices
+		videoDeviceID = (NSInteger)[QTKitVideoGrabber getIndexofStringInArray:deviceArray
+																 stringToFind:deviceIDString];
+
+		if(isInited){
+			[grabber setVideoDeviceID:videoDeviceID];
+		}
+	}
 }
 
 void ofQTKitGrabber::setAudioDeviceID(string _audioDeviceIDString){
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
-	// set array filled with devices
-	NSArray* deviceArray = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeSound];
-	
-	// convert device string to NSString
-	NSString* deviceIDString = [NSString stringWithUTF8String: _audioDeviceIDString.c_str()];
-	
-	// find the index of the device name in the array of devices
-	audioDeviceID = (NSInteger)[QTKitVideoGrabber getIndexofStringInArray:deviceArray
-															 stringToFind:deviceIDString];
-	
-	if(isInited){
-		[grabber setAudioDeviceID:audioDeviceID];
-    }
-	[pool release];	
+	@autoreleasepool {
+		// set array filled with devices
+		NSArray* deviceArray = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeSound];
+
+		// convert device string to NSString
+		NSString* deviceIDString = [NSString stringWithUTF8String: _audioDeviceIDString.c_str()];
+
+		// find the index of the device name in the array of devices
+		audioDeviceID = (NSInteger)[QTKitVideoGrabber getIndexofStringInArray:deviceArray
+																 stringToFind:deviceIDString];
+
+		if(isInited){
+			[grabber setAudioDeviceID:audioDeviceID];
+		}
+	}
 }
 
 bool ofQTKitGrabber::initGrabberWithoutPreview(){
@@ -702,109 +698,107 @@ bool ofQTKitGrabber::initGrabberWithoutPreview(){
 }
 
 bool ofQTKitGrabber::initGrabber(int w, int h){
-    
-    if(grabber != NULL){
-        close();
-    }
-    
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-    grabber = [[QTKitVideoGrabber alloc] initWithWidth:w //wxh can be -1 to specify do not force
-                                                height:h
-                                           videodevice:videoDeviceID
-                                           audiodevice:audioDeviceID
-                                            usingAudio:bUseAudio
-                                         capturePixels:bPreview
-                                             pixelsRef:pixels];
-	
-	isInited = (grabber != nil);
-	if(isInited){
-		grabber.grabber = this; //for events
+
+	if(grabber != NULL){
+		close();
 	}
-	[pool release];
-    return isInited;
+
+	@autoreleasepool {
+		grabber = [[QTKitVideoGrabber alloc] initWithWidth:w //wxh can be -1 to specify do not force
+													height:h
+											   videodevice:videoDeviceID
+											   audiodevice:audioDeviceID
+												usingAudio:bUseAudio
+											 capturePixels:bPreview
+												 pixelsRef:pixels];
+
+		isInited = (grabber != nil);
+		if(isInited){
+			grabber.grabber = this; //for events
+		}
+	}
+	return isInited;
 }
 
 bool ofQTKitGrabber::initRecording(){
-    bool success = false;
+	bool success = false;
 	if(confirmInit()){
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		NSString * videoCodec = [NSString stringWithUTF8String: videoCodecIDString.c_str()];
-		NSString * audioCodec = [NSString stringWithUTF8String: audioCodecIDString.c_str()];
-        
-		success = [grabber initRecording:videoCodec audioCodec:audioCodec];
+		@autoreleasepool {
+			NSString * videoCodec = [NSString stringWithUTF8String: videoCodecIDString.c_str()];
+			NSString * audioCodec = [NSString stringWithUTF8String: audioCodecIDString.c_str()];
 
-		[pool release];
+			success = [grabber initRecording:videoCodec audioCodec:audioCodec];
+		}
 	}
-    return success;
+	return success;
 }
 
-const vector<string>& ofQTKitGrabber::listVideoCodecs() const {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSArray* videoCodecs = [QTKitVideoGrabber listVideoCodecs];
-	videoCodecsVec.clear();
-	for (id object in videoCodecs){
-		string str = [[object description] UTF8String];
-		videoCodecsVec.push_back(str);
+vector<string>& ofQTKitGrabber::listVideoCodecs() const{
+	@autoreleasepool {
+		NSArray* videoCodecs = [QTKitVideoGrabber listVideoCodecs];
+		videoCodecsVec.clear();
+		for (id object in videoCodecs){
+			string str = [[object description] UTF8String];
+			videoCodecsVec.push_back(str);
+		}
 	}
-	[pool release];	
 	return videoCodecsVec;
 }
 
-const vector<string>& ofQTKitGrabber::listAudioCodecs() const {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSArray* audioCodecs = [QTKitVideoGrabber listAudioCodecs];
-	audioCodecsVec.clear();
-	for (id object in audioCodecs){
-		string str = [[object description] UTF8String];
-		audioCodecsVec.push_back(str);
+vector<string>& ofQTKitGrabber::listAudioCodecs() const{
+	@autoreleasepool {
+		NSArray* audioCodecs = [QTKitVideoGrabber listAudioCodecs];
+		audioCodecsVec.clear();
+		for (id object in audioCodecs){
+			string str = [[object description] UTF8String];
+			audioCodecsVec.push_back(str);
+		}
 	}
-	[pool release];	
 	return audioCodecsVec;
 }
 
 void ofQTKitGrabber::setVideoCodec(string _videoCodec){
-	videoCodecIDString = _videoCodec;	
+	videoCodecIDString = _videoCodec;
 	if(confirmInit()){
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];	
-		NSString * NSvideoCodec = [NSString stringWithUTF8String: videoCodecIDString.c_str()];
-		[grabber setVideoCodec:NSvideoCodec];
-		[pool release];
+		@autoreleasepool {
+			NSString * NSvideoCodec = [NSString stringWithUTF8String: videoCodecIDString.c_str()];
+			[grabber setVideoCodec:NSvideoCodec];
+		}
 	}
 }
 
 void ofQTKitGrabber::setAudioCodec(string _audioCodec){
-    if(confirmInit()){
-        audioCodecIDString = _audioCodec;
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];	
-        NSString * NSaudioCodec = [NSString stringWithUTF8String: audioCodecIDString.c_str()];
-        [grabber setAudioCodec:NSaudioCodec];
-        [pool release];
-    }
+	if(confirmInit()){
+		audioCodecIDString = _audioCodec;
+		@autoreleasepool {
+			NSString * NSaudioCodec = [NSString stringWithUTF8String: audioCodecIDString.c_str()];
+			[grabber setAudioCodec:NSaudioCodec];
+		}
+	}
 }
 
 void ofQTKitGrabber::startRecording(string filePath){
-    if(confirmInit()){
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		NSString * NSfilePath = [NSString stringWithUTF8String: ofToDataPath(filePath).c_str()];
-		[grabber startRecording:NSfilePath];
-		[pool release];
-    }
+	if(confirmInit()){
+		@autoreleasepool {
+			NSString * NSfilePath = [NSString stringWithUTF8String: ofToDataPath(filePath).c_str()];
+			[grabber startRecording:NSfilePath];
+		}
+	}
 }
 
 void ofQTKitGrabber::stopRecording(){
-    if(confirmInit()){
-	    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        [grabber stopRecording];
-        [pool release];
-    }
+	if(confirmInit()){
+		@autoreleasepool {
+			[grabber stopRecording];
+		}
+	}
 }
 
 void ofQTKitGrabber::update(){
-    if(confirmInit()){
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		[grabber update];
-        [pool release];
+	if(confirmInit()){
+		@autoreleasepool {
+			[grabber update];
+		}
 	} 
 }
 
@@ -854,55 +848,45 @@ bool ofQTKitGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofQTKitGrabber::getPixelFormat() const {
+ofPixelFormat ofQTKitGrabber::getPixelFormat() const{
 	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
 	return OF_PIXELS_RGB;
 }
 
 //---------------------------------------------------------------------------
-const vector<string>& ofQTKitGrabber::listVideoDevices() const {
-    
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-	NSArray* videoDevices = [QTKitVideoGrabber listVideoDevices];
-	videoDeviceVec.clear();
-	for (id object in videoDevices){
-		string str = [[object description] UTF8String];
-		videoDeviceVec.push_back(str);
+vector<string>& ofQTKitGrabber::listVideoDevices() const{
+	@autoreleasepool {
+		NSArray* videoDevices = [QTKitVideoGrabber listVideoDevices];
+		videoDeviceVec.clear();
+		for (id object in videoDevices){
+			string str = [[object description] UTF8String];
+			videoDeviceVec.push_back(str);
+		}
 	}
-	[pool release];
-    
 	return videoDeviceVec;
 }
 
-const vector<string>& ofQTKitGrabber::listAudioDevices() const {
-    
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-	NSArray* audioDevices = [QTKitVideoGrabber listAudioDevices];
-	audioDeviceVec.clear();
-	for (id object in audioDevices){
-		string str = [[object description] UTF8String];
-		audioDeviceVec.push_back(str);
+vector<string>& ofQTKitGrabber::listAudioDevices(){
+	@autoreleasepool {
+		NSArray* audioDevices = [QTKitVideoGrabber listAudioDevices];
+		audioDeviceVec.clear();
+		for (id object in audioDevices){
+			string str = [[object description] UTF8String];
+			audioDeviceVec.push_back(str);
+		}
 	}
-	
-    [pool release];
-    
 	return audioDeviceVec;
 }
 
 void ofQTKitGrabber::close(){
-
     if(grabber != NULL){
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        
-        [grabber stop];
-        [grabber release];
-        grabber = NULL;
-        isInited = false;
-        
-        [pool release];
-    }
+		@autoreleasepool {
+			[grabber stop];
+			[grabber release];
+			grabber = NULL;
+			isInited = false;
+		}
+	}
 }
 
 //will return empty if pixels haven't been allocated

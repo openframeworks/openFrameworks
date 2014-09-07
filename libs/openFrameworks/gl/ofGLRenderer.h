@@ -5,6 +5,7 @@
 #include <stack>
 #include "ofGraphics.h"
 #include "ofMatrixStack.h"
+#include <set>
 
 class ofShapeTessellation;
 class ofMesh;
@@ -138,8 +139,10 @@ public:
 
 
 	// gl specifics
-	void enableTextureTarget(int textureTarget);
-	void disableTextureTarget(int textureTarget);
+	void enableTextureTarget(int textureTarget, int textureID, int textureLocation);
+	void disableTextureTarget(int textureTarget, int textureLocation);
+	void setAlphaMaskTex(ofTexture & tex);
+	void disableAlphaMask();
 
 	// lighting globals
 	void enableLighting();
@@ -183,5 +186,7 @@ private:
 	ofMatrixStack matrixStack;
 	bool normalsEnabled;
 	bool lightingEnabled;
+	set<int> textureLocationsEnabled;
 
+	int alphaMaskTextureTarget;
 };

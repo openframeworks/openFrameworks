@@ -67,7 +67,7 @@ PLATFORM_DEFINES += USE_VCHIQ_ARM
 
 # Fix for firmware update @
 # https://github.com/Hexxeh/rpi-firmware/commit/ca3703d2d282ac96a97650e2e496276727e1b65b
-ifeq ($(strip $(shell cat /opt/vc/include/interface/vmcs_host/vc_dispmanx.h | grep VC_IMAGE_TRANSFORM_T)),) 
+ifeq ($(strip $(shell cat $(RPI_ROOT)/opt/vc/include/interface/vmcs_host/vc_dispmanx.h | grep VC_IMAGE_TRANSFORM_T)),) 
 PLATFORM_DEFINES += USE_DISPMANX_TRANSFORM_T
 endif
 
@@ -133,6 +133,13 @@ PLATFORM_LIBRARIES += openmaxil
 PLATFORM_LIBRARIES += bcm_host
 PLATFORM_LIBRARIES += vcos
 PLATFORM_LIBRARIES += vchiq_arm
+PLATFORM_LIBRARIES += pcre
+PLATFORM_LIBRARIES += rt 
+PLATFORM_LIBRARIES += X11 
+PLATFORM_LIBRARIES += dl
+
+
+PLATFORM_LDFLAGS += -pthread 
 
 
 ################################################################################
@@ -207,16 +214,8 @@ ifeq ($(CROSS_COMPILING),1)
 	
 	PLATFORM_LIBRARY_SEARCH_PATHS += $(RPI_ROOT)/opt/vc/lib
 	
-	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -pthread 
-	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/usr/lib
-	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/usr/lib/arm-linux-gnueabihf
-	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/lib
-	#PLATFORM_LDFLAGS += -Wl,-rpath-link $(SYSROOT)/lib/arm-linux-gnueabihf
+	PLATFORM_LDFLAGS += --sysroot=$(SYSROOT)
 	
 	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	
-	PLATFORM_LIBRARIES += pcre
-	PLATFORM_LIBRARIES += rt 
-	PLATFORM_LIBRARIES += X11 
-	PLATFORM_LIBRARIES += dl
 endif
