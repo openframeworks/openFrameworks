@@ -296,13 +296,13 @@ typedef TESSindex ofIndexType;
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
 #if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
-	#ifdef TARGET_LINUX
-		#define OF_VIDEO_PLAYER_GSTREAMER
-	#elif defined(TARGET_ANDROID)
-		#define OF_VIDEO_PLAYER_ANDROID
-	#elif defined(TARGET_OF_IOS)
-		#define OF_VIDEO_PLAYER_IOS
-	#elif defined(TARGET_OSX)
+    #ifdef TARGET_LINUX
+        #define OF_VIDEO_PLAYER_GSTREAMER
+    #elif defined(TARGET_ANDROID)
+        #define OF_VIDEO_PLAYER_ANDROID
+    #elif defined(TARGET_OF_IOS)
+        #define OF_VIDEO_PLAYER_IOS
+    #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
             #define OF_VIDEO_PLAYER_QUICKTIME
@@ -312,10 +312,10 @@ typedef TESSindex ofIndexType;
             #define OF_VIDEO_PLAYER_AVFOUNDATION
         #endif
     #elif defined(TARGET_EMSCRIPTEN)
-		#define OF_VIDEO_PLAYER_EMSCRIPTEN
-	#else
-		#define OF_VIDEO_PLAYER_QUICKTIME
-	#endif
+        #define OF_VIDEO_PLAYER_EMSCRIPTEN
+    #else
+        #define OF_VIDEO_PLAYER_QUICKTIME
+    #endif
 #endif
 
 //------------------------------------------------ soundstream
