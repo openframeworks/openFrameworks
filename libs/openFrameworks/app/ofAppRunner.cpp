@@ -348,6 +348,9 @@ void ofExitCallback(){
 	// any other deinitialization
 	OFSAptr.reset();
 
+	// everything should be destroyed here, except for
+	// static objects
+
 
 	// finish every library and subsystem
 	#ifndef TARGET_EMSCRIPTEN
