@@ -312,30 +312,26 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	}
 
 	private class OrientationListener extends OrientationEventListener{
+		private int rotation = -1;
 
 		public OrientationListener(Context context) {
 			super(context);
-			// TODO Auto-generated constructor stub
 		}
 
 		@Override
 		public void onOrientationChanged(int orientation) {
 			if (orientation == ORIENTATION_UNKNOWN) return;
 			try{
-				Camera.Parameters config = camera.getParameters();
-				/*Camera.CameraInfo info =
-				        new Camera.CameraInfo();*/
-				//Camera.getCameraInfo(camera, info);
 				orientation = (orientation + 45) / 90 * 90;
-				int rotation = orientation % 360;
-				//if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
-				    //rotation = (info.orientation - orientation + 360) % 360;
-				/*} else {  // back-facing camera
-				    rotation = (info.orientation + orientation) % 360;
-				}*/
-				config.setRotation(rotation);
-				camera.setParameters(config);
-			}catch(Exception e){
+				int newRotation = orientation % 360;
+
+				if (newRotation != rotation) {
+					rotation = newRotation;
+					Camera.Parameters config = camera.getParameters();
+					config.setRotation(rotation);
+					camera.setParameters(config);
+				}
+			} catch(Exception e) {
 				
 			}
 		}
