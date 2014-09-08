@@ -77,6 +77,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				setUseTexture(bool bUse);
 		bool 				isUsingTexture() const;
 		ofTexture &			getTextureReference();
+		vector<ofTexture> & getTexturePlanes();
 		const ofTexture &	getTextureReference() const;
 		vector<ofTexture> & getTexturePlanes();
 		const vector<ofTexture> & getTexturePlanes() const;
@@ -109,6 +110,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		bool				isLoaded() const;
 		bool				isPlaying() const;
 		bool 				isInitialized() const;
+		bool				isInitialized();
 
 		//this is kept as legacy to support people accessing width and height directly. 
 		mutable int         height;

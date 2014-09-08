@@ -810,7 +810,7 @@ bool ofQTKitGrabber::isReady() const {
 	return isInited;
 }
 
-bool ofQTKitGrabber::isInitialized(){
+bool ofQTKitGrabber::isInitialized() const{
     return isInited;
 }
 
