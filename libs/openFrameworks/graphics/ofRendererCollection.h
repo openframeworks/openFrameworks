@@ -148,21 +148,30 @@ public:
 			 renderers[i]->setupScreenOrtho(width,height,nearDist,farDist);
 		 }
 	 }
-	 ofRectangle getCurrentViewport(){
+	 ofRectangle getCurrentViewport() const{
 		 if(renderers.size()){
 			 return renderers[0]->getCurrentViewport();
 		 }else{
 			 return ofRectangle();
 		 }
 	 }
-	 int getViewportWidth(){
+
+	 ofRectangle getNativeViewport() const{
+		 if(renderers.size()){
+			 return renderers[0]->getNativeViewport();
+		 }else{
+			 return ofRectangle();
+		 }
+	 }
+
+	 int getViewportWidth() const{
 		 if(renderers.size()){
 			 return renderers[0]->getViewportWidth();
 		 }else{
 			 return 0;
 		 }
 	 }
-	 int getViewportHeight(){
+	 int getViewportHeight() const{
 		 if(renderers.size()){
 			 return renderers[0]->getViewportHeight();
 		 }else{
@@ -175,7 +184,7 @@ public:
 			 renderers[i]->setCoordHandedness(handedness);
 		 }
 	 }
-	 ofHandednessType getCoordHandedness(){
+	 ofHandednessType getCoordHandedness() const{
 		 if(renderers.size()){
 			 return renderers[0]->getCoordHandedness();
 		 }else{
@@ -262,6 +271,48 @@ public:
 	void multMatrix (const float * m){
 		for(int i=0;i<(int)renderers.size();i++){
 			renderers[i]->multMatrix( m );
+		}
+	}
+
+	void setOrientation(ofOrientation orientation, bool vflip){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->setOrientation( orientation, vflip );
+		}
+	}
+
+	bool isVFlipped() const{
+		if(!renderers.empty()){
+			return renderers.front()->isVFlipped();
+		}else{
+			ofLogWarning() << "No renderer in renderer collection, but vflipped requested returning true.";
+			return true;
+		}
+	}
+
+	void matrixMode(ofMatrixMode mode){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->matrixMode( mode );
+		}
+	}
+
+	void loadViewMatrix(const ofMatrix4x4& m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->loadViewMatrix( m );
+		}
+	}
+
+	void multViewMatrix(const ofMatrix4x4& m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->multViewMatrix( m );
+		}
+	}
+
+	ofMatrix4x4 getCurrentViewMatrix() const{
+		if(!renderers.empty()){
+			return renderers.front()->getCurrentViewMatrix();
+		}else{
+			ofLogWarning() << "No renderer in renderer collection, but current view matrix requested. Returning identity matrix.";
+			return ofMatrix4x4::newIdentityMatrix();
 		}
 	}
 
@@ -437,16 +488,20 @@ public:
 	}
 	void enablePointSprites(){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->enablePointSprites();
+			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
+				 ((shared_ptr<ofBaseGLRenderer>&)renderers[i])->enablePointSprites();
+			 }
 		 }
 	}
 	void disablePointSprites(){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->disablePointSprites();
+			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
+				 ((shared_ptr<ofBaseGLRenderer>&)renderers[i])->disablePointSprites();
+			 }
 		 }
 	}
 
-	void enableAntiaAliasing(){
+	void enableAntiAliasing(){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->enableAntiAliasing();
 		 }

@@ -59,12 +59,23 @@ public:
 	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool invertY = true);
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
-	ofRectangle getCurrentViewport();
-	int getViewportWidth();
-	int getViewportHeight();
+	ofRectangle getCurrentViewport() const;
+	ofRectangle getNativeViewport() const;
+	int getViewportWidth() const;
+	int getViewportHeight() const;
+
+	void setOrientation(ofOrientation orientation, bool vFlip);
+	bool isVFlipped() const;
+	void loadViewMatrix(const ofMatrix4x4 & m);
+	void multViewMatrix(const ofMatrix4x4 & m);
+	ofMatrix4x4 getCurrentViewMatrix() const;
+	ofMatrix4x4 getCurrentNormalMatrix() const;
+	ofMatrix4x4 getCurrentOrientationMatrix() const;
+	void setCircleResolution(int);
+
 
 	void setCoordHandedness(ofHandednessType handedness);
-	ofHandednessType getCoordHandedness();
+	ofHandednessType getCoordHandedness() const;
 
 	// drawing modes
 	void setRectMode(ofRectMode mode);

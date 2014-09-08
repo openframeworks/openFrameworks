@@ -58,14 +58,14 @@ public:
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 	void setOrientation(ofOrientation orientation, bool vFlip);
-	ofRectangle getCurrentViewport();
-	ofRectangle getNativeViewport();
-	int getViewportWidth();
-	int getViewportHeight();
+	ofRectangle getCurrentViewport() const;
+	ofRectangle getNativeViewport() const;
+	int getViewportWidth() const;
+	int getViewportHeight() const;
 	bool isVFlipped() const;
     
 	void setCoordHandedness(ofHandednessType handedness);
-	ofHandednessType getCoordHandedness();
+	ofHandednessType getCoordHandedness() const;
     
 	//our openGL wrappers
 	void pushMatrix();
@@ -169,6 +169,25 @@ public:
 	ofShader & alphaMask2DShader();
 	ofShader & bitmapStringShader();
 	ofShader & defaultUniqueShader();
+
+
+	void enableLighting(){};
+	void disableLighting(){};
+	void enableSeparateSpecularLight(){};
+	void disableSeparateSpecularLight(){}
+	bool getLightingEnabled(){return true;}
+	void setSmoothLighting(bool b){}
+	void setGlobalAmbientColor(const ofColor& c){}
+	void enableLight(int lightIndex){}
+	void disableLight(int lightIndex){}
+	void setLightSpotlightCutOff(int lightIndex, float spotCutOff){}
+	void setLightSpotConcentration(int lightIndex, float exponent){}
+	void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic ){}
+	void setLightAmbientColor(int lightIndex, const ofFloatColor& c){}
+	void setLightDiffuseColor(int lightIndex, const ofFloatColor& c){}
+	void setLightSpecularColor(int lightIndex, const ofFloatColor& c){}
+	void setLightPosition(int lightIndex, const ofVec4f & position){}
+	void setLightSpotDirection(int lightIndex, const ofVec4f & direction){}
     
 private:
 

@@ -1021,23 +1021,62 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist
 	}
 };
 
-ofRectangle ofCairoRenderer::getCurrentViewport(){
+ofRectangle ofCairoRenderer::getCurrentViewport() const{
 	return viewportRect;
 };
 
-int ofCairoRenderer::getViewportWidth(){
+ofRectangle ofCairoRenderer::getNativeViewport() const{
+	return viewportRect;
+}
+
+int ofCairoRenderer::getViewportWidth() const{
 	return viewportRect.width;
 };
 
-int ofCairoRenderer::getViewportHeight(){
+int ofCairoRenderer::getViewportHeight() const{
 	return viewportRect.height;
 };
+
+void ofCairoRenderer::setOrientation(ofOrientation orientation, bool vFlip){
+	ofLogError("ofCairoRenderer") << "orientation not supported yet";
+}
+
+bool ofCairoRenderer::isVFlipped() const{
+	return true;
+}
+
+void ofCairoRenderer::loadViewMatrix(const ofMatrix4x4 & m){
+	ofLogError("ofCairoRenderer") << "view matrix not supported yet";
+}
+
+void ofCairoRenderer::multViewMatrix(const ofMatrix4x4 & m){
+	ofLogError("ofCairoRenderer") << "view matrix not supported yet";
+}
+
+ofMatrix4x4 ofCairoRenderer::getCurrentViewMatrix() const{
+	ofLogError("ofCairoRenderer") << "view matrix not supported yet";
+	return ofMatrix4x4::newIdentityMatrix();
+}
+
+ofMatrix4x4 ofCairoRenderer::getCurrentNormalMatrix() const{
+	ofLogError("ofCairoRenderer") << "normal matrix not supported yet";
+	return ofMatrix4x4::newIdentityMatrix();
+}
+
+ofMatrix4x4 ofCairoRenderer::getCurrentOrientationMatrix() const{
+	ofLogError("ofCairoRenderer") << "orientation matrix not supported yet";
+	return ofMatrix4x4::newIdentityMatrix();
+}
+
+void ofCairoRenderer::setCircleResolution(int){
+
+}
 
 void ofCairoRenderer::setCoordHandedness(ofHandednessType handedness){
 
 };
 
-ofHandednessType ofCairoRenderer::getCoordHandedness(){
+ofHandednessType ofCairoRenderer::getCoordHandedness() const{
 	return OF_LEFT_HANDED;
 };
 

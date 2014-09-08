@@ -51,15 +51,15 @@ public:
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
-	ofRectangle getCurrentViewport();
-	ofRectangle getNativeViewport();
-	int getViewportWidth();
-	int getViewportHeight();
+	ofRectangle getCurrentViewport() const;
+	ofRectangle getNativeViewport() const;
+	int getViewportWidth() const;
+	int getViewportHeight() const;
 	bool isVFlipped() const;
 	bool texturesNeedVFlip() const;
 
 	void setCoordHandedness(ofHandednessType handedness);
-	ofHandednessType getCoordHandedness();
+	ofHandednessType getCoordHandedness() const;
 
 	//our openGL wrappers
 	void pushMatrix();
@@ -164,6 +164,9 @@ public:
 	void setLightSpecularColor(int lightIndex, const ofFloatColor& c);
 	void setLightPosition(int lightIndex, const ofVec4f & position);
 	void setLightSpotDirection(int lightIndex, const ofVec4f & direction);
+
+
+	void setCurrentMaterial(ofBaseMaterial * material){}
 
 private:
 	void startSmoothing();

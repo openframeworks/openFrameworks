@@ -56,8 +56,8 @@ static ofPath shape;
 static ofVboMesh gradientMesh;
 
 shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
-	static shared_ptr<ofBaseRenderer> renderer;
-	return renderer;
+	static shared_ptr<ofBaseRenderer> currentRenderer;
+	return currentRenderer;
 }
 
 void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
@@ -680,12 +680,16 @@ void ofEnableBlendMode(ofBlendMode blendMode){
 
 //----------------------------------------------------------
 void ofEnablePointSprites(){
-	ofGetCurrentRenderer()->enablePointSprites();
+	if(ofGetCurrentRenderer()->getType()=="GL" || ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+		((shared_ptr<ofBaseGLRenderer>&)ofGetCurrentRenderer())->enablePointSprites();
+	}
 }
 
 //----------------------------------------------------------
 void ofDisablePointSprites(){
-	ofGetCurrentRenderer()->disablePointSprites();
+	if(ofGetCurrentRenderer()->getType()=="GL" || ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
+		((shared_ptr<ofBaseGLRenderer>&)ofGetCurrentRenderer())->disablePointSprites();
+	}
 }
 
 //----------------------------------------------------------

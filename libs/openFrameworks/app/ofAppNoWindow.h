@@ -71,12 +71,13 @@ class ofNoopRenderer: public ofBaseRenderer{
 	virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool invertY = true){};
 	virtual void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){}
 	virtual void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){};
-	virtual ofRectangle getCurrentViewport(){return ofRectangle();};
-	virtual int getViewportWidth(){return 0;};
-	virtual int getViewportHeight(){return 0;};
+	virtual ofRectangle getCurrentViewport() const{return ofRectangle();};
+	ofRectangle getNativeViewport() const{return ofRectangle();};
+	virtual int getViewportWidth() const{return 0;};
+	virtual int getViewportHeight() const{return 0;};
 
 	virtual void setCoordHandedness(ofHandednessType handedness){};
-	virtual ofHandednessType getCoordHandedness(){return OF_LEFT_HANDED;};
+	virtual ofHandednessType getCoordHandedness() const{return OF_LEFT_HANDED;};
 
 	//our openGL wrappers
 	virtual void pushMatrix(){};
@@ -93,6 +94,24 @@ class ofNoopRenderer: public ofBaseRenderer{
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults(){};
 	virtual void setupScreen(){};
+
+	void setOrientation(ofOrientation, bool){}
+	bool isVFlipped() const{return true;}
+	ofMatrix4x4 getCurrentMatrix(ofMatrixMode) const{return ofMatrix4x4::newIdentityMatrix();};
+	ofMatrix4x4 getCurrentOrientationMatrix() const{return ofMatrix4x4::newIdentityMatrix();}
+	void matrixMode(ofMatrixMode){}
+	void loadIdentityMatrix(){}
+	void loadMatrix(const ofMatrix4x4&){}
+	void loadMatrix(const float*){}
+	void multMatrix(const ofMatrix4x4&){}
+	void multMatrix(const float*){}
+	void loadViewMatrix(const ofMatrix4x4&){}
+	void multViewMatrix(const ofMatrix4x4&){}
+	ofMatrix4x4 getCurrentViewMatrix() const{return ofMatrix4x4::newIdentityMatrix();}
+	ofMatrix4x4 getCurrentNormalMatrix() const{return ofMatrix4x4::newIdentityMatrix();}
+	void enableAntiAliasing(){}
+	void disableAntiAliasing(){}
+
 
 	// drawing modes
 	virtual void setRectMode(ofRectMode mode){}

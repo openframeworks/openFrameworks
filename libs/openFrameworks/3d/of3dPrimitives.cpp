@@ -215,6 +215,7 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
         const vector<ofVec3f>& vertices   = getMesh().getVertices();
         ofVec3f normal;
         ofVec3f vert;
+        
         normalsMesh.setMode( OF_PRIMITIVE_LINES );
         normalsMesh.getVertices().resize( normals.size() * 2);
         
