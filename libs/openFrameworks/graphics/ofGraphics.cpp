@@ -56,8 +56,8 @@ static ofPath shape;
 static ofVboMesh gradientMesh;
 
 shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
-	static shared_ptr<ofBaseRenderer> * renderer = new shared_ptr<ofBaseRenderer>();
-	return *renderer;
+	static shared_ptr<ofBaseRenderer> renderer;
+	return renderer;
 }
 
 void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){

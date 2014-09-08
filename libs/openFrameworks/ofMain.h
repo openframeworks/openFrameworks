@@ -67,6 +67,7 @@
 // app
 #include "ofBaseApp.h"
 #include "ofAppRunner.h"
+#include "ofAppBaseWindow.h"
 
 //--------------------------
 // audio

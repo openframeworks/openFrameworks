@@ -272,12 +272,35 @@ void ofNextContour(bool bClose = false);  // for multi contour shapes!
 
 // bitmapped type
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
-void ofDrawBitmapString(string textString, const ofPoint & p);
-void ofDrawBitmapString(string textString, float x, float y);
-void ofDrawBitmapString(string textString, float x, float y, float z);
+template<typename T>
+void ofDrawBitmapString(const T & textString, const ofPoint & p);
+template<typename T>
+void ofDrawBitmapString(const T & textString, float x, float y);
+template<typename T>
+void ofDrawBitmapString(const T & textString, float x, float y, float z);
 void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 
 
 // end primitives
 //-------------------------------------------
+
+
+
+//--------------------------------------------------
+template<typename T>
+void ofDrawBitmapString(const T & textString, const ofPoint & p){
+	ofDrawBitmapString(textString, p.x, p.y, p.z);
+}
+
+//--------------------------------------------------
+template<typename T>
+void ofDrawBitmapString(const T & textString, float x, float y){
+	ofDrawBitmapString(textString, x, y, 0.0f);
+}
+
+//--------------------------------------------------
+template<typename T>
+void ofDrawBitmapString(const T & textString, float x, float y, float z){
+	ofGetCurrentRenderer()->drawString(ofToString(textString),x,y,z,ofGetStyle().drawBitmapMode);
+}

@@ -1,13 +1,10 @@
 #pragma once
-#include "ofPoint.h"
-#include "ofRectangle.h"
 #include "ofConstants.h"
-#include "ofColor.h"
-#include "ofMesh.h"
-#include "ofPixels.h"
-#include "ofMatrix4x4.h"
 #include "ofTypes.h"
+#include "ofRectangle.h"
+#include "ofMatrix4x4.h"
 #include "ofURLFileLoader.h"
+#include "ofMesh.h"
 
 class ofAbstractParameter;
 
@@ -18,13 +15,28 @@ typedef ofImage_<unsigned char> ofImage;
 typedef ofImage_<float> ofFloatImage;
 typedef ofImage_<unsigned short> ofShortImage;
 
+template<typename T>
+class ofPixels_;
+
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<float> ofFloatPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+typedef ofPixels& ofPixelsRef;
+
+template<typename T>
+class ofColor_;
+
+typedef ofColor_<unsigned char> ofColor;
+
+class ofVec3f;
+typedef ofVec3f ofPoint;
+
 class ofPath;
 class ofPolyline;
 class ofFbo;
 class of3dPrimitive;
 class ofLight;
 class ofMaterial;
-typedef ofPixels& ofPixelsRef;
 class ofBaseMaterial;
 
 bool ofIsVFlipped();
@@ -78,6 +90,15 @@ class ofBaseHasTexture{
 public:
 	virtual ~ofBaseHasTexture(){}
 	virtual ofTexture & getTextureReference()=0;
+	virtual void setUseTexture(bool bUseTex)=0;
+	virtual bool isUsingTexture(){return true;};
+};
+
+class ofBaseHasTexturePlanes: public ofBaseHasTexture{
+public:
+	virtual ~ofBaseHasTexturePlanes(){}
+	virtual ofTexture & getTextureReference()=0;
+	virtual vector<ofTexture> & getTexturePlanes()=0;
 	virtual void setUseTexture(bool bUseTex)=0;
 };
 
@@ -174,13 +195,17 @@ public:
 	virtual ~ofBaseVideo(){}
 	virtual bool isFrameNew()=0;
 	virtual void close()=0;
+	virtual bool isInitialized()=0;
+
+	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
+	virtual ofPixelFormat getPixelFormat() = 0;
 };
 
 
 //----------------------------------------------------------
 // ofBaseVideoDraws
 //----------------------------------------------------------
-class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseImage{
+class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexturePlanes,virtual public ofBaseHasPixels{
 public:
 	virtual ~ofBaseVideoDraws(){}
 };
@@ -205,12 +230,9 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	
 	virtual float	getHeight() = 0;
 	virtual float	getWidth() = 0;
-	
-	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
-	virtual ofPixelFormat getPixelFormat() = 0;
 
 	// implement only if internal API can upload directly to texture
-	virtual ofTexture * getTexture(){ return NULL; }
+	virtual ofTexture * getTexture(){return NULL;};
 
 	//should implement!
 	virtual void setVerbose(bool bTalkToMe);
@@ -239,7 +261,7 @@ public:
 	
 	virtual bool 				isFrameNew() = 0;
 	virtual unsigned char * 	getPixels() = 0;
-	virtual ofTexture *			getTexture(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
+	virtual ofTexture * 		getTexture(){return NULL;};// if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 	
 	virtual float 				getWidth() = 0;
 	virtual float 				getHeight() = 0;
@@ -247,9 +269,9 @@ public:
 	virtual bool				isPaused() = 0;
 	virtual bool				isLoaded() = 0;
 	virtual bool				isPlaying() = 0;
-	
-	virtual bool				setPixelFormat(ofPixelFormat pixelFormat) = 0;
-	virtual ofPixelFormat 		getPixelFormat() = 0;
+	virtual bool 				isInitialized(){
+		return isLoaded();
+	}
 		
 	//should implement!
 	virtual float 				getPosition();
@@ -294,6 +316,10 @@ public:
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
+	virtual void draw(ofBaseVideoDraws & video, float x, float y, float w, float h)=0;
+
+	virtual void bind(ofBaseVideoDraws & video)=0;
+	virtual void unbind(ofBaseVideoDraws & video)=0;
 
 	//--------------------------------------------
 	// transformations

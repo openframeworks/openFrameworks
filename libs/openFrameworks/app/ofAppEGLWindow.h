@@ -75,13 +75,13 @@ public:
 	ofAppEGLWindow(Settings settings);
 	virtual ~ofAppEGLWindow();
 
-	void exit(ofEventArgs &e);
     void setThreadTimeout(long timeOut){ threadTimeout = timeOut; }
     void setGLESVersion(int glesVersion);
-	virtual void setupOpenGL(int w, int h, int screenMode);
+	virtual void setupOpenGL(int w, int h, ofWindowMode screenMode);
 
 	virtual void initializeWindow();
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	virtual void windowShouldClose();
 
 	virtual void hideCursor();
 	virtual void showCursor();
@@ -103,7 +103,7 @@ public:
 
 	virtual void	setWindowTitle(string title); // TODO const correct
 
-	virtual int		getWindowMode(); // TODO use enum
+	virtual ofWindowMode	getWindowMode();
 
 	virtual void	setFullscreen(bool fullscreen);
 	virtual void	toggleFullscreen();
@@ -164,7 +164,7 @@ protected:
 
 	bool     terminate;
 
-	int      windowMode;
+	ofWindowMode windowMode;
 	bool     bNewScreenMode;
 	int      buttonInUse;
 	bool     bEnableSetupScreen;

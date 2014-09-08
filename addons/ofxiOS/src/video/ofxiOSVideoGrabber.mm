@@ -4,7 +4,7 @@
 #include "ofxiOSVideoGrabber.h"
 
 ofxiOSVideoGrabber::ofxiOSVideoGrabber() {
-	grabber = ofPtr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
+	grabber = shared_ptr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
 }
 
 ofxiOSVideoGrabber::~ofxiOSVideoGrabber() {
@@ -17,6 +17,10 @@ vector <ofVideoDevice> ofxiOSVideoGrabber::listDevices() {
 
 bool ofxiOSVideoGrabber::initGrabber(int w, int h) {
 	return grabber->initGrabber(w, h);
+}
+
+bool ofxiOSVideoGrabber::isInitialized(){
+    return grabber->isInitialized();
 }
 
 bool ofxiOSVideoGrabber::isFrameNew() {

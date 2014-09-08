@@ -568,7 +568,7 @@ protected:
 
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(){};
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(){}
 
 template<typename ParameterType,typename Friend>
 inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ofParameter<ParameterType> & p)
@@ -576,11 +576,11 @@ inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ofParamete
 
 template<typename ParameterType,typename Friend>
 inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ParameterType v)
-:parameter(v){};
+:parameter(v){}
 
 template<typename ParameterType,typename Friend>
 inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(string name, ParameterType v)
-:parameter(name,v){};
+:parameter(name,v){}
 
 template<typename ParameterType,typename Friend>
 inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(string name, ParameterType v, ParameterType min, ParameterType max)

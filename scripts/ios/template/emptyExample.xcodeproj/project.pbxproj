@@ -719,7 +719,7 @@
 				<key>GCC_C_LANGUAGE_STANDARD</key>
 				<string>c99</string>
 				<key>GCC_DYNAMIC_NO_PIC</key>
-				<string>YES</string>
+				<string>NO</string>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
 				<string>NO</string>
 				<key>GCC_OPTIMIZATION_LEVEL</key>
