@@ -9,33 +9,7 @@
 
 //---------------------------------
 int ofGetGlInternalFormat(const ofPixels& pix) {
-#ifndef TARGET_OPENGLES
-	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB8;
-		case 4: return GL_RGBA8;
-		case 2:
-			if(ofIsGLProgrammableRenderer()){
-				return GL_RG8;
-			}else{
-				return GL_LUMINANCE_ALPHA;
-			}
-		default:
-			if(ofIsGLProgrammableRenderer()){
-				return GL_R8;
-			}else{
-				return GL_LUMINANCE8;
-			}
-	}
-#else
-	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB;
-		case 4: return GL_RGBA;
-		case 2:
-			return GL_LUMINANCE_ALPHA;
-		default:
-			return GL_LUMINANCE;
-	}
-#endif
+	return ofGetGLInternalFormatFromPixelFormat(pix.getPixelFormat());
 }
 
 //---------------------------------
@@ -241,10 +215,11 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 #endif
 			return GL_UNSIGNED_SHORT;
 
-
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) && defined(GL_RGB565)
+		case GL_RGB565:
+			return GL_UNSIGNED_SHORT_5_6_5;
+		break;
 #endif
-			 return GL_LUMINANCE;
 
 #ifndef TARGET_OPENGLES
 		case GL_LUMINANCE32F_ARB:
@@ -288,7 +263,15 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 
 //---------------------------------
 int ofGetGlType(const ofPixels & pixels) {
-	return GL_UNSIGNED_BYTE;
+#ifndef TARGET_OPENGLES
+	if(pixels.getPixelFormat()==OF_PIXELS_RGB565){
+		return GL_UNSIGNED_SHORT_5_6_5;
+	}else{
+#endif
+		return GL_UNSIGNED_BYTE;
+#ifndef TARGET_OPENGLES
+	}
+#endif
 }
 
 //---------------------------------
@@ -498,30 +481,55 @@ ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_BGRA:
-		return GL_RGBA;
-	case OF_PIXELS_MONO:
-		return GL_LUMINANCE;
-	case OF_PIXELS_RGB:
-		return GL_RGB;
 	case OF_PIXELS_RGBA:
 		return GL_RGBA;
+	case OF_PIXELS_RGB:
+	case OF_PIXELS_BGR:
+		return GL_RGB;
     case OF_PIXELS_RGB565:
-	#ifdef TARGET_OPENGLES
-		#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
-			return GL_RGB565_OES;
-		#else
-			return GL_RGB;
-		#endif
+	#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
+		return GL_RGB565_OES;
+	#elif defined(GL_RGB565)
+		return GL_RGB565;
 	#else
-		return GL_RGB5;
+		return GL_RGB;
 	#endif
+    case OF_PIXELS_GRAY:
+    case OF_PIXELS_NV12:
+    case OF_PIXELS_NV21:
+	case OF_PIXELS_YV12:
+	case OF_PIXELS_I420:
+	case OF_PIXELS_Y:
+	case OF_PIXELS_U:
+	case OF_PIXELS_V:
+#ifndef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()){
+			return GL_R8;
+		}else{
+#endif
+			return GL_LUMINANCE;
+#ifndef TARGET_OPENGLES
+		}
+#endif
+	case OF_PIXELS_YUY2:
+	case OF_PIXELS_UV:
+	case OF_PIXELS_VU:
+#ifndef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()){
+			return GL_RG8;
+		}else{
+#endif
+			return GL_LUMINANCE_ALPHA;
+#ifndef TARGET_OPENGLES
+		}
+#endif
 	default:
-		ofLogError("ofGLUtils") << "ofGetGLInternalFormatFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_LUMINANCE";
-		return GL_LUMINANCE;
+		ofLogError("ofGLUtils") << "ofGetGLInternalFormatFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_RGBA";
+		return GL_RGBA;
 	}
 }
 
-int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
+int ofGetGLFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_BGRA:
 #ifdef TARGET_OPENGLES
@@ -529,21 +537,58 @@ int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 #else
         return GL_BGRA;
 #endif
-	case OF_PIXELS_MONO:
-		return GL_LUMINANCE;
 	case OF_PIXELS_RGB:
 		return GL_RGB;
-	case OF_PIXELS_RGBA:
-		return GL_RGBA;
-    case OF_PIXELS_RGB565:
+	case OF_PIXELS_BGR:
 #ifdef TARGET_OPENGLES
     	return GL_RGB;
 #else
-        return GL_RGB5;
+        return GL_BGR;
+#endif
+	case OF_PIXELS_RGBA:
+		return GL_RGBA;
+    case OF_PIXELS_RGB565:
+        return GL_RGB;
+	case OF_PIXELS_GRAY:
+    case OF_PIXELS_NV12:
+    case OF_PIXELS_NV21:
+	case OF_PIXELS_YV12:
+	case OF_PIXELS_I420:
+	case OF_PIXELS_Y:
+	case OF_PIXELS_U:
+	case OF_PIXELS_V:
+#ifndef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()){
+			return GL_RED;
+		}else{
+#endif
+			return GL_LUMINANCE;
+#ifndef TARGET_OPENGLES
+		}
+#endif
+	case OF_PIXELS_YUY2:
+	case OF_PIXELS_UV:
+	case OF_PIXELS_VU:
+#ifndef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()){
+			return GL_RG;
+		}else{
+#endif
+			return GL_LUMINANCE_ALPHA;
+#ifndef TARGET_OPENGLES
+		}
 #endif
 	default:
-		ofLogError("ofGLUtils") << "ofGetGLTypeFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_LUMINANCE";
-		return GL_LUMINANCE;
+		ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_LUMINANCE";
+#ifndef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()){
+			return GL_RED;
+		}else{
+#endif
+			return GL_LUMINANCE;
+#ifndef TARGET_OPENGLES
+		}
+#endif
 	}
 }
 
@@ -570,6 +615,10 @@ int ofGetNumChannelsFromGLFormat(int glFormat){
 
 void ofSetPixelStorei(int w, int bpc, int numChannels){
 	int stride = w * numChannels * bpc;
+	ofSetPixelStorei(stride);
+}
+
+void ofSetPixelStorei(int stride){
     if (OF_ROUND_UP_8 (stride) == stride) {
         glPixelStorei (GL_UNPACK_ALIGNMENT, 8);
     } else if (OF_ROUND_UP_4 (stride) == stride) {
@@ -580,6 +629,8 @@ void ofSetPixelStorei(int w, int bpc, int numChannels){
         glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
     }
 }
+
+
 
 vector<string> ofGLSupportedExtensions(){
 	char* extensions = (char*)glGetString(GL_EXTENSIONS);
@@ -592,7 +643,7 @@ vector<string> ofGLSupportedExtensions(){
 }
 
 bool ofGLCheckExtension(string searchName){
-#ifdef TARGET_OPENGLES
+#if defined( TARGET_OPENGLES ) || defined( TARGET_LINUX )
 	vector<string> extensionsList = ofGLSupportedExtensions();
 	set<string> extensionsSet;
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
