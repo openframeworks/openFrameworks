@@ -43,7 +43,7 @@ class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	void videoSettings();*/
 	
 protected:
-	ofPtr<AVFoundationVideoGrabber> grabber;
+	shared_ptr<AVFoundationVideoGrabber> grabber;
 };
 
 #endif
