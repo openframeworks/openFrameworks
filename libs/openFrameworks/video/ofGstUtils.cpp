@@ -3,7 +3,10 @@
 #include "ofUtils.h"
 #include <gst/app/gstappsink.h>
 #include <gst/video/video.h>
+
+#if GST_VERSION_MAJOR>0
 #include <gst/video/gstvideometa.h>
+#endif
 
 #include <glib-object.h>
 #include <glib.h>
