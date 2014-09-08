@@ -346,28 +346,29 @@ void ofGLProgrammableRenderer::viewport(float x, float y, float width, float hei
 }
 
 //----------------------------------------------------------
-ofRectangle ofGLProgrammableRenderer::getCurrentViewport(){
+ofRectangle ofGLProgrammableRenderer::getCurrentViewport() const{
 	getNativeViewport();
 	return matrixStack.getCurrentViewport();
 }
 
 //----------------------------------------------------------
-ofRectangle ofGLProgrammableRenderer::getNativeViewport(){
+ofRectangle ofGLProgrammableRenderer::getNativeViewport() const{
 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, viewport);
 
+	ofGLProgrammableRenderer * mutRenderer = const_cast<ofGLProgrammableRenderer*>(this);
 	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-	matrixStack.nativeViewport(nativeViewport);
+	mutRenderer->matrixStack.nativeViewport(nativeViewport);
     return nativeViewport;
 }
 
 //----------------------------------------------------------
-int ofGLProgrammableRenderer::getViewportWidth(){
+int ofGLProgrammableRenderer::getViewportWidth() const{
 	return getCurrentViewport().width;
 }
 
 //----------------------------------------------------------
-int ofGLProgrammableRenderer::getViewportHeight(){
+int ofGLProgrammableRenderer::getViewportHeight() const{
 	return getCurrentViewport().height;
 }
 
@@ -382,7 +383,7 @@ void ofGLProgrammableRenderer::setCoordHandedness(ofHandednessType handedness) {
 }
 
 //----------------------------------------------------------
-ofHandednessType ofGLProgrammableRenderer::getCoordHandedness() {
+ofHandednessType ofGLProgrammableRenderer::getCoordHandedness() const{
 	return matrixStack.getHandedness();
 }
 

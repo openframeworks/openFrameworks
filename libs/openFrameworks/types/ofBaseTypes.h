@@ -298,53 +298,53 @@ public:
 
 	//--------------------------------------------
 	// transformations
-	virtual void pushView(){};
-	virtual void popView(){};
+	virtual void pushView()=0;
+	virtual void popView()=0;
 
 	// setup matrices and viewport (upto you to push and pop view before and after)
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
-	virtual void viewport(ofRectangle viewport){}
-	virtual void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped()){}
-	virtual void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0){}
-	virtual void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1){}
-	virtual void setOrientation(ofOrientation orientation, bool vFlip){};
-	virtual ofRectangle getCurrentViewport() const {return ofRectangle();}
-	virtual ofRectangle getNativeViewport() const {return getCurrentViewport();}
-	virtual int getViewportWidth() const {return 0;}
-	virtual int getViewportHeight() const {return 0;}
-	virtual bool isVFlipped() const{return true;}
+	virtual void viewport(ofRectangle viewport)=0;
+	virtual void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped())=0;
+	virtual void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0)=0;
+	virtual void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1)=0;
+	virtual void setOrientation(ofOrientation orientation, bool vFlip)=0;
+	virtual ofRectangle getCurrentViewport() const=0;
+	virtual ofRectangle getNativeViewport() const=0;
+	virtual int getViewportWidth() const=0;
+	virtual int getViewportHeight() const=0;
+	virtual bool isVFlipped() const=0;
 
-	virtual void setCoordHandedness(ofHandednessType handedness){};
-	virtual ofHandednessType getCoordHandedness(){return OF_LEFT_HANDED;};
+	virtual void setCoordHandedness(ofHandednessType handedness)=0;
+	virtual ofHandednessType getCoordHandedness() const=0;
 
 	//our openGL wrappers
-	virtual void pushMatrix(){};
-	virtual void popMatrix(){};
-	virtual ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const { return ofMatrix4x4();};
-	virtual ofMatrix4x4 getCurrentOrientationMatrix() const;
-	virtual void translate(float x, float y, float z = 0){};
-	virtual void translate(const ofPoint & p){};
-	virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1){};
-	virtual void rotate(float degrees, float vecX, float vecY, float vecZ){};
-	virtual void rotateX(float degrees){};
-	virtual void rotateY(float degrees){};
-	virtual void rotateZ(float degrees){};
-	virtual void rotate(float degrees){};
-	virtual void matrixMode(ofMatrixMode mode){};
-	virtual void loadIdentityMatrix (void){};
-	virtual void loadMatrix (const ofMatrix4x4 & m){};
-	virtual void loadMatrix (const float *m){};
-	virtual void multMatrix (const ofMatrix4x4 & m){};
-	virtual void multMatrix (const float *m){};
-	virtual void loadViewMatrix(const ofMatrix4x4 & m){};
-	virtual void multViewMatrix(const ofMatrix4x4 & m){}
-	virtual ofMatrix4x4 getCurrentViewMatrix() const { return ofMatrix4x4();};
-	virtual ofMatrix4x4 getCurrentNormalMatrix() const { return ofMatrix4x4();};
+	virtual void pushMatrix()=0;
+	virtual void popMatrix()=0;
+	virtual ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const=0;
+	virtual ofMatrix4x4 getCurrentOrientationMatrix() const=0;
+	virtual void translate(float x, float y, float z = 0)=0;
+	virtual void translate(const ofPoint & p)=0;
+	virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1)=0;
+	virtual void rotate(float degrees, float vecX, float vecY, float vecZ)=0;
+	virtual void rotateX(float degrees)=0;
+	virtual void rotateY(float degrees)=0;
+	virtual void rotateZ(float degrees)=0;
+	virtual void rotate(float degrees)=0;
+	virtual void matrixMode(ofMatrixMode mode)=0;
+	virtual void loadIdentityMatrix (void)=0;
+	virtual void loadMatrix (const ofMatrix4x4 & m)=0;
+	virtual void loadMatrix (const float *m)=0;
+	virtual void multMatrix (const ofMatrix4x4 & m)=0;
+	virtual void multMatrix (const float *m)=0;
+	virtual void loadViewMatrix(const ofMatrix4x4 & m)=0;
+	virtual void multViewMatrix(const ofMatrix4x4 & m)=0;
+	virtual ofMatrix4x4 getCurrentViewMatrix() const=0;
+	virtual ofMatrix4x4 getCurrentNormalMatrix() const=0;
 	
 	// screen coordinate things / default gl values
-	virtual void setupGraphicDefaults(){};
-	virtual void setupScreen(){};
+	virtual void setupGraphicDefaults()=0;
+	virtual void setupScreen()=0;
 
 	// drawing modes
 	virtual void setRectMode(ofRectMode mode)=0;
@@ -355,33 +355,31 @@ public:
 	virtual void setDepthTest(bool depthTest)=0;
 	virtual void setBlendMode(ofBlendMode blendMode)=0;
 	virtual void setLineSmoothing(bool smooth)=0;
-	virtual void setCircleResolution(int res){};
-	virtual void enablePointSprites(){};
-	virtual void disablePointSprites(){};
-	virtual void enableAntiAliasing(){};
-	virtual void disableAntiAliasing(){};
+	virtual void setCircleResolution(int res)=0;
+	virtual void enableAntiAliasing()=0;
+	virtual void disableAntiAliasing()=0;
 
 	// color options
-	virtual void setColor(int r, int g, int b){}; // 0-255
-	virtual void setColor(int r, int g, int b, int a){}; // 0-255
-	virtual void setColor(const ofColor & color){};
-	virtual void setColor(const ofColor & color, int _a){};
-	virtual void setColor(int gray){}; // new set a color as grayscale with one argument
-	virtual void setHexColor( int hexColor ){}; // hex, like web 0xFF0033;
+	virtual void setColor(int r, int g, int b)=0; // 0-255
+	virtual void setColor(int r, int g, int b, int a)=0; // 0-255
+	virtual void setColor(const ofColor & color)=0;
+	virtual void setColor(const ofColor & color, int _a)=0;
+	virtual void setColor(int gray)=0; // new set a color as grayscale with one argument
+	virtual void setHexColor( int hexColor )=0; // hex, like web 0xFF0033;
 
 	// bg color
 	virtual ofFloatColor & getBgColor()=0;
-	virtual bool bClearBg(){return true;};
-	virtual void background(const ofColor & c){};
-	virtual void background(float brightness){};
-	virtual void background(int hexColor, float _a=255.0f){};
-	virtual void background(int r, int g, int b, int a=255){};
+	virtual bool bClearBg()=0;
+	virtual void background(const ofColor & c)=0;
+	virtual void background(float brightness)=0;
+	virtual void background(int hexColor, float _a=255.0f)=0;
+	virtual void background(int r, int g, int b, int a=255)=0;
 
-	virtual void setBackgroundAuto(bool bManual){};		// default is true
+	virtual void setBackgroundAuto(bool bManual)=0;	// default is true
 
-	virtual void clear(float r, float g, float b, float a=0){};
-	virtual void clear(float brightness, float a=0){};
-	virtual void clearAlpha(){};
+	virtual void clear(float r, float g, float b, float a=0)=0;
+	virtual void clear(float brightness, float a=0)=0;
+	virtual void clearAlpha()=0;
 
 	// drawing
 	virtual void drawLine(float x1, float y1, float z1, float x2, float y2, float z2)=0;
@@ -404,28 +402,30 @@ public:
 	virtual void disableTextureTarget(int textureTarget, int textureLocation)=0;
 	virtual void setAlphaMaskTex(ofTexture & tex)=0;
 	virtual void disableAlphaMask()=0;
+	virtual void enablePointSprites()=0;
+	virtual void disablePointSprites()=0;
 
 	// lighting
-	virtual void enableLighting(){}
-	virtual void disableLighting(){}
-	virtual void enableSeparateSpecularLight(){}
-	virtual void disableSeparateSpecularLight(){}
-	virtual bool getLightingEnabled(){ return false; }
-	virtual void setSmoothLighting(bool b){}
-	virtual void setGlobalAmbientColor(const ofColor& c){}
-	virtual void enableLight(int lightIndex){};
-	virtual void disableLight(int lightIndex){};
-	virtual void setLightSpotlightCutOff(int lightIndex, float spotCutOff){};
-	virtual void setLightSpotConcentration(int lightIndex, float exponent){};
-	virtual void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic ){};
-	virtual void setLightAmbientColor(int lightIndex, const ofFloatColor& c){};
-	virtual void setLightDiffuseColor(int lightIndex, const ofFloatColor& c){};
-	virtual void setLightSpecularColor(int lightIndex, const ofFloatColor& c){};
-	virtual void setLightPosition(int lightIndex, const ofVec4f & position){};
-	virtual void setLightSpotDirection(int lightIndex, const ofVec4f & direction){};
+	virtual void enableLighting()=0;
+	virtual void disableLighting()=0;
+	virtual void enableSeparateSpecularLight()=0;
+	virtual void disableSeparateSpecularLight()=0;
+	virtual bool getLightingEnabled()=0;
+	virtual void setSmoothLighting(bool b)=0;
+	virtual void setGlobalAmbientColor(const ofColor& c)=0;
+	virtual void enableLight(int lightIndex)=0;
+	virtual void disableLight(int lightIndex)=0;
+	virtual void setLightSpotlightCutOff(int lightIndex, float spotCutOff)=0;
+	virtual void setLightSpotConcentration(int lightIndex, float exponent)=0;
+	virtual void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic )=0;
+	virtual void setLightAmbientColor(int lightIndex, const ofFloatColor& c)=0;
+	virtual void setLightDiffuseColor(int lightIndex, const ofFloatColor& c)=0;
+	virtual void setLightSpecularColor(int lightIndex, const ofFloatColor& c)=0;
+	virtual void setLightPosition(int lightIndex, const ofVec4f & position)=0;
+	virtual void setLightSpotDirection(int lightIndex, const ofVec4f & direction)=0;
 
 	// materials
-	virtual void setCurrentMaterial(ofBaseMaterial * material){};
+	virtual void setCurrentMaterial(ofBaseMaterial * material)=0;
 };
 
 

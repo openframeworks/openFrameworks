@@ -29,8 +29,8 @@ public:
 
 	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped());
 	void nativeViewport(ofRectangle viewport);
-	ofRectangle getCurrentViewport();
-	ofRectangle getNativeViewport();
+	ofRectangle getCurrentViewport() const;
+	ofRectangle getNativeViewport() const;
 
 	const ofMatrix4x4 & getProjectionMatrix() const;
 	const ofMatrix4x4 & getViewMatrix() const;
