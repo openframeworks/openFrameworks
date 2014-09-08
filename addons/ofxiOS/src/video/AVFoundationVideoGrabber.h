@@ -52,7 +52,8 @@ class AVFoundationVideoGrabber{
 		void clear();
 		void setCaptureRate(int capRate);
 	
-		bool initGrabber(int w, int h);
+        bool initGrabber(int w, int h);
+        bool isInitialized();
 		void updatePixelsCB( CGImageRef & ref );
 	
 		void update();
@@ -85,7 +86,7 @@ class AVFoundationVideoGrabber{
 		
 		
 		int device;
-	
+        bool bIsInit;
 		bool bHavePixelsChanged;
 		
 		int fps;

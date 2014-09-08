@@ -38,6 +38,10 @@ public:
 	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(ofBaseVideoDraws & video, float x, float y, float w, float h);
+
+	void bind(ofBaseVideoDraws & video);
+	void unbind(ofBaseVideoDraws & video);
     
 	bool rendersPathPrimitives(){
 		return false;
@@ -169,7 +173,16 @@ public:
 	ofShader & alphaMask2DShader();
 	ofShader & bitmapStringShader();
 	ofShader & defaultUniqueShader();
-    
+	ofShader & getShaderPlanarYUY2();
+	ofShader & getShaderNV12();
+	ofShader & getShaderNV21();
+	ofShader & getShaderPlanarYUV();
+	ofShader & getShaderPlanarYUY2Rect();
+	ofShader & getShaderNV12Rect();
+	ofShader & getShaderNV21Rect();
+	ofShader & getShaderPlanarYUVRect();
+	ofShader * getVideoShader(ofBaseVideoDraws & video);
+	void setVideoShaderUniforms(ofBaseVideoDraws & video, ofShader & shader);
 private:
 
 

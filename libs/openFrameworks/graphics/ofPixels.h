@@ -6,7 +6,6 @@
 #include "ofMath.h"
 #include <limits>
 
-
 //---------------------------------------
 enum ofInterpolationMethod {
 	OF_INTERPOLATE_NEAREST_NEIGHBOR =1,
@@ -37,10 +36,13 @@ public:
 
 	void set(PixelType val);
 	void set(int channel,PixelType val);
-	void setFromPixels(const PixelType * newPixels, int w, int h, int channels);
-	void setFromPixels(const PixelType * newPixels, int w, int h, ofImageType type);
-	void setFromExternalPixels(PixelType * newPixels, int w, int h, int channels);
+	void setFromPixels(const PixelType * newPixels,int w, int h, int channels);
+	void setFromPixels(const PixelType * newPixels,int w, int h, ofPixelFormat pixelFormat);
+	void setFromPixels(const PixelType * newPixels,int w, int h, ofImageType type);
+	void setFromExternalPixels(PixelType * newPixels,int w, int h, int channels);
+	void setFromExternalPixels(PixelType * newPixels,int w, int h, ofPixelFormat pixelFormat);
 	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, int channels, int stride);
+	void setFromAlignedPixels(const PixelType * newPixels, int width, int height, ofPixelFormat pixelFormat, int stride);
 	void swap(ofPixels_<PixelType> & pix);
 
 	//From ofPixelsUtils
@@ -88,7 +90,11 @@ public:
 	int getBitsPerPixel() const;
 	int getBytesPerChannel() const;
 	int getBitsPerChannel() const;
+	int getBytesStride() const;
 	int getNumChannels() const;
+	int getTotalBytes() const;
+	int getNumPlanes() const;
+	ofPixels_<PixelType> getPlane(int plane);
 
 	ofPixels_<PixelType> getChannel(int channel) const;
 	
@@ -100,9 +106,9 @@ public:
 	///
 	/// \param imageType Can be one of the following: OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
 	void setImageType(ofImageType imageType);
-	/// \brief Sets the number of color channels for the ofPixel object.
-	///
-	/// \param channel The number of color channels you would like the ofPixel object to have. Conventional values would be 1 (grayscale), 3 (RGB), and 4 (CMYK).
+
+	ofPixelFormat getPixelFormat() const;
+
 	void setNumChannels(int numChannels);
 
 	int size() const;
@@ -121,38 +127,44 @@ public:
 	const_reverse_iterator rend() const;
 
 	struct Pixel: public std::iterator<std::forward_iterator_tag,Pixel>{
-		Pixel(PixelType * pixel, int channels);
+		Pixel(PixelType * pixel, int bytesPerPixel, ofPixelFormat pixelFormat);
         const Pixel& operator*() const;
         const Pixel* operator->() const;
         Pixel& operator++();
         Pixel operator++(int);
         Pixel operator+(int) const;
+        Pixel operator+=(int);
         bool operator!=(Pixel const& rhs) const;
+        bool operator<(Pixel const& rhs) const;
         PixelType & operator[](int idx);
 
 	private:
 		PixelType * pixel;
-		int channels;
+		int componentsPerPixel;
+		ofPixelFormat pixelFormat;
 	};
 
 	struct Pixels{
-		Pixels(PixelType * begin, PixelType * end, int channels);
+		Pixels(PixelType * begin, PixelType * end, int componentsPerPixel, ofPixelFormat pixelFormat);
 		Pixel begin();
 		Pixel end();
 	private:
 		PixelType * _begin;
 		PixelType * _end;
-		int channels;
+		int componentsPerPixel;
+		ofPixelFormat pixelFormat;
 	};
 
 	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
-		Line(PixelType * _begin, int stride, int channels, int lineNum);
+		Line(PixelType * _begin, int stride, int componentsPerPixel, int lineNum, ofPixelFormat pixelFormat);
         const Line& operator*() const;
         const Line* operator->() const;
         Line& operator++();
         Line operator++(int);
         Line operator+(int) const;
+        Line operator+=(int);
         bool operator!=(Line const& rhs) const;
+        bool operator<(Line const& rhs) const;
         PixelType * begin();
         PixelType * end();
         const PixelType * begin() const;
@@ -167,12 +179,13 @@ public:
 		PixelType * _begin;
 		PixelType * _end;
 		int stride;
-		int channels;
+		int componentsPerPixel;
 		int lineNum;
+		ofPixelFormat pixelFormat;
 	};
 
 	struct Lines{
-		Lines(PixelType * _begin, PixelType * _end, int stride, int channels, int lines);
+		Lines(PixelType * _begin, PixelType * _end, int stride, int componentsPerPixel, int lines, ofPixelFormat pixelFormat);
 
         Line begin();
 
@@ -182,8 +195,9 @@ public:
         PixelType * _begin;
 		PixelType * _end;
 		int stride;
-		int channels;
+		int componentsPerPixel;
 		int lines;
+		ofPixelFormat pixelFormat;
 	};
 
 
@@ -204,9 +218,11 @@ private:
 	int 	width;
 	int 	height;
 
-	int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
+	//int 	channels; // 1, 3, 4 channels per pixel (grayscale, rgb, rgba)
+	int 	pixelsSize;
 	bool	bAllocated;
 	bool	pixelsOwner;			// if set from external data don't delete it
+	ofPixelFormat pixelFormat;
 
 };
 
@@ -232,10 +248,11 @@ template<typename SrcType>
 ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
 	bAllocated = false;
 	pixelsOwner = false;
-	channels = 0;
+	pixelsSize = 0;
 	pixels = NULL;
 	width = 0;
 	height = 0;
+	pixelFormat = OF_PIXELS_UNKNOWN;
 	copyFrom( mom );
 }
 
@@ -319,9 +336,10 @@ inline typename ofPixels_<PixelType>::const_reverse_iterator ofPixels_<PixelType
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-inline ofPixels_<PixelType>::Pixel::Pixel(PixelType * pixel, int channels)
+inline ofPixels_<PixelType>::Pixel::Pixel(PixelType * pixel, int componentsPerPixel, ofPixelFormat pixelFormat)
 :pixel(pixel)
-,channels(channels){
+,componentsPerPixel(componentsPerPixel)
+,pixelFormat(pixelFormat){
 
 }
 
@@ -340,7 +358,7 @@ inline const typename ofPixels_<PixelType>::Pixel* ofPixels_<PixelType>::Pixel::
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixel& ofPixels_<PixelType>::Pixel::operator++(){
-	pixel += channels;
+	pixel += componentsPerPixel;
 	return *this;
 }
 
@@ -355,7 +373,14 @@ inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixel::operato
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixel::operator+(int i) const{
-	return Pixel(pixel + channels * i, channels);
+	return Pixel(pixel + componentsPerPixel * i, componentsPerPixel, pixelFormat);
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixel::operator+=(int i){
+	pixel += componentsPerPixel * i;
+	return *this;
 }
 
 //----------------------------------------------------------------------
@@ -366,37 +391,45 @@ inline bool ofPixels_<PixelType>::Pixel::operator!=(Pixel const& rhs) const{
 
 //----------------------------------------------------------------------
 template<typename PixelType>
+inline bool ofPixels_<PixelType>::Pixel::operator<(Pixel const& rhs) const{
+	return pixel < rhs.pixel;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
 inline PixelType & ofPixels_<PixelType>::Pixel::operator[](int idx){
 	return pixel[idx];
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-inline ofPixels_<PixelType>::Pixels::Pixels(PixelType * begin, PixelType * end, int channels)
+inline ofPixels_<PixelType>::Pixels::Pixels(PixelType * begin, PixelType * end, int componentsPerPixel, ofPixelFormat pixelFormat)
 :_begin(begin)
 ,_end(end)
-,channels(channels){}
+,componentsPerPixel(componentsPerPixel)
+,pixelFormat(pixelFormat){}
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixels::begin(){
-	return Pixel(_begin,channels);
+	return Pixel(_begin,componentsPerPixel,pixelFormat);
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixels::end(){
-	return Pixel(_end,channels);
+	return Pixel(_end,componentsPerPixel,pixelFormat);
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-inline ofPixels_<PixelType>::Line::Line(PixelType * _begin, int stride, int channels, int lineNum)
+inline ofPixels_<PixelType>::Line::Line(PixelType * _begin, int stride, int componentsPerPixel, int lineNum, ofPixelFormat pixelFormat)
 :_begin(_begin)
 ,_end(_begin+stride)
 ,stride(stride)
-,channels(channels)
-,lineNum(lineNum){}
+,componentsPerPixel(componentsPerPixel)
+,lineNum(lineNum)
+,pixelFormat(pixelFormat){}
 
 //----------------------------------------------------------------------
 template<typename PixelType>
@@ -430,13 +463,28 @@ inline typename ofPixels_<PixelType>::Line ofPixels_<PixelType>::Line::operator+
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Line  ofPixels_<PixelType>::Line::operator+(int i) const{
-	return Line(_begin+stride*i,stride,channels,lineNum+i);
+	return Line(_begin+stride*i,stride,componentsPerPixel,lineNum+i,pixelFormat);
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline typename ofPixels_<PixelType>::Line  ofPixels_<PixelType>::Line::operator+=(int i){
+	_begin = _begin+stride*i;
+	_end = _begin + stride;
+	lineNum += i;
+	return *this;
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline bool ofPixels_<PixelType>::Line::operator!=(typename ofPixels_<PixelType>::Line const& rhs) const{
 	return rhs._begin != _begin || rhs._end != _end || rhs.stride != stride || rhs.lineNum!=lineNum;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline bool ofPixels_<PixelType>::Line::operator<(typename ofPixels_<PixelType>::Line const& rhs) const{
+	return _begin < rhs._begin || _end < rhs._end;
 }
 
 //----------------------------------------------------------------------
@@ -473,7 +521,7 @@ inline int ofPixels_<PixelType>::Line::getLineNum() const{
 template<typename PixelType>
 inline ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels(){
 	ofPixels_<PixelType> pixels;
-	pixels.setFromExternalPixels(_begin,stride,channels,1);
+	pixels.setFromExternalPixels(_begin,stride,pixelFormat,1);
 	return pixels;
 }
 
@@ -481,7 +529,7 @@ inline ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels(){
 template<typename PixelType>
 inline const ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels() const{
 	ofPixels_<PixelType> pixels;
-	pixels.setFromExternalPixels(_begin,stride,channels,1);
+	pixels.setFromExternalPixels(_begin,stride,pixelFormat,1);
 	return pixels;
 }
 
@@ -494,47 +542,48 @@ inline int ofPixels_<PixelType>::Line::getStride() const{
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixels ofPixels_<PixelType>::Line::getPixels(){
-	return Pixels(_begin,_end,channels);
+	return Pixels(_begin,_end,componentsPerPixel,pixelFormat);
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-inline ofPixels_<PixelType>::Lines::Lines(PixelType * _begin, PixelType * _end, int stride, int channels, int lines)
+inline ofPixels_<PixelType>::Lines::Lines(PixelType * _begin, PixelType * _end, int stride, int componentsPerPixel, int lines, ofPixelFormat pixelFormat)
 :_begin(_begin)
 ,_end(_end)
 ,stride(stride)
-,channels(channels)
-,lines(lines){}
+,componentsPerPixel(componentsPerPixel)
+,lines(lines)
+,pixelFormat(pixelFormat){}
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Line ofPixels_<PixelType>::Lines::begin(){
-	return Line(_begin,stride,channels,0);
+	return Line(_begin,stride,componentsPerPixel,0,pixelFormat);
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Line ofPixels_<PixelType>::Lines::end(){
-	return Line(_end,stride,channels,lines);
+	return Line(_end,stride,componentsPerPixel,lines,pixelFormat);
 }
 
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Line ofPixels_<PixelType>::getLine(int line){
-	return Line(pixels+(width*channels*line), width*channels, channels, line);
+	return Line(pixels+(width*getNumChannels()*line), width*getNumChannels(), getNumChannels(), line,pixelFormat);
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Lines ofPixels_<PixelType>::getLines(){
-	return Lines(begin(),end(),width*channels,channels,getHeight());
+	return Lines(begin(),end(),width*getNumChannels(),getNumChannels(),getHeight(),pixelFormat);
 }
 
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixels ofPixels_<PixelType>::getPixelsIter(){
-	return Pixels(begin(),end(),channels);
+	return Pixels(begin(),end(),getNumChannels(),pixelFormat);
 }
 
 namespace std{
