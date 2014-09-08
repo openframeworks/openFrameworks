@@ -511,6 +511,7 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 #ifndef TARGET_OPENGLES
 		}
 #endif
+    case OF_PIXELS_GRAY_ALPHA:
 	case OF_PIXELS_YUY2:
 	case OF_PIXELS_UV:
 	case OF_PIXELS_VU:
@@ -566,6 +567,7 @@ int ofGetGLFormatFromPixelFormat(ofPixelFormat pixelFormat){
 #ifndef TARGET_OPENGLES
 		}
 #endif
+    case OF_PIXELS_GRAY_ALPHA:
 	case OF_PIXELS_YUY2:
 	case OF_PIXELS_UV:
 	case OF_PIXELS_VU:
@@ -603,6 +605,12 @@ int ofGetNumChannelsFromGLFormat(int glFormat){
 		return 1;
 	case GL_LUMINANCE_ALPHA:
 		return 2;
+#ifndef TARGET_OPENGLES
+	case GL_RED:
+		return 1;
+	case GL_RG:
+		return 2;
+#endif
 	default:
 		return 1;
 	}
