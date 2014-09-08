@@ -4,18 +4,6 @@
 #include "ofAppBaseWindow.h"
 #include "ofBaseTypes.h"
 
-
-//#ifdef TARGET_WIN32
-//	#define GLUT_BUILDING_LIB
-//	#include "glut.h"
-//#endif
-//#ifdef TARGET_OSX
-//	#include <GLUT/glut.h>
-//#endif
-//#ifdef TARGET_LINUX
-//	#include <GL/glut.h>
-//#endif
-
 class ofBaseApp;
 
 class ofAppNoWindow : public ofAppBaseWindow {
