@@ -31,7 +31,10 @@ public:
 	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
 
+	void bind(const ofBaseVideoDraws & video) const;
+	void unbind(const ofBaseVideoDraws & video) const;
 	bool rendersPathPrimitives(){
 		return false;
 	}

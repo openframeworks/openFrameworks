@@ -58,7 +58,10 @@ class ofNoopRenderer: public ofBaseRenderer{
 	virtual void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
 	virtual void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
 	virtual void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
+	virtual void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{}
 
+	virtual void bind(const ofBaseVideoDraws & video) const{}
+	virtual void unbind(const ofBaseVideoDraws & video) const{}
 	//--------------------------------------------
 	// transformations
 	virtual void pushView(){};

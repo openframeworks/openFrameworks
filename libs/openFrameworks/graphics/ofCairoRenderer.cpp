@@ -325,52 +325,56 @@ void ofCairoRenderer::draw(const ofMesh & primitive, bool useColors, bool useTex
 	}
 	cairo_new_path(cr);
 
-		int i = 1;
-		ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
-		ofVec3f v2;
-		cairo_move_to(cr,v.x,v.y);
-		if(primitive.getMode()==OF_PRIMITIVE_TRIANGLE_STRIP){
-			v = transform(primitive.getVertex(primitive.getIndex(1)));
-			cairo_line_to(cr,v.x,v.y);
-			v = transform(primitive.getVertex(primitive.getIndex(2)));
-			cairo_line_to(cr,v.x,v.y);
-			i=2;
-		}
-		for(; i<primitive.getNumIndices(); i++){
-			v = transform(primitive.getVertex(primitive.getIndex(i)));
-			switch(primitive.getMode()){
-			case(OF_PRIMITIVE_TRIANGLES):
-				if((i+1)%3==0){
-					cairo_line_to(cr,v.x,v.y);
-					v2 = transform(primitive.getVertex(primitive.getIndex(i-2)));
-					cairo_line_to(cr,v2.x,v2.y);
-					cairo_move_to(cr,v.x,v.y);
-				}else if((i+3)%3==0){
-					cairo_move_to(cr,v.x,v.y);
-				}else{
-					cairo_line_to(cr,v.x,v.y);
-				}
+	cairo_matrix_t matrix;
+	cairo_matrix_init_identity(&matrix);
+	cairo_new_path(cr);
 
-			break;
-			case(OF_PRIMITIVE_TRIANGLE_STRIP):
-					v2 = transform(primitive.getVertex(primitive.getIndex(i-2)));
-					cairo_line_to(cr,v.x,v.y);
-					cairo_line_to(cr,v2.x,v2.y);
-					cairo_move_to(cr,v.x,v.y);
-			break;
-			case(OF_PRIMITIVE_TRIANGLE_FAN):
-					/*triangles.addIndex((GLuint)0);
-						triangles.addIndex((GLuint)1);
-						triangles.addIndex((GLuint)2);
-						for(int i = 2; i < primitive.getNumVertices()-1;i++){
-							triangles.addIndex((GLuint)0);
-							triangles.addIndex((GLuint)i);
-							triangles.addIndex((GLuint)i+1);
-						}*/
-			break;
-			default:break;
+	int i = 1;
+	ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
+	ofVec3f v2;
+	cairo_move_to(cr,v.x,v.y);
+	if(primitive.getMode()==OF_PRIMITIVE_TRIANGLE_STRIP){
+		v = transform(primitive.getVertex(primitive.getIndex(1)));
+		cairo_line_to(cr,v.x,v.y);
+		v = transform(primitive.getVertex(primitive.getIndex(2)));
+		cairo_line_to(cr,v.x,v.y);
+		i=2;
+	}
+	for(; i<primitive.getNumIndices(); i++){
+		v = transform(primitive.getVertex(primitive.getIndex(i)));
+		switch(primitive.getMode()){
+		case(OF_PRIMITIVE_TRIANGLES):
+			if((i+1)%3==0){
+				cairo_line_to(cr,v.x,v.y);
+				v2 = transform(primitive.getVertex(primitive.getIndex(i-2)));
+				cairo_line_to(cr,v2.x,v2.y);
+				cairo_move_to(cr,v.x,v.y);
+			}else if((i+3)%3==0){
+				cairo_move_to(cr,v.x,v.y);
+			}else{
+				cairo_line_to(cr,v.x,v.y);
 			}
+
+		break;
+		case(OF_PRIMITIVE_TRIANGLE_STRIP):
+				v2 = transform(primitive.getVertex(primitive.getIndex(i-2)));
+				cairo_line_to(cr,v.x,v.y);
+				cairo_line_to(cr,v2.x,v2.y);
+				cairo_move_to(cr,v.x,v.y);
+		break;
+		case(OF_PRIMITIVE_TRIANGLE_FAN):
+				/*triangles.addIndex((GLuint)0);
+					triangles.addIndex((GLuint)1);
+					triangles.addIndex((GLuint)2);
+					for(int i = 2; i < primitive.getNumVertices()-1;i++){
+						triangles.addIndex((GLuint)0);
+						triangles.addIndex((GLuint)i);
+						triangles.addIndex((GLuint)i+1);
+					}*/
+		break;
+		default:break;
 		}
+	}
 
 	cairo_move_to(cr,primitive.getVertex(primitive.getIndex(primitive.getNumIndices()-1)).x,primitive.getVertex(primitive.getIndex(primitive.getNumIndices()-1)).y);
 
@@ -498,12 +502,11 @@ void ofCairoRenderer::draw(const ofPath::Command & command) const{
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-	const ofPixels & raw = img.getPixelsRef();
+void ofCairoRenderer::draw(const ofPixels & raw, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	bool shouldCrop = sx != 0 || sy != 0 || sw != w || sh != h;
 	ofPixels cropped;
 	if(shouldCrop) {
-		cropped.allocate(sw, sh, raw.getImageType());
+		cropped.allocate(sw, sh, raw.getPixelFormat());
 		raw.cropTo(cropped, sx, sy, sw, sh);
 	}
 	const ofPixels & pix = shouldCrop ? cropped : raw;
@@ -584,15 +587,35 @@ void ofCairoRenderer::draw(const ofImage & img, float x, float y, float z, float
 }
 
 //--------------------------------------------
+void ofCairoRenderer::draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+	draw(img.getPixelsRef(),x,y,z,w,h,sx,sy,sw,sh);
+}
+
+//--------------------------------------------
 void ofCairoRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-	ofImage tmp = image;
+	ofPixels tmp = image.getPixelsRef();
 	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
 void ofCairoRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-	ofImage tmp = image;
+	ofPixels tmp = image.getPixelsRef();
 	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
+}
+
+//--------------------------------------------
+void ofCairoRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
+	draw(video.getPixelsRef(),x,y,0,w,h,x,y,w,h);
+}
+
+//--------------------------------------------
+void ofCairoRenderer::bind(const ofBaseVideoDraws & video) const{
+
+}
+
+//--------------------------------------------
+void ofCairoRenderer::unbind(const ofBaseVideoDraws & video) const{
+
 }
 
 //--------------------------------------------
@@ -1027,7 +1050,8 @@ ofRectangle ofCairoRenderer::getCurrentViewport() const{
 
 ofRectangle ofCairoRenderer::getNativeViewport() const{
 	return viewportRect;
-}
+};
+
 
 int ofCairoRenderer::getViewportWidth() const{
 	return viewportRect.width;

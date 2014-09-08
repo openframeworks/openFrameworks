@@ -251,6 +251,27 @@ void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, f
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
+	if(video.isInitialized() && video.isUsingTexture()){
+		video.getTextureReference().draw(x,y,w,h);
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofBaseVideoDraws & video) const{
+	if(video.isInitialized() && video.isUsingTexture()){
+		video.getTextureReference().bind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofBaseVideoDraws & video) const{
+	if(video.isInitialized() && video.isUsingTexture()){
+		video.getTextureReference().unbind();
+	}
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::setCurrentFBO(ofFbo * fbo){
 	if(fbo!=NULL){
 		ofMatrix4x4 m;

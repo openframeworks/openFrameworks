@@ -22,6 +22,7 @@ public:
 	//needs implementing
 	vector<ofVideoDevice>	listDevices() const;
 	bool	initGrabber(int w, int h);
+	bool	isInitialized();
 
 	bool	isFrameNew() const;
 	void	update();
