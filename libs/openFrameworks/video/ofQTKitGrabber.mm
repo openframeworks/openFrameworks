@@ -810,6 +810,10 @@ bool ofQTKitGrabber::isReady() const {
 	return isInited;
 }
 
+bool ofQTKitGrabber::isInitialized(){
+    return isInited;
+}
+
 bool ofQTKitGrabber::isRecordingReady() const {
 	return isInited && [grabber isRecordReady];
 }

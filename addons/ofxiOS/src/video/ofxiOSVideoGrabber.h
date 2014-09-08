@@ -17,6 +17,7 @@ class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	vector <ofVideoDevice> listDevices() const;
 	void getDeviceList() const {};
 	bool initGrabber(int w, int h);
+    bool isInitialized();
 	
 	bool			setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat 	getPixelFormat() const;
@@ -44,7 +45,7 @@ class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	void videoSettings();*/
 	
 protected:
-	ofPtr<AVFoundationVideoGrabber> grabber;
+	shared_ptr<AVFoundationVideoGrabber> grabber;
 };
 
 #endif

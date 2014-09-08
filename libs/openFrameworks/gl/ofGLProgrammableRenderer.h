@@ -38,7 +38,11 @@ public:
 	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
-    
+    void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
+
+	void bind(const ofBaseVideoDraws & video) const;
+	void unbind(const ofBaseVideoDraws & video) const;
+
 	bool rendersPathPrimitives(){
 		return false;
 	}
@@ -143,7 +147,7 @@ public:
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
-	ofShader & getCurrentShader();
+	const ofShader & getCurrentShader() const;
 
 	void enableTextureTarget(int textureTarget, int textureID, int textureLocation);
 	void disableTextureTarget(int textureTarget, int textureLocation);
@@ -151,7 +155,7 @@ public:
 	void disableAlphaMask();
 	GLenum getCurrentTextureTarget();
 
-	void beginCustomShader(ofShader & shader);
+	void beginCustomShader(const ofShader & shader);
 	void endCustomShader();
 
 	void setCurrentMaterial(ofBaseMaterial * material);
@@ -159,17 +163,26 @@ public:
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
 
-	ofShader & defaultTexRectColor();
-	ofShader & defaultTexRectNoColor();
-	ofShader & defaultTex2DColor();
-	ofShader & defaultTex2DNoColor();
-	ofShader & defaultNoTexColor();
-	ofShader & defaultNoTexNoColor();
-	ofShader & alphaMaskRectShader();
-	ofShader & alphaMask2DShader();
-	ofShader & bitmapStringShader();
-	ofShader & defaultUniqueShader();
-
+	ofShader & defaultTexRectColor() const;
+	ofShader & defaultTexRectNoColor() const;
+	ofShader & defaultTex2DColor() const;
+	ofShader & defaultTex2DNoColor() const;
+	ofShader & defaultNoTexColor() const;
+	ofShader & defaultNoTexNoColor() const;
+	ofShader & alphaMaskRectShader() const;
+	ofShader & alphaMask2DShader() const;
+	ofShader & bitmapStringShader() const;
+	ofShader & defaultUniqueShader() const;
+	ofShader & getShaderPlanarYUY2() const;
+	ofShader & getShaderNV12() const;
+	ofShader & getShaderNV21() const;
+	ofShader & getShaderPlanarYUV() const;
+	ofShader & getShaderPlanarYUY2Rect() const;
+	ofShader & getShaderNV12Rect() const;
+	ofShader & getShaderNV21Rect() const;
+	ofShader & getShaderPlanarYUVRect() const;
+	const ofShader * getVideoShader(const ofBaseVideoDraws & video) const;
+	void setVideoShaderUniforms(const ofBaseVideoDraws & video, const ofShader & shader) const;
 
 	void enableLighting(){};
 	void disableLighting(){};
@@ -188,7 +201,7 @@ public:
 	void setLightSpecularColor(int lightIndex, const ofFloatColor& c){}
 	void setLightPosition(int lightIndex, const ofVec4f & position){}
 	void setLightSpotDirection(int lightIndex, const ofVec4f & direction){}
-    
+
 private:
 
 
@@ -229,7 +242,7 @@ private:
 	bool bSmoothHinted;
 	ofRectMode rectMode;
 	
-	ofShader * currentShader;
+	const ofShader * currentShader;
 
 	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled, bitmapStringEnabled;
 	bool usingCustomShader, settingDefaultShader;

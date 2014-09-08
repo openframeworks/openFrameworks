@@ -445,19 +445,19 @@ void ofTexture::loadData(const float * data, int w, int h, int glFormat){
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofPixels & pix){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
+	ofSetPixelStorei(pix.getBytesStride());
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofShortPixels & pix){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
+	ofSetPixelStorei(pix.getBytesStride());
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofFloatPixels & pix){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
+	ofSetPixelStorei(pix.getBytesStride());
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 

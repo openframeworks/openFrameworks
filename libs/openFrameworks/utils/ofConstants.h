@@ -495,15 +495,6 @@ enum ofImageType{
  	OF_IMAGE_UNDEFINED		= 0x03
 };
 
-enum ofPixelFormat{
-	OF_PIXELS_MONO = 0, 
-	OF_PIXELS_RGB,
-	OF_PIXELS_RGBA,
-	OF_PIXELS_BGRA,
-	OF_PIXELS_RGB565,
-	OF_PIXELS_UNKNOWN
-};
-
 #define		OF_MAX_STYLE_HISTORY	32
 #define		OF_MAX_VIEWPORT_HISTORY	32
 #define		OF_MAX_CIRCLE_PTS 1024
@@ -676,6 +667,43 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_CONSOLE_COLOR_WHITE (37)
 
 #endif
+
+
+enum ofPixelFormat{
+	// grayscale
+	OF_PIXELS_GRAY = 0,
+	OF_PIXELS_GRAY_ALPHA = 1,
+
+	// rgb (can be 8,16 or 32 bpp depending on pixeltype)
+	OF_PIXELS_RGB=2,
+	OF_PIXELS_BGR=3,
+	OF_PIXELS_RGBA=4,
+	OF_PIXELS_BGRA=5,
+
+	// rgb 16bit
+	OF_PIXELS_RGB565=6,
+
+	// yuv
+	OF_PIXELS_NV12=7,
+	OF_PIXELS_NV21=8,
+	OF_PIXELS_YV12=9,
+	OF_PIXELS_I420=10,
+	OF_PIXELS_YUY2=11,
+
+	// yuv planes
+	OF_PIXELS_Y,
+	OF_PIXELS_U,
+	OF_PIXELS_V,
+	OF_PIXELS_UV,
+	OF_PIXELS_VU,
+
+	OF_PIXELS_UNKNOWN=-1,
+	OF_PIXELS_NATIVE=-2
+};
+
+#define OF_PIXELS_MONO OF_PIXELS_GRAY
+#define OF_PIXELS_R OF_PIXELS_GRAY
+#define OF_PIXELS_RG OF_PIXELS_GRAY_ALPHA
 
 
 //--------------------------------------------
