@@ -463,7 +463,7 @@ void ofBackground(int r, int g, int b, int a){
 
 //----------------------------------------------------------
 void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMode mode) {
-	float w = ofGetWidth(), h = ofGetHeight();
+	float w = ofGetViewportWidth(), h = ofGetViewportHeight();
 	gradientMesh.clear();
 	gradientMesh.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 #ifndef TARGET_EMSCRIPTEN
@@ -515,13 +515,25 @@ void ofBackgroundGradient(const ofColor& start, const ofColor& end, ofGradientMo
 		gradientMesh.addColor(end);
 		gradientMesh.addColor(start);
 	}
-	GLboolean depthMaskEnabled;
+	ofPushMatrix();
+	ofPushView();
+	ofSetupScreenOrtho(w, h);
+	
+	GLboolean depthMaskEnabled, lightingEnabled;
 	glGetBooleanv(GL_DEPTH_WRITEMASK,&depthMaskEnabled);
+	glGetBooleanv(GL_LIGHTING,&lightingEnabled);
 	glDepthMask(GL_FALSE);
+	glDisable(GL_LIGHTING);
 	gradientMesh.draw();
 	if(depthMaskEnabled){
 		glDepthMask(GL_TRUE);
 	}
+	if(lightingEnabled){
+		glEnable(GL_LIGHTING);
+	}
+	
+	ofPopView();
+	ofPopMatrix();
 }
 
 //----------------------------------------------------------
