@@ -4,7 +4,7 @@
 #include "ofxiOSVideoGrabber.h"
 
 ofxiOSVideoGrabber::ofxiOSVideoGrabber() {
-	grabber = ofPtr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
+	grabber = shared_ptr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
 }
 
 ofxiOSVideoGrabber::~ofxiOSVideoGrabber() {
