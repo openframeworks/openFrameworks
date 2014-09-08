@@ -10,14 +10,6 @@
 #include <gst/video/video.h>
 #include <gst/app/gstappsink.h>
 
-//#ifdef TARGET_RASPBERRYPI
-#if GST_VERSION_MAJOR==1 && GST_VERSION_MINOR>=4
-#include <gst/gl/egl/gstgldisplay_egl.h>
-#else
-#include <gst/egl/egl.h>
-#endif
-//#endif
-#include "ofAppEGLWindow.h"
 #include "ofAppRunner.h"
 
 
