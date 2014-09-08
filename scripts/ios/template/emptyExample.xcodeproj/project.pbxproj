@@ -148,6 +148,8 @@
 				<string>ofxiOS_Prefix.pch</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>5.0</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
@@ -168,6 +170,8 @@
 				<string>ofxiOS_Prefix.pch</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>5.0</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
@@ -501,6 +505,7 @@
 			<string>/bin/sh</string>
 			<key>shellScript</key>
 			<string>cp -rf bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"
+
 </string>
 		</dict>
 		<key>BB16E9930F2B1E5900518274</key>
