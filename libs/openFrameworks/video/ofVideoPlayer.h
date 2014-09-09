@@ -79,7 +79,6 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		ofTexture &			getTextureReference();
 		vector<ofTexture> & getTexturePlanes();
 		const ofTexture &	getTextureReference() const;
-		vector<ofTexture> & getTexturePlanes();
 		const vector<ofTexture> & getTexturePlanes() const;
 		void 				draw(float x, float y, float w, float h) const;
 		void 				draw(float x, float y) const;
