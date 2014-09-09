@@ -453,7 +453,13 @@ int count = 0;
 //--------------------------------------------------------------
 - (void)setCurrentTime:(double)currentTime
 {
-    [_player seekToTime:CMTimeMakeWithSeconds(currentTime, _duration.timescale)];
+    CMTime time = CMTimeMakeWithSeconds(currentTime, NSEC_PER_SEC);
+    time = CMTimeMaximum(time, kCMTimeZero);
+    time = CMTimeMinimum(time, _duration);
+    
+    [_player seekToTime:time
+        toleranceBefore:kCMTimeZero
+         toleranceAfter:kCMTimeZero];
 }
 
 //--------------------------------------------------------------
@@ -479,8 +485,7 @@ int count = 0;
 - (void)setPosition:(double)position
 {
     double time = self.duration * position;
-//    [self.player seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
-    [_player seekToTime:CMTimeMakeWithSeconds(time, _duration.timescale)];
+    [self setCurrentTime:time];
 }
 
 //--------------------------------------------------------------

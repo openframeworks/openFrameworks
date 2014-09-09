@@ -401,19 +401,25 @@ float ofAVFoundationPlayer::getHeight()
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::firstFrame()
 {
-    //TODO:
+    if (moviePlayer == NULL) {
+        return;
+    }
+    
+    [moviePlayer setPosition:0];
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::nextFrame()
 {
-    //TODO:
+    int nextFrameNum = ofClamp(getCurrentFrame() + 1, 0, getTotalNumFrames());
+    setFrame(nextFrameNum);
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::previousFrame()
 {
-	//TODO:
+	int prevFrameNum = ofClamp(getCurrentFrame() - 1, 0, getTotalNumFrames());
+    setFrame(prevFrameNum);
 }
 
 //--------------------------------------------------------------
