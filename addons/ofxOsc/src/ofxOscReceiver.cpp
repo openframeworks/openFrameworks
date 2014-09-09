@@ -159,7 +159,7 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 			ofMessage->addStringArg( arg->AsStringUnchecked() );
 		else if ( arg->IsBlob() ){
             const char * dataPtr;
-            unsigned long len = 0;
+            osc::osc_bundle_element_size_t len = 0;
             arg->AsBlobUnchecked((const void*&)dataPtr, len);
             ofBuffer buffer(dataPtr, len);
 			ofMessage->addBlobArg( buffer );
