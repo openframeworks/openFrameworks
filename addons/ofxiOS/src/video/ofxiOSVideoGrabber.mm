@@ -19,7 +19,7 @@ bool ofxiOSVideoGrabber::initGrabber(int w, int h) {
 	return grabber->initGrabber(w, h);
 }
 
-bool ofxiOSVideoGrabber::isInitialized(){
+bool ofxiOSVideoGrabber::isInitialized() const{
     return grabber->isInitialized();
 }
 

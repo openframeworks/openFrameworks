@@ -17,7 +17,7 @@ class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	vector <ofVideoDevice> listDevices() const;
 	void getDeviceList() const {};
 	bool initGrabber(int w, int h);
-    bool isInitialized();
+    bool isInitialized() const;
 	
 	bool			setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat 	getPixelFormat() const;
