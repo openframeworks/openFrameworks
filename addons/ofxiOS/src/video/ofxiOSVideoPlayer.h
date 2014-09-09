@@ -28,8 +28,8 @@ public:
 	
     bool isFrameNew() const;
     unsigned char * getPixels();
-    ofPixelsRef	getPixelsRef();
-    const ofPixelsRef	getPixelsRef() const;
+    ofPixels&	getPixelsRef();
+    const ofPixels&	getPixelsRef() const;
     ofTexture *	getTexture();
     void initTextureCache();
     void killTextureCache();
