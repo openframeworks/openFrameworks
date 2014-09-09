@@ -266,6 +266,11 @@ bool  ofDirectShowGrabber::isFrameNew(){
 	return bIsFrameNew;
 }
 
+//---------------------------------------------------------------------------
+bool  ofDirectShowGrabber::isInitialized(){
+	return bGrabberInited;
+}
+
 //--------------------------------------------------------------------
 void ofDirectShowGrabber::setVerbose(bool bTalkToMe){
 	bVerbose = bTalkToMe;
