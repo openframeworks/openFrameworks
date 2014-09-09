@@ -313,7 +313,7 @@ bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 	return true;
 }
 
-bool ofxAndroidVideoGrabber::isInitialized(){
+bool ofxAndroidVideoGrabber::isInitialized() const{
 	return bGrabberInited;
 }
 
