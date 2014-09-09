@@ -49,7 +49,7 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		bool            isRecording() const;
 	    bool            isRecordingReady() const;
         bool            isReady() const;
-        bool            isInitialized();
+        bool            isInitialized() const;
 
 		void            close();
 
