@@ -89,20 +89,6 @@ public:
 	UdpSocket();
 	virtual ~UdpSocket();
 
-	// Enable broadcast addresses (e.g. x.x.x.255)
-	// Sets SO_BROADCAST socket option.
-	void SetEnableBroadcast( bool enableBroadcast );
-
-	// Enable multiple listeners for a single port on same 
-	// network interface*
-	// Sets SO_REUSEADDR (also SO_REUSEPORT on OS X).
-	// [*] The exact behavior of SO_REUSEADDR and 
-	// SO_REUSEPORT is undefined for some common cases 
-	// and may have drastically different behavior on different
-	// operating systems.
-	void SetAllowReuse( bool allowReuse );
-
-
 	// The socket is created in an unbound, unconnected state
 	// such a socket can only be used to send to an arbitrary
 	// address using SendTo(). To use Send() you need to first
@@ -115,17 +101,32 @@ public:
 
 	// Connect to a remote endpoint which is used as the target
 	// for calls to Send()
-	void Connect( const IpEndpointName& remoteEndpoint );	
+	void Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false );
 	void Send( const char *data, std::size_t size );
     void SendTo( const IpEndpointName& remoteEndpoint, const char *data, std::size_t size );
 
 
 	// Bind a local endpoint to receive incoming data. Endpoint
 	// can be 'any' for the system to choose an endpoint
-	void Bind( const IpEndpointName& localEndpoint );
+	void Bind( const IpEndpointName& localEndpoint, bool allowReuse = false );
 	bool IsBound() const;
 
     std::size_t ReceiveFrom( IpEndpointName& remoteEndpoint, char *data, std::size_t size );
+    
+protected:
+	// Enable broadcast addresses (e.g. x.x.x.255)
+	// Sets SO_BROADCAST socket option.
+	void SetEnableBroadcast( bool enableBroadcast );
+
+	// Enable multiple listeners for a single port on same 
+	// network interface*
+	// Sets SO_REUSEADDR (also SO_REUSEPORT on OS X).
+	// [*] The exact behavior of SO_REUSEADDR and 
+	// SO_REUSEPORT is undefined for some common cases 
+	// and may have drastically different behavior on different
+	// operating systems.
+	void SetAllowReuse( bool allowReuse );
+    
 };
 
 
@@ -136,15 +137,15 @@ public:
 
 class UdpTransmitSocket : public UdpSocket{
 public:
-	UdpTransmitSocket( const IpEndpointName& remoteEndpoint )
-		{ Connect( remoteEndpoint ); }
+	UdpTransmitSocket( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false )
+		{ Connect( remoteEndpoint, enableBroadcast ); }
 };
 
 
 class UdpReceiveSocket : public UdpSocket{
 public:
-	UdpReceiveSocket( const IpEndpointName& localEndpoint )
-		{ Bind( localEndpoint ); }
+	UdpReceiveSocket( const IpEndpointName& localEndpoint, bool allowReuse = false )
+		{ Bind( localEndpoint, allowReuse ); }
 };
 
 
@@ -155,10 +156,10 @@ class UdpListeningReceiveSocket : public UdpSocket{
     SocketReceiveMultiplexer mux_;
     PacketListener *listener_;
 public:
-	UdpListeningReceiveSocket( const IpEndpointName& localEndpoint, PacketListener *listener )
+	UdpListeningReceiveSocket( const IpEndpointName& localEndpoint, PacketListener *listener, bool allowReuse = false )
         : listener_( listener )
     {
-        Bind( localEndpoint );
+        Bind( localEndpoint, allowReuse );
         mux_.AttachSocketListener( this, listener_ );
     }
 

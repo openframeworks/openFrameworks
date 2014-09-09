@@ -188,9 +188,11 @@ public:
 		return IpEndpointNameFromSockaddr( sockAddr );
 	}
 
-	void Connect( const IpEndpointName& remoteEndpoint )
+	void Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false )
 	{
 		SockaddrFromIpEndpointName( connectedAddr_, remoteEndpoint );
+       
+        SetEnableBroadcast(enableBroadcast);
        
         if (connect(socket_, (struct sockaddr *)&connectedAddr_, sizeof(connectedAddr_)) < 0) {
             throw std::runtime_error("unable to connect udp socket\n");
@@ -214,10 +216,12 @@ public:
         sendto( socket_, data, size, 0, (sockaddr*)&sendToAddr_, sizeof(sendToAddr_) );
 	}
 
-	void Bind( const IpEndpointName& localEndpoint )
+	void Bind( const IpEndpointName& localEndpoint, bool allowReuse = false )
 	{
 		struct sockaddr_in bindSockAddr;
 		SockaddrFromIpEndpointName( bindSockAddr, localEndpoint );
+
+        SetAllowReuse(allowReuse);
 
         if (bind(socket_, (struct sockaddr *)&bindSockAddr, sizeof(bindSockAddr)) < 0) {
             throw std::runtime_error("unable to bind udp socket\n");
@@ -274,9 +278,9 @@ IpEndpointName UdpSocket::LocalEndpointFor( const IpEndpointName& remoteEndpoint
 	return impl_->LocalEndpointFor( remoteEndpoint );
 }
 
-void UdpSocket::Connect( const IpEndpointName& remoteEndpoint )
+void UdpSocket::Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast )
 {
-	impl_->Connect( remoteEndpoint );
+	impl_->Connect( remoteEndpoint, enableBroadcast );
 }
 
 void UdpSocket::Send( const char *data, std::size_t size )
@@ -289,9 +293,9 @@ void UdpSocket::SendTo( const IpEndpointName& remoteEndpoint, const char *data, 
 	impl_->SendTo( remoteEndpoint, data, size );
 }
 
-void UdpSocket::Bind( const IpEndpointName& localEndpoint )
+void UdpSocket::Bind( const IpEndpointName& localEndpoint, bool allowReuse )
 {
-	impl_->Bind( localEndpoint );
+	impl_->Bind( localEndpoint, allowReuse );
 }
 
 bool UdpSocket::IsBound() const

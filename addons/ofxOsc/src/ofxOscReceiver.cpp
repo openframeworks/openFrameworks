@@ -39,7 +39,7 @@ ofxOscReceiver::ofxOscReceiver()
 	listen_socket = NULL;
 }
 
-void ofxOscReceiver::setup( int listen_port )
+void ofxOscReceiver::setup( int listen_port, bool allowReuse )
 {
 	// if we're already running, shutdown before running again
 	if ( listen_socket )
@@ -54,7 +54,7 @@ void ofxOscReceiver::setup( int listen_port )
 	
 	// create socket
 	socketHasShutdown = false;
-	listen_socket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, listen_port ), this );
+	listen_socket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, listen_port ), this, allowReuse );
 
 	// start thread
 	#ifdef TARGET_WIN32
