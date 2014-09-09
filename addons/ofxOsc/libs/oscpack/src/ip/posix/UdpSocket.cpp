@@ -96,6 +96,7 @@ static IpEndpointName IpEndpointNameFromSockaddr( const struct sockaddr_in& sock
 		);
 }
 
+unsigned long UdpSocket::maxBufferSize = 0;
 
 class UdpSocket::Implementation{
 	bool isBound_;
@@ -115,7 +116,12 @@ public:
 		if( (socket_ = socket( AF_INET, SOCK_DGRAM, 0 )) == -1 ){
             throw std::runtime_error("unable to create udp socket\n");
         }
-
+        
+        if( UdpSocket::maxBufferSize > 0 ){
+            setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, &UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
+            setsockopt(socket_, SOL_SOCKET, SO_RCVBUF, &UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
+        }
+        
 		std::memset( &sendToAddr_, 0, sizeof(sendToAddr_) );
         sendToAddr_.sin_family = AF_INET;
 	}
@@ -261,6 +267,14 @@ UdpSocket::UdpSocket()
 UdpSocket::~UdpSocket()
 {
 	delete impl_;
+}
+
+void UdpSocket::SetUdpBufferSize( unsigned long bufferSize ){
+    UdpSocket::maxBufferSize = bufferSize; 
+}
+
+unsigned long UdpSocket::GetUdpBufferSize(){
+    return UdpSocket::maxBufferSize;
 }
 
 void UdpSocket::SetEnableBroadcast( bool enableBroadcast )
@@ -444,7 +458,7 @@ public:
                 timerQueue_.push_back( std::make_pair( currentTimeMs + i->initialDelayMs, *i ) );
             std::sort( timerQueue_.begin(), timerQueue_.end(), CompareScheduledTimerCalls );
 
-            const int MAX_BUFFER_SIZE = 4098;
+            const int MAX_BUFFER_SIZE = UdpSocket::GetUdpBufferSize();
             data = new char[ MAX_BUFFER_SIZE ];
             IpEndpointName remoteEndpoint;
 

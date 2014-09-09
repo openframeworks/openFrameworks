@@ -41,6 +41,10 @@ ofxOscReceiver::ofxOscReceiver()
 
 void ofxOscReceiver::setup( int listen_port, bool allowReuse )
 {
+    if( UdpSocket::GetUdpBufferSize() == 0 ){
+        UdpSocket::SetUdpBufferSize(65535);
+    }
+    
 	// if we're already running, shutdown before running again
 	if ( listen_socket )
 		shutdown();
