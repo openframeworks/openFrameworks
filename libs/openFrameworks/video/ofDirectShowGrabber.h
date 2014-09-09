@@ -21,7 +21,8 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		bool					initGrabber(int w, int h);
 		void					update();
 		bool					isFrameNew();
-		
+		bool					isInitialized();
+
 		bool					setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat			getPixelFormat();		
 
