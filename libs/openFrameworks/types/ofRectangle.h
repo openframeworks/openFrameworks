@@ -67,8 +67,8 @@ public:
     ofRectangle(const ofRectangle& rect);
 
     /// \brief Construct a rectangle by defining two corners.
-    /// \param p The ofPoint representing the upper left hand corner.
-    /// \param p The ofPoint representing the lower right hand corner.
+    /// \param p0 The ofPoint representing the upper left hand corner.
+    /// \param p1 The ofPoint representing the lower right hand corner.
     ofRectangle(const ofPoint& p0, const ofPoint& p1);
 
     /// \brief Set the position and size of a rectangle.
@@ -98,8 +98,8 @@ public:
     void set(const ofRectangle& rect);
 
     /// \brief Set the position and size of a rectangle using corners.
-    /// \param p The ofPoint representing the upper left hand corner.
-    /// \param p The ofPoint representing the lower right hand corner.
+    /// \param p0 The ofPoint representing the upper left hand corner.
+    /// \param p1 The ofPoint representing the lower right hand corner.
     void set(const ofPoint& p0, const ofPoint& p1);
 
     /// \brief Set the x position of a rectangle.

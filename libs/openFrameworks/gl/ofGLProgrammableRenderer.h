@@ -3,22 +3,23 @@
 #include "ofPolyline.h"
 #include "ofMatrix4x4.h"
 #include "ofShader.h"
-#include "ofGraphics.h"
 #include "ofMatrixStack.h"
+#include "ofVboMesh.h"
 
 
-#include <stack>
 class ofShapeTessellation;
 class ofMesh;
 class ofFbo;
 class ofVbo;
+class ofMaterial;
+static const int OF_NO_TEXTURE=-1;
 
 class ofGLProgrammableRenderer: public ofBaseGLRenderer{
 public:
 	ofGLProgrammableRenderer(bool useShapeColor=true);
 	~ofGLProgrammableRenderer();
 
-	void setup();
+	void setup(const string & glslVersion);
 
     static const string TYPE;
 	const string & getType(){ return TYPE; }
@@ -37,6 +38,10 @@ public:
 	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(ofBaseVideoDraws & video, float x, float y, float w, float h);
+
+	void bind(ofBaseVideoDraws & video);
+	void unbind(ofBaseVideoDraws & video);
     
 	bool rendersPathPrimitives(){
 		return false;
@@ -83,9 +88,13 @@ public:
 	void loadMatrix (const float * m);
 	void multMatrix (const ofMatrix4x4 & m);
 	void multMatrix (const float * m);
+	void loadViewMatrix(const ofMatrix4x4 & m);
+	void multViewMatrix(const ofMatrix4x4 & m);
 	
 	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const;
 	ofMatrix4x4 getCurrentOrientationMatrix() const;
+	ofMatrix4x4 getCurrentViewMatrix() const;
+	ofMatrix4x4 getCurrentNormalMatrix() const;
 	
 	// screen coordinate things / default gl values
 	void setupGraphicDefaults();
@@ -140,29 +149,45 @@ public:
 
 	ofShader & getCurrentShader();
 
-	void enableTextureTarget(int textureTarget);
-	void disableTextureTarget(int textureTarget);
+	void enableTextureTarget(int textureTarget, int textureID, int textureLocation);
+	void disableTextureTarget(int textureTarget, int textureLocation);
+	void setAlphaMaskTex(ofTexture & tex);
+	void disableAlphaMask();
+	GLenum getCurrentTextureTarget();
 
 	void beginCustomShader(ofShader & shader);
 	void endCustomShader();
 
+	void setCurrentMaterial(ofBaseMaterial * material);
+
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
 
-	ofShader & defaultTexColor();
-	ofShader & defaultTexNoColor();
+	ofShader & defaultTexRectColor();
+	ofShader & defaultTexRectNoColor();
 	ofShader & defaultTex2DColor();
 	ofShader & defaultTex2DNoColor();
 	ofShader & defaultNoTexColor();
 	ofShader & defaultNoTexNoColor();
+	ofShader & alphaMaskRectShader();
+	ofShader & alphaMask2DShader();
 	ofShader & bitmapStringShader();
 	ofShader & defaultUniqueShader();
-    
+	ofShader & getShaderPlanarYUY2();
+	ofShader & getShaderNV12();
+	ofShader & getShaderNV21();
+	ofShader & getShaderPlanarYUV();
+	ofShader & getShaderPlanarYUY2Rect();
+	ofShader & getShaderNV12Rect();
+	ofShader & getShaderNV21Rect();
+	ofShader & getShaderPlanarYUVRect();
+	ofShader * getVideoShader(ofBaseVideoDraws & video);
+	void setVideoShaderUniforms(ofBaseVideoDraws & video, ofShader & shader);
 private:
 
 
 	ofPolyline circlePolyline;
-#ifdef TARGET_OPENGLES
+#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	ofMesh circleMesh;
 	ofMesh triangleMesh;
 	ofMesh rectMesh;
@@ -206,4 +231,7 @@ private:
 
 	bool wrongUseLoggedOnce;
 	bool uniqueShader;
+
+	ofBaseMaterial * currentMaterial;
+	int alphaMaskTextureTarget;
 };

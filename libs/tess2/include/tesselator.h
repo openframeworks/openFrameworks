@@ -69,7 +69,7 @@ enum TessElementType
 
 typedef float TESSreal;
 //note this shouldn't be defined(TARGET_OS_IPHONE) as its always defined either 0 or 1
-#if TARGET_OS_IPHONE || ANDROID || __ARMEL__
+#if TARGET_OS_IPHONE || ANDROID || __ARMEL__ || __EMSCRIPTEN__
 typedef unsigned short TESSindex;
 #else
 typedef unsigned int TESSindex;
@@ -162,7 +162,7 @@ int tessGetElementCount( TESStesselator *tess );
 const TESSindex* tessGetElements( TESStesselator *tess );
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif // TESSELATOR_H

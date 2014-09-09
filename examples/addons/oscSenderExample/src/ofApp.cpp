@@ -45,7 +45,7 @@ void ofApp::keyPressed(int key){
 		m.addFloatArg(3.5f);
 		m.addStringArg("hello");
 		m.addFloatArg(ofGetElapsedTimef());
-		sender.sendMessage(m);
+		sender.sendMessage(m, false);
 	}
     
     //send an image. (Note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through )
@@ -72,7 +72,7 @@ void ofApp::mouseMoved(int x, int y){
 	m.setAddress("/mouse/position");
 	m.addIntArg(x);
 	m.addIntArg(y);
-	sender.sendMessage(m);
+	sender.sendMessage(m, false);
 }
 
 //--------------------------------------------------------------
@@ -85,7 +85,7 @@ void ofApp::mousePressed(int x, int y, int button){
 	ofxOscMessage m;
 	m.setAddress("/mouse/button");
 	m.addStringArg("down");
-	sender.sendMessage(m);
+	sender.sendMessage(m, false);
 }
 
 //--------------------------------------------------------------
@@ -93,7 +93,7 @@ void ofApp::mouseReleased(int x, int y, int button){
 	ofxOscMessage m;
 	m.setAddress("/mouse/button");
 	m.addStringArg("up");
-	sender.sendMessage(m);
+	sender.sendMessage(m, false);
 
 }
 

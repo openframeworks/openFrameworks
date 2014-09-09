@@ -1,23 +1,10 @@
-/*
- *  ofBaseTypes.h
- *  openFrameworksLib
- *
- *  Created by zachary lieberman on 1/9/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
- *
- */
-
-
-
 #pragma once
-#include "ofPoint.h"
-#include "ofRectangle.h"
 #include "ofConstants.h"
-#include "ofColor.h"
-#include "ofMesh.h"
-#include "ofPixels.h"
-#include "ofMatrix4x4.h"
 #include "ofTypes.h"
+#include "ofRectangle.h"
+#include "ofMatrix4x4.h"
+#include "ofURLFileLoader.h"
+#include "ofMesh.h"
 
 class ofAbstractParameter;
 
@@ -28,11 +15,29 @@ typedef ofImage_<unsigned char> ofImage;
 typedef ofImage_<float> ofFloatImage;
 typedef ofImage_<unsigned short> ofShortImage;
 
+template<typename T>
+class ofPixels_;
+
+typedef ofPixels_<unsigned char> ofPixels;
+typedef ofPixels_<float> ofFloatPixels;
+typedef ofPixels_<unsigned short> ofShortPixels;
+typedef ofPixels& ofPixelsRef;
+
+template<typename T>
+class ofColor_;
+
+typedef ofColor_<unsigned char> ofColor;
+
+class ofVec3f;
+typedef ofVec3f ofPoint;
+
 class ofPath;
 class ofPolyline;
 class ofFbo;
 class of3dPrimitive;
-typedef ofPixels& ofPixelsRef;
+class ofLight;
+class ofMaterial;
+class ofBaseMaterial;
 
 bool ofIsVFlipped();
 
@@ -85,6 +90,15 @@ class ofBaseHasTexture{
 public:
 	virtual ~ofBaseHasTexture(){}
 	virtual ofTexture & getTextureReference()=0;
+	virtual void setUseTexture(bool bUseTex)=0;
+	virtual bool isUsingTexture(){return true;};
+};
+
+class ofBaseHasTexturePlanes: public ofBaseHasTexture{
+public:
+	virtual ~ofBaseHasTexturePlanes(){}
+	virtual ofTexture & getTextureReference()=0;
+	virtual vector<ofTexture> & getTexturePlanes()=0;
 	virtual void setUseTexture(bool bUseTex)=0;
 };
 
@@ -181,13 +195,17 @@ public:
 	virtual ~ofBaseVideo(){}
 	virtual bool isFrameNew()=0;
 	virtual void close()=0;
+	virtual bool isInitialized()=0;
+
+	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
+	virtual ofPixelFormat getPixelFormat() = 0;
 };
 
 
 //----------------------------------------------------------
 // ofBaseVideoDraws
 //----------------------------------------------------------
-class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseImage{
+class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexturePlanes,virtual public ofBaseHasPixels{
 public:
 	virtual ~ofBaseVideoDraws(){}
 };
@@ -212,12 +230,9 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	
 	virtual float	getHeight() = 0;
 	virtual float	getWidth() = 0;
-	
-	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
-	virtual ofPixelFormat getPixelFormat() = 0;
 
 	// implement only if internal API can upload directly to texture
-	virtual ofTexture * getTexture(){ return NULL; }
+	virtual ofTexture * getTexture(){return NULL;};
 
 	//should implement!
 	virtual void setVerbose(bool bTalkToMe);
@@ -246,7 +261,7 @@ public:
 	
 	virtual bool 				isFrameNew() = 0;
 	virtual unsigned char * 	getPixels() = 0;
-	virtual ofTexture *			getTexture(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
+	virtual ofTexture * 		getTexture(){return NULL;};// if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 	
 	virtual float 				getWidth() = 0;
 	virtual float 				getHeight() = 0;
@@ -254,9 +269,9 @@ public:
 	virtual bool				isPaused() = 0;
 	virtual bool				isLoaded() = 0;
 	virtual bool				isPlaying() = 0;
-	
-	virtual bool				setPixelFormat(ofPixelFormat pixelFormat) = 0;
-	virtual ofPixelFormat 		getPixelFormat() = 0;
+	virtual bool 				isInitialized(){
+		return isLoaded();
+	}
 		
 	//should implement!
 	virtual float 				getPosition();
@@ -301,6 +316,10 @@ public:
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
 	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
+	virtual void draw(ofBaseVideoDraws & video, float x, float y, float w, float h)=0;
+
+	virtual void bind(ofBaseVideoDraws & video)=0;
+	virtual void unbind(ofBaseVideoDraws & video)=0;
 
 	//--------------------------------------------
 	// transformations
@@ -343,6 +362,10 @@ public:
 	virtual void loadMatrix (const float *m){};
 	virtual void multMatrix (const ofMatrix4x4 & m){};
 	virtual void multMatrix (const float *m){};
+	virtual void loadViewMatrix(const ofMatrix4x4 & m){};
+	virtual void multViewMatrix(const ofMatrix4x4 & m){}
+	virtual ofMatrix4x4 getCurrentViewMatrix() const { return ofMatrix4x4();};
+	virtual ofMatrix4x4 getCurrentNormalMatrix() const { return ofMatrix4x4();};
 	
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults(){};
@@ -402,8 +425,32 @@ class ofBaseGLRenderer: public ofBaseRenderer{
 public:
 	virtual void setCurrentFBO(ofFbo * fbo)=0;
 
-	virtual void enableTextureTarget(int textureTarget)=0;
-	virtual void disableTextureTarget(int textureTarget)=0;
+	virtual void enableTextureTarget(int textureTarget, int textureID, int textureLocation)=0;
+	virtual void disableTextureTarget(int textureTarget, int textureLocation)=0;
+	virtual void setAlphaMaskTex(ofTexture & tex)=0;
+	virtual void disableAlphaMask()=0;
+
+	// lighting
+	virtual void enableLighting(){}
+	virtual void disableLighting(){}
+	virtual void enableSeparateSpecularLight(){}
+	virtual void disableSeparateSpecularLight(){}
+	virtual bool getLightingEnabled(){ return false; }
+	virtual void setSmoothLighting(bool b){}
+	virtual void setGlobalAmbientColor(const ofColor& c){}
+	virtual void enableLight(int lightIndex){};
+	virtual void disableLight(int lightIndex){};
+	virtual void setLightSpotlightCutOff(int lightIndex, float spotCutOff){};
+	virtual void setLightSpotConcentration(int lightIndex, float exponent){};
+	virtual void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic ){};
+	virtual void setLightAmbientColor(int lightIndex, const ofFloatColor& c){};
+	virtual void setLightDiffuseColor(int lightIndex, const ofFloatColor& c){};
+	virtual void setLightSpecularColor(int lightIndex, const ofFloatColor& c){};
+	virtual void setLightPosition(int lightIndex, const ofVec4f & position){};
+	virtual void setLightSpotDirection(int lightIndex, const ofVec4f & direction){};
+
+	// materials
+	virtual void setCurrentMaterial(ofBaseMaterial * material){};
 };
 
 
@@ -423,4 +470,22 @@ public:
 	virtual bool save(const string & path)=0;
 };
 
+class ofBaseURLFileLoader{
+public:
+	virtual ~ofBaseURLFileLoader(){};
+    virtual ofHttpResponse get(string url)=0;
+    virtual int getAsync(string url, string name="")=0;
+    virtual ofHttpResponse saveTo(string url, string path)=0;
+    virtual int saveAsync(string url, string path)=0;
+    virtual void remove(int id)=0;
+    virtual void clear()=0;
+    virtual void stop()=0;
+};
 
+class ofBaseMaterial{
+public:
+	virtual ~ofBaseMaterial(){};
+	virtual void begin();
+	virtual void end();
+	virtual void beginShader(int textureTarget)=0;
+};

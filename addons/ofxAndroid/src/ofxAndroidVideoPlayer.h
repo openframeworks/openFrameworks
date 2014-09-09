@@ -35,6 +35,7 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		ofTexture *	getTexture();
 		void reloadTexture();
 		void unloadTexture();
+		void removeTexture();
 
 		float getWidth();
 		float getHeight();

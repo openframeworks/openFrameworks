@@ -256,8 +256,12 @@ OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
 
 # create a list of all dirs in the project root that might be valid project
 # source directories 
-# grep -v "/\.[^\.]" will exclude all .hidden folders and files
-ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 -type d | grep -v "/\.[^\.]")
+ALL_OF_PROJECT_SOURCE_PATHS = $(shell find $(PROJECT_ROOT) -mindepth 1 \
+                                                           -type d \
+                                                           -not -path "./bin/*" \
+                                                           -not -path "./obj/*" \
+                                                           -not -path "./*.xcodeproj/*" \
+                                                           -not -path "*/\.*")
 ifneq ($(PROJECT_EXTERNAL_SOURCE_PATHS),)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(PROJECT_EXTERNAL_SOURCE_PATHS)
 	ALL_OF_PROJECT_SOURCE_PATHS += $(shell find $(PROJECT_EXTERNAL_SOURCE_PATHS) -mindepth 1 -type d | grep -v "/\.[^\.]")
@@ -427,6 +431,12 @@ ifeq ($(findstring Debug,$(TARGET_NAME)),Debug)
     else
     	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworksDebug.a
     endif
+    
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)),)
+		OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG)
+	else
+		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_DEBUG)
+	endif
 endif
 
 ifeq ($(findstring Release,$(TARGET_NAME)),Release)
@@ -441,6 +451,12 @@ ifeq ($(findstring Release,$(TARGET_NAME)),Release)
     else
     	TARGET_LIBS += $(OF_CORE_LIB_PATH)/libopenFrameworks.a
     endif
+    
+	ifeq ($(strip $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)),)
+	    OPTIMIZATION_LDFLAGS = $(PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE)
+	else
+		OPTIMIZATION_LDFLAGS = $(PROJECT_OPTIMIZATION_LDFLAGS_RELEASE)
+	endif
 endif
 
 

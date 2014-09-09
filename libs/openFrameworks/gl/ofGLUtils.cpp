@@ -9,33 +9,7 @@
 
 //---------------------------------
 int ofGetGlInternalFormat(const ofPixels& pix) {
-#ifndef TARGET_OPENGLES
-	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB8;
-		case 4: return GL_RGBA8;
-		case 2:
-			if(ofIsGLProgrammableRenderer()){
-				return GL_RG8;
-			}else{
-				return GL_LUMINANCE_ALPHA;
-			}
-		default:
-			if(ofIsGLProgrammableRenderer()){
-				return GL_R8;
-			}else{
-				return GL_LUMINANCE8;
-			}
-	}
-#else
-	switch(pix.getNumChannels()) {
-		case 3: return GL_RGB;
-		case 4: return GL_RGBA;
-		case 2:
-			return GL_LUMINANCE_ALPHA;
-		default:
-			return GL_LUMINANCE;
-	}
-#endif
+	return ofGetGLInternalFormatFromPixelFormat(pix.getPixelFormat());
 }
 
 //---------------------------------
@@ -138,6 +112,7 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 	#ifndef TARGET_OPENGLES
 			case GL_RGBA8:
 			case GL_RGBA16:
+			case GL_RGBA16F:
 			case GL_RGBA32F_ARB:
 	#endif
 				 return GL_RGBA;
@@ -186,14 +161,22 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 #ifndef TARGET_OPENGLES
 			case GL_R8:
 			case GL_R16:
+			case GL_R16F:
 			case GL_R32F:
 				return GL_RED;
 
 			case GL_RG8:
 			case GL_RG16:
+			case GL_RG16F:
 			case GL_RG32F:
 				return GL_RG;
 #endif
+
+#ifndef TARGET_OPENGLES
+			case GL_ALPHA8:
+#endif
+			case GL_ALPHA:
+				return GL_ALPHA;
 
 			default:
 				ofLogError("ofGLUtils") << "ofGetGLFormatFromInternal(): unknown internal format " << glInternalFormat << ", returning GL_RGBA";
@@ -209,39 +192,46 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 		case GL_RGBA:
 		case GL_LUMINANCE:
 		case GL_LUMINANCE_ALPHA:
+		case GL_ALPHA:
 #ifndef TARGET_OPENGLES
-		case GL_RGB8:
-		case GL_RGBA8:
 		case GL_LUMINANCE8:
 		case GL_LUMINANCE8_ALPHA8:
 		case GL_R8:
 		case GL_RG8:
+		case GL_RGB8:
+		case GL_RGBA8:
+		case GL_ALPHA8:
 #endif
 			 return GL_UNSIGNED_BYTE;
 
 
 #ifndef TARGET_OPENGLES
-		case GL_RGB16:
-		case GL_RGBA16:
 		case GL_LUMINANCE16:
 		case GL_LUMINANCE16_ALPHA16:
 		case GL_R16:
 		case GL_RG16:
+		case GL_RGB16:
+		case GL_RGBA16:
 #endif
 			return GL_UNSIGNED_SHORT;
 
-
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) && defined(GL_RGB565)
+		case GL_RGB565:
+			return GL_UNSIGNED_SHORT_5_6_5;
+		break;
 #endif
-			 return GL_LUMINANCE;
 
 #ifndef TARGET_OPENGLES
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
-		case GL_RGB32F:
-		case GL_RGBA32F:
+		case GL_R16F:
+		case GL_RG16F:
+		case GL_RGB16F:
+		case GL_RGBA16F:
 		case GL_R32F:
 		case GL_RG32F:
+		case GL_RGB32F:
+		case GL_RGBA32F:
 #endif
 			return GL_FLOAT;
 
@@ -273,7 +263,15 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 
 //---------------------------------
 int ofGetGlType(const ofPixels & pixels) {
-	return GL_UNSIGNED_BYTE;
+#ifndef TARGET_OPENGLES
+	if(pixels.getPixelFormat()==OF_PIXELS_RGB565){
+		return GL_UNSIGNED_SHORT_5_6_5;
+	}else{
+#endif
+		return GL_UNSIGNED_BYTE;
+#ifndef TARGET_OPENGLES
+	}
+#endif
 }
 
 //---------------------------------
@@ -295,7 +293,13 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 	case GL_LUMINANCE16:
 	case GL_LUMINANCE32F_ARB:
 	case GL_R16:
+	case GL_R16F:
+	case GL_R16I:
+	case GL_R16UI:
 	case GL_R32F:
+	case GL_R32I:
+	case GL_R32UI:
+	case GL_DEPTH_COMPONENT32F:
 	case GL_DEPTH_COMPONENT32:
 	case GL_DEPTH_COMPONENT16:
 	case GL_DEPTH_COMPONENT24:
@@ -308,7 +312,12 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 #ifndef TARGET_OPENGLES
 	case GL_RGB8:
 	case GL_RGB16:
+	case GL_RGB16F:
+	case GL_RGB16I:
+	case GL_RGB16UI:
 	case GL_RGB32F:
+	case GL_RGB32I:
+	case GL_RGB32UI:
 #endif
 		return OF_IMAGE_COLOR;
 
@@ -317,7 +326,12 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 #ifndef TARGET_OPENGLES
 	case GL_RGBA8:
 	case GL_RGBA16:
+	case GL_RGBA16F:
+	case GL_RGBA16I:
+	case GL_RGBA16UI:
 	case GL_RGBA32F:
+	case GL_RGBA32I:
+	case GL_RGBA32UI:
 #endif
 		return OF_IMAGE_COLOR_ALPHA;
 	}
@@ -392,6 +406,23 @@ GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode){
 		case OF_PRIMITIVE_POINTS:
 			return GL_POINTS;
 			break;
+#ifndef TARGET_OPENGLES
+		case OF_PRIMITIVE_LINES_ADJACENCY:
+			return GL_LINES_ADJACENCY;
+			break;
+		case OF_PRIMITIVE_LINE_STRIP_ADJACENCY:
+			return GL_LINE_STRIP_ADJACENCY;
+			break;
+		case OF_PRIMITIVE_TRIANGLES_ADJACENCY:
+			return GL_TRIANGLES_ADJACENCY;
+			break;
+		case OF_PRIMITIVE_TRIANGLE_STRIP_ADJACENCY:
+			return GL_TRIANGLE_STRIP_ADJACENCY;
+			break;
+		case OF_PRIMITIVE_PATCHES:
+			return GL_PATCHES;
+			break;
+#endif
 		default:
 			ofLogError("ofGLUtils") << "ofGetGLPrimitiveMode(): unknown OF primitive mode " << ofToString(mode) << ", returning GL_TRIANGLES";
 			return GL_TRIANGLES;
@@ -422,6 +453,23 @@ ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 		case GL_POINTS:
 			return OF_PRIMITIVE_POINTS;
 			break;
+#ifndef TARGET_OPENGLES
+		case GL_LINES_ADJACENCY:
+			return OF_PRIMITIVE_LINES_ADJACENCY;
+			break;
+		case GL_LINE_STRIP_ADJACENCY:
+			return OF_PRIMITIVE_LINE_STRIP_ADJACENCY;
+			break;
+		case GL_TRIANGLES_ADJACENCY:
+			return OF_PRIMITIVE_TRIANGLES_ADJACENCY;
+			break;
+		case GL_TRIANGLE_STRIP_ADJACENCY:
+			return OF_PRIMITIVE_TRIANGLE_STRIP_ADJACENCY;
+			break;
+		case GL_PATCHES:
+			return OF_PRIMITIVE_PATCHES;
+			break;
+#endif
 		default:
 			ofLogError("ofGLUtils") << "ofGetOFPrimitiveMode(): unknown GL primitive mode " << ofToString(mode) << ", returning OF_PRIMITIVE_TRIANGLES";
 			return OF_PRIMITIVE_TRIANGLES;
@@ -433,30 +481,56 @@ ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode){
 int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_BGRA:
-		return GL_RGBA;
-	case OF_PIXELS_MONO:
-		return GL_LUMINANCE;
-	case OF_PIXELS_RGB:
-		return GL_RGB;
 	case OF_PIXELS_RGBA:
 		return GL_RGBA;
+	case OF_PIXELS_RGB:
+	case OF_PIXELS_BGR:
+		return GL_RGB;
     case OF_PIXELS_RGB565:
-	#ifdef TARGET_OPENGLES
-		#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
-			return GL_RGB565_OES;
-		#else
-			return GL_RGB;
-		#endif
+	#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
+		return GL_RGB565_OES;
+	#elif defined(GL_RGB565)
+		return GL_RGB565;
 	#else
-		return GL_RGB5;
+		return GL_RGB;
 	#endif
+    case OF_PIXELS_GRAY:
+    case OF_PIXELS_NV12:
+    case OF_PIXELS_NV21:
+	case OF_PIXELS_YV12:
+	case OF_PIXELS_I420:
+	case OF_PIXELS_Y:
+	case OF_PIXELS_U:
+	case OF_PIXELS_V:
+#ifndef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()){
+			return GL_R8;
+		}else{
+#endif
+			return GL_LUMINANCE;
+#ifndef TARGET_OPENGLES
+		}
+#endif
+    case OF_PIXELS_GRAY_ALPHA:
+	case OF_PIXELS_YUY2:
+	case OF_PIXELS_UV:
+	case OF_PIXELS_VU:
+#ifndef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()){
+			return GL_RG8;
+		}else{
+#endif
+			return GL_LUMINANCE_ALPHA;
+#ifndef TARGET_OPENGLES
+		}
+#endif
 	default:
-		ofLogError("ofGLUtils") << "ofGetGLInternalFormatFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_LUMINANCE";
-		return GL_LUMINANCE;
+		ofLogError("ofGLUtils") << "ofGetGLInternalFormatFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_RGBA";
+		return GL_RGBA;
 	}
 }
 
-int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
+int ofGetGLFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_BGRA:
 #ifdef TARGET_OPENGLES
@@ -464,21 +538,59 @@ int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat){
 #else
         return GL_BGRA;
 #endif
-	case OF_PIXELS_MONO:
-		return GL_LUMINANCE;
 	case OF_PIXELS_RGB:
 		return GL_RGB;
-	case OF_PIXELS_RGBA:
-		return GL_RGBA;
-    case OF_PIXELS_RGB565:
+	case OF_PIXELS_BGR:
 #ifdef TARGET_OPENGLES
     	return GL_RGB;
 #else
-        return GL_RGB5;
+        return GL_BGR;
+#endif
+	case OF_PIXELS_RGBA:
+		return GL_RGBA;
+    case OF_PIXELS_RGB565:
+        return GL_RGB;
+	case OF_PIXELS_GRAY:
+    case OF_PIXELS_NV12:
+    case OF_PIXELS_NV21:
+	case OF_PIXELS_YV12:
+	case OF_PIXELS_I420:
+	case OF_PIXELS_Y:
+	case OF_PIXELS_U:
+	case OF_PIXELS_V:
+#ifndef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()){
+			return GL_RED;
+		}else{
+#endif
+			return GL_LUMINANCE;
+#ifndef TARGET_OPENGLES
+		}
+#endif
+    case OF_PIXELS_GRAY_ALPHA:
+	case OF_PIXELS_YUY2:
+	case OF_PIXELS_UV:
+	case OF_PIXELS_VU:
+#ifndef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()){
+			return GL_RG;
+		}else{
+#endif
+			return GL_LUMINANCE_ALPHA;
+#ifndef TARGET_OPENGLES
+		}
 #endif
 	default:
-		ofLogError("ofGLUtils") << "ofGetGLTypeFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_LUMINANCE";
-		return GL_LUMINANCE;
+		ofLogError("ofGLUtils") << "ofGetGLFormatFromPixelFormat(): unknown OF pixel format" << pixelFormat << ", returning GL_LUMINANCE";
+#ifndef TARGET_OPENGLES
+		if(ofIsGLProgrammableRenderer()){
+			return GL_RED;
+		}else{
+#endif
+			return GL_LUMINANCE;
+#ifndef TARGET_OPENGLES
+		}
+#endif
 	}
 }
 
@@ -493,6 +605,12 @@ int ofGetNumChannelsFromGLFormat(int glFormat){
 		return 1;
 	case GL_LUMINANCE_ALPHA:
 		return 2;
+#ifndef TARGET_OPENGLES
+	case GL_RED:
+		return 1;
+	case GL_RG:
+		return 2;
+#endif
 	default:
 		return 1;
 	}
@@ -505,6 +623,10 @@ int ofGetNumChannelsFromGLFormat(int glFormat){
 
 void ofSetPixelStorei(int w, int bpc, int numChannels){
 	int stride = w * numChannels * bpc;
+	ofSetPixelStorei(stride);
+}
+
+void ofSetPixelStorei(int stride){
     if (OF_ROUND_UP_8 (stride) == stride) {
         glPixelStorei (GL_UNPACK_ALIGNMENT, 8);
     } else if (OF_ROUND_UP_4 (stride) == stride) {
@@ -516,13 +638,20 @@ void ofSetPixelStorei(int w, int bpc, int numChannels){
     }
 }
 
+
+
 vector<string> ofGLSupportedExtensions(){
-	string extensions = (char*)glGetString(GL_EXTENSIONS);
-	return ofSplitString(extensions," ");
+	char* extensions = (char*)glGetString(GL_EXTENSIONS);
+	if(extensions){
+		string extensions_str = extensions;
+		return ofSplitString(extensions_str," ");
+	}else{
+		return vector<string>();
+	}
 }
 
 bool ofGLCheckExtension(string searchName){
-#ifdef TARGET_OPENGLES
+#if defined( TARGET_OPENGLES ) || defined( TARGET_LINUX )
 	vector<string> extensionsList = ofGLSupportedExtensions();
 	set<string> extensionsSet;
 	extensionsSet.insert(extensionsList.begin(),extensionsList.end());
@@ -535,7 +664,7 @@ bool ofGLCheckExtension(string searchName){
 bool ofGLSupportsNPOTTextures(){
 #ifndef TARGET_OPENGLES
 	return GL_ARB_texture_rectangle;
-#else
+#elif !defined(TARGET_EMSCRIPTEN)
 	static bool npotChecked = false;
 	static bool npotSupported = false;
 	if(!npotChecked){
@@ -552,14 +681,16 @@ bool ofGLSupportsNPOTTextures(){
 	}
 
 	return npotSupported;
+#else
+	return true;
 #endif
 }
 
-ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer(){
+shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer(){
 	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
-		return (ofPtr<ofGLProgrammableRenderer>&)ofGetCurrentRenderer();
+		return (shared_ptr<ofGLProgrammableRenderer>&)ofGetCurrentRenderer();
 	}else{
-		return ofPtr<ofGLProgrammableRenderer>();
+		return shared_ptr<ofGLProgrammableRenderer>();
 	}
 }
 
@@ -567,15 +698,27 @@ bool ofIsGLProgrammableRenderer(){
 	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE;
 }
 
-ofPtr<ofBaseGLRenderer> ofGetGLRenderer(){
+#ifndef TARGET_PROGRAMMABLE_GL
+shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 	if(ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE || ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
-		return (ofPtr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
+		return (shared_ptr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
 	}else if(ofGetCurrentRenderer()->getType()==ofRendererCollection::TYPE){
-		return ((ofPtr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
+		return ((shared_ptr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
 	}else{
-		return ofPtr<ofGLRenderer>();
+		return shared_ptr<ofGLRenderer>();
 	}
 }
+#else
+shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
+	if(ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
+		return (shared_ptr<ofBaseGLRenderer>&)ofGetCurrentRenderer();
+	}else if(ofGetCurrentRenderer()->getType()==ofRendererCollection::TYPE){
+		return ((shared_ptr<ofRendererCollection>&)ofGetCurrentRenderer())->getGLRenderer();
+	}else{
+		return shared_ptr<ofGLProgrammableRenderer>();
+	}
+}
+#endif
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 void ofUpdateBitmapCharacterTexture();

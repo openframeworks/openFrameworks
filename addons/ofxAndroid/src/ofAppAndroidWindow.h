@@ -9,12 +9,12 @@
 
 #include "ofAppBaseWindow.h"
 
-class ofAppAndroidWindow: public ofAppBaseWindow {
+class ofAppAndroidWindow: public ofAppBaseGLESWindow {
 public:
 	ofAppAndroidWindow();
 	virtual ~ofAppAndroidWindow();
 
-	void setupOpenGL(int w, int h, int screenMode);
+	void setupOpenGL(int w, int h, ofWindowMode screenMode);
 	void initializeWindow() {}
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 
@@ -35,7 +35,7 @@ public:
 
 	void	setWindowTitle(string title){}
 
-	int		getWindowMode() {return 0;}
+	ofWindowMode	getWindowMode() {return OF_WINDOW;}
 
 	void	setFullscreen(bool fullscreen);
 	void	toggleFullscreen();

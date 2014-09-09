@@ -1,9 +1,12 @@
 #include "ofImage.h"
 #include "ofAppRunner.h"
 #include "ofTypes.h"
-#include "ofURLFileLoader.h"
 #include "ofGraphics.h"
 #include "FreeImage.h"
+
+#ifndef TARGET_EMSCRIPTEN
+#include "ofURLFileLoader.h"
+#endif
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 #include <set>
@@ -176,12 +179,17 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	unsigned int channels = (bpp / sizeof(PixelType)) / 8;
 	unsigned int pitch = FreeImage_GetPitch(bmp);
 
+	ofPixelFormat pixFormat;
+	if(channels==1) pixFormat=OF_PIXELS_MONO;
+	if(channels==3) pixFormat=OF_PIXELS_RGB;
+	if(channels==4) pixFormat=OF_PIXELS_RGBA;
+
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
 	
 	unsigned char* bmpBits = FreeImage_GetBits(bmp);
 	if(bmpBits != NULL) {
-		pix.setFromAlignedPixels((PixelType*) bmpBits, width, height, channels, pitch);
+		pix.setFromAlignedPixels((PixelType*) bmpBits, width, height, pixFormat, pitch);
 	} else {
 		ofLogError("ofImage") << "putBmpIntoPixels(): unable to set ofPixels from FIBITMAP";
 	}
@@ -200,9 +208,11 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 	ofInitFreeImage();
+#ifndef TARGET_EMSCRIPTEN
 	if(fileName.substr(0, 7) == "http://") {
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
+#endif
 	
 	fileName = ofToDataPath(fileName);
 	bool bLoaded = false;
@@ -844,16 +854,16 @@ ofTexture & ofImage_<PixelType>::getTextureReference(){
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::bind(){
+void ofImage_<PixelType>::bind(int textureLocation){
 	if (bUseTexture && tex.bAllocated())
-		tex.bind();
+		tex.bind(textureLocation);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::unbind(){
+void ofImage_<PixelType>::unbind(int textureLocation){
 	if (bUseTexture && tex.bAllocated())
-		tex.unbind();
+		tex.unbind(textureLocation);
 }
 
 //------------------------------------
