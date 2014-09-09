@@ -113,6 +113,9 @@ public:
 
     std::size_t ReceiveFrom( IpEndpointName& remoteEndpoint, char *data, std::size_t size );
     
+    static void SetUdpBufferSize( unsigned long bufferSize );
+    static unsigned long GetUdpBufferSize();
+    
 protected:
 	// Enable broadcast addresses (e.g. x.x.x.255)
 	// Sets SO_BROADCAST socket option.
@@ -126,7 +129,7 @@ protected:
 	// and may have drastically different behavior on different
 	// operating systems.
 	void SetAllowReuse( bool allowReuse );
-    
+    static unsigned long maxBufferSize;
 };
 
 

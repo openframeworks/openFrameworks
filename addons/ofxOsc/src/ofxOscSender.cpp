@@ -49,6 +49,10 @@ ofxOscSender::~ofxOscSender()
 
 void ofxOscSender::setup( std::string hostname, int port, bool enableBroadcast )
 {
+    if( UdpSocket::GetUdpBufferSize() == 0 ){
+        UdpSocket::SetUdpBufferSize(65535);
+    }
+
 	if ( socket )
 		shutdown();
 	
