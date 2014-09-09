@@ -308,10 +308,6 @@ public:
 
 	virtual void bind(const ofBaseVideoDraws & video) const=0;
 	virtual void unbind(const ofBaseVideoDraws & video) const=0;
-	virtual void draw(ofBaseVideoDraws & video, float x, float y, float w, float h)=0;
-
-	virtual void bind(ofBaseVideoDraws & video)=0;
-	virtual void unbind(ofBaseVideoDraws & video)=0;
 
 	//--------------------------------------------
 	// transformations
