@@ -247,12 +247,12 @@ unsigned char * ofDirectShowGrabber::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofDirectShowGrabber::getPixelsRef(){
+ofPixels& ofDirectShowGrabber::getPixelsRef(){
 	return pixels;
 }
 
 //---------------------------------------------------------------------------
-const ofPixelsRef ofDirectShowGrabber::getPixelsRef() const {
+const ofPixels& ofDirectShowGrabber::getPixelsRef() const {
 	return pixels;
 }
 
@@ -272,7 +272,7 @@ bool  ofDirectShowGrabber::isFrameNew() const{
 }
 
 //---------------------------------------------------------------------------
-bool  ofDirectShowGrabber::isInitialized(){
+bool  ofDirectShowGrabber::isInitialized() const{
 	return bGrabberInited;
 }
 
