@@ -402,12 +402,12 @@ unsigned char * ofQuickTimeGrabber::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofQuickTimeGrabber::getPixelsRef(){
+ofPixels& ofQuickTimeGrabber::getPixelsRef(){
 	return pixels;
 }
 
 //---------------------------------------------------------------------------
-const ofPixelsRef ofQuickTimeGrabber::getPixelsRef() const {
+const ofPixels& ofQuickTimeGrabber::getPixelsRef() const {
 	return pixels;
 }
 

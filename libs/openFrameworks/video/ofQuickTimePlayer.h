@@ -29,7 +29,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 	
 		 bool 			isFrameNew() const;
 		 unsigned char * 	getPixels();
-		 ofPixelsRef		getPixelsRef();
+		 ofPixels&			getPixelsRef();
 		 const ofPixels&	getPixelsRef() const;
 		
 		 float 			getWidth() const;

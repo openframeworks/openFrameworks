@@ -21,14 +21,14 @@ class ofDirectShowGrabber : public ofBaseVideoGrabber{
 		bool					initGrabber(int w, int h);
 		void					update();
 		bool					isFrameNew() const;
-		bool					isInitialized();
+		bool					isInitialized() const;
 
 		bool					setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat			getPixelFormat() const;		
 
 		unsigned char		* 	getPixels();
-		ofPixelsRef				getPixelsRef();
-		const ofPixelsRef		getPixelsRef() const;
+		ofPixels&				getPixelsRef();
+		const ofPixels&			getPixelsRef() const;
 		
 		void					close();
 		void					clearMemory();
