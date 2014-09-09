@@ -90,6 +90,7 @@ static IpEndpointName IpEndpointNameFromSockaddr( const struct sockaddr_in& sock
 		);
 }
 
+unsigned long UdpSocket::maxBufferSize = 0;
 
 class UdpSocket::Implementation{
     NetworkInitializer networkInitializer_;
@@ -112,6 +113,11 @@ public:
             throw std::runtime_error("unable to create udp socket\n");
         }
 
+        if( UdpSocket::maxBufferSize > 0 ){
+            setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, &UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
+            setsockopt(socket_, SOL_SOCKET, SO_RCVBUF, &UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
+        }
+        
 		std::memset( &sendToAddr_, 0, sizeof(sendToAddr_) );
         sendToAddr_.sin_family = AF_INET;
 	}
@@ -254,6 +260,14 @@ UdpSocket::UdpSocket()
 UdpSocket::~UdpSocket()
 {
 	delete impl_;
+}
+
+void UdpSocket::SetUdpBufferSize( unsigned long bufferSize ){
+    UdpSocket::maxBufferSize = bufferSize; 
+}
+
+unsigned long UdpSocket::GetUdpBufferSize(){
+    return UdpSocket::maxBufferSize;
 }
 
 void UdpSocket::SetEnableBroadcast( bool enableBroadcast )
