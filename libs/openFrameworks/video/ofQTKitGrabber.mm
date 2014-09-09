@@ -733,7 +733,7 @@ bool ofQTKitGrabber::initRecording(){
 	return success;
 }
 
-vector<string>& ofQTKitGrabber::listVideoCodecs() const{
+const vector<string>& ofQTKitGrabber::listVideoCodecs() const{
 	@autoreleasepool {
 		NSArray* videoCodecs = [QTKitVideoGrabber listVideoCodecs];
 		videoCodecsVec.clear();
@@ -745,7 +745,7 @@ vector<string>& ofQTKitGrabber::listVideoCodecs() const{
 	return videoCodecsVec;
 }
 
-vector<string>& ofQTKitGrabber::listAudioCodecs() const{
+const vector<string>& ofQTKitGrabber::listAudioCodecs() const{
 	@autoreleasepool {
 		NSArray* audioCodecs = [QTKitVideoGrabber listAudioCodecs];
 		audioCodecsVec.clear();
@@ -858,7 +858,7 @@ ofPixelFormat ofQTKitGrabber::getPixelFormat() const{
 }
 
 //---------------------------------------------------------------------------
-vector<string>& ofQTKitGrabber::listVideoDevices() const{
+const vector<string>& ofQTKitGrabber::listVideoDevices() const{
 	@autoreleasepool {
 		NSArray* videoDevices = [QTKitVideoGrabber listVideoDevices];
 		videoDeviceVec.clear();
@@ -870,7 +870,7 @@ vector<string>& ofQTKitGrabber::listVideoDevices() const{
 	return videoDeviceVec;
 }
 
-vector<string>& ofQTKitGrabber::listAudioDevices(){
+const vector<string>& ofQTKitGrabber::listAudioDevices() const{
 	@autoreleasepool {
 		NSArray* audioDevices = [QTKitVideoGrabber listAudioDevices];
 		audioDeviceVec.clear();
