@@ -7,7 +7,7 @@ version=$2
 
 REPO=https://github.com/openframeworks/openFrameworks
 REPO_ALIAS=upstreamhttps
-BRANCH=master
+BRANCH=stable
 
 PG_REPO=https://github.com/ofZach/projectGeneratorSimple.git
 PG_REPO_ALIAS=originhttps
@@ -54,7 +54,7 @@ packageroot=$PWD
 if [ "$BRANCH" != "master" ]; then
 	git remote add $REPO_ALIAS $REPO
 	git fetch $REPO_ALIAS
-    git checkout --track -b $BRANCH ${REPO_ALIAS}/${BRANCH}
+    	git checkout $BRANCH ${REPO_ALIAS}/${BRANCH}
 fi
 git reset --hard
 git pull $REPO $BRANCH
