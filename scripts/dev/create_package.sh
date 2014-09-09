@@ -54,7 +54,8 @@ packageroot=$PWD
 if [ "$BRANCH" != "master" ]; then
 	git remote add $REPO_ALIAS $REPO
 	git fetch $REPO_ALIAS
-    	git checkout $BRANCH ${REPO_ALIAS}/${BRANCH}
+    	git checkout ${REPO_ALIAS}/${BRANCH}
+	git checkout -b ${BRANCH}
 fi
 git reset --hard
 git pull $REPO $BRANCH
