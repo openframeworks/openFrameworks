@@ -53,6 +53,26 @@ PLATFORM SPECIFIC
 	+ New platform!
 
 
+	
+OF 0.8.4
+========
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+PLATFORM SPECIFIC
+-----------------
+
+###OSX
+	/ Fixes for xcode 6
+
+###RPI
+	/ Fixes install_dependencies and makefiles
+
 
 
 OF 0.8.3
