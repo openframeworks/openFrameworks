@@ -28,9 +28,9 @@ public:
 	void	update();
 
 	unsigned char 	* getPixels();
-	ofPixelsRef		getPixelsRef();
+	ofPixels&		getPixelsRef();
 	const unsigned char 	* getPixels() const;
-	const ofPixelsRef		getPixelsRef() const;
+	const ofPixels&		getPixelsRef() const;
 
 	void	close();
 

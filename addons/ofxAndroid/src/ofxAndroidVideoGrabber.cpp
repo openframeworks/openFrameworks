@@ -142,11 +142,11 @@ ofxAndroidVideoGrabber::~ofxAndroidVideoGrabber(){
 }
 
 
-vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices(){
+vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices() const{
 	return vector<ofVideoDevice>();
 }
 
-bool ofxAndroidVideoGrabber::isFrameNew(){
+bool ofxAndroidVideoGrabber::isFrameNew() const{
 	return bIsFrameNew;
 }
 
@@ -324,11 +324,11 @@ unsigned char * ofxAndroidVideoGrabber::getPixels(){
 	return pixels.getPixels();
 }
 
-ofPixelsRef	ofxAndroidVideoGrabber::getPixelsRef(){
+ofPixels&	ofxAndroidVideoGrabber::getPixelsRef(){
 	return pixels;
 }
 
-const ofPixelsRef ofxAndroidVideoGrabber::getPixelsRef() const {
+const ofPixels& ofxAndroidVideoGrabber::getPixelsRef() const {
     return pixels;
 }
 
@@ -373,11 +373,11 @@ void ofxAndroidVideoGrabber::setDesiredFrameRate(int framerate){
 	attemptFramerate = framerate;
 }
 
-float ofxAndroidVideoGrabber::getHeight(){
+float ofxAndroidVideoGrabber::getHeight() const{
 	return pixels.getHeight();
 }
 
-float ofxAndroidVideoGrabber::getWidth(){
+float ofxAndroidVideoGrabber::getWidth() const{
 	return pixels.getWidth();
 }
 
@@ -386,7 +386,7 @@ bool ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	return true;
 }
 
-ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat(){
+ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat() const{
 	return internalPixelFormat;
 }
 
