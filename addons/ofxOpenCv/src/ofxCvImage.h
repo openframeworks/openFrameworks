@@ -38,6 +38,7 @@ class ofxCvImage : public ofBaseImage {
 	virtual float getHeight() const;       // get height of this image or its ROI height
     virtual void  setUseTexture( bool bUse );
     virtual ofTexture&  getTextureReference();
+	virtual const ofTexture & getTextureReference() const;
     virtual void flagImageChanged();  //mostly used internally
 
     

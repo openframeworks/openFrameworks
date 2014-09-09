@@ -95,6 +95,11 @@ ofTexture& ofxCvImage::getTextureReference() {
 }
 
 //--------------------------------------------------------------------------------
+const ofTexture & ofxCvImage::getTextureReference() const{
+	return tex;
+}
+
+//--------------------------------------------------------------------------------
 void ofxCvImage::flagImageChanged() {
     bTextureDirty = true;
     bPixelsDirty = true;
