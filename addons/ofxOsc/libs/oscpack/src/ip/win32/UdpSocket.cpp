@@ -447,8 +447,12 @@ public:
 			timerQueue_.push_back( std::make_pair( currentTimeMs + i->initialDelayMs, *i ) );
 		std::sort( timerQueue_.begin(), timerQueue_.end(), CompareScheduledTimerCalls );
 
-		const int MAX_BUFFER_SIZE = 4098;
-		char *data = new char[ MAX_BUFFER_SIZE ];
+            unsigned long maxSize = UdpSocket::GetUdpBufferSize();
+            if( maxSize == 0 ) {
+                maxSize = 4098;
+            }
+            const unsigned long MAX_BUFFER_SIZE = maxSize;
+            data = new char[ MAX_BUFFER_SIZE ];
 		IpEndpointName remoteEndpoint;
 
 		while( !break_ ){
