@@ -9,11 +9,10 @@
 
 #include "ofConstants.h"
 #include "ofBaseTypes.h"
-#include "ofTexture.h"
-#include "ofMatrix4x4.h"
-#include "Poco/RegularExpression.h"
-#include <map>
-#include "ofAppBaseWindow.h"
+#include "ofLog.h"
+class ofTexture;
+class ofMatrix4x4;
+class ofMatrix3x3;
 
 class ofShader {
 public:
@@ -59,16 +58,18 @@ public:
 	void setUniform4f(const string & name, float v1, float v2, float v3, float v4);
 	
 	// set an array of uniform values
-	void setUniform1iv(const string & name, int* v, int count = 1);
-	void setUniform2iv(const string & name, int* v, int count = 1);
-	void setUniform3iv(const string & name, int* v, int count = 1);
-	void setUniform4iv(const string & name, int* v, int count = 1);
+	void setUniform1iv(const string & name, const int* v, int count = 1);
+	void setUniform2iv(const string & name, const int* v, int count = 1);
+	void setUniform3iv(const string & name, const int* v, int count = 1);
+	void setUniform4iv(const string & name, const int* v, int count = 1);
 	
-	void setUniform1fv(const string & name, float* v, int count = 1);
-	void setUniform2fv(const string & name, float* v, int count = 1);
-	void setUniform3fv(const string & name, float* v, int count = 1);
-	void setUniform4fv(const string & name, float* v, int count = 1);
+	void setUniform1fv(const string & name, const float* v, int count = 1);
+	void setUniform2fv(const string & name, const float* v, int count = 1);
+	void setUniform3fv(const string & name, const float* v, int count = 1);
+	void setUniform4fv(const string & name, const float* v, int count = 1);
 	
+	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
+	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m);
 	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m);
 
 	// set attributes that vary per vertex (look up the location before glBegin)
@@ -93,10 +94,10 @@ public:
 	void setAttribute4d(GLint location, double v1, double v2, double v3, double v4);
 #endif
 
-	void setAttribute1fv(const string & name, float* v, GLsizei stride=sizeof(float));
-	void setAttribute2fv(const string & name, float* v, GLsizei stride=sizeof(float)*2);
-	void setAttribute3fv(const string & name, float* v, GLsizei stride=sizeof(float)*3);
-	void setAttribute4fv(const string & name, float* v, GLsizei stride=sizeof(float)*4);
+	void setAttribute1fv(const string & name, const float* v, GLsizei stride=sizeof(float));
+	void setAttribute2fv(const string & name, const float* v, GLsizei stride=sizeof(float)*2);
+	void setAttribute3fv(const string & name, const float* v, GLsizei stride=sizeof(float)*3);
+	void setAttribute4fv(const string & name, const float* v, GLsizei stride=sizeof(float)*4);
 	
 	void bindAttribute(GLuint location, const string & name);
 
@@ -142,10 +143,11 @@ public:
 private:
 	GLuint program;
 	bool bLoaded;
-	map<GLenum, GLuint> shaders;
-	map<string, GLint> uniformLocations;
-	map<GLenum, string> shaderSource;
-	
+
+	unordered_map<GLenum, GLuint> shaders;
+	unordered_map<string, GLint> uniformLocations;
+	unordered_map<GLenum, string> shaderSource;
+
 	GLint getUniformLocation(const string & name);
 	
 	void checkProgramInfoLog(GLuint program);

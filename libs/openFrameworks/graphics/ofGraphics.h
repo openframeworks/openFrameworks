@@ -11,9 +11,9 @@
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
 
-void ofSetCurrentRenderer(ofPtr<ofBaseRenderer> renderer,bool setDefaults=false);
+void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults=false);
 void ofSetCurrentRenderer(const string & rendererType,bool setDefaults=false);
-ofPtr<ofBaseRenderer> & ofGetCurrentRenderer();
+shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer();
 
 //for pdf screenshot
 void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
@@ -63,8 +63,17 @@ ofMatrix4x4 ofGetCurrentMatrix(ofMatrixMode matrixMode_);
 ///        passed on to the GPU.
 ///
 ///        Currently, only GL Programmable Renderer and GL Renderer
-///        implement getCurrentMatrix.
+///        implement ofGetCurrentOrientationMatrix.
 ofMatrix4x4 ofGetCurrentOrientationMatrix();
+
+/// \brief Query the current (oF internal) Normal Matrix state.
+/// \note  The matrix returned is the transposed of the inverse of the
+///        view matrix
+///
+///        Currently, only GL Programmable Renderer and GL Renderer
+///        implement ofGetCurrentNormalMatrix.
+ofMatrix4x4 ofGetCurrentNormalMatrix();
+
 void ofTranslate(float x, float y, float z = 0);
 void ofTranslate(const ofPoint & p);
 void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
@@ -79,6 +88,9 @@ void ofLoadMatrix (const float *m);			// ideally we would always use ofMatrix4x4
 void ofMultMatrix (const ofMatrix4x4 & m);	// ofMatrix4x4 objects when interacting with non-OF code
 void ofMultMatrix (const float *m);
 void ofSetMatrixMode(ofMatrixMode matrixMode);
+void ofLoadViewMatrix(const ofMatrix4x4 & m);
+void ofMultViewMatrix(const ofMatrix4x4 & m);
+ofMatrix4x4 ofGetCurrentViewMatrix();
 
 // screen coordinate things / default gl values
 void ofSetupGraphicDefaults();
@@ -260,12 +272,35 @@ void ofNextContour(bool bClose = false);  // for multi contour shapes!
 
 // bitmapped type
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
-void ofDrawBitmapString(string textString, const ofPoint & p);
-void ofDrawBitmapString(string textString, float x, float y);
-void ofDrawBitmapString(string textString, float x, float y, float z);
+template<typename T>
+void ofDrawBitmapString(const T & textString, const ofPoint & p);
+template<typename T>
+void ofDrawBitmapString(const T & textString, float x, float y);
+template<typename T>
+void ofDrawBitmapString(const T & textString, float x, float y, float z);
 void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 
 
 // end primitives
 //-------------------------------------------
+
+
+
+//--------------------------------------------------
+template<typename T>
+void ofDrawBitmapString(const T & textString, const ofPoint & p){
+	ofDrawBitmapString(textString, p.x, p.y, p.z);
+}
+
+//--------------------------------------------------
+template<typename T>
+void ofDrawBitmapString(const T & textString, float x, float y){
+	ofDrawBitmapString(textString, x, y, 0.0f);
+}
+
+//--------------------------------------------------
+template<typename T>
+void ofDrawBitmapString(const T & textString, float x, float y, float z){
+	ofGetCurrentRenderer()->drawString(ofToString(textString),x,y,z,ofGetStyle().drawBitmapMode);
+}

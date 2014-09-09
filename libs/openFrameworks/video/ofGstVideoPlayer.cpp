@@ -10,6 +10,8 @@
 #include <gst/video/video.h>
 #include <gst/app/gstappsink.h>
 
+#include "ofAppRunner.h"
+
 
 ofGstVideoPlayer::ofGstVideoPlayer(){
 	nFrames						= 0;
@@ -39,7 +41,10 @@ bool ofGstVideoPlayer::loadMovie(string name){
 		bIsStream		= false;
 	}else if( name.find( "://",0 ) == string::npos){
 		GError * err = NULL;
-		name = gst_filename_to_uri(ofToDataPath(name).c_str(),&err);
+		gchar* name_ptr = gst_filename_to_uri(ofToDataPath(name).c_str(),&err);
+		name = name_ptr;
+		g_free(name_ptr);
+		if(err) g_free(err);
 		bIsStream		= false;
 	}else{
 		bIsStream		= true;
@@ -53,7 +58,11 @@ bool ofGstVideoPlayer::loadMovie(string name){
 #else
 	GstElement * gstPipeline = gst_element_factory_make("playbin","player");
 #endif
-	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
+	if(internalPixelFormat==OF_PIXELS_NATIVE){
+		g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
+	}else{
+		g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
+	}
 
 	// create the oF appsink for video rgb without sync to clock
 	GstElement * gstSink = gst_element_factory_make("appsink", "app_sink");
@@ -121,42 +130,21 @@ bool ofGstVideoPlayer::loadMovie(string name){
 		break;
 	}
 #else
-	int bpp;
 	string mime="video/x-raw";
-	string format;
-	switch(internalPixelFormat){
-	case OF_PIXELS_MONO:
-		format = "GRAY8";
-		bpp = 8;
-		break;
-	case OF_PIXELS_RGB:
-		format = "RGB";
-		bpp = 24;
-		break;
-	case OF_PIXELS_RGBA:
-		format = "RGBA";
-		bpp = 32;
-		break;
-	case OF_PIXELS_BGRA:
-		format = "BGRA";
-		bpp = 32;
-		break;
-	default:
-		format = "RGB";
-		bpp=24;
-		break;
-	}
 
-	GstCaps *caps = gst_caps_new_simple(mime.c_str(),
-										"format", G_TYPE_STRING, format.c_str(),
-										/*"bpp", G_TYPE_INT, bpp,
-										"depth", G_TYPE_INT, 24,
-										"endianness",G_TYPE_INT,4321,
-										"red_mask",G_TYPE_INT,0xff0000,
-										"green_mask",G_TYPE_INT,0x00ff00,
-										"blue_mask",G_TYPE_INT,0x0000ff,
-										"alpha_mask",G_TYPE_INT,0x000000ff,*/
-										NULL);
+	GstCaps *caps;
+	if(internalPixelFormat==OF_PIXELS_NATIVE){
+		//caps = gst_caps_new_any();
+		caps = gst_caps_from_string((mime + ",format={RGBA,BGRA,RGB,BGR,RGB16,GRAY8,YV12,I420,NV12,NV21,YUY2}").c_str());
+		/*
+		GstCapsFeatures *features = gst_caps_features_new (GST_CAPS_FEATURE_META_GST_VIDEO_GL_TEXTURE_UPLOAD_META, NULL);
+		gst_caps_set_features (caps, 0, features);*/
+	}else{
+		string format = ofGstVideoUtils::getGstFormatName(internalPixelFormat);
+		caps = gst_caps_new_simple(mime.c_str(),
+											"format", G_TYPE_STRING, format.c_str(),
+											NULL);
+	}
 #endif
 
 
@@ -173,8 +161,8 @@ bool ofGstVideoPlayer::loadMovie(string name){
 		gst_object_unref(appQueuePad);
 		gst_element_add_pad(appBin, ghostPad);
 
-		gst_bin_add_many(GST_BIN(appBin), gstSink, NULL);
-		gst_element_link_many(appQueue, gstSink, NULL);
+		gst_bin_add(GST_BIN(appBin), gstSink);
+		gst_element_link(appQueue, gstSink);
 
 		g_object_set (G_OBJECT(gstPipeline),"video-sink",appBin,(void*)NULL);
 	}else{
@@ -184,14 +172,33 @@ bool ofGstVideoPlayer::loadMovie(string name){
 #ifdef TARGET_WIN32
 	GstElement *audioSink = gst_element_factory_make("directsoundsink", NULL);
 	g_object_set (G_OBJECT(gstPipeline),"audio-sink",audioSink,(void*)NULL);
-
 #endif
 
+#ifdef TARGET_LINUX_ARM
+#if GST_VERSION_MINOR<4
+	/*if(dynamic_cast<ofAppEGLWindow*>(ofGetWindowPtr())){
+		EGLDisplay display = ((ofAppEGLWindow*)ofGetWindowPtr())->getEglDisplay();
+		GstEGLDisplay * gstEGLDisplay = gst_egl_display_new (display,NULL);
+		GstContext *context = gst_context_new_egl_display(gstEGLDisplay,true);
+		GstMessage * msg = gst_message_new_have_context (GST_OBJECT (gstPipeline), context);
+		gst_element_post_message (GST_ELEMENT_CAST (gstPipeline), msg);
+	}*/
+#else
 
-	videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
-	videoUtils.startPipeline();
-	if(!bIsStream) return allocate(bpp);
-	else return true;
+	/*if(dynamic_cast<ofAppEGLWindow*>(ofGetWindowPtr())){
+		EGLDisplay display = ((ofAppEGLWindow*)ofGetWindowPtr())->getEglDisplay();
+		GstGLDisplayEGL * gstEGLDisplay = gst_gl_display_egl_new_with_egl_display (display);
+		GstContext *context = gst_context_new();
+		gst_gl_display_create_context (context, gstEGLDisplay);
+		GstMessage * msg = gst_message_new_have_context (GST_OBJECT (gstPipeline), context);
+		gst_element_post_message (GST_ELEMENT_CAST (gstPipeline), msg);
+	}*/
+#endif
+#endif
+
+	return videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream) &&
+				videoUtils.startPipeline() &&
+				(bIsStream || allocate());
 }
 
 void ofGstVideoPlayer::setThreadAppSink(bool threaded){
@@ -199,8 +206,11 @@ void ofGstVideoPlayer::setThreadAppSink(bool threaded){
 }
 
 
-bool ofGstVideoPlayer::allocate(int bpp){
-	if(bIsAllocated) return true;
+bool ofGstVideoPlayer::allocate(){
+	if(bIsAllocated){
+		ofLogWarning("ofGstVideoPlayer") << "already allocated";
+		return true;
+	}
 
 	guint64 durationNanos = videoUtils.getDurationNanos();
 
@@ -209,7 +219,7 @@ bool ofGstVideoPlayer::allocate(int bpp){
 #if GST_VERSION_MAJOR==0
 		int width,height;
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
-			if(!videoUtils.allocate(width,height,bpp)) return false;
+			if(!videoUtils.allocate(width,height,pixelFormat)) return false;
 		}else{
 			ofLogError("ofGstVideoPlayer") << "allocate(): couldn't query width and height";
 			return false;
@@ -232,7 +242,12 @@ bool ofGstVideoPlayer::allocate(int bpp){
 			GstVideoInfo info;
 			gst_video_info_init (&info);
 			if (gst_video_info_from_caps (&info, caps)){
-				if(!videoUtils.allocate(info.width,info.height,bpp)) return false;
+				ofPixelFormat format = ofGstVideoUtils::getOFFormat(GST_VIDEO_INFO_FORMAT(&info));
+				if(format!=internalPixelFormat){
+					ofLogNotice("ofGstVideoPlayer") << "allocating as" << info.width << "x" << info.height << " " << info.finfo->description << " " << info.finfo->name;
+					internalPixelFormat = format;
+				}
+				if(!videoUtils.allocate(info.width,info.height,format)) return false;
 			}else{
 				ofLogError("ofGstVideoPlayer") << "allocate(): couldn't query width and height";
 				return false;
@@ -253,12 +268,11 @@ bool ofGstVideoPlayer::allocate(int bpp){
 		ofLogError("ofGstVideoPlayer") << "allocate(): cannot get sink pad";
 		bIsAllocated = false;
 	}
-
 	return bIsAllocated;
 }
 
 void ofGstVideoPlayer::on_stream_prepared(){
-	if(!bIsAllocated) allocate(24);
+	if(!bIsAllocated) allocate();
 }
 
 int	ofGstVideoPlayer::getCurrentFrame(){

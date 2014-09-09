@@ -69,6 +69,12 @@ void ofxAndroidVideoPlayer::unloadTexture(){
 	texture.texData.textureID=0;
 }
 
+//---------------------------------------------------------------------------
+void ofxAndroidVideoPlayer::removeTexture(){
+	texture.texData.textureID=0;
+	texture.texData.bAllocated = false;
+}
+
 
 //---------------------------------------------------------------------------
 ofxAndroidVideoPlayer::ofxAndroidVideoPlayer(){
@@ -164,7 +170,6 @@ bool ofxAndroidVideoPlayer::loadMovie(string fileName){
 	td.textureTarget = GL_TEXTURE_EXTERNAL_OES;
 	td.glTypeInternal = GL_RGBA;
 	td.bFlipTexture = false;
-	td.useTextureMatrix = true;
 
 	// hack to initialize gl resources from outside ofTexture
 	texture.texData = td;
@@ -201,14 +206,12 @@ void ofxAndroidVideoPlayer::update(){
 	env->CallVoidMethod(javaVideoPlayer,javaGetTextureMatrix,matrixJava);
 	jfloat * m = env->GetFloatArrayElements(matrixJava,0);
 
-	for(int i=0;i<16;i++) {
-		texture.texData.textureMatrix.getPtr()[i] = m[i];
-	}
+	ofMatrix4x4 textureMatrix(m);
 
 	ofMatrix4x4 vFlipTextureMatrix;
 	vFlipTextureMatrix.scale(1,-1,1);
 	vFlipTextureMatrix.translate(0,1,0);
-	texture.texData.textureMatrix = vFlipTextureMatrix * texture.texData.textureMatrix;
+	texture.setTextureMatrix(vFlipTextureMatrix * textureMatrix);
 	//texture.getTextureData().tex_t = 1.+1-matrix.getPtr()[0]; // Hack!
 	//texture.getTextureData().tex_u = 1.;
 

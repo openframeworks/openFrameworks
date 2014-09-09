@@ -37,6 +37,11 @@
 	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber
 #endif
 
+#ifdef OF_VIDEO_CAPTURE_EMSCRIPTEN
+	#include "ofxEmscriptenVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofxEmscriptenVideoGrabber
+#endif
+
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 	public :
@@ -44,8 +49,8 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
 		
-		void					setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber);
-		ofPtr<ofBaseVideoGrabber> getGrabber();
+		void					setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber);
+		shared_ptr<ofBaseVideoGrabber> getGrabber();
 
 		vector<ofVideoDevice> listDevices();
 		bool				isFrameNew();
@@ -61,13 +66,18 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		unsigned char 	*	getPixels();
 		ofPixelsRef			getPixelsRef();
 		ofTexture &			getTextureReference();
+		vector<ofTexture> & getTexturePlanes();
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
 		void				setUseTexture(bool bUse);
+		bool 				isUsingTexture();
 		void				draw(float x, float y, float w, float h);
 		void				draw(float x, float y);
 		using ofBaseDraws::draw;
+
+		void 				bind();
+		void 				unbind();
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -86,13 +96,10 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 	private:
 		
-		ofTexture tex;
+		vector<ofTexture> tex;
 		bool bUseTexture;
-		bool bInitialized;
-		ofPtr<ofBaseVideoGrabber> grabber;
+		shared_ptr<ofBaseVideoGrabber> grabber;
 		int RequestedDeviceID;
-		
-		bool grabberRunning; //this keeps track of whether the grabber opened sucessfully and is still open. //TODO: maybe expose this in a method? 
 		
 		ofPixelFormat internalPixelFormat;
 		int desiredFramerate;

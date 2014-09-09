@@ -133,9 +133,9 @@ void ofxCvHaarFinder::draw( float x, float y ) {
 	ofPushStyle();
 	ofEnableAlphaBlending();
 	ofSetColor( 255,0,200,100 );
-	glPushMatrix();
+	ofPushMatrix();
 	
-	glTranslatef( x, y, 0.0 );
+	ofTranslate( x, y, 0.0 );
 	
 	ofNoFill();
 	for(unsigned int i=0; i<blobs.size(); i++ ) {
@@ -143,7 +143,7 @@ void ofxCvHaarFinder::draw( float x, float y ) {
 			   blobs[i].boundingRect.width, blobs[i].boundingRect.height );
 	}
 	
-	glPopMatrix();
+	ofPopMatrix();
 	ofPopStyle();
 }
 

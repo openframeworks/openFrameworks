@@ -73,7 +73,7 @@ ofAppiOSWindow::~ofAppiOSWindow() {
 }
 
 //----------------------------------------------------------------------------------- opengl setup.
-void ofAppiOSWindow::setupOpenGL(int w, int h, int screenMode) {
+void ofAppiOSWindow::setupOpenGL(int w, int h, ofWindowMode screenMode) {
 	windowMode = screenMode; // use this as flag for displaying status bar or not
 }
 
@@ -143,7 +143,7 @@ int ofAppiOSWindow::getHeight(){
 	return (int)getWindowSize().x;
 }
 
-int	ofAppiOSWindow::getWindowMode() {
+ofWindowMode ofAppiOSWindow::getWindowMode() {
 	return windowMode;
 }
 
@@ -245,7 +245,8 @@ bool ofAppiOSWindow::enableRendererES2() {
     if(isRendererES2() == true) {
         return false;
     }
-    ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
+    shared_ptr<ofBaseRenderer> renderer(new ofGLProgrammableRenderer(false));
+    ofSetCurrentRenderer(renderer);
     return true;
 }
 
@@ -253,7 +254,8 @@ bool ofAppiOSWindow::enableRendererES1() {
     if(isRendererES1() == true) {
         return false;
     }
-    ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
+    shared_ptr<ofBaseRenderer> renderer(new ofGLRenderer(false));
+    ofSetCurrentRenderer(renderer);
     return true;
 }
 

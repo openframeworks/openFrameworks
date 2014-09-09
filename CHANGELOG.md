@@ -1,3 +1,85 @@
+OF 0.9.0
+========
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+CORE
+----
+### app
+	/ setupOpenGL and ofApp___Window use ofWindowMode instead of int
+	/ fix exit callbacks to allow for calling of the destructors, and better signal handling
+
+### 3d
+	/ ofEasyCam: removes roll rotation when rotating inside the arcball
+	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
+	
+### gl
+	+ Programmable lights and materials
+	+ New area light type on programmable renderer
+	+ Separate model matrix
+	+ ofGetCurrentNormalMatrix
+	+ ofSetOpenGL(ES)Version, allows to set any specific GL version
+	+ ofTexture::enableMipmap() auto-generate mipmaps on load - for textures which support
+	  mipmaps (that's TEXTURE_2D textures loaded after ofDisableArbTex() )
+	+ ofTexture::generateMipmap() generate mipmap after a texture was loaded,
+	  if the texture target supports mipmaps (see above).
+	+ ofTexture::disableMipmap() disables auto-generation of mipmap for texture
+	- removed compressed mipmaps based on deprecated glu methods
+	- ofSetTextureWrap() : deprecated (use corresponding ofTexture member method) 
+	- ofGetUsingCustomTextureWrap() : deprecated
+	- ofRestoreTextureWrap() : deprecated
+	- ofSetMinMagFilters() : deprecated (use corresponding ofTexture member method) 
+	- ofGetUsingCustomMinMagFilters() : deprecated
+	- ofRestoreMinMagFilters() : deprecated	  
+	+ ofShader: report offending lines on compiling errors
+	+ ofGLUtils: better support for half float types
+
+### graphics
+	+ ofTruetypeFont: kerning and better hinting and spacing
+	+ ofDrawBitmapString: can draw any type not only strings
+
+### video
+	/ gstreamer: fix memory leaks when closing a video element
+
+PLATFORM SPECIFIC
+-----------------
+
+### Emscripten
+	+ New platform!
+
+
+
+
+OF 0.8.3
+========
+ 
+#### change key  
+	  + added  
+	  - removed  
+	  / modified  
+
+------------------------------------------------------------------------------
+        
+PLATFORM SPECIFIC
+-----------------
+###OSX
+	/ ofAppGLFWWindow: Drag drop files were coming in empty
+### Windows 
+	/ ofAppGLFWWindow: Drag drop files were coming in empty
+
+
+CORE ADDONS
+-----------
+### ofxKinect
+	/ small fixes for CodeBlocks compilation on Windows
+
+
+
 OF 0.8.2
 ========
  

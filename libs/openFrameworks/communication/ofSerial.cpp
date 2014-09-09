@@ -378,80 +378,79 @@ bool ofSerial::setup(string portName, int baud){
 
 	    return true;
 	//---------------------------------------------
-    #endif
-    //---------------------------------------------
-
-
-    //---------------------------------------------
-	#ifdef TARGET_WIN32
+    #elif defined( TARGET_WIN32 )
 	//---------------------------------------------
 
-	char pn[sizeof(portName)];
-	int num;
-	if (sscanf(portName.c_str(), "COM%d", &num) == 1) {
-		// Microsoft KB115831 a.k.a if COM > COM9 you have to use a different
-		// syntax
-		sprintf(pn, "\\\\.\\COM%d", num);
-	} else {
-		strncpy(pn, (const char *)portName.c_str(), sizeof(portName)-1);
-	}
-
-	// open the serial port:
-	// "COM4", etc...
-
-	hComm=CreateFileA(pn,GENERIC_READ|GENERIC_WRITE,0,0,
-					OPEN_EXISTING,0,0);
-
-	if(hComm==INVALID_HANDLE_VALUE){
-		ofLogError("ofSerial") << "setup(): unable to open " << portName;
-		return false;
-	}
-
-
-	// now try the settings:
-	COMMCONFIG cfg;
-	DWORD cfgSize;
-	char  buf[80];
-
-	cfgSize=sizeof(cfg);
-	GetCommConfig(hComm,&cfg,&cfgSize);
-	int bps = baud;
-	sprintf(buf,"baud=%d parity=N data=8 stop=1",bps);
-
-	#if (_MSC_VER)       // microsoft visual studio
-		// msvc doesn't like BuildCommDCB,
-		//so we need to use this version: BuildCommDCBA
-		if(!BuildCommDCBA(buf,&cfg.dcb)){
-			ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
+		char pn[sizeof(portName)];
+		int num;
+		if (sscanf(portName.c_str(), "COM%d", &num) == 1) {
+			// Microsoft KB115831 a.k.a if COM > COM9 you have to use a different
+			// syntax
+			sprintf(pn, "\\\\.\\COM%d", num);
+		} else {
+			strncpy(pn, (const char *)portName.c_str(), sizeof(portName)-1);
 		}
+
+		// open the serial port:
+		// "COM4", etc...
+
+		hComm=CreateFileA(pn,GENERIC_READ|GENERIC_WRITE,0,0,
+						OPEN_EXISTING,0,0);
+
+		if(hComm==INVALID_HANDLE_VALUE){
+			ofLogError("ofSerial") << "setup(): unable to open " << portName;
+			return false;
+		}
+
+
+		// now try the settings:
+		COMMCONFIG cfg;
+		DWORD cfgSize;
+		char  buf[80];
+
+		cfgSize=sizeof(cfg);
+		GetCommConfig(hComm,&cfg,&cfgSize);
+		int bps = baud;
+		sprintf(buf,"baud=%d parity=N data=8 stop=1",bps);
+
+		#if (_MSC_VER)       // microsoft visual studio
+			// msvc doesn't like BuildCommDCB,
+			//so we need to use this version: BuildCommDCBA
+			if(!BuildCommDCBA(buf,&cfg.dcb)){
+				ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
+			}
+		#else
+			if(!BuildCommDCB(buf,&cfg.dcb)){
+				ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
+			}
+		#endif
+
+
+		// Set baudrate and bits etc.
+		// Note that BuildCommDCB() clears XON/XOFF and hardware control by default
+
+		if(!SetCommState(hComm,&cfg.dcb)){
+			ofLogError("ofSerial") << "setup(): couldn't set comm state: " << cfg.dcb.BaudRate << " bps, xio " << cfg.dcb.fInX << "/" << cfg.dcb.fOutX;;
+		}
+		//ofLogNotice("ofSerial") << "bps=" << cfg.dcb.BaudRate << ", xio=" << cfg.dcb.fInX << "/" << cfg.dcb.fOutX;
+
+		// Set communication timeouts (NT)
+		COMMTIMEOUTS tOut;
+		GetCommTimeouts(hComm,&oldTimeout);
+		tOut = oldTimeout;
+		// Make timeout so that:
+		// - return immediately with buffered characters
+		tOut.ReadIntervalTimeout=MAXDWORD;
+		tOut.ReadTotalTimeoutMultiplier=0;
+		tOut.ReadTotalTimeoutConstant=0;
+		SetCommTimeouts(hComm,&tOut);
+
+		bInited = true;
+		return true;
+
 	#else
-		if(!BuildCommDCB(buf,&cfg.dcb)){
-			ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
-		}
-	#endif
-
-
-	// Set baudrate and bits etc.
-	// Note that BuildCommDCB() clears XON/XOFF and hardware control by default
-
-	if(!SetCommState(hComm,&cfg.dcb)){
-		ofLogError("ofSerial") << "setup(): couldn't set comm state: " << cfg.dcb.BaudRate << " bps, xio " << cfg.dcb.fInX << "/" << cfg.dcb.fOutX;;
-	}
-	//ofLogNotice("ofSerial") << "bps=" << cfg.dcb.BaudRate << ", xio=" << cfg.dcb.fInX << "/" << cfg.dcb.fOutX;
-
-	// Set communication timeouts (NT)
-	COMMTIMEOUTS tOut;
-	GetCommTimeouts(hComm,&oldTimeout);
-	tOut = oldTimeout;
-	// Make timeout so that:
-	// - return immediately with buffered characters
-	tOut.ReadIntervalTimeout=MAXDWORD;
-	tOut.ReadTotalTimeoutMultiplier=0;
-	tOut.ReadTotalTimeoutConstant=0;
-	SetCommTimeouts(hComm,&tOut);
-
-	bInited = true;
-	return true;
+		ofLogError("ofSerial")<< "not implemented in this platform";
+		return false;
 	//---------------------------------------------
 	#endif
 	//---------------------------------------------
@@ -516,17 +515,16 @@ int ofSerial::readBytes(unsigned char * buffer, int length){
 			return OF_SERIAL_ERROR;
 		}
 		return nRead;
-    #endif
-    //---------------------------------------------
-
-    //---------------------------------------------
-	#ifdef TARGET_WIN32
+    #elif defined( TARGET_WIN32 )
 		DWORD nRead = 0;
 		if (!ReadFile(hComm,buffer,length,&nRead,0)){
 			ofLogError("ofSerial") << "readBytes(): couldn't read from port";
 			return OF_SERIAL_ERROR;
 		}
 		return (int)nRead;
+	#else
+		ofLogError("ofSerial") << "not defined in this platform";
+		return -1;
 	#endif
 	//---------------------------------------------
 }
@@ -540,13 +538,11 @@ bool ofSerial::writeByte(unsigned char singleByte){
 		return false;
 	}
 
-	unsigned char tmpByte[1];
-	tmpByte[0] = singleByte;
 
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
 	    int numWritten = 0;
-	    numWritten = write(fd, tmpByte, 1);
+	    numWritten = write(fd, &singleByte, 1);
 		if(numWritten <= 0 ){
 			if ( errno == EAGAIN )
 				return 0;
@@ -557,13 +553,9 @@ bool ofSerial::writeByte(unsigned char singleByte){
 		ofLogVerbose("ofSerial") << "wrote byte";
 
 		return (numWritten > 0 ? true : false);
-    #endif
-    //---------------------------------------------
-
-    //---------------------------------------------
-	#ifdef TARGET_WIN32
+    #elif defined( TARGET_WIN32 )
 		DWORD written = 0;
-		if(!WriteFile(hComm, tmpByte, 1, &written,0)){
+		if(!WriteFile(hComm, &singleByte, 1, &written,0)){
 			 ofLogError("ofSerial") << "writeByte(): couldn't write to port";
 			 //return OF_SERIAL_ERROR; // this looks wrong.
 			 return false;
@@ -572,6 +564,9 @@ bool ofSerial::writeByte(unsigned char singleByte){
 		ofLogVerbose("ofSerial") << "wrote byte";
 
 		return ((int)written > 0 ? true : false);
+	#else
+		ofLogError("ofSerial") << "not defined in this platform";
+		return false;
 	#endif
 	//---------------------------------------------
 
@@ -585,34 +580,34 @@ int ofSerial::readByte(){
 		return OF_SERIAL_ERROR;
 	}
 
-	unsigned char tmpByte[1];
-	memset(tmpByte, 0, 1);
+	unsigned char tmpByte = 0;
 
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
-		int nRead = read(fd, tmpByte, 1);
+		int nRead = read(fd, &tmpByte, 1);
 		if(nRead < 0){
-			if ( errno == EAGAIN )
+			if ( errno == EAGAIN ){
 				return OF_SERIAL_NO_DATA;
+			}
 			ofLogError("ofSerial") << "readByte(): couldn't read from port: " << errno << " " << strerror(errno);
             return OF_SERIAL_ERROR;
 		}
-		if(nRead == 0)
+		if(nRead == 0){
 			return OF_SERIAL_NO_DATA;
-    #endif
-    //---------------------------------------------
-
-    //---------------------------------------------
-	#ifdef TARGET_WIN32
+		}
+    #elif defined( TARGET_WIN32 )
 		DWORD nRead;
-		if (!ReadFile(hComm, tmpByte, 1, &nRead, 0)){
+		if (!ReadFile(hComm, &tmpByte, 1, &nRead, 0)){
 			ofLogError("ofSerial") << "readByte(): couldn't read from port";
 			return OF_SERIAL_ERROR;
 		}
+	#else
+		ofLogError("ofSerial") << "not defined in this platform";
+		return OF_SERIAL_ERROR;
 	#endif
 	//---------------------------------------------
 
-	return (int)(tmpByte[0]);
+	return tmpByte;
 }
 
 
@@ -624,21 +619,18 @@ void ofSerial::flush(bool flushIn, bool flushOut){
 		return;
 	}
 
-	int flushType = 0;
 
 	//---------------------------------------------
 	#if defined( TARGET_OSX ) || defined( TARGET_LINUX )
+		int flushType = 0;
 		if( flushIn && flushOut) flushType = TCIOFLUSH;
 		else if(flushIn) flushType = TCIFLUSH;
 		else if(flushOut) flushType = TCOFLUSH;
 		else return;
 
 		tcflush(fd, flushType);
-    #endif
-    //---------------------------------------------
-
-    //---------------------------------------------
-	#ifdef TARGET_WIN32
+    #elif defined( TARGET_WIN32 )
+		int flushType = 0;
 		if( flushIn && flushOut) flushType = PURGE_TXCLEAR | PURGE_RXCLEAR;
 		else if(flushIn) flushType = PURGE_RXCLEAR;
 		else if(flushOut) flushType = PURGE_TXCLEAR;
