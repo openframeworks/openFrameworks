@@ -330,13 +330,13 @@ void ofxiOSVideoPlayer::updatePixelsToRGB () {
 }
 
 //----------------------------------------
-ofPixelsRef ofxiOSVideoPlayer::getPixelsRef() {
+ofPixels& ofxiOSVideoPlayer::getPixelsRef() {
     static ofPixels dummy;
     return dummy;
 }
 
 //----------------------------------------
-const ofPixelsRef ofxiOSVideoPlayer::getPixelsRef() const {
+const ofPixels& ofxiOSVideoPlayer::getPixelsRef() const {
     return getPixelsRef();
 }
 

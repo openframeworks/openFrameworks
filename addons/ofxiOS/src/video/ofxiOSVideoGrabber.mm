@@ -31,13 +31,13 @@ unsigned char * ofxiOSVideoGrabber::getPixels() {
 	return grabber->getPixels();
 }
 
-ofPixelsRef ofxiOSVideoGrabber::getPixelsRef(){
+ofPixels& ofxiOSVideoGrabber::getPixelsRef(){
     static ofPixels dummy;
     //@TODO implement me
     return dummy;
 }
 
-const ofPixelsRef ofxiOSVideoGrabber::getPixelsRef() const {
+const ofPixels& ofxiOSVideoGrabber::getPixelsRef() const {
     return getPixelsRef();
 }
 
