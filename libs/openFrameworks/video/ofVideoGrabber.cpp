@@ -290,5 +290,5 @@ float ofVideoGrabber::getWidth(){
 
 //----------------------------------------------------------
 bool ofVideoGrabber::isInitialized(){
-	return grabber->isInitialized() && (!bUseTexture || tex[0].isAllocated());
+	return grabber->isInitialized() && (!bUseTexture || tex[0].isAllocated() || grabber->getTexture());
 }
