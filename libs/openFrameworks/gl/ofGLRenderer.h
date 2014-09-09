@@ -20,7 +20,7 @@ public:
     static const string TYPE;
     const string & getType(){ return TYPE; }
 
-	void setCurrentFBO(ofFbo * fbo);
+	void setCurrentFBO(const ofFbo * fbo);
 
 	void update();
 	void draw(const ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true) const;

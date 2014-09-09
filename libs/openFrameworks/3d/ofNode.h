@@ -137,7 +137,7 @@ public:
 	
 
 	// if you extend ofNode and wish to change the way it draws, extend this
-	virtual void customDraw() const;
+	virtual void customDraw();
 
 	
 	// draw function. do NOT override this

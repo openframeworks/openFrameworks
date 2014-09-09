@@ -409,7 +409,7 @@ public:
 
 class ofBaseGLRenderer: public ofBaseRenderer{
 public:
-	virtual void setCurrentFBO(ofFbo * fbo)=0;
+	virtual void setCurrentFBO(const ofFbo * fbo)=0;
 
 	virtual void enableTextureTarget(int textureTarget, int textureID, int textureLocation)=0;
 	virtual void disableTextureTarget(int textureTarget, int textureLocation)=0;

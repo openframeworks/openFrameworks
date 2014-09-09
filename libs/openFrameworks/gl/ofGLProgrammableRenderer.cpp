@@ -372,7 +372,7 @@ void ofGLProgrammableRenderer::unbind(const ofBaseVideoDraws & video) const{
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setCurrentFBO(ofFbo * fbo){
+void ofGLProgrammableRenderer::setCurrentFBO(const ofFbo * fbo){
 	if(fbo!=NULL){
 		matrixStack.setRenderSurface(*fbo);
 		uploadMatrices();

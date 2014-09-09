@@ -272,7 +272,7 @@ void ofGLRenderer::unbind(const ofBaseVideoDraws & video) const{
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setCurrentFBO(ofFbo * fbo){
+void ofGLRenderer::setCurrentFBO(const ofFbo * fbo){
 	if(fbo!=NULL){
 		ofMatrix4x4 m;
 		glGetFloatv(GL_PROJECTION_MATRIX,m.getPtr());

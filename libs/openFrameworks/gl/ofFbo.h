@@ -17,8 +17,8 @@ public:
 	bool isAllocated() const;
 
 	using ofBaseDraws::draw;
-	void draw(float x, float y);
-	void draw(float x, float y, float width, float height);
+	void draw(float x, float y) const;
+	void draw(float x, float y, float width, float height) const;
 
 	void setAnchorPercent(float xPct, float yPct);
     void setAnchorPoint(float x, float y);
@@ -30,21 +30,24 @@ public:
 	ofTexture & getTextureReference();
 	ofTexture & getTextureReference(int attachmentPoint);
 	ofTexture & getDepthTexture();
+	const ofTexture & getTextureReference() const;
+	const ofTexture & getTextureReference(int attachmentPoint) const;
+	const ofTexture & getDepthTexture() const;
 	void setUseTexture(bool bUseTex){ /*irrelevant*/ };
 
-	void begin(bool setupScreen=true);
-	void end();
+	void begin(bool setupScreen=true) const;
+	void end() const;
 
-	void readToPixels(ofPixels & pixels, int attachmentPoint = 0);
-	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0);
-	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0);
+	void readToPixels(ofPixels & pixels, int attachmentPoint = 0) const;
+	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0) const;
+	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0) const;
 
 	float getWidth() const;
 	float getHeight() const;
 
 	// advanced functions
-	void bind();
-	void unbind();
+	void bind() const;
+	void unbind() const;
 
 	bool checkStatus() const;
 	void createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint);
@@ -92,14 +95,14 @@ public:
 	};
 private:
 	Settings 			settings;
-	int					isBound;
+	mutable int			isBound;
 
 	GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
 	GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)
 	GLuint				depthBuffer;
 	GLuint				stencilBuffer;
 
-	GLint				savedFramebuffer;	// save bound framebuffer before switching
+	mutable GLint		savedFramebuffer;	// save bound framebuffer before switching
 
 	vector<GLuint>		colorBuffers;	// only used if using MSAA...maybe...what about MRT?
 	vector<ofTexture>	textures;
@@ -110,7 +113,7 @@ private:
 	static int			_maxDrawBuffers;
 	static int			_maxSamples;
 
-	bool				dirty;
+	mutable bool		dirty;
 
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;
