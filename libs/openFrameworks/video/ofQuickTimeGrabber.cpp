@@ -247,7 +247,7 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 
 //--------------------------------------------------------------------
 bool ofQuickTimeGrabber::isInitialized() const{
-    return bGrabberInitied;
+    return bGrabberInited;
 }
 
 //--------------------------------------------------------------------
