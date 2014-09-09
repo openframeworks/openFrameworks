@@ -425,7 +425,7 @@ bool ofVideoPlayer::isPlaying(){
 
 //----------------------------------------------------------
 bool ofVideoPlayer::isInitialized(){
-	return player->isInitialized() && (!bUseTexture || tex[0].isAllocated());
+	return player->isInitialized() && (!bUseTexture || tex[0].isAllocated() || player->getTexture());
 }
 
 
