@@ -52,7 +52,8 @@ PLATFORM SPECIFIC
 ### Emscripten
 	+ New platform!
 
-
+### ofxiOS
+	+ deployment target is now iOS 5.1.1
 
 
 OF 0.8.3
