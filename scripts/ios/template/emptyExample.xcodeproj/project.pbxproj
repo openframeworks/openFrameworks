@@ -42,8 +42,6 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>E41D3ED713B38FB500A75A5D</string>
-				<string>E41D3EE613B3906D00A75A5D</string>
 				<string>678E130817951530005B6D19</string>
 				<string>678E130A17951536005B6D19</string>
 				<string>678E130C1795153C005B6D19</string>
@@ -761,13 +759,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>E41D3ED713B38FB500A75A5D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E41D3ED613B38FB500A75A5D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
 		<key>E41D3EE513B3906D00A75A5D</key>
 		<dict>
 			<key>fileEncoding</key>
@@ -782,13 +773,6 @@
 			<string>../../../libs/openFrameworksCompiled/project/ios/CoreOF.xcconfig</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E41D3EE613B3906D00A75A5D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E41D3EE513B3906D00A75A5D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>E41D400613B39D2100A75A5D</key>
 		<dict>
