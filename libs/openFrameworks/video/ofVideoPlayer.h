@@ -74,10 +74,15 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void				setFrame(int frame);  // frame 0 = first frame...
 
 		void 				setUseTexture(bool bUse);
+		bool 				isUsingTexture();
 		ofTexture &			getTextureReference();
+		vector<ofTexture> & getTexturePlanes();
 		void 				draw(float x, float y, float w, float h);
 		void 				draw(float x, float y);
 		using ofBaseDraws::draw;
+
+		void 				bind();
+		void 				unbind();
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -100,6 +105,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		bool				isPaused();
 		bool				isLoaded();
 		bool				isPlaying();
+		bool				isInitialized();
 
 		//this is kept as legacy to support people accessing width and height directly. 
 		int					height;
@@ -108,7 +114,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 	private:
 		shared_ptr<ofBaseVideoPlayer>		player;
 		
-		ofTexture tex;
+		vector<ofTexture> tex;
 		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
 		ofPixelFormat internalPixelFormat;

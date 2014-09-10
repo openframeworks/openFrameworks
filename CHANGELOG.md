@@ -10,6 +10,10 @@ OF 0.9.0
 
 CORE
 ----
+### app
+	/ setupOpenGL and ofApp___Window use ofWindowMode instead of int
+	/ fix exit callbacks to allow for calling of the destructors, and better signal handling
+
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball
 	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
@@ -48,6 +52,26 @@ PLATFORM SPECIFIC
 ### Emscripten
 	+ New platform!
 
+
+	
+OF 0.8.4
+========
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+PLATFORM SPECIFIC
+-----------------
+
+###OSX
+	/ Fixes for xcode 6
+
+###RPI
+	/ Fixes install_dependencies and makefiles
 
 
 
