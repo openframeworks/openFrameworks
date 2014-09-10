@@ -145,6 +145,8 @@
 				<string>ofxiOS_Prefix.pch</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>5.1.1</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
@@ -165,6 +167,8 @@
 				<string>ofxiOS_Prefix.pch</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>5.1.1</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
@@ -677,7 +681,7 @@
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>YES</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>3.1</string>
+				<string>5.1.1</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>NO</string>
 				<key>PROVISIONING_PROFILE[sdk=iphoneos*]</key>
@@ -729,7 +733,7 @@
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>YES</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>3.1</string>
+				<string>5.1.1</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>NO</string>
 				<key>SDKROOT</key>
