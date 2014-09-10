@@ -84,7 +84,6 @@
 				<string>BBE5EAB80F49AD8400F28951</string>
 				<string>53F323EB10A20EDB00E0DAE4</string>
 				<string>5326AEA810A23A0500278DE6</string>
-				<string>E4A823A412561BE3002F86A2</string>
 				<string>E41D400B13B39D2100A75A5D</string>
 				<string>E41D400C13B39D2100A75A5D</string>
 				<string>E41D400D13B39D2100A75A5D</string>
@@ -501,6 +500,7 @@
 			<string>/bin/sh</string>
 			<key>shellScript</key>
 			<string>cp -rf bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"
+
 </string>
 		</dict>
 		<key>BB16E9930F2B1E5900518274</key>
@@ -963,13 +963,6 @@
 			<string>System/Library/Frameworks/CoreGraphics.framework</string>
 			<key>sourceTree</key>
 			<string>SDKROOT</string>
-		</dict>
-		<key>E4A823A412561BE3002F86A2</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E4A823A312561BE3002F86A2</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>E4D8936A11527B74007E1F53</key>
 		<dict>
