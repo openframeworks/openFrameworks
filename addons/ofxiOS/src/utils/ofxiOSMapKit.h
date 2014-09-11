@@ -31,8 +31,6 @@
 #pragma once
 
 #include <Availability.h>
-#ifdef __IPHONE_3_0
-
 
 #include "ofMain.h"
 #include <MapKit/MapKit.h>
@@ -161,5 +159,3 @@ protected:
 #define ofxiPhoneMapKit ofxiOSMapKit
 //-------------------------------------------------------------------------------
 
-
-#endif
