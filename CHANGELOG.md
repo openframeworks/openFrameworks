@@ -52,8 +52,11 @@ PLATFORM SPECIFIC
 ### Emscripten
 	+ New platform!
 
+### ofxiOS
+	+ xcode 6.0 updates
+	+ deployment target moved up to iOS 5.1.1
 
-	
+
 OF 0.8.4
 ========
 
