@@ -85,6 +85,8 @@ ofxKinect::ofxKinect() {
 	bUseRegistration = false;
 	bNearWhite = true;
 
+	pixelFormat = OF_PIXELS_RGB;
+
 	setDepthClipping();
 }
 
@@ -106,6 +108,9 @@ bool ofxKinect::init(bool infrared, bool video, bool texture) {
 	bIsVideoInfrared = infrared;
 	bGrabVideo = video;
 	videoBytesPerPixel = infrared?1:3;
+	if(infrared){
+		pixelFormat = OF_PIXELS_GRAY;
+	}
 
 	bUseTexture = texture;
 
@@ -276,23 +281,48 @@ void ofxKinect::close() {
 }
 
 //---------------------------------------------------------------------------
-bool ofxKinect::isConnected() {
+bool ofxKinect::isConnected() const{
 	return isThreadRunning();
 }
 
+//---------------------------------------------------------------------------
+bool ofxKinect::isInitialized() const{
+	return kinectContext.isInited();
+}
+
 //--------------------------------------------------------------------
-bool ofxKinect::isFrameNew() {
+bool ofxKinect::isFrameNew()  const{
 	return isFrameNewVideo() || isFrameNewDepth();
 }
 
 //--------------------------------------------------------------------
-bool ofxKinect::isFrameNewVideo(){
+bool ofxKinect::isFrameNewVideo() const{
 	return bIsFrameNewVideo;
 }
 
 //--------------------------------------------------------------------
-bool ofxKinect::isFrameNewDepth(){
+bool ofxKinect::isFrameNewDepth() const{
 	return bIsFrameNewDepth;
+}
+
+//--------------------------------------------------------------------
+bool ofxKinect::setPixelFormat(ofPixelFormat pixelFormat){
+	if(!bIsVideoInfrared && pixelFormat==OF_PIXELS_RGB){
+		return true;
+	}else if(pixelFormat == OF_PIXELS_GRAY){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+//--------------------------------------------------------------------
+ofPixelFormat ofxKinect::getPixelFormat() const{
+	if(!bIsVideoInfrared){
+		return OF_PIXELS_RGB;
+	}else{
+		return OF_PIXELS_GRAY;
+	}
 }
 
 //----------------------------------------------------------
@@ -355,49 +385,49 @@ void ofxKinect::update() {
 }
 
 //------------------------------------
-float ofxKinect::getDistanceAt(int x, int y) {
+float ofxKinect::getDistanceAt(int x, int y)  const{
 	return depthPixelsRaw[y * width + x];
 }
 
 //------------------------------------
-float ofxKinect::getDistanceAt(const ofPoint & p) {
+float ofxKinect::getDistanceAt(const ofPoint & p)  const{
 	return getDistanceAt(p.x, p.y);
 }
 
 //------------------------------------
-ofVec3f ofxKinect::getWorldCoordinateAt(int x, int y) {
+ofVec3f ofxKinect::getWorldCoordinateAt(int x, int y)  const{
 	return getWorldCoordinateAt(x, y, getDistanceAt(x, y));
 }
 
 //------------------------------------
-ofVec3f ofxKinect::getWorldCoordinateAt(float cx, float cy, float wz) {
+ofVec3f ofxKinect::getWorldCoordinateAt(float cx, float cy, float wz)  const{
 	double wx, wy;
 	freenect_camera_to_world(kinectDevice, cx, cy, wz, &wx, &wy);
 	return ofVec3f(wx, wy, wz);
 }
 
 //------------------------------------
-float ofxKinect::getSensorEmitterDistance() {
+float ofxKinect::getSensorEmitterDistance()  const{
 	return kinectDevice->registration.zero_plane_info.dcmos_emitter_dist;
 }
 
 //------------------------------------
-float ofxKinect::getSensorCameraDistance() {
+float ofxKinect::getSensorCameraDistance()  const{
 	return kinectDevice->registration.zero_plane_info.dcmos_rcmos_dist;
 }
 
 //------------------------------------
-float ofxKinect::getZeroPlanePixelSize() {
+float ofxKinect::getZeroPlanePixelSize()  const{
 	return kinectDevice->registration.zero_plane_info.reference_pixel_size;
 }
 
 //------------------------------------
-float ofxKinect::getZeroPlaneDistance() {
+float ofxKinect::getZeroPlaneDistance()  const{
 	return kinectDevice->registration.zero_plane_info.reference_distance;
 }
 
 //------------------------------------
-ofColor ofxKinect::getColorAt(int x, int y) {
+ofColor ofxKinect::getColorAt(int x, int y)  const{
 	int index = (y * width + x) * videoBytesPerPixel;
 	ofColor c;
 	c.r = videoPixels[index + 0];
@@ -409,7 +439,7 @@ ofColor ofxKinect::getColorAt(int x, int y) {
 }
 
 //------------------------------------
-ofColor ofxKinect::getColorAt(const ofPoint & p) {
+ofColor ofxKinect::getColorAt(const ofPoint & p)  const{
 	return getColorAt(p.x, p.y);
 }
 
@@ -465,6 +495,60 @@ ofTexture& ofxKinect::getDepthTextureReference(){
 	return depthTex;
 }
 
+
+
+//---------------------------------------------------------------------------
+const unsigned char * ofxKinect::getPixels() const{
+	return videoPixels.getPixels();
+}
+
+//---------------------------------------------------------------------------
+const unsigned char * ofxKinect::getDepthPixels() const{
+	return depthPixels.getPixels();
+}
+
+//---------------------------------------------------------------------------
+const unsigned short * ofxKinect::getRawDepthPixels() const{
+	return depthPixelsRaw.getPixels();
+}
+
+//---------------------------------------------------------------------------
+const float* ofxKinect::getDistancePixels() const{
+	return distancePixels.getPixels();
+}
+
+const ofPixels & ofxKinect::getPixelsRef() const{
+	return videoPixels;
+}
+
+const ofPixels & ofxKinect::getDepthPixelsRef() const{
+	return depthPixels;
+}
+
+const ofShortPixels & ofxKinect::getRawDepthPixelsRef() const{
+	return depthPixelsRaw;
+}
+
+const ofFloatPixels & ofxKinect::getDistancePixelsRef() const{
+	return distancePixels;
+}
+
+//------------------------------------
+const ofTexture& ofxKinect::getTextureReference() const{
+	if(!videoTex.bAllocated()){
+		ofLogWarning("ofxKinect") << "getTextureReference(): device " << deviceId << " video texture not allocated";
+	}
+	return videoTex;
+}
+
+//---------------------------------------------------------------------------
+const ofTexture& ofxKinect::getDepthTextureReference() const{
+	if(!depthTex.bAllocated()){
+		ofLogWarning("ofxKinect") << "getDepthTextureReference(): device " << deviceId << " depth texture not allocated";
+	}
+	return depthTex;
+}
+
 //---------------------------------------------------------------------------
 void ofxKinect::enableDepthNearValueWhite(bool bEnabled) {
 	bNearWhite = bEnabled;
@@ -472,7 +556,7 @@ void ofxKinect::enableDepthNearValueWhite(bool bEnabled) {
 }
 
 //---------------------------------------------------------------------------
-bool ofxKinect::isDepthNearValueWhite() {
+bool ofxKinect::isDepthNearValueWhite() const{
 	return bNearWhite;
 }
 
@@ -484,45 +568,45 @@ void ofxKinect::setDepthClipping(float nearClip, float farClip) {
 }
 
 //---------------------------------------------------------------------------
-float ofxKinect::getNearClipping() {
+float ofxKinect::getNearClipping() const{
     return nearClipping;
 }
 
 //---------------------------------------------------------------------------
-float ofxKinect::getFarClipping() {
+float ofxKinect::getFarClipping() const{
     return farClipping;
 }
 
 //--------------------------------------------------------------------
-bool ofxKinect::hasAccelControl() {
+bool ofxKinect::hasAccelControl() const{
 	return bHasMotorControl; // depends on motor for now
 }
 
-bool ofxKinect::hasCamTiltControl() {
+bool ofxKinect::hasCamTiltControl() const{
 	return bHasMotorControl; // depends on motor for now
 }
 
-bool ofxKinect::hasLedControl() {
+bool ofxKinect::hasLedControl() const{
 	return bHasMotorControl; // depends on motor for now
 }
 
 //---------------------------------------------------------------------------
-ofPoint ofxKinect::getRawAccel() {
+ofPoint ofxKinect::getRawAccel() const{
 	return rawAccel;
 }
 
 //---------------------------------------------------------------------------
-ofPoint ofxKinect::getMksAccel() {
+ofPoint ofxKinect::getMksAccel() const{
 	return mksAccel;
 }
 
 //---------------------------------------------------------------------------
-float ofxKinect::getAccelPitch(){
+float ofxKinect::getAccelPitch() const{
 	return ofRadToDeg(asin(getMksAccel().z/OFX_KINECT_GRAVITY));
 }
 
 //---------------------------------------------------------------------------
-float ofxKinect::getAccelRoll(){
+float ofxKinect::getAccelRoll() const{
 	return ofRadToDeg(asin(getMksAccel().x/OFX_KINECT_GRAVITY));
 }
 
@@ -541,11 +625,11 @@ bool ofxKinect::setCameraTiltAngle(float angleInDegrees) {
 }
 
 //--------------------------------------------------------------------
-float ofxKinect::getTargetCameraTiltAngle() {
+float ofxKinect::getTargetCameraTiltAngle() const{
 	return targetTiltAngleDeg;
 }
 
-float ofxKinect::getCurrentCameraTiltAngle() {
+float ofxKinect::getCurrentCameraTiltAngle() const{
 	return currentTiltAngleDeg;
 }
 
@@ -565,66 +649,66 @@ void ofxKinect::setUseTexture(bool bUse){
 }
 
 //----------------------------------------------------------
-void ofxKinect::draw(float _x, float _y, float _w, float _h) {
+void ofxKinect::draw(float _x, float _y, float _w, float _h) const{
 	if(bUseTexture && bGrabVideo) {
 		videoTex.draw(_x, _y, _w, _h);
 	}
 }
 
 //----------------------------------------------------------
-void ofxKinect::draw(float _x, float _y) {
+void ofxKinect::draw(float _x, float _y) const{
 	draw(_x, _y, (float)width, (float)height);
 }
 
 //----------------------------------------------------------
-void ofxKinect::draw(const ofPoint & point) {
+void ofxKinect::draw(const ofPoint & point) const{
 	draw(point.x, point.y);
 }
 
 //----------------------------------------------------------
-void ofxKinect::draw(const ofRectangle & rect) {
+void ofxKinect::draw(const ofRectangle & rect) const{
 	draw(rect.x, rect.y, rect.width, rect.height);
 }
 
 //----------------------------------------------------------
-void ofxKinect::drawDepth(float _x, float _y, float _w, float _h) {
+void ofxKinect::drawDepth(float _x, float _y, float _w, float _h) const{
 	if(bUseTexture) {
 		depthTex.draw(_x, _y, _w, _h);
 	}
 }
 
 //---------------------------------------------------------------------------
-void ofxKinect::drawDepth(float _x, float _y) {
+void ofxKinect::drawDepth(float _x, float _y) const{
 	drawDepth(_x, _y, (float)width, (float)height);
 }
 
 //----------------------------------------------------------
-void ofxKinect::drawDepth(const ofPoint & point) {
+void ofxKinect::drawDepth(const ofPoint & point) const{
 	drawDepth(point.x, point.y);
 }
 
 //----------------------------------------------------------
-void ofxKinect::drawDepth(const ofRectangle & rect) {
+void ofxKinect::drawDepth(const ofRectangle & rect) const{
 	drawDepth(rect.x, rect.y, rect.width, rect.height);
 }
 
 //---------------------------------------------------------------------------
-int ofxKinect::getDeviceId() {
+int ofxKinect::getDeviceId() const{
 	return deviceId;
 }
 
 //---------------------------------------------------------------------------
-string ofxKinect::getSerial() {
+string ofxKinect::getSerial() const{
 	return serial;
 }
 
 //----------------------------------------------------------
-float ofxKinect::getHeight() {
+float ofxKinect::getHeight() const{
 	return (float) height;
 }
 
 //---------------------------------------------------------------------------
-float ofxKinect::getWidth() {
+float ofxKinect::getWidth() const{
 	return (float) width;
 }
 

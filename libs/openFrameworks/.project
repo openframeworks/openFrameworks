@@ -85,11 +85,6 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/openFrameworksCompiled/lib</locationURI>
 		</link>
 		<link>
-			<name>ofxAndroid</name>
-			<type>2</type>
-			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/addons/ofxAndroid</locationURI>
-		</link>
-		<link>
 			<name>project</name>
 			<type>2</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/openFrameworksCompiled/project</locationURI>

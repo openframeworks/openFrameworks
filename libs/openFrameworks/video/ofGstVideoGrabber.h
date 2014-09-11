@@ -38,33 +38,34 @@ public:
 
 	/// needs to be called before initGrabber
 	bool setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat	getPixelFormat();
+	ofPixelFormat	getPixelFormat() const;
 	
 	void videoSettings(){};//TODO: what is this??
 
-	vector<ofVideoDevice> listDevices();
+	vector<ofVideoDevice> listDevices() const;
 	void setDeviceID(int id);
 	void setDesiredFrameRate(int framerate);
 	bool initGrabber(int w, int h);
 
 	void 			update();
-	bool 			isFrameNew();
+	bool 			isFrameNew() const;
 
 	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
+	ofPixels&		getPixelsRef();
+	const ofPixels &		getPixelsRef() const;
 
-	float 			getHeight();
-	float 			getWidth();
+	float 			getHeight() const;
+	float 			getWidth() const;
 	void 			close();
 
 	void			setVerbose(bool bVerbose);
-	bool			isInitialized();
+	bool			isInitialized() const;
 
 	ofGstVideoUtils *	getGstVideoUtils();
 private:
 	ofGstVideoFormat&	selectFormat(int w, int h, int desired_framerate, ofPixelFormat desiredPixelFormat);
 
-	ofGstCamData		camData;
+	mutable ofGstCamData camData;
 	bool				bIsCamera;
 	int					attemptFramerate;
 	int					deviceID;

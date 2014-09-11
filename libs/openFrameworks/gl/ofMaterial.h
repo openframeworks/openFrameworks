@@ -59,7 +59,7 @@ private:
 	ofFloatColor prev_emissive, prev_emissive_back;
 	float prev_shininess, prev_shininess_back;
 
-	ofShader * currentShader;
+	mutable const ofShader * currentShader;
 
 	static ofShader shaderNoTexture;
 	static ofShader shaderTexture2D;

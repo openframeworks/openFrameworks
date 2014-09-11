@@ -48,27 +48,28 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		void                play();
 		void                stop();
 
-		bool                isFrameNew(); //returns true if the frame has changed in this update cycle
+		bool                isFrameNew() const; //returns true if the frame has changed in this update cycle
 
 		// Returns openFrameworks compatible RGBA pixels.
         // Be aware of your current render mode.
     
 		unsigned char * getPixels();
-		ofPixelsRef     getPixelsRef();
+        ofPixelsRef     getPixelsRef();
+        const ofPixelsRef getPixelsRef() const;
 
 		// Returns openFrameworks compatible ofTexture pointer.
         // if decodeMode == OF_QTKIT_DECODE_PIXELS_ONLY,
         // the returned pointer will be NULL.
 		ofTexture * getTexture();
 
-		float               getPosition();
-		float               getPositionInSeconds();
-		float               getSpeed();
-		ofLoopType          getLoopState();
-		float               getDuration();
-		bool                getIsMovieDone();
-		int                 getTotalNumFrames();
-		int                 getCurrentFrame();
+		float               getPosition() const;
+		float               getPositionInSeconds() const;
+		float               getSpeed() const;
+		ofLoopType          getLoopState() const;
+		float               getDuration() const;
+		bool                getIsMovieDone() const;
+		int                 getTotalNumFrames() const;
+		int                 getCurrentFrame() const;
 
 		void                setPaused(bool bPaused);
 		void                setPosition(float pct);
@@ -80,9 +81,9 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		
         // ofQTKitPlayer only supports OF_PIXELS_RGB and OF_PIXELS_RGBA.
 		bool                setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat       getPixelFormat();
+		ofPixelFormat       getPixelFormat() const;
 		
-		ofQTKitDecodeMode   getDecodeMode();
+		ofQTKitDecodeMode   getDecodeMode() const;
 
         // Enabling synchronous seeing ensures that any call to
         // setFrame(), setPosition() or jump(), will result in pixels
@@ -93,17 +94,17 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
         // when seeking frames manually (i.e. asynchronously).
     
         void                setSynchronousSeeking(bool synchronous);
-		bool                getSynchronousSeeking();
+		bool                getSynchronousSeeking() const;
 
 		void                draw(float x, float y, float w, float h);
 		void                draw(float x, float y);
 
-		float               getWidth();
-		float               getHeight();
+		float               getWidth() const;
+		float               getHeight() const;
 
-		bool                isPaused();
-		bool                isLoaded();
-		bool                isPlaying();
+		bool                isPaused() const;
+		bool                isLoaded() const;
+		bool                isPlaying() const;
 
 
 		void                firstFrame();
