@@ -880,7 +880,7 @@ void ofTexture::draw(float x, float y, float z, float w, float h){
 
 //------------------------------------
 void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy){
-	drawSubsection(x,y,0,w,h,sx,sy,getWidth(),getHeight());
+	drawSubsection(x,y,0,w,h,sx,sy,w,h);
 }
 
 //------------------------------------
@@ -890,7 +890,7 @@ void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, flo
 
 //------------------------------------
 void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
-	drawSubsection(x,y,z,w,h,sx,sy,getWidth(),getHeight());
+	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
 
 //----------------------------------------------------------
