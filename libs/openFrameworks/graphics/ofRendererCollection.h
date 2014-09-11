@@ -79,6 +79,24 @@ public:
 		}
 	}
 
+	void draw(ofBaseVideoDraws & video, float x, float y, float w, float h){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->draw(video,x,y,w,h);
+		}
+	}
+
+	void bind(ofBaseVideoDraws & video){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->bind(video);
+		}
+	}
+
+	void unbind(ofBaseVideoDraws & video){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->unbind(video);
+		}
+	}
+
 
 	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const{
 		static ofMatrix4x4 identityMatrix;

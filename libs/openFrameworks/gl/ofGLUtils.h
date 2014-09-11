@@ -53,46 +53,6 @@ int ofGetGlTypeFromInternal(int glInternalFormat);
 shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
 shared_ptr<ofBaseGLRenderer> ofGetGLRenderer();
 
-template<class T>
-int ofGetGlFormat(const ofPixels_<T> & pixels) {
-	switch(pixels.getNumChannels()) {
-		case 4:
-			return GL_RGBA;
-			break;
-		case 3:
-			return GL_RGB;
-			break;
-		case 2:
-#ifndef TARGET_OPENGLES
-			if(ofGetGLProgrammableRenderer()){
-				return GL_RG;
-			}else{
-#endif
-				return GL_LUMINANCE_ALPHA;
-#ifndef TARGET_OPENGLES
-			}
-#endif
-			break;
-
-		case 1:
-#ifndef TARGET_OPENGLES
-			if(ofGetGLProgrammableRenderer()){
-				return GL_RED;
-			}else{
-#endif
-				return GL_LUMINANCE;
-#ifndef TARGET_OPENGLES
-			}
-#endif
-			break;
-
-		default:
-			ofLogError("ofGLUtils") << "ofGetGlFormatAndType(): internal format not recognized, returning GL_RGBA";
-			return GL_RGBA;
-			break;
-	}
-}
-
 
 int ofGetGlType(const ofPixels & pixels);
 int ofGetGlType(const ofShortPixels & pixels);
@@ -110,15 +70,21 @@ GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode);
 ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode);
 
 int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat);
-int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat);
+int ofGetGLFormatFromPixelFormat(ofPixelFormat pixelFormat);
 int ofGetNumChannelsFromGLFormat(int glFormat);
 void ofSetPixelStorei(int w, int bpc, int numChannels);
+void ofSetPixelStorei(int stride);
 
 vector<string> ofGLSupportedExtensions();
 bool ofGLCheckExtension(string searchName);
 bool ofGLSupportsNPOTTextures();
 
 bool ofIsGLProgrammableRenderer();
+
+template<class T>
+int ofGetGlFormat(const ofPixels_<T> & pixels) {
+	return ofGetGLFormatFromPixelFormat(pixels.getPixelFormat());
+}
 
 
 #ifndef TARGET_OPENGLES
