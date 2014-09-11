@@ -19,6 +19,10 @@ bool ofxiOSVideoGrabber::initGrabber(int w, int h) {
 	return grabber->initGrabber(w, h);
 }
 
+bool ofxiOSVideoGrabber::isInitialized(){
+    return grabber->isInitialized();
+}
+
 bool ofxiOSVideoGrabber::isFrameNew() {
 	return grabber->isFrameNew();
 }

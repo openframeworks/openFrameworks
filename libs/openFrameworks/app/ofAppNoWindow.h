@@ -4,18 +4,6 @@
 #include "ofAppBaseWindow.h"
 #include "ofBaseTypes.h"
 
-
-//#ifdef TARGET_WIN32
-//	#define GLUT_BUILDING_LIB
-//	#include "glut.h"
-//#endif
-//#ifdef TARGET_OSX
-//	#include <GLUT/glut.h>
-//#endif
-//#ifdef TARGET_LINUX
-//	#include <GL/glut.h>
-//#endif
-
 class ofBaseApp;
 
 class ofAppNoWindow : public ofAppBaseWindow {
@@ -58,6 +46,10 @@ class ofNoopRenderer: public ofBaseRenderer{
 	virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){}
 	virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){}
 	virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){}
+	void draw(ofBaseVideoDraws & video, float x, float y, float w, float h){}
+
+	void bind(ofBaseVideoDraws & video){}
+	void unbind(ofBaseVideoDraws & video){}
 
 	//--------------------------------------------
 	// transformations

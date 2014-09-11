@@ -450,19 +450,19 @@ void ofTexture::loadData(const float * data, int w, int h, int glFormat){
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofPixels & pix){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
+	ofSetPixelStorei(pix.getBytesStride());
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofShortPixels & pix){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
+	ofSetPixelStorei(pix.getBytesStride());
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofFloatPixels & pix){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
+	ofSetPixelStorei(pix.getBytesStride());
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
@@ -1008,10 +1008,10 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	GLfloat tx1 = texData.tex_t - offsetw;
 	GLfloat ty1 = texData.tex_u - offseth;
 
-	quad.getVertices()[0].set(p1.x, p1.y);
-	quad.getVertices()[1].set(p2.x, p2.y);
-	quad.getVertices()[2].set(p3.x, p3.y);
-	quad.getVertices()[3].set(p4.x, p4.y);
+	quad.getVertices()[0].set(p1.x, p1.y, p1.z);
+	quad.getVertices()[1].set(p2.x, p2.y, p2.z);
+	quad.getVertices()[2].set(p3.x, p3.y, p3.z);
+	quad.getVertices()[3].set(p4.x, p4.y, p4.z);
 	
 	quad.getTexCoords()[0].set(tx0,ty0);
 	quad.getTexCoords()[1].set(tx1,ty0);

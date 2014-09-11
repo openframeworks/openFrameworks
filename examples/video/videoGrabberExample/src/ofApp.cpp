@@ -17,7 +17,7 @@ void ofApp::setup(){
             cout << " - unavailable " << endl; 
         }
 	}
-    
+
 	vidGrabber.setDeviceID(0);
 	vidGrabber.setDesiredFrameRate(60);
 	vidGrabber.initGrabber(camWidth,camHeight);

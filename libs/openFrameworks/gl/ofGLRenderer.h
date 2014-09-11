@@ -31,6 +31,10 @@ public:
 	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(ofBaseVideoDraws & video, float x, float y, float w, float h);
+
+	void bind(ofBaseVideoDraws & video);
+	void unbind(ofBaseVideoDraws & video);
 
 	bool rendersPathPrimitives(){
 		return false;
