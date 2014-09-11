@@ -86,6 +86,9 @@ public:
 
 	void		setVerticalSync(bool bSync);
 
+    void        setClipboardString(const string& text);
+    string      getClipboardString();
+
     int         getPixelScreenCoordScale();
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
