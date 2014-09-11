@@ -246,6 +246,11 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 }
 
 //--------------------------------------------------------------------
+bool ofQuickTimeGrabber::isInitialized(){
+    return bGrabberInited;
+}
+
+//--------------------------------------------------------------------
 vector<ofVideoDevice> ofQuickTimeGrabber::listDevices(){
 
     vector <ofVideoDevice> devices; 

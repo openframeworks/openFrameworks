@@ -17,6 +17,7 @@ public:
 
 	vector<ofVideoDevice>	listDevices();
 	bool	initGrabber(int w, int h);
+	bool	isInitialized();
 	void	update();
 	bool	isFrameNew();
 
