@@ -498,12 +498,14 @@ void ofCairoRenderer::draw(ofPath::Command & command){
 }
 
 //--------------------------------------------
-void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	ofPixelsRef raw = img.getPixelsRef();
+void ofCairoRenderer::draw(ofPixels & raw, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	if(!raw.isAllocated()){
+		return;
+	}
 	bool shouldCrop = sx != 0 || sy != 0 || sw != w || sh != h;
 	ofPixels cropped;
 	if(shouldCrop) {
-		cropped.allocate(sw, sh, raw.getImageType());
+		cropped.allocate(sw, sh, raw.getPixelFormat());
 		raw.cropTo(cropped, sx, sy, sw, sh);
 	}
 	ofPixelsRef pix = shouldCrop ? cropped : raw;
@@ -583,15 +585,35 @@ void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, fl
 }
 
 //--------------------------------------------
+void ofCairoRenderer::draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	draw(img.getPixelsRef(),x,y,z,w,h,sx,sy,sw,sh);
+}
+
+//--------------------------------------------
 void ofCairoRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	ofImage tmp = image;
+	ofPixels tmp = image.getPixelsRef();
 	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
 void ofCairoRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
-	ofImage tmp = image;
+	ofPixels tmp = image.getPixelsRef();
 	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
+}
+
+//--------------------------------------------
+void ofCairoRenderer::draw(ofBaseVideoDraws & video, float x, float y, float w, float h){
+	draw(video.getPixelsRef(),x,y,0,w,h,x,y,w,h);
+}
+
+//--------------------------------------------
+void ofCairoRenderer::bind(ofBaseVideoDraws & video){
+
+}
+
+//--------------------------------------------
+void ofCairoRenderer::unbind(ofBaseVideoDraws & video){
+
 }
 
 //--------------------------------------------

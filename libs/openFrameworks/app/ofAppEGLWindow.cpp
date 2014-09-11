@@ -1186,7 +1186,10 @@ void ofAppEGLWindow::idle() {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::display() {
-
+	eglMakeCurrent(eglDisplay,
+        eglSurface, // draw surface
+        eglSurface, // read surface
+        eglContext);
   // take care of any requests for a new screen mode
   if (windowMode != OF_GAME_MODE && bNewScreenMode){
     if( windowMode == OF_FULLSCREEN){
@@ -1257,7 +1260,7 @@ void ofAppEGLWindow::display() {
   if(renderer) {
     renderer->finishRender();
   }
-  
+
   EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
   if(!success) {
        GLint error = eglGetError();

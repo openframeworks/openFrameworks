@@ -53,7 +53,29 @@ PLATFORM SPECIFIC
 	+ New platform!
 
 ### ofxiOS
-	+ deployment target is now iOS 5.1.1
+	+ xcode 6.0 updates
+	+ deployment target moved up to iOS 5.1.1
+
+
+OF 0.8.4
+========
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+PLATFORM SPECIFIC
+-----------------
+
+###OSX
+	/ Fixes for xcode 6
+
+###RPI
+	/ Fixes install_dependencies and makefiles
+
 
 
 OF 0.8.3

@@ -56,6 +56,10 @@ bool ofxEmscriptenVideoGrabber::initGrabber(int w, int h){
 	}
 }
 
+bool ofxEmscriptenVideoGrabber::isInitialized(){
+	return texture.isAllocated();
+}
+
 void ofxEmscriptenVideoGrabber::update(){
 	if(html5video_grabber_update(id,usePixels,pixels.getPixels())){
 		texture.texData.width = html5video_grabber_width(id);

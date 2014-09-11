@@ -10,6 +10,7 @@ void ofApp::setup(){
 	// fingerMovie.setPixelFormat(OF_PIXELS_RGBA);
 
 	fingerMovie.loadMovie("movies/fingers.mov");
+	fingerMovie.setLoopState(OF_LOOP_NORMAL);
 	fingerMovie.play();
 }
 
@@ -26,7 +27,7 @@ void ofApp::draw(){
     fingerMovie.draw(20,20);
     ofSetHexColor(0x000000);
     unsigned char * pixels = fingerMovie.getPixels();
-    
+
     int nChannels = fingerMovie.getPixelsRef().getNumChannels();
     
     // let's move through the "RGB(A)" char array
