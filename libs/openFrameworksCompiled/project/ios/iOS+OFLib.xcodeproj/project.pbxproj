@@ -1021,7 +1021,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0600;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "iOS+OFLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1146,7 +1146,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
@@ -1170,7 +1170,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/kiss/lib/linux\"",
@@ -1189,13 +1189,16 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E41D3E9113B38BE900A75A5D /* Debug.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/debug/";
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/debug";
-				SDKROOT = iphoneos;
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = "";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SYMROOT = "$(SRCROOT)/../../lib/ios/";
+				VALID_ARCHS = armv7;
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1207,13 +1210,16 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E41D3E9213B38BE900A75A5D /* Release.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/release/";
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/release";
-				SDKROOT = iphoneos;
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = "";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SYMROOT = "$(SRCROOT)/../../lib/ios/";
+				VALID_ARCHS = armv7;
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
