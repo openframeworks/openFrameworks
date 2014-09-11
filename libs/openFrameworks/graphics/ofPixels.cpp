@@ -875,11 +875,11 @@ void ofPixels_<PixelType>::crop(int x, int y, int _width, int _height){
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int _width, int _height){
+void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int _width, int _height) const{
 	if (bAllocated){
 
 		if(&toPix == this){
-			crop(x,y,_width,_height);
+			toPix.crop(x,y,_width,_height);
 			return;
 		}
 
@@ -898,7 +898,7 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int
 
 
 		iterator newPixel = toPix.begin();
-		for(Line line = getLines().begin()+minY; line!=getLines().begin()+maxY; ++line ){
+		for(ConstLine line = getConstLines().begin()+minY; line!=getConstLines().begin()+maxY; ++line ){
 			for(const_iterator pixel = line.begin()+minX; pixel<line.begin()+maxX; ++pixel){
 				*newPixel++ = *pixel;
 			}
@@ -908,7 +908,7 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations){
+void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwiseRotations) const{
 	int channels = channelsFromPixelFormat(pixelFormat);
 
 	if (bAllocated == false || channels==0){
@@ -916,7 +916,7 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 	}
 
 	if(&dst == this){
-		rotate90(nClockwiseRotations);
+		dst.rotate90(nClockwiseRotations);
 		return;
 	}
 
@@ -1046,9 +1046,9 @@ void ofPixels_<PixelType>::mirror(bool vertically, bool horizontal){
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal){
+void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically, bool horizontal) const{
 	if(&dst == this){
-		mirror(vertically,horizontal);
+		dst.mirror(vertically,horizontal);
 		return;
 	}
 
@@ -1157,7 +1157,7 @@ float ofPixels_<PixelType>::bicubicInterpolate (const float *patch, float x,floa
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMethod interpMethod){
+bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMethod interpMethod) const{
 	if(&dst == this){
 		return true;
 	}
@@ -1265,13 +1265,13 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 
 //----------------------------------------------------------------------
 template<typename PixelType>
-bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo){
+bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo) const{
 	if (!(isAllocated()) || !(dst.isAllocated()) || getBytesPerPixel() != dst.getBytesPerPixel() || xTo>=dst.getWidth() || yTo>=dst.getHeight()) return false;
 
 	int bytesToCopyPerRow = (xTo + getWidth()<=dst.getWidth() ? getWidth() : dst.getWidth()-xTo) * getBytesPerPixel();
 	int columnsToCopy = yTo + getHeight() <= dst.getHeight() ? getHeight() : dst.getHeight()-yTo;
 	PixelType * dstPix = dst.getPixels() + ((xTo + yTo*dst.getWidth())*dst.getBytesPerPixel());
-	PixelType * srcPix = getPixels();
+	const PixelType * srcPix = getPixels();
 	int srcStride = getWidth()*getBytesPerPixel();
 	int dstStride = dst.getWidth()*dst.getBytesPerPixel();
 
