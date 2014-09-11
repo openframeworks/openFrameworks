@@ -875,7 +875,7 @@ void ofTexture::draw(float x, float y, float z, float w, float h) const{
 
 //------------------------------------
 void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy) const{
-	drawSubsection(x,y,0,w,h,sx,sy,getWidth(),getHeight());
+	drawSubsection(x,y,0,w,h,sx,sy,w,h);
 }
 
 //------------------------------------
@@ -885,7 +885,7 @@ void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, flo
 
 //------------------------------------
 void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const{
-	drawSubsection(x,y,z,w,h,sx,sy,getWidth(),getHeight());
+	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
 
 //----------------------------------------------------------
@@ -1011,10 +1011,10 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	quad.getVertices().resize(4);
 	quad.getTexCoords().resize(4);
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
-	quad.getVertices()[0].set(p1.x, p1.y);
-	quad.getVertices()[1].set(p2.x, p2.y);
-	quad.getVertices()[2].set(p3.x, p3.y);
-	quad.getVertices()[3].set(p4.x, p4.y);
+	quad.getVertices()[0].set(p1.x, p1.y, p1.z);
+	quad.getVertices()[1].set(p2.x, p2.y, p2.z);
+	quad.getVertices()[2].set(p3.x, p3.y, p3.z);
+	quad.getVertices()[3].set(p4.x, p4.y, p4.z);
 	
 	quad.getTexCoords()[0].set(tx0,ty0);
 	quad.getTexCoords()[1].set(tx1,ty0);
