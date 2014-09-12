@@ -896,7 +896,8 @@ bool ofSystemChoiceDialog(string choiceMessage){
     bool choice = true;
     
 #ifdef TARGET_WIN32
-    ofSystemAlertDialog(choiceMessage);
+    // currently unimplemented, redirects to ofSystemAlertDialog
+	ofSystemAlertDialog(choiceMessage);
 #endif
     
     
@@ -921,15 +922,18 @@ bool ofSystemChoiceDialog(string choiceMessage){
 #endif
     
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
-    ofSystemAlertDialog(choiceMessage);
+    // currently unimplemented, redirects to ofSystemAlertDialog
+	ofSystemAlertDialog(choiceMessage);
 #endif
     
 #ifdef TARGET_ANDROID
-    ofSystemAlertDialog(choiceMessage);
+    // currently unimplemented, redirects to ofSystemAlertDialog
+	ofSystemAlertDialog(choiceMessage);
 #endif
     
 #ifdef TARGET_EMSCRIPTEN
-    ofSystemAlertDialog(choiceMessage);
+    // currently unimplemented, redirects to ofSystemAlertDialog
+	ofSystemAlertDialog(choiceMessage);
 #endif
     
     return choice;
