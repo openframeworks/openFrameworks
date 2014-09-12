@@ -733,7 +733,7 @@ bool ofQTKitGrabber::initRecording(){
 	return success;
 }
 
-vector<string>& ofQTKitGrabber::listVideoCodecs(){
+const vector<string>& ofQTKitGrabber::listVideoCodecs() const{
 	@autoreleasepool {
 		NSArray* videoCodecs = [QTKitVideoGrabber listVideoCodecs];
 		videoCodecsVec.clear();
@@ -745,7 +745,7 @@ vector<string>& ofQTKitGrabber::listVideoCodecs(){
 	return videoCodecsVec;
 }
 
-vector<string>& ofQTKitGrabber::listAudioCodecs(){
+const vector<string>& ofQTKitGrabber::listAudioCodecs() const{
 	@autoreleasepool {
 		NSArray* audioCodecs = [QTKitVideoGrabber listAudioCodecs];
 		audioCodecsVec.clear();
@@ -802,31 +802,31 @@ void ofQTKitGrabber::update(){
 	} 
 }
 
-bool ofQTKitGrabber::isFrameNew(){
+bool ofQTKitGrabber::isFrameNew() const {
 	return isInited && [grabber isFrameNew];
 }
 
-bool ofQTKitGrabber::isReady(){
+bool ofQTKitGrabber::isReady() const {
 	return isInited;
 }
 
-bool ofQTKitGrabber::isInitialized(){
+bool ofQTKitGrabber::isInitialized() const{
     return isInited;
 }
 
-bool ofQTKitGrabber::isRecordingReady(){
+bool ofQTKitGrabber::isRecordingReady() const {
 	return isInited && [grabber isRecordReady];
 }
 
-bool ofQTKitGrabber::isRecording(){
+bool ofQTKitGrabber::isRecording() const {
 	return isReady() && [grabber isRecording];
 }
 
-bool ofQTKitGrabber::hasPreview(){
+bool ofQTKitGrabber::hasPreview() const {
     return bPreview;
 }
 
-vector <ofVideoDevice> ofQTKitGrabber::listDevices(){
+vector <ofVideoDevice> ofQTKitGrabber::listDevices() const {
     vector <string> devList = listVideoDevices();
     
     vector <ofVideoDevice> devices; 
@@ -852,13 +852,13 @@ bool ofQTKitGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofQTKitGrabber::getPixelFormat(){
+ofPixelFormat ofQTKitGrabber::getPixelFormat() const{
 	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
 	return OF_PIXELS_RGB;
 }
 
 //---------------------------------------------------------------------------
-vector<string>& ofQTKitGrabber::listVideoDevices(){
+const vector<string>& ofQTKitGrabber::listVideoDevices() const{
 	@autoreleasepool {
 		NSArray* videoDevices = [QTKitVideoGrabber listVideoDevices];
 		videoDeviceVec.clear();
@@ -870,7 +870,7 @@ vector<string>& ofQTKitGrabber::listVideoDevices(){
 	return videoDeviceVec;
 }
 
-vector<string>& ofQTKitGrabber::listAudioDevices(){
+const vector<string>& ofQTKitGrabber::listAudioDevices() const{
 	@autoreleasepool {
 		NSArray* audioDevices = [QTKitVideoGrabber listAudioDevices];
 		audioDeviceVec.clear();
@@ -905,6 +905,10 @@ ofPixelsRef ofQTKitGrabber::getPixelsRef(){
 	return pixels;
 }
 
+const ofPixelsRef ofQTKitGrabber::getPixelsRef() const {
+    return getPixelsRef();
+}
+
 void ofQTKitGrabber::setUseAudio(bool _bUseAudio){
 	if(_bUseAudio != bUseAudio){
 		if(isInited){
@@ -922,39 +926,39 @@ void ofQTKitGrabber::videoSettings(){
 	ofSystemAlertDialog("ofQTKitGrabber: Video Settings is not supported in 10.7+. Please compile against the 10.6 SDK for this feature.");
 }
 
-int ofQTKitGrabber::getDeviceID(){
+int ofQTKitGrabber::getDeviceID() const {
     return getVideoDeviceID();
 }
 
-int ofQTKitGrabber::getVideoDeviceID(){
+int ofQTKitGrabber::getVideoDeviceID() const {
     if(confirmInit()){
 		return grabber.videoDeviceID;
 	}
 	return -1;
 }
 
-int ofQTKitGrabber::getAudioDeviceID(){
+int ofQTKitGrabber::getAudioDeviceID() const {
 	if(confirmInit()){
 		return grabber.audioDeviceID;
 	}
 	return -1;
 }
 
-float ofQTKitGrabber::getHeight(){
+float ofQTKitGrabber::getHeight() const {
 	if(confirmInit()){
 		return float(grabber.height);
 	}
 	return 0;
 }
 
-float ofQTKitGrabber::getWidth(){
+float ofQTKitGrabber::getWidth() const {
 	if(confirmInit()){
 		return float(grabber.width);
 	}
 	return 0;
 }
 		  
-bool ofQTKitGrabber::confirmInit(){
+bool ofQTKitGrabber::confirmInit() const {
 	if(!isInited){
 		ofLogError("ofQTKitGrabber") << "confirmInit(): calling method on unintialized video grabber";
 	}

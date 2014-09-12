@@ -107,7 +107,7 @@ bool ofVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat) {
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofVideoGrabber::getPixelFormat(){
+ofPixelFormat ofVideoGrabber::getPixelFormat() const{
 	if(grabber){
 		internalPixelFormat = grabber->getPixelFormat();
 	}
@@ -115,9 +115,10 @@ ofPixelFormat ofVideoGrabber::getPixelFormat(){
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofVideoGrabber::listDevices(){
+vector<ofVideoDevice> ofVideoGrabber::listDevices() const{
 	if(!grabber){
-		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+		ofVideoGrabber * mutThis = const_cast<ofVideoGrabber*>(this);
+		mutThis->setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
 	return grabber->listDevices();
 }
@@ -154,13 +155,27 @@ unsigned char * ofVideoGrabber::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofVideoGrabber::getPixelsRef(){
+ofPixels& ofVideoGrabber::getPixelsRef(){
+	return grabber->getPixelsRef();
+}
+
+//---------------------------------------------------------------------------
+const ofPixels& ofVideoGrabber::getPixelsRef() const{
 	return grabber->getPixelsRef();
 }
 
 //------------------------------------
 //for getting a reference to the texture
 ofTexture & ofVideoGrabber::getTextureReference(){
+	if(grabber->getTexture() == NULL){
+		return tex[0];
+	}
+	else{
+		return *grabber->getTexture();
+	}
+}
+
+const ofTexture & ofVideoGrabber::getTextureReference() const{
 	if(grabber->getTexture() == NULL){
 		return tex[0];
 	}
@@ -177,8 +192,17 @@ vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
 	return tex;
 }
 
+const vector<ofTexture> & ofVideoGrabber::getTexturePlanes() const{
+	if(grabber->getTexture() != NULL){
+		ofVideoGrabber* mutThis = const_cast<ofVideoGrabber*>(this);
+		mutThis->tex.clear();
+		mutThis->tex.push_back(*grabber->getTexture());
+	}
+	return tex;
+}
+
 //---------------------------------------------------------------------------
-bool  ofVideoGrabber::isFrameNew(){
+bool  ofVideoGrabber::isFrameNew() const{
 	if(grabber){
 		return grabber->isFrameNew();
 	}
@@ -252,28 +276,28 @@ void ofVideoGrabber::resetAnchor(){
 }
 
 //------------------------------------
-void ofVideoGrabber::draw(float _x, float _y, float _w, float _h){
+void ofVideoGrabber::draw(float _x, float _y, float _w, float _h) const{
 	ofGetCurrentRenderer()->draw(*this,_x,_y,_w,_h);
 }
 
 //------------------------------------
-void ofVideoGrabber::draw(float _x, float _y){
+void ofVideoGrabber::draw(float _x, float _y) const{
 	draw(_x, _y,width,height);
 }
 
 
 //------------------------------------
-void ofVideoGrabber::bind(){
+void ofVideoGrabber::bind() const{
 	ofGetCurrentRenderer()->bind(*this);
 }
 
 //------------------------------------
-void ofVideoGrabber::unbind(){
+void ofVideoGrabber::unbind() const{
 	ofGetCurrentRenderer()->unbind(*this);
 }
 
 //----------------------------------------------------------
-float ofVideoGrabber::getHeight(){
+float ofVideoGrabber::getHeight() const{
 	if(grabber){
 		height = grabber->getHeight();
 	}
@@ -281,7 +305,7 @@ float ofVideoGrabber::getHeight(){
 }
 
 //----------------------------------------------------------
-float ofVideoGrabber::getWidth(){
+float ofVideoGrabber::getWidth() const{
 	if(grabber){
 		width = grabber->getWidth();
 	}
@@ -289,6 +313,6 @@ float ofVideoGrabber::getWidth(){
 }
 
 //----------------------------------------------------------
-bool ofVideoGrabber::isInitialized(){
+bool ofVideoGrabber::isInitialized() const{
 	return grabber->isInitialized() && (!bUseTexture || tex[0].isAllocated() || grabber->getTexture());
 }

@@ -209,7 +209,7 @@ void ofGstUtils::setFrameByFrame(bool _bFrameByFrame){
 	}
 }
 
-bool ofGstUtils::isFrameByFrame(){
+bool ofGstUtils::isFrameByFrame() const{
 	return bFrameByFrame;
 }
 
@@ -290,7 +290,7 @@ void ofGstUtils::play(){
 	setPaused(false);
 
 	//this is if we set the speed first but it only can be set when we are playing.
-	//if(!isStream) setSpeed(speed);
+	if(!isStream) setSpeed(speed);
 }
 
 void ofGstUtils::setPaused(bool _bPause){
@@ -332,7 +332,7 @@ void ofGstUtils::stop(){
 	bPaused = true;
 }
 
-float ofGstUtils::getPosition(){
+float ofGstUtils::getPosition() const{
 	if(gstPipeline){
 		gint64 pos=0;
 #if GST_VERSION_MAJOR==0
@@ -353,15 +353,15 @@ float ofGstUtils::getPosition(){
 	}
 }
 
-float ofGstUtils::getSpeed(){
+float ofGstUtils::getSpeed() const{
 	return speed;
 }
 
-float ofGstUtils::getDuration(){
+float ofGstUtils::getDuration() const{
 	return (float)getDurationNanos()/(float)GST_SECOND;
 }
 
-int64_t ofGstUtils::getDurationNanos(){
+int64_t ofGstUtils::getDurationNanos() const{
 	GstFormat format = GST_FORMAT_TIME;
 
 #if GST_VERSION_MAJOR==0
@@ -375,7 +375,7 @@ int64_t ofGstUtils::getDurationNanos(){
 
 }
 
-bool  ofGstUtils::getIsMovieDone(){
+bool  ofGstUtils::getIsMovieDone() const{
 	if(isAppSink){
 		return gst_app_sink_is_eos(GST_APP_SINK(gstSink));
 	}else{
@@ -667,15 +667,15 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 	return true;
 }
 
-GstElement 	* ofGstUtils::getPipeline(){
+GstElement 	* ofGstUtils::getPipeline() const{
 	return gstPipeline;
 }
 
-GstElement 	* ofGstUtils::getSink(){
+GstElement 	* ofGstUtils::getSink() const{
 	return gstSink;
 }
 
-GstElement 	* ofGstUtils::getGstElementByName(const string & name){
+GstElement 	* ofGstUtils::getGstElementByName(const string & name) const{
 	return gst_bin_get_by_name(GST_BIN(gstPipeline),name.c_str());
 }
 
@@ -683,7 +683,7 @@ void ofGstUtils::setSinkListener(ofGstAppSink * appsink_){
 	appsink = appsink_;
 }
 
-uint64_t ofGstUtils::getMinLatencyNanos(){
+uint64_t ofGstUtils::getMinLatencyNanos() const{
 	GstClockTime minlat=0, maxlat=0;
 	GstQuery * q = gst_query_new_latency();
 	if (gst_element_query (gstPipeline, q)) {
@@ -694,7 +694,7 @@ uint64_t ofGstUtils::getMinLatencyNanos(){
 	return minlat;
 }
 
-uint64_t ofGstUtils::getMaxLatencyNanos(){
+uint64_t ofGstUtils::getMaxLatencyNanos() const{
 	GstClockTime minlat=0, maxlat=0;
 	GstQuery * q = gst_query_new_latency();
 	if (gst_element_query (gstPipeline, q)) {
@@ -750,11 +750,11 @@ void ofGstVideoUtils::close(){
 	buffer = 0;
 }
 
-bool ofGstVideoUtils::isInitialized(){
+bool ofGstVideoUtils::isInitialized() const{
 	return isLoaded();
 }
 
-bool ofGstVideoUtils::isFrameNew(){
+bool ofGstVideoUtils::isFrameNew() const{
 	return bIsFrameNew;
 }
 
@@ -762,7 +762,11 @@ unsigned char * ofGstVideoUtils::getPixels(){
 	return pixels.getPixels();
 }
 
-ofPixelsRef ofGstVideoUtils::getPixelsRef(){
+ofPixels& ofGstVideoUtils::getPixelsRef(){
+	return pixels;
+}
+
+const ofPixels & ofGstVideoUtils::getPixelsRef() const{
 	return pixels;
 }
 
@@ -832,11 +836,11 @@ void ofGstVideoUtils::update(){
 	bHavePixelsChanged = false;
 }
 
-float ofGstVideoUtils::getHeight(){
+float ofGstVideoUtils::getHeight() const{
 	return pixels.getHeight();
 }
 
-float ofGstVideoUtils::getWidth(){
+float ofGstVideoUtils::getWidth() const{
 	return pixels.getWidth();
 }
 
@@ -1006,7 +1010,7 @@ bool ofGstVideoUtils::setPixelFormat(ofPixelFormat pixelFormat){
 	return true;
 }
 
-ofPixelFormat ofGstVideoUtils::getPixelFormat(){
+ofPixelFormat ofGstVideoUtils::getPixelFormat() const{
 	return internalPixelFormat;
 }
 

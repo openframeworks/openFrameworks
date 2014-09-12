@@ -139,7 +139,7 @@ public:
 	float getArea() const;
 	ofPoint getCentroid2D() const;
 
-	void draw();
+	void draw() const;
     
     // used for calculating the normals
     void setRightVector(ofVec3f v = ofVec3f(0, 0, -1));
