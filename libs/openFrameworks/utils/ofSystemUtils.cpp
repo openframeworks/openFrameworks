@@ -890,3 +890,47 @@ string ofSystemTextBoxDialog(string question, string text){
 #endif
 	return text;
 }
+
+
+bool ofSystemChoiceDialog(string choiceMessage){
+    bool choice = true;
+    
+#ifdef TARGET_WIN32
+    ofSystemAlertDialog(choiceMessage);
+#endif
+    
+    
+#ifdef TARGET_OSX
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    NSAlert *alertDialog = [NSAlert alertWithMessageText:[NSString stringWithUTF8String:choiceMessage.c_str()]
+                                           defaultButton:nil
+                                         alternateButton:nil
+                                             otherButton:nil
+                               informativeTextWithFormat:@""];
+    
+    [alertDialog addButtonWithTitle:@"Cancel"];
+    NSInteger returnCode = [alertDialog runModal];
+
+	// if Cancel was clicked, assign value to text
+	if ( returnCode == NSAlertSecondButtonReturn )
+		choice = false;
+    
+    restoreAppWindowFocus();
+    [pool drain];
+    
+#endif
+    
+#if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
+    ofSystemAlertDialog(choiceMessage);
+#endif
+    
+#ifdef TARGET_ANDROID
+    ofSystemAlertDialog(choiceMessage);
+#endif
+    
+#ifdef TARGET_EMSCRIPTEN
+    ofSystemAlertDialog(choiceMessage);
+#endif
+    
+    return choice;
+}
