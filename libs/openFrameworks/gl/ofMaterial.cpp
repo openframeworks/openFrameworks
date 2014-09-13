@@ -69,6 +69,16 @@ ofFloatColor ofMaterial::getEmissiveColor() {
 	return emissive;
 }
 
+ofMaterial::ColorData ofMaterial::getColorData(){
+    ofMaterial::ColorData colorData;
+    colorData.diffuse = diffuse;
+    colorData.ambient = ambient;
+    colorData.specular = specular;
+    colorData.emissive = emissive;
+    colorData.shininess = shininess;
+    return colorData;
+}
+
 void ofMaterial::begin() {
 #ifndef TARGET_PROGRAMMABLE_GL
 	if(!ofIsGLProgrammableRenderer()){
