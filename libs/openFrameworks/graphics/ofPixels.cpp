@@ -395,6 +395,8 @@ void ofPixels_<PixelType>::swapRgb(){
 	case OF_PIXELS_BGRA:
 		pixelFormat = OF_PIXELS_RGBA;
 		break;
+	default:
+		break;
 	}
 }
 
