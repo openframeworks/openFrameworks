@@ -57,6 +57,8 @@ public:
 
 	void setFrameByFrame(bool frameByFrame);
 	void setThreadAppSink(bool threaded);
+	bool isThreadedAppSink() const;
+	bool isFrameByFrame() const;
 
 	ofGstVideoUtils * getGstVideoUtils();
 

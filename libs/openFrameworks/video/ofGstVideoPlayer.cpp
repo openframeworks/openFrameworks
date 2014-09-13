@@ -418,3 +418,11 @@ ofGstVideoUtils * ofGstVideoPlayer::getGstVideoUtils(){
 void ofGstVideoPlayer::setFrameByFrame(bool frameByFrame){
 	videoUtils.setFrameByFrame(frameByFrame);
 }
+
+bool ofGstVideoPlayer::isThreadedAppSink() const{
+	return threadAppSink;
+}
+
+bool ofGstVideoPlayer::isFrameByFrame() const{
+	return videoUtils.isFrameByFrame();
+}
