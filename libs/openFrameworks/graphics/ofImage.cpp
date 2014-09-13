@@ -180,9 +180,14 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	unsigned int pitch = FreeImage_GetPitch(bmp);
 
 	ofPixelFormat pixFormat;
-	if(channels==1) pixFormat=OF_PIXELS_MONO;
+	if(channels==1) pixFormat=OF_PIXELS_GRAY;
+#ifdef TARGET_LITTLE_ENDIAN
+	if(channels==3) pixFormat=OF_PIXELS_BGR;
+	if(channels==4) pixFormat=OF_PIXELS_BGRA;
+#else
 	if(channels==3) pixFormat=OF_PIXELS_RGB;
 	if(channels==4) pixFormat=OF_PIXELS_RGBA;
+#endif
 
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
