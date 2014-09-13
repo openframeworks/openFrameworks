@@ -35,8 +35,18 @@ public:
 	ofFloatColor getSpecularColor();
 	ofFloatColor getEmissiveColor();
 	float getShininess();
+    
+    // useful for passing color data to a UBO
+    struct ColorData{
+        ofFloatColor diffuse;
+        ofFloatColor ambient;
+        ofFloatColor specular;
+        ofFloatColor emissive;
+        float shininess;
+    };
+    ofMaterial::ColorData getColorData();
 	
-	// apply the material
+    // apply the material
 	void begin();
 	void end();
 
