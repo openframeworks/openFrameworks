@@ -355,7 +355,7 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	}
 
 	#ifdef TARGET_LITTLE_ENDIAN
-	if(sizeof(PixelType) == 1) {
+	if(sizeof(PixelType) == 1 && (pix.getPixelFormat()==OF_PIXELS_RGB || pix.getPixelFormat()==OF_PIXELS_RGBA)) {
 		pix.swapRgb();
 	}
 	#endif
@@ -363,7 +363,7 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	FIBITMAP * bmp	= getBmpFromPixels(pix);
 
 	#ifdef TARGET_LITTLE_ENDIAN
-	if(sizeof(PixelType) == 1) {
+	if(sizeof(PixelType) == 1 && (pix.getPixelFormat()==OF_PIXELS_BGR || pix.getPixelFormat()==OF_PIXELS_BGRA)) {
 		pix.swapRgb();
 	}
 	#endif

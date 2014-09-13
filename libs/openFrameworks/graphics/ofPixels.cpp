@@ -382,6 +382,20 @@ void ofPixels_<PixelType>::swapRgb(){
 		ofLogWarning("ofPixels") << "rgb swap not supported for this pixel format";
 		break;
 	}
+	switch(pixelFormat){
+	case OF_PIXELS_RGB:
+		pixelFormat = OF_PIXELS_BGR;
+		break;
+	case OF_PIXELS_BGR:
+		pixelFormat = OF_PIXELS_RGB;
+		break;
+	case OF_PIXELS_RGBA:
+		pixelFormat = OF_PIXELS_BGRA;
+		break;
+	case OF_PIXELS_BGRA:
+		pixelFormat = OF_PIXELS_RGBA;
+		break;
+	}
 }
 
 template<typename PixelType>
