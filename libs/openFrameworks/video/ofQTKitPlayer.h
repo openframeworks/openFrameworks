@@ -3,6 +3,8 @@
 
 #pragma once
 
+#ifdef OF_VIDEO_PLAYER_QTKIT
+
 #include "ofMain.h"
 
 #ifdef __OBJC__
@@ -147,3 +149,5 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		#endif
 
 };
+
+#endif
