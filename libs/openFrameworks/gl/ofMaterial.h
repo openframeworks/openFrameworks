@@ -30,21 +30,21 @@ public:
 	void setEmissiveColor(ofFloatColor oEmmisive);
 	void setShininess(float nShininess);
 
-	ofFloatColor getDiffuseColor();
-	ofFloatColor getAmbientColor();
-	ofFloatColor getSpecularColor();
-	ofFloatColor getEmissiveColor();
-	float getShininess();
+	ofFloatColor getDiffuseColor() const;
+	ofFloatColor getAmbientColor() const;
+	ofFloatColor getSpecularColor() const;
+	ofFloatColor getEmissiveColor() const;
+	float getShininess() const;
     
-    // useful for passing color data to a UBO
-    struct ColorData{
+    struct Data{
         ofFloatColor diffuse;
         ofFloatColor ambient;
         ofFloatColor specular;
         ofFloatColor emissive;
         float shininess;
     };
-    ofMaterial::ColorData getColorData();
+    Data getData() const;
+    void setData(const ofMaterial::Data& data);
 	
     // apply the material
 	void begin();
@@ -55,19 +55,10 @@ private:
 	void beginShader(int texType);
 	string vertexSource(int maxLights, bool hasTexture, bool textureRect);
 	string fragmentSource(int maxLights, bool hasTexture, bool textureRect);
-
-	ofFloatColor diffuse;
-	ofFloatColor ambient;
-	ofFloatColor specular;
-	ofFloatColor emissive;
-	float shininess;
-
-
-	ofFloatColor prev_diffuse, prev_diffuse_back;
-	ofFloatColor prev_ambient, prev_ambient_back;
-	ofFloatColor prev_specular, prev_specular_back;
-	ofFloatColor prev_emissive, prev_emissive_back;
-	float prev_shininess, prev_shininess_back;
+    
+    Data data;
+    Data prev_data;
+    Data prev_data_back;
 
 	mutable const ofShader * currentShader;
 
