@@ -595,7 +595,7 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 		}break;
 
 			case GST_MESSAGE_EOS:{
-				ofLogVerbose("ofGstUtils") << "gstHandleMessage(): end of the stream";
+				//ofLogVerbose("ofGstUtils") << "gstHandleMessage(): end of the stream";
 				bool isClosing = closing;
 				eos_cb();
 
