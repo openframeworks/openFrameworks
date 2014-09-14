@@ -558,8 +558,25 @@ vector<ofPolyline> & ofPath::getOutline() {
 }
 
 //----------------------------------------------------------
+const vector<ofPolyline> & ofPath::getOutline() const{
+	if(windingMode!=OF_POLY_WINDING_ODD){
+		const_cast<ofPath*>(this)->tessellate();
+		return tessellatedContour;
+	}else{
+		const_cast<ofPath*>(this)->generatePolylinesFromCommands();
+		return polylines;
+	}
+}
+
+//----------------------------------------------------------
 ofMesh & ofPath::getTessellation(){
 	tessellate();
+	return cachedTessellation;
+}
+
+//----------------------------------------------------------
+const ofMesh & ofPath::getTessellation() const{
+	const_cast<ofPath*>(this)->tessellate();
 	return cachedTessellation;
 }
 

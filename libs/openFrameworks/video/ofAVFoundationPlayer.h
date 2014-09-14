@@ -31,12 +31,13 @@ public:
     void                play();
     void                stop();
     
-    bool                isFrameNew(); //returns true if the frame has changed in this update cycle
+    bool                isFrameNew() const; //returns true if the frame has changed in this update cycle
     
     // Returns openFrameworks compatible RGBA pixels.
     // Be aware of your current render mode.
     unsigned char *     getPixels();
-    ofPixelsRef         getPixelsRef();
+    const ofPixels &    getPixelsRef() const;
+    ofPixels &         getPixelsRef();
     
     // Returns openFrameworks compatible ofTexture pointer.
     // if decodeMode == OF_QTKIT_DECODE_PIXELS_ONLY,
@@ -45,9 +46,9 @@ public:
     ofTexture&          getTextureReference();
     
     bool                isLoading();
-    bool                isLoaded();
+    bool                isLoaded() const;
     
-    bool                isPlaying();
+    bool                isPlaying() const;
     bool                getIsMovieDone();
     
     float               getPosition();
@@ -56,7 +57,7 @@ public:
     int                 getCurrentFrame();
     float               getDuration();
     int                 getTotalNumFrames();
-    bool                isPaused();
+    bool                isPaused() const;
     float               getSpeed();
     ofLoopType          getLoopState();
     float               getVolume();
@@ -73,13 +74,13 @@ public:
     
     // ofAVFoundationPlayer only supports OF_PIXELS_RGB and OF_PIXELS_RGBA.
     bool                setPixelFormat(ofPixelFormat pixelFormat);
-    ofPixelFormat       getPixelFormat();
+    ofPixelFormat       getPixelFormat() const;
     
     void                draw(float x, float y, float w, float h);
     void                draw(float x, float y);
     
-    float               getWidth();
-    float               getHeight();
+    float               getWidth() const;
+    float               getHeight() const;
     
     void                firstFrame();
     void                nextFrame();

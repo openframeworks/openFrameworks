@@ -209,7 +209,7 @@ void ofGstUtils::setFrameByFrame(bool _bFrameByFrame){
 	}
 }
 
-bool ofGstUtils::isFrameByFrame(){
+bool ofGstUtils::isFrameByFrame() const{
 	return bFrameByFrame;
 }
 
@@ -218,6 +218,14 @@ bool ofGstUtils::startPipeline(){
 	bPaused 			= true;
 	speed 				= 1.0f;
 
+
+	GstBus * bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
+
+	if(bus){
+		busWatchID = gst_bus_add_watch (bus, (GstBusFunc) busFunction, this);
+	}
+
+	gst_object_unref(bus);
 
 	if(gst_element_set_state (GST_ELEMENT(gstPipeline), GST_STATE_READY) ==	GST_STATE_CHANGE_FAILURE) {
 		ofLogError("ofGstUtils") << "startPipeline(): unable to set pipeline to ready";
@@ -244,14 +252,6 @@ bool ofGstUtils::startPipeline(){
 		bPlaying = true;
 		bLoaded = true;
 	}
-
-	GstBus * bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
-
-	if(bus){
-		busWatchID = gst_bus_add_watch (bus, (GstBusFunc) busFunction, this);
-	}
-
-	gst_object_unref(bus);
 
 
 
@@ -290,7 +290,7 @@ void ofGstUtils::play(){
 	setPaused(false);
 
 	//this is if we set the speed first but it only can be set when we are playing.
-	//if(!isStream) setSpeed(speed);
+	if(!isStream) setSpeed(speed);
 }
 
 void ofGstUtils::setPaused(bool _bPause){
@@ -332,7 +332,7 @@ void ofGstUtils::stop(){
 	bPaused = true;
 }
 
-float ofGstUtils::getPosition(){
+float ofGstUtils::getPosition() const{
 	if(gstPipeline){
 		gint64 pos=0;
 #if GST_VERSION_MAJOR==0
@@ -353,15 +353,15 @@ float ofGstUtils::getPosition(){
 	}
 }
 
-float ofGstUtils::getSpeed(){
+float ofGstUtils::getSpeed() const{
 	return speed;
 }
 
-float ofGstUtils::getDuration(){
+float ofGstUtils::getDuration() const{
 	return (float)getDurationNanos()/(float)GST_SECOND;
 }
 
-int64_t ofGstUtils::getDurationNanos(){
+int64_t ofGstUtils::getDurationNanos() const{
 	GstFormat format = GST_FORMAT_TIME;
 
 #if GST_VERSION_MAJOR==0
@@ -375,7 +375,7 @@ int64_t ofGstUtils::getDurationNanos(){
 
 }
 
-bool  ofGstUtils::getIsMovieDone(){
+bool  ofGstUtils::getIsMovieDone() const{
 	if(isAppSink){
 		return gst_app_sink_is_eos(GST_APP_SINK(gstSink));
 	}else{
@@ -584,8 +584,8 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 			gchar *debug;
 			gst_message_parse_error(msg, &err, &debug);
 
-			/*ofLogVerbose("ofGstUtils") << "gstHandleMessage(): embedded video playback halted for plugin, module "
-				<< gst_element_get_name(GST_MESSAGE_SRC (msg)) << "  reported: " << err->message;*/
+			ofLogError("ofGstUtils") << "gstHandleMessage(): embedded video playback halted for plugin, module "
+				<< gst_element_get_name(GST_MESSAGE_SRC (msg)) << "  reported: " << err->message;
 
 			g_error_free(err);
 			g_free(debug);
@@ -595,7 +595,7 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 		}break;
 
 			case GST_MESSAGE_EOS:{
-				ofLogVerbose("ofGstUtils") << "gstHandleMessage(): end of the stream";
+				//ofLogVerbose("ofGstUtils") << "gstHandleMessage(): end of the stream";
 				bool isClosing = closing;
 				eos_cb();
 
@@ -667,15 +667,15 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 	return true;
 }
 
-GstElement 	* ofGstUtils::getPipeline(){
+GstElement 	* ofGstUtils::getPipeline() const{
 	return gstPipeline;
 }
 
-GstElement 	* ofGstUtils::getSink(){
+GstElement 	* ofGstUtils::getSink() const{
 	return gstSink;
 }
 
-GstElement 	* ofGstUtils::getGstElementByName(const string & name){
+GstElement 	* ofGstUtils::getGstElementByName(const string & name) const{
 	return gst_bin_get_by_name(GST_BIN(gstPipeline),name.c_str());
 }
 
@@ -683,7 +683,7 @@ void ofGstUtils::setSinkListener(ofGstAppSink * appsink_){
 	appsink = appsink_;
 }
 
-uint64_t ofGstUtils::getMinLatencyNanos(){
+uint64_t ofGstUtils::getMinLatencyNanos() const{
 	GstClockTime minlat=0, maxlat=0;
 	GstQuery * q = gst_query_new_latency();
 	if (gst_element_query (gstPipeline, q)) {
@@ -694,7 +694,7 @@ uint64_t ofGstUtils::getMinLatencyNanos(){
 	return minlat;
 }
 
-uint64_t ofGstUtils::getMaxLatencyNanos(){
+uint64_t ofGstUtils::getMaxLatencyNanos() const{
 	GstClockTime minlat=0, maxlat=0;
 	GstQuery * q = gst_query_new_latency();
 	if (gst_element_query (gstPipeline, q)) {
@@ -750,11 +750,11 @@ void ofGstVideoUtils::close(){
 	buffer = 0;
 }
 
-bool ofGstVideoUtils::isInitialized(){
+bool ofGstVideoUtils::isInitialized() const{
 	return isLoaded();
 }
 
-bool ofGstVideoUtils::isFrameNew(){
+bool ofGstVideoUtils::isFrameNew() const{
 	return bIsFrameNew;
 }
 
@@ -762,7 +762,11 @@ unsigned char * ofGstVideoUtils::getPixels(){
 	return pixels.getPixels();
 }
 
-ofPixelsRef ofGstVideoUtils::getPixelsRef(){
+ofPixels& ofGstVideoUtils::getPixelsRef(){
+	return pixels;
+}
+
+const ofPixels & ofGstVideoUtils::getPixelsRef() const{
 	return pixels;
 }
 
@@ -832,11 +836,11 @@ void ofGstVideoUtils::update(){
 	bHavePixelsChanged = false;
 }
 
-float ofGstVideoUtils::getHeight(){
+float ofGstVideoUtils::getHeight() const{
 	return pixels.getHeight();
 }
 
-float ofGstVideoUtils::getWidth(){
+float ofGstVideoUtils::getWidth() const{
 	return pixels.getWidth();
 }
 
@@ -1006,15 +1010,17 @@ bool ofGstVideoUtils::setPixelFormat(ofPixelFormat pixelFormat){
 	return true;
 }
 
-ofPixelFormat ofGstVideoUtils::getPixelFormat(){
+ofPixelFormat ofGstVideoUtils::getPixelFormat() const{
 	return internalPixelFormat;
 }
 
 bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 	Poco::ScopedLock<ofMutex> lock(mutex);
+#if GST_VERSION_MAJOR>0
 	if(pixelFormat!=internalPixelFormat){
 		ofLogNotice("ofGstVideoPlayer") << "allocating with " << w << "x" << h << " " << getGstFormatName(pixelFormat);
 	}
+#endif
 	if(bBackPixelsChanged){
 		pixels = backPixels;
 	}else{
@@ -1031,17 +1037,8 @@ bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 	return pixels.isAllocated();
 }
 
-static GstVideoInfo getVideoInfo(GstSample * sample){
-    GstCaps *caps = gst_sample_get_caps(sample);
-    GstVideoInfo vinfo;
-    gst_video_info_init (&vinfo);
-    gst_video_info_from_caps (&vinfo, caps);
-    gst_caps_unref(caps);
-    return vinfo;
-}
-
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstVideoUtils::process_frame(GstSample * sample){
+GstFlowReturn ofGstVideoUtils::process_buffer(GstBuffer * _buffer){
 	guint size = GST_BUFFER_SIZE (_buffer);
 	int stride = 0;
 	if(pixels.isAllocated() && pixels.getTotalBytes()!=(int)size){
@@ -1079,6 +1076,19 @@ GstFlowReturn ofGstVideoUtils::process_frame(GstSample * sample){
 	return GST_FLOW_OK;
 }
 #else
+
+static GstVideoInfo getVideoInfo(GstSample * sample){
+    GstCaps *caps = gst_sample_get_caps(sample);
+    GstVideoInfo vinfo;
+    gst_video_info_init (&vinfo);
+    if(caps){
+		gst_video_info_from_caps (&vinfo, caps);
+    }else{
+    	ofLogError() << "couldn't get sample caps";
+    }
+    return vinfo;
+}
+
 GstFlowReturn ofGstVideoUtils::process_sample(GstSample * sample){
 	GstBuffer * _buffer = gst_sample_get_buffer(sample);
 

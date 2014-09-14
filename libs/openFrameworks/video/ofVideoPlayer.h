@@ -51,10 +51,10 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		shared_ptr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
-	    string				getMoviePath();
+	    string				getMoviePath() const;
 
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat		getPixelFormat(); 
+		ofPixelFormat		getPixelFormat() const;
 		
 		void 				closeMovie();
 		void 				close();		
@@ -63,31 +63,34 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				play();
 		void 				stop();
 
-		bool 				isFrameNew();
+		bool 				isFrameNew() const;
 		unsigned char * 	getPixels();
-		ofPixelsRef			getPixelsRef();
-		float 				getPosition();
-		float 				getSpeed();
-		float 				getDuration();
-		bool				getIsMovieDone();
+        ofPixels&			getPixelsRef();
+        const ofPixels&     getPixelsRef() const;
+		float 				getPosition() const;
+		float 				getSpeed() const;
+		float 				getDuration() const;
+		bool				getIsMovieDone() const;
 
 		void 				setPosition(float pct);
 		void 				setVolume(float volume); // 0..1
 		void 				setLoopState(ofLoopType state);
-		ofLoopType			getLoopState();
+		ofLoopType			getLoopState() const;
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 
 		void 				setUseTexture(bool bUse);
-		bool 				isUsingTexture();
+		bool 				isUsingTexture() const;
 		ofTexture &			getTextureReference();
 		vector<ofTexture> & getTexturePlanes();
-		void 				draw(float x, float y, float w, float h);
-		void 				draw(float x, float y);
+		const ofTexture &	getTextureReference() const;
+		const vector<ofTexture> & getTexturePlanes() const;
+		void 				draw(float x, float y, float w, float h) const;
+		void 				draw(float x, float y) const;
 		using ofBaseDraws::draw;
 
-		void 				bind();
-		void 				unbind();
+		void 				bind() const;
+		void 				unbind() const;
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -97,24 +100,24 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		void 				setPaused(bool bPause);
 
-		int					getCurrentFrame();
-		int					getTotalNumFrames();
+		int					getCurrentFrame() const;
+		int					getTotalNumFrames() const;
 
 		void				firstFrame();
 		void				nextFrame();
 		void				previousFrame();
 
-		float 				getHeight();
-		float 				getWidth();
+		float 				getHeight() const;
+		float 				getWidth() const;
 
-		bool				isPaused();
-		bool				isLoaded();
-		bool				isPlaying();
-		bool				isInitialized();
+		bool				isPaused() const;
+		bool				isLoaded() const;
+		bool				isPlaying() const;
+		bool 				isInitialized() const;
 
 		//this is kept as legacy to support people accessing width and height directly. 
-		int					height;
-		int					width;
+		mutable int         height;
+		mutable int         width;
 
 	private:
 		shared_ptr<ofBaseVideoPlayer>		player;
@@ -122,7 +125,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		vector<ofTexture> tex;
 		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
-		ofPixelFormat internalPixelFormat;
+		mutable ofPixelFormat internalPixelFormat;
 	    string moviePath;
 };
 

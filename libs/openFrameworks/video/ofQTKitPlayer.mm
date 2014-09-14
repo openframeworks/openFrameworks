@@ -90,7 +90,7 @@ void ofQTKitPlayer::closeMovie() {
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::isLoaded() {
+bool ofQTKitPlayer::isLoaded() const {
 	return moviePlayer != NULL;
 }
 
@@ -124,7 +124,7 @@ void ofQTKitPlayer::setPaused(bool _bPaused){
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::isPaused() {
+bool ofQTKitPlayer::isPaused() const {
 	return bPaused;
 }
 
@@ -134,7 +134,7 @@ void ofQTKitPlayer::stop() {
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::isPlaying(){
+bool ofQTKitPlayer::isPlaying() const {
     if(!isLoaded()) return false;
 
 	return !moviePlayer.isFinished && !isPaused(); 
@@ -212,7 +212,7 @@ void ofQTKitPlayer::update() {
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::isFrameNew() {
+bool ofQTKitPlayer::isFrameNew() const {
 	return bNewFrame;
 }
 
@@ -242,6 +242,10 @@ ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
 		}
 	}
 	return pixels;
+}
+
+const ofPixelsRef ofQTKitPlayer::getPixelsRef() const {
+    return getPixelsRef();
 }
 
 //--------------------------------------------------------------------
@@ -303,13 +307,13 @@ void ofQTKitPlayer::setFrame(int frame) {
 }
 
 //--------------------------------------------------------------------
-int ofQTKitPlayer::getCurrentFrame() {
+int ofQTKitPlayer::getCurrentFrame() const {
 	if(!isLoaded()) return 0;
     return [moviePlayer frame];
 }
 
 //--------------------------------------------------------------------
-int ofQTKitPlayer::getTotalNumFrames() {
+int ofQTKitPlayer::getTotalNumFrames() const {
 	if(!isLoaded()) return 0;
 	return [moviePlayer frameCount];
 }
@@ -337,7 +341,7 @@ void ofQTKitPlayer::setLoopState(ofLoopType state) {
 }
 
 //--------------------------------------------------------------------
-ofLoopType ofQTKitPlayer::getLoopState(){
+ofLoopType ofQTKitPlayer::getLoopState() const {
 	if(!isLoaded()) return OF_LOOP_NONE;
 	
 	ofLoopType state = OF_LOOP_NONE;
@@ -359,39 +363,39 @@ ofLoopType ofQTKitPlayer::getLoopState(){
 }
 
 //--------------------------------------------------------------------
-float ofQTKitPlayer::getSpeed(){
+float ofQTKitPlayer::getSpeed() const {
 	return speed;
 }
 
 //--------------------------------------------------------------------
-float ofQTKitPlayer::getDuration(){
+float ofQTKitPlayer::getDuration() const {
 	return duration;
 }
 
 //--------------------------------------------------------------------
-float ofQTKitPlayer::getPositionInSeconds(){
+float ofQTKitPlayer::getPositionInSeconds() const {
 	return getPosition() * duration;
 }
 
 //--------------------------------------------------------------------
-float ofQTKitPlayer::getPosition(){
+float ofQTKitPlayer::getPosition() const {
 	if(!isLoaded()) return 0;
 	return [moviePlayer position];
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::getIsMovieDone(){
+bool ofQTKitPlayer::getIsMovieDone() const {
 	if(!isLoaded()) return false;
 	return [moviePlayer isFinished];
 }
 
 //--------------------------------------------------------------------
-float ofQTKitPlayer::getWidth() {
+float ofQTKitPlayer::getWidth() const {
     return [moviePlayer movieSize].width;
 }
 
 //--------------------------------------------------------------------
-float ofQTKitPlayer::getHeight() {
+float ofQTKitPlayer::getHeight() const {
     return [moviePlayer movieSize].height;
 }
 
@@ -414,12 +418,12 @@ bool ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
 }
 
 //--------------------------------------------------------------------
-ofPixelFormat ofQTKitPlayer::getPixelFormat(){
+ofPixelFormat ofQTKitPlayer::getPixelFormat() const {
 	return pixelFormat;
 }
 
 //--------------------------------------------------------------------
-ofQTKitDecodeMode ofQTKitPlayer::getDecodeMode(){
+ofQTKitDecodeMode ofQTKitPlayer::getDecodeMode() const {
     return decodeMode;
 }
 
@@ -432,8 +436,8 @@ void ofQTKitPlayer::setSynchronousSeeking(bool synchronous){
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::getSynchronousSeeking(){
-	return 	bSynchronousSeek;
+bool ofQTKitPlayer::getSynchronousSeeking() const {
+	return bSynchronousSeek;
 }
 
 //--------------------------------------------------------------------

@@ -100,7 +100,7 @@ bool ofQuickTimeGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofQuickTimeGrabber::getPixelFormat(){
+ofPixelFormat ofQuickTimeGrabber::getPixelFormat() const {
 	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
 	return OF_PIXELS_RGB;
 }
@@ -246,12 +246,12 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 }
 
 //--------------------------------------------------------------------
-bool ofQuickTimeGrabber::isInitialized(){
+bool ofQuickTimeGrabber::isInitialized() const{
     return bGrabberInited;
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofQuickTimeGrabber::listDevices(){
+vector<ofVideoDevice> ofQuickTimeGrabber::listDevices() const{
 
     vector <ofVideoDevice> devices; 
     
@@ -402,22 +402,27 @@ unsigned char * ofQuickTimeGrabber::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofQuickTimeGrabber::getPixelsRef(){
+ofPixels& ofQuickTimeGrabber::getPixelsRef(){
 	return pixels;
 }
 
 //---------------------------------------------------------------------------
-bool  ofQuickTimeGrabber::isFrameNew(){
+const ofPixels& ofQuickTimeGrabber::getPixelsRef() const {
+	return pixels;
+}
+
+//---------------------------------------------------------------------------
+bool  ofQuickTimeGrabber::isFrameNew() const {
 	return bIsFrameNew;
 }
 
 //--------------------------------------------------------------------
-float ofQuickTimeGrabber::getWidth(){
+float ofQuickTimeGrabber::getWidth() const {
 	return pixels.getWidth();
 }	
 
 //--------------------------------------------------------------------
-float ofQuickTimeGrabber::getHeight(){
+float ofQuickTimeGrabber::getHeight() const {
 	return pixels.getHeight();
 }
 

@@ -573,7 +573,7 @@ void ofFbo::allocate(Settings _settings) {
     */
 }
 
-bool ofFbo::isAllocated(){
+bool ofFbo::isAllocated() const {
 	return bIsAllocated;
 }
 
@@ -659,7 +659,7 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 }
 
 
-void ofFbo::begin(bool setupScreen) {
+void ofFbo::begin(bool setupScreen) const{
 	if(!bIsAllocated) return;
 	ofPushView();
 	if(ofGetGLRenderer()){
@@ -672,7 +672,7 @@ void ofFbo::begin(bool setupScreen) {
 	bind();
 }
 
-void ofFbo::end() {
+void ofFbo::end() const{
 	if(!bIsAllocated) return;
 	unbind();
 	if(ofGetGLRenderer()){
@@ -681,7 +681,7 @@ void ofFbo::end() {
 	ofPopView();
 }
 
-void ofFbo::bind() {
+void ofFbo::bind() const{
 	if(isBound == 0) {
 		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFramebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -690,7 +690,7 @@ void ofFbo::bind() {
 }
 
 
-void ofFbo::unbind() {
+void ofFbo::unbind() const{
 	if(isBound) {
 		glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
 		isBound = 0;
@@ -698,7 +698,7 @@ void ofFbo::unbind() {
 	}
 }
 
-int ofFbo::getNumTextures() {
+int ofFbo::getNumTextures() const {
 	return textures.size();
 }
 
@@ -754,7 +754,7 @@ void ofFbo::setDefaultTextureIndex(int defaultTexture)
 	defaultTextureIndex = defaultTexture;
 }
 
-int ofFbo::getDefaultTextureIndex()
+int ofFbo::getDefaultTextureIndex() const
 {
 	return defaultTextureIndex;
 }
@@ -766,6 +766,17 @@ ofTexture& ofFbo::getTextureReference(){
 ofTexture& ofFbo::getTextureReference(int attachmentPoint) {
 	updateTexture(attachmentPoint);
     
+    return textures[attachmentPoint];
+}
+
+const ofTexture& ofFbo::getTextureReference() const{
+	return getTextureReference(defaultTextureIndex);
+}
+
+const ofTexture& ofFbo::getTextureReference(int attachmentPoint) const{
+	ofFbo * mutThis = const_cast<ofFbo*>(this);
+	mutThis->updateTexture(attachmentPoint);
+
     return textures[attachmentPoint];
 }
 
@@ -781,7 +792,7 @@ void ofFbo::resetAnchor(){
 	getTextureReference().resetAnchor();
 }
 
-void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
+void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
 	getTextureReference(attachmentPoint).readToPixels(pixels);
@@ -794,7 +805,7 @@ void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint){
 #endif
 }
 
-void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint){
+void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
 	getTextureReference(attachmentPoint).readToPixels(pixels);
@@ -807,7 +818,7 @@ void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint){
 #endif
 }
 
-void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint){
+void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
 	getTextureReference(attachmentPoint).readToPixels(pixels);
@@ -861,32 +872,32 @@ void ofFbo::updateTexture(int attachmentPoint) {
 
 
 
-void ofFbo::draw(float x, float y) {
+void ofFbo::draw(float x, float y) const{
 	draw(x, y, settings.width, settings.height);
 }
 
 
-void ofFbo::draw(float x, float y, float width, float height) {
+void ofFbo::draw(float x, float y, float width, float height) const{
 	if(!bIsAllocated) return;
     getTextureReference().draw(x, y, width, height);
 }
 
 
-GLuint ofFbo::getFbo() {
+GLuint ofFbo::getFbo() const {
 	return fbo;
 }
 
-float ofFbo::getWidth() {
+float ofFbo::getWidth() const {
 	return settings.width;
 }
 
 
-float ofFbo::getHeight() {
+float ofFbo::getHeight() const {
 	return settings.height;
 }
 
 
-bool ofFbo::checkStatus() {
+bool ofFbo::checkStatus() const {
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	switch(status) {
 		case GL_FRAMEBUFFER_COMPLETE:
@@ -930,6 +941,13 @@ bool ofFbo::checkStatus() {
 }
 
 ofTexture & ofFbo::getDepthTexture(){
+	if(!settings.depthStencilAsTexture){
+		ofLogError("ofFbo") << "getDepthTexture(): frame buffer object " << fbo << " not allocated with depthStencilAsTexture";
+	}
+	return depthBufferTex;
+}
+
+const ofTexture & ofFbo::getDepthTexture() const{
 	if(!settings.depthStencilAsTexture){
 		ofLogError("ofFbo") << "getDepthTexture(): frame buffer object " << fbo << " not allocated with depthStencilAsTexture";
 	}

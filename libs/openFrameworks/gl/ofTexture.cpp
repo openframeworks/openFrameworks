@@ -150,9 +150,6 @@ static void release(GLuint id){
 //----------------------------------------------------------
 ofTexture::ofTexture(){
 	resetAnchor();
-	quad.getVertices().resize(4);
-	quad.getTexCoords().resize(4);
-	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	bWantsMipmap = false;
 }
 
@@ -161,7 +158,6 @@ ofTexture::ofTexture(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
-	quad = mom.quad;
 	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
 }
@@ -174,19 +170,18 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
-	quad = mom.quad;
 	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
 	return *this;
 }
 
 //----------------------------------------------------------
-bool ofTexture::bAllocated(){
+bool ofTexture::bAllocated() const {
 	return texData.bAllocated;
 }
 
 //----------------------------------------------------------
-bool ofTexture::isAllocated(){
+bool ofTexture::isAllocated() const {
 	return texData.bAllocated;
 }
 
@@ -234,11 +229,11 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 }
 
 
-void ofTexture::enableTextureTarget(int textureLocation){
+void ofTexture::enableTextureTarget(int textureLocation) const{
 	if(ofGetGLRenderer()) ofGetGLRenderer()->enableTextureTarget(texData.textureTarget, texData.textureID, textureLocation);
 }
 
-void ofTexture::disableTextureTarget(int textureLocation){
+void ofTexture::disableTextureTarget(int textureLocation) const{
 	if(ofGetGLRenderer()) ofGetGLRenderer()->disableTextureTarget(texData.textureTarget, textureLocation);
 }
 
@@ -659,7 +654,7 @@ void ofTexture::resetAnchor(){
 }
 
 //----------------------------------------------------------
-void ofTexture::bind(int textureLocation){
+void ofTexture::bind(int textureLocation) const{
 	//we could check if it has been allocated - but we don't do that in draw() 
 	if(texData.alphaMask){
 		ofGetGLRenderer()->setAlphaMaskTex(*texData.alphaMask);
@@ -693,7 +688,7 @@ void ofTexture::bind(int textureLocation){
 }
 
 //----------------------------------------------------------
-void ofTexture::unbind(int textureLocation){
+void ofTexture::unbind(int textureLocation) const{
 
 	disableTextureTarget(textureLocation);
 	if(texData.alphaMask){
@@ -725,7 +720,7 @@ void ofTexture::disableAlphaMask(){
 
 
 //----------------------------------------------------------
-ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
+ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 	
 	ofPoint temp;
 	
@@ -772,7 +767,7 @@ void ofTexture::disableTextureMatrix(){
 }
 
 //----------------------------------------------------------
-ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
+ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct) const{
 	
 	ofPoint temp;
 	
@@ -859,42 +854,42 @@ void ofTexture::disableMipmap(){
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y){
+void ofTexture::draw(float x, float y) const{
 	draw(x,y,0,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float z){
+void ofTexture::draw(float x, float y, float z) const{
 	draw(x,y,z,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float w, float h){
+void ofTexture::draw(float x, float y, float w, float h) const{
 	draw(x,y,0,w,h);
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float z, float w, float h){
+void ofTexture::draw(float x, float y, float z, float w, float h) const{
 	drawSubsection(x,y,z,w,h,0,0,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy){
-	drawSubsection(x,y,0,w,h,sx,sy,getWidth(),getHeight());
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy) const{
+	drawSubsection(x,y,0,w,h,sx,sy,w,h);
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh){
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh) const{
 	drawSubsection(x,y,0,w,h,sx,sy,_sw,_sh);
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
-	drawSubsection(x,y,z,w,h,sx,sy,getWidth(),getHeight());
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const{
+	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
 
 //----------------------------------------------------------
-void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(!texData.bAllocated){
 		return;
 	}
@@ -961,6 +956,10 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat tx1 = bottomRight.x - offsetw;
 	GLfloat ty1 = bottomRight.y - offseth;
 
+	ofMesh quad;
+	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	quad.getVertices().resize(4);
+	quad.getTexCoords().resize(4);
 	quad.getVertices()[0].set(px0,py0,z);
 	quad.getVertices()[1].set(px1,py0,z);
 	quad.getVertices()[2].set(px1,py1,z);
@@ -985,7 +984,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 
 // ROGER
 //----------------------------------------------------------
-void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4){
+void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const{
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
 	// slightly, slightly alters an image, scaling...
@@ -1008,10 +1007,14 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	GLfloat tx1 = texData.tex_t - offsetw;
 	GLfloat ty1 = texData.tex_u - offseth;
 
-	quad.getVertices()[0].set(p1.x, p1.y);
-	quad.getVertices()[1].set(p2.x, p2.y);
-	quad.getVertices()[2].set(p3.x, p3.y);
-	quad.getVertices()[3].set(p4.x, p4.y);
+	ofMesh quad;
+	quad.getVertices().resize(4);
+	quad.getTexCoords().resize(4);
+	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	quad.getVertices()[0].set(p1.x, p1.y, p1.z);
+	quad.getVertices()[1].set(p2.x, p2.y, p2.z);
+	quad.getVertices()[2].set(p3.x, p3.y, p3.z);
+	quad.getVertices()[3].set(p4.x, p4.y, p4.z);
 	
 	quad.getTexCoords()[0].set(tx0,ty0);
 	quad.getTexCoords()[1].set(tx1,ty0);
@@ -1030,7 +1033,7 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 }
 
 //----------------------------------------------------------
-void ofTexture::readToPixels(ofPixels & pixels){
+void ofTexture::readToPixels(ofPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
 	bind();
@@ -1040,7 +1043,7 @@ void ofTexture::readToPixels(ofPixels & pixels){
 }
 
 //----------------------------------------------------------
-void ofTexture::readToPixels(ofShortPixels & pixels){
+void ofTexture::readToPixels(ofShortPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
 	bind();
@@ -1050,7 +1053,7 @@ void ofTexture::readToPixels(ofShortPixels & pixels){
 }
 
 //----------------------------------------------------------
-void ofTexture::readToPixels(ofFloatPixels & pixels){
+void ofTexture::readToPixels(ofFloatPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
 	bind();
@@ -1060,11 +1063,11 @@ void ofTexture::readToPixels(ofFloatPixels & pixels){
 }
 
 //----------------------------------------------------------
-float ofTexture::getHeight(){
+float ofTexture::getHeight() const {
 	return texData.height;
 }
 
 //----------------------------------------------------------
-float ofTexture::getWidth(){
+float ofTexture::getWidth() const {
 	return texData.width;
 }

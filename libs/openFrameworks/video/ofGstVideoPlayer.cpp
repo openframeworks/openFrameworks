@@ -10,8 +10,6 @@
 #include <gst/video/video.h>
 #include <gst/app/gstappsink.h>
 
-#include "ofAppRunner.h"
-
 
 ofGstVideoPlayer::ofGstVideoPlayer(){
 	nFrames						= 0;
@@ -31,7 +29,7 @@ bool ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	return true;
 }
 
-ofPixelFormat ofGstVideoPlayer::getPixelFormat(){
+ofPixelFormat ofGstVideoPlayer::getPixelFormat() const {
 	return internalPixelFormat;
 }
 
@@ -58,11 +56,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 #else
 	GstElement * gstPipeline = gst_element_factory_make("playbin","player");
 #endif
-	if(internalPixelFormat==OF_PIXELS_NATIVE){
-		g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
-	}else{
-		g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
-	}
+	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
 
 	// create the oF appsink for video rgb without sync to clock
 	GstElement * gstSink = gst_element_factory_make("appsink", "app_sink");
@@ -76,7 +70,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	GstCaps *caps;
 	int bpp;
 	switch(internalPixelFormat){
-	case OF_PIXELS_MONO:
+	case OF_PIXELS_GRAY:
 		bpp = 8;
 		caps = gst_caps_new_simple("video/x-raw-gray",
 			"bpp", G_TYPE_INT, bpp,
@@ -105,6 +99,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 			"blue_mask",G_TYPE_INT,0x0000ff00,
 			"alpha_mask",G_TYPE_INT,0x000000ff,
 			NULL);
+		break;
 	case OF_PIXELS_BGRA:
 		bpp = 32;
 		caps = gst_caps_new_simple("video/x-raw-rgb",
@@ -219,7 +214,7 @@ bool ofGstVideoPlayer::allocate(){
 #if GST_VERSION_MAJOR==0
 		int width,height;
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
-			if(!videoUtils.allocate(width,height,pixelFormat)) return false;
+			if(!videoUtils.allocate(width,height,internalPixelFormat)) return false;
 		}else{
 			ofLogError("ofGstVideoPlayer") << "allocate(): couldn't query width and height";
 			return false;
@@ -275,7 +270,7 @@ void ofGstVideoPlayer::on_stream_prepared(){
 	if(!bIsAllocated) allocate();
 }
 
-int	ofGstVideoPlayer::getCurrentFrame(){
+int	ofGstVideoPlayer::getCurrentFrame() const {
 	int frame = 0;
 
 	// zach I think this may fail on variable length frames...
@@ -293,7 +288,7 @@ int	ofGstVideoPlayer::getCurrentFrame(){
 	return frame;
 }
 
-int	ofGstVideoPlayer::getTotalNumFrames(){
+int	ofGstVideoPlayer::getTotalNumFrames() const {
 	return nFrames;
 }
 
@@ -316,7 +311,7 @@ void ofGstVideoPlayer::setFrame(int frame){ // frame 0 = first frame...
 	setPosition(pct);
 }
 
-bool ofGstVideoPlayer::isStream(){
+bool ofGstVideoPlayer::isStream() const {
 	return bIsStream;
 }
 
@@ -336,31 +331,31 @@ void ofGstVideoPlayer::setPaused(bool bPause){
 	videoUtils.setPaused(bPause);
 }
 
-bool ofGstVideoPlayer::isPaused(){
+bool ofGstVideoPlayer::isPaused() const {
 	return videoUtils.isPaused();
 }
 
-bool ofGstVideoPlayer::isLoaded(){
+bool ofGstVideoPlayer::isLoaded() const {
 	return videoUtils.isLoaded();
 }
 
-bool ofGstVideoPlayer::isPlaying(){
+bool ofGstVideoPlayer::isPlaying() const {
 	return videoUtils.isPlaying();
 }
 
-float ofGstVideoPlayer::getPosition(){
+float ofGstVideoPlayer::getPosition() const {
 	return videoUtils.getPosition();
 }
 
-float ofGstVideoPlayer::getSpeed(){
+float ofGstVideoPlayer::getSpeed() const {
 	return videoUtils.getSpeed();
 }
 
-float ofGstVideoPlayer::getDuration(){
+float ofGstVideoPlayer::getDuration() const {
 	return videoUtils.getDuration();
 }
 
-bool ofGstVideoPlayer::getIsMovieDone(){
+bool ofGstVideoPlayer::getIsMovieDone() const {
 	return videoUtils.getIsMovieDone();
 }
 
@@ -376,7 +371,7 @@ void ofGstVideoPlayer::setLoopState(ofLoopType state){
 	videoUtils.setLoopState(state);
 }
 
-ofLoopType ofGstVideoPlayer::getLoopState(){
+ofLoopType ofGstVideoPlayer::getLoopState() const {
 	return videoUtils.getLoopState();
 }
 
@@ -389,7 +384,7 @@ void ofGstVideoPlayer::close(){
 	videoUtils.close();
 }
 
-bool ofGstVideoPlayer::isFrameNew(){
+bool ofGstVideoPlayer::isFrameNew() const {
 	return videoUtils.isFrameNew();
 }
 
@@ -397,15 +392,19 @@ unsigned char * ofGstVideoPlayer::getPixels(){
 	return videoUtils.getPixels();
 }
 
-ofPixelsRef ofGstVideoPlayer::getPixelsRef(){
+ofPixels& ofGstVideoPlayer::getPixelsRef(){
 	return videoUtils.getPixelsRef();
 }
 
-float ofGstVideoPlayer::getHeight(){
+const ofPixels& ofGstVideoPlayer::getPixelsRef() const {
+	return videoUtils.getPixelsRef();
+}
+
+float ofGstVideoPlayer::getHeight() const {
 	return videoUtils.getHeight();
 }
 
-float ofGstVideoPlayer::getWidth(){
+float ofGstVideoPlayer::getWidth() const {
 	return videoUtils.getWidth();
 }
 
@@ -415,4 +414,12 @@ ofGstVideoUtils * ofGstVideoPlayer::getGstVideoUtils(){
 
 void ofGstVideoPlayer::setFrameByFrame(bool frameByFrame){
 	videoUtils.setFrameByFrame(frameByFrame);
+}
+
+bool ofGstVideoPlayer::isThreadedAppSink() const{
+	return threadAppSink;
+}
+
+bool ofGstVideoPlayer::isFrameByFrame() const{
+	return videoUtils.isFrameByFrame();
 }

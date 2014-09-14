@@ -36,30 +36,30 @@ public:
 	void 	play();
 	void 	stop();
 	void 	setPaused(bool bPause);
-	bool 	isPaused(){return bPaused;}
-	bool 	isLoaded(){return bLoaded;}
-	bool 	isPlaying(){return bPlaying;}
+	bool 	isPaused() const {return bPaused;}
+	bool 	isLoaded() const {return bLoaded;}
+	bool 	isPlaying() const {return bPlaying;}
 
-	float	getPosition();
-	float 	getSpeed();
-	float 	getDuration();
-	int64_t  getDurationNanos();
-	bool  	getIsMovieDone();
+	float	getPosition() const;
+	float 	getSpeed() const;
+	float 	getDuration() const;
+	int64_t  getDurationNanos() const;
+	bool  	getIsMovieDone() const;
 
 	void 	setPosition(float pct);
 	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
-	ofLoopType	getLoopState(){return loopMode;}
+	ofLoopType	getLoopState() const {return loopMode;}
 	void 	setSpeed(float speed);
 
 	void 	setFrameByFrame(bool bFrameByFrame);
-	bool	isFrameByFrame();
+	bool	isFrameByFrame() const;
 
-	GstElement 	* getPipeline();
-	GstElement 	* getSink();
-	GstElement 	* getGstElementByName(const string & name);
-	uint64_t getMinLatencyNanos();
-	uint64_t getMaxLatencyNanos();
+	GstElement 	* getPipeline() const;
+	GstElement 	* getSink() const;
+	GstElement 	* getGstElementByName(const string & name) const;
+	uint64_t getMinLatencyNanos() const;
+	uint64_t getMaxLatencyNanos() const;
 
 	virtual void close();
 
@@ -97,7 +97,7 @@ private:
 	GstElement 	*		gstPipeline;
 
 	float				speed;
-	gint64				durationNanos;
+	mutable int64_t		durationNanos;
 	bool				isAppSink;
 	Poco::Condition		eosCondition;
 	ofMutex				eosMutex;
@@ -146,16 +146,17 @@ public:
 	bool 			setPipeline(string pipeline, ofPixelFormat pixelFormat=OF_PIXELS_RGB, bool isStream=false, int w=-1, int h=-1);
 
 	bool 			setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat 	getPixelFormat();
+	ofPixelFormat 	getPixelFormat() const;
 	bool 			allocate(int w, int h, ofPixelFormat pixelFormat);
 
-	bool 			isFrameNew();
+	bool 			isFrameNew() const;
 	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
+	ofPixels&		getPixelsRef();
+	const ofPixels& getPixelsRef() const;
 	void 			update();
 
-	float 			getHeight();
-	float 			getWidth();
+	float 			getHeight() const;
+	float 			getWidth() const;
 
 	void 			close();
 
@@ -165,7 +166,7 @@ public:
 	static ofPixelFormat	getOFFormat(GstVideoFormat format);
 #endif
 
-	bool			isInitialized();
+	bool			isInitialized() const;
 
 	// this events happen in a different thread
 	// do not use them for opengl stuff
