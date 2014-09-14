@@ -1035,15 +1035,6 @@ bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 	return pixels.isAllocated();
 }
 
-static GstVideoInfo getVideoInfo(GstSample * sample){
-    GstCaps *caps = gst_sample_get_caps(sample);
-    GstVideoInfo vinfo;
-    gst_video_info_init (&vinfo);
-    gst_video_info_from_caps (&vinfo, caps);
-    gst_caps_unref(caps);
-    return vinfo;
-}
-
 #if GST_VERSION_MAJOR==0
 GstFlowReturn ofGstVideoUtils::process_frame(GstSample * sample){
 	guint size = GST_BUFFER_SIZE (_buffer);
@@ -1083,6 +1074,19 @@ GstFlowReturn ofGstVideoUtils::process_frame(GstSample * sample){
 	return GST_FLOW_OK;
 }
 #else
+
+static GstVideoInfo getVideoInfo(GstSample * sample){
+    GstCaps *caps = gst_sample_get_caps(sample);
+    GstVideoInfo vinfo;
+    gst_video_info_init (&vinfo);
+    if(caps){
+		gst_video_info_from_caps (&vinfo, caps);
+    }else{
+    	ofLogError() << "couldn't get sample caps";
+    }
+    return vinfo;
+}
+
 GstFlowReturn ofGstVideoUtils::process_sample(GstSample * sample){
 	GstBuffer * _buffer = gst_sample_get_buffer(sample);
 
