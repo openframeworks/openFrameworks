@@ -18,7 +18,7 @@
 #elif defined(OF_SOUNDSTREAM_EMSCRIPTEN)
 	#include "ofxEmscriptenSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxEmscriptenSoundStream
-#endif 
+#endif
 
 /// \brief Sets up and starts a global ofSoundStream.
 ///
@@ -59,8 +59,18 @@ void ofSoundStreamStart();
 /// \brief Stops the sound stream and also cleans up the stream's resources
 void ofSoundStreamClose();
 
+/// \brief Represents information about a sound device on the system.
+struct ofSoundDevice {
+    std::string name;
+	unsigned int index;
+    unsigned int outputChannels;
+    unsigned int inputChannels;
+    std::vector<unsigned int> sampleRates;
+};
+
 /// \brief Prints a list of available devices to the console
-void ofSoundStreamListDevices();
+/// \return All devices found on the system
+std::vector<ofSoundDevice> ofSoundStreamListDevices();
 
 /// \class ofSoundStream
 /// \brief Gives access to audio input and output devices
@@ -93,7 +103,8 @@ public:
     shared_ptr<ofBaseSoundStream> getSoundStream();
 
     /// \brief prints a list of available audio devices to the console.
-    void listDevices();
+	/// \return All devices found on the system
+	std::vector<ofSoundDevice> listDevices();
 
     /// \brief sets the device represented by the stream, see ofSoundStream::listDevices().
     void setDeviceID(int deviceID);

@@ -13,10 +13,10 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		ofRtAudioSoundStream();
 		~ofRtAudioSoundStream();
 		
-		void listDevices();
+		std::vector<ofSoundDevice> listDevices();
 		void setDeviceID(int deviceID);
-        void setInDeviceID(int deviceID);
-        void setOutDeviceID(int deviceID);
+		void setInDeviceID(int deviceID);
+		void setOutDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);

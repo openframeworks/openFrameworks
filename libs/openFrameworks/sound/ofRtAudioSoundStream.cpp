@@ -28,13 +28,13 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream(){
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::listDevices(){
+vector<ofSoundDevice> ofRtAudioSoundStream::listDevices(){
 	shared_ptr<RtAudio> audioTemp;
 	try {
 		audioTemp = shared_ptr<RtAudio>(new RtAudio());
 	} catch (RtError &error) {
 		error.printMessage();
-		return;
+		return vector<ofSoundDevice>();
 	}
  	int devices = audioTemp->getDeviceCount();
 	RtAudio::DeviceInfo info;
@@ -51,6 +51,8 @@ void ofRtAudioSoundStream::listDevices(){
 		ofLogNotice("ofRtAudioSoundStream") << "maximum input channels " << info.inputChannels;
 		ofLogNotice("ofRtAudioSoundStream") << "-----------------------------------------";
 	}
+	
+	return vector<ofSoundDevice>();
 }
 
 //------------------------------------------------------------------------------
