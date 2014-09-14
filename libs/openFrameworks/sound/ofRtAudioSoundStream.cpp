@@ -36,9 +36,10 @@ vector<ofSoundDevice> ofRtAudioSoundStream::listDevices(){
 		error.printMessage();
 		return vector<ofSoundDevice>();
 	}
- 	int devices = audioTemp->getDeviceCount();
+ 	int deviceCount = audioTemp->getDeviceCount();
 	RtAudio::DeviceInfo info;
-	for (int i=0; i< devices; i++) {
+	vector<ofSoundDevice> deviceList;
+	for (int i=0; i< deviceCount; i++) {
 		try {
 			info = audioTemp->getDeviceInfo(i);
 		} catch (RtError &error) {
@@ -50,9 +51,19 @@ vector<ofSoundDevice> ofRtAudioSoundStream::listDevices(){
 		ofLogNotice("ofRtAudioSoundStream") << "maximum output channels " << info.outputChannels;
 		ofLogNotice("ofRtAudioSoundStream") << "maximum input channels " << info.inputChannels;
 		ofLogNotice("ofRtAudioSoundStream") << "-----------------------------------------";
+		
+		ofSoundDevice dev;
+		dev.deviceID = i;
+		dev.name = info.name;
+		dev.outputChannels = info.outputChannels;
+		dev.inputChannels = info.inputChannels;
+		dev.sampleRates = info.sampleRates;
+		dev.isDefaultInput = info.isDefaultInput;
+		dev.isDefaultOutput = info.isDefaultOutput;
+		deviceList.push_back(dev);
 	}
 	
-	return vector<ofSoundDevice>();
+	return deviceList;
 }
 
 //------------------------------------------------------------------------------

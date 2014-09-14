@@ -61,11 +61,15 @@ void ofSoundStreamClose();
 
 /// \brief Represents information about a sound device on the system.
 struct ofSoundDevice {
-    std::string name;
-	unsigned int index;
-    unsigned int outputChannels;
-    unsigned int inputChannels;
-    std::vector<unsigned int> sampleRates;
+	std::string name;
+	unsigned int deviceID;
+	unsigned int inputChannels;
+	unsigned int outputChannels;
+	bool isDefaultInput;
+	bool isDefaultOutput;
+	std::vector<unsigned int> sampleRates;
+	
+	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false), sampleRates() { }
 };
 
 /// \brief Prints a list of available devices to the console
