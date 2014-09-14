@@ -32,20 +32,20 @@ public:
 
 	void update();
 
-	void draw(ofPath & shape);
-	void draw(ofPath::Command & path);
-	void draw(ofPolyline & poly);
-	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true);
-	void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false);
-    void draw(of3dPrimitive& model, ofPolyRenderMode renderType );
-	void draw(vector<ofPoint> & vertexData, ofPrimitiveMode drawMode);
-	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofBaseVideoDraws & video, float x, float y, float w, float h);
+	void draw(const ofPath & shape) const;
+	void draw(const ofPath::Command & path) const;
+	void draw(const ofPolyline & poly) const;
+	void draw(const ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false) const;
+    void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
+	void draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const;
+	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
 
-	void bind(ofBaseVideoDraws & video);
-	void unbind(ofBaseVideoDraws & video);
+	void bind(const ofBaseVideoDraws & video) const;
+	void unbind(const ofBaseVideoDraws & video) const;
 
 	bool rendersPathPrimitives(){
 		return true;
@@ -63,12 +63,23 @@ public:
 	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool invertY = true);
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
-	ofRectangle getCurrentViewport();
-	int getViewportWidth();
-	int getViewportHeight();
+	ofRectangle getCurrentViewport() const;
+	ofRectangle getNativeViewport() const;
+	int getViewportWidth() const;
+	int getViewportHeight() const;
+
+	void setOrientation(ofOrientation orientation, bool vFlip);
+	bool isVFlipped() const;
+	void loadViewMatrix(const ofMatrix4x4 & m);
+	void multViewMatrix(const ofMatrix4x4 & m);
+	ofMatrix4x4 getCurrentViewMatrix() const;
+	ofMatrix4x4 getCurrentNormalMatrix() const;
+	ofMatrix4x4 getCurrentOrientationMatrix() const;
+	void setCircleResolution(int);
+
 
 	void setCoordHandedness(ofHandednessType handedness);
-	ofHandednessType getCoordHandedness();
+	ofHandednessType getCoordHandedness() const;
 
 	// drawing modes
 	void setRectMode(ofRectMode mode);
@@ -145,20 +156,17 @@ public:
 
 private:
 	void setStyle(const ofStyle & style);
-	cairo_matrix_t * getCairoMatrix();
-	void setCairoMatrix();
-	ofVec3f transform(ofVec3f vec);
+	ofVec3f transform(ofVec3f vec) const;
 	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
-	void draw(ofPixels & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	void draw(const ofPixels & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
-	deque<ofPoint> curvePoints;
+	mutable deque<ofPoint> curvePoints;
 	cairo_t * cr;
 	cairo_surface_t * surface;
 	bool bBackgroundAuto;
 	ofFloatColor bgColor;
 
 	stack<cairo_matrix_t> matrixStack;
-	cairo_matrix_t tmpMatrix;
 
 	Type type;
 	int page;

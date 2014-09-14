@@ -58,9 +58,11 @@ public:
 		Line(vector<char>::iterator _begin, vector<char>::iterator _end);
         const string & operator*() const;
         const string * operator->() const;
+        const string & asString() const;
         Line& operator++();
         Line operator++(int);
         bool operator!=(Line const& rhs) const;
+        bool operator==(Line const& rhs) const;
 
 	private:
         string line;
@@ -80,7 +82,7 @@ public:
 
 private:
 	vector<char> 	buffer;
-	long 			nextLinePos;
+	Line			currentLine;
 	static size_t	ioSize;
 };
 

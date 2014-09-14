@@ -49,26 +49,20 @@ public:
 
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo;
 
-#ifdef __IPHONE_3_1
 - (void) takePicture;
-#endif
-
 - (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker;
 
-#ifdef __IPHONE_3_1
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info;
-#endif
+
 - (CGImageRef) getCGImage;
 
 - (UIImageOrientation) getImageOrientation;
 
 - (BOOL) openLibrary;
 - (BOOL) openCamera:(int)camera;
-#ifdef __IPHONE_3_1
 - (BOOL) showCameraOverlay;
 - (BOOL) showCameraOverlayWithCustomView:(UIView *)overlayView;
 - (void) hideCameraOverlay;
-#endif
 - (BOOL) openSavedPhotos;
 - (void) close;
 
@@ -100,11 +94,10 @@ public:
 	bool openCamera(int camera=0); // 0 for rear, 1 for front
 	bool openLibrary();
     
-#ifdef __IPHONE_3_1
 	bool showCameraOverlay();
     bool showCameraOverlayWithCustomView(UIView * view);
 	void hideCameraOverlay();
-#endif
+
 	bool openSavedPhotos();
     void close(); //closes the image picker interface
     void clear(); //clears the internal ofPixels - useful if you need to free the memory without deleting the object. 
@@ -118,9 +111,7 @@ public:
 	
 	void saveImage(); //this doesn't quite work right now and i'm not sure why.
 	
-#ifdef __IPHONE_3_1
 	void takePicture();
-#endif
 	
 	void loadPixels(); //never call this. this is called by the obj-c class.
 	

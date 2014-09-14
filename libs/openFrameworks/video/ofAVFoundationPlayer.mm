@@ -114,6 +114,12 @@ void ofAVFoundationPlayer::update()
         
 		bNewFrame = [moviePlayer update];
         bHavePixelsChanged = bNewFrame;
+        
+        // Don't get the pixels every frame if it hasn't updated
+		if (bHavePixelsChanged) {
+			[moviePlayer pixels:pixels.getPixels()];
+			bHavePixelsChanged = false;
+		}
     }
 }
 
@@ -136,7 +142,7 @@ void ofAVFoundationPlayer::stop()
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::isFrameNew()
+bool ofAVFoundationPlayer::isFrameNew() const
 {
     return bNewFrame;
 }
@@ -148,20 +154,23 @@ unsigned char * ofAVFoundationPlayer::getPixels()
 }
 
 //--------------------------------------------------------------
-ofPixelsRef ofAVFoundationPlayer::getPixelsRef()
+const ofPixels & ofAVFoundationPlayer::getPixelsRef() const
 {
-	if (isLoaded()) {
-		// Don't get the pixels every frame if it hasn't updated
-		if (bHavePixelsChanged) {
-			[moviePlayer pixels:pixels.getPixels()];
-			bHavePixelsChanged = false;
-		}
-	}
-	else {
+	if (!isLoaded() ){
 		ofLogError("ofAVFoundationPlayer::getPixelsRef()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
 	}
 	return pixels;
 }
+
+//--------------------------------------------------------------
+ofPixels & ofAVFoundationPlayer::getPixelsRef()
+{
+	if (!isLoaded() ){
+		ofLogError("ofAVFoundationPlayer::getPixelsRef()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
+	}
+	return pixels;
+}
+
 
 //--------------------------------------------------------------
 ofTexture* ofAVFoundationPlayer::getTexture()
@@ -190,13 +199,13 @@ bool ofAVFoundationPlayer::isLoading()
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::isLoaded()
+bool ofAVFoundationPlayer::isLoaded() const
 {
     return bInitialized;
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::isPlaying()
+bool ofAVFoundationPlayer::isPlaying() const
 {
     return moviePlayer && [moviePlayer isPlaying];
 }
@@ -244,7 +253,7 @@ int ofAVFoundationPlayer::getTotalNumFrames()
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::isPaused()
+bool ofAVFoundationPlayer::isPaused() const
 {
     return moviePlayer && [moviePlayer isPaused];
 }
@@ -364,7 +373,7 @@ bool ofAVFoundationPlayer::setPixelFormat(ofPixelFormat newPixelFormat)
 }
 
 //--------------------------------------------------------------
-ofPixelFormat ofAVFoundationPlayer::getPixelFormat()
+ofPixelFormat ofAVFoundationPlayer::getPixelFormat() const
 {
     return pixelFormat;
 }
@@ -387,13 +396,13 @@ void ofAVFoundationPlayer::draw(float x, float y, float w, float h)
 }
 
 //--------------------------------------------------------------
-float ofAVFoundationPlayer::getWidth()
+float ofAVFoundationPlayer::getWidth() const
 {
     return moviePlayer.width;
 }
 
 //--------------------------------------------------------------
-float ofAVFoundationPlayer::getHeight()
+float ofAVFoundationPlayer::getHeight() const
 {
     return moviePlayer.height;
 }
