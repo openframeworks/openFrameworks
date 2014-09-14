@@ -74,7 +74,7 @@ struct ofSoundDevice {
 
 /// \brief Prints a list of available devices to the console
 /// \return All devices found on the system
-std::vector<ofSoundDevice> ofSoundStreamListDevices();
+std::vector<ofSoundDevice> ofSoundStreamListDevices(bool print = true);
 
 /// \class ofSoundStream
 /// \brief Gives access to audio input and output devices
@@ -108,7 +108,7 @@ public:
 
     /// \brief prints a list of available audio devices to the console.
 	/// \return All devices found on the system
-	std::vector<ofSoundDevice> listDevices();
+	std::vector<ofSoundDevice> listDevices(bool print = true);
 
     /// \brief sets the device represented by the stream, see ofSoundStream::listDevices().
     void setDeviceID(int deviceID);
