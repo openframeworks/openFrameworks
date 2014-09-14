@@ -28,7 +28,7 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream(){
 }
 
 //------------------------------------------------------------------------------
-vector<ofSoundDevice> ofRtAudioSoundStream::listDevices(){
+vector<ofSoundDevice> ofRtAudioSoundStream::listDevices(bool print){
 	shared_ptr<RtAudio> audioTemp;
 	try {
 		audioTemp = shared_ptr<RtAudio>(new RtAudio());
@@ -46,11 +46,14 @@ vector<ofSoundDevice> ofRtAudioSoundStream::listDevices(){
 			error.printMessage();
 			break;
 		}
-		ofLogNotice("ofRtAudioSoundStream") << "device " << i << " " << info.name << "";
-		if (info.isDefaultInput) ofLogNotice("ofRtAudioSoundStream") << "----* default ----*";
-		ofLogNotice("ofRtAudioSoundStream") << "maximum output channels " << info.outputChannels;
-		ofLogNotice("ofRtAudioSoundStream") << "maximum input channels " << info.inputChannels;
-		ofLogNotice("ofRtAudioSoundStream") << "-----------------------------------------";
+		
+		if(print) {
+			ofLogNotice("ofRtAudioSoundStream") << "device " << i << " " << info.name << "";
+			if (info.isDefaultInput) ofLogNotice("ofRtAudioSoundStream") << "----* default ----*";
+			ofLogNotice("ofRtAudioSoundStream") << "maximum output channels " << info.outputChannels;
+			ofLogNotice("ofRtAudioSoundStream") << "maximum input channels " << info.inputChannels;
+			ofLogNotice("ofRtAudioSoundStream") << "-----------------------------------------";
+		}
 		
 		ofSoundDevice dev;
 		dev.deviceID = i;

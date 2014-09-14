@@ -41,8 +41,8 @@ void ofSoundStreamClose(){
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStreamListDevices(){
-	return soundStreamOutput.listDevices();
+vector<ofSoundDevice> ofSoundStreamListDevices(bool print){
+	return soundStreamOutput.listDevices(print);
 }
 
 //------------------------------------------------------------
@@ -63,9 +63,9 @@ shared_ptr<ofBaseSoundStream> ofSoundStream::getSoundStream(){
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::listDevices(){
+vector<ofSoundDevice> ofSoundStream::listDevices(bool print){
 	if( soundStream ){
-		return soundStream->listDevices();
+		return soundStream->listDevices(print);
 	} else {
 		return vector<ofSoundDevice>();
 	}
