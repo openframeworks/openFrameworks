@@ -245,7 +245,7 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
         getNextMessage(&msg);
         vector<string> address = ofSplitString(msg.getAddress(),"/",true);
                 
-        for(int i=0;i<address.size();i++){
+        for(unsigned int i=0;i<address.size();i++){
             
             if(p) {
                 if(address[i]==p->getEscapedName()){
