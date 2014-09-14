@@ -56,11 +56,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 #else
 	GstElement * gstPipeline = gst_element_factory_make("playbin","player");
 #endif
-	if(internalPixelFormat==OF_PIXELS_NATIVE){
-		g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
-	}else{
-		g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
-	}
+	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
 
 	// create the oF appsink for video rgb without sync to clock
 	GstElement * gstSink = gst_element_factory_make("appsink", "app_sink");
@@ -74,7 +70,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 	GstCaps *caps;
 	int bpp;
 	switch(internalPixelFormat){
-	case OF_PIXELS_MONO:
+	case OF_PIXELS_GRAY:
 		bpp = 8;
 		caps = gst_caps_new_simple("video/x-raw-gray",
 			"bpp", G_TYPE_INT, bpp,
@@ -103,6 +99,7 @@ bool ofGstVideoPlayer::loadMovie(string name){
 			"blue_mask",G_TYPE_INT,0x0000ff00,
 			"alpha_mask",G_TYPE_INT,0x000000ff,
 			NULL);
+		break;
 	case OF_PIXELS_BGRA:
 		bpp = 32;
 		caps = gst_caps_new_simple("video/x-raw-rgb",
@@ -217,7 +214,7 @@ bool ofGstVideoPlayer::allocate(){
 #if GST_VERSION_MAJOR==0
 		int width,height;
 		if(gst_video_get_size(GST_PAD(pad), &width, &height)){
-			if(!videoUtils.allocate(width,height,pixelFormat)) return false;
+			if(!videoUtils.allocate(width,height,internalPixelFormat)) return false;
 		}else{
 			ofLogError("ofGstVideoPlayer") << "allocate(): couldn't query width and height";
 			return false;
