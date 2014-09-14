@@ -1,8 +1,8 @@
 /*
-	oscpack -- Open Sound Control packet manipulation library
-	http://www.audiomulch.com/~rossb/oscpack
+	oscpack -- Open Sound Control (OSC) packet manipulation library
+    http://www.rossbencina.com/code/oscpack
 
-	Copyright (c) 2004-2005 Ross Bencina <rossb@audiomulch.com>
+    Copyright (c) 2004-2013 Ross Bencina <rossb@audiomulch.com>
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files
@@ -15,10 +15,6 @@
 	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	Any person wishing to distribute modifications to the Software is
-	requested to send the modifications to the original developer so that
-	they can be incorporated into the canonical version.
-
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 	MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -27,21 +23,35 @@
 	CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#include "ip/UdpSocket.h"
-#if defined( __WIN32__ ) || defined( _WIN32 )
+
+/*
+	The text above constitutes the entire oscpack license; however, 
+	the oscpack developer(s) also make the following non-binding requests:
+
+	Any person wishing to distribute modifications to the Software is
+	requested to send the modifications to the original developer so that
+	they can be incorporated into the canonical version. It is also 
+	requested that these non-binding requests be included whenever the
+	above license is reproduced.
+*/
 
 #include <winsock2.h>   // this must come first to prevent errors with MSVC7
 #include <windows.h>
 #include <mmsystem.h>   // for timeGetTime()
 
-#include <vector>
-#include <algorithm>
-#include <stdexcept>
-#include <assert.h>
-
 #ifndef WINCE
 #include <signal.h>
 #endif
+
+#include <algorithm>
+#include <cassert>
+#include <cstring> // for memset
+#include <stdexcept>
+#include <vector>
+
+#include "ip/UdpSocket.h" // usually I'd include the module header first
+                          // but this is causing conflicts with BCB4 due to
+                          // std::size_t usage.
 
 #include "ip/NetworkingUtils.h"
 #include "ip/PacketListener.h"
@@ -53,7 +63,7 @@ typedef int socklen_t;
 
 static void SockaddrFromIpEndpointName( struct sockaddr_in& sockAddr, const IpEndpointName& endpoint )
 {
-    memset( (char *)&sockAddr, 0, sizeof(sockAddr ) );
+    std::memset( (char *)&sockAddr, 0, sizeof(sockAddr ) );
     sockAddr.sin_family = AF_INET;
 
 	sockAddr.sin_addr.s_addr = 
@@ -80,6 +90,7 @@ static IpEndpointName IpEndpointNameFromSockaddr( const struct sockaddr_in& sock
 		);
 }
 
+unsigned long UdpSocket::maxBufferSize = 0;
 
 class UdpSocket::Implementation{
     NetworkInitializer networkInitializer_;
@@ -101,22 +112,35 @@ public:
 		if( (socket_ = socket( AF_INET, SOCK_DGRAM, 0 )) == INVALID_SOCKET ){
             throw std::runtime_error("unable to create udp socket\n");
         }
-				
-		// enable multicast addresses
-		char on = 1; // char on win32
-		setsockopt(socket_, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on));
-		
-		// enable multiple listeners for a single port on same network interface
-		char reuse = 1; // char on win32
-		setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 
-		memset( &sendToAddr_, 0, sizeof(sendToAddr_) );
+        if( UdpSocket::maxBufferSize > 0 ){
+            setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, &UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
+            setsockopt(socket_, SOL_SOCKET, SO_RCVBUF, &UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
+        }
+        
+		std::memset( &sendToAddr_, 0, sizeof(sendToAddr_) );
         sendToAddr_.sin_family = AF_INET;
 	}
 
 	~Implementation()
 	{
 		if (socket_ != INVALID_SOCKET) closesocket(socket_);
+	}
+
+	void SetEnableBroadcast( bool enableBroadcast )
+	{
+		char broadcast = (char)((enableBroadcast) ? 1 : 0); // char on win32
+		setsockopt(socket_, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
+	}
+
+	void SetAllowReuse( bool allowReuse )
+	{
+		// Note: SO_REUSEADDR is non-deterministic for listening sockets on Win32. See MSDN article:
+		// "Using SO_REUSEADDR and SO_EXCLUSIVEADDRUSE"
+		// http://msdn.microsoft.com/en-us/library/ms740621%28VS.85%29.aspx
+
+		char reuseAddr = (char)((allowReuse) ? 1 : 0); // char on win32
+		setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &reuseAddr, sizeof(reuseAddr));
 	}
 
 	IpEndpointName LocalEndpointFor( const IpEndpointName& remoteEndpoint ) const
@@ -135,7 +159,7 @@ public:
         // get the address
 
         struct sockaddr_in sockAddr;
-        memset( (char *)&sockAddr, 0, sizeof(sockAddr ) );
+        std::memset( (char *)&sockAddr, 0, sizeof(sockAddr ) );
         socklen_t length = sizeof(sockAddr);
         if (getsockname(socket_, (struct sockaddr *)&sockAddr, &length) < 0) {
             throw std::runtime_error("unable to getsockname\n");
@@ -163,9 +187,11 @@ public:
 		return IpEndpointNameFromSockaddr( sockAddr );
 	}
 
-	void Connect( const IpEndpointName& remoteEndpoint )
+	void Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false )
 	{
 		SockaddrFromIpEndpointName( connectedAddr_, remoteEndpoint );
+       
+        SetEnableBroadcast(enableBroadcast);
        
         if (connect(socket_, (struct sockaddr *)&connectedAddr_, sizeof(connectedAddr_)) < 0) {
             throw std::runtime_error("unable to connect udp socket\n");
@@ -174,25 +200,27 @@ public:
 		isConnected_ = true;
 	}
 
-	void Send( const char *data, int size )
+	void Send( const char *data, std::size_t size )
 	{
 		assert( isConnected_ );
 
-        send( socket_, data, size, 0 );
+        send( socket_, data, (int)size, 0 );
 	}
 
-    void SendTo( const IpEndpointName& remoteEndpoint, const char *data, int size )
+    void SendTo( const IpEndpointName& remoteEndpoint, const char *data, std::size_t size )
 	{
 		sendToAddr_.sin_addr.s_addr = htonl( remoteEndpoint.address );
         sendToAddr_.sin_port = htons( (short)remoteEndpoint.port );
 
-        sendto( socket_, data, size, 0, (sockaddr*)&sendToAddr_, sizeof(sendToAddr_) );
+        sendto( socket_, data, (int)size, 0, (sockaddr*)&sendToAddr_, sizeof(sendToAddr_) );
 	}
 
-	void Bind( const IpEndpointName& localEndpoint )
+	void Bind( const IpEndpointName& localEndpoint, bool allowReuse = false )
 	{
 		struct sockaddr_in bindSockAddr;
 		SockaddrFromIpEndpointName( bindSockAddr, localEndpoint );
+
+        SetAllowReuse(allowReuse);
 
         if (bind(socket_, (struct sockaddr *)&bindSockAddr, sizeof(bindSockAddr)) < 0) {
             throw std::runtime_error("unable to bind udp socket\n");
@@ -203,14 +231,14 @@ public:
 
 	bool IsBound() const { return isBound_; }
 
-    int ReceiveFrom( IpEndpointName& remoteEndpoint, char *data, int size )
+    std::size_t ReceiveFrom( IpEndpointName& remoteEndpoint, char *data, std::size_t size )
 	{
 		assert( isBound_ );
 
 		struct sockaddr_in fromAddr;
         socklen_t fromAddrLen = sizeof(fromAddr);
              	 
-        int result = recvfrom(socket_, data, size, 0,
+        int result = recvfrom(socket_, data, (int)size, 0,
                     (struct sockaddr *) &fromAddr, (socklen_t*)&fromAddrLen);
 		if( result < 0 )
 			return 0;
@@ -234,29 +262,47 @@ UdpSocket::~UdpSocket()
 	delete impl_;
 }
 
+void UdpSocket::SetUdpBufferSize( unsigned long bufferSize ){
+    UdpSocket::maxBufferSize = bufferSize; 
+}
+
+unsigned long UdpSocket::GetUdpBufferSize(){
+    return UdpSocket::maxBufferSize;
+}
+
+void UdpSocket::SetEnableBroadcast( bool enableBroadcast )
+{
+    impl_->SetEnableBroadcast( enableBroadcast );
+}
+
+void UdpSocket::SetAllowReuse( bool allowReuse )
+{
+    impl_->SetAllowReuse( allowReuse );
+}
+
 IpEndpointName UdpSocket::LocalEndpointFor( const IpEndpointName& remoteEndpoint ) const
 {
 	return impl_->LocalEndpointFor( remoteEndpoint );
 }
 
-void UdpSocket::Connect( const IpEndpointName& remoteEndpoint )
+void UdpSocket::Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast )
 {
-	impl_->Connect( remoteEndpoint );
+	impl_->Connect( remoteEndpoint, enableBroadcast );
 }
 
-void UdpSocket::Send( const char *data, int size )
+void UdpSocket::Send( const char *data, std::size_t size )
 {
 	impl_->Send( data, size );
 }
 
-void UdpSocket::SendTo( const IpEndpointName& remoteEndpoint, const char *data, int size )
+void UdpSocket::SendTo( const IpEndpointName& remoteEndpoint, const char *data, std::size_t size )
 {
 	impl_->SendTo( remoteEndpoint, data, size );
 }
 
-void UdpSocket::Bind( const IpEndpointName& localEndpoint )
+void UdpSocket::Bind( const IpEndpointName& localEndpoint, bool allowReuse )
 {
-	impl_->Bind( localEndpoint );
+	impl_->Bind( localEndpoint, allowReuse );
 }
 
 bool UdpSocket::IsBound() const
@@ -264,7 +310,7 @@ bool UdpSocket::IsBound() const
 	return impl_->IsBound();
 }
 
-int UdpSocket::ReceiveFrom( IpEndpointName& remoteEndpoint, char *data, int size )
+std::size_t UdpSocket::ReceiveFrom( IpEndpointName& remoteEndpoint, char *data, std::size_t size )
 {
 	return impl_->ReceiveFrom( remoteEndpoint, data, size );
 }
@@ -401,8 +447,12 @@ public:
 			timerQueue_.push_back( std::make_pair( currentTimeMs + i->initialDelayMs, *i ) );
 		std::sort( timerQueue_.begin(), timerQueue_.end(), CompareScheduledTimerCalls );
 
-		const int MAX_BUFFER_SIZE = 4098;
-		char *data = new char[ MAX_BUFFER_SIZE ];
+            unsigned long maxSize = UdpSocket::GetUdpBufferSize();
+            if( maxSize == 0 ) {
+                maxSize = 4098;
+            }
+            const unsigned long MAX_BUFFER_SIZE = maxSize;
+            data = new char[ MAX_BUFFER_SIZE ];
 		IpEndpointName remoteEndpoint;
 
 		while( !break_ ){
@@ -423,9 +473,9 @@ public:
 
 			if( waitResult != WAIT_TIMEOUT ){
 				for( int i = waitResult - WAIT_OBJECT_0; i < (int)socketListeners_.size(); ++i ){
-					int size = socketListeners_[i].second->ReceiveFrom( remoteEndpoint, data, MAX_BUFFER_SIZE );
+					std::size_t size = socketListeners_[i].second->ReceiveFrom( remoteEndpoint, data, MAX_BUFFER_SIZE );
 					if( size > 0 ){
-						socketListeners_[i].first->ProcessPacket( data, size, remoteEndpoint );
+						socketListeners_[i].first->ProcessPacket( data, (int)size, remoteEndpoint );
 						if( break_ )
 							break;
 					}
@@ -540,5 +590,4 @@ void SocketReceiveMultiplexer::AsynchronousBreak()
 {
 	impl_->AsynchronousBreak();
 }
-#endif
 

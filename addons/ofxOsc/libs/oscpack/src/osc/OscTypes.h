@@ -1,8 +1,8 @@
 /*
-	oscpack -- Open Sound Control packet manipulation library
-	http://www.audiomulch.com/~rossb/oscpack
+	oscpack -- Open Sound Control (OSC) packet manipulation library
+    http://www.rossbencina.com/code/oscpack
 
-	Copyright (c) 2004-2005 Ross Bencina <rossb@audiomulch.com>
+    Copyright (c) 2004-2013 Ross Bencina <rossb@audiomulch.com>
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files
@@ -15,10 +15,6 @@
 	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	Any person wishing to distribute modifications to the Software is
-	requested to send the modifications to the original developer so that
-	they can be incorporated into the canonical version.
-
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 	MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -27,8 +23,19 @@
 	CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#ifndef INCLUDED_OSCTYPES_H
-#define INCLUDED_OSCTYPES_H
+
+/*
+	The text above constitutes the entire oscpack license; however, 
+	the oscpack developer(s) also make the following non-binding requests:
+
+	Any person wishing to distribute modifications to the Software is
+	requested to send the modifications to the original developer so that
+	they can be incorporated into the canonical version. It is also 
+	requested that these non-binding requests be included whenever the
+	above license is reproduced.
+*/
+#ifndef INCLUDED_OSCPACK_OSCTYPES_H
+#define INCLUDED_OSCPACK_OSCTYPES_H
 
 
 namespace osc{
@@ -67,6 +74,41 @@ typedef unsigned long uint32;
 #endif
 
 
+enum ValueTypeSizes{
+    OSC_SIZEOF_INT32 = 4,
+    OSC_SIZEOF_UINT32 = 4,
+    OSC_SIZEOF_INT64 = 8,
+    OSC_SIZEOF_UINT64 = 8,
+};
+
+
+// osc_bundle_element_size_t is used for the size of bundle elements and blobs
+// the OSC spec specifies these as int32 (signed) but we ensure that they 
+// are always positive since negative field sizes make no sense.
+
+typedef int32 osc_bundle_element_size_t;
+
+enum {
+    OSC_INT32_MAX = 0x7FFFFFFF,
+
+    // Element sizes are specified to be int32, and are always rounded up to nearest 
+    // multiple of 4. Therefore their values can't be greater than 0x7FFFFFFC.
+    OSC_BUNDLE_ELEMENT_SIZE_MAX = 0x7FFFFFFC
+};
+
+
+inline bool IsValidElementSizeValue( osc_bundle_element_size_t x )
+{
+    // sizes may not be negative or exceed OSC_BUNDLE_ELEMENT_SIZE_MAX
+    return x >= 0 && x <= OSC_BUNDLE_ELEMENT_SIZE_MAX; 
+}
+
+
+inline bool IsMultipleOf4( osc_bundle_element_size_t x )
+{
+    return (x & ((osc_bundle_element_size_t)0x03)) == 0;
+}
+
 
 enum TypeTagValues {
     TRUE_TYPE_TAG = 'T',
@@ -83,7 +125,9 @@ enum TypeTagValues {
     DOUBLE_TYPE_TAG = 'd',
     STRING_TYPE_TAG = 's',
     SYMBOL_TYPE_TAG = 'S',
-    BLOB_TYPE_TAG = 'b'
+    BLOB_TYPE_TAG = 'b',
+    ARRAY_BEGIN_TYPE_TAG = '[',
+    ARRAY_END_TYPE_TAG = ']'
 };
 
 
@@ -125,9 +169,11 @@ extern MessageTerminator EndMessage;
 struct NilType{
 };
 
+extern NilType OscNil;
+
 #ifndef _OBJC_OBJC_H_
-	extern NilType Nil;
-#endif 
+extern NilType Nil; // Objective-C defines Nil. so our Nil is deprecated. use OscNil instead
+#endif
 
 struct InfinitumType{
 };
@@ -172,13 +218,23 @@ struct Symbol{
 
 struct Blob{
     Blob() {}
-    explicit Blob( const void* data_, unsigned long size_ )
+    explicit Blob( const void* data_, osc_bundle_element_size_t size_ )
             : data( data_ ), size( size_ ) {}
     const void* data;
-    unsigned long size;
+    osc_bundle_element_size_t size;
 };
+
+struct ArrayInitiator{
+};
+
+extern ArrayInitiator BeginArray;
+
+struct ArrayTerminator{
+};
+
+extern ArrayTerminator EndArray;
 
 } // namespace osc
 
 
-#endif /* INCLUDED_OSCTYPES_H */
+#endif /* INCLUDED_OSCPACK_OSCTYPES_H */

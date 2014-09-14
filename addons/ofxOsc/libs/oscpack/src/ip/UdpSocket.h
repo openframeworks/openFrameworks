@@ -1,8 +1,8 @@
 /*
-	oscpack -- Open Sound Control packet manipulation library
-	http://www.audiomulch.com/~rossb/oscpack
+	oscpack -- Open Sound Control (OSC) packet manipulation library
+    http://www.rossbencina.com/code/oscpack
 
-	Copyright (c) 2004-2005 Ross Bencina <rossb@audiomulch.com>
+    Copyright (c) 2004-2013 Ross Bencina <rossb@audiomulch.com>
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files
@@ -15,10 +15,6 @@
 	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	Any person wishing to distribute modifications to the Software is
-	requested to send the modifications to the original developer so that
-	they can be incorporated into the canonical version.
-
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 	MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -27,16 +23,24 @@
 	CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#ifndef INCLUDED_UDPSOCKET_H
-#define INCLUDED_UDPSOCKET_H
 
-#ifndef INCLUDED_NETWORKINGUTILITIES_H
+/*
+	The text above constitutes the entire oscpack license; however, 
+	the oscpack developer(s) also make the following non-binding requests:
+
+	Any person wishing to distribute modifications to the Software is
+	requested to send the modifications to the original developer so that
+	they can be incorporated into the canonical version. It is also 
+	requested that these non-binding requests be included whenever the
+	above license is reproduced.
+*/
+#ifndef INCLUDED_OSCPACK_UDPSOCKET_H
+#define INCLUDED_OSCPACK_UDPSOCKET_H
+
+#include <cstring> // size_t
+
 #include "NetworkingUtils.h"
-#endif /* INCLUDED_NETWORKINGUTILITIES_H */
-
-#ifndef INCLUDED_IPENDPOINTNAME_H
 #include "IpEndpointName.h"
-#endif /* INCLUDED_IPENDPOINTNAME_H */
 
 
 class PacketListener;
@@ -80,34 +84,52 @@ class UdpSocket{
     
 public:
 
-	// ctor throws std::runtime_error if there's a problem
+	// Ctor throws std::runtime_error if there's a problem
 	// initializing the socket.
 	UdpSocket();
 	virtual ~UdpSocket();
 
-	// the socket is created in an unbound, unconnected state
+	// The socket is created in an unbound, unconnected state
 	// such a socket can only be used to send to an arbitrary
 	// address using SendTo(). To use Send() you need to first
 	// connect to a remote endpoint using Connect(). To use
 	// ReceiveFrom you need to first bind to a local endpoint
 	// using Bind().
 
-	// retrieve the local endpoint name when sending to 'to'
-    IpEndpointName LocalEndpointFor( const IpEndpointName& remoteEndpoint ) const;
+	// Retrieve the local endpoint name when sending to 'to'
+	IpEndpointName LocalEndpointFor( const IpEndpointName& remoteEndpoint ) const;
 
 	// Connect to a remote endpoint which is used as the target
 	// for calls to Send()
-	void Connect( const IpEndpointName& remoteEndpoint );	
-	void Send( const char *data, int size );
-    void SendTo( const IpEndpointName& remoteEndpoint, const char *data, int size );
+	void Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false );
+	void Send( const char *data, std::size_t size );
+    void SendTo( const IpEndpointName& remoteEndpoint, const char *data, std::size_t size );
 
 
 	// Bind a local endpoint to receive incoming data. Endpoint
 	// can be 'any' for the system to choose an endpoint
-	void Bind( const IpEndpointName& localEndpoint );
+	void Bind( const IpEndpointName& localEndpoint, bool allowReuse = false );
 	bool IsBound() const;
 
-	int ReceiveFrom( IpEndpointName& remoteEndpoint, char *data, int size );    
+    std::size_t ReceiveFrom( IpEndpointName& remoteEndpoint, char *data, std::size_t size );
+    
+    static void SetUdpBufferSize( unsigned long bufferSize );
+    static unsigned long GetUdpBufferSize();
+    
+protected:
+	// Enable broadcast addresses (e.g. x.x.x.255)
+	// Sets SO_BROADCAST socket option.
+	void SetEnableBroadcast( bool enableBroadcast );
+
+	// Enable multiple listeners for a single port on same 
+	// network interface*
+	// Sets SO_REUSEADDR (also SO_REUSEPORT on OS X).
+	// [*] The exact behavior of SO_REUSEADDR and 
+	// SO_REUSEPORT is undefined for some common cases 
+	// and may have drastically different behavior on different
+	// operating systems.
+	void SetAllowReuse( bool allowReuse );
+    static unsigned long maxBufferSize;
 };
 
 
@@ -118,15 +140,15 @@ public:
 
 class UdpTransmitSocket : public UdpSocket{
 public:
-	UdpTransmitSocket( const IpEndpointName& remoteEndpoint )
-		{ Connect( remoteEndpoint ); }
+	UdpTransmitSocket( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false )
+		{ Connect( remoteEndpoint, enableBroadcast ); }
 };
 
 
 class UdpReceiveSocket : public UdpSocket{
 public:
-	UdpReceiveSocket( const IpEndpointName& localEndpoint )
-		{ Bind( localEndpoint ); }
+	UdpReceiveSocket( const IpEndpointName& localEndpoint, bool allowReuse = false )
+		{ Bind( localEndpoint, allowReuse ); }
 };
 
 
@@ -137,10 +159,10 @@ class UdpListeningReceiveSocket : public UdpSocket{
     SocketReceiveMultiplexer mux_;
     PacketListener *listener_;
 public:
-	UdpListeningReceiveSocket( const IpEndpointName& localEndpoint, PacketListener *listener )
+	UdpListeningReceiveSocket( const IpEndpointName& localEndpoint, PacketListener *listener, bool allowReuse = false )
         : listener_( listener )
     {
-        Bind( localEndpoint );
+        Bind( localEndpoint, allowReuse );
         mux_.AttachSocketListener( this, listener_ );
     }
 
@@ -155,4 +177,4 @@ public:
 };
 
 
-#endif /* INCLUDED_UDPSOCKET_H */
+#endif /* INCLUDED_OSCPACK_UDPSOCKET_H */
