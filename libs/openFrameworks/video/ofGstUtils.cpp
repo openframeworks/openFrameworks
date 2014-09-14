@@ -219,6 +219,14 @@ bool ofGstUtils::startPipeline(){
 	speed 				= 1.0f;
 
 
+	GstBus * bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
+
+	if(bus){
+		busWatchID = gst_bus_add_watch (bus, (GstBusFunc) busFunction, this);
+	}
+
+	gst_object_unref(bus);
+
 	if(gst_element_set_state (GST_ELEMENT(gstPipeline), GST_STATE_READY) ==	GST_STATE_CHANGE_FAILURE) {
 		ofLogError("ofGstUtils") << "startPipeline(): unable to set pipeline to ready";
 		return false;
@@ -244,14 +252,6 @@ bool ofGstUtils::startPipeline(){
 		bPlaying = true;
 		bLoaded = true;
 	}
-
-	GstBus * bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
-
-	if(bus){
-		busWatchID = gst_bus_add_watch (bus, (GstBusFunc) busFunction, this);
-	}
-
-	gst_object_unref(bus);
 
 
 
@@ -584,8 +584,8 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 			gchar *debug;
 			gst_message_parse_error(msg, &err, &debug);
 
-			/*ofLogVerbose("ofGstUtils") << "gstHandleMessage(): embedded video playback halted for plugin, module "
-				<< gst_element_get_name(GST_MESSAGE_SRC (msg)) << "  reported: " << err->message;*/
+			ofLogError("ofGstUtils") << "gstHandleMessage(): embedded video playback halted for plugin, module "
+				<< gst_element_get_name(GST_MESSAGE_SRC (msg)) << "  reported: " << err->message;
 
 			g_error_free(err);
 			g_free(debug);
@@ -1016,9 +1016,11 @@ ofPixelFormat ofGstVideoUtils::getPixelFormat() const{
 
 bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 	Poco::ScopedLock<ofMutex> lock(mutex);
+#if GST_VERSION_MAJOR>0
 	if(pixelFormat!=internalPixelFormat){
 		ofLogNotice("ofGstVideoPlayer") << "allocating with " << w << "x" << h << " " << getGstFormatName(pixelFormat);
 	}
+#endif
 	if(bBackPixelsChanged){
 		pixels = backPixels;
 	}else{
@@ -1036,7 +1038,7 @@ bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 }
 
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstVideoUtils::process_frame(GstSample * sample){
+GstFlowReturn ofGstVideoUtils::process_buffer(GstBuffer * _buffer){
 	guint size = GST_BUFFER_SIZE (_buffer);
 	int stride = 0;
 	if(pixels.isAllocated() && pixels.getTotalBytes()!=(int)size){
