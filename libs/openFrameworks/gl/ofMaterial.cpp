@@ -49,12 +49,12 @@ void ofMaterial::setShininess(float nShininess) {
 	data.shininess = nShininess;
 }
 
-float ofMaterial::getShininess()const{
-	return data.shininess;
-}
-
 void ofMaterial::setData(const ofMaterial::Data &data){
     this->data = data;
+}
+
+float ofMaterial::getShininess()const{
+	return data.shininess;
 }
 
 ofFloatColor ofMaterial::getDiffuseColor()const {
