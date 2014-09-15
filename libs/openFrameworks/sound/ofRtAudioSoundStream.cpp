@@ -68,7 +68,6 @@ vector<ofSoundDevice> ofRtAudioSoundStream::listDevices(bool print){
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::setDeviceID(int _deviceID){
-	//deviceID = _deviceID;
     inDeviceID = outDeviceID = _deviceID;
 }
 
