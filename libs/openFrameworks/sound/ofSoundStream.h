@@ -70,9 +70,12 @@ struct ofSoundDevice {
 	std::vector<unsigned int> sampleRates;
 	
 	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false), sampleRates() { }
+	
+	/// Generates a description useful for logging to the console
+	std::string getDescription();
 };
 
-/// \brief Prints a list of available devices to the console
+/// \brief Retrieves a list of available audio devices
 /// \return All devices found on the system
 std::vector<ofSoundDevice> ofSoundStreamListDevices(bool print = true);
 
@@ -106,7 +109,7 @@ public:
     void setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr);
     shared_ptr<ofBaseSoundStream> getSoundStream();
 
-    /// \brief prints a list of available audio devices to the console.
+    /// \brief Retrieves a list of available audio devices
 	/// \return All devices found on the system
 	std::vector<ofSoundDevice> listDevices(bool print = true);
 
