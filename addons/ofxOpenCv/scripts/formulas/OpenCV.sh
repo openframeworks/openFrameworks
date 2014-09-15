@@ -233,7 +233,7 @@ function make_universal_binary() {
 # executed inside the lib src dir
 function build() {
 
-  LIB_FOLDER="$BUILD_ROOT_DIR/$TYPE/OpenCv"
+  LIB_FOLDER="build/$TYPE"
   LIB_FOLDER_OUT="$LIB_FOLDER/FAT"
 
   if [ "$TYPE" == "osx" ] ; then
@@ -273,7 +273,7 @@ function build() {
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 
-  LIB_FOLDER="$BUILD_ROOT_DIR/$TYPE/OpenCv"
+  LIB_FOLDER="build/$TYPE"
   LIB_FOLDER_OUT="$LIB_FOLDER/FAT"
 
   # prepare headers directory if needed
