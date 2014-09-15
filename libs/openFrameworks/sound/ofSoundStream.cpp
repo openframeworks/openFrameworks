@@ -168,3 +168,12 @@ int ofSoundStream::getBufferSize(){
 	}
 	return 0;
 }
+
+std::string ofSoundDevice::getDescription() {
+	std::stringstream desc;
+	desc << "[" << deviceID << "] " << name;
+	desc << " [in:" << inputChannels << " out:" << outputChannels << "]";
+	if(isDefaultInput) desc << " (default in)";
+	if(isDefaultOutput) desc << " (default out)";
+	return desc.str();
+}
