@@ -117,53 +117,7 @@ void ofNotifySetup(){
 
 //------------------------------------------
 void ofNotifyUpdate(){
-	// calculate sleep time to adjust to target fps
-	unsigned long long timeNow = ofGetElapsedTimeMicros();
-#ifndef TARGET_EMSCRIPTEN
-	if (nFrameCount != 0 && bFrameRateSet == true){
-		unsigned long long diffMicros = timeNow - prevMicrosForFPS;
-		prevMicrosForFPS = timeNow;
-		if(diffMicros < microsForFrame){
-			unsigned long long waitMicros = microsForFrame - diffMicros;
-            // Theoretical value to compensate for the extra time that it might sleep
-			prevMicrosForFPS += waitMicros;
-			#ifdef TARGET_WIN32
-				Sleep(waitMicros*MICROS_TO_MILLIS);
-			#else
-				usleep(waitMicros);
-			#endif
-		}
-	}else{
-		prevMicrosForFPS = timeNow;
-	}
-#endif
-
-	// calculate fps
-	timeNow = ofGetElapsedTimeMicros();
-
-	if(nFrameCount==0){
-		timeThen = timeNow;
-		if(bFrameRateSet)	fps = targetRate;
-	}else{
-		unsigned long long oneSecDiff = timeNow-oneSec;
-
-		if( oneSecDiff  >= 1000000 ){
-			fps = nFramesForFPS/(oneSecDiff*MICROS_TO_SEC);
-			oneSec  = timeNow;
-			nFramesForFPS = 0;
-		}else{
-			double deltaTime = ((double)oneSecDiff)*MICROS_TO_SEC;
-			if( deltaTime > 0.0 ){
-				fps = fps*0.99 + (nFramesForFPS/deltaTime)*0.01;
-			}
-		}
-		nFramesForFPS++;
-
-
-		lastFrameTime 	= timeNow-timeThen;
-		timeThen    	= timeNow;
-	}
-
+	
 	// update renderer, application and notify update event
 	ofGetCurrentRenderer()->update();
 
@@ -177,6 +131,53 @@ void ofNotifyDraw(){
 	}
 
 	nFrameCount++;
+	// calculate sleep time to adjust to target fps
+	unsigned long long timeNow = ofGetElapsedTimeMicros();
+#ifndef TARGET_EMSCRIPTEN
+	if (nFrameCount != 0 && bFrameRateSet == true){
+		unsigned long long diffMicros = timeNow - prevMicrosForFPS;
+		prevMicrosForFPS = timeNow;
+		if(diffMicros < microsForFrame){
+			unsigned long long waitMicros = microsForFrame - diffMicros;
+			// Theoretical value to compensate for the extra time that it might sleep
+			prevMicrosForFPS += waitMicros;
+#ifdef TARGET_WIN32
+			Sleep(waitMicros*MICROS_TO_MILLIS);
+#else
+			usleep(waitMicros);
+#endif
+		}
+	}else{
+		prevMicrosForFPS = timeNow;
+	}
+#endif
+	
+	// calculate fps
+	timeNow = ofGetElapsedTimeMicros();
+	
+	if(nFrameCount==0){
+		timeThen = timeNow;
+		if(bFrameRateSet)	fps = targetRate;
+	}else{
+		unsigned long long oneSecDiff = timeNow-oneSec;
+		
+		if( oneSecDiff  >= 1000000 ){
+			fps = nFramesForFPS/(oneSecDiff*MICROS_TO_SEC);
+			oneSec  = timeNow;
+			nFramesForFPS = 0;
+		}else{
+			double deltaTime = ((double)oneSecDiff)*MICROS_TO_SEC;
+			if( deltaTime > 0.0 ){
+				fps = fps*0.99 + (nFramesForFPS/deltaTime)*0.01;
+			}
+		}
+		nFramesForFPS++;
+		
+		
+		lastFrameTime 	= timeNow-timeThen;
+		timeThen    	= timeNow;
+	}
+	
 }
 
 //------------------------------------------

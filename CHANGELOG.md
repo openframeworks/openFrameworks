@@ -10,6 +10,10 @@ OF 0.9.0
 
 CORE
 ----
+### app
+	/ setupOpenGL and ofApp___Window use ofWindowMode instead of int
+	/ fix exit callbacks to allow for calling of the destructors, and better signal handling
+
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball
 	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
@@ -33,9 +37,11 @@ CORE
 	- ofGetUsingCustomMinMagFilters() : deprecated
 	- ofRestoreMinMagFilters() : deprecated	  
 	+ ofShader: report offending lines on compiling errors
+	+ ofGLUtils: better support for half float types
 
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
+	+ ofDrawBitmapString: can draw any type not only strings
 
 ### video
 	/ gstreamer: fix memory leaks when closing a video element
@@ -46,6 +52,29 @@ PLATFORM SPECIFIC
 ### Emscripten
 	+ New platform!
 
+### ofxiOS
+	+ xcode 6.0 updates
+	+ deployment target moved up to iOS 5.1.1
+
+
+OF 0.8.4
+========
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+PLATFORM SPECIFIC
+-----------------
+
+###OSX
+	/ Fixes for xcode 6
+
+###RPI
+	/ Fixes install_dependencies and makefiles
 
 
 

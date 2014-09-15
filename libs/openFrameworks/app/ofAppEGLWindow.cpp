@@ -253,7 +253,6 @@ ofAppEGLWindow::ofAppEGLWindow(Settings _settings) {
 
 //------------------------------------------------------------
 ofAppEGLWindow::~ofAppEGLWindow() {
-  ofRemoveListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
 }
 
 //------------------------------------------------------------
@@ -364,22 +363,6 @@ void ofAppEGLWindow::init(Settings _settings) {
     ////////////////
 
     initNative();
-
-    ofAddListener(ofEvents().exit, this, &ofAppEGLWindow::exit);
-}
-
-//------------------------------------------------------------
-void ofAppEGLWindow::exit(ofEventArgs &e) {
-  terminate = true; // TODO, it is unlikely that this will happen
-  if(!isUsingX11) {
-    destroyNativeEvents();
-  }   
-
-  // we got a terminate ... so clean up.
-  destroySurface();
-  destroyWindow();
-
-  exitNative();
 }
 
 //------------------------------------------------------------
@@ -440,7 +423,7 @@ void ofAppEGLWindow::setGLESVersion(int _glesVersion){
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setupOpenGL(int w, int h, int screenMode) {
+void ofAppEGLWindow::setupOpenGL(int w, int h, ofWindowMode screenMode) {
 
     // we set this here, and if we need to make a fullscreen 
     // app, we do it during the first loop.
@@ -795,7 +778,20 @@ void ofAppEGLWindow::runAppViaInfiniteLoop(ofBaseApp *appPtr) {
       display();
     }
 
+    if(!isUsingX11) {
+    	destroyNativeEvents();
+    }
+
+    // we got a terminate ... so clean up.
+    destroySurface();
+    destroyWindow();
+
+    exitNative();
     ofLogNotice("ofAppEGLWindow") << "runAppViaInfiniteLoop(): exiting infinite loop";
+}
+
+void ofAppEGLWindow::windowShouldClose(){
+	terminate = true;
 }
 
 //------------------------------------------------------------
@@ -1143,7 +1139,7 @@ void ofAppEGLWindow::setWindowShape(int w, int h){
 }
 
 //------------------------------------------------------------
-int ofAppEGLWindow::getWindowMode(){
+ofWindowMode ofAppEGLWindow::getWindowMode(){
   return windowMode;
 }
 
@@ -1190,7 +1186,10 @@ void ofAppEGLWindow::idle() {
 
 //------------------------------------------------------------
 void ofAppEGLWindow::display() {
-
+	eglMakeCurrent(eglDisplay,
+        eglSurface, // draw surface
+        eglSurface, // read surface
+        eglContext);
   // take care of any requests for a new screen mode
   if (windowMode != OF_GAME_MODE && bNewScreenMode){
     if( windowMode == OF_FULLSCREEN){
@@ -1261,7 +1260,7 @@ void ofAppEGLWindow::display() {
   if(renderer) {
     renderer->finishRender();
   }
-  
+
   EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
   if(!success) {
        GLint error = eglGetError();

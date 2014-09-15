@@ -42,8 +42,6 @@
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>E41D3ED713B38FB500A75A5D</string>
-				<string>E41D3EE613B3906D00A75A5D</string>
 				<string>678E130817951530005B6D19</string>
 				<string>678E130A17951536005B6D19</string>
 				<string>678E130C1795153C005B6D19</string>
@@ -84,7 +82,6 @@
 				<string>BBE5EAB80F49AD8400F28951</string>
 				<string>53F323EB10A20EDB00E0DAE4</string>
 				<string>5326AEA810A23A0500278DE6</string>
-				<string>E4A823A412561BE3002F86A2</string>
 				<string>E41D400B13B39D2100A75A5D</string>
 				<string>E41D400C13B39D2100A75A5D</string>
 				<string>E41D400D13B39D2100A75A5D</string>
@@ -148,10 +145,12 @@
 				<string>ofxiOS_Prefix.pch</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>5.1.1</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
-				<string>armv6 armv7</string>
+				<string>armv7</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -168,10 +167,12 @@
 				<string>ofxiOS_Prefix.pch</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>5.1.1</string>
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
-				<string>armv6 armv7</string>
+				<string>armv7</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -244,7 +245,7 @@
 			<key>attributes</key>
 			<dict>
 				<key>LastUpgradeCheck</key>
-				<string>0460</string>
+				<string>0600</string>
 			</dict>
 			<key>buildConfigurationList</key>
 			<string>C01FCF4E08A954540054247B</string>
@@ -501,6 +502,7 @@
 			<string>/bin/sh</string>
 			<key>shellScript</key>
 			<string>cp -rf bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"
+
 </string>
 		</dict>
 		<key>BB16E9930F2B1E5900518274</key>
@@ -652,8 +654,6 @@
 			<dict>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
 				<string>YES</string>
-				<key>ARCHS</key>
-				<string>$(ARCHS_STANDARD_32_BIT)</string>
 				<key>CLANG_CXX_LIBRARY</key>
 				<string>libstdc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
@@ -681,7 +681,7 @@
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>YES</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>3.1</string>
+				<string>5.1.1</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>NO</string>
 				<key>PROVISIONING_PROFILE[sdk=iphoneos*]</key>
@@ -690,6 +690,8 @@
 				<string>iphoneos</string>
 				<key>TARGETED_DEVICE_FAMILY</key>
 				<string>1</string>
+				<key>VALID_ARCHS</key>
+				<string>armv7</string>
 				<key>WARNING_LDFLAGS</key>
 				<string>-no_arch_warnings</string>
 			</dict>
@@ -706,8 +708,6 @@
 			<dict>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
 				<string>YES</string>
-				<key>ARCHS</key>
-				<string>$(ARCHS_STANDARD_32_BIT)</string>
 				<key>CLANG_CXX_LIBRARY</key>
 				<string>libstdc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
@@ -719,7 +719,7 @@
 				<key>GCC_C_LANGUAGE_STANDARD</key>
 				<string>c99</string>
 				<key>GCC_DYNAMIC_NO_PIC</key>
-				<string>YES</string>
+				<string>NO</string>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
 				<string>NO</string>
 				<key>GCC_OPTIMIZATION_LEVEL</key>
@@ -733,13 +733,15 @@
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>YES</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>3.1</string>
+				<string>5.1.1</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>NO</string>
 				<key>SDKROOT</key>
 				<string>iphoneos</string>
 				<key>TARGETED_DEVICE_FAMILY</key>
 				<string>1</string>
+				<key>VALID_ARCHS</key>
+				<string>armv7</string>
 				<key>WARNING_LDFLAGS</key>
 				<string>-no_arch_warnings</string>
 			</dict>
@@ -761,13 +763,6 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>E41D3ED713B38FB500A75A5D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E41D3ED613B38FB500A75A5D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
 		<key>E41D3EE513B3906D00A75A5D</key>
 		<dict>
 			<key>fileEncoding</key>
@@ -782,13 +777,6 @@
 			<string>../../../libs/openFrameworksCompiled/project/ios/CoreOF.xcconfig</string>
 			<key>sourceTree</key>
 			<string>SOURCE_ROOT</string>
-		</dict>
-		<key>E41D3EE613B3906D00A75A5D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E41D3EE513B3906D00A75A5D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>E41D400613B39D2100A75A5D</key>
 		<dict>
@@ -963,13 +951,6 @@
 			<string>System/Library/Frameworks/CoreGraphics.framework</string>
 			<key>sourceTree</key>
 			<string>SDKROOT</string>
-		</dict>
-		<key>E4A823A412561BE3002F86A2</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E4A823A312561BE3002F86A2</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
 		</dict>
 		<key>E4D8936A11527B74007E1F53</key>
 		<dict>

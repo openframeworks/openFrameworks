@@ -86,7 +86,7 @@ void ofResetElapsedTimeCounter(){
  * 32-bit, where the GLUT API return value is also overflowed.
  */
 unsigned long long ofGetSystemTime( ) {
-	#if defined(TARGET_LINUX) || defined(TARGET_EMSCRIPTEN)
+	#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
 		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		return
@@ -108,7 +108,7 @@ unsigned long long ofGetSystemTime( ) {
 }
 
 unsigned long long ofGetSystemTimeMicros( ) {
-	#if defined(TARGET_LINUX) || defined(TARGET_EMSCRIPTEN)
+	#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
 		struct timespec now;
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		return

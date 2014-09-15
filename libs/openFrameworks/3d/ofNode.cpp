@@ -348,14 +348,14 @@ void ofNode::resetTransform() {
 }
 
 //----------------------------------------
-void ofNode::draw() {
+void ofNode::draw()  const{
 	transformGL();
-	customDraw();
+	const_cast<ofNode*>(this)->customDraw();
 	restoreTransformGL();
 }
 
 //----------------------------------------
-void ofNode::customDraw() {
+void ofNode::customDraw(){
 	ofDrawBox(10);
 	ofDrawAxis(20);
 }

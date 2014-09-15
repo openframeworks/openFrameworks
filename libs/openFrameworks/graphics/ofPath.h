@@ -107,7 +107,9 @@ public:
 	void draw();
 
 	vector<ofPolyline> & getOutline();
+	const vector<ofPolyline> & getOutline() const;
 	ofMesh & getTessellation();
+	const ofMesh & getTessellation() const;
 
 	void simplify(float tolerance=0.3);
 

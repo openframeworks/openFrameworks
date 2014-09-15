@@ -12,6 +12,7 @@
 #define GST_DISABLE_DEPRECATED
 #include <gst/gst.h>
 #include <gst/gstpad.h>
+#include <gst/video/video.h>
 #include "Poco/Condition.h"
 
 class ofGstAppSink;
@@ -35,30 +36,30 @@ public:
 	void 	play();
 	void 	stop();
 	void 	setPaused(bool bPause);
-	bool 	isPaused(){return bPaused;}
-	bool 	isLoaded(){return bLoaded;}
-	bool 	isPlaying(){return bPlaying;}
+	bool 	isPaused() const {return bPaused;}
+	bool 	isLoaded() const {return bLoaded;}
+	bool 	isPlaying() const {return bPlaying;}
 
-	float	getPosition();
-	float 	getSpeed();
-	float 	getDuration();
-	int64_t  getDurationNanos();
-	bool  	getIsMovieDone();
+	float	getPosition() const;
+	float 	getSpeed() const;
+	float 	getDuration() const;
+	int64_t  getDurationNanos() const;
+	bool  	getIsMovieDone() const;
 
 	void 	setPosition(float pct);
 	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
-	ofLoopType	getLoopState(){return loopMode;}
+	ofLoopType	getLoopState() const {return loopMode;}
 	void 	setSpeed(float speed);
 
 	void 	setFrameByFrame(bool bFrameByFrame);
-	bool	isFrameByFrame();
+	bool	isFrameByFrame() const;
 
-	GstElement 	* getPipeline();
-	GstElement 	* getSink();
-	GstElement 	* getGstElementByName(const string & name);
-	uint64_t getMinLatencyNanos();
-	uint64_t getMaxLatencyNanos();
+	GstElement 	* getPipeline() const;
+	GstElement 	* getSink() const;
+	GstElement 	* getGstElementByName(const string & name) const;
+	uint64_t getMinLatencyNanos() const;
+	uint64_t getMaxLatencyNanos() const;
 
 	virtual void close();
 
@@ -96,7 +97,7 @@ private:
 	GstElement 	*		gstPipeline;
 
 	float				speed;
-	gint64				durationNanos;
+	mutable int64_t		durationNanos;
 	bool				isAppSink;
 	Poco::Condition		eosCondition;
 	ofMutex				eosMutex;
@@ -142,19 +143,30 @@ public:
 	ofGstVideoUtils();
 	virtual ~ofGstVideoUtils();
 
-	bool 			setPipeline(string pipeline, int bpp=24, bool isStream=false, int w=-1, int h=-1);
+	bool 			setPipeline(string pipeline, ofPixelFormat pixelFormat=OF_PIXELS_RGB, bool isStream=false, int w=-1, int h=-1);
 
-	bool 			allocate(int w, int h, int bpp);
+	bool 			setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat 	getPixelFormat() const;
+	bool 			allocate(int w, int h, ofPixelFormat pixelFormat);
 
-	bool 			isFrameNew();
+	bool 			isFrameNew() const;
 	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
+	ofPixels&		getPixelsRef();
+	const ofPixels& getPixelsRef() const;
 	void 			update();
 
-	float 			getHeight();
-	float 			getWidth();
+	float 			getHeight() const;
+	float 			getWidth() const;
 
 	void 			close();
+
+#if GST_VERSION_MAJOR>0
+	static string			getGstFormatName(ofPixelFormat format);
+	static GstVideoFormat	getGstFormat(ofPixelFormat format);
+	static ofPixelFormat	getOFFormat(GstVideoFormat format);
+#endif
+
+	bool			isInitialized() const;
 
 	// this events happen in a different thread
 	// do not use them for opengl stuff
@@ -164,9 +176,11 @@ public:
 
 protected:
 #if GST_VERSION_MAJOR==0
+	GstFlowReturn process_buffer(GstBuffer * buffer);
 	GstFlowReturn preroll_cb(GstBuffer * buffer);
 	GstFlowReturn buffer_cb(GstBuffer * buffer);
 #else
+	GstFlowReturn process_sample(GstSample * sample);
 	GstFlowReturn preroll_cb(GstSample * buffer);
 	GstFlowReturn buffer_cb(GstSample * buffer);
 #endif
@@ -187,6 +201,7 @@ private:
 	GstSample * 	buffer, *prevBuffer;
 	GstMapInfo mapinfo;
 #endif
+	ofPixelFormat	internalPixelFormat;
 };
 
 

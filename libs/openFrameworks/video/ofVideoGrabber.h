@@ -52,27 +52,35 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void					setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber);
 		shared_ptr<ofBaseVideoGrabber> getGrabber();
 
-		vector<ofVideoDevice> listDevices();
-		bool				isFrameNew();
+		vector<ofVideoDevice> listDevices() const;
+		bool				isFrameNew() const;
 		void				update();
 		void				close();	
 		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
 		bool				initGrabber(int w, int h, bool bTexture);
 		
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat 		getPixelFormat();
+		ofPixelFormat 		getPixelFormat() const;
 		
 		void				videoSettings();
 		unsigned char 	*	getPixels();
-		ofPixelsRef			getPixelsRef();
+        ofPixels&			getPixelsRef();
+        const ofPixels&     getPixelsRef() const;
 		ofTexture &			getTextureReference();
+		const ofTexture &	getTextureReference() const;
+		vector<ofTexture> & getTexturePlanes();
+		const vector<ofTexture> & getTexturePlanes() const;
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
 		void				setUseTexture(bool bUse);
-		void				draw(float x, float y, float w, float h);
-		void				draw(float x, float y);
+		bool 				isUsingTexture();
+		void				draw(float x, float y, float w, float h) const;
+		void				draw(float x, float y) const;
 		using ofBaseDraws::draw;
+
+		void 				bind() const;
+		void 				unbind() const;
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -80,26 +88,23 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
         void				setAnchorPoint(float x, float y);				//set the anchor point in pixels
         void				resetAnchor();								//resets the anchor to (0, 0)
 
-		float				getHeight();
-		float				getWidth();
+		float				getHeight() const;
+		float				getWidth() const;
 
-		bool				isInitialized();
+		bool				isInitialized() const;
 
 		//this is kept as legacy to support people accessing width and height directly. 
-		int					height;
-		int					width;
+		mutable int height;
+		mutable int width;
 
 	private:
 		
-		ofTexture tex;
+		vector<ofTexture> tex;
 		bool bUseTexture;
-		bool bInitialized;
 		shared_ptr<ofBaseVideoGrabber> grabber;
 		int RequestedDeviceID;
-		
-		bool grabberRunning; //this keeps track of whether the grabber opened sucessfully and is still open. //TODO: maybe expose this in a method? 
-		
-		ofPixelFormat internalPixelFormat;
+
+		mutable ofPixelFormat internalPixelFormat;
 		int desiredFramerate;
 };
 

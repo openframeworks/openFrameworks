@@ -18,50 +18,51 @@
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
+
+size_t ofBuffer::ioSize = 1024;
+
 //--------------------------------------------------
-ofBuffer::ofBuffer(){
-	nextLinePos = 0;
+ofBuffer::ofBuffer()
+:currentLine(begin(),end()){
 	buffer.resize(1);
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const char * buffer, unsigned int size){
-	set(buffer, size);
+ofBuffer::ofBuffer(const char * _buffer, unsigned int size)
+:buffer(_buffer,_buffer+size)
+,currentLine(begin(),end()){
+	buffer.resize(buffer.size()+1,0);
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const string & text){
-	set(text);
+ofBuffer::ofBuffer(const string & text)
+:buffer(text.begin(),text.end())
+,currentLine(begin(),end()){
+	buffer.resize(buffer.size()+1,0);
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(istream & stream){
+ofBuffer::ofBuffer(istream & stream)
+:currentLine(begin(),end()){
 	set(stream);
 }
 
 //--------------------------------------------------
 bool ofBuffer::set(istream & stream){
-	clear();
 	if(stream.bad()){
+		clear();
 		return false;
+	}else{
+		buffer.clear();
 	}
 
-	char aux_buffer[1024];
-	std::streamsize size = 0;
-	stream.read(aux_buffer, 1024);
-	std::streamsize n = stream.gcount();
-	while(n > 0){
-		// we resize to size+1 initialized to 0 to have a 0 at the end for strings
-		buffer.resize(size + n + 1, 0);
-		memcpy(&(buffer[0]) + size, aux_buffer, n);
-		size += n;
-		if(stream){
-			stream.read(aux_buffer, 1024);
-			n = stream.gcount();
-		}
-		else{n = 0;
-		}
+	vector<char> aux_buffer(ioSize);
+	while(stream.good()){
+		stream.read(&aux_buffer[0], ioSize);
+		buffer.insert(buffer.end(),aux_buffer.begin(),aux_buffer.begin()+stream.gcount());
 	}
+	buffer.push_back(0);
+	currentLine = getLines().begin();
 	return true;
 }
 
@@ -77,30 +78,33 @@ bool ofBuffer::writeTo(ostream & stream) const {
 //--------------------------------------------------
 void ofBuffer::set(const char * _buffer, unsigned int _size){
 	buffer.assign(_buffer,_buffer+_size);
-	buffer.resize(buffer.size()+1);
-	buffer.back() = 0;
+	buffer.resize(buffer.size()+1,0);
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::set(const string & text){
 	set(text.c_str(),text.size());
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::append(const string& _buffer){
 	append(_buffer.c_str(), _buffer.size());
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::append(const char * _buffer, unsigned int _size){
 	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
 	buffer.back() = 0;
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::clear(){
-	buffer.resize(1);
-	nextLinePos = 0;
+	buffer.resize(1,0);
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
@@ -154,50 +158,36 @@ long ofBuffer::size() const {
 }
 
 //--------------------------------------------------
+void ofBuffer::setIOBufferSize(size_t _ioSize){
+	ioSize = _ioSize;
+}
+
+//--------------------------------------------------
 string ofBuffer::getNextLine(){
-	if(buffer.empty() || (int)(buffer.size() - 1) == nextLinePos){
-		return "";
-	}
-	long currentLinePos = nextLinePos;
-	bool lineEndWasCR = false;
-	while(nextLinePos < (int)buffer.size() - 1 && buffer[nextLinePos] != '\n'){
-		if(buffer[nextLinePos] != '\r'){
-			nextLinePos++;
-		}
-		else{
-			lineEndWasCR = true;
-			break;
-		}
-	}
-	string line(getBinaryBuffer() + currentLinePos, nextLinePos - currentLinePos);
-	if(nextLinePos < (int)(buffer.size() - 1)){
-		nextLinePos++;
-	}
-	// if lineEndWasCR check for CRLF
-	if(lineEndWasCR && nextLinePos < (int)(buffer.size() - 1) && buffer[nextLinePos] == '\n'){
-		nextLinePos++;
-	}
-	return line;
+	++currentLine;
+	return currentLine.asString();
 }
 
 //--------------------------------------------------
 string ofBuffer::getFirstLine(){
-	resetLineReader();
-	return getNextLine();
+	currentLine = getLines().begin();
+	return currentLine.asString();
 }
 
 //--------------------------------------------------
 bool ofBuffer::isLastLine(){
-	return (int)(buffer.size() - 1) == nextLinePos;
+	return currentLine == getLines().end();
 }
 
 //--------------------------------------------------
 void ofBuffer::resetLineReader(){
-	nextLinePos = 0;
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
-vector<char>::iterator ofBuffer::begin(){ return buffer.begin(); }
+vector<char>::iterator ofBuffer::begin(){
+	return buffer.begin();
+}
 
 //--------------------------------------------------
 vector<char>::iterator ofBuffer::end(){
@@ -235,31 +225,31 @@ vector<char>::const_reverse_iterator ofBuffer::rend() const{
 }
 
 //--------------------------------------------------
-ofBuffer::Line::Line(vector<char> & buffer, vector<char>::iterator _begin)
-	:buffer(buffer)
+ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
+	:_current(_begin)
 	,_begin(_begin)
-	,_end(_begin){
-	if(buffer.empty() || _begin == buffer.end()){
+	,_end(_end){
+	if(_begin == _end){
 		line =  "";
 		return;
 	}
 
 	bool lineEndWasCR = false;
-	while(_end != buffer.end() && *_end != '\n'){
-		if(*_end != '\r'){
-			_end++;
+	while(_current != _end && *_current != '\n'){
+		if(*_current != '\r'){
+			_current++;
 		}else{
 			lineEndWasCR = true;
 			break;
 		}
 	}
-	line = string(_begin, _end);
-	if(_end != buffer.end()){
-		_end++;
+	line = string(_begin, _current);
+	if(_current != _end){
+		_current++;
 	}
 	// if lineEndWasCR check for CRLF
-	if(lineEndWasCR && _end != buffer.end() && *_end == '\n'){
-		_end++;
+	if(lineEndWasCR && _current != _end && *_current == '\n'){
+		_current++;
 	}
 }
 
@@ -274,8 +264,13 @@ const string * ofBuffer::Line::operator->() const{
 }
 
 //--------------------------------------------------
+const string & ofBuffer::Line::asString() const{
+	return line;
+}
+
+//--------------------------------------------------
 ofBuffer::Line & ofBuffer::Line::operator++(){
-	*this = Line(buffer,_end);
+	*this = Line(_current,_end);
 	return *this;
 }
 
@@ -291,24 +286,24 @@ bool ofBuffer::Line::operator!=(Line const& rhs) const{
 	return rhs._begin != _begin || rhs._end != _end;
 }
 
-void ofBuffer::Line::operator=(const ofBuffer::Line & _line){
-	line = _line.line;
-	_begin = _line._begin;
-	_end = _line._end;
+//--------------------------------------------------
+bool ofBuffer::Line::operator==(Line const& rhs) const{
+	return rhs._begin == _begin && rhs._end == _end;
 }
 
 //--------------------------------------------------
 ofBuffer::Lines::Lines(vector<char> & buffer)
-		:buffer(buffer){}
+:_begin(buffer.begin())
+,_end(buffer.end()){}
 
 //--------------------------------------------------
 ofBuffer::Line ofBuffer::Lines::begin(){
-	return Line(buffer,buffer.begin());
+	return Line(_begin,_end);
 }
 
 //--------------------------------------------------
 ofBuffer::Line ofBuffer::Lines::end(){
-	return Line(buffer,buffer.end());
+	return Line(_end,_end);
 }
 
 //--------------------------------------------------
@@ -377,7 +372,7 @@ ofFile::ofFile(string path, Mode mode, bool binary){
 
 //-------------------------------------------------------------------------------------------------------------
 ofFile::~ofFile(){
-	close();
+	//close();
 }
 
 //-------------------------------------------------------------------------------------------------------------
