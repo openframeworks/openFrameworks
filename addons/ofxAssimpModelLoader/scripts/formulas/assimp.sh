@@ -14,7 +14,13 @@ GIT_URL=
 # GIT_URL=https://github.com/assimp/assimp.git
 GIT_TAG=
 
-FORMULA_TYPES=( "osx" "osx-clang-libc++" )
+FORMULA_TYPES=( "osx" "osx-clang-libc++" "ios" )
+
+IOS_SDK_VERSION=7.1
+IOS_SDK_TARGET=5.1.1
+XCODE_ROOT_DIR=/Applications/Xcode.app/Contents
+TOOLCHAIN=$XCODE_ROOT_DIR/Developer/Toolchains/XcodeDefault.xctoolchain
+
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -25,14 +31,6 @@ function download() {
 	mv "assimp-$VER" assimp
 	rm "v$VER.zip"
 
-	if [ "$OS" == "osx" ] ; then
-		
-		chmod +x assimp/port/iOS/build.sh
-
-		# make a backup of the build script
-		cp assimp/port/iOS/build.sh assimp/port/iOS/build.sh.orig
-	fi
-
     # fix an issue with static libs being disabled - see issue https://github.com/assimp/assimp/issues/271
     # this could be fixed fairly soon - so see if its needed for future releases.
     sed -i -e 's/SET ( ASSIMP_BUILD_STATIC_LIB OFF/SET ( ASSIMP_BUILD_STATIC_LIB ON/g' assimp/CMakeLists.txt
@@ -42,40 +40,61 @@ function download() {
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
 
+    rm -f CMakeCache.txt || true
+
+    # we don't use the build script for iOS now as it is less reliable than doing it our self
 	if [ "$TYPE" == "ios" ] ; then
 		# ref: http://stackoverflow.com/questions/6691927/how-to-build-assimp-library-for-ios-device-and-simulator-with-boost-library
 
-		# this is basically updating an old build system with correct xcode paths
-		# and armv7s instead of armv6, hopefully the assimp project fixes this
-		# in the future ...
+        IOS_SDK_DEVICE=iPhoneOS
 
-		cd port/iOS
-		cp build.sh.orig build.sh
+		local buildOpts="-DASSIMP_BUILD_STATIC_LIB=1 -DASSIMP_BUILD_SHARED_LIB=0 -DASSIMP_ENABLE_BOOST_WORKAROUND=1"
+        libsToLink=""
 
-		# convert the armv6 toolchain to armv7s, the output will say "arm6"
-		# but the arch will build for armv7s
-		sed -i .tmp "s|CMAKE_SYSTEM_PROCESSOR.*\"armv6\"|CMAKE_SYSTEM_PROCESSOR \"armv7s\"|" IPHONEOS_ARM6_TOOLCHAIN.cmake
-		sed -i .tmp "s|armv6|armv7s|" build.sh
+        archs=("armv7" "armv7s" "arm64" "i386" "x86_64")
+        for curArch in "${archs[@]}"
+        do
+            echo "Building $curArch "
 
-		# set SDK and update xcode dev root
-		for toolchain in $( ls -1 *.cmake) ; do
-			sed -i .tmp \
-				-e "s|SDKVER.*\"5.0\"|SDKVER	\"$IOS_SDK_VER\"|" \
-				-e "s|\"/Developer|\"$XCODE_DEV_ROOT|" $toolchain
-		done
-		sed -i .tmp \
-			-e "s|IOS_BASE_SDK=.*|IOS_BASE_SDK=\"$IOS_SDK_VER\"|" \
-			-e "s|IOS_DEPLOY_TGT=.*|IOS_DEPLOY_TGT=\"$IOS_MIN_SDK_VER\"|" \
-			-e "s|=/Developer|=$XCODE_DEV_ROOT|" build.sh
+            IOS_SDK_DEVICE=iPhoneOS
 
-		# fix bad lipo line (due to switch to armv7s)
-		sed -i .tmp 's|lipo.*|lipo -c $lib_arm6 $lib_arm7 $lib_i386 -o $lib|' build.sh
+            if [ "$curArch" == "i386" ] || [ "$curArch" == "x86_64" ]; then
+                echo 'Target SDK set to SIMULATOR.'
+                IOS_SDK_DEVICE=iPhoneSimulator
+            fi
 
-		# fix old var names (missing ASSIMP_ prefix), keep this commented for now
-		# bleeding edge assimp on git uses the ASSIMP_ prefix, so this may need to updated in the future
-		#sed -i .tmp "s|-DENABLE_BOOST_WORKAROUND=|-DASSIMP_ENABLE_BOOST_WORKAROUND=|" build.sh
-		#sed -i .tmp "s|-DBUILD_STATIC_LIB=|-DASSIMP_BUILD_STATIC_LIB=|" build.sh
+            OUR_DEV_ROOT="$XCODE_ROOT_DIR/Developer/Platforms/$IOS_SDK_DEVICE.platform/Developer"
+            OUR_SDK_ROOT="$OUR_DEV_ROOT/SDKs/$IOS_SDK_DEVICE$IOS_SDK_VERSION.sdk"
 
+            OUR_CFLAGS="-arch $curArch -O3 -DNDEBUG -funroll-loops -isysroot $OUR_SDK_ROOT -stdlib=libstdc++ -miphoneos-version-min=$IOS_SDK_TARGET -I$OUR_SDK_ROOT/usr/include/"
+
+            export LDFLAGS="-L$OUR_SDK_ROOT/usr/lib/"
+            export DEVROOT="$OUR_DEV_ROOT"
+            export SDKROOT="$OUR_SDK_ROOT"
+            export CFLAGS="$OUR_CFLAGS"
+            export CPPFLAGS="$OUR_CFLAGS"
+            export CXXFLAGS="$OUR_CFLAGS"
+
+            #echo " out c_flags are $OUR_CFLAGS "
+
+            cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="$OUR_CFLAGS" -DCMAKE_CXX_FLAGS="$OUR_CFLAGS" -DCMAKE_CXX_FLAGS="$OUR_CFLAGS".
+
+            $XCODE_ROOT_DIR/Developer/usr/bin/make clean
+            $XCODE_ROOT_DIR/Developer/usr/bin/make assimp -j 8 -l
+
+            fileToRenameTo="./lib/libassimp-$TYPE-$curArch.a"
+
+            mv ./lib/libassimp.a $fileToRenameTo
+
+            libsToLink="$libsToLink $fileToRenameTo"
+
+            $XCODE_ROOT_DIR/Developer/usr/bin/make clean
+
+        done
+
+		# link into universal lib
+		command="lipo -create $libsToLink -o lib/libassimp-ios.a"
+        $command || true
 	fi
 
 	if [ "$TYPE" == "osx" ] ; then
@@ -87,20 +106,20 @@ function prepare() {
 		# 32 bit
 		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch i386 -O3 -DNDEBUG -funroll-loops" -DCMAKE_CXX_FLAGS="-arch i386 -stdlib=libstdc++ -O3 -DNDEBUG -funroll-loops" .
 		make assimp
-		mv lib/libassimp.a lib/libassimp-i386.a
+		mv lib/libassimp.a lib/libassimp-osx-i386.a
 		make clean
 
 		# 64 bit
 		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch x86_64 -O3 -DNDEBUG -funroll-loops" -DCMAKE_CXX_FLAGS="-arch x86_64 -stdlib=libc++ -O3 -DNDEBUG -funroll-loops" .
 		make assimp 
-		mv lib/libassimp.a lib/libassimp-x86_64.a
+		mv lib/libassimp.a lib/libassimp-osx-x86_64.a
 		make clean
 
 		# link into universal lib
-		lipo -c lib/libassimp-i386.a lib/libassimp-x86_64.a -o lib/libassimp.a
+		lipo -c lib/libassimp-osx-i386.a lib/libassimp-osx-x86_64.a -o lib/libassimp-osx.a
 
 	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
-		echoWarning "WARNING: this needs to be updated"
+		echoWarning "WARNING: this needs to be updated - do we even need it anymore?"
 
 		# warning, assimp on github uses the ASSIMP_ prefix for CMake options ...
 		# these may need to be updated for a new release
@@ -118,7 +137,7 @@ function prepare() {
 		make clean
 
 		# rename lib
-		libtool -c lib/libassimp-i386.a -o lib/libassimp.a
+		libtool -c lib/libassimp-i386.a -o lib/libassimp-osx.a
 
 	elif [ "$TYPE" == "linux" ] ; then
 		echoWarning "TODO: linux build"
@@ -132,9 +151,6 @@ function prepare() {
 	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: win_cb build"
 
-	elif [ "$TYPE" == "ios" ] ; then
-		./build.sh
-	
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: android build"
 	fi
@@ -153,11 +169,11 @@ function copy() {
 	mkdir -p $1/lib/$TYPE
 	if [ "$TYPE" == "vs" ] ; then
 		cp -Rv lib/libassimp.lib $1/lib/$TYPE/assimp.lib
-
+	elif [ "$TYPE" == "osx" ] ; then
+		cp -Rv lib/libassimp-osx.a $1/lib/$TYPE/assimp.a
 	elif [ "$TYPE" == "ios" ] ; then
-		cp -Rv lib/ios/libassimp.a $1/lib/$TYPE/assimp.a
-
-	else 
+		cp -Rv lib/libassimp-ios.a $1/lib/$TYPE/assimp.a
+	else
 		cp -Rv lib/libassimp.a $1/lib/$TYPE/assimp.a
 	fi
 }
