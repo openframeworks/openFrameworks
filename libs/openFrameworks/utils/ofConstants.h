@@ -155,8 +155,18 @@ enum ofTargetPlatform{
 	#endif
 	#include <unistd.h>
 	#include "GL/glew.h"
+
+	#define Point MacTypesPoint
+	#define Rect MacTypesRect
+
 	#include <OpenGL/gl.h>
 	#include <ApplicationServices/ApplicationServices.h>
+
+	#undef Point
+	#undef Rect
+
+	#undef check
+	#undef nil
 
 	#if defined(__LITTLE_ENDIAN__)
 		#define TARGET_LITTLE_ENDIAN		// intel cpu

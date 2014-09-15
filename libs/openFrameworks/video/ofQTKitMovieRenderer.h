@@ -2,11 +2,16 @@
 // Copyright (c) 2012 openFrameworks team
 // openFrameworks is released under the MIT License. See libs/_Licence.txt
 
+#define Point MacTypesPoint
+#define Rect MacTypesRect
+
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
 #import <QTKit/QTKit.h>
 #import <OpenGL/OpenGL.h>
 
+#undef Point
+#undef Rect
 
 @interface QTKitMovieRenderer : NSObject
 {
