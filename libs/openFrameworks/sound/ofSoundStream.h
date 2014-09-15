@@ -75,8 +75,8 @@ struct ofSoundDevice {
 	std::string getDescription();
 };
 
-/// \brief Retrieves a list of available audio devices
-/// \return All devices found on the system
+/// \brief Retrieves a list of all available audio devices
+/// \param print if true, print discovered devices via ofLog
 std::vector<ofSoundDevice> ofSoundStreamListDevices(bool print = true);
 
 /// \class ofSoundStream
@@ -110,7 +110,6 @@ public:
     shared_ptr<ofBaseSoundStream> getSoundStream();
 
     /// \brief Retrieves a list of available audio devices
-	/// \return All devices found on the system
 	std::vector<ofSoundDevice> listDevices(bool print = true);
 
     /// \brief sets the device represented by the stream, see ofSoundStream::listDevices().
