@@ -6,6 +6,7 @@
 
 #include "ofxiOSSoundStream.h"
 #include "ofxiOSSoundStreamDelegate.h"
+#include "ofSoundStream.h"
 #include "ofBaseApp.h"
 
 #import "SoundInputStream.h"
@@ -33,8 +34,8 @@ ofxiOSSoundStream::~ofxiOSSoundStream() {
 }
 
 //------------------------------------------------------------------------------
-void ofxiOSSoundStream::listDevices() {
-    //
+vector<ofSoundDevice> ofxiOSSoundStream::listDevices(bool print) {
+    return vector<ofSoundDevice>();
 }
 
 //------------------------------------------------------------------------------
