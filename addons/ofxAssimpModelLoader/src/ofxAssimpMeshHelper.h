@@ -6,7 +6,9 @@
 #pragma once
 
 #include "ofMain.h"
-#include "assimp.h"
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 #include "ofxAssimpTexture.h"
 
 class aiMesh;
