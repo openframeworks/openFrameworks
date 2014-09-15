@@ -29,8 +29,9 @@ ofxEmscriptenSoundStream::~ofxEmscriptenSoundStream() {
 	close();
 }
 
-void ofxEmscriptenSoundStream::listDevices() {
-
+vector<ofSoundDevice> ofxEmscriptenSoundStream::listDevices(bool print) {
+    ofLogWarning("ofxEmscriptenSoundStream") << "listDevices() isn't implemented for emscripten";
+    return vector<ofSoundDevice>();
 }
 
 void ofxEmscriptenSoundStream::setDeviceID(int deviceID) {
