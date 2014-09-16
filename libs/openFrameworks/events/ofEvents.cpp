@@ -18,6 +18,7 @@ static bool      			bFrameRateSet = 0;
 static int      			nFramesForFPS = 0;
 static int      			nFrameCount	  = 0;
 static unsigned long long   prevMicrosForFPS = 0;
+static ofMutex				mutex;
 
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
@@ -75,12 +76,14 @@ int ofGetFrameNum(){
 
 //--------------------------------------
 bool ofGetMousePressed(int button){ //by default any button
+	ofScopedLock lock(mutex);
 	if(button==-1) return pressedMouseButtons.size();
 	return pressedMouseButtons.find(button)!=pressedMouseButtons.end();
 }
 
 //--------------------------------------
 bool ofGetKeyPressed(int key){
+	ofScopedLock lock(mutex);
 	if(key==-1) return pressedKeys.size();
 	return pressedKeys.find(key)!=pressedKeys.end();
 }
@@ -186,27 +189,37 @@ void ofNotifyKeyPressed(int key, int keycode, int scancode, int codepoint){
 	// FIXME: modifiers are being reported twice, for generic and for left/right
 	// add operators to the arguments class so it can be checked for both
     if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
+    	mutex.lock();
         pressedKeys.insert(OF_KEY_CONTROL);
+    	mutex.unlock();
     	keyEventArgs.key = OF_KEY_CONTROL;
         ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
     }
     else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
+    	mutex.lock();
         pressedKeys.insert(OF_KEY_SHIFT);
+    	mutex.unlock();
     	keyEventArgs.key = OF_KEY_SHIFT;
         ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
+    	mutex.lock();
         pressedKeys.insert(OF_KEY_ALT);
+    	mutex.unlock();
     	keyEventArgs.key = OF_KEY_ALT;
         ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
+    	mutex.lock();
         pressedKeys.insert(OF_KEY_SUPER);
+    	mutex.unlock();
     	keyEventArgs.key = OF_KEY_SUPER;
         ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
     }
-            
+
+	mutex.lock();
 	pressedKeys.insert(key);
+	mutex.unlock();
 
 	keyEventArgs.key = key;
 	keyEventArgs.keycode = keycode;
@@ -229,27 +242,37 @@ void ofNotifyKeyReleased(int key, int keycode, int scancode, int codepoint){
 	// FIXME: modifiers are being reported twice, for generic and for left/right
 	// add operators to the arguments class so it can be checked for both
     if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
+    	mutex.lock();
         pressedKeys.erase(OF_KEY_CONTROL);
+    	mutex.unlock();
     	keyEventArgs.key = OF_KEY_CONTROL;
     	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
     }
     else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
+    	mutex.lock();
         pressedKeys.erase(OF_KEY_SHIFT);
+    	mutex.unlock();
     	keyEventArgs.key = OF_KEY_SHIFT;
     	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
+    	mutex.lock();
         pressedKeys.erase(OF_KEY_ALT);
+    	mutex.unlock();
     	keyEventArgs.key = OF_KEY_ALT;
     	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
+    	mutex.lock();
         pressedKeys.erase(OF_KEY_SUPER);
+    	mutex.unlock();
     	keyEventArgs.key = OF_KEY_SUPER;
     	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
     }
-    
+
+	mutex.lock();
 	pressedKeys.erase(key);
+	mutex.unlock();
 	
 	keyEventArgs.key = key;
 	keyEventArgs.keycode = keycode;
@@ -305,8 +328,9 @@ void ofNotifyMousePressed(int x, int y, int button){
     
 	currentMouseX = x;
 	currentMouseY = y;
+	mutex.lock();
 	pressedMouseButtons.insert(button);
-
+	mutex.unlock();
 
 	mouseEventArgs.x = x;
 	mouseEventArgs.y = y;
@@ -330,7 +354,9 @@ void ofNotifyMouseReleased(int x, int y, int button){
 
 	currentMouseX = x;
 	currentMouseY = y;
+	mutex.lock();
 	pressedMouseButtons.erase(button);
+	mutex.unlock();
 
 	mouseEventArgs.x = x;
 	mouseEventArgs.y = y;
