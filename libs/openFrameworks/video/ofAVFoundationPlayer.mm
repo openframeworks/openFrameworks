@@ -193,7 +193,7 @@ ofTexture& ofAVFoundationPlayer::getTextureReference()
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::isLoading()
+bool ofAVFoundationPlayer::isLoading() const
 {
     return moviePlayer && [moviePlayer isLoading];
 }
@@ -211,43 +211,43 @@ bool ofAVFoundationPlayer::isPlaying() const
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::getIsMovieDone()
+bool ofAVFoundationPlayer::getIsMovieDone() const
 {
     return moviePlayer.isMovieDone;
 }
 
 //--------------------------------------------------------------
-float ofAVFoundationPlayer::getPosition()
+float ofAVFoundationPlayer::getPosition() const
 {
     return moviePlayer.position;
 }
 
 //--------------------------------------------------------------
-float ofAVFoundationPlayer::getCurrentTime()
+float ofAVFoundationPlayer::getCurrentTime() const
 {
     return moviePlayer.currentTime;
 }
 
 //--------------------------------------------------------------
-float ofAVFoundationPlayer::getPositionInSeconds()
+float ofAVFoundationPlayer::getPositionInSeconds() const
 {
     return getCurrentTime();
 }
 
 //--------------------------------------------------------------
-int ofAVFoundationPlayer::getCurrentFrame()
+int ofAVFoundationPlayer::getCurrentFrame() const
 {
     return moviePlayer.currentFrame;
 }
 
 //--------------------------------------------------------------
-float ofAVFoundationPlayer::getDuration()
+float ofAVFoundationPlayer::getDuration() const
 {
     return moviePlayer.duration;
 }
 
 //--------------------------------------------------------------
-int ofAVFoundationPlayer::getTotalNumFrames()
+int ofAVFoundationPlayer::getTotalNumFrames() const
 {
     return moviePlayer.totalFrames;
 }
@@ -259,7 +259,7 @@ bool ofAVFoundationPlayer::isPaused() const
 }
 
 //--------------------------------------------------------------
-float ofAVFoundationPlayer::getSpeed()
+float ofAVFoundationPlayer::getSpeed() const
 {
     if (moviePlayer) {
         return moviePlayer.playbackRate;
@@ -269,7 +269,7 @@ float ofAVFoundationPlayer::getSpeed()
 }
 
 //--------------------------------------------------------------
-ofLoopType ofAVFoundationPlayer::getLoopState()
+ofLoopType ofAVFoundationPlayer::getLoopState() const
 {
     if (moviePlayer && [moviePlayer loops])
         return OF_LOOP_NORMAL;
@@ -278,7 +278,7 @@ ofLoopType ofAVFoundationPlayer::getLoopState()
 }
 
 //--------------------------------------------------------------
-float ofAVFoundationPlayer::getVolume()
+float ofAVFoundationPlayer::getVolume() const
 {
     if (moviePlayer) {
         return moviePlayer.volume;

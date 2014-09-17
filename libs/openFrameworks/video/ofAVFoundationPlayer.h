@@ -45,22 +45,22 @@ public:
     ofTexture *         getTexture();
     ofTexture&          getTextureReference();
     
-    bool                isLoading();
+    bool                isLoading() const;
     bool                isLoaded() const;
     
     bool                isPlaying() const;
-    bool                getIsMovieDone();
-    float               getPosition();
-    float               getCurrentTime();
-    float               getPositionInSeconds();
-    int                 getCurrentFrame();
-    float               getDuration();
-    int                 getTotalNumFrames();
+    bool                getIsMovieDone() const;
     
+    float               getPosition() const;
+    float               getCurrentTime() const;
+    float               getPositionInSeconds() const;
+    int                 getCurrentFrame() const;
+    float               getDuration() const;
+    int                 getTotalNumFrames() const;
     bool                isPaused() const;
-    float               getSpeed();
-    ofLoopType          getLoopState();
-    float               getVolume();
+    float               getSpeed() const;
+    ofLoopType          getLoopState() const;
+    float               getVolume() const;
     
     void                setPosition(float pct);
     void                setTime(float seconds);
