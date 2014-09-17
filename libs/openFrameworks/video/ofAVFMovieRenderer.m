@@ -37,8 +37,6 @@
 @synthesize playbackRate = _playbackRate;
 @synthesize bLoops = _bLoops;
 
-int count = 0;
-
 //--------------------------------------------------------------
 - (id)init
 {
@@ -152,35 +150,6 @@ int count = 0;
                     //(CFDictionaryRef)ctxAttributes, &_textureCache);
                     if (err != noErr) {
                         NSLog(@"Error at CVOpenGLTextureCacheCreate %d", err);
-                    }
-                }
-                
-                // Only monitor audio if the file is local and has audio tracks.
-                NSArray *audioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-                if ([url isFileURL] && [audioTracks count] > 0) {
-                    AVAssetTrack *audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
-                    
-                    NSError *error = nil;
-                    AVAssetReader *assetReader = [[AVAssetReader alloc] initWithAsset:asset error:&error];
-                    if (error != nil) {
-                        NSLog(@"Unable to create asset reader %@", [error localizedDescription]);
-                    }
-                    else if (audioTrack != nil) {
-                        // Read the audio track data
-                        NSMutableDictionary *bufferOptions = [NSMutableDictionary dictionary];
-                        [bufferOptions setObject:[NSNumber numberWithInt:kAudioFormatLinearPCM] forKey:AVFormatIDKey];
-                        [bufferOptions setObject:@44100 forKey:AVSampleRateKey];
-                        [bufferOptions setObject:@2 forKey:AVNumberOfChannelsKey];
-                        //                        [bufferOptions setObject:[NSData dataWithBytes:&channelLayout length:sizeof(AudioChannelLayout)] forKey:AVChannelLayoutKey];
-                        [bufferOptions setObject:@32 forKey:AVLinearPCMBitDepthKey];
-                        [bufferOptions setObject:@NO forKey:AVLinearPCMIsBigEndianKey];
-                        [bufferOptions setObject:@YES forKey:AVLinearPCMIsFloatKey];
-                        [bufferOptions setObject:@NO forKey:AVLinearPCMIsNonInterleaved];
-                        [assetReader addOutput:[AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack
-                                                                                          outputSettings:bufferOptions]];
-                        [assetReader startReading];
-                        
-                        count = 0;
                     }
                 }
                 
