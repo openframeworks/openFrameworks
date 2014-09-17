@@ -14,7 +14,8 @@
 #import "ofAVFMovieRenderer.h"
 #endif
 
-class ofAVFoundationPlayer  : public ofBaseVideoPlayer {
+class ofAVFoundationPlayer  : public ofBaseVideoPlayer
+{
     
 public:
     
@@ -23,7 +24,6 @@ public:
     
     bool                loadMovie(string path);
     
-    void                closeMovie();
     void                close();
     
     void                idleMovie();
@@ -39,11 +39,8 @@ public:
     const ofPixels &    getPixelsRef() const;
     ofPixels &          getPixelsRef();
     
-    // Returns openFrameworks compatible ofTexture pointer.
-    // if decodeMode == OF_QTKIT_DECODE_PIXELS_ONLY,
-    // the returned pointer will be NULL.
     ofTexture *         getTexture();
-    ofTexture&          getTextureReference();
+    ofTexture &         getTextureReference();
     
     bool                isLoading() const;
     bool                isLoaded() const;
@@ -107,7 +104,6 @@ protected:
     void updateTexture();
     void reallocatePixels();
     
-//    ofFbo fbo;
     ofTexture tex;
     ofPixels pixels;
     ofPixelFormat pixelFormat;
@@ -115,7 +111,7 @@ protected:
     // This #ifdef is so you can include this .h file in .cpp files
     // and avoid ugly casts in the .m file
 #ifdef __OBJC__
-    AVFMovieRenderer* moviePlayer;
+    AVFMovieRenderer * moviePlayer;
 #else
     void * moviePlayer;
 #endif

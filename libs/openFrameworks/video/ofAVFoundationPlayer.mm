@@ -35,7 +35,6 @@ ofAVFoundationPlayer::~ofAVFoundationPlayer()
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadMovie(string path)
 {
-
     if (bInitialized) {
         close();
     }
@@ -62,22 +61,13 @@ bool ofAVFoundationPlayer::loadMovie(string path)
 }
 
 //--------------------------------------------------------------
-void ofAVFoundationPlayer::closeMovie()
-{
-    close();
-}
-
-//--------------------------------------------------------------
 void ofAVFoundationPlayer::close()
 {
     pixels.clear();
     
     if (moviePlayer != nil) {
-//      NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
         [moviePlayer release];
         moviePlayer = nil;
-//      [pool release];
-
     }
     
     bInitialized = false;
@@ -126,7 +116,7 @@ void ofAVFoundationPlayer::update()
 void ofAVFoundationPlayer::play()
 {
     if (bInitialized) {
-        ofLogVerbose("ofAVFoundationPlayer::play()") << "Initialized and playing at time " << getCurrentTime();
+        ofLogVerbose("ofAVFoundationPlayer::play") << "Initialized and playing at time " << getCurrentTime();
         [moviePlayer play];
     }
     else {
@@ -172,21 +162,18 @@ ofPixels & ofAVFoundationPlayer::getPixelsRef()
 
 
 //--------------------------------------------------------------
-ofTexture* ofAVFoundationPlayer::getTexture()
+ofTexture * ofAVFoundationPlayer::getTexture()
 {
     //TODO: Allow AVF's direct to texture
     if (moviePlayer.textureAllocated) {
         updateTexture();
     }
     return &tex;
-
-//    return NULL;
 }
 
 //--------------------------------------------------------------
-ofTexture& ofAVFoundationPlayer::getTextureReference()
+ofTexture & ofAVFoundationPlayer::getTextureReference()
 {
-//  getTexture();
     updateTexture();
     return tex;
 }
@@ -296,7 +283,7 @@ void ofAVFoundationPlayer::setPosition(float pct)
 void ofAVFoundationPlayer::setTime(float position)
 {
     if (![moviePlayer isLoaded]) {
-        ofLogNotice("ofAVFoundationPlayer::setCurrentTime()") << "Video player not ready, declaring to scrub to time " << scrubToTime;
+        ofLogNotice("ofAVFoundationPlayer::setCurrentTime") << "Video player not ready, declaring to scrub to time " << scrubToTime;
         scrubToTime = position;
     }
     else {
@@ -325,7 +312,7 @@ void ofAVFoundationPlayer::setVolume(float volume)
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::setBalance(float balance)
 {
-
+    ofLogWarning("ofAVFoundationPlayer::setBalance") << "Not implemented!";
 }
 
 //--------------------------------------------------------------
@@ -433,7 +420,7 @@ void ofAVFoundationPlayer::previousFrame()
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::updateTexture()
 {
-    if(!moviePlayer.textureAllocated) {
+    if (!moviePlayer.textureAllocated) {
         return;
     }
     

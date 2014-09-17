@@ -68,7 +68,7 @@
     return @{
              (NSString *)kCVPixelBufferOpenGLCompatibilityKey : [NSNumber numberWithBool:self.useTexture],
              (NSString *)kCVPixelBufferPixelFormatTypeKey     : [NSNumber numberWithInt:kCVPixelFormatType_32ARGB]
-             //[NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr8]
+//             [NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr8]
             };
 }
 
@@ -125,8 +125,8 @@
                 self.playerItem = [AVPlayerItem playerItemWithAsset:asset];
                 [self.playerItem addObserver:self forKeyPath:@"status" options:0 context:&kItemStatusContext];
                 
-                // Notify this object when the player reaches the end
-                // This allows us to loop the video
+                // Notify this object when the player reaches the end.
+                // This allows us to loop the video.
                 [[NSNotificationCenter defaultCenter] addObserver:self
                                                          selector:@selector(playerItemDidReachEnd:)
                                                              name:AVPlayerItemDidPlayToEndTimeNotification
@@ -134,7 +134,7 @@
                 
                 [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
                 
-                // Create and attach video output. 10.8 Only!!!
+                // Create and attach video output.
                 self.playerItemVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:[self pixelBufferAttributes]];
                 [self.playerItemVideoOutput autorelease];
                 if (self.playerItemVideoOutput) {
@@ -147,7 +147,7 @@
                     CVReturn err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault, NULL,
                                                               CGLGetCurrentContext(), CGLGetPixelFormat(CGLGetCurrentContext()),
                                                               NULL, &_textureCache);
-                    //(CFDictionaryRef)ctxAttributes, &_textureCache);
+//                                                              (CFDictionaryRef)ctxAttributes, &_textureCache);
                     if (err != noErr) {
                         NSLog(@"Error at CVOpenGLTextureCacheCreate %d", err);
                     }
@@ -169,8 +169,7 @@
 - (void)dealloc
 {
     [self stop];
-            
-
+    
     self.playerItemVideoOutput = nil;
 
     if (_textureCache != NULL) {
@@ -247,7 +246,7 @@
     _bMovieDone = YES;
     
     if (self.bLoops) {
-        //start over
+        // Start over.
         _bMovieDone = NO;
         [self stop];
         [self play];
@@ -313,27 +312,23 @@
 {
     if (_latestPixelFrame == NULL) return;
         
-//    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld, movie size is %d x %d ",
+//    NSLog(@"Pixel buffer width = %ld height = %ld and bpr = %ld, movie size is %d x %d.",
 //      CVPixelBufferGetWidth(_latestPixelFrame),
 //      CVPixelBufferGetHeight(_latestPixelFrame),
 //      CVPixelBufferGetBytesPerRow(_latestPixelFrame),
 //      (NSInteger)movieSize.width, (NSInteger)movieSize.height);
     if ((NSInteger)self.width != CVPixelBufferGetWidth(_latestPixelFrame) || (NSInteger)self.height != CVPixelBufferGetHeight(_latestPixelFrame)) {
-        NSLog(@"CoreVideo pixel buffer is %ld x %ld while self reports size of %ld x %ld. This is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size",
+        NSLog(@"CoreVideo pixel buffer is %ld x %ld while self reports size of %ld x %ld. This is most likely caused by a non-square pixel video format such as HDV. Open this video in texture only mode to view it at the appropriate size.",
               CVPixelBufferGetWidth(_latestPixelFrame), CVPixelBufferGetHeight(_latestPixelFrame), (long)self.width, (long)self.height);
         return;
     }
     
     if (CVPixelBufferGetPixelFormatType(_latestPixelFrame) != kCVPixelFormatType_32ARGB) {
-        NSLog(@"QTKitMovieRenderer - Frame pixelformat not kCVPixelFormatType_32ARGB: %d, instead %ld", kCVPixelFormatType_32ARGB, (long)CVPixelBufferGetPixelFormatType(_latestPixelFrame));
+        NSLog(@"CoreVideo frame pixelformat not kCVPixelFormatType_32ARGB: %d, instead %ld", kCVPixelFormatType_32ARGB, (long)CVPixelBufferGetPixelFormatType(_latestPixelFrame));
         return;
     }
     
     CVPixelBufferLockBaseAddress(_latestPixelFrame, kCVPixelBufferLock_ReadOnly);
-    //If we are using alpha, the ofxAVFVideoPlayer class will have allocated a buffer of size
-    //video.width * video.height * 4
-    //CoreVideo creates alpha video in the format ARGB, and openFrameworks expects RGBA,
-    //so we need to swap the alpha around using a vImage permutation
     vImage_Buffer src = {
         CVPixelBufferGetBaseAddress(_latestPixelFrame),
         CVPixelBufferGetHeight(_latestPixelFrame),
@@ -341,13 +336,17 @@
         CVPixelBufferGetBytesPerRow(_latestPixelFrame)
     };
     vImage_Error err;
+    // If we are using alpha, the ofAVFoundationPlayer class will have allocated a buffer
+    // of size video.width * video.height * 4
+    // CoreVideo creates alpha video in the format ARGB, and openFrameworks expects RGBA,
+    // so we need to swap the alpha around using a vImage permutation
     if (self.useAlpha) {
         vImage_Buffer dest = { outbuf, self.height, self.width, self.width * 4 };
-        uint8_t permuteMap[4] = { 1, 2, 3, 0 }; //swizzle the alpha around to the end to make ARGB -> RGBA
+        uint8_t permuteMap[4] = { 1, 2, 3, 0 }; // Swizzle the alpha around to the end to make ARGB -> RGBA.
         err = vImagePermuteChannels_ARGB8888(&src, &dest, permuteMap, 0);
     }
-    //If we are are doing RGB then ofxAVFVideoPlayer will have created a buffer of size video.width * video.height * 3
-    //so we use vImage to copy them into the out buffer
+    // If we are are doing RGB then ofAVFoundationPlayer will have created a buffer of size
+    // video.width * video.height * 3, so we use vImage to copy them into the out buffer.
     else {
         vImage_Buffer dest = { outbuf, self.height, self.width, self.width * 3 };
         err = vImageConvert_ARGB8888toRGB888(&src, &dest, 0);
