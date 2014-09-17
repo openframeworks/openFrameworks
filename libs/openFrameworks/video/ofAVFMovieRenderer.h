@@ -6,7 +6,6 @@
 //  Modified by James George and Elie Zananiri.
 //
 
-
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
 #import <AVFoundation/AVFoundation.h>
@@ -16,13 +15,13 @@
 {
     AVPlayer * _player;
     AVPlayerItem * _playerItem;
-
+    
     id _playerItemVideoOutput;
     CVOpenGLTextureCacheRef _textureCache;
-	CVOpenGLTextureRef _latestTextureFrame;
-	CVPixelBufferRef _latestPixelFrame;
-
-	BOOL _useTexture;
+    CVOpenGLTextureRef _latestTextureFrame;
+    CVPixelBufferRef _latestPixelFrame;
+    
+    BOOL _useTexture;
     BOOL _useAlpha;
     
     CGSize _videoSize;

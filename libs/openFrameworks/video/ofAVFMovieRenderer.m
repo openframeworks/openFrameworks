@@ -70,7 +70,7 @@ int count = 0;
     return @{
              (NSString *)kCVPixelBufferOpenGLCompatibilityKey : [NSNumber numberWithBool:self.useTexture],
              (NSString *)kCVPixelBufferPixelFormatTypeKey     : [NSNumber numberWithInt:kCVPixelFormatType_32ARGB]
-			 //[NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr8]
+             //[NSNumber numberWithInt:kCVPixelFormatType_422YpCbCr8]
             };
 }
 
@@ -202,23 +202,23 @@ int count = 0;
     [self stop];
             
 
-	self.playerItemVideoOutput = nil;
+    self.playerItemVideoOutput = nil;
 
-	if (_textureCache != NULL) {
-		CVOpenGLTextureCacheRelease(_textureCache);
-		_textureCache = NULL;
-	}
-	if (_latestTextureFrame != NULL) {
-		CVOpenGLTextureRelease(_latestTextureFrame);
-		_latestTextureFrame = NULL;
-	}
-	if (_latestPixelFrame != NULL) {
-		CVPixelBufferRelease(_latestPixelFrame);
-		_latestPixelFrame = NULL;
-	}
-	
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
+    if (_textureCache != NULL) {
+        CVOpenGLTextureCacheRelease(_textureCache);
+        _textureCache = NULL;
+    }
+    if (_latestTextureFrame != NULL) {
+        CVOpenGLTextureRelease(_latestTextureFrame);
+        _latestTextureFrame = NULL;
+    }
+    if (_latestPixelFrame != NULL) {
+        CVPixelBufferRelease(_latestPixelFrame);
+        _latestPixelFrame = NULL;
+    }
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     if (self.playerItem) {
         [self.playerItem removeObserver:self forKeyPath:@"status"];
         self.playerItem = nil;
@@ -263,7 +263,7 @@ int count = 0;
 {
     if (![self isLoaded]) return NO;
     
-	return ![self isMovieDone] && ![self isPaused];
+    return ![self isMovieDone] && ![self isPaused];
 }
 
 //--------------------------------------------------------------
@@ -343,7 +343,7 @@ int count = 0;
 - (void)pixels:(unsigned char *)outbuf
 {
     if (_latestPixelFrame == NULL) return;
-		
+        
 //    NSLog(@"pixel buffer width is %ld height %ld and bpr %ld, movie size is %d x %d ",
 //      CVPixelBufferGetWidth(_latestPixelFrame),
 //      CVPixelBufferGetHeight(_latestPixelFrame),
@@ -414,20 +414,20 @@ int count = 0;
 {
     if (!self.textureAllocated) return;
     
-	GLuint texID = [self textureID];
-	GLenum target = [self textureTarget];
-	
-	glEnable(target);
-	glBindTexture(target, texID);
+    GLuint texID = [self textureID];
+    GLenum target = [self textureTarget];
+    
+    glEnable(target);
+    glBindTexture(target, texID);
 }
 
 //--------------------------------------------------------------
 - (void)unbindTexture
 {
     if (!self.textureAllocated) return;
-	
-	GLenum target = [self textureTarget];
-	glDisable(target);
+    
+    GLenum target = [self textureTarget];
+    glDisable(target);
 }
 
 #pragma mark - Playhead
