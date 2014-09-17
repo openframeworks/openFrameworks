@@ -37,7 +37,7 @@ public:
     // Be aware of your current render mode.
     unsigned char *     getPixels();
     const ofPixels &    getPixelsRef() const;
-    ofPixels &         getPixelsRef();
+    ofPixels &          getPixelsRef();
     
     // Returns openFrameworks compatible ofTexture pointer.
     // if decodeMode == OF_QTKIT_DECODE_PIXELS_ONLY,
@@ -50,20 +50,20 @@ public:
     
     bool                isPlaying() const;
     bool                getIsMovieDone();
-    
     float               getPosition();
     float               getCurrentTime();
     float               getPositionInSeconds();
     int                 getCurrentFrame();
     float               getDuration();
     int                 getTotalNumFrames();
+    
     bool                isPaused() const;
     float               getSpeed();
     ofLoopType          getLoopState();
     float               getVolume();
     
     void                setPosition(float pct);
-	void                setTime(float seconds);
+    void                setTime(float seconds);
     void                setPositionInSeconds(float seconds);
     void                setFrame(int frame); // frame 0 = first frame...
     void                setBalance(float balance);
@@ -91,9 +91,9 @@ protected:
     ofLoopType currentLoopState;
         
     bool bPaused;
-	bool bShouldPlay;
-	
-	float scrubToTime;
+    bool bShouldPlay;
+    
+    float scrubToTime;
     bool bNewFrame;
     bool bHavePixelsChanged;
     
