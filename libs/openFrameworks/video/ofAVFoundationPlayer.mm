@@ -40,23 +40,22 @@ bool ofAVFoundationPlayer::loadMovie(string path)
         close();
     }
     
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    
-    moviePlayer = [[AVFMovieRenderer alloc] init];
-    [moviePlayer setUseAlpha:(pixelFormat == OF_PIXELS_RGBA)];
-    [moviePlayer setUseTexture:YES];
+    @autoreleasepool {
+        moviePlayer = [[AVFMovieRenderer alloc] init];
+        [moviePlayer setUseAlpha:(pixelFormat == OF_PIXELS_RGBA)];
+        [moviePlayer setUseTexture:YES];
 
 
-    if (Poco::icompare(path.substr(0, 7), "http://")  == 0 ||
-        Poco::icompare(path.substr(0, 8), "https://") == 0 ||
-        Poco::icompare(path.substr(0, 7), "rtsp://")  == 0) {
-        [moviePlayer loadURLPath:[NSString stringWithUTF8String:path.c_str()]];
+        if (Poco::icompare(path.substr(0, 7), "http://")  == 0 ||
+            Poco::icompare(path.substr(0, 8), "https://") == 0 ||
+            Poco::icompare(path.substr(0, 7), "rtsp://")  == 0) {
+            [moviePlayer loadURLPath:[NSString stringWithUTF8String:path.c_str()]];
+        }
+        else {
+            path = ofToDataPath(path, false);
+            [moviePlayer loadFilePath:[NSString stringWithUTF8String:path.c_str()]];
+        }
     }
-    else {
-        path = ofToDataPath(path, false);
-        [moviePlayer loadFilePath:[NSString stringWithUTF8String:path.c_str()]];
-    }
-    [pool release];
     
     bShouldPlay = false;
     return true;
