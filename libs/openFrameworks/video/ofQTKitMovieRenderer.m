@@ -1,3 +1,4 @@
+#ifdef OF_VIDEO_PLAYER_QTKIT
 
 #import "ofQTKitMovieRenderer.h"
 #import <Accelerate/Accelerate.h>
@@ -706,3 +707,5 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 #pragma clang diagnostic pop
 
 @end
+
+#endif

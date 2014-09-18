@@ -2,6 +2,8 @@
 // Copyright (c) 2012 openFrameworks team
 // openFrameworks is released under the MIT License. See libs/_Licence.txt
 
+#ifdef OF_VIDEO_PLAYER_QTKIT
+
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
 #import <QTKit/QTKit.h>
@@ -84,3 +86,5 @@
 - (void)synchronizeSeek;
 
 @end
+
+#endif
