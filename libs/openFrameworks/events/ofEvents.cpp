@@ -212,6 +212,7 @@ void ofNotifyKeyPressed(int key, int keycode, int scancode, int codepoint){
 	keyEventArgs.keycode = keycode;
 	keyEventArgs.scancode = scancode;
 	keyEventArgs.codepoint = codepoint;
+	keyEventArgs.type = ofKeyEventArgs::Pressed;
 	ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
 	
 	
@@ -255,6 +256,7 @@ void ofNotifyKeyReleased(int key, int keycode, int scancode, int codepoint){
 	keyEventArgs.keycode = keycode;
 	keyEventArgs.scancode = scancode;
 	keyEventArgs.codepoint = codepoint;
+	keyEventArgs.type = ofKeyEventArgs::Released;
 	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
 }
 
