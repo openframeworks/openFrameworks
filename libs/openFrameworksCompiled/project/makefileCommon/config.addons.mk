@@ -91,7 +91,7 @@ define parse_addon
 		) \
 	) \
 	$(if $(strip $(ADDON_INCLUDES)), \
-		$(eval PROJECT_ADDONS_INCLUDES += $(addprefix $(addon)/,$(ADDON_INCLUDES))), \
+		$(eval PROJECT_ADDONS_INCLUDES += $(abspath $(ADDON_INCLUDES))), \
 		$(call parse_addons_includes, $(addon)) \
 		$(eval PROJECT_ADDONS_INCLUDES += $(PARSED_ADDONS_INCLUDES)) \
 	) \
