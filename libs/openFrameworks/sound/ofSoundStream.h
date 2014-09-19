@@ -69,15 +69,18 @@ struct ofSoundDevice {
 	bool isDefaultOutput;
 	std::vector<unsigned int> sampleRates;
 	
-	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false), sampleRates() { }
+	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false) { }
 	
-	/// Generates a description useful for logging to the console
+	/// \brief Generates a description useful for logging to the console
 	std::string getDescription();
 };
 
 /// \brief Retrieves a list of all available audio devices
 /// \param print if true, print discovered devices via ofLog
 std::vector<ofSoundDevice> ofSoundStreamListDevices(bool print = true);
+
+/// \brief Get all devices which match the arguments (name can be a partial match)
+std::vector<ofSoundDevice> ofSoundStreamGetMatchingDevices(const std::string &name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX);
 
 /// \class ofSoundStream
 /// \brief Gives access to audio input and output devices
@@ -111,9 +114,15 @@ public:
 
     /// \brief Retrieves a list of available audio devices
 	std::vector<ofSoundDevice> listDevices(bool print = true);
+	
+	/// \brief Get all devices which match the arguments (name can be a partial match)
+	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX);
 
     /// \brief sets the device represented by the stream, see ofSoundStream::listDevices().
     void setDeviceID(int deviceID);
+	
+	/// \brief sets the device represented by the stream, see ofSoundStream::listDevices().
+	void setDevice(const ofSoundDevice& device);
 
     /// \brief Sets up and starts the stream.
     /// \param app pointer to the app which will own the sound stream.
