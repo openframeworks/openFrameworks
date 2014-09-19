@@ -45,6 +45,10 @@ vector<ofSoundDevice> ofSoundStreamListDevices(bool print){
 	return soundStreamOutput.listDevices(print);
 }
 
+vector<ofSoundDevice> ofSoundStreamGetMatchingDevices(const string &name, unsigned int inChannels, unsigned int outChannels) {
+	return soundStreamOutput.getMatchingDevices(name, inChannels, outChannels);
+}
+
 //------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
 	#ifdef OF_SOUND_STREAM_TYPE
@@ -76,6 +80,11 @@ void ofSoundStream::setDeviceID(int deviceID){
 	if( soundStream ){
 		soundStream->setDeviceID(deviceID);
 	}	
+}
+
+//------------------------------------------------------------
+void ofSoundStream::setDevice(const ofSoundDevice &device) {
+	setDeviceID(device.deviceID);
 }
 
 //------------------------------------------------------------
@@ -169,6 +178,25 @@ int ofSoundStream::getBufferSize(){
 	return 0;
 }
 
+//------------------------------------------------------------
+vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels) {
+	vector<ofSoundDevice> devs = listDevices(false);
+	vector<ofSoundDevice> hits;
+	
+	for(int i = 0; i < devs.size(); i++) {
+		bool nameMatch = devs[i].name.find(name) != string::npos;
+		bool inMatch = (inChannels == UINT_MAX) || (devs[i].inputChannels == inChannels);
+		bool outMatch = (outChannels == UINT_MAX) || (devs[i].outputChannels == outChannels);
+		
+		if(nameMatch && inMatch && outMatch) {
+			hits.push_back(devs[i]);
+		}
+	}
+	
+	return hits;
+}
+
+//------------------------------------------------------------
 std::string ofSoundDevice::getDescription() {
 	std::stringstream desc;
 	desc << "[" << deviceID << "] " << name;
