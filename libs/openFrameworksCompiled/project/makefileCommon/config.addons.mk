@@ -98,10 +98,10 @@ define parse_addon
 			$(if $(wildcard $(addon_include)), \
 				$(eval PROJECT_ADDONS_INCLUDES += $(addon_include)) \
 			) \
-		) \
+		), \
+		$(call parse_addons_includes, $(addon)) \
+		$(eval PROJECT_ADDONS_INCLUDES += $(PARSED_ADDONS_INCLUDES)) \
 	) \
-	$(call parse_addons_includes, $(addon)) \
-	$(eval PROJECT_ADDONS_INCLUDES += $(PARSED_ADDONS_INCLUDES)) \
 	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
 	$(if $(strip $(ADDON_LIBS)), \
 		$(foreach addon_lib, $(strip $(ADDON_LIBS)), \
@@ -111,10 +111,10 @@ define parse_addon
 			$(if $(wildcard $(addon_lib)), \
 				$(eval PROJECT_ADDONS_LIBS += $(addon_lib)) \
 			) \
-		) \
+		), \
+		$(call parse_addons_libraries, $(addon)) \
+		$(eval PROJECT_ADDONS_LIBS += $(PARSED_ADDONS_LIBS)) \
 	) \
-	$(call parse_addons_libraries, $(addon)) \
-	$(eval PROJECT_ADDONS_LIBS += $(PARSED_ADDONS_LIBS)) \
 	$(eval PROJECT_ADDONS_LDFLAGS += $(ADDON_LDFLAGS)) \
 	$(eval PROJECT_ADDONS_PKG_CONFIG_LIBRARIES += $(ADDON_PKG_CONFIG_LIBRARIES)) \
 	$(eval PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
@@ -126,15 +126,16 @@ define parse_addon
 			$(if $(wildcard $(addon_src)), \
 				$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
 			) \
-		) \
+		), \
+		$(call parse_addons_sources, $(addon)) \
+		$(eval PROJECT_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_SOURCE_FILES)) \
 	) \
-	$(call parse_addons_sources, $(addon)) \
-	$(eval PROJECT_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_SOURCE_FILES)) \
 	$(if $(strip $(ADDON_DATA)), \
 		$(eval PROJECT_ADDONS_DATA += $(addon)/$(ADDON_DATA)) \
 	) \
 	$(foreach addon_dep, $(strip $(ADDON_DEPENDENCIES)), \
-		$(if $(filter $(addon_dep),$(PROJECT_ADDONS)), \
+		$(if $(filter-out $(PROJECT_ADDONS),$(addon_dep)), \
+			$(info adding $(addon_dep)) \
 			$(eval PROJECT_ADDONS += $(addon_dep)) \
 			$(call parse_addon, $(addon_dep)) \
 		) \
