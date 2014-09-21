@@ -49,8 +49,19 @@ of3dPrimitive & of3dPrimitive::operator=(const of3dPrimitive & mom){
 ofMesh* of3dPrimitive::getMeshPtr() {
     return mesh.get();
 }
+
 //----------------------------------------------------------
 ofMesh& of3dPrimitive::getMesh() {
+    return *mesh;
+}
+
+//----------------------------------------------------------
+const ofMesh* of3dPrimitive::getMeshPtr() const{
+    return mesh.get();
+}
+
+//----------------------------------------------------------
+const ofMesh& of3dPrimitive::getMesh() const{
     return *mesh;
 }
 
@@ -65,7 +76,17 @@ ofVec4f& of3dPrimitive::getTexCoords() {
 }
 
 //----------------------------------------------------------
-vector<ofIndexType> of3dPrimitive::getIndices( int startIndex, int endIndex ) {
+const ofVec4f* of3dPrimitive::getTexCoordsPtr() const{
+    return& texCoords;
+}
+
+//----------------------------------------------------------
+const ofVec4f& of3dPrimitive::getTexCoords() const{
+    return texCoords;
+}
+
+//----------------------------------------------------------
+vector<ofIndexType> of3dPrimitive::getIndices( int startIndex, int endIndex ) const {
     vector<ofIndexType> indices;
     indices.assign( getMesh().getIndices().begin()+startIndex, getMesh().getIndices().begin()+endIndex );
     return indices;
@@ -73,12 +94,12 @@ vector<ofIndexType> of3dPrimitive::getIndices( int startIndex, int endIndex ) {
 
 
 //----------------------------------------------------------
-bool of3dPrimitive::hasScaling() {
+bool of3dPrimitive::hasScaling()  const{
     ofVec3f scale = getScale();
     return (scale.x != 1.f || scale.y != 1.f || scale.z != 1.f);
 }
 //----------------------------------------------------------
-bool of3dPrimitive::hasNormalsEnabled() {
+bool of3dPrimitive::hasNormalsEnabled() const {
     return getMesh().hasNormals();
 }
 
@@ -158,27 +179,27 @@ void of3dPrimitive::normalizeAndApplySavedTexCoords() {
 
 
 //--------------------------------------------------------------
-void of3dPrimitive::drawVertices() {
+void of3dPrimitive::drawVertices()  const{
 	draw(OF_MESH_POINTS);
 }
 
 //--------------------------------------------------------------
-void of3dPrimitive::drawWireframe() {
+void of3dPrimitive::drawWireframe()  const{
 	draw(OF_MESH_WIREFRAME);
 }
 
 //--------------------------------------------------------------
-void of3dPrimitive::drawFaces() {
+void of3dPrimitive::drawFaces()  const{
 	draw(OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------
-void of3dPrimitive::draw() {
+void of3dPrimitive::draw() const{
 	draw(OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------
-void of3dPrimitive::draw(ofPolyRenderMode renderType) {
+void of3dPrimitive::draw(ofPolyRenderMode renderType) const{
     // ofNode applies all of the tranformations needed, included scale //
     ofNode::transformGL();
     ofGetCurrentRenderer()->draw(*this, renderType);
@@ -186,12 +207,12 @@ void of3dPrimitive::draw(ofPolyRenderMode renderType) {
 }
 
 //--------------------------------------------------------------
-void of3dPrimitive::drawNormals(float length, bool bFaceNormals) {
+void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
     ofNode::transformGL();
     
     if(getMesh().usingNormals()) {
-        vector<ofVec3f>& normals    = getMesh().getNormals();
-        vector<ofVec3f>& vertices   = getMesh().getVertices();
+        const vector<ofVec3f>& normals    = getMesh().getNormals();
+        const vector<ofVec3f>& vertices   = getMesh().getVertices();
         ofVec3f normal;
         ofVec3f vert;
         
@@ -231,7 +252,7 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) {
 }
 
 //--------------------------------------------------------------
-void of3dPrimitive::drawAxes(float a_size) {
+void of3dPrimitive::drawAxes(float a_size)  const{
     ofNode::transformGL();
     ofDrawAxis(a_size);
     ofNode::restoreTransformGL();
@@ -253,7 +274,7 @@ void of3dPrimitive::setUseVbo(bool useVbo){
 }
 
 //--------------------------------------------------------------
-bool of3dPrimitive::isUsingVbo(){
+bool of3dPrimitive::isUsingVbo() const{
 	return usingVbo;
 }
 
@@ -337,27 +358,27 @@ void ofPlanePrimitive::setMode(ofPrimitiveMode mode) {
 }
 
 //--------------------------------------------------------------
-int ofPlanePrimitive::getNumColumns() {
+int ofPlanePrimitive::getNumColumns() const {
     return (int)resolution.x;
 }
 
 //--------------------------------------------------------------
-int ofPlanePrimitive::getNumRows() {
+int ofPlanePrimitive::getNumRows() const {
     return (int)resolution.y;
 }
 
 //--------------------------------------------------------------
-ofVec2f ofPlanePrimitive::getResolution() {
+ofVec2f ofPlanePrimitive::getResolution() const {
     return resolution;
 }
 
 //--------------------------------------------------------------
-float ofPlanePrimitive::getWidth() {
+float ofPlanePrimitive::getWidth() const {
     return width;
 }
 
 //--------------------------------------------------------------
-float ofPlanePrimitive::getHeight() {
+float ofPlanePrimitive::getHeight() const {
     return height;
 }
 
@@ -417,12 +438,12 @@ void ofSpherePrimitive::setRadius(float _radius) {
 }
 
 //----------------------------------------------------------
-float ofSpherePrimitive::getRadius() {
+float ofSpherePrimitive::getRadius() const {
     return radius;
 }
 
 //----------------------------------------------------------
-int ofSpherePrimitive::getResolution() {
+int ofSpherePrimitive::getResolution() const {
     return resolution;
 }
 
@@ -475,12 +496,12 @@ void ofIcoSpherePrimitive::setRadius(float _radius) {
 }
 
 //----------------------------------------------------------
-float ofIcoSpherePrimitive::getRadius() {
+float ofIcoSpherePrimitive::getRadius() const {
     return radius;
 }
 
 //----------------------------------------------------------
-int ofIcoSpherePrimitive::getResolution() {
+int ofIcoSpherePrimitive::getResolution() const {
     return resolution;
 }
 
@@ -626,12 +647,12 @@ void ofCylinderPrimitive::setBottomCapColor( ofColor color ) {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofCylinderPrimitive::getTopCapIndices() {
+vector<ofIndexType> ofCylinderPrimitive::getTopCapIndices() const {
     return of3dPrimitive::getIndices( strides[0][0], strides[0][0] + strides[0][1] );
 }
 
 //--------------------------------------------------------------
-ofMesh ofCylinderPrimitive::getTopCapMesh() {
+ofMesh ofCylinderPrimitive::getTopCapMesh() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofCylinderPrimitive") << "getTopCapMesh(): must be in triangle strip mode";
         return ofMesh();
@@ -641,7 +662,7 @@ ofMesh ofCylinderPrimitive::getTopCapMesh() {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofCylinderPrimitive::getCylinderIndices() {
+vector<ofIndexType> ofCylinderPrimitive::getCylinderIndices() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofCylinderPrimitive") << "getCylinderIndices(): must be in triangle strip mode";
     }
@@ -649,7 +670,7 @@ vector<ofIndexType> ofCylinderPrimitive::getCylinderIndices() {
 }
 
 //--------------------------------------------------------------
-ofMesh ofCylinderPrimitive::getCylinderMesh() {
+ofMesh ofCylinderPrimitive::getCylinderMesh() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofCylinderPrimitive") << "setCylinderMesh(): must be in triangle strip mode";
         return ofMesh();
@@ -659,7 +680,7 @@ ofMesh ofCylinderPrimitive::getCylinderMesh() {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndices() {
+vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndices() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofCylinderPrimitive") << "getBottomCapIndices(): must be in triangle strip mode";
     }
@@ -667,7 +688,7 @@ vector<ofIndexType> ofCylinderPrimitive::getBottomCapIndices() {
 }
 
 //--------------------------------------------------------------
-ofMesh ofCylinderPrimitive::getBottomCapMesh() {
+ofMesh ofCylinderPrimitive::getBottomCapMesh() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofCylinderPrimitive") << "getBottomCapMesh(): must be in triangle strip mode";
         return ofMesh();
@@ -677,37 +698,37 @@ ofMesh ofCylinderPrimitive::getBottomCapMesh() {
 }
 
 //--------------------------------------------------------------
-int ofCylinderPrimitive::getResolutionRadius() {
+int ofCylinderPrimitive::getResolutionRadius() const {
     return (int)resolution.x;
 }
 
 //--------------------------------------------------------------
-int ofCylinderPrimitive::getResolutionHeight() {
+int ofCylinderPrimitive::getResolutionHeight() const {
     return (int)resolution.y;
 }
 
 //--------------------------------------------------------------
-int ofCylinderPrimitive::getResolutionCap() {
+int ofCylinderPrimitive::getResolutionCap() const {
     return (int)resolution.z;
 }
 
 //--------------------------------------------------------------
-ofVec3f ofCylinderPrimitive::getResolution() {
+ofVec3f ofCylinderPrimitive::getResolution() const {
     return resolution;
 }
 
 //--------------------------------------------------------------
-float ofCylinderPrimitive::getHeight() {
+float ofCylinderPrimitive::getHeight() const {
     return height;
 }
 
 //--------------------------------------------------------------
-float ofCylinderPrimitive::getRadius() {
+float ofCylinderPrimitive::getRadius() const {
     return radius;
 }
 
 //--------------------------------------------------------------
-bool ofCylinderPrimitive::getCapped() {
+bool ofCylinderPrimitive::getCapped() const {
     return bCapped;
 }
 
@@ -827,7 +848,7 @@ void ofConePrimitive::setCapColor( ofColor color ) {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofConePrimitive::getConeIndices() {
+vector<ofIndexType> ofConePrimitive::getConeIndices() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofConePrimitive") << "getConeIndices(): must be in triangle strip mode";
     }
@@ -835,7 +856,7 @@ vector<ofIndexType> ofConePrimitive::getConeIndices() {
 }
 
 //--------------------------------------------------------------
-ofMesh ofConePrimitive::getConeMesh() {
+ofMesh ofConePrimitive::getConeMesh() const {
     int startIndex  = strides[0][0];
     int endIndex    = startIndex + strides[0][1];
     
@@ -849,7 +870,7 @@ ofMesh ofConePrimitive::getConeMesh() {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofConePrimitive::getCapIndices() {
+vector<ofIndexType> ofConePrimitive::getCapIndices() const {
     if(getMesh().getMode() != OF_PRIMITIVE_TRIANGLE_STRIP) {
         ofLogWarning("ofConePrimitive") << "getCapIndices(): must be in triangle strip mode";
     }
@@ -857,7 +878,7 @@ vector<ofIndexType> ofConePrimitive::getCapIndices() {
 }
 
 //--------------------------------------------------------------
-ofMesh ofConePrimitive::getCapMesh() {
+ofMesh ofConePrimitive::getCapMesh() const {
     int startIndex  = strides[1][0];
     int endIndex    = startIndex + strides[1][1];
     
@@ -871,32 +892,32 @@ ofMesh ofConePrimitive::getCapMesh() {
 }
 
 //--------------------------------------------------------------
-int ofConePrimitive::getResolutionRadius() {
+int ofConePrimitive::getResolutionRadius() const {
     return (int)resolution.x;
 }
 
 //--------------------------------------------------------------
-int ofConePrimitive::getResolutionHeight() {
+int ofConePrimitive::getResolutionHeight() const {
     return (int)resolution.y;
 }
 
 //--------------------------------------------------------------
-int ofConePrimitive::getResolutionCap() {
+int ofConePrimitive::getResolutionCap() const {
     return (int)resolution.z;
 }
 
 //--------------------------------------------------------------
-ofVec3f ofConePrimitive::getResolution() {
+ofVec3f ofConePrimitive::getResolution() const {
     return resolution;
 }
 
 //--------------------------------------------------------------
-float ofConePrimitive::getRadius() {
+float ofConePrimitive::getRadius() const {
     return radius;
 }
 
 //--------------------------------------------------------------
-float ofConePrimitive::getHeight() {
+float ofConePrimitive::getHeight() const {
     return height;
 }
 
@@ -1009,7 +1030,7 @@ void ofBoxPrimitive::resizeToTexture( ofTexture& inTexture ) {
 }
 
 //--------------------------------------------------------------
-vector<ofIndexType> ofBoxPrimitive::getSideIndices( int sideIndex ) {
+vector<ofIndexType> ofBoxPrimitive::getSideIndices( int sideIndex ) const {
     
     if(sideIndex < 0 || sideIndex >= SIDES_TOTAL) {
         ofLogWarning("ofBoxPrimitive") << "getSideIndices(): faceIndex out of bounds, returning SIDE_FRONT";
@@ -1020,7 +1041,7 @@ vector<ofIndexType> ofBoxPrimitive::getSideIndices( int sideIndex ) {
 }
 
 //--------------------------------------------------------------
-ofMesh ofBoxPrimitive::getSideMesh( int sideIndex ) {
+ofMesh ofBoxPrimitive::getSideMesh( int sideIndex ) const {
     
     if(sideIndex < 0 || sideIndex > SIDES_TOTAL) {
         ofLogWarning("ofBoxPrimitive") << "getSideMesh(): faceIndex out of bounds, using SIDE_FRONT";
@@ -1077,37 +1098,37 @@ void ofBoxPrimitive::setSideColor( int sideIndex, ofColor color ) {
 }
 
 //--------------------------------------------------------------
-int ofBoxPrimitive::getResolutionWidth() {
+int ofBoxPrimitive::getResolutionWidth() const {
     return (int)resolution.x;
 }
 
 //--------------------------------------------------------------
-int ofBoxPrimitive::getResolutionHeight() {
+int ofBoxPrimitive::getResolutionHeight() const {
     return (int)resolution.y;
 }
 
 //--------------------------------------------------------------
-int ofBoxPrimitive::getResolutionDepth() {
+int ofBoxPrimitive::getResolutionDepth() const {
     return (int)resolution.z;
 }
 
 //--------------------------------------------------------------
-ofVec3f ofBoxPrimitive::getResolution() {
+ofVec3f ofBoxPrimitive::getResolution() const {
     return resolution;
 }
 
 //--------------------------------------------------------------
-float ofBoxPrimitive::getWidth() {
+float ofBoxPrimitive::getWidth() const {
     return size.x;
 }
 
 //--------------------------------------------------------------
-float ofBoxPrimitive::getHeight() {
+float ofBoxPrimitive::getHeight() const {
     return size.y;
 }
 
 //--------------------------------------------------------------
-float ofBoxPrimitive::getDepth() {
+float ofBoxPrimitive::getDepth() const {
     return size.z;
 }
 

@@ -27,22 +27,22 @@ public:
     void startRender();
     void finishRender();
 
-	void setCurrentFBO(ofFbo * fbo);
+	void setCurrentFBO(const ofFbo * fbo);
     
 	void update();
-	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
-	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
-    void draw(of3dPrimitive& model, ofPolyRenderMode renderType);
-	void draw(ofPolyline & poly);
-	void draw(ofPath & path);
-	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofBaseVideoDraws & video, float x, float y, float w, float h);
+	void draw(const ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true) const;
+    void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
+	void draw(const ofPolyline & poly) const;
+	void draw(const ofPath & path) const;
+	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+    void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
 
-	void bind(ofBaseVideoDraws & video);
-	void unbind(ofBaseVideoDraws & video);
-    
+	void bind(const ofBaseVideoDraws & video) const;
+	void unbind(const ofBaseVideoDraws & video) const;
+
 	bool rendersPathPrimitives(){
 		return false;
 	}
@@ -62,14 +62,14 @@ public:
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 	void setOrientation(ofOrientation orientation, bool vFlip);
-	ofRectangle getCurrentViewport();
-	ofRectangle getNativeViewport();
-	int getViewportWidth();
-	int getViewportHeight();
+	ofRectangle getCurrentViewport() const;
+	ofRectangle getNativeViewport() const;
+	int getViewportWidth() const;
+	int getViewportHeight() const;
 	bool isVFlipped() const;
     
 	void setCoordHandedness(ofHandednessType handedness);
-	ofHandednessType getCoordHandedness();
+	ofHandednessType getCoordHandedness() const;
     
 	//our openGL wrappers
 	void pushMatrix();
@@ -147,7 +147,7 @@ public:
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
 
-	ofShader & getCurrentShader();
+	const ofShader & getCurrentShader() const;
 
 	void enableTextureTarget(int textureTarget, int textureID, int textureLocation);
 	void disableTextureTarget(int textureTarget, int textureLocation);
@@ -155,7 +155,7 @@ public:
 	void disableAlphaMask();
 	GLenum getCurrentTextureTarget();
 
-	void beginCustomShader(ofShader & shader);
+	void beginCustomShader(const ofShader & shader);
 	void endCustomShader();
 
 	void setCurrentMaterial(ofBaseMaterial * material);
@@ -163,43 +163,62 @@ public:
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
 
-	ofShader & defaultTexRectColor();
-	ofShader & defaultTexRectNoColor();
-	ofShader & defaultTex2DColor();
-	ofShader & defaultTex2DNoColor();
-	ofShader & defaultNoTexColor();
-	ofShader & defaultNoTexNoColor();
-	ofShader & alphaMaskRectShader();
-	ofShader & alphaMask2DShader();
-	ofShader & bitmapStringShader();
-	ofShader & defaultUniqueShader();
-	ofShader & getShaderPlanarYUY2();
-	ofShader & getShaderNV12();
-	ofShader & getShaderNV21();
-	ofShader & getShaderPlanarYUV();
-	ofShader & getShaderPlanarYUY2Rect();
-	ofShader & getShaderNV12Rect();
-	ofShader & getShaderNV21Rect();
-	ofShader & getShaderPlanarYUVRect();
-	ofShader * getVideoShader(ofBaseVideoDraws & video);
-	void setVideoShaderUniforms(ofBaseVideoDraws & video, ofShader & shader);
+	ofShader & defaultTexRectColor() const;
+	ofShader & defaultTexRectNoColor() const;
+	ofShader & defaultTex2DColor() const;
+	ofShader & defaultTex2DNoColor() const;
+	ofShader & defaultNoTexColor() const;
+	ofShader & defaultNoTexNoColor() const;
+	ofShader & alphaMaskRectShader() const;
+	ofShader & alphaMask2DShader() const;
+	ofShader & bitmapStringShader() const;
+	ofShader & defaultUniqueShader() const;
+	ofShader & getShaderPlanarYUY2() const;
+	ofShader & getShaderNV12() const;
+	ofShader & getShaderNV21() const;
+	ofShader & getShaderPlanarYUV() const;
+	ofShader & getShaderPlanarYUY2Rect() const;
+	ofShader & getShaderNV12Rect() const;
+	ofShader & getShaderNV21Rect() const;
+	ofShader & getShaderPlanarYUVRect() const;
+	const ofShader * getVideoShader(const ofBaseVideoDraws & video) const;
+	void setVideoShaderUniforms(const ofBaseVideoDraws & video, const ofShader & shader) const;
+
+	void enableLighting(){};
+	void disableLighting(){};
+	void enableSeparateSpecularLight(){};
+	void disableSeparateSpecularLight(){}
+	bool getLightingEnabled(){return true;}
+	void setSmoothLighting(bool b){}
+	void setGlobalAmbientColor(const ofColor& c){}
+	void enableLight(int lightIndex){}
+	void disableLight(int lightIndex){}
+	void setLightSpotlightCutOff(int lightIndex, float spotCutOff){}
+	void setLightSpotConcentration(int lightIndex, float exponent){}
+	void setLightAttenuation(int lightIndex, float constant, float linear, float quadratic ){}
+	void setLightAmbientColor(int lightIndex, const ofFloatColor& c){}
+	void setLightDiffuseColor(int lightIndex, const ofFloatColor& c){}
+	void setLightSpecularColor(int lightIndex, const ofFloatColor& c){}
+	void setLightPosition(int lightIndex, const ofVec4f & position){}
+	void setLightSpotDirection(int lightIndex, const ofVec4f & direction){}
+
 private:
 
 
-	ofPolyline circlePolyline;
+	mutable ofPolyline circlePolyline;
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
-	ofMesh circleMesh;
-	ofMesh triangleMesh;
-	ofMesh rectMesh;
-	ofMesh lineMesh;
-	ofVbo meshVbo;
+	mutable ofMesh circleMesh;
+	mutable ofMesh triangleMesh;
+	mutable ofMesh rectMesh;
+	mutable ofMesh lineMesh;
+	mutable ofVbo meshVbo;
 #else
-	ofVboMesh circleMesh;
-	ofVboMesh triangleMesh;
-	ofVboMesh rectMesh;
-	ofVboMesh lineMesh;
-	ofVbo meshVbo;
-	ofVbo vertexDataVbo;
+	mutable ofVboMesh circleMesh;
+	mutable ofVboMesh triangleMesh;
+	mutable ofVboMesh rectMesh;
+	mutable ofVboMesh lineMesh;
+	mutable ofVbo meshVbo;
+	mutable ofVbo vertexDataVbo;
 #endif
 
 	void uploadCurrentMatrix();
@@ -223,7 +242,7 @@ private:
 	bool bSmoothHinted;
 	ofRectMode rectMode;
 	
-	ofShader * currentShader;
+	const ofShader * currentShader;
 
 	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled, bitmapStringEnabled;
 	bool usingCustomShader, settingDefaultShader;

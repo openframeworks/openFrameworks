@@ -31,78 +31,78 @@ public:
 	void setGeometryOutputType(GLenum type); // type: GL_POINTS, GL_LINE_STRIP or GL_TRIANGLE_STRIP
 	void setGeometryOutputCount(int count);	// set number of output vertices
 	
-	int getGeometryMaxOutputCount();		// returns maximum number of supported vertices
+	int getGeometryMaxOutputCount() const;		// returns maximum number of supported vertices
 
 
 	void unload();
 	
-	bool isLoaded();
+	bool isLoaded() const;
 
-	void begin();
-	void end();
+	void begin() const;
+	void end() const;
 	
 	// set a texture reference
-	void setUniformTexture(const string & name, ofBaseHasTexture& img, int textureLocation);
-	void setUniformTexture(const string & name, ofTexture& img, int textureLocation);
-	void setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation);
+	void setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation) const;
+	void setUniformTexture(const string & name, const ofTexture& img, int textureLocation) const;
+	void setUniformTexture(const string & name, int textureTarget, GLint textureID, int textureLocation) const;
 	
 	// set a single uniform value
-	void setUniform1i(const string & name, int v1);
-	void setUniform2i(const string & name, int v1, int v2);
-	void setUniform3i(const string & name, int v1, int v2, int v3);
-	void setUniform4i(const string & name, int v1, int v2, int v3, int v4);
+	void setUniform1i(const string & name, int v1) const;
+	void setUniform2i(const string & name, int v1, int v2) const;
+	void setUniform3i(const string & name, int v1, int v2, int v3) const;
+	void setUniform4i(const string & name, int v1, int v2, int v3, int v4) const;
 	
-	void setUniform1f(const string & name, float v1);
-	void setUniform2f(const string & name, float v1, float v2);
-	void setUniform3f(const string & name, float v1, float v2, float v3);
-	void setUniform4f(const string & name, float v1, float v2, float v3, float v4);
+	void setUniform1f(const string & name, float v1) const;
+	void setUniform2f(const string & name, float v1, float v2) const;
+	void setUniform3f(const string & name, float v1, float v2, float v3) const;
+	void setUniform4f(const string & name, float v1, float v2, float v3, float v4) const;
 	
 	// set an array of uniform values
-	void setUniform1iv(const string & name, const int* v, int count = 1);
-	void setUniform2iv(const string & name, const int* v, int count = 1);
-	void setUniform3iv(const string & name, const int* v, int count = 1);
-	void setUniform4iv(const string & name, const int* v, int count = 1);
+	void setUniform1iv(const string & name, const int* v, int count = 1) const;
+	void setUniform2iv(const string & name, const int* v, int count = 1) const;
+	void setUniform3iv(const string & name, const int* v, int count = 1) const;
+	void setUniform4iv(const string & name, const int* v, int count = 1) const;
 	
-	void setUniform1fv(const string & name, const float* v, int count = 1);
-	void setUniform2fv(const string & name, const float* v, int count = 1);
-	void setUniform3fv(const string & name, const float* v, int count = 1);
-	void setUniform4fv(const string & name, const float* v, int count = 1);
+	void setUniform1fv(const string & name, const float* v, int count = 1) const;
+	void setUniform2fv(const string & name, const float* v, int count = 1) const;
+	void setUniform3fv(const string & name, const float* v, int count = 1) const;
+	void setUniform4fv(const string & name, const float* v, int count = 1) const;
 	
 	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
-	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m);
-	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m);
+	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m) const;
+	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m) const;
 
 	// set attributes that vary per vertex (look up the location before glBegin)
-	GLint getAttributeLocation(const string & name);
+	GLint getAttributeLocation(const string & name) const;
 
 #ifndef TARGET_OPENGLES
-	void setAttribute1s(GLint location, short v1);
-	void setAttribute2s(GLint location, short v1, short v2);
-	void setAttribute3s(GLint location, short v1, short v2, short v3);
-	void setAttribute4s(GLint location, short v1, short v2, short v3, short v4);
+	void setAttribute1s(GLint location, short v1) const;
+	void setAttribute2s(GLint location, short v1, short v2) const;
+	void setAttribute3s(GLint location, short v1, short v2, short v3) const;
+	void setAttribute4s(GLint location, short v1, short v2, short v3, short v4) const;
 #endif
 	
-	void setAttribute1f(GLint location, float v1);
-	void setAttribute2f(GLint location, float v1, float v2);
-	void setAttribute3f(GLint location, float v1, float v2, float v3);
-	void setAttribute4f(GLint location, float v1, float v2, float v3, float v4);
+	void setAttribute1f(GLint location, float v1) const;
+	void setAttribute2f(GLint location, float v1, float v2) const;
+	void setAttribute3f(GLint location, float v1, float v2, float v3) const;
+	void setAttribute4f(GLint location, float v1, float v2, float v3, float v4) const;
 
 #ifndef TARGET_OPENGLES
-	void setAttribute1d(GLint location, double v1);
-	void setAttribute2d(GLint location, double v1, double v2);
-	void setAttribute3d(GLint location, double v1, double v2, double v3);
-	void setAttribute4d(GLint location, double v1, double v2, double v3, double v4);
+	void setAttribute1d(GLint location, double v1) const;
+	void setAttribute2d(GLint location, double v1, double v2) const;
+	void setAttribute3d(GLint location, double v1, double v2, double v3) const;
+	void setAttribute4d(GLint location, double v1, double v2, double v3, double v4) const;
 #endif
 
-	void setAttribute1fv(const string & name, const float* v, GLsizei stride=sizeof(float));
-	void setAttribute2fv(const string & name, const float* v, GLsizei stride=sizeof(float)*2);
-	void setAttribute3fv(const string & name, const float* v, GLsizei stride=sizeof(float)*3);
-	void setAttribute4fv(const string & name, const float* v, GLsizei stride=sizeof(float)*4);
+	void setAttribute1fv(const string & name, const float* v, GLsizei stride=sizeof(float)) const;
+	void setAttribute2fv(const string & name, const float* v, GLsizei stride=sizeof(float)*2) const;
+	void setAttribute3fv(const string & name, const float* v, GLsizei stride=sizeof(float)*3) const;
+	void setAttribute4fv(const string & name, const float* v, GLsizei stride=sizeof(float)*4) const;
 	
-	void bindAttribute(GLuint location, const string & name);
+	void bindAttribute(GLuint location, const string & name) const;
 
-	void printActiveUniforms();
-	void printActiveAttributes();
+	void printActiveUniforms() const;
+	void printActiveAttributes() const;
 	
 
 	// advanced use
@@ -118,13 +118,13 @@ public:
 	// binds default uniforms and attributes, only useful for
 	// fixed pipeline simulation under programmable renderer
 	// has to be called before linking
-	bool bindDefaults();
+	bool bindDefaults() const;
 
-	GLuint& getProgram();
-	GLuint& getShader(GLenum type);
+	GLuint getProgram() const;
+	GLuint getShader(GLenum type) const;
 	
-	bool operator==(const ofShader & other);
-	bool operator!=(const ofShader & other);
+	bool operator==(const ofShader & other) const;
+	bool operator!=(const ofShader & other) const;
 
 
 	// these are used only for openGL ES2 or GL3/4 using the programmable GL renderer
@@ -137,18 +137,18 @@ public:
 
 	/// @brief returns the shader source as it was passed to the GLSL compiler
 	/// @param type (GL_VERTEX_SHADER | GL_FRAGMENT_SHADER | GL_GEOMETRY_SHADER_EXT) the shader source you'd like to inspect.
-	string getShaderSource(GLenum type);
+	string getShaderSource(GLenum type) const;
 
 
 private:
 	GLuint program;
 	bool bLoaded;
 
-	unordered_map<GLenum, GLuint> shaders;
-	unordered_map<string, GLint> uniformLocations;
-	unordered_map<GLenum, string> shaderSource;
+	mutable unordered_map<GLenum, GLuint> shaders;
+	mutable unordered_map<string, GLint> uniformLocations;
+	mutable unordered_map<GLenum, string> shaderSource;
 
-	GLint getUniformLocation(const string & name);
+	GLint getUniformLocation(const string & name) const;
 	
 	void checkProgramInfoLog(GLuint program);
 	bool checkProgramLinkStatus(GLuint program);
@@ -162,8 +162,8 @@ private:
 	/// @note			Include paths are always specified _relative to the including file's current path_
 	///	@note			Recursive #pragma include statements are possible
 	/// @note			Includes will be processed up to 32 levels deep
-    string parseForIncludes( const string& source, const string& sourceDirectoryPath = "");
-    string parseForIncludes( const string& source, vector<string>& included, int level = 0, const string& sourceDirectoryPath = "");
+    static string parseForIncludes( const string& source, const string& sourceDirectoryPath = "");
+    static string parseForIncludes( const string& source, vector<string>& included, int level = 0, const string& sourceDirectoryPath = "");
 	
 	void checkAndCreateProgram();
 	
