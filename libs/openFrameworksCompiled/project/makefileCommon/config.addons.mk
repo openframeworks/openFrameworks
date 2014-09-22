@@ -137,8 +137,8 @@ define parse_addon
 					$(eval SRC_OBJ_FILE=$(strip $(call src_to_obj, $(addon_src:$(OF_ROOT)/%=%),))) \
 					$(info $(SRC_OBJ_FILE)) \
 					$(eval PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
-				) \
 				,$(error cannot find addon source file $(addon_src)) \
+				) \
 			) \
 		) \
 	) \
