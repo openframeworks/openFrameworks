@@ -65,15 +65,18 @@ define parse_addon
 	$(eval addon=$(addprefix $(OF_ADDONS_PATH)/, $1)) \
 	$(eval ADDON_DEPENDENCIES= ) \
 	$(eval ADDON_DATA= ) \
-	$(eval ADDON_INCLUDES= ) \
 	$(eval ADDON_CFLAGS= ) \
 	$(eval ADDON_LDFLAGS= ) \
-	$(eval ADDON_LIBS= ) \
 	$(eval ADDON_PKG_CONFIG_LIBRARIES= ) \
 	$(eval ADDON_FRAMEWORKS= ) \
-	$(eval ADDON_SOURCES= ) \
 	$(eval ADDON_LIBS_EXCLUDE= ) \
 	$(eval ADDON_SOURCES_EXCLUDE= ) \
+	$(call parse_addons_includes, $(addon)) \
+	$(eval ADDON_INCLUDES=$(PARSED_ADDONS_INCLUDES)) \
+	$(call parse_addons_libraries, $(addon)) \
+	$(eval ADDON_LIBS=$(PARSED_ADDONS_LIBS)) \
+	$(call parse_addons_sources, $(addon)) \
+	$(eval ADDON_SOURCES=$(PARSED_ADDONS_SOURCE_FILES)) \
 	$(eval PROCESS_NEXT=0) \
 	$(if $(wildcard $(addon)/addon_config.mk), \
 		$(foreach var_line, $(subst $(space),?,$(shell cat $(addon)/addon_config.mk | tr '\n' '\t')), \
@@ -91,16 +94,15 @@ define parse_addon
 		) \
 	) \
 	$(if $(strip $(ADDON_INCLUDES)), \
-		$(foreach addon_include, $(strip $(ADDON_INCLUDES)), \
+		$(eval ADDON_INCLUDES_FILTERED = $(filter-out $(addprefix $(addon)/,$(ADDON_INCLUDES_EXCLUDE)),$(ADDON_INCLUDES))) \
+		$(foreach addon_include, $(strip $(ADDON_INCLUDES_FILTERED)), \
 			$(if $(wildcard $(addon)/$(addon_include)), \
 				$(eval PROJECT_ADDONS_INCLUDES += $(addon)/$(addon_include)) \
 			) \
 			$(if $(wildcard $(addon_include)), \
 				$(eval PROJECT_ADDONS_INCLUDES += $(addon_include)) \
 			) \
-		), \
-		$(call parse_addons_includes, $(addon)) \
-		$(eval PROJECT_ADDONS_INCLUDES += $(PARSED_ADDONS_INCLUDES)) \
+		) \
 	) \
 	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
 	$(if $(strip $(ADDON_LIBS)), \
@@ -111,27 +113,24 @@ define parse_addon
 			$(if $(wildcard $(addon_lib)), \
 				$(eval PROJECT_ADDONS_LIBS += $(addon_lib)) \
 			) \
-		), \
-		$(call parse_addons_libraries, $(addon)) \
-		$(eval PROJECT_ADDONS_LIBS += $(PARSED_ADDONS_LIBS)) \
+		) \
 	) \
 	$(eval PROJECT_ADDONS_LDFLAGS += $(ADDON_LDFLAGS)) \
 	$(eval PROJECT_ADDONS_PKG_CONFIG_LIBRARIES += $(ADDON_PKG_CONFIG_LIBRARIES)) \
 	$(eval PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
 	$(if $(strip $(ADDON_SOURCES)), \
-		$(foreach addon_src, $(strip $(ADDON_SOURCES)), \
+		$(eval ADDON_SOURCES_FILTERED = $(filter-out $(addprefix $(addon)/,$(ADDON_SOURCES_EXCLUDE)),$(ADDON_SOURCES))) \
+		$(foreach addon_src, $(strip $(ADDON_SOURCES_FILTERED)), \
 			$(if $(wildcard $(addon)/$(addon_src)), \
 				$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon)/$(addon_src)) \
 			) \
 			$(if $(wildcard $(addon_src)), \
 				$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
 			) \
-		), \
-		$(call parse_addons_sources, $(addon)) \
-		$(eval PROJECT_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_SOURCE_FILES)) \
+		) \
 	) \
 	$(if $(strip $(ADDON_DATA)), \
-		$(eval PROJECT_ADDONS_DATA += $(addon)/$(ADDON_DATA)) \
+		$(eval PROJECT_ADDONS_DATA += $(addprefix $(addon)/,$(ADDON_DATA))) \
 	) \
 	$(foreach addon_dep, $(strip $(ADDON_DEPENDENCIES)), \
 		$(if $(filter-out $(PROJECT_ADDONS),$(addon_dep)), \
