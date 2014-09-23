@@ -102,7 +102,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		vector<ofTexture> tex;
 		bool bUseTexture;
 		shared_ptr<ofBaseVideoGrabber> grabber;
-		int RequestedDeviceID;
+		int requestedDeviceID;
 
 		mutable ofPixelFormat internalPixelFormat;
 		int desiredFramerate;
