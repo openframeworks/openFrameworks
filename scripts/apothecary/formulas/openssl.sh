@@ -4,6 +4,8 @@
 
 # define the version
 VER=1.0.1i
+CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
+COMPILER_TYPE=clang # clang, gcc
 
 
 # download the source code and unpack it into LIB_NAME
@@ -35,6 +37,10 @@ function prepare() {
 		installAndroidToolchain
 	elif [ "$TYPE" == "ios" ] ; then
 		# create output directories
+		mkdir -p "src"
+		mkdir -p "bin"
+		mkdir -p "lib"
+
 		mkdir -p lib/$TYPE
 		mkdir -p lib/include
 
@@ -50,9 +56,14 @@ function prepare() {
 		mkdir -p lib/$TYPE/armv7s
 		mkdir -p lib/$TYPE/arm64
 
+		
+
 		# make copies of the source files before modifying
 		cp Makefile Makefile.orig
+		cp Configure Configure.orig
 		cp "crypto/ui/ui_openssl.c" "crypto/ui/ui_openssl.c.orig"
+	
+
  	fi
 
 
@@ -61,7 +72,7 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
-	echoWarning "TODO: build $TYPE lib"
+	
 
 	# if [ "$TYPE" == "osx" ] ; then
 	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
@@ -119,13 +130,19 @@ function build() {
 
 		# This was quite helpful as a reference: https://github.com/x2on/OpenSSL-for-iPhone
 		# Refer to the other script if anything drastic changes for future versions
+		SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`	
+		set -e
+		CURRENTPATH=`pwd`
+		
+		DEVELOPER=$XCODE_DEV_ROOT
+		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
+		VERSION=$VER
 
-		export TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
-		export DEVELOPER=$XCODE_DEV_ROOT
+
 
 		local IOS_ARCHS="i386 x86_64 armv7 armv7s arm64"
-		local STDLIB="libc++"
-		CURRENTPATH=`pwd`	
+		local STDLIB="libc++"	
+
 
 		# Validate environment
 		case $XCODE_DEV_ROOT in  
@@ -144,71 +161,123 @@ function build() {
 		# loop through architectures! yay for loops!
 		for IOS_ARCH in ${IOS_ARCHS}
 		do
-			unset RANLIB CC CFLAG CFLAGS 
-			unset IOS_PLATFORM CROSS_TOP CROSS_SDK BUILD_TOOLS
-			unset IOS_DEVROOT IOS_SDKROOT
-	
-			export RANLIB=$TOOLCHAIN/usr/bin/ranlib
+			# make sure backed up
+			cp "Configure" "Configure.orig" 
+			cp "Makefile" "Makefile.orig"
 
-			
+			if [ "${COMPILER_TYPE}" == "clang" ]; then
+				export THECOMPILER=$TOOLCHAIN/usr/bin/clang
+			else
+				export THECOMPILER=${BUILD_TOOLS}/usr/bin/gcc
+			fi
+			echo "The compiler: $THECOMPILER"
+
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-				IOS_PLATFORM="iPhoneSimulator"
+				PLATFORM="iPhoneSimulator"
+				OLD_LANG=$LANG
+				unset LANG
+				sed -ie "s!\"debug-darwin-i386-cc\",\"cc:-arch i386 -g3!\"debug-darwin-i386-cc\",\"$THECOMPILER:-arch i386 -g3!" Configure
+				sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
+				export LANG=$OLD_LANG
 			else
 				cp "crypto/ui/ui_openssl.c" "crypto/ui/ui_openssl.c.orig"
-				# need to change this file for iOS only
 				sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
-				IOS_PLATFORM="iPhoneOS"
+				PLATFORM="iPhoneOS"
+				OLD_LANG=$LANG
+				unset LANG
+				sed -ie "s!\"iphoneos-cross\",\"llvm-gcc:-O3!\"iphoneos-cross\",\"$THECOMPILER:-Os!" Configure
+				export LANG=$OLD_LANG
 			fi
 
-			echo "Building OpenSSL $VER for $IOS_PLATFORM $IOS_SDK_VER $IOS_ARCH"
+		
 
-			local IOS_DEVROOT=$XCODE_DEV_ROOT/Platforms/$IOS_PLATFORM.platform/Developer
-			local IOS_SDKROOT=$IOS_DEVROOT/SDKs/$IOS_PLATFORM$IOS_SDK_VER.sdk
+			export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
+			export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
+			export BUILD_TOOLS="${DEVELOPER}"
 
-			export CROSS_TOP=$IOS_DEVROOT
-			export CROSS_SDK="$IOS_PLATFORM$IOS_SDK_VER.sdk"
-			export BUILD_TOOLS="$XCODE_DEV_ROOT"
-
-			export CC="$TOOLCHAIN/usr/bin/cc -arch $IOS_ARCH"
-
-			if [[ "$VER" =~ 1.0.0. ]]; then
-				echo "Building for OpenSSL Version before 1.0.0"
-	    		./Configure BSD-generic32 --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH"
-			elif [ "$IOS_ARCH" == "x86_64" ]; then
-			    ./Configure darwin64-x86_64-cc --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH"
-		    else
-			    ./Configure iphoneos-cross --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH"
-		    fi
-
-		    local MIN_IOS_VERSION=$IOS_MIN_SDK_VER
+			export CC="${THECOMPILER} -arch ${IOS_ARCH} -std=${CSTANDARD}"
+			mkdir -p "$CURRENTPATH/build/$TYPE/$IOS_ARCH"
+			LOG="$CURRENTPATH/build/$TYPE/$IOS_ARCH/build-openssl-${VER}.log"
+			
+			MIN_IOS_VERSION=$IOS_MIN_SDK_VER
 		    # min iOS version for arm64 is iOS 7
+		
+		    if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
+		    	MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
+		    elif [ "${IOS_ARCH}" == "i386" ]; then
+		    	MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
+		    fi
+			
 
-		    if [ "$IOS_ARCH" == "arm64" ] ; then
-		    	MIN_IOS_VERSION="7.0"
+			echo "Compiler: $CC"
+			echo "Building openssl-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
+
+			set +e
+			if [[ "$VERSION" =~ 1.0.0. ]]; then
+				echo "Building for OpenSSL Version before 1.0.0"
+	    		./Configure BSD-generic32 -no-asm --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH" > "${LOG}" 2>&1
+			elif [ "${IOS_ARCH}" == "i386" ]; then
+				echo "Configuring i386"
+			    ./Configure darwin-i386-cc -no-asm --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH" > "${LOG}" 2>&1
+		    elif [ "${IOS_ARCH}" == "x86_64" ]; then
+		    	echo "Configuring x86_64"
+			    ./Configure darwin64-x86_64-cc -no-asm --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH" > "${LOG}" 2>&1
+		    else
+		    	# armv7, armv7s, arm64
+		    	echo "Configuring arm"
+			    ./Configure iphoneos-cross -no-asm --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH" > "${LOG}" 2>&1
 		    fi
 
-		    sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -stdlib=$STDLIB -miphoneos-version-min=$MIN_IOS_VERSION !" "Makefile"
+		    if [ $? != 0 ]; then 
+		    	echo "Problem while configure - Please check ${LOG}"
+		    	exit 1
+		    fi
+
+		    MIN_TYPE=-miphoneos-version-min=
+		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+		    	MIN_TYPE=-mios-simulator-version-min=
+		    fi
+		    
+		    OLD_LANG=$LANG
+			unset LANG
+			sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -arch $IOS_ARCH -Os -fPIC -stdlib=libc++ $MIN_TYPE$MIN_IOS_VERSION !" Makefile
+			export LANG=$OLD_LANG
 
 
+			echo "Running make for ${IOS_ARCH}"
+			echo "Please stand by..."
 			# Must run at -j 1 (single thread only else will fail)
-			make
-			make install
+			make >> "${LOG}" 2>&1
+			if [ $? != 0 ];
+		    then 
+		    	echo "Problem while make - Please check ${LOG}"
+		    	exit 1
+		    else
+		    	echo "Make Successful for ${IOS_ARCH}"
+		    fi
+
+			set -e
+			make install >> "${LOG}" 2>&1
+			make clean >> "${LOG}" 2>&1
 
 			# copy libraries to lib folder
 			cp "build/$TYPE/$IOS_ARCH/lib/libssl.a" "lib/$TYPE/$IOS_ARCH/libssl.a"
 			cp "build/$TYPE/$IOS_ARCH/lib/libcrypto.a" "lib/$TYPE/$IOS_ARCH/libcrypto.a"
 
 			# must clean between builds
-			make clean
 
 			# reset source file back.
 			cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
+			cp "Makefile.orig" "Makefile"
+			cp "Configure.orig" "Configure"
+
+			unset CC CFLAG CFLAGS EXTRAFLAGS THECOMPILER
 
 		done
 
-		unset RANLIB CC CFLAG CFLAGS 
-		unset IOS_PLATFORM CROSS_TOP CROSS_SDK BUILD_TOOLS
+		unset CC CFLAG CFLAGS 
+		unset PLATFORM CROSS_TOP CROSS_SDK BUILD_TOOLS
 		unset IOS_DEVROOT IOS_SDKROOT 
 
 		cd lib/$TYPE/
@@ -234,9 +303,19 @@ function build() {
 
 		cp -R "build/$TYPE/x86_64/include/" "lib/include/"
 
+		cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
+	
+		
+
+
 		unset TOOLCHAIN DEVELOPER
 
+	else 
+
+		echoWarning "TODO: build $TYPE lib"
+
 	fi # end iOS Build
+
 
 	# elif [ "$TYPE" == "android" ] ; then
 	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
@@ -372,6 +451,11 @@ function clean() {
 		rm -rf /build
 		# clean up compiled libraries
 		rm -rf /lib
+
+		# reset files back to original if 
+		cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
+		cp "Makefile.orig" "Makefile"
+		cp "Configure.orig" "Configure"
 	# if [ "$TYPE" == "vs" ] ; then
 	# 	cmd //c buildwin.cmd ${VS_VER}0 clean static_md both Win32 nosamples notests
 	# elif [ "$TYPE" == "android" ] ; then
