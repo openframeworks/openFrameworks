@@ -78,9 +78,7 @@ define parse_addon
 	$(eval ADDON_INCLUDES=$(PARSED_ADDONS_INCLUDES)) \
 	$(call parse_addons_libraries, $(addon)) \
 	$(eval ADDON_LIBS=$(PARSED_ADDONS_LIBS)) \
-	$(info parsing sources) \
 	$(call parse_addons_sources, $(addon)) \
-	$(info sources parsed) \
 	$(eval ADDON_SOURCES=$(PARSED_ADDONS_SOURCE_FILES)) \
 	$(eval PROCESS_NEXT=0) \
 	$(if $(wildcard $(addon)/addon_config.mk), \
@@ -129,13 +127,11 @@ define parse_addon
 			$(if $(filter $(addon)%, $(addon_src)), \
 				$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
 				$(eval SRC_OBJ_FILE=$(addprefix $(OF_ADDONS_PATH)/,$(strip $(call src_to_obj, $(addon_src:$(addon)/%=%), $1/)))) \
-				$(info $(SRC_OBJ_FILE)) \
 				$(eval PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
 			, \
 				$(if $(filter $(OF_ROOT)%, $(addon_src)), \
 					$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
 					$(eval SRC_OBJ_FILE=$(strip $(call src_to_obj, $(addon_src:$(OF_ROOT)/%=%),))) \
-					$(info $(SRC_OBJ_FILE)) \
 					$(eval PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
 				,$(error cannot find addon source file $(addon_src)) \
 				) \
@@ -147,7 +143,6 @@ define parse_addon
 	) \
 	$(foreach addon_dep, $(strip $(ADDON_DEPENDENCIES)), \
 		$(if $(filter-out $(PROJECT_ADDONS),$(addon_dep)), \
-			$(info adding dependency $(addon_dep)) \
 			$(eval PROJECT_ADDONS += $(addon_dep)) \
 			$(call parse_addon, $(addon_dep)) \
 		) \
