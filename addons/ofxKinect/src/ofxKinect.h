@@ -283,6 +283,7 @@ public:
 
 	/// enable/disable frame loading into textures on update()
 	void setUseTexture(bool bUse);
+	bool isUsingTexture() const;
 
 	/// draw the video texture
 	void draw(float x, float y, float w, float h) const;

@@ -89,6 +89,10 @@ void ofxCvImage::setUseTexture( bool bUse ) {
 	bUseTexture = bUse;
 }
 
+bool ofxCvImage::isUsingTexture() const{
+	return bUseTexture;
+}
+
 //--------------------------------------------------------------------------------
 ofTexture& ofxCvImage::getTextureReference() {
 	return tex;

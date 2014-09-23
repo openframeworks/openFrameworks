@@ -648,6 +648,11 @@ void ofxKinect::setUseTexture(bool bUse){
 	bUseTexture = bUse;
 }
 
+//------------------------------------
+bool ofxKinect::isUsingTexture() const{
+	return bUseTexture;
+}
+
 //----------------------------------------------------------
 void ofxKinect::draw(float _x, float _y, float _w, float _h) const{
 	if(bUseTexture && bGrabVideo) {
