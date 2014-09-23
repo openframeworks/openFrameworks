@@ -691,6 +691,10 @@ enum ofPixelFormat{
 	OF_PIXELS_YV12=9,
 	OF_PIXELS_I420=10,
 	OF_PIXELS_YUY2=11,
+	OF_PIXELS_UYVY=12,
+
+	// bayer
+	OF_PIXELS_BAYER=13,
 
 	// yuv planes
 	OF_PIXELS_Y,

@@ -92,7 +92,7 @@ public:
 	virtual ofTexture & getTextureReference()=0;
 	virtual const ofTexture & getTextureReference() const=0;
 	virtual void setUseTexture(bool bUseTex)=0;
-	virtual bool isUsingTexture() const{return true;};
+	virtual bool isUsingTexture() const=0;
 };
 
 class ofBaseHasTexturePlanes: public ofBaseHasTexture{
