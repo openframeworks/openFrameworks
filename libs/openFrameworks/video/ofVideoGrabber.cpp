@@ -12,7 +12,7 @@
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){
 	bUseTexture			= false;
-	RequestedDeviceID	= -1;
+	requestedDeviceID	= -1;
 	internalPixelFormat = OF_PIXELS_RGB;
 	desiredFramerate 	= -1;
 	height				= 0;
@@ -55,8 +55,8 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 	bUseTexture = setUseTexture;
 
-	if( RequestedDeviceID >= 0 ){
-		grabber->setDeviceID(RequestedDeviceID);
+	if( requestedDeviceID >= 0 ){
+		grabber->setDeviceID(requestedDeviceID);
 	}
 
 	setPixelFormat(internalPixelFormat); //this safely handles checks for supported format
@@ -132,8 +132,8 @@ void ofVideoGrabber::setVerbose(bool bTalkToMe){
 
 //--------------------------------------------------------------------
 void ofVideoGrabber::setDeviceID(int _deviceID){
-	RequestedDeviceID = _deviceID;
-	if( grabber->isInitialized() ){
+	requestedDeviceID = _deviceID;
+	if( grabber && grabber->isInitialized() ){
 		ofLogWarning("ofxVideoGrabber") << "setDeviceID(): can't set device while grabber is running";
 	}
 }
