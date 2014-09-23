@@ -194,11 +194,11 @@ $(info $(PLATFORM_ARCH))
 ifeq ($(CROSS_COMPILING),1)	
 	ifneq ($(wildcard $(RPI_ROOT)/etc/debian_version),)
 		#RASPBIAN
-        ifeq ($(HOST_ARCH),x86_64)
-            TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
-        else
-            TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin
-        endif
+		ifeq ($(HOST_ARCH),x86_64)
+			TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian-x64/bin
+		else
+			TOOLCHAIN_ROOT = $(RPI_TOOLS)/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin
+		endif
 		GCC_PREFIX=arm-linux-gnueabihf
 	else
 		#ARCH LINUX
