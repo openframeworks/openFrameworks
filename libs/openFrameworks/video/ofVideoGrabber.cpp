@@ -255,7 +255,7 @@ void ofVideoGrabber::setUseTexture(bool bUse){
 }
 
 //------------------------------------
-bool ofVideoGrabber::isUsingTexture(){
+bool ofVideoGrabber::isUsingTexture() const{
 	return bUseTexture;
 }
 

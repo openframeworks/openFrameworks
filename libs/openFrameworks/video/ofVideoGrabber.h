@@ -74,7 +74,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
 		void				setUseTexture(bool bUse);
-		bool 				isUsingTexture();
+		bool 				isUsingTexture() const;
 		void				draw(float x, float y, float w, float h) const;
 		void				draw(float x, float y) const;
 		using ofBaseDraws::draw;
