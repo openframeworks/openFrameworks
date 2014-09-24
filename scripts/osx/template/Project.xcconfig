@@ -4,6 +4,7 @@ OF_PATH = ../../..
 
 //THIS HAS ALL THE HEADER AND LIBS FOR OF CORE
 #include "../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig"
+#include "addons.xcconfig"
 
 //ICONS - NEW IN 0072 
 ICON_NAME_DEBUG = icon-debug.icns
@@ -13,5 +14,12 @@ ICON_FILE_PATH = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/
 //IF YOU WANT AN APP TO HAVE A CUSTOM ICON - PUT THEM IN YOUR DATA FOLDER AND CHANGE ICON_FILE_PATH to:
 //ICON_FILE_PATH = bin/data/
 
-OTHER_LDFLAGS = $(OF_CORE_LIBS) 
+OTHER_LDFLAGS = $(OF_CORE_LIBS)
+
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)
+
+LIBRARY_SEARCH_PATHS = $(ADDONS_LIBS)
+
+FRAMEWORK_SEARCH_PATHS =
+
+USER_HEADER_SEARCH_PATHS = $(ADDONS_HEADERS)
