@@ -1,5 +1,5 @@
 //
-//  ofxiOSContstants.h
+//  ofxiOSConstants.h
 //  iOS+OFLib
 //
 //  Created by Lukasz Karluk on 25/09/2014.
