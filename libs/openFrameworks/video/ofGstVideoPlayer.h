@@ -73,6 +73,7 @@ protected:
 
 private:
 	ofPixelFormat		internalPixelFormat;
+	bool				nativePixels;
 	guint64				nFrames;
 	int 				fps_n, fps_d;
 	bool				bIsStream;

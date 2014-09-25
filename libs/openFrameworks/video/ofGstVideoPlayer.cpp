@@ -14,6 +14,7 @@
 ofGstVideoPlayer::ofGstVideoPlayer(){
 	nFrames						= 0;
 	internalPixelFormat			= OF_PIXELS_RGB;
+	nativePixels				= false;
 	bIsStream					= false;
 	bIsAllocated				= false;
 	threadAppSink				= false;
@@ -27,6 +28,9 @@ ofGstVideoPlayer::~ofGstVideoPlayer(){
 
 bool ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	internalPixelFormat = pixelFormat;
+	if(pixelFormat==OF_PIXELS_NATIVE){
+		nativePixels = true;
+	}
 	return true;
 }
 
@@ -198,10 +202,11 @@ bool ofGstVideoPlayer::loadMovie(string name){
 		if(!bIsStream){
 			gst_element_get_state (videoUtils.getPipeline(), NULL, NULL, -1);
 		}
+		internalPixelFormat = OF_PIXELS_NATIVE;
 		bIsAllocated = false;
+		videoUtils.reallocateOnNextFrame();
 		g_object_set(G_OBJECT(videoUtils.getPipeline()), "uri", name.c_str(), (void*)NULL);
 		gst_element_set_state (videoUtils.getPipeline(), GST_STATE_PAUSED);
-		videoUtils.reallocateOnNextFrame();
 		if(!bIsStream){
 			gst_element_get_state (videoUtils.getPipeline(), NULL, NULL, -1);
 			return allocate();
@@ -258,7 +263,7 @@ bool ofGstVideoPlayer::allocate(){
 			if (gst_video_info_from_caps (&info, caps)){
 				ofPixelFormat format = ofGstVideoUtils::getOFFormat(GST_VIDEO_INFO_FORMAT(&info));
 				if(format!=internalPixelFormat){
-					ofLogNotice("ofGstVideoPlayer") << "allocating as" << info.width << "x" << info.height << " " << info.finfo->description << " " << info.finfo->name;
+					ofLogVerbose("ofGstVideoPlayer") << "allocating as " << info.width << "x" << info.height << " " << info.finfo->description << " " << info.finfo->name;
 					internalPixelFormat = format;
 				}
 				if(!videoUtils.allocate(info.width,info.height,format)) return false;

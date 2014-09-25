@@ -48,9 +48,6 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
-		
-		void					setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber);
-		shared_ptr<ofBaseVideoGrabber> getGrabber();
 
 		vector<ofVideoDevice> listDevices() const;
 		bool				isFrameNew() const;
@@ -92,6 +89,20 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		float				getWidth() const;
 
 		bool				isInitialized() const;
+
+		void					setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber);
+		shared_ptr<ofBaseVideoGrabber> getGrabber();
+		const shared_ptr<ofBaseVideoGrabber> getGrabber() const;
+
+		template<typename GrabberType>
+		shared_ptr<GrabberType> getGrabber(){
+			return dynamic_pointer_cast<GrabberType>(getGrabber());
+		}
+
+		template<typename GrabberType>
+		const shared_ptr<GrabberType> getGrabber() const{
+			return dynamic_pointer_cast<GrabberType>(getGrabber());
+		}
 
 		//this is kept as legacy to support people accessing width and height directly. 
 		mutable int height;

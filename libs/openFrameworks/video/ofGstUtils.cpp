@@ -587,10 +587,12 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 			GError *err;
 			gchar *debug;
 			gst_message_parse_error(msg, &err, &debug);
+			gchar * name = gst_element_get_name(GST_MESSAGE_SRC (msg));
 
 			ofLogError("ofGstUtils") << "gstHandleMessage(): embedded video playback halted for plugin, module "
-				<< gst_element_get_name(GST_MESSAGE_SRC (msg)) << "  reported: " << err->message;
+				<< name << "  reported: " << err->message;
 
+			g_free(name);
 			g_error_free(err);
 			g_free(debug);
 
@@ -743,8 +745,6 @@ void ofGstVideoUtils::close(){
 	bBackPixelsChanged			= false;
 	buffer.reset();
 	prevBuffer.reset();
-	prevBuffer = 0;
-	buffer = 0;
 }
 
 bool ofGstVideoUtils::isInitialized() const{
