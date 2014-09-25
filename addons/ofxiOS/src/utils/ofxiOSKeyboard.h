@@ -39,7 +39,7 @@
 - (void) updateOrientation;
 - (void) makeSecure;
 - (void) setFieldLength: (int)len;
-
+- (UITextField *)getTextField;
 
 @end
 
@@ -71,7 +71,7 @@ public:
     OF_DEPRECATED_MSG("Use getText() instead.", string getLabelText());
 	bool isKeyboardShowing();
 	
-	
+    UITextField * getKeyboardTextField();
 	
 protected:
 	
