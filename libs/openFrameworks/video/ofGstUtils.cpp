@@ -776,7 +776,6 @@ void ofGstVideoUtils::update(){
 				bBackPixelsChanged=false;
 				swap(pixels,backPixels);
 				prevBuffer = buffer;
-				buffer.reset();
 			}
 		}else{
 #if GST_VERSION_MAJOR==0
@@ -1010,20 +1009,28 @@ bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 		ofLogNotice("ofGstVideoPlayer") << "allocating with " << w << "x" << h << " " << getGstFormatName(pixelFormat);
 	}
 #endif
-	if(bBackPixelsChanged){
-		pixels = backPixels;
-	}else{
-		pixels.allocate(w,h,pixelFormat);
-		backPixels.allocate(w,h,pixelFormat);
-		pixels.set(0);
-		backPixels.set(0);
+	pixels.allocate(w,h,pixelFormat);
+	backPixels.allocate(w,h,pixelFormat);
+	pixels.set(0);
+	backPixels.set(0);
 
-		bHavePixelsChanged = false;
-		bBackPixelsChanged = true;
-	}
+	bHavePixelsChanged = false;
+	bBackPixelsChanged = true;
+
 
 	internalPixelFormat = pixelFormat;
 	return pixels.isAllocated();
+}
+
+void ofGstVideoUtils::reallocateOnNextFrame(){
+	Poco::ScopedLock<ofMutex> lock(mutex);
+	pixels.clear();
+	backPixels.clear();
+	bIsFrameNew					= false;
+	bHavePixelsChanged			= false;
+	bBackPixelsChanged			= false;
+	prevBuffer.reset();
+	buffer.reset();
 }
 
 #if GST_VERSION_MAJOR==0
