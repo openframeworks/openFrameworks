@@ -33,7 +33,7 @@
 #pragma once
 
 #import "ofAppBaseWindow.h"
-#include "ofxiOSContstants.h"
+#include "ofxiOSConstants.h"
 
 class ofAppiOSWindow : public ofAppBaseGLESWindow {
 public:

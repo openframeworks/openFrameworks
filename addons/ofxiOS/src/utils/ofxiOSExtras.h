@@ -39,7 +39,7 @@
 #import <UIKit/UIKit.h>
 #import "ofMain.h"
 #import "ofxiOS.h"
-#import "ofxiOSContstants.h"
+#import "ofxiOSConstants.h"
 #import "ofAppiOSWindow.h"
 #import "ofxiOSAppDelegate.h"
 #import "ofxiOSEAGLView.h"
