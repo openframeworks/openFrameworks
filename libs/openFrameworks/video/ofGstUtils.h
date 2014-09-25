@@ -67,16 +67,17 @@ public:
 
 	// callbacks to get called from gstreamer
 #if GST_VERSION_MAJOR==0
-	virtual GstFlowReturn preroll_cb(GstBuffer * buffer);
-	virtual GstFlowReturn buffer_cb(GstBuffer * buffer);
+	virtual GstFlowReturn preroll_cb(shared_ptr<GstBuffer> buffer);
+	virtual GstFlowReturn buffer_cb(shared_ptr<GstBuffer> buffer);
 #else
-	virtual GstFlowReturn preroll_cb(GstSample * buffer);
-	virtual GstFlowReturn buffer_cb(GstSample * buffer);
+	virtual GstFlowReturn preroll_cb(shared_ptr<GstSample> buffer);
+	virtual GstFlowReturn buffer_cb(shared_ptr<GstSample> buffer);
 #endif
 	virtual void 		  eos_cb();
 
 	static void startGstMainLoop();
 	static GMainLoop * getGstMainLoop();
+	static void quitGstMainLoop();
 protected:
 	ofGstAppSink * 		appsink;
 	bool				isStream;
@@ -108,7 +109,6 @@ private:
 		ofGstMainLoopThread()
 		:main_loop(NULL)
 		{
-
 		}
 
 		void start(){
@@ -121,6 +121,10 @@ private:
 
 		GMainLoop * getMainLoop(){
 			return main_loop;
+		}
+
+		void quit(){
+			g_main_loop_quit(main_loop);
 		}
 	private:
 		GMainLoop *main_loop;
@@ -176,13 +180,13 @@ public:
 
 protected:
 #if GST_VERSION_MAJOR==0
-	GstFlowReturn process_buffer(GstBuffer * buffer);
-	GstFlowReturn preroll_cb(GstBuffer * buffer);
-	GstFlowReturn buffer_cb(GstBuffer * buffer);
+	GstFlowReturn process_buffer(shared_ptr<GstBuffer> * buffer);
+	GstFlowReturn preroll_cb(shared_ptr<GstBuffer> * buffer);
+	GstFlowReturn buffer_cb(shared_ptr<GstBuffer> * buffer);
 #else
-	GstFlowReturn process_sample(GstSample * sample);
-	GstFlowReturn preroll_cb(GstSample * buffer);
-	GstFlowReturn buffer_cb(GstSample * buffer);
+	GstFlowReturn process_sample(shared_ptr<GstSample> sample);
+	GstFlowReturn preroll_cb(shared_ptr<GstSample> buffer);
+	GstFlowReturn buffer_cb(shared_ptr<GstSample> buffer);
 #endif
 	void			eos_cb();
 
@@ -196,9 +200,9 @@ private:
 	bool			bBackPixelsChanged;
 	ofMutex			mutex;
 #if GST_VERSION_MAJOR==0
-	GstBuffer * 	buffer, *prevBuffer;
+	shared_ptr<GstBuffer> 	buffer, prevBuffer;
 #else
-	GstSample * 	buffer, *prevBuffer;
+	shared_ptr<GstSample> 	buffer, prevBuffer;
 	GstMapInfo mapinfo;
 #endif
 	ofPixelFormat	internalPixelFormat;
@@ -213,17 +217,17 @@ class ofGstAppSink{
 public:
 	virtual ~ofGstAppSink(){}
 #if GST_VERSION_MAJOR==0
-	virtual GstFlowReturn on_preroll(GstBuffer * buffer){
+	virtual GstFlowReturn on_preroll(shared_ptr<GstBuffer> buffer){
 		return GST_FLOW_OK;
 	}
-	virtual GstFlowReturn on_buffer(GstBuffer * buffer){
+	virtual GstFlowReturn on_buffer(shared_ptr<GstBuffer> buffer){
 		return GST_FLOW_OK;
 	}
 #else
-	virtual GstFlowReturn on_preroll(GstSample * buffer){
+	virtual GstFlowReturn on_preroll(shared_ptr<GstSample> buffer){
 		return GST_FLOW_OK;
 	}
-	virtual GstFlowReturn on_buffer(GstSample * buffer){
+	virtual GstFlowReturn on_buffer(shared_ptr<GstSample> buffer){
 		return GST_FLOW_OK;
 	}
 #endif
