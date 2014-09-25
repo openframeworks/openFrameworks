@@ -17,6 +17,7 @@ ofGstVideoPlayer::ofGstVideoPlayer(){
 	bIsStream					= false;
 	bIsAllocated				= false;
 	threadAppSink				= false;
+	bAsyncLoad					= false;
 	videoUtils.setSinkListener(this);
 }
 
@@ -33,24 +34,7 @@ ofPixelFormat ofGstVideoPlayer::getPixelFormat() const {
 	return internalPixelFormat;
 }
 
-bool ofGstVideoPlayer::loadMovie(string name){
-	close();
-	if( name.find( "file://",0 ) != string::npos){
-		bIsStream		= false;
-	}else if( name.find( "://",0 ) == string::npos){
-		GError * err = NULL;
-		gchar* name_ptr = gst_filename_to_uri(ofToDataPath(name).c_str(),&err);
-		name = name_ptr;
-		g_free(name_ptr);
-		if(err) g_free(err);
-		bIsStream		= false;
-	}else{
-		bIsStream		= true;
-	}
-	ofLogVerbose("ofGstVideoPlayer") << "loadMovie(): loading \"" << name << "\"";
-
-	ofGstUtils::startGstMainLoop();
-
+bool ofGstVideoPlayer::createPipeline(string name){
 #if GST_VERSION_MAJOR==0
 	GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
 #else
@@ -191,9 +175,45 @@ bool ofGstVideoPlayer::loadMovie(string name){
 #endif
 #endif
 
-	return videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream) &&
+	return videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
+}
+
+bool ofGstVideoPlayer::loadMovie(string name){
+	if( name.find( "file://",0 ) != string::npos){
+		bIsStream = bAsyncLoad;
+	}else if( name.find( "://",0 ) == string::npos){
+		GError * err = NULL;
+		gchar* name_ptr = gst_filename_to_uri(ofToDataPath(name).c_str(),&err);
+		name = name_ptr;
+		g_free(name_ptr);
+		if(err) g_free(err);
+		bIsStream = bAsyncLoad;
+	}else{
+		bIsStream = true;
+	}
+	ofLogVerbose("ofGstVideoPlayer") << "loadMovie(): loading \"" << name << "\"";
+
+	if(isInitialized()){
+		gst_element_set_state (videoUtils.getPipeline(), GST_STATE_READY);
+		if(!bIsStream){
+			gst_element_get_state (videoUtils.getPipeline(), NULL, NULL, -1);
+		}
+		bIsAllocated = false;
+		g_object_set(G_OBJECT(videoUtils.getPipeline()), "uri", name.c_str(), (void*)NULL);
+		gst_element_set_state (videoUtils.getPipeline(), GST_STATE_PAUSED);
+		videoUtils.reallocateOnNextFrame();
+		if(!bIsStream){
+			gst_element_get_state (videoUtils.getPipeline(), NULL, NULL, -1);
+			return allocate();
+		}else{
+			return true;
+		}
+	}else{
+		ofGstUtils::startGstMainLoop();
+		return createPipeline(name) &&
 				videoUtils.startPipeline() &&
 				(bIsStream || allocate());
+	}
 }
 
 void ofGstVideoPlayer::setThreadAppSink(bool threaded){
@@ -203,7 +223,6 @@ void ofGstVideoPlayer::setThreadAppSink(bool threaded){
 
 bool ofGstVideoPlayer::allocate(){
 	if(bIsAllocated){
-		ofLogWarning("ofGstVideoPlayer") << "already allocated";
 		return true;
 	}
 
@@ -422,4 +441,8 @@ bool ofGstVideoPlayer::isThreadedAppSink() const{
 
 bool ofGstVideoPlayer::isFrameByFrame() const{
 	return videoUtils.isFrameByFrame();
+}
+
+void ofGstVideoPlayer::setAsynchronousLoad(bool async){
+	bAsyncLoad = async;
 }

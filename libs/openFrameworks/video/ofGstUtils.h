@@ -152,6 +152,7 @@ public:
 	bool 			setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat 	getPixelFormat() const;
 	bool 			allocate(int w, int h, ofPixelFormat pixelFormat);
+	void 			reallocateOnNextFrame();
 
 	bool 			isFrameNew() const;
 	unsigned char * getPixels();

@@ -23,6 +23,9 @@ void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer){
 
 //---------------------------------------------------------------------------
 shared_ptr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
+	if( !player ){
+		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+	}
 	return player;
 }
 
@@ -74,7 +77,7 @@ bool ofVideoPlayer::loadMovie(string name){
         if(bUseTexture){
         	if(player->getTexture()==NULL){
 				if(width!=0 && height!=0) {
-					tex.resize(player->getPixelsRef().getNumPlanes());
+					tex.resize(max(player->getPixelsRef().getNumPlanes(),1));
 					for(int i=0;i<player->getPixelsRef().getNumPlanes();i++){
 						ofPixels plane = player->getPixelsRef().getPlane(i);
 						tex[i].allocate(plane);
@@ -176,13 +179,13 @@ void ofVideoPlayer::update(){
 			
 			if(playerTex == NULL){
 				if(int(tex.size())!=player->getPixelsRef().getNumPlanes()){
-					tex.resize(player->getPixelsRef().getNumPlanes());
+					tex.resize(max(player->getPixelsRef().getNumPlanes(),1));
 				}
 				if(player->getWidth() != 0 && player->getHeight() != 0) {
 					for(int i=0;i<player->getPixelsRef().getNumPlanes();i++){
 						ofPixels plane = player->getPixelsRef().getPlane(i);
 						bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
-						if(width==0 || height==0 || bDiffPixFormat || !tex[i].isAllocated() ){
+						if(bDiffPixFormat || !tex[i].isAllocated() || tex[i].getWidth() != plane.getWidth() || tex[i].getHeight() != plane.getHeight()){
 							tex[i].allocate(plane);
 							if(ofGetGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
 								tex[i].setRGToRGBASwizzles(true);
