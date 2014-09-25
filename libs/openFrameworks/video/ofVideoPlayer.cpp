@@ -29,6 +29,10 @@ shared_ptr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
 	return player;
 }
 
+const shared_ptr<ofBaseVideoPlayer>	ofVideoPlayer::getPlayer() const{
+	return player;
+}
+
 //we only set pixel format on the player if it exists. 
 //if the movie is already loaded then we can't update the format.
 //also if the format is not supported we get the format from the player instead.

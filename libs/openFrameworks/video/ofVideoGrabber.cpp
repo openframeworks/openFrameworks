@@ -39,6 +39,13 @@ void ofVideoGrabber::setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber){
 
 //--------------------------------------------------------------------
 shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber(){
+	if(!grabber){
+		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
+	}
+	return grabber;
+}
+
+const shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber() const{
 	return grabber;
 }
 
