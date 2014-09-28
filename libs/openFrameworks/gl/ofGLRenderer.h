@@ -20,22 +20,21 @@ public:
     static const string TYPE;
     const string & getType(){ return TYPE; }
 
-	void setCurrentFBO(ofFbo * fbo);
+	void setCurrentFBO(const ofFbo * fbo);
 
 	void update();
-	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
-	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
-    void draw(of3dPrimitive& model, ofPolyRenderMode renderType);
-	void draw(ofPolyline & poly);
-	void draw(ofPath & path);
-	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofBaseVideoDraws & video, float x, float y, float w, float h);
+	void draw(const ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true) const;
+    void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
+	void draw(const ofPolyline & poly) const;
+	void draw(const ofPath & path) const;
+	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
 
-	void bind(ofBaseVideoDraws & video);
-	void unbind(ofBaseVideoDraws & video);
-
+	void bind(const ofBaseVideoDraws & video) const;
+	void unbind(const ofBaseVideoDraws & video) const;
 	bool rendersPathPrimitives(){
 		return false;
 	}
@@ -55,15 +54,15 @@ public:
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
-	ofRectangle getCurrentViewport();
-	ofRectangle getNativeViewport();
-	int getViewportWidth();
-	int getViewportHeight();
+	ofRectangle getCurrentViewport() const;
+	ofRectangle getNativeViewport() const;
+	int getViewportWidth() const;
+	int getViewportHeight() const;
 	bool isVFlipped() const;
 	bool texturesNeedVFlip() const;
 
 	void setCoordHandedness(ofHandednessType handedness);
-	ofHandednessType getCoordHandedness();
+	ofHandednessType getCoordHandedness() const;
 
 	//our openGL wrappers
 	void pushMatrix();
@@ -168,6 +167,9 @@ public:
 	void setLightSpecularColor(int lightIndex, const ofFloatColor& c);
 	void setLightPosition(int lightIndex, const ofVec4f & position);
 	void setLightSpotDirection(int lightIndex, const ofVec4f & direction);
+
+
+	void setCurrentMaterial(ofBaseMaterial * material){}
 
 private:
 	void startSmoothing();

@@ -155,7 +155,7 @@ int ofxCvContourFinder::findContours( ofxCvGrayscaleImage&  input,
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
+void ofxCvContourFinder::draw( float x, float y, float w, float h ) const {
 
     float scalex = 0.0f;
     float scaley = 0.0f;
@@ -201,12 +201,12 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) {
 
 
 //----------------------------------------------------------
-void ofxCvContourFinder::draw(const ofPoint & point){
+void ofxCvContourFinder::draw(const ofPoint & point) const{
 	draw(point.x, point.y);
 }
 
 //----------------------------------------------------------
-void ofxCvContourFinder::draw(const ofRectangle & rect){
+void ofxCvContourFinder::draw(const ofRectangle & rect) const{
 	draw(rect.x, rect.y, rect.width, rect.height);
 }
 

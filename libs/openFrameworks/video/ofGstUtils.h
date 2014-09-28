@@ -36,30 +36,30 @@ public:
 	void 	play();
 	void 	stop();
 	void 	setPaused(bool bPause);
-	bool 	isPaused(){return bPaused;}
-	bool 	isLoaded(){return bLoaded;}
-	bool 	isPlaying(){return bPlaying;}
+	bool 	isPaused() const {return bPaused;}
+	bool 	isLoaded() const {return bLoaded;}
+	bool 	isPlaying() const {return bPlaying;}
 
-	float	getPosition();
-	float 	getSpeed();
-	float 	getDuration();
-	int64_t  getDurationNanos();
-	bool  	getIsMovieDone();
+	float	getPosition() const;
+	float 	getSpeed() const;
+	float 	getDuration() const;
+	int64_t  getDurationNanos() const;
+	bool  	getIsMovieDone() const;
 
 	void 	setPosition(float pct);
 	void 	setVolume(float volume);
 	void 	setLoopState(ofLoopType state);
-	ofLoopType	getLoopState(){return loopMode;}
+	ofLoopType	getLoopState() const {return loopMode;}
 	void 	setSpeed(float speed);
 
 	void 	setFrameByFrame(bool bFrameByFrame);
-	bool	isFrameByFrame();
+	bool	isFrameByFrame() const;
 
-	GstElement 	* getPipeline();
-	GstElement 	* getSink();
-	GstElement 	* getGstElementByName(const string & name);
-	uint64_t getMinLatencyNanos();
-	uint64_t getMaxLatencyNanos();
+	GstElement 	* getPipeline() const;
+	GstElement 	* getSink() const;
+	GstElement 	* getGstElementByName(const string & name) const;
+	uint64_t getMinLatencyNanos() const;
+	uint64_t getMaxLatencyNanos() const;
 
 	virtual void close();
 
@@ -67,16 +67,17 @@ public:
 
 	// callbacks to get called from gstreamer
 #if GST_VERSION_MAJOR==0
-	virtual GstFlowReturn preroll_cb(GstBuffer * buffer);
-	virtual GstFlowReturn buffer_cb(GstBuffer * buffer);
+	virtual GstFlowReturn preroll_cb(shared_ptr<GstBuffer> buffer);
+	virtual GstFlowReturn buffer_cb(shared_ptr<GstBuffer> buffer);
 #else
-	virtual GstFlowReturn preroll_cb(GstSample * buffer);
-	virtual GstFlowReturn buffer_cb(GstSample * buffer);
+	virtual GstFlowReturn preroll_cb(shared_ptr<GstSample> buffer);
+	virtual GstFlowReturn buffer_cb(shared_ptr<GstSample> buffer);
 #endif
 	virtual void 		  eos_cb();
 
 	static void startGstMainLoop();
 	static GMainLoop * getGstMainLoop();
+	static void quitGstMainLoop();
 protected:
 	ofGstAppSink * 		appsink;
 	bool				isStream;
@@ -97,7 +98,7 @@ private:
 	GstElement 	*		gstPipeline;
 
 	float				speed;
-	gint64				durationNanos;
+	mutable int64_t		durationNanos;
 	bool				isAppSink;
 	Poco::Condition		eosCondition;
 	ofMutex				eosMutex;
@@ -108,7 +109,6 @@ private:
 		ofGstMainLoopThread()
 		:main_loop(NULL)
 		{
-
 		}
 
 		void start(){
@@ -121,6 +121,10 @@ private:
 
 		GMainLoop * getMainLoop(){
 			return main_loop;
+		}
+
+		void quit(){
+			g_main_loop_quit(main_loop);
 		}
 	private:
 		GMainLoop *main_loop;
@@ -146,16 +150,18 @@ public:
 	bool 			setPipeline(string pipeline, ofPixelFormat pixelFormat=OF_PIXELS_RGB, bool isStream=false, int w=-1, int h=-1);
 
 	bool 			setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat 	getPixelFormat();
+	ofPixelFormat 	getPixelFormat() const;
 	bool 			allocate(int w, int h, ofPixelFormat pixelFormat);
+	void 			reallocateOnNextFrame();
 
-	bool 			isFrameNew();
+	bool 			isFrameNew() const;
 	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
+	ofPixels&		getPixelsRef();
+	const ofPixels& getPixelsRef() const;
 	void 			update();
 
-	float 			getHeight();
-	float 			getWidth();
+	float 			getHeight() const;
+	float 			getWidth() const;
 
 	void 			close();
 
@@ -165,7 +171,7 @@ public:
 	static ofPixelFormat	getOFFormat(GstVideoFormat format);
 #endif
 
-	bool			isInitialized();
+	bool			isInitialized() const;
 
 	// this events happen in a different thread
 	// do not use them for opengl stuff
@@ -175,13 +181,13 @@ public:
 
 protected:
 #if GST_VERSION_MAJOR==0
-	GstFlowReturn process_buffer(GstBuffer * buffer);
-	GstFlowReturn preroll_cb(GstBuffer * buffer);
-	GstFlowReturn buffer_cb(GstBuffer * buffer);
+	GstFlowReturn process_buffer(shared_ptr<GstBuffer> * buffer);
+	GstFlowReturn preroll_cb(shared_ptr<GstBuffer> * buffer);
+	GstFlowReturn buffer_cb(shared_ptr<GstBuffer> * buffer);
 #else
-	GstFlowReturn process_sample(GstSample * sample);
-	GstFlowReturn preroll_cb(GstSample * buffer);
-	GstFlowReturn buffer_cb(GstSample * buffer);
+	GstFlowReturn process_sample(shared_ptr<GstSample> sample);
+	GstFlowReturn preroll_cb(shared_ptr<GstSample> buffer);
+	GstFlowReturn buffer_cb(shared_ptr<GstSample> buffer);
 #endif
 	void			eos_cb();
 
@@ -195,9 +201,9 @@ private:
 	bool			bBackPixelsChanged;
 	ofMutex			mutex;
 #if GST_VERSION_MAJOR==0
-	GstBuffer * 	buffer, *prevBuffer;
+	shared_ptr<GstBuffer> 	buffer, prevBuffer;
 #else
-	GstSample * 	buffer, *prevBuffer;
+	shared_ptr<GstSample> 	buffer, prevBuffer;
 	GstMapInfo mapinfo;
 #endif
 	ofPixelFormat	internalPixelFormat;
@@ -212,17 +218,17 @@ class ofGstAppSink{
 public:
 	virtual ~ofGstAppSink(){}
 #if GST_VERSION_MAJOR==0
-	virtual GstFlowReturn on_preroll(GstBuffer * buffer){
+	virtual GstFlowReturn on_preroll(shared_ptr<GstBuffer> buffer){
 		return GST_FLOW_OK;
 	}
-	virtual GstFlowReturn on_buffer(GstBuffer * buffer){
+	virtual GstFlowReturn on_buffer(shared_ptr<GstBuffer> buffer){
 		return GST_FLOW_OK;
 	}
 #else
-	virtual GstFlowReturn on_preroll(GstSample * buffer){
+	virtual GstFlowReturn on_preroll(shared_ptr<GstSample> buffer){
 		return GST_FLOW_OK;
 	}
-	virtual GstFlowReturn on_buffer(GstSample * buffer){
+	virtual GstFlowReturn on_buffer(shared_ptr<GstSample> buffer){
 		return GST_FLOW_OK;
 	}
 #endif

@@ -307,6 +307,7 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	ofNotifySetup();
 	while(!glfwWindowShouldClose(windowP)){
+		glfwPollEvents();
 		ofNotifyUpdate();
 		display();
 	}
@@ -382,7 +383,7 @@ void ofAppGLFWWindow::display(void){
 	}
 
 	nFramesSinceWindowResized++;
-	glfwPollEvents();
+
 
 }
 
@@ -1078,6 +1079,16 @@ void ofAppGLFWWindow::setVerticalSync(bool bVerticalSync){
 	}else{
 		glfwSwapInterval(0);
 	}
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setClipboardString(const string& text) {
+    glfwSetClipboardString(ofAppGLFWWindow::windowP, text.c_str());
+}
+
+//------------------------------------------------------------
+string ofAppGLFWWindow::getClipboardString() {
+    return glfwGetClipboardString(ofAppGLFWWindow::windowP);
 }
 
 //------------------------------------------------------------

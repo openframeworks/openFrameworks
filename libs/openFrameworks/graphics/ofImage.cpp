@@ -180,9 +180,14 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	unsigned int pitch = FreeImage_GetPitch(bmp);
 
 	ofPixelFormat pixFormat;
-	if(channels==1) pixFormat=OF_PIXELS_MONO;
+	if(channels==1) pixFormat=OF_PIXELS_GRAY;
+#ifdef TARGET_LITTLE_ENDIAN
+	if(channels==3) pixFormat=OF_PIXELS_BGR;
+	if(channels==4) pixFormat=OF_PIXELS_BGRA;
+#else
 	if(channels==3) pixFormat=OF_PIXELS_RGB;
 	if(channels==4) pixFormat=OF_PIXELS_RGBA;
+#endif
 
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
@@ -262,8 +267,8 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromMemory(hmem);
 	if( fif == -1 ){
 		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, unable to guess image format from memory";
-		return false;
 		FreeImage_CloseMemory(hmem);
+		return false;
 	}
 
 
@@ -355,7 +360,7 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	}
 
 	#ifdef TARGET_LITTLE_ENDIAN
-	if(sizeof(PixelType) == 1) {
+	if(sizeof(PixelType) == 1 && (pix.getPixelFormat()==OF_PIXELS_RGB || pix.getPixelFormat()==OF_PIXELS_RGBA)) {
 		pix.swapRgb();
 	}
 	#endif
@@ -363,7 +368,7 @@ static void saveImage(ofPixels_<PixelType> & pix, string fileName, ofImageQualit
 	FIBITMAP * bmp	= getBmpFromPixels(pix);
 
 	#ifdef TARGET_LITTLE_ENDIAN
-	if(sizeof(PixelType) == 1) {
+	if(sizeof(PixelType) == 1 && (pix.getPixelFormat()==OF_PIXELS_BGR || pix.getPixelFormat()==OF_PIXELS_BGRA)) {
 		pix.swapRgb();
 	}
 	#endif
@@ -731,49 +736,49 @@ void ofImage_<PixelType>::resetAnchor(){
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float x, float y){
+void ofImage_<PixelType>::draw(float x, float y) const{
 	draw(x,y,0,getWidth(),getHeight());
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float x, float y, float z){
+void ofImage_<PixelType>::draw(float x, float y, float z) const{
 	draw(x,y,z,getWidth(),getHeight());
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float x, float y, float w, float h){
+void ofImage_<PixelType>::draw(float x, float y, float w, float h) const{
 	draw(x,y,0,w,h);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::draw(float x, float y, float z, float w, float h){
+void ofImage_<PixelType>::draw(float x, float y, float z, float w, float h) const{
 	drawSubsection(x,y,z,w,h,0,0,getWidth(),getHeight());
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::drawSubsection(float x, float y, float w, float h, float sx, float sy){
+void ofImage_<PixelType>::drawSubsection(float x, float y, float w, float h, float sx, float sy) const{
 	drawSubsection(x,y,0,w,h,sx,sy,w,h);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh){
+void ofImage_<PixelType>::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh) const{
 	drawSubsection(x,y,0,w,h,sx,sy,_sw,_sh);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
+void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const{
 	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofImage_<PixelType>::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	ofGetCurrentRenderer()->draw(*this,x,y,z,w,h,sx,sy,sw,sh);
 }
 
@@ -834,6 +839,12 @@ ofPixels_<PixelType> & ofImage_<PixelType>::getPixelsRef(){
 
 //----------------------------------------------------------
 template<typename PixelType>
+const ofPixels_<PixelType> & ofImage_<PixelType>::getPixelsRef() const {
+	return pixels;
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
 ofImage_<PixelType>::operator ofPixels_<PixelType>&(){
 	return pixels;
 }
@@ -842,26 +853,25 @@ ofImage_<PixelType>::operator ofPixels_<PixelType>&(){
 // for getting a reference to the texture
 template<typename PixelType>
 ofTexture & ofImage_<PixelType>::getTextureReference(){
-/*
-	// it should be the responsibility of anything using getTextureReference()
-	// to check that it's allocated
-	if(!tex.bAllocated() ){
-		ofLogWarning("ofImage") << "getTextureReference(): texture is not allocated";
-	}
-	*/
+	return tex;
+}
+
+//------------------------------------
+template<typename PixelType>
+const ofTexture & ofImage_<PixelType>::getTextureReference() const{
 	return tex;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::bind(int textureLocation){
+void ofImage_<PixelType>::bind(int textureLocation) const{
 	if (bUseTexture && tex.bAllocated())
 		tex.bind(textureLocation);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::unbind(int textureLocation){
+void ofImage_<PixelType>::unbind(int textureLocation) const{
 	if (bUseTexture && tex.bAllocated())
 		tex.unbind(textureLocation);
 }
@@ -944,7 +954,7 @@ void ofImage_<PixelType>::setUseTexture(bool bUse){
 
 //------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::isUsingTexture(){
+bool ofImage_<PixelType>::isUsingTexture() const{
 	return bUseTexture;
 }
 
@@ -1260,13 +1270,13 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getHeight() {
+float ofImage_<PixelType>::getHeight() const{
 	return height;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-float ofImage_<PixelType>::getWidth() {
+float ofImage_<PixelType>::getWidth() const{
 	return width;
 }
 

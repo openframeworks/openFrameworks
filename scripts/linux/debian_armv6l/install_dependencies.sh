@@ -9,11 +9,11 @@ GSTREAMER_VERSION=1.0
 
 GTK_VERSION=2.0
 echo "detecting latest gtk version"
-apt-cache show libgtk3.0-dev
+apt-cache show libgtk-3-dev
 exit_code=$?
 if [ $exit_code = 0 ]; then
     echo selecting gtk 3
-    GTK_VERSION=3.0
+    GTK_VERSION=-3
 fi
 
 echo "installing OF dependencies"

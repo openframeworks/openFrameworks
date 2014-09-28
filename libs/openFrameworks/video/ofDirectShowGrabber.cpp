@@ -99,13 +99,13 @@ bool ofDirectShowGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofDirectShowGrabber::getPixelFormat(){
+ofPixelFormat ofDirectShowGrabber::getPixelFormat() const {
 	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
 	return OF_PIXELS_RGB;
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofDirectShowGrabber::listDevices(){
+vector<ofVideoDevice> ofDirectShowGrabber::listDevices() const {
     
     vector <ofVideoDevice> devices; 
 	
@@ -247,27 +247,32 @@ unsigned char * ofDirectShowGrabber::getPixels(){
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofDirectShowGrabber::getPixelsRef(){
+ofPixels& ofDirectShowGrabber::getPixelsRef(){
+	return pixels;
+}
+
+//---------------------------------------------------------------------------
+const ofPixels& ofDirectShowGrabber::getPixelsRef() const {
 	return pixels;
 }
 
 //--------------------------------------------------------------------
-float ofDirectShowGrabber::getWidth(){
+float ofDirectShowGrabber::getWidth() const {
 	return width;
 }
 
 //--------------------------------------------------------------------
-float ofDirectShowGrabber::getHeight(){
+float ofDirectShowGrabber::getHeight() const {
 	return height;
 }
 
 //---------------------------------------------------------------------------
-bool  ofDirectShowGrabber::isFrameNew(){
+bool  ofDirectShowGrabber::isFrameNew() const{
 	return bIsFrameNew;
 }
 
 //---------------------------------------------------------------------------
-bool  ofDirectShowGrabber::isInitialized(){
+bool  ofDirectShowGrabber::isInitialized() const{
 	return bGrabberInited;
 }
 

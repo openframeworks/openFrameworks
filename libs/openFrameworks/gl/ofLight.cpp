@@ -252,7 +252,7 @@ void ofLight::setAreaLight(float width, float height){
 	data->height = height;
 }
 
-bool ofLight::getIsAreaLight(){
+bool ofLight::getIsAreaLight() const{
 	return data->lightType == OF_LIGHT_AREA;
 }
 
@@ -295,7 +295,7 @@ ofFloatColor ofLight::getSpecularColor() const {
 }
 
 //----------------------------------------
-void ofLight::customDraw() {
+void ofLight::customDraw(){
     if(getIsPointLight()) {
         ofDrawSphere( 0,0,0, 10);
     } else if (getIsSpotlight()) {
