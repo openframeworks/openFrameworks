@@ -1,4 +1,6 @@
 #!/bin/bash
+cd $(cat ~/.ofprojectgenerator/config)
+git pull upstreamhttps master
 cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 lasthash=$(cat lasthash.txt)
 currenthash=$(git rev-parse HEAD)
