@@ -29,7 +29,6 @@
  * ***********************************************************************/ 
 
 #include <Availability.h>
-#ifdef __IPHONE_3_0
 
 #include "ofxiOSMapKit.h"
 #include "ofxiOSExtras.h"
@@ -264,6 +263,3 @@ void ofxiOSMapKit::errorLoadingMap(string errorDescription) {
 		o->errorLoadingMap(errorDescription);
 	}
 }
-
-
-#endif
