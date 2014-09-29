@@ -435,7 +435,11 @@ bool ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 	// & prevent user-created memory leaks
 	// if they call "loadSound" repeatedly, for example
 
-	unloadSound();
+	unloadSound(); // Will lock the mutex.
+
+	// Only lock the thread when no other functions lock it.
+	{ ofScopedLock lock(mutex);
+
 	ALenum format=AL_FORMAT_MONO16;
 	bLoadedOk = false;
 
@@ -553,6 +557,7 @@ bool ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 	bLoadedOk = true;
 	return bLoadedOk;
 
+	} // Thread lock.
 }
 
 //------------------------------------------------------------
@@ -667,7 +672,6 @@ void ofOpenALSoundPlayer::unloadSound(){
 //------------------------------------------------------------
 bool ofOpenALSoundPlayer::getIsPlaying(){
 	if(sources.empty()) return false;
-	if(isStreaming) return isThreadRunning();
 	ALint state;
 	bool playing=false;
 	for(int i=0;i<(int)sources.size();i++){
