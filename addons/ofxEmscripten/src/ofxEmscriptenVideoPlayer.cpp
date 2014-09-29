@@ -64,8 +64,6 @@ void ofxEmscriptenVideoPlayer::update(){
 			}
 		}
 		if(texture.texData.textureID!=html5video_player_texture_id(id)){
-			texture.texData.textureID = html5video_player_texture_id(id);
-			texture.texData.bUseExternalTextureID = true;
 			texture.texData.bFlipTexture = false;
 			switch(getPixelFormat()){
 			case OF_PIXELS_RGBA:
@@ -85,6 +83,7 @@ void ofxEmscriptenVideoPlayer::update(){
 			texture.texData.tex_t = 1;
 			texture.texData.textureTarget = GL_TEXTURE_2D;
 			texture.texData.bAllocated = true;
+			texture.setUseExternalTextureID(html5video_player_texture_id(id));
 		}
 	}
 }
@@ -100,7 +99,7 @@ void ofxEmscriptenVideoPlayer::stop(){
 	html5video_player_stop(id);
 }
 
-bool ofxEmscriptenVideoPlayer::isFrameNew(){
+bool ofxEmscriptenVideoPlayer::isFrameNew() const{
 	return gotFirstFrame;
 }
 
@@ -108,7 +107,15 @@ unsigned char * ofxEmscriptenVideoPlayer::getPixels(){
 	return pixels.getPixels();
 }
 
+const unsigned char * ofxEmscriptenVideoPlayer::getPixels() const{
+	return pixels.getPixels();
+}
+
 ofPixels & ofxEmscriptenVideoPlayer::getPixelsRef(){
+	return pixels;
+}
+
+const ofPixels & ofxEmscriptenVideoPlayer::getPixelsRef() const{
 	return pixels;
 }
 
@@ -116,23 +123,23 @@ ofTexture * ofxEmscriptenVideoPlayer::getTexture(){
 	return &texture;
 }
 
-float ofxEmscriptenVideoPlayer::getWidth(){
+float ofxEmscriptenVideoPlayer::getWidth() const{
 	return texture.getWidth();
 }
 
-float ofxEmscriptenVideoPlayer::getHeight(){
+float ofxEmscriptenVideoPlayer::getHeight() const{
 	return texture.getHeight();
 }
 
-bool ofxEmscriptenVideoPlayer::isPaused(){
+bool ofxEmscriptenVideoPlayer::isPaused() const{
 	return html5video_player_is_paused(id);
 }
 
-bool ofxEmscriptenVideoPlayer::isLoaded(){
+bool ofxEmscriptenVideoPlayer::isLoaded() const{
 	return html5video_player_ready_state(id) == HAVE_ENOUGH_DATA;
 }
 
-bool ofxEmscriptenVideoPlayer::isPlaying(){
+bool ofxEmscriptenVideoPlayer::isPlaying() const{
 	return !isPaused();
 }
 
@@ -155,7 +162,7 @@ bool ofxEmscriptenVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	return true;
 }
 
-ofPixelFormat ofxEmscriptenVideoPlayer::getPixelFormat(){
+ofPixelFormat ofxEmscriptenVideoPlayer::getPixelFormat() const{
 	string format = html5video_player_pixel_format(id);
 	if(format == "RGB"){
 		return OF_PIXELS_RGB;
@@ -168,19 +175,19 @@ ofPixelFormat ofxEmscriptenVideoPlayer::getPixelFormat(){
 	}
 }
 
-float ofxEmscriptenVideoPlayer::getPosition(){
+float ofxEmscriptenVideoPlayer::getPosition() const{
 	return html5video_player_current_time(id) / html5video_player_duration(id);
 }
 
-float ofxEmscriptenVideoPlayer::getSpeed(){
+float ofxEmscriptenVideoPlayer::getSpeed() const{
 	return html5video_player_playback_rate(id);
 }
 
-float ofxEmscriptenVideoPlayer::getDuration(){
+float ofxEmscriptenVideoPlayer::getDuration() const{
 	return html5video_player_duration(id);
 }
 
-bool ofxEmscriptenVideoPlayer::getIsMovieDone(){
+bool ofxEmscriptenVideoPlayer::getIsMovieDone() const{
 	return html5video_player_ended(id);
 }
 
@@ -218,15 +225,15 @@ void ofxEmscriptenVideoPlayer::setFrame(int frame){
 }
 
 
-int	ofxEmscriptenVideoPlayer::getCurrentFrame(){
+int	ofxEmscriptenVideoPlayer::getCurrentFrame() const{
 	return 0;
 }
 
-int	ofxEmscriptenVideoPlayer::getTotalNumFrames(){
+int	ofxEmscriptenVideoPlayer::getTotalNumFrames() const{
 	return 1;
 }
 
-ofLoopType ofxEmscriptenVideoPlayer::getLoopState(){
+ofLoopType ofxEmscriptenVideoPlayer::getLoopState() const{
 	return html5video_player_loop(id)?OF_LOOP_NORMAL:OF_LOOP_NONE;
 }
 
