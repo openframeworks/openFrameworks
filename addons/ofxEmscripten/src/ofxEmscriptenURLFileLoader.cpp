@@ -49,7 +49,7 @@ void ofxEmscriptenURLFileLoader::stop(){
 
 }
 
-void ofxEmscriptenURLFileLoader::onload_cb(void* request, void* data, unsigned int size){
+void ofxEmscriptenURLFileLoader::onload_cb(unsigned, void* request, void* data, unsigned int size){
 	ofHttpResponse response;
 	response.data.set((const char*)data,size);
 	response.status = 200;
@@ -58,7 +58,7 @@ void ofxEmscriptenURLFileLoader::onload_cb(void* request, void* data, unsigned i
 	delete (ofHttpRequest*)request;
 }
 
-void ofxEmscriptenURLFileLoader::onerror_cb(void* request, int status, const char* message){
+void ofxEmscriptenURLFileLoader::onerror_cb(unsigned, void* request, int status, const char* message){
 	ofHttpResponse response;
 	response.status = status;
 	response.error = message;
@@ -67,7 +67,7 @@ void ofxEmscriptenURLFileLoader::onerror_cb(void* request, int status, const cha
 	delete (ofHttpRequest*)request;
 }
 
-void ofxEmscriptenURLFileLoader::onload_file_cb(void* request, const char* file){
+void ofxEmscriptenURLFileLoader::onload_file_cb(unsigned, void* request, const char* file){
 	ofHttpResponse response;
 	response.status = 200;
 	response.request = *(ofHttpRequest*)request;
@@ -75,7 +75,7 @@ void ofxEmscriptenURLFileLoader::onload_file_cb(void* request, const char* file)
 	delete (ofHttpRequest*)request;
 }
 
-void ofxEmscriptenURLFileLoader::onerror_file_cb(void* request, int status){
+void ofxEmscriptenURLFileLoader::onerror_file_cb(unsigned, void* request, int status){
 	ofHttpResponse response;
 	response.status = status;
 	response.request = *(ofHttpRequest*)request;

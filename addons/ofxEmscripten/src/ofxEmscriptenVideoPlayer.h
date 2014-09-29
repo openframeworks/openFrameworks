@@ -23,26 +23,28 @@ public:
 	void				play();
 	void				stop();
 
-	bool 				isFrameNew();
+	bool 				isFrameNew() const;
 	unsigned char * 	getPixels();
+	const unsigned char * 	getPixels() const;
 	ofPixels & 			getPixelsRef();
+	const ofPixels & 	getPixelsRef() const;
 	ofTexture *			getTexture(); // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 
-	float 				getWidth();
-	float 				getHeight();
+	float 				getWidth() const;
+	float 				getHeight() const;
 
-	bool				isPaused();
-	bool				isLoaded();
-	bool				isPlaying();
+	bool				isPaused() const;
+	bool				isLoaded() const;
+	bool				isPlaying() const;
 
 	bool				setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat 		getPixelFormat();
+	ofPixelFormat 		getPixelFormat() const;
 
 	//should implement!
-	float 				getPosition();
-	float 				getSpeed();
-	float 				getDuration();
-	bool				getIsMovieDone();
+	float 				getPosition() const;
+	float 				getSpeed() const;
+	float 				getDuration() const;
+	bool				getIsMovieDone() const;
 
 	void 				setPaused(bool bPause);
 	void 				setPosition(float pct);
@@ -51,9 +53,9 @@ public:
 	void   				setSpeed(float speed);
 	void				setFrame(int frame);  // frame 0 = first frame...
 
-	int					getCurrentFrame();
-	int					getTotalNumFrames();
-	ofLoopType			getLoopState();
+	int					getCurrentFrame() const;
+	int					getTotalNumFrames() const;
+	ofLoopType			getLoopState() const;
 
 	void				firstFrame();
 	void				nextFrame();
