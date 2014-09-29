@@ -95,6 +95,38 @@ function build() {
 
 	elif [ "$TYPE" == "ios" ] ; then
 
+		CSTANDARD=c11 # c89 | c99 | c11 | gnu11
+		CPPSTANDARD=c++11 # c89 | c99 | c11 | gnu11
+		COMPILER_CTYPE=clang # clang, gcc
+		COMPILER_CPPTYPE=clang++ # clang, gcc
+		STDLIB=libc++
+
+		IOS_ARCHS="i386 x86_64 armv7 armv7s arm64"
+
+		SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`	
+		set -e
+		CURRENTPATH=`pwd`
+		
+		DEVELOPER=$XCODE_DEV_ROOT
+		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
+		VERSION=$VER
+
+		mkdir -p "builddir/$TYPE"
+	
+		# Validate environment
+		case $XCODE_DEV_ROOT in  
+		     *\ * )
+		           echo "Your Xcode path contains whitespaces, which is not supported."
+		           exit 1
+		          ;;
+		esac
+		case $CURRENTPATH in  
+		     *\ * )
+		           echo "Your path contains whitespaces, which is not supported by 'make install'."
+		           exit 1
+		          ;;
+		esac 
+
 		unset IOS_DEVROOT IOS_SDKROOT
 		local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
 		local IOS_DEVROOT=$XCODE_DEV_ROOT/Platforms/iPhoneOS.platform/Developer
@@ -103,10 +135,9 @@ function build() {
 		local IOS_HOST="arm-apple-darwin"
 		local IOS_PREFIX="/usr/local/iphone"
 
-		export CPP=$TOOLCHAIN/usr/bin/cpp
-		export CXX=$TOOLCHAIN/usr/bin/c++
-		export CXXCPP=$TOOLCHAIN/usr/bin/cpp
-		export CC=$TOOLCHAIN/usr/bin/cc
+		export CC=$TOOLCHAIN/usr/bin/$COMPILER_CTYPE
+		export CXX=$TOOLCHAIN/usr/bin/$COMPILER_CTYPE
+
 		export LD=$TOOLCHAIN/usr/bin/ld
 		export AR=$TOOLCHAIN/usr/bin/ar
 		export AS=$TOOLCHAIN/usr/bin/as
@@ -114,82 +145,98 @@ function build() {
 		export RANLIB=$TOOLCHAIN/usr/bin/ranlib
 		export LDFLAGS="-L$IOS_SDKROOT/usr/lib/"
 
-		local STDLIB="libc++" 
-		#local STDLIB="libstdc++"
+		EXTRA_LINK_FLAGS="-std=$CSTANDARD -stdlib=$STDLIB -Os -fPIC -Wno-trigraphs -fpascal-strings -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
+		EXTRA_FLAGS="$EXTRA_LINK_FLAGS -fvisibility-inlines-hidden"
 
-		# armv7
-		local IOS_ARCH="armv7"
-		./configure --without-bzip2 --prefix=$IOS_PREFIX --host=$IOS_HOST --enable-static=yes --enable-shared=no \
-			CC=$IOS_CC \
-			CFLAGS="-arch $IOS_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden -miphoneos-version-min=$IOS_MIN_SDK_VER -I$IOS_SDKROOT/usr/include/libxml2 -isysroot $IOS_SDKROOT" \
-			AR=$AR \
-			LDFLAGS="-arch $IOS_ARCH -isysroot $IOS_SDKROOT -miphoneos-version-min=$IOS_MIN_SDK_VER"
-		make clean; make
-		cp objs/.libs/libfreetype.a lib/$TYPE/libfreetype-$IOS_ARCH.a
-		unset IOS_ARCH
+		# loop through architectures! yay for loops!
+		for IOS_ARCH in ${IOS_ARCHS}
+		do
+			set +e
+			#export ALL_IOS_ARCH="-arch armv7 -arch armv7s -arch arm64"
+			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
+			then
+				PLATFORM="iPhoneSimulator"
+			
+			else
+				PLATFORM="iPhoneOS"
+			fi
 
-		# armv7s
-		local IOS_ARCH="armv7s"
-		./configure --without-bzip2 --prefix=$IOS_PREFIX --host=$IOS_HOST --enable-static=yes --enable-shared=no \
-			CC=$IOS_CC \
-			CFLAGS="-arch $IOS_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden -miphoneos-version-min=$IOS_MIN_SDK_VER -I$IOS_SDKROOT/usr/include/libxml2 -isysroot $IOS_SDKROOT" \
-			AR=$AR \
-			LDFLAGS="-arch $IOS_ARCH -isysroot $IOS_SDKROOT -miphoneos-version-min=$IOS_MIN_SDK_VER"
-		make clean; make
-		cp objs/.libs/libfreetype.a lib/$TYPE/libfreetype-$IOS_ARCH.a
-		unset IOS_ARCH
+			export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
+			export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
+			export BUILD_TOOLS="${DEVELOPER}"
 
-		# arm64
+			MIN_IOS_VERSION=$IOS_MIN_SDK_VER
+		    # min iOS version for arm64 is iOS 7
+		
+		    if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
+		    	MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
+		    elif [ "${IOS_ARCH}" == "i386" ]; then
+		    	MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
+		    fi
 
-		local IOS_MIN_ARM64_SDK_VER="7.0"
-		local IOS_ARCH="arm64"
-		#export STDLIB="libc++"
-		./configure --without-bzip2 --prefix=$IOS_PREFIX --host=$IOS_HOST --enable-static=yes --enable-shared=no \
-			CC=$IOS_CC \
-			CFLAGS="-arch $IOS_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden -miphoneos-version-min=$IOS_MIN_SDK_VER -I$IOS_SDKROOT/usr/include/libxml2 -isysroot $IOS_SDKROOT" \
+		    MIN_TYPE=-miphoneos-version-min=
+		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+		    	MIN_TYPE=-mios-simulator-version-min=
+		    fi
+
+		    export CFLAGS="-arch $IOS_ARCH $EXTRA_FLAGS -pipe -no-cpp-precomp -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/ -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/libxml2" 
+			export LINKFLAGS="$CFLAGS $EXTRA_LINK_FLAGS"
+			export LDFLAGS="-L${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/lib/ $LINKFLAGS"
+			export CXXFLAGS="$CFLAGS $EXTRA_FLAGS"
+
+			mkdir -p "$CURRENTPATH/builddir/$TYPE/$IOS_ARCH"
+			LOG="$CURRENTPATH/builddir/$TYPE/$IOS_ARCH/build-freetype-${VER}-$IOS_ARCH.log"
+			echo "-----------------"
+			echo "Building FreeType-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
+			set +e
+
+			echo "Running make for ${IOS_ARCH}"
+			echo "Please stand by..."
+
+			echo "Configuring..."
+			./configure --without-bzip2 --prefix=$IOS_PREFIX --host=$IOS_HOST --enable-static=yes --enable-shared=no \
+			CC="$CC" \
+			CFLAGS="$CFLAGS" \
+			CXXFLAGS="$CXXFLAGS" \
+			CXX="$CXX" \
  			AS=$AS \
  			AR=$AR \
-	        NM=$IOS_DEVROOT/usr/bin/nm \
-			LDFLAGS="-arch $IOS_ARCH -isysroot $IOS_SDKROOT -miphoneos-version-min=$IOS_MIN_SDK_VER"
-		make clean; make
-		cp objs/.libs/libfreetype.a lib/$TYPE/libfreetype-$IOS_ARCH.a
-		unset IOS_ARCH
-		unset IOS_MIN_ARM64_SDK_VER
+	        NM=$NM \
+			LDFLAGS="$LDFLAGS" >> "${LOG}" 2>&1
+			echo "Making..."
+			make >> "${LOG}" 2>&1
+			if [ $? != 0 ];
+		    then 
+		    	echo "Problem while make - Please check ${LOG}"
+		    	exit 1
+		    else
+		    	echo "Make Successful for ${IOS_ARCH}"
+		    fi
+		    echo "Cleaning up from Make"
+		    make clean >> "${LOG}" 2>&1
+		    if [ $? != 0 ];
+		    then 
+		    	echo "Problem while cleaning make - Please check ${LOG}"
+		    	exit 1
+		    else
+		    	echo "Finished cleaning."
+		    fi
 
-		# simulator
+		    cp objs/.libs/libfreetype.a lib/$TYPE/libfreetype-$IOS_ARCH.a
 
-		# i386
-		unset IOS_DEVROOT IOS_SDKROOT
-		#export STDLIB="libstdc++"
-		local IOS_DEVROOT=$XCODE_DEV_ROOT/Platforms/iPhoneSimulator.platform/Developer
-		local IOS_SDKROOT=$IOS_DEVROOT/SDKs/iPhoneSimulator$IOS_SDK_VER.sdk
+		    echo "-----------------"
+		    echo "Build Successful for $IOS_ARCH"
+		done
 
-		unset LDFLAGS
-		export LDFLAGS="-L$IOS_SDKROOT/usr/lib/"
-		local IOS_ARCH="i386"
-		./configure --without-bzip2 --enable-static=yes --enable-shared=no \
-			CC=$IOS_CC \
-			CFLAGS="-arch $IOS_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden -miphoneos-version-min=$IOS_MIN_SDK_VER -I$IOS_SDKROOT/usr/include/libxml2 -isysroot $IOS_SDKROOT" \
-			CPP=$CPP \
-			CXX=$CXX \
-			LDFLAGS="-arch $IOS_ARCH -isysroot $IOS_SDKROOT -miphoneos-version-min=$IOS_MIN_SDK_VER"
-		make clean; make
-		cp objs/.libs/libfreetype.a lib/$TYPE/libfreetype-$IOS_ARCH.a
-		unset IOS_ARCH
 
-		# x86_64
-		local IOS_ARCH="x86_64"
-		#export STDLIB="libc++"
-		./configure --without-bzip2 --enable-static=yes --enable-shared=no \
-			CC=$IOS_CC \
-			CFLAGS="-arch $IOS_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden -miphoneos-version-min=$IOS_MIN_SDK_VER -I$IOS_SDKROOT/usr/include/libxml2 -isysroot $IOS_SDKROOT" \
-			CPP=$CPP \
-			CXX=$CXX \
-			LDFLAGS="-arch $IOS_ARCH -isysroot $IOS_SDKROOT -miphoneos-version-min=$IOS_MIN_SDK_VER"
-		make clean; make
-		cp objs/.libs/libfreetype.a lib/$TYPE/libfreetype-$IOS_ARCH.a
-		unset IOS_ARCH
-
+		echo "-----------------"
+		echo `pwd`
+		echo "Finished for all architectures."
+		mkdir -p "$CURRENTPATH/build/$TYPE/$IOS_ARCH"
+		LOG="$CURRENTPATH/builddir/$TYPE/build-freetype-${VER}-lipo.log"
+		# link into universal lib
+		echo "Running lipo to create fat lib"
+		echo "Please stand by..."
 		# link into universal lib
 		cd lib/$TYPE/
 		lipo -create libfreetype-armv7.a \
@@ -197,8 +244,35 @@ function build() {
 					libfreetype-arm64.a \
 					libfreetype-i386.a \
 					libfreetype-x86_64.a \
-					-output libfreetype.a
+					-output libfreetype.a \
+			 	>> "${LOG}" 2>&1
+
+		if [ $? != 0 ];
+		then 
+		    echo "Problem while creating fat lib with lipo - Please check ${LOG}"
+		    exit 1
+		else
+		   	echo "Lipo Successful."
+		fi
 		cd ../../
+		lipo -info lib/$TYPE/libfreetype.a
+
+		echo "--------------------"
+		echo "Stripping any lingering symbols"
+
+		SLOG="$CURRENTPATH/lib/$TYPE/freetype-stripping.log"
+
+		strip -x lib/$TYPE/libfreetype.a >> "${SLOG}" 2>&1
+		if [ $? != 0 ];
+		then 
+		    echo "Problem while stripping lib - Please check ${SLOG}"
+		    exit 1
+		else
+		    echo "Strip Successful for ${SLOG}"
+		fi
+
+		echo "--------------------"
+		echo "Build Successful for FreeType $TYPE $VER"
  
 		unset IOS_DEVROOT IOS_SDKROOT IOS_AR IOS_HOST IOS_PREFIX  CPP CXX CXXCPP CXXCPP CC LD AS AR NM RANLIB LDFLAGS STDLIB
 
@@ -248,7 +322,12 @@ function clean() {
 	
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: clean android"
-	
+	elif [ "$TYPE" == "ios" ] ; then
+		make clean
+		rm -f *.a *.lib
+		rm -f builddir/$TYPE
+		rm -f builddir
+		rm -f lib
 	else
 		make clean
 		rm -f *.a *.lib
