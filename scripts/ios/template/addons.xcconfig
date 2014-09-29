@@ -1,5 +1,28 @@
-// Addon headers and libs for this project
-
+// addons.xcconfig
+//--------------------------------
+// Add HEADERS and LIBS from ofxAddons or external libraries
+//--------------------
+// How to Use:
+//  If the addon has a .xcconfig in the main directory use this by including it here:
+//      Example:
+//              #include "$(OF_PATH)/addons/ofxSomeAddon/someaddon-ios.xcconfig"
+//              ADDONS_LIBS = $(SOME_ADDON_LIBS)
+//              ADDONS_HEADERS = $(SOME_ADDON_HEADERS)
+//
+//  If the addon has an example with a `addons.xcconfig` or the `nameOfAddon.xcconfig` in the folder you can
+//      copy the code from within it here or overwrite this file.
+//          Example:
+//              SOME_ADDON_HEADERS="$(OF_PATH)/addons/ofxSomeAddon/include"
+//              SOME_ADDON_LIB_1="$(OF_PATH)/addons/ofxSomeAddon/libs/ios/lib.a"
+//              SOME_ADDON_LIB_2="$(OF_PATH)/addons/ofxSomeAddon/libs/ios/otherlib.a"
+//              SOME_ADDON_LIBS=$(SOME_ADDON_LIB_1) $(SOME_ADDON_LIB_2)
+//              ADDONS_LIBS = $(SOME_ADDON_LIBS)
+//              ADDONS_HEADERS = $(SOME_ADDON_HEADERS)
+//
+//  If you have more than one addon / library make sure to add all of the final definitions to the ADDONS_LIBS and ADDONS_HEADERS
+//          Example:
+//              ADDONS_LIBS = $(SOME_ADDON_LIBS) $(SOME_OTHER_ADDON_LIBS)
+//              ADDONS_HEADERS = $(SOME_ADDON_HEADERS)  $(SOME_OTHER_ADDON_HEADERS)
 
 ADDONS_LIBS =
 
