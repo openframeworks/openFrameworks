@@ -118,6 +118,25 @@ static ofPixelFormat ofPixelFormatFromImageType(ofImageType type){
 	}
 }
 
+static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
+	switch(pixelFormat){
+	case OF_PIXELS_GRAY:
+		return OF_IMAGE_GRAYSCALE;
+		break;
+	case OF_PIXELS_RGB:
+		return OF_IMAGE_COLOR;
+		break;
+	case OF_PIXELS_RGBA:
+		return OF_IMAGE_COLOR_ALPHA;
+		break;
+	case OF_PIXELS_UNKNOWN:
+		return OF_IMAGE_UNDEFINED;
+	default:
+		ofLog(OF_LOG_ERROR,"ofPixels: image type not supported");
+		return OF_IMAGE_UNDEFINED;
+	}
+}
+
 string ofToString(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 		case OF_PIXELS_RGB:
@@ -811,7 +830,7 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(int planeIdx){
 
 template<typename PixelType>
 ofImageType ofPixels_<PixelType>::getImageType() const{
-	return getImageTypeFromChannels(getNumChannels());
+	return ofImageTypeFromPixelFormat(pixelFormat);
 }
 
 template<typename PixelType>
