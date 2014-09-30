@@ -264,5 +264,15 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CXX=
 
-afterplatform: after
-	@echo 
+afterplatform: $(TARGET_NAME)
+	@echo
+	@echo "     compiling done"
+	@echo "     to launch the application"
+	@echo
+	@echo "     emrun bin/$(BIN_NAME).html --browser browser_id"
+	@echo "     ./$(BIN_NAME)"
+	@echo "     "
+	@echo "     where browser_id is one of the following detected browsers"
+	@echo "     "
+	@emrun --list_browsers
+	@echo

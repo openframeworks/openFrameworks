@@ -327,7 +327,7 @@ endif
 	@rm -rf bin/libs
 
 after: $(TARGET_NAME)
-	cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/
+	@if [ -d $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH) ]; then cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/; fi
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
