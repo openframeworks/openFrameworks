@@ -16,9 +16,9 @@
 
 PLATFORM_PROJECT_RELEASE_TARGET = bin/$(BIN_NAME).html
 PLATFORM_PROJECT_DEBUG_TARGET = bin/$(BIN_NAME).html
-SHAREDCORE = 1
-PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.so
-PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.so
+BYTECODECORE=1
+PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.bc
+PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.bc
 
 ################################################################################
 # PLATFORM DEFINES
@@ -267,12 +267,11 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 afterplatform: $(TARGET_NAME)
 	@echo
 	@echo "     compiling done"
-	@echo "     to launch the application"
+	@echo "     to launch the application on the default browser, run:"
 	@echo
-	@echo "     emrun bin/$(BIN_NAME).html --browser browser_id"
-	@echo "     ./$(BIN_NAME)"
+	@echo "     emrun bin/$(BIN_NAME).html"
 	@echo "     "
-	@echo "     where browser_id is one of the following detected browsers"
+	@echo "     some browsers, like safari, don't support webgl"
 	@echo "     "
-	@emrun --list_browsers
+	@emrun --list_browsers 2>/dev/null
 	@echo
