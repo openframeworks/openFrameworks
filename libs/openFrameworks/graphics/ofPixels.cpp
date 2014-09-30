@@ -44,6 +44,8 @@ static float pixelBytesFromPixelFormat(ofPixelFormat format){
 			return 2 * sizeof(PixelType);
 
 		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_BAYER:
 		case OF_PIXELS_RGB565:
 			return 2;
 			break;
@@ -82,6 +84,8 @@ static int channelsFromPixelFormat(ofPixelFormat format){
 		return 1;
 		break;
 	case OF_PIXELS_YUY2:
+	case OF_PIXELS_UYVY:
+	case OF_PIXELS_BAYER:
 		return 2;
 		break;
 	case OF_PIXELS_Y:
@@ -140,6 +144,10 @@ string ofToString(ofPixelFormat pixelFormat){
 			return "I420";
 		case OF_PIXELS_YUY2:
 			return "YUY2";
+		case OF_PIXELS_UYVY:
+			return "UYVY";
+		case OF_PIXELS_BAYER:
+			return "BAYER";
 		default:
 			return "UNKOWN";
 	}
@@ -231,6 +239,8 @@ void ofPixels_<PixelType>::set(int channel,PixelType val){
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
 		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_BAYER:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
@@ -447,6 +457,8 @@ int ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
 			case OF_PIXELS_YV12:
 			case OF_PIXELS_I420:
 			case OF_PIXELS_YUY2:
+			case OF_PIXELS_UYVY:
+			case OF_PIXELS_BAYER:
 			case OF_PIXELS_Y:
 			case OF_PIXELS_U:
 			case OF_PIXELS_V:
@@ -491,6 +503,8 @@ ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
 		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_BAYER:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
@@ -545,6 +559,8 @@ void ofPixels_<PixelType>::setColor(int index, const ofColor_<PixelType>& color)
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
 		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_BAYER:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
@@ -630,6 +646,8 @@ void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
 		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_BAYER:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
@@ -712,6 +730,8 @@ int ofPixels_<PixelType>::getNumPlanes() const{
 		case OF_PIXELS_BGRA:
 		case OF_PIXELS_GRAY:
 		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_BAYER:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
@@ -744,6 +764,8 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(int planeIdx){
 		case OF_PIXELS_BGRA:
 		case OF_PIXELS_GRAY:
 		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_BAYER:
 			plane.setFromExternalPixels(pixels,width,height,pixelFormat);
 			break;
 		case OF_PIXELS_NV12:
@@ -909,8 +931,8 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int
 		// this prevents having to do a check for bounds in the for loop;
 		int minX = MAX(x, 0) * getNumChannels();
 		int maxX = MIN(x+_width, width) * getNumChannels();
-		int minY = MAX(y, 0) * getNumChannels();
-		int maxY = MIN(y+_height, height) * getNumChannels();
+		int minY = MAX(y, 0);
+		int maxY = MIN(y+_height, height);
 
 
 		iterator newPixel = toPix.begin();
