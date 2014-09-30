@@ -45,7 +45,6 @@ static float pixelBytesFromPixelFormat(ofPixelFormat format){
 
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
-		case OF_PIXELS_BAYER:
 		case OF_PIXELS_RGB565:
 			return 2;
 			break;
@@ -85,7 +84,6 @@ static int channelsFromPixelFormat(ofPixelFormat format){
 		break;
 	case OF_PIXELS_YUY2:
 	case OF_PIXELS_UYVY:
-	case OF_PIXELS_BAYER:
 		return 2;
 		break;
 	case OF_PIXELS_Y:
@@ -146,8 +144,6 @@ string ofToString(ofPixelFormat pixelFormat){
 			return "YUY2";
 		case OF_PIXELS_UYVY:
 			return "UYVY";
-		case OF_PIXELS_BAYER:
-			return "BAYER";
 		default:
 			return "UNKOWN";
 	}
@@ -240,7 +236,6 @@ void ofPixels_<PixelType>::set(int channel,PixelType val){
 		case OF_PIXELS_I420:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
-		case OF_PIXELS_BAYER:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
@@ -458,7 +453,6 @@ int ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
 			case OF_PIXELS_I420:
 			case OF_PIXELS_YUY2:
 			case OF_PIXELS_UYVY:
-			case OF_PIXELS_BAYER:
 			case OF_PIXELS_Y:
 			case OF_PIXELS_U:
 			case OF_PIXELS_V:
@@ -504,7 +498,6 @@ ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
 		case OF_PIXELS_I420:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
-		case OF_PIXELS_BAYER:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
@@ -560,7 +553,6 @@ void ofPixels_<PixelType>::setColor(int index, const ofColor_<PixelType>& color)
 		case OF_PIXELS_I420:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
-		case OF_PIXELS_BAYER:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
@@ -647,7 +639,6 @@ void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 		case OF_PIXELS_I420:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
-		case OF_PIXELS_BAYER:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
@@ -731,7 +722,6 @@ int ofPixels_<PixelType>::getNumPlanes() const{
 		case OF_PIXELS_GRAY:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
-		case OF_PIXELS_BAYER:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
@@ -765,7 +755,6 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(int planeIdx){
 		case OF_PIXELS_GRAY:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
-		case OF_PIXELS_BAYER:
 			plane.setFromExternalPixels(pixels,width,height,pixelFormat);
 			break;
 		case OF_PIXELS_NV12:
