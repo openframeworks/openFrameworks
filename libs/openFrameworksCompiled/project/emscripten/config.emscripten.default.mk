@@ -207,6 +207,7 @@ PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPoco
 PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.so
 PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.so
 PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/tess2/lib/$(ABI_LIB_SUBPATH)/libtess2.so
+PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/freetype/lib/$(ABI_LIB_SUBPATH)/libfreetype.bc
 
 
 ################################################################################
