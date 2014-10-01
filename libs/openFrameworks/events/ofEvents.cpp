@@ -5,6 +5,7 @@
 #include "ofGraphics.h"
 #include "ofAppBaseWindow.h"
 #include <set>
+#include "ofTimer.h"
 
 static const double MICROS_TO_SEC = .000001;
 static const double MICROS_TO_MILLIS = .001;
@@ -12,18 +13,11 @@ static const double MICROS_TO_MILLIS = .001;
 static unsigned long long   timeThen = 0, oneSec = 0;
 static float    			targetRate = 0;
 static float				fps = 60;
-static unsigned long long	nanosForFrame = 0;
 static unsigned long long	lastFrameTime = 0;
 static bool      			bFrameRateSet = 0;
 static int      			nFramesForFPS = 0;
 static int      			nFrameCount	  = 0;
-static unsigned long long   prevMicrosForFPS = 0;
-#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
-	static timespec nextWakeTime;
-#elif defined(TARGET_WIN32)
-	LARGE_INTEGER nextSleep;
-	HANDLE hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
-#endif
+static ofTimer 				timer;
 
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
@@ -55,7 +49,8 @@ void ofSetFrameRate(int _targetRate){
 	}else{
 		bFrameRateSet	= true;
 		targetRate		= _targetRate;
-		nanosForFrame	= 1000000000.0 / (double)targetRate;
+		unsigned long long nanosPerFrame	= 1000000000.0 / (double)targetRate;
+		timer.setPeriodicEvent(nanosPerFrame);
 	}
 }
 
@@ -140,45 +135,8 @@ void ofNotifyDraw(){
 	unsigned long long timeNow = ofGetElapsedTimeMicros();
 
 	if (nFrameCount != 0 && bFrameRateSet == true){
-#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
-		nextWakeTime.tv_nsec += nanosForFrame;
-		if(nextWakeTime.tv_nsec>1000000000){
-			nextWakeTime.tv_nsec-=1000000000;
-			nextWakeTime.tv_sec+=1;
-		}
-		timespec remainder = {0,0};
-		clock_nanosleep(CLOCK_MONOTONIC,TIMER_ABSTIME,&nextWakeTime,&remainder);
-	}else{
-		clock_gettime(CLOCK_MONOTONIC,&nextWakeTime);
-		prevMicrosForFPS = timeNow;
+		timer.waitNext();
 	}
-#elif defined(TARGET_WIN32)
-		WaitForSingleObject(hTimer, INFINITE);
-		nextSleep.QuadPart += nanosForFrame/100;
-		SetWaitableTimer(hTimer, &nextSleep, 0, NULL, NULL, 0);
-	}else{
-		GetSystemTimeAsFileTime((LPFILETIME)&nextSleep);
-		nextSleep.QuadPart += nanosForFrame/100;
-		SetWaitableTimer(hTimer, &nextSleep, 0, NULL, NULL, 0);
-		prevMicrosForFPS = timeNow;
-	}
-#elif !defined( TARGET_EMSCRIPTEN )
-		unsigned long long diffMicros = timeNow - prevMicrosForFPS;
-		prevMicrosForFPS = timeNow;
-		if(diffMicros < microsForFrame){
-			unsigned long long waitMicros = nanosForFrame/1000 - diffMicros;
-			// Theoretical value to compensate for the extra time that it might sleep
-			prevMicrosForFPS += waitMicros;
-#ifdef TARGET_WIN32
-			Sleep(waitMicros*MICROS_TO_MILLIS);
-#else
-			usleep(waitMicros);
-#endif
-		}
-	}else{
-		prevMicrosForFPS = timeNow;
-	}
-#endif
 	
 	// calculate fps
 	nFrameCount++;
