@@ -401,15 +401,6 @@ void ofExit(int status){
 }
 
 //--------------------------------------
-void ofSleepMillis(int millis){
-	#ifdef TARGET_WIN32
-		Sleep(millis);
-	#elif !defined(TARGET_EMSCRIPTEN)
-		usleep(millis * 1000);
-	#endif
-}
-
-//--------------------------------------
 void ofHideCursor(){
 	window->hideCursor();
 }
