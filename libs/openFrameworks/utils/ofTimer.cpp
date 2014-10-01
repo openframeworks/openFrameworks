@@ -36,7 +36,7 @@ void ofTimer::waitNext(){
 #else
 	unsigned long long secsNow, nanosNow;
 	ofGetMonotonicTime(secsNow, nanosNow);
-	unsigned long long waitNanos = ((long long)(nextWakeSecs - secsNow))*1000000000 + ((long long)(nextWakeNanos - nanosNow));
+	unsigned long long waitNanos = ((long long)(nextWakeTimeSecs - secsNow))*1000000000 + ((long long)(nextWakeTimeNanos - nanosNow));
 	if(waitNanos > 0){
 		nanosleep(waitNanos);
 	}
