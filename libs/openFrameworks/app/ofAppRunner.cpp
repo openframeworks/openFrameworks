@@ -24,6 +24,10 @@
 	#include "ofQtUtils.h"
 #endif
 
+#if defined (TARGET_WIN32)
+#include <mmsystem.h>
+#endif
+
 //========================================================================
 // static variables:
 
