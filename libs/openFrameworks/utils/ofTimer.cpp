@@ -40,7 +40,7 @@ void ofTimer::waitNext(){
 	if(waitNanos > 0){
 		timespec waittime;
 		timespec remainder;
-		waittime.tv_sec = nextWakeTimeSecs - secsNow;
+		waittime.tv_sec = waitNanos / 1000000000;
 		waittime.tv_nsec = waitNanos % 1000000000;
 		nanosleep(&waittime,&remainder);
 	}
