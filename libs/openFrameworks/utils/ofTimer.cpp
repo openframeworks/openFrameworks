@@ -1,5 +1,7 @@
 #include "ofTimer.h"
 
+#define NANOS_PER_SEC 1000000000
+
 void ofGetMonotonicTime(unsigned long long & seconds, unsigned long long & nanoseconds);
 
 ofTimer::ofTimer()
@@ -40,8 +42,8 @@ void ofTimer::waitNext(){
 	if(waitNanos > 0){
 		timespec waittime;
 		timespec remainder;
-		waittime.tv_sec = waitNanos / 1000000000;
-		waittime.tv_nsec = waitNanos % 1000000000;
+		waittime.tv_sec = waitNanos / NANOS_PER_SEC;
+		waittime.tv_nsec = waitNanos % NANOS_PER_SEC;
 		nanosleep(&waittime,&remainder);
 	}
 #endif
@@ -51,8 +53,8 @@ void ofTimer::waitNext(){
 void ofTimer::calculateNextPeriod(){
 #if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
 	nextWakeTime.tv_nsec += nanosPerPeriod;
-	if(nextWakeTime.tv_nsec>1000000000){
-		nextWakeTime.tv_nsec-=1000000000;
+	if(nextWakeTime.tv_nsec>NANOS_PER_SEC){
+		nextWakeTime.tv_nsec-=NANOS_PER_SEC;
 		nextWakeTime.tv_sec+=1;
 	}
 #elif defined(TARGET_WIN32)
@@ -60,8 +62,8 @@ void ofTimer::calculateNextPeriod(){
 	SetWaitableTimer(hTimer, &nextWakeTime, 0, NULL, NULL, 0);
 #else
 	nextWakeTimeNanos += nanosPerPeriod;
-	if(nextWakeTimeNanos>1000000000){
-		nextWakeTimeNanos-=1000000000;
+	if(nextWakeTimeNanos>NANOS_PER_SEC){
+		nextWakeTimeNanos-=NANOS_PER_SEC;
 		nextWakeTimeSecs+=1;
 	}
 #endif
