@@ -36,9 +36,13 @@ void ofTimer::waitNext(){
 #else
 	unsigned long long secsNow, nanosNow;
 	ofGetMonotonicTime(secsNow, nanosNow);
-	unsigned long long waitNanos = ((long long)(nextWakeTimeSecs - secsNow))*1000000000 + ((long long)(nextWakeTimeNanos - nanosNow));
+	long long waitNanos = ((long long)(nextWakeTimeSecs - secsNow))*1000000000 + ((long long)(nextWakeTimeNanos - nanosNow));
 	if(waitNanos > 0){
-		nanosleep(waitNanos);
+		timespec waittime;
+		timespec remainder;
+		waittime.tv_sec = nextWakeTimeSecs - secsNow;
+		waittime.tv_nsec = waitNanos % 1000000000;
+		nanosleep(&waittime,&remainder);
 	}
 #endif
 	calculateNextPeriod();
