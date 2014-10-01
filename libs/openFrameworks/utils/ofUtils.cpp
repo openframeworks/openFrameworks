@@ -76,7 +76,7 @@ void ofGetMonotonicTime(unsigned long long & seconds, unsigned long long & nanos
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_nsec;
 #elif defined( TARGET_WIN32 )
-	LARGE_INTEGER freq = 0;
+	LARGE_INTEGER freq;
 	LARGE_INTEGER counter;
 	QueryPerformanceFrequency(&freq);
 	QueryPerformanceCounter(&counter);
