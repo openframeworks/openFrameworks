@@ -11,7 +11,7 @@
 static float    			targetRate = 0;
 static bool      			bFrameRateSet = 0;
 static ofTimer 				timer;
-static ofFpsCounter			fps;
+static ofFpsCounter			fps(60);
 
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
@@ -125,7 +125,7 @@ void ofNotifyDraw(){
 		ofNotifyEvent( ofEvents().draw, voidEventArgs );
 	}
 
-	if (bFrameRateSet == true){
+	if (bFrameRateSet){
 		timer.waitNext();
 	}
 	
