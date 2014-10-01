@@ -7,7 +7,6 @@ public:
 	void reset();
 	void setPeriodicEvent(unsigned long long nanoseconds);
 	void waitNext();
-
 private:
 	void calculateNextPeriod();
 #if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
