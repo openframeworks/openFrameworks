@@ -6,18 +6,12 @@
 #include "ofAppBaseWindow.h"
 #include <set>
 #include "ofTimer.h"
+#include "ofFpsCounter.h"
 
-static const double MICROS_TO_SEC = .000001;
-static const double MICROS_TO_MILLIS = .001;
-
-static unsigned long long   timeThen = 0, oneSec = 0;
 static float    			targetRate = 0;
-static float				fps = 60;
-static unsigned long long	lastFrameTime = 0;
 static bool      			bFrameRateSet = 0;
-static int      			nFramesForFPS = 0;
-static int      			nFrameCount	  = 0;
 static ofTimer 				timer;
+static ofFpsCounter			fps;
 
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
@@ -49,14 +43,14 @@ void ofSetFrameRate(int _targetRate){
 	}else{
 		bFrameRateSet	= true;
 		targetRate		= _targetRate;
-		unsigned long long nanosPerFrame	= 1000000000.0 / (double)targetRate;
+		unsigned long long nanosPerFrame = 1000000000.0 / (double)targetRate;
 		timer.setPeriodicEvent(nanosPerFrame);
 	}
 }
 
 //--------------------------------------
 float ofGetFrameRate(){
-	return fps;
+	return fps.getFps();
 }
 
 //--------------------------------------
@@ -66,12 +60,12 @@ float ofGetTargetFrameRate(){
 
 //--------------------------------------
 double ofGetLastFrameTime(){
-	return lastFrameTime*MICROS_TO_SEC;
+	return fps.getLastFrameSecs();
 }
 
 //--------------------------------------
 int ofGetFrameNum(){
-	return nFrameCount;
+	return fps.getNumFrames();
 }
 
 //--------------------------------------
@@ -131,45 +125,21 @@ void ofNotifyDraw(){
 		ofNotifyEvent( ofEvents().draw, voidEventArgs );
 	}
 
-	// calculate sleep time to adjust to target fps
-	unsigned long long timeNow = ofGetElapsedTimeMicros();
-
-	if (nFrameCount != 0 && bFrameRateSet == true){
+	if (bFrameRateSet == true){
 		timer.waitNext();
 	}
 	
-	// calculate fps
-	nFrameCount++;
-	timeNow = ofGetElapsedTimeMicros();
-	
-	if(nFrameCount==0){
-		timeThen = timeNow;
-		if(bFrameRateSet)	fps = targetRate;
+	if(fps.getNumFrames()==0){
+		if(bFrameRateSet) fps = ofFpsCounter(targetRate);
 	}else{
-		unsigned long long oneSecDiff = timeNow-oneSec;
-		
-		if( oneSecDiff  >= 1000000 ){
-			fps = nFramesForFPS/(oneSecDiff*MICROS_TO_SEC);
-			oneSec  = timeNow;
-			nFramesForFPS = 0;
-		}else{
-			double deltaTime = ((double)oneSecDiff)*MICROS_TO_SEC;
-			if( deltaTime > 0.0 ){
-				fps = fps*0.99 + (nFramesForFPS/deltaTime)*0.01;
-			}
-		}
-		nFramesForFPS++;
-		
-		
-		lastFrameTime 	= timeNow-timeThen;
 		/*if(ofIsVerticalSyncEnabled()){
 			float rate = ofGetRefreshRate();
 			int intervals = round(lastFrameTime*rate/1000000.);//+vsyncedIntervalsRemainder;
 			//vsyncedIntervalsRemainder = lastFrameTime*rate/1000000.+vsyncedIntervalsRemainder - intervals;
 			lastFrameTime = intervals*1000000/rate;
 		}*/
-		timeThen    	= timeNow;
 	}
+	fps.newFrame();
 	
 }
 
