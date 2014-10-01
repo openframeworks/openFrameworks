@@ -183,7 +183,7 @@ namespace ofxCv {
 			// improve corner accuracy
 			if(found) {
 				if(img.type() != CV_8UC1) {
-					cvtColor(img, grayMat, CV_RGB2GRAY);
+                    copyGray(img, grayMat);
 				} else {
 					grayMat = img;
 				}

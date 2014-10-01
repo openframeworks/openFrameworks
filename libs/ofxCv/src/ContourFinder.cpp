@@ -55,13 +55,7 @@ namespace ofxCv {
 				inRange(hsvBuffer, lowerb, upperb, thresh);
 			}
 		} else {
-			if(img.channels() == 1) {
-				thresh = img.clone();
-			} else if(img.channels() == 3) {
-				cvtColor(img, thresh, CV_RGB2GRAY);
-			} else if(img.channels() == 4) {
-				cvtColor(img, thresh, CV_RGBA2GRAY);
-			}
+            copyGray(img, thresh);
 		}
 		if(autoThreshold) {
 			threshold(thresh, thresholdValue, invert);
