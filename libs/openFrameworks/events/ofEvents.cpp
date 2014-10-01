@@ -12,12 +12,17 @@ static const double MICROS_TO_MILLIS = .001;
 static unsigned long long   timeThen = 0, oneSec = 0;
 static float    			targetRate = 0;
 static float				fps = 60;
-static unsigned long long	microsForFrame = 0;
+static unsigned long long	nanosForFrame = 0;
 static unsigned long long	lastFrameTime = 0;
 static bool      			bFrameRateSet = 0;
 static int      			nFramesForFPS = 0;
 static int      			nFrameCount	  = 0;
 static unsigned long long   prevMicrosForFPS = 0;
+#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
+static timespec nextWakeTime;
+#elif defined(TARGET_WIN32)
+HANDLE hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
+#endif
 
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
@@ -49,7 +54,12 @@ void ofSetFrameRate(int _targetRate){
 	}else{
 		bFrameRateSet	= true;
 		targetRate		= _targetRate;
-		microsForFrame	= 1000000.0 / (double)targetRate;
+		nanosForFrame	= 1000000000.0 / (double)targetRate;
+#ifdef TARGET_WIN32
+		LARGE_INTEGER liDueTime;
+		liDueTime.QuadPart = -(long long)nanosForFrame;
+		SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0)
+#endif
 	}
 }
 
@@ -130,15 +140,29 @@ void ofNotifyDraw(){
 		ofNotifyEvent( ofEvents().draw, voidEventArgs );
 	}
 
-	nFrameCount++;
 	// calculate sleep time to adjust to target fps
 	unsigned long long timeNow = ofGetElapsedTimeMicros();
-#ifndef TARGET_EMSCRIPTEN
+
 	if (nFrameCount != 0 && bFrameRateSet == true){
+#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
+		nextWakeTime.tv_nsec += nanosForFrame;
+		if(nextWakeTime.tv_nsec>1000000000){
+			nextWakeTime.tv_nsec-=1000000000;
+			nextWakeTime.tv_sec+=1;
+		}
+		timespec remainder = {0,0};
+		clock_nanosleep(CLOCK_MONOTONIC,TIMER_ABSTIME,&nextWakeTime,&remainder);
+	}else{
+		clock_gettime(CLOCK_MONOTONIC,&nextWakeTime);
+		prevMicrosForFPS = timeNow;
+	}
+#elif defined(TARGET_WIN32)
+	WaitForSingleObject(hTimer, INFINITE);
+#elif !defined( TARGET_EMSCRIPTEN )
 		unsigned long long diffMicros = timeNow - prevMicrosForFPS;
 		prevMicrosForFPS = timeNow;
 		if(diffMicros < microsForFrame){
-			unsigned long long waitMicros = microsForFrame - diffMicros;
+			unsigned long long waitMicros = nanosForFrame/1000 - diffMicros;
 			// Theoretical value to compensate for the extra time that it might sleep
 			prevMicrosForFPS += waitMicros;
 #ifdef TARGET_WIN32
@@ -153,6 +177,7 @@ void ofNotifyDraw(){
 #endif
 	
 	// calculate fps
+	nFrameCount++;
 	timeNow = ofGetElapsedTimeMicros();
 	
 	if(nFrameCount==0){
@@ -175,6 +200,12 @@ void ofNotifyDraw(){
 		
 		
 		lastFrameTime 	= timeNow-timeThen;
+		/*if(ofIsVerticalSyncEnabled()){
+			float rate = ofGetRefreshRate();
+			int intervals = round(lastFrameTime*rate/1000000.);//+vsyncedIntervalsRemainder;
+			//vsyncedIntervalsRemainder = lastFrameTime*rate/1000000.+vsyncedIntervalsRemainder - intervals;
+			lastFrameTime = intervals*1000000/rate;
+		}*/
 		timeThen    	= timeNow;
 	}
 	
