@@ -16,8 +16,8 @@ private:
 	LARGE_INTEGER nextWakeTime;
 	HANDLE hTimer;
 #else
-	unsigned long long   prevSecs;
-	unsigned long long   prevNanos;
+	unsigned long long   nextWakeTimeSecs;
+	unsigned long long   nextWakeTimeNanos;
 #endif
 	unsigned long long nanosPerPeriod;
 };

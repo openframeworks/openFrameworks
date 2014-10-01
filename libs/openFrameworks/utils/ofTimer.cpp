@@ -17,7 +17,7 @@ void ofTimer::reset(){
 #elif defined(TARGET_WIN32)
 	GetSystemTimeAsFileTime((LPFILETIME)&nextWakeTime);
 #else
-	ofGetMonotonicTime(prevSecs,prevNanos);
+	ofGetMonotonicTime(nextWakeTimeSecs,nextWakeTimeNanos);
 #endif
 	calculateNextPeriod();
 }
@@ -36,18 +36,10 @@ void ofTimer::waitNext(){
 #else
 	unsigned long long secsNow, nanosNow;
 	ofGetMonotonicTime(secsNow, nanosNow);
-	unsigned long long diffNanos = (secsNow - prevSecs)*1000000000 + ((long long)(nanosNow - prevNanos));
-	prevSecs = secsNow;
-	prevNanos = nanosNow;
-	if(diffNanos < nanosPerPeriod){
-		unsigned long long waitNanos = nanosPerPeriod/1000 - diffNanos;
+	unsigned long long waitNanos = ((long long)(nextWakeSecs - secsNow))*1000000000 + ((long long)(nextWakeNanos - nanosNow));
+	if(waitNanos > 0){
 		nanosleep(waitNanos);
-		// Theoretical value to compensate for the extra time that it might sleep
-		prevNanos += waitNanos;
-		if(prevNanos>1000000000){
-			prevNanos-=1000000000;
-			prevSecs+=1;
-		}
+	}
 #endif
 	calculateNextPeriod();
 }
@@ -62,5 +54,11 @@ void ofTimer::calculateNextPeriod(){
 #elif defined(TARGET_WIN32)
 	nextWakeTime.QuadPart += nanosPerPeriod/100;
 	SetWaitableTimer(hTimer, &nextWakeTime, 0, NULL, NULL, 0);
+#else
+	nextWakeTimeNanos += nanosPerPeriod;
+	if(nextWakeTimeNanos>1000000000){
+		nextWakeTimeNanos-=1000000000;
+		nextWakeTimeSecs+=1;
+	}
 #endif
 }
