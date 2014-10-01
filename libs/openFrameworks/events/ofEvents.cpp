@@ -19,9 +19,10 @@ static int      			nFramesForFPS = 0;
 static int      			nFrameCount	  = 0;
 static unsigned long long   prevMicrosForFPS = 0;
 #if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
-static timespec nextWakeTime;
+	static timespec nextWakeTime;
 #elif defined(TARGET_WIN32)
-HANDLE hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
+	LARGE_INTEGER nextSleep;
+	HANDLE hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
 #endif
 
 // core events instance & arguments
@@ -55,11 +56,6 @@ void ofSetFrameRate(int _targetRate){
 		bFrameRateSet	= true;
 		targetRate		= _targetRate;
 		nanosForFrame	= 1000000000.0 / (double)targetRate;
-#ifdef TARGET_WIN32
-		LARGE_INTEGER liDueTime;
-		liDueTime.QuadPart = -(long long)nanosForFrame;
-		SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0)
-#endif
 	}
 }
 
@@ -157,7 +153,15 @@ void ofNotifyDraw(){
 		prevMicrosForFPS = timeNow;
 	}
 #elif defined(TARGET_WIN32)
-	WaitForSingleObject(hTimer, INFINITE);
+		WaitForSingleObject(hTimer, INFINITE);
+		nextSleep.QuadPart += nanosForFrame/100;
+		SetWaitableTimer(hTimer, &nextSleep, 0, NULL, NULL, 0);
+	}else{
+		GetSystemTimeAsFileTime((LPFILETIME)&nextSleep);
+		nextSleep.QuadPart += nanosForFrame/100;
+		SetWaitableTimer(hTimer, &nextSleep, 0, NULL, NULL, 0);
+		prevMicrosForFPS = timeNow;
+	}
 #elif !defined( TARGET_EMSCRIPTEN )
 		unsigned long long diffMicros = timeNow - prevMicrosForFPS;
 		prevMicrosForFPS = timeNow;
