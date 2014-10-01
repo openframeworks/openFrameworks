@@ -4,7 +4,7 @@ void ofGetMonotonicTime(unsigned long long & seconds, unsigned long long & nanos
 
 ofTimer::ofTimer()
 :nanosPerPeriod(0)
-#ifdef TARGET_WINDOWS
+#ifdef TARGET_WIN32
 ,hTimer(CreateWaitableTimer(NULL, TRUE, NULL))
 #endif
 {
