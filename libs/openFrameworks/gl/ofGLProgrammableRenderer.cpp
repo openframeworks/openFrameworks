@@ -404,22 +404,33 @@ void ofGLProgrammableRenderer::viewport(float x, float y, float width, float hei
 	matrixStack.viewport(x,y,width,height,vflip);
 	ofRectangle nativeViewport = matrixStack.getNativeViewport();
 	glViewport(nativeViewport.x,nativeViewport.y,nativeViewport.width,nativeViewport.height);
+	mCurrentNativeViewport = nativeViewport;
 }
 
 //----------------------------------------------------------
 ofRectangle ofGLProgrammableRenderer::getCurrentViewport() const{
-	getNativeViewport();
+	getNativeViewport(); ///< this will set matrixStack.nativeViewport as a side effect.
 	return matrixStack.getCurrentViewport();
 }
 
 //----------------------------------------------------------
 ofRectangle ofGLProgrammableRenderer::getNativeViewport() const{
+	static ofRectangle lastNativeViewport;
+	if (mCurrentNativeViewport == lastNativeViewport) {	
+		return lastNativeViewport;
+	}
+
+	/// ----------! invariant: viewport has changed.
+
 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, viewport);
 
 	ofGLProgrammableRenderer * mutRenderer = const_cast<ofGLProgrammableRenderer*>(this);
 	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 	mutRenderer->matrixStack.nativeViewport(nativeViewport);
+
+	mutRenderer->mCurrentNativeViewport = lastNativeViewport = nativeViewport;
+
     return nativeViewport;
 }
 
