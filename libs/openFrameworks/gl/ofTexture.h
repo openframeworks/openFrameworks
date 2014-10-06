@@ -398,6 +398,8 @@ class ofTexture : public ofBaseDraws {
 	///
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
+	void loadData(const ofBufferObject & buffer, int glFormat, int glType);
+
 	/// \brief Generate mipmap for the current texture.
 	///
 	/// \warning Only GL_TEXTURE_RECTANGLE - which is the default openFrameworks
@@ -562,6 +564,8 @@ class ofTexture : public ofBaseDraws {
 	/// \param pixels Target pixels reference.
 	void readToPixels(ofFloatPixels & pixels) const;
 
+	void copyTo(ofBufferObject & buffer) const;
+
 	/// \brief Bind the texture.
 	///
 	/// For advanced users who need to manually manage texture drawing without
@@ -579,7 +583,14 @@ class ofTexture : public ofBaseDraws {
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
 	///
 	void unbind(int textureLocation=0) const;
-	
+
+#ifndef TARGET_OPENGLES
+	/// glBindImageTexture: https://www.opengl.org/wiki/GLAPI/glBindImageTexture
+	///
+	/// binds the texture as an read or write image, only available since 4.2
+	void bindAsImage(GLuint unit, GLenum access, GLint level=0, GLboolean layered=0, GLint layer=0);
+#endif
+
 	void setAlphaMask(ofTexture & mask);
 	void disableAlphaMask();
 
