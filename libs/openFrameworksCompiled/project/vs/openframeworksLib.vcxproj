@@ -79,6 +79,7 @@
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppGLFWWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppNoWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofBaseApp.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofFbo.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLRenderer.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLUtils.h" />
@@ -157,6 +158,7 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppNoWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofFbo.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLRenderer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLUtils.cpp" />
