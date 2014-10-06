@@ -8,7 +8,7 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=apothecary-1.4
+VER=apothecary-1.5
 
 # tools for git use
 GIT_URL=https://github.com/bakercp/poco
@@ -66,7 +66,7 @@ function prepare() {
 		cd ../../
 
 	elif [ "$TYPE" == "vs" ] ; then
-		# Patch the components to exclude those that we aren't using.  
+		# Patch the components to exclude those that we aren't using.
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/components.patch 2>/dev/null ; then
 			patch -p0 -u < $FORMULA_DIR/components.patch
 		fi
@@ -99,7 +99,7 @@ function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
-		
+
 		# 32 bit
 		# For OS 10.9+ we must explicitly set libstdc++ for the 32-bit OSX build.
 		./configure $BUILD_OPTS --cflags=-stdlib=libstdc++ --config=Darwin32
@@ -146,10 +146,10 @@ function build() {
 	elif [ "$TYPE" == "ios" ] ; then
 
 
-		SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`	
+		SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
 		set -e
 		CURRENTPATH=`pwd`
-		
+
 		DEVELOPER=$XCODE_DEV_ROOT
 		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
 		VERSION=$VER
@@ -159,18 +159,18 @@ function build() {
 		echo $CURRENTPATH
 
 		# Validate environment
-		case $XCODE_DEV_ROOT in  
+		case $XCODE_DEV_ROOT in
 		     *\ * )
 		           echo "Your Xcode path contains whitespaces, which is not supported."
 		           exit 1
 		          ;;
 		esac
-		case $CURRENTPATH in  
+		case $CURRENTPATH in
 		     *\ * )
 		           echo "Your path contains whitespaces, which is not supported by 'make install'."
 		           exit 1
 		          ;;
-		esac 
+		esac
 
 		echo "------------"
 		# To Fix: global:62: *** Current working directory not under $PROJECT_BASE.  Stop. make
@@ -190,7 +190,7 @@ function build() {
 		local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/ios
 
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen --include-path=$OPENSSL_INCLUDE --library-path=$OPENSSL_LIBS"
-		
+
 		STATICOPT_CC=-fPIC
 		STATICOPT_CXX=-fPIC
 
@@ -199,14 +199,14 @@ function build() {
 		do
 			MIN_IOS_VERSION=$IOS_MIN_SDK_VER
 		    # min iOS version for arm64 is iOS 7
-			
+
 		    if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
 		    	MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
 		    elif [ "${IOS_ARCH}" == "i386" ]; then
 		    	MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
 		    fi
 		    export IPHONE_SDK_VERSION_MIN=$IOS_MIN_SDK_VER
-			
+
 			export POCO_TARGET_OSARCH=$IOS_ARCH
 
 			MIN_TYPE=-miphoneos-version-min=
@@ -227,11 +227,11 @@ function build() {
 			mkdir -p "$CURRENTPATH/build/$TYPE/$IOS_ARCH"
 			LOG="$CURRENTPATH/build/$TYPE/$IOS_ARCH/poco-$IOS_ARCH-${VER}.log"
 			set +e
-			
+
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
 				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
-			else 
+			else
 				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
 			fi
 			echo "--------------------"
@@ -240,10 +240,10 @@ function build() {
 			echo "Configuring for ${IOS_ARCH} ..."
 			./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_IPHONE > "${LOG}" 2>&1
 
-			if [ $? != 0 ]; then 
+			if [ $? != 0 ]; then
 		    	echo "Problem while configure - Please check ${LOG}"
 		    	exit 1
-		    else 
+		    else
 		    	echo "Configure successful"
 		    fi
 		    echo "--------------------"
@@ -253,17 +253,17 @@ function build() {
 			echo "Please stand by..."
 			make >> "${LOG}" 2>&1
 			if [ $? != 0 ];
-		    then 
+		    then
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
 		    else
 		    	echo "Make Successful for ${IOS_ARCH}"
 		    fi
-			unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN OSFLAGS 
+			unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN OSFLAGS
 			unset CROSS_TOP CROSS_SDK BUILD_TOOLS
 
 			echo "--------------------"
- 
+
 		done
 
 		cd lib/iPhoneOS
@@ -287,7 +287,7 @@ function build() {
 		for TOBESTRIPPED in $( ls -1) ; do
 			strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
 			if [ $? != 0 ];
-		    then 
+		    then
 		    	echo "Problem while stripping lib - Please check ${SLOG}"
 		    	exit 1
 		    else
@@ -297,7 +297,7 @@ function build() {
 
 
 		cd ../../
-				
+
 		echo "--------------------"
 		echo "Reseting changed files back to originals"
 		cd build/config
@@ -312,7 +312,7 @@ function build() {
 
 	elif [ "$TYPE" == "android" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
-		
+
 		local OLD_PATH=$PATH
 
 		export PATH=$PATH:$BUILD_DIR/Toolchains/Android/androideabi/bin:$BUILD_DIR/Toolchains/Android/x86/bin
@@ -380,7 +380,7 @@ function build() {
 		make
 		# delete debug builds
 		rm lib/Linux/armv7l/*d.a
-	else 
+	else
 		echoWarning "TODO: build $TYPE lib"
 	fi
 }
@@ -405,7 +405,7 @@ function copy() {
 	cp -Rv Zip/include/Poco/Zip $1/include/Poco
 
 	# libs
-	if [ "$TYPE" == "osx" ] ; then		
+	if [ "$TYPE" == "osx" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Darwin/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "ios" ] ; then
