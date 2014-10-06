@@ -22,7 +22,9 @@ ofHttpResponse ofxEmscriptenURLFileLoader::get(string url){
 
 int ofxEmscriptenURLFileLoader::getAsync(string url, string name){
 	ofHttpRequest * req = new ofHttpRequest(url,name,false);
+#if __EMSCRIPTEN_major__>1 || (__EMSCRIPTEN_major__==1 && __EMSCRIPTEN_minor__>22)
 	emscripten_async_wget2_data(url.c_str(), "GET", "", req, true, &onload_cb, &onerror_cb, NULL);
+#endif
 	return req->getID();
 }
 
@@ -33,7 +35,9 @@ ofHttpResponse ofxEmscriptenURLFileLoader::saveTo(string url, string path){
 
 int ofxEmscriptenURLFileLoader::saveAsync(string url, string path){
 	ofHttpRequest * req = new ofHttpRequest(url,url,true);
+#if __EMSCRIPTEN_major__>1 || (__EMSCRIPTEN_major__==1 && __EMSCRIPTEN_minor__>22)
 	emscripten_async_wget2(url.c_str(), path.c_str(), "GET", "", req, &onload_file_cb, &onerror_file_cb, NULL);
+#endif
 	return 0;
 }
 
@@ -49,7 +53,7 @@ void ofxEmscriptenURLFileLoader::stop(){
 
 }
 
-void ofxEmscriptenURLFileLoader::onload_cb(void* request, void* data, unsigned int size){
+void ofxEmscriptenURLFileLoader::onload_cb(unsigned, void* request, void* data, unsigned int size){
 	ofHttpResponse response;
 	response.data.set((const char*)data,size);
 	response.status = 200;
@@ -58,7 +62,7 @@ void ofxEmscriptenURLFileLoader::onload_cb(void* request, void* data, unsigned i
 	delete (ofHttpRequest*)request;
 }
 
-void ofxEmscriptenURLFileLoader::onerror_cb(void* request, int status, const char* message){
+void ofxEmscriptenURLFileLoader::onerror_cb(unsigned, void* request, int status, const char* message){
 	ofHttpResponse response;
 	response.status = status;
 	response.error = message;
@@ -67,7 +71,7 @@ void ofxEmscriptenURLFileLoader::onerror_cb(void* request, int status, const cha
 	delete (ofHttpRequest*)request;
 }
 
-void ofxEmscriptenURLFileLoader::onload_file_cb(void* request, const char* file){
+void ofxEmscriptenURLFileLoader::onload_file_cb(unsigned, void* request, const char* file){
 	ofHttpResponse response;
 	response.status = 200;
 	response.request = *(ofHttpRequest*)request;
@@ -75,7 +79,7 @@ void ofxEmscriptenURLFileLoader::onload_file_cb(void* request, const char* file)
 	delete (ofHttpRequest*)request;
 }
 
-void ofxEmscriptenURLFileLoader::onerror_file_cb(void* request, int status){
+void ofxEmscriptenURLFileLoader::onerror_file_cb(unsigned, void* request, int status){
 	ofHttpResponse response;
 	response.status = status;
 	response.request = *(ofHttpRequest*)request;

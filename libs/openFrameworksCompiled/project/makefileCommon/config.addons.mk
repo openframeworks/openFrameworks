@@ -51,6 +51,9 @@ endef
 space :=
 space += 
 
+define src_to_obj
+	$(addsuffix .o,$(basename $(filter %.c %.cpp %.cc %.cxx %.cc %.s %.S, $(addprefix $(OF_PROJECT_OBJ_OUPUT_PATH),$(addprefix $2,$1)))))
+endef
 
 # PARSE addon_config.mk FILES
 #
@@ -65,15 +68,18 @@ define parse_addon
 	$(eval addon=$(addprefix $(OF_ADDONS_PATH)/, $1)) \
 	$(eval ADDON_DEPENDENCIES= ) \
 	$(eval ADDON_DATA= ) \
-	$(eval ADDON_INCLUDES= ) \
 	$(eval ADDON_CFLAGS= ) \
 	$(eval ADDON_LDFLAGS= ) \
-	$(eval ADDON_LIBS= ) \
 	$(eval ADDON_PKG_CONFIG_LIBRARIES= ) \
 	$(eval ADDON_FRAMEWORKS= ) \
-	$(eval ADDON_SOURCES= ) \
 	$(eval ADDON_LIBS_EXCLUDE= ) \
 	$(eval ADDON_SOURCES_EXCLUDE= ) \
+	$(call parse_addons_includes, $(addon)) \
+	$(eval ADDON_INCLUDES=$(PARSED_ADDONS_INCLUDES)) \
+	$(call parse_addons_libraries, $(addon)) \
+	$(eval ADDON_LIBS=$(PARSED_ADDONS_LIBS)) \
+	$(call parse_addons_sources, $(addon)) \
+	$(eval ADDON_SOURCES=$(PARSED_ADDONS_SOURCE_FILES)) \
 	$(eval PROCESS_NEXT=0) \
 	$(if $(wildcard $(addon)/addon_config.mk), \
 		$(foreach var_line, $(subst $(space),?,$(shell cat $(addon)/addon_config.mk | tr '\n' '\t')), \
@@ -91,29 +97,52 @@ define parse_addon
 		) \
 	) \
 	$(if $(strip $(ADDON_INCLUDES)), \
-		$(eval PROJECT_ADDONS_INCLUDES += $(addprefix $(addon)/,$(ADDON_INCLUDES))), \
-		$(call parse_addons_includes, $(addon)) \
-		$(eval PROJECT_ADDONS_INCLUDES += $(PARSED_ADDONS_INCLUDES)) \
+		$(eval ADDON_INCLUDES_FILTERED = $(filter-out $(addprefix $(addon)/,$(ADDON_INCLUDES_EXCLUDE)),$(ADDON_INCLUDES))) \
+		$(foreach addon_include, $(strip $(ADDON_INCLUDES_FILTERED)), \
+			$(if $(wildcard $(addon)/$(addon_include)), \
+				$(eval PROJECT_ADDONS_INCLUDES += $(addon)/$(addon_include)) \
+			) \
+			$(if $(wildcard $(addon_include)), \
+				$(eval PROJECT_ADDONS_INCLUDES += $(addon_include)) \
+			) \
+		) \
 	) \
 	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
 	$(if $(strip $(ADDON_LIBS)), \
-		$(eval PROJECT_ADDONS_LIBS += $(addprefix $(addon)/,$(ADDON_LIBS))), \
-		$(call parse_addons_libraries, $(addon)) \
-		$(eval PROJECT_ADDONS_LIBS += $(PARSED_ADDONS_LIBS)) \
+		$(foreach addon_lib, $(strip $(ADDON_LIBS)), \
+			$(if $(wildcard $(addon)/$(addon_lib)), \
+				$(eval PROJECT_ADDONS_LIBS += $(addon)/$(addon_lib)) \
+			) \
+			$(if $(wildcard $(addon_lib)), \
+				$(eval PROJECT_ADDONS_LIBS += $(addon_lib)) \
+			) \
+		) \
 	) \
 	$(eval PROJECT_ADDONS_LDFLAGS += $(ADDON_LDFLAGS)) \
 	$(eval PROJECT_ADDONS_PKG_CONFIG_LIBRARIES += $(ADDON_PKG_CONFIG_LIBRARIES)) \
 	$(eval PROJECT_ADDONS_FRAMEWORKS += $(ADDON_FRAMEWORKS)) \
 	$(if $(strip $(ADDON_SOURCES)), \
-		$(eval PROJECT_ADDONS_SOURCE_FILES += $(addprefix $(addon)/,$(ADDON_SOURCES))), \
-		$(call parse_addons_sources, $(addon)) \
-		$(eval PROJECT_ADDONS_SOURCE_FILES += $(PARSED_ADDONS_SOURCE_FILES)) \
+		$(eval ADDON_SOURCES_FILTERED = $(filter-out $(addprefix $(addon)/,$(ADDON_SOURCES_EXCLUDE)),$(ADDON_SOURCES))) \
+		$(foreach addon_src, $(strip $(ADDON_SOURCES_FILTERED)), \
+			$(if $(filter $(addon)%, $(addon_src)), \
+				$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
+				$(eval SRC_OBJ_FILE=$(addprefix $(OF_ADDONS_PATH)/,$(strip $(call src_to_obj, $(addon_src:$(addon)/%=%), $1/)))) \
+				$(eval PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
+			, \
+				$(if $(filter $(OF_ROOT)%, $(addon_src)), \
+					$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
+					$(eval SRC_OBJ_FILE=$(strip $(call src_to_obj, $(addon_src:$(OF_ROOT)/%=%),))) \
+					$(eval PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
+				,$(error cannot find addon source file $(addon_src)) \
+				) \
+			) \
+		) \
 	) \
 	$(if $(strip $(ADDON_DATA)), \
-		$(eval PROJECT_ADDONS_DATA += $(addon)/$(ADDON_DATA)) \
+		$(eval PROJECT_ADDONS_DATA += $(addprefix $(addon)/,$(ADDON_DATA))) \
 	) \
 	$(foreach addon_dep, $(strip $(ADDON_DEPENDENCIES)), \
-		$(if $(filter $(addon_dep),$(PROJECT_ADDONS)), , \
+		$(if $(filter-out $(PROJECT_ADDONS),$(addon_dep)), \
 			$(eval PROJECT_ADDONS += $(addon_dep)) \
 			$(call parse_addon, $(addon_dep)) \
 		) \
@@ -124,6 +153,10 @@ endef
 $(foreach addon_to_parse, $(PROJECT_ADDONS), \
 	$(call parse_addon, $(addon_to_parse)) \
 )
+
+
+OF_PROJECT_ADDONS_OBJS = $(PROJECT_ADDONS_OBJ_FILES)
+OF_PROJECT_ADDONS_DEPS = $(patsubst %.o,%.d,$(PROJECT_ADDONS_OBJ_FILES))
 
 ########################################################################
 #  DEBUGGING

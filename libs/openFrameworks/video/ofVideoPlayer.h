@@ -20,6 +20,11 @@
 	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
 #endif
 
+#ifdef OF_VIDEO_PLAYER_AVFOUNDATION
+    #include "ofAVFoundationPlayer.h"
+    #define OF_VID_PLAYER_TYPE ofAVFoundationPlayer
+#endif
+
 #ifdef OF_VIDEO_PLAYER_IOS
 	#include "ofxiOSVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
@@ -41,9 +46,6 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 	public:
 
 		ofVideoPlayer ();
-
-		void						setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer);
-		shared_ptr<ofBaseVideoPlayer>	getPlayer();
 
 		bool 				loadMovie(string name);
 	    string				getMoviePath() const;
@@ -109,6 +111,20 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		bool				isLoaded() const;
 		bool				isPlaying() const;
 		bool 				isInitialized() const;
+
+		void				setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer);
+		shared_ptr<ofBaseVideoPlayer>	getPlayer();
+		const shared_ptr<ofBaseVideoPlayer>	getPlayer() const;
+
+		template<typename PlayerType>
+		shared_ptr<PlayerType> getPlayer(){
+			return dynamic_pointer_cast<PlayerType>(getPlayer());
+		}
+
+		template<typename PlayerType>
+		const shared_ptr<PlayerType> getPlayer() const{
+			return dynamic_pointer_cast<PlayerType>(getPlayer());
+		}
 
 		//this is kept as legacy to support people accessing width and height directly. 
 		mutable int         height;

@@ -34,6 +34,7 @@ public:
 	const ofTexture & getTextureReference(int attachmentPoint) const;
 	const ofTexture & getDepthTexture() const;
 	void setUseTexture(bool bUseTex){ /*irrelevant*/ };
+	bool isUsingTexture() const {return true;}
 
 	void begin(bool setupScreen=true) const;
 	void end() const;
