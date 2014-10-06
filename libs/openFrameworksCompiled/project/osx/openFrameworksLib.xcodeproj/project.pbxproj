@@ -13,6 +13,8 @@
 		22246D98176C9AA0008A8AF4 /* ofAppGlutWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22246D96176C9AA0008A8AF4 /* ofAppGlutWindow.h */; };
 		22769591170D9DD200604FC3 /* ofMatrixStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */; };
 		22769592170D9DD200604FC3 /* ofMatrixStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 22769590170D9DD200604FC3 /* ofMatrixStack.h */; };
+		2292E73E19E3049700DE9411 /* ofBufferObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2292E73C19E3049700DE9411 /* ofBufferObject.cpp */; };
+		2292E73F19E3049700DE9411 /* ofBufferObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 2292E73D19E3049700DE9411 /* ofBufferObject.h */; };
 		22A1C453170AFCB60079E473 /* ofRendererCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */; };
 		22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */; };
 		22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
@@ -165,6 +167,8 @@
 		22246D96176C9AA0008A8AF4 /* ofAppGlutWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGlutWindow.h; sourceTree = "<group>"; };
 		2276958F170D9DD200604FC3 /* ofMatrixStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofMatrixStack.cpp; sourceTree = "<group>"; };
 		22769590170D9DD200604FC3 /* ofMatrixStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMatrixStack.h; sourceTree = "<group>"; };
+		2292E73C19E3049700DE9411 /* ofBufferObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofBufferObject.cpp; path = gl/ofBufferObject.cpp; sourceTree = "<group>"; };
+		2292E73D19E3049700DE9411 /* ofBufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofBufferObject.h; path = gl/ofBufferObject.h; sourceTree = "<group>"; };
 		22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofRendererCollection.cpp; sourceTree = "<group>"; };
 		22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ofAppGLFWWindow.cpp; sourceTree = "<group>"; };
 		22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGLFWWindow.h; sourceTree = "<group>"; };
@@ -352,6 +356,8 @@
 		DACFA8C8132D09C7008D4B7A /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				2292E73C19E3049700DE9411 /* ofBufferObject.cpp */,
+				2292E73D19E3049700DE9411 /* ofBufferObject.h */,
 				22246D91176C9987008A8AF4 /* ofGLProgrammableRenderer.cpp */,
 				22246D92176C9987008A8AF4 /* ofGLProgrammableRenderer.h */,
 				DACFA8C9132D09E8008D4B7A /* ofFbo.cpp */,
@@ -704,6 +710,7 @@
 				DAC22D4016E7A4AF0020226D /* ofParameter.h in Headers */,
 				DAC22D4216E7A4AF0020226D /* ofParameterGroup.h in Headers */,
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
+				2292E73F19E3049700DE9411 /* ofBufferObject.h in Headers */,
 				2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */,
 				22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */,
 				22769592170D9DD200604FC3 /* ofMatrixStack.h in Headers */,
@@ -779,6 +786,7 @@
 				E4F3BA6912F4C4BF002D19BB /* ofCamera.cpp in Sources */,
 				E4F3BA6B12F4C4BF002D19BB /* ofEasyCam.cpp in Sources */,
 				E4F3BA7312F4C4BF002D19BB /* ofNode.cpp in Sources */,
+				2292E73E19E3049700DE9411 /* ofBufferObject.cpp in Sources */,
 				E4F3BA8A12F4C4C9002D19BB /* ofFmodSoundPlayer.cpp in Sources */,
 				E4F3BA8E12F4C4C9002D19BB /* ofSoundPlayer.cpp in Sources */,
 				E4F3BA9012F4C4C9002D19BB /* ofSoundStream.cpp in Sources */,
