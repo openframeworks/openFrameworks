@@ -34,20 +34,19 @@ function prepare() {
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		# help from http://stackoverflow.com/questions/12229714/building-glew-for-mac-osx
-		
+
 		# GLEW will not allow one to simply supply OPT="-arch i386 -arch x86_64"
 		# so we build them separately.
 
 		# 32 bit
-		make clean; make glew.lib OPT="-arch i386"
+		make clean; make glew.lib OPT="-arch i386 -stdlib=libstdc++"
 		mv lib/libGLEW.a libGLEW-i386.a
 
 		# 64 bit
-		make clean; make glew.lib OPT="-arch x86_64"
+		make clean; make glew.lib OPT="-arch x86_64 -stdlib=libc++"
 		mv lib/libGLEW.a libGLEW-x86_64.a
 
-		# link into universal lib
+		# link into fat universal lib
 		lipo -c libGLEW-i386.a libGLEW-x86_64.a -o libGLEW.a
 
 	elif [ "$TYPE" == "vs" ] ; then
