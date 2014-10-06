@@ -255,32 +255,38 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, int glFormat, int
 //----------------------------------------------------------
 void ofTexture::allocate(const ofPixels& pix){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 //----------------------------------------------------------
 void ofTexture::allocate(const ofPixels& pix, bool bUseARBExtention){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 //----------------------------------------------------------
 void ofTexture::allocate(const ofShortPixels& pix){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 //----------------------------------------------------------
 void ofTexture::allocate(const ofShortPixels& pix, bool bUseARBExtention){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 
 //----------------------------------------------------------
 void ofTexture::allocate(const ofFloatPixels& pix){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 //----------------------------------------------------------
 void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 //----------------------------------------------------------
@@ -479,6 +485,11 @@ void ofTexture::loadData(const ofFloatPixels & pix, int glFormat){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
 }
 
+void ofTexture::loadData(const ofBufferObject & buffer, int glFormat, int glType){
+	buffer.bind(GL_PIXEL_UNPACK_BUFFER);
+	loadData(0,texData.width,texData.height,glFormat,glType);
+	buffer.unbind(GL_PIXEL_UNPACK_BUFFER);
+}
 
 //----------------------------------------------------------
 void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glType){
@@ -704,6 +715,14 @@ void ofTexture::unbind(int textureLocation) const{
 	texData.isBound = false;
 }
 
+#ifndef TARGET_OPENGLES
+//----------------------------------------------------------
+void ofTexture::bindAsImage(GLuint unit, GLenum access, GLint level, GLboolean layered, GLint layer){
+	glBindImageTexture(unit,texData.textureID,level,layered,layer,access,texData.glTypeInternal);
+}
+#endif
+
+//----------------------------------------------------------
 void ofTexture::setAlphaMask(ofTexture & mask){
 	if(mask.texData.textureTarget!=this->texData.textureTarget){
 		ofLogError("ofTexture") << "Cannot set alpha mask with different texture target";
@@ -712,6 +731,7 @@ void ofTexture::setAlphaMask(ofTexture & mask){
 	}
 }
 
+//----------------------------------------------------------
 void ofTexture::disableAlphaMask(){
 	if(texData.alphaMask){
 		texData.alphaMask.reset();
@@ -1060,6 +1080,15 @@ void ofTexture::readToPixels(ofFloatPixels & pixels) const {
 	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_FLOAT,pixels.getPixels());
 	unbind();
 #endif
+}
+
+void ofTexture::copyTo(ofBufferObject & buffer) const{
+	buffer.bind(GL_PIXEL_PACK_BUFFER);
+	bind();
+	glGetTexImage(texData.textureTarget,0,ofGetGLFormatFromInternal(texData.glTypeInternal),ofGetGlTypeFromInternal(texData.glTypeInternal),0);
+	unbind();
+	buffer.unbind(GL_PIXEL_PACK_BUFFER);
+
 }
 
 //----------------------------------------------------------

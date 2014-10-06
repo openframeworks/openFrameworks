@@ -13,6 +13,10 @@
 class ofTexture;
 class ofMatrix4x4;
 class ofMatrix3x3;
+class ofParameterGroup;
+class ofVec2f;
+class ofVec3f;
+class ofVec4f;
 
 class ofShader {
 public:
@@ -41,6 +45,10 @@ public:
 	void begin() const;
 	void end() const;
 	
+#ifndef TARGET_OPENGLES
+	void dispatchCompute(GLuint x, GLuint y, GLuint z) const;
+#endif
+
 	// set a texture reference
 	void setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation) const;
 	void setUniformTexture(const string & name, const ofTexture& img, int textureLocation) const;
@@ -57,6 +65,10 @@ public:
 	void setUniform3f(const string & name, float v1, float v2, float v3) const;
 	void setUniform4f(const string & name, float v1, float v2, float v3, float v4) const;
 	
+	void setUniform2f(const string & name, const ofVec2f & v) const;
+	void setUniform3f(const string & name, const ofVec3f & v) const;
+	void setUniform4f(const string & name, const ofVec4f & v) const;
+
 	// set an array of uniform values
 	void setUniform1iv(const string & name, const int* v, int count = 1) const;
 	void setUniform2iv(const string & name, const int* v, int count = 1) const;
@@ -68,6 +80,8 @@ public:
 	void setUniform3fv(const string & name, const float* v, int count = 1) const;
 	void setUniform4fv(const string & name, const float* v, int count = 1) const;
 	
+	void setUniforms(const ofParameterGroup & parameters) const;
+
 	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
 	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m) const;
 	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m) const;
@@ -132,7 +146,8 @@ public:
 		POSITION_ATTRIBUTE=0,  // tig: was =1, and BOY, what a performance hog this was!!! see: http://www.chromium.org/nativeclient/how-tos/3d-tips-and-best-practices
 		COLOR_ATTRIBUTE,
 		NORMAL_ATTRIBUTE,
-		TEXCOORD_ATTRIBUTE
+		TEXCOORD_ATTRIBUTE,
+		INDEX_ATTRIBUTE  // usually not used except for compute shades
 	};
 
 	/// @brief returns the shader source as it was passed to the GLSL compiler

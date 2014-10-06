@@ -482,10 +482,18 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_BGRA:
 	case OF_PIXELS_RGBA:
+#ifndef TARGET_OPENGLES
+		return GL_RGBA8;
+#else
 		return GL_RGBA;
+#endif
 	case OF_PIXELS_RGB:
 	case OF_PIXELS_BGR:
+#ifndef TARGET_OPENGLES
+		return GL_RGB8;
+#else
 		return GL_RGB;
+#endif
     case OF_PIXELS_RGB565:
 	#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
 		return GL_RGB565_OES;
