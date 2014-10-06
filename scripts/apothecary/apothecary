@@ -770,6 +770,19 @@ function vs-build() {
 	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && devenv '$1' /'${2:-Build}' '${3:-Release}''
 }
 
+# visual studio upgrader
+# http://msdn.microsoft.com/en-us/library/vstudio/w15a82ay(v=vs.110).aspx
+function vs-upgrade() {
+	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && devenv '$1' /Upgrade'
+}
+
+# visual studio clean
+# http://msdn.microsoft.com/en-us/library/vstudio/w15a82ay(v=vs.110).aspx
+function vs-clean() {
+	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && devenv '$1' /Clean Release'
+	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && devenv '$1' /Clean Debug'
+}
+
 ################################################################################
 ### FORMULA SCRIPT FUNCTIONS
 
