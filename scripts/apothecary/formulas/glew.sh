@@ -11,7 +11,7 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
 # define the version
-VER=1.10.0
+VER=1.11.0
 
 # tools for git use
 GIT_URL=https://github.com/nigels-com/glew.git
@@ -52,11 +52,9 @@ function build() {
 
 	elif [ "$TYPE" == "vs" ] ; then
 		cd build/vc10
-		vs-build "glew.sln" Upgrade
+		vs-upgrade "glew.sln"
 		vs-build "glew_static.vcxproj"
 		cd ../../
-		echoWarning "TODO: build vs"
-
 	elif [ "$TYPE" == "win_cb" ] ; then
 		#make glew.lib
 		echoWarning "TODO: build win_cb"
@@ -77,9 +75,11 @@ function copy() {
 
 	elif [ "$TYPE" == "vs" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/glew32s.lib $1/lib/$TYPE
+		cp -v lib/Release/Win32/glew32s.lib $1/lib/$TYPE
 
 	elif [ "$TYPE" == "win_cb" ] ; then
+		# TODO: add cb formula
+		echoWarning "TODO: copy win_cb"
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/glew32s.lib $1/lib/$TYPE
 	fi
@@ -89,8 +89,9 @@ function copy() {
 function clean() {
 
 	if [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: clean vs"
-	
+		cd build/vc10
+		vs-clean "glew.sln"
+		cd ../../
 	else
 		make clean
 		rm -f *.a *.lib
