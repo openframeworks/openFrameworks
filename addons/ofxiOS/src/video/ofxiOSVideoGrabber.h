@@ -14,22 +14,24 @@ class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	~ofxiOSVideoGrabber();
 	
 	//needs implementing
-	vector <ofVideoDevice> listDevices();	
-	void getDeviceList(){};
+	vector <ofVideoDevice> listDevices() const;
+	void getDeviceList() const {};
 	bool initGrabber(int w, int h);
+    bool isInitialized() const;
 	
 	bool			setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat 	getPixelFormat();	
+	ofPixelFormat 	getPixelFormat() const;
 
-	bool isFrameNew();
+	bool isFrameNew() const;
 	
 	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
-	
+	ofPixels&		getPixelsRef();
+	const ofPixels& getPixelsRef() const;
+
 	void close();	
 	
-	float getHeight();
-	float getWidth();
+	float getHeight() const;
+	float getWidth() const;
 	
 	void update();
 	
@@ -43,7 +45,7 @@ class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	void videoSettings();*/
 	
 protected:
-	ofPtr<AVFoundationVideoGrabber> grabber;
+	shared_ptr<AVFoundationVideoGrabber> grabber;
 };
 
 #endif

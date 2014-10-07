@@ -73,7 +73,7 @@ ofAppiOSWindow::~ofAppiOSWindow() {
 }
 
 //----------------------------------------------------------------------------------- opengl setup.
-void ofAppiOSWindow::setupOpenGL(int w, int h, int screenMode) {
+void ofAppiOSWindow::setupOpenGL(int w, int h, ofWindowMode screenMode) {
 	windowMode = screenMode; // use this as flag for displaying status bar or not
 }
 
@@ -143,7 +143,7 @@ int ofAppiOSWindow::getHeight(){
 	return (int)getWindowSize().x;
 }
 
-int	ofAppiOSWindow::getWindowMode() {
+ofWindowMode ofAppiOSWindow::getWindowMode() {
 	return windowMode;
 }
 

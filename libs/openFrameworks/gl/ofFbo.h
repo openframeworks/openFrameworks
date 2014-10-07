@@ -14,52 +14,56 @@ public:
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
 	//void allocateForShadow( int width, int height );
 	void allocate(Settings settings = Settings());
-	bool isAllocated();
+	bool isAllocated() const;
 
 	using ofBaseDraws::draw;
-	void draw(float x, float y);
-	void draw(float x, float y, float width, float height);
+	void draw(float x, float y) const;
+	void draw(float x, float y, float width, float height) const;
 
 	void setAnchorPercent(float xPct, float yPct);
     void setAnchorPoint(float x, float y);
 	void resetAnchor();
 
 	void setDefaultTextureIndex(int defaultTexture);
-	int getDefaultTextureIndex();
+	int getDefaultTextureIndex() const;
 
 	ofTexture & getTextureReference();
 	ofTexture & getTextureReference(int attachmentPoint);
 	ofTexture & getDepthTexture();
+	const ofTexture & getTextureReference() const;
+	const ofTexture & getTextureReference(int attachmentPoint) const;
+	const ofTexture & getDepthTexture() const;
 	void setUseTexture(bool bUseTex){ /*irrelevant*/ };
+	bool isUsingTexture() const {return true;}
 
-	void begin(bool setupScreen=true);
-	void end();
+	void begin(bool setupScreen=true) const;
+	void end() const;
 
-	void readToPixels(ofPixels & pixels, int attachmentPoint = 0);
-	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0);
-	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0);
+	void readToPixels(ofPixels & pixels, int attachmentPoint = 0) const;
+	void readToPixels(ofShortPixels & pixels, int attachmentPoint = 0) const;
+	void readToPixels(ofFloatPixels & pixels, int attachmentPoint = 0) const;
 
-	float getWidth();
-	float getHeight();
+	float getWidth() const;
+	float getHeight() const;
 
 	// advanced functions
-	void bind();
-	void unbind();
+	void bind() const;
+	void unbind() const;
 
-	bool checkStatus();
+	bool checkStatus() const;
 	void createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint);
     void attachTexture(ofTexture & texture, GLenum internalFormat, GLenum attachmentPoint);
 	GLuint createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint);
 	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum attachment );
 	void createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum attachment, GLenum transferFormat, GLenum transferType );
 	
-	int	getNumTextures();
+	int	getNumTextures() const;
 
 	void setActiveDrawBuffer(int i);
 	void setActiveDrawBuffers(const vector<int>& i);
 	void activateAllDrawBuffers();
 
-	GLuint getFbo();	// returns GLuint of Fbo for advanced actions
+	GLuint getFbo() const;	// returns GLuint of Fbo for advanced actions
 
 
 	static bool	checkGLSupport();
@@ -67,8 +71,8 @@ public:
 	static int maxDrawBuffers();		// return max simultaneous draw buffers
 	static int maxSamples();			// return max MSAA samples
 
-	GLuint getDepthBuffer(){ return depthBuffer; }
-	GLuint getStencilBuffer(){ return stencilBuffer; }
+	GLuint getDepthBuffer() const { return depthBuffer; }
+	GLuint getStencilBuffer() const { return stencilBuffer; }
 
 	struct Settings {
 		int		width;					// width of images attached to fbo
@@ -92,14 +96,14 @@ public:
 	};
 private:
 	Settings 			settings;
-	int					isBound;
+	mutable int			isBound;
 
 	GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
 	GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)
 	GLuint				depthBuffer;
 	GLuint				stencilBuffer;
 
-	GLint				savedFramebuffer;	// save bound framebuffer before switching
+	mutable GLint		savedFramebuffer;	// save bound framebuffer before switching
 
 	vector<GLuint>		colorBuffers;	// only used if using MSAA...maybe...what about MRT?
 	vector<ofTexture>	textures;
@@ -110,7 +114,7 @@ private:
 	static int			_maxDrawBuffers;
 	static int			_maxSamples;
 
-	bool				dirty;
+	mutable bool		dirty;
 
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;

@@ -142,11 +142,11 @@ ofxAndroidVideoGrabber::~ofxAndroidVideoGrabber(){
 }
 
 
-vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices(){
+vector<ofVideoDevice> ofxAndroidVideoGrabber::listDevices() const{
 	return vector<ofVideoDevice>();
 }
 
-bool ofxAndroidVideoGrabber::isFrameNew(){
+bool ofxAndroidVideoGrabber::isFrameNew() const{
 	return bIsFrameNew;
 }
 
@@ -313,6 +313,10 @@ bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
 	return true;
 }
 
+bool ofxAndroidVideoGrabber::isInitialized() const{
+	return bGrabberInited;
+}
+
 void ofxAndroidVideoGrabber::videoSettings(){
 }
 
@@ -320,8 +324,12 @@ unsigned char * ofxAndroidVideoGrabber::getPixels(){
 	return pixels.getPixels();
 }
 
-ofPixelsRef	ofxAndroidVideoGrabber::getPixelsRef(){
+ofPixels&	ofxAndroidVideoGrabber::getPixelsRef(){
 	return pixels;
+}
+
+const ofPixels& ofxAndroidVideoGrabber::getPixelsRef() const {
+    return pixels;
 }
 
 void ofxAndroidVideoGrabber::setVerbose(bool bTalkToMe){
@@ -365,11 +373,11 @@ void ofxAndroidVideoGrabber::setDesiredFrameRate(int framerate){
 	attemptFramerate = framerate;
 }
 
-float ofxAndroidVideoGrabber::getHeight(){
+float ofxAndroidVideoGrabber::getHeight() const{
 	return pixels.getHeight();
 }
 
-float ofxAndroidVideoGrabber::getWidth(){
+float ofxAndroidVideoGrabber::getWidth() const{
 	return pixels.getWidth();
 }
 
@@ -378,7 +386,7 @@ bool ofxAndroidVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	return true;
 }
 
-ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat(){
+ofPixelFormat ofxAndroidVideoGrabber::getPixelFormat() const{
 	return internalPixelFormat;
 }
 

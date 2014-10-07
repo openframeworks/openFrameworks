@@ -579,8 +579,13 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 		cps[i].tW				= cps[i].width;
 		cps[i].tH				= cps[i].height;
 
+
+		areaSum += (cps[i].tW+border*2)*(cps[i].tH+border*2);
+
+		if(width==0 || height==0) continue;
+
 		// Allocate Memory For The Texture Data.
-		expanded_data[i].allocate(width, height, 2);
+		expanded_data[i].allocate(width, height, OF_PIXELS_GRAY_ALPHA);
 		//-------------------------------- clear data:
 		expanded_data[i].set(0,255); // every luminance pixel = 255
 		expanded_data[i].set(1,0);
@@ -588,7 +593,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 		if (bAntiAliased == true){
 			ofPixels bitmapPixels;
-			bitmapPixels.setFromExternalPixels(bitmap.buffer,bitmap.width,bitmap.rows,1);
+			bitmapPixels.setFromExternalPixels(bitmap.buffer,bitmap.width,bitmap.rows,OF_PIXELS_GRAY);
 			expanded_data[i].setChannel(1,bitmapPixels);
 		} else {
 			//-----------------------------------
@@ -613,8 +618,6 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 			}
 			//-----------------------------------
 		}
-
-		areaSum += (cps[i].tW+border*2)*(cps[i].tH+border*2);
 	}
 
 	vector<charProps> sortedCopy = cps;
@@ -655,7 +658,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 
 	ofPixels atlasPixelsLuminanceAlpha;
-	atlasPixelsLuminanceAlpha.allocate(w,h,2);
+	atlasPixelsLuminanceAlpha.allocate(w,h,OF_PIXELS_GRAY_ALPHA);
 	atlasPixelsLuminanceAlpha.set(0,255);
 	atlasPixelsLuminanceAlpha.set(1,0);
 
