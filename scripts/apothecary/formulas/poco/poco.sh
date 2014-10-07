@@ -53,11 +53,11 @@ function prepare() {
 		# fix using sed i636 reference and allow overloading variable
 		sed -i .tmp "s|POCO_TARGET_OSARCH.* = .*|POCO_TARGET_OSARCH ?= i386|" iPhoneSimulator-clang-libc++
 		sed -i .tmp "s|OSFLAGS            = -arch|OSFLAGS            ?= -arch|" iPhoneSimulator-clang-libc++
-		sed -i .tmp "s|STATICOPT_CC    =|STATICOPT_CC    ?= -DNDEBUG -Os -fPIC|" iPhone-clang-libc++
-		sed -i .tmp "s|STATICOPT_CXX   =|STATICOPT_CXX   ?= -DNDEBUG -Os -fPIC|" iPhone-clang-libc++
+		sed -i .tmp "s|STATICOPT_CC    =|STATICOPT_CC    ?= -DNDEBUG -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -Os -fPIC|" iPhone-clang-libc++
+		sed -i .tmp "s|STATICOPT_CXX   =|STATICOPT_CXX   ?= -DNDEBUG -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -Os -fPIC|" iPhone-clang-libc++
 		sed -i .tmp "s|OSFLAGS                 = -arch|OSFLAGS                ?= -arch|" iPhone-clang-libc++
-		sed -i .tmp "s|RELEASEOPT_CC   = -DNDEBUG -O2|RELEASEOPT_CC   =  -DNDEBUG -Os -fPIC|" iPhone-clang-libc++
-		sed -i .tmp "s|RELEASEOPT_CXX  = -DNDEBUG -O |RELEASEOPT_CXX  =  -DNDEBUG -Os -fPIC|" iPhone-clang-libc++
+		sed -i .tmp "s|RELEASEOPT_CC   = -DNDEBUG -O2|RELEASEOPT_CC   =  -DNDEBUG -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -Os -fPIC|" iPhone-clang-libc++
+		sed -i .tmp "s|RELEASEOPT_CXX  = -DNDEBUG -O |RELEASEOPT_CXX  =  -DNDEBUG -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -Os -fPIC|" iPhone-clang-libc++
 
 		cd ../rules/
 		cp compile compile.orig
@@ -72,7 +72,7 @@ function prepare() {
 		fi
 
 		# Locate the path of the openssl libs distributed with openFrameworks.
-		local OF_LIBS_OPENSSL="../../../../libs/openssl/"
+		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
 
 		# get the absolute path to the included openssl libs
 		local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
@@ -98,7 +98,7 @@ function prepare() {
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+		local BUILD_OPTS="--no-tests --no-samples --static -DHPDF_NOPNGLIB --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 
 		# 32 bit
 		# For OS 10.9+ we must explicitly set libstdc++ for the 32-bit OSX build.
@@ -106,7 +106,7 @@ function build() {
 		make
 
 		# 64 bit
-		./configure $BUILD_OPTS --config=Darwin64-clang-libc++
+		./configure $BUILD_OPTS -DPOCO_ENABLE_CPP11 --config=Darwin64-clang-libc++
 		make
 
 		cd lib/Darwin
@@ -130,8 +130,14 @@ function build() {
 	elif [ "$TYPE" == "win_cb" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 
-		local OPENSSL_INCLUDE="/c/Users/bakercp/openFrameworks/libs/openssl/include"
-		local OPENSSL_LIBS="/c/Users/bakercp/openFrameworks/libs/openssl/lib/win_cb"
+		# Locate the path of the openssl libs distributed with openFrameworks.
+		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
+
+		# get the absolute path to the included openssl libs
+		local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
+
+		local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
+		local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/win_cb
 
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
@@ -181,7 +187,7 @@ function build() {
 		local BUILD_POCO_CONFIG_SIMULATOR=iPhoneSimulator-clang-libc++
 
 		# Locate the path of the openssl libs distributed with openFrameworks.
-		local OF_LIBS_OPENSSL="../../../../libs/openssl/"
+		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
 
 		# get the absolute path to the included openssl libs
 		local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
@@ -193,6 +199,7 @@ function build() {
 
 		STATICOPT_CC=-fPIC
 		STATICOPT_CXX=-fPIC
+		export HPDF_NOPNGLIB=1
 
 		# loop through architectures! yay for loops!
 		for IOS_ARCH in ${IOS_ARCHS}
@@ -230,9 +237,9 @@ function build() {
 
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
+				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
 			else
-				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
+				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
 			fi
 			echo "--------------------"
 			echo "Making Poco-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
@@ -265,6 +272,8 @@ function build() {
 			echo "--------------------"
 
 		done
+
+		unset HPDF_NOPNGLIB
 
 		cd lib/iPhoneOS
 		# link into universal lib, strip "lib" from filename
@@ -317,7 +326,7 @@ function build() {
 
 		export PATH=$PATH:$BUILD_DIR/Toolchains/Android/androideabi/bin:$BUILD_DIR/Toolchains/Android/x86/bin
 
-		local OF_LIBS_OPENSSL="../../../../libs/openssl/"
+		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
 
 		# get the absolute path to the included openssl libs
 		local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
