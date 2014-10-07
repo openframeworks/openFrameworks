@@ -53,11 +53,11 @@ function prepare() {
 		# fix using sed i636 reference and allow overloading variable
 		sed -i .tmp "s|POCO_TARGET_OSARCH.* = .*|POCO_TARGET_OSARCH ?= i386|" iPhoneSimulator-clang-libc++
 		sed -i .tmp "s|OSFLAGS            = -arch|OSFLAGS            ?= -arch|" iPhoneSimulator-clang-libc++
-		sed -i .tmp "s|STATICOPT_CC    =|STATICOPT_CC    ?= -DNDEBUG -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -Os -fPIC|" iPhone-clang-libc++
-		sed -i .tmp "s|STATICOPT_CXX   =|STATICOPT_CXX   ?= -DNDEBUG -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -Os -fPIC|" iPhone-clang-libc++
+		sed -i .tmp "s|STATICOPT_CC    =|STATICOPT_CC    ?= -DNDEBUG -DPOCO_ENABLE_CPP11 -Os -fPIC|" iPhone-clang-libc++
+		sed -i .tmp "s|STATICOPT_CXX   =|STATICOPT_CXX   ?= -DNDEBUG -DPOCO_ENABLE_CPP11 -Os -fPIC|" iPhone-clang-libc++
 		sed -i .tmp "s|OSFLAGS                 = -arch|OSFLAGS                ?= -arch|" iPhone-clang-libc++
-		sed -i .tmp "s|RELEASEOPT_CC   = -DNDEBUG -O2|RELEASEOPT_CC   =  -DNDEBUG -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -Os -fPIC|" iPhone-clang-libc++
-		sed -i .tmp "s|RELEASEOPT_CXX  = -DNDEBUG -O |RELEASEOPT_CXX  =  -DNDEBUG -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -Os -fPIC|" iPhone-clang-libc++
+		sed -i .tmp "s|RELEASEOPT_CC   = -DNDEBUG -O2|RELEASEOPT_CC   =  -DNDEBUG -DPOCO_ENABLE_CPP11 -Os -fPIC|" iPhone-clang-libc++
+		sed -i .tmp "s|RELEASEOPT_CXX  = -DNDEBUG -O |RELEASEOPT_CXX  =  -DNDEBUG -DPOCO_ENABLE_CPP11 -Os -fPIC|" iPhone-clang-libc++
 
 		cd ../rules/
 		cp compile compile.orig
@@ -98,7 +98,7 @@ function prepare() {
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static -DHPDF_NOPNGLIB --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
 		# 32 bit
 		# For OS 10.9+ we must explicitly set libstdc++ for the 32-bit OSX build.
@@ -106,8 +106,13 @@ function build() {
 		make
 
 		# 64 bit
-		./configure $BUILD_OPTS -DPOCO_ENABLE_CPP11 --config=Darwin64-clang-libc++
+
+		export POCO_ENABLE_CPP11=1
+
+		./configure $BUILD_OPTS --config=Darwin64-clang-libc++
 		make
+
+		unset POCO_ENABLE_CPP11
 
 		cd lib/Darwin
 
@@ -128,7 +133,7 @@ function build() {
 		cmd //c buildwin.cmd ${VS_VER}0 build static_md both Win32 nosamples notests
 
 	elif [ "$TYPE" == "win_cb" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
 		# Locate the path of the openssl libs distributed with openFrameworks.
 		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
@@ -195,11 +200,10 @@ function build() {
 		local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
 		local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/ios
 
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen --include-path=$OPENSSL_INCLUDE --library-path=$OPENSSL_LIBS"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen --include-path=$OPENSSL_INCLUDE --library-path=$OPENSSL_LIBS"
 
 		STATICOPT_CC=-fPIC
 		STATICOPT_CXX=-fPIC
-		export HPDF_NOPNGLIB=1
 
 		# loop through architectures! yay for loops!
 		for IOS_ARCH in ${IOS_ARCHS}
@@ -237,9 +241,9 @@ function build() {
 
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
+				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -DPOCO_ENABLE_CPP11 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
 			else
-				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -DPOCO_ENABLE_CPP11 -DHPDF_NOPNGLIB -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
+				export OSFLAGS="-arch $POCO_TARGET_OSARCH -fPIC -DPOCO_ENABLE_CPP11 -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$IPHONE_SDK_VERSION_MIN"
 			fi
 			echo "--------------------"
 			echo "Making Poco-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
@@ -272,8 +276,6 @@ function build() {
 			echo "--------------------"
 
 		done
-
-		unset HPDF_NOPNGLIB
 
 		cd lib/iPhoneOS
 		# link into universal lib, strip "lib" from filename
@@ -320,7 +322,7 @@ function build() {
 		echo "Completed."
 
 	elif [ "$TYPE" == "android" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
 		local OLD_PATH=$PATH
 
@@ -334,7 +336,7 @@ function build() {
 		local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
 		local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/
 
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
@@ -366,25 +368,25 @@ function build() {
 		export PATH=$OLD_PATH
 
 	elif [ "$TYPE" == "linux" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
 		rm lib/Linux/$(uname -m)/*d.a
 	elif [ "$TYPE" == "linux64" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
 		rm lib/Linux/x86_64/*d.a
 	elif [ "$TYPE" == "linuxarmv6l" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
 		rm lib/Linux/armv6l/*d.a
 	elif [ "$TYPE" == "linuxarmv7l" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 		./configure $BUILD_OPTS
 		make
 		# delete debug builds
@@ -407,7 +409,6 @@ function copy() {
 	cp -Rv MongoDB/include/Poco/MongoDB $1/include/Poco
 	cp -Rv Net/include/Poco/Net $1/include/Poco
 	cp -Rv NetSSL_OpenSSL/include/Poco/Net/* $1/include/Poco/Net
-	cp -Rv PDF/include/Poco/PDF $1/include/Poco
 	cp -Rv SevenZip/include/Poco/SevenZip $1/include/Poco
 	cp -Rv Util/include/Poco/Util $1/include/Poco
 	cp -Rv XML/include/Poco/* $1/include/Poco
