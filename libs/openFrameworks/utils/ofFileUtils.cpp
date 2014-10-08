@@ -236,11 +236,13 @@ ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
 
 	bool lineEndWasCR = false;
 	while(_current != _end && *_current != '\n'){
-		if(*_current != '\r'){
-			_current++;
-		}else{
+		if(*_current == '\r'){
 			lineEndWasCR = true;
 			break;
+		}else if(*_current==0 && _current+1 == _end){
+			break;
+		}else{
+			_current++;
 		}
 	}
 	line = string(_begin, _current);
