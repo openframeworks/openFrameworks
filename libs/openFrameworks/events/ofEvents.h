@@ -41,9 +41,13 @@ class ofKeyEventArgs : public ofEventArgs {
 		Pressed,
 		Released,
 	} type;
-	int key;
+	/// \brief For special keys, one of OF_KEY_* (@see ofConstants.h). For all other keys, the Unicode code point you'd expect if this key combo (including modifier keys that may be down) was pressed in a text editor (same as codepoint). 
+	int key; 
+	/// \brief The keycode returned by the windowing system, independent of any modifier keys or keyboard layout settings. For ofAppGLFWWindow this value is one of GLFW_KEY_* (@see glfw3.h) - typically, ASCII representation of the symbol on the physical key, so A key always returns 0x41 even if shift, alt, ctrl are down. 
 	int keycode;
+	/// \brief The raw scan code returned by the keyboard, OS and hardware specific. 
 	int scancode;
+	/// \brief The Unicode code point you'd expect if this key combo (including modifier keys) was pressed in a text editor, or -1 for non-printable characters. 
 	unsigned int codepoint;
 };
 
