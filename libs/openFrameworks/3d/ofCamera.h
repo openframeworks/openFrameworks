@@ -17,7 +17,7 @@ public:
 	ofCamera();
 
     /// \brief Destroy the camera.
-    virtual ~ofCamera(){};
+    virtual ~ofCamera();
 	
 	/// \brief Set the field of view for a perspective camera.
 	///
