@@ -28,7 +28,7 @@ ImgAnalysisThread::~ImgAnalysisThread(){
 void ImgAnalysisThread::analize(ofPixels & pixels){
 	// send the frame to the thread for analyzing
 	// this makes a copy but we can't avoid it anyway if
-	// we want to update the grabber from while analyzing
+	// we want to update the grabber while analyzing
 	// previous frames
 	toAnalize.send(pixels);
 }
@@ -38,7 +38,7 @@ void ImgAnalysisThread::update(){
 	// it to the texture. we use a while loop to drop any
 	// extra frame in case the main thread is slower than
 	// the analysis
-	// try_recv doesn't reallocate or make any copies
+	// tryReceive doesn't reallocate or make any copies
 	newFrame = false;
 	while(analized.tryReceive(pixels)){
 		newFrame = true;
@@ -73,7 +73,7 @@ void ImgAnalysisThread::threadedFunction(){
 		// wait until there's a new frame
 		// this blocks the thread, so it doesn't use
 		// the CPU at all, until a frame arrives.
-		// also recv doesn't allocate or make any copies
+		// also receive doesn't allocate or make any copies
 		ofPixels pixels;
 		if(toAnalize.receive(pixels)){
 			// we have a new frame, process it, the analysis
@@ -94,7 +94,7 @@ void ImgAnalysisThread::threadedFunction(){
 			analized.send(pixels);
 #endif
 		}else{
-			// if recv returns false the channel
+			// if receive returns false the channel
 			// has been closed, go out of the while loop
 			// to end the thread
 			break;
