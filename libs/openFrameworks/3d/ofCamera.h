@@ -133,10 +133,30 @@ public:
 	/// \todo getImagePlaneDistance
 	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
 	
-	/// \todo begin()
+	/// \brief Begins rendering with the camera.
+    ///
+    /// Example:
+    /// \code{.cpp}
+    ///
+    /// void draw() {
+    ///
+    ///     // Begin rendering from the camera's perspective.
+    ///     camera.begin();
+    ///
+    ///     ofLine(0, 0, ofGetWidth(), ofGetHeight());
+    ///     // Additional rendering ...
+    ///
+    ///     // End rendering form the camera's perspective.
+    ///     camera.end();
+    ///
+    /// }
+    ///
+    /// \endcode
+    ///
+    /// \param viewport The camera's rendering viewport.
 	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
 
-	/// \todo end()
+    /// \brief Ends rendering with the camera.
 	virtual void end();
 	
 	/// \brief Access the projection matrix.
