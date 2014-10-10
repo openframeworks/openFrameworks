@@ -13,14 +13,15 @@
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
 #include "ofPixels.h"
+#include "ofThread.h"
 
 //class ofVec3f;
 class ofBaseApp;
 
 #ifdef TARGET_OPENGLES
-class ofAppGLFWWindow : public ofAppBaseGLESWindow{
+class ofAppGLFWWindow : public ofAppBaseGLESWindow, public ofThread{
 #else
-class ofAppGLFWWindow : public ofAppBaseGLWindow {
+class ofAppGLFWWindow : public ofAppBaseGLWindow, public ofThread {
 #endif
 
 public:
@@ -91,6 +92,13 @@ public:
 
     int         getPixelScreenCoordScale();
 
+    enum EventsPollType{
+    	Poll,
+    	Wait,
+    	Threaded
+    };
+    static void setEventsPolling(EventsPollType pollType);
+
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 	Display* 	getX11Display();
 	Window  	getX11Window();
@@ -123,6 +131,7 @@ private:
 
 	// callbacks
 	void			display(void);
+	void 			threadedFunction();
 
 	static void 	mouse_cb(GLFWwindow* windowP_, int button, int state, int mods);
 	static void 	motion_cb(GLFWwindow* windowP_, double x, double y);
@@ -179,6 +188,7 @@ private:
 	int glVersionMinor, glVersionMajor;
 
 	bool iconSet;
+	static EventsPollType pollType;
 
     #ifdef TARGET_WIN32
     LONG lExStyle, lStyle;

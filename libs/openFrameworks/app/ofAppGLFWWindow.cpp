@@ -33,6 +33,7 @@
 
 ofBaseApp *	ofAppGLFWWindow::ofAppPtr;
 ofAppGLFWWindow	* ofAppGLFWWindow::instance;
+ofAppGLFWWindow::EventsPollType ofAppGLFWWindow::pollType = ofAppGLFWWindow::Poll;
 
 void ofGLReadyCallback();
 
@@ -307,9 +308,13 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	ofNotifySetup();
 	while(!glfwWindowShouldClose(windowP)){
-		glfwPollEvents();
 		ofNotifyUpdate();
 		display();
+		if(pollType==Poll){
+			glfwPollEvents();
+		}else if(pollType==Wait){
+			glfwWaitEvents();
+		}
 	}
 }
 
@@ -395,6 +400,22 @@ void ofAppGLFWWindow::setWindowTitle(string title){
 //------------------------------------------------------------
 int ofAppGLFWWindow::getPixelScreenCoordScale(){
     return pixelScreenCoordScale;
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setEventsPolling(ofAppGLFWWindow::EventsPollType pollType){
+	ofAppGLFWWindow::pollType = pollType;
+	if(pollType==Threaded){
+		instance->startThread();
+	}else{
+		instance->stopThread();
+	}
+}
+
+void ofAppGLFWWindow::threadedFunction(){
+	while(!glfwWindowShouldClose(windowP) && isThreadRunning()){
+		glfwWaitEvents();
+	}
 }
 
 //------------------------------------------------------------
