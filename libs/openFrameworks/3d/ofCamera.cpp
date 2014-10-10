@@ -16,6 +16,9 @@ vFlip(false)
 }
 
 //----------------------------------------
+ofCamera::~ofCamera() {}
+
+//----------------------------------------
 void ofCamera::setFov(float f) {
 	fov = f;
 }
