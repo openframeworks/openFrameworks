@@ -182,8 +182,13 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	ofPixelFormat pixFormat;
 	if(channels==1) pixFormat=OF_PIXELS_GRAY;
 #ifdef TARGET_LITTLE_ENDIAN
-	if(channels==3) pixFormat=OF_PIXELS_BGR;
-	if(channels==4) pixFormat=OF_PIXELS_BGRA;
+	if(swapForLittleEndian){
+		if(channels==3) pixFormat=OF_PIXELS_BGR;
+		if(channels==4) pixFormat=OF_PIXELS_BGRA;
+	}else{
+		if(channels==3) pixFormat=OF_PIXELS_RGB;
+		if(channels==4) pixFormat=OF_PIXELS_RGBA;
+	}
 #else
 	if(channels==3) pixFormat=OF_PIXELS_RGB;
 	if(channels==4) pixFormat=OF_PIXELS_RGBA;
