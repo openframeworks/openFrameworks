@@ -157,6 +157,8 @@ protected:
 	virtual void onScaleChanged() {}
 
 private:
+	void updateAxis() {}
+
 	ofVec3f position;
 	ofQuaternion orientation;
 	ofVec3f scale;
