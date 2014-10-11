@@ -102,7 +102,6 @@ float ofNode::getZ() const {
 void ofNode::setOrientation(const ofQuaternion& q) {
 	orientation = q;
 	createMatrix();
-	updateAxis();
 	onOrientationChanged();
 }
 
@@ -146,7 +145,6 @@ void ofNode::setScale(float sx, float sy, float sz) {
 void ofNode::setScale(const ofVec3f& s) {
 	this->scale = s;
 	createMatrix();
-	updateAxis();
 	onScaleChanged();
 }
 
