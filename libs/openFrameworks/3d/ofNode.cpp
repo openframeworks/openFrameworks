@@ -44,6 +44,7 @@ void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
 
 	ofQuaternion so;
 	localTransformMatrix.decompose(position, orientation, scale, so);
+	updateAxis();
 	
 	onPositionChanged();
 	onOrientationChanged();
@@ -59,6 +60,7 @@ void ofNode::setPosition(float px, float py, float pz) {
 void ofNode::setPosition(const ofVec3f& p) {
 	position = p;
 	localTransformMatrix.setTranslation(position);
+	updateAxis();
 	onPositionChanged();
 }
 
@@ -251,6 +253,13 @@ void ofNode::lookAt(const ofNode& lookAtNode, const ofVec3f& upVector) {
 }
 
 //----------------------------------------
+void ofNode::updateAxis() {
+	if(scale[0]>0) axis[0] = getLocalTransformMatrix().getRowAsVec3f(0)/scale[0];
+	if(scale[1]>0) axis[1] = getLocalTransformMatrix().getRowAsVec3f(1)/scale[1];
+	if(scale[2]>0) axis[2] = getLocalTransformMatrix().getRowAsVec3f(2)/scale[2];
+}
+
+//----------------------------------------
 ofVec3f ofNode::getXAxis() const {
 	return axis[0];
 }
@@ -380,9 +389,7 @@ void ofNode::createMatrix() {
 	localTransformMatrix.rotate(orientation);
 	localTransformMatrix.setTranslation(position);
 	
-	if(scale[0]>0) axis[0] = getLocalTransformMatrix().getRowAsVec3f(0)/scale[0];
-	if(scale[1]>0) axis[1] = getLocalTransformMatrix().getRowAsVec3f(1)/scale[1];
-	if(scale[2]>0) axis[2] = getLocalTransformMatrix().getRowAsVec3f(2)/scale[2];
+	updateAxis();
 }
 
 
