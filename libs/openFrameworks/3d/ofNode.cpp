@@ -60,7 +60,6 @@ void ofNode::setPosition(float px, float py, float pz) {
 void ofNode::setPosition(const ofVec3f& p) {
 	position = p;
 	localTransformMatrix.setTranslation(position);
-	updateAxis();
 	onPositionChanged();
 }
 
