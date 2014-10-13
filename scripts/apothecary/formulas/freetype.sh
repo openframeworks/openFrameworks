@@ -277,18 +277,43 @@ function build() {
 		unset IOS_DEVROOT IOS_SDKROOT IOS_AR IOS_HOST IOS_PREFIX  CPP CXX CXXCPP CXXCPP CC LD AS AR NM RANLIB LDFLAGS STDLIB
 
 	elif [ "$TYPE" == "android" ] ; then
-		echoWarning "TODO: build android"
+		
+        source ../../../../libs/openFrameworksCompiled/project/android/paths.make
+		
+		# armv7
+		ABI=armeabi-v7a
+		local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE/$ABI
+		source ../../formulas/android_configure.sh $ABI
+
+		./configure --prefix=$BUILD_TO_DIR --host armv7a-linux-android --with-harfbuzz=no --enable-static=yes --enable-shared=no 
+		make clean 
+		make
+		make install
+		
+		# x86
+		ABI=x86
+		local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE/$ABI
+		source ../../formulas/android_configure.sh $ABI
+
+		./configure --prefix=$BUILD_TO_DIR --host x86-linux-android --with-harfbuzz=no --enable-static=yes --enable-shared=no 
+		make clean 
+		make
+		make install
+
+		echo "-----------"
+		echo "$BUILD_DIR"
 	fi
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
+    #remove old include files if they exist
+    rm -rf $1/include
 
 	# copy headers 
-	mkdir -p $1/include/freetype2/config
+	mkdir -p $1/include/freetype2/
 
 	# copy files from the build root
-
 	cp -Rv include/* $1/include/freetype2/
 
 	# older versions before 2.5.x
@@ -310,7 +335,8 @@ function copy() {
 		# cp -v lib/$TYPE/libfreetype.a $1/lib/$TYPE/libfreetype.a
 		echoWarning "TODO: copy win_cb lib"
 	elif [ "$TYPE" == "android" ] ; then
-		echoWarning "TODO: copy android lib"
+		cp -v build/$TYPE/armeabi-v7a/lib/libfreetype.a $1/lib/$TYPE/armeabi-v7a/libfreetype.a
+		cp -v build/$TYPE/x86/lib/libfreetype.a $1/lib/$TYPE/x86/libfreetype.a
 	fi
 }
 
@@ -321,7 +347,8 @@ function clean() {
 		echoWarning "TODO: clean vs"
 	
 	elif [ "$TYPE" == "android" ] ; then
-		echoWarning "TODO: clean android"
+		make clean
+		rm -f build/$TYPE
 	elif [ "$TYPE" == "ios" ] ; then
 		make clean
 		rm -f *.a *.lib
