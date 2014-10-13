@@ -262,6 +262,7 @@
 		66EA462817A6D396009BB12A /* ofxOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOpenALSoundPlayer.h; sourceTree = "<group>"; };
 		66EA462917A6D396009BB12A /* SoundEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoundEngine.cpp; sourceTree = "<group>"; };
 		66EA462A17A6D396009BB12A /* SoundEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundEngine.h; sourceTree = "<group>"; };
+		6711091F19D3EAC6005D095F /* ofxiOSConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxiOSConstants.h; sourceTree = "<group>"; };
 		671C0AF01770246200DF03B3 /* AVSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVSoundPlayer.h; sourceTree = "<group>"; };
 		671C0AF11770246200DF03B3 /* AVSoundPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVSoundPlayer.m; sourceTree = "<group>"; };
 		671C0AF21770246200DF03B3 /* ofxiOSSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSSoundPlayer.h; sourceTree = "<group>"; };
@@ -636,6 +637,7 @@
 			isa = PBXGroup;
 			children = (
 				860B024C17A96D840032B827 /* ofxiOS.h */,
+				6711091F19D3EAC6005D095F /* ofxiOSConstants.h */,
 				15BC775215A5C31F00772525 /* ofxiOSExtensions.h */,
 				15594EFE15C55A5700727FF2 /* app */,
 				15594F8A15C56A4E00727FF2 /* core */,

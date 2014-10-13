@@ -24,6 +24,10 @@
 	#include "ofQtUtils.h"
 #endif
 
+#if defined (TARGET_WIN32)
+#include <mmsystem.h>
+#endif
+
 //========================================================================
 // static variables:
 
@@ -398,15 +402,6 @@ void ofSetAppPtr(shared_ptr<ofBaseApp> appPtr) {
 //--------------------------------------
 void ofExit(int status){
 	std::exit(status);
-}
-
-//--------------------------------------
-void ofSleepMillis(int millis){
-	#ifdef TARGET_WIN32
-		Sleep(millis);
-	#elif !defined(TARGET_EMSCRIPTEN)
-		usleep(millis * 1000);
-	#endif
 }
 
 //--------------------------------------
