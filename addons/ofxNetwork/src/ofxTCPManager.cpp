@@ -49,8 +49,12 @@ bool ofxTCPManager::Close()
 		if(close(m_hSocket) == SOCKET_ERROR)
 	#endif
 		{
-			ofxNetworkCheckError();
-			return(false);
+			//	if it's reported we're not/no longer a socket, let it fall through and be invalidated
+			int Error = ofxNetworkCheckError();
+			if ( Error != OFXNETWORK_ERROR(NOTSOCK) )
+			{
+				return(false);
+			}
 		}
 
 	m_hSocket= INVALID_SOCKET;
@@ -310,6 +314,31 @@ int ofxTCPManager::Receive(char* pBuff, const int iSize)
 	return ret;
 }
 
+
+
+//--------------------------------------------------------------------------------
+/// Return values:
+/// SOCKET_TIMEOUT indicates timeout
+/// SOCKET_ERROR in case of a problem.
+///
+int ofxTCPManager::PeekReceive(char* pBuff, const int iSize)
+{
+	if (m_hSocket == INVALID_SOCKET) 
+		return(SOCKET_ERROR);
+ 
+  	int ret = recv(m_hSocket, pBuff, iSize, MSG_PEEK);
+
+	if(ret==-1)  
+	{
+		//	if socket is non-blocking, the result is likely to be EWOULDBLOCK (no data) so return zero-bytes
+		int NetError = ofxNetworkCheckError();
+		if ( NetError == OFXNETWORK_ERROR(WOULDBLOCK) )
+			return 0;
+		//	error
+		return SOCKET_ERROR;
+	}
+	return ret;
+}
 
 //--------------------------------------------------------------------------------
 /// Return values:
