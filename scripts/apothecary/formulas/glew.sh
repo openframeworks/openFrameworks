@@ -51,7 +51,8 @@ function build() {
 
 	elif [ "$TYPE" == "vs" ] ; then
 		cd build/vc10
-		vs-upgrade "glew.sln"
+		#vs-clean "glew.sln"
+		#vs-upgrade "glew.sln"
 		vs-build "glew_static.vcxproj"
 		cd ../../
 	elif [ "$TYPE" == "win_cb" ] ; then
