@@ -127,11 +127,13 @@
     <ClInclude Include="..\..\..\openFrameworks\types\ofTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofConstants.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofFileUtils.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofFpsCounter.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofLog.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofMatrixStack.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofNoise.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofSystemUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofThread.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofTimer.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofURLFileLoader.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofXml.h" />
@@ -196,10 +198,12 @@
     <ClCompile Include="..\..\..\openFrameworks\types\ofParameterGroup.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofRectangle.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofFileUtils.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofFpsCounter.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofLog.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofMatrixStack.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofSystemUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofThread.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofTimer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofURLFileLoader.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofXml.cpp" />

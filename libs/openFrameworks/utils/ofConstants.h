@@ -134,7 +134,7 @@ enum ofTargetPlatform{
 	#define GL_BGR_EXT 0x80E0
 	#endif
 
-	// #define WIN32_HIGH_RES_TIMING
+	#define WIN32_HIGH_RES_TIMING
 
 	// note: this is experimental!
 	// uncomment to turn this on (only for windows machines)
@@ -306,7 +306,7 @@ typedef TESSindex ofIndexType;
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
             #define OF_VIDEO_PLAYER_QUICKTIME
-        #elseif !defined(MAC_OS_X_VERSION_10_8)
+        #elif !defined(MAC_OS_X_VERSION_10_8)
             #define OF_VIDEO_PLAYER_QTKIT
         #else
             #define OF_VIDEO_PLAYER_AVFOUNDATION

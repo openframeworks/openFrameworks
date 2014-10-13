@@ -43,6 +43,11 @@ CORE
 	+ ofTruetypeFont: kerning and better hinting and spacing
 	+ ofDrawBitmapString: can draw any type not only strings
 
+### utils
+	/ better timming in fps calculation
+	+ ofFpsCounter allows to easily meassure the fps of any element
+	+ ofTimer allows to create a precise periodic waitable timer
+
 ### video
 	/ gstreamer: fix memory leaks when closing a video element
 
@@ -56,6 +61,16 @@ PLATFORM SPECIFIC
 	+ xcode 6.0 updates
 	+ deployment target moved up to iOS 5.1.1
 
+### android
+	+ remove support for arm5 since no devices seem to have that cpu anymore and it
+	  was problematic with certain libraries
+
+### linux and arm linux
+	+ opencv libs are now installed in the system, rerun install_dependencies if you
+	  are having problems compiling projects that use opencv
+
+### windows
+	+ activated high precission timming to fix inaccurate fps calculations
 
 OF 0.8.4
 ========
