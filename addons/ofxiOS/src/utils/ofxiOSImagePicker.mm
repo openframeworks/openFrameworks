@@ -41,7 +41,7 @@ bool ofxiOSImagePicker::openCamera(int camera)
 {
 	return [imagePicker openCamera:camera];
 }
-#ifdef __IPHONE_3_1
+
 //----------------------------------------------------------------
 bool ofxiOSImagePicker::showCameraOverlay() {
 	return [imagePicker showCameraOverlay];
@@ -57,7 +57,7 @@ void ofxiOSImagePicker::hideCameraOverlay()
 {
 	[imagePicker hideCameraOverlay];
 }
-#endif
+
 //----------------------------------------------------------------
 bool ofxiOSImagePicker::openLibrary()
 {
@@ -104,12 +104,12 @@ int ofxiOSImagePicker::getOrientation()
 			
 	}
 }
-#ifdef __IPHONE_3_1
+
 void ofxiOSImagePicker::takePicture()
 {
 	[imagePicker takePicture];
 }
-#endif
+
 //----------------------------------------------------------------
 void ofxiOSImagePicker::loadPixels()
 {	
@@ -240,7 +240,6 @@ bool ofxiOSImagePicker::getImageUpdated(){
 	cppPixelLoader->loadPixels();
 }
 
-#ifdef __IPHONE_3_1
 - (void) imagePickerController:(UIImagePickerController *)picker 
  didFinishPickingMediaWithInfo:(NSDictionary *)info {
 
@@ -252,7 +251,6 @@ bool ofxiOSImagePicker::getImageUpdated(){
 - (void) takePicture {
 	[_imagePicker takePicture];
 }
-#endif
 
 //--------------------------------------------------------------
 - (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker {
@@ -287,7 +285,6 @@ bool ofxiOSImagePicker::getImageUpdated(){
 	}
 }
 
-#ifdef __IPHONE_3_1
 //-------------------------------------------------------------- overlay
 - (BOOL) showCameraOverlay {
 	BOOL bOk = [self showCameraOverlayWithCustomView:nil];
@@ -370,7 +367,7 @@ bool ofxiOSImagePicker::getImageUpdated(){
         overlay = nil;
     }
 }
-#endif
+
 //--------------------------------------------------------------
 - (BOOL) openLibrary {
 	if(photoLibraryIsAvailable) {

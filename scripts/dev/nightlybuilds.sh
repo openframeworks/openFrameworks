@@ -1,9 +1,11 @@
 #!/bin/bash
+cd $(cat ~/.ofprojectgenerator/config)
+git pull upstreamhttps master
 cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 lasthash=$(cat lasthash.txt)
 currenthash=$(git rev-parse HEAD)
 if [ "$currenthash" = "$lasthash" ]; then
-    return 0
+    exit 0
 fi
 
 # delete packages older than 1 week ago
@@ -13,15 +15,15 @@ rm /var/www/versions/nightly/of_v${oneweeksago}*_nightly.*
 
 lastversion=$(date +%Y%m%d)
 echo $currenthash>lasthash.txt
-./create_package.sh linux $lastversion
-./create_package.sh linux64 $lastversion
-./create_package.sh win_cb $lastversion
-./create_package.sh vs $lastversion
-./create_package.sh ios $lastversion
-./create_package.sh osx $lastversion
-./create_package.sh android $lastversion
-./create_package.sh linuxarmv6l $lastversion
-./create_package.sh linuxarmv7l $lastversion
+./create_package.sh linux $lastversion master
+./create_package.sh linux64 $lastversion master
+./create_package.sh win_cb $lastversion master
+./create_package.sh vs $lastversion master
+./create_package.sh ios $lastversion master
+./create_package.sh osx $lastversion master
+./create_package.sh android $lastversion master
+./create_package.sh linuxarmv6l $lastversion master
+./create_package.sh linuxarmv7l $lastversion master
 
 mv *.tar.gz /var/www/versions/nightly
 mv *.zip /var/www/versions/nightly

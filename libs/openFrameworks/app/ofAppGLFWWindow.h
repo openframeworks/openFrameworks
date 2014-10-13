@@ -23,12 +23,10 @@ class ofAppGLFWWindow : public ofAppBaseGLESWindow{
 class ofAppGLFWWindow : public ofAppBaseGLWindow {
 #endif
 
-	static GLFWwindow* windowP;
-
 public:
 
 	ofAppGLFWWindow();
-	~ofAppGLFWWindow(){}
+	~ofAppGLFWWindow();
 
 
 	// window settings, this functions can be called from main before calling ofSetupOpenGL
@@ -53,7 +51,7 @@ public:
 #else
 	void setOpenGLVersion(int major, int minor);
 #endif
-	void setupOpenGL(int w, int h, int screenMode);
+	void setupOpenGL(int w, int h, ofWindowMode screenMode);
 	void initializeWindow();
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
 	void windowShouldClose();
@@ -78,7 +76,7 @@ public:
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
 
-	int			getWindowMode();
+	ofWindowMode	getWindowMode();
 
 	void		setFullscreen(bool fullscreen);
 	void		toggleFullscreen();
@@ -87,6 +85,9 @@ public:
 	void		disableSetupScreen();
 
 	void		setVerticalSync(bool bSync);
+
+    void        setClipboardString(const string& text);
+    string      getClipboardString();
 
     int         getPixelScreenCoordScale();
 
@@ -116,6 +117,10 @@ public:
 #endif
 
 private:
+	// private copy construction
+	ofAppGLFWWindow(ofAppGLFWWindow & w){};
+	ofAppGLFWWindow & operator=(ofAppGLFWWindow & w){return w;};
+
 	// callbacks
 	void			display(void);
 
@@ -138,7 +143,7 @@ private:
 	int				samples;
 	int				rBits,gBits,bBits,aBits,depthBits,stencilBits;
 
-	int				windowMode;
+	ofWindowMode	windowMode;
 
 	bool			bEnableSetupScreen;
 
@@ -159,6 +164,8 @@ private:
 	int 			nFramesSinceWindowResized;
 	bool			bDoubleBuffered;
     bool            bMultiWindowFullscreen; 
+
+	GLFWwindow* 	windowP;
     
 	int				getCurrentMonitor();
 	

@@ -18,61 +18,51 @@
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
+
+size_t ofBuffer::ioSize = 1024;
+
 //--------------------------------------------------
-ofBuffer::ofBuffer(){
-	nextLinePos = 0;
+ofBuffer::ofBuffer()
+:currentLine(begin(),end()){
 	buffer.resize(1);
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const char * buffer, unsigned int size){
-	set(buffer, size);
+ofBuffer::ofBuffer(const char * _buffer, unsigned int size)
+:buffer(_buffer,_buffer+size)
+,currentLine(begin(),end()){
+	buffer.resize(buffer.size()+1,0);
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const string & text){
-	set(text);
+ofBuffer::ofBuffer(const string & text)
+:buffer(text.begin(),text.end())
+,currentLine(begin(),end()){
+	buffer.resize(buffer.size()+1,0);
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(istream & stream){
+ofBuffer::ofBuffer(istream & stream)
+:currentLine(begin(),end()){
 	set(stream);
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const ofBuffer & buffer_){
-	buffer = buffer_.buffer;
-	nextLinePos = buffer_.nextLinePos;
-}
-
-//--------------------------------------------------
-ofBuffer::~ofBuffer(){
-	clear();
-}
-
-//--------------------------------------------------
 bool ofBuffer::set(istream & stream){
-	clear();
 	if(stream.bad()){
+		clear();
 		return false;
+	}else{
+		buffer.clear();
 	}
 
-	char aux_buffer[1024];
-	std::streamsize size = 0;
-	stream.read(aux_buffer, 1024);
-	std::streamsize n = stream.gcount();
-	while(n > 0){
-		// we resize to size+1 initialized to 0 to have a 0 at the end for strings
-		buffer.resize(size + n + 1, 0);
-		memcpy(&(buffer[0]) + size, aux_buffer, n);
-		size += n;
-		if(stream){
-			stream.read(aux_buffer, 1024);
-			n = stream.gcount();
-		}
-		else{n = 0;
-		}
+	vector<char> aux_buffer(ioSize);
+	while(stream.good()){
+		stream.read(&aux_buffer[0], ioSize);
+		buffer.insert(buffer.end(),aux_buffer.begin(),aux_buffer.begin()+stream.gcount());
 	}
+	buffer.push_back(0);
+	currentLine = getLines().begin();
 	return true;
 }
 
@@ -88,30 +78,33 @@ bool ofBuffer::writeTo(ostream & stream) const {
 //--------------------------------------------------
 void ofBuffer::set(const char * _buffer, unsigned int _size){
 	buffer.assign(_buffer,_buffer+_size);
-	buffer.resize(buffer.size()+1);
-	buffer.back() = 0;
+	buffer.resize(buffer.size()+1,0);
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::set(const string & text){
 	set(text.c_str(),text.size());
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::append(const string& _buffer){
 	append(_buffer.c_str(), _buffer.size());
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::append(const char * _buffer, unsigned int _size){
 	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
 	buffer.back() = 0;
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::clear(){
-	buffer.resize(1);
-	nextLinePos = 0;
+	buffer.resize(1,0);
+	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
@@ -165,46 +158,159 @@ long ofBuffer::size() const {
 }
 
 //--------------------------------------------------
+void ofBuffer::setIOBufferSize(size_t _ioSize){
+	ioSize = _ioSize;
+}
+
+//--------------------------------------------------
 string ofBuffer::getNextLine(){
-	if(buffer.empty() || (int)(buffer.size() - 1) == nextLinePos){
-		return "";
-	}
-	long currentLinePos = nextLinePos;
-	bool lineEndWasCR = false;
-	while(nextLinePos < (int)buffer.size() - 1 && buffer[nextLinePos] != '\n'){
-		if(buffer[nextLinePos] != '\r'){
-			nextLinePos++;
-		}
-		else{
-			lineEndWasCR = true;
-			break;
-		}
-	}
-	string line(getBinaryBuffer() + currentLinePos, nextLinePos - currentLinePos);
-	if(nextLinePos < (int)(buffer.size() - 1)){
-		nextLinePos++;
-	}
-	// if lineEndWasCR check for CRLF
-	if(lineEndWasCR && nextLinePos < (int)(buffer.size() - 1) && buffer[nextLinePos] == '\n'){
-		nextLinePos++;
-	}
-	return line;
+	++currentLine;
+	return currentLine.asString();
 }
 
 //--------------------------------------------------
 string ofBuffer::getFirstLine(){
-	resetLineReader();
-	return getNextLine();
+	currentLine = getLines().begin();
+	return currentLine.asString();
 }
 
 //--------------------------------------------------
 bool ofBuffer::isLastLine(){
-	return (int)(buffer.size() - 1) == nextLinePos;
+	return currentLine == getLines().end();
 }
 
 //--------------------------------------------------
 void ofBuffer::resetLineReader(){
-	nextLinePos = 0;
+	currentLine = getLines().begin();
+}
+
+//--------------------------------------------------
+vector<char>::iterator ofBuffer::begin(){
+	return buffer.begin();
+}
+
+//--------------------------------------------------
+vector<char>::iterator ofBuffer::end(){
+	return buffer.end();
+}
+
+//--------------------------------------------------
+vector<char>::const_iterator ofBuffer::begin() const{
+	return buffer.begin();
+}
+
+//--------------------------------------------------
+vector<char>::const_iterator ofBuffer::end() const{
+	return buffer.end();
+}
+
+//--------------------------------------------------
+vector<char>::reverse_iterator ofBuffer::rbegin(){
+	return buffer.rbegin();
+}
+
+//--------------------------------------------------
+vector<char>::reverse_iterator ofBuffer::rend(){
+	return buffer.rend();
+}
+
+//--------------------------------------------------
+vector<char>::const_reverse_iterator ofBuffer::rbegin() const{
+	return buffer.rbegin();
+}
+
+//--------------------------------------------------
+vector<char>::const_reverse_iterator ofBuffer::rend() const{
+	return buffer.rend();
+}
+
+//--------------------------------------------------
+ofBuffer::Line::Line(vector<char>::iterator _begin, vector<char>::iterator _end)
+	:_current(_begin)
+	,_begin(_begin)
+	,_end(_end){
+	if(_begin == _end){
+		line =  "";
+		return;
+	}
+
+	bool lineEndWasCR = false;
+	while(_current != _end && *_current != '\n'){
+		if(*_current == '\r'){
+			lineEndWasCR = true;
+			break;
+		}else if(*_current==0 && _current+1 == _end){
+			break;
+		}else{
+			_current++;
+		}
+	}
+	line = string(_begin, _current);
+	if(_current != _end){
+		_current++;
+	}
+	// if lineEndWasCR check for CRLF
+	if(lineEndWasCR && _current != _end && *_current == '\n'){
+		_current++;
+	}
+}
+
+//--------------------------------------------------
+const string & ofBuffer::Line::operator*() const{
+	return line;
+}
+
+//--------------------------------------------------
+const string * ofBuffer::Line::operator->() const{
+	return &line;
+}
+
+//--------------------------------------------------
+const string & ofBuffer::Line::asString() const{
+	return line;
+}
+
+//--------------------------------------------------
+ofBuffer::Line & ofBuffer::Line::operator++(){
+	*this = Line(_current,_end);
+	return *this;
+}
+
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Line::operator++(int) {
+	Line tmp(*this);
+	operator++();
+	return tmp;
+}
+
+//--------------------------------------------------
+bool ofBuffer::Line::operator!=(Line const& rhs) const{
+	return rhs._begin != _begin || rhs._end != _end;
+}
+
+//--------------------------------------------------
+bool ofBuffer::Line::operator==(Line const& rhs) const{
+	return rhs._begin == _begin && rhs._end == _end;
+}
+
+//--------------------------------------------------
+ofBuffer::Lines::Lines(vector<char> & buffer)
+:_begin(buffer.begin())
+,_end(buffer.end()){}
+
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Lines::begin(){
+	return Line(_begin,_end);
+}
+
+//--------------------------------------------------
+ofBuffer::Line ofBuffer::Lines::end(){
+	return Line(_end,_end);
+}
+
+//--------------------------------------------------
+ofBuffer::Lines ofBuffer::getLines(){
+	return ofBuffer::Lines(buffer);
 }
 
 //--------------------------------------------------
@@ -268,7 +374,7 @@ ofFile::ofFile(string path, Mode mode, bool binary){
 
 //-------------------------------------------------------------------------------------------------------------
 ofFile::~ofFile(){
-	close();
+	//close();
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -419,8 +525,8 @@ bool ofFile::exists() const {
 		return myFile.exists();
 	}
 	catch(...){
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -459,8 +565,8 @@ bool ofFile::canRead() const {
 		return myFile.canRead();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check canRead" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -469,8 +575,8 @@ bool ofFile::canWrite() const {
 		return myFile.canWrite();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check canWrite" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -479,8 +585,8 @@ bool ofFile::canExecute() const {
 		return myFile.canExecute();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check canExecute" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -489,8 +595,8 @@ bool ofFile::isFile() const {
 		return myFile.isFile();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check isFile" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -499,8 +605,8 @@ bool ofFile::isLink() const {
 		return myFile.isLink();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check isLink" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -509,8 +615,8 @@ bool ofFile::isDirectory() const {
 		return myFile.isDirectory();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check isDirectory" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -519,8 +625,8 @@ bool ofFile::isDevice() const {
 		return myFile.isDevice();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check isDevice" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -529,8 +635,8 @@ bool ofFile::isHidden() const {
 		return myFile.isHidden();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofFile") << "Couldn't check isHidden" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -933,8 +1039,8 @@ bool ofDirectory::isHidden() const {
 		return myDir.isHidden();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofDirectory") << "Couldn't check isHidden" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -975,8 +1081,8 @@ bool ofDirectory::isDirectory() const {
 		return myDir.isDirectory();
 	}catch(Poco::Exception & e){
 		ofLogWarning("ofDirectory") << "Couldn't check isDirectory" << e.what();
-		return false;
 	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1338,6 +1444,47 @@ bool ofDirectory::operator>(const ofDirectory & dir){
 bool ofDirectory::operator>=(const ofDirectory & dir){
 	return getAbsolutePath() >= dir.getAbsolutePath();
 }
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::iterator ofDirectory::begin(){
+	return files.begin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::iterator ofDirectory::end(){
+	return files.end();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_iterator ofDirectory::begin() const{
+	return files.begin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_iterator ofDirectory::end() const{
+	return files.end();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::reverse_iterator ofDirectory::rbegin(){
+	return files.rbegin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::reverse_iterator ofDirectory::rend(){
+	return files.rend();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_reverse_iterator ofDirectory::rbegin() const{
+	return files.rbegin();
+}
+
+//------------------------------------------------------------------------------------------------------------
+vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
+	return files.rend();
+}
+
 
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------

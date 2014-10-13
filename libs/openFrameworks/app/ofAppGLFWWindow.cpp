@@ -33,7 +33,6 @@
 
 ofBaseApp *	ofAppGLFWWindow::ofAppPtr;
 ofAppGLFWWindow	* ofAppGLFWWindow::instance;
-GLFWwindow* ofAppGLFWWindow::windowP = NULL;
 
 void ofGLReadyCallback();
 
@@ -75,9 +74,15 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
     //default to 4 times antialiasing. 
     setNumSamples(4);
 	iconSet = false;
+	windowP = NULL;
 
 	glfwSetErrorCallback(error_cb);
+}
 
+ofAppGLFWWindow::~ofAppGLFWWindow(){
+	if(windowP){
+		glfwDestroyWindow(windowP);
+	}
 }
 
 
@@ -135,7 +140,7 @@ void ofAppGLFWWindow::setOpenGLVersion(int major, int minor){
 #endif
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
+void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 
 	requestedWidth = w;
 	requestedHeight = h;
@@ -148,7 +153,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, int screenMode){
 
 //	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
-	int requestedMode = screenMode;
+	ofWindowMode requestedMode = screenMode;
 
 	glfwWindowHint(GLFW_RED_BITS, rBits);
 	glfwWindowHint(GLFW_GREEN_BITS, gBits);
@@ -302,11 +307,10 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	ofNotifySetup();
 	while(!glfwWindowShouldClose(windowP)){
+		glfwPollEvents();
 		ofNotifyUpdate();
 		display();
 	}
-    glfwDestroyWindow(windowP);
-    glfwTerminate();
 }
 
 void ofAppGLFWWindow::windowShouldClose(){
@@ -379,7 +383,7 @@ void ofAppGLFWWindow::display(void){
 	}
 
 	nFramesSinceWindowResized++;
-	glfwPollEvents();
+
 
 }
 
@@ -511,7 +515,7 @@ GLFWwindow* ofAppGLFWWindow::getGLFWWindow(){
 }
 
 //------------------------------------------------------------
-int	ofAppGLFWWindow::getWindowMode(){
+ofWindowMode ofAppGLFWWindow::getWindowMode(){
 	return windowMode;
 }
 
@@ -556,7 +560,7 @@ void ofAppGLFWWindow::disableSetupScreen(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
-    int curWindowMode  = windowMode;
+	ofWindowMode curWindowMode = windowMode;
  
   if (fullscreen){
 		windowMode = OF_FULLSCREEN;
@@ -928,7 +932,7 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** d
 	drag.position.set(ofGetMouseX(), ofGetMouseY());
 	drag.files.resize(numFiles);
 	for(int i=0; i<(int)drag.files.size(); i++){
-		drag.files[i] = Poco::URI(dropString[i]).getPath();
+		drag.files[i] = Poco::Path(dropString[i]).toString();
 	}
 	ofNotifyDragEvent(drag);
 }
@@ -1075,6 +1079,16 @@ void ofAppGLFWWindow::setVerticalSync(bool bVerticalSync){
 	}else{
 		glfwSwapInterval(0);
 	}
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::setClipboardString(const string& text) {
+    glfwSetClipboardString(ofAppGLFWWindow::windowP, text.c_str());
+}
+
+//------------------------------------------------------------
+string ofAppGLFWWindow::getClipboardString() {
+    return glfwGetClipboardString(ofAppGLFWWindow::windowP);
 }
 
 //------------------------------------------------------------

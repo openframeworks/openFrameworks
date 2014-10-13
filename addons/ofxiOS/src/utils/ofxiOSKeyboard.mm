@@ -151,7 +151,9 @@ void ofxiOSKeyboard::updateOrientation()
 	[keyboard updateOrientation];
 }
 
-
+UITextField * ofxiOSKeyboard::getKeyboardTextField() {
+    return [keyboard getTextField];
+}
 
 // CLASS IMPLEMENTATIONS--------------objc------------------------
 //----------------------------------------------------------------
@@ -435,4 +437,8 @@ void ofxiOSKeyboard::updateOrientation()
 	[_textField becomeFirstResponder];
 }
 //--------------------------------------------------------------
+- (UITextField *)getTextField {
+    return _textField;
+}
+
 @end

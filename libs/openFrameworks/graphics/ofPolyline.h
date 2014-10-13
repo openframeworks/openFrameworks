@@ -115,6 +115,14 @@ public:
 	const ofPoint& operator[] (int index) const;
 	ofPoint& operator[] (int index);
 	void resize(size_t size);
+	vector<ofPoint>::iterator begin();
+	vector<ofPoint>::iterator end();
+	vector<ofPoint>::const_iterator begin() const;
+	vector<ofPoint>::const_iterator end() const;
+	vector<ofPoint>::reverse_iterator rbegin();
+	vector<ofPoint>::reverse_iterator rend();
+	vector<ofPoint>::const_reverse_iterator rbegin() const;
+	vector<ofPoint>::const_reverse_iterator rend() const;
 
 	/// closed
 	void setClosed( bool tf );
@@ -131,7 +139,7 @@ public:
 	float getArea() const;
 	ofPoint getCentroid2D() const;
 
-	void draw();
+	void draw() const;
     
     // used for calculating the normals
     void setRightVector(ofVec3f v = ofVec3f(0, 0, -1));

@@ -10,6 +10,10 @@ OF 0.9.0
 
 CORE
 ----
+### app
+	/ setupOpenGL and ofApp___Window use ofWindowMode instead of int
+	/ fix exit callbacks to allow for calling of the destructors, and better signal handling
+
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball
 	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
@@ -32,10 +36,17 @@ CORE
 	- ofSetMinMagFilters() : deprecated (use corresponding ofTexture member method) 
 	- ofGetUsingCustomMinMagFilters() : deprecated
 	- ofRestoreMinMagFilters() : deprecated	  
-
+	+ ofShader: report offending lines on compiling errors
+	+ ofGLUtils: better support for half float types
 
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
+	+ ofDrawBitmapString: can draw any type not only strings
+
+### utils
+	/ better timming in fps calculation
+	+ ofFpsCounter allows to easily meassure the fps of any element
+	+ ofTimer allows to create a precise periodic waitable timer
 
 ### video
 	/ gstreamer: fix memory leaks when closing a video element
@@ -46,6 +57,39 @@ PLATFORM SPECIFIC
 ### Emscripten
 	+ New platform!
 
+### ofxiOS
+	+ xcode 6.0 updates
+	+ deployment target moved up to iOS 5.1.1
+
+### android
+	+ remove support for arm5 since no devices seem to have that cpu anymore and it
+	  was problematic with certain libraries
+
+### linux and arm linux
+	+ opencv libs are now installed in the system, rerun install_dependencies if you
+	  are having problems compiling projects that use opencv
+
+### windows
+	+ activated high precission timming to fix inaccurate fps calculations
+
+OF 0.8.4
+========
+
+#### change key
+          + added
+          - removed
+          / modified
+
+------------------------------------------------------------------------------
+
+PLATFORM SPECIFIC
+-----------------
+
+###OSX
+	/ Fixes for xcode 6
+
+###RPI
+	/ Fixes install_dependencies and makefiles
 
 
 

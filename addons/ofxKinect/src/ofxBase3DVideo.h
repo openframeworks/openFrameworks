@@ -32,10 +32,13 @@ public:
     
     /// get the pixels of the most recent depth frame
     virtual unsigned char* getDepthPixels()=0;
+    virtual const unsigned char* getDepthPixels() const=0;
     
     /// get the distance in millimeters to a given point as a float array
     virtual float* getDistancePixels()=0;
+    virtual const float* getDistancePixels() const=0;
     
     /// get the grayscale depth texture
     virtual ofTexture& getDepthTextureReference()=0;
+    virtual const ofTexture& getDepthTextureReference() const=0;
 };

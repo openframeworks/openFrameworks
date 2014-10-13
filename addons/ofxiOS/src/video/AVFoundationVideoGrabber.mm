@@ -416,11 +416,17 @@ bool AVFoundationVideoGrabber::initGrabber(int w, int h){
 		[grabber startCapture];
 		
 		newFrame=false;
-		
+		bIsInit = true;
+        
 		return true;
 	} else {
 		return false;
 	}
+}
+
+
+bool AVFoundationVideoGrabber::isInitialized(){
+    return bIsInit;
 }
 
 void AVFoundationVideoGrabber::update(){
