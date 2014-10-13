@@ -3,7 +3,9 @@
 
 //========================================================================
 int main( ){
-	ofSetOpenGLVersion(4,4);
+    // this example uses compute shaders which are only supported since
+    // openGL 4.3
+	ofSetOpenGLVersion(4,3);
 	ofSetupOpenGL(1024,768,OF_FULLSCREEN);			// <-------- setup the GL context
 
 	// this kicks off the running of my app
