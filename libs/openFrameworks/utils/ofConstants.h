@@ -134,7 +134,7 @@ enum ofTargetPlatform{
 	#define GL_BGR_EXT 0x80E0
 	#endif
 
-	// #define WIN32_HIGH_RES_TIMING
+	#define WIN32_HIGH_RES_TIMING
 
 	// note: this is experimental!
 	// uncomment to turn this on (only for windows machines)
