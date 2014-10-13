@@ -22,6 +22,8 @@ CORE
 	+ Programmable lights and materials
 	+ New area light type on programmable renderer
 	+ Separate model matrix
+	+ ofBufferObject wraps GL buffers for easy use
+	+ compute shader examples
 	+ ofGetCurrentNormalMatrix
 	+ ofSetOpenGL(ES)Version, allows to set any specific GL version
 	+ ofTexture::enableMipmap() auto-generate mipmaps on load - for textures which support
