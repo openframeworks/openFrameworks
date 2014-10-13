@@ -387,6 +387,8 @@ function copy() {
     mkdir -p $1/lib/$TYPE/x86/
     cp -R sdk/native/libs/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a/
     cp -R sdk/native/libs/x86/*.a $1/lib/$TYPE/x86/
+    cp -R sdk/native/3rdparty/libs/armeabi-v7a/libtbb.a $1/lib/$TYPE/armeabi-v7a/
+    cp -R sdk/native/3rdparty/libs/x86/libtbb.a $1/lib/$TYPE/x86/
   fi
 
 
