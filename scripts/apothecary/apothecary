@@ -251,7 +251,7 @@ echoVerbose() {
 #### PARSE COMMANDLINE
 
 # from http://www.mkssoftware.com/docs/man1/getopts.1.asp
-while getopts t:a:b:d:s:x:hgv opt ; do
+while getopts t:a:b:d:s:hgvx opt ; do
 	case "$opt" in
 		t) # set the library build type
 		   TYPE="$OPTARG" ;;
@@ -263,14 +263,14 @@ while getopts t:a:b:d:s:x:hgv opt ; do
 		   LIBS_DIR="$OPTARG" ;;
 		s) # set the git tag to switch version
 		   SWITCH_VER="$OPTARG" ;;
-		x) # use visual express tools
-		   VS_BUILD_TOOL=WDExpress ;;
 		g) # set git usage
 		   USE_GIT=1 ;;
 		h) # print help and exit
 		   echo "$HELP" ; exit 0 ;;
 		v) # verbose mode = true
 		   A_VERBOSE=1 ;;
+		x) # use visual express tools
+		   VS_BUILD_TOOL=WDExpress ;;
 		[?]) # print help and exit 
 			 echo "$HELP" ; exit 0 ;;
 	esac
@@ -775,20 +775,20 @@ function gitclone() {
 # example: vs-build "./tess2.sln" Build Debug
 # http://msdn.microsoft.com/library/vstudio/b20w810z.aspx
 function vs-build() {
-	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && $VS_BUILD_TOOL '$1' /'${2:-Build}' '${3:-Release}''
+	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /'${2:-Build}' '${3:-Release}''
 }
 
 # visual studio upgrader
 # http://msdn.microsoft.com/en-us/library/vstudio/w15a82ay(v=vs.110).aspx
 function vs-upgrade() {
-	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && $VS_BUILD_TOOL '$1' /Upgrade'
+	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /Upgrade'
 }
 
 # visual studio clean
 # http://msdn.microsoft.com/en-us/library/vstudio/w15a82ay(v=vs.110).aspx
 function vs-clean() {
-	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && $VS_BUILD_TOOL '$1' /Clean Release'
-	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && $VS_BUILD_TOOL '$1' /Clean Debug'
+	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /Clean Release'
+	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /Clean Debug'
 }
 
 ################################################################################
@@ -880,11 +880,6 @@ echoVerbose "Valid build types: ${VALID_TYPES[*]}"
 # set xcode dev root on osx
 if [ "$OS" == "osx" ] ; then
 	XCODE_DEV_ROOT=$($XS)
-fi
-
-# set vs build tool depending if express
-if [ "$OS" == "windows" ] ; then
-	VS_BUILD_TOOL=$($XS)
 fi
 
 # check if we have a valid build type
