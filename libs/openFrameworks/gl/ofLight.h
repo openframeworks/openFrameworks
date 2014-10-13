@@ -30,7 +30,7 @@ void ofEnableSeparateSpecularLight();
 void ofDisableSeparateSpecularLight();
 bool ofGetLightingEnabled();
 void ofSetSmoothLighting(bool b);
-void ofSetGlobalAmbientColor(const ofColor& c);
+void ofSetGlobalAmbientColor(const ofFloatColor& c);
 const ofFloatColor & ofGetGlobalAmbientColor();
 
 //----------------------------------------

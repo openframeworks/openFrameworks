@@ -44,7 +44,6 @@ float 		ofGetFrameRate();
 float 		ofGetTargetFrameRate();
 int			ofGetFrameNum();
 void 		ofSetFrameRate(int targetRate);
-void		ofSleepMillis(int millis);
 double		ofGetLastFrameTime();
 
 void		ofSetOrientation(ofOrientation orientation, bool vFlip=true);

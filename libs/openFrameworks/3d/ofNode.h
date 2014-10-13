@@ -149,7 +149,7 @@ protected:
 	ofNode *parent;
 	
 	void createMatrix();
-	
+	void updateAxis();
 	
 	// classes extending ofNode can override these methods to get notified 
 	virtual void onPositionChanged() {}
