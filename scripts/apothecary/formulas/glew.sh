@@ -55,8 +55,8 @@ function build() {
 		vs-build "glew_static.vcxproj"
 		cd ../../
 	elif [ "$TYPE" == "win_cb" ] ; then
-		#make glew.lib
-		echoWarning "TODO: build win_cb"
+		make clean
+		make
 	fi
 }
 
@@ -64,9 +64,13 @@ function build() {
 function copy() {
 
 	# headers
+	rm -r $1/include
 	mkdir -p $1/include
 	cp -Rv include/* $1/include
 
+	rm -r $1/lib/$TYPE/*
+	
+	
 	# libs
 	if [ "$TYPE" == "osx" ] ; then
 		mkdir -p $1/lib/$TYPE
@@ -78,9 +82,8 @@ function copy() {
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		# TODO: add cb formula
-		echoWarning "TODO: copy win_cb"
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/glew32s.lib $1/lib/$TYPE
+		cp -v lib/libglew32.a $1/lib/$TYPE
 	fi
 }
 
