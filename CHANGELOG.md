@@ -56,6 +56,9 @@ PLATFORM SPECIFIC
 	+ xcode 6.0 updates
 	+ deployment target moved up to iOS 5.1.1
 
+### android
+	+ remove support for arm5 since no devices seem to have that cpu anymore and it
+	  was problematic with certain libraries
 
 OF 0.8.4
 ========
