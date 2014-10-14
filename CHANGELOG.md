@@ -44,6 +44,7 @@ CORE
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
 	+ ofDrawBitmapString: can draw any type not only strings
+	/ ofImage: can load image via https
 
 ### utils
 	/ better timming in fps calculation
