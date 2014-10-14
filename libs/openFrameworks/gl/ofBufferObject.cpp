@@ -117,7 +117,11 @@ void * ofBufferObject::map(GLenum access){
 		return glMapNamedBuffer(data->id,access);
 	}
 #endif
-	bind(data->lastTarget);
+	if(data->lastTarget==GL_PIXEL_PACK_BUFFER){
+		bind(GL_PIXEL_UNPACK_BUFFER);
+	}else{
+		bind(data->lastTarget);
+	}
 	return glMapBuffer(data->lastTarget,access);
 }
 
