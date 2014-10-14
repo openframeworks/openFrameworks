@@ -746,7 +746,7 @@ bool ofMesh::usingIndices() const{
 
 
 //--------------------------------------------------------------
-void ofMesh::append(ofMesh & mesh){
+void ofMesh::append(const ofMesh & mesh){
 	int prevNumVertices = vertices.size();
 	if(mesh.getNumVertices()){
 		vertices.insert(vertices.end(),mesh.getVertices().begin(),mesh.getVertices().end());

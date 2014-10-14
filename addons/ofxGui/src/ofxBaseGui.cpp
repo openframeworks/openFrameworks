@@ -142,7 +142,7 @@ void ofxBaseGui::unbindFontTexture(){
 }
 
 
-ofMesh & ofxBaseGui::getTextMesh(const string & text, float x, float y){
+ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
 	if(useTTF){
 		return font.getStringMesh(text,x,y);
 	}else{

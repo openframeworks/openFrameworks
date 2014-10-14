@@ -140,7 +140,7 @@ public:
     virtual bool usingNormals() const;
     virtual bool usingIndices() const;
 
-    void append(ofMesh & mesh);
+    void append(const ofMesh & mesh);
     
     void setColorForIndices( int startIndex, int endIndex, ofColor color );
     ofMesh getMeshForIndices( int startIndex, int endIndex ) const;
