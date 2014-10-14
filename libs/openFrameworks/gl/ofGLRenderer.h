@@ -23,8 +23,9 @@ public:
 	void setCurrentFBO(const ofFbo * fbo);
 
 	void update();
-	void draw(const ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true) const;
-	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true) const;
+	using ofBaseRenderer::draw;
+	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
 	void draw(const ofPolyline & poly) const;
 	void draw(const ofPath & path) const;

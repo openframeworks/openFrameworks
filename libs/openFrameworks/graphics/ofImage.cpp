@@ -142,7 +142,7 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 	
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
-	
+
 	return bmp;
 }
 

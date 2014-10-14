@@ -908,17 +908,18 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
 
-//----------------------------------------------------------
-void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+//------------------------------------
+ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+	ofMesh quad;
 	if(!texData.bAllocated){
-		return;
+		return quad;
 	}
 
 	GLfloat px0 = x;		// up to you to get the aspect ratio right
 	GLfloat py0 = y;
 	GLfloat px1 = w+x;
 	GLfloat py1 = h+y;
-	
+
 	if (texData.bFlipTexture == ofIsVFlipped()){
 		swap(py0,py1);
 	}
@@ -930,13 +931,13 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 		px1 -= w/2;
 		py1 -= h/2;
 	}
-	
+
 	//we translate our drawing points by our anchor point.
 	//we still respect ofRectMode so if you have rect mode set to
 	//OF_RECTMODE_CENTER your anchor will be relative to that.
 	GLfloat anchorX;
 	GLfloat anchorY;
-	
+
 	if(bAnchorIsPct){
 		anchorX = anchor.x * w;
 		anchorY = anchor.y * h;
@@ -944,13 +945,13 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 		anchorX = anchor.x;
 		anchorY = anchor.y;
 	}
-	
+
 	px0 -= anchorX;
 	py0 -= anchorY;
 	px1 -= anchorX;
 	py1 -= anchorY;
-	
-	
+
+
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
 	// slightly, slightly alters an image, scaling...
@@ -958,16 +959,16 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	// we need a better solution for this, but
 	// to constantly add a 2 pixel border on all uploaded images
 	// is insane..
-	
+
 	GLfloat offsetw = 0.0f;
 	GLfloat offseth = 0.0f;
-	
+
 	if (!ofGLSupportsNPOTTextures() && bTexHackEnabled) {
 		offsetw = 1.0f / (texData.tex_w);
 		offseth = 1.0f / (texData.tex_h);
 	}
 	// -------------------------------------------------
-	
+
 	ofPoint topLeft = getCoordFromPoint(sx, sy);
 	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
 
@@ -976,7 +977,6 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat tx1 = bottomRight.x - offsetw;
 	GLfloat ty1 = bottomRight.y - offseth;
 
-	ofMesh quad;
 	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	quad.getVertices().resize(4);
 	quad.getTexCoords().resize(4);
@@ -984,11 +984,22 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	quad.getVertices()[1].set(px1,py0,z);
 	quad.getVertices()[2].set(px1,py1,z);
 	quad.getVertices()[3].set(px0,py1,z);
-	
+
 	quad.getTexCoords()[0].set(tx0,ty0);
 	quad.getTexCoords()[1].set(tx1,ty0);
 	quad.getTexCoords()[2].set(tx1,ty1);
 	quad.getTexCoords()[3].set(tx0,ty1);
+
+	return quad;
+}
+
+//----------------------------------------------------------
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+	if(!texData.bAllocated){
+		return;
+	}
+
+	ofMesh quad = getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh);
 
 	// make sure we are on unit 0 - we may change this when setting shader samplers
 	// before glEnable or else the shader gets confused

@@ -195,7 +195,7 @@ void ofThread::threadedFunction(){
 
 //-------------------------------------------------
 void ofThread::run(){
-	ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Started Thread.";
+	//ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Started Thread.";
 #ifdef TARGET_ANDROID
 	JNIEnv * env;
 	jint attachResult = ofGetJavaVMPtr()->AttachCurrentThread(&env,NULL);
