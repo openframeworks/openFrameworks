@@ -13,8 +13,8 @@ FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 VER=3160 # 3.16.0
 
 # tools for git use
-GIT_URL=
-GIT_TAG=
+GIT_URL=https://github.com/danoli3/FreeImage
+GIT_TAG=3.16.0
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -23,6 +23,14 @@ function download() {
 		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER"Win32.zip
 		unzip -qo FreeImage"$VER"Win32.zip
 		rm FreeImage"$VER"Win32.zip
+	elif [[ "${TYPE}" == "osx" || "${TYPE}" == "ios" ]]; then
+        # Fixed issues for OSX / iOS for FreeImage compiling in git repo.
+        echo "Downloading from $GIT_URL for OSX/iOS"
+		echo $GIT_URL
+		curl -Lk $GIT_URL/archive/$GIT_TAG.tar.gz -o FreeImage-$GIT_TAG.tar.gz
+		tar -xf FreeImage-$GIT_TAG.tar.gz
+		mv FreeImage-$GIT_TAG FreeImage
+		rm FreeImage-$GIT_TAG.tar.gz
 	else
 		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER".zip
 		unzip -qo FreeImage"$VER".zip
@@ -47,6 +55,7 @@ function prepare() {
 	elif [ "$TYPE" == "ios" ] ; then
 
 		mkdir -p Dist/$TYPE
+		mkdir -p builddir/$TYPE
 
 		# copy across new Makefile for iOS.
 		cp -v $FORMULA_DIR/Makefile.ios Makefile.ios
@@ -65,13 +74,17 @@ function build() {
 
 		# Notes: 
         # --- for 3.1+ Must use "-DNO_LCMS -D__ANSI__ -DDISABLE_PERF_MEASUREMENT" to compile LibJXR
-        # --- arm64 has lots of hotfixes using sed inline here.
 		export TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain
+		export TARGET_IOS
         
         local IOS_ARCHS="i386 x86_64 armv7 armv7s arm64"
-        #local IOS_ARCHS="arm64" # for future arm64
         local STDLIB="libc++"
         local CURRENTPATH=`pwd`
+
+		SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`	
+        DEVELOPER=$XCODE_DEV_ROOT
+		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
+		VERSION=$VER
 
         # Validate environment
         case $XCODE_DEV_ROOT in
@@ -87,37 +100,53 @@ function build() {
                 ;;
         esac
 
+        mkdir -p "builddir/$TYPE"
+
         # loop through architectures! yay for loops!
         for IOS_ARCH in ${IOS_ARCHS}
         do
+
+        	unset ARCH IOS_DEVROOT IOS_SDKROOT IOS_CC TARGET_NAME HEADER
+            unset CC CPP CXX CXXCPP CFLAGS CXXFLAGS LDFLAGS LD AR AS NM RANLIB LIBTOOL 
+            unset EXTRA_PLATFORM_CFLAGS EXTRA_PLATFORM_LDFLAGS IOS_PLATFORM NO_LCMS
+
             export ARCH=$IOS_ARCH
             
-            local EXTRA_PLATFORM_CFLAGS="" # will add -fvisibility=hidden $(INCLUDE) to makefile
+            local EXTRA_PLATFORM_CFLAGS=""
 			export EXTRA_PLATFORM_LDFLAGS=""
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
-				export IOS_PLATFORM="iPhoneSimulator"
-				#EXTRA_PLATFORM_CFLAGS=""
-				#EXTRA_PLATFORM_LDFLAGS=""
+				PLATFORM="iPhoneSimulator"
+			
 			else
-				#EXTRA_PLATFORM_CFLAGS=""
-				#EXTRA_PLATFORM_LDFLAGS=""
-				export IOS_PLATFORM="iPhoneOS"
+				PLATFORM="iPhoneOS"
 			fi
 
-			export IOS_DEVROOT=$XCODE_DEV_ROOT/Platforms/$IOS_PLATFORM.platform/Developer
-			export IOS_SDKROOT=$IOS_DEVROOT/SDKs/$IOS_PLATFORM$IOS_SDK_VER.sdk
-			export IOS_CC=$TOOLCHAIN/usr/bin/clang
+			export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
+			export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
+			export BUILD_TOOLS="${DEVELOPER}"
 
-			#export TARGET_NAME="build/$TYPE/$IOS_ARCH/libfreeimage.a"
-			export TARGET_NAME="libfreeimage-$IOS_ARCH.a"
+			MIN_IOS_VERSION=$IOS_MIN_SDK_VER
+		    # min iOS version for arm64 is iOS 7
+		
+		    if [[ "${IOS_ARCH}" == "arm64" || "${IOS_ARCH}" == "x86_64" ]]; then
+		    	MIN_IOS_VERSION=7.0 # 7.0 as this is the minimum for these architectures
+		    elif [ "${IOS_ARCH}" == "i386" ]; then
+		    	MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
+		    fi
+
+		    MIN_TYPE=-miphoneos-version-min=
+		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
+		    	MIN_TYPE=-mios-simulator-version-min=
+		    fi
+
+			export TARGET_NAME="$CURRENTPATH/libfreeimage-$IOS_ARCH.a"
 			export HEADER="Source/FreeImage.h"
 
-			echo "Building FreeType VERISON:$VER for PLATFORM:$IOS_PLATFORM SDK:$IOS_SDK_VER ARCH:$IOS_ARCH"
-
+			export CC=$TOOLCHAIN/usr/bin/clang
 			export CPP=$TOOLCHAIN/usr/bin/clang++
-			export CXX=$TOOLCHAIN/usr/bin/c++
-			export CXXCPP=$TOOLCHAIN/usr/bin/cpp
+			export CXX=$TOOLCHAIN/usr/bin/clang++
+			export CXXCPP=$TOOLCHAIN/usr/bin/clang++
 	
 			export LD=$TOOLCHAIN/usr/bin/ld
 			export AR=$TOOLCHAIN/usr/bin/ar
@@ -126,86 +155,100 @@ function build() {
 			export RANLIB=$TOOLCHAIN/usr/bin/ranlib
 			export LIBTOOL=$TOOLCHAIN/usr/bin/libtool
 
-			local MIN_IOS_VERSION=$IOS_MIN_SDK_VER
-		    # min iOS version for arm64 is iOS 7
 
-		    if [ "$IOS_ARCH" == "arm64" ] ; then
-		    	MIN_IOS_VERSION="7.0"
+		  	export EXTRA_PLATFORM_CFLAGS="$EXTRA_PLATFORM_CFLAGS"
+			export EXTRA_PLATFORM_LDFLAGS="$EXTRA_PLATFORM_LDFLAGS -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -Wl,-dead_strip -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/ $MIN_TYPE$MIN_IOS_VERSION "
 
-		    	# Manually Fix major issues with arm64 for iOS from some source libraries.
-		    	cp -v Source/ZLib/gzguts.h Source/ZLib/gzguts.h.orig
-		    	#define LSEEK errors fixed by definig unistd for ZLib
-		    	sed -i temp '20i\
-					#include <unistd.h>' Source/ZLib/gzguts.h
+		   	EXTRA_LINK_FLAGS="-arch $IOS_ARCH -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-shorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DHAVE_UNISTD_H=1 -DOPJ_STATIC -DNO_LCMS -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -DLIBRAW_NODLL -DLIBRAW_LIBRARY_BUILD -DFREEIMAGE_LIB -fexceptions -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -Wno-sign-conversion -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -DNDEBUG -fPIC -fexceptions -fvisibility=hidden"
+			EXTRA_FLAGS="$EXTRA_LINK_FLAGS -ffast-math -DDISABLE_PERF_MEASUREMENT $MIN_TYPE$MIN_IOS_VERSION -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/"
 
-				cp -v Source/LibJXR/image/decode/segdec.c Source/LibJXR/image/decode/segdec.c.orig
-				
-		    	sed -e 's/#if defined(_M_IA64) || defined(_ARM_)/#if defined(_M_IA64) || defined(_ARM_) || defined(__ARMEL__) || defined(_M_ARM) || defined(__arm__) || defined(__arm64__)/g' Source/LibJXR/image/decode/segdec.c > Source/LibJXR/image/decode/segdec.c
-
-		    	cp -v Source/LibJXR/image/sys/xplatform_image.h Source/LibJXR/image/sys/xplatform_image.h.orig
-		    	sed -e 's/#if defined(_ARM_) || defined(UNDER_CE)/#if defined(_ARM_) || defined(UNDER_CE) || defined(__ARMEL__) || defined(_M_ARM) || defined(__arm__) || defined(__arm64__)/g' Source/LibJXR/image/decode/segdec.c > Source/LibJXR/image/decode/segdec.c
-
-		    	cp -v Source/LibJXR/jxrgluelib/JXRGlueJxr.c Source/LibJXR/jxrgluelib/JXRGlueJxr.c.orig
-
-		    	sed -i temp '31i\
-					#include <wchar.h>' Source/LibJXR/./jxrgluelib/JXRGlueJxr.c
-
-		    fi
-
-		    export EXTRA_PLATFORM_CFLAGS="$EXTRA_PLATFORM_CFLAGS -mdynamic-no-pic" # will add -fvisibility=hidden $(INCLUDE) to makefile
-			export EXTRA_PLATFORM_LDFLAGS="$EXTRA_PLATFORM_LDFLAGS -isysroot $IOS_SDKROOT -Wl,-dead_strip"
-			export CC="$IOS_CC"
-			export CFLAGS="-arch $IOS_ARCH -O2 -Wall -Wmissing-prototypes -pipe $EXTRA_PLATFORM_CFLAGS -stdlib=$STDLIB -Wno-ctor-dtor-privacy -Wc++11-narrowing -ffast-math -fno-strict-aliasing -fmessage-length=0 -fexceptions -DNO_LCMS -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -fvisibility=hidden -miphoneos-version-min=$MIN_IOS_VERSION -isysroot $IOS_SDKROOT"
-			export CXXFLAGS="-fvisibility-inlines-hidden"
-			export LDFLAGS="-arch $IOS_ARCH $EXTRA_PLATFORM_LDFLAGS -miphoneos-version-min=$MIN_IOS_VERSION"
+		    export CC="$CC $EXTRA_FLAGS"
+			export CFLAGS="-arch $IOS_ARCH $EXTRA_FLAGS"
+			export CXXFLAGS="$EXTRA_FLAGS -std=c++11 -stdlib=libc++"
+			export LDFLAGS="-arch $IOS_ARCH $EXTRA_PLATFORM_LDFLAGS $EXTRA_LINK_FLAGS $MIN_TYPE$MIN_IOS_VERSION -std=c++11 -stdlib=libc++"
 			export LDFLAGS_PHONE=$LDFLAGS
+
+			mkdir -p "$CURRENTPATH/builddir/$TYPE/$IOS_ARCH"
+			LOG="$CURRENTPATH/builddir/$TYPE/$IOS_ARCH/build-freeimage-${VER}-$IOS_ARCH.log"
+			echo "-----------------"
+			echo "Building FreeImage-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
+			set +e
+
+			echo "Running make for ${IOS_ARCH}"
+			echo "Please stand by..."
+
 			
 			# run makefile
-			make -f Makefile.ios
-      
+			make -f Makefile.ios >> "${LOG}" 2>&1
+			if [ $? != 0 ];
+		    then 
+		    	echo "Problem while make - Please check ${LOG}"
+		    	exit 1
+		    else
+		    	echo "Make Successful for ${IOS_ARCH}"
+		    fi
+		    
+     		echo "Completed Build for $IOS_ARCH of FreeImage"
+
+     		mv -v libfreeimage-$IOS_ARCH.a Dist/$TYPE/libfreeimage-$IOS_ARCH.a
+
+     		cp Source/FreeImage.h Dist
+
             unset ARCH IOS_DEVROOT IOS_SDKROOT IOS_CC TARGET_NAME HEADER
             unset CC CPP CXX CXXCPP CFLAGS CXXFLAGS LDFLAGS LD AR AS NM RANLIB LIBTOOL 
-            unset EXTRA_PLATFORM_CFLAGS EXTRA_PLATFORM_LDFLAGS IOS_PLATFORM
-
-            if [ "$IOS_ARCH" == "arm64" ] ; then
-		    
-		    	# reset back to originals
-		    	cp -v Source/ZLib/gzguts.h.orig Source/ZLib/gzguts.h
-				cp -v Source/LibJXR/image/decode/segdec.c.orig Source/LibJXR/image/decode/segdec.c
-				cp -v Source/LibJXR/image/sys/xplatform_image.h.orig Source/LibJXR/image/sys/xplatform_image.h
-				cp -v Source/LibJXR/jxrgluelib/JXRGlueJxr.c.orig Source/LibJXR/jxrgluelib/JXRGlueJxr.c
-
-		    fi
-     	
-
-     		echo "Completed Build for $IOS_ARCH of FreeType"
-
-     		# Strip debug symbols! for size and speed!
-     		strip -x Dist/$TYPE/libfreeimage-$IOS_ARCH.a
+            unset EXTRA_PLATFORM_CFLAGS EXTRA_PLATFORM_LDFLAGS IOS_PLATFORM NO_LCMS
 
 		done
 
 		echo "Completed Build for $TYPE"
 
+        echo "-----------------"
+		echo `pwd`
+		echo "Finished for all architectures."
+		mkdir -p "$CURRENTPATH/builddir/$TYPE/$IOS_ARCH"
+		LOG="$CURRENTPATH/builddir/$TYPE/build-freeimage-${VER}-lipo.log"
+
 
 		cd Dist/$TYPE/
-		# stripping the lib prefix to bypass any issues with existing sdk libraries
-		echo "Creating Fat Lib for crypto"
+		# link into universal lib
+		echo "Running lipo to create fat lib"
+		echo "Please stand by..."
 		lipo -create libfreeimage-armv7.a \
 					libfreeimage-armv7s.a \
 					libfreeimage-arm64.a \
 					libfreeimage-i386.a \
 					libfreeimage-x86_64.a \
-					-output freeimage.a
+					-output freeimage.a >> "${LOG}" 2>&1
+
+
+		if [ $? != 0 ];
+		then 
+		    echo "Problem while creating fat lib with lipo - Please check ${LOG}"
+		    exit 1
+		else
+		   	echo "Lipo Successful."
+		fi
+
+		lipo -info freeimage.a
+		echo "--------------------"
+		echo "Stripping any lingering symbols"
+		echo "Please stand by..."
 		# validate all stripped debug:
-		strip -x freeimage.a
+		strip -x freeimage.a  >> "${LOG}" 2>&1
+		if [ $? != 0 ];
+		then 
+		    echo "Problem while stripping lib - Please check ${LOG}"
+		    exit 1
+		else
+		    echo "Strip Successful for ${LOG}"
+		fi
 		cd ../../
 
-		# copy includes
-		echo "Copying includes"
+		echo "--------------------"
+		echo "Build Successful for FreeImage $TYPE $VER"
 
 		# include copied in the makefile to libs/$TYPE/include
-
+		unset TARGET_IOS
 		unset TOOLCHAIN
 
 	elif [ "$TYPE" == "android" ] ; then
@@ -249,8 +292,10 @@ function clean() {
 		
 		make clean
 		rm -rf Dist
-		#clean
-		
+		rm -f *.a *.lib
+		rm -f builddir/$TYPE
+		rm -f builddir
+		rm -f lib		
 	else
 		make clean
 		# run dedicated clean script
