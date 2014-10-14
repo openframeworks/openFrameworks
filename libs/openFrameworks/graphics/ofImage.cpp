@@ -127,10 +127,14 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 		int dstStride = FreeImage_GetPitch(bmp);
 		unsigned char* src = (unsigned char*) pixels;
 		unsigned char* dst = bmpBits;
-		for(int i = 0; i < (int)height; i++) {
-			memcpy(dst, src, srcStride);
-			src += srcStride;
-			dst += dstStride;
+		if(srcStride != dstStride){
+			for(int i = 0; i < (int)height; i++) {
+				memcpy(dst, src, srcStride);
+				src += srcStride;
+				dst += dstStride;
+			}
+		}else{
+			memcpy(dst,src,dstStride*height);
 		}
 	} else {
 		ofLogError("ofImage") << "getBmpFromPixels(): unable to get FIBITMAP from ofPixels";
