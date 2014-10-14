@@ -33,6 +33,8 @@ public:
 	 }
 
 
+	 using ofBaseRenderer::draw;
+
 	 void draw(const ofPolyline & poly) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(poly);
@@ -43,6 +45,7 @@ public:
 			 renderers[i]->draw(shape);
 		 }
 	 }
+
 	 void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(vertexData,useColors, useTextures, useNormals);

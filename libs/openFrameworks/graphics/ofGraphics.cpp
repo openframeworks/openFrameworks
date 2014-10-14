@@ -124,7 +124,7 @@ void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectan
 	rendererCollection->renderers.push_back(ofGetGLRenderer());
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	
-	ofSetCurrentRenderer(cairoScreenshot, true);
+	ofSetCurrentRenderer(rendererCollection, true);
 	bScreenShotStarted = true;
 }
 

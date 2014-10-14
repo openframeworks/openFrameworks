@@ -543,6 +543,8 @@ class ofTexture : public ofBaseDraws {
 	/// \param z Draw position on the z axis.
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
+	ofMesh getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+
 	/// \brief Read current texture data from the GPU into pixels.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.

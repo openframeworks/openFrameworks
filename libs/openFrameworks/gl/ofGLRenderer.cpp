@@ -152,21 +152,11 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 
 //----------------------------------------------------------
 void ofGLRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType)  const{
-	// FIXME: we don't need this anymore since GL_NORMALIZE is enabled on lighting
-	// leaving it comented just in case. it's also safe to remove this method completely
-	// from the renderers hierarchy
-
-    /*bool normalsEnabled = glIsEnabled( GL_NORMALIZE );
-    if(model.hasScaling() && model.hasNormalsEnabled()) {
-        if(!normalsEnabled) glEnable( GL_NORMALIZE );
-    }*/
-
-    model.getMesh().draw(renderType);
-
-    /*if(model.hasScaling() && model.hasNormalsEnabled()) {
-        if(!normalsEnabled) glDisable( GL_NORMALIZE );
-    }*/
-
+	if(model.isUsingVbo()){
+		model.getMesh().draw(renderType);
+	}else{
+		draw(model.getMesh(),renderType);
+	}
 }
 
 //----------------------------------------------------------
@@ -196,7 +186,7 @@ void ofGLRenderer::draw(const ofPath & shape) const{
 		if(shape.getUseShapeColor()){
 			mut_this->setColor( shape.getFillColor(),shape.getFillColor().a);
 		}
-		draw(mesh);
+		draw(mesh,OF_MESH_FILL);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
@@ -219,7 +209,9 @@ void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float 
 	if(image.isUsingTexture()){
 		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLRenderer") << "drawing an unallocated texture";
 		}
@@ -231,7 +223,9 @@ void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, f
 	if(image.isUsingTexture()){
 		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
 		}
@@ -243,7 +237,9 @@ void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, f
 	if(image.isUsingTexture()){
 		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
 		}
@@ -253,7 +249,10 @@ void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, f
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
 	if(video.isInitialized() && video.isUsingTexture()){
-		video.getTextureReference().draw(x,y,w,h);
+		const ofTexture& tex = video.getTextureReference();
+		tex.bind();
+		draw(tex.getMeshForSubsection(x,y,0,w,h,0,0,w,h),false,true,false);
+		tex.unbind();
 	}
 }
 
@@ -1000,27 +999,9 @@ void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float hei
 
 //----------------------------------------------------------
 void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
-	// remember the current blend mode so that we can restore it at the end of this method.
-	GLint blend_src, blend_dst;
-	glGetIntegerv( GL_BLEND_SRC, &blend_src );
-	glGetIntegerv( GL_BLEND_DST, &blend_dst );
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
-	int len = (int)textString.length();
 	float fontSize = 8.0f;
-	float lineHeight = fontSize*1.7f;
-	int newLineDirection = 1.0f;
-
-	if(!ofIsVFlipped()){
-		newLineDirection  = -1;
-		// this would align multiline texts to the last line when vflip is disabled
-		//int lines = ofStringTimesInString(textString,"\n");
-		//y = lines*lineHeight;
-	}
-
 	float sx = 0;
 	float sy = -fontSize;
 
@@ -1148,50 +1129,31 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 		default:
 			break;
 	}
-	//
-	///////////////////////////
+	// remember the current blend mode so that we can restore it at the end of this method.
+	GLint blend_src, blend_dst;
+	glGetIntegerv( GL_BLEND_SRC, &blend_src );
+	glGetIntegerv( GL_BLEND_DST, &blend_dst );
 
-	// tig: we switch over to our built-in bitmapstring shader
-	// to render text. This gives us more flexibility & control
-	// and does not mess/interfere with client side shaders.
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#ifndef TARGET_OPENGLES
+	// this temporarily enables alpha testing,
+	// which discards pixels unless their alpha is 1.0f
+	glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
+#endif
 
+	ofMesh charMesh = ofBitmapStringGetMesh(textString,x,y,mode);
+	ofBitmapStringGetTextureRef().bind();
+	draw(charMesh,OF_MESH_FILL,false,true,false);
+	ofBitmapStringGetTextureRef().unbind();
 
-	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
-	//We do this because its way faster
-	ofDrawBitmapCharacterStart(textString.size());
-
-	int column = 0;
-
-	for(int c = 0; c < len; c++){
-		if(textString[c] == '\n'){
-
-			sy += lineHeight*newLineDirection;
-			if(mode == OF_BITMAPMODE_SIMPLE) {
-				sx = x;
-			} else {
-				sx = 0;
-			}
-
-			column = 0;
-		} else if (textString[c] == '\t'){
-			//move the cursor to the position of the next tab
-			//8 is the default tab spacing in osx terminal and windows	 command line
-			int out = column + 8 - (column % 8);
-			sx += fontSize * (out-column);
-			column = out;
-		} else if (textString[c] >= 32){
-			// < 32 = control characters - don't draw
-			// solves a bug with control characters
-			// getting drawn when they ought to not be
-			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
-
-			sx += fontSize;
-			column++;
-		}
-	}
-	//We do this because its way faster
-	ofDrawBitmapCharacterEnd();
-
+#ifndef TARGET_OPENGLES
+	glPopAttrib();
+#endif
+	// restore blendmode
+	glBlendFunc(blend_src, blend_dst);
 
 	if (hasModelView)
 		popMatrix();
@@ -1206,8 +1168,6 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	if (hasViewport)
 		popView();
 
-	// restore blendmode
-	glBlendFunc(blend_src, blend_dst);
 }
 
 //----------------------------------------------------------
