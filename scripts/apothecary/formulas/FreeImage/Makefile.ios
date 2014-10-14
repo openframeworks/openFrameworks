@@ -3,7 +3,7 @@
 
 include Makefile.srcs
 
-ACFLAGS=$(INCLUDE)
+ACFLAGS=-MMD -MT -MF $(INCLUDE)
 FCFLAGS=$(CFLAGS) $(ACFLAGS)
 FCXXFLAGS=$(CXXFLAGS) $(CFLAGS) $(ACFLAGS)
 
@@ -17,14 +17,9 @@ default: all
 all: dist
 
 dist: FreeImage
-	cp *.a Dist/ios
 	cp Source/FreeImage.h Dist
-	rm *.a
 
 FreeImage: $(TARGET_NAME)
-
-$(TARGET_NAME): $(MODULES_IOS)
-	$(LIBTOOL) -arch_only $(ARCH) -o $@ $(MODULES_IOS)
 
 .c.o-$(ARCH):
 	$(CC) $(FCFLAGS) -c $< -o $@
@@ -32,6 +27,8 @@ $(TARGET_NAME): $(MODULES_IOS)
 .cpp.o-$(ARCH):
 	$(CXX) $(FCXXFLAGS) -c $< -o $@
 
+$(TARGET_NAME): $(MODULES_IOS)
+	$(LIBTOOL) -arch_only $(ARCH) -o $@ $(MODULES_IOS)
 
 clean:
 	rm -f core Dist/*.* u2dtmp* $(MODULES_IOS)
