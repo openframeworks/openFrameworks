@@ -39,6 +39,7 @@ void ofApp::update(){
 		// map the buffer so we can access it from the cpu
 		// and wrap the memory in an ofPixels to save it
 		// easily. Finally unmap it.
+		pixelBufferFront.bind(GL_PIXEL_UNPACK_BUFFER);
 		unsigned char * p = pixelBufferFront.map<unsigned char>(GL_READ_ONLY);
 		pixels.setFromExternalPixels(p,fbo.getWidth(),fbo.getHeight(),OF_PIXELS_RGB);
 		ofSaveImage(pixels,ofToString(ofGetFrameNum())+".jpg");
