@@ -78,8 +78,8 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 
 	if( grabber->isInitialized() && bUseTexture ){
 		if(!grabber->getTexture()){
-			for(int i=0;i<grabber->getPixelsRef().getNumPlanes();i++){
-				ofPixels plane = grabber->getPixelsRef().getPlane(i);
+			for(int i=0;i<grabber->getPixels().getNumPlanes();i++){
+				ofPixels plane = grabber->getPixels().getPlane(i);
 				tex.push_back(ofTexture());
 				tex[i].allocate(plane);
 				if(ofGetGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
@@ -154,21 +154,23 @@ void ofVideoGrabber::setDesiredFrameRate(int framerate){
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofVideoGrabber::getPixels(){
-	if(grabber){
-		return grabber->getPixels();
-	}
-	return NULL;
+ofPixels & ofVideoGrabber::getPixels(){
+	return getGrabber()->getPixels();
+}
+
+//---------------------------------------------------------------------------
+const ofPixels & ofVideoGrabber::getPixels() const{
+	return getGrabber()->getPixels();
 }
 
 //---------------------------------------------------------------------------
 ofPixels& ofVideoGrabber::getPixelsRef(){
-	return grabber->getPixelsRef();
+	return getGrabber()->getPixels();
 }
 
 //---------------------------------------------------------------------------
 const ofPixels& ofVideoGrabber::getPixelsRef() const{
-	return grabber->getPixelsRef();
+	return getGrabber()->getPixels();
 }
 
 //------------------------------------
@@ -223,11 +225,11 @@ void ofVideoGrabber::update(){
 		width = grabber->getWidth();
 		height = grabber->getHeight();
 		if( bUseTexture && !grabber->getTexture() && grabber->isFrameNew() ){
-			if(int(tex.size())!=grabber->getPixelsRef().getNumPlanes()){
-				tex.resize(grabber->getPixelsRef().getNumPlanes());
+			if(int(tex.size())!=grabber->getPixels().getNumPlanes()){
+				tex.resize(grabber->getPixels().getNumPlanes());
 			}
-			for(int i=0;i<grabber->getPixelsRef().getNumPlanes();i++){
-				ofPixels plane = grabber->getPixelsRef().getPlane(i);
+			for(int i=0;i<grabber->getPixels().getNumPlanes();i++){
+				ofPixels plane = grabber->getPixels().getPlane(i);
 				bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 				if(width==0 || height==0 || bDiffPixFormat || !tex[i].isAllocated() ){
 					tex[i].allocate(plane);

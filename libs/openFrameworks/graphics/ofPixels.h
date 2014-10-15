@@ -66,6 +66,8 @@ public:
 	void clear();
 
 	PixelType * getPixels();
+	operator PixelType*();
+	operator const PixelType*();
 
 	/// \brief Retrieves pixel data from the ofPixel object.
 	///

@@ -61,9 +61,10 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				stop();
 
 		bool 				isFrameNew() const;
-		unsigned char * 	getPixels();
-        ofPixels&			getPixelsRef();
-        const ofPixels&     getPixelsRef() const;
+		ofPixels& 			getPixels();
+		const ofPixels&		getPixels() const;
+        OF_DEPRECATED_MSG("Use getPixels() instead", ofPixels&	getPixelsRef());
+        OF_DEPRECATED_MSG("Use getPixels() instead", const ofPixels&  getPixelsRef() const);
 		float 				getPosition() const;
 		float 				getSpeed() const;
 		float 				getDuration() const;
@@ -131,6 +132,7 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		mutable int         width;
 
 	private:
+		void initDefaultPlayer();
 		shared_ptr<ofBaseVideoPlayer>		player;
 		
 		vector<ofTexture> tex;

@@ -836,8 +836,14 @@ void ofImage_<PixelType>::clear(){
 
 //------------------------------------
 template<typename PixelType>
-PixelType * ofImage_<PixelType>::getPixels(){
-	return pixels.getPixels();
+ofPixels_<PixelType> &  ofImage_<PixelType>::getPixels(){
+	return pixels;
+}
+
+//------------------------------------
+template<typename PixelType>
+const ofPixels_<PixelType> & ofImage_<PixelType>::getPixels() const{
+	return pixels;
 }
 
 //----------------------------------------------------------

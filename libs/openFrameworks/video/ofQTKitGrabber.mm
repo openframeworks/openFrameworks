@@ -893,20 +893,18 @@ void ofQTKitGrabber::close(){
 	}
 }
 
-//will return empty if pixels haven't been allocated
-unsigned char* ofQTKitGrabber::getPixels(){
-	return getPixelsRef().getPixels();
-}
-
-ofPixelsRef ofQTKitGrabber::getPixelsRef(){
+ofPixels& ofQTKitGrabber::getPixels(){
 	if(!confirmInit() || !pixels.isAllocated()){
-	    ofLogError("ofQTKitGrabber") << "getPixelsRef(): asking for pixels on unitialized grabber";
+	    ofLogError("ofQTKitGrabber") << "getPixels(): asking for pixels on unitialized grabber";
 	}
 	return pixels;
 }
 
-const ofPixelsRef ofQTKitGrabber::getPixelsRef() const {
-    return getPixelsRef();
+const ofPixels& ofQTKitGrabber::getPixels() const {
+	if(!confirmInit() || !pixels.isAllocated()){
+	    ofLogError("ofQTKitGrabber") << "getPixels(): asking for pixels on unitialized grabber";
+	}
+	return pixels;
 }
 
 void ofQTKitGrabber::setUseAudio(bool _bUseAudio){

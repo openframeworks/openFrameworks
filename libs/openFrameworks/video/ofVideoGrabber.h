@@ -60,9 +60,10 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		ofPixelFormat 		getPixelFormat() const;
 		
 		void				videoSettings();
-		unsigned char 	*	getPixels();
-        ofPixels&			getPixelsRef();
-        const ofPixels&     getPixelsRef() const;
+		ofPixels& 			getPixels();
+		const ofPixels&		getPixels() const;
+        OF_DEPRECATED_MSG("Use getPixels() instead", ofPixels&	getPixelsRef());
+        OF_DEPRECATED_MSG("Use getPixels() instead", const ofPixels&  getPixelsRef() const);
 		ofTexture &			getTextureReference();
 		const ofTexture &	getTextureReference() const;
 		vector<ofTexture> & getTexturePlanes();
