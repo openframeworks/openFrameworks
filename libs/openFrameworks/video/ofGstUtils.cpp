@@ -755,15 +755,11 @@ bool ofGstVideoUtils::isFrameNew() const{
 	return bIsFrameNew;
 }
 
-unsigned char * ofGstVideoUtils::getPixels(){
-	return pixels.getPixels();
-}
-
-ofPixels& ofGstVideoUtils::getPixelsRef(){
+ofPixels& ofGstVideoUtils::getPixels(){
 	return pixels;
 }
 
-const ofPixels & ofGstVideoUtils::getPixelsRef() const{
+const ofPixels & ofGstVideoUtils::getPixels() const{
 	return pixels;
 }
 

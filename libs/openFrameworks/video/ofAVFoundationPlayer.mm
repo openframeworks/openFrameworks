@@ -137,25 +137,19 @@ bool ofAVFoundationPlayer::isFrameNew() const
 }
 
 //--------------------------------------------------------------
-unsigned char * ofAVFoundationPlayer::getPixels()
-{
-    return getPixelsRef().getPixels();
-}
-
-//--------------------------------------------------------------
-const ofPixels & ofAVFoundationPlayer::getPixelsRef() const
+const ofPixels & ofAVFoundationPlayer::getPixels() const
 {
     if (!isLoaded() ){
-        ofLogError("ofAVFoundationPlayer::getPixelsRef()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
+        ofLogError("ofAVFoundationPlayer::getPixels()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixels.";
     }
     return pixels;
 }
 
 //--------------------------------------------------------------
-ofPixels & ofAVFoundationPlayer::getPixelsRef()
+ofPixels & ofAVFoundationPlayer::getPixels()
 {
     if (!isLoaded() ){
-        ofLogError("ofAVFoundationPlayer::getPixelsRef()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixelsRef.";
+        ofLogError("ofAVFoundationPlayer::getPixels()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixels.";
     }
     return pixels;
 }

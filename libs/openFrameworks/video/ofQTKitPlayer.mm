@@ -228,7 +228,7 @@ void ofQTKitPlayer::draw(float x, float y, float w, float h) {
 }
 
 //--------------------------------------------------------------------
-ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
+ofPixels& ofQTKitPlayer::getPixels(){
 	@autoreleasepool {
 		if(isLoaded() && moviePlayer.usePixels) {
 			//don't get the pixels every frame if it hasn't updated
@@ -238,19 +238,14 @@ ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
 			}
 		}
 		else{
-			ofLogError("ofQTKitPlayer") << "getPixelsRef(): returning pixels that may be unallocated, make sure to initialize the video player before calling this function";
+			ofLogError("ofQTKitPlayer") << "getPixels(): returning pixels that may be unallocated, make sure to initialize the video player before calling this function";
 		}
 	}
 	return pixels;
 }
 
-const ofPixelsRef ofQTKitPlayer::getPixelsRef() const {
-    return getPixelsRef();
-}
-
-//--------------------------------------------------------------------
-unsigned char* ofQTKitPlayer::getPixels() {
-	return getPixelsRef().getPixels();
+const ofPixels& ofQTKitPlayer::getPixels() const {
+    return pixels;
 }
 
 //--------------------------------------------------------------------
