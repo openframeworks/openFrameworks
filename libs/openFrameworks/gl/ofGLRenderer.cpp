@@ -27,6 +27,7 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor)
 	normalsEnabled = false;
 	lightingEnabled = true;
 	rectMode = OF_RECTMODE_CORNER;
+	alphaMaskTextureTarget = GL_TEXTURE_2D;
 }
 
 //----------------------------------------------------------
