@@ -22,8 +22,8 @@ void ofApp::setup(){
 	vidGrabber.setDesiredFrameRate(60);
 	vidGrabber.initGrabber(camWidth,camHeight);
 	
-	videoInverted 	= new unsigned char[camWidth*camHeight*3];
-	videoTexture.allocate(camWidth,camHeight, GL_RGB);	
+	videoInverted.allocate(camWidth,camHeight,OF_PIXELS_RGB);
+	videoTexture.allocate(videoInverted);
 	ofSetVerticalSync(true);
 }
 
@@ -36,12 +36,11 @@ void ofApp::update(){
 	vidGrabber.update();
 	
 	if (vidGrabber.isFrameNew()){
-		int totalPixels = camWidth*camHeight*3;
-		unsigned char * pixels = vidGrabber.getPixels();
-		for (int i = 0; i < totalPixels; i++){
+		ofPixels & pixels = vidGrabber.getPixels();
+		for (int i = 0; i < pixels.size(); i++){
 			videoInverted[i] = 255 - pixels[i];
 		}
-		videoTexture.loadData(videoInverted, camWidth,camHeight, GL_RGB);
+		videoTexture.loadData(videoInverted);
 	}
 
 }
