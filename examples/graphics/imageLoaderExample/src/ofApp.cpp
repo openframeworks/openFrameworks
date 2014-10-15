@@ -53,7 +53,7 @@ void ofApp::draw(){
 	
 	// same as above, but this time
 	// use the raw data directly with getPixels()
-	unsigned char* pixels = bikeIcon.getPixels();
+	ofPixels & pixels = bikeIcon.getPixels();
 	ofSetColor(0, 0, 255);
 	for(int y = 0; y < h; y++) {
 		for(int x = 0; x < w; x++) {

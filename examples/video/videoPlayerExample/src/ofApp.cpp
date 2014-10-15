@@ -26,11 +26,11 @@ void ofApp::draw(){
 
     fingerMovie.draw(20,20);
     ofSetHexColor(0x000000);
-    unsigned char * pixels = fingerMovie.getPixels();
+    ofPixels & pixels = fingerMovie.getPixels();
 
-    int vidWidth = fingerMovie.getWidth();
-    int vidHeight = fingerMovie.getHeight();
-    int nChannels = fingerMovie.getPixelsRef().getNumChannels();
+    int vidWidth = pixels.getWidth();
+    int vidHeight = pixels.getHeight();
+    int nChannels = pixels.getNumChannels();
     
     // let's move through the "RGB(A)" char array
     // using the red pixel to control the size of a circle.
