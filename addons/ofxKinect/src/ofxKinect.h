@@ -158,35 +158,21 @@ public:
 
 /// \section Pixel Data
 
-	/// get the pixels of the most recent rgb frame
+	/// get the video pixels reference
 	///
 	/// see setRegistration() for a calibrated depth->RGB image
-	unsigned char* getPixels();
-	const unsigned char* getPixels() const;
+	ofPixels & getPixels();
+	const ofPixels & getPixels() const;
 
 	/// get the pixels of the most recent depth frame
-	unsigned char* getDepthPixels();       ///< grayscale values
-	const unsigned char* getDepthPixels() const;       ///< grayscale values
-	unsigned short* getRawDepthPixels();   ///< raw 11 bit values
-	const unsigned short* getRawDepthPixels() const;   ///< raw 11 bit values
+	ofPixels & getDepthPixels();       	///< grayscale values
+	const ofPixels & getDepthPixels() const;       	///< grayscale values
+	ofShortPixels & getRawDepthPixels();	///< raw 11 bit values
+	const ofShortPixels & getRawDepthPixels() const;	///< raw 11 bit values
 
 	/// get the distance in millimeters to a given point as a float array
-	float* getDistancePixels();
-	const float* getDistancePixels() const;
-
-	/// get the video pixels reference
-	ofPixels & getPixelsRef();
-	const ofPixels & getPixelsRef() const;
-
-	/// get the pixels of the most recent depth frame
-	ofPixels & getDepthPixelsRef();       	///< grayscale values
-	const ofPixels & getDepthPixelsRef() const;       	///< grayscale values
-	ofShortPixels & getRawDepthPixelsRef();	///< raw 11 bit values
-	const ofShortPixels & getRawDepthPixelsRef() const;	///< raw 11 bit values
-
-	/// get the distance in millimeters to a given point as a float array
-	ofFloatPixels & getDistancePixelsRef();
-	const ofFloatPixels & getDistancePixelsRef() const;
+	ofFloatPixels & getDistancePixels();
+	const ofFloatPixels & getDistancePixels() const;
 
 	/// get the video (ir or rgb) texture
 	ofTexture& getTextureReference();

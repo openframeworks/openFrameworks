@@ -103,19 +103,11 @@ bool ofxEmscriptenVideoPlayer::isFrameNew() const{
 	return gotFirstFrame;
 }
 
-unsigned char * ofxEmscriptenVideoPlayer::getPixels(){
-	return pixels.getPixels();
-}
-
-const unsigned char * ofxEmscriptenVideoPlayer::getPixels() const{
-	return pixels.getPixels();
-}
-
-ofPixels & ofxEmscriptenVideoPlayer::getPixelsRef(){
+ofPixels & ofxEmscriptenVideoPlayer::getPixels(){
 	return pixels;
 }
 
-const ofPixels & ofxEmscriptenVideoPlayer::getPixelsRef() const{
+const ofPixels & ofxEmscriptenVideoPlayer::getPixels() const{
 	return pixels;
 }
 
