@@ -155,9 +155,8 @@ public:
 	void 			reallocateOnNextFrame();
 
 	bool 			isFrameNew() const;
-	unsigned char * getPixels();
-	ofPixels&		getPixelsRef();
-	const ofPixels& getPixelsRef() const;
+	ofPixels&		getPixels();
+	const ofPixels&	getPixels() const;
 	void 			update();
 
 	float 			getHeight() const;

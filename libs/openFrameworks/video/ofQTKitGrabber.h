@@ -29,9 +29,8 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		void            update();
 		float           getWidth() const;
 		float           getHeight() const;
-		unsigned char * getPixels();
-        ofPixelsRef     getPixelsRef();
-        const ofPixelsRef getPixelsRef() const;
+        ofPixels&	    getPixels();
+        const ofPixels& getPixels() const;
 		void            setVerbose(bool bTalkToMe);
 
 		vector <ofVideoDevice> listDevices() const;

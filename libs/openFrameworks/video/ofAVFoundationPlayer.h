@@ -35,9 +35,8 @@ public:
     
     // Returns openFrameworks compatible RGBA pixels.
     // Be aware of your current render mode.
-    unsigned char *     getPixels();
-    const ofPixels &    getPixelsRef() const;
-    ofPixels &          getPixelsRef();
+    const ofPixels &    getPixels() const;
+    ofPixels &          getPixels();
     
     ofTexture *         getTexture();
     ofTexture &         getTextureReference();

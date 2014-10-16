@@ -21,7 +21,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);		
 		
 		ofVideoGrabber 		vidGrabber;
-		unsigned char * 	videoInverted;
+		ofPixels		 	videoInverted;
 		ofTexture			videoTexture;
 		int 				camWidth;
 		int 				camHeight;

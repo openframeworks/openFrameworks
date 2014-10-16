@@ -24,10 +24,8 @@ public:
 	void				stop();
 
 	bool 				isFrameNew() const;
-	unsigned char * 	getPixels();
-	const unsigned char * 	getPixels() const;
-	ofPixels & 			getPixelsRef();
-	const ofPixels & 	getPixelsRef() const;
+	ofPixels & 			getPixels();
+	const ofPixels & 	getPixels() const;
 	ofTexture *			getTexture(); // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 
 	float 				getWidth() const;

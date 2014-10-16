@@ -397,17 +397,12 @@ void ofQuickTimeGrabber::update(){
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofQuickTimeGrabber::getPixels(){
-	return pixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-ofPixels& ofQuickTimeGrabber::getPixelsRef(){
+ofPixels& ofQuickTimeGrabber::getPixels(){
 	return pixels;
 }
 
 //---------------------------------------------------------------------------
-const ofPixels& ofQuickTimeGrabber::getPixelsRef() const {
+const ofPixels& ofQuickTimeGrabber::getPixels() const {
 	return pixels;
 }
 
