@@ -320,15 +320,11 @@ bool ofxAndroidVideoGrabber::isInitialized() const{
 void ofxAndroidVideoGrabber::videoSettings(){
 }
 
-unsigned char * ofxAndroidVideoGrabber::getPixels(){
-	return pixels.getPixels();
-}
-
-ofPixels&	ofxAndroidVideoGrabber::getPixelsRef(){
+ofPixels&	ofxAndroidVideoGrabber::getPixels(){
 	return pixels;
 }
 
-const ofPixels& ofxAndroidVideoGrabber::getPixelsRef() const {
+const ofPixels& ofxAndroidVideoGrabber::getPixels() const {
     return pixels;
 }
 
