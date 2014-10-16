@@ -32,15 +32,48 @@ class ofEventArgs{};
 
 class ofEntryEventArgs : public ofEventArgs {
 public:
+	ofEntryEventArgs()
+	:state(0){}
+
+	ofEntryEventArgs(int state)
+	:state(state){}
+
 	int state;
 };
 
 class ofKeyEventArgs : public ofEventArgs {
-  public:
+public:
 	enum Type{
 		Pressed,
 		Released,
-	} type;
+	};
+
+	ofKeyEventArgs()
+  	:type(Pressed)
+  	,key(0)
+	,keycode(0)
+	,scancode(0)
+	,codepoint(0){}
+
+	ofKeyEventArgs(Type type, int key, int keycode, int scancode, unsigned int codepoint)
+	:type(type)
+	,key(key)
+	,keycode(keycode)
+	,scancode(scancode)
+	,codepoint(codepoint){
+
+	}
+
+	ofKeyEventArgs(Type type, int key)
+	:type(type)
+	,key(key)
+	,keycode(0)
+	,scancode(0)
+	,codepoint(0){
+
+	}
+
+	Type type;
 	/// \brief For special keys, one of OF_KEY_* (@see ofConstants.h). For all other keys, the Unicode code point you'd expect if this key combo (including modifier keys that may be down) was pressed in a text editor (same as codepoint). 
 	int key; 
 	/// \brief The keycode returned by the windowing system, independent of any modifier keys or keyboard layout settings. For ofAppGLFWWindow this value is one of GLFW_KEY_* (@see glfw3.h) - typically, ASCII representation of the symbol on the physical key, so A key always returns 0x41 even if shift, alt, ctrl are down. 
@@ -58,7 +91,18 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 		Moved,
 		Released,
 		Dragged
-	} type;
+	};
+
+	ofMouseEventArgs()
+	:type(Pressed)
+	,button(OF_MOUSE_BUTTON_LEFT){}
+
+	ofMouseEventArgs(Type type, float x, float y, int button)
+	:ofVec2f(x,y)
+	,type(type)
+	,button(button){}
+
+	Type type;
 	int button;
 };
 
@@ -70,8 +114,45 @@ class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
 		move,
 		doubleTap,
 		cancel
-	} type;
+	};
 
+	ofTouchEventArgs()
+	:type(down)
+	,id(0)
+	,time(0)
+	,numTouches(0)
+	,width(0)
+	,height(0)
+	,angle(0)
+	,minoraxis(0)
+	,majoraxis(0)
+	,pressure(0)
+	,xspeed(0)
+	,yspeed(0)
+	,xaccel(0)
+	,yaccel(0)
+	{
+
+	}
+
+	ofTouchEventArgs(Type type, float x, float y, int id)
+	:ofVec2f(x,y)
+	,type(type)
+	,id(id)
+	,time(0)
+	,numTouches(0)
+	,width(0)
+	,height(0)
+	,angle(0)
+	,minoraxis(0)
+	,majoraxis(0)
+	,pressure(0)
+	,xspeed(0)
+	,yspeed(0)
+	,xaccel(0)
+	,yaccel(0){}
+
+	Type type;
 	int id;
 	int time;
 	int numTouches;
@@ -83,15 +164,16 @@ class ofTouchEventArgs : public ofEventArgs, public ofVec2f {
 	float xaccel, yaccel;
 };
 
-class ofAudioEventArgs : public ofEventArgs {
-  public:
-	float* buffer;
-	int bufferSize;
-	int nChannels;
-};
-
 class ofResizeEventArgs : public ofEventArgs {
-  public:
+public:
+	ofResizeEventArgs()
+  	:width(0)
+	,height(0){}
+
+	ofResizeEventArgs(int width, int height)
+	:width(width)
+	,height(height){}
+
 	int width;
 	int height;
 };
@@ -123,9 +205,6 @@ class ofCoreEvents {
 	ofEvent<ofMouseEventArgs> 	mousePressed;
 	ofEvent<ofMouseEventArgs> 	mouseReleased;
 
-	ofEvent<ofAudioEventArgs> 	audioReceived;
-	ofEvent<ofAudioEventArgs> 	audioRequested;
-
 	ofEvent<ofTouchEventArgs>	touchDown;
 	ofEvent<ofTouchEventArgs>	touchUp;
 	ofEvent<ofTouchEventArgs>	touchMoved;
@@ -146,8 +225,6 @@ class ofCoreEvents {
 		mouseReleased.disable();
 		mousePressed.disable();
 		mouseMoved.disable();
-		audioReceived.disable();
-		audioRequested.disable();
 		touchDown.disable();
 		touchUp.disable();
 		touchMoved.disable();
@@ -168,8 +245,6 @@ class ofCoreEvents {
 		mouseReleased.enable();
 		mousePressed.enable();
 		mouseMoved.enable();
-		audioReceived.enable();
-		audioRequested.enable();
 		touchDown.enable();
 		touchUp.enable();
 		touchMoved.enable();

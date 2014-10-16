@@ -521,10 +521,12 @@ void ofShader::end()  const{
 	}
 }
 
+#ifndef TARGET_OPENGLES
 //--------------------------------------------------------------
 void ofShader::dispatchCompute(GLuint x, GLuint y, GLuint z) const{
 	glDispatchCompute(x,y,z);
 }
+#endif
 
 //--------------------------------------------------------------
 void ofShader::setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation)  const{

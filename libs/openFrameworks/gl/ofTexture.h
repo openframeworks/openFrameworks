@@ -398,7 +398,9 @@ class ofTexture : public ofBaseDraws {
 	///
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
+#ifndef TARGET_OPENGLES
 	void loadData(const ofBufferObject & buffer, int glFormat, int glType);
+#endif
 
 	/// \brief Generate mipmap for the current texture.
 	///
@@ -566,7 +568,9 @@ class ofTexture : public ofBaseDraws {
 	/// \param pixels Target pixels reference.
 	void readToPixels(ofFloatPixels & pixels) const;
 
+#ifndef TARGET_OPENGLES
 	void copyTo(ofBufferObject & buffer) const;
+#endif
 
 	/// \brief Bind the texture.
 	///
