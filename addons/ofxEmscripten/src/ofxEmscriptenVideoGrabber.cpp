@@ -95,19 +95,11 @@ bool ofxEmscriptenVideoGrabber::isFrameNew() const{
 	return html5video_grabber_ready_state(id)>=HAVE_METADATA;
 }
 
-unsigned char * ofxEmscriptenVideoGrabber::getPixels(){
-	return pixels.getPixels();
-}
-
-ofPixels & ofxEmscriptenVideoGrabber::getPixelsRef(){
+ofPixels & ofxEmscriptenVideoGrabber::getPixels(){
 	return pixels;
 }
 
-const unsigned char * ofxEmscriptenVideoGrabber::getPixels() const{
-	return pixels.getPixels();
-}
-
-const ofPixels & ofxEmscriptenVideoGrabber::getPixelsRef() const{
+const ofPixels & ofxEmscriptenVideoGrabber::getPixels() const{
 	return pixels;
 }
 

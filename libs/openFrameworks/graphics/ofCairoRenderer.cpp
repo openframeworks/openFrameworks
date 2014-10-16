@@ -588,24 +588,24 @@ void ofCairoRenderer::draw(const ofPixels & raw, float x, float y, float z, floa
 
 //--------------------------------------------
 void ofCairoRenderer::draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-	draw(img.getPixelsRef(),x,y,z,w,h,sx,sy,sw,sh);
+	draw(img.getPixels(),x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
 void ofCairoRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-	ofPixels tmp = image.getPixelsRef();
+	ofPixels tmp = image.getPixels();
 	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
 void ofCairoRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-	ofPixels tmp = image.getPixelsRef();
+	ofPixels tmp = image.getPixels();
 	draw(tmp,x,y,z,w,h,sx,sy,sw,sh);
 }
 
 //--------------------------------------------
 void ofCairoRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
-	draw(video.getPixelsRef(),x,y,0,w,h,x,y,w,h);
+	draw(video.getPixels(),x,y,0,w,h,x,y,w,h);
 }
 
 //--------------------------------------------

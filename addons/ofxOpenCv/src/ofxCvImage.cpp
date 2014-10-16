@@ -411,7 +411,7 @@ void ofxCvImage::updateTexture(){
 				tex.clear();
 				tex.allocate( width, height, glchannels );
 			}
-			tex.loadData( getPixelsRef() );
+			tex.loadData( getPixels() );
 			bTextureDirty = false;
 		}
 	}
@@ -475,7 +475,7 @@ void ofxCvImage::drawROI( float x, float y, float w, float h ) const {
                 tex.clear();
                 tex.allocate( (int)roi.width, (int)roi.height, glchannels );
             }
-            tex.loadData( getRoiPixelsRef() );
+            tex.loadData( getRoiPixels() );
             bTextureDirty = false;
         }
 
@@ -873,14 +873,9 @@ void ofxCvImage::setRoiFromPixels( const ofPixels & pixels ){
 }
 
 //--------------------------------------------------------------------------------
-unsigned char*  ofxCvImage::getPixels(){
-	return getPixelsRef().getPixels();
-}
-
-//--------------------------------------------------------------------------------
-ofPixelsRef ofxCvImage::getPixelsRef(){
+ofPixels& ofxCvImage::getPixels(){
 	if(!bAllocated) {
-		ofLogWarning("ofxCvImage") << "getPixelsRef(): image not allocated";	
+		ofLogWarning("ofxCvImage") << "getPixels(): image not allocated";
 	} else if(bPixelsDirty) {
 		IplImage * cv8bit= getCv8BitsImage();
 
@@ -898,16 +893,9 @@ ofPixelsRef ofxCvImage::getPixelsRef(){
 }
 
 //--------------------------------------------------------------------------------
-unsigned char*  ofxCvImage::getRoiPixels(){
-	return getRoiPixelsRef().getPixels();
-}
-
-
-
-//--------------------------------------------------------------------------------
-ofPixelsRef  ofxCvImage::getRoiPixelsRef(){
+ofPixels& ofxCvImage::getRoiPixels(){
 	if(!bAllocated) {
-		ofLogWarning("ofxCvImage") << "getRoiPixelsRef(): image not allocated";	
+		ofLogWarning("ofxCvImage") << "getRoiPixels(): image not allocated";
 	} else if(bRoiPixelsDirty) {
 		IplImage * cv8bit= getCv8BitsRoiImage();
 		ofRectangle roi = getROI();
@@ -918,29 +906,16 @@ ofPixelsRef  ofxCvImage::getRoiPixelsRef(){
 	return roiPixels;
 }
 
-
 //--------------------------------------------------------------------------------
-const unsigned char*  ofxCvImage::getPixels() const{
+const ofPixels& ofxCvImage::getPixels() const{
 	ofxCvImage* mutImage = const_cast<ofxCvImage*>(this);
 	return mutImage->getPixels();
 }
 
 //--------------------------------------------------------------------------------
-const ofPixelsRef ofxCvImage::getPixelsRef() const{
-	ofxCvImage* mutImage = const_cast<ofxCvImage*>(this);
-	return mutImage->getPixelsRef();
-}
-
-//--------------------------------------------------------------------------------
-const unsigned char* ofxCvImage::getRoiPixels() const{
+const ofPixels& ofxCvImage::getRoiPixels() const{
 	ofxCvImage* mutImage = const_cast<ofxCvImage*>(this);
 	return mutImage->getRoiPixels();
-}
-
-//--------------------------------------------------------------------------------
-const ofPixelsRef ofxCvImage::getRoiPixelsRef() const{
-	ofxCvImage* mutImage = const_cast<ofxCvImage*>(this);
-	return mutImage->getRoiPixelsRef();
 }
 
 //--------------------------------------------------------------------------------

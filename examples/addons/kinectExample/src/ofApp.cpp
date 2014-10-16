@@ -72,9 +72,8 @@ void ofApp::update() {
 		} else {
 			
 			// or we do it ourselves - show people how they can work with the pixels
-			unsigned char * pix = grayImage.getPixels();
-			
-			int numPixels = grayImage.getWidth() * grayImage.getHeight();
+			ofPixels & pix = grayImage.getPixels();
+			int numPixels = pix.size();
 			for(int i = 0; i < numPixels; i++) {
 				if(pix[i] < nearThreshold && pix[i] > farThreshold) {
 					pix[i] = 255;

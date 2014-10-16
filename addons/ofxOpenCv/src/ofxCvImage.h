@@ -79,15 +79,11 @@ class ofxCvImage : public ofBaseImage {
 
     // Get Pixel Data
     //
-    virtual unsigned char*  getPixels();
-    virtual ofPixelsRef		getPixelsRef();
-    virtual unsigned char*  getRoiPixels();
-    virtual ofPixelsRef		getRoiPixelsRef();
+    virtual ofPixels&		getPixels();
+    virtual ofPixels&		getRoiPixels();
     virtual IplImage*  getCvImage() { return cvImage; };
-    virtual const unsigned char*  getPixels() const;
-    virtual const ofPixelsRef		getPixelsRef() const;
-    virtual const unsigned char*  getRoiPixels() const;
-    virtual const ofPixelsRef		getRoiPixelsRef() const;
+    virtual const ofPixels&		getPixels() const;
+    virtual const ofPixels&		getRoiPixels() const;
     virtual const IplImage*  getCvImage() const { return cvImage; };
 
 
