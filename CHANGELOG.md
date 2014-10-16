@@ -45,14 +45,26 @@ CORE
 	+ ofTruetypeFont: kerning and better hinting and spacing
 	+ ofDrawBitmapString: can draw any type not only strings
 	/ ofImage: can load image via https
+	/ getPixelsRef() deprecated and getPixels() now returns ofPixels
+	  temporarily ofPixels auto casts to unsigned char* so old code
+	  is still compatible
+	+ ofPixels support for YUV formats, the prefered allocation method
+	  changes from channels to ofPixelFormat like:
+		pix.allocate(w,h,OF_PIXELS_RGB)
 
 ### utils
 	/ better timming in fps calculation
 	+ ofFpsCounter allows to easily meassure the fps of any element
 	+ ofTimer allows to create a precise periodic waitable timer
+	+ ofThreadChannel: thread synchronization primitive to make it
+	  easier to work with threads avoiding the need for mutexes in
+	  most cases. see example/utils/threadChannelExample
 
 ### video
 	/ gstreamer: fix memory leaks when closing a video element
+	+ gstreamer: support for YUV formats when using the programmable renderer
+	  using OF_PIXELS_NATIVE as pixel format will choose the fastest format
+	/ gstreamer: faster reload by default and optional asynchronous load
 
 PLATFORM SPECIFIC
 -----------------
