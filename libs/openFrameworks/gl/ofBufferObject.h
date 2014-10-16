@@ -117,11 +117,12 @@ public:
 	T * mapRange(GLintptr offset, GLsizeiptr length, GLenum access){
 		return static_cast<T*>(mapRange(offset,length,access));
 	}
+
+	void copyTo(ofBufferObject & dstBuffer);
 #endif
 
 	GLsizeiptr size() const;
 
-	void copyTo(ofBufferObject & dstBuffer);
 private:
 	struct Data{
 		Data(GLuint id);
