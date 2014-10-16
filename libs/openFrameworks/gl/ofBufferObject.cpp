@@ -148,12 +148,6 @@ void * ofBufferObject::mapRange(GLintptr offset, GLsizeiptr length, GLenum acces
 void ofBufferObject::unmapRange(){
 	unmap();
 }
-#endif
-
-GLsizeiptr ofBufferObject::size() const{
-	if(data) return data->size;
-	else return 0;
-}
 
 void ofBufferObject::copyTo(ofBufferObject & dstBuffer){
 	bind(GL_COPY_READ_BUFFER);
@@ -161,4 +155,10 @@ void ofBufferObject::copyTo(ofBufferObject & dstBuffer){
 	glCopyBufferSubData(GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,0,0,size());
 	unbind(GL_COPY_READ_BUFFER);
 	dstBuffer.unbind(GL_COPY_WRITE_BUFFER);
+}
+#endif
+
+GLsizeiptr ofBufferObject::size() const{
+	if(data) return data->size;
+	else return 0;
 }

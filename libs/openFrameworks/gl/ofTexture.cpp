@@ -485,11 +485,14 @@ void ofTexture::loadData(const ofFloatPixels & pix, int glFormat){
 	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
 }
 
+#ifndef TARGET_OPENGLES
+//----------------------------------------------------------
 void ofTexture::loadData(const ofBufferObject & buffer, int glFormat, int glType){
 	buffer.bind(GL_PIXEL_UNPACK_BUFFER);
 	loadData(0,texData.width,texData.height,glFormat,glType);
 	buffer.unbind(GL_PIXEL_UNPACK_BUFFER);
 }
+#endif
 
 //----------------------------------------------------------
 void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glType){
@@ -1083,7 +1086,6 @@ void ofTexture::readToPixels(ofShortPixels & pixels) const {
 #endif
 }
 
-//----------------------------------------------------------
 void ofTexture::readToPixels(ofFloatPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
@@ -1093,6 +1095,8 @@ void ofTexture::readToPixels(ofFloatPixels & pixels) const {
 #endif
 }
 
+#ifndef TARGET_OPENGLES
+//----------------------------------------------------------
 void ofTexture::copyTo(ofBufferObject & buffer) const{
 	buffer.bind(GL_PIXEL_PACK_BUFFER);
 	bind();
@@ -1101,6 +1105,7 @@ void ofTexture::copyTo(ofBufferObject & buffer) const{
 	buffer.unbind(GL_PIXEL_PACK_BUFFER);
 
 }
+#endif
 
 //----------------------------------------------------------
 float ofTexture::getHeight() const {
