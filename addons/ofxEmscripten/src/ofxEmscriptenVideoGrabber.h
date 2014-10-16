@@ -21,10 +21,8 @@ public:
 	void	update();
 	bool	isFrameNew() const;
 
-	unsigned char 	* getPixels();
-	ofPixels & 		  getPixelsRef();
-	const unsigned char * getPixels() const;
-	const ofPixels & getPixelsRef() const;
+	ofPixels &  getPixels();
+	const ofPixels & getPixels() const;
 
 	void	close();
 

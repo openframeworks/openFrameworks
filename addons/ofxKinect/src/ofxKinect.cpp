@@ -443,39 +443,19 @@ ofColor ofxKinect::getColorAt(const ofPoint & p)  const{
 	return getColorAt(p.x, p.y);
 }
 
-//---------------------------------------------------------------------------
-unsigned char * ofxKinect::getPixels() {
-	return videoPixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-unsigned char * ofxKinect::getDepthPixels() {
-	return depthPixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-unsigned short * ofxKinect::getRawDepthPixels() {
-	return depthPixelsRaw.getPixels();
-}
-
-//---------------------------------------------------------------------------
-float* ofxKinect::getDistancePixels() {
-	return distancePixels.getPixels();
-}
-
-ofPixels & ofxKinect::getPixelsRef(){
+ofPixels & ofxKinect::getPixels(){
 	return videoPixels;
 }
 
-ofPixels & ofxKinect::getDepthPixelsRef(){
+ofPixels & ofxKinect::getDepthPixels(){
 	return depthPixels;
 }
 
-ofShortPixels & ofxKinect::getRawDepthPixelsRef(){
+ofShortPixels & ofxKinect::getRawDepthPixels(){
 	return depthPixelsRaw;
 }
 
-ofFloatPixels & ofxKinect::getDistancePixelsRef(){
+ofFloatPixels & ofxKinect::getDistancePixels(){
 	return distancePixels;
 }
 
@@ -495,41 +475,19 @@ ofTexture& ofxKinect::getDepthTextureReference(){
 	return depthTex;
 }
 
-
-
-//---------------------------------------------------------------------------
-const unsigned char * ofxKinect::getPixels() const{
-	return videoPixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-const unsigned char * ofxKinect::getDepthPixels() const{
-	return depthPixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-const unsigned short * ofxKinect::getRawDepthPixels() const{
-	return depthPixelsRaw.getPixels();
-}
-
-//---------------------------------------------------------------------------
-const float* ofxKinect::getDistancePixels() const{
-	return distancePixels.getPixels();
-}
-
-const ofPixels & ofxKinect::getPixelsRef() const{
+const ofPixels & ofxKinect::getPixels() const{
 	return videoPixels;
 }
 
-const ofPixels & ofxKinect::getDepthPixelsRef() const{
+const ofPixels & ofxKinect::getDepthPixels() const{
 	return depthPixels;
 }
 
-const ofShortPixels & ofxKinect::getRawDepthPixelsRef() const{
+const ofShortPixels & ofxKinect::getRawDepthPixels() const{
 	return depthPixelsRaw;
 }
 
-const ofFloatPixels & ofxKinect::getDistancePixelsRef() const{
+const ofFloatPixels & ofxKinect::getDistancePixels() const{
 	return distancePixels;
 }
 

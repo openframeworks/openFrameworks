@@ -658,7 +658,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		}
 
 		if(int(instances[cameraId]->getWidth())!=width || int(instances[cameraId]->getHeight())!=height){
-			grabber->getAuxBuffer().resizeTo(instances[cameraId]->getPixelsRef());
+			grabber->getAuxBuffer().resizeTo(instances[cameraId]->getPixels());
 		}
 		/*acc_time += ofGetSystemTime() - time_one_frame;
 		num_frames ++;
@@ -669,7 +669,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 
 		env->ReleasePrimitiveArrayCritical(array,buffer,0);
 		newPixels = true;
-		ofNotifyEvent(grabber->newFrameE,instances[cameraId]->getPixelsRef());
+		ofNotifyEvent(grabber->newFrameE,instances[cameraId]->getPixels());
 		//((ofxAndroidApp*)ofGetAppPtr())->imageReceived(pixels,width,height);
 		return 0;
 	}
