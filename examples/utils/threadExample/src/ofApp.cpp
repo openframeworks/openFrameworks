@@ -23,11 +23,19 @@ void ofApp::draw()
     std::stringstream ss;
     ss << "I am a the main opengl thread." << std::endl;
     ss << "my current count is: " << mainAppsCount << std::endl;
+
     ofDrawBitmapString(ss.str(), 350, 56);
 
     ofSetHexColor(0xff0033);
 
-    ofDrawBitmapString("Press 's' to stop the thread and 'a' to start it", 50, 160);
+    ss.str(""); // Clear the string stream.
+
+    ss << "Press 's' to stop the thread." << std::endl;
+    ss << "Press 'a' to start it." << std::endl;
+    ss << "Press '!' to throw an exception." << std::endl;
+
+    ofDrawBitmapString(ss.str(), 50, 140);
+
 }
 
 void ofApp::keyPressed(int key)
@@ -39,5 +47,9 @@ void ofApp::keyPressed(int key)
     else if (key == 's')
     {
         threadedObject.stop();
+    }
+    else if (key == '!')
+    {
+        threadedObject.throwTestException();
     }
 }
