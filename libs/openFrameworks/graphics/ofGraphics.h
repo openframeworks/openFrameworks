@@ -167,8 +167,8 @@ void ofSetRectMode(ofRectMode mode);		// set the mode, either to OF_RECTMODE_COR
 // background
 
 // bg color
-float * ofBgColorPtr();
-ofColor ofGetBackground();
+OF_DEPRECATED_MSG("Use ofGetBackgroundColor instead",ofColor ofGetBackground());
+ofColor ofGetBackgroundColor();
 void ofBackground(int r, int g, int b, int a=255);
 void ofBackground(int brightness, int alpha = 255);
 void ofBackground(const ofColor & c);
@@ -181,7 +181,8 @@ void ofSetBackgroundColor(const ofColor & c);
 void ofSetBackgroundColorHex(int hexColor, int alpha = 255);
 
 // user's access to settings (bgAuto, corner mode):
-void 	ofSetBackgroundAuto(bool bManual);		// default is true
+void ofSetBackgroundAuto(bool bManual);		// default is true
+bool ofGetBackgroundAuto();
 
 void ofClear(float r, float g, float b, float a=0);
 void ofClear(float brightness, float a=0);
@@ -189,7 +190,7 @@ void ofClear(const ofColor & c);
 void ofClearAlpha();
 
 // OF's access to settings (bgAuto, origin, corner mode):
-bool 	ofbClearBg();
+bool OF_DEPRECATED_MSG("Use ofGetBackgroundAuto instead",ofbClearBg());
 
 // end background
 //---------------------------------------------------

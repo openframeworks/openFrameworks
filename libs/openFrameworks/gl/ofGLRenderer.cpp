@@ -30,6 +30,26 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor)
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
 }
 
+void ofGLRenderer::startRender(){
+	viewport();
+    // to do non auto clear on PC for now - we do something like "single" buffering --
+    // it's not that pretty but it work for the most part
+
+    #ifdef TARGET_WIN32
+    if (getBackgroundAuto() == false){
+        glDrawBuffer (GL_FRONT);
+    }
+    #endif
+
+	if ( getBackgroundAuto() ){// || ofGetFrameNum() < 3){
+		clear();
+	}
+}
+
+void ofGLRenderer::finishRender(){
+
+}
+
 //----------------------------------------------------------
 void ofGLRenderer::update(){
     matrixStack.setRenderSurface(*ofGetWindowPtr());
@@ -682,6 +702,11 @@ void ofGLRenderer::setHexColor(int hexColor){
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::clear(){
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::clear(float r, float g, float b, float a) {
 	glClearColor(r / 255., g / 255., b / 255., a / 255.);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -706,19 +731,24 @@ void ofGLRenderer::setBackgroundAuto(bool bAuto){
 }
 
 //----------------------------------------------------------
-bool ofGLRenderer::bClearBg(){
+bool ofGLRenderer::getBackgroundAuto(){
 	return bBackgroundAuto;
 }
 
 //----------------------------------------------------------
-ofFloatColor & ofGLRenderer::getBgColor(){
+ofColor ofGLRenderer::getBackgroundColor(){
 	return bgColor;
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::background(const ofColor & c){
-	bgColor = c;
+void ofGLRenderer::setBackgroundColor(const ofColor & color){
+	bgColor = color;
 	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::background(const ofColor & c){
+	setBackgroundColor(c);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

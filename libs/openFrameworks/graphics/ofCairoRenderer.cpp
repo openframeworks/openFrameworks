@@ -129,6 +129,15 @@ void ofCairoRenderer::close(){
 	}
 }
 
+
+void ofCairoRenderer::startRender(){
+
+}
+
+void ofCairoRenderer::finishRender(){
+
+}
+
 void ofCairoRenderer::update(){
 	if(!surface || !cr)
 	cairo_surface_flush(surface);
@@ -136,7 +145,7 @@ void ofCairoRenderer::update(){
 		page=1;
 	}else{
 		page++;
-		if(bClearBg()){
+		if(getBackgroundAuto()){
 			cairo_show_page(cr);
 		}else{
 			cairo_copy_page(cr);
@@ -725,12 +734,12 @@ void ofCairoRenderer::setHexColor( int hexColor ){
 //--------------------------------------------
 // transformations
 //our openGL wrappers
-
 ofMatrix4x4 ofCairoRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const{
 	ofLogWarning() << "getCurrentMatrix not yet implemented for Cairo Renderer.";
 	return ofMatrix4x4();
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::pushMatrix(){
 	if(!surface || !cr) return;
 	cairo_matrix_t matrix;
@@ -741,6 +750,7 @@ void ofCairoRenderer::pushMatrix(){
 	modelViewStack.push(modelView);
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::popMatrix(){
 	if(!surface || !cr) return;
 	cairo_set_matrix(cr,&matrixStack.top());
@@ -751,6 +761,7 @@ void ofCairoRenderer::popMatrix(){
 	modelViewStack.pop();
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::translate(float x, float y, float z ){
 	if(!surface || !cr) return;
 	cairo_matrix_t matrix;
@@ -763,10 +774,12 @@ void ofCairoRenderer::translate(float x, float y, float z ){
 
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::translate(const ofPoint & p){
 	translate(p.x,p.y,p.z);
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::scale(float xAmnt, float yAmnt, float zAmnt ){
 	if(!surface || !cr) return;
 	cairo_matrix_t matrix;
@@ -778,18 +791,22 @@ void ofCairoRenderer::scale(float xAmnt, float yAmnt, float zAmnt ){
 	modelView.glScale(xAmnt,yAmnt,zAmnt);
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::rotateZ(float degrees){
     rotate(degrees,0,0,1);
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::rotate(float degrees){
 	rotateZ(degrees);
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::matrixMode(ofMatrixMode mode){
 	currentMatrixMode = mode;
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::loadIdentityMatrix (void){
 	if(!surface || !cr) return;
 	if(currentMatrixMode==OF_MATRIX_MODELVIEW){
@@ -806,6 +823,7 @@ void ofCairoRenderer::loadIdentityMatrix (void){
 	}
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::loadMatrix (const ofMatrix4x4 & m){
 	if(!surface || !cr) return;
 	if(!b3D) return;
@@ -816,6 +834,7 @@ void ofCairoRenderer::loadMatrix (const ofMatrix4x4 & m){
 	}
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::loadMatrix (const float * m){
 	if(!surface || !cr) return;
 	if(!b3D) return;
@@ -827,6 +846,7 @@ void ofCairoRenderer::loadMatrix (const float * m){
 
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::multMatrix (const ofMatrix4x4 & m){
 	if(!surface || !cr) return;
 	if(!b3D) return;
@@ -837,6 +857,7 @@ void ofCairoRenderer::multMatrix (const ofMatrix4x4 & m){
 	}
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::multMatrix (const float * m){
 	if(!surface || !cr) return;
 	if(!b3D) return;
@@ -848,6 +869,7 @@ void ofCairoRenderer::multMatrix (const float * m){
 	}
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
     if(!surface || !cr) return;
 
@@ -863,29 +885,35 @@ void ofCairoRenderer::rotate(float degrees, float vecX, float vecY, float vecZ){
     modelView.glRotate(degrees,vecX,vecY,vecZ);
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::rotateX(float degrees){
 	rotate(degrees,1,0,0);
 }
+//----------------------------------------------------------
 void ofCairoRenderer::rotateY(float degrees){
 	rotate(degrees,0,1,0);
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::setupScreen(){
 	if(!surface || !cr) return;
 
 	setupScreenPerspective();	// assume defaults
 }
 
+//----------------------------------------------------------
 // screen coordinate things / default gl values
 void ofCairoRenderer::pushView(){
 	viewportStack.push(viewportRect);
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::popView(){
 	viewportRect = viewportStack.top();
 	viewportStack.pop();
 };
 
+//----------------------------------------------------------
 // setup matrices and viewport (upto you to push and pop view before and after)
 // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
@@ -893,6 +921,7 @@ void ofCairoRenderer::viewport(ofRectangle v){
 	viewport(v.x,v.y,v.width,v.height);
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
 	if(width < 0) width = ofGetWindowWidth();
 	if(height < 0) height = ofGetWindowHeight();
@@ -913,6 +942,7 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 	cairo_clip(cr);
 };
 
+//----------------------------------------------------------
 void ofCairoRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
 	if(!b3D) return;
 	if(width < 0) width = ofGetWidth();
@@ -981,6 +1011,7 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, float fo
 	}
 };
 
+//----------------------------------------------------------
 void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist){
 	if(!b3D) return;
 	if(width < 0) width = ofGetWidth();
@@ -1044,68 +1075,87 @@ void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist
 	}
 };
 
+//----------------------------------------------------------
 ofRectangle ofCairoRenderer::getCurrentViewport() const{
 	return viewportRect;
 };
 
+//----------------------------------------------------------
 ofRectangle ofCairoRenderer::getNativeViewport() const{
 	return viewportRect;
 };
 
-
+//----------------------------------------------------------
 int ofCairoRenderer::getViewportWidth() const{
 	return viewportRect.width;
 };
 
+//----------------------------------------------------------
 int ofCairoRenderer::getViewportHeight() const{
 	return viewportRect.height;
 };
 
+//----------------------------------------------------------
 void ofCairoRenderer::setOrientation(ofOrientation orientation, bool vFlip){
 	ofLogError("ofCairoRenderer") << "orientation not supported yet";
 }
 
+//----------------------------------------------------------
 bool ofCairoRenderer::isVFlipped() const{
 	return true;
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::loadViewMatrix(const ofMatrix4x4 & m){
 	ofLogError("ofCairoRenderer") << "view matrix not supported yet";
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::multViewMatrix(const ofMatrix4x4 & m){
 	ofLogError("ofCairoRenderer") << "view matrix not supported yet";
 }
 
+//----------------------------------------------------------
 ofMatrix4x4 ofCairoRenderer::getCurrentViewMatrix() const{
 	ofLogError("ofCairoRenderer") << "view matrix not supported yet";
 	return ofMatrix4x4::newIdentityMatrix();
 }
 
+//----------------------------------------------------------
 ofMatrix4x4 ofCairoRenderer::getCurrentNormalMatrix() const{
 	ofLogError("ofCairoRenderer") << "normal matrix not supported yet";
 	return ofMatrix4x4::newIdentityMatrix();
 }
 
+//----------------------------------------------------------
 ofMatrix4x4 ofCairoRenderer::getCurrentOrientationMatrix() const{
 	ofLogError("ofCairoRenderer") << "orientation matrix not supported yet";
 	return ofMatrix4x4::newIdentityMatrix();
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::setCircleResolution(int){
 
 }
 
+//----------------------------------------------------------
 void ofCairoRenderer::setCoordHandedness(ofHandednessType handedness){
 
 };
 
+//----------------------------------------------------------
 ofHandednessType ofCairoRenderer::getCoordHandedness() const{
 	return OF_LEFT_HANDED;
 };
 
+//----------------------------------------------------------
 void ofCairoRenderer::setupGraphicDefaults(){
 };
+
+//----------------------------------------------------------
+void ofCairoRenderer::clear(){
+	clear(bgColor.r,bgColor.g,bgColor.b,bgColor.a);
+}
 
 //----------------------------------------------------------
 void ofCairoRenderer::clear(float r, float g, float b, float a) {
@@ -1130,12 +1180,17 @@ void ofCairoRenderer::setBackgroundAuto(bool bAuto){
 }
 
 //----------------------------------------------------------
-bool ofCairoRenderer::bClearBg(){
+bool ofCairoRenderer::getBackgroundAuto(){
 	return bBackgroundAuto;
 }
 
 //----------------------------------------------------------
-ofFloatColor & ofCairoRenderer::getBgColor(){
+void ofCairoRenderer::setBackgroundColor(const ofColor & c){
+	bgColor = c;
+}
+
+//----------------------------------------------------------
+ofColor ofCairoRenderer::getBackgroundColor(){
 	return bgColor;
 }
 

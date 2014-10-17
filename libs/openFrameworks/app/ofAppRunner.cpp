@@ -292,7 +292,7 @@ void ofGLReadyCallback(){
 
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
 	ofSetupGraphicDefaults();
-	ofBackground(200);
+	ofSetBackgroundColor(200);
 	ofSetVerticalSync(true);
 	ofEnableAlphaBlending();
 }

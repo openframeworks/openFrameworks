@@ -72,6 +72,19 @@ ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
 void ofGLProgrammableRenderer::startRender() {
 	matrixStack.setRenderSurface(*ofGetWindowPtr());
 	beginDefaultShader();
+	viewport();
+    // to do non auto clear on PC for now - we do something like "single" buffering --
+    // it's not that pretty but it work for the most part
+
+    #ifdef TARGET_WIN32
+    if (getBackgroundAuto() == false){
+        glDrawBuffer (GL_FRONT);
+    }
+    #endif
+
+	if ( getBackgroundAuto() ){// || ofGetFrameNum() < 3){
+		clear();
+	}
 }
 
 //----------------------------------------------------------
@@ -758,6 +771,11 @@ void ofGLProgrammableRenderer::setHexColor(int hexColor){
 }
 
 //----------------------------------------------------------
+void ofGLProgrammableRenderer::clear(){
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::clear(float r, float g, float b, float a) {
 	glClearColor(r / 255., g / 255., b / 255., a / 255.);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -782,13 +800,19 @@ void ofGLProgrammableRenderer::setBackgroundAuto(bool bAuto){
 }
 
 //----------------------------------------------------------
-bool ofGLProgrammableRenderer::bClearBg(){
+bool ofGLProgrammableRenderer::getBackgroundAuto(){
 	return bBackgroundAuto;
 }
 
 //----------------------------------------------------------
-ofFloatColor & ofGLProgrammableRenderer::getBgColor(){
+ofColor ofGLProgrammableRenderer::getBackgroundColor(){
 	return bgColor;
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::setBackgroundColor(const ofColor & c){
+	bgColor = c;
+	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
 }
 
 //----------------------------------------------------------
