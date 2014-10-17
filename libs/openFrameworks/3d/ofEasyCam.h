@@ -101,6 +101,7 @@ private:
 	bool bApplyInertia;
 	bool bDoTranslate;
 	bool bDoRotate;
+	bool bDoScrollZoom;
 	bool bInsideArcball;
 	bool bMouseInputEnabled;
 	bool bDistanceSet;
@@ -132,6 +133,7 @@ private:
 	void mousePressed(ofMouseEventArgs & mouse);
 	void mouseReleased(ofMouseEventArgs & mouse);
 	void mouseDragged(ofMouseEventArgs & mouse);
+	void mouseScrolled(ofMouseEventArgs & mouse);
 	void updateMouse(const ofMouseEventArgs & mouse);
 
     /// \brief The key used to differentiate between translation and rotation.
