@@ -24,13 +24,13 @@ void ofDrawAxis(float size);
 /// The xz plane (at y=0) is drawn in green.
 /// The xy plane (at z=0) is drawn in blue.
 ///
-/// \param scale The extent of each grid plane, on each side of the origin. A scale of 10 will produce a set of grid which are 20 units wide (10 on the positive side of the origin, 10 on the negative side).
-/// \param ticks The number of ticks (i.e. subdivisions) on each side of the origin. 
-/// \param labels Whether or not labels are drawn. 
+/// \param stepSize distance between (parallel) lines on the grid
+/// \param numberOfSteps number of lines to draw on each side of the central axis of the grid. A number of 8 will draw 8 lines on each side of the central axis, plus one line at the central axis.
+/// \param labels Whether or not labels are drawn.
 /// \param x Whether or not the yz plane (at x=0) is drawn.
 /// \param y Whether or not the xz plane (at y=0) is drawn.
 /// \param z Whether or not the xy plane (at z=0) is drawn.
-void ofDrawGrid(float scale = 10.0f, float ticks = 8.0f, bool labels = false, bool x = true, bool y = true, bool z = true);
+void ofDrawGrid(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labels = false, bool x = true, bool y = true, bool z = true);
 
 /// \brief Draws the YZ grid plane representing the current reference frame.
 ///
@@ -40,10 +40,10 @@ void ofDrawGrid(float scale = 10.0f, float ticks = 8.0f, bool labels = false, bo
 /// ofDrawBitmapString internally.) The grid is drawn with the current color
 /// (i.e. set with ofSetColor). 
 ///
-/// \param scale The extent of each grid plane, on each side of the origin. A scale of 10 will produce a grid which is 20 units wide (10 on the positive side of the origin, 10 on the negative side).
-/// \param ticks The number of ticks (i.e. subdivisions) on each side of the origin. 
-/// \param labels Whether or not labels are drawn. 
-void ofDrawGridPlane(float scale, float ticks = 8.0f, bool labels = false);
+/// \param stepSize distance between (parallel) lines on the grid
+/// \param numberOfSteps number of lines to draw on each side of the central axis of the grid. A number of 8 will draw 8 lines on each side of the central axis, plus one line at the central axis.
+/// \param labels Whether or not labels are drawn.
+void ofDrawGridPlane(float stepSize = 1.25f, size_t numberOfSteps = 8, bool labels = false );
 
 /// \brief Draws an arrow with the current color. 
 ///
