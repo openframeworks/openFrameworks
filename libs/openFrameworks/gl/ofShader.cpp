@@ -343,7 +343,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
-		ofLog(logLevel, "ofShader", (nameForType(type) + " shader reports:\n" + infoBuffer).c_str());
+		ofLog(logLevel, "ofShader %s shader reports:\n%s",nameForType(type).c_str(), infoBuffer);
 		if (shaderSource.find(type) != shaderSource.end()) {
 			// The following regexp should match shader compiler error messages by Nvidia and ATI.
 			// Unfortunately, each vendor's driver formats error messages slightly different.

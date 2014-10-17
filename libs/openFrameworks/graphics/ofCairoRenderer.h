@@ -30,6 +30,8 @@ public:
 	void close();
 	void flush();
 
+	void startRender();
+	void finishRender();
 	void update();
 
 	using ofBaseRenderer::draw;
@@ -127,15 +129,17 @@ public:
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	ofFloatColor & getBgColor();
-	bool bClearBg();
+	void setBackgroundColor(const ofColor & c);
+	ofColor getBackgroundColor();
 	void background(const ofColor & c);
 	void background(float brightness);
 	void background(int hexColor, float _a=255.0f);
 	void background(int r, int g, int b, int a=255);
 
 	void setBackgroundAuto(bool bManual);		// default is true
+	bool getBackgroundAuto();
 
+	void clear();
 	void clear(float r, float g, float b, float a=0);
 	void clear(float brightness, float a=0);
 	void clearAlpha();
