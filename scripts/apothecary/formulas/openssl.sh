@@ -33,9 +33,7 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	if [ "$TYPE" == "android" ] ; then
-		installAndroidToolchain
-	elif [ "$TYPE" == "ios" ] ; then
+	if [ "$TYPE" == "ios" ] ; then
 		# create output directories
 		mkdir -p "src"
 		mkdir -p "bin"
@@ -393,6 +391,28 @@ function build() {
 		cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
 
 		unset TOOLCHAIN DEVELOPER
+	elif [ "$TYPE" == "android" ]; then
+		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
+		
+        # armv7
+        ABI=armeabi-v7a
+        local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
+        source ../../formulas/android_configure.sh $ABI
+        export CC="$CC $CFLAGS $LDFLAGS"
+        ./Configure --prefix=$BUILD_TO_DIR -no-ssl2 -no-ssl3 -no-comp -no-hw -no-engine android-armv7 #--host armv7a-linux-android --enable-static=yes --enable-shared=no
+        make clean
+        make
+        make install
+        
+        # x86
+        ABI=x86
+        local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
+        source ../../formulas/android_configure.sh $ABI
+        export CC="$CC $CFLAGS $LDFLAGS"
+        ./Configure --prefix=$BUILD_TO_DIR -no-ssl2 -no-ssl3 -no-comp -no-hw -no-engine android-x86 #--host x86-linux-android --enable-static=yes --enable-shared=no
+        make clean
+        make
+        make install
 
 	else 
 
@@ -481,15 +501,23 @@ function copy() {
 	#echoWarning "TODO: copy $TYPE lib"
 
 	# # headers
+	if [ -d $1/include/ ]; then
+	    rm -r $1/include/
+	fi
+	
 	mkdir -pv $1/include/
 	# storing a copy of the include in lib/include/
 	# set via: cp -R "build/$TYPE/x86_64/include/" "lib/include/"
-	cp -Rv lib/include/ $1/include/
 
 	rm -r $1/lib/$TYPE/*
 
 	# libs
-	 if [ "$TYPE" == "ios" ] ; then
+	 if [ "$TYPE" == "osx" ] ; then	
+	 	echoWarning "TODO: copy $TYPE lib"
+	# 	mkdir -p $1/lib/$TYPE
+	# 	cp -v lib/Darwin/*.a $1/lib/$TYPE
+	 elif [ "$TYPE" == "ios" ] ; then
+	    cp -Rv lib/include/ $1/include/
 	 	mkdir -p $1/lib/$TYPE
 	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	 elif [ "$TYPE" == "osx" ] ; then
@@ -513,9 +541,15 @@ function copy() {
 	# elif [ "$TYPE" == "linuxarmv7l" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/Linux/armv7l/*.a $1/lib/$TYPE
-	# elif [ "$TYPE" == "android" ] ; then
-	# 	mkdir -p $1/lib/$TYPE/armeabi
-	# 	cp -v lib/Android/armeabi/*.a $1/lib/$TYPE/armeabi
+	elif [ "$TYPE" == "android" ] ; then
+	    cp -Rv build/android/armeabi-v7a/include/ $1/
+	    if [ -d $1/lib/$TYPE/ ]; then
+	        rm -r $1/lib/$TYPE/
+	    fi
+	    mkdir -p $1/lib/$TYPE/armeabi-v7a
+		cp -rv build/android/armeabi-v7a/lib/*.a $1/lib/$TYPE/armeabi-v7a/
+	    mkdir -p $1/lib/$TYPE/x86
+		cp -rv build/android/x86/lib/*.a $1/lib/$TYPE/x86/
 
 	# 	mkdir -p $1/lib/$TYPE/armeabi-v7a
 	# 	cp -v lib/Android/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a
