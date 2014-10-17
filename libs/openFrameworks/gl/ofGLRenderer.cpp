@@ -1145,7 +1145,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	glAlphaFunc(GL_GREATER, 0);
 #endif
 
-	ofMesh charMesh = ofBitmapStringGetMesh(textString,x,y,mode);
+	ofMesh charMesh = ofBitmapStringGetMesh(textString,0,0,mode);
 	ofBitmapStringGetTextureRef().bind();
 	draw(charMesh,OF_MESH_FILL,false,true,false);
 	ofBitmapStringGetTextureRef().unbind();

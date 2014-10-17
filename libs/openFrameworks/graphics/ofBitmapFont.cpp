@@ -446,8 +446,8 @@ ofMesh ofBitmapStringGetMesh(const string & text, int x, int y, ofDrawBitmapMode
 		//y = lines*lineHeight;
 	}
 
-	float sx = 0;
-	float sy = -fontSize;
+	float sx = x;
+	float sy = y-fontSize;
 
 	for(int c = 0; c < len; c++){
 		if(text[c] == '\n'){
