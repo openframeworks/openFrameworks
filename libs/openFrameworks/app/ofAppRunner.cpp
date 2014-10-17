@@ -33,6 +33,7 @@
 
 static shared_ptr<ofBaseApp>			OFSAptr;
 static shared_ptr<ofAppBaseWindow> 		window;
+static ofThreadErrorLogger threadErrorLogger;
 
 //========================================================================
 // default windowing
@@ -103,6 +104,7 @@ void ofRunApp(ofBaseApp * OFSA){
 
 //--------------------------------------
 void ofRunApp(shared_ptr<ofBaseApp> OFSA){
+	Poco::ErrorHandler::set(&threadErrorLogger);
 	OFSAptr = OFSA;
 	if(OFSAptr){
 		OFSAptr->mouseX = 0;
