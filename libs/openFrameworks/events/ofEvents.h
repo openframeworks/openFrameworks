@@ -103,6 +103,11 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 	,type(type)
 	,button(button){}
 
+	ofMouseEventArgs(Type type, float x, float y)
+	:ofVec2f(x,y)
+	,type(type)
+	,button(0){}
+
 	Type type;
 	int button;
 };
@@ -228,8 +233,6 @@ class ofCoreEvents {
 		mousePressed.disable();
 		mouseMoved.disable();
 		mouseScrolled.disable();
-		audioReceived.disable();
-		audioRequested.disable();
 		touchDown.disable();
 		touchUp.disable();
 		touchMoved.disable();
@@ -251,8 +254,6 @@ class ofCoreEvents {
 		mousePressed.enable();
 		mouseMoved.enable();
 		mouseScrolled.enable();
-		audioReceived.enable();
-		audioRequested.enable();
 		touchDown.enable();
 		touchUp.enable();
 		touchMoved.enable();
@@ -349,7 +350,7 @@ void ofNotifyMousePressed(int x, int y, int button);
 void ofNotifyMouseReleased(int x, int y, int button);
 void ofNotifyMouseDragged(int x, int y, int button);
 void ofNotifyMouseMoved(int x, int y);
-void ofNotifyMouseScrolled(double x, double y);
+void ofNotifyMouseScrolled(float x, float y);
 void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent);
 
 void ofNotifyExit();
