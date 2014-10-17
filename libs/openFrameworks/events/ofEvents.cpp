@@ -321,8 +321,8 @@ void ofNotifyMouseMoved(int x, int y){
 }
 
 //------------------------------------------
-void ofNotifyMouseScrolled(double x, double y){
-	static ofMouseEventArgs mouseEventArgs;
+void ofNotifyMouseScrolled(float x, float y){
+	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Scrolled,x,y);
 
 	mouseEventArgs.x = x;
 	mouseEventArgs.y = y;
