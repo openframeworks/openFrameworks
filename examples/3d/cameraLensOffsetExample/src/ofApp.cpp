@@ -5,7 +5,7 @@ void ofApp::setup(){
 	ofEnableSmoothing();
 	ofSetVerticalSync(true);
 	
-	video.initGrabber(320, 240);
+	video.setup(320, 240);
 	finder.setup("haarcascade_frontalface_default.xml");
 	usePreview = false;
 	

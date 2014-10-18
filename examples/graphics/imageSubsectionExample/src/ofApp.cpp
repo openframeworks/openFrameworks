@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetVerticalSync(true);
-	img.loadImage("indispensable.jpg");
+	img.load("indispensable.jpg");
 	ofSetLineWidth(2);
 }
 

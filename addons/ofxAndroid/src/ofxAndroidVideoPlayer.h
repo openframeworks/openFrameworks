@@ -20,7 +20,7 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		ofxAndroidVideoPlayer();
 		virtual ~ofxAndroidVideoPlayer();
 
-		bool loadMovie(string fileName);
+		bool load(string fileName);
 		void close(); // empty!
 		void update();
 

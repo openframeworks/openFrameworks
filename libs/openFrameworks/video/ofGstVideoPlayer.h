@@ -13,7 +13,7 @@ public:
 	bool 	setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat	getPixelFormat() const;
 	
-	bool 	loadMovie(string uri);
+	bool 	load(string uri);
 
 	void 	update();
 

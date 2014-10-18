@@ -6,7 +6,7 @@ void ofApp::setup(){
 
 	ofSetFrameRate(30);
 
-	grabber.initGrabber(480, 360, OF_PIXELS_BGRA);
+	grabber.setup(480, 360, OF_PIXELS_BGRA);
 	tex.allocate(grabber.getWidth(), grabber.getHeight(), GL_RGB);
 	
 	pix = new unsigned char[ (int)( grabber.getWidth() * grabber.getHeight() * 3.0) ];

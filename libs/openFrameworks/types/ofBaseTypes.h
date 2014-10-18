@@ -220,7 +220,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 
 	//needs implementing
 	virtual vector<ofVideoDevice>	listDevices() const = 0;
-	virtual bool	initGrabber(int w, int h) = 0;
+	virtual bool	setup(int w, int h) = 0;
 	
 	virtual float	getHeight() const = 0;
 	virtual float	getWidth() const = 0;
@@ -246,7 +246,7 @@ public:
 	virtual ~ofBaseVideoPlayer();
 	
 	//needs implementing
-	virtual bool				loadMovie(string name) = 0;
+	virtual bool				load(string name) = 0;
 	
 	virtual void				play() = 0;
 	virtual void				stop() = 0;		

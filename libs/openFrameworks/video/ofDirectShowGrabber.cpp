@@ -34,7 +34,7 @@ ofDirectShowGrabber::~ofDirectShowGrabber(){
 
 
 //--------------------------------------------------------------------
-bool ofDirectShowGrabber::initGrabber(int w, int h){
+bool ofDirectShowGrabber::setup(int w, int h){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW

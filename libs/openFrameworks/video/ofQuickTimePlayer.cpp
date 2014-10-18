@@ -270,7 +270,7 @@ void ofQuickTimePlayer::createImgMemAndGWorld(){
 
 
 //---------------------------------------------------------------------------
-bool ofQuickTimePlayer::loadMovie(string name){
+bool ofQuickTimePlayer::load(string name){
 
 
 	//--------------------------------------
