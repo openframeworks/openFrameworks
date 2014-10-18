@@ -65,13 +65,20 @@ public:
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
-	bool loadFont(string filename,
+	bool load(string filename,
                   int fontsize,
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=false,
                   bool makeContours=false,
                   float simplifyAmt=0.3,
                   int dpi=0);
+	OF_DEPRECATED_MSG("Use load instead",bool loadFont(string filename,
+                  int fontsize,
+                  bool _bAntiAliased=true,
+                  bool _bFullCharacterSet=false,
+                  bool makeContours=false,
+                  float simplifyAmt=0.3,
+                  int dpi=0));
 	
 	/// \brief Has the font been loaded successfully?
 	/// \returns true if the font was loaded.

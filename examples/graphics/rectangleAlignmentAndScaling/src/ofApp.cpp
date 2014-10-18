@@ -38,7 +38,7 @@ void ofApp::setup(){
     
     bUseImage = true;
     
-    img.loadImage("resolution_test_1080_mini.png");
+    img.load("resolution_test_1080_mini.png");
 
     targetColor  = ofColor(255,0,0);
     subjectColor = ofColor(255,255,0);

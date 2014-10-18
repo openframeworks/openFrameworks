@@ -54,7 +54,7 @@ void ofApp::draw(){
 		img.grabScreen(200,200,300,180);
 
 		string fileName = "snapshot_"+ofToString(10000+snapCounter)+".png";
-		img.saveImage(fileName);
+		img.save(fileName);
 		sprintf(snapString, "saved %s", fileName.c_str());
 		snapCounter++;
 		bSnapshot = false;

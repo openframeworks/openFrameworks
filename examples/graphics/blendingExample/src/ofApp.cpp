@@ -11,7 +11,7 @@ void ofApp::setup(){
 	ofBackground(50,50,50);	
 
     rainbow.allocate(256, 256, OF_IMAGE_COLOR_ALPHA);
-    rainbow.loadImage("rainbow.tiff");
+    rainbow.load("rainbow.tiff");
 }
 
 

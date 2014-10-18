@@ -5,9 +5,9 @@ void ofApp::setup(){
 
 	#ifdef _USE_LIVE_VIDEO
         vidGrabber.setVerbose(true);
-        vidGrabber.initGrabber(320,240);
+        vidGrabber.setup(320,240);
 	#else
-        vidPlayer.loadMovie("fingers.mov");
+        vidPlayer.load("fingers.mov");
         vidPlayer.play();
 	#endif
 
