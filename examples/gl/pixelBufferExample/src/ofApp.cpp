@@ -34,7 +34,7 @@ void ofApp::update(){
 
 	if(record){
 		// copy the fbo texture to a buffer
-		fbo.getTextureReference().copyTo(pixelBufferBack);
+		fbo.getTexture().copyTo(pixelBufferBack);
 
 		// map the buffer so we can access it from the cpu
 		// and wrap the memory in an ofPixels to save it

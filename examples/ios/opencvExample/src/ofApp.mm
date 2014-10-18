@@ -9,11 +9,11 @@ void ofApp::setup(){
 	capH = 240;
 
 	#ifdef _USE_LIVE_VIDEO
-		vidGrabber.initGrabber(capW, capH);
+		vidGrabber.setup(capW, capH);
 		capW = vidGrabber.getWidth();
 		capH = vidGrabber.getHeight();
     #else	
-        vidPlayer.loadMovie("fingers.m4v");
+        vidPlayer.load("fingers.m4v");
         vidPlayer.setLoopState(OF_LOOP_NORMAL);
 		vidPlayer.play();
 	#endif

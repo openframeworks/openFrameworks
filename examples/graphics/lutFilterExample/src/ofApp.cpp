@@ -16,7 +16,7 @@ void ofApp::setup(){
 	lutImg.allocate(640, 480, OF_IMAGE_COLOR);
 	
 	vidGrabber.setVerbose(true);
-	vidGrabber.initGrabber(640,480);
+	vidGrabber.setup(640,480);
 
 	
 	thumbPos.set(lutImg.getWidth()*0.5f-80, -lutImg.getHeight()*0.5f - 60, 0);

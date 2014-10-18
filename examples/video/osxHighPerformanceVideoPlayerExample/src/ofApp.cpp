@@ -31,10 +31,10 @@ void ofApp::setup(){
 	// Pixels and texture together is faster than PIXEL_ONLY and manually uploaded textures.
     ofQTKitDecodeMode decodeMode = OF_QTKIT_DECODE_PIXELS_AND_TEXTURE;
 	
-	fingerMovie.loadMovie("movies/fingers.mov", decodeMode);
+	fingerMovie.load("movies/fingers.mov", decodeMode);
 
     // You can also load movies from URLs.
-    // fingerMovie.loadMovie("http://labs.silentlycrashing.net/fingers.mov", decodeMode);
+    // fingerMovie.load("http://labs.silentlycrashing.net/fingers.mov", decodeMode);
 	
     //# 3 Synchronous seeking. ---------------------------
     // Like the legacy player, by default frames are available immediately for display

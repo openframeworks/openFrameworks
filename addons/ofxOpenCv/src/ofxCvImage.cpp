@@ -94,6 +94,16 @@ bool ofxCvImage::isUsingTexture() const{
 }
 
 //--------------------------------------------------------------------------------
+ofTexture& ofxCvImage::getTexture() {
+	return tex;
+}
+
+//--------------------------------------------------------------------------------
+const ofTexture & ofxCvImage::getTexture() const{
+	return tex;
+}
+
+//--------------------------------------------------------------------------------
 ofTexture& ofxCvImage::getTextureReference() {
 	return tex;
 }

@@ -17,6 +17,8 @@ CORE
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball
 	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
+	/ ofDrawGrid: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
+	/ ofDrawGridPlane: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
 	
 ### gl
 	+ Programmable lights and materials
@@ -77,6 +79,8 @@ PLATFORM SPECIFIC
 	+ deployment target moved up to iOS 5.1.1
 
 ### android
+	+ fix camera stretching artifacts experienced on some devices when using 16:9 
+	  aspect ratios
 	+ remove support for arm5 since no devices seem to have that cpu anymore and it
 	  was problematic with certain libraries
 

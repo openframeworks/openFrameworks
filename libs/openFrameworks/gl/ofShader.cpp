@@ -343,7 +343,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
-		ofLog(logLevel, "ofShader %s shader reports:\n%s",nameForType(type).c_str(), infoBuffer);
+		ofLog(logLevel, "ofShader: %s shader reports:\n%s", nameForType(type).c_str(), infoBuffer);
 		if (shaderSource.find(type) != shaderSource.end()) {
 			// The following regexp should match shader compiler error messages by Nvidia and ATI.
 			// Unfortunately, each vendor's driver formats error messages slightly different.
@@ -378,9 +378,8 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetProgramInfoLog(program, infoLength, &infoLength, infoBuffer);
 		string msg = "ofShader: program reports:\n";
+#ifdef TARGET_RASPBERRYPI
 		if (shaderSource.find(GL_FRAGMENT_SHADER) != shaderSource.end()) {
-			// The following regexp should match shader compiler error messages by Nvidia and ATI.
-			// Unfortunately, each vendor's driver formats error messages slightly different.
 			Poco::RegularExpression re(",.line.([^\\)]*)");
 			Poco::RegularExpression::MatchVec matches;
 			string infoString = (infoBuffer != NULL) ? string(infoBuffer): "";
@@ -400,6 +399,7 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 				ofLogError("ofShader") << msg.str();
 			}
 		}
+#endif
 		ofLog(OF_LOG_ERROR, msg + infoBuffer);
 		delete [] infoBuffer;
 	}
@@ -530,7 +530,7 @@ void ofShader::dispatchCompute(GLuint x, GLuint y, GLuint z) const{
 
 //--------------------------------------------------------------
 void ofShader::setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation)  const{
-	setUniformTexture(name, img.getTextureReference(), textureLocation);
+	setUniformTexture(name, img.getTexture(), textureLocation);
 }
 
 //--------------------------------------------------------------

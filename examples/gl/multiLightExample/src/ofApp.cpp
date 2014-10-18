@@ -66,7 +66,7 @@ void ofApp::setup(){
     // so we must disable the arb rectangle call to allow 0 -> 1
     ofDisableArbTex();
     // load an image to use as the texture //
-    ofLogoImage.loadImage("of.png");
+    ofLogoImage.load("of.png");
     bUseTexture = true;
 }
 
@@ -93,7 +93,7 @@ void ofApp::draw(){
     
     // grab the texture reference and bind it //
     // this will apply the texture to all drawing (vertex) calls before unbind() //
-    if(bUseTexture) ofLogoImage.getTextureReference().bind();
+    if(bUseTexture) ofLogoImage.getTexture().bind();
     
 	ofSetColor(255, 255, 255, 255);
     ofPushMatrix();
@@ -115,7 +115,7 @@ void ofApp::draw(){
 	ofDrawBox( 0, 0, 0, 850);
 	ofPopMatrix();
     
-    if(bUseTexture) ofLogoImage.getTextureReference().unbind();
+    if(bUseTexture) ofLogoImage.getTexture().unbind();
 	
 	if (!bPointLight) pointLight.disable();
 	if (!bSpotLight) spotLight.disable();

@@ -90,7 +90,8 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 		Pressed,
 		Moved,
 		Released,
-		Dragged
+		Dragged,
+		Scrolled
 	};
 
 	ofMouseEventArgs()
@@ -101,6 +102,11 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 	:ofVec2f(x,y)
 	,type(type)
 	,button(button){}
+
+	ofMouseEventArgs(Type type, float x, float y)
+	:ofVec2f(x,y)
+	,type(type)
+	,button(0){}
 
 	Type type;
 	int button;
@@ -204,6 +210,7 @@ class ofCoreEvents {
 	ofEvent<ofMouseEventArgs> 	mouseDragged;
 	ofEvent<ofMouseEventArgs> 	mousePressed;
 	ofEvent<ofMouseEventArgs> 	mouseReleased;
+	ofEvent<ofMouseEventArgs> 	mouseScrolled;
 
 	ofEvent<ofTouchEventArgs>	touchDown;
 	ofEvent<ofTouchEventArgs>	touchUp;
@@ -225,6 +232,7 @@ class ofCoreEvents {
 		mouseReleased.disable();
 		mousePressed.disable();
 		mouseMoved.disable();
+		mouseScrolled.disable();
 		touchDown.disable();
 		touchUp.disable();
 		touchMoved.disable();
@@ -245,6 +253,7 @@ class ofCoreEvents {
 		mouseReleased.enable();
 		mousePressed.enable();
 		mouseMoved.enable();
+		mouseScrolled.enable();
 		touchDown.enable();
 		touchUp.enable();
 		touchMoved.enable();
@@ -266,6 +275,7 @@ void ofRegisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFT
 	ofAddListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
 	ofAddListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
 	ofAddListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
+	ofAddListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
 }
 
 template<class ListenerClass>
@@ -299,6 +309,7 @@ void ofUnregisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_A
 	ofRemoveListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
 	ofRemoveListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
 	ofRemoveListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
+	ofRemoveListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
 }
 
 template<class ListenerClass>
@@ -339,6 +350,7 @@ void ofNotifyMousePressed(int x, int y, int button);
 void ofNotifyMouseReleased(int x, int y, int button);
 void ofNotifyMouseDragged(int x, int y, int button);
 void ofNotifyMouseMoved(int x, int y);
+void ofNotifyMouseScrolled(float x, float y);
 void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent);
 
 void ofNotifyExit();

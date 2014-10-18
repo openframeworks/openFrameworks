@@ -20,7 +20,7 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		ofxAndroidVideoPlayer();
 		virtual ~ofxAndroidVideoPlayer();
 
-		bool loadMovie(string fileName);
+		bool load(string fileName);
 		void close(); // empty!
 		void update();
 
@@ -32,7 +32,7 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		bool isPaused() const;
 		bool isFrameNew() const { return bIsFrameNew;};
 
-		ofTexture *	getTexture();
+		ofTexture *	getTexturePtr();
 		void reloadTexture();
 		void unloadTexture();
 		void removeTexture();

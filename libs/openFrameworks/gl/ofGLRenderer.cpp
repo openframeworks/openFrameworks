@@ -228,7 +228,7 @@ void ofGLRenderer::draw(const ofPath & shape) const{
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		const ofTexture& tex = image.getTextureReference();
+		const ofTexture& tex = image.getTexture();
 		if(tex.bAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
@@ -242,7 +242,7 @@ void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float 
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		const ofTexture& tex = image.getTextureReference();
+		const ofTexture& tex = image.getTexture();
 		if(tex.bAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
@@ -256,7 +256,7 @@ void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, f
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		const ofTexture& tex = image.getTextureReference();
+		const ofTexture& tex = image.getTexture();
 		if(tex.bAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
@@ -270,7 +270,7 @@ void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, f
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
 	if(video.isInitialized() && video.isUsingTexture()){
-		const ofTexture& tex = video.getTextureReference();
+		const ofTexture& tex = video.getTexture();
 		tex.bind();
 		draw(tex.getMeshForSubsection(x,y,0,w,h,0,0,w,h),false,true,false);
 		tex.unbind();
@@ -280,14 +280,14 @@ void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float 
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofBaseVideoDraws & video) const{
 	if(video.isInitialized() && video.isUsingTexture()){
-		video.getTextureReference().bind();
+		video.getTexture().bind();
 	}
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::unbind(const ofBaseVideoDraws & video) const{
 	if(video.isInitialized() && video.isUsingTexture()){
-		video.getTextureReference().unbind();
+		video.getTexture().unbind();
 	}
 }
 

@@ -9,7 +9,7 @@ void ofApp::setup(){
 	#ifdef USE_CAMERA 
 		ofSetFrameRate(20);
 		grabber.setDesiredFrameRate(20);
-		grabber.initGrabber(480, 360);
+		grabber.setup(480, 360);
 		
 		int w = grabber.getWidth();
 		int h = grabber.getHeight();
@@ -23,7 +23,7 @@ void ofApp::setup(){
 		finder.setNeighbors(1);
 		finder.setScaleHaar(1.5);
 	#else 
-		img.loadImage("test.jpg");
+		img.load("test.jpg");
 	#endif 
 
 }

@@ -5,7 +5,7 @@
 void ofApp::setup(){
 	ofSetFrameRate(60);
 	player.setPixelFormat(OF_PIXELS_RGBA);
-	player.loadMovie("fingers.mov");
+	player.load("fingers.mov");
 	bg.allocate(player.getPixelsRef());
 	pixels.allocate(player.getWidth(),player.getHeight());
 	pixels.setUseTexture(false);
@@ -18,7 +18,7 @@ void ofApp::setup(){
 	grabBG = true;
 	player.play();
 
-	player.getTextureReference().bindAsImage(0,GL_READ_ONLY);
+	player.getTexture().bindAsImage(0,GL_READ_ONLY);
 	bg.bindAsImage(1,GL_READ_ONLY);
 	thres.bindAsImage(2,GL_WRITE_ONLY);
 }
