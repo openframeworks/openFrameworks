@@ -8,8 +8,8 @@ void ofApp::setup(){
 
 	letter = '$';
 
-	testFont.loadFont("Batang.ttf", 60, true, true, true);
-	testFont2.loadFont("cooperBlack.ttf", 18, true, true, true);
+	testFont.load("Batang.ttf", 60, true, true, true);
+	testFont2.load("cooperBlack.ttf", 18, true, true, true);
 	testChar = testFont.getCharacterAsPoints(letter);
 
 }

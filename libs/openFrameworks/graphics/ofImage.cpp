@@ -116,7 +116,7 @@ FREE_IMAGE_TYPE getFreeImageType(ofFloatPixels& pix) {
 //----------------------------------------------------
 template<typename PixelType>
 FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
-	PixelType* pixels = pix.getPixels();
+	PixelType* pixels = pix.getData();
 	unsigned int width = pix.getWidth();
 	unsigned int height = pix.getHeight();
 	unsigned int bpp = pix.getBitsPerPixel();
@@ -278,7 +278,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	FIBITMAP* bmp = NULL;
 	FIMEMORY* hmem = NULL;
 	
-	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getBinaryBuffer(), buffer.size());
+	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getData(), buffer.size());
 	if (hmem == NULL){
 		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, opening FreeImage memory failed";
 		return false;
@@ -941,14 +941,14 @@ const ofTexture & ofImage_<PixelType>::getTextureReference() const{
 //----------------------------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::bind(int textureLocation) const{
-	if (bUseTexture && tex.bAllocated())
+	if (bUseTexture && tex.isAllocated())
 		tex.bind(textureLocation);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::unbind(int textureLocation) const{
-	if (bUseTexture && tex.bAllocated())
+	if (bUseTexture && tex.isAllocated())
 		tex.unbind(textureLocation);
 }
 
@@ -993,7 +993,7 @@ void  ofImage_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::setFromPixels(const ofPixels_<PixelType> & pixels){
-	setFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight(),pixels.getImageType());
+	setFromPixels(pixels.getData(),pixels.getWidth(),pixels.getHeight(),pixels.getImageType());
 }
 
 //------------------------------------
@@ -1052,7 +1052,7 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
     
     glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(_x, _y, _w, _h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, pixels.getPixels()); // read the memory....
+    glReadPixels(_x, _y, _w, _h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, pixels.getData()); // read the memory....
     glPopClientAttrib();
     
 	int sizeOfOneLineOfPixels = pixels.getWidth() * pixels.getBytesPerPixel();
@@ -1060,8 +1060,8 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 	PixelType * linea;
 	PixelType * lineb;
 	for (int i = 0; i < pixels.getHeight()/2; i++){
-		linea = pixels.getPixels() + i * sizeOfOneLineOfPixels;
-		lineb = pixels.getPixels() + (pixels.getHeight()-i-1) * sizeOfOneLineOfPixels;
+		linea = pixels.getData() + i * sizeOfOneLineOfPixels;
+		lineb = pixels.getData() + (pixels.getHeight()-i-1) * sizeOfOneLineOfPixels;
 		memcpy(tempLineOfPix, linea, sizeOfOneLineOfPixels);
 		memcpy(linea, lineb, sizeOfOneLineOfPixels);
 		memcpy(lineb, tempLineOfPix, sizeOfOneLineOfPixels);

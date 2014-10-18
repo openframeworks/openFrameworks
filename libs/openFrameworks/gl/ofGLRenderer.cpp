@@ -257,7 +257,7 @@ void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, f
 void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
 		const ofTexture& tex = image.getTexture();
-		if(tex.bAllocated()) {
+		if(tex.isAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
 			tex.unbind();

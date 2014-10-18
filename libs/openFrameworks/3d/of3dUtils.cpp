@@ -79,14 +79,12 @@ void ofDrawGrid(float stepSize, size_t numberOfSteps, bool labels, bool x, bool 
 
 //--------------------------------------------------------------
 void ofDrawGridPlane(float stepSize, size_t numberOfSteps, bool labels) {
-	
-	float minor = stepSize;
 	float scale = stepSize * numberOfSteps;
 	
 	ofPushStyle();
 	for (int iDimension=0; iDimension<2; iDimension++)
 	{
-		for (int i=0; i <= numberOfSteps; i++)
+		for (size_t i=0; i <= numberOfSteps; i++)
 		{
 			float yz = i * stepSize;
 			

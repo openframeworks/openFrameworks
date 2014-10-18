@@ -294,7 +294,7 @@ void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, flo
 	if(image.isUsingTexture()){
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 		const ofTexture& tex = image.getTexture();
-		if(tex.bAllocated()) {
+		if(tex.isAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
 			tex.unbind();
@@ -309,7 +309,7 @@ void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y
 	if(image.isUsingTexture()){
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 		const ofTexture& tex = image.getTexture();
-		if(tex.bAllocated()) {
+		if(tex.isAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
 			tex.unbind();
@@ -324,7 +324,7 @@ void ofGLProgrammableRenderer::draw(const ofShortImage & image, float x, float y
 	if(image.isUsingTexture()){
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 		const ofTexture& tex = image.getTexture();
-		if(tex.bAllocated()) {
+		if(tex.isAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
 			tex.unbind();
