@@ -47,7 +47,9 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		ofVideoPlayer ();
 
-		bool 				loadMovie(string name);
+
+		bool 				load(string name);
+		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(string name));
 	    string				getMoviePath() const;
 
 		bool				setPixelFormat(ofPixelFormat pixelFormat);

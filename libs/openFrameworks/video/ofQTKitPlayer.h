@@ -39,8 +39,8 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		ofQTKitPlayer();
 		virtual ~ofQTKitPlayer();
 
-		bool                loadMovie(string path); //default mode is PIXELS_ONLY
-		bool                loadMovie(string path, ofQTKitDecodeMode mode);
+		bool                load(string path); //default mode is PIXELS_ONLY
+		bool                load(string path, ofQTKitDecodeMode mode);
 
 		void                closeMovie();
 		void                close();

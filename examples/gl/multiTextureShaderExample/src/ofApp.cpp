@@ -9,13 +9,13 @@ void ofApp::setup(){
 	int camHeight 		= 240;
     
     vidGrabber.setVerbose(true);
-	vidGrabber.initGrabber(camWidth,camHeight);
+	vidGrabber.setup(camWidth,camHeight);
     
-    fingerMovie.loadMovie("fingers.mov");
+    fingerMovie.load("fingers.mov");
 	fingerMovie.play();
     
-    logoImg.loadImage("colors.jpg");
-    multimaskImg.loadImage("mask.jpg");
+    logoImg.load("colors.jpg");
+    multimaskImg.load("mask.jpg");
     
     fbo.allocate(camWidth,camHeight);
     maskFbo.allocate(camWidth,camHeight);

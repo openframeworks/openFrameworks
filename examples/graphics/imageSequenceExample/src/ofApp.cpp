@@ -37,7 +37,7 @@ void ofApp::setup() {
             // add the image to the vector
             string filePath = dir.getPath(i);
             images.push_back(ofImage());
-            images.back().loadImage(filePath);
+            images.back().load(filePath);
             
         }
         

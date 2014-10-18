@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	img.loadImage("test.jpg");
+	img.load("test.jpg");
 	finder.setup("haarcascade_frontalface_default.xml");
 	finder.findHaarObjects(img);
 }

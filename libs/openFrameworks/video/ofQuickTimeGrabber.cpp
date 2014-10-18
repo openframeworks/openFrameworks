@@ -106,7 +106,7 @@ ofPixelFormat ofQuickTimeGrabber::getPixelFormat() const {
 }
 
 //--------------------------------------------------------------------
-bool ofQuickTimeGrabber::initGrabber(int w, int h){
+bool ofQuickTimeGrabber::setup(int w, int h){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
