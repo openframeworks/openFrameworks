@@ -114,7 +114,7 @@ void ofBuffer::allocate(long _size){
 }
 
 //--------------------------------------------------
-char *ofBuffer::getBinaryBuffer(){
+char * ofBuffer::getData(){
 	if(buffer.empty()){
 		return NULL;
 	}
@@ -122,11 +122,21 @@ char *ofBuffer::getBinaryBuffer(){
 }
 
 //--------------------------------------------------
-const char *ofBuffer::getBinaryBuffer() const {
+const char * ofBuffer::getData() const{
 	if(buffer.empty()){
-		return "";
+		return NULL;
 	}
 	return &buffer[0];
+}
+
+//--------------------------------------------------
+char *ofBuffer::getBinaryBuffer(){
+	return getData();
+}
+
+//--------------------------------------------------
+const char *ofBuffer::getBinaryBuffer() const {
+	return getData();
 }
 
 //--------------------------------------------------
