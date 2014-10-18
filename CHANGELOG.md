@@ -68,6 +68,7 @@ CORE
 	+ ofThreadChannel: thread synchronization primitive to make it
 	  easier to work with threads avoiding the need for mutexes in
 	  most cases. see example/utils/threadChannelExample
+	/ ofBuffer::getBinaryBuffer() -> getData()
 
 ### video
 	/ gstreamer: fix memory leaks when closing a video element

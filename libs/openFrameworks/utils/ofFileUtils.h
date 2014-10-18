@@ -27,8 +27,10 @@ public:
 
 	void allocate(long _size);
 
-	char * getBinaryBuffer();
-	const char * getBinaryBuffer() const;
+	char * getData();
+	const char * getData() const;
+	OF_DEPRECATED_MSG("Use getData instead",char * getBinaryBuffer());
+	OF_DEPRECATED_MSG("Use getData instead",const char * getBinaryBuffer() const);
 
 	string getText() const;
 	operator string() const;  // cast to string, to use a buffer as a string
