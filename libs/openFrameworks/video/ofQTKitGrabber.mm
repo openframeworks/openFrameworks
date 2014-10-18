@@ -694,10 +694,10 @@ void ofQTKitGrabber::setAudioDeviceID(string _audioDeviceIDString){
 
 bool ofQTKitGrabber::initGrabberWithoutPreview(){
     bPreview = false;
-    return initGrabber(-1,-1); //supplying -1 allows CoreVideo to choose the dimensions
+    return setup(-1,-1); //supplying -1 allows CoreVideo to choose the dimensions
 }
 
-bool ofQTKitGrabber::initGrabber(int w, int h){
+bool ofQTKitGrabber::setup(int w, int h){
 
 	if(grabber != NULL){
 		close();

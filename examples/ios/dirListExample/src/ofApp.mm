@@ -9,7 +9,7 @@ void ofApp::setup(){
  	images = new ofImage[nImages];
     //you can now iterate through the files as you like
     for(int i = 0; i < nImages; i++){
-		images[i].loadImage(DIR.getPath(i));
+		images[i].load(DIR.getPath(i));
     }
     currentImage = 0;
 

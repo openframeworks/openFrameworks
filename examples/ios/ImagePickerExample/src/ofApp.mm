@@ -5,8 +5,8 @@ void ofApp::setup(){
     ofBackground(170);
     ofSetOrientation(OF_ORIENTATION_DEFAULT);
     
-    camImg.loadImage("images/camera.png");
-    libImg.loadImage("images/library.png");
+    camImg.load("images/camera.png");
+    libImg.load("images/library.png");
     
     camRect.set(20, 20, camImg.getWidth(), camImg.getHeight());
     libRect.set(camImg.getWidth() + 40, 20, libImg.getWidth(), libImg.getHeight());

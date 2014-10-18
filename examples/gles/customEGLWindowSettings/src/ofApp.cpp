@@ -6,7 +6,7 @@ void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
 
 
-    rpiLogo.loadImage("Raspi_Colour_R.png");
+    rpiLogo.load("Raspi_Colour_R.png");
 
 }
 
