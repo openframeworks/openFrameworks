@@ -53,8 +53,10 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		bool				isFrameNew() const;
 		void				update();
 		void				close();	
-		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
-		bool				initGrabber(int w, int h, bool bTexture);
+		bool				setup(int w, int h){return setup(w,h,true);}
+		bool				setup(int w, int h, bool bTexture);
+		OF_DEPRECATED_MSG("Use setup instead",bool initGrabber(int w, int h){return setup(w,h);})
+		OF_DEPRECATED_MSG("Use setup instead",bool initGrabber(int w, int h, bool bTexture));
 		
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat 		getPixelFormat() const;
@@ -64,8 +66,10 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		const ofPixels&		getPixels() const;
         OF_DEPRECATED_MSG("Use getPixels() instead", ofPixels&	getPixelsRef());
         OF_DEPRECATED_MSG("Use getPixels() instead", const ofPixels&  getPixelsRef() const);
-		ofTexture &			getTextureReference();
-		const ofTexture &	getTextureReference() const;
+		ofTexture &			getTexture();
+		const ofTexture &	getTexture() const;
+		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
+		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
 		vector<ofTexture> & getTexturePlanes();
 		const vector<ofTexture> & getTexturePlanes() const;
 		void				setVerbose(bool bTalkToMe);

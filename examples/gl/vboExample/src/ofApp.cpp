@@ -63,7 +63,7 @@ void ofApp::setup() {
     ofEnableNormalizedTexCoords();
     #endif
 
-	img.loadImage("linzer.png");
+	img.load("linzer.png");
 	
 	// OF_PRIMITIVE_TRIANGLES means every three vertices create a triangle
 	mesh.setMode(OF_PRIMITIVE_TRIANGLES);

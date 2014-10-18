@@ -8,7 +8,7 @@ void ofApp::setup(){
 
 	int grabberWidth = 320;
 	int grabberHeight = 240;
-	grabber.initGrabber(grabberWidth,grabberHeight);
+	grabber.setup(grabberWidth,grabberHeight);
 
 	colorCv.allocate(grabberWidth, grabberHeight);
 	colorCvSmall.allocate(grabberWidth/4, grabberHeight/4);

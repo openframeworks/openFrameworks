@@ -50,12 +50,12 @@ const shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber() const{
 }
 
 //--------------------------------------------------------------------
-bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
+bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 
 #ifndef OF_VID_GRABBER_TYPE
-#error OF_VID_GRABBER_TYPE is not #defined! 
+#error OF_VID_GRABBER_TYPE is not #defined!
 #endif
-    
+
 	if(!grabber){
 		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
@@ -72,12 +72,12 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		grabber->setDesiredFrameRate(desiredFramerate);
 	}
 
-	grabber->initGrabber(w, h);
+	grabber->setup(w, h);
 	width			= (int)grabber->getWidth();
 	height			= (int)grabber->getHeight();
 
 	if( grabber->isInitialized() && bUseTexture ){
-		if(!grabber->getTexture()){
+		if(!grabber->getTexturePtr()){
 			for(int i=0;i<grabber->getPixels().getNumPlanes();i++){
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				tex.push_back(ofTexture());
@@ -90,6 +90,11 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	}
 
 	return grabber->isInitialized();
+}
+
+//--------------------------------------------------------------------
+bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
+	return setup(w,h,setUseTexture);
 }
 
 //--------------------------------------------------------------------
@@ -174,38 +179,50 @@ const ofPixels& ofVideoGrabber::getPixelsRef() const{
 }
 
 //------------------------------------
-//for getting a reference to the texture
+ofTexture & ofVideoGrabber::getTexture(){
+	if(grabber->getTexturePtr() == NULL){
+		return tex[0];
+	}
+	else{
+		return *grabber->getTexturePtr();
+	}
+}
+
+//------------------------------------
+const ofTexture & ofVideoGrabber::getTexture() const{
+	if(grabber->getTexturePtr() == NULL){
+		return tex[0];
+	}
+	else{
+		return *grabber->getTexturePtr();
+	}
+}
+
+//------------------------------------
 ofTexture & ofVideoGrabber::getTextureReference(){
-	if(grabber->getTexture() == NULL){
-		return tex[0];
-	}
-	else{
-		return *grabber->getTexture();
-	}
+	return getTexture();
 }
 
+//------------------------------------
 const ofTexture & ofVideoGrabber::getTextureReference() const{
-	if(grabber->getTexture() == NULL){
-		return tex[0];
-	}
-	else{
-		return *grabber->getTexture();
-	}
+	return getTexture();
 }
 
+//------------------------------------
 vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
-	if(grabber->getTexture() != NULL){
+	if(grabber->getTexturePtr() != NULL){
 		tex.clear();
-		tex.push_back(*grabber->getTexture());
+		tex.push_back(*grabber->getTexturePtr());
 	}
 	return tex;
 }
 
+//------------------------------------
 const vector<ofTexture> & ofVideoGrabber::getTexturePlanes() const{
-	if(grabber->getTexture() != NULL){
+	if(grabber->getTexturePtr() != NULL){
 		ofVideoGrabber* mutThis = const_cast<ofVideoGrabber*>(this);
 		mutThis->tex.clear();
-		mutThis->tex.push_back(*grabber->getTexture());
+		mutThis->tex.push_back(*grabber->getTexturePtr());
 	}
 	return tex;
 }
@@ -224,7 +241,7 @@ void ofVideoGrabber::update(){
 		grabber->update();
 		width = grabber->getWidth();
 		height = grabber->getHeight();
-		if( bUseTexture && !grabber->getTexture() && grabber->isFrameNew() ){
+		if( bUseTexture && !grabber->getTexturePtr() && grabber->isFrameNew() ){
 			if(int(tex.size())!=grabber->getPixels().getNumPlanes()){
 				tex.resize(grabber->getPixels().getNumPlanes());
 			}
@@ -248,7 +265,7 @@ void ofVideoGrabber::close(){
 	if(grabber){
 		grabber->close();
 	}
-	if(!grabber->getTexture()) tex.clear();
+	if(!grabber->getTexturePtr()) tex.clear();
 }
 
 //--------------------------------------------------------------------
@@ -271,17 +288,17 @@ bool ofVideoGrabber::isUsingTexture() const{
 
 //----------------------------------------------------------
 void ofVideoGrabber::setAnchorPercent(float xPct, float yPct){
-	getTextureReference().setAnchorPercent(xPct, yPct);
+	getTexture().setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
 void ofVideoGrabber::setAnchorPoint(float x, float y){
-	getTextureReference().setAnchorPoint(x, y);
+	getTexture().setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------
 void ofVideoGrabber::resetAnchor(){
-	getTextureReference().resetAnchor();
+	getTexture().resetAnchor();
 }
 
 //------------------------------------
@@ -323,5 +340,5 @@ float ofVideoGrabber::getWidth() const{
 
 //----------------------------------------------------------
 bool ofVideoGrabber::isInitialized() const{
-	return grabber->isInitialized() && (!bUseTexture || tex[0].isAllocated() || grabber->getTexture());
+	return grabber->isInitialized() && (!bUseTexture || tex[0].isAllocated() || grabber->getTexturePtr());
 }

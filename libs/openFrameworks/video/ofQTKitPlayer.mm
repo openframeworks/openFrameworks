@@ -24,12 +24,12 @@ ofQTKitPlayer::~ofQTKitPlayer() {
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::loadMovie(string path){
-	return loadMovie(path, OF_QTKIT_DECODE_PIXELS_ONLY);
+bool ofQTKitPlayer::load(string path){
+	return load(path, OF_QTKIT_DECODE_PIXELS_ONLY);
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
+bool ofQTKitPlayer::load(string movieFilePath, ofQTKitDecodeMode mode) {
 	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
 		ofLogError("ofQTKitPlayer") << "loadMovie(): unknown ofQTKitDecodeMode mode";
 		return false;
@@ -249,7 +249,7 @@ const ofPixels& ofQTKitPlayer::getPixels() const {
 }
 
 //--------------------------------------------------------------------
-ofTexture* ofQTKitPlayer::getTexture() {
+ofTexture* ofQTKitPlayer::getTexturePtr() {
     ofTexture* texPtr = NULL;
 	if(moviePlayer.textureAllocated){
 		updateTexture();

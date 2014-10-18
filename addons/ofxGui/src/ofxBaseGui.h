@@ -67,6 +67,7 @@ public:
 	virtual bool mousePressed(ofMouseEventArgs & args) = 0;
 	virtual bool mouseDragged(ofMouseEventArgs & args) = 0;
 	virtual bool mouseReleased(ofMouseEventArgs & args) = 0;
+	virtual bool mouseScrolled(ofMouseEventArgs & args) = 0;
 protected:
 	virtual void render()=0;
 	bool isGuiDrawing();

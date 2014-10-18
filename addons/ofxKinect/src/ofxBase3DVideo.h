@@ -39,6 +39,6 @@ public:
     virtual const ofFloatPixels& getDistancePixels() const=0;
     
     /// get the grayscale depth texture
-    virtual ofTexture& getDepthTextureReference()=0;
-    virtual const ofTexture& getDepthTextureReference() const=0;
+    virtual ofTexture& getDepthTexture()=0;
+    virtual const ofTexture& getDepthTexture() const=0;
 };

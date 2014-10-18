@@ -293,7 +293,7 @@ void ofGLProgrammableRenderer::draw(const ofPath & shape) const{
 void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
-		const ofTexture& tex = image.getTextureReference();
+		const ofTexture& tex = image.getTexture();
 		if(tex.bAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
@@ -308,7 +308,7 @@ void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, flo
 void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
-		const ofTexture& tex = image.getTextureReference();
+		const ofTexture& tex = image.getTexture();
 		if(tex.bAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
@@ -323,7 +323,7 @@ void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y
 void ofGLProgrammableRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
-		const ofTexture& tex = image.getTextureReference();
+		const ofTexture& tex = image.getTexture();
 		if(tex.bAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
@@ -347,7 +347,7 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 			setVideoShaderUniforms(video,*shader);
 		}
 	}
-	const ofTexture& tex = video.getTextureReference();
+	const ofTexture& tex = video.getTexture();
 	tex.bind();
 	draw(tex.getMeshForSubsection(x,y,0,w,h,0,0,w,h),false,true,false);
 	tex.unbind();
@@ -373,7 +373,7 @@ void ofGLProgrammableRenderer::bind(const ofBaseVideoDraws & video) const{
 	}
 
 	if(!binded){
-		video.getTextureReference().bind();
+		video.getTexture().bind();
 	}
 }
 
@@ -393,7 +393,7 @@ void ofGLProgrammableRenderer::unbind(const ofBaseVideoDraws & video) const{
 	}
 
 	if(!unbinded){
-		video.getTextureReference().unbind();
+		video.getTexture().unbind();
 	}
 
 }
@@ -1873,7 +1873,7 @@ static string videoFragmentShaderSource(const ofBaseVideoDraws & video, const st
 	}
 
 	string header = fragment_shader_header;
-	GLenum textureTarget = video.getTextureReference().getTextureData().textureTarget;
+	GLenum textureTarget = video.getTexture().getTextureData().textureTarget;
 	if(textureTarget==GL_TEXTURE_2D){
 		header += "#define SAMPLER sampler2D\n";
 	}
@@ -1971,7 +1971,7 @@ void ofGLProgrammableRenderer::setup(const string & glslVersion){
 
 const ofShader * ofGLProgrammableRenderer::getVideoShader(const ofBaseVideoDraws & video) const{
 	const ofShader * shader = NULL;
-	GLenum target = video.getTextureReference().getTextureData().textureTarget;
+	GLenum target = video.getTexture().getTextureData().textureTarget;
 	switch(video.getPixelFormat()){
 		case OF_PIXELS_YUY2:
 			if(target==GL_TEXTURE_2D){
@@ -2041,7 +2041,7 @@ void ofGLProgrammableRenderer::setVideoShaderUniforms(const ofBaseVideoDraws & v
 	switch(video.getPixelFormat()){
 		case OF_PIXELS_YUY2:
 #ifndef TARGET_OPENGLES
-			if(video.getTextureReference().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+			if(video.getTexture().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
 				shader.setUniform1f("onePixel",1.0);
 				shader.setUniform1f("textureWidth",1.0);
 			}else{
@@ -2057,7 +2057,7 @@ void ofGLProgrammableRenderer::setVideoShaderUniforms(const ofBaseVideoDraws & v
 			shader.setUniformTexture("Ytex",video.getTexturePlanes()[0],0);
 			shader.setUniformTexture("UVtex",video.getTexturePlanes()[1],1);
 #ifndef TARGET_OPENGLES
-			if(video.getTextureReference().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+			if(video.getTexture().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
 				shader.setUniform2f("tex_scaleUV",getTextureScaleX(video,1),getTextureScaleY(video,1));
 			}else{
 #endif
@@ -2071,7 +2071,7 @@ void ofGLProgrammableRenderer::setVideoShaderUniforms(const ofBaseVideoDraws & v
 			shader.setUniformTexture("Utex",video.getTexturePlanes()[2],1);
 			shader.setUniformTexture("Vtex",video.getTexturePlanes()[1],2);
 #ifndef TARGET_OPENGLES
-			if(video.getTextureReference().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+			if(video.getTexture().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
 				shader.setUniform2f("tex_scaleY",getTextureScaleX(video,0),getTextureScaleY(video,0));
 				shader.setUniform2f("tex_scaleU",getTextureScaleX(video,2),getTextureScaleY(video,2));
 				shader.setUniform2f("tex_scaleV",getTextureScaleX(video,1),getTextureScaleY(video,1));
@@ -2089,7 +2089,7 @@ void ofGLProgrammableRenderer::setVideoShaderUniforms(const ofBaseVideoDraws & v
 			shader.setUniformTexture("Utex",video.getTexturePlanes()[1],1);
 			shader.setUniformTexture("Vtex",video.getTexturePlanes()[2],2);
 #ifndef TARGET_OPENGLES
-			if(video.getTextureReference().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+			if(video.getTexture().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
 				shader.setUniform2f("tex_scaleY",getTextureScaleX(video,0),getTextureScaleY(video,0));
 				shader.setUniform2f("tex_scaleU",getTextureScaleX(video,1),getTextureScaleY(video,1));
 				shader.setUniform2f("tex_scaleV",getTextureScaleX(video,2),getTextureScaleY(video,2));

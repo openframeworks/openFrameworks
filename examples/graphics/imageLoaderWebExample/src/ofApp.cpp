@@ -7,13 +7,13 @@ void ofApp::setup(){
 	ofRegisterURLNotification(this);
 	
 	//to load synchronously
-	//image.loadImage("http://blah.com/img.jpg");
+	//image.load("http://blah.com/img.jpg");
 }
 
 //--------------------------------------------------------------
 void ofApp::urlResponse(ofHttpResponse & response){
 	if(response.status==200 && response.request.name == "tsingy_forest"){
-		img.loadImage(response.data);
+		img.load(response.data);
 		loading=false;
 	}else{
 		cout << response.status << " " << response.error << endl;

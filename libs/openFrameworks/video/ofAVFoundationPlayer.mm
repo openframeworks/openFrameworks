@@ -33,7 +33,7 @@ ofAVFoundationPlayer::~ofAVFoundationPlayer()
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::loadMovie(string path)
+bool ofAVFoundationPlayer::load(string path)
 {
     if (bInitialized) {
         close();
@@ -156,7 +156,7 @@ ofPixels & ofAVFoundationPlayer::getPixels()
 
 
 //--------------------------------------------------------------
-ofTexture * ofAVFoundationPlayer::getTexture()
+ofTexture * ofAVFoundationPlayer::getTexturePtr()
 {
     //TODO: Allow AVF's direct to texture
     if (moviePlayer.textureAllocated) {

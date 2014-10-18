@@ -36,7 +36,7 @@ void ofApp::setup(){
     buttonState = "digital pin:";
     potValue = "analog pin:";
 
-	bgImage.loadImage("background.png");
+	bgImage.load("background.png");
 	font.loadFont("franklinGothic.otf", 20);
     smallFont.loadFont("franklinGothic.otf", 14);
 

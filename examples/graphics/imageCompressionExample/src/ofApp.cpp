@@ -11,7 +11,7 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::reset() {
 	generation = 0;
-	img.loadImage("buses.jpg");
+	img.load("buses.jpg");
 	// pick random for bleeding
 	addX = ofRandom(0, 16);
 	addY = ofRandom(0, 16);
@@ -27,7 +27,7 @@ void ofApp::update() {
 
 	// keeps the image from getting too big
 	if(size < maxSize) {
-		img.saveImage(curFilename, quality);
+		img.save(curFilename, quality);
 
 		if(ofGetKeyPressed('g')) {
 			// this portion glitches the jpeg file
@@ -46,9 +46,9 @@ void ofApp::update() {
 
 			// write the file out like nothing happened
 			ofBufferToFile(curFilename, file, true);
-			img.loadImage(curFilename);
+			img.load(curFilename);
 		} else {
-			img.loadImage(curFilename);
+			img.load(curFilename);
 
 			// this if switches every other frame
 			// resizing up and down breaks the 8x8 JPEG blocks

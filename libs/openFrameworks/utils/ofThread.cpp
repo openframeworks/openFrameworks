@@ -199,6 +199,9 @@ void ofThread::run(){
 #ifdef TARGET_ANDROID
 	JNIEnv * env;
 	jint attachResult = ofGetJavaVMPtr()->AttachCurrentThread(&env,NULL);
+	if(attachResult!=0){
+		ofLogWarning() << "couldn't attach new thread to java vm";
+	}
 #endif
 	// user function
     // should loop endlessly.

@@ -27,11 +27,15 @@ public:
 	void setDefaultTextureIndex(int defaultTexture);
 	int getDefaultTextureIndex() const;
 
-	ofTexture & getTextureReference();
-	ofTexture & getTextureReference(int attachmentPoint);
+	OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference());
+	OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference(int attachmentPoint));
+	ofTexture & getTexture();
+	ofTexture & getTexture(int attachmentPoint);
 	ofTexture & getDepthTexture();
-	const ofTexture & getTextureReference() const;
-	const ofTexture & getTextureReference(int attachmentPoint) const;
+	OF_DEPRECATED_MSG("Use getTexture",const ofTexture & getTextureReference() const);
+	OF_DEPRECATED_MSG("Use getTexture",const ofTexture & getTextureReference(int attachmentPoint) const);
+	const ofTexture & getTexture() const ;
+	const ofTexture & getTexture(int attachmentPoint) const;
 	const ofTexture & getDepthTexture() const;
 	void setUseTexture(bool bUseTex){ /*irrelevant*/ };
 	bool isUsingTexture() const {return true;}
