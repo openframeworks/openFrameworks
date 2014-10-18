@@ -530,7 +530,7 @@ void ofShader::dispatchCompute(GLuint x, GLuint y, GLuint z) const{
 
 //--------------------------------------------------------------
 void ofShader::setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation)  const{
-	setUniformTexture(name, img.getTextureReference(), textureLocation);
+	setUniformTexture(name, img.getTexture(), textureLocation);
 }
 
 //--------------------------------------------------------------

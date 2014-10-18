@@ -86,17 +86,17 @@ void ofApp::update(){
     ofClear(0, 0, 0,255);
     shader.begin();
     // Pass the video texture
-    shader.setUniformTexture("tex0", vidGrabber.getTextureReference() , 1 );
+    shader.setUniformTexture("tex0", vidGrabber.getTexture() , 1 );
     // Pass the image texture
     shader.setUniformTexture("tex1", logoImg, 2 );
     // Pass the movie texture
-    shader.setUniformTexture("tex2", fingerMovie.getTextureReference() , 3 );
+    shader.setUniformTexture("tex2", fingerMovie.getTexture() , 3 );
     // Pass the mask texture
-    shader.setUniformTexture("maskTex", maskFbo.getTextureReference() , 4 );
+    shader.setUniformTexture("maskTex", maskFbo.getTexture() , 4 );
     
     // We are using this image just as a frame where the pixels can be arrange
     // this could be a mesh also. 
-    // Comment "shader.setUniformTexture("maskTex", maskFbo.getTextureReference() , 4 );" to se how there is two ways
+    // Comment "shader.setUniformTexture("maskTex", maskFbo.getTexture() , 4 );" to se how there is two ways
     // of passing a texture to the shader
     // 
     maskFbo.draw(0,0);

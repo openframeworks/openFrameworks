@@ -760,20 +760,36 @@ int ofFbo::getDefaultTextureIndex() const
 }
 
 ofTexture& ofFbo::getTextureReference(){
-	return getTextureReference(defaultTextureIndex);
+	return getTexture();
 }
 
 ofTexture& ofFbo::getTextureReference(int attachmentPoint) {
+	return getTexture(attachmentPoint);
+}
+
+const ofTexture& ofFbo::getTextureReference() const{
+	return getTexture();
+}
+
+const ofTexture& ofFbo::getTextureReference(int attachmentPoint) const{
+	return getTexture(attachmentPoint);
+}
+
+ofTexture& ofFbo::getTexture(){
+	return getTexture(defaultTextureIndex);
+}
+
+ofTexture& ofFbo::getTexture(int attachmentPoint) {
 	updateTexture(attachmentPoint);
     
     return textures[attachmentPoint];
 }
 
-const ofTexture& ofFbo::getTextureReference() const{
-	return getTextureReference(defaultTextureIndex);
+const ofTexture& ofFbo::getTexture() const{
+	return getTexture(defaultTextureIndex);
 }
 
-const ofTexture& ofFbo::getTextureReference(int attachmentPoint) const{
+const ofTexture& ofFbo::getTexture(int attachmentPoint) const{
 	ofFbo * mutThis = const_cast<ofFbo*>(this);
 	mutThis->updateTexture(attachmentPoint);
 
@@ -781,21 +797,21 @@ const ofTexture& ofFbo::getTextureReference(int attachmentPoint) const{
 }
 
 void ofFbo::setAnchorPercent(float xPct, float yPct){
-	getTextureReference().setAnchorPercent(xPct, yPct);
+	getTexture().setAnchorPercent(xPct, yPct);
 }
 
 void ofFbo::setAnchorPoint(float x, float y){
-	getTextureReference().setAnchorPoint(x, y);
+	getTexture().setAnchorPoint(x, y);
 }
 
 void ofFbo::resetAnchor(){
-	getTextureReference().resetAnchor();
+	getTexture().resetAnchor();
 }
 
 void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-	getTextureReference(attachmentPoint).readToPixels(pixels);
+	getTexture(attachmentPoint).readToPixels(pixels);
 #else
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
@@ -808,7 +824,7 @@ void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint) const{
 void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-	getTextureReference(attachmentPoint).readToPixels(pixels);
+	getTexture(attachmentPoint).readToPixels(pixels);
 #else
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
@@ -821,7 +837,7 @@ void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint) const{
 void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-	getTextureReference(attachmentPoint).readToPixels(pixels);
+	getTexture(attachmentPoint).readToPixels(pixels);
 #else
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
@@ -879,7 +895,7 @@ void ofFbo::draw(float x, float y) const{
 
 void ofFbo::draw(float x, float y, float width, float height) const{
 	if(!bIsAllocated) return;
-    getTextureReference().draw(x, y, width, height);
+    getTexture().draw(x, y, width, height);
 }
 
 

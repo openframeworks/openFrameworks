@@ -877,16 +877,28 @@ ofImage_<PixelType>::operator ofPixels_<PixelType>&(){
 }
 
 //------------------------------------
-// for getting a reference to the texture
 template<typename PixelType>
-ofTexture & ofImage_<PixelType>::getTextureReference(){
+ofTexture & ofImage_<PixelType>::getTexture(){
 	return tex;
 }
 
 //------------------------------------
 template<typename PixelType>
-const ofTexture & ofImage_<PixelType>::getTextureReference() const{
+const ofTexture & ofImage_<PixelType>::getTexture() const{
 	return tex;
+}
+
+//------------------------------------
+// for getting a reference to the texture
+template<typename PixelType>
+ofTexture & ofImage_<PixelType>::getTextureReference(){
+	return getTexture();
+}
+
+//------------------------------------
+template<typename PixelType>
+const ofTexture & ofImage_<PixelType>::getTextureReference() const{
+	return getTexture();
 }
 
 //----------------------------------------------------------
