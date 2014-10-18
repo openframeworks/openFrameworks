@@ -145,15 +145,17 @@ public:
     /// \returns Returns whether the ofImage has a texture or not. 
     bool isUsingTexture() const;
 
-    /// \brief Returns the texture reference that the ofImage contains. 
+    /// \brief Returns the texture that the ofImage contains.
     ///
     /// You can use this to directly manipulate the texture itself, but keep in 
     /// mind that if you manipulate the texture directly, there is no simple way 
     /// to copy the data from the texture back to the pixels and keep the ofImage in sync.
     ///
-    /// \returns Returns the texture reference that the ofImage contains. 
-    ofTexture & getTextureReference();
-    const ofTexture & getTextureReference() const;
+    /// \returns Returns the texture that the ofImage contains.
+    ofTexture & getTexture();
+    const ofTexture & getTexture() const;
+    OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference());
+    OF_DEPRECATED_MSG("Use getTexture",const ofTexture & getTextureReference() const);
 
     // quick texture binding shortcut
     /// \brief Binds the oftexture instance that the ofImage contains so that it can be used for advanced drawing.
@@ -529,7 +531,7 @@ void ofImage_<PixelType>::clone(const ofImage_<SrcType> &mom){
 
 	tex.clear();
 	bUseTexture = mom.isUsingTexture();
-	if (bUseTexture == true && mom.getTextureReference().isAllocated()){
+	if (bUseTexture == true && mom.getTexture().isAllocated()){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
 

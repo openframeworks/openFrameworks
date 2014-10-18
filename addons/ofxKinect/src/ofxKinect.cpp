@@ -459,22 +459,6 @@ ofFloatPixels & ofxKinect::getDistancePixels(){
 	return distancePixels;
 }
 
-//------------------------------------
-ofTexture& ofxKinect::getTextureReference(){
-	if(!videoTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getTextureReference(): device " << deviceId << " video texture not allocated";
-	}
-	return videoTex;
-}
-
-//---------------------------------------------------------------------------
-ofTexture& ofxKinect::getDepthTextureReference(){
-	if(!depthTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getDepthTextureReference(): device " << deviceId << " depth texture not allocated";
-	}
-	return depthTex;
-}
-
 const ofPixels & ofxKinect::getPixels() const{
 	return videoPixels;
 }
@@ -492,19 +476,55 @@ const ofFloatPixels & ofxKinect::getDistancePixels() const{
 }
 
 //------------------------------------
-const ofTexture& ofxKinect::getTextureReference() const{
+ofTexture& ofxKinect::getTexture(){
 	if(!videoTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getTextureReference(): device " << deviceId << " video texture not allocated";
+		ofLogWarning("ofxKinect") << "getTexture(): device " << deviceId << " video texture not allocated";
 	}
 	return videoTex;
 }
 
 //---------------------------------------------------------------------------
-const ofTexture& ofxKinect::getDepthTextureReference() const{
+ofTexture& ofxKinect::getDepthTexture(){
 	if(!depthTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getDepthTextureReference(): device " << deviceId << " depth texture not allocated";
+		ofLogWarning("ofxKinect") << "getDepthTexture(): device " << deviceId << " depth texture not allocated";
 	}
 	return depthTex;
+}
+
+//------------------------------------
+const ofTexture& ofxKinect::getTexture() const{
+	if(!videoTex.bAllocated()){
+		ofLogWarning("ofxKinect") << "getTexture(): device " << deviceId << " video texture not allocated";
+	}
+	return videoTex;
+}
+
+//---------------------------------------------------------------------------
+const ofTexture& ofxKinect::getDepthTexture() const{
+	if(!depthTex.bAllocated()){
+		ofLogWarning("ofxKinect") << "getDepthTexture(): device " << deviceId << " depth texture not allocated";
+	}
+	return depthTex;
+}
+
+//------------------------------------
+ofTexture& ofxKinect::getTextureReference(){
+	return getTexture();
+}
+
+//---------------------------------------------------------------------------
+ofTexture& ofxKinect::getDepthTextureReference(){
+	return getDepthTexture();
+}
+
+//------------------------------------
+const ofTexture& ofxKinect::getTextureReference() const{
+	return getTexture();
+}
+
+//---------------------------------------------------------------------------
+const ofTexture& ofxKinect::getDepthTextureReference() const{
+	return getDepthTexture();
 }
 
 //---------------------------------------------------------------------------
