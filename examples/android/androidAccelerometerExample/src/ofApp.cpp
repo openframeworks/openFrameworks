@@ -5,7 +5,7 @@ void ofApp::setup(){
 	// initialize the accelerometer
 	ofxAccelerometer.setup();
 
-	font.loadFont("verdana.ttf",24);
+	font.load("verdana.ttf",24);
 	ofSetLineWidth(10);
 	ofBackground(0,0,0);
 }

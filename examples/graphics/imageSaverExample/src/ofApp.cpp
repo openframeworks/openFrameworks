@@ -5,7 +5,7 @@
 void ofApp::setup(){
 	snapCounter = 0;
 	bSnapshot = false;
-	cooper.loadFont("cooperBlack.ttf", 50);
+	cooper.load("cooperBlack.ttf", 50);
 	phase = 0;
 	memset(snapString, 0, 255);		// clear the string by setting all chars to 0
 }

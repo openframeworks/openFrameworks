@@ -7,7 +7,7 @@ void ofApp::setup(){
 
     sprintf(eventString, "Alpha"); 
 
-	vagRounded.loadFont("vag.ttf", 32);
+	vagRounded.load("vag.ttf", 32);
 	ofBackground(50,50,50);	
 
     rainbow.allocate(256, 256, OF_IMAGE_COLOR_ALPHA);

@@ -10,7 +10,7 @@ void ofApp::setup(){
 	ofBackground(225,225,225);
 	ofSetVerticalSync(true);
 	
-	font.loadFont("frabk.ttf", 24, true, false, true);
+	font.load("frabk.ttf", 24, true, false, true);
 	
 	dropZoneRects.assign(3, ofRectangle());
 

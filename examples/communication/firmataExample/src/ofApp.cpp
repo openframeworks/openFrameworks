@@ -37,8 +37,8 @@ void ofApp::setup(){
     potValue = "analog pin:";
 
 	bgImage.load("background.png");
-	font.loadFont("franklinGothic.otf", 20);
-    smallFont.loadFont("franklinGothic.otf", 14);
+	font.load("franklinGothic.otf", 20);
+    smallFont.load("franklinGothic.otf", 14);
 
     // replace the string below with the serial port for your Arduino board
     // you can get this from the Arduino application or via command line
