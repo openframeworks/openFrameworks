@@ -17,6 +17,8 @@ CORE
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball
 	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
+	/ ofDrawGrid: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
+	/ ofDrawGridPlane: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
 	
 ### gl
 	+ Programmable lights and materials
