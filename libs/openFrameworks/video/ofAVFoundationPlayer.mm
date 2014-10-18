@@ -33,7 +33,7 @@ ofAVFoundationPlayer::~ofAVFoundationPlayer()
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::loadMovie(string path)
+bool ofAVFoundationPlayer::load(string path)
 {
     if (bInitialized) {
         close();

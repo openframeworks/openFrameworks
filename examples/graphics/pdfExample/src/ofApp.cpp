@@ -15,7 +15,7 @@ void ofApp::setup(){
 	dropZoneRects.assign(3, ofRectangle());
 
 	images.assign(3, ofImage());
-	images[0].loadImage("DSC09316.jpeg");
+	images[0].load("DSC09316.jpeg");
 	
 	for(unsigned int k = 0; k < dropZoneRects.size(); k++){
 		dropZoneRects[k] = ofRectangle(32 + k * 310, 200, 300, 200);
@@ -185,7 +185,7 @@ void ofApp::gotMessage(ofMessage msg){
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 	for(unsigned int j = 0; j < dropZoneRects.size(); j++){
 		if( dropZoneRects[j].inside( dragInfo.position ) ){
-			images[j].loadImage( dragInfo.files[0] );
+			images[j].load( dragInfo.files[0] );
 			break;
 		}
 	}

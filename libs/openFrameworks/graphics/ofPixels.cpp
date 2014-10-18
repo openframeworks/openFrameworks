@@ -342,12 +342,6 @@ void ofPixels_<PixelType>::swap(ofPixels_<PixelType> & pix){
 }
 
 template<typename PixelType>
-PixelType * ofPixels_<PixelType>::getPixels(){
-	return pixels;
-}
-
-
-template<typename PixelType>
 ofPixels_<PixelType>::operator PixelType*(){
 	return pixels;
 }
@@ -358,8 +352,23 @@ ofPixels_<PixelType>::operator const PixelType*(){
 }
 
 template<typename PixelType>
+PixelType * ofPixels_<PixelType>::getPixels(){
+	return pixels;
+}
+
+template<typename PixelType>
 const PixelType * ofPixels_<PixelType>::getPixels() const{
-	return &pixels[0];
+	return pixels;
+}
+
+template<typename PixelType>
+PixelType * ofPixels_<PixelType>::getData(){
+	return pixels;
+}
+
+template<typename PixelType>
+const PixelType * ofPixels_<PixelType>::getData() const{
+	return pixels;
 }
 
 template<typename PixelType>

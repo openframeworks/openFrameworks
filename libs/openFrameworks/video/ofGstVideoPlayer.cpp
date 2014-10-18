@@ -185,7 +185,7 @@ bool ofGstVideoPlayer::createPipeline(string name){
 	return videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
 }
 
-bool ofGstVideoPlayer::loadMovie(string name){
+bool ofGstVideoPlayer::load(string name){
 	if( name.find( "file://",0 ) != string::npos){
 		bIsStream = bAsyncLoad;
 	}else if( name.find( "://",0 ) == string::npos){

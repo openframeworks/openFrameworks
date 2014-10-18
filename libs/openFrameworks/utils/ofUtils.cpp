@@ -761,7 +761,7 @@ void ofSaveScreen(const string& filename) {
    ofImage screen;
    screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
    screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-   screen.saveImage(filename);
+   screen.save(filename);
 }
 
 //--------------------------------------------------
@@ -771,7 +771,7 @@ void ofSaveViewport(const string& filename) {
 	ofRectangle view = ofGetCurrentViewport();
 	screen.allocate(view.width, view.height, OF_IMAGE_COLOR);
 	screen.grabScreen(0, 0, view.width, view.height);
-	screen.saveImage(filename);
+	screen.save(filename);
 }
 
 //--------------------------------------------------

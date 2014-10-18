@@ -14,7 +14,7 @@ void ofApp::setup() {
 	ofSetFrameRate(30);
 	ofBackground(225, 225, 225);
     
-	video.loadMovie("hands.m4v");
+	video.load("hands.m4v");
 	video.play();
     
     controls = [[VideoPlayerControls alloc] init];
@@ -118,7 +118,7 @@ void ofApp::scrubEnd() {
 }
 
 void ofApp::loadPressed() {
-    video.loadMovie("hands.m4v");
+    video.load("hands.m4v");
     video.play();
     
     AVFoundationVideoPlayer * avVideoPlayer;

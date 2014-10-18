@@ -8,9 +8,9 @@ void ofApp::setup(){
     
     // GL_REPEAT for texture wrap only works with NON-ARB textures //
     ofDisableArbTex();
-    texture.loadImage("of.png");
+    texture.load("of.png");
     texture.getTexture().setTextureWrap( GL_REPEAT, GL_REPEAT );
-    vidGrabber.initGrabber(640, 480, true);
+    vidGrabber.setup(640, 480, true);
     
     bFill       = true;
     bWireframe  = true;

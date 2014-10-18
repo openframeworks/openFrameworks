@@ -128,17 +128,17 @@ ofxAndroidVideoPlayer::~ofxAndroidVideoPlayer(){
 
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::loadMovie(string fileName){
+bool ofxAndroidVideoPlayer::load(string fileName){
 
 	if(!javaVideoPlayer){
-		ofLogError("ofxAndroidVideoPlayer") << "loadMovie(): java soundVideoPlayer not loaded";
+		ofLogError("ofxAndroidVideoPlayer") << "load(): java soundVideoPlayer not loaded";
 		return false;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	jmethodID javaLoadMethod = env->GetMethodID(javaClass,"loadMovie","(Ljava/lang/String;)V");
 	if(!javaLoadMethod){
-		ofLogError("ofxAndroidVideoPlayer") << "loadMovie(): couldn't get java loadVideo for VideoPlayer";
+		ofLogError("ofxAndroidVideoPlayer") << "load(): couldn't get java loadVideo for VideoPlayer";
 		return false;
 	}
 

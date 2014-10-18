@@ -66,13 +66,13 @@ ofPixelFormat ofVideoPlayer::getPixelFormat() const{
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::loadMovie(string name){
+bool ofVideoPlayer::load(string name){
 	if( !player ){
 		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
-	bool bOk = player->loadMovie(name);
+	bool bOk = player->load(name);
 	width	 = player->getWidth();
 	height	 = player->getHeight();
 
@@ -97,6 +97,11 @@ bool ofVideoPlayer::loadMovie(string name){
     }
 	
 	return bOk;
+}
+
+//---------------------------------------------------------------------------
+bool ofVideoPlayer::loadMovie(string name){
+	return load(name);
 }
 
 //---------------------------------------------------------------------------

@@ -613,7 +613,7 @@ ofImage_<PixelType>::ofImage_(const ofFile & file){
 	ofInitFreeImage();
 
 
-	loadImage(file);
+	load(file);
 }
 
 template<typename PixelType>
@@ -628,7 +628,7 @@ ofImage_<PixelType>::ofImage_(const string & filename){
 	ofInitFreeImage();
 
 
-	loadImage(filename);
+	load(filename);
 }
 
 //----------------------------------------------------------
@@ -669,13 +669,19 @@ void ofImage_<PixelType>::reloadTexture(){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(const ofFile & file){
-	return loadImage(file.getAbsolutePath());
+bool ofImage_<PixelType>::load(const ofFile & file){
+	return load(file.getAbsolutePath());
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(string fileName){
+bool ofImage_<PixelType>::loadImage(const ofFile & file){
+	return load(file);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+bool ofImage_<PixelType>::load(string fileName){
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	registerImage(this);
 #endif
@@ -695,8 +701,15 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 	return bLoadedOk;
 }
 
+//----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
+bool ofImage_<PixelType>::loadImage(string fileName){
+	return load(fileName);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+bool ofImage_<PixelType>::load(const ofBuffer & buffer){
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	registerImage(this);
 #endif
@@ -718,20 +731,44 @@ bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(string fileName, ofImageQualityType qualityLevel){
+bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
+	return load(buffer);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::save(string fileName, ofImageQualityType qualityLevel){
 	ofSaveImage(pixels, fileName, qualityLevel);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
+void ofImage_<PixelType>::save(ofBuffer & buffer, ofImageQualityType qualityLevel){
 	ofSaveImage(pixels, buffer, qualityLevel);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(const ofFile & file, ofImageQualityType compressionLevel){
+void ofImage_<PixelType>::save(const ofFile & file, ofImageQualityType compressionLevel){
 	ofSaveImage(pixels,file.getAbsolutePath(),compressionLevel);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::saveImage(string fileName, ofImageQualityType qualityLevel){
+	save(fileName, qualityLevel);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
+	save(buffer, qualityLevel);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::saveImage(const ofFile & file, ofImageQualityType compressionLevel){
+	save(file,compressionLevel);
 }
 
 // we could cap these values - but it might be more useful

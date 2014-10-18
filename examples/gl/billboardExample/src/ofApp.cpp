@@ -42,7 +42,7 @@ void ofApp::setup() {
 	
 	// we need to disable ARB textures in order to use normalized texcoords
 	ofDisableArbTex();
-	texture.loadImage("dot.png");
+	texture.load("dot.png");
 	ofEnableAlphaBlending();
 }
 

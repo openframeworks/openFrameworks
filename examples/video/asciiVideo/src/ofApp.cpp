@@ -9,7 +9,7 @@ void ofApp::setup(){
 	camHeight 		= 480;
 	
 	vidGrabber.setVerbose(true);
-	vidGrabber.initGrabber(camWidth,camHeight);
+	vidGrabber.setup(camWidth,camHeight);
 
     font.loadFont("Courier New Bold.ttf", 9);
     
