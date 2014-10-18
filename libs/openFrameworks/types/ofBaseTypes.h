@@ -89,8 +89,8 @@ class ofTexture;
 class ofBaseHasTexture{
 public:
 	virtual ~ofBaseHasTexture(){}
-	virtual ofTexture & getTextureReference()=0;
-	virtual const ofTexture & getTextureReference() const=0;
+	virtual ofTexture & getTexture()=0;
+	virtual const ofTexture & getTexture() const=0;
 	virtual void setUseTexture(bool bUseTex)=0;
 	virtual bool isUsingTexture() const=0;
 };
@@ -226,7 +226,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual float	getWidth() const = 0;
 
 	// implement only if internal API can upload directly to texture
-	virtual ofTexture * getTexture(){ return NULL; }
+	virtual ofTexture * getTexturePtr(){ return NULL; }
 
 	//should implement!
 	virtual void setVerbose(bool bTalkToMe);
@@ -250,7 +250,7 @@ public:
 	
 	virtual void				play() = 0;
 	virtual void				stop() = 0;		
-	virtual ofTexture *			getTexture(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
+	virtual ofTexture *			getTexturePtr(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 	
 	virtual float 				getWidth() const = 0;
 	virtual float 				getHeight() const = 0;

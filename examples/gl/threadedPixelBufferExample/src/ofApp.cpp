@@ -43,7 +43,7 @@ void ofApp::update(){
 		firstFrame = false;
 
 		// copy the fbo texture to a buffer
-		fbo.getTextureReference().copyTo(pixelBufferBack);
+		fbo.getTexture().copyTo(pixelBufferBack);
 
 		// bind and map the buffer as PIXEL_UNPACK so it can be
 		// accessed from a different thread  from the cpu

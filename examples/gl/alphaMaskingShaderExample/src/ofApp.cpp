@@ -117,7 +117,7 @@ void ofApp::update(){
     ofClear(0, 0, 0, 0); 
     
     shader.begin();
-    shader.setUniformTexture("maskTex", maskFbo.getTextureReference(), 1 );
+    shader.setUniformTexture("maskTex", maskFbo.getTexture(), 1 );
     
     srcImg.draw(0,0);
 

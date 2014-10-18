@@ -156,7 +156,7 @@ ofPixels & ofAVFoundationPlayer::getPixels()
 
 
 //--------------------------------------------------------------
-ofTexture * ofAVFoundationPlayer::getTexture()
+ofTexture * ofAVFoundationPlayer::getTexturePtr()
 {
     //TODO: Allow AVF's direct to texture
     if (moviePlayer.textureAllocated) {

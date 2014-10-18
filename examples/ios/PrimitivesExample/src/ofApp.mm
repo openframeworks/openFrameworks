@@ -13,7 +13,7 @@ void ofApp::setup(){
     // GL_REPEAT for texture wrap only works with NON-ARB textures //
     ofDisableArbTex();
     texture.load("of.png");
-    texture.getTextureReference().setTextureWrap( GL_REPEAT, GL_REPEAT );
+    texture.getTexture().setTextureWrap( GL_REPEAT, GL_REPEAT );
     
     bFill       = true;
     bWireframe  = true;
@@ -87,7 +87,7 @@ void ofApp::draw(){
     ofNoFill();
     ofDrawSphere(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth());
     
-    if(mode == 1 || mode == 2) texture.getTextureReference().bind();
+    if(mode == 1 || mode == 2) texture.getTexture().bind();
     
     
     // Plane //
@@ -347,7 +347,7 @@ void ofApp::draw(){
         cone.setScale(1.0f);
     }
     
-    if(mode == 1 || mode == 2) texture.getTextureReference().unbind();
+    if(mode == 1 || mode == 2) texture.getTexture().unbind();
     
     material.end();
     ofDisableLighting();
@@ -447,13 +447,13 @@ void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
         // resize the plane to the size of the texture //
         float tscale = 1.0f;
         if(ofGetWidth() < 1024) tscale = 0.4f;
-        plane.resizeToTexture( texture.getTextureReference(), tscale );
+        plane.resizeToTexture( texture.getTexture(), tscale );
         // setTexCoordsFromTexture sets normalized or non-normalized tex coords based on an ofTexture passed in.
-        box.mapTexCoordsFromTexture( texture.getTextureReference() );
-        sphere.mapTexCoordsFromTexture( texture.getTextureReference() );
-        icoSphere.mapTexCoordsFromTexture( texture.getTextureReference() );
-        cylinder.mapTexCoordsFromTexture( texture.getTextureReference() );
-        cone.mapTexCoordsFromTexture( texture.getTextureReference() );
+        box.mapTexCoordsFromTexture( texture.getTexture() );
+        sphere.mapTexCoordsFromTexture( texture.getTexture() );
+        icoSphere.mapTexCoordsFromTexture( texture.getTexture() );
+        cylinder.mapTexCoordsFromTexture( texture.getTexture() );
+        cone.mapTexCoordsFromTexture( texture.getTexture() );
     }
     
     //

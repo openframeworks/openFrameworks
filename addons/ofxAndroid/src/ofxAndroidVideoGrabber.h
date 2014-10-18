@@ -47,7 +47,7 @@ public:
 
 	bool setAutoFocus(bool autofocus);
 
-	ofTexture *	getTexture();
+	ofTexture *	getTexturePtr();
 	void loadTexture();
 	void reloadTexture();
 	void unloadTexture();

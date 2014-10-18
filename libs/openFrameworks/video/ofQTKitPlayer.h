@@ -62,7 +62,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		// Returns openFrameworks compatible ofTexture pointer.
         // if decodeMode == OF_QTKIT_DECODE_PIXELS_ONLY,
         // the returned pointer will be NULL.
-		ofTexture * getTexture();
+		ofTexture * getTexturePtr();
 
 		float               getPosition() const;
 		float               getPositionInSeconds() const;

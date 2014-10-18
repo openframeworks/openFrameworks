@@ -59,7 +59,7 @@ void ofApp::update() {
 	if(kinect.isFrameNew()) {
 		
 		// load grayscale depth image from the kinect source
-		grayImage.setFromPixels(kinect.getDepthPixels(), kinect.width, kinect.height);
+		grayImage.setFromPixels(kinect.getDepthPixels());
 		
 		// we do two thresholds - one for the far plane and one for the near plane
 		// we then do a cvAnd to get the pixels which are a union of the two thresholds

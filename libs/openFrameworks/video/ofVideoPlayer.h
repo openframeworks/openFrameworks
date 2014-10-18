@@ -81,9 +81,11 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		void 				setUseTexture(bool bUse);
 		bool 				isUsingTexture() const;
-		ofTexture &			getTextureReference();
+		ofTexture &			getTexture();
+		const ofTexture &	getTexture() const;
+		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
+		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
 		vector<ofTexture> & getTexturePlanes();
-		const ofTexture &	getTextureReference() const;
 		const vector<ofTexture> & getTexturePlanes() const;
 		void 				draw(float x, float y, float w, float h) const;
 		void 				draw(float x, float y) const;

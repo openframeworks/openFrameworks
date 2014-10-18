@@ -38,7 +38,7 @@ public:
     const ofPixels &    getPixels() const;
     ofPixels &          getPixels();
     
-    ofTexture *         getTexture();
+    ofTexture *         getTexturePtr();
     ofTexture &         getTextureReference();
     
     bool                isLoading() const;

@@ -97,9 +97,9 @@ void ofApp::draw() {
 	billboardShader.begin();
 	
 	ofEnablePointSprites(); // not needed for GL3/4
-	texture.getTextureReference().bind();
+	texture.getTexture().bind();
 	billboards.draw();
-	texture.getTextureReference().unbind();
+	texture.getTexture().unbind();
 	ofDisablePointSprites(); // not needed for GL3/4
 	
 	billboardShader.end();
