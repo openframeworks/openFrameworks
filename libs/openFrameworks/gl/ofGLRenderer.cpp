@@ -229,7 +229,7 @@ void ofGLRenderer::draw(const ofPath & shape) const{
 void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
 		const ofTexture& tex = image.getTexture();
-		if(tex.bAllocated()) {
+		if(tex.isAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
 			tex.unbind();
@@ -243,7 +243,7 @@ void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float 
 void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
 		const ofTexture& tex = image.getTexture();
-		if(tex.bAllocated()) {
+		if(tex.isAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
 			tex.unbind();
@@ -743,7 +743,7 @@ ofColor ofGLRenderer::getBackgroundColor(){
 //----------------------------------------------------------
 void ofGLRenderer::setBackgroundColor(const ofColor & color){
 	bgColor = color;
-	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+ 	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
 }
 
 //----------------------------------------------------------
