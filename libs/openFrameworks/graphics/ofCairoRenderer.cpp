@@ -35,7 +35,7 @@ ofCairoRenderer::~ofCairoRenderer(){
 
 void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
 	if( _viewport.width == 0 || _viewport.height == 0 ){
-		_viewport.set(0, 0, ofGetWidth(), ofGetHeight());
+		_viewport.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
 	}
 
 	filename = _filename;
@@ -82,7 +82,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	case IMAGE:
 		imageBuffer.allocate(_viewport.width, _viewport.height, 4);
 		imageBuffer.set(0);
-		surface = cairo_image_surface_create_for_data(imageBuffer.getPixels(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
+		surface = cairo_image_surface_create_for_data(imageBuffer.getData(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
 		break;
 	case FROM_FILE_EXTENSION:
 		ofLogFatalError("ofCairoRenderer") << "setup(): couldn't determine type from extension for filename: \"" << _filename << "\"!";
@@ -100,6 +100,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	b3D = b3D_;
 	multiPage = multiPage_;
 	setStyle(ofGetStyle());
+	clear();
 }
 
 void ofCairoRenderer::setupMemoryOnly(Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
@@ -140,6 +141,7 @@ void ofCairoRenderer::finishRender(){
 
 void ofCairoRenderer::update(){
 	if(!surface || !cr)
+	setStyle(ofGetStyle());
 	cairo_surface_flush(surface);
 	if(page==0 || !multiPage){
 		page=1;
@@ -147,11 +149,11 @@ void ofCairoRenderer::update(){
 		page++;
 		if(getBackgroundAuto()){
 			cairo_show_page(cr);
+			clear();
 		}else{
 			cairo_copy_page(cr);
 		}
 	}
-	setStyle(ofGetStyle());
 }
 
 void ofCairoRenderer::setStyle(const ofStyle & style){
@@ -159,7 +161,7 @@ void ofCairoRenderer::setStyle(const ofStyle & style){
 	setColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
 
 	//bg color
-	//setBackgroundColor(style.bgColor);
+	setBackgroundColor(style.bgColor);
 
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	setCircleResolution(style.circleResolution);
@@ -527,7 +529,7 @@ void ofCairoRenderer::draw(const ofPixels & raw, float x, float y, float z, floa
 	cairo_surface_t *image;
 	int stride=0;
 	int picsize = pix.getWidth()* pix.getHeight();
-	const unsigned char *imgPix = pix.getPixels();
+	const unsigned char *imgPix = pix.getData();
 
 	static vector<unsigned char> swapPixels;
 
@@ -567,7 +569,7 @@ void ofCairoRenderer::draw(const ofPixels & raw, float x, float y, float z, floa
 		image = cairo_image_surface_create_for_data(&swapPixels[0], CAIRO_FORMAT_ARGB32, pix.getWidth(), pix.getHeight(), stride);
 #else
 		stride = cairo_format_stride_for_width (CAIRO_FORMAT_ARGB32, pix.getWidth());
-		image = cairo_image_surface_create_for_data(pix.getPixels(), CAIRO_FORMAT_ARGB32, pix.getWidth(), pix.getHeight(), stride);
+		image = cairo_image_surface_create_for_data(pix.getData(), CAIRO_FORMAT_ARGB32, pix.getWidth(), pix.getHeight(), stride);
 #endif
 		break;
 	case OF_IMAGE_GRAYSCALE:
@@ -1154,7 +1156,9 @@ void ofCairoRenderer::setupGraphicDefaults(){
 
 //----------------------------------------------------------
 void ofCairoRenderer::clear(){
-	clear(bgColor.r,bgColor.g,bgColor.b,bgColor.a);
+	if(!surface || ! cr) return;
+	cairo_set_source_rgba(cr,bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+	cairo_paint(cr);
 }
 
 //----------------------------------------------------------
