@@ -42,6 +42,7 @@ CORE
 	- ofRestoreMinMagFilters() : deprecated	  
 	+ ofShader: report offending lines on compiling errors
 	+ ofGLUtils: better support for half float types
+	/ getTextureReference -> getTexture
 
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
@@ -50,9 +51,15 @@ CORE
 	/ getPixelsRef() deprecated and getPixels() now returns ofPixels
 	  temporarily ofPixels auto casts to unsigned char* so old code
 	  is still compatible
+	/ ofPixels::getPixels() -> getData()
 	+ ofPixels support for YUV formats, the prefered allocation method
 	  changes from channels to ofPixelFormat like:
 		pix.allocate(w,h,OF_PIXELS_RGB)
+	/ fixed ofSetBackgroundColor
+	/ added ofGetBackgroundColor and ofGetBackgroundAuto
+	- removed ofbBGColor and ofbBGClear
+	/ ofImage::loadImage() -> load()
+	/ ofImage::saveImage() -> save()
 
 ### utils
 	/ better timming in fps calculation
@@ -67,6 +74,8 @@ CORE
 	+ gstreamer: support for YUV formats when using the programmable renderer
 	  using OF_PIXELS_NATIVE as pixel format will choose the fastest format
 	/ gstreamer: faster reload by default and optional asynchronous load
+	/ ofVideoPlayer::loadMovie() -> load()
+	/ ofVideoGrabber::initGrabber() -> setup()
 
 PLATFORM SPECIFIC
 -----------------
