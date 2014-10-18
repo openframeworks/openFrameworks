@@ -95,7 +95,7 @@ void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer_,bool setDefaults)
 	if(setDefaults){
 		ofGetCurrentRenderer()->setupGraphicDefaults();
 		ofSetStyle(currentStyle);
-		ofBackground(currentStyle.bgColor);
+		ofSetBackgroundColor(currentStyle.bgColor);
 	}
 }
 
@@ -425,19 +425,23 @@ void ofSetBackgroundAuto(bool bAuto){
 	ofGetCurrentRenderer()->setBackgroundAuto(bAuto);
 }
 
-//----------------------------------------------------------
-bool ofbClearBg(){
-	return ofGetCurrentRenderer()->bClearBg();
+bool ofGetBackgroundAuto(){
+	return ofGetCurrentRenderer()->getBackgroundAuto();
 }
 
 //----------------------------------------------------------
-float * ofBgColorPtr(){
-	return &ofGetCurrentRenderer()->getBgColor().r;
+bool ofbClearBg(){
+	return ofGetBackgroundAuto();
 }
 
 //----------------------------------------------------------
 ofColor ofGetBackground(){
-	return ofColor(ofGetCurrentRenderer()->getBgColor());
+	return ofGetCurrentRenderer()->getBackgroundColor();
+}
+
+//----------------------------------------------------------
+ofColor ofGetBackgroundColor(){
+	return ofGetCurrentRenderer()->getBackgroundColor();
 }
 
 //----------------------------------------------------------
@@ -542,6 +546,7 @@ void ofSetBackgroundColorHex(int hexColor, int alpha){
 //----------------------------------------------------------
 void ofSetBackgroundColor(int r, int g, int b, int a){
 	currentStyle.bgColor.set(r,g,b,a);
+	ofGetCurrentRenderer()->setBackgroundColor(currentStyle.bgColor);
 }
 
 // end background functions

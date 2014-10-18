@@ -293,6 +293,8 @@ public:
 
 	virtual const string & getType()=0;
 
+	virtual void startRender() = 0;
+	virtual void finishRender() = 0;
 	virtual void update()=0;
 
 	virtual void draw(const ofPolyline & poly) const=0;
@@ -383,15 +385,17 @@ public:
 	virtual void setHexColor( int hexColor )=0; // hex, like web 0xFF0033;
 
 	// bg color
-	virtual ofFloatColor & getBgColor()=0;
-	virtual bool bClearBg()=0;
+	virtual ofColor getBackgroundColor()=0;
+	virtual void setBackgroundColor(const ofColor & c)=0;
 	virtual void background(const ofColor & c)=0;
 	virtual void background(float brightness)=0;
 	virtual void background(int hexColor, float _a=255.0f)=0;
 	virtual void background(int r, int g, int b, int a=255)=0;
 
 	virtual void setBackgroundAuto(bool bManual)=0;	// default is true
+	virtual bool getBackgroundAuto()=0;
 
+	virtual void clear()=0;
 	virtual void clear(float r, float g, float b, float a=0)=0;
 	virtual void clear(float brightness, float a=0)=0;
 	virtual void clearAlpha()=0;
