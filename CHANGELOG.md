@@ -77,6 +77,8 @@ PLATFORM SPECIFIC
 	+ deployment target moved up to iOS 5.1.1
 
 ### android
+	+ fix camera stretching artifacts experienced on some devices when using 16:9 
+	  aspect ratios
 	+ remove support for arm5 since no devices seem to have that cpu anymore and it
 	  was problematic with certain libraries
 
