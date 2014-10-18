@@ -249,7 +249,7 @@ const ofPixels& ofQTKitPlayer::getPixels() const {
 }
 
 //--------------------------------------------------------------------
-ofTexture* ofQTKitPlayer::getTexture() {
+ofTexture* ofQTKitPlayer::getTexturePtr() {
     ofTexture* texPtr = NULL;
 	if(moviePlayer.textureAllocated){
 		updateTexture();

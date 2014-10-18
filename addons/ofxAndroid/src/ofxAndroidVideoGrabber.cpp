@@ -191,7 +191,7 @@ void ofxAndroidVideoGrabber::close(){
 }
 
 
-ofTexture *	ofxAndroidVideoGrabber::getTexture(){
+ofTexture *	ofxAndroidVideoGrabber::getTexturePtr(){
 	if(supportsTextureRendering()) return &texture;
 	else return NULL;
 }
@@ -634,7 +634,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		//static ofPixels aux_buffer;
 		ofxAndroidVideoGrabber* grabber = (ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber().get();
 
-		unsigned char * dst = instances[cameraId]->getPixels();
+		unsigned char * dst = instances[cameraId]->getPixels().getPixels();
 		if(int(instances[cameraId]->getWidth())!=width || int(instances[cameraId]->getHeight())!=height){
 			if(instances[cameraId]->getPixelFormat()!=OF_PIXELS_MONO){
 				grabber->getAuxBuffer().allocate(width,height,instances[cameraId]->getPixelFormat());
