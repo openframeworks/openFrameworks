@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Poco/ErrorHandler.h"
 #include "ofConstants.h"
 #include "ofFileUtils.h"
 #include "ofTypes.h"
@@ -13,6 +14,14 @@ enum ofLogLevel{
 	OF_LOG_SILENT	// this one is special and should always be last,
 					// set ofSetLogLevel to OF_SILENT to not receive any messages
 };
+
+//--------------------------------------------------
+/// printf annotations for automatic format checking in GCC
+#ifdef __GNUC__
+#define OF_PRINTF_ATTR(x, y) __attribute__ ((format (printf, x, y)))
+#else
+#define OF_PRINTF_ATTR(x, y)
+#endif
 
 //--------------------------------------------------
 void ofSetLogLevel(ofLogLevel level);
@@ -65,7 +74,7 @@ class ofLog{
 		
 		/// the legacy ofLog interfaces
 		ofLog(ofLogLevel level, const string & message);
-		ofLog(ofLogLevel level, const char* format, ...);
+		ofLog(ofLogLevel level, const char* format, ...) OF_PRINTF_ATTR(3, 4);
 		
 		/// does the actual printing when the ostream is done
 		virtual ~ofLog();
@@ -120,35 +129,35 @@ class ofLogVerbose : public ofLog{
 	public:
 		ofLogVerbose(const string &module="");
 		ofLogVerbose(const string & module, const string & message);
-		ofLogVerbose(const string & module, const char* format, ...);
+		ofLogVerbose(const string & module, const char* format, ...) OF_PRINTF_ATTR(3, 4);
 };
 
 class ofLogNotice : public ofLog{
 	public:
 		ofLogNotice(const string & module="");
 		ofLogNotice(const string & module, const string & message);
-		ofLogNotice(const string & module, const char* format, ...);
+		ofLogNotice(const string & module, const char* format, ...) OF_PRINTF_ATTR(3, 4);
 };
 
 class ofLogWarning : public ofLog{
 	public:
 		ofLogWarning(const string & module="");
 		ofLogWarning(const string & module, const string & message);
-		ofLogWarning(const string & module, const char* format, ...);
+		ofLogWarning(const string & module, const char* format, ...) OF_PRINTF_ATTR(3, 4);
 };
 
 class ofLogError : public ofLog{
 	public:
 		ofLogError(const string & module="");
 		ofLogError(const string & module, const string & message);
-		ofLogError(const string & module, const char* format, ...);
+		ofLogError(const string & module, const char* format, ...) OF_PRINTF_ATTR(3, 4);
 };
 
 class ofLogFatalError : public ofLog{
 	public:
 		ofLogFatalError(const string & module="");
 		ofLogFatalError(const string & module, const string & message);
-		ofLogFatalError(const string & module, const char* format, ...);
+		ofLogFatalError(const string & module, const char* format, ...) OF_PRINTF_ATTR(3, 4);
 };
 
 //--------------------------------------------------------------
@@ -160,7 +169,7 @@ class ofBaseLoggerChannel{
 public:
 	virtual ~ofBaseLoggerChannel(){};
 	virtual void log(ofLogLevel level, const string & module, const string & message)=0;
-	virtual void log(ofLogLevel level, const string & module, const char* format, ...)=0;
+	virtual void log(ofLogLevel level, const string & module, const char* format, ...)  OF_PRINTF_ATTR(4, 5) =0;
 	virtual void log(ofLogLevel level, const string & module, const char* format, va_list args)=0;
 };
 
@@ -168,7 +177,7 @@ class ofConsoleLoggerChannel: public ofBaseLoggerChannel{
 public:
 	virtual ~ofConsoleLoggerChannel(){};
 	void log(ofLogLevel level, const string & module, const string & message);
-	void log(ofLogLevel level, const string & module, const char* format, ...);
+	void log(ofLogLevel level, const string & module, const char* format, ...) OF_PRINTF_ATTR(4, 5);
 	void log(ofLogLevel level, const string & module, const char* format, va_list args);
 };
 
@@ -181,11 +190,28 @@ public:
 	void setFile(const string & path,bool append=false);
 
 	void log(ofLogLevel level, const string & module, const string & message);
-	void log(ofLogLevel level, const string & module, const char* format, ...);
+	void log(ofLogLevel level, const string & module, const char* format, ...) OF_PRINTF_ATTR(4, 5);
 	void log(ofLogLevel level, const string & module, const char* format, va_list args);
 
 	void close();
 
 private:
 	ofFile file;
+};
+
+class ofThreadErrorLogger: public Poco::ErrorHandler{
+public:
+    virtual ~ofThreadErrorLogger(){}
+
+    virtual void exception(const Poco::Exception& exc){
+        ofLogFatalError("ofThreadErrorLogger::exception") << exc.displayText();
+    }
+
+    virtual void exception(const std::exception& exc){
+        ofLogFatalError("ofThreadErrorLogger::exception") << exc.what();
+    }
+
+    virtual void exception(){
+        ofLogFatalError("ofThreadErrorLogger::exception") << "Unknown exception.";
+    }
 };

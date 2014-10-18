@@ -67,13 +67,14 @@ public:
 	virtual bool mousePressed(ofMouseEventArgs & args) = 0;
 	virtual bool mouseDragged(ofMouseEventArgs & args) = 0;
 	virtual bool mouseReleased(ofMouseEventArgs & args) = 0;
+	virtual bool mouseScrolled(ofMouseEventArgs & args) = 0;
 protected:
 	virtual void render()=0;
 	bool isGuiDrawing();
 	virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
 	void bindFontTexture();
 	void unbindFontTexture();
-	ofMesh & getTextMesh(const string & text, float x, float y);
+	ofMesh getTextMesh(const string & text, float x, float y);
 	ofRectangle getTextBoundingBox(const string & text,float x, float y);
 
 	ofRectangle b;

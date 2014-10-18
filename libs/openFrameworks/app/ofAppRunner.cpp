@@ -24,11 +24,16 @@
 	#include "ofQtUtils.h"
 #endif
 
+#if defined (TARGET_WIN32)
+#include <mmsystem.h>
+#endif
+
 //========================================================================
 // static variables:
 
 static shared_ptr<ofBaseApp>			OFSAptr;
 static shared_ptr<ofAppBaseWindow> 		window;
+static ofThreadErrorLogger threadErrorLogger;
 
 //========================================================================
 // default windowing
@@ -99,6 +104,7 @@ void ofRunApp(ofBaseApp * OFSA){
 
 //--------------------------------------
 void ofRunApp(shared_ptr<ofBaseApp> OFSA){
+	Poco::ErrorHandler::set(&threadErrorLogger);
 	OFSAptr = OFSA;
 	if(OFSAptr){
 		OFSAptr->mouseX = 0;
@@ -148,6 +154,7 @@ void ofRunApp(shared_ptr<ofBaseApp> OFSA){
     ofAddListener(ofEvents().mouseDragged,OFSA.get(),&ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
     ofAddListener(ofEvents().mousePressed,OFSA.get(),&ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
     ofAddListener(ofEvents().mouseReleased,OFSA.get(),&ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().mouseScrolled,OFSA.get(),&ofBaseApp::mouseScrolled,OF_EVENT_ORDER_APP);
     ofAddListener(ofEvents().windowEntered,OFSA.get(),&ofBaseApp::windowEntry,OF_EVENT_ORDER_APP);
     ofAddListener(ofEvents().windowResized,OFSA.get(),&ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
     ofAddListener(ofEvents().messageEvent,OFSA.get(),&ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
@@ -398,15 +405,6 @@ void ofSetAppPtr(shared_ptr<ofBaseApp> appPtr) {
 //--------------------------------------
 void ofExit(int status){
 	std::exit(status);
-}
-
-//--------------------------------------
-void ofSleepMillis(int millis){
-	#ifdef TARGET_WIN32
-		Sleep(millis);
-	#elif !defined(TARGET_EMSCRIPTEN)
-		usleep(millis * 1000);
-	#endif
 }
 
 //--------------------------------------

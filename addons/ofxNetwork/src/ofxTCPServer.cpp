@@ -51,12 +51,15 @@ void ofxTCPServer::setMessageDelimiter(string delim){
 //--------------------------
 bool ofxTCPServer::close(){
 
-	if(!connected) return true;
-
-	mConnectionsLock.lock();
-	map<int,ofPtr<ofxTCPClient> >::iterator it;
-	for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
-		it->second->close();
+	if(connected)
+	{
+		mConnectionsLock.lock();
+		map<int,ofPtr<ofxTCPClient> >::iterator it;
+		for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
+			it->second->close();
+		}
+		stopThread();
+		connected = false;
 	}
 	TCPConnections.clear();
 	mConnectionsLock.unlock();	//	unlock for thread
@@ -68,8 +71,7 @@ bool ofxTCPServer::close(){
 		waitForThread(false); //stop the thread
 		return false;
 	}else{
-		connected = false;
-
+		
 		waitForThread(false); //stop the thread
 		return true;
 	}
@@ -212,6 +214,17 @@ int ofxTCPServer::receiveRawBytes(int clientID, char * receiveBytes,  int numByt
 
 
 //--------------------------
+int ofxTCPServer::peekReceiveRawBytes(int clientID, char * receiveBytes,  int numBytes){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
+	if( !isClientSetup(clientID) ){
+		ofLog(OF_LOG_WARNING, "ofxTCPServer: client " + ofToString(clientID) + " doesn't exist");
+		return 0;
+	}
+
+	return getClient(clientID).peekReceiveRawBytes(receiveBytes, numBytes);
+}
+
+//--------------------------
 int ofxTCPServer::receiveRawMsg(int clientID, char * receiveBytes,  int numBytes){
 	ofMutex::ScopedLock Lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
@@ -265,6 +278,7 @@ bool ofxTCPServer::isConnected(){
 
 //--------------------------
 bool ofxTCPServer::isClientSetup(int clientID){
+	ofMutex::ScopedLock Lock( mConnectionsLock );
 	return TCPConnections.find(clientID)!=TCPConnections.end();
 }
 

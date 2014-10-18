@@ -810,16 +810,13 @@ bool ofGstVideoGrabber::isFrameNew() const {
 	return videoUtils.isFrameNew();
 }
 
-unsigned char * ofGstVideoGrabber::getPixels(){
+
+ofPixels& ofGstVideoGrabber::getPixels(){
 	return videoUtils.getPixels();
 }
 
-ofPixels& ofGstVideoGrabber::getPixelsRef(){
-	return videoUtils.getPixelsRef();
-}
-
-const ofPixels & ofGstVideoGrabber::getPixelsRef() const {
-	return videoUtils.getPixelsRef();
+const ofPixels & ofGstVideoGrabber::getPixels() const {
+	return videoUtils.getPixels();
 }
 
 float ofGstVideoGrabber::getHeight() const {

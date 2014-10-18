@@ -6,6 +6,8 @@
 
 #ifndef TARGET_EMSCRIPTEN
 #include "ofURLFileLoader.h"
+#include "Poco/URI.h"
+#include "Poco/Exception.h"
 #endif
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
@@ -127,10 +129,14 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 		int dstStride = FreeImage_GetPitch(bmp);
 		unsigned char* src = (unsigned char*) pixels;
 		unsigned char* dst = bmpBits;
-		for(int i = 0; i < (int)height; i++) {
-			memcpy(dst, src, srcStride);
-			src += srcStride;
-			dst += dstStride;
+		if(srcStride != dstStride){
+			for(int i = 0; i < (int)height; i++) {
+				memcpy(dst, src, srcStride);
+				src += srcStride;
+				dst += dstStride;
+			}
+		}else{
+			memcpy(dst,src,dstStride*height);
 		}
 	} else {
 		ofLogError("ofImage") << "getBmpFromPixels(): unable to get FIBITMAP from ofPixels";
@@ -138,7 +144,7 @@ FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
 	
 	// ofPixels are top left, FIBITMAP is bottom left
 	FreeImage_FlipVertical(bmp);
-	
+
 	return bmp;
 }
 
@@ -182,8 +188,13 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	ofPixelFormat pixFormat;
 	if(channels==1) pixFormat=OF_PIXELS_GRAY;
 #ifdef TARGET_LITTLE_ENDIAN
-	if(channels==3) pixFormat=OF_PIXELS_BGR;
-	if(channels==4) pixFormat=OF_PIXELS_BGRA;
+	if(swapForLittleEndian){
+		if(channels==3) pixFormat=OF_PIXELS_BGR;
+		if(channels==4) pixFormat=OF_PIXELS_BGRA;
+	}else{
+		if(channels==3) pixFormat=OF_PIXELS_RGB;
+		if(channels==4) pixFormat=OF_PIXELS_RGBA;
+	}
 #else
 	if(channels==3) pixFormat=OF_PIXELS_RGB;
 	if(channels==4) pixFormat=OF_PIXELS_RGBA;
@@ -213,8 +224,18 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 	ofInitFreeImage();
+
 #ifndef TARGET_EMSCRIPTEN
-	if(fileName.substr(0, 7) == "http://") {
+	// Attempt to parse the fileName as a url - specifically it must be a full address starting with http/https
+	// Poco::URI normalizes to lowercase
+	Poco::URI uri;
+    try {
+        uri = Poco::URI(fileName);
+    } catch(const Poco::SyntaxException& exc){
+        ofLogError("ofImage") << "loadImage(): malformed url when loading image from url \"" << fileName << "\": " << exc.displayText();
+		return false;
+    }
+	if(uri.getScheme() == "http" || uri.getScheme() == "https"){
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
 #endif
@@ -267,8 +288,8 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	FREE_IMAGE_FORMAT fif = FreeImage_GetFileTypeFromMemory(hmem);
 	if( fif == -1 ){
 		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, unable to guess image format from memory";
-		return false;
 		FreeImage_CloseMemory(hmem);
+		return false;
 	}
 
 
@@ -827,8 +848,14 @@ void ofImage_<PixelType>::clear(){
 
 //------------------------------------
 template<typename PixelType>
-PixelType * ofImage_<PixelType>::getPixels(){
-	return pixels.getPixels();
+ofPixels_<PixelType> &  ofImage_<PixelType>::getPixels(){
+	return pixels;
+}
+
+//------------------------------------
+template<typename PixelType>
+const ofPixels_<PixelType> & ofImage_<PixelType>::getPixels() const{
+	return pixels;
 }
 
 //----------------------------------------------------------

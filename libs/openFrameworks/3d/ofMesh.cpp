@@ -746,7 +746,7 @@ bool ofMesh::usingIndices() const{
 
 
 //--------------------------------------------------------------
-void ofMesh::append(ofMesh & mesh){
+void ofMesh::append(const ofMesh & mesh){
 	int prevNumVertices = vertices.size();
 	if(mesh.getNumVertices()){
 		vertices.insert(vertices.end(),mesh.getVertices().begin(),mesh.getVertices().end());
@@ -822,7 +822,7 @@ void ofMesh::load(string path){
 	for(;line != lines.end(); ++line){
 		lineNum++;
 		string lineStr = *line;
-		if(lineStr.find("comment")==0){
+		if(lineStr.find("comment")==0 || lineStr.empty()){
 			continue;
 		}
 
@@ -900,8 +900,8 @@ void ofMesh::load(string path){
 		}
 
 		if(state==Vertices){
-			if(data.getNumVertices()<currentVertex){
-				error = "found more vertices than specified in header";
+			if(data.getNumVertices()<=currentVertex){
+				error = "found more vertices: " + ofToString(currentVertex+1) + " than specified in header: " + ofToString(data.getNumVertices());
 				goto clean;
 			}
 			stringstream sline(lineStr);

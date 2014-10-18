@@ -5,7 +5,7 @@
 
 class ofMesh;
 class ofTexture;
-
+bool ofIsVFlipped();
 
 /*
  
@@ -16,10 +16,7 @@ class ofTexture;
  
  */
 
-void ofDrawBitmapCharacterStart(int stringLength);
-void ofDrawBitmapCharacter(int character, int x , int y );
-void ofDrawBitmapCharacterEnd();
-ofMesh & ofBitmapStringGetMesh(const string & text, int x, int y);
+ofMesh ofBitmapStringGetMesh(const string & text, int x, int y, ofDrawBitmapMode mode=OF_BITMAPMODE_MODEL_BILLBOARD, bool vFlipped=ofIsVFlipped());
 ofTexture & ofBitmapStringGetTextureRef();
 ofRectangle ofBitmapStringGetBoundingBox(const string & text, int x, int y);
 

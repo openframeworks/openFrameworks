@@ -286,7 +286,18 @@ int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
 //--------------------------
 int ofxTCPClient::receiveRawBytes(char * receiveBuffer, int numBytes){
 	messageSize = TCPClient.Receive(receiveBuffer, numBytes);
-	if(messageSize==0){
+	//	0 is not an error... -1 is
+	if ( messageSize == SOCKET_ERROR ){
+		close();
+	}
+	return messageSize;
+}
+
+//--------------------------
+int ofxTCPClient::peekReceiveRawBytes(char * receiveBuffer, int numBytes){
+	messageSize = TCPClient.PeekReceive(receiveBuffer, numBytes);
+	//	network error, kill client
+	if ( messageSize == SOCKET_ERROR ){
 		close();
 	}
 	return messageSize;

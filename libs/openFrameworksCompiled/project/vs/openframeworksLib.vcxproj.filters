@@ -267,6 +267,15 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofXml.h">
       <Filter>libs\openFrameworks\utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h">
+      <Filter>libs\openFrameworks\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofFpsCounter.h">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofTimer.h">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
@@ -457,6 +466,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\utils\ofXml.cpp">
       <Filter>libs\openFrameworks\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofFpsCounter.cpp">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofTimer.cpp">
+      <Filter>libs\openFrameworks\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp">
+      <Filter>libs\openFrameworks\gl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

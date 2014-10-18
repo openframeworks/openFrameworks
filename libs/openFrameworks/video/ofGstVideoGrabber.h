@@ -50,9 +50,8 @@ public:
 	void 			update();
 	bool 			isFrameNew() const;
 
-	unsigned char * getPixels();
-	ofPixels&		getPixelsRef();
-	const ofPixels &		getPixelsRef() const;
+	ofPixels&		getPixels();
+	const ofPixels &		getPixels() const;
 
 	float 			getHeight() const;
 	float 			getWidth() const;

@@ -92,7 +92,7 @@ public:
 	virtual ofTexture & getTextureReference()=0;
 	virtual const ofTexture & getTextureReference() const=0;
 	virtual void setUseTexture(bool bUseTex)=0;
-	virtual bool isUsingTexture() const{return true;};
+	virtual bool isUsingTexture() const=0;
 };
 
 class ofBaseHasTexturePlanes: public ofBaseHasTexture{
@@ -117,9 +117,8 @@ template<typename T>
 class ofBaseHasPixels_: public ofAbstractHasPixels{
 public:
 	virtual ~ofBaseHasPixels_<T>(){}
-	virtual T * getPixels()=0;
-	virtual ofPixels_<T> & getPixelsRef()=0;
-	virtual const ofPixels_<T> & getPixelsRef() const =0;
+	virtual ofPixels_<T> & getPixels()=0;
+	virtual const ofPixels_<T> & getPixels() const=0;
 };
 
 typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
@@ -298,6 +297,9 @@ public:
 
 	virtual void draw(const ofPolyline & poly) const=0;
 	virtual void draw(const ofPath & shape) const=0;
+	virtual void draw(const ofMesh & mesh, ofPolyRenderMode renderType) const{
+		draw(mesh,renderType,mesh.usingColors(),mesh.usingTextures(),mesh.usingNormals());
+	}
 	virtual void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const=0;
 	virtual void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const=0;
     virtual void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const=0;
