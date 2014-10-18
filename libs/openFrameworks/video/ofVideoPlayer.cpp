@@ -370,7 +370,7 @@ void ofVideoPlayer::setUseTexture(bool bUse){
 	if(bUse && player && !player->getTexturePtr() && getWidth()!=0 && getHeight()!=0){
 		for(int i=0;i<player->getPixels().getNumPlanes();i++){
 			ofPixels plane = player->getPixels().getPlane(i);
-			bool bDiffPixFormat = ( tex[i].bAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
+			bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 			if(!tex[i].isAllocated() || bDiffPixFormat){
 				tex[i].allocate(plane);
 			}
