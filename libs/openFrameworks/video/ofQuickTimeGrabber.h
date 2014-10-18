@@ -21,7 +21,7 @@ class ofQuickTimeGrabber : public ofBaseVideoGrabber{
 		virtual ~ofQuickTimeGrabber();
 
         vector<ofVideoDevice>	listDevices() const;
-		bool					initGrabber(int w, int h);
+		bool					setup(int w, int h);
 		void					update();
 		bool					isFrameNew() const;
         bool                    isInitialized() const;

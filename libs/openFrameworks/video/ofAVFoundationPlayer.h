@@ -22,7 +22,7 @@ public:
     ofAVFoundationPlayer();
     ~ofAVFoundationPlayer();
     
-    bool                loadMovie(string path);
+    bool                load(string path);
     
     void                close();
     

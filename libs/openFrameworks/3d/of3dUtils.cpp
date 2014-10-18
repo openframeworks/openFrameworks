@@ -35,7 +35,7 @@ void ofDrawAxis(float size) {
 }
 
 //--------------------------------------------------------------
-void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
+void ofDrawGrid(float stepSize, size_t numberOfSteps, bool labels, bool x, bool y, bool z) {
 	
 	ofColor c(255,0,0);
 	
@@ -44,14 +44,14 @@ void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 	if (x) {
 		c.setHsb(0.0f, 200.0f, 255.0f);
 		ofSetColor(c);
-		ofDrawGridPlane(scale, ticks, labels);
+		ofDrawGridPlane(stepSize, numberOfSteps, labels);
 	}
 	if (y) {
 		c.setHsb(255.0f / 3.0f, 200.0f, 255.0f);
 		ofSetColor(c);
 		ofPushMatrix();
 		ofRotate(90, 0, 0, -1);
-		ofDrawGridPlane(scale, ticks, labels);
+		ofDrawGridPlane(stepSize, numberOfSteps, labels);
 		ofPopMatrix();
 	}
 	if (z) {
@@ -59,14 +59,14 @@ void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 		ofSetColor(c);
 		ofPushMatrix();
 		ofRotate(90, 0, 1, 0);
-		ofDrawGridPlane(scale, ticks, labels);
+		ofDrawGridPlane(stepSize, numberOfSteps, labels);
 		ofPopMatrix();
 	}
 	
 	if (labels) {
 		ofPushStyle();
 		ofSetColor(255, 255, 255);
-		float labelPos = scale * (1.0f + 0.5f / ticks);
+		float labelPos = stepSize * (numberOfSteps + 0.5);
 		ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
 		ofDrawBitmapString("x", labelPos, 0, 0);
 		ofDrawBitmapString("y", 0, labelPos, 0);
@@ -78,31 +78,33 @@ void ofDrawGrid(float scale, float ticks, bool labels, bool x, bool y, bool z) {
 
 
 //--------------------------------------------------------------
-void ofDrawGridPlane(float scale, float ticks, bool labels) {
+void ofDrawGridPlane(float stepSize, size_t numberOfSteps, bool labels) {
 	
-	float minor = scale / ticks;
-	float major =  minor * 2.0f;
+	float minor = stepSize;
+	float scale = stepSize * numberOfSteps;
 	
 	ofPushStyle();
 	for (int iDimension=0; iDimension<2; iDimension++)
 	{
-		for (float yz=-scale; yz<=scale; yz+= minor)
+		for (int i=0; i <= numberOfSteps; i++)
 		{
-			//major major
-			if (fabs(yz) == scale || yz == 0)
-				ofSetLineWidth(2);
+			float yz = i * stepSize;
 			
-			//major
-			else if (yz / major == floor(yz / major) )
-				ofSetLineWidth(1.5);
+			if (i == numberOfSteps || i == 0)
+				ofSetLineWidth(2);   // central axis or cap line
+			else if ( i % 2 == 0){
+				ofSetLineWidth(1.5); // major
+			} else {
+				ofSetLineWidth(1);   // minor
+			}
 			
-			//minor
-			else
-				ofSetLineWidth(1);
-			if (iDimension==0)
+			if (iDimension == 0 ) {
 				ofLine(0, yz, -scale, 0, yz, scale);
-			else
+				if (yz !=0) ofLine(0, -yz, -scale, 0, -yz, scale);
+			} else {
 				ofLine(0, -scale, yz, 0, scale, yz);
+				if (yz !=0) ofLine(0, -scale, -yz, 0, scale, -yz);
+			}
 		}
 	}
 	ofPopStyle();
@@ -112,13 +114,19 @@ void ofDrawGridPlane(float scale, float ticks, bool labels) {
 		ofPushStyle();
 		ofSetColor(255, 255, 255);
 		
-		float accuracy = ceil(-log(scale/ticks)/log(10.0f));
+//		float accuracy = ceil(-log()/log(10.0f));
 		
 		ofSetDrawBitmapMode(OF_BITMAPMODE_MODEL_BILLBOARD);
-		for (float yz = -scale; yz<=scale; yz+=minor)
+
+		ofDrawBitmapString(ofToString(0), 0, 0, 0);
+
+		for (float i = 1; i <= numberOfSteps; i++)
 		{
-			ofDrawBitmapString(ofToString(yz, accuracy), 0, yz, 0);
-			ofDrawBitmapString(ofToString(yz, accuracy), 0, 0, yz);		
+			float yz = i * stepSize;
+			ofDrawBitmapString(ofToString(yz), 0, yz, 0);
+			ofDrawBitmapString(ofToString(-yz), 0, -yz, 0);
+			ofDrawBitmapString(ofToString(yz), 0, 0, yz);
+			ofDrawBitmapString(ofToString(-yz), 0, 0, -yz);
 		}
 		ofPopStyle();
 	}

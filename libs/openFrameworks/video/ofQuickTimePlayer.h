@@ -14,7 +14,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		ofQuickTimePlayer();
 		~ofQuickTimePlayer();
 
-		 bool			loadMovie(string name);
+		 bool			load(string name);
 		 void			closeMovie();	
 		 void			close();
 		 void			update();
