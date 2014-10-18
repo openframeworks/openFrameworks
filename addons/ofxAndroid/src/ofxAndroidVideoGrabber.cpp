@@ -252,7 +252,7 @@ bool ofxAndroidVideoGrabber::supportsTextureRendering(){
 	return supportsTexture;
 }
 
-bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
+bool ofxAndroidVideoGrabber::setup(int w, int h){
 	if(instances.find(cameraId)==instances.end()){
 		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): multiple grabber instances not currently supported";
 		return false;

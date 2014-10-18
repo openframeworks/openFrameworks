@@ -25,7 +25,7 @@ void ofApp::setup() {
 	}
 	
 	ofDisableArbTex();
-	texture.loadImage("snow.png");
+	texture.load("snow.png");
 
 	// we are getting the location of the point size attribute
 	// we then set the pointSizes to the vertex attritbute

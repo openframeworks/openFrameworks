@@ -53,8 +53,10 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		bool				isFrameNew() const;
 		void				update();
 		void				close();	
-		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
-		bool				initGrabber(int w, int h, bool bTexture);
+		bool				setup(int w, int h){return setup(w,h,true);}
+		bool				setup(int w, int h, bool bTexture);
+		OF_DEPRECATED_MSG("Use setup instead",bool initGrabber(int w, int h){return setup(w,h);})
+		OF_DEPRECATED_MSG("Use setup instead",bool initGrabber(int w, int h, bool bTexture));
 		
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat 		getPixelFormat() const;

@@ -29,7 +29,7 @@ void ofApp::setup(){
 	//note: you can get nicer anti-aliased rendering ( with slower fps ) 
 	//if you uncomment the appropriate line in main.cpp
 
-	img.loadImage("nyc-small.exr");
+	img.load("nyc-small.exr");
 	
 	light.enable();
 	light.setPosition(+500, 0, 0);

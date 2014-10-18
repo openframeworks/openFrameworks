@@ -4,9 +4,9 @@
 void ofApp::setup(){
     ofEnableAlphaBlending();
     
-    srcImg.loadImage("A.jpg");
-    dstImg.loadImage("B.jpg");
-    brushImg.loadImage("brush.png");
+    srcImg.load("A.jpg");
+    dstImg.load("B.jpg");
+    brushImg.load("brush.png");
     
     int width = srcImg.getWidth();
     int height = srcImg.getHeight();

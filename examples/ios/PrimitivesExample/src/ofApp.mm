@@ -12,7 +12,7 @@ void ofApp::setup(){
     
     // GL_REPEAT for texture wrap only works with NON-ARB textures //
     ofDisableArbTex();
-    texture.loadImage("of.png");
+    texture.load("of.png");
     texture.getTexture().setTextureWrap( GL_REPEAT, GL_REPEAT );
     
     bFill       = true;

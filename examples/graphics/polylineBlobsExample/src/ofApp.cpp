@@ -7,7 +7,7 @@ void ofApp::setup() {
 	camWidth = 640;
 	camHeight = 480;
 	
-	cam.initGrabber(640, 480);
+	cam.setup(640, 480);
 	cvImgColor.allocate(camWidth, camHeight);
 	cvImgGrayscale.allocate(camWidth, camHeight);
 	

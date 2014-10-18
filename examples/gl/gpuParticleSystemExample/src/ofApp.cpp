@@ -63,7 +63,7 @@ void ofApp::setup(){
     delete [] vel; // Delete the array
     
     // Loading and setings of the variables of the textures of the particles
-    sparkImg.loadImage("spark.png");
+    sparkImg.load("spark.png");
     imgWidth = sparkImg.getWidth();
     imgHeight = sparkImg.getHeight();
     

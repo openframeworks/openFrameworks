@@ -115,7 +115,7 @@ void ofApp::searchGoogleImages() {
 void ofApp::update(){
     for(unsigned int i=0; i<images.size(); i++) {
         if(!images[i].bDoneLoading) {
-            images[i].loadImage(images[i].url);
+            images[i].load(images[i].url);
             images[i].bDoneLoading = true;
             break;
         }

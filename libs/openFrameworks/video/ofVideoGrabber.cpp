@@ -50,12 +50,12 @@ const shared_ptr<ofBaseVideoGrabber> ofVideoGrabber::getGrabber() const{
 }
 
 //--------------------------------------------------------------------
-bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
+bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 
 #ifndef OF_VID_GRABBER_TYPE
-#error OF_VID_GRABBER_TYPE is not #defined! 
+#error OF_VID_GRABBER_TYPE is not #defined!
 #endif
-    
+
 	if(!grabber){
 		setGrabber( shared_ptr<OF_VID_GRABBER_TYPE>(new OF_VID_GRABBER_TYPE) );
 	}
@@ -72,7 +72,7 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 		grabber->setDesiredFrameRate(desiredFramerate);
 	}
 
-	grabber->initGrabber(w, h);
+	grabber->setup(w, h);
 	width			= (int)grabber->getWidth();
 	height			= (int)grabber->getHeight();
 
@@ -90,6 +90,11 @@ bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
 	}
 
 	return grabber->isInitialized();
+}
+
+//--------------------------------------------------------------------
+bool ofVideoGrabber::initGrabber(int w, int h, bool setUseTexture){
+	return setup(w,h,setUseTexture);
 }
 
 //--------------------------------------------------------------------
