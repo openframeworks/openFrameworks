@@ -37,9 +37,9 @@ void ofApp::update(){
 	if (bNewFrame){
 
 		#ifdef _USE_LIVE_VIDEO
-            colorImg.setFromPixels(vidGrabber.getPixels(), 320,240);
+            colorImg.setFromPixels(vidGrabber.getPixels());
 	    #else
-            colorImg.setFromPixels(vidPlayer.getPixels(), 320,240);
+            colorImg.setFromPixels(vidPlayer.getPixels());
         #endif
 
         grayImage = colorImg;

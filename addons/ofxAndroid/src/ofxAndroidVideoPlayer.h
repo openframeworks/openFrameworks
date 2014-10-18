@@ -32,7 +32,7 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		bool isPaused() const;
 		bool isFrameNew() const { return bIsFrameNew;};
 
-		ofTexture *	getTexture();
+		ofTexture *	getTexturePtr();
 		void reloadTexture();
 		void unloadTexture();
 		void removeTexture();

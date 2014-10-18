@@ -320,7 +320,7 @@ bool ofxAndroidVideoPlayer::isPlaying() const {
 };
 
 //---------------------------------------------------------------------------
-ofTexture * ofxAndroidVideoPlayer::getTexture(){
+ofTexture * ofxAndroidVideoPlayer::getTexturePtr(){
 	return & texture;
 }
 

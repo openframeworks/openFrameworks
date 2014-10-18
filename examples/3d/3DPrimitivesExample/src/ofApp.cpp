@@ -9,7 +9,7 @@ void ofApp::setup(){
     // GL_REPEAT for texture wrap only works with NON-ARB textures //
     ofDisableArbTex();
     texture.load("of.png");
-    texture.getTextureReference().setTextureWrap( GL_REPEAT, GL_REPEAT );
+    texture.getTexture().setTextureWrap( GL_REPEAT, GL_REPEAT );
     vidGrabber.setup(640, 480, true);
     
     bFill       = true;
@@ -95,8 +95,8 @@ void ofApp::draw() {
     ofNoFill();
     ofDrawSphere(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth());
     
-    if(mode == 1 || mode == 3) texture.getTextureReference().bind();
-    if(mode == 2) vidGrabber.getTextureReference().bind();
+    if(mode == 1 || mode == 3) texture.getTexture().bind();
+    if(mode == 2) vidGrabber.getTexture().bind();
     
     
     // Plane //
@@ -349,8 +349,8 @@ void ofApp::draw() {
         cone.setScale(1.0f);
     }
     
-    if(mode == 1 || mode == 3) texture.getTextureReference().unbind();
-    if(mode == 2) vidGrabber.getTextureReference().unbind();
+    if(mode == 1 || mode == 3) texture.getTexture().unbind();
+    if(mode == 2) vidGrabber.getTexture().unbind();
     
     material.end();
     ofDisableLighting();
@@ -555,22 +555,22 @@ void ofApp::keyPressed(int key) {
     
     if(mode == 1) {
         // resize the plane to the size of the texture //
-        plane.resizeToTexture( texture.getTextureReference() );
+        plane.resizeToTexture( texture.getTexture() );
         // setTexCoordsFromTexture sets normalized or non-normalized tex coords based on an ofTexture passed in.
-        box.mapTexCoordsFromTexture( texture.getTextureReference() );
-        sphere.mapTexCoordsFromTexture( texture.getTextureReference() );
-        icoSphere.mapTexCoordsFromTexture( texture.getTextureReference() );
-        cylinder.mapTexCoordsFromTexture( texture.getTextureReference() );
-        cone.mapTexCoordsFromTexture( texture.getTextureReference() );
+        box.mapTexCoordsFromTexture( texture.getTexture() );
+        sphere.mapTexCoordsFromTexture( texture.getTexture() );
+        icoSphere.mapTexCoordsFromTexture( texture.getTexture() );
+        cylinder.mapTexCoordsFromTexture( texture.getTexture() );
+        cone.mapTexCoordsFromTexture( texture.getTexture() );
     }
     
     if(mode == 2) {
-        plane.resizeToTexture( vidGrabber.getTextureReference(), .5 );
-        box.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        sphere.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        icoSphere.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        cylinder.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        cone.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
+        plane.resizeToTexture( vidGrabber.getTexture(), .5 );
+        box.mapTexCoordsFromTexture( vidGrabber.getTexture() );
+        sphere.mapTexCoordsFromTexture( vidGrabber.getTexture() );
+        icoSphere.mapTexCoordsFromTexture( vidGrabber.getTexture() );
+        cylinder.mapTexCoordsFromTexture( vidGrabber.getTexture() );
+        cone.mapTexCoordsFromTexture( vidGrabber.getTexture() );
     }
     
     // 
