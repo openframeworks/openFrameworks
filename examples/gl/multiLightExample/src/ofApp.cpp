@@ -66,7 +66,7 @@ void ofApp::setup(){
     // so we must disable the arb rectangle call to allow 0 -> 1
     ofDisableArbTex();
     // load an image to use as the texture //
-    ofLogoImage.loadImage("of.png");
+    ofLogoImage.load("of.png");
     bUseTexture = true;
 }
 

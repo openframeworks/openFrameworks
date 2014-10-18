@@ -4,14 +4,14 @@
 void ofApp::setup(){	
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 	
-	bikers.loadImage("images/bikers.jpg");
-	gears.loadImage("images/gears.gif");
-	tdf.loadImage("images/tdf_1972_poster.jpg");
-	tdfSmall.loadImage("images/tdf_1972_poster.jpg");
+	bikers.load("images/bikers.jpg");
+	gears.load("images/gears.gif");
+	tdf.load("images/tdf_1972_poster.jpg");
+	tdfSmall.load("images/tdf_1972_poster.jpg");
 	tdfSmall.resize(tdf.width / 4, tdf.height / 4);
 	tdfSmall.setImageType(OF_IMAGE_GRAYSCALE);
-	transparency.loadImage("images/transparency.png");
-	bikeIcon.loadImage("images/bike_icon.png");
+	transparency.load("images/transparency.png");
+	bikeIcon.load("images/bike_icon.png");
 	bikeIcon.setImageType(OF_IMAGE_GRAYSCALE);
 }
 

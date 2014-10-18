@@ -682,7 +682,7 @@ ofGstVideoFormat & ofGstVideoGrabber::selectFormat(int w, int h, int desired_fra
 	return camData.webcam_devices[deviceID].video_formats[mostSimilarFormat];
 }
 
-bool ofGstVideoGrabber::initGrabber(int w, int h){
+bool ofGstVideoGrabber::setup(int w, int h){
 	if(!camData.bInited) get_video_devices(camData);
 
 	if(camData.webcam_devices.size()==0){
