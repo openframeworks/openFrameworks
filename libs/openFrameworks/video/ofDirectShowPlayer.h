@@ -8,56 +8,56 @@
 class DirectShowVideo; 
 
 class ofDirectShowPlayer : public ofBaseVideoPlayer{
-	public:
+    public:
 
-		ofDirectShowPlayer();
-		~ofDirectShowPlayer();
+        ofDirectShowPlayer();
+        ~ofDirectShowPlayer();
 
-		bool load(string path);
-		void update();
-		void draw(float x, float y);
+        bool                load(string path);
+        void                update();
+        void                draw(float x, float y);
 
-		 void				close();
-	
-		 void				play();
-		 void				stop();		
-	
-		 bool 				isFrameNew() const;
+        void                close();
+    
+        void                play();
+        void                stop();     
+    
+        bool                isFrameNew() const;
 
-		 const ofPixels &   getPixels() const;
-		 ofPixels &         getPixels();
-	
-		 float 				getWidth() const;
-		 float 				getHeight() const;
-	
-		 bool				isPaused() const;
-		 bool				isLoaded() const;
-		 bool				isPlaying() const;
-	
-		 bool setPixelFormat(ofPixelFormat pixelFormat);
-		 ofPixelFormat 		getPixelFormat() const;
+        const ofPixels &    getPixels() const;
+        ofPixels &          getPixels();
+    
+        float               getWidth() const;
+        float               getHeight() const;
+    
+        bool                isPaused() const;
+        bool                isLoaded() const;
+        bool                isPlaying() const;
+    
+        bool                setPixelFormat(ofPixelFormat pixelFormat);
+        ofPixelFormat       getPixelFormat() const;
 
-		 float 				getPosition() const;
-		 float 				getSpeed() const;
-		 float 				getDuration() const;
-		 bool				getIsMovieDone() const;
-	
-		 void 				setPaused(bool bPause);
-		 void 				setPosition(float pct);
-		 void 				setVolume(float volume); // 0..1
-		 void 				setLoopState(ofLoopType state);
-		 void   			setSpeed(float speed);
-		 void				setFrame(int frame);  // frame 0 = first frame...
-	
-		 int				getCurrentFrame() const;
-		 int				getTotalNumFrames() const;
-		 ofLoopType			getLoopState() const;
-	
-		 void				firstFrame();
-		 void				nextFrame();
-		 void				previousFrame();
+        float               getPosition() const;
+        float               getSpeed() const;
+        float               getDuration() const;
+        bool                getIsMovieDone() const;
+    
+        void                setPaused(bool bPause);
+        void                setPosition(float pct);
+        void                setVolume(float volume); // 0..1
+        void                setLoopState(ofLoopType state);
+        void                setSpeed(float speed);
+        void                setFrame(int frame);  // frame 0 = first frame...
+    
+        int                 getCurrentFrame() const;
+        int                 getTotalNumFrames() const;
+        ofLoopType          getLoopState() const;
+    
+        void                firstFrame();
+        void                nextFrame();
+        void                previousFrame();
 
-	protected:
-		DirectShowVideo * player; 
-		ofPixels pix;
+    protected:
+        DirectShowVideo *   player; 
+        ofPixels            pix;
 };
