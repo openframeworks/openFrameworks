@@ -1099,7 +1099,7 @@ ofDirectShowPlayer::~ofDirectShowPlayer(){
 	close();
 }
 
-bool ofDirectShowPlayer::loadMovie(string path){
+bool ofDirectShowPlayer::load(string path){
 	path = ofToDataPath(path); 
 
 	close();
@@ -1138,41 +1138,41 @@ void ofDirectShowPlayer::stop(){
 	}
 }		
 	
-bool ofDirectShowPlayer::isFrameNew(){
+bool ofDirectShowPlayer::isFrameNew() const{
 	return ( player && player->isFrameNew() ); 
 }
 
-unsigned char * ofDirectShowPlayer::getPixels(){
-	return pix.getPixels();
-}
-	
-ofPixelsRef ofDirectShowPlayer::getPixelsRef(){
-	return pix; 
+const ofPixels & ofDirectShowPlayer::getPixels() const{
+	return pix;
 }
 
-float ofDirectShowPlayer::getWidth(){
+ofPixels & ofDirectShowPlayer::getPixels(){
+	return pix;
+}
+
+float ofDirectShowPlayer::getWidth() const{
 	if( player && player->isLoaded() ){
 		return player->getWidth();
 	}
 	return 0.0; 
 }
 
-float ofDirectShowPlayer::getHeight(){
+float ofDirectShowPlayer::getHeight() const{
 	if( player && player->isLoaded() ){
 		return player->getHeight();
 	}
 	return 0.0;
 }
 	
-bool ofDirectShowPlayer::isPaused(){
+bool ofDirectShowPlayer::isPaused() const{
 	return ( player && player->isPaused() ); 
 }
 
-bool ofDirectShowPlayer::isLoaded(){
+bool ofDirectShowPlayer::isLoaded() const{
 	return ( player && player->isLoaded() ); 
 }
 
-bool ofDirectShowPlayer::isPlaying(){
+bool ofDirectShowPlayer::isPlaying() const{
 	return ( player && player->isPlaying() ); 
 }	
 
@@ -1180,26 +1180,26 @@ bool ofDirectShowPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	return (pixelFormat == OF_PIXELS_RGB);
 }
 
-ofPixelFormat ofDirectShowPlayer::getPixelFormat(){
+ofPixelFormat ofDirectShowPlayer::getPixelFormat() const{
 	return OF_PIXELS_RGB; 
 }
 		
 //should implement!
-float ofDirectShowPlayer::getPosition(){
+float ofDirectShowPlayer::getPosition() const{
 	if( player && player->isLoaded() ){
 		return player->getPosition();
 	}
 	return 0.0;
 }
 
-float ofDirectShowPlayer::getSpeed(){
+float ofDirectShowPlayer::getSpeed() const{
 	if( player && player->isLoaded() ){
 		return player->getSpeed();
 	}
 	return 0.0; 
 }
 
-float ofDirectShowPlayer::getDuration(){
+float ofDirectShowPlayer::getDuration() const{
 	if( player && player->isLoaded() ){
 		return player->getDurationInSeconds();
 	}
@@ -1207,7 +1207,7 @@ float ofDirectShowPlayer::getDuration(){
 }
 
 
-bool ofDirectShowPlayer::getIsMovieDone(){
+bool ofDirectShowPlayer::getIsMovieDone() const{
 	return ( player && player->isMovieDone() ); 
 }
 	
@@ -1248,21 +1248,21 @@ void ofDirectShowPlayer::setSpeed(float speed){
 	}
 }
 	
-int	ofDirectShowPlayer::getCurrentFrame(){
+int	ofDirectShowPlayer::getCurrentFrame() const{
 	if( player && player->isLoaded() ){
 		return player->getCurrentFrameNo();
 	}
 	return 0; 
 }
 
-int	ofDirectShowPlayer::getTotalNumFrames(){
+int	ofDirectShowPlayer::getTotalNumFrames() const{
 	if( player && player->isLoaded() ){
 		return player->getAproximateNoFrames();
 	}
 	return 0; 
 }
 
-ofLoopType ofDirectShowPlayer::getLoopState(){
+ofLoopType ofDirectShowPlayer::getLoopState() const{
 	if( player ){
 		if( player->isLooping() ){
 			return OF_LOOP_NORMAL;
