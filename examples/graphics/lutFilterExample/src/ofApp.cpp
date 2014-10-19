@@ -46,7 +46,7 @@ void ofApp::draw(){
 	if(doLUT){
 		
 		lutImg.draw(lutPos.x, lutPos.y);
-		ofRect(thumbPos.x-3, thumbPos.y-3, 166, 126);
+		ofDrawRectangle(thumbPos.x-3, thumbPos.y-3, 166, 126);
 		vidGrabber.draw(thumbPos.x, thumbPos.y, 160, 120);
 		
 		ofDrawBitmapString(dir.getName(dirLoadIndex), lutPos.x, -lutPos.y+50);

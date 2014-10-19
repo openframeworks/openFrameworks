@@ -53,21 +53,21 @@ public:
             float angle = 90+ofRadToDeg(atan2(vel.y, vel.x));
             ofRotateZ(angle);
             
-            ofEllipse(0, 0, 5, 3);
-            ofLine(+1, 0, +3, -4);
-            ofLine(-1, 0, -3, -4);
+            ofDrawEllipse(0, 0, 5, 3);
+            ofDrawLine(+1, 0, +3, -4);
+            ofDrawLine(-1, 0, -3, -4);
             
-            ofEllipse(0, +3, 3, 4);
-            ofEllipse(0, +6, 3, 3);
-            ofEllipse(0, +8, 2, 3);
+            ofDrawEllipse(0, +3, 3, 4);
+            ofDrawEllipse(0, +6, 3, 3);
+            ofDrawEllipse(0, +8, 2, 3);
             
-            ofLine(0, +3, +4, +3);
-            ofLine(0, +5, +4, +5);
-            ofLine(0, +6, +4, +7);
+            ofDrawLine(0, +3, +4, +3);
+            ofDrawLine(0, +5, +4, +5);
+            ofDrawLine(0, +6, +4, +7);
             
-            ofLine(0, +3, -4, +3);
-            ofLine(0, +5, -4, +5);
-            ofLine(0, +6, -4, +7);
+            ofDrawLine(0, +3, -4, +3);
+            ofDrawLine(0, +5, -4, +5);
+            ofDrawLine(0, +6, -4, +7);
             ofPopMatrix();
         }
         

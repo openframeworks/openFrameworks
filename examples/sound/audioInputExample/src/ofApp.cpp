@@ -66,7 +66,7 @@ void ofApp::draw(){
 		ofDrawBitmapString("Left Channel", 4, 18);
 		
 		ofSetLineWidth(1);	
-		ofRect(0, 0, 512, 200);
+		ofDrawRectangle(0, 0, 512, 200);
 
 		ofSetColor(245, 58, 135);
 		ofSetLineWidth(3);
@@ -89,7 +89,7 @@ void ofApp::draw(){
 		ofDrawBitmapString("Right Channel", 4, 18);
 		
 		ofSetLineWidth(1);	
-		ofRect(0, 0, 512, 200);
+		ofDrawRectangle(0, 0, 512, 200);
 
 		ofSetColor(245, 58, 135);
 		ofSetLineWidth(3);
@@ -110,7 +110,7 @@ void ofApp::draw(){
 			
 		ofSetColor(225);
 		ofDrawBitmapString("Scaled average vol (0-100): " + ofToString(scaledVol * 100.0, 0), 4, 18);
-		ofRect(0, 0, 400, 400);
+		ofDrawRectangle(0, 0, 400, 400);
 		
 		ofSetColor(245, 58, 135);
 		ofFill();		

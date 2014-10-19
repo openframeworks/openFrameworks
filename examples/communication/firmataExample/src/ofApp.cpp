@@ -143,7 +143,7 @@ void ofApp::draw(){
     
     ofEnableAlphaBlending();
     ofSetColor(0, 0, 0, 127);
-    ofRect(510, 15, 275, 150);
+    ofDrawRectangle(510, 15, 275, 150);
     ofDisableAlphaBlending();
     
     ofSetColor(255, 255, 255);

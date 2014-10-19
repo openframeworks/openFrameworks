@@ -77,9 +77,9 @@ void ofApp::update(){
 void ofApp::draw(){
 	camera.begin();
 	ofSetColor(ofColor::red);
-	ofRect(atractor1,10,10);
-	ofRect(atractor2,10,10);
-	ofRect(atractor3,10,10);
+	ofDrawRectangle(atractor1,10,10);
+	ofDrawRectangle(atractor2,10,10);
+	ofDrawRectangle(atractor3,10,10);
 
 	glPointSize(5);
 	ofSetColor(255,255,255,70);
