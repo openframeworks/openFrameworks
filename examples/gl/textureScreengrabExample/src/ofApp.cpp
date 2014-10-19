@@ -21,7 +21,7 @@ void ofApp::draw(){
 
 	// 1st, draw on screen:
 	ofSetHexColor(0x66CC33);	
-	ofRect(100,100,300,300);
+	ofDrawRectangle(100,100,300,300);
 	
 	ofSetHexColor(0xffffff);
 	ofPushMatrix();

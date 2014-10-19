@@ -42,7 +42,7 @@ void ofApp::draw(){
 	}
 	
 	ofSetColor(ofColor::gray);
-	ofLine(nearestVertex, mouse);
+	ofDrawLine(nearestVertex, mouse);
 	
 	ofNoFill();
 	ofSetColor(ofColor::yellow);

@@ -75,7 +75,7 @@ void ofApp::draw(){
             
             // assign the color and draw a rectangle
             ofSetColor( c );
-            ofRect( i, j, step-1, step-1 );
+            ofDrawRectangle( i, j, step-1, step-1 );
         }
     }
     
@@ -89,12 +89,12 @@ void ofApp::draw(){
                                      ofMap( mouseY, ofGetHeight(),0, 0,255 ) );
     ofSetColor( color );
     ofFill();
-    ofRect( mouseX, mouseY, 100, 100 );
+    ofDrawRectangle( mouseX, mouseY, 100, 100 );
     
     // now draw a white border around the rectangle
     ofNoFill();
     ofSetHexColor(0xFFFFFF);
-    ofRect( mouseX, mouseY, 100, 100 );
+    ofDrawRectangle( mouseX, mouseY, 100, 100 );
     ofFill();    
     
     // finally we draw text over the rectangle giving the resulting HSB and RGB values 

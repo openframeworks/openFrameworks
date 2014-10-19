@@ -189,18 +189,18 @@ void ofApp::draw(){
     
     ofFill();
     ofSetColor(10);
-    ofRect(-10, 0, 20, 100);
+    ofDrawRectangle(-10, 0, 20, 100);
     
     float bulletPct = ofMap(bullets.size(), 0, maxBullets, 0.0, 100.0);
     ofSetColor(100);
-    ofRect(-10, 0, 20, bulletPct);
+    ofDrawRectangle(-10, 0, 20, bulletPct);
     
     ofSetColor(100);
-    ofRect(-10, 90, 20, 10);
+    ofDrawRectangle(-10, 90, 20, 10);
     
     if(bFire) {
         ofSetColor(220, 0, 0);
-        ofRect(-10, 97, 20, 3);
+        ofDrawRectangle(-10, 97, 20, 3);
     }
     ofPopMatrix();
     

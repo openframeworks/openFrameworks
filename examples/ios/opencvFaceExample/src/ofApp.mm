@@ -68,13 +68,13 @@ void ofApp::draw(){
 		ofSetColor(255, 0, 255);
 		for(int k = 0; k < faces.size(); k++){
 			ofRectangle rect(faces[k].boundingRect.x * scaleFactor, faces[k].boundingRect.y * scaleFactor, faces[k].boundingRect.width * scaleFactor, faces[k].boundingRect.width * scaleFactor);
-			ofRect(rect);
+			ofDrawRectangle(rect);
 		}
 	ofPopStyle();
 	
 	ofEnableAlphaBlending();
 	ofSetColor(230, 0, 255, 200);
-	ofRect(0, 0, ofGetWidth(), 16);
+	ofDrawRectangle(0, 0, ofGetWidth(), 16);
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("face detector: hold this way up", 5, 12);
 }

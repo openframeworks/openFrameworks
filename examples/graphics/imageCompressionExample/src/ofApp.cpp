@@ -70,7 +70,7 @@ void ofApp::draw() {
 	img.draw(0, 0, ofGetWidth(), ofGetHeight());
 
 	ofSetColor(0);
-	ofRect(5, 5, 290, 45);
+	ofDrawRectangle(5, 5, 290, 45);
 	ofSetColor(255);
 	ofDrawBitmapString("Currently on generation " + ofToString(generation), 10, 20);
 	ofDrawBitmapString("Click to reset, hold 'g' to glitch.", 10, 40);

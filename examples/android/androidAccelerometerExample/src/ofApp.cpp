@@ -32,9 +32,9 @@ void ofApp::draw(){
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
 
 	ofSetColor(255,255,0);
-	ofLine(0,0,normAccel.x*ofGetWidth()/2,0);
+	ofDrawLine(0,0,normAccel.x*ofGetWidth()/2,0);
 	ofSetColor(255,0,255);
-	ofLine(0,0,0,-normAccel.y*ofGetHeight()/2);
+	ofDrawLine(0,0,0,-normAccel.y*ofGetHeight()/2);
 	// we don't draw z as the perspective might be confusing
 	// but it's approximately one when the device is still and parallel
 	// to the ground
