@@ -13,7 +13,7 @@ class ofDirectShowPlayer : public ofBaseVideoPlayer{
 		ofDirectShowPlayer();
 		~ofDirectShowPlayer();
 
-		bool loadMovie(string path);
+		bool load(string path);
 		void update();
 		void draw(float x, float y);
 
@@ -22,24 +22,25 @@ class ofDirectShowPlayer : public ofBaseVideoPlayer{
 		 void				play();
 		 void				stop();		
 	
-		 bool 				isFrameNew();
-		 unsigned char * 	getPixels();
-	     ofPixelsRef		getPixelsRef();
+		 bool 				isFrameNew() const;
+
+		 const ofPixels &   getPixels() const;
+		 ofPixels &         getPixels();
 	
-		 float 				getWidth();
-		 float 				getHeight();
+		 float 				getWidth() const;
+		 float 				getHeight() const;
 	
-		 bool				isPaused();
-		 bool				isLoaded();
-		 bool				isPlaying();
+		 bool				isPaused() const;
+		 bool				isLoaded() const;
+		 bool				isPlaying() const;
 	
 		 bool setPixelFormat(ofPixelFormat pixelFormat);
-		 ofPixelFormat 		getPixelFormat();
+		 ofPixelFormat 		getPixelFormat() const;
 
-		 float 				getPosition();
-		 float 				getSpeed();
-		 float 				getDuration();
-		 bool				getIsMovieDone();
+		 float 				getPosition() const;
+		 float 				getSpeed() const;
+		 float 				getDuration() const;
+		 bool				getIsMovieDone() const;
 	
 		 void 				setPaused(bool bPause);
 		 void 				setPosition(float pct);
@@ -48,9 +49,9 @@ class ofDirectShowPlayer : public ofBaseVideoPlayer{
 		 void   			setSpeed(float speed);
 		 void				setFrame(int frame);  // frame 0 = first frame...
 	
-		 int				getCurrentFrame();
-		 int				getTotalNumFrames();
-		 ofLoopType			getLoopState();
+		 int				getCurrentFrame() const;
+		 int				getTotalNumFrames() const;
+		 ofLoopType			getLoopState() const;
 	
 		 void				firstFrame();
 		 void				nextFrame();
