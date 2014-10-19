@@ -73,12 +73,12 @@ void ofApp::draw(){
 	
 	//This are just the reference lines draw in the screen.
 	ofSetColor(0, 0, 0, 150);
-	ofLine(LEFT_MARGIN, 0, LEFT_MARGIN, ofGetHeight());
-	ofLine(0, TOP_MARGIN, ofGetWidth(), TOP_MARGIN);
+	ofDrawLine(LEFT_MARGIN, 0, LEFT_MARGIN, ofGetHeight());
+	ofDrawLine(0, TOP_MARGIN, ofGetWidth(), TOP_MARGIN);
 	
 	ofSetColor(0, 0, 0, 80);
-	ofLine(LEFT_MARGIN, center.y, ofGetWidth(), center.y);
-	ofLine(center.x, TOP_MARGIN, center.x, ofGetHeight());
+	ofDrawLine(LEFT_MARGIN, center.y, ofGetWidth(), center.y);
+	ofDrawLine(center.x, TOP_MARGIN, center.x, ofGetHeight());
 	
 	//ofSetLineWidth(2);
 	

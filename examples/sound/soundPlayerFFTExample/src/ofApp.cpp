@@ -93,7 +93,7 @@ void ofApp::draw(){
 	
 	ofEnableAlphaBlending();
 		ofSetColor(255,255,255,100);
-		ofRect(100,ofGetHeight()-300,5*128,200);
+		ofDrawRectangle(100,ofGetHeight()-300,5*128,200);
 	ofDisableAlphaBlending();
 	
 	// draw the fft resutls:
@@ -103,7 +103,7 @@ void ofApp::draw(){
 	for (int i = 0;i < nBandsToGet; i++){
 		// (we use negative height here, because we want to flip them
 		// because the top corner is 0,0)
-		ofRect(100+i*width,ofGetHeight()-100,width,-(fftSmoothed[i] * 200));
+		ofDrawRectangle(100+i*width,ofGetHeight()-100,width,-(fftSmoothed[i] * 200));
 	}
 	
 	// finally draw the playing circle:

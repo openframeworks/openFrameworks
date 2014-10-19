@@ -29,11 +29,11 @@ void ofApp::draw(){
 	// draw the background colors:
 	float widthDiv = ofGetWidth() / 3.0f;
 	ofSetHexColor(0xeeeeee);
-	ofRect(0,0,widthDiv,ofGetHeight());
+	ofDrawRectangle(0,0,widthDiv,ofGetHeight());
 	ofSetHexColor(0xffffff);
-	ofRect(widthDiv,0,widthDiv,ofGetHeight());
+	ofDrawRectangle(widthDiv,0,widthDiv,ofGetHeight());
 	ofSetHexColor(0xdddddd);
-	ofRect(widthDiv*2,0,widthDiv,ofGetHeight());
+	ofDrawRectangle(widthDiv*2,0,widthDiv,ofGetHeight());
 
 
 	//---------------------------------- synth:

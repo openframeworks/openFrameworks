@@ -82,8 +82,8 @@ void ofApp::draw(){
     ofPushStyle();
     ofSetColor(0);
     ofFill();
-    ofRect(previewWindow);
-    ofRect(playbackWindow);
+    ofDrawRectangle(previewWindow);
+    ofDrawRectangle(playbackWindow);
     ofPopStyle();
     
     // draw the preview if available
@@ -101,8 +101,8 @@ void ofApp::draw(){
 		// x out to show there is no video preview
         ofSetColor(255);
 		ofSetLineWidth(3);
-		ofLine(20, 20, 640+20, 480+20);
-		ofLine(20+640, 20, 20, 480+20);
+		ofDrawLine(20, 20, 640+20, 480+20);
+		ofDrawLine(20+640, 20, 20, 480+20);
 		ofPopStyle();
 	}
     
@@ -129,7 +129,7 @@ void ofApp::draw(){
     else{
     	ofSetColor(255,80);
     }
-    ofRect(previewWindow);
+    ofDrawRectangle(previewWindow);
     ofPopStyle();
     
     

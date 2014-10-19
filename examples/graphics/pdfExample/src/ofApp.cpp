@@ -64,7 +64,7 @@ void ofApp::draw(){
 	ofNoFill();
 	for(unsigned int k = 0; k < dropZoneRects.size(); k++){
 		ofSetColor(54,54,54);
-		ofRect(dropZoneRects[k]);
+		ofDrawRectangle(dropZoneRects[k]);
 		ofSetColor(245, 58, 135);		
 		ofDrawBitmapString("drop images here", dropZoneRects[k].getCenter().x - 70, dropZoneRects[k].getCenter().y);
 	}
@@ -110,7 +110,7 @@ void ofApp::draw(){
 
 		ofTranslate(x, y, 0);
 		ofRotate(angle);
-		ofRect(0, 0, 30, 30);
+		ofDrawRectangle(0, 0, 30, 30);
 	ofPopMatrix();	
 	
 	if( boxTrail.size() == 0 || ( boxTrail.back() - ofPoint(x, y) ).length() > 1.5 ){

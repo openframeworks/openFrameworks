@@ -73,7 +73,7 @@ void ofApp::draw(){
 
 	ofFill();
 	ofSetHexColor(0x333333);
-	ofRect(360,540,320,240);
+	ofDrawRectangle(360,540,320,240);
 	ofSetHexColor(0xffffff);
 
 	// we could draw the whole contour finder

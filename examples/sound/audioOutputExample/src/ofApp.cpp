@@ -56,7 +56,7 @@ void ofApp::draw(){
 		ofDrawBitmapString("Left Channel", 4, 18);
 		
 		ofSetLineWidth(1);	
-		ofRect(0, 0, 900, 200);
+		ofDrawRectangle(0, 0, 900, 200);
 
 		ofSetColor(245, 58, 135);
 		ofSetLineWidth(3);
@@ -80,7 +80,7 @@ void ofApp::draw(){
 		ofDrawBitmapString("Right Channel", 4, 18);
 		
 		ofSetLineWidth(1);	
-		ofRect(0, 0, 900, 200);
+		ofDrawRectangle(0, 0, 900, 200);
 
 		ofSetColor(245, 58, 135);
 		ofSetLineWidth(3);

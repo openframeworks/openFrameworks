@@ -54,7 +54,7 @@ void ofApp::draw(){
 	for (int i = 0; i < faces.size(); i++) {
 		ofxCvBlob& face = faces[i];
 		ofRectangle rect(face.boundingRect.x * scaleFactor, face.boundingRect.y * scaleFactor, face.boundingRect.width * scaleFactor, face.boundingRect.height * scaleFactor);
-		ofRect(rect);
+		ofDrawRectangle(rect);
 	}
 	ofPopStyle();
 

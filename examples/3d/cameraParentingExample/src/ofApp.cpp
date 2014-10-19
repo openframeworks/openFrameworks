@@ -154,7 +154,7 @@ void ofApp::draw(){
 			ofSetColor(0, 255, 255);
 			ofVec3f v1 = cam[i].getGlobalPosition();
 			ofVec3f v2 = testNodes[lookatIndex[i]].getGlobalPosition();
-            ofLine(v1,v2);
+            ofDrawLine(v1,v2);
 		}
 		
 		// draw line from cam to its parent
@@ -162,7 +162,7 @@ void ofApp::draw(){
 			ofSetColor(255, 255, 0);
 			ofVec3f v1 = cam[i].getGlobalPosition();
 			ofVec3f v2 = testNodes[parentIndex[i]].getGlobalPosition();
-            ofLine(v1,v2);
+            ofDrawLine(v1,v2);
 		}
 	}
 	
