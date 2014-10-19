@@ -39,11 +39,11 @@ void ofApp::draw(){
 
     // draw the background colors:
 	ofSetHexColor(0xeeeeee);
-	ofRect(0, 0, sectionWidth, ofGetHeight());
+	ofDrawRectangle(0, 0, sectionWidth, ofGetHeight());
 	ofSetHexColor(0xffffff);
-	ofRect(sectionWidth, 0, sectionWidth, ofGetHeight());
+	ofDrawRectangle(sectionWidth, 0, sectionWidth, ofGetHeight());
 	ofSetHexColor(0xdddddd);
-	ofRect(sectionWidth * 2, 0, sectionWidth, ofGetHeight());
+	ofDrawRectangle(sectionWidth * 2, 0, sectionWidth, ofGetHeight());
     
 	//---------------------------------- synth:
 	if(synth.getIsPlaying()) {

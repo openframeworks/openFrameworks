@@ -388,32 +388,32 @@ void ofApp::draw() {
     ofFill();
     
     ofSetColor(0);
-    ofRect(plane.getPosition().x-154, plane.getPosition().y + 120, 140, 24);
+    ofDrawRectangle(plane.getPosition().x-154, plane.getPosition().y + 120, 140, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofPlanePrimitive", plane.getPosition().x-150, plane.getPosition().y+136 );
     
     ofSetColor(0);
-    ofRect(box.getPosition().x-154, box.getPosition().y + 120, 126, 24);
+    ofDrawRectangle(box.getPosition().x-154, box.getPosition().y + 120, 126, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofBoxPrimitive", box.getPosition().x-150, box.getPosition().y+136 );
     
     ofSetColor(0);
-    ofRect(sphere.getPosition().x-154, sphere.getPosition().y + 120, 148, 24);
+    ofDrawRectangle(sphere.getPosition().x-154, sphere.getPosition().y + 120, 148, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofSpherePrimitive", sphere.getPosition().x-150, sphere.getPosition().y+136 );
     
     ofSetColor(0);
-    ofRect(icoSphere.getPosition().x-154, icoSphere.getPosition().y + 120, 168, 24);
+    ofDrawRectangle(icoSphere.getPosition().x-154, icoSphere.getPosition().y + 120, 168, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofIcoSpherePrimitive", icoSphere.getPosition().x-150, icoSphere.getPosition().y+136 );
     
     ofSetColor(0);
-    ofRect(cylinder.getPosition().x-154, cylinder.getPosition().y + 120, 160, 24);
+    ofDrawRectangle(cylinder.getPosition().x-154, cylinder.getPosition().y + 120, 160, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofCylinderPrimitive", cylinder.getPosition().x-150, cylinder.getPosition().y+136 );
     
     ofSetColor(0);
-    ofRect(cone.getPosition().x-154, cone.getPosition().y + 120, 136, 24);
+    ofDrawRectangle(cone.getPosition().x-154, cone.getPosition().y + 120, 136, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofConePrimitive", cone.getPosition().x-150, cone.getPosition().y+136 );
         
