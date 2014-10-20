@@ -706,6 +706,25 @@ bool ofIsGLProgrammableRenderer(){
 	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE;
 }
 
+string ofGLSLVersionFromGL(int major, int minor){
+	switch(major){
+	case 3:
+		if(minor==0){
+			return "130";
+		}else if(minor==1){
+			return "140";
+		}else if(minor==2){
+			return "150";
+		}else{
+			return ofToString(major*100+minor*10);
+		}
+	case 4:
+		return ofToString(major*100+minor*10);
+	default:
+		return "120";
+	}
+}
+
 #ifndef TARGET_PROGRAMMABLE_GL
 shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 	if(ofGetCurrentRenderer()->getType()==ofGLRenderer::TYPE || ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){

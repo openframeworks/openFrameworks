@@ -86,6 +86,8 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
 	return ofGetGLFormatFromPixelFormat(pixels.getPixelFormat());
 }
 
+string ofGLSLVersionFromGL(int major, int minor);
+
 
 #ifndef TARGET_OPENGLES
 	#define GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS			GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT

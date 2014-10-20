@@ -4,13 +4,11 @@
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
 #include "ofTypes.h"
-
-#ifdef TARGET_LINUX
 #include "ofPixels.h"
-#endif
 
 //class ofPoint;
 class ofBaseApp;
+class ofBaseRenderer;
 
 class ofAppGlutWindow : public ofAppBaseGLWindow {
 
@@ -56,6 +54,9 @@ public:
 
 	void		setVerticalSync(bool enabled);
 
+	ofCoreEvents & events();
+	shared_ptr<ofBaseRenderer> & renderer();
+
 private:
 	static void display(void);
 	static void mouse_cb(int button, int state, int x, int y);
@@ -77,6 +78,8 @@ private:
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 	
+	ofCoreEvents coreEvents;
+	shared_ptr<ofBaseRenderer> currentRenderer;
 		 
 };
 

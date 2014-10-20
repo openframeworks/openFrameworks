@@ -2,6 +2,8 @@
 
 #include "ofPoint.h"
 #include "ofTypes.h"
+class ofBaseRenderer;
+class ofCoreEvents;
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 #include <X11/Xlib.h>
@@ -22,6 +24,8 @@ public:
 	virtual void windowShouldClose(){
 		std::exit(0);
 	}
+	virtual ofCoreEvents & events() = 0;
+	virtual shared_ptr<ofBaseRenderer> & renderer() = 0;
 
 	virtual void hideCursor() {}
 	virtual void showCursor() {}

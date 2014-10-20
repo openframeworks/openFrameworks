@@ -2,32 +2,10 @@
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofBaseTypes.h"
-#include "ofGLRenderer.h"
 #include "ofPath.h"
 #include "ofRendererCollection.h"
-#include "ofGLProgrammableRenderer.h"
-#include "ofGLRenderer.h"
 #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 #include "ofCairoRenderer.h"
-#endif
-
-
-#if !defined(TARGET_LINUX_ARM) && !defined(TARGET_EMSCRIPTEN)
-	#ifdef TARGET_OSX
-		#include <OpenGL/glu.h>
-	#endif
-
-	#ifdef TARGET_OPENGLES
-		#include "glu.h"
-	#endif
-
-	#ifdef TARGET_LINUX
-		#include <GL/glu.h>
-	#endif
-
-	#ifdef TARGET_WIN32
-		#include "glu.h"
-	#endif
 #endif
 
 
@@ -35,30 +13,12 @@
     #define CALLBACK
 #endif
 
-#ifdef TARGET_WIN32
-	#define GLUT_BUILDING_LIB
-	#include "glut.h"
-#endif
-#ifdef TARGET_OSX
-	#include <GLUT/glut.h>
-#endif
-#if defined( TARGET_LINUX ) && !defined(TARGET_OPENGLES)
-	#include <GL/glut.h>
-#endif
-
 
 //style stuff - new in 006
 static ofStyle currentStyle;
 static deque <ofStyle> styleHistory;
-static deque <ofRectangle> viewportHistory;
-
 static ofPath shape;
 static ofVboMesh gradientMesh;
-
-shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
-	static shared_ptr<ofBaseRenderer> currentRenderer;
-	return currentRenderer;
-}
 
 void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
 	if(rendererType==ofGLProgrammableRenderer::TYPE){
@@ -706,14 +666,14 @@ void ofEnableBlendMode(ofBlendMode blendMode){
 //----------------------------------------------------------
 void ofEnablePointSprites(){
 	if(ofGetCurrentRenderer()->getType()=="GL" || ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
-		((shared_ptr<ofBaseGLRenderer>&)ofGetCurrentRenderer())->enablePointSprites();
+		static_cast<ofBaseGLRenderer*>(ofGetCurrentRenderer().get())->enablePointSprites();
 	}
 }
 
 //----------------------------------------------------------
 void ofDisablePointSprites(){
 	if(ofGetCurrentRenderer()->getType()=="GL" || ofGetCurrentRenderer()->getType()=="ProgrammableGL"){
-		((shared_ptr<ofBaseGLRenderer>&)ofGetCurrentRenderer())->disablePointSprites();
+		static_cast<ofBaseGLRenderer*>(ofGetCurrentRenderer().get())->disablePointSprites();
 	}
 }
 

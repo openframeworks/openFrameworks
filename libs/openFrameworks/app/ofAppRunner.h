@@ -10,8 +10,9 @@ class ofAppBaseGLWindow;
 class ofAppBaseGLESWindow;
 class ofBaseApp;
 class ofBaseRenderer;
+class ofCoreEvents;
 
-void 		ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
+OF_INTERNAL_DEPRECATED(void 		ofSetupOpenGL(int w, int h, ofWindowMode screenMode));	// sets up the opengl context!
 #ifdef TARGET_OPENGLES
 void		ofSetOpenGLESVersion(int version);
 int			ofGetOpenGLESVersion();
@@ -19,79 +20,84 @@ string		ofGetGLSLVersion();
 void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
 void 		ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, ofWindowMode screenMode);  // will be deprecated
 #else
-void		ofSetOpenGLVersion(int major, int minor);
-int			ofGetOpenGLVersionMajor();
-int			ofGetOpenGLVersionMinor();
-string		ofGetGLSLVersion();
-void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
-void 		ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, ofWindowMode screenMode);  // will be deprecated
+OF_INTERNAL_DEPRECATED(void		ofSetOpenGLVersion(int major, int minor));
+OF_INTERNAL_DEPRECATED(int			ofGetOpenGLVersionMajor());
+OF_INTERNAL_DEPRECATED(int			ofGetOpenGLVersionMinor());
+OF_INTERNAL_DEPRECATED(string		ofGetGLSLVersion());
+OF_INTERNAL_DEPRECATED(void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWindowMode screenMode));	// sets up the opengl context!
+OF_INTERNAL_DEPRECATED(void 		ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, ofWindowMode screenMode));  // will be deprecated
 #endif
-void		ofSetWindow(ofAppBaseWindow * windowPtr);
-void		ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr);
+OF_INTERNAL_DEPRECATED(void		ofSetWindow(ofAppBaseWindow * windowPtr));
+OF_INTERNAL_DEPRECATED(void		ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr));
 void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode screenMode));
 
-void 		ofRunApp(shared_ptr<ofBaseApp> OFSA);
-void 		ofRunApp(ofBaseApp * OFSA = NULL); // will be deprecated
+OF_INTERNAL_DEPRECATED(void 		ofRunApp(shared_ptr<ofBaseApp> OFSA));
+OF_INTERNAL_DEPRECATED(void 		ofRunApp(ofBaseApp * OFSA = NULL)); // will be deprecated
 
 
-ofBaseApp * ofGetAppPtr();
-void ofSetAppPtr(shared_ptr<ofBaseApp> appPtr);
+OF_INTERNAL_DEPRECATED(ofBaseApp * ofGetAppPtr());
+OF_INTERNAL_DEPRECATED(void ofSetAppPtr(shared_ptr<ofBaseApp> appPtr));
 
-void		ofExit(int status=0);
+OF_INTERNAL_DEPRECATED(void		ofExit(int status=0));
 
 //-------------------------- time
-float 		ofGetFrameRate();
-float 		ofGetTargetFrameRate();
-int			ofGetFrameNum();
-void 		ofSetFrameRate(int targetRate);
-double		ofGetLastFrameTime();
+OF_INTERNAL_DEPRECATED(float 		ofGetFrameRate());
+OF_INTERNAL_DEPRECATED(float 		ofGetTargetFrameRate());
+OF_INTERNAL_DEPRECATED(int			ofGetFrameNum());
+OF_INTERNAL_DEPRECATED(void 		ofSetFrameRate(int targetRate));
+OF_INTERNAL_DEPRECATED(double		ofGetLastFrameTime());
 
-void		ofSetOrientation(ofOrientation orientation, bool vFlip=true);
-ofOrientation			ofGetOrientation();
+OF_INTERNAL_DEPRECATED(void		ofSetOrientation(ofOrientation orientation, bool vFlip=true));
+OF_INTERNAL_DEPRECATED(ofOrientation			ofGetOrientation());
 
 //-------------------------- cursor
-void 		ofHideCursor();
-void 		ofShowCursor();
+OF_INTERNAL_DEPRECATED(void 		ofHideCursor());
+OF_INTERNAL_DEPRECATED(void 		ofShowCursor());
 //-------------------------- window / screen
-int 		ofGetWindowPositionX();
-int 		ofGetWindowPositionY();
-int 		ofGetScreenWidth();
-int 		ofGetScreenHeight();
-int			ofGetWindowMode();
-int 		ofGetWidth();			// ofGetWidth is correct for orientation
-int 		ofGetHeight();
-int 		ofGetWindowWidth();			// ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation. 
-int 		ofGetWindowHeight();
-bool		ofDoesHWOrientation();
-ofPoint		ofGetWindowSize();
-ofRectangle	ofGetWindowRect();
-ofAppBaseWindow * ofGetWindowPtr();
+OF_INTERNAL_DEPRECATED(int 		ofGetWindowPositionX());
+OF_INTERNAL_DEPRECATED(int 		ofGetWindowPositionY());
+OF_INTERNAL_DEPRECATED(int 		ofGetScreenWidth());
+OF_INTERNAL_DEPRECATED(int 		ofGetScreenHeight());
+OF_INTERNAL_DEPRECATED(int			ofGetWindowMode());
+OF_INTERNAL_DEPRECATED(int 		ofGetWidth());			// ofGetWidth is correct for orientation
+OF_INTERNAL_DEPRECATED(int 		ofGetHeight());
+OF_INTERNAL_DEPRECATED(int 		ofGetWindowWidth());			// ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation.
+OF_INTERNAL_DEPRECATED(int 		ofGetWindowHeight());
+OF_INTERNAL_DEPRECATED(bool		ofDoesHWOrientation());
+OF_INTERNAL_DEPRECATED(ofPoint		ofGetWindowSize());
+OF_INTERNAL_DEPRECATED(ofRectangle	ofGetWindowRect());
+OF_INTERNAL_DEPRECATED(ofAppBaseWindow * ofGetWindowPtr());
 
-void 		ofSetWindowPosition(int x, int y);
-void 		ofSetWindowShape(int width, int height);
-void 		ofSetWindowTitle(string title);
-void		ofEnableSetupScreen();
-void		ofDisableSetupScreen();
-void		ofSetFullscreen(bool fullscreen);
-void		ofToggleFullscreen();
+OF_INTERNAL_DEPRECATED(void 		ofSetWindowPosition(int x, int y));
+OF_INTERNAL_DEPRECATED(void 		ofSetWindowShape(int width, int height));
+OF_INTERNAL_DEPRECATED(void 		ofSetWindowTitle(string title));
+OF_INTERNAL_DEPRECATED(void		ofEnableSetupScreen());
+OF_INTERNAL_DEPRECATED(void		ofDisableSetupScreen());
+OF_INTERNAL_DEPRECATED(void		ofSetFullscreen(bool fullscreen));
+OF_INTERNAL_DEPRECATED(void		ofToggleFullscreen());
 //-------------------------- sync
-void 		ofSetVerticalSync(bool bSync);
+OF_INTERNAL_DEPRECATED(void 		ofSetVerticalSync(bool bSync));
+
+ofCoreEvents & ofEvents();
+void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults=false);
+OF_DEPRECATED(void ofSetCurrentRenderer(const string & rendererType,bool setDefaults=false));
+shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer();
 
 //-------------------------- native window handles
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 #include <X11/Xlib.h>
-	Display* ofGetX11Display();
-	Window  ofGetX11Window();
+OF_INTERNAL_DEPRECATED(Display* ofGetX11Display());
+OF_INTERNAL_DEPRECATED(Window  ofGetX11Window());
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
-	GLXContext ofGetGLXContext();
+OF_INTERNAL_DEPRECATED(GLXContext ofGetGLXContext());
 #endif
 
 #if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
-	EGLDisplay ofGetEGLDisplay();
-	EGLContext ofGetEGLContext();
-	EGLSurface ofGetEGLSurface();
+OF_INTERNAL_DEPRECATED(EGLDisplay ofGetEGLDisplay());
+OF_INTERNAL_DEPRECATED(EGLContext ofGetEGLContext());
+OF_INTERNAL_DEPRECATED(EGLSurface ofGetEGLSurface());
 #endif
 
 #if defined(TARGET_OSX)

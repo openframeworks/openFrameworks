@@ -19,7 +19,7 @@ public:
 	ofGLProgrammableRenderer(const ofAppBaseWindow * window);
 	~ofGLProgrammableRenderer();
 
-	void setup(const string & glslVersion);
+	void setup(int glVersionMajor, int glVersionMinor);
 
     static const string TYPE;
 	const string & getType(){ return TYPE; }

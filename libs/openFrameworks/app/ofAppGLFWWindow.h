@@ -62,6 +62,9 @@ public:
 
 	int getHeight();
 	int getWidth();
+
+	ofCoreEvents & events();
+	shared_ptr<ofBaseRenderer> & renderer();
     
     GLFWwindow* getGLFWWindow();
 
@@ -139,6 +142,9 @@ private:
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
+	ofCoreEvents coreEvents;
+	shared_ptr<ofBaseRenderer> currentRenderer;
+
 	//utils
 	int				samples;
 	int				rBits,gBits,bBits,aBits,depthBits,stencilBits;
@@ -169,8 +175,8 @@ private:
     
 	int				getCurrentMonitor();
 	
-	static ofAppGLFWWindow	* instance;
-	static ofBaseApp *	ofAppPtr;
+	//static ofAppGLFWWindow	* instance;
+	ofBaseApp *	ofAppPtr;
 
     int pixelScreenCoordScale; 
 

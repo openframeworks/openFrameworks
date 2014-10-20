@@ -97,19 +97,8 @@ void ofURLFileLoaderShutdown();
 	}
 #endif
 
-//--------------------------------------
-void ofRunApp(ofBaseApp * OFSA){
-	ofRunApp(shared_ptr<ofBaseApp>(OFSA));
-}
-
-//--------------------------------------
-void ofRunApp(shared_ptr<ofBaseApp> OFSA){
+void ofInit(){
 	Poco::ErrorHandler::set(&threadErrorLogger);
-	OFSAptr = OFSA;
-	if(OFSAptr){
-		OFSAptr->mouseX = 0;
-		OFSAptr->mouseY = 0;
-	}
 
 #ifndef TARGET_ANDROID
 	atexit(ofExitCallback);
@@ -138,30 +127,47 @@ void ofRunApp(shared_ptr<ofBaseApp> OFSA){
 								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
 	#endif
 
-	window->initializeWindow();
-
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
 	ofSetWorkingDirectoryToDefault();
+}
 
-    ofAddListener(ofEvents().setup,OFSA.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().update,OFSA.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().draw,OFSA.get(),&ofBaseApp::draw,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().exit,OFSA.get(),&ofBaseApp::exit,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().keyPressed,OFSA.get(),&ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().keyReleased,OFSA.get(),&ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().mouseMoved,OFSA.get(),&ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().mouseDragged,OFSA.get(),&ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().mousePressed,OFSA.get(),&ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().mouseReleased,OFSA.get(),&ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().mouseScrolled,OFSA.get(),&ofBaseApp::mouseScrolled,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().windowEntered,OFSA.get(),&ofBaseApp::windowEntry,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().windowResized,OFSA.get(),&ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().messageEvent,OFSA.get(),&ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
-    ofAddListener(ofEvents().fileDragEvent,OFSA.get(),&ofBaseApp::dragged,OF_EVENT_ORDER_APP);
+//--------------------------------------
+void ofRunApp(ofBaseApp * OFSA){
+	ofRunApp(shared_ptr<ofBaseApp>(OFSA));
+}
+
+//--------------------------------------
+void ofRunApp(shared_ptr<ofBaseApp> OFSA){
+	ofInit();
+
+	OFSAptr = OFSA;
+	if(OFSAptr){
+		OFSAptr->mouseX = 0;
+		OFSAptr->mouseY = 0;
+	}
+
+	window->initializeWindow();
+
+    ofAddListener(window->events().setup,OFSA.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().update,OFSA.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().draw,OFSA.get(),&ofBaseApp::draw,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().exit,OFSA.get(),&ofBaseApp::exit,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().keyPressed,OFSA.get(),&ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().keyReleased,OFSA.get(),&ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().mouseMoved,OFSA.get(),&ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().mouseDragged,OFSA.get(),&ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().mousePressed,OFSA.get(),&ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().mouseReleased,OFSA.get(),&ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().mouseScrolled,OFSA.get(),&ofBaseApp::mouseScrolled,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().windowEntered,OFSA.get(),&ofBaseApp::windowEntry,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().windowResized,OFSA.get(),&ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().messageEvent,OFSA.get(),&ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
+    ofAddListener(window->events().fileDragEvent,OFSA.get(),&ofBaseApp::dragged,OF_EVENT_ORDER_APP);
 
 	window->runAppViaInfiniteLoop(OFSAptr.get());
 }
+
 
 #ifdef TARGET_OPENGLES
 static int glVersionMajor = 1;
@@ -170,25 +176,6 @@ static int glVersionMinor = 0;
 static int glVersionMajor = 2;
 static int glVersionMinor = 1;
 #endif
-
-static string glslVersionFromGL(int major, int minor){
-	switch(major){
-	case 3:
-		if(minor==0){
-			return "130";
-		}else if(minor==1){
-			return "140";
-		}else if(minor==2){
-			return "150";
-		}else{
-			return ofToString(major*100+minor*10);
-		}
-	case 4:
-		return ofToString(major*100+minor*10);
-	default:
-		return "120";
-	}
-}
 
 //--------------------------------------
 #ifdef TARGET_OPENGLES
@@ -219,7 +206,7 @@ int	ofGetOpenGLVersionMinor(){
 }
 
 string ofGetGLSLVersion(){
-	return glslVersionFromGL(glVersionMajor,glVersionMinor);
+	return ofGLSLVersionFromGL(glVersionMajor,glVersionMinor);
 }
 #endif
 
@@ -229,26 +216,6 @@ void ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, ofWi
 #else
 void ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWindowMode screenMode){
 #endif
-    if(!ofGetCurrentRenderer()) {
-	#ifdef TARGET_PROGRAMMABLE_GL
-	    ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(windowPtr.get()))),false);
-	#else
-#ifdef TARGET_OPENGLES
-    	if(glVersionMajor>1){
-    	    ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(windowPtr.get())),false);
-    	}else{
-    		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer(windowPtr.get())),false);
-    	}
-#else
-    	if(glVersionMajor>2){
-    	    ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(windowPtr.get())),false);
-    	}else{
-    		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer(windowPtr.get())),false);
-    	}
-#endif
-	#endif
-    }
-
 	window = windowPtr;
 
 	if(ofIsGLProgrammableRenderer()){
@@ -272,20 +239,6 @@ void ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWind
 	#endif
 
 	windowPtr->setupOpenGL(w, h, screenMode);
-}
-
-void ofGLReadyCallback(){
-
-#ifndef TARGET_OPENGLES
-	glewExperimental = GL_TRUE;
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-	{
-		/* Problem: glewInit failed, something is seriously wrong. */
-		ofLogError("ofAppRunner") << "couldn't init GLEW: " << glewGetErrorString(err);
-		return;
-	}
-#endif
 
 	ofLogVerbose("ofAppRunner") << "GL ready";
 	ofLogVerbose("ofAppRunner") << "Vendor:   " << (char*)glGetString(GL_VENDOR);
@@ -294,15 +247,9 @@ void ofGLReadyCallback(){
 	char* glslVer = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
 	ofLogVerbose("ofAppRunner") << "GLSL:     " << (glslVer ? glslVer : "Error getting GLSL version.");
 
-    if(ofIsGLProgrammableRenderer()){
-    	ofGetGLProgrammableRenderer()->setup(glslVersionFromGL(glVersionMajor,glVersionMinor));
-    }
-
 	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
 	ofSetupGraphicDefaults();
-	ofViewport();
-	ofSetupScreenPerspective();
-	ofSetVerticalSync(true);
+	window->setVerticalSync(true);
 	ofEnableAlphaBlending();
 }
 
@@ -348,7 +295,7 @@ void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode scree
 void ofExitCallback(){
 	// first notify we are exiting so every object has a chance to
 	// stop threads, deallocate...
-	ofNotifyExit();
+	ofExitEvent().notify(NULL);
 
 	// then disable all core events to avoid crashes
 	ofEvents().disable();
@@ -391,6 +338,15 @@ void ofExitCallback(){
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
 	// events
+}
+
+// core events instance & arguments
+ofCoreEvents & ofEvents(){
+	return window->events();
+}
+
+shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
+	return window->renderer();
 }
 
 //--------------------------------------

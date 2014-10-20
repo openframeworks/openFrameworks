@@ -24,11 +24,14 @@ public:
 	int			getWidth();
 	int			getHeight();
 
+	ofCoreEvents & events();
+
 
 private:
 	int width, height;
 
     ofBaseApp *		ofAppPtr;
+    ofCoreEvents coreEvents;
 };
 
 class ofNoopRenderer: public ofBaseRenderer{

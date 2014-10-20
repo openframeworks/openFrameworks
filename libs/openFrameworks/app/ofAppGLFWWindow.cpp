@@ -2,6 +2,7 @@
 #include "ofEvents.h"
 
 #include "ofBaseApp.h"
+#include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofAppRunner.h"
 #include "Poco/URI.h"
@@ -31,10 +32,10 @@
 //========================================================================
 // static variables:
 
-ofBaseApp *	ofAppGLFWWindow::ofAppPtr;
-ofAppGLFWWindow	* ofAppGLFWWindow::instance;
+//ofBaseApp *	ofAppGLFWWindow::ofAppPtr;
+//ofAppGLFWWindow	* ofAppGLFWWindow::instance;
 
-void ofGLReadyCallback();
+void ofGLInit();
 
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow(){
@@ -64,7 +65,6 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
 	bDoubleBuffered		= true;
 
 	ofAppPtr			= NULL;
-	instance			= this;
 
     pixelScreenCoordScale = 1;
 
@@ -176,12 +176,22 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersionMinor);
 		#ifdef TARGET_OPENGLES
 			glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
+			if(glVersionMajor>=1){
+				currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer);
+			}else{
+				currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer);
+			}
 		#else
 			if((glVersionMajor>=3 && glVersionMinor>=2) || glVersionMajor>=4){
 				glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 				glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+				currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+			}else{
+				currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
 			}
 		#endif
+	}else{
+		currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
 	}
 
 	if(requestedMode==OF_GAME_MODE){
@@ -221,6 +231,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
         return;
     }
 
+    glfwSetWindowUserPointer(windowP,this);
 	windowMode = requestedMode;
 
 	requestedHeight = requestedHeight < 1 ? 1 : requestedHeight;
@@ -246,9 +257,23 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
             setWindowShape(windowW, windowH);
         }
 	}
-    
-    ofGLReadyCallback();
 
+#ifndef TARGET_OPENGLES
+	glewExperimental = GL_TRUE;
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+	{
+		/* Problem: glewInit failed, something is seriously wrong. */
+		ofLogError("ofAppRunner") << "couldn't init GLEW: " << glewGetErrorString(err);
+		return;
+	}
+#endif
+
+    if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
+    	static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(glVersionMajor,glVersionMinor);
+    }else{
+    	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
+    }
 }
 
 //--------------------------------------------
@@ -300,17 +325,29 @@ void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 #endif
 
 //--------------------------------------------
+ofCoreEvents & ofAppGLFWWindow::events(){
+	return coreEvents;
+}
+
+//--------------------------------------------
+shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
+	return currentRenderer;
+}
+
+//--------------------------------------------
 void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	ofAppPtr = appPtr;
 
 	glfwMakeContextCurrent(windowP);
 
-	ofNotifySetup();
-	while(!glfwWindowShouldClose(windowP)){
+	events().notifySetup();
+	while(!glfwWindowShouldClose(windowP) && !events().windowShouldClose()){
 		glfwPollEvents();
-		ofNotifyUpdate();
+		currentRenderer->update();
+		events().notifyUpdate();
 		display();
 	}
+	events().notifyExit();
 }
 
 void ofAppGLFWWindow::windowShouldClose(){
@@ -319,17 +356,17 @@ void ofAppGLFWWindow::windowShouldClose(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::display(void){
-	ofGetCurrentRenderer()->startRender();
-	if( bEnableSetupScreen )ofSetupScreen();
+	currentRenderer->startRender();
+	if( bEnableSetupScreen ) currentRenderer->setupScreen();
 
-	ofNotifyDraw();
+	events().notifyDraw();
 
 	#ifdef TARGET_WIN32
-	if (ofGetCurrentRenderer()->getBackgroundAuto() == false){
+	if (currentRenderer->getBackgroundAuto() == false){
 		// on a PC resizing a window with this method of accumulation (essentially single buffering)
 		// is BAD, so we clear on resize events.
 		if (nFramesSinceWindowResized < 3){
-			ofGetCurrentRenderer()->clear();
+			currentRenderer->clear();
 		} else {
 			if ( (ofGetFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glfwSwapBuffers(windowP);
 			else                                                     glFlush();
@@ -342,10 +379,10 @@ void ofAppGLFWWindow::display(void){
 		}
 	}
 	#else
-		if (ofGetCurrentRenderer()->getBackgroundAuto() == false){
+		if (currentRenderer->getBackgroundAuto() == false){
 			// in accum mode resizing a window is BAD, so we clear on resize events.
 			if (nFramesSinceWindowResized < 3){
-				ofGetCurrentRenderer()->clear();
+				currentRenderer->clear();
 			}
 		}
 		if(bDoubleBuffered){
@@ -355,7 +392,7 @@ void ofAppGLFWWindow::display(void){
 		}
 	#endif
 
-	ofGetCurrentRenderer()->finishRender();
+	currentRenderer->finishRender();
 
 	nFramesSinceWindowResized++;
 
@@ -823,23 +860,23 @@ void ofAppGLFWWindow::exitApp(){
 }
 
 //------------------------------------------------------------
-static void rotateMouseXY(ofOrientation orientation, double &x, double &y) {
+static void rotateMouseXY(ofOrientation orientation, int w, int h, double &x, double &y) {
 	int savedY;
 	switch(orientation) {
 		case OF_ORIENTATION_180:
-			x = ofGetWidth() - x;
-			y = ofGetHeight() - y;
+			x = w - x;
+			y = h - y;
 			break;
 
 		case OF_ORIENTATION_90_RIGHT:
 			savedY = y;
 			y = x;
-			x = ofGetWidth()-savedY;
+			x = w-savedY;
 			break;
 
 		case OF_ORIENTATION_90_LEFT:
 			savedY = y;
-			y = ofGetHeight() - x;
+			y = h - x;
 			x = savedY;
 			break;
 
@@ -873,11 +910,13 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
 		break;
 	}
 
+	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+
 	if (state == GLFW_PRESS) {
-		ofNotifyMousePressed(ofGetMouseX(), ofGetMouseY(), button);
+		instance->events().notifyMousePressed(ofGetMouseX(), ofGetMouseY(), button);
 		instance->buttonPressed=true;
 	} else if (state == GLFW_RELEASE) {
-		ofNotifyMouseReleased(ofGetMouseX(), ofGetMouseY(), button);
+		instance->events().notifyMouseReleased(ofGetMouseX(), ofGetMouseY(), button);
 		instance->buttonPressed=false;
 	}
 	instance->buttonInUse = button;
@@ -887,19 +926,21 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
-	rotateMouseXY(ofGetOrientation(), x, y);
+	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	if(!instance->buttonPressed){
-		ofNotifyMouseMoved(x*instance->pixelScreenCoordScale, y*instance->pixelScreenCoordScale);
+		instance->events().notifyMouseMoved(x*instance->pixelScreenCoordScale, y*instance->pixelScreenCoordScale);
 	}else{
-		ofNotifyMouseDragged(x*instance->pixelScreenCoordScale, y*instance->pixelScreenCoordScale, instance->buttonInUse);
+		instance->events().notifyMouseDragged(x*instance->pixelScreenCoordScale, y*instance->pixelScreenCoordScale, instance->buttonInUse);
 	}
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
-	rotateMouseXY(ofGetOrientation(), x, y);
-	ofNotifyMouseScrolled(x, y);
+	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
+	instance->events().notifyMouseScrolled(x, y);
 }
 
 //------------------------------------------------------------
@@ -910,7 +951,8 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** d
 	for(int i=0; i<(int)drag.files.size(); i++){
 		drag.files[i] = Poco::Path(dropString[i]).toString();
 	}
-	ofNotifyDragEvent(drag);
+	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+	instance->events().notifyDragEvent(drag);
 }
 
 //------------------------------------------------------------
@@ -1032,18 +1074,20 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 			break;
 	}
 
+	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
 	if(action == GLFW_PRESS || action == GLFW_REPEAT){
-		ofNotifyKeyPressed(key,keycode,scancode,codepoint);
+		instance->events().notifyKeyPressed(key,keycode,scancode,codepoint);
 	}else if (action == GLFW_RELEASE){
-		ofNotifyKeyReleased(key,keycode,scancode,codepoint);
+		instance->events().notifyKeyReleased(key,keycode,scancode,codepoint);
 	}
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
+	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
 	instance->windowW = w;
 	instance->windowH = h;
-	ofNotifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
+	instance->events().notifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
 
 	instance->nFramesSinceWindowResized = 0;
 }
