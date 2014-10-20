@@ -80,7 +80,7 @@ ofxBaseGui::ofxBaseGui(){
 }
 
 void ofxBaseGui::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
-	font.loadFont(filename,fontsize,_bAntiAliased,_bFullCharacterSet,dpi);
+	font.load(filename,fontsize,_bAntiAliased,_bFullCharacterSet,dpi);
 	fontLoaded = true;
 	useTTF = true;
 }
