@@ -30,8 +30,8 @@ const string ofGLProgrammableRenderer::TYPE="ProgrammableGL";
 
 
 //----------------------------------------------------------
-ofGLProgrammableRenderer::ofGLProgrammableRenderer(bool useShapeColor)
-:matrixStack(*ofGetWindowPtr())
+ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * window)
+:matrixStack(window)
 {
 	bBackgroundAuto = true;
 

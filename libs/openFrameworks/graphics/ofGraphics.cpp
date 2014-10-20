@@ -62,10 +62,10 @@ shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
 
 void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
 	if(rendererType==ofGLProgrammableRenderer::TYPE){
-		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
+		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(ofGetWindowPtr())),setDefaults);
 #ifndef TARGET_PROGRAMMABLE_GL
 	}else if(rendererType==ofGLRenderer::TYPE){
-		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer(ofGetWindowPtr())),setDefaults);
 #endif
 #if !defined(TARGET_OF_IOS) && !defined(TARGET_ANDROID) && !defined(TARGET_EMSCRIPTEN)
 	}else if(rendererType==ofCairoRenderer::TYPE){
@@ -75,9 +75,9 @@ void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
 		ofLogError("ofGraphics") << "ofSetCurrentRenderer(): unknown renderer type " << rendererType << ", setting an ofGLRenderer";
 		ofLogError("ofGraphics") << "if you want to use a custom renderer, pass an ofPtr to a new instance of it";
 #ifndef TARGET_PROGRAMMABLE_GL
-		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer),setDefaults);
+		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer(ofGetWindowPtr())),setDefaults);
 #else
-		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer),setDefaults);
+		ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(ofGetWindowPtr())),setDefaults);
 #endif
 	}
 }

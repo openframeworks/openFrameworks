@@ -16,7 +16,7 @@ static const int OF_NO_TEXTURE=-1;
 
 class ofGLProgrammableRenderer: public ofBaseGLRenderer{
 public:
-	ofGLProgrammableRenderer(bool useShapeColor=true);
+	ofGLProgrammableRenderer(const ofAppBaseWindow * window);
 	~ofGLProgrammableRenderer();
 
 	void setup(const string & glslVersion);
