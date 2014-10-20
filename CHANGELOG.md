@@ -19,6 +19,7 @@ CORE
 	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
 	/ ofDrawGrid: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
 	/ ofDrawGridPlane: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
+	/ ofCamera: fix calculations on first frame or before first call to begin
 	
 ### gl
 	+ Programmable lights and materials
@@ -60,6 +61,7 @@ CORE
 	- removed ofbBGColor and ofbBGClear
 	/ ofImage::loadImage() -> load()
 	/ ofImage::saveImage() -> save()
+	+ ofBeginSaveScreenAsSVG
 
 ### utils
 	/ better timming in fps calculation

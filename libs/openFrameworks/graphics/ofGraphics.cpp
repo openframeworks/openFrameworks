@@ -111,25 +111,8 @@ static shared_ptr<ofBaseRenderer> storedRenderer;
 static shared_ptr<ofRendererCollection> rendererCollection;
 static bool bScreenShotStarted = false;
 
-//-----------------------------------------------------------------------------------
-void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectangle viewport){
-	if( bScreenShotStarted )ofEndSaveScreenAsPDF();
-	
-	storedRenderer = ofGetCurrentRenderer();
-	
-	cairoScreenshot = shared_ptr<ofCairoRenderer>(new ofCairoRenderer);
-	cairoScreenshot->setup(filename, ofCairoRenderer::PDF, bMultipage, b3D, viewport); 		
 
-	rendererCollection = shared_ptr<ofRendererCollection>(new ofRendererCollection);
-	rendererCollection->renderers.push_back(ofGetGLRenderer());
-	rendererCollection->renderers.push_back(cairoScreenshot);
-	
-	ofSetCurrentRenderer(rendererCollection, true);
-	bScreenShotStarted = true;
-}
-
-//-----------------------------------------------------------------------------------
-void ofEndSaveScreenAsPDF(){
+static void ofEndSaveScreen(){
 	if( bScreenShotStarted ){
 
 		if( cairoScreenshot ){
@@ -141,9 +124,46 @@ void ofEndSaveScreenAsPDF(){
 			ofSetCurrentRenderer(storedRenderer,true);
 			storedRenderer.reset();
 		}
-		
+
 		bScreenShotStarted = false;
 	}
+
+}
+
+static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool bMultipage, bool b3D, ofRectangle viewport){
+	if( bScreenShotStarted ) ofEndSaveScreen();
+	
+	storedRenderer = ofGetCurrentRenderer();
+	
+	cairoScreenshot = shared_ptr<ofCairoRenderer>(new ofCairoRenderer);
+	cairoScreenshot->setup(filename, type, bMultipage, b3D, viewport);
+
+	rendererCollection = shared_ptr<ofRendererCollection>(new ofRendererCollection);
+	rendererCollection->renderers.push_back(ofGetGLRenderer());
+	rendererCollection->renderers.push_back(cairoScreenshot);
+	
+	ofSetCurrentRenderer(rendererCollection, true);
+	bScreenShotStarted = true;
+}
+
+//-----------------------------------------------------------------------------------
+void ofBeginSaveScreenAsPDF(string filename, bool bMultipage, bool b3D, ofRectangle viewport){
+	ofBeginSaveScreen(filename, ofCairoRenderer::PDF, bMultipage, b3D, viewport);
+}
+
+//-----------------------------------------------------------------------------------
+void ofEndSaveScreenAsPDF(){
+	ofEndSaveScreen();
+}
+
+//-----------------------------------------------------------------------------------
+void ofBeginSaveScreenAsSVG(string filename, bool bMultipage, bool b3D, ofRectangle viewport){
+	ofBeginSaveScreen(filename, ofCairoRenderer::SVG, bMultipage, b3D, viewport);
+}
+
+//-----------------------------------------------------------------------------------
+void ofEndSaveScreenAsSVG(){
+	ofEndSaveScreen();
 }
 
 #endif
