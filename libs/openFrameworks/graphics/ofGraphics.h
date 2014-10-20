@@ -18,6 +18,8 @@ shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer();
 //for pdf screenshot
 void ofBeginSaveScreenAsPDF(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
 void ofEndSaveScreenAsPDF();
+void ofBeginSaveScreenAsSVG(string filename, bool bMultipage = false, bool b3D = false, ofRectangle viewport = ofRectangle(0,0,0,0));
+void ofEndSaveScreenAsSVG();
 
 
 // transformations
