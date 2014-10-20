@@ -1885,7 +1885,8 @@ static string videoFragmentShaderSource(const ofBaseVideoDraws & video, const st
 	return shaderSource(header + src,glslVersion);
 }
 
-void ofGLProgrammableRenderer::setup(const string & glslVersion){
+void ofGLProgrammableRenderer::setup(int glVersionMajor, int glVersionMinor){
+	string glslVersion = ofGLSLVersionFromGL(glVersionMajor, glVersionMinor);
 	glGetError();
 
 #ifdef TARGET_RASPBERRY_PI
@@ -1967,6 +1968,9 @@ void ofGLProgrammableRenderer::setup(const string & glslVersion){
 	rectMesh.setUsage(GL_STREAM_DRAW);
 	lineMesh.setUsage(GL_STREAM_DRAW);
 #endif
+
+	viewport();
+	setupScreenPerspective();
 }
 
 const ofShader * ofGLProgrammableRenderer::getVideoShader(const ofBaseVideoDraws & video) const{

@@ -87,7 +87,7 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	//set_conio_terminal_mode();
 	#endif
 
-	ofNotifySetup();
+	events().notifySetup();
 
     ofLogNotice("ofAppNoWindow")
 		<< "***" << endl
@@ -98,39 +98,40 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 		<< "***"<< endl
 		<< "*** press Esc or Ctrl-C to quit" << endl
 		<< "***" << endl;
-	while (true)
+	while (!events().windowShouldClose())
 	{
         /// listen for escape
         #ifdef TARGET_WIN32
         if (GetAsyncKeyState(VK_ESCAPE))
-            ofNotifyKeyPressed(OF_KEY_ESC);
+        	events().notifyKeyPressed(OF_KEY_ESC);
         #endif
 
 		#if defined TARGET_OSX || defined TARGET_LINUX
-		while ( kbhit() )
+		while ( !events().windowShouldClose() && kbhit() )
 		{
 			int key = getch();
 			if ( key == 27 )
 			{
-				ofNotifyKeyPressed(OF_KEY_ESC);
+				events().notifyKeyPressed(OF_KEY_ESC);
 			}
 			else if ( key == /* ctrl-c */ 3 )
 			{
 				ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
-				OF_EXIT_APP(0);
+				break;
 			}
 			else
 			{
-				ofNotifyKeyPressed(key);
+				events().notifyKeyPressed(key);
 			}
 		}
 		#endif
 
 
-		ofNotifyUpdate();
-		ofNotifyDraw();
+		events().notifyUpdate();
+		events().notifyDraw();
 
 	}
+	events().notifyExit();
 }
 
 //------------------------------------------------------------
@@ -178,3 +179,7 @@ int	ofAppNoWindow::getHeight(){
 	return height;
 }
 
+
+ofCoreEvents & ofAppNoWindow::events(){
+	return coreEvents;
+}

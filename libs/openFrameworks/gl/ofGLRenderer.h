@@ -20,6 +20,7 @@ public:
     static const string TYPE;
     const string & getType(){ return TYPE; }
 
+    void setup();
 	void setCurrentFBO(const ofFbo * fbo);
 
 	void startRender();

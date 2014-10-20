@@ -30,6 +30,12 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * window)
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
 }
 
+void ofGLRenderer::setup(){
+	setupGraphicDefaults();
+	viewport();
+	setupScreenPerspective();
+}
+
 void ofGLRenderer::startRender(){
 	viewport();
     // to do non auto clear on PC for now - we do something like "single" buffering --
