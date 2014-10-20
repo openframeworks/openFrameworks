@@ -103,7 +103,7 @@ void ofAppiOSWindow::startAppWithDelegate(string appDelegateClassName) {
     bAppCreated = true;
     
     @autoreleasepool {
-        UIApplicationMain(nil, nil, nil, [NSString stringWithUTF8String:appDelegateClassName.c_str()]);
+        UIApplicationMain(0, nil, nil, [NSString stringWithUTF8String:appDelegateClassName.c_str()]);
     }
 }
 

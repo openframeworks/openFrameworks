@@ -17,10 +17,6 @@
 		#include <OpenGL/glu.h>
 	#endif
 
-	#ifdef TARGET_OPENGLES
-		#include "glu.h"
-	#endif
-
 	#ifdef TARGET_LINUX
 		#include <GL/glu.h>
 	#endif
