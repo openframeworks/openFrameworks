@@ -19,7 +19,7 @@ class ofFbo;
 
 class ofMatrixStack {
 public:
-	ofMatrixStack(const ofAppBaseWindow & window);
+	ofMatrixStack(const ofAppBaseWindow * window);
 
 	void setRenderSurface(const ofFbo & fbo);
 	void setRenderSurface(const ofAppBaseWindow & window);

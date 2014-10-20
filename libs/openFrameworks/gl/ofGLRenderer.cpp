@@ -15,8 +15,8 @@
 const string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------
-ofGLRenderer::ofGLRenderer(bool useShapeColor)
-:matrixStack(*ofGetWindowPtr()){
+ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * window)
+:matrixStack(window){
 	bBackgroundAuto = true;
 
 	linePoints.resize(2);
