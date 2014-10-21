@@ -70,7 +70,7 @@ public:
 
 };
 
-/// \brief An abstract class representing an object can be updated.
+/// \brief An abstract class representing an object that can be updated.
 class ofBaseUpdates{
 public:
 	/// \brief Destroy the ofBaseUpdates.
@@ -84,16 +84,16 @@ public:
 class ofTexture;
 
 
-/// \brief An abstract class representing an object that can has an ofTexture.
+/// \brief An abstract class representing an object that can have an ofTexture.
 class ofBaseHasTexture{
 public:
 	/// \brief Destroy the ofBaseHasTexture.
 	virtual ~ofBaseHasTexture(){}
 
-	/// \returns a reference the the ofTexture.
+	/// \returns a reference to the ofTexture.
 	virtual ofTexture & getTexture()=0;
 
-	/// \returns a const reference the the ofTexture.
+	/// \returns a const reference to the ofTexture.
 	virtual const ofTexture & getTexture() const=0;
 
 	/// \brief Enable or disable internal ofTexture use.
@@ -192,9 +192,9 @@ typedef ofBaseHasPixels_<unsigned short> ofBaseHasShortPixels;
 ///
 /// // ...
 ///
-/// imageProviders(&image);
-/// imageProviders(&floatImage);
-/// imageProviders(&shortImage);
+/// imageProviders.push_back(&image);
+/// imageProviders.push_back(&floatImage);
+/// imageProviders.push_back(&shortImage);
 ///
 /// \endcode
 class ofAbstractImage: public ofBaseDraws, public ofBaseHasTexture{
@@ -335,11 +335,11 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	virtual bool setup(int w, int h) = 0;
 
 	/// \brief Get the video grabber's height.
-	/// \returns the video grabbers height.
+	/// \returns the video grabber's height.
 	virtual float getHeight() const = 0;
 
 	/// \brief Get the video grabber's width.
-	/// \returns the video grabbers width.
+	/// \returns the video grabber's width.
 	virtual float getWidth() const = 0;
 
 	/// \brief Get the video grabber's internal ofTexture pointer if available.
@@ -347,7 +347,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	/// \note Subclasses should implement this method only if internal API can
 	/// upload video grabber pixels directly to an ofTexture.
 	///
-	/// \returns the internal ofTexture pointer or NULL of not available.
+	/// \returns the internal ofTexture pointer or NULL if not available.
 	virtual ofTexture * getTexturePtr(){ return NULL; }
 
 	/// \brief Set the video grabber's hardware verbosity level.
@@ -367,6 +367,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	///
 	/// Many video grabbers support user-specified frame rates.  This frame rate
 	/// should be considered a hint for the video grabber and is not guaranteed.
+	///
 	/// \param framerate the desired frame rate.
 	virtual void setDesiredFrameRate(int framerate);
 
