@@ -62,8 +62,9 @@ function prepare() {
 		cp Makefile Makefile.orig
 		cp Configure Configure.orig
 		cp "crypto/ui/ui_openssl.c" "crypto/ui/ui_openssl.c.orig"
-	
-
+ 	elif  [ "$TYPE" == "osx" ] ; then
+		mkdir -p lib/$TYPE
+		mkdir -p lib/include
  	fi
 
 
@@ -74,32 +75,118 @@ function prepare() {
 function build() {
 	
 
-	# if [ "$TYPE" == "osx" ] ; then
-	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
+	if [ "$TYPE" == "osx" ] ; then
 		
-	# 	# # 32 bit
-	# 	# # For OS 10.9+ we must explicitly set libstdc++ for the 32-bit OSX build.
-	# 	# ./configure $BUILD_OPTS --cflags=-stdlib=libstdc++ --config=Darwin32
-	# 	# make
+		local BUILD_OPTS="-no-shared -no-asm -no-ec_nistp_64_gcc_128 -no-gmp -no-jpake -no-krb5 -no-md2 -no-rc5 -no-rfc3779 -no-sctp -no-shared -no-store -no-unit-test -no-zlib -no-zlib-dynamic"
+		local OSX_ARCHS="x86_64 i386"
+		
+		VERSION=$VER
+		CURRENTPATH=`pwd`
+		
+		# create build directories 
 
-	# 	# # 64 bit
-	# 	# ./configure $BUILD_OPTS --config=Darwin64-clang-libc++
-	# 	# make
+		for OSX_ARCH in ${OSX_ARCHS}
+			do
+			
+			# Back up configure & makefile
 
-	# 	# cd lib/Darwin
+			cp "Configure" "Configure.orig" 
+			cp "Makefile" "Makefile.orig"
 
-	# 	# # delete debug builds
-	# 	# rm i386/*d.a
-	# 	# rm x86_64/*d.a
+			# create build directory for current arch
+			mkdir -p "$CURRENTPATH/build/$TYPE/$OSX_ARCH"
 
-	# 	# # link into universal lib, strip "lib" from filename
-	# 	# local lib
-	# 	# for lib in $( ls -1 i386) ; do
-	# 	# 	local renamedLib=$(echo $lib | sed 's|lib||')
-	# 	# 	if [ ! -e $renamedLib ] ; then
-	# 	# 		lipo -c i386/$lib x86_64/$lib -o $renamedLib
-	# 	# 	fi
-	# 	# done
+			#create logfile
+			LOG="$CURRENTPATH/build/$TYPE/$OSX_ARCH/build-openssl-${VER}.log"
+
+			
+			if [ "${COMPILER_TYPE}" == "clang" ]; then
+				export THECOMPILER=clang
+			else
+				export THECOMPILER=gcc
+			fi
+
+			echo "Using Compiler: $THECOMPILER"
+
+			# patch the Configure file to make sure the correct compiler is invoked.
+
+			OLD_LANG=$LANG
+			unset LANG
+				sed -ie "s!\"darwin-i386-cc\",\"cc:-arch i386 -g3!\"darwin-i386-cc\",\"${THECOMPILER}:-arch i386 -g3!" Configure
+				sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
+			export LANG=$OLD_LANG
+
+   			OSX_C_FLAGS="" 		# Flags for stdlib, std and arch
+   			CONFIG_TARGET=""	# Which one of the target presets to use
+
+			if [[ "${OSX_ARCH}" == "i386" ]]; then
+		    	# 386 -> libstdc++
+		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -stdlib=libstdc++"
+		    	CONFIG_TARGET=darwin-i386-cc
+		    	export CC="${THECOMPILER} ${OSX_C_FLAGS}"
+		    elif [ "${OSX_ARCH}" == "x86_64" ]; then
+		    	# 86_64 -> libc++
+		    	OSX_C_FLAGS="-arch ${OSX_ARCH} -std=${CSTANDARD} -stdlib=libc++"
+				CONFIG_TARGET=darwin64-x86_64-cc
+		    	export CC="${THECOMPILER} ${OSX_C_FLAGS}"
+		    fi
+
+	    	echo "Configure for target: $CONFIG_TARGET"
+
+		    ./Configure $CONFIG_TARGET $BUILD_OPTS --openssldir="$CURRENTPATH/build/$TYPE/$OSX_ARCH" > "${LOG}" 2>&1
+
+			if [ $? != 0 ]; then 
+		    	echo "Problem during configure - Please check ${LOG}"
+		    	exit 1
+		    fi
+
+		    # patching Makefile to use the correct c flags.
+
+		    OLD_LANG=$LANG
+		    # we need to unset LANG otherwise sed will get upsed.
+			unset LANG
+			sed -ie "s!^CFLAG=!CFLAG=$OSX_C_FLAGS !" Makefile
+			export LANG=$OLD_LANG
+
+
+			echo "Running make for ${OSX_ARCH}"
+			echo "Please stand by..."
+
+			# Must run at -j 1 (single thread only else will fail)
+			# this is super annoying, but true for OS X, as well as iOS.
+			make -j 1 >> "${LOG}" 2>&1
+			
+			if [ $? != 0 ];
+		    then 
+		    	echo "Problem while make - Please check ${LOG}"
+		    	exit 1
+		    else
+		    	echo "Make Successful for ${OSX_ARCH}"
+		    fi
+
+			set -e
+			make -j 1 install >> "${LOG}" 2>&1
+			make -j 1 clean >> "${LOG}" 2>&1
+
+			# restore configure & makefile
+
+			cp "Configure.orig" "Configure" 
+			cp "Makefile.orig" "Makefile"
+
+			unset CC CFLAG CFLAGS EXTRAFLAGS THECOMPILER
+		done
+
+		# Stage includes
+		echo "Staging includes"
+
+		cp -R "build/$TYPE/x86_64/include/" "lib/include/"
+
+		# Stage fat libs - this is where we omit the lib-prefix
+		echo "Building & staging fat libs"
+		lipo -c "build/$TYPE/i386/lib/libcrypto.a" "build/$TYPE/x86_64/lib/libcrypto.a" -o "lib/$TYPE/crypto.a"
+		lipo -c "build/$TYPE/i386/lib/libssl.a" "build/$TYPE/x86_64/lib/libssl.a" -o "lib/$TYPE/ssl.a"
+		
+		# ------------ END OS X Recipe.
 
 	# elif [ "$TYPE" == "vs" ] ; then
 	# 	# cmd //c buildwin.cmd ${VS_VER}0 build static_md both Win32 nosamples notests
@@ -126,7 +213,7 @@ function build() {
 	# 	# # Delete debug libs.
 	# 	# lib/MinGW/i686/*d.a
 
-	if [ "$TYPE" == "ios" ] ; then
+	elif [ "$TYPE" == "ios" ] ; then
 
 		# This was quite helpful as a reference: https://github.com/x2on/OpenSSL-for-iPhone
 		# Refer to the other script if anything drastic changes for future versions
@@ -137,7 +224,7 @@ function build() {
 		DEVELOPER=$XCODE_DEV_ROOT
 		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
 		VERSION=$VER
-
+		
 
 
 		local IOS_ARCHS="i386 x86_64 armv7 armv7s arm64"
@@ -262,8 +349,8 @@ function build() {
 			make clean >> "${LOG}" 2>&1
 
 			# copy libraries to lib folder
-			cp "build/$TYPE/$IOS_ARCH/lib/libssl.a" "lib/$TYPE/$IOS_ARCH/libssl.a"
-			cp "build/$TYPE/$IOS_ARCH/lib/libcrypto.a" "lib/$TYPE/$IOS_ARCH/libcrypto.a"
+			cp "build/$TYPE/$IOS_ARCH/lib/libssl.a" "lib/$TYPE/$IOS_ARCH/ssl.a"
+			cp "build/$TYPE/$IOS_ARCH/lib/libcrypto.a" "lib/$TYPE/$IOS_ARCH/crypto.a"
 
 			# must clean between builds
 
@@ -304,9 +391,6 @@ function build() {
 		cp -R "build/$TYPE/x86_64/include/" "lib/include/"
 
 		cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
-	
-		
-
 
 		unset TOOLCHAIN DEVELOPER
 
@@ -402,14 +486,15 @@ function copy() {
 	# set via: cp -R "build/$TYPE/x86_64/include/" "lib/include/"
 	cp -Rv lib/include/ $1/include/
 
+	rm -r $1/lib/$TYPE/*
+
 	# libs
-	 if [ "$TYPE" == "osx" ] ; then	
-	 	echoWarning "TODO: copy $TYPE lib"
-	# 	mkdir -p $1/lib/$TYPE
-	# 	cp -v lib/Darwin/*.a $1/lib/$TYPE
-	 elif [ "$TYPE" == "ios" ] ; then
+	 if [ "$TYPE" == "ios" ] ; then
 	 	mkdir -p $1/lib/$TYPE
 	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
+	 elif [ "$TYPE" == "osx" ] ; then
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	# elif [ "$TYPE" == "vs" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/*.lib $1/lib/$TYPE
