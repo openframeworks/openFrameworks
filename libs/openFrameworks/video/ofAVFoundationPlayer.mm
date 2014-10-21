@@ -106,7 +106,7 @@ void ofAVFoundationPlayer::update()
         
         // Don't get the pixels every frame if it hasn't updated
         if (bHavePixelsChanged) {
-            [moviePlayer pixels:pixels.getPixels()];
+            [moviePlayer pixels:pixels.getData()];
             bHavePixelsChanged = false;
         }
     }
@@ -346,7 +346,7 @@ bool ofAVFoundationPlayer::setPixelFormat(ofPixelFormat newPixelFormat)
         // If we already have a movie loaded we need to reload
         // the movie with the new settings correctly allocated.
         if (isLoaded()) {
-            loadMovie(moviePath);
+            load(moviePath);
         }
     }
     return true;
