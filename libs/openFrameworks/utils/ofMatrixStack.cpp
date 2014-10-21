@@ -154,6 +154,16 @@ ofRectangle ofMatrixStack::getNativeViewport() const{
 	return currentViewport;
 }
 
+ofRectangle ofMatrixStack::getFullSurfaceViewport() const{
+	if(currentFbo){
+		return ofRectangle(0,0,currentFbo->getWidth(),currentFbo->getHeight());
+	}else if(currentWindow){
+		return ofRectangle(0,0,currentWindow->getWidth(),currentWindow->getHeight());
+	}else{
+		return ofRectangle();
+	}
+}
+
 void ofMatrixStack::nativeViewport(ofRectangle viewport){
 	currentViewport=viewport;
 }

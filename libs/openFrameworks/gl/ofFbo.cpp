@@ -434,8 +434,9 @@ void ofFbo::allocate(Settings _settings) {
 	destroy();
 
 	// check that passed values are correct
-	if(_settings.width == 0) _settings.width = ofGetWidth();
-	if(_settings.height == 0) _settings.height = ofGetHeight();
+	if(_settings.width <= 0 || _settings.height <= 0){
+		ofLogError("ofFbo") << "width and height have to be more than 0";
+	}
 	if(_settings.numSamples > maxSamples() && maxSamples() > -1) {
 		ofLogWarning("ofFbo") << "allocate(): clamping numSamples " << _settings.numSamples << " to maxSamples " << maxSamples() << " for frame buffer object" << fbo;
 		_settings.numSamples = maxSamples();

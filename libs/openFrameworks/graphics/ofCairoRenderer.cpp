@@ -1,7 +1,5 @@
 #include "ofCairoRenderer.h"
-#include "ofGraphics.h"
 #include "ofConstants.h"
-#include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofImage.h"
@@ -20,11 +18,8 @@ ofCairoRenderer::ofCairoRenderer(){
 	surface = NULL;
 	cr = NULL;
 	bBackgroundAuto = true;
-	rectMode = OF_RECTMODE_CORNER;
-	bSmoothHinted = false;
 	page = 0;
 	multiPage = false;
-	bFilled = OF_FILLED;
 	b3D = false;
 	currentMatrixMode=OF_MATRIX_MODELVIEW;
 }
@@ -95,6 +90,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	cr = cairo_create(surface);
 	cairo_set_antialias(cr,CAIRO_ANTIALIAS_SUBPIXEL);
 	viewportRect = _viewport;
+	originalViewport = _viewport;
 	viewport(viewportRect);
 	page = 0;
 	b3D = b3D_;
@@ -190,6 +186,7 @@ void ofCairoRenderer::setStyle(const ofStyle & style){
 
 	//bitmap draw mode
 	//setDrawBitmapMode(style.drawBitmapMode);
+	currentStyle = style;
 }
 
 void ofCairoRenderer::draw(const ofPath & shape) const{
@@ -320,7 +317,7 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec) const{
 	vec = projection.preMult(vec);
 
 	//vec.set(vec.x/vec.z*viewportRect.width*0.5-ofGetWidth()*0.5-viewportRect.x,vec.y/vec.z*viewportRect.height*0.5-ofGetHeight()*0.5-viewportRect.y);
-	vec.set(vec.x/vec.z*ofGetWidth()*0.5,vec.y/vec.z*ofGetHeight()*0.5);
+	vec.set(vec.x/vec.z*viewportRect.width*0.5,vec.y/vec.z*viewportRect.height*0.5);
 	return vec;
 }
 
@@ -631,22 +628,26 @@ void ofCairoRenderer::unbind(const ofBaseVideoDraws & video) const{
 
 //--------------------------------------------
 void ofCairoRenderer::setRectMode(ofRectMode mode){
-	rectMode = mode;
+	currentStyle.rectMode = mode;
 }
 
 //--------------------------------------------
 ofRectMode ofCairoRenderer::getRectMode(){
-	return rectMode;
+	return currentStyle.rectMode;
 }
 
 //--------------------------------------------
 void ofCairoRenderer::setFillMode(ofFillFlag fill){
-	bFilled = fill;
+	currentStyle.bFill = fill;
 }
 
 //--------------------------------------------
 ofFillFlag ofCairoRenderer::getFillMode(){
-	return bFilled;
+	if(currentStyle.bFill){
+		return OF_FILLED;
+	}else{
+		return OF_OUTLINE;
+	}
 }
 
 //--------------------------------------------
@@ -925,8 +926,8 @@ void ofCairoRenderer::viewport(ofRectangle v){
 
 //----------------------------------------------------------
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
-	if(width < 0) width = ofGetWindowWidth();
-	if(height < 0) height = ofGetWindowHeight();
+	if(width < 0) width = originalViewport.width;
+	if(height < 0) height = originalViewport.height;
 
 	if (invertY){
 		y = -y;
@@ -947,8 +948,8 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 //----------------------------------------------------------
 void ofCairoRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
 	if(!b3D) return;
-	if(width < 0) width = ofGetWidth();
-	if(height < 0) height = ofGetHeight();
+	if(width < 0) width = viewportRect.width;
+	if(height < 0) height = viewportRect.height;
 	ofOrientation orientation = ofGetOrientation();
 
 	float viewW = viewportRect.width;
@@ -1016,8 +1017,8 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, float fo
 //----------------------------------------------------------
 void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist){
 	if(!b3D) return;
-	if(width < 0) width = ofGetWidth();
-	if(height < 0) height = ofGetHeight();
+	if(width < 0) width = viewportRect.width;
+	if(height < 0) height = viewportRect.height;
 	ofOrientation orientation = ofGetOrientation();
 
 	float viewW = viewportRect.width;
@@ -1157,7 +1158,7 @@ void ofCairoRenderer::setupGraphicDefaults(){
 //----------------------------------------------------------
 void ofCairoRenderer::clear(){
 	if(!surface || ! cr) return;
-	cairo_set_source_rgba(cr,bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+	cairo_set_source_rgba(cr,currentStyle.bgColor.r/255., currentStyle.bgColor.g/255., currentStyle.bgColor.b/255., currentStyle.bgColor.a/255.);
 	cairo_paint(cr);
 }
 
@@ -1178,6 +1179,32 @@ void ofCairoRenderer::clear(float brightness, float a) {
 void ofCairoRenderer::clearAlpha() {
 }
 
+
+void ofCairoRenderer::setBitmapTextMode(ofDrawBitmapMode & mode){
+	currentStyle.drawBitmapMode = mode;
+}
+
+ofStyle ofCairoRenderer::getStyle() const{
+	return currentStyle;
+}
+
+void ofCairoRenderer::pushStyle(){
+	styleHistory.push_back(currentStyle);
+	//if we are over the max number of styles we have set, then delete the oldest styles.
+	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
+		styleHistory.pop_front();
+		//should we warn here?
+		ofLogWarning("ofGraphics") << "ofPushStyle(): maximum number of style pushes << " << OF_MAX_STYLE_HISTORY << " reached, did you forget to pop somewhere?";
+	}
+}
+
+void ofCairoRenderer::popStyle(){
+	if( styleHistory.size() ){
+		setStyle(styleHistory.front());
+		styleHistory.pop_back();
+	}
+}
+
 //----------------------------------------------------------
 void ofCairoRenderer::setBackgroundAuto(bool bAuto){
 	bBackgroundAuto = bAuto;
@@ -1190,17 +1217,17 @@ bool ofCairoRenderer::getBackgroundAuto(){
 
 //----------------------------------------------------------
 void ofCairoRenderer::setBackgroundColor(const ofColor & c){
-	bgColor = c;
+	currentStyle.bgColor = c;
 }
 
 //----------------------------------------------------------
 ofColor ofCairoRenderer::getBackgroundColor(){
-	return bgColor;
+	return currentStyle.bgColor;
 }
 
 //----------------------------------------------------------
 void ofCairoRenderer::background(const ofColor & c){
-	bgColor = c;
+	setBackgroundColor(c);
 	clear(c.r,c.g,c.b,c.a);
 }
 
@@ -1248,7 +1275,7 @@ void ofCairoRenderer::drawRectangle(float x, float y, float z, float w, float h)
 
 	cairo_close_path(cr);
 
-	if(bFilled==OF_FILLED){
+	if(currentStyle.bFill==OF_FILLED){
 		cairo_fill( cr );
 	}else{
 		cairo_stroke( cr );
@@ -1266,7 +1293,7 @@ void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float
 
 	cairo_close_path(cr);
 
-	if(bFilled==OF_FILLED){
+	if(currentStyle.bFill==OF_FILLED){
 		cairo_fill( cr );
 	}else{
 		cairo_stroke( cr );
@@ -1280,7 +1307,7 @@ void ofCairoRenderer::drawCircle(float x, float y, float z, float radius){
 
 	cairo_close_path(cr);
 
-	if(bFilled==OF_FILLED){
+	if(currentStyle.bFill==OF_FILLED){
 		cairo_fill( cr );
 	}else{
 		cairo_stroke( cr );
@@ -1425,14 +1452,14 @@ void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float 
 	cairo_close_path(cr);
 
 
-	if(bFilled==OF_FILLED){
+	if(currentStyle.bFill==OF_FILLED){
 		cairo_fill( cr );
 	}else{
 		cairo_stroke( cr );
 	}
 }
 
-void ofCairoRenderer::drawString(string text, float x, float y, float z, ofDrawBitmapMode mode){
+void ofCairoRenderer::drawString(string text, float x, float y, float z){
 	cairo_select_font_face (cr, "Mono", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cr, 10);
 	vector<string> lines = ofSplitString(text, "\n");

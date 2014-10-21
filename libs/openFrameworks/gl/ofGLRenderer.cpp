@@ -1,8 +1,6 @@
 #include "ofGLRenderer.h"
 #include "ofMesh.h"
 #include "ofPath.h"
-#include "ofGraphics.h"
-#include "ofAppRunner.h"
 #include "ofMesh.h"
 #include "of3dPrimitives.h"
 #include "ofBitmapFont.h"
@@ -15,19 +13,17 @@
 const string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------
-ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * window)
-:matrixStack(window){
+ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
+:matrixStack(_window){
 	bBackgroundAuto = true;
 
 	linePoints.resize(2);
 	rectPoints.resize(4);
 	triPoints.resize(3);
-	fillFlag = OF_FILLED;
-	bSmoothHinted = false;
 	normalsEnabled = false;
 	lightingEnabled = true;
-	rectMode = OF_RECTMODE_CORNER;
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
+	window = _window;
 }
 
 void ofGLRenderer::setup(){
@@ -58,7 +54,7 @@ void ofGLRenderer::finishRender(){
 
 //----------------------------------------------------------
 void ofGLRenderer::update(){
-    matrixStack.setRenderSurface(*ofGetWindowPtr());
+    matrixStack.setRenderSurface(*window);
 }
 
 //----------------------------------------------------------
@@ -111,7 +107,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextu
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
-		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->startSmoothing();
+		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 #ifndef TARGET_OPENGLES
 		glPushAttrib(GL_POLYGON_BIT);
 		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
@@ -174,7 +170,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 #endif
-		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->endSmoothing();
+		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->endSmoothing();
 }
 
 //----------------------------------------------------------
@@ -190,14 +186,14 @@ void ofGLRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType
 void ofGLRenderer::draw(const ofPolyline & poly) const{
 	if(!poly.getVertices().empty()) {
 		// use smoothness, if requested:
-		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->startSmoothing();
+		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
 		// use smoothness, if requested:
-		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->endSmoothing();
+		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->endSmoothing();
 	}
 }
 
@@ -205,7 +201,7 @@ void ofGLRenderer::draw(const ofPolyline & poly) const{
 void ofGLRenderer::draw(const ofPath & shape) const{
 	ofColor prevColor;
 	if(shape.getUseShapeColor()){
-		prevColor = ofGetStyle().color;
+		prevColor = currentStyle.color;
 	}
 	ofGLRenderer * mut_this = const_cast<ofGLRenderer*>(this);
 	if(shape.isFilled()){
@@ -216,7 +212,7 @@ void ofGLRenderer::draw(const ofPath & shape) const{
 		draw(mesh,OF_MESH_FILL);
 	}
 	if(shape.hasOutline()){
-		float lineWidth = ofGetStyle().lineWidth;
+		float lineWidth = currentStyle.lineWidth;
 		if(shape.getUseShapeColor()){
 			mut_this->setColor( shape.getStrokeColor(), shape.getStrokeColor().a);
 		}
@@ -311,7 +307,7 @@ void ofGLRenderer::setCurrentFBO(const ofFbo * fbo){
 		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
 		matrixMode(currentMode);
 	}else{
-		matrixStack.setRenderSurface(*ofGetWindowPtr());
+		matrixStack.setRenderSurface(*window);
 	}
 }
 
@@ -684,14 +680,16 @@ void ofGLRenderer::setColor(const ofColor & color, int _a){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setColor(int _r, int _g, int _b){
-	glColor4f(_r/255.f,_g/255.f,_b/255.f,1.f);
+void ofGLRenderer::setColor(int r, int g, int b){
+	currentStyle.color.set(r,g,b);
+	glColor4f(r/255.f,g/255.f,b/255.f,1.f);
 }
 
 
 //----------------------------------------------------------
-void ofGLRenderer::setColor(int _r, int _g, int _b, int _a){
-	glColor4f(_r/255.f,_g/255.f,_b/255.f,_a/255.f);
+void ofGLRenderer::setColor(int r, int g, int b, int a){
+	currentStyle.color.set(r,g,b,a);
+	glColor4f(r/255.f,g/255.f,b/255.f,a/255.f);
 }
 
 //----------------------------------------------------------
@@ -743,13 +741,13 @@ bool ofGLRenderer::getBackgroundAuto(){
 
 //----------------------------------------------------------
 ofColor ofGLRenderer::getBackgroundColor(){
-	return bgColor;
+	return currentStyle.bgColor;
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setBackgroundColor(const ofColor & color){
-	bgColor = color;
- 	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+	currentStyle.bgColor = color;
+ 	glClearColor(currentStyle.bgColor[0]/255.,currentStyle.bgColor[1]/255.,currentStyle.bgColor[2]/255., currentStyle.bgColor[3]/255.);
 }
 
 //----------------------------------------------------------
@@ -775,26 +773,31 @@ void ofGLRenderer::background(int r, int g, int b, int a){
 
 //----------------------------------------------------------
 void ofGLRenderer::setFillMode(ofFillFlag fill){
-	fillFlag = fill;
+	currentStyle.bFill = (fill==OF_FILLED);
 }
 
 //----------------------------------------------------------
 ofFillFlag ofGLRenderer::getFillMode(){
-	return fillFlag;
+	if(currentStyle.bFill){
+		return OF_FILLED;
+	}else{
+		return OF_OUTLINE;
+	}
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setRectMode(ofRectMode mode){
-	rectMode = mode;
+	currentStyle.rectMode = mode;
 }
 
 //----------------------------------------------------------
 ofRectMode ofGLRenderer::getRectMode(){
-	return rectMode;
+	return currentStyle.rectMode;
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setLineWidth(float lineWidth){
+	currentStyle.lineWidth = lineWidth;
 	glLineWidth(lineWidth);
 }
 
@@ -809,7 +812,7 @@ void ofGLRenderer::setDepthTest(bool depthTest){
 
 //----------------------------------------------------------
 void ofGLRenderer::setLineSmoothing(bool smooth){
-	bSmoothHinted = smooth;
+	currentStyle.smoothing = smooth;
 }
 
 
@@ -894,6 +897,76 @@ void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
 	}
 }
 
+void ofGLRenderer::setBitmapTextMode(ofDrawBitmapMode & mode){
+	currentStyle.drawBitmapMode = mode;
+}
+
+ofStyle ofGLRenderer::getStyle() const{
+	return currentStyle;
+}
+
+void ofGLRenderer::pushStyle(){
+	styleHistory.push_back(currentStyle);
+	//if we are over the max number of styles we have set, then delete the oldest styles.
+	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
+		styleHistory.pop_front();
+		//should we warn here?
+		ofLogWarning("ofGraphics") << "ofPushStyle(): maximum number of style pushes << " << OF_MAX_STYLE_HISTORY << " reached, did you forget to pop somewhere?";
+	}
+}
+
+void ofGLRenderer::popStyle(){
+	if( styleHistory.size() ){
+		setStyle(styleHistory.front());
+		styleHistory.pop_back();
+	}
+}
+
+void ofGLRenderer::setStyle(const ofStyle & style){
+	//color
+	setColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
+
+	//bg color
+	setBackgroundColor(style.bgColor);
+
+	//circle resolution - don't worry it only recalculates the display list if the res has changed
+	setCircleResolution(style.circleResolution);
+
+	//ofSetSphereResolution(style.sphereResolution);
+
+	//setCurveResolution(style.curveResolution);
+
+	//line width - finally!
+	setLineWidth(style.lineWidth);
+
+	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
+
+	//rect mode: corner/center
+	setRectMode(style.rectMode);
+
+	//poly mode: winding type
+	//setPolyMode(style.polyMode);
+
+	//fill
+	/*if(style.bFill ){
+		setFillMode(OF_FILLED);
+	}else{
+		setFillMode(OF_NO_FILLED);
+	}*/
+
+	//smoothing
+	/*if(style.smoothing ){
+		enableSmoothing();
+	}else{
+		disableSmoothing();
+	}*/
+
+	//blending
+	setBlendMode(style.blendingMode);
+
+	currentStyle = style;
+}
+
 //----------------------------------------------------------
 void ofGLRenderer::enablePointSprites(){
 
@@ -938,21 +1011,21 @@ void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, fl
 	linePoints[1].set(x2,y2,z2);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted) startSmoothing();
+	if (currentStyle.smoothing) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &linePoints[0].x);
 	glDrawArrays(GL_LINES, 0, 2);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted) endSmoothing();
+	if (currentStyle.smoothing) endSmoothing();
 
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h){
 
-	if (rectMode == OF_RECTMODE_CORNER){
+	if (currentStyle.rectMode == OF_RECTMODE_CORNER){
 		rectPoints[0].set(x,y,z);
 		rectPoints[1].set(x+w, y, z);
 		rectPoints[2].set(x+w, y+h, z);
@@ -965,14 +1038,14 @@ void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h){
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &rectPoints[0].x);
-	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
+	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
 
 }
 
@@ -983,14 +1056,14 @@ void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2
 	triPoints[2].set(x3,y3,z3);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &triPoints[0].x);
-	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
+	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
 
 }
 
@@ -1002,14 +1075,14 @@ void ofGLRenderer::drawCircle(float x, float y, float z,  float radius){
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
-	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
 
 }
 
@@ -1023,19 +1096,19 @@ void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float hei
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
-	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
+void ofGLRenderer::drawString(string textString, float x, float y, float z){
 
 
 	float fontSize = 8.0f;
@@ -1054,7 +1127,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 	ofRectangle rViewport;
 
-	switch (mode) {
+	switch (currentStyle.drawBitmapMode) {
 
 		case OF_BITMAPMODE_SIMPLE:
 
@@ -1067,7 +1140,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			hasViewport = true;
 			pushView();
 
-			rViewport = ofGetWindowRect();
+			rViewport = matrixStack.getFullSurfaceViewport();
 			viewport(rViewport);
 
 			matrixMode(OF_MATRIX_PROJECTION);
@@ -1181,7 +1254,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	glAlphaFunc(GL_GREATER, 0);
 #endif
 
-	ofMesh charMesh = ofBitmapStringGetMesh(textString,0,0,mode);
+	ofMesh charMesh = ofBitmapStringGetMesh(textString,0,0,currentStyle.drawBitmapMode);
 	ofBitmapStringGetTextureRef().bind();
 	draw(charMesh,OF_MESH_FILL,false,true,false);
 	ofBitmapStringGetTextureRef().unbind();

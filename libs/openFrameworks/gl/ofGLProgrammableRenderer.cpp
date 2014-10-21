@@ -1,8 +1,6 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofMesh.h"
 #include "ofPath.h"
-#include "ofGraphics.h"
-#include "ofAppRunner.h"
 #include "ofMesh.h"
 #include "ofBitmapFont.h"
 #include "ofGLUtils.h"
@@ -30,8 +28,8 @@ const string ofGLProgrammableRenderer::TYPE="ProgrammableGL";
 
 
 //----------------------------------------------------------
-ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * window)
-:matrixStack(window)
+ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _window)
+:matrixStack(_window)
 {
 	bBackgroundAuto = true;
 
@@ -39,11 +37,6 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * windo
 	lineMesh.setMode(OF_PRIMITIVE_LINES);
 	triangleMesh.getVertices().resize(3);
 	rectMesh.getVertices().resize(4);
-
-
-    rectMode = OF_RECTMODE_CORNER;
-    bFilled = OF_FILLED;
-    bSmoothHinted = false;
 
 	bitmapStringEnabled = false;
     verticesEnabled = true;
@@ -62,6 +55,10 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * windo
 	currentTextureTarget = OF_NO_TEXTURE;
 	currentMaterial = NULL;
 	alphaMaskTextureTarget = OF_NO_TEXTURE;
+
+	major = 3;
+	minor = 2;
+	window = _window;
 }
 
 ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
@@ -70,7 +67,7 @@ ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::startRender() {
-	matrixStack.setRenderSurface(*ofGetWindowPtr());
+	matrixStack.setRenderSurface(*window);
 	beginDefaultShader();
 	viewport();
     // to do non auto clear on PC for now - we do something like "single" buffering --
@@ -404,7 +401,7 @@ void ofGLProgrammableRenderer::setCurrentFBO(const ofFbo * fbo){
 		matrixStack.setRenderSurface(*fbo);
 		uploadMatrices();
 	}else{
-		matrixStack.setRenderSurface(*ofGetWindowPtr());
+		matrixStack.setRenderSurface(*window);
 		uploadMatrices();
 	}
 }
@@ -749,8 +746,8 @@ void ofGLProgrammableRenderer::setColor(int _r, int _g, int _b){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setColor(int _r, int _g, int _b, int _a){
 	ofColor newColor(_r,_g,_b,_a);
-	if(newColor!=currentColor){
-		currentColor = newColor;
+	if(newColor!=currentStyle.color){
+		currentStyle.color = newColor;
 		if(currentShader){
 			currentShader->setUniform4f(COLOR_UNIFORM,_r/255.,_g/255.,_b/255.,_a/255.);
 		}
@@ -768,6 +765,11 @@ void ofGLProgrammableRenderer::setHexColor(int hexColor){
 	int g = (hexColor >> 8) & 0xff;
 	int b = (hexColor >> 0) & 0xff;
 	setColor(r,g,b);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::setBitmapTextMode(ofDrawBitmapMode & mode){
+	currentStyle.drawBitmapMode = mode;
 }
 
 //----------------------------------------------------------
@@ -806,19 +808,18 @@ bool ofGLProgrammableRenderer::getBackgroundAuto(){
 
 //----------------------------------------------------------
 ofColor ofGLProgrammableRenderer::getBackgroundColor(){
-	return bgColor;
+	return currentStyle.bgColor;
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setBackgroundColor(const ofColor & c){
-	bgColor = c;
-	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+	currentStyle.bgColor = c;
+	glClearColor(currentStyle.bgColor[0]/255., currentStyle.bgColor[1]/255., currentStyle.bgColor[2]/255., currentStyle.bgColor[3]/255.);
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::background(const ofColor & c){
-	bgColor = c;
-	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+	setBackgroundColor(c);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
@@ -839,22 +840,26 @@ void ofGLProgrammableRenderer::background(int r, int g, int b, int a){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setFillMode(ofFillFlag fill){
-	bFilled = fill;
+	currentStyle.bFill = (fill==OF_FILLED);
 }
 
 //----------------------------------------------------------
 ofFillFlag ofGLProgrammableRenderer::getFillMode(){
-	return bFilled;
+	if(currentStyle.bFill){
+		return OF_FILLED;
+	}else{
+		return OF_OUTLINE;
+	}
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setRectMode(ofRectMode mode){
-	rectMode = mode;
+	currentStyle.rectMode = mode;
 }
 
 //----------------------------------------------------------
 ofRectMode ofGLProgrammableRenderer::getRectMode(){
-	return rectMode;
+	return currentStyle.rectMode;
 }
 
 //----------------------------------------------------------
@@ -864,13 +869,9 @@ void ofGLProgrammableRenderer::setLineWidth(float lineWidth){
 	// p.330: "LineWidth values greater than 1.0 will generate an
 	// INVALID_VALUE error".
 	// use geometry shaders to draw lines of varying thickness...
-	
-#ifndef TARGET_OPENGLES
-	//ofLogVerbose("ofGLProgrammableRenderer") << "setLineWidth(): has no effect in OpenGL 3.2+;
-	//<< "use a geometry shader to generate thick lines";
-#else
+
+	currentStyle.lineWidth = lineWidth;
 	glLineWidth(lineWidth);
-#endif
 }
 
 //----------------------------------------------------------
@@ -884,7 +885,7 @@ void ofGLProgrammableRenderer::setDepthTest(bool depthTest) {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setLineSmoothing(bool smooth){
-	bSmoothHinted = smooth;
+	currentStyle.smoothing = smooth;
 }
 
 //----------------------------------------------------------
@@ -989,6 +990,73 @@ void ofGLProgrammableRenderer::setAlphaBitmapText(bool bitmapText){
 	if(wasBitmapStringEnabled!=bitmapText){
 		if(currentShader) currentShader->setUniform1f(BITMAP_STRING_UNIFORM,bitmapText);
 	}
+}
+
+ofStyle ofGLProgrammableRenderer::getStyle() const{
+	return currentStyle;
+}
+
+void ofGLProgrammableRenderer::pushStyle(){
+	styleHistory.push_back(currentStyle);
+	//if we are over the max number of styles we have set, then delete the oldest styles.
+	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
+		styleHistory.pop_front();
+		//should we warn here?
+		ofLogWarning("ofGraphics") << "ofPushStyle(): maximum number of style pushes << " << OF_MAX_STYLE_HISTORY << " reached, did you forget to pop somewhere?";
+	}
+}
+
+void ofGLProgrammableRenderer::popStyle(){
+	if( styleHistory.size() ){
+		setStyle(styleHistory.front());
+		styleHistory.pop_back();
+	}
+}
+
+void ofGLProgrammableRenderer::setStyle(const ofStyle & style){
+
+	//color
+	setColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
+
+	//bg color
+	setBackgroundColor(style.bgColor);
+
+	//circle resolution - don't worry it only recalculates the display list if the res has changed
+	setCircleResolution(style.circleResolution);
+
+	//ofSetSphereResolution(style.sphereResolution);
+
+	//setCurveResolution(style.curveResolution);
+
+	//line width - finally!
+	setLineWidth(style.lineWidth);
+
+	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
+
+	//rect mode: corner/center
+	setRectMode(style.rectMode);
+
+	//poly mode: winding type
+	//setPolyMode(style.polyMode);
+
+	//fill
+	/*if(style.bFill ){
+		setFillMode(OF_FILLED);
+	}else{
+		setFillMode(OF_NO_FILLED);
+	}*/
+
+	//smoothing
+	/*if(style.smoothing ){
+		enableSmoothing();
+	}else{
+		disableSmoothing();
+	}*/
+
+	//blending
+	setBlendMode(style.blendingMode);
+
+	currentStyle = style;
 }
 
 //----------------------------------------------------------
@@ -1100,7 +1168,7 @@ void ofGLProgrammableRenderer::uploadMatrices(){
 
 void ofGLProgrammableRenderer::setDefaultUniforms(){
 	if(!currentShader) return;
-	currentShader->setUniform4f(COLOR_UNIFORM, currentColor.r/255.,currentColor.g/255.,currentColor.b/255.,currentColor.a/255.);
+	currentShader->setUniform4f(COLOR_UNIFORM, currentStyle.color.r/255.,currentStyle.color.g/255.,currentStyle.color.b/255.,currentStyle.color.a/255.);
 	bool usingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	currentShader->setUniform1f(USE_COLORS_UNIFORM,colorsEnabled);
@@ -1183,17 +1251,17 @@ void ofGLProgrammableRenderer::drawLine(float x1, float y1, float z1, float x2, 
 	lineMesh.getVertices()[1].set(x2,y2,z2);
     
 	// use smoothness, if requested:
-	if (bSmoothHinted) startSmoothing();
+	if (currentStyle.smoothing) startSmoothing();
     
 	lineMesh.draw();
     
 	// use smoothness, if requested:
-	if (bSmoothHinted) endSmoothing();
+	if (currentStyle.smoothing) endSmoothing();
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w, float h) {
-	if (rectMode == OF_RECTMODE_CORNER){
+	if (currentStyle.rectMode == OF_RECTMODE_CORNER){
 		rectMesh.getVertices()[0].set(x,y,z);
 		rectMesh.getVertices()[1].set(x+w, y, z);
 		rectMesh.getVertices()[2].set(x+w, y+h, z);
@@ -1206,13 +1274,13 @@ void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w,
 	}
     
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
 
-	rectMesh.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_LOOP);
+	rectMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_LOOP);
 	rectMesh.draw();
     
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
 }
 
 //----------------------------------------------------------
@@ -1222,13 +1290,13 @@ void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float 
 	triangleMesh.getVertices()[2].set(x3,y3,z3);
     
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
 
-	triangleMesh.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_STRIP : OF_PRIMITIVE_LINE_LOOP);
+	triangleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_STRIP : OF_PRIMITIVE_LINE_LOOP);
 	triangleMesh.draw();
     
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
 }
 
 //----------------------------------------------------------
@@ -1239,13 +1307,13 @@ void ofGLProgrammableRenderer::drawCircle(float x, float y, float z,  float radi
 	}
     
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
 
-	circleMesh.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
 	circleMesh.draw();
 	
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
 }
 
 //----------------------------------------------------------
@@ -1258,17 +1326,17 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 	}
     
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
 
-	circleMesh.setMode((bFilled == OF_FILLED) ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
+	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
 	circleMesh.draw();
     
 	// use smoothness, if requested:
-	if (bSmoothHinted && bFilled == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
+void ofGLProgrammableRenderer::drawString(string textString, float x, float y, float z){
 	float fontSize = 8.0f;
 	float sx = 0;
 	float sy = -fontSize;
@@ -1285,7 +1353,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	static ofRectangle rViewport;
 	static ofMatrix4x4 modelView;
 
-	switch (mode) {
+	switch (currentStyle.drawBitmapMode) {
 
 		case OF_BITMAPMODE_SIMPLE:
 
@@ -1298,7 +1366,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			hasViewport = true;
 			pushView();
 
-			rViewport = ofGetWindowRect();
+			rViewport = matrixStack.getFullSurfaceViewport();
 			viewport(rViewport);
 
 			matrixMode(OF_MATRIX_PROJECTION);
@@ -1394,7 +1462,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
 	setAlphaBitmapText(true);
-	ofMesh charMesh = ofBitmapStringGetMesh(textString, 0, 0, mode);
+	ofMesh charMesh = ofBitmapStringGetMesh(textString, 0, 0, currentStyle.drawBitmapMode);
 	ofBitmapStringGetTextureRef().bind();
 	draw(charMesh,OF_MESH_FILL,false,true,false);
 	ofBitmapStringGetTextureRef().unbind();
@@ -1818,11 +1886,11 @@ static string FRAGMENT_SHADER_PLANAR_YUV = STRINGIFY(
 );
 
 
-static string shaderSource(const string & src, const string & glslVersion){
+static string shaderSource(const string & src, int major, int minor){
 	string shaderSrc = src;
-	ofStringReplace(shaderSrc,"%glsl_version%",glslVersion);
+	ofStringReplace(shaderSrc,"%glsl_version%",ofGLSLVersionFromGL(major,minor));
 #ifndef TARGET_OPENGLES
-	if(ofGetOpenGLVersionMajor()<4 && ofGetOpenGLVersionMinor()<2){
+	if(major<4 && minor<2){
 		ofStringReplace(shaderSrc,"%extensions%","#extension GL_ARB_texture_rectangle : enable");
 	}else{
 		ofStringReplace(shaderSrc,"%extensions%","");
@@ -1831,7 +1899,7 @@ static string shaderSource(const string & src, const string & glslVersion){
 	return shaderSrc;
 }
 
-static string videoFragmentShaderSource(const ofBaseVideoDraws & video, const string & glslVersion){
+static string videoFragmentShaderSource(const ofBaseVideoDraws & video, int major, int minor){
 	string src;
 	switch(video.getPixelFormat()){
 		case OF_PIXELS_YUY2:
@@ -1882,11 +1950,10 @@ static string videoFragmentShaderSource(const ofBaseVideoDraws & video, const st
 		header += "#define SAMPLER sampler2DRect\n";
 	}
 #endif
-	return shaderSource(header + src,glslVersion);
+	return shaderSource(header + src, major, minor);
 }
 
-void ofGLProgrammableRenderer::setup(int glVersionMajor, int glVersionMinor){
-	string glslVersion = ofGLSLVersionFromGL(glVersionMajor, glVersionMinor);
+void ofGLProgrammableRenderer::setup(int major, int minor){
 	glGetError();
 
 #ifdef TARGET_RASPBERRY_PI
@@ -1894,8 +1961,6 @@ void ofGLProgrammableRenderer::setup(int glVersionMajor, int glVersionMinor){
 #else
 	uniqueShader = false;
 #endif
-
-	matrixStack.setRenderSurface(*ofGetWindowPtr());
 
 	if(uniqueShader){
 		defaultUniqueShader().setupShaderFromSource(GL_VERTEX_SHADER,uniqueVertexShader);
@@ -1905,36 +1970,36 @@ void ofGLProgrammableRenderer::setup(int glVersionMajor, int glVersionMinor){
 		beginDefaultShader();
 	}else{
 	#ifndef TARGET_OPENGLES
-		defaultTexRectColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
-		defaultTexRectNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
+		defaultTexRectColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		defaultTexRectNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 	#endif
-		defaultTex2DColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
-		defaultNoTexColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
-		defaultTex2DNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
-		defaultNoTexNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
-		alphaMaskRectShader().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
-		alphaMask2DShader().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,glslVersion));
+		defaultTex2DColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		defaultNoTexColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		defaultTex2DNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		defaultNoTexNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		alphaMaskRectShader().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		alphaMask2DShader().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 
 	#ifndef TARGET_OPENGLES
-		defaultTexRectColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectColor,glslVersion));
-		defaultTex2DColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,glslVersion));
+		defaultTexRectColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectColor,major, minor));
+		defaultTex2DColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,major, minor));
 	#else
-		defaultTex2DColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,glslVersion));
+		defaultTex2DColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,major, minor));
 	#endif
-		defaultNoTexColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexColor,glslVersion));
+		defaultNoTexColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexColor,major, minor));
 	#ifndef TARGET_OPENGLES
-		defaultTexRectNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectNoColor,glslVersion));
-		defaultTex2DNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,glslVersion));
+		defaultTexRectNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectNoColor,major, minor));
+		defaultTex2DNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,major, minor));
 	#else
-		defaultTex2DNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,glslVersion));
+		defaultTex2DNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,major, minor));
 	#endif
-		defaultNoTexNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexNoColor,glslVersion));
-		alphaMaskRectShader().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTexRectNoColor,glslVersion));
-		alphaMask2DShader().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTex2DNoColor,glslVersion));
+		defaultNoTexNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexNoColor,major, minor));
+		alphaMaskRectShader().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTexRectNoColor,major, minor));
+		alphaMask2DShader().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTex2DNoColor,major, minor));
 
 
-		bitmapStringShader().setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(bitmapStringVertexShader,glslVersion));
-		bitmapStringShader().setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(bitmapStringFragmentShader,glslVersion));
+		bitmapStringShader().setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(bitmapStringVertexShader,major, minor));
+		bitmapStringShader().setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(bitmapStringFragmentShader,major, minor));
 
 #ifndef TARGET_OPENGLES
 		defaultTexRectColor().bindDefaults();
@@ -2017,8 +2082,8 @@ const ofShader * ofGLProgrammableRenderer::getVideoShader(const ofBaseVideoDraws
 	}
 	if(shader && !shader->isLoaded()){
 		ofShader * mutShader = const_cast<ofShader*>(shader);
-		mutShader->setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,ofGetGLSLVersion()));
-		mutShader->setupShaderFromSource(GL_FRAGMENT_SHADER,videoFragmentShaderSource(video,ofGetGLSLVersion()));
+		mutShader->setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major,minor));
+		mutShader->setupShaderFromSource(GL_FRAGMENT_SHADER,videoFragmentShaderSource(video,major,minor));
 		mutShader->bindDefaults();
 		mutShader->linkProgram();
 	}

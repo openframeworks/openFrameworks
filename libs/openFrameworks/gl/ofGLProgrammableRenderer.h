@@ -124,6 +124,8 @@ public:
 	void setColor(const ofColor & color, int _a);
 	void setColor(int gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
+
+	void setBitmapTextMode(ofDrawBitmapMode & mode);
     
 	// bg color
 	ofColor getBackgroundColor();
@@ -148,7 +150,7 @@ public:
 	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
 	void drawCircle(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
-	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
+	void drawString(string text, float x, float y, float z);
 
 	const ofShader & getCurrentShader() const;
 
@@ -165,6 +167,11 @@ public:
 
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
+
+	ofStyle getStyle() const;
+	void pushStyle();
+	void popStyle();
+	void setStyle(const ofStyle & style);
 
 	ofShader & defaultTexRectColor() const;
 	ofShader & defaultTexRectNoColor() const;
@@ -238,12 +245,7 @@ private:
 	ofMatrixStack matrixStack;
 
 	bool bBackgroundAuto;
-	ofFloatColor bgColor;
-    ofColor currentColor;
-    
-	ofFillFlag bFilled;
-	bool bSmoothHinted;
-	ofRectMode rectMode;
+	int major, minor;
 	
 	const ofShader * currentShader;
 
@@ -256,4 +258,8 @@ private:
 
 	ofBaseMaterial * currentMaterial;
 	int alphaMaskTextureTarget;
+
+	ofStyle currentStyle;
+	deque <ofStyle> styleHistory;
+	const ofAppBaseWindow * window;
 };

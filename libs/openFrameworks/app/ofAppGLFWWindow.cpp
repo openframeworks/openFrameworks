@@ -35,8 +35,6 @@
 //ofBaseApp *	ofAppGLFWWindow::ofAppPtr;
 //ofAppGLFWWindow	* ofAppGLFWWindow::instance;
 
-void ofGLInit();
-
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow(){
 	bEnableSetupScreen	= true;

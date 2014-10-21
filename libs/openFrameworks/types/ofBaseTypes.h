@@ -384,6 +384,8 @@ public:
 	virtual void setColor(int gray)=0; // new set a color as grayscale with one argument
 	virtual void setHexColor( int hexColor )=0; // hex, like web 0xFF0033;
 
+	virtual void setBitmapTextMode(ofDrawBitmapMode & mode)=0;
+
 	// bg color
 	virtual ofColor getBackgroundColor()=0;
 	virtual void setBackgroundColor(const ofColor & c)=0;
@@ -406,11 +408,16 @@ public:
 	virtual void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3)=0;
 	virtual void drawCircle(float x, float y, float z, float radius)=0;
 	virtual void drawEllipse(float x, float y, float z, float width, float height)=0;
-	virtual void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode)=0;
+	virtual void drawString(string text, float x, float y, float z)=0;
 
 
 	// returns true if the renderer can render curves without decomposing them
 	virtual bool rendersPathPrimitives()=0;
+
+	virtual ofStyle getStyle() const=0;
+	virtual void setStyle(const ofStyle & style) = 0;
+	virtual void pushStyle()=0;
+	virtual void popStyle()=0;
 };
 
 class ofBaseGLRenderer: public ofBaseRenderer{

@@ -20,8 +20,6 @@
 	#include <X11/Xatom.h>
 #endif
 
-void ofGLInit();
-
 
 // glut works with static callbacks UGH, so we need static variables here:
 
