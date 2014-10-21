@@ -76,7 +76,10 @@ public:
 
 class ofBaseUpdates{
 public:
+    /// \brief Destroy the ofBaseUpdates.
 	virtual ~ofBaseUpdates(){}
+
+    /// \brief Update the object's state.
 	virtual void update()=0;
 };
 
@@ -107,6 +110,7 @@ public:
 //----------------------------------------------------------
 class ofAbstractHasPixels{
 public:
+    /// \brief Destroy the ofAbstractHasPixels.
 	virtual ~ofAbstractHasPixels(){}
 };
 
@@ -116,8 +120,15 @@ public:
 template<typename T>
 class ofBaseHasPixels_: public ofAbstractHasPixels{
 public:
+    /// \brief Destroy the ofAbstractHasPixels.
 	virtual ~ofBaseHasPixels_<T>(){}
-	virtual ofPixels_<T> & getPixels()=0;
+
+    /// \brief Get a reference to the underlying ofPixels.
+    /// \returns a reference the underlying ofPixels.
+    virtual ofPixels_<T> & getPixels()=0;
+
+    /// \brief Get a const reference to the underlying ofPixels.
+    /// \returns a const reference the underlying ofPixels.
 	virtual const ofPixels_<T> & getPixels() const=0;
 };
 
@@ -192,12 +203,24 @@ class ofBaseSoundOutput{
 //----------------------------------------------------------
 class ofBaseVideo: virtual public ofBaseHasPixels, public ofBaseUpdates{
 public:
+    /// \brief Destroy the ofBaseVideo.
 	virtual ~ofBaseVideo(){}
+
+    /// \returns true if the pixel data was updated since the last update().
 	virtual bool isFrameNew() const =0;
+
+    /// \brief Close the video device.
 	virtual void close()=0;
+
+    /// \returns true if the video device is initialized.
 	virtual bool isInitialized() const=0;
 
+    /// \brief Set the requested ofPixelFormat.
+    /// \param pixelFormat the requested ofPixelFormat.
+    /// \returns true if the format was successfully changed.
 	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
+
+    /// \returns the current ofPixelFormat.
 	virtual ofPixelFormat getPixelFormat() const = 0;
 };
 
@@ -216,22 +239,64 @@ public:
 class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	
 	public :
+    /// \brief Destroy the ofBaseVideoGrabber
 	virtual ~ofBaseVideoGrabber();
 
 	//needs implementing
+    /// \brief Get a list of available video grabber devices.
+    /// \returns a std::vector of ofVideoDevice objects.
 	virtual vector<ofVideoDevice>	listDevices() const = 0;
+
+    /// \brief Set up the grabber with the requested width and height.
+    ///
+    /// Some video grabbers may not take the requested width and height as
+    /// a hint and choose the closest dimensions to those requested.
+    /// Users can check the actual width and height by calling getWidth() and
+    /// getHeight() respectively after a successful setup.
+    ///
+    /// \param w the requested width.
+    /// \param h the requested height.
+    /// \returns true if the video grabber was set up successfully.
 	virtual bool	setup(int w, int h) = 0;
-	
+
+    /// \brief Get the video grabber's height.
+    /// \returns the video grabbers height.
 	virtual float	getHeight() const = 0;
+
+    /// \brief Get the video grabber's width.
+    /// \returns the video grabbers width.
 	virtual float	getWidth() const = 0;
 
-	// implement only if internal API can upload directly to texture
+    /// \brief Get the video grabber's internal ofTexture pointer if available.
+    ///
+    /// \note Subclasses should implement this method only if internal API can
+    /// upload video grabber pixels directly to an ofTexture.
+    ///
+    /// \returns the internal ofTexture pointer or NULL of not available.
 	virtual ofTexture * getTexturePtr(){ return NULL; }
 
-	//should implement!
+    /// \brief Set the video grabber's hardware verbosity level.
+    /// \param bTalkToMe true if verbose grabber logging feedback is required.
 	virtual void setVerbose(bool bTalkToMe);
-	virtual void setDeviceID(int _deviceID);
+
+    /// \brief Set the video grabber's device ID.
+    ///
+    /// In most cases, a user can choose a specific grabber source by ID.  This
+    /// device ID information should be available to the user via the
+    /// listDevices() method.
+    ///
+    /// \param deviceID The device ID provided by listDevices().
+	virtual void setDeviceID(int deviceID);
+
+    /// \brief Set the video grabber's desired frame rate.
+    ///
+    /// Many video grabbers support user-specified frame rates.  This frame rate
+    /// should be considered a hint for the video grabber and is not guaranteed.
+    /// \param framerate the desired frame rate.
 	virtual void setDesiredFrameRate(int framerate);
+
+    /// \brief Request a native GUI for video grabber settings.
+    /// \note This feature may not be implemented by all video grabbers.
 	virtual void videoSettings();
 	
 };
