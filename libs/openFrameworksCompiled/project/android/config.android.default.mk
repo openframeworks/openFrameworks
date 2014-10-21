@@ -426,7 +426,7 @@ PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$
 PLATFORM_AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 
 #ifeq (,$(findstring MINGW32_NT,$(shell uname)))
-ZIPWINDOWS=..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ./res/raw/$(RESFILE)
+ZIPWINDOWS=..\\..\\..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ../../res/raw/$(RESFILE)
 #endif
 
 afterplatform:$(RESFILE)
@@ -531,14 +531,14 @@ $(RESFILE): $(DATA_FILES)
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
 		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 			echo "Windows Platform. Running Zip..."; \
-			cmd //c $(ZIPWINDOWS) ./bin/data/ && exit; \
+			cmd //c $(ZIPWINDOWS) * && exit; \
 		else \
-			cd bin/data; \
 			zip -r ../../res/raw/$(RESNAME).zip *; \
-			cd ../..; \
 		fi; \
+		cd ../..; \
 	fi
 
 install:	
@@ -553,14 +553,14 @@ install:
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
 		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 			echo "Windows Platform. Running Zip..."; \
-			cmd //c $(ZIPWINDOWS) ./bin/data/ && exit; \
+			cmd //c $(ZIPWINDOWS) * && exit; \
 		else \
-			cd bin/data; \
 			zip -r ../../res/raw/$(RESNAME).zip; *; \
-			cd ../..; \
 		fi; \
+		cd ../..; \
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml
