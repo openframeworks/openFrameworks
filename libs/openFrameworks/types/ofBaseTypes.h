@@ -60,14 +60,14 @@ public:
 	virtual void draw(const ofPoint & point, float w, float h) const {
 		draw(point.x, point.y, w, h);
 	}
-	
+
 	virtual float getHeight() const = 0;
 	virtual float getWidth() const = 0;
-	
+
 	virtual void setAnchorPercent(float xPct, float yPct){};
 	virtual void setAnchorPoint(float x, float y){};
 	virtual void resetAnchor(){};
-	
+
 };
 
 /// \brief An abstract class representing an object can be updated.
@@ -312,7 +312,7 @@ public:
 
 /// \brief A base class representing a video device such as a camera.
 class ofBaseVideoGrabber: virtual public ofBaseVideo{
-	
+
 	public :
     /// \brief Destroy the ofBaseVideoGrabber
 	virtual ~ofBaseVideoGrabber();
@@ -373,48 +373,48 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
     /// \brief Request a native GUI for video grabber settings.
     /// \note This feature may not be implemented by all video grabbers.
 	virtual void videoSettings();
-	
+
 };
 
 
 /// \brief A base class representing a video player.
 class ofBaseVideoPlayer: virtual public ofBaseVideo{
-	
+
 public:
 	virtual ~ofBaseVideoPlayer();
-	
+
 	//needs implementing
 	virtual bool				load(string name) = 0;
-	
+
 	virtual void				play() = 0;
-	virtual void				stop() = 0;		
+	virtual void				stop() = 0;
 	virtual ofTexture *			getTexturePtr(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
-	
+
 	virtual float 				getWidth() const = 0;
 	virtual float 				getHeight() const = 0;
-	
+
 	virtual bool				isPaused() const = 0;
 	virtual bool				isLoaded() const = 0;
 	virtual bool				isPlaying() const = 0;
 	virtual bool				isInitialized() const{ return isLoaded(); }
-		
+
 	//should implement!
 	virtual float 				getPosition() const;
 	virtual float 				getSpeed() const;
 	virtual float 				getDuration() const;
 	virtual bool				getIsMovieDone() const;
-	
+
 	virtual void 				setPaused(bool bPause);
 	virtual void 				setPosition(float pct);
 	virtual void 				setVolume(float volume); // 0..1
 	virtual void 				setLoopState(ofLoopType state);
 	virtual void   				setSpeed(float speed);
 	virtual void				setFrame(int frame);  // frame 0 = first frame...
-	
+
 	virtual int					getCurrentFrame() const;
 	virtual int					getTotalNumFrames() const;
 	virtual ofLoopType			getLoopState() const;
-	
+
 	virtual void				firstFrame();
 	virtual void				nextFrame();
 	virtual void				previousFrame();
@@ -496,7 +496,7 @@ public:
 	virtual void multViewMatrix(const ofMatrix4x4 & m)=0;
 	virtual ofMatrix4x4 getCurrentViewMatrix() const=0;
 	virtual ofMatrix4x4 getCurrentNormalMatrix() const=0;
-	
+
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults()=0;
 	virtual void setupScreen()=0;
