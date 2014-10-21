@@ -32,11 +32,12 @@ public:
 
 	void update();
 
+	using ofBaseRenderer::draw;
 	void draw(const ofPath & shape) const;
 	void draw(const ofPath::Command & path) const;
 	void draw(const ofPolyline & poly) const;
-	void draw(const ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals=true) const;
-	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors = false, bool useTextures = false, bool useNormals = false) const;
+	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
 	void draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const;
 	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;

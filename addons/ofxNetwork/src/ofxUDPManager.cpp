@@ -22,7 +22,6 @@ ofxUDPManager::ofxUDPManager()
 
 	m_hSocket= INVALID_SOCKET;
 	m_dwTimeoutReceive=	OF_UDP_DEFAULT_TIMEOUT;
-	m_iListenPort= -1;
 
 	canGetRemoteAddress	= false;
 	nonBlocking			= true;
@@ -97,7 +96,7 @@ bool ofxUDPManager::Bind(unsigned short usPort)
 	//Port MUST	be in Network Byte Order
 	saServer.sin_port =	htons(usPort);
 	int ret = ::bind(m_hSocket,(struct sockaddr*)&saServer,sizeof(struct sockaddr));
-	if(ret == -1) ofxNetworkCheckError();
+	if(ret == SOCKET_ERROR) ofxNetworkCheckError();
 
 	return (ret == 0);
 }
@@ -254,6 +253,32 @@ int	ofxUDPManager::SendAll(const char*	pBuff, const int iSize)
 }
 
 
+//--------------------------------------------------------------------------------
+//	returns number of bytes wiating or SOCKET_ERROR if error
+int	ofxUDPManager::PeekReceive()
+{
+	if (m_hSocket == INVALID_SOCKET){
+		ofLogError("INVALID_SOCKET");
+		return SOCKET_ERROR;
+	}
+
+	//	we can use MSG_PEEK, but we still need a large buffer (udp protocol max is 64kb even if max for this socket is less)
+	//	don't want a 64kb stack item here, so instead read how much can be read (note: not queue size, there may be more data-more packets)
+	u_long Size = 0;
+	int Result = ioctlsocket( m_hSocket, FIONREAD, &Size );
+	
+	//	error
+	if ( Result != 0 )
+	{
+		//assert( Result == SOCKET_ERROR );
+		//	report error
+		int SocketError = ofxNetworkCheckError();
+		return SOCKET_ERROR;
+	}
+
+	return Size;
+}
+
 
 //--------------------------------------------------------------------------------
 ///	Return values:
@@ -297,9 +322,12 @@ int	ofxUDPManager::Receive(char* pBuff, const int iSize)
 	}
 	else
 	{
-		ofxNetworkCheckError();
-		//ofLogNotice("ofxUDPManager") << "received from: ????";
-		canGetRemoteAddress= false;
+		canGetRemoteAddress = false;
+
+		//	if the network error is WOULDBLOCK, then return 0 instead of SOCKET_ERROR as it's not really a problem, just no data.
+		int SocketError = ofxNetworkCheckError();
+		if ( SocketError == OFXNETWORK_ERROR(WOULDBLOCK) )
+			return 0;
 	}
 
 	return ret;
@@ -324,12 +352,33 @@ int	ofxUDPManager::GetTimeoutReceive()
 }
 
 //--------------------------------------------------------------------------------
-bool ofxUDPManager::GetRemoteAddr(char* address)
+bool ofxUDPManager::GetRemoteAddr(string& address,int& port) const
 {
 	if (m_hSocket == INVALID_SOCKET) return(false);
 	if ( canGetRemoteAddress ==	false) return (false);
 
-	strcpy(address,	inet_ntoa((in_addr)saClient.sin_addr));
+	//	get the static-winsock-allocated address-conversion string and make a copy of it
+	const char* AddressStr = inet_ntoa((in_addr)saClient.sin_addr);
+	address = AddressStr;
+
+	//	get the port
+	port = ntohs(saClient.sin_port);
+
+	return true;
+}
+
+//--------------------------------------------------------------------------------
+bool ofxUDPManager::GetListenAddr(string& address,int& port) const
+{
+	if (m_hSocket == INVALID_SOCKET) return(false);
+
+	//	get the static-winsock-allocated address-conversion string and make a copy of it
+	const char* AddressStr = inet_ntoa((in_addr)saServer.sin_addr);
+	address = AddressStr;
+
+	//	get the port
+	port = ntohs(saServer.sin_port);
+
 	return true;
 }
 

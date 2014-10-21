@@ -242,17 +242,12 @@ void ofDirectShowGrabber::clearMemory(){
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofDirectShowGrabber::getPixels(){
-	return pixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-ofPixels& ofDirectShowGrabber::getPixelsRef(){
+ofPixels& ofDirectShowGrabber::getPixels(){
 	return pixels;
 }
 
 //---------------------------------------------------------------------------
-const ofPixels& ofDirectShowGrabber::getPixelsRef() const {
+const ofPixels& ofDirectShowGrabber::getPixels() const {
 	return pixels;
 }
 

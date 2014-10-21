@@ -17,6 +17,7 @@ public:
     virtual bool mousePressed(ofMouseEventArgs & args){return false;}
     virtual bool mouseDragged(ofMouseEventArgs & args){return false;}
     virtual bool mouseReleased(ofMouseEventArgs & args){return false;}
+    virtual bool mouseScrolled(ofMouseEventArgs & args){return false;}
 
 	virtual void saveTo(ofBaseSerializer& serializer){};
 	virtual void loadFrom(ofBaseSerializer& serializer){};

@@ -33,7 +33,7 @@ include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 ARCH = android
 
 ifndef ABIS_TO_COMPILE_RELEASE
-	ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon x86
+	ABIS_TO_COMPILE_RELEASE = armv7 neon x86
 endif
 
 ifndef ABIS_TO_COMPILE_DEBUG

@@ -16,9 +16,9 @@
 
 PLATFORM_PROJECT_RELEASE_TARGET = bin/$(BIN_NAME).html
 PLATFORM_PROJECT_DEBUG_TARGET = bin/$(BIN_NAME).html
-SHAREDCORE = 1
-PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.so
-PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.so
+BYTECODECORE=1
+PLATFORM_CORELIB_DEBUG_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.bc
+PLATFORM_CORELIB_RELEASE_TARGET = $(OF_CORE_LIB_PATH)/libopenFrameworks.bc
 
 ################################################################################
 # PLATFORM DEFINES
@@ -207,6 +207,7 @@ PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPoco
 PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.so
 PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.so
 PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/tess2/lib/$(ABI_LIB_SUBPATH)/libtess2.so
+PLATFORM_SHARED_LIBRARIES += $(OF_LIBS_PATH)/freetype/lib/$(ABI_LIB_SUBPATH)/libfreetype.bc
 
 
 ################################################################################
@@ -263,5 +264,14 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 ################################################################################
 #PLATFORM_CXX=
 
-afterplatform: after
-	@echo 
+afterplatform: $(TARGET_NAME)
+	@echo
+	@echo "     compiling done"
+	@echo "     to launch the application on the default browser, run:"
+	@echo
+	@echo "     emrun bin/$(BIN_NAME).html"
+	@echo "     "
+	@echo "     some browsers, like safari, don't support webgl"
+	@echo "     "
+	@emrun --list_browsers 2>/dev/null
+	@echo

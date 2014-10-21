@@ -212,15 +212,16 @@ public:
     /// \warning This is a raw pointer. It's up to you to get this right.
     ///
     /// \returns Returns a raw pointer to the pixel data.
-    PixelType * getPixels();
+    ofPixels_<PixelType> & getPixels();
+    const ofPixels_<PixelType> & getPixels() const;
     
     /// \brief This returns an ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
     /// 
     /// Make sure you call either update() or reloadTexture() after making changes to the ofPixels.
     ///
     /// \returns Returns an ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
-    ofPixels_<PixelType> & getPixelsRef();
-    const ofPixels_<PixelType> & getPixelsRef() const;
+    OF_DEPRECATED_MSG("Use getPixels() instead ", ofPixels_<PixelType> & getPixelsRef());
+    OF_DEPRECATED_MSG("Use getPixels() instead ", const ofPixels_<PixelType> & getPixelsRef() const);
 
     operator ofPixels_<PixelType>&();
     
@@ -524,12 +525,11 @@ ofImage_<PixelType>::ofImage_(const ofImage_<SrcType>& mom) {
 template<typename PixelType>
 template<typename SrcType>
 void ofImage_<PixelType>::clone(const ofImage_<SrcType> &mom){
-	ofImage_<SrcType> & nonConst = const_cast<ofImage_<SrcType> & >(mom);
-	pixels = nonConst.getPixelsRef();
+	pixels = mom.getPixels();
 
 	tex.clear();
-	bUseTexture = nonConst.isUsingTexture();
-	if (bUseTexture == true && nonConst.getTextureReference().isAllocated()){
+	bUseTexture = mom.isUsingTexture();
+	if (bUseTexture == true && mom.getTextureReference().isAllocated()){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
 

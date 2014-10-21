@@ -23,6 +23,7 @@ public:
 	virtual bool mousePressed(ofMouseEventArgs & args);
 	virtual bool mouseDragged(ofMouseEventArgs & args);
 	virtual bool mouseReleased(ofMouseEventArgs & args);
+    virtual bool mouseScrolled(ofMouseEventArgs & args);
 
 	void setUpdateOnReleaseOnly(bool bUpdateOnReleaseOnly);
 
@@ -51,6 +52,7 @@ protected:
 	ofParameter<Type> value;
 	bool bUpdateOnReleaseOnly;
 	bool bGuiActive;
+	bool mouseInside;
 	bool setValue(float mx, float my, bool bCheck);
 	void generateDraw();
 	void generateText();

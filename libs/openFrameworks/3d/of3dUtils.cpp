@@ -8,14 +8,11 @@ ofVboMesh & cachedAxesVbo(){
     return *axis;
 }
 
-/** @brief Draws x,y,z axes representing the current reference frame
- *  @detail Axes are drawn in red (+x), green (+y) and blue (+z)
- *	@param size size at which to draw the axes
- **/
+
 void ofDrawAxis(float size) {
 	if (ofGetGLProgrammableRenderer()){
 		ofPushMatrix();
-		ofScale(size, size,size);
+		ofScale(size, size, size);
 		cachedAxesVbo().draw();
 		ofPopMatrix();
 	} else {
@@ -160,19 +157,19 @@ void ofDrawRotationAxes(float radius, float stripWidth, int circleRes){
 		float x = cos(TWO_PI * j/circleRes);
 		float y = sin(TWO_PI * j/circleRes);
 		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));
-		axisXMesh.addVertex(ofVec3f(x*radius, y*radius, -stripWidth));
+		axisXMesh.addVertex(ofVec3f(-stripWidth, x*radius, y*radius));
 		axisXMesh.addColor(ofFloatColor(ofFloatColor::red));
-		axisXMesh.addVertex(ofVec3f(x*radius, y*radius,  stripWidth));
+		axisXMesh.addVertex(ofVec3f( stripWidth, x*radius, y*radius));
 		
-		axisYMesh.addColor(ofFloatColor(ofFloatColor::blue));
+		axisYMesh.addColor(ofFloatColor(ofFloatColor::green));
 		axisYMesh.addVertex(ofVec3f(x*radius, -stripWidth, y*radius));
-		axisYMesh.addColor(ofFloatColor(ofFloatColor::blue));
+		axisYMesh.addColor(ofFloatColor(ofFloatColor::green));
 		axisYMesh.addVertex(ofVec3f(x*radius,  stripWidth, y*radius));
 		
-		axisZMesh.addColor(ofFloatColor(ofFloatColor::green));
-		axisZMesh.addVertex(ofVec3f(-stripWidth, x*radius, y*radius));
-		axisZMesh.addColor(ofFloatColor(ofFloatColor::green));
-		axisZMesh.addVertex(ofVec3f( stripWidth, x*radius, y*radius));
+		axisZMesh.addColor(ofFloatColor(ofFloatColor::blue));
+		axisZMesh.addVertex(ofVec3f(x*radius, y*radius, -stripWidth));
+		axisZMesh.addColor(ofFloatColor(ofFloatColor::blue));
+		axisZMesh.addVertex(ofVec3f(x*radius, y*radius,  stripWidth));
 	}
 	
 	ofPushStyle();

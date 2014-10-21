@@ -55,9 +55,9 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		// Returns openFrameworks compatible RGBA pixels.
         // Be aware of your current render mode.
     
-		unsigned char * getPixels();
-        ofPixelsRef     getPixelsRef();
-        const ofPixelsRef getPixelsRef() const;
+        ofPixels&     getPixels();
+        const ofPixels& getPixels() const;
+
 
 		// Returns openFrameworks compatible ofTexture pointer.
         // if decodeMode == OF_QTKIT_DECODE_PIXELS_ONLY,

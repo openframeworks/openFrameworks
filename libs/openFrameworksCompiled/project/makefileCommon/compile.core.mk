@@ -251,6 +251,11 @@ $(TARGET) : $(OF_CORE_OBJ_FILES)
 	@echo "Creating library " $(TARGET)
 	@mkdir -p $(@D)
 	$(CC) -shared $(OF_CORE_OBJ_FILES) -o $@  
+else ifeq ($(BYTECODECORE),1)
+$(TARGET) : $(OF_CORE_OBJ_FILES) 
+	@echo "Creating library " $(TARGET)
+	@mkdir -p $(@D)
+	$(CC) $(OF_CORE_OBJ_FILES) -o $@  
 else
 $(TARGET) : $(OF_CORE_OBJ_FILES) 
 	@echo "Creating library " $(TARGET)

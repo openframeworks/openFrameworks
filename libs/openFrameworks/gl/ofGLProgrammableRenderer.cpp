@@ -61,6 +61,7 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(bool useShapeColor)
 
 	currentTextureTarget = OF_NO_TEXTURE;
 	currentMaterial = NULL;
+	alphaMaskTextureTarget = OF_NO_TEXTURE;
 }
 
 ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
@@ -205,7 +206,11 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType) const {
-	model.getMesh().draw(renderType);
+	if(model.isUsingVbo()){
+		model.getMesh().draw(renderType);
+	}else{
+		draw(model.getMesh(),renderType);
+	}
 }
 
 //----------------------------------------------------------
@@ -253,7 +258,7 @@ void ofGLProgrammableRenderer::draw(const ofPath & shape) const{
 		if(shape.getUseShapeColor()){
 			mut_this->setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
 		}
-		draw(mesh);
+		draw(mesh,OF_MESH_FILL);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
@@ -277,7 +282,9 @@ void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, flo
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
@@ -290,7 +297,9 @@ void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
@@ -303,7 +312,9 @@ void ofGLProgrammableRenderer::draw(const ofShortImage & image, float x, float y
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 		const ofTexture& tex = image.getTextureReference();
 		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
@@ -323,7 +334,10 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 			setVideoShaderUniforms(video,*shader);
 		}
 	}
-	video.getTextureReference().draw(x,y,w,h);
+	const ofTexture& tex = video.getTextureReference();
+	tex.bind();
+	draw(tex.getMeshForSubsection(x,y,0,w,h,0,0,w,h),false,true,false);
+	tex.unbind();
 	if(shader){
 		shader->end();
 	}
@@ -1231,32 +1245,9 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
-
-	// remember the current blend mode so that we can restore it at the end of this method.
-	ofBlendMode previousBlendMode = ofGetStyle().blendingMode;
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
-	int len = (int)textString.length();
 	float fontSize = 8.0f;
-	float lineHeight = fontSize*1.7f;
-	int newLineDirection = 1.0f;
-
 	float sx = 0;
 	float sy = -fontSize;
-
-	if(!ofIsVFlipped()){
-		newLineDirection  = -1;
-		// this would align multiline texts to the last line when vflip is disabled
-		//int lines = ofStringTimesInString(textString,"\n");
-		//y = lines*lineHeight;
-	}
-
-	if(!ofIsVFlipped()){
-		newLineDirection  = -1;
-	}
 
 	///////////////////////////
 	// APPLY TRANSFORM / VIEW
@@ -1378,40 +1369,12 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
-	ofDrawBitmapCharacterStart(textString.size());
-
-	int column = 0;
-
-	for(int c = 0; c < len; c++){
-		if(textString[c] == '\n'){
-
-			sy += lineHeight*newLineDirection;
-			if(mode == OF_BITMAPMODE_SIMPLE) {
-				sx = x;
-			} else {
-				sx = 0;
-			}
-
-			column = 0;
-		} else if (textString[c] == '\t'){
-			//move the cursor to the position of the next tab
-			//8 is the default tab spacing in osx terminal and windows	 command line
-			int out = column + 8 - (column % 8);
-			sx += fontSize * (out-column);
-			column = out;
-		} else if (textString[c] >= 32){
-			// < 32 = control characters - don't draw
-			// solves a bug with control characters
-			// getting drawn when they ought to not be
-			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
-
-			sx += fontSize;
-			column++;
-		}
-	}
-	//We do this because its way faster
-	ofDrawBitmapCharacterEnd();
-
+	setAlphaBitmapText(true);
+	ofMesh charMesh = ofBitmapStringGetMesh(textString, 0, 0, mode);
+	ofBitmapStringGetTextureRef().bind();
+	draw(charMesh,OF_MESH_FILL,false,true,false);
+	ofBitmapStringGetTextureRef().unbind();
+	setAlphaBitmapText(false);
 
 
 	if (hasViewport){
@@ -1428,9 +1391,6 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			matrixMode(OF_MATRIX_MODELVIEW);
 		}
 	}
-
-	// restore blendmode
-	ofEnableBlendMode(previousBlendMode);
 }
 
 

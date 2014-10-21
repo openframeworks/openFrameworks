@@ -65,12 +65,14 @@ public:
 
 	void clear();
 
-	PixelType * getPixels();
-
 	/// \brief Retrieves pixel data from the ofPixel object.
 	///
 	/// \returns A raw pointer to the pixel data.
+	PixelType * getPixels();
 	const PixelType * getPixels() const;
+
+	OF_DEPRECATED_MSG("Accessing pixels as unsigned char*, instead use ofPixels or getPixels().getPixels() if you are really trying to access the raw data",operator PixelType*());
+	OF_DEPRECATED_MSG("Accessing pixels as unsigned char*, instead use ofPixels or getPixels().getPixels() if you are really trying to access the raw data",operator const PixelType*());
 
 	int getPixelIndex(int x, int y) const;
 	ofColor_<PixelType> getColor(int x, int y) const;

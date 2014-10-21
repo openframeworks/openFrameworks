@@ -21,8 +21,8 @@ public:
 	void stop();
 
 private:
-	static void onload_cb(void* request, void* data, unsigned int size);
-	static void onerror_cb(void* request, int status, const char* msg);
-	static void onload_file_cb(void* request, const char* file);
-	static void onerror_file_cb(void* request, int status);
+	static void onload_cb(unsigned, void* request, void* data, unsigned int size);
+	static void onerror_cb(unsigned, void* request, int status, const char* msg);
+	static void onload_file_cb(unsigned, void* request, const char* file);
+	static void onerror_file_cb(unsigned, void* request, int status);
 };
