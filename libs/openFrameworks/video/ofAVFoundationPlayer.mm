@@ -106,7 +106,7 @@ void ofAVFoundationPlayer::update()
         
         // Don't get the pixels every frame if it hasn't updated
         if (bHavePixelsChanged) {
-            [moviePlayer pixels:pixels.getPixels()];
+            [moviePlayer pixels:pixels.getData()];
             bHavePixelsChanged = false;
         }
     }
