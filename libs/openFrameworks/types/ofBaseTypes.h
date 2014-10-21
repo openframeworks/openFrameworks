@@ -70,10 +70,7 @@ public:
 	
 };
 
-//----------------------------------------------------------
-// ofBaseUpdates
-//----------------------------------------------------------
-
+/// \brief An abstract class representing an object can be updated.
 class ofBaseUpdates{
 public:
     /// \brief Destroy the ofBaseUpdates.
@@ -84,39 +81,75 @@ public:
 };
 
 
-//----------------------------------------------------------
-// ofBaseHasTexture
-//----------------------------------------------------------
 class ofTexture;
 
+
+/// \brief An abstract class representing an object that can has an ofTexture.
 class ofBaseHasTexture{
 public:
+    /// \brief Destroy the ofBaseHasTexture.
 	virtual ~ofBaseHasTexture(){}
+
+    /// \returns a reference the the ofTexture.
 	virtual ofTexture & getTexture()=0;
+
+    /// \returns a const reference the the ofTexture.
 	virtual const ofTexture & getTexture() const=0;
+
+    /// \brief Enable or disable internal ofTexture use.
+    /// \param bUseTex true if an ofTexture should be used.
 	virtual void setUseTexture(bool bUseTex)=0;
+
+    /// \returns true if an internal ofTexture is being used.
 	virtual bool isUsingTexture() const=0;
 };
 
+
+/// \brief An abstract class representing an object that ofTexture planes.
 class ofBaseHasTexturePlanes: public ofBaseHasTexture{
 public:
+    /// \brief Destroy the ofBaseHasTexturePlanes.
 	virtual ~ofBaseHasTexturePlanes(){}
+
+    /// \returns a reference to a std::vector containing the ofTexture planes.
 	virtual vector<ofTexture> & getTexturePlanes()=0;
+
+    /// \returns a const reference to a std::vector containing the ofTexture planes.
 	virtual const vector<ofTexture> & getTexturePlanes() const=0;
 };
 
-//----------------------------------------------------------
-// ofAbstractHasPixels
-//----------------------------------------------------------
+
+/// \brief An abstract class representing an object that has pixels.
+///
+/// This empty class primarily exists to allow templated subclasses of different
+/// types to be stored as raw or shared pointers in collections such as
+/// std::vector.
+///
+/// Example:
+/// \code{.cpp}
+///
+/// std::vector<ofAbstractHasPixels> pixelProviders;
+///
+/// ofPixels pixels;
+/// ofFloatPixels floatPixels;
+/// ofShortPixels shortPixels;
+///
+/// // ...
+///
+/// pixelProviders.push_back(&pixels);
+/// pixelProviders.push_back(&floatPixels);
+/// pixelProviders.push_back(&shortPixels);
+///
+/// \endcode
 class ofAbstractHasPixels{
 public:
     /// \brief Destroy the ofAbstractHasPixels.
 	virtual ~ofAbstractHasPixels(){}
 };
 
-//----------------------------------------------------------
-// ofBaseHasPixels
-//----------------------------------------------------------
+
+/// \brief A base class represeting an object that has pixels.
+/// \tparam T The pixel data type.
 template<typename T>
 class ofBaseHasPixels_: public ofAbstractHasPixels{
 public:
@@ -132,87 +165,128 @@ public:
 	virtual const ofPixels_<T> & getPixels() const=0;
 };
 
+/// \brief A typedef for an unsigned char ofBaseHasPixels_.
 typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
+
+/// \brief A typedef for an float ofBaseHasPixels_.
 typedef ofBaseHasPixels_<float> ofBaseHasFloatPixels;
+
+/// \brief A typedef for an unsigned short ofBaseHasPixels_.
 typedef ofBaseHasPixels_<unsigned short> ofBaseHasShortPixels;
 
-//----------------------------------------------------------
-// ofAbstractImage    ->   to be able to put different types of images in vectors...
-//----------------------------------------------------------
+
+/// \brief An abstract class representing an image.
+///
+/// This empty class primarily exists to allow templated subclasses of different
+/// types to be stored as raw or shared pointers in collections such as
+/// std::vector.
+///
+/// Example:
+/// \code{.cpp}
+///
+/// std::vector<ofAbstractImage*> imageProviders;
+///
+/// ofImage image;
+/// ofFloatImage floatImage;
+/// ofShortImage shortImage;
+///
+/// // ...
+///
+/// imageProviders(&image);
+/// imageProviders(&floatImage);
+/// imageProviders(&shortImage);
+///
+/// \endcode
 class ofAbstractImage: public ofBaseDraws, public ofBaseHasTexture{
 public:
+    /// \brief Destroy the ofAbstractImage.
 	virtual ~ofAbstractImage(){}
 };
 
-//----------------------------------------------------------
-// ofBaseImage
-//----------------------------------------------------------
+/// \brief A base class represeting an image.
+/// \tparam T The pixel data type.
 template<typename T>
 class ofBaseImage_: public ofAbstractImage, virtual public ofBaseHasPixels_<T>{
 public:
+    /// \brief Destroy the ofBaseImage_.
 	virtual ~ofBaseImage_<T>(){};
 };
 
+
+/// \brief A typedef for an unsigned char ofBaseImage_.
 typedef ofBaseImage_<unsigned char> ofBaseImage;
+
+/// \brief A typedef for an float ofBaseImage_.
 typedef ofBaseImage_<float> ofBaseFloatImage;
+
+/// \brief A typedef for an unsigned short ofBaseImage_.
 typedef ofBaseImage_<unsigned short> ofBaseShortImage;
 
-//----------------------------------------------------------
-// ofBaseHasSoundStream
-//----------------------------------------------------------
+
+
+/// \brief A base class representing a sound input stream.
 class ofBaseSoundInput{
+public:
+    /// \brief Destroy the ofBaseSoundInput.
+    virtual ~ofBaseSoundInput() {};
 
-	public:
-        virtual ~ofBaseSoundInput() {};
-    
-		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
-			audioIn(input, bufferSize, nChannels);
-		}
+    /// \todo
+    virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
+        audioIn(input, bufferSize, nChannels);
+    }
 
-		virtual void audioIn( float * input, int bufferSize, int nChannels ){  
-			audioReceived(input, bufferSize, nChannels);
-		}
+    /// \todo
+    virtual void audioIn( float * input, int bufferSize, int nChannels ){
+        audioReceived(input, bufferSize, nChannels);
+    }
 
-		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+    /// \todo
+    virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
 };
 
-//----------------------------------------------------------
-// ofBaseHasSoundStream
-//----------------------------------------------------------
+
+/// \brief A base class representing a sound output stream.
 class ofBaseSoundOutput{
+public:
+    /// \brief Destroy the ofBaseSoundOutput.
+    virtual ~ofBaseSoundOutput() {};
 
-	public:
-        virtual ~ofBaseSoundOutput() {};
-    
-		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
-			audioOut(output, bufferSize, nChannels);
-		}
+    /// \todo
+    virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
+        audioOut(output, bufferSize, nChannels);
+    }
 
-		virtual void audioOut( float * output, int bufferSize, int nChannels ){
-			audioRequested(output, bufferSize, nChannels);
-		}
+    /// \todo
+    virtual void audioOut( float * output, int bufferSize, int nChannels ){
+        audioRequested(output, bufferSize, nChannels);
+    }
 
-		//legacy
-		virtual void audioRequested( float * output, int bufferSize, int nChannels ){
-		}
+    /// \todo
+    /// \note This is a legacy method.
+    virtual void audioRequested( float * output, int bufferSize, int nChannels ){
+    }
 };
 
 
-//----------------------------------------------------------
-// ofBaseVideo
-//----------------------------------------------------------
+/// \brief A base class representing a video source.
 class ofBaseVideo: virtual public ofBaseHasPixels, public ofBaseUpdates{
 public:
     /// \brief Destroy the ofBaseVideo.
 	virtual ~ofBaseVideo(){}
 
-    /// \returns true if the pixel data was updated since the last update().
+    /// \returns true if the pixel data was updated since the last call to update().
 	virtual bool isFrameNew() const =0;
 
-    /// \brief Close the video device.
+    /// \brief Close the video source.
 	virtual void close()=0;
 
-    /// \returns true if the video device is initialized.
+    /// \brief Determine if the video source is initialized.
+    ///
+    /// Video sources such as cameras are often initialized with a
+    /// setup() method.  Video sources such as movie players are often
+    /// initialized with a load() method.
+    ///
+    /// \returns true if the video source is initialized.
 	virtual bool isInitialized() const=0;
 
     /// \brief Set the requested ofPixelFormat.
@@ -225,17 +299,18 @@ public:
 };
 
 
-//----------------------------------------------------------
-// ofBaseVideoDraws
-//----------------------------------------------------------
-class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexturePlanes,virtual public ofBaseHasPixels{
+/// \brief A base class representing a drawable video source.
+class ofBaseVideoDraws:
+    virtual public ofBaseVideo,
+    public ofBaseDraws,
+    public ofBaseHasTexturePlanes,
+    virtual public ofBaseHasPixels{
 public:
+    /// \brief Destroy the ofBaseVideoDraws.
 	virtual ~ofBaseVideoDraws(){}
 };
 
-//----------------------------------------------------------
-// ofBaseVideoGrabber
-//----------------------------------------------------------
+/// \brief A base class representing a video device such as a camera.
 class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	
 	public :
@@ -249,7 +324,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 
     /// \brief Set up the grabber with the requested width and height.
     ///
-    /// Some video grabbers may not take the requested width and height as
+    /// Some video grabbers may take the requested width and height as
     /// a hint and choose the closest dimensions to those requested.
     /// Users can check the actual width and height by calling getWidth() and
     /// getHeight() respectively after a successful setup.
@@ -257,15 +332,15 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
     /// \param w the requested width.
     /// \param h the requested height.
     /// \returns true if the video grabber was set up successfully.
-	virtual bool	setup(int w, int h) = 0;
+	virtual bool setup(int w, int h) = 0;
 
     /// \brief Get the video grabber's height.
     /// \returns the video grabbers height.
-	virtual float	getHeight() const = 0;
+	virtual float getHeight() const = 0;
 
     /// \brief Get the video grabber's width.
     /// \returns the video grabbers width.
-	virtual float	getWidth() const = 0;
+	virtual float getWidth() const = 0;
 
     /// \brief Get the video grabber's internal ofTexture pointer if available.
     ///
@@ -302,9 +377,7 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 };
 
 
-//----------------------------------------------------------
-// ofBaseVideoPlayer
-//----------------------------------------------------------
+/// \brief A base class representing a video player.
 class ofBaseVideoPlayer: virtual public ofBaseVideo{
 	
 public:
