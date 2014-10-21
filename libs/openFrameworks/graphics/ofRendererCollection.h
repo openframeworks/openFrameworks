@@ -559,6 +559,38 @@ public:
 		 }
 	}
 
+	void setBitmapTextMode(ofDrawBitmapMode & mode){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setBitmapTextMode(mode);
+		 }
+	}
+
+	ofStyle getStyle() const{
+		if(renderers.empty()){
+			return ofStyle();
+		}else{
+			return renderers[0]->getStyle();
+		}
+	}
+
+	void pushStyle(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->pushStyle();
+		 }
+	}
+
+	void popStyle(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->popStyle();
+		 }
+	}
+
+	void setStyle(const ofStyle & style){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setStyle(style);
+		 }
+	}
+
 	// drawing
 	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
 		 for(int i=0;i<(int)renderers.size();i++){
@@ -590,9 +622,9 @@ public:
 		 }
 	}
 
-	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode){
+	void drawString(string text, float x, float y, float z){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->drawString(text, x,y,z,mode);
+			 renderers[i]->drawString(text, x,y,z);
 		 }
 	}
 

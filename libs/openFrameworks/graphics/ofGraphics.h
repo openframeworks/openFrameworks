@@ -348,5 +348,5 @@ void ofDrawBitmapString(const T & textString, float x, float y){
 //--------------------------------------------------
 template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y, float z){
-	ofGetCurrentRenderer()->drawString(ofToString(textString),x,y,z,ofGetStyle().drawBitmapMode);
+	ofGetCurrentRenderer()->drawString(ofToString(textString),x,y,z);
 }

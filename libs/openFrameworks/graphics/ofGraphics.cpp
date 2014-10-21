@@ -15,8 +15,6 @@
 
 
 //style stuff - new in 006
-static ofStyle currentStyle;
-static deque <ofStyle> styleHistory;
 static ofPath shape;
 static ofVboMesh gradientMesh;
 
@@ -42,21 +40,12 @@ void ofSetCurrentRenderer(const string & rendererType,bool setDefaults){
 	}
 }
 
-void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer_,bool setDefaults){
-	ofGetCurrentRenderer() = renderer_;
-	if(ofGetCurrentRenderer()->rendersPathPrimitives()){
-		shape.setMode(ofPath::COMMANDS);
-	}else{
-		shape.setMode(ofPath::POLYLINES);
-	}
-
-	shape.setUseShapeColor(false);
-
+void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults){
 	if(setDefaults){
-		ofGetCurrentRenderer()->setupGraphicDefaults();
-		ofSetStyle(currentStyle);
-		ofSetBackgroundColor(currentStyle.bgColor);
+		renderer->setupGraphicDefaults();
+		renderer->setStyle(ofGetCurrentRenderer()->getStyle());
 	}
+	ofGetCurrentRenderer() = renderer;
 }
 
 #if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
@@ -241,7 +230,12 @@ void ofSetupScreenOrtho(float width, float height, float nearDist, float farDist
 //Resets openGL parameters back to OF defaults
 void ofSetupGraphicDefaults(){
 	ofGetCurrentRenderer()->setupGraphicDefaults();
-	ofSetStyle(ofStyle());
+	if(ofGetCurrentRenderer()->rendersPathPrimitives()){
+		shape.setMode(ofPath::COMMANDS);
+	}else{
+		shape.setMode(ofPath::POLYLINES);
+	}
+	shape.setUseShapeColor(false);
 }
 
 //----------------------------------------------------------
@@ -441,7 +435,6 @@ void ofBackgroundHex(int hexColor, int alpha){
 
 //----------------------------------------------------------
 void ofBackground(int r, int g, int b, int a){
-	currentStyle.bgColor.set(r,g,b,a);
 	ofGetCurrentRenderer()->background(r,g,b,a);
 }
 
@@ -514,19 +507,18 @@ void ofSetBackgroundColor(int brightness, int alpha){
 }
 
 //----------------------------------------------------------
-void ofSetBackgroundColor(const ofColor & c){
-	ofSetBackgroundColor ( c.r, c.g, c.b, c.a);
-}
-
-//----------------------------------------------------------
 void ofSetBackgroundColorHex(int hexColor, int alpha){
 	ofSetBackgroundColor ( (hexColor >> 16) & 0xff, (hexColor >> 8) & 0xff, (hexColor >> 0) & 0xff, alpha);
 }
 
 //----------------------------------------------------------
 void ofSetBackgroundColor(int r, int g, int b, int a){
-	currentStyle.bgColor.set(r,g,b,a);
-	ofGetCurrentRenderer()->setBackgroundColor(currentStyle.bgColor);
+	ofSetBackgroundColor (ofColor(r,g,b,a));
+}
+
+//----------------------------------------------------------
+void ofSetBackgroundColor(const ofColor & c){
+	ofGetCurrentRenderer()->setBackgroundColor(c);
 }
 
 // end background functions
@@ -541,20 +533,18 @@ void ofSetBackgroundColor(int r, int g, int b, int a){
 //----------------------------------------------------------
 void  ofSetRectMode(ofRectMode mode){
 	ofGetCurrentRenderer()->setRectMode(mode);
-	currentStyle.rectMode = mode;
 }
 
 //----------------------------------------------------------
 ofRectMode ofGetRectMode(){
-    return currentStyle.rectMode;
+    return ofGetCurrentRenderer()->getRectMode();
 }
 
 //----------------------------------------------------------
 void ofNoFill(){
 	shape.setFilled(false);
-	shape.setStrokeWidth(currentStyle.lineWidth);
+	shape.setStrokeWidth(ofGetCurrentRenderer()->getStyle().lineWidth);
 	ofGetCurrentRenderer()->setFillMode(OF_OUTLINE);
-	currentStyle.bFill = false;
 }
 
 //----------------------------------------------------------
@@ -562,20 +552,18 @@ void ofFill(){
 	shape.setFilled(true);
 	shape.setStrokeWidth(0);
 	ofGetCurrentRenderer()->setFillMode(OF_FILLED);
-	currentStyle.bFill = true;
 }
 
 // Returns OF_FILLED or OF_OUTLINE
 //----------------------------------------------------------
 ofFillFlag ofGetFill(){
-    return currentStyle.bFill ? OF_FILLED : OF_OUTLINE;
+    return ofGetCurrentRenderer()->getFillMode();
 }
 
 //----------------------------------------------------------
 void ofSetLineWidth(float lineWidth){
 	shape.setStrokeWidth(lineWidth);
 	ofGetCurrentRenderer()->setLineWidth(lineWidth);
-	currentStyle.lineWidth = lineWidth;
 }
 
 //----------------------------------------------------------
@@ -597,13 +585,14 @@ void ofDisableDepthTest(){
 //----------------------------------------
 void ofSetCurveResolution(int res){
 	shape.setCurveResolution(res);
-	currentStyle.curveResolution = res;
+	ofStyle style = ofGetCurrentRenderer()->getStyle();
+	style.curveResolution = res;
+	ofGetCurrentRenderer()->setStyle(style);
 }
 
 //----------------------------------------------------------
 void ofSetCircleResolution(int res){
 	ofGetCurrentRenderer()->setCircleResolution(res);
-	currentStyle.circleResolution = res;
 	shape.setCircleResolution(res);
 }
 
@@ -619,24 +608,12 @@ void ofSetColor(const ofColor & color, int _a){
 
 //----------------------------------------------------------
 void ofSetColor(int r, int g, int b){
-
-	currentStyle.color.r = r;
-	currentStyle.color.g = g;
-	currentStyle.color.b = b;
-	currentStyle.color.a = 255.0f;
-
-	ofGetCurrentRenderer()->setColor(r,g,b,255);
+	ofSetColor(r,g,b,255);
 }
 
 
 //----------------------------------------------------------
 void ofSetColor(int r, int g, int b, int a){
-
-	currentStyle.color.r = r;
-	currentStyle.color.g = g;
-	currentStyle.color.b = b;
-	currentStyle.color.a = a;
-
 	ofGetCurrentRenderer()->setColor(r,g,b,a);
 }
 
@@ -659,7 +636,6 @@ void ofSetHexColor(int hexColor){
 //----------------------------------------------------------
 
 void ofEnableBlendMode(ofBlendMode blendMode){
-	currentStyle.blendingMode = blendMode;
 	ofGetCurrentRenderer()->setBlendMode(blendMode);
 }
 
@@ -697,19 +673,19 @@ void ofEnableSmoothing(){
 	// please see:
 	// http://www.opengl.org/resources/faq/technical/rasterization.htm
 	ofGetCurrentRenderer()->setLineSmoothing(true);
-	currentStyle.smoothing = 1;
 }
 
 //----------------------------------------------------------
 void ofDisableSmoothing(){
 	ofGetCurrentRenderer()->setLineSmoothing(false);
-	currentStyle.smoothing = 0;
 }
 
 //----------------------------------------------------------
 void ofSetPolyMode(ofPolyWindingMode mode){
 	shape.setPolyWindingMode(mode);
-	currentStyle.polyMode = mode;
+	ofStyle style = ofGetCurrentRenderer()->getStyle();
+	style.polyMode = mode;
+	ofGetCurrentRenderer()->setStyle(style);
 }
 
 //----------------------------------------
@@ -724,79 +700,31 @@ void ofDisableAntiAliasing(){
 
 //----------------------------------------
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode){
-	currentStyle.drawBitmapMode = mode;
+	ofGetCurrentRenderer()->setBitmapTextMode(mode);
 }
 
 //----------------------------------------------------------
 void ofSetStyle(ofStyle style){
-	//color
-	ofSetColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
-
-	//bg color
-	ofSetBackgroundColor(style.bgColor);
-
-	//circle resolution - don't worry it only recalculates the display list if the res has changed
-	ofSetCircleResolution(style.circleResolution);
-
-	//ofSetSphereResolution(style.sphereResolution);
-
-	ofSetCurveResolution(style.curveResolution);
-
-	//line width - finally!
-	ofSetLineWidth(style.lineWidth);
-	
-	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
-
-	//rect mode: corner/center
-	ofSetRectMode(style.rectMode);
-
-	//poly mode: winding type
-	ofSetPolyMode(style.polyMode);
-
-	//fill
-	if(style.bFill ){
-		ofFill();
-	}else{
-		ofNoFill();
-	}
-
-	//smoothing
-	if(style.smoothing ){
-		ofEnableSmoothing();
-	}else{
-		ofDisableSmoothing();
-	}
-
-	//blending
-	ofEnableBlendMode(style.blendingMode);
-	
-	//bitmap draw mode
-	ofSetDrawBitmapMode(style.drawBitmapMode);
+	ofGetCurrentRenderer()->setStyle(style);
+    shape.setCurveResolution(ofGetCurrentRenderer()->getStyle().curveResolution);
+	shape.setPolyWindingMode(ofGetCurrentRenderer()->getStyle().polyMode);
 }
 
 //----------------------------------------------------------
 ofStyle ofGetStyle(){
-	return currentStyle;
+	return ofGetCurrentRenderer()->getStyle();
 }
 
 //----------------------------------------------------------
 void ofPushStyle(){
-	styleHistory.push_front(currentStyle);
-
-	//if we are over the max number of styles we have set, then delete the oldest styles.
-	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
-		styleHistory.pop_back();
-		//should we warn here?
-		//ofLogWarning("ofGraphics") "ofPushStyle(): maximum number of style pushes << " OF_MAX_STYLE_HISTORY << " reached, did you forget to pop somewhere?"
-	}
+	ofGetCurrentRenderer()->pushStyle();
 }
 
 //----------------------------------------------------------
 void ofPopStyle(){
-	if( styleHistory.size() ){
-		ofSetStyle(styleHistory.front());
-		styleHistory.pop_front();
-	}
+	ofGetCurrentRenderer()->popStyle();
+    shape.setCurveResolution(ofGetCurrentRenderer()->getStyle().curveResolution);
+	shape.setPolyWindingMode(ofGetCurrentRenderer()->getStyle().polyMode);
 }
 
 
@@ -940,49 +868,45 @@ void ofDrawRectRounded(float x, float y, float z, float w, float h, float topLef
 	}
 	shape.clear();
     shape.rectRounded(x,y,z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
-    shape.draw();
+    ofGetCurrentRenderer()->draw(shape);//.draw();
 
 }
 
 //----------------------------------------------------------
 void ofDrawCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-    shape.setCurveResolution(currentStyle.curveResolution);
     shape.clear();
 	shape.curveTo(x0,y0);
 	shape.curveTo(x1,y1);
 	shape.curveTo(x2,y2);
 	shape.curveTo(x3,y3);
-	shape.draw();
+    ofGetCurrentRenderer()->draw(shape);//.draw();
 }
 
 //----------------------------------------------------------
 void ofDrawCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
-    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.curveTo(x0,y0,z0);
 	shape.curveTo(x1,y1,z1);
 	shape.curveTo(x2,y2,z2);
 	shape.curveTo(x3,y3,z3);
-	shape.draw();
+    ofGetCurrentRenderer()->draw(shape);//.draw();
 }
 
 
 //----------------------------------------------------------
 void ofDrawBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.moveTo(x0,y0);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
-	shape.draw();
+    ofGetCurrentRenderer()->draw(shape);//.draw();
 }
 
 //----------------------------------------------------------
 void ofDrawBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
-    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.clear();
 	shape.moveTo(x0,y0,z0);
 	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
-	shape.draw();
+    ofGetCurrentRenderer()->draw(shape);//.draw();
 }
 
 //----------------------------------------------------------
@@ -1159,7 +1083,6 @@ void ofVertices( const vector <ofPoint> & polyPoints ){
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
-    shape.setCurveResolution(currentStyle.curveResolution);
     shape.curveTo(x,y);
 }
 
@@ -1170,7 +1093,6 @@ void ofCurveVertex(float x, float y, float z){
 
 //----------------------------------------------------------
 void ofCurveVertices( const vector <ofPoint> & curvePoints){
-    shape.setCurveResolution(currentStyle.curveResolution);
 	for( int k = 0; k < (int)curvePoints.size(); k++){
 		shape.curveTo(curvePoints[k]);
 	}
@@ -1178,24 +1100,20 @@ void ofCurveVertices( const vector <ofPoint> & curvePoints){
 
 //---------------------------------------------------
 void ofCurveVertex(ofPoint & p){
-    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.curveTo(p);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
-    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(x1,y1,x2,y2,x3,y3);
 }
 
 void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3){
-    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(p1, p2, p3);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
-    shape.setCurveResolution(currentStyle.curveResolution);
 	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 }
 
@@ -1218,7 +1136,7 @@ void ofEndShape(bool bClose){
 		shape.close();
 	}
 
-	shape.draw();
+    ofGetCurrentRenderer()->draw(shape);//.draw();
 
 }
 
@@ -1234,7 +1152,7 @@ void ofDrawBitmapString(string textString, float x, float y){
 }
 //--------------------------------------------------
 void ofDrawBitmapString(string textString, float x, float y, float z){
-	ofGetCurrentRenderer()->drawString(textString,x,y,z,currentStyle.drawBitmapMode);
+	ofGetCurrentRenderer()->drawString(textString,x,y,z);
 }
 //--------------------------------------------------
 void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background, const ofColor& foreground) {
@@ -1270,7 +1188,7 @@ void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& backg
 	ofFill();
 	ofPushMatrix();
 	
-	if(currentStyle.drawBitmapMode == OF_BITMAPMODE_MODEL) {
+	if(ofGetStyle().drawBitmapMode == OF_BITMAPMODE_MODEL) {
 		ofTranslate(x,y,0);
 		ofScale(1,-1,0);
 		ofTranslate(-(padding), + padding - fontSize - 2,0);

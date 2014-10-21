@@ -156,8 +156,13 @@ class ofNoopRenderer: public ofBaseRenderer{
 	virtual void drawCircle(float x, float y, float z, float radius){}
 	virtual void drawSphere(float x, float y, float z, float radius){}
 	virtual void drawEllipse(float x, float y, float z, float width, float height){}
-	virtual void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode){}
+	virtual void drawString(string text, float x, float y, float z){}
 
+	void setBitmapTextMode(ofDrawBitmapMode & mode){}
+	ofStyle getStyle() const{ return ofStyle(); }
+	void pushStyle(){};
+	void popStyle(){};
+	void setStyle(const ofStyle & style){};
 
 	// returns true if the renderer can render curves without decomposing them
 	virtual bool rendersPathPrimitives(){return true;}

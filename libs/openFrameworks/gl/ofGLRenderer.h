@@ -120,6 +120,8 @@ public:
 	void setColor(int gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
+	void setBitmapTextMode(ofDrawBitmapMode & mode);
+
 	// bg color
 	ofColor getBackgroundColor();
 	void setBackgroundColor(const ofColor & c);
@@ -136,6 +138,11 @@ public:
 	void clear(float brightness, float a=0);
 	void clearAlpha();
 
+	ofStyle getStyle() const;
+	void pushStyle();
+	void popStyle();
+	void setStyle(const ofStyle & style);
+
 
 	// drawing
 	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2);
@@ -144,7 +151,7 @@ public:
 	void drawCircle(float x, float y, float z, float radius);
 	//	void drawSphere(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
-	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
+	void drawString(string text, float x, float y, float z);
 
 
 	// gl specifics
@@ -183,7 +190,6 @@ private:
 
 
 	bool bBackgroundAuto;
-	ofFloatColor bgColor;
 
 	vector<ofPoint> linePoints;
 	vector<ofPoint> rectPoints;
@@ -191,14 +197,14 @@ private:
 	vector<ofPoint> circlePoints;
 	ofPolyline circlePolyline;
 
-	ofFillFlag fillFlag;
-	bool bSmoothHinted;
-	ofRectMode rectMode;
-
 	ofMatrixStack matrixStack;
 	bool normalsEnabled;
 	bool lightingEnabled;
 	set<int> textureLocationsEnabled;
 
 	int alphaMaskTextureTarget;
+
+	ofStyle currentStyle;
+	deque <ofStyle> styleHistory;
+	const ofAppBaseWindow * window;
 };

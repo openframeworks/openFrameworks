@@ -31,6 +31,7 @@ public:
 	void nativeViewport(ofRectangle viewport);
 	ofRectangle getCurrentViewport() const;
 	ofRectangle getNativeViewport() const;
+	ofRectangle getFullSurfaceViewport() const;
 
 	const ofMatrix4x4 & getProjectionMatrix() const;
 	const ofMatrix4x4 & getViewMatrix() const;

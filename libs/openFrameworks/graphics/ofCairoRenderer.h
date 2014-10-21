@@ -144,6 +144,13 @@ public:
 	void clear(float brightness, float a=0);
 	void clearAlpha();
 
+	void setBitmapTextMode(ofDrawBitmapMode & mode);
+
+	ofStyle getStyle() const;
+	void pushStyle();
+	void popStyle();
+	void setStyle(const ofStyle & style);
+
 	// drawing
 	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2);
 	void drawRectangle(float x, float y, float z, float w, float h);
@@ -151,7 +158,7 @@ public:
 	void drawCircle(float x, float y, float z, float radius);
 	void drawSphere(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
-	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
+	void drawString(string text, float x, float y, float z);
 
 	// cairo specifics
 	cairo_t * getCairoContext();
@@ -160,7 +167,6 @@ public:
 	ofBuffer & getContentBuffer();
 
 private:
-	void setStyle(const ofStyle & style);
 	ofVec3f transform(ofVec3f vec) const;
 	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
 	void draw(const ofPixels & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -169,7 +175,6 @@ private:
 	cairo_t * cr;
 	cairo_surface_t * surface;
 	bool bBackgroundAuto;
-	ofFloatColor bgColor;
 
 	stack<cairo_matrix_t> matrixStack;
 
@@ -181,7 +186,7 @@ private:
 	bool b3D;
 	ofMatrix4x4 projection;
 	ofMatrix4x4 modelView;
-	ofRectangle viewportRect;
+	ofRectangle viewportRect, originalViewport;
 
 	stack<ofMatrix4x4> projectionStack;
 	stack<ofMatrix4x4> modelViewStack;
@@ -192,11 +197,10 @@ private:
 	vector<ofPoint> sphereVerts;
 	vector<ofPoint> spherePoints;
 
-	ofFillFlag bFilled;
-	bool bSmoothHinted;
-	ofRectMode rectMode;
-
 	string filename;
 	ofBuffer streamBuffer;
 	ofPixels imageBuffer;
+
+	ofStyle currentStyle;
+	deque <ofStyle> styleHistory;
 };
