@@ -423,7 +423,7 @@ void ofPixels_<PixelType>::swapRgb(){
 	}
 	break;
 	default:
-		//ofLogWarning("ofPixels") << "rgb swap not supported for this pixel format";
+		ofLogWarning("ofPixels") << "rgb swap not supported for this pixel format";
 		break;
 	}
 	switch(pixelFormat){
