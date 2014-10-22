@@ -179,8 +179,8 @@ void ofxCvContourFinder::draw( float x, float y, float w, float h ) const {
 
 	ofNoFill();
 	for( int i=0; i<(int)blobs.size(); i++ ) {
-		ofRect( blobs[i].boundingRect.x, blobs[i].boundingRect.y,
-                blobs[i].boundingRect.width, blobs[i].boundingRect.height );
+		ofDrawRectangle( blobs[i].boundingRect.x, blobs[i].boundingRect.y,
+                        blobs[i].boundingRect.width, blobs[i].boundingRect.height );
 	}
 
 	// ---------------------------- draw the blobs
