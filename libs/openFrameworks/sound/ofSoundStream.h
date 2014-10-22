@@ -125,9 +125,15 @@ public:
 
     /// \brief Sets the object which will have audioIn() called when the device receives audio.
     void setInput(ofBaseSoundInput * soundInput);
+	
+	/// \brief Gets the object currently receiving audioIn() calls for this stream
+	ofBaseSoundInput * getInput();
 
     /// \brief Sets the object which will have audioOut() called when the device requests audio.
     void setOutput(ofBaseSoundOutput * soundOutput);
+	
+	/// \brief Gets the object currently receiving audioOut() calls for this stream
+	ofBaseSoundOutput * getOutput();
 
     /// \brief Starts a stream (note that setup() will start the stream on its own).
     void start();
@@ -135,7 +141,7 @@ public:
     /// \brief Stops the stream.
     void stop();
 
-    /// \brief stops the stream and cleans up its resources.
+    /// \brief Stops the stream and cleans up its resources.
     void close();
 
     /// \brief Queries the number of "ticks" passed since the stream started.

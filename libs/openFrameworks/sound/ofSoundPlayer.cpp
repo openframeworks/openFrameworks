@@ -120,14 +120,7 @@ void ofSoundPlayer::setPaused(bool bP){
 		player->setPaused(bP);
 	}
 }
-//--------------------------------------------------------------------
-bool ofSoundPlayer::getIsLooping(){
-	if( player != NULL ){
-		return player->getIsLooping();
-	}else{
-        return false;
-    }
-}
+
 //--------------------------------------------------------------------
 void ofSoundPlayer::setLoop(bool bLp){
 	if( player ){
