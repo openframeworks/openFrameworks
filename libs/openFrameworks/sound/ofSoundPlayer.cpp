@@ -49,9 +49,6 @@ float * ofSoundGetSpectrum(int nBands){
 	#endif
 }
 
-
-
-#include "ofSoundPlayer.h"
 //---------------------------------------------------------------------------
 ofSoundPlayer::ofSoundPlayer (){
 	player	= shared_ptr<OF_SOUND_PLAYER_TYPE>(new OF_SOUND_PLAYER_TYPE);
@@ -123,7 +120,14 @@ void ofSoundPlayer::setPaused(bool bP){
 		player->setPaused(bP);
 	}
 }
-
+//--------------------------------------------------------------------
+bool ofSoundPlayer::getIsLooping(){
+	if( player != NULL ){
+		return player->getIsLooping();
+	}else{
+        return false;
+    }
+}
 //--------------------------------------------------------------------
 void ofSoundPlayer::setLoop(bool bLp){
 	if( player ){

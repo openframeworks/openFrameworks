@@ -5,6 +5,8 @@
 #include "ofBaseApp.h"
 #include "ofTypes.h"
 #include "ofBaseSoundStream.h"
+#include "ofSoundBuffer.h"
+#include "ofSoundObject.h"
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
 	#include "ofRtAudioSoundStream.h"
@@ -166,5 +168,6 @@ public:
     
 protected:
     shared_ptr<ofBaseSoundStream> soundStream;
-
 };
+
+ofSoundStream & ofGetSoundStream();

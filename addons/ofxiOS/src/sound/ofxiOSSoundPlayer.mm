@@ -131,6 +131,13 @@ bool ofxiOSSoundPlayer::getIsPlaying() {
     return [(AVSoundPlayer *)soundPlayer isPlaying];
 }
 
+bool ofxiOSSoundPlayer::getIsLooping() {
+    if(soundPlayer == NULL) {
+        return false;
+    }
+    return [(AVSoundPlayer *)soundPlayer loop];
+}
+
 float ofxiOSSoundPlayer::getSpeed() {
     if(soundPlayer == NULL) {
         return 0;

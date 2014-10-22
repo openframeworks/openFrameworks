@@ -75,6 +75,15 @@
 #ifndef TARGET_NO_SOUND
 #include "ofSoundStream.h"
 #include "ofSoundPlayer.h"
+#include "ofSoundObject.h"
+#include "ofSoundStream.h"
+#include "ofSoundPlayer.h"
+#include "ofSoundBuffer.h"
+
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID)
+#include "ofSoundFile.h"
+#endif
+
 #endif
 
 //--------------------------

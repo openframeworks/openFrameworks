@@ -337,6 +337,12 @@ bool ofxOpenALSoundPlayer::getIsPlaying() {
 
 //--------------------------------------------------------------
 
+bool ofxOpenALSoundPlayer::getIsLooping() {
+	return bLoop;
+}
+
+//--------------------------------------------------------------
+
 float ofxOpenALSoundPlayer::getPitch() {
 	return pitch;
 }
