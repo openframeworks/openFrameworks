@@ -15,7 +15,7 @@ public:
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
 	
-	void setDefaultSerializer(ofPtr<ofBaseFileSerializer> serializer);
+	void setDefaultSerializer(std::shared_ptr<ofBaseFileSerializer> serializer);
 
 	virtual void saveTo(ofBaseSerializer& serializer);
 	virtual void loadFrom(ofBaseSerializer& serializer);
@@ -81,7 +81,7 @@ protected:
 	static ofTrueTypeFont font;
 	static bool fontLoaded;
 	static bool useTTF;
-	ofPtr<ofBaseFileSerializer> serializer;
+	std::shared_ptr<ofBaseFileSerializer> serializer;
 
 	static ofColor headerBackgroundColor;
 	static ofColor backgroundColor;
