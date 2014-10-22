@@ -62,7 +62,7 @@ bool ofxBaseGui::useTTF = false;
 
 ofxBaseGui::ofxBaseGui(){
 	currentFrame = ofGetFrameNum();
-	serializer = ofPtr<ofBaseFileSerializer> (new ofXml);
+    serializer = std::shared_ptr<ofBaseFileSerializer>(new ofXml);
 
 	thisHeaderBackgroundColor=headerBackgroundColor;
 	thisBackgroundColor=backgroundColor;
@@ -179,7 +179,7 @@ void ofxBaseGui::loadFrom(ofBaseSerializer& serializer){
 }
 
 
-void ofxBaseGui::setDefaultSerializer(ofPtr<ofBaseFileSerializer>  _serializer){
+void ofxBaseGui::setDefaultSerializer(std::shared_ptr<ofBaseFileSerializer> _serializer){
 	serializer = _serializer;
 }
 
