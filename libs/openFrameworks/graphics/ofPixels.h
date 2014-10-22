@@ -136,6 +136,8 @@ public:
         const Pixel* operator->() const;
         Pixel& operator++();
         Pixel operator++(int);
+        Pixel& operator--();
+        Pixel operator--(int);
         Pixel operator+(int) const;
         Pixel operator+=(int);
         bool operator!=(Pixel const& rhs) const;
@@ -165,10 +167,14 @@ public:
         const Line* operator->() const;
         Line& operator++();
         Line operator++(int);
+        Line& operator--();
+        Line operator--(int);
         Line operator+(int) const;
         Line operator+=(int);
         bool operator!=(Line const& rhs) const;
         bool operator<(Line const& rhs) const;
+        bool operator>(Line const& rhs) const;
+        bool operator>=(Line const& rhs) const;
         PixelType * begin();
         PixelType * end();
         const PixelType * begin() const;
@@ -448,6 +454,21 @@ inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixel::operato
 
 //----------------------------------------------------------------------
 template<typename PixelType>
+inline typename ofPixels_<PixelType>::Pixel& ofPixels_<PixelType>::Pixel::operator--(){
+	pixel -= componentsPerPixel;
+	return *this;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixel::operator--(int){
+	Pixel tmp(*this);
+	operator++();
+	return tmp;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixel::operator+(int i) const{
 	return Pixel(pixel + componentsPerPixel * i, componentsPerPixel, pixelFormat);
 }
@@ -538,6 +559,23 @@ inline typename ofPixels_<PixelType>::Line ofPixels_<PixelType>::Line::operator+
 
 //----------------------------------------------------------------------
 template<typename PixelType>
+inline typename ofPixels_<PixelType>::Line& ofPixels_<PixelType>::Line::operator--(){
+	_end = _begin;
+	_begin = _end - stride;
+	--lineNum;
+	return *this;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline typename ofPixels_<PixelType>::Line ofPixels_<PixelType>::Line::operator--(int) {
+	Line tmp(*this);
+	operator--();
+	return tmp;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
 inline typename ofPixels_<PixelType>::Line  ofPixels_<PixelType>::Line::operator+(int i) const{
 	return Line(_begin+stride*i,stride,componentsPerPixel,lineNum+i,pixelFormat);
 }
@@ -560,7 +598,19 @@ inline bool ofPixels_<PixelType>::Line::operator!=(typename ofPixels_<PixelType>
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline bool ofPixels_<PixelType>::Line::operator<(typename ofPixels_<PixelType>::Line const& rhs) const{
-	return _begin < rhs._begin || _end < rhs._end;
+	return _begin < rhs._begin;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline bool ofPixels_<PixelType>::Line::operator>(typename ofPixels_<PixelType>::Line const& rhs) const{
+	return _begin > rhs._begin;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline bool ofPixels_<PixelType>::Line::operator>=(typename ofPixels_<PixelType>::Line const& rhs) const{
+	return _begin >= rhs._begin;
 }
 
 //----------------------------------------------------------------------

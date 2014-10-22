@@ -498,27 +498,12 @@ bool ofShader::isLoaded() const{
 
 //--------------------------------------------------------------
 void ofShader::begin()  const{
-	if (bLoaded){
-		glUseProgram(program);
-		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-		if(renderer){
-			renderer->beginCustomShader(*this);
-		}
-	}else{
-		ofLogError("ofShader") << "begin(): couldn't begin, shader not loaded";
-	}
+	ofGetGLRenderer()->bind(*this);
 }
 
 //--------------------------------------------------------------
 void ofShader::end()  const{
-	if (bLoaded){
-		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-		if(renderer){
-			renderer->endCustomShader();
-		}else{
-			glUseProgram(0);
-		}
-	}
+	ofGetGLRenderer()->unbind(*this);
 }
 
 #ifndef TARGET_OPENGLES

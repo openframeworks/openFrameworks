@@ -200,15 +200,17 @@ void of3dPrimitive::draw() const{
 
 //--------------------------------------------------------------
 void of3dPrimitive::draw(ofPolyRenderMode renderType) const{
-    // ofNode applies all of the tranformations needed, included scale //
-    ofNode::transformGL();
     ofGetCurrentRenderer()->draw(*this, renderType);
-    ofNode::restoreTransformGL();
+}
+
+//--------------------------------------------------------------
+void of3dPrimitive::customDraw(const ofBaseRenderer * renderer) const{
+	renderer->draw(*this, OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------
 void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
-    ofNode::transformGL();
+    ofNode::transformGL(ofGetCurrentRenderer().get());
     
     if(getMesh().usingNormals()) {
         const vector<ofVec3f>& normals    = getMesh().getNormals();
@@ -248,14 +250,14 @@ void of3dPrimitive::drawNormals(float length, bool bFaceNormals) const{
     }
     
     
-    ofNode::restoreTransformGL();
+    ofNode::restoreTransformGL(ofGetCurrentRenderer().get());
 }
 
 //--------------------------------------------------------------
 void of3dPrimitive::drawAxes(float a_size)  const{
-    ofNode::transformGL();
+    ofNode::transformGL(ofGetCurrentRenderer().get());
     ofDrawAxis(a_size);
-    ofNode::restoreTransformGL();
+    ofNode::restoreTransformGL(ofGetCurrentRenderer().get());
 }
 
 //--------------------------------------------------------------

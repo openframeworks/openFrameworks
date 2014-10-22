@@ -140,20 +140,6 @@ ofMatrix4x4 ofBaseRenderer::getCurrentOrientationMatrix() const {
 	return ofMatrix4x4();
 }
 
-
-//---------------------------------------------------------------------------
-void ofBaseMaterial::begin(){
-	if(ofIsGLProgrammableRenderer()){
-		ofGetGLProgrammableRenderer()->setCurrentMaterial(this);
-	}
-}
-
-void ofBaseMaterial::end(){
-	if(ofIsGLProgrammableRenderer()){
-		ofGetGLProgrammableRenderer()->setCurrentMaterial(NULL);
-	}
-}
-
 //---------------------------------------------------------------------------
 //void ofBaseVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 //	ofLogWarning("ofBaseVideoPlayer") << "setPixelFormat() not implemented";

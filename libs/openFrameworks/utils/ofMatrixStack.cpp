@@ -412,3 +412,10 @@ void ofMatrixStack::updatedRelatedMatrices(){
 	}
 }
 
+bool ofMatrixStack::doesHardwareOrientation() const{
+	if(currentFbo){
+		return true;
+	}else{
+		return currentWindow->doesHWOrientation();
+	}
+}

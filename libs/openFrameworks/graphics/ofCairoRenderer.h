@@ -41,6 +41,7 @@ public:
 	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
+    void draw(const ofNode& node) const;
 	void draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const;
 	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -159,12 +160,17 @@ public:
 	void drawSphere(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z);
+	void drawString(const ofTrueTypeFont & font, string text, float x, float y);
 
 	// cairo specifics
 	cairo_t * getCairoContext();
 	cairo_surface_t * getCairoSurface();
 	ofPixels & getImageSurfacePixels();
 	ofBuffer & getContentBuffer();
+
+
+	virtual void bind(const ofCamera & camera, const ofRectangle & viewport){}
+	virtual void unbind(const ofCamera & camera){}
 
 private:
 	ofVec3f transform(ofVec3f vec) const;

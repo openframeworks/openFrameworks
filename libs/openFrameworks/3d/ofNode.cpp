@@ -357,27 +357,24 @@ void ofNode::resetTransform() {
 
 //----------------------------------------
 void ofNode::draw()  const{
-	transformGL();
-	const_cast<ofNode*>(this)->customDraw();
-	restoreTransformGL();
+	ofGetCurrentRenderer()->draw(*this);
 }
 
 //----------------------------------------
-void ofNode::customDraw(){
+void ofNode::customDraw(const ofBaseRenderer * renderer) const{
 	ofDrawBox(10);
 	ofDrawAxis(20);
 }
 
 //----------------------------------------
-void ofNode::transformGL() const {
-	ofPushMatrix();
-	ofMultMatrix( getGlobalTransformMatrix() );
-	//glMultMatrixf( getGlobalTransformMatrix().getPtr() );
+void ofNode::transformGL(ofBaseRenderer * renderer) const {
+	renderer->pushMatrix();
+	renderer->multMatrix( getGlobalTransformMatrix() );
 }
 
 //----------------------------------------
-void ofNode::restoreTransformGL() const {
-	ofPopMatrix();
+void ofNode::restoreTransformGL(ofBaseRenderer * renderer) const {
+	renderer->popMatrix();
 }
 
 //----------------------------------------

@@ -76,6 +76,12 @@ public:
         }
     }
 
+    void draw(const  ofNode& node) const {
+        for(int i=0;i<(int)renderers.size();i++) {
+            renderers[i]->draw( node );
+        }
+    }
+
 	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
@@ -627,6 +633,15 @@ public:
 			 renderers[i]->drawString(text, x,y,z);
 		 }
 	}
+
+	void drawString(const ofTrueTypeFont & font, string text, float x, float y){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->drawString(font, text, x,y);
+		 }
+	}
+
+	virtual void bind(const ofCamera & camera, const ofRectangle & viewport){}
+	virtual void unbind(const ofCamera & camera){}
 
 	vector<shared_ptr<ofBaseRenderer> > renderers;
 };

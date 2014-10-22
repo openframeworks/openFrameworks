@@ -9,6 +9,9 @@
 #include "ofFbo.h"
 #include "ofLight.h"
 #include "ofMaterial.h"
+#include "ofCamera.h"
+#include "ofTrueTypeFont.h"
+#include "ofNode.h"
 
 const string ofGLRenderer::TYPE="GL";
 
@@ -175,11 +178,22 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 
 //----------------------------------------------------------
 void ofGLRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType)  const{
+	const_cast<ofGLRenderer*>(this)->pushMatrix();
+	const_cast<ofGLRenderer*>(this)->multMatrix(model.getGlobalTransformMatrix());
 	if(model.isUsingVbo()){
 		model.getMesh().draw(renderType);
 	}else{
 		draw(model.getMesh(),renderType);
 	}
+	const_cast<ofGLRenderer*>(this)->popMatrix();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::draw(const ofNode& node) const{
+	const_cast<ofGLRenderer*>(this)->pushMatrix();
+	const_cast<ofGLRenderer*>(this)->multMatrix(node.getGlobalTransformMatrix());
+	node.customDraw(this);
+	const_cast<ofGLRenderer*>(this)->popMatrix();
 }
 
 //----------------------------------------------------------
@@ -294,21 +308,116 @@ void ofGLRenderer::unbind(const ofBaseVideoDraws & video) const{
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setCurrentFBO(const ofFbo * fbo){
-	if(fbo!=NULL){
+void ofGLRenderer::bind(const ofShader & shader){
+	glUseProgram(shader.getProgram());
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofShader & shader){
+	glUseProgram(0);
+}
+
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofFbo & fbo, bool setupPerspective){
+	matrixStack.pushView();
+	matrixStack.setRenderSurface(fbo);
+	viewport();
+	if(setupPerspective){
+		setupScreenPerspective();
+	}else{
 		ofMatrix4x4 m;
 		glGetFloatv(GL_PROJECTION_MATRIX,m.getPtr());
 		m =  m*matrixStack.getOrientationMatrixInverse();
 		ofMatrixMode currentMode = matrixStack.getCurrentMatrixMode();
 		matrixStack.matrixMode(OF_MATRIX_PROJECTION);
 		matrixStack.loadMatrix(m.getPtr());
-		matrixStack.setRenderSurface(*fbo);
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
 		matrixMode(currentMode);
-	}else{
-		matrixStack.setRenderSurface(*window);
 	}
+	fbo.bind();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofFbo & fbo){
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	matrixStack.setRenderSurface(*window);
+	matrixStack.popView();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(ofBaseMaterial & material){
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(ofBaseMaterial & material){
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofTexture & texture, int location){
+	//we could check if it has been allocated - but we don't do that in draw()
+	if(texture.texData.alphaMask){
+		setAlphaMaskTex(*texture.texData.alphaMask);
+	}
+	enableTextureTarget(texture,location);
+
+
+	if(ofGetUsingNormalizedTexCoords()) {
+		matrixMode(OF_MATRIX_TEXTURE);
+		pushMatrix();
+		ofMatrix4x4 m;
+
+#ifndef TARGET_OPENGLES
+		if(texture.texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
+			m.makeScaleMatrix(texture.texData.width, texture.texData.height, 1.0f);
+		else
+#endif
+			m.makeScaleMatrix(texture.texData.width / texture.texData.tex_w, texture.texData.height / texture.texData.tex_h, 1.0f);
+
+		loadMatrix(m);
+		matrixMode(OF_MATRIX_MODELVIEW);
+	}
+	if(texture.texData.useTextureMatrix){
+		matrixMode(OF_MATRIX_TEXTURE);
+		if(!ofGetUsingNormalizedTexCoords()) pushMatrix();
+		multMatrix(texture.texData.textureMatrix);
+		matrixMode(OF_MATRIX_MODELVIEW);
+	}
+
+	texture.texData.isBound = true;
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofTexture & texture, int location){
+	disableTextureTarget(texture.texData.textureTarget,location);
+	if(texture.texData.alphaMask){
+		disableAlphaMask();
+	}
+
+	if(texture.texData.useTextureMatrix || ofGetUsingNormalizedTexCoords()) {
+		matrixMode(OF_MATRIX_TEXTURE);
+		popMatrix();
+		matrixMode(OF_MATRIX_MODELVIEW);
+	}
+
+	texture.texData.isBound = false;
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofCamera & camera, const ofRectangle & _viewport){
+	pushView();
+	viewport(_viewport);
+	setOrientation(matrixStack.getOrientation(),camera.isVFlipped());
+	matrixMode(OF_MATRIX_PROJECTION);
+	loadMatrix(camera.getProjectionMatrix(_viewport).getPtr());
+	matrixMode(OF_MATRIX_MODELVIEW);
+	loadViewMatrix(camera.getModelViewMatrix());
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofCamera & camera){
+	popView();
 }
 
 //----------------------------------------------------------
@@ -1281,27 +1390,45 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::enableTextureTarget(int textureTarget, int textureID, int textureLocation){
+void ofGLRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y){
+	bool blendEnabled = glIsEnabled(GL_BLEND);
+	GLint blend_src, blend_dst;
+	glGetIntegerv( GL_BLEND_SRC, &blend_src );
+	glGetIntegerv( GL_BLEND_DST, &blend_dst );
+
+    glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	bind(font.getFontTexture(),0);
+	draw(font.getStringMesh(text,x,y,isVFlipped()),OF_MESH_FILL);
+	unbind(font.getFontTexture(),0);
+
+	if(!blendEnabled){
+		glDisable(GL_BLEND);
+	}
+	glBlendFunc(blend_src, blend_dst);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::enableTextureTarget(const ofTexture & tex, int textureLocation){
 	glActiveTexture(GL_TEXTURE0+textureLocation);
 	glClientActiveTexture(GL_TEXTURE0+textureLocation);
-	glEnable(textureTarget);
-	glBindTexture( textureTarget, (GLuint)textureID);
+	glEnable( tex.getTextureData().textureTarget);
+	glBindTexture( tex.getTextureData().textureTarget, (GLuint)tex.getTextureData().textureID);
 	textureLocationsEnabled.insert(textureLocation);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::disableTextureTarget(int textureTarget, int textureLocation){
 	glActiveTexture(GL_TEXTURE0+textureLocation);
-	//glClientActiveTexture(GL_TEXTURE0+textureLocation);
 	glBindTexture( textureTarget, 0);
 	glDisable(textureTarget);
 	glActiveTexture(GL_TEXTURE0);
-	//glClientActiveTexture(GL_TEXTURE0);
 	textureLocationsEnabled.erase(textureLocation);
 }
 
-void ofGLRenderer::setAlphaMaskTex(ofTexture & tex){
-	enableTextureTarget(tex.getTextureData().textureTarget, tex.getTextureData().textureID, 1);
+void ofGLRenderer::setAlphaMaskTex(const ofTexture & tex){
+	enableTextureTarget(tex, 1);
 	alphaMaskTextureTarget = tex.getTextureData().textureTarget;
 }
 
@@ -1432,4 +1559,113 @@ void ofGLRenderer::setLightPosition(int lightIndex, const ofVec4f & position){
 void ofGLRenderer::setLightSpotDirection(int lightIndex, const ofVec4f & direction){
 	if(lightIndex==-1) return;
 	glLightfv(GL_LIGHT0 + lightIndex, GL_SPOT_DIRECTION, &direction.x);
+}
+
+int ofGLRenderer::getGLVersionMajor(){
+#ifdef TARGET_OPENGLES
+	return 1;
+#else
+	return 2;
+#endif
+}
+
+int ofGLRenderer::getGLVersionMinor(){
+#ifdef TARGET_OPENGLES
+	return 0;
+#else
+	return 1;
+#endif
+}
+
+
+void ofGLRenderer::saveFullViewport(ofPixels & pixels){
+	ofRectangle v = getCurrentViewport();
+	saveScreen(v.x,v.y,v.width,v.height,pixels);
+}
+
+void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
+
+    int sh = getViewportHeight();
+
+
+	#ifndef TARGET_OPENGLES
+	ofBufferObject buffer;
+	pixels.allocate(w, h, OF_PIXELS_RGB);
+	buffer.allocate(pixels.size(),GL_STATIC_READ);
+	if(isVFlipped()){
+		y = sh - y;
+		y -= h; // top, bottom issues
+	}
+
+	buffer.bind(GL_PIXEL_PACK_BUFFER);
+	glReadPixels(x, y, w, h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, 0); // read the memory....
+	buffer.unbind(GL_PIXEL_PACK_BUFFER);
+	unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
+	ofPixels src;
+	src.setFromExternalPixels(p,w,h,OF_PIXELS_RGB);
+	src.mirrorTo(pixels,true,false);
+	buffer.unmap();
+
+	#else
+
+	int sw = getViewportWidth();
+	int numPixels   = width*height;
+	if( numPixels == 0 ){
+		ofLogError("ofImage") << "grabScreen(): unable to grab screen, image width and/or height are 0: " << width << "x" << height;
+		return;
+	}
+	pixels.allocate(w, h, OF_PIXELS_RGBA);
+
+	switch(matrixStack.getOrientation()){
+	case OF_ORIENTATION_DEFAULT:
+
+		if(isVFlipped()){
+			y = sh - y;   // screen is flipped vertically.
+			y -= h;
+		}
+
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		pixels.mirror(true,false);
+	case OF_ORIENTATION_180) {
+
+		if(isVFlipped()){
+			x = sw - x;   // screen is flipped horizontally.
+			x -= w;
+		}
+
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		pixels.mirror(false,true);
+	case OF_ORIENTATION_90_RIGHT) {
+		swap(w,h);
+		swap(x,y);
+		if(!isVFlipped()){
+			x = sw - x;   // screen is flipped horizontally.
+			x -= w;
+
+			y = sh - y;   // screen is flipped vertically.
+			y -= h;
+		}
+
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		pixels.mirror(true,true);
+	case OF_ORIENTATION_90_LEFT) {
+		swap(w, h);
+		swap(x, y);
+		if(isVFlipped()){
+			x = sw - x;   // screen is flipped horizontally.
+			x -= w;
+
+			y = sh - y;   // screen is flipped vertically.
+			y -= h;
+		}
+
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		pixels.mirror(true,true);
+	}
+
+	#endif
 }

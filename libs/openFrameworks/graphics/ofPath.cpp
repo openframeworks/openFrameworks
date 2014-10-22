@@ -590,43 +590,7 @@ void ofPath::draw(float x, float y){
 
 //----------------------------------------------------------
 void ofPath::draw(){
-	if(mode == ofPath::COMMANDS && ofGetCurrentRenderer()->rendersPathPrimitives()){
-		ofGetCurrentRenderer()->draw(*this);
-	}else{
-		tessellate();
-
-
-		ofColor prevColor;
-		if(bUseShapeColor){
-			prevColor = ofGetStyle().color;
-		}
-
-		if(bFill && !cachedTessellation.getVertices().empty()){
-			if(bUseShapeColor){
-				ofSetColor(fillColor);
-			}
-			cachedTessellation.draw();
-			//ofGetCurrentRenderer()->draw(cachedTessellation,bUseShapeColor,false,false);
-
-		}
-
-		if(hasOutline()){
-			float lineWidth = ofGetStyle().lineWidth;
-			if(bUseShapeColor){
-				ofSetColor(strokeColor);
-			}
-			ofSetLineWidth( strokeWidth );
-			vector<ofPolyline> & polys = getOutline();
-			for(int i=0;i<(int)polys.size();i++){
-				ofGetCurrentRenderer()->draw(polys[i]);
-			}
-			ofSetLineWidth(lineWidth);
-		}
-
-		if(bUseShapeColor){
-			ofSetColor(prevColor);
-		}
-	}
+	ofGetCurrentRenderer()->draw(*this);
 }
 
 //----------------------------------------------------------

@@ -34,6 +34,7 @@ public:
 	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
+    void draw(const ofNode& node) const;
 	void draw(const ofPolyline & poly) const;
 	void draw(const ofPath & path) const;
 	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -151,19 +152,28 @@ public:
 	void drawCircle(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z);
+	void drawString(const ofTrueTypeFont & font, string text, float x, float y);
 
-	const ofShader & getCurrentShader() const;
 
-	void enableTextureTarget(int textureTarget, int textureID, int textureLocation);
+	void enableTextureTarget(const ofTexture & tex, int textureLocation);
 	void disableTextureTarget(int textureTarget, int textureLocation);
-	void setAlphaMaskTex(ofTexture & tex);
+	void setAlphaMaskTex(const ofTexture & tex);
 	void disableAlphaMask();
 	GLenum getCurrentTextureTarget();
 
-	void beginCustomShader(const ofShader & shader);
-	void endCustomShader();
 
-	void setCurrentMaterial(ofBaseMaterial * material);
+	const ofShader & getCurrentShader() const;
+
+	void bind(ofBaseMaterial & material);
+	void bind(const ofFbo & fbo, bool setupPerspective);
+	void bind(const ofShader & shader);
+	void bind(const ofTexture & texture, int location);
+	void unbind(ofBaseMaterial & material);
+	void unbind(const ofFbo & fbo);
+	void unbind(const ofShader & shader);
+	void unbind(const ofTexture & texture, int location);
+	void bind(const ofCamera & camera, const ofRectangle & viewport);
+	void unbind(const ofCamera & camera);
 
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
 	void setAlphaBitmapText(bool bitmapText);
@@ -212,6 +222,14 @@ public:
 	void setLightPosition(int lightIndex, const ofVec4f & position){}
 	void setLightSpotDirection(int lightIndex, const ofVec4f & direction){}
 
+	string defaultVertexShaderHeader(bool textureRect);
+	string defaultFragmentShaderHeader(bool textureRect);
+
+	int getGLVersionMajor();
+	int getGLVersionMinor();
+
+	void saveScreen(int x, int y, int w, int h, ofPixels & pixels);
+	void saveFullViewport(ofPixels & pixels);
 private:
 
 

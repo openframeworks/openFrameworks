@@ -228,15 +228,6 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 	texData.bUseExternalTextureID = true;
 }
 
-
-void ofTexture::enableTextureTarget(int textureLocation) const{
-	if(ofGetGLRenderer()) ofGetGLRenderer()->enableTextureTarget(texData.textureTarget, texData.textureID, textureLocation);
-}
-
-void ofTexture::disableTextureTarget(int textureLocation) const{
-	if(ofGetGLRenderer()) ofGetGLRenderer()->disableTextureTarget(texData.textureTarget, textureLocation);
-}
-
 //----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType){
 	allocate(w, h, internalGlDataType, ofGetUsingArbTex(), ofGetGLFormatFromInternal(internalGlDataType), ofGetGlTypeFromInternal(internalGlDataType));
@@ -353,9 +344,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 	glGenTextures(1, (GLuint *)&texData.textureID);   // could be more then one, but for now, just one
 	retain(texData.textureID);
 
-	enableTextureTarget(0);
-
-	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+	glBindTexture(texData.textureTarget,texData.textureID);
 	glTexImage2D(texData.textureTarget, 0, texData.glTypeInternal, (GLint)texData.tex_w, (GLint)texData.tex_h, 0, glFormat, pixelType, 0);  // init to black...
 
 	glTexParameterf(texData.textureTarget, GL_TEXTURE_MAG_FILTER, texData.magFilter);
@@ -368,7 +357,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		}
 	#endif
-	disableTextureTarget(0);
+	glBindTexture(texData.textureTarget,0);
 
 
 
@@ -379,9 +368,7 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 
 void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles){
 #ifndef TARGET_OPENGLES
-	enableTextureTarget(0);
-
-	//glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+	glBindTexture(texData.textureTarget,texData.textureID);
 	if(rToRGBSwizzles){
 		if(texData.glTypeInternal==GL_R8 ||
 				texData.glTypeInternal==GL_R16 ||
@@ -415,19 +402,15 @@ void ofTexture::setRGToRGBASwizzles(bool rToRGBSwizzles){
 			 glTexParameteri(texData.textureTarget, GL_TEXTURE_SWIZZLE_A, GL_ALPHA);
 		}
 	}
-
-	//glBindTexture( texData.textureTarget, 0);
-	disableTextureTarget(0);
+	glBindTexture(texData.textureTarget,0);
 #endif
 }
 
 void ofTexture::setSwizzle(GLenum srcSwizzle, GLenum dstChannel){
 #ifndef TARGET_OPENGLES
-	enableTextureTarget(0);
-
-	//glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
+	glBindTexture(texData.textureTarget,texData.textureID);
 	glTexParameteri(texData.textureTarget, srcSwizzle, dstChannel);
-	disableTextureTarget(0);
+	glBindTexture(texData.textureTarget,0);
 #endif
 }
 
@@ -538,12 +521,10 @@ void ofTexture::generateMipmap(){
 	//	  support extension GL_EXT_framebuffer_object
 
 	bool isGlGenerateMipmapAvailable = false;
-	
-#ifdef TARGET_OPENGLES
-	if (ofGetOpenGLESVersion() >= 2) isGlGenerateMipmapAvailable = true;
-#else
-	if (ofGetOpenGLVersionMajor() >= 3) isGlGenerateMipmapAvailable = true;
-#endif
+	if(!glGenerateMipmap){
+		cout << "no glGenerateMipmap" << endl;
+		isGlGenerateMipmapAvailable = true;
+	}
 	
 	
 	if (!isGlGenerateMipmapAvailable && !ofGLCheckExtension("GL_EXT_framebuffer_object")) {
@@ -614,7 +595,6 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	//update our size with the new dimensions - this should be the same size or smaller than the allocated texture size
 	texData.width 	= w;
 	texData.height 	= h;
-	//texData.glType  = GL_RGB; // this was probably a bug, because you might be resetting the glType to something other than what the texture was created for
 	
 	//compute new tex co-ords based on the ratio of data's w, h to texture w,h;
 #ifndef TARGET_OPENGLES // DAMIAN
@@ -629,12 +609,11 @@ void ofTexture::loadScreenData(int x, int y, int w, int h){
 	}
 	
 	
-	enableTextureTarget(0);
+	glBindTexture(texData.textureTarget,texData.textureID);
 
-	glBindTexture(texData.textureTarget, (GLuint)texData.textureID);
 	glCopyTexSubImage2D(texData.textureTarget, 0,0,0,x,y,w,h);
 
-	disableTextureTarget(0);
+	glBindTexture(texData.textureTarget,0);
 	
 	if (bWantsMipmap) {
 		generateMipmap();
@@ -669,53 +648,12 @@ void ofTexture::resetAnchor(){
 
 //----------------------------------------------------------
 void ofTexture::bind(int textureLocation) const{
-	//we could check if it has been allocated - but we don't do that in draw() 
-	if(texData.alphaMask){
-		ofGetGLRenderer()->setAlphaMaskTex(*texData.alphaMask);
-	}
-	enableTextureTarget(textureLocation);
-	
-
-	if(ofGetUsingNormalizedTexCoords()) {
-		ofSetMatrixMode(OF_MATRIX_TEXTURE);
-		ofPushMatrix();
-		ofMatrix4x4 m;
-		
-#ifndef TARGET_OPENGLES	
-		if(texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
-			m.makeScaleMatrix(texData.width, texData.height, 1.0f);
-		else 
-#endif			
-			m.makeScaleMatrix(texData.width / texData.tex_w, texData.height / texData.tex_h, 1.0f);
-		
-		ofLoadMatrix(m);
-		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-	}
-	if(texData.useTextureMatrix){
-		ofSetMatrixMode(OF_MATRIX_TEXTURE);
-		if(!ofGetUsingNormalizedTexCoords()) ofPushMatrix();
-		ofMultMatrix(texData.textureMatrix);
-		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-	}
-
-	texData.isBound = true;
+	ofGetGLRenderer()->bind(*this,textureLocation);
 }
 
 //----------------------------------------------------------
 void ofTexture::unbind(int textureLocation) const{
-
-	disableTextureTarget(textureLocation);
-	if(texData.alphaMask){
-		ofGetGLRenderer()->disableAlphaMask();
-	}
-
-	if(texData.useTextureMatrix || ofGetUsingNormalizedTexCoords()) {
-		ofSetMatrixMode(OF_MATRIX_TEXTURE);
-		ofPopMatrix();
-		ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-	}
-
-	texData.isBound = false;
+	ofGetGLRenderer()->unbind(*this,textureLocation);
 }
 
 #ifndef TARGET_OPENGLES

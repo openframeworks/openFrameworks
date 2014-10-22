@@ -19,7 +19,18 @@
 #include "of3dPrimitives.h"
 
 
+
+enum of3dPrimitiveType {
+	OF_3D_PRIMITIVE_PLANE,
+    OF_3D_PRIMITIVE_SPHERE,
+    OF_3D_PRIMITIVE_ICO_SPHERE,
+	OF_3D_PRIMITIVE_BOX,
+	OF_3D_PRIMITIVE_CONE,
+    OF_3D_PRIMITIVE_CYLINDER,
+    OF_3D_PRIMITIVE_BOX_WIREFRAME
+};
 // Grid Plane - drawn from the center //
+const of3dPrimitive& ofGetCached3dPrimitive( of3dPrimitiveType type );
 void ofSetPlaneResolution( int columns, int rows );
 ofVec2f ofGetPlaneResolution();
 void ofDrawPlane(float x, float y, float width, float height);

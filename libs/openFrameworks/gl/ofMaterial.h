@@ -51,10 +51,8 @@ public:
 	void end();
 
 private:
-	void initShaders();
-	void beginShader(int texType);
-	string vertexSource(int maxLights, bool hasTexture, bool textureRect);
-	string fragmentSource(int maxLights, bool hasTexture, bool textureRect);
+	void initShaders(ofGLProgrammableRenderer * renderer);
+	void beginShader(int texType, ofGLProgrammableRenderer * renderer);
     
     Data data;
     Data prev_data;

@@ -67,6 +67,7 @@ public:
     void setUseVbo(bool useVbo);
     bool isUsingVbo() const;
 protected:
+    void customDraw(const ofBaseRenderer * renderer) const;
     
     // useful when creating a new model, since it uses normalized tex coords //
     void normalizeAndApplySavedTexCoords();
