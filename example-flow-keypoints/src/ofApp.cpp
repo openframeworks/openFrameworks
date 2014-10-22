@@ -19,7 +19,7 @@ void ofApp::draw(){
 	flow.draw();
 	if(ofGetMousePressed()){
 		ofNoFill();
-		ofRect(rect);
+		ofDrawRectangle(rect);
 	}
 }
 
