@@ -5,6 +5,7 @@
 #include "ofMatrix4x4.h"
 #include "ofURLFileLoader.h"
 #include "ofMesh.h"
+#include "ofSoundBuffer.h"
 
 class ofAbstractParameter;
 
@@ -147,13 +148,19 @@ typedef ofBaseImage_<float> ofBaseFloatImage;
 typedef ofBaseImage_<unsigned short> ofBaseShortImage;
 
 //----------------------------------------------------------
-// ofBaseHasSoundStream
+// ofBaseSoundInput
 //----------------------------------------------------------
 class ofBaseSoundInput{
 
 	public:
         virtual ~ofBaseSoundInput() {};
     
+		/// called when some new audio is available, inputBuffer contains the audio.
+		virtual void audioIn( ofSoundBuffer& inputBuffer ){
+			int deviceId=0;
+			audioIn( &inputBuffer[0], inputBuffer.getNumFrames(), inputBuffer.getNumChannels(), deviceId, inputBuffer.getTickCount() );
+		}
+	
 		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
 			audioIn(input, bufferSize, nChannels);
 		}
@@ -166,13 +173,20 @@ class ofBaseSoundInput{
 };
 
 //----------------------------------------------------------
-// ofBaseHasSoundStream
+// ofBaseSoundOutput
 //----------------------------------------------------------
 class ofBaseSoundOutput{
 
 	public:
         virtual ~ofBaseSoundOutput() {};
     
+	
+		/// when called, subclasses should fill outputBuffer with the requested amount of audio, in the requested format.
+		virtual void audioOut( ofSoundBuffer& outputBuffer ){
+			int deviceId=0;
+			audioOut( &outputBuffer[0], outputBuffer.getNumFrames(), outputBuffer.getNumChannels(), deviceId, outputBuffer.getTickCount() );
+		}
+	
 		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
 			audioOut(output, bufferSize, nChannels);
 		}

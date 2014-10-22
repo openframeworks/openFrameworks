@@ -4,6 +4,7 @@
 
 #include "ofBaseSoundStream.h"
 #include "ofTypes.h"
+#include "ofSoundBuffer.h"
 
 class RtAudio;
 typedef unsigned int RtAudioStreamStatus;
@@ -20,6 +21,8 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
+        ofBaseSoundInput * getInput();
+        ofBaseSoundOutput * getOutput();
 		bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 		
@@ -33,7 +36,7 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		int getNumOutputChannels();
 		int getSampleRate();
 		int getBufferSize();
-	
+		int getDeviceID() { return outDeviceID; }
 		
 	private:
 		long unsigned long	tickCount;
@@ -46,6 +49,9 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		ofBaseSoundInput *  soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
 		
+		ofSoundBuffer		outputBuffer;
+		ofSoundBuffer		inputBuffer;
+
 		static int rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data);
 
 };

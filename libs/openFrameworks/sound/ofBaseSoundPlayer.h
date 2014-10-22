@@ -36,5 +36,6 @@ public:
 	virtual float getPan() = 0;
 	virtual bool isLoaded() = 0;
 	virtual float getVolume() = 0;
+	virtual bool getIsLooping() = 0;
 	
 };

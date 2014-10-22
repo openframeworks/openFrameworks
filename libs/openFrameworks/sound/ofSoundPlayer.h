@@ -160,5 +160,4 @@ public:
 
 protected:
     shared_ptr<ofBaseSoundPlayer> player;
-
 };

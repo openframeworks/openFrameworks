@@ -45,13 +45,23 @@ void ofxiOSSoundStream::setDeviceID(int _deviceID) {
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setInput(ofBaseSoundInput * soundInput) {
 	soundInputPtr = soundInput;
+	[((ofxiOSSoundStreamDelegate *)((SoundInputStream *)soundInputStream).delegate) setInput:soundInputPtr];
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
 	soundOutputPtr = soundOutput;
+	[((ofxiOSSoundStreamDelegate *)((SoundOutputStream *)soundOutputStream).delegate) setOutput:soundOutputPtr];
+}
+//------------------------------------------------------------------------------
+ofBaseSoundInput * ofxiOSSoundStream::getInput(){
+	return soundInputPtr;
 }
 
+//------------------------------------------------------------------------------
+ofBaseSoundOutput * ofxiOSSoundStream::getOutput(){
+	return soundOutputPtr;
+}
 //------------------------------------------------------------------------------
 bool ofxiOSSoundStream::setup(int numOfOutChannels, int numOfInChannels, int sampleRate, int bufferSize, int numOfBuffers) {
     close();
@@ -76,8 +86,8 @@ bool ofxiOSSoundStream::setup(int numOfOutChannels, int numOfInChannels, int sam
                                                               withSampleRate:sampleRate
                                                               withBufferSize:bufferSize];
         ofxiOSSoundStreamDelegate * delegate = [[ofxiOSSoundStreamDelegate alloc] initWithSoundOutputApp:soundOutputPtr];
-        ((SoundInputStream *)soundOutputStream).delegate = delegate;
-        [(SoundInputStream *)soundOutputStream start];
+        ((SoundOutputStream *)soundOutputStream).delegate = delegate;
+        [(SoundOutputStream *)soundOutputStream start];
     }
     
     bool bOk = (soundInputStream != NULL) || (soundOutputStream != NULL);
@@ -162,6 +172,11 @@ int ofxiOSSoundStream::getSampleRate(){
 //------------------------------------------------------------------------------
 int ofxiOSSoundStream::getBufferSize(){
     return bufferSize;
+}
+
+//------------------------------------------------------------------------------
+int ofxiOSSoundStream::getDeviceID(){
+    return 0;
 }
 
 //------------------------------------------------------------------------------

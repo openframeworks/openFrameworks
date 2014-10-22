@@ -32,6 +32,7 @@ public:
     float getPosition();
     int getPositionMS();
     bool getIsPlaying();
+	bool getIsLooping();
     float getSpeed();
     float getPan();
     bool isLoaded();
