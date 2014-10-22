@@ -139,8 +139,8 @@ void ofxCvHaarFinder::draw( float x, float y ) {
 	
 	ofNoFill();
 	for(unsigned int i=0; i<blobs.size(); i++ ) {
-		ofRect( blobs[i].boundingRect.x, blobs[i].boundingRect.y, 
-			   blobs[i].boundingRect.width, blobs[i].boundingRect.height );
+		ofDrawRectangle(blobs[i].boundingRect.x, blobs[i].boundingRect.y,
+                        blobs[i].boundingRect.width, blobs[i].boundingRect.height );
 	}
 	
 	ofPopMatrix();
