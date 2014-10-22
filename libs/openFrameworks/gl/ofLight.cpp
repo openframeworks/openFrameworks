@@ -295,7 +295,7 @@ ofFloatColor ofLight::getSpecularColor() const {
 }
 
 //----------------------------------------
-void ofLight::customDraw(){
+void ofLight::customDraw(const ofBaseRenderer * renderer) const{;
     if(getIsPointLight()) {
         ofDrawSphere( 0,0,0, 10);
     } else if (getIsSpotlight()) {

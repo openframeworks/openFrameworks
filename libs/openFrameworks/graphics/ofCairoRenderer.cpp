@@ -4,7 +4,8 @@
 #include "ofMesh.h"
 #include "ofImage.h"
 #include "of3dPrimitives.h"
-
+#include "ofTrueTypeFont.h"
+#include "ofNode.h"
 
 const string ofCairoRenderer::TYPE="cairo";
 
@@ -95,7 +96,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	page = 0;
 	b3D = b3D_;
 	multiPage = multiPage_;
-	setStyle(ofGetStyle());
+	setStyle(currentStyle);
 	clear();
 }
 
@@ -137,7 +138,7 @@ void ofCairoRenderer::finishRender(){
 
 void ofCairoRenderer::update(){
 	if(!surface || !cr)
-	setStyle(ofGetStyle());
+	setStyle(currentStyle);
 	cairo_surface_flush(surface);
 	if(page==0 || !multiPage){
 		page=1;
@@ -205,7 +206,7 @@ void ofCairoRenderer::draw(const ofPath & shape) const{
 
 	ofColor prevColor;
 	if(shape.getUseShapeColor()){
-		prevColor = ofGetStyle().color;
+		prevColor = currentStyle.color;
 	}
 
 	if(shape.isFilled()){
@@ -222,7 +223,7 @@ void ofCairoRenderer::draw(const ofPath & shape) const{
 		}
 	}
 	if(shape.hasOutline()){
-		float lineWidth = ofGetStyle().lineWidth;
+		float lineWidth = currentStyle.lineWidth;
 		if(shape.getUseShapeColor()){
 			ofColor c = shape.getStrokeColor();
 			c.a = shape.getStrokeColor().a;
@@ -386,7 +387,7 @@ void ofCairoRenderer::draw(const ofMesh & primitive, bool useColors, bool useTex
 
 	cairo_move_to(cr,primitive.getVertex(primitive.getIndex(primitive.getNumIndices()-1)).x,primitive.getVertex(primitive.getIndex(primitive.getNumIndices()-1)).y);
 
-	if(ofGetStyle().lineWidth>0){
+	if(currentStyle.lineWidth>0){
 
 		cairo_stroke( cr );
 	}
@@ -402,22 +403,21 @@ void ofCairoRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode mode, boo
 //----------------------------------------------------------
 void ofCairoRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType  )  const{
 
-    if(model.hasScaling()) {
-        ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support scaling";
-        //glEnable( GL_NORMALIZE );
-        //glPushMatrix();
-        //ofVec3f scale = model.getScale();
-        //glScalef( scale.x, scale.y, scale.z);
-    }
+	const_cast<ofCairoRenderer*>(this)->pushMatrix();
+	const_cast<ofCairoRenderer*>(this)->multMatrix(model.getGlobalTransformMatrix());
 
     const ofMesh& mesh = model.getMesh();
-    draw( mesh, renderType, mesh.usingColors(), mesh.usingTextures(), mesh.usingNormals() );
+    draw( mesh, renderType );
 
-    if(model.hasScaling()) {
-        //glPopMatrix();
-        //glDisable( GL_NORMALIZE );
-    }
+	const_cast<ofCairoRenderer*>(this)->popMatrix();
 
+}
+
+void ofCairoRenderer::draw(const ofNode& node) const{
+	const_cast<ofCairoRenderer*>(this)->pushMatrix();
+	const_cast<ofCairoRenderer*>(this)->multMatrix(node.getGlobalTransformMatrix());
+	node.customDraw(this);
+	const_cast<ofCairoRenderer*>(this)->popMatrix();
 }
 
 void ofCairoRenderer::draw(const ofPath::Command & command) const{
@@ -1261,7 +1261,7 @@ void ofCairoRenderer::drawRectangle(float x, float y, float z, float w, float h)
 
 	cairo_new_path(cr);
 
-	if (ofGetStyle().rectMode == OF_RECTMODE_CORNER){
+	if (currentStyle.rectMode == OF_RECTMODE_CORNER){
 		cairo_move_to(cr,x,y);
 		cairo_line_to(cr,x+w, y);
 		cairo_line_to(cr,x+w, y+h);
@@ -1409,13 +1409,13 @@ void ofCairoRenderer::disableAntiAliasing(){
 
 //----------------------------------------------------------
 void ofCairoRenderer::drawSphere(float x, float y, float z, float radius) {
-	int n = ofGetStyle().sphereResolution * 2;
+	int n = currentStyle.sphereResolution * 2;
 	float ndiv2=(float)n/2;
 	int cindex = 0;
 
 	if(sphereVerts.size() < 1) {
 		// double check to make sure that setSphereResolution has been called at least once //
-		setSphereResolution( ofGetStyle().sphereResolution );
+		setSphereResolution( currentStyle.sphereResolution );
 	}
 
 	spherePoints.resize( (n+1) * 2 );
@@ -1467,6 +1467,10 @@ void ofCairoRenderer::drawString(string text, float x, float y, float z){
 		cairo_move_to (cr, x, y+i*14.3);
 		cairo_show_text (cr, lines[i].c_str() );
 	}
+}
+
+void ofCairoRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y){
+	font.drawStringAsShapes(text,x,y);
 }
 
 cairo_t * ofCairoRenderer::getCairoContext(){

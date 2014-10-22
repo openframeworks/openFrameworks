@@ -661,25 +661,15 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 
 
 void ofFbo::begin(bool setupScreen) const{
-	if(!bIsAllocated) return;
-	ofPushView();
 	if(ofGetGLRenderer()){
-		ofGetGLRenderer()->setCurrentFBO(this);
+		ofGetGLRenderer()->bind(*this,setupScreen);
 	}
-	ofViewport();
-	if(setupScreen){
-		ofSetupScreenPerspective();
-	}
-	bind();
 }
 
 void ofFbo::end() const{
-	if(!bIsAllocated) return;
-	unbind();
 	if(ofGetGLRenderer()){
-		ofGetGLRenderer()->setCurrentFBO(NULL);
+		ofGetGLRenderer()->unbind(*this);
 	}
-	ofPopView();
 }
 
 void ofFbo::bind() const{
@@ -850,7 +840,6 @@ void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 
 void ofFbo::updateTexture(int attachmentPoint) {
 	if(!bIsAllocated) return;
-	// TODO: flag to see if this is dirty or not
 #ifndef TARGET_OPENGLES
 	if(fbo != fboTextures && dirty) {
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );

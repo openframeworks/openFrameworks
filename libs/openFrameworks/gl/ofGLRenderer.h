@@ -21,7 +21,6 @@ public:
     const string & getType(){ return TYPE; }
 
     void setup();
-	void setCurrentFBO(const ofFbo * fbo);
 
 	void startRender();
 	void finishRender();
@@ -30,6 +29,7 @@ public:
 	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
+    void draw(const ofNode& model) const;
 	void draw(const ofPolyline & poly) const;
 	void draw(const ofPath & path) const;
 	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -37,8 +37,6 @@ public:
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
 
-	void bind(const ofBaseVideoDraws & video) const;
-	void unbind(const ofBaseVideoDraws & video) const;
 	bool rendersPathPrimitives(){
 		return false;
 	}
@@ -152,12 +150,13 @@ public:
 	//	void drawSphere(float x, float y, float z, float radius);
 	void drawEllipse(float x, float y, float z, float width, float height);
 	void drawString(string text, float x, float y, float z);
+	void drawString(const ofTrueTypeFont & font, string text, float x, float y);
 
 
 	// gl specifics
-	void enableTextureTarget(int textureTarget, int textureID, int textureLocation);
+	void enableTextureTarget(const ofTexture & tex, int textureLocation);
 	void disableTextureTarget(int textureTarget, int textureLocation);
-	void setAlphaMaskTex(ofTexture & tex);
+	void setAlphaMaskTex(const ofTexture & tex);
 	void disableAlphaMask();
 
 	// lighting globals
@@ -182,8 +181,24 @@ public:
 	void setLightSpotDirection(int lightIndex, const ofVec4f & direction);
 
 
-	void setCurrentMaterial(ofBaseMaterial * material){}
+	void bind(const ofBaseVideoDraws & video) const;
+	void bind(ofBaseMaterial & material);
+	void bind(const ofFbo & fbo, bool setupPerspective);
+	void bind(const ofShader & shader);
+	void bind(const ofTexture & texture, int location);
+	void bind(const ofCamera & camera, const ofRectangle & viewport);
+	void unbind(const ofBaseVideoDraws & video) const;
+	void unbind(ofBaseMaterial & material);
+	void unbind(const ofFbo & fbo);
+	void unbind(const ofShader & shader);
+	void unbind(const ofTexture & texture, int location);
+	void unbind(const ofCamera & camera);
 
+	int getGLVersionMajor();
+	int getGLVersionMinor();
+
+	void saveScreen(int x, int y, int w, int h, ofPixels & pixels);
+	void saveFullViewport(ofPixels & pixels);
 private:
 	void startSmoothing();
 	void endSmoothing();

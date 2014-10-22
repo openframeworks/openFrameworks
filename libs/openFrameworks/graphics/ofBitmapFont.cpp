@@ -379,7 +379,7 @@ static void prepareBitmapTexture(){
 }
 		
 //---------------------------------------------------------------------
-static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int character, int x , int y){
+static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int character, int x , int y, bool vFlipped){
 	if (character < 128) {		
 
 		float posTexW = (float)(character % 16)/16.0f;
@@ -392,7 +392,7 @@ static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int charact
 		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position.
 		//3 pixel adjustment corrects that when y is flpped 5 when it's not.
 		int yOffset = 14;
-		if(!ofIsVFlipped()){
+		if(!vFlipped){
 			y += 5;
 			y += yOffset;
 			yOffset *= -1;
@@ -470,7 +470,7 @@ ofMesh ofBitmapStringGetMesh(const string & text, int x, int y, ofDrawBitmapMode
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
 			// getting drawn when they ought to not be
-			addBitmapCharacter(charMesh, vertexCount, text[c], (int)sx, (int)sy);
+			addBitmapCharacter(charMesh, vertexCount, text[c], (int)sx, (int)sy, vFlipped);
 
 			sx += fontSize;
 			column++;

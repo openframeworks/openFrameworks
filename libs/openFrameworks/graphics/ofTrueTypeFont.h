@@ -82,23 +82,23 @@ public:
 	
 	/// \brief Has the font been loaded successfully?
 	/// \returns true if the font was loaded.
-	bool isLoaded();
+	bool isLoaded() const;
 	
 	/// \brief Is the font anit-aliased?
 	/// \returns true if the font was set to be anti-aliased.
-	bool isAntiAliased();
+	bool isAntiAliased() const;
 
 	/// \brief Does the font have a full character set?
 	/// \returns true if the font was allocated with a full character set.
-	bool hasFullCharacterSet();
+	bool hasFullCharacterSet() const;
 
 	/// \brief Returns the size of the font.
 	/// \returns Size of font, set when font was loaded.
-	int getSize();
+	int getSize() const;
 	
 	/// \brief Computes line height based on font size.
 	/// \returns Returns current line height.
-	float getLineHeight();
+	float getLineHeight() const;
 
 	/// \brief Sets line height for text drawn on screen. 
 	///
@@ -141,7 +141,7 @@ public:
 	/// less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
 	///
 	/// \returns Returns letter spacing of font object.
-	float getLetterSpacing();
+	float getLetterSpacing() const;
 
 	/// \brief Sets the letter spacing of the font object.
 	/// 
@@ -155,7 +155,7 @@ public:
 	/// case 'p' of that font. 2.0 means that it's 2 times the size of the lower case 'p', etc.
 	///
 	/// \returns Returns a variable that represents how wide spaces are.
-	float getSpaceSize();
+	float getSpaceSize() const;
 
 	/// \brief Sets the size of the space ' ' character. 
 	/// 
@@ -170,7 +170,7 @@ public:
 	///
 	/// \param s The string to get the width of.
 	/// \returns Returns the string width. 
-	float stringWidth(string s);
+	float stringWidth(string s) const;
 
 	/// \brief Returns the string height.
 	///
@@ -178,20 +178,20 @@ public:
 	///
 	/// \param s The string to get the height of.
 	/// \returns Returns the string height. 
-	float stringHeight(string s);
+	float stringHeight(string s) const;
 
 	/// \brief Returns the bounding box of a string as a rectangle.
 	/// \param s The string to get bounding box of.
 	/// \param x X position of returned rectangle.
 	/// \param y Y position of returned rectangle.
 	/// \returns Returns the bounding box of a string as a rectangle.
-	ofRectangle getStringBoundingBox(string s, float x, float y);
+	ofRectangle getStringBoundingBox(string s, float x, float y) const;
 
 	/// \brief Draw a string s at position x,y
 	/// \param s String to draw
 	/// \param x X position of string
 	/// \param y Y position of string
-	void drawString(string s, float x, float y);
+	void drawString(string s, float x, float y) const;
 
 	/// \brief Draws the string as if it was geometrical shapes.
 	/// 
@@ -199,7 +199,7 @@ public:
 	/// 
 	/// \param x X position of shapes
 	/// \param y Y position of shapes
-	void drawStringAsShapes(string s, float x, float y);
+	void drawStringAsShapes(string s, float x, float y) const;
 
 	/// \brief Get the num chars in the loaded character set.
 	/// 
@@ -207,17 +207,14 @@ public:
 	/// and full character sets, this helps you know how many characters it can represent.
 	///
 	/// \returns Number of characters in loaded character set.
-	int	getNumCharacters();	
+	int	getNumCharacters() const;
 	
 	/// \todo
-	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=ofIsVFlipped());
-	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=ofIsVFlipped());
-	ofMesh & getStringMesh(string s, float x, float y);
-	ofTexture & getFontTexture();
+	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=true, bool filled=true) const;
+	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=true, bool filled=true) const;
+	const ofMesh & getStringMesh(string s, float x, float y, bool vflip=true) const;
+	const ofTexture & getFontTexture() const;
 
-	/// \todo
-	void bind();
-	void unbind();
 
 	/// \brief Get the current font endcoding.
 	/// 
@@ -264,27 +261,21 @@ protected:
 	int dpi;
 
 
-    int getKerning(int c, int prevC);
-	void drawChar(int c, float x, float y);
-	void drawCharAsShape(int c, float x, float y);
-	void createStringMesh(string s, float x, float y);
+    int getKerning(int c, int prevC) const;
+	void drawChar(int c, float x, float y, bool vFlipped) const;
+	void drawCharAsShape(int c, float x, float y, bool vFlipped, bool filled) const;
+	void createStringMesh(string s, float x, float y, bool vFlipped) const;
 	
-	int border;
 	string filename;
 
 	ofTexture texAtlas;
-	bool binded;
-	ofMesh stringQuads;
+	mutable ofMesh stringQuads;
 
 private:
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	friend void ofUnloadAllFontTextures();
 	friend void ofReloadAllFontTextures();
 #endif
-
-	GLint blend_src, blend_dst;
-	GLboolean blend_enabled;
-	GLboolean texture_2d_enabled;
 
 	ofTextEncoding encoding;
 	FT_Face		face;

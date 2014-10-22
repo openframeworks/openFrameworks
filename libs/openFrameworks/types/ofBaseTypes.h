@@ -38,6 +38,9 @@ class of3dPrimitive;
 class ofLight;
 class ofMaterial;
 class ofBaseMaterial;
+class ofCamera;
+class ofTrueTypeFont;
+class ofNode;
 
 bool ofIsVFlipped();
 
@@ -305,6 +308,7 @@ public:
 	virtual void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const=0;
 	virtual void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const=0;
     virtual void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const=0;
+    virtual void draw(const ofNode& model) const=0;
 	virtual void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
 	virtual void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
 	virtual void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
@@ -359,6 +363,10 @@ public:
 	virtual ofMatrix4x4 getCurrentViewMatrix() const=0;
 	virtual ofMatrix4x4 getCurrentNormalMatrix() const=0;
 	
+	// bind common objects that need perspective settings
+	virtual void bind(const ofCamera & camera, const ofRectangle & viewport)=0;
+	virtual void unbind(const ofCamera & camera)=0;
+
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults()=0;
 	virtual void setupScreen()=0;
@@ -409,6 +417,7 @@ public:
 	virtual void drawCircle(float x, float y, float z, float radius)=0;
 	virtual void drawEllipse(float x, float y, float z, float width, float height)=0;
 	virtual void drawString(string text, float x, float y, float z)=0;
+	virtual void drawString(const ofTrueTypeFont & font, string text, float x, float y)=0;
 
 
 	// returns true if the renderer can render curves without decomposing them
@@ -422,11 +431,10 @@ public:
 
 class ofBaseGLRenderer: public ofBaseRenderer{
 public:
-	virtual void setCurrentFBO(const ofFbo * fbo)=0;
 
-	virtual void enableTextureTarget(int textureTarget, int textureID, int textureLocation)=0;
+	virtual void enableTextureTarget(const ofTexture & tex, int textureLocation)=0;
 	virtual void disableTextureTarget(int textureTarget, int textureLocation)=0;
-	virtual void setAlphaMaskTex(ofTexture & tex)=0;
+	virtual void setAlphaMaskTex(const ofTexture & tex)=0;
 	virtual void disableAlphaMask()=0;
 	virtual void enablePointSprites()=0;
 	virtual void disablePointSprites()=0;
@@ -450,8 +458,21 @@ public:
 	virtual void setLightPosition(int lightIndex, const ofVec4f & position)=0;
 	virtual void setLightSpotDirection(int lightIndex, const ofVec4f & direction)=0;
 
-	// materials
-	virtual void setCurrentMaterial(ofBaseMaterial * material)=0;
+	virtual int getGLVersionMajor()=0;
+	virtual int getGLVersionMinor()=0;
+
+	virtual void saveScreen(int x, int y, int w, int h, ofPixels & pixels)=0;
+	virtual void saveFullViewport(ofPixels & pixels)=0;
+
+	// bindings
+	virtual void bind(ofBaseMaterial & material)=0;
+	virtual void bind(const ofFbo & fbo, bool setupPerspective)=0;
+	virtual void bind(const ofShader & shader)=0;
+	virtual void bind(const ofTexture & texture, int location)=0;
+	virtual void unbind(ofBaseMaterial & material)=0;
+	virtual void unbind(const ofFbo & fbo)=0;
+	virtual void unbind(const ofShader & shader)=0;
+	virtual void unbind(const ofTexture & texture, int location)=0;
 };
 
 
@@ -486,7 +507,7 @@ public:
 class ofBaseMaterial{
 public:
 	virtual ~ofBaseMaterial(){};
-	virtual void begin();
-	virtual void end();
-	virtual void beginShader(int textureTarget)=0;
+	virtual void begin()=0;
+	virtual void end()=0;
+	virtual void beginShader(int textureTarget, ofGLProgrammableRenderer * renderer)=0;
 };

@@ -3,7 +3,7 @@
 #include "of3dGraphics.h"
 
 
-ofVboMesh & cachedAxesVbo(){
+static const ofVboMesh & cachedAxesVbo(){
     static ofVboMesh * axis = new ofVboMesh(ofMesh::axis());
     return *axis;
 }

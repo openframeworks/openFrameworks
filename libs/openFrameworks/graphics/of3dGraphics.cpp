@@ -12,19 +12,9 @@
 #include <map>
 
 
-enum of3dPrimitiveType {
-	OF_3D_PRIMITIVE_PLANE,
-    OF_3D_PRIMITIVE_SPHERE,
-    OF_3D_PRIMITIVE_ICO_SPHERE,
-	OF_3D_PRIMITIVE_BOX,
-	OF_3D_PRIMITIVE_CONE,
-    OF_3D_PRIMITIVE_CYLINDER,
-    OF_3D_PRIMITIVE_BOX_WIREFRAME
-};
-
 
 //----------------------------------------------------------
-static of3dPrimitive& getCached3dPrimitive( of3dPrimitiveType type ) {
+const of3dPrimitive& ofGetCached3dPrimitive( of3dPrimitiveType type ) {
     switch (type) {
         case OF_3D_PRIMITIVE_PLANE:{
         	static ofPlanePrimitive * plane = new ofPlanePrimitive(1.0f, 1.0f, 6, 4);
@@ -121,7 +111,7 @@ static of3dPrimitive& getCached3dPrimitive( of3dPrimitiveType type ) {
 }
 
 //----------------------------------------------------------
-static void renderCached3dPrimitive( ofMesh& model ) {
+static void renderCached3dPrimitive( const ofMesh& model ) {
     if(ofGetFill() == OF_FILLED) {
     	model.draw(OF_MESH_FILL);
     } else {
@@ -132,13 +122,13 @@ static void renderCached3dPrimitive( ofMesh& model ) {
 // Plane //
 //----------------------------------------------------------
 void ofSetPlaneResolution( int columns, int rows ) {
-    ((ofPlanePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_PLANE)).setResolution(columns, rows);
+    ((ofPlanePrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_PLANE)).setResolution(columns, rows);
 }
 
 // returns columns as x value of vector and rows as y value
 //----------------------------------------------------------
 ofVec2f ofGetPlaneResolution() {
-    ofPlanePrimitive& plane = ((ofPlanePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_PLANE));
+    ofPlanePrimitive& plane = ((ofPlanePrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_PLANE));
     return plane.getResolution();
 }
 
@@ -152,7 +142,7 @@ void ofDrawPlane(float x, float y, float z, float width, float height) {
 	static ofMatrix4x4 m;
 	m.makeScaleMatrix(width,height,1);
 	m.translate(x,y,z);
-    ofMesh & plane = getCached3dPrimitive( OF_3D_PRIMITIVE_PLANE ).getMesh();
+    const ofMesh & plane = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_PLANE ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
     renderCached3dPrimitive( plane );
@@ -166,9 +156,9 @@ void ofDrawPlane(ofPoint& position, float width, float height) {
 
 //----------------------------------------------------------
 void ofDrawPlane( float width, float height ) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(width,height,1);
-    ofMesh & plane = getCached3dPrimitive( OF_3D_PRIMITIVE_PLANE ).getMesh();
+	const ofMesh & plane = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_PLANE ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
     renderCached3dPrimitive( plane );
@@ -180,21 +170,21 @@ void ofDrawPlane( float width, float height ) {
 //----------------------------------------------------------
 void ofSetSphereResolution(int res) {
     if(ofGetSphereResolution() != res) {
-        ((ofSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_SPHERE)).setResolution(res);
+        ((ofSpherePrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_SPHERE)).setResolution(res);
     }
 }
 
 //---------------------------------------------------------
 int ofGetSphereResolution() {
-    return ((ofSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_SPHERE)).getResolution();
+    return ((ofSpherePrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_SPHERE)).getResolution();
 }
 
 //----------------------------------------------------------
 void ofDrawSphere(float x, float y, float z, float radius) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,radius,radius);
 	m.translate(x,y,z);
-	ofMesh& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE ).getMesh();
+	const ofMesh& sphere = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
     renderCached3dPrimitive( sphere );
@@ -213,9 +203,9 @@ void ofDrawSphere(const ofPoint& position, float radius) {
 
 //----------------------------------------------------------
 void ofDrawSphere(float radius) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,radius,radius);
-	ofMesh& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE ).getMesh();
+	const ofMesh& sphere = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
     renderCached3dPrimitive( sphere );
@@ -248,21 +238,21 @@ void ofSphere(float radius) {
 //----------------------------------------------------------
 void ofSetIcoSphereResolution( int res ) {
     if(ofGetIcoSphereResolution() != res) {
-        ((ofIcoSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_ICO_SPHERE)).setResolution(res);
+        ((ofIcoSpherePrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_ICO_SPHERE)).setResolution(res);
     }
 }
 
 //----------------------------------------------------------
 int ofGetIcoSphereResolution() {
-    return ((ofIcoSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_ICO_SPHERE)).getResolution();
+    return ((ofIcoSpherePrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_ICO_SPHERE)).getResolution();
 }
 
 //----------------------------------------------------------
 void ofDrawIcoSphere(float x, float y, float z, float radius) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,radius,radius);
 	m.translate(x,y,z);
-	ofMesh& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE ).getMesh();
+	const ofMesh& sphere = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
     renderCached3dPrimitive( sphere );
@@ -281,9 +271,9 @@ void ofDrawIcoSphere(const ofPoint& position, float radius) {
 
 //----------------------------------------------------------
 void ofDrawIcoSphere(float radius) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,radius,radius);
-	ofMesh& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE ).getMesh();
+	const ofMesh& sphere = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
     renderCached3dPrimitive( sphere );
@@ -295,13 +285,13 @@ void ofDrawIcoSphere(float radius) {
 //----------------------------------------------------------
 void ofSetCylinderResolution( int radiusSegments, int heightSegments, int capSegments ) {
     if(ofGetCylinderResolution() != ofVec3f( radiusSegments, heightSegments, capSegments )) {
-        ((ofCylinderPrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_CYLINDER)).setResolution(radiusSegments, heightSegments, capSegments);
+        ((ofCylinderPrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_CYLINDER)).setResolution(radiusSegments, heightSegments, capSegments);
     }
 }
 
 //----------------------------------------------------------
 ofVec3f ofGetCylinderResolution() {
-    return ((ofCylinderPrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_CYLINDER)).getResolution();
+    return ((ofCylinderPrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_CYLINDER)).getResolution();
 }
 
 //----------------------------------------------------------
@@ -311,10 +301,10 @@ void ofDrawCylinder(float x, float y, float radius, float height) {
 
 //----------------------------------------------------------
 void ofDrawCylinder(float x, float y, float z, float radius, float height) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,height,radius);
 	m.translate(x,y,z);
-	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER ).getMesh();
+	const ofMesh& mesh = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
     renderCached3dPrimitive( mesh );
@@ -328,9 +318,9 @@ void ofDrawCylinder(const ofPoint& position, float radius, float height) {
 
 //----------------------------------------------------------
 void ofDrawCylinder(float radius, float height) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,height,radius);
-	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER ).getMesh();
+	const ofMesh& mesh = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
     renderCached3dPrimitive( mesh );
@@ -343,21 +333,21 @@ void ofDrawCylinder(float radius, float height) {
 //----------------------------------------------------------
 void ofSetConeResolution( int radiusSegments, int heightSegments, int capSegments) {
     if(ofGetConeResolution() != ofVec3f( radiusSegments, heightSegments, capSegments )) {
-        ((ofConePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_CONE)).setResolution(radiusSegments, heightSegments, capSegments);
+        ((ofConePrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_CONE)).setResolution(radiusSegments, heightSegments, capSegments);
     }
 }
 
 //----------------------------------------------------------
 ofVec3f ofGetConeResolution() {
-    return ((ofConePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_CONE)).getResolution();
+    return ((ofConePrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_CONE)).getResolution();
 }
 
 //----------------------------------------------------------
 void ofDrawCone(float x, float y, float z, float radius, float height) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,height,radius);
 	m.translate(x,y,z);
-	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE ).getMesh();
+	const ofMesh& mesh = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_CONE ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
     renderCached3dPrimitive( mesh );
@@ -376,9 +366,9 @@ void ofDrawCone(const ofPoint& position, float radius, float height) {
 
 //----------------------------------------------------------
 void ofDrawCone(float radius, float height) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,height,radius);
-	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE ).getMesh();
+	const ofMesh& mesh = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_CONE ).getMesh();
     ofPushMatrix();
     ofMultMatrix(m);
     renderCached3dPrimitive( mesh );
@@ -417,28 +407,28 @@ void ofSetBoxResolution( int res ) {
 //----------------------------------------------------------
 void ofSetBoxResolution( int resWidth, int resHeight, int resDepth ) {
     if(ofGetBoxResolution() != ofVec3f( resWidth, resHeight, resDepth )) {
-        ((ofBoxPrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_BOX)).setResolution(resWidth, resHeight, resDepth);
+        ((ofBoxPrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_BOX)).setResolution(resWidth, resHeight, resDepth);
     }
 }
 
 //----------------------------------------------------------
 ofVec3f ofGetBoxResolution() {
-    return ((ofBoxPrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_BOX)).getResolution();
+    return ((ofBoxPrimitive&)ofGetCached3dPrimitive(OF_3D_PRIMITIVE_BOX)).getResolution();
 }
 
 //----------------------------------------------------------
 void ofDrawBox( float x, float y, float z, float width, float height, float depth) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(width,height,depth);
 	m.translate(x,y,z);
 	
     ofPushMatrix();
     ofMultMatrix(m);
     if(ofGetFill() == OF_FILLED) {
-    	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
+    	const ofMesh& mesh = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
         renderCached3dPrimitive( mesh );
     } else {
-        ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX_WIREFRAME ).getMesh();
+    	const ofMesh& mesh = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_BOX_WIREFRAME ).getMesh();
         renderCached3dPrimitive( mesh );
     }
     ofPopMatrix();
@@ -466,15 +456,15 @@ void ofDrawBox(float size) {
 
 //----------------------------------------------------------
 void ofDrawBox( float width, float height, float depth ) {
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(width,height,depth);
     ofPushMatrix();
     ofMultMatrix(m);
     if(ofGetFill() == OF_FILLED) {
-    	ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
+    	const ofMesh& mesh = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_BOX ).getMesh();
         renderCached3dPrimitive( mesh );
     } else {
-        ofMesh& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX_WIREFRAME ).getMesh();
+    	const ofMesh& mesh = ofGetCached3dPrimitive( OF_3D_PRIMITIVE_BOX_WIREFRAME ).getMesh();
         renderCached3dPrimitive( mesh );
     }
     ofPopMatrix();

@@ -128,8 +128,8 @@ public:
 	// if you want to draw something at the position+orientation+scale of this node...
 	// ...call ofNode::transform(); write your draw code, and ofNode::restoreTransform();
 	// OR A simpler way is to extend ofNode and override ofNode::customDraw();
-	void transformGL() const;
-	void restoreTransformGL() const;
+	void transformGL(ofBaseRenderer * renderer = ofGetCurrentRenderer().get()) const;
+	void restoreTransformGL(ofBaseRenderer * renderer = ofGetCurrentRenderer().get()) const;
 	
 	
 	// resets this node's transformation
@@ -137,7 +137,9 @@ public:
 	
 
 	// if you extend ofNode and wish to change the way it draws, extend this
-	virtual void customDraw();
+	// try to not use global functions for rendering and instead use the passed
+	// renderer
+	virtual void customDraw(const ofBaseRenderer * renderer) const;
 
 	
 	// draw function. do NOT override this

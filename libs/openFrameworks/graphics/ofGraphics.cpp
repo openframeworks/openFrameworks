@@ -88,7 +88,7 @@ static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool 
 	cairoScreenshot->setup(filename, type, bMultipage, b3D, viewport);
 
 	rendererCollection = shared_ptr<ofRendererCollection>(new ofRendererCollection);
-	rendererCollection->renderers.push_back(ofGetGLRenderer());
+	rendererCollection->renderers.push_back(storedRenderer);
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	
 	ofSetCurrentRenderer(rendererCollection, true);
@@ -230,12 +230,14 @@ void ofSetupScreenOrtho(float width, float height, float nearDist, float farDist
 //Resets openGL parameters back to OF defaults
 void ofSetupGraphicDefaults(){
 	ofGetCurrentRenderer()->setupGraphicDefaults();
+	ofGetCurrentRenderer()->setStyle(ofStyle());
 	if(ofGetCurrentRenderer()->rendersPathPrimitives()){
 		shape.setMode(ofPath::COMMANDS);
 	}else{
 		shape.setMode(ofPath::POLYLINES);
 	}
 	shape.setUseShapeColor(false);
+
 }
 
 //----------------------------------------------------------

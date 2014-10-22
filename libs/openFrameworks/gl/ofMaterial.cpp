@@ -11,6 +11,9 @@ ofShader ofMaterial::shaderTextureRect;
 bool ofMaterial::shadersInitialized = false;
 size_t ofMaterial::shaderLights = 0;
 
+static string vertexSource(string defaultHeader, int maxLights, bool hasTexture);
+static string fragmentSource(string defaultHeader, int maxLights, bool hasTexture);
+
 ofMaterial::ofMaterial() {
     data.diffuse.set(0.8f, 0.8f, 0.8f, 1.0f);
     data.specular.set(0.0f, 0.0f, 0.0f, 1.0f);
@@ -123,8 +126,8 @@ void ofMaterial::begin() {
 	#endif
 	}
 #endif
-	if(ofIsGLProgrammableRenderer()){
-		ofGetGLProgrammableRenderer()->setCurrentMaterial(this);
+	if(ofGetGLRenderer()){
+		ofGetGLRenderer()->unbind(*this);
 	}
 }
 
@@ -155,29 +158,33 @@ void ofMaterial::end() {
 	#endif
 	}
 #endif
-	if(ofIsGLProgrammableRenderer()){
-		ofGetGLProgrammableRenderer()->setCurrentMaterial(NULL);
-		if(currentShader) currentShader->end();
+	if(ofGetGLRenderer()){
+		ofGetGLRenderer()->unbind(*this);
+		if(currentShader) ofGetGLRenderer()->unbind(*currentShader);
 		currentShader = NULL;
 	}
 }
 
-void ofMaterial::initShaders(){
+void ofMaterial::initShaders(ofGLProgrammableRenderer * renderer){
 	if(!shadersInitialized || ofLightsData().size()!=shaderLights){
+		string vertexRectHeader = renderer->defaultVertexShaderHeader(true);
+		string fragmentRectHeader = renderer->defaultFragmentShaderHeader(true);
+		string vertex2DHeader = renderer->defaultVertexShaderHeader(false);
+		string fragment2DHeader = renderer->defaultVertexShaderHeader(false);
 		shaderLights = ofLightsData().size();
-		shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(shaderLights,false,false));
-		shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(shaderLights,false,false));
+		shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,false));
+		shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,false));
 		shaderNoTexture.bindDefaults();
 		shaderNoTexture.linkProgram();
 
-		shaderTexture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(shaderLights,true,false));
-		shaderTexture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(shaderLights,true,false));
+		shaderTexture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,true));
+		shaderTexture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,false));
 		shaderTexture2D.bindDefaults();
 		shaderTexture2D.linkProgram();
 
 #ifndef TARGET_OPENGLES
-		shaderTextureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(shaderLights,true,true));
-		shaderTextureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(shaderLights,true,true));
+		shaderTextureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,shaderLights,false));
+		shaderTextureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader,shaderLights,false));
 		shaderTextureRect.bindDefaults();
 		shaderTextureRect.linkProgram();
 #endif
@@ -186,8 +193,8 @@ void ofMaterial::initShaders(){
 	}
 }
 
-void ofMaterial::beginShader(int texType){
-	initShaders();
+void ofMaterial::beginShader(int texType, ofGLProgrammableRenderer * renderer){
+	initShaders(renderer);
 	switch(texType){
 	case OF_NO_TEXTURE:
 		currentShader = &shaderNoTexture;
@@ -200,7 +207,7 @@ void ofMaterial::beginShader(int texType){
 		break;
 	}
 
-	const ofMatrix4x4 & normalMatrix = ofGetCurrentNormalMatrix();
+	const ofMatrix4x4 & normalMatrix = renderer->getCurrentNormalMatrix();
 	currentShader->begin();
 	currentShader->setUniformMatrix4f("normalMatrix",normalMatrix);
 	currentShader->setUniform4fv("mat_ambient", &data.ambient.r);
@@ -218,7 +225,7 @@ void ofMaterial::beginShader(int texType){
 		}
 
 		shared_ptr<ofLight::Data> light = ofLightsData()[i].lock();
-		ofVec4f lightEyePosition = light->position * ofGetCurrentViewMatrix();
+		ofVec4f lightEyePosition = light->position * renderer->getCurrentViewMatrix();
 		currentShader->setUniform1f("lights["+idx+"].enabled",1);
 		currentShader->setUniform1f("lights["+idx+"].type", light->lightType);
 		currentShader->setUniform4fv("lights["+idx+"].position", &lightEyePosition.x);
@@ -234,7 +241,7 @@ void ofMaterial::beginShader(int texType){
 
 		if(light->lightType==OF_LIGHT_SPOT){
 			ofVec3f direction = light->position + light->direction;
-			direction = direction * ofGetCurrentViewMatrix();
+			direction = direction * renderer->getCurrentViewMatrix();
 			direction = direction - lightEyePosition;
 			currentShader->setUniform3fv("lights["+idx+"].spotDirection", &direction.x);
 			currentShader->setUniform1f("lights["+idx+"].spotExponent", light->exponent);
@@ -247,10 +254,10 @@ void ofMaterial::beginShader(int texType){
 			currentShader->setUniform1f("lights["+idx+"].width", light->width);
 			currentShader->setUniform1f("lights["+idx+"].height", light->height);
 			ofVec3f direction = light->position + light->direction;
-			direction = direction * ofGetCurrentViewMatrix();
+			direction = direction * renderer->getCurrentViewMatrix();
 			direction = direction - lightEyePosition;
 			ofVec3f right = light->position + light->right;
-			right = right * ofGetCurrentViewMatrix();
+			right = right * renderer->getCurrentViewMatrix();
 			right = right - lightEyePosition;
 			ofVec3f up = right.getCrossed(direction);
 			currentShader->setUniform3fv("lights["+idx+"].spotDirection", &direction.x);
@@ -262,42 +269,7 @@ void ofMaterial::beginShader(int texType){
 
 #define STRINGIFY(x) #x
 
-#ifdef TARGET_OPENGLES
-static string vertex_shader_header =
-		"precision mediump float;\n"
-		"#define IN attribute\n"
-		"#define OUT varying\n"
-		"#define TEXTURE texture2D\n"
-		"#define TARGET_OPENGLES\n"
-		"#define MAX_LIGHTS %max_lights%\n";
-static string fragment_shader_header =
-		"precision mediump float;\n"
-		"#define IN varying\n"
-		"#define OUT\n"
-		"#define TEXTURE texture2D\n"
-		"#define FRAG_COLOR gl_FragColor\n"
-		"#define TARGET_OPENGLES\n"
-		"#define MAX_LIGHTS %max_lights%\n";
-#else
-static string vertex_shader_header =
-		"#version %glsl_version%\n"
-		"%extensions%\n"
-		"#define IN in\n"
-		"#define OUT out\n"
-		"#define TEXTURE texture\n"
-		"#define MAX_LIGHTS %max_lights%\n";
-static string fragment_shader_header =
-		"#version %glsl_version%\n"
-		"%extensions%\n"
-		"#define IN in\n"
-		"#define OUT out\n"
-		"#define TEXTURE texture\n"
-		"#define FRAG_COLOR fragColor\n"
-		"out vec4 fragColor;\n"
-		"#define MAX_LIGHTS %max_lights%\n";
-#endif
-
-string ofMaterial::vertexShader = STRINGIFY(
+static string vertexShader = STRINGIFY(
 	OUT vec4 outColor; // this is the ultimate color for this vertex
 	OUT vec2 outtexcoord; // pass the texCoord if needed
 	OUT vec3 transformedNormal;
@@ -329,7 +301,7 @@ string ofMaterial::vertexShader = STRINGIFY(
 );
 
 
-string ofMaterial::fragmentShader = STRINGIFY(
+static string fragmentShader = STRINGIFY(
 	IN vec4 outColor; // this is the ultimate color for this vertex
 	IN vec2 outtexcoord; // pass the texCoord if needed
 	IN vec3 transformedNormal;
@@ -564,31 +536,19 @@ string ofMaterial::fragmentShader = STRINGIFY(
 );
 
 
-static string shaderHeader(string header, const string & glslVersion, int maxLights, bool hasTexture, bool textureRect){
-	ofStringReplace(header,"%glsl_version%",glslVersion);
-#ifndef TARGET_OPENGLES
-	if(ofGetOpenGLVersionMajor()<4 && ofGetOpenGLVersionMinor()<2){
-		ofStringReplace(header,"%extensions%","#extension GL_ARB_texture_rectangle : enable");
-	}else{
-		ofStringReplace(header,"%extensions%","");
-	}
-#endif
+static string shaderHeader(string header, int maxLights, bool hasTexture){
+	header += "#define MAX_LIGHTS " + ofToString(maxLights) + "\n";
 	ofStringReplace(header,"%max_lights%",ofToString(maxLights));
 	if(hasTexture){
 		header += "#define HAS_TEXTURE\n";
 	}
-	if(textureRect){
-		header += "#define SAMPLER sampler2DRect\n";
-	}else{
-		header += "#define SAMPLER sampler2D\n";
-	}
 	return header;
 }
 
-string ofMaterial::vertexSource(int maxLights, bool hasTexture, bool textureRect){
-	return shaderHeader(vertex_shader_header,ofGetGLSLVersion(),maxLights,hasTexture,textureRect) + vertexShader;
+static string vertexSource(string defaultHeader, int maxLights, bool hasTexture){
+	return shaderHeader(defaultHeader,maxLights,hasTexture) + vertexShader;
 }
 
-string ofMaterial::fragmentSource(int maxLights, bool hasTexture, bool textureRect){
-	return shaderHeader(fragment_shader_header,ofGetGLSLVersion(),maxLights,hasTexture,textureRect) + fragmentShader;
+static string fragmentSource(string defaultHeader, int maxLights, bool hasTexture){
+	return shaderHeader(defaultHeader,maxLights,hasTexture) + fragmentShader;
 }

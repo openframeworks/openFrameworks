@@ -1035,160 +1035,25 @@ bool ofImage_<PixelType>::isUsingTexture() const{
 }
 
 //------------------------------------
-template<typename PixelType>
-void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
-
-	allocate(_w, _h, OF_IMAGE_COLOR);
-
-    int sh = ofGetViewportHeight();     // if we are in a FBO or other viewport, this fails: ofGetHeight();
-
-
-	#ifndef TARGET_OPENGLES
-    
-    if(ofIsVFlipped()){
-		_y = sh - _y;
-		_y -= _h; // top, bottom issues
-    }
-    
-    glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(_x, _y, _w, _h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, pixels.getData()); // read the memory....
-    glPopClientAttrib();
-    
-	int sizeOfOneLineOfPixels = pixels.getWidth() * pixels.getBytesPerPixel();
-	PixelType * tempLineOfPix = new PixelType[sizeOfOneLineOfPixels];
-	PixelType * linea;
-	PixelType * lineb;
-	for (int i = 0; i < pixels.getHeight()/2; i++){
-		linea = pixels.getData() + i * sizeOfOneLineOfPixels;
-		lineb = pixels.getData() + (pixels.getHeight()-i-1) * sizeOfOneLineOfPixels;
-		memcpy(tempLineOfPix, linea, sizeOfOneLineOfPixels);
-		memcpy(linea, lineb, sizeOfOneLineOfPixels);
-		memcpy(lineb, tempLineOfPix, sizeOfOneLineOfPixels);
+template<>
+void ofImage_<unsigned char>::grabScreen(int x, int y, int w, int h){
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		renderer->saveScreen(x,y,w,h,pixels);
+		update();
 	}
-	delete [] tempLineOfPix;
-	
-    #else
-    
-    int sw = ofGetViewportWidth();
-    int numPixels   = width*height;
-    if( numPixels == 0 ){
-        ofLogError("ofImage") << "grabScreen(): unable to grab screen, image width and/or height are 0: " << width << "x" << height;
-        return;
-    }
-    
-    int numRGBA         = numPixels*4;
-    GLubyte *bufferRGBA = (GLubyte *) malloc(numRGBA);
+}
 
-    if(ofGetOrientation() == OF_ORIENTATION_DEFAULT || ofDoesHWOrientation()) {
-
-        if(ofIsVFlipped()){
-			_y = sh - _y;   // screen is flipped vertically.
-			_y -= _h;
-        }
-        
-        glPixelStorei(GL_PACK_ALIGNMENT, 1);
-        glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
-        
-        for(int y = 0; y < _h; y++){  
-            for(int x = 0; x < _w; x++){
-                
-                int i = y * _w * 3 + x * 3;
-                int j = (_h-1-y) * _w * 4 + x * 4;  // rotate 90.
-                
-                pixels.getPixels()[i]   = bufferRGBA[j];
-                pixels.getPixels()[i+1] = bufferRGBA[j+1];
-                pixels.getPixels()[i+2] = bufferRGBA[j+2];
-            }
-        }
-    }
-    else if(ofGetOrientation() == OF_ORIENTATION_180) {
-
-        if(ofIsVFlipped()){
-			_x = sw - _x;   // screen is flipped horizontally.
-			_x -= _w;
-        }
-        
-        glPixelStorei(GL_PACK_ALIGNMENT, 1);
-        glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
-        
-        for(int y = 0; y < _h; y++){  
-            for(int x = 0; x < _w; x++){
-                
-                int i = y * _w * 3 + x * 3;
-                int j = y * _w * 4 + (_w-1-x) * 4;  // rotate 90.
-                
-                pixels.getPixels()[i]   = bufferRGBA[j];
-                pixels.getPixels()[i+1] = bufferRGBA[j+1];
-                pixels.getPixels()[i+2] = bufferRGBA[j+2];
-            }
-        }
-    }
-    else if(ofGetOrientation() == OF_ORIENTATION_90_RIGHT) {
-        
-        swap(_w,_h);
-        swap(_x,_y);
-
-
-        if(!ofIsVFlipped()){
-			_x = sw - _x;   // screen is flipped horizontally.
-			_x -= _w;
-
-			_y = sh - _y;   // screen is flipped vertically.
-			_y -= _h;
-        }
-        
-        
-        glPixelStorei(GL_PACK_ALIGNMENT, 1);
-        glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
-        
-        for(int y = 0; y < _h; y++){  
-            for(int x = 0; x < _w; x++){
-                
-                int i = x * _h * 3 + y * 3;
-                int j = y * _w * 4 + x * 4;
-                
-                pixels.getPixels()[i]   = bufferRGBA[j];
-                pixels.getPixels()[i+1] = bufferRGBA[j+1];
-                pixels.getPixels()[i+2] = bufferRGBA[j+2];
-            }
-        }
-    }
-    else if(ofGetOrientation() == OF_ORIENTATION_90_LEFT) {
-        
-        swap(_w, _h);
-        
-        swap(_x, _y);
-
-        if(ofIsVFlipped()){
-			_x = sw - _x;   // screen is flipped horizontally.
-			_x -= _w;
-
-			_y = sh - _y;   // screen is flipped vertically.
-			_y -= _h;
-        }
-        
-        glPixelStorei(GL_PACK_ALIGNMENT, 1);
-        glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
-        
-        for(int y = 0; y < _h; y++){  
-            for(int x = 0; x < _w; x++){
-                
-                int i = x * _h * 3 + y * 3;
-                int j = (_h-1-y) * _w * 4 + (_w-1-x) * 4;
-                
-                pixels.getPixels()[i]   = bufferRGBA[j];
-                pixels.getPixels()[i+1] = bufferRGBA[j+1];
-                pixels.getPixels()[i+2] = bufferRGBA[j+2];
-            }
-        }
-    }
-    
-    free(bufferRGBA);
-
-    #endif
-
-	update();
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::grabScreen(int x, int y, int w, int h){
+	ofPixels p;
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		renderer->saveScreen(x,y,w,h,p);
+		pixels = p;
+		update();
+	}
 }
 
 //------------------------------------

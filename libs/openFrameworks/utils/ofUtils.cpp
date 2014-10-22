@@ -758,20 +758,27 @@ unsigned int ofGetVersionPatch() {
 
 //--------------------------------------------------
 void ofSaveScreen(const string& filename) {
-   ofImage screen;
+   /*ofImage screen;
    screen.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);
    screen.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-   screen.save(filename);
+   screen.save(filename);*/
+	ofPixels pixels;
+	ofGetGLRenderer()->saveFullViewport(pixels);
+	ofSaveImage(pixels,filename);
 }
 
 //--------------------------------------------------
 void ofSaveViewport(const string& filename) {
 	// because ofSaveScreen doesn't related to viewports
-	ofImage screen;
+	/*ofImage screen;
 	ofRectangle view = ofGetCurrentViewport();
 	screen.allocate(view.width, view.height, OF_IMAGE_COLOR);
 	screen.grabScreen(0, 0, view.width, view.height);
-	screen.save(filename);
+	screen.save(filename);*/
+
+	ofPixels pixels;
+	ofGetGLRenderer()->saveFullViewport(pixels);
+	ofSaveImage(pixels,filename);
 }
 
 //--------------------------------------------------

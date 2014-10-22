@@ -182,7 +182,7 @@ public:
 	GLint wrapModeHorizontal; ///< How will the texture wrap around horizontally?
 	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
 	
-private:
+	//TODO: this should be private but need access from renderers
 	mutable bool isBound;  ///< Is the texture already bound
 	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
@@ -721,9 +721,6 @@ class ofTexture : public ofBaseDraws {
 
 protected:
     void loadData(const void * data, int w, int h, int glFormat, int glType);
-
-	void enableTextureTarget(int textureLocation) const;
-	void disableTextureTarget(int textureLocation) const;
 
 	ofPoint anchor;
 	bool bAnchorIsPct;

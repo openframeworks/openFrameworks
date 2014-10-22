@@ -103,7 +103,7 @@ void ofCamera::setVFlip(bool vflip){
 }
 
 //----------------------------------------
-bool ofCamera::isVFlipped(){
+bool ofCamera::isVFlipped() const{
 	return vFlip;
 }
 
@@ -123,37 +123,23 @@ bool ofCamera::getOrtho() const {
 }
 
 //----------------------------------------
-float ofCamera::getImagePlaneDistance(ofRectangle viewport) const {
+float ofCamera::getImagePlaneDistance(const ofRectangle & viewport) const {
 	return viewport.height / (2.0f * tanf(PI * fov / 360.0f));
 }
 
 //----------------------------------------
-void ofCamera::begin(ofRectangle viewport) {
-	if(!isActive) ofPushView();
-	isActive = true;
-
-	ofViewport(viewport.x,viewport.y,viewport.width,viewport.height);
-	ofSetOrientation(ofGetOrientation(),vFlip);
-
-	ofSetMatrixMode(OF_MATRIX_PROJECTION);
-	ofLoadMatrix( getProjectionMatrix(viewport) );
-
-	ofSetMatrixMode(OF_MATRIX_MODELVIEW);
-	ofLoadViewMatrix( getModelViewMatrix() );
+void ofCamera::begin(const ofRectangle & viewport) {
+	ofGetCurrentRenderer()->bind(*this,viewport);
 }
 
 // if begin(); pushes first, then we need an end to pop
 //----------------------------------------
 void ofCamera::end() {
-	if (isActive)
-	{
-		ofPopView();
-		isActive = false;
-	}
+	ofGetCurrentRenderer()->unbind(*this);
 }
 
 //----------------------------------------
-ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
+ofMatrix4x4 ofCamera::getProjectionMatrix(const ofRectangle & viewport) const {
 	// autocalculate near/far clip planes if not set by user
 	const_cast<ofCamera*>(this)->calcClipPlanes(viewport);
 
@@ -174,12 +160,12 @@ ofMatrix4x4 ofCamera::getModelViewMatrix() const {
 }
 
 //----------------------------------------
-ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(ofRectangle viewport) const {
+ofMatrix4x4 ofCamera::getModelViewProjectionMatrix(const ofRectangle & viewport) const {
 	return getModelViewMatrix() * getProjectionMatrix(viewport);
 }
 
 //----------------------------------------
-ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) const {
+ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, const ofRectangle & viewport) const {
 
 	ofVec3f CameraXYZ = WorldXYZ * getModelViewProjectionMatrix(viewport);
 	ofVec3f ScreenXYZ;
@@ -194,7 +180,7 @@ ofVec3f ofCamera::worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport) const {
 }
 
 //----------------------------------------
-ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) const {
+ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, const ofRectangle & viewport) const {
 
 	//convert from screen to camera
 	ofVec3f CameraXYZ;
@@ -212,12 +198,12 @@ ofVec3f ofCamera::screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport) const {
 }
 
 //----------------------------------------
-ofVec3f ofCamera::worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport) const {
+ofVec3f ofCamera::worldToCamera(ofVec3f WorldXYZ, const ofRectangle &  viewport) const {
 	return WorldXYZ * getModelViewProjectionMatrix(viewport);
 }
 
 //----------------------------------------
-ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport) const {
+ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, const ofRectangle & viewport) const {
 
 	ofMatrix4x4 inverseCamera;
 	inverseCamera.makeInvertOf(getModelViewProjectionMatrix(viewport));
@@ -226,7 +212,7 @@ ofVec3f ofCamera::cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport) const {
 }
 
 //----------------------------------------
-void ofCamera::calcClipPlanes(ofRectangle viewport) {
+void ofCamera::calcClipPlanes(const ofRectangle & viewport) {
 	// autocalculate near/far clip planes if not set by user
 	if(nearClip == 0 || farClip == 0) {
 		float dist = getImagePlaneDistance(viewport);
