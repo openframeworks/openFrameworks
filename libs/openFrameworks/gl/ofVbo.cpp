@@ -191,15 +191,6 @@ ofVbo::ofVbo(){
 	bUsingNormals = false;
 	bUsingIndices = false;
 
-//	// tig: note that we set the 'Normalize' flag to true here, assuming that mesh normals need to be
-//	// normalized while being uploaded to GPU memory.
-//	// http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
-//	// Normalizing the normals on the shader is probably faster, but sending non-normalized normals is
-//	// more prone to lead to artifacts difficult to diagnose, especially with the built-in 3D primitives.
-//	// If you need to optimise this, and you've dug this far through the code, you are most probably
-//	// able to roll your own client code for binding & rendering vbos anyway...
-//	normalAttribute.normalize = true;
-
 	totalVerts = 0;
 	totalIndices = 0;
 
@@ -736,8 +727,6 @@ void ofVbo::bind() const{
 								customAttributes.at(ofShader::POSITION_ATTRIBUTE).stride,
 								(void*)customAttributes.at(ofShader::POSITION_ATTRIBUTE).offset);
 				#endif
-			}else{
-				customAttributes.at(ofShader::POSITION_ATTRIBUTE).enable();
 			}
 		}else if(supportVAOs){
 			if(!programmable){
@@ -758,8 +747,6 @@ void ofVbo::bind() const{
 							   customAttributes.at(ofShader::COLOR_ATTRIBUTE).stride,
 							   (void*)customAttributes.at(ofShader::COLOR_ATTRIBUTE).offset);
 				#endif
-			} else {
-				customAttributes.at(ofShader::COLOR_ATTRIBUTE).enable();
 			}
 		}else if(supportVAOs){
 			if(!programmable){
@@ -779,8 +766,6 @@ void ofVbo::bind() const{
 				glNormalPointer(GL_FLOAT, customAttributes.at(ofShader::NORMAL_ATTRIBUTE).stride,
 								(void*)customAttributes.at(ofShader::NORMAL_ATTRIBUTE).offset);
 				#endif
-			}else{
-				customAttributes.at(ofShader::NORMAL_ATTRIBUTE).enable();
 			}
 		}else if(supportVAOs){
 			if(!programmable){
@@ -797,12 +782,10 @@ void ofVbo::bind() const{
 				customAttributes.at(ofShader::TEXCOORD_ATTRIBUTE).bind();
 				#ifndef TARGET_PROGRAMMABLE_GL
 				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				glTexCoordPointer(customAttributes.at(ofShader::COLOR_ATTRIBUTE).numCoords,
+				glTexCoordPointer(customAttributes.at(ofShader::TEXCOORD_ATTRIBUTE).numCoords,
 								  GL_FLOAT, customAttributes.at(ofShader::TEXCOORD_ATTRIBUTE).stride,
 								  (void*)customAttributes.at(ofShader::TEXCOORD_ATTRIBUTE).offset);
 				#endif
-			} else {
-				customAttributes.at(ofShader::TEXCOORD_ATTRIBUTE).enable();
 			}
 		}else if(supportVAOs){
 			if(!programmable){
@@ -831,7 +814,6 @@ void ofVbo::bind() const{
 
 		vaoChanged=false;
 	}
-
 
 	shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
 	if(renderer){
