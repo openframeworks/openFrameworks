@@ -4,10 +4,10 @@
 
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.
-static float minDifference = 0.1e-5f;
+static const float minDifference = 0.1e-5f;
 
 // this is the default on windows os
-static unsigned long doubleclickTime = 200;
+static const unsigned long doubleclickTime = 200;
 
 //----------------------------------------
 ofEasyCam::ofEasyCam(){
@@ -58,7 +58,7 @@ void ofEasyCam::update(ofEventArgs & args){
 	}	
 }
 //----------------------------------------
-void ofEasyCam::begin(ofRectangle viewport){
+void ofEasyCam::begin(const ofRectangle & viewport){
 	this->viewport = viewport;
 	ofCamera::begin(viewport);	
 }
