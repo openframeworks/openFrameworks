@@ -15,6 +15,7 @@
 	#else
 		#define GLFW_EXPOSE_NATIVE_EGL
 	#endif
+	#include <X11/extensions/Xrandr.h>
 	#include "GLFW/glfw3native.h"
 	#include <X11/Xatom.h>
 #elif defined(TARGET_OSX)
