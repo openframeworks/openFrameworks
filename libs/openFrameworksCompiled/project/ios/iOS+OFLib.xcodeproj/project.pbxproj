@@ -65,6 +65,13 @@
 		671C0AF71770246200DF03B3 /* ofxiOSSoundPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 671C0AF31770246200DF03B3 /* ofxiOSSoundPlayer.mm */; };
 		67509ABC17979781003A3A29 /* ofXml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67509ABA17979781003A3A29 /* ofXml.cpp */; };
 		67509ABD17979781003A3A29 /* ofXml.h in Headers */ = {isa = PBXBuildFile; fileRef = 67509ABB17979781003A3A29 /* ofXml.h */; };
+		67833F8319F8990D00DBE7AA /* ofFpsCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67833F7E19F8990D00DBE7AA /* ofFpsCounter.cpp */; };
+		67833F8419F8990D00DBE7AA /* ofFpsCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 67833F7F19F8990D00DBE7AA /* ofFpsCounter.h */; };
+		67833F8519F8990D00DBE7AA /* ofThreadChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 67833F8019F8990D00DBE7AA /* ofThreadChannel.h */; };
+		67833F8619F8990D00DBE7AA /* ofTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67833F8119F8990D00DBE7AA /* ofTimer.cpp */; };
+		67833F8719F8990D00DBE7AA /* ofTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 67833F8219F8990D00DBE7AA /* ofTimer.h */; };
+		67833F8A19F8996300DBE7AA /* ofBufferObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67833F8819F8996300DBE7AA /* ofBufferObject.cpp */; };
+		67833F8B19F8996300DBE7AA /* ofBufferObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 67833F8919F8996300DBE7AA /* ofBufferObject.h */; };
 		678C3D23176F04F800D1CC68 /* ofxiOSSoundStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 678C3D19176F04F800D1CC68 /* ofxiOSSoundStream.h */; };
 		678C3D24176F04F800D1CC68 /* ofxiOSSoundStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = 678C3D1A176F04F800D1CC68 /* ofxiOSSoundStream.mm */; };
 		678C3D25176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 678C3D1B176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h */; };
@@ -269,6 +276,13 @@
 		671C0AF31770246200DF03B3 /* ofxiOSSoundPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSSoundPlayer.mm; sourceTree = "<group>"; };
 		67509ABA17979781003A3A29 /* ofXml.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofXml.cpp; sourceTree = "<group>"; };
 		67509ABB17979781003A3A29 /* ofXml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofXml.h; sourceTree = "<group>"; };
+		67833F7E19F8990D00DBE7AA /* ofFpsCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFpsCounter.cpp; sourceTree = "<group>"; };
+		67833F7F19F8990D00DBE7AA /* ofFpsCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofFpsCounter.h; sourceTree = "<group>"; };
+		67833F8019F8990D00DBE7AA /* ofThreadChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofThreadChannel.h; sourceTree = "<group>"; };
+		67833F8119F8990D00DBE7AA /* ofTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofTimer.cpp; sourceTree = "<group>"; };
+		67833F8219F8990D00DBE7AA /* ofTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofTimer.h; sourceTree = "<group>"; };
+		67833F8819F8996300DBE7AA /* ofBufferObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBufferObject.cpp; sourceTree = "<group>"; };
+		67833F8919F8996300DBE7AA /* ofBufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofBufferObject.h; sourceTree = "<group>"; };
 		678C3D19176F04F800D1CC68 /* ofxiOSSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSSoundStream.h; sourceTree = "<group>"; };
 		678C3D1A176F04F800D1CC68 /* ofxiOSSoundStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofxiOSSoundStream.mm; sourceTree = "<group>"; };
 		678C3D1B176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxiOSSoundStreamDelegate.h; sourceTree = "<group>"; };
@@ -748,6 +762,8 @@
 		E4F76D92176CB27200798745 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				67833F8819F8996300DBE7AA /* ofBufferObject.cpp */,
+				67833F8919F8996300DBE7AA /* ofBufferObject.h */,
 				E4F76D93176CB27200798745 /* ofFbo.cpp */,
 				E4F76D94176CB27200798745 /* ofFbo.h */,
 				E4F76D95176CB27200798745 /* ofGLProgrammableRenderer.cpp */,
@@ -858,6 +874,8 @@
 				E4F76DF0176CB27200798745 /* ofConstants.h */,
 				E4F76DF1176CB27200798745 /* ofFileUtils.cpp */,
 				E4F76DF2176CB27200798745 /* ofFileUtils.h */,
+				67833F7E19F8990D00DBE7AA /* ofFpsCounter.cpp */,
+				67833F7F19F8990D00DBE7AA /* ofFpsCounter.h */,
 				E4F76DF3176CB27200798745 /* ofLog.cpp */,
 				E4F76DF4176CB27200798745 /* ofLog.h */,
 				E4F76DF5176CB27200798745 /* ofMatrixStack.cpp */,
@@ -867,6 +885,9 @@
 				E4F76DF9176CB27200798745 /* ofSystemUtils.h */,
 				E4F76DFA176CB27200798745 /* ofThread.cpp */,
 				E4F76DFB176CB27200798745 /* ofThread.h */,
+				67833F8019F8990D00DBE7AA /* ofThreadChannel.h */,
+				67833F8119F8990D00DBE7AA /* ofTimer.cpp */,
+				67833F8219F8990D00DBE7AA /* ofTimer.h */,
 				E4F76DFC176CB27200798745 /* ofURLFileLoader.cpp */,
 				E4F76DFD176CB27200798745 /* ofURLFileLoader.h */,
 				E4F76DFE176CB27200798745 /* ofUtils.cpp */,
@@ -901,6 +922,7 @@
 				E4F76E20176CB27200798745 /* ofEasyCam.h in Headers */,
 				E4F76E22176CB27200798745 /* ofMesh.h in Headers */,
 				E4F76E24176CB27200798745 /* ofNode.h in Headers */,
+				67833F8419F8990D00DBE7AA /* ofFpsCounter.h in Headers */,
 				E4F76E25176CB27200798745 /* ofAppBaseWindow.h in Headers */,
 				E4F76E2F176CB27200798745 /* ofAppRunner.h in Headers */,
 				E4F76E30176CB27200798745 /* ofBaseApp.h in Headers */,
@@ -934,6 +956,7 @@
 				E4F76E6F176CB27200798745 /* ofVec3f.h in Headers */,
 				E4F76E71176CB27200798745 /* ofVec4f.h in Headers */,
 				E4F76E72176CB27200798745 /* ofVectorMath.h in Headers */,
+				67833F8519F8990D00DBE7AA /* ofThreadChannel.h in Headers */,
 				E4F76E73176CB27200798745 /* ofMain.h in Headers */,
 				E4F76E75176CB27200798745 /* ofBaseSoundPlayer.h in Headers */,
 				E4F76E77176CB27200798745 /* ofBaseSoundStream.h in Headers */,
@@ -956,6 +979,7 @@
 				E4F76E9E176CB27200798745 /* ofURLFileLoader.h in Headers */,
 				E4F76EA0176CB27200798745 /* ofUtils.h in Headers */,
 				E4F76EB6176CB27200798745 /* ofVideoGrabber.h in Headers */,
+				67833F8B19F8996300DBE7AA /* ofBufferObject.h in Headers */,
 				E4F76EB8176CB27200798745 /* ofVideoPlayer.h in Headers */,
 				BB24E0DC10DA9F5700E9C588 /* ofxAccelerometer.h in Headers */,
 				E485F81A1363242200E939D3 /* ofxMultiTouch.h in Headers */,
@@ -990,6 +1014,7 @@
 				678C3D2B176F04F800D1CC68 /* SoundStream.h in Headers */,
 				671C0AF41770246200DF03B3 /* AVSoundPlayer.h in Headers */,
 				671C0AF61770246200DF03B3 /* ofxiOSSoundPlayer.h in Headers */,
+				67833F8719F8990D00DBE7AA /* ofTimer.h in Headers */,
 				67509ABD17979781003A3A29 /* ofXml.h in Headers */,
 				66EA462C17A6D396009BB12A /* ofxOpenALSoundPlayer.h in Headers */,
 				66EA462E17A6D396009BB12A /* SoundEngine.h in Headers */,
@@ -1056,6 +1081,7 @@
 				E4F76E21176CB27200798745 /* ofMesh.cpp in Sources */,
 				E4F76E23176CB27200798745 /* ofNode.cpp in Sources */,
 				E4F76E2E176CB27200798745 /* ofAppRunner.cpp in Sources */,
+				67833F8319F8990D00DBE7AA /* ofFpsCounter.cpp in Sources */,
 				E4F76E36176CB27200798745 /* ofEvents.cpp in Sources */,
 				E4F76E39176CB27200798745 /* ofFbo.cpp in Sources */,
 				E4F76E3B176CB27200798745 /* ofGLProgrammableRenderer.cpp in Sources */,
@@ -1078,6 +1104,7 @@
 				E4F76E61176CB27200798745 /* ofTessellator.cpp in Sources */,
 				E4F76E63176CB27200798745 /* ofTrueTypeFont.cpp in Sources */,
 				E4F76E65176CB27200798745 /* ofMath.cpp in Sources */,
+				67833F8619F8990D00DBE7AA /* ofTimer.cpp in Sources */,
 				E4F76E67176CB27200798745 /* ofMatrix3x3.cpp in Sources */,
 				E4F76E69176CB27200798745 /* ofMatrix4x4.cpp in Sources */,
 				E4F76E6B176CB27200798745 /* ofQuaternion.cpp in Sources */,
@@ -1119,6 +1146,7 @@
 				15594FC215C56D1E00727FF2 /* ofxiOSKeyboard.mm in Sources */,
 				15594FC315C56D1E00727FF2 /* ofxiOSMapKit.mm in Sources */,
 				15594FC415C56D1E00727FF2 /* ofxiOSMapKitDelegate.mm in Sources */,
+				67833F8A19F8996300DBE7AA /* ofBufferObject.cpp in Sources */,
 				1594366415CF5F420087B684 /* ofxiOSVideoGrabber.mm in Sources */,
 				1594366515CF5F420087B684 /* ofxiOSVideoPlayer.mm in Sources */,
 				678C3D24176F04F800D1CC68 /* ofxiOSSoundStream.mm in Sources */,
