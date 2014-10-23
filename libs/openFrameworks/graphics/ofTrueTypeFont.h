@@ -210,7 +210,7 @@ public:
 	int	getNumCharacters() const;
 	
 	/// \todo
-	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=true, bool filled=true) const;
+	const ofTTFCharacter & getCharacterAsPoints(int character, bool vflip=true, bool filled=true) const;
 	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=true, bool filled=true) const;
 	const ofMesh & getStringMesh(string s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
@@ -245,6 +245,8 @@ protected:
 	
 	vector <ofTTFCharacter> charOutlines;
 	vector <ofTTFCharacter> charOutlinesNonVFlipped;
+	vector <ofTTFCharacter> charOutlinesContour;
+	vector <ofTTFCharacter> charOutlinesNonVFlippedContour;
 
 	float lineHeight;
 	float ascenderHeight;

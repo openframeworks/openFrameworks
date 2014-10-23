@@ -128,6 +128,7 @@ void ofMatrixStack::viewport(float x, float y, float width, float height, bool v
 	if(width < 0 || height < 0){
 		width = getRenderSurfaceWidth();
 		height = getRenderSurfaceHeight();
+		vflip = isVFlipped();
 	}
 
 	if (vflip){

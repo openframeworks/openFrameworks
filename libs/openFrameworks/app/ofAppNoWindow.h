@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "ofAppBaseWindow.h"
 #include "ofBaseTypes.h"
+#include "of3dGraphics.h"
 
 class ofBaseApp;
 
@@ -35,6 +36,9 @@ private:
 };
 
 class ofNoopRenderer: public ofBaseRenderer{
+public:
+	ofNoopRenderer():graphics3d(this){}
+private:
 	static const string TYPE;
 	const string & getType(){return TYPE;}
 
@@ -54,8 +58,6 @@ class ofNoopRenderer: public ofBaseRenderer{
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
 	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{}
 
-	void bind(const ofBaseVideoDraws & video) const{}
-	void unbind(const ofBaseVideoDraws & video) const{}
 	//--------------------------------------------
 	// transformations
 	void pushView(){};
@@ -119,7 +121,6 @@ class ofNoopRenderer: public ofBaseRenderer{
 	void setBlendMode(ofBlendMode blendMode){}
 	void setLineSmoothing(bool smooth){}
 	void setCircleResolution(int res){};
-	void setSphereResolution(int res){};
 	void enablePointSprites(){};
 	void disablePointSprites(){};
 	void setDepthTest(bool){};
@@ -160,7 +161,7 @@ class ofNoopRenderer: public ofBaseRenderer{
 	void drawString(string text, float x, float y, float z){}
 	void drawString(const ofTrueTypeFont & font, string text, float x, float y){}
 
-	void setBitmapTextMode(ofDrawBitmapMode & mode){}
+	void setBitmapTextMode(ofDrawBitmapMode mode){}
 	ofStyle getStyle() const{ return ofStyle(); }
 	void pushStyle(){};
 	void popStyle(){};
@@ -170,5 +171,13 @@ class ofNoopRenderer: public ofBaseRenderer{
 	bool rendersPathPrimitives(){return true;}
 	void bind(const ofCamera & camera, const ofRectangle & viewport){};
 	void unbind(const ofCamera & camera){};
+	const of3dGraphics & get3dGraphics() const{
+		return graphics3d;
+	}
+
+	of3dGraphics & get3dGraphics(){
+		return graphics3d;
+	}
+	of3dGraphics graphics3d;
 };
 

@@ -5,6 +5,7 @@
 #include "ofShader.h"
 #include "ofMatrixStack.h"
 #include "ofVboMesh.h"
+#include "of3dGraphics.h"
 
 
 class ofShapeTessellation;
@@ -31,6 +32,7 @@ public:
     
 	void update();
 	using ofBaseRenderer::draw;
+	using ofBaseGLRenderer::draw;
 	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
@@ -40,10 +42,8 @@ public:
 	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofTexture & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
     void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
-
-	void bind(const ofBaseVideoDraws & video) const;
-	void unbind(const ofBaseVideoDraws & video) const;
 
 	bool rendersPathPrimitives(){
 		return false;
@@ -60,7 +60,7 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
-	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped());
+	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=true);
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 	void setOrientation(ofOrientation orientation, bool vFlip);
@@ -106,7 +106,6 @@ public:
 	void setFillMode(ofFillFlag fill);
 	ofFillFlag getFillMode();
 	void setCircleResolution(int res);
-	void setSphereResolution(int res);
 	void setRectMode(ofRectMode mode);
 	ofRectMode getRectMode();
 	void setLineWidth(float lineWidth);
@@ -126,7 +125,7 @@ public:
 	void setColor(int gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
-	void setBitmapTextMode(ofDrawBitmapMode & mode);
+	void setBitmapTextMode(ofDrawBitmapMode mode);
     
 	// bg color
 	ofColor getBackgroundColor();
@@ -168,11 +167,13 @@ public:
 	void bind(const ofFbo & fbo, bool setupPerspective);
 	void bind(const ofShader & shader);
 	void bind(const ofTexture & texture, int location);
+	void bind(const ofBaseVideoDraws & video);
+	void bind(const ofCamera & camera, const ofRectangle & viewport);
 	void unbind(ofBaseMaterial & material);
 	void unbind(const ofFbo & fbo);
 	void unbind(const ofShader & shader);
 	void unbind(const ofTexture & texture, int location);
-	void bind(const ofCamera & camera, const ofRectangle & viewport);
+	void unbind(const ofBaseVideoDraws & video);
 	void unbind(const ofCamera & camera);
 
 	void setAttributes(bool vertices, bool color, bool tex, bool normals);
@@ -230,6 +231,9 @@ public:
 
 	void saveScreen(int x, int y, int w, int h, ofPixels & pixels);
 	void saveFullViewport(ofPixels & pixels);
+
+	const of3dGraphics & get3dGraphics() const;
+	of3dGraphics & get3dGraphics();
 private:
 
 
@@ -279,5 +283,6 @@ private:
 
 	ofStyle currentStyle;
 	deque <ofStyle> styleHistory;
+	of3dGraphics graphics3d;
 	const ofAppBaseWindow * window;
 };

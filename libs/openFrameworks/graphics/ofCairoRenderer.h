@@ -10,6 +10,7 @@
 #include "ofMatrix4x4.h"
 #include "ofBaseTypes.h"
 #include "ofPath.h"
+#include "of3dGraphics.h"
 
 class ofCairoRenderer: public ofBaseRenderer{
 public:
@@ -47,9 +48,6 @@ public:
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
-
-	void bind(const ofBaseVideoDraws & video) const;
-	void unbind(const ofBaseVideoDraws & video) const;
 
 	bool rendersPathPrimitives(){
 		return true;
@@ -145,7 +143,7 @@ public:
 	void clear(float brightness, float a=0);
 	void clearAlpha();
 
-	void setBitmapTextMode(ofDrawBitmapMode & mode);
+	void setBitmapTextMode(ofDrawBitmapMode mode);
 
 	ofStyle getStyle() const;
 	void pushStyle();
@@ -171,6 +169,9 @@ public:
 
 	virtual void bind(const ofCamera & camera, const ofRectangle & viewport){}
 	virtual void unbind(const ofCamera & camera){}
+
+	const of3dGraphics & get3dGraphics() const;
+	of3dGraphics & get3dGraphics();
 
 private:
 	ofVec3f transform(ofVec3f vec) const;
@@ -209,4 +210,5 @@ private:
 
 	ofStyle currentStyle;
 	deque <ofStyle> styleHistory;
+	of3dGraphics graphics3d;
 };

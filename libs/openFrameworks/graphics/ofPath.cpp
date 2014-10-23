@@ -581,15 +581,12 @@ const ofMesh & ofPath::getTessellation() const{
 }
 
 //----------------------------------------------------------
-void ofPath::draw(float x, float y){
-	ofPushMatrix();
-	ofTranslate(x,y);
-	draw();
-	ofPopMatrix();
+void ofPath::draw(float x, float y) const{
+	ofGetCurrentRenderer()->draw(*this,x,y);
 }
 
 //----------------------------------------------------------
-void ofPath::draw(){
+void ofPath::draw() const{
 	ofGetCurrentRenderer()->draw(*this);
 }
 

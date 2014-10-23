@@ -314,12 +314,18 @@ void ofVideoGrabber::draw(float _x, float _y) const{
 
 //------------------------------------
 void ofVideoGrabber::bind() const{
-	ofGetCurrentRenderer()->bind(*this);
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		renderer->bind(*this);
+	}
 }
 
 //------------------------------------
 void ofVideoGrabber::unbind() const{
-	ofGetCurrentRenderer()->unbind(*this);
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		renderer->unbind(*this);
+	}
 }
 
 //----------------------------------------------------------

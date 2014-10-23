@@ -414,12 +414,18 @@ void ofVideoPlayer::draw(float _x, float _y) const{
 
 //------------------------------------
 void ofVideoPlayer::bind() const{
-	ofGetCurrentRenderer()->bind(*this);
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		renderer->bind(*this);
+	}
 }
 
 //------------------------------------
 void ofVideoPlayer::unbind() const{
-	ofGetCurrentRenderer()->unbind(*this);
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		renderer->unbind(*this);
+	}
 }
 
 //------------------------------------
