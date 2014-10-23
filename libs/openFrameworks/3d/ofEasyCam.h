@@ -13,7 +13,7 @@ public:
     /// \brief Destroy the camera.
 	~ofEasyCam();
 
-	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
+	virtual void begin(const ofRectangle & viewport = ofGetCurrentViewport());
 
     /// \brief Reset the camera position and orientation.
 	void reset();
