@@ -802,9 +802,15 @@ void ofVbo::bind() const{
         }
 
 		map<int,VertexAttribute>::const_iterator it;
-		for(it=customAttributes.begin();it!=customAttributes.end();it++){
-			it->second.enable();
-			if(ofIsGLProgrammableRenderer()){
+		for(it = customAttributes.begin();it!=customAttributes.end();it++){
+			if(!programmable){
+				// if we are using the fixed function pipeline, 
+				// only locations after 3 may be proper attributes
+				if (it->first > 3) it->second.enable();
+			} else {
+				it->second.enable();
+				// TODO: make sure you can switch off attributes in programmable renderer
+				// TODO: make sure you can switch arbitrary attributes on and off in programmable renderer
 				bUsingVerts |= it->first == ofShader::POSITION_ATTRIBUTE;
 				bUsingColors |= it->first == ofShader::COLOR_ATTRIBUTE;
 				bUsingTexCoords |= it->first == ofShader::TEXCOORD_ATTRIBUTE;
