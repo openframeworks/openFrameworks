@@ -389,7 +389,7 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 	customAttributes[location].stride = size;
 	customAttributes[location].numCoords = numCoords;
 	customAttributes[location].offset = 0;
-
+	customAttributes[location].location = location;
 	customAttributes[location].setData(total * size, attrib0x, usage);
 }
 
