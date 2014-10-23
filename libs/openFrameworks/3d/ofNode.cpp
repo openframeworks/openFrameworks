@@ -362,8 +362,8 @@ void ofNode::draw()  const{
 
 //----------------------------------------
 void ofNode::customDraw(const ofBaseRenderer * renderer) const{
-	ofDrawBox(10);
-	ofDrawAxis(20);
+	renderer->drawBox(10);
+	renderer->draw(ofMesh::axis(20),OF_MESH_FILL);
 }
 
 //----------------------------------------

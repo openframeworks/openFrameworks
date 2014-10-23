@@ -33,6 +33,7 @@ const string ofGLProgrammableRenderer::TYPE="ProgrammableGL";
 //----------------------------------------------------------
 ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _window)
 :matrixStack(_window)
+,graphics3d(this)
 {
 	bBackgroundAuto = true;
 
@@ -306,9 +307,9 @@ void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, flo
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
-			tex.bind();
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
-			tex.unbind();
+			const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
@@ -321,9 +322,9 @@ void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
-			tex.bind();
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
-			tex.unbind();
+			const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
@@ -336,12 +337,24 @@ void ofGLProgrammableRenderer::draw(const ofShortImage & image, float x, float y
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
-			tex.bind();
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
-			tex.unbind();
+			const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
+	}
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::draw(const ofTexture & tex, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+	const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
+	if(tex.isAllocated()) {
+		const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
+		draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+		const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
+	} else {
+		ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 	}
 }
 
@@ -350,25 +363,13 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
 		return;
 	}
-	const ofShader * shader = NULL;
-	if(!usingCustomShader){
-		shader = getVideoShader(video);
-		if(shader){
-			shader->begin();
-			setVideoShaderUniforms(video,*shader);
-		}
-	}
-	const ofTexture& tex = video.getTexture();
-	tex.bind();
-	draw(tex.getMeshForSubsection(x,y,0,w,h,0,0,w,h),false,true,false);
-	tex.unbind();
-	if(shader){
-		shader->end();
-	}
+	const_cast<ofGLProgrammableRenderer*>(this)->bind(video);
+	draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,w,h,isVFlipped(),currentStyle.rectMode),false,true,false);
+	const_cast<ofGLProgrammableRenderer*>(this)->unbind(video);
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::bind(const ofBaseVideoDraws & video) const{
+void ofGLProgrammableRenderer::bind(const ofBaseVideoDraws & video){
 	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
 		return;
 	}
@@ -389,7 +390,7 @@ void ofGLProgrammableRenderer::bind(const ofBaseVideoDraws & video) const{
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::unbind(const ofBaseVideoDraws & video) const{
+void ofGLProgrammableRenderer::unbind(const ofBaseVideoDraws & video){
 	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
 		return;
 	}
@@ -771,7 +772,7 @@ void ofGLProgrammableRenderer::setHexColor(int hexColor){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setBitmapTextMode(ofDrawBitmapMode & mode){
+void ofGLProgrammableRenderer::setBitmapTextMode(ofDrawBitmapMode mode){
 	currentStyle.drawBitmapMode = mode;
 }
 
@@ -2504,4 +2505,12 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 	}
 
 	#endif
+}
+
+const of3dGraphics & ofGLProgrammableRenderer::get3dGraphics() const{
+	return graphics3d;
+}
+
+of3dGraphics & ofGLProgrammableRenderer::get3dGraphics(){
+	return graphics3d;
 }

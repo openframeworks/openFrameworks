@@ -14,7 +14,8 @@ _cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char
 	return CAIRO_STATUS_SUCCESS;
 }
 
-ofCairoRenderer::ofCairoRenderer(){
+ofCairoRenderer::ofCairoRenderer()
+:graphics3d(this){
 	type = PDF;
 	surface = NULL;
 	cr = NULL;
@@ -617,16 +618,6 @@ void ofCairoRenderer::draw(const ofBaseVideoDraws & video, float x, float y, flo
 }
 
 //--------------------------------------------
-void ofCairoRenderer::bind(const ofBaseVideoDraws & video) const{
-
-}
-
-//--------------------------------------------
-void ofCairoRenderer::unbind(const ofBaseVideoDraws & video) const{
-
-}
-
-//--------------------------------------------
 void ofCairoRenderer::setRectMode(ofRectMode mode){
 	currentStyle.rectMode = mode;
 }
@@ -1180,7 +1171,7 @@ void ofCairoRenderer::clearAlpha() {
 }
 
 
-void ofCairoRenderer::setBitmapTextMode(ofDrawBitmapMode & mode){
+void ofCairoRenderer::setBitmapTextMode(ofDrawBitmapMode mode){
 	currentStyle.drawBitmapMode = mode;
 }
 
@@ -1493,4 +1484,12 @@ ofBuffer & ofCairoRenderer::getContentBuffer(){
 		ofLogError("ofCairoRenderer") << "getContentBuffer(): can only get buffer from memory allocated renderer for svg or pdf";
 	}
 	return streamBuffer;
+}
+
+const of3dGraphics & ofCairoRenderer::get3dGraphics() const{
+	return graphics3d;
+}
+
+of3dGraphics & ofCairoRenderer::get3dGraphics(){
+	return graphics3d;
 }

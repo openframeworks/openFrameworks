@@ -581,7 +581,7 @@ void ofTexture::generateMipmap(){
 //----------------------------------------------------------
 void ofTexture::loadScreenData(int x, int y, int w, int h){
 	
-	int screenHeight = ofGetViewportHeight(); // this call fails if we are in a different viewport or FBO: ofGetHeight();
+	int screenHeight = ofGetViewportHeight();
 	y = screenHeight - y;
 	y -= h; // top, bottom issues
 	texData.bFlipTexture = true;
@@ -754,12 +754,12 @@ ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct) const{
 
 //----------------------------------------------------------
 void ofTexture::setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical) {
-	bind();
+	glBindTexture(texData.textureTarget,texData.textureID);
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_S, wrapModeHorizontal);
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_WRAP_T, wrapModeVertical);
 	texData.wrapModeVertical = wrapModeVertical;
 	texData.wrapModeHorizontal = wrapModeHorizontal;
-	unbind();
+	glBindTexture(texData.textureTarget,0);
 }
 
 //----------------------------------------------------------
@@ -787,14 +787,13 @@ void ofTexture::setTextureMinMagFilter(GLint minFilter, GLint magFilter){
 		hasWarnedInvalidMagFilter = true;
 		return;
 	}
-	
-	bool wasBound = texData.isBound;
-	if (!wasBound) bind();
+
+	glBindTexture(texData.textureTarget,texData.textureID);
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_MAG_FILTER, magFilter);
 	glTexParameteri(texData.textureTarget, GL_TEXTURE_MIN_FILTER, minFilter);
 	texData.magFilter = magFilter;
 	texData.minFilter = minFilter;
-	if (!wasBound) unbind();
+	glBindTexture(texData.textureTarget,0);
 }
 
 //----------------------------------------------------------
@@ -849,8 +848,17 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
 
+//----------------------------------------------------------
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		renderer->draw(*this,x,y,z,w,h,sx,sy,sw,sh);
+	}
+}
+
+
 //------------------------------------
-ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh, bool vflipped, ofRectMode rectMode) const{
 	ofMesh quad;
 	if(!texData.bAllocated){
 		return quad;
@@ -861,12 +869,12 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	GLfloat px1 = w+x;
 	GLfloat py1 = h+y;
 
-	if (texData.bFlipTexture == ofIsVFlipped()){
+	if (texData.bFlipTexture == vflipped){
 		swap(py0,py1);
 	}
 
 	// for rect mode center, let's do this:
-	if (ofGetRectMode() == OF_RECTMODE_CENTER){
+	if (rectMode == OF_RECTMODE_CENTER){
 		px0 -= w/2;
 		py0 -= h/2;
 		px1 -= w/2;
@@ -934,29 +942,23 @@ ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float
 	return quad;
 }
 
+// ROGER
 //----------------------------------------------------------
-void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
-	if(!texData.bAllocated){
-		return;
-	}
-
-	ofMesh quad = getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh);
+void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const{
 
 	// make sure we are on unit 0 - we may change this when setting shader samplers
 	// before glEnable or else the shader gets confused
 	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
 	//glActiveTexture(GL_TEXTURE0);
-	
-	bool wasBound = texData.isBound;
-	if(!wasBound) bind(0);
-	quad.draw();
-	if(!wasBound) unbind(0);
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		bind(0);
+		renderer->draw(getQuad(p1,p2,p3,p4),OF_MESH_FILL);
+		unbind(0);
+	}
 }
 
-
-// ROGER
-//----------------------------------------------------------
-void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const{
+ofMesh ofTexture::getQuad(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const{
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
 	// slightly, slightly alters an image, scaling...
@@ -992,25 +994,16 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	quad.getTexCoords()[1].set(tx1,ty0);
 	quad.getTexCoords()[2].set(tx1,ty1);
 	quad.getTexCoords()[3].set(tx0,ty1);
-	
-	// make sure we are on unit 0 - we may change this when setting shader samplers
-	// before glEnable or else the shader gets confused
-	/// ps: maybe if bUsingArbTex is enabled we should use glActiveTextureARB?
-	//glActiveTexture(GL_TEXTURE0);
-	
-	bool wasBound = texData.isBound;
-	if(!wasBound) bind(0);
-	quad.draw();
-	if(!wasBound) unbind(0);
+	return quad;
 }
 
 //----------------------------------------------------------
 void ofTexture::readToPixels(ofPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
-	bind();
+	glBindTexture(texData.textureTarget,texData.textureID);
 	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_UNSIGNED_BYTE, pixels.getData());
-	unbind();
+	glBindTexture(texData.textureTarget,0);
 #endif
 }
 
@@ -1018,18 +1011,18 @@ void ofTexture::readToPixels(ofPixels & pixels) const {
 void ofTexture::readToPixels(ofShortPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
-	bind();
+	glBindTexture(texData.textureTarget,texData.textureID);
 	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_UNSIGNED_SHORT,pixels.getData());
-	unbind();
+	glBindTexture(texData.textureTarget,0);
 #endif
 }
 
 void ofTexture::readToPixels(ofFloatPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
-	bind();
+	glBindTexture(texData.textureTarget,texData.textureID);
 	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_FLOAT,pixels.getData());
-	unbind();
+	glBindTexture(texData.textureTarget,0);
 #endif
 }
 
@@ -1037,9 +1030,9 @@ void ofTexture::readToPixels(ofFloatPixels & pixels) const {
 //----------------------------------------------------------
 void ofTexture::copyTo(ofBufferObject & buffer) const{
 	buffer.bind(GL_PIXEL_PACK_BUFFER);
-	bind();
+	glBindTexture(texData.textureTarget,texData.textureID);
 	glGetTexImage(texData.textureTarget,0,ofGetGLFormatFromInternal(texData.glTypeInternal),ofGetGlTypeFromInternal(texData.glTypeInternal),0);
-	unbind();
+	glBindTexture(texData.textureTarget,0);
 	buffer.unbind(GL_PIXEL_PACK_BUFFER);
 
 }

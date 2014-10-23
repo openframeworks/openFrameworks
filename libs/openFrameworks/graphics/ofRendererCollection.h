@@ -3,9 +3,11 @@
 #include "ofBaseTypes.h"
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
+#include "of3dGraphics.h"
 
 class ofRendererCollection: public ofBaseRenderer{
 public:
+	ofRendererCollection():graphics3d(this){}
 	 ~ofRendererCollection(){}
 
 	 static const string TYPE;
@@ -106,7 +108,7 @@ public:
 		}
 	}
 
-	void bind(const ofBaseVideoDraws & video) const{
+	/*void bind(const ofBaseVideoDraws & video) const{
 		for(int i=0;i<(int)renderers.size();i++){
 			renderers[i]->bind(video);
 		}
@@ -116,7 +118,7 @@ public:
 		for(int i=0;i<(int)renderers.size();i++){
 			renderers[i]->unbind(video);
 		}
-	}
+	}*/
 
 
 	ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const{
@@ -172,7 +174,7 @@ public:
 			 renderers[i]->viewport(viewport);
 		 }
 	}
-	 void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped()){
+	 void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=true){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->viewport(x,y,width,height);
 		 }
@@ -565,7 +567,7 @@ public:
 		 }
 	}
 
-	void setBitmapTextMode(ofDrawBitmapMode & mode){
+	void setBitmapTextMode(ofDrawBitmapMode mode){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->setBitmapTextMode(mode);
 		 }
@@ -643,5 +645,14 @@ public:
 	virtual void bind(const ofCamera & camera, const ofRectangle & viewport){}
 	virtual void unbind(const ofCamera & camera){}
 
+	const of3dGraphics & get3dGraphics() const{
+		return graphics3d;
+	}
+
+	of3dGraphics & get3dGraphics(){
+		return graphics3d;
+	}
+
 	vector<shared_ptr<ofBaseRenderer> > renderers;
+	of3dGraphics graphics3d;
 };

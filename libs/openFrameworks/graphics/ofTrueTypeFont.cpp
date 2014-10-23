@@ -507,9 +507,10 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 	cps.resize(nCharacters);
 
 	if(bMakeContours){
-		charOutlines.clear();
 		charOutlines.assign(nCharacters, ofTTFCharacter());
 		charOutlinesNonVFlipped.assign(nCharacters, ofTTFCharacter());
+		charOutlinesContour.assign(nCharacters, ofTTFCharacter());
+		charOutlinesNonVFlippedContour.assign(nCharacters, ofTTFCharacter());
 	}
 
 	vector<ofPixels> expanded_data(nCharacters);
@@ -543,19 +544,24 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 
 			//int character = i + NUM_CHARACTER_TO_START;
 			charOutlines[i] = makeContoursForCharacter( face );
+			charOutlinesContour[i] = charOutlines[i];
+			charOutlinesContour[i].setFilled(false);
+			charOutlinesContour[i].setStrokeWidth(1);
 
 			charOutlinesNonVFlipped[i] = charOutlines[i];
 			charOutlinesNonVFlipped[i].translate(ofVec3f(0,cps[i].height));
 			charOutlinesNonVFlipped[i].scale(1,-1);
+			charOutlinesNonVFlippedContour[i] = charOutlines[i];
+			charOutlinesNonVFlippedContour[i].setFilled(false);
+			charOutlinesNonVFlippedContour[i].setStrokeWidth(1);
 
 
-			if(simplifyAmt>0)
+			if(simplifyAmt>0){
 				charOutlines[i].simplify(simplifyAmt);
-			charOutlines[i].getTessellation();
-
-			if(simplifyAmt>0)
 				charOutlinesNonVFlipped[i].simplify(simplifyAmt);
-			charOutlinesNonVFlipped[i].getTessellation();
+				charOutlinesContour[i].simplify(simplifyAmt);
+				charOutlinesNonVFlippedContour[i].simplify(simplifyAmt);
+			}
 		}
 
 
@@ -773,7 +779,7 @@ float ofTrueTypeFont::getSpaceSize() const{
 }
 
 //------------------------------------------------------------------
-ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character, bool vflip, bool filled) const{
+const ofTTFCharacter & ofTrueTypeFont::getCharacterAsPoints(int character, bool vflip, bool filled) const{
 	if( bMakeContours == false ){
 		ofLogError("ofxTrueTypeFont") << "getCharacterAsPoints(): contours not created, call loadFont() with makeContours set to true";
 		return ofTTFCharacter();
@@ -785,9 +791,17 @@ ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character, bool vflip, b
     }
     
     if(vflip){
-    	return charOutlines[character - NUM_CHARACTER_TO_START];
+    	if(filled){
+    		return charOutlines[character - NUM_CHARACTER_TO_START];
+    	}else{
+    		return charOutlinesContour[character - NUM_CHARACTER_TO_START];
+    	}
     }else{
-    	return charOutlinesNonVFlipped[character - NUM_CHARACTER_TO_START];
+    	if(filled){
+    		return charOutlinesNonVFlipped[character - NUM_CHARACTER_TO_START];
+    	}else{
+    		return charOutlinesNonVFlippedContour[character - NUM_CHARACTER_TO_START];
+    	}
     }
 }
 
@@ -910,16 +924,7 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y, bool vFlipped, boo
 		return;
 	}
 	//-----------------------
-
-	if(vFlipped){
-		ofTTFCharacter charRef = charOutlines[c - NUM_CHARACTER_TO_START];
-		charRef.setFilled(filled);
-		charRef.draw(x,y);
-	}else{
-		ofTTFCharacter charRef = charOutlinesNonVFlipped[c - NUM_CHARACTER_TO_START];
-		charRef.setFilled(filled);
-		charRef.draw(x,y);
-	}
+	getCharacterAsPoints(c,vFlipped,filled).draw(x,y);
 }
 
 //-----------------------------------------------------------

@@ -34,6 +34,13 @@ of3dPrimitive::of3dPrimitive(const of3dPrimitive & mom):ofNode(mom){
 }
 
 //----------------------------------------------------------
+of3dPrimitive::of3dPrimitive(const ofMesh & mesh)
+:usingVbo(true)
+,mesh(new ofVboMesh(mesh)){
+
+}
+
+//----------------------------------------------------------
 of3dPrimitive & of3dPrimitive::operator=(const of3dPrimitive & mom){
 	if(&mom!=this){
 		(*(ofNode*)this)=mom;
@@ -194,18 +201,13 @@ void of3dPrimitive::drawFaces()  const{
 }
 
 //--------------------------------------------------------------
-void of3dPrimitive::draw() const{
-	draw(OF_MESH_FILL);
-}
-
-//--------------------------------------------------------------
 void of3dPrimitive::draw(ofPolyRenderMode renderType) const{
     ofGetCurrentRenderer()->draw(*this, renderType);
 }
 
 //--------------------------------------------------------------
 void of3dPrimitive::customDraw(const ofBaseRenderer * renderer) const{
-	renderer->draw(*this, OF_MESH_FILL);
+	renderer->draw(getMesh(), OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------
