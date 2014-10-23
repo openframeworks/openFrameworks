@@ -203,10 +203,10 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 				ofPixels iconPixels;
 				#ifdef DEBUG
 					iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
-					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
+					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
 				#else
 					iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
-					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
+					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
 				#endif
 				setWindowIcon(iconPixels);
 				glfwShowWindow(windowP);
@@ -319,40 +319,17 @@ void ofAppGLFWWindow::windowShouldClose(){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::display(void){
-
-	shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-	if(renderer){
-		renderer->startRender();
-	}
-
-	// set viewport, clear the screen
-	ofViewport();		// used to be glViewport( 0, 0, width, height );
-	float * bgPtr = ofBgColorPtr();
-	bool bClearAuto = ofbClearBg();
-
-	// to do non auto clear on PC for now - we do something like "single" buffering --
-	// it's not that pretty but it work for the most part
-
-	#ifdef TARGET_WIN32
-	if (bClearAuto == false){
-		glDrawBuffer (GL_FRONT);
-	}
-	#endif
-
-	if ( bClearAuto == true ){
-		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
-	}
-
+	ofGetCurrentRenderer()->startRender();
 	if( bEnableSetupScreen )ofSetupScreen();
 
 	ofNotifyDraw();
 
 	#ifdef TARGET_WIN32
-	if (bClearAuto == false){
+	if (ofGetCurrentRenderer()->getBackgroundAuto() == false){
 		// on a PC resizing a window with this method of accumulation (essentially single buffering)
 		// is BAD, so we clear on resize events.
 		if (nFramesSinceWindowResized < 3){
-			ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
+			ofGetCurrentRenderer()->clear();
 		} else {
 			if ( (ofGetFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glfwSwapBuffers(windowP);
 			else                                                     glFlush();
@@ -365,10 +342,10 @@ void ofAppGLFWWindow::display(void){
 		}
 	}
 	#else
-		if (bClearAuto == false){
+		if (ofGetCurrentRenderer()->getBackgroundAuto() == false){
 			// in accum mode resizing a window is BAD, so we clear on resize events.
 			if (nFramesSinceWindowResized < 3){
-				ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
+				ofGetCurrentRenderer()->clear();
 			}
 		}
 		if(bDoubleBuffered){
@@ -378,9 +355,7 @@ void ofAppGLFWWindow::display(void){
 		}
 	#endif
 
-	if(renderer){
-		renderer->finishRender();
-	}
+	ofGetCurrentRenderer()->finishRender();
 
 	nFramesSinceWindowResized++;
 
@@ -923,7 +898,8 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
-	//TODO: implement scroll events
+	rotateMouseXY(ofGetOrientation(), x, y);
+	ofNotifyMouseScrolled(x, y);
 }
 
 //------------------------------------------------------------

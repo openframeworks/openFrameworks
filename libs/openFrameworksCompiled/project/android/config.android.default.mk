@@ -33,7 +33,7 @@ include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 ARCH = android
 
 ifndef ABIS_TO_COMPILE_RELEASE
-	ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon x86
+	ABIS_TO_COMPILE_RELEASE = armv7 neon x86
 endif
 
 ifndef ABIS_TO_COMPILE_DEBUG
@@ -250,6 +250,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
@@ -426,7 +427,7 @@ PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$
 PLATFORM_AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 
 #ifeq (,$(findstring MINGW32_NT,$(shell uname)))
-ZIPWINDOWS=..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ./res/raw/$(RESFILE)
+ZIPWINDOWS=..\\..\\..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ../../res/raw/$(RESFILE)
 #endif
 
 afterplatform:$(RESFILE)
@@ -531,14 +532,14 @@ $(RESFILE): $(DATA_FILES)
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
 		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 			echo "Windows Platform. Running Zip..."; \
-			cmd //c $(ZIPWINDOWS) ./bin/data/ && exit; \
+			cmd //c $(ZIPWINDOWS) * && exit; \
 		else \
-			cd bin/data; \
 			zip -r ../../res/raw/$(RESNAME).zip *; \
-			cd ../..; \
 		fi; \
+		cd ../..; \
 	fi
 
 install:	
@@ -553,14 +554,14 @@ install:
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
 		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 			echo "Windows Platform. Running Zip..."; \
-			cmd //c $(ZIPWINDOWS) ./bin/data/ && exit; \
+			cmd //c $(ZIPWINDOWS) * && exit; \
 		else \
-			cd bin/data; \
 			zip -r ../../res/raw/$(RESNAME).zip; *; \
-			cd ../..; \
 		fi; \
+		cd ../..; \
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml

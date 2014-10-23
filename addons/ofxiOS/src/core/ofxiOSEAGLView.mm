@@ -87,12 +87,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 - (void)setup {
     
     ofNotifySetup();
-    
-    glClearColor(ofBgColorPtr()[0], 
-                 ofBgColorPtr()[1], 
-                 ofBgColorPtr()[2], 
-                 ofBgColorPtr()[3]); // clear background.
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    ofGetCurrentRenderer()->clear();
 }
 
 - (void)destroy {
@@ -176,20 +171,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     [self lockGL];
     [self startRender];
     
-    ofGLProgrammableRenderer * es2Renderer = NULL;
-    if(ofIsGLProgrammableRenderer()) {
-        es2Renderer = (ofGLProgrammableRenderer *)(ofGetCurrentRenderer().get());
-        es2Renderer->startRender();
-    }
-
-    ofViewport(ofRectangle(0, 0, ofGetWidth(), ofGetHeight()));
-    
-    float * bgPtr = ofBgColorPtr();
-    bool bClearAuto = ofbClearBg();
-    if(bClearAuto == true) {
-        glClearColor(bgPtr[0], bgPtr[1], bgPtr[2], bgPtr[3]);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
+    ofGetCurrentRenderer()->startRender();
     
     if(ofAppiOSWindow::getInstance()->isSetupScreenEnabled()) {
         ofSetupScreen();
@@ -201,9 +183,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     
     //------------------------------------------
     
-    if(es2Renderer != NULL) {
-        es2Renderer->finishRender();
-    }
+    ofGetCurrentRenderer()->finishRender();
     
     [self finishRender];
     [self unlockGL];

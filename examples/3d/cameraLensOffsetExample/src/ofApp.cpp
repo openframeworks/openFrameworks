@@ -5,7 +5,7 @@ void ofApp::setup(){
 	ofEnableSmoothing();
 	ofSetVerticalSync(true);
 	
-	video.initGrabber(320, 240);
+	video.setup(320, 240);
 	finder.setup("haarcascade_frontalface_default.xml");
 	usePreview = false;
 	
@@ -131,7 +131,7 @@ void ofApp::drawScene(bool isPreview){
 	for (float z = 0.0f; z > -40.0f; z-= 0.1f){
 		col.setHue(int(-z * 100.0f + ofGetElapsedTimef() * 10.0f) % 360);
 		ofSetColor(col);
-		ofRect(-windowWidth / 2.0f, -windowHeight / 2.0f, z, windowWidth, windowHeight);
+		ofDrawRectangle(-windowWidth / 2.0f, -windowHeight / 2.0f, z, windowWidth, windowHeight);
 	}
 	ofPopStyle();
 	
@@ -184,7 +184,7 @@ void ofApp::draw(){
 	ofNoFill();
 	for(unsigned int i = 0; i < finder.blobs.size(); i++) {
 		ofRectangle cur = finder.blobs[i].boundingRect;
-		ofRect(cur.x, cur.y, cur.width, cur.height);
+		ofDrawRectangle(cur.x, cur.y, cur.width, cur.height);
 	}
 	ofPopStyle();
 	
@@ -198,7 +198,7 @@ void ofApp::draw(){
 		
 		ofPushStyle();
 		ofSetColor(0);
-		ofRect(bottomLeft);
+		ofDrawRectangle(bottomLeft);
 		ofPopStyle();
 		
 		headTrackedCamera.begin(bottomLeft);

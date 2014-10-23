@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){	 
 	counter = 0;
-	vagRounded.loadFont("vag.ttf", 32);
+	vagRounded.load("vag.ttf", 32);
 	ofBackground(50,50,50);	
 }
 

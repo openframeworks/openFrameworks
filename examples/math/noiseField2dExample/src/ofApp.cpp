@@ -92,7 +92,7 @@ void ofApp::draw() {
         ofPushMatrix();
         ofTranslate(i, j);
 				ofSetColor(0);
-        ofLine(0, 0, ofLerp(-windSpeed, windSpeed, field.x), ofLerp(-windSpeed, windSpeed, field.y));
+        ofDrawLine(0, 0, ofLerp(-windSpeed, windSpeed, field.x), ofLerp(-windSpeed, windSpeed, field.y));
         ofPopMatrix();
       }
     }

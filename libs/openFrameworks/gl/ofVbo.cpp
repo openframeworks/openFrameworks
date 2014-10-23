@@ -31,38 +31,9 @@ bool ofVbo::supportVAOs = true;
 	#define glBindVertexArray								glBindVertexArrayFunc
 #endif
 
-static map<GLuint,int> & getIds(){
-	static map<GLuint,int> * ids = new map<GLuint,int>;
-	return *ids;
-}
-
 static map<GLuint,int> & getVAOIds(){
 	static map<GLuint,int> * ids = new map<GLuint,int>;
 	return *ids;
-}
-
-//--------------------------------------------------------------
-static void retain(GLuint id){
-	if(id==0) return;
-	if(getIds().find(id)!=getIds().end()){
-		getIds()[id]++;
-	}else{
-		getIds()[id]=1;
-	}
-}
-
-//--------------------------------------------------------------
-static void release(GLuint id){
-	if(getIds().find(id)!=getIds().end()){
-		getIds()[id]--;
-		if(getIds()[id]==0){
-			glDeleteBuffers(1, &id);
-			getIds().erase(id);
-		}
-	}else{
-		ofLogWarning("ofVbo") << "release(): something's wrong here, releasing unkown vertex buffer object id " << id;
-		glDeleteBuffers(1, &id);
-	}
 }
 
 //--------------------------------------------------------------
@@ -112,6 +83,106 @@ void ofRegenerateAllVbos(){
 #endif
 
 //--------------------------------------------------------------
+ofVbo::VertexAttribute::VertexAttribute()
+:stride(0)
+,offset(0)
+,numCoords(0)
+,location(0)
+,normalize(false){
+
+}
+
+//--------------------------------------------------------------
+bool ofVbo::VertexAttribute::isAllocated() const{
+	return buffer.isAllocated();
+}
+
+
+//--------------------------------------------------------------
+void ofVbo::VertexAttribute::allocate(){
+	buffer.allocate();
+}
+
+//--------------------------------------------------------------
+void ofVbo::VertexAttribute::bind() const{
+	buffer.bind(GL_ARRAY_BUFFER);
+}
+
+//--------------------------------------------------------------
+void ofVbo::VertexAttribute::setData(GLsizeiptr bytes, const void * data, GLenum usage){
+	buffer.setData(bytes,data,usage);
+}
+
+//--------------------------------------------------------------
+void ofVbo::VertexAttribute::unbind() const{
+	buffer.unbind(GL_ARRAY_BUFFER);
+}
+
+//--------------------------------------------------------------
+GLuint ofVbo::VertexAttribute::getId() const{
+	return buffer.getId();
+}
+
+//--------------------------------------------------------------
+void ofVbo::VertexAttribute::updateData(GLintptr offset, GLsizeiptr bytes, const void * data){
+	buffer.updateData(offset,bytes,data);
+}
+
+//--------------------------------------------------------------
+void ofVbo::VertexAttribute::enable() const{
+	bind();
+	glEnableVertexAttribArray(location);
+	glVertexAttribPointer(location, numCoords, GL_FLOAT, normalize?GL_TRUE:GL_FALSE, stride, (void*)offset);
+	unbind();
+}
+
+//--------------------------------------------------------------
+void ofVbo::VertexAttribute::disable() const{
+	glDisableVertexAttribArray(location);
+}
+
+//--------------------------------------------------------------
+ofVbo::IndexAttribute::IndexAttribute()
+{
+
+}
+
+//--------------------------------------------------------------
+bool ofVbo::IndexAttribute::isAllocated() const{
+	return buffer.isAllocated();
+}
+
+//--------------------------------------------------------------
+void ofVbo::IndexAttribute::allocate(){
+	buffer.allocate();
+}
+
+//--------------------------------------------------------------
+void ofVbo::IndexAttribute::bind() const{
+	buffer.bind(GL_ELEMENT_ARRAY_BUFFER);
+}
+
+//--------------------------------------------------------------
+void ofVbo::IndexAttribute::setData(GLsizeiptr bytes, const void * data, GLenum usage){
+	buffer.setData(bytes,data,usage);
+}
+
+//--------------------------------------------------------------
+void ofVbo::IndexAttribute::unbind() const{
+	buffer.unbind(GL_ELEMENT_ARRAY_BUFFER);
+}
+
+//--------------------------------------------------------------
+void ofVbo::IndexAttribute::updateData(GLintptr offset, GLsizeiptr bytes, const void * data){
+	buffer.updateData(offset,bytes,data);
+}
+
+//--------------------------------------------------------------
+GLuint ofVbo::IndexAttribute::getId() const{
+	return buffer.getId();
+}
+
+//--------------------------------------------------------------
 ofVbo::ofVbo(){
 	bUsingVerts = false;
 	bUsingTexCoords = false;
@@ -119,28 +190,27 @@ ofVbo::ofVbo(){
 	bUsingNormals = false;
 	bUsingIndices = false;
 
-	vertSize		= -1;
-	vertStride      = 0;
+	vertexAttribute.numCoords = 3;
+	colorAttribute.numCoords = 4;
+	normalAttribute.numCoords = 3;
+	texCoordAttribute.numCoords = 2;
 
-	vertUsage		= -1;
-	colorUsage		= -1;
-	normUsage		= -1;
-	texUsage		= -1;
+	vertexAttribute.location = ofShader::POSITION_ATTRIBUTE;
+	colorAttribute.location = ofShader::COLOR_ATTRIBUTE;
+	normalAttribute.location = ofShader::NORMAL_ATTRIBUTE;
+	texCoordAttribute.location = ofShader::TEXCOORD_ATTRIBUTE;
 
-	vertId     = 0;
-	normalId   = 0;
-	colorId    = 0;
-	texCoordId = 0;
-	indexId    = 0;
+	// tig: note that we set the 'Normalize' flag to true here, assuming that mesh normals need to be
+	// normalized while being uploaded to GPU memory.
+	// http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
+	// Normalizing the normals on the shader is probably faster, but sending non-normalized normals is
+	// more prone to lead to artifacts difficult to diagnose, especially with the built-in 3D primitives.
+	// If you need to optimise this, and you've dug this far through the code, you are most probably
+	// able to roll your own client code for binding & rendering vbos anyway...
+	normalAttribute.normalize = true;
 
 	totalVerts = 0;
 	totalIndices = 0;
-	
-	texCoordStride = sizeof(ofVec2f);
-	normalStride = sizeof(ofVec3f);
-	colorStride = sizeof(ofFloatColor);
-
-	bAllocated		= false;
 
 	vaoChanged 		= false;
 	vaoID			= 0;
@@ -154,52 +224,22 @@ ofVbo::ofVbo(const ofVbo & mom){
 	bUsingNormals = mom.bUsingNormals;
 	bUsingIndices = mom.bUsingIndices;
 
-	vertSize		= mom.vertSize;
-	vertStride      = mom.vertStride;
-	colorStride		= mom.colorStride;
-	normalStride    = mom.normalStride;
-	texCoordStride  = mom.texCoordStride;
+	vertexAttribute = mom.vertexAttribute;
+	colorAttribute = mom.colorAttribute;
+	normalAttribute = mom.normalAttribute;
+	texCoordAttribute = mom.texCoordAttribute;
+	indexAttribute = mom.indexAttribute;
+	customAttributes = mom.customAttributes;
 
-	vertUsage		= mom.vertUsage;
-	colorUsage		= mom.colorUsage;
-	normUsage		= mom.normUsage;
-	texUsage		= mom.texUsage;
+	totalVerts = mom.totalVerts;
+	totalIndices = mom.totalIndices;
+	bBound   = mom.bBound;
 
-	vertId     = mom.vertId;
-	retain(vertId);
-	normalId   = mom.normalId;
-	retain(normalId);
-	colorId    = mom.colorId;
-	retain(colorId);
-	texCoordId = mom.texCoordId;
-	retain(texCoordId);
-	indexId    = mom.indexId;
-	retain(indexId);
 	if(supportVAOs){
 		vaoID	   = mom.vaoID;
 		retainVAO(vaoID);
 		vaoChanged = mom.vaoChanged;
 	}
-
-	attributeIds = mom.attributeIds;
-	for (map<int, GLuint>::iterator it = attributeIds.begin(); it != attributeIds.end(); it++){
-		retain(it->second);
-	}
-	
-	attributeNumCoords = mom.attributeNumCoords;
-	attributeStrides = mom.attributeStrides;
-	attributeSize = mom.attributeSize;
-
-	totalVerts = mom.totalVerts;
-	totalIndices = mom.totalIndices;
-
-	texCoordStride = sizeof(ofVec2f);
-	normalStride = sizeof(ofVec3f);
-	colorStride = sizeof(ofFloatColor);
-
-	bAllocated		= mom.bAllocated;
-
-	bBound   = mom.bBound;
 }
 
 ofVbo & ofVbo::operator=(const ofVbo& mom){
@@ -211,47 +251,22 @@ ofVbo & ofVbo::operator=(const ofVbo& mom){
 	bUsingNormals = mom.bUsingNormals;
 	bUsingIndices = mom.bUsingIndices;
 
-	vertSize		= mom.vertSize;
-	vertStride      = mom.vertStride;
-	colorStride		= mom.colorStride;
-	normalStride    = mom.normalStride;
-	texCoordStride  = mom.texCoordStride;
+	vertexAttribute = mom.vertexAttribute;
+	colorAttribute = mom.colorAttribute;
+	normalAttribute = mom.normalAttribute;
+	texCoordAttribute = mom.texCoordAttribute;
+	indexAttribute = mom.indexAttribute;
+	customAttributes = mom.customAttributes;
 
-	vertUsage		= mom.vertUsage;
-	colorUsage		= mom.colorUsage;
-	normUsage		= mom.normUsage;
-	texUsage		= mom.texUsage;
+	totalVerts = mom.totalVerts;
+	totalIndices = mom.totalIndices;
+	bBound   = mom.bBound;
 
-	vertId     = mom.vertId;
-	retain(vertId);
-	normalId   = mom.normalId;
-	retain(normalId);
-	colorId    = mom.colorId;
-	retain(colorId);
-	texCoordId = mom.texCoordId;
-	retain(texCoordId);
-	indexId    = mom.indexId;
-	retain(indexId);
 	if(supportVAOs){
 		vaoID	   = mom.vaoID;
 		retainVAO(vaoID);
 		vaoChanged = mom.vaoChanged;
 	}
-
-	attributeIds = mom.attributeIds;
-	for (map<int, GLuint>::iterator it = attributeIds.begin(); it != attributeIds.end(); it++){
-		retain(it->second);
-	}
-	
-	attributeNumCoords = mom.attributeNumCoords;
-	attributeStrides = mom.attributeStrides;
-	attributeSize = mom.attributeSize;
-	
-	totalVerts = mom.totalVerts;
-	totalIndices = mom.totalIndices;
-
-	bAllocated		= mom.bAllocated;
-	bBound   = mom.bBound;
 	return *this;
 }
 
@@ -333,25 +348,21 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 #endif
 
 
-	if(vertId==0) {
-		bAllocated  = true;
+	if(!vertexAttribute.isAllocated()) {
 		bUsingVerts = true;
 		vaoChanged=true;
-		glGenBuffers(1, &(vertId));
-		retain(vertId);
+		vertexAttribute.allocate();
 		#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 			registerVbo(this);
 		#endif
 	}
 
-	vertUsage = usage;
-	vertSize = numCoords;
-	vertStride = stride==0?3*sizeof(float):stride;
+	vertexAttribute.numCoords = numCoords;
+	vertexAttribute.stride = stride==0?numCoords*sizeof(float):stride;
+	vertexAttribute.offset = 0;
 	totalVerts = total;
 	
-	glBindBuffer(GL_ARRAY_BUFFER, vertId);
-	glBufferData(GL_ARRAY_BUFFER, total * vertStride, vert0x, usage);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	vertexAttribute.setData(total * vertexAttribute.stride, vert0x, usage);
 
 }
 
@@ -362,17 +373,14 @@ void ofVbo::setColorData(const ofFloatColor * colors, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setColorData(const float * color0r, int total, int usage, int stride) {
-	if(colorId==0) {
-		glGenBuffers(1, &(colorId));
-		retain(colorId);
+	if(!colorAttribute.isAllocated()) {
+		colorAttribute.allocate();
 		enableColors();
 	}
-	colorUsage = usage;
-	colorStride = stride==0?4*sizeof(float):stride;
+	colorAttribute.stride = stride==0?4*sizeof(float):stride;
+	colorAttribute.offset = 0;
 	
-	glBindBuffer(GL_ARRAY_BUFFER, colorId);
-	glBufferData(GL_ARRAY_BUFFER, total * colorStride, color0r, usage);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	colorAttribute.setData(total * colorAttribute.stride, color0r, usage);
 }
 
 //--------------------------------------------------------------
@@ -382,17 +390,14 @@ void ofVbo::setNormalData(const ofVec3f * normals, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stride) {
-	if(normalId==0) {
-		glGenBuffers(1, &(normalId));
-		retain(normalId);
+	if(!normalAttribute.isAllocated()) {
+		normalAttribute.allocate();
 		enableNormals();
 	}
-	normUsage = usage;
-	normalStride = stride==0?3*sizeof(float):stride;
+	normalAttribute.stride = stride==0?3*sizeof(float):stride;
+	normalAttribute.offset = 0;
 	
-	glBindBuffer(GL_ARRAY_BUFFER, normalId);
-	glBufferData(GL_ARRAY_BUFFER, total * normalStride, normal0x, usage);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	normalAttribute.setData(total * normalAttribute.stride, normal0x, usage);
 }
 
 //--------------------------------------------------------------
@@ -402,50 +407,42 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int stride) {
-	if(texCoordId==0) {
-		glGenBuffers(1, &(texCoordId));
-		retain(texCoordId);
+	if(!texCoordAttribute.isAllocated()) {
+		texCoordAttribute.allocate();
 		enableTexCoords();
 	}
-	texUsage = usage;
-	texCoordStride = stride==0?2*sizeof(float):stride;
+	texCoordAttribute.stride = stride==0?2*sizeof(float):stride;
+	texCoordAttribute.offset = 0;
 	
-	glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
-	glBufferData(GL_ARRAY_BUFFER, total * texCoordStride, texCoord0x, usage);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	texCoordAttribute.setData(total * texCoordAttribute.stride, texCoord0x, usage);
 }
 
 
 //--------------------------------------------------------------
 void ofVbo::setIndexData(const ofIndexType * indices, int total, int usage){
-	if(indexId==0){
-		glGenBuffers(1, &(indexId));
-		retain(indexId);
+	if(!indexAttribute.isAllocated()){
+		indexAttribute.allocate();
 		enableIndices();
 	}
 	
 	totalIndices = total;
-	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(ofIndexType) * total, &indices[0], usage);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	indexAttribute.setData(sizeof(ofIndexType) * total, &indices[0], usage);
 }
 
 //--------------------------------------------------------------
 void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
-	if(attributeIds.find(location)==attributeIds.end()){
-		glGenBuffers(1, &(attributeIds[location]));
-		retain(attributeIds[location]);
+	if(customAttributes.find(location)==customAttributes.end()){
+		customAttributes[location].allocate();
 		vaoChanged = true;
 	}
 
-	attributeStrides[location] = stride;
-	attributeNumCoords[location] = numCoords;
-	attributeSize[location] = (stride == 0) ? numCoords * sizeof(float) : stride;
+	GLsizeiptr size = (stride == 0) ? numCoords * sizeof(float) : stride;
+	customAttributes[location].stride = size;
+	customAttributes[location].numCoords = numCoords;
+	customAttributes[location].offset = 0;
 
-	glBindBuffer(GL_ARRAY_BUFFER, attributeIds[location]);
-	glBufferData(GL_ARRAY_BUFFER, total * attributeSize[location], attrib0x, usage);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	customAttributes[location].setData(total * size, attrib0x, usage);
 }
 
 //--------------------------------------------------------------
@@ -469,10 +466,8 @@ void ofVbo::updateVertexData(const ofVec2f * verts, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::updateVertexData(const float * vert0x, int total) {
-	if(vertId!=0){
-		glBindBuffer(GL_ARRAY_BUFFER, vertId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*vertStride, vert0x);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	if(vertexAttribute.isAllocated()){
+		vertexAttribute.updateData(0, total*vertexAttribute.stride, vert0x);
 	}
 }
 
@@ -483,10 +478,8 @@ void ofVbo::updateColorData(const ofFloatColor * colors, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::updateColorData(const float * color0r, int total) {
-	if(colorId!=0) {
-		glBindBuffer(GL_ARRAY_BUFFER, colorId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*colorStride, color0r);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	if(colorAttribute.isAllocated()) {
+		colorAttribute.updateData(0, total*colorAttribute.stride, color0r);
 	}
 }
 
@@ -497,10 +490,8 @@ void ofVbo::updateNormalData(const ofVec3f * normals, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::updateNormalData(const float * normal0x, int total) {
-	if(normalId!=0) {
-		glBindBuffer(GL_ARRAY_BUFFER, normalId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*normalStride, normal0x);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	if(normalAttribute.isAllocated()) {
+		normalAttribute.updateData(0, total*normalAttribute.stride, normal0x);
 	}
 }
 
@@ -511,53 +502,47 @@ void ofVbo::updateTexCoordData(const ofVec2f * texCoords, int total) {
 
 //--------------------------------------------------------------
 void ofVbo::updateTexCoordData(const float * texCoord0x, int total) {
-	if(texCoordId!=0) {
-		glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*texCoordStride, texCoord0x);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	if(texCoordAttribute.isAllocated()) {
+		texCoordAttribute.updateData(0, total*texCoordAttribute.stride, texCoord0x);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::updateIndexData(const ofIndexType * indices, int total) {
-	if(indexId!=0) {
-		glBindBuffer(GL_ARRAY_BUFFER, indexId);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total*sizeof(ofIndexType), &indices[0]);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	if(indexAttribute.isAllocated()) {
+		indexAttribute.updateData(0, total*sizeof(ofIndexType), indices);
 	}
 }
 
 void ofVbo::updateAttributeData(int location, const float * attr0x, int total){
-	if(attributeIds.find(location)!=attributeIds.end() && attributeIds[location]!=0) {
-		glBindBuffer(GL_ARRAY_BUFFER, attributeIds[location]);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, total * attributeSize[location], attr0x);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	if(customAttributes.find(location)!=customAttributes.end() && customAttributes[location].isAllocated()) {
+		customAttributes[location].updateData(0, total*customAttributes[location].stride, attr0x);
 	}
 }
 
 void ofVbo::enableColors(){
-	if(colorId!=0 && !bUsingColors){
+	if(colorAttribute.isAllocated() && !bUsingColors){
 		bUsingColors=true;
 		vaoChanged = true;
 	}
 }
 
 void ofVbo::enableNormals(){
-	if(normalId!=0 && !bUsingNormals){
+	if(normalAttribute.isAllocated() && !bUsingNormals){
 		bUsingNormals=true;
 		vaoChanged = true;
 	}
 }
 
 void ofVbo::enableTexCoords(){
-	if(texCoordId!=0 && !bUsingTexCoords){
+	if(texCoordAttribute.isAllocated() && !bUsingTexCoords){
 		bUsingTexCoords=true;
 		vaoChanged = true;
 	}
 }
 
 void ofVbo::enableIndices(){
-	if(indexId!=0 && !bUsingIndices){
+	if(indexAttribute.isAllocated() && !bUsingIndices){
 		bUsingIndices=true;
 		vaoChanged = true;
 	}
@@ -593,7 +578,7 @@ void ofVbo::disableIndices(){
 
 //--------------------------------------------------------------
 bool ofVbo::getIsAllocated() const {
-	return bAllocated;
+	return vertexAttribute.isAllocated();
 }	
 
 //--------------------------------------------------------------
@@ -623,27 +608,134 @@ bool ofVbo::getUsingIndices() const {
 
 //--------------------------------------------------------------
 GLuint ofVbo::getVertId() const {
-	return vertId;
+	return vertexAttribute.getId();
 }
 
 //--------------------------------------------------------------
 GLuint ofVbo::getColorId() const{
-	return colorId;
+	return colorAttribute.getId();
 }
 
 //--------------------------------------------------------------
 GLuint ofVbo::getNormalId() const {
-	return normalId;
+	return normalAttribute.getId();
 }
 
 //--------------------------------------------------------------
 GLuint ofVbo::getTexCoordId() const {
-	return texCoordId;
+	return texCoordAttribute.getId();
 }
 
 //--------------------------------------------------------------
 GLuint ofVbo::getIndexId() const {
-	return indexId;
+	return indexAttribute.getId();
+}
+
+//--------------------------------------------------------------
+void ofVbo::setVertexBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset){
+	vertexAttribute.buffer = buffer;
+	vaoChanged = true;
+	bUsingVerts = true;
+	vertexAttribute.numCoords = numCoords;
+	vertexAttribute.stride = stride==0?numCoords*sizeof(float):stride;
+	vertexAttribute.offset = offset;
+	//totalVerts = total;
+	if(!vaoChecked){
+		supportVAOs = ofIsGLProgrammableRenderer();// || glewIsSupported("GL_ARB_vertex_array_object"); <- this should work but has false positives on some cards like emulation in vm's
+		vaoChecked = true;
+	}
+}
+
+//--------------------------------------------------------------
+void ofVbo::setColorBuffer(ofBufferObject & buffer, int stride, int offset){
+	colorAttribute.buffer = buffer;
+	vaoChanged = true;
+	bUsingColors = true;
+	colorAttribute.stride = stride==0?4*sizeof(float):stride;
+	colorAttribute.offset = offset;
+}
+
+//--------------------------------------------------------------
+void ofVbo::setNormalBuffer(ofBufferObject & buffer, int stride, int offset){
+	normalAttribute.buffer = buffer;
+	vaoChanged = true;
+	bUsingNormals = true;
+	normalAttribute.stride = stride==0?3*sizeof(float):stride;
+	normalAttribute.offset = offset;
+}
+
+//--------------------------------------------------------------
+void ofVbo::setTexCoordBuffer(ofBufferObject & buffer, int stride, int offset){
+	texCoordAttribute.buffer = buffer;
+	vaoChanged = true;
+	bUsingNormals = true;
+	texCoordAttribute.stride = stride==0?2*sizeof(float):stride;
+	texCoordAttribute.offset = offset;
+}
+
+//--------------------------------------------------------------
+void ofVbo::setIndexBuffer(ofBufferObject & buffer){
+	indexAttribute.buffer = buffer;
+	vaoChanged = true;
+	bUsingIndices = true;
+}
+
+//--------------------------------------------------------------
+void ofVbo::setAttributeBuffer(int location, ofBufferObject & buffer, int numCoords, int stride, int offset){
+	customAttributes[location].buffer = buffer;
+	customAttributes[location].numCoords = numCoords;
+	customAttributes[location].stride = stride;
+	customAttributes[location].offset = offset;
+}
+
+//--------------------------------------------------------------
+ofBufferObject & ofVbo::getVertexBuffer(){
+	return vertexAttribute.buffer;
+}
+
+//--------------------------------------------------------------
+ofBufferObject & ofVbo::getColorBuffer(){
+	return colorAttribute.buffer;
+}
+
+//--------------------------------------------------------------
+ofBufferObject & ofVbo::getNormalBuffer(){
+	return normalAttribute.buffer;
+}
+
+//--------------------------------------------------------------
+ofBufferObject & ofVbo::getTexCoordBuffer(){
+	return texCoordAttribute.buffer;
+}
+
+//--------------------------------------------------------------
+ofBufferObject & ofVbo::getIndexBuffer(){
+	return indexAttribute.buffer;
+}
+
+//--------------------------------------------------------------
+const ofBufferObject & ofVbo::getVertexBuffer() const{
+	return vertexAttribute.buffer;
+}
+
+//--------------------------------------------------------------
+const ofBufferObject & ofVbo::getColorBuffer() const{
+	return colorAttribute.buffer;
+}
+
+//--------------------------------------------------------------
+const ofBufferObject & ofVbo::getNormalBuffer() const{
+	return normalAttribute.buffer;
+}
+
+//--------------------------------------------------------------
+const ofBufferObject & ofVbo::getTexCoordBuffer() const{
+	return texCoordAttribute.buffer;
+}
+
+//--------------------------------------------------------------
+const ofBufferObject & ofVbo::getIndexBuffer() const{
+	return indexAttribute.buffer;
 }
 
 //--------------------------------------------------------------
@@ -665,15 +757,14 @@ void ofVbo::bind() const{
 	if(vaoChanged || !supportVAOs){
 		bool programmable = ofIsGLProgrammableRenderer();
 		if(bUsingVerts){
-			glBindBuffer(GL_ARRAY_BUFFER, vertId);
 			if(!programmable){
+				vertexAttribute.bind();
 				#ifndef TARGET_PROGRAMMABLE_GL
 				glEnableClientState(GL_VERTEX_ARRAY);
-				glVertexPointer(vertSize, GL_FLOAT, vertStride, 0);
+				glVertexPointer(vertexAttribute.numCoords, GL_FLOAT, vertexAttribute.stride, (void*)vertexAttribute.offset);
 				#endif
 			}else{
-				glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
-				glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, vertSize, GL_FLOAT, GL_FALSE, vertStride, 0);
+				vertexAttribute.enable();
 			}
 		}else if(supportVAOs){
 			if(!programmable){
@@ -681,20 +772,19 @@ void ofVbo::bind() const{
 				glDisableClientState(GL_VERTEX_ARRAY);
 				#endif
 			}else{
-				glDisableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
+				vertexAttribute.disable();
 			}
 		}
 
 		if(bUsingColors) {
-			glBindBuffer(GL_ARRAY_BUFFER, colorId);
 			if(!programmable){
+				colorAttribute.bind();
 				#ifndef TARGET_PROGRAMMABLE_GL
 				glEnableClientState(GL_COLOR_ARRAY);
-				glColorPointer(4, GL_FLOAT, colorStride, 0);
+				glColorPointer(4, GL_FLOAT, colorAttribute.stride, (void*)colorAttribute.offset);
 				#endif
 			}else{
-				glEnableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
-				glVertexAttribPointer(ofShader::COLOR_ATTRIBUTE, 4, GL_FLOAT, GL_FALSE, colorStride, 0);
+				colorAttribute.enable();
 			}
 		}else if(supportVAOs){
 			if(!programmable){
@@ -702,27 +792,19 @@ void ofVbo::bind() const{
 				glDisableClientState(GL_COLOR_ARRAY);
 				#endif
 			}else{
-				glDisableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
+				colorAttribute.disable();
 			}
 		}
 
 		if(bUsingNormals) {
-			glBindBuffer(GL_ARRAY_BUFFER, normalId);
 			if(!programmable){
+				normalAttribute.bind();
 				#ifndef TARGET_PROGRAMMABLE_GL
 				glEnableClientState(GL_NORMAL_ARRAY);
-				glNormalPointer(GL_FLOAT, normalStride, 0);
+				glNormalPointer(GL_FLOAT, normalAttribute.stride, (void*)normalAttribute.offset);
 				#endif
 			}else{
-				// tig: note that we set the 'Normalize' flag to true here, assuming that mesh normals need to be
-				// normalized while being uploaded to GPU memory.
-				// http://www.opengl.org/sdk/docs/man/xhtml/glVertexAttribPointer.xml
-				// Normalizing the normals on the shader is probably faster, but sending non-normalized normals is
-				// more prone to lead to artifacts difficult to diagnose, especially with the built-in 3D primitives.
-				// If you need to optimise this, and you've dug this far through the code, you are most probably
-				// able to roll your own client code for binding & rendering vbos anyway...
-				glEnableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
-				glVertexAttribPointer(ofShader::NORMAL_ATTRIBUTE, 3, GL_FLOAT, GL_TRUE, normalStride, 0);
+				normalAttribute.enable();
 			}
 		}else if(supportVAOs){
 			if(!programmable){
@@ -730,20 +812,19 @@ void ofVbo::bind() const{
 				glDisableClientState(GL_NORMAL_ARRAY);
 				#endif
 			}else{
-				glDisableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
+				normalAttribute.disable();
 			}
 		}
 
 		if(bUsingTexCoords) {
-			glBindBuffer(GL_ARRAY_BUFFER, texCoordId);
 			if(!programmable){
+				texCoordAttribute.bind();
 				#ifndef TARGET_PROGRAMMABLE_GL
 				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				glTexCoordPointer(2, GL_FLOAT, texCoordStride, 0);
+				glTexCoordPointer(2, GL_FLOAT, texCoordAttribute.stride, (void*)texCoordAttribute.offset);
 				#endif
 			}else{
-				glEnableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
-				glVertexAttribPointer(ofShader::TEXCOORD_ATTRIBUTE, 2, GL_FLOAT, GL_FALSE, texCoordStride, 0);
+				texCoordAttribute.enable();
 			}
 		}else if(supportVAOs){
 			if(!programmable){
@@ -751,19 +832,17 @@ void ofVbo::bind() const{
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 				#endif
 			}else{
-				glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
+				texCoordAttribute.disable();
 			}
 		}
         
         if (bUsingIndices) {
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexId);
+            indexAttribute.bind();
         }
 
-		map<int,GLuint>::const_iterator it;
-		for(it=attributeIds.begin();it!=attributeIds.end();it++){
-			glBindBuffer(GL_ARRAY_BUFFER, it->second);
-			glEnableVertexAttribArray(it->first);
-			glVertexAttribPointer(it->first, attributeNumCoords.find(it->first)->second, GL_FLOAT, GL_FALSE, attributeStrides.find(it->first)->second, 0);
+		map<int,VertexAttribute>::const_iterator it;
+		for(it=customAttributes.begin();it!=customAttributes.end();it++){
+			it->second.enable();
 			if(ofIsGLProgrammableRenderer()){
 				bUsingVerts |= it->first == ofShader::POSITION_ATTRIBUTE;
 				bUsingColors |= it->first == ofShader::COLOR_ATTRIBUTE;
@@ -787,58 +866,28 @@ void ofVbo::bind() const{
 void ofVbo::unbind() const{
 	if(supportVAOs){
 		glBindVertexArray(0);
-		if(!ofIsGLProgrammableRenderer()){
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			if(bUsingColors){
-				#ifndef TARGET_PROGRAMMABLE_GL
-				glDisableClientState(GL_COLOR_ARRAY);
-				#endif
-			}
-			if(bUsingNormals){
-				#ifndef TARGET_PROGRAMMABLE_GL
-				glDisableClientState(GL_NORMAL_ARRAY);
-				#endif
-			}
-			if(bUsingTexCoords){
-				#ifndef TARGET_PROGRAMMABLE_GL
-				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-				#endif
-			}
+	}
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	if(!ofIsGLProgrammableRenderer()){
+		#ifndef TARGET_PROGRAMMABLE_GL
+		if(bUsingColors){
+			glDisableClientState(GL_COLOR_ARRAY);
 		}
-	}else{
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		if(ofIsGLProgrammableRenderer()){
-			if(bUsingColors){
-				glDisableVertexAttribArray(ofShader::COLOR_ATTRIBUTE);
-			}
-			if(bUsingNormals){
-				glDisableVertexAttribArray(ofShader::NORMAL_ATTRIBUTE);
-			}
-			if(bUsingTexCoords){
-				glDisableVertexAttribArray(ofShader::TEXCOORD_ATTRIBUTE);
-			}
-		}else{
-			#ifndef TARGET_PROGRAMMABLE_GL
-			if(bUsingColors){
-				glDisableClientState(GL_COLOR_ARRAY);
-			}
-			if(bUsingNormals){
-				glDisableClientState(GL_NORMAL_ARRAY);
-			}
-			if(bUsingTexCoords){
-				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			}
-			#endif
+		if(bUsingNormals){
+			glDisableClientState(GL_NORMAL_ARRAY);
 		}
+		if(bUsingTexCoords){
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		}
+		#endif
 	}
 	bBound   = false;
 }
 
 //--------------------------------------------------------------
 void ofVbo::draw(int drawMode, int first, int total) const{
-	if(bAllocated) {
+	if(vertexAttribute.isAllocated()) {
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
 		glDrawArrays(drawMode, first, total);
@@ -848,7 +897,7 @@ void ofVbo::draw(int drawMode, int first, int total) const{
 
 //--------------------------------------------------------------
 void ofVbo::drawElements(int drawMode, int amt) const{
-	if(bAllocated){
+	if(vertexAttribute.isAllocated()){
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
 #ifdef TARGET_OPENGLES
@@ -866,7 +915,7 @@ void ofVbo::drawElements(int drawMode, int amt) const{
 // amounts of geometry simultaneously without clogging the memory bus;
 // as discussed in: http://poniesandlight.co.uk/code/ofxVboMeshInstanced/
 void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) const{
-	if(bAllocated) {
+	if(vertexAttribute.isAllocated()) {
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
 #ifdef TARGET_OPENGLES
@@ -884,7 +933,7 @@ void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) con
 
 //--------------------------------------------------------------
 void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) const{
-	if(bAllocated){
+	if(vertexAttribute.isAllocated()){
 		bool wasBinded = bBound;
 		if(!wasBinded) bind();
 #ifdef TARGET_OPENGLES
@@ -912,7 +961,6 @@ void ofVbo::clear(){
 		releaseVAO(vaoID);
 		vaoID=0;
 	}
-	bAllocated		= false;
 	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 		unregisterVbo(this);
 	#endif
@@ -921,55 +969,41 @@ void ofVbo::clear(){
 
 //--------------------------------------------------------------
 void ofVbo::clearVertices(){
-	if(vertId!=0){
-		release(vertId);
-		vertId = 0;
+	if(vertexAttribute.isAllocated()){
+		vertexAttribute = VertexAttribute();
 		bUsingVerts = false;
 		totalVerts = 0;
-		vertSize = -1;
-		vertStride      = 0;
-		vertUsage		= -1;
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::clearNormals(){
-	if(normalId!=0){
-		release(normalId);
-		normalId = 0;
+	if(normalAttribute.isAllocated()){
+		normalAttribute = VertexAttribute();
 		bUsingNormals = false;
-		normUsage		= -1;
-		normalStride = sizeof(ofVec3f);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::clearColors(){
-	if(colorId!=0){
-		release(colorId);
-		colorId = 0;
+	if(colorAttribute.isAllocated()){
+		colorAttribute = VertexAttribute();
 		bUsingColors = false;
-		colorUsage		= -1;
-		colorStride = sizeof(ofFloatColor);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::clearTexCoords(){
-	if(texCoordId!=0){
-		release(texCoordId);
-		texCoordId = 0;
+	if(texCoordAttribute.isAllocated()){
+		texCoordAttribute = VertexAttribute();
 		bUsingTexCoords = false;
-		texUsage		= -1;
-		texCoordStride = sizeof(ofVec2f);
 	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::clearIndices(){
-	if(indexId!=0){
-		release(indexId);
-		indexId = 0;
+	if(indexAttribute.isAllocated()){
+		indexAttribute = IndexAttribute();
 		bUsingIndices = false;
 		totalIndices = 0;
 	}

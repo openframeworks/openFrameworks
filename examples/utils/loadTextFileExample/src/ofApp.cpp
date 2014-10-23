@@ -58,7 +58,7 @@ void ofApp::draw() {
     
     // draw the line
     ofSetColor(0);
-    ofRect(x, y, strWidth, 15);
+    ofDrawRectangle(x, y, strWidth, 15);
     ofSetColor(255);
     ofDrawBitmapString(typedLine, x+4, y+11);
     

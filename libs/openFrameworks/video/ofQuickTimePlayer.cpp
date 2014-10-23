@@ -141,17 +141,12 @@ ofQuickTimePlayer::~ofQuickTimePlayer(){
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofQuickTimePlayer::getPixels(){
-	return pixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-ofPixels& ofQuickTimePlayer::getPixelsRef(){
+ofPixels& ofQuickTimePlayer::getPixels(){
 	return pixels;
 }
 
 //---------------------------------------------------------------------------
-const ofPixels& ofQuickTimePlayer::getPixelsRef() const {
+const ofPixels& ofQuickTimePlayer::getPixels() const {
 	return pixels;
 }
 
@@ -275,7 +270,7 @@ void ofQuickTimePlayer::createImgMemAndGWorld(){
 
 
 //---------------------------------------------------------------------------
-bool ofQuickTimePlayer::loadMovie(string name){
+bool ofQuickTimePlayer::load(string name){
 
 
 	//--------------------------------------

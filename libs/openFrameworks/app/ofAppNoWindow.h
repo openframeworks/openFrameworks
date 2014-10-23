@@ -35,6 +35,8 @@ class ofNoopRenderer: public ofBaseRenderer{
 	static const string TYPE;
 	virtual const string & getType(){return TYPE;}
 
+	virtual void startRender(){}
+	virtual void finishRender(){}
 	virtual void update(){}
 
 	virtual void draw(const ofPolyline & poly) const{}
@@ -127,8 +129,9 @@ class ofNoopRenderer: public ofBaseRenderer{
 	virtual void setHexColor( int hexColor ){}; // hex, like web 0xFF0033;
 
 	// bg color
-	virtual ofFloatColor & getBgColor(){return bgColor;}
-	virtual bool bClearBg(){
+	virtual ofColor getBackgroundColor(){return ofColor(200);}
+	virtual void setBackgroundColor(const ofColor & color){}
+	virtual bool getBackgroundAuto(){
 		return true;
 	}
 	virtual void background(const ofColor & c){};
@@ -138,6 +141,7 @@ class ofNoopRenderer: public ofBaseRenderer{
 
 	virtual void setBackgroundAuto(bool bManual){};		// default is true
 
+	virtual void clear(){};
 	virtual void clear(float r, float g, float b, float a=0){};
 	virtual void clear(float brightness, float a=0){};
 	virtual void clearAlpha(){};
@@ -154,7 +158,5 @@ class ofNoopRenderer: public ofBaseRenderer{
 
 	// returns true if the renderer can render curves without decomposing them
 	virtual bool rendersPathPrimitives(){return true;}
-private:
-	ofFloatColor bgColor;
 };
 

@@ -17,11 +17,16 @@ CORE
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball
 	/ ofEasyCam: disables mouse events when moving ofxGui or other higher priority events
+	/ ofDrawGrid: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
+	/ ofDrawGridPlane: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
+	/ ofCamera: fix calculations on first frame or before first call to begin
 	
 ### gl
 	+ Programmable lights and materials
 	+ New area light type on programmable renderer
 	+ Separate model matrix
+	+ ofBufferObject wraps GL buffers for easy use, see compute shader
+	  and pixel buffer examples for usage
 	+ ofGetCurrentNormalMatrix
 	+ ofSetOpenGL(ES)Version, allows to set any specific GL version
 	+ ofTexture::enableMipmap() auto-generate mipmaps on load - for textures which support
@@ -38,13 +43,42 @@ CORE
 	- ofRestoreMinMagFilters() : deprecated	  
 	+ ofShader: report offending lines on compiling errors
 	+ ofGLUtils: better support for half float types
+	/ getTextureReference -> getTexture
 
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
 	+ ofDrawBitmapString: can draw any type not only strings
+	/ ofImage: can load image via https
+	/ getPixelsRef() deprecated and getPixels() now returns ofPixels
+	  temporarily ofPixels auto casts to unsigned char* so old code
+	  is still compatible
+	/ ofPixels::getPixels() -> getData()
+	+ ofPixels support for YUV formats, the prefered allocation method
+	  changes from channels to ofPixelFormat like:
+		pix.allocate(w,h,OF_PIXELS_RGB)
+	/ fixed ofSetBackgroundColor
+	/ added ofGetBackgroundColor and ofGetBackgroundAuto
+	- removed ofbBGColor and ofbBGClear
+	/ ofImage::loadImage() -> load()
+	/ ofImage::saveImage() -> save()
+	+ ofBeginSaveScreenAsSVG
+
+### utils
+	/ better timming in fps calculation
+	+ ofFpsCounter allows to easily meassure the fps of any element
+	+ ofTimer allows to create a precise periodic waitable timer
+	+ ofThreadChannel: thread synchronization primitive to make it
+	  easier to work with threads avoiding the need for mutexes in
+	  most cases. see example/utils/threadChannelExample
+	/ ofBuffer::getBinaryBuffer() -> getData()
 
 ### video
 	/ gstreamer: fix memory leaks when closing a video element
+	+ gstreamer: support for YUV formats when using the programmable renderer
+	  using OF_PIXELS_NATIVE as pixel format will choose the fastest format
+	/ gstreamer: faster reload by default and optional asynchronous load
+	/ ofVideoPlayer::loadMovie() -> load()
+	/ ofVideoGrabber::initGrabber() -> setup()
 
 PLATFORM SPECIFIC
 -----------------
@@ -56,6 +90,18 @@ PLATFORM SPECIFIC
 	+ xcode 6.0 updates
 	+ deployment target moved up to iOS 5.1.1
 
+### android
+	+ fix camera stretching artifacts experienced on some devices when using 16:9 
+	  aspect ratios
+	+ remove support for arm5 since no devices seem to have that cpu anymore and it
+	  was problematic with certain libraries
+
+### linux and arm linux
+	+ opencv libs are now installed in the system, rerun install_dependencies if you
+	  are having problems compiling projects that use opencv
+
+### windows
+	+ activated high precission timming to fix inaccurate fps calculations
 
 OF 0.8.4
 ========

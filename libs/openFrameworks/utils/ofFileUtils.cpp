@@ -114,7 +114,7 @@ void ofBuffer::allocate(long _size){
 }
 
 //--------------------------------------------------
-char *ofBuffer::getBinaryBuffer(){
+char * ofBuffer::getData(){
 	if(buffer.empty()){
 		return NULL;
 	}
@@ -122,11 +122,21 @@ char *ofBuffer::getBinaryBuffer(){
 }
 
 //--------------------------------------------------
-const char *ofBuffer::getBinaryBuffer() const {
+const char * ofBuffer::getData() const{
 	if(buffer.empty()){
-		return "";
+		return NULL;
 	}
 	return &buffer[0];
+}
+
+//--------------------------------------------------
+char *ofBuffer::getBinaryBuffer(){
+	return getData();
+}
+
+//--------------------------------------------------
+const char *ofBuffer::getBinaryBuffer() const {
+	return getData();
 }
 
 //--------------------------------------------------
@@ -362,13 +372,15 @@ bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary){
 using namespace Poco;
 
 //------------------------------------------------------------------------------------------------------------
-ofFile::ofFile(){
-	mode = Reference;
-	binary = false;
+ofFile::ofFile()
+:mode(Reference)
+,binary(false){
 }
 
 //------------------------------------------------------------------------------------------------------------
-ofFile::ofFile(string path, Mode mode, bool binary){
+ofFile::ofFile(string path, Mode mode, bool binary)
+:mode(Reference)
+,binary(false){
 	open(path, mode, binary);
 }
 
@@ -378,7 +390,9 @@ ofFile::~ofFile(){
 }
 
 //-------------------------------------------------------------------------------------------------------------
-ofFile::ofFile(const ofFile & mom){
+ofFile::ofFile(const ofFile & mom)
+:mode(Reference)
+,binary(false){
 	copyFrom(mom);
 }
 
@@ -416,27 +430,27 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 			break;
 	}
 	switch(_mode){
-	 case Reference:
-		 return true;
-		 break;
+		case Reference:
+			return true;
+			break;
 
-	 case ReadOnly:
-		 if(exists()){
+		case ReadOnly:
+			if(exists()){
 			 fstream::open(path().c_str(), ios::in | binary_mode);
-		 }
-		 break;
+			}
+			break;
 
-	 case WriteOnly:
-		 fstream::open(path().c_str(), ios::out | binary_mode);
-		 break;
+		case WriteOnly:
+			fstream::open(path().c_str(), ios::out | binary_mode);
+			break;
 
 		case ReadWrite:
-		 fstream::open(path().c_str(), ios_base::in | ios_base::out | binary_mode);
-		 break;
+			fstream::open(path().c_str(), ios_base::in | ios_base::out | binary_mode);
+			break;
 
 		case Append:
-		 fstream::open(path().c_str(), ios::out | ios::app | binary_mode);
-		 break;
+			fstream::open(path().c_str(), ios::out | ios::app | binary_mode);
+			break;
 	}
 	return fstream::good();
 }

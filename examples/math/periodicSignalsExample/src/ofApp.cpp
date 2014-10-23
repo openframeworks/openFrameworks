@@ -77,7 +77,7 @@ void ofApp::draw(){
 
 	ofSetColor(170);
 	for(int i=0;i<(ofGetWidth()-rightMargin)/speed.getValue();i++){
-		ofLine(i*speed.getValue(),120,i*speed.getValue(),ofGetHeight());
+		ofDrawLine(i*speed.getValue(),120,i*speed.getValue(),ofGetHeight());
 		if(showPos)
 			ofDrawBitmapString(ofToString(i)+"s",i*speed.getValue(),ofGetHeight()-20);
 		else
@@ -85,7 +85,7 @@ void ofApp::draw(){
 	}
 
 	ofSetColor(20);
-	ofLine(ofGetWidth()-rightMargin,0,ofGetWidth()-rightMargin,ofGetHeight());
+	ofDrawLine(ofGetWidth()-rightMargin,0,ofGetWidth()-rightMargin,ofGetHeight());
 
 	for(int i=0;i<(int)trail.size();i++){
 		ofEnableSmoothing();
@@ -94,10 +94,10 @@ void ofApp::draw(){
 
 
 		ofDisableSmoothing();
-		ofLine(0,60*(i+2),ofGetWidth(),60*(i+2));
+		ofDrawLine(0,60*(i+2),ofGetWidth(),60*(i+2));
 
 		float rectY = 60*(i+2);
-		ofRect(ofGetWidth()-rightMargin+10,rectY,10,y[i]-rectY);
+		ofDrawRectangle(ofGetWidth()-rightMargin+10,rectY,10,y[i]-rectY);
 	}
 
 	ofDrawBitmapString("constant",ofGetWidth()-160,60*2-4);

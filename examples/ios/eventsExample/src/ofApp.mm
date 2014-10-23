@@ -7,7 +7,7 @@ void ofApp::setup(){
 	
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 	
-	vagRounded.loadFont("vag.ttf", 18);
+	vagRounded.load("vag.ttf", 18);
 	ofBackground(50,50,50);	
 }
 

@@ -16,7 +16,7 @@ void ofApp::setup(){
 	lutImg.allocate(640, 480, OF_IMAGE_COLOR);
 	
 	vidGrabber.setVerbose(true);
-	vidGrabber.initGrabber(640,480);
+	vidGrabber.setup(640,480);
 
 	
 	thumbPos.set(lutImg.getWidth()*0.5f-80, -lutImg.getHeight()*0.5f - 60, 0);
@@ -46,7 +46,7 @@ void ofApp::draw(){
 	if(doLUT){
 		
 		lutImg.draw(lutPos.x, lutPos.y);
-		ofRect(thumbPos.x-3, thumbPos.y-3, 166, 126);
+		ofDrawRectangle(thumbPos.x-3, thumbPos.y-3, 166, 126);
 		vidGrabber.draw(thumbPos.x, thumbPos.y, 160, 120);
 		
 		ofDrawBitmapString(dir.getName(dirLoadIndex), lutPos.x, -lutPos.y+50);

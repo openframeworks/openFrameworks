@@ -220,7 +220,7 @@ template<typename PixelType>
 void ofPixels_<PixelType>::copyFrom(const ofPixels_<PixelType> & mom){
 	if(mom.isAllocated()) {
 		allocate(mom.getWidth(), mom.getHeight(), mom.getPixelFormat());
-		memcpy(pixels, mom.getPixels(), mom.size() * sizeof(PixelType));
+		memcpy(pixels, mom.getData(), mom.size() * sizeof(PixelType));
 	}
 }
 
@@ -342,13 +342,33 @@ void ofPixels_<PixelType>::swap(ofPixels_<PixelType> & pix){
 }
 
 template<typename PixelType>
+ofPixels_<PixelType>::operator PixelType*(){
+	return pixels;
+}
+
+template<typename PixelType>
+ofPixels_<PixelType>::operator const PixelType*(){
+	return pixels;
+}
+
+template<typename PixelType>
 PixelType * ofPixels_<PixelType>::getPixels(){
-	return &pixels[0];
+	return pixels;
 }
 
 template<typename PixelType>
 const PixelType * ofPixels_<PixelType>::getPixels() const{
-	return &pixels[0];
+	return pixels;
+}
+
+template<typename PixelType>
+PixelType * ofPixels_<PixelType>::getData(){
+	return pixels;
+}
+
+template<typename PixelType>
+const PixelType * ofPixels_<PixelType>::getData() const{
+	return pixels;
 }
 
 template<typename PixelType>
@@ -991,7 +1011,7 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 
 	if(rotation == 1){
 		PixelType * srcPixels = pixels;
-		PixelType * startPixels = dst.getPixels() + (strideDst - channels);
+		PixelType * startPixels = dst.getData() + (strideDst - channels);
 		for (int i = 0; i < height; ++i, --startPixels){
 			PixelType * dstPixels = startPixels;
 			for (int j = 0; j < width; ++j){
@@ -1141,7 +1161,7 @@ bool ofPixels_<PixelType>::resize(int dstWidth, int dstHeight, ofInterpolationMe
 	if(!resizeTo(dstPixels,interpMethod)) return false;
 
 	delete [] pixels;
-	pixels = dstPixels.getPixels();
+	pixels = dstPixels.getData();
 	width  = dstWidth;
 	height = dstHeight;
 	dstPixels.pixelsOwner = false;
@@ -1217,7 +1237,7 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 	int bytesPerPixel = getBytesPerPixel();
 
 
-	PixelType * dstPixels = dst.getPixels();
+	PixelType * dstPixels = dst.getData();
 
 	switch (interpMethod){
 
@@ -1316,8 +1336,8 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo
 
 	int bytesToCopyPerRow = (xTo + getWidth()<=dst.getWidth() ? getWidth() : dst.getWidth()-xTo) * getBytesPerPixel();
 	int columnsToCopy = yTo + getHeight() <= dst.getHeight() ? getHeight() : dst.getHeight()-yTo;
-	PixelType * dstPix = dst.getPixels() + ((xTo + yTo*dst.getWidth())*dst.getBytesPerPixel());
-	const PixelType * srcPix = getPixels();
+	PixelType * dstPix = dst.getData() + ((xTo + yTo*dst.getWidth())*dst.getBytesPerPixel());
+	const PixelType * srcPix = getData();
 	int srcStride = getWidth()*getBytesPerPixel();
 	int dstStride = dst.getWidth()*dst.getBytesPerPixel();
 

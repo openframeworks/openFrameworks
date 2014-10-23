@@ -66,24 +66,24 @@ ofPixelFormat ofVideoPlayer::getPixelFormat() const{
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::loadMovie(string name){
+bool ofVideoPlayer::load(string name){
 	if( !player ){
 		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
-	bool bOk = player->loadMovie(name);
+	bool bOk = player->load(name);
 	width	 = player->getWidth();
 	height	 = player->getHeight();
 
 	if( bOk){
         moviePath = name;
         if(bUseTexture){
-        	if(player->getTexture()==NULL){
+        	if(player->getTexturePtr()==NULL){
 				if(width!=0 && height!=0) {
-					tex.resize(max(player->getPixelsRef().getNumPlanes(),1));
-					for(int i=0;i<player->getPixelsRef().getNumPlanes();i++){
-						ofPixels plane = player->getPixelsRef().getPlane(i);
+					tex.resize(max(player->getPixels().getNumPlanes(),1));
+					for(int i=0;i<player->getPixels().getNumPlanes();i++){
+						ofPixels plane = player->getPixels().getPlane(i);
 						tex[i].allocate(plane);
 						if(ofGetGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
 							tex[i].setRGToRGBASwizzles(true);
@@ -91,7 +91,7 @@ bool ofVideoPlayer::loadMovie(string name){
 					}
 				}
         	}else{
-        		playerTex = player->getTexture();
+        		playerTex = player->getTexturePtr();
         	}
         }
     }
@@ -100,46 +100,61 @@ bool ofVideoPlayer::loadMovie(string name){
 }
 
 //---------------------------------------------------------------------------
+bool ofVideoPlayer::loadMovie(string name){
+	return load(name);
+}
+
+//---------------------------------------------------------------------------
 string ofVideoPlayer::getMoviePath() const{
     return moviePath;	
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofVideoPlayer::getPixels(){
-	if( player ){
-		return player->getPixels();
-	}
-	return NULL;	
+ofPixels & ofVideoPlayer::getPixels(){
+	return getPlayer()->getPixels();
+}
+
+//---------------------------------------------------------------------------
+const ofPixels&	ofVideoPlayer::getPixels() const{
+	return getPlayer()->getPixels();
 }
 
 //---------------------------------------------------------------------------
 ofPixels& ofVideoPlayer::getPixelsRef(){
-	return player->getPixelsRef();
+	return getPlayer()->getPixels();
 }
 
 //---------------------------------------------------------------------------
 const ofPixels& ofVideoPlayer::getPixelsRef() const{
-	return player->getPixelsRef();
+	return getPlayer()->getPixels();
 }
 
 //---------------------------------------------------------------------------
-//for getting a reference to the texture
-ofTexture & ofVideoPlayer::getTextureReference(){
+ofTexture & ofVideoPlayer::getTexture(){
 	if(playerTex == NULL){
 		return tex[0];
-	}
-	else{
+	}else{
 		return *playerTex;
 	}
 }
 
-const ofTexture & ofVideoPlayer::getTextureReference() const{
+//---------------------------------------------------------------------------
+const ofTexture & ofVideoPlayer::getTexture() const{
 	if(playerTex == NULL){
 		return tex[0];
-	}
-	else{
+	}else{
 		return *playerTex;
 	}
+}
+
+//---------------------------------------------------------------------------
+ofTexture & ofVideoPlayer::getTextureReference(){
+	return getTexture();
+}
+
+//---------------------------------------------------------------------------
+const ofTexture & ofVideoPlayer::getTextureReference() const{
+	return getTexture();
 }
 
 //---------------------------------------------------------------------------
@@ -179,15 +194,15 @@ void ofVideoPlayer::update(){
 		
 		if( bUseTexture && player->isFrameNew() ) {
 			
-			playerTex = player->getTexture();
+			playerTex = player->getTexturePtr();
 			
 			if(playerTex == NULL){
-				if(int(tex.size())!=player->getPixelsRef().getNumPlanes()){
-					tex.resize(max(player->getPixelsRef().getNumPlanes(),1));
+				if(int(tex.size())!=player->getPixels().getNumPlanes()){
+					tex.resize(max(player->getPixels().getNumPlanes(),1));
 				}
 				if(player->getWidth() != 0 && player->getHeight() != 0) {
-					for(int i=0;i<player->getPixelsRef().getNumPlanes();i++){
-						ofPixels plane = player->getPixelsRef().getPlane(i);
+					for(int i=0;i<player->getPixels().getNumPlanes();i++){
+						ofPixels plane = player->getPixels().getPlane(i);
 						bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 						if(bDiffPixFormat || !tex[i].isAllocated() || tex[i].getWidth() != plane.getWidth() || tex[i].getHeight() != plane.getHeight()){
 							tex[i].allocate(plane);
@@ -352,10 +367,10 @@ void ofVideoPlayer::setPaused(bool _bPause){
 //------------------------------------
 void ofVideoPlayer::setUseTexture(bool bUse){
 	bUseTexture = bUse;
-	if(bUse && player && !player->getTexture() && getWidth()!=0 && getHeight()!=0){
-		for(int i=0;i<player->getPixelsRef().getNumPlanes();i++){
-			ofPixels plane = player->getPixelsRef().getPlane(i);
-			bool bDiffPixFormat = ( tex[i].bAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
+	if(bUse && player && !player->getTexturePtr() && getWidth()!=0 && getHeight()!=0){
+		for(int i=0;i<player->getPixels().getNumPlanes();i++){
+			ofPixels plane = player->getPixels().getPlane(i);
+			bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 			if(!tex[i].isAllocated() || bDiffPixFormat){
 				tex[i].allocate(plane);
 			}
@@ -373,17 +388,17 @@ bool ofVideoPlayer::isUsingTexture() const{
 
 //----------------------------------------------------------
 void ofVideoPlayer::setAnchorPercent(float xPct, float yPct){
-	getTextureReference().setAnchorPercent(xPct, yPct);
+	getTexture().setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
 void ofVideoPlayer::setAnchorPoint(float x, float y){
-	getTextureReference().setAnchorPoint(x, y);
+	getTexture().setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------
 void ofVideoPlayer::resetAnchor(){
-	getTextureReference().resetAnchor();
+	getTexture().resetAnchor();
 }
 
 //------------------------------------
@@ -457,7 +472,7 @@ bool ofVideoPlayer::isPlaying() const{
 
 //----------------------------------------------------------
 bool ofVideoPlayer::isInitialized() const{
-	return player->isInitialized() && (!bUseTexture || tex[0].isAllocated() || player->getTexture());
+	return player->isInitialized() && (!bUseTexture || tex[0].isAllocated() || player->getTexturePtr());
 }
 
 

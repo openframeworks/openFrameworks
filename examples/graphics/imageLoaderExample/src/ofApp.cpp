@@ -2,16 +2,16 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	bikers.loadImage("images/bikers.jpg");
-	gears.loadImage("images/gears.gif");
-	tdf.loadImage("images/tdf_1972_poster.jpg");
+	bikers.load("images/bikers.jpg");
+	gears.load("images/gears.gif");
+	tdf.load("images/tdf_1972_poster.jpg");
 
-	tdfSmall.loadImage("images/tdf_1972_poster.jpg");
+	tdfSmall.load("images/tdf_1972_poster.jpg");
 	tdfSmall.resize(tdfSmall.width / 4, tdfSmall.height / 4);
 	tdfSmall.setImageType(OF_IMAGE_GRAYSCALE);
 
-	transparency.loadImage("images/transparency.png");
-	bikeIcon.loadImage("images/bike_icon.png");
+	transparency.load("images/transparency.png");
+	bikeIcon.load("images/bike_icon.png");
 	bikeIcon.setImageType(OF_IMAGE_GRAYSCALE);
 }
 
@@ -53,7 +53,7 @@ void ofApp::draw(){
 	
 	// same as above, but this time
 	// use the raw data directly with getPixels()
-	unsigned char* pixels = bikeIcon.getPixels();
+	ofPixels & pixels = bikeIcon.getPixels();
 	ofSetColor(0, 0, 255);
 	for(int y = 0; y < h; y++) {
 		for(int x = 0; x < w; x++) {

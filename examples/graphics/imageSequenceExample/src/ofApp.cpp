@@ -37,7 +37,7 @@ void ofApp::setup() {
             // add the image to the vector
             string filePath = dir.getPath(i);
             images.push_back(ofImage());
-            images.back().loadImage(filePath);
+            images.back().load(filePath);
             
         }
         
@@ -108,7 +108,7 @@ void ofApp::draw() {
     
     // how fast is the app running and some other info
     ofSetColor(50);
-    ofRect(0, 0, 200, 200);
+    ofDrawRectangle(0, 0, 200, 200);
     ofSetColor(200);
     string info;
     info += ofToString(frameIndex)+" sequence index\n";

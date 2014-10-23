@@ -29,7 +29,7 @@ void ofApp::draw(){
 	}	
 	
 	// draw the FPS
-	ofRect(0,ofGetHeight()-20,30,20);
+	ofDrawRectangle(0,ofGetHeight()-20,30,20);
 
 	ofSetColor(0);
 	ofDrawBitmapString(ofToString(ofGetFrameRate(),0),5,ofGetHeight()-5);

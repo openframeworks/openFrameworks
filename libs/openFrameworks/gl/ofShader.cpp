@@ -7,6 +7,11 @@
 #include "ofTexture.h"
 #include "ofMatrix4x4.h"
 #include "ofMatrix3x3.h"
+#include "ofVec2f.h"
+#include "ofVec3f.h"
+#include "ofVec4f.h"
+#include "ofParameterGroup.h"
+#include "ofParameter.h"
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
@@ -338,7 +343,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
-		ofLog(logLevel, "ofShader", (nameForType(type) + " shader reports:\n" + infoBuffer).c_str());
+		ofLog(logLevel, "ofShader: %s shader reports:\n%s", nameForType(type).c_str(), infoBuffer);
 		if (shaderSource.find(type) != shaderSource.end()) {
 			// The following regexp should match shader compiler error messages by Nvidia and ATI.
 			// Unfortunately, each vendor's driver formats error messages slightly different.
@@ -373,9 +378,8 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetProgramInfoLog(program, infoLength, &infoLength, infoBuffer);
 		string msg = "ofShader: program reports:\n";
+#ifdef TARGET_RASPBERRYPI
 		if (shaderSource.find(GL_FRAGMENT_SHADER) != shaderSource.end()) {
-			// The following regexp should match shader compiler error messages by Nvidia and ATI.
-			// Unfortunately, each vendor's driver formats error messages slightly different.
 			Poco::RegularExpression re(",.line.([^\\)]*)");
 			Poco::RegularExpression::MatchVec matches;
 			string infoString = (infoBuffer != NULL) ? string(infoBuffer): "";
@@ -395,6 +399,7 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 				ofLogError("ofShader") << msg.str();
 			}
 		}
+#endif
 		ofLog(OF_LOG_ERROR, msg + infoBuffer);
 		delete [] infoBuffer;
 	}
@@ -516,9 +521,16 @@ void ofShader::end()  const{
 	}
 }
 
+#ifndef TARGET_OPENGLES
+//--------------------------------------------------------------
+void ofShader::dispatchCompute(GLuint x, GLuint y, GLuint z) const{
+	glDispatchCompute(x,y,z);
+}
+#endif
+
 //--------------------------------------------------------------
 void ofShader::setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation)  const{
-	setUniformTexture(name, img.getTextureReference(), textureLocation);
+	setUniformTexture(name, img.getTexture(), textureLocation);
 }
 
 //--------------------------------------------------------------
@@ -618,6 +630,22 @@ void ofShader::setUniform4f(const string & name, float v1, float v2, float v3, f
 	}
 }
 
+
+//--------------------------------------------------------------
+void ofShader::setUniform2f(const string & name, const ofVec2f & v) const{
+	setUniform2f(name,v.x,v.y);
+}
+
+//--------------------------------------------------------------
+void ofShader::setUniform3f(const string & name, const ofVec3f & v) const{
+	setUniform3f(name,v.x,v.y,v.z);
+}
+
+//--------------------------------------------------------------
+void ofShader::setUniform4f(const string & name, const ofVec4f & v) const{
+	setUniform4f(name,v.x,v.y,v.z,v.w);
+}
+
 //--------------------------------------------------------------
 void ofShader::setUniform1iv(const string & name, const int* v, int count)  const{
 	if(bLoaded) {
@@ -679,6 +707,25 @@ void ofShader::setUniform4fv(const string & name, const float* v, int count)  co
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
 		if (loc != -1) glUniform4fv(loc, count, v);
+	}
+}
+
+//--------------------------------------------------------------
+void ofShader::setUniforms(const ofParameterGroup & parameters) const{
+	for(int i=0;i<parameters.size();i++){
+		if(parameters[i].type()==typeid(ofParameter<int>).name()){
+			setUniform1i(parameters[i].getEscapedName(),parameters[i].cast<int>());
+		}else if(parameters[i].type()==typeid(ofParameter<float>).name()){
+			setUniform1f(parameters[i].getEscapedName(),parameters[i].cast<float>());
+		}else if(parameters[i].type()==typeid(ofParameter<ofVec2f>).name()){
+			setUniform2f(parameters[i].getEscapedName(),parameters[i].cast<ofVec2f>());
+		}else if(parameters[i].type()==typeid(ofParameter<ofVec3f>).name()){
+			setUniform3f(parameters[i].getEscapedName(),parameters[i].cast<ofVec3f>());
+		}else if(parameters[i].type()==typeid(ofParameter<ofVec4f>).name()){
+			setUniform4f(parameters[i].getEscapedName(),parameters[i].cast<ofVec4f>());
+		}else if(parameters[i].type()==typeid(ofParameterGroup).name()){
+			setUniforms((ofParameterGroup&)parameters[i]);
+		}
 	}
 }
 	

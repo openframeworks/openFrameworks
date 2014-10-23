@@ -443,110 +443,88 @@ ofColor ofxKinect::getColorAt(const ofPoint & p)  const{
 	return getColorAt(p.x, p.y);
 }
 
-//---------------------------------------------------------------------------
-unsigned char * ofxKinect::getPixels() {
-	return videoPixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-unsigned char * ofxKinect::getDepthPixels() {
-	return depthPixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-unsigned short * ofxKinect::getRawDepthPixels() {
-	return depthPixelsRaw.getPixels();
-}
-
-//---------------------------------------------------------------------------
-float* ofxKinect::getDistancePixels() {
-	return distancePixels.getPixels();
-}
-
-ofPixels & ofxKinect::getPixelsRef(){
+ofPixels & ofxKinect::getPixels(){
 	return videoPixels;
 }
 
-ofPixels & ofxKinect::getDepthPixelsRef(){
+ofPixels & ofxKinect::getDepthPixels(){
 	return depthPixels;
 }
 
-ofShortPixels & ofxKinect::getRawDepthPixelsRef(){
+ofShortPixels & ofxKinect::getRawDepthPixels(){
 	return depthPixelsRaw;
 }
 
-ofFloatPixels & ofxKinect::getDistancePixelsRef(){
+ofFloatPixels & ofxKinect::getDistancePixels(){
 	return distancePixels;
+}
+
+const ofPixels & ofxKinect::getPixels() const{
+	return videoPixels;
+}
+
+const ofPixels & ofxKinect::getDepthPixels() const{
+	return depthPixels;
+}
+
+const ofShortPixels & ofxKinect::getRawDepthPixels() const{
+	return depthPixelsRaw;
+}
+
+const ofFloatPixels & ofxKinect::getDistancePixels() const{
+	return distancePixels;
+}
+
+//------------------------------------
+ofTexture& ofxKinect::getTexture(){
+	if(!videoTex.bAllocated()){
+		ofLogWarning("ofxKinect") << "getTexture(): device " << deviceId << " video texture not allocated";
+	}
+	return videoTex;
+}
+
+//---------------------------------------------------------------------------
+ofTexture& ofxKinect::getDepthTexture(){
+	if(!depthTex.bAllocated()){
+		ofLogWarning("ofxKinect") << "getDepthTexture(): device " << deviceId << " depth texture not allocated";
+	}
+	return depthTex;
+}
+
+//------------------------------------
+const ofTexture& ofxKinect::getTexture() const{
+	if(!videoTex.bAllocated()){
+		ofLogWarning("ofxKinect") << "getTexture(): device " << deviceId << " video texture not allocated";
+	}
+	return videoTex;
+}
+
+//---------------------------------------------------------------------------
+const ofTexture& ofxKinect::getDepthTexture() const{
+	if(!depthTex.bAllocated()){
+		ofLogWarning("ofxKinect") << "getDepthTexture(): device " << deviceId << " depth texture not allocated";
+	}
+	return depthTex;
 }
 
 //------------------------------------
 ofTexture& ofxKinect::getTextureReference(){
-	if(!videoTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getTextureReference(): device " << deviceId << " video texture not allocated";
-	}
-	return videoTex;
+	return getTexture();
 }
 
 //---------------------------------------------------------------------------
 ofTexture& ofxKinect::getDepthTextureReference(){
-	if(!depthTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getDepthTextureReference(): device " << deviceId << " depth texture not allocated";
-	}
-	return depthTex;
-}
-
-
-
-//---------------------------------------------------------------------------
-const unsigned char * ofxKinect::getPixels() const{
-	return videoPixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-const unsigned char * ofxKinect::getDepthPixels() const{
-	return depthPixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-const unsigned short * ofxKinect::getRawDepthPixels() const{
-	return depthPixelsRaw.getPixels();
-}
-
-//---------------------------------------------------------------------------
-const float* ofxKinect::getDistancePixels() const{
-	return distancePixels.getPixels();
-}
-
-const ofPixels & ofxKinect::getPixelsRef() const{
-	return videoPixels;
-}
-
-const ofPixels & ofxKinect::getDepthPixelsRef() const{
-	return depthPixels;
-}
-
-const ofShortPixels & ofxKinect::getRawDepthPixelsRef() const{
-	return depthPixelsRaw;
-}
-
-const ofFloatPixels & ofxKinect::getDistancePixelsRef() const{
-	return distancePixels;
+	return getDepthTexture();
 }
 
 //------------------------------------
 const ofTexture& ofxKinect::getTextureReference() const{
-	if(!videoTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getTextureReference(): device " << deviceId << " video texture not allocated";
-	}
-	return videoTex;
+	return getTexture();
 }
 
 //---------------------------------------------------------------------------
 const ofTexture& ofxKinect::getDepthTextureReference() const{
-	if(!depthTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getDepthTextureReference(): device " << deviceId << " depth texture not allocated";
-	}
-	return depthTex;
+	return getDepthTexture();
 }
 
 //---------------------------------------------------------------------------
