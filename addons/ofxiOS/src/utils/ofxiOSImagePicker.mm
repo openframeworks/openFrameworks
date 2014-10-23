@@ -128,7 +128,7 @@ void ofxiOSImagePicker::loadPixels()
     int height = pixels.getHeight();
     int bpp = pixels.getNumChannels();
 	
-    photoContext = CGBitmapContextCreate(pixels.getPixels(), width, height, 8, width * bpp, CGImageGetColorSpace(photo), kCGImageAlphaPremultipliedLast);
+    photoContext = CGBitmapContextCreate(pixels.getData(), width, height, 8, width * bpp, CGImageGetColorSpace(photo), kCGImageAlphaPremultipliedLast);
     
     CGContextDrawImage(photoContext, CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height), photo);
     CGContextRelease(photoContext);
@@ -144,7 +144,7 @@ void ofxiOSImagePicker::saveImage()
 
 //----------------------------------------------------------------
 unsigned char * ofxiOSImagePicker::getPixels(){
-    return pixels.getPixels();
+    return pixels.getData();
 }
 
 //----------------------------------------------------------------
