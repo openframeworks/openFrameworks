@@ -374,6 +374,16 @@ ofTrueTypeFont::ofTrueTypeFont(){
 
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	face = NULL;
+	ascenderHeight = 0;
+	bAntiAliased = 0;
+	bFullCharacterSet = 0;
+	descenderHeight = 0;
+	dpi = 96;
+	encoding = OF_ENCODING_UTF8;
+	fontSize = 0;
+	lineHeight = 0;
+	nCharacters = 0;
+	simplifyAmt = 0;
 }
 
 //------------------------------------------------------------------
@@ -511,6 +521,8 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 		charOutlinesNonVFlipped.assign(nCharacters, ofTTFCharacter());
 		charOutlinesContour.assign(nCharacters, ofTTFCharacter());
 		charOutlinesNonVFlippedContour.assign(nCharacters, ofTTFCharacter());
+	}else{
+		charOutlines.resize(1);
 	}
 
 	vector<ofPixels> expanded_data(nCharacters);
@@ -779,14 +791,14 @@ float ofTrueTypeFont::getSpaceSize() const{
 }
 
 //------------------------------------------------------------------
-const ofTTFCharacter & ofTrueTypeFont::getCharacterAsPoints(int character, bool vflip, bool filled) const{
+ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character, bool vflip, bool filled) const{
 	if( bMakeContours == false ){
 		ofLogError("ofxTrueTypeFont") << "getCharacterAsPoints(): contours not created, call loadFont() with makeContours set to true";
 		return ofTTFCharacter();
 	}
     if (character - NUM_CHARACTER_TO_START >= nCharacters || character < NUM_CHARACTER_TO_START){
         //ofLogError("ofxTrueTypeFont") << "getCharacterAsPoint(): char " << character + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
-        
+
         return ofTTFCharacter();
     }
     
@@ -924,7 +936,19 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y, bool vFlipped, boo
 		return;
 	}
 	//-----------------------
-	getCharacterAsPoints(c,vFlipped,filled).draw(x,y);
+    if(vFlipped){
+    	if(filled){
+    		charOutlines[c - NUM_CHARACTER_TO_START].draw(x,y);
+    	}else{
+    		charOutlinesContour[c - NUM_CHARACTER_TO_START].draw(x,y);
+    	}
+    }else{
+    	if(filled){
+    		charOutlinesNonVFlipped[c - NUM_CHARACTER_TO_START].draw(x,y);
+    	}else{
+    		charOutlinesNonVFlippedContour[c - NUM_CHARACTER_TO_START].draw(x,y);
+    	}
+    }
 }
 
 //-----------------------------------------------------------

@@ -615,12 +615,10 @@ void of3dGraphics::drawRotationAxes(float radius, float stripWidth, int circleRe
 		axisZMesh.addVertex(ofVec3f(x*radius, y*radius,  stripWidth));
 	}
 
-	renderer->setDepthTest(true);
 	axisXMesh.draw();
 	axisYMesh.draw();
 	axisZMesh.draw();
 	drawAxis(radius);
-	#warning "revert depth test"
 }
 
 
