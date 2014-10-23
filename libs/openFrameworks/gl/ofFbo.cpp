@@ -217,7 +217,6 @@ int	ofFbo::_maxSamples = -1;
 
 
 ofFbo::ofFbo():
-isBound(0),
 fbo(0),
 fboTextures(0),
 depthBuffer(0),
@@ -258,7 +257,6 @@ bIsAllocated(false)
 
 ofFbo::ofFbo(const ofFbo & mom){
 	settings = mom.settings;
-	isBound = mom.isBound;
 	bIsAllocated = mom.bIsAllocated;
 
 	fbo = mom.fbo;
@@ -291,7 +289,6 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
 	destroy();
 	settings = mom.settings;
-	isBound = mom.isBound;
 	bIsAllocated = mom.bIsAllocated;
 
 	fbo = mom.fbo;
@@ -367,8 +364,6 @@ void ofFbo::destroy() {
 
 	for(int i=0; i<(int)colorBuffers.size(); i++) releaseRB(colorBuffers[i]);
 	colorBuffers.clear();
-
-	isBound = 0;
 	bIsAllocated = false;
 }
 
@@ -673,20 +668,14 @@ void ofFbo::end() const{
 }
 
 void ofFbo::bind() const{
-	if(isBound == 0) {
-		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFramebuffer);
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	}
-	isBound++;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFramebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 
 
 void ofFbo::unbind() const{
-	if(isBound) {
-		glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
-		isBound = 0;
-		dirty = true;
-	}
+	glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
+	savedFramebuffer = 0;
 }
 
 int ofFbo::getNumTextures() const {
