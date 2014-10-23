@@ -337,8 +337,8 @@ void ofUpdateBitmapCharacterTexture(){
 #endif
 
 static ofPixels myLetterPixels;
-static float widthTex = 8.0f/256.0f;
-static float heightTex = 14.0f/256.0f;
+static const float widthTex = 8.0f/256.0f;
+static const float heightTex = 14.0f/256.0f;
 
 //---------------------------------------------------------------------
 static void prepareBitmapTexture(){

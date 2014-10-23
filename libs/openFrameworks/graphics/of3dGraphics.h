@@ -329,19 +329,14 @@ public:
 	void drawRotationAxes(float radius, float stripWidth, int circleRes) const;
 
 private:
-	enum of3dPrimitiveType {
-		OF_3D_PRIMITIVE_PLANE,
-	    OF_3D_PRIMITIVE_SPHERE,
-	    OF_3D_PRIMITIVE_ICO_SPHERE,
-		OF_3D_PRIMITIVE_BOX,
-		OF_3D_PRIMITIVE_CONE,
-	    OF_3D_PRIMITIVE_CYLINDER,
-	    OF_3D_PRIMITIVE_BOX_WIREFRAME,
-	    OF_3D_PRIMITIVE_AXIS
-	};
-
-	//----------------------------------------------------------
-	const of3dPrimitive& getCached3dPrimitive( of3dPrimitiveType type ) const;
 	void renderCached3dPrimitive( const of3dPrimitive& model ) const;
 	mutable ofBaseRenderer * renderer;
+	ofPlanePrimitive plane;
+	ofSpherePrimitive sphere;
+	ofIcoSpherePrimitive icoSphere;
+	ofBoxPrimitive box;
+	ofConePrimitive cone;
+	ofCylinderPrimitive cylinder;
+	ofBoxPrimitive boxWireframe;
+	of3dPrimitive axis;
 };

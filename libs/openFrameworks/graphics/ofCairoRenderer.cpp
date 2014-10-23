@@ -529,7 +529,7 @@ void ofCairoRenderer::draw(const ofPixels & raw, float x, float y, float z, floa
 	int picsize = pix.getWidth()* pix.getHeight();
 	const unsigned char *imgPix = pix.getData();
 
-	static vector<unsigned char> swapPixels;
+	vector<unsigned char> swapPixels;
 
 	switch(pix.getImageType()){
 	case OF_IMAGE_COLOR:
@@ -1239,7 +1239,7 @@ void ofCairoRenderer::background(int r, int g, int b, int a){
 
 
 //----------------------------------------------------------
-void ofCairoRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
+void ofCairoRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
 	cairo_new_path(cr);
 	cairo_move_to(cr,x1,y1);
 	cairo_line_to(cr,x2,y2);
@@ -1248,7 +1248,7 @@ void ofCairoRenderer::drawLine(float x1, float y1, float z1, float x2, float y2,
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::drawRectangle(float x, float y, float z, float w, float h){
+void ofCairoRenderer::drawRectangle(float x, float y, float z, float w, float h) const{
 
 	cairo_new_path(cr);
 
@@ -1274,7 +1274,7 @@ void ofCairoRenderer::drawRectangle(float x, float y, float z, float w, float h)
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{
 	cairo_new_path(cr);
 
 	cairo_move_to(cr, x1, y1);
@@ -1292,7 +1292,7 @@ void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::drawCircle(float x, float y, float z, float radius){
+void ofCairoRenderer::drawCircle(float x, float y, float z, float radius) const{
 	cairo_new_path(cr);
 	cairo_arc(cr, x,y,radius,0,2*PI);
 
@@ -1302,89 +1302,6 @@ void ofCairoRenderer::drawCircle(float x, float y, float z, float radius){
 		cairo_fill( cr );
 	}else{
 		cairo_stroke( cr );
-	}
-}
-
-//----------------------------------------------------------
-void ofCairoRenderer::setSphereResolution(int res) {
-	int n = res * 2;
-	float ndiv2=(float)n/2;
-	int stripVerts = (ndiv2*((n+1)*2));
-
-	if((int)sphereVerts.size() != stripVerts ) {
-		sphereVerts.clear();
-		sphereVerts.resize( (ndiv2*((n+1)*2)) );
-	} else {
-		return;
-	}
-
-	/*
-	 Original code by Paul Bourke
-	 A more efficient contribution by Federico Dosil (below)
-	 Draw a point for zero radius spheres
-	 Use CCW facet ordering
-	 http://paulbourke.net/texture_colour/texturemap/
-	 */
-
-	float theta2 = TWO_PI;
-	float phi1 = -HALF_PI;
-	float phi2 = HALF_PI;
-	float radius = 1.f; // normalize the verts //
-
-	int i, j;
-	float j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
-	cte3 = (theta2)/n;
-	cte1 = (phi2-phi1)/ndiv2;
-	dosdivn = 2*unodivn;
-	ofVec3f e,p,e2,p2;
-
-	// Handle special cases //
-	if (n < 0){
-		n = -n;
-		ndiv2 = -ndiv2;
-	}
-	if (n < 4) {
-		ofLogWarning("ofCairoRenderer") << "setSphereResolution(): ignoring low sphere resolution: " << n;
-	}
-
-	t2=phi1;
-	cost2=cos(phi1);
-	j1divn=0;
-
-	int cindex = 0; // current index //
-
-	for (j=0;j<ndiv2;j++) {
-		t1 = t2;
-		t2 += cte1;
-		t3 = -cte3;
-		cost1 = cost2;
-		cost2 = cos(t2);
-		e.y = sin(t1);
-		e2.y = sin(t2);
-		p.y = radius * e.y;
-		p2.y = radius * e2.y;
-
-		idivn=0;
-		j1divn+=dosdivn;
-		for (i=0;i<=n;i++) {
-			t3 += cte3;
-			e.x = cost1 * cos(t3);
-			e.z = cost1 * sin(t3);
-			p.x = radius * e.x;
-			p.z = radius * e.z;
-
-			cindex = (j * (n+1) + i) * 2;
-			sphereVerts[cindex].set(p.x,p.y,p.z);
-
-			e2.x = cost2 * cos(t3);
-			e2.z = cost2 * sin(t3);
-			p2.x = radius * e2.x;
-			p2.z = radius * e2.z;
-			cindex = (j * (n+1) + i) * 2 + 1;
-			sphereVerts[cindex].set(p2.x,p2.y,p2.z);
-
-			idivn += unodivn;
-		}
 	}
 }
 
@@ -1399,46 +1316,16 @@ void ofCairoRenderer::disableAntiAliasing(){
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::drawSphere(float x, float y, float z, float radius) {
-	int n = currentStyle.sphereResolution * 2;
-	float ndiv2=(float)n/2;
-	int cindex = 0;
-
-	if(sphereVerts.size() < 1) {
-		// double check to make sure that setSphereResolution has been called at least once //
-		setSphereResolution( currentStyle.sphereResolution );
-	}
-
-	spherePoints.resize( (n+1) * 2 );
-
-	ofVec3f sp;
-	int i, j;
-	for (j=0;j<ndiv2;j++) {
-		for (i=0;i<=n;i++) {
-			cindex = (j * (n+1) + i) * 2;
-			sp = sphereVerts[cindex] * radius;
-
-			spherePoints[i*2+0].set( sp.x+x, sp.y+y, sp.z+z );
-
-			cindex = (j * (n+1) + i) * 2 + 1;
-			sp = sphereVerts[cindex] * radius;
-			spherePoints[i*2+1].set( sp.x+x, sp.y+y, sp.z+z );
-		}
-		draw(spherePoints, OF_PRIMITIVE_TRIANGLE_STRIP);
-	}
-
-}
-
-//----------------------------------------------------------
-void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float height){
+void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float height) const{
+	ofCairoRenderer * mutThis = const_cast<ofCairoRenderer*>(this);
 	cairo_new_path(cr);
 	float ellipse_ratio = height/width;
-	pushMatrix();
-	translate(0,-y*ellipse_ratio);
-	scale(1,ellipse_ratio);
-	translate(0,y/ellipse_ratio);
+	mutThis->pushMatrix();
+	mutThis->translate(0,-y*ellipse_ratio);
+	mutThis->scale(1,ellipse_ratio);
+	mutThis->translate(0,y/ellipse_ratio);
 	cairo_arc(cr,x,y,width*0.5,0,360);
-	popMatrix();
+	mutThis->popMatrix();
 
 	cairo_close_path(cr);
 
@@ -1450,7 +1337,7 @@ void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float 
 	}
 }
 
-void ofCairoRenderer::drawString(string text, float x, float y, float z){
+void ofCairoRenderer::drawString(string text, float x, float y, float z) const{
 	cairo_select_font_face (cr, "Mono", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cr, 10);
 	vector<string> lines = ofSplitString(text, "\n");
@@ -1460,7 +1347,7 @@ void ofCairoRenderer::drawString(string text, float x, float y, float z){
 	}
 }
 
-void ofCairoRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y){
+void ofCairoRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
 	font.drawStringAsShapes(text,x,y);
 }
 

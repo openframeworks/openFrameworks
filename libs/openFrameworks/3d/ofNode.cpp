@@ -4,8 +4,9 @@
 #include "ofLog.h"
 #include "of3dGraphics.h"
 
-ofNode::ofNode() : 
-	parent(NULL) {
+ofNode::ofNode()
+:parent(NULL)
+,legacyCustomDrawOverrided(true){
 	setPosition(ofVec3f(0, 0, 0));
 	setOrientation(ofVec3f(0, 0, 0));
 	setScale(1);
@@ -362,8 +363,16 @@ void ofNode::draw()  const{
 
 //----------------------------------------
 void ofNode::customDraw(const ofBaseRenderer * renderer) const{
-	renderer->drawBox(10);
-	renderer->draw(ofMesh::axis(20),OF_MESH_FILL);
+	const_cast<ofNode*>(this)->customDraw();
+	if(!legacyCustomDrawOverrided){
+		renderer->drawBox(10);
+		renderer->draw(ofMesh::axis(20),OF_MESH_FILL);
+	}
+}
+
+//----------------------------------------
+void ofNode::customDraw(){
+	legacyCustomDrawOverrided = false;
 }
 
 //----------------------------------------

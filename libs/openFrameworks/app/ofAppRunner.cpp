@@ -33,7 +33,6 @@
 
 static shared_ptr<ofBaseApp>			OFSAptr;
 static shared_ptr<ofAppBaseWindow> 		window;
-static ofThreadErrorLogger threadErrorLogger;
 
 //========================================================================
 // default windowing
@@ -98,7 +97,7 @@ void ofURLFileLoaderShutdown();
 #endif
 
 void ofInit(){
-	Poco::ErrorHandler::set(&threadErrorLogger);
+	Poco::ErrorHandler::set(new ofThreadErrorLogger);
 
 #ifndef TARGET_ANDROID
 	atexit(ofExitCallback);

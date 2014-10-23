@@ -152,14 +152,14 @@ private:
 	void clearAlpha(){};
 
 	// drawing
-	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2){}
-	void drawRectangle(float x, float y, float z, float w, float h){}
-	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){}
-	void drawCircle(float x, float y, float z, float radius){}
-	void drawSphere(float x, float y, float z, float radius){}
-	void drawEllipse(float x, float y, float z, float width, float height){}
-	void drawString(string text, float x, float y, float z){}
-	void drawString(const ofTrueTypeFont & font, string text, float x, float y){}
+	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{}
+	void drawRectangle(float x, float y, float z, float w, float h) const{}
+	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{}
+	void drawCircle(float x, float y, float z, float radius) const{}
+	void drawSphere(float x, float y, float z, float radius) const{}
+	void drawEllipse(float x, float y, float z, float width, float height) const{}
+	void drawString(string text, float x, float y, float z) const{}
+	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const{}
 
 	void setBitmapTextMode(ofDrawBitmapMode mode){}
 	ofStyle getStyle() const{ return ofStyle(); }

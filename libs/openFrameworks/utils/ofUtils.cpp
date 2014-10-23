@@ -624,7 +624,7 @@ string ofToUpper(const string & src){
 string ofVAArgsToString(const char * format, ...){
 	// variadic args to string:
 	// http://www.codeproject.com/KB/string/string_format.aspx
-	static char aux_buffer[10000];
+	char aux_buffer[10000];
 	string retStr("");
 	if (NULL != format){
 

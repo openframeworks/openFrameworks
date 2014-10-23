@@ -1131,9 +1131,9 @@ GLenum ofGLProgrammableRenderer::getCurrentTextureTarget(){
 void ofGLProgrammableRenderer::setAlphaMaskTex(const ofTexture & tex){
 	alphaMaskTextureTarget = tex.getTextureData().textureTarget;
 	if(alphaMaskTextureTarget==GL_TEXTURE_2D){
-		alphaMask2DShader().begin();
+		alphaMask2DShader.begin();
 	}else{
-		alphaMaskRectShader().begin();
+		alphaMaskRectShader.begin();
 	}
 	enableTextureTarget(tex, 1);
 }
@@ -1142,9 +1142,9 @@ void ofGLProgrammableRenderer::setAlphaMaskTex(const ofTexture & tex){
 void ofGLProgrammableRenderer::disableAlphaMask(){
 	disableTextureTarget(alphaMaskTextureTarget,1);
 	if(alphaMaskTextureTarget==GL_TEXTURE_2D){
-		alphaMask2DShader().end();
+		alphaMask2DShader.end();
 	}else{
-		alphaMaskRectShader().end();
+		alphaMaskRectShader.end();
 	}
 }
 
@@ -1195,6 +1195,7 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(ofBaseMaterial & material){
 	currentMaterial = &material;
+	currentMaterial->beginShader(currentTextureTarget,this);
 }
 
 //----------------------------------------------------------
@@ -1296,47 +1297,47 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 		if(currentMaterial){
 			currentMaterial->beginShader(currentTextureTarget,this);
 		}else if(bitmapStringEnabled){
-			nextShader = &bitmapStringShader();
+			nextShader = &bitmapStringShader;
 
 		}else if(colorsEnabled && texCoordsEnabled){
 			switch(currentTextureTarget){
 	#ifndef TARGET_OPENGLES
 			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = &defaultTexRectColor();
+				nextShader = &defaultTexRectColor;
 				break;
 	#endif
 			case GL_TEXTURE_2D:
-				nextShader = &defaultTex2DColor();
+				nextShader = &defaultTex2DColor;
 				break;
 			case OF_NO_TEXTURE:
-				nextShader = &defaultNoTexColor();
+				nextShader = &defaultNoTexColor;
 				break;
 			}
 
 		}else if(colorsEnabled){
-			nextShader = &defaultNoTexColor();
+			nextShader = &defaultNoTexColor;
 
 		}else if(texCoordsEnabled){
 			switch(currentTextureTarget){
 	#ifndef TARGET_OPENGLES
 			case GL_TEXTURE_RECTANGLE_ARB:
-				nextShader = &defaultTexRectNoColor();
+				nextShader = &defaultTexRectNoColor;
 				break;
 	#endif
 			case GL_TEXTURE_2D:
-				nextShader = &defaultTex2DNoColor();
+				nextShader = &defaultTex2DNoColor;
 				break;
 			case OF_NO_TEXTURE:
-				nextShader = &defaultNoTexNoColor();
+				nextShader = &defaultNoTexNoColor;
 				break;
 			}
 
 		}else{
-			nextShader = &defaultNoTexNoColor();
+			nextShader = &defaultNoTexNoColor;
 		}
 
 	}else{
-		nextShader = &defaultUniqueShader();
+		nextShader = &defaultUniqueShader;
 	}
 
 	if(nextShader && (!currentShader || *currentShader!=*nextShader)){
@@ -1348,21 +1349,23 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
+void ofGLProgrammableRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
+	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
 	lineMesh.getVertices()[0].set(x1,y1,z1);
 	lineMesh.getVertices()[1].set(x2,y2,z2);
     
 	// use smoothness, if requested:
-	if (currentStyle.smoothing) startSmoothing();
+	if (currentStyle.smoothing) mutThis->startSmoothing();
     
 	lineMesh.draw();
     
 	// use smoothness, if requested:
-	if (currentStyle.smoothing) endSmoothing();
+	if (currentStyle.smoothing) mutThis->endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w, float h) {
+void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w, float h) const{
+	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
 	if (currentStyle.rectMode == OF_RECTMODE_CORNER){
 		rectMesh.getVertices()[0].set(x,y,z);
 		rectMesh.getVertices()[1].set(x+w, y, z);
@@ -1376,69 +1379,73 @@ void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w,
 	}
     
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	rectMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_LOOP);
 	rectMesh.draw();
     
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{
+	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
 	triangleMesh.getVertices()[0].set(x1,y1,z1);
 	triangleMesh.getVertices()[1].set(x2,y2,z2);
 	triangleMesh.getVertices()[2].set(x3,y3,z3);
     
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	triangleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_STRIP : OF_PRIMITIVE_LINE_LOOP);
 	triangleMesh.draw();
     
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::drawCircle(float x, float y, float z,  float radius){
-	vector<ofPoint> & circleCache = circlePolyline.getVertices();
+void ofGLProgrammableRenderer::drawCircle(float x, float y, float z,  float radius) const{
+	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
+	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circleMesh.getVertices()[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
 	}
     
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
 	circleMesh.draw();
 	
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float width, float height){
+void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float width, float height) const{
+	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
-	vector<ofPoint> & circleCache = circlePolyline.getVertices();
+	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circleMesh.getVertices()[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
 	}
     
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
 	circleMesh.draw();
     
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::drawString(string textString, float x, float y, float z){
+void ofGLProgrammableRenderer::drawString(string textString, float x, float y, float z) const{
+	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
 	float fontSize = 8.0f;
 	float sx = 0;
 	float sy = -fontSize;
@@ -1452,8 +1459,8 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	bool hasProjection = false;
 	bool hasViewport = false;
 
-	static ofRectangle rViewport;
-	static ofMatrix4x4 modelView;
+	ofRectangle rViewport;
+	ofMatrix4x4 modelView;
 
 	switch (currentStyle.drawBitmapMode) {
 
@@ -1466,19 +1473,19 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 		case OF_BITMAPMODE_SCREEN:
 
 			hasViewport = true;
-			pushView();
+			mutThis->pushView();
 
 			rViewport = matrixStack.getFullSurfaceViewport();
-			viewport(rViewport);
+			mutThis->viewport(rViewport);
 
-			matrixMode(OF_MATRIX_PROJECTION);
-			loadIdentityMatrix();
-			matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->matrixMode(OF_MATRIX_PROJECTION);
+			mutThis->loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
 
 			modelView.makeTranslationMatrix(-1,-1,0);
 			modelView.glScale(2/rViewport.width, 2/rViewport.height, 1);
 			modelView.glTranslate(x,y, 0);
-			loadMatrix(modelView);
+			mutThis->loadMatrix(modelView);
 			break;
 
 		case OF_BITMAPMODE_VIEWPORT:
@@ -1486,27 +1493,27 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			rViewport = getCurrentViewport();
 
 			hasProjection = true;
-			matrixMode(OF_MATRIX_PROJECTION);
-			pushMatrix();
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_PROJECTION);
+			mutThis->pushMatrix();
+			mutThis->loadIdentityMatrix();
 
 			hasModelView = true;
-			matrixMode(OF_MATRIX_MODELVIEW);
-			pushMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->pushMatrix();
 
 			modelView.makeTranslationMatrix(-1,-1,0);
 			modelView.glScale(2/rViewport.width, 2/rViewport.height, 1);
 			modelView.glTranslate(x,y, 0);
-			loadMatrix(modelView);
+			mutThis->loadMatrix(modelView);
 			break;
 
 		case OF_BITMAPMODE_MODEL:
 
 			hasModelView = true;
-			matrixMode(OF_MATRIX_MODELVIEW);
-			pushMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->pushMatrix();
 
-			translate(x, y, z);
+			mutThis->translate(x, y, z);
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
@@ -1536,18 +1543,18 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 
 			hasProjection = true;
-			matrixMode(OF_MATRIX_PROJECTION);
-			pushMatrix();
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_PROJECTION);
+			mutThis->pushMatrix();
+			mutThis->loadIdentityMatrix();
 
 			hasModelView = true;
-			matrixMode(OF_MATRIX_MODELVIEW);
-			pushMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->pushMatrix();
 
 			modelView.makeTranslationMatrix(-1,-1,0);
 			modelView.glScale(2/rViewport.width, 2/rViewport.height, 1);
 			modelView.glTranslate(dScreen.x, dScreen.y, 0);
-			loadMatrix(modelView);
+			mutThis->loadMatrix(modelView);
 		}
 			break;
 
@@ -1563,42 +1570,43 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
-	setAlphaBitmapText(true);
-	ofMesh charMesh = ofBitmapStringGetMesh(textString, 0, 0, currentStyle.drawBitmapMode);
+	mutThis->setAlphaBitmapText(true);
+	ofMesh charMesh = ofBitmapStringGetMesh(textString, 0, 0, currentStyle.drawBitmapMode, isVFlipped());
 	ofBitmapStringGetTextureRef().bind();
 	draw(charMesh,OF_MESH_FILL,false,true,false);
 	ofBitmapStringGetTextureRef().unbind();
-	setAlphaBitmapText(false);
+	mutThis->setAlphaBitmapText(false);
 
 
 	if (hasViewport){
-		popView();
+		mutThis->popView();
 	}else{
 		if (hasModelView){
-			popMatrix();
+			mutThis->popMatrix();
 		}
 
 		if (hasProjection)
 		{
-			matrixMode(OF_MATRIX_PROJECTION);
-			popMatrix();
-			matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->matrixMode(OF_MATRIX_PROJECTION);
+			mutThis->popMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
 		}
 	}
 }
 
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y){
+void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
+	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
 	ofBlendMode blendMode = currentStyle.blendingMode;
 
-	setBlendMode(OF_BLENDMODE_ALPHA);
+	mutThis->setBlendMode(OF_BLENDMODE_ALPHA);
 
-	bind(font.getFontTexture(),0);
+	mutThis->bind(font.getFontTexture(),0);
 	draw(font.getStringMesh(text,x,y,isVFlipped()),OF_MESH_FILL);
-	unbind(font.getFontTexture(),0);
+	mutThis->unbind(font.getFontTexture(),0);
 
-	setBlendMode(blendMode);
+	mutThis->setBlendMode(blendMode);
 }
 
 #define STRINGIFY(x) #x
@@ -1639,7 +1647,7 @@ static const string fragment_shader_header =
 		"out vec4 fragColor;\n";
 #endif
 
-static string defaultVertexShader = vertex_shader_header + STRINGIFY(
+static const string defaultVertexShader = vertex_shader_header + STRINGIFY(
 	uniform mat4 projectionMatrix;
 	uniform mat4 modelViewMatrix;
 	uniform mat4 textureMatrix;
@@ -1664,7 +1672,7 @@ static string defaultVertexShader = vertex_shader_header + STRINGIFY(
 
 // ----------------------------------------------------------------------
 
-static string defaultFragmentShaderTexRectColor = fragment_shader_header + STRINGIFY(
+static const string defaultFragmentShaderTexRectColor = fragment_shader_header + STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
 	uniform float usingTexture;
@@ -1683,7 +1691,7 @@ static string defaultFragmentShaderTexRectColor = fragment_shader_header + STRIN
 
 // ----------------------------------------------------------------------
 
-static string defaultFragmentShaderTexRectNoColor = fragment_shader_header + STRINGIFY(
+static const string defaultFragmentShaderTexRectNoColor = fragment_shader_header + STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
 	uniform float usingTexture;
@@ -1701,7 +1709,7 @@ static string defaultFragmentShaderTexRectNoColor = fragment_shader_header + STR
 
 // ----------------------------------------------------------------------
 
-static string alphaMaskFragmentShaderTexRectNoColor = fragment_shader_header + STRINGIFY(
+static const string alphaMaskFragmentShaderTexRectNoColor = fragment_shader_header + STRINGIFY(
 
 	uniform sampler2DRect src_tex_unit0;
 	uniform sampler2DRect src_tex_unit1;
@@ -1720,7 +1728,7 @@ static string alphaMaskFragmentShaderTexRectNoColor = fragment_shader_header + S
 
 // ----------------------------------------------------------------------
 
-static string alphaMaskFragmentShaderTex2DNoColor = fragment_shader_header + STRINGIFY(
+static const string alphaMaskFragmentShaderTex2DNoColor = fragment_shader_header + STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
 	uniform sampler2D src_tex_unit1;
@@ -1739,7 +1747,7 @@ static string alphaMaskFragmentShaderTex2DNoColor = fragment_shader_header + STR
 
 // ----------------------------------------------------------------------
 
-static string defaultFragmentShaderTex2DColor = fragment_shader_header + STRINGIFY(
+static const string defaultFragmentShaderTex2DColor = fragment_shader_header + STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
 	uniform float usingTexture;
@@ -1757,7 +1765,7 @@ static string defaultFragmentShaderTex2DColor = fragment_shader_header + STRINGI
 
 // ----------------------------------------------------------------------
 
-static string defaultFragmentShaderTex2DNoColor = fragment_shader_header + STRINGIFY(
+static const string defaultFragmentShaderTex2DNoColor = fragment_shader_header + STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
 	uniform float usingTexture;
@@ -1775,7 +1783,7 @@ static string defaultFragmentShaderTex2DNoColor = fragment_shader_header + STRIN
 
 // ----------------------------------------------------------------------
 
-static string defaultFragmentShaderNoTexColor = fragment_shader_header + STRINGIFY (
+static const string defaultFragmentShaderNoTexColor = fragment_shader_header + STRINGIFY (
 
 	uniform float usingTexture;
 	uniform float usingColors;
@@ -1792,7 +1800,7 @@ static string defaultFragmentShaderNoTexColor = fragment_shader_header + STRINGI
 
 // ----------------------------------------------------------------------
 
-static string defaultFragmentShaderNoTexNoColor = fragment_shader_header + STRINGIFY(
+static const string defaultFragmentShaderNoTexNoColor = fragment_shader_header + STRINGIFY(
 
 	uniform float usingTexture;
 	uniform float usingColors;
@@ -1809,7 +1817,7 @@ static string defaultFragmentShaderNoTexNoColor = fragment_shader_header + STRIN
 
 // ----------------------------------------------------------------------
 
-static string bitmapStringVertexShader = vertex_shader_header + STRINGIFY(
+static const string bitmapStringVertexShader = vertex_shader_header + STRINGIFY(
 
 	uniform mat4 projectionMatrix;
 	uniform mat4 modelViewMatrix;
@@ -1831,7 +1839,7 @@ static string bitmapStringVertexShader = vertex_shader_header + STRINGIFY(
 
 // ----------------------------------------------------------------------
 
-static string bitmapStringFragmentShader = fragment_shader_header + STRINGIFY(
+static const string bitmapStringFragmentShader = fragment_shader_header + STRINGIFY(
 
 	uniform sampler2D src_tex_unit0;
 	uniform vec4 globalColor;
@@ -1853,7 +1861,7 @@ static string bitmapStringFragmentShader = fragment_shader_header + STRINGIFY(
 // changing shaders in raspberry pi is very expensive so we use only one shader there
 // in desktop openGL these are not used but we declare it to avoid more ifdefs
 
-static string uniqueVertexShader = vertex_shader_header + STRINGIFY(
+static const string uniqueVertexShader = vertex_shader_header + STRINGIFY(
         
 	uniform mat4 modelViewMatrix;
 	uniform mat4 projectionMatrix;
@@ -1880,7 +1888,7 @@ static string uniqueVertexShader = vertex_shader_header + STRINGIFY(
 );
 
 // ----------------------------------------------------------------------
-static string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
+static const string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
         
 	uniform sampler2D src_tex_unit0;
 	uniform float usingTexture;
@@ -1906,7 +1914,7 @@ static string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
 
 // ----------------------------------------------------------------------
 // video color space conversion shaders
-static string FRAGMENT_SHADER_YUY2 = STRINGIFY(
+static const string FRAGMENT_SHADER_YUY2 = STRINGIFY(
 	uniform SAMPLER src_tex_unit0;\n
 	uniform vec4 globalColor;\n
 
@@ -1941,7 +1949,7 @@ static string FRAGMENT_SHADER_YUY2 = STRINGIFY(
 );
 
 // ----------------------------------------------------------------------
-static string FRAGMENT_SHADER_NV12_NV21 = STRINGIFY(
+static const string FRAGMENT_SHADER_NV12_NV21 = STRINGIFY(
 	uniform SAMPLER Ytex;\n
 	uniform SAMPLER UVtex;\n
 	uniform vec4 globalColor;\n
@@ -1969,7 +1977,7 @@ static string FRAGMENT_SHADER_NV12_NV21 = STRINGIFY(
 );
 
 // ----------------------------------------------------------------------
-static string FRAGMENT_SHADER_PLANAR_YUV = STRINGIFY(
+static const string FRAGMENT_SHADER_PLANAR_YUV = STRINGIFY(
 	uniform SAMPLER Ytex;\n
 	uniform SAMPLER Utex;\n
 	uniform SAMPLER Vtex;\n
@@ -2103,68 +2111,68 @@ void ofGLProgrammableRenderer::setup(int major, int minor){
 #endif
 
 	if(uniqueShader){
-		defaultUniqueShader().setupShaderFromSource(GL_VERTEX_SHADER,uniqueVertexShader);
-		defaultUniqueShader().setupShaderFromSource(GL_FRAGMENT_SHADER,uniqueFragmentShader);
-		defaultUniqueShader().bindDefaults();
-		defaultUniqueShader().linkProgram();
+		defaultUniqueShader.setupShaderFromSource(GL_VERTEX_SHADER,uniqueVertexShader);
+		defaultUniqueShader.setupShaderFromSource(GL_FRAGMENT_SHADER,uniqueFragmentShader);
+		defaultUniqueShader.bindDefaults();
+		defaultUniqueShader.linkProgram();
 		beginDefaultShader();
 	}else{
 	#ifndef TARGET_OPENGLES
-		defaultTexRectColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
-		defaultTexRectNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		defaultTexRectColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		defaultTexRectNoColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 	#endif
-		defaultTex2DColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
-		defaultNoTexColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
-		defaultTex2DNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
-		defaultNoTexNoColor().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
-		alphaMaskRectShader().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
-		alphaMask2DShader().setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		defaultTex2DColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		defaultNoTexColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		defaultTex2DNoColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		defaultNoTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		alphaMaskRectShader.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		alphaMask2DShader.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 
 	#ifndef TARGET_OPENGLES
-		defaultTexRectColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectColor,major, minor));
-		defaultTex2DColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,major, minor));
+		defaultTexRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectColor,major, minor));
+		defaultTex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,major, minor));
 	#else
-		defaultTex2DColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,major, minor));
+		defaultTex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,major, minor));
 	#endif
-		defaultNoTexColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexColor,major, minor));
+		defaultNoTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexColor,major, minor));
 	#ifndef TARGET_OPENGLES
-		defaultTexRectNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectNoColor,major, minor));
-		defaultTex2DNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,major, minor));
+		defaultTexRectNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectNoColor,major, minor));
+		defaultTex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,major, minor));
 	#else
-		defaultTex2DNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,major, minor));
+		defaultTex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,major, minor));
 	#endif
-		defaultNoTexNoColor().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexNoColor,major, minor));
-		alphaMaskRectShader().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTexRectNoColor,major, minor));
-		alphaMask2DShader().setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTex2DNoColor,major, minor));
+		defaultNoTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexNoColor,major, minor));
+		alphaMaskRectShader.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTexRectNoColor,major, minor));
+		alphaMask2DShader.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTex2DNoColor,major, minor));
 
 
-		bitmapStringShader().setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(bitmapStringVertexShader,major, minor));
-		bitmapStringShader().setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(bitmapStringFragmentShader,major, minor));
-
-#ifndef TARGET_OPENGLES
-		defaultTexRectColor().bindDefaults();
-		defaultTexRectNoColor().bindDefaults();
-#endif
-		defaultTex2DColor().bindDefaults();
-		defaultNoTexColor().bindDefaults();
-		defaultTex2DNoColor().bindDefaults();
-		defaultNoTexNoColor().bindDefaults();
-		alphaMaskRectShader().bindDefaults();
-		alphaMask2DShader().bindDefaults();
+		bitmapStringShader.setupShaderFromSource(GL_VERTEX_SHADER, shaderSource(bitmapStringVertexShader,major, minor));
+		bitmapStringShader.setupShaderFromSource(GL_FRAGMENT_SHADER, shaderSource(bitmapStringFragmentShader,major, minor));
 
 #ifndef TARGET_OPENGLES
-		defaultTexRectColor().linkProgram();
-		defaultTexRectNoColor().linkProgram();
+		defaultTexRectColor.bindDefaults();
+		defaultTexRectNoColor.bindDefaults();
 #endif
-		defaultTex2DColor().linkProgram();
-		defaultNoTexColor().linkProgram();
-		defaultTex2DNoColor().linkProgram();
-		defaultNoTexNoColor().linkProgram();
-		alphaMaskRectShader().linkProgram();
-		alphaMask2DShader().linkProgram();
+		defaultTex2DColor.bindDefaults();
+		defaultNoTexColor.bindDefaults();
+		defaultTex2DNoColor.bindDefaults();
+		defaultNoTexNoColor.bindDefaults();
+		alphaMaskRectShader.bindDefaults();
+		alphaMask2DShader.bindDefaults();
 
-		bitmapStringShader().bindDefaults();
-		bitmapStringShader().linkProgram();
+#ifndef TARGET_OPENGLES
+		defaultTexRectColor.linkProgram();
+		defaultTexRectNoColor.linkProgram();
+#endif
+		defaultTex2DColor.linkProgram();
+		defaultNoTexColor.linkProgram();
+		defaultTex2DNoColor.linkProgram();
+		defaultNoTexNoColor.linkProgram();
+		alphaMaskRectShader.linkProgram();
+		alphaMask2DShader.linkProgram();
+
+		bitmapStringShader.bindDefaults();
+		bitmapStringShader.linkProgram();
 	}
 
 #ifndef TARGET_OPENGLES
@@ -2184,31 +2192,31 @@ const ofShader * ofGLProgrammableRenderer::getVideoShader(const ofBaseVideoDraws
 	switch(video.getPixelFormat()){
 		case OF_PIXELS_YUY2:
 			if(target==GL_TEXTURE_2D){
-				shader = &getShaderPlanarYUY2();
+				shader = &shaderPlanarYUY2;
 			}else{
-				shader = &getShaderPlanarYUY2Rect();
+				shader = &shaderPlanarYUY2Rect;
 			}
 			break;
 		case OF_PIXELS_NV12:
 			if(target==GL_TEXTURE_2D){
-				shader = &getShaderNV12();
+				shader = &shaderNV12;
 			}else{
-				shader = &getShaderNV12Rect();
+				shader = &shaderNV12Rect;
 			}
 			break;
 		case OF_PIXELS_NV21:
 			if(target==GL_TEXTURE_2D){
-				shader = &getShaderNV21();
+				shader = &shaderNV21;
 			}else{
-				shader = &getShaderNV21Rect();
+				shader = &shaderNV21Rect;
 			}
 			break;
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
 			if(target==GL_TEXTURE_2D){
-				shader = &getShaderPlanarYUV();
+				shader = &shaderPlanarYUV;
 			}else{
-				shader = &getShaderPlanarYUVRect();
+				shader = &shaderPlanarYUVRect;
 			}
 			break;
 		case OF_PIXELS_RGB:
@@ -2314,96 +2322,6 @@ void ofGLProgrammableRenderer::setVideoShaderUniforms(const ofBaseVideoDraws & v
 		default:
 			break;
 	}
-}
-
-ofShader & ofGLProgrammableRenderer::defaultUniqueShader() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::defaultTexRectColor() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::defaultTexRectNoColor() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::defaultTex2DColor() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::defaultTex2DNoColor() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::defaultNoTexColor() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::defaultNoTexNoColor() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::alphaMaskRectShader() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::alphaMask2DShader() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::bitmapStringShader() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::getShaderPlanarYUY2() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::getShaderNV12() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::getShaderNV21() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::getShaderPlanarYUV() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::getShaderPlanarYUY2Rect() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::getShaderNV12Rect() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::getShaderNV21Rect() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
-}
-
-ofShader & ofGLProgrammableRenderer::getShaderPlanarYUVRect() const{
-	static ofShader * shader = new ofShader;
-	return *shader;
 }
 
 int ofGLProgrammableRenderer::getGLVersionMajor(){

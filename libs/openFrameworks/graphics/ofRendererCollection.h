@@ -600,50 +600,58 @@ public:
 	}
 
 	// drawing
-	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
+	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->drawLine(x1,y1,z1,x2,y2,z2);
 		 }
 	}
 
-	void drawRectangle(float x, float y, float z, float w, float h){
+	void drawRectangle(float x, float y, float z, float w, float h) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->drawRectangle(x,y,z,w,h);
 		 }
 	}
 
-	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->drawTriangle(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 		 }
 	}
 
-	void drawCircle(float x, float y, float z, float radius){
+	void drawCircle(float x, float y, float z, float radius) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->drawCircle(x,y,z,radius);
 		 }
 	}
 
-	void drawEllipse(float x, float y, float z, float width, float height){
+	void drawEllipse(float x, float y, float z, float width, float height) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->drawEllipse(x,y,z,width,height);
 		 }
 	}
 
-	void drawString(string text, float x, float y, float z){
+	void drawString(string text, float x, float y, float z) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->drawString(text, x,y,z);
 		 }
 	}
 
-	void drawString(const ofTrueTypeFont & font, string text, float x, float y){
+	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->drawString(font, text, x,y);
 		 }
 	}
 
-	virtual void bind(const ofCamera & camera, const ofRectangle & viewport){}
-	virtual void unbind(const ofCamera & camera){}
+	virtual void bind(const ofCamera & camera, const ofRectangle & viewport){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->bind(camera, viewport);
+		 }
+	}
+	virtual void unbind(const ofCamera & camera){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->unbind(camera);
+		 }
+	}
 
 	const of3dGraphics & get3dGraphics() const{
 		return graphics3d;

@@ -1126,24 +1126,24 @@ void ofGLRenderer::disableAntiAliasing(){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
+void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
 	linePoints[0].set(x1,y1,z1);
 	linePoints[1].set(x2,y2,z2);
 
 	// use smoothness, if requested:
-	if (currentStyle.smoothing) startSmoothing();
+	if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &linePoints[0].x);
 	glDrawArrays(GL_LINES, 0, 2);
 
 	// use smoothness, if requested:
-	if (currentStyle.smoothing) endSmoothing();
+	if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h){
+void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h) const{
 
 	if (currentStyle.rectMode == OF_RECTMODE_CORNER){
 		rectPoints[0].set(x,y,z);
@@ -1158,79 +1158,79 @@ void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h){
 	}
 
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &rectPoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{
 	triPoints[0].set(x1,y1,z1);
 	triPoints[1].set(x2,y2,z2);
 	triPoints[2].set(x3,y3,z3);
 
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &triPoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
 
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawCircle(float x, float y, float z,  float radius){
-	vector<ofPoint> & circleCache = circlePolyline.getVertices();
+void ofGLRenderer::drawCircle(float x, float y, float z,  float radius) const{
+	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circlePoints[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
 	}
 
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float height){
+void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float height) const{
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
-	vector<ofPoint> & circleCache = circlePolyline.getVertices();
+	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circlePoints[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
 	}
 
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
 	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
-	if (currentStyle.smoothing && !currentStyle.bFill) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawString(string textString, float x, float y, float z){
+void ofGLRenderer::drawString(string textString, float x, float y, float z) const{
 
-
+	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
 	float fontSize = 8.0f;
 	float sx = 0;
 	float sy = -fontSize;
@@ -1258,20 +1258,20 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z){
 		case OF_BITMAPMODE_SCREEN:
 
 			hasViewport = true;
-			pushView();
+			mutThis->pushView();
 
 			rViewport = matrixStack.getFullSurfaceViewport();
-			viewport(rViewport);
+			mutThis->viewport(rViewport);
 
-			matrixMode(OF_MATRIX_PROJECTION);
-			loadIdentityMatrix();
-			matrixMode(OF_MATRIX_MODELVIEW);
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_PROJECTION);
+			mutThis->loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->loadIdentityMatrix();
 
-			translate(-1, 1, 0);
-			scale(2/rViewport.width, -2/rViewport.height, 1);
+			mutThis->translate(-1, 1, 0);
+			mutThis->scale(2/rViewport.width, -2/rViewport.height, 1);
 
-			translate(x, y, 0);
+			mutThis->translate(x, y, 0);
 			break;
 
 		case OF_BITMAPMODE_VIEWPORT:
@@ -1279,28 +1279,28 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z){
 			rViewport = getCurrentViewport();
 
 			hasProjection = true;
-			matrixMode(OF_MATRIX_PROJECTION);
-			pushMatrix();
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_PROJECTION);
+			mutThis->pushMatrix();
+			mutThis->loadIdentityMatrix();
 
 			hasModelView = true;
-			matrixMode(OF_MATRIX_MODELVIEW);
-			pushMatrix();
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->pushMatrix();
+			mutThis->loadIdentityMatrix();
 
-			translate(-1, 1, 0);
-			scale(2/rViewport.width, -2/rViewport.height, 1);
+			mutThis->translate(-1, 1, 0);
+			mutThis->scale(2/rViewport.width, -2/rViewport.height, 1);
 
-			translate(x, y, 0);
+			mutThis->translate(x, y, 0);
 			break;
 
 		case OF_BITMAPMODE_MODEL:
 
 			hasModelView = true;
-			matrixMode(OF_MATRIX_MODELVIEW);
-			pushMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->pushMatrix();
 
-			translate(x, y, z);
+			mutThis->translate(x, y, z);
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
@@ -1339,20 +1339,20 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z){
 
 
 			hasProjection = true;
-			matrixMode(OF_MATRIX_PROJECTION);
-			pushMatrix();
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_PROJECTION);
+			mutThis->pushMatrix();
+			mutThis->loadIdentityMatrix();
 
 			hasModelView = true;
-			matrixMode(OF_MATRIX_MODELVIEW);
-			pushMatrix();
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->pushMatrix();
+			mutThis->loadIdentityMatrix();
 
-			translate(-1, -1, 0);
+			mutThis->translate(-1, -1, 0);
 
-			scale(2/rViewport.width, 2/rViewport.height, 1);
+			mutThis->scale(2/rViewport.width, 2/rViewport.height, 1);
 
-			translate(dScreen.x, dScreen.y, 0);
+			mutThis->translate(dScreen.x, dScreen.y, 0);
 		}
 			break;
 
@@ -1374,7 +1374,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z){
 	glAlphaFunc(GL_GREATER, 0);
 #endif
 
-	ofMesh charMesh = ofBitmapStringGetMesh(textString,0,0,currentStyle.drawBitmapMode);
+	ofMesh charMesh = ofBitmapStringGetMesh(textString,0,0,currentStyle.drawBitmapMode,isVFlipped());
 	ofBitmapStringGetTextureRef().bind();
 	draw(charMesh,OF_MESH_FILL,false,true,false);
 	ofBitmapStringGetTextureRef().unbind();
@@ -1386,22 +1386,23 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z){
 	glBlendFunc(blend_src, blend_dst);
 
 	if (hasModelView)
-		popMatrix();
+		mutThis->popMatrix();
 
 	if (hasProjection)
 	{
-		matrixMode(OF_MATRIX_PROJECTION);
-		popMatrix();
-		matrixMode(OF_MATRIX_MODELVIEW);
+		mutThis->matrixMode(OF_MATRIX_PROJECTION);
+		mutThis->popMatrix();
+		mutThis->matrixMode(OF_MATRIX_MODELVIEW);
 	}
 
 	if (hasViewport)
-		popView();
+		mutThis->popView();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y){
+void ofGLRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
+	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
 	bool blendEnabled = glIsEnabled(GL_BLEND);
 	GLint blend_src, blend_dst;
 	glGetIntegerv( GL_BLEND_SRC, &blend_src );
@@ -1410,9 +1411,9 @@ void ofGLRenderer::drawString(const ofTrueTypeFont & font, string text, float x,
     glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	bind(font.getFontTexture(),0);
+	mutThis->bind(font.getFontTexture(),0);
 	draw(font.getStringMesh(text,x,y,isVFlipped()),OF_MESH_FILL);
-	unbind(font.getFontTexture(),0);
+	mutThis->unbind(font.getFontTexture(),0);
 
 	if(!blendEnabled){
 		glDisable(GL_BLEND);

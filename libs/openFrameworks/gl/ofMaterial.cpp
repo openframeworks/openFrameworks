@@ -127,7 +127,7 @@ void ofMaterial::begin() {
 	}
 #endif
 	if(ofGetGLRenderer()){
-		ofGetGLRenderer()->unbind(*this);
+		ofGetGLRenderer()->bind(*this);
 	}
 }
 
@@ -170,7 +170,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer * renderer){
 		string vertexRectHeader = renderer->defaultVertexShaderHeader(true);
 		string fragmentRectHeader = renderer->defaultFragmentShaderHeader(true);
 		string vertex2DHeader = renderer->defaultVertexShaderHeader(false);
-		string fragment2DHeader = renderer->defaultVertexShaderHeader(false);
+		string fragment2DHeader = renderer->defaultFragmentShaderHeader(false);
 		shaderLights = ofLightsData().size();
 		shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,false));
 		shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,false));
@@ -194,6 +194,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer * renderer){
 }
 
 void ofMaterial::beginShader(int texType, ofGLProgrammableRenderer * renderer){
+	cout << "begin " << endl;
 	initShaders(renderer);
 	switch(texType){
 	case OF_NO_TEXTURE:
@@ -269,7 +270,7 @@ void ofMaterial::beginShader(int texType, ofGLProgrammableRenderer * renderer){
 
 #define STRINGIFY(x) #x
 
-static string vertexShader = STRINGIFY(
+static const string vertexShader = STRINGIFY(
 	OUT vec4 outColor; // this is the ultimate color for this vertex
 	OUT vec2 outtexcoord; // pass the texCoord if needed
 	OUT vec3 transformedNormal;
@@ -301,7 +302,7 @@ static string vertexShader = STRINGIFY(
 );
 
 
-static string fragmentShader = STRINGIFY(
+static const string fragmentShader = STRINGIFY(
 	IN vec4 outColor; // this is the ultimate color for this vertex
 	IN vec2 outtexcoord; // pass the texCoord if needed
 	IN vec3 transformedNormal;

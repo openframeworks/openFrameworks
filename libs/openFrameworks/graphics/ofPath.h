@@ -204,7 +204,7 @@ private:
 #endif
 	bool				cachedTessellationValid;
 
-	static ofTessellator tessellator;
+	ofTessellator tessellator;
 
 	bool				bHasChanged;
 	int					prevCurveRes;
