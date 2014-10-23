@@ -442,7 +442,7 @@ void ofCoreEvents::notifyDragEvent(ofDragInfo info){
 
 //------------------------------------------
 void ofCoreEvents::notifyWindowEntry( int state ) {
-	static ofEntryEventArgs entryArgs(state);
+	ofEntryEventArgs entryArgs(state);
 	ofNotifyEvent(windowEntered, entryArgs);
 
 }

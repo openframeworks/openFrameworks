@@ -29,12 +29,6 @@
 	#include <GLFW/glfw3native.h>
 #endif
 
-//========================================================================
-// static variables:
-
-//ofBaseApp *	ofAppGLFWWindow::ofAppPtr;
-//ofAppGLFWWindow	* ofAppGLFWWindow::instance;
-
 //-------------------------------------------------------
 ofAppGLFWWindow::ofAppGLFWWindow(){
 	bEnableSetupScreen	= true;

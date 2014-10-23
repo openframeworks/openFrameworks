@@ -2,8 +2,6 @@
 #include "ofGraphics.h"
 #include "ofTessellator.h"
 
-ofTessellator ofPath::tessellator;
-
 ofPath::Command::Command(Type type)
 :type(type){
 

@@ -174,8 +174,7 @@ private:
 	GLFWwindow* 	windowP;
     
 	int				getCurrentMonitor();
-	
-	//static ofAppGLFWWindow	* instance;
+
 	ofBaseApp *	ofAppPtr;
 
     int pixelScreenCoordScale; 

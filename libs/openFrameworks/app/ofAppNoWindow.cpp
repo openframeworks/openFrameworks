@@ -136,17 +136,6 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 //------------------------------------------------------------
 void ofAppNoWindow::exitApp(){
-
-//  -- This already exists in ofExitCallback
-
-//	static ofEventArgs voidEventArgs;
-//
-//	if(ofAppPtr)ofAppPtr->exit();
-//
-//	#ifdef OF_USING_POCO
-//		ofNotifyEvent( ofEvents.exit, voidEventArgs );
-//	#endif
-
 	ofLogVerbose("ofAppNoWindow") << "terminating headless (no window) app!";
 
 

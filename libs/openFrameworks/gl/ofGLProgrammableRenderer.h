@@ -145,13 +145,13 @@ public:
     
     
 	// drawing
-	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2);
-	void drawRectangle(float x, float y, float z, float w, float h);
-	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
-	void drawCircle(float x, float y, float z, float radius);
-	void drawEllipse(float x, float y, float z, float width, float height);
-	void drawString(string text, float x, float y, float z);
-	void drawString(const ofTrueTypeFont & font, string text, float x, float y);
+	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const;
+	void drawRectangle(float x, float y, float z, float w, float h) const;
+	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const;
+	void drawCircle(float x, float y, float z, float radius) const;
+	void drawEllipse(float x, float y, float z, float width, float height) const;
+	void drawString(string text, float x, float y, float z) const;
+	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const;
 
 
 	void enableTextureTarget(const ofTexture & tex, int textureLocation);
@@ -184,24 +184,6 @@ public:
 	void popStyle();
 	void setStyle(const ofStyle & style);
 
-	ofShader & defaultTexRectColor() const;
-	ofShader & defaultTexRectNoColor() const;
-	ofShader & defaultTex2DColor() const;
-	ofShader & defaultTex2DNoColor() const;
-	ofShader & defaultNoTexColor() const;
-	ofShader & defaultNoTexNoColor() const;
-	ofShader & alphaMaskRectShader() const;
-	ofShader & alphaMask2DShader() const;
-	ofShader & bitmapStringShader() const;
-	ofShader & defaultUniqueShader() const;
-	ofShader & getShaderPlanarYUY2() const;
-	ofShader & getShaderNV12() const;
-	ofShader & getShaderNV21() const;
-	ofShader & getShaderPlanarYUV() const;
-	ofShader & getShaderPlanarYUY2Rect() const;
-	ofShader & getShaderNV12Rect() const;
-	ofShader & getShaderNV21Rect() const;
-	ofShader & getShaderPlanarYUVRect() const;
 	const ofShader * getVideoShader(const ofBaseVideoDraws & video) const;
 	void setVideoShaderUniforms(const ofBaseVideoDraws & video, const ofShader & shader) const;
 
@@ -237,7 +219,7 @@ public:
 private:
 
 
-	mutable ofPolyline circlePolyline;
+	ofPolyline circlePolyline;
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	mutable ofMesh circleMesh;
 	mutable ofMesh triangleMesh;
@@ -285,4 +267,24 @@ private:
 	deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
 	const ofAppBaseWindow * window;
+
+
+	ofShader defaultTexRectColor;
+	ofShader defaultTexRectNoColor;
+	ofShader defaultTex2DColor;
+	ofShader defaultTex2DNoColor;
+	ofShader defaultNoTexColor;
+	ofShader defaultNoTexNoColor;
+	ofShader alphaMaskRectShader;
+	ofShader alphaMask2DShader;
+	ofShader bitmapStringShader;
+	ofShader defaultUniqueShader;
+	ofShader shaderPlanarYUY2;
+	ofShader shaderNV12;
+	ofShader shaderNV21;
+	ofShader shaderPlanarYUV;
+	ofShader shaderPlanarYUY2Rect;
+	ofShader shaderNV12Rect;
+	ofShader shaderNV21Rect;
+	ofShader shaderPlanarYUVRect;
 };

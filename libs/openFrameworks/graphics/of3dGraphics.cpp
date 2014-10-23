@@ -25,109 +25,70 @@ enum of3dPrimitiveType {
 
 
 of3dGraphics::of3dGraphics(ofBaseRenderer * renderer)
-:renderer(renderer){
+:renderer(renderer)
+,plane(1.0f, 1.0f, 6, 4)
+,sphere(1.0f, 20)
+,icoSphere(1.0f, 2)
+,box(1.f, 1.f, 1.f)
+,cone( 1.f, 1.f, 9, 3, 2 )
+,cylinder(1.f, 1.f, 8, 4, 2, true)
+,boxWireframe(1.f, 1.f, 1.f )
+,axis(ofMesh::axis())
+{
 
-}
+    ofMesh* boxWireframeMesh = boxWireframe.getMeshPtr();
+	boxWireframeMesh->clear();
+	boxWireframeMesh->setMode( OF_PRIMITIVE_LINES );
 
-//----------------------------------------------------------
-const of3dPrimitive& of3dGraphics::getCached3dPrimitive( of3dPrimitiveType type ) const{
-    switch (type) {
-        case OF_3D_PRIMITIVE_PLANE:{
-        	static ofPlanePrimitive * plane = new ofPlanePrimitive(1.0f, 1.0f, 6, 4);
-        	return *plane;
-        }break;
-        case OF_3D_PRIMITIVE_SPHERE:{
-        	static ofSpherePrimitive * sphere = new ofSpherePrimitive(1.0f, 20);
-        	return *sphere;
-        }break;
-        case OF_3D_PRIMITIVE_ICO_SPHERE:{
-        	static ofIcoSpherePrimitive * icosphere = new ofIcoSpherePrimitive(1.0f, 2);
-        	return *icosphere;
-        }break;
-        case OF_3D_PRIMITIVE_BOX:{
-        	static ofBoxPrimitive * box = new  ofBoxPrimitive( 1.f, 1.f, 1.f );
-        	return *box;
-        }break;
-        case OF_3D_PRIMITIVE_CONE:{
-        	static ofConePrimitive * cone = new ofConePrimitive( 1.f, 1.f, 9, 3, 2 );
-        	return *cone;
-        }break;
-        case OF_3D_PRIMITIVE_CYLINDER:{
-        	static ofCylinderPrimitive * cylinder = new ofCylinderPrimitive(1.f, 1.f, 8, 4, 2, true);
-        	return *cylinder;
-        }break;
-            // special case for rendering with lines, so the triangles are not visible //
-        case OF_3D_PRIMITIVE_BOX_WIREFRAME: {
-            static ofBoxPrimitive * boxWireframe = new ofBoxPrimitive( 1.f, 1.f, 1.f );
-            static bool initialized = false;
-            ofMesh* boxWireframeMesh = boxWireframe->getMeshPtr();
-            
-            if(!initialized){
-				boxWireframeMesh->clear();
-				boxWireframeMesh->setMode( OF_PRIMITIVE_LINES );
+	boxWireframeMesh->addVertex(ofVec3f(-.5, -.5, -.5));
+	boxWireframeMesh->addVertex(ofVec3f(.5, -.5, -.5));
+	boxWireframeMesh->addVertex(ofVec3f(.5, .5, -.5));
+	boxWireframeMesh->addVertex(ofVec3f(-.5, .5, -.5));
 
-				boxWireframeMesh->addVertex(ofVec3f(-.5, -.5, -.5));
-				boxWireframeMesh->addVertex(ofVec3f(.5, -.5, -.5));
-				boxWireframeMesh->addVertex(ofVec3f(.5, .5, -.5));
-				boxWireframeMesh->addVertex(ofVec3f(-.5, .5, -.5));
+	boxWireframeMesh->addVertex(ofVec3f(-.5, -.5, .5));
+	boxWireframeMesh->addVertex(ofVec3f(.5, -.5, .5));
+	boxWireframeMesh->addVertex(ofVec3f(.5, .5, .5));
+	boxWireframeMesh->addVertex(ofVec3f(-.5, .5, .5));
 
-				boxWireframeMesh->addVertex(ofVec3f(-.5, -.5, .5));
-				boxWireframeMesh->addVertex(ofVec3f(.5, -.5, .5));
-				boxWireframeMesh->addVertex(ofVec3f(.5, .5, .5));
-				boxWireframeMesh->addVertex(ofVec3f(-.5, .5, .5));
+	// front face
+	boxWireframeMesh->addIndex(0);
+	boxWireframeMesh->addIndex(1);
 
-				// front face
-				boxWireframeMesh->addIndex(0);
-				boxWireframeMesh->addIndex(1);
+	boxWireframeMesh->addIndex(1);
+	boxWireframeMesh->addIndex(2);
 
-				boxWireframeMesh->addIndex(1);
-				boxWireframeMesh->addIndex(2);
+	boxWireframeMesh->addIndex(2);
+	boxWireframeMesh->addIndex(3);
 
-				boxWireframeMesh->addIndex(2);
-				boxWireframeMesh->addIndex(3);
+	boxWireframeMesh->addIndex(3);
+	boxWireframeMesh->addIndex(0);
 
-				boxWireframeMesh->addIndex(3);
-				boxWireframeMesh->addIndex(0);
+	// back face
+	boxWireframeMesh->addIndex(4);
+	boxWireframeMesh->addIndex(5);
 
-				// back face
-				boxWireframeMesh->addIndex(4);
-				boxWireframeMesh->addIndex(5);
+	boxWireframeMesh->addIndex(5);
+	boxWireframeMesh->addIndex(6);
 
-				boxWireframeMesh->addIndex(5);
-				boxWireframeMesh->addIndex(6);
+	boxWireframeMesh->addIndex(6);
+	boxWireframeMesh->addIndex(7);
 
-				boxWireframeMesh->addIndex(6);
-				boxWireframeMesh->addIndex(7);
-
-				boxWireframeMesh->addIndex(7);
-				boxWireframeMesh->addIndex(4);
+	boxWireframeMesh->addIndex(7);
+	boxWireframeMesh->addIndex(4);
 
 
-				boxWireframeMesh->addIndex(0);
-				boxWireframeMesh->addIndex(4);
+	boxWireframeMesh->addIndex(0);
+	boxWireframeMesh->addIndex(4);
 
-				boxWireframeMesh->addIndex(1);
-				boxWireframeMesh->addIndex(5);
+	boxWireframeMesh->addIndex(1);
+	boxWireframeMesh->addIndex(5);
 
-				boxWireframeMesh->addIndex(2);
-				boxWireframeMesh->addIndex(6);
+	boxWireframeMesh->addIndex(2);
+	boxWireframeMesh->addIndex(6);
 
-				boxWireframeMesh->addIndex(3);
-				boxWireframeMesh->addIndex(7);
-				initialized = true;
-            }
-            
-            return * boxWireframe;
-        }break;
-        case OF_3D_PRIMITIVE_AXIS:{
-            static of3dPrimitive * axis = new of3dPrimitive(ofMesh::axis());
-            return *axis;
-        }break;
-        default:{
-        	static of3dPrimitive * primitive = new of3dPrimitive;
-        	return * primitive;
-        }break;
-    }
+	boxWireframeMesh->addIndex(3);
+	boxWireframeMesh->addIndex(7);
+
 }
 
 //----------------------------------------------------------
@@ -150,13 +111,12 @@ void of3dGraphics::renderCached3dPrimitive( const of3dPrimitive& model ) const{
 // Plane //
 //----------------------------------------------------------
 void of3dGraphics::setPlaneResolution( int columns, int rows ) {
-    ((ofPlanePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_PLANE)).setResolution(columns, rows);
+    plane.setResolution(columns, rows);
 }
 
 // returns columns as x value of vector and rows as y value
 //----------------------------------------------------------
 ofVec2f of3dGraphics::getPlaneResolution() const{
-    ofPlanePrimitive& plane = ((ofPlanePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_PLANE));
     return plane.getResolution();
 }
 
@@ -167,10 +127,9 @@ void of3dGraphics::drawPlane(float x, float y, float width, float height) const{
 
 //----------------------------------------------------------
 void of3dGraphics::drawPlane(float x, float y, float z, float width, float height) const{
-	static ofMatrix4x4 m;
+	ofMatrix4x4 m;
 	m.makeScaleMatrix(width,height,1);
 	m.translate(x,y,z);
-    const of3dPrimitive & plane = getCached3dPrimitive( OF_3D_PRIMITIVE_PLANE );
     renderer->pushMatrix();
     renderer->multMatrix(m);
     renderCached3dPrimitive( plane );
@@ -186,7 +145,6 @@ void of3dGraphics::drawPlane(ofPoint& position, float width, float height) const
 void of3dGraphics::drawPlane( float width, float height ) const{
 	ofMatrix4x4 m;
 	m.makeScaleMatrix(width,height,1);
-	const of3dPrimitive & plane = getCached3dPrimitive( OF_3D_PRIMITIVE_PLANE );
     renderer->pushMatrix();
     renderer->multMatrix(m);
     renderCached3dPrimitive( plane );
@@ -198,13 +156,13 @@ void of3dGraphics::drawPlane( float width, float height ) const{
 //----------------------------------------------------------
 void of3dGraphics::setSphereResolution(int res) {
     if(ofGetSphereResolution() != res) {
-        ((ofSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_SPHERE)).setResolution(res);
+       sphere.setResolution(res);
     }
 }
 
 //---------------------------------------------------------
 int of3dGraphics::getSphereResolution() const{
-    return ((ofSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_SPHERE)).getResolution();
+    return sphere.getResolution();
 }
 
 //----------------------------------------------------------
@@ -212,7 +170,6 @@ void of3dGraphics::drawSphere(float x, float y, float z, float radius) const{
 	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,radius,radius);
 	m.translate(x,y,z);
-	const of3dPrimitive& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE );
     renderer->pushMatrix();
     renderer->multMatrix(m);
     renderCached3dPrimitive( sphere );
@@ -233,7 +190,6 @@ void of3dGraphics::drawSphere(const ofPoint& position, float radius) const{
 void of3dGraphics::drawSphere(float radius) const{
 	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,radius,radius);
-	const of3dPrimitive& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_SPHERE );
     renderer->pushMatrix();
     renderer->multMatrix(m);
     renderCached3dPrimitive( sphere );
@@ -245,13 +201,13 @@ void of3dGraphics::drawSphere(float radius) const{
 //----------------------------------------------------------
 void of3dGraphics::setIcoSphereResolution( int res ) {
     if(ofGetIcoSphereResolution() != res) {
-        ((ofIcoSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_ICO_SPHERE)).setResolution(res);
+        icoSphere.setResolution(res);
     }
 }
 
 //----------------------------------------------------------
 int of3dGraphics::getIcoSphereResolution() const{
-    return ((ofIcoSpherePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_ICO_SPHERE)).getResolution();
+    return icoSphere.getResolution();
 }
 
 //----------------------------------------------------------
@@ -259,10 +215,9 @@ void of3dGraphics::drawIcoSphere(float x, float y, float z, float radius) const{
 	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,radius,radius);
 	m.translate(x,y,z);
-	const of3dPrimitive& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE );
     renderer->pushMatrix();
     renderer->multMatrix(m);
-    renderCached3dPrimitive( sphere );
+    renderCached3dPrimitive( icoSphere );
     renderer->popMatrix();
 }
 
@@ -280,10 +235,9 @@ void of3dGraphics::drawIcoSphere(const ofPoint& position, float radius) const{
 void of3dGraphics::drawIcoSphere(float radius) const{
 	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,radius,radius);
-	const of3dPrimitive& sphere = getCached3dPrimitive( OF_3D_PRIMITIVE_ICO_SPHERE );
     renderer->pushMatrix();
     renderer->multMatrix(m);
-    renderCached3dPrimitive( sphere );
+    renderCached3dPrimitive( icoSphere );
     renderer->popMatrix();
 }
 
@@ -292,13 +246,13 @@ void of3dGraphics::drawIcoSphere(float radius) const{
 //----------------------------------------------------------
 void of3dGraphics::setCylinderResolution( int radiusSegments, int heightSegments, int capSegments ) {
     if(ofGetCylinderResolution() != ofVec3f( radiusSegments, heightSegments, capSegments )) {
-        ((ofCylinderPrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_CYLINDER)).setResolution(radiusSegments, heightSegments, capSegments);
+        cylinder.setResolution(radiusSegments, heightSegments, capSegments);
     }
 }
 
 //----------------------------------------------------------
 ofVec3f of3dGraphics::getCylinderResolution() const{
-    return ((ofCylinderPrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_CYLINDER)).getResolution();
+    return cylinder.getResolution();
 }
 
 //----------------------------------------------------------
@@ -311,10 +265,9 @@ void of3dGraphics::drawCylinder(float x, float y, float z, float radius, float h
 	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,height,radius);
 	m.translate(x,y,z);
-	const of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER );
     renderer->pushMatrix();
     renderer->multMatrix(m);
-    renderCached3dPrimitive( mesh );
+    renderCached3dPrimitive( cylinder );
     renderer->popMatrix();
 }
 
@@ -327,10 +280,9 @@ void of3dGraphics::drawCylinder(const ofPoint& position, float radius, float hei
 void of3dGraphics::drawCylinder(float radius, float height) const{
 	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,height,radius);
-	const of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CYLINDER );
     renderer->pushMatrix();
     renderer->multMatrix(m);
-    renderCached3dPrimitive( mesh );
+    renderCached3dPrimitive( cylinder );
     renderer->popMatrix();
 }
 
@@ -340,13 +292,13 @@ void of3dGraphics::drawCylinder(float radius, float height) const{
 //----------------------------------------------------------
 void of3dGraphics::setConeResolution( int radiusSegments, int heightSegments, int capSegments){
     if(ofGetConeResolution() != ofVec3f( radiusSegments, heightSegments, capSegments )) {
-        ((ofConePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_CONE)).setResolution(radiusSegments, heightSegments, capSegments);
+        cone.setResolution(radiusSegments, heightSegments, capSegments);
     }
 }
 
 //----------------------------------------------------------
 ofVec3f of3dGraphics::getConeResolution() const{
-    return ((ofConePrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_CONE)).getResolution();
+    return cone.getResolution();
 }
 
 //----------------------------------------------------------
@@ -354,10 +306,9 @@ void of3dGraphics::drawCone(float x, float y, float z, float radius, float heigh
 	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,height,radius);
 	m.translate(x,y,z);
-	const of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE );
     renderer->pushMatrix();
     renderer->multMatrix(m);
-    renderCached3dPrimitive( mesh );
+    renderCached3dPrimitive( cone );
     renderer->popMatrix();
 }
 
@@ -375,10 +326,9 @@ void of3dGraphics::drawCone(const ofPoint& position, float radius, float height)
 void of3dGraphics::drawCone(float radius, float height) const{
 	ofMatrix4x4 m;
 	m.makeScaleMatrix(radius,height,radius);
-	const of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_CONE );
     renderer->pushMatrix();
     renderer->multMatrix(m);
-    renderCached3dPrimitive( mesh );
+    renderCached3dPrimitive( cone );
     renderer->popMatrix();
 }
 
@@ -393,13 +343,13 @@ void of3dGraphics::setBoxResolution( int res ) {
 //----------------------------------------------------------
 void of3dGraphics::setBoxResolution( int resWidth, int resHeight, int resDepth ) {
     if(ofGetBoxResolution() != ofVec3f( resWidth, resHeight, resDepth )) {
-        ((ofBoxPrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_BOX)).setResolution(resWidth, resHeight, resDepth);
+        box.setResolution(resWidth, resHeight, resDepth);
     }
 }
 
 //----------------------------------------------------------
 ofVec3f of3dGraphics::getBoxResolution() const{
-    return ((ofBoxPrimitive&)getCached3dPrimitive(OF_3D_PRIMITIVE_BOX)).getResolution();
+    return box.getResolution();
 }
 
 //----------------------------------------------------------
@@ -411,11 +361,9 @@ void of3dGraphics::drawBox( float x, float y, float z, float width, float height
     renderer->pushMatrix();
     renderer->multMatrix(m);
     if(renderer->getFillMode() == OF_FILLED) {
-    	const of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX );
-        renderCached3dPrimitive( mesh );
+        renderCached3dPrimitive( box );
     } else {
-    	const of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX_WIREFRAME );
-        renderCached3dPrimitive( mesh );
+        renderCached3dPrimitive( boxWireframe );
     }
     renderer->popMatrix();
 }
@@ -442,18 +390,7 @@ void of3dGraphics::drawBox(float size) const{
 
 //----------------------------------------------------------
 void of3dGraphics::drawBox( float width, float height, float depth ) const{
-	ofMatrix4x4 m;
-	m.makeScaleMatrix(width,height,depth);
-    renderer->pushMatrix();
-    renderer->multMatrix(m);
-    if(renderer->getFillMode() == OF_FILLED) {
-    	const of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX );
-        renderCached3dPrimitive( mesh );
-    } else {
-    	const of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_BOX_WIREFRAME );
-        renderCached3dPrimitive( mesh );
-    }
-    renderer->popMatrix();
+	drawBox(0,0,0,width,height,depth);
 }
 
 
@@ -462,8 +399,7 @@ void of3dGraphics::drawAxis(float size) const{
 	m.makeScaleMatrix(size,size,size);
 	renderer->pushMatrix();
     renderer->multMatrix(m);
-	const of3dPrimitive& mesh = getCached3dPrimitive( OF_3D_PRIMITIVE_AXIS );
-    renderCached3dPrimitive( mesh );
+    renderCached3dPrimitive( axis );
     renderer->popMatrix();
 }
 

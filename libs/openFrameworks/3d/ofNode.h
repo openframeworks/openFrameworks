@@ -140,6 +140,7 @@ public:
 	// try to not use global functions for rendering and instead use the passed
 	// renderer
 	virtual void customDraw(const ofBaseRenderer * renderer) const;
+	virtual void customDraw();
 
 	
 	// draw function. do NOT override this
@@ -166,5 +167,6 @@ private:
 	ofVec3f axis[3];
 	
 	ofMatrix4x4 localTransformMatrix;
+	bool legacyCustomDrawOverrided;
 //	ofMatrix4x4 globalTransformMatrix;
 };
