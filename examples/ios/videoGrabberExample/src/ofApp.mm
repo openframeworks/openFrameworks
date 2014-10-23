@@ -18,16 +18,19 @@ void ofApp::update(){
 	
 	grabber.update();
 	
-	unsigned char * src = grabber.getPixels();
-	int totalPix = grabber.getWidth() * grabber.getHeight() * 3;
-	
-	for(int k = 0; k < totalPix; k+= 3){
-		pix[k  ] = 255 - src[k];
-		pix[k+1] = 255 - src[k+1];
-		pix[k+2] = 255 - src[k+2];		
-	}
-	
-	tex.loadData(pix, grabber.getWidth(), grabber.getHeight(), GL_RGB);
+    if(grabber.isFrameNew() == true) {
+        ofPixels & pixels = grabber.getPixels();
+        unsigned char * src = pixels.getData();
+        int totalPix = grabber.getWidth() * grabber.getHeight() * 3;
+        
+        for(int k = 0; k < totalPix; k+= 3){
+            pix[k  ] = 255 - src[k];
+            pix[k+1] = 255 - src[k+1];
+            pix[k+2] = 255 - src[k+2];		
+        }
+        
+        tex.loadData(pix, grabber.getWidth(), grabber.getHeight(), GL_RGB);
+    }
 }
 
 //--------------------------------------------------------------
