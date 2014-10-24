@@ -8,12 +8,17 @@
 #pragma once
 
 #include "ofAppBaseWindow.h"
+#include "ofEvents.h"
+#include "ofConstants.h"
+#include "ofTypes.h"
+#include "ofBaseTypes.h"
 
 class ofAppAndroidWindow: public ofAppBaseGLESWindow {
 public:
 	ofAppAndroidWindow();
 	virtual ~ofAppAndroidWindow();
 
+	void setGLESVersion(int version);
 	void setupOpenGL(int w, int h, ofWindowMode screenMode);
 	void initializeWindow() {}
 	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
@@ -46,6 +51,14 @@ public:
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
 
+	ofCoreEvents & events();
+	shared_ptr<ofBaseRenderer> & renderer();
+
 	void	setThreadedEvents(bool threadedEvents);
 	void 	setAccumulateTouchEvents(bool accumEvents);
+
+private:
+	ofCoreEvents coreEvents;
+	shared_ptr<ofBaseRenderer> currentRenderer;
+	int glesVersion;
 };
