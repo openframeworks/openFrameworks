@@ -33,7 +33,7 @@ void ofBufferObject::allocate(GLsizeiptr bytes, const void * data, GLenum usage)
 }
 
 bool ofBufferObject::isAllocated() const{
-	return data;
+	return data.get() != NULL;
 }
 
 void ofBufferObject::bind(GLenum target) const{
