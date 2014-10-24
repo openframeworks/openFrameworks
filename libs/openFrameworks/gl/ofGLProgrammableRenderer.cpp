@@ -84,7 +84,7 @@ void ofGLProgrammableRenderer::startRender() {
     #endif
 
 	if ( getBackgroundAuto() ){// || ofGetFrameNum() < 3){
-		clear();
+		background(currentStyle.bgColor);
 	}
 }
 
@@ -546,6 +546,7 @@ void ofGLProgrammableRenderer::setupScreenOrtho(float width, float height, float
 //----------------------------------------------------------
 //Resets openGL parameters back to OF defaults
 void ofGLProgrammableRenderer::setupGraphicDefaults(){
+	setStyle(ofStyle());
 }
 
 //----------------------------------------------------------
@@ -2361,12 +2362,13 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 	src.mirrorTo(pixels,true,false);
 	buffer.unmap();
 
+
 	#else
 
 	int sw = getViewportWidth();
-	int numPixels   = width*height;
+	int numPixels   = w*h;
 	if( numPixels == 0 ){
-		ofLogError("ofImage") << "grabScreen(): unable to grab screen, image width and/or height are 0: " << width << "x" << height;
+		ofLogError("ofImage") << "grabScreen(): unable to grab screen, image width and/or height are 0: " << w << "x" << h;
 		return;
 	}
 	pixels.allocate(w, h, OF_PIXELS_RGBA);
@@ -2382,7 +2384,8 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
 		pixels.mirror(true,false);
-	case OF_ORIENTATION_180) {
+		break;
+	case OF_ORIENTATION_180:
 
 		if(isVFlipped()){
 			x = sw - x;   // screen is flipped horizontally.
@@ -2390,9 +2393,10 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 		}
 
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
-		glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
 		pixels.mirror(false,true);
-	case OF_ORIENTATION_90_RIGHT) {
+		break;
+	case OF_ORIENTATION_90_RIGHT:
 		swap(w,h);
 		swap(x,y);
 		if(!isVFlipped()){
@@ -2406,7 +2410,8 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
 		pixels.mirror(true,true);
-	case OF_ORIENTATION_90_LEFT) {
+		break;
+	case OF_ORIENTATION_90_LEFT:
 		swap(w, h);
 		swap(x, y);
 		if(isVFlipped()){
@@ -2418,8 +2423,9 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 		}
 
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
-		glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
 		pixels.mirror(true,true);
+		break;
 	}
 
 	#endif

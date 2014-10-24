@@ -78,7 +78,7 @@ class ofStyle{
 	public:
 		ofStyle(){
 			bFill				= true;
-			blendingMode		= OF_BLENDMODE_DISABLED;
+			blendingMode		= OF_BLENDMODE_ALPHA;
 			smoothing			= false;
 			circleResolution	= 20;
 			sphereResolution	= 20;
