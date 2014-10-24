@@ -266,6 +266,8 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
     }else{
     	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
     }
+
+    setVerticalSync(true);
 }
 
 //--------------------------------------------
