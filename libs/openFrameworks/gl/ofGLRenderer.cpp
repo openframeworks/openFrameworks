@@ -48,7 +48,7 @@ void ofGLRenderer::startRender(){
     #endif
 
 	if ( getBackgroundAuto() ){// || ofGetFrameNum() < 3){
-		clear();
+		background(currentStyle.bgColor);
 	}
 }
 
@@ -331,7 +331,7 @@ void ofGLRenderer::unbind(const ofShader & shader){
 
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofFbo & fbo, bool setupPerspective){
-	matrixStack.pushView();
+	pushView();
 	matrixStack.setRenderSurface(fbo);
 	viewport();
 	if(setupPerspective){
@@ -352,9 +352,9 @@ void ofGLRenderer::bind(const ofFbo & fbo, bool setupPerspective){
 
 //----------------------------------------------------------
 void ofGLRenderer::unbind(const ofFbo & fbo){
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	fbo.unbind();
 	matrixStack.setRenderSurface(*window);
-	matrixStack.popView();
+	popView();
 }
 
 //----------------------------------------------------------
@@ -596,11 +596,11 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, float nearDist, f
 //----------------------------------------------------------
 //Resets openGL parameters back to OF defaults
 void ofGLRenderer::setupGraphicDefaults(){
-
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	setStyle(ofStyle());
 }
 
 //----------------------------------------------------------
@@ -1621,9 +1621,9 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 	#else
 
 	int sw = getViewportWidth();
-	int numPixels   = width*height;
+	int numPixels   = w*h;
 	if( numPixels == 0 ){
-		ofLogError("ofImage") << "grabScreen(): unable to grab screen, image width and/or height are 0: " << width << "x" << height;
+		ofLogError("ofImage") << "grabScreen(): unable to grab screen, image width and/or height are 0: " << w << "x" << h;
 		return;
 	}
 	pixels.allocate(w, h, OF_PIXELS_RGBA);
@@ -1639,7 +1639,8 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
 		pixels.mirror(true,false);
-	case OF_ORIENTATION_180) {
+		break;
+	case OF_ORIENTATION_180:
 
 		if(isVFlipped()){
 			x = sw - x;   // screen is flipped horizontally.
@@ -1647,9 +1648,10 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		}
 
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
-		glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
 		pixels.mirror(false,true);
-	case OF_ORIENTATION_90_RIGHT) {
+		break;
+	case OF_ORIENTATION_90_RIGHT:
 		swap(w,h);
 		swap(x,y);
 		if(!isVFlipped()){
@@ -1663,7 +1665,8 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
 		pixels.mirror(true,true);
-	case OF_ORIENTATION_90_LEFT) {
+		break;
+	case OF_ORIENTATION_90_LEFT:
 		swap(w, h);
 		swap(x, y);
 		if(isVFlipped()){
@@ -1675,8 +1678,9 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 		}
 
 		glPixelStorei(GL_PACK_ALIGNMENT, 1);
-		glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
 		pixels.mirror(true,true);
+		break;
 	}
 
 	#endif
