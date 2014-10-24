@@ -41,6 +41,7 @@ public:
 	void setNormalBuffer(ofBufferObject & buffer, int stride, int offset=0);
 	void setTexCoordBuffer(ofBufferObject & buffer, int stride, int offset=0);
 	void setIndexBuffer(ofBufferObject & buffer);
+	
 	void setAttributeBuffer(int location, ofBufferObject & buffer, int numCoords, int stride, int offset=0);
 
 	ofBufferObject & getVertexBuffer();
