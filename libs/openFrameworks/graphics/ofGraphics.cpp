@@ -230,7 +230,6 @@ void ofSetupScreenOrtho(float width, float height, float nearDist, float farDist
 //Resets openGL parameters back to OF defaults
 void ofSetupGraphicDefaults(){
 	ofGetCurrentRenderer()->setupGraphicDefaults();
-	ofGetCurrentRenderer()->setStyle(ofStyle());
 	if(ofGetCurrentRenderer()->rendersPathPrimitives()){
 		shape.setMode(ofPath::COMMANDS);
 	}else{
