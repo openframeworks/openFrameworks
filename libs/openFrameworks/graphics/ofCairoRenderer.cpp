@@ -1144,6 +1144,7 @@ ofHandednessType ofCairoRenderer::getCoordHandedness() const{
 
 //----------------------------------------------------------
 void ofCairoRenderer::setupGraphicDefaults(){
+	setStyle(ofStyle());
 };
 
 //----------------------------------------------------------
