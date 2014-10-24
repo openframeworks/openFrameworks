@@ -239,17 +239,7 @@ void ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWind
 
 	windowPtr->setupOpenGL(w, h, screenMode);
 
-	ofLogVerbose("ofAppRunner") << "GL ready";
-	ofLogVerbose("ofAppRunner") << "Vendor:   " << (char*)glGetString(GL_VENDOR);
-	ofLogVerbose("ofAppRunner") << "Renderer: " << (char*)glGetString(GL_RENDERER);
-	ofLogVerbose("ofAppRunner") << "Version:  " << (char*)glGetString(GL_VERSION);
-	char* glslVer = (char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
-	ofLogVerbose("ofAppRunner") << "GLSL:     " << (glslVer ? glslVer : "Error getting GLSL version.");
 
-	//Default colors etc are now in ofGraphics - ofSetupGraphicDefaults
-	ofSetupGraphicDefaults();
-	window->setVerticalSync(true);
-	ofEnableAlphaBlending();
 }
 
 //--------------------------------------

@@ -288,6 +288,7 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 	}
 #endif
 	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
+	setVerticalSync(true);
 }
 
 //------------------------------------------------------------
