@@ -62,6 +62,7 @@ public:
     
 	void * getAVFoundationVideoPlayer();
     
+    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::loadMovie() is deprecated, use load() instead.", bool loadMovie(string name));
     OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.", ofPixels & getPixelsRef());
     OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.", const ofPixels & getPixelsRef() const);
     OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getTexture() is deprecated, use getTexturePtr() instead.", ofTexture * getTexture());
