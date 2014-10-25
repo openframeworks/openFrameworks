@@ -74,7 +74,7 @@ namespace ofxCv {
 		ofNoFill();
 		for(int i = 0; i < size(); i++) {
 			ofRectangle object = getObject(i);
-			ofRect(object);
+			ofDrawRectangle(object);
 			ofDrawBitmapStringHighlight(ofToString(getLabel(i)), object.x, object.y);
 		}
 		ofPopStyle();

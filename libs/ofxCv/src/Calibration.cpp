@@ -263,7 +263,7 @@ namespace ofxCv {
 		ofImage cur;
 		dirList.listDir(directory);
 		for(int i = 0; i < (int)dirList.size(); i++) {
-			cur.loadImage(dirList.getPath(i));
+			cur.load(dirList.getPath(i));
 			if(!add(toCv(cur))) {
 				ofLog(OF_LOG_ERROR, "Calibration::add() failed on " + dirList.getPath(i));
 			}
@@ -350,7 +350,7 @@ namespace ofxCv {
 		ofNoFill();
 		ofSetColor(ofColor::red);
 		for(int j = 0; j < (int)imagePoints[i].size(); j++) {
-			ofCircle(toOf(imagePoints[i][j]), 5);
+			ofDrawCircle(toOf(imagePoints[i][j]), 5);
 		}
 		ofPopStyle();
 	}
@@ -395,7 +395,7 @@ namespace ofxCv {
 		for(int j = 0; j < (int)objectPoints[i].size(); j++) {
 			ofPushMatrix();
 			ofTranslate(toOf(objectPoints[i][j]));
-			ofCircle(0, 0, .5);
+			ofDrawCircle(0, 0, .5);
 			ofPopMatrix();
 		}
 
