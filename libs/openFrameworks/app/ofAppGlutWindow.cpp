@@ -210,7 +210,7 @@ void ofAppGlutWindow::setDoubleBuffering(bool _bDoubleBuffered){
 
 
 //------------------------------------------------------------
-void ofAppGlutWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
+void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 
 	int argc = 1;
 	char *argv = (char*)"openframeworks";
@@ -227,17 +227,17 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 		}
 	}
 
-	windowMode = screenMode;
+	windowMode = settings.windowMode;
 	bNewScreenMode = true;
 
 	if (windowMode == OF_FULLSCREEN){
 		glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
 		glutCreateWindow("");
 		
-		requestedWidth  = w;
-		requestedHeight = h;
+		requestedWidth  = settings.width;
+		requestedHeight = settings.height;
 	} else if (windowMode != OF_GAME_MODE){
-		glutInitWindowSize(w, h);
+		glutInitWindowSize(settings.width, settings.height);
 		glutCreateWindow("");
 
 		/*
@@ -261,7 +261,7 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 
     	// w x h, 32bit pixel depth, 60Hz refresh rate
 		char gameStr[64];
-		sprintf( gameStr, "%dx%d:%d@%d", w, h, 32, 60 );
+		sprintf( gameStr, "%dx%d:%d@%d", settings.width, settings.height, 32, 60 );
 
     	glutGameModeString(gameStr);
 
@@ -289,10 +289,6 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 #endif
 	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
 	setVerticalSync(true);
-}
-
-//------------------------------------------------------------
-void ofAppGlutWindow::initializeWindow(){
 
 
     //----------------------
@@ -337,6 +333,7 @@ void ofAppGlutWindow::initializeWindow(){
 		setWindowIcon(iconPixels);
     }
 #endif
+	setWindowPosition(settings.position.x,settings.position.y);
 }
 
 #ifdef TARGET_LINUX
@@ -371,8 +368,17 @@ void ofAppGlutWindow::setWindowIcon(const ofPixels & iconPixels){
 }
 #endif
 
+
+void ofAppGlutWindow::update(){
+	idle_cb();
+}
+
+void ofAppGlutWindow::draw(){
+	display();
+}
+
 //------------------------------------------------------------
-void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
+void ofAppGlutWindow::run(ofBaseApp * appPtr){
 	ofAppPtr = appPtr;
 
 	events().notifySetup();
@@ -598,7 +604,7 @@ void ofAppGlutWindow::display(void){
 				#ifdef TARGET_OSX
 					[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
 					#ifdef MAC_OS_X_VERSION_10_7 //needed for Lion as when the machine reboots the app is not at front level
-						if( ofGetFrameNum() <= 10 ){  //is this long enough? too long?
+						if( instance->events().getFrameNum() <= 10 ){  //is this long enough? too long?
 							[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
 						}
 					#endif

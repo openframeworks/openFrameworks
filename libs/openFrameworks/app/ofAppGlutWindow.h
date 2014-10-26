@@ -17,12 +17,12 @@ public:
 	ofAppGlutWindow();
 	~ofAppGlutWindow(){}
 
-	void setupOpenGL(int w, int h, ofWindowMode screenMode);
+	void setup(const ofGLWindowSettings & settings);
+	void update();
+	void draw();
 	
 	void setDoubleBuffering(bool _bDoubleBuffered); 
-	
-	void initializeWindow();
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	void run(ofBaseApp * appPtr);
 	
 	//note if you fail to set a compatible string the app will not launch
 	void setGlutDisplayString(string str);

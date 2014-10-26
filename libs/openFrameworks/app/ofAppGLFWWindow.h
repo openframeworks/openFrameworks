@@ -45,17 +45,17 @@ public:
 
 
     // this functions are only meant to be called from inside OF don't call them from your code
-
 #ifdef TARGET_OPENGLES
-	void setGLESVersion(int glesVersion);
+	void setup(const ofGLESWindowSettings & settings);
 #else
-	void setOpenGLVersion(int major, int minor);
+	void setup(const ofGLWindowSettings & settings);
 #endif
-	void setupOpenGL(int w, int h, ofWindowMode screenMode);
-	void initializeWindow();
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
-	void windowShouldClose();
+	void update();
+	void draw();
+	void run(ofBaseApp * appPtr);
+	bool windowShouldClose();
 
+	void close();
 
 	void hideCursor();
 	void showCursor();

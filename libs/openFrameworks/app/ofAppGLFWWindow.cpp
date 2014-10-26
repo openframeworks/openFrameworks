@@ -72,11 +72,16 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
 }
 
 ofAppGLFWWindow::~ofAppGLFWWindow(){
-	if(windowP){
-		glfwDestroyWindow(windowP);
-	}
+	close();
 }
 
+void ofAppGLFWWindow::close(){
+	if(windowP){
+		events().notifyExit();
+		glfwDestroyWindow(windowP);
+		windowP = NULL;
+	}
+}
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setNumSamples(int _samples){
@@ -115,27 +120,19 @@ void ofAppGLFWWindow::setStencilBits(int stencil){
 	stencilBits=stencil;
 }
 
-
-
+//------------------------------------------------------------
 #ifdef TARGET_OPENGLES
-//------------------------------------------------------------
-void ofAppGLFWWindow::setGLESVersion(int glesVersion){
-	glVersionMajor = glesVersion;
+void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings){
+	glVersionMajor = settings.glesVersion;
 	glVersionMinor = 0;
-}
 #else
-//------------------------------------------------------------
-void ofAppGLFWWindow::setOpenGLVersion(int major, int minor){
-	glVersionMajor = major;
-	glVersionMinor = minor;
-}
+void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
+	glVersionMajor = settings.glVersionMajor;
+	glVersionMinor = settings.glVersionMinor;
 #endif
 
-//------------------------------------------------------------
-void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
-
-	requestedWidth = w;
-	requestedHeight = h;
+	requestedWidth = settings.width;
+	requestedHeight = settings.height;
 
 
 	if(!glfwInit( )){
@@ -145,7 +142,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 
 //	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
-	ofWindowMode requestedMode = screenMode;
+	ofWindowMode requestedMode = settings.windowMode;
 
 	glfwWindowHint(GLFW_RED_BITS, rBits);
 	glfwWindowHint(GLFW_GREEN_BITS, gBits);
@@ -190,13 +187,13 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
 		if(count>0){
-			windowP = glfwCreateWindow(w, h, "", monitors[0], NULL);
+			windowP = glfwCreateWindow(settings.width, settings.height, "", monitors[0], NULL);
 		}else{
 			ofLogError("ofAppGLFWWindow") << "couldn't find any monitors";
 			return;
 		}
 	}else{
-		windowP = glfwCreateWindow(w, h, "", NULL, NULL);
+		windowP = glfwCreateWindow(settings.width, settings.height, "", NULL, NULL);
 		if(!windowP){
 			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 		}
@@ -230,8 +227,8 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 	glfwGetWindowSize( windowP, &requestedWidth, &requestedHeight );
 
 
-	nonFullScreenW = w;
-	nonFullScreenH = h;
+	nonFullScreenW = settings.width;
+	nonFullScreenH = settings.height;
 
     glfwMakeContextCurrent(windowP);
 
@@ -268,17 +265,6 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
     }
 
     setVerticalSync(true);
-}
-
-//--------------------------------------------
-void ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
-}
-
-//--------------------------------------------
-void ofAppGLFWWindow::initializeWindow(){
-	 //----------------------
-	 // setup the callbacks
-	if(!windowP) return;
 	glfwSetMouseButtonCallback(windowP, mouse_cb);
 	glfwSetCursorPosCallback(windowP, motion_cb);
 	glfwSetKeyCallback(windowP, keyboard_cb);
@@ -286,7 +272,11 @@ void ofAppGLFWWindow::initializeWindow(){
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
 	glfwSetDropCallback(windowP, drop_cb);
+	setWindowPosition(settings.position.x,settings.position.y);
+}
 
+//--------------------------------------------
+void ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
 }
 
 #ifdef TARGET_LINUX
@@ -329,7 +319,7 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
 }
 
 //--------------------------------------------
-void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
+void ofAppGLFWWindow::run(ofBaseApp * appPtr){
 	ofAppPtr = appPtr;
 
 	glfwMakeContextCurrent(windowP);
@@ -344,8 +334,19 @@ void ofAppGLFWWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	events().notifyExit();
 }
 
-void ofAppGLFWWindow::windowShouldClose(){
-	glfwSetWindowShouldClose(windowP,1);
+void ofAppGLFWWindow::update(){
+	glfwMakeContextCurrent(windowP);
+	glfwPollEvents();
+	currentRenderer->update();
+	events().notifyUpdate();
+}
+
+void ofAppGLFWWindow::draw(){
+	display();
+}
+
+bool ofAppGLFWWindow::windowShouldClose(){
+	return glfwWindowShouldClose(windowP) || events().windowShouldClose();
 }
 
 //------------------------------------------------------------
@@ -362,7 +363,7 @@ void ofAppGLFWWindow::display(void){
 		if (nFramesSinceWindowResized < 3){
 			currentRenderer->clear();
 		} else {
-			if ( (ofGetFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glfwSwapBuffers(windowP);
+			if ( (events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glfwSwapBuffers(windowP);
 			else                                                     glFlush();
 		}
 	} else {

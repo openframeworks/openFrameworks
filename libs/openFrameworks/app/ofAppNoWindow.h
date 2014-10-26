@@ -13,10 +13,12 @@ public:
 	ofAppNoWindow();
 	~ofAppNoWindow(){}
 
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	void run(ofBaseApp * appPtr);
 
 	static void exitApp();
-	void setupOpenGL(int w, int h, ofWindowMode screenMode);
+	void setup(const ofWindowSettings & settings);
+	void update();
+	void draw();
 
 	ofPoint		getWindowPosition();
 	ofPoint		getWindowSize();
