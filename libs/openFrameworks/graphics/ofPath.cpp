@@ -1,5 +1,5 @@
 #include "ofPath.h"
-#include "ofGraphics.h"
+#include "ofAppRunner.h"
 #include "ofTessellator.h"
 
 ofPath::Command::Command(Type type)

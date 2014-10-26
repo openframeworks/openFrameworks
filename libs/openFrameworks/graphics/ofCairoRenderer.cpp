@@ -6,6 +6,7 @@
 #include "of3dPrimitives.h"
 #include "ofTrueTypeFont.h"
 #include "ofNode.h"
+#include "ofGraphics.h"
 
 const string ofCairoRenderer::TYPE="cairo";
 

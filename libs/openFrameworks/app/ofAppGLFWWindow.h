@@ -28,6 +28,11 @@ public:
 	ofAppGLFWWindow();
 	~ofAppGLFWWindow();
 
+	static void loop(){};
+	static bool doesLoop(){ return false; }
+	static bool allowsMultiWindow(){ return true; }
+	static bool needsPolling(){ return true; }
+	static void pollEvents(){ glfwPollEvents(); }
 
 	// window settings, this functions can be called from main before calling ofSetupOpenGL
 	void 		setNumSamples(int samples);
@@ -45,6 +50,7 @@ public:
 
 
     // this functions are only meant to be called from inside OF don't call them from your code
+    using ofAppBaseWindow::setup;
 #ifdef TARGET_OPENGLES
 	void setup(const ofGLESWindowSettings & settings);
 #else

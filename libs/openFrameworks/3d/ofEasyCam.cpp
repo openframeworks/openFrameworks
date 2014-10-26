@@ -218,6 +218,7 @@ void ofEasyCam::updateRotation(){
 }
 
 void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
+	cout << "mouse pressed " << (ofVec2f&)mouse << endl;
 	if(viewport.inside(mouse.x, mouse.y)){
 		lastMouse = mouse;
 		prevMouse = mouse;
@@ -244,6 +245,7 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 }
 
 void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
+	cout << "mouse released " << (ofVec2f&)mouse << endl;
 	unsigned long curTap = ofGetElapsedTimeMillis();
 	if(lastTap != 0 && curTap - lastTap < doubleclickTime){
 		reset();

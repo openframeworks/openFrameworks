@@ -460,7 +460,6 @@ ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofDrawBitmapMode
 
 const ofTexture & ofBitmapFont::getTexture() const{
 	if(!texture.isAllocated()){
-		cout << "allocating texture " << endl;
 		ofBitmapFont::init();
 		texture.allocate(pixels,false);
 		texture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);

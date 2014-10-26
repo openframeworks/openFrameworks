@@ -1122,21 +1122,16 @@ void ofEndShape(bool bClose){
 //--------------------------------------------------
 // text
 //--------------------------------------------------
-void ofDrawBitmapString(string textString, const ofPoint & p){
-	ofDrawBitmapString(textString, p.x, p.y, p.z);
-}
-//--------------------------------------------------
-void ofDrawBitmapString(string textString, float x, float y){
-	ofDrawBitmapString(textString, x, y, 0.0f);
-}
-//--------------------------------------------------
-void ofDrawBitmapString(string textString, float x, float y, float z){
+template<>
+void ofDrawBitmapString(const string & textString, float x, float y, float z){
 	ofGetCurrentRenderer()->drawString(textString,x,y,z);
 }
+
 //--------------------------------------------------
 void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background, const ofColor& foreground) {
 	ofDrawBitmapStringHighlight(text, position.x, position.y, background, foreground);
 }
+
 //--------------------------------------------------
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background, const ofColor& foreground) {
 	vector<string> lines = ofSplitString(text, "\n");

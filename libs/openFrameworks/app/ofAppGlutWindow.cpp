@@ -18,6 +18,7 @@
 	#include "ofIcon.h"
 	#include "ofImage.h"
 	#include <X11/Xatom.h>
+	#include <GL/freeglut_ext.h>
 #endif
 
 
@@ -232,7 +233,7 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 
 	if (windowMode == OF_FULLSCREEN){
 		glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
-		glutCreateWindow("");
+		windowId = glutCreateWindow("");
 		
 		requestedWidth  = settings.width;
 		requestedHeight = settings.height;
@@ -377,6 +378,15 @@ void ofAppGlutWindow::draw(){
 	display();
 }
 
+
+void ofAppGlutWindow::close(){
+#ifdef TARGET_LINUX
+	glutLeaveMainLoop();
+#else
+	std::exit(0);
+#endif
+}
+
 //------------------------------------------------------------
 void ofAppGlutWindow::run(ofBaseApp * appPtr){
 	ofAppPtr = appPtr;
@@ -384,6 +394,12 @@ void ofAppGlutWindow::run(ofBaseApp * appPtr){
 	events().notifySetup();
 	events().notifyUpdate();
 
+	glutMainLoop();
+}
+
+//------------------------------------------------------------
+void ofAppGlutWindow::loop(){
+	instance->events().notifyUpdate();
 	glutMainLoop();
 }
 
@@ -667,7 +683,7 @@ void ofAppGlutWindow::display(void){
 		}
     #endif
 
-		instance->currentRenderer->finishRender();
+	instance->currentRenderer->finishRender();
 
     nFramesSinceWindowResized++;
 
@@ -768,7 +784,8 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 void ofAppGlutWindow::idle_cb(void) {
 	if(instance->events().windowShouldClose()){
 		instance->events().notifyExit();
-		instance->windowShouldClose();
+		ofExit(0);
+		return;
 	}
 	instance->currentRenderer->update();
 	instance->events().notifyUpdate();

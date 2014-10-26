@@ -2,7 +2,7 @@
 
 
 #include "ofRectangle.h"
-#include "ofAppRunner.h"
+#include "ofGraphics.h"
 #include "ofNode.h"
 
 /// \todo Use the public API of ofNode for all transformations

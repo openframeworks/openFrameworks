@@ -4,6 +4,8 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofTypes.h"
+#include "ofWindowSettings.h"
+#include "ofMainLoop.h"
 
 class ofAppBaseWindow;
 class ofAppBaseGLWindow;
@@ -11,18 +13,34 @@ class ofAppBaseGLESWindow;
 class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
-class ofWindowSettings;
 
+void ofInit();
 OF_INTERNAL_DEPRECATED(void 		ofSetupOpenGL(int w, int h, ofWindowMode screenMode));	// sets up the opengl context!
 OF_INTERNAL_DEPRECATED(shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings));	// sets up the opengl context!
-#ifdef TARGET_OPENGLES
-void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
-void 		ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, ofWindowMode screenMode);  // will be deprecated
-#else
-OF_INTERNAL_DEPRECATED(void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWindowMode screenMode));	// sets up the opengl context!
-OF_INTERNAL_DEPRECATED(void 		ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, ofWindowMode screenMode));  // will be deprecated
-#endif
-void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode screenMode));
+
+shared_ptr<ofMainLoop> ofGetMainLoop();
+
+template<typename Window>
+void ofSetupOpenGL(shared_ptr<Window> windowPtr, int w, int h, ofWindowMode screenMode){
+	ofInit();
+	ofWindowSettings settings;
+	settings.width = w;
+	settings.height = h;
+	settings.windowMode = screenMode;
+	ofGetMainLoop()->addWindow(windowPtr);
+	windowPtr->setup(settings);
+}
+
+
+template<typename Window>
+static void noopDeleter(Window*){}
+
+template<typename Window>
+void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode){
+	shared_ptr<Window> window = shared_ptr<Window>(windowPtr,std::ptr_fun(noopDeleter<Window>));
+	ofSetupOpenGL(window,w,h,screenMode);
+}
+
 
 OF_INTERNAL_DEPRECATED(int 		ofRunApp(shared_ptr<ofBaseApp> OFSA));
 OF_INTERNAL_DEPRECATED(int 		ofRunApp(ofBaseApp * OFSA = NULL)); // will be deprecated

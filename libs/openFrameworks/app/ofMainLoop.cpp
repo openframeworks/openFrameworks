@@ -28,7 +28,10 @@
 
 ofMainLoop::ofMainLoop()
 :bShouldClose(false)
-,status(0){
+,status(0)
+,allowMultiWindow(true)
+,windowLoop(NULL)
+,pollEvents(NULL){
 
 }
 
@@ -36,25 +39,24 @@ ofMainLoop::~ofMainLoop() {
 }
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & settings){
-	shared_ptr<ofAppBaseWindow> window;
 #ifdef TARGET_NODISPLAY
-	window = shared_ptr<ofAppBaseWindow>(new ofAppNoWindow());
+	shared_ptr<ofAppNoWindow> window = shared_ptr<ofAppNoWindow>(new ofAppNoWindow());
 #else
 	#if defined(TARGET_OF_IOS)
-	window = shared_ptr<ofAppBaseGLESWindow>(new ofAppiOSWindow());
+	shared_ptr<ofAppiOSWindow> window = shared_ptr<ofAppiOSWindow>(new ofAppiOSWindow());
 	#elif defined(TARGET_ANDROID)
-	window = shared_ptr<ofAppBaseGLESWindow>(new ofAppAndroidWindow());
+	shared_ptr<ofAppAndroidWindow> window = shared_ptr<ofAppAndroidWindow>(new ofAppAndroidWindow());
 	#elif defined(TARGET_RASPBERRY_PI)
-	window = shared_ptr<ofAppBaseGLESWindow>(new ofAppEGLWindow());
+	shared_ptr<ofAppEGLWindow> window = shared_ptr<ofAppEGLWindow>(new ofAppEGLWindow());
 	#elif defined(TARGET_EMSCRIPTEN)
-	window = shared_ptr<ofAppBaseGLESWindow>(new ofxAppEmscriptenWindow);
+	shared_ptr<ofxAppEmscriptenWindow> window = shared_ptr<ofxAppEmscriptenWindow>(new ofxAppEmscriptenWindow);
 	#elif defined(TARGET_OPENGLES)
-	window = shared_ptr<ofAppBaseGLESWindow>(new ofAppGLFWWindow());
+	shared_ptr<ofAppGLFWWindow> window = shared_ptr<ofAppGLFWWindow>(new ofAppGLFWWindow());
 	#else
-	window = shared_ptr<ofAppBaseGLWindow>(new ofAppGLFWWindow());
+	shared_ptr<ofAppGLFWWindow> window = shared_ptr<ofAppGLFWWindow>(new ofAppGLFWWindow());
 	#endif
 #endif
-	currentWindow = window;
+	addWindow(window);
 	window->setup(settings);
 	return window;
 }
@@ -82,25 +84,37 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> a
     window->events().notifySetup();
 }
 
+void ofMainLoop::run(shared_ptr<ofBaseApp> app){
+	if(!windowsApps.empty()){
+		run(windowsApps.begin()->first,app);
+	}
+}
+
 int ofMainLoop::loop(){
-	while(!bShouldClose && !windowsApps.empty()){
-		for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
-			if(i->first->windowShouldClose()){
-				cout << "destroiying " << i->first.get() << endl;
-				i->first->close();
-				windowsApps.erase(i);
-			}else{
-				currentWindow = i->first;
-				i->first->update();
-				i->first->draw();
-			}
+	if(!windowLoop){
+		while(!bShouldClose && !windowsApps.empty()){
+			loopOnce();
 		}
+	}else{
+		windowLoop();
 	}
 	return status;
 }
 
 void ofMainLoop::loopOnce(){
-
+	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
+		if(i->first->windowShouldClose()){
+			i->first->close();
+			windowsApps.erase(i);
+		}else{
+			currentWindow = i->first;
+			i->first->update();
+			i->first->draw();
+		}
+	}
+	if(pollEvents){
+		pollEvents();
+	}
 }
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
@@ -117,7 +131,7 @@ ofCoreEvents & ofMainLoop::events(){
 
 void ofMainLoop::shouldClose(int _status){
 	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
-		i->first->windowShouldClose();
+		i->first->close();
 	}
 	bShouldClose = true;
 	status = _status;

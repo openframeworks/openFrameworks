@@ -6,8 +6,6 @@
 #include "ofMatrix4x4.h"
 #include "ofRectangle.h"
 #include "ofTypes.h"
-#include "ofBaseTypes.h"
-
 #define  	CIRC_RESOLUTION		    22				// 22 pts for a circle...
 
 //for pdf screenshot
@@ -25,10 +23,10 @@ OF_INTERNAL_DEPRECATED(void ofPopView());
 // setup matrices and viewport (upto you to push and pop view before and after)
 // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
+OF_INTERNAL_DEPRECATED(bool ofIsVFlipped());
 OF_INTERNAL_DEPRECATED(void ofViewport(ofRectangle viewport));
 OF_INTERNAL_DEPRECATED(void ofViewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped()));
 
-OF_INTERNAL_DEPRECATED(bool ofIsVFlipped());
 
 OF_INTERNAL_DEPRECATED(void ofSetupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0));
 OF_INTERNAL_DEPRECATED(void ofSetupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1));
@@ -324,6 +322,8 @@ template<typename T>
 OF_INTERNAL_DEPRECATED(void ofDrawBitmapString(const T & textString, float x, float y));
 template<typename T>
 OF_INTERNAL_DEPRECATED(void ofDrawBitmapString(const T & textString, float x, float y, float z));
+template<>
+OF_INTERNAL_DEPRECATED(void ofDrawBitmapString(const string & textString, float x, float y, float z));
 OF_INTERNAL_DEPRECATED(void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white));
 OF_INTERNAL_DEPRECATED(void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white));
 
@@ -348,5 +348,5 @@ void ofDrawBitmapString(const T & textString, float x, float y){
 //--------------------------------------------------
 template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y, float z){
-	ofGetCurrentRenderer()->drawString(ofToString(textString),x,y,z);
+	ofDrawBitmapString(ofToString(textString),x,y,z);
 }
