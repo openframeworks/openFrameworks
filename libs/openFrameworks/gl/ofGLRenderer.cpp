@@ -25,7 +25,7 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 	rectPoints.resize(4);
 	triPoints.resize(3);
 	normalsEnabled = false;
-	lightingEnabled = true;
+	lightingEnabled = false;
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
 	window = _window;
 }
@@ -1374,10 +1374,10 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 	glAlphaFunc(GL_GREATER, 0);
 #endif
 
-	ofMesh charMesh = ofBitmapStringGetMesh(textString,0,0,currentStyle.drawBitmapMode,isVFlipped());
-	ofBitmapStringGetTextureRef().bind();
+	ofMesh charMesh = bitmapFont.getMesh(textString,0,0,currentStyle.drawBitmapMode,isVFlipped());
+	bitmapFont.getTexture().bind();
 	draw(charMesh,OF_MESH_FILL,false,true,false);
-	ofBitmapStringGetTextureRef().unbind();
+	bitmapFont.getTexture().unbind();
 
 #ifndef TARGET_OPENGLES
 	glPopAttrib();

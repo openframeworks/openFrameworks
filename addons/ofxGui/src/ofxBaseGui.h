@@ -4,6 +4,7 @@
 #include "ofBaseTypes.h"
 #include "ofParameter.h"
 #include "ofTrueTypeFont.h"
+#include "ofBitmapFont.h"
 
 class ofxBaseGui{
 public:
@@ -81,7 +82,8 @@ protected:
 	static ofTrueTypeFont font;
 	static bool fontLoaded;
 	static bool useTTF;
-	ofPtr<ofBaseFileSerializer> serializer;
+	shared_ptr<ofBaseFileSerializer> serializer;
+	ofBitmapFont bitmapFont;
 
 	static ofColor headerBackgroundColor;
 	static ofColor backgroundColor;

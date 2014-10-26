@@ -4,6 +4,7 @@
 #include "ofMatrix4x4.h"
 #include <stack>
 #include "of3dGraphics.h"
+#include "ofBitmapFont.h"
 #include "ofMatrixStack.h"
 #include <set>
 
@@ -226,5 +227,6 @@ private:
 	ofStyle currentStyle;
 	deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
+	ofBitmapFont bitmapFont;
 	const ofAppBaseWindow * window;
 };
