@@ -11,28 +11,23 @@ class ofAppBaseGLESWindow;
 class ofBaseApp;
 class ofBaseRenderer;
 class ofCoreEvents;
+class ofWindowSettings;
 
 OF_INTERNAL_DEPRECATED(void 		ofSetupOpenGL(int w, int h, ofWindowMode screenMode));	// sets up the opengl context!
+OF_INTERNAL_DEPRECATED(shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings));	// sets up the opengl context!
 #ifdef TARGET_OPENGLES
-void		ofSetOpenGLESVersion(int version);
-int			ofGetOpenGLESVersion();
-string		ofGetGLSLVersion();
 void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
 void 		ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, ofWindowMode screenMode);  // will be deprecated
 #else
-OF_INTERNAL_DEPRECATED(void		ofSetOpenGLVersion(int major, int minor));
-OF_INTERNAL_DEPRECATED(int			ofGetOpenGLVersionMajor());
-OF_INTERNAL_DEPRECATED(int			ofGetOpenGLVersionMinor());
-OF_INTERNAL_DEPRECATED(string		ofGetGLSLVersion());
 OF_INTERNAL_DEPRECATED(void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWindowMode screenMode));	// sets up the opengl context!
 OF_INTERNAL_DEPRECATED(void 		ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, ofWindowMode screenMode));  // will be deprecated
 #endif
-OF_INTERNAL_DEPRECATED(void		ofSetWindow(ofAppBaseWindow * windowPtr));
-OF_INTERNAL_DEPRECATED(void		ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr));
 void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode screenMode));
 
-OF_INTERNAL_DEPRECATED(void 		ofRunApp(shared_ptr<ofBaseApp> OFSA));
-OF_INTERNAL_DEPRECATED(void 		ofRunApp(ofBaseApp * OFSA = NULL)); // will be deprecated
+OF_INTERNAL_DEPRECATED(int 		ofRunApp(shared_ptr<ofBaseApp> OFSA));
+OF_INTERNAL_DEPRECATED(int 		ofRunApp(ofBaseApp * OFSA = NULL)); // will be deprecated
+void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app);
+int ofRunMainLoop();
 
 
 OF_INTERNAL_DEPRECATED(ofBaseApp * ofGetAppPtr());
@@ -80,7 +75,6 @@ OF_INTERNAL_DEPRECATED(void 		ofSetVerticalSync(bool bSync));
 
 ofCoreEvents & ofEvents();
 void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults=false);
-OF_DEPRECATED(void ofSetCurrentRenderer(const string & rendererType,bool setDefaults=false));
 shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer();
 
 //-------------------------- native window handles

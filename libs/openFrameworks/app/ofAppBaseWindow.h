@@ -2,14 +2,14 @@
 
 #include "ofPoint.h"
 #include "ofTypes.h"
-class ofBaseRenderer;
-class ofCoreEvents;
-
+#include "ofEvents.h"
+#include "ofWindowSettings.h"
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 #include <X11/Xlib.h>
 #endif
 
 class ofBaseApp;
+class ofBaseRenderer;
 
 class ofAppBaseWindow{
 
@@ -18,12 +18,14 @@ public:
 	ofAppBaseWindow(){};
 	virtual ~ofAppBaseWindow(){};
 
-	virtual void setupOpenGL(int w, int h, ofWindowMode screenMode) {}
-	virtual void initializeWindow() {}
-	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr) {}
-	virtual void windowShouldClose(){
-		std::exit(0);
+	virtual void setup(const ofWindowSettings & settings)=0;
+	virtual void update()=0;
+	virtual void draw()=0;
+	virtual void run(ofBaseApp * appPtr) {}
+	virtual bool windowShouldClose(){
+		return events().windowShouldClose();
 	}
+	virtual void close(){};
 	virtual ofCoreEvents & events() = 0;
 	virtual shared_ptr<ofBaseRenderer> & renderer() = 0;
 
@@ -88,11 +90,21 @@ public:
 class ofAppBaseGLWindow: public ofAppBaseWindow{
 public:
 	virtual ~ofAppBaseGLWindow(){}
-	virtual void setOpenGLVersion(int glVersionMajor,int glVersionMinor){};
+	virtual void setup(const ofGLWindowSettings & settings)=0;
+
+private:
+	void setup(const ofWindowSettings & settings){
+		setup(static_cast<const ofGLWindowSettings&>(settings));
+	}
 };
 
 class ofAppBaseGLESWindow: public ofAppBaseWindow{
 public:
 	virtual ~ofAppBaseGLESWindow(){}
-	virtual void setGLESVersion(int glesVersion){};
+	virtual void setup(const ofGLESWindowSettings & settings)=0;
+
+private:
+	void setup(const ofWindowSettings & settings){
+		setup(static_cast<const ofGLESWindowSettings&>(settings));
+	}
 };

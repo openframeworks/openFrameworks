@@ -70,15 +70,15 @@ ofAppNoWindow::ofAppNoWindow(){
 }
 
 
-void ofAppNoWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
-	width = w;
-	height = h;
+void ofAppNoWindow::setup(const ofWindowSettings & settings){
+	width = settings.width;
+	height = settings.height;
+
+	ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofNoopRenderer));
 }
 
 //------------------------------------------------------------
-void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
-
-	ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofNoopRenderer));
+void ofAppNoWindow::run(ofBaseApp * appPtr){
 
 	ofAppPtr = appPtr;
 
@@ -132,6 +132,42 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 
 	}
 	events().notifyExit();
+}
+
+void ofAppNoWindow::update(){
+
+    /// listen for escape
+    #ifdef TARGET_WIN32
+    if (GetAsyncKeyState(VK_ESCAPE))
+    	events().notifyKeyPressed(OF_KEY_ESC);
+    #endif
+
+	#if defined TARGET_OSX || defined TARGET_LINUX
+	while ( !events().windowShouldClose() && kbhit() )
+	{
+		int key = getch();
+		if ( key == 27 )
+		{
+			events().notifyKeyPressed(OF_KEY_ESC);
+		}
+		else if ( key == /* ctrl-c */ 3 )
+		{
+			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
+			break;
+		}
+		else
+		{
+			events().notifyKeyPressed(key);
+		}
+	}
+	#endif
+
+
+	events().notifyUpdate();
+}
+
+void ofAppNoWindow::draw(){
+	events().notifyDraw();
 }
 
 //------------------------------------------------------------
