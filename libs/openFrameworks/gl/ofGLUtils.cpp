@@ -707,6 +707,9 @@ bool ofIsGLProgrammableRenderer(){
 }
 
 string ofGLSLVersionFromGL(int major, int minor){
+#ifdef TARGET_OPENGLES
+	return "ES1"
+#else
 	switch(major){
 	case 3:
 		if(minor==0){
@@ -723,6 +726,7 @@ string ofGLSLVersionFromGL(int major, int minor){
 	default:
 		return "120";
 	}
+#endif
 }
 
 #ifndef TARGET_PROGRAMMABLE_GL

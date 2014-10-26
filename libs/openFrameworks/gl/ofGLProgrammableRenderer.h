@@ -6,6 +6,7 @@
 #include "ofMatrixStack.h"
 #include "ofVboMesh.h"
 #include "of3dGraphics.h"
+#include "ofBitmapFont.h"
 
 
 class ofShapeTessellation;
@@ -266,6 +267,7 @@ private:
 	ofStyle currentStyle;
 	deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
+	ofBitmapFont bitmapFont;
 	const ofAppBaseWindow * window;
 
 

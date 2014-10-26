@@ -129,7 +129,7 @@ void ofxBaseGui::bindFontTexture(){
 	if(useTTF){
 		font.getFontTexture().bind();
 	}else{
-		ofBitmapStringGetTextureRef().bind();
+		bitmapFont.getTexture().bind();
 	}
 }
 
@@ -137,7 +137,7 @@ void ofxBaseGui::unbindFontTexture(){
 	if(useTTF){
 		font.getFontTexture().unbind();
 	}else{
-		ofBitmapStringGetTextureRef().unbind();
+		bitmapFont.getTexture().unbind();
 	}
 }
 
@@ -146,7 +146,7 @@ ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
 	if(useTTF){
 		return font.getStringMesh(text,x,y);
 	}else{
-		return ofBitmapStringGetMesh(text,x,y);
+		return bitmapFont.getMesh(text,x,y);
 	}
 }
 
@@ -154,7 +154,7 @@ ofRectangle ofxBaseGui::getTextBoundingBox(const string & text,float x, float y)
 	if(useTTF){
 		return font.getStringBoundingBox(text,x,y);
 	}else{
-		return ofBitmapStringGetBoundingBox(text,x,y);
+		return bitmapFont.getBoundingBox(text,x,y);
 	}
 }
 

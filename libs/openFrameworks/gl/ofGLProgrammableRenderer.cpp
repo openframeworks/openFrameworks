@@ -277,18 +277,18 @@ void ofGLProgrammableRenderer::draw(const ofPath & shape) const{
 	if(shape.getUseShapeColor()){
 		prevColor = currentStyle.color;
 	}
-	ofGLProgrammableRenderer* mut_this = const_cast<ofGLProgrammableRenderer*>(this);
+	ofGLProgrammableRenderer * mut_this = const_cast<ofGLProgrammableRenderer*>(this);
 	if(shape.isFilled()){
 		const ofMesh & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
-			mut_this->setColor( shape.getFillColor() * currentStyle.color,shape.getFillColor().a/255. * currentStyle.color.a);
+			mut_this->setColor( shape.getFillColor(),shape.getFillColor().a);
 		}
 		draw(mesh,OF_MESH_FILL);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = currentStyle.lineWidth;
 		if(shape.getUseShapeColor()){
-			mut_this->setColor( shape.getStrokeColor() * currentStyle.color, shape.getStrokeColor().a/255. * currentStyle.color.a);
+			mut_this->setColor( shape.getStrokeColor(), shape.getStrokeColor().a);
 		}
 		mut_this->setLineWidth( shape.getStrokeWidth() );
 		const vector<ofPolyline> & outlines = shape.getOutline();
@@ -1572,10 +1572,10 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
 	mutThis->setAlphaBitmapText(true);
-	ofMesh charMesh = ofBitmapStringGetMesh(textString, 0, 0, currentStyle.drawBitmapMode, isVFlipped());
-	ofBitmapStringGetTextureRef().bind();
+	ofMesh charMesh = bitmapFont.getMesh(textString, 0, 0, currentStyle.drawBitmapMode, isVFlipped());
+	bitmapFont.getTexture().bind();
 	draw(charMesh,OF_MESH_FILL,false,true,false);
-	ofBitmapStringGetTextureRef().unbind();
+	bitmapFont.getTexture().unbind();
 	mutThis->setAlphaBitmapText(false);
 
 
@@ -2183,6 +2183,7 @@ void ofGLProgrammableRenderer::setup(int major, int minor){
 	lineMesh.setUsage(GL_STREAM_DRAW);
 #endif
 
+	setupGraphicDefaults();
 	viewport();
 	setupScreenPerspective();
 }
