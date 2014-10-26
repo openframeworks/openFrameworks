@@ -254,7 +254,7 @@ ofPixels & ofxiOSVideoPlayer::getPixels() {
 
 //----------------------------------------
 const ofPixels & ofxiOSVideoPlayer::getPixels() const {
-    return pixels;
+    return const_cast<ofxiOSVideoPlayer*>(this)->getPixels();
 }
 
 //----------------------------------------
