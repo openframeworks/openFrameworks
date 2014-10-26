@@ -2,7 +2,7 @@
 #include "ofUtils.h"
 #include "ofBaseTypes.h"
 #include "ofConstants.h"
-#include "ofGraphics.h"
+#include "ofAppRunner.h"
 
 #ifdef TARGET_ANDROID
 	extern bool ofxAndroidInitGrabber(ofVideoGrabber * grabber);

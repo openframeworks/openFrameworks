@@ -33,22 +33,7 @@
 // static variables:
 
 static shared_ptr<ofMainLoop> mainLoop;
-static shared_ptr<ofAppBaseWindow> tmpWindow;
-// this is hacky only to provide bw compatibility, a shared_ptr should always be initialized using a shared_ptr
-// it shouldn't be a problem since it's only called from main and never deleted from outside
-// also since old versions created the window in the stack, if this function is called we create a shared_ptr that never deletes
-//--------------------------------------
-#ifdef TARGET_OPENGLES
-static void noopDeleter(ofAppBaseGLESWindow*){}
-void ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, ofWindowMode screenMode){
-	ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
-}
-#else
-static void noopDeleter(ofAppBaseGLWindow*){}
-void ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, ofWindowMode screenMode){
-	ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow>(windowPtr,std::ptr_fun(noopDeleter)),w,h,screenMode);
-}
-#endif
+
 
 void ofExitCallback();
 void ofURLFileLoaderShutdown();
@@ -116,6 +101,12 @@ void ofInit(){
 	mainLoop = shared_ptr<ofMainLoop>(new ofMainLoop);
 }
 
+
+//--------------------------------------
+shared_ptr<ofMainLoop> ofGetMainLoop(){
+	return mainLoop;
+}
+
 //--------------------------------------
 int ofRunApp(ofBaseApp * OFSA){
 	return ofRunApp(shared_ptr<ofBaseApp>(OFSA));
@@ -123,9 +114,7 @@ int ofRunApp(ofBaseApp * OFSA){
 
 //--------------------------------------
 int ofRunApp(shared_ptr<ofBaseApp> app){
-	mainLoop->run(tmpWindow,app);
-	tmpWindow.reset();
-    ofSetupGraphicDefaults();
+	mainLoop->run(app);
 	return mainLoop->loop();
 }
 
@@ -136,32 +125,7 @@ void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
 }
 
 int ofRunMainLoop(){
-    ofSetupGraphicDefaults();
 	return mainLoop->loop();
-}
-
-//--------------------------------------
-#ifdef TARGET_OPENGLES
-void ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, ofWindowMode screenMode){
-#else
-void ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWindowMode screenMode){
-	ofInit();
-#endif
-	tmpWindow = windowPtr;
-#ifdef TARGET_OPENGLES
-	ofGLESWindowSettings settings;
-	settings.glesVersion = 1;
-#else
-	ofGLWindowSettings settings;
-	settings.glVersionMajor = 2;
-	settings.glVersionMinor = 1;
-#endif
-
-	settings.width = w;
-	settings.height = h;
-	settings.windowMode = screenMode;
-
-	windowPtr->setup(settings);
 }
 
 //--------------------------------------
@@ -178,24 +142,12 @@ void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 	settings.width = w;
 	settings.height = h;
 	settings.windowMode = screenMode;
-	tmpWindow = ofCreateWindow(settings);
+	ofCreateWindow(settings);
 }
 
 shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 	ofInit();
-	tmpWindow = mainLoop->createWindow(settings);
-	return tmpWindow;
-}
-
-void ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode screenMode){
-	ofWindowSettings settings;
-
-	settings.width = w;
-	settings.height = h;
-	settings.windowMode = screenMode;
-	windowPtr->setup(settings);
-	tmpWindow = shared_ptr<ofAppBaseWindow>(windowPtr);
-
+	return mainLoop->createWindow(settings);
 }
 
 //-----------------------	gets called when the app exits

@@ -13,6 +13,12 @@ public:
 	ofAppNoWindow();
 	~ofAppNoWindow(){}
 
+	static bool doesLoop(){ return false; }
+	static bool allowsMultiWindow(){ return false; }
+	static void loop(){};
+	static bool needsPolling(){ return false; }
+	static void pollEvents(){};
+
 	void run(ofBaseApp * appPtr);
 
 	static void exitApp();

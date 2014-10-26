@@ -1,5 +1,5 @@
 #include "ofPolyline.h"
-#include "ofGraphics.h"
+#include "ofAppRunner.h"
 
 //----------------------------------------------------------
 ofPolyline::ofPolyline(){

@@ -5,7 +5,6 @@
 #include "ofEventUtils.h"
 #include "ofTimer.h"
 #include "ofFpsCounter.h"
-#include "ofAppRunner.h"
 #include <set>
 
 //-------------------------- mouse/key query
@@ -283,6 +282,7 @@ void ofSendMessage(ofMessage msg);
 void ofSendMessage(string messageString);
 
 ofEvent<void> & ofExitEvent();
+ofCoreEvents & ofEvents();
 
 template<class ListenerClass>
 void ofRegisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){

@@ -91,8 +91,6 @@ class ofAppBaseGLWindow: public ofAppBaseWindow{
 public:
 	virtual ~ofAppBaseGLWindow(){}
 	virtual void setup(const ofGLWindowSettings & settings)=0;
-
-private:
 	void setup(const ofWindowSettings & settings){
 		setup(static_cast<const ofGLWindowSettings&>(settings));
 	}
@@ -102,8 +100,6 @@ class ofAppBaseGLESWindow: public ofAppBaseWindow{
 public:
 	virtual ~ofAppBaseGLESWindow(){}
 	virtual void setup(const ofGLESWindowSettings & settings)=0;
-
-private:
 	void setup(const ofWindowSettings & settings){
 		setup(static_cast<const ofGLESWindowSettings&>(settings));
 	}

@@ -883,12 +883,14 @@ static void rotateMouseXY(ofOrientation orientation, int w, int h, double &x, do
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
+
+	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
 #ifdef TARGET_OSX
     //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
-    if( ofGetKeyPressed(OF_KEY_CONTROL) && button == GLFW_MOUSE_BUTTON_LEFT){
+    if( instance->events().getKeyPressed(OF_KEY_CONTROL) && button == GLFW_MOUSE_BUTTON_LEFT){
         button = GLFW_MOUSE_BUTTON_RIGHT; 
     }
-    if( ofGetKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
+    if( instance->events().getKeyPressed(OF_KEY_ALT) && button == GLFW_MOUSE_BUTTON_LEFT){
         button = GLFW_MOUSE_BUTTON_MIDDLE; 
     }
 #endif
@@ -905,13 +907,11 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
 		break;
 	}
 
-	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
-
 	if (state == GLFW_PRESS) {
-		instance->events().notifyMousePressed(ofGetMouseX(), ofGetMouseY(), button);
+		instance->events().notifyMousePressed(instance->events().getMouseX(), instance->events().getMouseY(), button);
 		instance->buttonPressed=true;
 	} else if (state == GLFW_RELEASE) {
-		instance->events().notifyMouseReleased(ofGetMouseX(), ofGetMouseY(), button);
+		instance->events().notifyMouseReleased(instance->events().getMouseX(), instance->events().getMouseY(), button);
 		instance->buttonPressed=false;
 	}
 	instance->buttonInUse = button;
@@ -940,13 +940,13 @@ void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString) {
+	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
 	ofDragInfo drag;
-	drag.position.set(ofGetMouseX(), ofGetMouseY());
+	drag.position.set(instance->events().getMouseX(), instance->events().getMouseY());
 	drag.files.resize(numFiles);
 	for(int i=0; i<(int)drag.files.size(); i++){
 		drag.files[i] = Poco::Path(dropString[i]).toString();
 	}
-	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
 	instance->events().notifyDragEvent(drag);
 }
 

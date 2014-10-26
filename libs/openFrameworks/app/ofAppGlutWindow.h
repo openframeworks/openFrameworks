@@ -17,12 +17,20 @@ public:
 	ofAppGlutWindow();
 	~ofAppGlutWindow(){}
 
+	static bool doesLoop(){ return true; }
+	static bool allowsMultiWindow(){ return false; }
+	static void loop();
+	static bool needsPolling(){ return false; }
+	static void pollEvents(){  }
+
+	using ofAppBaseWindow::setup;
 	void setup(const ofGLWindowSettings & settings);
 	void update();
 	void draw();
+	void run(ofBaseApp * appPtr);
+	void close();
 	
 	void setDoubleBuffering(bool _bDoubleBuffered); 
-	void run(ofBaseApp * appPtr);
 	
 	//note if you fail to set a compatible string the app will not launch
 	void setGlutDisplayString(string str);
@@ -80,6 +88,6 @@ private:
 	
 	ofCoreEvents coreEvents;
 	shared_ptr<ofBaseRenderer> currentRenderer;
-		 
+	int windowId;
 };
 

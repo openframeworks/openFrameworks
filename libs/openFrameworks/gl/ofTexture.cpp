@@ -522,7 +522,6 @@ void ofTexture::generateMipmap(){
 
 	bool isGlGenerateMipmapAvailable = false;
 	if(!glGenerateMipmap){
-		cout << "no glGenerateMipmap" << endl;
 		isGlGenerateMipmapAvailable = true;
 	}
 	

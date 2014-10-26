@@ -194,7 +194,6 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer * renderer){
 }
 
 void ofMaterial::beginShader(int texType, ofGLProgrammableRenderer * renderer){
-	cout << "begin " << endl;
 	initShaders(renderer);
 	switch(texType){
 	case OF_NO_TEXTURE:

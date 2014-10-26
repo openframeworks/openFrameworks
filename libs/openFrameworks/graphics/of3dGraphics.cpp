@@ -7,7 +7,7 @@
 //
 
 #include "of3dGraphics.h"
-#include "ofGraphics.h"
+#include "ofAppRunner.h"
 #include "ofVboMesh.h"
 #include <map>
 
