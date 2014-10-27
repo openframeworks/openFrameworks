@@ -92,7 +92,12 @@ public:
 	virtual ~ofAppBaseGLWindow(){}
 	virtual void setup(const ofGLWindowSettings & settings)=0;
 	void setup(const ofWindowSettings & settings){
-		setup(static_cast<const ofGLWindowSettings&>(settings));
+		const ofGLWindowSettings * glSettings = dynamic_cast<const ofGLWindowSettings*>(&settings);
+		if(glSettings){
+			setup(*glSettings);
+		}else{
+			setup(ofGLWindowSettings(settings));
+		}
 	}
 };
 
@@ -101,6 +106,11 @@ public:
 	virtual ~ofAppBaseGLESWindow(){}
 	virtual void setup(const ofGLESWindowSettings & settings)=0;
 	void setup(const ofWindowSettings & settings){
-		setup(static_cast<const ofGLESWindowSettings&>(settings));
+		const ofGLESWindowSettings * glSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
+		if(glSettings){
+			setup(*glSettings);
+		}else{
+			setup(ofGLESWindowSettings(settings));
+		}
 	}
 };

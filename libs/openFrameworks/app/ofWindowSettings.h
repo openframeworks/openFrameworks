@@ -8,6 +8,8 @@ public:
 	,position(0,0)
 	,windowMode(OF_WINDOW){}
 
+	virtual ~ofWindowSettings(){};
+
 	int width;
 	int height;
 	ofVec2f position;
@@ -19,6 +21,13 @@ public:
 	ofGLWindowSettings()
 	:glVersionMajor(2)
 	,glVersionMinor(1){}
+
+	ofGLWindowSettings(const ofWindowSettings & settings)
+	:ofWindowSettings(settings)
+	,glVersionMajor(2)
+	,glVersionMinor(1){}
+
+	virtual ~ofGLWindowSettings(){};
 
 	void setGLVersion(int major, int minor){
 		glVersionMajor = major;
@@ -33,9 +42,16 @@ class ofGLESWindowSettings: public ofWindowSettings{
 public:
 	ofGLESWindowSettings()
 	:glesVersion(1){}
-	int glesVersion;
+
+	ofGLESWindowSettings(const ofWindowSettings & settings)
+	:ofWindowSettings(settings)
+	,glesVersion(2){}
+
+	virtual ~ofGLESWindowSettings(){};
 
 	void setGLESVersion(int version){
 		glesVersion = version;
 	}
+
+	int glesVersion;
 };

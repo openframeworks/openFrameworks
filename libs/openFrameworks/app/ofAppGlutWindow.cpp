@@ -193,6 +193,7 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	bDoubleBuffered = true; // LIA
 	iconSet = false;
 	instance = this;
+	windowId = 0;
 }
 
 //lets you enable alpha blending using a display string like:
