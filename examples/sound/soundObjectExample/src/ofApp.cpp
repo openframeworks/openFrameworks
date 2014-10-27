@@ -42,7 +42,7 @@ void ofApp::draw(){
 
 
 //--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
+void ofApp::mouseMoved(int x, int y){
 	float f = ofMap(x, 0, ofGetWidth(), 0, 1, true);
 	// give the frequency a logarithmic scale.
 	f = f * f;
