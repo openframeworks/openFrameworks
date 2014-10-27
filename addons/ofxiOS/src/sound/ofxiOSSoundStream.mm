@@ -43,6 +43,11 @@ void ofxiOSSoundStream::setDeviceID(int _deviceID) {
 }
 
 //------------------------------------------------------------------------------
+int ofxiOSSoundStream::getDeviceID() {
+	return 0;
+}
+
+//------------------------------------------------------------------------------
 void ofxiOSSoundStream::setInput(ofBaseSoundInput * soundInput) {
 	soundInputPtr = soundInput;
 }

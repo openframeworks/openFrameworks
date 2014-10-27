@@ -55,6 +55,10 @@
 		53DA339012DF8F5000C622CE /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA338F12DF8F5000C622CE /* CoreMedia.framework */; };
 		53DA339212DF8F5000C622CE /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DA339112DF8F5000C622CE /* CoreVideo.framework */; };
 		5E2E99DD10ED147800587639 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E2E99DC10ED147800587639 /* MapKit.framework */; };
+		6678E97519FEB2DF00C00581 /* ofBaseSoundStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6678E97119FEB2DF00C00581 /* ofBaseSoundStream.cpp */; };
+		6678E97619FEB2DF00C00581 /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6678E97219FEB2DF00C00581 /* ofSoundBuffer.cpp */; };
+		6678E97719FEB2DF00C00581 /* ofSoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678E97319FEB2DF00C00581 /* ofSoundBuffer.h */; };
+		6678E97819FEB2DF00C00581 /* ofSoundUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678E97419FEB2DF00C00581 /* ofSoundUtils.h */; };
 		66EA462B17A6D396009BB12A /* ofxOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66EA462717A6D396009BB12A /* ofxOpenALSoundPlayer.cpp */; };
 		66EA462C17A6D396009BB12A /* ofxOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 66EA462817A6D396009BB12A /* ofxOpenALSoundPlayer.h */; };
 		66EA462D17A6D396009BB12A /* SoundEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66EA462917A6D396009BB12A /* SoundEngine.cpp */; };
@@ -265,6 +269,10 @@
 		53DA339112DF8F5000C622CE /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		53F323EA10A20EDB00E0DAE4 /* OpenAL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = System/Library/Frameworks/OpenAL.framework; sourceTree = SDKROOT; };
 		5E2E99DC10ED147800587639 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		6678E97119FEB2DF00C00581 /* ofBaseSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofBaseSoundStream.cpp; sourceTree = "<group>"; };
+		6678E97219FEB2DF00C00581 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
+		6678E97319FEB2DF00C00581 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
+		6678E97419FEB2DF00C00581 /* ofSoundUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUtils.h; sourceTree = "<group>"; };
 		66EA462717A6D396009BB12A /* ofxOpenALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOpenALSoundPlayer.cpp; sourceTree = "<group>"; };
 		66EA462817A6D396009BB12A /* ofxOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOpenALSoundPlayer.h; sourceTree = "<group>"; };
 		66EA462917A6D396009BB12A /* SoundEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoundEngine.cpp; sourceTree = "<group>"; };
@@ -485,24 +493,24 @@
 		15594F0115C55A5700727FF2 /* sound */ = {
 			isa = PBXGroup;
 			children = (
-				66EA462717A6D396009BB12A /* ofxOpenALSoundPlayer.cpp */,
-				66EA462817A6D396009BB12A /* ofxOpenALSoundPlayer.h */,
-				66EA462917A6D396009BB12A /* SoundEngine.cpp */,
-				66EA462A17A6D396009BB12A /* SoundEngine.h */,
+				671C0AF01770246200DF03B3 /* AVSoundPlayer.h */,
+				671C0AF11770246200DF03B3 /* AVSoundPlayer.m */,
+				671C0AF21770246200DF03B3 /* ofxiOSSoundPlayer.h */,
+				671C0AF31770246200DF03B3 /* ofxiOSSoundPlayer.mm */,
 				678C3D19176F04F800D1CC68 /* ofxiOSSoundStream.h */,
 				678C3D1A176F04F800D1CC68 /* ofxiOSSoundStream.mm */,
 				678C3D1B176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.h */,
 				678C3D1C176F04F800D1CC68 /* ofxiOSSoundStreamDelegate.mm */,
+				66EA462717A6D396009BB12A /* ofxOpenALSoundPlayer.cpp */,
+				66EA462817A6D396009BB12A /* ofxOpenALSoundPlayer.h */,
+				66EA462917A6D396009BB12A /* SoundEngine.cpp */,
+				66EA462A17A6D396009BB12A /* SoundEngine.h */,
 				678C3D1D176F04F800D1CC68 /* SoundInputStream.h */,
 				678C3D1E176F04F800D1CC68 /* SoundInputStream.m */,
 				678C3D1F176F04F800D1CC68 /* SoundOutputStream.h */,
 				678C3D20176F04F800D1CC68 /* SoundOutputStream.m */,
 				678C3D21176F04F800D1CC68 /* SoundStream.h */,
 				678C3D22176F04F800D1CC68 /* SoundStream.m */,
-				671C0AF21770246200DF03B3 /* ofxiOSSoundPlayer.h */,
-				671C0AF31770246200DF03B3 /* ofxiOSSoundPlayer.mm */,
-				671C0AF01770246200DF03B3 /* AVSoundPlayer.h */,
-				671C0AF11770246200DF03B3 /* AVSoundPlayer.m */,
 			);
 			path = sound;
 			sourceTree = "<group>";
@@ -843,11 +851,15 @@
 			isa = PBXGroup;
 			children = (
 				E4F76DD2176CB27200798745 /* ofBaseSoundPlayer.h */,
+				6678E97119FEB2DF00C00581 /* ofBaseSoundStream.cpp */,
 				E4F76DD4176CB27200798745 /* ofBaseSoundStream.h */,
+				6678E97219FEB2DF00C00581 /* ofSoundBuffer.cpp */,
+				6678E97319FEB2DF00C00581 /* ofSoundBuffer.h */,
 				E4F76DDD176CB27200798745 /* ofSoundPlayer.cpp */,
 				E4F76DDE176CB27200798745 /* ofSoundPlayer.h */,
 				E4F76DDF176CB27200798745 /* ofSoundStream.cpp */,
 				E4F76DE0176CB27200798745 /* ofSoundStream.h */,
+				6678E97419FEB2DF00C00581 /* ofSoundUtils.h */,
 			);
 			path = sound;
 			sourceTree = "<group>";
@@ -970,6 +982,7 @@
 				E4F76E89176CB27200798745 /* ofParameter.h in Headers */,
 				E4F76E8B176CB27200798745 /* ofParameterGroup.h in Headers */,
 				E4F76E8D176CB27200798745 /* ofPoint.h in Headers */,
+				6678E97819FEB2DF00C00581 /* ofSoundUtils.h in Headers */,
 				E4F76E8F176CB27200798745 /* ofRectangle.h in Headers */,
 				E4F76E90176CB27200798745 /* ofTypes.h in Headers */,
 				E4F76E91176CB27200798745 /* ofConstants.h in Headers */,
@@ -996,6 +1009,7 @@
 				15594F9415C56A8A00727FF2 /* ofxiOSEAGLView.h in Headers */,
 				15594F9515C56A8A00727FF2 /* ofxiOSAppDelegate.h in Headers */,
 				15594F9615C56A8A00727FF2 /* ofxiOSViewController.h in Headers */,
+				6678E97719FEB2DF00C00581 /* ofSoundBuffer.h in Headers */,
 				15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */,
 				15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */,
 				15594FAD15C56C9500727FF2 /* ofxiOSAlerts.h in Headers */,
@@ -1112,11 +1126,13 @@
 				E4F76E69176CB27200798745 /* ofMatrix4x4.cpp in Sources */,
 				E4F76E6B176CB27200798745 /* ofQuaternion.cpp in Sources */,
 				E4F76E6D176CB27200798745 /* ofVec2f.cpp in Sources */,
+				6678E97519FEB2DF00C00581 /* ofBaseSoundStream.cpp in Sources */,
 				E4F76E70176CB27200798745 /* ofVec4f.cpp in Sources */,
 				E4F76E80176CB27200798745 /* ofSoundPlayer.cpp in Sources */,
 				E4F76E82176CB27200798745 /* ofSoundStream.cpp in Sources */,
 				E4F76E84176CB27200798745 /* ofBaseTypes.cpp in Sources */,
 				E4F76E86176CB27200798745 /* ofColor.cpp in Sources */,
+				6678E97619FEB2DF00C00581 /* ofSoundBuffer.cpp in Sources */,
 				E4F76E88176CB27200798745 /* ofParameter.cpp in Sources */,
 				E4F76E8A176CB27200798745 /* ofParameterGroup.cpp in Sources */,
 				E4F76E8E176CB27200798745 /* ofRectangle.cpp in Sources */,
