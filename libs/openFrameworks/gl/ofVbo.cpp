@@ -360,6 +360,7 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 					registerVbo(this);
 				#endif
 				bUsingVerts = true;
+				totalVerts = total;
 			}
 				break;
 			case ofShader::COLOR_ATTRIBUTE:
