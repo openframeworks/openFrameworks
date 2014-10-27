@@ -360,7 +360,6 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 					registerVbo(this);
 				#endif
 				bUsingVerts = true;
-				totalVerts = total;
 			}
 				break;
 			case ofShader::COLOR_ATTRIBUTE:
@@ -384,6 +383,9 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 			default:
 				break;
 		}
+	}
+	if(location == ofShader::POSITION_ATTRIBUTE){
+		totalVerts = total;
 	}
 
 	GLsizeiptr size = (stride == 0) ? numCoords * sizeof(float) : stride;
