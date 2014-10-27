@@ -131,7 +131,9 @@ public:
 	void stereoPan(float left, float right);
 
 	/// copy length samples from shortBuffer and interpret as interleaved with the given number of channels at the given samplerate
-	void copyFrom(short * shortBuffer, unsigned int length, int channels, int samplerate);
+	void copyFrom(short * shortBuffer, size_t numFrames, int channels, int samplerate);
+	
+	void copyFrom(float * buffer, size_t numFrames, unsigned int channels, int samplerate);
 
 	/// resize ofSoundBuffer to outNumFrames with outNumChannels, and then copy outNumFrames of data from us to soundBuffer. 
 	/// fromFrame is a frame offset. if we don't have enough source data, loop with fromFrame=0 until we have filled outBuffer.

@@ -28,13 +28,20 @@ ofSoundBuffer::ofSoundBuffer(short * shortBuffer, unsigned int numFrames, int _c
 	checkSizeAndChannelsConsistency("constructor");
 }
 
-void ofSoundBuffer::copyFrom(short * shortBuffer, unsigned int numFrames, int _channels, int _samplerate){
+void ofSoundBuffer::copyFrom(short * shortBuffer, size_t numFrames, int _channels, int _samplerate){
 	channels = _channels;
 	samplerate = _samplerate;
 	buffer.resize(numFrames*channels);
 	for(unsigned int i=0;i<size();i++){
 		buffer[i] = shortBuffer[i]/float(numeric_limits<short>::max());
 	}
+	checkSizeAndChannelsConsistency("copyFrom");
+}
+
+void ofSoundBuffer::copyFrom(float * floatBuffer, size_t numFrames, unsigned int _channels, int _samplerate) {
+	channels = _channels;
+	samplerate = _samplerate;
+	buffer.assign(floatBuffer, floatBuffer + numFrames);
 	checkSizeAndChannelsConsistency("copyFrom");
 }
 
