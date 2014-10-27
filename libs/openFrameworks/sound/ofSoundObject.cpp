@@ -123,9 +123,9 @@ ofSoundMixer &ofGetSystemSoundMixer(){
 
 ofPtr<ofBaseSoundOutput> ofSoundMixer::getChannelSource(int channelNumber){
 	if (channelNumber < channels.size()) {
-		return ofPtr<ofBaseSoundOutput>(channels[channelNumber]);
+		return shared_ptr<ofBaseSoundOutput>(channels[channelNumber]);
 	}else{
-		return ofPtr<ofBaseSoundOutput>();
+		return shared_ptr<ofBaseSoundOutput>();
 	}
 }
 
