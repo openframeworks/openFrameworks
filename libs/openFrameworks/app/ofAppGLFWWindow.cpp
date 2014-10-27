@@ -161,7 +161,6 @@ void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
 	glfwWindowHint(GLFW_SAMPLES,samples);
 
 	if(glVersionMinor!=-1 && glVersionMajor!=-1){
-		cout << "setting version " << glVersionMajor << "," << glVersionMinor << endl;
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersionMinor);
