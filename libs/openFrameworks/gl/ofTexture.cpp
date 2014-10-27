@@ -579,7 +579,8 @@ void ofTexture::generateMipmap(){
 
 //----------------------------------------------------------
 void ofTexture::loadScreenData(int x, int y, int w, int h){
-	
+	// TODO: this should go into the renderers so it
+	// doesn't depend on global calls
 	int screenHeight = ofGetViewportHeight();
 	y = screenHeight - y;
 	y -= h; // top, bottom issues

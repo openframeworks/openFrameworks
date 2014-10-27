@@ -1082,8 +1082,6 @@ void ofImage_<PixelType>::cropFrom(ofImage_<PixelType> & otherImage, int x, int 
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::rotate90(int nRotations){
-	int myOldWidth = pixels.getWidth();
-	int myOldHeight = pixels.getHeight();
 	pixels.rotate90(nRotations);
 	update();
 }

@@ -1582,7 +1582,6 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawString(string textString, float x, float y, float z) const{
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
-	float fontSize = 8.0f;
 	float sx = 0;
 	float sy = 0;
 

@@ -315,6 +315,16 @@ ofPoint	ofGetWindowSize() {
 }
 
 //--------------------------------------------------
+float ofRandomWidth() {
+	return ofRandom(0.f, ofGetWidth());
+}
+
+//--------------------------------------------------
+float ofRandomHeight() {
+	return ofRandom(0.f, ofGetHeight());
+}
+
+//--------------------------------------------------
 ofRectangle	ofGetWindowRect() {
 	return ofRectangle(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 }

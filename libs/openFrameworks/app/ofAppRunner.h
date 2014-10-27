@@ -76,6 +76,12 @@ OF_INTERNAL_DEPRECATED(int 		ofGetWidth());			// ofGetWidth is correct for orien
 OF_INTERNAL_DEPRECATED(int 		ofGetHeight());
 OF_INTERNAL_DEPRECATED(int 		ofGetWindowWidth());			// ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation.
 OF_INTERNAL_DEPRECATED(int 		ofGetWindowHeight());
+
+/// \returns a random number between 0 and the width of the window.
+float ofRandomWidth();
+
+/// \returns a random number between 0 and the height of the window.
+float ofRandomHeight();
 OF_INTERNAL_DEPRECATED(bool		ofDoesHWOrientation());
 OF_INTERNAL_DEPRECATED(ofPoint		ofGetWindowSize());
 OF_INTERNAL_DEPRECATED(ofRectangle	ofGetWindowRect());
