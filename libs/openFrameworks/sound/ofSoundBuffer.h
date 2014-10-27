@@ -110,6 +110,9 @@ public:
 	
 	/// return the duration of audio in this buffer in milliseconds (==(getNumFrames()/getSampleRate())*1000)
 	unsigned long getDurationMS() const;
+	
+	/// return the ID of the device which generated this buffer
+	unsigned int getDeviceID() const { return soundStreamDeviceID; }
 
 	/// access the sample at the given position in the buffer.
 	/// to retrieve the sample for channel channelIndex of frame frameIndex, do the following:
