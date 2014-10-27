@@ -2,10 +2,11 @@
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 
-ofBufferObject::Data::Data(GLuint id)
-:id(id)
+ofBufferObject::Data::Data()
+:id(0)
 ,size(0)
 ,lastTarget(GL_ARRAY_BUFFER){
+	glGenBuffers(1,&id);
 }
 
 ofBufferObject::Data::~Data(){
@@ -18,9 +19,7 @@ ofBufferObject::ofBufferObject()
 }
 
 void ofBufferObject::allocate(){
-	GLuint id;
-	glGenBuffers(1,&id);
-	data = shared_ptr<Data>(new Data(id));
+	data = shared_ptr<Data>(new Data());
 }
 
 void ofBufferObject::allocate(GLsizeiptr bytes, GLenum usage){
@@ -34,7 +33,7 @@ void ofBufferObject::allocate(GLsizeiptr bytes, const void * data, GLenum usage)
 }
 
 bool ofBufferObject::isAllocated() const{
-	return data!=NULL;
+	return data.get() != NULL;
 }
 
 void ofBufferObject::bind(GLenum target) const{
@@ -159,6 +158,6 @@ void ofBufferObject::copyTo(ofBufferObject & dstBuffer){
 #endif
 
 GLsizeiptr ofBufferObject::size() const{
-	if(data) return data->size;
+	if (data) return data->size;
 	else return 0;
 }
