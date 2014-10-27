@@ -11,7 +11,7 @@ void ofApp::setup(){
 	noise.connectTo(filter).connectTo(delay).connectTo(ofGetSystemSoundMixer());
 
 	soundStream.setup(2, 0, 44100, 64, 1);
-	soundStream.setOutput(&ofGetSystemSoundMixer());
+	soundStream.setOutput(ofGetSystemSoundMixer());
 	
 	font.load(OF_TTF_SANS, 12);
 	ofBackground(0);
