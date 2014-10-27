@@ -10,7 +10,7 @@ void ofApp::setup(){
 	// connect each object to the next in a chain, finishing with the global sound mixer.
 	noise.connectTo(filter).connectTo(delay).connectTo(ofGetSystemSoundMixer());
 
-	soundStream.setup(2, 0, 44100, 64, 1);
+	soundStream.setup(2, 0, 44100, 512, 1);
 	soundStream.setOutput(ofGetSystemSoundMixer());
 	
 	font.load(OF_TTF_SANS, 12);
