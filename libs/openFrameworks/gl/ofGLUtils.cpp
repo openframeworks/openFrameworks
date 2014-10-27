@@ -694,14 +694,6 @@ bool ofGLSupportsNPOTTextures(){
 #endif
 }
 
-bool ofIsGLProgrammableRenderer(){
-	int major=0;
-	glGetIntegerv(GL_MAJOR_VERSION, &major);
-	cout << major << endl;
-	return major>=3;
-	//return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE;
-}
-
 string ofGLSLVersionFromGL(int major, int minor){
 #ifdef TARGET_OPENGLES
 	return "ES1"
