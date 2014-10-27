@@ -54,6 +54,10 @@ void ofRtAudioSoundStream::setDeviceID(int _deviceID){
     inDeviceID = outDeviceID = _deviceID;
 }
 
+int ofRtAudioSoundStream::getDeviceID() {
+	return inDeviceID;
+}
+
 void ofRtAudioSoundStream::setInDeviceID(int _deviceID){
 	inDeviceID = _deviceID;
 }
