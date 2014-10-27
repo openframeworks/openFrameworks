@@ -20,6 +20,8 @@ class ofxiOSSoundStream : public ofBaseSoundStream {
 
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
+		ofBaseSoundInput * getInput();
+		ofBaseSoundOutput * getOutput();
 		
 		/// currently, the number of buffers is always 1 on iOS and setting nBuffers has no effect
 		/// the max buffersize is 4096 
