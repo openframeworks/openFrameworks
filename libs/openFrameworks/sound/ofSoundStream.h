@@ -123,9 +123,15 @@ public:
 
     /// \brief Sets the object which will have audioIn() called when the device receives audio.
     void setInput(ofBaseSoundInput * soundInput);
+	
+    /// \brief Sets the object which will have audioIn() called when the device receives audio.
+    void setInput(ofBaseSoundInput &soundInput);
 
     /// \brief Sets the object which will have audioOut() called when the device requests audio.
     void setOutput(ofBaseSoundOutput * soundOutput);
+	
+    /// \brief Sets the object which will have audioOut() called when the device requests audio.
+    void setOutput(ofBaseSoundOutput &soundOutput);
 
     /// \brief Starts a stream (note that setup() will start the stream on its own).
     void start();

@@ -92,10 +92,20 @@ void ofSoundStream::setInput(ofBaseSoundInput * soundInput){
 }
 
 //------------------------------------------------------------
+void ofSoundStream::setInput(ofBaseSoundInput &soundInput){
+	setInput(&soundInput);
+}
+
+//------------------------------------------------------------
 void ofSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 	if( soundStream ){
 		soundStream->setOutput(soundOutput);
 	}
+}
+
+//------------------------------------------------------------
+void ofSoundStream::setOutput(ofBaseSoundOutput &soundOutput){
+	setOutput(&soundOutput);
 }
 
 //------------------------------------------------------------
