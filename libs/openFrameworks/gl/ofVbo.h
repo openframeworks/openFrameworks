@@ -41,6 +41,7 @@ public:
 	void setNormalBuffer(ofBufferObject & buffer, int stride, int offset=0);
 	void setTexCoordBuffer(ofBufferObject & buffer, int stride, int offset=0);
 	void setIndexBuffer(ofBufferObject & buffer);
+	
 	void setAttributeBuffer(int location, ofBufferObject & buffer, int numCoords, int stride, int offset=0);
 
 	ofBufferObject & getVertexBuffer();
@@ -56,6 +57,8 @@ public:
 	const ofBufferObject & getTexCoordBuffer() const;
 	const ofBufferObject & getIndexBuffer() const;
 
+	const ofBufferObject & getAttributeBuffer(int location) const;
+
 	void updateMesh(const ofMesh & mesh);
 
 	void updateVertexData(const ofVec3f * verts, int total);
@@ -69,7 +72,7 @@ public:
 	void updateColorData(const float * color0r, int total);
 	void updateNormalData(const float * normal0x, int total);
 	void updateTexCoordData(const float * texCoord0x, int total);
-	
+
 	void updateAttributeData(int location, const float * vert0x, int total);
 
 	void enableColors();
@@ -87,6 +90,9 @@ public:
 	GLuint getNormalId() const;
 	GLuint getTexCoordId() const;
 	GLuint getIndexId() const;
+	
+	/// returns OpenGL memory object id for GL buffer holding attribute data
+	GLuint  getAttributeId(int AttrPos_) const;
 	
 	bool getIsAllocated() const;
 	bool getUsingVerts() const;
@@ -111,6 +117,8 @@ public:
 	void clearColors();
 	void clearTexCoords();
 	void clearIndices();
+	
+	void clearAttribute(int attributePos_);
 
 	int getNumVertices() const;
 	int getNumIndices() const;
@@ -155,10 +163,6 @@ private:
 	GLuint vaoID;
 	mutable bool vaoChanged;
 
-	VertexAttribute vertexAttribute;
-	VertexAttribute normalAttribute;
-	VertexAttribute colorAttribute;
-	VertexAttribute texCoordAttribute;
 	IndexAttribute indexAttribute;
 
 	mutable bool bUsingVerts;		// need at least vertex data
@@ -173,7 +177,11 @@ private:
 	mutable bool bBound;
 
 	map<int,VertexAttribute> customAttributes;
+	
+	bool hasAttribute(int attributePos_) const {return (customAttributes.find(attributePos_) != customAttributes.end());};
 
+	static void checkVAO();
+	
 	static bool vaoChecked;
 	static bool supportVAOs;
 };

@@ -16,21 +16,20 @@ public:
     void enableTextureCache();
     void disableTextureCache();
     
-    bool loadMovie(string name);
+    bool load(string name);
     void close();
     void update();
 	
-	bool			setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat 	getPixelFormat() const;
+	bool setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat getPixelFormat() const;
 	
     void play();
     void stop();
 	
     bool isFrameNew() const;
-    unsigned char * getPixels();
-    ofPixels&	getPixelsRef();
-    const ofPixels&	getPixelsRef() const;
-    ofTexture *	getTexture();
+    ofPixels & getPixels();
+    const ofPixels & getPixels() const;
+    ofTexture * getTexturePtr();
     void initTextureCache();
     void killTextureCache();
 	
@@ -63,25 +62,24 @@ public:
     
 	void * getAVFoundationVideoPlayer();
     
+    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::loadMovie() is deprecated, use load() instead.", bool loadMovie(string name));
+    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.", ofPixels & getPixelsRef());
+    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.", const ofPixels & getPixelsRef() const);
+    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getTexture() is deprecated, use getTexturePtr() instead.", ofTexture * getTexture());
+    
 protected:
     
-    void updatePixelsToRGB();
-	
 	void * videoPlayer; // super hack to forward declare an objective c class inside a header file that can only handle c classes.
 	
     bool bFrameNew;
     bool bResetPixels;
-    bool bResetTexture;
     bool bUpdatePixels;
-    bool bUpdatePixelsToRgb;
     bool bUpdateTexture;
     bool bTextureCacheSupported;
     bool bTextureCacheEnabled;
 	
-	GLubyte * pixelsRGB;
-    GLubyte * pixelsRGBA;
-    GLint internalGLFormat;
-	ofPixelFormat internalPixelFormat;
+    ofPixels pixels;
+	ofPixelFormat pixelFormat;
 	ofTexture videoTexture;
 };
 

@@ -215,7 +215,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	}
 
 #ifdef TARGET_LITTLE_ENDIAN
-	if(swapForLittleEndian && sizeof(PixelType) == 1) {
+	if(swapForLittleEndian && sizeof(PixelType) == 1 && channels >=3 ) {
 		pix.swapRgb();
 	}
 #endif
