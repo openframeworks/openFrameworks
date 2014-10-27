@@ -672,6 +672,11 @@ void ofTexture::setAlphaMask(ofTexture & mask){
 }
 
 //----------------------------------------------------------
+const ofTexture * ofTexture::getAlphaMask() const{
+	return texData.alphaMask.get();
+}
+
+//----------------------------------------------------------
 void ofTexture::disableAlphaMask(){
 	if(texData.alphaMask){
 		texData.alphaMask.reset();
@@ -714,6 +719,7 @@ ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 	
 }
 
+//----------------------------------------------------------
 /// Sets a texture matrix that will be uploaded whenever the texture is
 /// binded.
 void ofTexture::setTextureMatrix(const ofMatrix4x4 & m){
@@ -721,9 +727,22 @@ void ofTexture::setTextureMatrix(const ofMatrix4x4 & m){
 	texData.useTextureMatrix = true;
 }
 
+//----------------------------------------------------------
 /// Disable the texture matrix.
 void ofTexture::disableTextureMatrix(){
 	texData.useTextureMatrix = false;
+	texData.textureMatrix.makeIdentityMatrix();
+}
+
+
+//----------------------------------------------------------
+const ofMatrix4x4 & ofTexture::getTextureMatrix() const{
+	return texData.textureMatrix;
+}
+
+//----------------------------------------------------------
+bool ofTexture::isUsingTextureMatrix() const{
+	return texData.useTextureMatrix;
 }
 
 //----------------------------------------------------------

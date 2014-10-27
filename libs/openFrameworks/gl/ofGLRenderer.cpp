@@ -474,8 +474,8 @@ void ofGLRenderer::unbind(ofBaseMaterial & material){
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofTexture & texture, int location){
 	//we could check if it has been allocated - but we don't do that in draw()
-	if(texture.texData.alphaMask){
-		setAlphaMaskTex(*texture.texData.alphaMask);
+	if(texture.getAlphaMask()){
+		setAlphaMaskTex(*texture.getAlphaMask());
 	}
 	enableTextureTarget(texture,location);
 
@@ -495,30 +495,26 @@ void ofGLRenderer::bind(const ofTexture & texture, int location){
 		loadMatrix(m);
 		matrixMode(OF_MATRIX_MODELVIEW);
 	}
-	if(texture.texData.useTextureMatrix){
+	if(texture.isUsingTextureMatrix()){
 		matrixMode(OF_MATRIX_TEXTURE);
 		if(!ofGetUsingNormalizedTexCoords()) pushMatrix();
-		multMatrix(texture.texData.textureMatrix);
+		multMatrix(texture.getTextureMatrix());
 		matrixMode(OF_MATRIX_MODELVIEW);
 	}
-
-	texture.texData.isBound = true;
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::unbind(const ofTexture & texture, int location){
 	disableTextureTarget(texture.texData.textureTarget,location);
-	if(texture.texData.alphaMask){
+	if(texture.getAlphaMask()){
 		disableAlphaMask();
 	}
 
-	if(texture.texData.useTextureMatrix || ofGetUsingNormalizedTexCoords()) {
+	if(texture.isUsingTextureMatrix() || ofGetUsingNormalizedTexCoords()) {
 		matrixMode(OF_MATRIX_TEXTURE);
 		popMatrix();
 		matrixMode(OF_MATRIX_MODELVIEW);
 	}
-
-	texture.texData.isBound = false;
 }
 
 //----------------------------------------------------------

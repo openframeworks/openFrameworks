@@ -28,6 +28,11 @@ static const string BITMAP_STRING_UNIFORM="bitmapText";
 
 
 const string ofGLProgrammableRenderer::TYPE="ProgrammableGL";
+static bool programmableRendererCreated = false;
+
+bool ofIsGLProgrammableRenderer(){
+	return programmableRendererCreated;
+}
 
 
 //----------------------------------------------------------
@@ -35,6 +40,7 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 :matrixStack(_window)
 ,graphics3d(this)
 {
+	programmableRendererCreated = true;
 	bBackgroundAuto = true;
 
 	lineMesh.getVertices().resize(2);
@@ -1339,8 +1345,8 @@ void ofGLProgrammableRenderer::unbind(ofBaseMaterial & material){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofTexture & texture, int location){
 	//we could check if it has been allocated - but we don't do that in draw()
-	if(texture.texData.alphaMask){
-		setAlphaMaskTex(*texture.texData.alphaMask);
+	if(texture.getAlphaMask()){
+		setAlphaMaskTex(*texture.getAlphaMask());
 	}
 	enableTextureTarget(texture,location);
 
@@ -1360,30 +1366,26 @@ void ofGLProgrammableRenderer::bind(const ofTexture & texture, int location){
 		loadMatrix(m);
 		matrixMode(OF_MATRIX_MODELVIEW);
 	}
-	if(texture.texData.useTextureMatrix){
+	if(texture.isUsingTextureMatrix()){
 		matrixMode(OF_MATRIX_TEXTURE);
 		if(!ofGetUsingNormalizedTexCoords()) pushMatrix();
-		multMatrix(texture.texData.textureMatrix);
+		multMatrix(texture.getTextureMatrix());
 		matrixMode(OF_MATRIX_MODELVIEW);
 	}
-
-	texture.texData.isBound = true;
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(const ofTexture & texture, int location){
 	disableTextureTarget(texture.texData.textureTarget,location);
-	if(texture.texData.alphaMask){
+	if(texture.getAlphaMask()){
 		disableAlphaMask();
 	}
 
-	if(texture.texData.useTextureMatrix || ofGetUsingNormalizedTexCoords()) {
+	if(texture.isUsingTextureMatrix() || ofGetUsingNormalizedTexCoords()) {
 		matrixMode(OF_MATRIX_TEXTURE);
 		popMatrix();
 		matrixMode(OF_MATRIX_MODELVIEW);
 	}
-
-	texture.texData.isBound = false;
 }
 
 //----------------------------------------------------------

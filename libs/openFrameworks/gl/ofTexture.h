@@ -149,7 +149,6 @@ public:
 		bAllocated = false;
 		bUseExternalTextureID = false;
 		useTextureMatrix = false;
-		isBound = false;
 		
 		minFilter = GL_LINEAR;
 		magFilter = GL_LINEAR;
@@ -182,8 +181,7 @@ public:
 	GLint wrapModeHorizontal; ///< How will the texture wrap around horizontally?
 	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
 	
-	//TODO: this should be private but need access from renderers
-	mutable bool isBound;  ///< Is the texture already bound
+private:
 	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
@@ -599,6 +597,7 @@ class ofTexture : public ofBaseDraws {
 #endif
 
 	void setAlphaMask(ofTexture & mask);
+	const ofTexture * getAlphaMask() const;
 	void disableAlphaMask();
 
 	/// \brief Helper to convert display coordinate to texture coordinate.
@@ -644,6 +643,10 @@ class ofTexture : public ofBaseDraws {
 	/// Sets a texture matrix that will be uploaded whenever the texture is
 	/// binded.
 	void setTextureMatrix(const ofMatrix4x4 & m);
+
+	const ofMatrix4x4 & getTextureMatrix() const;
+
+	bool isUsingTextureMatrix() const;
 
 	/// Disable the texture matrix.
 	void disableTextureMatrix();
