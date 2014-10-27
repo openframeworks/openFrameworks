@@ -75,6 +75,7 @@
 #ifndef TARGET_NO_SOUND
 #include "ofSoundStream.h"
 #include "ofSoundPlayer.h"
+#include "ofSoundBuffer.h"
 #endif
 
 //--------------------------

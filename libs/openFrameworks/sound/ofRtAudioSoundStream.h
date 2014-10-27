@@ -33,8 +33,8 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		int getNumOutputChannels();
 		int getSampleRate();
 		int getBufferSize();
+		int getDeviceID();
 	
-		
 	private:
 		long unsigned long	tickCount;
 		shared_ptr<RtAudio>		audio;
