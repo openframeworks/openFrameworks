@@ -50,7 +50,7 @@ string ofGetGlInternalFormatName(int glInternalFormat);
 int ofGetGLFormatFromInternal(int glInternalFormat);
 int ofGetGlTypeFromInternal(int glInternalFormat);
 
-shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
+//shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
 shared_ptr<ofBaseGLRenderer> ofGetGLRenderer();
 
 
@@ -79,7 +79,7 @@ vector<string> ofGLSupportedExtensions();
 bool ofGLCheckExtension(string searchName);
 bool ofGLSupportsNPOTTextures();
 
-bool ofIsGLProgrammableRenderer();
+//bool ofIsGLProgrammableRenderer();
 
 template<class T>
 int ofGetGlFormat(const ofPixels_<T> & pixels) {

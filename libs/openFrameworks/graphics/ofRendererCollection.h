@@ -4,6 +4,7 @@
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "of3dGraphics.h"
+#include "ofPath.h"
 
 class ofRendererCollection: public ofBaseRenderer{
 public:
@@ -360,9 +361,11 @@ public:
 
 	// screen coordinate things / default gl values
 	 void setupGraphicDefaults(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setupGraphicDefaults();
-		 }
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->setupGraphicDefaults();
+		}
+		path.setMode(ofPath::COMMANDS);
+		path.setUseShapeColor(false);
 	 }
 	 void setupScreen(){
 		 for(int i=0;i<(int)renderers.size();i++){
@@ -503,6 +506,13 @@ public:
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->setFillMode(fill);
 		 }
+		if(fill==OF_FILLED){
+			path.setFilled(true);
+			path.setStrokeWidth(0);
+		}else{
+			path.setFilled(false);
+			path.setStrokeWidth(getStyle().lineWidth);
+		}
 	}
 
 	ofFillFlag getFillMode(){
@@ -514,9 +524,12 @@ public:
 	}
 
 	void setLineWidth(float lineWidth){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->setLineWidth(lineWidth);
-		 }
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->setLineWidth(lineWidth);
+		}
+		if(!getStyle().bFill){
+			path.setStrokeWidth(lineWidth);
+		}
 	}
 
 	void setDepthTest(bool depthTest) {
@@ -599,6 +612,20 @@ public:
 		 }
 	}
 
+	void setCurveResolution(int res){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setCurveResolution(res);
+		 }
+		 path.setCurveResolution(res);
+	}
+
+	void setPolyMode(ofPolyWindingMode mode){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setPolyMode(mode);
+		 }
+		 path.setPolyWindingMode(mode);
+	}
+
 	// drawing
 	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
 		 for(int i=0;i<(int)renderers.size();i++){
@@ -661,6 +688,11 @@ public:
 		return graphics3d;
 	}
 
+	ofPath & getPath(){
+		return path;
+	}
+
 	vector<shared_ptr<ofBaseRenderer> > renderers;
 	of3dGraphics graphics3d;
+	ofPath path;
 };

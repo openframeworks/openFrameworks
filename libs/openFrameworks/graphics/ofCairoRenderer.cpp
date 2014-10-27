@@ -167,7 +167,7 @@ void ofCairoRenderer::setStyle(const ofStyle & style){
 
 	setSphereResolution(style.sphereResolution);
 
-	//setCurveResolution(style.curveResolution);
+	setCurveResolution(style.curveResolution);
 
 	//line width - finally!
 	setLineWidth(style.lineWidth);
@@ -176,7 +176,7 @@ void ofCairoRenderer::setStyle(const ofStyle & style){
 	setRectMode(style.rectMode);
 
 	//poly mode: winding type
-	//setPolyMode(style.polyMode);
+	setPolyMode(style.polyMode);
 
 	//fill
 	setFillMode(style.bFill?OF_FILLED:OF_OUTLINE);
@@ -190,6 +190,11 @@ void ofCairoRenderer::setStyle(const ofStyle & style){
 	//bitmap draw mode
 	//setDrawBitmapMode(style.drawBitmapMode);
 	currentStyle = style;
+}
+
+void ofCairoRenderer::setCurveResolution(int resolution){
+	currentStyle.curveResolution = resolution;
+	path.setCurveResolution(resolution);
 }
 
 void ofCairoRenderer::draw(const ofPath & shape) const{
@@ -618,6 +623,10 @@ void ofCairoRenderer::draw(const ofBaseVideoDraws & video, float x, float y, flo
 	draw(video.getPixels(),x,y,0,w,h,x,y,w,h);
 }
 
+ofPath & ofCairoRenderer::getPath(){
+	return path;
+}
+
 //--------------------------------------------
 void ofCairoRenderer::setRectMode(ofRectMode mode){
 	currentStyle.rectMode = mode;
@@ -631,6 +640,13 @@ ofRectMode ofCairoRenderer::getRectMode(){
 //--------------------------------------------
 void ofCairoRenderer::setFillMode(ofFillFlag fill){
 	currentStyle.bFill = fill;
+	if(currentStyle.bFill){
+		path.setFilled(true);
+		path.setStrokeWidth(0);
+	}else{
+		path.setFilled(false);
+		path.setStrokeWidth(currentStyle.lineWidth);
+	}
 }
 
 //--------------------------------------------
@@ -644,6 +660,10 @@ ofFillFlag ofCairoRenderer::getFillMode(){
 
 //--------------------------------------------
 void ofCairoRenderer::setLineWidth(float lineWidth){
+	currentStyle.lineWidth = lineWidth;
+	if(!currentStyle.bFill){
+		path.setStrokeWidth(lineWidth);
+	}
 	cairo_set_line_width( cr, lineWidth );
 }
 
@@ -1133,6 +1153,11 @@ void ofCairoRenderer::setCircleResolution(int){
 
 }
 
+void ofCairoRenderer::setPolyMode(ofPolyWindingMode mode){
+	currentStyle.polyMode = mode;
+	path.setPolyWindingMode(mode);
+}
+
 //----------------------------------------------------------
 void ofCairoRenderer::setCoordHandedness(ofHandednessType handedness){
 
@@ -1146,6 +1171,8 @@ ofHandednessType ofCairoRenderer::getCoordHandedness() const{
 //----------------------------------------------------------
 void ofCairoRenderer::setupGraphicDefaults(){
 	setStyle(ofStyle());
+	path.setMode(ofPath::COMMANDS);
+	path.setUseShapeColor(false);
 };
 
 //----------------------------------------------------------

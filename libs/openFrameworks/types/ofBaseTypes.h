@@ -42,6 +42,8 @@ class ofCamera;
 class ofTrueTypeFont;
 class ofNode;
 class of3dGraphics;
+class ofVbo;
+class ofVboMesh;
 
 bool ofIsVFlipped();
 
@@ -424,13 +426,18 @@ public:
 	virtual void drawString(const ofTrueTypeFont & font, string text, float x, float y) const=0;
 
 
-	// returns true if the renderer can render curves without decomposing them
-	virtual bool rendersPathPrimitives()=0;
+	// returns true an ofPath to draw with, this allows to keep
+	// immediate mode rendering working in multiwindow with multiple
+	// contexts without reimplementing the logic on every renderer
+	virtual ofPath & getPath()=0;
 
 	virtual ofStyle getStyle() const=0;
 	virtual void setStyle(const ofStyle & style) = 0;
 	virtual void pushStyle()=0;
 	virtual void popStyle()=0;
+
+	virtual void setCurveResolution(int resolution)=0;
+	virtual void setPolyMode(ofPolyWindingMode mode)=0;
 
 	virtual const of3dGraphics & get3dGraphics() const=0;
 	virtual of3dGraphics & get3dGraphics()=0;
@@ -587,6 +594,13 @@ class ofBaseGLRenderer: public ofBaseRenderer{
 public:
 	using ofBaseRenderer::draw;
 	virtual void draw(const ofTexture & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
+	virtual void draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const=0;
+	virtual void drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const=0;
+	virtual void drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const=0;
+	virtual void drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const=0;
+	virtual void draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const=0;
+	virtual void drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode renderType, int primCount) const=0;
+
 
 	virtual void enableTextureTarget(const ofTexture & tex, int textureLocation)=0;
 	virtual void disableTextureTarget(int textureTarget, int textureLocation)=0;

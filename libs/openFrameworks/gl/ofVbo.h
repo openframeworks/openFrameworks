@@ -85,6 +85,7 @@ public:
 	void disableTexCoords();
 	void disableIndices();
 
+	GLuint getVaoId() const;
 	GLuint getVertId() const;
 	GLuint getColorId() const;
 	GLuint getNormalId() const;
@@ -126,6 +127,8 @@ public:
 
 	static void disableVAOs();
 	static void enableVAOs();
+
+	bool hasAttribute(int attributePos_) const;
 
 private:
 
@@ -177,8 +180,6 @@ private:
 	mutable bool bBound;
 
 	map<int,VertexAttribute> customAttributes;
-	
-	bool hasAttribute(int attributePos_) const {return (customAttributes.find(attributePos_) != customAttributes.end());};
 
 	static void checkVAO();
 	

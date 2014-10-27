@@ -6,6 +6,7 @@
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
 #include "ofMatrixStack.h"
+#include "ofPath.h"
 #include <set>
 
 class ofShapeTessellation;
@@ -39,10 +40,13 @@ public:
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofTexture & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
-
-	bool rendersPathPrimitives(){
-		return false;
-	}
+	void draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const;
+	void drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const;
+	void drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const;
+	void drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const;
+	void draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const;
+	void drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode renderType, int primCount) const;
+	ofPath & getPath();
 
 
 
@@ -143,6 +147,8 @@ public:
 	void pushStyle();
 	void popStyle();
 	void setStyle(const ofStyle & style);
+	void setCurveResolution(int resolution);
+	void setPolyMode(ofPolyWindingMode mode);
 
 
 	// drawing
@@ -228,5 +234,6 @@ private:
 	deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
 	ofBitmapFont bitmapFont;
+	ofPath path;
 	const ofAppBaseWindow * window;
 };
