@@ -85,7 +85,7 @@ bool ofVideoPlayer::load(string name){
 					for(int i=0;i<player->getPixels().getNumPlanes();i++){
 						ofPixels plane = player->getPixels().getPlane(i);
 						tex[i].allocate(plane);
-						if(ofGetGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
+						if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
 							tex[i].setRGToRGBASwizzles(true);
 						}
 					}
@@ -206,7 +206,7 @@ void ofVideoPlayer::update(){
 						bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
 						if(bDiffPixFormat || !tex[i].isAllocated() || tex[i].getWidth() != plane.getWidth() || tex[i].getHeight() != plane.getHeight()){
 							tex[i].allocate(plane);
-							if(ofGetGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
+							if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
 								tex[i].setRGToRGBASwizzles(true);
 							}
 						}
@@ -374,7 +374,7 @@ void ofVideoPlayer::setUseTexture(bool bUse){
 			if(!tex[i].isAllocated() || bDiffPixFormat){
 				tex[i].allocate(plane);
 			}
-			if(ofGetGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
+			if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
 				tex[i].setRGToRGBASwizzles(true);
 			}
 		}

@@ -548,6 +548,11 @@ bool ofVbo::getUsingIndices() const {
 }
 
 //--------------------------------------------------------------
+GLuint ofVbo::getVaoId() const{
+	return vaoID;
+}
+
+//--------------------------------------------------------------
 GLuint ofVbo::getVertId() const {
 	return getAttributeId(ofShader::POSITION_ATTRIBUTE);
 }
@@ -821,11 +826,6 @@ void ofVbo::bind() const{
 
 		vaoChanged=false;
 	}
-
-	shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-	if(renderer){
-		renderer->setAttributes(bUsingVerts,bUsingColors,bUsingTexCoords,bUsingNormals);
-	}
 	bBound   = true;
 }
 
@@ -854,67 +854,22 @@ void ofVbo::unbind() const{
 
 //--------------------------------------------------------------
 void ofVbo::draw(int drawMode, int first, int total) const{
-	if(hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
-		bool wasBound = bBound;
-		if(!wasBound) bind();
-		glDrawArrays(drawMode, first, total);
-		if(!wasBound) unbind();
-	}
+	ofGetGLRenderer()->draw(*this,drawMode,first,total);
 }
 
 //--------------------------------------------------------------
 void ofVbo::drawElements(int drawMode, int amt) const{
-	if(hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
-		bool wasBound = bBound;
-		if(!wasBound) bind();
-#ifdef TARGET_OPENGLES
-        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
-#else
-        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
-#endif
-		
-		if(!wasBound) unbind();
-	}
+	ofGetGLRenderer()->drawElements(*this,drawMode,amt);
 }
 
 //--------------------------------------------------------------
-// tig: this, being a key feature of OpenGL VBOs, allows to render massive
-// amounts of geometry simultaneously without clogging the memory bus;
-// as discussed in: http://poniesandlight.co.uk/code/ofxVboMeshInstanced/
 void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) const{
-	if(hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
-		bool wasBound = bBound;
-		if(!wasBound) bind();
-#ifdef TARGET_OPENGLES
-		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
-		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-		// glDrawArraysInstanced(drawMode, first, total, primCount);
-#else
-		glDrawArraysInstanced(drawMode, first, total, primCount);
-#endif
-		if(!wasBound) unbind();
-	}
+	ofGetGLRenderer()->drawInstanced(*this,drawMode,first,total,primCount);
 }
 
 //--------------------------------------------------------------
 void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) const{
-	if(hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
-		bool wasBound = bBound;
-		if(!wasBound) bind();
-#ifdef TARGET_OPENGLES
-        // todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-        // unfortunately there is currently no easy way within oF to query the current OpenGL version.
-        // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-        ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
-#else
-        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
-#endif
-		
-		if(!wasBound) unbind();
-	}
+	ofGetGLRenderer()->drawElementsInstanced(*this,drawMode,amt,primCount);
 }
 
 //--------------------------------------------------------------
@@ -1045,3 +1000,9 @@ void ofVbo::enableVAOs(){
 	supportVAOs = true;
 	vaoChecked = false;
 }
+
+//--------------------------------------------------------------
+bool ofVbo::hasAttribute(int attributePos_) const {
+	return (customAttributes.find(attributePos_) != customAttributes.end());
+}
+

@@ -144,7 +144,7 @@ void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
 //	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
 	ofWindowMode requestedMode = settings.windowMode;
-
+	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_RED_BITS, rBits);
 	glfwWindowHint(GLFW_GREEN_BITS, gBits);
 	glfwWindowHint(GLFW_BLUE_BITS, bBits);
@@ -161,6 +161,7 @@ void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
 	glfwWindowHint(GLFW_SAMPLES,samples);
 
 	if(glVersionMinor!=-1 && glVersionMajor!=-1){
+		cout << "setting version " << glVersionMajor << "," << glVersionMinor << endl;
 		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersionMinor);

@@ -7,6 +7,7 @@
 #include "ofVboMesh.h"
 #include "of3dGraphics.h"
 #include "ofBitmapFont.h"
+#include "ofPath.h"
 
 
 class ofShapeTessellation;
@@ -45,10 +46,13 @@ public:
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofTexture & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
     void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
-
-	bool rendersPathPrimitives(){
-		return false;
-	}
+	void draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const;
+	void drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const;
+	void drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const;
+	void drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const;
+	void draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const;
+	void drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode renderType, int primCount) const;
+    ofPath & getPath();
     
     
     
@@ -161,7 +165,6 @@ public:
 	void disableAlphaMask();
 	GLenum getCurrentTextureTarget();
 
-
 	const ofShader & getCurrentShader() const;
 
 	void bind(ofBaseMaterial & material);
@@ -177,13 +180,12 @@ public:
 	void unbind(const ofBaseVideoDraws & video);
 	void unbind(const ofCamera & camera);
 
-	void setAttributes(bool vertices, bool color, bool tex, bool normals);
-	void setAlphaBitmapText(bool bitmapText);
-
 	ofStyle getStyle() const;
 	void pushStyle();
 	void popStyle();
 	void setStyle(const ofStyle & style);
+	void setCurveResolution(int resolution);
+	void setPolyMode(ofPolyWindingMode mode);
 
 	const ofShader * getVideoShader(const ofBaseVideoDraws & video) const;
 	void setVideoShaderUniforms(const ofBaseVideoDraws & video, const ofShader & shader) const;
@@ -246,6 +248,9 @@ private:
 	void uploadMatrices();
 	void setDefaultUniforms();
 
+	void setAttributes(bool vertices, bool color, bool tex, bool normals);
+	void setAlphaBitmapText(bool bitmapText);
+
     
 	ofMatrixStack matrixStack;
 
@@ -268,6 +273,7 @@ private:
 	deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
 	ofBitmapFont bitmapFont;
+	ofPath path;
 	const ofAppBaseWindow * window;
 
 

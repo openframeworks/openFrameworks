@@ -93,18 +93,10 @@ of3dGraphics::of3dGraphics(ofBaseRenderer * renderer)
 
 //----------------------------------------------------------
 void of3dGraphics::renderCached3dPrimitive( const of3dPrimitive& model ) const{
-	if(model.isUsingVbo()){
-		if(renderer->getFillMode() == OF_FILLED) {
-			model.getMesh().draw(OF_MESH_FILL);
-		}else{
-			model.getMesh().draw(OF_MESH_WIREFRAME);
-		}
-	}else{
-		if(renderer->getFillMode() == OF_FILLED) {
-			renderer->draw(model,OF_MESH_FILL);
-		} else {
-			renderer->draw(model,OF_MESH_WIREFRAME);
-		}
+	if(renderer->getFillMode() == OF_FILLED) {
+		renderer->draw(model,OF_MESH_FILL);
+	} else {
+		renderer->draw(model,OF_MESH_WIREFRAME);
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "ofAppBaseWindow.h"
 #include "ofBaseTypes.h"
 #include "of3dGraphics.h"
+#include "ofPath.h"
 
 class ofBaseApp;
 
@@ -171,12 +172,14 @@ private:
 
 	void setBitmapTextMode(ofDrawBitmapMode mode){}
 	ofStyle getStyle() const{ return ofStyle(); }
-	void pushStyle(){};
-	void popStyle(){};
-	void setStyle(const ofStyle & style){};
+	void pushStyle(){}
+	void popStyle(){}
+	void setStyle(const ofStyle & style){}
+	void setCurveResolution(int res){}
+	void setPolyMode(ofPolyWindingMode){}
 
 	// returns true if the renderer can render curves without decomposing them
-	bool rendersPathPrimitives(){return true;}
+	ofPath & getPath(){ return path; }
 	void bind(const ofCamera & camera, const ofRectangle & viewport){};
 	void unbind(const ofCamera & camera){};
 	const of3dGraphics & get3dGraphics() const{
@@ -187,5 +190,6 @@ private:
 		return graphics3d;
 	}
 	of3dGraphics graphics3d;
+	ofPath path;
 };
 

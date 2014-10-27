@@ -198,9 +198,9 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	}
 #endif
 	if(meshVbo.getUsingIndices()) {
-		meshVbo.drawElements(drawMode, meshVbo.getNumIndices());
+		drawElements(meshVbo,drawMode, meshVbo.getNumIndices());
 	} else {
-		meshVbo.draw(drawMode, 0, meshVbo.getNumVertices());
+		draw(meshVbo, drawMode, 0, meshVbo.getNumVertices());
 	}
 	
 	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
@@ -219,11 +219,62 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 }
 
 //----------------------------------------------------------
+void ofGLProgrammableRenderer::draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const{
+	drawInstanced(mesh,renderType,1);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode renderType, int primCount) const{
+	if(mesh.getNumVertices()==0) return;
+	GLuint mode = ofGetGLPrimitiveMode(mesh.getMode());
+#ifndef TARGET_OPENGLES
+	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+	if(mesh.getNumIndices() && renderType!=OF_MESH_POINTS){
+		if (primCount <= 1) {
+			drawElements(mesh.getVbo(),mode,mesh.getNumIndices());
+		} else {
+			drawElementsInstanced(mesh.getVbo(),mode,mesh.getNumIndices(),primCount);
+		}
+	}else{
+		if (primCount <= 1) {
+			draw(mesh.getVbo(),mode,0,mesh.getNumVertices());
+		} else {
+			drawInstanced(mesh.getVbo(),mode,0,mesh.getNumVertices(),primCount);
+		}
+	}
+
+	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
+	// infer a massive performance hit. instead, we revert the glPolygonMode to mirror the current ofFill state
+	// after we're finished drawing, following the principle of least surprise.
+	// ideally the glPolygonMode (or the polygon draw mode) should be part of ofStyle so that we can keep track
+	// of its state on the client side...
+
+	//glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_LINE : GL_FILL);
+#else
+	if(renderType == OF_MESH_POINTS){
+		draw(mesh.getVbo(),GL_POINTS,0,mesh.getNumVertices());
+	}else if(renderType == OF_MESH_WIREFRAME){
+		if(mesh.getNumIndices()){
+			drawElements(mesh.getVbo(),GL_LINES,mesh.getNumIndices());
+		}else{
+			draw(mesh.getVbo(),GL_LINES,0,mesh.getNumVertices());
+		}
+	}else{
+		if(mesh.getNumIndices()){
+			drawElements(mesh.getVbo(),mode,mesh.getNumIndices());
+		}else{
+			draw(mesh.getVbo(),mode,0,mesh.getNumVertices());
+		}
+	}
+#endif
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType) const {
 	const_cast<ofGLProgrammableRenderer*>(this)->pushMatrix();
 	const_cast<ofGLProgrammableRenderer*>(this)->multMatrix(model.getGlobalTransformMatrix());
 	if(model.isUsingVbo()){
-		model.getMesh().draw(renderType);
+		draw(static_cast<const ofVboMesh&>(model.getMesh()),renderType);
 	}else{
 		draw(model.getMesh(),renderType);
 	}
@@ -240,11 +291,6 @@ void ofGLProgrammableRenderer::draw(const ofNode& node) const{
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
-	/*  some things are internally still using ofPolyline
-	if(!wrongUseLoggedOnce){
-		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh or ofPath";
-		wrongUseLoggedOnce = true;
-	}*/
 	if(poly.getVertices().empty()) return;
 
 	// use smoothness, if requested:
@@ -366,6 +412,71 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 	const_cast<ofGLProgrammableRenderer*>(this)->bind(video);
 	draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,w,h,isVFlipped(),currentStyle.rectMode),false,true,false);
 	const_cast<ofGLProgrammableRenderer*>(this)->unbind(video);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const{
+	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+		vbo.bind();
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
+		glDrawArrays(drawMode, first, total);
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const{
+	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+		vbo.bind();
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
+#ifdef TARGET_OPENGLES
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
+#else
+        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+#endif
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const{
+	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+		vbo.bind();
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
+#ifdef TARGET_OPENGLES
+		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
+		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
+		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+		// glDrawArraysInstanced(drawMode, first, total, primCount);
+#else
+		glDrawArraysInstanced(drawMode, first, total, primCount);
+#endif
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const{
+	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+		vbo.bind();
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
+#ifdef TARGET_OPENGLES
+        // todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
+        // unfortunately there is currently no easy way within oF to query the current OpenGL version.
+        // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+        ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
+#else
+        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
+#endif
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+ofPath & ofGLProgrammableRenderer::getPath(){
+	return path;
 }
 
 //----------------------------------------------------------
@@ -547,6 +658,8 @@ void ofGLProgrammableRenderer::setupScreenOrtho(float width, float height, float
 //Resets openGL parameters back to OF defaults
 void ofGLProgrammableRenderer::setupGraphicDefaults(){
 	setStyle(ofStyle());
+	path.setMode(ofPath::POLYLINES);
+	path.setUseShapeColor(false);
 }
 
 //----------------------------------------------------------
@@ -561,7 +674,13 @@ void ofGLProgrammableRenderer::setCircleResolution(int res){
 		circlePolyline.clear();
 		circlePolyline.arc(0,0,0,1,1,0,360,res);
 		circleMesh.getVertices() = circlePolyline.getVertices();
+		path.setCircleResolution(res);
 	}
+}
+
+void ofGLProgrammableRenderer::setPolyMode(ofPolyWindingMode mode){
+	currentStyle.polyMode = mode;
+	path.setPolyWindingMode(mode);
 }
 
 //our openGL wrappers
@@ -846,6 +965,13 @@ void ofGLProgrammableRenderer::background(int r, int g, int b, int a){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::setFillMode(ofFillFlag fill){
 	currentStyle.bFill = (fill==OF_FILLED);
+	if(currentStyle.bFill){
+		path.setFilled(true);
+		path.setStrokeWidth(0);
+	}else{
+		path.setFilled(false);
+		path.setStrokeWidth(currentStyle.lineWidth);
+	}
 }
 
 //----------------------------------------------------------
@@ -876,6 +1002,9 @@ void ofGLProgrammableRenderer::setLineWidth(float lineWidth){
 	// use geometry shaders to draw lines of varying thickness...
 
 	currentStyle.lineWidth = lineWidth;
+	if(!currentStyle.bFill){
+		path.setStrokeWidth(lineWidth);
+	}
 	glLineWidth(lineWidth);
 }
 
@@ -1029,9 +1158,7 @@ void ofGLProgrammableRenderer::setStyle(const ofStyle & style){
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	setCircleResolution(style.circleResolution);
 
-	//ofSetSphereResolution(style.sphereResolution);
-
-	//setCurveResolution(style.curveResolution);
+	setCurveResolution(style.curveResolution);
 
 	//line width - finally!
 	setLineWidth(style.lineWidth);
@@ -1042,14 +1169,14 @@ void ofGLProgrammableRenderer::setStyle(const ofStyle & style){
 	setRectMode(style.rectMode);
 
 	//poly mode: winding type
-	//setPolyMode(style.polyMode);
+	setPolyMode(style.polyMode);
 
 	//fill
-	/*if(style.bFill ){
+	if(style.bFill ){
 		setFillMode(OF_FILLED);
 	}else{
-		setFillMode(OF_NO_FILLED);
-	}*/
+		setFillMode(OF_OUTLINE);
+	}
 
 	//smoothing
 	/*if(style.smoothing ){
@@ -1062,6 +1189,11 @@ void ofGLProgrammableRenderer::setStyle(const ofStyle & style){
 	setBlendMode(style.blendingMode);
 
 	currentStyle = style;
+}
+
+void ofGLProgrammableRenderer::setCurveResolution(int resolution){
+	currentStyle.curveResolution = resolution;
+	path.setCurveResolution(resolution);
 }
 
 //----------------------------------------------------------
@@ -1270,6 +1402,7 @@ void ofGLProgrammableRenderer::unbind(const ofCamera & camera){
 	popView();
 }
 
+
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::uploadMatrices(){
 	if(!currentShader) return;
@@ -1343,7 +1476,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 
 	if(nextShader && (!currentShader || *currentShader!=*nextShader)){
 		settingDefaultShader = true;
-		nextShader->begin();
+		bind(*nextShader);
 		settingDefaultShader = false;
 	}else{
 	}
@@ -1358,7 +1491,7 @@ void ofGLProgrammableRenderer::drawLine(float x1, float y1, float z1, float x2, 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing) mutThis->startSmoothing();
     
-	lineMesh.draw();
+	draw(lineMesh,OF_MESH_FILL);
     
 	// use smoothness, if requested:
 	if (currentStyle.smoothing) mutThis->endSmoothing();
@@ -1383,7 +1516,7 @@ void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w,
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	rectMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_LOOP);
-	rectMesh.draw();
+	draw(rectMesh,OF_MESH_FILL);
     
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -1400,7 +1533,7 @@ void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float 
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	triangleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_STRIP : OF_PRIMITIVE_LINE_LOOP);
-	triangleMesh.draw();
+	draw(triangleMesh,OF_MESH_FILL);
     
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -1418,7 +1551,7 @@ void ofGLProgrammableRenderer::drawCircle(float x, float y, float z,  float radi
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
-	circleMesh.draw();
+	draw(circleMesh,OF_MESH_FILL);
 	
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -1438,7 +1571,7 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
-	circleMesh.draw();
+	draw(circleMesh,OF_MESH_FILL);
     
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -1449,7 +1582,7 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	ofGLProgrammableRenderer * mutThis = const_cast<ofGLProgrammableRenderer*>(this);
 	float fontSize = 8.0f;
 	float sx = 0;
-	float sy = -fontSize;
+	float sy = 0;
 
 	///////////////////////////
 	// APPLY TRANSFORM / VIEW
@@ -1572,10 +1705,10 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
 	mutThis->setAlphaBitmapText(true);
-	ofMesh charMesh = bitmapFont.getMesh(textString, 0, 0, currentStyle.drawBitmapMode, isVFlipped());
-	bitmapFont.getTexture().bind();
+	ofMesh charMesh = bitmapFont.getMesh(textString, sx, sy, currentStyle.drawBitmapMode, isVFlipped());
+	mutThis->bind(bitmapFont.getTexture(),0);
 	draw(charMesh,OF_MESH_FILL,false,true,false);
-	bitmapFont.getTexture().unbind();
+	mutThis->unbind(bitmapFont.getTexture(),0);
 	mutThis->setAlphaBitmapText(false);
 
 

@@ -57,7 +57,7 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 				return GL_LUMINANCE_ALPHA32F_ARB;
 			}
 		default:
-			if(ofGetGLProgrammableRenderer()){
+			if(ofIsGLProgrammableRenderer()){
 				return GL_R32F;
 			}else{
 				return GL_LUMINANCE32F_ARB;
@@ -694,16 +694,12 @@ bool ofGLSupportsNPOTTextures(){
 #endif
 }
 
-shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer(){
-	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
-		return (shared_ptr<ofGLProgrammableRenderer>&)ofGetCurrentRenderer();
-	}else{
-		return shared_ptr<ofGLProgrammableRenderer>();
-	}
-}
-
 bool ofIsGLProgrammableRenderer(){
-	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE;
+	int major=0;
+	glGetIntegerv(GL_MAJOR_VERSION, &major);
+	cout << major << endl;
+	return major>=3;
+	//return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE;
 }
 
 string ofGLSLVersionFromGL(int major, int minor){

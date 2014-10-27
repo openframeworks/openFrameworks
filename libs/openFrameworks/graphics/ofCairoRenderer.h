@@ -48,10 +48,7 @@ public:
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
-
-	bool rendersPathPrimitives(){
-		return true;
-	}
+	ofPath & getPath();
 
 	//--------------------------------------------
 	// transformations
@@ -148,6 +145,8 @@ public:
 	void pushStyle();
 	void popStyle();
 	void setStyle(const ofStyle & style);
+	void setCurveResolution(int resolution);
+	void setPolyMode(ofPolyWindingMode mode);
 
 	// drawing
 	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const;
@@ -209,4 +208,5 @@ private:
 	ofStyle currentStyle;
 	deque <ofStyle> styleHistory;
 	of3dGraphics graphics3d;
+	ofPath path;
 };

@@ -15,13 +15,13 @@
 
 
 //style stuff - new in 006
-static ofPath shape;
 static ofVboMesh gradientMesh;
 
 void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults){
 	if(setDefaults){
+		ofStyle style = ofGetCurrentRenderer()->getStyle();
 		renderer->setupGraphicDefaults();
-		renderer->setStyle(ofGetCurrentRenderer()->getStyle());
+		renderer->setStyle(style);
 	}
 	ofGetCurrentRenderer() = renderer;
 }
@@ -70,6 +70,7 @@ static void ofBeginSaveScreen(string filename, ofCairoRenderer::Type type, bool 
 	rendererCollection->renderers.push_back(cairoScreenshot);
 	
 	ofSetCurrentRenderer(rendererCollection, true);
+	cairoScreenshot->background(cairoScreenshot->getStyle().bgColor);
 	bScreenShotStarted = true;
 }
 
@@ -208,13 +209,6 @@ void ofSetupScreenOrtho(float width, float height, float nearDist, float farDist
 //Resets openGL parameters back to OF defaults
 void ofSetupGraphicDefaults(){
 	ofGetCurrentRenderer()->setupGraphicDefaults();
-	if(ofGetCurrentRenderer()->rendersPathPrimitives()){
-		shape.setMode(ofPath::COMMANDS);
-	}else{
-		shape.setMode(ofPath::POLYLINES);
-	}
-	shape.setUseShapeColor(false);
-
 }
 
 //----------------------------------------------------------
@@ -521,15 +515,11 @@ ofRectMode ofGetRectMode(){
 
 //----------------------------------------------------------
 void ofNoFill(){
-	shape.setFilled(false);
-	shape.setStrokeWidth(ofGetCurrentRenderer()->getStyle().lineWidth);
 	ofGetCurrentRenderer()->setFillMode(OF_OUTLINE);
 }
 
 //----------------------------------------------------------
 void ofFill(){
-	shape.setFilled(true);
-	shape.setStrokeWidth(0);
 	ofGetCurrentRenderer()->setFillMode(OF_FILLED);
 }
 
@@ -541,14 +531,12 @@ ofFillFlag ofGetFill(){
 
 //----------------------------------------------------------
 void ofSetLineWidth(float lineWidth){
-	shape.setStrokeWidth(lineWidth);
 	ofGetCurrentRenderer()->setLineWidth(lineWidth);
 }
 
 //----------------------------------------------------------
 void ofSetDepthTest(bool depthTest){
 	ofGetCurrentRenderer()->setDepthTest(depthTest);
-	//currentStyle.depthTest = depthTest;
 }
 
 //----------------------------------------------------------
@@ -563,16 +551,12 @@ void ofDisableDepthTest(){
 
 //----------------------------------------
 void ofSetCurveResolution(int res){
-	shape.setCurveResolution(res);
-	ofStyle style = ofGetCurrentRenderer()->getStyle();
-	style.curveResolution = res;
-	ofGetCurrentRenderer()->setStyle(style);
+	ofGetCurrentRenderer()->setCurveResolution(res);
 }
 
 //----------------------------------------------------------
 void ofSetCircleResolution(int res){
 	ofGetCurrentRenderer()->setCircleResolution(res);
-	shape.setCircleResolution(res);
 }
 
 //----------------------------------------------------------
@@ -661,10 +645,7 @@ void ofDisableSmoothing(){
 
 //----------------------------------------------------------
 void ofSetPolyMode(ofPolyWindingMode mode){
-	shape.setPolyWindingMode(mode);
-	ofStyle style = ofGetCurrentRenderer()->getStyle();
-	style.polyMode = mode;
-	ofGetCurrentRenderer()->setStyle(style);
+	ofGetCurrentRenderer()->setPolyMode(mode);
 }
 
 //----------------------------------------
@@ -685,8 +666,6 @@ void ofSetDrawBitmapMode(ofDrawBitmapMode mode){
 //----------------------------------------------------------
 void ofSetStyle(ofStyle style){
 	ofGetCurrentRenderer()->setStyle(style);
-    shape.setCurveResolution(ofGetCurrentRenderer()->getStyle().curveResolution);
-	shape.setPolyWindingMode(ofGetCurrentRenderer()->getStyle().polyMode);
 }
 
 //----------------------------------------------------------
@@ -702,8 +681,6 @@ void ofPushStyle(){
 //----------------------------------------------------------
 void ofPopStyle(){
 	ofGetCurrentRenderer()->popStyle();
-    shape.setCurveResolution(ofGetCurrentRenderer()->getStyle().curveResolution);
-	shape.setPolyWindingMode(ofGetCurrentRenderer()->getStyle().polyMode);
 }
 
 
@@ -845,47 +822,47 @@ void ofDrawRectRounded(float x, float y, float z, float w, float h, float topLef
 		default:
 			break;
 	}
-	shape.clear();
-    shape.rectRounded(x,y,z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
-    ofGetCurrentRenderer()->draw(shape);//.draw();
+	ofGetCurrentRenderer()->getPath().clear();
+	ofGetCurrentRenderer()->getPath().rectRounded(x,y,z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
+    ofGetCurrentRenderer()->draw(ofGetCurrentRenderer()->getPath());//.draw();
 
 }
 
 //----------------------------------------------------------
 void ofDrawCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-    shape.clear();
-	shape.curveTo(x0,y0);
-	shape.curveTo(x1,y1);
-	shape.curveTo(x2,y2);
-	shape.curveTo(x3,y3);
-    ofGetCurrentRenderer()->draw(shape);//.draw();
+	ofGetCurrentRenderer()->getPath().clear();
+	ofGetCurrentRenderer()->getPath().curveTo(x0,y0);
+	ofGetCurrentRenderer()->getPath().curveTo(x1,y1);
+	ofGetCurrentRenderer()->getPath().curveTo(x2,y2);
+	ofGetCurrentRenderer()->getPath().curveTo(x3,y3);
+    ofGetCurrentRenderer()->draw(ofGetCurrentRenderer()->getPath());//.draw();
 }
 
 //----------------------------------------------------------
 void ofDrawCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
-	shape.clear();
-	shape.curveTo(x0,y0,z0);
-	shape.curveTo(x1,y1,z1);
-	shape.curveTo(x2,y2,z2);
-	shape.curveTo(x3,y3,z3);
-    ofGetCurrentRenderer()->draw(shape);//.draw();
+	ofGetCurrentRenderer()->getPath().clear();
+	ofGetCurrentRenderer()->getPath().curveTo(x0,y0,z0);
+	ofGetCurrentRenderer()->getPath().curveTo(x1,y1,z1);
+	ofGetCurrentRenderer()->getPath().curveTo(x2,y2,z2);
+	ofGetCurrentRenderer()->getPath().curveTo(x3,y3,z3);
+    ofGetCurrentRenderer()->draw(ofGetCurrentRenderer()->getPath());//.draw();
 }
 
 
 //----------------------------------------------------------
 void ofDrawBezier(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
-	shape.clear();
-	shape.moveTo(x0,y0);
-	shape.bezierTo(x1,y1,x2,y2,x3,y3);
-    ofGetCurrentRenderer()->draw(shape);//.draw();
+	ofGetCurrentRenderer()->getPath().clear();
+	ofGetCurrentRenderer()->getPath().moveTo(x0,y0);
+	ofGetCurrentRenderer()->getPath().bezierTo(x1,y1,x2,y2,x3,y3);
+    ofGetCurrentRenderer()->draw(ofGetCurrentRenderer()->getPath());//.draw();
 }
 
 //----------------------------------------------------------
 void ofDrawBezier(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
-	shape.clear();
-	shape.moveTo(x0,y0,z0);
-	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
-    ofGetCurrentRenderer()->draw(shape);//.draw();
+	ofGetCurrentRenderer()->getPath().clear();
+	ofGetCurrentRenderer()->getPath().moveTo(x0,y0,z0);
+	ofGetCurrentRenderer()->getPath().bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
+    ofGetCurrentRenderer()->draw(ofGetCurrentRenderer()->getPath());//.draw();
 }
 
 //----------------------------------------------------------
@@ -1035,73 +1012,73 @@ void ofBezier(float x0, float y0, float z0, float x1, float y1, float z1, float 
 
 //----------------------------------------------------------
 void ofBeginShape(){
-	shape.clear();
+	ofGetCurrentRenderer()->getPath().clear();
 }
 
 //----------------------------------------------------------
 void ofVertex(float x, float y){
-	shape.lineTo(x,y);
+	ofGetCurrentRenderer()->getPath().lineTo(x,y);
 }
 
 //----------------------------------------------------------
 void ofVertex(float x, float y, float z){
-	shape.lineTo(x,y,z);
+	ofGetCurrentRenderer()->getPath().lineTo(x,y,z);
 }
 
 //---------------------------------------------------
 void ofVertex(ofPoint & p){
-	shape.lineTo(p);
+	ofGetCurrentRenderer()->getPath().lineTo(p);
 }
 
 //----------------------------------------------------------
 void ofVertices( const vector <ofPoint> & polyPoints ){
 	for( int k = 0; k < (int)polyPoints.size(); k++){
-		shape.lineTo(polyPoints[k]);
+		ofGetCurrentRenderer()->getPath().lineTo(polyPoints[k]);
 	}
 }
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y){
-    shape.curveTo(x,y);
+	ofGetCurrentRenderer()->getPath().curveTo(x,y);
 }
 
 //---------------------------------------------------
 void ofCurveVertex(float x, float y, float z){
-	shape.curveTo(x,y,z);
+	ofGetCurrentRenderer()->getPath().curveTo(x,y,z);
 }
 
 //----------------------------------------------------------
 void ofCurveVertices( const vector <ofPoint> & curvePoints){
 	for( int k = 0; k < (int)curvePoints.size(); k++){
-		shape.curveTo(curvePoints[k]);
+		ofGetCurrentRenderer()->getPath().curveTo(curvePoints[k]);
 	}
 }
 
 //---------------------------------------------------
 void ofCurveVertex(ofPoint & p){
-	shape.curveTo(p);
+	ofGetCurrentRenderer()->getPath().curveTo(p);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float x2, float y2, float x3, float y3){
-	shape.bezierTo(x1,y1,x2,y2,x3,y3);
+	ofGetCurrentRenderer()->getPath().bezierTo(x1,y1,x2,y2,x3,y3);
 }
 
 void ofBezierVertex(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3){
-	shape.bezierTo(p1, p2, p3);
+	ofGetCurrentRenderer()->getPath().bezierTo(p1, p2, p3);
 }
 
 //---------------------------------------------------
 void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
-	shape.bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
+	ofGetCurrentRenderer()->getPath().bezierTo(x1,y1,z1,x2,y2,z2,x3,y3,z3);
 }
 
 //----------------------------------------------------------
 void ofNextContour(bool bClose){
 	if (bClose){
-		shape.close();
+		ofGetCurrentRenderer()->getPath().close();
 	}
-	shape.newSubPath();
+	ofGetCurrentRenderer()->getPath().newSubPath();
 }
 
 
@@ -1112,10 +1089,10 @@ void ofEndShape(bool bClose){
 	// -----------------------------------------------
 
 	if (bClose){
-		shape.close();
+		ofGetCurrentRenderer()->getPath().close();
 	}
 
-    ofGetCurrentRenderer()->draw(shape);//.draw();
+    ofGetCurrentRenderer()->draw(ofGetCurrentRenderer()->getPath());//.draw();
 
 }
 

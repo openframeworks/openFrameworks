@@ -178,11 +178,56 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const{
+	drawInstanced(mesh,renderType,1);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode renderType, int primCount) const{
+	if(mesh.getNumVertices()==0) return;
+	GLuint mode = ofGetGLPrimitiveMode(mesh.getMode());
+#ifndef TARGET_OPENGLES
+	glPushAttrib(GL_POLYGON_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+	if(mesh.getNumIndices() && renderType!=OF_MESH_POINTS){
+		if (primCount <= 1) {
+			drawElements(mesh.getVbo(),mode,mesh.getNumIndices());
+		} else {
+			drawElementsInstanced(mesh.getVbo(),mode,mesh.getNumIndices(),primCount);
+		}
+	}else{
+		if (primCount <= 1) {
+			draw(mesh.getVbo(),mode,0,mesh.getNumVertices());
+		} else {
+			drawInstanced(mesh.getVbo(),mode,0,mesh.getNumVertices(),primCount);
+		}
+	}
+	glPopAttrib(); //TODO: GLES doesnt support polygon mode, add renderType to gl renderer?
+#else
+	if(renderType == OF_MESH_POINTS){
+		draw(mesh.getVbo(),GL_POINTS,0,mesh.getNumVertices());
+	}else if(renderType == OF_MESH_WIREFRAME){
+		if(mesh.getNumIndices()){
+			drawElements(mesh.getVbo(),GL_LINES,mesh.getNumIndices());
+		}else{
+			draw(mesh.getVbo(),GL_LINES,0,mesh.getNumVertices());
+		}
+	}else{
+		if(mesh.getNumIndices()){
+			drawElements(mesh.getVbo(),mode,mesh.getNumIndices());
+		}else{
+			draw(mesh.getVbo(),mode,0,mesh.getNumVertices());
+		}
+	}
+#endif
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType)  const{
 	const_cast<ofGLRenderer*>(this)->pushMatrix();
 	const_cast<ofGLRenderer*>(this)->multMatrix(model.getGlobalTransformMatrix());
 	if(model.isUsingVbo()){
-		model.getMesh().draw(renderType);
+		draw(static_cast<const ofVboMesh&>(model.getMesh()),renderType);
 	}else{
 		draw(model.getMesh(),renderType);
 	}
@@ -302,6 +347,67 @@ void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float 
 		draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,w,h,isVFlipped(),currentStyle.rectMode),false,true,false);
 		const_cast<ofGLRenderer*>(this)->unbind(video);
 	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const{
+	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+		vbo.bind();
+		glDrawArrays(drawMode, first, total);
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const{
+	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+		vbo.bind();
+#ifdef TARGET_OPENGLES
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
+#else
+        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+#endif
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const{
+	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+		vbo.bind();
+#ifdef TARGET_OPENGLES
+		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
+		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
+		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+		// glDrawArraysInstanced(drawMode, first, total, primCount);
+#else
+		glDrawArraysInstanced(drawMode, first, total, primCount);
+#endif
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const{
+	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+		vbo.bind();
+#ifdef TARGET_OPENGLES
+        // todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
+        // unfortunately there is currently no easy way within oF to query the current OpenGL version.
+        // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+        ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
+#else
+        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
+#endif
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+ofPath & ofGLRenderer::getPath(){
+	return path;
 }
 
 //----------------------------------------------------------
@@ -601,6 +707,8 @@ void ofGLRenderer::setupGraphicDefaults(){
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	setStyle(ofStyle());
+	path.setMode(ofPath::POLYLINES);
+	path.setUseShapeColor(false);
 }
 
 //----------------------------------------------------------
@@ -614,7 +722,13 @@ void ofGLRenderer::setCircleResolution(int res){
 		circlePolyline.clear();
 		circlePolyline.arc(0,0,0,1,1,0,360,res);
 		circlePoints.resize(circlePolyline.size());
+		path.setCircleResolution(res);
 	}
+}
+
+void ofGLRenderer::setPolyMode(ofPolyWindingMode mode){
+	currentStyle.polyMode = mode;
+	path.setPolyWindingMode(mode);
 }
 
 //our openGL wrappers
@@ -894,6 +1008,13 @@ void ofGLRenderer::background(int r, int g, int b, int a){
 //----------------------------------------------------------
 void ofGLRenderer::setFillMode(ofFillFlag fill){
 	currentStyle.bFill = (fill==OF_FILLED);
+	if(currentStyle.bFill){
+		path.setFilled(true);
+		path.setStrokeWidth(0);
+	}else{
+		path.setFilled(false);
+		path.setStrokeWidth(currentStyle.lineWidth);
+	}
 }
 
 //----------------------------------------------------------
@@ -918,6 +1039,9 @@ ofRectMode ofGLRenderer::getRectMode(){
 //----------------------------------------------------------
 void ofGLRenderer::setLineWidth(float lineWidth){
 	currentStyle.lineWidth = lineWidth;
+	if(!currentStyle.bFill){
+		path.setStrokeWidth(lineWidth);
+	}
 	glLineWidth(lineWidth);
 }
 
@@ -1052,9 +1176,7 @@ void ofGLRenderer::setStyle(const ofStyle & style){
 	//circle resolution - don't worry it only recalculates the display list if the res has changed
 	setCircleResolution(style.circleResolution);
 
-	//ofSetSphereResolution(style.sphereResolution);
-
-	//setCurveResolution(style.curveResolution);
+	setCurveResolution(style.curveResolution);
 
 	//line width - finally!
 	setLineWidth(style.lineWidth);
@@ -1065,14 +1187,14 @@ void ofGLRenderer::setStyle(const ofStyle & style){
 	setRectMode(style.rectMode);
 
 	//poly mode: winding type
-	//setPolyMode(style.polyMode);
+	setPolyMode(style.polyMode);
 
 	//fill
-	/*if(style.bFill ){
+	if(style.bFill ){
 		setFillMode(OF_FILLED);
 	}else{
-		setFillMode(OF_NO_FILLED);
-	}*/
+		setFillMode(OF_OUTLINE);
+	}
 
 	//smoothing
 	/*if(style.smoothing ){
@@ -1085,6 +1207,11 @@ void ofGLRenderer::setStyle(const ofStyle & style){
 	setBlendMode(style.blendingMode);
 
 	currentStyle = style;
+}
+
+void ofGLRenderer::setCurveResolution(int resolution){
+	currentStyle.curveResolution = resolution;
+	path.setCurveResolution(resolution);
 }
 
 //----------------------------------------------------------
@@ -1233,7 +1360,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
 	float fontSize = 8.0f;
 	float sx = 0;
-	float sy = -fontSize;
+	float sy = 0;
 
 
 	///////////////////////////
@@ -1374,10 +1501,10 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z) cons
 	glAlphaFunc(GL_GREATER, 0);
 #endif
 
-	ofMesh charMesh = bitmapFont.getMesh(textString,0,0,currentStyle.drawBitmapMode,isVFlipped());
-	bitmapFont.getTexture().bind();
+	ofMesh charMesh = bitmapFont.getMesh(textString,sx,sy,currentStyle.drawBitmapMode,isVFlipped());
+	mutThis->bind(bitmapFont.getTexture(),0);
 	draw(charMesh,OF_MESH_FILL,false,true,false);
-	bitmapFont.getTexture().unbind();
+	mutThis->unbind(bitmapFont.getTexture(),0);
 
 #ifndef TARGET_OPENGLES
 	glPopAttrib();
