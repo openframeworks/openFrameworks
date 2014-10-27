@@ -9,14 +9,12 @@
 class ofBaseSoundInput;
 class ofBaseSoundOutput;
 
-@interface ofxiOSSoundStreamDelegate : NSObject <SoundStreamDelegate> {
-    ofBaseSoundInput * soundInputApp;
-    ofBaseSoundOutput * soundOutputApp;
-}
+@interface ofxiOSSoundStreamDelegate : NSObject <SoundStreamDelegate>
 
 - (id)initWithSoundInputApp:(ofBaseSoundInput *)app;
 - (id)initWithSoundOutputApp:(ofBaseSoundOutput *)app;
-
+- (void)setInput:(ofBaseSoundInput *)input;
+- (void)setOutput:(ofBaseSoundOutput *)output;
 
 @end
 
