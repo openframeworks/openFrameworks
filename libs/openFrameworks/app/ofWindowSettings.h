@@ -19,6 +19,12 @@ public:
 	ofGLWindowSettings()
 	:glVersionMajor(2)
 	,glVersionMinor(1){}
+
+	void setGLVersion(int major, int minor){
+		glVersionMajor = major;
+		glVersionMinor = minor;
+	}
+
 	int glVersionMajor;
 	int glVersionMinor;
 };
@@ -28,4 +34,8 @@ public:
 	ofGLESWindowSettings()
 	:glesVersion(1){}
 	int glesVersion;
+
+	void setGLESVersion(int version){
+		glesVersion = version;
+	}
 };
