@@ -9,18 +9,17 @@
 //----------------------------------------------------
 // ofSoundObject
 
-ofSoundObject::ofSoundObject() {
-	inputObject = NULL;
-	outputObjectRef = NULL;
+ofSoundObject::ofSoundObject(): inputObject(NULL), outputObjectPtr(NULL){
 }
 
 
-ofSoundObject &ofSoundObject::connectTo(ofSoundObject &soundObject) {
-	if (outputObjectRef != NULL) {
+ofSoundObject &ofSoundObject::connectTo(ofSoundObject& soundObject) {
+	if (outputObjectPtr) {
 		disconnect();
 	}
-	outputObjectRef = &soundObject;
-	soundObject.setInput(this);
+	outputObjectPtr = &soundObject;
+
+	soundObject.setInput(*this);
 	
 	// if we find an infinite loop, we want to disconnect and provide an error
 	if(!checkForInfiniteLoops()) {
@@ -30,31 +29,37 @@ ofSoundObject &ofSoundObject::connectTo(ofSoundObject &soundObject) {
 	return soundObject;
 }
 
-void ofSoundObject::disconnectInput(ofSoundObject * input){
-	if (inputObject != NULL) {
+void ofSoundObject::disconnectInput(ofSoundObject& input){
+	if (inputObject) {
 		inputObject = NULL;
 	}
 }
 
 void ofSoundObject::disconnect(){
-	outputObjectRef->disconnectInput(this);
-	outputObjectRef =NULL;
+	outputObjectPtr->disconnectInput(*this);
+	outputObjectPtr = NULL;
 }
 
-void ofSoundObject::setInput(ofSoundObject *obj) {
-	inputObject = obj;
+void ofSoundObject::setInput(ofSoundObject& obj) {
+	inputObject = &obj;
 }
 
-ofSoundObject *ofSoundObject::getInputObject() {
-	return inputObject;
+ofSoundObject& ofSoundObject::getInputObject() {
+	return *inputObject;
 }
 
-bool ofSoundObject::checkForInfiniteLoops() {
-	ofSoundObject *prev = inputObject;
+const ofSoundObject& ofSoundObject::getInputObject() const
+{
+    return *inputObject;
+}
+
+
+bool ofSoundObject::checkForInfiniteLoops() const {
+	ofSoundObject* prev = inputObject;
 
 	// move up the dsp chain until we find ourselves or the beginning of the chain (input==NULL)
 	while(prev!=this && prev!=NULL) {
-		prev = prev->getInputObject();
+		prev = &prev->getInputObject();
 	}
 
 	// if we found ourselves, return false (to indicate there's an infinite loop)
@@ -62,8 +67,8 @@ bool ofSoundObject::checkForInfiniteLoops() {
 }
 
 // this pulls the audio through from earlier links in the chain
-void ofSoundObject::audioOut(ofSoundBuffer &output) {
-	if(inputObject!=NULL) {
+void ofSoundObject::audioOut(ofSoundBuffer& output) {
+	if(inputObject) {
 		if(workingBuffer.size()!=output.size()) {
 			ofLogVerbose("ofSoundObject") << "working buffer size != output buffer size.";
 			workingBuffer.resize(output.size());
@@ -84,7 +89,7 @@ ofSoundInput::ofSoundInput() {
 }
 
 // copy audio in to internal buffer
-void ofSoundInput::audioIn(ofSoundBuffer &input) {
+void ofSoundInput::audioIn(ofSoundBuffer& input) {
 	if(inputBuffer.size()!=input.size()) {
 		ofLogVerbose("ofSoundinput::audioIn") << "input buffer size != output buffer size.";
 		inputBuffer.resize(input.size());
@@ -94,7 +99,7 @@ void ofSoundInput::audioIn(ofSoundBuffer &input) {
 	input.copyTo(inputBuffer);
 }
 
-void ofSoundInput::audioOut(ofSoundBuffer &output) {
+void ofSoundInput::audioOut(ofSoundBuffer& output) {
 	if(output.getNumFrames()==inputBuffer.getNumFrames()){
 		ofLogVerbose("ofSoundinput::audioOut") << "input buffer size != output buffer size.";
 		inputBuffer.resize(output.size());
@@ -121,34 +126,34 @@ ofSoundMixer &ofGetSystemSoundMixer(){
 	return systemSoundMixer;
 }
 
-ofPtr<ofBaseSoundOutput> ofSoundMixer::getChannelSource(int channelNumber){
+std::shared_ptr<ofBaseSoundOutput> ofSoundMixer::getChannelSource(int channelNumber) {
 	if (channelNumber < channels.size()) {
-		return shared_ptr<ofBaseSoundOutput>(channels[channelNumber]);
+        return std::shared_ptr<ofBaseSoundOutput>(channels[channelNumber]);
 	}else{
-		return shared_ptr<ofBaseSoundOutput>();
+		return std::shared_ptr<ofBaseSoundOutput>();
 	}
 }
 
-void ofSoundMixer::disconnectInput(ofSoundObject * input){
-	for (int i =0; i<channels.size(); i++) {
-		if (input == channels[i]) {
+void ofSoundMixer::disconnectInput(ofSoundObject& input){
+	for (std::size_t i =0; i<channels.size(); i++) {
+		if (&input == channels[i]) {
 			channels.erase(channels.begin() + i);
 			break;
 		}
 	}
 }
 
-void ofSoundMixer::setInput(ofSoundObject *obj){
-	for (int i =0; i<channels.size(); i++) {
-		if (obj == channels[i]) {
+void ofSoundMixer::setInput(ofSoundObject& obj){
+    for (std::size_t i =0; i<channels.size(); i++) {
+		if (&obj == channels[i]) {
 			ofLogNotice("ofSoundMixer::setInput") << " already connected" << endl;
 			return;
 		}
 	}
-	channels.push_back(obj);
+	channels.push_back(&obj);
 }
 
-int ofSoundMixer::getNumChannels(){
+std::size_t ofSoundMixer::getNumChannels() const{
 	return channels.size();
 }
 
@@ -156,11 +161,11 @@ void ofSoundMixer::setMasterVolume(float vol){
 	masterVolume = vol;
 }
 
-float ofSoundMixer::getMasterVolume(){
+float ofSoundMixer::getMasterVolume() const{
 	return masterVolume;
 }
 
-float ofSoundMixer::getMasterPan(){
+float ofSoundMixer::getMasterPan() const{
 	return masterPan;
 }
 
@@ -168,8 +173,8 @@ void ofSoundMixer::setMasterPan(float pan){
 	masterPan = pan;
 }
 
-bool ofSoundMixer::isConnectedTo(ofSoundObject& obj){
-	for (int i =0; i<channels.size(); i++) {
+bool ofSoundMixer::isConnectedTo(const ofSoundObject& obj) const{
+    for (std::size_t i =0; i<channels.size(); i++) {
 		if (&obj == channels[i]) {
 			return true;
 		}
@@ -178,23 +183,23 @@ bool ofSoundMixer::isConnectedTo(ofSoundObject& obj){
 }
 
 // this pulls the audio through from earlier links in the chain and sums up the total output
-void ofSoundMixer::audioOut(ofSoundBuffer &output) {
-	if(channels.size()>0) {
-		for(int i = 0; i < channels.size(); i++){
-			if (channels[i] != NULL) {
+void ofSoundMixer::audioOut(ofSoundBuffer& output) {
+	if(!channels.empty()) {
+        for(std::size_t i = 0; i < channels.size(); i++){
+			if (channels[i]) {
 				ofSoundBuffer tempBuffer;
 				tempBuffer.resize(output.size());
 				tempBuffer.setNumChannels(output.getNumChannels());
 				tempBuffer.setSampleRate(output.getSampleRate());
 				channels[i]->audioOut(tempBuffer);
 				
-				for (int i = 0; i < tempBuffer.size(); i++) {
+                for (std::size_t i = 0; i < tempBuffer.size(); i++) {
 					output.getBuffer()[i] += tempBuffer.getBuffer()[i];
 				}
 			}
 		}
 		if(output.getNumChannels() == 2) {
-			output.stereoPan(1-masterPan, masterPan);
+			output.stereoPan(1 - masterPan, masterPan);
 		}
 		output*=masterVolume;
 	}
