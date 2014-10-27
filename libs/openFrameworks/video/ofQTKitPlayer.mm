@@ -406,7 +406,7 @@ bool ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
         // If we already have a movie loaded we need to reload
         // the movie with the new settings correctly allocated.
         if(isLoaded()){
-            loadMovie(moviePath, decodeMode);
+            load(moviePath, decodeMode);
         }
     }	
 	return true;

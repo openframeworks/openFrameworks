@@ -304,7 +304,7 @@ typedef TESSindex ofIndexType;
         #define OF_VIDEO_PLAYER_ANDROID
     #elif defined(TARGET_OF_IOS)
         #define OF_VIDEO_PLAYER_IOS
-	#elif defined(TARGET_WIN32)
+	#elif defined(TARGET_WIN32) && !defined(__MINGW32__)
         #define OF_VIDEO_PLAYER_DIRECTSHOW
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime

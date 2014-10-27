@@ -125,7 +125,7 @@ public:
 
 private:
 	struct Data{
-		Data(GLuint id);
+		Data();
 		~Data();
 		GLuint id;
 		GLsizeiptr size;
