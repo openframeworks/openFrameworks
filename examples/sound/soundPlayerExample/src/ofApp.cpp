@@ -8,7 +8,7 @@ void ofApp::setup(){
 	synth.setVolume(0.75f);
 	beats.setVolume(0.75f);
 	vocals.setVolume(0.5f);
-	font.loadFont("Sudbury_Basin_3D.ttf", 32);
+	font.load("Sudbury_Basin_3D.ttf", 32);
 	beats.setMultiPlay(false);
 	vocals.setMultiPlay(true);
 }

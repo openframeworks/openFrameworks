@@ -73,7 +73,7 @@ void ofApp::drawInteractionArea(){
 	ofSetColor(255, 255, 0);
 	ofNoFill();
 	glDepthMask(false);
-	ofCircle(x, y, r);
+	ofDrawCircle(x, y, r);
 	glDepthMask(true);
 	ofPopStyle();
 }

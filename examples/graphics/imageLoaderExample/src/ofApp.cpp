@@ -47,7 +47,7 @@ void ofApp::draw(){
 		for(int x = 0; x < w; x++) {
 			ofColor cur = bikeIcon.getColor(x, y);
 			float size = 1 - (cur.getBrightness() / 255);
-			ofCircle(x * diameter, 500 + y * diameter, 1 + size * diameter / 2);
+			ofDrawCircle(x * diameter, 500 + y * diameter, 1 + size * diameter / 2);
 		}
 	}
 	
@@ -60,7 +60,7 @@ void ofApp::draw(){
 			int index = y * w + x;
 			unsigned char cur = pixels[index];
 			float size = 1 - ((float) cur / 255);
-			ofCircle(200 + x * diameter, 500 + y * diameter, 1 + size * diameter / 2);
+			ofDrawCircle(200 + x * diameter, 500 + y * diameter, 1 + size * diameter / 2);
 		}
 	}
 	

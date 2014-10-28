@@ -150,9 +150,9 @@ void ofApp::draw(){
     // draw the bug holes
     for(unsigned int i=0; i<holes.size(); i++) {
         ofSetColor(100);
-        ofCircle(holes[i], 10);
+		ofDrawCircle(holes[i], 10);
         ofSetColor(40);
-        ofCircle(holes[i], 7);
+		ofDrawCircle(holes[i], 7);
     }
     
     for(unsigned int i=0; i<bugs.size(); i++) {
@@ -205,7 +205,7 @@ void ofApp::draw(){
     ofPopMatrix();
     
     ofSetColor(255);
-    ofCircle(gunPos.x, gunPos.y, 2);
+	ofDrawCircle(gunPos.x, gunPos.y, 2);
     
 }
 
