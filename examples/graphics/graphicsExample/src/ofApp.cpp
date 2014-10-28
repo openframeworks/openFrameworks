@@ -25,12 +25,12 @@ void ofApp::draw(){
 	ofSetColor(255,130,0);
 	float radius = 50 + 10 * sin(counter);
 	ofFill();		// draw "filled shapes"
-	ofCircle(100,400,radius);
+	ofDrawCircle(100,400,radius);
 
 	// now just an outline
 	ofNoFill();
 	ofSetHexColor(0xCCCCCC);
-	ofCircle(100,400,80);
+	ofDrawCircle(100,400,80);
 
 	// use the bitMap type
 	// note, this can be slow on some graphics cards

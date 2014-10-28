@@ -20,6 +20,7 @@ bool ofxSynthWaveWriter::startWriting(string filename){
 		return false;
 	}
 	setvbuf( file, 0, _IOFBF, 32 * 1024L );
+	return true;
 }
 
 void ofxSynthWaveWriter::process( float* input, float *output, int numFrames, int numInChannels, int numOutChannels ){

@@ -99,7 +99,7 @@ void ofApp::draw() {
 		// draw the points as circles
 		ofSetColor(ofColor::red);
 		for(int i = 0; i < nPoints; i++) {
-      ofCircle(points[i], 2);
+		ofDrawCircle(points[i], 2);
 		}
   } else {
 		// when not in debug mode, draw all the points to the screen
