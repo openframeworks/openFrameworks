@@ -42,7 +42,7 @@ ofEasyCam::~ofEasyCam(){
 
 //----------------------------------------
 void ofEasyCam::update(ofEventArgs & args){
-	ofRectangle viewport = getViewport(this->viewport);
+	viewport = getViewport(this->viewport);
     if(!bDistanceSet && bAutoDistance){
         setDistance(getImagePlaneDistance(viewport), true);
     }
@@ -66,7 +66,7 @@ void ofEasyCam::begin(ofRectangle _viewport){
 	if(!bEventsSet){
 		setEvents(ofEvents());
 	}
-	viewport = _viewport;
+	viewport = getViewport(_viewport);
 	ofCamera::begin(viewport);
 }
 
@@ -186,8 +186,10 @@ void ofEasyCam::disableMouseInput(){
 }
 
 void ofEasyCam::setEvents(ofCoreEvents & _events){
+	disableMouseInput();
 	bEventsSet = true;
 	events = &_events;
+	enableMouseInput();
 }
 
 //----------------------------------------

@@ -226,13 +226,13 @@ void ofCamera::calcClipPlanes(const ofRectangle & viewport) {
 
 ofRectangle ofCamera::getViewport(const ofRectangle & viewport) const{
 	if(viewport.isZero()){
-		return renderer->getCurrentViewport();
+		return getRenderer()->getCurrentViewport();
 	}else{
 		return viewport;
 	}
 }
 
-shared_ptr<ofBaseRenderer> ofCamera::getRenderer(){
+shared_ptr<ofBaseRenderer> ofCamera::getRenderer() const{
 	if(!renderer){
 		return ofGetCurrentRenderer();
 	}else{
