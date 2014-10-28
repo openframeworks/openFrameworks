@@ -35,7 +35,8 @@ public:
 	,visible(true)
 	,iconified(false)
 	,decorated(true)
-	,resizable(true){}
+	,resizable(true)
+	,monitor(0){}
 
 #ifdef TARGET_OPENGLES
 	ofGLFWWindowSettings(const ofGLESWindowSettings & settings)
@@ -51,7 +52,8 @@ public:
 	,visible(true)
 	,iconified(false)
 	,decorated(true)
-	,resizable(true){}
+	,resizable(true)
+	,monitor(0){}
 #else
 	ofGLFWWindowSettings(const ofGLWindowSettings & settings)
 	:ofGLWindowSettings(settings)
@@ -66,7 +68,8 @@ public:
 	,visible(true)
 	,iconified(false)
 	,decorated(true)
-	,resizable(true){}
+	,resizable(true)
+	,monitor(0){}
 #endif
 
 	int numSamples;
@@ -81,6 +84,7 @@ public:
 	bool iconified;
 	bool decorated;
 	bool resizable;
+	int monitor;
 	shared_ptr<ofAppBaseWindow> shareContextWith;
 };
 
