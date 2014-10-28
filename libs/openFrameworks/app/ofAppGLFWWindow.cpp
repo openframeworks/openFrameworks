@@ -37,37 +37,17 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
 	buttonPressed		= false;
     bMultiWindowFullscreen  = false;
 
-	nonFullScreenX		= 0;
-	nonFullScreenY		= 0;
-	nonFullScreenW		= 0;
-	nonFullScreenH		= 0;
-
-	samples				= 0;
-	rBits=gBits=bBits=aBits = 8;
-	depthBits			= 24;
-	stencilBits			= 0;
-
 	orientation 		= OF_ORIENTATION_DEFAULT;
-
-	requestedWidth		= 0;
-	requestedHeight		= 0;
 	windowMode			= OF_WINDOW;
-
-	windowW				= 0;
-	windowH				= 0;
-	bDoubleBuffered		= true;
 
 	ofAppPtr			= NULL;
 
     pixelScreenCoordScale = 1;
-
-	glVersionMinor=glVersionMajor=-1;
 	nFramesSinceWindowResized = 0;
-    
-    //default to 4 times antialiasing. 
-    setNumSamples(4);
 	iconSet = false;
 	windowP = NULL;
+	windowW = 0;
+	windowH = 0;
 
 	glfwSetErrorCallback(error_cb);
 }
@@ -81,12 +61,13 @@ void ofAppGLFWWindow::close(){
 		events().notifyExit();
 		glfwDestroyWindow(windowP);
 		windowP = NULL;
+		events().disable();
 	}
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setNumSamples(int _samples){
-	samples=_samples;
+	settings.numSamples=_samples;
 }
 
 //------------------------------------------------------------
@@ -96,45 +77,47 @@ void ofAppGLFWWindow::setMultiDisplayFullscreen(bool bMultiFullscreen){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setDoubleBuffering(bool doubleBuff){
-	bDoubleBuffered = doubleBuff;
+	settings.doubleBuffering = doubleBuff;
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setColorBits(int r, int g, int b){
-	rBits=r;
-	gBits=g;
-	bBits=b;
+	settings.redBits=r;
+	settings.greenBits=g;
+	settings.blueBits=b;
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setAlphaBits(int a){
-	aBits=a;
+	settings.alphaBits=a;
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setDepthBits(int depth){
-	depthBits=depth;
+	settings.depthBits=depth;
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setStencilBits(int stencil){
-	stencilBits=stencil;
+	settings.stencilBits=stencil;
 }
 
 //------------------------------------------------------------
 #ifdef TARGET_OPENGLES
 void ofAppGLFWWindow::setup(const ofGLESWindowSettings & settings){
-	glVersionMajor = settings.glesVersion;
-	glVersionMinor = 0;
 #else
 void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
-	glVersionMajor = settings.glVersionMajor;
-	glVersionMinor = settings.glVersionMinor;
 #endif
+	const ofGLFWWindowSettings * glSettings = dynamic_cast<const ofGLFWWindowSettings*>(&settings);
+	if(glSettings){
+		setup(*glSettings);
+	}else{
+		setup(ofGLFWWindowSettings(settings));
+	}
+}
 
-	requestedWidth = settings.width;
-	requestedHeight = settings.height;
-
+void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
+	settings = _settings;
 
 	if(!glfwInit( )){
 		ofLogError("ofAppGLFWWindow") << "couldn't init GLFW";
@@ -143,58 +126,59 @@ void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
 
 //	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
-	ofWindowMode requestedMode = settings.windowMode;
+	ofWindowMode requestedMode = _settings.windowMode;
 	glfwDefaultWindowHints();
-	glfwWindowHint(GLFW_RED_BITS, rBits);
-	glfwWindowHint(GLFW_GREEN_BITS, gBits);
-	glfwWindowHint(GLFW_BLUE_BITS, bBits);
-	glfwWindowHint(GLFW_ALPHA_BITS, aBits);
-	glfwWindowHint(GLFW_DEPTH_BITS, depthBits);
-	glfwWindowHint(GLFW_STENCIL_BITS, stencilBits);
-#ifdef TARGET_LINUX
-	// start the window hidden so we can set the icon before it shows
+	glfwWindowHint(GLFW_RED_BITS, settings.redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, settings.greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, settings.blueBits);
+	glfwWindowHint(GLFW_ALPHA_BITS, settings.alphaBits);
+	glfwWindowHint(GLFW_DEPTH_BITS, settings.depthBits);
+	glfwWindowHint(GLFW_STENCIL_BITS, settings.stencilBits);
 	glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
-#endif
 #ifndef TARGET_OSX
-	glfwWindowHint(GLFW_AUX_BUFFERS,bDoubleBuffered?1:0);
+	glfwWindowHint(GLFW_AUX_BUFFERS,settings.doubleBuffering?1:0);
 #endif
-	glfwWindowHint(GLFW_SAMPLES,samples);
+	glfwWindowHint(GLFW_SAMPLES,settings.numSamples);
+	glfwWindowHint(GLFW_RESIZABLE, settings.resizable);
+	glfwWindowHint(GLFW_DECORATED, settings.decorated);
+	#ifdef TARGET_OPENGLES
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glesVersion);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
+		if(settings.glesVersion>=1){
+			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer);
+		}else{
+			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer);
+		}
+	#else
+		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_API);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glVersionMajor);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.glVersionMinor);
+		if((settings.glVersionMajor>=3 && settings.glVersionMinor>=2) || settings.glVersionMajor>=4){
+			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+		}else{
+			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+		}
+	#endif
 
-	if(glVersionMinor!=-1 && glVersionMajor!=-1){
-		glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersionMajor);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersionMinor);
-		#ifdef TARGET_OPENGLES
-			glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_ES_API);
-			if(glVersionMajor>=1){
-				currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer);
-			}else{
-				currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer);
-			}
-		#else
-			if((glVersionMajor>=3 && glVersionMinor>=2) || glVersionMajor>=4){
-				glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-				glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-				currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
-			}else{
-				currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
-			}
-		#endif
-	}else{
-		currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+	GLFWwindow * sharedContext = NULL;
+	if(settings.shareContextWith){
+		sharedContext = (GLFWwindow*)settings.shareContextWith->getWindowContext();
 	}
 
 	if(requestedMode==OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
 		if(count>0){
-			windowP = glfwCreateWindow(settings.width, settings.height, "", monitors[0], NULL);
+			windowP = glfwCreateWindow(settings.width, settings.height, "", monitors[0], sharedContext);
 		}else{
 			ofLogError("ofAppGLFWWindow") << "couldn't find any monitors";
 			return;
 		}
 	}else{
-		windowP = glfwCreateWindow(settings.width, settings.height, "", NULL, NULL);
+		windowP = glfwCreateWindow(settings.width, settings.height, "", NULL, sharedContext);
 		if(!windowP){
 			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 		}
@@ -209,9 +193,14 @@ void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
 					GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
 				#endif
 				setWindowIcon(iconPixels);
-				glfwShowWindow(windowP);
 			}
 		#endif
+		if(settings.visible){
+			glfwShowWindow(windowP);
+		}
+		if(settings.iconified){
+			iconify(true);
+		}
 		if(requestedMode==OF_FULLSCREEN){
 			setFullscreen(true);
 		}
@@ -224,12 +213,7 @@ void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
     glfwSetWindowUserPointer(windowP,this);
 	windowMode = requestedMode;
 
-	requestedHeight = requestedHeight < 1 ? 1 : requestedHeight;
-	glfwGetWindowSize( windowP, &requestedWidth, &requestedHeight );
-
-
-	nonFullScreenW = settings.width;
-	nonFullScreenH = settings.height;
+	glfwGetWindowSize( windowP, &settings.width, &settings.height );
 
     glfwMakeContextCurrent(windowP);
 
@@ -260,7 +244,7 @@ void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
 #endif
 
     if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
-    	static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(glVersionMajor,glVersionMinor);
+    	static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glVersionMajor,settings.glVersionMinor);
     }else{
     	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
     }
@@ -346,8 +330,12 @@ void ofAppGLFWWindow::draw(){
 	display();
 }
 
-bool ofAppGLFWWindow::windowShouldClose(){
+bool ofAppGLFWWindow::getWindowShouldClose(){
 	return glfwWindowShouldClose(windowP) || events().windowShouldClose();
+}
+
+void ofAppGLFWWindow::setWindowShouldClose(){
+	glfwSetWindowShouldClose(windowP,1);
 }
 
 //------------------------------------------------------------
@@ -381,7 +369,7 @@ void ofAppGLFWWindow::display(void){
 				currentRenderer->clear();
 			}
 		}
-		if(bDoubleBuffered){
+		if(settings.doubleBuffering){
 		    glfwSwapBuffers(windowP);
 		} else{
 			glFlush();
@@ -425,11 +413,6 @@ ofPoint ofAppGLFWWindow::getWindowSize(){
 ofPoint ofAppGLFWWindow::getWindowPosition(){
     int x, y; 
 	glfwGetWindowPos(windowP, &x, &y);
-    
-    if( windowMode == OF_WINDOW ){
-        nonFullScreenX = x; 
-        nonFullScreenY = y; 
-    }   
     
     x *= pixelScreenCoordScale;
     y *= pixelScreenCoordScale;
@@ -530,19 +513,11 @@ ofWindowMode ofAppGLFWWindow::getWindowMode(){
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowPosition(int x, int y){
     glfwSetWindowPos(windowP,x/pixelScreenCoordScale,y/pixelScreenCoordScale);
-    
-    if( windowMode == OF_WINDOW ){
-        nonFullScreenX=x;
-        nonFullScreenY=y;
-    }
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowShape(int w, int h){
 	glfwSetWindowSize(windowP,w/pixelScreenCoordScale,h/pixelScreenCoordScale);
-	// this is useful, esp if we are in the first frame (setup):
-	requestedWidth  = w;
-	requestedHeight = h;
 }
 
 //------------------------------------------------------------

@@ -1,16 +1,7 @@
 #include "ofEvents.h"
 
 
-
-ofEvent<void> & ofExitEvent(){
-	static ofEvent<void> * exitEvent = new ofEvent<void>;
-	return *exitEvent;
-}
-
-ofEventArgs voidEventArgs;
-
-
-static bool bEscQuits = true;
+static ofEventArgs voidEventArgs;
 
 
 //--------------------------------------
@@ -66,11 +57,6 @@ int ofGetPreviousMouseX(){
 //--------------------------------------
 int ofGetPreviousMouseY(){
 	return ofEvents().getPreviousMouseY();
-}
-
-//--------------------------------------
-void ofSetEscapeQuitsApp(bool bQuitOnEsc){
-	bEscQuits = bQuitOnEsc;
 }
 
 ofCoreEvents::ofCoreEvents()
@@ -265,13 +251,6 @@ void ofCoreEvents::notifyKeyPressed(int key, int keycode, int scancode, int code
 	pressedKeys.insert(key);
     ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Pressed,key,keycode,scancode,codepoint);
 	ofNotifyEvent( keyPressed, keyEventArgs );
-	
-	
-	if (key == OF_KEY_ESC && bEscQuits == true){				// "escape"
-		bShouldClose = true;
-    }
-	
-	
 }
 
 //------------------------------------------

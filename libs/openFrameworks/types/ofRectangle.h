@@ -310,6 +310,8 @@ public:
     bool operator == (const ofRectangle& rect) const;
     bool operator != (const ofRectangle& rect) const;
     
+    bool isZero() const;
+
     ofPoint position;
     float& x;
     float& y;

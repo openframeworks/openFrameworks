@@ -206,7 +206,7 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	if(meshVbo.getUsingIndices()) {
 		drawElements(meshVbo,drawMode, meshVbo.getNumIndices());
 	} else {
-		draw(meshVbo, drawMode, 0, meshVbo.getNumVertices());
+		draw(meshVbo, drawMode, 0, vertexData.getNumVertices());
 	}
 	
 	// tig: note further that we could glGet() and store the current polygon mode, but don't, since that would
@@ -1334,7 +1334,6 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(ofBaseMaterial & material){
 	currentMaterial = &material;
-	currentMaterial->beginShader(currentTextureTarget,this);
 }
 
 //----------------------------------------------------------
@@ -2143,7 +2142,7 @@ static const string FRAGMENT_SHADER_PLANAR_YUV = STRINGIFY(
 	}\n
 );
 
-static string defaultShaderHeader(string header, bool textureRect, int major, int minor){
+static string defaultShaderHeader(string header, GLenum textureTarget, int major, int minor){
 	ofStringReplace(header,"%glsl_version%",ofGLSLVersionFromGL(major,minor));
 #ifndef TARGET_OPENGLES
 	if(major<4 && minor<2){
@@ -2152,10 +2151,10 @@ static string defaultShaderHeader(string header, bool textureRect, int major, in
 		ofStringReplace(header,"%extensions%","");
 	}
 #endif
-	if(textureRect){
-		header += "#define SAMPLER sampler2DRect\n";
-	}else{
+	if(textureTarget==GL_TEXTURE_2D){
 		header += "#define SAMPLER sampler2D\n";
+	}else{
+		header += "#define SAMPLER sampler2DRect\n";
 	}
 	return header;
 }
@@ -2228,12 +2227,12 @@ static string videoFragmentShaderSource(const ofBaseVideoDraws & video, int majo
 	return shaderSource(header + src, major, minor);
 }
 
-string ofGLProgrammableRenderer::defaultVertexShaderHeader(bool textureRect){
-	return defaultShaderHeader(vertex_shader_header,textureRect,major,minor);
+string ofGLProgrammableRenderer::defaultVertexShaderHeader(GLenum textureTarget){
+	return defaultShaderHeader(vertex_shader_header,textureTarget,major,minor);
 }
 
-string ofGLProgrammableRenderer::defaultFragmentShaderHeader(bool textureRect){
-	return defaultShaderHeader(fragment_shader_header,textureRect,major,minor);
+string ofGLProgrammableRenderer::defaultFragmentShaderHeader(GLenum textureTarget){
+	return defaultShaderHeader(fragment_shader_header,textureTarget,major,minor);
 }
 
 void ofGLProgrammableRenderer::setup(int major, int minor){

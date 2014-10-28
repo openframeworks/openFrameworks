@@ -688,6 +688,11 @@ bool ofRectangle::operator == (const ofRectangle& rect) const {
 }
 
 //----------------------------------------------------------
+bool ofRectangle::isZero() const{
+	return (x == 0) && (y == 0) && (width == 0) && (height == 0);
+}
+
+//----------------------------------------------------------
 ostream& operator<<(ostream& os, const ofRectangle& rect){
 	os << rect.position << ", " << rect.width << ", " << rect.height;
 	return os;

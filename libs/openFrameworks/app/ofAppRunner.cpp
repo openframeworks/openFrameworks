@@ -65,7 +65,9 @@ void ofURLFileLoaderShutdown();
 #endif
 
 void ofInit(){
-	if(mainLoop) return;
+	static bool initialized = false;
+	if(initialized) return;
+	initialized = true;
 	Poco::ErrorHandler::set(new ofThreadErrorLogger);
 
 #ifndef TARGET_ANDROID
@@ -98,7 +100,6 @@ void ofInit(){
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
 	ofSetWorkingDirectoryToDefault();
-	mainLoop = shared_ptr<ofMainLoop>(new ofMainLoop);
 }
 
 
@@ -147,6 +148,7 @@ void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 
 shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 	ofInit();
+	if(!mainLoop) mainLoop = shared_ptr<ofMainLoop>(new ofMainLoop);
 	return mainLoop->createWindow(settings);
 }
 
@@ -155,13 +157,6 @@ shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 //							at the end of the application
 
 void ofExitCallback(){
-	// first notify we are exiting so every object has a chance to
-	// stop threads, deallocate...
-	ofExitEvent().notify(NULL);
-
-	// then disable all core events to avoid crashes
-	ofEvents().disable();
-
 	// controlled destruction of the mainLoop before
 	// any other deinitialization
 	mainLoop.reset();
@@ -202,11 +197,18 @@ void ofExitCallback(){
 	// events
 }
 
+//--------------------------------------
 // core events instance & arguments
 ofCoreEvents & ofEvents(){
 	return mainLoop->events();
 }
 
+//--------------------------------------
+void ofSetEscapeQuitsApp(bool bQuitOnEsc){
+	mainLoop->setEscapeQuitsLoop(bQuitOnEsc);
+}
+
+//--------------------------------------
 shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer(){
 	return mainLoop->getCurrentWindow()->renderer();
 }

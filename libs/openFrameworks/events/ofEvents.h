@@ -8,16 +8,14 @@
 #include <set>
 
 //-------------------------- mouse/key query
-bool		ofGetMousePressed(int button=-1); //by default any button
-bool		ofGetKeyPressed(int key=-1); //by default any key
+bool ofGetMousePressed(int button=-1); //by default any button
+bool ofGetKeyPressed(int key=-1); //by default any key
 
-int			ofGetMouseX();
-int			ofGetMouseY();
+int	ofGetMouseX();
+int	ofGetMouseY();
 
-int			ofGetPreviousMouseX();
-int			ofGetPreviousMouseY();
-
-void		ofSetEscapeQuitsApp(bool bQuitOnEsc);
+int	ofGetPreviousMouseX();
+int	ofGetPreviousMouseY();
 
 //-----------------------------------------------
 class ofDragInfo{
@@ -235,8 +233,8 @@ class ofCoreEvents {
 	int getFrameNum() const;
 
 	bool windowShouldClose() const;
-	bool getMousePressed(int button) const;
-	bool getKeyPressed(int key) const;
+	bool getMousePressed(int button=-1) const;
+	bool getKeyPressed(int key=-1) const;
 	int getMouseX() const;
 	int getMouseY() const;
 	int getPreviousMouseX() const;
@@ -281,7 +279,6 @@ private:
 void ofSendMessage(ofMessage msg);
 void ofSendMessage(string messageString);
 
-ofEvent<void> & ofExitEvent();
 ofCoreEvents & ofEvents();
 
 template<class ListenerClass>
