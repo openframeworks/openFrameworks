@@ -171,8 +171,8 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	if(requestedMode==OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
-		if(count>0){
-			windowP = glfwCreateWindow(settings.width, settings.height, "", monitors[0], sharedContext);
+		if(count>settings.monitor){
+			windowP = glfwCreateWindow(settings.width, settings.height, "", monitors[settings.monitor], sharedContext);
 		}else{
 			ofLogError("ofAppGLFWWindow") << "couldn't find any monitors";
 			return;
