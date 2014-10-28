@@ -203,7 +203,7 @@ public:
 
 protected:
 	ofRectangle getViewport(const ofRectangle & _viewport) const;
-	shared_ptr<ofBaseRenderer> getRenderer();
+	shared_ptr<ofBaseRenderer> getRenderer() const;
 	void calcClipPlanes(const ofRectangle & viewport);
 	
 private:
