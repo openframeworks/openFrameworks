@@ -29,7 +29,7 @@ void ofApp::draw() {
     
     ofTranslate(10, 10);
     ofSetColor(0);
-    ofRect(0, 0, 300, 100);
+    ofDrawRectangle(0, 0, 300, 100);
     ofSetColor(255);
     graph.draw(300, 100);
 }

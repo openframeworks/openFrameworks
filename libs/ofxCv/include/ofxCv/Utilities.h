@@ -213,6 +213,6 @@ namespace ofxCv {
 	template <class T>
 	void toOf(Mat mat, ofImage_<T>& img) {
 		imitate(img, mat);
-		toOf(mat, img.getPixelsRef());
+		toOf(mat, img.getPixels());
 	}
 }

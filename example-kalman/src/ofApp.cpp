@@ -41,7 +41,7 @@ void ofApp::draw() {
 	ofPushStyle();
 	ofSetColor(ofColor::red, 128);
 	ofFill();
-	ofCircle(point, speed * 2);
+	ofDrawCircle(point, speed * 2);
 	ofPopStyle();
 	
 	estimated.draw();
