@@ -167,10 +167,12 @@ void ofMaterial::end() {
 
 void ofMaterial::initShaders(ofGLProgrammableRenderer * renderer){
 	if(!shadersInitialized || ofLightsData().size()!=shaderLights){
-		string vertexRectHeader = renderer->defaultVertexShaderHeader(true);
-		string fragmentRectHeader = renderer->defaultFragmentShaderHeader(true);
-		string vertex2DHeader = renderer->defaultVertexShaderHeader(false);
-		string fragment2DHeader = renderer->defaultFragmentShaderHeader(false);
+#ifndef TARGET_OPENGLES
+		string vertexRectHeader = renderer->defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
+		string fragmentRectHeader = renderer->defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
+#endif
+		string vertex2DHeader = renderer->defaultVertexShaderHeader(GL_TEXTURE_2D);
+		string fragment2DHeader = renderer->defaultFragmentShaderHeader(GL_TEXTURE_2D);
 		shaderLights = ofLightsData().size();
 		shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,false));
 		shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,false));
@@ -178,13 +180,13 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer * renderer){
 		shaderNoTexture.linkProgram();
 
 		shaderTexture2D.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,true));
-		shaderTexture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,false));
+		shaderTexture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,true));
 		shaderTexture2D.bindDefaults();
 		shaderTexture2D.linkProgram();
 
 #ifndef TARGET_OPENGLES
-		shaderTextureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,shaderLights,false));
-		shaderTextureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader,shaderLights,false));
+		shaderTextureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,shaderLights,true));
+		shaderTextureRect.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragmentRectHeader,shaderLights,true));
 		shaderTextureRect.bindDefaults();
 		shaderTextureRect.linkProgram();
 #endif
@@ -537,8 +539,7 @@ static const string fragmentShader = STRINGIFY(
 
 
 static string shaderHeader(string header, int maxLights, bool hasTexture){
-	header += "#define MAX_LIGHTS " + ofToString(maxLights) + "\n";
-	ofStringReplace(header,"%max_lights%",ofToString(maxLights));
+	header += "#define MAX_LIGHTS " + ofToString(max(1,maxLights)) + "\n";
 	if(hasTexture){
 		header += "#define HAS_TEXTURE\n";
 	}

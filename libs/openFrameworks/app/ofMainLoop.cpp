@@ -31,7 +31,8 @@ ofMainLoop::ofMainLoop()
 ,status(0)
 ,allowMultiWindow(true)
 ,windowLoop(NULL)
-,pollEvents(NULL){
+,pollEvents(NULL)
+,escapeQuits(true){
 
 }
 
@@ -58,6 +59,7 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & se
 #endif
 	addWindow(window);
 	window->setup(settings);
+	ofAddListener(window->events().keyPressed,this,&ofMainLoop::keyPressed);
 	return window;
 }
 
@@ -103,7 +105,7 @@ int ofMainLoop::loop(){
 
 void ofMainLoop::loopOnce(){
 	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
-		if(i->first->windowShouldClose()){
+		if(i->first->getWindowShouldClose()){
 			i->first->close();
 			windowsApps.erase(i);
 		}else{
@@ -115,6 +117,7 @@ void ofMainLoop::loopOnce(){
 	if(pollEvents){
 		pollEvents();
 	}
+	exitEvent.notify(this);
 }
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
@@ -131,8 +134,18 @@ ofCoreEvents & ofMainLoop::events(){
 
 void ofMainLoop::shouldClose(int _status){
 	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
-		i->first->close();
+		i->first->setWindowShouldClose();
 	}
 	bShouldClose = true;
 	status = _status;
+}
+
+void ofMainLoop::setEscapeQuitsLoop(bool quits){
+	escapeQuits = quits;
+}
+
+void ofMainLoop::keyPressed(ofKeyEventArgs & key){
+	if (key.key == OF_KEY_ESC && escapeQuits == true){				// "escape"
+		shouldClose(0);
+    }
 }

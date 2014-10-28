@@ -22,10 +22,16 @@ public:
 	virtual void update()=0;
 	virtual void draw()=0;
 	virtual void run(ofBaseApp * appPtr) {}
-	virtual bool windowShouldClose(){
+	virtual bool getWindowShouldClose(){
 		return events().windowShouldClose();
 	}
-	virtual void close(){};
+	virtual void setWindowShouldClose(){
+		close();
+	}
+	virtual void close(){
+		events().notifyExit();
+		events().disable();
+	}
 	virtual ofCoreEvents & events() = 0;
 	virtual shared_ptr<ofBaseRenderer> & renderer() = 0;
 
@@ -60,6 +66,8 @@ public:
 	virtual void	setVerticalSync(bool enabled){};
     virtual void    setClipboardString(const string& text) {}
     virtual string  getClipboardString() { return ""; }
+
+    virtual void * getWindowContext(){return NULL;};
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 	virtual Display* getX11Display(){return NULL;}

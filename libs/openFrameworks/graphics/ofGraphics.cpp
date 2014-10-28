@@ -172,29 +172,6 @@ ofHandednessType ofGetCoordHandedness(){
 	return ofGetCurrentRenderer()->getCoordHandedness();
 }
 
-
-static bool setupScreenDeprecated=false;
-
-//----------------------------------------------------------
-void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip, float fov, float nearDist, float farDist){
-	if(!setupScreenDeprecated){
-		ofLogError("ofGraphics") << "ofSetupScreenPerspective() with orientation and vflip is deprecated,";
-		ofLogError("ofGraphics") << "set them with ofSetOrientation() before calling ofSetupScreenPerspective()";
-		setupScreenDeprecated = true;
-	}
-	ofGetCurrentRenderer()->setupScreenPerspective(width,height,fov,nearDist,farDist);
-}
-
-//----------------------------------------------------------
-void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip, float nearDist, float farDist){
-	if(!setupScreenDeprecated){
-		ofLogError("ofGraphics") << "ofSetupScreenOrtho() with orientation and vflip is deprecated,";
-		ofLogError("ofGraphics") << "set them with ofSetOrientation() before calling ofSetupScreenPerspective()";
-		setupScreenDeprecated = true;
-	}
-	ofGetCurrentRenderer()->setupScreenOrtho(width,height,nearDist,farDist);
-}
-
 //----------------------------------------------------------
 void ofSetupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
 	ofGetCurrentRenderer()->setupScreenPerspective(width,height, fov,nearDist,farDist);

@@ -18,6 +18,73 @@
 class ofBaseApp;
 
 #ifdef TARGET_OPENGLES
+class ofGLFWWindowSettings: public ofGLESWindowSettings{
+#else
+class ofGLFWWindowSettings: public ofGLWindowSettings{
+#endif
+public:
+	ofGLFWWindowSettings()
+	:numSamples(4)
+	,doubleBuffering(true)
+	,redBits(8)
+	,greenBits(8)
+	,blueBits(8)
+	,alphaBits(8)
+	,depthBits(24)
+	,stencilBits(0)
+	,visible(true)
+	,iconified(false)
+	,decorated(true)
+	,resizable(true){}
+
+#ifdef TARGET_OPENGLES
+	ofGLFWWindowSettings(const ofGLESWindowSettings & settings)
+	:ofGLESWindowSettings(settings)
+	,numSamples(4)
+	,doubleBuffering(true)
+	,redBits(8)
+	,greenBits(8)
+	,blueBits(8)
+	,alphaBits(8)
+	,depthBits(24)
+	,stencilBits(0)
+	,visible(true)
+	,iconified(false)
+	,decorated(true)
+	,resizable(true){}
+#else
+	ofGLFWWindowSettings(const ofGLWindowSettings & settings)
+	:ofGLWindowSettings(settings)
+	,numSamples(4)
+	,doubleBuffering(true)
+	,redBits(8)
+	,greenBits(8)
+	,blueBits(8)
+	,alphaBits(8)
+	,depthBits(24)
+	,stencilBits(0)
+	,visible(true)
+	,iconified(false)
+	,decorated(true)
+	,resizable(true){}
+#endif
+
+	int numSamples;
+	bool doubleBuffering;
+	int redBits;
+	int greenBits;
+	int blueBits;
+	int alphaBits;
+	int depthBits;
+	int stencilBits;
+	bool visible;
+	bool iconified;
+	bool decorated;
+	bool resizable;
+	shared_ptr<ofAppBaseWindow> shareContextWith;
+};
+
+#ifdef TARGET_OPENGLES
 class ofAppGLFWWindow : public ofAppBaseGLESWindow{
 #else
 class ofAppGLFWWindow : public ofAppBaseGLWindow {
@@ -56,10 +123,12 @@ public:
 #else
 	void setup(const ofGLWindowSettings & settings);
 #endif
+	void setup(const ofGLFWWindowSettings & settings);
 	void update();
 	void draw();
 	void run(ofBaseApp * appPtr);
-	bool windowShouldClose();
+	bool getWindowShouldClose();
+	void setWindowShouldClose();
 
 	void close();
 
@@ -73,6 +142,7 @@ public:
 	shared_ptr<ofBaseRenderer> & renderer();
     
     GLFWwindow* getGLFWWindow();
+    void * getWindowContext(){return getGLFWWindow();}
 
 	ofVec3f		getWindowSize();
 	ofVec3f		getScreenSize();
@@ -150,31 +220,17 @@ private:
 
 	ofCoreEvents coreEvents;
 	shared_ptr<ofBaseRenderer> currentRenderer;
-
-	//utils
-	int				samples;
-	int				rBits,gBits,bBits,aBits,depthBits,stencilBits;
+	ofGLFWWindowSettings settings;
 
 	ofWindowMode	windowMode;
 
 	bool			bEnableSetupScreen;
-
-	int				requestedWidth;
-	int				requestedHeight;
-
-	int 			nonFullScreenW;
-	int 			nonFullScreenH;
-	int 			nonFullScreenX;
-	int 			nonFullScreenY;
+	int				windowW, windowH;
 
 	int				buttonInUse;
 	bool			buttonPressed;
 
-	int				windowW;
-	int				windowH;
-
 	int 			nFramesSinceWindowResized;
-	bool			bDoubleBuffered;
     bool            bMultiWindowFullscreen; 
 
 	GLFWwindow* 	windowP;
@@ -186,8 +242,6 @@ private:
     int pixelScreenCoordScale; 
 
 	ofOrientation orientation;
-
-	int glVersionMinor, glVersionMajor;
 
 	bool iconSet;
 

@@ -208,8 +208,8 @@ public:
 	void setLightPosition(int lightIndex, const ofVec4f & position){}
 	void setLightSpotDirection(int lightIndex, const ofVec4f & direction){}
 
-	string defaultVertexShaderHeader(bool textureRect);
-	string defaultFragmentShaderHeader(bool textureRect);
+	string defaultVertexShaderHeader(GLenum textureTarget);
+	string defaultFragmentShaderHeader(GLenum textureTarget);
 
 	int getGLVersionMajor();
 	int getGLVersionMinor();

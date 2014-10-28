@@ -381,6 +381,8 @@ void ofAppGlutWindow::draw(){
 
 
 void ofAppGlutWindow::close(){
+	events().notifyExit();
+	events().disable();
 #ifdef TARGET_LINUX
 	glutLeaveMainLoop();
 #else

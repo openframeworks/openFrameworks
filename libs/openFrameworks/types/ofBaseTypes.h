@@ -635,6 +635,8 @@ public:
 	virtual void saveFullViewport(ofPixels & pixels)=0;
 
 	// bindings
+	using ofBaseRenderer::bind;
+	using ofBaseRenderer::unbind;
 	virtual void bind(ofBaseMaterial & material)=0;
 	virtual void bind(const ofFbo & fbo, bool setupPerspective)=0;
 	virtual void bind(const ofShader & shader)=0;
