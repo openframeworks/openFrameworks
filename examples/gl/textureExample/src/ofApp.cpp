@@ -51,7 +51,7 @@ void ofApp::update(){
 			grayPixels[j*w+i] = (unsigned char)(ofRandomuf() * 255);
 		}
 	}
-	texGray.loadData(grayPixels, w,h, GL_LUMINANCE); 
+	texGray.loadData(grayPixels.getData(), w,h, GL_LUMINANCE);
 	
 }
 

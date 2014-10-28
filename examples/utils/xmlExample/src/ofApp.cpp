@@ -87,7 +87,7 @@ void ofApp::setup(){
     
 	//load a monospaced font
 	//which we will use to show part of the xml structure
-	TTF.loadFont("mono.ttf", 7);
+	TTF.load("mono.ttf", 7);
 }
 
 //--------------------------------------------------------------
