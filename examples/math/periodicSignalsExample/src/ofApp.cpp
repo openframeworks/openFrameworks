@@ -89,7 +89,7 @@ void ofApp::draw(){
 
 	for(int i=0;i<(int)trail.size();i++){
 		ofEnableSmoothing();
-		ofCircle(x,y[i],radius);
+		ofDrawCircle(x,y[i],radius);
 		trail[i].draw();
 
 
