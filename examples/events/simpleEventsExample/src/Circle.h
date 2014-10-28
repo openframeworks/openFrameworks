@@ -36,6 +36,7 @@ public:
     void mouseDragged(ofMouseEventArgs & args);
     void mousePressed(ofMouseEventArgs & args);
     void mouseReleased(ofMouseEventArgs & args);
+    void mouseScrolled(ofMouseEventArgs & args);
     
     //this function checks if the passed arguments are inside the circle.
     bool inside(float _x, float _y );

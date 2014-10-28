@@ -55,6 +55,7 @@ void Circle::mouseReleased(ofMouseEventArgs & args){
         ofNotifyEvent(clickedInsideGlobal, mousePos);
     }
 }
+void Circle::mouseScrolled(ofMouseEventArgs & args){}
 
 //this function checks if the passed arguments are inside the circle.
 bool Circle::inside(float _x, float _y ){
