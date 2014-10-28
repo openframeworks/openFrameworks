@@ -28,15 +28,15 @@ void drawTransparentAxis(float size, int alpha) {
 	
 	// draw x axis
 	ofSetColor(255, 0, 0, alpha);
-	ofLine(0, 0, 0, size, 0, 0);
+	ofDrawLine(0, 0, 0, size, 0, 0);
 	
 	// draw y axis
 	ofSetColor(0, 255, 0, alpha);
-	ofLine(0, 0, 0, 0, size, 0);
+	ofDrawLine(0, 0, 0, 0, size, 0);
 	
 	// draw z axis
 	ofSetColor(0, 0, 255, alpha);
-	ofLine(0, 0, 0, 0, 0, size);
+	ofDrawLine(0, 0, 0, 0, 0, size);
 	ofPopStyle();
 }
 
