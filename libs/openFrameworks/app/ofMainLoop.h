@@ -13,10 +13,10 @@ public:
 	shared_ptr<ofAppBaseWindow> createWindow(const ofWindowSettings & settings);
 	template<typename Window>
 	void addWindow(shared_ptr<Window> window){
+		allowMultiWindow = Window::allowsMultiWindow();
 		if(!allowMultiWindow) windowsApps.clear();
 		windowsApps[window] = shared_ptr<ofBaseApp>();
 		currentWindow = window;
-		allowMultiWindow = Window::allowsMultiWindow();
 		if(Window::doesLoop()){
 			windowLoop = Window::loop;
 		}
