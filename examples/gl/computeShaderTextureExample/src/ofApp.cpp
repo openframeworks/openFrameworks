@@ -12,7 +12,7 @@ void ofApp::setup(){
 	thres.allocate(player.getWidth(),player.getHeight(),GL_R8);
 	thres.setRGToRGBASwizzles(true);
 
-	pixelsBuffer.allocate(pixels.getPixelsRef(),GL_DYNAMIC_READ);
+	pixelsBuffer.allocate(pixels.getPixels(),GL_DYNAMIC_READ);
 	shader.setupShaderFromFile(GL_COMPUTE_SHADER,"computeShader.glsl");
 	shader.linkProgram();
 	grabBG = true;
