@@ -26,7 +26,7 @@ void ofApp::setup(){
 	ofSetCircleResolution(40);
 	
 	
-	angleArc.setArcResolution(360);
+	angleArc.setCircleResolution(360);
 	angleArc.setFilled(true);
 	angleArc.setColor(ofColor(240, 130, 10));
 	
@@ -65,11 +65,11 @@ void ofApp::draw(){
 	
 	//draw the yellow circle
 	ofSetColor(240, 230, 10);
-	ofCircle(0,0, radius);
+	ofDrawCircle(0,0, radius);
 	
 	//draw the cyan circle that's moving over the yellow circle's perimeter 
 	ofSetColor(0, 140, 255);
-	ofCircle(point, 10);
+	ofDrawCircle(point, 10);
 	
 	//draw the orange arc that represents the angle
 	angleArc.draw();

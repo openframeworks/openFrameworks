@@ -32,7 +32,7 @@ void ofApp::update(){
 	
 	if (doLUT) {
 		if (vidGrabber.isFrameNew()){
-			applyLUT(vidGrabber.getPixelsRef());
+			applyLUT(vidGrabber.getPixels());
 		}
 	}
 }

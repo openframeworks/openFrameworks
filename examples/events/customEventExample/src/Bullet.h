@@ -15,7 +15,7 @@ public:
     
     void draw() {
         ofSetColor(20);
-        ofCircle(pos, 2);
+		ofDrawCircle(pos, 2);
     }
     
 };

@@ -10,7 +10,7 @@ void ofApp::setup(){
 	string filePath = "morse.csv";
 	
 	//Use a ofTrueTypeFont for scalable text
-	font.loadFont("frabk.ttf", 122);
+	font.load("frabk.ttf", 122);
 	
 	//Load file placed in bin/data
 	ofFile file(filePath);
@@ -20,10 +20,10 @@ void ofApp::setup(){
 	}
 	
 	ofBuffer buffer(file);
-	
+
 	//Read file line by line
-	while (!buffer.isLastLine()) {
-		string line = buffer.getNextLine();
+	for (ofBuffer::Line it = buffer.getLines().begin(), end = buffer.getLines().end(); it != end; ++it) {
+		string line = *it;
 		
 		//Split line into strings
 		vector<string> words = ofSplitString(line, ",");

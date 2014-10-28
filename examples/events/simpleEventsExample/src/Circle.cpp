@@ -32,7 +32,7 @@ void Circle::setup(int radius, int x, int y, ofColor color){
 void Circle::draw(){
     ofPushStyle();
     ofSetColor(color);
-    ofCircle(x,y, radius);
+	ofDrawCircle(x,y, radius);
     ofPopStyle();
 }
 

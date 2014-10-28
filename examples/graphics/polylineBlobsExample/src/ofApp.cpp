@@ -21,7 +21,7 @@ void ofApp::update() {
 	cam.update();
 	if(cam.isFrameNew()) {
 		cam.update();
-		cvImgColor.setFromPixels(cam.getPixels(), camWidth, camHeight);
+		cvImgColor.setFromPixels(cam.getPixels().getData(), camWidth, camHeight);
 		cvImgGrayscale.setFromColorImage(cvImgColor);
 		cvImgGrayscale.threshold(threshold, ofGetKeyPressed());
 		contourFinder.findContours(cvImgGrayscale, 64 * 64, camWidth * camHeight, 5, false, true);

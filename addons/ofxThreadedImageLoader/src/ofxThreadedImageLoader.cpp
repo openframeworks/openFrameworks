@@ -49,7 +49,7 @@ void ofxThreadedImageLoader::threadedFunction() {
 	thread.setName("ofxThreadedImageLoader " + thread.name());
 	ofImageLoaderEntry entry;
 	while( images_to_load_from_disk.receive(entry) ) {
-		if(entry.image->loadImage(entry.filename) )  {
+		if(entry.image->load(entry.filename) )  {
 			images_to_update.send(entry);
 		}else{
 			ofLogError("ofxThreadedImageLoader") << "couldn't load file: \"" << entry.filename << "\"";
@@ -69,7 +69,7 @@ void ofxThreadedImageLoader::urlResponse(ofHttpResponse & response) {
 	entry_iterator it = images_async_loading.find(response.request.name);
 	if(response.status == 200) {
 		if(it != images_async_loading.end()) {
-			it->second.image->loadImage(response.data);
+			it->second.image->load(response.data);
 			images_to_update.send(it->second);
 		}
 	}else{
