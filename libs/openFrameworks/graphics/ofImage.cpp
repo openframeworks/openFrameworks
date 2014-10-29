@@ -1004,6 +1004,8 @@ void ofImage_<PixelType>::update(){
 			if(ofIsGLProgrammableRenderer() && (pixels.getPixelFormat()==OF_PIXELS_GRAY || pixels.getPixelFormat()==OF_PIXELS_GRAY_ALPHA)){
 				tex.setRGToRGBASwizzles(true);
 			}
+		}else{
+			tex.loadData(pixels);
 		}
 	}
 }
