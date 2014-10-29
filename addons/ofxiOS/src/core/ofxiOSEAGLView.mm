@@ -43,7 +43,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
                       andDepth:ofAppiOSWindow::getInstance()->isDepthBufferEnabled()
                          andAA:ofAppiOSWindow::getInstance()->isAntiAliasingEnabled()
                  andNumSamples:ofAppiOSWindow::getInstance()->getAntiAliasingSampleCount()
-                     andRetina:ofAppiOSWindow::getInstance()->isRetinaEnabled()];
+                     andRetina:ofAppiOSWindow::getInstance()->isRetinaEnabled()
+                andRetinaScale:ofAppiOSWindow::getInstance()->getRetinaScale()];
     
     if(self) {
         
