@@ -82,8 +82,8 @@ protected:
 	static ofTrueTypeFont font;
 	static bool fontLoaded;
 	static bool useTTF;
+	static ofBitmapFont bitmapFont;
 	shared_ptr<ofBaseFileSerializer> serializer;
-	ofBitmapFont bitmapFont;
 
 	static ofColor headerBackgroundColor;
 	static ofColor backgroundColor;

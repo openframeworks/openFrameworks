@@ -59,6 +59,7 @@ int ofxBaseGui::defaultHeight = 18;
 ofTrueTypeFont ofxBaseGui::font;
 bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
+ofBitmapFont ofxBaseGui::bitmapFont;
 
 ofxBaseGui::ofxBaseGui(){
 	currentFrame = ofGetFrameNum();
