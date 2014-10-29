@@ -7,7 +7,7 @@ void ofApp::setup(){
     original.load("myImage.jpg");
     
     //get the pixels from the image
-    ofPixelsRef pixels = original.getPixelsRef();
+	ofPixelsRef pixels = original.getPixels();
 	
 	//let's manipulate the pixels by iterating through them
     //or a rough bluescreen

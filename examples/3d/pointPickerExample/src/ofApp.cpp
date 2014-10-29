@@ -47,7 +47,7 @@ void ofApp::draw(){
 	ofNoFill();
 	ofSetColor(ofColor::yellow);
 	ofSetLineWidth(2);
-	ofCircle(nearestVertex, 4);
+	ofDrawCircle(nearestVertex, 4);
 	ofSetLineWidth(1);
 	
 	ofVec2f offset(10, -10);

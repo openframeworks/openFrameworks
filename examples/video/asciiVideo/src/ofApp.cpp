@@ -11,7 +11,7 @@ void ofApp::setup(){
 	vidGrabber.setVerbose(true);
 	vidGrabber.setup(camWidth,camHeight);
 
-    font.loadFont("Courier New Bold.ttf", 9);
+	font.load("Courier New Bold.ttf", 9);
     
     // this set of characters comes from processing: 
     //http://processing.org/learning/library/asciivideo.html
@@ -41,7 +41,7 @@ void ofApp::draw(){
     // draw the raw video frame with the alpha value generated above
     vidGrabber.draw(0,0);
 
-    ofPixelsRef pixelsRef = vidGrabber.getPixelsRef();
+	ofPixelsRef pixelsRef = vidGrabber.getPixels();
     
     ofSetHexColor(0xffffff);
 

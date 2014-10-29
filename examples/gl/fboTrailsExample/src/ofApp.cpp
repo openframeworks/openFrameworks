@@ -101,7 +101,7 @@ void ofApp::drawFboTest(){
 
 	//also draw based on our mouse position
 	ofFill();	   
-	ofCircle(ofGetMouseX() % 410, ofGetMouseY(), 8);
+	ofDrawCircle(ofGetMouseX() % 410, ofGetMouseY(), 8);
 
 	//we move a line across the screen based on the time
 	//the %400 makes the number stay in the 0-400 range. 

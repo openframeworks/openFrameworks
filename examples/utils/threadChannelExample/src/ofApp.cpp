@@ -10,7 +10,7 @@ void ofApp::setup(){
 void ofApp::update(){
 	grabber.update();
 	if(grabber.isFrameNew()){
-		analizer.analize(grabber.getPixelsRef());
+		analizer.analize(grabber.getPixels());
 	}
 	analizer.update();
 }

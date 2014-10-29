@@ -34,7 +34,7 @@ void ofApp::update() {
 			// first loading the file (as binary)
 			ofBuffer file = ofBufferFromFile(curFilename, true);
 			int fileSize = file.size();
-			char * buffer = file.getBinaryBuffer();
+			char * buffer = file.getData();
 
 			// pick a byte offset that is somewhere near the end of the file
 			int whichByte = (int) ofRandom(fileSize * glitchStart, fileSize);

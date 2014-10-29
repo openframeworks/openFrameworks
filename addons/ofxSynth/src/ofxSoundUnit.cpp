@@ -343,8 +343,9 @@ bool ofxSoundMixer::addInputFrom( ofxSoundSource* source )
 	// check for branches/cycles
 	if ( addingInputWouldCreateCycle( source ) )
 	{
-		ofLogError("ofxSoundMixer") << "addInputFrom(): can't connect '%s' (%x) to '%s' (%x): this would create a cycle in the DSP graph",
-				source->getName().c_str(), source, this->getName().c_str(), this );
+		ofLogError("ofxSoundMixer") <<
+			"addInputFrom(): can't connect '" << source->getName() << "' (" << ofToString(source) << ") " <<
+			"to '" << this->getName() << "' (" << ofToString(this) << "): this would create a cycle in the DSP graph";
 		return false;
 	}
 

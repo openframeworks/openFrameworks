@@ -114,7 +114,7 @@ void ofApp::draw(){
 		
 		ofSetColor(245, 58, 135);
 		ofFill();		
-		ofCircle(200, 200, scaledVol * 190.0f);
+		ofDrawCircle(200, 200, scaledVol * 190.0f);
 		
 		//lets draw the volume history as a graph
 		ofBeginShape();

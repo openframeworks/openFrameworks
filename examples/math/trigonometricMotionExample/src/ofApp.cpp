@@ -147,7 +147,7 @@ void ofApp::draw(){
 	ofScale(scale, scale, 0);
 	wave.draw();
 	ofSetColor(0,10, 255),
-	ofCircle(horWave, vertWave, 10);
+	ofDrawCircle(horWave, vertWave, 10);
 	ofPopMatrix();
 	
 }
