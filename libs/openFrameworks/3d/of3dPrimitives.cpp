@@ -206,8 +206,8 @@ void of3dPrimitive::draw(ofPolyRenderMode renderType) const{
 }
 
 //--------------------------------------------------------------
-void of3dPrimitive::customDraw(const ofBaseRenderer * renderer) const{
-	renderer->draw(getMesh(), OF_MESH_FILL);
+void of3dPrimitive::draw() const{
+	draw(OF_MESH_FILL);
 }
 
 //--------------------------------------------------------------

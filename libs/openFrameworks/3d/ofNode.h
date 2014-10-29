@@ -146,7 +146,7 @@ public:
 	// draw function. do NOT override this
 	// transforms the node to its position+orientation+scale
 	// and calls the virtual 'customDraw' method above which you CAN override
-	void draw() const;
+	virtual void draw() const;
 	
 protected:
 	ofNode *parent;
