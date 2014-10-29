@@ -24,28 +24,14 @@ namespace ofxCv {
 		drawMat(mat, x, y, mat.cols, mat.rows);
 	}
 	
-    // experimental special case of copying into ofTexture, which acts different
-    // might be able to rewrite this in terms of getDepth() but right now this
-    // function loses precision with CV_32F -> CV_8U
+    // special case for copying into ofTexture
     template <class S>
     void copy(S& src, ofTexture& tex) {
+        imitate(tex, src);
+        int w = tex.getWidth(), h = tex.getHeight();
+        int glType = tex.getTextureData().glTypeInternal;
         Mat mat = toCv(src);
-		int glType;
-		Mat buffer;
-		if(mat.depth() != CV_8U) {
-			copy(mat, buffer, CV_8U);
-		} else {
-			buffer = mat;
-		}
-		if(mat.channels() == 1) {
-			glType = GL_LUMINANCE;
-		} else {
-			glType = GL_RGB;
-		}
-		int w = buffer.cols;
-		int h = buffer.rows;
-		tex.allocate(w, h, glType);
-		tex.loadData(buffer.ptr(), w, h, glType);
+		tex.loadData(mat.ptr(), w, h, glType);
     }
     
 	void drawMat(Mat& mat, float x, float y, float width, float height) {
