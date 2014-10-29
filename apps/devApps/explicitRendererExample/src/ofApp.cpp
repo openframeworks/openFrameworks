@@ -6,10 +6,11 @@ void ofApp::setup(){
 	camera.setEvents(window->events());
 	camera.setRenderer(gl);
 	gui->radius.addListener(this,&ofApp::radiusChanged);
+	gui->radius=200;
 }
 
 void ofApp::radiusChanged(float & radius){
-	sphere.set(radius,radius*0.2);
+	sphere.set(radius,radius*0.08);
 }
 
 //--------------------------------------------------------------
@@ -22,6 +23,8 @@ void ofApp::draw(){
 	gl->bind(camera,gl->getCurrentViewport());
 	gl->setColor(gui->color);
 	gl->draw(sphere,OF_MESH_WIREFRAME);
+	gl->setColor(gui->color,gui->color->a*0.1);
+	gl->draw(sphere,OF_MESH_FILL);
 	gl->unbind(camera);
 
 	gl->setColor(0);
