@@ -233,14 +233,18 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	}
 
 #ifndef TARGET_OPENGLES
-	glewExperimental = GL_TRUE;
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-	{
-		/* Problem: glewInit failed, something is seriously wrong. */
-		ofLogError("ofAppRunner") << "couldn't init GLEW: " << glewGetErrorString(err);
-		return;
-	}
+    static bool inited = false;
+    if(!inited){
+		glewExperimental = GL_TRUE;
+		GLenum err = glewInit();
+		if (GLEW_OK != err)
+		{
+			/* Problem: glewInit failed, something is seriously wrong. */
+			ofLogError("ofAppRunner") << "couldn't init GLEW: " << glewGetErrorString(err);
+			return;
+		}
+		inited = true;
+    }
 #endif
 
     if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
