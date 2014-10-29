@@ -62,13 +62,13 @@ public:
     void drawWireframe() const;
     void drawFaces() const;
     void draw(ofPolyRenderMode renderType) const;
+    void draw() const;
     void drawNormals( float length, bool bFaceNormals=false ) const;
     void drawAxes(float a_size) const;
     
     void setUseVbo(bool useVbo);
     bool isUsingVbo() const;
 protected:
-    void customDraw(const ofBaseRenderer * renderer) const;
     
     // useful when creating a new model, since it uses normalized tex coords //
     void normalizeAndApplySavedTexCoords();
