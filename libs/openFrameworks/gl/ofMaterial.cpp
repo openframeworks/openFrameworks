@@ -14,15 +14,16 @@ size_t ofMaterial::shaderLights = 0;
 static string vertexSource(string defaultHeader, int maxLights, bool hasTexture);
 static string fragmentSource(string defaultHeader, int maxLights, bool hasTexture);
 
+ofMaterial::Data::Data()
+:diffuse(0.8f, 0.8f, 0.8f, 1.0f)
+,ambient(0.2f, 0.2f, 0.2f, 1.0f)
+,specular(0.0f, 0.0f, 0.0f, 1.0f)
+,emissive(0.0f, 0.0f, 0.0f, 1.0f)
+,shininess(0.2f){
+
+}
+
 ofMaterial::ofMaterial() {
-    data.diffuse.set(0.8f, 0.8f, 0.8f, 1.0f);
-    data.specular.set(0.0f, 0.0f, 0.0f, 1.0f);
-    data.ambient.set(0.2f, 0.2f, 0.2f, 1.0f);
-    data.emissive.set(0.0f, 0.0f, 0.0f, 1.0f);
-    data.shininess = 0.2f;
-    prev_data.shininess = 0.2f;
-    prev_data_back.shininess = 0.2f;
-    currentShader = NULL;
 }
 
 void ofMaterial::setColors(ofFloatColor oDiffuse, ofFloatColor oAmbient, ofFloatColor oSpecular, ofFloatColor oEmissive) {
@@ -80,99 +81,26 @@ ofMaterial::Data ofMaterial::getData()const{
     return data;
 }
 
-void ofMaterial::begin() {
-#ifndef TARGET_PROGRAMMABLE_GL
-	if(!ofIsGLProgrammableRenderer()){
-	#ifndef TARGET_OPENGLES
-		// save previous values, opengl es cannot use push/pop attrib
-		glGetMaterialfv(GL_FRONT,GL_DIFFUSE,&prev_data.diffuse.r);
-		glGetMaterialfv(GL_FRONT,GL_SPECULAR,&prev_data.specular.r);
-		glGetMaterialfv(GL_FRONT,GL_AMBIENT,&prev_data.ambient.r);
-		glGetMaterialfv(GL_FRONT,GL_EMISSION,&prev_data.emissive.r);
-		glGetMaterialfv(GL_FRONT, GL_SHININESS, &prev_data.shininess);
-
-		glGetMaterialfv(GL_BACK,GL_DIFFUSE,&prev_data_back.diffuse.r);
-		glGetMaterialfv(GL_BACK,GL_SPECULAR,&prev_data_back.specular.r);
-		glGetMaterialfv(GL_BACK,GL_AMBIENT,&prev_data_back.ambient.r);
-		glGetMaterialfv(GL_BACK,GL_EMISSION,&prev_data_back.emissive.r);
-		glGetMaterialfv(GL_BACK, GL_SHININESS, &prev_data_back.shininess);
-
-		// Material colors and properties
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, &data.diffuse.r);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, &data.specular.r);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, &data.ambient.r);
-		glMaterialfv(GL_FRONT, GL_EMISSION, &data.emissive.r);
-		glMaterialfv(GL_FRONT, GL_SHININESS, &data.shininess);
-
-		glMaterialfv(GL_BACK, GL_DIFFUSE, &data.diffuse.r);
-		glMaterialfv(GL_BACK, GL_SPECULAR, &data.specular.r);
-		glMaterialfv(GL_BACK, GL_AMBIENT, &data.ambient.r);
-		glMaterialfv(GL_BACK, GL_EMISSION, &data.emissive.r);
-		glMaterialfv(GL_BACK, GL_SHININESS, &data.shininess);
-	#elif !defined(TARGET_PROGRAMMABLE_GL)
-		// opengl es 1.1 implementation must use GL_FRONT_AND_BACK.
-
-		glGetMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &prev_data.diffuse.r);
-		glGetMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &prev_data.specular.r);
-		glGetMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &prev_data.ambient.r);
-		glGetMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &prev_data.emissive.r);
-		glGetMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &prev_data.shininess);
-
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &data.diffuse.r);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &data.specular.r);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &data.ambient.r);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &data.emissive.r);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &data.shininess);
-	#endif
-	}
-#endif
+void ofMaterial::begin() const{
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->bind(*this);
 	}
 }
 
-void ofMaterial::end() {
-#ifndef TARGET_PROGRAMMABLE_GL
-	if(!ofIsGLProgrammableRenderer()){
-	#ifndef TARGET_OPENGLES
-		// Set previous material colors and properties
-		glMaterialfv(GL_FRONT, GL_DIFFUSE, &prev_data.diffuse.r);
-		glMaterialfv(GL_FRONT, GL_SPECULAR, &prev_data.specular.r);
-		glMaterialfv(GL_FRONT, GL_AMBIENT, &prev_data.ambient.r);
-		glMaterialfv(GL_FRONT, GL_EMISSION, &prev_data.emissive.r);
-		glMaterialfv(GL_FRONT, GL_SHININESS, &prev_data.shininess);
-
-		glMaterialfv(GL_BACK, GL_DIFFUSE, &prev_data_back.diffuse.r);
-		glMaterialfv(GL_BACK, GL_SPECULAR, &prev_data_back.specular.r);
-		glMaterialfv(GL_BACK, GL_AMBIENT, &prev_data_back.ambient.r);
-		glMaterialfv(GL_BACK, GL_EMISSION, &prev_data_back.emissive.r);
-		glMaterialfv(GL_BACK, GL_SHININESS, &prev_data_back.shininess);
-	#else
-		// opengl es 1.1 implementation must use GL_FRONT_AND_BACK.
-
-		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &prev_data.diffuse.r);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &prev_data.specular.r);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &prev_data.ambient.r);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &prev_data.emissive.r);
-		glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &prev_data.shininess);
-	#endif
-	}
-#endif
+void ofMaterial::end() const{
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->unbind(*this);
-		if(currentShader) ofGetGLRenderer()->unbind(*currentShader);
-		currentShader = NULL;
 	}
 }
 
-void ofMaterial::initShaders(ofGLProgrammableRenderer * renderer){
+void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 	if(!shadersInitialized || ofLightsData().size()!=shaderLights){
 #ifndef TARGET_OPENGLES
-		string vertexRectHeader = renderer->defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
-		string fragmentRectHeader = renderer->defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
+		string vertexRectHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_RECTANGLE);
+		string fragmentRectHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_RECTANGLE);
 #endif
-		string vertex2DHeader = renderer->defaultVertexShaderHeader(GL_TEXTURE_2D);
-		string fragment2DHeader = renderer->defaultFragmentShaderHeader(GL_TEXTURE_2D);
+		string vertex2DHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_2D);
+		string fragment2DHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_2D);
 		shaderLights = ofLightsData().size();
 		shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,false));
 		shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,false));
@@ -195,76 +123,76 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer * renderer){
 	}
 }
 
-void ofMaterial::beginShader(int texType, ofGLProgrammableRenderer * renderer){
+const ofShader & ofMaterial::getShader(int textureTarget, ofGLProgrammableRenderer & renderer) const{
 	initShaders(renderer);
-	switch(texType){
+	switch(textureTarget){
 	case OF_NO_TEXTURE:
-		currentShader = &shaderNoTexture;
+		return shaderNoTexture;
 		break;
 	case GL_TEXTURE_2D:
-		currentShader = &shaderTexture2D;
+		return shaderTexture2D;
 		break;
 	default:
-		currentShader = &shaderTextureRect;
+		return shaderTextureRect;
 		break;
 	}
+}
 
-	const ofMatrix4x4 & normalMatrix = renderer->getCurrentNormalMatrix();
-	currentShader->begin();
-	currentShader->setUniformMatrix4f("normalMatrix",normalMatrix);
-	currentShader->setUniform4fv("mat_ambient", &data.ambient.r);
-	currentShader->setUniform4fv("mat_diffuse", &data.diffuse.r);
-	currentShader->setUniform4fv("mat_specular", &data.specular.r);
-	currentShader->setUniform4fv("mat_emissive", &data.emissive.r);
-	currentShader->setUniform4fv("global_ambient", &ofGetGlobalAmbientColor().r);
-	currentShader->setUniform1f("mat_shininess",data.shininess);
+void ofMaterial::updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
+	shader.setUniform4fv("mat_ambient", &data.ambient.r);
+	shader.setUniform4fv("mat_diffuse", &data.diffuse.r);
+	shader.setUniform4fv("mat_specular", &data.specular.r);
+	shader.setUniform4fv("mat_emissive", &data.emissive.r);
+	shader.setUniform4fv("global_ambient", &ofGetGlobalAmbientColor().r);
+	shader.setUniform1f("mat_shininess",data.shininess);
+}
 
+void ofMaterial::updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
 	for(size_t i=0;i<ofLightsData().size();i++){
 		string idx = ofToString(i);
 		if(ofLightsData()[i].expired() || !ofLightsData()[i].lock()->isEnabled){
-			currentShader->setUniform1f("lights["+idx+"].enabled",0);
+			shader.setUniform1f("lights["+idx+"].enabled",0);
 			continue;
 		}
-
 		shared_ptr<ofLight::Data> light = ofLightsData()[i].lock();
-		ofVec4f lightEyePosition = light->position * renderer->getCurrentViewMatrix();
-		currentShader->setUniform1f("lights["+idx+"].enabled",1);
-		currentShader->setUniform1f("lights["+idx+"].type", light->lightType);
-		currentShader->setUniform4fv("lights["+idx+"].position", &lightEyePosition.x);
-		currentShader->setUniform4fv("lights["+idx+"].ambient", &light->ambientColor.r);
-		currentShader->setUniform4fv("lights["+idx+"].specular", &light->specularColor.r);
-		currentShader->setUniform4fv("lights["+idx+"].diffuse", &light->diffuseColor.r);
+		ofVec4f lightEyePosition = light->position * renderer.getCurrentViewMatrix();
+		shader.setUniform1f("lights["+idx+"].enabled",1);
+		shader.setUniform1f("lights["+idx+"].type", light->lightType);
+		shader.setUniform4fv("lights["+idx+"].position", &lightEyePosition.x);
+		shader.setUniform4fv("lights["+idx+"].ambient", &light->ambientColor.r);
+		shader.setUniform4fv("lights["+idx+"].specular", &light->specularColor.r);
+		shader.setUniform4fv("lights["+idx+"].diffuse", &light->diffuseColor.r);
 
 		if(light->lightType==OF_LIGHT_POINT || light->lightType==OF_LIGHT_AREA){
-			currentShader->setUniform1f("lights["+idx+"].constantAttenuation", light->attenuation_constant);
-			currentShader->setUniform1f("lights["+idx+"].linearAttenuation", light->attenuation_linear);
-			currentShader->setUniform1f("lights["+idx+"].quadraticAttenuation", light->attenuation_quadratic);
+			shader.setUniform1f("lights["+idx+"].constantAttenuation", light->attenuation_constant);
+			shader.setUniform1f("lights["+idx+"].linearAttenuation", light->attenuation_linear);
+			shader.setUniform1f("lights["+idx+"].quadraticAttenuation", light->attenuation_quadratic);
 		}
 
 		if(light->lightType==OF_LIGHT_SPOT){
 			ofVec3f direction = light->position + light->direction;
-			direction = direction * renderer->getCurrentViewMatrix();
+			direction = direction * renderer.getCurrentViewMatrix();
 			direction = direction - lightEyePosition;
-			currentShader->setUniform3fv("lights["+idx+"].spotDirection", &direction.x);
-			currentShader->setUniform1f("lights["+idx+"].spotExponent", light->exponent);
-			currentShader->setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
-			currentShader->setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
+			shader.setUniform3fv("lights["+idx+"].spotDirection", &direction.x);
+			shader.setUniform1f("lights["+idx+"].spotExponent", light->exponent);
+			shader.setUniform1f("lights["+idx+"].spotCutoff", light->spotCutOff);
+			shader.setUniform1f("lights["+idx+"].spotCosCutoff", cos(ofDegToRad(light->spotCutOff)));
 		}else if(light->lightType==OF_LIGHT_DIRECTIONAL){
 			ofVec3f halfVector = (ofVec3f(0,0,1) + lightEyePosition).getNormalized();
-			currentShader->setUniform3fv("lights["+idx+"].halfVector", &halfVector.x);
+			shader.setUniform3fv("lights["+idx+"].halfVector", &halfVector.x);
 		}else if(light->lightType==OF_LIGHT_AREA){
-			currentShader->setUniform1f("lights["+idx+"].width", light->width);
-			currentShader->setUniform1f("lights["+idx+"].height", light->height);
+			shader.setUniform1f("lights["+idx+"].width", light->width);
+			shader.setUniform1f("lights["+idx+"].height", light->height);
 			ofVec3f direction = light->position + light->direction;
-			direction = direction * renderer->getCurrentViewMatrix();
+			direction = direction * renderer.getCurrentViewMatrix();
 			direction = direction - lightEyePosition;
 			ofVec3f right = light->position + light->right;
-			right = right * renderer->getCurrentViewMatrix();
+			right = right * renderer.getCurrentViewMatrix();
 			right = right - lightEyePosition;
 			ofVec3f up = right.getCrossed(direction);
-			currentShader->setUniform3fv("lights["+idx+"].spotDirection", &direction.x);
-			currentShader->setUniform3fv("lights["+idx+"].right", &right.x);
-			currentShader->setUniform3fv("lights["+idx+"].up", &up.x);
+			shader.setUniform3fv("lights["+idx+"].spotDirection", &direction.x);
+			shader.setUniform3fv("lights["+idx+"].right", &right.x);
+			shader.setUniform3fv("lights["+idx+"].up", &up.x);
 		}
 	}
 }

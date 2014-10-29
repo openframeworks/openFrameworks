@@ -464,11 +464,58 @@ void ofGLRenderer::unbind(const ofFbo & fbo){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::bind(ofBaseMaterial & material){
+void ofGLRenderer::bind(const ofBaseMaterial & material){
+	ofFloatColor diffuse = material.getDiffuseColor();
+	ofFloatColor specular = material.getSpecularColor();
+	ofFloatColor ambient = material.getAmbientColor();
+	ofFloatColor emissive = material.getEmissiveColor();
+	float shininess = material.getShininess();
+#ifndef TARGET_OPENGLES
+	// Material colors and properties
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, &diffuse.r);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, &specular.r);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, &ambient.r);
+	glMaterialfv(GL_FRONT, GL_EMISSION, &emissive.r);
+	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
+
+	glMaterialfv(GL_BACK, GL_DIFFUSE, &diffuse.r);
+	glMaterialfv(GL_BACK, GL_SPECULAR, &specular.r);
+	glMaterialfv(GL_BACK, GL_AMBIENT, &ambient.r);
+	glMaterialfv(GL_BACK, GL_EMISSION, &emissive.r);
+	glMaterialfv(GL_BACK, GL_SHININESS, &shininess);
+#elif !defined(TARGET_PROGRAMMABLE_GL)
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &diffuse.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specular.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &ambient.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &emissive.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
+#endif
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::unbind(ofBaseMaterial & material){
+void ofGLRenderer::unbind(const ofBaseMaterial & material){
+	// Set default material colors and properties
+	ofMaterial::Data defaultData;
+#ifndef TARGET_OPENGLES
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, &defaultData.diffuse.r);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, &defaultData.specular.r);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, &defaultData.ambient.r);
+	glMaterialfv(GL_FRONT, GL_EMISSION, &defaultData.emissive.r);
+	glMaterialfv(GL_FRONT, GL_SHININESS, &defaultData.shininess);
+
+	glMaterialfv(GL_BACK, GL_DIFFUSE, &defaultData.diffuse.r);
+	glMaterialfv(GL_BACK, GL_SPECULAR, &defaultData.specular.r);
+	glMaterialfv(GL_BACK, GL_AMBIENT, &defaultData.ambient.r);
+	glMaterialfv(GL_BACK, GL_EMISSION, &defaultData.emissive.r);
+	glMaterialfv(GL_BACK, GL_SHININESS, &defaultData.shininess);
+#else
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &defaultData.diffuse.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &defaultData.specular.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &defaultData.ambient.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &defaultData.emissive.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &defaultData.shininess);
+#endif
 }
 
 //----------------------------------------------------------
@@ -521,7 +568,7 @@ void ofGLRenderer::unbind(const ofTexture & texture, int location){
 void ofGLRenderer::bind(const ofCamera & camera, const ofRectangle & _viewport){
 	pushView();
 	viewport(_viewport);
-	setOrientation(matrixStack.getOrientation(),camera.isVFlipped());
+	setOrientation(matrixStack.getOrientation(),true);
 	matrixMode(OF_MATRIX_PROJECTION);
 	loadMatrix(camera.getProjectionMatrix(_viewport).getPtr());
 	matrixMode(OF_MATRIX_MODELVIEW);

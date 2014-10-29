@@ -637,12 +637,12 @@ public:
 	// bindings
 	using ofBaseRenderer::bind;
 	using ofBaseRenderer::unbind;
-	virtual void bind(ofBaseMaterial & material)=0;
+	virtual void bind(const ofBaseMaterial & material)=0;
 	virtual void bind(const ofFbo & fbo, bool setupPerspective)=0;
 	virtual void bind(const ofShader & shader)=0;
 	virtual void bind(const ofTexture & texture, int location)=0;
 	virtual void bind(const ofBaseVideoDraws & video)=0;
-	virtual void unbind(ofBaseMaterial & material)=0;
+	virtual void unbind(const ofBaseMaterial & material)=0;
 	virtual void unbind(const ofFbo & fbo)=0;
 	virtual void unbind(const ofShader & shader)=0;
 	virtual void unbind(const ofTexture & texture, int location)=0;
@@ -681,7 +681,15 @@ public:
 class ofBaseMaterial{
 public:
 	virtual ~ofBaseMaterial(){};
-	virtual void begin()=0;
-	virtual void end()=0;
-	virtual void beginShader(int textureTarget, ofGLProgrammableRenderer * renderer)=0;
+	virtual ofFloatColor getDiffuseColor() const=0;
+	virtual ofFloatColor getAmbientColor() const=0;
+	virtual ofFloatColor getSpecularColor() const=0;
+	virtual ofFloatColor getEmissiveColor() const=0;
+	virtual float getShininess() const=0;
+	virtual void begin() const=0;
+	virtual void end() const=0;
+	virtual const ofShader & getShader(int textureTarget, ofGLProgrammableRenderer & renderer) const=0;
+	virtual void uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
+	virtual void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
+	virtual void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const=0;
 };

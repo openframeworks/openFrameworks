@@ -316,3 +316,8 @@ void ofBaseRenderer::drawArrow(const ofVec3f& start, const ofVec3f& end, float h
 void ofBaseRenderer::drawRotationAxes(float radius, float stripWidth, int circleRes) const{
 	get3dGraphics().drawRotationAxes(radius,stripWidth,circleRes);
 }
+
+void ofBaseMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
+	const ofMatrix4x4 & normalMatrix = renderer.getCurrentNormalMatrix();
+	shader.setUniformMatrix4f("normalMatrix",normalMatrix);
+}
