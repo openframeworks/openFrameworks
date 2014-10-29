@@ -176,7 +176,37 @@ private:
 
 	mutable bool bBound;
 
+	VertexAttribute mFixedFunctionPositionAttribute;
+	VertexAttribute mFixedFunctionColorAttribute;
+	VertexAttribute mFixedFunctionTexCoordAttribute;
+	VertexAttribute mFixedFunctionNormalAttribute;
+	
 	map<int,VertexAttribute> customAttributes;
+
+	void setVertexAttributeData(VertexAttribute &v, const float * attrib0x, int numCoords, int total, int usage, int stride, bool normalize=false){
+		if (!v.isAllocated()) {
+			v.allocate();
+		}
+		GLsizeiptr size = (stride == 0) ? numCoords * sizeof(float) : stride;
+		v.stride = size;
+		v.numCoords = numCoords;
+		v.offset = 0;
+		v.setData(total * size, attrib0x, usage);
+		v.normalize = normalize;
+	};
+	
+	void setVertexAttributeBuffer(VertexAttribute &v, ofBufferObject & buffer, int numCoords, int stride, int offset){
+
+		if(!vaoChecked) checkVAO();
+		vaoChanged = true;
+
+		v.buffer = buffer;
+		v.offset = offset;
+		v.numCoords = numCoords;
+		GLsizeiptr size = (stride == 0) ? numCoords * sizeof(float) : stride;
+		v.stride = size;
+
+	};
 	
 	bool hasAttribute(int attributePos_) const {return (customAttributes.find(attributePos_) != customAttributes.end());};
 
@@ -184,4 +214,6 @@ private:
 	
 	static bool vaoChecked;
 	static bool supportVAOs;
+	
+	static bool isProgrammable();
 };
