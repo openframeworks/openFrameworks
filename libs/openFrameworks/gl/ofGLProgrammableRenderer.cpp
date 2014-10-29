@@ -216,7 +216,7 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	// of its state on the client side...
 
 #ifndef TARGET_OPENGLES
-	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_LINE : GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_FILL : GL_LINE);
 #endif
 	
 #endif
@@ -809,6 +809,9 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 		currentShader->setUniformMatrix4f(VIEW_MATRIX_UNIFORM, matrixStack.getViewMatrix());
 		currentShader->setUniformMatrix4f(MODELVIEW_MATRIX_UNIFORM, matrixStack.getModelViewMatrix());
 		currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
+		if(currentMaterial){
+			currentMaterial->uploadMatrices(*currentShader,*this);
+		}
 		break;
 	case OF_MATRIX_PROJECTION:
 		currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, matrixStack.getProjectionMatrix());
@@ -1332,12 +1335,12 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::bind(ofBaseMaterial & material){
+void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
 	currentMaterial = &material;
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::unbind(ofBaseMaterial & material){
+void ofGLProgrammableRenderer::unbind(const ofBaseMaterial & material){
 	currentMaterial = NULL;
 }
 
@@ -1411,6 +1414,9 @@ void ofGLProgrammableRenderer::uploadMatrices(){
 	currentShader->setUniformMatrix4f(PROJECTION_MATRIX_UNIFORM, matrixStack.getProjectionMatrix());
 	currentShader->setUniformMatrix4f(TEXTURE_MATRIX_UNIFORM, matrixStack.getTextureMatrix());
 	currentShader->setUniformMatrix4f(MODELVIEW_PROJECTION_MATRIX_UNIFORM, matrixStack.getModelViewProjectionMatrix());
+	if(currentMaterial){
+		currentMaterial->uploadMatrices(*currentShader,*this);
+	}
 }
 
 //----------------------------------------------------------
@@ -1420,17 +1426,21 @@ void ofGLProgrammableRenderer::setDefaultUniforms(){
 	bool usingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 	currentShader->setUniform1f(USE_TEXTURE_UNIFORM,usingTexture);
 	currentShader->setUniform1f(USE_COLORS_UNIFORM,colorsEnabled);
+	if(currentMaterial){
+		currentMaterial->updateMaterial(*currentShader,*this);
+		currentMaterial->updateLights(*currentShader,*this);
+	}
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::beginDefaultShader(){
 	if(usingCustomShader && !currentMaterial)	return;
 
-	ofShader * nextShader = NULL;
+	const ofShader * nextShader = NULL;
 
-	if(!uniqueShader){
+	if(!uniqueShader || currentMaterial){
 		if(currentMaterial){
-			currentMaterial->beginShader(currentTextureTarget,this);
+			nextShader = &currentMaterial->getShader(currentTextureTarget,*this);
 		}else if(bitmapStringEnabled){
 			nextShader = &bitmapStringShader;
 
@@ -1475,11 +1485,12 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 		nextShader = &defaultUniqueShader;
 	}
 
-	if(nextShader && (!currentShader || *currentShader!=*nextShader)){
-		settingDefaultShader = true;
-		bind(*nextShader);
-		settingDefaultShader = false;
-	}else{
+	if(nextShader){
+		if(!currentShader || *currentShader!=*nextShader){
+			settingDefaultShader = true;
+			bind(*nextShader);
+			settingDefaultShader = false;
+		}
 	}
 }
 
@@ -2235,9 +2246,11 @@ string ofGLProgrammableRenderer::defaultFragmentShaderHeader(GLenum textureTarge
 	return defaultShaderHeader(fragment_shader_header,textureTarget,major,minor);
 }
 
-void ofGLProgrammableRenderer::setup(int major, int minor){
+void ofGLProgrammableRenderer::setup(int _major, int _minor){
 	glGetError();
 
+	major = _major;
+	minor = _minor;
 #ifdef TARGET_RASPBERRY_PI
 	uniqueShader = true;
 #else

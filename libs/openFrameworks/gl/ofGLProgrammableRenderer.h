@@ -167,13 +167,13 @@ public:
 
 	const ofShader & getCurrentShader() const;
 
-	void bind(ofBaseMaterial & material);
+	void bind(const ofBaseMaterial & material);
 	void bind(const ofFbo & fbo, bool setupPerspective);
 	void bind(const ofShader & shader);
 	void bind(const ofTexture & texture, int location);
 	void bind(const ofBaseVideoDraws & video);
 	void bind(const ofCamera & camera, const ofRectangle & viewport);
-	void unbind(ofBaseMaterial & material);
+	void unbind(const ofBaseMaterial & material);
 	void unbind(const ofFbo & fbo);
 	void unbind(const ofShader & shader);
 	void unbind(const ofTexture & texture, int location);
@@ -266,7 +266,7 @@ private:
 	bool wrongUseLoggedOnce;
 	bool uniqueShader;
 
-	ofBaseMaterial * currentMaterial;
+	const ofBaseMaterial * currentMaterial;
 	int alphaMaskTextureTarget;
 
 	ofStyle currentStyle;
