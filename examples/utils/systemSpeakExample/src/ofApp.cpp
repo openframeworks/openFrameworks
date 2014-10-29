@@ -5,7 +5,7 @@ static string voices[24] = {"Agnes", "Albert", "Alex", "Bad News", "Bahh", "Bell
 //--------------------------------------------------------------
 void ofApp::setup() {
 
-    font.loadFont("verdana.ttf", 34);
+	font.load("verdana.ttf", 34);
     voice = "Cellos";
     bRandomVoice = false;
 
