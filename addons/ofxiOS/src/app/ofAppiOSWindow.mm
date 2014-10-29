@@ -40,6 +40,7 @@
 //-------------------------------------------------------------------------------------
 ofAppiOSWindow::Settings::Settings() {
     enableRetina = false;
+    retinaScale = 0;
     enableDepth = false;
     enableAntiAliasing = false;
     numOfAntiAliasingSamples = 0;
@@ -298,9 +299,10 @@ void ofAppiOSWindow::setVerticalSync(bool enabled) {
 }
 
 //----------------------------------------------------------------------------------- retina.
-bool ofAppiOSWindow::enableRetina() {
+bool ofAppiOSWindow::enableRetina(float retinaScale) {
     if(isRetinaSupportedOnDevice()) {
         settings.enableRetina = true;
+        settings.retinaScale = retinaScale;
     }
     return settings.enableRetina;
 }
@@ -329,6 +331,10 @@ bool ofAppiOSWindow::isRetinaSupportedOnDevice() {
     }
     
     return bRetinaSupportedOnDevice;
+}
+
+float ofAppiOSWindow::getRetinaScale() {
+    return settings.retinaScale;
 }
 
 //----------------------------------------------------------------------------------- depth buffer.
