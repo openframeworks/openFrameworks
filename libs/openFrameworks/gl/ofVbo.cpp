@@ -816,13 +816,13 @@ void ofVbo::bind() const{
 				// only locations after 3 may be proper attributes
 				if (it->first > 3) it->second.enable();
 			} else {
-				it->second.enable();
-				// TODO: make sure you can switch off attributes in programmable renderer
-				// TODO: make sure you can switch arbitrary attributes on and off in programmable renderer
-				bUsingVerts |= it->first == ofShader::POSITION_ATTRIBUTE;
-				bUsingColors |= it->first == ofShader::COLOR_ATTRIBUTE;
-				bUsingTexCoords |= it->first == ofShader::TEXCOORD_ATTRIBUTE;
-				bUsingNormals |= it->first == ofShader::NORMAL_ATTRIBUTE;
+				if((bUsingVerts && it->first == ofShader::POSITION_ATTRIBUTE) ||
+					(bUsingColors && it->first == ofShader::COLOR_ATTRIBUTE) ||
+					(bUsingTexCoords && it->first == ofShader::TEXCOORD_ATTRIBUTE) ||
+					(bUsingNormals && it->first == ofShader::NORMAL_ATTRIBUTE) ||
+					it->first > 3){
+						it->second.enable();
+				}
 			}
 		}
 
