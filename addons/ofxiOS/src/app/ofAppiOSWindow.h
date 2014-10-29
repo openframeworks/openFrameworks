@@ -92,10 +92,11 @@ public:
     bool isRendererES2();
     bool isRendererES1();
     
-    bool enableRetina();
+    bool enableRetina(float retinaScale=0);
     bool disableRetina();
     bool isRetinaEnabled();
     bool isRetinaSupportedOnDevice();
+    float getRetinaScale();
     
     bool enableDepthBuffer();
     bool disableDepthBuffer();
@@ -108,6 +109,7 @@ public:
     
     struct Settings {
         bool enableRetina;
+        float retinaScale;
         bool enableDepth;
         bool enableAntiAliasing;
         int numOfAntiAliasingSamples;
