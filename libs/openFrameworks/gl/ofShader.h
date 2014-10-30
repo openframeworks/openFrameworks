@@ -159,9 +159,9 @@ private:
 	GLuint program;
 	bool bLoaded;
 
-	mutable unordered_map<GLenum, GLuint> shaders;
+	unordered_map<GLenum, GLuint> shaders;
+	unordered_map<GLenum, string> shaderSource;
 	mutable unordered_map<string, GLint> uniformLocations;
-	mutable unordered_map<GLenum, string> shaderSource;
 
 	GLint getUniformLocation(const string & name) const;
 	
