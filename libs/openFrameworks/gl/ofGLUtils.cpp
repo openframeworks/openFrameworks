@@ -696,7 +696,7 @@ bool ofGLSupportsNPOTTextures(){
 
 string ofGLSLVersionFromGL(int major, int minor){
 #ifdef TARGET_OPENGLES
-	return "ES1"
+	return "ES1";
 #else
 	switch(major){
 	case 3:
@@ -740,13 +740,11 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 #endif
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-void ofUpdateBitmapCharacterTexture();
 void ofReloadAllImageTextures();
 void ofReloadAllFontTextures();
 void ofRegenerateAllVbos();
 
 void ofReloadGLResources(){
-	ofUpdateBitmapCharacterTexture();
 	ofReloadAllImageTextures();
 	ofReloadAllFontTextures();
 	ofRegenerateAllVbos();

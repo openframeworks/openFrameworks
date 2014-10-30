@@ -85,20 +85,6 @@ jobject ofGetOFActivityObject(){
 	return env->GetStaticObjectField(OFAndroid,ofActivityID);
 }
 
-/*void ofRunApp( ofxAndroidApp * app){
-	androidApp = app;
-	ofRunApp((ofBaseApp*)app);
-}
-
-void ofRunApp( ofPtr<ofxAndroidApp> app){
-	androidApp = app;
-	ofRunApp((ofBaseApp*)app);
-}*/
-
-void ofxRegisterMultitouch(ofxAndroidApp * app){
-	ofRegisterTouchEvents(app);
-}
-
 
 
 
@@ -113,17 +99,14 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
-
-void ofAppAndroidWindow::setGLESVersion(int version){
-	if(version<2){
+void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
+	glesVersion = settings.glesVersion;
+	if(glesVersion<2){
 		currentRenderer = make_shared<ofGLRenderer>(this);
 	}else{
 		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
 	}
-	glesVersion = version;
-}
 
-void ofAppAndroidWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){
@@ -140,15 +123,12 @@ void ofAppAndroidWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion);
 }
 
-void ofAppAndroidWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
-	androidApp = dynamic_cast<ofxAndroidApp*>( appPtr );
-	if(androidApp){
-		ofAddListener(coreEvents.touchCancelled,androidApp,&ofxAndroidApp::touchCancelled);
-		ofAddListener(coreEvents.touchDoubleTap,androidApp,&ofxAndroidApp::touchDoubleTap);
-		ofAddListener(coreEvents.touchDown,androidApp,&ofxAndroidApp::touchDown);
-		ofAddListener(coreEvents.touchMoved,androidApp,&ofxAndroidApp::touchMoved);
-		ofAddListener(coreEvents.touchUp,androidApp,&ofxAndroidApp::touchUp);
-	}
+void ofAppAndroidWindow::update(){
+
+}
+
+void ofAppAndroidWindow::draw(){
+
 }
 
 ofPoint	ofAppAndroidWindow::getWindowSize(){
@@ -253,7 +233,6 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved)
 	JNIEnv *env;
 	ofJavaVM = vm;
 	ofLog(OF_LOG_NOTICE,"JNI_OnLoad called");
-	ofSleepMillis(5000);
 	if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
 		ofLogError("ofAppAndroidWindow") << "failed to get environment using GetEnv()";
 		return -1;

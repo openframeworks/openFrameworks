@@ -1,6 +1,5 @@
 
 #include "ofBitmapFont.h"
-#include "ofGraphics.h"
 
 
 // ==============================================================
@@ -323,15 +322,6 @@ static const unsigned char* bmpChar_8x13_Map[] = {	bmpChar_8x13_000,bmpChar_8x13
 
 
 #include "ofTexture.h"
-
-#ifdef TARGET_OPENGLES
-//---------------------------------------------------------------------
-// tig: does this actually do anything?
-void ofUpdateBitmapCharacterTexture(){
-	bBitmapTexturePrepared = false;
-}
-#endif
-
 static const float widthTex = 8.0f/256.0f;
 static const float heightTex = 14.0f/256.0f;
 ofPixels ofBitmapFont::pixels;
