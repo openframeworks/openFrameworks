@@ -141,6 +141,8 @@ private:
 		void unbind() const;
 		void setData(GLsizeiptr bytes, const void * data, GLenum usage);
 		void updateData(GLintptr offset, GLsizeiptr bytes, const void * data);
+		void setData(const float * attrib0x, int numCoords, int total, int usage, int stride, bool normalize=false);
+		void setBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset);
 		void enable() const;
 		void disable() const;
 		GLuint getId() const;
@@ -183,29 +185,6 @@ private:
 	VertexAttribute texCoordAttribute;
 	VertexAttribute normalAttribute;
 	map<int,VertexAttribute> customAttributes;
-
-	void setVertexAttributeData(VertexAttribute &v, const float * attrib0x, int numCoords, int total, int usage, int stride, bool normalize=false){
-		if (!v.isAllocated()) {
-			v.allocate();
-		}
-		GLsizeiptr size = (stride == 0) ? numCoords * sizeof(float) : stride;
-		v.stride = size;
-		v.numCoords = numCoords;
-		v.offset = 0;
-		v.setData(total * size, attrib0x, usage);
-		v.normalize = normalize;
-	};
-	
-	void setVertexAttributeBuffer(VertexAttribute &v, ofBufferObject & buffer, int numCoords, int stride, int offset){
-		vaoChanged = true;
-
-		v.buffer = buffer;
-		v.offset = offset;
-		v.numCoords = numCoords;
-		GLsizeiptr size = (stride == 0) ? numCoords * sizeof(float) : stride;
-		v.stride = size;
-
-	};
 	
 	VertexAttribute & getOrCreateAttr(int location);
 };

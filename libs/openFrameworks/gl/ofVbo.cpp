@@ -126,6 +126,30 @@ void ofVbo::VertexAttribute::updateData(GLintptr offset, GLsizeiptr bytes, const
 	buffer.updateData(offset,bytes,data);
 }
 
+
+//--------------------------------------------------------------
+void ofVbo::VertexAttribute::setData(const float * attrib0x, int numCoords, int total, int usage, int stride, bool normalize){
+	if (!isAllocated()) {
+		allocate();
+	}
+	GLsizeiptr size = (stride == 0) ? numCoords * sizeof(float) : stride;
+	this->stride = size;
+	this->numCoords = numCoords;
+	this->offset = 0;
+	this->normalize = normalize;
+	setData(total * size, attrib0x, usage);
+};
+
+//--------------------------------------------------------------
+void ofVbo::VertexAttribute::setBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset){
+	this->buffer = buffer;
+	this->offset = offset;
+	this->numCoords = numCoords;
+	GLsizeiptr size = (stride == 0) ? numCoords * sizeof(float) : stride;
+	this->stride = size;
+
+};
+
 //--------------------------------------------------------------
 void ofVbo::VertexAttribute::enable() const{
 	bind();
@@ -309,7 +333,7 @@ void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride) {
-	setVertexAttributeData(positionAttribute, vert0x, numCoords, total, usage, stride);
+	positionAttribute.setData(vert0x, numCoords, total, usage, stride);
 	bUsingVerts = true;
 	totalVerts = total;
 }
@@ -321,7 +345,7 @@ void ofVbo::setColorData(const ofFloatColor * colors, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setColorData(const float * color0r, int total, int usage, int stride) {
-	setVertexAttributeData(colorAttribute, color0r, 4, total, usage, stride);
+	colorAttribute.setData(color0r, 4, total, usage, stride);
 	enableColors();
 }
 
@@ -339,7 +363,7 @@ void ofVbo::setNormalData(const float * normal0x, int total, int usage, int stri
 	// more prone to lead to artifacts difficult to diagnose, especially with the built-in 3D primitives.
 	// If you need to optimise this, and you've dug this far through the code, you are most probably
 	// able to roll your own client code for binding & rendering vbos anyway...
-	setVertexAttributeData(normalAttribute, normal0x, 3, total, usage, stride);
+	normalAttribute.setData(normal0x, 3, total, usage, stride);
 	normalAttribute.normalize = true;
 	enableNormals();
 }
@@ -351,7 +375,7 @@ void ofVbo::setTexCoordData(const ofVec2f * texCoords, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int stride) {
-	setVertexAttributeData(texCoordAttribute, texCoord0x, 2, total, usage, stride);
+	texCoordAttribute.setData(texCoord0x, 2, total, usage, stride);
 	enableTexCoords();
 }
 
@@ -386,11 +410,13 @@ ofVbo::VertexAttribute & ofVbo::getOrCreateAttr(int location){
 			default:
 				customAttributes[location].location = location;
 				attr = &customAttributes[location];
+				vaoChanged = true;
 				break;
 		}
 	}else{
 		customAttributes[location].location = location;
 		attr = &customAttributes[location];
+		vaoChanged = true;
 	}
 	return *attr;
 }
@@ -398,20 +424,17 @@ ofVbo::VertexAttribute & ofVbo::getOrCreateAttr(int location){
 //--------------------------------------------------------------
 void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
 	if(location==ofShader::POSITION_ATTRIBUTE){
-		if(!ofIsGLProgrammableRenderer()){
-			#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-				registerVbo(this);
-			#endif
-		}else{
+		#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+			registerVbo(this);
+		#endif
+		if(ofIsGLProgrammableRenderer()){
 			totalVerts = total;
-		}
-		#ifdef TARGET_OPENGLES
-			if(ofIsGLProgrammableRenderer()){
+			#ifdef TARGET_OPENGLES
 				glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
 				glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
 				glBindVertexArray =  (glBindVertexArrayType)dlsym(RTLD_DEFAULT, "glBindVertexArrayArrays");
-			}
-		#endif
+			#endif
+		}
 	}
 
 	bool normalize = false;
@@ -425,7 +448,7 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 		}
 	}
 
-	setVertexAttributeData(getOrCreateAttr(location),attrib0x,numCoords,total,usage,stride,normalize);
+	getOrCreateAttr(location).setData(attrib0x,numCoords,total,usage,stride,normalize);
 }
 
 //--------------------------------------------------------------
@@ -622,7 +645,7 @@ GLuint ofVbo::getAttributeId(int location) const {
 
 //--------------------------------------------------------------
 void ofVbo::setVertexBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset){
-	setVertexAttributeBuffer(positionAttribute, buffer, numCoords, stride, offset);
+	positionAttribute.setBuffer(buffer, numCoords, stride, offset);
 	bUsingVerts = true;
 	// TODO: Check: we have no perfect way of knowing the new number of total vertices,
 	// since the buffer does not tell us, so we try to calculate based on the data size
@@ -633,19 +656,19 @@ void ofVbo::setVertexBuffer(ofBufferObject & buffer, int numCoords, int stride, 
 
 //--------------------------------------------------------------
 void ofVbo::setColorBuffer(ofBufferObject & buffer, int stride, int offset){
-	setVertexAttributeBuffer(colorAttribute, buffer, 4, stride, offset);
+	colorAttribute.setBuffer(buffer, 4, stride, offset);
 	enableColors();
 }
 
 //--------------------------------------------------------------
 void ofVbo::setNormalBuffer(ofBufferObject & buffer, int stride, int offset){
-	setVertexAttributeBuffer(normalAttribute, buffer, 3, stride, offset);
+	normalAttribute.setBuffer(buffer, 3, stride, offset);
 	enableNormals();
 }
 
 //--------------------------------------------------------------
 void ofVbo::setTexCoordBuffer(ofBufferObject & buffer, int stride, int offset){
-	setVertexAttributeBuffer(texCoordAttribute, buffer, 2, stride, offset);
+	texCoordAttribute.setBuffer(buffer, 2, stride, offset);
 	enableTexCoords();
 }
 
@@ -668,7 +691,7 @@ void ofVbo::setAttributeBuffer(int location, ofBufferObject & buffer, int numCoo
 		}
 	}
 
-	setVertexAttributeBuffer(getOrCreateAttr(location), buffer, numCoords, stride, offset);
+	getOrCreateAttr(location).setBuffer(buffer, numCoords, stride, offset);
 }
 
 //--------------------------------------------------------------
