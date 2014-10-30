@@ -1202,6 +1202,12 @@ void ofVbo::enableVAOs(){
 
 void ofVbo::checkIsProgrammable() {
 	if (isProgrammableChecked) return;
+	
+	// make sure there is a renderer present before performing check!
+	// this is necessary since some static ofVboMeshes i.e. in ofPath
+	// will get initialised before the actual renderer is setup.
+	
+	if (!ofGetCurrentRenderer()) return;
 	isProgrammable = ofIsGLProgrammableRenderer();
 	isProgrammableChecked = true;
 }
