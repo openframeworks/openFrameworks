@@ -795,33 +795,33 @@ ofBufferObject & ofVbo::getAttributeBuffer(int attributePos_) {
 
 //--------------------------------------------------------------
 const ofBufferObject & ofVbo::getVertexBuffer() const{
-	return getVertexBuffer();
+	return isProgrammable ? getAttributeBuffer(ofShader::POSITION_ATTRIBUTE) : mFixedFunctionPositionAttribute.buffer;
 }
 
 //--------------------------------------------------------------
 const ofBufferObject & ofVbo::getColorBuffer() const{
-	return getColorBuffer();
+	return isProgrammable ? getAttributeBuffer(ofShader::COLOR_ATTRIBUTE) : mFixedFunctionColorAttribute.buffer;
 }
 
 //--------------------------------------------------------------
 const ofBufferObject & ofVbo::getNormalBuffer() const{
-	return getNormalBuffer();
+	return isProgrammable ? getAttributeBuffer(ofShader::NORMAL_ATTRIBUTE) : mFixedFunctionNormalAttribute.buffer;
 }
 
 //--------------------------------------------------------------
 const ofBufferObject & ofVbo::getTexCoordBuffer() const{
-	return getTexCoordBuffer();
+	return isProgrammable ? getAttributeBuffer(ofShader::TEXCOORD_ATTRIBUTE) : mFixedFunctionTexCoordAttribute.buffer;
 }
 
 //--------------------------------------------------------------
 const ofBufferObject & ofVbo::getAttributeBuffer(int attributePos_) const{
-	return getAttributeBuffer(attributePos_);
+	return customAttributes.at(attributePos_).buffer;
 }
 
 
 //--------------------------------------------------------------
 const ofBufferObject & ofVbo::getIndexBuffer() const{
-	return getIndexBuffer();
+	return indexAttribute.buffer;
 }
 
 //--------------------------------------------------------------
