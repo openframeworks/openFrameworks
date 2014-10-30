@@ -759,7 +759,7 @@ void ofVbo::setAttributeBuffer(int location, ofBufferObject & buffer, int numCoo
 				break;
 		}
 	}
-
+	customAttributes[location].location = location;
 	setVertexAttributeBuffer(customAttributes[location], buffer, numCoords, stride, offset);
 }
 
