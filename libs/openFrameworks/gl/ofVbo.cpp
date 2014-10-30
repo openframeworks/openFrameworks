@@ -763,6 +763,7 @@ void ofVbo::bind() const{
 			glGenVertexArrays(1, &const_cast<ofVbo*>(this)->vaoID);
 			if(vaoID!=0){
 				retainVAO(vaoID);
+				vaoChanged = true;
 			}
 		}
 		glBindVertexArray(vaoID);
