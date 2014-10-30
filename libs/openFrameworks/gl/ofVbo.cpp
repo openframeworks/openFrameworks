@@ -841,7 +841,7 @@ void ofVbo::bind() const{
 		bool programmable = isProgrammable;
 		if(bUsingVerts){
 			if(!programmable){
-				customAttributes.at(ofShader::POSITION_ATTRIBUTE).bind();
+				mFixedFunctionPositionAttribute.bind();
 				#ifndef TARGET_PROGRAMMABLE_GL
 				glEnableClientState(GL_VERTEX_ARRAY);
 				glVertexPointer(mFixedFunctionPositionAttribute.numCoords, GL_FLOAT,
@@ -972,7 +972,7 @@ void ofVbo::unbind() const{
 
 //--------------------------------------------------------------
 void ofVbo::draw(int drawMode, int first, int total) const{
-	if(hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if (bUsingVerts || (isProgrammable && hasAttribute(ofShader::POSITION_ATTRIBUTE)))  {
 		bool wasBound = bBound;
 		if(!wasBound) bind();
 		glDrawArrays(drawMode, first, total);
@@ -982,7 +982,7 @@ void ofVbo::draw(int drawMode, int first, int total) const{
 
 //--------------------------------------------------------------
 void ofVbo::drawElements(int drawMode, int amt) const{
-	if(hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if (bUsingVerts || (isProgrammable && hasAttribute(ofShader::POSITION_ATTRIBUTE)))  {
 		bool wasBound = bBound;
 		if(!wasBound) bind();
 #ifdef TARGET_OPENGLES
@@ -1000,7 +1000,7 @@ void ofVbo::drawElements(int drawMode, int amt) const{
 // amounts of geometry simultaneously without clogging the memory bus;
 // as discussed in: http://poniesandlight.co.uk/code/ofxVboMeshInstanced/
 void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) const{
-	if(hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if (bUsingVerts || (isProgrammable && hasAttribute(ofShader::POSITION_ATTRIBUTE)))  {
 		bool wasBound = bBound;
 		if(!wasBound) bind();
 #ifdef TARGET_OPENGLES
@@ -1018,7 +1018,7 @@ void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) con
 
 //--------------------------------------------------------------
 void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) const{
-	if(hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if (bUsingVerts || (isProgrammable && hasAttribute(ofShader::POSITION_ATTRIBUTE)))  {
 		bool wasBound = bBound;
 		if(!wasBound) bind();
 #ifdef TARGET_OPENGLES
