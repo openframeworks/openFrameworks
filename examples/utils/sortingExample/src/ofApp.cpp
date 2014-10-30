@@ -47,7 +47,7 @@ void ofApp::setup() {
     ofTrueTypeFont::setGlobalDpi(96);
 
     // load the font
-    font.loadFont("sans-serif", 11);
+	font.load("sans-serif", 11);
     sortTypeInfo = "no sort";
     words.clear();
     

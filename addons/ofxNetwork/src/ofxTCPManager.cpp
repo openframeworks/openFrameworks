@@ -131,7 +131,7 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
 
   if (m_dwTimeoutAccept != NO_TIMEOUT) {
     fd_set fd= {1, m_hSocket};
-	  timeval tv= {m_dwTimeoutAccept, 0};
+	  timeval tv= {(time_t)m_dwTimeoutAccept, 0};
 	  if(select(0, &fd, NULL, NULL, &tv) == 0) {
 		  ofxNetworkCheckError();
 		  return(false);
@@ -235,7 +235,7 @@ int ofxTCPManager::Send(const char* pBuff, const int iSize)
 		fd_set fd;
 		FD_ZERO(&fd);
 		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{m_dwTimeoutSend, 0};
+		timeval	tv=	{(time_t)m_dwTimeoutSend, 0};
 		if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 0)
 		{
 			return(SOCKET_TIMEOUT);
@@ -262,7 +262,7 @@ int ofxTCPManager::SendAll(const char* pBuff, const int iSize)
 		fd_set fd;
 		FD_ZERO(&fd);
 		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{m_dwTimeoutSend, 0};
+		timeval	tv=	{(time_t)m_dwTimeoutSend, 0};
 		if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 0)
 		{
 			return(SOCKET_TIMEOUT);
@@ -303,7 +303,7 @@ int ofxTCPManager::Receive(char* pBuff, const int iSize)
   		fd_set fd;
   		FD_ZERO(&fd);
   		FD_SET(m_hSocket, &fd);
-  		timeval	tv=	{m_dwTimeoutSend, 0};
+  		timeval	tv=	{(time_t)m_dwTimeoutSend, 0};
   		if(select(m_hSocket+1,&fd,NULL,NULL,&tv)== 0)
   		{
   			return(SOCKET_TIMEOUT);
@@ -355,7 +355,7 @@ int ofxTCPManager::ReceiveAll(char* pBuff, const int iSize)
 		fd_set fd;
 		FD_ZERO(&fd);
 		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{m_dwTimeoutSend, 0};
+		timeval	tv=	{(time_t)m_dwTimeoutSend, 0};
 		if(select(m_hSocket+1,&fd,NULL,NULL,&tv)== 0)
 		{
 			return(SOCKET_TIMEOUT);

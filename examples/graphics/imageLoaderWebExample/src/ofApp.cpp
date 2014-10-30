@@ -41,7 +41,7 @@ void ofApp::draw(){
 				ofColor c = img.getColor(x, y);
 				
 				ofSetColor( c.r, c.g, c.b );
-				ofCircle( x, y, divider/2 );
+				ofDrawCircle( x, y, divider/2 );
 			}
 		}
 		

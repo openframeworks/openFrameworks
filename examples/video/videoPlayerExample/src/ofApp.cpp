@@ -38,7 +38,7 @@ void ofApp::draw(){
         for (int j = 4; j < vidHeight; j+=8){
             unsigned char r = pixels[(j * 320 + i)*nChannels];
             float val = 1 - ((float)r / 255.0f);
-            ofCircle(400 + i,20+j,10*val);
+			ofDrawCircle(400 + i,20+j,10*val);
         }
     }
 

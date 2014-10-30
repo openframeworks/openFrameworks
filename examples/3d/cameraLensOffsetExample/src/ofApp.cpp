@@ -40,7 +40,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 	video.update();
-	finder.findHaarObjects(video.getPixelsRef());
+	finder.findHaarObjects(video.getPixels());
 	
 	ofVec3f headPosition(0,0,viewerDistance);
 	

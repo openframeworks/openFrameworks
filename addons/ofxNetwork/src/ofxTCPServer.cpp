@@ -37,7 +37,7 @@ bool ofxTCPServer::setup(int _port, bool blocking){
 	port			= _port;
 	bClientBlocking = blocking;
 
-	startThread(true, false);
+	startThread();
 	return true;
 }
 

@@ -54,10 +54,10 @@ public:
 	
 	void draw(){//here we draw the oscillator
 		ofFill();
-		ofCircle(pos.x, pos.y, amplitude/4);
+		ofDrawCircle(pos.x, pos.y, amplitude/4);
 		ofSetColor(40);
 		ofNoFill();
-		ofCircle(pos.x, pos.y, amplitude/4);
+		ofDrawCircle(pos.x, pos.y, amplitude/4);
 		ofDrawLine(pos.x, pos.y, pos.x +  waveCos/4, pos.y + waveSin/4);
 	}
 	bool checkOver(int x, int y){//this is to check if the mouse is over the oscillator.

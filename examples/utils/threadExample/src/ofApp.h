@@ -2,7 +2,7 @@
 
 
 #include "ofMain.h"
-#include "ThreadedObject.h" // include our ThreadedObject class.
+#include "threadedObject.h" // include our ThreadedObject class.
 
 
 class ofApp: public ofBaseApp

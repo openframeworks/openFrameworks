@@ -110,11 +110,11 @@ void ofApp::draw(){
 
 	ofEnableAlphaBlending();
 		ofSetColor(255,255,255,20);
-		ofCircle(px, py,50);	
+		ofDrawCircle(px, py,50);
 	ofDisableAlphaBlending();
 	
 	ofSetHexColor(0xffffff);
-	ofCircle(px, py,8);
+	ofDrawCircle(px, py,8);
 }
 
 
