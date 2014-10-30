@@ -513,8 +513,34 @@ void ofVbo::updateIndexData(const ofIndexType * indices, int total) {
 }
 
 void ofVbo::updateAttributeData(int location, const float * attr0x, int total){
-	if(customAttributes.find(location)!=customAttributes.end() && customAttributes[location].isAllocated()) {
-		customAttributes[location].updateData(0, total*customAttributes[location].stride, attr0x);
+	VertexAttribute * attr = NULL;
+	if (ofIsGLProgrammableRenderer()) {
+		switch (location){
+			case ofShader::POSITION_ATTRIBUTE:
+				attr = &positionAttribute;
+				break;
+			case ofShader::COLOR_ATTRIBUTE:
+				attr = &colorAttribute;
+				break;
+			case ofShader::NORMAL_ATTRIBUTE:
+				attr = &normalAttribute;
+				break;
+			case ofShader::TEXCOORD_ATTRIBUTE:
+				attr = &texCoordAttribute;
+				break;
+			default:
+				customAttributes[location].location = location;
+				attr = &customAttributes[location];
+				vaoChanged = true;
+				break;
+		}
+	} else {
+		if(customAttributes.find(location)!=customAttributes.end() && customAttributes[location].isAllocated()) {
+			attr = &customAttributes[location];
+		}
+	}
+	if (attr !=NULL) {
+		attr->updateData(0, total*attr->stride, attr0x);
 	}
 }
 
