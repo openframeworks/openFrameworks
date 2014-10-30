@@ -85,6 +85,7 @@ public:
 	void disableTexCoords();
 	void disableIndices();
 
+	GLuint getVaoId() const;
 	GLuint getVertId() const;
 	GLuint getColorId() const;
 	GLuint getNormalId() const;
@@ -126,6 +127,9 @@ public:
 
 	static void disableVAOs();
 	static void enableVAOs();
+
+
+	bool hasAttribute(int attributePos_) const;
 
 private:
 
@@ -174,13 +178,10 @@ private:
 	int	totalVerts;
 	int	totalIndices;
 
-	mutable bool bBound;
-
-	VertexAttribute mFixedFunctionPositionAttribute;
-	VertexAttribute mFixedFunctionColorAttribute;
-	VertexAttribute mFixedFunctionTexCoordAttribute;
-	VertexAttribute mFixedFunctionNormalAttribute;
-	
+	VertexAttribute positionAttribute;
+	VertexAttribute colorAttribute;
+	VertexAttribute texCoordAttribute;
+	VertexAttribute normalAttribute;
 	map<int,VertexAttribute> customAttributes;
 
 	void setVertexAttributeData(VertexAttribute &v, const float * attrib0x, int numCoords, int total, int usage, int stride, bool normalize=false){
@@ -196,8 +197,6 @@ private:
 	};
 	
 	void setVertexAttributeBuffer(VertexAttribute &v, ofBufferObject & buffer, int numCoords, int stride, int offset){
-
-		if(!vaoChecked) checkVAO();
 		vaoChanged = true;
 
 		v.buffer = buffer;
@@ -208,15 +207,5 @@ private:
 
 	};
 	
-	bool hasAttribute(int attributePos_) const {return (customAttributes.find(attributePos_) != customAttributes.end());};
-
-	static void checkVAO();
-	
-	static bool vaoChecked;
-	static bool supportVAOs;
-	
-	static void checkIsProgrammable();
-	static bool isProgrammable;
-	static bool isProgrammableChecked;
-	
+	VertexAttribute & getOrCreateAttr(int location);
 };
