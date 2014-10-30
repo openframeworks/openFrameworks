@@ -215,5 +215,8 @@ private:
 	static bool vaoChecked;
 	static bool supportVAOs;
 	
-	static bool isProgrammable();
+	static void checkIsProgrammable();
+	static bool isProgrammable;
+	static bool isProgrammableChecked;
+	
 };
