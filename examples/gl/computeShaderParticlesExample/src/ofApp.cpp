@@ -75,17 +75,18 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	ofEnableBlendMode(OF_BLENDMODE_ADD);
 	camera.begin();
 	ofSetColor(ofColor::red);
 	ofDrawRectangle(atractor1,10,10);
 	ofDrawRectangle(atractor2,10,10);
 	ofDrawRectangle(atractor3,10,10);
 
+	ofSetColor(255,70);
 	glPointSize(5);
-	ofSetColor(255,255,255,70);
 	vbo.draw(GL_POINTS,0,particles.size());
-	glPointSize(2);
 	ofSetColor(255);
+	glPointSize(2);
 	vbo.draw(GL_POINTS,0,particles.size());
 
 	ofNoFill();
@@ -93,6 +94,7 @@ void ofApp::draw(){
 
 	camera.end();
 
+	ofEnableBlendMode(OF_BLENDMODE_ALPHA);
 	ofSetColor(255);
 	gui.draw();
 }
