@@ -228,7 +228,7 @@ bIsAllocated(false)
 {
 #ifdef TARGET_OPENGLES
 	if(!bglFunctionsInitialized){
-		if(ofGetGLProgrammableRenderer()){
+		if(ofIsGLProgrammableRenderer()){
 			glGenFramebuffers = (glGenFramebuffersType)dlsym(RTLD_DEFAULT, "glGenFramebuffers");
 			glDeleteFramebuffers =  (glDeleteFramebuffersType)dlsym(RTLD_DEFAULT, "glDeleteFramebuffers");
 			glDeleteRenderbuffers =  (glDeleteRenderbuffersType)dlsym(RTLD_DEFAULT, "glDeleteRenderbuffers");
@@ -389,7 +389,7 @@ bool ofFbo::checkGLSupport() {
                           << "maxSamples: " << _maxSamples;
 #else
 
-	if(ofGetGLProgrammableRenderer() || ofGLCheckExtension("GL_OES_framebuffer_object")){
+	if(ofIsGLProgrammableRenderer() || ofGLCheckExtension("GL_OES_framebuffer_object")){
 		ofLogVerbose("ofFbo") << "GL frame buffer object supported";
 	}else{
 		ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
@@ -796,7 +796,7 @@ void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint) const{
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
 	int format = ofGetGLFormatFromInternal(settings.internalformat);
-	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_BYTE, pixels.getPixels());
+	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_BYTE, pixels.getData());
 	unbind();
 #endif
 }
@@ -809,7 +809,7 @@ void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint) const{
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
 	int format = ofGetGLFormatFromInternal(settings.internalformat);
-	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_SHORT, pixels.getPixels());
+	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_SHORT, pixels.getData());
 	unbind();
 #endif
 }

@@ -18,10 +18,15 @@ public:
 	ofAppAndroidWindow();
 	virtual ~ofAppAndroidWindow();
 
-	void setGLESVersion(int version);
-	void setupOpenGL(int w, int h, ofWindowMode screenMode);
-	void initializeWindow() {}
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	static bool doesLoop(){ return true; }
+	static void loop(){ }
+	static bool needsPolling(){ return false; }
+	static void pollEvents(){}
+	static bool allowsMultiWindow(){ return false; }
+
+	void setup(const ofGLESWindowSettings & settings);
+	void update();
+	void draw();
 
 	void hideCursor() {}
 	void showCursor() {}

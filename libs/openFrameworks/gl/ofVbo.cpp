@@ -974,7 +974,7 @@ int ofVbo::getNumVertices() const {
 void ofVbo::checkVAO(){
 	if (vaoChecked) return;
 #ifdef TARGET_OPENGLES
-	if(ofGetGLProgrammableRenderer()){
+	if(ofIsGLProgrammableRenderer()){
 		glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
 		glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
 		glBindVertexArray =  (glBindVertexArrayType)dlsym(RTLD_DEFAULT, "glBindVertexArrayArrays");

@@ -247,6 +247,8 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
     }
 #endif
 
+    ofLogVerbose() << "GL Version:" << glGetString(GL_VERSION);
+
     if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
     	static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glVersionMajor,settings.glVersionMinor);
     }else{

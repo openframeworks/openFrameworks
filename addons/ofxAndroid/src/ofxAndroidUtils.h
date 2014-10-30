@@ -16,11 +16,6 @@ JNIEnv * ofGetJNIEnv();
 jclass ofGetJavaOFAndroid();
 jobject ofGetOFActivityObject();
 
-//void ofRunApp( ofxAndroidApp * app);
-
-
-void ofxRegisterMultitouch(ofxAndroidApp * app);
-
 void ofxAndroidAlertBox(string msg);
 int ofxAndroidProgressBox(string msg);
 void ofxAndroidDismissProgressBox(int id);

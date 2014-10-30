@@ -2267,29 +2267,23 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor){
 	#ifndef TARGET_OPENGLES
 		defaultTexRectColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 		defaultTexRectNoColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
+		alphaMaskRectShader.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 	#endif
 		defaultTex2DColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 		defaultNoTexColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 		defaultTex2DNoColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 		defaultNoTexNoColor.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
-		alphaMaskRectShader.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 		alphaMask2DShader.setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,major, minor));
 
 	#ifndef TARGET_OPENGLES
 		defaultTexRectColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectColor,major, minor));
-		defaultTex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,major, minor));
-	#else
-		defaultTex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,major, minor));
-	#endif
-		defaultNoTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexColor,major, minor));
-	#ifndef TARGET_OPENGLES
 		defaultTexRectNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTexRectNoColor,major, minor));
-		defaultTex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,major, minor));
-	#else
-		defaultTex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,major, minor));
-	#endif
-		defaultNoTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexNoColor,major, minor));
 		alphaMaskRectShader.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTexRectNoColor,major, minor));
+	#endif
+		defaultTex2DColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DColor,major, minor));
+		defaultNoTexColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexColor,major, minor));
+		defaultTex2DNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderTex2DNoColor,major, minor));
+		defaultNoTexNoColor.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(defaultFragmentShaderNoTexNoColor,major, minor));
 		alphaMask2DShader.setupShaderFromSource(GL_FRAGMENT_SHADER,shaderSource(alphaMaskFragmentShaderTex2DNoColor,major, minor));
 
 
