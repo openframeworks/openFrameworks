@@ -223,20 +223,11 @@ private:
 
 
 	ofPolyline circlePolyline;
-#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	mutable ofMesh circleMesh;
 	mutable ofMesh triangleMesh;
 	mutable ofMesh rectMesh;
 	mutable ofMesh lineMesh;
 	mutable ofVbo meshVbo;
-#else
-	mutable ofVboMesh circleMesh;
-	mutable ofVboMesh triangleMesh;
-	mutable ofVboMesh rectMesh;
-	mutable ofVboMesh lineMesh;
-	mutable ofVbo meshVbo;
-	mutable ofVbo vertexDataVbo;
-#endif
 
 	void uploadCurrentMatrix();
 

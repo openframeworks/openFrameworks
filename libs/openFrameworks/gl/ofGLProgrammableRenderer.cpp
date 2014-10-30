@@ -181,12 +181,13 @@ void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode 
 	}
 #else
 	
-	meshVbo.setMesh(vertexData, GL_STATIC_DRAW, useColors, useTextures, useNormals);
 
 #ifndef TARGET_OPENGLES
+	meshVbo.setMesh(vertexData, GL_STREAM_DRAW, useColors, useTextures, useNormals);
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 	GLenum drawMode = ofGetGLPrimitiveMode(vertexData.getMode());
 #else
+	meshVbo.setMesh(vertexData, GL_STATIC_DRAW, useColors, useTextures, useNormals);
 	GLenum drawMode;
 	switch(renderType){
 	case OF_MESH_POINTS:
@@ -315,8 +316,8 @@ void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
 
 #else
 
-	vertexDataVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
-	vertexDataVbo.draw(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
+	meshVbo.setVertexData(&poly.getVertices()[0], poly.size(), GL_DYNAMIC_DRAW);
+	meshVbo.draw(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
 #endif
 	// use smoothness, if requested:
@@ -422,7 +423,7 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const{
-	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if(vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
 		glDrawArrays(drawMode, first, total);
@@ -432,7 +433,7 @@ void ofGLProgrammableRenderer::draw(const ofVbo & vbo, GLuint drawMode, int firs
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const{
-	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if(vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
 #ifdef TARGET_OPENGLES
@@ -446,7 +447,7 @@ void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, 
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const{
-	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if(vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
 #ifdef TARGET_OPENGLES
@@ -464,7 +465,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode,
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const{
-	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if(vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
 #ifdef TARGET_OPENGLES
@@ -1503,7 +1504,7 @@ void ofGLProgrammableRenderer::drawLine(float x1, float y1, float z1, float x2, 
 	// use smoothness, if requested:
 	if (currentStyle.smoothing) mutThis->startSmoothing();
     
-	draw(lineMesh,OF_MESH_FILL);
+	draw(lineMesh,OF_MESH_FILL,false,false,false);
     
 	// use smoothness, if requested:
 	if (currentStyle.smoothing) mutThis->endSmoothing();
@@ -1528,7 +1529,7 @@ void ofGLProgrammableRenderer::drawRectangle(float x, float y, float z, float w,
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	rectMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_LOOP);
-	draw(rectMesh,OF_MESH_FILL);
+	draw(rectMesh,OF_MESH_FILL,false,false,false);
     
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -1545,7 +1546,7 @@ void ofGLProgrammableRenderer::drawTriangle(float x1, float y1, float z1, float 
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	triangleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_STRIP : OF_PRIMITIVE_LINE_LOOP);
-	draw(triangleMesh,OF_MESH_FILL);
+	draw(triangleMesh,OF_MESH_FILL,false,false,false);
     
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -1563,7 +1564,7 @@ void ofGLProgrammableRenderer::drawCircle(float x, float y, float z,  float radi
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
-	draw(circleMesh,OF_MESH_FILL);
+	draw(circleMesh,OF_MESH_FILL,false,false,false);
 	
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -1583,7 +1584,7 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->startSmoothing();
 
 	circleMesh.setMode(currentStyle.bFill ? OF_PRIMITIVE_TRIANGLE_FAN : OF_PRIMITIVE_LINE_STRIP);
-	draw(circleMesh,OF_MESH_FILL);
+	draw(circleMesh,OF_MESH_FILL,false,false,false);
     
 	// use smoothness, if requested:
 	if (currentStyle.smoothing && !currentStyle.bFill) mutThis->endSmoothing();
@@ -2315,13 +2316,6 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor){
 		bitmapStringShader.bindDefaults();
 		bitmapStringShader.linkProgram();
 	}
-
-#ifndef TARGET_OPENGLES
-	circleMesh.setUsage(GL_STREAM_DRAW);
-	triangleMesh.setUsage(GL_STREAM_DRAW);
-	rectMesh.setUsage(GL_STREAM_DRAW);
-	lineMesh.setUsage(GL_STREAM_DRAW);
-#endif
 
 	setupGraphicDefaults();
 	viewport();

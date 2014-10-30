@@ -351,7 +351,7 @@ void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float 
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const{
-	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if(vbo.getUsingVerts()) {
 		vbo.bind();
 		glDrawArrays(drawMode, first, total);
 		vbo.unbind();
@@ -360,7 +360,7 @@ void ofGLRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total
 
 //----------------------------------------------------------
 void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const{
-	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if(vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
         glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
@@ -373,7 +373,7 @@ void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt) con
 
 //----------------------------------------------------------
 void ofGLRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const{
-	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if(vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
 		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
@@ -390,7 +390,7 @@ void ofGLRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, 
 
 //----------------------------------------------------------
 void ofGLRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const{
-	if(vbo.hasAttribute(ofShader::POSITION_ATTRIBUTE)) {
+	if(vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
         // todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
