@@ -202,7 +202,7 @@ ofVbo::ofVbo(){
 	vaoID			= 0;
 	bBound   = false;
 
-	checkIsProgrammable(); ///< cache whether the GL renderer is using programmable pipeline
+	checkIsProgrammable();
 }
 
 ofVbo::ofVbo(const ofVbo & mom){
@@ -321,6 +321,7 @@ void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int us
 		#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 			registerVbo(this);
 		#endif
+		if (!vaoChecked) checkVAO();
 		setVertexAttributeData(mFixedFunctionPositionAttribute, vert0x, numCoords, total, usage, stride);
 		bUsingVerts = true;
 		totalVerts = total;
@@ -337,6 +338,7 @@ void ofVbo::setColorData(const float * color0r, int total, int usage, int stride
 	if (isProgrammable) {
 		setAttributeData(ofShader::COLOR_ATTRIBUTE, color0r, 4, total, usage, stride);
 	} else {
+		if (!vaoChecked) checkVAO();
 		setVertexAttributeData(mFixedFunctionColorAttribute, color0r, 4, total, usage, stride);
 	}
 	enableColors();
@@ -376,6 +378,7 @@ void ofVbo::setTexCoordData(const float * texCoord0x, int total, int usage, int 
 	if (isProgrammable) {
 		setAttributeData(ofShader::TEXCOORD_ATTRIBUTE, texCoord0x, 2, total, usage, stride);
 	} else {
+		if (!vaoChecked) checkVAO();
 		setVertexAttributeData(mFixedFunctionTexCoordAttribute, texCoord0x, 2, total, usage, stride);
 	}
 	enableTexCoords();
