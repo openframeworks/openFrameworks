@@ -488,6 +488,7 @@ void ofShader::unload() {
 		}
 
 		shaders.clear();
+		uniformLocations.clear();
 	}
 	bLoaded = false;
 }
@@ -855,13 +856,14 @@ GLint ofShader::getAttributeLocation(const string & name)  const{
 
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const string & name)  const{
+	if(!bLoaded) return -1;
 	GLint loc = -1;
 
 	// tig: caching uniform locations gives the RPi a 17% boost on average
 	unordered_map<string, GLint>::iterator it = uniformLocations.find(name);
 	if (it == uniformLocations.end()){
 		loc = glGetUniformLocation(program, name.c_str());
-		if (loc != -1) uniformLocations[name] = loc;
+		uniformLocations[name] = loc;
 	} else {
 		loc = it->second;
 	}
