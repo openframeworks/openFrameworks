@@ -529,9 +529,11 @@ void ofVbo::updateAttributeData(int location, const float * attr0x, int total){
 				attr = &texCoordAttribute;
 				break;
 			default:
-				customAttributes[location].location = location;
-				attr = &customAttributes[location];
-				vaoChanged = true;
+				if(customAttributes.find(location)!=customAttributes.end() && customAttributes[location].isAllocated()) {
+					customAttributes[location].location = location;
+					attr = &customAttributes[location];
+					vaoChanged = true;
+				}
 				break;
 		}
 	} else {
@@ -539,7 +541,7 @@ void ofVbo::updateAttributeData(int location, const float * attr0x, int total){
 			attr = &customAttributes[location];
 		}
 	}
-	if (attr !=NULL) {
+	if (attr !=NULL && attr->isAllocated()) {
 		attr->updateData(0, total*attr->stride, attr0x);
 	}
 }
