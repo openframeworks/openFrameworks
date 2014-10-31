@@ -2294,23 +2294,23 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor){
 #ifndef TARGET_OPENGLES
 		defaultTexRectColor.bindDefaults();
 		defaultTexRectNoColor.bindDefaults();
+		alphaMaskRectShader.bindDefaults();
 #endif
 		defaultTex2DColor.bindDefaults();
 		defaultNoTexColor.bindDefaults();
 		defaultTex2DNoColor.bindDefaults();
 		defaultNoTexNoColor.bindDefaults();
-		alphaMaskRectShader.bindDefaults();
 		alphaMask2DShader.bindDefaults();
 
 #ifndef TARGET_OPENGLES
 		defaultTexRectColor.linkProgram();
 		defaultTexRectNoColor.linkProgram();
+		alphaMaskRectShader.linkProgram();
 #endif
 		defaultTex2DColor.linkProgram();
 		defaultNoTexColor.linkProgram();
 		defaultTex2DNoColor.linkProgram();
 		defaultNoTexNoColor.linkProgram();
-		alphaMaskRectShader.linkProgram();
 		alphaMask2DShader.linkProgram();
 
 		bitmapStringShader.bindDefaults();
@@ -2374,6 +2374,7 @@ const ofShader * ofGLProgrammableRenderer::getVideoShader(const ofBaseVideoDraws
 	return shader;
 }
 
+#ifndef TARGET_OPENGLES
 static float getTextureScaleX(const ofBaseVideoDraws & video, int plane){
 	if(!video.getTexturePlanes().empty()){
 		return video.getTexturePlanes()[plane].getWidth()/video.getWidth();
@@ -2389,6 +2390,7 @@ static float getTextureScaleY(const ofBaseVideoDraws & video, int plane){
 		return 1.0;
 	}
 }
+#endif
 
 void ofGLProgrammableRenderer::setVideoShaderUniforms(const ofBaseVideoDraws & video, const ofShader & shader) const{
 	switch(video.getPixelFormat()){
