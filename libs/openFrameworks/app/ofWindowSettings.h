@@ -45,7 +45,7 @@ public:
 
 	ofGLESWindowSettings(const ofWindowSettings & settings)
 	:ofWindowSettings(settings)
-	,glesVersion(2){}
+	,glesVersion(1){}
 
 	virtual ~ofGLESWindowSettings(){};
 

@@ -223,7 +223,7 @@ PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
 PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g -D_DEBUG
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -455,6 +455,7 @@ afterplatform:$(RESFILE)
 	@if [ "$(findstring armv5,$(ABIS_TO_COMPILE))" = "armv5" ]; then \
 		echo create gdb.setup for armeabi; \
 		echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup; \
+		echo "set sysroot $(SYSROOT)" >> libs/armeabi/gdb.setup; \
 		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup; \
 		echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup; \
 		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi/gdb.setup; \
@@ -465,6 +466,7 @@ afterplatform:$(RESFILE)
 	@if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ]; then \
 		echo create gdb.setup for armeabi-v7a; \
 		echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup; \
+		echo "set sysroot $(SYSROOT)" >> libs/armeabi-v7a/gdb.setup; \
 		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup; \
 		echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup; \
 		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi-v7a/gdb.setup; \
@@ -475,6 +477,7 @@ afterplatform:$(RESFILE)
 	@if [ "$(findstring x86,$(ABIS_TO_COMPILE))" = "x86" ]; then \
 		echo create gdb.setup for x86; \
 		echo "set solib-search-path $(PWD)/obj/local/x86:$(PWD)/libs/x86" > libs/x86/gdb.setup; \
+		echo "set sysroot $(SYSROOT)" >> libs/x86/gdb.setup; \
 		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/x86/gdb.setup; \
 		echo "directory $(PWD)/src" >> libs/x86/gdb.setup; \
 		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/x86/gdb.setup; \

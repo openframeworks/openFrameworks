@@ -185,5 +185,8 @@ private:
 	VertexAttribute normalAttribute;
 	map<int,VertexAttribute> customAttributes;
 	
+	static bool vaoChecked;
+	static bool vaoSupported;
+
 	VertexAttribute & getOrCreateAttr(int location);
 };

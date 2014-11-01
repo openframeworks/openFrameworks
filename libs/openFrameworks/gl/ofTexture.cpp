@@ -147,6 +147,27 @@ static void release(GLuint id){
 	}
 }
 
+#ifdef TARGET_ANDROID
+static set<ofTexture*> & allTextures(){
+	static set<ofTexture*> * allTextures = new set<ofTexture*>;
+	return allTextures;
+}
+
+static void registerTexture(ofTexture * texture){
+	allTextures().insert(texture);
+}
+
+static void unregisterTexture(ofTexture * texture){
+	allTextures().erase(texture);
+}
+
+void ofRegenerateAllTextures(){
+	for(auto tex: allTextures()){
+		tex->clear();
+	}
+}
+#endif
+
 //----------------------------------------------------------
 ofTexture::ofTexture(){
 	resetAnchor();
@@ -363,6 +384,9 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 
 	texData.bAllocated = true;
 
+#ifdef TARGET_ANDROID
+	registerTexture(this);
+#endif
 }
 
 
@@ -521,7 +545,7 @@ void ofTexture::generateMipmap(){
 	//	  support extension GL_EXT_framebuffer_object
 
 	bool isGlGenerateMipmapAvailable = false;
-	if(!glGenerateMipmap){
+	if(ofIsGLProgrammableRenderer()){
 		isGlGenerateMipmapAvailable = true;
 	}
 	

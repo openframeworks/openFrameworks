@@ -74,7 +74,7 @@ int ofGetNumChannelsFromGLFormat(int glFormat);
 void ofSetPixelStorei(int w, int bpc, int numChannels);
 void ofSetPixelStorei(int stride);
 
-vector<string> ofGLSupportedExtensions();
+//vector<string> ofGLSupportedExtensions();
 bool ofGLCheckExtension(string searchName);
 bool ofGLSupportsNPOTTextures();
 
