@@ -150,7 +150,7 @@ static void release(GLuint id){
 #ifdef TARGET_ANDROID
 static set<ofTexture*> & allTextures(){
 	static set<ofTexture*> * allTextures = new set<ofTexture*>;
-	return allTextures;
+	return *allTextures;
 }
 
 static void registerTexture(ofTexture * texture){
@@ -181,6 +181,9 @@ ofTexture::ofTexture(const ofTexture & mom){
 	texData = mom.texData;
 	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
+#ifdef TARGET_ANDROID
+	registerTexture(this);
+#endif
 }
 
 //----------------------------------------------------------
@@ -193,6 +196,9 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	texData = mom.texData;
 	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
+#ifdef TARGET_ANDROID
+	unregisterTexture(this);
+#endif
 	return *this;
 }
 
@@ -229,6 +235,9 @@ ofTexture::~ofTexture(){
 	if(!texData.bUseExternalTextureID){
 		release(texData.textureID);
 	}
+#ifdef TARGET_ANDROID
+	unregisterTexture(this);
+#endif
 }
 
 //----------------------------------------------------------
