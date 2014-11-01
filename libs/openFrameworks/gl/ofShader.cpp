@@ -521,10 +521,10 @@ void ofShader::end()  const{
 	}
 }
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 //--------------------------------------------------------------
 void ofShader::dispatchCompute(GLuint x, GLuint y, GLuint z) const{
-	glDispatchCompute(x,y,z);
+    glDispatchCompute(x,y,z);
 }
 #endif
 
