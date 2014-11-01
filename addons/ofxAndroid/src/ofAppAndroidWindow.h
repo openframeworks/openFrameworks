@@ -24,6 +24,7 @@ public:
 	static void pollEvents(){}
 	static bool allowsMultiWindow(){ return false; }
 
+    using ofAppBaseWindow::setup;
 	void setup(const ofGLESWindowSettings & settings);
 	void update();
 	void draw();

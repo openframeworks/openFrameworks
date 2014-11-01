@@ -88,7 +88,9 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> a
 		ofAddListener(window->events().touchUp,app.get(),&ofBaseApp::touchUp,OF_EVENT_ORDER_APP);
 	}
 	currentWindow = window;
-    window->events().notifySetup();
+	if(!windowLoop){
+		window->events().notifySetup();
+	}
 }
 
 void ofMainLoop::run(shared_ptr<ofBaseApp> app){
@@ -105,6 +107,7 @@ int ofMainLoop::loop(){
 	}else{
 		windowLoop();
 	}
+	exitEvent.notify(this);
 	return status;
 }
 
@@ -122,7 +125,6 @@ void ofMainLoop::loopOnce(){
 	if(pollEvents){
 		pollEvents();
 	}
-	exitEvent.notify(this);
 }
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){

@@ -10,7 +10,7 @@
 #include "Poco/Exception.h"
 #endif
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+#if defined(TARGET_ANDROID)
 #include <set>
 	// android destroys the opengl context on screen orientation change
 	// or when the application runs in the background so we need to reload
@@ -55,13 +55,14 @@
 	}
 
 	void ofReloadAllImageTextures(){
-		set<ofImage *>::iterator it;
-		for(it=all_images().begin(); it!=all_images().end(); it++){
-			(*it)->reloadTexture();
+		for(auto img: all_images()){
+			img->update();
 		}
-		set<ofFloatImage *>::iterator f_it;
-		for(f_it=all_float_images().begin(); f_it!=all_float_images().end(); f_it++){
-			(*f_it)->reloadTexture();
+		for(auto img: all_short_images()){
+			img->update();
+		}
+		for(auto img: all_float_images()){
+			img->update();
 		}
 	}
 #endif
@@ -655,15 +656,6 @@ ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
 template<typename PixelType>
 ofImage_<PixelType>::~ofImage_(){
 	clear();
-}
-
-
-//----------------------------------------------------------
-template<typename PixelType>
-void ofImage_<PixelType>::reloadTexture(){
-	if (pixels.isAllocated() && bUseTexture){
-		tex.allocate(pixels);
-	}
 }
 
 //----------------------------------------------------------

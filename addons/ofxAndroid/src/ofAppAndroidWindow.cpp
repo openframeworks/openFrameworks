@@ -101,6 +101,7 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 
 void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
 	glesVersion = settings.glesVersion;
+	ofLogError() << "setup gles" << glesVersion;
 	if(glesVersion<2){
 		currentRenderer = make_shared<ofGLRenderer>(this);
 	}else{
@@ -224,7 +225,6 @@ void ofPauseVideoPlayers();
 void ofResumeVideoPlayers();
 
 void ofReloadGLResources();
-void ofUnloadAllFontTextures();
 
 extern "C"{
 
@@ -289,7 +289,6 @@ void
 Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz ){
 	surfaceDestroyed = true;
 	ofLogNotice("ofAppAndroidWindow") << "onSurfaceDestroyed";
-	ofUnloadAllFontTextures();
 	ofPauseVideoGrabbers();
 	if(androidApp){
 		androidApp->unloadTextures();
@@ -301,7 +300,6 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	if(appSetup){
 		ofLogNotice("ofAppAndroidWindow") << "onSurfaceCreated";
 		if(!surfaceDestroyed){
-			ofUnloadAllFontTextures();
 			ofPauseVideoGrabbers();
 			ofPauseVideoPlayers();
 			if(androidApp){
@@ -326,6 +324,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	    }else{
 	    	static_cast<ofGLRenderer*>(window->renderer().get())->setup();
 	    }
+	    ofLogNotice() << "renderer created";
 	}
 }
 
