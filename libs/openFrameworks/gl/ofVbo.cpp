@@ -384,6 +384,9 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 				break;
 		}
 	}
+	if(location == ofShader::POSITION_ATTRIBUTE){
+		totalVerts = total;
+	}
 
 	GLsizeiptr size = (stride == 0) ? numCoords * sizeof(float) : stride;
 	customAttributes[location].stride = size;

@@ -254,7 +254,7 @@ ofPixels & ofxiOSVideoPlayer::getPixels() {
 
 //----------------------------------------
 const ofPixels & ofxiOSVideoPlayer::getPixels() const {
-    return getPixels();
+    return const_cast<ofxiOSVideoPlayer*>(this)->getPixels();
 }
 
 //----------------------------------------
@@ -589,6 +589,10 @@ void * ofxiOSVideoPlayer::getAVFoundationVideoPlayer() {
 }
 
 //---------------------------------------- DEPRECATED.
+bool ofxiOSVideoPlayer::loadMovie(string name) {
+    return load(name);
+}
+
 ofPixels & ofxiOSVideoPlayer::getPixelsRef() {
     return getPixels();
 }
