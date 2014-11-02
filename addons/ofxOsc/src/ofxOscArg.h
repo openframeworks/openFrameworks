@@ -36,7 +36,8 @@ typedef enum _ofxOscArgType
 	OFXOSC_TYPE_NONE,
 	OFXOSC_TYPE_INT32,
 	OFXOSC_TYPE_INT64,
-	OFXOSC_TYPE_FLOAT,
+    OFXOSC_TYPE_FLOAT,
+    OFXOSC_TYPE_DOUBLE,
 	OFXOSC_TYPE_STRING,
 	OFXOSC_TYPE_BLOB,
 	OFXOSC_TYPE_BUNDLE,
@@ -126,6 +127,26 @@ public:
 private:
 		float value;
 };
+
+class ofxOscArgDouble : public ofxOscArg
+{
+public:
+    ofxOscArgDouble( double _value ) { value = _value; }
+    ~ofxOscArgDouble() {};
+
+    /// return the type of this argument
+    ofxOscArgType getType() { return OFXOSC_TYPE_DOUBLE; }
+    string getTypeName() { return "double"; }
+
+    /// return value
+    double get() const { return value; }
+    /// set value
+    void set( double _value ) { value = _value; }
+    
+private:
+    double value;
+};
+
 
 class ofxOscArgString : public ofxOscArg
 {
