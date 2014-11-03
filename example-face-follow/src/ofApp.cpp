@@ -6,11 +6,11 @@ using namespace cv;
 void ofApp::setup() {
 	ofSetVerticalSync(true);
 	ofSetFrameRate(120);
-	finder.setup("haarcascade_frontalface_alt2.xml");
+	finder.setup("haarcascade_frontalface_default.xml");
 	finder.setPreset(ObjectFinder::Fast);
 	finder.getTracker().setSmoothingRate(.3);
 	cam.initGrabber(640, 480);
-	sunglasses.loadImage("sunglasses.png");
+	sunglasses.load("sunglasses.png");
 	ofEnableAlphaBlending();
 }
 
@@ -36,7 +36,7 @@ void ofApp::draw() {
 		ofPushMatrix();
 		ofTranslate(object.getPosition());
 		ofDrawBitmapStringHighlight(ofToString(finder.getLabel(i)), 0, 0);
-		ofLine(ofVec2f(), toOf(finder.getVelocity(i)) * 10);
+		ofDrawLine(ofVec2f(), toOf(finder.getVelocity(i)) * 10);
 		ofPopMatrix();
 	}
 }

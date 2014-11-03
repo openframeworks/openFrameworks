@@ -22,30 +22,36 @@ namespace ofxCv {
 	}
 	void ObjectFinder::update(cv::Mat img) {
         cv::Mat gray;
-        if(getChannels(img) == 1) gray = img;
-        else                      copyGray(img,gray);
+        if(getChannels(img) == 1) {
+            gray = img;
+        } else {
+          copyGray(img,gray);
+        }
         resize(gray, graySmall, rescale, rescale);
 		cv::Mat graySmallMat = toCv(graySmall);
 		if(useHistogramEqualization) {
 			equalizeHist(graySmallMat, graySmallMat);
 		}
 		cv::Size minSize, maxSize;
-		float averageSide = (graySmallMat.rows + graySmallMat.cols) / 2;
+		float minSide = MIN(graySmallMat.rows, graySmallMat.cols);
 		if(minSizeScale > 0) {
-			int side = minSizeScale * averageSide;
-			minSize = cv::Size(side, side);
+			int side = minSizeScale * minSide;
+            minSize = cv::Size(side, side);
 		}
 		if(maxSizeScale < 1) {
-			int side = maxSizeScale * averageSide;
-			maxSize = cv::Size(side, side);
+			int side = maxSizeScale * minSide;
+            maxSize = cv::Size(side, side);
 		}
-		classifier.detectMultiScale(graySmallMat, objects, multiScaleFactor, minNeighbors,
-																(cannyPruning ? CASCADE_DO_CANNY_PRUNING : 0) |
-																(findBiggestObject ? CASCADE_FIND_BIGGEST_OBJECT | CASCADE_DO_ROUGH_SEARCH : 0),
-																minSize,
-																maxSize);
+        classifier.detectMultiScale(graySmallMat,
+                                    objects,
+                                    multiScaleFactor,
+                                    minNeighbors,
+                                    (cannyPruning ? CASCADE_DO_CANNY_PRUNING : 0) |
+                                    (findBiggestObject ? CASCADE_FIND_BIGGEST_OBJECT | CASCADE_DO_ROUGH_SEARCH : 0),
+                                    minSize,
+                                    maxSize);
 		for(int i = 0; i < objects.size(); i++) {
-			cv::Rect& rect = objects[i];
+            cv::Rect& rect = objects[i];
 			rect.width /= rescale, rect.height /= rescale;
 			rect.x /= rescale, rect.y /= rescale;
 		}
