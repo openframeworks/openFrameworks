@@ -395,10 +395,16 @@
 				<string>E45BE5980E8CC70C009D7055</string>
 				<string>E4B69B5B0A3A1756003C02F2</string>
 			</array>
+			<key>indentWidth</key>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXGroup</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
+			<key>tabWidth</key>
+			<string>4</string>
+			<key>usesTabs</key>
+			<string>1</string>
 		</dict>
 		<key>E4B69B4C0A3A1720003C02F2</key>
 		<dict>
