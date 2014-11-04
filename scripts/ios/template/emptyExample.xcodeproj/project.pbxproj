@@ -300,12 +300,18 @@
 				<string>BB16E9930F2B1E5900518274</string>
 				<string>19C28FACFE9D520D11CA2CBB</string>
 			</array>
+			<key>indentWidth</key>
+			<string>4</string>
 			<key>isa</key>
 			<string>PBXGroup</string>
 			<key>name</key>
 			<string>CustomTemplate</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
+			<key>tabWidth</key>
+			<string>4</string>
+			<key>usesTabs</key>
+			<string>1</string>
 		</dict>
 		<key>29B97323FDCFA39411CA2CEA</key>
 		<dict>
