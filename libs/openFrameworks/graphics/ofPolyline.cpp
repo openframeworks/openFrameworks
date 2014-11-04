@@ -773,7 +773,7 @@ float ofPolyline::getIndexAtLength(float length) const {
         distAt1 = lengths[i1];
         if(distAt1 <= length) {         // if Length at i1 is less than desired Length (this is good)
             distAt2 = lengths[i1+1];
-            if(distAt2 > length) {
+            if(distAt2 >= length) {
                 float t = ofMap(length, distAt1, distAt2, 0, 1);
                 return i1 + t;
             } else {
