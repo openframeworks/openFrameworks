@@ -577,8 +577,11 @@
 				BB16E9930F2B1E5900518274 /* libs */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
+			indentWidth = 4;
 			name = CustomTemplate;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 1;
 		};
 		29B97323FDCFA39411CA2CEA /* core frameworks */ = {
 			isa = PBXGroup;
