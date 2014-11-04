@@ -10,6 +10,8 @@ ifndef APPNAME
     APPNAME = $(shell basename `pwd`)
 endif
 
+APP_VERSION ?= 0.01
+
 # Name TARGET
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
