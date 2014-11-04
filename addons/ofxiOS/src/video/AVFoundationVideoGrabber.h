@@ -12,7 +12,6 @@
 #include "ofxiOS.h"
 #include "ofxiOSExtras.h"
 
-#if defined  __arm__
 
 class AVFoundationVideoGrabber;
 
@@ -96,5 +95,4 @@ class AVFoundationVideoGrabber{
 };
 
 
-#endif	// (__arm__) compile only for ARM
 
