@@ -71,9 +71,10 @@ ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode);
 
 int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat);
 int ofGetGLFormatFromPixelFormat(ofPixelFormat pixelFormat);
+int ofGetBytesPerChannelFromGLType(int glType);
 int ofGetNumChannelsFromGLFormat(int glFormat);
-void ofSetPixelStorei(int w, int bpc, int numChannels);
-void ofSetPixelStorei(int stride);
+void ofSetPixelStoreiAlignment(GLenum pname, int w, int bpc, int numChannels);
+void ofSetPixelStoreiAlignment(GLenum panme, int stride);
 
 vector<string> ofGLSupportedExtensions();
 bool ofGLCheckExtension(string searchName);
