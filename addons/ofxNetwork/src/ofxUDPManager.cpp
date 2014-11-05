@@ -277,7 +277,7 @@ int	ofxUDPManager::PeekReceive()
 	{
 		//assert( Result == SOCKET_ERROR );
 		//	report error
-		int err = ofxNetworkCheckError();
+		ofxNetworkCheckError();
 		return SOCKET_ERROR;
 	}
 
