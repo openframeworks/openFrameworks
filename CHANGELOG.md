@@ -50,7 +50,7 @@ CORE
 	  `ofVbo::setTexCoordData(...)` or the more flexible 
 	  `ofVbo::setAttributeData(ofShader::TEXCOORD_ATTRIBUTE, ...)` which allows 
 	  for 3d texture coordinates.
-
+	/ Fix ofTexture::readToPixels for non RGBA or 4 aligned formats
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
 	+ ofDrawBitmapString: can draw any type not only strings
