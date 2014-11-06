@@ -83,6 +83,27 @@ jobject ofGetOFActivityObject(){
 	return env->GetStaticObjectField(OFAndroid,ofActivityID);
 }
 
+void ofCallStaticVoidJavaMethod(std::string className, std::string methodName, std::string methodSignature)
+{
+	jclass classObject = ofGetJNIEnv()->FindClass(className.c_str());
+
+	if(classObject==0){
+		ofLogError("callStaticVoidMethod") << "couldn't find java class '" << className << "'";
+		return;
+	}
+
+	jmethodID methodObject = ofGetJNIEnv()->GetStaticMethodID(classObject,methodName.c_str(), methodSignature.c_str());
+	if(!methodObject){
+
+		ofLogError("callStaticVoidMethod") << "couldn't find method '"
+				<< methodName << "' with signature '"
+				<< methodSignature << " in class " << className << "'";
+		return;
+	}
+
+	ofGetJNIEnv()->CallStaticVoidMethod(classObject, methodObject);
+}
+
 /*void ofRunApp( ofxAndroidApp * app){
 	androidApp = app;
 	ofRunApp((ofBaseApp*)app);
