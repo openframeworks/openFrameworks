@@ -83,25 +83,56 @@ jobject ofGetOFActivityObject(){
 	return env->GetStaticObjectField(OFAndroid,ofActivityID);
 }
 
-void ofCallStaticVoidJavaMethod(std::string className, std::string methodName, std::string methodSignature)
+jobject ofJavaGetStaticObjectField(std::string className, std::string fieldType, std::string fieldName)
 {
 	jclass classObject = ofGetJNIEnv()->FindClass(className.c_str());
+    
+	if(!classObject){
+        
+		ofLogError("ofJavaGetStaticObjectField") << "couldn't find class '"
+        << className << "'";
+		return NULL;
+	}
+    
+	jfieldID fieldIDObject = ofGetJNIEnv()->GetStaticFieldID(classObject, fieldName.c_str(), fieldType.c_str());
+    
+	if(!fieldIDObject){
+        
+		ofLogError("ofJavaGetStaticObjectField") << "couldn't find field '" <<
+        fieldName << "' of type '" <<
+        fieldType << "' in class '" <<
+        className << "'";
+		return NULL;
+	}
+    
+	return ofGetJNIEnv()->GetStaticObjectField(classObject, fieldIDObject);
+}
 
+void ofJavaCallStaticVoidMethod(std::string className, std::string methodName, std::string methodSignature, ...)
+{
+	jclass classObject = ofGetJNIEnv()->FindClass(className.c_str());
+    
 	if(classObject==0){
-		ofLogError("callStaticVoidMethod") << "couldn't find java class '" << className << "'";
+		ofLogError("ofJavaCallStaticVoidMethod") << "couldn't find java class '" << className << "'";
 		return;
 	}
-
+    
 	jmethodID methodObject = ofGetJNIEnv()->GetStaticMethodID(classObject,methodName.c_str(), methodSignature.c_str());
 	if(!methodObject){
-
-		ofLogError("callStaticVoidMethod") << "couldn't find method '"
-				<< methodName << "' with signature '"
-				<< methodSignature << " in class " << className << "'";
+        
+		ofLogError("ofJavaCallStaticVoidMethod") << "couldn't find method '"
+        << methodName << "' with signature '"
+        << methodSignature << " in class " << className << "'";
 		return;
 	}
-
-	ofGetJNIEnv()->CallStaticVoidMethod(classObject, methodObject);
+    
+	va_list args;
+    
+	va_start(args, methodSignature);
+    
+	ofGetJNIEnv()->CallStaticVoidMethodV(classObject, methodObject, args);
+    
+	va_end(args);
 }
 
 /*void ofRunApp( ofxAndroidApp * app){
