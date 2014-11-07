@@ -143,6 +143,9 @@ int ofGetGlFormat(const ofPixels_<T> & pixels) {
         #ifndef GL_UNSIGNED_INT
             #define GL_UNSIGNED_INT                         GL_UNSIGNED_INT_OES
         #endif
+        #ifndef GL_HALF_FLOAT
+            #define GL_HALF_FLOAT                           GL_HALF_FLOAT_OES
+        #endif
     #endif
 #endif
 
