@@ -51,13 +51,15 @@ static ofxiOSEAGLView * _instanceRef = nil;
         _instanceRef = self;
         
         if(rendererVersion == ESRendererVersion_20) {
-            if(ofAppiOSWindow::getInstance()->isRendererES2() == false) {
-                ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
+            ofAppiOSWindow * windowPtr = ofAppiOSWindow::getInstance();
+            if(windowPtr->isRendererES2() == false) {
+                ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(windowPtr)));
             }
             ofGetGLProgrammableRenderer()->setup("120");
         } else if(rendererVersion == ESRendererVersion_11) {
-            if(ofAppiOSWindow::getInstance()->isRendererES1() == false) {
-                ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer(false)));
+            ofAppiOSWindow * windowPtr = ofAppiOSWindow::getInstance();
+            if(windowPtr->isRendererES1() == false) {
+                ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofGLRenderer(windowPtr)));
             }
         }
         
