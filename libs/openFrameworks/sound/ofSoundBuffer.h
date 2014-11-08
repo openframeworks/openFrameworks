@@ -158,18 +158,18 @@ public:
 
 	/// resample our data to outBuffer at the given target speed, starting at fromFrame and copying numFrames of data. resize outBuffer to fit.
 	/// speed is relative to current speed (ie 1.0f == no change). lower speeds will give a larger outBuffer, higher speeds a smaller outBuffer.
-	void resampleTo(ofSoundBuffer & outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop=false, InterpolationAlgorithm algorithm=defaultAlgorithm);
+	void resampleTo(ofSoundBuffer & outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop=false, InterpolationAlgorithm algorithm=defaultAlgorithm) const;
 	
 	/// copy the requested channel of our data to outBuffer. resize outBuffer to fit.
-	void getChannel(ofSoundBuffer & outBuffer, int sourceChannel);
+	void getChannel(ofSoundBuffer & outBuffer, int sourceChannel) const;
 	/// copy data from inBuffer to the given channel. resize ourselves to match inBuffer's getNumFrames().
 	void setChannel(const ofSoundBuffer & inBuffer, int channel);
 	
-	float getRMSAmplitude();
-	float getRMSAmplitudeChannel(unsigned int channel);
+	float getRMSAmplitude() const;
+	float getRMSAmplitudeChannel(unsigned int channel) const;
 	
-	void linearResampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop);
-	void hermiteResampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop);
+	void linearResampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop) const;
+	void hermiteResampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop) const;
 	
 	/// fills the buffer with random noise between -amplitude and amplitude. useful for debugging.
 	void fillWithNoise(float amplitude = 1);
