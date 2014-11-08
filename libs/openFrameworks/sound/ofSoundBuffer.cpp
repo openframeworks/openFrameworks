@@ -476,22 +476,22 @@ void ofSoundBuffer::setChannel(const ofSoundBuffer & inBuffer, int targetChannel
 }
 
 float ofSoundBuffer::getRMSAmplitude() const {
-	float rmsAmplitude  = 0;
-	for(unsigned int i=0;i<size();i++){
-		rmsAmplitude += abs(buffer[i]);
+	double acc = 0;
+	for(size_t i = 0; i < buffer.size(); i++){
+		acc += buffer[i] * buffer[i];
 	}
-	rmsAmplitude /= float(size());
-	return rmsAmplitude;
+	return sqrt(acc / (double)buffer.size());
 }
 
 float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel) const {
 	if(channel>getNumChannels()-1) return 0;
-	float rmsAmplitude  = 0;
-	for(unsigned int i=0;i<getNumFrames();i++){
-		rmsAmplitude += abs(buffer[i*getNumChannels()+channel]);
+
+	double acc = 0;
+	for(size_t i = 0; i < getNumFrames(); i++) {
+		float sample = getSample(i, channel);
+		acc += sample * sample;
 	}
-	rmsAmplitude /= float(getNumFrames());
-	return rmsAmplitude;
+	return sqrt(acc / (double)getNumFrames());
 }
 
 void ofSoundBuffer::normalize(float level){
