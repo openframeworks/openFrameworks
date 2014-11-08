@@ -102,6 +102,14 @@ const float & ofSoundBuffer::operator[](unsigned int pos) const{
 	return buffer[pos];
 }
 
+float & ofSoundBuffer::getSample(size_t frameIndex, unsigned int channel){
+	return buffer[(frameIndex * channels) + channel];
+}
+
+const float & ofSoundBuffer::getSample(size_t frameIndex, unsigned int channel) const {
+	return buffer[(frameIndex * channels) + channel];
+}
+
 void ofSoundBuffer::swap(ofSoundBuffer & buffer){
 	std::swap(channels,buffer.channels);
 	std::swap(samplerate,buffer.samplerate);
