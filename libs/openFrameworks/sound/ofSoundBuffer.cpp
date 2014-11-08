@@ -263,7 +263,7 @@ static bool prepareBufferForResampling(const ofSoundBuffer &in, ofSoundBuffer &o
 
 // based on maximilian optimized for performance.
 // might lose 1 or 2 samples when it reaches the end of the buffer
-void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop) {
+void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop) const {
 	
 	int inChannels = getNumChannels();
 	unsigned long inFrames = getNumFrames();
@@ -328,7 +328,7 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, unsigned int from
 
 // based on maximilian optimized for performance.
 // might lose 1 to 3 samples when it reaches the end of the buffer
-void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop) {
+void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop) const {
 	
 	int inChannels = getNumChannels();
 	unsigned long inFrames = getNumFrames();
@@ -412,7 +412,7 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, unsigned int fro
 	}
 }
 
-void ofSoundBuffer::resampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop, InterpolationAlgorithm algorithm){
+void ofSoundBuffer::resampleTo(ofSoundBuffer & buffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop, InterpolationAlgorithm algorithm) const {
 	switch(algorithm){
 		case Linear:
 			linearResampleTo(buffer, fromFrame, numFrames, speed, loop);
@@ -429,7 +429,7 @@ void ofSoundBuffer::resample(float speed, InterpolationAlgorithm algorithm){
 	*this = resampled;
 }
 
-void ofSoundBuffer::getChannel(ofSoundBuffer & targetBuffer, int sourceChannel) {
+void ofSoundBuffer::getChannel(ofSoundBuffer & targetBuffer, int sourceChannel) const {
 	if ( sourceChannel>=channels ){
 		ofLogWarning("ofSoundBuffer") << "getChannel requested channel " << sourceChannel << " but we only have " << channels << " channels. clamping channel to " << channels-1;
 		sourceChannel = channels-1;
@@ -467,7 +467,7 @@ void ofSoundBuffer::setChannel(const ofSoundBuffer & inBuffer, int targetChannel
 	}
 }
 
-float ofSoundBuffer::getRMSAmplitude(){
+float ofSoundBuffer::getRMSAmplitude() const {
 	float rmsAmplitude  = 0;
 	for(unsigned int i=0;i<size();i++){
 		rmsAmplitude += abs(buffer[i]);
@@ -476,7 +476,7 @@ float ofSoundBuffer::getRMSAmplitude(){
 	return rmsAmplitude;
 }
 
-float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel){
+float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel) const {
 	if(channel>getNumChannels()-1) return 0;
 	float rmsAmplitude  = 0;
 	for(unsigned int i=0;i<getNumFrames();i++){
