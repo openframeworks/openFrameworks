@@ -121,6 +121,10 @@ public:
 	/// float sample = myBuffer[(frameIndex*myBuffer.getNumChannels()) + channelIndex];
 	float & operator[](unsigned int samplePos);
 	const float & operator[](unsigned int samplePos) const;
+	
+	/// access the sample at frameIndex on a soecific channel
+	float & getSample(size_t frameIndex, unsigned int channel);
+	const float & getSample(size_t frameIndex, unsigned int channel) const;
 
 	/// return a new buffer containing the contents of this buffer multiplied by value.
 	ofSoundBuffer operator*(float value);
