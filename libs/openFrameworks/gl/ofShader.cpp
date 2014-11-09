@@ -327,7 +327,7 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
         return false;
     }
 	if(status == GL_TRUE)
-		ofLogVerbose("ofShader") << "checkProgramLinkStatus(): program " << program << "linked";
+		ofLogVerbose("ofShader") << "checkProgramLinkStatus(): program " << program << " linked";
 	else if (status == GL_FALSE) {
 		ofLogError("ofShader") << "checkProgramLinkStatus(): program failed to link";
 		checkProgramInfoLog(program);
@@ -963,6 +963,9 @@ string ofShader::nameForType(GLenum type){
 		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
 		#ifndef TARGET_OPENGLES
 		case GL_GEOMETRY_SHADER_EXT: return "GL_GEOMETRY_SHADER_EXT";
+		#ifdef glDispatchCompute
+		case GL_COMPUTE_SHADER: return "GL_COMPUTE_SHADER";
+		#endif
 		#endif
 		default: return "UNKNOWN SHADER TYPE";
 	}
