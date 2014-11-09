@@ -15,8 +15,8 @@ JavaVM * ofGetJavaVMPtr();
 JNIEnv * ofGetJNIEnv();
 jclass ofGetJavaOFAndroid();
 jobject ofGetOFActivityObject();
-jobject ofJavaGetStaticObjectField(std::string className, std::string fieldType, std::string fieldName)
-void ofJavaCallStaticVoidMethod(std::string className, std::string methodName, std::string methodSignature, ...)
+jobject ofJavaGetStaticObjectField(std::string className, std::string fieldType, std::string fieldName);
+void ofJavaCallStaticVoidMethod(std::string className, std::string methodName, std::string methodSignature, ...);
 
 //void ofRunApp( ofxAndroidApp * app);
 
