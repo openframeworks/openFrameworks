@@ -361,6 +361,7 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 ################################################################################
 #PLATFORM_CC=
 
+APP_VERSION ?= 0.01
 
 afterplatform: $(TARGET_NAME)
 	@rm -rf bin/$(BIN_NAME).app
