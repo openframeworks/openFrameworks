@@ -157,7 +157,7 @@ jobject ofJavaCallStaticObjectMethod(std::string className, std::string methodNa
 
 	va_start(args, methodSignature);
 
-	jobject result = ofGetJNIEnv()->CallStaticObjectMethod(classID, methodID, args);
+	jobject result = ofGetJNIEnv()->CallStaticObjectMethodV(classID, methodID, args);
 
 	va_end(args);
 
@@ -186,7 +186,7 @@ void ofJavaCallVoidMethod(jobject object, std::string className, std::string met
 
 	va_start(args, methodSignature);
 
-	ofGetJNIEnv()->CallVoidMethod(object, methodID, args);
+	ofGetJNIEnv()->CallVoidMethodV(object, methodID, args);
 
 	va_end(args);
 }
@@ -213,7 +213,7 @@ jobject ofJavaCallObjectMethod(jobject object, std::string className, std::strin
 
 	va_start(args, methodSignature);
 
-	jobject result = ofGetJNIEnv()->CallObjectMethod(object, methodID, args);
+	jobject result = ofGetJNIEnv()->CallObjectMethodV(object, methodID, args);
 
 	va_end(args);
 
