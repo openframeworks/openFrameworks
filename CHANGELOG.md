@@ -44,7 +44,13 @@ CORE
 	+ ofShader: report offending lines on compiling errors
 	+ ofGLUtils: better support for half float types
 	/ getTextureReference -> getTexture
-
+	/ ofVbo refector: ofVbo will, in programmable renderer, automatically recognise 
+	  attribute locations 0, 1, 2, 3 as position, color, texture, normal attributes 
+	  can be set using either using convenience methods e.g. 
+	  `ofVbo::setTexCoordData(...)` or the more flexible 
+	  `ofVbo::setAttributeData(ofShader::TEXCOORD_ATTRIBUTE, ...)` which allows 
+	  for 3d texture coordinates.
+	/ Fix ofTexture::readToPixels for non RGBA or 4 aligned formats
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
 	+ ofDrawBitmapString: can draw any type not only strings

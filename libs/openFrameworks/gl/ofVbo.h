@@ -85,6 +85,7 @@ public:
 	void disableTexCoords();
 	void disableIndices();
 
+	GLuint getVaoId() const;
 	GLuint getVertId() const;
 	GLuint getColorId() const;
 	GLuint getNormalId() const;
@@ -127,6 +128,9 @@ public:
 	static void disableVAOs();
 	static void enableVAOs();
 
+
+	bool hasAttribute(int attributePos_) const;
+
 private:
 
 	struct VertexAttribute{
@@ -137,6 +141,8 @@ private:
 		void unbind() const;
 		void setData(GLsizeiptr bytes, const void * data, GLenum usage);
 		void updateData(GLintptr offset, GLsizeiptr bytes, const void * data);
+		void setData(const float * attrib0x, int numCoords, int total, int usage, int stride, bool normalize=false);
+		void setBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset);
 		void enable() const;
 		void disable() const;
 		GLuint getId() const;
@@ -174,14 +180,11 @@ private:
 	int	totalVerts;
 	int	totalIndices;
 
-	mutable bool bBound;
-
+	VertexAttribute positionAttribute;
+	VertexAttribute colorAttribute;
+	VertexAttribute texCoordAttribute;
+	VertexAttribute normalAttribute;
 	map<int,VertexAttribute> customAttributes;
 	
-	bool hasAttribute(int attributePos_) const {return (customAttributes.find(attributePos_) != customAttributes.end());};
-
-	static void checkVAO();
-	
-	static bool vaoChecked;
-	static bool supportVAOs;
+	VertexAttribute & getOrCreateAttr(int location);
 };
