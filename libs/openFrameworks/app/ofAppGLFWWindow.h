@@ -36,6 +36,7 @@ public:
 	void		setAlphaBits(int a);
 	void		setDepthBits(int depth);
 	void		setStencilBits(int stencil);
+	void		setStereo(bool stereo);
 	void		listVideoModes();
 	bool		isWindowIconified();
 	bool		isWindowActive();
@@ -142,6 +143,7 @@ private:
 	//utils
 	int				samples;
 	int				rBits,gBits,bBits,aBits,depthBits,stencilBits;
+	bool			stereo;
 
 	ofWindowMode	windowMode;
 
