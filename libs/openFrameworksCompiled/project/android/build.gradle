@@ -1,0 +1,103 @@
+// build.gradle project file for Android Studio support
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.0.1'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+// OpenFrameworks support functions
+/**
+ * Initialization task to set up NDK paths.
+ */
+task ofNdkSetup {
+    logger.lifecycle name
+
+    /* Find NDK directory */
+    def localProperties = new File(rootDir, "local.properties")
+    if (!localProperties.exists()) {
+        throw new GradleException("local.properties is missing!")
+    }
+
+    Properties properties = new Properties()
+    localProperties.withInputStream { instr ->
+        properties.load(instr)
+    }
+    String sdkDirectory = properties.get("sdk.dir")
+    String ndkDirectory = properties.get("ndk.dir")
+    if (ndkDirectory == null) {
+        throw new GradleException("NDK not configured. Add ndk.dir=/path/to/ndk to local.properties.")
+    }
+    def ndkDir = new File(ndkDirectory)
+    if (!ndkDir.directory) {
+        throw new GradleException("NDK directory is invalid. Check ndk.dir path in local.properties.")
+    }
+
+    /* Find suitable make executable */
+    def make = null;
+
+    new File(ndkDirectory, "prebuilt").eachDir { dir ->
+        if(make != null)
+            return
+
+        def binDir = new File(dir, "bin");
+        for(fn in ["make", "make.exe"]) {
+            def makeFile = new File(binDir, fn);
+            if(makeFile.exists()) {
+                def proc = [makeFile.absolutePath, "--version"].execute()
+                proc.waitFor()
+                if(proc.exitValue() == 0) {
+                    make = makeFile;
+                }
+            }
+        }
+    }
+
+    if(make == null) {
+        throw new GradleException("GNU make not found in NDK...")
+    }
+
+    logger.info " -> found make $make"
+
+    ext.sdkDirectory = sdkDirectory
+    ext.ndkDirectory = ndkDirectory
+    ext.make = make
+}
+
+/**
+ * Helper function to run make with a given set of options
+ */
+def ofRunMake(List opts) {
+    List cmd = [rootProject.ofNdkSetup.ext.make, "-j4"] + opts
+    logger.info("Executing make command " + cmd)
+    def proc = cmd.execute()
+    proc.in.eachLine {line ->
+        logger.lifecycle(line)
+    }
+    proc.err.eachLine {line ->
+        if(line.contains(": warning:")) {
+            logger.warn(line)
+        } else if(line.contains(": error:") || line.contains(": ***")) {
+            logger.error(line)
+        } else {
+            logger.quiet(line)
+        }
+    }
+    proc.waitFor()
+    if(proc.exitValue() != 0) {
+        throw new GradleException("make failed with exit status " + proc.exitValue())
+    }
+}
