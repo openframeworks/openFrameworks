@@ -358,7 +358,7 @@ bool ofTrueTypeFont::initLibraries(){
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+	#if defined(TARGET_ANDROID)
 		all_fonts().insert(this);
 	#endif
 	letterSpacing = 1;
@@ -387,7 +387,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 		unloadTextures();
 	}
 
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+	#if defined(TARGET_ANDROID)
 		all_fonts().erase(this);
 	#endif
 }
