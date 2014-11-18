@@ -57,10 +57,11 @@ template<typename PixelType>
 class ofColor_{
 public:
     /// \brief Construct an ofColor_ instance.
-    ofColor_<PixelType>();
-
-    /// \brief Destroy an ofColor_ instance.
-    ~ofColor_<PixelType>();
+    ofColor_<PixelType>():
+        r(limit()),
+        g(limit()),
+        b(limit()),
+        a(limit()) {};
 
     /// \brief Construct an ofColor_ by using channel values.
     ///
@@ -76,10 +77,6 @@ public:
                         float green,
                         float blue,
                         float alpha = limit());
-
-    /// \brief Construct an ofColor_ from an existing ofColor_.
-    /// \param color The ofColor_ to copy.
-    ofColor_<PixelType>(const ofColor_<PixelType>& color);
 
     /// \brief Construct an ofColor_ from an existing ofColor_.
     ///
@@ -407,15 +404,6 @@ public:
                 float saturation,
                 float brightness,
                 float alpha = limit());
-
-    /// \brief Assign a color using an existing color.
-    ///
-    /// R, G, B and A components are set to the the values of the assigned
-    /// color.
-    ///
-    /// \param color The color to assign.
-    /// \returns A reference to itself.
-    ofColor_<PixelType>& operator = (const ofColor_<PixelType>& color);
 
     /// \brief Assign a color using an existing color.
     ///
