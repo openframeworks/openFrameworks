@@ -9,6 +9,8 @@
 void ofSoundStopAll(){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		ofFmodSoundStopAll();
+	#else
+		ofLogWarning("ofSoundPlayer") << "ofSoundStopAll() not implemented on this platform";
 	#endif
 }
 
@@ -16,6 +18,8 @@ void ofSoundStopAll(){
 void ofSoundSetVolume(float vol){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		ofFmodSoundSetVolume(vol);
+	#else
+		ofLogWarning("ofSoundPlayer") << "ofSoundSetVolume() not implemented on this platform";
 	#endif
 }
 
@@ -23,6 +27,8 @@ void ofSoundSetVolume(float vol){
 void ofSoundUpdate(){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		ofFmodSoundUpdate();
+	#else
+		ofLogWarning("ofSoundPlayer") << "ofSoundUpdate() not implemented on this platform";
 	#endif
 }
 
@@ -31,6 +37,8 @@ void ofSoundUpdate(){
 void ofSoundShutdown(){
 	#ifdef OF_SOUND_PLAYER_FMOD
 		ofFmodSoundPlayer::closeFmod();
+	#else
+		ofLogWarning("ofSoundPlayer") << "ofSoundShutdown() not implemented on this platform";
 	#endif
 }
 #endif
@@ -44,12 +52,10 @@ float * ofSoundGetSpectrum(int nBands){
 	#elif defined(OF_SOUND_PLAYER_EMSCRIPTEN)
 		return ofxEmscriptenSoundPlayer::getSystemSpectrum(nBands);
 	#else
-		ofLogError("ofSoundPlayer") << "ofSoundGetSpectrum(): not implemented, returning NULL";
+		ofLogWarning("ofSoundPlayer") << "ofSoundGetSpectrum() not implemented on this platform, returning NULL";
 		return NULL;
 	#endif
 }
-
-
 
 #include "ofSoundPlayer.h"
 //---------------------------------------------------------------------------
