@@ -109,6 +109,11 @@ PLATFORM SPECIFIC
 ### windows
 	+ activated high precission timming to fix inaccurate fps calculations
 
+CORE ADDONS
+-----------
+### ofxOpenCV
+	/ updated ofxCvHaarFinder to not use textures on internal image objects, allowing for usage within threads.
+
 OF 0.8.4
 ========
 
