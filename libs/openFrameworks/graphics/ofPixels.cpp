@@ -933,9 +933,7 @@ void ofPixels_<PixelType>::crop(int x, int y, int _width, int _height){
 	if (bAllocated){
 		ofPixels_<PixelType> crop;
 		cropTo(crop,x,y,_width,_height);
-		std::swap(crop.pixels,pixels);
-		width = crop.width;
-		height = crop.height;
+		swap(crop);
 	}
 }
 
