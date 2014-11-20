@@ -801,10 +801,11 @@ string ofSystem(const string& command){
 	if (ret == NULL){
 		ofLogError("ofUtils") << "ofSystem(): error opening return file for command \"" << command  << "\"";
 	}else{
-		do {
-		      c = fgetc (ret);
-		      strret += c;
-		} while (c != EOF);
+		c = fgetc (ret);
+		while (c != EOF) {
+			strret += c;
+			c = fgetc (ret);
+		}
 #ifdef TARGET_WIN32
 		_pclose (ret);
 #else
