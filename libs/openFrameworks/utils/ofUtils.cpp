@@ -796,7 +796,7 @@ string ofSystem(const string& command){
 #endif
 	
 	string strret;
-	char c;
+	int c;
 
 	if (ret == NULL){
 		ofLogError("ofUtils") << "ofSystem(): error opening return file for command \"" << command  << "\"";
