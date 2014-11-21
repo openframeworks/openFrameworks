@@ -21,8 +21,9 @@ enum ofxiOSDeviceType {
 // iOS Renderer Types.
 //-------------------------------------------------------------------------------
 enum ofxiOSRendererType {
-    OFXIOS_RENDERER_ES1 = 0,
-    OFXIOS_RENDERER_ES2
+    OFXIOS_RENDERER_ES1 = 1,
+    OFXIOS_RENDERER_ES2 = 2,
+    OFXIOS_RENDERER_ES3 = 3
 };
 
 
