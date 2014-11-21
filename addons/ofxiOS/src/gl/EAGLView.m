@@ -97,6 +97,11 @@ andPreferedRenderer:(ESRendererVersion)version
         [self updateScaleFactor];
         
         //------------------------------------------------------
+        if(rendererVersion == ESRendererVersion_30) {
+            NSLog(@"OpenGLES 3.0 Renderer not implemented for oF. Defaulting to OpenGLES 2.0");
+            rendererVersion = ESRendererVersion_20;
+        }
+        
         if(rendererVersion == ESRendererVersion_20) {
             renderer = [[ES2Renderer alloc] initWithDepth:bUseDepth
                                                     andAA:bUseFSAA
@@ -104,18 +109,20 @@ andPreferedRenderer:(ESRendererVersion)version
                                                 andRetina:bUseRetina];
         }
 		
-        if(!renderer){
+        if(!renderer){ // if OpenGLES 2.0 fails to load try OpenGLES 1.1
+            rendererVersion = ESRendererVersion_11;
             renderer = [[ES1Renderer alloc] initWithDepth:bUseDepth 
                                                     andAA:bUseFSAA 
                                            andFSAASamples:fsaaSamples 
                                                 andRetina:bUseRetina];
 			
             if(!renderer){
+                NSLog(@"Critical Error - ofiOS EAGLView.m could not start any type of OpenGLES renderer");
 				[self release];
 				return nil;
 			}
             
-            rendererVersion = ESRendererVersion_11;
+            
         }
 		
 		self.multipleTouchEnabled = true;
@@ -154,7 +161,6 @@ andPreferedRenderer:(ESRendererVersion)version
     if(!bInit) {
         return;
     }
-
     [self stopAnimation];
     [renderer release];
     [glLock release];

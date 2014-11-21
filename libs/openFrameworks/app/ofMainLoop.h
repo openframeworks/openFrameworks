@@ -14,15 +14,19 @@ public:
 	template<typename Window>
 	void addWindow(shared_ptr<Window> window){
 		allowMultiWindow = Window::allowsMultiWindow();
-		if(!allowMultiWindow) windowsApps.clear();
+        if(Window::doesLoop()){
+            windowLoop = Window::loop;
+            
+        }
+        if(Window::needsPolling()){
+            pollEvents = Window::pollEvents;
+        }
+        if(!allowMultiWindow){
+            windowsApps.clear();
+        }
 		windowsApps[window] = shared_ptr<ofBaseApp>();
 		currentWindow = window;
-		if(Window::doesLoop()){
-			windowLoop = Window::loop;
-		}
-		if(Window::needsPolling){
-			pollEvents = Window::pollEvents;
-		}
+		
 	}
 	void run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app);
 	void run(shared_ptr<ofBaseApp> app);
@@ -37,7 +41,7 @@ public:
 	ofEvent<void> exitEvent;
 private:
 	void keyPressed(ofKeyEventArgs & key);
-	map<shared_ptr<ofAppBaseWindow>,shared_ptr<ofBaseApp>> windowsApps;
+	map<shared_ptr<ofAppBaseWindow>,shared_ptr<ofBaseApp> > windowsApps;
 	bool bShouldClose;
 	shared_ptr<ofAppBaseWindow> currentWindow;
 	int status;
