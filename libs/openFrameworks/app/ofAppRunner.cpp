@@ -70,7 +70,9 @@ void ofInit(){
 	initialized = true;
 	Poco::ErrorHandler::set(new ofThreadErrorLogger);
 
-#ifndef TARGET_ANDROID
+#if defined(TARGET_ANDROID) || defined(TARGET_IOS)
+    // manage own exit
+#else
 	atexit(ofExitCallback);
 #endif
 
