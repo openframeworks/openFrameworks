@@ -94,7 +94,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         return;
     }
     
-    window->close();
+    window->events().notifyExit();
     
     [activeTouches release];
     
