@@ -29,6 +29,7 @@ void ofResetElapsedTimeCounter();
 /// \returns the floating point elapsed time in seconds.
 float ofGetElapsedTimef();
 
+
 /// \brief Return the elapsed time in milliseconds.
 ///
 /// This returns the elapsed time since ofResetElapsedTimeCounter() was called.
@@ -74,6 +75,9 @@ unsigned long long ofGetSystemTime();
 /// \brief Get the system time in microseconds.
 /// \returns the system time in microseconds.
 unsigned long long ofGetSystemTimeMicros();
+
+/// \brief Sleeps the current thread for the specified amount of ms
+void ofSleepMillis(int millis);
 
 /// \brief Formats the current system time according to the given format.
 ///

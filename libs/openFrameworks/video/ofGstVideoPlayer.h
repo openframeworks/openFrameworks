@@ -13,7 +13,7 @@ public:
 	bool 	setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat	getPixelFormat() const;
 	
-	bool 	loadMovie(string uri);
+	bool 	load(string uri);
 
 	void 	update();
 
@@ -48,9 +48,8 @@ public:
 
 	bool 			isFrameNew() const;
 
-	unsigned char * getPixels();
-	ofPixels&		getPixelsRef();
-	const ofPixels& getPixelsRef() const;
+	ofPixels&		getPixels();
+	const ofPixels& getPixels() const;
 
 	float 			getHeight() const;
 	float 			getWidth() const;
@@ -59,22 +58,26 @@ public:
 	void setThreadAppSink(bool threaded);
 	bool isThreadedAppSink() const;
 	bool isFrameByFrame() const;
+	void setAsynchronousLoad(bool async);
 
 	ofGstVideoUtils * getGstVideoUtils();
 
 protected:
-	bool	allocate();
-	void	on_stream_prepared();
+	bool allocate();
+	bool createPipeline(string uri);
+	void on_stream_prepared();
 
 	// return true to set the message as attended so upstream doesn't try to process it
 	virtual bool on_message(GstMessage* msg){return false;};
 
 private:
 	ofPixelFormat		internalPixelFormat;
+	bool				nativePixels;
 	guint64				nFrames;
 	int 				fps_n, fps_d;
 	bool				bIsStream;
 	bool				bIsAllocated;
+	bool				bAsyncLoad;
 	bool				threadAppSink;
 	ofGstVideoUtils		videoUtils;
 };

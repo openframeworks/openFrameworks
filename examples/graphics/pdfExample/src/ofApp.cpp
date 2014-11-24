@@ -10,12 +10,12 @@ void ofApp::setup(){
 	ofBackground(225,225,225);
 	ofSetVerticalSync(true);
 	
-	font.loadFont("frabk.ttf", 24, true, false, true);
+	font.load("frabk.ttf", 24, true, false, true);
 	
 	dropZoneRects.assign(3, ofRectangle());
 
 	images.assign(3, ofImage());
-	images[0].loadImage("DSC09316.jpeg");
+	images[0].load("DSC09316.jpeg");
 	
 	for(unsigned int k = 0; k < dropZoneRects.size(); k++){
 		dropZoneRects[k] = ofRectangle(32 + k * 310, 200, 300, 200);
@@ -64,7 +64,7 @@ void ofApp::draw(){
 	ofNoFill();
 	for(unsigned int k = 0; k < dropZoneRects.size(); k++){
 		ofSetColor(54,54,54);
-		ofRect(dropZoneRects[k]);
+		ofDrawRectangle(dropZoneRects[k]);
 		ofSetColor(245, 58, 135);		
 		ofDrawBitmapString("drop images here", dropZoneRects[k].getCenter().x - 70, dropZoneRects[k].getCenter().y);
 	}
@@ -110,7 +110,7 @@ void ofApp::draw(){
 
 		ofTranslate(x, y, 0);
 		ofRotate(angle);
-		ofRect(0, 0, 30, 30);
+		ofDrawRectangle(0, 0, 30, 30);
 	ofPopMatrix();	
 	
 	if( boxTrail.size() == 0 || ( boxTrail.back() - ofPoint(x, y) ).length() > 1.5 ){
@@ -185,7 +185,7 @@ void ofApp::gotMessage(ofMessage msg){
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 	for(unsigned int j = 0; j < dropZoneRects.size(); j++){
 		if( dropZoneRects[j].inside( dragInfo.position ) ){
-			images[j].loadImage( dragInfo.files[0] );
+			images[j].load( dragInfo.files[0] );
 			break;
 		}
 	}

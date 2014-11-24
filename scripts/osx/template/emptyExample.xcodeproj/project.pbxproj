@@ -142,6 +142,13 @@
 			<string>BBAB23BE13894E4700AA2426</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>CodeSignOnCopy</string>
+				</array>
+			</dict>
 		</dict>
 		<key>E4328143138ABC890047C5CB</key>
 		<dict>
@@ -398,7 +405,7 @@
 			<key>attributes</key>
 			<dict>
 				<key>LastUpgradeCheck</key>
-				<string>0460</string>
+				<string>0600</string>
 			</dict>
 			<key>buildConfigurationList</key>
 			<string>E4B69B4D0A3A1720003C02F2</string>
@@ -460,7 +467,7 @@
 			<key>buildSettings</key>
 			<dict>
 				<key>ARCHS</key>
-				<string>$(NATIVE_ARCH)</string>
+				<string>$(ARCHS_STANDARD_32_BIT)</string>
 				<key>CONFIGURATION_BUILD_DIR</key>
 				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>
@@ -493,6 +500,8 @@
 				<string>NO</string>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
 				<string>10.6</string>
+				<key>ONLY_ACTIVE_ARCH</key>
+				<string>YES</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
@@ -514,7 +523,7 @@
 			<key>buildSettings</key>
 			<dict>
 				<key>ARCHS</key>
-				<string>$(NATIVE_ARCH)</string>
+				<string>$(ARCHS_STANDARD_32_BIT)</string>
 				<key>CONFIGURATION_BUILD_DIR</key>
 				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>

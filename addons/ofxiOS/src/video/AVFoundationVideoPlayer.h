@@ -8,6 +8,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import <Accelerate/Accelerate.h>
 
 @class AVPlayer;
 @class AVPlayerItem;

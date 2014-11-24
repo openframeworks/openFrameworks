@@ -26,9 +26,9 @@ class ofApp : public ofBaseApp{
 
 		int 			w, h;
 		
-		unsigned char 	* colorPixels;
-		unsigned char 	* grayPixels;
-		unsigned char 	* colorAlphaPixels;
+		ofPixels colorPixels;
+		ofPixels grayPixels;
+		ofPixels colorAlphaPixels;
 		
 		
 };

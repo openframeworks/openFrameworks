@@ -5,7 +5,7 @@ void ofApp::setup() {
 	ofSetVerticalSync(true);
 	
 	// load an image from disk
-	img.loadImage("linzer.png");
+	img.load("linzer.png");
 	
 	// we're going to load a ton of points into an ofMesh
 	mesh.setMode(OF_PRIMITIVE_POINTS);

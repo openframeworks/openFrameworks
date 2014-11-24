@@ -142,7 +142,7 @@ bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 	tmpBuffSend.append(msg,size);
 	tmpBuffSend.append(messageDelimiter.c_str(),messageDelimiter.size());
 
-	int ret = TCPClient.SendAll( tmpBuffSend.getBinaryBuffer(), tmpBuffSend.size() );
+	int ret = TCPClient.SendAll( tmpBuffSend.getData(), tmpBuffSend.size() );
 	if( ret == 0 ){
 		ofLogWarning("ofxTCPClient") << "sendRawMsg(): client disconnected";
 		close();
@@ -155,7 +155,7 @@ bool ofxTCPClient::sendRawMsg(const char * msg, int size){
 		// part that hasn't been sent and send
 		// with the next message to not corrupt
 		// next messages
-		tmpBuffSend.set(&tmpBuffSend.getBinaryBuffer()[ret],tmpBuffSend.size()-ret);
+		tmpBuffSend.set(&tmpBuffSend.getData()[ret],tmpBuffSend.size()-ret);
 		return true;
 	}else{
 		tmpBuffSend.clear();
@@ -256,7 +256,7 @@ static int findDelimiter(char * data, int size, string delimiter){
 int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
 	int length=-2;
 	//only get data from the buffer if we don't have already some complete message
-	if(findDelimiter(tmpBuffReceive.getBinaryBuffer(),tmpBuffReceive.size(),messageDelimiter)==-1){
+	if(findDelimiter(tmpBuffReceive.getData(),tmpBuffReceive.size(),messageDelimiter)==-1){
 		memset(tmpBuff,  0, TCP_MAX_MSG_SIZE);
 		length = receiveRawBytes(tmpBuff, TCP_MAX_MSG_SIZE);
 		if(length>0){ // don't copy the data if there was an error or disconnection
@@ -265,11 +265,11 @@ int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
 	}
 
 	// process any available data
-	int posDelimiter = findDelimiter(tmpBuffReceive.getBinaryBuffer(),tmpBuffReceive.size(),messageDelimiter);
+	int posDelimiter = findDelimiter(tmpBuffReceive.getData(),tmpBuffReceive.size(),messageDelimiter);
 	if(posDelimiter>0){
-		memcpy(receiveBuffer,tmpBuffReceive.getBinaryBuffer(),posDelimiter);
+		memcpy(receiveBuffer,tmpBuffReceive.getData(),posDelimiter);
 		if(tmpBuffReceive.size() > posDelimiter + (int)messageDelimiter.size()){
-			memcpy(tmpBuff,tmpBuffReceive.getBinaryBuffer()+posDelimiter+messageDelimiter.size(),tmpBuffReceive.size()-(posDelimiter+messageDelimiter.size()));
+			memcpy(tmpBuff,tmpBuffReceive.getData()+posDelimiter+messageDelimiter.size(),tmpBuffReceive.size()-(posDelimiter+messageDelimiter.size()));
 			tmpBuffReceive.set(tmpBuff,tmpBuffReceive.size()-(posDelimiter+messageDelimiter.size()));
 		}else{
 			tmpBuffReceive.clear();
@@ -286,7 +286,18 @@ int ofxTCPClient::receiveRawMsg(char * receiveBuffer, int numBytes){
 //--------------------------
 int ofxTCPClient::receiveRawBytes(char * receiveBuffer, int numBytes){
 	messageSize = TCPClient.Receive(receiveBuffer, numBytes);
-	if(messageSize==0){
+	//	0 is not an error... -1 is
+	if ( messageSize == SOCKET_ERROR ){
+		close();
+	}
+	return messageSize;
+}
+
+//--------------------------
+int ofxTCPClient::peekReceiveRawBytes(char * receiveBuffer, int numBytes){
+	messageSize = TCPClient.PeekReceive(receiveBuffer, numBytes);
+	//	network error, kill client
+	if ( messageSize == SOCKET_ERROR ){
 		close();
 	}
 	return messageSize;

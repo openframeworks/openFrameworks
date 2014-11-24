@@ -26,12 +26,26 @@ public:
 
 	 bool rendersPathPrimitives(){return true;}
 
+	 void startRender(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->startRender();
+		 }
+	 }
+
+	 void finishRender(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->finishRender();
+		 }
+	 }
+
 	 void update(){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->update();
 		 }
 	 }
 
+
+	 using ofBaseRenderer::draw;
 
 	 void draw(const ofPolyline & poly) const{
 		 for(int i=0;i<(int)renderers.size();i++){
@@ -43,6 +57,7 @@ public:
 			 renderers[i]->draw(shape);
 		 }
 	 }
+
 	 void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(vertexData,useColors, useTextures, useNormals);
@@ -385,18 +400,23 @@ public:
 	 }; // hex, like web 0xFF0033;
 
 	// bg color
-	ofFloatColor & getBgColor(){
+	ofColor getBackgroundColor(){
 		 if(renderers.size()){
-			 return renderers[0]->getBgColor();
+			 return renderers[0]->getBackgroundColor();
 		 }else{
-			 static ofFloatColor c;
-			 return c;
+			 return ofColor(200);
 		 }
 	}
 
-	bool bClearBg(){
+	void setBackgroundColor(const ofColor & color){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setBackgroundColor(color);
+		 }
+	}
+
+	bool getBackgroundAuto(){
 		 if(renderers.size()){
-			 return renderers[0]->bClearBg();
+			 return renderers[0]->getBackgroundAuto();
 		 }else{
 			 return true;
 		 }
@@ -432,16 +452,24 @@ public:
 		 }
 	}
 
+	void clear(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->clear();
+		 }
+	}
+
 	void clear(float r, float g, float b, float a=0){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->clear(r,g,b,a);
 		 }
 	}
+
 	void clear(float brightness, float a=0){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->clear(brightness,a);
 		 }
 	}
+
 	void clearAlpha(){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->clearAlpha();

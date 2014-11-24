@@ -73,7 +73,7 @@ void ofApp::dragEvent(ofDragInfo info){
 		
 		draggedImages.assign( info.files.size(), ofImage() );
 		for(unsigned int k = 0; k < info.files.size(); k++){
-			draggedImages[k].loadImage(info.files[k]);
+			draggedImages[k].load(info.files[k]);
 		}
 	}
 

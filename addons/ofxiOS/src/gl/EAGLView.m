@@ -55,12 +55,13 @@
 	return [CAEAGLLayer class];
 }
 
-- (id) initWithFrame:(CGRect)frame
- andPreferedRenderer:(ESRendererVersion)version
-            andDepth:(bool)depth
-               andAA:(bool)fsaaEnabled
-       andNumSamples:(int)samples
-           andRetina:(bool)retinaEnabled{
+- (id)initWithFrame:(CGRect)frame
+andPreferedRenderer:(ESRendererVersion)version
+           andDepth:(bool)depth
+              andAA:(bool)fsaaEnabled
+      andNumSamples:(int)samples
+          andRetina:(bool)retinaEnabled
+     andRetinaScale:(CGFloat)retinaScale {
 
 	if((self = [super initWithFrame:frame])) {
         
@@ -70,26 +71,32 @@
         bUseRetina = retinaEnabled;
         fsaaSamples = samples;
 
-        CAEAGLLayer *eaglLayer = (CAEAGLLayer *)super.layer;
-		
+        //------------------------------------------------------
+        CAEAGLLayer * eaglLayer = (CAEAGLLayer *)super.layer;
         eaglLayer.opaque = true;
 		eaglLayer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
 										[NSNumber numberWithBool:YES], kEAGLDrawablePropertyRetainedBacking, kEAGLColorFormatRGBA8, kEAGLDrawablePropertyColorFormat, nil];
 		
-		scaleFactor = 1;
-		if(bUseRetina){
-			if([[UIScreen mainScreen] respondsToSelector:@selector(scale)]){
-				if ([[UIScreen mainScreen] scale] > 1){
-					[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
-					scaleFactor = [[UIScreen mainScreen] scale];
-				} else {
-                    bUseRetina = false;
+        //------------------------------------------------------
+        scaleFactorPref = retinaScale;
+        
+        if(bUseRetina == YES) {
+            if(scaleFactorPref == 0.0) {
+                scaleFactorPref = [[UIScreen mainScreen] scale]; // no scale preference, default to max scale.
+            } else {
+                if(scaleFactorPref < 1.0) {
+                    scaleFactorPref = 1.0; // invalid negative value, default scale to 1.
+                } else if(scaleFactorPref > [[UIScreen mainScreen] scale]) {
+                    scaleFactorPref = [[UIScreen mainScreen] scale];
                 }
-			} else {
-                bUseRetina = false;
             }
-		}
-		
+        } else {
+            scaleFactorPref = 1.0;
+        }
+        
+        [self updateScaleFactor];
+        
+        //------------------------------------------------------
         if(rendererVersion == ESRendererVersion_20) {
             renderer = [[ES2Renderer alloc] initWithDepth:bUseDepth
                                                     andAA:bUseFSAA
@@ -177,29 +184,7 @@
 }
 	
 - (void)layoutSubviews{
-    UIScreen * currentScreen = self.window.screen;
-    if(!currentScreen){
-        currentScreen = [UIScreen mainScreen];
-    }
-    
-    if(bUseRetina){
-        if([currentScreen respondsToSelector:@selector(scale)]){
-            if(scaleFactor != [currentScreen scale]){
-                scaleFactor = [currentScreen scale];
-                [self setContentScaleFactor:scaleFactor];
-            }
-        } else {
-            if(scaleFactor != 1){
-                scaleFactor = 1;
-                [self setContentScaleFactor:scaleFactor];
-            }
-        }
-    } else {
-        if(scaleFactor != 1){
-            scaleFactor = 1;
-            [self setContentScaleFactor:scaleFactor];
-        }
-    }
+    [self updateScaleFactor];
 
     [renderer startRender];
     [renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
@@ -208,6 +193,23 @@
     [self notifyResized];
 }
 
+//-------------------------------------------------------------------
+- (void)updateScaleFactor {
+    UIScreen * currentScreen = self.window.screen;
+    if(currentScreen == nil) {
+        currentScreen = [UIScreen mainScreen];
+    }
+
+    if([currentScreen respondsToSelector:@selector(scale)] == NO) {
+        return;
+    }
+    
+    scaleFactor = MIN(scaleFactorPref, [currentScreen scale]);
+    
+    if(scaleFactor != self.contentScaleFactor) {
+        self.contentScaleFactor = scaleFactor;
+    }
+}
 
 //------------------------------------------------------------------- lock/unlock GL context.
 - (void)lockGL {

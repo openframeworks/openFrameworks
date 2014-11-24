@@ -9,12 +9,12 @@
 #include "ofAppBaseWindow.h"
 #include "ofFbo.h"
 
-ofMatrixStack::ofMatrixStack(const ofAppBaseWindow & window)
+ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 :vFlipped(true)
 ,orientation(OF_ORIENTATION_DEFAULT)
 ,handedness(OF_LEFT_HANDED)
 ,currentFbo(NULL)
-,currentWindow(const_cast<ofAppBaseWindow*>(&window))
+,currentWindow(const_cast<ofAppBaseWindow*>(window))
 ,currentMatrixMode(OF_MATRIX_MODELVIEW)
 ,currentMatrix(&modelViewMatrix)
 {

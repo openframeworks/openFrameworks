@@ -14,7 +14,7 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		ofQuickTimePlayer();
 		~ofQuickTimePlayer();
 
-		 bool			loadMovie(string name);
+		 bool			load(string name);
 		 void			closeMovie();	
 		 void			close();
 		 void			update();
@@ -28,9 +28,9 @@ class ofQuickTimePlayer : public ofBaseVideoPlayer{
 		ofPixelFormat   getPixelFormat() const;		 
 	
 		 bool 			isFrameNew() const;
-		 unsigned char * 	getPixels();
-		 ofPixels&			getPixelsRef();
-		 const ofPixels&	getPixelsRef() const;
+
+		 ofPixels&			getPixels();
+		 const ofPixels&	getPixels() const;
 		
 		 float 			getWidth() const;
 		 float 			getHeight() const;

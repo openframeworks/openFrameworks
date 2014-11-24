@@ -1,8 +1,8 @@
 /*
-	oscpack -- Open Sound Control packet manipulation library
-	http://www.audiomulch.com/~rossb/oscpack
+	oscpack -- Open Sound Control (OSC) packet manipulation library
+    http://www.rossbencina.com/code/oscpack
 
-	Copyright (c) 2004-2005 Ross Bencina <rossb@audiomulch.com>
+    Copyright (c) 2004-2013 Ross Bencina <rossb@audiomulch.com>
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files
@@ -15,10 +15,6 @@
 	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	Any person wishing to distribute modifications to the Software is
-	requested to send the modifications to the original developer so that
-	they can be incorporated into the canonical version.
-
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 	MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -27,14 +23,23 @@
 	CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
-#ifndef INCLUDED_OSCPRINTRECEIVEDELEMENTS_H
-#define INCLUDED_OSCPRINTRECEIVEDELEMENTS_H
+
+/*
+	The text above constitutes the entire oscpack license; however, 
+	the oscpack developer(s) also make the following non-binding requests:
+
+	Any person wishing to distribute modifications to the Software is
+	requested to send the modifications to the original developer so that
+	they can be incorporated into the canonical version. It is also 
+	requested that these non-binding requests be included whenever the
+	above license is reproduced.
+*/
+#ifndef INCLUDED_OSCPACK_OSCPRINTRECEIVEDELEMENTS_H
+#define INCLUDED_OSCPACK_OSCPRINTRECEIVEDELEMENTS_H
 
 #include <iosfwd>
 
-#ifndef INCLUDED_OSCRECEIVEDELEMENTS_H
 #include "OscReceivedElements.h"
-#endif /* INCLUDED_OSCRECEIVEDELEMENTS_H */
 
 
 namespace osc{
@@ -46,4 +51,4 @@ std::ostream& operator<<( std::ostream & os, const ReceivedBundle& b );
 
 } // namespace osc
 
-#endif /* INCLUDED_OSCPRINTRECEIVEDELEMENTS_H */
+#endif /* INCLUDED_OSCPACK_OSCPRINTRECEIVEDELEMENTS_H */

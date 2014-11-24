@@ -21,16 +21,14 @@ public:
 
 	//needs implementing
 	vector<ofVideoDevice>	listDevices() const;
-	bool	initGrabber(int w, int h);
+	bool	setup(int w, int h);
 	bool	isInitialized() const;
 
 	bool	isFrameNew() const;
 	void	update();
 
-	unsigned char 	* getPixels();
-	ofPixels&		getPixelsRef();
-	const unsigned char 	* getPixels() const;
-	const ofPixels&		getPixelsRef() const;
+	ofPixels& getPixels();
+	const ofPixels&	getPixels() const;
 
 	void	close();
 
@@ -49,7 +47,7 @@ public:
 
 	bool setAutoFocus(bool autofocus);
 
-	ofTexture *	getTexture();
+	ofTexture *	getTexturePtr();
 	void loadTexture();
 	void reloadTexture();
 	void unloadTexture();

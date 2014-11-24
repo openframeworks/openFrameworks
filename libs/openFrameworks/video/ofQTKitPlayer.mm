@@ -24,12 +24,12 @@ ofQTKitPlayer::~ofQTKitPlayer() {
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::loadMovie(string path){
-	return loadMovie(path, OF_QTKIT_DECODE_PIXELS_ONLY);
+bool ofQTKitPlayer::load(string path){
+	return load(path, OF_QTKIT_DECODE_PIXELS_ONLY);
 }
 
 //--------------------------------------------------------------------
-bool ofQTKitPlayer::loadMovie(string movieFilePath, ofQTKitDecodeMode mode) {
+bool ofQTKitPlayer::load(string movieFilePath, ofQTKitDecodeMode mode) {
 	if(mode != OF_QTKIT_DECODE_PIXELS_ONLY && mode != OF_QTKIT_DECODE_TEXTURE_ONLY && mode != OF_QTKIT_DECODE_PIXELS_AND_TEXTURE){
 		ofLogError("ofQTKitPlayer") << "loadMovie(): unknown ofQTKitDecodeMode mode";
 		return false;
@@ -228,7 +228,7 @@ void ofQTKitPlayer::draw(float x, float y, float w, float h) {
 }
 
 //--------------------------------------------------------------------
-ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
+ofPixels& ofQTKitPlayer::getPixels(){
 	@autoreleasepool {
 		if(isLoaded() && moviePlayer.usePixels) {
 			//don't get the pixels every frame if it hasn't updated
@@ -238,23 +238,18 @@ ofPixelsRef	ofQTKitPlayer::getPixelsRef(){
 			}
 		}
 		else{
-			ofLogError("ofQTKitPlayer") << "getPixelsRef(): returning pixels that may be unallocated, make sure to initialize the video player before calling this function";
+			ofLogError("ofQTKitPlayer") << "getPixels(): returning pixels that may be unallocated, make sure to initialize the video player before calling this function";
 		}
 	}
 	return pixels;
 }
 
-const ofPixelsRef ofQTKitPlayer::getPixelsRef() const {
-    return getPixelsRef();
+const ofPixels& ofQTKitPlayer::getPixels() const {
+    return pixels;
 }
 
 //--------------------------------------------------------------------
-unsigned char* ofQTKitPlayer::getPixels() {
-	return getPixelsRef().getPixels();
-}
-
-//--------------------------------------------------------------------
-ofTexture* ofQTKitPlayer::getTexture() {
+ofTexture* ofQTKitPlayer::getTexturePtr() {
     ofTexture* texPtr = NULL;
 	if(moviePlayer.textureAllocated){
 		updateTexture();
@@ -411,7 +406,7 @@ bool ofQTKitPlayer::setPixelFormat(ofPixelFormat newPixelFormat){
         // If we already have a movie loaded we need to reload
         // the movie with the new settings correctly allocated.
         if(isLoaded()){
-            loadMovie(moviePath, decodeMode);
+            load(moviePath, decodeMode);
         }
     }	
 	return true;

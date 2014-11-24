@@ -25,7 +25,7 @@ void ofApp::setup() {
 	}
 	
 	ofDisableArbTex();
-	texture.loadImage("snow.png");
+	texture.load("snow.png");
 
 	// we are getting the location of the point size attribute
 	// we then set the pointSizes to the vertex attritbute
@@ -83,7 +83,7 @@ void ofApp::draw() {
 	ofEnablePointSprites();
 	
 	
-	texture.getTextureReference().bind();
+	texture.getTexture().bind();
 	vbo.updateVertexData(pos, NUM_BILLBOARDS);
 
 	// rotate the snow based on the velocity
@@ -91,7 +91,7 @@ void ofApp::draw() {
 	vbo.updateAttributeData(angleLoc, rotations, NUM_BILLBOARDS);
 
 	vbo.draw(GL_POINTS, 0, NUM_BILLBOARDS);
-	texture.getTextureReference().unbind();
+	texture.getTexture().unbind();
 
 	ofDisablePointSprites();
 	shader.end();

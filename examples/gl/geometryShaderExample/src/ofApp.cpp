@@ -51,7 +51,7 @@ void ofApp::draw(){
 	ofRotateY(mouseX);
 
 	for(unsigned int i=1; i<points.size(); i++) {
-		ofLine(points[i-1], points[i]);
+		ofDrawLine(points[i-1], points[i]);
 	}
 	
 	if(doShader) shader.end();

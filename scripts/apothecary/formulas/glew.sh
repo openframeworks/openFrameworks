@@ -11,7 +11,7 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
 # define the version
-VER=1.10.0
+VER=1.11.0
 
 # tools for git use
 GIT_URL=https://github.com/nigels-com/glew.git
@@ -34,32 +34,30 @@ function prepare() {
 function build() {
 
 	if [ "$TYPE" == "osx" ] ; then
-		# help from http://stackoverflow.com/questions/12229714/building-glew-for-mac-osx
-		
+
 		# GLEW will not allow one to simply supply OPT="-arch i386 -arch x86_64"
 		# so we build them separately.
 
 		# 32 bit
-		make clean; make glew.lib OPT="-arch i386"
+		make clean; make glew.lib OPT="-arch i386 -stdlib=libstdc++"
 		mv lib/libGLEW.a libGLEW-i386.a
 
 		# 64 bit
-		make clean; make glew.lib OPT="-arch x86_64"
+		make clean; make glew.lib OPT="-arch x86_64 -stdlib=libc++"
 		mv lib/libGLEW.a libGLEW-x86_64.a
 
-		# link into universal lib
+		# link into fat universal lib
 		lipo -c libGLEW-i386.a libGLEW-x86_64.a -o libGLEW.a
 
 	elif [ "$TYPE" == "vs" ] ; then
 		cd build/vc10
-		vs-build "glew.sln" Upgrade
+		#vs-clean "glew.sln"
+		#vs-upgrade "glew.sln"
 		vs-build "glew_static.vcxproj"
 		cd ../../
-		echoWarning "TODO: build vs"
-
 	elif [ "$TYPE" == "win_cb" ] ; then
-		#make glew.lib
-		echoWarning "TODO: build win_cb"
+		make clean
+		make
 	fi
 }
 
@@ -67,9 +65,13 @@ function build() {
 function copy() {
 
 	# headers
+	rm -r $1/include
 	mkdir -p $1/include
 	cp -Rv include/* $1/include
 
+	rm -r $1/lib/$TYPE/*
+	
+	
 	# libs
 	if [ "$TYPE" == "osx" ] ; then
 		mkdir -p $1/lib/$TYPE
@@ -77,11 +79,12 @@ function copy() {
 
 	elif [ "$TYPE" == "vs" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/glew32s.lib $1/lib/$TYPE
+		cp -v lib/Release/Win32/glew32s.lib $1/lib/$TYPE
 
 	elif [ "$TYPE" == "win_cb" ] ; then
+		# TODO: add cb formula
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/glew32s.lib $1/lib/$TYPE
+		cp -v lib/libglew32.a $1/lib/$TYPE
 	fi
 }
 
@@ -89,8 +92,9 @@ function copy() {
 function clean() {
 
 	if [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: clean vs"
-	
+		cd build/vc10
+		vs-clean "glew.sln"
+		cd ../../
 	else
 		make clean
 		rm -f *.a *.lib

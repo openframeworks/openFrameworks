@@ -92,14 +92,14 @@ void ofApp::draw() {
         ofPushMatrix();
         ofTranslate(i, j);
 				ofSetColor(0);
-        ofLine(0, 0, ofLerp(-windSpeed, windSpeed, field.x), ofLerp(-windSpeed, windSpeed, field.y));
+        ofDrawLine(0, 0, ofLerp(-windSpeed, windSpeed, field.x), ofLerp(-windSpeed, windSpeed, field.y));
         ofPopMatrix();
       }
     }
 		// draw the points as circles
 		ofSetColor(ofColor::red);
 		for(int i = 0; i < nPoints; i++) {
-      ofCircle(points[i], 2);
+		ofDrawCircle(points[i], 2);
 		}
   } else {
 		// when not in debug mode, draw all the points to the screen

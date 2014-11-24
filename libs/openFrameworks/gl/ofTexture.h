@@ -398,6 +398,10 @@ class ofTexture : public ofBaseDraws {
 	///
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
+#ifndef TARGET_OPENGLES
+	void loadData(const ofBufferObject & buffer, int glFormat, int glType);
+#endif
+
 	/// \brief Generate mipmap for the current texture.
 	///
 	/// \warning Only GL_TEXTURE_RECTANGLE - which is the default openFrameworks
@@ -541,6 +545,8 @@ class ofTexture : public ofBaseDraws {
 	/// \param z Draw position on the z axis.
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
+	ofMesh getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+
 	/// \brief Read current texture data from the GPU into pixels.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.
@@ -562,6 +568,10 @@ class ofTexture : public ofBaseDraws {
 	/// \param pixels Target pixels reference.
 	void readToPixels(ofFloatPixels & pixels) const;
 
+#ifndef TARGET_OPENGLES
+	void copyTo(ofBufferObject & buffer) const;
+#endif
+
 	/// \brief Bind the texture.
 	///
 	/// For advanced users who need to manually manage texture drawing without
@@ -579,7 +589,14 @@ class ofTexture : public ofBaseDraws {
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
 	///
 	void unbind(int textureLocation=0) const;
-	
+
+#ifndef TARGET_OPENGLES
+	/// glBindImageTexture: https://www.opengl.org/wiki/GLAPI/glBindImageTexture
+	///
+	/// binds the texture as an read or write image, only available since 4.2
+	void bindAsImage(GLuint unit, GLenum access, GLint level=0, GLboolean layered=0, GLint layer=0);
+#endif
+
 	void setAlphaMask(ofTexture & mask);
 	void disableAlphaMask();
 
@@ -667,7 +684,7 @@ class ofTexture : public ofBaseDraws {
 	/// Legacy function for backwards compatibility.
 	///
 	/// \returns true if the texture has been allocated.
-	bool bAllocated() const;
+	OF_DEPRECATED_MSG("Use isAllocated instead",bool bAllocated() const);
 	
 	/// \brief Has the texture been allocated?
 	/// \returns true if the texture has been allocated.

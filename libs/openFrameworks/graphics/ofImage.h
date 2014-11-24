@@ -145,15 +145,17 @@ public:
     /// \returns Returns whether the ofImage has a texture or not. 
     bool isUsingTexture() const;
 
-    /// \brief Returns the texture reference that the ofImage contains. 
+    /// \brief Returns the texture that the ofImage contains.
     ///
     /// You can use this to directly manipulate the texture itself, but keep in 
     /// mind that if you manipulate the texture directly, there is no simple way 
     /// to copy the data from the texture back to the pixels and keep the ofImage in sync.
     ///
-    /// \returns Returns the texture reference that the ofImage contains. 
-    ofTexture & getTextureReference();
-    const ofTexture & getTextureReference() const;
+    /// \returns Returns the texture that the ofImage contains.
+    ofTexture & getTexture();
+    const ofTexture & getTexture() const;
+    OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference());
+    OF_DEPRECATED_MSG("Use getTexture",const ofTexture & getTextureReference() const);
 
     // quick texture binding shortcut
     /// \brief Binds the oftexture instance that the ofImage contains so that it can be used for advanced drawing.
@@ -167,35 +169,41 @@ public:
     /// \brief Loads an image given by fileName.
     /// \param fileName Program looks for image given by fileName, relative to the data folder.
     /// \returns Returns true if image loaded correctly.
-    bool loadImage(string fileName);
+    bool load(string fileName);
+    OF_DEPRECATED_MSG("Use load instead",bool loadImage(string fileName));
     
     /// \brief Loads an image from an ofBuffer instance created by, for instance, ofFile::readToBuffer(). 
     ///
     /// This actually loads the image data into an ofPixels object and then into the texture.
-    bool loadImage(const ofBuffer & buffer);
+    bool load(const ofBuffer & buffer);
+    OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofBuffer & buffer));
     
     /// \brief Loads an image from an ofFile instance created by, for instance, ofDirectory::getFiles().
     ///
     /// This actually loads the image data into an ofPixels object and then into the texture.
-    bool loadImage(const ofFile & file);
+    bool load(const ofFile & file);
+    OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofFile & file));
     
     /// \brief Saves the image to the file path in fileName with the image quality specified by compressionLevel.
     /// \param fileName Saves image to this path, relative to the data folder.
     /// \param compressionLevel The different compression levels are: OF_IMAGE_QUALITY_BEST, OF_IMAGE_QUALITY_HIGH, 
     /// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
-    void saveImage(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+    void save(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+    OF_DEPRECATED_MSG("Use save instead",void saveImage(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST));
     
     /// \brief This saves the image to the ofBuffer passed with the image quality specified by compressionLevel. 
     /// \param buffer ofBuffer to save image to
     /// \param compressionLevel The different compression levels are: OF_IMAGE_QUALITY_BEST, OF_IMAGE_QUALITY_HIGH, 
     /// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
-    void saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+    void save(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+    OF_DEPRECATED_MSG("Use save instead",void saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST));
     
     /// \brief This saves the image to the ofFile passed with the image quality specified by compressionLevel. 
     /// \param file ofFile to save image to
     /// \param compressionLevel The different compression levels are: OF_IMAGE_QUALITY_BEST, OF_IMAGE_QUALITY_HIGH, 
     /// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
-    void saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+    void save(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
+    OF_DEPRECATED_MSG("Use save instead",void saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST));
     
     /// \brief This sets the compression level used when creating mipmaps for the ofTexture contained by the ofImage. 
     /// \param compression The different texture compression levels are: OF_COMPRESS_NONE, 
@@ -212,15 +220,16 @@ public:
     /// \warning This is a raw pointer. It's up to you to get this right.
     ///
     /// \returns Returns a raw pointer to the pixel data.
-    PixelType * getPixels();
+    ofPixels_<PixelType> & getPixels();
+    const ofPixels_<PixelType> & getPixels() const;
     
     /// \brief This returns an ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
     /// 
     /// Make sure you call either update() or reloadTexture() after making changes to the ofPixels.
     ///
     /// \returns Returns an ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
-    ofPixels_<PixelType> & getPixelsRef();
-    const ofPixels_<PixelType> & getPixelsRef() const;
+    OF_DEPRECATED_MSG("Use getPixels() instead ", ofPixels_<PixelType> & getPixelsRef());
+    OF_DEPRECATED_MSG("Use getPixels() instead ", const ofPixels_<PixelType> & getPixelsRef() const);
 
     operator ofPixels_<PixelType>&();
     
@@ -524,12 +533,11 @@ ofImage_<PixelType>::ofImage_(const ofImage_<SrcType>& mom) {
 template<typename PixelType>
 template<typename SrcType>
 void ofImage_<PixelType>::clone(const ofImage_<SrcType> &mom){
-	ofImage_<SrcType> & nonConst = const_cast<ofImage_<SrcType> & >(mom);
-	pixels = nonConst.getPixelsRef();
+	pixels = mom.getPixels();
 
 	tex.clear();
-	bUseTexture = nonConst.isUsingTexture();
-	if (bUseTexture == true && nonConst.getTextureReference().isAllocated()){
+	bUseTexture = mom.isUsingTexture();
+	if (bUseTexture == true && mom.getTexture().isAllocated()){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 	}
 

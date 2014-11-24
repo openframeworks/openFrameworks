@@ -22,16 +22,15 @@ class ofQTKitGrabber : public ofBaseVideoGrabber {
 		ofQTKitGrabber();
 		~ofQTKitGrabber();
 
-	    bool            initGrabber(int w, int h);
+	    bool            setup(int w, int h);
 	    //initGrabberNoPreview if you want to only use this grabber for recording
 	    bool            initGrabberWithoutPreview();
 		bool            isFrameNew() const;
 		void            update();
 		float           getWidth() const;
 		float           getHeight() const;
-		unsigned char * getPixels();
-        ofPixelsRef     getPixelsRef();
-        const ofPixelsRef getPixelsRef() const;
+        ofPixels&	    getPixels();
+        const ofPixels& getPixels() const;
 		void            setVerbose(bool bTalkToMe);
 
 		vector <ofVideoDevice> listDevices() const;

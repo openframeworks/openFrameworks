@@ -1203,20 +1203,7 @@ void ofAppEGLWindow::display() {
   ///////////////////////////////////////////////////////////////////////////////////////
   // set viewport, clear the screen
  
-  ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-  if(renderer){
-   renderer->startRender();
-  }
-
-  ofViewport(0, 0, getWindowWidth(), getWindowHeight());    // used to be glViewport( 0, 0, width, height );
-  
-  float * bgPtr = ofBgColorPtr();
-  bool bClearAuto = ofbClearBg();
-
-  if ( bClearAuto == true || ofGetFrameNum() < 3){
-    ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
-  }
-
+  ofGetCurrentRenderer()->startRender();
   if( bEnableSetupScreen ) ofSetupScreen(); // this calls into the current renderer (ofSetupScreenPerspective)
 
   ofNotifyDraw();
@@ -1256,10 +1243,7 @@ void ofAppEGLWindow::display() {
 
     }
    }
- 
-  if(renderer) {
-    renderer->finishRender();
-  }
+  ofGetCurrentRenderer()->finishRender();
 
   EGLBoolean success = eglSwapBuffers(eglDisplay, eglSurface);
   if(!success) {

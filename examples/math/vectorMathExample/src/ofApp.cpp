@@ -103,7 +103,7 @@ void ofApp::draw(){
 
      ofFill();
      ofSetHexColor(0xE5A93F);
-     ofRect(10,10,300,70);
+     ofDrawRectangle(10,10,300,70);
      ofSetHexColor(0x000000);
      ofDrawBitmapString(info,30,30);
 

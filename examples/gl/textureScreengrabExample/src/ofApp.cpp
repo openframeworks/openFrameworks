@@ -21,20 +21,20 @@ void ofApp::draw(){
 
 	// 1st, draw on screen:
 	ofSetHexColor(0x66CC33);	
-	ofRect(100,100,300,300);
+	ofDrawRectangle(100,100,300,300);
 	
 	ofSetHexColor(0xffffff);
 	ofPushMatrix();
 		ofTranslate(200,200,0);
 		ofRotate(counter,0,0,1);
-		ofCircle(0,0,80);
-		ofCircle(100,0,10);	// a small one
+		ofDrawCircle(0,0,80);
+		ofDrawCircle(100,0,10);	// a small one
 	ofPopMatrix();
 	ofSetHexColor(0x333333);
 	ofDrawBitmapString("(a) on screen", 150,200);
 
 	ofSetHexColor(0xFFCC33);	
-	ofCircle(mouseX, mouseY,20);
+	ofDrawCircle(mouseX, mouseY,20);
 	
 
 	// 2nd, grab a portion of the screen into a texture
