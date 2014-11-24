@@ -66,13 +66,13 @@ XCODE_DEV_ROOT=
 
 # used when building some libs for osx
 OSX_LATEST_SDK="xcrun -sdk macosx --show-sdk-version"
-OSX_SDK_VER=10.9
+OSX_SDK_VER=10.10
 OSX_MIN_SDK_VER=10.6
 
 # used when building for ios, the sdks you have installed are found in:
 # $XCODE_DEV_ROOT/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#.#.sdk
 IOS_LATEST_SDK="xcrun -sdk iphoneos --show-sdk-version" # stupid hack to keep my syntax highlighting from breaking :P
-IOS_SDK_VER=8.0
+IOS_SDK_VER=8.1
 IOS_MIN_SDK_VER=5.1
 
 # used when building for vs
