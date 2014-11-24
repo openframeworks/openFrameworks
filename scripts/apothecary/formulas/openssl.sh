@@ -3,7 +3,7 @@
 # openssl
 
 # define the version
-VER=1.0.1i
+VER=1.0.1j
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
 
@@ -45,13 +45,13 @@ function prepare() {
 		mkdir -p build/$TYPE/i386
 		mkdir -p build/$TYPE/x86_64
 		mkdir -p build/$TYPE/armv7
-		mkdir -p build/$TYPE/armv7s
+        #mkdir -p build/$TYPE/armv7s
 		mkdir -p build/$TYPE/arm64
 
 		mkdir -p lib/$TYPE/i386
 		mkdir -p lib/$TYPE/x86_64
 		mkdir -p lib/$TYPE/armv7
-		mkdir -p lib/$TYPE/armv7s
+        #mkdir -p lib/$TYPE/armv7s
 		mkdir -p lib/$TYPE/arm64
 
 		
@@ -225,8 +225,8 @@ function build() {
 		
 
 
-		local IOS_ARCHS="i386 x86_64 armv7 armv7s arm64"
-		local STDLIB="libc++"	
+        local IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
+		local STDLIB="libc++"
 
 
 		# Validate environment
@@ -369,14 +369,12 @@ function build() {
 		# stripping the lib prefix to bypass any issues with existing sdk libraries
 		echo "Creating Fat Lib for crypto"
 		lipo -create armv7/libcrypto.a \
-					armv7s/libcrypto.a \
 					arm64/libcrypto.a \
 					i386/libcrypto.a \
 					x86_64/libcrypto.a \
 					-output crypto.a
 		echo "Creating Fat Lib for ssl"
 		lipo -create armv7/libssl.a \
-					armv7s/libssl.a \
 					arm64/libssl.a \
 					i386/libssl.a \
 					x86_64/libssl.a \
