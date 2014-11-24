@@ -303,6 +303,11 @@ function installAndroidToolchain() {
 
 	local WD=$(pwd)
 
+	if [ ! -d $ANDROID_NDK_ROOT/build/tools ]; then
+		echoError "ANDROID_NDK_ROOT not defined, please configure ../../libs/openFrameworksCompiled/project/android/paths.make"
+	fi
+
+
 	cd $ANDROID_NDK_ROOT/build/tools
 
 	if [ ! -d "$BUILD_DIR/Toolchains/Android/androideabi" ]; then
