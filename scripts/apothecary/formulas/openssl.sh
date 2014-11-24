@@ -368,16 +368,16 @@ function build() {
 		cd lib/$TYPE/
 		# stripping the lib prefix to bypass any issues with existing sdk libraries
 		echo "Creating Fat Lib for crypto"
-		lipo -create armv7/libcrypto.a \
-					arm64/libcrypto.a \
-					i386/libcrypto.a \
-					x86_64/libcrypto.a \
+		lipo -create armv7/crypto.a \
+					arm64/crypto.a \
+					i386/crypto.a \
+					x86_64/crypto.a \
 					-output crypto.a
 		echo "Creating Fat Lib for ssl"
-		lipo -create armv7/libssl.a \
-					arm64/libssl.a \
-					i386/libssl.a \
-					x86_64/libssl.a \
+		lipo -create armv7/ssl.a \
+					arm64/ssl.a \
+					i386/ssl.a \
+					x86_64/ssl.a \
 					-output ssl.a
 		cd ../../
 
