@@ -54,8 +54,6 @@ function prepare() {
         #mkdir -p lib/$TYPE/armv7s
 		mkdir -p lib/$TYPE/arm64
 
-		
-
 		# make copies of the source files before modifying
 		cp Makefile Makefile.orig
 		cp Configure Configure.orig
@@ -63,15 +61,14 @@ function prepare() {
  	elif  [ "$TYPE" == "osx" ] ; then
 		mkdir -p lib/$TYPE
 		mkdir -p lib/include
- 	fi
-
-
+	elif [ "$TYPE" == "android" ] ; then
+		installAndroidToolchain
+	fi
 
 }
 
 # executed inside the lib src dir
 function build() {
-	
 
 	if [ "$TYPE" == "osx" ] ; then
 		
@@ -390,12 +387,10 @@ function build() {
 
 		unset TOOLCHAIN DEVELOPER
 	elif [ "$TYPE" == "android" ]; then
-		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
-		
         # armv7
         ABI=armeabi-v7a
         local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
-        source ../../formulas/android_configure.sh $ABI
+        source ../../formulas/android_configure.sh $ABI $BUILD_DIR/Toolchains/Android
         export CC="$CC $CFLAGS $LDFLAGS"
         ./Configure --prefix=$BUILD_TO_DIR -no-ssl2 -no-ssl3 -no-comp -no-hw -no-engine android-armv7 #--host armv7a-linux-android --enable-static=yes --enable-shared=no
         make clean
@@ -405,7 +400,7 @@ function build() {
         # x86
         ABI=x86
         local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
-        source ../../formulas/android_configure.sh $ABI
+        source ../../formulas/android_configure.sh $ABI $BUILD_DIR/Toolchains/Android
         export CC="$CC $CFLAGS $LDFLAGS"
         ./Configure --prefix=$BUILD_TO_DIR -no-ssl2 -no-ssl3 -no-comp -no-hw -no-engine android-x86 #--host x86-linux-android --enable-static=yes --enable-shared=no
         make clean
