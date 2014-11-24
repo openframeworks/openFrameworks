@@ -94,6 +94,16 @@ bool ofxCvImage::isUsingTexture() const{
 }
 
 //--------------------------------------------------------------------------------
+ofTexture& ofxCvImage::getTexture() {
+	return tex;
+}
+
+//--------------------------------------------------------------------------------
+const ofTexture & ofxCvImage::getTexture() const{
+	return tex;
+}
+
+//--------------------------------------------------------------------------------
 ofTexture& ofxCvImage::getTextureReference() {
 	return tex;
 }
@@ -864,12 +874,12 @@ void  ofxCvImage::resetImageROI( IplImage* img ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::setFromPixels( const ofPixels & pixels ){
-	setFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight());
+	setFromPixels(pixels.getData(),pixels.getWidth(),pixels.getHeight());
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::setRoiFromPixels( const ofPixels & pixels ){
-	setRoiFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight());
+	setRoiFromPixels(pixels.getData(),pixels.getWidth(),pixels.getHeight());
 }
 
 //--------------------------------------------------------------------------------

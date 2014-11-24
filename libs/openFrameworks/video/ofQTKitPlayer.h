@@ -39,8 +39,8 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		ofQTKitPlayer();
 		virtual ~ofQTKitPlayer();
 
-		bool                loadMovie(string path); //default mode is PIXELS_ONLY
-		bool                loadMovie(string path, ofQTKitDecodeMode mode);
+		bool                load(string path); //default mode is PIXELS_ONLY
+		bool                load(string path, ofQTKitDecodeMode mode);
 
 		void                closeMovie();
 		void                close();
@@ -62,7 +62,7 @@ class ofQTKitPlayer  : public ofBaseVideoPlayer {
 		// Returns openFrameworks compatible ofTexture pointer.
         // if decodeMode == OF_QTKIT_DECODE_PIXELS_ONLY,
         // the returned pointer will be NULL.
-		ofTexture * getTexture();
+		ofTexture * getTexturePtr();
 
 		float               getPosition() const;
 		float               getPositionInSeconds() const;

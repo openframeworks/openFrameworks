@@ -87,7 +87,7 @@ void ofApp::draw() {
     
 
     ofSetColor(0);
-    ofRect(0, 0, 250, 90);
+    ofDrawRectangle(0, 0, 250, 90);
     ofSetColor(255);
     ofDrawBitmapString("Mode "+ofToString(mode), 20, 20);
     ofDrawBitmapString("FPS "+ofToString(ofGetFrameRate(), 0), 20, 40);

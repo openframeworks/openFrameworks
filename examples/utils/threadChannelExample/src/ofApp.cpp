@@ -3,14 +3,14 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	grabber.setDeviceID(1);
-	grabber.initGrabber(640,480);
+	grabber.setup(640,480);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	grabber.update();
 	if(grabber.isFrameNew()){
-		analizer.analize(grabber.getPixelsRef());
+		analizer.analize(grabber.getPixels());
 	}
 	analizer.update();
 }

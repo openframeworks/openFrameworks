@@ -224,7 +224,7 @@ int	ofxUDPManager::SendAll(const char*	pBuff, const int iSize)
 		fd_set fd;
 		FD_ZERO(&fd);
 		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{m_dwTimeoutSend, 0};
+		timeval	tv=	{(time_t)m_dwTimeoutSend, 0};
 		if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 0)
 		{
 			ofxNetworkCheckError();
@@ -264,19 +264,24 @@ int	ofxUDPManager::PeekReceive()
 
 	//	we can use MSG_PEEK, but we still need a large buffer (udp protocol max is 64kb even if max for this socket is less)
 	//	don't want a 64kb stack item here, so instead read how much can be read (note: not queue size, there may be more data-more packets)
-	u_long Size = 0;
-	int Result = ioctlsocket( m_hSocket, FIONREAD, &Size );
+        #ifdef TARGET_WIN32
+                unsigned long size = 0;
+                int retVal = ioctlsocket(m_hSocket,FIONREAD,&size);
+        #else
+                int size  = 0;
+                int retVal = ioctl(m_hSocket,FIONREAD,&size);
+        #endif
 	
 	//	error
-	if ( Result != 0 )
+	if ( retVal != 0 )
 	{
 		//assert( Result == SOCKET_ERROR );
 		//	report error
-		int SocketError = ofxNetworkCheckError();
+		ofxNetworkCheckError();
 		return SOCKET_ERROR;
 	}
 
-	return Size;
+	return size;
 }
 
 

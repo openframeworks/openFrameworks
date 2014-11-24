@@ -4,10 +4,10 @@
 void ofApp::setup(){
     
     //load the image object
-    original.loadImage("myImage.jpg");
+    original.load("myImage.jpg");
     
     //get the pixels from the image
-    ofPixelsRef pixels = original.getPixelsRef();
+	ofPixelsRef pixels = original.getPixels();
 	
 	//let's manipulate the pixels by iterating through them
     //or a rough bluescreen
@@ -44,7 +44,7 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
 	if(key == 's'){
 		//we can save out the modified version here
-		keyed.saveImage("keyed_image.png");
+		keyed.save("keyed_image.png");
 	}
 }
 

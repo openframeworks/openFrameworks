@@ -24,7 +24,7 @@ void ofApp::update(){
 void ofApp::draw(){
 	ofSetColor(255);
 	for(int i=0;i<areas.size();i++){
-		ofRect(areas[i]);
+		ofDrawRectangle(areas[i]);
 	}
 	ofSetColor(255,0,0);
 	ofDrawBitmapString(ofToString(ofGetWidth())+","+ofToString(ofGetHeight()),20,20);

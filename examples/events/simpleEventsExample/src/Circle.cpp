@@ -32,7 +32,7 @@ void Circle::setup(int radius, int x, int y, ofColor color){
 void Circle::draw(){
     ofPushStyle();
     ofSetColor(color);
-    ofCircle(x,y, radius);
+	ofDrawCircle(x,y, radius);
     ofPopStyle();
 }
 
@@ -55,6 +55,7 @@ void Circle::mouseReleased(ofMouseEventArgs & args){
         ofNotifyEvent(clickedInsideGlobal, mousePos);
     }
 }
+void Circle::mouseScrolled(ofMouseEventArgs & args){}
 
 //this function checks if the passed arguments are inside the circle.
 bool Circle::inside(float _x, float _y ){

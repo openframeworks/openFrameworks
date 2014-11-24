@@ -89,8 +89,8 @@ class ofTexture;
 class ofBaseHasTexture{
 public:
 	virtual ~ofBaseHasTexture(){}
-	virtual ofTexture & getTextureReference()=0;
-	virtual const ofTexture & getTextureReference() const=0;
+	virtual ofTexture & getTexture()=0;
+	virtual const ofTexture & getTexture() const=0;
 	virtual void setUseTexture(bool bUseTex)=0;
 	virtual bool isUsingTexture() const=0;
 };
@@ -220,13 +220,13 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 
 	//needs implementing
 	virtual vector<ofVideoDevice>	listDevices() const = 0;
-	virtual bool	initGrabber(int w, int h) = 0;
+	virtual bool	setup(int w, int h) = 0;
 	
 	virtual float	getHeight() const = 0;
 	virtual float	getWidth() const = 0;
 
 	// implement only if internal API can upload directly to texture
-	virtual ofTexture * getTexture(){ return NULL; }
+	virtual ofTexture * getTexturePtr(){ return NULL; }
 
 	//should implement!
 	virtual void setVerbose(bool bTalkToMe);
@@ -246,11 +246,11 @@ public:
 	virtual ~ofBaseVideoPlayer();
 	
 	//needs implementing
-	virtual bool				loadMovie(string name) = 0;
+	virtual bool				load(string name) = 0;
 	
 	virtual void				play() = 0;
 	virtual void				stop() = 0;		
-	virtual ofTexture *			getTexture(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
+	virtual ofTexture *			getTexturePtr(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 	
 	virtual float 				getWidth() const = 0;
 	virtual float 				getHeight() const = 0;
@@ -293,6 +293,8 @@ public:
 
 	virtual const string & getType()=0;
 
+	virtual void startRender() = 0;
+	virtual void finishRender() = 0;
 	virtual void update()=0;
 
 	virtual void draw(const ofPolyline & poly) const=0;
@@ -383,15 +385,17 @@ public:
 	virtual void setHexColor( int hexColor )=0; // hex, like web 0xFF0033;
 
 	// bg color
-	virtual ofFloatColor & getBgColor()=0;
-	virtual bool bClearBg()=0;
+	virtual ofColor getBackgroundColor()=0;
+	virtual void setBackgroundColor(const ofColor & c)=0;
 	virtual void background(const ofColor & c)=0;
 	virtual void background(float brightness)=0;
 	virtual void background(int hexColor, float _a=255.0f)=0;
 	virtual void background(int r, int g, int b, int a=255)=0;
 
 	virtual void setBackgroundAuto(bool bManual)=0;	// default is true
+	virtual bool getBackgroundAuto()=0;
 
+	virtual void clear()=0;
 	virtual void clear(float r, float g, float b, float a=0)=0;
 	virtual void clear(float brightness, float a=0)=0;
 	virtual void clearAlpha()=0;

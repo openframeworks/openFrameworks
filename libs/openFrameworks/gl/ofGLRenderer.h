@@ -14,7 +14,7 @@ class of3dPrimitive;
 
 class ofGLRenderer: public ofBaseGLRenderer{
 public:
-	ofGLRenderer(bool useShapeColor=true);
+	ofGLRenderer(const ofAppBaseWindow * window);
 	~ofGLRenderer(){}
 
     static const string TYPE;
@@ -22,6 +22,8 @@ public:
 
 	void setCurrentFBO(const ofFbo * fbo);
 
+	void startRender();
+	void finishRender();
 	void update();
 	using ofBaseRenderer::draw;
 	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
@@ -118,15 +120,17 @@ public:
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	ofFloatColor & getBgColor();
-	bool bClearBg();
+	ofColor getBackgroundColor();
+	void setBackgroundColor(const ofColor & c);
 	void background(const ofColor & c);
 	void background(float brightness);
 	void background(int hexColor, float _a=255.0f);
 	void background(int r, int g, int b, int a=255);
 
 	void setBackgroundAuto(bool bManual);		// default is true
+	bool getBackgroundAuto();
 
+	void clear();
 	void clear(float r, float g, float b, float a=0);
 	void clear(float brightness, float a=0);
 	void clearAlpha();

@@ -22,7 +22,7 @@ public:
     ofAVFoundationPlayer();
     ~ofAVFoundationPlayer();
     
-    bool                loadMovie(string path);
+    bool                load(string path);
     
     void                close();
     
@@ -38,7 +38,7 @@ public:
     const ofPixels &    getPixels() const;
     ofPixels &          getPixels();
     
-    ofTexture *         getTexture();
+    ofTexture *         getTexturePtr();
     ofTexture &         getTextureReference();
     
     bool                isLoading() const;

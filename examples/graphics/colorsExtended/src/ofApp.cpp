@@ -226,7 +226,7 @@ void ofApp::draw(){
         int y = (floor(i / 3)) * 50;
         
         ofSetColor( colorNames[i].color );
-        ofRect(0 + x, y - offset, (i%3 == 2) ? ofGetWidth() - x : ofGetWidth()/3.0, 50);
+        ofDrawRectangle(0 + x, y - offset, (i%3 == 2) ? ofGetWidth() - x : ofGetWidth()/3.0, 50);
         
         ofDrawBitmapStringHighlight(colorNames[i].name, 20 + x, y -offset+30, ofColor::white, ofColor::black);
         
@@ -235,7 +235,7 @@ void ofApp::draw(){
     
     
     ofSetColor(0);
-    ofRect(0, ofGetHeight()-60, ofGetWidth(), 60);
+    ofDrawRectangle(0, ofGetHeight()-60, ofGetWidth(), 60);
     ofDrawBitmapStringHighlight("press '1' to sort by name, '2' to sort by hue,\n'3' to sort by brightness, '4' to sort by saturation", 20, ofGetHeight()-60 + 30, ofColor::black, ofColor::white);
     
     

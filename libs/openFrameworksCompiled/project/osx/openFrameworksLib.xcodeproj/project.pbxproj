@@ -509,7 +509,10 @@
 				E45BE5980E8CC70C009D7055 /* frameworks */,
 				E4B27C1510CBEB8E00536013 /* openFrameworksDebug.a */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 1;
 		};
 		E4F3BA5212F4C4BF002D19BB /* 3d */ = {
 			isa = PBXGroup;
@@ -761,7 +764,7 @@
 		E4B69B4C0A3A1720003C02F2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0600;
 			};
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "openFrameworksLib" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -938,6 +941,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/osx/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/osx/build/debug/";
 				OBJROOT = "$(SRCROOT)/../../lib/osx/build/debug/";
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Debug;

@@ -25,6 +25,11 @@
     #define OF_VID_PLAYER_TYPE ofAVFoundationPlayer
 #endif
 
+#ifdef OF_VIDEO_PLAYER_DIRECTSHOW
+    #include "ofDirectShowPlayer.h"
+    #define OF_VID_PLAYER_TYPE ofDirectShowPlayer
+#endif
+
 #ifdef OF_VIDEO_PLAYER_IOS
 	#include "ofxiOSVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
@@ -47,7 +52,9 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		ofVideoPlayer ();
 
-		bool 				loadMovie(string name);
+
+		bool 				load(string name);
+		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(string name));
 	    string				getMoviePath() const;
 
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
@@ -79,9 +86,11 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		void 				setUseTexture(bool bUse);
 		bool 				isUsingTexture() const;
-		ofTexture &			getTextureReference();
+		ofTexture &			getTexture();
+		const ofTexture &	getTexture() const;
+		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
+		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
 		vector<ofTexture> & getTexturePlanes();
-		const ofTexture &	getTextureReference() const;
 		const vector<ofTexture> & getTexturePlanes() const;
 		void 				draw(float x, float y, float w, float h) const;
 		void 				draw(float x, float y) const;

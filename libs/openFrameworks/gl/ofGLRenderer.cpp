@@ -15,8 +15,8 @@
 const string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------
-ofGLRenderer::ofGLRenderer(bool useShapeColor)
-:matrixStack(*ofGetWindowPtr()){
+ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * window)
+:matrixStack(window){
 	bBackgroundAuto = true;
 
 	linePoints.resize(2);
@@ -28,6 +28,26 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor)
 	lightingEnabled = true;
 	rectMode = OF_RECTMODE_CORNER;
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
+}
+
+void ofGLRenderer::startRender(){
+	viewport();
+    // to do non auto clear on PC for now - we do something like "single" buffering --
+    // it's not that pretty but it work for the most part
+
+    #ifdef TARGET_WIN32
+    if (getBackgroundAuto() == false){
+        glDrawBuffer (GL_FRONT);
+    }
+    #endif
+
+	if ( getBackgroundAuto() ){// || ofGetFrameNum() < 3){
+		clear();
+	}
+}
+
+void ofGLRenderer::finishRender(){
+
 }
 
 //----------------------------------------------------------
@@ -208,8 +228,8 @@ void ofGLRenderer::draw(const ofPath & shape) const{
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		const ofTexture& tex = image.getTextureReference();
-		if(tex.bAllocated()) {
+		const ofTexture& tex = image.getTexture();
+		if(tex.isAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
 			tex.unbind();
@@ -222,8 +242,8 @@ void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float 
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		const ofTexture& tex = image.getTextureReference();
-		if(tex.bAllocated()) {
+		const ofTexture& tex = image.getTexture();
+		if(tex.isAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
 			tex.unbind();
@@ -236,8 +256,8 @@ void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, f
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		const ofTexture& tex = image.getTextureReference();
-		if(tex.bAllocated()) {
+		const ofTexture& tex = image.getTexture();
+		if(tex.isAllocated()) {
 			tex.bind();
 			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
 			tex.unbind();
@@ -250,7 +270,7 @@ void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, f
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
 	if(video.isInitialized() && video.isUsingTexture()){
-		const ofTexture& tex = video.getTextureReference();
+		const ofTexture& tex = video.getTexture();
 		tex.bind();
 		draw(tex.getMeshForSubsection(x,y,0,w,h,0,0,w,h),false,true,false);
 		tex.unbind();
@@ -260,14 +280,14 @@ void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float 
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofBaseVideoDraws & video) const{
 	if(video.isInitialized() && video.isUsingTexture()){
-		video.getTextureReference().bind();
+		video.getTexture().bind();
 	}
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::unbind(const ofBaseVideoDraws & video) const{
 	if(video.isInitialized() && video.isUsingTexture()){
-		video.getTextureReference().unbind();
+		video.getTexture().unbind();
 	}
 }
 
@@ -682,6 +702,11 @@ void ofGLRenderer::setHexColor(int hexColor){
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::clear(){
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::clear(float r, float g, float b, float a) {
 	glClearColor(r / 255., g / 255., b / 255., a / 255.);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -706,19 +731,24 @@ void ofGLRenderer::setBackgroundAuto(bool bAuto){
 }
 
 //----------------------------------------------------------
-bool ofGLRenderer::bClearBg(){
+bool ofGLRenderer::getBackgroundAuto(){
 	return bBackgroundAuto;
 }
 
 //----------------------------------------------------------
-ofFloatColor & ofGLRenderer::getBgColor(){
+ofColor ofGLRenderer::getBackgroundColor(){
 	return bgColor;
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::setBackgroundColor(const ofColor & color){
+	bgColor = color;
+ 	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::background(const ofColor & c){
-	bgColor = c;
-	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+	setBackgroundColor(c);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

@@ -7,7 +7,7 @@ void ofApp::setup(){
 	ofSetOrientation(OF_ORIENTATION_90_LEFT);
 	// this makes the camera directly return grayscale image, faster!
 	grabber.setPixelFormat(OF_PIXELS_MONO);
-	grabber.initGrabber(320,240);
+	grabber.setup(320,240);
 	gray.allocate(grabber.getWidth(),grabber.getHeight());
 	bg.allocate(grabber.getWidth(),grabber.getHeight());
 	//diff.allocate(grabber.getWidth(),grabber.getHeight());

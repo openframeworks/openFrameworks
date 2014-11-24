@@ -9,7 +9,7 @@ void ofApp::setup(){
 	// Uncomment this to show movies with alpha channels
 	// fingerMovie.setPixelFormat(OF_PIXELS_RGBA);
 
-	fingerMovie.loadMovie("movies/fingers.mov");
+	fingerMovie.load("movies/fingers.mov");
 	fingerMovie.setLoopState(OF_LOOP_NORMAL);
 	fingerMovie.play();
 }
@@ -38,7 +38,7 @@ void ofApp::draw(){
         for (int j = 4; j < vidHeight; j+=8){
             unsigned char r = pixels[(j * 320 + i)*nChannels];
             float val = 1 - ((float)r / 255.0f);
-            ofCircle(400 + i,20+j,10*val);
+			ofDrawCircle(400 + i,20+j,10*val);
         }
     }
 

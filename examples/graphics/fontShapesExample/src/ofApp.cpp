@@ -4,8 +4,8 @@
 void ofApp::setup(){
 	ofBackground(255,255,255);
 
-	testFont.loadFont("Batang.ttf", 160, true, true, true);
-	testFont2.loadFont("cooperBlack.ttf", 52, true, true, true);
+	testFont.load("Batang.ttf", 160, true, true, true);
+	testFont2.load("cooperBlack.ttf", 52, true, true, true);
 
 	letter = '$';
 	testChar = testFont.getCharacterAsPoints(letter);

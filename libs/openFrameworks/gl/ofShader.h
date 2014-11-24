@@ -45,7 +45,7 @@ public:
 	void begin() const;
 	void end() const;
 	
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
 	void dispatchCompute(GLuint x, GLuint y, GLuint z) const;
 #endif
 

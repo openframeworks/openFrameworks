@@ -116,7 +116,7 @@ FREE_IMAGE_TYPE getFreeImageType(ofFloatPixels& pix) {
 //----------------------------------------------------
 template<typename PixelType>
 FIBITMAP* getBmpFromPixels(ofPixels_<PixelType> &pix){
-	PixelType* pixels = pix.getPixels();
+	PixelType* pixels = pix.getData();
 	unsigned int width = pix.getWidth();
 	unsigned int height = pix.getHeight();
 	unsigned int bpp = pix.getBitsPerPixel();
@@ -215,7 +215,7 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 	}
 
 #ifdef TARGET_LITTLE_ENDIAN
-	if(swapForLittleEndian && sizeof(PixelType) == 1) {
+	if(swapForLittleEndian && sizeof(PixelType) == 1 && channels >=3 ) {
 		pix.swapRgb();
 	}
 #endif
@@ -278,7 +278,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 	FIBITMAP* bmp = NULL;
 	FIMEMORY* hmem = NULL;
 	
-	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getBinaryBuffer(), buffer.size());
+	hmem = FreeImage_OpenMemory((unsigned char*) buffer.getData(), buffer.size());
 	if (hmem == NULL){
 		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer, opening FreeImage memory failed";
 		return false;
@@ -613,7 +613,7 @@ ofImage_<PixelType>::ofImage_(const ofFile & file){
 	ofInitFreeImage();
 
 
-	loadImage(file);
+	load(file);
 }
 
 template<typename PixelType>
@@ -628,7 +628,7 @@ ofImage_<PixelType>::ofImage_(const string & filename){
 	ofInitFreeImage();
 
 
-	loadImage(filename);
+	load(filename);
 }
 
 //----------------------------------------------------------
@@ -669,13 +669,19 @@ void ofImage_<PixelType>::reloadTexture(){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(const ofFile & file){
-	return loadImage(file.getAbsolutePath());
+bool ofImage_<PixelType>::load(const ofFile & file){
+	return load(file.getAbsolutePath());
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(string fileName){
+bool ofImage_<PixelType>::loadImage(const ofFile & file){
+	return load(file);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+bool ofImage_<PixelType>::load(string fileName){
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	registerImage(this);
 #endif
@@ -695,8 +701,15 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 	return bLoadedOk;
 }
 
+//----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
+bool ofImage_<PixelType>::loadImage(string fileName){
+	return load(fileName);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+bool ofImage_<PixelType>::load(const ofBuffer & buffer){
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
 	registerImage(this);
 #endif
@@ -718,20 +731,44 @@ bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(string fileName, ofImageQualityType qualityLevel){
+bool ofImage_<PixelType>::loadImage(const ofBuffer & buffer){
+	return load(buffer);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::save(string fileName, ofImageQualityType qualityLevel){
 	ofSaveImage(pixels, fileName, qualityLevel);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
+void ofImage_<PixelType>::save(ofBuffer & buffer, ofImageQualityType qualityLevel){
 	ofSaveImage(pixels, buffer, qualityLevel);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::saveImage(const ofFile & file, ofImageQualityType compressionLevel){
+void ofImage_<PixelType>::save(const ofFile & file, ofImageQualityType compressionLevel){
 	ofSaveImage(pixels,file.getAbsolutePath(),compressionLevel);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::saveImage(string fileName, ofImageQualityType qualityLevel){
+	save(fileName, qualityLevel);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::saveImage(ofBuffer & buffer, ofImageQualityType qualityLevel){
+	save(buffer, qualityLevel);
+}
+
+//----------------------------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::saveImage(const ofFile & file, ofImageQualityType compressionLevel){
+	save(file,compressionLevel);
 }
 
 // we could cap these values - but it might be more useful
@@ -877,29 +914,41 @@ ofImage_<PixelType>::operator ofPixels_<PixelType>&(){
 }
 
 //------------------------------------
-// for getting a reference to the texture
 template<typename PixelType>
-ofTexture & ofImage_<PixelType>::getTextureReference(){
+ofTexture & ofImage_<PixelType>::getTexture(){
 	return tex;
 }
 
 //------------------------------------
 template<typename PixelType>
-const ofTexture & ofImage_<PixelType>::getTextureReference() const{
+const ofTexture & ofImage_<PixelType>::getTexture() const{
 	return tex;
+}
+
+//------------------------------------
+// for getting a reference to the texture
+template<typename PixelType>
+ofTexture & ofImage_<PixelType>::getTextureReference(){
+	return getTexture();
+}
+
+//------------------------------------
+template<typename PixelType>
+const ofTexture & ofImage_<PixelType>::getTextureReference() const{
+	return getTexture();
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::bind(int textureLocation) const{
-	if (bUseTexture && tex.bAllocated())
+	if (bUseTexture && tex.isAllocated())
 		tex.bind(textureLocation);
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::unbind(int textureLocation) const{
-	if (bUseTexture && tex.bAllocated())
+	if (bUseTexture && tex.isAllocated())
 		tex.unbind(textureLocation);
 }
 
@@ -944,7 +993,7 @@ void  ofImage_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int
 //------------------------------------
 template<typename PixelType>
 void ofImage_<PixelType>::setFromPixels(const ofPixels_<PixelType> & pixels){
-	setFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight(),pixels.getImageType());
+	setFromPixels(pixels.getData(),pixels.getWidth(),pixels.getHeight(),pixels.getImageType());
 }
 
 //------------------------------------
@@ -1003,7 +1052,7 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
     
     glPushClientAttrib( GL_CLIENT_PIXEL_STORE_BIT );											// be nice to anyone else who might use pixelStore
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(_x, _y, _w, _h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, pixels.getPixels()); // read the memory....
+    glReadPixels(_x, _y, _w, _h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, pixels.getData()); // read the memory....
     glPopClientAttrib();
     
 	int sizeOfOneLineOfPixels = pixels.getWidth() * pixels.getBytesPerPixel();
@@ -1011,8 +1060,8 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
 	PixelType * linea;
 	PixelType * lineb;
 	for (int i = 0; i < pixels.getHeight()/2; i++){
-		linea = pixels.getPixels() + i * sizeOfOneLineOfPixels;
-		lineb = pixels.getPixels() + (pixels.getHeight()-i-1) * sizeOfOneLineOfPixels;
+		linea = pixels.getData() + i * sizeOfOneLineOfPixels;
+		lineb = pixels.getData() + (pixels.getHeight()-i-1) * sizeOfOneLineOfPixels;
 		memcpy(tempLineOfPix, linea, sizeOfOneLineOfPixels);
 		memcpy(linea, lineb, sizeOfOneLineOfPixels);
 		memcpy(lineb, tempLineOfPix, sizeOfOneLineOfPixels);

@@ -684,7 +684,7 @@ class ofTexture : public ofBaseDraws {
 	/// Legacy function for backwards compatibility.
 	///
 	/// \returns true if the texture has been allocated.
-	bool bAllocated() const;
+	OF_DEPRECATED_MSG("Use isAllocated instead",bool bAllocated() const);
 	
 	/// \brief Has the texture been allocated?
 	/// \returns true if the texture has been allocated.

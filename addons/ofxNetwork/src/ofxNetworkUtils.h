@@ -119,9 +119,6 @@ inline int ofxNetworkCheckErrno(const string & file, const string & line){
 		//ofLogError("ofxNetwork") << file << ": " << line << " EAGAIN: try again";
 		break;
 #endif
-	case OFXNETWORK_ERROR(WOULDBLOCK):
-		// represents "resource temporarily unavailable", can be ignored
-		break;
 	default:
 		ofLogError("ofxNetwork") << file << ": " << line << " unknown error: " << err << " see errno.h for description of the error";
 		break;

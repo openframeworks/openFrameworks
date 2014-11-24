@@ -216,12 +216,12 @@ bool ofxKinect::open(int id) {
 	bGotData = false;
 
 	freenect_set_user(kinectDevice, this);
-	freenect_set_depth_buffer(kinectDevice, depthPixelsRawBack.getPixels());
-	freenect_set_video_buffer(kinectDevice, videoPixelsBack.getPixels());
+	freenect_set_depth_buffer(kinectDevice, depthPixelsRawBack.getData());
+	freenect_set_video_buffer(kinectDevice, videoPixelsBack.getData());
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
 	freenect_set_video_callback(kinectDevice, &grabVideoFrame);
 
-	startThread(true, false); // blocking, not verbose
+	startThread(); // blocking, not verbose
 
 	return true;
 }
@@ -259,7 +259,7 @@ bool ofxKinect::open(string serial) {
 	freenect_set_depth_callback(kinectDevice, &grabDepthFrame);
 	freenect_set_video_callback(kinectDevice, &grabVideoFrame);
 	
-	startThread(true, false); // blocking, not verbose
+	startThread(); // blocking, not verbose
 	
 	return true;
 }
@@ -349,15 +349,15 @@ void ofxKinect::update() {
             if( videoPixels.getHeight() == videoPixelsIntra.getHeight() ){
                 swap(videoPixels,videoPixelsIntra);
             }else{
-                int minimumSize = MIN(videoPixels.size(), videoPixelsIntra.size());
-                memcpy(videoPixels.getPixels(), videoPixelsIntra.getPixels(), minimumSize);
+				int minimumSize = MIN(videoPixels.size(), videoPixelsIntra.size());
+				memcpy(videoPixels.getData(), videoPixelsIntra.getData(), minimumSize);
             }
 			bNeedsUpdateVideo = false;
 			this->unlock();
 		}
 
 		if(bUseTexture) {
-			videoTex.loadData(videoPixels.getPixels(), width, height, bIsVideoInfrared?GL_LUMINANCE:GL_RGB);
+			videoTex.loadData(videoPixels.getData(), width, height, bIsVideoInfrared?GL_LUMINANCE:GL_RGB);
 		}
 	} else {
 		bIsFrameNewVideo = false;
@@ -376,7 +376,7 @@ void ofxKinect::update() {
 		}
 
 		if(bUseTexture) {
-			depthTex.loadData(depthPixels.getPixels(), width, height, GL_LUMINANCE);
+			depthTex.loadData(depthPixels.getData(), width, height, GL_LUMINANCE);
 		}
 	} else {
 		bIsFrameNewDepth = false;
@@ -459,22 +459,6 @@ ofFloatPixels & ofxKinect::getDistancePixels(){
 	return distancePixels;
 }
 
-//------------------------------------
-ofTexture& ofxKinect::getTextureReference(){
-	if(!videoTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getTextureReference(): device " << deviceId << " video texture not allocated";
-	}
-	return videoTex;
-}
-
-//---------------------------------------------------------------------------
-ofTexture& ofxKinect::getDepthTextureReference(){
-	if(!depthTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getDepthTextureReference(): device " << deviceId << " depth texture not allocated";
-	}
-	return depthTex;
-}
-
 const ofPixels & ofxKinect::getPixels() const{
 	return videoPixels;
 }
@@ -492,19 +476,55 @@ const ofFloatPixels & ofxKinect::getDistancePixels() const{
 }
 
 //------------------------------------
-const ofTexture& ofxKinect::getTextureReference() const{
-	if(!videoTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getTextureReference(): device " << deviceId << " video texture not allocated";
+ofTexture& ofxKinect::getTexture(){
+	if(!videoTex.isAllocated()){
+		ofLogWarning("ofxKinect") << "getTexture(): device " << deviceId << " video texture not allocated";
 	}
 	return videoTex;
 }
 
 //---------------------------------------------------------------------------
-const ofTexture& ofxKinect::getDepthTextureReference() const{
-	if(!depthTex.bAllocated()){
-		ofLogWarning("ofxKinect") << "getDepthTextureReference(): device " << deviceId << " depth texture not allocated";
+ofTexture& ofxKinect::getDepthTexture(){
+	if(!depthTex.isAllocated()){
+		ofLogWarning("ofxKinect") << "getDepthTexture(): device " << deviceId << " depth texture not allocated";
 	}
 	return depthTex;
+}
+
+//------------------------------------
+const ofTexture& ofxKinect::getTexture() const{
+	if(!videoTex.isAllocated()){
+		ofLogWarning("ofxKinect") << "getTexture(): device " << deviceId << " video texture not allocated";
+	}
+	return videoTex;
+}
+
+//---------------------------------------------------------------------------
+const ofTexture& ofxKinect::getDepthTexture() const{
+	if(!depthTex.isAllocated()){
+		ofLogWarning("ofxKinect") << "getDepthTexture(): device " << deviceId << " depth texture not allocated";
+	}
+	return depthTex;
+}
+
+//------------------------------------
+ofTexture& ofxKinect::getTextureReference(){
+	return getTexture();
+}
+
+//---------------------------------------------------------------------------
+ofTexture& ofxKinect::getDepthTextureReference(){
+	return getDepthTexture();
+}
+
+//------------------------------------
+const ofTexture& ofxKinect::getTextureReference() const{
+	return getTexture();
+}
+
+//---------------------------------------------------------------------------
+const ofTexture& ofxKinect::getDepthTextureReference() const{
+	return getDepthTexture();
 }
 
 //---------------------------------------------------------------------------
@@ -750,7 +770,7 @@ void ofxKinect::grabDepthFrame(freenect_device *dev, void *depth, uint32_t times
 		swap(kinect->depthPixelsRawBack,kinect->depthPixelsRawIntra);
 		kinect->bNeedsUpdateDepth = true;
 		kinect->unlock();
-		freenect_set_depth_buffer(kinect->kinectDevice,kinect->depthPixelsRawBack.getPixels());
+		freenect_set_depth_buffer(kinect->kinectDevice,kinect->depthPixelsRawBack.getData());
     }
 }
 
@@ -764,7 +784,7 @@ void ofxKinect::grabVideoFrame(freenect_device *dev, void *video, uint32_t times
 		swap(kinect->videoPixelsBack,kinect->videoPixelsIntra);
 		kinect->bNeedsUpdateVideo = true;
 		kinect->unlock();
-		freenect_set_video_buffer(kinect->kinectDevice,kinect->videoPixelsBack.getPixels());
+		freenect_set_video_buffer(kinect->kinectDevice,kinect->videoPixelsBack.getData());
 	}
 }
 

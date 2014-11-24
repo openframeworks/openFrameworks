@@ -220,7 +220,7 @@ template<typename PixelType>
 void ofPixels_<PixelType>::copyFrom(const ofPixels_<PixelType> & mom){
 	if(mom.isAllocated()) {
 		allocate(mom.getWidth(), mom.getHeight(), mom.getPixelFormat());
-		memcpy(pixels, mom.getPixels(), mom.size() * sizeof(PixelType));
+		memcpy(pixels, mom.getData(), mom.size() * sizeof(PixelType));
 	}
 }
 
@@ -342,12 +342,6 @@ void ofPixels_<PixelType>::swap(ofPixels_<PixelType> & pix){
 }
 
 template<typename PixelType>
-PixelType * ofPixels_<PixelType>::getPixels(){
-	return pixels;
-}
-
-
-template<typename PixelType>
 ofPixels_<PixelType>::operator PixelType*(){
 	return pixels;
 }
@@ -358,8 +352,23 @@ ofPixels_<PixelType>::operator const PixelType*(){
 }
 
 template<typename PixelType>
+PixelType * ofPixels_<PixelType>::getPixels(){
+	return pixels;
+}
+
+template<typename PixelType>
 const PixelType * ofPixels_<PixelType>::getPixels() const{
-	return &pixels[0];
+	return pixels;
+}
+
+template<typename PixelType>
+PixelType * ofPixels_<PixelType>::getData(){
+	return pixels;
+}
+
+template<typename PixelType>
+const PixelType * ofPixels_<PixelType>::getData() const{
+	return pixels;
 }
 
 template<typename PixelType>
@@ -376,7 +385,9 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 	int newSize = bytesFromPixelFormat<PixelType>(w,h,format);
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==size()){
-		pixelFormat = format;
+        pixelFormat = format;
+        width = w;
+        height = h;
 		return; //we don't need to allocate
 	}
 
@@ -924,9 +935,7 @@ void ofPixels_<PixelType>::crop(int x, int y, int _width, int _height){
 	if (bAllocated){
 		ofPixels_<PixelType> crop;
 		cropTo(crop,x,y,_width,_height);
-		std::swap(crop.pixels,pixels);
-		width = crop.width;
-		height = crop.height;
+		swap(crop);
 	}
 }
 
@@ -1002,7 +1011,7 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 
 	if(rotation == 1){
 		PixelType * srcPixels = pixels;
-		PixelType * startPixels = dst.getPixels() + (strideDst - channels);
+		PixelType * startPixels = dst.getData() + (strideDst - channels);
 		for (int i = 0; i < height; ++i, --startPixels){
 			PixelType * dstPixels = startPixels;
 			for (int j = 0; j < width; ++j){
@@ -1152,7 +1161,7 @@ bool ofPixels_<PixelType>::resize(int dstWidth, int dstHeight, ofInterpolationMe
 	if(!resizeTo(dstPixels,interpMethod)) return false;
 
 	delete [] pixels;
-	pixels = dstPixels.getPixels();
+	pixels = dstPixels.getData();
 	width  = dstWidth;
 	height = dstHeight;
 	dstPixels.pixelsOwner = false;
@@ -1228,7 +1237,7 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 	int bytesPerPixel = getBytesPerPixel();
 
 
-	PixelType * dstPixels = dst.getPixels();
+	PixelType * dstPixels = dst.getData();
 
 	switch (interpMethod){
 
@@ -1327,8 +1336,8 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo
 
 	int bytesToCopyPerRow = (xTo + getWidth()<=dst.getWidth() ? getWidth() : dst.getWidth()-xTo) * getBytesPerPixel();
 	int columnsToCopy = yTo + getHeight() <= dst.getHeight() ? getHeight() : dst.getHeight()-yTo;
-	PixelType * dstPix = dst.getPixels() + ((xTo + yTo*dst.getWidth())*dst.getBytesPerPixel());
-	const PixelType * srcPix = getPixels();
+	PixelType * dstPix = dst.getData() + ((xTo + yTo*dst.getWidth())*dst.getBytesPerPixel());
+	const PixelType * srcPix = getData();
 	int srcStride = getWidth()*getBytesPerPixel();
 	int dstStride = dst.getWidth()*dst.getBytesPerPixel();
 

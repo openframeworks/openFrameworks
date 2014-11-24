@@ -8,9 +8,9 @@ void ofApp::setup(){
     
     // GL_REPEAT for texture wrap only works with NON-ARB textures //
     ofDisableArbTex();
-    texture.loadImage("of.png");
-    texture.getTextureReference().setTextureWrap( GL_REPEAT, GL_REPEAT );
-    vidGrabber.initGrabber(640, 480, true);
+    texture.load("of.png");
+    texture.getTexture().setTextureWrap( GL_REPEAT, GL_REPEAT );
+    vidGrabber.setup(640, 480, true);
     
     bFill       = true;
     bWireframe  = true;
@@ -95,8 +95,8 @@ void ofApp::draw() {
     ofNoFill();
     ofDrawSphere(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth());
     
-    if(mode == 1 || mode == 3) texture.getTextureReference().bind();
-    if(mode == 2) vidGrabber.getTextureReference().bind();
+    if(mode == 1 || mode == 3) texture.getTexture().bind();
+    if(mode == 2) vidGrabber.getTexture().bind();
     
     
     // Plane //
@@ -349,8 +349,8 @@ void ofApp::draw() {
         cone.setScale(1.0f);
     }
     
-    if(mode == 1 || mode == 3) texture.getTextureReference().unbind();
-    if(mode == 2) vidGrabber.getTextureReference().unbind();
+    if(mode == 1 || mode == 3) texture.getTexture().unbind();
+    if(mode == 2) vidGrabber.getTexture().unbind();
     
     material.end();
     ofDisableLighting();
@@ -388,32 +388,32 @@ void ofApp::draw() {
     ofFill();
     
     ofSetColor(0);
-    ofRect(plane.getPosition().x-154, plane.getPosition().y + 120, 140, 24);
+    ofDrawRectangle(plane.getPosition().x-154, plane.getPosition().y + 120, 140, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofPlanePrimitive", plane.getPosition().x-150, plane.getPosition().y+136 );
     
     ofSetColor(0);
-    ofRect(box.getPosition().x-154, box.getPosition().y + 120, 126, 24);
+    ofDrawRectangle(box.getPosition().x-154, box.getPosition().y + 120, 126, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofBoxPrimitive", box.getPosition().x-150, box.getPosition().y+136 );
     
     ofSetColor(0);
-    ofRect(sphere.getPosition().x-154, sphere.getPosition().y + 120, 148, 24);
+    ofDrawRectangle(sphere.getPosition().x-154, sphere.getPosition().y + 120, 148, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofSpherePrimitive", sphere.getPosition().x-150, sphere.getPosition().y+136 );
     
     ofSetColor(0);
-    ofRect(icoSphere.getPosition().x-154, icoSphere.getPosition().y + 120, 168, 24);
+    ofDrawRectangle(icoSphere.getPosition().x-154, icoSphere.getPosition().y + 120, 168, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofIcoSpherePrimitive", icoSphere.getPosition().x-150, icoSphere.getPosition().y+136 );
     
     ofSetColor(0);
-    ofRect(cylinder.getPosition().x-154, cylinder.getPosition().y + 120, 160, 24);
+    ofDrawRectangle(cylinder.getPosition().x-154, cylinder.getPosition().y + 120, 160, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofCylinderPrimitive", cylinder.getPosition().x-150, cylinder.getPosition().y+136 );
     
     ofSetColor(0);
-    ofRect(cone.getPosition().x-154, cone.getPosition().y + 120, 136, 24);
+    ofDrawRectangle(cone.getPosition().x-154, cone.getPosition().y + 120, 136, 24);
     ofSetColor(255);
     ofDrawBitmapString("ofConePrimitive", cone.getPosition().x-150, cone.getPosition().y+136 );
         
@@ -555,22 +555,22 @@ void ofApp::keyPressed(int key) {
     
     if(mode == 1) {
         // resize the plane to the size of the texture //
-        plane.resizeToTexture( texture.getTextureReference() );
+        plane.resizeToTexture( texture.getTexture() );
         // setTexCoordsFromTexture sets normalized or non-normalized tex coords based on an ofTexture passed in.
-        box.mapTexCoordsFromTexture( texture.getTextureReference() );
-        sphere.mapTexCoordsFromTexture( texture.getTextureReference() );
-        icoSphere.mapTexCoordsFromTexture( texture.getTextureReference() );
-        cylinder.mapTexCoordsFromTexture( texture.getTextureReference() );
-        cone.mapTexCoordsFromTexture( texture.getTextureReference() );
+        box.mapTexCoordsFromTexture( texture.getTexture() );
+        sphere.mapTexCoordsFromTexture( texture.getTexture() );
+        icoSphere.mapTexCoordsFromTexture( texture.getTexture() );
+        cylinder.mapTexCoordsFromTexture( texture.getTexture() );
+        cone.mapTexCoordsFromTexture( texture.getTexture() );
     }
     
     if(mode == 2) {
-        plane.resizeToTexture( vidGrabber.getTextureReference(), .5 );
-        box.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        sphere.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        icoSphere.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        cylinder.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
-        cone.mapTexCoordsFromTexture( vidGrabber.getTextureReference() );
+        plane.resizeToTexture( vidGrabber.getTexture(), .5 );
+        box.mapTexCoordsFromTexture( vidGrabber.getTexture() );
+        sphere.mapTexCoordsFromTexture( vidGrabber.getTexture() );
+        icoSphere.mapTexCoordsFromTexture( vidGrabber.getTexture() );
+        cylinder.mapTexCoordsFromTexture( vidGrabber.getTexture() );
+        cone.mapTexCoordsFromTexture( vidGrabber.getTexture() );
     }
     
     // 

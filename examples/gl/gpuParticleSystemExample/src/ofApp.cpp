@@ -44,8 +44,8 @@ void ofApp::setup(){
     }
     // Load this information in to the FBO�s texture
     posPingPong.allocate(textureRes, textureRes,GL_RGB32F);
-    posPingPong.src->getTextureReference().loadData(pos, textureRes, textureRes, GL_RGB);
-    posPingPong.dst->getTextureReference().loadData(pos, textureRes, textureRes, GL_RGB);
+    posPingPong.src->getTexture().loadData(pos, textureRes, textureRes, GL_RGB);
+    posPingPong.dst->getTexture().loadData(pos, textureRes, textureRes, GL_RGB);
     delete [] pos;    // Delete the array
     
     
@@ -58,12 +58,12 @@ void ofApp::setup(){
     }
     // Load this information in to the FBO�s texture
     velPingPong.allocate(textureRes, textureRes,GL_RGB32F);
-    velPingPong.src->getTextureReference().loadData(vel, textureRes, textureRes, GL_RGB);
-    velPingPong.dst->getTextureReference().loadData(vel, textureRes, textureRes, GL_RGB);
+    velPingPong.src->getTexture().loadData(vel, textureRes, textureRes, GL_RGB);
+    velPingPong.dst->getTexture().loadData(vel, textureRes, textureRes, GL_RGB);
     delete [] vel; // Delete the array
     
     // Loading and setings of the variables of the textures of the particles
-    sparkImg.loadImage("spark.png");
+    sparkImg.load("spark.png");
     imgWidth = sparkImg.getWidth();
     imgHeight = sparkImg.getHeight();
     
@@ -103,8 +103,8 @@ void ofApp::update(){
     velPingPong.dst->begin();
     ofClear(0);
     updateVel.begin();
-    updateVel.setUniformTexture("backbuffer", velPingPong.src->getTextureReference(), 0);   // passing the previus velocity information
-    updateVel.setUniformTexture("posData", posPingPong.src->getTextureReference(), 1);  // passing the position information
+    updateVel.setUniformTexture("backbuffer", velPingPong.src->getTexture(), 0);   // passing the previus velocity information
+    updateVel.setUniformTexture("posData", posPingPong.src->getTexture(), 1);  // passing the position information
     updateVel.setUniform1i("resolution", (int)textureRes); 
     updateVel.setUniform2f("screen", (float)width, (float)height);
     updateVel.setUniform1f("timestep", (float)timeStep);
@@ -125,8 +125,8 @@ void ofApp::update(){
     posPingPong.dst->begin();
     ofClear(0);
     updatePos.begin();
-    updatePos.setUniformTexture("prevPosData", posPingPong.src->getTextureReference(), 0); // Previus position
-    updatePos.setUniformTexture("velData", velPingPong.src->getTextureReference(), 1);  // Velocity
+    updatePos.setUniformTexture("prevPosData", posPingPong.src->getTexture(), 0); // Previus position
+    updatePos.setUniformTexture("velData", velPingPong.src->getTexture(), 1);  // Velocity
     updatePos.setUniform1f("timestep",(float) timeStep );
     
     // draw the source position texture to be updated
@@ -150,8 +150,8 @@ void ofApp::update(){
     renderFBO.begin();
     ofClear(0,0,0,0);
     updateRender.begin();
-    updateRender.setUniformTexture("posTex", posPingPong.dst->getTextureReference(), 0);
-    updateRender.setUniformTexture("sparkTex", sparkImg.getTextureReference() , 1);
+    updateRender.setUniformTexture("posTex", posPingPong.dst->getTexture(), 0);
+    updateRender.setUniformTexture("sparkTex", sparkImg.getTexture() , 1);
     updateRender.setUniform1i("resolution", (float)textureRes); 
     updateRender.setUniform2f("screen", (float)width, (float)height);
     updateRender.setUniform1f("size", (float)particleSize); 

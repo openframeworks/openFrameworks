@@ -21,7 +21,7 @@ void ofApp::setup(){
 	
 	//initialize the video grabber
 	vidGrabber.setVerbose(true);
-	vidGrabber.initGrabber(320,240);
+	vidGrabber.setup(320,240);
 
 	//store the width and height for convenience
 	int width = vidGrabber.getWidth();

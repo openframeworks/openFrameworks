@@ -41,6 +41,7 @@ public:
 	void setNormalBuffer(ofBufferObject & buffer, int stride, int offset=0);
 	void setTexCoordBuffer(ofBufferObject & buffer, int stride, int offset=0);
 	void setIndexBuffer(ofBufferObject & buffer);
+	
 	void setAttributeBuffer(int location, ofBufferObject & buffer, int numCoords, int stride, int offset=0);
 
 	ofBufferObject & getVertexBuffer();
@@ -56,6 +57,8 @@ public:
 	const ofBufferObject & getTexCoordBuffer() const;
 	const ofBufferObject & getIndexBuffer() const;
 
+	const ofBufferObject & getAttributeBuffer(int location) const;
+
 	void updateMesh(const ofMesh & mesh);
 
 	void updateVertexData(const ofVec3f * verts, int total);
@@ -69,7 +72,7 @@ public:
 	void updateColorData(const float * color0r, int total);
 	void updateNormalData(const float * normal0x, int total);
 	void updateTexCoordData(const float * texCoord0x, int total);
-	
+
 	void updateAttributeData(int location, const float * vert0x, int total);
 
 	void enableColors();
@@ -82,11 +85,15 @@ public:
 	void disableTexCoords();
 	void disableIndices();
 
+	GLuint getVaoId() const;
 	GLuint getVertId() const;
 	GLuint getColorId() const;
 	GLuint getNormalId() const;
 	GLuint getTexCoordId() const;
 	GLuint getIndexId() const;
+	
+	/// returns OpenGL memory object id for GL buffer holding attribute data
+	GLuint  getAttributeId(int AttrPos_) const;
 	
 	bool getIsAllocated() const;
 	bool getUsingVerts() const;
@@ -111,6 +118,8 @@ public:
 	void clearColors();
 	void clearTexCoords();
 	void clearIndices();
+	
+	void clearAttribute(int attributePos_);
 
 	int getNumVertices() const;
 	int getNumIndices() const;
@@ -118,6 +127,9 @@ public:
 
 	static void disableVAOs();
 	static void enableVAOs();
+
+
+	bool hasAttribute(int attributePos_) const;
 
 private:
 
@@ -129,6 +141,8 @@ private:
 		void unbind() const;
 		void setData(GLsizeiptr bytes, const void * data, GLenum usage);
 		void updateData(GLintptr offset, GLsizeiptr bytes, const void * data);
+		void setData(const float * attrib0x, int numCoords, int total, int usage, int stride, bool normalize=false);
+		void setBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset);
 		void enable() const;
 		void disable() const;
 		GLuint getId() const;
@@ -155,10 +169,6 @@ private:
 	GLuint vaoID;
 	mutable bool vaoChanged;
 
-	VertexAttribute vertexAttribute;
-	VertexAttribute normalAttribute;
-	VertexAttribute colorAttribute;
-	VertexAttribute texCoordAttribute;
 	IndexAttribute indexAttribute;
 
 	mutable bool bUsingVerts;		// need at least vertex data
@@ -170,10 +180,11 @@ private:
 	int	totalVerts;
 	int	totalIndices;
 
-	mutable bool bBound;
-
+	VertexAttribute positionAttribute;
+	VertexAttribute colorAttribute;
+	VertexAttribute texCoordAttribute;
+	VertexAttribute normalAttribute;
 	map<int,VertexAttribute> customAttributes;
-
-	static bool vaoChecked;
-	static bool supportVAOs;
+	
+	VertexAttribute & getOrCreateAttr(int location);
 };
