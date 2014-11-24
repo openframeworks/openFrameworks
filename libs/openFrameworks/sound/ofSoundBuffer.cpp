@@ -16,16 +16,35 @@ ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundB
 ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundBuffer::Linear;
 #endif
 
-ofSoundBuffer::ofSoundBuffer() {
-	channels=1;
-	samplerate=44100;
-	tickCount=0;
+ofSoundBuffer::ofSoundBuffer()
+: channels(1)
+, samplerate(44100)
+, tickCount(0) {
+
+}
+
+ofSoundBuffer::ofSoundBuffer(const ofSoundBuffer &other)
+: buffer(other.buffer)
+, channels(other.channels)
+, samplerate(other.samplerate)
+, tickCount(other.tickCount)
+, soundStreamDeviceID(other.soundStreamDeviceID) {
+
 }
 
 ofSoundBuffer::ofSoundBuffer(short * shortBuffer, unsigned int numFrames, int _channels, int _samplerate){
 	tickCount=0;
 	copyFrom(shortBuffer,numFrames,_channels,_samplerate);
 	checkSizeAndChannelsConsistency("constructor");
+}
+
+ofSoundBuffer& ofSoundBuffer::operator=(ofSoundBuffer other) {
+	swap(other);
+	return *this;
+}
+
+ofSoundBuffer::~ofSoundBuffer() {
+
 }
 
 void ofSoundBuffer::copyFrom(short * shortBuffer, size_t numFrames, int _channels, int _samplerate){
@@ -111,9 +130,11 @@ const float & ofSoundBuffer::getSample(size_t frameIndex, unsigned int channel) 
 }
 
 void ofSoundBuffer::swap(ofSoundBuffer & buffer){
-	std::swap(channels,buffer.channels);
-	std::swap(samplerate,buffer.samplerate);
-	std::swap(this->buffer,buffer.buffer);
+	std::swap(this->channels, buffer.channels);
+	std::swap(this->samplerate, buffer.samplerate);
+	std::swap(this->tickCount, buffer.tickCount);
+	std::swap(this->soundStreamDeviceID, buffer.soundStreamDeviceID);
+	std::swap(this->buffer, buffer.buffer);
 }
 
 ofSoundBuffer ofSoundBuffer::operator*(float value){

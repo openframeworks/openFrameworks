@@ -84,8 +84,11 @@
 class ofSoundBuffer {
 public:
 	ofSoundBuffer();
+	ofSoundBuffer(const ofSoundBuffer &other);
 	/// initialise by converting samples from a signed short (16-bit) buffer containing numFrames frames of numChannels channels of audio data.
 	ofSoundBuffer(short * shortBuffer, unsigned int numFrames, int numChannels, int sampleRate);
+	ofSoundBuffer& operator=(ofSoundBuffer other);
+	~ofSoundBuffer();
 
 	enum InterpolationAlgorithm{
 		Linear,
