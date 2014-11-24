@@ -9,6 +9,7 @@
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/app/gstappsink.h>
+#include "ofConstants.h"
 
 
 ofGstVideoPlayer::ofGstVideoPlayer(){
@@ -20,6 +21,8 @@ ofGstVideoPlayer::ofGstVideoPlayer(){
 	threadAppSink				= false;
 	bAsyncLoad					= false;
 	videoUtils.setSinkListener(this);
+	fps_d = 1;
+	fps_n = 1;
 }
 
 ofGstVideoPlayer::~ofGstVideoPlayer(){
@@ -182,7 +185,7 @@ bool ofGstVideoPlayer::createPipeline(string name){
 	return videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
 }
 
-bool ofGstVideoPlayer::loadMovie(string name){
+bool ofGstVideoPlayer::load(string name){
 	if( name.find( "file://",0 ) != string::npos){
 		bIsStream = bAsyncLoad;
 	}else if( name.find( "://",0 ) == string::npos){
@@ -412,16 +415,12 @@ bool ofGstVideoPlayer::isFrameNew() const {
 	return videoUtils.isFrameNew();
 }
 
-unsigned char * ofGstVideoPlayer::getPixels(){
+ofPixels& ofGstVideoPlayer::getPixels(){
 	return videoUtils.getPixels();
 }
 
-ofPixels& ofGstVideoPlayer::getPixelsRef(){
-	return videoUtils.getPixelsRef();
-}
-
-const ofPixels& ofGstVideoPlayer::getPixelsRef() const {
-	return videoUtils.getPixelsRef();
+const ofPixels& ofGstVideoPlayer::getPixels() const {
+	return videoUtils.getPixels();
 }
 
 float ofGstVideoPlayer::getHeight() const {

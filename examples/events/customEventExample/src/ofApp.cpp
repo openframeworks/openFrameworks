@@ -150,9 +150,9 @@ void ofApp::draw(){
     // draw the bug holes
     for(unsigned int i=0; i<holes.size(); i++) {
         ofSetColor(100);
-        ofCircle(holes[i], 10);
+		ofDrawCircle(holes[i], 10);
         ofSetColor(40);
-        ofCircle(holes[i], 7);
+		ofDrawCircle(holes[i], 7);
     }
     
     for(unsigned int i=0; i<bugs.size(); i++) {
@@ -189,23 +189,23 @@ void ofApp::draw(){
     
     ofFill();
     ofSetColor(10);
-    ofRect(-10, 0, 20, 100);
+    ofDrawRectangle(-10, 0, 20, 100);
     
     float bulletPct = ofMap(bullets.size(), 0, maxBullets, 0.0, 100.0);
     ofSetColor(100);
-    ofRect(-10, 0, 20, bulletPct);
+    ofDrawRectangle(-10, 0, 20, bulletPct);
     
     ofSetColor(100);
-    ofRect(-10, 90, 20, 10);
+    ofDrawRectangle(-10, 90, 20, 10);
     
     if(bFire) {
         ofSetColor(220, 0, 0);
-        ofRect(-10, 97, 20, 3);
+        ofDrawRectangle(-10, 97, 20, 3);
     }
     ofPopMatrix();
     
     ofSetColor(255);
-    ofCircle(gunPos.x, gunPos.y, 2);
+	ofDrawCircle(gunPos.x, gunPos.y, 2);
     
 }
 

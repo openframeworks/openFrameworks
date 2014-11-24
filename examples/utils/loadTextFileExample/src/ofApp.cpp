@@ -14,13 +14,10 @@ void ofApp::setup() {
     ofBuffer buffer = ofBufferFromFile("ohplaces.txt");
     
     if(buffer.size()) { 
-                
-        // we now keep grabbing the next line
-        // until we reach the end of the file
-        while(buffer.isLastLine() == false) {
-            
-            // move on to the next line
-            string line = buffer.getNextLine();
+
+		for (ofBuffer::Line it = buffer.getLines().begin(), end = buffer.getLines().end(); it != end; ++it) {
+
+			string line = *it;
             
             // copy the line to draw later
             // make sure its not a empty line
@@ -58,7 +55,7 @@ void ofApp::draw() {
     
     // draw the line
     ofSetColor(0);
-    ofRect(x, y, strWidth, 15);
+    ofDrawRectangle(x, y, strWidth, 15);
     ofSetColor(255);
     ofDrawBitmapString(typedLine, x+4, y+11);
     

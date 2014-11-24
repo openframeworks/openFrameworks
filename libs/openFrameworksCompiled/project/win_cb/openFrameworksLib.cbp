@@ -146,6 +146,12 @@
 		<Unit filename="../../../openFrameworks/events/ofEvents.h">
 			<Option virtualFolder="openframeworks/events/" />
 		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofBufferObject.cpp">
+			<Option virtualFolder="openframeworks/gl/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/gl/ofBufferObject.h">
+			<Option virtualFolder="openframeworks/gl/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/gl/ofFbo.cpp">
 			<Option virtualFolder="openframeworks/gl/" />
 		</Unit>
@@ -392,6 +398,12 @@
 		<Unit filename="../../../openFrameworks/utils/ofFileUtils.h">
 			<Option virtualFolder="openframeworks/utils/" />
 		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofFpsCounter.h">
+			<Option virtualFolder="openframeworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofFpsCounter.cpp">
+			<Option virtualFolder="openframeworks/utils/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/utils/ofLog.cpp">
 			<Option virtualFolder="openframeworks/utils/" />
 		</Unit>
@@ -417,6 +429,12 @@
 			<Option virtualFolder="openframeworks/utils/" />
 		</Unit>
 		<Unit filename="../../../openFrameworks/utils/ofThread.h">
+			<Option virtualFolder="openframeworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofTimer.h">
+			<Option virtualFolder="openframeworks/utils/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/utils/ofTimer.cpp">
 			<Option virtualFolder="openframeworks/utils/" />
 		</Unit>
 		<Unit filename="../../../openFrameworks/utils/ofURLFileLoader.cpp">

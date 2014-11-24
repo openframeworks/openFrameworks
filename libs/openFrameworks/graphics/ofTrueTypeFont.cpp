@@ -400,7 +400,7 @@ void ofTrueTypeFont::unloadTextures(){
 }
 
 void ofTrueTypeFont::reloadTextures(){
-	loadFont(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
+	load(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
 }
 
 static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string & filename){
@@ -448,9 +448,13 @@ static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string 
 
 	return true;
 }
-
 //-----------------------------------------------------------
 bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
+	return load(_filename, _fontSize, _bAntiAliased, _bFullCharacterSet, _makeContours, _simplifyAmt, _dpi);
+}
+
+//-----------------------------------------------------------
+bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
 
 	initLibraries();
 

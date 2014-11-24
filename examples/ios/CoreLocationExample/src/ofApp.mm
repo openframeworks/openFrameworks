@@ -11,8 +11,8 @@ void ofApp::setup(){
 	hasCompass = coreLocation->startHeading();
 	hasGPS = coreLocation->startLocation();
 	
-	arrowImg.loadImage("arrowLong.png");
-	compassImg.loadImage("compass.png");
+	arrowImg.load("arrowLong.png");
+	compassImg.load("compass.png");
 	
 	compassImg.setAnchorPoint(160, 200);
 	arrowImg.setAnchorPercent(0.5, 1.0);

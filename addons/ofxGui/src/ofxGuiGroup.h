@@ -39,6 +39,7 @@ public:
 	virtual bool mousePressed(ofMouseEventArgs & args);
 	virtual bool mouseDragged(ofMouseEventArgs & args);
 	virtual bool mouseReleased(ofMouseEventArgs & args);
+	virtual bool mouseScrolled(ofMouseEventArgs & args);
 	
 	
 	vector<string> getControlNames();

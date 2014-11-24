@@ -63,7 +63,7 @@ void ofApp::keyReleased(int key){
 		//
 		ofFileDialogResult saveFileResult = ofSystemSaveDialog(ofGetTimestampString() + "." + ofToLower(originalFileExtension), "Save your file");
 		if (saveFileResult.bSuccess){
-			processedImages[0].saveImage(saveFileResult.filePath);
+			processedImages[0].save(saveFileResult.filePath);
 		}
 	}
 	
@@ -99,7 +99,7 @@ void ofApp::processOpenFileSelection(ofFileDialogResult openFileResult){
 			
 			//Load the selected image
 			ofImage image;
-			image.loadImage(openFileResult.getPath());
+			image.load(openFileResult.getPath());
 			if (image.getWidth()>ofGetWidth() || image.getHeight() > ofGetHeight()) 
 			{
 				image.resize(image.getWidth()/2, image.getHeight()/2);

@@ -75,7 +75,7 @@ void ofApp::draw(){
 	
 	// draw a line connecting the box to the grid
 	ofSetColor(yellow);
-	ofLine(current.x, current.y, current.z, current.x, 0, current.z);
+	ofDrawLine(current.x, current.y, current.z, current.x, 0, current.z);
 	
 	// translate and rotate to the current position and orientation
 	ofTranslate(current.x, current.y, current.z);

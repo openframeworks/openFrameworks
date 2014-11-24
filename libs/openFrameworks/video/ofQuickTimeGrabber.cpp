@@ -106,7 +106,7 @@ ofPixelFormat ofQuickTimeGrabber::getPixelFormat() const {
 }
 
 //--------------------------------------------------------------------
-bool ofQuickTimeGrabber::initGrabber(int w, int h){
+bool ofQuickTimeGrabber::setup(int w, int h){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -397,17 +397,12 @@ void ofQuickTimeGrabber::update(){
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofQuickTimeGrabber::getPixels(){
-	return pixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-ofPixels& ofQuickTimeGrabber::getPixelsRef(){
+ofPixels& ofQuickTimeGrabber::getPixels(){
 	return pixels;
 }
 
 //---------------------------------------------------------------------------
-const ofPixels& ofQuickTimeGrabber::getPixelsRef() const {
+const ofPixels& ofQuickTimeGrabber::getPixels() const {
 	return pixels;
 }
 

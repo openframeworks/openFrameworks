@@ -8,7 +8,7 @@ void ofApp::setup(){
 	ofEnableAlphaBlending();
 
 	//we load a font and tell OF to make outlines so we can draw it as GL shapes rather than textures
-	font.loadFont("type/verdana.ttf", 80, true, false, true, 0.4, 72);
+	font.load("type/verdana.ttf", 80, true, false, true, 0.4, 72);
 	shader.load("shaders/noise.vert", "shaders/noise.frag");
 
 	doShader = false;

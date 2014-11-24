@@ -9,11 +9,6 @@
 
 
 //------------------------------------------------------------------------------
-int receiveAudioBufferAndCallSimpleApp(void *outputBuffer, void *inputBuffer, unsigned int bufferSize,
-           double streamTime, RtAudioStreamStatus status, void *data);
-
-
-//------------------------------------------------------------------------------
 ofRtAudioSoundStream::ofRtAudioSoundStream(){
 	outDeviceID		= -1;
     inDeviceID		= -1;
