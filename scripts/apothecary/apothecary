@@ -79,7 +79,8 @@ IOS_MIN_SDK_VER=5.1
 VS_VER=11
 
 # used when compiling for android
-ANDROID_NDK_ROOT=path_to_ndk/root
+ANDROID_NDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep NDK_ROOT | sed 's/.*=\(.*\)/\1/'`
+ANDROID_SDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep SDK_ROOT | sed 's/.*=\(.*\)/\1/'`
 ANDROID_PLATFORM=android-19
 
 ################################################################################
