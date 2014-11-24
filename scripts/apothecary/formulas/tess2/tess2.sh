@@ -70,7 +70,7 @@ function build() {
 
 	elif [ "$TYPE" == "ios" ] ; then
 	
-		IOS_ARCHS="i386 x86_64 armv7 armv7s arm64"
+		IOS_ARCHS="i386 x86_64 armv7 arm64" # armv7s
 
 		SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`	
 		set -e
@@ -191,8 +191,9 @@ function build() {
 		# link into universal lib
 		echo "Running lipo to create fat lib"
 		echo "Please stand by..."
+
+		# builddir/$TYPE/libtess2-armv7s.a \
 		lipo -create builddir/$TYPE/libtess2-armv7.a \
-			 	builddir/$TYPE/libtess2-armv7s.a \
 			 	builddir/$TYPE/libtess2-arm64.a \
 			 	builddir/$TYPE/libtess2-i386.a \
 			 	builddir/$TYPE/libtess2-x86_64.a \
@@ -243,11 +244,11 @@ function copy() {
 	
 	# headers
 	mkdir -p $1/include
-	cp -v Include/* $1/include
+	cp -Rv Include/ $1/include
 
 	# source
-	mkdir -p $1/Source
-	cp -v Source/* $1/Sources
+	mkdir -p $1/Sources
+	cp -Rv Source/ $1/Sources
 
 	# lib
 	mkdir -p $1/lib/$TYPE
