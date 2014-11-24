@@ -59,7 +59,8 @@ enum ofTargetPlatform{
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
 #elif defined( __APPLE_CC__)
-	#include <TargetConditionals.h>
+    #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
+    #include <TargetConditionals.h>
 
 	#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 		#define TARGET_OF_IPHONE
@@ -91,8 +92,9 @@ enum ofTargetPlatform{
 #ifdef TARGET_WIN32
 	//this is for TryEnterCriticalSection
 	//http://www.zeroc.com/forums/help-center/351-ice-1-2-tryentercriticalsection-problem.html
+	//http://msdn.microsoft.com/en-us/library/6sehtctf.aspx
 	#ifndef _WIN32_WINNT
-		#define _WIN32_WINNT 0x500
+		#define _WIN32_WINNT 0x501
 	#endif
 	#define WIN32_LEAN_AND_MEAN
 
