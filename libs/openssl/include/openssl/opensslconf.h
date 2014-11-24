@@ -1,6 +1,9 @@
 /* opensslconf.h */
 /* WARNING: Generated automatically from opensslconf.h.in by Configure. */
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
 /* OpenSSL was configured with the following options: */
 #ifndef OPENSSL_SYSNAME_MACOSX
 # define OPENSSL_SYSNAME_MACOSX
@@ -92,6 +95,13 @@
 
 /* Generate 80386 code? */
 #undef I386_ONLY
+
+#if !(defined(VMS) || defined(__VMS)) /* VMS uses logical names instead */
+#if defined(HEADER_CRYPTLIB_H) && !defined(OPENSSLDIR)
+#define ENGINESDIR "/Users/danielrosser/Documents/openFrameworks/scripts/apothecary/build/openssl/build/ios/x86_64/lib/engines"
+#define OPENSSLDIR "/Users/danielrosser/Documents/openFrameworks/scripts/apothecary/build/openssl/build/ios/x86_64"
+#endif
+#endif
 
 #undef OPENSSL_UNISTD
 #define OPENSSL_UNISTD <unistd.h>
@@ -235,3 +245,6 @@ YOU SHOULD NOT HAVE BOTH DES_RISC1 AND DES_RISC2 DEFINED!!!!!
 
 #endif /* DES_DEFAULT_OPTIONS */
 #endif /* HEADER_DES_LOCL_H */
+#ifdef  __cplusplus
+}
+#endif
