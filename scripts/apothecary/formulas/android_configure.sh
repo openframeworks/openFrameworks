@@ -1,26 +1,26 @@
 export ABI=$1
-export TOOLCHAIN_PATH=$2
-
+export LIBSPATH=android/$ABI
+export NDK_PLATFORM=android-19
+export HOST_PLATFORM=linux-x86_64
+export TOOLCHAIN_VERSION=4.8
 if [ $ABI = armeabi-v7a ] || [ $ABI = armeabi ]; then
-    export TOOLCHAIN=androideabi
+    export SYSROOT=${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-arm
     export ANDROID_PREFIX=arm-linux-androideabi
+    export TOOLCHAIN=$ANDROID_PREFIX-4.8
 elif [ $ABI = x86 ]; then
-    export TOOLCHAIN=x86
-    export ANDROID_PREFIX=arm-linux-androideabi
+    export SYSROOT=${NDK_ROOT}/platforms/${NDK_PLATFORM}/arch-x86
+    export ANDROID_PREFIX=i686-linux-android
+    export TOOLCHAIN=x86-4.8
 fi
+export TOOLCHAIN_PATH=${NDK_ROOT}/toolchains/${TOOLCHAIN}/prebuilt/${HOST_PLATFORM}/bin/
+export CC=${NDK_ROOT}/toolchains/${TOOLCHAIN}/prebuilt/${HOST_PLATFORM}/bin/${ANDROID_PREFIX}-gcc
+export CXX=${NDK_ROOT}/toolchains/${TOOLCHAIN}/prebuilt/${HOST_PLATFORM}/bin/${ANDROID_PREFIX}-g++
+export AR=${NDK_ROOT}/toolchains/${TOOLCHAIN}/prebuilt/${HOST_PLATFORM}/bin/${ANDROID_PREFIX}-ar
+export CFLAGS="--sysroot=${SYSROOT} -fno-short-enums"
 
-export TOOL=${TOOLCHAIN_PATH}/${TOOLCHAIN}/bin/${ANDROID_PREFIX}
-export SYSROOT=${TOOLCHAIN_PATH}/${TOOLCHAIN}/sysroot
-
-export CC=${TOOL}-gcc
-export CXX=${TOOL}-g++
-export LINK=${CXX}
-export STRIP=${TOOL}-strip
-export LIB=${TOOL}-ar
-export RANLIB=${TOOL}-ranlib
-
-export CFLAGS="--sysroot=${SYSROOT} -fno-short-enums -I${SYSROOT}/usr/include/"
-export LDFLAGS="--sysroot=${SYSROOT} -lz -lsupc++ -llog -ldl -lm -lc -lgnustl_static -lgcc"
+#export CFLAGS="$CFLAGS -I${SYSROOT}/usr/include/ -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/include -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/libs/${ABI}/include -I${NDK_ROOT}/sources/android/cpufeatures"
+export CFLAGS="$CFLAGS -I${SYSROOT}/usr/include/ -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/${ABI}/include"
+export LDFLAGS="--sysroot=${SYSROOT} -L${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/libs/${ABI} -lz -lsupc++ -llog -ldl -lm -lc -lgnustl_static -lgcc"
 
 if [ $ABI = armeabi-v7a ]; then
     export CFLAGS="$CFLAGS -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
