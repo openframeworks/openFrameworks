@@ -20,7 +20,7 @@ CORE
 	/ ofDrawGrid: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
 	/ ofDrawGridPlane: arguments changed to ```float stepSize, size_t numberOfSteps``` instead of ```float scale, float ticks```
 	/ ofCamera: fix calculations on first frame or before first call to begin
-	
+
 ### gl
 	+ Programmable lights and materials
 	+ New area light type on programmable renderer
@@ -35,20 +35,20 @@ CORE
 	  if the texture target supports mipmaps (see above).
 	+ ofTexture::disableMipmap() disables auto-generation of mipmap for texture
 	- removed compressed mipmaps based on deprecated glu methods
-	- ofSetTextureWrap() : deprecated (use corresponding ofTexture member method) 
+	- ofSetTextureWrap() : deprecated (use corresponding ofTexture member method)
 	- ofGetUsingCustomTextureWrap() : deprecated
 	- ofRestoreTextureWrap() : deprecated
-	- ofSetMinMagFilters() : deprecated (use corresponding ofTexture member method) 
+	- ofSetMinMagFilters() : deprecated (use corresponding ofTexture member method)
 	- ofGetUsingCustomMinMagFilters() : deprecated
-	- ofRestoreMinMagFilters() : deprecated	  
+	- ofRestoreMinMagFilters() : deprecated
 	+ ofShader: report offending lines on compiling errors
 	+ ofGLUtils: better support for half float types
 	/ getTextureReference -> getTexture
-	/ ofVbo refector: ofVbo will, in programmable renderer, automatically recognise 
-	  attribute locations 0, 1, 2, 3 as position, color, texture, normal attributes 
-	  can be set using either using convenience methods e.g. 
-	  `ofVbo::setTexCoordData(...)` or the more flexible 
-	  `ofVbo::setAttributeData(ofShader::TEXCOORD_ATTRIBUTE, ...)` which allows 
+	/ ofVbo refector: ofVbo will, in programmable renderer, automatically recognise
+	  attribute locations 0, 1, 2, 3 as position, color, texture, normal attributes
+	  can be set using either using convenience methods e.g.
+	  `ofVbo::setTexCoordData(...)` or the more flexible
+	  `ofVbo::setAttributeData(ofShader::TEXCOORD_ATTRIBUTE, ...)` which allows
 	  for 3d texture coordinates.
 	/ Fix ofTexture::readToPixels for non RGBA or 4 aligned formats
 ### graphics
@@ -97,7 +97,7 @@ PLATFORM SPECIFIC
 	+ deployment target moved up to iOS 5.1.1
 
 ### android
-	+ fix camera stretching artifacts experienced on some devices when using 16:9 
+	+ fix camera stretching artifacts experienced on some devices when using 16:9
 	  aspect ratios
 	+ remove support for arm5 since no devices seem to have that cpu anymore and it
 	  was problematic with certain libraries
@@ -108,6 +108,11 @@ PLATFORM SPECIFIC
 
 ### windows
 	+ activated high precission timming to fix inaccurate fps calculations
+
+CORE ADDONS
+-----------
+### ofxOpenCV
+	/ updated ofxCvHaarFinder to not use textures on internal image objects, allowing for usage within threads.
 
 OF 0.8.4
 ========
@@ -132,19 +137,19 @@ PLATFORM SPECIFIC
 
 OF 0.8.3
 ========
- 
-#### change key  
-	  + added  
-	  - removed  
-	  / modified  
+
+#### change key
+	  + added
+	  - removed
+	  / modified
 
 ------------------------------------------------------------------------------
-        
+
 PLATFORM SPECIFIC
 -----------------
 ###OSX
 	/ ofAppGLFWWindow: Drag drop files were coming in empty
-### Windows 
+### Windows
 	/ ofAppGLFWWindow: Drag drop files were coming in empty
 
 
@@ -157,11 +162,11 @@ CORE ADDONS
 
 OF 0.8.2
 ========
- 
-#### change key  
-	  + added  
-	  - removed  
-	  / modified  
+
+#### change key
+	  + added
+	  - removed
+	  / modified
 
 ------------------------------------------------------------------------------
 
@@ -169,16 +174,16 @@ CORE
 ----
 ### 3d
 	/ fix of3DPrimitive copy constructor not copying node
-        
+
 ### app
 	+ ofAppEGLWindow added new methods hasMouse()/hasKeyboard() to provide info on whether mouse/keyboard were detected
 	+ ofAppEGLWindow has new method setThreadTimeout allowing adjustable wait time for the thread to join
 	/ ofAppGLFWWindow: fix key mappings on non english keyboards
-	/ ofAppGLFWWindow: Cleaner exit code for GLFW based apps. 
-	/ ofAppGLFWWindow: fixes for better Retina support. 
+	/ ofAppGLFWWindow: Cleaner exit code for GLFW based apps.
+	/ ofAppGLFWWindow: fixes for better Retina support.
 	/ Updated GLFW to latest master branch
-	/ ofAppGLFWWindow: added patch to handle special keys and cases. 
-	/ ofAppGLFWWindow: better support for non-english keyboards. 
+	/ ofAppGLFWWindow: added patch to handle special keys and cases.
+	/ ofAppGLFWWindow: better support for non-english keyboards.
 	/ ofAppGLFWWindow: small bugfix for GLFW drag drop callback for retina screens. Closes
 	/ ofSystem bugfix for successive calls. Now uses pclose instead of fclose.
 ### events
@@ -202,12 +207,12 @@ CORE
 	/ ofSystem: fix for second and later calls failing
 	+ ofThread argument for tryJoin time.
 	/ ofThread overall, documentation and example fixes
-	/ ofThread change to infinite wait. 
+	/ ofThread change to infinite wait.
 	/ ofParameterGroup: fix to allow nested ofParameterGroups
 	/ ofParameterGroup: memory leak fix
 	/ ofThread: detach thread on stop if it's not being waited.
 	/ ofParameter(Group) fix polymorphism on parameter groups
-        
+
 PLATFORM SPECIFIC
 -----------------
 ### Android
@@ -220,11 +225,11 @@ PLATFORM SPECIFIC
 ### iOS
 	+ implement setSpeed() for video player
 	+ ofxiOSGetDeviceInfo for querying major / minor versions, device type and device string
-	+ move to cleaner NSAutoreleasePool for iOS projects. 
+	+ move to cleaner NSAutoreleasePool for iOS projects.
 	/ iOS-VideoGrabber memory related fixes
-	/ ofxiOSVideoPlayer: setSpeed functionality. 
+	/ ofxiOSVideoPlayer: setSpeed functionality.
 	+ ofxiOSSoundPlayer: added getAVSoundPlayer() method
-	/ bugfix for ofxiOSImagePicker crashing on exit. 
+	/ bugfix for ofxiOSImagePicker crashing on exit.
 	/ ofxiOSImagePicker: switch to using ofPixels.
 ### Linux
 	/ video: fixes for videos which pixels have padding
@@ -247,41 +252,41 @@ CORE ADDONS
 	+ ofxSlider: added get/setMin/Max
 	/ ofxGui: fixed for mouse registration issues with ofxGui. ofxPanel was registering for mouse events 3 times on setup! - ofxButton was registering for events in setup and registering again in the destructor. - ofxSlider was never unregistering mouse events.
 ### ofxKinect
-	/ bugfix to fix Kinect not being able to re-open if device was not correctly shutdown. 
-	/ bugfix for Kinect IR image crashing. Now sets the correct image sizes. 
+	/ bugfix to fix Kinect not being able to re-open if device was not correctly shutdown.
+	/ bugfix for Kinect IR image crashing. Now sets the correct image sizes.
 ### ofxNetwork
 	/ fix port reuse on osx
 ### ofxOsc
-	+ added blob support. ability to send ofBuffers as blobs. Note: max data size limited by network buffer sizes. 
-        
-        
+	+ added blob support. ability to send ofBuffers as blobs. Note: max data size limited by network buffer sizes.
+
+
 
 OF 0.8.1
 ========
- 
-#### change key  
-	  + added  
-	  - removed  
-	  / modified  
+
+#### change key
+	  + added
+	  - removed
+	  / modified
 
 ------------------------------------------------------------------------------
 
 ```
-_____/\\\\\\\______________/\\\\\\\\\_______________/\\\_        
- ___/\\\/////\\\__________/\\\///////\\\_________/\\\\\\\_       
-  __/\\\____\//\\\________\/\\\_____\/\\\________\/////\\\_      
-   _\/\\\_____\/\\\________\///\\\\\\\\\/_____________\/\\\_     
-    _\/\\\_____\/\\\_________/\\\///////\\\____________\/\\\_    
-     _\/\\\_____\/\\\________/\\\______\//\\\___________\/\\\_   
-      _\//\\\____/\\\________\//\\\______/\\\____________\/\\\_  
-       __\///\\\\\\\/____/\\\__\///\\\\\\\\\/____/\\\_____\/\\\_ 
-        ____\///////_____\///_____\/////////_____\///______\///_ 
+_____/\\\\\\\______________/\\\\\\\\\_______________/\\\_
+ ___/\\\/////\\\__________/\\\///////\\\_________/\\\\\\\_
+  __/\\\____\//\\\________\/\\\_____\/\\\________\/////\\\_
+   _\/\\\_____\/\\\________\///\\\\\\\\\/_____________\/\\\_
+    _\/\\\_____\/\\\_________/\\\///////\\\____________\/\\\_
+     _\/\\\_____\/\\\________/\\\______\//\\\___________\/\\\_
+      _\//\\\____/\\\________\//\\\______/\\\____________\/\\\_
+       __\///\\\\\\\/____/\\\__\///\\\\\\\\\/____/\\\_____\/\\\_
+        ____\///////_____\///_____\/////////_____\///______\///_
 
 ```
 MAJOR CHANGES
 -------------
 	/ "testApp" changed to "ofApp" everywhere.
-	
+
 DEPRECATIONS & REMOVALS
 -----------------------
 	- ofxOpenCv: removed deprecated ofxCvMain.h. Use ofxOpenCv.h instead.
@@ -325,7 +330,7 @@ CORE
 	/ Assign allocated flag to true after allocating offscreenGWorldPixels
 	/ Fix gl programmable renderer of draw axis
 	/ fixed ofMaterial for opengl ES1
-	/ check if currentShader exists - prevents segfault	
+	/ check if currentShader exists - prevents segfault
 	/ add more sophisticated openGL capability checks
 	+ displacement map example
 ### Sound
@@ -336,7 +341,7 @@ CORE
 	/ ofXml addressing seg errors when clearing
 	/ tiny log fix in ofSerial
 	+ ofXml get attribute to work with paths && non-paths
-### Video	
+### Video
 
 PLATFORM SPECIFIC
 -----------------
@@ -381,12 +386,12 @@ PLATFORM SPECIFIC
 	/ replaced poco 1.4.6 libs with 1.4.3p libs for vs2012
 	/ Changes to ofGstVideo files to compile with 0.10 gstreamer and fixup file names in Win32
 	/ Improve Dialog Win32
-### Linux Arm 
+### Linux Arm
 	/ Fbo with ofClear now works properly
 	/ Fbo/Shader behavior now consistent with other platforms (can be used in update and draw)
 	/ Shaders used in draw() no longer cause GL Errors and corrupt display
 
- 
+
 CORE ADDONS
 -----------
 ### ofxAssimpModelLoader
@@ -412,11 +417,11 @@ EXAMPLES
 
 OF 0.8.0
 ========
- 
-#### change key  
-	  + added  
-	  - removed  
-	  / modified  
+
+#### change key
+	  + added
+	  - removed
+	  / modified
 
 ------------------------------------------------------------------------------
 
@@ -425,8 +430,8 @@ MAJOR CHANGES
 -------------
 	+ programmable GL renderer (ability to use OpenGL 3+ / GLES 2.0)
 	 linux support for ARM devices (e.g. Raspberry Pi)
-	+ ofXml, a full xml parser. NOTE: ofXML is still in development, more convenience functions will be added in future releases. 
-	+ ofParameter, allows for datatypes to have names, default values and ranges, check out the examples! 
+	+ ofXml, a full xml parser. NOTE: ofXML is still in development, more convenience functions will be added in future releases.
+	+ ofParameter, allows for datatypes to have names, default values and ranges, check out the examples!
 	+ 4x anti-aliasing is now on by default (osx/linux/win)
 	+ ofxKinect and ofxGui as core addons
 	+ new module-based logging system
@@ -434,12 +439,12 @@ MAJOR CHANGES
 	+ debug and release icons for all apps
 	+ textures and text are now correctly flipped when in ofCamera view. NOTE: this might mean that some projects which are manually flipping textures might see those textures inverted
 	+ orientation affects ofCamera. NOTE: old projects correcting this manually will break.
-	+ OpenGL ES 2.0 support on ofxiOS 
+	+ OpenGL ES 2.0 support on ofxiOS
 	+ support for Visual Studio 2012 (drop support for earlier VS versions)
 	/ changed default window manager from GLUT to GLFW
 	/ vsync and alpha blending now on by default
 	/ new documentation structure and now written in Markdown
-	/ ofxiPhone completely renamed to ofxiOS 
+	/ ofxiPhone completely renamed to ofxiOS
 
 DEPRECATIONS & REMOVALS
 -----------------------
@@ -460,12 +465,12 @@ deprecated in this release:
 	/ ofxOpenALSoundPlayer
 	/ ofSetupScreenPerspective(), ofSetupScreenOrtho() don't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them
 	/ ofPath::set/getArcResolution -> set/getCircleResolution
-	
+
 
 CORE
 ----
 ### 3d
-	 
+
 	of3dPrimitive
                 + ofPlanePrimitive
                 + ofSpherePrimitive
@@ -473,7 +478,7 @@ CORE
                 + ofCylinderPrimitive
                 + ofConePrimitive
                 + ofBoxPrimitive
-   
+
 	ofMesh
                 + ofMesh::setColorForIndices( int startIndex, int endIndex, ofColor color )
                 + ofMesh::getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex );
@@ -486,15 +491,15 @@ CORE
                 + ofMeshFace class with additional functions like getFaceNormal()
                 / fixed bug where it was assumed the count of vertices / normals / indices / colours / texCoords was the same
 
-			
+
 	ofNode
                 / ofNode::setParent() and clearParent() now accept a flag which allow nodes to maintain their global position
-                
+
         ofCamera
         	+ ofCamera::setVFlipped/ofCamera::isVFlipped
-        
+
 ### App
-        + ofAppGLFWWindow::setMultiDisplayFullscreen(bool) 
+        + ofAppGLFWWindow::setMultiDisplayFullscreen(bool)
         + ofEnable/DisableAntiAliasing that works at runtime
         + ofGetOrientation() and ofSetOrientation()
         + OF_KEY_TAB
@@ -507,7 +512,7 @@ CORE
         + ofAddListener now has an optional param for listener priority
         + event listeners can now return a bool to indicate whether an event should be marked as attended
         + support for modificator keys: control, alt and shift (only glfw)
- 
+
 ### Graphics
 
 	of3DGraphics
@@ -535,7 +540,7 @@ CORE
         + ofColor::blueSteel
         + ofShortPixelsRef and ofFloatPixelsRef
         + ofPixels::setColor(ofColor) and ofImage::setColor(ofColor)
-        / ofColor fix for colors wrapping. 
+        / ofColor fix for colors wrapping.
         / ofPath refactored to be easier to integrate into other graphics libraries
         / ofDrawBitmapStringHighlight now modifies less GL state
         / ofDrawBitmapString now properly interprets tabs
@@ -552,7 +557,7 @@ CORE
 ### GL
         + ability to draw instanced geometry using ofVbo::drawInstanced()
         + ofSetDepthTest(), ofEnableDepthTest(), ofDisableDepthTest()
-        + ofEnableAntiAliasing() / ofDisableAntiAliasing(), to toggle antialiasing on runtime. NOTE: needs to be enabled in the window. 
+        + ofEnableAntiAliasing() / ofDisableAntiAliasing(), to toggle antialiasing on runtime. NOTE: needs to be enabled in the window.
         + ofShader support for #pragma includes
         + ofVbo support for VAOs
         / ofVbo and ofVboMesh accessors marked const
@@ -577,8 +582,8 @@ CORE
         / ofDirectory listings now properly interpret numerical file names (so "2.jpg" will show up before "10.jpg")
         / fixed bug where ofURLFileLoader wouldn't unlock mutex when request pool is empty
         / ofThread now waits during destructor, with a timeout of 10 seconds
-	
-### Video	
+
+### Video
         / ofVideoGrabber::listDevices() now returns a vector<ofVideoDevice>
 
 PLATFORM SPECIFIC
@@ -587,7 +592,7 @@ PLATFORM SPECIFIC
         + support for choosing GLES renderer at runtime
         + ofxAndroidVibrator
         + ofxAndroidVideoPlayer
-        / fixed bug where app width and height weren't set before calling setup() 
+        / fixed bug where app width and height weren't set before calling setup()
         / fixed bug in onTouchMoved where historical event calls were being given incorrect arguments
 
 ### Mac OS X
@@ -601,7 +606,7 @@ PLATFORM SPECIFIC
         + launch images and icons for iPhone5 and retina iPad
         + ofxiOSSoundStream::setMixWithOtherApps() allows other apps' sound to play in the background
         + ofiPhoneVideoPlayer::setFrame, getCurrentFrame, getTotalNumFrames, etc
-        + option to enable hardware orientation in ofAppiOSWindow 
+        + option to enable hardware orientation in ofAppiOSWindow
         + ofxiOSSoundPlayer as default sound player (based on AVAudioPlayer)
         / ofxiPhone renamed to ofxiOS
         / ofxiPhoneSoundStream refactored and renamed to ofxiOSSoundStream
@@ -626,7 +631,7 @@ PLATFORM SPECIFIC
         / ofSerial can now connect to COM ports higher than COM9
         / capitalized target names ("Debug" and "Release")
         / added "compile C as C++" flag for VS project template
- 
+
 CORE ADDONS
 -----------
 ### All addons
@@ -679,21 +684,21 @@ EXAMPLES
 
 ---------------------------------------------------------------
 
-	  .oooo.        ooooooooo           .o   
-	 d8P'`Y8b      d"""""""8'         .d88   
-	888    888           .8'        .d'888   
-	888    888          .8'       .d'  888   
-	888    888         .8'        88ooo888oo 
-	`88b  d88' .o.    .8'     .o.      888   
-	 `Y8bd8P'  Y8P   .8'      Y8P     o888o  
+	  .oooo.        ooooooooo           .o
+	 d8P'`Y8b      d"""""""8'         .d88
+	888    888           .8'        .d'888
+	888    888          .8'       .d'  888
+	888    888         .8'        88ooo888oo
+	`88b  d88' .o.    .8'     .o.      888
+	 `Y8bd8P'  Y8P   .8'      Y8P     o888o
 
 OF 0.7.4
 ========
- 
-#### change key  
-	  + added  
-	  - removed  
-	  / modified  
+
+#### change key
+	  + added
+	  - removed
+	  / modified
 
 ------------------------------------------------------------------------------
 
@@ -701,8 +706,8 @@ OF 0.7.4
 MAJOR CHANGES
 -------------
 
-New Codeblocks (windows): 
-For 0.7.4 we updated all core libraries to work against the new version of codeblocks, which itself uses a new version of GCC.  Anyone using codeblocks on windows will need to update to 12.11, because these libraries will not work with older versions of codeblocks. 
+New Codeblocks (windows):
+For 0.7.4 we updated all core libraries to work against the new version of codeblocks, which itself uses a new version of GCC.  Anyone using codeblocks on windows will need to update to 12.11, because these libraries will not work with older versions of codeblocks.
 
 System Libraries (linux):
 Linux now uses some system libraries instead of including them in the core.  Please ensure you have installed the system dependencies for your OS.  You can install the system dependencies by executing the install_dependencies.sh script in  $OF_ROOT/scripts/linux/DISTRO/install_dependencies.sh, where DISTRO is your running linux distribution.  Currently OF has install scripts for Debian, Ubuntu, ArchLinux, and Fedora.
@@ -714,29 +719,29 @@ DEPRECATIONS & REMOVALS
 -----------------------
 - removed OF_USING_POCO conditionals
 - support for Codeblocks version 10.04 on windows
-- removed portaudio and freetype libraries.  Linux now uses some system libraries.  Please ensure you have installed the system dependencies. 
+- removed portaudio and freetype libraries.  Linux now uses some system libraries.  Please ensure you have installed the system dependencies.
 
 CORE
 ----
 ### 3d
-	 
+
 	ofCamera
-		+ added getForceAspectRatio() and getAspectRatio() 
-		- dependencies with glu, openGL 
+		+ added getForceAspectRatio() and getAspectRatio()
+		- dependencies with glu, openGL
 		/ fix const correctness
 		/ fixed worldToScreen() bug
-		/ lens offset 
-   
+		/ lens offset
+
 	ofEasyCam
 		/ setPosition fix
 
 	ofMesh
 		/ fixed load and save type mismatch
 		/ fixed ofMesh.load() to load Normals
-			
+
 	3DModelBuilder
 		/ to work with OpenGL ES
- 
+
 ### App
 	No Updates
 ### Communication
@@ -744,7 +749,7 @@ CORE
 ### Events
 	+ added void events (events that can be listened to from a method without arguments)
 	- removed OF_USING_POCO conditionals
- 
+
 ### Graphics
 
 	ofTrueTypeFont
@@ -756,9 +761,9 @@ CORE
 
 	ofPath
 		+ added ofCurveVertex(x, y, z) overload
-	   
+
 ### Math
-	No Updates 
+	No Updates
 ### GL
 	No Updates
 ### Sound
@@ -776,16 +781,16 @@ CORE
 	ofConstants
 		+ added #include <cfloat>
 		/ The OF_VERSION* defines have been changed for the new version system.
-		
+
 ### Video
-	
-	ofGstVideoGrabber 
+
+	ofGstVideoGrabber
 		+ included support for PREFER_RGB_OVER_YUV and PREFER_NON_COMPRESSED
 		/ updated gstreamer player/grabber to be compatible with gstreamer 1.0
 
 PLATFORM SPECIFIC
 -----------------
- 
+
 ### Android
 	+ added ofxAndroidLaunchBrowser(String url)to ofxAndroidUtils
 	+ added parent OFActivity class
@@ -801,17 +806,17 @@ PLATFORM SPECIFIC
 	/ added ability to choose arm targets through config.make
 	/ updates to the accelerometer units
 	/ updated readme file to reflect latest changes in Eclipse setup
-	
+
 	ofImage
-		/ register images on load  
- 
+		/ register images on load
+
 ### Mac OS X
-	/ ofQTKitVideoGrabber now uses BGRA with BGRA to RGB blitting for fast capture. 
- 
+	/ ofQTKitVideoGrabber now uses BGRA with BGRA to RGB blitting for fast capture.
+
 ### iOS
 	ofImage
-		/ register images on load  
- 
+		/ register images on load
+
 ### Linux
 	- removed portaudio and freetype libraries
 
@@ -819,35 +824,35 @@ PLATFORM SPECIFIC
 	+ codeblocks 12.11 support (drop support for earlier CB versions)
 	/ fixed grayscale image on windows
 	/ fixed microsecond timer overflow
- 
+
 CORE ADDONS
 -----------
 
 ### ofxOpenCV
 	/ fixed broken hole detection in CV contour finder
-	/ applied patch for opencv bug (http://code.opencv.org/issues/1643) 
- 
+	/ applied patch for opencv bug (http://code.opencv.org/issues/1643)
+
 ### ofxOpenALSoundPlayer
 	/ fixed static ofMutex issue in ofxOpenALSoundPlayer
- 
+
 ### ofxAssimpModelLoader
-	/ Assimp makeover 
-	/ aiNode bugfix 
+	/ Assimp makeover
+	/ aiNode bugfix
 
 ### ofxTCP
-	+ adds rawMsg send and receive 
-	/ fixes tcp close 
- 
+	+ adds rawMsg send and receive
+	/ fixes tcp close
+
 ### ofxSvg
 	/ several bugfixes for ofxSvg
- 
+
 PROJECT GENERATOR
 -----------------
 
 ### project generator (simple)
 	/ updated the git submodule and gitignore for develop branch
 	/ fix project generator on Linux
- 
+
 EXAMPLES
 --------
 
@@ -857,7 +862,7 @@ EXAMPLES
 	/ fixed GPUparticleSystemExample unexpected behavior
 	/ added missing baud variable to communication/serialExample
 	/ updated firmataExample and fontShapesExample to use ofBaseApp instead of ofSimpleApp
- 
+
 ### Android
 	+ androidAccelerometerExample
 	+ android3DModelLoaderExample
@@ -865,21 +870,21 @@ EXAMPLES
 
 
 ---------------------------------------------------------------
-		  .oooo.     .oooo.    ooooooooo   .oooo.   
-		 d8P'`Y8b   d8P'`Y8b  d"""""""8' .dP""Y88b  
-		888    888 888    888       .8'        ]8P' 
-		888    888 888    888      .8'       <88b.  
-		888    888 888    888     .8'         `88b. 
-		`88b  d88' `88b  d88'    .8'     o.   .88P  
-		 `Y8bd8P'   `Y8bd8P'    .8'      `8bd88P'   
+		  .oooo.     .oooo.    ooooooooo   .oooo.
+		 d8P'`Y8b   d8P'`Y8b  d"""""""8' .dP""Y88b
+		888    888 888    888       .8'        ]8P'
+		888    888 888    888      .8'       <88b.
+		888    888 888    888     .8'         `88b.
+		`88b  d88' `88b  d88'    .8'     o.   .88P
+		 `Y8bd8P'   `Y8bd8P'    .8'      `8bd88P'
 
 OF 0073
 =======
 
-#### change key  
-	+ added  
-	- removed  
-	/ modified  
+#### change key
+	+ added
+	- removed
+	/ modified
 
 ---------------------------------------------------------------
 
@@ -892,13 +897,13 @@ OF 0073
 
 ---------------------------------------------------------------
 
-		  .oooo.     .oooo.    ooooooooo   .oooo.   
-		 d8P'`Y8b   d8P'`Y8b  d"""""""8' .dP""Y88b  
-		888    888 888    888       .8'        ]8P' 
-		888    888 888    888      .8'       .d8P'  
-		888    888 888    888     .8'      .dP'     
-		`88b  d88' `88b  d88'    .8'     .oP     .o 
-		 `Y8bd8P'   `Y8bd8P'    .8'      8888888888 
+		  .oooo.     .oooo.    ooooooooo   .oooo.
+		 d8P'`Y8b   d8P'`Y8b  d"""""""8' .dP""Y88b
+		888    888 888    888       .8'        ]8P'
+		888    888 888    888      .8'       .d8P'
+		888    888 888    888     .8'      .dP'
+		`88b  d88' `88b  d88'    .8'     .oP     .o
+		 `Y8bd8P'   `Y8bd8P'    .8'      8888888888
 
 OF 0072
 =======
@@ -919,22 +924,22 @@ DEPRECATIONS & REMOVALS
 	/ ofVideoGrabber: grabFrame() ---> update()
 	/ ofVideoPlayer: idleMovie() ---> update()
 	/ ofPolyline: addVertexes() ---> addVertices()
-	
+
 	ofGraphics
 		/ ofVertexes() ---> ofVertices()
 		/ ofCurveVertexes() ---> ofCurveVertices()
-	
+
 	ofQTKitPlayer
 		/ bind() ---> getTexture()->bind()
 		/ unbind() ---> getTexture()->unbind()
-	
+
 	ofAppiPhoneWindow
 		/ enableRetinaSupport() ---> enableRetina()
 		/ isRetinaSupported() ---> isRetinaSupportedOnDevice()
 		/ isDepthEnabled() ---> isDepthBufferEnabled()
 
 ### Removals (have been deprecated previously, their functionality has been migrated to the OF core)
-   
+
 	- ofxDirList ---> ofFileUtils: ofFile, ofFilePath, ofDirectory, etc
 	- ofxThread ---> ofThread
 	- ofxVectorMath ---> ofVectorMath: ofVec2f, ofVec3f, etc
@@ -945,8 +950,8 @@ CORE
 	/ fixed lots of compilation warnings in the core library
 
 ### 3d
-	/ ofMaterial fixed incorrect storing / restoring of shininess 
-	
+	/ ofMaterial fixed incorrect storing / restoring of shininess
+
 	ofEasyCam
 		+ enable/disable/get now uses middle mouse button for translation, activated by default
 		+ added set/get translation key, pressing this key and dragging with the left mouse button
@@ -959,11 +964,11 @@ CORE
 		/ updated rotation interactions to rotate over all three axes, rotation over the X or Y axes is
 		  achieved by starting to drag inside a circle with it's diameter set to the minimum between
 		  the viewport width and height, when the drag starts outside this circle Z axis rotation is achieved
-		
+
 	ofMesh
 		/ convert all index types from int to ofIndexType
 		/ fixes to multiLightExample
-		
+
 	ofNode:
 		+ missing implementation for rotateAround()
 		+ added getGlobalScale()
@@ -983,11 +988,11 @@ CORE
 	+ added ofRectRounded functions, bring on the lawsuit APPL ...
 	/ fixed anti-aliasing issue when auto background set to false
 	/ ofFloatImage and ofShortImage display correctly again
-	/ ofDrawBitmapString(): default style changed to be backwards compatible with pre-007 
+	/ ofDrawBitmapString(): default style changed to be backwards compatible with pre-007
 	/ ofDrawBitmapString(): fixed drawing in simple mode, and drawing with alpha enabled
 	/ ofDrawBitmapString(): fixed rendering to FBOs (i.e. upside-down inside FBO)
 	/ ofGstUtils: several fixes for network streams and performance
-	
+
 	ofCairoRenderer
 		+ added support for rendering to a png
 		/ now sets current style every frame since Cairo wasn't preserving the style
@@ -999,17 +1004,17 @@ CORE
 		/ saveImage() now flattens color channels (4 to 3) when saving a jpeg
 		/ fixed memcpy bug in getBmpFromPixels()
 		/ update() rewritten to use ofGetGlInternalFormat so ofImage can handle short and float images
-		
+
 	ofPolyline
 		+ added fromRectangle()
 		/ getBoundingBox() is now const
 
 	ofTrueTypeFont
-		/ make font rendering whitespace and printable character width the same  
+		/ make font rendering whitespace and printable character width the same
 
 ### Math
 	/ ofPoint & ofVec*f: fixed myVec = float only assigning to the x value,
-	  now prints an error message to help track down bugs, you should now use myVec.set(float) 
+	  now prints an error message to help track down bugs, you should now use myVec.set(float)
 	  instead to set all three values to the same float value
 	/ all instances of functions named *Vertexes have been changed to *Vertices
 	/ ofVec3f: removed default argument for z component in 3 value constructor
@@ -1024,15 +1029,15 @@ CORE
 		/ fixed bug where ofFbo was broken on systems that did not support MSAA
 
 	ofTexture
-		+ added setUseExternalTextureID for setting external Texture ID which will not be released by ofTexture, 
+		+ added setUseExternalTextureID for setting external Texture ID which will not be released by ofTexture,
 		   was causing crashes for people trying to use external texture ids
 		/ can now read to pixels from depth buffers
 		/ added depth texture to image type support for OpenGL ES
-		
+
 	ofVboMesh
 		+ added enabled/disable of flags for colors, texCoords, indices, & normals
 		/ fixed problem when changing size to 0
-		/ fixed clearing of vbo buffers when mesh is reallocated to 0 
+		/ fixed clearing of vbo buffers when mesh is reallocated to 0
 
 ### Sound
 	/ setPan() now works consistently (range is -1..1) over all objects that use sound
@@ -1041,17 +1046,17 @@ CORE
 
 ### Types
 	 / ofPixels: fixes to channel count in OF_PIXELS_RGBA
-	 
+
 	ofRectangle
-		+ added getters and setters for x , y, width, & height 
+		+ added getters and setters for x , y, width, & height
 		+ added methods for working with lines, translation, & scaling
-		+ edge x/y locations can now be called by their "anchor" name (ofAlignHorz and ofAlignVert) 
+		+ edge x/y locations can now be called by their "anchor" name (ofAlignHorz and ofAlignVert)
 		   using getHorzAnchor() and getVertAnchor()
-		+ calling standardize() on a given ofRectangle will adjust the x / y position to make both 
+		+ calling standardize() on a given ofRectangle will adjust the x / y position to make both
 		   the width / height to greater than zero
 		+ added a + operator, which is equivalent to calling translate(ofPoint ...)
 		- removed getAsPolyline() and growToInclude()
-		/ x & y vars are now references to an underlying ofPoint, you can get a reference to 
+		/ x & y vars are now references to an underlying ofPoint, you can get a reference to
 		  the underlying ofPoint via getPositionRef()
 
 	ofColor
@@ -1075,17 +1080,17 @@ CORE
 	/ ofBuffer: set and operator= from string + append method
 	/ ofLaunchBrowser: now accepts https URLs
 	/ ofPtr: extended facade to allow for dynamic_pointer_cast
-	
+
 	ofConstants
-		+ added ofAlignVert & ofAlignHorz enums based on Qt, 
+		+ added ofAlignVert & ofAlignHorz enums based on Qt,
 		   could be combined into a single bit-wise combined alignment flag
 		+ added ofAspectRatioMode enum, describes how an aspect ratio is preserved (or not) during scaling operations,
 		   can be combined with ofAlignVert and ofAlignHorz to describe a rectangular scaling operation
-		+ added ofScaleMode enum, represents a set of common scaling modes where each scaling mode can also be 
+		+ added ofScaleMode enum, represents a set of common scaling modes where each scaling mode can also be
 		   described by a specific combination of ofAspectRatioMode, an ofAlignVert, and an ofAlignHorz
 		   making ofScaleMode makes common scaling operations less verbose
-		
-	ofURLFileLoader 
+
+	ofURLFileLoader
 		/ now catches all exceptions
 		/ fixed issue with ofRemoveRequest if ofURLFileLoader currently loading the request
 
@@ -1101,7 +1106,7 @@ CORE
 		+ added movie path variable and getter
 		/ setVolume changed to take a float 0..1 with a warning message on out-of-range
 		/ updated to handle pixel formats more optimally
-	
+
 	ofVideoGrabber
 		/ switched to 24RGB pixel format to avoid manual conversion
 		/ now allows up to 24 cameras on Windows
@@ -1119,7 +1124,7 @@ PLATFORM SPECIFIC
 	/ no more modal dialogs, were causing problems with gui thread
 	/ ofSoundPlayer: resource usage and bug fixes
 	/ updates Hardware Key handling to use characters instead of keycodes
-	
+
 	ofAndroidLib
 		+ added support for touchCancelled and swipe
 		/ updated to the latest Android SDK R20 and Android-NDK-R8B
@@ -1142,7 +1147,7 @@ PLATFORM SPECIFIC
 ### Mac OS X
 	/ OpenFrameworks now works "out of the box" on 10.7+ by using QTKit for video grabbing & playback,
 	/ If compiling with the 10.6 SDK, the old Quicktime framework based players and grabbers are still included
-	ofVideoPlayer 
+	ofVideoPlayer
 		/ uses Core Video and QTKit internally
 		+ added support for getCurrentFrame() and setFrame() on videos with non-static framerates
 		+ added support for more codecs through QTKit framework
@@ -1150,7 +1155,7 @@ PLATFORM SPECIFIC
 		+ added option to enabled asynchronous seeking for non-blocking calls to setFrame()
 	ofVideoGrabber
 		/ uses Core Video and QTKit internally
-		+ added ability to record videos to disk 
+		+ added ability to record videos to disk
 		+ added support supports a wider range of video inputs, for example HDV over FireWire
 		- removed video setting dialog for 10.7+
 
@@ -1171,7 +1176,7 @@ PLATFORM SPECIFIC
 	/ fixed create_package to not delete iOS libraries
 	/ ofiPhoneVideoPlayer and AVFoundationVideoPlayer rewritten / cleanedup
 	/ fixed AVPlayerItem crash on unloading video
-	/ glViewController is now set as the window's rootViewController, 
+	/ glViewController is now set as the window's rootViewController,
 	  this is a much nicer implementation than adding the glViewController's view to the window
 	/ fixed ofxiPhoneSendGLViewToFront() and ofxiPhoneSendGLViewToBack() to always work with the GLView superview
 	/ GLView is now brought to front using ofxiPhoneSendGLViewToFront()
@@ -1186,18 +1191,18 @@ PLATFORM SPECIFIC
 	ofAppiPhoneWindow
 		+ enabling retina was ambiguous, method names are now more concise
 		+ added methods for disabling retina, depth, & anti-aliasing
-		/ isRetinaSupported() made more reliable 
+		/ isRetinaSupported() made more reliable
 		/ now accesses window position, size, and screen size from the ofxiOSEAGLView
-		
-	ofxiOSEAGLView 
-		+ ofxiOSEAGLView is the OF specific extension of EAGLView, 
+
+	ofxiOSEAGLView
+		+ ofxiOSEAGLView is the OF specific extension of EAGLView,
 		   most of the logic from the ofxiPhoneViewController has been move into here,
 		   it is now possible to create a ofxIOSEAGLView without the need for a ofxiPhoneViewController container
 		+ only accepts ofxiPhoneApp instead of ofBaseApp, this is more strict and safe
-		+ moved window size and position code from ofAppiPhoneWindow into ofxiOSEAGLView, 
+		+ moved window size and position code from ofAppiPhoneWindow into ofxiOSEAGLView,
 		   makes more sense for ofxiOSEAGLView to return these values and only recalculate them when
 		   layoutSubviews() is called on a ofxiOSEAGLView resize
-		
+
 	 ofxiPhoneViewController
 		+ now adds itself as a delegate when creating a glView,
 		   this is handy to get glView callbacks when extending in another class
@@ -1247,7 +1252,7 @@ EXAMPLES
 ### iOS
 	+ moviePlayer example: added video player volume
 	/ Mapkit example fixed
-	
+
 ### Android
 	+ added OpenCVFace face tracking example
 	/ soundPlayer example: updated to show multiplay on Android
@@ -1256,13 +1261,13 @@ EXAMPLES
 
 
 ---------------------------------------------------------------
-	  .oooo.     .oooo.    ooooooooo   .o  
-	 d8P'`Y8b   d8P'`Y8b  d"""""""8' o888  
-	888    888 888    888       .8'   888  
-	888    888 888    888      .8'    888  
-	888    888 888    888     .8'     888  
-	`88b  d88' `88b  d88'    .8'      888  
-	 `Y8bd8P'   `Y8bd8P'    .8'      o888o 
+	  .oooo.     .oooo.    ooooooooo   .o
+	 d8P'`Y8b   d8P'`Y8b  d"""""""8' o888
+	888    888 888    888       .8'   888
+	888    888 888    888      .8'    888
+	888    888 888    888     .8'     888
+	`88b  d88' `88b  d88'    .8'      888
+	 `Y8bd8P'   `Y8bd8P'    .8'      o888o
 
 OF 0071
 =======
@@ -1274,80 +1279,80 @@ OF 0071
 
 ---------------------------------------------------------------
 
-The main focus for 0071 was to add new examples to better show the features added in 007. 
-0071 is mainly an 'examples + bug fixes' release, with some additional, much needed, updating to the mobile releases ( iOS and Android ). 
+The main focus for 0071 was to add new examples to better show the features added in 007.
+0071 is mainly an 'examples + bug fixes' release, with some additional, much needed, updating to the mobile releases ( iOS and Android ).
 
 Critical changes ( might need to update your projects to fix )
 * ofEvents -> ofEvents() singleton - this means that projects which register calls using "ofEvents." will need to replace these with "ofEvents()." (note the parentheses).
-* OF Examples now are found in the "examples/" folder in the root of the OF folder. The "apps/" is still included but is kept empty as a place to put your OF apps and experiments. 
-* Because of the project generator (see below) some addons have been standardized, and we've added "addons.make" to each project file that uses addons.  Prior to this release, addons.make was only used on linux / android platforms.  As we develop the project generator, we'll work to document these changes. 
+* OF Examples now are found in the "examples/" folder in the root of the OF folder. The "apps/" is still included but is kept empty as a place to put your OF apps and experiments.
+* Because of the project generator (see below) some addons have been standardized, and we've added "addons.make" to each project file that uses addons.  Prior to this release, addons.make was only used on linux / android platforms.  As we develop the project generator, we'll work to document these changes.
 * audioRequested and audioReceived on the ofBaseApp/testApp are now called audioOut and audioIn
 
 
 Project generator
-A significant amount of the work which went into 0071 was in the development of a Project Generator. The Project Generator can make project files for all the OF platforms and it was critical to have this in order to increase the number of examples we could include with the release. The Project Generator is also able to add addons to existing projects, making the task of adding addons much faster than the current manual approach. Going forward, the Project Generator will be included with the new releases and be a key tool for generating, modifying and updating your OF projects. Currently, the Project Generator is in our github repository (https://github.com/openframeworks/openFrameworks) in apps/devApps/. 
+A significant amount of the work which went into 0071 was in the development of a Project Generator. The Project Generator can make project files for all the OF platforms and it was critical to have this in order to increase the number of examples we could include with the release. The Project Generator is also able to add addons to existing projects, making the task of adding addons much faster than the current manual approach. Going forward, the Project Generator will be included with the new releases and be a key tool for generating, modifying and updating your OF projects. Currently, the Project Generator is in our github repository (https://github.com/openframeworks/openFrameworks) in apps/devApps/.
 
 ### core
 	+ loads of new examples! 96 examples now come with the desktop releases of OF. For a full list see: https://gist.github.com/2836913
-	platform specific: 
+	platform specific:
 	+ android support for front camera
 	+ android support for ofSoundPlayer
 	+ new iOS examples showing how to mix OF with Native Apps
 	/ android compatibility  with ndk r7+ and lots of bugfixes
-	/ loads of iOS bugfixes - including retina issue, FBO issues, native GUI fixes, video fixes. 
+	/ loads of iOS bugfixes - including retina issue, FBO issues, native GUI fixes, video fixes.
 	/ XCode fix to avoid constant rebuild of projects
-	/ Some MacOS 10.7 fixes ( ofShowCursor / HideCursor ) 
+	/ Some MacOS 10.7 fixes ( ofShowCursor / HideCursor )
 	/ Better compatiblity with XCode 4
 	/ linux: createProjects.py script dropped in favor of command line version of the projectGenerator
 
-### utils 
+### utils
 	+ implemented getUserHomeDir() for Windows
 	/ ofSystemSaveFileDialog fix for linux
-	/ ofFile and ofDirectory fixes for overwrite failing. 
+	/ ofFile and ofDirectory fixes for overwrite failing.
 	/ ofThread now uses Poco::Thread
 	/ bugfix for ofFile::copyFromTo
 	/ makefiles now are modular + ensure compatibility with future versions
 
-### addons 
-	+ OSC allows multiple binds to the same port and support for multicast / unicast 
+### addons
+	+ OSC allows multiple binds to the same port and support for multicast / unicast
 	/ Loads of ofxOpenCV fixes to prevent crashing when images are not allocated or the wrong size
-	library changes: 
-	/ OpenCv library in the ofxOpenCv addon updated to version 2.3.1 
+	library changes:
+	/ OpenCv library in the ofxOpenCv addon updated to version 2.3.1
 	/ Poco library updated to version 1.4.3
 
-### 3d 
+### 3d
 	+ ofDrawGrid() for showing an multi-axis xyz grid, ofDrawGridPlane() for a single plane
 	+ ofDrawArrow() for lines with arrow heads (using ofCone())
 	+ ofCone() for draw cone primitives
 	+ 3D versions of ofCurve(), ofBezier(), ofVertex() and ofBezierVertex().
 	+ ofMesh now allows you to explicitly enable/disable colors/textures/normals before drawing using ofMesh::[enable/disable][Colors/Textures/Normals]()
-	+ ofxAssimpModelLoader utility methods 
-	/ faster ofSphere() without GLUT dependancies. 
+	+ ofxAssimpModelLoader utility methods
+	/ faster ofSphere() without GLUT dependancies.
 
-### math 
+### math
 	+ ofQuaternion::normalize()
 	+ ofTexture/ofImage::drawSubsection() for drawing portions of images
 	+ ofBackgroundGradient() for gradient app backgrounds, with OF_GRADIENT_CIRCULAR, OF_GRADIENT_LINEAR, OF_GRADIENT_BAR
 	+ ofPolyline::getCentroid2D() and ofPolyline::getArea()
 	/  fix mismatch between * and *= operators for ofMatrix3x3. Implemented separate hadamard/schur product ofMatrix3x3::entrywiseTimes()
 	/ modify ofMatrix4x4::getRotate() method to operate on a scale-invariant version of the matrix
-	Graphics: 
-	/ ofColor fixes for HSB color wrapping 
+	Graphics:
+	/ ofColor fixes for HSB color wrapping
 	/ ofPixels optimizations for swapRGB() and mirror() and rotate()
 	/ ofPolyline::getSmoothed() works with open and closed lines
 
-### app 
+### app
 	+ ofAppGlutWindow::setDoubleBuffering() gets rid of flickering when drawing without clearing. use this in your main.cpp instead of just saying ofSetBackgroundAuto(false)
 
-### openGL 
+### openGL
 	+ ofFbo added option to have the depth/stencil buffer as a texture
 	/ ofFbo lots of fixes for iOS and POT textures
 
-### communication 
-	/ ofSerial bugfixes 
+### communication
+	/ ofSerial bugfixes
 
-### sound 
-	+ ofSoundStream allow for different input and output devices. 
+### sound
+	+ ofSoundStream allow for different input and output devices.
 
 For a full list of commits for 0071 see: https://gist.github.com/2836647
 
@@ -1401,7 +1406,7 @@ Here's a fairly complete list of the changes.
 	/ all the classes with opengl resources have shallow copy + shared pointer semantics so textureA = textureB makes textureB point to the same texture in the graphics card as textureA, and the texture is released when the last copy is destroyed
 	/ all swappable api objects (ofVideoGrabber, ofVideoPlayer, ofSoundPlayer and ofSoundStream) have shallow copy + shared pointer semantics too
 	/ all memory structures (ofPixels, ofImage, ofBuffer, ofMesh...) have deep copy semantics, so pixelsA = pixelsB makes b a full new copy of pixelsA
-	/ Poco library is changed from 1.3.3 to 1.4 
+	/ Poco library is changed from 1.3.3 to 1.4
 
 ### video and cv
 	+ ofxCvHaarFinder is brought into the core ofxOpenCv addon
@@ -1454,13 +1459,13 @@ Here's a fairly complete list of the changes.
 	/ better iPhone video and camera support
 
 ---------------------------------------------------------------
-	  .oooo.     .oooo.       .ooo     .oooo.   
-	 d8P'`Y8b   d8P'`Y8b    .88'     .dP""Y88b  
-	888    888 888    888  d88'            ]8P' 
-	888    888 888    888 d888P"Ybo.     .d8P'  
-	888    888 888    888 Y88[   ]88   .dP'     
-	`88b  d88' `88b  d88' `Y88   88P .oP     .o 
-	 `Y8bd8P'   `Y8bd8P'   `88bod8'  8888888888 
+	  .oooo.     .oooo.       .ooo     .oooo.
+	 d8P'`Y8b   d8P'`Y8b    .88'     .dP""Y88b
+	888    888 888    888  d88'            ]8P'
+	888    888 888    888 d888P"Ybo.     .d8P'
+	888    888 888    888 Y88[   ]88   .dP'
+	`88b  d88' `88b  d88' `Y88   88P .oP     .o
+	 `Y8bd8P'   `Y8bd8P'   `88bod8'  8888888888
 
 OF 0062 Pre-release
 ===================
@@ -1493,13 +1498,13 @@ This is mostly minor changes, as it's a maintenance release with small bug fixes
 
 
 ---------------------------------------------------------------
-		  :::::::   :::::::   ::::::::    ::: 
-		:+:   :+: :+:   :+: :+:    :+: :+:+:  
-	   +:+   +:+ +:+   +:+ +:+          +:+   
-	  +#+   +:+ +#+   +:+ +#++:++#+    +#+    
-	 +#+   +#+ +#+   +#+ +#+    +#+   +#+     
-	#+#   #+# #+#   #+# #+#    #+#   #+#      
-	#######   #######   ########  #######  
+		  :::::::   :::::::   ::::::::    :::
+		:+:   :+: :+:   :+: :+:    :+: :+:+:
+	   +:+   +:+ +:+   +:+ +:+          +:+
+	  +#+   +:+ +#+   +:+ +#++:++#+    +#+
+	 +#+   +#+ +#+   +#+ +#+    +#+   +#+
+	#+#   #+# #+#   #+# #+#    #+#   #+#
+	#######   #######   ########  #######
 
 OF 0061 Pre-release
 ===================
@@ -1516,9 +1521,9 @@ OF 0061 Pre-release
 
 - we've moved from svn to git / github, and now have an automated system of building the OF package.  This should also greatly ease our development of openFrameworks.  Before we had separate SVNs for the OF lib, the OF examples, and the core addons.  Now, we've got one major place where changes and development of OF can be tracked.   see http://github.com/openFrameworks/openFrameworks.
 
-- To encourage faster releases, we've moved to a major / minor release schedule, with minor releases (0061, 0062) relating to bug fixes and major releases (007, 008) relating to major features.  
+- To encourage faster releases, we've moved to a major / minor release schedule, with minor releases (0061, 0062) relating to bug fixes and major releases (007, 008) relating to major features.
 
-### core 
+### core
 
 	/ folder structure is now changed so that all ide/packages can share one directory structure. Download the 0061 all release to check it out.
 	- core addons now don't have libs from other platforms
@@ -1526,31 +1531,31 @@ OF 0061 Pre-release
 	/ core FreeImage.h -> move BOOL typedefs etc to #defines and do #undef at the end
 	+ Put MIT license in OF headers
 
-### OSX 
+### OSX
 
 	+ xcode has snow leopard fixes, and an SL release
 	/ xcode projects are now renamed to have the folder name (ie, every project has a unique target name)
 	/ xcode apps now have max optimization settings for release.
 	+ xcode now has 3 build modes, Debug, Release, Release Universal.  Debug and Release are for your current platform (either intel or PPC), Release Universal is for both.
-	/ renamed libs - change all libSomething.a to be something.a - this prevents xcode linking to root level dynamic libraries. 
+	/ renamed libs - change all libSomething.a to be something.a - this prevents xcode linking to root level dynamic libraries.
 
 ### Win32 CodeBlocks
 
 	+ added Poco linker flag for CB - needed for some network calls
 	/ fixed Poco linking order on win32.
 
-### linux 
+### linux
 
 	+ changed the linux default videograbber to gstreamer
 	- remove ofV4lUtils
 	/ smarter makefiles
 	/ modified install scripts to fix karmic problems &amp; build OF compile on install
 
-### examples 
+### examples
 
-	/ fixed missing files, missing calls to windowResized, removed unnecessary calls to ofSetupSCreen() and include stdio. 
+	/ fixed missing files, missing calls to windowResized, removed unnecessary calls to ofSetupSCreen() and include stdio.
 
-### app 
+### app
 
 	/ Fullscreen on OS X is not top level anymore (no more crazy fullscreen app crashes and can't escape).
 	/ OSX now using custom GLUT framework
@@ -1565,7 +1570,7 @@ OF 0061 Pre-release
 	/ fixed vertical sync for linux: http://www.openframeworks/forum/viewtopic.php?f=7&amp;t=561&amp;p=10683#p10683
 	+ ofBaseVideo added isFrameNew()
 
-### utils 
+### utils
 
 	+ ofxNoise / ofxSignedNoise - Added simplex ( similar to perlin ) noise to core
 	+ ofBaseHasTexture now has ofSetUseTexture ( to enable / disable use of the texture )
@@ -1575,11 +1580,11 @@ OF 0061 Pre-release
 	/ detect C:/ as a root path in ofToDataPath
 	/ fixed ofPoint warnings
 
-### events 
+### events
 
 	/ fixed vs2008 intellisense doesn't like using Poco::delegate; in ofEventUtils: http://www.openframeworks/forum/viewtopic.php?f=9&amp;t=1877
 
-### graphics 
+### graphics
 
 	/ ofImage - Loading a corrupted image in linux made the app crash, fixed now.
 	/ ofImage setImageType now should properly alter the texture if we need to.
@@ -1594,7 +1599,7 @@ OF 0061 Pre-release
 	+ ofSetCurveResolution - makes curved shapes a lot faster!
 	/ setAnchorPoint - move arguments from int to float
 
-### communication 
+### communication
 
 	/ merged ofStandardFirmata into ofArduino, and removed ofStandardFirmata files from all projects.
 	/ fixed Linux serial issues with device number.
@@ -1602,7 +1607,7 @@ OF 0061 Pre-release
 	/ serial enumerateDevices is doing ofLog so not always printing out: http://www.openframeworks/forum/posting.php?mode=reply&amp;f=6&amp;t=1860
 	/ fix for ofArduino: http://www.openframeworks/forum/viewtopic.php?f=8&amp;t=3042&amp;p=16425#p16425
 
-### video 
+### video
 
 	+ add setFrameRate for ofVideoGrabber
 	/ update the quicktime settings dialog so that PS3 eye panel shows up.
@@ -1613,21 +1618,21 @@ OF 0061 Pre-release
 	/ ofUCUtils - PIX_FMT_YUV422 won't exist anymore on future ffmpeg versions
 	/ ofUCUtils - sws_getContext needs PixFmt as parameter instead of int since karmic
 
-### sound 
+### sound
 
 	/ updated ofSoundStream to use rtAudio 4
-	+ Add a ofSoundPlayerUpdate call - for keeping fmod on track - should be called once per frame to make sure sounds don't drop out. 
+	+ Add a ofSoundPlayerUpdate call - for keeping fmod on track - should be called once per frame to make sure sounds don't drop out.
 
-### addons 
+### addons
 
 	/ ofxXmlSettings fixed a printf(tag.c_str()) that xcode complained about
 	/ ofxXmlSettings memory leak
 	/ ofxXmlSettings read attributes
 	/ ofxXmlSettings read from string / save to string
 
-	ofxVectorGraphics 
+	ofxVectorGraphics
 
-		+ Update to CreEPS 2.0 - has MIT license and new features. 
+		+ Update to CreEPS 2.0 - has MIT license and new features.
 
 	ofxOpenCv
 
@@ -1649,7 +1654,7 @@ OF 0061 Pre-release
 		/ ofxOsc - memory leak
 		/ ofxOsc - Shutdown issue - fix here: http://damian.dreamhosters.com/svn/public/ofxOsc/latest/
 
-	ofxThread 
+	ofxThread
 
 		/ stopThread now called when threaded function returns
 
@@ -1659,19 +1664,19 @@ OF 0061 Pre-release
 		+ added ofxMatrx4x4 and ofxQuaternion
 		/ ofxPoin2/3/4f deprecated merged with ofxVec2/3/4f
 
-	ofxNetwork 
+	ofxNetwork
 
 		/ fixed for xcode needs tcp.h included in ofxUdpManager
 
 ---------------------------------------------------------------
 
-	  .oooo.     .oooo.       .ooo   
-	 d8P'`Y8b   d8P'`Y8b    .88'     
-	888    888 888    888  d88'      
-	888    888 888    888 d888P"Ybo. 
-	888    888 888    888 Y88[   ]88 
-	`88b  d88' `88b  d88' `Y88   88P 
-	 `Y8bd8P'   `Y8bd8P'   `88bod8'  
+	  .oooo.     .oooo.       .ooo
+	 d8P'`Y8b   d8P'`Y8b    .88'
+	888    888 888    888  d88'
+	888    888 888    888 d888P"Ybo.
+	888    888 888    888 Y88[   ]88
+	`88b  d88' `88b  d88' `Y88   88P
+	 `Y8bd8P'   `Y8bd8P'   `88bod8'
 
 OF 006 Pre-release
 ==================
@@ -1756,7 +1761,7 @@ http://www.openframeworks/forum/viewtopic.php?p=5213#5213
 
 ### events
 
-	+ added an event system that allows objects receive core events ( draw, mouse, key...), and to create other events. 
+	+ added an event system that allows objects receive core events ( draw, mouse, key...), and to create other events.
 
 ### video
 
@@ -1777,7 +1782,7 @@ http://www.openframeworks/forum/viewtopic.php?p=7665#7665
 	/ ofVideoPlayer - (linux) changed fobs out for gstreamer
 	/ ofVideoPlayer - (linux) sound in videos
 
-### communication 
+### communication
 
 	/ ofSerial - fixed read byte errors
 	/ ofSerial - verbose, with non reads
@@ -1787,7 +1792,7 @@ http://www.openframeworks/forum/viewtopic.php?p=7665#7665
 	+ ofStandardFirmata - added this class (thanks erik!) for easier serial support
 	+ ofArduino - added this class which extends ofStandardFirmata with specific arduino functions
 
-### sound 
+### sound
 
 	/ ofSoundPlayer - (linux) alsa as default backend
 
@@ -1823,13 +1828,13 @@ http://www.openframeworks/forum/viewtopic.php?p=7221#7221
 
 ---------------------------------------------------------------
 
-	  .oooo.     .oooo.     oooooooo 
-	 d8P'`Y8b   d8P'`Y8b   dP""""""" 
-	888    888 888    888 d88888b.   
-	888    888 888    888     `Y88b  
-	888    888 888    888       ]88  
-	`88b  d88' `88b  d88' o.   .88P  
-	 `Y8bd8P'   `Y8bd8P'  `8bd88P'   
+	  .oooo.     .oooo.     oooooooo
+	 d8P'`Y8b   d8P'`Y8b   dP"""""""
+	888    888 888    888 d88888b.
+	888    888 888    888     `Y88b
+	888    888 888    888       ]88
+	`88b  d88' `88b  d88' o.   .88P
+	 `Y8bd8P'   `Y8bd8P'  `8bd88P'
 
 OF 005 Pre-release
 ==================
@@ -1840,10 +1845,10 @@ OF 005 Pre-release
 	/ = modified
 
 ---------------------------------------------------------------
-### major changes 
+### major changes
 
 in this release we introduced a "FAT" package as well as an addons.h system that uses #defines.
-removed the ofCore to fix some include issues. 
+removed the ofCore to fix some include issues.
 
 	/ better ofMain / addons system
 	- no ofCore
@@ -1851,7 +1856,7 @@ removed the ofCore to fix some include issues.
 ---------------------------------------------------------------
 ### other changes
 
-### app 
+### app
 
 	+ ofAppRunner - recording of the screens original position
 	/ ofAppRunner - jorge's fix for idle / setFrameRate()
@@ -1898,22 +1903,22 @@ http://www.openframeworks/forum/viewtopic.php?t=494
 	/ ofSoundStream  - fixed ofSoundStreamEnd
 	/ ofSoundStream  - renamed ofSoundStreamEnd ofSoundStreamClose
 
-### video 
+### video
 
 	+ ofVideoGrabber - added linux support for unicap as well as V4L, settable in ofContstants
 	+ ofVideoGrabber - added ofUCUtils
 	+ ofVideoGrabber - tons of V4L fixes
 	+ ofVideoPlayer - createMovieFromURL for quicktime
-	/ ofVideoPlayer - fix for bHavePixelsChanged on QT (isFrameNew returning true) 
+	/ ofVideoPlayer - fix for bHavePixelsChanged on QT (isFrameNew returning true)
 
 ---------------------------------------------------------------
-	  .oooo.     .oooo.         .o   
-	 d8P'`Y8b   d8P'`Y8b      .d88   
-	888    888 888    888   .d'888   
-	888    888 888    888 .d'  888   
-	888    888 888    888 88ooo888oo 
-	`88b  d88' `88b  d88'      888   
-	 `Y8bd8P'   `Y8bd8P'      o888o  
+	  .oooo.     .oooo.         .o
+	 d8P'`Y8b   d8P'`Y8b      .d88
+	888    888 888    888   .d'888
+	888    888 888    888 .d'  888
+	888    888 888    888 88ooo888oo
+	`88b  d88' `88b  d88'      888
+	 `Y8bd8P'   `Y8bd8P'      o888o
 
 OF 004 Pre-release
 ==================
@@ -1938,7 +1943,7 @@ now the structure look like:
 - libs
 - addons
 
-where libs are the core libraries for OF (which shouldn't change much), and addons is everything else.  
+where libs are the core libraries for OF (which shouldn't change much), and addons is everything else.
 
 Adding a library will work in the following way:
 
@@ -1958,7 +1963,7 @@ d) when you want to use the addon, use the #define before including ofMain in te
 e) place any dll / .so files in the right place (after compiling)
 
 ---------------------------------------------------------------
-### other changes 
+### other changes
 
 	/ 	ofGraphics - fixed a bug with OS X, 10.5 compiling
 	/ 	ofSerial - fixed a bug with win32 destructor
@@ -1970,13 +1975,13 @@ e) place any dll / .so files in the right place (after compiling)
 
 ---------------------------------------------------------------
 
-	  .oooo.     .oooo.     .oooo.   
-	 d8P'`Y8b   d8P'`Y8b  .dP""Y88b  
-	888    888 888    888       ]8P' 
-	888    888 888    888     <88b.  
-	888    888 888    888      `88b. 
-	`88b  d88' `88b  d88' o.   .88P  
-	 `Y8bd8P'   `Y8bd8P'  `8bd88P'                           
+	  .oooo.     .oooo.     .oooo.
+	 d8P'`Y8b   d8P'`Y8b  .dP""Y88b
+	888    888 888    888       ]8P'
+	888    888 888    888     <88b.
+	888    888 888    888      `88b.
+	`88b  d88' `88b  d88' o.   .88P
+	 `Y8bd8P'   `Y8bd8P'  `8bd88P'
 
 OF 003 Pre-release
 ==================
@@ -2002,7 +2007,7 @@ OF 003 Pre-release
 - every app now uses a "data" folder for any OF loading and saving media
 
 ---------------------------------------------------------------
-### other changes 
+### other changes
 
 (there are likely more, this is what we can remember but we will update as we update the API)
 
@@ -2030,13 +2035,13 @@ OF 003 Pre-release
 
 ---------------------------------------------------------------
 
-	  .oooo.     .oooo.     .oooo.   
-	 d8P'`Y8b   d8P'`Y8b  .dP""Y88b  
-	888    888 888    888       ]8P' 
-	888    888 888    888     .d8P'  
-	888    888 888    888   .dP'     
-	`88b  d88' `88b  d88' .oP     .o 
-	 `Y8bd8P'   `Y8bd8P'  8888888888 
+	  .oooo.     .oooo.     .oooo.
+	 d8P'`Y8b   d8P'`Y8b  .dP""Y88b
+	888    888 888    888       ]8P'
+	888    888 888    888     .d8P'
+	888    888 888    888   .dP'
+	`88b  d88' `88b  d88' .oP     .o
+	 `Y8bd8P'   `Y8bd8P'  8888888888
 
 OF 002 Pre-release
 ==================

@@ -170,7 +170,7 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid
 PLATFORM_CFLAGS = -Wall -std=c++11
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
+PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-sections -fdata-sections
 
 
 ifeq ($(ABI),armv7)
@@ -202,7 +202,7 @@ PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-st
 ifneq ($(ABI),x86)
 PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 
 endif
-PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
+PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -221,6 +221,9 @@ PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+
+# RELEASE options
+PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -s
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
