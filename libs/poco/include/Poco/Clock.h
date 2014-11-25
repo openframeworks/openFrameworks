@@ -45,8 +45,14 @@ class Foundation_API Clock
 	/// to the time of day.
 {
 public:
-	typedef Int64 ClockVal;    /// monotonic clock value in microsecond resolution
-	typedef Int64 ClockDiff;   /// difference between two clock values in microseconds
+	typedef Int64 ClockVal;
+		/// Monotonic clock value in microsecond resolution.
+
+	typedef Int64 ClockDiff;
+		/// Difference between two ClockVal values in microseconds.
+
+	static const ClockVal CLOCKVAL_MIN; /// Minimum clock value.
+	static const ClockVal CLOCKVAL_MAX; /// Maximum clock value.
 
 	Clock();
 		/// Creates a Clock with the current system clock value.
@@ -78,7 +84,7 @@ public:
 	
 	Clock  operator +  (ClockDiff d) const;
 	Clock  operator -  (ClockDiff d) const;
-	ClockDiff   operator -  (const Clock& ts) const;
+	ClockDiff operator - (const Clock& ts) const;
 	Clock& operator += (ClockDiff d);
 	Clock& operator -= (ClockDiff d);
 	
@@ -86,6 +92,13 @@ public:
 		/// Returns the clock value expressed in microseconds
 		/// since the system-specific epoch time (usually system
 		/// startup).
+
+	ClockVal raw() const;
+		/// Returns the clock value expressed in microseconds
+		/// since the system-specific epoch time (usually system
+		/// startup).
+		///
+		/// Same as microseconds().
 	
 	ClockDiff elapsed() const;
 		/// Returns the time elapsed since the time denoted by
@@ -95,12 +108,12 @@ public:
 		/// Returns true iff the given interval has passed
 		/// since the time denoted by the Clock instance.
 	
-	static ClockVal resolution();
+	static ClockDiff resolution();
 		/// Returns the resolution in units per second.
 		/// Since the Clock clas has microsecond resolution,
 		/// the returned value is always 1000000.
 		
-	static ClockVal accuracy();
+	static ClockDiff accuracy();
 		/// Returns the system's clock accuracy in microseconds.
 		
 	static bool monotonic();
@@ -203,7 +216,7 @@ inline bool Clock::isElapsed(Clock::ClockDiff interval) const
 }
 
 
-inline Clock::ClockVal Clock::resolution()
+inline Clock::ClockDiff Clock::resolution()
 {
 	return 1000000;
 }
@@ -212,6 +225,12 @@ inline Clock::ClockVal Clock::resolution()
 inline void swap(Clock& s1, Clock& s2)
 {
 	s1.swap(s2);
+}
+
+
+inline Clock::ClockVal Clock::raw() const
+{
+	return _clock;
 }
 
 

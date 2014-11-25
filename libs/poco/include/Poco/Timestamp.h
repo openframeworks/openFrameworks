@@ -28,6 +28,7 @@ namespace Poco {
 
 class Timespan;
 
+
 class Foundation_API Timestamp
 	/// A Timestamp stores a monotonic* time value
 	/// with (theoretical) microseconds resolution.
@@ -36,22 +37,37 @@ class Foundation_API Timestamp
 	///
 	/// [*] Note that Timestamp values are only monotonic as
 	/// long as the systems's clock is monotonic as well
-	/// (and not, e.g. set back).
+	/// (and not, e.g. set back due to time synchronization
+	/// or other reasons).
 	///
 	/// Timestamps are UTC (Coordinated Universal Time)
 	/// based and thus independent of the timezone
 	/// in effect on the system.
+	///
+	/// The internal reference time is the Unix epoch, 
+	/// midnight, January 1, 1970.
 {
 public:
-	typedef Int64 TimeVal;    /// monotonic UTC time value in microsecond resolution
-	typedef Int64 UtcTimeVal; /// monotonic UTC time value in 100 nanosecond resolution
-	typedef Int64 TimeDiff;   /// difference between two timestamps in microseconds
+	typedef Int64 TimeVal; 
+		/// Monotonic UTC time value in microsecond resolution,
+		/// with base time midnight, January 1, 1970.
+		
+	typedef Int64 UtcTimeVal; 
+		/// Monotonic UTC time value in 100 nanosecond resolution,
+		/// with base time midnight, October 15, 1582.
+		
+	typedef Int64 TimeDiff;
+		/// Difference between two TimeVal values in microseconds.
+
+	static const TimeVal TIMEVAL_MIN; /// Minimum timestamp value.
+	static const TimeVal TIMEVAL_MAX; /// Maximum timestamp value.
 
 	Timestamp();
 		/// Creates a timestamp with the current time.
 		
 	Timestamp(TimeVal tv);
-		/// Creates a timestamp from the given time value.
+		/// Creates a timestamp from the given time value
+		/// (microseconds since midnight, January 1, 1970).
 		
 	Timestamp(const Timestamp& other);
 		/// Copy constructor.
@@ -106,14 +122,21 @@ public:
 	bool isElapsed(TimeDiff interval) const;
 		/// Returns true iff the given interval has passed
 		/// since the time denoted by the timestamp.
+
+	TimeVal raw() const;
+		/// Returns the raw time value.
+		///
+		/// Same as epochMicroseconds().
 	
 	static Timestamp fromEpochTime(std::time_t t);
 		/// Creates a timestamp from a std::time_t.
 		
 	static Timestamp fromUtcTime(UtcTimeVal val);
-		/// Creates a timestamp from a UTC time value.
+		/// Creates a timestamp from a UTC time value
+		/// (100 nanosecond intervals since midnight,
+		/// October 15, 1582).
 		
-	static TimeVal resolution();
+	static TimeDiff resolution();
 		/// Returns the resolution in units per second.
 		/// Since the timestamp has microsecond resolution,
 		/// the returned value is always 1000000.
@@ -232,7 +255,7 @@ inline bool Timestamp::isElapsed(Timestamp::TimeDiff interval) const
 }
 
 
-inline Timestamp::TimeVal Timestamp::resolution()
+inline Timestamp::TimeDiff Timestamp::resolution()
 {
 	return 1000000;
 }
@@ -241,6 +264,12 @@ inline Timestamp::TimeVal Timestamp::resolution()
 inline void swap(Timestamp& s1, Timestamp& s2)
 {
 	s1.swap(s2);
+}
+
+
+inline Timestamp::TimeVal Timestamp::raw() const
+{
+	return _ts;
 }
 
 

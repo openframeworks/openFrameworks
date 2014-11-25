@@ -90,7 +90,7 @@ public:
 		/// their pace, this allows finer control over client connections.
 		///
 		/// If abortCurrent is false, all current requests are allowed to
-		/// complete. If abortCurrent is false, the underlying sockets of
+		/// complete. If abortCurrent is true, the underlying sockets of
 		/// all client connections are shut down, causing all requests
 		/// to abort.
 

@@ -78,11 +78,12 @@ public:
 
 	SocketAcceptor(ServerSocket& socket, SocketReactor& reactor):
 		_socket(socket),
-		_pReactor(0)
+		_pReactor(&reactor)
 		/// Creates a SocketAcceptor, using the given ServerSocket.
 		/// The SocketAcceptor registers itself with the given SocketReactor.
 	{
-		registerAcceptor(reactor);
+		_pReactor->addEventHandler(_socket, Poco::Observer<SocketAcceptor,
+			ReadableNotification>(*this, &SocketAcceptor::onAccept));
 	}
 
 	virtual ~SocketAcceptor()
@@ -90,22 +91,43 @@ public:
 	{
 		try
 		{
-			unregisterAcceptor();
+			if (_pReactor)
+			{
+				_pReactor->removeEventHandler(_socket, Poco::Observer<SocketAcceptor,
+					ReadableNotification>(*this, &SocketAcceptor::onAccept));
+			}
 		}
 		catch (...)
 		{
 			poco_unexpected();
 		}
 	}
-	
+
+	void setReactor(SocketReactor& reactor)
+		/// Sets the reactor for this acceptor.
+	{
+		_pReactor = &reactor;
+		if (!_pReactor->hasEventHandler(_socket, Poco::Observer<SocketAcceptor,
+			ReadableNotification>(*this, &SocketAcceptor::onAccept)))
+		{
+			registerAcceptor(reactor);
+		}
+	}
+
 	virtual void registerAcceptor(SocketReactor& reactor)
 		/// Registers the SocketAcceptor with a SocketReactor.
 		///
-		/// A subclass can override this and, for example, also register
-		/// an event handler for a timeout event.
-		///
-		/// The overriding method must call the baseclass implementation first.
+		/// A subclass can override this function to e.g.
+		/// register an event handler for timeout event.
+		/// 
+		/// If acceptor was constructed without providing reactor to it,
+		/// the override of this method must either call the base class
+		/// implementation or directly register the accept handler with
+		/// the reactor.
 	{
+		if (_pReactor)
+			throw Poco::InvalidAccessException("Acceptor already registered.");
+
 		_pReactor = &reactor;
 		_pReactor->addEventHandler(_socket, Poco::Observer<SocketAcceptor, ReadableNotification>(*this, &SocketAcceptor::onAccept));
 	}
@@ -113,10 +135,12 @@ public:
 	virtual void unregisterAcceptor()
 		/// Unregisters the SocketAcceptor.
 		///
-		/// A subclass can override this and, for example, also unregister
-		/// its event handler for a timeout event.
-		///
-		/// The overriding method must call the baseclass implementation first.
+		/// A subclass can override this function to e.g.
+		/// unregister its event handler for a timeout event.
+		/// 
+		/// If the accept handler was registered with the reactor,
+		/// the overriding method must either call the base class
+		/// implementation or directly unregister the accept handler.
 	{
 		if (_pReactor)
 		{
@@ -129,6 +153,7 @@ public:
 	{
 		pNotification->release();
 		StreamSocket sock = _socket.acceptConnection();
+		_pReactor->wakeUp();
 		createServiceHandler(sock);
 	}
 	

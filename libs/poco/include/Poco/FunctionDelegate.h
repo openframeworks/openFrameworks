@@ -34,16 +34,16 @@ class FunctionDelegate: public AbstractDelegate<TArgs>
 	/// for use as a Delegate.
 {
 public:
-	typedef void (*NotifyMethod)(const void*, TArgs&);
+	typedef void (*NotifyFunction)(const void*, TArgs&);
 
-	FunctionDelegate(NotifyMethod method):
-		_receiverMethod(method)
+	FunctionDelegate(NotifyFunction function):
+		_function(function)
 	{
 	}
 
 	FunctionDelegate(const FunctionDelegate& delegate):
 		AbstractDelegate<TArgs>(delegate),
-		_receiverMethod(delegate._receiverMethod)
+		_function(delegate._function)
 	{
 	}
 
@@ -55,8 +55,7 @@ public:
 	{
 		if (&delegate != this)
 		{
-			this->_pTarget        = delegate._pTarget;
-			this->_receiverMethod = delegate._receiverMethod;
+			this->_function = delegate._function;
 		}
 		return *this;
 	}
@@ -64,9 +63,9 @@ public:
 	bool notify(const void* sender, TArgs& arguments)
 	{
 		Mutex::ScopedLock lock(_mutex);
-		if (_receiverMethod)
+		if (_function)
 		{
-			(*_receiverMethod)(sender, arguments);
+			(*_function)(sender, arguments);
 			return true;
 		}
 		else return false;
@@ -75,7 +74,7 @@ public:
 	bool equals(const AbstractDelegate<TArgs>& other) const
 	{
 		const FunctionDelegate* pOtherDelegate = dynamic_cast<const FunctionDelegate*>(other.unwrap());
-		return pOtherDelegate && _receiverMethod == pOtherDelegate->_receiverMethod;
+		return pOtherDelegate && _function == pOtherDelegate->_function;
 	}
 
 	AbstractDelegate<TArgs>* clone() const
@@ -86,11 +85,11 @@ public:
 	void disable()
 	{
 		Mutex::ScopedLock lock(_mutex);
-		_receiverMethod = 0;
+		_function = 0;
 	}
 
 protected:
-	NotifyMethod _receiverMethod;
+	NotifyFunction _function;
 	Mutex _mutex;
 
 private:
@@ -102,16 +101,16 @@ template <class TArgs>
 class FunctionDelegate<TArgs, true, false>: public AbstractDelegate<TArgs>
 {
 public:
-	typedef void (*NotifyMethod)(void*, TArgs&);
+	typedef void (*NotifyFunction)(void*, TArgs&);
 
-	FunctionDelegate(NotifyMethod method):
-		_receiverMethod(method)
+	FunctionDelegate(NotifyFunction function):
+		_function(function)
 	{
 	}
 
 	FunctionDelegate(const FunctionDelegate& delegate):
 		AbstractDelegate<TArgs>(delegate),
-		_receiverMethod(delegate._receiverMethod)
+		_function(delegate._function)
 	{
 	}
 
@@ -123,8 +122,7 @@ public:
 	{
 		if (&delegate != this)
 		{
-			this->_pTarget        = delegate._pTarget;
-			this->_receiverMethod = delegate._receiverMethod;
+			this->_function = delegate._function;
 		}
 		return *this;
 	}
@@ -132,9 +130,9 @@ public:
 	bool notify(const void* sender, TArgs& arguments)
 	{
 		Mutex::ScopedLock lock(_mutex);
-		if (_receiverMethod)
+		if (_function)
 		{
-			(*_receiverMethod)(const_cast<void*>(sender), arguments);
+			(*_function)(const_cast<void*>(sender), arguments);
 			return true;
 		}
 		else return false;
@@ -143,7 +141,7 @@ public:
 	bool equals(const AbstractDelegate<TArgs>& other) const
 	{
 		const FunctionDelegate* pOtherDelegate = dynamic_cast<const FunctionDelegate*>(other.unwrap());
-		return pOtherDelegate && _receiverMethod == pOtherDelegate->_receiverMethod;
+		return pOtherDelegate && _function == pOtherDelegate->_function;
 	}
 
 	AbstractDelegate<TArgs>* clone() const
@@ -154,11 +152,11 @@ public:
 	void disable()
 	{
 		Mutex::ScopedLock lock(_mutex);
-		_receiverMethod = 0;
+		_function = 0;
 	}
 
 protected:
-	NotifyMethod _receiverMethod;
+	NotifyFunction _function;
 	Mutex _mutex;
 
 private:
@@ -170,16 +168,16 @@ template <class TArgs, bool senderIsConst>
 class FunctionDelegate<TArgs, false, senderIsConst>: public AbstractDelegate<TArgs>
 {
 public:
-	typedef void (*NotifyMethod)(TArgs&);
+	typedef void (*NotifyFunction)(TArgs&);
 
-	FunctionDelegate(NotifyMethod method):
-		_receiverMethod(method)
+	FunctionDelegate(NotifyFunction function):
+		_function(function)
 	{
 	}
 
 	FunctionDelegate(const FunctionDelegate& delegate):
 		AbstractDelegate<TArgs>(delegate),
-		_receiverMethod(delegate._receiverMethod)
+		_function(delegate._function)
 	{
 	}
 
@@ -191,8 +189,7 @@ public:
 	{
 		if (&delegate != this)
 		{
-			this->_pTarget        = delegate._pTarget;
-			this->_receiverMethod = delegate._receiverMethod;
+			this->_function = delegate._function;
 		}
 		return *this;
 	}
@@ -200,9 +197,9 @@ public:
 	bool notify(const void* /*sender*/, TArgs& arguments)
 	{
 		Mutex::ScopedLock lock(_mutex);
-		if (_receiverMethod)
+		if (_function)
 		{
-			(*_receiverMethod)(arguments);
+			(*_function)(arguments);
 			return true; 
 		}
 		else return false;
@@ -211,7 +208,7 @@ public:
 	bool equals(const AbstractDelegate<TArgs>& other) const
 	{
 		const FunctionDelegate* pOtherDelegate = dynamic_cast<const FunctionDelegate*>(other.unwrap());
-		return pOtherDelegate && _receiverMethod == pOtherDelegate->_receiverMethod;
+		return pOtherDelegate && _function == pOtherDelegate->_function;
 	}
 
 	AbstractDelegate<TArgs>* clone() const
@@ -222,11 +219,11 @@ public:
 	void disable()
 	{
 		Mutex::ScopedLock lock(_mutex);
-		_receiverMethod = 0;
+		_function = 0;
 	}
 
 protected:
-	NotifyMethod _receiverMethod;
+	NotifyFunction _function;
 	Mutex _mutex;
 
 private:
@@ -234,26 +231,22 @@ private:
 };
 
 
-
-
-
-
 template <> 
-class FunctionDelegate<void,true,true>: public AbstractDelegate<void>
+class FunctionDelegate<void, true, true>: public AbstractDelegate<void>
 	/// Wraps a freestanding function or static member function 
 	/// for use as a Delegate.
 {
 public:
-	typedef void (*NotifyMethod)(const void*);
+	typedef void (*NotifyFunction)(const void*);
 
-	FunctionDelegate(NotifyMethod method):
-		_receiverMethod(method)
+	FunctionDelegate(NotifyFunction function):
+		_function(function)
 	{
 	}
 
 	FunctionDelegate(const FunctionDelegate& delegate):
 		AbstractDelegate<void>(delegate),
-		_receiverMethod(delegate._receiverMethod)
+		_function(delegate._function)
 	{
 	}
 
@@ -265,8 +258,7 @@ public:
 	{
 		if (&delegate != this)
 		{
-			//this->_pTarget        = delegate._pTarget;
-			this->_receiverMethod = delegate._receiverMethod;
+			this->_function = delegate._function;
 		}
 		return *this;
 	}
@@ -274,9 +266,9 @@ public:
 	bool notify(const void* sender)
 	{
 		Mutex::ScopedLock lock(_mutex);
-		if (_receiverMethod)
+		if (_function)
 		{
-			(*_receiverMethod)(sender);
+			(*_function)(sender);
 			return true;
 		}
 		else return false;
@@ -285,7 +277,7 @@ public:
 	bool equals(const AbstractDelegate<void>& other) const
 	{
 		const FunctionDelegate* pOtherDelegate = dynamic_cast<const FunctionDelegate*>(other.unwrap());
-		return pOtherDelegate && _receiverMethod == pOtherDelegate->_receiverMethod;
+		return pOtherDelegate && _function == pOtherDelegate->_function;
 	}
 
 	AbstractDelegate<void>* clone() const
@@ -296,11 +288,11 @@ public:
 	void disable()
 	{
 		Mutex::ScopedLock lock(_mutex);
-		_receiverMethod = 0;
+		_function = 0;
 	}
 
 protected:
-	NotifyMethod _receiverMethod;
+	NotifyFunction _function;
 	Mutex _mutex;
 
 private:
@@ -312,16 +304,16 @@ template <>
 class FunctionDelegate<void, true, false>: public AbstractDelegate<void>
 {
 public:
-	typedef void (*NotifyMethod)(void*);
+	typedef void (*NotifyFunction)(void*);
 
-	FunctionDelegate(NotifyMethod method):
-		_receiverMethod(method)
+	FunctionDelegate(NotifyFunction function):
+		_function(function)
 	{
 	}
 
 	FunctionDelegate(const FunctionDelegate& delegate):
 		AbstractDelegate<void>(delegate),
-		_receiverMethod(delegate._receiverMethod)
+		_function(delegate._function)
 	{
 	}
 
@@ -333,8 +325,7 @@ public:
 	{
 		if (&delegate != this)
 		{
-			//this->_pTarget        = delegate._pTarget;
-			this->_receiverMethod = delegate._receiverMethod;
+			this->_function = delegate._function;
 		}
 		return *this;
 	}
@@ -342,9 +333,9 @@ public:
 	bool notify(const void* sender)
 	{
 		Mutex::ScopedLock lock(_mutex);
-		if (_receiverMethod)
+		if (_function)
 		{
-			(*_receiverMethod)(const_cast<void*>(sender));
+			(*_function)(const_cast<void*>(sender));
 			return true;
 		}
 		else return false;
@@ -353,7 +344,7 @@ public:
 	bool equals(const AbstractDelegate<void>& other) const
 	{
 		const FunctionDelegate* pOtherDelegate = dynamic_cast<const FunctionDelegate*>(other.unwrap());
-		return pOtherDelegate && _receiverMethod == pOtherDelegate->_receiverMethod;
+		return pOtherDelegate && _function == pOtherDelegate->_function;
 	}
 
 	AbstractDelegate<void>* clone() const
@@ -364,11 +355,11 @@ public:
 	void disable()
 	{
 		Mutex::ScopedLock lock(_mutex);
-		_receiverMethod = 0;
+		_function = 0;
 	}
 
 protected:
-	NotifyMethod _receiverMethod;
+	NotifyFunction _function;
 	Mutex _mutex;
 
 private:
@@ -380,16 +371,16 @@ template <bool senderIsConst>
 class FunctionDelegate<void, false, senderIsConst>: public AbstractDelegate<void>
 {
 public:
-	typedef void (*NotifyMethod)();
+	typedef void (*NotifyFunction)();
 
-	FunctionDelegate(NotifyMethod method):
-		_receiverMethod(method)
+	FunctionDelegate(NotifyFunction function):
+		_function(function)
 	{
 	}
 
 	FunctionDelegate(const FunctionDelegate& delegate):
 		AbstractDelegate<void>(delegate),
-		_receiverMethod(delegate._receiverMethod)
+		_function(delegate._function)
 	{
 	}
 
@@ -401,8 +392,7 @@ public:
 	{
 		if (&delegate != this)
 		{
-			//this->_pTarget        = delegate._pTarget;
-			this->_receiverMethod = delegate._receiverMethod;
+			this->_function = delegate._function;
 		}
 		return *this;
 	}
@@ -410,9 +400,9 @@ public:
 	bool notify(const void* /*sender*/)
 	{
 		Mutex::ScopedLock lock(_mutex);
-		if (_receiverMethod)
+		if (_function)
 		{
-			(*_receiverMethod)();
+			(*_function)();
 			return true; 
 		}
 		else return false;
@@ -421,7 +411,7 @@ public:
 	bool equals(const AbstractDelegate<void>& other) const
 	{
 		const FunctionDelegate* pOtherDelegate = dynamic_cast<const FunctionDelegate*>(other.unwrap());
-		return pOtherDelegate && _receiverMethod == pOtherDelegate->_receiverMethod;
+		return pOtherDelegate && _function == pOtherDelegate->_function;
 	}
 
 	AbstractDelegate<void>* clone() const
@@ -432,11 +422,11 @@ public:
 	void disable()
 	{
 		Mutex::ScopedLock lock(_mutex);
-		_receiverMethod = 0;
+		_function = 0;
 	}
 
 protected:
-	NotifyMethod _receiverMethod;
+	NotifyFunction _function;
 	Mutex _mutex;
 
 private:

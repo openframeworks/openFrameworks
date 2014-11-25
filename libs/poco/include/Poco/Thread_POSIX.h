@@ -26,6 +26,7 @@
 #include "Poco/Event.h"
 #include "Poco/RefCountedObject.h"
 #include "Poco/AutoPtr.h"
+#include "Poco/SharedPtr.h"
 #include <pthread.h>
 // must be limits.h (not <climits>) for PTHREAD_STACK_MIN on Solaris
 #include <limits.h>
@@ -61,16 +62,6 @@ public:
 		POLICY_DEFAULT_IMPL = SCHED_OTHER
 	};
 	
-	struct CallbackData: public RefCountedObject
-	{
-		CallbackData(): callback(0), pData(0)
-		{
-		}
-
-		Callable  callback;
-		void*     pData; 
-	};
-
 	ThreadImpl();
 	~ThreadImpl();
 
@@ -83,9 +74,7 @@ public:
 	static int getMaxOSPriorityImpl(int policy);
 	void setStackSizeImpl(int size);
 	int getStackSizeImpl() const;
-	void startImpl(Runnable& target);
-	void startImpl(Callable target, void* pData = 0);
-
+	void startImpl(SharedPtr<Runnable> pTarget);
 	void joinImpl();
 	bool joinImpl(long milliseconds);
 	bool isRunningImpl() const;
@@ -96,7 +85,6 @@ public:
 
 protected:
 	static void* runnableEntry(void* pThread);
-	static void* callableEntry(void* pThread);
 	static int mapPrio(int prio, int policy = SCHED_OTHER);
 	static int reverseMapPrio(int osPrio, int policy = SCHED_OTHER);
 
@@ -129,8 +117,6 @@ private:
 	struct ThreadData: public RefCountedObject
 	{
 		ThreadData():
-			pRunnableTarget(0),
-			pCallbackTarget(0),
 			thread(0),
 			prio(PRIO_NORMAL_IMPL),
 			policy(SCHED_OTHER),
@@ -146,8 +132,7 @@ private:
 		#endif
 		}
 
-		Runnable*     pRunnableTarget;
-		AutoPtr<CallbackData> pCallbackTarget;
+		SharedPtr<Runnable> pRunnableTarget;
 		pthread_t     thread;
 		int           prio;
 		int           osPrio;
@@ -186,8 +171,7 @@ inline int ThreadImpl::getOSPriorityImpl() const
 
 inline bool ThreadImpl::isRunningImpl() const
 {
-	return _pData->pRunnableTarget != 0 ||
-		(_pData->pCallbackTarget.get() != 0 && _pData->pCallbackTarget->callback != 0);
+	return !_pData->pRunnableTarget.isNull();
 }
 
 

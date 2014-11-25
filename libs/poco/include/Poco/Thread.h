@@ -122,7 +122,7 @@ public:
 		/// May return 0 if the priority has not been explicitly set.
 		
 	static int getMinOSPriority(int policy = POLICY_DEFAULT);
-		/// Returns the mininum operating system-specific priority value,
+		/// Returns the minimum operating system-specific priority value,
 		/// which can be passed to setOSPriority() for the given policy.
 		
 	static int getMaxOSPriority(int policy = POLICY_DEFAULT);
@@ -148,6 +148,13 @@ public:
 
 	void start(Callable target, void* pData = 0);
 		/// Starts the thread with the given target and parameter.
+
+	template <class Functor>
+	void startFunc(Functor fn)
+		/// Starts the thread with the given functor object or lambda.
+	{
+		startImpl(new FunctorRunnable<Functor>(fn));
+	}
 
 	void join();
 		/// Waits until the thread completes execution.	
@@ -221,7 +228,29 @@ protected:
 		
 	static int uniqueId();
 		/// Creates and returns a unique id for a thread.
-		
+
+	template <class Functor>
+	class FunctorRunnable: public Runnable
+	{
+	public:
+		FunctorRunnable(const Functor& functor):
+			_functor(functor)
+		{
+		}
+
+		~FunctorRunnable()
+		{
+		}
+
+		void run()
+		{
+			_functor();
+		}
+	
+	private:
+		Functor _functor;
+	};
+
 private:
 	Thread(const Thread&);
 	Thread& operator = (const Thread&);

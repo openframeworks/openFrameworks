@@ -52,6 +52,9 @@ public:
 	~HTTPDigestCredentials();
 		/// Destroys the HTTPDigestCredentials.
 
+	void reset();
+		/// Resets the HTTPDigestCredentials object to a clean state.
+
 	void setUsername(const std::string& username);
 		/// Sets the username.
 

@@ -35,6 +35,9 @@ struct Foundation_API UTF8
 	///
 	/// toUpper(), toUpperInPlace(), toLower() and toLowerInPlace() provide
 	/// Unicode-based character case transformation for UTF-8 encoded strings.
+	///
+	/// removeBOM() removes the UTF-8 Byte Order Mark sequence (0xEF, 0xBB, 0xBF)
+	/// from the beginning of the given string, if it's there.
 {
 	static int icompare(const std::string& str, std::string::size_type pos, std::string::size_type n, std::string::const_iterator it2, std::string::const_iterator end2);
 	static int icompare(const std::string& str1, const std::string& str2);
@@ -51,6 +54,10 @@ struct Foundation_API UTF8
 	static std::string& toUpperInPlace(std::string& str);
 	static std::string toLower(const std::string& str);
 	static std::string& toLowerInPlace(std::string& str);
+	
+	static void removeBOM(std::string& str);
+		/// Remove the UTF-8 Byte Order Mark sequence (0xEF, 0xBB, 0xBF)
+		/// from the beginning of the string, if it's there.
 };
 
 

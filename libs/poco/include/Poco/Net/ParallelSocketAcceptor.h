@@ -73,7 +73,7 @@ public:
 		SocketReactor& reactor,
 		unsigned threads = Poco::Environment::processorCount()):
 		_socket(socket),
-		_pReactor(0),
+		_pReactor(&reactor),
 		_threads(threads),
 		_next(0)
 		/// Creates a ParallelSocketAcceptor using the given ServerSocket, sets the 
@@ -81,7 +81,9 @@ public:
 		/// with the given SocketReactor.
 	{
 		init();
-		registerAcceptor(reactor);
+		_pReactor->addEventHandler(_socket,
+			Poco::Observer<ParallelSocketAcceptor,
+			ReadableNotification>(*this, &ParallelSocketAcceptor::onAccept));
 	}
 
 	virtual ~ParallelSocketAcceptor()
@@ -89,22 +91,43 @@ public:
 	{
 		try
 		{
-			unregisterAcceptor();
+			if (_pReactor)
+			{
+				_pReactor->removeEventHandler(_socket,
+					Poco::Observer<ParallelSocketAcceptor,
+					ReadableNotification>(*this, &ParallelSocketAcceptor::onAccept));
+			}
 		}
 		catch (...)
 		{
 			poco_unexpected();
 		}
 	}
+
+	void setReactor(SocketReactor& reactor)
+		/// Sets the reactor for this acceptor.
+	{
+		_pReactor = &reactor;
+		if (!_pReactor->hasEventHandler(_socket, 
+			Poco::Observer<ParallelSocketAcceptor,
+			ReadableNotification>(*this, &ParallelSocketAcceptor::onAccept)))
+		{
+			registerAcceptor(reactor);
+		}
+	}
 	
 	virtual void registerAcceptor(SocketReactor& reactor)
 		/// Registers the ParallelSocketAcceptor with a SocketReactor.
 		///
-		/// A subclass can override this and, for example, also register
-		/// an event handler for a timeout event.
-		///
-		/// The overriding method must call the baseclass implementation first.
+		/// A subclass can override this function to e.g.
+		/// register an event handler for timeout event.
+		/// 
+		/// The overriding method must either call the base class
+		/// implementation or register the accept handler on its own.
 	{
+		if (_pReactor)
+			throw Poco::InvalidAccessException("Acceptor already registered.");
+
 		_pReactor = &reactor;
 		_pReactor->addEventHandler(_socket,
 			Poco::Observer<ParallelSocketAcceptor,
@@ -114,14 +137,18 @@ public:
 	virtual void unregisterAcceptor()
 		/// Unregisters the ParallelSocketAcceptor.
 		///
-		/// A subclass can override this and, for example, also unregister
-		/// its event handler for a timeout event.
-		///
-		/// The overriding method must call the baseclass implementation first.
+		/// A subclass can override this function to e.g.
+		/// unregister its event handler for a timeout event.
+		/// 
+		/// The overriding method must either call the base class
+		/// implementation or unregister the accept handler on its own.
 	{
-		_pReactor->removeEventHandler(_socket,
-			Poco::Observer<ParallelSocketAcceptor,
-			ReadableNotification>(*this, &ParallelSocketAcceptor::onAccept));
+		if (_pReactor)
+		{
+			_pReactor->removeEventHandler(_socket,
+				Poco::Observer<ParallelSocketAcceptor,
+				ReadableNotification>(*this, &ParallelSocketAcceptor::onAccept));
+		}
 	}
 	
 	void onAccept(ReadableNotification* pNotification)
@@ -129,6 +156,7 @@ public:
 	{
 		pNotification->release();
 		StreamSocket sock = _socket.acceptConnection();
+		_pReactor->wakeUp();
 		createServiceHandler(sock);
 	}
 
@@ -140,6 +168,7 @@ protected:
 	{
 		std::size_t next = _next++;
 		if (_next == _reactors.size()) _next = 0;
+		_reactors[next]->wakeUp();
 		return new ServiceHandler(socket, *_reactors[next]);
 	}
 
@@ -167,9 +196,27 @@ protected:
 			_reactors.push_back(new ParallelReactor);
 	}
 
-private:
 	typedef std::vector<typename ParallelReactor::Ptr> ReactorVec;
 
+	ReactorVec& reactors()
+		/// Returns reference to vector of reactors.
+	{
+		return _reactors;
+	}
+
+	SocketReactor* reactor(std::size_t idx)
+		/// Returns reference to the reactor at position idx.
+	{
+		return _reactors.at(idx).get();
+	}
+
+	std::size_t& next()
+		/// Returns reference to the next reactor index.
+	{
+		return _next;
+	}
+
+private:
 	ParallelSocketAcceptor();
 	ParallelSocketAcceptor(const ParallelSocketAcceptor&);
 	ParallelSocketAcceptor& operator = (const ParallelSocketAcceptor&);

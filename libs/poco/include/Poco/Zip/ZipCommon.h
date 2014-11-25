@@ -90,7 +90,9 @@ public:
 		FT_ASCII = 1
 	};
 
-	static const std::string ILLEGAL_PATH;
+	static bool isValidPath(const std::string& path);
+		/// Checks whether the given path is valid (does
+		/// not contain ".." path segments).
 };
 
 

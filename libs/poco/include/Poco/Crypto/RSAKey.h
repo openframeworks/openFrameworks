@@ -64,13 +64,21 @@ public:
 
 	RSAKey(const std::string& publicKeyFile, const std::string& privateKeyFile = "", const std::string& privateKeyPassphrase = "");
 		/// Creates the RSAKey, by reading public and private key from the given files and
-		/// using the given passphrase for the private key. Can only by used for signing if 
-		/// a private key is available. 
+		/// using the given passphrase for the private key.
+		///
+		/// Cannot be used for signing or decryption unless a private key is available.
+		///
+		/// If a private key is specified, you don't need to specify a public key file.
+		/// OpenSSL will auto-create the public key from the private key.
 
 	RSAKey(std::istream* pPublicKeyStream, std::istream* pPrivateKeyStream = 0, const std::string& privateKeyPassphrase = "");
-		/// Creates the RSAKey. Can only by used for signing if pPrivKey
-		/// is not null. If a private key file is specified, you don't need to
-		/// specify a public key file. OpenSSL will auto-create it from the private key.
+		/// Creates the RSAKey, by reading public and private key from the given streams and
+		/// using the given passphrase for the private key.
+		///
+		/// Cannot be used for signing or decryption unless a private key is available.
+		///
+		/// If a private key is specified, you don't need to specify a public key file.
+		/// OpenSSL will auto-create the public key from the private key.
 
 	~RSAKey();
 		/// Destroys the RSAKey.

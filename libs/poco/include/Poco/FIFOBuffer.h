@@ -263,14 +263,10 @@ public:
 		/// 
 		/// Returns the length of data written.
 	{
-		std::size_t len = length;
+		if (length == 0 || length > buffer.size())
+			length = buffer.size();
 
-		if (len == 0)
-			len = buffer.size();
-		else if (len > buffer.size())
-			len = buffer.size();
-
-		return write(buffer.begin(), len);
+		return write(buffer.begin(), length);
 	}
 
 	std::size_t size() const

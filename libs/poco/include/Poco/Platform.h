@@ -151,7 +151,17 @@
 	#define POCO_ARCH_LITTLE_ENDIAN 1
 #elif defined(__mips__) || defined(__mips) || defined(__MIPS__) || defined(_M_MRX000)
 	#define POCO_ARCH POCO_ARCH_MIPS
-	#define POCO_ARCH_BIG_ENDIAN 1
+	#if defined(POCO_OS_FAMILY_WINDOWS)
+		// Is this OK? Supports windows only little endian??
+		#define POCO_ARCH_LITTLE_ENDIAN 1
+	#elif defined(__MIPSEB__) || defined(_MIPSEB) || defined(__MIPSEB)
+		#define POCO_ARCH_BIG_ENDIAN 1
+	#elif defined(__MIPSEL__) || defined(_MIPSEL) || defined(__MIPSEL)
+		#define POCO_ARCH_LITTLE_ENDIAN 1
+	#else
+		#error "MIPS but neither MIPSEL nor MIPSEB?"
+	#endif
+
 #elif defined(__hppa) || defined(__hppa__)
 	#define POCO_ARCH POCO_ARCH_HPPA
 	#define POCO_ARCH_BIG_ENDIAN 1

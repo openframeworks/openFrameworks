@@ -47,6 +47,14 @@ class Foundation_API DateTimeParser
 	/// additional specifier is supported: %r will parse a year given by either
 	/// two or four digits. Years 69-00 are interpreted in the 20th century
 	/// (1969-2000), years 01-68 in the 21th century (2001-2068).
+	///
+	/// Note that in the current implementation all characters other than format specifiers in 
+	/// the format string are ignored/not matched against the date/time string. This may
+	/// lead to non-error results even with nonsense input strings.
+	/// This may change in a future version to a more strict behavior.
+	/// If more strict format validation of date/time strings is required, a regular
+	/// expression could be used for initial validation, before passing the string
+	/// to DateTimeParser.
 {
 public:
 	static void parse(const std::string& fmt, const std::string& str, DateTime& dateTime, int& timeZoneDifferential);

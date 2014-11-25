@@ -22,9 +22,13 @@
 
 #include "Poco/Foundation.h"
 #include <vector>
+#include <utility>
 
 
 namespace Poco {
+
+
+class Path;
 
 
 class Foundation_API URI
@@ -37,11 +41,13 @@ class Foundation_API URI
 	///
 	/// The class automatically performs a few normalizations on
 	/// all URIs and URI parts passed to it:
-	///   * scheme identifiers are converted to lower case.
+	///   * scheme identifiers are converted to lower case
 	///   * percent-encoded characters are decoded
 	///   * optionally, dot segments are removed from paths (see normalize())
 {
 public:
+	typedef std::vector<std::pair<std::string, std::string> > QueryParameters;
+
 	URI();
 		/// Creates an empty URI.
 
@@ -71,6 +77,12 @@ public:
 	URI(const URI& baseURI, const std::string& relativeURI);
 		/// Creates an URI from a base URI and a relative URI, according to
 		/// the algorithm in section 5.2 of RFC 3986.
+
+	explicit URI(const Path& path);
+		/// Creates a URI from a path.
+		///
+		/// The path will be made absolute, and a file:// URI
+		/// will be built from it.
 
 	~URI();
 		/// Destroys the URI.
@@ -150,10 +162,30 @@ public:
 		/// Sets the path part of the URI.
 	
 	std::string getQuery() const;
-		/// Returns the query part of the URI.
+		/// Returns the decoded query part of the URI.
+		///
+		/// Note that encoded ampersand characters ('&', "%26") 
+		/// will be decoded, which could cause ambiguities if the query 
+		/// string contains multiple parameters and a parameter name
+		/// or value contains an ampersand as well.
+		/// In such a case it's better to use getRawQuery() or
+		/// getQueryParameters().
 		
 	void setQuery(const std::string& query);	
 		/// Sets the query part of the URI.
+		///
+		/// The query string will be percent-encoded. If the query
+		/// already contains percent-encoded characters, these
+		/// will be double-encoded, which is probably not what's
+		/// intended by the caller. Furthermore, ampersand ('&')
+		/// characters in the query will not be encoded. This could
+		/// lead to ambiguity issues if the query string contains multiple
+		/// name-value parameters separated by ampersand, and if any
+		/// name or value also contains an ampersand. In such a 
+		/// case, it's better to use setRawQuery() with a properly
+		/// percent-encoded query string, or use addQueryParameter()
+		/// or setQueryParameters(), which take care of appropriate 
+		/// percent encoding of parameter names and values.
 
 	void addQueryParameter(const std::string& param, const std::string& val = "");
 		/// Adds "param=val" to the query; "param" may not be empty.
@@ -163,11 +195,24 @@ public:
 		/// if found in param or val.
 
 	const std::string& getRawQuery() const;
-		/// Returns the unencoded query part of the URI.
+		/// Returns the query string in raw form, which usually
+		/// means percent encoded.
 		
 	void setRawQuery(const std::string& query);	
 		/// Sets the query part of the URI.
+		///
+		/// The given query string must be properly percent-encoded.
 	
+	QueryParameters getQueryParameters() const;
+		/// Returns the decoded query string parameters as a vector
+		/// of name-value pairs.
+
+	void setQueryParameters(const QueryParameters& params);
+		/// Sets the query part of the URI from a vector
+		/// of query parameters.
+		///
+		/// Calls addQueryParameter() for each parameter name and value.
+
 	const std::string& getFragment() const;
 		/// Returns the fragment part of the URI.
 		
@@ -237,6 +282,7 @@ public:
 		/// URI-decodes the given string by replacing percent-encoded
 		/// characters with the actual character. The decoded string
 		/// is appended to decodedStr.
+		///
 		/// When plusAsSpace is true, non-encoded plus signs in the query are decoded as spaces.
 		/// (http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1)
 

@@ -41,10 +41,14 @@ public:
 	Buffer(std::size_t capacity):
 		_capacity(capacity),
 		_used(capacity),
-		_ptr(new T[capacity]),
+		_ptr(0),
 		_ownMem(true)
 		/// Creates and allocates the Buffer.
 	{
+		if (capacity > 0)
+		{
+			_ptr = new T[capacity];
+		}
 	}
 
 	Buffer(T* pMem, std::size_t length):
@@ -64,26 +68,32 @@ public:
 	Buffer(const T* pMem, std::size_t length):
 		_capacity(length),
 		_used(length),
-		_ptr(new T[length]),
+		_ptr(0),
 		_ownMem(true)
 		/// Creates and allocates the Buffer; copies the contents of
 		/// the supplied memory into the buffer. Length argument specifies
 		/// the length of the supplied memory pointed to by pMem in the
 		/// number of elements of type T.
 	{
-		if (_used)
+		if (_capacity > 0)
+		{
+			_ptr = new T[_capacity];
 			std::memcpy(_ptr, pMem, _used * sizeof(T));
+		}
 	}
 
 	Buffer(const Buffer& other):
 		/// Copy constructor.
 		_capacity(other._used),
 		_used(other._used),
-		_ptr(new T[other._used]),
+		_ptr(0),
 		_ownMem(true)
 	{
 		if (_used)
+		{
+			_ptr = new T[_used];
 			std::memcpy(_ptr, other._ptr, _used * sizeof(T));
+		}
 	}
 
 	Buffer& operator = (const Buffer& other)
@@ -115,15 +125,15 @@ public:
 		/// resized. If resize is attempted on those, IllegalAccessException
 		/// is thrown.
 	{
-		if (!_ownMem)
-			throw Poco::InvalidAccessException("Cannot resize buffer which does not own its storage.");
+		if (!_ownMem) throw Poco::InvalidAccessException("Cannot resize buffer which does not own its storage.");
 
 		if (newCapacity > _capacity)
 		{
 			T* ptr = new T[newCapacity];
 			if (preserveContent)
+			{
 				std::memcpy(ptr, _ptr, _used * sizeof(T));
-
+			}
 			delete [] _ptr;
 			_ptr = ptr;
 			_capacity = newCapacity;
@@ -144,18 +154,20 @@ public:
 		/// resized. If resize is attempted on those, IllegalAccessException
 		/// is thrown.
 	{
-		if (!_ownMem)
-			throw Poco::InvalidAccessException("Cannot resize buffer which does not own its storage.");
+		if (!_ownMem) throw Poco::InvalidAccessException("Cannot resize buffer which does not own its storage.");
 
 		if (newCapacity != _capacity)
 		{
-			T* ptr = new T[newCapacity];
-			if (preserveContent)
+			T* ptr = 0;
+			if (newCapacity > 0)
 			{
-				std::size_t newSz = _used < newCapacity ? _used : newCapacity;
-				std::memcpy(ptr, _ptr, newSz * sizeof(T));
+				ptr = new T[newCapacity];
+				if (preserveContent)
+				{
+					std::size_t newSz = _used < newCapacity ? _used : newCapacity;
+					std::memcpy(ptr, _ptr, newSz * sizeof(T));
+				}
 			}
-
 			delete [] _ptr;
 			_ptr = ptr;
 			_capacity = newCapacity;
@@ -217,7 +229,7 @@ public:
 		swap(_used, other._used);
 	}
 
-	bool operator ==(const Buffer& other) const
+	bool operator == (const Buffer& other) const
 		/// Compare operator.
 	{
 		if (this != &other)
@@ -235,14 +247,14 @@ public:
 		return true;
 	}
 
-	bool operator !=(const Buffer& other) const
+	bool operator != (const Buffer& other) const
 		/// Compare operator.
 	{
 		return !(*this == other);
 	}
 
 	void clear()
-		/// Sets the contents of the bufer to zero.
+		/// Sets the contents of the buffer to zero.
 	{
 		std::memset(_ptr, 0, _used * sizeof(T));
 	}

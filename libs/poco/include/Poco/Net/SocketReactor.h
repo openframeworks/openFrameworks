@@ -30,6 +30,11 @@
 
 
 namespace Poco {
+
+
+class Thread;
+
+
 namespace Net {
 
 
@@ -128,6 +133,9 @@ public:
 		/// The reactor will be stopped when the next event
 		/// (including a timeout event) occurs.
 
+	void wakeUp();
+		/// Wakes up idle reactor.
+
 	void setTimeout(const Poco::Timespan& timeout);
 		/// Sets the timeout. 
 		///
@@ -166,7 +174,7 @@ protected:
 		/// Can be overridden by subclasses. The default implementation
 		/// dispatches the TimeoutNotification and thus should be called by overriding
 		/// implementations.
-		
+
 	virtual void onIdle();
 		/// Called if no sockets are available to call select() on.
 		///
@@ -194,7 +202,7 @@ protected:
 		
 	void dispatch(SocketNotification* pNotification);
 		/// Dispatches the given notification to all observers.
-		
+
 private:
 	typedef Poco::AutoPtr<SocketNotifier>     NotifierPtr;
 	typedef Poco::AutoPtr<SocketNotification> NotificationPtr;
@@ -206,7 +214,7 @@ private:
 	{
 		DEFAULT_TIMEOUT = 250000
 	};
-		
+
 	bool            _stop;
 	Poco::Timespan  _timeout;
 	EventHandlerMap _handlers;
@@ -217,6 +225,7 @@ private:
 	NotificationPtr _pIdleNotification;
 	NotificationPtr _pShutdownNotification;
 	Poco::FastMutex _mutex;
+	Poco::Thread*   _pThread;
 	
 	friend class SocketNotifier;
 };

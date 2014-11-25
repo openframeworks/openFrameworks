@@ -37,6 +37,7 @@ class DefaultStrategy: public NotificationStrategy<TArgs, TDelegate>
 	/// order in which they have been registered.
 {
 public:
+	typedef TDelegate*                   DelegateHandle;
 	typedef SharedPtr<TDelegate>         DelegatePtr;
 	typedef std::vector<DelegatePtr>     Delegates;
 	typedef typename Delegates::iterator Iterator;
@@ -63,9 +64,11 @@ public:
 		}
 	}
 
-	void add(const TDelegate& delegate)
+	DelegateHandle add(const TDelegate& delegate)
 	{
-		_delegates.push_back(DelegatePtr(static_cast<TDelegate*>(delegate.clone())));
+		DelegatePtr pDelegate(static_cast<TDelegate*>(delegate.clone()));
+		_delegates.push_back(pDelegate);
+		return pDelegate.get();
 	}
 
 	void remove(const TDelegate& delegate)
@@ -73,6 +76,19 @@ public:
 		for (Iterator it = _delegates.begin(); it != _delegates.end(); ++it)
 		{
 			if (delegate.equals(**it))
+			{
+				(*it)->disable();
+				_delegates.erase(it);
+				return;
+			}
+		}
+	}
+	
+	void remove(DelegateHandle delegateHandle)
+	{
+		for (Iterator it = _delegates.begin(); it != _delegates.end(); ++it)
+		{
+			if (*it == delegateHandle)
 			{
 				(*it)->disable();
 				_delegates.erase(it);
@@ -108,6 +124,7 @@ protected:
 	Delegates _delegates;
 };
 
+
 template <class TDelegate>
 class DefaultStrategy<void,TDelegate>: public NotificationStrategy<void, TDelegate>
 	/// Default notification strategy.
@@ -117,6 +134,7 @@ class DefaultStrategy<void,TDelegate>: public NotificationStrategy<void, TDelega
 	/// order in which they have been registered.
 {
 public:
+	typedef TDelegate*                   DelegateHandle;
 	typedef SharedPtr<TDelegate>         DelegatePtr;
 	typedef std::vector<DelegatePtr>     Delegates;
 	typedef typename Delegates::iterator Iterator;
@@ -143,9 +161,11 @@ public:
 		}
 	}
 
-	void add(const TDelegate& delegate)
+	DelegateHandle add(const TDelegate& delegate)
 	{
-		_delegates.push_back(DelegatePtr(static_cast<TDelegate*>(delegate.clone())));
+		DelegatePtr pDelegate(static_cast<TDelegate*>(delegate.clone()));
+		_delegates.push_back(pDelegate);
+		return pDelegate.get();
 	}
 
 	void remove(const TDelegate& delegate)
@@ -153,6 +173,19 @@ public:
 		for (Iterator it = _delegates.begin(); it != _delegates.end(); ++it)
 		{
 			if (delegate.equals(**it))
+			{
+				(*it)->disable();
+				_delegates.erase(it);
+				return;
+			}
+		}
+	}
+
+	void remove(DelegateHandle delegateHandle)
+	{
+		for (Iterator it = _delegates.begin(); it != _delegates.end(); ++it)
+		{
+			if (*it == delegateHandle)
 			{
 				(*it)->disable();
 				_delegates.erase(it);
@@ -187,6 +220,7 @@ public:
 protected:
 	Delegates _delegates;
 };
+
 
 } // namespace Poco
 

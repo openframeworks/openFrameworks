@@ -259,7 +259,8 @@ protected:
 	static Poco::Util::AbstractConfiguration& appConfig();
 		/// Returns the application configuration.
 		///
-		/// Throws a 
+		/// Throws a InvalidStateException if not application instance
+		/// is available.
 
 private:
 	SSLManager();

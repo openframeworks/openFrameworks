@@ -542,6 +542,7 @@ private:
 	static Var parseObject(const std::string& val, std::string::size_type& pos);
 	static Var parseArray(const std::string& val, std::string::size_type& pos);
 	static std::string parseString(const std::string& val, std::string::size_type& pos);
+	static std::string parseJSONString(const std::string& val, std::string::size_type& pos);
 	static void skipWhiteSpace(const std::string& val, std::string::size_type& pos);
 
 	template <typename T>
