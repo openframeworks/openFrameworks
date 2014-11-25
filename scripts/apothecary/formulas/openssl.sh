@@ -511,7 +511,8 @@ function copy() {
 	rm -rf $1/lib/$TYPE/* 2> /dev/null
 
 	# libs
-	 if [ "$TYPE" == "osx" ] ; then	
+	 if [ "$TYPE" == "osx" ] ; then
+	    cp -Rv lib/include/ $1/include/
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	 elif [ "$TYPE" == "ios" ] ; then
