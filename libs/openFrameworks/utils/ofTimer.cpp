@@ -1,6 +1,6 @@
 #include "ofTimer.h"
 
-#define NANOS_PER_SEC 1000000000
+#define NANOS_PER_SEC 1000000000ll
 
 void ofGetMonotonicTime(unsigned long long & seconds, unsigned long long & nanoseconds);
 
@@ -54,8 +54,9 @@ void ofTimer::calculateNextPeriod(){
 #if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
 	nextWakeTime.tv_nsec += nanosPerPeriod;
 	if(nextWakeTime.tv_nsec>NANOS_PER_SEC){
-		nextWakeTime.tv_nsec-=NANOS_PER_SEC;
-		nextWakeTime.tv_sec+=1;
+		uint64_t secs = nextWakeTime.tv_nsec / NANOS_PER_SEC;
+		nextWakeTime.tv_nsec-=NANOS_PER_SEC*secs;
+		nextWakeTime.tv_sec+=secs;
 	}
 #elif defined(TARGET_WIN32)
 	nextWakeTime.QuadPart += nanosPerPeriod/100;
@@ -63,8 +64,9 @@ void ofTimer::calculateNextPeriod(){
 #else
 	nextWakeTimeNanos += nanosPerPeriod;
 	if(nextWakeTimeNanos>NANOS_PER_SEC){
-		nextWakeTimeNanos-=NANOS_PER_SEC;
-		nextWakeTimeSecs+=1;
+		uint64_t secs = nextWakeTimeNanos / NANOS_PER_SEC;
+		nextWakeTimeNanos-=NANOS_PER_SEC*secs;
+		nextWakeTimeSecs+=secs;
 	}
 #endif
 }
