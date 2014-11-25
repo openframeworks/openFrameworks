@@ -507,20 +507,18 @@ function copy() {
 	# storing a copy of the include in lib/include/
 	# set via: cp -R "build/$TYPE/x86_64/include/" "lib/include/"
 
-	rm -r $1/lib/$TYPE/*
+	# suppress file not found errors
+	rm -rf $1/lib/$TYPE/* 2> /dev/null
 
 	# libs
-	 if [ "$TYPE" == "osx" ] ; then	
-	 	echoWarning "TODO: copy $TYPE lib"
-	# 	mkdir -p $1/lib/$TYPE
-	# 	cp -v lib/Darwin/*.a $1/lib/$TYPE
+	 if [ "$TYPE" == "osx" ] ; then
+	    cp -Rv lib/include/ $1/include/
+		mkdir -p $1/lib/$TYPE
+		cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	 elif [ "$TYPE" == "ios" ] ; then
 	    cp -Rv lib/include/ $1/include/
 	 	mkdir -p $1/lib/$TYPE
 	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
-	 elif [ "$TYPE" == "osx" ] ; then
-		mkdir -p $1/lib/$TYPE
-		cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	# elif [ "$TYPE" == "vs" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/*.lib $1/lib/$TYPE
