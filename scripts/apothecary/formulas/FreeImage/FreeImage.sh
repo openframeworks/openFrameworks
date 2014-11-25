@@ -59,6 +59,36 @@ function prepare() {
 
 		# copy across new Makefile for iOS.
 		cp -v $FORMULA_DIR/Makefile.ios Makefile.ios
+	elif [ "$TYPE" == "android" ]; then
+	    sed -i "s/#define HAVE_SEARCH_H/\/\/#define HAVE_SEARCH_H/g" Source/LibTIFF4/tif_config.h
+	    cat > Source/LibRawLite/src/swab.h << ENDDELIM
+	    #include <stdint.h>
+        #include <asm/byteorder.h>
+        inline void swab(const void *from, void*to, ssize_t n)
+        {
+            ssize_t i;
+            if (n < 0)
+                return;
+            for (i = 0; i < (n/2)*2; i += 2)
+                *((uint16_t*)to+i) = __arch__swab16(*((uint16_t*)from+i));
+        }
+ENDDELIM
+        
+        sed -i "s/#include \"swab.h\"//g" Source/LibRawLite/internal/dcraw_common.cpp
+        echo "#include \"swab.h\"" > Source/LibRawLite/internal/dcraw_common_patched.cpp;
+        cat Source/LibRawLite/internal/dcraw_common.cpp >> Source/LibRawLite/internal/dcraw_common_patched.cpp
+        cat Source/LibRawLite/internal/dcraw_common_patched.cpp > Source/LibRawLite/internal/dcraw_common.cpp
+        rm Source/LibRawLite/internal/dcraw_common_patched.cpp
+        
+        sed -i "s/#include \"swab.h\"//g" Source/LibRawLite/src/libraw_cxx.cpp
+        echo "#include \"swab.h\"" > Source/LibRawLite/src/libraw_cxx_patched.cpp
+        cat Source/LibRawLite/src/libraw_cxx.cpp >> Source/LibRawLite/src/libraw_cxx_patched.cpp
+        cat Source/LibRawLite/src/libraw_cxx_patched.cpp > Source/LibRawLite/src/libraw_cxx.cpp
+        rm Source/LibRawLite/src/libraw_cxx_patched.cpp
+        
+        #rm Source/LibWebP/src/dsp/dec_neon.c
+        
+        sed -i "s/#define WEBP_ANDROID_NEON/\/\/#define WEBP_ANDROID_NEON/g" Source/LibWebP/./src/dsp/dsp.h
 	fi
 }
 
@@ -252,7 +282,29 @@ function build() {
 		unset TOOLCHAIN
 
 	elif [ "$TYPE" == "android" ] ; then
-		echoWarning "TODO: android build"
+        source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
+        
+        # armv7
+        ABI=armeabi-v7a
+        local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
+        source ../../formulas/android_configure.sh $ABI
+        export CC="$CC $CFLAGS $LDFLAGS"
+        export CXX="$CXX $CFLAGS $LDFLAGS"
+        make clean -f Makefile.gnu
+        make -f Makefile.gnu libfreeimage.a
+        mkdir -p Dist/$ABI
+        mv libfreeimage.a Dist/$ABI
+        
+        # x86
+        ABI=x86
+        local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
+        source ../../formulas/android_configure.sh $ABI
+        export CC="$CC $CFLAGS $LDFLAGS"
+        export CXX="$CXX $CFLAGS $LDFLAGS"
+        make clean -f Makefile.gnu
+        make -f Makefile.gnu libfreeimage.a
+        mkdir -p Dist/$ABI
+        mv libfreeimage.a Dist/$ABI
 	fi
 }
 
@@ -260,25 +312,42 @@ function build() {
 function copy() {
 	
 	# headers
+	if [ -d $1/include ]; then
+	    rm -rf $1/include
+	fi
 	mkdir -p $1/include
 	
-	cp -v Dist/*.h $1/include
 	
 
 	# lib
 	if [ "$TYPE" == "osx" ] ; then
+	    cp -v Dist/*.h $1/include
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
 	elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
+	    cp -v Dist/*.h $1/include
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/FreeImage.lib $1/lib/$TYPE/FreeImage.lib
 		cp -v Dist/FreeImage.dll $1/../../export/$TYPE/FreeImage.dll
 	elif [ "$TYPE" == "ios" ] ; then
-		mkdir -p $1/lib/$TYPE
-		cp -v Dist/$TYPE/freeimage.a $1/lib/$TYPE/freeimage.a
+        cp -Rv build/android/armeabi-v7a/include/ $1/
+        if [ -d $1/lib/$TYPE/ ]; then
+            rm -r $1/lib/$TYPE/
+        fi
+        mkdir -p $1/lib/$TYPE/armeabi-v7a
+        cp -rv build/android/armeabi-v7a/lib/*.a $1/lib/$TYPE/armeabi-v7a/
+        mkdir -p $1/lib/$TYPE/x86
+        cp -rv build/android/x86/lib/*.a $1/lib/$TYPE/x86/
 
 	elif [ "$TYPE" == "android" ] ; then
-		echoWarning "TODO: copy android lib"
+        cp Source/FreeImage.h $1/include
+        if [ -d $1/lib/$TYPE/ ]; then
+            rm -r $1/lib/$TYPE/
+        fi
+        mkdir -p $1/lib/$TYPE/armeabi-v7a
+        cp -rv Dist/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a/
+        mkdir -p $1/lib/$TYPE/x86
+        cp -rv Dist/x86/*.a $1/lib/$TYPE/x86/
 	fi	
 }
 
