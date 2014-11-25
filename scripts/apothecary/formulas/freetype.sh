@@ -113,7 +113,7 @@ function build() {
 		COMPILER_CPPTYPE=clang++ # clang, gcc
 		STDLIB=libc++
 
-		IOS_ARCHS="i386 x86_64 armv7 armv7s arm64"
+		IOS_ARCHS="i386 x86_64 armv7 arm64" # armv7s
 
 		SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`	
 		set -e
@@ -251,8 +251,9 @@ function build() {
 		echo "Please stand by..."
 		# link into universal lib
 		cd lib/$TYPE/
+
+		# libfreetype-armv7s.a  \
 		lipo -create libfreetype-armv7.a \
-					libfreetype-armv7s.a  \
 					libfreetype-arm64.a \
 					libfreetype-i386.a \
 					libfreetype-x86_64.a \
