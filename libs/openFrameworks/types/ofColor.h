@@ -57,10 +57,11 @@ template<typename PixelType>
 class ofColor_{
 public:
     /// \brief Construct an ofColor_ instance.
-    ofColor_<PixelType>();
-
-    /// \brief Destroy an ofColor_ instance.
-    ~ofColor_<PixelType>();
+    ofColor_<PixelType>():
+        r(limit()),
+        g(limit()),
+        b(limit()),
+        a(limit()) {};
 
     /// \brief Construct an ofColor_ by using channel values.
     ///
@@ -76,10 +77,6 @@ public:
                         float green,
                         float blue,
                         float alpha = limit());
-
-    /// \brief Construct an ofColor_ from an existing ofColor_.
-    /// \param color The ofColor_ to copy.
-    ofColor_<PixelType>(const ofColor_<PixelType>& color);
 
     /// \brief Construct an ofColor_ from an existing ofColor_.
     ///
@@ -210,7 +207,6 @@ public:
     /// This will use the R, G, B and A components from the passed color.
     ///
     /// \param color The ofColor_ to copy.
-    /// \param alpha The new alpha value to replace the alpha value in color.
     void set(const ofColor_<PixelType>& color);
 
     /// \brief Set an ofColor_ from a hexadecimal representation.
@@ -366,7 +362,7 @@ public:
     /// Lightness is simply the average of the three color components. This
     /// method of calculating lightness is used by the Lab and HSL color spaces.
     ///
-    /// \brief returns the lightness in the range 0 - limit().
+    /// \returns the lightness in the range 0 - limit().
     float getLightness() const;
 
     /// \brief Extract the hue, saturation and brightness from this color.
@@ -383,7 +379,7 @@ public:
     void setHue(float hue);
 
     /// \brief Set the hue angle of this color.
-    /// \param hue A hue angle value to set in the range of 0 - 360 degrees.
+    /// \param angle A hue angle value to set in the range of 0 - 360 degrees.
     void setHueAngle(float angle);
 
     /// \brief Set the saturation this color.
@@ -403,19 +399,11 @@ public:
     /// \param hue A hue value to set in the range of 0 - limit().
     /// \param saturation A saturation value to set in the range of 0 - limit().
     /// \param brightness A brightness value to set in the range of 0 - limit().
+    /// \param alpha An alpha value to set in the range of 0 - limit().
     void setHsb(float hue,
                 float saturation,
                 float brightness,
                 float alpha = limit());
-
-    /// \brief Assign a color using an existing color.
-    ///
-    /// R, G, B and A components are set to the the values of the assigned
-    /// color.
-    ///
-    /// \param color The color to assign.
-    /// \returns A reference to itself.
-    ofColor_<PixelType>& operator = (const ofColor_<PixelType>& color);
 
     /// \brief Assign a color using an existing color.
     ///

@@ -65,19 +65,22 @@ XS="xcode-select -print-path" # stupid hack to keep my syntax highlighting from 
 XCODE_DEV_ROOT=
 
 # used when building some libs for osx
-OSX_SDK_VER=10.8
+OSX_LATEST_SDK="xcrun -sdk macosx --show-sdk-version"
+OSX_SDK_VER=10.10
 OSX_MIN_SDK_VER=10.7
 
 # used when building for ios, the sdks you have installed are found in:
 # $XCODE_DEV_ROOT/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#.#.sdk
-IOS_SDK_VER=7.1
+IOS_LATEST_SDK="xcrun -sdk iphoneos --show-sdk-version" # stupid hack to keep my syntax highlighting from breaking :P
+IOS_SDK_VER=8.1
 IOS_MIN_SDK_VER=5.1
 
 # used when building for vs
 VS_VER=11
 
 # used when compiling for android
-ANDROID_NDK_ROOT=path_to_ndk/root
+ANDROID_NDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep NDK_ROOT | sed 's/.*=\(.*\)/\1/'`
+ANDROID_SDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep SDK_ROOT | sed 's/.*=\(.*\)/\1/'`
 ANDROID_PLATFORM=android-19
 
 ################################################################################
@@ -299,6 +302,11 @@ fi
 function installAndroidToolchain() {
 
 	local WD=$(pwd)
+
+	if [ ! -d $ANDROID_NDK_ROOT/build/tools ]; then
+		echoError "ANDROID_NDK_ROOT not defined, please configure ../../libs/openFrameworksCompiled/project/android/paths.make"
+	fi
+
 
 	cd $ANDROID_NDK_ROOT/build/tools
 
@@ -879,7 +887,9 @@ echoVerbose "Valid build types: ${VALID_TYPES[*]}"
 
 # set xcode dev root on osx
 if [ "$OS" == "osx" ] ; then
-	XCODE_DEV_ROOT=$($XS)
+	XCODE_DEV_ROOT=$($XS) # Sets to path from Xcode Path
+	OSX_SDK_VER=$($OSX_LATEST_SDK) # sets to latest OSX SDK
+	IOS_SDK_VER=$($IOS_LATEST_SDK) # sets to latest iOS SDK
 fi
 
 # check if we have a valid build type
