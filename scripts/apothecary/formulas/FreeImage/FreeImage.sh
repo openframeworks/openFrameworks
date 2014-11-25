@@ -107,7 +107,7 @@ function build() {
 		export TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain
 		export TARGET_IOS
         
-        local IOS_ARCHS="i386 x86_64 armv7 armv7s arm64"
+        local IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
         local STDLIB="libc++"
         local CURRENTPATH=`pwd`
 
@@ -243,8 +243,8 @@ function build() {
 		# link into universal lib
 		echo "Running lipo to create fat lib"
 		echo "Please stand by..."
+		#			libfreeimage-armv7s.a \
 		lipo -create libfreeimage-armv7.a \
-					libfreeimage-armv7s.a \
 					libfreeimage-arm64.a \
 					libfreeimage-i386.a \
 					libfreeimage-x86_64.a \
@@ -316,8 +316,6 @@ function copy() {
 	    rm -rf $1/include
 	fi
 	mkdir -p $1/include
-	
-	
 
 	# lib
 	if [ "$TYPE" == "osx" ] ; then
@@ -330,14 +328,12 @@ function copy() {
 		cp -v Dist/FreeImage.lib $1/lib/$TYPE/FreeImage.lib
 		cp -v Dist/FreeImage.dll $1/../../export/$TYPE/FreeImage.dll
 	elif [ "$TYPE" == "ios" ] ; then
-        cp -Rv build/android/armeabi-v7a/include/ $1/
+
         if [ -d $1/lib/$TYPE/ ]; then
             rm -r $1/lib/$TYPE/
         fi
-        mkdir -p $1/lib/$TYPE/armeabi-v7a
-        cp -rv build/android/armeabi-v7a/lib/*.a $1/lib/$TYPE/armeabi-v7a/
-        mkdir -p $1/lib/$TYPE/x86
-        cp -rv build/android/x86/lib/*.a $1/lib/$TYPE/x86/
+       	mkdir -p $1/lib/$TYPE
+		cp -v Dist/$TYPE/freeimage.a $1/lib/$TYPE/freeimage.a
 
 	elif [ "$TYPE" == "android" ] ; then
         cp Source/FreeImage.h $1/include
