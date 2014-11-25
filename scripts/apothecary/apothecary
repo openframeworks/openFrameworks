@@ -67,7 +67,7 @@ XCODE_DEV_ROOT=
 # used when building some libs for osx
 OSX_LATEST_SDK="xcrun -sdk macosx --show-sdk-version"
 OSX_SDK_VER=10.10
-OSX_MIN_SDK_VER=10.6
+OSX_MIN_SDK_VER=10.7
 
 # used when building for ios, the sdks you have installed are found in:
 # $XCODE_DEV_ROOT/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#.#.sdk
