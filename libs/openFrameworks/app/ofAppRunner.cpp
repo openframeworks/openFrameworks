@@ -1,5 +1,7 @@
 #include "ofAppRunner.h"
 
+#include "Poco/Net/Net.h"
+
 #include "ofBaseApp.h"
 #include "ofAppBaseWindow.h"
 
@@ -365,6 +367,7 @@ void ofExitCallback(){
 	#ifndef TARGET_EMSCRIPTEN
 		ofURLFileLoaderShutdown();
 	#endif
+    Poco::Net::uninitializeNetwork();
 
 	#ifndef TARGET_NO_SOUND
 		//------------------------
@@ -387,10 +390,55 @@ void ofExitCallback(){
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeEndPeriod(1);
 	#endif
+}
 
-	// static deinitialization happens after this finishes
-	// every object should have ended by now and won't receive any
-	// events
+//--------------------------------------
+void ofRunApp(shared_ptr<ofBaseApp> OFSA){
+	Poco::Net::initializeNetwork();
+
+	OFSAptr = OFSA;
+	if(OFSAptr){
+		OFSAptr->mouseX = 0;
+		OFSAptr->mouseY = 0;
+	}
+
+#ifndef TARGET_ANDROID
+	atexit(ofExitCallback);
+#endif
+
+	#ifdef WIN32_HIGH_RES_TIMING
+		timeBeginPeriod(1);		// ! experimental, sets high res time
+								// you need to call timeEndPeriod.
+								// if you quit the app other than "esc"
+								// (ie, close the console, kill the process, etc)
+								// at exit wont get called, and the time will
+								// remain high res, that could mess things
+								// up on your system.
+								// info here:http://www.geisswerks.com/ryan/FAQS/timing.html
+	#endif
+
+	window->initializeWindow();
+
+	ofSeedRandom();
+	ofResetElapsedTimeCounter();
+
+    ofAddListener(ofEvents().setup,OFSA.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().update,OFSA.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().draw,OFSA.get(),&ofBaseApp::draw,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().exit,OFSA.get(),&ofBaseApp::exit,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().keyPressed,OFSA.get(),&ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().keyReleased,OFSA.get(),&ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().mouseMoved,OFSA.get(),&ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().mouseDragged,OFSA.get(),&ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().mousePressed,OFSA.get(),&ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().mouseReleased,OFSA.get(),&ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().windowEntered,OFSA.get(),&ofBaseApp::windowEntry,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().windowResized,OFSA.get(),&ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().messageEvent,OFSA.get(),&ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
+    ofAddListener(ofEvents().fileDragEvent,OFSA.get(),&ofBaseApp::dragged,OF_EVENT_ORDER_APP);
+
+	window->runAppViaInfiniteLoop(OFSAptr.get());
+
 }
 
 //--------------------------------------
