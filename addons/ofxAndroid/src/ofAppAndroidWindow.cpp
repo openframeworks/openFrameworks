@@ -493,9 +493,9 @@ Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, ji
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, jint swipeDir){
+Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, jint swipeDir, jfloat vX, jfloat vY){
 	if(androidApp){
-		androidApp->swipe((ofxAndroidSwipeDir)swipeDir,id);
+		androidApp->swipe((ofxAndroidSwipeDir)swipeDir,id, vX, vY);
 	}
 }
 
@@ -508,6 +508,15 @@ void
 Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyCode){
 	ofNotifyKeyReleased(keyCode);
 }
+
+void
+Java_cc_openframeworks_OFAndroid_onTouchDragged(JNIEnv* env, jclass thiz,
+		jint id, jint dragDir, jfloat x, jfloat y) {
+	if (androidApp) {
+		androidApp->touchDragged((ofxAndroidDragDir) dragDir, id, x, y);
+	}
+}
+
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onBackPressed(){

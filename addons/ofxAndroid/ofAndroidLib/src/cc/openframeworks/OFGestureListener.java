@@ -99,16 +99,16 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 
         if(velocityX > OFGestureListener.swipe_Min_Velocity && xDistance > OFGestureListener.swipe_Min_Distance){
         	if(e1.getX() > e2.getX()) // right to left
-        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_LEFT);
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_LEFT, velocityX, velocityY);
         	else
-        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_RIGHT);
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_RIGHT, velocityX, velocityY);
    
         	result = true;
         }else if(velocityY > OFGestureListener.swipe_Min_Velocity && yDistance > OFGestureListener.swipe_Min_Distance){
         	if(e1.getY() > e2.getY()) // bottom to up 
-        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_UP);
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_UP, velocityX, velocityY);
         	else
-        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_DOWN);
+        		OFAndroid.onSwipe(e1.getPointerId(0),SWIPE_DOWN, velocityX, velocityY);
    
         	result = true;
         }
@@ -116,14 +116,52 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
         return result;
 	}
 
+	
+	
 	@Override
 	public void onLongPress(MotionEvent arg0) {
 	}
 
 	@Override
-	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,	float arg3) {
-		return super.onScroll(arg0, arg1, arg2, arg3);
+	public boolean onScroll(MotionEvent eventStart, MotionEvent event,
+			float distanceX, float distanceY) {
+
+		final int action = event.getAction();
+		final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+		final int pointerId = event.getPointerId(pointerIndex);
+		boolean result = false;
+
+		float absDX = Math.abs(distanceX);
+		float absDY = Math.abs(distanceY);
+		switch ((action & MotionEvent.ACTION_MASK)) {
+			case MotionEvent.ACTION_MOVE: {
+				if (absDY > absDX) {
+		
+					if (distanceY > 0) // bottom to up
+						OFAndroid.onTouchDragged(pointerId, DRAG_UP,
+								distanceX, distanceY);
+					else
+						OFAndroid.onTouchDragged(pointerId, DRAG_DOWN,
+								distanceX, distanceY);
+		
+					result = true;
+		
+				} else {
+					if (distanceX > 0) // right to left
+						OFAndroid.onTouchDragged(pointerId, DRAG_LEFT,
+								distanceX, distanceY);
+					else
+						OFAndroid.onTouchDragged(pointerId, DRAG_RIGHT,
+								distanceX, distanceY);
+		
+					result = true;
+				}
+				break;
+			}
+		}
+		return result;
 	}
+
 
 	@Override
 	public void onShowPress(MotionEvent arg0) {
@@ -137,10 +175,14 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
     private GestureDetector gestureDetector;
     View.OnTouchListener touchListener;
     public static int swipe_Min_Distance = 100;
-    public static int swipe_Max_Distance = 350;
-    public static int swipe_Min_Velocity = 100;
+    public static int swipe_Max_Distance = 2560;
+    public static int swipe_Min_Velocity = 50;
     public final static int SWIPE_UP    = 1;
     public final static int SWIPE_DOWN  = 2;
     public final static int SWIPE_LEFT  = 3;
     public final static int SWIPE_RIGHT = 4;
+	public final static int DRAG_UP = 5;
+	public final static int DRAG_DOWN = 6;
+	public final static int DRAG_LEFT = 7;
+	public final static int DRAG_RIGHT = 8;
 }
