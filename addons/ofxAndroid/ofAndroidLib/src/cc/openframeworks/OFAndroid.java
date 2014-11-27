@@ -719,18 +719,6 @@ public class OFAndroid {
 			accelerometer = new OFAndroidAccelerometer((SensorManager)ofActivity.getSystemService(Context.SENSOR_SERVICE));
 	}
 	
-	public static void setupGPS(){
-		if(gps==null)
-			gps = new OFAndroidGPS(ofActivity);
-		gps.startGPS();
-	}
-	
-	public static void stopGPS(){
-		if(gps==null)
-			return;
-		gps.stopGPS();
-	}
-	
 	static MulticastLock mcLock;
 	public static void enableMulticast(){
 		WifiManager wifi = (WifiManager)ofActivity.getSystemService( Context.WIFI_SERVICE );
