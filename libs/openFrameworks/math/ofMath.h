@@ -22,7 +22,7 @@
 ///    ofNextPow2(64); // returns 64
 ///    ofNextPow(401)); // returns 512
 ///
-/// \param value.
+/// \param a The starting point for finding the next power of 2.
 /// \returns value^2.
 int ofNextPow2(int a);
 
@@ -33,12 +33,12 @@ void ofSeedRandom();
 
 /// \brief Seeds the random number generator with a value for consistent randomness.
 ///
-/// \param int The value with which to seed the generator.
+/// \param val The value with which to seed the generator.
 void ofSeedRandom(int val);
 
 /// \brief Returns a random floating point number between 0 and max.
 ///
-/// \param float The maximum value of the random number.
+/// \param max The maximum value of the random number.
 float ofRandom(float max); 
 
 /// \brief returns a random number between two values.
@@ -56,7 +56,7 @@ float ofRandom(float val0, float val1);
 /// \returns A random floating point number between -1 and 1.
 float ofRandomf();
 
-/// \Returns a random floating point number between 0 and 1.
+/// \returns A random floating point number between 0 and 1.
 float ofRandomuf();
 
 /// \brief Given a value and a range, remap the value to be within 0 and 1.
