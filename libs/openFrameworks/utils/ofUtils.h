@@ -207,7 +207,9 @@ void ofRandomize(vector<T>& values) {
 ///
 ///    0, 2, 4, 6, 8
 ///
-/// \param values the vector of values to modify.
+/// \tparam T the type contained by the vector.
+/// \tparam BoolFunction the boolean function used to erase.
+/// \param values The vector of values to modify.
 /// \param shouldErase a boolean function as described above.
 /// \sa http://www.cplusplus.com/reference/algorithm/remove_if/
 template<class T, class BoolFunction>
@@ -221,7 +223,8 @@ void ofRemove(vector<T>& values, BoolFunction shouldErase) {
 /// Equivalent elements are not guaranteed to keep their original relative
 /// order.
 ///
-/// \param The vector of values to be sorted.
+/// \tparam T the type contained by the vector.
+/// \param values The vector of values to be sorted.
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
 template<class T>
 void ofSort(vector<T>& values) {
@@ -260,6 +263,7 @@ void ofSort(vector<T>& values) {
 ///
 ///    9, 8, 7, 6, 5, 4, 3, 2, 1, 0.
 ///
+/// \tparam T the type contained by the vector.
 /// \param The vector of values to be sorted.
 /// \param The comparison function.
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
@@ -269,6 +273,7 @@ void ofSort(vector<T>& values, BoolFunction compare) {
 }
 
 /// \brief Search for a target value in a vector of values.
+/// \tparam T the type contained by the vector.
 /// \param values The vector of values to be searched.
 /// \param target The target value to be found.
 /// \returns true the index of the first target value found.
@@ -278,6 +283,7 @@ unsigned int ofFind(const vector<T>& values, const T& target) {
 }
 
 /// \brief Search for a target value in a vector of values.
+/// \tparam T the type contained by the vector.
 /// \param values The vector of values to be searched.
 /// \param target The target value to be found.
 /// \returns true iff at least one value equal to the target value is found.

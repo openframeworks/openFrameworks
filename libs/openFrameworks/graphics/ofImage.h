@@ -110,7 +110,7 @@ public:
     ///
     /// \param w Width of image to allocate.
     /// \param h Height of image to allocate.
-    /// \param type The type can be of three types: OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA.
+    /// \param type The ofImageType.
     void allocate(int w, int h, ofImageType type);
     
     /// \brief This clears the texture and pixels contained within the ofImage.
@@ -186,28 +186,25 @@ public:
     
     /// \brief Saves the image to the file path in fileName with the image quality specified by compressionLevel.
     /// \param fileName Saves image to this path, relative to the data folder.
-    /// \param compressionLevel The different compression levels are: OF_IMAGE_QUALITY_BEST, OF_IMAGE_QUALITY_HIGH, 
-    /// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
+    /// \param compressionLevel The ofImageQualityType.
     void save(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
     OF_DEPRECATED_MSG("Use save instead",void saveImage(string fileName, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST));
     
     /// \brief This saves the image to the ofBuffer passed with the image quality specified by compressionLevel. 
-    /// \param buffer ofBuffer to save image to
-    /// \param compressionLevel The different compression levels are: OF_IMAGE_QUALITY_BEST, OF_IMAGE_QUALITY_HIGH, 
-    /// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
+    /// \param buffer ofBuffer to save image to.
+    /// \param compressionLevel The ofImageQualityType.
     void save(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
     OF_DEPRECATED_MSG("Use save instead",void saveImage(ofBuffer & buffer, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST));
     
     /// \brief This saves the image to the ofFile passed with the image quality specified by compressionLevel. 
-    /// \param file ofFile to save image to
+    /// \param file ofFile to save image to.
     /// \param compressionLevel The different compression levels are: OF_IMAGE_QUALITY_BEST, OF_IMAGE_QUALITY_HIGH, 
     /// \param OF_IMAGE_QUALITY_MEDIUM, OF_IMAGE_QUALITY_LOW, OF_IMAGE_QUALITY_WORST
     void save(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST);
     OF_DEPRECATED_MSG("Use save instead",void saveImage(const ofFile & file, ofImageQualityType compressionLevel = OF_IMAGE_QUALITY_BEST));
     
     /// \brief This sets the compression level used when creating mipmaps for the ofTexture contained by the ofImage. 
-    /// \param compression The different texture compression levels are: OF_COMPRESS_NONE, 
-    /// \param OF_COMPRESS_SRGB, OF_COMPRESS_ARB
+    /// \param compression The ofTexCompression to set.
     void setCompression(ofTexCompression compression);
 
     /// \brief Returns a raw pointer to the pixel data.
@@ -219,7 +216,7 @@ public:
     ///
     /// \warning This is a raw pointer. It's up to you to get this right.
     ///
-    /// \returns Returns a raw pointer to the pixel data.
+    /// \returns A raw pointer to the pixel data.
     ofPixels_<PixelType> & getPixels();
     const ofPixels_<PixelType> & getPixels() const;
     
@@ -227,7 +224,7 @@ public:
     /// 
     /// Make sure you call either update() or reloadTexture() after making changes to the ofPixels.
     ///
-    /// \returns Returns an ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
+    /// \returns An ofPixels reference that you can use to manipulate the raw pixel data of the ofImage.
     OF_DEPRECATED_MSG("Use getPixels() instead ", ofPixels_<PixelType> & getPixelsRef());
     OF_DEPRECATED_MSG("Use getPixels() instead ", const ofPixels_<PixelType> & getPixelsRef() const);
 
@@ -236,7 +233,7 @@ public:
     /// \brief This returns the ofColor representing the pixels at the x and y position passed in.
     /// \param x x position of pixel
     /// \param y y position of pixel
-    /// \returns This returns the ofColor representing the pixels at the x and y position passed in.
+    /// \returns The ofColor representing the pixels at the x and y position passed in.
     ofColor_<PixelType> getColor(int x, int y) const;
 
     /// \brief Sets the pixel at the x,y position passed in. 
@@ -313,9 +310,6 @@ public:
     /// \param h Height of region to crop.
     void crop(int x, int y, int w, int h); 
     
-    // this does a crop from another image.
-    // NOTE: this will reallocate memory if the image types are different, or if the w & h do not
-    // equal this images w & h
     /// \brief Replaces region in caller image specified by w,h,x,y with pixels from otherImage.
     /// 
     /// The w,h are measured from the x,y, so passing 100, 100, 300, 300 will grab
@@ -328,7 +322,6 @@ public:
     /// \param h Height of region to crop.
     void cropFrom(ofImage_<PixelType> & otherImage, int x, int y, int w, int h);
     
-    // perform rotation of 90 degress clockwise rotation amont times. 
     /// \brief Rotates the image by a multiple of 90 degrees.
     /// \param rotation Amount to rotate in multiples of 90. For instance, if you pass 
     /// in 2, then the image will be rotated 180 degrees.
@@ -339,8 +332,6 @@ public:
     /// \param horizontal Set to true to reflect image across horizontal axis.
     void mirror(bool vertical, bool horizontal); 
     
-    // if you've altered the pixels (e.g., from getPixels())
-    // call update() to see a change (move the pixels to the texture)
     /// \brief Call to ensure that changes to pixels are reflected in the ofTexture of the image.
     /// 
     /// Many of the ofImage methods call this after they change the pixels, but if you directly manipulate 
@@ -348,8 +339,6 @@ public:
     /// texture of the image to the screen.
     void update();
 
-    // the anchor is the point the image is drawn around.
-    // this can be useful if you want to rotate an image around a particular point.
     /// \brief Change the drawing anchor from top-left corner to a position specified by xPct and yPct.
     ///
     /// Changes the drawing position specified by draw() from the normal top-left corner of the image to a
