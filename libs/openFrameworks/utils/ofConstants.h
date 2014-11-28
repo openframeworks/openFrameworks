@@ -59,7 +59,8 @@ enum ofTargetPlatform{
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
 #elif defined( __APPLE_CC__)
-	#include <TargetConditionals.h>
+    #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
+    #include <TargetConditionals.h>
 
 	#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 		#define TARGET_OF_IPHONE
