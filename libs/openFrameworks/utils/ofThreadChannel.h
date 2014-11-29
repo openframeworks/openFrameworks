@@ -65,9 +65,14 @@ public:
 			return false;
 		}
 		if(queue.empty()){
-			condition.wait(mutex,timeoutMs);
+			try {
+				condition.wait(mutex,timeoutMs);
+			}catch (Poco::TimeoutException & e) {
+				return false;
+			}
 		}
-		if(!closed && !queue.empty()){
+
+		if(!closed){
 			swap(ret,queue.front());
 			queue.pop();
 			return true;
