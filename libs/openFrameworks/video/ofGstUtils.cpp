@@ -982,7 +982,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 		pipeline + " ! appsink name=ofappsink caps=\"" + caps + "\""; // caps=video/x-raw-rgb
 
 	internalPixelFormat = pixelFormat;
-	if((isStream && (w==-1 || h==-1)) || pixelFormat==OF_PIXELS_NATIVE || allocate(w,h,pixelFormat)){
+	if((w==-1 || h==-1) || pixelFormat==OF_PIXELS_NATIVE || allocate(w,h,pixelFormat)){
 		return setPipelineWithSink(pipeline_string,"ofappsink",isStream);
 	}else{
 		return false;
