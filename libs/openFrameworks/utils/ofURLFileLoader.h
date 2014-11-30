@@ -18,6 +18,7 @@ public:
 	string				url;
 	string				name;
 	bool				saveTo;
+	map<string,string>	headers;
 
 	int getID(){return id;}
 private:
@@ -84,6 +85,7 @@ class ofURLFileLoader  {
 		void remove(int id);
 		void clear();
         void stop();
+        ofHttpResponse handleRequest(ofHttpRequest & request);
 
     private:
         shared_ptr<ofBaseURLFileLoader> impl;
