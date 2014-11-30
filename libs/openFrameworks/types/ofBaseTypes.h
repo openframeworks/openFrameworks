@@ -613,6 +613,7 @@ public:
 	virtual void remove(int id)=0;
 	virtual void clear()=0;
 	virtual void stop()=0;
+	virtual ofHttpResponse handleRequest(ofHttpRequest request) = 0;
 };
 
 class ofBaseMaterial{
