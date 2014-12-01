@@ -174,12 +174,7 @@ void ofSoundMixer::setMasterPan(float pan){
 }
 
 bool ofSoundMixer::isConnectedTo(const ofSoundObject& obj) const{
-    for (std::size_t i =0; i<channels.size(); i++) {
-		if (&obj == channels[i]) {
-			return true;
-		}
-	}
-	return false;
+	return std::find(channels.begin(), channels.end(), &obj) != channels.end();
 }
 
 // this pulls the audio through from earlier links in the chain and sums up the total output
