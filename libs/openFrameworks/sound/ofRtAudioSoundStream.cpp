@@ -231,7 +231,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	if(nInputChannels > 0){
 		if( rtStreamPtr->soundInputPtr != NULL ){
 			rtStreamPtr->inputBuffer.set( fPtrIn, nFramesPerBuffer, nInputChannels );
-			rtStreamPtr->applySoundStreamOriginInfo(&rtStreamPtr->inputBuffer);
+			rtStreamPtr->applySoundStreamOriginInfo(rtStreamPtr->inputBuffer);
 			rtStreamPtr->soundInputPtr->audioIn(rtStreamPtr->inputBuffer);
 		}
 		// [damian] not sure what this is for? assuming it's for underruns? or for when the sound system becomes broken?
@@ -245,7 +245,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 				rtStreamPtr->outputBuffer.setNumChannels(nOutputChannels);
 				rtStreamPtr->outputBuffer.resize(nFramesPerBuffer*nOutputChannels);
 			}
-			rtStreamPtr->applySoundStreamOriginInfo(&rtStreamPtr->outputBuffer);
+			rtStreamPtr->applySoundStreamOriginInfo(rtStreamPtr->outputBuffer);
 			rtStreamPtr->soundOutputPtr->audioOut(rtStreamPtr->outputBuffer);
 		}
 		rtStreamPtr->outputBuffer.copyTo(fPtrOut, nFramesPerBuffer, nOutputChannels,0);
