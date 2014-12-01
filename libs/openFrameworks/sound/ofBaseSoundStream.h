@@ -29,5 +29,5 @@ class ofBaseSoundStream{
 	
 	protected:
 		/// set tickCount and deviceID on the buffer
-		void applySoundStreamOriginInfo( ofSoundBuffer* buffer );
+		void applySoundStreamOriginInfo( ofSoundBuffer& buffer );
 };
