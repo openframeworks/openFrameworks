@@ -751,9 +751,6 @@ string ofSystemTextBoxDialog(string question, string text){
     
 
 
-	#endif
-
-
 #endif
 
 #ifdef TARGET_ANDROID
