@@ -306,7 +306,7 @@ static int CALLBACK loadDialogBrowseCallback(
 //---------------------------------------------------------------------
 
 // OS specific results here.  "" = cancel or something bad like can't load, can't save, etc...
-ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection, string defaultPath,bool multipleitems){
+ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection, string defaultPath,bool multipleItems){
 
 	ofFileDialogResult results;
 
@@ -318,7 +318,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		NSOpenGLContext *context = [NSOpenGLContext currentContext];
 
 		NSOpenPanel * loadDialog = [NSOpenPanel openPanel];
-		[loadDialog setAllowsMultipleSelection:BOOL(multipleitems)];
+		[loadDialog setAllowsMultipleSelection:BOOL(multipleItems)];
 		[loadDialog setCanChooseDirectories:bFolderSelection];
 		[loadDialog setResolvesAliases:YES];
 
@@ -381,7 +381,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.lpstrFilter = L"All\0";
 		ofn.lpstrFile = szFileName;
 		ofn.nMaxFile = nBufferSize;
-		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY| (multipleitems ? OFN_ALLOWMULTISELECT : 0);
+		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY| (multipleItems ? OFN_ALLOWMULTISELECT : 0);
 		ofn.lpstrDefExt = 0;
         
 		if(GetOpenFileNameW(&ofn)) {
