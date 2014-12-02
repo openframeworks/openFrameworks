@@ -521,7 +521,7 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	ofn.lpstrDefExt = L"";	// we could do .rxml here?
 	ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
 	ofn.lpstrTitle = L"Select Output File";
-    //thiw will be solved only if ming is compiled as unicode
+
 	if (GetSaveFileNameW(&ofn)){
 #ifdef __MINGW32_VERSION
         results.filePath = convertWideToNarrow(fileName,CP_ACP);
