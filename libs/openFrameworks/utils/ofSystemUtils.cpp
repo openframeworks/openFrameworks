@@ -247,16 +247,16 @@ string ofFileDialogResult::getPath(){
 
 
 //------------------------------------------------------------------------------
-void ofSystemAlertDialog(string errorMessage,string title_Msg ){
+void ofSystemAlertDialog(string errorMessage,string titleMsg ){
 	#ifdef TARGET_WIN32
-		    MessageBoxW(NULL, convertNarrowToWide(errorMessage).c_str(), convertNarrowToWide(title_Msg).c_str(), MB_OK);
+		    MessageBoxW(NULL, convertNarrowToWide(errorMessage).c_str(), convertNarrowToWide(titleMsg).c_str(), MB_OK);
 	#endif
 
 	#ifdef TARGET_OSX
 		@autoreleasepool {
 			NSAlert* alertDialog = [[[NSAlert alloc] init] autorelease];
 			alertDialog.messageText = [NSString stringWithUTF8String:errorMessage.c_str()];
-			alertDialog.informativeText =[NSString stringWithUTF8String:title_Msg.c_str()];
+			alertDialog.informativeText =[NSString stringWithUTF8String:titleMsg.c_str()];
 			[alertDialog runModal];
 			restoreAppWindowFocus();
 		}
@@ -935,13 +935,13 @@ string ofSystemPassword(string question, string text){
 
 
 //------------------------------------------------------------------------------
-bool ofSystemYesNoDialog(string title_Msg,string question){
+bool ofSystemYesNoDialog(string titleMsg,string question){
     bool result = false;
 #ifdef TARGET_WIN32
 #ifndef __MINGW32_VERSION
-    question = ofEncodeToUtf8(question),title_Msg = ofEncodeToUtf8(title_Msg);
+    question = ofEncodeToUtf8(question),titleMsg = ofEncodeToUtf8(titleMsg);
 #endif
-    int dialogueResult =  MessageBoxW(NULL, convertNarrowToWide(question).c_str(), convertNarrowToWide(title_Msg).c_str(), MB_OKCANCEL | MB_ICONEXCLAMATION | MB_TOPMOST);
+    int dialogueResult =  MessageBoxW(NULL, convertNarrowToWide(question).c_str(), convertNarrowToWide(titleMsg).c_str(), MB_OKCANCEL | MB_ICONEXCLAMATION | MB_TOPMOST);
     if(dialogueResult==1)result = true; else result = false;
 #endif
 #ifdef TARGET_OSX
@@ -951,8 +951,8 @@ bool ofSystemYesNoDialog(string title_Msg,string question){
 	[alert setMessageText:[NSString stringWithCString:question.c_str()
 											 encoding:NSUTF8StringEncoding]];
     int height =50;
-    if(title_Msg.size()>100){
-        height = title_Msg.size()/2;
+    if(titleMsg.size()>100){
+        height = titleMsg.size()/2;
     }
     
 	NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,height))];
@@ -962,7 +962,7 @@ bool ofSystemYesNoDialog(string title_Msg,string question){
     
     
     [label setBackgroundColor:[NSColor clearColor]];
-	[label setStringValue:[NSString stringWithCString:title_Msg.c_str()
+	[label setStringValue:[NSString stringWithCString:titleMsg.c_str()
 											 encoding:NSUTF8StringEncoding]];
 	[alert setAccessoryView:label];
 	NSInteger returnCode = [alert runModal];
