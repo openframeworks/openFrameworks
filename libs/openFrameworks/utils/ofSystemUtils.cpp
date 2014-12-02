@@ -33,7 +33,7 @@
 #include <sstream>
 #include <string>
 
-std::string convertWideToNarrow( const std::wstring wstr, int encoding = CP_UTF8  )
+std::string convertWideToNarrow( const std::wstring& wstr, int encoding = CP_UTF8  )
 {
     int size_needed = WideCharToMultiByte(encoding, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
     std::string strTo( size_needed, 0 );
