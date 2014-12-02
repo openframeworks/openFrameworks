@@ -19,7 +19,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle="", bool bFolderSelecti
 ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName);
 string ofSystemTextBoxDialog(string question, string text="");
 string ofSystemPassword(string password,string initialPass="");
-bool ofSystemYesNoDialog(string question,string alerttitle="?");
+bool ofSystemYesNoDialog(string question,string alertTitle="?");
 
 
 string ofEncodeToUtf8(string item);
