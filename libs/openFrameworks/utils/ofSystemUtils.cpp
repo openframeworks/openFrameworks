@@ -47,16 +47,16 @@ std::string convertWideToNarrow( const std::wstring& wstr, int encoding = CP_UTF
 std::wstring convertNarrowToWide( const std::string& as, int encoding = CP_UTF8 ){
     // deal with trivial case of empty string
     if( as.empty() )    return std::wstring();
-    
+
     // determine required length of new string
     size_t reqLength = ::MultiByteToWideChar( encoding, 0, as.c_str(), (int)as.length(), 0, 0 );
-    
+
     // construct new string of required length
     std::wstring ret( reqLength, L'\0' );
-    
+
     // convert old string to new string
     ::MultiByteToWideChar( encoding, 0, as.c_str(), (int)as.length(), &ret[0], (int)ret.length() );
-    
+
     // return new string ( compiler should optimize this away )
     return ret;
 }
@@ -191,7 +191,7 @@ gboolean text_dialog_gtk(gpointer userdata){
 static void initGTK(){
 	static bool initialized = false;
 	if(!initialized){
-		#if !defined(TARGET_RASPBERRY_PI) 
+		#if !defined(TARGET_RASPBERRY_PI)
 		XInitThreads();
 		#endif
 		int argc=0; char **argv = NULL;
@@ -249,7 +249,7 @@ string ofFileDialogResult::getPath(){
 //------------------------------------------------------------------------------
 void ofSystemAlertDialog(string errorMessage,string titleMsg ){
 	#ifdef TARGET_WIN32
-		    MessageBoxW(NULL, convertNarrowToWide(errorMessage).c_str(), convertNarrowToWide(titleMsg).c_str(), MB_OK);
+	MessageBoxW(NULL, convertNarrowToWide(errorMessage).c_str(), convertNarrowToWide(titleMsg).c_str(), MB_OK);
 	#endif
 
 	#ifdef TARGET_OSX
@@ -358,7 +358,11 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 #ifdef TARGET_WIN32
 
 	if (bFolderSelection == false){
-        
+#ifndef __MINGW32_VERSION
+		//It assumes that in VS you pass the Default Path by hand ergo in a NOT UTF8 so we make it UTF8 like in CODE BLOCKS
+		//if you are passing a UTF8 encoded string in VS by some way, like if you encode it or read from a buffer  you might have to use ofEncodeToUnicode
+    windowTitle = ofEncodeToUtf8(windowTitle),defaultPath = ofEncodeToUtf8(defaultPath);
+#endif
         OPENFILENAMEW ofn;
 		ZeroMemory(&ofn, sizeof(ofn));
 		ofn.lStructSize = sizeof(ofn);
@@ -366,15 +370,16 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.hwndOwner = hwnd;
         const int nBufferSize = 1000 * (MAX_PATH + 1) + 1;//allow a thousand files
 		wchar_t szFileName[nBufferSize];
-        
+
 		if(defaultPath!=""){
             wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+
 		}else{
 			memset(&szFileName,  0, sizeof(szFileName));
 		}
         if (windowTitle != "") {
 			ofn.lpstrTitle = convertNarrowToWide(windowTitle).c_str();
-            
+
 		} else {
 			ofn.lpstrTitle = NULL;
 		}
@@ -383,43 +388,39 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.nMaxFile = nBufferSize;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY| (multipleItems ? OFN_ALLOWMULTISELECT : 0);
 		ofn.lpstrDefExt = 0;
-        
+
 		if(GetOpenFileNameW(&ofn)) {
-#ifdef __MINGW32_VERSION
-            results.filePath = convertWideToNarrow(szFileName,CP_ACP);
-#else
-            results.filePath = convertWideToNarrow(szFileName);
-#endif
+
+            results.filePath = convertWideToNarrow(szFileName,CP_ACP);//note: this is not utf8
+			
             int firstFileNameLength = wcslen (szFileName);
 			if (szFileName [firstFileNameLength + 1] == '\0') {
 			} else {
 			    string path__ = results.filePath+"\\";
 				for (const wchar_t *p = & szFileName [firstFileNameLength + 1]; *p != '\0'; p += wcslen (p) + 1) {
-#ifdef __MINGW32_VERSION
+
                     results.results.push_back(path__+convertWideToNarrow(p,CP_ACP));
-#else
-                    results.results.push_back(path__+convertWideToNarrow(p));
-#endif
+
                     results.filePath =  results.results[0];
 				}
 			}
 		}
-        
+
 	} else {
-        
+
 		BROWSEINFOW      bi;
 		wchar_t         wideCharacterBuffer[MAX_PATH];
         wchar_t         wideWindowTitle[MAX_PATH];
 		LPITEMIDLIST    pidl;
 		LPMALLOC		lpMalloc;
-        
+
         if (windowTitle != "") {
 			wcscpy(wideWindowTitle, convertNarrowToWide(windowTitle).c_str());
 		} else {
 			wcscpy(wideWindowTitle, L"Select Directory");
 		}
-        
-        
+
+
 		// Get a pointer to the shell memory allocator
 		if(SHGetMalloc(&lpMalloc) != S_OK){
 			//TODO: deal with some sort of error here?
@@ -431,7 +432,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
 		bi.lpfn             =   &loadDialogBrowseCallback;
 		bi.lParam           =   (LPARAM) &defaultPath;
-        
+
 		if(pidl = SHBrowseForFolderW(&bi)){
 			// Copy the path directory to the buffer
 			if(SHGetPathFromIDListW(pidl,wideCharacterBuffer)){
@@ -441,7 +442,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		}
 		lpMalloc->Release();
 	}
-    
+
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
@@ -476,7 +477,6 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 
 	ofFileDialogResult results;
-
 	//----------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------       OSX
 	//----------------------------------------------------------------------------------------
@@ -504,7 +504,9 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	//------------------------------------------------------------------------------   windoze
 	//----------------------------------------------------------------------------------------
 #ifdef TARGET_WIN32
-
+#ifndef __MINGW32_VERSION
+    defaultName = ofEncodeToUtf8(defaultName),messageName = ofEncodeToUtf8(messageName);
+#endif
 
 	wchar_t fileName[MAX_PATH] = L"";
 	char * extension;
@@ -523,11 +525,9 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 	ofn.lpstrTitle = L"Select Output File";
 
 	if (GetSaveFileNameW(&ofn)){
-#ifdef __MINGW32_VERSION
-        results.filePath = convertWideToNarrow(fileName,CP_ACP);
-#else
-		results.filePath = convertWideToNarrow(fileName);
-#endif
+
+        results.filePath = convertWideToNarrow(fileName,CP_ACP);//not a utf8
+
 	}
 
 
@@ -614,13 +614,15 @@ string ofSystemTextBoxDialog(string question, string text){
 #ifdef TARGET_WIN32
    WNDCLASSEXW wc;
 	MSG Msg;
-    
-    
+#ifndef __MINGW32_VERSION
+    question = ofEncodeToUtf8(question),text = ofEncodeToUtf8(text);
+#endif
+
     int OF_CENTER_POSX_ = 0;
     int OF_CENTER_POSY_ = 0;
-    
+
     const LPCWSTR g_szClassName = L"myWindowClass\0";
-    
+
     //Step 1: Registering the Window Class
     wc.cbSize        = sizeof(WNDCLASSEXW);
     wc.style         = CS_HREDRAW | CS_VREDRAW;
@@ -651,41 +653,41 @@ string ofSystemTextBoxDialog(string question, string text){
                                   WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU | ES_AUTOHSCROLL,
                                   OF_CENTER_POSX_, OF_CENTER_POSY_, 240, 140,
                                   WindowFromDC(wglGetCurrentDC()), NULL, GetModuleHandle(0),NULL);
-    
+
     RECT rc;
-    
+
     GetWindowRect ( dialog, &rc ) ;
-    
+
     OF_CENTER_POSX_ = (GetSystemMetrics(SM_CXSCREEN) - rc.right)/2;
     OF_CENTER_POSY_ = (GetSystemMetrics(SM_CYSCREEN) - rc.bottom)/2;
     SetWindowPos( dialog, 0,  OF_CENTER_POSX_, OF_CENTER_POSY_, 240, 140, SWP_NOZORDER | SWP_NOSIZE );
-    
-    
+
+
     if(dialog == NULL)
     {
-        
+
         MessageBoxW(NULL,L"Window Creation Failed!\0", L"Error!\0",
                     MB_ICONEXCLAMATION | MB_OK);
         return text;
-        
+
     }
-    
+
     EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
     HWND hEdit = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT\0", convertNarrowToWide(question).c_str(),
                                  WS_CHILD | WS_VISIBLE | WS_TABSTOP,
                                  10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
-    
-    
+
+
     HWND okButton = CreateWindowExW(WS_EX_CLIENTEDGE, L"BUTTON\0", L"OK\0",
                                     WS_CHILD | WS_VISIBLE | WS_TABSTOP,
                                     10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(NULL), NULL);
-    
+
     HWND cancelButton = CreateWindowExW(WS_EX_CLIENTEDGE, L"BUTTON\0", L"Cancel\0",
                                         WS_CHILD | WS_VISIBLE,
                                         80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(NULL), NULL);
-    
+
     SetFocus( hEdit );
-    
+
     ShowWindow(dialog, SW_SHOWNORMAL);
     bool bFirstEmpty = true;
     while (true){
@@ -701,7 +703,7 @@ string ofSystemTextBoxDialog(string question, string text){
             }
             GetMessageW( &Msg, 0, 0, 0 );
         }
-        
+
         if (Msg.message == WM_QUIT){
             PostQuitMessage( Msg.wParam );
             if (!IsWindow( dialog )){
@@ -710,15 +712,15 @@ string ofSystemTextBoxDialog(string question, string text){
             }
             break;
         }
-        
+
         if (!IsWindow( dialog )){
             EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
             return text;
         }
-        
+
         TranslateMessage( &Msg );
         DispatchMessageW( &Msg );
-        
+
         if((Msg.hwnd == okButton && Msg.message==WM_LBUTTONUP) || (Msg.message==WM_KEYUP && Msg.wParam==13)){
             break;
         }else if((Msg.hwnd == cancelButton && Msg.message==WM_LBUTTONUP) ||  (Msg.message==WM_KEYUP && Msg.wParam==27)){
@@ -727,28 +729,28 @@ string ofSystemTextBoxDialog(string question, string text){
             text ="";
             return text;
         }
-        
+
         if (!IsWindow( dialog )){
             EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
             return text;
         }
-        
+
         if (bFirstEmpty && Msg.message == WM_TIMER){
             ShowWindow( dialog, SW_SHOWNORMAL );
             bFirstEmpty = FALSE;
         }
     }
-    
+
     wchar_t wstr[16384];
     GetDlgItemTextW( dialog, 101, wstr, 16384 );
     char mbstr2[16384];
     WideCharToMultiByte(CP_UTF8,0,wstr,16384,mbstr2,16384,NULL,NULL);
-    
+
     text = mbstr2;
-    
+
     DestroyWindow(dialog);
     EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
-    
+
 
 
 #endif
@@ -782,10 +784,10 @@ string ofSystemPassword(string question, string text){
      startGTK(dialog);
      */
 #endif
-    
+
 #ifdef TARGET_OSX
 	// create password dialog
-    
+
 	NSAlert *alert = [[[NSAlert alloc] init] autorelease];
 	[alert addButtonWithTitle:@"OK"];
 	[alert addButtonWithTitle:@"Cancel"];
@@ -800,10 +802,10 @@ string ofSystemPassword(string question, string text){
 	if ( returnCode == NSAlertFirstButtonReturn )
 		text = [[label stringValue] UTF8String];
 #endif
-    
-    
+
+
 #ifdef TARGET_WIN32
-    
+
 #ifndef __MINGW32_VERSION
     question = ofEncodeToUtf8(question),text = ofEncodeToUtf8(text);
 #endif
@@ -827,14 +829,14 @@ string ofSystemPassword(string question, string text){
     if(!RegisterClassExW(&wc)){
         DWORD err=GetLastError();
         if ((err==ERROR_CLASS_ALREADY_EXISTS)){
-            ; 
+            ;
         } else {
             MessageBoxW(NULL, L"Window Registration Failed!\0", L"Error!\0",
                         MB_ICONEXCLAMATION | MB_OK);
             return text;
         }
     }
-    
+
     HWND dialog = CreateWindowExW(WS_EX_DLGMODALFRAME,
                                   g_szClassName,
                                   convertNarrowToWide(question).c_str(),
@@ -842,14 +844,14 @@ string ofSystemPassword(string question, string text){
                                   OF_CENTER_POSX_, OF_CENTER_POSY_, 240, 140,
                                   WindowFromDC(wglGetCurrentDC()), NULL, GetModuleHandle(0),NULL);
     RECT rc;
-    
+
     GetWindowRect ( dialog, &rc ) ;
-    
+
     OF_CENTER_POSX_ = (GetSystemMetrics(SM_CXSCREEN) - rc.right)/2;
     OF_CENTER_POSY_ = (GetSystemMetrics(SM_CYSCREEN) - rc.bottom)/2;
     SetWindowPos( dialog, 0,  OF_CENTER_POSX_, OF_CENTER_POSY_, 240, 140, SWP_NOZORDER | SWP_NOSIZE );
-    
-    
+
+
     if(dialog == NULL)
     {
         MessageBoxW(NULL,L"Window Creation Failed!\0", L"Error!\0",
@@ -860,7 +862,7 @@ string ofSystemPassword(string question, string text){
     HWND hEdit = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT\0", convertNarrowToWide(text).c_str(),
                                  WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_PASSWORD,
                                  10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
-    
+
     HWND okButton = CreateWindowExW(WS_EX_CLIENTEDGE, L"BUTTON\0", L"OK\0",
                                     WS_CHILD | WS_VISIBLE | WS_TABSTOP,
                                     10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(NULL), NULL);
@@ -911,25 +913,25 @@ string ofSystemPassword(string question, string text){
             bFirstEmpty = FALSE;
         }
     }
-    
-    
+
+
     wchar_t wstr[16384];
     GetDlgItemTextW( dialog, 101, wstr, 16384 );
     char mbstr2[16384];
     WideCharToMultiByte(CP_UTF8,0,wstr,16384,mbstr2,16384,NULL,NULL);
-    
+
     text = mbstr2;
-    
-    
+
+
     DestroyWindow(dialog);
     EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
-    
-    
+
+
 #endif
 #ifdef TARGET_ANDROID
     //
 #endif
-    
+
 	return text;
 }
 
@@ -954,13 +956,13 @@ bool ofSystemYesNoDialog(string titleMsg,string question){
     if(titleMsg.size()>100){
         height = titleMsg.size()/2;
     }
-    
+
 	NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,height))];
     [label setBordered:false];
     [label setEditable:false];
     [label setBezeled:false];
-    
-    
+
+
     [label setBackgroundColor:[NSColor clearColor]];
 	[label setStringValue:[NSString stringWithCString:titleMsg.c_str()
 											 encoding:NSUTF8StringEncoding]];
@@ -968,40 +970,39 @@ bool ofSystemYesNoDialog(string titleMsg,string question){
 	NSInteger returnCode = [alert runModal];
 	if (returnCode == NSAlertFirstButtonReturn)result = true; else result = false;
 #endif
-    
+
 #if defined( TARGET_LINUX ) && defined (OF_USING_GTK)
     //
 #endif
-    
+
 #ifdef TARGET_ANDROID
     //
 #endif
-    
-    
+
+
     return result;
-    
+
 }
 //---------------------------------------------------------------------
 
- 
- 
-void ofOpenFile(string path){
-    
+
+
+void ofOpenFile(string path){//to be used with ofSystemLoadDialog don't put paths by hand it wont work
+
 #ifdef TARGET_WIN32
-    std::replace( path.begin(), path.end(), '/','\\' );
-    string t___ =  path;
-    const char * path__ = t___.c_str();
-    ShellExecute(NULL, _T("open"), _T(path__), NULL, NULL, SW_SHOW);
-    
+
+	std::replace( path.begin(), path.end(), '/','\\' );	
+	ShellExecuteW(NULL, L"open",convertNarrowToWide(ofEncodeToUtf8(path)).c_str(), NULL, NULL, SW_SHOW);
+
 #else
-    
+
     std::ostringstream oss;
     oss <<"open "<< '\"' << path << '\"';
     system(oss.str().c_str());
-    
+
 #endif
-    
-    
+
+
 }
 
 
@@ -1013,3 +1014,11 @@ string ofEncodeToUtf8(string item){
     return item;
 }
 
+string ofEncodeToUnicode(string item){
+	#ifdef TARGET_WIN32
+	item = convertWideToNarrow(convertNarrowToWide(item),CP_ACP);
+#endif
+    //todo osx
+    return item;
+
+}
