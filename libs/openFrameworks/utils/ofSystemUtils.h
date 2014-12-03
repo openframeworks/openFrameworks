@@ -5,7 +5,7 @@ class ofFileDialogResult{
 	public:
 		ofFileDialogResult();
 		
-    		vector<string> results;
+        vector<string> results;
 		string getName();
 		string getPath();
 		
@@ -20,6 +20,8 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName);
 string ofSystemTextBoxDialog(string question, string text="");
 string ofSystemPassword(string password,string initialPass="");
 bool ofSystemYesNoDialog(string question,string alertTitle="?");
+void  ofOpenFile(string path);
 
 
-string ofEncodeToUtf8(string item);
+string ofEncodeToUtf8(string& item);
+string ofEncodeToUnicode(string& item);
