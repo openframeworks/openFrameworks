@@ -1006,7 +1006,7 @@ void ofOpenFile(string path){//to be used with ofSystemLoadDialog don't put path
 }
 
 
-string ofEncodeToUtf8(string item){
+string ofEncodeToUtf8(string& item){
 #ifdef TARGET_WIN32
 	item = convertWideToNarrow(convertNarrowToWide(item,CP_ACP));
 #endif
@@ -1014,7 +1014,7 @@ string ofEncodeToUtf8(string item){
     return item;
 }
 
-string ofEncodeToUnicode(string item){
+string ofEncodeToUnicode(string& item){
 	#ifdef TARGET_WIN32
 	item = convertWideToNarrow(convertNarrowToWide(item),CP_ACP);
 #endif
