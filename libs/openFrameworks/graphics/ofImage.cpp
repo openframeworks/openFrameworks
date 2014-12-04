@@ -1089,16 +1089,16 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
+        PixelType *pixelData = pixels.getData();
         
         for(int y = 0; y < _h; y++){  
             for(int x = 0; x < _w; x++){
                 
-                int i = y * _w * 3 + x * 3;
                 int j = (_h-1-y) * _w * 4 + x * 4;  // rotate 90.
                 
-                pixels.getPixels()[i]   = bufferRGBA[j];
-                pixels.getPixels()[i+1] = bufferRGBA[j+1];
-                pixels.getPixels()[i+2] = bufferRGBA[j+2];
+                *pixelData++ = bufferRGBA[j];
+                *pixelData++ = bufferRGBA[j+1];
+                *pixelData++ = bufferRGBA[j+2];
             }
         }
     }
@@ -1111,16 +1111,16 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
+        PixelType *pixelData = pixels.getData();
         
         for(int y = 0; y < _h; y++){  
             for(int x = 0; x < _w; x++){
                 
-                int i = y * _w * 3 + x * 3;
                 int j = y * _w * 4 + (_w-1-x) * 4;  // rotate 90.
                 
-                pixels.getPixels()[i]   = bufferRGBA[j];
-                pixels.getPixels()[i+1] = bufferRGBA[j+1];
-                pixels.getPixels()[i+2] = bufferRGBA[j+2];
+                *pixelData++ = bufferRGBA[j];
+                *pixelData++ = bufferRGBA[j+1];
+                *pixelData++ = bufferRGBA[j+2];
             }
         }
     }
@@ -1128,7 +1128,6 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
         
         swap(_w,_h);
         swap(_x,_y);
-
 
         if(!ofIsVFlipped()){
 			_x = sw - _x;   // screen is flipped horizontally.
@@ -1141,23 +1140,22 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
+        PixelType *pixelData = pixels.getData();
         
         for(int y = 0; y < _h; y++){  
             for(int x = 0; x < _w; x++){
                 
-                int i = x * _h * 3 + y * 3;
                 int j = y * _w * 4 + x * 4;
                 
-                pixels.getPixels()[i]   = bufferRGBA[j];
-                pixels.getPixels()[i+1] = bufferRGBA[j+1];
-                pixels.getPixels()[i+2] = bufferRGBA[j+2];
+                *pixelData++ = bufferRGBA[j];
+                *pixelData++ = bufferRGBA[j+1];
+                *pixelData++ = bufferRGBA[j+2];
             }
         }
     }
     else if(ofGetOrientation() == OF_ORIENTATION_90_LEFT) {
         
         swap(_w, _h);
-        
         swap(_x, _y);
 
         if(ofIsVFlipped()){
@@ -1170,16 +1168,16 @@ void ofImage_<PixelType>::grabScreen(int _x, int _y, int _w, int _h){
         
         glPixelStorei(GL_PACK_ALIGNMENT, 1);
         glReadPixels(_x, _y, _w, _h, GL_RGBA, GL_UNSIGNED_BYTE, bufferRGBA);
+        PixelType *pixelData = pixels.getData();
         
         for(int y = 0; y < _h; y++){  
             for(int x = 0; x < _w; x++){
                 
-                int i = x * _h * 3 + y * 3;
                 int j = (_h-1-y) * _w * 4 + (_w-1-x) * 4;
                 
-                pixels.getPixels()[i]   = bufferRGBA[j];
-                pixels.getPixels()[i+1] = bufferRGBA[j+1];
-                pixels.getPixels()[i+2] = bufferRGBA[j+2];
+                *pixelData++ = bufferRGBA[j];
+                *pixelData++ = bufferRGBA[j+1];
+                *pixelData++ = bufferRGBA[j+2];
             }
         }
     }
