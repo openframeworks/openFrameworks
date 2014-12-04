@@ -730,18 +730,18 @@ void ofShader::setUniforms(const ofParameterGroup & parameters) const{
 }
 	
 //--------------------------------------------------------------
-void ofShader::setUniformMatrix3f(const string & name, const ofMatrix3x3 & m)  const{
+void ofShader::setUniformMatrix3f(const string & name, const ofMatrix3x3 & m, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
-		if (loc != -1) glUniformMatrix3fv(loc, 1, GL_FALSE, &m.a);
+		if (loc != -1) glUniformMatrix3fv(loc, count, GL_FALSE, &m.a);
 	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m)  const{
+void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
-		if (loc != -1) glUniformMatrix4fv(loc, 1, GL_FALSE, m.getPtr());
+		if (loc != -1) glUniformMatrix4fv(loc, count, GL_FALSE, m.getPtr());
 	}
 }
 
