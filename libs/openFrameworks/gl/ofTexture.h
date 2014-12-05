@@ -48,8 +48,8 @@ void ofEnableArbTex();
 
 /// \brief Use GL_TEXTURE_2D textures.
 ///
-/// GL_TEXTURE_2D is OpenGL's default way of handling textures and does support
-/// a wider range of core OpenGL features such as mipmaps.
+/// GL_TEXTURE_2D is OpenGL's default way of handling textures and supports a
+/// wider range of core OpenGL features such as mipmaps.
 ///
 /// \sa ofEnableArbTex()
 void ofDisableArbTex();
@@ -61,9 +61,9 @@ bool ofGetUsingNormalizedTexCoords();
 
 /// \brief Use normalized (0 - 1) texture coordinates.
 ///
-/// By default, textures in OF work with pixel based coordinates based on given
+/// By default, textures in OF work with pixel-based coordinates based on given
 /// content dimensions (images size, fbo size, etc). Normalized (0 - 1)
-/// coordinates are the traditional GL default as they allow working with
+/// coordinates are the traditional OpenGL default as they allow working with
 /// internal texture data without having to worry about specific dimensions of
 /// the content.
 ///
@@ -72,7 +72,7 @@ bool ofGetUsingNormalizedTexCoords();
 /// \sa http://www.opengl.org/sdk/docs/man4/html/glTexParameter.xhtml
 void ofEnableNormalizedTexCoords();
 
-/// \brief Use pixel based texture coordinates.
+/// \brief Use pixel-based texture coordinates.
 /// \sa ofEnableNormalizedTexCoords()
 void ofDisableNormalizedTexCoords();
 
