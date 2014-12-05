@@ -81,8 +81,9 @@ void ofDisableNormalizedTexCoords();
 /// By default, textures are clamped to their edges with GL_CLAMP_TO_EDGE.
 /// Setting a repeat mode like GL_REPEAT allows you to create tiled backgrounds
 /// with small textures.
-//////
+///
 /// This overrides individual ofTexture wrap settings.
+///
 /// \sa ofTexture::setTextureWrap
 /// \sa http://www.opengl.org/sdk/docs/man4/html/glTexParameter.xhtml
 ///
@@ -95,6 +96,7 @@ OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",void 
 /// \brief Check whether OF is using custom global texture wrapping.
 ///
 /// \warning Deprecated. Use member methods instead.
+///
 /// \sa ofSetTextureWrap()
 /// \returns true if OF is currently using custom global texture wrapping. 
 OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",bool ofGetUsingCustomTextureWrap());
@@ -102,7 +104,9 @@ OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",bool 
 /// \brief Removes global custom texture wrapping.
 ///
 /// Restores individual ofTexture wrap settings.
+///
 /// \warning Deprecated. Use member methods instead.
+///
 /// \sa ofSetTextureWrap()
 OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",void ofRestoreTextureWrap());
 
@@ -112,6 +116,7 @@ OF_DEPRECATED_MSG("Use member method ofTexture::setTextureWrap() instead.",void 
 /// overrides individual ofTexture min & mag filter settings.
 ///
 /// \warning Deprecated. Use member methods instead.
+///
 /// \sa ofTexture::setTextureMinMagFilter()
 /// \param minFilter minifying filter for scaling a pixel to a smaller area.
 /// \param magFilter magnifying filter for scaling a pixel to a larger area.
