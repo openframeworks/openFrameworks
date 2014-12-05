@@ -329,7 +329,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param h Desired height in pixels.
 	/// \param glInternalFormat OpenGL data format: `GL_RGBA`, `GL_LUMINANCE`, etc.
 	/// \param bUseARBExtension Set to true to use rectangular textures.
-	/// \param glFormat
+	/// \param glFormat The OpenGL format.
 	/// \param pixelType OpenGL pixel type: `GL_UNSIGNED_BYTE`, `GL_FLOAT`, etc.
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtension, int glFormat, int pixelType);
 	
@@ -702,13 +702,13 @@ class ofTexture : public ofBaseDraws {
 	/// \brief Helper to convert display coordinate to texture coordinate.
 	/// \param xPos Horizontal position in pixels.
 	/// \param yPos Vertical position in pixels.
-	/// \returns Texture coordinate or (0, 0) if texture is not allocated.
+	/// \returns Texture coordinate or ofPoint::zero() if texture is not allocated.
 	ofPoint getCoordFromPoint(float xPos, float yPos) const;
 	
 	/// \brief Helper to convert display coordinate to texture coordinate.
 	/// \param xPts Horizontal position in a normalized percentage (0 - 1).
 	/// \param yPts Vertical position in a normalized percentage (0 - 1).
-	/// \returns Texture coordinate or (0, 0) if texture is not allocated.
+	/// \returns Texture coordinate or ofPoint::zero() if texture is not allocated.
 	ofPoint getCoordFromPercent(float xPts, float yPts) const;
 
 	/// \}
@@ -716,11 +716,11 @@ class ofTexture : public ofBaseDraws {
 	/// \name Texture settings
 	/// \{
 
-	/// \brief Set another ofTexture to use as alpha mask
-	/// \param mask The texture to use as alpha mask
+	/// \brief Set another ofTexture to use as an alpha mask.
+	/// \param mask The texture to use as alpha mask.
 	void setAlphaMask(ofTexture & mask);
 
-	/// \name Disable the alpha mask
+	/// \brief Disable the alpha mask.
 	void disableAlphaMask();
 
 	
@@ -752,8 +752,8 @@ class ofTexture : public ofBaseDraws {
 	/// \param magFilter magnifying filter for scaling a pixel to a larger area.
 	void setTextureMinMagFilter(GLint minFilter, GLint magFilter);
 
-	/// \brief Sets a texture matrix that will be uploaded whenever the texture is
-	/// binded.
+	/// \brief Sets a texture matrix to be uploaded whenever the texture is bound.
+	/// \param m The 4x4 texture matrix.
 	void setTextureMatrix(const ofMatrix4x4 & m);
 
 	/// \brief Disable the texture matrix.
@@ -766,13 +766,12 @@ class ofTexture : public ofBaseDraws {
 	void setCompression(ofTexCompression compression);
 
 	/// \todo Define Swizzle in the documentation.
-
 	/// \brief Swizzle RGBA to grayscale with alpha in the red channel.
 	///
 	/// Use 1 channel GL_R as luminance instead of red channel in OpenGL 3+.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.
-	///
+	/// \sa https://en.wikipedia.org/wiki/Swizzling_(computer_graphics)
 	void setRGToRGBASwizzles(bool rToRGBSwizzles);
 
 	/// \brief Swizzle a channel to another
@@ -784,10 +783,10 @@ class ofTexture : public ofBaseDraws {
 	/// tex.setSwizzle(GL_TEXTURE_SWIZZLE_R,GL_ALPHA);
 	/// ~~~~~
 	///
-	/// will make channel 0 appear as alpha in the shader
+	/// will make channel 0 appear as alpha in the shader.
 	///
 	/// \warning This is not supported in OpenGL ES and does nothing.
-	///
+	/// \sa https://en.wikipedia.org/wiki/Swizzling_(computer_graphics)
 	void setSwizzle(GLenum srcSwizzle, GLenum dstChannel);
 
 	/// \}
@@ -817,6 +816,8 @@ class ofTexture : public ofBaseDraws {
 	void readToPixels(ofFloatPixels & pixels) const;
 
 #ifndef TARGET_OPENGLES
+	/// \brief Copy the texture to an ofBufferObject.
+	/// \param buffer the target buffer to copy to.
 	void copyTo(ofBufferObject & buffer) const;
 #endif
 
@@ -828,8 +829,8 @@ class ofTexture : public ofBaseDraws {
 	/// \brief Internal texture data access.
 	///
 	/// This returns the internal texture data for this texture, for instance,
-	/// its textureID, type of texture, whether it's been allocated,
-	/// and other data about the state of the texture.
+	/// its textureID, type of texture, whether it's been allocated and other
+	/// data about the state of the texture.
 	///
 	/// \returns a reference to the internal texture data struct.
 	ofTextureData& getTextureData();
@@ -844,20 +845,20 @@ class ofTexture : public ofBaseDraws {
 	/// \name Mipmapping
 	/// \{
 
-	/// \brief Sets flag allowing texture to auto-generate mipmap
+	/// \brief Sets flag allowing texture to auto-generate a mipmap.
 	///
 	/// By default, this will set your minFilter to GL_LINEAR_MIPMAP_LINEAR.
 	/// If you want to change your minFilter later use setTextureMinMagFilter()
 	///
 	///	If you want to generate a mipmap later, or at a specific
-	/// point in your code, use ofTexture::generateMipmap() instead.
+	/// point in your code, use generateMipmap() instead.
 	///
 	/// \sa generateMipmap()
 	/// \sa disableMipmap()
 	/// \sa setTextureMinMagFilter()
 	void enableMipmap();
 
-	/// \brief Sets flag allowing texture to auto-generate mipmap
+	/// \brief Sets flag disallowing texture to auto-generate mipmap.
 	///
 	/// By default, this will set your minFilter to GL_LINEAR_MIPMAP_LINEAR.
 	/// If you want to change your minFilter later use setTextureMinMagFilter()
@@ -889,18 +890,35 @@ class ofTexture : public ofBaseDraws {
 	                       ///< For backwards compatibility.
 
 protected:
+	/// \brief Load byte pixel data.
+	///
+	/// glFormat can be different to the internal format of the texture on each
+	/// load, i.e. we can upload GL_BGRA pixels into a GL_RGBA texture but the
+	/// number of channels need to match according to the OpenGL standard.
+	///
+	/// \param data Pointer to byte pixel data. Must not be NULL.
+	/// \param w Pixel data width.
+	/// \param h Pixel data height.
+	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
+	/// \param glType the OpenGL type of the data.
     void loadData(const void * data, int w, int h, int glFormat, int glType);
 
+	/// \brief Enable a texture target.
+	/// \param textureLocation the OpenGL texture ID to enable as a target.
 	void enableTextureTarget(int textureLocation) const;
+
+	/// \brief Disable a texture target.
+	/// \param textureLocation the OpenGL texture ID to enable as a target.
 	void disableTextureTarget(int textureLocation) const;
 
-	ofPoint anchor;
-	bool bAnchorIsPct;
+	ofPoint anchor; ///< The texture's anchor point.
+
+	bool bAnchorIsPct; ///< Is the anchor point represented as a normalized
+					   ///< (0 - 1) coordinate?
 
 	/// \endcond
 
 private:
-	
-	bool bWantsMipmap;
+	bool bWantsMipmap; ///< Should mipmaps be created?
 	
 };
