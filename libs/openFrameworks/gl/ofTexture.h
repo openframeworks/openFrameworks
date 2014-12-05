@@ -30,14 +30,16 @@
 bool ofGetUsingArbTex();
 
 /// \brief Use GL_TEXTURE_RECTANGLE textures.
-/// GL_TEXTURE_RECTANGLE textures are more intuitive since they allow pixel based coordinates
-/// and are enabled by default.
 ///
-/// GL_TEXTURE_2D textures use normalised texture coordinates (a float value between 0 and 1
-/// is used to express texture coordinates along width and height.)
+/// GL_TEXTURE_RECTANGLE textures are more intuitive since they allow pixel
+/// based coordinates and are enabled by default.
 ///
-/// GL_TEXTURE_2D textures are more widely supported and allow advanced features such as
-/// mipmaps and texture compression.
+/// GL_TEXTURE_2D textures use normalised texture coordinates (a float value
+/// between 0 and 1 is used to express texture coordinates along width and
+/// height).
+///
+/// GL_TEXTURE_2D textures are more widely supported and allow advanced features
+/// such as mipmaps and texture compression.
 ///
 /// \sa ofDisableArbTex()
 /// \warning GL_TEXTURE_RECTANGLE is not available in OpenGL ES.
