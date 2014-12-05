@@ -28,7 +28,7 @@
 /// There are 2 ways you can use ofLog:
 ///
 /// #### Functional: as a function taking a message
-/// Example:
+///
 /// ~~~~{.cpp}
 /// 
 /// // send a single string message, setting the log level
@@ -40,7 +40,7 @@
 /// ~~~~
 ///
 /// #### Stream: as a stream using the << stream operator
-/// Example
+///
 /// ~~~~{.cpp}
 /// 
 /// // the stream style, setting the log level
@@ -103,6 +103,20 @@
 /// - ofSetLoggerChannel(shared_ptr<ofBaseLoggerChannel> loggerChannel)
 
 
+//--------------------------------------------------
+/// \cond INTERNAL
+/// printf annotations for automatic format checking in GCC
+#ifdef __GNUC__
+#define OF_PRINTF_ATTR(x, y) __attribute__ ((format (printf, x, y)))
+#else
+#define OF_PRINTF_ATTR(x, y)
+#endif
+/// \endcond
+//--------------------------------------------------
+
+/// \name Global logging level
+/// \{
+
 
 
 /// The supported logging levels. Default is `OF_LOG_NOTICE`
@@ -115,22 +129,6 @@ enum ofLogLevel{
 	OF_LOG_SILENT	// this one is special and should always be last,
 					// set ofSetLogLevel to OF_SILENT to not receive any messages
 };
-
-
-
-//--------------------------------------------------
-/// \cond INTERNAL
-/// printf annotations for automatic format checking in GCC
-#ifdef __GNUC__
-#define OF_PRINTF_ATTR(x, y) __attribute__ ((format (printf, x, y)))
-#else
-#define OF_PRINTF_ATTR(x, y)
-#endif
-/// \endcond
-//--------------------------------------------------
-
-/// \name Global logging settings
-/// \{
 
 /// \brief Sets the logging level so only messages above a certain priority are shown.
 ///
@@ -155,9 +153,18 @@ void ofSetLogLevel(ofLogLevel level);
 
 
 /// \brief set the logging level for only a specific module
+/// 
+/// Example of logging to a specific module:
+/// ~~~~{.cpp}
+/// 
+/// // log to a module called "Hello"
+/// ofLogWarning("Hello") << "a warning print";
+/// 
+/// ~~~~
 void ofSetLogLevel(string module, ofLogLevel level);
 
 
+/// \brief Get the currently set global logging level
 ofLogLevel ofGetLogLevel();
 
 /// \brief Get log level name as a string
@@ -165,12 +172,27 @@ ofLogLevel ofGetLogLevel();
 /// \param pad set to true if you want all log level names to be the same length
 string ofGetLogLevelName(ofLogLevel level, bool pad=false);
 
+/// \}
+
 //--------------------------------------------------
+
+/// \name Global logger channel
+/// \{
+
 class ofBaseLoggerChannel;
 
+/// \brief Set the looging to output to a file instead of the console
+/// \param path The path to the file to save the logging to
+/// \param append Set to true if you want to append to the existing file
 void ofLogToFile(const string & path, bool append=false);
+
+/// \brief Set the logging to ouptut to the console
+/// 
+/// This is the default state, and is only needed to be called in case 
+/// ofLogToFile() has been called
 void ofLogToConsole();
 
+/// \brief Set the logger to use a custom logger channel
 void ofSetLoggerChannel(shared_ptr<ofBaseLoggerChannel> loggerChannel);
 
 /// \}
@@ -303,7 +325,7 @@ class ofLog{
 		/// ~~~~{.cpp}
 		/// 
 		/// // print a simple message with no variables
-		/// ofLog(OF_LOG_WARNING, "welcome to the jungle);
+		/// ofLog(OF_LOG_WARNING, "welcome to the jungle");
 		/// 
 		/// // our variables
 		/// float fun = 11.11;
@@ -315,7 +337,7 @@ class ofLog{
 		/// 
 		/// ~~~~
 		/// 
-		/// Note: `theNames.c_str() returns a C string from theNames which is a C++ string object.
+		/// Note: `theNames.c_str()` returns a C string from theNames which is a C++ string object.
 		/// 
 		/// There are other formatting options such as setting the decimal precision of float objects 
 		/// and the forward padding of numbers (i.e. 0001 instead of 1). 
@@ -437,6 +459,9 @@ class ofLogFatalError : public ofLog{
 		ofLogFatalError(const string & module, const char* format, ...) OF_PRINTF_ATTR(3, 4);
 };
 
+
+/// \cond INTERNAL
+
 //--------------------------------------------------------------
 // Logger Channels
 
@@ -477,7 +502,6 @@ private:
 };
 
 
-/// \cond INTERNAL
 class ofThreadErrorLogger: public Poco::ErrorHandler{
 public:
     virtual ~ofThreadErrorLogger(){}
