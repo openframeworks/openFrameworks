@@ -203,12 +203,13 @@ public:
 	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
 	
 private:
-	mutable bool isBound;  ///< Is the texture already bound
-	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
+	mutable bool isBound;  ///< Is the texture already bound.
+	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind.
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
 	bool hasMipmap; ///< True if mipmap has been generated for this texture, false by default.
+
 	friend class ofTexture;
 
 };
