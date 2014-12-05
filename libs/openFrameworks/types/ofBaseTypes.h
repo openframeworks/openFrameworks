@@ -48,24 +48,77 @@ bool ofIsVFlipped();
 
 class ofBaseDraws{
 public:
+	/// \brief Destroy the abstract object.
 	virtual ~ofBaseDraws(){}
+
+	/// \brief Draw at a position at the native size.
+	///
+	/// Native size is determined by getWidth() and getHeight().
+	///
+	/// \param x Draw position on the x axis.
+	/// \param y Draw position on the y axis.
 	virtual void draw(float x, float y) const=0;
+
+	/// \brief Draw at a position with the specified size.
+	///
+	/// \param x Draw position on the x axis.
+	/// \param y Draw position on the y axis.
+	/// \param w Draw width.
+	/// \param h Draw height.
 	virtual void draw(float x, float y, float w, float h) const=0;
+
+	/// \brief Draw at a position at the native size.
+	///
+	/// Native size is determined by getWidth() and getHeight().
+	///
+	/// \param point Draw position.
 	virtual void draw(const ofPoint & point) const {
 		draw(point.x, point.y);
 	}
+
+	/// \brief Draw at a position and size specified by a rectangle.
+	///
+	/// \param rect Draw position and size.
 	virtual void draw(const ofRectangle & rect) const {
 		draw(rect.x, rect.y, rect.width, rect.height);
 	}
+
+	/// \brief Draw at a position.
+	///
+	/// \param point Draw position.
+	/// \param w Draw width.
+	/// \param h Draw height.
 	virtual void draw(const ofPoint & point, float w, float h) const {
 		draw(point.x, point.y, w, h);
 	}
 
+	/// \brief Get the height.
+	/// \returns the height.
 	virtual float getHeight() const = 0;
+
+	/// \brief Get the width.
+	/// \returns the width.
 	virtual float getWidth() const = 0;
 
+	/// \brief Set the anchor point the item is drawn around as a percentage.
+	///
+	/// This can be useful if you want to rotate an image around a particular
+	/// point.
+	///
+	/// \param xPct Horizontal position as a percentage (0 - 1).
+	/// \param yPct Vertical position as a percentage (0 - 1).
 	virtual void setAnchorPercent(float xPct, float yPct){};
+
+	/// \brief Set the anchor point the item is drawn around in pixels.
+	///
+	/// This can be useful if you want to rotate an image around a particular
+	/// point.
+	///
+	/// \param x Horizontal texture position in pixels.
+	/// \param y Vertical texture position in pixels.
 	virtual void setAnchorPoint(float x, float y){};
+
+	/// \brief Reset the anchor point to (0, 0).
 	virtual void resetAnchor(){};
 
 };
