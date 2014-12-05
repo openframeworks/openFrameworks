@@ -6,13 +6,31 @@
 #include "ofConstants.h"
 #include "ofVboMesh.h"
 
+/// \file
+/// ofTexture is used to create textures that live on your graphics card.
+/// You can use the ofTexture class to manually create textures from raw bitmap data,
+/// but more oftenly you will use other classes like ofImage or ofVideoGrabber to
+/// create textures from image files or camera feeds.
+///
+/// ofTextures is a wrapper around OpenGL textures, and allows a way to store pixel data
+/// on the graphics card, and quickly render it.
+///
+/// ofTexture allows use of non-power of 2 textures in opengl, and has a series of functions to
+/// upload and download data in different formats
+///
+/// You need to allocate the texture before drawing it or loading data into it.
+
+
+
+/// \name Global texture settings
+/// \{
+
 /// \brief Check whether OF is using GL_TEXTURE_RECTANGLE rectangular or GL_TEXTURE_2D textures.
 /// \sa ofEnableArbTex()
 /// \returns true if using GL_TEXTURE_RECTANGLE textures, false if using GL_TEXTURE_2D textures.
 bool ofGetUsingArbTex();
 
 /// \brief Use GL_TEXTURE_RECTANGLE textures.
-///
 /// GL_TEXTURE_RECTANGLE textures are more intuitive since they allow pixel based coordinates
 /// and are enabled by default.
 ///
@@ -62,12 +80,10 @@ void ofDisableNormalizedTexCoords();
 /// By default, textures are clamped to their edges with GL_CLAMP_TO_EDGE.
 /// Setting a repeat mode like GL_REPEAT allows you to create tiled backgrounds
 /// with small textures.
-///
-/// See <http://www.opengl.org/sdk/docs/man4/html/glTexParameter.xhtml> for more
-/// info.
-///
+//////
 /// This overrides individual ofTexture wrap settings.
 /// \sa ofTexture::setTextureWrap
+/// \sa http://www.opengl.org/sdk/docs/man4/html/glTexParameter.xhtml
 ///
 /// \warning Deprecated. Use member methods instead.
 ///
@@ -111,6 +127,8 @@ OF_DEPRECATED_MSG("Use member method ofTexture::setTextureMinMagFilter() instead
 /// \warning Deprecated. Use member methods instead.
 OF_DEPRECATED_MSG("Use member method ofTexture::setTextureMinMagFilter() instead.",void ofRestoreMinMagFilters());
 
+/// \}
+
 /// Compression is only available through OpenGL
 /// for textures using GL_TEXTURE_2D, *not* GL_TEXTURE_RECTANGLE,
 /// also note that most compression algorithms work on blocks of 4x4 pixels,
@@ -120,6 +138,9 @@ enum ofTexCompression {
 	OF_COMPRESS_SRGB,	///< sRGB compression
 	OF_COMPRESS_ARB		///< ARB compression
 };
+
+
+/// \cond INTERNAL
 
 /// \class ofTextureData
 /// \brief Internal texture settings struct.
@@ -193,6 +214,8 @@ private:
 
 };
 
+/// \endcond
+
 /// \brief Enable global texture "edge hacking" to compensate for edge artifacts.
 ///
 /// Adds a 2 pixel offset to avoid possible edge artifacts (typically a black or
@@ -212,14 +235,13 @@ void ofDisableTextureEdgeHack();
 bool ofIsTextureEdgeHackEnabled();
 
 /// \class ofTexture
-/// \brief An OpenGL image on the the graphics card.
-///
-/// ofTexture is a wrapper for the OpenGL texture API. It allows use of
-/// non-power of 2 textures and to upload and draw graphical data.
-///
-/// \sa https://www.opengl.org/wiki/Texture
+/// \brief A wrapper class for an OpenGL texture
+
 class ofTexture : public ofBaseDraws {
 	public :
+
+	/// \name Construction and allocation
+	/// \{
 
 	/// \brief Construct an ofTexture instance.
 	ofTexture();
@@ -228,16 +250,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param mom The ofTexture to copy. Reuses internal GL texture ID.
 	ofTexture(const ofTexture & mom);
 
-	/// \brief Copy a given ofTexture into this texture.
-	/// \param mom The ofTexture to copy from. Reuses internal GL texture ID.
-	ofTexture& operator=(const ofTexture & mom);
 	
-	/// \brief Destroy an ofTexture instance.
-	///
-	/// The internal GL texture ID is only rleased if this is the last texture
-	/// using it.
-	virtual ~ofTexture();
-
 	/// \brief Allocate texture using the given settings.
 	///
 	/// This is useful if you need manual control over loading a number of
@@ -254,12 +267,20 @@ class ofTexture : public ofBaseDraws {
 
 	/// \brief Allocate texture of a given size and format.
 	///
+	/// The width (w) and height (h) do not necessarily need to be powers of 2,
+	/// but they do need to be large enough to contain the data you will upload to the texture.
+	///
+	/// The internal data type `glFormat` describes how OpenGL will store this texture internally.
+	/// For example, if you want a grayscale texture, you can use `GL_LUMINANCE`.
+	/// You can upload what ever type of data you want (using `loadData()`) but internally,
+	/// opengl will store the information as grayscale. Other types include: `GL_RGB`, `GL_RGBA`.
+	///
 	/// Uses the currently set OF texture type. Defaults to ARB rectangular 
 	/// textures if they are supported. (They are not supported on OpenGL ES).
 	///
 	/// \param w Desired width in pixels.
 	/// \param h Desired height in pixels.
-	/// \param glInternalFormat GL texture format: GL_RGBA, GL_LUMINANCE, etc.
+	/// \param glFormat OpenGL internal data format: `GL_RGBA`, `GL_LUMINANCE`, etc.
 	virtual void allocate(int w, int h, int glInternalFormat);
 
 	/// \brief Allocate texture of a given size and format.
@@ -271,8 +292,9 @@ class ofTexture : public ofBaseDraws {
 	
 	/// \brief Allocate texture of a given size and format. Specify texture type.
 	///
-	/// This lets you overide the default OF texture type, in case you need a
-	/// square GL_TEXTURE_2D texture.
+	/// This allows to enable the ARBE extension for this texture.
+	/// This will overide the default OF texture type, in case you need a
+	/// square texture (`GL_TEXTURE_2D`).
 	///
 	/// \warning ARB textures are not available in OpenGL ES.
 	/// \sa ofEnableArbTex()
@@ -290,8 +312,8 @@ class ofTexture : public ofBaseDraws {
 	/// Same as allocate(w, h, glInternalFormat, bUseARBExtension) with the
 	/// addition of:
 	///
-	/// \param glFormat GL texture format: GL_RGBA, GL_LUMINANCE, etc.
-	/// \param pixelType GL pixel type: GL_UNSIGNED_BYTE, GL_FLOAT, etc.
+	/// \param glInternalFormat OpenGL data format: `GL_RGBA`, `GL_LUMINANCE`, etc.
+	/// \param pixelType OpenGL pixel type: `GL_UNSIGNED_BYTE`, `GL_FLOAT`, etc.
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtention, int glFormat, int pixelType);
 	
 	/// \brief Allocate texture using an ofPixels instance.
@@ -329,9 +351,45 @@ class ofTexture : public ofBaseDraws {
 	/// Same as loadData(ofPixels &, bool), except using ofFloatPixels.
 	virtual void allocate(const ofFloatPixels& pix, bool bUseARBExtention);
 	
+
+	/// \brief Get whether the texture has been allocated.
+	///
+	/// This let's you check if a texture is safe to draw.
+	/// The texture can both be allocated by using `allocate()` or loading it with data `loadData()`
+	/// \returns true if the texture has been allocated.
+	bool isAllocated() const;
+
+
+	/// \brief Has the texture been allocated?
+	///
+	/// Legacy function for backwards compatibility.
+	///
+	/// \returns true if the texture has been allocated.
+	OF_DEPRECATED_MSG("Use isAllocated instead",bool bAllocated() const);
+
+	/// \brief Destroy an ofTexture instance.
+	///
+	/// The internal GL texture ID is only released if this is the last texture
+	/// using it.
+	virtual ~ofTexture();
+
+
+	/// \}
+
+	/// \name Update texture
+	/// \{
+
+	/// \brief Copy a given ofTexture into this texture.
+	/// \param mom The ofTexture to copy from. Reuses internal GL texture ID.
+	ofTexture& operator=(const ofTexture & mom);
+
+
 	/// \brief Clears the texture.
 	///
-	/// The internal GL texture ID is only rleased if this is the last texture
+	/// Clears / frees the texture memory, if something was already allocated.
+	/// Useful if you need to control the memory on the graphics card.
+	///
+	/// The internal GL texture ID is only released if this is the last texture
 	/// using it.
 	void clear();
 
@@ -399,41 +457,18 @@ class ofTexture : public ofBaseDraws {
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
 #ifndef TARGET_OPENGLES
+	/// \brief Load pixels from an ofBufferObject
+	///
 	void loadData(const ofBufferObject & buffer, int glFormat, int glType);
 #endif
 
-	/// \brief Generate mipmap for the current texture.
-	///
-	/// \warning Only GL_TEXTURE_RECTANGLE - which is the default openFrameworks
-	/// texture target - does *not* support mipmaps, so make sure to call
-	/// ofDisableArbTex() before loading texture
-	/// data for a texture you want to generate mipmaps for.
-	///
-	/// \sa ofEnableArbTex()
-	/// \sa ofDisableArbTex()
-	void generateMipmap();
-	
-    /// \todo Define Swizzle in the documentation.
-
-	/// \brief Swizzle RGBA to grayscale with alpha in the red channel.
-	///
-	/// Use 1 channel GL_R as luminance instead of red channel in OpenGL 3+.
-	///
-	/// \warning This is not supported in OpenGL ES and does nothing.
-	///
-	void setRGToRGBASwizzles(bool rToRGBSwizzles);
-
-	/// \brief Swizzle a channel to another
-	///
-	/// Example:
-	/// tex.setSwizzle(GL_TEXTURE_SWIZZLE_R,GL_ALPHA)
-	/// will make channel 0 appear as alpha in the shader
-	///
-	/// \warning This is not supported in OpenGL ES and does nothing.
-	///
-	void setSwizzle(GLenum srcSwizzle, GLenum dstChannel);
-
 	/// \brief Copy an area of the screen into this texture.
+	///
+	/// Specifiy the position (x,y) you wish to grab from,
+	/// with the width (w) and height (h) of the region.
+	///
+	/// Make sure that you have allocated your texture (using `allocate()`)
+	/// to be large enough to hold the region of the screen you wish to load.
 	///
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glCopyTexSubImage2D.xhtml
 	///
@@ -442,37 +477,15 @@ class ofTexture : public ofBaseDraws {
 	/// \param w Width of the area to copy in pixels.
 	/// \param h Height of the area to copy in pixels.
 	void loadScreenData(int x, int y, int w, int h);
+	
+	/// \}
 
-	/// \brief Set the anchor point the texture is drawn around as a percentage.
-	///
-	/// This can be useful if you want to rotate an image around a particular
-	/// point.
-	///
-	/// \param xPct Horizontal texture position as a percentage (0 - 1).
-	/// \param yPct Vertical texture position as a percentage (0 - 1).
-	void setAnchorPercent(float xPct, float yPct);
-	
-	/// \brief Set the anchor point the texture is drawn around in pixels.
-	///
-	/// This can be useful if you want to rotate an image around a particular
-	/// point.
-	///
-	/// \param x Horizontal texture position in pixels.
-	/// \param y Vertical texture position in pixels.
-	void setAnchorPoint(float x, float y);
-	
-	/// \brief Reset the anchor point to (0, 0).
-	void resetAnchor();
+
+	/// \name Drawing
+	/// \{
 
 	using ofBaseDraws::draw;
 
-	/// \brief Draw the texture by it's upper left & lower right corners.
-	///
-	/// \param p1 Upper left position on the x axis.
-	/// \param p2 Upper left position on the y axis.
-	/// \param p3 Lower right position on the x axis.
-	/// \param p4 Lower right position on the y axis.
-	void draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const;
 	
 	/// \brief Draw the texture at it's normal size.
 	///
@@ -480,14 +493,14 @@ class ofTexture : public ofBaseDraws {
 	/// \param y Draw position on the y axis.
 	void draw(float x, float y) const;
 
-	/// \brief Draw the texture at it's normal size with depth.
+	/// \brief Draw the texture at it's normal size with depth in 3D space.
 	///
 	/// \param x Draw position on the x axis.
 	/// \param y Draw position on the y axis.
 	/// \param z Draw position on the z axis.
 	void draw(float x, float y, float z) const;
 
-	/// \brief Draw the texture at a given size.
+	/// \brief Draw the texture at a given size and position.
 	///
 	/// \param x Draw position on the x axis.
 	/// \param y Draw position on the y axis.
@@ -495,7 +508,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param h Draw height.
 	void draw(float x, float y, float w, float h) const;
 
-	/// \brief Draw the texture at a given size with depth.
+	/// \brief Draw the texture at a given size witdh and depth.
 	///
 	/// \param x Draw position on the x axis.
 	/// \param y Draw position on the y axis.
@@ -504,12 +517,20 @@ class ofTexture : public ofBaseDraws {
 	/// \param h Draw height.
 	void draw(float x, float y, float z, float w, float h) const;
 	
+	/// \brief Draws the texture at 4 points passed in as if you created 4 glVertices.
+	///
+	/// \param p1 Upper left position on the x axis.
+	/// \param p2 Upper left position on the y axis.
+	/// \param p3 Lower right position on the x axis.
+	/// \param p4 Lower right position on the y axis.
+	void draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const;
+
 	/// \brief Draw a subsection of the texture.
 	///
-	/// Like ofRect, (x, y) depend on the current OF_RECT_MODE:
+	/// Like ofRect() depend on the current `OF_RECT_MODE`:
 	///
-	/// * OF_RECT_MODE_CORNER: drawn with the upper left corner = (x,y)
-	/// * OF_RECT_MODE_CENTER: drawn centered on (x,y)
+	/// * `OF_RECT_MODE_CORNER`: drawn with the upper left corner = (x,y)
+	/// * `OF_RECT_MODE_CENTER`: drawn centered on (x,y)
 	///
 	/// \sa ofSetRectMode()
 	///
@@ -523,14 +544,14 @@ class ofTexture : public ofBaseDraws {
 
 	/// \brief Draw a subsection of the texture with depth.
 	///
-	/// Same as drawSubsection(x, y, w, h, sx, sy) with the addition of:
+	/// Same as drawSubsection(float x, float y, float w, float h, float sx, float sy) const with the addition of z axis parameter.
 	///
 	/// \param z Draw position on the z axis.
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const;
 
 	/// \brief Draw a subsection of the texture with an offset.
 	///
-	/// Same as drawSubsection(x, y, w, h, sx, sy) with the addition of:
+	/// Same as ddrawSubsection(float x, float y, float w, float h, float sx, float sy) const with the addition of the width and height of the subsection.
 	///
 	/// \param sw Subsection width within the texture.
 	/// \param sh Subsection height within the texture.
@@ -538,14 +559,182 @@ class ofTexture : public ofBaseDraws {
 	
 	/// \brief Draw a subsection of the texture with an offset and depth.
 	///
-	/// Same as drawSubsection(x, y, w, h, sx, sy, sw, sh) with the addition of:
+	/// Same as drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh) const with the addition of z axis parameter.
 	///
 	/// \param sw Subsection width within the texture.
 	/// \param sh Subsection height within the texture.
 	/// \param z Draw position on the z axis.
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
+	/// \brief Get a mesh that has the texture coordinates set.
 	ofMesh getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+
+	/// \brief Bind the texture.
+	///
+	/// For advanced users who need to manually manage texture drawing without
+	/// calling ofTexture::draw.
+	///
+	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
+	///
+	void bind(int textureLocation=0) const;
+	
+	/// \brief Unbind the texture.
+	///
+	/// For advanced users who need to manually manage texture drawing without
+	/// calling ofTexture::draw.
+	///
+	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
+	///
+	void unbind(int textureLocation=0) const;
+
+#ifndef TARGET_OPENGLES
+	/// Calls glBindImageTexture on the texture
+	///
+	/// Binds the texture as an read or write image, only available since OpenGL 4.2
+	/// \warning This is not available in OpenGLES
+	/// \sa http://www.opengl.org/wiki/GLAPI/glBindImageTexture
+	void bindAsImage(GLuint unit, GLenum access, GLint level=0, GLboolean layered=0, GLint layer=0);
+#endif
+
+	/// \}
+
+	/// \name Size and coordinates
+	/// \{
+
+	/// \brief Display height of texture.
+	///
+	/// Return value is pixel size (default) or normalized (0 - 1) if ofEnableNormalizedTextures() is set to true.
+	///
+	/// \sa ofEnabledNormalizedTextures()
+	///
+	/// \returns Display height of texture in pixels.
+	float getHeight() const;
+
+	/// \brief Display width of texture.
+	///
+	/// Return value is pixel size (default) or normalized (0 - 1) if ofEnableNormalizedTextures() is set to true.
+	///
+	/// \sa ofEnabledNormalizedTextures()
+	///
+	/// \returns Display width of texture in pixels.
+	float getWidth() const;
+
+	/// \brief Set the anchor point the texture is drawn around as a percentage.
+	///
+	/// This can be useful if you want to rotate an image around a particular
+	/// point.
+	///
+	/// \param xPct Horizontal texture position as a percentage (0 - 1).
+	/// \param yPct Vertical texture position as a percentage (0 - 1).
+	void setAnchorPercent(float xPct, float yPct);
+
+	/// \brief Set the anchor point the texture is drawn around in pixels.
+	///
+	/// This can be useful if you want to rotate an image around a particular
+	/// point.
+	///
+	/// \param x Horizontal texture position in pixels.
+	/// \param y Vertical texture position in pixels.
+	void setAnchorPoint(float x, float y);
+
+	/// \brief Reset the anchor point to (0, 0).
+	void resetAnchor();
+
+	/// \brief Helper to convert display coordinate to texture coordinate.
+	/// \param xPos Horizontal position in pixels.
+	/// \param yPos Vertical position in pixels.
+	/// \returns Texture coordinate or (0, 0) if texture is not allocated.
+	ofPoint getCoordFromPoint(float xPos, float yPos) const;
+	
+	/// \brief Helper to convert display coordinate to texture coordinate.
+	/// \param xPts Horizontal position in a normalized percentage (0 - 1).
+	/// \param yPts Vertical position in a normalized percentage (0 - 1).
+	/// \returns Texture coordinate or (0, 0) if texture is not allocated.
+	ofPoint getCoordFromPercent(float xPts, float yPts) const;
+
+	/// \}
+
+	/// \name Texture settings
+	/// \{
+
+	/// \brief Set another ofTexture to use as alpha mask
+	/// \param mask The texture to use as alpha mask
+	void setAlphaMask(ofTexture & mask);
+
+	/// \name Disable the alpha mask
+	void disableAlphaMask();
+
+	
+	/// \brief Set texture wrapping.
+	///
+	/// By default, textures are clamped to their edges with `GL_CLAMP_TO_EDGE`.
+	/// Setting a repeat mode like `GL_REPEAT` allows you to create tiled
+	/// backgrounds with small textures.
+	///
+	/// \sa ofTextureSetWrap()
+	/// \sa http://www.opengl.org/sdk/docs/man4/html/glTexParameter.xhtml
+	///
+	/// \warning May be overridden.
+	///
+	/// \param wrapS wrap parameter for texture coordinate s.
+	/// \param wrapT wrap parameter for texture coordinate t.
+	void setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical);
+
+	/// \brief Set texture minification/magnification scaling filters.
+	///
+	/// Controls how OpenGL will scale this texture.
+	///
+	/// \sa http://www.opengl.org/sdk/docs/man4/html/glTexParameter.xhtml
+	/// \sa ofTextureSetMinMagFilters()
+	///
+	/// \warning May be overridden.
+	///
+	/// \param minFilter minifying filter for scaling a pixel to a smaller area.
+	/// \param magFilter magnifying filter for scaling a pixel to a larger area.
+	void setTextureMinMagFilter(GLint minFilter, GLint magFilter);
+
+	/// \brief Sets a texture matrix that will be uploaded whenever the texture is
+	/// binded.
+	void setTextureMatrix(const ofMatrix4x4 & m);
+
+	/// \brief Disable the texture matrix.
+	void disableTextureMatrix();
+
+	/// \brief Set the texture compression.
+	///
+	/// \warning: not yet implemented.
+	/// \sa ofTexCompression
+	void setCompression(ofTexCompression compression);
+
+	/// \todo Define Swizzle in the documentation.
+
+	/// \brief Swizzle RGBA to grayscale with alpha in the red channel.
+	///
+	/// Use 1 channel GL_R as luminance instead of red channel in OpenGL 3+.
+	///
+	/// \warning This is not supported in OpenGL ES and does nothing.
+	///
+	void setRGToRGBASwizzles(bool rToRGBSwizzles);
+
+	/// \brief Swizzle a channel to another
+	///
+	/// Example:
+	///
+	/// ~~~~~
+	/// ofTexture tex;
+	/// tex.setSwizzle(GL_TEXTURE_SWIZZLE_R,GL_ALPHA);
+	/// ~~~~~
+	///
+	/// will make channel 0 appear as alpha in the shader
+	///
+	/// \warning This is not supported in OpenGL ES and does nothing.
+	///
+	void setSwizzle(GLenum srcSwizzle, GLenum dstChannel);
+
+	/// \}
+
+	/// \name Read pixel data
+	/// \{
 
 	/// \brief Read current texture data from the GPU into pixels.
 	///
@@ -572,86 +761,29 @@ class ofTexture : public ofBaseDraws {
 	void copyTo(ofBufferObject & buffer) const;
 #endif
 
-	/// \brief Bind the texture.
-	///
-	/// For advanced users who need to manually manage texture drawing without
-	/// calling ofTexture::draw.
-	///
-	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
-	///
-	void bind(int textureLocation=0) const;
-	
-	/// \brief Unbind the texture.
-	///
-	/// For advanced users who need to manually manage texture drawing without
-	/// calling ofTexture::draw.
-	///
-	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
-	///
-	void unbind(int textureLocation=0) const;
+	/// \}
 
-#ifndef TARGET_OPENGLES
-	/// glBindImageTexture: https://www.opengl.org/wiki/GLAPI/glBindImageTexture
-	///
-	/// binds the texture as an read or write image, only available since 4.2
-	void bindAsImage(GLuint unit, GLenum access, GLint level=0, GLboolean layered=0, GLint layer=0);
-#endif
+	/// \name Texture data
+	/// \{
 
-	void setAlphaMask(ofTexture & mask);
-	void disableAlphaMask();
+	/// \brief Internal texture data access.
+	///
+	/// This returns the internal texture data for this texture, for instance,
+	/// its textureID, type of texture, whether it's been allocated,
+	/// and other data about the state of the texture.
+	///
+	/// \returns a reference to the internal texture data struct.
+	ofTextureData& getTextureData();
 
-	/// \brief Helper to convert display coordinate to texture coordinate.
-	/// \param xPos Horizontal position in pixels.
-	/// \param yPos Vertical position in pixels.
-	/// \returns Texture coordinate or (0, 0) if texture is not allocated.
-	ofPoint getCoordFromPoint(float xPos, float yPos) const;		
-	
-	/// \brief Helper to convert display coordinate to texture coordinate.
-	/// \param xPts Horizontal position in a normalized percentage (0 - 1).
-	/// \param yPts Vertical position in a normalized percentage (0 - 1).
-	/// \returns Texture coordinate or (0, 0) if texture is not allocated.
-	ofPoint getCoordFromPercent(float xPts, float yPts) const;		
-	
-	/// \brief Set texture wrapping.
-	///
-	/// By default, textures are clamped to their edges with GL_CLAMP_TO_EDGE.
-	/// Setting a repeat mode like GL_REPEAT allows you to create tiled
-	/// backgrounds with small textures.
-	///
-	/// \sa ofTextureSetWrap()
-	/// \sa http://www.opengl.org/sdk/docs/man4/html/glTexParameter.xhtml
-	///
-	/// \warning May be overridden.
-	///
-	/// \param wrapS wrap parameter for texture coordinate s.
-	/// \param wrapT wrap parameter for texture coordinate t.
-	void setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical);
+	/// \brief Const version of getTextureData().
+	/// \sa ofTextureData::getTextureData()
+	const ofTextureData& getTextureData() const;
 
-	/// \brief Set texture minification/magnification scaling filters.
-	///
-	/// Controls how OpenGL will scale this texture.
-	///
-	/// \sa http://www.opengl.org/sdk/docs/man4/html/glTexParameter.xhtml
-	/// \sa ofTextureSetMinMagFilters()
-	///
-	/// \warning May be overridden.
-	///
-	/// \param minFilter minifying filter for scaling a pixel to a smaller area.
-	/// \param magFilter magnifying filter for scaling a pixel to a larger area.
-	void setTextureMinMagFilter(GLint minFilter, GLint magFilter);
+	/// \}
 
-	/// Sets a texture matrix that will be uploaded whenever the texture is
-	/// binded.
-	void setTextureMatrix(const ofMatrix4x4 & m);
 
-	/// Disable the texture matrix.
-	void disableTextureMatrix();
-
-	/// \brief Set the texture compression.
-	///
-	/// \warning: not yet implemented.
-	/// \sa ofTexCompression
-	void setCompression(ofTexCompression compression);
+	/// \name Mipmapping
+	/// \{
 
 	/// \brief Sets flag allowing texture to auto-generate mipmap
 	///
@@ -679,45 +811,23 @@ class ofTexture : public ofBaseDraws {
 	/// \sa setTextureMinMagFilter()
 	void disableMipmap();
 	
-	/// \brief Has the texture been allocated?
+
+	/// \brief Generate mipmap for the current texture.
 	///
-	/// Legacy function for backwards compatibility.
+	/// \warning Only GL_TEXTURE_RECTANGLE - which is the default openFrameworks
+	/// texture target - does *not* support mipmaps, so make sure to call
+	/// ofDisableArbTex() before loading texture
+	/// data for a texture you want to generate mipmaps for.
 	///
-	/// \returns true if the texture has been allocated.
-	OF_DEPRECATED_MSG("Use isAllocated instead",bool bAllocated() const);
+	/// \sa ofEnableArbTex()
+	/// \sa ofDisableArbTex()
+	void generateMipmap();
 	
-	/// \brief Has the texture been allocated?
-	/// \returns true if the texture has been allocated.
-	bool isAllocated() const;
+	/// \}
 
-	/// \brief Internal texture data access.
-	/// \returns a reference to the internal texture data struct.
-	ofTextureData& getTextureData();
-
-	/// \brief Const version of getTextureData().
-	/// \sa ofTextureData::getTextureData()
-	const ofTextureData& getTextureData() const;
-
+	/// \cond INTERNAL
 	ofTextureData texData; ///< Internal texture data access.
 	                       ///< For backwards compatibility.
-
-	/// \brief Display height of texture.
-	///
-	/// Return value is pixel size (default) or normalized (0 - 1).
-	///
-	/// \sa ofEnabledNormalizedTextures()
-	///
-	/// \returns Display height of texture in pixels.
-	float getHeight() const;
-
-	/// \brief Display width of texture.
-	///
-	/// Return value is pixel size (default) or normalized (0 - 1).
-	///
-	/// \sa ofEnabledNormalizedTextures()
-	///
-	/// \returns Display width of texture in pixels.
-	float getWidth() const;
 
 protected:
     void loadData(const void * data, int w, int h, int glFormat, int glType);
@@ -727,6 +837,8 @@ protected:
 
 	ofPoint anchor;
 	bool bAnchorIsPct;
+
+	/// \endcond
 
 private:
 	
