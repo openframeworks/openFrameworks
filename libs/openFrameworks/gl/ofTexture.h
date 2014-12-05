@@ -7,18 +7,17 @@
 #include "ofVboMesh.h"
 
 /// \file
-/// ofTexture is used to create textures that live on your graphics card.
-/// You can use the ofTexture class to manually create textures from raw bitmap data,
-/// but more oftenly you will use other classes like ofImage or ofVideoGrabber to
-/// create textures from image files or camera feeds.
+/// ofTexture is used to create OpenGL textures that live on your graphics card
+/// (GPU). While you can certainly use ofTexture directly to manipulate and
+/// textures, more often ofTexture will be used internally by classes like
+/// ofImage or ofVideoGrabber.  That said, ofImage and other classes that use
+/// ofTexture internally often provide access to the ofTexture.
 ///
-/// ofTextures is a wrapper around OpenGL textures, and allows a way to store pixel data
-/// on the graphics card, and quickly render it.
+/// ofTexture allows use of non-power of 2 textures in OpenGL and has a set
+/// of functions simplify the process of transfering pixel data to and from
+/// the GPU in various formats.
 ///
-/// ofTexture allows use of non-power of 2 textures in opengl, and has a series of functions to
-/// upload and download data in different formats
-///
-/// You need to allocate the texture before drawing it or loading data into it.
+/// Users must _allocate_ the texture before drawing it or loading data into it.
 
 
 
