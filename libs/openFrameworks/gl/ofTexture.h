@@ -291,7 +291,7 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \param w Desired width in pixels.
 	/// \param h Desired height in pixels.
-	/// \param glFormat OpenGL internal data format: `GL_RGBA`, `GL_LUMINANCE`, etc.
+	/// \param glInternalFormat OpenGL internal data format: `GL_RGBA`, `GL_LUMINANCE`, etc.
 	virtual void allocate(int w, int h, int glInternalFormat);
 
 	/// \brief Allocate texture of a given size and format.
@@ -321,9 +321,6 @@ class ofTexture : public ofBaseDraws {
 
 	/// \brief Allocate texture of a given size, format, & type.
 	///
-	/// \TODO Not sure how the two texture format parameters are different:
-	/// glFormat & glInternalFormat.
-	///
 	/// \sa allocate(int w, int h, int glInternalFormat)
 	/// \param w Desired width in pixels.
 	/// \param h Desired height in pixels.
@@ -332,7 +329,10 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat The OpenGL format.
 	/// \param pixelType OpenGL pixel type: `GL_UNSIGNED_BYTE`, `GL_FLOAT`, etc.
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtension, int glFormat, int pixelType);
-	
+
+	/// \todo Not sure how the two texture format parameters are different:
+	/// glFormat & glInternalFormat.
+
 	/// \brief Allocate texture using an ofPixels instance.
 	///
 	/// Pixel type and OpenGL format are determined from pixel settings.
@@ -350,7 +350,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa allocate(const ofPixels& pix)
 	/// \param pix Reference to ofPixels instance.
 	/// \param bUseARBExtension Set to true to use rectangular textures.
-	virtual void allocate(const ofPixels& pix, bool bUseARBExtention);
+	virtual void allocate(const ofPixels& pix, bool bUseARBExtension);
 	
 	/// \brief Allocate texture using an ofShortPixels instance.
 	///
@@ -367,7 +367,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa allocate(const ofShortPixels& pix)
 	/// \param pix Reference to ofShortPixels instance.
 	/// \param bUseARBExtension Set to true to use rectangular textures.
-	virtual void allocate(const ofShortPixels& pix, bool bUseARBExtention);
+	virtual void allocate(const ofShortPixels& pix, bool bUseARBExtension);
 	
 	/// \brief Allocate texture using an ofFloatPixels instance.
 	///
@@ -384,7 +384,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa allocate(const ofFloatPixels& pix)
 	/// \param pix Reference to ofFloatPixels instance.
 	/// \param bUseARBExtension Set to true to use rectangular textures.
-	virtual void allocate(const ofFloatPixels& pix, bool bUseARBExtention);
+	virtual void allocate(const ofFloatPixels& pix, bool bUseARBExtension);
 	
 
 	/// \brief Determine whether the texture has been allocated.
@@ -544,27 +544,10 @@ class ofTexture : public ofBaseDraws {
 	/// \{
 
 	using ofBaseDraws::draw;
-
 	
-	/// \brief Draw the texture at it's normal size.
-	///
-	/// \param x Draw position on the x axis.
-	/// \param y Draw position on the y axis.
 	void draw(float x, float y) const;
-
-	/// \brief Draw the texture at it's normal size with depth in 3D space.
-	///
-	/// \param x Draw position on the x axis.
-	/// \param y Draw position on the y axis.
-	/// \param z Draw position on the z axis.
 	void draw(float x, float y, float z) const;
 
-	/// \brief Draw the texture at a given size and position.
-	///
-	/// \param x Draw position on the x axis.
-	/// \param y Draw position on the y axis.
-	/// \param w Draw width.
-	/// \param h Draw height.
 	void draw(float x, float y, float w, float h) const;
 
 	/// \brief Draw the texture at a given size witdh and depth.
@@ -603,29 +586,55 @@ class ofTexture : public ofBaseDraws {
 
 	/// \brief Draw a subsection of the texture with depth.
 	///
-	/// Same as drawSubsection(float x, float y, float w, float h, float sx, float sy) const with the addition of z axis parameter.
-	///
+	/// \sa drawSubsection(float x, float y, float w, float h, float sx, float sy)
+	/// \param x Draw position on the x axis.
+	/// \param y Draw position on the y axis.
 	/// \param z Draw position on the z axis.
+	/// \param w Draw width.
+	/// \param h Draw height.
+	/// \param sx Subsection x axis offset within the texture.
+	/// \param sy Subsection y axis offset within the texture.
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const;
 
 	/// \brief Draw a subsection of the texture with an offset.
 	///
-	/// Same as ddrawSubsection(float x, float y, float w, float h, float sx, float sy) const with the addition of the width and height of the subsection.
-	///
+	/// \sa drawSubsection(float x, float y, float w, float h, float sx, float sy)
+	/// \param x Draw position on the x axis.
+	/// \param y Draw position on the y axis.
+	/// \param w Draw width.
+	/// \param h Draw height.
+	/// \param sx Subsection x axis offset within the texture.
+	/// \param sy Subsection y axis offset within the texture.
 	/// \param sw Subsection width within the texture.
 	/// \param sh Subsection height within the texture.
 	void drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh) const;
 	
 	/// \brief Draw a subsection of the texture with an offset and depth.
 	///
-	/// Same as drawSubsection(float x, float y, float w, float h, float sx, float sy, float sw, float sh) const with the addition of z axis parameter.
-	///
+	/// \sa drawSubsection(float x, float y, float w, float h, float sx, float sy)
+	/// \param x Draw position on the x axis.
+	/// \param y Draw position on the y axis.
+	/// \param z Draw position on the z axis.
+	/// \param w Draw width.
+	/// \param h Draw height.
+	/// \param sx Subsection x axis offset within the texture.
+	/// \param sy Subsection y axis offset within the texture.
 	/// \param sw Subsection width within the texture.
 	/// \param sh Subsection height within the texture.
-	/// \param z Draw position on the z axis.
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
 	/// \brief Get a mesh that has the texture coordinates set.
+	///
+	/// \sa drawSubsection(float x, float y, float w, float h, float sx, float sy)
+	/// \param x Draw position on the x axis.
+	/// \param y Draw position on the y axis.
+	/// \param z Draw position on the z axis.
+	/// \param w Draw width.
+	/// \param h Draw height.
+	/// \param sx Subsection x axis offset within the texture.
+	/// \param sy Subsection y axis offset within the texture.
+	/// \param sw Subsection width within the texture.
+	/// \param sh Subsection height within the texture.
 	ofMesh getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
 	/// \brief Bind the texture.
@@ -634,7 +643,6 @@ class ofTexture : public ofBaseDraws {
 	/// calling ofTexture::draw.
 	///
 	/// \sa http://www.opengl.org/sdk/docs/man4/html/glBindTexture.xhtml
-	///
 	void bind(int textureLocation=0) const;
 	
 	/// \brief Unbind the texture.
@@ -723,7 +731,6 @@ class ofTexture : public ofBaseDraws {
 	/// \brief Disable the alpha mask.
 	void disableAlphaMask();
 
-	
 	/// \brief Set texture wrapping.
 	///
 	/// By default, textures are clamped to their edges with `GL_CLAMP_TO_EDGE`.
@@ -735,8 +742,8 @@ class ofTexture : public ofBaseDraws {
 	///
 	/// \warning May be overridden.
 	///
-	/// \param wrapS wrap parameter for texture coordinate s.
-	/// \param wrapT wrap parameter for texture coordinate t.
+	/// \param wrapModeHorizontal wrap parameter for texture coordinate s.
+	/// \param wrapModeVertical wrap parameter for texture coordinate t.
 	void setTextureWrap(GLint wrapModeHorizontal, GLint wrapModeVertical);
 
 	/// \brief Set texture minification/magnification scaling filters.
