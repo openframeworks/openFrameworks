@@ -7,8 +7,9 @@
 
 /// \file
 /// ofLog provides an interface for writing text output from your app.
-/// It's basically a more useful version of `cout` or `printf` where
-/// the output can be filtered and written to the console or to a file.
+/// It's basically a more useful version of `std::cout` or `printf` where
+/// the output can be filtered and written to the console a file, or even a
+/// custom logging module.
 ///
 /// Sometimes you want to be able to see when something has happened inside
 /// the code, but don't need to draw something visually. Oftentimes it's
@@ -22,7 +23,7 @@
 /// are shown. This is useful if you want see lots of messages when debugging,
 /// but then set a higher level so only warnings and errors appear for users.
 ///
-/// See ofSetLogLevel(ofLogLevel level) for more details
+/// See ofSetLogLevel(ofLogLevel level) for more details.
 ///
 /// ### Usage
 /// There are 2 ways you can use ofLog:
@@ -31,10 +32,10 @@
 ///
 /// ~~~~{.cpp}
 /// 
-/// // send a single string message, setting the log level
+/// // Send a single string message, setting the log level.
 /// ofLog(OF_LOG_NOTICE, "the number is " + ofToString(10));
 /// 
-/// // the legacy printf style
+/// // The legacy printf style.
 /// ofLog(OF_LOG_NOTICE, "the number is %d", 10); 
 /// 
 /// ~~~~
@@ -43,27 +44,27 @@
 ///
 /// ~~~~{.cpp}
 /// 
-/// // the stream style, setting the log level
-/// ofLog(OF_LOG_NOTICE) << "the number is " << 10;
+/// // The stream style, setting the log level to OF_LOG_WARNING.
+/// ofLog(OF_LOG_WARNING) << "the number is " << 10;
 /// 
-/// // this is the same as the last line, but only sends at log level notice
+/// // This is the same as the last line, except it uses the default OF_LOG_NOTICE.
 /// ofLog() << "the number is " << 10;
 /// 
-/// // there are also log level specific stream objects,
-/// // one for each level except OF_LOG_SILENT
-/// ofLogVerbose() << "a verbose print"
-/// ofLogNotice() << "a regular notice print";
-/// ofLogWarning() << "uh oh, a warning";
-/// ofLogError() << "oh no, an error occurred!";
-/// ofLogFatalError() << "accckkk, a fatal error!!";
+/// // There are also log level-specific stream objects, one for each level
+/// // except OF_LOG_SILENT.
+/// ofLogVerbose() << "A verbose message."
+/// ofLogNotice() << "A regular notice message.";
+/// ofLogWarning() << "Uh oh, a warning!";
+/// ofLogError() << "Oh no, an error occurred!";
+/// ofLogFatalError() << "Accckkk, a fatal error!!";
 /// 
 /// ~~~~
 /// 
 /// **Note**: The log level specific stream objects also take a string argument 
 /// for the "module". A module is a string that is added to the beginning of 
 /// the log line and can be used to separate logging messages by setting an 
-/// independent log level for **that module only**. 
-/// This module-specific log level has no effect on other modules. 
+/// independent log level for **that module only**. This module-specific log
+/// level has no effect on other modules.
 /// 
 /// See ofSetLogLevel(string module, ofLogLevel level) for more details.
 /// 
@@ -71,24 +72,25 @@
 /// ~~~~{.cpp}
 /// 
 /// // log to a module called "Hello"
-/// ofLogWarning("Hello") << "a warning print";
+/// ofLogWarning("Hello") << "A warning message.";
 /// 
 /// ~~~~
-/// **Warning**: It is important to understand that the log level specific stream objects 
-/// take the module name as an argument and the log messages via the << operator. 
-/// Putting your message as a string argument inside the parentheses uses that message as 
-/// a *module* and so nothing will be printed:
+/// **Warning**: It is important to understand that the log level specific
+/// stream objects take the module name as an argument and the log messages via
+/// the << operator. Putting your message as a string argument inside the
+/// parentheses uses that message as a *module* and so nothing will be printed:
 /// 
 /// ~~~~{.cpp}
 /// 
-/// // this prints a warning message
-/// ofLogWarning() << "a warning print";
+/// // This prints a warning message.
+/// ofLogWarning() << "A warning message.";
 /// 
-/// // !!! this does not print a message as the string "a warning print" is the module argument !!!
-/// ofLogWarning("a warning print");
+/// // !!! This does not print a message because the string "a warning print"
+/// // is the module argument !!!
+/// ofLogWarning("A warning print");
 /// 
-/// // this prints a warning message to the "Hello" module
-/// ofLogWarning("Hello") << "a warning print";
+/// // This prints a warning message to the "Hello" module.
+/// ofLogWarning("Hello") << "A warning print";
 /// 
 /// ~~~~
 /// 
@@ -105,7 +107,7 @@
 
 //--------------------------------------------------
 /// \cond INTERNAL
-/// printf annotations for automatic format checking in GCC
+/// printf annotations for automatic format checking in GCC.
 #ifdef __GNUC__
 #define OF_PRINTF_ATTR(x, y) __attribute__ ((format (printf, x, y)))
 #else
