@@ -11,6 +11,8 @@
 
 #include "Poco/Path.h"
 
+/// \name Elapsed time
+/// \{
 
 /// \brief Reset the elapsed time counter.
 ///
@@ -45,12 +47,18 @@ unsigned long long ofGetElapsedTimeMillis();
 /// Usually ofResetElapsedTimeCounter() is called automatically upon program
 /// startup.
 ///
-/// \returns the elapsed time in milliseconds.
+/// \returns the elapsed time in milliseconds (1000000 microsecs = 1 second).
 unsigned long long ofGetElapsedTimeMicros();
 
 /// \brief Get the number of frames rendered since the program started.
 /// \returns the number of frames rendered since the program started.
 int ofGetFrameNum();
+
+/// \}
+
+// --------------------------------------------
+/// \name System time
+/// \{
 
 /// \brief Get the seconds after the minute.
 /// \returns the seconds after the minute [0-59].
@@ -142,11 +150,13 @@ int ofGetDay();
 /// \returns the current weekday [0-6].
 int ofGetWeekday();
 
-/// \brief Launch the given URL in the browser.
-/// \param url the URL to open.
-/// \param uriEncodeQuery true iff the query parameters in the given URL have
-/// already been URL encoded.
-void ofLaunchBrowser(const string& url, bool uriEncodeQuery=false);
+/// \}
+
+
+
+// --------------------------------------------
+/// \name Data path
+/// \{
 
 /// \brief Enable the use of the data path.
 ///
@@ -171,6 +181,22 @@ void ofDisableDataPath();
 /// \returns the converted path.
 string ofToDataPath(const string& path, bool absolute=false);
 
+/// \brief Reset the working directory to the platform default.
+void ofSetWorkingDirectoryToDefault();
+
+/// \brief Set the relative path to the data/ folder from the executable.
+/// \warning The provided path must have a trailing slash (/).
+/// \param root The path to the data/ folder relative to the app executable.
+void ofSetDataPathRoot(const string& root);
+
+
+
+/// \}
+
+// --------------------------------------------
+/// \name Vectors
+/// \{
+
 /// \brief Randomly reorder the values in a vector.
 /// \param values The vector of values to modify.
 template<class T>
@@ -187,21 +213,25 @@ void ofRandomize(vector<T>& values) {
 /// Example of a custom function to remove odd numbers from a vector<int>
 /// of integers:
 ///
-///    bool IsOdd(int i) {
-///        return ((i % 2) == 1);
-///    }
+/// ~~~~{.cpp}
+/// bool IsOdd(int i) {
+///     return ((i % 2) == 1);
+/// }
+/// ~~~~
 ///
 /// To call the function, one might use:
 ///
-///    std::vector<int> myInts;
+/// ~~~~{.cpp}
+/// vector<int> myInts;
 ///
-///    // Fill the vector with integers.
-///    for (int i = 0; i < 10; ++i)
-///    {
-///        myInts.push_back(i);
-///    }
+/// // Fill the vector with integers.
+/// for (int i = 0; i < 10; ++i)
+/// {
+///     myInts.push_back(i);
+/// }
 ///
-///    ofRemove(myInts, IsOdd);
+/// ofRemove(myInts, IsOdd);
+/// ~~~~
 ///
 /// The resulting vector will contain the following values:
 ///
@@ -235,10 +265,12 @@ void ofSort(vector<T>& values) {
 ///
 /// Example of a custom function to sort descending of integers:
 ///
-///    bool sortDescending(int i,int j)
-///    {
-///        return (j < i);
-///    }
+/// ~~~~{.cpp}
+/// bool sortDescending(int i,int j)
+/// {
+///     return (j < i);
+/// }
+/// ~~~~
 ///
 /// This binary function must accept two
 /// elements in the range as arguments and return a value convertible to bool.
@@ -249,15 +281,17 @@ void ofSort(vector<T>& values) {
 ///
 /// To call the function, one might use:
 ///
-///    std::vector<int> myInts;
+/// ~~~~{.cpp}
+/// std::vector<int> myInts;
 ///
-///    // Fill the vector with integers.
-///    for (int i = 0; i < 10; ++i)
-///    {
-///        myInts.push_back(i);
-///    }
+/// // Fill the vector with integers.
+/// for (int i = 0; i < 10; ++i)
+/// {
+///     myInts.push_back(i);
+/// }
 ///
-///    ofSort(myInts, sortDescending);
+/// ofSort(myInts, sortDescending);
+/// ~~~~
 ///
 /// The resulting vector will contain the following values:
 ///
@@ -292,14 +326,82 @@ bool ofContains(const vector<T>& values, const T& target) {
 	return ofFind(values, target) != values.size();
 }
 
-/// \brief Reset the working directory to the platform default.
-void ofSetWorkingDirectoryToDefault();
 
-/// \brief Set the relative path to the data/ folder from the executable.
-/// \warning The provided path must have a trailing slash (/).
-/// \param root The path to the data/ folder relative to the app executable.
-void ofSetDataPathRoot(const string& root);
 
+/// \}
+
+// --------------------------------------------
+/// \name String manipulation
+/// \{
+
+//--------------------------------------------------
+/// \brief Split a string on a delimiter
+/// \param source The string to split
+/// \param delimiter The string to split on
+/// \param ignoreEmpty Set to true to remove empty results
+/// \param trim Set to true to trim the resulting strings
+/// \returns A vector of string split on the delimiter
+vector<string> ofSplitString(const string& source, const string& delimiter, bool ignoreEmpty = false, bool trim = false);
+
+/// \brief Join a vector of string together to one string
+/// 
+/// \param stringElements The vector of strings to join
+/// \param delimiter The delimiter to put betweeen each string
+string ofJoinString(const vector<string>& stringElements, const string& delimiter);
+
+/// \brief Replace occurrences of a string with another string
+/// \param input The string to run the replacement on
+/// \param searchStr The string to be replaced
+/// \param replaceStr The string to put in place 
+void ofStringReplace(string& input, const string& searchStr, const string& replaceStr);
+
+/// \brief Check if string contains another string
+/// 
+/// Example:
+/// ~~~{.cpp}
+///     string haystack = "foobar";
+///     ofLog() << ofIsStringInString(haystack, "foo"); // outputs 1
+///     ofLog() << ofIsStringInString(haystack,"bar"); // outputs 1
+///     ofLog() << ofIsStringInString(haystack, "something else"); // outputs 0
+/// ~~~
+/// \param haystack The string to check for occurrence in 
+/// \param needle The string to check for
+bool ofIsStringInString(const string& haystack, const string& needle);
+
+/// \brief Check how many times a string contains another string
+/// \param haystack The string to check for occurrence in 
+/// \param needle The string to check for
+int ofStringTimesInString(const string& haystack, const string& needle);
+
+/// \brief Converts all characters in the string to lowercase.
+string ofToLower(const string& src);
+
+/// \brief Converts all characters in the string to uppercase.
+///
+/// ~~~~{.cpp}
+///     string politeGreeting = "Hello, World!";
+///     string enthusiasticGreeting = ofToUpper(politeGreeting); 
+///     ofLog() << enthusiasticGreeting; // returns "HELLO, WORLD!"
+/// ~~~~
+string ofToUpper(const string& src);
+
+string ofVAArgsToString(const char * format, ...);
+string ofVAArgsToString(const char * format, va_list args);
+
+/// \}
+
+// --------------------------------------------
+/// \name String conversion
+/// \{
+
+
+/// \brief Convert a value to a string
+/// 
+/// Example:
+/// ~~~~~{.cpp}
+/// string str = "framerate is "; 						
+/// str += ofToString(ofGetFrameRate(), 2)+"fps"; 
+/// ~~~~~
 template <class T>
 string ofToString(const T& value){
 	ostringstream out;
@@ -307,7 +409,9 @@ string ofToString(const T& value){
 	return out.str();
 }
 
-/// like sprintf "%4f" format, in this example precision=4
+/// \brief Convert a value to a string with a specific precision
+///
+/// Like sprintf "%4f" format, in this example precision=4
 template <class T>
 string ofToString(const T& value, int precision){
 	ostringstream out;
@@ -315,7 +419,9 @@ string ofToString(const T& value, int precision){
 	return out.str();
 }
 
-/// like sprintf "% 4d" or "% 4f" format, in this example width=4, fill=' '
+/// \brief Convert a value to a string with a specific width and fill
+///
+/// Like sprintf "% 4d" or "% 4f" format, in this example width=4, fill=' '
 template <class T>
 string ofToString(const T& value, int width, char fill ){
 	ostringstream out;
@@ -323,7 +429,9 @@ string ofToString(const T& value, int width, char fill ){
 	return out.str();
 }
 
-/// like sprintf "%04.2d" or "%04.2f" format, in this example precision=2, width=4, fill='0'
+/// \brief Convert a value to a string with a specific precision, width and filll
+///
+/// Like sprintf "%04.2d" or "%04.2f" format, in this example precision=2, width=4, fill='0'
 template <class T>
 string ofToString(const T& value, int precision, int width, char fill ){
 	ostringstream out;
@@ -331,6 +439,7 @@ string ofToString(const T& value, int precision, int width, char fill ){
 	return out.str();
 }
 
+/// \brief Convert a vector of values to a string
 template<class T>
 string ofToString(const vector<T>& values) {
 	stringstream out;
@@ -361,6 +470,27 @@ string ofFromString(const string & value);
 template<>
 const char * ofFromString(const string & value);
 
+/// \}
+
+// --------------------------------------------
+/// \name Number conversion
+/// \{
+
+/// \brief Converts a string representation of an int (e.g., `"3"`) to an actual int
+int ofToInt(const string& intString);
+
+/// \brief Converts a string representation of a float (e.g., `"3.14"`) to an actual float
+float ofToFloat(const string& floatString);
+
+/// \brief Converts a string representation of a double (e.g., `"3.14"`) to an actual double
+double ofToDouble(const string& doubleString);
+
+/// \brief Converts a string representation of a boolean (e.g., `"TRUE"`) 
+/// to an actual bool using a case-insensitive comparison against the words `"true"` and `"false"`.
+bool ofToBool(const string& boolString);
+
+/// \brief Converts any value to its equivalent hexadecimal 
+/// representation corresponding to the way it is stored in memory.
 template <class T>
 string ofToHex(const T& value) {
 	ostringstream out;
@@ -375,21 +505,40 @@ string ofToHex(const T& value) {
 	}
 	return out.str();
 }
+
+/// \brief Converts a string (e.g., `"abc"`) to its equivalent 
+/// hexadecimal representation (e.g., `"616263"`).
 template <>
 string ofToHex(const string& value);
+
+/// \brief Converts a c-style string (e.g., `"abc"`) to its equivalent hexadecimal 
+/// representation (e.g., `"616263"`).
 string ofToHex(const char* value);
 
+/// \brief Converts a hexadecimal representation of an int 
+/// (little-endian, 32-bit, e.g., `"0xbadf00d"` or `"badf00d"`) to an actual int.
 int ofHexToInt(const string& intHexString);
+
+/// \brief Converts a hexadecimal representation of an char 
+/// (e.g., `"61"`) to an actual char (e.g., `a`).
 char ofHexToChar(const string& charHexString);
+
+/// \brief Converts a hexadecimal representation of an float 
+/// (little-endian, 32-bit IEEE 754, e.g., `"4060000000000000"`) 
+/// to an actual float (e.g., `128.f`).
 float ofHexToFloat(const string& floatHexString);
+
+/// \brief Converts a hexadecimal representation of an string 
+/// (e.g., `"61626364656667"`) to an actual string (`"abcdefg"`)
 string ofHexToString(const string& stringHexString);
 
-int ofToInt(const string& intString);
-char ofToChar(const string& charString);
-float ofToFloat(const string& floatString);
-double ofToDouble(const string& doubleString);
-bool ofToBool(const string& boolString);
 
+/// \brief Converts a string representation of a single char (e.g., `"c"`) to an actual char.
+char ofToChar(const string& charString);
+
+
+/// \brief Converts any datatype value to a string of only 1s and 0s 
+/// corresponding to the way value is stored in memory.
 template <class T>
 string ofToBinary(const T& value) {
 	ostringstream out;
@@ -403,40 +552,95 @@ string ofToBinary(const T& value) {
 	}
 	return out.str();
 }
+
+/// \brief Converts a string value to a string of only 1s and 0s 
+/// corresponding to the way value is stored in memory.
 template <>
 string ofToBinary(const string& value);
+
+/// \brief Converts any C-style string value to a string of only 1s and 0s 
+/// corresponding to the way value is stored in memory.
 string ofToBinary(const char* value);
 
+/// \brief Interprets a string consisting only of 1s and 0s as an int 
+/// (little-endian, 32-bit), and returns the corresponding int value.
 int ofBinaryToInt(const string& value);
+
+/// \brief Interprets a string consisting only of 1s and 0s as a char, 
+/// and returns the corresponding char value.
 char ofBinaryToChar(const string& value);
+
+/// \brief Interprets a string consisting only of 1s and 0s as a float 
+/// (little-endian, 32-bit IEEE 754), and returns the corresponding float value.
 float ofBinaryToFloat(const string& value);
+
+/// \brief Interprets a string consisting only of 1s and 0s as 8-bit 
+/// ASCII characters, and returns the corresponding string.
 string ofBinaryToString(const string& value);
 
+/// \}
 
+// --------------------------------------------
+/// \name OpenFrameworks version
+/// \{
+
+/// \brief Get the current version of openFrameworks with dot delimeter.
+/// For example `0.9.0`.
 string 	ofGetVersionInfo();
+
+/// \brief Get the major of the current version number of openFrameworks (the first digit)
 unsigned int ofGetVersionMajor();
+
+/// \brief Get the minor of the current version number of openFrameworks (the middle digit)
 unsigned int ofGetVersionMinor();
+
+/// \brief Get the patch number of the current version number of openFrameworks (the last digit)
 unsigned int ofGetVersionPatch();
 
+/// \}
+
+// --------------------------------------------
+/// \name Frame saving
+/// \{
+
+
+/// \brief Saves the current screen image into a given file
+/// Example:
+/// ~~~~{.cpp}
+/// 
+/// string filename;
+/// fileName = "screen1.png";
+/// ofSaveScreen(fileName);
+/// ~~~~
+/// 
+/// \param filename The filename to save the image in
 void	ofSaveScreen(const string& filename);
+
+/// \brief Saves the current frame as a PNG image.
 void	ofSaveFrame(bool bUseViewport = false);
 void	ofSaveViewport(const string& filename);
 
-//--------------------------------------------------
-vector<string> ofSplitString(const string& source, const string& delimiter, bool ignoreEmpty = false, bool trim = false);
-string ofJoinString(const vector<string>& stringElements, const string& delimiter);
-void ofStringReplace(string& input, const string& searchStr, const string& replaceStr);
-bool ofIsStringInString(const string& haystack, const string& needle);
-int ofStringTimesInString(const string& haystack, const string& needle);
 
-string ofToLower(const string& src);
-string ofToUpper(const string& src);
+/// \}
 
-string ofVAArgsToString(const char * format, ...);
-string ofVAArgsToString(const char * format, va_list args);
 
+// --------------------------------------------
+/// \name System
+/// \{
+
+
+/// \brief Launch the given URL in the default browser.
+/// \param url the URL to open.
+/// \param uriEncodeQuery true if the query parameters in the given URL have
+/// already been URL encoded.
+void ofLaunchBrowser(const string& url, bool uriEncodeQuery=false);
+
+/// \brief Run a system command. Similar to run a command in terminal.
 string ofSystem(const string& command);
 
+/// \brief Get the target platform of the current system.
 ofTargetPlatform ofGetTargetPlatform();
+
+/// \}
 
 
