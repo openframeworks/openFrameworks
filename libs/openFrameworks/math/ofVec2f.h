@@ -60,6 +60,9 @@ class ofVec4f;
 /// single floats or ints, and can reduce the number of lines of code you have to
 /// write by half, at the same time making your code much easier to read and
 /// understand!
+///
+/// \sa ofVec3f for 3D vectors
+/// \sa ofVec4f for 4D vectors
 
 class ofVec2f {
 public:
