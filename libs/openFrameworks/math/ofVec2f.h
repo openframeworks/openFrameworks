@@ -303,6 +303,14 @@ public:
 	/// ~~~~
     ofVec2f  operator+( const ofVec2f& vec ) const;
     
+    /// \brief Returns a new vector with a float value f added to both x and y members.
+	/// 
+	/// ~~~~{.cpp}
+	/// ofVec2f v1(2, 5);
+	/// ofVec2f v2 = v1 + 10; // (12, 15)
+	/// ~~~~
+    ofVec2f  operator+( const float f ) const;
+
 	/// \brief Super easy addition assignment. Adds vec.x to x, and adds vec.y to y.
 	/// 
 	/// ~~~~{.cpp}
@@ -312,7 +320,15 @@ public:
 	/// ~~~~
     ofVec2f& operator+=( const ofVec2f& vec );
 
-	/// \brief Super easy vector subtraction. Returns a new vector (x-vec.x,y-vec.y).
+	/// \brief Adds a float value f to both x and y members.
+	/// 
+	/// ~~~~{.cpp}
+	/// ofVec2f v1(2, 5);
+	/// v1 += 10; // (12, 15)
+	/// ~~~~
+    ofVec2f& operator+=( const float f );
+
+    /// \brief Super easy vector subtraction. Returns a new vector (x-vec.x,y-vec.y).
 	/// 
 	/// ~~~~{.cpp}
 	/// ofVec2f v1 = ofVec2f(40, 20); 
@@ -321,7 +337,22 @@ public:
 	/// ~~~~
     ofVec2f  operator-( const ofVec2f& vec ) const;
     
-	
+	/// \brief Returns a new vector with a float value f subtracted from both x and y members.
+	/// 
+	/// ~~~~{.cpp}
+	/// ofVec2f v1(2, 5);
+	/// ofVec2f v2 = v1 - 10; // (-8, -5)
+	/// ~~~~
+    ofVec2f  operator-( const float f ) const;
+
+	/// \brief Returns a new ofVec2f that is the inverted version (mirrored in X and Y) of this vector.
+	/// 
+	/// ~~~~{.cpp}
+	/// ofVec2f v1(2, 5);
+	/// ofVec2f v2 = -v1; // (-2, -5)
+	/// ~~~~    
+    ofVec2f  operator-() const;
+
 	/// \brief Super easy subtraction assignment. Subtracts vec.x from x, and subtracts vec.y from y.
 	/// 
 	/// ~~~~{.cpp}
@@ -330,6 +361,14 @@ public:
 	/// v1 -= v2; // v1 is (15, -30)
 	/// ~~~~
     ofVec2f& operator-=( const ofVec2f& vec );
+
+    /// \brief Subtract a float value f from both x and y members.
+	/// 
+	/// ~~~~{.cpp}
+	/// ofVec2f v1(2, 5);
+	/// v1 -= 10; // (-8, -5)
+	/// ~~~~
+	ofVec2f& operator-=( const float f );
 
 	/// \brief Returns a new vector (x*vec.x , y*vec.y).
 	/// 
@@ -343,6 +382,15 @@ public:
 	/// 
     ofVec2f  operator*( const ofVec2f& vec ) const;
     
+	/// \brief Return a new ofVec2f that is this vector scaled by multiplying both x
+	/// and y members by the float.
+	/// 
+	/// ~~~~{.cpp}
+	/// ofVec2f v1(2, 5);
+	/// ofVec2f v2 = v1 * 4; // (8, 20)
+	/// ~~~~
+    ofVec2f  operator*( const float f ) const;
+
 	/// \brief Multiplies x by vec.x, and multiplies y by vec.y.
 	/// 
 	/// ~~~~{.cpp}
@@ -353,6 +401,14 @@ public:
 	/// 
 	/// Useful for scaling a 2D point by a non-uniform scale.
     ofVec2f& operator*=( const ofVec2f& vec );
+
+	/// \brief Scale this vector by multiplying both x and y members by f.
+	/// 
+	/// ~~~~{.cpp}
+	/// ofVec2f v1(2, 5);
+	/// v1 *= 4; // (8, 20)
+	/// ~~~~
+    ofVec2f& operator*=( const float f );
 
 	/// \brief Returns a new vector (x/vec.x,y/vec.y).
 	/// 
@@ -365,6 +421,15 @@ public:
 	/// Useful for scaling a 2D point by a non-uniform scale.
     ofVec2f  operator/( const ofVec2f& vec ) const;
 
+	/// \brief Return a new ofVec2f that is this vector scaled by dividing
+	/// both x and y members by f.
+	/// 
+	/// ~~~~{.cpp}
+	/// ofVec2f v1(2, 5);
+	/// ofVec2f v2 = v1 / 4; // (0.5, 1.25)
+	/// ~~~~
+    ofVec2f  operator/( const float f ) const;
+
 	/// \brief Divides x by vec.x, and divides y by vec.y.
 	/// 
 	/// ~~~~{.cpp}
@@ -376,73 +441,6 @@ public:
 	/// Useful for scaling a 2D point by a non-uniform scale.
     ofVec2f& operator/=( const ofVec2f& vec );
 	
-	
-	/// \brief Returns a new vector with a float value f added to both x and y members.
-	/// 
-	/// ~~~~{.cpp}
-	/// ofVec2f v1(2, 5);
-	/// ofVec2f v2 = v1 + 10; // (12, 15)
-	/// ~~~~
-    ofVec2f  operator+( const float f ) const;
-
-	/// \brief Adds a float value f to both x and y members.
-	/// 
-	/// ~~~~{.cpp}
-	/// ofVec2f v1(2, 5);
-	/// v1 += 10; // (12, 15)
-	/// ~~~~
-    ofVec2f& operator+=( const float f );
-    
-	/// \brief Returns a new vector with a float value f subtracted from both x and y members.
-	/// 
-	/// ~~~~{.cpp}
-	/// ofVec2f v1(2, 5);
-	/// ofVec2f v2 = v1 - 10; // (-8, -5)
-	/// ~~~~
-    ofVec2f  operator-( const float f ) const;
-
-    /// \brief Subtract a float value f from both x and y members.
-	/// 
-	/// ~~~~{.cpp}
-	/// ofVec2f v1(2, 5);
-	/// v1 -= 10; // (-8, -5)
-	/// ~~~~
-	ofVec2f& operator-=( const float f );
-
-	/// \brief Returns a new ofVec2f that is the inverted version (mirrored in X and Y) of this vector.
-	/// 
-	/// ~~~~{.cpp}
-	/// ofVec2f v1(2, 5);
-	/// ofVec2f v2 = -v1; // (-2, -5)
-	/// ~~~~    
-    ofVec2f  operator-() const;
-
-	/// \brief Return a new ofVec2f that is this vector scaled by multiplying both x
-	/// and y members by the float.
-	/// 
-	/// ~~~~{.cpp}
-	/// ofVec2f v1(2, 5);
-	/// ofVec2f v2 = v1 * 4; // (8, 20)
-	/// ~~~~
-    ofVec2f  operator*( const float f ) const;
-    
-	/// \brief Scale this vector by multiplying both x and y members by f.
-	/// 
-	/// ~~~~{.cpp}
-	/// ofVec2f v1(2, 5);
-	/// v1 *= 4; // (8, 20)
-	/// ~~~~
-    ofVec2f& operator*=( const float f );
-
-	/// \brief Return a new ofVec2f that is this vector scaled by dividing
-	/// both x and y members by f.
-	/// 
-	/// ~~~~{.cpp}
-	/// ofVec2f v1(2, 5);
-	/// ofVec2f v2 = v1 / 4; // (0.5, 1.25)
-	/// ~~~~
-    ofVec2f  operator/( const float f ) const;
-
 	/// \brief Scale this vector by dividing both x and y members by f.
 	/// 
 	/// ~~~~{.cpp}
@@ -450,11 +448,14 @@ public:
 	/// v1 /= 4; // (0.5, 1.25)
 	/// ~~~~
     ofVec2f& operator/=( const float f );
+
 	
 	/// \cond INTERNAL
 	friend ostream& operator<<(ostream& os, const ofVec2f& vec);
 	friend istream& operator>>(istream& is, const ofVec2f& vec);
 	/// \endcond
+	
+	/// \}
 	
 	//---------------------
 	/// \name Simple manipulations
