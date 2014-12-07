@@ -912,37 +912,37 @@ public:
 	/// \cond INTERNAL
 
     // getScaled
-    ofVec2f rescaled( const float length ) const;
+    OF_DEPRECATED_MSG("Use member method getScaled() instead.", ofVec2f rescaled( const float length ) const);
 	
     // scale
-    ofVec2f& rescale( const float length );
+    OF_DEPRECATED_MSG("Use member method scale() instead.", ofVec2f& rescale( const float length ));
 	
     // getRotated
-    ofVec2f rotated( float angle ) const;
+    OF_DEPRECATED_MSG("Use member method getRotated() instead.", ofVec2f rotated( float angle ) const);
 	
     // getNormalized
-    ofVec2f normalized() const;
+    OF_DEPRECATED_MSG("Use member method getNormalized() instead.", ofVec2f normalized() const);
 	
     // getLimited
-    ofVec2f limited(float max) const;
+    OF_DEPRECATED_MSG("Use member method getLimited() instead.", ofVec2f limited(float max) const);
 	
     // getPerpendicular
-    ofVec2f perpendiculared() const;
+    OF_DEPRECATED_MSG("Use member method getPerpendicular() instead.", ofVec2f perpendiculared() const);
 	
     // getInterpolated
-    ofVec2f interpolated( const ofVec2f& pnt, float p ) const;
+    OF_DEPRECATED_MSG("Use member method getInterpolated() instead.", ofVec2f interpolated( const ofVec2f& pnt, float p ) const);
     
     // getMiddled
-    ofVec2f middled( const ofVec2f& pnt ) const;
+    OF_DEPRECATED_MSG("Use member method getMiddled() instead.", ofVec2f middled( const ofVec2f& pnt ) const);
     
     // getMapped 
-    ofVec2f mapped( const ofVec2f& origin, const ofVec2f& vx, const ofVec2f& vy ) const;
+    OF_DEPRECATED_MSG("Use member method getMapped() instead.", ofVec2f mapped( const ofVec2f& origin, const ofVec2f& vx, const ofVec2f& vy ) const);
     
     // squareDistance
-    float distanceSquared( const ofVec2f& pnt ) const;
+    OF_DEPRECATED_MSG("Use member method squareDistance() instead.", float distanceSquared( const ofVec2f& pnt ) const);
     
     // use getRotated
-    ofVec2f rotated( float angle, const ofVec2f& pivot ) const;    
+    OF_DEPRECATED_MSG("Use member method getRotated() instead.", ofVec2f rotated( float angle, const ofVec2f& pivot ) const);    
     
     // return all zero vector
     static ofVec2f zero() { return ofVec2f(0, 0); }
@@ -1018,7 +1018,7 @@ inline bool ofVec2f::match( const ofVec2f& vec, float tolerance ) const {
 //
 // Checks if vectors look in the same direction.
 // Tolerance is specified in degree.
-
+ 
 inline bool ofVec2f::isAligned( const ofVec2f& vec, float tolerance ) const { 
 	return  fabs( this->angle( vec ) ) < tolerance;
 }
