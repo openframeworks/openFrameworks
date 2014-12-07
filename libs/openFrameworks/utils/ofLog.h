@@ -30,19 +30,16 @@
 /// #### Functional: as a function taking a message
 ///
 /// ~~~~{.cpp}
-/// 
 /// // send a single string message, setting the log level
 /// ofLog(OF_LOG_NOTICE, "the number is " + ofToString(10));
 /// 
 /// // the legacy printf style
 /// ofLog(OF_LOG_NOTICE, "the number is %d", 10); 
-/// 
 /// ~~~~
 ///
 /// #### Stream: as a stream using the << stream operator
 ///
 /// ~~~~{.cpp}
-/// 
 /// // the stream style, setting the log level
 /// ofLog(OF_LOG_NOTICE) << "the number is " << 10;
 /// 
@@ -56,7 +53,6 @@
 /// ofLogWarning() << "uh oh, a warning";
 /// ofLogError() << "oh no, an error occurred!";
 /// ofLogFatalError() << "accckkk, a fatal error!!";
-/// 
 /// ~~~~
 /// 
 /// **Note**: The log level specific stream objects also take a string argument 
@@ -69,10 +65,8 @@
 /// 
 /// Example of logging to a specific module:
 /// ~~~~{.cpp}
-/// 
 /// // log to a module called "Hello"
 /// ofLogWarning("Hello") << "a warning print";
-/// 
 /// ~~~~
 /// **Warning**: It is important to understand that the log level specific stream objects 
 /// take the module name as an argument and the log messages via the << operator. 
@@ -80,7 +74,6 @@
 /// a *module* and so nothing will be printed:
 /// 
 /// ~~~~{.cpp}
-/// 
 /// // this prints a warning message
 /// ofLogWarning() << "a warning print";
 /// 
@@ -89,7 +82,6 @@
 /// 
 /// // this prints a warning message to the "Hello" module
 /// ofLogWarning("Hello") << "a warning print";
-/// 
 /// ~~~~
 /// 
 /// ####Log Message Redirection
@@ -98,12 +90,11 @@
 /// custom destination.
 ///
 /// For log redirection see
-/// - ofLogToFile(const string & path, bool append)
+/// - ofLogToFile()
 /// - ofLogToConsole()
-/// - ofSetLoggerChannel(shared_ptr<ofBaseLoggerChannel> loggerChannel)
+/// - ofSetLoggerChannel()
 
 
-//--------------------------------------------------
 /// \cond INTERNAL
 /// printf annotations for automatic format checking in GCC
 #ifdef __GNUC__
@@ -112,12 +103,11 @@
 #define OF_PRINTF_ATTR(x, y)
 #endif
 /// \endcond
-//--------------------------------------------------
 
+
+//--------------------------------------------------
 /// \name Global logging level
 /// \{
-
-
 
 /// The supported logging levels. Default is `OF_LOG_NOTICE`
 enum ofLogLevel{
@@ -156,10 +146,8 @@ void ofSetLogLevel(ofLogLevel level);
 /// 
 /// Example of logging to a specific module:
 /// ~~~~{.cpp}
-/// 
 /// // log to a module called "Hello"
 /// ofLogWarning("Hello") << "a warning print";
-/// 
 /// ~~~~
 void ofSetLogLevel(string module, ofLogLevel level);
 
@@ -175,7 +163,6 @@ string ofGetLogLevelName(ofLogLevel level, bool pad=false);
 /// \}
 
 //--------------------------------------------------
-
 /// \name Global logger channel
 /// \{
 
@@ -347,7 +334,7 @@ class ofLog{
 		
 		/// \}
 	
-
+		//--------------------------------------------------
 		/// \name Logging configuration
 		/// \{
 
