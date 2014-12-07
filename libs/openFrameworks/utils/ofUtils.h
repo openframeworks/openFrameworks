@@ -332,7 +332,18 @@ bool ofContains(const vector<T>& values, const T& target) {
 /// \name String manipulation
 /// \{
 
-/// \brief Split a string on a delimiter
+/// \brief Splits a given string using delimiter and returns 
+/// the resulting parts of the string as vector.
+///
+/// A useful application is to use delimiter `" "`:
+/// ~~~~{.cpp}
+/// result = ofSplitString("of rocks", " ");
+/// // result[0] = "of"
+/// // result[1] = "rocks"
+/// ~~~~
+/// Like this a big string can be "cut" and turned it into 
+/// a vector of words.
+///
 /// \param source The string to split
 /// \param delimiter The string to split on
 /// \param ignoreEmpty Set to true to remove empty results
@@ -631,7 +642,9 @@ void	ofSaveViewport(const string& filename);
 /// already been URL encoded.
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery=false);
 
-/// \brief Run a system command. Similar to run a command in terminal.
+/// \brief Executes a system command. Similar to run a command in terminal.
+/// \note Will block until the executed program/command has finished.
+/// \returns the system command output as string. 
 string ofSystem(const string& command);
 
 /// \brief Get the target platform of the current system.
