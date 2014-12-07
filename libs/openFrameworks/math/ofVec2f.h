@@ -20,10 +20,10 @@ class ofVec4f;
 /// motion in a particular direction with a particular length.
 /// 
 /// *You will also see the term vector used to describe an array of objects in C++
-/// *(such as text strings). Don't let this confuse you, they are quite different:
-/// *one of them is a mathematical term for a fixed-length list of numbers that
-/// *you can do mathematical operations on, the other is a C++-specific term that
-/// *means 'dynamically sizeable array'.
+/// (such as text strings). Don't let this confuse you, they are quite different:
+/// one of them is a mathematical term for a fixed-length list of numbers that
+/// you can do mathematical operations on, the other is a C++-specific term that
+/// means 'dynamically sizeable array'.*
 /// 
 /// ofVec2f has two member variables, x and y, which allow to conveniently store
 /// 2D properties of an object such as its position, velocity, or acceleration.
