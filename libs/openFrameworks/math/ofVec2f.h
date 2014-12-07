@@ -4,7 +4,7 @@ class ofVec3f;
 class ofVec4f;
 #include "ofConstants.h"
 
-/// \file
+/// \brief
 /// ofVec2f is a class for storing a two dimensional vector. 
 ///
 /// Moving through space requires knowledge of where things are and where they are going.
@@ -63,7 +63,6 @@ class ofVec4f;
 ///
 /// \sa ofVec3f for 3D vectors
 /// \sa ofVec4f for 4D vectors
-
 class ofVec2f {
 public:
 	/// \cond INTERNAL
@@ -252,7 +251,22 @@ public:
 	/// 
     bool match( const ofVec2f& vec, float tolerance=0.0001 ) const;
     
+	/// \brief Determine if two vectors are aligned
+    /// 
+    /// ~~~~{.cpp}
+	/// ofVec2f v1 = ofVec2f(40, 20);
+	/// ofVec2f v2 = ofVec2f(4, 2);
+	/// v1.isAligned(v2) // returns true
+	/// ~~~~
+    /// \param vec The vector to compare alignment with
+    /// \param tolerance an angle tolerance/threshold (specified in degrees) for deciding if the vectors are sufficiently aligned.
+    /// \returns true if both vectors are aligned (pointing in the same direction). 
     bool isAligned( const ofVec2f& vec, float tolerance=0.0001 ) const;
+    
+    /// \brief Determine if two vectors are aligned with tolerance in radians
+    /// \param vec The vector to compare alignment with
+    /// \param tolerance an angle tolerance/threshold (specified in radians) for deciding if the vectors are sufficiently aligned.
+    /// \sa isAligned()
     bool isAlignedRad( const ofVec2f& vec, float tolerance=0.0001 ) const;
 
     /// \brief Determine if two vectors are aligned
@@ -260,7 +274,7 @@ public:
     /// ~~~~{.cpp}
 	/// ofVec2f v1 = ofVec2f(40, 20);
 	/// ofVec2f v2 = ofVec2f(4, 2);
-	/// // v1.align(v2) returns true
+	/// v1.align(v2) // returns true
 	/// ~~~~
     /// \param vec The vector to compare alignment with
     /// \param tolerance an angle tolerance/threshold (specified in degrees) for deciding if the vectors are sufficiently aligned.
@@ -270,7 +284,7 @@ public:
     /// \brief Determine if two vectors are aligned with tolerance in radians
     /// \param vec The vector to compare alignment with
     /// \param tolerance an angle tolerance/threshold (specified in radians) for deciding if the vectors are sufficiently aligned.
-    /// \sa align(const ofVec2f& vec, float tolerance=0.0001)
+    /// \sa align()
     bool alignRad( const ofVec2f& vec, float tolerance=0.0001 ) const;
 	
 	/// \}
