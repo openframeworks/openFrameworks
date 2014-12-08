@@ -38,7 +38,7 @@ float ofGetElapsedTimef();
 /// Usually ofResetElapsedTimeCounter() is called automatically once during
 /// program startup.
 ///
-/// \returns the elapsed time in milliseconds.
+/// \returns the elapsed time in milliseconds (1000 milliseconds = 1 second).
 unsigned long long ofGetElapsedTimeMillis();
 
 /// \brief Return the elapsed time in microseconds.
@@ -47,7 +47,7 @@ unsigned long long ofGetElapsedTimeMillis();
 /// Usually ofResetElapsedTimeCounter() is called automatically upon program
 /// startup.
 ///
-/// \returns the elapsed time in milliseconds (1000000 microsecs = 1 second).
+/// \returns the elapsed time in microseconds (1000000 microseconds = 1 second).
 unsigned long long ofGetElapsedTimeMicros();
 
 /// \brief Get the number of frames rendered since the program started.
@@ -151,8 +151,6 @@ int ofGetDay();
 int ofGetWeekday();
 
 /// \}
-
-
 
 // --------------------------------------------
 /// \name Data path
@@ -334,8 +332,18 @@ bool ofContains(const vector<T>& values, const T& target) {
 /// \name String manipulation
 /// \{
 
-//--------------------------------------------------
-/// \brief Split a string on a delimiter
+/// \brief Splits a given string using delimiter and returns 
+/// the resulting parts of the string as vector.
+///
+/// A useful application is to use delimiter `" "`:
+/// ~~~~{.cpp}
+/// result = ofSplitString("of rocks", " ");
+/// // result[0] = "of"
+/// // result[1] = "rocks"
+/// ~~~~
+/// Like this a big string can be "cut" and turned it into 
+/// a vector of words.
+///
 /// \param source The string to split
 /// \param delimiter The string to split on
 /// \param ignoreEmpty Set to true to remove empty results
@@ -400,7 +408,8 @@ string ofVAArgsToString(const char * format, va_list args);
 /// Example:
 /// ~~~~~{.cpp}
 /// string str = "framerate is "; 						
-/// str += ofToString(ofGetFrameRate(), 2)+"fps"; 
+/// str += ofToString(ofGetFrameRate())+"fps"; 
+/// // returns something like "framerate is 60 fps"
 /// ~~~~~
 template <class T>
 string ofToString(const T& value){
@@ -581,7 +590,7 @@ string ofBinaryToString(const string& value);
 /// \}
 
 // --------------------------------------------
-/// \name OpenFrameworks version
+/// \name openFrameworks version
 /// \{
 
 /// \brief Get the current version of openFrameworks with dot delimeter.
@@ -605,12 +614,10 @@ unsigned int ofGetVersionPatch();
 
 
 /// \brief Saves the current screen image into a given file
+///
 /// Example:
 /// ~~~~{.cpp}
-/// 
-/// string filename;
-/// fileName = "screen1.png";
-/// ofSaveScreen(fileName);
+/// ofSaveScreen("screen1.png"); // Will save screen1.png in the /data folder
 /// ~~~~
 /// 
 /// \param filename The filename to save the image in
@@ -635,7 +642,9 @@ void	ofSaveViewport(const string& filename);
 /// already been URL encoded.
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery=false);
 
-/// \brief Run a system command. Similar to run a command in terminal.
+/// \brief Executes a system command. Similar to run a command in terminal.
+/// \note Will block until the executed program/command has finished.
+/// \returns the system command output as string. 
 string ofSystem(const string& command);
 
 /// \brief Get the target platform of the current system.
