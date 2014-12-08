@@ -880,7 +880,7 @@ public:
 	/// \brief Set this vector to its own **normalized** perpendicular (by
 	/// rotating 90 degrees and normalizing).
 	/// 
-	/// ![PERPENDICULAR](../math/perpendicular.png)
+	/// ![PERPENDICULAR](math/perpendicular.png)
 	/// Image courtesy of Wikipedia
 	/// 
 	/// ~~~~{.cpp}
@@ -899,7 +899,7 @@ public:
 	/// they are pointing in the same direction, or -1 if they are pointing in 
 	/// opposite directions.
 	///
-	/// ![DOT](../math/dotproduct.png)
+	/// ![DOT](math/dotproduct.png)
 	/// Image courtesy of Wikipedia
 	/// 
 	/// ~~~~{.cpp}
