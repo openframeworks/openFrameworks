@@ -16,14 +16,38 @@
 #include "ofConstants.h"
 #include <cmath>
 
-
+/// \brief The ofMatrix4x4 is the big class of the math part of openFrameworks. You'll
+/// sometimes see it used for doing things like setting where the camera in OepnGL
+/// (the mathematically calculated one, not the ofCamera one) is looking or is
+/// pointedA, or figuring how to position something in 3d space, doing scaling,
+/// etc. The great thing about the 4x4 matrix is that it can do all these things
+/// at the same time. A single ofMatrix4x4 can represent a ton of different
+/// information about a stuff that goes on in doing 3d programming: where an
+/// object is, how you want to scale an object, where a camera is. Let's look at a
+/// few really basic examples:
+/// 
+/// ![MATS](math/mats.png)
+/// 
+/// Not particularly exciting, but you can see how they'd be useful. Luckily most
+/// of the need to transform, rotate, scale, shear, or further bazzlemunge (just
+/// kidding, bazzlemunging is not a thing) stuff in OF is handled internally by
+/// objects like ofNode or ofCamera.
+/// 
 class ofMatrix4x4 {
 public:
 //	float _mat[4][4];
-	ofVec4f _mat[4];
 	
-	//---------------------------------------------
-	// constructors
+	/// \cond INTERNAL
+	// Should this be moved to private?
+	ofVec4f _mat[4];
+	/// \endcond
+
+
+
+	//---------------------
+	/// \name Construct a matrix
+	/// \{
+
 	ofMatrix4x4() {
 		makeIdentityMatrix();
 	}
@@ -42,81 +66,12 @@ public:
 	              float a20, float a21, float a22, float a23,
 	              float a30, float a31, float a32, float a33);
 
-	//---------------------------------------------
-	// destructor
+	// \brief destructor
 	~ofMatrix4x4() {}
 
-//	int compare(const ofMatrix4x4& m) const;
-//
-//	bool operator < (const ofMatrix4x4& m) const { return compare(m)<0; }
-//	bool operator == (const ofMatrix4x4& m) const { return compare(m)==0; }
-//	bool operator != (const ofMatrix4x4& m) const { return compare(m)!=0; }
-
-	//---------------------------------------------
-	// write data with matrix(row,col)=number
-	float& operator()(int row, int col) {
-		return _mat[row][col];
-	}
-
-	//---------------------------------------------
-	// read data with var=matrix(row,col)
-	float operator()(int row, int col) const {
-		return _mat[row][col];
-	}
-
-	//----------------------------------------
-	ofVec3f getRowAsVec3f(int i) const {
-		return ofVec3f(_mat[i][0], _mat[i][1], _mat[i][2]);
-	}
-	
-	//----------------------------------------
-	ofVec4f getRowAsVec4f(int i) const {
-		return _mat[i];
-	}
-	
-	friend ostream& operator<<(ostream& os, const ofMatrix4x4& M);
-	friend istream& operator>>(istream& is, ofMatrix4x4& M);
-	
-	//---------------------------------------------
-	// check if the matrix is valid
-	bool isValid() const {
-		return !isNaN();
-	}
-
-	bool isNaN() const;
-
-	//---------------------------------------------
-	// copy a matrix using = operator
-	ofMatrix4x4& operator = (const ofMatrix4x4& rhs);
-
-	//---------------------------------------------
-	// methods to set the data of the matrix
-	void set(const ofMatrix4x4& rhs);
-	void set(float const * const ptr);
-	void set(double const * const ptr);
-	void set(float a00, float a01, float a02, float a03,
-	         float a10, float a11, float a12, float a13,
-	         float a20, float a21, float a22, float a23,
-	         float a30, float a31, float a32, float a33);
-
-	//---------------------------------------------
-	// access the internal data in float* format
-	// useful for opengl matrix transformations
-	float * getPtr() {
-		return (float*)_mat;
-	}
-	const float * getPtr() const {
-		return (const float *)_mat;
-	}
-
-	//---------------------------------------------
-	// check matrix identity
-	bool isIdentity() const;
-
-
-	//---------------------------------------------
-	// init matrix as identity, scale, translation...
+	// Init matrix as identity, scale, translation...
 	// all make* methods delete the current data
+	
 	void makeIdentityMatrix();
 
 	void makeScaleMatrix( const ofVec3f& );
@@ -138,10 +93,7 @@ public:
 	bool makeInvertOf( const ofMatrix4x4& rhs);
 	void makeOrthoNormalOf(const ofMatrix4x4& rhs);
 	void makeFromMultiplicationOf( const ofMatrix4x4&, const ofMatrix4x4& );
-
-	ofMatrix4x4 getInverse() const;
-
-
+	
 	//---------------------------------------------
 	// init as opengl related matrix for perspective settings
 	// see opengl docs of the related funciton for further details
@@ -180,48 +132,6 @@ public:
 	// (the inverse of makeLookAtMatrix), same as gluLookAt
 	void makeLookAtViewMatrix(const ofVec3f& eye, const ofVec3f& center, const ofVec3f& up);
 
-
-	//---------------------------------------------
-	// Get the perspective components from a matrix
-	// this only works with pure perspective projection matrices
-
-	bool getOrtho(double& left,   double& right,
-	              double& bottom, double& top,
-	              double& zNear,  double& zFar) const;
-
-	bool getFrustum(double& left,   double& right,
-	                double& bottom, double& top,
-	                double& zNear,  double& zFar) const;
-
-	/** Get the frustum settings of a symmetric perspective projection
-	 * matrix.
-	 * Return false if matrix is not a perspective matrix,
-	 * where parameter values are undefined.
-	 * Note, if matrix is not a symmetric perspective matrix then the
-	 * shear will be lost.
-	 * Asymmetric matrices occur when stereo, power walls, caves and
-	 * reality center display are used.
-	 * In these configuration one should use the AsFrustum method instead.
-	 */
-	bool getPerspective(double& fovy,  double& aspectRatio,
-	                    double& zNear, double& zFar) const;
-
-	// will only work for modelview matrices
-	void getLookAt(ofVec3f& eye, ofVec3f& center, ofVec3f& up,
-	               float lookDistance = 1.0f) const;
-
-
-
-	//---------------------------------------------
-	// decompose the matrix into translation, rotation,
-	// scale and scale orientation.
-	void decompose( ofVec3f& translation,
-					ofQuaternion& rotation,
-					ofVec3f& scale,
-					ofQuaternion& so ) const;
-
-
-	//---------------------------------------------
 	// basic utility functions to create new matrices
 	inline static ofMatrix4x4 newIdentityMatrix( void );
 	inline static ofMatrix4x4 newScaleMatrix( const ofVec3f& sv);
@@ -236,12 +146,7 @@ public:
 	                                   float angle3, const ofVec3f& axis3);
 	inline static ofMatrix4x4 newRotationMatrix( const ofQuaternion& quat);
 
-
-	// create new matrices as transformation of another
-	inline static ofMatrix4x4 getInverseOf( const ofMatrix4x4& matrix);
-	inline static ofMatrix4x4 getTransposedOf( const ofMatrix4x4& matrix);
-	inline static ofMatrix4x4 getOrthoNormalOf(const ofMatrix4x4& matrix);
-
+	
 
 	// create new matrices related to glFunctions
 
@@ -268,57 +173,257 @@ public:
 	                                  const ofVec3f& center,
 	                                  const ofVec3f& up);
 
+	//---------------------
+	/// \name Accessors
+	/// \{
 
-	//---------------------------------------------
-	// matrix - vector multiplication
-	// although opengl uses premultiplication
-	// because of the way matrices are used in opengl:
-	//
-	// ofMatrix4x4				openGL
-	// [0]  [1]  [2]  [3]		[0] [4] [8]  [12]
-	// [4]  [5]  [6]  [7]		[1] [5] [9]  [13]
-	// [8]  [9]  [10] [11]		[2] [6] [10] [14]
-	// [12] [13] [14] [15]		[3] [7] [11] [15]
-	//
-	// in memory though both are layed in the same way
-	// so when uploading a matrix it just works without
-	// needing to transpose
-	//
-	// so although opengl docs explain transformations
-	// like:
-	//
-	// ofVec3f c = rotateZ 30º ofVec3f a around ofVec3f b
-	//
-	// openGL docs says: c = T(b)*R(30)*a;
-	//
-	// with ofMatrix4x4:
-	// ofMatrix4x4 R = ofMatrix4x4::newRotationMatrix(30,0,0,1);
-	// ofMatrix4x4 T = ofMatrix4x4::newTranlationMatrix(b);
-	// ofVec3f c = a*R*T;
-	// where * is calling postMult
-
-	inline ofVec3f postMult( const ofVec3f& v ) const;
-	inline ofVec3f operator* (const ofVec3f& v) const {
-		return postMult(v);
+	/// \brief Write data with `matrix(row,col)=number`
+	float& operator()(int row, int col) {
+		return _mat[row][col];
 	}
+
+	// \brief Read data
+	float operator()(int row, int col) const {
+		return _mat[row][col];
+	}
+
+	ofVec3f getRowAsVec3f(int i) const {
+		return ofVec3f(_mat[i][0], _mat[i][1], _mat[i][2]);
+	}
+	
+	ofVec4f getRowAsVec4f(int i) const {
+		return _mat[i];
+	}
+	
+	/// \cond INTERNAL
+	friend ostream& operator<<(ostream& os, const ofMatrix4x4& M);
+	friend istream& operator>>(istream& is, ofMatrix4x4& M);
+	/// \endcond
+	
+	// \brief Access the internal data in `float*` format
+	// useful for opengl matrix transformations
+	float * getPtr() {
+		return (float*)_mat;
+	}
+	const float * getPtr() const {
+		return (const float *)_mat;
+	}
+	
+	/// \}
+
+	//---------------------
+	/// \name Checking
+	/// \{
+
+	
+	/// \brief Check if the matrix is valid
+	bool isValid() const {
+		return !isNaN();
+	}
+
+	bool isNaN() const;
+
+	/// \brief Check matrix identity
+	bool isIdentity() const;
+
+	/// \}
+
+	//---------------------
+	/// \name Setters
+	/// \{
+
+	/// \brief Copy a matrix using `=` operator
+	ofMatrix4x4& operator = (const ofMatrix4x4& rhs);
+
+	
+	/// \brief Set the data of the matrix
+	void set(const ofMatrix4x4& rhs);
+	void set(float const * const ptr);
+	void set(double const * const ptr);
+	void set(float a00, float a01, float a02, float a03,
+	         float a10, float a11, float a12, float a13,
+	         float a20, float a21, float a22, float a23,
+	         float a30, float a31, float a32, float a33);
+
+	/// \}
+
+	//---------------------
+	/// \name Getters
+	/// \{
+
+	/// \brief Get the inverse matrix
+	ofMatrix4x4 getInverse() const;
+
+
+	/// \brief Get the perspective components from a matrix
+	/// this only works with pure perspective projection matrices
+	bool getOrtho(double& left,   double& right,
+	              double& bottom, double& top,
+	              double& zNear,  double& zFar) const;
+
+	
+	bool getFrustum(double& left,   double& right,
+	                double& bottom, double& top,
+	                double& zNear,  double& zFar) const;
+
+	/// \brief Get the frustum settings of a symmetric perspective projection
+	/// matrix.
+	/// 
+	/// Note, if matrix is not a symmetric perspective matrix then the
+	/// shear will be lost.
+	/// Asymmetric matrices occur when stereo, power walls, caves and
+	/// reality center display are used.
+	/// In these configuration one should use the AsFrustum method instead.
+	///
+	/// \returns false if matrix is not a perspective matrix,
+	/// where parameter values are undefined.
+	bool getPerspective(double& fovy,  double& aspectRatio,
+	                    double& zNear, double& zFar) const;
+
+	// will only work for modelview matrices
+	void getLookAt(ofVec3f& eye, ofVec3f& center, ofVec3f& up,
+	               float lookDistance = 1.0f) const;
+
+
+
+	/// \brief Decompose the matrix into translation, rotation,
+	/// scale and scale orientation.
+	void decompose( ofVec3f& translation,
+					ofQuaternion& rotation,
+					ofVec3f& scale,
+					ofQuaternion& so ) const;
+
+	// create new matrices as transformation of another
+	inline static ofMatrix4x4 getInverseOf( const ofMatrix4x4& matrix);
+	inline static ofMatrix4x4 getTransposedOf( const ofMatrix4x4& matrix);
+	inline static ofMatrix4x4 getOrthoNormalOf(const ofMatrix4x4& matrix);
+
+
+	/// \}
+
+	//---------------------
+	/// \name Matrix multiplication
+	/// \{
+
+	/// \brief Vector multiplication
+	/// although opengl uses premultiplication
+	/// because of the way matrices are used in opengl:
+	///
+	/// ofMatrix4x4:
+	/// 
+	/// |   |   |   |   |
+	/// |:-:|:-:|:-:|:-:|
+	/// | 0 | 1 | 2 | 3 |
+	/// | 4 | 5 | 6 | 7 |
+	/// | 8 | 9 | 10| 11|
+	/// | 12| 13| 14| 15|
+	///
+	/// 
+	/// openGL:
+	///
+	/// |   |   |   |   |
+	/// |:-:|:-:|:-:|:-:|
+	/// | 0 | 4 | 8 | 12|
+	/// | 1 | 5 | 9 | 13|
+	/// | 2 | 6 | 10| 14|
+	/// | 3 | 7 | 11| 15|
+	///
+	/// in memory though both are layed in the same way
+	/// so when uploading a matrix it just works without
+	/// needing to transpose
+	///
+	/// so although opengl docs explain transformations
+	/// like:
+	///
+	/// ~~~~~{.cpp}
+	/// ofVec3f c = rotateZ 30º ofVec3f a around ofVec3f b
+	/// ~~~~~
+	///
+	/// openGL docs says: `c = T(b)*R(30)*a`
+	///
+	/// with ofMatrix4x4:
+	/// ~~~~~{.cpp}
+	/// ofMatrix4x4 R = ofMatrix4x4::newRotationMatrix(30,0,0,1);
+	/// ofMatrix4x4 T = ofMatrix4x4::newTranlationMatrix(b);
+	/// ofVec3f c = a*R*T;
+	/// ~~~~~
+	/// where `*` is calling postMult()
+	///
+	inline ofVec3f postMult( const ofVec3f& v ) const;
 
 	inline ofVec4f postMult( const ofVec4f& v ) const;
-	inline ofVec4f operator* (const ofVec4f& v) const {
-		return postMult(v);
-	}
+
+	/// \brief Basic Matrixf multiplication
+	void postMult( const ofMatrix4x4& );
 
 	inline ofVec3f preMult( const ofVec3f& v ) const;
 	inline ofVec4f preMult( const ofVec4f& v ) const;
 
+	void preMult( const ofMatrix4x4& );
+
+
+	inline void operator *= ( const ofMatrix4x4& other ) {
+		if ( this == &other ) {
+			ofMatrix4x4 temp(other);
+			postMult( temp );
+		} else postMult( other );
+	}
+
+	inline ofMatrix4x4 operator * ( const ofMatrix4x4 &m ) const {
+		ofMatrix4x4 r;
+		r.makeFromMultiplicationOf(*this, m);
+		return  r;
+	}
+	
+
+	/// \brief Calls postMult()
+	inline ofVec3f operator* (const ofVec3f& v) const {
+		return postMult(v);
+	}
+	
+	/// \brief Calls postMult()
+	inline ofVec4f operator* (const ofVec4f& v) const {
+		return postMult(v);
+	}
+
 
 	//---------------------------------------------
+	// specialized postMult methods, usually you want to use this
+	// for transforming ofVec not preMult
+	// equivalent to postMult(newTranslationMatrix(v)); */
+	inline void postMultTranslate( const ofVec3f& v );
+	// equivalent to postMult(scale(v));
+	inline void postMultScale( const ofVec3f& v );
+	// equivalent to postMult(newRotationMatrix(q));
+	inline void postMultRotate( const ofQuaternion& q );
+
+	// AARON METHODS
+	inline void postMultTranslate(float x, float y, float z);
+	inline void postMultRotate(float angle, float x, float y, float z);
+	inline void postMultScale(float x, float y, float z);
+
+
+	//---------------------------------------------
+	// equivalent to preMult(newScaleMatrix(v));
+	inline void preMultScale( const ofVec3f& v );
+	// equivalent to preMult(newTranslationMatrix(v));
+	inline void preMultTranslate( const ofVec3f& v );
+	// equivalent to preMult(newRotationMatrix(q));
+	inline void preMultRotate( const ofQuaternion& q );
+
+
+	/// \}
+
+	//---------------------
+	/// \name Matrix transformation
+	/// \{
+
 	// set methods: all these alter the components
 	// deleting the previous data only in that components
 	void setRotate(const ofQuaternion& q);
 	void setTranslation( float tx, float ty, float tz );
 	void setTranslation( const ofVec3f& v );
 
-	//---------------------------------------------
 	// all these apply the transformations over the
 	// current one, it's actually postMult... and behaves
 	// the opposite to the equivalent gl functions
@@ -331,7 +436,6 @@ public:
 	void scale(float x, float y, float z);
 	void scale( const ofVec3f& v );
 
-	//---------------------------------------------
 	// all these apply the transformations over the
 	// current one, it's actually preMult... and behaves
 	// the the same the equivalent gl functions
@@ -361,53 +465,11 @@ public:
 	inline static ofVec3f transform3x3(const ofMatrix4x4& m, const ofVec3f& v);
 
 
-	//---------------------------------------------
-	// basic Matrixf multiplication, our workhorse methods.
-	void postMult( const ofMatrix4x4& );
-	inline void operator *= ( const ofMatrix4x4& other ) {
-		if ( this == &other ) {
-			ofMatrix4x4 temp(other);
-			postMult( temp );
-		} else postMult( other );
-	}
-
-	inline ofMatrix4x4 operator * ( const ofMatrix4x4 &m ) const {
-		ofMatrix4x4 r;
-		r.makeFromMultiplicationOf(*this, m);
-		return  r;
-	}
+	/// \}
 	
-	
-
-	void preMult( const ofMatrix4x4& );
-
-
-
-	//---------------------------------------------
-	// specialized postMult methods, usually you want to use this
-	// for transforming ofVec not preMult
-	// equivalent to postMult(newTranslationMatrix(v)); */
-	inline void postMultTranslate( const ofVec3f& v );
-	// equivalent to postMult(scale(v));
-	inline void postMultScale( const ofVec3f& v );
-	// equivalent to postMult(newRotationMatrix(q));
-	inline void postMultRotate( const ofQuaternion& q );
-
-	// AARON METHODS
-	inline void postMultTranslate(float x, float y, float z);
-	inline void postMultRotate(float angle, float x, float y, float z);
-	inline void postMultScale(float x, float y, float z);
-
-
-	//---------------------------------------------
-	// equivalent to preMult(newScaleMatrix(v));
-	inline void preMultScale( const ofVec3f& v );
-	// equivalent to preMult(newTranslationMatrix(v));
-	inline void preMultTranslate( const ofVec3f& v );
-	// equivalent to preMult(newRotationMatrix(q));
-	inline void preMultRotate( const ofQuaternion& q );
 };
 
+/// \cond INTERNAL
 
 //--------------------------------------------------
 // implementation of inline methods
@@ -863,3 +925,4 @@ inline ofVec4f operator* (const ofVec4f& v, const ofMatrix4x4& m ) {
 }
 
 
+/// \endcond
