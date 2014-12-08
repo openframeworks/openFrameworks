@@ -22,6 +22,7 @@
 
 class ofMatrix4x4;
 
+
 class ofQuaternion {
 public:
     //    float _v[4];
@@ -83,13 +84,11 @@ public:
     inline ofVec3f asVec3() const;
     
 
-
     /// \}
     
     //---------------------
     /// \name Functions
     /// \{
-    
     
   
     /// \brief return true if the Quat represents a zero rotation, 
@@ -113,7 +112,6 @@ public:
     
     
     
-    // METHODS RELATED TO ROTATIONS
     /// \briefSet a quaternion which will perform a rotation of an
     /// angle around the axis given by the vector(x,y,z).
     ///
@@ -154,8 +152,6 @@ public:
     /// \{
     
 
-
-    // BASIC ARITHMETIC METHODS
     // Implemented in terms of Vec4s. Some Vec4 operators, e.g.
     // operator* are not appropriate for quaternions (as
     // mathematical objects) so they are implemented differently.
@@ -166,26 +162,34 @@ public:
     inline bool operator !=(const ofQuaternion& q) const;
     //    inline bool operator <(const ofQuaternion& q) const;  // why?
     
-    inline ostream& operator<<(ostream& os);
-    inline istream& operator>>(istream& is);
-    
+
     inline const ofQuaternion operator *(float rhs) const;                  ///< Multiply by scalar
-    inline ofQuaternion& operator *=(float rhs);                            ///< Unary multiply by scalar
     inline const ofQuaternion operator*(const ofQuaternion& rhs) const;     ///< Binary multiply
+    inline ofVec3f operator*(const ofVec3f& v) const;                       ///< Rotate a vector by this quaternion.
+    inline ofQuaternion& operator *=(float rhs);                            ///< Unary multiply by scalar
     inline ofQuaternion& operator*=(const ofQuaternion& rhs);               ///< Unary multiply
     inline ofQuaternion operator /(float rhs) const;                        ///< Divide by scalar
-    inline ofQuaternion& operator /=(float rhs);                            ///< Unary divide by scalar
     inline const ofQuaternion operator/(const ofQuaternion& denom) const;   ///< Binary divide
+    inline ofQuaternion& operator /=(float rhs);                            ///< Unary divide by scalar
     inline ofQuaternion& operator/=(const ofQuaternion& denom);             ///< Unary divide
     inline const ofQuaternion operator +(const ofQuaternion& rhs) const;    ///< Binary addition
     inline ofQuaternion& operator +=(const ofQuaternion& rhs);              ///< Unary addition
-    inline const ofQuaternion operator -(const ofQuaternion& rhs) const;    ///< Binary subtraction
     inline ofQuaternion& operator -=(const ofQuaternion& rhs);              ///< Unary subtraction
-    inline const ofQuaternion operator -() const;                           ///< returns the negative of the quaternion. calls operator -() on the Vec4 */
-    inline ofVec3f operator*(const ofVec3f& v) const;                       ///< Rotate a vector by this quaternion.
+    inline const ofQuaternion operator -(const ofQuaternion& rhs) const;    ///< Binary subtraction
+    inline const ofQuaternion operator -() const;                           ///< returns the negative of the quaternion. calls operator -() on the Vec4
+    
+    inline ostream& operator<<(ostream& os);
+    inline istream& operator>>(istream& is);
     
     /// \}
 };
+
+
+
+// ----------------------------------------------------------------
+// IMPLEMENTATION
+// ----------------------------------------------------------------
+
 
 
 //----------------------------------------
