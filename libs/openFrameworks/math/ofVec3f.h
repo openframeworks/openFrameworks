@@ -601,14 +601,9 @@ public:
 	/// using 'pivot' as the origin of rotation.
     ofVec3f& rotateRad( float angle, const ofVec3f& pivot, const ofVec3f& axis );    
     
-    
-    
-    
-
-    
+    	
 	
-	
-	/// \briefReturn a new 'ofVec3f' calculated by copying this vector and then mapping from
+	/// \brief Return a new 'ofVec3f' calculated by copying this vector and then mapping from
 	/// its default coordinate system -- origin (0,0,0), X direction (1,0,0), Y
 	/// direction (0,1,0), Z direction (0,0,1) -- to a new coordinate system defined
 	/// with origin at 'origin', X direction 'vx', and Y direction 'vy', and Z
