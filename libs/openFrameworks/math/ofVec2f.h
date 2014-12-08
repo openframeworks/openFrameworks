@@ -175,10 +175,7 @@ public:
 	}
 	
 	
-    // Getters and Setters.
-    //
-	void set( float scalar );
-
+    
 	/// \brief Set x and y components of this vector with just one function call.
 	/// 
 	/// ~~~~{.cpp}
@@ -197,6 +194,8 @@ public:
 	/// ~~~~
 	/// 
     void set( const ofVec2f& vec );
+	
+	void set( float scalar );
 
     /// \}
 
