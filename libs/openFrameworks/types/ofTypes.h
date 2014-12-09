@@ -21,42 +21,58 @@ namespace std {
 }
 #endif
 
-//----------------------------------------------------------
-// ofDeviceInfo
-//----------------------------------------------------------
 class ofSerial;
+
+/// \brief Describes a Serial device, what ID it has, what name it has, 
+/// and the path to the device.
 class ofSerialDeviceInfo{
 	friend class ofSerial;
 
 	public:
 
+		/// \brief Constructor
+		/// \param devicePathIn The path to the device
+		/// \param deviceNameIn The name of the device
+		/// \param deviceIDIn  	The ID of the device
 		ofSerialDeviceInfo(string devicePathIn, string deviceNameIn, int deviceIDIn){
 			devicePath			= devicePathIn;
 			deviceName			= deviceNameIn;
 			deviceID			= deviceIDIn;
 		}
 
+		/// \brief Constructs a undefined serial device
 		ofSerialDeviceInfo(){
 			deviceName = "device undefined";
 			deviceID   = -1;
 		}
 
+		/// \brief Gets the path to the device
+		///
+		/// Example: `/dev/tty.cu/usbdevice-a440`
 		string getDevicePath(){
 			return devicePath;
 		}
 
+		/// \brief Gets the name of the device
+		///
+		/// Example: `usbdevice-a440` / `COM4`
 		string getDeviceName(){
 			return deviceName;
 		}
 
+		/// \brief Gets the ID of the device
+		///
+		/// Example: `0`,`1`,`2`,`3` etc
 		int getDeviceID(){
 			return deviceID;
 		}
 
 	protected:
+		/// \cond INTERNAL
 		string devicePath;			//eg: /dev/tty.cu/usbdevice-a440
 		string deviceName;			//eg: usbdevice-a440 / COM4
 		int deviceID;				//eg: 0,1,2,3 etc
+		/// \endcond
 
 		//TODO: other stuff for serial ?
 };
@@ -70,12 +86,11 @@ class ofSerialDeviceInfo{
 typedef Poco::FastMutex ofMutex;
 typedef Poco::FastMutex::ScopedLock ofScopedLock;
 
-//----------------------------------------------------------
-// ofStyle
-//----------------------------------------------------------
-
+/// \brief Contains general information about the style of ofGraphics
+/// elements such as color, line width and others.
 class ofStyle{
 	public:
+		/// \brief Constructor for ofStyle
 		ofStyle(){
 			bFill				= true;
 			blendingMode		= OF_BLENDMODE_DISABLED;
@@ -95,22 +110,59 @@ class ofStyle{
 			//depthTest = false;
 		}
 
+		/// \brief Destructor of ofStyle
 		virtual ~ofStyle(){}
 
+		/// \brief Contains the color information for the style object.
 		ofColor color;
+		
+		/// \brief Contains the background color information for the style object.
 		ofColor bgColor;
+
+		/// \brief Contains information about the drawing behavior for 
+		/// ovelapping parts of the same polygon when a shape is created.
+		/// 
+		/// Possible modes are:
+		/// - `OF_POLY_WINDING_ODD`
+		/// - `OF_POLY_WINDING_NONZERO`
+		/// - `OF_POLY_WINDING_POSITIVE`
+		/// - `OF_POLY_WINDING_NEGATIVE`
+		/// - `OF_POLY_WINDING_ABS_GEQ_TWO`
 		ofPolyWindingMode polyMode;
+		
+		/// \brief Contains information about the mode for drawing rectangles.
+		/// 
+		/// If they are corner aligned, or drawn so that the x,y position is
+		/// the center of the rectangle. Possible options are
+		/// `OF_RECTMODE_CENTER` and `OF_RECTMODE_CORNER`
 		ofRectMode rectMode;
+
+		/// \brief Contains information about how the graphics have to 
+		/// be drawed: Fill or noFill(empty)
 		bool bFill;
+
+		/// \brief Contains the ofDrawBitmapMode information
 		ofDrawBitmapMode drawBitmapMode;
 
+		/// \brief Contains the blending mode information
 		ofBlendMode blendingMode;
 
+		/// \brief Contains the information about if smoothing
+		/// effect is activated or not.
 		bool smoothing;
+
+		// \brief Contains the resolution of a ofCircle.
 		int circleResolution;
+		
+		// \brief Contains the resolution of a ofSphere.
 		int sphereResolution;
+		
+		// \brief Contains the resolution of a curves drawn.	
 		int curveResolution;
+
+		/// \brief Contains information about the width of the line for our ofLine.
 		float lineWidth;
+
 		//bool depthTest; removed since it'll break old projects setting depth test through glEnable
 };
 
