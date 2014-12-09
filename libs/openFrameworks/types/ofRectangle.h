@@ -35,11 +35,12 @@
 /// that the is in it the "standard" form.
 class ofRectangle{
 public:
+
+    /// \name Constructor
+    /// \{
+
     /// \brief Construct a rectangle with zero width and zero height at 0, 0.
     ofRectangle();
-
-    /// \brief Destroy the rectangle.
-    virtual ~ofRectangle();
 
     /// \brief Construct a rectangle using location and size.
     ///
@@ -74,6 +75,14 @@ public:
     /// \param p0 The ofPoint representing the upper left hand corner.
     /// \param p1 The ofPoint representing the lower right hand corner.
     ofRectangle(const ofPoint& p0, const ofPoint& p1);
+
+    /// \brief Destroy the rectangle.
+    virtual ~ofRectangle();
+
+    /// \}
+
+    /// \name Setters
+    /// \{
 
     /// \brief Set the position and size of a rectangle.
     ///
@@ -152,6 +161,11 @@ public:
     /// \param h The height of the rectangle.
     void setFromCenter(const ofPoint& p, float w, float h);
 
+    /// \}
+
+    /// \name Transformation
+    /// \{
+
     /// \brief Translate the rectangle's position by an x and y amount.
     /// \param dx The amount to translate in the x direction.
     /// \param dy The amount to translate in the y direction.
@@ -194,7 +208,6 @@ public:
     ///        = s.y * height.
     void scale(const ofPoint& s);
     
-    
     /// \brief Scale the width of the rectangle.
     ///
     /// Scaling will scale the width, but will not change the
@@ -218,8 +231,7 @@ public:
     /// height, x, and y will be adjusted.
     ///
     /// \param s scaling factor.    
-    void scaleFromCenter(float s);
-    
+    void scaleFromCenter(float s);    
 
     /// \brief Scales both the width and height the ofRectangle from its center
     /// point.
@@ -230,7 +242,6 @@ public:
     /// \param sX the x scaling factor.  The new width = sX * width.
     /// \param sY the y scaling factor.  The new height = sY * height.
     void scaleFromCenter(float sX, float sY);
-    
 
     /// \brief Scales both the width and height the ofRectangle from its center
     /// point.
@@ -241,7 +252,6 @@ public:
     /// \param s Scales x and y.  The new width = s.x * width and the new height
     ///        = s.y * height.
     void scaleFromCenter(const ofPoint& s);
-    
 
     /// \brief Adjusts the ofRectangle to match the passed-in ofRectangle using the
     /// passed-in ofScaleMode.
@@ -293,7 +303,6 @@ public:
     void scaleTo(const ofRectangle& targetRect,
                  ofScaleMode scaleMode = OF_SCALEMODE_FIT);
 
-    
     /// \brief Adjusts the ofRectangle to match the passed-in ofRectangle.  It will use the
     /// ofAspectRatioMode to scale the ofRectangle, and will use the use the alignment
     /// anchor parameters to position the rectangle.
@@ -308,7 +317,6 @@ public:
                  ofAspectRatioMode subjectAspectRatioMode,
                  ofAlignHorz sharedHorzAnchor = OF_ALIGN_HORZ_CENTER,
                  ofAlignVert sharedVertAnchor = OF_ALIGN_VERT_CENTER);
-
     
     /// Adjusts the ofRectangle to match the passed-in ofRectangle.  It will
     /// use the ofAspectRatioMode to scale the ofRectangle, and will use the
@@ -346,6 +354,12 @@ public:
                  ofAlignVert modelVertAnchor,
                  ofAlignHorz subjectHorzAnchor,
                  ofAlignVert subjectVertAnchor);
+
+    /// \}
+
+    /// \name Alignment
+    /// \{
+
 
     /// \brief Aligns the horizontal position of the ofRectangle to the given x position
     /// using an ofAlignHorz constant. If a constant is not passed in, this will
@@ -471,7 +485,11 @@ public:
                  ofAlignHorz thisHorzAnchor,
                  ofAlignVert thisVertAnchor);
 
-    
+    /// \}
+
+    /// \name Intersection
+    /// \{
+
     /// \brief Determines if the passed (x,y) coordinates are within the ofRectangle
     /// or not.
     ///
@@ -517,7 +535,6 @@ public:
     /// with the area contained within the passed ofRectangle,    
     /// returns `false` otherwise.
     bool intersects(const ofRectangle& rect) const;
-    
 
     /// \brief Determines if a line defined by two points is intersecting with
     /// the ofRectangle
@@ -550,8 +567,8 @@ public:
     /// ofRectangle.
     void growToInclude(const ofRectangle& rect);
     
-    /// \brief Modify the ofRectangle so that both the ofPoints given are enclosed within
-    /// the rectangle.
+    /// \brief Modify the ofRectangle so that both the ofPoints given 
+    /// are enclosed within the rectangle.
     /// 
     /// This will potentially change the width, height, x position, and y position
     /// of the ofRectangle.
@@ -574,6 +591,11 @@ public:
     /// ofRectangle and that of the passed ofRectangle.
     ofRectangle getUnion(const ofRectangle& rect) const;
     
+    /// \}
+
+    /// \name Standardization 
+    /// \{
+
     /// \brief Standardize the rectangle
     /// 
     /// ofRectangle is a simple container for describing the position
@@ -604,19 +626,23 @@ public:
     /// values into their respective standardized versions.
     void standardize();
     
-    /// \brief If the ofRectangle is standardized, it returns itself.  Otherwise it returns a
-    /// standardized copy of itself.
+    /// \brief If the ofRectangle is standardized, it returns itself.  
+    /// Otherwise it returns a standardized copy of itself.
     /// 
     /// \sa For more information about standardized rectangles, see the discussion at
     /// standardize().
     ofRectangle getStandardized() const;
 
-
-    /// \brief Returns true if this ofRectangle is in the standardized form; that its width and height are
-    /// both positive.
+    /// \brief Returns true if this ofRectangle is in the standardized form; 
+    /// that its width and height are both positive.
     /// 
     /// \sa For a discussion of the standardized form, see standardize()
     bool isStandardized() const;
+
+    /// \}
+
+    /// \name Getters
+    /// \{
     
     /// \brief Gets the area of the ofRectangle as a float.
     /// This is the product of the width and height.
@@ -758,7 +784,6 @@ public:
     /// 
     /// Any other anchor value will return `0.0`.
     float getHorzAnchor(ofAlignHorz anchor) const;
-    
 
     /// \brief A convenience method that returns the value of one of the
     /// vertical edges of the ofRectangle using the ofAlignVert enum.
@@ -799,6 +824,11 @@ public:
     /// \brief Gets the height of the ofRectangle as a float.
     float getHeight() const;
 
+    /// \}
+
+    /// \name Operators
+    /// \{
+
     ofRectangle& operator = (const ofRectangle& rect);
 
     /// \brief Returns a new ofRectangle where the x and y positions of the
@@ -812,6 +842,12 @@ public:
     /// \brief If the two ofRectangles differ in x, y, width, or height, they
     /// are considered unequal.
     bool operator != (const ofRectangle& rect) const;
+
+    /// \}
+
+    /// \name Properties
+    /// \{
+
     
     /// \brief The (x,y) position of the ofRectangle as an ofPoint.
     ofPoint position;
@@ -827,6 +863,8 @@ public:
 
     /// \brief The height of the ofRectangle.
     float height;
+
+    /// \}
 };
 
 /// \cond INTERNAL
