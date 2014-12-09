@@ -13,22 +13,48 @@
 #include "ofPoint.h"
 #include "ofConstants.h"
 
-/// \brief Calculates the next larger power of 2.
+
+//---------------------
+/// \name Random numbers
+/// \{
+
+/// \brief Returns a random floating point number between 0 and max.
 ///
-/// If the input is already a power of 2, it will return itself.  
+/// \param max The maximum value of the random number.
+float ofRandom(float max); 
+
+/// \brief Returns a random number between two values.
+///
 /// Example:
+///	~~~~~{.cpp}
+/// // Return a random floating point number between -30 and 20.
+/// ofRandom(-30, 20);
+/// ~~~~~
 ///
-///    ofNextPow2(50); // returns 64
-///    ofNextPow2(64); // returns 64
-///    ofNextPow(401)); // returns 512
-///
-/// \param a The starting point for finding the next power of 2.
-/// \returns value^2.
-int ofNextPow2(int a);
+/// \param val0 the minimum value of the random number.
+/// \param val1 The maximum value of the random number.
+/// \returns A random floating point number between val0 and val1.
+float ofRandom(float val0, float val1);
+
+/// \brief Returns a random floating point number
+/// \returns A random floating point number between -1 and 1.
+float ofRandomf();
+
+/// \brief Returns a random unsigned floating point number
+/// \returns A random floating point number between 0 and 1.
+float ofRandomuf();
+
+
+/// \returns a random number between 0 and the width of the window.
+float ofRandomWidth();
+
+/// \returns a random number between 0 and the height of the window. 
+float ofRandomHeight();
 
 /// \brief Randomly seeds the random number generator.
 ///
-/// This seeds the random number generator with an acceptably random value, generated from clock time and the PID.
+/// This seeds the random number generator with an acceptably random value, 
+/// generated from clock time and the PID.
 void ofSeedRandom();
 
 /// \brief Seeds the random number generator with a value for consistent randomness.
@@ -36,28 +62,11 @@ void ofSeedRandom();
 /// \param val The value with which to seed the generator.
 void ofSeedRandom(int val);
 
-/// \brief Returns a random floating point number between 0 and max.
-///
-/// \param max The maximum value of the random number.
-float ofRandom(float max); 
+/// \}
 
-/// \brief returns a random number between two values.
-///
-/// Example:
-///
-///    // Return a random floating point number between -30 and 20.
-///    ofRandom(-30, 20);
-///
-/// \param val0 the minimum value of the random number.
-/// \param val1 The maximum value of the random number.
-/// \returns A random floating point number between val0 and val1.
-float ofRandom(float val0, float val1);
-
-/// \returns A random floating point number between -1 and 1.
-float ofRandomf();
-
-/// \returns A random floating point number between 0 and 1.
-float ofRandomuf();
+//---------------------
+/// \name Number ranges
+/// \{
 
 /// \brief Given a value and a range, remap the value to be within 0 and 1.
 ///
@@ -81,18 +90,19 @@ float ofNormalize(float value, float min, float max);
 /// clamped by default.
 ///
 /// Example:
-///
-///     float x, newx;
-///     x = 5;
-///     // 0 < x < 10
-///     newx = ofMap(x, 0, 10, 21, 22); // newx = 21.5 a value between 21 and 22
+/// ~~~~~{.cpp}
+/// float x, newx;
+/// x = 5;
+/// // 0 < x < 10
+/// newx = ofMap(x, 0, 10, 21, 22); // newx = 21.5 a value between 21 and 22
+/// ~~~~~
 ///
 /// \param value The number to be mapped.
 /// \param inputMin The floor of the input range.
 /// \param inputMax The ceiling of the input range.
 /// \param outputMin The floor of the output range.
 /// \param outputMax The ceiling of the output range.
-/// \param clamp true iff the value should be clamped between outputMin and outputMax.
+/// \param clamp true if the value should be clamped between outputMin and outputMax.
 /// \returns a float, mapped between outputMin and outputMax.
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp = false);
 
@@ -101,12 +111,14 @@ float ofMap(float value, float inputMin, float inputMax, float outputMin, float 
 /// Restricts a value to be within a specified range defined by values min and
 /// max.  If the value is min <= value <= max, returns value.  If the value is
 /// greater than max, return max; if the value is less than min, return min.
-///        
-///     float val, newval;
-///     val = 10;
-///     newval = ofClamp(val,30,40); // newval = 30
-///     newval = ofClamp(val,0,5); // newval = 5
-///     newval = ofClamp(val,0,20); // newval = 10
+/// 
+/// ~~~~{.cpp}       
+/// float val, newval;
+/// val = 10;
+/// newval = ofClamp(val,30,40); // newval = 30
+/// newval = ofClamp(val,0,5); // newval = 5
+/// newval = ofClamp(val,0,20); // newval = 10
+/// ~~~~
 ///
 /// \param value The number to be clamped.
 /// \param min The floor of the range.
@@ -114,19 +126,28 @@ float ofMap(float value, float inputMin, float inputMax, float outputMin, float 
 /// \returns A float between min and max.
 float ofClamp(float value, float min, float max);
 
+/// \brief Determines if a number is inside of a given range.
+/// \param t The value to test.
+/// \param min The floor of the range.
+/// \param max The ceiling of the range.
+/// \returns true if the number t is the range of [min - max].
+bool ofInRange(float t, float min, float max);
+
 /// \brief Linearly interpolate a value be within a range.
 /// 
 /// Calculates a number between two numbers (start,stop) at a specific increment
 /// (amt).  If we want the new number to be between start and stop numbers, amt
 /// needs to be a number between 0 and 1.  ofLerp() does not clamp the values.
 ///
-///     float init = 1;
-///     float end = 2;
-///     float increment = 0.2;
-///     float result = ofLerp(init, end, increment); // result = 1.2
-///     // Values outside 0...1 work as well.
-///     increment = 2;
-///     result = ofLerp(init, end, increment); // result = 3
+/// ~~~~{.cpp}
+/// float init = 1;
+/// float end = 2;
+/// float increment = 0.2;
+/// float result = ofLerp(init, end, increment); // result = 1.2
+/// // Values outside 0...1 work as well.
+/// increment = 2;
+/// result = ofLerp(init, end, increment); // result = 3
+/// ~~~~
 ///
 /// \param start The floor of the range.
 /// \param stop The ceiling of the range.
@@ -134,9 +155,15 @@ float ofClamp(float value, float min, float max);
 /// \returns A float between start and stop.
 float ofLerp(float start, float stop, float amt);
 
+/// \}
+
+//---------------------
+/// \name Distance
+/// \{
+
 /// \brief Calculates the distance between two points.
 ///
-/// Uses <http://en.wikipedia.org/wiki/Pythagorean_theorem>
+/// Uses [Pythagorean theorem](http://en.wikipedia.org/wiki/Pythagorean_theorem)
 ///
 /// \param x1 X position of first point.
 /// \param y1 Y position of first point.
@@ -158,16 +185,13 @@ float ofDist(float x1, float y1, float x2, float y2);
 /// \returns distance^2 between two points.
 float ofDistSquared(float x1, float y1, float x2, float y2);
 
-/// \brief Returns the sign of a number.
-/// \returns int -1 if n is negative, 1 if n is positive, and 0 is n == 0;
-int ofSign(float n);
+/// \}
 
-/// \brief Determines if a number is inside of a given range.
-/// \param t The value to test.
-/// \param min The floor of the range.
-/// \param max The ceiling of the range.
-/// \returns true iff the number t is the range of [min - max].
-bool ofInRange(float t, float min, float max);
+
+
+//---------------------
+/// \name Angles
+/// \{
 
 /// \brief Convert radians to degrees.
 /// \param radians An angle in radians.
@@ -177,8 +201,9 @@ float ofRadToDeg(float radians);
 /// \brief Convert degrees to radians.
 ///
 /// Example:
-///
-///     float result = ofDegToRad(90); // result will be PI/2
+/// ~~~~{.cpp}
+/// float result = ofDegToRad(90); // result will be PI/2
+/// ~~~~
 ///
 /// \param degrees An angle in degrees.
 /// \returns the angle in radians.
@@ -213,8 +238,10 @@ float ofLerpRadians(float currentAngle, float targetAngle, float pct);
 /// This will calculate the actual difference, taking into account multiple
 /// revolutions. For example:
 ///
-///     ofAngleDifferenceDegrees(0,90); // returns 90;
-///     ofAngleDifferenceDegrees(0,450); // also returns 90;
+/// ~~~~{.cpp}
+/// ofAngleDifferenceDegrees(0,90); // returns 90;
+/// ofAngleDifferenceDegrees(0,450); // also returns 90;
+/// ~~~~
 ///
 /// \param currentAngle The current angle in degrees.
 /// \param targetAngle the angle to be compared to in degrees.
@@ -226,24 +253,34 @@ float ofAngleDifferenceDegrees(float currentAngle, float targetAngle);
 /// This will calculate the actual difference, taking into account multiple
 /// revolutions. For example:
 ///
-///     ofAngleDifferenceRadians(0,PI); // returns -PI;
-///     ofAngleDifferenceRadians(0,3*PI); // also returns -PI;
+/// ~~~~{.cpp}
+/// ofAngleDifferenceRadians(0,PI); // returns -PI;
+/// ofAngleDifferenceRadians(0,3*PI); // also returns -PI;
+/// ~~~~
 ///
 /// \param currentAngle The current angle in radians.
 /// \param targetAngle the angle to be compared to in radians.
 /// \returns The difference between two angles in radians.
 float ofAngleDifferenceRadians(float currentAngle, float targetAngle);
 
+/// \}
+
+//---------------------
+/// \name Number wrapping
+/// \{
+
+
 /// \brief Find a value within a given range, wrapping the value if it overflows.
 ///
 /// If a value is between from and to, return that value.
 /// If a value is NOT within that range, wrap it.
 ///
-/// For example:
-/// 
-///     ofWrap(5,0,10); // returns 5;
-///     ofWrap(15,0,10); // also returns 5;
-///     ofWrap(-5,0,10); // also returns 5;
+/// Example:
+/// ~~~~{.cpp}
+/// ofWrap(5,0,10); // returns 5;
+/// ofWrap(15,0,10); // also returns 5;
+/// ofWrap(-5,0,10); // also returns 5;
+/// ~~~~
 ///
 /// \param value The value to map.
 /// \param from The floor of the range.
@@ -256,11 +293,12 @@ float ofWrapRadians(float angle, float from = -PI, float to=+PI);
 // \brief Convenience function for ofMath::ofWrap(), constrained between -180...180
 float ofWrapDegrees(float angle, float from = -180, float to=+180);
 
-/// \returns a random number between 0 and the width of the window.
-float ofRandomWidth();
+/// \}
 
-/// \returns a random number between 0 and the height of the window. 
-float ofRandomHeight();
+//---------------------
+/// \name Noise
+/// \{
+
 
 /// \brief Calculates a one dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x);
@@ -285,6 +323,12 @@ float ofSignedNoise(float x, float y, float z);
 
 /// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y, float z, float w);
+
+/// \}
+
+//---------------------
+/// \name Geometry
+/// \{
 
 /// \brief Determine if an (x,y) coordinate is within the polygon defined by a vector of ofPoints.
 /// \param x The x dimension of the coordinate.
@@ -356,6 +400,32 @@ Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct);
 template<typename Type>
 Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias);
 
+/// \}
+
+//---------------------
+/// \name Others
+/// \{
+
+/// \brief Calculates the next larger power of 2.
+///
+/// If the input is already a power of 2, it will return itself.  
+///
+/// Example:
+/// ~~~~{.cpp}
+/// ofNextPow2(50); // returns 64
+/// ofNextPow2(64); // returns 64
+/// ofNextPow2(401); // returns 512
+/// ~~~~
+///
+/// \param a The starting point for finding the next power of 2.
+/// \returns value^2.
+int ofNextPow2(int a);
+
+/// \brief Returns the sign of a number.
+/// \returns int -1 if n is negative, 1 if n is positive, and 0 is n == 0;
+int ofSign(float n);
+
+/// \}
 
 
 
