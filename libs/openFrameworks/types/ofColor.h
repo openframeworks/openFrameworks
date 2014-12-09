@@ -21,7 +21,7 @@
 /// numerical PixelType, the choice of PixelType affects both the range of
 /// values and resulting precision of the RGB color representation.
 ///
-/// Typically users will not use this class template directly, but will use the
+/// Typically you will not use this class template directly, but will use the
 /// convenient pre-defined typedefs.
 ///
 /// |   Typedef     |    PixelType     | Bit Depth | Min. Value | Max. Value  |
@@ -30,23 +30,27 @@
 /// | `ofShortColor`| `unsigned short` | 16        | 0          | 65535       |
 /// | `ofFloatColor`| `float`          | _varies_  | 0.0        | 1.0         |
 ///
+/// To create an color the easiest way is to use the constructor, with the 
+/// color components parsed in the order of `( r, g, b )`
+/// ~~~~{.cpp}
+///     ofColor myColor = ofColor(255, 0, 0);
+///     // myColor is now red
+/// ~~~~
+///
 /// For integral PixelTypes (e.g. `unsigned char` and `unsigned short`), the
-/// minimum is zero and the maximum is given by:
-///
-///     std::numeric_limits<PixelType>::max();
-///
-/// For floating point PixelsTypes, the maximum is 1.0.
+/// minimum is zero and the maximum can be determined with limit().
+/// For `ofFloatColor`, the maximum is 1.0.
 ///
 /// The ofColor typedef represents an 8-bit RGBA color.  Thus, each component
 /// has a maximum value of 255 and a minimum value of 0.  The ofColor typedef
 /// is the default color type in openFrameworks and will work for most
 /// user applications.
 ///
-/// The ofFloatColor and ofShortColor represent higher precision representations
+/// The `ofFloatColor` and `ofShortColor` represent higher precision representations
 /// of a given color and are used in special cases where precision color math
-/// is required.  ofFloatColor might be used for specialized image processing,
+/// is required.  `ofFloatColor` might be used for specialized image processing,
 /// such as image averaging where rounding errors might otherwise introduce
-/// unaccaptable visual artifacts.  ofShortColor might be used with depth camera
+/// unaccaptable visual artifacts.  `ofShortColor` might be used with depth camera
 /// images that can represent the "depth" of each pixel with greater than 256
 /// unique levels.
 ///
@@ -56,6 +60,9 @@
 template<typename PixelType>
 class ofColor_{
 public:
+    /// \name Create an ofColor
+    /// \{
+    
     /// \brief Construct an ofColor_ instance.
     ofColor_<PixelType>():
         r(limit()),
@@ -146,38 +153,29 @@ public:
     /// \param hexColor A color in hexadecimal form.
     /// \param alpha The alpha value of the color.
     static ofColor_<PixelType> fromHex(int hexColor, float alpha = limit());
-    
-    /// \brief A collection of static colors defined by name.
-    ///
-    /// These constants allow the user to access colors by name.  For example,
-    /// if using ofColor, one might set a color in the following way:
-    ///
-    ///     ofColor myColor = ofColor::white;
-    ///
-    /// This will result in myColor being set to a fully opaque white.  The list of
-    /// colors is based upon the CSS names colors and can be viewed here:
-    /// http://www.w3schools.com/cssref/css_colornames.asp
-    ///
-    static const ofColor_<PixelType> white, gray, black, red, green, blue, cyan, magenta,
-    yellow,aliceBlue,antiqueWhite,aqua,aquamarine,azure,beige,bisque,blanchedAlmond,
-    blueViolet,brown,burlyWood,cadetBlue,chartreuse,chocolate,coral,cornflowerBlue,cornsilk,
-    crimson,darkBlue,darkCyan,darkGoldenRod,darkGray,darkGrey,darkGreen,darkKhaki,
-    darkMagenta,darkOliveGreen,darkorange,darkOrchid,darkRed,darkSalmon,darkSeaGreen,
-    darkSlateBlue,darkSlateGray,darkSlateGrey,darkTurquoise,darkViolet,deepPink,
-    deepSkyBlue,dimGray,dimGrey,dodgerBlue,fireBrick,floralWhite,forestGreen,fuchsia,
-    gainsboro,ghostWhite,gold,goldenRod,grey,greenYellow,honeyDew,hotPink,indianRed,indigo,
-    ivory,khaki,lavender,lavenderBlush,lawnGreen,lemonChiffon,lightBlue,lightCoral,
-    lightCyan,lightGoldenRodYellow,lightGray,lightGrey,lightGreen,lightPink,lightSalmon,
-    lightSeaGreen,lightSkyBlue,lightSlateGray,lightSlateGrey,lightSteelBlue,lightYellow,
-    lime,limeGreen,linen,maroon,mediumAquaMarine,mediumBlue,mediumOrchid,mediumPurple,
-    mediumSeaGreen,mediumSlateBlue,mediumSpringGreen,mediumTurquoise,mediumVioletRed,
-    midnightBlue,mintCream,mistyRose,moccasin,navajoWhite,navy,oldLace,olive,oliveDrab,
-    orange,orangeRed,orchid,paleGoldenRod,paleGreen,paleTurquoise,paleVioletRed,papayaWhip,
-    peachPuff,peru,pink,plum,powderBlue,purple,rosyBrown,royalBlue,saddleBrown,salmon,
-    sandyBrown,seaGreen,seaShell,sienna,silver,skyBlue,slateBlue,slateGray,slateGrey,snow,
-    springGreen,steelBlue,blueSteel,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
-    yellowGreen;
 
+    /// \}
+    
+    /// \name Data Accessor
+    /// \{
+
+    /// \brief A union representing the internal data
+    /// \sa r, g, b and a
+    union {
+        struct {
+            PixelType r; ///< \brief The red color component.
+            PixelType g; ///< \brief The green color component.
+            PixelType b; ///< \brief The blue color component.
+            PixelType a; ///< \brief The alpha color component.
+        };
+        PixelType v[4]; ///< \brief The pixel values as an array.
+    };
+    
+    /// \}  
+
+    /// \name Setters
+    /// \{
+    
     /// \brief Set an ofColor_ by using channel values.
     ///
     /// When modifying an instance of ofColor_ the channel values must fall
@@ -225,12 +223,41 @@ public:
     /// \param alpha The alpha value of the color.
     void setHex(int hexColor, float alpha = limit());
 
-    /// \brief Get a hexadecimal representation of the RGB color.
+    /// \brief Set the hue of this color.
+    /// \param hue A hue value to set in the range of 0 - limit().
+    void setHue(float hue);
+
+    /// \brief Set the hue angle of this color.
+    /// \param angle A hue angle value to set in the range of 0 - 360 degrees.
+    void setHueAngle(float angle);
+
+    /// \brief Set the saturation this color.
     ///
-    /// \warning This method does _not_ encode the alpha component.
+    /// This method uses HSB not HSL. So red desaturated is white, not gray
     ///
-    /// \returns An integer representing an RGB color.
-    int getHex() const;
+    /// \param saturation A saturation value value in the range of 0 - limit().
+    /// \sa http://en.wikipedia.org/wiki/HSL_and_HSV
+    void setSaturation(float saturation);
+
+    /// \brief Set the brightness of this color.
+    /// \param brightness A brightness value to set in the range of 0 - limit().
+    void setBrightness(float brightness);
+
+    /// \brief Set the color using HSB components.
+    ///
+    /// \param hue A hue value to set in the range of 0 - limit().
+    /// \param saturation A saturation value to set in the range of 0 - limit().
+    /// \param brightness A brightness value to set in the range of 0 - limit().
+    /// \param alpha An alpha value to set in the range of 0 - limit().
+    void setHsb(float hue,
+                float saturation,
+                float brightness,
+                float alpha = limit());
+
+    /// \}
+
+    /// \name Modifiers
+    /// \{
 
     /// \brief Clamp values between 0 and the limit().
     ///
@@ -246,6 +273,7 @@ public:
     /// and blue components with their original value subtracted from the
     /// limit().  For example, an ofColor value of:
     ///
+    /// ~~~~~{.cpp}
     ///     unsigned char maxValue = limit(); // would return 255
     ///
     ///     unsigned char r = 255;
@@ -255,6 +283,7 @@ public:
     ///     unsigned char rNew = maxValue - r; // 255 - 255 = 0
     ///     unsigned char gNew = maxValue - g; // 255 - 255 = 0
     ///     unsigned char bNew = maxValue - b; // 255 - 0   = 255;
+    /// ~~~~~
     ///
     /// Thus the inversion of `ofColor(255, 255, 0)` is `ofColor(0, 0, 255);`
     ///
@@ -269,6 +298,7 @@ public:
     /// original red, green and blue components.  This operation is equivalent
     /// to the following:
     ///
+    /// ~~~~~{.cpp}
     ///     ofColor myColor(127, 0, 0, 127);
     ///
     ///     float brightness = myColor.getBrightness(); // returns 127.
@@ -277,6 +307,7 @@ public:
     ///     ofColor myNormalizedColor = myColor / scaleFactor;
     ///                                 // Divides the red, green and blue
     ///                                 // components by the scale factor.
+    /// ~~~~~
     ///
     /// \returns A reference to itself.
     ofColor_<PixelType>& normalize();
@@ -299,6 +330,11 @@ public:
     /// \returns A reference to itself.
     ofColor_<PixelType>& lerp(const ofColor_<PixelType>& target, float amount);
 
+    /// \}
+
+    /// \name Getters
+    /// \{
+
     /// \brief A non-destructive version of clamp().
     /// \returns A copy of this color, clamped.
     /// \sa clamp()
@@ -320,6 +356,13 @@ public:
     /// \sa lerp()
     ofColor_<PixelType> getLerped(const ofColor_<PixelType>& target,
                                   float amount) const;
+
+    /// \brief Get a hexadecimal representation of the RGB color.
+    ///
+    /// \warning This method does _not_ encode the alpha component.
+    ///
+    /// \returns An integer representing an RGB color.
+    int getHex() const;
 
     /// \brief Get the Hue of this color.
     ///
@@ -354,7 +397,7 @@ public:
     /// method of calculating brightness is used by Photoshop (HSB) and
     /// Processing (HSB).  Note that brightness is also called "Value".
     ///
-    /// \brief returns the brightness in the range 0 - limit().
+    /// \returns the brightness in the range 0 - limit().
     float getBrightness() const;
 
     /// \brief Calculate the lightness of the R, G and B components.
@@ -365,7 +408,7 @@ public:
     /// \returns the lightness in the range 0 - limit().
     float getLightness() const;
 
-    /// \brief Extract the hue, saturation and brightness from this color.
+    /// \brief Extract the hue, saturation and brightness (HSB) from this color.
     /// \param hue A reference to the hue to fill.  Will be in the range of
     ///     0 - limit().
     /// \param hue A reference to the saturation to fill.  Will be in the range
@@ -374,37 +417,22 @@ public:
     ///     range of 0 - limit().
     void getHsb(float& hue, float& saturation, float& brightness) const;
 
-    /// \brief Set the hue of this color.
-    /// \param hue A hue value to set in the range of 0 - limit().
-    void setHue(float hue);
-
-    /// \brief Set the hue angle of this color.
-    /// \param angle A hue angle value to set in the range of 0 - 360 degrees.
-    void setHueAngle(float angle);
-
-    /// \brief Set the saturation this color.
+    /// \brief Get the maximum value of a color component.
     ///
-    /// This method uses HSB not HSL. So red desaturated is white, not gray
+    /// Based on the type of PixelType (whether its a ofColor, ofFloatColor or 
+    /// ofShortColor), the maximum value different. For a ofFloatColor the maximum 
+    /// is `1.0`, but for a ofColor it's `255`.
     ///
-    /// \param saturation A saturation value value in the range of 0 - limit().
-    /// \sa http://en.wikipedia.org/wiki/HSL_and_HSV
-    void setSaturation(float saturation);
+    /// Use this function to get this number out.
+    /// 
+    /// \returns The value associated with a fully saturated color component.
+    static float limit();
 
-    /// \brief Set the brightness of this color.
-    /// \param brightness A brightness value to set in the range of 0 - limit().
-    void setBrightness(float brightness);
-
-    /// \brief Set the color using HSB components.
-    ///
-    /// \param hue A hue value to set in the range of 0 - limit().
-    /// \param saturation A saturation value to set in the range of 0 - limit().
-    /// \param brightness A brightness value to set in the range of 0 - limit().
-    /// \param alpha An alpha value to set in the range of 0 - limit().
-    void setHsb(float hue,
-                float saturation,
-                float brightness,
-                float alpha = limit());
-
+    /// \}
+    
+    /// \name Operators
+    /// \{
+    
     /// \brief Assign a color using an existing color.
     ///
     /// R, G, B and A components are set to the the values of the assigned
@@ -424,11 +452,15 @@ public:
     /// R, G and B components are set to the grayscale value and alpha is
     /// set to limit().
     ///
+    /// ~~~~~{.cpp}
     ///     ofColor myColor = 127;
+    /// ~~~~~
     ///
     /// is equivalent to:
     ///
+    /// ~~~~~{.cpp}
     ///     ofColor myColor(127, 127, 127, 255);
+    /// ~~~~~
     ///
     /// \param val The grayscale value.
     /// \returns A reference to itself.
@@ -474,6 +506,7 @@ public:
     /// retrieval using the ofColor_ input stream operator one might use the
     /// following:
     ///
+    /// ~~~~~{.cpp}
     ///     std::stringstream ss;     // Create an empty std::string stream.
     ///                               // Note: std::stringstream is just one
     ///                               // option for an output stream.  Another
@@ -483,6 +516,7 @@ public:
     ///                               // Create an ofColor to output.
     ///
     ///     ss << myColor;            // Write the color to the output stream.
+    /// ~~~~~
     ///
     /// \param os An output stream reference.
     /// \param color The color to write to the output stream.
@@ -507,12 +541,14 @@ public:
     /// For example, to read input from a std::stringstream into an ofColor
     /// one might use the following:
     ///
+    /// ~~~~~{.cpp}
     ///     std::stringstream ss;     // Create an empty std::string stream.
     ///                               // Note: std::stringstream is just one
     ///                               // option for an input stream.
     ///     ss << "255, 255, 0, 255"; // Write the color to the stringstream.
     ///     ofColor myColor;          // Create an ofColor instance to fill.
     ///     ss >> myColor;            // myColor is now filled with a yellow.
+    /// ~~~~~
     ///
     /// \param is An input stream reference.
     /// \param color The color to fill with the input stream.
@@ -543,36 +579,70 @@ public:
         return is;
     }
 
-    /// \brief Return the maximum value of a color.
-    /// \return The value associated with a fully saturated color component.
-    static float limit();
 
-    union {
-        struct {
-            PixelType r; ///< \brief The red color component.
-            PixelType g; ///< \brief The green color component.
-            PixelType b; ///< \brief The blue color component.
-            PixelType a; ///< \brief The alpha color component.
-        };
-        PixelType v[4]; ///< \brief The pixel values as an array.
-    };
+    /// \}
     
+    /// \name Predefined Colors    
+    /// \brief A collection of static colors defined by name.
+    ///
+    /// These constants allow the user to access colors by name.  For example,
+    /// if using ofColor, one might set a color in the following way:
+    ///
+    /// ~~~~~{.cpp}
+    ///     ofColor myColor = ofColor::white;
+    ///     // myColor is now full white (255,255,255,255)
+    /// ~~~~~
+    ///
+    /// The list of colors is based upon the CSS names colors and can be viewed 
+    /// [here](http://www.w3schools.com/cssref/css_colornames.asp).
+    ///
+    /// \{
+
+    static const ofColor_<PixelType> white, gray, black, red, green, blue, cyan, magenta,
+    yellow,aliceBlue,antiqueWhite,aqua,aquamarine,azure,beige,bisque,blanchedAlmond,
+    blueViolet,brown,burlyWood,cadetBlue,chartreuse,chocolate,coral,cornflowerBlue,cornsilk,
+    crimson,darkBlue,darkCyan,darkGoldenRod,darkGray,darkGrey,darkGreen,darkKhaki,
+    darkMagenta,darkOliveGreen,darkorange,darkOrchid,darkRed,darkSalmon,darkSeaGreen,
+    darkSlateBlue,darkSlateGray,darkSlateGrey,darkTurquoise,darkViolet,deepPink,
+    deepSkyBlue,dimGray,dimGrey,dodgerBlue,fireBrick,floralWhite,forestGreen,fuchsia,
+    gainsboro,ghostWhite,gold,goldenRod,grey,greenYellow,honeyDew,hotPink,indianRed,indigo,
+    ivory,khaki,lavender,lavenderBlush,lawnGreen,lemonChiffon,lightBlue,lightCoral,
+    lightCyan,lightGoldenRodYellow,lightGray,lightGrey,lightGreen,lightPink,lightSalmon,
+    lightSeaGreen,lightSkyBlue,lightSlateGray,lightSlateGrey,lightSteelBlue,lightYellow,
+    lime,limeGreen,linen,maroon,mediumAquaMarine,mediumBlue,mediumOrchid,mediumPurple,
+    mediumSeaGreen,mediumSlateBlue,mediumSpringGreen,mediumTurquoise,mediumVioletRed,
+    midnightBlue,mintCream,mistyRose,moccasin,navajoWhite,navy,oldLace,olive,oliveDrab,
+    orange,orangeRed,orchid,paleGoldenRod,paleGreen,paleTurquoise,paleVioletRed,papayaWhip,
+    peachPuff,peru,pink,plum,powderBlue,purple,rosyBrown,royalBlue,saddleBrown,salmon,
+    sandyBrown,seaGreen,seaShell,sienna,silver,skyBlue,slateBlue,slateGray,slateGrey,snow,
+    springGreen,steelBlue,blueSteel,tan,teal,thistle,tomato,turquoise,violet,wheat,whiteSmoke,
+    yellowGreen;
+
+    /// \}
+
+
 private:
     template<typename SrcType>
     void copyFrom(const ofColor_<SrcType>& mom);
 };
 
+/// \name Variants
+/// \{
+
 /// \typedef ofColor
-/// \brief A typedef representing an 8-bit RGBA color.
+/// \brief A typedef representing an 8-bit (`unsigned char`) RGBA color.
 typedef ofColor_<unsigned char> ofColor;
 
 /// \typedef ofShortColor
-/// \brief A typedef representing a 16-bit RGBA color.
+/// \brief A typedef representing a 16-bit (`unsigned short`) RGBA color.
 typedef ofColor_<unsigned short> ofShortColor;
 
 /// \typedef ofFloatColor
-/// \brief A typedef representing a floating point RGBA color.
+/// \brief A typedef representing a floating (`float`) point RGBA color.
 typedef ofColor_<float> ofFloatColor;
+
+/// \}
+
 
 template<typename PixelType>
 template<typename SrcType>
