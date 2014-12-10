@@ -25,21 +25,21 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
             		for(int i=0; i<event.getHistorySize(); i++)
             		{            			
 		                for(int j=0; j<event.getPointerCount(); j++){	                			
-	                		OFAndroid.onTouchMoved(event.getPointerId(j), event.getHistoricalX(j, i), event.getHistoricalY(j, i), event.getHistoricalPressure(j, i));
+	                		OFAndroid.onTouchMoved(event.getPointerId(j), event.getHistoricalX(j, i), event.getHistoricalY(j, i), event.getHistoricalPressure(j, i), event.getHistoricalTouchMajor(j, i), event.getHistoricalTouchMinor(j, i), event.getHistoricalOrientation(j, i));
 	                	}            			
                 	}
 	            	for(int i=0; i<event.getPointerCount(); i++){
-	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
+	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i), event.getTouchMajor(i), event.getTouchMinor(i), event.getOrientation(i));
 	            	}
                 }
 	            	break;
                 case MotionEvent.ACTION_POINTER_UP:
                 case MotionEvent.ACTION_UP:
-                	OFAndroid.onTouchUp(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
+                	OFAndroid.onTouchUp(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex), event.getTouchMajor(pointerIndex), event.getTouchMinor(pointerIndex), event.getOrientation(pointerIndex));
                 	break;
                 case MotionEvent.ACTION_POINTER_DOWN:
                 case MotionEvent.ACTION_DOWN:
-                	OFAndroid.onTouchDown(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
+                	OFAndroid.onTouchDown(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex), event.getTouchMajor(pointerIndex), event.getTouchMinor(pointerIndex), event.getOrientation(pointerIndex));
                 	break;
                 case MotionEvent.ACTION_CANCEL:
                 	OFAndroid.onTouchCancelled(pointerId,event.getX(),event.getY());
