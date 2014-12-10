@@ -399,12 +399,15 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
+Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure,jfloat majoraxis,jfloat minoraxis,jfloat angle){
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
+	touch.majoraxis = majoraxis;
+	touch.minoraxis = minoraxis;
+	touch.angle = angle;
 	touch.type = ofTouchEventArgs::down;
 	if(threadedTouchEvents){
 		ofNotifyMousePressed(x,y,0);
@@ -417,12 +420,15 @@ Java_cc_openframeworks_OFAndroid_onTouchDown(JNIEnv*  env, jclass  thiz, jint id
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
+Java_cc_openframeworks_OFAndroid_onTouchUp(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure,jfloat majoraxis,jfloat minoraxis,jfloat angle){
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
+	touch.majoraxis = majoraxis;
+	touch.minoraxis = minoraxis;
+	touch.angle = angle;
 	touch.type = ofTouchEventArgs::up;
 	if(threadedTouchEvents){
 		ofNotifyMouseReleased(x,y,0);
@@ -452,12 +458,15 @@ Java_cc_openframeworks_OFAndroid_onTouchCancelled(JNIEnv*  env, jclass  thiz, ji
 }
 
 void
-Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure){
+Java_cc_openframeworks_OFAndroid_onTouchMoved(JNIEnv*  env, jclass  thiz, jint id,jfloat x,jfloat y,jfloat pressure,jfloat majoraxis,jfloat minoraxis,jfloat angle){
 	ofTouchEventArgs touch;
 	touch.id = id;
 	touch.x = x;
 	touch.y = y;
 	touch.pressure = pressure;
+	touch.majoraxis = majoraxis;
+	touch.minoraxis = minoraxis;
+	touch.angle = angle;
 	touch.type = ofTouchEventArgs::move;
 	if(threadedTouchEvents){
 		ofNotifyMouseMoved(x,y);
