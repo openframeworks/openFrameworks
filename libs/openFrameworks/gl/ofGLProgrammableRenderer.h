@@ -251,8 +251,6 @@ private:
 	bool wrongUseLoggedOnce;
 	bool uniqueShader;
 
-	ofRectangle mCurrentNativeViewport;
-
 	ofBaseMaterial * currentMaterial;
 	int alphaMaskTextureTarget;
 };
