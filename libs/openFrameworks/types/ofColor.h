@@ -119,7 +119,7 @@ public:
                         float blue,
                         float alpha = limit());
 
-     /// \brief Construct a grayscale ofColor_ by specifiying a single number.
+     /// \brief Construct a grayscale ofColor_ by specifying a single number.
     ///
     /// This constructor will use a single value to describe a grayscale color.
     /// This single value will be taken by each of the R, G and B components.
@@ -207,7 +207,7 @@ public:
 
     /// \}
     
-    /// \name Data Accessor
+    /// \name Data Accessors
     /// \{
 
     /// \brief A union representing the internal data
@@ -244,7 +244,7 @@ public:
     /// \param alpha The alpha component.
     void set(float red, float green, float blue, float alpha = limit());
 
-    /// \brief Set a grayscale ofColor_ by specifiying a single number.
+    /// \brief Set a grayscale ofColor_ by specifying a single number.
     ///
     /// When modifying an instance of ofColor_ you can use a single value to
     /// describe a grayscale color. This single value will be taken by each of
@@ -303,7 +303,7 @@ public:
     /// \param angle A hue angle value to set in the range of 0 - 360 degrees.
     void setHueAngle(float angle);
 
-    /// \brief Set the saturation this color.
+    /// \brief Set the saturation of this color.
     ///
     /// This method uses HSB not HSL. So red desaturated is white, not gray
     ///
@@ -468,7 +468,7 @@ public:
 
     /// \brief Get the Hue of this color.
     ///
-    /// The color is converted from the default RGB to an HSB colorspace and the
+    /// The color is converted from the default RGB to an HSB color space and the
     /// resulting Hue value is returned.  The resulting hue value will always be
     /// returned in the range 0 - limit().
     ///
@@ -477,7 +477,7 @@ public:
 
     /// \brief Get the Hue angle of this color.
     ///
-    /// The color is converted from the default RGB to an HSB colorspace and the
+    /// The color is converted from the default RGB to an HSB color space and the
     /// resulting Hue angle is returned.  The resulting hue value will always be
     /// returned in degrees in the range 0 - 360.
     ///
@@ -486,7 +486,7 @@ public:
 
     /// \brief Get the Saturation of this color.
     ///
-    /// The color is converted from the default RGB to an HSB colorspace and the
+    /// The color is converted from the default RGB to an HSB color space and the
     /// resulting saturation is returned.  The resulting saturation value will
     /// always be returned in the range 0 - limit().
     ///

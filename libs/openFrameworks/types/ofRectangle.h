@@ -10,7 +10,7 @@
 ///
 /// ofRectangle is a simple container for describing the position and size of a
 /// 2D rectangle.  Since the `width` and `height` variables can be negative, the
-/// x/y position is not garanteed to represent the upper right hand corner.  For
+/// x/y position is not guaranteed to represent the upper right hand corner.  For
 /// example, two visually identical rectangles can be represented in the
 /// following ways:
 ///
@@ -219,7 +219,7 @@ public:
     /// \brief Scale the height of the rectangle.
     ///
     /// Scaling will scale the height, but will not change the
-    /// position and widtg.
+    /// position and width.
     ///
     /// \param sY scaling factor.
     void scaleHeight(float sY);
