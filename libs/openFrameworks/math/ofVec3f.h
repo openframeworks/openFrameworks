@@ -1287,7 +1287,7 @@ inline ofVec3f ofVec3f::rotated( float angle, const ofVec3f& axis ) const {
 	return getRotated(angle, axis);
 }
 inline ofVec3f ofVec3f::getRotated( float angle, const ofVec3f& axis ) const {
-	ofVec3f ax = axis.normalized();
+	ofVec3f ax = axis.getNormalized();
 	float a = (float)(angle*DEG_TO_RAD);
 	float sina = sin( a );
 	float cosa = cos( a );
@@ -1305,7 +1305,7 @@ inline ofVec3f ofVec3f::getRotated( float angle, const ofVec3f& axis ) const {
 }
 
 inline ofVec3f ofVec3f::getRotatedRad( float angle, const ofVec3f& axis ) const {
-	ofVec3f ax = axis.normalized();
+	ofVec3f ax = axis.getNormalized();
 	float a = angle;
 	float sina = sin( a );
 	float cosa = cos( a );
@@ -1323,7 +1323,7 @@ inline ofVec3f ofVec3f::getRotatedRad( float angle, const ofVec3f& axis ) const 
 }
 
 inline ofVec3f& ofVec3f::rotate( float angle, const ofVec3f& axis ) {
-	ofVec3f ax = axis.normalized();
+	ofVec3f ax = axis.getNormalized();
 	float a = (float)(angle*DEG_TO_RAD);
 	float sina = sin( a );
 	float cosa = cos( a );
@@ -1344,7 +1344,7 @@ inline ofVec3f& ofVec3f::rotate( float angle, const ofVec3f& axis ) {
 
 
 inline ofVec3f& ofVec3f::rotateRad(float angle, const ofVec3f& axis ) {
-	ofVec3f ax = axis.normalized();
+	ofVec3f ax = axis.getNormalized();
 	float a = angle;
 	float sina = sin( a );
 	float cosa = cos( a );
@@ -1446,7 +1446,7 @@ inline ofVec3f ofVec3f::getRotated( float angle,
 								   const ofVec3f& pivot,
 								   const ofVec3f& axis ) const
 {
-	ofVec3f ax = axis.normalized();
+	ofVec3f ax = axis.getNormalized();
 	float tx = x - pivot.x;
 	float ty = y - pivot.y;
 	float tz = z - pivot.z;
@@ -1475,7 +1475,7 @@ inline ofVec3f ofVec3f::getRotatedRad( float angle,
 									  const ofVec3f& pivot,
 									  const ofVec3f& axis ) const
 {
-	ofVec3f ax = axis.normalized();
+	ofVec3f ax = axis.getNormalized();
 	float tx = x - pivot.x;
 	float ty = y - pivot.y;
 	float tz = z - pivot.z;
@@ -1504,7 +1504,7 @@ inline ofVec3f& ofVec3f::rotate( float angle,
 								const ofVec3f& pivot,
 								const ofVec3f& axis )
 {
-	ofVec3f ax = axis.normalized();
+	ofVec3f ax = axis.getNormalized();
 	x -= pivot.x;
 	y -= pivot.y;
 	z -= pivot.z;
@@ -1536,7 +1536,7 @@ inline ofVec3f& ofVec3f::rotateRad( float angle,
 								   const ofVec3f& pivot,
 								   const ofVec3f& axis )
 {
-	ofVec3f ax = axis.normalized();
+	ofVec3f ax = axis.getNormalized();
 	x -= pivot.x;
 	y -= pivot.y;
 	z -= pivot.z;
@@ -1831,14 +1831,14 @@ inline float ofVec3f::lengthSquared() const {
  * http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/index.htm
  */
 inline float ofVec3f::angle( const ofVec3f& vec ) const {
-	ofVec3f n1 = this->normalized();
-	ofVec3f n2 = vec.normalized();
+	ofVec3f n1 = this->getNormalized();
+	ofVec3f n2 = vec.getNormalized();
 	return (float)(acos( n1.dot(n2) )*RAD_TO_DEG);
 }
 
 inline float ofVec3f::angleRad( const ofVec3f& vec ) const {
-	ofVec3f n1 = this->normalized();
-	ofVec3f n2 = vec.normalized();
+	ofVec3f n1 = this->getNormalized();
+	ofVec3f n2 = vec.getNormalized();
 	return (float)acos( n1.dot(n2) );
 }
 
