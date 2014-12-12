@@ -232,9 +232,9 @@ void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& poi
 //----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());	
-	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).normalized();	
+	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).getNormalized();
 	if (zaxis.length() > 0) {
-		ofVec3f xaxis = upVector.getCrossed(zaxis).normalized();	
+		ofVec3f xaxis = upVector.getCrossed(zaxis).getNormalized();
 		ofVec3f yaxis = zaxis.getCrossed(xaxis);
 		
 		ofMatrix4x4 m;

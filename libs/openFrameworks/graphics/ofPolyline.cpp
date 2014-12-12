@@ -920,7 +920,7 @@ void ofPolyline::calcData(int index, ofVec3f &tangent, float &angle, ofVec3f &ro
     tangent = (v2 - v1);
     tangent.normalize();
     
-    rotation = v1.crossed(v2);
+    rotation = v1.getCrossed(v2);
     angle = 180 - ofRadToDeg(acos(ofClamp(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z, -1, 1)));
 
     normal = rightVector.getCrossed(tangent);
