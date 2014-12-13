@@ -784,7 +784,7 @@ void ofGstVideoUtils::update(){
 			if(buffer){
 				if(pixels.isAllocated()){
 					pixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-					prevBuffer = shared_ptr<GstBuffer>(sample,gst_buffer_unref);;
+					prevBuffer = shared_ptr<GstBuffer>(buffer,gst_buffer_unref);;
 					bHavePixelsChanged=true;
 				}
 			}
