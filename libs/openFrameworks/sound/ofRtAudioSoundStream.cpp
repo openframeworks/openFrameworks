@@ -230,7 +230,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	
 	if(nInputChannels > 0){
 		if( rtStreamPtr->soundInputPtr != NULL ){
-			rtStreamPtr->inputBuffer.set( fPtrIn, nFramesPerBuffer, nInputChannels );
+			rtStreamPtr->inputBuffer.copyFrom(fPtrIn, nFramesPerBuffer, nInputChannels, rtStreamPtr->getSampleRate());
 			rtStreamPtr->applySoundStreamOriginInfo(rtStreamPtr->inputBuffer);
 			rtStreamPtr->soundInputPtr->audioIn(rtStreamPtr->inputBuffer);
 		}
