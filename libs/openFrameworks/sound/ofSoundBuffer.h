@@ -85,8 +85,7 @@ class ofSoundBuffer {
 public:
 	ofSoundBuffer();
 	ofSoundBuffer(const ofSoundBuffer &other);
-	/// initialise by converting samples from a signed short (16-bit) buffer containing numFrames frames of numChannels channels of audio data.
-	ofSoundBuffer(short * shortBuffer, unsigned int numFrames, int numChannels, int sampleRate);
+	ofSoundBuffer(short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
 	ofSoundBuffer& operator=(ofSoundBuffer other);
 	~ofSoundBuffer();
 
@@ -122,12 +121,12 @@ public:
 	/// ofSoundBuffer myBuffer;
 	/// ...
 	/// float sample = myBuffer[(frameIndex*myBuffer.getNumChannels()) + channelIndex];
-	float & operator[](unsigned int samplePos);
-	const float & operator[](unsigned int samplePos) const;
+	float & operator[](std::size_t samplePos);
+	const float & operator[](std::size_t samplePos) const;
 	
 	/// access the sample at frameIndex on a soecific channel
-	float & getSample(size_t frameIndex, unsigned int channel);
-	const float & getSample(size_t frameIndex, unsigned int channel) const;
+	float & getSample(std::size_t frameIndex, std::size_t channel);
+	const float & getSample(std::size_t frameIndex, std::size_t channel) const;
 
 	/// return a new buffer containing the contents of this buffer multiplied by value.
 	ofSoundBuffer operator*(float value);
@@ -138,39 +137,39 @@ public:
 	void stereoPan(float left, float right);
 
 	/// copy length samples from shortBuffer and interpret as interleaved with the given number of channels at the given samplerate
-	void copyFrom(short * shortBuffer, size_t numFrames, int channels, int samplerate);
+	void copyFrom(short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
 	
-	void copyFrom(float * buffer, size_t numFrames, unsigned int channels, int samplerate);
+	void copyFrom(float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
 
-	/// resize ofSoundBuffer to outNumFrames with outNumChannels, and then copy outNumFrames of data from us to soundBuffer. 
+	/// resize outBuffer to outNumFrames with outNumChannels, and then copy outNumFrames of data from us to outBuffer.
 	/// fromFrame is a frame offset. if we don't have enough source data, loop with fromFrame=0 until we have filled outBuffer.
 	/// if outBuffer has fewer channels than our buffer, just copy the first outNumChannels of our data and skip the rest.
 	/// if outBuffer has more channels than our buffer, loop through our channels repeatedly until done. 
-	void copyTo(ofSoundBuffer & outBuffer, unsigned int outNumFrames, unsigned int outNumChannels, unsigned int fromFrame,bool loop=false) const;
+	void copyTo(ofSoundBuffer & outBuffer, std::size_t outNumFrames, std::size_t outNumChannels, std::size_t fromFrame, bool loop = false) const;
 	/// as copyTo but mixes source audio with audio in `outBuffer` by adding samples together (+), instead of overwriting.
-	void addTo(ofSoundBuffer & outBuffer, unsigned int outNumFrames, unsigned int outNumChannels, unsigned int fromFrame,bool loop=false) const;
+	void addTo(ofSoundBuffer & outBuffer, std::size_t outNumFrames, std::size_t outNumChannels, std::size_t fromFrame, bool loop = false) const;
 
 	/// as copyTo above but reads outNumFrames and outNumChannels from outBuffer
-	void copyTo(ofSoundBuffer & outBuffer, unsigned int frameFrame = 0, bool loop=false) const;
+	void copyTo(ofSoundBuffer & outBuffer, std::size_t frameFrame = 0, bool loop = false) const;
 	/// as addTo above but reads outNumFrames and outNumChannels from outBuffer
-	void addTo(ofSoundBuffer & outBuffer, unsigned int fromFrame = 0, bool loop=false) const;
+	void addTo(ofSoundBuffer & outBuffer, std::size_t fromFrame = 0, bool loop = false) const;
 
 	/// copy sample data to out, where out is already allocated to match outNumFrames and outNumChannels (ie outNumFrames*outNumChannels samples).
 	/// fromFrame is a frame offset. if we don't have enough source data, loop with fromFrame=0 until we have filled the out buffer.
 	/// if out has fewer channels than our buffer, just copy the first outNumChannels of our data and skip the rest.
 	/// if out has more channels than our buffer, loop through our channels repeatedly until done.
-	void copyTo(float * out, unsigned int outNumFrames, unsigned int outNumChannels,unsigned int fromFrame,bool loop=false) const;
+	void copyTo(float * outBuffer, std::size_t outNumFrames, std::size_t outNumChannels, std::size_t fromFrame, bool loop = false) const;
 	/// as copyTo but mixes source audio with audio in `out` by adding samples together (+), instead of overwriting
-	void addTo(float * out, unsigned int outNumFrames, unsigned int outNumChannels,unsigned int fromFrame,bool loop=false) const;
+	void addTo(float * outBuffer, std::size_t outNumFrames, std::size_t outNumChannels, std::size_t fromFrame, bool loop = false) const;
 
 	/// resample our data to outBuffer at the given target speed, starting at fromFrame and copying numFrames of data. resize outBuffer to fit.
 	/// speed is relative to current speed (ie 1.0f == no change). lower speeds will give a larger outBuffer, higher speeds a smaller outBuffer.
-	void resampleTo(ofSoundBuffer & outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop=false, InterpolationAlgorithm algorithm=defaultAlgorithm) const;
+	void resampleTo(ofSoundBuffer & outBuffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop = false, InterpolationAlgorithm algorithm = defaultAlgorithm) const;
 	
 	/// copy the requested channel of our data to outBuffer. resize outBuffer to fit.
-	void getChannel(ofSoundBuffer & outBuffer, int sourceChannel) const;
+	void getChannel(ofSoundBuffer & outBuffer, std::size_t sourceChannel) const;
 	/// copy data from inBuffer to the given channel. resize ourselves to match inBuffer's getNumFrames().
-	void setChannel(const ofSoundBuffer & inBuffer, int channel);
+	void setChannel(const ofSoundBuffer & inBuffer, std::size_t channel);
 	
 	float getRMSAmplitude() const;
 	float getRMSAmplitudeChannel(unsigned int channel) const;
@@ -191,17 +190,15 @@ public:
 	bool trimSilence(float threshold = 0.0001, bool trimStart = true, bool trimEnd = true);
 	
 	/// return the total number of samples in this buffer (==getNumFrames()*getNumChannels())
-	unsigned long size() const { return buffer.size(); }
+	std::size_t size() const { return buffer.size(); }
 	/// resize this buffer to exactly this many samples. it's up to you make sure samples matches the channel count.
-	void resize(unsigned int numSamples, float val=float());
+	void resize(std::size_t numSamples, float val = float());
 	/// remove all samples, preserving channel count and sample rate.
 	void clear();
 	/// swap the contents of this buffer with otherBuffer
 	void swap(ofSoundBuffer & otherBuffer);
 	/// set everything in this buffer to value, preserving size, channel count and sample rate.
 	void set(float value);
-	/// copy data from source, interpreting it as nFrames frames of nChannels channels. resize ourself to fit the incoming data.
-	void set(float * source, unsigned int nFrames, unsigned int nChannels);
 	
 	/// return the underlying buffer. careful!
 	vector<float> & getBuffer();
@@ -213,10 +210,10 @@ protected:
 	bool checkSizeAndChannelsConsistency( string function="" );  
 
 	vector<float> buffer;
-	int channels;
-	int samplerate;
+	std::size_t channels;
+	unsigned int samplerate;
 
-	long unsigned long tickCount;
+	unsigned long long tickCount;
 	int soundStreamDeviceID;
 };
 
