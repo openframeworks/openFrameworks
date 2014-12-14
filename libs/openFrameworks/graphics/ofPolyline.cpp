@@ -833,7 +833,7 @@ ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) const {
     getInterpolationParams(findex, i1, i2, t);
     ofPoint leftPoint(points[i1]);
     ofPoint rightPoint(points[i2]);
-    return leftPoint.interpolated(rightPoint, t);
+    return leftPoint.getInterpolated(rightPoint, t);
 }
 
 
@@ -866,7 +866,7 @@ ofVec3f ofPolyline::getRotationAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-    return getRotationAtIndex(i1).interpolated(getRotationAtIndex(i2), t);
+    return getRotationAtIndex(i1).getInterpolated(getRotationAtIndex(i2), t);
 }
 
 //--------------------------------------------------
@@ -882,7 +882,7 @@ ofVec3f ofPolyline::getTangentAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-    return getTangentAtIndex(i1).interpolated(getTangentAtIndex(i2), t);
+    return getTangentAtIndex(i1).getInterpolated(getTangentAtIndex(i2), t);
 }
 
 //--------------------------------------------------
@@ -898,7 +898,7 @@ ofVec3f ofPolyline::getNormalAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-    return getNormalAtIndex(i1).interpolated(getNormalAtIndex(i2), t);
+    return getNormalAtIndex(i1).getInterpolated(getNormalAtIndex(i2), t);
 }
 
 
@@ -920,7 +920,7 @@ void ofPolyline::calcData(int index, ofVec3f &tangent, float &angle, ofVec3f &ro
     tangent = (v2 - v1);
     tangent.normalize();
     
-    rotation = v1.crossed(v2);
+    rotation = v1.getCrossed(v2);
     angle = 180 - ofRadToDeg(acos(ofClamp(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z, -1, 1)));
 
     normal = rightVector.getCrossed(tangent);

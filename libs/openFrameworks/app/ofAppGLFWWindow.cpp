@@ -1065,7 +1065,13 @@ void ofAppGLFWWindow::setClipboardString(const string& text) {
 
 //------------------------------------------------------------
 string ofAppGLFWWindow::getClipboardString() {
-    return glfwGetClipboardString(ofAppGLFWWindow::windowP);
+	const char* clipboard = glfwGetClipboardString(ofAppGLFWWindow::windowP);
+
+	if (clipboard) {
+		return clipboard;
+	} else {
+		return "";
+	}
 }
 
 //------------------------------------------------------------
