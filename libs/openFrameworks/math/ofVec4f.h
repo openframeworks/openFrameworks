@@ -6,21 +6,31 @@ class ofVec3f;
 
 class ofVec4f {
 public:
-	float x, y, z, w;
-    
+    /// \cond INTERNAL
     static const int DIM = 4;
+    /// \endcond
 	
+	float x;
+	float y;
+	float z;
+	float w;
+
+	//---------------------
+	/// \name Construct a 4D vector
+	/// \{
+    
 	ofVec4f();
 	explicit ofVec4f( float _scalar );
 	ofVec4f( float _x, float _y, float _z, float _w );
 	ofVec4f( const ofVec2f& vec);
 	ofVec4f( const ofVec3f& vec);
-	
-    // Getters and Setters.
-    //
-	void set( float _scalar );
-    void set( float _x, float _y, float _z, float _w );
-    void set( const ofVec4f& vec );
+
+    /// \}
+
+	//---------------------
+	/// \name Access components
+	/// \{
+
 	
 	float * getPtr() {
 		return (float*)&x;
@@ -36,42 +46,60 @@ public:
 	float operator[]( int n ) const {
 		return getPtr()[n];
 	}
+
+	void set( float _scalar );
+    void set( float _x, float _y, float _z, float _w );
+    void set( const ofVec4f& vec );
 	
 	
-    // Check similarity/equality.
-    //
+	/// \}
+
+    //---------------------
+	/// \name Comparison 
+	/// \{
+
+
     bool operator==( const ofVec4f& vec ) const;
     bool operator!=( const ofVec4f& vec ) const;
     bool match( const ofVec4f& vec, float tolerance=0.0001) const;
 	
-	
-    // Additions and Subtractions.
-    //
+	/// \}
+
+	//---------------------
+	/// \name Operators
+	/// \{
+
     ofVec4f  operator+( const ofVec4f& vec ) const;
-    ofVec4f& operator+=( const ofVec4f& vec );
-    ofVec4f  operator-( const float f ) const;
-    ofVec4f& operator-=( const float f );
-    ofVec4f  operator-( const ofVec4f& vec ) const;
-    ofVec4f& operator-=( const ofVec4f& vec );
     ofVec4f  operator+( const float f ) const;
+    ofVec4f& operator+=( const ofVec4f& vec );
     ofVec4f& operator+=( const float f );
+    ofVec4f  operator-( const float f ) const;
+    ofVec4f  operator-( const ofVec4f& vec ) const;
     ofVec4f  operator-() const;
+    ofVec4f& operator-=( const float f );
+    ofVec4f& operator-=( const ofVec4f& vec );
 	
 	
-    // Scalings
-    //
     ofVec4f  operator*( const ofVec4f& vec ) const;
-    ofVec4f& operator*=( const ofVec4f& vec );
     ofVec4f  operator*( const float f ) const;
+    ofVec4f& operator*=( const ofVec4f& vec );
     ofVec4f& operator*=( const float f );
     ofVec4f  operator/( const ofVec4f& vec ) const;
-    ofVec4f& operator/=( const ofVec4f& vec );
     ofVec4f  operator/( const float f ) const;
+    ofVec4f& operator/=( const ofVec4f& vec );
     ofVec4f& operator/=( const float f );
-	
+	    
+	/// \cond INTERNAL
 	friend ostream& operator<<(ostream& os, const ofVec4f& vec);
 	friend istream& operator>>(istream& is, const ofVec4f& vec);
+	/// \endcond
+
+    /// \}
 	
+	//---------------------
+	/// \name Simple manipulations
+	/// \{
+
     /// \brief Returns a new ofVec4f that is the result of scaling this vector up or down so that it has the requested length.
     ///
     /// \param length The desired length of the new ofVec4f object.
@@ -83,7 +111,13 @@ public:
     /// \param length The desired length of the vector.
     ofVec4f& scale( const float length );
 	
+	/// \}
 	
+	
+	//---------------------
+	/// \name Distance
+	/// \{
+
     /// \brief Treats this vector and 'pnt' as points in 4D space and calculates the distance between them.
     ///
     /// \param pnt The vector used in the distance calculation with the current vector.
@@ -91,7 +125,13 @@ public:
     float distance( const ofVec4f& pnt) const;
     float squareDistance( const ofVec4f& pnt ) const;
 	
-	
+	/// \}
+
+	//---------------------
+	/// \name Interpolation
+	/// \{
+
+
     /// \brief Performs a linear interpolation of this vector towards 'pnt'.
     ///
     /// \param pnt The vector the interpolation will be performed on. 
@@ -122,6 +162,12 @@ public:
     /// \param points The array of 'ofVec4f's used in the average calculation.
     /// \param num The number of ofVec4f objects in the array.
     ofVec4f&  average( const ofVec4f* points, int num );
+
+    /// \}
+
+    //---------------------
+	/// \name Limit
+	/// \{
     
     /// \brief Returns a normalized copy of this vector.
     ///
@@ -150,12 +196,25 @@ public:
     /// \param max The maximum length of the current vector.
     ofVec4f& limit(float max);
 	
+	/// \}
+
+	//---------------------
+	/// \name Measurement
+	/// \{
 	
     /// \brief Returns the length (magnitude) of this vector.
     ///
     /// \returns The magnitude of the current vector. 
     float length() const;
     float lengthSquared() const;
+
+
+  	/// \}
+
+	//---------------------
+	/// \name Calculations
+	/// \{
+
 
     /// \brief Calculates and returns the dot product of this vector with 'vec'.
     ///
@@ -168,43 +227,47 @@ public:
     /// \param vec The vector used in the dot product calculation with this vector.
     /// \returns The dot product of this vector with 'vec'. 
     float dot( const ofVec4f& vec ) const;
-	
+		
+	/// \}
+
 	
 	
 	
     //---------------------------------------
     // this methods are deprecated in 006 please use:
+	/// \cond INTERNAL
 	
     // getScaled
-    ofVec4f rescaled( const float length ) const;
+    OF_DEPRECATED_MSG("Use member method getScaled() instead.", ofVec4f rescaled( const float length ) const);
 	
     // scale
-    ofVec4f& rescale( const float length );
+    OF_DEPRECATED_MSG("Use member method scale() instead.", ofVec4f& rescale( const float length ));
 	
     // getNormalized
-    ofVec4f normalized() const;
+    OF_DEPRECATED_MSG("Use member method getNormalized() instead.", ofVec4f normalized() const);
 	
     // getLimited
-    ofVec4f limited(float max) const;
+    OF_DEPRECATED_MSG("Use member method getLimited() instead.", ofVec4f limited(float max) const);
 	
     // use squareDistance
-    float  distanceSquared( const ofVec4f& pnt ) const;
+    OF_DEPRECATED_MSG("Use member method squareDistance() instead.", float  distanceSquared( const ofVec4f& pnt ) const);
 	
     // use getInterpolated
-    ofVec4f 	interpolated( const ofVec4f& pnt, float p ) const;
+    OF_DEPRECATED_MSG("Use member method getInterpolated() instead.", ofVec4f interpolated( const ofVec4f& pnt, float p ) const);
 	
     // use getMiddle
-    ofVec4f 	middled( const ofVec4f& pnt ) const;    
+    OF_DEPRECATED_MSG("Use member method getMiddle() instead.", ofVec4f middled( const ofVec4f& pnt ) const);
     
     // return all zero vector
     static ofVec4f zero() { return ofVec4f(0, 0, 0, 0); }
     
     // return all one vector
     static ofVec4f one() { return ofVec4f(1, 1, 1, 1); }
-
+    /// \endcond
 };
 
 
+/// \cond INTERNAL
 
 
 // Non-Member operators
@@ -630,5 +693,5 @@ inline ofVec4f operator/( float f, const ofVec4f& vec ) {
 }
 
 
-
+/// \endcond
 

@@ -243,8 +243,8 @@ void ofTexture::allocate(int w, int h, int internalGlDataType){
 }
 
 //----------------------------------------------------------
-void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
-	allocate(w, h, internalGlDataType, bUseARBExtention, ofGetGLFormatFromInternal(internalGlDataType), ofGetGlTypeFromInternal(internalGlDataType));
+void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtension){
+	allocate(w, h, internalGlDataType, bUseARBExtension, ofGetGLFormatFromInternal(internalGlDataType), ofGetGlTypeFromInternal(internalGlDataType));
 }
 
 //----------------------------------------------------------
@@ -290,14 +290,14 @@ void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
 }
 
 //----------------------------------------------------------
-void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention, int glFormat, int pixelType){
+void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtension, int glFormat, int pixelType){
 	texData.width = w;
 	texData.height = h;
 	texData.bFlipTexture = false;
 	texData.glTypeInternal = internalGlDataType;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-	if (bUseARBExtention && GL_ARB_texture_rectangle){
+	if (bUseARBExtension && GL_ARB_texture_rectangle){
 		texData.textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 	} else 
 #endif

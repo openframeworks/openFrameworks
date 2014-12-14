@@ -784,7 +784,7 @@ void ofGstVideoUtils::update(){
 			if(buffer){
 				if(pixels.isAllocated()){
 					pixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-					prevBuffer = shared_ptr<GstBuffer>(sample,gst_buffer_unref);;
+					prevBuffer = shared_ptr<GstBuffer>(buffer,gst_buffer_unref);;
 					bHavePixelsChanged=true;
 				}
 			}
@@ -982,7 +982,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 		pipeline + " ! appsink name=ofappsink caps=\"" + caps + "\""; // caps=video/x-raw-rgb
 
 	internalPixelFormat = pixelFormat;
-	if((isStream && (w==-1 || h==-1)) || pixelFormat==OF_PIXELS_NATIVE || allocate(w,h,pixelFormat)){
+	if((w==-1 || h==-1) || pixelFormat==OF_PIXELS_NATIVE || allocate(w,h,pixelFormat)){
 		return setPipelineWithSink(pipeline_string,"ofappsink",isStream);
 	}else{
 		return false;
