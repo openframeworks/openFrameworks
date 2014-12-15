@@ -188,6 +188,7 @@ void ofSoundBuffer::copyTo(float * outBuffer, std::size_t nFrames, std::size_t o
 	// if channels count matches we can just memcpy
 	if(channels == outChannels){
 		memcpy(outBuffer, buffPtr, nFramesToCopy * channels * sizeof(float));
+		outBuffer += nFramesToCopy * outChannels;
 	} else if(channels > outChannels){
 		// otherwise, if we have more channels than the output is requesting,
 		// we copy the first outChannels channels
@@ -215,13 +216,11 @@ void ofSoundBuffer::copyTo(float * outBuffer, std::size_t nFrames, std::size_t o
 	if (framesRemaining > 0){
 		if(!loop || size() == 0){
 			// fill with 0s
-			cout << "set zeros" << endl;
 			for(std::size_t i = 0; i < framesRemaining * outChannels; i++){
 				outBuffer[i] = 0;
 			}
 		}else{
 			// loop
-			cout << "loop" << endl;
 			copyTo(outBuffer, framesRemaining, outChannels, 0, loop);
 		}
 	}
@@ -240,6 +239,7 @@ void ofSoundBuffer::addTo(float * outBuffer, std::size_t nFrames, std::size_t ou
 		for(std::size_t i = 0; i < (nFramesToCopy * outChannels); i++){
 			outBuffer[i] += buffPtr[i];
 		}
+		outBuffer += nFramesToCopy * outChannels;
 	} else if(channels > outChannels){
 		// otherwise, if we have more channels than the output is requesting,
 		// we copy the first outChannels channels
