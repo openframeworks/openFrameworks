@@ -55,6 +55,32 @@ public:
 		}
 	}
 
+	/// receives a new value in the passed parameter
+	/// and returns true or returns false if there
+	/// after the specified timeout in ms there is
+	/// no data available or the channel was closed
+	bool tryReceive(T & ret, int64_t timeoutMs){
+		ofScopedLock lock(mutex);
+		if(closed){
+			return false;
+		}
+		if(queue.empty()){
+			try {
+				condition.wait(mutex,timeoutMs);
+			}catch (Poco::TimeoutException & e) {
+				return false;
+			}
+		}
+
+		if(!closed){
+			swap(ret,queue.front());
+			queue.pop();
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	/// sends a copy of the passed value
 	/// returns true if it was sent successfully
 	/// or false if the channel was closed
