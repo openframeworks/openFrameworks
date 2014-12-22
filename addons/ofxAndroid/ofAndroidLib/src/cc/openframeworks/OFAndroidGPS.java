@@ -79,7 +79,12 @@ public class OFAndroidGPS extends OFAndroidObject implements LocationListener, S
 				sensorManager.registerListener(
 						OFAndroidGPS.this, 
 						sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), 
-						SensorManager.SENSOR_DELAY_NORMAL);
+						SensorManager.SENSOR_DELAY_UI);
+				
+				sensorManager.registerListener(
+						OFAndroidGPS.this, 
+						sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE),
+						SensorManager.SENSOR_DELAY_UI);
 				
 				m_compassStarted = true;
 			}
@@ -120,12 +125,13 @@ public class OFAndroidGPS extends OFAndroidObject implements LocationListener, S
 			float R[] = new float[9];
 			float I[] = new float[9];
 			boolean success = SensorManager.getRotationMatrix(R, I, m_currentGravityData, m_currentGeomagneticData);
+			
 			if (success) {
 				float orientation[] = new float[3];
 				SensorManager.getOrientation(R, orientation);
 				
 				android.util.Log.d("COMPASS", String.valueOf(orientation[0] * 180 / Math.PI));
-				headingChanged(orientation[0] * 180 / Math.PI); // orientation contains: azimut, pitch and roll
+				headingChanged(360 - orientation[0] * 180 / Math.PI); // orientation contains: azimut, pitch and roll
 			}
 		}
 	}
