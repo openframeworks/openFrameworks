@@ -875,7 +875,10 @@ GLint ofShader::getUniformLocation(const string & name)  const{
 	unordered_map<string, GLint>::iterator it = uniformLocations.find(name);
 	if (it == uniformLocations.end()){
 		loc = glGetUniformLocation(program, name.c_str());
-		if (loc != -1) uniformLocations[name] = loc;
+		// we store loc even if we don't get a positive reply from the card, 
+		// since misses would destroy our frame performance by calling 
+		// glGetUniformLocation unnecessarily every frame.
+		uniformLocations[name] = loc;
 	} else {
 		loc = it->second;
 	}
