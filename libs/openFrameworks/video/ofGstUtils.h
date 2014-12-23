@@ -180,9 +180,9 @@ public:
 
 protected:
 #if GST_VERSION_MAJOR==0
-	GstFlowReturn process_buffer(shared_ptr<GstBuffer> * buffer);
-	GstFlowReturn preroll_cb(shared_ptr<GstBuffer> * buffer);
-	GstFlowReturn buffer_cb(shared_ptr<GstBuffer> * buffer);
+	GstFlowReturn process_buffer(shared_ptr<GstBuffer> buffer);
+	GstFlowReturn preroll_cb(shared_ptr<GstBuffer> buffer);
+	GstFlowReturn buffer_cb(shared_ptr<GstBuffer> buffer);
 #else
 	GstFlowReturn process_sample(shared_ptr<GstSample> sample);
 	GstFlowReturn preroll_cb(shared_ptr<GstSample> buffer);

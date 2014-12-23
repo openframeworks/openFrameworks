@@ -83,9 +83,11 @@ public:
 	void setUniforms(const ofParameterGroup & parameters) const;
 
 	// note: it may be more optimal to use a 4x4 matrix than a 3x3 matrix, if possible
-	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m) const;
-	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m) const;
+	void setUniformMatrix3f(const string & name, const ofMatrix3x3 & m, int count = 1) const;
+	void setUniformMatrix4f(const string & name, const ofMatrix4x4 & m, int count = 1) const;
 
+	GLint getUniformLocation(const string & name) const;
+	
 	// set attributes that vary per vertex (look up the location before glBegin)
 	GLint getAttributeLocation(const string & name) const;
 
@@ -163,8 +165,6 @@ private:
 	mutable unordered_map<string, GLint> uniformLocations;
 	mutable unordered_map<GLenum, string> shaderSource;
 
-	GLint getUniformLocation(const string & name) const;
-	
 	void checkProgramInfoLog(GLuint program);
 	bool checkProgramLinkStatus(GLuint program);
 	void checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLevel);
