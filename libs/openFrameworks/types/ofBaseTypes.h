@@ -48,235 +48,427 @@ bool ofIsVFlipped();
 
 class ofBaseDraws{
 public:
+	/// \brief Destroy the abstract object.
 	virtual ~ofBaseDraws(){}
+
+	/// \brief Draw at a position at the native size.
+	///
+	/// Native size is determined by getWidth() and getHeight().
+	///
+	/// \param x Draw position on the x axis.
+	/// \param y Draw position on the y axis.
 	virtual void draw(float x, float y) const=0;
+
+	/// \brief Draw at a position with the specified size.
+	///
+	/// \param x Draw position on the x axis.
+	/// \param y Draw position on the y axis.
+	/// \param w Draw width.
+	/// \param h Draw height.
 	virtual void draw(float x, float y, float w, float h) const=0;
+
+	/// \brief Draw at a position at the native size.
+	///
+	/// Native size is determined by getWidth() and getHeight().
+	///
+	/// \param point Draw position.
 	virtual void draw(const ofPoint & point) const {
 		draw(point.x, point.y);
 	}
+
+	/// \brief Draw at a position and size specified by a rectangle.
+	///
+	/// \param rect Draw position and size.
 	virtual void draw(const ofRectangle & rect) const {
 		draw(rect.x, rect.y, rect.width, rect.height);
 	}
+
+	/// \brief Draw at a position.
+	///
+	/// \param point Draw position.
+	/// \param w Draw width.
+	/// \param h Draw height.
 	virtual void draw(const ofPoint & point, float w, float h) const {
 		draw(point.x, point.y, w, h);
 	}
-	
+
+	/// \brief Get the height.
+	/// \returns the height.
 	virtual float getHeight() const = 0;
+
+	/// \brief Get the width.
+	/// \returns the width.
 	virtual float getWidth() const = 0;
-	
+
+	/// \brief Set the anchor point the item is drawn around as a percentage.
+	///
+	/// This can be useful if you want to rotate an image around a particular
+	/// point.
+	///
+	/// \param xPct Horizontal position as a percentage (0 - 1).
+	/// \param yPct Vertical position as a percentage (0 - 1).
 	virtual void setAnchorPercent(float xPct, float yPct){};
+
+	/// \brief Set the anchor point the item is drawn around in pixels.
+	///
+	/// This can be useful if you want to rotate an image around a particular
+	/// point.
+	///
+	/// \param x Horizontal texture position in pixels.
+	/// \param y Vertical texture position in pixels.
 	virtual void setAnchorPoint(float x, float y){};
+
+	/// \brief Reset the anchor point to (0, 0).
 	virtual void resetAnchor(){};
-	
+
 };
 
-//----------------------------------------------------------
-// ofBaseUpdates
-//----------------------------------------------------------
-
+/// \brief An abstract class representing an object that can be updated.
 class ofBaseUpdates{
 public:
+	/// \brief Destroy the ofBaseUpdates.
 	virtual ~ofBaseUpdates(){}
+
+	/// \brief Update the object's state.
 	virtual void update()=0;
 };
 
 
-//----------------------------------------------------------
-// ofBaseHasTexture
-//----------------------------------------------------------
 class ofTexture;
 
+
+/// \brief An abstract class representing an object that can have an ofTexture.
 class ofBaseHasTexture{
 public:
+	/// \brief Destroy the ofBaseHasTexture.
 	virtual ~ofBaseHasTexture(){}
+
+	/// \returns a reference to the ofTexture.
 	virtual ofTexture & getTexture()=0;
+
+	/// \returns a const reference to the ofTexture.
 	virtual const ofTexture & getTexture() const=0;
+
+	/// \brief Enable or disable internal ofTexture use.
+	/// \param bUseTex true if an ofTexture should be used.
 	virtual void setUseTexture(bool bUseTex)=0;
+
+	/// \returns true if an internal ofTexture is being used.
 	virtual bool isUsingTexture() const=0;
 };
 
+
+/// \brief An abstract class representing an object that ofTexture planes.
 class ofBaseHasTexturePlanes: public ofBaseHasTexture{
 public:
+	/// \brief Destroy the ofBaseHasTexturePlanes.
 	virtual ~ofBaseHasTexturePlanes(){}
+
+	/// \returns a reference to a std::vector containing the ofTexture planes.
 	virtual vector<ofTexture> & getTexturePlanes()=0;
+
+	/// \returns a const reference to a std::vector containing the ofTexture planes.
 	virtual const vector<ofTexture> & getTexturePlanes() const=0;
 };
 
-//----------------------------------------------------------
-// ofAbstractHasPixels
-//----------------------------------------------------------
+
+/// \brief An abstract class representing an object that has pixels.
+///
+/// This empty class primarily exists to allow templated subclasses of different
+/// types to be stored as raw or shared pointers in collections such as
+/// std::vector.
+///
+/// Example:
+/// \code{.cpp}
+///
+/// std::vector<ofAbstractHasPixels> pixelProviders;
+///
+/// ofPixels pixels;
+/// ofFloatPixels floatPixels;
+/// ofShortPixels shortPixels;
+///
+/// // ...
+///
+/// pixelProviders.push_back(&pixels);
+/// pixelProviders.push_back(&floatPixels);
+/// pixelProviders.push_back(&shortPixels);
+///
+/// \endcode
 class ofAbstractHasPixels{
 public:
+	/// \brief Destroy the ofAbstractHasPixels.
 	virtual ~ofAbstractHasPixels(){}
 };
 
-//----------------------------------------------------------
-// ofBaseHasPixels
-//----------------------------------------------------------
+
+/// \brief A base class represeting an object that has pixels.
+/// \tparam T The pixel data type.
 template<typename T>
 class ofBaseHasPixels_: public ofAbstractHasPixels{
 public:
+	/// \brief Destroy the ofAbstractHasPixels.
 	virtual ~ofBaseHasPixels_<T>(){}
+
+	/// \brief Get a reference to the underlying ofPixels.
+	/// \returns a reference the underlying ofPixels.
 	virtual ofPixels_<T> & getPixels()=0;
+
+	/// \brief Get a const reference to the underlying ofPixels.
+	/// \returns a const reference the underlying ofPixels.
 	virtual const ofPixels_<T> & getPixels() const=0;
 };
 
+/// \brief A typedef for an unsigned char ofBaseHasPixels_.
 typedef ofBaseHasPixels_<unsigned char> ofBaseHasPixels;
+
+/// \brief A typedef for an float ofBaseHasPixels_.
 typedef ofBaseHasPixels_<float> ofBaseHasFloatPixels;
+
+/// \brief A typedef for an unsigned short ofBaseHasPixels_.
 typedef ofBaseHasPixels_<unsigned short> ofBaseHasShortPixels;
 
-//----------------------------------------------------------
-// ofAbstractImage    ->   to be able to put different types of images in vectors...
-//----------------------------------------------------------
+
+/// \brief An abstract class representing an image.
+///
+/// This empty class primarily exists to allow templated subclasses of different
+/// types to be stored as raw or shared pointers in collections such as
+/// std::vector.
+///
+/// Example:
+/// \code{.cpp}
+///
+/// std::vector<ofAbstractImage*> imageProviders;
+///
+/// ofImage image;
+/// ofFloatImage floatImage;
+/// ofShortImage shortImage;
+///
+/// // ...
+///
+/// imageProviders.push_back(&image);
+/// imageProviders.push_back(&floatImage);
+/// imageProviders.push_back(&shortImage);
+///
+/// \endcode
 class ofAbstractImage: public ofBaseDraws, public ofBaseHasTexture{
 public:
+	/// \brief Destroy the ofAbstractImage.
 	virtual ~ofAbstractImage(){}
 };
 
-//----------------------------------------------------------
-// ofBaseImage
-//----------------------------------------------------------
+/// \brief A base class represeting an image.
+/// \tparam T The pixel data type.
 template<typename T>
 class ofBaseImage_: public ofAbstractImage, virtual public ofBaseHasPixels_<T>{
 public:
+	/// \brief Destroy the ofBaseImage_.
 	virtual ~ofBaseImage_<T>(){};
 };
 
+
+/// \brief A typedef for an unsigned char ofBaseImage_.
 typedef ofBaseImage_<unsigned char> ofBaseImage;
+
+/// \brief A typedef for an float ofBaseImage_.
 typedef ofBaseImage_<float> ofBaseFloatImage;
+
+/// \brief A typedef for an unsigned short ofBaseImage_.
 typedef ofBaseImage_<unsigned short> ofBaseShortImage;
 
-//----------------------------------------------------------
-// ofBaseHasSoundStream
-//----------------------------------------------------------
+
+
+/// \brief A base class representing a sound input stream.
 class ofBaseSoundInput{
+public:
+	/// \brief Destroy the ofBaseSoundInput.
+	virtual ~ofBaseSoundInput() {};
 
-	public:
-        virtual ~ofBaseSoundInput() {};
-    
-		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
-			audioIn(input, bufferSize, nChannels);
-		}
+	/// \todo
+	virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
+		audioIn(input, bufferSize, nChannels);
+	}
 
-		virtual void audioIn( float * input, int bufferSize, int nChannels ){  
-			audioReceived(input, bufferSize, nChannels);
-		}
+	/// \todo
+	virtual void audioIn( float * input, int bufferSize, int nChannels ){
+		audioReceived(input, bufferSize, nChannels);
+	}
 
-		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+	/// \todo
+	virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
 };
 
-//----------------------------------------------------------
-// ofBaseHasSoundStream
-//----------------------------------------------------------
+
+/// \brief A base class representing a sound output stream.
 class ofBaseSoundOutput{
+public:
+	/// \brief Destroy the ofBaseSoundOutput.
+	virtual ~ofBaseSoundOutput() {};
 
-	public:
-        virtual ~ofBaseSoundOutput() {};
-    
-		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
-			audioOut(output, bufferSize, nChannels);
-		}
+	/// \todo
+	virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
+		audioOut(output, bufferSize, nChannels);
+	}
 
-		virtual void audioOut( float * output, int bufferSize, int nChannels ){
-			audioRequested(output, bufferSize, nChannels);
-		}
+	/// \todo
+	virtual void audioOut( float * output, int bufferSize, int nChannels ){
+		audioRequested(output, bufferSize, nChannels);
+	}
 
-		//legacy
-		virtual void audioRequested( float * output, int bufferSize, int nChannels ){
-		}
+	/// \todo
+	/// \note This is a legacy method.
+	virtual void audioRequested( float * output, int bufferSize, int nChannels ){
+	}
 };
 
 
-//----------------------------------------------------------
-// ofBaseVideo
-//----------------------------------------------------------
+/// \brief A base class representing a video source.
 class ofBaseVideo: virtual public ofBaseHasPixels, public ofBaseUpdates{
 public:
+	/// \brief Destroy the ofBaseVideo.
 	virtual ~ofBaseVideo(){}
+
+	/// \returns true if the pixel data was updated since the last call to update().
 	virtual bool isFrameNew() const =0;
+
+	/// \brief Close the video source.
 	virtual void close()=0;
+
+	/// \brief Determine if the video source is initialized.
+	///
+	/// Video sources such as cameras are often initialized with a
+	/// setup() method.  Video sources such as movie players are often
+	/// initialized with a load() method.
+	///
+	/// \returns true if the video source is initialized.
 	virtual bool isInitialized() const=0;
 
+	/// \brief Set the requested ofPixelFormat.
+	/// \param pixelFormat the requested ofPixelFormat.
+	/// \returns true if the format was successfully changed.
 	virtual bool setPixelFormat(ofPixelFormat pixelFormat) = 0;
+
+	/// \returns the current ofPixelFormat.
 	virtual ofPixelFormat getPixelFormat() const = 0;
 };
 
 
-//----------------------------------------------------------
-// ofBaseVideoDraws
-//----------------------------------------------------------
-class ofBaseVideoDraws: virtual public ofBaseVideo, public ofBaseDraws, public ofBaseHasTexturePlanes,virtual public ofBaseHasPixels{
+/// \brief A base class representing a drawable video source.
+class ofBaseVideoDraws:
+	virtual public ofBaseVideo,
+	public ofBaseDraws,
+	public ofBaseHasTexturePlanes,
+	virtual public ofBaseHasPixels{
 public:
+	/// \brief Destroy the ofBaseVideoDraws.
 	virtual ~ofBaseVideoDraws(){}
 };
 
-//----------------------------------------------------------
-// ofBaseVideoGrabber
-//----------------------------------------------------------
+/// \brief A base class representing a video device such as a camera.
 class ofBaseVideoGrabber: virtual public ofBaseVideo{
-	
+
 	public :
+	/// \brief Destroy the ofBaseVideoGrabber
 	virtual ~ofBaseVideoGrabber();
 
 	//needs implementing
+	/// \brief Get a list of available video grabber devices.
+	/// \returns a std::vector of ofVideoDevice objects.
 	virtual vector<ofVideoDevice>	listDevices() const = 0;
-	virtual bool	setup(int w, int h) = 0;
-	
-	virtual float	getHeight() const = 0;
-	virtual float	getWidth() const = 0;
 
-	// implement only if internal API can upload directly to texture
+	/// \brief Set up the grabber with the requested width and height.
+	///
+	/// Some video grabbers may take the requested width and height as
+	/// a hint and choose the closest dimensions to those requested.
+	/// Users can check the actual width and height by calling getWidth() and
+	/// getHeight() respectively after a successful setup.
+	///
+	/// \param w the requested width.
+	/// \param h the requested height.
+	/// \returns true if the video grabber was set up successfully.
+	virtual bool setup(int w, int h) = 0;
+
+	/// \brief Get the video grabber's height.
+	/// \returns the video grabber's height.
+	virtual float getHeight() const = 0;
+
+	/// \brief Get the video grabber's width.
+	/// \returns the video grabber's width.
+	virtual float getWidth() const = 0;
+
+	/// \brief Get the video grabber's internal ofTexture pointer if available.
+	///
+	/// \note Subclasses should implement this method only if internal API can
+	/// upload video grabber pixels directly to an ofTexture.
+	///
+	/// \returns the internal ofTexture pointer or NULL if not available.
 	virtual ofTexture * getTexturePtr(){ return NULL; }
 
-	//should implement!
+	/// \brief Set the video grabber's hardware verbosity level.
+	/// \param bTalkToMe true if verbose grabber logging feedback is required.
 	virtual void setVerbose(bool bTalkToMe);
-	virtual void setDeviceID(int _deviceID);
+
+	/// \brief Set the video grabber's device ID.
+	///
+	/// In most cases, a user can choose a specific grabber source by ID.  This
+	/// device ID information should be available to the user via the
+	/// listDevices() method.
+	///
+	/// \param deviceID The device ID provided by listDevices().
+	virtual void setDeviceID(int deviceID);
+
+	/// \brief Set the video grabber's desired frame rate.
+	///
+	/// Many video grabbers support user-specified frame rates.  This frame rate
+	/// should be considered a hint for the video grabber and is not guaranteed.
+	///
+	/// \param framerate the desired frame rate.
 	virtual void setDesiredFrameRate(int framerate);
+
+	/// \brief Request a native GUI for video grabber settings.
+	/// \note This feature may not be implemented by all video grabbers.
 	virtual void videoSettings();
-	
+
 };
 
 
-//----------------------------------------------------------
-// ofBaseVideoPlayer
-//----------------------------------------------------------
+/// \brief A base class representing a video player.
 class ofBaseVideoPlayer: virtual public ofBaseVideo{
-	
+
 public:
 	virtual ~ofBaseVideoPlayer();
-	
+
 	//needs implementing
 	virtual bool				load(string name) = 0;
-	
+
 	virtual void				play() = 0;
-	virtual void				stop() = 0;		
+	virtual void				stop() = 0;
 	virtual ofTexture *			getTexturePtr(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
-	
+
 	virtual float 				getWidth() const = 0;
 	virtual float 				getHeight() const = 0;
-	
+
 	virtual bool				isPaused() const = 0;
 	virtual bool				isLoaded() const = 0;
 	virtual bool				isPlaying() const = 0;
 	virtual bool				isInitialized() const{ return isLoaded(); }
-		
+
 	//should implement!
 	virtual float 				getPosition() const;
 	virtual float 				getSpeed() const;
 	virtual float 				getDuration() const;
 	virtual bool				getIsMovieDone() const;
-	
+
 	virtual void 				setPaused(bool bPause);
 	virtual void 				setPosition(float pct);
 	virtual void 				setVolume(float volume); // 0..1
 	virtual void 				setLoopState(ofLoopType state);
 	virtual void   				setSpeed(float speed);
 	virtual void				setFrame(int frame);  // frame 0 = first frame...
-	
+
 	virtual int					getCurrentFrame() const;
 	virtual int					getTotalNumFrames() const;
 	virtual ofLoopType			getLoopState() const;
-	
+
 	virtual void				firstFrame();
 	virtual void				nextFrame();
 	virtual void				previousFrame();
@@ -304,7 +496,7 @@ public:
 	}
 	virtual void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const=0;
 	virtual void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const=0;
-    virtual void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const=0;
+	virtual void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const=0;
 	virtual void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
 	virtual void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
 	virtual void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const=0;
@@ -358,7 +550,7 @@ public:
 	virtual void multViewMatrix(const ofMatrix4x4 & m)=0;
 	virtual ofMatrix4x4 getCurrentViewMatrix() const=0;
 	virtual ofMatrix4x4 getCurrentNormalMatrix() const=0;
-	
+
 	// screen coordinate things / default gl values
 	virtual void setupGraphicDefaults()=0;
 	virtual void setupScreen()=0;
@@ -467,13 +659,14 @@ public:
 class ofBaseURLFileLoader{
 public:
 	virtual ~ofBaseURLFileLoader(){};
-    virtual ofHttpResponse get(string url)=0;
-    virtual int getAsync(string url, string name="")=0;
-    virtual ofHttpResponse saveTo(string url, string path)=0;
-    virtual int saveAsync(string url, string path)=0;
-    virtual void remove(int id)=0;
-    virtual void clear()=0;
-    virtual void stop()=0;
+	virtual ofHttpResponse get(string url)=0;
+	virtual int getAsync(string url, string name="")=0;
+	virtual ofHttpResponse saveTo(string url, string path)=0;
+	virtual int saveAsync(string url, string path)=0;
+	virtual void remove(int id)=0;
+	virtual void clear()=0;
+	virtual void stop()=0;
+	virtual ofHttpResponse handleRequest(ofHttpRequest request) = 0;
 };
 
 class ofBaseMaterial{
