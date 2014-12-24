@@ -424,159 +424,177 @@ ofxAndroidEventsClass & ofxAndroidEvents(){
 	return *events;
 }
 
-jobject ofJavaGetStaticObjectField(std::string className, std::string fieldType, std::string fieldName)
+jmethodID ofxJavaGetMethodID(jclass classID, std::string methodName, std::string methodSignature) {
+
+	jmethodID result = ofGetJNIEnv()->GetMethodID(classID, methodName.c_str(), methodSignature.c_str());
+
+	if(!result){
+
+		ofLogError("ofxJavaGetMethodID") << "couldn't find instance method '"
+		<< methodName << "' with signature '"
+		<< methodSignature << "' in class '"
+		<< ofxJavaGetClassName(classID) << "'";
+		return NULL;
+	}
+
+	return result;
+}
+
+jmethodID ofxJavaGetStaticMethodID(jclass classID, std::string methodName, std::string methodSignature) {
+
+	jmethodID result = ofGetJNIEnv()->GetStaticMethodID(classID, methodName.c_str(), methodSignature.c_str());
+
+	if(!result){
+
+		ofLogError("ofxJavaGetStaticMethodID") << "couldn't find static method '"
+		<< methodName << "' with signature '"
+		<< methodSignature << "' in class '"
+		<< ofxJavaGetClassName(classID) << "'";
+		return NULL;
+	}
+
+	return result;
+}
+
+std::string ofxJavaGetClassName(jclass classID)
 {
-	jclass classObject = ofGetJNIEnv()->FindClass(className.c_str());
+	return "[UNKNOWN]"; //TODO
+}
 
-	if(!classObject){
+jclass ofxJavaGetClassID(std::string className)
+{
+	jclass result = ofGetJNIEnv()->FindClass(className.c_str());
 
-		ofLogError("ofJavaGetStaticObjectField") << "couldn't find class '"
+	if(!result){
+
+		ofLogError("ofxJavaGetClassID") << "couldn't find class '"
         << className << "'";
 		return NULL;
 	}
 
-	jfieldID fieldIDObject = ofGetJNIEnv()->GetStaticFieldID(classObject, fieldName.c_str(), fieldType.c_str());
+	return result;
+}
 
-	if(!fieldIDObject){
+jfieldID ofxJavaGetStaticFieldID(jclass classID, std::string fieldName, std::string fieldType) {
+	jfieldID result = ofGetJNIEnv()->GetStaticFieldID(classID, fieldName.c_str(), fieldType.c_str());
 
-		ofLogError("ofJavaGetStaticObjectField") << "couldn't find static field '" <<
+	if(!result){
+
+		ofLogError("ofxJavaGetStaticFieldID") << "couldn't find static field '" <<
         fieldName << "' of type '" <<
         fieldType << "' in class '" <<
-        className << "'";
+        ofxJavaGetClassName(classID) << "'";
 		return NULL;
 	}
 
-	return ofGetJNIEnv()->GetStaticObjectField(classObject, fieldIDObject);
+	return result;
 }
 
-void ofJavaCallVoidMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, va_list args){
+jobject ofxJavaGetStaticObjectField(jclass classID, std::string fieldName, std::string fieldType) {
 
+	return ofGetJNIEnv()->GetStaticObjectField(classID, ofxJavaGetStaticFieldID(classID, fieldName, fieldType));
+}
 
+jobject ofxJavaGetStaticObjectField(std::string className, std::string fieldName, std::string fieldType) {
+	return ofxJavaGetStaticObjectField(ofxJavaGetClassID(className), fieldName, fieldType);
+}
 
-	jmethodID methodID = ofGetJNIEnv()->GetMethodID(classID, methodName.c_str(), methodSignature.c_str());
-	if(!methodID){
-
-		ofLogError("ofJavaCallVoidMethod") << "couldn't find instance method '"
-		<< methodName << "' with signature '"
-		<< methodSignature << "'";
-		return;
-	}
+void ofxJavaCallVoidMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, va_list args){
+	jmethodID methodID = ofxJavaGetMethodID(classID, methodName, methodSignature);
 
 	ofGetJNIEnv()->CallVoidMethodV(object, methodID, args);
 }
 
-void ofJavaCallVoidMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...) {
+void ofxJavaCallVoidMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...) {
 
 	va_list args;
 
 	va_start(args, methodSignature);
 
-	ofJavaCallVoidMethod(object, classID, methodName, methodSignature, args);
+	ofxJavaCallVoidMethod(object, classID, methodName, methodSignature, args);
 
 	va_end(args);
 }
 
-void ofJavaCallVoidMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...)
+void ofxJavaCallVoidMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...)
 {
-	JNIEnv* jniEnv = ofGetJNIEnv();
-
-	jclass classID = jniEnv->FindClass(className.c_str());
-
-	if(classID==0){
-		ofLogError("ofJavaCallVoidMethod") << "couldn't find java class '" << className << "'";
-
-		jthrowable exc = jniEnv->ExceptionOccurred();
-		if(exc)
-		{
-			jniEnv->ExceptionDescribe();
-			jniEnv->ExceptionClear();
-		}
-
-		return;
-	}
+	jclass classID = ofxJavaGetClassID(className);
 
 	va_list args;
 
 	va_start(args, methodSignature);
 
-	ofJavaCallVoidMethod(object, classID, methodName, methodSignature, args);
+	ofxJavaCallVoidMethod(object, classID, methodName, methodSignature, args);
 
 	va_end(args);
 }
 
-
-jobject ofJavaCallStaticObjectMethod(jclass classID, std::string methodName, std::string methodSignature, ...)
+jobject ofxJavaCallStaticObjectMethod(jclass classID, std::string methodName, std::string methodSignature, va_list args)
 {
-	JNIEnv* jniEnv = ofGetJNIEnv();
-
-	if (jniEnv==0) {
-		ofLogError("ofJavaCallStaticObjectMethod") << "couldn't get jniEnv";
-		return NULL;
-	}
-
-	jmethodID methodID = ofGetJNIEnv()->GetStaticMethodID(classID, methodName.c_str(), methodSignature.c_str());
-	if(!methodID){
-
-		ofLogError("ofJavaCallStaticObjectMethod") << "couldn't find static method '"
-        << methodName << "' with signature '"
-        << methodSignature << "'";
-		return NULL;
-	}
-
-	va_list args;
-
-	va_start(args, methodSignature);
+	jmethodID methodID = ofxJavaGetStaticMethodID(classID, methodName, methodSignature);
 
 	jobject result = ofGetJNIEnv()->CallStaticObjectMethodV(classID, methodID, args);
 
-	va_end(args);
-
 	return result;
 }
 
-jobject ofJavaCallStaticObjectMethod(std::string className, std::string methodName, std::string methodSignature, ...)
+jobject ofxJavaCallStaticObjectMethod(jclass classID, std::string methodName, std::string methodSignature, ...)
 {
-	jclass classObject = ofGetJNIEnv()->FindClass(className.c_str());
-
-	if(classObject==0){
-		ofLogError("ofJavaCallStaticObjectMethod") << "couldn't find java class '" << className << "'";
-		return NULL;
-	}
-
 	va_list args;
 
 	va_start(args, methodSignature);
 
-	jobject result = ofJavaCallStaticObjectMethod(classObject, methodName, methodSignature);
+	jobject result = ofxJavaCallStaticObjectMethod(classID, methodName, methodSignature, args);
 
 	va_end(args);
 
 	return result;
 }
 
-jobject ofJavaCallObjectMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...)
+jobject ofxJavaCallStaticObjectMethod(std::string className, std::string methodName, std::string methodSignature, ...)
 {
-	jclass classID = ofGetJNIEnv()->FindClass(className.c_str());
-
-	if(classID==0){
-		ofLogError("ofJavaCallObjectMethod") << "couldn't find java class '" << className << "'";
-		return NULL;
-	}
-
-	jmethodID methodID = ofGetJNIEnv()->GetMethodID(classID, methodName.c_str(), methodSignature.c_str());
-	if(!methodID){
-
-		ofLogError("ofJavaCallObjectMethod") << "couldn't find instance method '"
-        << methodName << "' with signature '"
-        << methodSignature << "' in class '" << className << "'";
-		return NULL;
-	}
+	jclass classID = ofxJavaGetClassID(className);
 
 	va_list args;
 
 	va_start(args, methodSignature);
 
-	jobject result = ofGetJNIEnv()->CallObjectMethodV(object, methodID, args);
+	jobject result = ofxJavaCallStaticObjectMethod(classID, methodName, methodSignature, args);
+
+	va_end(args);
+
+	return result;
+}
+
+jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, va_list args)
+{
+	jmethodID methodID = ofxJavaGetMethodID(classID, methodName, methodSignature);
+
+	return ofGetJNIEnv()->CallObjectMethodV(object, methodID, args);
+}
+
+jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...)
+{
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	jobject result = ofxJavaCallObjectMethod(object, classID, methodName, methodSignature, args);
+
+	va_end(args);
+
+	return result;
+}
+
+jobject ofxJavaCallObjectMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...)
+{
+	jclass classID = ofxJavaGetClassID(className);
+
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	jobject result = ofxJavaCallObjectMethod(object, classID, methodName, methodSignature, args);
 
 	va_end(args);
 
