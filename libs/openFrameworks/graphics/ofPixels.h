@@ -261,7 +261,7 @@ public:
 	/// return 4 and ofPixels<unsigned char> return 1.
 	int getBytesPerChannel() const;
 
-	/// Get how large each channel of a pixels is. 
+	/// \brief Get how large each channel of a pixels is.
 	///
 	/// ofPixels objects that store pixel data as `unsigned char` are smaller
 	/// than ofPixels objects that store pixel data as 'float`.	
@@ -340,6 +340,7 @@ public:
 
 	/// \}
 	
+    /// \cond INTERNAL
 
 	struct Pixel: public std::iterator<std::forward_iterator_tag,Pixel>{
 		Pixel(PixelType * pixel, int bytesPerPixel, ofPixelFormat pixelFormat);
@@ -405,6 +406,7 @@ public:
         Line begin();
 
         Line end();
+        
 
 	private:
         PixelType * _begin;
@@ -492,6 +494,7 @@ public:
 	ConstLines getConstLines() const;
 	ConstPixels getConstPixelsIter() const;
 
+    /// \endcond
 
 private:
 	static float bicubicInterpolate(const float *patch, float x,float y, float x2,float y2, float x3,float y3);
