@@ -125,7 +125,12 @@ PLATFORM_CFLAGS += -fpascal-strings
 
 PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
 PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
-PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
+
+ifndef MAC_OS_MIN_VERSION
+	PLATFORM_CFLAGS += -mmacosx-version-min=10.7
+else
+	PLATFORM_CFLAGS += -mmacosx-version-min=MAC_OS_MIN_VERSION
+endif
 
 PLATFORM_CFLAGS += -fasm-blocks
 PLATFORM_CFLAGS += -funroll-loops
@@ -153,8 +158,12 @@ ifeq ($(MAC_OS_SDK),10.9)
 endif
 PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
-PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
 
+ifndef MAC_OS_MIN_VERSION
+	PLATFORM_LDFLAGS += -mmacosx-version-min=10.7
+else
+	PLATFORM_LDFLAGS += -mmacosx-version-min=MAC_OS_MIN_VERSION
+endif
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
