@@ -298,6 +298,13 @@ inline ofVec4f::ofVec4f( float _x,
 // Getters and Setters.
 //
 //
+inline void ofVec4f::set( float _scalar) {
+	x = _scalar;
+	y = _scalar;
+	z = _scalar;
+	w = _scalar;
+}
+
 inline void ofVec4f::set( float _x, float _y, float _z, float _w ) {
 	x = _x;
 	y = _y;
