@@ -158,7 +158,7 @@ ifeq ($(MAC_OS_SDK),10.9)
 endif
 
 ifeq ($(MAC_OS_SDK),10.10)
-PLATFORM_LDFLAGS += -stdlib=libstdc++
+	PLATFORM_LDFLAGS += -stdlib=libstdc++
 endif
 
 PLATFORM_LDFLAGS += -arch i386
