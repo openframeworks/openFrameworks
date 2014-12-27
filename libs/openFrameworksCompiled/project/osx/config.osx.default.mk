@@ -156,6 +156,11 @@ endif
 ifeq ($(MAC_OS_SDK),10.9)
 	PLATFORM_LDFLAGS += -stdlib=libstdc++
 endif
+
+ifeq ($(MAC_OS_SDK),10.10)
+PLATFORM_LDFLAGS += -stdlib=libstdc++
+endif
+
 PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
 
