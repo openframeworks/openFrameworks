@@ -101,8 +101,6 @@ ifndef MAC_OS_SDK
 		MAC_OS_SDK=10.8
 	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
 		MAC_OS_SDK=10.7
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk)
-		MAC_OS_SDK=10.6
 	endif
 endif
 
@@ -133,15 +131,6 @@ PLATFORM_CFLAGS += -fasm-blocks
 PLATFORM_CFLAGS += -funroll-loops
 PLATFORM_CFLAGS += -mssse3
 PLATFORM_CFLAGS += -fmessage-length=0
-
-ifeq ($(MAC_OS_SDK),10.6)
-	PLATFORM_CFLAGS += -pipe
-	PLATFORM_CFLAGS += -Wno-trigraphs
-	PLATFORM_CFLAGS += -fasm-blocks
-	PLATFORM_CFLAGS += -Wno-deprecated-declarations
-	PLATFORM_CFLAGS += -Wno-invalid-offsetof
-	PLATFORM_CFLAGS += -gdwarf-2
-endif
 
 PLATFORM_CXXFLAGS += -x objective-c++
 
