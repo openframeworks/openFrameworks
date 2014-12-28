@@ -262,10 +262,7 @@ PLATFORM_HEADER_SEARCH_PATHS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_LIBRARIES =
-ifneq ($(MAC_OS_SDK),10.6)
-	PLATFORM_LIBRARIES += objc
-endif
+PLATFORM_LIBRARIES = objc
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
@@ -310,10 +307,7 @@ PLATFORM_FRAMEWORKS += OpenGL
 PLATFORM_FRAMEWORKS += QuickTime
 PLATFORM_FRAMEWORKS += IOKit
 PLATFORM_FRAMEWORKS += Cocoa
-
-ifneq ($(MAC_OS_SDK),10.6)
-	PLATFORM_FRAMEWORKS += CoreVideo
-endif
+PLATFORM_FRAMEWORKS += CoreVideo
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
