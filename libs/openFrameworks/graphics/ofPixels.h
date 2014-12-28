@@ -304,6 +304,11 @@ public:
 	/// of the same dimensions would be 640.000.
 	int size() const;
 	
+	/// \brief Get the type of the image
+	/// \returns One of the following types: `OF_IMAGE_GRAYSCALE`,
+	/// `OF_IMAGE_COLOR`, `OF_IMAGE_COLOR_ALPHA`
+	ofImageType getImageType() const;
+	
 	/// \}
 	/// \name Setters
 	/// \{
@@ -313,7 +318,6 @@ public:
 	/// representation of the data that should go into that one channel.
 	void setChannel(int channel, const ofPixels_<PixelType> channelPixels);
 	
-
 	/// \brief Changes the image type for the ofPixels object
 	///
 	/// \param imageType Can be one of the following: OF_IMAGE_GRAYSCALE, OF_IMAGE_COLOR, OF_IMAGE_COLOR_ALPHA
