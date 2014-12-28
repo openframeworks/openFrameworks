@@ -86,33 +86,30 @@ PLATFORM_CFLAGS += -Wall
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
-MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
+ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
+	MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
 
-ifeq ($(findstring .app, $(MAC_OS_XCODE_ROOT)),.app)
 	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
-else
-	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/SDKs
-endif
 
-#ifeq ($(wildcard /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer),/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer)
-#	MAC_OS_SDK_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
-#else
-#    MAC_OS_SDK_PATH=/Developer/SDKs
-#endif
-
-ifndef MAC_OS_SDK
-	ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.10.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.10.sdk)
-		MAC_OS_SDK=10.10
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.9.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.9.sdk)
-		MAC_OS_SDK=10.9
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
-		MAC_OS_SDK=10.8
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
-		MAC_OS_SDK=10.7
+	ifndef MAC_OS_SDK
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.10.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.10.sdk)
+			MAC_OS_SDK=10.10
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.9.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.9.sdk)
+			MAC_OS_SDK=10.9
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
+			MAC_OS_SDK=10.8
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
+			MAC_OS_SDK=10.7
+		endif
 	endif
-endif
 
-MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
+	ifndef MAC_OS_SDK_ROOT
+		MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
+	endif
+else
+	# xcode-select was not set, assume command line tools are installed
+	MAC_OS_SDK_ROOT=
+endif
 
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
 ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
@@ -130,8 +127,10 @@ PLATFORM_CFLAGS += -arch i386
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
 
-PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
-PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
+ifdef MAC_OS_SDK_ROOT
+	PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
+	PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
+endif
 
 PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
