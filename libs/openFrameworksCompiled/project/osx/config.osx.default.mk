@@ -69,8 +69,16 @@ PLATFORM_REQUIRED_ADDONS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
+ifndef MAC_OS_MIN_VERSION
+	MAC_OS_MIN_VERSION = 10.7
+endif
+
+ifndef MAC_OS_STD_LIB
+	MAC_OS_STD_LIB = libstdc++
+endif
+
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
-PLATFORM_CFLAGS = -stdlib=libstdc++
+PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
 PLATFORM_CFLAGS += -Wall
@@ -125,11 +133,7 @@ PLATFORM_CFLAGS += -fpascal-strings
 PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
 PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
 
-ifndef MAC_OS_MIN_VERSION
-	PLATFORM_CFLAGS += -mmacosx-version-min=10.7
-else
-	PLATFORM_CFLAGS += -mmacosx-version-min=MAC_OS_MIN_VERSION
-endif
+PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
 PLATFORM_CFLAGS += -fasm-blocks
 PLATFORM_CFLAGS += -funroll-loops
@@ -151,23 +155,12 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-
-ifeq ($(MAC_OS_SDK),10.9)
-	PLATFORM_LDFLAGS += -stdlib=libstdc++
-endif
-
-ifeq ($(MAC_OS_SDK),10.10)
-	PLATFORM_LDFLAGS += -stdlib=libstdc++
-endif
+PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
 
-ifndef MAC_OS_MIN_VERSION
-	PLATFORM_LDFLAGS += -mmacosx-version-min=10.7
-else
-	PLATFORM_LDFLAGS += -mmacosx-version-min=MAC_OS_MIN_VERSION
-endif
+PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
