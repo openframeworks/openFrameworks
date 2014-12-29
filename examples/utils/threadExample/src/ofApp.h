@@ -14,9 +14,10 @@ public:
     
     void keyPressed(int key);
 
+    /// \brief Our threaded object.
     ThreadedObject threadedObject;
-        ///< \brief Our threaded object.
+
+    /// \brief A local count that is only accessed in the main thread
     int mainAppsCount;
-        ///< \brief A local count that is only accessed in the main thread
 
 };

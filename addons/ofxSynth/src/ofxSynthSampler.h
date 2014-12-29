@@ -53,15 +53,15 @@ class ofxSynthSample  {
 		~ofxSynthSample()
 		{
 			delete myData;
-			myChunkSize = NULL;
-			mySubChunk1Size = NULL;
-			myFormat = NULL;
-			myChannels = NULL;
-			mySampleRate = NULL;
-			myByteRate = NULL;
-			myBlockAlign = NULL;
-			myBitsPerSample = NULL;
-			myDataSize = NULL;
+			myChunkSize = 0;
+			mySubChunk1Size = 0;
+			myFormat = 0;
+			myChannels = 0;
+			mySampleRate = 0;
+			myByteRate = 0;
+			myBlockAlign = 0;
+			myBitsPerSample = 0;
+			myDataSize = 0;
 		}
 		
 		bool load(string fileName);

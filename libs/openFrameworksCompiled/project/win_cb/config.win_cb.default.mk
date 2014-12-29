@@ -145,6 +145,7 @@ PLATFORM_CORE_EXCLUSIONS =
 # core sources
 #PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
@@ -212,7 +213,7 @@ PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libc
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/videoInput/lib/$(ABI_LIB_SUBPATH)/videoInputLib.a 
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/FreeImage/lib/$(ABI_LIB_SUBPATH)/FreeImage.lib 
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/quicktime/lib/$(ABI_LIB_SUBPATH)/qtmlClient.lib 
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/glew/lib/$(ABI_LIB_SUBPATH)/glew32s.lib 
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/glew/lib/$(ABI_LIB_SUBPATH)/libglew32.a 
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/glu/lib/$(ABI_LIB_SUBPATH)/glu32.lib
 
 # shared libraries 

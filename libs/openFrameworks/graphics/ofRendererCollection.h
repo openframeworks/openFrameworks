@@ -26,6 +26,18 @@ public:
 
 	 bool rendersPathPrimitives(){return true;}
 
+	 void startRender(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->startRender();
+		 }
+	 }
+
+	 void finishRender(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->finishRender();
+		 }
+	 }
+
 	 void update(){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->update();
@@ -33,49 +45,70 @@ public:
 	 }
 
 
-	 void draw(ofPolyline & poly){
+	 using ofBaseRenderer::draw;
+
+	 void draw(const ofPolyline & poly) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(poly);
 		 }
 	 }
-	 void draw(ofPath & shape){
+	 void draw(const ofPath & shape) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(shape);
 		 }
 	 }
-	 void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
+
+	 void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(vertexData,useColors, useTextures, useNormals);
 		 }
 	 }
 
-	 void draw(ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals){
+	 void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(vertexData,mode,useColors,useTextures,useNormals);
 		 }
 	 }
 
-    void draw( of3dPrimitive& model, ofPolyRenderMode renderType ) {
+    void draw(const  of3dPrimitive& model, ofPolyRenderMode renderType ) const {
         for(int i=0;i<(int)renderers.size();i++) {
             renderers[i]->draw( model, renderType );
         }
     }
 
-	void draw(ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		 }
 	}
 
-	void draw(ofFloatImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	void draw(const ofFloatImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 		for(int i=0;i<(int)renderers.size();i++){
 			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
 		}
 	}
 
-	void draw(ofShortImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+	void draw(const ofShortImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 		for(int i=0;i<(int)renderers.size();i++){
 			renderers[i]->draw(img,x,y,z,w,h,sx,sy,sw,sh);
+		}
+	}
+
+	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->draw(video,x,y,w,h);
+		}
+	}
+
+	void bind(const ofBaseVideoDraws & video) const{
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->bind(video);
+		}
+	}
+
+	void unbind(const ofBaseVideoDraws & video) const{
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->unbind(video);
 		}
 	}
 
@@ -148,21 +181,30 @@ public:
 			 renderers[i]->setupScreenOrtho(width,height,nearDist,farDist);
 		 }
 	 }
-	 ofRectangle getCurrentViewport(){
+	 ofRectangle getCurrentViewport() const{
 		 if(renderers.size()){
 			 return renderers[0]->getCurrentViewport();
 		 }else{
 			 return ofRectangle();
 		 }
 	 }
-	 int getViewportWidth(){
+
+	 ofRectangle getNativeViewport() const{
+		 if(renderers.size()){
+			 return renderers[0]->getNativeViewport();
+		 }else{
+			 return ofRectangle();
+		 }
+	 }
+
+	 int getViewportWidth() const{
 		 if(renderers.size()){
 			 return renderers[0]->getViewportWidth();
 		 }else{
 			 return 0;
 		 }
 	 }
-	 int getViewportHeight(){
+	 int getViewportHeight() const{
 		 if(renderers.size()){
 			 return renderers[0]->getViewportHeight();
 		 }else{
@@ -175,7 +217,7 @@ public:
 			 renderers[i]->setCoordHandedness(handedness);
 		 }
 	 }
-	 ofHandednessType getCoordHandedness(){
+	 ofHandednessType getCoordHandedness() const{
 		 if(renderers.size()){
 			 return renderers[0]->getCoordHandedness();
 		 }else{
@@ -265,6 +307,48 @@ public:
 		}
 	}
 
+	void setOrientation(ofOrientation orientation, bool vflip){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->setOrientation( orientation, vflip );
+		}
+	}
+
+	bool isVFlipped() const{
+		if(!renderers.empty()){
+			return renderers.front()->isVFlipped();
+		}else{
+			ofLogWarning() << "No renderer in renderer collection, but vflipped requested returning true.";
+			return true;
+		}
+	}
+
+	void matrixMode(ofMatrixMode mode){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->matrixMode( mode );
+		}
+	}
+
+	void loadViewMatrix(const ofMatrix4x4& m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->loadViewMatrix( m );
+		}
+	}
+
+	void multViewMatrix(const ofMatrix4x4& m){
+		for(int i=0;i<(int)renderers.size();i++){
+			renderers[i]->multViewMatrix( m );
+		}
+	}
+
+	ofMatrix4x4 getCurrentViewMatrix() const{
+		if(!renderers.empty()){
+			return renderers.front()->getCurrentViewMatrix();
+		}else{
+			ofLogWarning() << "No renderer in renderer collection, but current view matrix requested. Returning identity matrix.";
+			return ofMatrix4x4::newIdentityMatrix();
+		}
+	}
+
 
 	// screen coordinate things / default gl values
 	 void setupGraphicDefaults(){
@@ -316,18 +400,23 @@ public:
 	 }; // hex, like web 0xFF0033;
 
 	// bg color
-	ofFloatColor & getBgColor(){
+	ofColor getBackgroundColor(){
 		 if(renderers.size()){
-			 return renderers[0]->getBgColor();
+			 return renderers[0]->getBackgroundColor();
 		 }else{
-			 static ofFloatColor c;
-			 return c;
+			 return ofColor(200);
 		 }
 	}
 
-	bool bClearBg(){
+	void setBackgroundColor(const ofColor & color){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->setBackgroundColor(color);
+		 }
+	}
+
+	bool getBackgroundAuto(){
 		 if(renderers.size()){
-			 return renderers[0]->bClearBg();
+			 return renderers[0]->getBackgroundAuto();
 		 }else{
 			 return true;
 		 }
@@ -363,16 +452,24 @@ public:
 		 }
 	}
 
+	void clear(){
+		 for(int i=0;i<(int)renderers.size();i++){
+			 renderers[i]->clear();
+		 }
+	}
+
 	void clear(float r, float g, float b, float a=0){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->clear(r,g,b,a);
 		 }
 	}
+
 	void clear(float brightness, float a=0){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->clear(brightness,a);
 		 }
 	}
+
 	void clearAlpha(){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->clearAlpha();
@@ -437,16 +534,20 @@ public:
 	}
 	void enablePointSprites(){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->enablePointSprites();
+			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
+				 ((shared_ptr<ofBaseGLRenderer>&)renderers[i])->enablePointSprites();
+			 }
 		 }
 	}
 	void disablePointSprites(){
 		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->disablePointSprites();
+			 if(renderers[i]->getType()=="GL" || renderers[i]->getType()=="ProgrammableGL"){
+				 ((shared_ptr<ofBaseGLRenderer>&)renderers[i])->disablePointSprites();
+			 }
 		 }
 	}
 
-	void enableAntiaAliasing(){
+	void enableAntiAliasing(){
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->enableAntiAliasing();
 		 }

@@ -28,7 +28,7 @@ ofxEmscriptenVideoGrabber::~ofxEmscriptenVideoGrabber() {
 	// TODO Auto-generated destructor stub
 }
 
-vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices(){
+vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices() const{
 	return vector<ofVideoDevice>();
 }
 
@@ -56,6 +56,10 @@ bool ofxEmscriptenVideoGrabber::initGrabber(int w, int h){
 	}
 }
 
+bool ofxEmscriptenVideoGrabber::isInitialized() const{
+	return texture.isAllocated();
+}
+
 void ofxEmscriptenVideoGrabber::update(){
 	if(html5video_grabber_update(id,usePixels,pixels.getPixels())){
 		texture.texData.width = html5video_grabber_width(id);
@@ -63,8 +67,6 @@ void ofxEmscriptenVideoGrabber::update(){
 		texture.texData.tex_w = texture.texData.width;
 		texture.texData.tex_h = texture.texData.height;
 		if(texture.texData.textureID!=html5video_grabber_texture_id(id)){
-			texture.texData.textureID = html5video_grabber_texture_id(id);
-			texture.texData.bUseExternalTextureID = true;
 			texture.texData.bFlipTexture = false;
 			switch(getPixelFormat()){
 			case OF_PIXELS_RGBA:
@@ -84,19 +86,20 @@ void ofxEmscriptenVideoGrabber::update(){
 			texture.texData.tex_t = 1;
 			texture.texData.textureTarget = GL_TEXTURE_2D;
 			texture.texData.bAllocated = true;
+			texture.setUseExternalTextureID(html5video_grabber_texture_id(id));
 		}
 	}
 }
 
-bool ofxEmscriptenVideoGrabber::isFrameNew(){
+bool ofxEmscriptenVideoGrabber::isFrameNew() const{
 	return html5video_grabber_ready_state(id)>=HAVE_METADATA;
 }
 
-unsigned char * ofxEmscriptenVideoGrabber::getPixels(){
-	return pixels.getPixels();
+ofPixels & ofxEmscriptenVideoGrabber::getPixels(){
+	return pixels;
 }
 
-ofPixels & ofxEmscriptenVideoGrabber::getPixelsRef(){
+const ofPixels & ofxEmscriptenVideoGrabber::getPixels() const{
 	return pixels;
 }
 
@@ -104,11 +107,11 @@ void ofxEmscriptenVideoGrabber::close(){
 
 }
 
-float ofxEmscriptenVideoGrabber::getHeight(){
+float ofxEmscriptenVideoGrabber::getHeight() const{
 	return texture.getHeight();
 }
 
-float ofxEmscriptenVideoGrabber::getWidth(){
+float ofxEmscriptenVideoGrabber::getWidth() const{
 	return texture.getWidth();
 }
 
@@ -130,7 +133,7 @@ bool ofxEmscriptenVideoGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 	return true;
 }
 
-ofPixelFormat ofxEmscriptenVideoGrabber::getPixelFormat(){
+ofPixelFormat ofxEmscriptenVideoGrabber::getPixelFormat() const{
 	string format = html5video_grabber_pixel_format(id);
 	if(format == "RGB"){
 		return OF_PIXELS_RGB;

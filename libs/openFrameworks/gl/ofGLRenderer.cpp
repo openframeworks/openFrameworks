@@ -15,8 +15,8 @@
 const string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------
-ofGLRenderer::ofGLRenderer(bool useShapeColor)
-:matrixStack(*ofGetWindowPtr()){
+ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * window)
+:matrixStack(window){
 	bBackgroundAuto = true;
 
 	linePoints.resize(2);
@@ -27,6 +27,27 @@ ofGLRenderer::ofGLRenderer(bool useShapeColor)
 	normalsEnabled = false;
 	lightingEnabled = true;
 	rectMode = OF_RECTMODE_CORNER;
+	alphaMaskTextureTarget = GL_TEXTURE_2D;
+}
+
+void ofGLRenderer::startRender(){
+	viewport();
+    // to do non auto clear on PC for now - we do something like "single" buffering --
+    // it's not that pretty but it work for the most part
+
+    #ifdef TARGET_WIN32
+    if (getBackgroundAuto() == false){
+        glDrawBuffer (GL_FRONT);
+    }
+    #endif
+
+	if ( getBackgroundAuto() ){// || ofGetFrameNum() < 3){
+		clear();
+	}
+}
+
+void ofGLRenderer::finishRender(){
+
 }
 
 //----------------------------------------------------------
@@ -35,7 +56,7 @@ void ofGLRenderer::update(){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
+void ofGLRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
 	if(vertexData.getNumVertices()){
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData.getVerticesPointer()->x);
@@ -83,8 +104,8 @@ void ofGLRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, b
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
-		if (bSmoothHinted) startSmoothing();
+void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
+		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->startSmoothing();
 #ifndef TARGET_OPENGLES
 		glPushAttrib(GL_POLYGON_BIT);
 		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
@@ -147,78 +168,71 @@ void ofGLRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool u
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 #endif
-		if (bSmoothHinted) endSmoothing();
+		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
-	// FIXME: we don't need this anymore since GL_NORMALIZE is enabled on lighting
-	// leaving it comented just in case. it's also safe to remove this method completely
-	// from the renderers hierarchy
-
-    /*bool normalsEnabled = glIsEnabled( GL_NORMALIZE );
-    if(model.hasScaling() && model.hasNormalsEnabled()) {
-        if(!normalsEnabled) glEnable( GL_NORMALIZE );
-    }*/
-
-    model.getMesh().draw(renderType);
-
-    /*if(model.hasScaling() && model.hasNormalsEnabled()) {
-        if(!normalsEnabled) glDisable( GL_NORMALIZE );
-    }*/
-
+void ofGLRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType)  const{
+	if(model.isUsingVbo()){
+		model.getMesh().draw(renderType);
+	}else{
+		draw(model.getMesh(),renderType);
+	}
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofPolyline & poly){
+void ofGLRenderer::draw(const ofPolyline & poly) const{
 	if(!poly.getVertices().empty()) {
 		// use smoothness, if requested:
-		if (bSmoothHinted) startSmoothing();
+		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
 		// use smoothness, if requested:
-		if (bSmoothHinted) endSmoothing();
+		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->endSmoothing();
 	}
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofPath & shape){
+void ofGLRenderer::draw(const ofPath & shape) const{
 	ofColor prevColor;
 	if(shape.getUseShapeColor()){
 		prevColor = ofGetStyle().color;
 	}
+	ofGLRenderer * mut_this = const_cast<ofGLRenderer*>(this);
 	if(shape.isFilled()){
-		ofMesh & mesh = shape.getTessellation();
+		const ofMesh & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
-			setColor( shape.getFillColor(),shape.getFillColor().a);
+			mut_this->setColor( shape.getFillColor(),shape.getFillColor().a);
 		}
-		draw(mesh);
+		draw(mesh,OF_MESH_FILL);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			setColor( shape.getStrokeColor(), shape.getStrokeColor().a);
+			mut_this->setColor( shape.getStrokeColor(), shape.getStrokeColor().a);
 		}
-		setLineWidth( shape.getStrokeWidth() );
-		vector<ofPolyline> & outlines = shape.getOutline();
+		mut_this->setLineWidth( shape.getStrokeWidth() );
+		const vector<ofPolyline> & outlines = shape.getOutline();
 		for(int i=0; i<(int)outlines.size(); i++)
 			draw(outlines[i]);
-		setLineWidth(lineWidth);
+		mut_this->setLineWidth(lineWidth);
 	}
 	if(shape.getUseShapeColor()){
-		setColor(prevColor);
+		mut_this->setColor(prevColor);
 	}
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		ofTexture& tex = image.getTextureReference();
-		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		const ofTexture& tex = image.getTexture();
+		if(tex.isAllocated()) {
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLRenderer") << "drawing an unallocated texture";
 		}
@@ -226,11 +240,13 @@ void ofGLRenderer::draw(ofImage & image, float x, float y, float z, float w, flo
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		ofTexture& tex = image.getTextureReference();
-		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		const ofTexture& tex = image.getTexture();
+		if(tex.isAllocated()) {
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
 		}
@@ -238,11 +254,13 @@ void ofGLRenderer::draw(ofFloatImage & image, float x, float y, float z, float w
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		ofTexture& tex = image.getTextureReference();
-		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		const ofTexture& tex = image.getTexture();
+		if(tex.isAllocated()) {
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
 		}
@@ -250,7 +268,31 @@ void ofGLRenderer::draw(ofShortImage & image, float x, float y, float z, float w
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setCurrentFBO(ofFbo * fbo){
+void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
+	if(video.isInitialized() && video.isUsingTexture()){
+		const ofTexture& tex = video.getTexture();
+		tex.bind();
+		draw(tex.getMeshForSubsection(x,y,0,w,h,0,0,w,h),false,true,false);
+		tex.unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofBaseVideoDraws & video) const{
+	if(video.isInitialized() && video.isUsingTexture()){
+		video.getTexture().bind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofBaseVideoDraws & video) const{
+	if(video.isInitialized() && video.isUsingTexture()){
+		video.getTexture().unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::setCurrentFBO(const ofFbo * fbo){
 	if(fbo!=NULL){
 		ofMatrix4x4 m;
 		glGetFloatv(GL_PROJECTION_MATRIX,m.getPtr());
@@ -318,28 +360,29 @@ void ofGLRenderer::viewport(float x, float y, float width, float height, bool vf
 }
 
 //----------------------------------------------------------
-ofRectangle ofGLRenderer::getCurrentViewport(){
+ofRectangle ofGLRenderer::getCurrentViewport() const{
 	getNativeViewport();
 	return matrixStack.getCurrentViewport();
 }
 
 //----------------------------------------------------------
-ofRectangle ofGLRenderer::getNativeViewport(){
+ofRectangle ofGLRenderer::getNativeViewport() const{
 	GLint viewport[4];					// Where The Viewport Values Will Be Stored
 	glGetIntegerv(GL_VIEWPORT, viewport);
 
+	ofGLRenderer * mutRenderer = const_cast<ofGLRenderer*>(this);
 	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-	matrixStack.nativeViewport(nativeViewport);
+	mutRenderer->matrixStack.nativeViewport(nativeViewport);
     return nativeViewport;
 }
 
 //----------------------------------------------------------
-int ofGLRenderer::getViewportWidth(){
+int ofGLRenderer::getViewportWidth() const{
 	return getCurrentViewport().width;
 }
 
 //----------------------------------------------------------
-int ofGLRenderer::getViewportHeight(){
+int ofGLRenderer::getViewportHeight() const{
 	return getCurrentViewport().height;
 }
 
@@ -349,7 +392,7 @@ void ofGLRenderer::setCoordHandedness(ofHandednessType handedness) {
 }
 
 //----------------------------------------------------------
-ofHandednessType ofGLRenderer::getCoordHandedness() {
+ofHandednessType ofGLRenderer::getCoordHandedness() const{
 	return matrixStack.getHandedness();
 }
 
@@ -659,6 +702,11 @@ void ofGLRenderer::setHexColor(int hexColor){
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::clear(){
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::clear(float r, float g, float b, float a) {
 	glClearColor(r / 255., g / 255., b / 255., a / 255.);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -683,19 +731,24 @@ void ofGLRenderer::setBackgroundAuto(bool bAuto){
 }
 
 //----------------------------------------------------------
-bool ofGLRenderer::bClearBg(){
+bool ofGLRenderer::getBackgroundAuto(){
 	return bBackgroundAuto;
 }
 
 //----------------------------------------------------------
-ofFloatColor & ofGLRenderer::getBgColor(){
+ofColor ofGLRenderer::getBackgroundColor(){
 	return bgColor;
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::setBackgroundColor(const ofColor & color){
+	bgColor = color;
+ 	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::background(const ofColor & c){
-	bgColor = c;
-	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+	setBackgroundColor(c);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -977,27 +1030,9 @@ void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float hei
 
 //----------------------------------------------------------
 void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
-	// remember the current blend mode so that we can restore it at the end of this method.
-	GLint blend_src, blend_dst;
-	glGetIntegerv( GL_BLEND_SRC, &blend_src );
-	glGetIntegerv( GL_BLEND_DST, &blend_dst );
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
-	int len = (int)textString.length();
 	float fontSize = 8.0f;
-	float lineHeight = fontSize*1.7f;
-	int newLineDirection = 1.0f;
-
-	if(!ofIsVFlipped()){
-		newLineDirection  = -1;
-		// this would align multiline texts to the last line when vflip is disabled
-		//int lines = ofStringTimesInString(textString,"\n");
-		//y = lines*lineHeight;
-	}
-
 	float sx = 0;
 	float sy = -fontSize;
 
@@ -1125,50 +1160,31 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 		default:
 			break;
 	}
-	//
-	///////////////////////////
+	// remember the current blend mode so that we can restore it at the end of this method.
+	GLint blend_src, blend_dst;
+	glGetIntegerv( GL_BLEND_SRC, &blend_src );
+	glGetIntegerv( GL_BLEND_DST, &blend_dst );
 
-	// tig: we switch over to our built-in bitmapstring shader
-	// to render text. This gives us more flexibility & control
-	// and does not mess/interfere with client side shaders.
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#ifndef TARGET_OPENGLES
+	// this temporarily enables alpha testing,
+	// which discards pixels unless their alpha is 1.0f
+	glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0);
+#endif
 
+	ofMesh charMesh = ofBitmapStringGetMesh(textString,0,0,mode);
+	ofBitmapStringGetTextureRef().bind();
+	draw(charMesh,OF_MESH_FILL,false,true,false);
+	ofBitmapStringGetTextureRef().unbind();
 
-	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
-	//We do this because its way faster
-	ofDrawBitmapCharacterStart(textString.size());
-
-	int column = 0;
-
-	for(int c = 0; c < len; c++){
-		if(textString[c] == '\n'){
-
-			sy += lineHeight*newLineDirection;
-			if(mode == OF_BITMAPMODE_SIMPLE) {
-				sx = x;
-			} else {
-				sx = 0;
-			}
-
-			column = 0;
-		} else if (textString[c] == '\t'){
-			//move the cursor to the position of the next tab
-			//8 is the default tab spacing in osx terminal and windows	 command line
-			int out = column + 8 - (column % 8);
-			sx += fontSize * (out-column);
-			column = out;
-		} else if (textString[c] >= 32){
-			// < 32 = control characters - don't draw
-			// solves a bug with control characters
-			// getting drawn when they ought to not be
-			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
-
-			sx += fontSize;
-			column++;
-		}
-	}
-	//We do this because its way faster
-	ofDrawBitmapCharacterEnd();
-
+#ifndef TARGET_OPENGLES
+	glPopAttrib();
+#endif
+	// restore blendmode
+	glBlendFunc(blend_src, blend_dst);
 
 	if (hasModelView)
 		popMatrix();
@@ -1183,8 +1199,6 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	if (hasViewport)
 		popView();
 
-	// restore blendmode
-	glBlendFunc(blend_src, blend_dst);
 }
 
 //----------------------------------------------------------

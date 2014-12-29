@@ -11,25 +11,24 @@ class ofAppBaseGLESWindow;
 class ofBaseApp;
 class ofBaseRenderer;
 
-void 		ofSetupOpenGL(int w, int h, int screenMode);	// sets up the opengl context!
+void 		ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
 #ifdef TARGET_OPENGLES
 void		ofSetOpenGLESVersion(int version);
 int			ofGetOpenGLESVersion();
 string		ofGetGLSLVersion();
-void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
-void 		ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, int screenMode);  // will be deprecated
+void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
+void 		ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, ofWindowMode screenMode);  // will be deprecated
 #else
 void		ofSetOpenGLVersion(int major, int minor);
 int			ofGetOpenGLVersionMajor();
 int			ofGetOpenGLVersionMinor();
 string		ofGetGLSLVersion();
-void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, int screenMode);	// sets up the opengl context!
-void 		ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, int screenMode);  // will be deprecated
+void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
+void 		ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, ofWindowMode screenMode);  // will be deprecated
 #endif
 void		ofSetWindow(ofAppBaseWindow * windowPtr);
 void		ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr);
-void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, int screenMode));
-//void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(shared_ptr<ofAppBaseWindow> windowPtr, int w, int h, int screenMode));
+void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode screenMode));
 
 void 		ofRunApp(shared_ptr<ofBaseApp> OFSA);
 void 		ofRunApp(ofBaseApp * OFSA = NULL); // will be deprecated
@@ -45,7 +44,6 @@ float 		ofGetFrameRate();
 float 		ofGetTargetFrameRate();
 int			ofGetFrameNum();
 void 		ofSetFrameRate(int targetRate);
-void		ofSleepMillis(int millis);
 double		ofGetLastFrameTime();
 
 void		ofSetOrientation(ofOrientation orientation, bool vFlip=true);

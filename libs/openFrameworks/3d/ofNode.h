@@ -143,13 +143,13 @@ public:
 	// draw function. do NOT override this
 	// transforms the node to its position+orientation+scale
 	// and calls the virtual 'customDraw' method above which you CAN override
-	void draw();
+	void draw() const;
 	
 protected:
 	ofNode *parent;
 	
 	void createMatrix();
-	
+	void updateAxis();
 	
 	// classes extending ofNode can override these methods to get notified 
 	virtual void onPositionChanged() {}

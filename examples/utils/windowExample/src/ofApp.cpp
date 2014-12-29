@@ -8,7 +8,7 @@ void ofApp::setup(){
 	ofSetWindowPosition(screenW/2-300/2, screenH/2-300/2);
 	
 	// load our typeface
-	vagRounded.loadFont("vag.ttf", 16);
+	vagRounded.load("vag.ttf", 16);
 
 	bFullscreen	= 0;
 	
@@ -96,7 +96,7 @@ void ofApp::draw(){
 	
 
 	ofSetHexColor(0xFFFFFF);
-	ofCircle(ballPositionX, ballPositionY, 15);
+	ofDrawCircle(ballPositionX, ballPositionY, 15);
 }
 
 

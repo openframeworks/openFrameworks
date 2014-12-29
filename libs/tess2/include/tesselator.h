@@ -162,7 +162,7 @@ int tessGetElementCount( TESStesselator *tess );
 const TESSindex* tessGetElements( TESStesselator *tess );
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif // TESSELATOR_H

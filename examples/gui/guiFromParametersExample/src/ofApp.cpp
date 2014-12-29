@@ -55,10 +55,10 @@ void ofApp::draw(){
 
 	ofSetColor(color);
 	if(twoCircles){
-		ofCircle(center->x-radius*.5, center->y, radius );
-		ofCircle(center->x+radius*.5, center->y, radius );
+		ofDrawCircle(center->x-radius*.5, center->y, radius );
+		ofDrawCircle(center->x+radius*.5, center->y, radius );
 	}else{
-		ofCircle((ofVec2f)center, radius );
+		ofDrawCircle((ofVec2f)center, radius );
 	}
 	
 	if( bHide ){

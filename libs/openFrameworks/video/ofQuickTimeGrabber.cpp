@@ -100,13 +100,13 @@ bool ofQuickTimeGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofQuickTimeGrabber::getPixelFormat(){
+ofPixelFormat ofQuickTimeGrabber::getPixelFormat() const {
 	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
 	return OF_PIXELS_RGB;
 }
 
 //--------------------------------------------------------------------
-bool ofQuickTimeGrabber::initGrabber(int w, int h){
+bool ofQuickTimeGrabber::setup(int w, int h){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -246,7 +246,12 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofQuickTimeGrabber::listDevices(){
+bool ofQuickTimeGrabber::isInitialized() const{
+    return bGrabberInited;
+}
+
+//--------------------------------------------------------------------
+vector<ofVideoDevice> ofQuickTimeGrabber::listDevices() const{
 
     vector <ofVideoDevice> devices; 
     
@@ -392,27 +397,27 @@ void ofQuickTimeGrabber::update(){
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofQuickTimeGrabber::getPixels(){
-	return pixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-ofPixelsRef ofQuickTimeGrabber::getPixelsRef(){
+ofPixels& ofQuickTimeGrabber::getPixels(){
 	return pixels;
 }
 
 //---------------------------------------------------------------------------
-bool  ofQuickTimeGrabber::isFrameNew(){
+const ofPixels& ofQuickTimeGrabber::getPixels() const {
+	return pixels;
+}
+
+//---------------------------------------------------------------------------
+bool  ofQuickTimeGrabber::isFrameNew() const {
 	return bIsFrameNew;
 }
 
 //--------------------------------------------------------------------
-float ofQuickTimeGrabber::getWidth(){
+float ofQuickTimeGrabber::getWidth() const {
 	return pixels.getWidth();
 }	
 
 //--------------------------------------------------------------------
-float ofQuickTimeGrabber::getHeight(){
+float ofQuickTimeGrabber::getHeight() const {
 	return pixels.getHeight();
 }
 

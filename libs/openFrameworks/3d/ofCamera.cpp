@@ -16,6 +16,9 @@ vFlip(false)
 }
 
 //----------------------------------------
+ofCamera::~ofCamera() {}
+
+//----------------------------------------
 void ofCamera::setFov(float f) {
 	fov = f;
 }
@@ -73,8 +76,8 @@ void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float fa
 void ofCamera::setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight){
 	ofVec3f bottomEdge = bottomRight - bottomLeft; // plane x axis
 	ofVec3f leftEdge = topLeft - bottomLeft; // plane y axis
-	ofVec3f bottomEdgeNorm = bottomEdge.normalized();
-	ofVec3f leftEdgeNorm = leftEdge.normalized();
+	ofVec3f bottomEdgeNorm = bottomEdge.getNormalized();
+	ofVec3f leftEdgeNorm = leftEdge.getNormalized();
 	ofVec3f bottomLeftToCam = this->getPosition() - bottomLeft;
 	
 	ofVec3f cameraLookVector = leftEdgeNorm.getCrossed(bottomEdgeNorm);
@@ -129,9 +132,6 @@ void ofCamera::begin(ofRectangle viewport) {
 	if(!isActive) ofPushView();
 	isActive = true;
 
-	// autocalculate near/far clip planes if not set by user
-	calcClipPlanes(viewport);
-
 	ofViewport(viewport.x,viewport.y,viewport.width,viewport.height);
 	ofSetOrientation(ofGetOrientation(),vFlip);
 
@@ -154,6 +154,9 @@ void ofCamera::end() {
 
 //----------------------------------------
 ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
+	// autocalculate near/far clip planes if not set by user
+	const_cast<ofCamera*>(this)->calcClipPlanes(viewport);
+
 	if(isOrtho) {
 		return ofMatrix4x4::newOrthoMatrix(0, viewport.width, 0, viewport.height, nearClip, farClip);
 	}else{

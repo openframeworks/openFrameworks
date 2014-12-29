@@ -115,10 +115,12 @@ public:
 	bool hasTexCoords() const;
 	bool hasIndices() const;
 	
-	void drawVertices();
-	void drawWireframe();
-	void drawFaces();
-	void draw();
+	void drawVertices() const;
+	void drawWireframe() const;
+	void drawFaces() const;
+	void draw() const;
+
+	virtual void draw(ofPolyRenderMode renderType) const;
 
 	void load(string path);
 	void save(string path, bool useBinary = false) const;
@@ -138,7 +140,7 @@ public:
     virtual bool usingNormals() const;
     virtual bool usingIndices() const;
 
-    void append(ofMesh & mesh);
+    void append(const ofMesh & mesh);
     
     void setColorForIndices( int startIndex, int endIndex, ofColor color );
     ofMesh getMeshForIndices( int startIndex, int endIndex ) const;
@@ -158,8 +160,6 @@ public:
     static ofMesh cone(float radius, float height, int radiusSegments=12, int heightSegments=6, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh box(float width, float height, float depth, int resX=2, int resY=2, int resZ=2);
     static ofMesh axis(float size=1.0);
-	
-	virtual void draw(ofPolyRenderMode renderType);
 
 private:
 

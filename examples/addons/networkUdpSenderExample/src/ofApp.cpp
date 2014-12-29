@@ -28,7 +28,7 @@ void ofApp::draw(){
 	ofDrawBitmapString("openFrameworks UDP Send Example ", 15, 30);
     ofDrawBitmapString("drag to draw", 15, 50);
 	for(unsigned int i=1;i<stroke.size();i++){
-		ofLine(stroke[i-1].x,stroke[i-1].y,stroke[i].x,stroke[i].y);
+		ofDrawLine(stroke[i-1].x,stroke[i-1].y,stroke[i].x,stroke[i].y);
 	}
 
 }

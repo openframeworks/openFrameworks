@@ -150,9 +150,6 @@ static void release(GLuint id){
 //----------------------------------------------------------
 ofTexture::ofTexture(){
 	resetAnchor();
-	quad.getVertices().resize(4);
-	quad.getTexCoords().resize(4);
-	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
 	bWantsMipmap = false;
 }
 
@@ -161,7 +158,6 @@ ofTexture::ofTexture(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
-	quad = mom.quad;
 	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
 }
@@ -174,19 +170,18 @@ ofTexture& ofTexture::operator=(const ofTexture & mom){
 	anchor = mom.anchor;
 	bAnchorIsPct = mom.bAnchorIsPct;
 	texData = mom.texData;
-	quad = mom.quad;
 	bWantsMipmap = mom.bWantsMipmap;
 	retain(texData.textureID);
 	return *this;
 }
 
 //----------------------------------------------------------
-bool ofTexture::bAllocated(){
+bool ofTexture::bAllocated() const {
 	return texData.bAllocated;
 }
 
 //----------------------------------------------------------
-bool ofTexture::isAllocated(){
+bool ofTexture::isAllocated() const {
 	return texData.bAllocated;
 }
 
@@ -234,11 +229,11 @@ void ofTexture::setUseExternalTextureID(GLuint externTexID){
 }
 
 
-void ofTexture::enableTextureTarget(int textureLocation){
+void ofTexture::enableTextureTarget(int textureLocation) const{
 	if(ofGetGLRenderer()) ofGetGLRenderer()->enableTextureTarget(texData.textureTarget, texData.textureID, textureLocation);
 }
 
-void ofTexture::disableTextureTarget(int textureLocation){
+void ofTexture::disableTextureTarget(int textureLocation) const{
 	if(ofGetGLRenderer()) ofGetGLRenderer()->disableTextureTarget(texData.textureTarget, textureLocation);
 }
 
@@ -248,8 +243,8 @@ void ofTexture::allocate(int w, int h, int internalGlDataType){
 }
 
 //----------------------------------------------------------
-void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention){
-	allocate(w, h, internalGlDataType, bUseARBExtention, ofGetGLFormatFromInternal(internalGlDataType), ofGetGlTypeFromInternal(internalGlDataType));
+void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtension){
+	allocate(w, h, internalGlDataType, bUseARBExtension, ofGetGLFormatFromInternal(internalGlDataType), ofGetGlTypeFromInternal(internalGlDataType));
 }
 
 //----------------------------------------------------------
@@ -260,43 +255,49 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, int glFormat, int
 //----------------------------------------------------------
 void ofTexture::allocate(const ofPixels& pix){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 //----------------------------------------------------------
 void ofTexture::allocate(const ofPixels& pix, bool bUseARBExtention){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 //----------------------------------------------------------
 void ofTexture::allocate(const ofShortPixels& pix){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 //----------------------------------------------------------
 void ofTexture::allocate(const ofShortPixels& pix, bool bUseARBExtention){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 
 //----------------------------------------------------------
 void ofTexture::allocate(const ofFloatPixels& pix){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), ofGetUsingArbTex(), ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 //----------------------------------------------------------
 void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
 	allocate(pix.getWidth(), pix.getHeight(), ofGetGlInternalFormat(pix), bUseARBExtention, ofGetGlFormat(pix), ofGetGlType(pix));
+	loadData(pix);
 }
 
 //----------------------------------------------------------
-void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtention, int glFormat, int pixelType){
+void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtension, int glFormat, int pixelType){
 	texData.width = w;
 	texData.height = h;
 	texData.bFlipTexture = false;
 	texData.glTypeInternal = internalGlDataType;
 	//our graphics card might not support arb so we have to see if it is supported.
 #ifndef TARGET_OPENGLES
-	if (bUseARBExtention && GL_ARB_texture_rectangle){
+	if (bUseARBExtension && GL_ARB_texture_rectangle){
 		texData.textureTarget = GL_TEXTURE_RECTANGLE_ARB;
 	} else 
 #endif
@@ -432,58 +433,66 @@ void ofTexture::setSwizzle(GLenum srcSwizzle, GLenum dstChannel){
 
 //----------------------------------------------------------
 void ofTexture::loadData(const unsigned char * data, int w, int h, int glFormat){
-	ofSetPixelStorei(w,1,ofGetNumChannelsFromGLFormat(glFormat));
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,1,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_UNSIGNED_BYTE);
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const unsigned short * data, int w, int h, int glFormat){
-	ofSetPixelStorei(w,2,ofGetNumChannelsFromGLFormat(glFormat));
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,2,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_UNSIGNED_SHORT);
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const float * data, int w, int h, int glFormat){
-	ofSetPixelStorei(w,4,ofGetNumChannelsFromGLFormat(glFormat));
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,w,4,ofGetNumChannelsFromGLFormat(glFormat));
 	loadData(data, w, h, glFormat, GL_FLOAT);
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofPixels & pix){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,pix.getBytesStride());
+	loadData(pix.getData(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofShortPixels & pix){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,pix.getBytesStride());
+	loadData(pix.getData(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofFloatPixels & pix){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),pix.getNumChannels());
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,pix.getBytesStride());
+	loadData(pix.getData(), pix.getWidth(), pix.getHeight(), ofGetGlFormat(pix), ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofPixels & pix, int glFormat){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(pix.getData(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofShortPixels & pix, int glFormat){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(pix.getData(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
 }
 
 //----------------------------------------------------------
 void ofTexture::loadData(const ofFloatPixels & pix, int glFormat){
-	ofSetPixelStorei(pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
-	loadData(pix.getPixels(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
+	ofSetPixelStoreiAlignment(GL_UNPACK_ALIGNMENT,pix.getWidth(),pix.getBytesPerChannel(),ofGetNumChannelsFromGLFormat(glFormat));
+	loadData(pix.getData(), pix.getWidth(), pix.getHeight(), glFormat, ofGetGlType(pix));
 }
 
+#ifndef TARGET_OPENGLES
+//----------------------------------------------------------
+void ofTexture::loadData(const ofBufferObject & buffer, int glFormat, int glType){
+	buffer.bind(GL_PIXEL_UNPACK_BUFFER);
+	loadData(0,texData.width,texData.height,glFormat,glType);
+	buffer.unbind(GL_PIXEL_UNPACK_BUFFER);
+}
+#endif
 
 //----------------------------------------------------------
 void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glType){
@@ -659,7 +668,7 @@ void ofTexture::resetAnchor(){
 }
 
 //----------------------------------------------------------
-void ofTexture::bind(int textureLocation){
+void ofTexture::bind(int textureLocation) const{
 	//we could check if it has been allocated - but we don't do that in draw() 
 	if(texData.alphaMask){
 		ofGetGLRenderer()->setAlphaMaskTex(*texData.alphaMask);
@@ -693,7 +702,7 @@ void ofTexture::bind(int textureLocation){
 }
 
 //----------------------------------------------------------
-void ofTexture::unbind(int textureLocation){
+void ofTexture::unbind(int textureLocation) const{
 
 	disableTextureTarget(textureLocation);
 	if(texData.alphaMask){
@@ -709,6 +718,14 @@ void ofTexture::unbind(int textureLocation){
 	texData.isBound = false;
 }
 
+#ifndef TARGET_OPENGLES
+//----------------------------------------------------------
+void ofTexture::bindAsImage(GLuint unit, GLenum access, GLint level, GLboolean layered, GLint layer){
+	glBindImageTexture(unit,texData.textureID,level,layered,layer,access,texData.glTypeInternal);
+}
+#endif
+
+//----------------------------------------------------------
 void ofTexture::setAlphaMask(ofTexture & mask){
 	if(mask.texData.textureTarget!=this->texData.textureTarget){
 		ofLogError("ofTexture") << "Cannot set alpha mask with different texture target";
@@ -717,6 +734,7 @@ void ofTexture::setAlphaMask(ofTexture & mask){
 	}
 }
 
+//----------------------------------------------------------
 void ofTexture::disableAlphaMask(){
 	if(texData.alphaMask){
 		texData.alphaMask.reset();
@@ -725,11 +743,11 @@ void ofTexture::disableAlphaMask(){
 
 
 //----------------------------------------------------------
-ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos){
+ofPoint ofTexture::getCoordFromPoint(float xPos, float yPos) const{
 	
 	ofPoint temp;
 	
-	if (!bAllocated()) return temp;
+	if (!isAllocated()) return temp;
 	
 #ifndef TARGET_OPENGLES	
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
@@ -772,11 +790,11 @@ void ofTexture::disableTextureMatrix(){
 }
 
 //----------------------------------------------------------
-ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct){
+ofPoint ofTexture::getCoordFromPercent(float xPct, float yPct) const{
 	
 	ofPoint temp;
 	
-	if (!bAllocated()) return temp;
+	if (!isAllocated()) return temp;
 	
 #ifndef TARGET_OPENGLES	
 	if (texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB){
@@ -859,51 +877,52 @@ void ofTexture::disableMipmap(){
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y){
+void ofTexture::draw(float x, float y) const{
 	draw(x,y,0,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float z){
+void ofTexture::draw(float x, float y, float z) const{
 	draw(x,y,z,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float w, float h){
+void ofTexture::draw(float x, float y, float w, float h) const{
 	draw(x,y,0,w,h);
 }
 
 //------------------------------------
-void ofTexture::draw(float x, float y, float z, float w, float h){
+void ofTexture::draw(float x, float y, float z, float w, float h) const{
 	drawSubsection(x,y,z,w,h,0,0,getWidth(),getHeight());
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy){
-	drawSubsection(x,y,0,w,h,sx,sy,getWidth(),getHeight());
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy) const{
+	drawSubsection(x,y,0,w,h,sx,sy,w,h);
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh){
+void ofTexture::drawSubsection(float x, float y, float w, float h, float sx, float sy, float _sw, float _sh) const{
 	drawSubsection(x,y,0,w,h,sx,sy,_sw,_sh);
 }
 
 //------------------------------------
-void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy){
-	drawSubsection(x,y,z,w,h,sx,sy,getWidth(),getHeight());
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy) const{
+	drawSubsection(x,y,z,w,h,sx,sy,w,h);
 }
 
-//----------------------------------------------------------
-void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) {
+//------------------------------------
+ofMesh ofTexture::getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+	ofMesh quad;
 	if(!texData.bAllocated){
-		return;
+		return quad;
 	}
 
 	GLfloat px0 = x;		// up to you to get the aspect ratio right
 	GLfloat py0 = y;
 	GLfloat px1 = w+x;
 	GLfloat py1 = h+y;
-	
+
 	if (texData.bFlipTexture == ofIsVFlipped()){
 		swap(py0,py1);
 	}
@@ -915,13 +934,13 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 		px1 -= w/2;
 		py1 -= h/2;
 	}
-	
+
 	//we translate our drawing points by our anchor point.
 	//we still respect ofRectMode so if you have rect mode set to
 	//OF_RECTMODE_CENTER your anchor will be relative to that.
 	GLfloat anchorX;
 	GLfloat anchorY;
-	
+
 	if(bAnchorIsPct){
 		anchorX = anchor.x * w;
 		anchorY = anchor.y * h;
@@ -929,13 +948,13 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 		anchorX = anchor.x;
 		anchorY = anchor.y;
 	}
-	
+
 	px0 -= anchorX;
 	py0 -= anchorY;
 	px1 -= anchorX;
 	py1 -= anchorY;
-	
-	
+
+
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
 	// slightly, slightly alters an image, scaling...
@@ -943,16 +962,16 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	// we need a better solution for this, but
 	// to constantly add a 2 pixel border on all uploaded images
 	// is insane..
-	
+
 	GLfloat offsetw = 0.0f;
 	GLfloat offseth = 0.0f;
-	
+
 	if (!ofGLSupportsNPOTTextures() && bTexHackEnabled) {
 		offsetw = 1.0f / (texData.tex_w);
 		offseth = 1.0f / (texData.tex_h);
 	}
 	// -------------------------------------------------
-	
+
 	ofPoint topLeft = getCoordFromPoint(sx, sy);
 	ofPoint bottomRight = getCoordFromPoint(sx + sw, sy + sh);
 
@@ -961,15 +980,29 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 	GLfloat tx1 = bottomRight.x - offsetw;
 	GLfloat ty1 = bottomRight.y - offseth;
 
+	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	quad.getVertices().resize(4);
+	quad.getTexCoords().resize(4);
 	quad.getVertices()[0].set(px0,py0,z);
 	quad.getVertices()[1].set(px1,py0,z);
 	quad.getVertices()[2].set(px1,py1,z);
 	quad.getVertices()[3].set(px0,py1,z);
-	
+
 	quad.getTexCoords()[0].set(tx0,ty0);
 	quad.getTexCoords()[1].set(tx1,ty0);
 	quad.getTexCoords()[2].set(tx1,ty1);
 	quad.getTexCoords()[3].set(tx0,ty1);
+
+	return quad;
+}
+
+//----------------------------------------------------------
+void ofTexture::drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+	if(!texData.bAllocated){
+		return;
+	}
+
+	ofMesh quad = getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh);
 
 	// make sure we are on unit 0 - we may change this when setting shader samplers
 	// before glEnable or else the shader gets confused
@@ -985,7 +1018,7 @@ void ofTexture::drawSubsection(float x, float y, float z, float w, float h, floa
 
 // ROGER
 //----------------------------------------------------------
-void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4){
+void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const{
 	// -------------------------------------------------
 	// complete hack to remove border artifacts.
 	// slightly, slightly alters an image, scaling...
@@ -1008,10 +1041,14 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 	GLfloat tx1 = texData.tex_t - offsetw;
 	GLfloat ty1 = texData.tex_u - offseth;
 
-	quad.getVertices()[0].set(p1.x, p1.y);
-	quad.getVertices()[1].set(p2.x, p2.y);
-	quad.getVertices()[2].set(p3.x, p3.y);
-	quad.getVertices()[3].set(p4.x, p4.y);
+	ofMesh quad;
+	quad.getVertices().resize(4);
+	quad.getTexCoords().resize(4);
+	quad.setMode(OF_PRIMITIVE_TRIANGLE_FAN);
+	quad.getVertices()[0].set(p1.x, p1.y, p1.z);
+	quad.getVertices()[1].set(p2.x, p2.y, p2.z);
+	quad.getVertices()[2].set(p3.x, p3.y, p3.z);
+	quad.getVertices()[3].set(p4.x, p4.y, p4.z);
 	
 	quad.getTexCoords()[0].set(tx0,ty0);
 	quad.getTexCoords()[1].set(tx1,ty0);
@@ -1030,41 +1067,56 @@ void ofTexture::draw(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3,
 }
 
 //----------------------------------------------------------
-void ofTexture::readToPixels(ofPixels & pixels){
+void ofTexture::readToPixels(ofPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
+	ofSetPixelStoreiAlignment(GL_PACK_ALIGNMENT,pixels.getWidth(),pixels.getBytesPerChannel(),pixels.getNumChannels());
 	bind();
-	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_UNSIGNED_BYTE, pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_UNSIGNED_BYTE, pixels.getData());
 	unbind();
 #endif
 }
 
 //----------------------------------------------------------
-void ofTexture::readToPixels(ofShortPixels & pixels){
+void ofTexture::readToPixels(ofShortPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
+	ofSetPixelStoreiAlignment(GL_PACK_ALIGNMENT,pixels.getWidth(),pixels.getBytesPerChannel(),pixels.getNumChannels());
 	bind();
-	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_UNSIGNED_SHORT,pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_UNSIGNED_SHORT,pixels.getData());
 	unbind();
 #endif
 }
 
-//----------------------------------------------------------
-void ofTexture::readToPixels(ofFloatPixels & pixels){
+void ofTexture::readToPixels(ofFloatPixels & pixels) const {
 #ifndef TARGET_OPENGLES
 	pixels.allocate(texData.width,texData.height,ofGetImageTypeFromGLType(texData.glTypeInternal));
+	ofSetPixelStoreiAlignment(GL_PACK_ALIGNMENT,pixels.getWidth(),pixels.getBytesPerChannel(),pixels.getNumChannels());
 	bind();
-	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_FLOAT,pixels.getPixels());
+	glGetTexImage(texData.textureTarget,0,ofGetGlFormat(pixels),GL_FLOAT,pixels.getData());
 	unbind();
 #endif
 }
 
+#ifndef TARGET_OPENGLES
 //----------------------------------------------------------
-float ofTexture::getHeight(){
+void ofTexture::copyTo(ofBufferObject & buffer) const{
+	ofSetPixelStoreiAlignment(GL_PACK_ALIGNMENT,getWidth(),ofGetBytesPerChannelFromGLType(ofGetGlTypeFromInternal(texData.glTypeInternal)),ofGetNumChannelsFromGLFormat(ofGetGLFormatFromInternal(texData.glTypeInternal)));
+	buffer.bind(GL_PIXEL_PACK_BUFFER);
+	bind();
+	glGetTexImage(texData.textureTarget,0,ofGetGLFormatFromInternal(texData.glTypeInternal),ofGetGlTypeFromInternal(texData.glTypeInternal),0);
+	unbind();
+	buffer.unbind(GL_PIXEL_PACK_BUFFER);
+
+}
+#endif
+
+//----------------------------------------------------------
+float ofTexture::getHeight() const {
 	return texData.height;
 }
 
 //----------------------------------------------------------
-float ofTexture::getWidth(){
+float ofTexture::getWidth() const {
 	return texData.width;
 }

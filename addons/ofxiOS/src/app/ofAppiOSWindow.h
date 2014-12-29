@@ -33,16 +33,19 @@
 #pragma once
 
 #import "ofAppBaseWindow.h"
+#include "ofxiOSConstants.h"
 
 class ofAppiOSWindow : public ofAppBaseGLESWindow {
 public:
     
+    struct Settings;
+    
     static ofAppiOSWindow * getInstance();
 	
-	ofAppiOSWindow();
+	ofAppiOSWindow(Settings settings=Settings());
 	virtual ~ofAppiOSWindow();
     
-	virtual void setupOpenGL(int w, int h, int screenMode);
+	virtual void setupOpenGL(int w, int h, ofWindowMode screenMode);
 	virtual void initializeWindow();
 	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
     virtual void startAppWithDelegate(string appDelegateClassName);
@@ -66,7 +69,7 @@ public:
 	
 	virtual void setWindowTitle(string title);
 	
-	virtual int getWindowMode();
+	virtual ofWindowMode getWindowMode();
 	
 	virtual void setFullscreen(bool fullscreen);
 	virtual void toggleFullscreen();
@@ -89,10 +92,11 @@ public:
     bool isRendererES2();
     bool isRendererES1();
     
-    bool enableRetina();
+    bool enableRetina(float retinaScale=0);
     bool disableRetina();
     bool isRetinaEnabled();
     bool isRetinaSupportedOnDevice();
+    float getRetinaScale();
     
     bool enableDepthBuffer();
     bool disableDepthBuffer();
@@ -102,22 +106,31 @@ public:
     bool disableAntiAliasing();
     bool isAntiAliasingEnabled();
     int getAntiAliasingSampleCount();
+    
+    struct Settings {
+        bool enableRetina;
+        float retinaScale;
+        bool enableDepth;
+        bool enableAntiAliasing;
+        int numOfAntiAliasingSamples;
+        bool enableHardwareOrientation;
+        bool enableHardwareOrientationAnimation;
+        bool enableSetupScreen;
+        ofxiOSRendererType rendererType;
+        ofWindowMode windowMode;
+        
+        Settings();
+        bool operator!=(const Settings & other);
+    };
 	
 protected:
     
-    int windowMode;
+    Settings settings;
 
-	bool bEnableSetupScreen;
 	ofOrientation orientation;
-    bool bHardwareOrientation;
-    bool bOrientationIsAnimated;
 	
-    bool bRetinaEnabled;
     bool bRetinaSupportedOnDevice;
     bool bRetinaSupportedOnDeviceChecked;
-	bool bDepthEnabled;
-	bool bAntiAliasingEnabled;
-	int antiAliasingSamples;
 };
 
 OF_DEPRECATED_MSG("ofAppiPhoneWindow is deprecated, use ofAppiOSWindow instead.", typedef ofAppiOSWindow ofAppiPhoneWindow);

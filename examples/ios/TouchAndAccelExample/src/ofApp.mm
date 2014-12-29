@@ -11,7 +11,7 @@ void ofApp::setup(){
 	
 	balls.assign(10, Ball());
 	
-	arrow.loadImage("arrow.png");
+	arrow.load("arrow.png");
 	arrow.setAnchorPercent(1.0, 0.5);
 	
 	// initialize all of the Ball particles

@@ -109,7 +109,7 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
-void ofAppAndroidWindow::setupOpenGL(int w, int h, int screenMode){
+void ofAppAndroidWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
 	if(javaClass==0){
@@ -391,31 +391,10 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 	ofNotifyUpdate();
 
 
-	if(ofGetGLProgrammableRenderer()){
-		ofGetGLProgrammableRenderer()->startRender();
-	}
-	int width, height;
-
-	width  = sWindowWidth;
-	height = sWindowHeight;
-
-	height = height > 0 ? height : 1;
-	// set viewport, clear the screen
-	//glViewport( 0, 0, width, height );
-	ofViewport(0, 0, width, height, false);		// used to be glViewport( 0, 0, width, height );
-	float * bgPtr = ofBgColorPtr();
-	bool bClearAuto = ofbClearBg();
-
-	if ( bClearAuto == true || ofGetFrameNum() < 3){
-		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
-	}
-
-	if(bSetupScreen) ofSetupScreen();
+	ofGetCurrentRenderer()->startRender();
+	if(bSetupScreen) ofGetCurrentRenderer()->setupScreen();
 	ofNotifyDraw();
-
-	if(ofGetGLProgrammableRenderer()){
-		ofGetGLProgrammableRenderer()->finishRender();
-	}
+	ofGetCurrentRenderer()->finishRender();
 
 }
 

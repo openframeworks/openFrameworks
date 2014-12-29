@@ -55,21 +55,21 @@ void ofApp::draw(){
     {
         ofTranslate(p1.x, p1.y);
         ofRotate(45);
-        ofLine(0, 0, 0, -10);
+        ofDrawLine(0, 0, 0, -10);
         ofRotate(90);
-        ofLine(0, 0, 0, -10);
+        ofDrawLine(0, 0, 0, -10);
     }
     ofPopMatrix();
     ofPushMatrix();
     {
         ofTranslate(p2.x, p2.y);
         ofRotate(-45);
-        ofLine(0, 0, 0, -10);
+        ofDrawLine(0, 0, 0, -10);
         ofRotate(-90);
-        ofLine(0, 0, 0, -10);
+        ofDrawLine(0, 0, 0, -10);
     }
     ofPopMatrix();
-    ofLine( p1.x, p1.y, p2.x, p2.y);
+    ofDrawLine( p1.x, p1.y, p2.x, p2.y);
     ofDrawBitmapString(ofToString(ofGetWidth()), ofGetWidth()*0.5-10, ofGetHeight()-20);
     
     //-- draw height arrow.
@@ -82,21 +82,21 @@ void ofApp::draw(){
     {
         ofTranslate(p1.x, p1.y);
         ofRotate(-135);
-        ofLine(0, 0, 0, -10);
+        ofDrawLine(0, 0, 0, -10);
         ofRotate(-90);
-        ofLine(0, 0, 0, -10);
+        ofDrawLine(0, 0, 0, -10);
     }
     ofPopMatrix();
     ofPushMatrix();
     {
         ofTranslate(p2.x, p2.y);
         ofRotate(-45);
-        ofLine(0, 0, 0, -10);
+        ofDrawLine(0, 0, 0, -10);
         ofRotate(-270);
-        ofLine(0, 0, 0, -10);
+        ofDrawLine(0, 0, 0, -10);
     }
     ofPopMatrix();
-    ofLine( p1.x, p1.y, p2.x, p2.y);
+    ofDrawLine( p1.x, p1.y, p2.x, p2.y);
     ofDrawBitmapString(ofToString(ofGetHeight()), ofGetWidth()-50, ofGetHeight()*0.5-5);
     
     ofSetLineWidth(1);
@@ -117,11 +117,11 @@ void ofApp::draw(){
 
         ofFill();
         ofSetColor(ofColor::white);
-        ofRect(buttonExternalDisplayRect.x, buttonExternalDisplayRect.y, buttonExternalDisplayRect.width, buttonExternalDisplayRect.height);
+        ofDrawRectangle(buttonExternalDisplayRect.x, buttonExternalDisplayRect.y, buttonExternalDisplayRect.width, buttonExternalDisplayRect.height);
         
         ofNoFill();
         ofSetColor(ofColor::black);
-        ofRect(buttonExternalDisplayRect.x, buttonExternalDisplayRect.y, buttonExternalDisplayRect.width, buttonExternalDisplayRect.height);
+        ofDrawRectangle(buttonExternalDisplayRect.x, buttonExternalDisplayRect.y, buttonExternalDisplayRect.width, buttonExternalDisplayRect.height);
         
         ofFill();
         ofSetColor(ofColor::black);
@@ -131,11 +131,11 @@ void ofApp::draw(){
         
         ofFill();
         ofSetColor(ofColor::white);
-        ofRect(buttonMirrorDisplayRect.x, buttonMirrorDisplayRect.y, buttonMirrorDisplayRect.width, buttonMirrorDisplayRect.height);        
+        ofDrawRectangle(buttonMirrorDisplayRect.x, buttonMirrorDisplayRect.y, buttonMirrorDisplayRect.width, buttonMirrorDisplayRect.height);        
         
         ofNoFill();
         ofSetColor(ofColor::black);
-        ofRect(buttonMirrorDisplayRect.x, buttonMirrorDisplayRect.y, buttonMirrorDisplayRect.width, buttonMirrorDisplayRect.height);        
+        ofDrawRectangle(buttonMirrorDisplayRect.x, buttonMirrorDisplayRect.y, buttonMirrorDisplayRect.width, buttonMirrorDisplayRect.height);        
         
         ofFill();
         ofSetColor(ofColor::black);

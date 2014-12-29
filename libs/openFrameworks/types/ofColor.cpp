@@ -179,30 +179,11 @@ float ofColor_<float>::limit() {
 }
 
 template<typename PixelType>
-ofColor_<PixelType>::ofColor_():
-    r(limit()),
-    g(limit()),
-    b(limit()),
-    a(limit()){
-}
-
-template<typename PixelType>
-ofColor_<PixelType>::~ofColor_(){}
-
-template<typename PixelType>
 ofColor_<PixelType>::ofColor_(float _r, float _g, float _b, float _a):
     r(_r),
     g(_g),
     b(_b),
     a(_a){
-}
-
-template<typename PixelType>
-ofColor_<PixelType>::ofColor_(const ofColor_<PixelType>& color):
-    r(color.r),
-    g(color.g),
-    b(color.b),
-    a(color.a){
 }
 
 template<typename PixelType>
@@ -527,16 +508,6 @@ int ofColor_<unsigned char>::getHex() const {
 template<typename PixelType>
 int ofColor_<PixelType>::getHex() const {
 	return ((ofColor) *this).getHex();
-}
-
-
-template<typename PixelType>
-ofColor_<PixelType> & ofColor_<PixelType>::operator = (const ofColor_<PixelType>& color){
-	r = color.r;
-	g = color.g;
-	b = color.b;
-	a = color.a;
-	return *this;
 }
 
 

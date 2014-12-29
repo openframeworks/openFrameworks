@@ -14,24 +14,30 @@ class of3dPrimitive;
 
 class ofGLRenderer: public ofBaseGLRenderer{
 public:
-	ofGLRenderer(bool useShapeColor=true);
+	ofGLRenderer(const ofAppBaseWindow * window);
 	~ofGLRenderer(){}
 
     static const string TYPE;
     const string & getType(){ return TYPE; }
 
-	void setCurrentFBO(ofFbo * fbo);
+	void setCurrentFBO(const ofFbo * fbo);
 
+	void startRender();
+	void finishRender();
 	void update();
-	void draw(ofMesh & vertexData, bool useColors=true, bool useTextures=true, bool useNormals = true);
-	void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors=true, bool useTextures = true, bool useNormals=true);
-    void draw(of3dPrimitive& model, ofPolyRenderMode renderType);
-	void draw(ofPolyline & poly);
-	void draw(ofPath & path);
-	void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
-	void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+	using ofBaseRenderer::draw;
+	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
+	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
+    void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
+	void draw(const ofPolyline & poly) const;
+	void draw(const ofPath & path) const;
+	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
 
+	void bind(const ofBaseVideoDraws & video) const;
+	void unbind(const ofBaseVideoDraws & video) const;
 	bool rendersPathPrimitives(){
 		return false;
 	}
@@ -51,15 +57,15 @@ public:
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
-	ofRectangle getCurrentViewport();
-	ofRectangle getNativeViewport();
-	int getViewportWidth();
-	int getViewportHeight();
+	ofRectangle getCurrentViewport() const;
+	ofRectangle getNativeViewport() const;
+	int getViewportWidth() const;
+	int getViewportHeight() const;
 	bool isVFlipped() const;
 	bool texturesNeedVFlip() const;
 
 	void setCoordHandedness(ofHandednessType handedness);
-	ofHandednessType getCoordHandedness();
+	ofHandednessType getCoordHandedness() const;
 
 	//our openGL wrappers
 	void pushMatrix();
@@ -114,15 +120,17 @@ public:
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
 
 	// bg color
-	ofFloatColor & getBgColor();
-	bool bClearBg();
+	ofColor getBackgroundColor();
+	void setBackgroundColor(const ofColor & c);
 	void background(const ofColor & c);
 	void background(float brightness);
 	void background(int hexColor, float _a=255.0f);
 	void background(int r, int g, int b, int a=255);
 
 	void setBackgroundAuto(bool bManual);		// default is true
+	bool getBackgroundAuto();
 
+	void clear();
 	void clear(float r, float g, float b, float a=0);
 	void clear(float brightness, float a=0);
 	void clearAlpha();
@@ -164,6 +172,9 @@ public:
 	void setLightSpecularColor(int lightIndex, const ofFloatColor& c);
 	void setLightPosition(int lightIndex, const ofVec4f & position);
 	void setLightSpotDirection(int lightIndex, const ofVec4f & direction);
+
+
+	void setCurrentMaterial(ofBaseMaterial * material){}
 
 private:
 	void startSmoothing();

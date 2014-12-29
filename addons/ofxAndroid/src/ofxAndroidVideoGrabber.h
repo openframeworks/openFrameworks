@@ -20,19 +20,20 @@ public:
 	~ofxAndroidVideoGrabber();
 
 	//needs implementing
-	vector<ofVideoDevice>	listDevices();
-	bool	initGrabber(int w, int h);
+	vector<ofVideoDevice>	listDevices() const;
+	bool	setup(int w, int h);
+	bool	isInitialized() const;
 
-	bool	isFrameNew();
+	bool	isFrameNew() const;
 	void	update();
 
-	unsigned char 	* getPixels();
-	ofPixelsRef		getPixelsRef();
+	ofPixels& getPixels();
+	const ofPixels&	getPixels() const;
 
 	void	close();
 
-	float	getHeight();
-	float	getWidth();
+	float	getHeight() const;
+	float	getWidth() const;
 
 	//should implement!
 	void setVerbose(bool bTalkToMe);
@@ -40,13 +41,13 @@ public:
 	void setDesiredFrameRate(int framerate);
 	void videoSettings();
 	bool setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat getPixelFormat();
+	ofPixelFormat getPixelFormat() const;
 
 	// specifics android
 
 	bool setAutoFocus(bool autofocus);
 
-	ofTexture *	getTexture();
+	ofTexture *	getTexturePtr();
 	void loadTexture();
 	void reloadTexture();
 	void unloadTexture();

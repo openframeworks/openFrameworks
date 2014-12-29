@@ -30,8 +30,8 @@ const string ofGLProgrammableRenderer::TYPE="ProgrammableGL";
 
 
 //----------------------------------------------------------
-ofGLProgrammableRenderer::ofGLProgrammableRenderer(bool useShapeColor)
-:matrixStack(*ofGetWindowPtr())
+ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * window)
+:matrixStack(window)
 {
 	bBackgroundAuto = true;
 
@@ -61,6 +61,7 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(bool useShapeColor)
 
 	currentTextureTarget = OF_NO_TEXTURE;
 	currentMaterial = NULL;
+	alphaMaskTextureTarget = OF_NO_TEXTURE;
 }
 
 ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
@@ -71,6 +72,19 @@ ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
 void ofGLProgrammableRenderer::startRender() {
 	matrixStack.setRenderSurface(*ofGetWindowPtr());
 	beginDefaultShader();
+	viewport();
+    // to do non auto clear on PC for now - we do something like "single" buffering --
+    // it's not that pretty but it work for the most part
+
+    #ifdef TARGET_WIN32
+    if (getBackgroundAuto() == false){
+        glDrawBuffer (GL_FRONT);
+    }
+    #endif
+
+	if ( getBackgroundAuto() ){// || ofGetFrameNum() < 3){
+		clear();
+	}
 }
 
 //----------------------------------------------------------
@@ -89,12 +103,12 @@ void ofGLProgrammableRenderer::update(){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals){
+void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)  const{
 	draw(vertexData, OF_MESH_FILL, useColors, useTextures, useNormals); // tig: use default mode if no render mode specified.
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals){
+void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
 	if (vertexData.getVertices().empty()) return;
 	
 	
@@ -104,7 +118,7 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	// Also gles2 still supports vertex array syntax for uploading data to attributes and it seems to be faster than
 	// vbo's for meshes that are updated frequently so let's use that instead
 	
-	if (bSmoothHinted) startSmoothing();
+	//if (bSmoothHinted) startSmoothing();
 
 #if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
@@ -135,7 +149,7 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	}
 
 
-	setAttributes(true,useColors,useTextures,useNormals);
+	const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,useColors,useTextures,useNormals);
 
 	GLenum drawMode;
 	switch(renderType){
@@ -200,16 +214,20 @@ void ofGLProgrammableRenderer::draw(ofMesh & vertexData, ofPolyRenderMode render
 	
 #endif
 	
-	if (bSmoothHinted) endSmoothing();
+	//if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw( of3dPrimitive& model, ofPolyRenderMode renderType) {
-	model.getMesh().draw(renderType);
+void ofGLProgrammableRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType) const {
+	if(model.isUsingVbo()){
+		model.getMesh().draw(renderType);
+	}else{
+		draw(model.getMesh(),renderType);
+	}
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofPolyline & poly){
+void ofGLProgrammableRenderer::draw(const ofPolyline & poly) const{
 	/*  some things are internally still using ofPolyline
 	if(!wrongUseLoggedOnce){
 		ofLogWarning("ofGLProgrammableRenderer") << "draw(): drawing an ofMesh or ofPolyline directly is deprecated, use a ofVboMesh or ofPath";
@@ -218,14 +236,14 @@ void ofGLProgrammableRenderer::draw(ofPolyline & poly){
 	if(poly.getVertices().empty()) return;
 
 	// use smoothness, if requested:
-	if (bSmoothHinted) startSmoothing();
+	//if (bSmoothHinted) startSmoothing();
 
 #if defined( TARGET_OPENGLES ) && !defined(TARGET_EMSCRIPTEN)
 
 	glEnableVertexAttribArray(ofShader::POSITION_ATTRIBUTE);
 	glVertexAttribPointer(ofShader::POSITION_ATTRIBUTE, 3, GL_FLOAT, GL_FALSE, sizeof(ofVec3f), &poly[0]);
 
-	setAttributes(true,false,false,false);
+	const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,false,false);
 
 	GLenum drawMode = poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP;
 
@@ -238,45 +256,48 @@ void ofGLProgrammableRenderer::draw(ofPolyline & poly){
 
 #endif
 	// use smoothness, if requested:
-	if (bSmoothHinted) endSmoothing();
+	//if (bSmoothHinted) endSmoothing();
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofPath & shape){
+void ofGLProgrammableRenderer::draw(const ofPath & shape) const{
 	ofColor prevColor;
 	if(shape.getUseShapeColor()){
 		prevColor = ofGetStyle().color;
 	}
+	ofGLProgrammableRenderer* mut_this = const_cast<ofGLProgrammableRenderer*>(this);
 	if(shape.isFilled()){
-		ofMesh & mesh = shape.getTessellation();
+		const ofMesh & mesh = shape.getTessellation();
 		if(shape.getUseShapeColor()){
-			setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
+			mut_this->setColor( shape.getFillColor() * ofGetStyle().color,shape.getFillColor().a/255. * ofGetStyle().color.a);
 		}
-		draw(mesh);
+		draw(mesh,OF_MESH_FILL);
 	}
 	if(shape.hasOutline()){
 		float lineWidth = ofGetStyle().lineWidth;
 		if(shape.getUseShapeColor()){
-			setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
+			mut_this->setColor( shape.getStrokeColor() * ofGetStyle().color, shape.getStrokeColor().a/255. * ofGetStyle().color.a);
 		}
-		setLineWidth( shape.getStrokeWidth() );
-		vector<ofPolyline> & outlines = shape.getOutline();
+		mut_this->setLineWidth( shape.getStrokeWidth() );
+		const vector<ofPolyline> & outlines = shape.getOutline();
 		for(int i=0; i<(int)outlines.size(); i++)
 			draw(outlines[i]);
-		setLineWidth(lineWidth);
+		mut_this->setLineWidth(lineWidth);
 	}
 	if(shape.getUseShapeColor()){
-		setColor(prevColor);
+		mut_this->setColor(prevColor);
 	}
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		setAttributes(true,false,true,false);
-		ofTexture& tex = image.getTextureReference();
-		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
+		const ofTexture& tex = image.getTexture();
+		if(tex.isAllocated()) {
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
@@ -284,12 +305,14 @@ void ofGLProgrammableRenderer::draw(ofImage & image, float x, float y, float z, 
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		setAttributes(true,false,true,false);
-		ofTexture& tex = image.getTextureReference();
-		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
+		const ofTexture& tex = image.getTexture();
+		if(tex.isAllocated()) {
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
@@ -297,12 +320,14 @@ void ofGLProgrammableRenderer::draw(ofFloatImage & image, float x, float y, floa
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh){
+void ofGLProgrammableRenderer::draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(image.isUsingTexture()){
-		setAttributes(true,false,true,false);
-		ofTexture& tex = image.getTextureReference();
-		if(tex.bAllocated()) {
-			tex.drawSubsection(x,y,z,w,h,sx,sy,sw,sh);
+		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
+		const ofTexture& tex = image.getTexture();
+		if(tex.isAllocated()) {
+			tex.bind();
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
+			tex.unbind();
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
 		}
@@ -310,7 +335,71 @@ void ofGLProgrammableRenderer::draw(ofShortImage & image, float x, float y, floa
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::setCurrentFBO(ofFbo * fbo){
+void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
+	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
+		return;
+	}
+	const ofShader * shader = NULL;
+	if(!usingCustomShader){
+		shader = getVideoShader(video);
+		if(shader){
+			shader->begin();
+			setVideoShaderUniforms(video,*shader);
+		}
+	}
+	const ofTexture& tex = video.getTexture();
+	tex.bind();
+	draw(tex.getMeshForSubsection(x,y,0,w,h,0,0,w,h),false,true,false);
+	tex.unbind();
+	if(shader){
+		shader->end();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::bind(const ofBaseVideoDraws & video) const{
+	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
+		return;
+	}
+	const ofShader * shader = NULL;
+	bool binded = false;
+	if(!usingCustomShader){
+		shader = getVideoShader(video);
+		if(shader){
+			shader->begin();
+			setVideoShaderUniforms(video,*shader);
+			binded = true;
+		}
+	}
+
+	if(!binded){
+		video.getTexture().bind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::unbind(const ofBaseVideoDraws & video) const{
+	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
+		return;
+	}
+	const ofShader * shader = NULL;
+	bool unbinded = false;
+	if(!usingCustomShader){
+		shader = getVideoShader(video);
+		if(shader){
+			shader->end();
+			unbinded = true;
+		}
+	}
+
+	if(!unbinded){
+		video.getTexture().unbind();
+	}
+
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::setCurrentFBO(const ofFbo * fbo){
 	if(fbo!=NULL){
 		matrixStack.setRenderSurface(*fbo);
 		uploadMatrices();
@@ -345,28 +434,22 @@ void ofGLProgrammableRenderer::viewport(float x, float y, float width, float hei
 }
 
 //----------------------------------------------------------
-ofRectangle ofGLProgrammableRenderer::getCurrentViewport(){
-	getNativeViewport();
+ofRectangle ofGLProgrammableRenderer::getCurrentViewport() const{
 	return matrixStack.getCurrentViewport();
 }
 
 //----------------------------------------------------------
-ofRectangle ofGLProgrammableRenderer::getNativeViewport(){
-	GLint viewport[4];					// Where The Viewport Values Will Be Stored
-	glGetIntegerv(GL_VIEWPORT, viewport);
-
-	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-	matrixStack.nativeViewport(nativeViewport);
-    return nativeViewport;
+ofRectangle ofGLProgrammableRenderer::getNativeViewport() const{
+    return matrixStack.getNativeViewport();
 }
 
 //----------------------------------------------------------
-int ofGLProgrammableRenderer::getViewportWidth(){
+int ofGLProgrammableRenderer::getViewportWidth() const{
 	return getCurrentViewport().width;
 }
 
 //----------------------------------------------------------
-int ofGLProgrammableRenderer::getViewportHeight(){
+int ofGLProgrammableRenderer::getViewportHeight() const{
 	return getCurrentViewport().height;
 }
 
@@ -381,7 +464,7 @@ void ofGLProgrammableRenderer::setCoordHandedness(ofHandednessType handedness) {
 }
 
 //----------------------------------------------------------
-ofHandednessType ofGLProgrammableRenderer::getCoordHandedness() {
+ofHandednessType ofGLProgrammableRenderer::getCoordHandedness() const{
 	return matrixStack.getHandedness();
 }
 
@@ -604,21 +687,6 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 
 }
 
-//----------------------------------------------------------
-/** @brief	Queries the current OpenGL matrix state
- *  @detail Returns the specified matrix as held by the renderer's current matrix stack.
- *
- *			You can query one of the following:
- *
- *			[OF_MATRIX_MODELVIEW | OF_MATRIX_PROJECTION | OF_MATRIX_TEXTURE]
- *
- *			Each query will return the state of the matrix
- *			as it was uploaded to the shader currently bound.
- *
- *	@param	matrixMode_  Which matrix mode to query
- */
-/// \note   If an invalid matrixMode is queried, this method will return the identity matrix, and
-///         print an error message.
 ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:
@@ -681,6 +749,11 @@ void ofGLProgrammableRenderer::setHexColor(int hexColor){
 }
 
 //----------------------------------------------------------
+void ofGLProgrammableRenderer::clear(){
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+//----------------------------------------------------------
 void ofGLProgrammableRenderer::clear(float r, float g, float b, float a) {
 	glClearColor(r / 255., g / 255., b / 255., a / 255.);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -705,13 +778,19 @@ void ofGLProgrammableRenderer::setBackgroundAuto(bool bAuto){
 }
 
 //----------------------------------------------------------
-bool ofGLProgrammableRenderer::bClearBg(){
+bool ofGLProgrammableRenderer::getBackgroundAuto(){
 	return bBackgroundAuto;
 }
 
 //----------------------------------------------------------
-ofFloatColor & ofGLProgrammableRenderer::getBgColor(){
+ofColor ofGLProgrammableRenderer::getBackgroundColor(){
 	return bgColor;
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::setBackgroundColor(const ofColor & c){
+	bgColor = c;
+	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
 }
 
 //----------------------------------------------------------
@@ -876,7 +955,7 @@ void ofGLProgrammableRenderer::disableAntiAliasing(){
 }
 
 //----------------------------------------------------------
-ofShader & ofGLProgrammableRenderer::getCurrentShader(){
+const ofShader & ofGLProgrammableRenderer::getCurrentShader() const{
 	return *currentShader;
 }
 
@@ -896,7 +975,7 @@ void ofGLProgrammableRenderer::setAttributes(bool vertices, bool color, bool tex
 	bool wasUsingTexture = texCoordsEnabled & (currentTextureTarget!=OF_NO_TEXTURE);
 
 	texCoordsEnabled = tex;
-	colorsEnabled=color;
+	colorsEnabled = color;
 	normalsEnabled = normals;
 
 	if(!uniqueShader || currentMaterial){
@@ -976,7 +1055,7 @@ void ofGLProgrammableRenderer::disableAlphaMask(){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::beginCustomShader(ofShader & shader){
+void ofGLProgrammableRenderer::beginCustomShader(const ofShader & shader){
 	if(currentShader && *currentShader==shader){
 		return;
 	}
@@ -1168,32 +1247,9 @@ void ofGLProgrammableRenderer::drawEllipse(float x, float y, float z, float widt
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
-
-	// remember the current blend mode so that we can restore it at the end of this method.
-	ofBlendMode previousBlendMode = ofGetStyle().blendingMode;
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
-	int len = (int)textString.length();
 	float fontSize = 8.0f;
-	float lineHeight = fontSize*1.7f;
-	int newLineDirection = 1.0f;
-
 	float sx = 0;
 	float sy = -fontSize;
-
-	if(!ofIsVFlipped()){
-		newLineDirection  = -1;
-		// this would align multiline texts to the last line when vflip is disabled
-		//int lines = ofStringTimesInString(textString,"\n");
-		//y = lines*lineHeight;
-	}
-
-	if(!ofIsVFlipped()){
-		newLineDirection  = -1;
-	}
 
 	///////////////////////////
 	// APPLY TRANSFORM / VIEW
@@ -1315,40 +1371,12 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 
 	// (c) enable texture once before we start drawing each char (no point turning it on and off constantly)
 	//We do this because its way faster
-	ofDrawBitmapCharacterStart(textString.size());
-
-	int column = 0;
-
-	for(int c = 0; c < len; c++){
-		if(textString[c] == '\n'){
-
-			sy += lineHeight*newLineDirection;
-			if(mode == OF_BITMAPMODE_SIMPLE) {
-				sx = x;
-			} else {
-				sx = 0;
-			}
-
-			column = 0;
-		} else if (textString[c] == '\t'){
-			//move the cursor to the position of the next tab
-			//8 is the default tab spacing in osx terminal and windows	 command line
-			int out = column + 8 - (column % 8);
-			sx += fontSize * (out-column);
-			column = out;
-		} else if (textString[c] >= 32){
-			// < 32 = control characters - don't draw
-			// solves a bug with control characters
-			// getting drawn when they ought to not be
-			ofDrawBitmapCharacter(textString[c], (int)sx, (int)sy);
-
-			sx += fontSize;
-			column++;
-		}
-	}
-	//We do this because its way faster
-	ofDrawBitmapCharacterEnd();
-
+	setAlphaBitmapText(true);
+	ofMesh charMesh = ofBitmapStringGetMesh(textString, 0, 0, mode);
+	ofBitmapStringGetTextureRef().bind();
+	draw(charMesh,OF_MESH_FILL,false,true,false);
+	ofBitmapStringGetTextureRef().unbind();
+	setAlphaBitmapText(false);
 
 
 	if (hasViewport){
@@ -1365,9 +1393,6 @@ void ofGLProgrammableRenderer::drawString(string textString, float x, float y, f
 			matrixMode(OF_MATRIX_MODELVIEW);
 		}
 	}
-
-	// restore blendmode
-	ofEnableBlendMode(previousBlendMode);
 }
 
 
@@ -1650,7 +1675,6 @@ static string uniqueVertexShader = vertex_shader_header + STRINGIFY(
 );
 
 // ----------------------------------------------------------------------
-
 static string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
         
 	uniform sampler2D src_tex_unit0;
@@ -1675,6 +1699,103 @@ static string uniqueFragmentShader = fragment_shader_header + STRINGIFY(
 	}
 );
 
+// ----------------------------------------------------------------------
+// video color space conversion shaders
+static string FRAGMENT_SHADER_YUY2 = STRINGIFY(
+	uniform SAMPLER src_tex_unit0;\n
+	uniform vec4 globalColor;\n
+
+	IN vec4 colorVarying;\n
+	IN vec2 texCoordVarying;\n
+	uniform float onePixel;\n
+	uniform float textureWidth;\n
+
+    const vec3 offset = vec3(-0.0625, -0.5, -0.5);\n
+    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n
+    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);\n
+    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
+
+
+	void main(){\n
+        vec3 yuv;\n
+	    yuv.x=TEXTURE(src_tex_unit0,texCoordVarying).r;\n
+		float x = texCoordVarying.x * textureWidth;\n
+		if(mod(x,2.0)>0.5){\n
+			yuv.y=TEXTURE(src_tex_unit0,vec2(texCoordVarying.x-onePixel,texCoordVarying.y)).%g;\n
+			yuv.z=TEXTURE(src_tex_unit0,texCoordVarying).%g;\n
+		}else{\n
+			yuv.y=TEXTURE(src_tex_unit0,texCoordVarying).%g;\n
+			yuv.z=TEXTURE(src_tex_unit0,vec2(texCoordVarying.x+onePixel,texCoordVarying.y)).%g;\n
+		}\n
+        yuv += offset;\n
+        float r = dot(yuv, rcoeff);\n
+        float g = dot(yuv, gcoeff);\n
+        float b = dot(yuv, bcoeff);\n
+        FRAG_COLOR=vec4(r,g,b,1.0) * globalColor;\n
+	}\n
+);
+
+// ----------------------------------------------------------------------
+static string FRAGMENT_SHADER_NV12_NV21 = STRINGIFY(
+	uniform SAMPLER Ytex;\n
+	uniform SAMPLER UVtex;\n
+	uniform vec4 globalColor;\n
+    uniform vec2 tex_scaleUV;\n
+
+	IN vec4 colorVarying;\n
+	IN vec2 texCoordVarying;\n
+
+    const vec3 offset = vec3(-0.0625, -0.5, -0.5);\n
+    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n
+    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);\n
+    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
+
+
+	void main(){\n
+        vec3 yuv;\n
+	    yuv.x=TEXTURE(Ytex,texCoordVarying).r;\n
+	    yuv.yz=TEXTURE(UVtex,texCoordVarying * tex_scaleUV).%r%g;\n
+        yuv += offset;\n
+        float r = dot(yuv, rcoeff);\n
+        float g = dot(yuv, gcoeff);\n
+        float b = dot(yuv, bcoeff);\n
+        FRAG_COLOR=vec4(r,g,b,1.0) * globalColor;\n
+	}\n
+);
+
+// ----------------------------------------------------------------------
+static string FRAGMENT_SHADER_PLANAR_YUV = STRINGIFY(
+	uniform SAMPLER Ytex;\n
+	uniform SAMPLER Utex;\n
+	uniform SAMPLER Vtex;\n
+    uniform vec2 tex_scaleY;\n
+    uniform vec2 tex_scaleU;\n
+    uniform vec2 tex_scaleV;\n
+	uniform vec4 globalColor;\n
+
+	IN vec4 colorVarying;\n
+	IN vec2 texCoordVarying;\n
+
+    const vec3 offset = vec3(-0.0625, -0.5, -0.5);\n
+    const vec3 rcoeff = vec3(1.164, 0.000, 1.596);\n
+    const vec3 gcoeff = vec3(1.164,-0.391,-0.813);\n
+    const vec3 bcoeff = vec3(1.164, 2.018, 0.000);\n
+
+
+	void main(){\n
+        vec3 yuv;\n
+	    yuv.x=TEXTURE(Ytex,texCoordVarying * tex_scaleY).r;\n
+	    yuv.y=TEXTURE(Utex,texCoordVarying * tex_scaleU).r;\n
+	    yuv.z=TEXTURE(Vtex,texCoordVarying * tex_scaleV).r;\n
+        yuv += offset;\n
+        float r = dot(yuv, rcoeff);\n
+        float g = dot(yuv, gcoeff);\n
+        float b = dot(yuv, bcoeff);\n
+        FRAG_COLOR=vec4(r,g,b,1.0) * globalColor;\n
+	}\n
+);
+
+
 static string shaderSource(const string & src, const string & glslVersion){
 	string shaderSrc = src;
 	ofStringReplace(shaderSrc,"%glsl_version%",glslVersion);
@@ -1686,6 +1807,60 @@ static string shaderSource(const string & src, const string & glslVersion){
 	}
 #endif
 	return shaderSrc;
+}
+
+static string videoFragmentShaderSource(const ofBaseVideoDraws & video, const string & glslVersion){
+	string src;
+	switch(video.getPixelFormat()){
+		case OF_PIXELS_YUY2:
+			src = FRAGMENT_SHADER_YUY2;
+			#ifndef TARGET_OPENGLES
+				ofStringReplace(src,"%g","g");
+			#else
+				ofStringReplace(src,"%g","a");
+			#endif
+			break;
+		case OF_PIXELS_NV12:
+			src = FRAGMENT_SHADER_NV12_NV21;
+			#ifndef TARGET_OPENGLES
+				ofStringReplace(src,"%r%g","rg");
+			#else
+				ofStringReplace(src,"%r%g","ra");
+			#endif
+			break;
+		case OF_PIXELS_NV21:
+			src = FRAGMENT_SHADER_NV12_NV21;
+			#ifndef TARGET_OPENGLES
+				ofStringReplace(src,"%r%g","gr");
+			#else
+				ofStringReplace(src,"%r%g","ar");
+			#endif
+			break;
+		case OF_PIXELS_YV12:
+		case OF_PIXELS_I420:
+			src = FRAGMENT_SHADER_PLANAR_YUV;
+			break;
+		case OF_PIXELS_RGB:
+		case OF_PIXELS_BGR:
+		case OF_PIXELS_RGB565:
+		case OF_PIXELS_RGBA:
+		case OF_PIXELS_BGRA:
+		case OF_PIXELS_GRAY:
+		default:
+			break;
+	}
+
+	string header = fragment_shader_header;
+	GLenum textureTarget = video.getTexture().getTextureData().textureTarget;
+	if(textureTarget==GL_TEXTURE_2D){
+		header += "#define SAMPLER sampler2D\n";
+	}
+#ifndef TARGET_OPENGLES
+	else if(textureTarget==GL_TEXTURE_RECTANGLE){
+		header += "#define SAMPLER sampler2DRect\n";
+	}
+#endif
+	return shaderSource(header + src,glslVersion);
 }
 
 void ofGLProgrammableRenderer::setup(const string & glslVersion){
@@ -1772,53 +1947,230 @@ void ofGLProgrammableRenderer::setup(const string & glslVersion){
 #endif
 }
 
+const ofShader * ofGLProgrammableRenderer::getVideoShader(const ofBaseVideoDraws & video) const{
+	const ofShader * shader = NULL;
+	GLenum target = video.getTexture().getTextureData().textureTarget;
+	switch(video.getPixelFormat()){
+		case OF_PIXELS_YUY2:
+			if(target==GL_TEXTURE_2D){
+				shader = &getShaderPlanarYUY2();
+			}else{
+				shader = &getShaderPlanarYUY2Rect();
+			}
+			break;
+		case OF_PIXELS_NV12:
+			if(target==GL_TEXTURE_2D){
+				shader = &getShaderNV12();
+			}else{
+				shader = &getShaderNV12Rect();
+			}
+			break;
+		case OF_PIXELS_NV21:
+			if(target==GL_TEXTURE_2D){
+				shader = &getShaderNV21();
+			}else{
+				shader = &getShaderNV21Rect();
+			}
+			break;
+		case OF_PIXELS_YV12:
+		case OF_PIXELS_I420:
+			if(target==GL_TEXTURE_2D){
+				shader = &getShaderPlanarYUV();
+			}else{
+				shader = &getShaderPlanarYUVRect();
+			}
+			break;
+		case OF_PIXELS_RGB:
+		case OF_PIXELS_BGR:
+		case OF_PIXELS_RGB565:
+		case OF_PIXELS_RGBA:
+		case OF_PIXELS_BGRA:
+		case OF_PIXELS_GRAY:
+		default:
+			break;
+	}
+	if(shader && !shader->isLoaded()){
+		ofShader * mutShader = const_cast<ofShader*>(shader);
+		mutShader->setupShaderFromSource(GL_VERTEX_SHADER,shaderSource(defaultVertexShader,ofGetGLSLVersion()));
+		mutShader->setupShaderFromSource(GL_FRAGMENT_SHADER,videoFragmentShaderSource(video,ofGetGLSLVersion()));
+		mutShader->bindDefaults();
+		mutShader->linkProgram();
+	}
+	return shader;
+}
 
-ofShader & ofGLProgrammableRenderer::defaultUniqueShader(){
+static float getTextureScaleX(const ofBaseVideoDraws & video, int plane){
+	if(!video.getTexturePlanes().empty()){
+		return video.getTexturePlanes()[plane].getWidth()/video.getWidth();
+	}else{
+		return 1.0;
+	}
+}
+
+static float getTextureScaleY(const ofBaseVideoDraws & video, int plane){
+	if(!video.getTexturePlanes().empty()){
+		return video.getTexturePlanes()[plane].getHeight()/video.getHeight();
+	}else{
+		return 1.0;
+	}
+}
+
+void ofGLProgrammableRenderer::setVideoShaderUniforms(const ofBaseVideoDraws & video, const ofShader & shader) const{
+	switch(video.getPixelFormat()){
+		case OF_PIXELS_YUY2:
+#ifndef TARGET_OPENGLES
+			if(video.getTexture().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+				shader.setUniform1f("onePixel",1.0);
+				shader.setUniform1f("textureWidth",1.0);
+			}else{
+#endif
+				shader.setUniform1f("onePixel",1.0/video.getWidth());
+				shader.setUniform1f("textureWidth",video.getWidth());
+#ifndef TARGET_OPENGLES
+			}
+#endif
+			break;
+		case OF_PIXELS_NV12:
+		case OF_PIXELS_NV21:
+			shader.setUniformTexture("Ytex",video.getTexturePlanes()[0],0);
+			shader.setUniformTexture("UVtex",video.getTexturePlanes()[1],1);
+#ifndef TARGET_OPENGLES
+			if(video.getTexture().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+				shader.setUniform2f("tex_scaleUV",getTextureScaleX(video,1),getTextureScaleY(video,1));
+			}else{
+#endif
+				shader.setUniform2f("tex_scaleUV",1.0,1.0);
+#ifndef TARGET_OPENGLES
+			}
+#endif
+			break;
+		case OF_PIXELS_YV12:
+			shader.setUniformTexture("Ytex",video.getTexturePlanes()[0],0);
+			shader.setUniformTexture("Utex",video.getTexturePlanes()[2],1);
+			shader.setUniformTexture("Vtex",video.getTexturePlanes()[1],2);
+#ifndef TARGET_OPENGLES
+			if(video.getTexture().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+				shader.setUniform2f("tex_scaleY",getTextureScaleX(video,0),getTextureScaleY(video,0));
+				shader.setUniform2f("tex_scaleU",getTextureScaleX(video,2),getTextureScaleY(video,2));
+				shader.setUniform2f("tex_scaleV",getTextureScaleX(video,1),getTextureScaleY(video,1));
+			}else{
+#endif
+				shader.setUniform2f("tex_scaleY",1.0,1.0);
+				shader.setUniform2f("tex_scaleU",1.0,1.0);
+				shader.setUniform2f("tex_scaleV",1.0,1.0);
+#ifndef TARGET_OPENGLES
+			}
+#endif
+			break;
+		case OF_PIXELS_I420:
+			shader.setUniformTexture("Ytex",video.getTexturePlanes()[0],0);
+			shader.setUniformTexture("Utex",video.getTexturePlanes()[1],1);
+			shader.setUniformTexture("Vtex",video.getTexturePlanes()[2],2);
+#ifndef TARGET_OPENGLES
+			if(video.getTexture().getTextureData().textureTarget==GL_TEXTURE_RECTANGLE){
+				shader.setUniform2f("tex_scaleY",getTextureScaleX(video,0),getTextureScaleY(video,0));
+				shader.setUniform2f("tex_scaleU",getTextureScaleX(video,1),getTextureScaleY(video,1));
+				shader.setUniform2f("tex_scaleV",getTextureScaleX(video,2),getTextureScaleY(video,2));
+			}else{
+#endif
+				shader.setUniform2f("tex_scaleY",1.0,1.0);
+				shader.setUniform2f("tex_scaleU",1.0,1.0);
+				shader.setUniform2f("tex_scaleV",1.0,1.0);
+#ifndef TARGET_OPENGLES
+			}
+#endif
+			break;
+		default:
+			break;
+	}
+}
+
+ofShader & ofGLProgrammableRenderer::defaultUniqueShader() const{
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
 
-ofShader & ofGLProgrammableRenderer::defaultTexRectColor(){
+ofShader & ofGLProgrammableRenderer::defaultTexRectColor() const{
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
 
-ofShader & ofGLProgrammableRenderer::defaultTexRectNoColor(){
+ofShader & ofGLProgrammableRenderer::defaultTexRectNoColor() const{
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
 
-ofShader & ofGLProgrammableRenderer::defaultTex2DColor(){
+ofShader & ofGLProgrammableRenderer::defaultTex2DColor() const{
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
 
-ofShader & ofGLProgrammableRenderer::defaultTex2DNoColor(){
+ofShader & ofGLProgrammableRenderer::defaultTex2DNoColor() const{
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
 
-ofShader & ofGLProgrammableRenderer::defaultNoTexColor(){
+ofShader & ofGLProgrammableRenderer::defaultNoTexColor() const{
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
 
-ofShader & ofGLProgrammableRenderer::defaultNoTexNoColor(){
+ofShader & ofGLProgrammableRenderer::defaultNoTexNoColor() const{
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
 
-ofShader & ofGLProgrammableRenderer::alphaMaskRectShader(){
+ofShader & ofGLProgrammableRenderer::alphaMaskRectShader() const{
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
 
-ofShader & ofGLProgrammableRenderer::alphaMask2DShader(){
+ofShader & ofGLProgrammableRenderer::alphaMask2DShader() const{
 	static ofShader * shader = new ofShader;
 	return *shader;
 }
 
-ofShader & ofGLProgrammableRenderer::bitmapStringShader(){
+ofShader & ofGLProgrammableRenderer::bitmapStringShader() const{
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderPlanarYUY2() const{
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderNV12() const{
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderNV21() const{
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderPlanarYUV() const{
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderPlanarYUY2Rect() const{
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderNV12Rect() const{
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderNV21Rect() const{
+	static ofShader * shader = new ofShader;
+	return *shader;
+}
+
+ofShader & ofGLProgrammableRenderer::getShaderPlanarYUVRect() const{
 	static ofShader * shader = new ofShader;
 	return *shader;
 }

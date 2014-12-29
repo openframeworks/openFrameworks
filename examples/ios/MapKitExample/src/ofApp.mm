@@ -75,7 +75,7 @@ void ofApp::draw() {
 		ofSetLineWidth(5);
 		ofPoint pos1 = mapKit.getScreenCoordinatesForLocation(POS1_LATITUDE, POS1_LONGITUDE);
 		ofPoint pos2 = mapKit.getScreenCoordinatesForLocation(POS2_LATITUDE, POS2_LONGITUDE);
-		ofLine(pos1.x, pos1.y, pos2.x, pos2.y);
+		ofDrawLine(pos1.x, pos1.y, pos2.x, pos2.y);
 		
 		
 		// draw black circle in middle of screen
@@ -92,7 +92,7 @@ void ofApp::draw() {
 
 		// draw semi-transparent rectangle in top part of screen
 		ofSetColor(0, 0, 0, 200);
-		ofRect(0, 0, ofGetWidth(), sHeight + 10);
+		ofDrawRectangle(0, 0, ofGetWidth(), sHeight + 10);
 
 		// display at top of screen
 		ofSetColor(255, 255, 255);

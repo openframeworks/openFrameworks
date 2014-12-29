@@ -28,6 +28,7 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		virtual void mouseDragged( int x, int y, int button ){}
 		virtual void mousePressed( int x, int y, int button ){}
 		virtual void mouseReleased(int x, int y, int button ){}
+		virtual void mouseScrolled( float x, float y ){}
 		
 		virtual void dragEvent(ofDragInfo dragInfo) { }
 		virtual void gotMessage(ofMessage msg){ }
@@ -79,6 +80,9 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 			mouseX=mouse.x;
 			mouseY=mouse.y;
 			mouseReleased(mouse.x,mouse.y,mouse.button);
+		}
+		virtual void mouseScrolled( ofMouseEventArgs & mouse ){
+			mouseScrolled(mouse.x,mouse.y);
 		}
 		virtual void windowEntry(ofEntryEventArgs & entry){
 			windowEntry(entry.state);

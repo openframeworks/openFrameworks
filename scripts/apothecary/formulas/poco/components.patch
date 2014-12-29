@@ -1,0 +1,22 @@
+--- components	Mon Aug 18 21:40:47 2014
++++ components	Mon Aug 18 21:39:51 2014
+@@ -1,5 +1,3 @@
+-CppUnit
+-CppUnit/WinTestRunner
+ Foundation
+ XML
+ JSON
+@@ -9,13 +7,6 @@
+ NetSSL_OpenSSL
+ Data
+ Data/SQLite
+-Data/ODBC
+-Data/MySQL
+ Zip
+-PageCompiler
+-PageCompiler/File2Page
+ PDF
+-CppParser
+ MongoDB
+-PocoDoc
+-ProGen
