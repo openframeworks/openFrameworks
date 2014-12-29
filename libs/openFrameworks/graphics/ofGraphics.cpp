@@ -942,7 +942,12 @@ void ofDrawRectRounded(const ofPoint & p, float w, float h, float r){
 
 //----------------------------------------------------------
 void ofDrawRectRounded(float x, float y, float w, float h, float r){
-	ofDrawRectRounded(x, y, 0.0f, w, h, r,r,r,r);
+	ofDrawRectRounded(x,y,0.0f,w,h,r,r,r,r);
+}
+
+//----------------------------------------------------------
+void ofDrawRectRounded(float x, float y, float z, float w, float h, float r){
+	ofDrawRectRounded(x,y,z,w,h,r,r,r,r);
 }
 
 //----------------------------------------------------------
@@ -1118,6 +1123,11 @@ void ofRectRounded(const ofPoint & p, float w, float h, float r){
 //----------------------------------------------------------
 void ofRectRounded(float x, float y, float w, float h, float r){
 	ofDrawRectRounded(x, y, w, h, r);
+}
+
+//----------------------------------------------------------
+void ofRectRounded(float x, float y, float z, float w, float h, float r){
+	ofDrawRectRounded(x,y,z,w,h,r,r,r,r);
 }
 
 //----------------------------------------------------------

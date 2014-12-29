@@ -8,6 +8,22 @@
 #include "ofTexture.h"
 #include "ofMesh.h"
 
+/// \file
+/// The ofTrueTypeFont class provides an interface to load fonts into
+/// openFrameworks. The fonts are converted to textures, and can be drawn on
+/// screen. There are some options when you load the font - what size the
+/// font is rendered at, whether or not it is anti-aliased, and whether the
+/// font object will be the full character set or a subset (i.e., extended
+/// ASCII, which can include diacritics like umlauts, or ASCII). The default
+/// is anti-aliased, non-full character set. The library uses freetype, which
+/// has certain patent problems in regards to true type hinting, especially
+/// at small sizes, so non-anti-aliased type doesn't always render
+/// beautifully. But we find it quite adequate, and at larger sizes it seems
+/// to works well.
+
+
+/// \cond INTERNAL
+
 //--------------------------------------------------
 typedef struct {
 	int characterIndex;
@@ -27,12 +43,19 @@ typedef ofPath ofTTFCharacter;
 //--------------------------------------------------
 #define NUM_CHARACTER_TO_START		32		// 0 - 32 are control characters, no graphics needed.
 
-/// \todo?
+
+typedef struct FT_FaceRec_*  FT_Face;
+
+/// \endcond
+
+/// \name Fonts
+/// \{
 const static string OF_TTF_SANS = "sans-serif";
 const static string OF_TTF_SERIF = "serif";
 const static string OF_TTF_MONO = "monospace";
+/// \}
 
-typedef struct FT_FaceRec_*  FT_Face;
+
 
 class ofTrueTypeFont{
 
@@ -44,24 +67,23 @@ public:
 
 	/// \todo
 	virtual ~ofTrueTypeFont();
-	
-	// set the default dpi for all typefaces.
-	/// \todo
-	static void setGlobalDpi(int newDpi);
-			
+
+	/// \name Load Font
+	/// \{
+				
 	/// \brief Loads the font specified by filename, allows you to control size, aliasing, and other parameters.
 	///
 	/// loads a font, and allows you to set the following parameters: the filename, the size, if the font is anti-aliased,
-	/// if it has a full character set, if you need it to have contours (for getStringPoints) and paramters that control 
+	/// if it has a full character set, if you need it to have contours (for getStringPoints) and parameters that control 
 	/// the simplification amount for those contours and the dpi of the font.
 	/// 
 	/// default (without dpi), non-full char set, anti aliased, 96 dpi
     ///
 	/// \param filename The name of the font file to load.
     /// \param fontsize The size in pixels to load the font.
-    /// \param _bAntiAliased true iff the font should be anti-aliased.
-    /// \param _bFullCharacterSet true iff the full character set should be cached.
-    /// \param makeControus true iff the vector contours should be cached.
+    /// \param _bAntiAliased true if the font should be anti-aliased.
+    /// \param _bFullCharacterSet true if the full character set should be cached.
+    /// \param makeControus true if the vector contours should be cached.
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
@@ -83,14 +105,55 @@ public:
 	/// \brief Has the font been loaded successfully?
 	/// \returns true if the font was loaded.
 	bool isLoaded();
+
+	/// \}
+	/// \name Font Settings
+	/// \{
 	
-	/// \brief Is the font anit-aliased?
+	// set the default dpi for all typefaces.
+	/// \todo
+	static void setGlobalDpi(int newDpi);
+	
+	/// \brief Is the font anti-aliased?
 	/// \returns true if the font was set to be anti-aliased.
 	bool isAntiAliased();
 
 	/// \brief Does the font have a full character set?
 	/// \returns true if the font was allocated with a full character set.
 	bool hasFullCharacterSet();
+	
+	/// \brief Get the number characters in the loaded character set.
+	/// 
+	/// If you allocate the font using different parameters, you can load in partial 
+	/// and full character sets, this helps you know how many characters it can represent.
+	///
+	/// \returns Number of characters in loaded character set.
+	int	getNumCharacters();	
+
+	/// \brief Get the current font encoding.
+	/// 
+	/// This is set by ofTrueTypeFont::setEncoding() to either `OF_ENCODING_UTF8` or 
+	/// `OF_ENCODING_ISO_8859_15`. `OF_ENCODING_ISO_8859_15` is for an 8-bit single-byte
+	/// coded graphic character sets, like ASCII while `OF_ENCODING_UTF8` is a variable-width 
+	/// encoding that can represent every character in the Unicode character set.
+	///
+	/// \returns encoding used by the font object.
+	ofTextEncoding getEncoding() const;
+	
+	/// \brief Sets the current font encoding.
+	///
+	/// Can be set to either `OF_ENCODING_UTF8` or `OF_ENCODING_ISO_8859_15`. `OF_ENCODING_ISO_8859_15` 
+	/// is for an 8-bit single-byte coded graphic character sets, like ASCII while `OF_ENCODING_UTF8` 
+	/// is a variable-width encoding that can represent every character in the Unicode character set. 
+	/// This function is useful if you are trying to draw unicode strings.
+	///
+	/// \param encoding The encoding used by the font object, either `OF_ENCODING_UTF8 or 
+	/// \param OF_ENCODING_ISO_8859_15
+	void setEncoding(ofTextEncoding encoding);
+
+	/// \}
+	/// \name Font Size
+	/// \{
 
 	/// \brief Returns the size of the font.
 	/// \returns Size of font, set when font was loaded.
@@ -114,7 +177,7 @@ public:
 	/// others do not, and still others define it simply to be the highest coordinate over all glyphs.
 	///
 	/// \returns Returns font ascender height in pixels.
-	float		getAscenderHeight() const;
+	float getAscenderHeight() const;
 
 	/// \brief Get the descender distance for this font.
 	///
@@ -124,7 +187,7 @@ public:
 	/// This value will be negative for descenders below the baseline (which is typical).
 	///
 	/// \returns Returns font descender height in pixels.
-	float		getDescenderHeight() const;
+	float getDescenderHeight() const;
 
 	/// \brief Get the global bounding box for this font.
 	///
@@ -187,6 +250,10 @@ public:
 	/// \returns Returns the bounding box of a string as a rectangle.
 	ofRectangle getStringBoundingBox(string s, float x, float y);
 
+	/// \}
+	/// \name Drawing
+	/// \{
+
 	/// \brief Draw a string s at position x,y
 	/// \param s String to draw
 	/// \param x X position of string
@@ -201,46 +268,21 @@ public:
 	/// \param y Y position of shapes
 	void drawStringAsShapes(string s, float x, float y);
 
-	/// \brief Get the num chars in the loaded character set.
-	/// 
-	/// If you allocate the font using different paramters, you can load in partial 
-	/// and full character sets, this helps you know how many characters it can represent.
-	///
-	/// \returns Number of characters in loaded character set.
-	int	getNumCharacters();	
+	ofTexture & getFontTexture();
+
+	void bind();
+	void unbind();
 	
 	/// \todo
 	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=ofIsVFlipped());
 	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=ofIsVFlipped());
 	ofMesh & getStringMesh(string s, float x, float y);
-	ofTexture & getFontTexture();
 
-	/// \todo
-	void bind();
-	void unbind();
-
-	/// \brief Get the current font endcoding.
-	/// 
-	/// This is set by ofTrueTypeFont::setEncoding() to either OF_ENCODING_UTF8 or 
-	/// OF_ENCODING_ISO_8859_15. OF_ENCODING_ISO_8859_15 is for an 8-bit single-byte
-	/// coded graphic character sets, like ASCII while OF_ENCODING_UTF8 is a variable-width 
-	/// encoding that can represent every character in the Unicode character set.
-	///
-	/// \returns encoding used by the font object.
-	ofTextEncoding getEncoding() const;
+	/// \}
 	
-	/// \brief Sets the current font encoding.
-	///
-	/// Can be set to either OF_ENCODING_UTF8 or OF_ENCODING_ISO_8859_15. OF_ENCODING_ISO_8859_15 
-	/// is for an 8-bit single-byte coded graphic character sets, like ASCII while OF_ENCODING_UTF8 
-	/// is a variable-width encoding that can represent every character in the Unicode character set. 
-	/// This function is useful if you are trying to draw unicode strings.
-	///
-	/// \param encoding The encoding used by the font object, either OF_ENCODING_UTF8 or 
-	/// \param OF_ENCODING_ISO_8859_15
-	void setEncoding(ofTextEncoding encoding);
-
 protected:
+	/// \cond INTERNAL
+	
 	bool bLoadedOk;
 	bool bAntiAliased;
 	bool bFullCharacterSet;
@@ -275,6 +317,8 @@ protected:
 	ofTexture texAtlas;
 	bool binded;
 	ofMesh stringQuads;
+
+	/// \endcond
 
 private:
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
