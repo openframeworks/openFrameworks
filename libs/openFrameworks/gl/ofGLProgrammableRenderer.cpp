@@ -554,19 +554,12 @@ void ofGLProgrammableRenderer::viewport(float x, float y, float width, float hei
 
 //----------------------------------------------------------
 ofRectangle ofGLProgrammableRenderer::getCurrentViewport() const{
-	getNativeViewport();
 	return matrixStack.getCurrentViewport();
 }
 
 //----------------------------------------------------------
 ofRectangle ofGLProgrammableRenderer::getNativeViewport() const{
-	GLint viewport[4];					// Where The Viewport Values Will Be Stored
-	glGetIntegerv(GL_VIEWPORT, viewport);
-
-	ofGLProgrammableRenderer * mutRenderer = const_cast<ofGLProgrammableRenderer*>(this);
-	ofRectangle nativeViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-	mutRenderer->matrixStack.nativeViewport(nativeViewport);
-    return nativeViewport;
+    return matrixStack.getNativeViewport();
 }
 
 //----------------------------------------------------------
@@ -825,21 +818,6 @@ void ofGLProgrammableRenderer::uploadCurrentMatrix(){
 
 }
 
-//----------------------------------------------------------
-/** @brief	Queries the current OpenGL matrix state
- *  @detail Returns the specified matrix as held by the renderer's current matrix stack.
- *
- *			You can query one of the following:
- *
- *			[OF_MATRIX_MODELVIEW | OF_MATRIX_PROJECTION | OF_MATRIX_TEXTURE]
- *
- *			Each query will return the state of the matrix
- *			as it was uploaded to the shader currently bound.
- *
- *	@param	matrixMode_  Which matrix mode to query
- */
-/// \note   If an invalid matrixMode is queried, this method will return the identity matrix, and
-///         print an error message.
 ofMatrix4x4 ofGLProgrammableRenderer::getCurrentMatrix(ofMatrixMode matrixMode_) const {
 	switch (matrixMode_) {
 		case OF_MATRIX_MODELVIEW:

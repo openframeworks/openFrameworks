@@ -624,6 +624,11 @@ void ofPath::setCurveResolution(int _curveResolution){
 }
 
 //----------------------------------------------------------
+int ofPath::getCurveResolution() const {
+	return curveResolution;
+}
+
+//----------------------------------------------------------
 void ofPath::setCircleResolution(int res){
 	circleResolution = res;
 }
