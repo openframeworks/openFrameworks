@@ -915,8 +915,8 @@ bool ofMatrix4x4::getPerspective(double& fovy,double& aspectRatio,
 
 void ofMatrix4x4::makeLookAtViewMatrix(const ofVec3f& eye,const ofVec3f& center,const ofVec3f& up)
 {
-	ofVec3f zaxis = (eye - center).normalized();
-	ofVec3f xaxis = up.getCrossed(zaxis).normalized();
+	ofVec3f zaxis = (eye - center).getNormalized();
+	ofVec3f xaxis = up.getCrossed(zaxis).getNormalized();
 	ofVec3f yaxis = zaxis.getCrossed(xaxis);
 
 	_mat[0].set(xaxis.x, yaxis.x, zaxis.x, 0);
@@ -927,8 +927,8 @@ void ofMatrix4x4::makeLookAtViewMatrix(const ofVec3f& eye,const ofVec3f& center,
 
 void ofMatrix4x4::makeLookAtMatrix(const ofVec3f& eye,const ofVec3f& center,const ofVec3f& up)
 {
-	ofVec3f zaxis = (eye - center).normalized();
-	ofVec3f xaxis = up.getCrossed(zaxis).normalized();
+	ofVec3f zaxis = (eye - center).getNormalized();
+	ofVec3f xaxis = up.getCrossed(zaxis).getNormalized();
 	ofVec3f yaxis = zaxis.getCrossed(xaxis);
 
 	_mat[0].set(xaxis.x, xaxis.y, xaxis.z, 0);

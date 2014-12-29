@@ -225,7 +225,7 @@ string ofShader::parseForIncludes( const string& source, const string& sourceDir
 string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const string& sourceDirectoryPath) {
     
 	if ( level > 32 ) {
-		ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
+		ofLogError( "ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
 		return "";
 	}
 	
@@ -247,7 +247,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		string include = line.substr(matches[1].offset, matches[1].length);
 		
 		if ( std::find( included.begin(), included.end(), include ) != included.end() ) {
-			ofLogVerbose() << include << " already included";
+			ofLogVerbose("ofShader") << include << " already included";
 			continue;
 		}
 		
@@ -259,7 +259,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		
 		ofBuffer buffer = ofBufferFromFile( include );
 		if ( !buffer.size() ) {
-			ofLogError() <<"Could not open glsl include file " << include;
+			ofLogError("ofShader") <<"Could not open glsl include file " << include;
 			continue;
 		}
 		
@@ -276,7 +276,7 @@ string ofShader::getShaderSource(GLenum type)  const{
 	if ( source != shaderSource.end()) {
 		return source->second;
 	} else {
-		ofLogError() << "No shader source for shader of type: " << nameForType(type);
+		ofLogError("ofShader") << "No shader source for shader of type: " << nameForType(type);
 		return "";
 	}
 }
@@ -326,7 +326,7 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
         return false;
     }
 	if(status == GL_TRUE)
-		ofLogVerbose("ofShader") << "checkProgramLinkStatus(): program " << program << "linked";
+		ofLogVerbose("ofShader") << "checkProgramLinkStatus(): program " << program << " linked";
 	else if (status == GL_FALSE) {
 		ofLogError("ofShader") << "checkProgramLinkStatus(): program failed to link";
 		checkProgramInfoLog(program);
@@ -401,7 +401,7 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 			}
 		}
 #endif
-		ofLog(OF_LOG_ERROR, msg + infoBuffer);
+		ofLogError("ofShader", msg + infoBuffer);
 		delete [] infoBuffer;
 	}
 }
@@ -436,7 +436,7 @@ bool ofShader::linkProgram() {
 		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
 			GLuint shader = it->second;
 			if(shader) {
-				ofLogVerbose() << "linkProgram(): attaching " << nameForType(it->first) << " shader to program " << program;
+				ofLogVerbose("ofShader") << "linkProgram(): attaching " << nameForType(it->first) << " shader to program " << program;
 				glAttachShader(program, shader);
 			}
 		}
@@ -717,18 +717,18 @@ void ofShader::setUniforms(const ofParameterGroup & parameters) const{
 }
 	
 //--------------------------------------------------------------
-void ofShader::setUniformMatrix3f(const string & name, const ofMatrix3x3 & m)  const{
+void ofShader::setUniformMatrix3f(const string & name, const ofMatrix3x3 & m, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
-		if (loc != -1) glUniformMatrix3fv(loc, 1, GL_FALSE, &m.a);
+		if (loc != -1) glUniformMatrix3fv(loc, count, GL_FALSE, &m.a);
 	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m)  const{
+void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
-		if (loc != -1) glUniformMatrix4fv(loc, 1, GL_FALSE, m.getPtr());
+		if (loc != -1) glUniformMatrix4fv(loc, count, GL_FALSE, m.getPtr());
 	}
 }
 
@@ -956,6 +956,9 @@ string ofShader::nameForType(GLenum type){
 		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
 		#ifndef TARGET_OPENGLES
 		case GL_GEOMETRY_SHADER_EXT: return "GL_GEOMETRY_SHADER_EXT";
+		#ifdef glDispatchCompute
+		case GL_COMPUTE_SHADER: return "GL_COMPUTE_SHADER";
+		#endif
 		#endif
 		default: return "UNKNOWN SHADER TYPE";
 	}

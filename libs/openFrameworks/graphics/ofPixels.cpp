@@ -385,7 +385,9 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 	int newSize = bytesFromPixelFormat<PixelType>(w,h,format);
 	//we check if we are already allocated at the right size
 	if(bAllocated && newSize==size()){
-		pixelFormat = format;
+        pixelFormat = format;
+        width = w;
+        height = h;
 		return; //we don't need to allocate
 	}
 
@@ -933,9 +935,7 @@ void ofPixels_<PixelType>::crop(int x, int y, int _width, int _height){
 	if (bAllocated){
 		ofPixels_<PixelType> crop;
 		cropTo(crop,x,y,_width,_height);
-		std::swap(crop.pixels,pixels);
-		width = crop.width;
-		height = crop.height;
+		swap(crop);
 	}
 }
 

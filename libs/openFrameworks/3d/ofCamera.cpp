@@ -76,8 +76,8 @@ void ofCamera::setupPerspective(bool _vFlip, float fov, float nearDist, float fa
 void ofCamera::setupOffAxisViewPortal(const ofVec3f & topLeft, const ofVec3f & bottomLeft, const ofVec3f & bottomRight){
 	ofVec3f bottomEdge = bottomRight - bottomLeft; // plane x axis
 	ofVec3f leftEdge = topLeft - bottomLeft; // plane y axis
-	ofVec3f bottomEdgeNorm = bottomEdge.normalized();
-	ofVec3f leftEdgeNorm = leftEdge.normalized();
+	ofVec3f bottomEdgeNorm = bottomEdge.getNormalized();
+	ofVec3f leftEdgeNorm = leftEdge.getNormalized();
 	ofVec3f bottomLeftToCam = this->getPosition() - bottomLeft;
 	
 	ofVec3f cameraLookVector = leftEdgeNorm.getCrossed(bottomEdgeNorm);

@@ -15,12 +15,14 @@ ofxCvHaarFinder::ofxCvHaarFinder() {
 	cascade = NULL;
 	scaleHaar = 1.08;
 	neighbors = 2;
+	img.setUseTexture(false);
 }
 
 ofxCvHaarFinder::ofxCvHaarFinder(const ofxCvHaarFinder& finder) {
 	cascade = NULL;
 	scaleHaar = finder.scaleHaar;
 	neighbors = finder.neighbors;
+	img.setUseTexture(false);
 	setup(finder.haarFile);
 }
 
@@ -29,8 +31,8 @@ ofxCvHaarFinder::~ofxCvHaarFinder() {
 		cvReleaseHaarClassifierCascade(&cascade);
 }
 
-// low values	- more accurate - eg: 1.01 
-// high values	- faster - eg: 1.06 or 1.09 
+// low values	- more accurate - eg: 1.01
+// high values	- faster - eg: 1.06 or 1.09
 void ofxCvHaarFinder::setScaleHaar(float scaleHaar) {
 	this->scaleHaar = scaleHaar;
 }
@@ -54,6 +56,7 @@ void ofxCvHaarFinder::setup(string haarFile) {
 		// http://thread.gmane.org/gmane.comp.lib.opencv/16540/focus=17400
 		// http://www.openframeworks.cc/forum/viewtopic.php?f=10&t=1853&hilit=haar
 		ofxCvGrayscaleImage hack;
+		hack.setUseTexture(false);
 		hack.allocate(8, 8);
 		CvMemStorage* storage = cvCreateMemStorage();
 		cvHaarDetectObjects(hack.getCvImage(), cascade, storage, scaleHaar, 2, CV_HAAR_DO_CANNY_PRUNING);
@@ -74,12 +77,14 @@ float ofxCvHaarFinder::getHeight() {
 }
 
 int ofxCvHaarFinder::findHaarObjects(ofImage& input, int minWidth, int minHeight) {
-	
+
 	ofxCvGrayscaleImage gray;
+	gray.setUseTexture(false);
 	gray.allocate(input.width, input.height);
 
 	if( input.type == OF_IMAGE_COLOR ){
 		ofxCvColorImage color;
+		color.setUseTexture(false);
 		color.allocate(input.width, input.height);
 		color = input.getPixels();
 		gray = color;
@@ -89,17 +94,19 @@ int ofxCvHaarFinder::findHaarObjects(ofImage& input, int minWidth, int minHeight
 		ofLogError("ofxCvHaarFinder") << "findHaarObjects(): OF_IMAGE_RGBA image type not supported";
 		return 0;
 	}
-	
+
 	return findHaarObjects(gray, minWidth, minHeight);
-	
+
 }
 
 int ofxCvHaarFinder::findHaarObjects(ofPixels& input, int minWidth, int minHeight){
 	ofxCvGrayscaleImage gray;
+	gray.setUseTexture(false);
 	gray.allocate(input.getWidth(), input.getHeight());
 
 	if( input.getImageType() == OF_IMAGE_COLOR ){
 		ofxCvColorImage color;
+		color.setUseTexture(false);
 		color.allocate(input.getWidth(), input.getHeight());
 		color.setFromPixels(input);
 		gray = color;
@@ -134,15 +141,15 @@ void ofxCvHaarFinder::draw( float x, float y ) {
 	ofEnableAlphaBlending();
 	ofSetColor( 255,0,200,100 );
 	ofPushMatrix();
-	
+
 	ofTranslate( x, y, 0.0 );
-	
+
 	ofNoFill();
 	for(unsigned int i=0; i<blobs.size(); i++ ) {
 		ofDrawRectangle(blobs[i].boundingRect.x, blobs[i].boundingRect.y,
                         blobs[i].boundingRect.width, blobs[i].boundingRect.height );
 	}
-	
+
 	ofPopMatrix();
 	ofPopStyle();
 }
@@ -201,7 +208,7 @@ int ofxCvHaarFinder::findHaarObjects(const ofxCvGrayscaleImage& input,
 
 		for (int i = 0; i < nHaarResults; i++ ) {
 			//ofLogNotice("ofxCvHaarFinder") << "findHaarObjects(): " << i << " objects";
-			
+
 			ofxCvBlob blob;
 
 			CvRect* r = (CvRect*) cvGetSeqElem(haarResults, i);
