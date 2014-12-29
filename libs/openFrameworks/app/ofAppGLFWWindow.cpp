@@ -53,6 +53,7 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
 	rBits=gBits=bBits=aBits = 8;
 	depthBits			= 24;
 	stencilBits			= 0;
+	stereo				= false;
 
 	orientation 		= OF_ORIENTATION_DEFAULT;
 
@@ -124,6 +125,10 @@ void ofAppGLFWWindow::setStencilBits(int stencil){
 	stencilBits=stencil;
 }
 
+//------------------------------------------------------------
+void ofAppGLFWWindow::setStereo(bool stereo){
+	this->stereo=stereo;
+}
 
 
 #ifdef TARGET_OPENGLES
@@ -162,6 +167,7 @@ void ofAppGLFWWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 	glfwWindowHint(GLFW_ALPHA_BITS, aBits);
 	glfwWindowHint(GLFW_DEPTH_BITS, depthBits);
 	glfwWindowHint(GLFW_STENCIL_BITS, stencilBits);
+	glfwWindowHint(GLFW_STEREO, stereo?GL_TRUE:GL_FALSE);
 #ifdef TARGET_LINUX
 	// start the window hidden so we can set the icon before it shows
 	glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
