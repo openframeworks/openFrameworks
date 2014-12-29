@@ -74,13 +74,13 @@ public:
 	}
 
 	Type type;
-	/// \brief For special keys, one of OF_KEY_* (@see ofConstants.h). For all other keys, the Unicode code point you'd expect if this key combo (including modifier keys that may be down) was pressed in a text editor (same as codepoint). 
-	int key; 
-	/// \brief The keycode returned by the windowing system, independent of any modifier keys or keyboard layout settings. For ofAppGLFWWindow this value is one of GLFW_KEY_* (@see glfw3.h) - typically, ASCII representation of the symbol on the physical key, so A key always returns 0x41 even if shift, alt, ctrl are down. 
+	/// \brief For special keys, one of OF_KEY_* (@see ofConstants.h). For all other keys, the Unicode code point you'd expect if this key combo (including modifier keys that may be down) was pressed in a text editor (same as codepoint).
+	int key;
+	/// \brief The keycode returned by the windowing system, independent of any modifier keys or keyboard layout settings. For ofAppGLFWWindow this value is one of GLFW_KEY_* (@see glfw3.h) - typically, ASCII representation of the symbol on the physical key, so A key always returns 0x41 even if shift, alt, ctrl are down.
 	int keycode;
-	/// \brief The raw scan code returned by the keyboard, OS and hardware specific. 
+	/// \brief The raw scan code returned by the keyboard, OS and hardware specific.
 	int scancode;
-	/// \brief The Unicode code point you'd expect if this key combo (including modifier keys) was pressed in a text editor, or -1 for non-printable characters. 
+	/// \brief The Unicode code point you'd expect if this key combo (including modifier keys) was pressed in a text editor, or -1 for non-printable characters.
 	unsigned int codepoint;
 };
 
@@ -191,7 +191,7 @@ class ofMessage : public ofEventArgs{
 		}
 		string message;
 };
-		
+
 
 class ofCoreEvents {
   public:
@@ -232,6 +232,9 @@ class ofCoreEvents {
 		mouseReleased.disable();
 		mousePressed.disable();
 		mouseMoved.disable();
+		windowEntered.disable();
+		audioReceived.disable();
+		audioRequested.disable();
 		mouseScrolled.disable();
 		touchDown.disable();
 		touchUp.disable();
@@ -253,6 +256,9 @@ class ofCoreEvents {
 		mouseReleased.enable();
 		mousePressed.enable();
 		mouseMoved.enable();
+		windowEntered.enable();
+		audioReceived.enable();
+		audioRequested.enable();
 		mouseScrolled.enable();
 		touchDown.enable();
 		touchUp.enable();
@@ -275,6 +281,7 @@ void ofRegisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFT
 	ofAddListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
 	ofAddListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
 	ofAddListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
+	ofAddListener(ofEvents().windowEntered, listener, &ListenerClass::windowEntered,prio);
 	ofAddListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
 }
 
@@ -309,6 +316,7 @@ void ofUnregisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_A
 	ofRemoveListener(ofEvents().mouseMoved,listener,&ListenerClass::mouseMoved,prio);
 	ofRemoveListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
 	ofRemoveListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
+	ofRemoveListener(ofEvents().windowEntered,listener,&ListenerClass::windowEntered,prio);
 	ofRemoveListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
 }
 
@@ -352,6 +360,7 @@ void ofNotifyMouseDragged(int x, int y, int button);
 void ofNotifyMouseMoved(int x, int y);
 void ofNotifyMouseScrolled(float x, float y);
 void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent);
+
 
 void ofNotifyExit();
 void ofNotifyWindowResized(int width, int height);
