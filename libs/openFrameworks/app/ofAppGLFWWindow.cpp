@@ -357,11 +357,11 @@ void ofAppGLFWWindow::display(void){
 		if (nFramesSinceWindowResized < 3){
 			currentRenderer->clear();
 		} else {
-			if ( (events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glfwSwapBuffers(windowP);
+			if ( (events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && settings.doubleBuffering)    glfwSwapBuffers(windowP);
 			else                                                     glFlush();
 		}
 	} else {
-		if(bDoubleBuffered){
+		if(settings.doubleBuffering){
 		    glfwSwapBuffers(windowP);
 		} else {
 			glFlush();
@@ -794,7 +794,11 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         SetWindowPos(hwnd, HWND_TOPMOST, xpos, ypos, fullscreenW, fullscreenH, SWP_SHOWWINDOW);
  
 	}else if( windowMode == OF_WINDOW ){
- 
+		int nonFullScreenX = getWindowPosition().x;
+		int nonFullScreenY = getWindowPosition().y;
+		int nonFullScreenW = getWindowSize().x;
+		int nonFullScreenH = getWindowSize().y;
+
 		HWND hwnd = glfwGetWin32Window(windowP);
  
   		DWORD EX_STYLE = WS_EX_OVERLAPPEDWINDOW;
