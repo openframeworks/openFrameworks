@@ -4,34 +4,48 @@
 #include "ofPoint.h"
 #include "ofRectangle.h"
 #include "ofTypes.h"
+#include "ofWindowSettings.h"
+#include "ofMainLoop.h"
 
 class ofAppBaseWindow;
 class ofAppBaseGLWindow;
 class ofAppBaseGLESWindow;
 class ofBaseApp;
 class ofBaseRenderer;
+class ofCoreEvents;
 
+void ofInit();
 void 		ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
-#ifdef TARGET_OPENGLES
-void		ofSetOpenGLESVersion(int version);
-int			ofGetOpenGLESVersion();
-string		ofGetGLSLVersion();
-void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLESWindow> windowPtr, int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
-void 		ofSetupOpenGL(ofAppBaseGLESWindow * windowPtr, int w, int h, ofWindowMode screenMode);  // will be deprecated
-#else
-void		ofSetOpenGLVersion(int major, int minor);
-int			ofGetOpenGLVersionMajor();
-int			ofGetOpenGLVersionMinor();
-string		ofGetGLSLVersion();
-void 		ofSetupOpenGL(shared_ptr<ofAppBaseGLWindow> windowPtr, int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
-void 		ofSetupOpenGL(ofAppBaseGLWindow * windowPtr, int w, int h, ofWindowMode screenMode);  // will be deprecated
-#endif
-void		ofSetWindow(ofAppBaseWindow * windowPtr);
-void		ofSetWindow(shared_ptr<ofAppBaseWindow> windowPtr);
-void		OF_DEPRECATED_MSG("use ofSetWindow for non GL windows",ofSetupOpenGL(ofAppBaseWindow * windowPtr, int w, int h, ofWindowMode screenMode));
+shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings);	// sets up the opengl context!
 
-void 		ofRunApp(shared_ptr<ofBaseApp> OFSA);
-void 		ofRunApp(ofBaseApp * OFSA = NULL); // will be deprecated
+shared_ptr<ofMainLoop> ofGetMainLoop();
+
+template<typename Window>
+void ofSetupOpenGL(shared_ptr<Window> windowPtr, int w, int h, ofWindowMode screenMode){
+	ofInit();
+	ofWindowSettings settings;
+	settings.width = w;
+	settings.height = h;
+	settings.windowMode = screenMode;
+	ofGetMainLoop()->addWindow(windowPtr);
+	windowPtr->setup(settings);
+}
+
+
+template<typename Window>
+static void noopDeleter(Window*){}
+
+template<typename Window>
+void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode){
+	shared_ptr<Window> window = shared_ptr<Window>(windowPtr,std::ptr_fun(noopDeleter<Window>));
+	ofSetupOpenGL(window,w,h,screenMode);
+}
+
+
+int 		ofRunApp(shared_ptr<ofBaseApp> OFSA);
+int 		ofRunApp(ofBaseApp * OFSA = NULL); // will be deprecated
+void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app);
+int ofRunMainLoop();
 
 
 ofBaseApp * ofGetAppPtr();
@@ -60,8 +74,14 @@ int 		ofGetScreenHeight();
 int			ofGetWindowMode();
 int 		ofGetWidth();			// ofGetWidth is correct for orientation
 int 		ofGetHeight();
-int 		ofGetWindowWidth();			// ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation. 
+int 		ofGetWindowWidth();			// ofGetWindowWidth is correct for actual window coordinates - so doesn't change with orientation.
 int 		ofGetWindowHeight();
+
+/// \returns a random number between 0 and the width of the window.
+float ofRandomWidth();
+
+/// \returns a random number between 0 and the height of the window.
+float ofRandomHeight();
 bool		ofDoesHWOrientation();
 ofPoint		ofGetWindowSize();
 ofRectangle	ofGetWindowRect();
@@ -77,21 +97,26 @@ void		ofToggleFullscreen();
 //-------------------------- sync
 void 		ofSetVerticalSync(bool bSync);
 
+ofCoreEvents & ofEvents();
+void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults=false);
+shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer();
+void ofSetEscapeQuitsApp(bool bQuitOnEsc);
+
 //-------------------------- native window handles
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 #include <X11/Xlib.h>
-	Display* ofGetX11Display();
-	Window  ofGetX11Window();
+Display* ofGetX11Display();
+Window  ofGetX11Window();
 #endif
 
 #if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
-	GLXContext ofGetGLXContext();
+GLXContext ofGetGLXContext();
 #endif
 
 #if defined(TARGET_LINUX) && defined(TARGET_OPENGLES)
-	EGLDisplay ofGetEGLDisplay();
-	EGLContext ofGetEGLContext();
-	EGLSurface ofGetEGLSurface();
+EGLDisplay ofGetEGLDisplay();
+EGLContext ofGetEGLContext();
+EGLSurface ofGetEGLSurface();
 #endif
 
 #if defined(TARGET_OSX)

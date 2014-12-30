@@ -11,7 +11,7 @@ void ofApp::setup(){
     height = ofGetWindowHeight();
     
     string shadersFolder;
-    if(ofGetGLProgrammableRenderer()){
+    if(ofIsGLProgrammableRenderer()){
     	shadersFolder="shaders_programmable";
     }else{
     	shadersFolder="shaders";

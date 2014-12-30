@@ -60,18 +60,18 @@ void ofFpsCounter::newFrame(){
 	nFrameCount++;
 }
 
-double ofFpsCounter::getFps(){
+double ofFpsCounter::getFps() const{
 	return fps;
 }
 
-unsigned int ofFpsCounter::getNumFrames(){
+unsigned int ofFpsCounter::getNumFrames() const{
 	return nFrameCount;
 }
 
-unsigned long long ofFpsCounter::getLastFrameNanos(){
+unsigned long long ofFpsCounter::getLastFrameNanos() const{
 	return lastFrameTime;
 }
 
-double ofFpsCounter::getLastFrameSecs(){
+double ofFpsCounter::getLastFrameSecs() const{
 	return lastFrameTime*NANOS_TO_SEC;
 }

@@ -128,6 +128,7 @@ void ofMatrixStack::viewport(float x, float y, float width, float height, bool v
 	if(width < 0 || height < 0){
 		width = getRenderSurfaceWidth();
 		height = getRenderSurfaceHeight();
+		vflip = isVFlipped();
 	}
 
 	if (vflip){
@@ -152,6 +153,16 @@ ofRectangle ofMatrixStack::getCurrentViewport() const{
 
 ofRectangle ofMatrixStack::getNativeViewport() const{
 	return currentViewport;
+}
+
+ofRectangle ofMatrixStack::getFullSurfaceViewport() const{
+	if(currentFbo){
+		return ofRectangle(0,0,currentFbo->getWidth(),currentFbo->getHeight());
+	}else if(currentWindow){
+		return ofRectangle(0,0,currentWindow->getWidth(),currentWindow->getHeight());
+	}else{
+		return ofRectangle();
+	}
 }
 
 void ofMatrixStack::nativeViewport(ofRectangle viewport){
@@ -402,3 +413,10 @@ void ofMatrixStack::updatedRelatedMatrices(){
 	}
 }
 
+bool ofMatrixStack::doesHardwareOrientation() const{
+	if(currentFbo){
+		return true;
+	}else{
+		return currentWindow->doesHWOrientation();
+	}
+}

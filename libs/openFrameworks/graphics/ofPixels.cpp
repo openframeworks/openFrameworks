@@ -1125,14 +1125,20 @@ void ofPixels_<PixelType>::mirrorTo(ofPixels_<PixelType> & dst, bool vertically,
 
 	int bytesPerPixel = getNumChannels();
 
-	if (! (vertically && horizontal)){
-		int wToDo = horizontal ? width/2 : width;
-		int hToDo = vertically ? height/2 : height;
+	if(vertically && !horizontal){
+		ofPixels_<PixelType>::Lines dstLines = dst.getLines();
+		ofPixels_<PixelType>::ConstLine lineSrc = getConstLines().begin();
+		ofPixels_<PixelType>::Line line = --dstLines.end();
 
+		for(; line>=dstLines.begin(); --line, ++lineSrc){
+			memcpy(line.begin(),lineSrc.begin(),line.getStride());
+		}
+	}else if (!vertically && horizontal){
+		int wToDo = width/2;
+		int hToDo = height;
 		for (int i = 0; i < wToDo; i++){
 			for (int j = 0; j < hToDo; j++){
-
-				int pixelb = (vertically ? (height - j - 1) : j) * width + (horizontal ? (width - i - 1) : i);
+				int pixelb = i;
 				int pixela = j*width + i;
 				for (int k = 0; k < bytesPerPixel; k++){
 					dst[pixela*bytesPerPixel + k] = pixels[pixelb*bytesPerPixel + k];

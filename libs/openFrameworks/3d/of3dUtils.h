@@ -1,6 +1,7 @@
 #pragma once
 
-#include "ofVectorMath.h"
+#include "ofConstants.h"
+class ofVec3f;
 
 /// \brief Draws x,y,z axes representing the current reference frame.
 ///

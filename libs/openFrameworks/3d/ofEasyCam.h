@@ -13,7 +13,7 @@ public:
     /// \brief Destroy the camera.
 	~ofEasyCam();
 
-	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
+	virtual void begin(ofRectangle viewport = ofRectangle());
 
     /// \brief Reset the camera position and orientation.
 	void reset();
@@ -91,6 +91,8 @@ public:
     ///
     /// \param bAutoDistance true to enable auto distance.
     void setAutoDistance(bool bAutoDistance);
+
+    void setEvents(ofCoreEvents & events);
 	
 private:
 	void setDistance(float distance, bool save);
@@ -106,6 +108,7 @@ private:
 	bool bMouseInputEnabled;
 	bool bDistanceSet;
     bool bAutoDistance;
+    bool bEventsSet;
 	float lastDistance;
 
 	float drag;
@@ -160,8 +163,7 @@ private:
     /// \brief The previous camera orientation.
 	ofQuaternion prevOrientation;
 
-    /// \brief The viewport.
-    ///
-    /// A locally cached viewport results in more efficient calculations.
 	ofRectangle viewport;
+
+	ofCoreEvents * events;
 };

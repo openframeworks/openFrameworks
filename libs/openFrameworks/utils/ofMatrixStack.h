@@ -27,10 +27,11 @@ public:
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	ofOrientation getOrientation() const;
 
-	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped());
+	void viewport(float x, float y, float width, float height, bool vflip);
 	void nativeViewport(ofRectangle viewport);
 	ofRectangle getCurrentViewport() const;
 	ofRectangle getNativeViewport() const;
+	ofRectangle getFullSurfaceViewport() const;
 
 	const ofMatrix4x4 & getProjectionMatrix() const;
 	const ofMatrix4x4 & getViewMatrix() const;
@@ -67,7 +68,7 @@ public:
 	void multViewMatrix(const ofMatrix4x4 & matrix);
 
 	void clearStacks();
-
+	bool doesHardwareOrientation() const;
 
 private:
 	bool vFlipped;

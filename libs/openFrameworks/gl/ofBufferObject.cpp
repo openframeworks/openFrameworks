@@ -76,17 +76,11 @@ GLuint ofBufferObject::getId() const{
 	else return 0;
 }
 
-#ifndef TARGET_OPENGLES
-bool isOpenGL45(){
-	return (ofGetOpenGLVersionMajor()==4 &&  ofGetOpenGLVersionMinor()>=5) || ofGetOpenGLVersionMajor()>4;
-}
-#endif
-
 void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 	if(!this->data) return;
 	this->data->size = bytes;
 #ifdef glNamedBufferData
-	if(isOpenGL45()){
+	if(glNamedBufferData){
 		glNamedBufferData(this->data->id, bytes, data, usage);
 		return;
 	}
@@ -99,7 +93,7 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * data){
 	if(!data) return;
 #ifdef glNamedBufferSubData
-	if(isOpenGL45()){
+	if(glNamedBufferSubData){
 		glNamedBufferSubData(this->data->id,offset,bytes,data);
 		return;
 	}
@@ -112,7 +106,7 @@ void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * 
 #ifndef TARGET_OPENGLES
 void * ofBufferObject::map(GLenum access){
 #ifdef glMapNamedBuffer
-	if(isOpenGL45()){
+	if(glMapNamedBuffer){
 		return glMapNamedBuffer(data->id,access);
 	}
 #endif
@@ -126,7 +120,7 @@ void * ofBufferObject::map(GLenum access){
 
 void ofBufferObject::unmap(){
 #ifdef glUnmapNamedBuffer
-	if(isOpenGL45()){
+	if(glUnmapNamedBuffer){
 		glUnmapNamedBuffer(data->id);
 	}
 #endif
@@ -136,7 +130,7 @@ void ofBufferObject::unmap(){
 
 void * ofBufferObject::mapRange(GLintptr offset, GLsizeiptr length, GLenum access){
 #ifdef glMapNamedBufferRange
-	if(isOpenGL45()){
+	if(glMapNamedBufferRange){
 		return glMapBufferRange(data->id,offset,length,access);
 	}
 #endif

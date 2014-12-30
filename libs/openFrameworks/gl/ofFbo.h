@@ -100,7 +100,6 @@ public:
 	};
 private:
 	Settings 			settings;
-	mutable int			isBound;
 
 	GLuint				fbo;			// main fbo which we bind for drawing into, all renderbuffers are attached to this
 	GLuint				fboTextures;	// textures are attached to this (if MSAA is disabled, this is equal to fbo, otherwise it's a new fbo)

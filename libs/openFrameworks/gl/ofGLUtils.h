@@ -50,7 +50,6 @@ string ofGetGlInternalFormatName(int glInternalFormat);
 int ofGetGLFormatFromInternal(int glInternalFormat);
 int ofGetGlTypeFromInternal(int glInternalFormat);
 
-shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
 shared_ptr<ofBaseGLRenderer> ofGetGLRenderer();
 
 
@@ -76,7 +75,7 @@ int ofGetNumChannelsFromGLFormat(int glFormat);
 void ofSetPixelStoreiAlignment(GLenum pname, int w, int bpc, int numChannels);
 void ofSetPixelStoreiAlignment(GLenum panme, int stride);
 
-vector<string> ofGLSupportedExtensions();
+//vector<string> ofGLSupportedExtensions();
 bool ofGLCheckExtension(string searchName);
 bool ofGLSupportsNPOTTextures();
 
@@ -86,6 +85,8 @@ template<class T>
 int ofGetGlFormat(const ofPixels_<T> & pixels) {
 	return ofGetGLFormatFromPixelFormat(pixels.getPixelFormat());
 }
+
+string ofGLSLVersionFromGL(int major, int minor);
 
 
 #ifndef TARGET_OPENGLES
