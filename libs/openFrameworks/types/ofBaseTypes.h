@@ -5,6 +5,7 @@
 #include "ofMatrix4x4.h"
 #include "ofURLFileLoader.h"
 #include "ofMesh.h"
+#include "ofSoundBuffer.h"
 
 class ofAbstractParameter;
 
@@ -279,45 +280,52 @@ typedef ofBaseImage_<unsigned short> ofBaseShortImage;
 
 /// \brief A base class representing a sound input stream.
 class ofBaseSoundInput{
-public:
-	/// \brief Destroy the ofBaseSoundInput.
-	virtual ~ofBaseSoundInput() {};
+	public:
+		/// \brief Destroy the ofBaseSoundInput.
+		virtual ~ofBaseSoundInput() {};
+	
+		virtual void audioIn( ofSoundBuffer& buffer ){
+			audioIn(&buffer[0], buffer.getNumFrames(), buffer.getNumChannels(), buffer.getDeviceID(), buffer.getTickCount());
+		}
+	
+		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
+			audioIn(input, bufferSize, nChannels);
+		}
 
-	/// \todo
-	virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
-		audioIn(input, bufferSize, nChannels);
-	}
+		/// \todo
+		virtual void audioIn( float * input, int bufferSize, int nChannels ){
+			audioReceived(input, bufferSize, nChannels);
+		}
 
-	/// \todo
-	virtual void audioIn( float * input, int bufferSize, int nChannels ){
-		audioReceived(input, bufferSize, nChannels);
-	}
-
-	/// \todo
-	virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+		/// \todo
+		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
 };
 
 
 /// \brief A base class representing a sound output stream.
 class ofBaseSoundOutput{
-public:
-	/// \brief Destroy the ofBaseSoundOutput.
-	virtual ~ofBaseSoundOutput() {};
+	public:
+		/// \brief Destroy the ofBaseSoundOutput.
+		virtual ~ofBaseSoundOutput() {};
+	
+		virtual void audioOut( ofSoundBuffer& buffer ){
+			audioOut(&buffer[0], buffer.getNumFrames(), buffer.getNumChannels(), buffer.getDeviceID(), buffer.getTickCount());
+		}
+	
+		/// \todo
+		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
+			audioOut(output, bufferSize, nChannels);
+		}
 
-	/// \todo
-	virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
-		audioOut(output, bufferSize, nChannels);
-	}
+		/// \todo
+		virtual void audioOut( float * output, int bufferSize, int nChannels ){
+			audioRequested(output, bufferSize, nChannels);
+		}
 
-	/// \todo
-	virtual void audioOut( float * output, int bufferSize, int nChannels ){
-		audioRequested(output, bufferSize, nChannels);
-	}
-
-	/// \todo
-	/// \note This is a legacy method.
-	virtual void audioRequested( float * output, int bufferSize, int nChannels ){
-	}
+		/// \todo
+		/// \note This is a legacy method.
+		virtual void audioRequested( float * output, int bufferSize, int nChannels ){
+		}
 };
 
 
