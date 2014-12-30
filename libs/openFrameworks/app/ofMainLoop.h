@@ -37,7 +37,8 @@ public:
 	ofEvent<void> exitEvent;
 private:
 	void keyPressed(ofKeyEventArgs & key);
-	map<shared_ptr<ofAppBaseWindow>,shared_ptr<ofBaseApp>> windowsApps;
+	map<shared_ptr<ofAppBaseWindow>,shared_ptr<ofBaseApp> > windowsApps;
+	vector<shared_ptr<ofBaseApp> > apps;
 	bool bShouldClose;
 	shared_ptr<ofAppBaseWindow> currentWindow;
 	int status;
