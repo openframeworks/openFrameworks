@@ -3,18 +3,19 @@
 #include "ofConstants.h"
 #include "ofPoint.h"
 #include "ofEventUtils.h"
+#include "ofTimer.h"
+#include "ofFpsCounter.h"
+#include <set>
 
 //-------------------------- mouse/key query
-bool		ofGetMousePressed(int button=-1); //by default any button
-bool		ofGetKeyPressed(int key=-1); //by default any key
+bool ofGetMousePressed(int button=-1); //by default any button
+bool ofGetKeyPressed(int key=-1); //by default any key
 
-int			ofGetMouseX();
-int			ofGetMouseY();
+int	ofGetMouseX();
+int	ofGetMouseY();
 
-int			ofGetPreviousMouseX();
-int			ofGetPreviousMouseY();
-
-void		ofSetEscapeQuitsApp(bool bQuitOnEsc);
+int	ofGetPreviousMouseX();
+int	ofGetPreviousMouseY();
 
 //-----------------------------------------------
 class ofDragInfo{
@@ -195,6 +196,7 @@ class ofMessage : public ofEventArgs{
 
 class ofCoreEvents {
   public:
+	ofCoreEvents();
 	ofEvent<ofEventArgs> 		setup;
 	ofEvent<ofEventArgs> 		update;
 	ofEvent<ofEventArgs> 		draw;
@@ -221,47 +223,57 @@ class ofCoreEvents {
 	ofEvent<ofMessage>			messageEvent;
 	ofEvent<ofDragInfo>			fileDragEvent;
 
-	void disable(){
-		setup.disable();
-		draw.disable();
-		update.disable();
-		exit.disable();
-		keyPressed.disable();
-		keyReleased.disable();
-		mouseDragged.disable();
-		mouseReleased.disable();
-		mousePressed.disable();
-		mouseMoved.disable();
-		mouseScrolled.disable();
-		touchDown.disable();
-		touchUp.disable();
-		touchMoved.disable();
-		touchDoubleTap.disable();
-		touchCancelled.disable();
-		messageEvent.disable();
-		fileDragEvent.disable();
-	}
+	void disable();
+	void enable();
 
-	void enable(){
-		setup.enable();
-		draw.enable();
-		update.enable();
-		exit.enable();
-		keyPressed.enable();
-		keyReleased.enable();
-		mouseDragged.enable();
-		mouseReleased.enable();
-		mousePressed.enable();
-		mouseMoved.enable();
-		mouseScrolled.enable();
-		touchDown.enable();
-		touchUp.enable();
-		touchMoved.enable();
-		touchDoubleTap.enable();
-		touchCancelled.enable();
-		messageEvent.enable();
-		fileDragEvent.enable();
-	}
+	void setFrameRate(int _targetRate);
+	float getFrameRate() const;
+	float getTargetFrameRate() const;
+	double getLastFrameTime() const;
+	int getFrameNum() const;
+
+	bool windowShouldClose() const;
+	bool getMousePressed(int button=-1) const;
+	bool getKeyPressed(int key=-1) const;
+	int getMouseX() const;
+	int getMouseY() const;
+	int getPreviousMouseX() const;
+	int getPreviousMouseY() const;
+
+	//  event notification only for internal OF use
+	void notifySetup();
+	void notifyUpdate();
+	void notifyDraw();
+
+	void notifyKeyPressed(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
+	void notifyKeyReleased(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
+	void notifyKeyEvent(const ofKeyEventArgs & keyEvent);
+
+	void notifyMousePressed(int x, int y, int button);
+	void notifyMouseReleased(int x, int y, int button);
+	void notifyMouseDragged(int x, int y, int button);
+	void notifyMouseMoved(int x, int y);
+	void notifyMouseScrolled(float x, float y);
+	void notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
+
+	void notifyExit();
+	void notifyWindowResized(int width, int height);
+	void notifyWindowEntry(int state);
+
+	void notifyDragEvent(ofDragInfo info);
+
+private:
+	bool bShouldClose;
+	float targetRate;
+	bool bFrameRateSet;
+	ofTimer timer;
+	ofFpsCounter fps;
+
+	int	currentMouseX, currentMouseY;
+	int	previousMouseX, previousMouseY;
+	bool bPreMouseNotSet;
+	set<int> pressedMouseButtons;
+	set<int> pressedKeys;
 };
 
 void ofSendMessage(ofMessage msg);
@@ -336,25 +348,3 @@ template<class ListenerClass>
 void ofUnregisterDragEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFTER_APP){
 	ofRemoveListener(ofEvents().fileDragEvent, listener, &ListenerClass::dragEvent,prio);
 }
-
-//  event notification only for internal OF use
-void ofNotifySetup();
-void ofNotifyUpdate();
-void ofNotifyDraw();
-
-void ofNotifyKeyPressed(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
-void ofNotifyKeyReleased(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
-void ofNotifyKeyEvent(const ofKeyEventArgs & keyEvent);
-
-void ofNotifyMousePressed(int x, int y, int button);
-void ofNotifyMouseReleased(int x, int y, int button);
-void ofNotifyMouseDragged(int x, int y, int button);
-void ofNotifyMouseMoved(int x, int y);
-void ofNotifyMouseScrolled(float x, float y);
-void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent);
-
-void ofNotifyExit();
-void ofNotifyWindowResized(int width, int height);
-void ofNotifyWindowEntry(int state);
-
-void ofNotifyDragEvent(ofDragInfo info);

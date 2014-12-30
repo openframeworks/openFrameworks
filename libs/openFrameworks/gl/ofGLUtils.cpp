@@ -57,7 +57,7 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 				return GL_LUMINANCE_ALPHA32F_ARB;
 			}
 		default:
-			if(ofGetGLProgrammableRenderer()){
+			if(ofIsGLProgrammableRenderer()){
 				return GL_R32F;
 			}else{
 				return GL_LUMINANCE32F_ARB;
@@ -728,16 +728,27 @@ bool ofGLSupportsNPOTTextures(){
 #endif
 }
 
-shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer(){
-	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
-		return (shared_ptr<ofGLProgrammableRenderer>&)ofGetCurrentRenderer();
-	}else{
-		return shared_ptr<ofGLProgrammableRenderer>();
+string ofGLSLVersionFromGL(int major, int minor){
+#ifdef TARGET_OPENGLES
+	return "ES1";
+#else
+	switch(major){
+	case 3:
+		if(minor==0){
+			return "130";
+		}else if(minor==1){
+			return "140";
+		}else if(minor==2){
+			return "150";
+		}else{
+			return ofToString(major*100+minor*10);
+		}
+	case 4:
+		return ofToString(major*100+minor*10);
+	default:
+		return "120";
 	}
-}
-
-bool ofIsGLProgrammableRenderer(){
-	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE;
+#endif
 }
 
 #ifndef TARGET_PROGRAMMABLE_GL
@@ -762,17 +773,17 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 }
 #endif
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-void ofUpdateBitmapCharacterTexture();
+#if defined(TARGET_ANDROID)
+void ofRegenerateAllVbos();
+void ofRegenerateAllTextures();
 void ofReloadAllImageTextures();
 void ofReloadAllFontTextures();
-void ofRegenerateAllVbos();
 
 void ofReloadGLResources(){
-	ofUpdateBitmapCharacterTexture();
+	ofRegenerateAllTextures();
+	ofRegenerateAllVbos();
 	ofReloadAllImageTextures();
 	ofReloadAllFontTextures();
-	ofRegenerateAllVbos();
 }
 #endif
 

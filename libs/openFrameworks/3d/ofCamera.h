@@ -2,7 +2,7 @@
 
 
 #include "ofRectangle.h"
-#include "ofAppRunner.h"
+#include "ofGraphics.h"
 #include "ofNode.h"
 
 /// \todo Use the public API of ofNode for all transformations
@@ -119,7 +119,7 @@ public:
 	void setVFlip(bool vflip);
 
     /// \todo isVFlipped()
-    bool isVFlipped();
+    bool isVFlipped() const;
 
 	/// \todo enableOrtho()
 	void enableOrtho();
@@ -131,7 +131,7 @@ public:
     bool getOrtho() const;
 	
 	/// \todo getImagePlaneDistance
-	float getImagePlaneDistance(ofRectangle viewport = ofGetCurrentViewport()) const;
+	float getImagePlaneDistance(ofRectangle viewport = ofRectangle()) const;
 	
 	/// \brief Begins rendering with the camera.
     ///
@@ -154,21 +154,21 @@ public:
     /// \endcode
     ///
     /// \param viewport The camera's rendering viewport.
-	virtual void begin(ofRectangle viewport = ofGetCurrentViewport());
+	virtual void begin(ofRectangle viewport = ofRectangle());
 
     /// \brief Ends rendering with the camera.
 	virtual void end();
 	
 	/// \brief Access the projection matrix.
     /// \returns the current 4x4 projection matrix.
-	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport()) const;
+	ofMatrix4x4 getProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
 
     /// \brief Access the model view matrix.
     /// \returns the current 4x4 model view matrix.
     ofMatrix4x4 getModelViewMatrix() const;
 
     /// \todo getModelViewProjectionMatrix()
-    ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofGetCurrentViewport()) const;
+    ofMatrix4x4 getModelViewProjectionMatrix(ofRectangle viewport = ofRectangle()) const;
 	
     /// \brief Obtain the screen coordinates of a point in the 3D world.
 	///
@@ -180,7 +180,7 @@ public:
 	/// \param WorldXYZ A 3D point in the world, whose screen coordinates you wish to know. 
 	/// \param viewport (Optional) A viewport. The default is ofGetCurrentViewport(). 
 	/// \returns An ofVec3f containing the screen coordinates of your 3D point of interest. 
-	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
+	ofVec3f worldToScreen(ofVec3f WorldXYZ, ofRectangle viewport = ofRectangle()) const;
 	
 	/// \brief Obtain the coordinates, in the 3D world, of a 2D point presumed to be on your screen.
 	///
@@ -190,17 +190,23 @@ public:
 	/// This Z value is interpreted as a distance into or away from the screen. 
 	///
 	/// \param ScreenXYZ A point on your screen, whose 3D world coordinates you wish to know.
-	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
+	ofVec3f screenToWorld(ofVec3f ScreenXYZ, ofRectangle viewport = ofRectangle()) const;
 	
 	/// \todo worldToCamera()
-	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
+	ofVec3f worldToCamera(ofVec3f WorldXYZ, ofRectangle viewport = ofRectangle()) const;
 
 	/// \todo cameraToWorld()
-	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofGetCurrentViewport()) const;
+	ofVec3f cameraToWorld(ofVec3f CameraXYZ, ofRectangle viewport = ofRectangle()) const;
 	
+
+    void setRenderer(shared_ptr<ofBaseRenderer> renderer);
+
 protected:
-	void calcClipPlanes(ofRectangle viewport);
+	ofRectangle getViewport(const ofRectangle & _viewport) const;
+	shared_ptr<ofBaseRenderer> getRenderer() const;
+	void calcClipPlanes(const ofRectangle & viewport);
 	
+private:
 	bool isOrtho;
 	float fov;
 	float nearClip;
@@ -210,5 +216,6 @@ protected:
 	float aspectRatio; // only used when forceAspect=true, = w / h
 	bool isActive;
 	bool vFlip;
+	shared_ptr<ofBaseRenderer> renderer;
 };
 

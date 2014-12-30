@@ -13,19 +13,22 @@
 #include <map>
 #include <set>
 
+bool ofVbo::vaoSupported=true;
+bool ofVbo::vaoChecked=false;
+
 
 #ifdef TARGET_OPENGLES
 	#include <dlfcn.h>
 	typedef void (* glGenVertexArraysType) (GLsizei n,  GLuint *arrays);
-	glGenVertexArraysType glGenVertexArraysFunc;
+	glGenVertexArraysType glGenVertexArraysFunc = NULL;
 	#define glGenVertexArrays								glGenVertexArraysFunc
 
 	typedef void (* glDeleteVertexArraysType) (GLsizei n,  GLuint *arrays);
-	glDeleteVertexArraysType glDeleteVertexArraysFunc;
+	glDeleteVertexArraysType glDeleteVertexArraysFunc = NULL;
 	#define glDeleteVertexArrays							glDeleteVertexArraysFunc
 
 	typedef void (* glBindVertexArrayType) (GLuint array);
-	glBindVertexArrayType glBindVertexArrayFunc;
+	glBindVertexArrayType glBindVertexArrayFunc = NULL;
 	#define glBindVertexArray								glBindVertexArrayFunc
 #endif
 
@@ -333,6 +336,11 @@ void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride) {
+	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+	if(!positionAttribute.isAllocated()){
+		registerVbo(this);
+	}
+	#endif
 	positionAttribute.setData(vert0x, numCoords, total, usage, stride);
 	bUsingVerts = true;
 	totalVerts = total;
@@ -423,29 +431,23 @@ ofVbo::VertexAttribute & ofVbo::getOrCreateAttr(int location){
 
 //--------------------------------------------------------------
 void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
-	if(location==ofShader::POSITION_ATTRIBUTE){
+	if(ofIsGLProgrammableRenderer() && location==ofShader::POSITION_ATTRIBUTE){
 		#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-			registerVbo(this);
+			if(!positionAttribute.isAllocated()){
+				registerVbo(this);
+			}
 		#endif
-		if(ofIsGLProgrammableRenderer()){
-			totalVerts = total;
-			#ifdef TARGET_OPENGLES
-				glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
-				glDeleteVertexArrays =  (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
-				glBindVertexArray =  (glBindVertexArrayType)dlsym(RTLD_DEFAULT, "glBindVertexArrayArrays");
-			#endif
-		}
+		totalVerts = total;
 	}
 
 	bool normalize = false;
-	if(!hasAttribute(location)){
+	if(ofIsGLProgrammableRenderer() && !hasAttribute(location)){
 		vaoChanged = true;
-		if (ofIsGLProgrammableRenderer()) {
-			bUsingVerts |= (location == ofShader::POSITION_ATTRIBUTE);
-			bUsingColors |= (location == ofShader::COLOR_ATTRIBUTE);
-			bUsingNormals |= (location == ofShader::NORMAL_ATTRIBUTE);
-			bUsingTexCoords |= (location == ofShader::TEXCOORD_ATTRIBUTE);
-		}
+		bUsingVerts |= (location == ofShader::POSITION_ATTRIBUTE);
+		bUsingColors |= (location == ofShader::COLOR_ATTRIBUTE);
+		bUsingNormals |= (location == ofShader::NORMAL_ATTRIBUTE);
+		bUsingTexCoords |= (location == ofShader::TEXCOORD_ATTRIBUTE);
+		normalize = (location == ofShader::NORMAL_ATTRIBUTE);
 	}
 
 	getOrCreateAttr(location).setData(attrib0x,numCoords,total,usage,stride,normalize);
@@ -671,6 +673,11 @@ GLuint ofVbo::getAttributeId(int location) const {
 
 //--------------------------------------------------------------
 void ofVbo::setVertexBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset){
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+	if(!positionAttribute.isAllocated()){
+		registerVbo(this);
+	}
+#endif
 	positionAttribute.setBuffer(buffer, numCoords, stride, offset);
 	bUsingVerts = true;
 	// TODO: Check: we have no perfect way of knowing the new number of total vertices,
@@ -702,19 +709,22 @@ void ofVbo::setTexCoordBuffer(ofBufferObject & buffer, int stride, int offset){
 void ofVbo::setIndexBuffer(ofBufferObject & buffer){
 	indexAttribute.buffer = buffer;
 	vaoChanged = true;
-	bUsingIndices = true;
+	enableIndices();
 }
 
 //--------------------------------------------------------------
 void ofVbo::setAttributeBuffer(int location, ofBufferObject & buffer, int numCoords, int stride, int offset){
-	if(!hasAttribute(location)){
+#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+	if(ofIsGLProgrammableRenderer() && location==ofShader::POSITION_ATTRIBUTE && !positionAttribute.isAllocated()){
+		registerVbo(this);
+	}
+#endif
+	if(ofIsGLProgrammableRenderer() && !hasAttribute(location)){
 		vaoChanged = true;
-		if (ofIsGLProgrammableRenderer()) {
-			bUsingVerts |= (location == ofShader::POSITION_ATTRIBUTE);
-			bUsingColors |= (location == ofShader::COLOR_ATTRIBUTE);
-			bUsingNormals |= (location == ofShader::NORMAL_ATTRIBUTE);
-			bUsingTexCoords |= (location == ofShader::TEXCOORD_ATTRIBUTE);
-		}
+		bUsingVerts |= (location == ofShader::POSITION_ATTRIBUTE);
+		bUsingColors |= (location == ofShader::COLOR_ATTRIBUTE);
+		bUsingNormals |= (location == ofShader::NORMAL_ATTRIBUTE);
+		bUsingTexCoords |= (location == ofShader::TEXCOORD_ATTRIBUTE);
 	}
 
 	getOrCreateAttr(location).setBuffer(buffer, numCoords, stride, offset);
@@ -784,18 +794,32 @@ const ofBufferObject & ofVbo::getIndexBuffer() const{
 //--------------------------------------------------------------
 void ofVbo::bind() const{
 	bool programmable = ofIsGLProgrammableRenderer();
-	if(programmable){
+	if(programmable && (vaoSupported || !vaoChecked)){
 		if(vaoID==0){
-			glGenVertexArrays(1, &const_cast<ofVbo*>(this)->vaoID);
+			#ifdef TARGET_OPENGLES
+			if(glGenVertexArrays==0 && !vaoChecked){
+				glGenVertexArrays = (glGenVertexArraysType)dlsym(RTLD_DEFAULT, "glGenVertexArrays");
+				glDeleteVertexArrays = (glDeleteVertexArraysType)dlsym(RTLD_DEFAULT, "glDeleteVertexArrays");
+				glBindVertexArray = (glBindVertexArrayType)dlsym(RTLD_DEFAULT, "glBindVertexArray");
+				vaoChecked = true;
+				vaoSupported = glGenVertexArrays;
+			}
+			#else
+			vaoChecked = true;
+			vaoSupported = true;
+			#endif
+			if(vaoSupported) glGenVertexArrays(1, &const_cast<ofVbo*>(this)->vaoID);
 			if(vaoID!=0){
 				retainVAO(vaoID);
 				vaoChanged = true;
 			}
 		}
-		glBindVertexArray(vaoID);
+		if(vaoSupported) glBindVertexArray(vaoID);
+	}else{
+		vaoSupported = false;
 	}
 
-	if(vaoChanged || !programmable){
+	if(vaoChanged || !vaoSupported){
 		if(bUsingVerts){
 			if(!programmable){
 				positionAttribute.bind();
@@ -870,15 +894,11 @@ void ofVbo::bind() const{
 
 		vaoChanged=false;
 	}
-
-	if(programmable){
-		ofGetGLProgrammableRenderer()->setAttributes(true,getUsingColors(),getUsingTexCoords(),getUsingNormals());
-	}
 }
 
 //--------------------------------------------------------------
 void ofVbo::unbind() const{
-	if(ofIsGLProgrammableRenderer()){
+	if(vaoSupported){
 		glBindVertexArray(0);
 	}
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -900,63 +920,22 @@ void ofVbo::unbind() const{
 
 //--------------------------------------------------------------
 void ofVbo::draw(int drawMode, int first, int total) const{
-	if (bUsingVerts || (ofIsGLProgrammableRenderer() && hasAttribute(ofShader::POSITION_ATTRIBUTE)))  {
-		bind();
-		glDrawArrays(drawMode, first, total);
-		unbind();
-	}
+	ofGetGLRenderer()->draw(*this,drawMode,first,total);
 }
 
 //--------------------------------------------------------------
 void ofVbo::drawElements(int drawMode, int amt) const{
-	if (bUsingVerts || (ofIsGLProgrammableRenderer() && hasAttribute(ofShader::POSITION_ATTRIBUTE)))  {
-		bind();
-#ifdef TARGET_OPENGLES
-        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
-#else
-        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
-#endif
-		
-		unbind();
-	}
+	ofGetGLRenderer()->drawElements(*this,drawMode,amt);
 }
 
 //--------------------------------------------------------------
-// tig: this, being a key feature of OpenGL VBOs, allows to render massive
-// amounts of geometry simultaneously without clogging the memory bus;
-// as discussed in: http://poniesandlight.co.uk/code/ofxVboMeshInstanced/
 void ofVbo::drawInstanced(int drawMode, int first, int total, int primCount) const{
-	if (bUsingVerts || (ofIsGLProgrammableRenderer() && hasAttribute(ofShader::POSITION_ATTRIBUTE)))  {
-		bind();
-#ifdef TARGET_OPENGLES
-		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
-		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-		// glDrawArraysInstanced(drawMode, first, total, primCount);
-#else
-		glDrawArraysInstanced(drawMode, first, total, primCount);
-#endif
-		unbind();
-	}
+	ofGetGLRenderer()->drawInstanced(*this,drawMode,first,total,primCount);
 }
 
 //--------------------------------------------------------------
 void ofVbo::drawElementsInstanced(int drawMode, int amt, int primCount) const{
-	if (bUsingVerts || (ofIsGLProgrammableRenderer() && hasAttribute(ofShader::POSITION_ATTRIBUTE)))  {
-		bind();
-#ifdef TARGET_OPENGLES
-        // todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-        // unfortunately there is currently no easy way within oF to query the current OpenGL version.
-        // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
-        ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
-#else
-        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
-#endif
-		
-		unbind();
-	}
+	ofGetGLRenderer()->drawElementsInstanced(*this,drawMode,amt,primCount);
 }
 
 //--------------------------------------------------------------

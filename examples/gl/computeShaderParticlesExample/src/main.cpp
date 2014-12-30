@@ -5,8 +5,10 @@
 int main( ){
     // this example uses compute shaders which are only supported since
     // openGL 4.3
-	ofSetOpenGLVersion(4,3);
-	ofSetupOpenGL(1024,768,OF_FULLSCREEN);			// <-------- setup the GL context
+	ofGLWindowSettings settings;
+	settings.setGLVersion(4,3);
+	settings.windowMode = OF_FULLSCREEN;
+	ofCreateWindow(settings);			// <-------- setup the GL context
 
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN

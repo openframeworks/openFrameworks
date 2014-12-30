@@ -200,9 +200,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
 	if(status == GL_TRUE){
 		ofLogVerbose("ofShader") << "setupShaderFromSource(): " << nameForType(type) + " shader compiled";
 		checkShaderInfoLog(shader, type, OF_LOG_WARNING);
-	}
-	
-	else if (status == GL_FALSE) {
+	}else if (status == GL_FALSE) {
 		ofLogError("ofShader") << "setupShaderFromSource(): " << nameForType(type) + " shader failed to compile";
 		checkShaderInfoLog(shader, type, OF_LOG_ERROR);
 		return false;
@@ -274,8 +272,9 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 
 //--------------------------------------------------------------
 string ofShader::getShaderSource(GLenum type)  const{
-	if (shaderSource.find(type) != shaderSource.end()) {
-		return shaderSource[type];
+	unordered_map<GLenum,string>::const_iterator source = shaderSource.find(type);
+	if ( source != shaderSource.end()) {
+		return source->second;
 	} else {
 		ofLogError("ofShader") << "No shader source for shader of type: " << nameForType(type);
 		return "";
@@ -354,7 +353,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 			ofBuffer buf = shaderSource[type];
 			ofBuffer::Line line = buf.getLines().begin();
 			if (!matches.empty()){
-			int  offendingLineNumber = ofToInt(infoString.substr(matches[1].offset, matches[1].length));
+				int  offendingLineNumber = ofToInt(infoString.substr(matches[1].offset, matches[1].length));
 				ostringstream msg;
 				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< endl;
 				for(int i=0; line != buf.getLines().end(); line++, i++ ){
@@ -364,6 +363,8 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 					}
 				}
 				ofLog(logLevel) << msg.str();
+			}else{
+				ofLogError() << shaderSource[type];
 			}
 		}
 		delete [] infoBuffer;
@@ -487,6 +488,7 @@ void ofShader::unload() {
 		}
 
 		shaders.clear();
+		uniformLocations.clear();
 	}
 	bLoaded = false;
 }
@@ -498,27 +500,12 @@ bool ofShader::isLoaded() const{
 
 //--------------------------------------------------------------
 void ofShader::begin()  const{
-	if (bLoaded){
-		glUseProgram(program);
-		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-		if(renderer){
-			renderer->beginCustomShader(*this);
-		}
-	}else{
-		ofLogError("ofShader") << "begin(): couldn't begin, shader not loaded";
-	}
+	ofGetGLRenderer()->bind(*this);
 }
 
 //--------------------------------------------------------------
 void ofShader::end()  const{
-	if (bLoaded){
-		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-		if(renderer){
-			renderer->endCustomShader();
-		}else{
-			glUseProgram(0);
-		}
-	}
+	ofGetGLRenderer()->unbind(*this);
 }
 
 #if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
@@ -869,15 +856,13 @@ GLint ofShader::getAttributeLocation(const string & name)  const{
 
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const string & name)  const{
+	if(!bLoaded) return -1;
 	GLint loc = -1;
 
 	// tig: caching uniform locations gives the RPi a 17% boost on average
 	unordered_map<string, GLint>::iterator it = uniformLocations.find(name);
 	if (it == uniformLocations.end()){
 		loc = glGetUniformLocation(program, name.c_str());
-		// we store loc even if we don't get a positive reply from the card, 
-		// since misses would destroy our frame performance by calling 
-		// glGetUniformLocation unnecessarily every frame.
 		uniformLocations[name] = loc;
 	} else {
 		loc = it->second;
@@ -946,7 +931,12 @@ GLuint ofShader::getProgram() const{
 
 //--------------------------------------------------------------
 GLuint ofShader::getShader(GLenum type) const{
-	return shaders[type];
+	unordered_map<GLenum,GLuint>::const_iterator shader = shaders.find(type);
+	if(shader!=shaders.end()){
+		return shader->second;
+	}else{
+		return 0;
+	}
 }
 
 //--------------------------------------------------------------

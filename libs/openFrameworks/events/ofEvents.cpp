@@ -1,38 +1,128 @@
 #include "ofEvents.h"
-#include "ofAppRunner.h"
-#include "ofBaseApp.h"
-#include "ofUtils.h"
-#include "ofGraphics.h"
-#include "ofAppBaseWindow.h"
-#include <set>
-#include "ofTimer.h"
-#include "ofFpsCounter.h"
-
-static float    			targetRate = 0;
-static bool      			bFrameRateSet = 0;
-static ofTimer 				timer;
-static ofFpsCounter			fps(60);
-
-// core events instance & arguments
-ofCoreEvents & ofEvents(){
-	static ofCoreEvents * events = new ofCoreEvents;
-	return *events;
-}
-
-ofEventArgs voidEventArgs;
 
 
-static int	currentMouseX=0, currentMouseY=0;
-static int	previousMouseX=0, previousMouseY=0;
-static bool		bPreMouseNotSet;
-static set<int> pressedMouseButtons;
-static set<int> pressedKeys;
-
-static bool bEscQuits = true;
+static ofEventArgs voidEventArgs;
 
 
 //--------------------------------------
-void ofSetFrameRate(int _targetRate){
+void ofSetFrameRate(int targetRate){
+	ofEvents().setFrameRate(targetRate);
+}
+
+//--------------------------------------
+float ofGetFrameRate(){
+	return ofEvents().getFrameRate();
+}
+
+//--------------------------------------
+float ofGetTargetFrameRate(){
+	return ofEvents().getTargetFrameRate();
+}
+
+//--------------------------------------
+double ofGetLastFrameTime(){
+	return ofEvents().getLastFrameTime();
+}
+
+//--------------------------------------
+int ofGetFrameNum(){
+	return ofEvents().getFrameNum();
+}
+
+//--------------------------------------
+bool ofGetMousePressed(int button){ //by default any button
+	return ofEvents().getMousePressed(button);
+}
+
+//--------------------------------------
+bool ofGetKeyPressed(int key){
+	return ofEvents().getKeyPressed(key);
+}
+
+//--------------------------------------
+int ofGetMouseX(){
+	return ofEvents().getMouseX();
+}
+
+//--------------------------------------
+int ofGetMouseY(){
+	return ofEvents().getMouseY();
+}
+
+//--------------------------------------
+int ofGetPreviousMouseX(){
+	return ofEvents().getPreviousMouseX();
+}
+
+//--------------------------------------
+int ofGetPreviousMouseY(){
+	return ofEvents().getPreviousMouseY();
+}
+
+ofCoreEvents::ofCoreEvents()
+:bShouldClose(false)
+,targetRate(0)
+,bFrameRateSet(false)
+,fps(60)
+,currentMouseX(0)
+,currentMouseY(0)
+,previousMouseX(0)
+,previousMouseY(0)
+,bPreMouseNotSet(false){
+
+}
+
+//------------------------------------------
+bool ofCoreEvents::windowShouldClose() const{
+	return bShouldClose;
+}
+
+//------------------------------------------
+void ofCoreEvents::disable(){
+	setup.disable();
+	draw.disable();
+	update.disable();
+	exit.disable();
+	keyPressed.disable();
+	keyReleased.disable();
+	mouseDragged.disable();
+	mouseReleased.disable();
+	mousePressed.disable();
+	mouseMoved.disable();
+	mouseScrolled.disable();
+	touchDown.disable();
+	touchUp.disable();
+	touchMoved.disable();
+	touchDoubleTap.disable();
+	touchCancelled.disable();
+	messageEvent.disable();
+	fileDragEvent.disable();
+}
+
+//------------------------------------------
+void ofCoreEvents::enable(){
+	setup.enable();
+	draw.enable();
+	update.enable();
+	exit.enable();
+	keyPressed.enable();
+	keyReleased.enable();
+	mouseDragged.enable();
+	mouseReleased.enable();
+	mousePressed.enable();
+	mouseMoved.enable();
+	mouseScrolled.enable();
+	touchDown.enable();
+	touchUp.enable();
+	touchMoved.enable();
+	touchDoubleTap.enable();
+	touchCancelled.enable();
+	messageEvent.enable();
+	fileDragEvent.enable();
+}
+
+//--------------------------------------
+void ofCoreEvents::setFrameRate(int _targetRate){
 	// given this FPS, what is the amount of millis per frame
 	// that should elapse?
 
@@ -49,81 +139,71 @@ void ofSetFrameRate(int _targetRate){
 }
 
 //--------------------------------------
-float ofGetFrameRate(){
+float ofCoreEvents::getFrameRate() const{
 	return fps.getFps();
 }
 
 //--------------------------------------
-float ofGetTargetFrameRate(){
+float ofCoreEvents::getTargetFrameRate() const{
 	return targetRate;
 }
 
 //--------------------------------------
-double ofGetLastFrameTime(){
+double ofCoreEvents::getLastFrameTime() const{
 	return fps.getLastFrameSecs();
 }
 
 //--------------------------------------
-int ofGetFrameNum(){
+int ofCoreEvents::getFrameNum() const{
 	return fps.getNumFrames();
 }
 
 //--------------------------------------
-bool ofGetMousePressed(int button){ //by default any button
+bool ofCoreEvents::getMousePressed(int button) const{ //by default any button
 	if(button==-1) return pressedMouseButtons.size();
 	return pressedMouseButtons.find(button)!=pressedMouseButtons.end();
 }
 
 //--------------------------------------
-bool ofGetKeyPressed(int key){
+bool ofCoreEvents::getKeyPressed(int key) const{
 	if(key==-1) return pressedKeys.size();
 	return pressedKeys.find(key)!=pressedKeys.end();
 }
 
 //--------------------------------------
-int ofGetMouseX(){
+int ofCoreEvents::getMouseX() const{
 	return currentMouseX;
 }
 
 //--------------------------------------
-int ofGetMouseY(){
+int ofCoreEvents::getMouseY() const{
 	return currentMouseY;
 }
 
 //--------------------------------------
-int ofGetPreviousMouseX(){
+int ofCoreEvents::getPreviousMouseX() const{
 	return previousMouseX;
 }
 
 //--------------------------------------
-int ofGetPreviousMouseY(){
+int ofCoreEvents::getPreviousMouseY() const{
 	return previousMouseY;
 }
 
-//--------------------------------------
-void ofSetEscapeQuitsApp(bool bQuitOnEsc){
-	bEscQuits = bQuitOnEsc;
+//------------------------------------------
+void ofCoreEvents::notifySetup(){
+	ofNotifyEvent( setup, voidEventArgs );
+}
+
+#include "ofGraphics.h"
+//------------------------------------------
+void ofCoreEvents::notifyUpdate(){
+	ofNotifyEvent( update, voidEventArgs );
 }
 
 //------------------------------------------
-void ofNotifySetup(){
-	ofNotifyEvent( ofEvents().setup, voidEventArgs );
-}
-
-//------------------------------------------
-void ofNotifyUpdate(){
-	
-	// update renderer, application and notify update event
-	ofGetCurrentRenderer()->update();
-
-	ofNotifyEvent( ofEvents().update, voidEventArgs );
-}
-
-//------------------------------------------
-void ofNotifyDraw(){
-	if(ofGetCurrentRenderer()){
-		ofNotifyEvent( ofEvents().draw, voidEventArgs );
-	}
+void ofCoreEvents::notifyDraw(){
+	ofNotifyEvent( draw, voidEventArgs );
 
 	if (bFrameRateSet){
 		timer.waitNext();
@@ -144,109 +224,102 @@ void ofNotifyDraw(){
 }
 
 //------------------------------------------
-void ofNotifyKeyPressed(int key, int keycode, int scancode, int codepoint){
+void ofCoreEvents::notifyKeyPressed(int key, int keycode, int scancode, int codepoint){
 	// FIXME: modifiers are being reported twice, for generic and for left/right
 	// add operators to the arguments class so it can be checked for both
     if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
         pressedKeys.insert(OF_KEY_CONTROL);
         ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Pressed,OF_KEY_CONTROL);
-        ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
+        ofNotifyEvent( keyPressed, keyEventArgs );
     }
     else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
         pressedKeys.insert(OF_KEY_SHIFT);
         ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Pressed,OF_KEY_SHIFT);
-        ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
+        ofNotifyEvent( keyPressed, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
         pressedKeys.insert(OF_KEY_ALT);
         ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Pressed,OF_KEY_ALT);
-        ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
+        ofNotifyEvent( keyPressed, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
         pressedKeys.insert(OF_KEY_SUPER);
         ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Pressed,OF_KEY_SUPER);
-        ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
+        ofNotifyEvent( keyPressed, keyEventArgs );
     }
             
 	pressedKeys.insert(key);
     ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Pressed,key,keycode,scancode,codepoint);
-	ofNotifyEvent( ofEvents().keyPressed, keyEventArgs );
-	
-	
-	if (key == OF_KEY_ESC && bEscQuits == true){				// "escape"
-		ofGetWindowPtr()->windowShouldClose();
-    }
-	
-	
+	ofNotifyEvent( keyPressed, keyEventArgs );
 }
 
 //------------------------------------------
-void ofNotifyKeyReleased(int key, int keycode, int scancode, int codepoint){
+void ofCoreEvents::notifyKeyReleased(int key, int keycode, int scancode, int codepoint){
 	// FIXME: modifiers are being reported twice, for generic and for left/right
 	// add operators to the arguments class so it can be checked for both
     if(key == OF_KEY_RIGHT_CONTROL || key == OF_KEY_LEFT_CONTROL){
         pressedKeys.erase(OF_KEY_CONTROL);
         ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Released,OF_KEY_CONTROL);
-    	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
+    	ofNotifyEvent( keyReleased, keyEventArgs );
     }
     else if(key == OF_KEY_RIGHT_SHIFT || key == OF_KEY_LEFT_SHIFT){
         pressedKeys.erase(OF_KEY_SHIFT);
         ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Released,OF_KEY_SHIFT);
-    	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
+    	ofNotifyEvent( keyReleased, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_ALT || key == OF_KEY_RIGHT_ALT){
         pressedKeys.erase(OF_KEY_ALT);
         ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Released,OF_KEY_ALT);
-    	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
+    	ofNotifyEvent( keyReleased, keyEventArgs );
     }
     else if(key == OF_KEY_LEFT_SUPER || key == OF_KEY_RIGHT_SUPER){
         pressedKeys.erase(OF_KEY_SUPER);
         ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Released,OF_KEY_SUPER);
-    	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
+    	ofNotifyEvent( keyReleased, keyEventArgs );
     }
     
 	pressedKeys.erase(key);
     ofKeyEventArgs keyEventArgs(ofKeyEventArgs::Released,key,keycode,scancode,codepoint);
-	ofNotifyEvent( ofEvents().keyReleased, keyEventArgs );
+	ofNotifyEvent( keyReleased, keyEventArgs );
 }
 
 
 //------------------------------------------
-void ofNotifyKeyEvent(const ofKeyEventArgs & keyEvent){
+void ofCoreEvents::notifyKeyEvent(const ofKeyEventArgs & keyEvent){
 	switch(keyEvent.type){
 		case ofKeyEventArgs::Pressed:
-			ofNotifyKeyPressed(keyEvent.key);
+			notifyKeyPressed(keyEvent.key);
 			break;
 		case ofKeyEventArgs::Released:
-			ofNotifyKeyReleased(keyEvent.key);
+			notifyKeyReleased(keyEvent.key);
 			break;
 		
 	}
 }
 
 //------------------------------------------
-void ofNotifyMouseEvent(const ofMouseEventArgs & mouseEvent){
+void ofCoreEvents::notifyMouseEvent(const ofMouseEventArgs & mouseEvent){
 	switch(mouseEvent.type){
 		case ofMouseEventArgs::Moved:
-			ofNotifyMouseMoved(mouseEvent.x,mouseEvent.y);
+			notifyMouseMoved(mouseEvent.x,mouseEvent.y);
 			break;
 		case ofMouseEventArgs::Dragged:
-			ofNotifyMouseDragged(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			notifyMouseDragged(mouseEvent.x,mouseEvent.y,mouseEvent.button);
 			break;
 		case ofMouseEventArgs::Pressed:
-			ofNotifyMousePressed(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			notifyMousePressed(mouseEvent.x,mouseEvent.y,mouseEvent.button);
 			break;
 		case ofMouseEventArgs::Released:
-			ofNotifyMouseReleased(mouseEvent.x,mouseEvent.y,mouseEvent.button);
+			notifyMouseReleased(mouseEvent.x,mouseEvent.y,mouseEvent.button);
 			break;
 		case ofMouseEventArgs::Scrolled:
-			ofNotifyMouseScrolled(mouseEvent.x,mouseEvent.y);
+			notifyMouseScrolled(mouseEvent.x,mouseEvent.y);
 			break;
 	}
 }
 
 //------------------------------------------
-void ofNotifyMousePressed(int x, int y, int button){
+void ofCoreEvents::notifyMousePressed(int x, int y, int button){
     if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -262,11 +335,11 @@ void ofNotifyMousePressed(int x, int y, int button){
 
 
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Pressed,x,y,button);
-	ofNotifyEvent( ofEvents().mousePressed, mouseEventArgs );
+	ofNotifyEvent( mousePressed, mouseEventArgs );
 }
 
 //------------------------------------------
-void ofNotifyMouseReleased(int x, int y, int button){
+void ofCoreEvents::notifyMouseReleased(int x, int y, int button){
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -281,11 +354,11 @@ void ofNotifyMouseReleased(int x, int y, int button){
 	pressedMouseButtons.erase(button);
 
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Released,x,y,button);
-	ofNotifyEvent( ofEvents().mouseReleased, mouseEventArgs );
+	ofNotifyEvent( mouseReleased, mouseEventArgs );
 }
 
 //------------------------------------------
-void ofNotifyMouseDragged(int x, int y, int button){
+void ofCoreEvents::notifyMouseDragged(int x, int y, int button){
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -299,11 +372,11 @@ void ofNotifyMouseDragged(int x, int y, int button){
 	currentMouseY = y;
 
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Dragged,x,y,button);
-	ofNotifyEvent( ofEvents().mouseDragged, mouseEventArgs );
+	ofNotifyEvent( mouseDragged, mouseEventArgs );
 }
 
 //------------------------------------------
-void ofNotifyMouseMoved(int x, int y){
+void ofCoreEvents::notifyMouseMoved(int x, int y){
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -317,33 +390,40 @@ void ofNotifyMouseMoved(int x, int y){
 	currentMouseY = y;
 
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Moved,x,y,0);
-	ofNotifyEvent( ofEvents().mouseMoved, mouseEventArgs );
+	ofNotifyEvent( mouseMoved, mouseEventArgs );
 }
 
 //------------------------------------------
-void ofNotifyMouseScrolled(float x, float y){
+void ofCoreEvents::notifyMouseScrolled(float x, float y){
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Scrolled,x,y);
 
 	mouseEventArgs.x = x;
 	mouseEventArgs.y = y;
 	mouseEventArgs.type = ofMouseEventArgs::Scrolled;
-	ofNotifyEvent( ofEvents().mouseScrolled, mouseEventArgs );
+	ofNotifyEvent( mouseScrolled, mouseEventArgs );
 }
 
 //------------------------------------------
-void ofNotifyExit(){
-	ofNotifyEvent( ofEvents().exit, voidEventArgs );
+void ofCoreEvents::notifyExit(){
+	ofNotifyEvent( exit, voidEventArgs );
 }
 
 //------------------------------------------
-void ofNotifyWindowResized(int width, int height){
+void ofCoreEvents::notifyWindowResized(int width, int height){
 	ofResizeEventArgs resizeEventArgs(width,height);
-	ofNotifyEvent( ofEvents().windowResized, resizeEventArgs );
+	ofNotifyEvent( windowResized, resizeEventArgs );
 }
 
 //------------------------------------------
-void ofNotifyDragEvent(ofDragInfo info){
-	ofNotifyEvent(ofEvents().fileDragEvent, info);
+void ofCoreEvents::notifyDragEvent(ofDragInfo info){
+	ofNotifyEvent(fileDragEvent, info);
+}
+
+//------------------------------------------
+void ofCoreEvents::notifyWindowEntry( int state ) {
+	ofEntryEventArgs entryArgs(state);
+	ofNotifyEvent(windowEntered, entryArgs);
+
 }
 
 //------------------------------------------
@@ -355,10 +435,4 @@ void ofSendMessage(ofMessage msg){
 void ofSendMessage(string messageString){
 	ofMessage msg(messageString);
 	ofSendMessage(msg);
-}
-
-void ofNotifyWindowEntry( int state ) {
-	static ofEntryEventArgs entryArgs(state);
-	ofNotifyEvent(ofEvents().windowEntered, entryArgs);
-	
 }

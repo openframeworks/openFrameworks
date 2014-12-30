@@ -1,6 +1,5 @@
 
 #include "ofBitmapFont.h"
-#include "ofGraphics.h"
 
 
 // ==============================================================
@@ -323,63 +322,30 @@ static const unsigned char* bmpChar_8x13_Map[] = {	bmpChar_8x13_000,bmpChar_8x13
 
 
 #include "ofTexture.h"
-#include "ofGLProgrammableRenderer.h"
+static const float widthTex = 8.0f/256.0f;
+static const float heightTex = 14.0f/256.0f;
+ofPixels ofBitmapFont::pixels;
 
-static bool				bBitmapTexturePrepared = false;
-static ofTexture		bitmappedFontTexture;
-
-#ifdef TARGET_OPENGLES
-//---------------------------------------------------------------------
-// tig: does this actually do anything?
-void ofUpdateBitmapCharacterTexture(){
-	bBitmapTexturePrepared = false;
-}
-#endif
-
-static ofPixels myLetterPixels;
-static float widthTex = 8.0f/256.0f;
-static float heightTex = 14.0f/256.0f;
-
-//---------------------------------------------------------------------
-static void prepareBitmapTexture(){
-	if (!bBitmapTexturePrepared){
-		myLetterPixels.allocate(16*16, 16*16, 4); // letter size:8x14pixels, texture size:16x8letters, gl_rgba: 4bytes/1pixel
-        myLetterPixels.set(0);
-
-		bitmappedFontTexture.allocate(16*16, 16*16, GL_RGBA, false);
-		
-		bBitmapTexturePrepared = true;
-		
-		for (int i = 0; i < 256; i++) {
-			
-			const unsigned char * face = bmpChar_8x13_Map[i];
-			
-			for (int j = 1; j < 15; j++){
-				for (int k = 0; k < 8; k++){
-					if ( ((face[15-j] << k) & (128)) > 0 ){
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4] = 255;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+1] = 255;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+2] = 255;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+3] = 255;
-					}else{
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4] = 0;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+1] = 0;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+2] = 0;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+3] = 0;
-					}
+void ofBitmapFont::init(){
+	if(pixels.isAllocated()) return;
+	pixels.allocate(16*16, 16*16, OF_PIXELS_GRAY_ALPHA); // letter size:8x14pixels, texture size:16x8letters, gl_r: 1bytes/1pixel
+	pixels.set(0);
+	for (int i = 0; i < 256; i++) {
+		const unsigned char * face = bmpChar_8x13_Map[i];
+		for (int j = 1; j < 15; j++){
+			for (int k = 0; k < 8; k++){
+				if ( ((face[15-j] << k) & (128)) > 0 ){
+					pixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
+					pixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
 				}
 			}
 		}
-		
-		bitmappedFontTexture.loadData(myLetterPixels);
-		bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
-
 	}
 
 }
 		
 //---------------------------------------------------------------------
-static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int character, int x , int y){
+static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int character, int x , int y, bool vFlipped){
 	if (character < 128) {		
 
 		float posTexW = (float)(character % 16)/16.0f;
@@ -392,7 +358,7 @@ static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int charact
 		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position.
 		//3 pixel adjustment corrects that when y is flpped 5 when it's not.
 		int yOffset = 14;
-		if(!ofIsVFlipped()){
+		if(!vFlipped){
 			y += 5;
 			y += yOffset;
 			yOffset *= -1;
@@ -421,7 +387,7 @@ static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int charact
 	}	
 }
 
-ofMesh ofBitmapStringGetMesh(const string & text, int x, int y, ofDrawBitmapMode mode, bool vFlipped){
+ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofDrawBitmapMode mode, bool vFlipped) const{
 	int len = (int)text.length();
 	float fontSize = 8.0f;
 
@@ -429,10 +395,6 @@ ofMesh ofBitmapStringGetMesh(const string & text, int x, int y, ofDrawBitmapMode
 	charMesh.setMode(OF_PRIMITIVE_TRIANGLES);
 	charMesh.getVertices().resize(6 * len);
 	charMesh.getTexCoords().resize(6 * len);
-
-	if(!bBitmapTexturePrepared){
-		prepareBitmapTexture();
-	}
 
 	int vertexCount = 0;
 	int column = 0;
@@ -470,7 +432,7 @@ ofMesh ofBitmapStringGetMesh(const string & text, int x, int y, ofDrawBitmapMode
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
 			// getting drawn when they ought to not be
-			addBitmapCharacter(charMesh, vertexCount, text[c], (int)sx, (int)sy);
+			addBitmapCharacter(charMesh, vertexCount, text[c], (int)sx, (int)sy, vFlipped);
 
 			sx += fontSize;
 			column++;
@@ -483,16 +445,19 @@ ofMesh ofBitmapStringGetMesh(const string & text, int x, int y, ofDrawBitmapMode
 
 }
 
-ofTexture & ofBitmapStringGetTextureRef(){
-	if(!bBitmapTexturePrepared){
-		prepareBitmapTexture();
+const ofTexture & ofBitmapFont::getTexture() const{
+	if(!texture.isAllocated()){
+		ofBitmapFont::init();
+		texture.allocate(pixels,false);
+		texture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
+		texture.setRGToRGBASwizzles(true);
 	}
-	return bitmappedFontTexture;
+	return texture;
 }
 
 
-ofRectangle ofBitmapStringGetBoundingBox(const string & text, int x, int y){
-	const ofMesh & mesh = ofBitmapStringGetMesh(text,x,y);
+ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y) const{
+	const ofMesh & mesh = getMesh(text,x,y);
 	ofVec2f max(numeric_limits<float>::min(),numeric_limits<float>::min());
 	ofVec2f min(numeric_limits<float>::max(),numeric_limits<float>::max());
 	for(int i=0;i< mesh.getNumVertices(); i++){

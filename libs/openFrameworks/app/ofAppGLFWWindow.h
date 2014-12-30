@@ -18,6 +18,77 @@
 class ofBaseApp;
 
 #ifdef TARGET_OPENGLES
+class ofGLFWWindowSettings: public ofGLESWindowSettings{
+#else
+class ofGLFWWindowSettings: public ofGLWindowSettings{
+#endif
+public:
+	ofGLFWWindowSettings()
+	:numSamples(4)
+	,doubleBuffering(true)
+	,redBits(8)
+	,greenBits(8)
+	,blueBits(8)
+	,alphaBits(8)
+	,depthBits(24)
+	,stencilBits(0)
+	,visible(true)
+	,iconified(false)
+	,decorated(true)
+	,resizable(true)
+	,monitor(0){}
+
+#ifdef TARGET_OPENGLES
+	ofGLFWWindowSettings(const ofGLESWindowSettings & settings)
+	:ofGLESWindowSettings(settings)
+	,numSamples(4)
+	,doubleBuffering(true)
+	,redBits(8)
+	,greenBits(8)
+	,blueBits(8)
+	,alphaBits(8)
+	,depthBits(24)
+	,stencilBits(0)
+	,visible(true)
+	,iconified(false)
+	,decorated(true)
+	,resizable(true)
+	,monitor(0){}
+#else
+	ofGLFWWindowSettings(const ofGLWindowSettings & settings)
+	:ofGLWindowSettings(settings)
+	,numSamples(4)
+	,doubleBuffering(true)
+	,redBits(8)
+	,greenBits(8)
+	,blueBits(8)
+	,alphaBits(8)
+	,depthBits(24)
+	,stencilBits(0)
+	,visible(true)
+	,iconified(false)
+	,decorated(true)
+	,resizable(true)
+	,monitor(0){}
+#endif
+
+	int numSamples;
+	bool doubleBuffering;
+	int redBits;
+	int greenBits;
+	int blueBits;
+	int alphaBits;
+	int depthBits;
+	int stencilBits;
+	bool visible;
+	bool iconified;
+	bool decorated;
+	bool resizable;
+	int monitor;
+	shared_ptr<ofAppBaseWindow> shareContextWith;
+};
+
+#ifdef TARGET_OPENGLES
 class ofAppGLFWWindow : public ofAppBaseGLESWindow{
 #else
 class ofAppGLFWWindow : public ofAppBaseGLWindow {
@@ -28,6 +99,11 @@ public:
 	ofAppGLFWWindow();
 	~ofAppGLFWWindow();
 
+	static void loop(){};
+	static bool doesLoop(){ return false; }
+	static bool allowsMultiWindow(){ return true; }
+	static bool needsPolling(){ return true; }
+	static void pollEvents(){ glfwPollEvents(); }
 
 	// window settings, this functions can be called from main before calling ofSetupOpenGL
 	void 		setNumSamples(int samples);
@@ -45,25 +121,32 @@ public:
 
 
     // this functions are only meant to be called from inside OF don't call them from your code
-
+    using ofAppBaseWindow::setup;
 #ifdef TARGET_OPENGLES
-	void setGLESVersion(int glesVersion);
+	void setup(const ofGLESWindowSettings & settings);
 #else
-	void setOpenGLVersion(int major, int minor);
+	void setup(const ofGLWindowSettings & settings);
 #endif
-	void setupOpenGL(int w, int h, ofWindowMode screenMode);
-	void initializeWindow();
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
-	void windowShouldClose();
+	void setup(const ofGLFWWindowSettings & settings);
+	void update();
+	void draw();
+	void run(ofBaseApp * appPtr);
+	bool getWindowShouldClose();
+	void setWindowShouldClose();
 
+	void close();
 
 	void hideCursor();
 	void showCursor();
 
 	int getHeight();
 	int getWidth();
+
+	ofCoreEvents & events();
+	shared_ptr<ofBaseRenderer> & renderer();
     
     GLFWwindow* getGLFWWindow();
+    void * getWindowContext(){return getGLFWWindow();}
 
 	ofVec3f		getWindowSize();
 	ofVec3f		getScreenSize();
@@ -139,44 +222,30 @@ private:
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
-	//utils
-	int				samples;
-	int				rBits,gBits,bBits,aBits,depthBits,stencilBits;
+	ofCoreEvents coreEvents;
+	shared_ptr<ofBaseRenderer> currentRenderer;
+	ofGLFWWindowSettings settings;
 
 	ofWindowMode	windowMode;
 
 	bool			bEnableSetupScreen;
-
-	int				requestedWidth;
-	int				requestedHeight;
-
-	int 			nonFullScreenW;
-	int 			nonFullScreenH;
-	int 			nonFullScreenX;
-	int 			nonFullScreenY;
+	int				windowW, windowH;
 
 	int				buttonInUse;
 	bool			buttonPressed;
 
-	int				windowW;
-	int				windowH;
-
 	int 			nFramesSinceWindowResized;
-	bool			bDoubleBuffered;
     bool            bMultiWindowFullscreen; 
 
 	GLFWwindow* 	windowP;
     
 	int				getCurrentMonitor();
-	
-	static ofAppGLFWWindow	* instance;
-	static ofBaseApp *	ofAppPtr;
+
+	ofBaseApp *	ofAppPtr;
 
     int pixelScreenCoordScale; 
 
 	ofOrientation orientation;
-
-	int glVersionMinor, glVersionMajor;
 
 	bool iconSet;
 

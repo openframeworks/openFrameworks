@@ -93,6 +93,28 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		virtual void messageReceived(ofMessage & message){
 			gotMessage(message);
 		}
+
+		virtual void touchDown(int x, int y, int id) {};
+		virtual void touchMoved(int x, int y, int id) {};
+		virtual void touchUp(int x, int y, int id) {};
+		virtual void touchDoubleTap(int x, int y, int id) {};
+		virtual void touchCancelled(int x, int y, int id) {};
+
+		virtual void touchDown(ofTouchEventArgs & touch) {
+			touchDown(touch.x, touch.y, touch.id);
+		};
+		virtual void touchMoved(ofTouchEventArgs & touch) {
+			touchMoved(touch.x, touch.y, touch.id);
+		};
+		virtual void touchUp(ofTouchEventArgs & touch) {
+			touchUp(touch.x, touch.y, touch.id);
+		};
+		virtual void touchDoubleTap(ofTouchEventArgs & touch) {
+			touchDoubleTap(touch.x, touch.y, touch.id);
+		};
+		virtual void touchCancelled(ofTouchEventArgs & touch){
+			touchCancelled(touch.x, touch.y, touch.id);
+		}
 };
 
 

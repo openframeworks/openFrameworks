@@ -18,7 +18,7 @@ void ofApp::setup() {
 	
 	// set the vertex data
 	vbo.setVertexData(pos, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
-	if(ofGetGLProgrammableRenderer()){
+	if(ofIsGLProgrammableRenderer()){
 		shader.load("shaderGL3/Billboard");
 	}else{
 		shader.load("shaderGL2/Billboard");
@@ -95,10 +95,6 @@ void ofApp::draw() {
 
 	ofDisablePointSprites();
 	shader.end();
-	
-	// disable vertex attributes
-	//glDisableVertexAttribArray(pointAttLoc);
-	//glDisableVertexAttribArray(angleLoc);
 }
 
 //--------------------------------------------------------------
