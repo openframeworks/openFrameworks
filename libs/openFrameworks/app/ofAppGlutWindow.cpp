@@ -656,13 +656,13 @@ void ofAppGlutWindow::display(void){
 	instance->events().notifyDraw();
 
     #ifdef TARGET_WIN32
-    if (currentRenderer->getBackgroundAuto() == false){
+    if (instance->currentRenderer->getBackgroundAuto() == false){
         // on a PC resizing a window with this method of accumulation (essentially single buffering)
         // is BAD, so we clear on resize events.
         if (nFramesSinceWindowResized < 3){
-        	currentRenderer->clear();
+            instance->currentRenderer->clear();
         } else {
-            if ( (events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
+            if ( (instance->events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
             else  glFlush();
         }
     } else {
