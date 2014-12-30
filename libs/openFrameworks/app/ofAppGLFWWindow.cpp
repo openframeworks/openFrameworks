@@ -58,7 +58,6 @@ ofAppGLFWWindow::~ofAppGLFWWindow(){
 
 void ofAppGLFWWindow::close(){
 	if(windowP){
-		events().notifyExit();
 		glfwDestroyWindow(windowP);
 		windowP = NULL;
 		events().disable();
