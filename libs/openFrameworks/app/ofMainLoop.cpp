@@ -65,7 +65,6 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & se
 
 void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
 	windowsApps[window] = app;
-	apps.push_back(app);
 	if(app){
 		ofAddListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
 		ofAddListener(window->events().update,app.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
@@ -109,9 +108,7 @@ int ofMainLoop::loop(){
 		windowLoop();
 	}
 	exitEvent.notify(this);
-	exitEvent.notify(this);
 	windowsApps.clear();
-	apps.clear();
 	return status;
 }
 
