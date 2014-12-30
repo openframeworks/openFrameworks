@@ -116,8 +116,11 @@
     <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundBuffer.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundObject.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundStream.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameter.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameterGroup.h" />
@@ -186,8 +189,11 @@
     <ClCompile Include="..\..\..\openFrameworks\math\ofQuaternion.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofVec2f.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofVec4f.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundBuffer.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundObject.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofBaseTypes.cpp" />
