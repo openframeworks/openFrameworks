@@ -166,10 +166,10 @@ static void fixCloseWindowOnWin32(){
 	DragAcceptFiles (handle, TRUE);
 
 	//store the current message event handler for the window
-	currentWndProc = (WNDPROC)GetWindowLongPtr(handle, GWL_WNDPROC);
+	currentWndProc = (WNDPROC)GetWindowLongPtr(handle, GWLP_WNDPROC);
 
 	//tell the window to now use our event handler!
-	SetWindowLongPtr(handle, GWL_WNDPROC, (long)winProc);
+	SetWindowLongPtr(handle, GWLP_WNDPROC, (LONG_PTR)winProc);
 }
 
 #endif
