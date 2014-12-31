@@ -65,7 +65,7 @@ void ofApp::draw(){
 
 		//get the normalized direction. normalized vectors always have a length of one
 		//and are really useful for representing directions as opposed to something with length
-		ofVec3f unitDirection = direction.normalized();
+		ofVec3f unitDirection = direction.getNormalized();
 
 		//find both directions to the left and to the right
 		ofVec3f toTheLeft = unitDirection.getRotated(-90, ofVec3f(0,0,1));
@@ -122,7 +122,7 @@ void ofApp::mouseMoved(int x, int y ){
         }
 
         ofVec3f directionToFurthestPoint = (furthestPoint - center);
-        ofVec3f directionToFurthestPointRotated = directionToFurthestPoint.rotated(rotateAmount, ofVec3f(0,1,0));
+        ofVec3f directionToFurthestPointRotated = directionToFurthestPoint.getRotated(rotateAmount, ofVec3f(0,1,0));
         camera.setPosition(center + directionToFurthestPointRotated);
         camera.lookAt(center);
     }
