@@ -62,6 +62,9 @@ void ofSoundStreamClose();
 /// \brief Prints a list of available devices to the console
 void ofSoundStreamListDevices();
 
+/// \brief Sets the device represented by the stream, see ofSoundStreamListDevices().
+void ofSoundStreamSetDeviceID(int deviceID);
+
 /// \class ofSoundStream
 /// \brief Gives access to audio input and output devices
 ///

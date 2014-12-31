@@ -46,6 +46,11 @@ void ofSoundStreamListDevices(){
 }
 
 //------------------------------------------------------------
+void ofSoundStreamSetDeviceID(int deviceID){
+	soundStreamOutput.setDeviceID(deviceID);
+}
+
+//------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
 	#ifdef OF_SOUND_STREAM_TYPE
 		setSoundStream( shared_ptr<OF_SOUND_STREAM_TYPE>(new OF_SOUND_STREAM_TYPE) );
