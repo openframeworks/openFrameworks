@@ -87,7 +87,7 @@ void ofApp::update(){
 	//move the camera around the mesh
 	ofVec3f camDirection(0,0,1);
 	ofVec3f centre(vidGrabber.getWidth()/2.f,vidGrabber.getHeight()/2.f, 255/2.f);
-	ofVec3f camDirectionRotated = camDirection.rotated(rotateAmount, ofVec3f(1,0,0));
+	ofVec3f camDirectionRotated = camDirection.getRotated(rotateAmount, ofVec3f(1,0,0));
 	ofVec3f camPosition = centre + camDirectionRotated * extrusionAmount;
 	
 	cam.setPosition(camPosition);
