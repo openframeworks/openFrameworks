@@ -38,8 +38,8 @@ void ofApp::setup(){
         ofVec3f next(radius*cos(nextTheta),radius*sin(nextTheta),radius*zamt*sin(zfreq*nextTheta) );
         
         // our normals for each triangle face is the cross product of the two vectors making up that sliver 
-        ofVec3f previousFaceNormal = prev.crossed(p);
-        ofVec3f nextFaceNormal = p.crossed(next);
+        ofVec3f previousFaceNormal = prev.getCrossed(p);
+        ofVec3f nextFaceNormal = p.getCrossed(next);
         
         /* notice here we go in the same direction: previous->current,current->next;
            we could similarly go next->current,current-prev, which would flip all of our normals;
