@@ -86,6 +86,7 @@
 				<string>E41D400C13B39D2100A75A5D</string>
 				<string>E41D400D13B39D2100A75A5D</string>
 				<string>E41D400E13B39D2100A75A5D</string>
+				<string>67DFA53619F92A69003B3434</string>
 			</array>
 			<key>isa</key>
 			<string>PBXFrameworksBuildPhase</string>
@@ -323,6 +324,7 @@
 				<string>1D30AB110D05D00D00671497</string>
 				<string>288765FC0DF74451002DB57D</string>
 				<string>5326AEA710A23A0500278DE6</string>
+				<string>67DFA53419F92A5E003B3434</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
@@ -484,6 +486,26 @@
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
+		<key>67DFA53419F92A5E003B3434</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>Accelerate.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/Accelerate.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>67DFA53619F92A69003B3434</key>
+		<dict>
+			<key>fileRef</key>
+			<string>67DFA53419F92A5E003B3434</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
 		<key>9255DD331112741900D6945E</key>
 		<dict>
 			<key>buildActionMask</key>
@@ -502,6 +524,8 @@
 			<string>/bin/sh</string>
 			<key>shellScript</key>
 			<string>cp -rf bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"
+
+
 
 </string>
 		</dict>

@@ -4,8 +4,9 @@
 #include "ofLog.h"
 #include "of3dGraphics.h"
 
-ofNode::ofNode() : 
-	parent(NULL) {
+ofNode::ofNode()
+:parent(NULL)
+,legacyCustomDrawOverrided(true){
 	setPosition(ofVec3f(0, 0, 0));
 	setOrientation(ofVec3f(0, 0, 0));
 	setScale(1);
@@ -44,6 +45,7 @@ void ofNode::setTransformMatrix(const ofMatrix4x4 &m44) {
 
 	ofQuaternion so;
 	localTransformMatrix.decompose(position, orientation, scale, so);
+	updateAxis();
 	
 	onPositionChanged();
 	onOrientationChanged();
@@ -231,9 +233,9 @@ void ofNode::rotateAround(float degrees, const ofVec3f& axis, const ofVec3f& poi
 //----------------------------------------
 void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 	if(parent) upVector = upVector * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix());	
-	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).normalized();	
+	ofVec3f zaxis = (getGlobalPosition() - lookAtPosition).getNormalized();
 	if (zaxis.length() > 0) {
-		ofVec3f xaxis = upVector.getCrossed(zaxis).normalized();	
+		ofVec3f xaxis = upVector.getCrossed(zaxis).getNormalized();
 		ofVec3f yaxis = zaxis.getCrossed(xaxis);
 		
 		ofMatrix4x4 m;
@@ -248,6 +250,13 @@ void ofNode::lookAt(const ofVec3f& lookAtPosition, ofVec3f upVector) {
 //----------------------------------------
 void ofNode::lookAt(const ofNode& lookAtNode, const ofVec3f& upVector) {
 	lookAt(lookAtNode.getGlobalPosition(), upVector);
+}
+
+//----------------------------------------
+void ofNode::updateAxis() {
+	if(scale[0]>0) axis[0] = getLocalTransformMatrix().getRowAsVec3f(0)/scale[0];
+	if(scale[1]>0) axis[1] = getLocalTransformMatrix().getRowAsVec3f(1)/scale[1];
+	if(scale[2]>0) axis[2] = getLocalTransformMatrix().getRowAsVec3f(2)/scale[2];
 }
 
 //----------------------------------------
@@ -349,27 +358,32 @@ void ofNode::resetTransform() {
 
 //----------------------------------------
 void ofNode::draw()  const{
-	transformGL();
+	ofGetCurrentRenderer()->draw(*this);
+}
+
+//----------------------------------------
+void ofNode::customDraw(const ofBaseRenderer * renderer) const{
 	const_cast<ofNode*>(this)->customDraw();
-	restoreTransformGL();
+	if(!legacyCustomDrawOverrided){
+		renderer->drawBox(10);
+		renderer->draw(ofMesh::axis(20),OF_MESH_FILL);
+	}
 }
 
 //----------------------------------------
 void ofNode::customDraw(){
-	ofDrawBox(10);
-	ofDrawAxis(20);
+	legacyCustomDrawOverrided = false;
 }
 
 //----------------------------------------
-void ofNode::transformGL() const {
-	ofPushMatrix();
-	ofMultMatrix( getGlobalTransformMatrix() );
-	//glMultMatrixf( getGlobalTransformMatrix().getPtr() );
+void ofNode::transformGL(ofBaseRenderer * renderer) const {
+	renderer->pushMatrix();
+	renderer->multMatrix( getGlobalTransformMatrix() );
 }
 
 //----------------------------------------
-void ofNode::restoreTransformGL() const {
-	ofPopMatrix();
+void ofNode::restoreTransformGL(ofBaseRenderer * renderer) const {
+	renderer->popMatrix();
 }
 
 //----------------------------------------
@@ -380,9 +394,7 @@ void ofNode::createMatrix() {
 	localTransformMatrix.rotate(orientation);
 	localTransformMatrix.setTranslation(position);
 	
-	if(scale[0]>0) axis[0] = getLocalTransformMatrix().getRowAsVec3f(0)/scale[0];
-	if(scale[1]>0) axis[1] = getLocalTransformMatrix().getRowAsVec3f(1)/scale[1];
-	if(scale[2]>0) axis[2] = getLocalTransformMatrix().getRowAsVec3f(2)/scale[2];
+	updateAxis();
 }
 
 

@@ -25,6 +25,11 @@
     #define OF_VID_PLAYER_TYPE ofAVFoundationPlayer
 #endif
 
+#ifdef OF_VIDEO_PLAYER_DIRECTSHOW
+    #include "ofDirectShowPlayer.h"
+    #define OF_VID_PLAYER_TYPE ofDirectShowPlayer
+#endif
+
 #ifdef OF_VIDEO_PLAYER_IOS
 	#include "ofxiOSVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
@@ -47,10 +52,9 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		ofVideoPlayer ();
 
-		void						setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer);
-		shared_ptr<ofBaseVideoPlayer>	getPlayer();
 
-		bool 				loadMovie(string name);
+		bool 				load(string name);
+		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(string name));
 	    string				getMoviePath() const;
 
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
@@ -64,9 +68,10 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				stop();
 
 		bool 				isFrameNew() const;
-		unsigned char * 	getPixels();
-        ofPixels&			getPixelsRef();
-        const ofPixels&     getPixelsRef() const;
+		ofPixels& 			getPixels();
+		const ofPixels&		getPixels() const;
+        OF_DEPRECATED_MSG("Use getPixels() instead", ofPixels&	getPixelsRef());
+        OF_DEPRECATED_MSG("Use getPixels() instead", const ofPixels&  getPixelsRef() const);
 		float 				getPosition() const;
 		float 				getSpeed() const;
 		float 				getDuration() const;
@@ -81,9 +86,11 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		void 				setUseTexture(bool bUse);
 		bool 				isUsingTexture() const;
-		ofTexture &			getTextureReference();
+		ofTexture &			getTexture();
+		const ofTexture &	getTexture() const;
+		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
+		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
 		vector<ofTexture> & getTexturePlanes();
-		const ofTexture &	getTextureReference() const;
 		const vector<ofTexture> & getTexturePlanes() const;
 		void 				draw(float x, float y, float w, float h) const;
 		void 				draw(float x, float y) const;
@@ -115,11 +122,26 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		bool				isPlaying() const;
 		bool 				isInitialized() const;
 
+		void				setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer);
+		shared_ptr<ofBaseVideoPlayer>	getPlayer();
+		const shared_ptr<ofBaseVideoPlayer>	getPlayer() const;
+
+		template<typename PlayerType>
+		shared_ptr<PlayerType> getPlayer(){
+			return dynamic_pointer_cast<PlayerType>(getPlayer());
+		}
+
+		template<typename PlayerType>
+		const shared_ptr<PlayerType> getPlayer() const{
+			return dynamic_pointer_cast<PlayerType>(getPlayer());
+		}
+
 		//this is kept as legacy to support people accessing width and height directly. 
 		mutable int         height;
 		mutable int         width;
 
 	private:
+		void initDefaultPlayer();
 		shared_ptr<ofBaseVideoPlayer>		player;
 		
 		vector<ofTexture> tex;

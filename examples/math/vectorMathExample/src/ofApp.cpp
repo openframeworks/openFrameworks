@@ -53,7 +53,7 @@ void ofApp::update(){
 
      // rotate the points
      for (int i = 0; i < nPts; i++){
-        pts[i] = pts[i].rotated(speedOfRotation, rotateAmount);
+        pts[i] = pts[i].getRotated(speedOfRotation, rotateAmount);
      }
 
      // move them back
@@ -103,7 +103,7 @@ void ofApp::draw(){
 
      ofFill();
      ofSetHexColor(0xE5A93F);
-     ofRect(10,10,300,70);
+     ofDrawRectangle(10,10,300,70);
      ofSetHexColor(0x000000);
      ofDrawBitmapString(info,30,30);
 

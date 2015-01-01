@@ -7,8 +7,11 @@
 #include "ofLog.h"
 #include "ofSystemUtils.h"
 #include "ofThread.h"
+#include "ofThreadChannel.h"
 #include "ofURLFileLoader.h"
 #include "ofUtils.h"
+#include "ofThreadChannel.h"
+#include "ofFpsCounter.h"
 
 //--------------------------
 // types
@@ -68,12 +71,16 @@
 #include "ofBaseApp.h"
 #include "ofAppRunner.h"
 #include "ofAppBaseWindow.h"
+#include "ofWindowSettings.h"
+#include "ofMainLoop.h"
 
 //--------------------------
 // audio
 #ifndef TARGET_NO_SOUND
 #include "ofSoundStream.h"
 #include "ofSoundPlayer.h"
+#include "ofSoundBuffer.h"
+#include "ofSoundObject.h"
 #endif
 
 //--------------------------

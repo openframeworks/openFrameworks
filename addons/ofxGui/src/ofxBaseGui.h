@@ -4,6 +4,7 @@
 #include "ofBaseTypes.h"
 #include "ofParameter.h"
 #include "ofTrueTypeFont.h"
+#include "ofBitmapFont.h"
 
 class ofxBaseGui{
 public:
@@ -15,7 +16,7 @@ public:
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
 	
-	void setDefaultSerializer(ofPtr<ofBaseFileSerializer> serializer);
+	void setDefaultSerializer(std::shared_ptr<ofBaseFileSerializer> serializer);
 
 	virtual void saveTo(ofBaseSerializer& serializer);
 	virtual void loadFrom(ofBaseSerializer& serializer);
@@ -67,20 +68,22 @@ public:
 	virtual bool mousePressed(ofMouseEventArgs & args) = 0;
 	virtual bool mouseDragged(ofMouseEventArgs & args) = 0;
 	virtual bool mouseReleased(ofMouseEventArgs & args) = 0;
+	virtual bool mouseScrolled(ofMouseEventArgs & args) = 0;
 protected:
 	virtual void render()=0;
 	bool isGuiDrawing();
 	virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
 	void bindFontTexture();
 	void unbindFontTexture();
-	ofMesh & getTextMesh(const string & text, float x, float y);
+	ofMesh getTextMesh(const string & text, float x, float y);
 	ofRectangle getTextBoundingBox(const string & text,float x, float y);
 
 	ofRectangle b;
 	static ofTrueTypeFont font;
 	static bool fontLoaded;
 	static bool useTTF;
-	ofPtr<ofBaseFileSerializer> serializer;
+	static ofBitmapFont bitmapFont;
+	shared_ptr<ofBaseFileSerializer> serializer;
 
 	static ofColor headerBackgroundColor;
 	static ofColor backgroundColor;

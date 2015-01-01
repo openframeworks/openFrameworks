@@ -27,26 +27,129 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
- * ***********************************************************************/ 
-
+ * ***********************************************************************/
 
 #pragma once
 
 #import "ofAppBaseWindow.h"
+#include "ofxiOSConstants.h"
+#include "ofWindowSettings.h"
+
+class ofiOSWindowSettings: public ofGLESWindowSettings{
+public:
+    ofiOSWindowSettings()
+    :enableRetina(false)
+    ,retinaScale(0)
+    ,enableDepth(false)
+    ,enableAntiAliasing(false)
+    ,numOfAntiAliasingSamples(0)
+    ,enableHardwareOrientation(false)
+    ,enableHardwareOrientationAnimation(false)
+    ,enableSetupScreen(true) {
+        windowMode = OF_FULLSCREEN;
+        glesVersion = 1;
+    }
+    
+    ofiOSWindowSettings(const ofWindowSettings & settings)
+    :ofGLESWindowSettings(settings)
+    ,enableRetina(false)
+    ,retinaScale(0)
+    ,enableDepth(false)
+    ,enableAntiAliasing(false)
+    ,numOfAntiAliasingSamples(0)
+    ,enableHardwareOrientation(false)
+    ,enableHardwareOrientationAnimation(false)
+    ,enableSetupScreen(true) {
+        const ofGLESWindowSettings * glesSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
+        if(glesSettings){
+            glesVersion = glesSettings->glesVersion;
+        } else {
+            glesVersion = 1;
+        }
+        const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
+        if(iosSettings){
+            enableRetina = iosSettings->enableRetina;
+            retinaScale = iosSettings->retinaScale;
+            enableDepth = iosSettings->enableDepth;
+            enableAntiAliasing = iosSettings->enableAntiAliasing;
+            numOfAntiAliasingSamples = iosSettings->numOfAntiAliasingSamples;
+            enableHardwareOrientation = iosSettings->enableHardwareOrientation;
+            enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
+            enableSetupScreen = iosSettings->enableSetupScreen;
+        } else {
+            enableRetina = false;
+            retinaScale = 0;
+            enableDepth = false;
+            enableAntiAliasing = false;
+            numOfAntiAliasingSamples = 0;
+            enableHardwareOrientation = false;
+            enableHardwareOrientationAnimation = false;
+            enableSetupScreen = true;
+        }
+    }
+
+    ofiOSWindowSettings(const ofGLESWindowSettings & settings)
+    :ofGLESWindowSettings(settings)
+    ,enableRetina(false)
+    ,retinaScale(0)
+    ,enableDepth(false)
+    ,enableAntiAliasing(false)
+    ,numOfAntiAliasingSamples(0)
+    ,enableHardwareOrientation(false)
+    ,enableHardwareOrientationAnimation(false)
+    ,enableSetupScreen(true) {
+        const ofiOSWindowSettings * iosSettings = dynamic_cast<const ofiOSWindowSettings*>(&settings);
+        if(iosSettings){
+            enableRetina = iosSettings->enableRetina;
+            retinaScale = iosSettings->retinaScale;
+            enableDepth = iosSettings->enableDepth;
+            enableAntiAliasing = iosSettings->enableAntiAliasing;
+            numOfAntiAliasingSamples = iosSettings->numOfAntiAliasingSamples;
+            enableHardwareOrientation = iosSettings->enableHardwareOrientation;
+            enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
+            enableSetupScreen = iosSettings->enableSetupScreen;
+        }
+    }
+
+    virtual ~ofiOSWindowSettings(){};
+    
+    bool enableRetina;
+    float retinaScale;
+    bool enableDepth;
+    bool enableAntiAliasing;
+    int numOfAntiAliasingSamples;
+    bool enableHardwareOrientation;
+    bool enableHardwareOrientationAnimation;
+    bool enableSetupScreen;
+};
+
 
 class ofAppiOSWindow : public ofAppBaseGLESWindow {
 public:
-    
+
     static ofAppiOSWindow * getInstance();
 	
 	ofAppiOSWindow();
-	virtual ~ofAppiOSWindow();
+	~ofAppiOSWindow();
     
-	virtual void setupOpenGL(int w, int h, ofWindowMode screenMode);
-	virtual void initializeWindow();
-	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
-    virtual void startAppWithDelegate(string appDelegateClassName);
-	
+    static void loop();
+    static bool doesLoop(){ return true; }
+    static bool allowsMultiWindow(){ return false; }
+    static bool needsPolling(){ return false; }
+    static void pollEvents(){ }
+    
+    void setup(const ofWindowSettings & _settings);
+    void setup(const ofGLESWindowSettings & _settings);
+    void setup(const ofiOSWindowSettings & _settings);
+    
+    void run(ofBaseApp * appPtr);
+    OF_DEPRECATED_MSG("Use setup(const ofiOSWindowSettings & settings); instead.", virtual void setupOpenGL(int w, int h, ofWindowMode screenMode) );
+    static void startAppWithDelegate(string appDelegateClassName);
+    void update();
+    void draw();
+   
+    void close();
+    
 	virtual void hideCursor();
 	virtual void showCursor();
     
@@ -63,6 +166,10 @@ public:
 	
 	virtual int getWidth();
 	virtual int getHeight();
+    
+    ofiOSWindowSettings & getSettings();
+    ofCoreEvents & events();
+    shared_ptr<ofBaseRenderer> & renderer();
 	
 	virtual void setWindowTitle(string title);
 	
@@ -84,15 +191,18 @@ public:
     bool enableOrientationAnimation();
     bool disableOrientationAnimation();
     
-    bool enableRendererES2();
-    bool enableRendererES1();
-    bool isRendererES2();
-    bool isRendererES1();
+    bool isProgrammableRenderer();
+    ofxiOSRendererType getGLESVersion();
+    OF_DEPRECATED_MSG("Use ofiOSWindowSettings to setup programmable renderer by selecting glesVerison to >=2", bool enableRendererES2());
+    OF_DEPRECATED_MSG("Use ofiOSWindowSettings to setup  non-programmable renderer by selecting glesVersion Version to 1", bool enableRendererES1());
+    OF_DEPRECATED_MSG("Use isProgrammableRenderer() or getGLESVersion()", bool isRendererES2());
+    OF_DEPRECATED_MSG("Use isProgrammableRenderer() or getGLESVersion()", bool isRendererES1());
     
-    bool enableRetina();
+    bool enableRetina(float retinaScale=0);
     bool disableRetina();
     bool isRetinaEnabled();
     bool isRetinaSupportedOnDevice();
+    float getRetinaScale();
     
     bool enableDepthBuffer();
     bool disableDepthBuffer();
@@ -102,22 +212,19 @@ public:
     bool disableAntiAliasing();
     bool isAntiAliasingEnabled();
     int getAntiAliasingSampleCount();
-	
+    
 protected:
     
-    ofWindowMode windowMode;
+    ofCoreEvents coreEvents;
+    shared_ptr<ofBaseRenderer> currentRenderer;
+    ofiOSWindowSettings settings;
 
-	bool bEnableSetupScreen;
 	ofOrientation orientation;
-    bool bHardwareOrientation;
-    bool bOrientationIsAnimated;
 	
-    bool bRetinaEnabled;
     bool bRetinaSupportedOnDevice;
     bool bRetinaSupportedOnDeviceChecked;
-	bool bDepthEnabled;
-	bool bAntiAliasingEnabled;
-	int antiAliasingSamples;
+    
+    bool hasExited;
 };
 
 OF_DEPRECATED_MSG("ofAppiPhoneWindow is deprecated, use ofAppiOSWindow instead.", typedef ofAppiOSWindow ofAppiPhoneWindow);

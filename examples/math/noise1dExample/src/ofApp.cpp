@@ -106,14 +106,14 @@ void ofApp::renderNoisyRobotArmDemo(){
 	ofSetCircleResolution(5); // a kludgy "pentagon"
 	ofFill();
 	ofSetColor (ofFloatColor(noisyR, noisyG, noisyB, 0.75)); 
-	ofEllipse(-10,0, 60,60); 
+	ofDrawEllipse(-10,0, 60,60); 
 	ofNoFill();
 	ofSetColor(0);
-	ofEllipse(-10,0, 60,60); 
+	ofDrawEllipse(-10,0, 60,60); 
 	ofSetCircleResolution(12);
 	ofSetColor(0); 
 	ofFill();
-	ofEllipse(0,0, 7,7);
+	ofDrawEllipse(0,0, 7,7);
 	
 	ofPopMatrix();
 }
@@ -125,15 +125,15 @@ void ofApp::drawNoisyArmRect (float w, float h){
 	
 	ofFill();
 	ofSetColor(255,255,255, 128);
-	ofRect(-h/2,-h/2, w,h);
+	ofDrawRectangle(-h/2,-h/2, w,h);
 	
 	ofNoFill();
 	ofSetColor(0);
-	ofRect(-h/2,-h/2, w,h); 
+	ofDrawRectangle(-h/2,-h/2, w,h); 
 	
 	ofSetColor(0); 
 	ofFill();
-	ofEllipse(0,0, 7,7);
+	ofDrawEllipse(0,0, 7,7);
 }
 
 
@@ -180,7 +180,7 @@ void ofApp::renderRadialSignedNoiseDemo (){
 	// the radial displacements caused by the signed noise later on. 
 	ofSetColor(0,0,0, 64); 
 	ofSetCircleResolution(256);
-	ofEllipse(0,0, radialNoiseDemoR*2,radialNoiseDemoR*2);
+	ofDrawEllipse(0,0, radialNoiseDemoR*2,radialNoiseDemoR*2);
 	
 	// Let's use the signed noise as a radial displacement to a circle. 
 	// We render out the points stored in the X and Y arrays. 
@@ -212,7 +212,7 @@ void ofApp::renderRadialSignedNoiseDemo (){
 	// draw a little ball at the end
 	ofFill();
 	ofSetColor(0,0,0, 160);
-	ofEllipse(px,py, 7,7); 
+	ofDrawEllipse(px,py, 7,7); 
 	
 	ofPopMatrix();
 }
@@ -231,7 +231,7 @@ void ofApp::renderLinearSignedNoiseDemo(){
 	
 	// draw a "baseline"
 	ofSetColor(0,0,0, 64); 
-	ofLine(0,0, drawWiggleWidth,0); 
+	ofDrawLine(0,0, drawWiggleWidth,0); 
 	
 	// draw a wiggly line
 	ofSetColor(255,0,0, 192); 

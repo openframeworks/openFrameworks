@@ -85,7 +85,7 @@ void ofApp::drawFboTest(){
 	//by drawing a rectangle the size of the fbo with a small alpha value, we can slowly fade the current contents of the fbo. 
 	ofFill();
 	ofSetColor(255,255,255, fadeAmnt);
-	ofRect(0,0,400,400);
+	ofDrawRectangle(0,0,400,400);
 
 	//2 - Draw graphics
 	
@@ -101,13 +101,13 @@ void ofApp::drawFboTest(){
 
 	//also draw based on our mouse position
 	ofFill();	   
-	ofCircle(ofGetMouseX() % 410, ofGetMouseY(), 8);
+	ofDrawCircle(ofGetMouseX() % 410, ofGetMouseY(), 8);
 
 	//we move a line across the screen based on the time
 	//the %400 makes the number stay in the 0-400 range. 
 	int shiftX   = (ofGetElapsedTimeMillis() / 8 ) % 400;
 
-	ofRect(shiftX, rgbaFbo.getHeight()-30, 3, 30);
+	ofDrawRectangle(shiftX, rgbaFbo.getHeight()-30, 3, 30);
 
 }
 

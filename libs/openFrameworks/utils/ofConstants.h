@@ -40,9 +40,11 @@ enum ofTargetPlatform{
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated))
     #endif
 	#define OF_DEPRECATED(func) func __attribute__ ((deprecated))
+	#define OF_INTERNAL_DEPRECATED(func) func __attribute__ ((deprecated("OF core deprecated")))
 #elif defined(_MSC_VER)
 	#define OF_DEPRECATED_MSG(message, func) __declspec(deprecated(message)) func
 	#define OF_DEPRECATED(func) __declspec(deprecated) func
+	#define OF_INTERNAL_DEPRECATED(func) __declspec(deprecated("OF core deprecated")) func
 #else
 	#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
 	#define OF_DEPRECATED_MSG(message, func) func
@@ -59,7 +61,8 @@ enum ofTargetPlatform{
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
 #elif defined( __APPLE_CC__)
-	#include <TargetConditionals.h>
+    #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
+    #include <TargetConditionals.h>
 
 	#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
 		#define TARGET_OF_IPHONE
@@ -134,7 +137,7 @@ enum ofTargetPlatform{
 	#define GL_BGR_EXT 0x80E0
 	#endif
 
-	// #define WIN32_HIGH_RES_TIMING
+	#define WIN32_HIGH_RES_TIMING
 
 	// note: this is experimental!
 	// uncomment to turn this on (only for windows machines)
@@ -295,18 +298,20 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
     #ifdef TARGET_LINUX
         #define OF_VIDEO_PLAYER_GSTREAMER
     #elif defined(TARGET_ANDROID)
         #define OF_VIDEO_PLAYER_ANDROID
     #elif defined(TARGET_OF_IOS)
         #define OF_VIDEO_PLAYER_IOS
+	#elif defined(TARGET_WIN32) && !defined(__MINGW32__)
+        #define OF_VIDEO_PLAYER_DIRECTSHOW
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
         #ifndef MAC_OS_X_VERSION_10_7
             #define OF_VIDEO_PLAYER_QUICKTIME
-        #elseif !defined(MAC_OS_X_VERSION_10_8)
+        #elif !defined(MAC_OS_X_VERSION_10_8)
             #define OF_VIDEO_PLAYER_QTKIT
         #else
             #define OF_VIDEO_PLAYER_AVFOUNDATION
@@ -691,6 +696,7 @@ enum ofPixelFormat{
 	OF_PIXELS_YV12=9,
 	OF_PIXELS_I420=10,
 	OF_PIXELS_YUY2=11,
+	OF_PIXELS_UYVY=12,
 
 	// yuv planes
 	OF_PIXELS_Y,

@@ -15,7 +15,6 @@
 
 
 
-
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
 
 void ofGstUtils::startGstMainLoop(){
@@ -29,6 +28,12 @@ void ofGstUtils::startGstMainLoop(){
 
 GMainLoop * ofGstUtils::getGstMainLoop(){
 	return mainLoop->getMainLoop();
+}
+
+void ofGstUtils::quitGstMainLoop(){
+	mainLoop->quit();
+	delete mainLoop;
+	mainLoop=0;
 }
 
 
@@ -46,20 +51,19 @@ static bool gst_inited = false;
 
 static GstFlowReturn on_new_buffer_from_source (GstAppSink * elt, void * data){
 #if GST_VERSION_MAJOR==0
-	GstBuffer *buffer = gst_app_sink_pull_buffer (GST_APP_SINK (elt));
+	shared_ptr<GstBuffer> buffer(gst_app_sink_pull_buffer (GST_APP_SINK (elt)),&gst_buffer_unref);
 #else
-	GstSample *buffer = gst_app_sink_pull_sample (GST_APP_SINK (elt));
+	shared_ptr<GstSample> buffer(gst_app_sink_pull_sample (GST_APP_SINK (elt)),&gst_sample_unref);
 #endif
 	return ((ofGstUtils*)data)->buffer_cb(buffer);
 }
 
 static GstFlowReturn on_new_preroll_from_source (GstAppSink * elt, void * data){
 #if GST_VERSION_MAJOR==0
-	GstBuffer *buffer;
+	shared_ptr<GstBuffer> buffer(gst_app_sink_pull_preroll(GST_APP_SINK (elt)),&gst_buffer_unref);
 #else
-	GstSample *buffer;
+	shared_ptr<GstSample> buffer(gst_app_sink_pull_preroll(GST_APP_SINK (elt)),&gst_sample_unref);
 #endif
-	buffer = gst_app_sink_pull_preroll(GST_APP_SINK (elt));
 	return ((ofGstUtils*)data)->preroll_cb(buffer);
 }
 
@@ -128,9 +132,9 @@ ofGstUtils::~ofGstUtils() {
 }
 
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstUtils::preroll_cb(GstBuffer * buffer){
+GstFlowReturn ofGstUtils::preroll_cb(shared_ptr<GstBuffer> buffer){
 #else
-GstFlowReturn ofGstUtils::preroll_cb(GstSample * buffer){
+GstFlowReturn ofGstUtils::preroll_cb(shared_ptr<GstSample> buffer){
 #endif
 	bIsMovieDone = false;
 	if(appsink) return appsink->on_preroll(buffer);
@@ -139,9 +143,9 @@ GstFlowReturn ofGstUtils::preroll_cb(GstSample * buffer){
 
 
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstUtils::buffer_cb(GstBuffer * buffer){
+GstFlowReturn ofGstUtils::buffer_cb(shared_ptr<GstBuffer> buffer){
 #else
-GstFlowReturn ofGstUtils::buffer_cb(GstSample * buffer){
+GstFlowReturn ofGstUtils::buffer_cb(shared_ptr<GstSample> buffer){
 #endif
 	bIsMovieDone = false;
 	if(appsink) return appsink->on_buffer(buffer);
@@ -583,10 +587,12 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 			GError *err;
 			gchar *debug;
 			gst_message_parse_error(msg, &err, &debug);
+			gchar * name = gst_element_get_name(GST_MESSAGE_SRC (msg));
 
 			ofLogError("ofGstUtils") << "gstHandleMessage(): embedded video playback halted for plugin, module "
-				<< gst_element_get_name(GST_MESSAGE_SRC (msg)) << "  reported: " << err->message;
+				<< name << "  reported: " << err->message;
 
+			g_free(name);
 			g_error_free(err);
 			g_free(debug);
 
@@ -717,8 +723,6 @@ ofGstVideoUtils::ofGstVideoUtils(){
 	bIsFrameNew					= false;
 	bHavePixelsChanged			= false;
 	bBackPixelsChanged			= false;
-	buffer = 0;
-	prevBuffer = 0;
 #if GST_VERSION_MAJOR==1
 	GstMapInfo initMapinfo		= {0,};
 	mapinfo 					= initMapinfo;
@@ -732,22 +736,15 @@ ofGstVideoUtils::~ofGstVideoUtils(){
 
 void ofGstVideoUtils::close(){
 	ofGstUtils::close();
-	Poco::ScopedLock<ofMutex> lock(mutex);
+	ofScopedLock lock(mutex);
 	pixels.clear();
 	backPixels.clear();
 	eventPixels.clear();
 	bIsFrameNew					= false;
 	bHavePixelsChanged			= false;
 	bBackPixelsChanged			= false;
-#if GST_VERSION_MAJOR==0
-	if(prevBuffer) gst_buffer_unref (prevBuffer);
-	if(buffer && prevBuffer!=buffer) gst_buffer_unref (buffer);
-#else
-	if(prevBuffer) gst_sample_unref (prevBuffer);
-	if(buffer && prevBuffer!=buffer) gst_sample_unref (buffer);
-#endif
-	prevBuffer = 0;
-	buffer = 0;
+	buffer.reset();
+	prevBuffer.reset();
 }
 
 bool ofGstVideoUtils::isInitialized() const{
@@ -758,35 +755,24 @@ bool ofGstVideoUtils::isFrameNew() const{
 	return bIsFrameNew;
 }
 
-unsigned char * ofGstVideoUtils::getPixels(){
-	return pixels.getPixels();
-}
-
-ofPixels& ofGstVideoUtils::getPixelsRef(){
+ofPixels& ofGstVideoUtils::getPixels(){
 	return pixels;
 }
 
-const ofPixels & ofGstVideoUtils::getPixelsRef() const{
+const ofPixels & ofGstVideoUtils::getPixels() const{
 	return pixels;
 }
 
 void ofGstVideoUtils::update(){
 	if (isLoaded()){
 		if(!isFrameByFrame()){
-			mutex.lock();
-				bHavePixelsChanged = bBackPixelsChanged;
-				if (bHavePixelsChanged){
-					bBackPixelsChanged=false;
-					swap(pixels,backPixels);
-#if GST_VERSION_MAJOR==0
-					if(prevBuffer) gst_buffer_unref (prevBuffer);
-#else
-					if(prevBuffer) gst_sample_unref (prevBuffer);
-#endif
-					prevBuffer = buffer;
-				}
-
-			mutex.unlock();
+			ofScopedLock lock(mutex);
+			bHavePixelsChanged = bBackPixelsChanged;
+			if (bHavePixelsChanged){
+				bBackPixelsChanged=false;
+				swap(pixels,backPixels);
+				prevBuffer = buffer;
+			}
 		}else{
 #if GST_VERSION_MAJOR==0
 			GstBuffer *buffer;
@@ -797,9 +783,8 @@ void ofGstVideoUtils::update(){
 
 			if(buffer){
 				if(pixels.isAllocated()){
-					if(prevBuffer) gst_buffer_unref (prevBuffer);
 					pixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-					prevBuffer = buffer;
+					prevBuffer = shared_ptr<GstBuffer>(buffer,gst_buffer_unref);;
 					bHavePixelsChanged=true;
 				}
 			}
@@ -818,11 +803,10 @@ void ofGstVideoUtils::update(){
 
 			if(buffer){
 				if(pixels.isAllocated()){
-					if(prevBuffer) gst_sample_unref (prevBuffer);
 					gst_buffer_map (buffer, &mapinfo, GST_MAP_READ);
 					//TODO: stride = mapinfo.size / height;
 					pixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-					prevBuffer = sample;
+					prevBuffer = shared_ptr<GstSample>(sample,gst_sample_unref);
 					bHavePixelsChanged=true;
 					gst_buffer_unmap(buffer,&mapinfo);
 				}
@@ -998,7 +982,7 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 		pipeline + " ! appsink name=ofappsink caps=\"" + caps + "\""; // caps=video/x-raw-rgb
 
 	internalPixelFormat = pixelFormat;
-	if((isStream && (w==-1 || h==-1)) || pixelFormat==OF_PIXELS_NATIVE || allocate(w,h,pixelFormat)){
+	if((w==-1 || h==-1) || pixelFormat==OF_PIXELS_NATIVE || allocate(w,h,pixelFormat)){
 		return setPipelineWithSink(pipeline_string,"ofappsink",isStream);
 	}else{
 		return false;
@@ -1021,44 +1005,50 @@ bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 		ofLogNotice("ofGstVideoPlayer") << "allocating with " << w << "x" << h << " " << getGstFormatName(pixelFormat);
 	}
 #endif
-	if(bBackPixelsChanged){
-		pixels = backPixels;
-	}else{
-		pixels.allocate(w,h,pixelFormat);
-		backPixels.allocate(w,h,pixelFormat);
-		pixels.set(0);
-		backPixels.set(0);
+	pixels.allocate(w,h,pixelFormat);
+	backPixels.allocate(w,h,pixelFormat);
+	pixels.set(0);
+	backPixels.set(0);
 
-		bHavePixelsChanged = false;
-		bBackPixelsChanged = true;
-	}
-	prevBuffer = 0;
+	bHavePixelsChanged = false;
+	bBackPixelsChanged = true;
+
+
 	internalPixelFormat = pixelFormat;
 	return pixels.isAllocated();
 }
 
+void ofGstVideoUtils::reallocateOnNextFrame(){
+	Poco::ScopedLock<ofMutex> lock(mutex);
+	pixels.clear();
+	backPixels.clear();
+	bIsFrameNew					= false;
+	bHavePixelsChanged			= false;
+	bBackPixelsChanged			= false;
+	prevBuffer.reset();
+	buffer.reset();
+}
+
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstVideoUtils::process_buffer(GstBuffer * _buffer){
-	guint size = GST_BUFFER_SIZE (_buffer);
+GstFlowReturn ofGstVideoUtils::process_buffer(shared_ptr<GstBuffer> _buffer){
+	guint size = GST_BUFFER_SIZE (_buffer.get());
 	int stride = 0;
 	if(pixels.isAllocated() && pixels.getTotalBytes()!=(int)size){
         stride = gst_video_format_get_row_stride( GST_VIDEO_FORMAT_RGB,0, pixels.getWidth());
         if(stride == (pixels.getWidth() * pixels.getHeight() *  pixels.getBytesPerPixel())) {
             ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getTotalBytes();
-            gst_buffer_unref (_buffer);
             return GST_FLOW_ERROR;
         }
 	}
 	mutex.lock();
-	if(bBackPixelsChanged && buffer) gst_buffer_unref (buffer);
 	if(pixels.isAllocated()){
 		buffer = _buffer;
         if(stride > 0) {
-            backPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
+            backPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
         }
         else {
-            backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
-            eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+            backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+            eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
         }
 		bBackPixelsChanged=true;
 		mutex.unlock();
@@ -1089,8 +1079,8 @@ static GstVideoInfo getVideoInfo(GstSample * sample){
     return vinfo;
 }
 
-GstFlowReturn ofGstVideoUtils::process_sample(GstSample * sample){
-	GstBuffer * _buffer = gst_sample_get_buffer(sample);
+GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
+	GstBuffer * _buffer = gst_sample_get_buffer(sample.get());
 
 	/* TODO: get GL and EGL buffers.
 	GstVideoGLTextureUploadMeta *upload_meta = gst_buffer_get_video_gl_texture_upload_meta (_buffer);
@@ -1104,17 +1094,15 @@ GstFlowReturn ofGstVideoUtils::process_sample(GstSample * sample){
 
 	int stride = 0;
 	if(pixels.isAllocated() && pixels.getTotalBytes()!=(int)size){
-		GstVideoInfo vinfo = getVideoInfo(sample);
+		GstVideoInfo vinfo = getVideoInfo(sample.get());
 		stride = vinfo.stride[0];
 
 		if(stride == (pixels.getWidth() * pixels.getBytesPerPixel())) {
 			ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getTotalBytes();
-			gst_sample_unref (sample);
 			return GST_FLOW_ERROR;
 		}
 	}
 	mutex.lock();
-	if(bBackPixelsChanged && buffer) gst_sample_unref (buffer);
 	buffer = sample;
 
 	if(pixels.isAllocated()){
@@ -1135,7 +1123,7 @@ GstFlowReturn ofGstVideoUtils::process_sample(GstSample * sample){
 		if(appsink){
 			appsink->on_stream_prepared();
 		}else{
-			GstVideoInfo vinfo = getVideoInfo(sample);
+			GstVideoInfo vinfo = getVideoInfo(sample.get());
 			allocate(vinfo.width,vinfo.height,getOFFormat(vinfo.finfo->format));
 		}
 	}
@@ -1145,16 +1133,16 @@ GstFlowReturn ofGstVideoUtils::process_sample(GstSample * sample){
 #endif
 
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstVideoUtils::preroll_cb(GstBuffer * _buffer){
-	GstFlowReturn ret = process_buffer(_buffer);
+GstFlowReturn ofGstVideoUtils::preroll_cb(shared_ptr<GstBuffer> buffer){
+	GstFlowReturn ret = process_buffer(buffer);
 	if(ret==GST_FLOW_OK){
-		return ofGstUtils::preroll_cb(_buffer);
+		return ofGstUtils::preroll_cb(buffer);
 	}else{
 		return ret;
 	}
 }
 #else
-GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
+GstFlowReturn ofGstVideoUtils::preroll_cb(shared_ptr<GstSample> sample){
 	GstFlowReturn ret = process_sample(sample);
 	if(ret==GST_FLOW_OK){
 		return ofGstUtils::preroll_cb(sample);
@@ -1165,19 +1153,19 @@ GstFlowReturn ofGstVideoUtils::preroll_cb(GstSample * sample){
 #endif
 
 #if GST_VERSION_MAJOR==0
-GstFlowReturn ofGstVideoUtils::buffer_cb(GstBuffer * _buffer){
-	GstFlowReturn ret = process_buffer(_buffer);
+GstFlowReturn ofGstVideoUtils::buffer_cb(shared_ptr<GstBuffer> buffer){
+	GstFlowReturn ret = process_buffer(buffer);
 	if(ret==GST_FLOW_OK){
-		return ofGstUtils::buffer_cb(_buffer);
+		return ofGstUtils::buffer_cb(buffer);
 	}else{
 		return ret;
 	}
 }
 #else
-GstFlowReturn ofGstVideoUtils::buffer_cb(GstSample * sample){
+GstFlowReturn ofGstVideoUtils::buffer_cb(shared_ptr<GstSample> sample){
 	GstFlowReturn ret = process_sample(sample);
 	if(ret==GST_FLOW_OK){
-		return ofGstUtils::buffer_cb(buffer);
+		return ofGstUtils::buffer_cb(sample);
 	}else{
 		return ret;
 	}

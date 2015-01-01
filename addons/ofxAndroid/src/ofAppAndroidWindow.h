@@ -8,15 +8,26 @@
 #pragma once
 
 #include "ofAppBaseWindow.h"
+#include "ofEvents.h"
+#include "ofConstants.h"
+#include "ofTypes.h"
+#include "ofBaseTypes.h"
 
 class ofAppAndroidWindow: public ofAppBaseGLESWindow {
 public:
 	ofAppAndroidWindow();
 	virtual ~ofAppAndroidWindow();
 
-	void setupOpenGL(int w, int h, ofWindowMode screenMode);
-	void initializeWindow() {}
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	static bool doesLoop(){ return true; }
+	static void loop(){ }
+	static bool needsPolling(){ return false; }
+	static void pollEvents(){}
+	static bool allowsMultiWindow(){ return false; }
+
+    using ofAppBaseWindow::setup;
+	void setup(const ofGLESWindowSettings & settings);
+	void update();
+	void draw();
 
 	void hideCursor() {}
 	void showCursor() {}
@@ -46,6 +57,14 @@ public:
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
 
+	ofCoreEvents & events();
+	shared_ptr<ofBaseRenderer> & renderer();
+
 	void	setThreadedEvents(bool threadedEvents);
 	void 	setAccumulateTouchEvents(bool accumEvents);
+
+private:
+	ofCoreEvents coreEvents;
+	shared_ptr<ofBaseRenderer> currentRenderer;
+	int glesVersion;
 };

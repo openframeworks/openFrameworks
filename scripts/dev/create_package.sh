@@ -5,9 +5,15 @@
 platform=$1
 version=$2
 
+if [ $# -eq 3 ]; then
+branch=$3
+else
+branch=stable
+fi
+
 REPO=https://github.com/openframeworks/openFrameworks
 REPO_ALIAS=upstreamhttps
-BRANCH=master
+BRANCH=$branch
 
 PG_REPO=https://github.com/ofZach/projectGeneratorSimple.git
 PG_REPO_ALIAS=originhttps
@@ -25,9 +31,12 @@ fi
 
 if [ "$version" == "" ]; then
     echo usage: 
-    echo ./create_package.sh platform version
+    echo ./create_package.sh platform version [branch]
     echo platform:
     echo win_cb, linux, linux64, vs, osx, android, ios, all
+    echo 
+    echo branch:
+    echo master, stable
     exit 1
 fi
 
@@ -38,37 +47,21 @@ libsnotinwindows="unicap gstappsink kiss portaudio"
 libsnotinandroid="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio kiss portaudio cairo"
 libsnotinios="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio kiss portaudio cairo"
 
-if [ ! -d openFrameworks/.git ]; then
-    git clone $REPO 
-    gitfinishedok=$?
-    if [ $gitfinishedok -ne 0 ]; then
-        echo "Error connecting to github"
-        exit
-    fi
+rm -rf openFrameworks
+git clone $REPO --depth=1 --branch=$BRANCH
+gitfinishedok=$?
+if [ $gitfinishedok -ne 0 ]; then
+    echo "Error connecting to github"
+    exit
 fi
 
 
 
 cd openFrameworks
 packageroot=$PWD
-if [ "$BRANCH" != "master" ]; then
-	git remote add $REPO_ALIAS $REPO
-	git fetch $REPO_ALIAS
-    git checkout --track -b $BRANCH ${REPO_ALIAS}/${BRANCH}
-fi
-git reset --hard
-git pull $REPO $BRANCH
-git submodule sync
-git submodule init
-git submodule update
 cd apps/projectGenerator/projectGeneratorSimple
-if [ "$PG_BRANCH" != "master" ]; then
-	git remote add $PG_REPO_ALIAS $PG_REPO
-	git fetch $PG_REPO_ALIAS
-    git checkout --track -b $PG_BRANCH ${PG_REPO_ALIAS}/${PG_BRANCH}
-fi
-git checkout $PG_BRANCH
-git pull $PG_REPO $PG_BRANCH
+git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
+
 cd $packageroot
 
 
@@ -538,8 +531,6 @@ else
     
 fi
 
-cd $packageroot
-git reset --hard
 
 cd $packageroot/.. 
-    
+rm -rf openFrameworks   

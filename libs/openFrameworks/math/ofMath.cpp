@@ -1,6 +1,5 @@
 #include "ofMath.h"
 #include "ofUtils.h"
-#include "ofAppRunner.h"
 #include "float.h"
 
 #ifndef TARGET_WIN32
@@ -181,16 +180,6 @@ float ofLerpDegrees(float currentAngle, float targetAngle, float pct) {
 //--------------------------------------------------
 float ofLerpRadians(float currentAngle, float targetAngle, float pct) {
 	return currentAngle + ofAngleDifferenceRadians(currentAngle,targetAngle) * pct;
-}
-
-//--------------------------------------------------
-float ofRandomWidth() {
-	return ofRandom(0.f, ofGetWidth());
-}
-
-//--------------------------------------------------
-float ofRandomHeight() {
-	return ofRandom(0.f, ofGetHeight());
 }
 
 //--------------------------------------------------

@@ -57,7 +57,7 @@ int ofGetGlInternalFormat(const ofFloatPixels& pix) {
 				return GL_LUMINANCE_ALPHA32F_ARB;
 			}
 		default:
-			if(ofGetGLProgrammableRenderer()){
+			if(ofIsGLProgrammableRenderer()){
 				return GL_R32F;
 			}else{
 				return GL_LUMINANCE32F_ARB;
@@ -482,10 +482,18 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 	switch(pixelFormat){
 	case OF_PIXELS_BGRA:
 	case OF_PIXELS_RGBA:
+#ifndef TARGET_OPENGLES
+		return GL_RGBA8;
+#else
 		return GL_RGBA;
+#endif
 	case OF_PIXELS_RGB:
 	case OF_PIXELS_BGR:
+#ifndef TARGET_OPENGLES
+		return GL_RGB8;
+#else
 		return GL_RGB;
+#endif
     case OF_PIXELS_RGB565:
 	#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
 		return GL_RGB565_OES;
@@ -616,25 +624,59 @@ int ofGetNumChannelsFromGLFormat(int glFormat){
 	}
 }
 
+int ofGetBytesPerChannelFromGLType(int glType){
+	switch(glType) {
+		case GL_UNSIGNED_BYTE:
+			return 1;
+		case GL_UNSIGNED_SHORT:
+			return 2;
+
+#if !defined(TARGET_OPENGLES) && defined(GL_RGB565)
+		case GL_UNSIGNED_SHORT_5_6_5:
+			return 2;
+#endif
+
+#ifndef TARGET_OPENGLES
+		case GL_FLOAT:
+			return 4;
+#endif
+		case GL_UNSIGNED_INT_24_8:
+			 return 4;
+
+
+#ifndef TARGET_OPENGLES
+		case GL_UNSIGNED_INT:
+			return 4;
+#endif
+		case GL_HALF_FLOAT:
+			return 2;
+
+		default:
+			ofLogError("ofGetBytesPerChannelFromGLType") << "unknown type returning 1";
+			return 1;
+
+	}
+}
+
 // Rounds an integer value up to the next multiple of 2,4 and 8.
 #define OF_ROUND_UP_2(num)  (((num)+1)&~1)
 #define OF_ROUND_UP_4(num)  (((num)+3)&~3)
 #define OF_ROUND_UP_8(num)  (((num)+7)&~7)
 
-void ofSetPixelStorei(int w, int bpc, int numChannels){
+void ofSetPixelStoreiAlignment(GLenum pname, int w, int bpc, int numChannels){
 	int stride = w * numChannels * bpc;
-	ofSetPixelStorei(stride);
+	ofSetPixelStoreiAlignment(pname,stride);
 }
 
-void ofSetPixelStorei(int stride){
+void ofSetPixelStoreiAlignment(GLenum pname, int stride){
     if (OF_ROUND_UP_8 (stride) == stride) {
-        glPixelStorei (GL_UNPACK_ALIGNMENT, 8);
+        glPixelStorei (pname, 8);
     } else if (OF_ROUND_UP_4 (stride) == stride) {
-        glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
+        glPixelStorei (pname, 4);
     } else if (OF_ROUND_UP_2 (stride) == stride) {
-        glPixelStorei (GL_UNPACK_ALIGNMENT, 2);
+        glPixelStorei (pname, 2);
     } else {
-        glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
+        glPixelStorei (pname, 1);
     }
 }
 
@@ -686,16 +728,27 @@ bool ofGLSupportsNPOTTextures(){
 #endif
 }
 
-shared_ptr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer(){
-	if(ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE){
-		return (shared_ptr<ofGLProgrammableRenderer>&)ofGetCurrentRenderer();
-	}else{
-		return shared_ptr<ofGLProgrammableRenderer>();
+string ofGLSLVersionFromGL(int major, int minor){
+#ifdef TARGET_OPENGLES
+	return "ES1";
+#else
+	switch(major){
+	case 3:
+		if(minor==0){
+			return "130";
+		}else if(minor==1){
+			return "140";
+		}else if(minor==2){
+			return "150";
+		}else{
+			return ofToString(major*100+minor*10);
+		}
+	case 4:
+		return ofToString(major*100+minor*10);
+	default:
+		return "120";
 	}
-}
-
-bool ofIsGLProgrammableRenderer(){
-	return ofGetCurrentRenderer() && ofGetCurrentRenderer()->getType()==ofGLProgrammableRenderer::TYPE;
+#endif
 }
 
 #ifndef TARGET_PROGRAMMABLE_GL
@@ -720,17 +773,17 @@ shared_ptr<ofBaseGLRenderer> ofGetGLRenderer(){
 }
 #endif
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-void ofUpdateBitmapCharacterTexture();
+#if defined(TARGET_ANDROID)
+void ofRegenerateAllVbos();
+void ofRegenerateAllTextures();
 void ofReloadAllImageTextures();
 void ofReloadAllFontTextures();
-void ofRegenerateAllVbos();
 
 void ofReloadGLResources(){
-	ofUpdateBitmapCharacterTexture();
+	ofRegenerateAllTextures();
+	ofRegenerateAllVbos();
 	ofReloadAllImageTextures();
 	ofReloadAllFontTextures();
-	ofRegenerateAllVbos();
 }
 #endif
 

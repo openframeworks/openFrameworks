@@ -230,6 +230,18 @@ bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 	}
 }
 
+bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
+	ofMouseEventArgs a = args;
+	for(int i = 0; i < (int)collection.size(); i++){
+		if(collection[i]->mouseScrolled(a)) return true;
+	}
+	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
+		return true;
+	}else{
+		return false;
+	}
+}
+
 void ofxGuiGroup::generateDraw(){
 	border.clear();
 	border.setFillColor(ofColor(thisBorderColor,180));

@@ -191,7 +191,7 @@ void ofxAndroidVideoGrabber::close(){
 }
 
 
-ofTexture *	ofxAndroidVideoGrabber::getTexture(){
+ofTexture *	ofxAndroidVideoGrabber::getTexturePtr(){
 	if(supportsTextureRendering()) return &texture;
 	else return NULL;
 }
@@ -252,7 +252,7 @@ bool ofxAndroidVideoGrabber::supportsTextureRendering(){
 	return supportsTexture;
 }
 
-bool ofxAndroidVideoGrabber::initGrabber(int w, int h){
+bool ofxAndroidVideoGrabber::setup(int w, int h){
 	if(instances.find(cameraId)==instances.end()){
 		ofLogError("ofxAndroidVideoGrabber") << "initGrabber(): multiple grabber instances not currently supported";
 		return false;
@@ -320,15 +320,11 @@ bool ofxAndroidVideoGrabber::isInitialized() const{
 void ofxAndroidVideoGrabber::videoSettings(){
 }
 
-unsigned char * ofxAndroidVideoGrabber::getPixels(){
-	return pixels.getPixels();
-}
-
-ofPixels&	ofxAndroidVideoGrabber::getPixelsRef(){
+ofPixels&	ofxAndroidVideoGrabber::getPixels(){
 	return pixels;
 }
 
-const ofPixels& ofxAndroidVideoGrabber::getPixelsRef() const {
+const ofPixels& ofxAndroidVideoGrabber::getPixels() const {
     return pixels;
 }
 
@@ -638,7 +634,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		//static ofPixels aux_buffer;
 		ofxAndroidVideoGrabber* grabber = (ofxAndroidVideoGrabber*)instances[cameraId]->getGrabber().get();
 
-		unsigned char * dst = instances[cameraId]->getPixels();
+		unsigned char * dst = instances[cameraId]->getPixels().getPixels();
 		if(int(instances[cameraId]->getWidth())!=width || int(instances[cameraId]->getHeight())!=height){
 			if(instances[cameraId]->getPixelFormat()!=OF_PIXELS_MONO){
 				grabber->getAuxBuffer().allocate(width,height,instances[cameraId]->getPixelFormat());
@@ -662,7 +658,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		}
 
 		if(int(instances[cameraId]->getWidth())!=width || int(instances[cameraId]->getHeight())!=height){
-			grabber->getAuxBuffer().resizeTo(instances[cameraId]->getPixelsRef());
+			grabber->getAuxBuffer().resizeTo(instances[cameraId]->getPixels());
 		}
 		/*acc_time += ofGetSystemTime() - time_one_frame;
 		num_frames ++;
@@ -673,7 +669,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 
 		env->ReleasePrimitiveArrayCritical(array,buffer,0);
 		newPixels = true;
-		ofNotifyEvent(grabber->newFrameE,instances[cameraId]->getPixelsRef());
+		ofNotifyEvent(grabber->newFrameE,instances[cameraId]->getPixels());
 		//((ofxAndroidApp*)ofGetAppPtr())->imageReceived(pixels,width,height);
 		return 0;
 	}
