@@ -568,7 +568,7 @@ void ofGLRenderer::unbind(const ofTexture & texture, int location){
 void ofGLRenderer::bind(const ofCamera & camera, const ofRectangle & _viewport){
 	pushView();
 	viewport(_viewport);
-	setOrientation(matrixStack.getOrientation(),true);
+	setOrientation(matrixStack.getOrientation(),camera.isVFlipped());
 	matrixMode(OF_MATRIX_PROJECTION);
 	loadMatrix(camera.getProjectionMatrix(_viewport).getPtr());
 	matrixMode(OF_MATRIX_MODELVIEW);
