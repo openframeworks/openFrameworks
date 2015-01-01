@@ -11,10 +11,12 @@
 #import <CoreVideo/CoreVideo.h>
 #import <CoreMedia/CoreMedia.h>
 
-#if defined  __arm__
-
 #define IS_IOS_7_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
 #define IS_IOS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
+
+#if TARGET_IPHONE_SIMULATOR
+#warning Target = iOS Simulator - The AVFoundationVideoGrabber will not function on the iOS Simulator
+#endif
 
 @interface iOSVideoGrabber() <AVCaptureVideoDataOutputSampleBufferDelegate> {
 	AVCaptureDeviceInput		*captureInput;	
@@ -40,6 +42,9 @@
 		bInitCalled = NO;
 		grabberPtr = NULL;
 		deviceID = 0;
+        width = 0;
+        height = 0;
+        currentFrame = 0;
 	}
 	return self;
 }
@@ -354,6 +359,8 @@ AVFoundationVideoGrabber::AVFoundationVideoGrabber(){
 	fps		= 30;
 	grabber = [iOSVideoGrabber alloc];
 	pixels	= NULL;
+    width = 0;
+    height = 0;
 	
 	internalGlDataType = GL_RGB;
 	newFrame = false;
@@ -551,5 +558,5 @@ ofPixelFormat AVFoundationVideoGrabber::getPixelFormat() {
 	}
 }
 
-#endif	// (__arm__) compile only for ARM
+
 

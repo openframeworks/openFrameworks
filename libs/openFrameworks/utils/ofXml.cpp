@@ -149,7 +149,7 @@ string ofXml::toString() const
     if(document) {
         try {
             writer.writeNode( stream, getPocoDocument() );
-        } catch( exception e ) {
+        } catch( exception & e ) {
             ofLogError("ofXml") << "toString(): " << e.what();
         }
     } else if(element){

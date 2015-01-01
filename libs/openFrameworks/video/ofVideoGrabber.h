@@ -48,33 +48,35 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
-		
-		void					setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber);
-		shared_ptr<ofBaseVideoGrabber> getGrabber();
 
 		vector<ofVideoDevice> listDevices() const;
 		bool				isFrameNew() const;
 		void				update();
 		void				close();	
-		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
-		bool				initGrabber(int w, int h, bool bTexture);
+		bool				setup(int w, int h){return setup(w,h,true);}
+		bool				setup(int w, int h, bool bTexture);
+		OF_DEPRECATED_MSG("Use setup instead",bool initGrabber(int w, int h){return setup(w,h);})
+		OF_DEPRECATED_MSG("Use setup instead",bool initGrabber(int w, int h, bool bTexture));
 		
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
 		ofPixelFormat 		getPixelFormat() const;
 		
 		void				videoSettings();
-		unsigned char 	*	getPixels();
-        ofPixels&			getPixelsRef();
-        const ofPixels&     getPixelsRef() const;
-		ofTexture &			getTextureReference();
-		const ofTexture &	getTextureReference() const;
+		ofPixels& 			getPixels();
+		const ofPixels&		getPixels() const;
+        OF_DEPRECATED_MSG("Use getPixels() instead", ofPixels&	getPixelsRef());
+        OF_DEPRECATED_MSG("Use getPixels() instead", const ofPixels&  getPixelsRef() const);
+		ofTexture &			getTexture();
+		const ofTexture &	getTexture() const;
+		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
+		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
 		vector<ofTexture> & getTexturePlanes();
 		const vector<ofTexture> & getTexturePlanes() const;
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
 		void				setUseTexture(bool bUse);
-		bool 				isUsingTexture();
+		bool 				isUsingTexture() const;
 		void				draw(float x, float y, float w, float h) const;
 		void				draw(float x, float y) const;
 		using ofBaseDraws::draw;
@@ -93,6 +95,20 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 		bool				isInitialized() const;
 
+		void					setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber);
+		shared_ptr<ofBaseVideoGrabber> getGrabber();
+		const shared_ptr<ofBaseVideoGrabber> getGrabber() const;
+
+		template<typename GrabberType>
+		shared_ptr<GrabberType> getGrabber(){
+			return dynamic_pointer_cast<GrabberType>(getGrabber());
+		}
+
+		template<typename GrabberType>
+		const shared_ptr<GrabberType> getGrabber() const{
+			return dynamic_pointer_cast<GrabberType>(getGrabber());
+		}
+
 		//this is kept as legacy to support people accessing width and height directly. 
 		mutable int height;
 		mutable int width;
@@ -102,7 +118,7 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 		vector<ofTexture> tex;
 		bool bUseTexture;
 		shared_ptr<ofBaseVideoGrabber> grabber;
-		int RequestedDeviceID;
+		int requestedDeviceID;
 
 		mutable ofPixelFormat internalPixelFormat;
 		int desiredFramerate;

@@ -11,7 +11,7 @@
 texture3DS::texture3DS(string filename, const int textureId){
 	
     ofImage img;
-    if( !img.loadImage(filename) ){
+    if( !img.load(filename) ){
 		ofLogError("texture3DS") << "couldn't open " << filename;
     }
 
@@ -41,7 +41,7 @@ texture3DS::texture3DS(string filename, const int textureId){
 
     // FLIP THE PIXELS
     //we need to flip the image vertically
-    unsigned char * ptrToPixels = img.getPixels();
+    unsigned char * ptrToPixels = img.getPixels().getData();
     int bytesPP = (m_bpp / 8);
 
 	//this extra allocation is because of a glu bug - http://osdir.com/ml/video.mesa3d.devel/2005-02/msg00035.html

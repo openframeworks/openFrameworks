@@ -1,8 +1,6 @@
 #include "ofPath.h"
-#include "ofGraphics.h"
+#include "ofAppRunner.h"
 #include "ofTessellator.h"
-
-ofTessellator ofPath::tessellator;
 
 ofPath::Command::Command(Type type)
 :type(type){
@@ -581,52 +579,13 @@ const ofMesh & ofPath::getTessellation() const{
 }
 
 //----------------------------------------------------------
-void ofPath::draw(float x, float y){
-	ofPushMatrix();
-	ofTranslate(x,y);
-	draw();
-	ofPopMatrix();
+void ofPath::draw(float x, float y) const{
+	ofGetCurrentRenderer()->draw(*this,x,y);
 }
 
 //----------------------------------------------------------
-void ofPath::draw(){
-	if(mode == ofPath::COMMANDS && ofGetCurrentRenderer()->rendersPathPrimitives()){
-		ofGetCurrentRenderer()->draw(*this);
-	}else{
-		tessellate();
-
-
-		ofColor prevColor;
-		if(bUseShapeColor){
-			prevColor = ofGetStyle().color;
-		}
-
-		if(bFill && !cachedTessellation.getVertices().empty()){
-			if(bUseShapeColor){
-				ofSetColor(fillColor);
-			}
-			cachedTessellation.draw();
-			//ofGetCurrentRenderer()->draw(cachedTessellation,bUseShapeColor,false,false);
-
-		}
-
-		if(hasOutline()){
-			float lineWidth = ofGetStyle().lineWidth;
-			if(bUseShapeColor){
-				ofSetColor(strokeColor);
-			}
-			ofSetLineWidth( strokeWidth );
-			vector<ofPolyline> & polys = getOutline();
-			for(int i=0;i<(int)polys.size();i++){
-				ofGetCurrentRenderer()->draw(polys[i]);
-			}
-			ofSetLineWidth(lineWidth);
-		}
-
-		if(bUseShapeColor){
-			ofSetColor(prevColor);
-		}
-	}
+void ofPath::draw() const{
+	ofGetCurrentRenderer()->draw(*this);
 }
 
 //----------------------------------------------------------
@@ -662,6 +621,11 @@ ofPath::Mode ofPath::getMode(){
 //----------------------------------------------------------
 void ofPath::setCurveResolution(int _curveResolution){
 	curveResolution = _curveResolution;
+}
+
+//----------------------------------------------------------
+int ofPath::getCurveResolution() const {
+	return curveResolution;
 }
 
 //----------------------------------------------------------

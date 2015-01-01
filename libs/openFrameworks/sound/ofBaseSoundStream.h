@@ -4,6 +4,7 @@
 class ofBaseSoundInput;
 class ofBaseSoundOutput;
 class ofSoundDevice;
+class ofSoundBuffer;
 
 class ofBaseSoundStream{
 	public:
@@ -25,4 +26,9 @@ class ofBaseSoundStream{
 		virtual int getNumOutputChannels() = 0;
 		virtual int getSampleRate() = 0;
 		virtual int getBufferSize() = 0;
+		virtual int getDeviceID() = 0;
+	
+	protected:
+		/// set tickCount and deviceID on the buffer
+		void applySoundStreamOriginInfo( ofSoundBuffer& buffer );
 };

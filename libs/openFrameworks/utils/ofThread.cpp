@@ -195,10 +195,13 @@ void ofThread::threadedFunction(){
 
 //-------------------------------------------------
 void ofThread::run(){
-	ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Started Thread.";
+	//ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Started Thread.";
 #ifdef TARGET_ANDROID
 	JNIEnv * env;
 	jint attachResult = ofGetJavaVMPtr()->AttachCurrentThread(&env,NULL);
+	if(attachResult!=0){
+		ofLogWarning() << "couldn't attach new thread to java vm";
+	}
 #endif
 	// user function
     // should loop endlessly.

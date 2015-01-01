@@ -45,14 +45,13 @@ public:
 	vector<ofVideoDevice> listDevices() const;
 	void setDeviceID(int id);
 	void setDesiredFrameRate(int framerate);
-	bool initGrabber(int w, int h);
+	bool setup(int w, int h);
 
 	void 			update();
 	bool 			isFrameNew() const;
 
-	unsigned char * getPixels();
-	ofPixels&		getPixelsRef();
-	const ofPixels &		getPixelsRef() const;
+	ofPixels&		getPixels();
+	const ofPixels &		getPixels() const;
 
 	float 			getHeight() const;
 	float 			getWidth() const;

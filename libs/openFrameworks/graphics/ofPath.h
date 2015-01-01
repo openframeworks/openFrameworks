@@ -103,8 +103,8 @@ public:
 	float getStrokeWidth() const; // default 0
 	bool hasOutline() const { return strokeWidth>0; }
 
-	void draw(float x, float y);
-	void draw();
+	void draw(float x, float y) const;
+	void draw() const;
 
 	vector<ofPolyline> & getOutline();
 	const vector<ofPolyline> & getOutline() const;
@@ -204,7 +204,7 @@ private:
 #endif
 	bool				cachedTessellationValid;
 
-	static ofTessellator tessellator;
+	ofTessellator tessellator;
 
 	bool				bHasChanged;
 	int					prevCurveRes;

@@ -1,5 +1,5 @@
 #include "ofMesh.h"
-#include "ofGraphics.h"
+#include "ofAppRunner.h"
 #include <map>
 
 //--------------------------------------------------------------
@@ -746,7 +746,7 @@ bool ofMesh::usingIndices() const{
 
 
 //--------------------------------------------------------------
-void ofMesh::append(ofMesh & mesh){
+void ofMesh::append(const ofMesh & mesh){
 	int prevNumVertices = vertices.size();
 	if(mesh.getNumVertices()){
 		vertices.insert(vertices.end(),mesh.getVertices().begin(),mesh.getVertices().end());
@@ -822,7 +822,7 @@ void ofMesh::load(string path){
 	for(;line != lines.end(); ++line){
 		lineNum++;
 		string lineStr = *line;
-		if(lineStr.find("comment")==0){
+		if(lineStr.find("comment")==0 || lineStr.empty()){
 			continue;
 		}
 
@@ -900,8 +900,8 @@ void ofMesh::load(string path){
 		}
 
 		if(state==Vertices){
-			if(data.getNumVertices()<currentVertex){
-				error = "found more vertices than specified in header";
+			if(data.getNumVertices()<=currentVertex){
+				error = "found more vertices: " + ofToString(currentVertex+1) + " than specified in header: " + ofToString(data.getNumVertices());
 				goto clean;
 			}
 			stringstream sline(lineStr);
@@ -1781,9 +1781,9 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
             ofVec3f v2 = vertices[i2];
             ofVec3f v3 = vertices[i3];
             //make 1 vertice at the center of each edge and project it onto the sphere
-            vertices.push_back((v1+v2).normalized());
-            vertices.push_back((v2+v3).normalized());
-            vertices.push_back((v1+v3).normalized());
+            vertices.push_back((v1+v2).getNormalized());
+            vertices.push_back((v2+v3).getNormalized());
+            vertices.push_back((v1+v3).getNormalized());
             //now recreate indices
             newFaces.push_back(i1);
             newFaces.push_back(i12);
@@ -2157,8 +2157,8 @@ ofMesh ofMesh::cone( float radius, float height, int radiusSegments, int heightS
             }
             
             ofVec3f diff = vert-startVec;
-            ofVec3f crossed = up.crossed(vert);
-            normal = crossed.normalized();
+            ofVec3f crossed = up.getCrossed(vert);
+            normal = crossed.getNormalized();
             normal = crossed.getPerpendicular(diff);
             
             normal.normalize();

@@ -7,6 +7,11 @@
 #include "ofTexture.h"
 #include "ofMatrix4x4.h"
 #include "ofMatrix3x3.h"
+#include "ofVec2f.h"
+#include "ofVec3f.h"
+#include "ofVec4f.h"
+#include "ofParameterGroup.h"
+#include "ofParameter.h"
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
@@ -195,9 +200,7 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
 	if(status == GL_TRUE){
 		ofLogVerbose("ofShader") << "setupShaderFromSource(): " << nameForType(type) + " shader compiled";
 		checkShaderInfoLog(shader, type, OF_LOG_WARNING);
-	}
-	
-	else if (status == GL_FALSE) {
+	}else if (status == GL_FALSE) {
 		ofLogError("ofShader") << "setupShaderFromSource(): " << nameForType(type) + " shader failed to compile";
 		checkShaderInfoLog(shader, type, OF_LOG_ERROR);
 		return false;
@@ -222,7 +225,7 @@ string ofShader::parseForIncludes( const string& source, const string& sourceDir
 string ofShader::parseForIncludes( const string& source, vector<string>& included, int level, const string& sourceDirectoryPath) {
     
 	if ( level > 32 ) {
-		ofLog( OF_LOG_ERROR, "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
+		ofLogError( "ofShader", "glsl header inclusion depth limit reached, might be caused by cyclic header inclusion" );
 		return "";
 	}
 	
@@ -244,7 +247,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		string include = line.substr(matches[1].offset, matches[1].length);
 		
 		if ( std::find( included.begin(), included.end(), include ) != included.end() ) {
-			ofLogVerbose() << include << " already included";
+			ofLogVerbose("ofShader") << include << " already included";
 			continue;
 		}
 		
@@ -256,7 +259,7 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		
 		ofBuffer buffer = ofBufferFromFile( include );
 		if ( !buffer.size() ) {
-			ofLogError() <<"Could not open glsl include file " << include;
+			ofLogError("ofShader") <<"Could not open glsl include file " << include;
 			continue;
 		}
 		
@@ -269,10 +272,11 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 
 //--------------------------------------------------------------
 string ofShader::getShaderSource(GLenum type)  const{
-	if (shaderSource.find(type) != shaderSource.end()) {
-		return shaderSource[type];
+	unordered_map<GLenum,string>::const_iterator source = shaderSource.find(type);
+	if ( source != shaderSource.end()) {
+		return source->second;
 	} else {
-		ofLogError() << "No shader source for shader of type: " << nameForType(type);
+		ofLogError("ofShader") << "No shader source for shader of type: " << nameForType(type);
 		return "";
 	}
 }
@@ -322,7 +326,7 @@ bool ofShader::checkProgramLinkStatus(GLuint program) {
         return false;
     }
 	if(status == GL_TRUE)
-		ofLogVerbose("ofShader") << "checkProgramLinkStatus(): program " << program << "linked";
+		ofLogVerbose("ofShader") << "checkProgramLinkStatus(): program " << program << " linked";
 	else if (status == GL_FALSE) {
 		ofLogError("ofShader") << "checkProgramLinkStatus(): program failed to link";
 		checkProgramInfoLog(program);
@@ -338,7 +342,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
-		ofLog(logLevel, "ofShader", (nameForType(type) + " shader reports:\n" + infoBuffer).c_str());
+		ofLog(logLevel, "ofShader: %s shader reports:\n%s", nameForType(type).c_str(), infoBuffer);
 		if (shaderSource.find(type) != shaderSource.end()) {
 			// The following regexp should match shader compiler error messages by Nvidia and ATI.
 			// Unfortunately, each vendor's driver formats error messages slightly different.
@@ -349,7 +353,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 			ofBuffer buf = shaderSource[type];
 			ofBuffer::Line line = buf.getLines().begin();
 			if (!matches.empty()){
-			int  offendingLineNumber = ofToInt(infoString.substr(matches[1].offset, matches[1].length));
+				int  offendingLineNumber = ofToInt(infoString.substr(matches[1].offset, matches[1].length));
 				ostringstream msg;
 				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< endl;
 				for(int i=0; line != buf.getLines().end(); line++, i++ ){
@@ -359,6 +363,8 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 					}
 				}
 				ofLog(logLevel) << msg.str();
+			}else{
+				ofLogError() << shaderSource[type];
 			}
 		}
 		delete [] infoBuffer;
@@ -373,9 +379,8 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetProgramInfoLog(program, infoLength, &infoLength, infoBuffer);
 		string msg = "ofShader: program reports:\n";
+#ifdef TARGET_RASPBERRYPI
 		if (shaderSource.find(GL_FRAGMENT_SHADER) != shaderSource.end()) {
-			// The following regexp should match shader compiler error messages by Nvidia and ATI.
-			// Unfortunately, each vendor's driver formats error messages slightly different.
 			Poco::RegularExpression re(",.line.([^\\)]*)");
 			Poco::RegularExpression::MatchVec matches;
 			string infoString = (infoBuffer != NULL) ? string(infoBuffer): "";
@@ -395,7 +400,8 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 				ofLogError("ofShader") << msg.str();
 			}
 		}
-		ofLog(OF_LOG_ERROR, msg + infoBuffer);
+#endif
+		ofLogError("ofShader", msg + infoBuffer);
 		delete [] infoBuffer;
 	}
 }
@@ -430,7 +436,7 @@ bool ofShader::linkProgram() {
 		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
 			GLuint shader = it->second;
 			if(shader) {
-				ofLogVerbose() << "linkProgram(): attaching " << nameForType(it->first) << " shader to program " << program;
+				ofLogVerbose("ofShader") << "linkProgram(): attaching " << nameForType(it->first) << " shader to program " << program;
 				glAttachShader(program, shader);
 			}
 		}
@@ -482,6 +488,7 @@ void ofShader::unload() {
 		}
 
 		shaders.clear();
+		uniformLocations.clear();
 	}
 	bLoaded = false;
 }
@@ -493,32 +500,24 @@ bool ofShader::isLoaded() const{
 
 //--------------------------------------------------------------
 void ofShader::begin()  const{
-	if (bLoaded){
-		glUseProgram(program);
-		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-		if(renderer){
-			renderer->beginCustomShader(*this);
-		}
-	}else{
-		ofLogError("ofShader") << "begin(): couldn't begin, shader not loaded";
-	}
+	ofGetGLRenderer()->bind(*this);
 }
 
 //--------------------------------------------------------------
 void ofShader::end()  const{
-	if (bLoaded){
-		shared_ptr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-		if(renderer){
-			renderer->endCustomShader();
-		}else{
-			glUseProgram(0);
-		}
-	}
+	ofGetGLRenderer()->unbind(*this);
 }
+
+#if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
+//--------------------------------------------------------------
+void ofShader::dispatchCompute(GLuint x, GLuint y, GLuint z) const{
+    glDispatchCompute(x,y,z);
+}
+#endif
 
 //--------------------------------------------------------------
 void ofShader::setUniformTexture(const string & name, const ofBaseHasTexture& img, int textureLocation)  const{
-	setUniformTexture(name, img.getTextureReference(), textureLocation);
+	setUniformTexture(name, img.getTexture(), textureLocation);
 }
 
 //--------------------------------------------------------------
@@ -618,6 +617,22 @@ void ofShader::setUniform4f(const string & name, float v1, float v2, float v3, f
 	}
 }
 
+
+//--------------------------------------------------------------
+void ofShader::setUniform2f(const string & name, const ofVec2f & v) const{
+	setUniform2f(name,v.x,v.y);
+}
+
+//--------------------------------------------------------------
+void ofShader::setUniform3f(const string & name, const ofVec3f & v) const{
+	setUniform3f(name,v.x,v.y,v.z);
+}
+
+//--------------------------------------------------------------
+void ofShader::setUniform4f(const string & name, const ofVec4f & v) const{
+	setUniform4f(name,v.x,v.y,v.z,v.w);
+}
+
 //--------------------------------------------------------------
 void ofShader::setUniform1iv(const string & name, const int* v, int count)  const{
 	if(bLoaded) {
@@ -681,20 +696,39 @@ void ofShader::setUniform4fv(const string & name, const float* v, int count)  co
 		if (loc != -1) glUniform4fv(loc, count, v);
 	}
 }
+
+//--------------------------------------------------------------
+void ofShader::setUniforms(const ofParameterGroup & parameters) const{
+	for(int i=0;i<parameters.size();i++){
+		if(parameters[i].type()==typeid(ofParameter<int>).name()){
+			setUniform1i(parameters[i].getEscapedName(),parameters[i].cast<int>());
+		}else if(parameters[i].type()==typeid(ofParameter<float>).name()){
+			setUniform1f(parameters[i].getEscapedName(),parameters[i].cast<float>());
+		}else if(parameters[i].type()==typeid(ofParameter<ofVec2f>).name()){
+			setUniform2f(parameters[i].getEscapedName(),parameters[i].cast<ofVec2f>());
+		}else if(parameters[i].type()==typeid(ofParameter<ofVec3f>).name()){
+			setUniform3f(parameters[i].getEscapedName(),parameters[i].cast<ofVec3f>());
+		}else if(parameters[i].type()==typeid(ofParameter<ofVec4f>).name()){
+			setUniform4f(parameters[i].getEscapedName(),parameters[i].cast<ofVec4f>());
+		}else if(parameters[i].type()==typeid(ofParameterGroup).name()){
+			setUniforms((ofParameterGroup&)parameters[i]);
+		}
+	}
+}
 	
 //--------------------------------------------------------------
-void ofShader::setUniformMatrix3f(const string & name, const ofMatrix3x3 & m)  const{
+void ofShader::setUniformMatrix3f(const string & name, const ofMatrix3x3 & m, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
-		if (loc != -1) glUniformMatrix3fv(loc, 1, GL_FALSE, &m.a);
+		if (loc != -1) glUniformMatrix3fv(loc, count, GL_FALSE, &m.a);
 	}
 }
 
 //--------------------------------------------------------------
-void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m)  const{
+void ofShader::setUniformMatrix4f(const string & name, const ofMatrix4x4 & m, int count)  const{
 	if(bLoaded) {
 		int loc = getUniformLocation(name);
-		if (loc != -1) glUniformMatrix4fv(loc, 1, GL_FALSE, m.getPtr());
+		if (loc != -1) glUniformMatrix4fv(loc, count, GL_FALSE, m.getPtr());
 	}
 }
 
@@ -822,13 +856,14 @@ GLint ofShader::getAttributeLocation(const string & name)  const{
 
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const string & name)  const{
+	if(!bLoaded) return -1;
 	GLint loc = -1;
 
 	// tig: caching uniform locations gives the RPi a 17% boost on average
 	unordered_map<string, GLint>::iterator it = uniformLocations.find(name);
 	if (it == uniformLocations.end()){
 		loc = glGetUniformLocation(program, name.c_str());
-		if (loc != -1) uniformLocations[name] = loc;
+		uniformLocations[name] = loc;
 	} else {
 		loc = it->second;
 	}
@@ -896,7 +931,12 @@ GLuint ofShader::getProgram() const{
 
 //--------------------------------------------------------------
 GLuint ofShader::getShader(GLenum type) const{
-	return shaders[type];
+	unordered_map<GLenum,GLuint>::const_iterator shader = shaders.find(type);
+	if(shader!=shaders.end()){
+		return shader->second;
+	}else{
+		return 0;
+	}
 }
 
 //--------------------------------------------------------------
@@ -916,6 +956,9 @@ string ofShader::nameForType(GLenum type){
 		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
 		#ifndef TARGET_OPENGLES
 		case GL_GEOMETRY_SHADER_EXT: return "GL_GEOMETRY_SHADER_EXT";
+		#ifdef glDispatchCompute
+		case GL_COMPUTE_SHADER: return "GL_COMPUTE_SHADER";
+		#endif
 		#endif
 		default: return "UNKNOWN SHADER TYPE";
 	}

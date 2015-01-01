@@ -682,7 +682,7 @@ ofGstVideoFormat & ofGstVideoGrabber::selectFormat(int w, int h, int desired_fra
 	return camData.webcam_devices[deviceID].video_formats[mostSimilarFormat];
 }
 
-bool ofGstVideoGrabber::initGrabber(int w, int h){
+bool ofGstVideoGrabber::setup(int w, int h){
 	if(!camData.bInited) get_video_devices(camData);
 
 	if(camData.webcam_devices.size()==0){
@@ -810,16 +810,13 @@ bool ofGstVideoGrabber::isFrameNew() const {
 	return videoUtils.isFrameNew();
 }
 
-unsigned char * ofGstVideoGrabber::getPixels(){
+
+ofPixels& ofGstVideoGrabber::getPixels(){
 	return videoUtils.getPixels();
 }
 
-ofPixels& ofGstVideoGrabber::getPixelsRef(){
-	return videoUtils.getPixelsRef();
-}
-
-const ofPixels & ofGstVideoGrabber::getPixelsRef() const {
-	return videoUtils.getPixelsRef();
+const ofPixels & ofGstVideoGrabber::getPixels() const {
+	return videoUtils.getPixels();
 }
 
 float ofGstVideoGrabber::getHeight() const {

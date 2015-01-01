@@ -5,7 +5,7 @@
 void ofApp::setup(){
 	snapCounter = 0;
 	bSnapshot = false;
-	cooper.loadFont("cooperBlack.ttf", 50);
+	cooper.load("cooperBlack.ttf", 50);
 	phase = 0;
 	memset(snapString, 0, 255);		// clear the string by setting all chars to 0
 }
@@ -23,7 +23,7 @@ void ofApp::draw(){
 	phase += 0.35f;
 
 	ofSetHexColor(0xDDDDFF);
-	ofRect(200,200,300,180);
+	ofDrawRectangle(200,200,300,180);
 
 
 
@@ -41,7 +41,7 @@ void ofApp::draw(){
 	glPushMatrix();
 		glTranslatef(330,280,0);
 		glRotatef(phase*5, 0,0,1);
-		ofRect(-25,-25,50,50);
+		ofDrawRectangle(-25,-25,50,50);
 	glPopMatrix();
 
 	ofDisableAlphaBlending();
@@ -54,7 +54,7 @@ void ofApp::draw(){
 		img.grabScreen(200,200,300,180);
 
 		string fileName = "snapshot_"+ofToString(10000+snapCounter)+".png";
-		img.saveImage(fileName);
+		img.save(fileName);
 		sprintf(snapString, "saved %s", fileName.c_str());
 		snapCounter++;
 		bSnapshot = false;

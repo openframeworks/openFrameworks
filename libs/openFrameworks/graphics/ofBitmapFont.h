@@ -2,10 +2,10 @@
 
 #include "ofConstants.h"
 #include "ofRectangle.h"
-
+#include "ofPixels.h"
+#include "ofTexture.h"
 class ofMesh;
-class ofTexture;
-
+class ofRectangle;
 
 /*
  
@@ -16,10 +16,13 @@ class ofTexture;
  
  */
 
-void ofDrawBitmapCharacterStart(int stringLength);
-void ofDrawBitmapCharacter(int character, int x , int y );
-void ofDrawBitmapCharacterEnd();
-ofMesh & ofBitmapStringGetMesh(const string & text, int x, int y);
-ofTexture & ofBitmapStringGetTextureRef();
-ofRectangle ofBitmapStringGetBoundingBox(const string & text, int x, int y);
-
+class ofBitmapFont{
+public:
+	ofMesh getMesh(const string & text, int x, int y, ofDrawBitmapMode mode=OF_BITMAPMODE_MODEL_BILLBOARD, bool vFlipped=true) const;
+	const ofTexture & getTexture() const;
+	ofRectangle getBoundingBox(const string & text, int x, int y) const;
+private:
+	static void init();
+	static ofPixels pixels;
+	mutable ofTexture texture;
+};

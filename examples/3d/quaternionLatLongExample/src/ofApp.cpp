@@ -82,7 +82,7 @@ void ofApp::draw(){
 		ofVec3f worldPoint = latRot * longRot * spinQuat * center;
 		
 		//draw it and label it
-		ofLine(ofVec3f(0,0,0), worldPoint);
+		ofDrawLine(ofVec3f(0,0,0), worldPoint);
 
 		//set the bitmap text mode billboard so the points show up correctly in 3d
 		ofDrawBitmapString(cities[i].name, worldPoint );

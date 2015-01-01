@@ -6,7 +6,7 @@ void ofApp::setup(){
     ofSetLogLevel(OF_LOG_VERBOSE);
 
 
-    rpiLogo.loadImage("Raspi_Colour_R.png");
+    rpiLogo.load("Raspi_Colour_R.png");
 
 }
 
@@ -39,8 +39,8 @@ void ofApp::draw() {
     ofPushStyle();
     ofSetColor(255,0,0);
     ofNoFill();
-    ofLine(ofGetMouseX(),0,ofGetMouseX(),ofGetHeight());
-    ofLine(0,ofGetMouseY(),ofGetWidth(),ofGetMouseY());
+    ofDrawLine(ofGetMouseX(),0,ofGetMouseX(),ofGetHeight());
+    ofDrawLine(0,ofGetMouseY(),ofGetWidth(),ofGetMouseY());
     ofPopStyle();
 }
 

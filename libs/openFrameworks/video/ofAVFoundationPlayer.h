@@ -22,7 +22,7 @@ public:
     ofAVFoundationPlayer();
     ~ofAVFoundationPlayer();
     
-    bool                loadMovie(string path);
+    bool                load(string path);
     
     void                close();
     
@@ -35,11 +35,10 @@ public:
     
     // Returns openFrameworks compatible RGBA pixels.
     // Be aware of your current render mode.
-    unsigned char *     getPixels();
-    const ofPixels &    getPixelsRef() const;
-    ofPixels &          getPixelsRef();
+    const ofPixels &    getPixels() const;
+    ofPixels &          getPixels();
     
-    ofTexture *         getTexture();
+    ofTexture *         getTexturePtr();
     ofTexture &         getTextureReference();
     
     bool                isLoading() const;

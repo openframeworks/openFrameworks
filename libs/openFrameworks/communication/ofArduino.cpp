@@ -160,7 +160,7 @@ void ofArduino::disconnect(){
 }
 
 void ofArduino::update(){
-	static vector<unsigned char> bytesToProcess;
+	vector<unsigned char> bytesToProcess;
 	int bytesToRead = _port.available();
 	if (bytesToRead>0) {
 		bytesToProcess.resize(bytesToRead);

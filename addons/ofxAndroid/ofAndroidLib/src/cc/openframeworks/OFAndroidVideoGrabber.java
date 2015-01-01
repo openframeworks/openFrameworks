@@ -117,6 +117,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		
 		Log.i("OF", "Grabber default format: " + config.getPreviewFormat());
 		Log.i("OF", "Grabber default preview size: " + config.getPreviewSize().width + "," + config.getPreviewSize().height);
+		config.setPictureSize(w, h);
 		config.setPreviewSize(w, h);
 		config.setPreviewFormat(ImageFormat.NV21);
         try{

@@ -217,7 +217,6 @@ int	ofFbo::_maxSamples = -1;
 
 
 ofFbo::ofFbo():
-isBound(0),
 fbo(0),
 fboTextures(0),
 depthBuffer(0),
@@ -229,7 +228,7 @@ bIsAllocated(false)
 {
 #ifdef TARGET_OPENGLES
 	if(!bglFunctionsInitialized){
-		if(ofGetGLProgrammableRenderer()){
+		if(ofIsGLProgrammableRenderer()){
 			glGenFramebuffers = (glGenFramebuffersType)dlsym(RTLD_DEFAULT, "glGenFramebuffers");
 			glDeleteFramebuffers =  (glDeleteFramebuffersType)dlsym(RTLD_DEFAULT, "glDeleteFramebuffers");
 			glDeleteRenderbuffers =  (glDeleteRenderbuffersType)dlsym(RTLD_DEFAULT, "glDeleteRenderbuffers");
@@ -258,7 +257,6 @@ bIsAllocated(false)
 
 ofFbo::ofFbo(const ofFbo & mom){
 	settings = mom.settings;
-	isBound = mom.isBound;
 	bIsAllocated = mom.bIsAllocated;
 
 	fbo = mom.fbo;
@@ -291,7 +289,6 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
 	destroy();
 	settings = mom.settings;
-	isBound = mom.isBound;
 	bIsAllocated = mom.bIsAllocated;
 
 	fbo = mom.fbo;
@@ -367,8 +364,6 @@ void ofFbo::destroy() {
 
 	for(int i=0; i<(int)colorBuffers.size(); i++) releaseRB(colorBuffers[i]);
 	colorBuffers.clear();
-
-	isBound = 0;
 	bIsAllocated = false;
 }
 
@@ -394,7 +389,7 @@ bool ofFbo::checkGLSupport() {
                           << "maxSamples: " << _maxSamples;
 #else
 
-	if(ofGetGLProgrammableRenderer() || ofGLCheckExtension("GL_OES_framebuffer_object")){
+	if(ofIsGLProgrammableRenderer() || ofGLCheckExtension("GL_OES_framebuffer_object")){
 		ofLogVerbose("ofFbo") << "GL frame buffer object supported";
 	}else{
 		ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
@@ -434,8 +429,9 @@ void ofFbo::allocate(Settings _settings) {
 	destroy();
 
 	// check that passed values are correct
-	if(_settings.width == 0) _settings.width = ofGetWidth();
-	if(_settings.height == 0) _settings.height = ofGetHeight();
+	if(_settings.width <= 0 || _settings.height <= 0){
+		ofLogError("ofFbo") << "width and height have to be more than 0";
+	}
 	if(_settings.numSamples > maxSamples() && maxSamples() > -1) {
 		ofLogWarning("ofFbo") << "allocate(): clamping numSamples " << _settings.numSamples << " to maxSamples " << maxSamples() << " for frame buffer object" << fbo;
 		_settings.numSamples = maxSamples();
@@ -660,42 +656,26 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 
 
 void ofFbo::begin(bool setupScreen) const{
-	if(!bIsAllocated) return;
-	ofPushView();
 	if(ofGetGLRenderer()){
-		ofGetGLRenderer()->setCurrentFBO(this);
+		ofGetGLRenderer()->bind(*this,setupScreen);
 	}
-	ofViewport();
-	if(setupScreen){
-		ofSetupScreenPerspective();
-	}
-	bind();
 }
 
 void ofFbo::end() const{
-	if(!bIsAllocated) return;
-	unbind();
 	if(ofGetGLRenderer()){
-		ofGetGLRenderer()->setCurrentFBO(NULL);
+		ofGetGLRenderer()->unbind(*this);
 	}
-	ofPopView();
 }
 
 void ofFbo::bind() const{
-	if(isBound == 0) {
-		glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFramebuffer);
-		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	}
-	isBound++;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFramebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 
 
 void ofFbo::unbind() const{
-	if(isBound) {
-		glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
-		isBound = 0;
-		dirty = true;
-	}
+	glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
+	savedFramebuffer = 0;
 }
 
 int ofFbo::getNumTextures() const {
@@ -760,20 +740,36 @@ int ofFbo::getDefaultTextureIndex() const
 }
 
 ofTexture& ofFbo::getTextureReference(){
-	return getTextureReference(defaultTextureIndex);
+	return getTexture();
 }
 
 ofTexture& ofFbo::getTextureReference(int attachmentPoint) {
+	return getTexture(attachmentPoint);
+}
+
+const ofTexture& ofFbo::getTextureReference() const{
+	return getTexture();
+}
+
+const ofTexture& ofFbo::getTextureReference(int attachmentPoint) const{
+	return getTexture(attachmentPoint);
+}
+
+ofTexture& ofFbo::getTexture(){
+	return getTexture(defaultTextureIndex);
+}
+
+ofTexture& ofFbo::getTexture(int attachmentPoint) {
 	updateTexture(attachmentPoint);
     
     return textures[attachmentPoint];
 }
 
-const ofTexture& ofFbo::getTextureReference() const{
-	return getTextureReference(defaultTextureIndex);
+const ofTexture& ofFbo::getTexture() const{
+	return getTexture(defaultTextureIndex);
 }
 
-const ofTexture& ofFbo::getTextureReference(int attachmentPoint) const{
+const ofTexture& ofFbo::getTexture(int attachmentPoint) const{
 	ofFbo * mutThis = const_cast<ofFbo*>(this);
 	mutThis->updateTexture(attachmentPoint);
 
@@ -781,26 +777,26 @@ const ofTexture& ofFbo::getTextureReference(int attachmentPoint) const{
 }
 
 void ofFbo::setAnchorPercent(float xPct, float yPct){
-	getTextureReference().setAnchorPercent(xPct, yPct);
+	getTexture().setAnchorPercent(xPct, yPct);
 }
 
 void ofFbo::setAnchorPoint(float x, float y){
-	getTextureReference().setAnchorPoint(x, y);
+	getTexture().setAnchorPoint(x, y);
 }
 
 void ofFbo::resetAnchor(){
-	getTextureReference().resetAnchor();
+	getTexture().resetAnchor();
 }
 
 void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-	getTextureReference(attachmentPoint).readToPixels(pixels);
+	getTexture(attachmentPoint).readToPixels(pixels);
 #else
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
 	int format = ofGetGLFormatFromInternal(settings.internalformat);
-	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_BYTE, pixels.getPixels());
+	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_BYTE, pixels.getData());
 	unbind();
 #endif
 }
@@ -808,12 +804,12 @@ void ofFbo::readToPixels(ofPixels & pixels, int attachmentPoint) const{
 void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-	getTextureReference(attachmentPoint).readToPixels(pixels);
+	getTexture(attachmentPoint).readToPixels(pixels);
 #else
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
 	int format = ofGetGLFormatFromInternal(settings.internalformat);
-	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_SHORT, pixels.getPixels());
+	glReadPixels(0,0,settings.width, settings.height, format, GL_UNSIGNED_SHORT, pixels.getData());
 	unbind();
 #endif
 }
@@ -821,7 +817,7 @@ void ofFbo::readToPixels(ofShortPixels & pixels, int attachmentPoint) const{
 void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-	getTextureReference(attachmentPoint).readToPixels(pixels);
+	getTexture(attachmentPoint).readToPixels(pixels);
 #else
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
@@ -833,7 +829,6 @@ void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 
 void ofFbo::updateTexture(int attachmentPoint) {
 	if(!bIsAllocated) return;
-	// TODO: flag to see if this is dirty or not
 #ifndef TARGET_OPENGLES
 	if(fbo != fboTextures && dirty) {
 		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );
@@ -879,7 +874,7 @@ void ofFbo::draw(float x, float y) const{
 
 void ofFbo::draw(float x, float y, float width, float height) const{
 	if(!bIsAllocated) return;
-    getTextureReference().draw(x, y, width, height);
+    getTexture().draw(x, y, width, height);
 }
 
 

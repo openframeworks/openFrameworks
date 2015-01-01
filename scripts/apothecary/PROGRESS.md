@@ -14,7 +14,7 @@
 | FreeType                        | ✓   | N/A   | N/A     | N/A         | N/A         | ?  | ?      | ?   | ?       |
 | cairo                           | ✓?  | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | fmodex                          | ✗   | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
-| glew                            | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
+| glew                            | ✓?  | ✗     | ✗       | ✗           | ✗           | ✓  | ✗      | N/A | N/A     |
 | glfw                            | ✗   | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | N/A | N/A     |
 | glu                             | N/A | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | ✗   | ✗       |
 | glut                            | ✗   | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
