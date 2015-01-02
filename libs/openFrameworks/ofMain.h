@@ -49,13 +49,13 @@
 #include "ofVboMesh.h"
 #include "ofGLProgrammableRenderer.h"
 #ifndef TARGET_PROGRAMMABLE_GL
-#include "ofGLRenderer.h"
+	#include "ofGLRenderer.h"
 #endif
 
 //--------------------------
 // graphics
 #if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
-#include "ofCairoRenderer.h"
+	#include "ofCairoRenderer.h"
 #endif
 #include "ofGraphics.h"
 #include "ofImage.h"
@@ -73,14 +73,20 @@
 #include "ofAppBaseWindow.h"
 #include "ofWindowSettings.h"
 #include "ofMainLoop.h"
+#if !defined( TARGET_OF_IOS ) & !defined(TARGET_ANDROID) & !defined(TARGET_EMSCRIPTEN)
+	#include "ofAppGLFWWindow.h"
+	#if !defined( TARGET_LINUX_ARM )
+		#include "ofAppGlutWindow.h"
+	#endif
+#endif
 
 //--------------------------
 // audio
 #ifndef TARGET_NO_SOUND
-#include "ofSoundStream.h"
-#include "ofSoundPlayer.h"
-#include "ofSoundBuffer.h"
-#include "ofSoundObject.h"
+	#include "ofSoundStream.h"
+	#include "ofSoundPlayer.h"
+	#include "ofSoundBuffer.h"
+	#include "ofSoundObject.h"
 #endif
 
 //--------------------------
