@@ -5,7 +5,7 @@
  not-in-place variations.
  
  high level image operations:
- - Canny (edge detection), medianBlur, blur (gaussian), convertColor
+ - Canny (edge detection), medianBlur, blur, convertColor
  - Coherent line drawing
  
  low level image manipulation and comparison:
@@ -202,20 +202,35 @@ cv::name(xMat, yMat, resultMat);\
 	
 	int forceOdd(int x);
 	
-	// Gaussian blur
+	// box blur
 	template <class S, class D>
 	void blur(S& src, D& dst, int size) {
 		imitate(dst, src);
 		size = forceOdd(size);
 		Mat srcMat = toCv(src), dstMat = toCv(dst);
-		cv::GaussianBlur(srcMat, dstMat, cv::Size(size, size), 0, 0);
+		cv::blur(srcMat, dstMat, cv::Size(size, size));
 	}
 	
-	// in-place Gaussian blur
+	// in-place box blur
 	template <class SD>
 	void blur(SD& srcDst, int size) {
 		ofxCv::blur(srcDst, srcDst, size);
 	}
+    
+    // Gaussian blur
+    template <class S, class D>
+    void GaussianBlur(S& src, D& dst, int size) {
+        imitate(dst, src);
+        size = forceOdd(size);
+        Mat srcMat = toCv(src), dstMat = toCv(dst);
+        cv::GaussianBlur(srcMat, dstMat, cv::Size(size, size), 0, 0);
+    }
+    
+    // in-place Gaussian blur
+    template <class SD>
+    void GaussianBlur(SD& srcDst, int size) {
+        ofxCv::GaussianBlur(srcDst, srcDst, size);
+    }
 	
 	// Median blur
 	template <class S, class D>
