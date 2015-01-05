@@ -17,8 +17,8 @@ class ofApp : public ofBaseApp{
 	
 	ofEasyCam	mCamMain;
 
-	ofPtr<ofShader>	mShdInstanced;
-	ofTexture		mTexDepth;
+	shared_ptr<ofShader>	mShdInstanced;
+	ofTexture	mTexDepth;
 	
 	bool isShaderDirty;
 	
