@@ -279,6 +279,12 @@
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundUtils.h">
       <Filter>libs\openFrameworks\sound</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofMainLoop.h">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\app\ofWindowSettings.h">
+      <Filter>libs\openFrameworks\app</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
@@ -481,6 +487,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp">
       <Filter>libs\openFrameworks\sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\openFrameworks\app\ofMainLoop.cpp">
+      <Filter>libs\openFrameworks\app</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
