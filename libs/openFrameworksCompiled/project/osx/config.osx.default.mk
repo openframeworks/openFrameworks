@@ -43,7 +43,7 @@ PLATFORM_RUN_COMMAND = cd bin/$(BIN_NAME).app/Contents/MacOS/;./$(BIN_NAME)
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_DEFINES =__MACOSX_CORE__
+PLATFORM_DEFINES = __MACOSX_CORE__
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
@@ -69,8 +69,16 @@ PLATFORM_REQUIRED_ADDONS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
+ifndef MAC_OS_MIN_VERSION
+	MAC_OS_MIN_VERSION = 10.7
+endif
+
+ifndef MAC_OS_STD_LIB
+	MAC_OS_STD_LIB = libstdc++
+endif
+
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
-PLATFORM_CFLAGS = -stdlib=libstdc++
+PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
 PLATFORM_CFLAGS += -Wall
@@ -78,34 +86,30 @@ PLATFORM_CFLAGS += -Wall
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
-MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
+ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
+	MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
 
-ifeq ($(findstring .app, $(MAC_OS_XCODE_ROOT)),.app)
 	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
-else
-	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/SDKs
-endif
 
-#ifeq ($(wildcard /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer),/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer)
-#	MAC_OS_SDK_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
-#else
-#    MAC_OS_SDK_PATH=/Developer/SDKs
-#endif
-
-ifndef MAC_OS_SDK
-	ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.9.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.9.sdk)
-		MAC_OS_SDK=10.9
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
-		MAC_OS_SDK=10.8
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
-		MAC_OS_SDK=10.7
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk)
-		MAC_OS_SDK=10.6
+	ifndef MAC_OS_SDK
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.10.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.10.sdk)
+			MAC_OS_SDK=10.10
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.9.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.9.sdk)
+			MAC_OS_SDK=10.9
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
+			MAC_OS_SDK=10.8
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
+			MAC_OS_SDK=10.7
+		endif
 	endif
+
+	ifndef MAC_OS_SDK_ROOT
+		MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
+	endif
+else
+	# xcode-select was not set, assume command line tools are installed
+	MAC_OS_SDK_ROOT=
 endif
-
-MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
-
 
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
 ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
@@ -123,23 +127,17 @@ PLATFORM_CFLAGS += -arch i386
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
 
-PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
-PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
-PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
+ifdef MAC_OS_SDK_ROOT
+	PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
+	PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
+endif
+
+PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
 PLATFORM_CFLAGS += -fasm-blocks
 PLATFORM_CFLAGS += -funroll-loops
 PLATFORM_CFLAGS += -mssse3
 PLATFORM_CFLAGS += -fmessage-length=0
-
-ifeq ($(MAC_OS_SDK),10.6)
-	PLATFORM_CFLAGS += -pipe
-	PLATFORM_CFLAGS += -Wno-trigraphs
-	PLATFORM_CFLAGS += -fasm-blocks
-	PLATFORM_CFLAGS += -Wno-deprecated-declarations
-	PLATFORM_CFLAGS += -Wno-invalid-offsetof
-	PLATFORM_CFLAGS += -gdwarf-2
-endif
 
 PLATFORM_CXXFLAGS += -x objective-c++
 
@@ -156,14 +154,12 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
-ifeq ($(MAC_OS_SDK),10.9)
-	PLATFORM_LDFLAGS += -stdlib=libstdc++
-endif
 PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
-PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
 
+PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -258,10 +254,7 @@ PLATFORM_HEADER_SEARCH_PATHS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_LIBRARIES =
-ifneq ($(MAC_OS_SDK),10.6)
-	PLATFORM_LIBRARIES += objc
-endif
+PLATFORM_LIBRARIES = objc
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
@@ -306,10 +299,7 @@ PLATFORM_FRAMEWORKS += OpenGL
 PLATFORM_FRAMEWORKS += QuickTime
 PLATFORM_FRAMEWORKS += IOKit
 PLATFORM_FRAMEWORKS += Cocoa
-
-ifneq ($(MAC_OS_SDK),10.6)
-	PLATFORM_FRAMEWORKS += CoreVideo
-endif
+PLATFORM_FRAMEWORKS += CoreVideo
 
 ifeq ($(USE_GST),1)
 	PLATFORM_FRAMEWORKS += GStreamer
@@ -336,6 +326,7 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 # PLATFORM CONFIGURATIONS
 #   These will override the architecture vars generated by configure.platform.make
 ##########################################################################################
+
 #PLATFORM_ARCH =
 #PLATFORM_OS =
 #PLATFORM_LIBS_PATH =
@@ -345,15 +336,7 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 #    Don't want to use a default compiler?
 ################################################################################
 
-
-#ifeq ($(MAC_OS_SDK),10.6)
-#    PLATFORM_CXX = g++
-#    PLATFORM_CC = gcc
-#else
-#	PLATFORM_CXX = clang
-#    PLATFORM_CC = clang
-#endif
-
+# PLATFORM_CXX =
 
 ################################################################################
 # PLATFORM CC
