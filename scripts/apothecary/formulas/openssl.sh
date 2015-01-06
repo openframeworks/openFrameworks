@@ -117,7 +117,7 @@ function build() {
             if test ${LC_CTYPE+defined};
             then
                 OLD_LC_CTYPE=$LC_CTYPE
-                unset LC_CTYPE
+                LC_CTYPE=C
             fi
 
             # patch the Configure file to make sure the correct compiler is invoked.
@@ -173,7 +173,7 @@ function build() {
             if test ${LC_CTYPE+defined};
             then
                 OLD_LC_CTYPE=$LC_CTYPE
-                unset LC_CTYPE
+                LC_CTYPE=C
             fi
 
             # patching Makefile to use the correct c flags.
@@ -317,7 +317,7 @@ function build() {
                 if test ${LC_CTYPE+defined};
                 then
                     OLD_LC_CTYPE=$LC_CTYPE
-                    unset LC_CTYPE
+                    LC_CTYPE=C
                 fi
 
 				sed -ie "s!\"debug-darwin-i386-cc\",\"cc:-arch i386 -g3!\"debug-darwin-i386-cc\",\"$THECOMPILER:-arch i386 -g3!" Configure
@@ -351,7 +351,7 @@ function build() {
                 if test ${LC_CTYPE+defined};
                 then
                     OLD_LC_CTYPE=$LC_CTYPE
-                    unset LC_CTYPE
+                    LC_CTYPE=C
                 fi
 
 				sed -ie "s!\"iphoneos-cross\",\"llvm-gcc:-O3!\"iphoneos-cross\",\"$THECOMPILER:-Os!" Configure
@@ -430,7 +430,7 @@ function build() {
             if test ${LC_CTYPE+defined};
             then
                 OLD_LC_CTYPE=$LC_CTYPE
-                unset LC_CTYPE
+                LC_CTYPE=C
             fi
 
 			sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -arch $IOS_ARCH -Os -fPIC -stdlib=libc++ $MIN_TYPE$MIN_IOS_VERSION !" Makefile
