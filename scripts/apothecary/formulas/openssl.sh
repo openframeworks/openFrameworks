@@ -106,13 +106,35 @@ function build() {
 
 			echo "Using Compiler: $THECOMPILER"
 
-			# patch the Configure file to make sure the correct compiler is invoked.
+			# unset LANG if defined
+			if test ${LANG+defined};
+			then
+				OLD_LANG=$LANG
+				unset LANG
+			fi
 
-			OLD_LANG=$LANG
-			unset LANG
-				sed -ie "s!\"darwin-i386-cc\",\"cc:-arch i386 -g3!\"darwin-i386-cc\",\"${THECOMPILER}:-arch i386 -g3!" Configure
-				sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
-			export LANG=$OLD_LANG
+            # unset LC_CTYPE if defined
+            if test ${LC_CTYPE+defined};
+            then
+                OLD_LC_CTYPE=$LC_CTYPE
+                unset LC_CTYPE
+            fi
+
+            # patch the Configure file to make sure the correct compiler is invoked.
+			sed -ie "s!\"darwin-i386-cc\",\"cc:-arch i386 -g3!\"darwin-i386-cc\",\"${THECOMPILER}:-arch i386 -g3!" Configure
+			sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
+
+            # reset LANG if it was defined
+			if test ${OLD_LANG+defined};
+			then
+				export LANG=$OLD_LANG
+			fi
+
+            # reset LC_CTYPE if it was defined
+            if test ${OLD_LC_CTYPE+defined};
+            then
+                export LC_CTYPE=$OLD_LC_CTYPE
+            fi
 
    			OSX_C_FLAGS="" 		# Flags for stdlib, std and arch
    			CONFIG_TARGET=""	# Which one of the target presets to use
@@ -138,13 +160,36 @@ function build() {
 		    	exit 1
 		    fi
 
-		    # patching Makefile to use the correct c flags.
 
-		    OLD_LANG=$LANG
-		    # we need to unset LANG otherwise sed will get upsed.
-			unset LANG
+            # we need to unset LANG otherwise sed will get upsed.
+   			# unset LANG if defined
+			if test ${LANG+defined};
+			then
+                OLD_LANG=$LANG
+				unset LANG
+			fi
+
+            # unset LC_CTYPE if defined
+            if test ${LC_CTYPE+defined};
+            then
+                OLD_LC_CTYPE=$LC_CTYPE
+                unset LC_CTYPE
+            fi
+
+            # patching Makefile to use the correct c flags.
 			sed -ie "s!^CFLAG=!CFLAG=$OSX_C_FLAGS !" Makefile
-			export LANG=$OLD_LANG
+
+            # reset LANG if it was defined
+			if test ${OLD_LANG+defined};
+			then
+				export LANG=$OLD_LANG
+            fi
+
+            # reset LC_CTYPE if it was defined
+            if test ${OLD_LC_CTYPE+defined};
+            then
+                export LC_CTYPE=$OLD_LC_CTYPE
+            fi
 
 
 			echo "Running make for ${OSX_ARCH}"
@@ -260,22 +305,71 @@ function build() {
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
 				PLATFORM="iPhoneSimulator"
-				OLD_LANG=$LANG
-				unset LANG
+
+                # unset LANG if defined
+				if test ${LANG+defined};
+				then
+					OLD_LANG=$LANG
+					unset LANG
+				fi
+
+                # unset LC_CTYPE if defined
+                if test ${LC_CTYPE+defined};
+                then
+                    OLD_LC_CTYPE=$LC_CTYPE
+                    unset LC_CTYPE
+                fi
+
 				sed -ie "s!\"debug-darwin-i386-cc\",\"cc:-arch i386 -g3!\"debug-darwin-i386-cc\",\"$THECOMPILER:-arch i386 -g3!" Configure
 				sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
-				export LANG=$OLD_LANG
+
+                # reset LANG if it was defined
+				if test ${OLD_LANG+defined};
+				then
+					export LANG=$OLD_LANG
+                fi
+
+                # reset LC_CTYPE if it was defined
+                if test ${OLD_LC_CTYPE+defined};
+                then
+                    export LC_CTYPE=$OLD_LC_CTYPE
+                fi
+
 			else
 				cp "crypto/ui/ui_openssl.c" "crypto/ui/ui_openssl.c.orig"
 				sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
 				PLATFORM="iPhoneOS"
-				OLD_LANG=$LANG
-				unset LANG
+
+                # unset LANG if defined
+				if test ${LANG+defined};
+				then
+					OLD_LANG=$LANG				
+					unset LANG
+				fi
+
+                # unset LC_CTYPE if defined
+                if test ${LC_CTYPE+defined};
+                then
+                    OLD_LC_CTYPE=$LC_CTYPE
+                    unset LC_CTYPE
+                fi
+
 				sed -ie "s!\"iphoneos-cross\",\"llvm-gcc:-O3!\"iphoneos-cross\",\"$THECOMPILER:-Os!" Configure
-				export LANG=$OLD_LANG
+
+                # reset LANG if it was defined
+				if test ${OLD_LANG+defined};
+				then
+					export LANG=$OLD_LANG
+				fi
+
+                # reset LC_CTYPE if it was defined
+                if test ${OLD_LC_CTYPE+defined};
+                then
+                    export LC_CTYPE=$OLD_LC_CTYPE
+                fi
 			fi
 
-		
+
 
 			export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
 			export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
@@ -323,12 +417,35 @@ function build() {
 		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
 		    	MIN_TYPE=-mios-simulator-version-min=
 		    fi
-		    
-		    OLD_LANG=$LANG
-			unset LANG
-			sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -arch $IOS_ARCH -Os -fPIC -stdlib=libc++ $MIN_TYPE$MIN_IOS_VERSION !" Makefile
-			export LANG=$OLD_LANG
 
+
+            # unset LANG if defined
+            if test ${LANG+defined};
+			then
+			  OLD_LANG=$LANG
+				unset LANG
+			fi
+
+            # unset LC_CTYPE if defined
+            if test ${LC_CTYPE+defined};
+            then
+                OLD_LC_CTYPE=$LC_CTYPE
+                unset LC_CTYPE
+            fi
+
+			sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -arch $IOS_ARCH -Os -fPIC -stdlib=libc++ $MIN_TYPE$MIN_IOS_VERSION !" Makefile
+
+            # reset LANG if it was defined
+			if test ${OLD_LANG+defined};
+			then
+				export LANG=$OLD_LANG
+			fi
+
+            # reset LC_CTYPE if it was defined
+            if test ${OLD_LC_CTYPE+defined};
+            then
+                export LC_CTYPE=$OLD_LC_CTYPE
+            fi
 
 			echo "Running make for ${IOS_ARCH}"
 			echo "Please stand by..."
