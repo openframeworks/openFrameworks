@@ -15,6 +15,7 @@ class ofBaseRenderer;
 class ofCoreEvents;
 
 void ofInit();
+shared_ptr<ofMainLoop> ofCreateMainLoop();
 void 		ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
 shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings);	// sets up the opengl context!
 
@@ -27,7 +28,7 @@ void ofSetupOpenGL(shared_ptr<Window> windowPtr, int w, int h, ofWindowMode scre
 	settings.width = w;
 	settings.height = h;
 	settings.windowMode = screenMode;
-	ofGetMainLoop()->addWindow(windowPtr);
+	ofCreateMainLoop()->addWindow(windowPtr);
 	windowPtr->setup(settings);
 }
 
@@ -42,8 +43,8 @@ void ofSetupOpenGL(Window * windowPtr, int w, int h, ofWindowMode screenMode){
 }
 
 
-int 		ofRunApp(shared_ptr<ofBaseApp> OFSA);
-int 		ofRunApp(ofBaseApp * OFSA = NULL); // will be deprecated
+int ofRunApp(shared_ptr<ofBaseApp> OFSA);
+int ofRunApp(ofBaseApp * OFSA = NULL); // will be deprecated
 void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app);
 int ofRunMainLoop();
 
