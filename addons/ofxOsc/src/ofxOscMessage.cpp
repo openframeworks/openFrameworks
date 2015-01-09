@@ -82,6 +82,18 @@ string ofxOscMessage::getArgTypeName( int index ) const
         return args[index]->getTypeName();
 }
 
+bool ofxOscMessage::getArgAsBool(int index) const
+{
+	if(getArgType(index) == OFXOSC_TYPE_TRUE or getArgType(index) == OFXOSC_TYPE_FALSE)
+	{
+		return ((ofxOscArgBool*)args[index])->get();
+	}
+	else
+	{
+		ofLogError("ofxOscMessage") << "getArgAsBool(): argument " << index << " is not a bool";
+		return false;
+	}
+}
 
 int32_t ofxOscMessage::getArgAsInt32( int index ) const
 {
@@ -189,6 +201,10 @@ set methods
 
 */
 
+void ofxOscMessage::addBoolArg( bool argument )
+{
+	args.push_back( new ofxOscArgBool( argument ) );
+}
 
 void ofxOscMessage::addIntArg( int32_t argument )
 {
@@ -237,7 +253,9 @@ ofxOscMessage& ofxOscMessage::copy( const ofxOscMessage& other )
 	for ( int i=0; i<(int)other.args.size(); ++i )
 	{
 		ofxOscArgType argType = other.getArgType( i );
-		if ( argType == OFXOSC_TYPE_INT32 )
+		if ( argType == OFXOSC_TYPE_TRUE or argType == OFXOSC_TYPE_FALSE )
+			args.push_back( new ofxOscArgBool( other.getArgAsBool( i ) ) );
+		else if ( argType == OFXOSC_TYPE_INT32 )
 			args.push_back( new ofxOscArgInt32( other.getArgAsInt32( i ) ) );
 		else if ( argType == OFXOSC_TYPE_INT64 )
 			args.push_back( new ofxOscArgInt64( other.getArgAsInt64( i ) ) );

@@ -149,7 +149,9 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 		  arg != m.ArgumentsEnd();
 		  ++arg )
 	{
-		if ( arg->IsInt32() )
+		if ( arg->IsBool())
+			ofMessage->addBoolArg( arg->AsBoolUnchecked() );
+		else if ( arg->IsInt32() )
 			ofMessage->addIntArg( arg->AsInt32Unchecked() );
 		else if ( arg->IsInt64() )
 			ofMessage->addInt64Arg( arg->AsInt64Unchecked() );

@@ -31,9 +31,29 @@
 #include <string>
 #include "ofMain.h"
 
+/*
+OSC 1.1 specifications types:
+          i - 32bit integer
+          h - 64bit integer
+          f - 32bit floating point number
+          d - 64bit (double) floating point number
+          s - string
+          S - symbol
+          c - char
+          m - 4 byte midi packet (8 digits hexadecimal)
+          T - TRUE (no value required)
+          F - FALSE (no value required)
+          N - NIL (no value required)
+          I - IMPULSE, act as a trigger (no value required), older named INFINITUM
+          t - TIMETAG, an OSC timetag in NTP format, encoded in the data section
+
+See : http://cnmat.berkeley.edu/system/files/attachments/Nime09OSCfinal.pdf
+*/
 typedef enum _ofxOscArgType
 {
 	OFXOSC_TYPE_NONE,
+	OFXOSC_TYPE_TRUE,
+	OFXOSC_TYPE_FALSE,
 	OFXOSC_TYPE_INT32,
 	OFXOSC_TYPE_INT64,
 	OFXOSC_TYPE_FLOAT,
@@ -58,7 +78,7 @@ public:
 	virtual ~ofxOscArg() {};
 
 	virtual ofxOscArgType getType() { return OFXOSC_TYPE_NONE; }
-	virtual string getTypeName() { return "none"; }
+	virtual string getTypeName() { return "N"; }
 
 private:
 };
@@ -70,6 +90,35 @@ subclasses for each possible argument type
 
 */
 
+class ofxOscArgBool : public ofxOscArg
+{
+public:
+	ofxOscArgBool( bool _value ) { value = _value; }
+	~ofxOscArgBool() {};
+
+	/// return the type of this argument
+	ofxOscArgType getType() {
+		if(value)
+			return OFXOSC_TYPE_TRUE;
+		else
+			return OFXOSC_TYPE_FALSE;
+	};
+	string getTypeName() {
+		if(value)
+			return "T";
+		else
+			return "F";
+	};
+
+	/// return value
+	bool get() const { return value; }
+	/// set value
+	void set( bool _value ) { value = _value; }
+
+private:
+	bool value;
+};
+
 class ofxOscArgInt32 : public ofxOscArg
 {
 public:
@@ -78,7 +127,7 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_INT32; }
-	string getTypeName() { return "int32"; }
+	string getTypeName() { return "i"; }
 
 	/// return value
 	int32_t get() const { return value; }
@@ -97,7 +146,7 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_INT64; }
-	string getTypeName() { return "int64"; }
+	string getTypeName() { return "h"; }
 
 	/// return value
 	uint64_t get() const { return value; }
@@ -116,7 +165,7 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_FLOAT; }
-	string getTypeName() { return "float"; }
+	string getTypeName() { return "f"; }
 
 	/// return value
 	float get() const { return value; }
@@ -135,7 +184,7 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_STRING; }
-	string getTypeName() { return "string"; }
+	string getTypeName() { return "s"; }
 
 	/// return value
 	string get() const { return value; }
@@ -156,7 +205,7 @@ public:
 
 	/// return the type of this argument
 	ofxOscArgType getType() { return OFXOSC_TYPE_BLOB; }
-	string getTypeName() { return "blob"; }
+	string getTypeName() { return "b"; }
 
 	/// return value
 	ofBuffer get() const { return value; }
