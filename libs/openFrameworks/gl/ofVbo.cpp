@@ -680,11 +680,20 @@ void ofVbo::setVertexBuffer(ofBufferObject & buffer, int numCoords, int stride, 
 #endif
 	positionAttribute.setBuffer(buffer, numCoords, stride, offset);
 	bUsingVerts = true;
+
 	// Calculate the total number of vertices based on what we know:
-	// + if the buffer does not give us a stride, we try to calculate based on the data size
-	//   and the number of coordinates.
-	// + else we use the attribute stride to calculate.
-	totalVerts = buffer.size() / (stride == 0 ? (numCoords * sizeof(float)) : stride );
+	int tmpStride = stride;
+	if (tmpStride == 0) {
+		// if stride is not given through argument, we need to calculate it based on 
+		// on the data size and the number of coordinates.
+		tmpStride = (numCoords * sizeof(float));
+		if (tmpStride == 0) {
+			ofLogWarning() << "Setting buffer with 0 vertices.";
+			totalVerts = 0;
+			return;
+		}
+	}
+	totalVerts = buffer.size() / tmpStride;
 }
 
 //--------------------------------------------------------------
