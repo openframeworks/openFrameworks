@@ -27,7 +27,6 @@ public:
 	void setup(const ofGLWindowSettings & settings);
 	void update();
 	void draw();
-	void run(ofBaseApp * appPtr);
 	void close();
 	
 	void setDoubleBuffering(bool _bDoubleBuffered); 
@@ -77,6 +76,7 @@ private:
 	static void special_key_up_cb(int key, int x, int y) ;
 	static void resize_cb(int w, int h);
 	static void entry_cb(int state);
+	static void exit_cb();
 	static void dragEvent(char ** fileNames, int howManyFiles, int dragX, int dragY);
 	string displayString;
 
