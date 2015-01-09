@@ -60,8 +60,7 @@ int ofGetPreviousMouseY(){
 }
 
 ofCoreEvents::ofCoreEvents()
-:bShouldClose(false)
-,targetRate(0)
+:targetRate(0)
 ,bFrameRateSet(false)
 ,fps(60)
 ,currentMouseX(0)
@@ -70,11 +69,6 @@ ofCoreEvents::ofCoreEvents()
 ,previousMouseY(0)
 ,bPreMouseNotSet(false){
 
-}
-
-//------------------------------------------
-bool ofCoreEvents::windowShouldClose() const{
-	return bShouldClose;
 }
 
 //------------------------------------------
