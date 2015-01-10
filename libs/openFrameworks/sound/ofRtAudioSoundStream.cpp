@@ -23,7 +23,7 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream(){
 }
 
 //------------------------------------------------------------------------------
-vector<ofSoundDevice> ofRtAudioSoundStream::listDevices(){
+vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(){
 	shared_ptr<RtAudio> audioTemp;
 	try {
 		audioTemp = shared_ptr<RtAudio>(new RtAudio());
@@ -53,8 +53,6 @@ vector<ofSoundDevice> ofRtAudioSoundStream::listDevices(){
 		dev.isDefaultOutput = info.isDefaultOutput;
 		deviceList.push_back(dev);
 	}
-	
-	ofLogNotice("ofRtAudioSoundStream::listDevices") << std::endl << deviceList;
 	
 	return deviceList;
 }

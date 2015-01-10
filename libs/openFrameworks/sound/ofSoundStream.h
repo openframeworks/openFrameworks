@@ -75,8 +75,8 @@ void ofSoundStreamStart();
 /// \brief Stops the sound stream and also cleans up the stream's resources
 void ofSoundStreamClose();
 
-/// \brief Retrieves a list of all available audio devices
-/// \param print if true, print discovered devices via ofLog
+/// \brief Prints a list of all available audio devices
+/// \return all sound devices found on the system
 std::vector<ofSoundDevice> ofSoundStreamListDevices();
 
 /// \brief Get all devices which match the arguments (name can be a partial match)
@@ -111,9 +111,12 @@ public:
     
     void setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr);
     shared_ptr<ofBaseSoundStream> getSoundStream();
-
-    /// \brief Retrieves a list of available audio devices
-	std::vector<ofSoundDevice> listDevices();
+	
+	/// \brief Prints a list of available audio devices to the console
+	void printDeviceList();
+	
+	/// \brief Retrieves a list of available audio devices
+	std::vector<ofSoundDevice> getDeviceList();
 	
 	/// \brief Get all devices which match the arguments (name can be a partial match)
 	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX);
@@ -195,7 +198,10 @@ public:
     /// \brief Queries the stream's buffer size.
     /// \return the current buffer size of the stream.
     int getBufferSize();
-    
+	
+	/// \brief Retrieves a list of available audio devices and prints device descriptions to the console
+	std::vector<ofSoundDevice> OF_DEPRECATED_MSG("Use printDeviceList instead", listDevices());
+	
 protected:
     shared_ptr<ofBaseSoundStream> soundStream;
 

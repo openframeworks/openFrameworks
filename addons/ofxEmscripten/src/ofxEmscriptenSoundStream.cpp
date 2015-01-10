@@ -29,8 +29,8 @@ ofxEmscriptenSoundStream::~ofxEmscriptenSoundStream() {
 	close();
 }
 
-vector<ofSoundDevice> ofxEmscriptenSoundStream::listDevices() {
-    ofLogWarning("ofxEmscriptenSoundStream") << "listDevices() isn't implemented for emscripten";
+vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList() {
+    ofLogWarning("ofxEmscriptenSoundStream") << "getDeviceList() isn't implemented for emscripten";
     return vector<ofSoundDevice>();
 }
 

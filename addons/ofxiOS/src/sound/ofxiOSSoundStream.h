@@ -15,7 +15,7 @@ class ofxiOSSoundStream : public ofBaseSoundStream {
 		~ofxiOSSoundStream();
 		
 		/// these are not implemented on iOS
-		std::vector<ofSoundDevice> listDevices();
+		std::vector<ofSoundDevice> getDeviceList();
 		void setDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
