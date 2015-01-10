@@ -255,17 +255,9 @@ typedef TESSindex ofIndexType;
 // check if any video capture system is already defined from the compiler
 #if !defined(OF_VIDEO_CAPTURE_GSTREAMER) && !defined(OF_VIDEO_CAPTURE_QUICKTIME) && !defined(OF_VIDEO_CAPTURE_DIRECTSHOW) && !defined(OF_VIDEO_CAPTURE_ANDROID) && !defined(OF_VIDEO_CAPTURE_IOS)
 	#ifdef TARGET_LINUX
-
 		#define OF_VIDEO_CAPTURE_GSTREAMER
-
 	#elif defined(TARGET_OSX)
-		//on 10.6 and below we can use the old grabber
-		#ifndef MAC_OS_X_VERSION_10_7
-			#define OF_VIDEO_CAPTURE_QUICKTIME
-		#else
-			#define OF_VIDEO_CAPTURE_QTKIT
-        #endif
-
+		#define OF_VIDEO_CAPTURE_QTKIT
 	#elif defined (TARGET_WIN32)
 
 		// comment out this following line, if you'd like to use the
