@@ -54,9 +54,6 @@ public:
     void disableTextures();
     void disableColors();
     
-    void removeMesh( int index );
-    void removeTexture( int index );
-    
     using ofNode::draw;
     void drawVertices() const;
     void drawWireframe() const;
