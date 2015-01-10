@@ -123,9 +123,11 @@ static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
 	case OF_PIXELS_GRAY:
 		return OF_IMAGE_GRAYSCALE;
 		break;
+	case OF_PIXELS_BGR:
 	case OF_PIXELS_RGB:
 		return OF_IMAGE_COLOR;
 		break;
+	case OF_PIXELS_BGRA:
 	case OF_PIXELS_RGBA:
 		return OF_IMAGE_COLOR_ALPHA;
 		break;
