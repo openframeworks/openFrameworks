@@ -31,7 +31,7 @@ class ofBaseSoundStream{
 		virtual int getDeviceID() = 0;
 	
 		// deprecated
-		virtual std::vector<ofSoundDevice> listDevices();
+		virtual std::vector<ofSoundDevice> OF_DEPRECATED_MSG("Use printDeviceList instead", listDevices());
 	
 	protected:
 		/// set tickCount and deviceID on the buffer
