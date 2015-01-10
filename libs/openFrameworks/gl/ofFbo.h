@@ -15,6 +15,7 @@ public:
 	//void allocateForShadow( int width, int height );
 	void allocate(Settings settings = Settings());
 	bool isAllocated() const;
+	void clear();
 
 	using ofBaseDraws::draw;
 	void draw(float x, float y) const;

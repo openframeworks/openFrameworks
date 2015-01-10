@@ -337,7 +337,6 @@ int	ofFbo::maxSamples() {
 	return _maxSamples;
 }
 
-
 void ofFbo::destroy() {
 	if(fbo){
 		releaseFB(fbo);
@@ -571,6 +570,10 @@ void ofFbo::allocate(Settings _settings) {
 
 bool ofFbo::isAllocated() const {
 	return bIsAllocated;
+}
+
+void ofFbo::clear() {
+	destroy();
 }
 
 GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
