@@ -38,7 +38,6 @@ static int			windowW;
 static int			windowH;
 static int          nFramesSinceWindowResized;
 static ofOrientation	orientation;
-static ofBaseApp *  ofAppPtr;
 static ofAppGlutWindow * instance;
 
 #ifdef TARGET_WIN32
@@ -204,12 +203,10 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	displayString = displayStr;
  }
 
-
+ //------------------------------------------------------------
 void ofAppGlutWindow::setDoubleBuffering(bool _bDoubleBuffered){ 
 	bDoubleBuffered = _bDoubleBuffered;
 }
-
-
 
 //------------------------------------------------------------
 void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
@@ -309,7 +306,9 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 
     glutReshapeFunc(resize_cb);
 	glutEntryFunc(entry_cb);
+#ifdef TARGET_LINUX
 	glutCloseFunc(exit_cb);
+#endif
 
 #ifdef TARGET_OSX
 	glutDragEventFunc(dragEvent);
@@ -815,12 +814,12 @@ void ofAppGlutWindow::resize_cb(int w, int h) {
 	nFramesSinceWindowResized = 0;
 }
 
+//------------------------------------------------------------
 void ofAppGlutWindow::entry_cb(int state) {
-	
 	instance->events().notifyWindowEntry( state );
-	
 }
 
+//------------------------------------------------------------
 void ofAppGlutWindow::exit_cb() {
 	instance->events().notifyExit();
 	instance->events().disable();
