@@ -141,8 +141,10 @@ void ofxOscSender::appendParameter( ofxOscMessage & msg, const ofAbstractParamet
 	msg.setAddress(address+parameter.getEscapedName());
 	if(parameter.type()==typeid(ofParameter<int>).name()){
 		msg.addIntArg(parameter.cast<int>());
-	}else if(parameter.type()==typeid(ofParameter<float>).name()){
-		msg.addFloatArg(parameter.cast<float>());
+    }else if(parameter.type()==typeid(ofParameter<float>).name()){
+        msg.addFloatArg(parameter.cast<float>());
+    }else if(parameter.type()==typeid(ofParameter<double>).name()){
+        msg.addDoubleArg(parameter.cast<double>());
 	}else if(parameter.type()==typeid(ofParameter<bool>).name()){
 		msg.addIntArg(parameter.cast<bool>());
 	}else{
@@ -174,13 +176,15 @@ void ofxOscSender::appendMessage( ofxOscMessage& message, osc::OutboundPacketStr
 			p << message.getArgAsInt32( i );
 		else if ( message.getArgType(i) == OFXOSC_TYPE_INT64 )
 			p << (osc::int64)message.getArgAsInt64( i );
-		else if ( message.getArgType( i ) == OFXOSC_TYPE_FLOAT )
-			p << message.getArgAsFloat( i );
+        else if ( message.getArgType( i ) == OFXOSC_TYPE_FLOAT )
+            p << message.getArgAsFloat( i );
+        else if ( message.getArgType( i ) == OFXOSC_TYPE_DOUBLE )
+            p << message.getArgAsDouble( i );
 		else if ( message.getArgType( i ) == OFXOSC_TYPE_STRING )
 			p << message.getArgAsString( i ).c_str();
         else if ( message.getArgType( i ) == OFXOSC_TYPE_BLOB ){
             ofBuffer buff = message.getArgAsBlob(i);
-            osc::Blob b(buff.getBinaryBuffer(), (unsigned long)buff.size());
+            osc::Blob b(buff.getData(), (unsigned long)buff.size());
             p << b; 
 		}else
 		{
