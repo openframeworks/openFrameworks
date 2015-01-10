@@ -371,6 +371,17 @@ void ofFbo::destroy() {
 	clear();
 }
 
+void ofFbo::clearAlpha() {
+	begin();
+
+	glColorMask(0, 0, 0, 1);
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColorMask(1, 1, 1, 1);
+
+	end();
+}
+
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
 	

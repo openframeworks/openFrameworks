@@ -18,6 +18,7 @@ public:
 
 	OF_DEPRECATED_MSG("Use clear instead",void destroy());
 	void clear();
+	void clearAlpha();
 
 	using ofBaseDraws::draw;
 	void draw(float x, float y) const;
