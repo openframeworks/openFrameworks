@@ -451,12 +451,6 @@
 		<Unit filename="../../../openFrameworks/video/ofQTKitGrabber.h">
 			<Option virtualFolder="openFrameworks/video/" />
 		</Unit>
-		<Unit filename="../../../openFrameworks/video/ofQTKitMovieRenderer.h">
-			<Option virtualFolder="openFrameworks/video/" />
-		</Unit>
-		<Unit filename="../../../openFrameworks/video/ofQTKitPlayer.h">
-			<Option virtualFolder="openFrameworks/video/" />
-		</Unit>
 		<Unit filename="../../../openFrameworks/video/ofQtUtils.cpp">
 			<Option virtualFolder="openFrameworks/video/" />
 		</Unit>
