@@ -52,10 +52,10 @@ vector<ofSoundDevice> ofRtAudioSoundStream::listDevices(bool print){
 		dev.isDefaultInput = info.isDefaultInput;
 		dev.isDefaultOutput = info.isDefaultOutput;
 		deviceList.push_back(dev);
-		
-		if(print) {
-			ofLogNotice("ofRtAudioSoundStream") << dev.getDescription();
-		}
+	}
+	
+	if(print) {
+		ofLogNotice("ofRtAudioSoundStream::listDevices") << std::endl << deviceList;
 	}
 	
 	return deviceList;

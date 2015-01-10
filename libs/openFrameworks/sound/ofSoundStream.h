@@ -71,8 +71,8 @@ struct ofSoundDevice {
 	
 	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false) { }
 	
-	/// \brief Generates a description useful for logging to the console
-	std::string getDescription();
+	friend std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev);
+	friend std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs);
 };
 
 /// \brief Retrieves a list of all available audio devices

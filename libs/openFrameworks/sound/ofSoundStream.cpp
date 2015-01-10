@@ -207,11 +207,18 @@ vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name,
 }
 
 //------------------------------------------------------------
-std::string ofSoundDevice::getDescription() {
-	std::stringstream desc;
-	desc << "[" << deviceID << "] " << name;
-	desc << " [in:" << inputChannels << " out:" << outputChannels << "]";
-	if(isDefaultInput) desc << " (default in)";
-	if(isDefaultOutput) desc << " (default out)";
-	return desc.str();
+std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev) {
+	os << "[" << dev.deviceID << "] " << dev.name;
+	os << " [in:" << dev.inputChannels << " out:" << dev.outputChannels << "]";
+	if(dev.isDefaultInput) os << " (default in)";
+	if(dev.isDefaultOutput) os << " (default out)";
+	return os;
+}
+
+//------------------------------------------------------------
+std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs) {
+	for(std::size_t i = 0; i < devs.size(); i++) {
+		os << devs[i] << std::endl;
+	}
+	return os;
 }
