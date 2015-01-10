@@ -70,7 +70,7 @@ PLATFORM_REQUIRED_ADDONS =
 ##########################################################################################
 
 ifndef MAC_OS_MIN_VERSION
-	MAC_OS_MIN_VERSION = 10.7
+	MAC_OS_MIN_VERSION = 10.8
 endif
 
 ifndef MAC_OS_STD_LIB
@@ -98,8 +98,6 @@ ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
 			MAC_OS_SDK=10.9
 		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
 			MAC_OS_SDK=10.8
-		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
-			MAC_OS_SDK=10.7
 		endif
 	endif
 
