@@ -48,8 +48,8 @@ ofxAndroidSoundStream::~ofxAndroidSoundStream(){
 	}
 }
 
-vector<ofSoundDevice> ofxAndroidSoundStream::listDevices(){
-    ofLogWarning("ofxAndroidSoundStream") << "listDevices() isn't implemented on android";
+vector<ofSoundDevice> ofxAndroidSoundStream::getDeviceList(){
+    ofLogWarning("ofxAndroidSoundStream") << "getDeviceList() isn't implemented on android";
     return vector<ofSoundDevice>();
 }
 
