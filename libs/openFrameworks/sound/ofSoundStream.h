@@ -20,6 +20,22 @@
 	#define OF_SOUND_STREAM_TYPE ofxEmscriptenSoundStream
 #endif
 
+/// \brief Represents information about a sound device on the system.
+struct ofSoundDevice {
+	std::string name;
+	unsigned int deviceID;
+	unsigned int inputChannels;
+	unsigned int outputChannels;
+	bool isDefaultInput;
+	bool isDefaultOutput;
+	std::vector<unsigned int> sampleRates;
+	
+	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false) { }
+	
+	friend std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev);
+	friend std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs);
+};
+
 /// \brief Sets up and starts a global ofSoundStream.
 ///
 /// This will set up a sound stream with a default sample rate of 44100, a
@@ -59,25 +75,9 @@ void ofSoundStreamStart();
 /// \brief Stops the sound stream and also cleans up the stream's resources
 void ofSoundStreamClose();
 
-/// \brief Represents information about a sound device on the system.
-struct ofSoundDevice {
-	std::string name;
-	unsigned int deviceID;
-	unsigned int inputChannels;
-	unsigned int outputChannels;
-	bool isDefaultInput;
-	bool isDefaultOutput;
-	std::vector<unsigned int> sampleRates;
-	
-	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false) { }
-	
-	friend std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev);
-	friend std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs);
-};
-
 /// \brief Retrieves a list of all available audio devices
 /// \param print if true, print discovered devices via ofLog
-std::vector<ofSoundDevice> ofSoundStreamListDevices(bool print = true);
+std::vector<ofSoundDevice> ofSoundStreamListDevices();
 
 /// \brief Get all devices which match the arguments (name can be a partial match)
 std::vector<ofSoundDevice> ofSoundStreamGetMatchingDevices(const std::string &name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX);
@@ -113,7 +113,7 @@ public:
     shared_ptr<ofBaseSoundStream> getSoundStream();
 
     /// \brief Retrieves a list of available audio devices
-	std::vector<ofSoundDevice> listDevices(bool print = true);
+	std::vector<ofSoundDevice> listDevices();
 	
 	/// \brief Get all devices which match the arguments (name can be a partial match)
 	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX);

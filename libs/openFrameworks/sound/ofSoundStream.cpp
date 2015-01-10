@@ -41,8 +41,8 @@ void ofSoundStreamClose(){
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStreamListDevices(bool print){
-	return soundStreamOutput.listDevices(print);
+vector<ofSoundDevice> ofSoundStreamListDevices(){
+	return soundStreamOutput.listDevices();
 }
 
 vector<ofSoundDevice> ofSoundStreamGetMatchingDevices(const string &name, unsigned int inChannels, unsigned int outChannels) {
@@ -67,9 +67,9 @@ shared_ptr<ofBaseSoundStream> ofSoundStream::getSoundStream(){
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::listDevices(bool print){
+vector<ofSoundDevice> ofSoundStream::listDevices(){
 	if( soundStream ){
-		return soundStream->listDevices(print);
+		return soundStream->listDevices();
 	} else {
 		return vector<ofSoundDevice>();
 	}
@@ -190,7 +190,7 @@ int ofSoundStream::getBufferSize(){
 
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels) {
-	vector<ofSoundDevice> devs = listDevices(false);
+	vector<ofSoundDevice> devs = listDevices();
 	vector<ofSoundDevice> hits;
 	
 	for(int i = 0; i < devs.size(); i++) {
