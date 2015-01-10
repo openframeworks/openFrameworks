@@ -14,7 +14,7 @@ public:
 	ofxEmscriptenSoundStream();
 	~ofxEmscriptenSoundStream();
 
-	std::vector<ofSoundDevice> listDevices(bool print = true);
+	std::vector<ofSoundDevice> listDevices();
 	void setDeviceID(int deviceID);
 	bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 	bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);

@@ -29,7 +29,7 @@ ofxEmscriptenSoundStream::~ofxEmscriptenSoundStream() {
 	close();
 }
 
-vector<ofSoundDevice> ofxEmscriptenSoundStream::listDevices(bool print) {
+vector<ofSoundDevice> ofxEmscriptenSoundStream::listDevices() {
     ofLogWarning("ofxEmscriptenSoundStream") << "listDevices() isn't implemented for emscripten";
     return vector<ofSoundDevice>();
 }

@@ -34,7 +34,7 @@ ofxiOSSoundStream::~ofxiOSSoundStream() {
 }
 
 //------------------------------------------------------------------------------
-vector<ofSoundDevice> ofxiOSSoundStream::listDevices(bool print) {
+vector<ofSoundDevice> ofxiOSSoundStream::listDevices() {
 	ofLogWarning("ofxiOSSoundStream") << "listDevices() isn't implemented on iOS";
 	return vector<ofSoundDevice>();
 }
