@@ -287,7 +287,7 @@ ofFbo::ofFbo(const ofFbo & mom){
 
 ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
-	destroy();
+	clear();
 	settings = mom.settings;
 	bIsAllocated = mom.bIsAllocated;
 
@@ -319,7 +319,7 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 }
 
 ofFbo::~ofFbo(){
-	destroy();
+	clear();
 }
 
 int	ofFbo::maxColorAttachments() {
@@ -337,7 +337,7 @@ int	ofFbo::maxSamples() {
 	return _maxSamples;
 }
 
-void ofFbo::destroy() {
+void ofFbo::clear() {
 	if(fbo){
 		releaseFB(fbo);
 		fbo=0;
@@ -364,6 +364,10 @@ void ofFbo::destroy() {
 	for(int i=0; i<(int)colorBuffers.size(); i++) releaseRB(colorBuffers[i]);
 	colorBuffers.clear();
 	bIsAllocated = false;
+}
+
+void ofFbo::destroy() {
+	clear();
 }
 
 bool ofFbo::checkGLSupport() {
@@ -425,7 +429,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 void ofFbo::allocate(Settings _settings) {
 	if(!checkGLSupport()) return;
 
-	destroy();
+	clear();
 
 	// check that passed values are correct
 	if(_settings.width <= 0 || _settings.height <= 0){
@@ -570,10 +574,6 @@ void ofFbo::allocate(Settings _settings) {
 
 bool ofFbo::isAllocated() const {
 	return bIsAllocated;
-}
-
-void ofFbo::clear() {
-	destroy();
 }
 
 GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
