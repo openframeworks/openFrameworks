@@ -61,10 +61,12 @@ class ofMeshFace;
 /// 		mesh.addColor(ofFloatColor(0,0,0));  // add a color at that vertex
 /// 	}
 /// }
+/// ~~~~
 ///
-/// now it's important to make sure that each vertex is correctly connected 
+/// Now it's important to make sure that each vertex is correctly connected 
 /// with the other vertices around it. This is done using indices, which you 
 /// can set up like so:
+/// ~~~~{.cpp}
 /// for (int y = 0; y<height-1; y++){
 /// 	for (int x=0; x<width-1; x++){
 /// 		mesh.addIndex(x+y*width);				// 0
@@ -81,6 +83,9 @@ class ofMeshFace;
 class ofMesh{
 public:
 
+	/// \name Construction
+	/// \{
+
 	/// \brief This creates the mesh, 
 	/// using OF_PRIMITIVE_TRIANGLES without any initial vertices.
 	ofMesh();
@@ -91,7 +96,16 @@ public:
 	/// OF_PRIMITIVE_LINE_LOOP, OF_PRIMITIVE_POINTS. 
 	/// See [ofGLUtils](../gl/ofGLUtils.htm) for more information on these types.
 	ofMesh(ofPrimitiveMode mode, const vector<ofVec3f>& verts);
+
+	void setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
+
+	/// \cond INTERNAL
 	virtual ~ofMesh();
+	/// \endcond
+
+	/// \}
+	/// \name Mesh Mode
+	/// \{
 
 	/// \brief Allows you to set the ofPrimitiveMode. 
 	/// The available modes are OF_PRIMITIVE_TRIANGLES, 
@@ -103,19 +117,67 @@ public:
 	/// \\returns the primitive mode that the mesh is using.
 	ofPrimitiveMode getMode() const;
 
-    /// \brief Removes all the vertices, colors, and indices from the mesh.
-	void clear();
+	/// \}
+ 	/// \name Primitive constructor helper methods
+	/// \{
+    static ofMesh plane(float width, float height, int columns=2, int rows=2, 
+    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+    static ofMesh sphere(float radius, int res=12, 
+    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+    static ofMesh icosahedron(float radius);
+    static ofMesh icosphere(float radius, int iterations=2);
+  	///
+	///	\brief A helper method that returns a cylinder made of triangles. 
+	/// The resolution settings for the radius, height, and cap are optional 
+	/// (they are set at a default of 12 segments around the radius, 6 segments 
+	/// in the height, and 2 on the cap). You have the option to cap the 
+	/// cylinder or not. The only valid modes are the default 
+	/// OF_PRIMITIVE_TRIANGLE_STRIP and OF_PRIMITIVE_TRIANGLES.
+	///	~~~~{.cpp}
+	///	ofMesh mesh;
+	///	mesh = ofMesh::cylinder(100.0, 200.0);
+	///	~~~~
+	///	
+	///	![image of a simple cylinder](3d/cylinder.jpg)
+  	///
+    static ofMesh cylinder(float radius, float height, int radiusSegments=12, 
+    	int heightSegments=6, int numCapSegments=2, bool bCapped = true, 
+    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
 
-	/// \brief Allow you to set up the indices automatically when you add a vertex.
-	void setupIndicesAuto();
+	/// \brief A helper method that returns a cone made of triangles. 
+	/// The resolution settings for the radius, height, and cap are optional 
+	/// (they are set at a default of 12 segments around the radius, 6 segments 
+	/// in the height, and 2 on the cap). The only valid modes are the default 
+	/// OF_PRIMITIVE_TRIANGLE_STRIP and OF_PRIMITIVE_TRIANGLES.
+	/// ~~~~{.cpp}
+	/// ofMesh mesh;
+	/// mesh = ofMesh::cone(100.0, 200.0);
+	/// ~~~~
+	///
+	/// ![image of a simple cone](3d/cone.jpg)
+	static ofMesh cone(float radius, float height, int radiusSegments=12, 
+		int heightSegments=6, int capSegments=2, 
+		ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
 
+	/// \brief A helper method that returns a box made of triangles. 
+	/// The resolution settings for the width and height are optional 
+	/// (they are both set at a default of 2 triangles per side).
+	/// ~~~~{.cpp}
+	/// ofMesh mesh;
+	/// mesh = ofMesh::box(200.0, 200.0, 200.0);
+	/// ~~~~
+	///
+	/// ![image of a simple box](3d/box.jpg)
+	static ofMesh box(float width, float height, float depth, int resX=2, 
+		int resY=2, int resZ=2);
 
+	/// \returns an ofMesh representing an XYZ coordinate system.
+	static ofMesh axis(float size=1.0);
+
+	/// \}
 	/// \name Vertices
 	/// \{
-
-	/// \returns the vertex at the index.
-	ofVec3f getVertex(ofIndexType i) const;
-
+    
 	/// \brief Add a new vertex at the end of the current list of vertices. 
 	/// It is important to remember that the order the vertices are added to 
 	/// the list determines how they link they form the polygons and strips 
@@ -136,10 +198,15 @@ public:
 
 	/// \brief Removes the vertex at the index in the vector.
 	void removeVertex(ofIndexType index);
+	
 	void setVertex(ofIndexType index, const ofVec3f& v);
 
 	/// \brief Removes all the vertices.
 	void clearVertices();
+
+	/// \brief Removes all the vertices, colors, and indices from the mesh.
+	void clear();
+
 
   	/// \returns the size of the vertices vector for the mesh. 
   	/// This will tell you how many vertices are contained in the mesh.
@@ -151,12 +218,8 @@ public:
 	/// \returns a pointer to the vertices that the mesh contains.
 	const ofVec3f* getVerticesPointer() const;
 
-
-	/// Use this if you plan to change the indices as part of this call as it 
-	/// will force a reset of the cache.
-	/// \returns the vector that contains all of the indices of the mesh, if it has any.
-	vector<ofIndexType> & getIndices();
-
+	/// \returns the vertex at the index.
+	ofVec3f getVertex(ofIndexType i) const;
 
 	/// \returns the vector that contains all of the vertices of the mesh.
 	vector<ofVec3f> & getVertices();
@@ -169,6 +232,17 @@ public:
 
 	/// \returns Whether the mesh has any vertices.
 	bool hasVertices() const;
+
+	/// \brief Add the vertices, normals, texture coordinates and indices of one mesh onto another mesh. 
+	/// Everything from the referenced mesh is simply added at the end 
+	/// of the current mesh's lists.
+    void append(const ofMesh & mesh);
+
+    void mergeDuplicateVertices();
+
+    /// \returns a ofVec3f defining the centroid of all the vetices in the mesh.
+	ofVec3f getCentroid() const;
+
 
 	/// \}
 	
@@ -244,12 +318,28 @@ public:
     /// Use enableNormals() to turn normals back on.
     virtual void disableNormals();
     virtual bool usingNormals() const;
+    
+    void smoothNormals( float angle );
 
+    /// \}
+    /// \name Faces
+    /// \{
+
+	/// \returns the vector that contains all of the faces of the mesh. This isn't currently implemented.
+	vector<int>& getFace(int faceId);
+
+    /// \brief Get normals for each face
+    /// As a default it only calculates the normal for the face as a whole but 
+    /// by setting (perVertex = true) it will return the same normal value for 
+    /// each of the three vertices making up a face.
+    /// \returns a vector containing the calculated normals of each face in the mesh. 
+    vector<ofVec3f> getFaceNormals( bool perVetex=false) const;
+
+    /// \returns the mesh as a vector of unique ofMeshFaces
+    /// a list of triangles that do not share vertices or indices 
+    const vector<ofMeshFace> & getUniqueFaces() const;
 
 	/// \}
-
-
-
 	/// \name Colors
 	/// \{
 
@@ -389,6 +479,15 @@ public:
 	/// \name Indices
 	/// \{
 
+	/// \brief Allow you to set up the indices automatically when you add a vertex.
+	void setupIndicesAuto();
+
+	/// \brief Use this if you plan to change the indices as part of this call as it 
+	/// will force a reset of the cache.
+	/// \returns the vector that contains all of the indices of the mesh, if it has any.
+	vector<ofIndexType> & getIndices();
+
+	
 	/// \returns the index from the index vector. Each index represents the index of the vertex in the vertices vector. This determines the way that the vertices are connected into the polgoynon type set in the primitiveMode.
 	ofIndexType getIndex(ofIndexType i) const;
 
@@ -468,16 +567,15 @@ public:
     virtual void disableIndices();
     virtual bool usingIndices() const;
 
+    void setColorForIndices( int startIndex, int endIndex, ofColor color );
+
+    /// The new mesh includes the mesh mode, colors, textures, and normals of the original mesh (assuming any were added).
+    /// \returns a mesh made up of a range of indices from startIndex to the endIndex. 
+    ofMesh getMeshForIndices( int startIndex, int endIndex ) const;
+    ofMesh getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const;
+    
+	
 	/// \}
-
-
-	/// \returns the vector that contains all of the faces of the mesh. This isn't currently implemented.
-	vector<int>& getFace(int faceId);
-
-	/// \returns a ofVec3f defining the centroid of all the vetices in the mesh.
-	ofVec3f getCentroid() const;
-
-
 	/// \name Drawing
 	/// \{
 
@@ -499,8 +597,6 @@ public:
 	virtual void draw(ofPolyRenderMode renderType) const;
 
 	/// \}
-
-
 	/// \name Saving and loading
 	/// \{
 
@@ -522,90 +618,6 @@ public:
     ///  For more information, see the [PLY format specification](http://paulbourke.net/dataformats/ply/).
 	void save(string path, bool useBinary = false) const;
 	
-	/// \}
-
-	/// \brief Add the vertices, normals, texture coordinates and indices of one mesh onto another mesh. 
-	/// Everything from the referenced mesh is simply added at the end 
-	/// of the current mesh's lists.
-    void append(const ofMesh & mesh);
-
-    void setColorForIndices( int startIndex, int endIndex, ofColor color );
-
-    /// The new mesh includes the mesh mode, colors, textures, and normals of the original mesh (assuming any were added).
-    /// \returns a mesh made up of a range of indices from startIndex to the endIndex. 
-    ofMesh getMeshForIndices( int startIndex, int endIndex ) const;
-    ofMesh getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const;
-    void mergeDuplicateVertices();
-    
-    /// \returns the mesh as a vector of unique ofMeshFaces
-    /// a list of triangles that do not share vertices or indices 
-    const vector<ofMeshFace> & getUniqueFaces() const;
-
-    /// \brief Get normals for each face
-    /// As a default it only calculates the normal for the face as a whole but 
-    /// by setting (perVertex = true) it will return the same normal value for 
-    /// each of the three vertices making up a face.
-    /// \returns a vector containing the calculated normals of each face in the mesh. 
-    vector<ofVec3f> getFaceNormals( bool perVetex=false) const;
-    void setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
-    void smoothNormals( float angle );
-
-    /// \name Primitive constructor helper methods
-	/// \{
-    static ofMesh plane(float width, float height, int columns=2, int rows=2, 
-    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
-    static ofMesh sphere(float radius, int res=12, 
-    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
-    static ofMesh icosahedron(float radius);
-    static ofMesh icosphere(float radius, int iterations=2);
-  	///
-	///	\brief A helper method that returns a cylinder made of triangles. 
-	/// The resolution settings for the radius, height, and cap are optional 
-	/// (they are set at a default of 12 segments around the radius, 6 segments 
-	/// in the height, and 2 on the cap). You have the option to cap the 
-	/// cylinder or not. The only valid modes are the default 
-	/// OF_PRIMITIVE_TRIANGLE_STRIP and OF_PRIMITIVE_TRIANGLES.
-	///	~~~~{.cpp}
-	///	ofMesh mesh;
-	///	mesh = ofMesh::cylinder(100.0, 200.0);
-	///	~~~~
-	///	
-	///	![image of a simple cylinder](3d/cylinder.jpg)
-  	///
-    static ofMesh cylinder(float radius, float height, int radiusSegments=12, 
-    	int heightSegments=6, int numCapSegments=2, bool bCapped = true, 
-    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
-
-	/// \brief A helper method that returns a cone made of triangles. 
-	/// The resolution settings for the radius, height, and cap are optional 
-	/// (they are set at a default of 12 segments around the radius, 6 segments 
-	/// in the height, and 2 on the cap). The only valid modes are the default 
-	/// OF_PRIMITIVE_TRIANGLE_STRIP and OF_PRIMITIVE_TRIANGLES.
-	/// ~~~~{.cpp}
-	/// ofMesh mesh;
-	/// mesh = ofMesh::cone(100.0, 200.0);
-	/// ~~~~
-	///
-	/// ![image of a simple cone](3d/cone.jpg)
-	static ofMesh cone(float radius, float height, int radiusSegments=12, 
-		int heightSegments=6, int capSegments=2, 
-		ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
-
-	/// \brief A helper method that returns a box made of triangles. 
-	/// The resolution settings for the width and height are optional 
-	/// (they are both set at a default of 2 triangles per side).
-	/// ~~~~{.cpp}
-	/// ofMesh mesh;
-	/// mesh = ofMesh::box(200.0, 200.0, 200.0);
-	/// ~~~~
-	///
-	/// ![image of a simple box](3d/box.jpg)
-	static ofMesh box(float width, float height, float depth, int resX=2, 
-		int resY=2, int resZ=2);
-
-	/// \returns an ofMesh representing an XYZ coordinate system.
-	static ofMesh axis(float size=1.0);
-
 	/// \}
 
 private:

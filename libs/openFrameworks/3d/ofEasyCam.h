@@ -7,16 +7,27 @@
 /// \brief A super simple camera for interacting with objects in 3D space.
 class ofEasyCam : public ofCamera {
 public:
+    /// \name Constructor and Destructor
+	/// \{
+    
     /// \brief Create a default camera.
 	ofEasyCam();
 
     /// \brief Destroy the camera.
 	~ofEasyCam();
 
+	/// \}
+	/// \name Rendering
+	/// \{
+
 	virtual void begin(ofRectangle viewport = ofRectangle());
 
     /// \brief Reset the camera position and orientation.
 	void reset();
+
+	/// \}
+	/// \name Camera Target
+	/// \{
 
     /// \brief Set the camera's target.
     /// \param target The position of the target.
@@ -29,6 +40,10 @@ public:
     /// \brief Get the camera's target node reference.
     /// \returns a reference the the camera's target node.
 	ofNode& getTarget();
+
+	/// \}
+	/// \name Getters
+	/// \{
 
     /// \brief Set the camera's distance to the target.
     /// \param distance The distance to the target.
@@ -50,6 +65,20 @@ public:
     /// \returns the camera's drag coefficient.
 	float getDrag() const;
 
+	/// \}
+	/// \name Setters
+	/// \{
+
+	/// \brief Enable or disable camera autodistance.
+    ///
+    /// Allow the camera to attempt to set the distance based on the camera's
+    /// current viewpoirt.
+    ///
+    /// \param bAutoDistance true to enable auto distance.
+    void setAutoDistance(bool bAutoDistance);
+
+    void setEvents(ofCoreEvents & events);
+
     /// \brief Set the key used to switch between camera rotation and translation.
     ///
     /// Translation will only happen when the translation key is pressed.
@@ -61,6 +90,10 @@ public:
     /// \brief Get the current translation key code.
     /// \returns the current translation key code.
     char getTranslationKey();
+
+    /// \}
+    /// \name Mouse Input
+    /// \{
 
     /// \brief Enable mouse camera control.
 	void enableMouseInput();
@@ -84,15 +117,9 @@ public:
     /// \returns true iff the mouse's middle button is enabled.
 	bool getMouseMiddleButtonEnabled();
 
-    /// \brief Enable or disable camera autodistance.
-    ///
-    /// Allow the camera to attempt to set the distance based on the camera's
-    /// current viewpoirt.
-    ///
-    /// \param bAutoDistance true to enable auto distance.
-    void setAutoDistance(bool bAutoDistance);
+	/// \}
 
-    void setEvents(ofCoreEvents & events);
+
 	
 private:
 	void setDistance(float distance, bool save);
