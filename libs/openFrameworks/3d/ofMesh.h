@@ -100,6 +100,10 @@ public:
 	/// \brief Allow you to set up the indices automatically when you add a vertex.
 	void setupIndicesAuto();
 
+
+	/// \name Vertices
+	/// \{
+
 	/// \returns the vertex at the index.
 	ofVec3f getVertex(ofIndexType i) const;
 
@@ -124,6 +128,39 @@ public:
 	/// \brief Removes all the vertices.
 	void clearVertices();
 
+  	/// \returns the size of the vertices vector for the mesh. 
+  	/// This will tell you how many vertices are contained in the mesh.
+	int getNumVertices() const;
+
+	/// \returns a pointer to the vertices that the mesh contains.
+	ofVec3f* getVerticesPointer();
+
+	/// \returns a pointer to the vertices that the mesh contains.
+	const ofVec3f* getVerticesPointer() const;
+
+
+	/// Use this if you plan to change the indices as part of this call as it will force a reset of the cache.
+	/// \returns the vector that contains all of the indices of the mesh, if it has any.
+	vector<ofIndexType> & getIndices();
+
+
+	/// \returns the vector that contains all of the vertices of the mesh.
+	vector<ofVec3f> & getVertices();
+
+	/// \returns the vector that contains all of the vertices of the mesh.
+	const vector<ofVec3f> & getVertices() const;
+	
+	/// \returns If the vertices of the mesh have changed, been added or removed.
+	bool haveVertsChanged();
+
+	/// \returns Whether the mesh has any vertices.
+	bool hasVertices() const;
+
+	/// \}
+	
+	/// \name Normals
+	/// \{
+
 	/// \\returns the normal at the index in the normals vector.
 	ofVec3f getNormal(ofIndexType i) const;
 
@@ -146,6 +183,46 @@ public:
 	/// \brief Remove all the normals.
 	void clearNormals();
 
+	/// \brief This will tell you how many normals are contained in the mesh.
+	/// \returns the size of the normals vector for the mesh. 
+	int getNumNormals() const;
+
+	/// \returns a pointer to the normals that the mesh contains.
+	ofVec3f* getNormalsPointer();
+
+	/// \returns a pointer to the normals that the mesh contains.
+	const ofVec3f* getNormalsPointer() const;
+
+	/// Use this if you plan to change the normals as part of this call as it will force a reset of the cache.
+	/// \returns the vector that contains all of the normals of the mesh, if it has any.
+	vector<ofVec3f> & getNormals();
+
+	/// \returns the vector that contains all of the normals of the mesh, if it has any. (read only)
+	const vector<ofVec3f> & getNormals() const;
+
+	/// \returns If the normals of the mesh have changed, been added or removed.
+	bool haveNormalsChanged();
+
+	/// /returnsWhether the mesh has any normals.
+	bool hasNormals() const;
+
+	/// \brief Enable mesh normals. 
+    /// Use disableNormals() to turn normals off. 
+    /// Normals are enabled by default when they are added to the mesh.
+    virtual void enableNormals();
+    /// \brief Disable mesh normals. 
+    /// Use enableNormals() to turn normals back on.
+    virtual void disableNormals();
+    virtual bool usingNormals() const;
+
+
+	/// \}
+
+
+
+	/// \name Colors
+	/// \{
+
 	/// \brief \returns the color at the index in the colors vector.
 	ofFloatColor getColor(ofIndexType i) const;
 
@@ -167,6 +244,45 @@ public:
 	/// \brief Clear all the colors.
 	void clearColors();
 
+	/// \returns the size of the colors vector for the mesh. 
+	/// This will tell you how many colors are contained in the mesh.
+	int getNumColors() const;
+
+	/// Use this if you plan to change the colors as part of this call as it will force a reset of the cache.
+	/// \returns a pointer that contains all of the colors of the mesh, if it has any. 
+	ofFloatColor* getColorsPointer();
+
+	/// \returns a pointer that contains all of the colors of the mesh, if it has any. (read only)
+	const ofFloatColor* getColorsPointer() const;
+
+	/// Use this if you plan to change the colors as part of this call as it will force a reset of the cache.
+	/// \returns the vector that contains all of the colors of the mesh, if it has any. 
+	vector<ofFloatColor> & getColors();
+
+	/// \returns the vector that contains all of the colors of the mesh, if it has any. (read only)
+	const vector<ofFloatColor> & getColors() const;
+
+	/// \returns If the colors of the mesh have changed, been added or removed.
+	bool haveColorsChanged();
+
+	/// /returns Whether the mesh has any colors.
+	bool hasColors() const;
+
+	/// \brief Enable mesh colors. 
+	/// Use disableColors() to turn colors off. 
+	/// Colors are enabled by default when they are added to the mesh.
+    virtual void enableColors();
+    /// \brief Disable mesh colors. 
+    /// Use enableColors() to turn colors back on.
+    virtual void disableColors();
+    virtual bool usingColors() const;
+
+	/// \}
+
+
+	/// \name Texture Coordinates
+	/// \{
+
 	/// \returns the Vec2f representing the texture coordinate. Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates.
 	ofVec2f getTexCoord(ofIndexType i) const;
 
@@ -185,6 +301,48 @@ public:
 
 	/// Clear all the texture coordinates.
 	void clearTexCoords();
+
+	/// \brief This will tell you how many texture coordinates are contained in the mesh.
+	/// \returns the size of the texture coordinates vector for the mesh.
+	int getNumTexCoords() const;
+
+	/// \returns a pointer to the texture coords that the mesh contains.
+	ofVec2f* getTexCoordsPointer();
+
+	/// Get a pointer to the ofVec2f texture coordinates that the mesh contains.
+	const ofVec2f* getTexCoordsPointer() const;
+
+	/// Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates. 
+	/// Use this if you plan to change the texture coordinates as part of this 
+	/// call as it will force a reset of the cache.
+	/// \returns a vector of Vec2f representing the texture coordinates for the whole mesh. 
+	vector<ofVec2f> & getTexCoords();
+	
+	/// Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates. 
+	/// \returns a vector of Vec2f representing the texture coordinates for the whole mesh. (read only)
+	const vector<ofVec2f> & getTexCoords() const;
+
+	/// \returns If the texture coords of the mesh have changed, been added or removed.
+	bool haveTexCoordsChanged();
+
+	/// /returns Whether the mesh has any textures assigned to it.
+	bool hasTexCoords() const;
+
+	/// \brief Enable mesh textures. 
+    /// Use disableTextures() to turn textures off. 
+    /// Textures are enabled by default when they are added to the mesh.
+    virtual void enableTextures();
+    
+    /// \brief Disable mesh textures. 
+    /// Use enableTextures() to turn textures back on.
+    virtual void disableTextures();
+    virtual bool usingTextures() const;
+
+
+	/// \}
+
+	/// \name Indices
+	/// \{
 
 	/// \returns the index from the index vector. Each index represents the index of the vertex in the vertices vector. This determines the way that the vertices are connected into the polgoynon type set in the primitiveMode.
 	ofIndexType getIndex(ofIndexType i) const;
@@ -226,97 +384,42 @@ public:
 	/// This means that your mesh will be a point cloud.
 	void clearIndices();
 
-	/// \brief Adding a triangle means using three of the vertices that have already been added to create a triangle. 
-	/// This is an easy way to create triangles in the mesh. The indices refer to the index of the vertex in the vector of vertices.
-  	void addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType index3);
-
-  	/// \returns the size of the vertices vector for the mesh. 
-  	/// This will tell you how many vertices are contained in the mesh.
-	int getNumVertices() const;
-
-	/// \returns the size of the colors vector for the mesh. 
-	/// This will tell you how many colors are contained in the mesh.
-	int getNumColors() const;
-
-	/// \brief This will tell you how many normals are contained in the mesh.
-	/// \returns the size of the normals vector for the mesh. 
-	int getNumNormals() const;
-	 
-	/// \brief This will tell you how many texture coordinates are contained in the mesh.
-	/// \returns the size of the texture coordinates vector for the mesh.
-	int getNumTexCoords() const;
-
 	/// \brief This will tell you how many indices are contained in the mesh.
 	/// \returns the size of the indices vector for the mesh. 
 	int getNumIndices() const;
 
-	/// \returns a pointer to the vertices that the mesh contains.
-	ofVec3f* getVerticesPointer();
-
-	/// Use this if you plan to change the colors as part of this call as it will force a reset of the cache.
-	/// \returns a pointer that contains all of the colors of the mesh, if it has any. 
-	ofFloatColor* getColorsPointer();
-
-	/// \returns a pointer to the normals that the mesh contains.
-	ofVec3f* getNormalsPointer();
-
-	/// \returns a pointer to the texture coords that the mesh contains.
-	ofVec2f* getTexCoordsPointer();
-
 	/// \returns a pointer to the indices that the mesh contains.
 	ofIndexType* getIndexPointer();
-
-	/// \returns a pointer to the vertices that the mesh contains.
-	const ofVec3f* getVerticesPointer() const;
-
-	/// \returns a pointer that contains all of the colors of the mesh, if it has any. (read only)
-	const ofFloatColor* getColorsPointer() const;
-
-	/// \returns a pointer to the normals that the mesh contains.
-	const ofVec3f* getNormalsPointer() const;
-
-	/// Get a pointer to the ofVec2f texture coordinates that the mesh contains.
-	const ofVec2f* getTexCoordsPointer() const;
 
 	/// \returns a pointer to the indices that the mesh contains.
 	const ofIndexType* getIndexPointer() const;
 
-	/// \returns the vector that contains all of the vertices of the mesh.
-	vector<ofVec3f> & getVertices();
-
-	/// Use this if you plan to change the colors as part of this call as it will force a reset of the cache.
-	/// \returns the vector that contains all of the colors of the mesh, if it has any. 
-	vector<ofFloatColor> & getColors();
-
-	/// Use this if you plan to change the normals as part of this call as it will force a reset of the cache.
-	/// \returns the vector that contains all of the normals of the mesh, if it has any.
-	vector<ofVec3f> & getNormals();
-
-	/// Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates. 
-	/// Use this if you plan to change the texture coordinates as part of this 
-	/// call as it will force a reset of the cache.
-	/// \returns a vector of Vec2f representing the texture coordinates for the whole mesh. 
-	vector<ofVec2f> & getTexCoords();
-
-	/// Use this if you plan to change the indices as part of this call as it will force a reset of the cache.
-	/// \returns the vector that contains all of the indices of the mesh, if it has any.
-	vector<ofIndexType> & getIndices();
-
-	/// \returns the vector that contains all of the vertices of the mesh.
-	const vector<ofVec3f> & getVertices() const;
-
-	/// \returns the vector that contains all of the colors of the mesh, if it has any. (read only)
-	const vector<ofFloatColor> & getColors() const;
-
-	/// \returns the vector that contains all of the normals of the mesh, if it has any. (read only)
-	const vector<ofVec3f> & getNormals() const;
-
-	/// Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates. 
-	/// \returns a vector of Vec2f representing the texture coordinates for the whole mesh. (read only)
-	const vector<ofVec2f> & getTexCoords() const;
 
 	/// \returns the vector that contains all of the indices of the mesh, if it has any. (read only)
 	const vector<ofIndexType> & getIndices() const;
+
+	/// \returns If the indices of the mesh have changed, been added or removed.
+	bool haveIndicesChanged();
+
+	/// /returns Whether the mesh has any indices assigned to it.
+	bool hasIndices() const;
+
+	/// \brief Adding a triangle means using three of the vertices that have already been added to create a triangle. 
+	/// This is an easy way to create triangles in the mesh. The indices refer to the index of the vertex in the vector of vertices.
+  	void addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType index3);
+
+    /// \brief Enable mesh indices. 
+    /// Use disableIndices() to turn indices off. 
+    /// Indices are enabled by default when they are added to the mesh.
+    virtual void enableIndices();
+
+    /// \brief Disable mesh indices. 
+    /// Use enableIndices() to turn indices back on.
+    virtual void disableIndices();
+    virtual bool usingIndices() const;
+
+	/// \}
+
 
 	/// \returns the vector that contains all of the faces of the mesh. This isn't currently implemented.
 	vector<int>& getFace(int faceId);
@@ -324,35 +427,9 @@ public:
 	/// \returns a ofVec3f defining the centroid of all the vetices in the mesh.
 	ofVec3f getCentroid() const;
 
-	/// \returns If the vertices of the mesh have changed, been added or removed.
-	bool haveVertsChanged();
 
-	/// \returns If the colors of the mesh have changed, been added or removed.
-	bool haveColorsChanged();
-
-	/// \returns If the normals of the mesh have changed, been added or removed.
-	bool haveNormalsChanged();
-
-	/// \returns If the texture coords of the mesh have changed, been added or removed.
-	bool haveTexCoordsChanged();
-
-	/// \returns If the indices of the mesh have changed, been added or removed.
-	bool haveIndicesChanged();
-
-	/// \returns Whether the mesh has any vertices.
-	bool hasVertices() const;
-
-	/// /returns Whether the mesh has any colors.
-	bool hasColors() const;
-
-	/// /returnsWhether the mesh has any normals.
-	bool hasNormals() const;
-
-	/// /returns Whether the mesh has any textures assigned to it.
-	bool hasTexCoords() const;
-
-	/// /returns Whether the mesh has any indices assigned to it.
-	bool hasIndices() const;
+	/// \name Drawing
+	/// \{
 
 	/// \brief This allows you draw just the vertices, meaning that you'll have a point cloud.
 	void drawVertices() const;
@@ -369,6 +446,12 @@ public:
 
 	/// \brief This draws the mesh using a defined renderType, overriding the renderType defined with setMode().
 	virtual void draw(ofPolyRenderMode renderType) const;
+
+	/// \}
+
+
+	/// \name Saving and loading
+	/// \{
 
 	/// \brief Loads a mesh from a file located at the provided path into the mesh.
     /// This will replace any existing data within the mesh.
@@ -387,47 +470,13 @@ public:
     ///  
     ///  For more information, see the [PLY format specification](http://paulbourke.net/dataformats/ply/).
 	void save(string path, bool useBinary = false) const;
+	
+	/// \}
 
-	/// \brief Enable mesh colors. 
-	/// Use disableColors() to turn colors off. 
-	/// Colors are enabled by default when they are added to the mesh.
-    virtual void enableColors();
 
-    /// \brief Enable mesh textures. 
-    /// Use disableTextures() to turn textures off. 
-    /// Textures are enabled by default when they are added to the mesh.
-    virtual void enableTextures();
 
-    /// \brief Enable mesh normals. 
-    /// Use disableNormals() to turn normals off. 
-    /// Normals are enabled by default when they are added to the mesh.
-    virtual void enableNormals();
 
-    /// \brief Enable mesh indices. 
-    /// Use disableIndices() to turn indices off. 
-    /// Indices are enabled by default when they are added to the mesh.
-    virtual void enableIndices();
 
-    /// \brief Disable mesh colors. 
-    /// Use enableColors() to turn colors back on.
-    virtual void disableColors();
-
-    /// \brief Disable mesh textures. 
-    /// Use enableTextures() to turn textures back on.
-    virtual void disableTextures();
-
-    /// \brief Disable mesh normals. 
-    /// Use enableNormals() to turn normals back on.
-    virtual void disableNormals();
-
-    /// \brief Disable mesh indices. 
-    /// Use enableIndices() to turn indices back on.
-    virtual void disableIndices();
-
-    virtual bool usingColors() const;
-    virtual bool usingTextures() const;
-    virtual bool usingNormals() const;
-    virtual bool usingIndices() const;
 
 	/// \brief Add the vertices, normals, texture coordinates and indices of one mesh onto another mesh. 
 	/// Everything from the referenced mesh is simply added at the end 
@@ -454,6 +503,8 @@ public:
     void setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNormal=false );
     void smoothNormals( float angle );
 
+    /// \name Primitive constructor helper methods
+	/// \{
     static ofMesh plane(float width, float height, int columns=2, int rows=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh sphere(float radius, int res=12, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh icosahedron(float radius);
@@ -489,6 +540,8 @@ public:
 
 	/// \returns an ofMesh representing an XYZ coordinate system.
 	static ofMesh axis(float size=1.0);
+
+	/// \}
 
 private:
 
