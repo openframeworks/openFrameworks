@@ -208,8 +208,6 @@ public:
 
 	/// Will give you this shape:
 	/// ![image of basic use of indices](3d/index.jpg)
-
-
 	void addIndex(ofIndexType i);
 
 	/// \brief This adds a vector of indices.
@@ -516,7 +514,21 @@ private:
 //	ofMaterial *mat;
 };
 
-// this is always a triangle //
+
+/// \brief An ofMeshFace is a face on one of the ofPrimitive instances. 
+/// In the ofPrimitive a face consists of 3 points connected together.
+/// 
+/// You can get a vector of ofMeshFace instances from any ofPrimitive like so:
+/// 
+/// ~~~~{.cpp}
+/// 
+/// vector<ofMeshFace> triangles = box.getMesh().getUniqueFaces();
+/// 
+/// ~~~~
+/// 
+/// They're very handy for manipulating individual vertices or doing strange/fun things with intersection and boundary testing, among many many other things. 
+/// 
+/// this is always a triangle
 class ofMeshFace {
 public:
     ofMeshFace();
