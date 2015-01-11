@@ -16,6 +16,9 @@ public:
 	void allocate(Settings settings = Settings());
 	bool isAllocated() const;
 
+	OF_DEPRECATED_MSG("Use clear instead",void destroy());
+	void clear();
+
 	using ofBaseDraws::draw;
 	void draw(float x, float y) const;
 	void draw(float x, float y, float width, float height) const;
@@ -125,8 +128,6 @@ private:
 #ifdef TARGET_OPENGLES
 	static bool bglFunctionsInitialized;
 #endif
-
-	void destroy();
 
 	// if using MSAA, we will have rendered into a colorbuffer, not directly into the texture
 	// call this to blit from the colorbuffer into the texture so we can use the results for rendering, or input to a shader etc.
