@@ -81,14 +81,23 @@ class ofMeshFace;
 class ofMesh{
 public:
 
-	/// \brief This creates the mesh, using OF_PRIMITIVE_TRIANGLES without any initial vertices.
+	/// \brief This creates the mesh, 
+	/// using OF_PRIMITIVE_TRIANGLES without any initial vertices.
 	ofMesh();
 
-	/// \brief This allows to you to use one of the other ofPrimitiveModes: OF_PRIMITIVE_TRIANGLES, OF_PRIMITIVE_TRIANGLE_STRIP, OF_PRIMITIVE_TRIANGLE_FAN, OF_PRIMITIVE_LINES, OF_PRIMITIVE_LINE_STRIP, OF_PRIMITIVE_LINE_LOOP, OF_PRIMITIVE_POINTS. See [ofGLUtils](../gl/ofGLUtils.htm) for more information on these types.
+	/// \brief This allows to you to use one of the other ofPrimitiveModes: 
+	/// OF_PRIMITIVE_TRIANGLES, OF_PRIMITIVE_TRIANGLE_STRIP, 
+	/// OF_PRIMITIVE_TRIANGLE_FAN, OF_PRIMITIVE_LINES, OF_PRIMITIVE_LINE_STRIP, 
+	/// OF_PRIMITIVE_LINE_LOOP, OF_PRIMITIVE_POINTS. 
+	/// See [ofGLUtils](../gl/ofGLUtils.htm) for more information on these types.
 	ofMesh(ofPrimitiveMode mode, const vector<ofVec3f>& verts);
 	virtual ~ofMesh();
 
-	/// \brief Allows you to set the ofPrimitiveMode. The available modes are OF_PRIMITIVE_TRIANGLES, OF_PRIMITIVE_TRIANGLE_STRIP, OF_PRIMITIVE_TRIANGLE_FAN, OF_PRIMITIVE_LINES, OF_PRIMITIVE_LINE_STRIP, OF_PRIMITIVE_LINE_LOOP, OF_PRIMITIVE_POINTS
+	/// \brief Allows you to set the ofPrimitiveMode. 
+	/// The available modes are OF_PRIMITIVE_TRIANGLES, 
+	/// OF_PRIMITIVE_TRIANGLE_STRIP, OF_PRIMITIVE_TRIANGLE_FAN, 
+	/// OF_PRIMITIVE_LINES, OF_PRIMITIVE_LINE_STRIP, 
+	/// OF_PRIMITIVE_LINE_LOOP, OF_PRIMITIVE_POINTS
 	void setMode(ofPrimitiveMode mode);
 
 	/// \\returns the primitive mode that the mesh is using.
@@ -115,10 +124,14 @@ public:
 	void addVertex(const ofVec3f& v);
 
 	/// \brief Add a vector of vertices to a mesh, allowing you to push out 
-	/// many at once rather than adding one at a time. The vector of vertices is added after the end of the current vertices list.
+	/// many at once rather than adding one at a time. The vector of vertices 
+	/// is added after the end of the current vertices list.
 	void addVertices(const vector<ofVec3f>& verts);
 
-	/// \brief Add an array of vertices to the mesh. Because you are using a pointer to the array you also have to define the length of the array as an int (amt). The vertices are added at the end of the current vertices list.
+	/// \brief Add an array of vertices to the mesh. 
+	/// Because you are using a pointer to the array you also have to define 
+	/// the length of the array as an int (amt). The vertices are added at the 
+	/// end of the current vertices list.
 	void addVertices(const ofVec3f* verts, int amt);
 
 	/// \brief Removes the vertex at the index in the vector.
@@ -139,7 +152,8 @@ public:
 	const ofVec3f* getVerticesPointer() const;
 
 
-	/// Use this if you plan to change the indices as part of this call as it will force a reset of the cache.
+	/// Use this if you plan to change the indices as part of this call as it 
+	/// will force a reset of the cache.
 	/// \returns the vector that contains all of the indices of the mesh, if it has any.
 	vector<ofIndexType> & getIndices();
 
@@ -164,14 +178,27 @@ public:
 	/// \\returns the normal at the index in the normals vector.
 	ofVec3f getNormal(ofIndexType i) const;
 
-	/// \brief Add a normal to the mesh as a 3D vector, typically perpendicular to the plane of the face. A normal is a vector that defines how a surface responds to lighting, i.e. how it is lit. The amount of light reflected by a surface is proportional to the angle between the light's direction and the normal. The smaller the angle the brighter the surface will look. See the normalsExample for advice on computing the normals.
-	/// addNormal adds the 3D vector to the end of the list, so you need to make sure you add normals at the same index of the matching face.
+	/// \brief Add a normal to the mesh as a 3D vector, 
+	/// typically perpendicular to the plane of the face. A normal is a vector 
+	/// that defines how a surface responds to lighting, i.e. how it is lit. 
+	/// The amount of light reflected by a surface is proportional to the angle 
+	/// between the light's direction and the normal. The smaller the angle the 
+	/// brighter the surface will look. See the normalsExample for advice on 
+	/// computing the normals.
+	/// addNormal adds the 3D vector to the end of the list, so you need to 
+	/// make sure you add normals at the same index of the matching face.
 	void addNormal(const ofVec3f& n);
 
-	/// \brief Add a vector of normals to a mesh, allowing you to push out many normals at once rather than adding one at a time. The vector of normals is added after the end of the current normals list.
+	/// \brief Add a vector of normals to a mesh, 
+	/// allowing you to push out many normals at once rather than 
+	/// adding one at a time. The vector of normals is added after the end of 
+	/// the current normals list.
 	void addNormals(const vector<ofVec3f>& norms);
 
-	// \brief Add an array of normals to the mesh. Because you are using a pointer to the array you also have to define the length of the array as an int (amt). The normals are added at the end of the current normals list.
+	/// \brief Add an array of normals to the mesh. 
+	/// Because you are using a pointer to the array you also have to define 
+	/// the length of the array as an int (amt). The normals are added at the 
+	/// end of the current normals list.
 	void addNormals(const ofVec3f* norms, int amt);
 
 	/// \brief Remove a normal.
@@ -193,11 +220,14 @@ public:
 	/// \returns a pointer to the normals that the mesh contains.
 	const ofVec3f* getNormalsPointer() const;
 
-	/// Use this if you plan to change the normals as part of this call as it will force a reset of the cache.
-	/// \returns the vector that contains all of the normals of the mesh, if it has any.
+	/// Use this if you plan to change the normals as part of this call as it 
+	/// will force a reset of the cache.
+	/// \returns the vector that contains all of the normals of the mesh, 
+	/// if it has any.
 	vector<ofVec3f> & getNormals();
 
-	/// \returns the vector that contains all of the normals of the mesh, if it has any. (read only)
+	/// \returns the vector that contains all of the normals of the mesh, if 
+	/// it has any. (read only)
 	const vector<ofVec3f> & getNormals() const;
 
 	/// \returns If the normals of the mesh have changed, been added or removed.
@@ -226,10 +256,12 @@ public:
 	/// \brief \returns the color at the index in the colors vector.
 	ofFloatColor getColor(ofIndexType i) const;
 
-	/// \brief This adds a color to the mesh, the color will be associated with the vertex in the same position.
+	/// \brief This adds a color to the mesh, 
+	/// the color will be associated with the vertex in the same position.
 	void addColor(const ofFloatColor& c);
 
-	/// \brief This adds colors using a reference to a vector of ofColors. For each color in the vector, this will put the colors at the corresponding vertex.
+	/// \brief This adds colors using a reference to a vector of ofColors. 
+	/// For each color in the vector, this will put the colors at the corresponding vertex.
 	void addColors(const vector<ofFloatColor>& cols);
 
 	/// \brief This adds a pointer of colors to the ofMesh instance with the amount passed as the second parameter.
@@ -272,6 +304,7 @@ public:
 	/// Use disableColors() to turn colors off. 
 	/// Colors are enabled by default when they are added to the mesh.
     virtual void enableColors();
+
     /// \brief Disable mesh colors. 
     /// Use enableColors() to turn colors back on.
     virtual void disableColors();
@@ -283,23 +316,34 @@ public:
 	/// \name Texture Coordinates
 	/// \{
 
-	/// \returns the Vec2f representing the texture coordinate. Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates.
+	/// \returns the Vec2f representing the texture coordinate. 
+	/// Because OF uses ARB textures these are in pixels rather than 
+	/// 0-1 normalized coordinates.
 	ofVec2f getTexCoord(ofIndexType i) const;
 
-	/// Add a Vec2f representing the texture coordinate. Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates.
+	/// \brief Add a Vec2f representing the texture coordinate. 
+	/// Because OF uses ARB textures these are in pixels rather than 
+	/// 0-1 normalized coordinates.
 	void addTexCoord(const ofVec2f& t);
 
-	/// Add a vector of texture coordinates to a mesh, allowing you to push out many at once rather than adding one at a time. The vector of texture coordinates is added after the end of the current texture coordinates list.
+	/// \brief Add a vector of texture coordinates to a mesh, 
+	/// allowing you to push out many at once rather than adding one at a time. 
+	/// The vector of texture coordinates is added after the end of the current 
+	/// texture coordinates list.
 	void addTexCoords(const vector<ofVec2f>& tCoords);
 
-	/// Add an array of texture coordinates to the mesh. Because you are using a pointer to the array you also have to define the length of the array as an int (amt). The texture coordinates are added at the end of the current texture coordinates list.
+	/// \brief  Add an array of texture coordinates to the mesh. 
+	/// Because you are using a pointer to the array you also have to define 
+	/// the length of the array as an int (amt). 
+	/// The texture coordinates are added at the end of the current texture 
+	/// coordinates list.
 	void addTexCoords(const ofVec2f* tCoords, int amt);
 
-	/// Remove a Vec2f representing the texture coordinate.
+	/// \brief  Remove a Vec2f representing the texture coordinate.
 	void removeTexCoord(ofIndexType index);
 	void setTexCoord(ofIndexType index, const ofVec2f& t);
 
-	/// Clear all the texture coordinates.
+	/// \brief  Clear all the texture coordinates.
 	void clearTexCoords();
 
 	/// \brief This will tell you how many texture coordinates are contained in the mesh.
@@ -309,9 +353,10 @@ public:
 	/// \returns a pointer to the texture coords that the mesh contains.
 	ofVec2f* getTexCoordsPointer();
 
-	/// Get a pointer to the ofVec2f texture coordinates that the mesh contains.
+	/// \brief Get a pointer to the ofVec2f texture coordinates that the mesh contains.
 	const ofVec2f* getTexCoordsPointer() const;
 
+	/// \brief Get a vector representing the texture coordinates of the mesh
 	/// Because OF uses ARB textures these are in pixels rather than 0-1 normalized coordinates. 
 	/// Use this if you plan to change the texture coordinates as part of this 
 	/// call as it will force a reset of the cache.
@@ -348,7 +393,11 @@ public:
 	ofIndexType getIndex(ofIndexType i) const;
 
 
-	/// Add an index to the index vector. Each index represents the order of connection for  vertices. This determines the way that the vertices are connected according to the polygon type set in the primitiveMode. It important to note that a particular vertex might be used for several faces and so would be referenced several times in the index vector.
+	/// Add an index to the index vector. Each index represents the order of 
+	/// connection for  vertices. This determines the way that the vertices are
+	/// connected according to the polygon type set in the primitiveMode. 
+	/// It important to note that a particular vertex might be used for several 
+	/// faces and so would be referenced several times in the index vector.
 	/// ~~~~{.cpp}
 	/// ofMesh mesh;
 	/// mesh.setMode(OF_PRIMITIVE_TRIANGLES);
@@ -371,7 +420,8 @@ public:
 	/// \brief This adds a vector of indices.
 	void addIndices(const vector<ofIndexType>& inds);
 
-	/// \brief This adds indices to the ofMesh by pointing to an array of indices. The "amt" defines the length of the array.
+	/// \brief This adds indices to the ofMesh by pointing to an array of indices.
+	/// The "amt" defines the length of the array.
 	void addIndices(const ofIndexType* inds, int amt);
 
 	/// \brief Removes an index.
@@ -444,7 +494,8 @@ public:
 	/// you set them up to be triangles, this will draw the triangles.
 	void draw() const;
 
-	/// \brief This draws the mesh using a defined renderType, overriding the renderType defined with setMode().
+	/// \brief This draws the mesh using a defined renderType, 
+	/// overriding the renderType defined with setMode().
 	virtual void draw(ofPolyRenderMode renderType) const;
 
 	/// \}
@@ -473,11 +524,6 @@ public:
 	
 	/// \}
 
-
-
-
-
-
 	/// \brief Add the vertices, normals, texture coordinates and indices of one mesh onto another mesh. 
 	/// Everything from the referenced mesh is simply added at the end 
 	/// of the current mesh's lists.
@@ -491,7 +537,8 @@ public:
     ofMesh getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const;
     void mergeDuplicateVertices();
     
-    /// \returns the mesh as a vector of unique ofMeshFaces: a list of triangles that do not share vertices or indices 
+    /// \returns the mesh as a vector of unique ofMeshFaces
+    /// a list of triangles that do not share vertices or indices 
     const vector<ofMeshFace> & getUniqueFaces() const;
 
     /// \brief Get normals for each face
@@ -505,12 +552,19 @@ public:
 
     /// \name Primitive constructor helper methods
 	/// \{
-    static ofMesh plane(float width, float height, int columns=2, int rows=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
-    static ofMesh sphere(float radius, int res=12, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+    static ofMesh plane(float width, float height, int columns=2, int rows=2, 
+    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+    static ofMesh sphere(float radius, int res=12, 
+    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh icosahedron(float radius);
     static ofMesh icosphere(float radius, int iterations=2);
   	///
-	///	\brief A helper method that returns a cylinder made of triangles. The resolution settings for the radius, height, and cap are optional (they are set at a default of 12 segments around the radius, 6 segments in the height, and 2 on the cap). You have the option to cap the cylinder or not. The only valid modes are the default OF_PRIMITIVE_TRIANGLE_STRIP and OF_PRIMITIVE_TRIANGLES.
+	///	\brief A helper method that returns a cylinder made of triangles. 
+	/// The resolution settings for the radius, height, and cap are optional 
+	/// (they are set at a default of 12 segments around the radius, 6 segments 
+	/// in the height, and 2 on the cap). You have the option to cap the 
+	/// cylinder or not. The only valid modes are the default 
+	/// OF_PRIMITIVE_TRIANGLE_STRIP and OF_PRIMITIVE_TRIANGLES.
 	///	~~~~{.cpp}
 	///	ofMesh mesh;
 	///	mesh = ofMesh::cylinder(100.0, 200.0);
@@ -518,25 +572,36 @@ public:
 	///	
 	///	![image of a simple cylinder](3d/cylinder.jpg)
   	///
-    static ofMesh cylinder(float radius, float height, int radiusSegments=12, int heightSegments=6, int numCapSegments=2, bool bCapped = true, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+    static ofMesh cylinder(float radius, float height, int radiusSegments=12, 
+    	int heightSegments=6, int numCapSegments=2, bool bCapped = true, 
+    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
 
-	/// \brief A helper method that returns a cone made of triangles. The resolution settings for the radius, height, and cap are optional (they are set at a default of 12 segments around the radius, 6 segments in the height, and 2 on the cap). The only valid modes are the default OF_PRIMITIVE_TRIANGLE_STRIP and OF_PRIMITIVE_TRIANGLES.
+	/// \brief A helper method that returns a cone made of triangles. 
+	/// The resolution settings for the radius, height, and cap are optional 
+	/// (they are set at a default of 12 segments around the radius, 6 segments 
+	/// in the height, and 2 on the cap). The only valid modes are the default 
+	/// OF_PRIMITIVE_TRIANGLE_STRIP and OF_PRIMITIVE_TRIANGLES.
 	/// ~~~~{.cpp}
 	/// ofMesh mesh;
 	/// mesh = ofMesh::cone(100.0, 200.0);
 	/// ~~~~
 	///
 	/// ![image of a simple cone](3d/cone.jpg)
-	static ofMesh cone(float radius, float height, int radiusSegments=12, int heightSegments=6, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+	static ofMesh cone(float radius, float height, int radiusSegments=12, 
+		int heightSegments=6, int capSegments=2, 
+		ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
 
-	/// \brief A helper method that returns a box made of triangles. The resolution settings for the width and height are optional (they are both set at a default of 2 triangles per side).
+	/// \brief A helper method that returns a box made of triangles. 
+	/// The resolution settings for the width and height are optional 
+	/// (they are both set at a default of 2 triangles per side).
 	/// ~~~~{.cpp}
 	/// ofMesh mesh;
 	/// mesh = ofMesh::box(200.0, 200.0, 200.0);
 	/// ~~~~
 	///
 	/// ![image of a simple box](3d/box.jpg)
-	static ofMesh box(float width, float height, float depth, int resX=2, int resY=2, int resZ=2);
+	static ofMesh box(float width, float height, float depth, int resX=2, 
+		int resY=2, int resZ=2);
 
 	/// \returns an ofMesh representing an XYZ coordinate system.
 	static ofMesh axis(float size=1.0);
@@ -556,7 +621,8 @@ private:
 	mutable vector<ofMeshFace> faces;
 	mutable bool bFacesDirty;
 
-	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, bIndicesChanged;
+	bool bVertsChanged, bColorsChanged, bNormalsChanged, bTexCoordsChanged, 
+		bIndicesChanged;
 	ofPrimitiveMode mode;
 
     bool useColors;
@@ -579,7 +645,8 @@ private:
 /// 
 /// ~~~~
 /// 
-/// They're very handy for manipulating individual vertices or doing strange/fun things with intersection and boundary testing, among many many other things. 
+/// They're very handy for manipulating individual vertices or doing strange/fun
+/// things with intersection and boundary testing, among many many other things. 
 /// 
 /// this is always a triangle
 class ofMeshFace {
