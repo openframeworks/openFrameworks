@@ -6,8 +6,6 @@
 //  Modified by James George and Elie Zananiri.
 //
 
-#if defined(OF_VIDEO_PLAYER_AVFOUNDATION)
-
 #include "ofAVFoundationPlayer.h"
 #include "Poco/String.h"
 
@@ -441,5 +439,3 @@ void ofAVFoundationPlayer::reallocatePixels()
         pixels.allocate(getWidth(), getHeight(), OF_IMAGE_COLOR);
     }
 }
-
-#endif

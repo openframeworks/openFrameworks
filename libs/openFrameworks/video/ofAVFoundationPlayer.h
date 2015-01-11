@@ -8,8 +8,6 @@
 
 #pragma once
 
-#if defined(OF_VIDEO_PLAYER_AVFOUNDATION)
-
 #include "ofMain.h"
 
 #ifdef __OBJC__
@@ -118,5 +116,3 @@ protected:
 #endif
     
 };
-
-#endif
