@@ -1295,6 +1295,7 @@ void ofGLProgrammableRenderer::unbind(const ofShader & shader){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofFbo & fbo, bool setupPerspective){
 	matrixStack.pushView();
+	pushStyle();
 	matrixStack.setRenderSurface(fbo);
 	viewport();
 	if(setupPerspective){
@@ -1310,6 +1311,7 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	matrixStack.setRenderSurface(*window);
 	uploadMatrices();
+	popStyle();
 	matrixStack.popView();
 }
 

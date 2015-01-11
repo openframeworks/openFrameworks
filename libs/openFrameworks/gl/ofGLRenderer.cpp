@@ -438,6 +438,7 @@ void ofGLRenderer::unbind(const ofShader & shader){
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofFbo & fbo, bool setupPerspective){
 	pushView();
+	pushStyle();
 	matrixStack.setRenderSurface(fbo);
 	viewport();
 	if(setupPerspective){
@@ -460,6 +461,7 @@ void ofGLRenderer::bind(const ofFbo & fbo, bool setupPerspective){
 void ofGLRenderer::unbind(const ofFbo & fbo){
 	fbo.unbind();
 	matrixStack.setRenderSurface(*window);
+	popStyle();
 	popView();
 }
 
