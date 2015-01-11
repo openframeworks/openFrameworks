@@ -79,13 +79,58 @@ protected:
 
 };
 
+
+/// \brief The ofPlanePrimitive allows you to create an UV plane.
+/// Can be used for example as simple canvas for projecting simple texture .
+/// 
+/// Like all primitives it allows you to set the size, in this case height 
+/// and width, draw it, set positions, etc, as a simple example:
+/// 
+/// ~~~~{.cpp}
+/// 
+/// ofPlanePrimitive plane;
+/// 
+/// void setup()
+/// {
+/// /// let's say we have a window set to be at 
+/// // resolution 640x480...
+/// 
+///     plane.set(640, 480);   ///dimensions for width and height in pixels
+/// plane.setPosition(320, 240, 0); /// position in x y z
+/// plane.setResolution(2, 2); /// this resolution (as columns and rows) is enough
+/// }
+/// 
+/// void draw()
+/// {
+/// plane.drawWireframe();
+/// }
+/// ~~~~
+/// As you can see, plane is constructed from two triangles.
+/// To draw a texture over any primitive, simply bind the ofTexture instance 
+/// and then draw your primitive:
+/// 
+/// ~~~~{.cpp}
+/// 
+/// texture.getTextureReference().bind();
+/// // now draw filled...
+/// plane.draw();
+/// 
+/// ~~~~
+/// 
+/// The plane primitive also allows you to simply pass an ofTexture to the 
+/// plane and generate the texture coordinates from that texture so that the 
+/// ofTexture fills the plane when it's drawn. This saves you the hassle of 
+/// creating all the texture coordinates for each vertex, which is nice.
+
 class ofPlanePrimitive : public of3dPrimitive {
 public:
     ofPlanePrimitive();
-    ofPlanePrimitive( float width, float height, int columns, int rows, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
+    ofPlanePrimitive( float width, float height, int columns, int rows, 
+        ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofPlanePrimitive();
 
-    void set(float width, float height, int columns, int rows, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
+    void set(float width, float height, int columns, int rows, 
+        ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void set( float width, float height );
     void resizeToTexture( ofTexture& inTexture, float scale=1.f );
     void setWidth( float width );
@@ -113,10 +158,12 @@ protected:
 class ofSpherePrimitive : public of3dPrimitive {
 public:
     ofSpherePrimitive();
-    ofSpherePrimitive( float radius, int res, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
+    ofSpherePrimitive( float radius, int res, 
+        ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofSpherePrimitive();
 
-    void set( float radius, int resolution, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
+    void set( float radius, int resolution, 
+        ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void setResolution( int res );
     void setRadius(float radius);
     void setMode( ofPrimitiveMode mode );
@@ -182,7 +229,8 @@ protected:
 
 /// \brief The ofCylinderPrimitive allows you to create an cylinder mesh.
 /// 
-/// Like all primitives it allows you to set the size, for the cylinder a radius and height, draw it, set positions, etc, as a simple example:
+/// Like all primitives it allows you to set the size, for the cylinder 
+/// a radius and height, draw it, set positions, etc, as a simple example:
 /// 
 /// ~~~~{.cpp}
 /// 
@@ -208,7 +256,8 @@ protected:
 /// }
 /// ~~~~
 /// 
-/// To draw a texture over any primitive, simply bind the ofTexture instance and then draw your primitive:
+/// To draw a texture over any primitive, simply bind the ofTexture instance 
+/// and then draw your primitive:
 /// 
 /// ~~~~{.cpp}
 /// 
@@ -222,10 +271,14 @@ protected:
 class ofCylinderPrimitive : public of3dPrimitive {
 public:
     ofCylinderPrimitive();
-    ofCylinderPrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, bool bCapped = true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
+    ofCylinderPrimitive( float radius, float height, int radiusSegments, 
+        int heightSegments, int capSegments=2, bool bCapped = true,
+        ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofCylinderPrimitive();
 
-    void set( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, bool bCapped=true,ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
+    void set( float radius, float height, int radiusSegments, 
+        int heightSegments, int capSegments=2, bool bCapped=true,
+        ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void set( float radius, float height, bool bCapped=true );
     void setRadius( float radius );
     void setHeight( float height );
@@ -266,7 +319,8 @@ protected:
 };
 
 /// \brief The ofConePrimitive allows you to create a 3D cone. 
-/// Like all primitives it allows you to set the size, draw it, set positions, etc, as a simple example:
+/// Like all primitives it allows you to set the size, draw it, 
+/// set positions, etc, as a simple example:
 /// 
 /// ~~~~{.cpp}
 /// 
@@ -292,7 +346,8 @@ protected:
 /// }
 /// ~~~~
 /// 
-/// To draw a texture over any primitive, simply bind the ofTexture instance and then draw your primitive:
+/// To draw a texture over any primitive, simply bind the ofTexture instance 
+/// and then draw your primitive:
 /// 
 /// ~~~~{.cpp}
 /// 
@@ -309,10 +364,13 @@ class ofConePrimitive : public of3dPrimitive {
 public:
 
     ofConePrimitive();
-    ofConePrimitive( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
+    ofConePrimitive( float radius, float height, int radiusSegments, 
+        int heightSegments, int capSegments=2, 
+        ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     ~ofConePrimitive();
 
-    void set( float radius, float height, int radiusSegments, int heightSegments, int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
+    void set( float radius, float height, int radiusSegments, int heightSegments, 
+        int capSegments=2, ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP );
     void set( float radius, float height );
     void setResolutionRadius( int radiusRes );
     void setResolutionHeight( int heightRes );
@@ -418,10 +476,12 @@ public:
         SIDES_TOTAL
     };
     ofBoxPrimitive();
-    ofBoxPrimitive( float width, float height, float depth, int resWidth=2, int resHeight=2, int resDepth=2 );
+    ofBoxPrimitive( float width, float height, float depth, int resWidth=2, 
+        int resHeight=2, int resDepth=2 );
     ~ofBoxPrimitive();
 
-    void set( float width, float height, float depth, int resWidth, int resHeight, int resDepth);
+    void set( float width, float height, float depth, int resWidth, 
+        int resHeight, int resDepth);
     void set( float width, float height, float depth );
     void set( float size ); // all sides the same dimensions //
 
