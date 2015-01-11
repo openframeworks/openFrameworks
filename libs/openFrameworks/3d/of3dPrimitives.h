@@ -1,10 +1,3 @@
-//
-//  of3dPrimitives.h
-//  openFrameworksLib
-//
-//  Created by Nick Hardeman on 9/14/12.
-//
-//
 #pragma once
 
 #include "ofVboMesh.h"
