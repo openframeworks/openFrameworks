@@ -42,17 +42,15 @@ public:
 	ofNode();
 	virtual ~ofNode() {}
 
-	// set parent to link nodes
-	// transformations are inherited from parent node
-	// set to NULL if not needed (default)
+	/// \brief set parent to link nodes
+	/// transformations are inherited from parent node
+	/// set to NULL if not needed (default)
 	void setParent(ofNode& parent, bool bMaintainGlobalTransform = false);
 	void clearParent(bool bMaintainGlobalTransform = false);
 	ofNode* getParent() const;
 
 	
-	//----------------------------------------
-	// Get transformations
-	
+	/// \brief Get position
 	ofVec3f getPosition() const;
 
 	/// \brief get x coordinate.
@@ -103,7 +101,6 @@ public:
 	ofQuaternion getGlobalOrientation() const;
 	ofVec3f getGlobalScale() const;
 
-	
 	
 	// Set Transformations
 
@@ -161,6 +158,7 @@ public:
 	/// \brief rotate around arbitrary axis by angle
 	void rotate(float degrees, const ofVec3f& v);
 
+	/// \brief rotate around arbitrary axis by angle
 	void rotate(float degrees, float vx, float vy, float vz);
 	
 	/// \brief rotate by quaternion around point
