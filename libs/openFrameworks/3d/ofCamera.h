@@ -15,6 +15,7 @@ class ofCamera : public ofNode {
 public:
 	/// \name Constructor and Destructor
 	/// \{
+    
     /// \brief Construct a default camera.
 	ofCamera();
 
