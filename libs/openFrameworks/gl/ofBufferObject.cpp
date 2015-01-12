@@ -1,9 +1,6 @@
 #include "ofBufferObject.h"
 #include "ofConstants.h"
 #include "ofAppRunner.h"
-#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
-	#include <GL/glew.h>
-#endif
 
 ofBufferObject::Data::Data()
 :id(0)
