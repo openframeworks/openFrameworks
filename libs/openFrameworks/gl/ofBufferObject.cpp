@@ -1,7 +1,6 @@
 #include "ofBufferObject.h"
 #include "ofConstants.h"
 #include "ofAppRunner.h"
-#include "GL/glew.h"
 
 ofBufferObject::Data::Data()
 :id(0)
