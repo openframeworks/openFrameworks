@@ -243,10 +243,8 @@ float ofDist(float x1, float y1, float z1, float x2, float y2, float z2);
 ///
 /// \param x1 X position of first point.
 /// \param y1 Y position of first point.
-/// \param z1 Z position of first point.
 /// \param x2 X position of second point.
 /// \param y2 Y position of second point.
-/// \param z2 Z position of second point.
 /// \returns distance-squared between two points.
 float ofDistSquared(float x1, float y1, float x2, float y2);
 
@@ -258,8 +256,10 @@ float ofDistSquared(float x1, float y1, float x2, float y2);
 ///
 /// \param x1 X position of first point.
 /// \param y1 Y position of first point.
+/// \param z1 Z position of first point.
 /// \param x2 X position of second point.
 /// \param y2 Y position of second point.
+/// \param z2 Z position of second point.
 /// \returns distance-squared between two points.
 float ofDistSquared(float x1, float y1, float z1, float x2, float y2, float z2);
 
