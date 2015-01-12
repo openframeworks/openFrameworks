@@ -1,15 +1,14 @@
 language: node_js
 node_js: '0.10'
+env:
+  global:
+    - secure: RIsZhGwZY2PZLxqSBMh1z1MiqNFkRupOk/fV7M03i/n51xLX+KVFibbtm+YslgxPj6wGJFk8mU+UZnxhbM5RCOY/mQXyckqgXH4/VFp+VChsvCMFg2k/TC+YIugCLulWH/Ny52i0BBa5TjDi6758JZRmgZ7oybM49zribYyX4mw=
 branches:
   only:
     - master
 notifications:
   email:
     - jonas@halfdanj.dk
-env:
-  global:
-    - secure: RIsZhGwZY2PZLxqSBMh1z1MiqNFkRupOk/fV7M03i/n51xLX+KVFibbtm+YslgxPj6wGJFk8mU+UZnxhbM5RCOY/mQXyckqgXH4/VFp+VChsvCMFg2k/TC+YIugCLulWH/Ny52i0BBa5TjDi6758JZRmgZ7oybM49zribYyX4mw=
-
 before_install:
   - sudo apt-get install python-software-properties
   - sudo apt-add-repository -y ppa:libreoffice/libreoffice-4-2
