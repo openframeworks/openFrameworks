@@ -2,7 +2,7 @@ language: node_js
 node_js: '0.10'
 env:
   global:
-    - secure: RIsZhGwZY2PZLxqSBMh1z1MiqNFkRupOk/fV7M03i/n51xLX+KVFibbtm+YslgxPj6wGJFk8mU+UZnxhbM5RCOY/mQXyckqgXH4/VFp+VChsvCMFg2k/TC+YIugCLulWH/Ny52i0BBa5TjDi6758JZRmgZ7oybM49zribYyX4mw=
+    - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
 branches:
   only:
     - master
