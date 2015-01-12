@@ -123,7 +123,7 @@ void HandleFiles(WPARAM wParam)
     // allocated by the application is released.
     DragFinish(hDrop);
 
-	ofAppPtr->dragEvent(info);
+	instance->events().notifyDragEvent(info);
 
 }
 
