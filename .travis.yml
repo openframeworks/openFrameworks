@@ -22,6 +22,7 @@ script:
   - cd scripts/
   - git clone https://github.com/halfdanJ/ofDocGenerator
   - cd ofDocGenerator
+  - npm install
   - npm run start
 after_success:
   - "ncftpput -R -v -u $FTP_USER -p $FTP_PASSWORD 104.130.212.175 / output/*"
