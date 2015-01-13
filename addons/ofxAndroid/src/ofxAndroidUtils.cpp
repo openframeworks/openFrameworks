@@ -492,15 +492,29 @@ jfieldID ofxJavaGetStaticFieldID(jclass classID, std::string fieldName, std::str
 
 jobject ofxJavaGetStaticObjectField(jclass classID, std::string fieldName, std::string fieldType) {
 
-	return ofGetJNIEnv()->GetStaticObjectField(classID, ofxJavaGetStaticFieldID(classID, fieldName, fieldType));
+	jfieldID fieldID = ofxJavaGetStaticFieldID(classID, fieldName, fieldType);
+
+	if (!fieldID)
+		return NULL;
+
+	return ofGetJNIEnv()->GetStaticObjectField(classID, fieldID);
 }
 
 jobject ofxJavaGetStaticObjectField(std::string className, std::string fieldName, std::string fieldType) {
-	return ofxJavaGetStaticObjectField(ofxJavaGetClassID(className), fieldName, fieldType);
+
+	jclass classID = ofxJavaGetClassID(className);
+
+	if (!classID)
+		return NULL;
+
+	return ofxJavaGetStaticObjectField(classID, fieldName, fieldType);
 }
 
 void ofxJavaCallVoidMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, va_list args){
 	jmethodID methodID = ofxJavaGetMethodID(classID, methodName, methodSignature);
+
+	if (!methodID)
+		return;
 
 	ofGetJNIEnv()->CallVoidMethodV(object, methodID, args);
 }
@@ -520,6 +534,9 @@ void ofxJavaCallVoidMethod(jobject object, std::string className, std::string me
 {
 	jclass classID = ofxJavaGetClassID(className);
 
+	if (!classID)
+		return;
+
 	va_list args;
 
 	va_start(args, methodSignature);
@@ -533,9 +550,10 @@ jobject ofxJavaCallStaticObjectMethod(jclass classID, std::string methodName, st
 {
 	jmethodID methodID = ofxJavaGetStaticMethodID(classID, methodName, methodSignature);
 
-	jobject result = ofGetJNIEnv()->CallStaticObjectMethodV(classID, methodID, args);
+	if (!methodID)
+		return NULL;
 
-	return result;
+	return ofGetJNIEnv()->CallStaticObjectMethodV(classID, methodID, args);
 }
 
 jobject ofxJavaCallStaticObjectMethod(jclass classID, std::string methodName, std::string methodSignature, ...)
@@ -555,6 +573,9 @@ jobject ofxJavaCallStaticObjectMethod(std::string className, std::string methodN
 {
 	jclass classID = ofxJavaGetClassID(className);
 
+	if (!classID)
+		return NULL;
+
 	va_list args;
 
 	va_start(args, methodSignature);
@@ -569,6 +590,9 @@ jobject ofxJavaCallStaticObjectMethod(std::string className, std::string methodN
 jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, va_list args)
 {
 	jmethodID methodID = ofxJavaGetMethodID(classID, methodName, methodSignature);
+
+	if (!methodID)
+		return NULL;
 
 	return ofGetJNIEnv()->CallObjectMethodV(object, methodID, args);
 }
@@ -589,6 +613,9 @@ jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string meth
 jobject ofxJavaCallObjectMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...)
 {
 	jclass classID = ofxJavaGetClassID(className);
+
+	if (!classID)
+		return NULL;
 
 	va_list args;
 
