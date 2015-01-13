@@ -4,10 +4,10 @@
 
 // when an ofEasyCam is moving due to momentum, this keeps it
 // from moving forever by assuming small values are zero.
-static float minDifference = 0.1e-5f;
+static const float minDifference = 0.1e-5f;
 
 // this is the default on windows os
-static unsigned long doubleclickTime = 200;
+static const unsigned long doubleclickTime = 200;
 
 //----------------------------------------
 ofEasyCam::ofEasyCam(){
@@ -28,9 +28,10 @@ ofEasyCam::ofEasyCam(){
 	bEnableMouseMiddleButton = true;
 	bAutoDistance = true;
 	doTranslationKey = 'm';
+	bEventsSet = false;
+	events = NULL;
 	
 	reset();
-	enableMouseInput();	
 
 }
 
@@ -38,8 +39,10 @@ ofEasyCam::ofEasyCam(){
 ofEasyCam::~ofEasyCam(){
 	disableMouseInput();
 }
+
 //----------------------------------------
 void ofEasyCam::update(ofEventArgs & args){
+	viewport = getViewport(this->viewport);
     if(!bDistanceSet && bAutoDistance){
         setDistance(getImagePlaneDistance(viewport), true);
     }
@@ -47,7 +50,7 @@ void ofEasyCam::update(ofEventArgs & args){
 	
 		rotationFactor = sensitivityRot * 180 / min(viewport.width, viewport.height);
 
-		if(ofGetMousePressed()) prevMouse = ofVec2f(ofGetMouseX(),ofGetMouseY());
+		if(events->getMousePressed()) prevMouse = ofVec2f(events->getMouseX(),events->getMouseY());
 		
 		if (bDoRotate) {
 			updateRotation();
@@ -57,10 +60,14 @@ void ofEasyCam::update(ofEventArgs & args){
 		}
 	}	
 }
+
 //----------------------------------------
-void ofEasyCam::begin(ofRectangle viewport){
-	this->viewport = viewport;
-	ofCamera::begin(viewport);	
+void ofEasyCam::begin(ofRectangle _viewport){
+	if(!bEventsSet){
+		setEvents(ofEvents());
+	}
+	viewport = getViewport(_viewport);
+	ofCamera::begin(viewport);
 }
 
 //----------------------------------------
@@ -86,24 +93,29 @@ void ofEasyCam::reset(){
 	bDoTranslate = false;
 	bDoRotate = false;
 }
+
 //----------------------------------------
 void ofEasyCam::setTarget(const ofVec3f& targetPoint){
 	target.setPosition(targetPoint);
 	lookAt(target);
 }
+
 //----------------------------------------
 void ofEasyCam::setTarget(ofNode& targetNode){
 	target = targetNode;
 	lookAt(target);
 }
+
 //----------------------------------------
 ofNode& ofEasyCam::getTarget(){
 	return target;
 }
+
 //----------------------------------------
 void ofEasyCam::setDistance(float distance){
 	setDistance(distance, true);
 }
+
 //----------------------------------------
 void ofEasyCam::setDistance(float distance, bool save){//should this be the distance from the camera to the target?
 	if (distance > 0.0f){
@@ -114,10 +126,12 @@ void ofEasyCam::setDistance(float distance, bool save){//should this be the dist
 		bDistanceSet = true;
 	}
 }
+
 //----------------------------------------
 float ofEasyCam::getDistance() const {
 	return target.getPosition().distance(getPosition());
 }
+
 //----------------------------------------
 void ofEasyCam::setAutoDistance(bool bAutoDistance){
     this->bAutoDistance = bAutoDistance;
@@ -125,62 +139,79 @@ void ofEasyCam::setAutoDistance(bool bAutoDistance){
         bDistanceSet = false;
     }
 }
+
 //----------------------------------------
 void ofEasyCam::setDrag(float drag){
 	this->drag = drag;
 }
+
 //----------------------------------------
 float ofEasyCam::getDrag() const {
 	return drag;
 }
+
 //----------------------------------------
 void ofEasyCam::setTranslationKey(char key){
 	doTranslationKey = key;
 }
+
 //----------------------------------------
 char ofEasyCam::getTranslationKey(){
 	return doTranslationKey;
 }
+
 //----------------------------------------
 void ofEasyCam::enableMouseInput(){
 	if(!bMouseInputEnabled){
 		bMouseInputEnabled = true;
-	//	ofRegisterMouseEvents(this);
-		ofAddListener(ofEvents().update, this, &ofEasyCam::update);
-		ofAddListener(ofEvents().mouseDragged , this, &ofEasyCam::mouseDragged);
-		ofAddListener(ofEvents().mousePressed, this, &ofEasyCam::mousePressed);
-		ofAddListener(ofEvents().mouseReleased, this, &ofEasyCam::mouseReleased);
-		ofAddListener(ofEvents().mouseScrolled, this, &ofEasyCam::mouseScrolled);
+		bEventsSet = true;
+		ofAddListener(events->update, this, &ofEasyCam::update);
+		ofAddListener(events->mouseDragged , this, &ofEasyCam::mouseDragged);
+		ofAddListener(events->mousePressed, this, &ofEasyCam::mousePressed);
+		ofAddListener(events->mouseReleased, this, &ofEasyCam::mouseReleased);
+		ofAddListener(events->mouseScrolled, this, &ofEasyCam::mouseScrolled);
 	}
 }
+
 //----------------------------------------
 void ofEasyCam::disableMouseInput(){
 	if(bMouseInputEnabled){
 		bMouseInputEnabled = false;
-		//ofUnregisterMouseEvents(this);
-		ofRemoveListener(ofEvents().update, this, &ofEasyCam::update);
-		ofRemoveListener(ofEvents().mouseDragged, this, &ofEasyCam::mouseDragged);
-		ofRemoveListener(ofEvents().mousePressed, this, &ofEasyCam::mousePressed);
-		ofRemoveListener(ofEvents().mouseReleased, this, &ofEasyCam::mouseReleased);
-		ofRemoveListener(ofEvents().mouseScrolled, this, &ofEasyCam::mouseScrolled);
+		ofRemoveListener(events->update, this, &ofEasyCam::update);
+		ofRemoveListener(events->mouseDragged, this, &ofEasyCam::mouseDragged);
+		ofRemoveListener(events->mousePressed, this, &ofEasyCam::mousePressed);
+		ofRemoveListener(events->mouseReleased, this, &ofEasyCam::mouseReleased);
+		ofRemoveListener(events->mouseScrolled, this, &ofEasyCam::mouseScrolled);
 	}
 }
+
+void ofEasyCam::setEvents(ofCoreEvents & _events){
+	disableMouseInput();
+	bEventsSet = true;
+	events = &_events;
+	enableMouseInput();
+}
+
 //----------------------------------------
 bool ofEasyCam::getMouseInputEnabled(){
 	return bMouseInputEnabled;
 }
+
 //----------------------------------------
 void ofEasyCam::enableMouseMiddleButton(){
 	bEnableMouseMiddleButton = true;
 }
+
 //----------------------------------------
 void ofEasyCam::disableMouseMiddleButton(){
 	bEnableMouseMiddleButton = false;
 }
+
 //----------------------------------------
 bool ofEasyCam::getMouseMiddleButtonEnabled(){
 	return bEnableMouseMiddleButton;
 }
+
 //----------------------------------------
 void ofEasyCam::updateTranslation(){
 	if (bApplyInertia) {
@@ -196,6 +227,7 @@ void ofEasyCam::updateTranslation(){
 		setPosition(prevPosition + ofVec3f(prevAxisX * moveX) + (prevAxisY * moveY) + (prevAxisZ * moveZ));
 	}
 }	
+
 //----------------------------------------
 void ofEasyCam::updateRotation(){
 	if (bApplyInertia) {
@@ -218,6 +250,7 @@ void ofEasyCam::updateRotation(){
 }
 
 void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
+	ofRectangle viewport = getViewport(this->viewport);
 	if(viewport.inside(mouse.x, mouse.y)){
 		lastMouse = mouse;
 		prevMouse = mouse;
@@ -227,7 +260,7 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 		prevPosition = ofCamera::getGlobalPosition();
 		prevOrientation = ofCamera::getGlobalOrientation();
 
-		if ((bEnableMouseMiddleButton && mouse.button == OF_MOUSE_BUTTON_MIDDLE) || ofGetKeyPressed(doTranslationKey)  || mouse.button == OF_MOUSE_BUTTON_RIGHT){
+		if ((bEnableMouseMiddleButton && mouse.button == OF_MOUSE_BUTTON_MIDDLE) || events->getKeyPressed(doTranslationKey)  || mouse.button == OF_MOUSE_BUTTON_RIGHT){
 			bDoTranslate = true;
 			bDoRotate = false;
 		}else if (mouse.button == OF_MOUSE_BUTTON_LEFT) {
@@ -245,6 +278,7 @@ void ofEasyCam::mousePressed(ofMouseEventArgs & mouse){
 
 void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 	unsigned long curTap = ofGetElapsedTimeMillis();
+	ofRectangle viewport = getViewport(this->viewport);
 	if(lastTap != 0 && curTap - lastTap < doubleclickTime){
 		reset();
 		return;
@@ -255,7 +289,7 @@ void ofEasyCam::mouseReleased(ofMouseEventArgs & mouse){
 
 	updateMouse(mouse);
 	ofVec2f center(viewport.width/2, viewport.height/2);
-	zRot = - vFlip * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(prevMouse - ofVec2f(viewport.x, viewport.y) - center);
+	zRot = - isVFlipped() * ofVec2f(mouse.x - viewport.x - center.x, mouse.y - viewport.y - center.y).angle(prevMouse - ofVec2f(viewport.x, viewport.y) - center);
 }
 
 void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
@@ -265,6 +299,7 @@ void ofEasyCam::mouseDragged(ofMouseEventArgs & mouse){
 }
 
 void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
+	ofRectangle viewport = getViewport(this->viewport);
 	prevPosition = ofCamera::getGlobalPosition();
 	prevAxisZ = getZAxis();
 	moveZ = mouse.y * 30 * sensitivityZ * (getDistance() + FLT_EPSILON)/ viewport.height;
@@ -273,6 +308,7 @@ void ofEasyCam::mouseScrolled(ofMouseEventArgs & mouse){
 
 
 void ofEasyCam::updateMouse(const ofMouseEventArgs & mouse){
+	ofRectangle viewport = getViewport(this->viewport);
 	int vFlip;
 	if(isVFlipped()){
 		vFlip = -1;

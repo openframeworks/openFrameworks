@@ -2,9 +2,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	 
-    alpha = 0;
-	counter = 0;
-
     sprintf(eventString, "Alpha"); 
 
 	vagRounded.load("vag.ttf", 32);
@@ -12,16 +9,13 @@ void ofApp::setup(){
 
     rainbow.allocate(256, 256, OF_IMAGE_COLOR_ALPHA);
     rainbow.load("rainbow.tiff");
+	blendMode = OF_BLENDMODE_ALPHA;
 }
 
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	counter = counter + 0.033f;
 
-    alpha += 0.01;
-   
-    alpha = (alpha > 1.0) ? 1.0 : alpha;
 }
 
 //--------------------------------------------------------------

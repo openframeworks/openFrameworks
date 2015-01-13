@@ -29,7 +29,7 @@ void ofApp::setup(){
     #ifdef TARGET_OPENGLES
     shader.load("shaders_gles/alphamask.vert","shaders_gles/alphamask.frag");
     #else
-    if(ofGetGLProgrammableRenderer()){
+    if(ofIsGLProgrammableRenderer()){
     	string vertex = "#version 150\n\
     	\n\
 		uniform mat4 projectionMatrix;\n\

@@ -173,24 +173,16 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 	return charOutlines;
 }
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+#if defined(TARGET_ANDROID)
 	#include <set>
 	static set<ofTrueTypeFont*> & all_fonts(){
 		static set<ofTrueTypeFont*> *all_fonts = new set<ofTrueTypeFont*>;
 		return *all_fonts;
 	}
 
-	void ofUnloadAllFontTextures(){
-		set<ofTrueTypeFont*>::iterator it;
-		for(it=all_fonts().begin();it!=all_fonts().end();it++){
-			(*it)->unloadTextures();
-		}
-	}
-
 	void ofReloadAllFontTextures(){
-		set<ofTrueTypeFont*>::iterator it;
-		for(it=all_fonts().begin();it!=all_fonts().end();it++){
-			(*it)->reloadTextures();
+		for(auto font: all_fonts()){
+			font->reloadTextures();
 		}
 	}
 
@@ -366,16 +358,24 @@ bool ofTrueTypeFont::initLibraries(){
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+	#if defined(TARGET_ANDROID)
 		all_fonts().insert(this);
 	#endif
 	letterSpacing = 1;
 	spaceSize = 1;
 
-	border			= 1;
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
-	binded = false;
 	face = NULL;
+	ascenderHeight = 0;
+	bAntiAliased = 0;
+	bFullCharacterSet = 0;
+	descenderHeight = 0;
+	dpi = 96;
+	encoding = OF_ENCODING_UTF8;
+	fontSize = 0;
+	lineHeight = 0;
+	nCharacters = 0;
+	simplifyAmt = 0;
 }
 
 //------------------------------------------------------------------
@@ -387,7 +387,7 @@ ofTrueTypeFont::~ofTrueTypeFont(){
 		unloadTextures();
 	}
 
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
+	#if defined(TARGET_ANDROID)
 		all_fonts().erase(this);
 	#endif
 }
@@ -455,7 +455,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 //-----------------------------------------------------------
 bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
-
+	int border = 1;
 	initLibraries();
 
 	//------------------------------------------------
@@ -509,9 +509,12 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 	cps.resize(nCharacters);
 
 	if(bMakeContours){
-		charOutlines.clear();
 		charOutlines.assign(nCharacters, ofTTFCharacter());
 		charOutlinesNonVFlipped.assign(nCharacters, ofTTFCharacter());
+		charOutlinesContour.assign(nCharacters, ofTTFCharacter());
+		charOutlinesNonVFlippedContour.assign(nCharacters, ofTTFCharacter());
+	}else{
+		charOutlines.resize(1);
 	}
 
 	vector<ofPixels> expanded_data(nCharacters);
@@ -545,19 +548,24 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 
 			//int character = i + NUM_CHARACTER_TO_START;
 			charOutlines[i] = makeContoursForCharacter( face );
+			charOutlinesContour[i] = charOutlines[i];
+			charOutlinesContour[i].setFilled(false);
+			charOutlinesContour[i].setStrokeWidth(1);
 
 			charOutlinesNonVFlipped[i] = charOutlines[i];
 			charOutlinesNonVFlipped[i].translate(ofVec3f(0,cps[i].height));
 			charOutlinesNonVFlipped[i].scale(1,-1);
+			charOutlinesNonVFlippedContour[i] = charOutlines[i];
+			charOutlinesNonVFlippedContour[i].setFilled(false);
+			charOutlinesNonVFlippedContour[i].setStrokeWidth(1);
 
 
-			if(simplifyAmt>0)
+			if(simplifyAmt>0){
 				charOutlines[i].simplify(simplifyAmt);
-			charOutlines[i].getTessellation();
-
-			if(simplifyAmt>0)
 				charOutlinesNonVFlipped[i].simplify(simplifyAmt);
-			charOutlinesNonVFlipped[i].getTessellation();
+				charOutlinesContour[i].simplify(simplifyAmt);
+				charOutlinesNonVFlippedContour[i].simplify(simplifyAmt);
+			}
 		}
 
 
@@ -710,22 +718,22 @@ void ofTrueTypeFont::setEncoding(ofTextEncoding _encoding) {
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::isLoaded() {
+bool ofTrueTypeFont::isLoaded() const{
 	return bLoadedOk;
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::isAntiAliased() {
+bool ofTrueTypeFont::isAntiAliased() const{
 	return bAntiAliased;
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::hasFullCharacterSet() {
+bool ofTrueTypeFont::hasFullCharacterSet() const{
 	return bFullCharacterSet;
 }
 
 //-----------------------------------------------------------
-int ofTrueTypeFont::getSize() {
+int ofTrueTypeFont::getSize() const{
 	return fontSize;
 }
 
@@ -735,7 +743,7 @@ void ofTrueTypeFont::setLineHeight(float _newLineHeight) {
 }
 
 //-----------------------------------------------------------
-float ofTrueTypeFont::getLineHeight(){
+float ofTrueTypeFont::getLineHeight() const{
 	return lineHeight;
 }
 
@@ -760,7 +768,7 @@ void ofTrueTypeFont::setLetterSpacing(float _newletterSpacing) {
 }
 
 //-----------------------------------------------------------
-float ofTrueTypeFont::getLetterSpacing(){
+float ofTrueTypeFont::getLetterSpacing() const{
 	return letterSpacing;
 }
 
@@ -770,31 +778,39 @@ void ofTrueTypeFont::setSpaceSize(float _newspaceSize) {
 }
 
 //-----------------------------------------------------------
-float ofTrueTypeFont::getSpaceSize(){
+float ofTrueTypeFont::getSpaceSize() const{
 	return spaceSize;
 }
 
 //------------------------------------------------------------------
-ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character, bool vflip){
+ofTTFCharacter ofTrueTypeFont::getCharacterAsPoints(int character, bool vflip, bool filled) const{
 	if( bMakeContours == false ){
 		ofLogError("ofxTrueTypeFont") << "getCharacterAsPoints(): contours not created, call loadFont() with makeContours set to true";
 		return ofTTFCharacter();
 	}
     if (character - NUM_CHARACTER_TO_START >= nCharacters || character < NUM_CHARACTER_TO_START){
         //ofLogError("ofxTrueTypeFont") << "getCharacterAsPoint(): char " << character + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
-        
+
         return ofTTFCharacter();
     }
     
     if(vflip){
-    	return charOutlines[character - NUM_CHARACTER_TO_START];
+    	if(filled){
+    		return charOutlines[character - NUM_CHARACTER_TO_START];
+    	}else{
+    		return charOutlinesContour[character - NUM_CHARACTER_TO_START];
+    	}
     }else{
-    	return charOutlinesNonVFlipped[character - NUM_CHARACTER_TO_START];
+    	if(filled){
+    		return charOutlinesNonVFlipped[character - NUM_CHARACTER_TO_START];
+    	}else{
+    		return charOutlinesNonVFlippedContour[character - NUM_CHARACTER_TO_START];
+    	}
     }
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::drawChar(int c, float x, float y) {
+void ofTrueTypeFont::drawChar(int c, float x, float y, bool vFlipped) const{
 
 	if (c >= nCharacters){
 		//ofLogError("ofTrueTypeFont") << "drawChar(): char " << c + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
@@ -814,7 +830,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	xmax		= cps[c].xmax+x;
 	ymax		= cps[c].ymax;
 
-	if(!ofIsVFlipped()){
+	if(!vFlipped){
        ymin *= -1;
        ymax *= -1;
 	}
@@ -842,7 +858,7 @@ void ofTrueTypeFont::drawChar(int c, float x, float y) {
 	stringQuads.addIndex(firstIndex);
 }
 
-int ofTrueTypeFont::getKerning(int c, int prevC){
+int ofTrueTypeFont::getKerning(int c, int prevC) const{
     if(FT_HAS_KERNING( face ) && prevC>0 && prevC<nCharacters && c>0 && c<nCharacters){
         FT_Vector kerning;
         FT_Get_Kerning(face, FT_Get_Char_Index(face, cps[prevC].glyph), FT_Get_Char_Index(face, cps[c].glyph), FT_KERNING_UNFITTED, &kerning);
@@ -853,7 +869,7 @@ int ofTrueTypeFont::getKerning(int c, int prevC){
 }
 
 //-----------------------------------------------------------
-vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip){
+vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip, bool filled) const{
 	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
 		string o;
 		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(str,o);
@@ -889,7 +905,7 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip)
 				Y += lineHeight*newLineDirection;
 				X = 0 ; //reset X Pos back to zero
 			} else if(cy > -1){
-				shapes.push_back(getCharacterAsPoints((unsigned char)str[index],vflip));
+				shapes.push_back(getCharacterAsPoints((unsigned char)str[index],vflip,filled));
 
                 X += getKerning(cy,prevCy);
                 
@@ -906,32 +922,35 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip)
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::drawCharAsShape(int c, float x, float y) {
+void ofTrueTypeFont::drawCharAsShape(int c, float x, float y, bool vFlipped, bool filled) const{
 	if (c - NUM_CHARACTER_TO_START >= nCharacters || c < NUM_CHARACTER_TO_START){
 		//ofLogError("ofTrueTypeFont") << "drawCharAsShape(): char " << << c + NUM_CHARACTER_TO_START << " not allocated: line " << __LINE__ << " in " << __FILE__;
 		return;
 	}
 	//-----------------------
-
-	if(ofIsVFlipped()){
-		ofTTFCharacter & charRef = charOutlines[c - NUM_CHARACTER_TO_START];
-		charRef.setFilled(ofGetStyle().bFill);
-		charRef.draw(x,y);
-	}else{
-		ofTTFCharacter & charRef = charOutlinesNonVFlipped[c - NUM_CHARACTER_TO_START];
-		charRef.setFilled(ofGetStyle().bFill);
-		charRef.draw(x,y);
-	}
+    if(vFlipped){
+    	if(filled){
+    		charOutlines[c - NUM_CHARACTER_TO_START].draw(x,y);
+    	}else{
+    		charOutlinesContour[c - NUM_CHARACTER_TO_START].draw(x,y);
+    	}
+    }else{
+    	if(filled){
+    		charOutlinesNonVFlipped[c - NUM_CHARACTER_TO_START].draw(x,y);
+    	}else{
+    		charOutlinesNonVFlippedContour[c - NUM_CHARACTER_TO_START].draw(x,y);
+    	}
+    }
 }
 
 //-----------------------------------------------------------
-float ofTrueTypeFont::stringWidth(string c) {
+float ofTrueTypeFont::stringWidth(string c) const{
     ofRectangle rect = getStringBoundingBox(c, 0,0);
     return rect.width;
 }
 
 
-ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
+ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y) const{
 
     ofRectangle myRect;
 
@@ -1005,12 +1024,12 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y){
 }
 
 //-----------------------------------------------------------
-float ofTrueTypeFont::stringHeight(string c) {
+float ofTrueTypeFont::stringHeight(string c) const{
     ofRectangle rect = getStringBoundingBox(c, 0,0);
     return rect.height;
 }
 
-void ofTrueTypeFont::createStringMesh(string c, float x, float y){
+void ofTrueTypeFont::createStringMesh(string c, float x, float y, bool vFlipped) const{
 	
 	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
 		string o;
@@ -1023,7 +1042,7 @@ void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 	GLfloat		Y		= y;
 	int newLineDirection		= 1;
 
-	if(!ofIsVFlipped()){
+	if(!vFlipped){
 		// this would align multiline texts to the last line when vflip is disabled
 		//int lines = ofStringTimesInString(c,"\n");
 		//Y = lines*lineHeight;
@@ -1042,7 +1061,7 @@ void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 				prevCy = -1;
 			} else if(cy > -1){
 	            X += getKerning(cy,prevCy);
-				drawChar(cy, X, Y);
+				drawChar(cy, X, Y, vFlipped);
 				X += cps[cy].advance * letterSpacing;
 			}
 		}
@@ -1051,87 +1070,29 @@ void ofTrueTypeFont::createStringMesh(string c, float x, float y){
 	}
 }
 
-ofMesh & ofTrueTypeFont::getStringMesh(string c, float x, float y){
+const ofMesh & ofTrueTypeFont::getStringMesh(string c, float x, float y, bool vFlipped) const{
 	stringQuads.clear();
-	createStringMesh(c,x,y);
+	createStringMesh(c,x,y,vFlipped);
 	return stringQuads;
 }
 
-ofTexture & ofTrueTypeFont::getFontTexture(){
+const ofTexture & ofTrueTypeFont::getFontTexture() const{
 	return texAtlas;
 }
 
 //=====================================================================
-void ofTrueTypeFont::drawString(string c, float x, float y) {	
+void ofTrueTypeFont::drawString(string c, float x, float y) const{
 	if (!bLoadedOk){
-		ofLogError("ofTrueTypeFont") << "drawString(): font not allocated: line " << __LINE__ << " in " << __FILE__;
+		ofLogError("ofTrueTypeFont") << "drawString(): font not allocated";
 		return;
-	};
+	}
 	
-	bool alreadyBinded = binded;
+	ofGetCurrentRenderer()->drawString(*this,c,x,y);
 
-	if(!alreadyBinded) bind();
-	createStringMesh(c,x,y);
-	if(!alreadyBinded) unbind();
-
-}
-
-//-----------------------------------------------------------
-void ofTrueTypeFont::bind(){
-	if(!binded){
-	    // we need transparency to draw text, but we don't know
-	    // if that is set up in outside of this function
-	    // we "pushAttrib", turn on alpha and "popAttrib"
-	    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/pushattrib.html
-
-	    // **** note ****
-	    // I have read that pushAttrib() is slow, if used often,
-	    // maybe there is a faster way to do this?
-	    // ie, check if blending is enabled, etc...
-	    // glIsEnabled().... glGet()...
-	    // http://www.opengl.org/documentation/specs/man_pages/hardcopy/GL/html/gl/get.html
-	    // **************
-		// (a) record the current "alpha state, blend func, etc"
-
-		blend_enabled = glIsEnabled(GL_BLEND);
-		texture_2d_enabled = glIsEnabled(GL_TEXTURE_2D);
-#ifndef TARGET_PROGRAMMABLE_GL
-		glGetIntegerv( GL_BLEND_SRC, &blend_src );
-		glGetIntegerv( GL_BLEND_DST, &blend_dst );
-#else
-		//TODO: use blending mode to set it back afterwards
-		blend_src = GL_SRC_ALPHA;
-		blend_dst = GL_ONE_MINUS_SRC_ALPHA;
-#endif
-
-	    // (b) enable our regular ALPHA blending!
-	    glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		texAtlas.bind();
-		stringQuads.clear();
-		binded = true;
-	}
-}
-
-//-----------------------------------------------------------
-void ofTrueTypeFont::unbind(){
-	if(binded){
-		stringQuads.drawFaces();
-		texAtlas.unbind();
-
-		if( !blend_enabled )
-			glDisable(GL_BLEND);
-		if( !texture_2d_enabled )
-			glDisable(GL_TEXTURE_2D);
-		glBlendFunc( blend_src, blend_dst );
-
-		binded = false;
-	}
 }
 
 //=====================================================================
-void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
+void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) const{
 
     if (!bLoadedOk){
     	ofLogError("ofTrueTypeFont") << "drawStringAsShapes(): font not allocated: line " << __LINE__ << " in " << __FILE__;
@@ -1173,7 +1134,7 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 				prevCy = -1;
 		  } else if(cy > -1){
 	            X += getKerning(cy,prevCy);
-				drawCharAsShape((unsigned char)c[index], X, Y);
+				drawCharAsShape((unsigned char)c[index], X, Y, ofIsVFlipped(), ofGetStyle().bFill);
 				X += cps[cy].advance * letterSpacing;
 		  }
 		}
@@ -1184,6 +1145,6 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) {
 }
 
 //-----------------------------------------------------------
-int ofTrueTypeFont::getNumCharacters() {
+int ofTrueTypeFont::getNumCharacters() const{
 	return nCharacters;
 }

@@ -70,82 +70,54 @@ ofAppNoWindow::ofAppNoWindow(){
 }
 
 
-void ofAppNoWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
-	width = w;
-	height = h;
-}
-
-//------------------------------------------------------------
-void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
+//----------------------------------------------------------
+void ofAppNoWindow::setup(const ofWindowSettings & settings){
+	width = settings.width;
+	height = settings.height;
 
 	ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofNoopRenderer));
+}
 
-	ofAppPtr = appPtr;
+//----------------------------------------------------------
+void ofAppNoWindow::update(){
+
+    /// listen for escape
+    #ifdef TARGET_WIN32
+    if (GetAsyncKeyState(VK_ESCAPE))
+    	events().notifyKeyPressed(OF_KEY_ESC);
+    #endif
 
 	#if defined TARGET_OSX || defined TARGET_LINUX
-	// for keyboard
-	//set_conio_terminal_mode();
+	while ( kbhit() )
+	{
+		int key = getch();
+		if ( key == 27 )
+		{
+			events().notifyKeyPressed(OF_KEY_ESC);
+		}
+		else if ( key == /* ctrl-c */ 3 )
+		{
+			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
+			break;
+		}
+		else
+		{
+			events().notifyKeyPressed(key);
+		}
+	}
 	#endif
 
-	ofNotifySetup();
 
-    ofLogNotice("ofAppNoWindow")
-		<< "***" << endl
-		<< "***" << endl
-		<< "*** running a headless (no window) app" << endl
-		<< "***" << endl
-		<< "*** keyboard input works here" << endl
-		<< "***"<< endl
-		<< "*** press Esc or Ctrl-C to quit" << endl
-		<< "***" << endl;
-	while (true)
-	{
-        /// listen for escape
-        #ifdef TARGET_WIN32
-        if (GetAsyncKeyState(VK_ESCAPE))
-            ofNotifyKeyPressed(OF_KEY_ESC);
-        #endif
+	events().notifyUpdate();
+}
 
-		#if defined TARGET_OSX || defined TARGET_LINUX
-		while ( kbhit() )
-		{
-			int key = getch();
-			if ( key == 27 )
-			{
-				ofNotifyKeyPressed(OF_KEY_ESC);
-			}
-			else if ( key == /* ctrl-c */ 3 )
-			{
-				ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
-				OF_EXIT_APP(0);
-			}
-			else
-			{
-				ofNotifyKeyPressed(key);
-			}
-		}
-		#endif
-
-
-		ofNotifyUpdate();
-		ofNotifyDraw();
-
-	}
+//----------------------------------------------------------
+void ofAppNoWindow::draw(){
+	events().notifyDraw();
 }
 
 //------------------------------------------------------------
 void ofAppNoWindow::exitApp(){
-
-//  -- This already exists in ofExitCallback
-
-//	static ofEventArgs voidEventArgs;
-//
-//	if(ofAppPtr)ofAppPtr->exit();
-//
-//	#ifdef OF_USING_POCO
-//		ofNotifyEvent( ofEvents.exit, voidEventArgs );
-//	#endif
-
 	ofLogVerbose("ofAppNoWindow") << "terminating headless (no window) app!";
 
 
@@ -157,24 +129,34 @@ void ofAppNoWindow::exitApp(){
 	OF_EXIT_APP(0);
 }
 
+//----------------------------------------------------------
 ofPoint	ofAppNoWindow::getWindowPosition(){
 	return ofPoint(0,0);
 }
 
+//----------------------------------------------------------
 ofPoint	ofAppNoWindow::getWindowSize(){
 	return ofPoint(width,height);
 }
 
+//----------------------------------------------------------
 ofPoint	ofAppNoWindow::getScreenSize(){
 	return ofPoint(width,height);
 }
 
 
+//----------------------------------------------------------
 int	ofAppNoWindow::getWidth(){
 	return width;
 }
 
+//----------------------------------------------------------
 int	ofAppNoWindow::getHeight(){
 	return height;
 }
 
+
+//----------------------------------------------------------
+ofCoreEvents & ofAppNoWindow::events(){
+	return coreEvents;
+}

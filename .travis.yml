@@ -1,0 +1,27 @@
+language: node_js
+node_js: '0.10'
+env:
+  global:
+    - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
+branches:
+  only:
+    - master
+notifications:
+  email:
+    - jonas@halfdanj.dk
+before_install:
+  - sudo apt-get install python-software-properties
+  - sudo apt-add-repository -y ppa:libreoffice/libreoffice-4-2
+  - sudo apt-get update
+  - sudo apt-get install doxygen
+  - sudo apt-get install ncftp
+  - gem install sass --version "=3.2.12"
+  - gem install compass --version "=0.12.2"
+script:
+  - cd scripts/
+  - git clone https://github.com/halfdanJ/ofDocGenerator
+  - cd ofDocGenerator
+  - npm install
+  - npm run start
+after_success:
+  - "ncftpput -R -v -u $FTP_USER -p $FTP_PASSWORD 104.130.212.175 / output/*"

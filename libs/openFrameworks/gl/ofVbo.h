@@ -128,7 +128,6 @@ public:
 	static void disableVAOs();
 	static void enableVAOs();
 
-
 	bool hasAttribute(int attributePos_) const;
 
 private:
@@ -186,5 +185,8 @@ private:
 	VertexAttribute normalAttribute;
 	map<int,VertexAttribute> customAttributes;
 	
+	static bool vaoChecked;
+	static bool vaoSupported;
+
 	VertexAttribute & getOrCreateAttr(int location);
 };
