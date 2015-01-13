@@ -5,10 +5,10 @@ public:
 	ofFpsCounter();
 	ofFpsCounter(double targetFps);
 	void newFrame();
-	double getFps();
-	unsigned int getNumFrames();
-	unsigned long long getLastFrameNanos();
-	double getLastFrameSecs();
+	double getFps() const;
+	unsigned int getNumFrames() const;
+	unsigned long long getLastFrameNanos() const;
+	double getLastFrameSecs() const;
 
 private:
 	unsigned int nFrameCount;

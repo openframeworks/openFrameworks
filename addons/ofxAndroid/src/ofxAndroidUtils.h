@@ -37,11 +37,6 @@ jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string meth
 jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...);
 jobject ofxJavaCallObjectMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...);
 
-//void ofRunApp( ofxAndroidApp * app);
-
-
-void ofxRegisterMultitouch(ofxAndroidApp * app);
-
 void ofxAndroidAlertBox(string msg);
 int ofxAndroidProgressBox(string msg);
 void ofxAndroidDismissProgressBox(int id);

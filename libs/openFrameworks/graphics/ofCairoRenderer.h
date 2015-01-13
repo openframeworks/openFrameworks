@@ -10,6 +10,7 @@
 #include "ofMatrix4x4.h"
 #include "ofBaseTypes.h"
 #include "ofPath.h"
+#include "of3dGraphics.h"
 
 class ofCairoRenderer: public ofBaseRenderer{
 public:
@@ -41,18 +42,13 @@ public:
 	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
+    void draw(const ofNode& node) const;
 	void draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const;
 	void draw(const ofImage & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
-
-	void bind(const ofBaseVideoDraws & video) const;
-	void unbind(const ofBaseVideoDraws & video) const;
-
-	bool rendersPathPrimitives(){
-		return true;
-	}
+	ofPath & getPath();
 
 	//--------------------------------------------
 	// transformations
@@ -93,7 +89,6 @@ public:
 	void setDepthTest(bool depthTest);
 	void setBlendMode(ofBlendMode blendMode);
 	void setLineSmoothing(bool smooth);
-	void setSphereResolution(int res);
 	void enableAntiAliasing();
 	void disableAntiAliasing();
 
@@ -144,14 +139,23 @@ public:
 	void clear(float brightness, float a=0);
 	void clearAlpha();
 
+	void setBitmapTextMode(ofDrawBitmapMode mode);
+
+	ofStyle getStyle() const;
+	void pushStyle();
+	void popStyle();
+	void setStyle(const ofStyle & style);
+	void setCurveResolution(int resolution);
+	void setPolyMode(ofPolyWindingMode mode);
+
 	// drawing
-	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2);
-	void drawRectangle(float x, float y, float z, float w, float h);
-	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
-	void drawCircle(float x, float y, float z, float radius);
-	void drawSphere(float x, float y, float z, float radius);
-	void drawEllipse(float x, float y, float z, float width, float height);
-	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
+	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const;
+	void drawRectangle(float x, float y, float z, float w, float h) const;
+	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const;
+	void drawCircle(float x, float y, float z, float radius) const;
+	void drawEllipse(float x, float y, float z, float width, float height) const;
+	void drawString(string text, float x, float y, float z) const;
+	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const;
 
 	// cairo specifics
 	cairo_t * getCairoContext();
@@ -159,8 +163,14 @@ public:
 	ofPixels & getImageSurfacePixels();
 	ofBuffer & getContentBuffer();
 
+
+	virtual void bind(const ofCamera & camera, const ofRectangle & viewport){}
+	virtual void unbind(const ofCamera & camera){}
+
+	const of3dGraphics & get3dGraphics() const;
+	of3dGraphics & get3dGraphics();
+
 private:
-	void setStyle(const ofStyle & style);
 	ofVec3f transform(ofVec3f vec) const;
 	static _cairo_status stream_function(void *closure,const unsigned char *data, unsigned int length);
 	void draw(const ofPixels & img, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
@@ -169,7 +179,6 @@ private:
 	cairo_t * cr;
 	cairo_surface_t * surface;
 	bool bBackgroundAuto;
-	ofFloatColor bgColor;
 
 	stack<cairo_matrix_t> matrixStack;
 
@@ -181,7 +190,7 @@ private:
 	bool b3D;
 	ofMatrix4x4 projection;
 	ofMatrix4x4 modelView;
-	ofRectangle viewportRect;
+	ofRectangle viewportRect, originalViewport;
 
 	stack<ofMatrix4x4> projectionStack;
 	stack<ofMatrix4x4> modelViewStack;
@@ -192,11 +201,12 @@ private:
 	vector<ofPoint> sphereVerts;
 	vector<ofPoint> spherePoints;
 
-	ofFillFlag bFilled;
-	bool bSmoothHinted;
-	ofRectMode rectMode;
-
 	string filename;
 	ofBuffer streamBuffer;
 	ofPixels imageBuffer;
+
+	ofStyle currentStyle;
+	deque <ofStyle> styleHistory;
+	of3dGraphics graphics3d;
+	ofPath path;
 };

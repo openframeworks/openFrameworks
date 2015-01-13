@@ -372,7 +372,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.lStructSize = sizeof(ofn);
 		HWND hwnd = WindowFromDC(wglGetCurrentDC());
 		ofn.hwndOwner = hwnd;
-#ifdef __MINGW32_VERSION
+#ifdef __MINGW32__
 		char szFileName[MAX_PATH];
         memset(szFileName,0,260);
 		if(defaultPath!=""){
@@ -405,14 +405,14 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
         
-#ifdef __MINGW32_VERSION
+#ifdef __MINGW32__
 		ofn.lpstrTitle = windowTitle.c_str();
 #else
 		ofn.lpstrTitle = windowTitleW.c_str();
 #endif 
 
 		if(GetOpenFileName(&ofn)) {
-#ifdef __MINGW32_VERSION
+#ifdef __MINGW32__
 			results.filePath = string(szFileName);
 #else
 			results.filePath = convertWideToNarrow(szFileName);

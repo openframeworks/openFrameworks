@@ -26,7 +26,7 @@ public:
 
 	template<typename T>
 	void allocate(const ofPixels_<T> & data, GLenum usage){
-		allocate(data.size()*sizeof(T),data.getPixels(),usage);
+		allocate(data.size()*sizeof(T),data.getData(),usage);
 	}
 
 	/// true if allocate was called before

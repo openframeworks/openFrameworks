@@ -57,11 +57,11 @@ void ofApp::update(){
 		// only reload the shader if it is 'dirty', i.e. the user has either requested reloading
 		// or the 'isShaderDirty' flag has been initialized to true in setup()
 		
-		// Since we are using an ofPtr around the shader, the old shader will get destroyed
+		// Since we are using a shared_ptr around the shader, the old shader will get destroyed
 		// automatically as soon as we assign a new shader object to our mShdInstanced.
 		
 		ofLogNotice() << "Reloading Shader.";
-		mShdInstanced = ofPtr<ofShader>(new ofShader());
+		mShdInstanced = shared_ptr<ofShader>(new ofShader());
 		// most of the instanced drawing magic happens in the shaders:
 #ifdef USE_PROGRAMMABLE_GL
 		// if we are using programmable GL, we load the GLSL version 150 shader pair.

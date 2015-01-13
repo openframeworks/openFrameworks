@@ -10,7 +10,7 @@
 class ofxAndroidSoundStream : public ofBaseSoundStream{
 	public:
 		ofxAndroidSoundStream();
-		virtual ~ofxAndroidSoundStream();
+        ~ofxAndroidSoundStream();
 		
 		void listDevices();
 		void setDeviceID(int deviceID);
@@ -26,6 +26,7 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		
 		long unsigned long getTickCount();		
 
+        int getDeviceID(){return 0;}
 		int getNumInputChannels();
 		int getNumOutputChannels();
 		int getSampleRate();
