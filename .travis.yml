@@ -10,18 +10,18 @@ notifications:
   email:
     - jonas@halfdanj.dk
 before_install:
-  - sudo apt-get install python-software-properties
-  - sudo apt-add-repository -y ppa:libreoffice/libreoffice-4-2
-  - sudo apt-get update
-  - sudo apt-get install doxygen
-  - sudo apt-get install ncftp
-  - gem install sass --version "=3.2.12"
-  - gem install compass --version "=0.12.2"
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; sudo apt-get install python-software-properties
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; sudo apt-add-repository -y ppa:libreoffice/libreoffice-4-2
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; sudo apt-get update
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; sudo apt-get install doxygen
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; sudo apt-get install ncftp
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; gem install sass --version "=3.2.12"
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; gem install compass --version "=0.12.2"
 script:
-  - cd scripts/
-  - git clone https://github.com/halfdanJ/ofDocGenerator
-  - cd ofDocGenerator
-  - npm install
-  - npm run start
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; cd scripts/
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; git clone https://github.com/halfdanJ/ofDocGenerator
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; cd ofDocGenerator
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; npm install
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; npm run start
 after_success:
-  - "ncftpput -R -v -u $FTP_USER -p $FTP_PASSWORD 104.130.212.175 / output/*"
+  - if [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; ncftpput -R -v -u $FTP_USER -p $FTP_PASSWORD 104.130.212.175 / output/*
