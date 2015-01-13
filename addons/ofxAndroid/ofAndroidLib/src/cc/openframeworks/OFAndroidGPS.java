@@ -130,7 +130,6 @@ public class OFAndroidGPS extends OFAndroidObject implements LocationListener, S
 				float orientation[] = new float[3];
 				SensorManager.getOrientation(R, orientation);
 				
-				android.util.Log.d("COMPASS", String.valueOf(orientation[0] * 180 / Math.PI));
 				headingChanged(360 - orientation[0] * 180 / Math.PI); // orientation contains: azimut, pitch and roll
 			}
 		}
