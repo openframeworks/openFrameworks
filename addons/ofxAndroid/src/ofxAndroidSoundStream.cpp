@@ -7,6 +7,7 @@
 
 #include "ofBaseApp.h"
 #include "ofxAndroidSoundStream.h"
+#include "ofSoundStream.h"
 #include "ofUtils.h"
 #include "ofxAndroidUtils.h"
 #include "ofAppRunner.h"
@@ -47,8 +48,9 @@ ofxAndroidSoundStream::~ofxAndroidSoundStream(){
 	}
 }
 
-void ofxAndroidSoundStream::listDevices(){
-
+vector<ofSoundDevice> ofxAndroidSoundStream::getDeviceList(){
+    ofLogWarning("ofxAndroidSoundStream") << "getDeviceList() isn't implemented on android";
+    return vector<ofSoundDevice>();
 }
 
 void ofxAndroidSoundStream::setDeviceID(int deviceID){

@@ -10,12 +10,12 @@
 
 class ofxiOSSoundStream : public ofBaseSoundStream {
 
-    public:
+	public:
 		ofxiOSSoundStream();
 		~ofxiOSSoundStream();
 		
 		/// these are not implemented on iOS
-		void listDevices();
+		std::vector<ofSoundDevice> getDeviceList();
 		void setDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
@@ -44,18 +44,17 @@ class ofxiOSSoundStream : public ofBaseSoundStream {
 		static bool setMixWithOtherApps(bool bMix);
 		
 	private:
-    
-        ofBaseSoundInput * soundInputPtr;
-        ofBaseSoundOutput * soundOutputPtr;
-    
-        void * soundInputStream;
-        void * soundOutputStream;
-    
-        int numOfInChannels;
-        int numOfOutChannels;
-        int sampleRate;
-        int bufferSize;
-        int numOfBuffers;
+		ofBaseSoundInput * soundInputPtr;
+		ofBaseSoundOutput * soundOutputPtr;
+
+		void * soundInputStream;
+		void * soundOutputStream;
+
+		int numOfInChannels;
+		int numOfOutChannels;
+		int sampleRate;
+		int bufferSize;
+		int numOfBuffers;
 };
 
 #define ofxiPhoneSoundStream ofxiOSSoundStream
