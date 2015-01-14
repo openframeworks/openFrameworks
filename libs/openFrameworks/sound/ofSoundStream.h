@@ -79,9 +79,6 @@ void ofSoundStreamClose();
 /// \return all sound devices found on the system
 std::vector<ofSoundDevice> ofSoundStreamListDevices();
 
-/// \brief Get all devices which match the arguments (name can be a partial match)
-std::vector<ofSoundDevice> ofSoundStreamGetMatchingDevices(const std::string &name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX);
-
 /// \class ofSoundStream
 /// \brief Gives access to audio input and output devices
 ///
