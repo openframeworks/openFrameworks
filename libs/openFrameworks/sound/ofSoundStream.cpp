@@ -47,10 +47,6 @@ vector<ofSoundDevice> ofSoundStreamListDevices(){
 	return deviceList;
 }
 
-vector<ofSoundDevice> ofSoundStreamGetMatchingDevices(const string &name, unsigned int inChannels, unsigned int outChannels) {
-	return soundStreamOutput.getMatchingDevices(name, inChannels, outChannels);
-}
-
 //------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
 	#ifdef OF_SOUND_STREAM_TYPE
