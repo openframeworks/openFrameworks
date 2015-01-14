@@ -18,7 +18,23 @@
 #elif defined(OF_SOUNDSTREAM_EMSCRIPTEN)
 	#include "ofxEmscriptenSoundStream.h"
 	#define OF_SOUND_STREAM_TYPE ofxEmscriptenSoundStream
-#endif 
+#endif
+
+/// \brief Represents information about a sound device on the system.
+struct ofSoundDevice {
+	std::string name;
+	unsigned int deviceID;
+	unsigned int inputChannels;
+	unsigned int outputChannels;
+	bool isDefaultInput;
+	bool isDefaultOutput;
+	std::vector<unsigned int> sampleRates;
+	
+	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false) { }
+	
+	friend std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev);
+	friend std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs);
+};
 
 /// \brief Sets up and starts a global ofSoundStream.
 ///
@@ -59,8 +75,9 @@ void ofSoundStreamStart();
 /// \brief Stops the sound stream and also cleans up the stream's resources
 void ofSoundStreamClose();
 
-/// \brief Prints a list of available devices to the console
-void ofSoundStreamListDevices();
+/// \brief Prints a list of all available audio devices
+/// \return all sound devices found on the system
+std::vector<ofSoundDevice> ofSoundStreamListDevices();
 
 /// \class ofSoundStream
 /// \brief Gives access to audio input and output devices
@@ -91,12 +108,21 @@ public:
     
     void setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr);
     shared_ptr<ofBaseSoundStream> getSoundStream();
-
-    /// \brief prints a list of available audio devices to the console.
-    void listDevices();
+	
+	/// \brief Prints a list of available audio devices to the console
+	void printDeviceList();
+	
+	/// \brief Retrieves a list of available audio devices
+	std::vector<ofSoundDevice> getDeviceList();
+	
+	/// \brief Get all devices which match the arguments (name can be a partial match)
+	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX);
 
     /// \brief sets the device represented by the stream, see ofSoundStream::listDevices().
     void setDeviceID(int deviceID);
+	
+	/// \brief sets the device represented by the stream, see ofSoundStream::listDevices().
+	void setDevice(const ofSoundDevice& device);
 
     /// \brief Sets up and starts the stream.
     /// \param app pointer to the app which will own the sound stream.
@@ -169,7 +195,10 @@ public:
     /// \brief Queries the stream's buffer size.
     /// \return the current buffer size of the stream.
     int getBufferSize();
-    
+	
+	/// \brief Retrieves a list of available audio devices and prints device descriptions to the console
+	OF_DEPRECATED_MSG("Use printDeviceList instead", std::vector<ofSoundDevice> listDevices());
+	
 protected:
     shared_ptr<ofBaseSoundStream> soundStream;
 
