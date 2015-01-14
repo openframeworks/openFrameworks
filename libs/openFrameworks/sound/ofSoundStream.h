@@ -200,7 +200,7 @@ public:
     int getBufferSize();
 	
 	/// \brief Retrieves a list of available audio devices and prints device descriptions to the console
-	std::vector<ofSoundDevice> OF_DEPRECATED_MSG("Use printDeviceList instead", listDevices());
+	OF_DEPRECATED_MSG("Use printDeviceList instead", std::vector<ofSoundDevice> listDevices());
 	
 protected:
     shared_ptr<ofBaseSoundStream> soundStream;
