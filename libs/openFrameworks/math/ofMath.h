@@ -221,6 +221,19 @@ float ofLerp(float start, float stop, float amt);
 /// \param y2 Y position of second point.
 /// \returns float Distance between points.
 float ofDist(float x1, float y1, float x2, float y2);
+///
+/// \brief Calculates the 3D distance between two points.
+///
+/// Uses the [Pythagorean theorem](http://en.wikipedia.org/wiki/Pythagorean_theorem).
+///
+/// \param x1 X position of first point.
+/// \param y1 Y position of first point.
+/// \param z1 Z position of first point.
+/// \param x2 X position of second point.
+/// \param y2 Y position of second point.
+/// \param z2 Z position of second point.
+/// \returns float Distance between points.
+float ofDist(float x1, float y1, float z1, float x2, float y2, float z2);
 
 /// \brief Calculates the squared 2D distance between two points.
 ///
@@ -234,6 +247,21 @@ float ofDist(float x1, float y1, float x2, float y2);
 /// \param y2 Y position of second point.
 /// \returns distance-squared between two points.
 float ofDistSquared(float x1, float y1, float x2, float y2);
+
+/// \brief Calculates the squared 3D distance between two points.
+///
+/// Same as ofDist() but doesn't take the square root sqrt() of the result,
+/// which is a faster operation if you need to calculate and compare multiple
+/// distances.
+///
+/// \param x1 X position of first point.
+/// \param y1 Y position of first point.
+/// \param z1 Z position of first point.
+/// \param x2 X position of second point.
+/// \param y2 Y position of second point.
+/// \param z2 Z position of second point.
+/// \returns distance-squared between two points.
+float ofDistSquared(float x1, float y1, float z1, float x2, float y2, float z2);
 
 /// \}
 
