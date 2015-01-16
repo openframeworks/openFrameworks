@@ -256,7 +256,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 	// ideally the glPolygonMode (or the polygon draw mode) should be part of ofStyle so that we can keep track
 	// of its state on the client side...
 
-	//glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_LINE : GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_LINE : GL_FILL);
 #else
 	if(renderType == OF_MESH_POINTS){
 		draw(mesh.getVbo(),GL_POINTS,0,mesh.getNumVertices());
@@ -956,9 +956,17 @@ void ofGLProgrammableRenderer::setFillMode(ofFillFlag fill){
 	if(currentStyle.bFill){
 		path.setFilled(true);
 		path.setStrokeWidth(0);
+		#ifndef TARGET_OPENGLES
+			// GLES does not support glPolygonMode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		#endif
 	}else{
 		path.setFilled(false);
 		path.setStrokeWidth(currentStyle.lineWidth);
+		#ifndef TARGET_OPENGLES
+			// GLES does not support glPolygonMode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		#endif
 	}
 }
 
