@@ -523,7 +523,7 @@
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string>cp -rf bin/data/ "$TARGET_BUILD_DIR/$PRODUCT_NAME.app"
+			<string>rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
 
 
 
