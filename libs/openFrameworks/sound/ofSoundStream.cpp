@@ -205,7 +205,7 @@ vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name,
 	vector<ofSoundDevice> devs = getDeviceList();
 	vector<ofSoundDevice> hits;
 	
-	for(int i = 0; i < devs.size(); i++) {
+	for(size_t i = 0; i < devs.size(); i++) {
 		bool nameMatch = devs[i].name.find(name) != string::npos;
 		bool inMatch = (inChannels == UINT_MAX) || (devs[i].inputChannels == inChannels);
 		bool outMatch = (outChannels == UINT_MAX) || (devs[i].outputChannels == outChannels);
