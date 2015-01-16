@@ -4,7 +4,6 @@
 #include "ofxOpenCv.h"
 #include "ofxNetwork.h"
 #include "ofxOsc.h"
-//#include "ofxSynth.h"
 #include "ofxXmlSettings.h"
 #include "ofx3DModelLoader.h"
 #include "ofxAssimpModelLoader.h"
@@ -39,6 +38,5 @@ class ofApp : public ofBaseApp{
         ofxXmlSettings settings;
         ofx3DModelLoader modelLoader;
 		ofxAssimpModelLoader betterModelLoader;
-		//ofxSynth synth;
 		ofxThreadedImageLoader threadedLoader;
 };
