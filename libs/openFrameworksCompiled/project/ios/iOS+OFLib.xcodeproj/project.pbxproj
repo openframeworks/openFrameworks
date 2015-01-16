@@ -1264,7 +1264,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/debug";
 				ONLY_ACTIVE_ARCH = NO;
-				SDKROOT = "";
+				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SYMROOT = "$(SRCROOT)/../../lib/ios/";
 				VALID_ARCHS = armv7;
@@ -1285,7 +1285,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1.1;
 				OBJROOT = "$(SRCROOT)/../../lib/ios/build/release";
 				ONLY_ACTIVE_ARCH = NO;
-				SDKROOT = "";
+				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SYMROOT = "$(SRCROOT)/../../lib/ios/";
 				VALID_ARCHS = armv7;
