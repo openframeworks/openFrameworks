@@ -355,10 +355,14 @@ public:
         Pixel& operator--();
         Pixel operator--(int);
         Pixel operator+(int) const;
+        Pixel operator-(int) const;
         Pixel operator+=(int);
         bool operator!=(Pixel const& rhs) const;
         bool operator<(Pixel const& rhs) const;
         PixelType & operator[](int idx);
+        const PixelType & operator[](int idx) const;
+		int getComponentsPerPixel() const;
+		ofPixelFormat getPixelFormat() const;
 
 	private:
 		PixelType * pixel;
@@ -368,6 +372,7 @@ public:
 
 	struct Pixels{
 		Pixels(PixelType * begin, PixelType * end, int componentsPerPixel, ofPixelFormat pixelFormat);
+		Pixels(Pixel begin, Pixel end);
 		Pixel begin();
 		Pixel end();
 	private:
@@ -434,10 +439,13 @@ public:
 		ConstPixel& operator++();
 		ConstPixel operator++(int);
 		ConstPixel operator+(int) const;
+		ConstPixel operator-(int) const;
 		ConstPixel operator+=(int);
 		bool operator!=(ConstPixel const& rhs) const;
 		bool operator<(ConstPixel const& rhs) const;
 		const PixelType & operator[](int idx) const;
+		int getComponentsPerPixel() const;
+		ofPixelFormat getPixelFormat() const;
 
 	private:
 		const PixelType * pixel;
@@ -447,6 +455,7 @@ public:
 
 	struct ConstPixels{
 		ConstPixels(const PixelType * begin, const PixelType * end, int componentsPerPixel, ofPixelFormat pixelFormat);
+		ConstPixels(const ConstPixel & begin, const ConstPixel & end);
 		ConstPixel begin() const;
 		ConstPixel end() const;
 	private:
@@ -681,7 +690,7 @@ inline typename ofPixels_<PixelType>::Pixel& ofPixels_<PixelType>::Pixel::operat
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixel::operator--(int){
 	Pixel tmp(*this);
-	operator++();
+	operator--();
 	return tmp;
 }
 
@@ -689,6 +698,12 @@ inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixel::operato
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixel::operator+(int i) const{
 	return Pixel(pixel + componentsPerPixel * i, componentsPerPixel, pixelFormat);
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline typename ofPixels_<PixelType>::Pixel ofPixels_<PixelType>::Pixel::operator-(int i) const{
+	return Pixel(pixel - componentsPerPixel * i, componentsPerPixel, pixelFormat);
 }
 
 //----------------------------------------------------------------------
@@ -718,11 +733,38 @@ inline PixelType & ofPixels_<PixelType>::Pixel::operator[](int idx){
 
 //----------------------------------------------------------------------
 template<typename PixelType>
+inline const PixelType & ofPixels_<PixelType>::Pixel::operator[](int idx) const{
+	return pixel[idx];
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline int ofPixels_<PixelType>::Pixel::getComponentsPerPixel() const{
+	return componentsPerPixel;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline ofPixelFormat ofPixels_<PixelType>::Pixel::getPixelFormat() const{
+	return pixelFormat;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
 inline ofPixels_<PixelType>::Pixels::Pixels(PixelType * begin, PixelType * end, int componentsPerPixel, ofPixelFormat pixelFormat)
 :_begin(begin)
 ,_end(end)
 ,componentsPerPixel(componentsPerPixel)
 ,pixelFormat(pixelFormat){}
+
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline ofPixels_<PixelType>::Pixels::Pixels(Pixel begin, Pixel end)
+:_begin(&begin[0])
+,_end(&end[0])
+,componentsPerPixel(begin.getComponentsPerPixel())
+,pixelFormat(begin.getPixelFormat()){}
 
 //----------------------------------------------------------------------
 template<typename PixelType>
@@ -974,6 +1016,12 @@ inline typename ofPixels_<PixelType>::ConstPixel ofPixels_<PixelType>::ConstPixe
 
 //----------------------------------------------------------------------
 template<typename PixelType>
+inline typename ofPixels_<PixelType>::ConstPixel ofPixels_<PixelType>::ConstPixel::operator-(int i) const{
+	return ConstPixel(pixel - componentsPerPixel * i, componentsPerPixel, pixelFormat);
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
 inline typename ofPixels_<PixelType>::ConstPixel ofPixels_<PixelType>::ConstPixel::operator+=(int i){
 	pixel += componentsPerPixel * i;
 	return *this;
@@ -999,11 +1047,31 @@ inline const PixelType & ofPixels_<PixelType>::ConstPixel::operator[](int idx) c
 
 //----------------------------------------------------------------------
 template<typename PixelType>
+inline int ofPixels_<PixelType>::ConstPixel::getComponentsPerPixel() const{
+	return componentsPerPixel;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline ofPixelFormat ofPixels_<PixelType>::ConstPixel::getPixelFormat() const{
+	return pixelFormat;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
 inline ofPixels_<PixelType>::ConstPixels::ConstPixels(const PixelType * begin, const PixelType * end, int componentsPerPixel, ofPixelFormat pixelFormat)
 :_begin(begin)
 ,_end(end)
 ,componentsPerPixel(componentsPerPixel)
 ,pixelFormat(pixelFormat){}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline ofPixels_<PixelType>::ConstPixels::ConstPixels(const ConstPixel & begin, const ConstPixel & end)
+:_begin(&begin[0])
+,_end(&end[0])
+,componentsPerPixel(begin.getComponentsPerPixel())
+,pixelFormat(begin.getPixelFormat()){}
 
 //----------------------------------------------------------------------
 template<typename PixelType>
