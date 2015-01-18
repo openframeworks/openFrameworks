@@ -965,8 +965,8 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
         }
         area += points[points.size()-1].x * points[0].y - points[0].x * points[points.size()-1].y;
         area *= 0.5;
-
-        if(area < FLT_EPSILON) {
+        
+        if(fabsf(area) < FLT_EPSILON) {
             centroid2D = getBoundingBox().getCenter();
         } else {
             // centroid
