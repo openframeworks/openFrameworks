@@ -114,7 +114,7 @@ void ofArduino::initPins() {
 bool ofArduino::connect(string device, int baud){
 	connectTime = ofGetElapsedTimef();
 	_initialized = false;
-	_port.enumerateDevices();
+	_port.listDevices();
 	connected = _port.setup(device.c_str(), baud);
 	return connected;
 }
