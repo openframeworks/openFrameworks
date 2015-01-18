@@ -201,6 +201,17 @@ int ofSoundStream::getBufferSize(){
 }
 
 //------------------------------------------------------------
+ofSoundDevice::ofSoundDevice()
+: name("Unknown")
+, deviceID(0)
+, inputChannels(0)
+, outputChannels(0)
+, isDefaultInput(false)
+, isDefaultOutput(false) {
+
+}
+
+//------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels) {
 	vector<ofSoundDevice> devs = getDeviceList();
 	vector<ofSoundDevice> hits;
