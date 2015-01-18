@@ -24,7 +24,7 @@
 class ofSoundDevice {
 public:
 	
-	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false) { }
+	ofSoundDevice();
 	
 	friend std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev);
 	friend std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs);
