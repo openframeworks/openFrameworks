@@ -18,7 +18,8 @@ class of3dPrimitive : public ofNode {
 public:
     of3dPrimitive();
     virtual ~of3dPrimitive();
-    
+
+    of3dPrimitive(const ofMesh & mesh);
     of3dPrimitive(const of3dPrimitive & mom);
     of3dPrimitive & operator=(const of3dPrimitive & mom);
 
@@ -56,11 +57,12 @@ public:
     void removeMesh( int index );
     void removeTexture( int index );
     
+    using ofNode::draw;
     void drawVertices() const;
     void drawWireframe() const;
     void drawFaces() const;
-    void draw() const;
     void draw(ofPolyRenderMode renderType) const;
+    void draw() const;
     void drawNormals( float length, bool bFaceNormals=false ) const;
     void drawAxes(float a_size) const;
     

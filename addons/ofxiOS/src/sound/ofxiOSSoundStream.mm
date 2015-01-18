@@ -43,13 +43,30 @@ void ofxiOSSoundStream::setDeviceID(int _deviceID) {
 }
 
 //------------------------------------------------------------------------------
+int ofxiOSSoundStream::getDeviceID() {
+	return 0;
+}
+
+//------------------------------------------------------------------------------
 void ofxiOSSoundStream::setInput(ofBaseSoundInput * soundInput) {
 	soundInputPtr = soundInput;
+	[(ofxiOSSoundStreamDelegate *)[(id)soundInputStream delegate] setInput:soundInputPtr];
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
 	soundOutputPtr = soundOutput;
+	[(ofxiOSSoundStreamDelegate *)[(id)soundOutputStream delegate] setOutput:soundOutputPtr];
+}
+
+//------------------------------------------------------------------------------
+ofBaseSoundInput * ofxiOSSoundStream::getInput(){
+	return soundInputPtr;
+}
+
+//------------------------------------------------------------------------------
+ofBaseSoundOutput * ofxiOSSoundStream::getOutput(){
+	return soundOutputPtr;
 }
 
 //------------------------------------------------------------------------------

@@ -295,22 +295,20 @@ ofFloatColor ofLight::getSpecularColor() const {
 }
 
 //----------------------------------------
-void ofLight::customDraw(){
+void ofLight::customDraw(const ofBaseRenderer * renderer) const{;
     if(getIsPointLight()) {
-        ofDrawSphere( 0,0,0, 10);
+        renderer->drawSphere( 0,0,0, 10);
     } else if (getIsSpotlight()) {
         float coneHeight = (sin(data->spotCutOff*DEG_TO_RAD) * 30.f) + 1;
         float coneRadius = (cos(data->spotCutOff*DEG_TO_RAD) * 30.f) + 8;
-		ofPushMatrix();
-		ofRotate(-90, 1, 0, 0);
-		ofDrawCone(0, -(coneHeight*.5), 0, coneHeight, coneRadius);
-		ofPopMatrix();
+		const_cast<ofBaseRenderer*>(renderer)->rotate(-90,1,0,0);
+		renderer->drawCone(0, -(coneHeight*.5), 0, coneHeight, coneRadius);
     } else  if (getIsAreaLight()) {
-		ofPushMatrix();
-		ofDrawPlane(data->width,data->height);
-		ofPopMatrix();
+    	const_cast<ofBaseRenderer*>(renderer)->pushMatrix();
+		renderer->drawPlane(data->width,data->height);
+		const_cast<ofBaseRenderer*>(renderer)->popMatrix();
     }else{
-        ofDrawBox(10);
+        renderer->drawBox(10);
     }
     ofDrawAxis(20);
 }

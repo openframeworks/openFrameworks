@@ -5,6 +5,9 @@
 #include "ofShader.h"
 #include "ofMatrixStack.h"
 #include "ofVboMesh.h"
+#include "of3dGraphics.h"
+#include "ofBitmapFont.h"
+#include "ofPath.h"
 
 
 class ofShapeTessellation;
@@ -19,7 +22,7 @@ public:
 	ofGLProgrammableRenderer(const ofAppBaseWindow * window);
 	~ofGLProgrammableRenderer();
 
-	void setup(const string & glslVersion);
+	void setup(int glVersionMajor, int glVersionMinor);
 
     static const string TYPE;
 	const string & getType(){ return TYPE; }
@@ -31,22 +34,25 @@ public:
     
 	void update();
 	using ofBaseRenderer::draw;
+	using ofBaseGLRenderer::draw;
 	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
+    void draw(const ofNode& node) const;
 	void draw(const ofPolyline & poly) const;
 	void draw(const ofPath & path) const;
 	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
+	void draw(const ofTexture & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
     void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
-
-	void bind(const ofBaseVideoDraws & video) const;
-	void unbind(const ofBaseVideoDraws & video) const;
-
-	bool rendersPathPrimitives(){
-		return false;
-	}
+	void draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const;
+	void drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const;
+	void drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const;
+	void drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const;
+	void draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const;
+	void drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode renderType, int primCount) const;
+    ofPath & getPath();
     
     
     
@@ -59,7 +65,7 @@ public:
 	// if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
 	// if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 	void viewport(ofRectangle viewport);
-	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=ofIsVFlipped());
+	void viewport(float x = 0, float y = 0, float width = -1, float height = -1, bool vflip=true);
 	void setupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 	void setupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 	void setOrientation(ofOrientation orientation, bool vFlip);
@@ -120,7 +126,6 @@ public:
 	void setFillMode(ofFillFlag fill);
 	ofFillFlag getFillMode();
 	void setCircleResolution(int res);
-	void setSphereResolution(int res);
 	void setRectMode(ofRectMode mode);
 	ofRectMode getRectMode();
 	void setLineWidth(float lineWidth);
@@ -139,6 +144,8 @@ public:
 	void setColor(const ofColor & color, int _a);
 	void setColor(int gray); // new set a color as grayscale with one argument
 	void setHexColor( int hexColor ); // hex, like web 0xFF0033;
+
+	void setBitmapTextMode(ofDrawBitmapMode mode);
     
 	// bg color
 	ofColor getBackgroundColor();
@@ -158,47 +165,43 @@ public:
     
     
 	// drawing
-	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2);
-	void drawRectangle(float x, float y, float z, float w, float h);
-	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
-	void drawCircle(float x, float y, float z, float radius);
-	void drawEllipse(float x, float y, float z, float width, float height);
-	void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode);
+	void drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const;
+	void drawRectangle(float x, float y, float z, float w, float h) const;
+	void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const;
+	void drawCircle(float x, float y, float z, float radius) const;
+	void drawEllipse(float x, float y, float z, float width, float height) const;
+	void drawString(string text, float x, float y, float z) const;
+	void drawString(const ofTrueTypeFont & font, string text, float x, float y) const;
 
-	const ofShader & getCurrentShader() const;
 
-	void enableTextureTarget(int textureTarget, int textureID, int textureLocation);
+	void enableTextureTarget(const ofTexture & tex, int textureLocation);
 	void disableTextureTarget(int textureTarget, int textureLocation);
-	void setAlphaMaskTex(ofTexture & tex);
+	void setAlphaMaskTex(const ofTexture & tex);
 	void disableAlphaMask();
 	GLenum getCurrentTextureTarget();
 
-	void beginCustomShader(const ofShader & shader);
-	void endCustomShader();
+	const ofShader & getCurrentShader() const;
 
-	void setCurrentMaterial(ofBaseMaterial * material);
+	void bind(const ofBaseMaterial & material);
+	void bind(const ofFbo & fbo, bool setupPerspective);
+	void bind(const ofShader & shader);
+	void bind(const ofTexture & texture, int location);
+	void bind(const ofBaseVideoDraws & video);
+	void bind(const ofCamera & camera, const ofRectangle & viewport);
+	void unbind(const ofBaseMaterial & material);
+	void unbind(const ofFbo & fbo);
+	void unbind(const ofShader & shader);
+	void unbind(const ofTexture & texture, int location);
+	void unbind(const ofBaseVideoDraws & video);
+	void unbind(const ofCamera & camera);
 
-	void setAttributes(bool vertices, bool color, bool tex, bool normals);
-	void setAlphaBitmapText(bool bitmapText);
+	ofStyle getStyle() const;
+	void pushStyle();
+	void popStyle();
+	void setStyle(const ofStyle & style);
+	void setCurveResolution(int resolution);
+	void setPolyMode(ofPolyWindingMode mode);
 
-	ofShader & defaultTexRectColor() const;
-	ofShader & defaultTexRectNoColor() const;
-	ofShader & defaultTex2DColor() const;
-	ofShader & defaultTex2DNoColor() const;
-	ofShader & defaultNoTexColor() const;
-	ofShader & defaultNoTexNoColor() const;
-	ofShader & alphaMaskRectShader() const;
-	ofShader & alphaMask2DShader() const;
-	ofShader & bitmapStringShader() const;
-	ofShader & defaultUniqueShader() const;
-	ofShader & getShaderPlanarYUY2() const;
-	ofShader & getShaderNV12() const;
-	ofShader & getShaderNV21() const;
-	ofShader & getShaderPlanarYUV() const;
-	ofShader & getShaderPlanarYUY2Rect() const;
-	ofShader & getShaderNV12Rect() const;
-	ofShader & getShaderNV21Rect() const;
-	ofShader & getShaderPlanarYUVRect() const;
 	const ofShader * getVideoShader(const ofBaseVideoDraws & video) const;
 	void setVideoShaderUniforms(const ofBaseVideoDraws & video, const ofShader & shader) const;
 
@@ -220,24 +223,26 @@ public:
 	void setLightPosition(int lightIndex, const ofVec4f & position){}
 	void setLightSpotDirection(int lightIndex, const ofVec4f & direction){}
 
+	string defaultVertexShaderHeader(GLenum textureTarget);
+	string defaultFragmentShaderHeader(GLenum textureTarget);
+
+	int getGLVersionMajor();
+	int getGLVersionMinor();
+
+	void saveScreen(int x, int y, int w, int h, ofPixels & pixels);
+	void saveFullViewport(ofPixels & pixels);
+
+	const of3dGraphics & get3dGraphics() const;
+	of3dGraphics & get3dGraphics();
 private:
 
 
-	mutable ofPolyline circlePolyline;
-#if defined(TARGET_OPENGLES) && !defined(TARGET_EMSCRIPTEN)
+	ofPolyline circlePolyline;
 	mutable ofMesh circleMesh;
 	mutable ofMesh triangleMesh;
 	mutable ofMesh rectMesh;
 	mutable ofMesh lineMesh;
 	mutable ofVbo meshVbo;
-#else
-	mutable ofVboMesh circleMesh;
-	mutable ofVboMesh triangleMesh;
-	mutable ofVboMesh rectMesh;
-	mutable ofVboMesh lineMesh;
-	mutable ofVbo meshVbo;
-	mutable ofVbo vertexDataVbo;
-#endif
 
 	void uploadCurrentMatrix();
 
@@ -249,16 +254,14 @@ private:
 	void uploadMatrices();
 	void setDefaultUniforms();
 
+	void setAttributes(bool vertices, bool color, bool tex, bool normals);
+	void setAlphaBitmapText(bool bitmapText);
+
     
 	ofMatrixStack matrixStack;
 
 	bool bBackgroundAuto;
-	ofFloatColor bgColor;
-    ofColor currentColor;
-    
-	ofFillFlag bFilled;
-	bool bSmoothHinted;
-	ofRectMode rectMode;
+	int major, minor;
 	
 	const ofShader * currentShader;
 
@@ -269,6 +272,33 @@ private:
 	bool wrongUseLoggedOnce;
 	bool uniqueShader;
 
-	ofBaseMaterial * currentMaterial;
+	const ofBaseMaterial * currentMaterial;
 	int alphaMaskTextureTarget;
+
+	ofStyle currentStyle;
+	deque <ofStyle> styleHistory;
+	of3dGraphics graphics3d;
+	ofBitmapFont bitmapFont;
+	ofPath path;
+	const ofAppBaseWindow * window;
+
+
+	ofShader defaultTexRectColor;
+	ofShader defaultTexRectNoColor;
+	ofShader defaultTex2DColor;
+	ofShader defaultTex2DNoColor;
+	ofShader defaultNoTexColor;
+	ofShader defaultNoTexNoColor;
+	ofShader alphaMaskRectShader;
+	ofShader alphaMask2DShader;
+	ofShader bitmapStringShader;
+	ofShader defaultUniqueShader;
+	ofShader shaderPlanarYUY2;
+	ofShader shaderNV12;
+	ofShader shaderNV21;
+	ofShader shaderPlanarYUV;
+	ofShader shaderPlanarYUY2Rect;
+	ofShader shaderNV12Rect;
+	ofShader shaderNV21Rect;
+	ofShader shaderPlanarYUVRect;
 };

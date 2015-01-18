@@ -178,7 +178,6 @@ public:
 		bAllocated = false;
 		bUseExternalTextureID = false;
 		useTextureMatrix = false;
-		isBound = false;
 		
 		minFilter = GL_LINEAR;
 		magFilter = GL_LINEAR;
@@ -212,8 +211,7 @@ public:
 	GLint wrapModeVertical; ///< How will the texture wrap around vertically?
 	
 private:
-	mutable bool isBound;  ///< Is the texture already bound?
-	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind.
+	shared_ptr<ofTexture> alphaMask; ///< Optional alpha mask to bind
 	bool bUseExternalTextureID; ///< Are we using an external texture ID? 
 	ofMatrix4x4 textureMatrix; ///< For required transformations.
 	bool useTextureMatrix; ///< Apply the transformation matrix?
@@ -623,6 +621,9 @@ class ofTexture : public ofBaseDraws {
 	/// \param sh Subsection height within the texture.
 	void drawSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
 
+	ofMesh getMeshForSubsection(float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh, bool vflipped, ofRectMode rectMode) const;
+	ofMesh getQuad(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3, const ofPoint & p4) const;
+
 	/// \brief Get a mesh that has the texture coordinates set.
 	///
 	/// \sa drawSubsection(float x, float y, float w, float h, float sx, float sy)
@@ -663,6 +664,7 @@ class ofTexture : public ofBaseDraws {
 	void bindAsImage(GLuint unit, GLenum access, GLint level=0, GLboolean layered=0, GLint layer=0);
 #endif
 
+	const ofTexture * getAlphaMask() const;
 	/// \}
 
 	/// \name Size and coordinates
@@ -763,6 +765,11 @@ class ofTexture : public ofBaseDraws {
 	/// \param m The 4x4 texture matrix.
 	void setTextureMatrix(const ofMatrix4x4 & m);
 
+	const ofMatrix4x4 & getTextureMatrix() const;
+
+	bool isUsingTextureMatrix() const;
+
+	/// Disable the texture matrix.
 	/// \brief Disable the texture matrix.
 	void disableTextureMatrix();
 

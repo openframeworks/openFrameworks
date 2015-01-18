@@ -290,10 +290,10 @@ public:
 	/// \{
 
 	/// \brief Draws the path at 0,0. Calling draw() also calls tessellate()
-	void draw();
+	void draw() const;
 
 	/// \brief Draws the path at x,y. Calling draw() also calls tessellate()
-	void draw(float x, float y);
+	void draw(float x, float y) const;
 
 	/// \}
 	/// \name Functions
@@ -401,7 +401,7 @@ private:
 #endif
 	bool				cachedTessellationValid;
 
-	static ofTessellator tessellator;
+	ofTessellator tessellator;
 
 	bool				bHasChanged;
 	int					prevCurveRes;

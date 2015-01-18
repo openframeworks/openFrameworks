@@ -1,5 +1,3 @@
-#if defined  __arm__
-
 #include "ofxiOSVideoGrabber.h"
 #include "AVFoundationVideoGrabber.h"
 
@@ -17,7 +15,16 @@ vector <ofVideoDevice> ofxiOSVideoGrabber::listDevices() const {
 }
 
 bool ofxiOSVideoGrabber::setup(int w, int h) {
-    return grabber->initGrabber(w, h);
+    if(grabber->initGrabber(w, h)) {
+        return true;
+    } else {
+        ofLog(OF_LOG_ERROR, "Failed to init the ofxiOSVideoGrabber");
+#if TARGET_IPHONE_SIMULATOR
+        ofLog(OF_LOG_WARNING, "ofxiOSVideoGrabber::setup(int w, int h) :: The iOS Video Grabber will not function on the iOS Simulator");
+#endif
+        return false;
+    }
+    
 }
 
 float ofxiOSVideoGrabber::getHeight() const {
@@ -108,4 +115,3 @@ const ofPixels& ofxiOSVideoGrabber::getPixelsRef() const{
 	return getPixels();
 }
 
-#endif

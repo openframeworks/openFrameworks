@@ -70,15 +70,15 @@ ofAppNoWindow::ofAppNoWindow(){
 }
 
 
-void ofAppNoWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
-	width = w;
-	height = h;
+void ofAppNoWindow::setup(const ofWindowSettings & settings){
+	width = settings.width;
+	height = settings.height;
+
+	ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofNoopRenderer));
 }
 
 //------------------------------------------------------------
-void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
-
-	ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofNoopRenderer));
+void ofAppNoWindow::run(ofBaseApp * appPtr){
 
 	ofAppPtr = appPtr;
 
@@ -87,7 +87,7 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 	//set_conio_terminal_mode();
 	#endif
 
-	ofNotifySetup();
+	events().notifySetup();
 
     ofLogNotice("ofAppNoWindow")
 		<< "***" << endl
@@ -98,54 +98,80 @@ void ofAppNoWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 		<< "***"<< endl
 		<< "*** press Esc or Ctrl-C to quit" << endl
 		<< "***" << endl;
-	while (true)
+	while (!events().windowShouldClose())
 	{
         /// listen for escape
         #ifdef TARGET_WIN32
         if (GetAsyncKeyState(VK_ESCAPE))
-            ofNotifyKeyPressed(OF_KEY_ESC);
+        	events().notifyKeyPressed(OF_KEY_ESC);
         #endif
 
 		#if defined TARGET_OSX || defined TARGET_LINUX
-		while ( kbhit() )
+		while ( !events().windowShouldClose() && kbhit() )
 		{
 			int key = getch();
 			if ( key == 27 )
 			{
-				ofNotifyKeyPressed(OF_KEY_ESC);
+				events().notifyKeyPressed(OF_KEY_ESC);
 			}
 			else if ( key == /* ctrl-c */ 3 )
 			{
 				ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
-				OF_EXIT_APP(0);
+				break;
 			}
 			else
 			{
-				ofNotifyKeyPressed(key);
+				events().notifyKeyPressed(key);
 			}
 		}
 		#endif
 
 
-		ofNotifyUpdate();
-		ofNotifyDraw();
+		events().notifyUpdate();
+		events().notifyDraw();
 
 	}
+	events().notifyExit();
+}
+
+void ofAppNoWindow::update(){
+
+    /// listen for escape
+    #ifdef TARGET_WIN32
+    if (GetAsyncKeyState(VK_ESCAPE))
+    	events().notifyKeyPressed(OF_KEY_ESC);
+    #endif
+
+	#if defined TARGET_OSX || defined TARGET_LINUX
+	while ( !events().windowShouldClose() && kbhit() )
+	{
+		int key = getch();
+		if ( key == 27 )
+		{
+			events().notifyKeyPressed(OF_KEY_ESC);
+		}
+		else if ( key == /* ctrl-c */ 3 )
+		{
+			ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
+			break;
+		}
+		else
+		{
+			events().notifyKeyPressed(key);
+		}
+	}
+	#endif
+
+
+	events().notifyUpdate();
+}
+
+void ofAppNoWindow::draw(){
+	events().notifyDraw();
 }
 
 //------------------------------------------------------------
 void ofAppNoWindow::exitApp(){
-
-//  -- This already exists in ofExitCallback
-
-//	static ofEventArgs voidEventArgs;
-//
-//	if(ofAppPtr)ofAppPtr->exit();
-//
-//	#ifdef OF_USING_POCO
-//		ofNotifyEvent( ofEvents.exit, voidEventArgs );
-//	#endif
-
 	ofLogVerbose("ofAppNoWindow") << "terminating headless (no window) app!";
 
 
@@ -178,3 +204,7 @@ int	ofAppNoWindow::getHeight(){
 	return height;
 }
 
+
+ofCoreEvents & ofAppNoWindow::events(){
+	return coreEvents;
+}

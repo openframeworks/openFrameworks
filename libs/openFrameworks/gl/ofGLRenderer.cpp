@@ -1,8 +1,6 @@
 #include "ofGLRenderer.h"
 #include "ofMesh.h"
 #include "ofPath.h"
-#include "ofGraphics.h"
-#include "ofAppRunner.h"
 #include "ofMesh.h"
 #include "of3dPrimitives.h"
 #include "ofBitmapFont.h"
@@ -11,23 +9,31 @@
 #include "ofFbo.h"
 #include "ofLight.h"
 #include "ofMaterial.h"
+#include "ofCamera.h"
+#include "ofTrueTypeFont.h"
+#include "ofNode.h"
 
 const string ofGLRenderer::TYPE="GL";
 
 //----------------------------------------------------------
-ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * window)
-:matrixStack(window){
+ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
+:matrixStack(_window)
+,graphics3d(this){
 	bBackgroundAuto = true;
 
 	linePoints.resize(2);
 	rectPoints.resize(4);
 	triPoints.resize(3);
-	fillFlag = OF_FILLED;
-	bSmoothHinted = false;
 	normalsEnabled = false;
-	lightingEnabled = true;
-	rectMode = OF_RECTMODE_CORNER;
+	lightingEnabled = false;
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
+	window = _window;
+}
+
+void ofGLRenderer::setup(){
+	setupGraphicDefaults();
+	viewport();
+	setupScreenPerspective();
 }
 
 void ofGLRenderer::startRender(){
@@ -42,7 +48,7 @@ void ofGLRenderer::startRender(){
     #endif
 
 	if ( getBackgroundAuto() ){// || ofGetFrameNum() < 3){
-		clear();
+		background(currentStyle.bgColor);
 	}
 }
 
@@ -52,7 +58,7 @@ void ofGLRenderer::finishRender(){
 
 //----------------------------------------------------------
 void ofGLRenderer::update(){
-    matrixStack.setRenderSurface(*ofGetWindowPtr());
+    matrixStack.setRenderSurface(*window);
 }
 
 //----------------------------------------------------------
@@ -105,7 +111,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextu
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
-		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->startSmoothing();
+		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 #ifndef TARGET_OPENGLES
 		glPushAttrib(GL_POLYGON_BIT);
 		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
@@ -168,30 +174,86 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 #endif
-		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->endSmoothing();
+		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->endSmoothing();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const{
+	drawInstanced(mesh,renderType,1);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode renderType, int primCount) const{
+	if(mesh.getNumVertices()==0) return;
+	GLuint mode = ofGetGLPrimitiveMode(mesh.getMode());
+#ifndef TARGET_OPENGLES
+	glPushAttrib(GL_POLYGON_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
+	if(mesh.getNumIndices() && renderType!=OF_MESH_POINTS){
+		if (primCount <= 1) {
+			drawElements(mesh.getVbo(),mode,mesh.getNumIndices());
+		} else {
+			drawElementsInstanced(mesh.getVbo(),mode,mesh.getNumIndices(),primCount);
+		}
+	}else{
+		if (primCount <= 1) {
+			draw(mesh.getVbo(),mode,0,mesh.getNumVertices());
+		} else {
+			drawInstanced(mesh.getVbo(),mode,0,mesh.getNumVertices(),primCount);
+		}
+	}
+	glPopAttrib(); //TODO: GLES doesnt support polygon mode, add renderType to gl renderer?
+#else
+	if(renderType == OF_MESH_POINTS){
+		draw(mesh.getVbo(),GL_POINTS,0,mesh.getNumVertices());
+	}else if(renderType == OF_MESH_WIREFRAME){
+		if(mesh.getNumIndices()){
+			drawElements(mesh.getVbo(),GL_LINES,mesh.getNumIndices());
+		}else{
+			draw(mesh.getVbo(),GL_LINES,0,mesh.getNumVertices());
+		}
+	}else{
+		if(mesh.getNumIndices()){
+			drawElements(mesh.getVbo(),mode,mesh.getNumIndices());
+		}else{
+			draw(mesh.getVbo(),mode,0,mesh.getNumVertices());
+		}
+	}
+#endif
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType)  const{
+	const_cast<ofGLRenderer*>(this)->pushMatrix();
+	const_cast<ofGLRenderer*>(this)->multMatrix(model.getGlobalTransformMatrix());
 	if(model.isUsingVbo()){
-		model.getMesh().draw(renderType);
+		draw(static_cast<const ofVboMesh&>(model.getMesh()),renderType);
 	}else{
 		draw(model.getMesh(),renderType);
 	}
+	const_cast<ofGLRenderer*>(this)->popMatrix();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::draw(const ofNode& node) const{
+	const_cast<ofGLRenderer*>(this)->pushMatrix();
+	const_cast<ofGLRenderer*>(this)->multMatrix(node.getGlobalTransformMatrix());
+	node.customDraw(this);
+	const_cast<ofGLRenderer*>(this)->popMatrix();
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::draw(const ofPolyline & poly) const{
 	if(!poly.getVertices().empty()) {
 		// use smoothness, if requested:
-		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->startSmoothing();
+		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &poly.getVertices()[0].x);
 		glDrawArrays(poly.isClosed()?GL_LINE_LOOP:GL_LINE_STRIP, 0, poly.size());
 
 		// use smoothness, if requested:
-		if (bSmoothHinted) const_cast<ofGLRenderer*>(this)->endSmoothing();
+		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->endSmoothing();
 	}
 }
 
@@ -199,7 +261,7 @@ void ofGLRenderer::draw(const ofPolyline & poly) const{
 void ofGLRenderer::draw(const ofPath & shape) const{
 	ofColor prevColor;
 	if(shape.getUseShapeColor()){
-		prevColor = ofGetStyle().color;
+		prevColor = currentStyle.color;
 	}
 	ofGLRenderer * mut_this = const_cast<ofGLRenderer*>(this);
 	if(shape.isFilled()){
@@ -210,7 +272,7 @@ void ofGLRenderer::draw(const ofPath & shape) const{
 		draw(mesh,OF_MESH_FILL);
 	}
 	if(shape.hasOutline()){
-		float lineWidth = ofGetStyle().lineWidth;
+		float lineWidth = currentStyle.lineWidth;
 		if(shape.getUseShapeColor()){
 			mut_this->setColor( shape.getStrokeColor(), shape.getStrokeColor().a);
 		}
@@ -230,9 +292,9 @@ void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float 
 	if(image.isUsingTexture()){
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
-			tex.bind();
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
-			tex.unbind();
+			const_cast<ofGLRenderer*>(this)->bind(tex,0);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			const_cast<ofGLRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLRenderer") << "drawing an unallocated texture";
 		}
@@ -244,9 +306,9 @@ void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, f
 	if(image.isUsingTexture()){
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
-			tex.bind();
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
-			tex.unbind();
+			const_cast<ofGLRenderer*>(this)->bind(tex,0);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			const_cast<ofGLRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
 		}
@@ -258,9 +320,9 @@ void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, f
 	if(image.isUsingTexture()){
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
-			tex.bind();
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh),false,true,false);
-			tex.unbind();
+			const_cast<ofGLRenderer*>(this)->bind(tex,0);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			const_cast<ofGLRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
 		}
@@ -268,45 +330,254 @@ void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, f
 }
 
 //----------------------------------------------------------
+void ofGLRenderer::draw(const ofTexture & tex, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
+	if(tex.isAllocated()) {
+		const_cast<ofGLRenderer*>(this)->bind(tex,0);
+		draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+		const_cast<ofGLRenderer*>(this)->unbind(tex,0);
+	} else {
+		ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
+	}
+}
+
+//----------------------------------------------------------
 void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
 	if(video.isInitialized() && video.isUsingTexture()){
-		const ofTexture& tex = video.getTexture();
-		tex.bind();
-		draw(tex.getMeshForSubsection(x,y,0,w,h,0,0,w,h),false,true,false);
-		tex.unbind();
+		const_cast<ofGLRenderer*>(this)->bind(video);
+		draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,w,h,isVFlipped(),currentStyle.rectMode),false,true,false);
+		const_cast<ofGLRenderer*>(this)->unbind(video);
 	}
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::bind(const ofBaseVideoDraws & video) const{
+void ofGLRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const{
+	if(vbo.getUsingVerts()) {
+		vbo.bind();
+		glDrawArrays(drawMode, first, total);
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const{
+	if(vbo.getUsingVerts()) {
+		vbo.bind();
+#ifdef TARGET_OPENGLES
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
+#else
+        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+#endif
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const{
+	if(vbo.getUsingVerts()) {
+		vbo.bind();
+#ifdef TARGET_OPENGLES
+		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
+		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
+		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+		// glDrawArraysInstanced(drawMode, first, total, primCount);
+#else
+		glDrawArraysInstanced(drawMode, first, total, primCount);
+#endif
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const{
+	if(vbo.getUsingVerts()) {
+		vbo.bind();
+#ifdef TARGET_OPENGLES
+        // todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
+        // unfortunately there is currently no easy way within oF to query the current OpenGL version.
+        // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
+        ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
+        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
+#else
+        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
+#endif
+		vbo.unbind();
+	}
+}
+
+//----------------------------------------------------------
+ofPath & ofGLRenderer::getPath(){
+	return path;
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofBaseVideoDraws & video){
 	if(video.isInitialized() && video.isUsingTexture()){
-		video.getTexture().bind();
+		bind(video.getTexture(),0);
 	}
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::unbind(const ofBaseVideoDraws & video) const{
+void ofGLRenderer::unbind(const ofBaseVideoDraws & video){
 	if(video.isInitialized() && video.isUsingTexture()){
 		video.getTexture().unbind();
 	}
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setCurrentFBO(const ofFbo * fbo){
-	if(fbo!=NULL){
+void ofGLRenderer::bind(const ofShader & shader){
+	glUseProgram(shader.getProgram());
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofShader & shader){
+	glUseProgram(0);
+}
+
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofFbo & fbo, bool setupPerspective){
+	pushView();
+	matrixStack.setRenderSurface(fbo);
+	viewport();
+	if(setupPerspective){
+		setupScreenPerspective();
+	}else{
 		ofMatrix4x4 m;
 		glGetFloatv(GL_PROJECTION_MATRIX,m.getPtr());
 		m =  m*matrixStack.getOrientationMatrixInverse();
 		ofMatrixMode currentMode = matrixStack.getCurrentMatrixMode();
 		matrixStack.matrixMode(OF_MATRIX_PROJECTION);
 		matrixStack.loadMatrix(m.getPtr());
-		matrixStack.setRenderSurface(*fbo);
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
 		matrixMode(currentMode);
-	}else{
-		matrixStack.setRenderSurface(*ofGetWindowPtr());
 	}
+	fbo.bind();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofFbo & fbo){
+	fbo.unbind();
+	matrixStack.setRenderSurface(*window);
+	popView();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofBaseMaterial & material){
+	ofFloatColor diffuse = material.getDiffuseColor();
+	ofFloatColor specular = material.getSpecularColor();
+	ofFloatColor ambient = material.getAmbientColor();
+	ofFloatColor emissive = material.getEmissiveColor();
+	float shininess = material.getShininess();
+#ifndef TARGET_OPENGLES
+	// Material colors and properties
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, &diffuse.r);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, &specular.r);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, &ambient.r);
+	glMaterialfv(GL_FRONT, GL_EMISSION, &emissive.r);
+	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
+
+	glMaterialfv(GL_BACK, GL_DIFFUSE, &diffuse.r);
+	glMaterialfv(GL_BACK, GL_SPECULAR, &specular.r);
+	glMaterialfv(GL_BACK, GL_AMBIENT, &ambient.r);
+	glMaterialfv(GL_BACK, GL_EMISSION, &emissive.r);
+	glMaterialfv(GL_BACK, GL_SHININESS, &shininess);
+#elif !defined(TARGET_PROGRAMMABLE_GL)
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &diffuse.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specular.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &ambient.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &emissive.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
+#endif
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofBaseMaterial & material){
+	// Set default material colors and properties
+	ofMaterial::Data defaultData;
+#ifndef TARGET_OPENGLES
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, &defaultData.diffuse.r);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, &defaultData.specular.r);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, &defaultData.ambient.r);
+	glMaterialfv(GL_FRONT, GL_EMISSION, &defaultData.emissive.r);
+	glMaterialfv(GL_FRONT, GL_SHININESS, &defaultData.shininess);
+
+	glMaterialfv(GL_BACK, GL_DIFFUSE, &defaultData.diffuse.r);
+	glMaterialfv(GL_BACK, GL_SPECULAR, &defaultData.specular.r);
+	glMaterialfv(GL_BACK, GL_AMBIENT, &defaultData.ambient.r);
+	glMaterialfv(GL_BACK, GL_EMISSION, &defaultData.emissive.r);
+	glMaterialfv(GL_BACK, GL_SHININESS, &defaultData.shininess);
+#else
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &defaultData.diffuse.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &defaultData.specular.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &defaultData.ambient.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &defaultData.emissive.r);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &defaultData.shininess);
+#endif
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofTexture & texture, int location){
+	//we could check if it has been allocated - but we don't do that in draw()
+	if(texture.getAlphaMask()){
+		setAlphaMaskTex(*texture.getAlphaMask());
+	}
+	enableTextureTarget(texture,location);
+
+
+	if(ofGetUsingNormalizedTexCoords()) {
+		matrixMode(OF_MATRIX_TEXTURE);
+		pushMatrix();
+		ofMatrix4x4 m;
+
+#ifndef TARGET_OPENGLES
+		if(texture.texData.textureTarget == GL_TEXTURE_RECTANGLE_ARB)
+			m.makeScaleMatrix(texture.texData.width, texture.texData.height, 1.0f);
+		else
+#endif
+			m.makeScaleMatrix(texture.texData.width / texture.texData.tex_w, texture.texData.height / texture.texData.tex_h, 1.0f);
+
+		loadMatrix(m);
+		matrixMode(OF_MATRIX_MODELVIEW);
+	}
+	if(texture.isUsingTextureMatrix()){
+		matrixMode(OF_MATRIX_TEXTURE);
+		if(!ofGetUsingNormalizedTexCoords()) pushMatrix();
+		multMatrix(texture.getTextureMatrix());
+		matrixMode(OF_MATRIX_MODELVIEW);
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofTexture & texture, int location){
+	disableTextureTarget(texture.texData.textureTarget,location);
+	if(texture.getAlphaMask()){
+		disableAlphaMask();
+	}
+
+	if(texture.isUsingTextureMatrix() || ofGetUsingNormalizedTexCoords()) {
+		matrixMode(OF_MATRIX_TEXTURE);
+		popMatrix();
+		matrixMode(OF_MATRIX_MODELVIEW);
+	}
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofCamera & camera, const ofRectangle & _viewport){
+	pushView();
+	viewport(_viewport);
+	setOrientation(matrixStack.getOrientation(),camera.isVFlipped());
+	matrixMode(OF_MATRIX_PROJECTION);
+	loadMatrix(camera.getProjectionMatrix(_viewport).getPtr());
+	matrixMode(OF_MATRIX_MODELVIEW);
+	loadViewMatrix(camera.getModelViewMatrix());
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofCamera & camera){
+	popView();
 }
 
 //----------------------------------------------------------
@@ -474,11 +745,13 @@ void ofGLRenderer::setupScreenOrtho(float width, float height, float nearDist, f
 //----------------------------------------------------------
 //Resets openGL parameters back to OF defaults
 void ofGLRenderer::setupGraphicDefaults(){
-
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	setStyle(ofStyle());
+	path.setMode(ofPath::POLYLINES);
+	path.setUseShapeColor(false);
 }
 
 //----------------------------------------------------------
@@ -492,7 +765,13 @@ void ofGLRenderer::setCircleResolution(int res){
 		circlePolyline.clear();
 		circlePolyline.arc(0,0,0,1,1,0,360,res);
 		circlePoints.resize(circlePolyline.size());
+		path.setCircleResolution(res);
 	}
+}
+
+void ofGLRenderer::setPolyMode(ofPolyWindingMode mode){
+	currentStyle.polyMode = mode;
+	path.setPolyWindingMode(mode);
 }
 
 //our openGL wrappers
@@ -678,14 +957,16 @@ void ofGLRenderer::setColor(const ofColor & color, int _a){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::setColor(int _r, int _g, int _b){
-	glColor4f(_r/255.f,_g/255.f,_b/255.f,1.f);
+void ofGLRenderer::setColor(int r, int g, int b){
+	currentStyle.color.set(r,g,b);
+	glColor4f(r/255.f,g/255.f,b/255.f,1.f);
 }
 
 
 //----------------------------------------------------------
-void ofGLRenderer::setColor(int _r, int _g, int _b, int _a){
-	glColor4f(_r/255.f,_g/255.f,_b/255.f,_a/255.f);
+void ofGLRenderer::setColor(int r, int g, int b, int a){
+	currentStyle.color.set(r,g,b,a);
+	glColor4f(r/255.f,g/255.f,b/255.f,a/255.f);
 }
 
 //----------------------------------------------------------
@@ -737,13 +1018,13 @@ bool ofGLRenderer::getBackgroundAuto(){
 
 //----------------------------------------------------------
 ofColor ofGLRenderer::getBackgroundColor(){
-	return bgColor;
+	return currentStyle.bgColor;
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setBackgroundColor(const ofColor & color){
-	bgColor = color;
- 	glClearColor(bgColor[0],bgColor[1],bgColor[2], bgColor[3]);
+	currentStyle.bgColor = color;
+ 	glClearColor(currentStyle.bgColor[0]/255.,currentStyle.bgColor[1]/255.,currentStyle.bgColor[2]/255., currentStyle.bgColor[3]/255.);
 }
 
 //----------------------------------------------------------
@@ -769,26 +1050,41 @@ void ofGLRenderer::background(int r, int g, int b, int a){
 
 //----------------------------------------------------------
 void ofGLRenderer::setFillMode(ofFillFlag fill){
-	fillFlag = fill;
+	currentStyle.bFill = (fill==OF_FILLED);
+	if(currentStyle.bFill){
+		path.setFilled(true);
+		path.setStrokeWidth(0);
+	}else{
+		path.setFilled(false);
+		path.setStrokeWidth(currentStyle.lineWidth);
+	}
 }
 
 //----------------------------------------------------------
 ofFillFlag ofGLRenderer::getFillMode(){
-	return fillFlag;
+	if(currentStyle.bFill){
+		return OF_FILLED;
+	}else{
+		return OF_OUTLINE;
+	}
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setRectMode(ofRectMode mode){
-	rectMode = mode;
+	currentStyle.rectMode = mode;
 }
 
 //----------------------------------------------------------
 ofRectMode ofGLRenderer::getRectMode(){
-	return rectMode;
+	return currentStyle.rectMode;
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::setLineWidth(float lineWidth){
+	currentStyle.lineWidth = lineWidth;
+	if(!currentStyle.bFill){
+		path.setStrokeWidth(lineWidth);
+	}
 	glLineWidth(lineWidth);
 }
 
@@ -803,7 +1099,7 @@ void ofGLRenderer::setDepthTest(bool depthTest){
 
 //----------------------------------------------------------
 void ofGLRenderer::setLineSmoothing(bool smooth){
-	bSmoothHinted = smooth;
+	currentStyle.smoothing = smooth;
 }
 
 
@@ -888,6 +1184,79 @@ void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
 	}
 }
 
+void ofGLRenderer::setBitmapTextMode(ofDrawBitmapMode mode){
+	currentStyle.drawBitmapMode = mode;
+}
+
+ofStyle ofGLRenderer::getStyle() const{
+	return currentStyle;
+}
+
+void ofGLRenderer::pushStyle(){
+	styleHistory.push_back(currentStyle);
+	//if we are over the max number of styles we have set, then delete the oldest styles.
+	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
+		styleHistory.pop_front();
+		//should we warn here?
+		ofLogWarning("ofGraphics") << "ofPushStyle(): maximum number of style pushes << " << OF_MAX_STYLE_HISTORY << " reached, did you forget to pop somewhere?";
+	}
+}
+
+void ofGLRenderer::popStyle(){
+	if( styleHistory.size() ){
+		setStyle(styleHistory.front());
+		styleHistory.pop_back();
+	}
+}
+
+void ofGLRenderer::setStyle(const ofStyle & style){
+	//color
+	setColor((int)style.color.r, (int)style.color.g, (int)style.color.b, (int)style.color.a);
+
+	//bg color
+	setBackgroundColor(style.bgColor);
+
+	//circle resolution - don't worry it only recalculates the display list if the res has changed
+	setCircleResolution(style.circleResolution);
+
+	setCurveResolution(style.curveResolution);
+
+	//line width - finally!
+	setLineWidth(style.lineWidth);
+
+	//ofSetDepthTest(style.depthTest); removed since it'll break old projects setting depth test through glEnable
+
+	//rect mode: corner/center
+	setRectMode(style.rectMode);
+
+	//poly mode: winding type
+	setPolyMode(style.polyMode);
+
+	//fill
+	if(style.bFill ){
+		setFillMode(OF_FILLED);
+	}else{
+		setFillMode(OF_OUTLINE);
+	}
+
+	//smoothing
+	/*if(style.smoothing ){
+		enableSmoothing();
+	}else{
+		disableSmoothing();
+	}*/
+
+	//blending
+	setBlendMode(style.blendingMode);
+
+	currentStyle = style;
+}
+
+void ofGLRenderer::setCurveResolution(int resolution){
+	currentStyle.curveResolution = resolution;
+	path.setCurveResolution(resolution);
+}
+
 //----------------------------------------------------------
 void ofGLRenderer::enablePointSprites(){
 
@@ -927,26 +1296,26 @@ void ofGLRenderer::disableAntiAliasing(){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
+void ofGLRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
 	linePoints[0].set(x1,y1,z1);
 	linePoints[1].set(x2,y2,z2);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted) startSmoothing();
+	if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &linePoints[0].x);
 	glDrawArrays(GL_LINES, 0, 2);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted) endSmoothing();
+	if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h){
+void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h) const{
 
-	if (rectMode == OF_RECTMODE_CORNER){
+	if (currentStyle.rectMode == OF_RECTMODE_CORNER){
 		rectPoints[0].set(x,y,z);
 		rectPoints[1].set(x+w, y, z);
 		rectPoints[2].set(x+w, y+h, z);
@@ -959,82 +1328,81 @@ void ofGLRenderer::drawRectangle(float x, float y, float z,float w, float h){
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &rectPoints[0].x);
-	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
+	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 4);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+void ofGLRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{
 	triPoints[0].set(x1,y1,z1);
 	triPoints[1].set(x2,y2,z2);
 	triPoints[2].set(x3,y3,z3);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &triPoints[0].x);
-	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
+	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_LOOP, 0, 3);
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawCircle(float x, float y, float z,  float radius){
-	vector<ofPoint> & circleCache = circlePolyline.getVertices();
+void ofGLRenderer::drawCircle(float x, float y, float z,  float radius) const{
+	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circlePoints[i].set(radius*circleCache[i].x+x,radius*circleCache[i].y+y,z);
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
-	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float height){
+void ofGLRenderer::drawEllipse(float x, float y, float z, float width, float height) const{
 	float radiusX = width*0.5;
 	float radiusY = height*0.5;
-	vector<ofPoint> & circleCache = circlePolyline.getVertices();
+	const vector<ofPoint> & circleCache = circlePolyline.getVertices();
 	for(int i=0;i<(int)circleCache.size();i++){
 		circlePoints[i].set(radiusX*circlePolyline[i].x+x,radiusY*circlePolyline[i].y+y,z);
 	}
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) startSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->startSmoothing();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &circlePoints[0].x);
-	glDrawArrays((fillFlag == OF_FILLED) ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
+	glDrawArrays(currentStyle.bFill ? GL_TRIANGLE_FAN : GL_LINE_STRIP, 0, circlePoints.size());
 
 	// use smoothness, if requested:
-	if (bSmoothHinted && fillFlag == OF_OUTLINE) endSmoothing();
+	if (currentStyle.smoothing && !currentStyle.bFill) const_cast<ofGLRenderer*>(this)->endSmoothing();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDrawBitmapMode mode){
+void ofGLRenderer::drawString(string textString, float x, float y, float z) const{
 
-
-	float fontSize = 8.0f;
+	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
 	float sx = 0;
-	float sy = -fontSize;
+	float sy = 0;
 
 
 	///////////////////////////
@@ -1048,7 +1416,7 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 	ofRectangle rViewport;
 
-	switch (mode) {
+	switch (currentStyle.drawBitmapMode) {
 
 		case OF_BITMAPMODE_SIMPLE:
 
@@ -1059,20 +1427,20 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 		case OF_BITMAPMODE_SCREEN:
 
 			hasViewport = true;
-			pushView();
+			mutThis->pushView();
 
-			rViewport = ofGetWindowRect();
-			viewport(rViewport);
+			rViewport = matrixStack.getFullSurfaceViewport();
+			mutThis->viewport(rViewport);
 
-			matrixMode(OF_MATRIX_PROJECTION);
-			loadIdentityMatrix();
-			matrixMode(OF_MATRIX_MODELVIEW);
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_PROJECTION);
+			mutThis->loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->loadIdentityMatrix();
 
-			translate(-1, 1, 0);
-			scale(2/rViewport.width, -2/rViewport.height, 1);
+			mutThis->translate(-1, 1, 0);
+			mutThis->scale(2/rViewport.width, -2/rViewport.height, 1);
 
-			translate(x, y, 0);
+			mutThis->translate(x, y, 0);
 			break;
 
 		case OF_BITMAPMODE_VIEWPORT:
@@ -1080,28 +1448,28 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 			rViewport = getCurrentViewport();
 
 			hasProjection = true;
-			matrixMode(OF_MATRIX_PROJECTION);
-			pushMatrix();
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_PROJECTION);
+			mutThis->pushMatrix();
+			mutThis->loadIdentityMatrix();
 
 			hasModelView = true;
-			matrixMode(OF_MATRIX_MODELVIEW);
-			pushMatrix();
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->pushMatrix();
+			mutThis->loadIdentityMatrix();
 
-			translate(-1, 1, 0);
-			scale(2/rViewport.width, -2/rViewport.height, 1);
+			mutThis->translate(-1, 1, 0);
+			mutThis->scale(2/rViewport.width, -2/rViewport.height, 1);
 
-			translate(x, y, 0);
+			mutThis->translate(x, y, 0);
 			break;
 
 		case OF_BITMAPMODE_MODEL:
 
 			hasModelView = true;
-			matrixMode(OF_MATRIX_MODELVIEW);
-			pushMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->pushMatrix();
 
-			translate(x, y, z);
+			mutThis->translate(x, y, z);
 			break;
 
 		case OF_BITMAPMODE_MODEL_BILLBOARD:
@@ -1140,20 +1508,20 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 
 
 			hasProjection = true;
-			matrixMode(OF_MATRIX_PROJECTION);
-			pushMatrix();
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_PROJECTION);
+			mutThis->pushMatrix();
+			mutThis->loadIdentityMatrix();
 
 			hasModelView = true;
-			matrixMode(OF_MATRIX_MODELVIEW);
-			pushMatrix();
-			loadIdentityMatrix();
+			mutThis->matrixMode(OF_MATRIX_MODELVIEW);
+			mutThis->pushMatrix();
+			mutThis->loadIdentityMatrix();
 
-			translate(-1, -1, 0);
+			mutThis->translate(-1, -1, 0);
 
-			scale(2/rViewport.width, 2/rViewport.height, 1);
+			mutThis->scale(2/rViewport.width, 2/rViewport.height, 1);
 
-			translate(dScreen.x, dScreen.y, 0);
+			mutThis->translate(dScreen.x, dScreen.y, 0);
 		}
 			break;
 
@@ -1175,10 +1543,10 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	glAlphaFunc(GL_GREATER, 0);
 #endif
 
-	ofMesh charMesh = ofBitmapStringGetMesh(textString,0,0,mode);
-	ofBitmapStringGetTextureRef().bind();
+	ofMesh charMesh = bitmapFont.getMesh(textString,sx,sy,currentStyle.drawBitmapMode,isVFlipped());
+	mutThis->bind(bitmapFont.getTexture(),0);
 	draw(charMesh,OF_MESH_FILL,false,true,false);
-	ofBitmapStringGetTextureRef().unbind();
+	mutThis->unbind(bitmapFont.getTexture(),0);
 
 #ifndef TARGET_OPENGLES
 	glPopAttrib();
@@ -1187,42 +1555,61 @@ void ofGLRenderer::drawString(string textString, float x, float y, float z, ofDr
 	glBlendFunc(blend_src, blend_dst);
 
 	if (hasModelView)
-		popMatrix();
+		mutThis->popMatrix();
 
 	if (hasProjection)
 	{
-		matrixMode(OF_MATRIX_PROJECTION);
-		popMatrix();
-		matrixMode(OF_MATRIX_MODELVIEW);
+		mutThis->matrixMode(OF_MATRIX_PROJECTION);
+		mutThis->popMatrix();
+		mutThis->matrixMode(OF_MATRIX_MODELVIEW);
 	}
 
 	if (hasViewport)
-		popView();
+		mutThis->popView();
 
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::enableTextureTarget(int textureTarget, int textureID, int textureLocation){
+void ofGLRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
+	ofGLRenderer * mutThis = const_cast<ofGLRenderer*>(this);
+	bool blendEnabled = glIsEnabled(GL_BLEND);
+	GLint blend_src, blend_dst;
+	glGetIntegerv( GL_BLEND_SRC, &blend_src );
+	glGetIntegerv( GL_BLEND_DST, &blend_dst );
+
+    glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	mutThis->bind(font.getFontTexture(),0);
+	draw(font.getStringMesh(text,x,y,isVFlipped()),OF_MESH_FILL);
+	mutThis->unbind(font.getFontTexture(),0);
+
+	if(!blendEnabled){
+		glDisable(GL_BLEND);
+	}
+	glBlendFunc(blend_src, blend_dst);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::enableTextureTarget(const ofTexture & tex, int textureLocation){
 	glActiveTexture(GL_TEXTURE0+textureLocation);
 	glClientActiveTexture(GL_TEXTURE0+textureLocation);
-	glEnable(textureTarget);
-	glBindTexture( textureTarget, (GLuint)textureID);
+	glEnable( tex.getTextureData().textureTarget);
+	glBindTexture( tex.getTextureData().textureTarget, (GLuint)tex.getTextureData().textureID);
 	textureLocationsEnabled.insert(textureLocation);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::disableTextureTarget(int textureTarget, int textureLocation){
 	glActiveTexture(GL_TEXTURE0+textureLocation);
-	//glClientActiveTexture(GL_TEXTURE0+textureLocation);
 	glBindTexture( textureTarget, 0);
 	glDisable(textureTarget);
 	glActiveTexture(GL_TEXTURE0);
-	//glClientActiveTexture(GL_TEXTURE0);
 	textureLocationsEnabled.erase(textureLocation);
 }
 
-void ofGLRenderer::setAlphaMaskTex(ofTexture & tex){
-	enableTextureTarget(tex.getTextureData().textureTarget, tex.getTextureData().textureID, 1);
+void ofGLRenderer::setAlphaMaskTex(const ofTexture & tex){
+	enableTextureTarget(tex, 1);
 	alphaMaskTextureTarget = tex.getTextureData().textureTarget;
 }
 
@@ -1353,4 +1740,125 @@ void ofGLRenderer::setLightPosition(int lightIndex, const ofVec4f & position){
 void ofGLRenderer::setLightSpotDirection(int lightIndex, const ofVec4f & direction){
 	if(lightIndex==-1) return;
 	glLightfv(GL_LIGHT0 + lightIndex, GL_SPOT_DIRECTION, &direction.x);
+}
+
+int ofGLRenderer::getGLVersionMajor(){
+#ifdef TARGET_OPENGLES
+	return 1;
+#else
+	return 2;
+#endif
+}
+
+int ofGLRenderer::getGLVersionMinor(){
+#ifdef TARGET_OPENGLES
+	return 0;
+#else
+	return 1;
+#endif
+}
+
+
+void ofGLRenderer::saveFullViewport(ofPixels & pixels){
+	ofRectangle v = getCurrentViewport();
+	saveScreen(v.x,v.y,v.width,v.height,pixels);
+}
+
+void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
+
+    int sh = getViewportHeight();
+
+
+	#ifndef TARGET_OPENGLES
+	ofBufferObject buffer;
+	pixels.allocate(w, h, OF_PIXELS_RGB);
+	buffer.allocate(pixels.size(),GL_STATIC_READ);
+	if(isVFlipped()){
+		y = sh - y;
+		y -= h; // top, bottom issues
+	}
+
+	buffer.bind(GL_PIXEL_PACK_BUFFER);
+	glReadPixels(x, y, w, h, ofGetGlFormat(pixels), GL_UNSIGNED_BYTE, 0); // read the memory....
+	buffer.unbind(GL_PIXEL_PACK_BUFFER);
+	unsigned char * p = buffer.map<unsigned char>(GL_READ_ONLY);
+	ofPixels src;
+	src.setFromExternalPixels(p,w,h,OF_PIXELS_RGB);
+	src.mirrorTo(pixels,true,false);
+	buffer.unmap();
+
+	#else
+
+	int sw = getViewportWidth();
+	int numPixels   = w*h;
+	if( numPixels == 0 ){
+		ofLogError("ofImage") << "grabScreen(): unable to grab screen, image width and/or height are 0: " << w << "x" << h;
+		return;
+	}
+	pixels.allocate(w, h, OF_PIXELS_RGBA);
+
+	switch(matrixStack.getOrientation()){
+	case OF_ORIENTATION_DEFAULT:
+
+		if(isVFlipped()){
+			y = sh - y;   // screen is flipped vertically.
+			y -= h;
+		}
+
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		pixels.mirror(true,false);
+		break;
+	case OF_ORIENTATION_180:
+
+		if(isVFlipped()){
+			x = sw - x;   // screen is flipped horizontally.
+			x -= w;
+		}
+
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		pixels.mirror(false,true);
+		break;
+	case OF_ORIENTATION_90_RIGHT:
+		swap(w,h);
+		swap(x,y);
+		if(!isVFlipped()){
+			x = sw - x;   // screen is flipped horizontally.
+			x -= w;
+
+			y = sh - y;   // screen is flipped vertically.
+			y -= h;
+		}
+
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		pixels.mirror(true,true);
+		break;
+	case OF_ORIENTATION_90_LEFT:
+		swap(w, h);
+		swap(x, y);
+		if(isVFlipped()){
+			x = sw - x;   // screen is flipped horizontally.
+			x -= w;
+
+			y = sh - y;   // screen is flipped vertically.
+			y -= h;
+		}
+
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.getData());
+		pixels.mirror(true,true);
+		break;
+	}
+
+	#endif
+}
+
+const of3dGraphics & ofGLRenderer::get3dGraphics() const{
+	return graphics3d;
+}
+
+of3dGraphics & ofGLRenderer::get3dGraphics(){
+	return graphics3d;
 }

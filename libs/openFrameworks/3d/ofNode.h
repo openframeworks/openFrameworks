@@ -3,7 +3,7 @@
 
 #include "ofVectorMath.h"
 #include "of3dUtils.h"
-#include "ofGraphics.h"
+#include "ofAppRunner.h"
 
 
 // a generic 3d object in space with transformation (position, rotation, scale)
@@ -128,8 +128,8 @@ public:
 	// if you want to draw something at the position+orientation+scale of this node...
 	// ...call ofNode::transform(); write your draw code, and ofNode::restoreTransform();
 	// OR A simpler way is to extend ofNode and override ofNode::customDraw();
-	void transformGL() const;
-	void restoreTransformGL() const;
+	void transformGL(ofBaseRenderer * renderer = ofGetCurrentRenderer().get()) const;
+	void restoreTransformGL(ofBaseRenderer * renderer = ofGetCurrentRenderer().get()) const;
 	
 	
 	// resets this node's transformation
@@ -137,13 +137,16 @@ public:
 	
 
 	// if you extend ofNode and wish to change the way it draws, extend this
+	// try to not use global functions for rendering and instead use the passed
+	// renderer
+	virtual void customDraw(const ofBaseRenderer * renderer) const;
 	virtual void customDraw();
 
 	
 	// draw function. do NOT override this
 	// transforms the node to its position+orientation+scale
 	// and calls the virtual 'customDraw' method above which you CAN override
-	void draw() const;
+	virtual void draw() const;
 	
 protected:
 	ofNode *parent;
@@ -164,5 +167,6 @@ private:
 	ofVec3f axis[3];
 	
 	ofMatrix4x4 localTransformMatrix;
+	bool legacyCustomDrawOverrided;
 //	ofMatrix4x4 globalTransformMatrix;
 };

@@ -6,7 +6,6 @@
 #include "ofMatrix4x4.h"
 #include "ofRectangle.h"
 #include "ofTypes.h"
-#include "ofBaseTypes.h"
 
 /// \cond INTERNAL
 #define  	CIRC_RESOLUTION		    22
@@ -28,8 +27,8 @@
 /// ~~~~
 void ofSetColor(int r, int g, int b);
 
-/// \brief Sets the draw color with r,g,b,a 0-255. 
-/// 
+/// \brief Sets the draw color with r,g,b,a 0-255.
+///
 /// For alpha (transparency), you must first enable transparent blending
 /// (turned off by default for performance reasons) with
 /// ofEnableAlphaBlending()
@@ -89,14 +88,14 @@ ofColor ofGetBackgroundColor();
 OF_DEPRECATED_MSG("Use ofGetBackgroundColor instead",ofColor ofGetBackground());
 
 
-/// \brief Sets the background color. 
+/// \brief Sets the background color.
 ///
 /// It takes as input r,g,b (0-255). The background is
 /// cleared automatically, just before the draw() command, so if the background
 /// color is not changing, you could call this inside of setup() (once, at the
 /// start of the application). If the background color is changing, you can call
 /// this inside of update().
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::setup(){
 ///     ofBackground(255,0,0);  // Sets the background color to red
@@ -115,9 +114,9 @@ void ofBackground(const ofColor & c);
 void ofBackgroundHex(int hexColor, int alpha = 255);
 
 
-/// \brief Sets the background color to a gradient. 
-/// 
-/// It takes as input 2 ofColor() objects and a Gradient Mode. 
+/// \brief Sets the background color to a gradient.
+///
+/// It takes as input 2 ofColor() objects and a Gradient Mode.
 /// Must be called in the draw() function.
 ///
 /// Accepted modes are:
@@ -125,41 +124,41 @@ void ofBackgroundHex(int hexColor, int alpha = 255);
 /// Circular: `OF_GRADIENT_CIRCULAR`
 /// Linear: `OF_GRADIENT_LINEAR`
 /// Bar: `OF_GRADIENT_BAR`
-/// 
+///
 /// **Background Gradient: Circular:**
 /// ![Background Gradient Circular](graphics/bkgGradient_circular.png)
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-/// 
+///
 ///     ofColor colorOne(255, 0, 0);
 ///     ofColor colorTwo(0, 0, 0);
-/// 
+///
 ///     ofBackgroundGradient(colorOne, colorTwo, OF_GRADIENT_CIRCULAR);
 ///     // Sets the background to a circular gradient
 /// }
 /// ~~~~
-/// 
+///
 /// **Background Gradient: Linear:**
 /// ![Background Gradient Linear](graphics/bkgGradient_linear.png)
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-/// 
+///
 ///     ofColor colorOne(255, 0, 0);
 ///     ofColor colorTwo(0, 0, 0);
-/// 
+///
 ///     ofBackgroundGradient(colorOne, colorTwo, OF_GRADIENT_LINEAR);
 ///       // Sets the background to a linear gradient
 /// }
 /// ~~~~
-/// 
+///
 /// **Background Gradient: Bar:**
 /// ![Background Gradient Bar](graphics/bkgGradient_bar.png)
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-/// 
+///
 ///     ofColor colorOne(255, 0, 0);
 ///     ofColor colorTwo(0, 0, 0);
-/// 
+///
 ///     ofBackgroundGradient(colorOne, colorTwo, OF_GRADIENT_BAR);
 ///       // Sets the background to a bar gradient
 /// }
@@ -192,7 +191,7 @@ void ofSetBackgroundColorHex(int hexColor, int alpha = 255);
 /// \brief Sets the background clearing function to be auto (default) or not. If non-
 /// auto, then background clearing will not occur per frame (at the start of
 /// draw) but rather, whenever ofBackground is called.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::setup(){
 ///     ofSetBackgroundAuto(false); //disable automatic background redraw
@@ -245,7 +244,7 @@ void ofClear(float r, float g, float b, float a=0);
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with a
 /// grayscale value.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofClear(128);
@@ -256,7 +255,7 @@ void ofClear(float brightness, float a=0);
 
 /// \brief Clears the color and depth bits of current renderer and replaces it with
 /// an ofColor.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofColor myColor(0, 0, 255);
@@ -295,7 +294,7 @@ void ofDrawTriangle(const ofPoint & p1, const ofPoint & p2, const ofPoint & p3);
 /// Please keep in mind that drawing circle with different outline color and
 /// fill requires calling ofNoFill and ofSetColor for drawing stroke and
 /// ofFill and again ofSetColor for filled solid color circle.
-/// 
+///
 void ofDrawCircle(float x, float y, float radius);
 void ofDrawCircle(float x, float y, float z, float radius);
 void ofDrawCircle(const ofPoint & p, float radius);
@@ -337,7 +336,7 @@ void ofDrawRectangle(float x1,float y1,float w,float h);
 ///     rect.y = 10;
 ///     rect.width = 100;
 ///     rect.height = 100;
-/// 
+///
 ///     ofDrawRectangle(rect);
 /// }
 /// ~~~~
@@ -350,7 +349,7 @@ void ofDrawRectangle(const ofRectangle & r);
 ///     ofPoint p;      // create a point P
 ///     p.x = 10;       // set the x of the point
 ///     p.y = 10;       // set the y of the point
-/// 
+///
 ///     ofDrawRectangle(p, 80, 80); // Draw the rectangle
 /// }
 /// ~~~~
@@ -367,7 +366,7 @@ void ofDrawRectangle(float x,float y,float z,float w,float h);
 
 /// \brief Draws a rounded rectangle from the given rectangle using given
 /// radius.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofRectangle myRect;
@@ -375,7 +374,7 @@ void ofDrawRectangle(float x,float y,float z,float w,float h);
 ///     myRect.y = 10;
 ///     myRect.width = 100;
 ///     myRect.height = 100;
-/// 
+///
 ///     ofDrawRectRounded(myRect, 10);
 /// }
 /// ~~~~
@@ -383,7 +382,7 @@ void ofDrawRectRounded(const ofRectangle & b, float r);
 
 /// \brief Draws a rectangle from point p with a given width, height and radius of
 /// rounded corners.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofPoint p;
@@ -396,7 +395,7 @@ void ofDrawRectRounded(const ofPoint & p, float w, float h, float r);
 
 /// \brief Draws a rectangle from point X, Y with a given width, height and radius of
 /// rounded corners.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofDrawRectRounded(10, 10, 100, 100, 10);
@@ -407,7 +406,7 @@ void ofDrawRectRounded(float x, float y, float w, float h, float r);
 
 /// \brief Draws a rectangle from point X, Y, at depth Z with a given width, height and
 /// radius of rounded corners.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofDrawRectRounded(10, 10, 10, 100, 100, 10);
@@ -418,21 +417,21 @@ void ofDrawRectRounded(float x, float y, float z, float w, float h, float r);
 
 /// \brief Draws a rounded rectangle from point X, Y, at depth Z with a given width,
 /// height and radius of rounded corners.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofDrawRectRounded(10, 10, 10, 100, 100, 10);
 /// }
 /// ~~~~
 void ofDrawRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
-                                                        float topRightRadius,
-                                                        float bottomRightRadius,
-                                                        float bottomLeftRadius);
+					   float topRightRadius,
+					   float bottomRightRadius,
+					   float bottomLeftRadius);
 
 
 /// \brief Draws a rounded rectangle from the given rectangle using different given
 /// radius for each of the corners.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofRectangle myRect;
@@ -440,27 +439,27 @@ void ofDrawRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
 ///     myRect.y = 10;
 ///     myRect.width = 100;
 ///     myRect.height = 100;
-/// 
+///
 ///     ofDrawRectRounded( myRect, 10, 20, 30, 40 );
 /// }
 /// ~~~~
 void ofDrawRectRounded(const ofRectangle & b, float topLeftRadius,
-                                          float topRightRadius,
-                                          float bottomRightRadius,
-                                          float bottomLeftRadius);
+					   float topRightRadius,
+					   float bottomRightRadius,
+					   float bottomLeftRadius);
 
 /// \brief Draws a rounded rectangle from point X, Y, at depth Z with a given width,
 /// height and different radius for each rounded corner.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofDrawRectRounded(10, 10, 10, 100, 100, 10, 20, 30, 40);
 /// }
 /// ~~~~
 void ofDrawRectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
-                                                                float topRightRadius,
-                                                                float bottomRightRadius,
-                                                                float bottomLeftRadius);
+					   float topRightRadius,
+					   float bottomRightRadius,
+					   float bottomLeftRadius);
 
 /// \brief Draws a curve from point (x1, y1) to point (x2, y2). The curve is shaped by
 /// the two control points (x0,y0) and (x3,y3).
@@ -500,19 +499,19 @@ OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(float x, fl
 
 //----------------------------------------------------------
 OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
-                                                        float topRightRadius,
-                                                        float bottomRightRadius,
-                                                        float bottomLeftRadius));
+																	 float topRightRadius,
+																	 float bottomRightRadius,
+																	 float bottomLeftRadius));
 
 OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(const ofRectangle & b, float topLeftRadius,
-                                          float topRightRadius,
-                                          float bottomRightRadius,
-                                          float bottomLeftRadius));
+																	 float topRightRadius,
+																	 float bottomRightRadius,
+																	 float bottomLeftRadius));
 
 OF_DEPRECATED_MSG("Use ofDrawRectRounded instead",void ofRectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
-                                                                float topRightRadius,
-                                                                float bottomRightRadius,
-                                                                float bottomLeftRadius));
+																	 float topRightRadius,
+																	 float bottomRightRadius,
+																	 float bottomLeftRadius));
 
 OF_DEPRECATED_MSG("Use ofDrawCurve instead",void ofCurve(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3));
 OF_DEPRECATED_MSG("Use ofDrawCurve instead",void ofCurve(float x0, float y0, float z0, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3));
@@ -552,8 +551,8 @@ void ofVertices(const vector <ofPoint> & polyPoints);
 /// \brief Specifies a single point of a shape. The difference from ofVertex is that
 /// the line describing the edge of the shape between two points will be a
 /// curve as opposed to a straight line. The curve is automatically generated
-/// using the catmull from formula. 
-/// 
+/// using the catmull from formula.
+///
 /// This function has to be called between ofBeginShape() and ofEndShape().
 void ofCurveVertex(float x, float y);
 void ofCurveVertex(float x, float y, float z);
@@ -571,7 +570,7 @@ void ofBezierVertex(float x1, float y1, float z1, float x2, float y2, float z2, 
 
 
 /// \brief This tells the program that your shape is finished and that it should now
-/// draw it to the screen. 
+/// draw it to the screen.
 ///
 /// This function must be called otherwise you will not see your shape.
 ///
@@ -581,9 +580,9 @@ void ofEndShape(bool bClose = false);
 
 /// \brief Allows you to draw multiple contours within one shape. Call this
 /// between ofBeginShape() and ofEndShape() to create a new contour for your
-/// shape. 
+/// shape.
 ///
-/// \param bClose If set to true then the previous contour will be 
+/// \param bClose If set to true then the previous contour will be
 /// automatically closed. Default false
 void ofNextContour(bool bClose = false);  // for multi contour shapes!
 
@@ -596,15 +595,15 @@ void ofNextContour(bool bClose = false);  // for multi contour shapes!
 /// \brief Set the bitmap drawing mode
 ///
 /// Valid modes:
-/// 
+///
 ///     OF_BITMAPMODE_SIMPLE
-///     OF_BITMAPMODE_SCREEN 
+///     OF_BITMAPMODE_SCREEN
 ///     OF_BITMAPMODE_VIEWPORT
 ///     OF_BITMAPMODE_MODEL
 ///     OF_BITMAPMODE_MODEL_BILLBOARD
 void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 
-/// \brief Draws a bitmapped string, on screen, at point (x,y). 
+/// \brief Draws a bitmapped string, on screen, at point (x,y).
 ///
 /// For example, you can write some text on screen like this:
 /// ~~~~{.cpp}
@@ -631,7 +630,7 @@ void ofSetDrawBitmapMode(ofDrawBitmapMode mode);
 /// some graphics cards, you may discover that glDrawPixels is slow (or even,
 /// very slow). If so, you might want to investigate using ofTrueTypeFont
 /// with a small typeface, non-anti-aliased, as a suitable alternative.
-/// 
+///
 /// \sa ofTrueTypeFont
 template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y);
@@ -639,6 +638,8 @@ template<typename T>
 void ofDrawBitmapString(const T & textString, const ofPoint & p);
 template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y, float z);
+template<>
+void ofDrawBitmapString(const string & textString, float x, float y, float z);
 void ofDrawBitmapStringHighlight(string text, const ofPoint& position, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 void ofDrawBitmapStringHighlight(string text, int x, int y, const ofColor& background = ofColor::black, const ofColor& foreground = ofColor::white);
 
@@ -656,7 +657,7 @@ void ofSetupScreen();
 /// from the top left corner, as set with the ofSetRectMode() function.
 ///
 /// Default is `OF_RECTMODE_CORNER`
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     if(ofGetRectMode() == OF_RECTMODE_CORNER){
@@ -668,13 +669,13 @@ void ofSetupScreen();
 /// }
 /// ~~~~
 /// \sa ofSetRectMode()
-ofRectMode  ofGetRectMode(); 
+ofRectMode  ofGetRectMode();
 
 /// \brief Sets the resolution for the ofDrawCircle command. By default, the circle is 22
 /// points, but if you need to draw larger circles, you can adjust the
 /// resolution using this command. All circles are cached in openGL using a
 /// display list for optimization purposes.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofSetCircleResolution(10);
@@ -698,42 +699,42 @@ void ofSetCurveResolution(int res);
 /// ~~~~
 void ofSetLineWidth(float lineWidth);
 
-/// \brief Set depth testing on or off to either sort by z-depth (`true`) 
+/// \brief Set depth testing on or off to either sort by z-depth (`true`)
 /// or draw order (`false`).
 void ofSetDepthTest(bool depthTest);
 
 
 /// \brief Turns on depth testing so rendering happens according to z-depth rather
 /// than draw order.
-/// 
+///
 /// \sa ofDisableDepthTest()
 void ofEnableDepthTest();
 
 /// \brief Turn off depth testing so rendering happens in draw order rather than by
-/// z-depth. 
+/// z-depth.
 ///
 /// Turning off depth test is useful for combining 3d scenes with 2d
 /// overlays such as a control panel.
 ///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
-/// 
+///
 ///     ofPushMatrix();
-/// 
+///
 ///         ofTranslate( ofGetWidth()/2, ofGetHeight()/2, 0 );
-/// 
+///
 ///         ofEnableDepthTest();
 ///         ofSetColor(255);
 ///         ofDrawSphere(0,0,100,60);
 ///         ofSetColor(255,0,255);
 ///         ofDrawSphere(50,0,50,100);
 ///         ofDisableDepthTest();
-/// 
+///
 ///         ofSetColor(0);
 ///         ofDrawRectangle(75,75,120,30);
 ///         ofSetColor(255);
 ///         ofDrawBitmapString("Some bubbles.",85,90);
-/// 
+///
 ///     ofPopMatrix();
 /// }
 /// ~~~~
@@ -742,7 +743,7 @@ void ofEnableDepthTest();
 void ofDisableDepthTest();
 
 /// \brief Sets and enables the blend mode for drawing. The options are:
-/// 
+///
 ///     OF_BLENDMODE_DISABLED
 ///     OF_BLENDMODE_ALPHA
 ///     OF_BLENDMODE_ADD
@@ -756,7 +757,7 @@ void ofEnableBlendMode(ofBlendMode blendMode);
 /// \brief Disable the current blend mode.
 void ofDisableBlendMode();
 
-/// \brief Turn on point sprite. 
+/// \brief Turn on point sprite.
 ///
 /// Textures can be mapped onto points. By default, point size is 1pt. So
 /// texture is not shown correctly. You can change point size by
@@ -769,7 +770,7 @@ void ofDisablePointSprites();
 /// \brief Turns on alpha blending (which is on by default since OF version 0.8.0).
 /// It simply wraps opengl commands that enable blending, and turn on a common
 /// blend mode.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofEnableAlphaBlending();    // turn on alpha blending
@@ -813,7 +814,7 @@ ofStyle ofGetStyle();
 
 /// \brief Set the current style of the ofGraphics.
 /// \param style contains information of the graphics style such as
-/// ofColor, ofFill, polyMode and others. 
+/// ofColor, ofFill, polyMode and others.
 ///
 /// \sa See ofStyle for more details.
 void ofSetStyle(ofStyle style);
@@ -843,7 +844,7 @@ void ofPushStyle();
 /// \sa ofPushStyle()
 void ofPopStyle();
 
-/// \brief Sets the drawing behavior for overlapping parts of the same polygon. 
+/// \brief Sets the drawing behavior for overlapping parts of the same polygon.
 ///
 /// Possible modes are:
 ///
@@ -859,7 +860,7 @@ void ofSetPolyMode(ofPolyWindingMode mode);
 /// of the rectangle. possible options are `OF_RECTMODE_CENTER` and
 /// `OF_RECTMODE_CORNER`. This affects not only how ofDrawRectangle() objects are drawn,
 /// but also ofTexture (and therefore ofImage) objects.
-/// 
+///
 /// ~~~~{.cpp}
 /// void ofApp::draw(){
 ///     ofSetRectMode(OF_RECTMODE_CORNER); //set rectangle mode to the corner
@@ -869,7 +870,7 @@ void ofSetPolyMode(ofPolyWindingMode mode);
 ///     // both rectangles are drawn at the same place
 /// }
 /// ~~~~
-void ofSetRectMode(ofRectMode mode);  
+void ofSetRectMode(ofRectMode mode);
 
 /// \}
 /// \name Transformation
@@ -943,7 +944,7 @@ void ofScale(float xAmnt, float yAmnt, float zAmnt = 1);
 /// }
 /// ~~~~
 ///
-/// \param degrees Specifies the angle of rotation, in degrees. 
+/// \param degrees Specifies the angle of rotation, in degrees.
 /// \param vecX specifies the x coordinates of a vector
 /// \param vecY specifies the y coordinates of a vector
 /// \param vecZ specifies the z coordinates of a vector
@@ -1002,17 +1003,6 @@ ofMatrix4x4 ofGetCurrentViewMatrix();
 
 
 /// \}
-/// \name Renderer
-/// \{
-
-/// \brief Overwrite the current renderer with a custom renderer
-void ofSetCurrentRenderer(shared_ptr<ofBaseRenderer> renderer,bool setDefaults=false);
-OF_DEPRECATED(void ofSetCurrentRenderer(const string & rendererType,bool setDefaults=false));
-
-/// \brief Get the current renderer reference
-shared_ptr<ofBaseRenderer> & ofGetCurrentRenderer();
-
-/// \}
 /// \name View Setup
 /// \{
 
@@ -1021,8 +1011,11 @@ void ofPushView();
 
 void ofPopView();
 
+/// \brief Get if view is flipped vertically
+bool ofIsVFlipped();
+
 /// \brief Setup the drawing viewport
-/// \param viewport A rectangle describing the size and position of the viewport. 
+/// \param viewport A rectangle describing the size and position of the viewport.
 /// If the width or height are set to 0, it will assume the size to be the window
 /// size (ofGetWidth(), ofGetHeight())
 void ofViewport(ofRectangle viewport);
@@ -1050,19 +1043,17 @@ int ofGetViewportWidth();
 /// \returns A height in pixels
 int ofGetViewportHeight();
 
-/// \brief Get if view is flipped vertically
-bool ofIsVFlipped();
 
 // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
 void ofSetupScreenPerspective(float width = -1, float height = -1, float fov = 60, float nearDist = 0, float farDist = 0);
 void ofSetupScreenOrtho(float width = -1, float height = -1, float nearDist = -1, float farDist = 1);
 
 OF_DEPRECATED_MSG("ofSetupScreenPerspective() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
-    void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0)
-);
+				  void ofSetupScreenPerspective(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float fov = 60, float nearDist = 0, float farDist = 0)
+				  );
 OF_DEPRECATED_MSG("ofSetupScreenOrtho() doesn't accept orientation and vflip parameters anymore, use ofSetOrientation() to specify them",
-    void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1)
-);
+				  void ofSetupScreenOrtho(float width, float height, ofOrientation orientation, bool vFlip = ofIsVFlipped(), float nearDist = -1, float farDist = 1)
+				  );
 
 int ofOrientationToDegrees(ofOrientation orientation);
 
@@ -1073,7 +1064,7 @@ ofHandednessType ofGetCoordHandedness();
 /// \name Screen Saving
 /// \{
 
-/// \brief Begin rendering to a PDF file. 
+/// \brief Begin rendering to a PDF file.
 ///
 /// openFrameworks allows rendering of 2D graphics to pdf via the
 /// ofCairoRenderer. ofBeginSaveScreenAsPDF() is called before drawing. When
@@ -1120,5 +1111,5 @@ void ofDrawBitmapString(const T & textString, float x, float y){
 //--------------------------------------------------
 template<typename T>
 void ofDrawBitmapString(const T & textString, float x, float y, float z){
-	ofGetCurrentRenderer()->drawString(ofToString(textString),x,y,z,ofGetStyle().drawBitmapMode);
+	ofDrawBitmapString(ofToString(textString),x,y,z);
 }

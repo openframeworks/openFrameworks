@@ -1,12 +1,12 @@
 #include "ofCairoRenderer.h"
-#include "ofGraphics.h"
 #include "ofConstants.h"
-#include "ofAppRunner.h"
 #include "ofUtils.h"
 #include "ofMesh.h"
 #include "ofImage.h"
 #include "of3dPrimitives.h"
-
+#include "ofTrueTypeFont.h"
+#include "ofNode.h"
+#include "ofGraphics.h"
 
 const string ofCairoRenderer::TYPE="cairo";
 
@@ -15,16 +15,14 @@ _cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char
 	return CAIRO_STATUS_SUCCESS;
 }
 
-ofCairoRenderer::ofCairoRenderer(){
+ofCairoRenderer::ofCairoRenderer()
+:graphics3d(this){
 	type = PDF;
 	surface = NULL;
 	cr = NULL;
 	bBackgroundAuto = true;
-	rectMode = OF_RECTMODE_CORNER;
-	bSmoothHinted = false;
 	page = 0;
 	multiPage = false;
-	bFilled = OF_FILLED;
 	b3D = false;
 	currentMatrixMode=OF_MATRIX_MODELVIEW;
 }
@@ -95,11 +93,12 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	cr = cairo_create(surface);
 	cairo_set_antialias(cr,CAIRO_ANTIALIAS_SUBPIXEL);
 	viewportRect = _viewport;
+	originalViewport = _viewport;
 	viewport(viewportRect);
 	page = 0;
 	b3D = b3D_;
 	multiPage = multiPage_;
-	setStyle(ofGetStyle());
+	setStyle(currentStyle);
 	clear();
 }
 
@@ -141,7 +140,7 @@ void ofCairoRenderer::finishRender(){
 
 void ofCairoRenderer::update(){
 	if(!surface || !cr)
-	setStyle(ofGetStyle());
+	setStyle(currentStyle);
 	cairo_surface_flush(surface);
 	if(page==0 || !multiPage){
 		page=1;
@@ -168,7 +167,7 @@ void ofCairoRenderer::setStyle(const ofStyle & style){
 
 	setSphereResolution(style.sphereResolution);
 
-	//setCurveResolution(style.curveResolution);
+	setCurveResolution(style.curveResolution);
 
 	//line width - finally!
 	setLineWidth(style.lineWidth);
@@ -177,7 +176,7 @@ void ofCairoRenderer::setStyle(const ofStyle & style){
 	setRectMode(style.rectMode);
 
 	//poly mode: winding type
-	//setPolyMode(style.polyMode);
+	setPolyMode(style.polyMode);
 
 	//fill
 	setFillMode(style.bFill?OF_FILLED:OF_OUTLINE);
@@ -190,6 +189,12 @@ void ofCairoRenderer::setStyle(const ofStyle & style){
 
 	//bitmap draw mode
 	//setDrawBitmapMode(style.drawBitmapMode);
+	currentStyle = style;
+}
+
+void ofCairoRenderer::setCurveResolution(int resolution){
+	currentStyle.curveResolution = resolution;
+	path.setCurveResolution(resolution);
 }
 
 void ofCairoRenderer::draw(const ofPath & shape) const{
@@ -208,7 +213,7 @@ void ofCairoRenderer::draw(const ofPath & shape) const{
 
 	ofColor prevColor;
 	if(shape.getUseShapeColor()){
-		prevColor = ofGetStyle().color;
+		prevColor = currentStyle.color;
 	}
 
 	if(shape.isFilled()){
@@ -225,7 +230,7 @@ void ofCairoRenderer::draw(const ofPath & shape) const{
 		}
 	}
 	if(shape.hasOutline()){
-		float lineWidth = ofGetStyle().lineWidth;
+		float lineWidth = currentStyle.lineWidth;
 		if(shape.getUseShapeColor()){
 			ofColor c = shape.getStrokeColor();
 			c.a = shape.getStrokeColor().a;
@@ -320,7 +325,7 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec) const{
 	vec = projection.preMult(vec);
 
 	//vec.set(vec.x/vec.z*viewportRect.width*0.5-ofGetWidth()*0.5-viewportRect.x,vec.y/vec.z*viewportRect.height*0.5-ofGetHeight()*0.5-viewportRect.y);
-	vec.set(vec.x/vec.z*ofGetWidth()*0.5,vec.y/vec.z*ofGetHeight()*0.5);
+	vec.set(vec.x/vec.z*viewportRect.width*0.5,vec.y/vec.z*viewportRect.height*0.5);
 	return vec;
 }
 
@@ -389,7 +394,7 @@ void ofCairoRenderer::draw(const ofMesh & primitive, bool useColors, bool useTex
 
 	cairo_move_to(cr,primitive.getVertex(primitive.getIndex(primitive.getNumIndices()-1)).x,primitive.getVertex(primitive.getIndex(primitive.getNumIndices()-1)).y);
 
-	if(ofGetStyle().lineWidth>0){
+	if(currentStyle.lineWidth>0){
 
 		cairo_stroke( cr );
 	}
@@ -405,22 +410,21 @@ void ofCairoRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode mode, boo
 //----------------------------------------------------------
 void ofCairoRenderer::draw( const of3dPrimitive& model, ofPolyRenderMode renderType  )  const{
 
-    if(model.hasScaling()) {
-        ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support scaling";
-        //glEnable( GL_NORMALIZE );
-        //glPushMatrix();
-        //ofVec3f scale = model.getScale();
-        //glScalef( scale.x, scale.y, scale.z);
-    }
+	const_cast<ofCairoRenderer*>(this)->pushMatrix();
+	const_cast<ofCairoRenderer*>(this)->multMatrix(model.getGlobalTransformMatrix());
 
     const ofMesh& mesh = model.getMesh();
-    draw( mesh, renderType, mesh.usingColors(), mesh.usingTextures(), mesh.usingNormals() );
+    draw( mesh, renderType );
 
-    if(model.hasScaling()) {
-        //glPopMatrix();
-        //glDisable( GL_NORMALIZE );
-    }
+	const_cast<ofCairoRenderer*>(this)->popMatrix();
 
+}
+
+void ofCairoRenderer::draw(const ofNode& node) const{
+	const_cast<ofCairoRenderer*>(this)->pushMatrix();
+	const_cast<ofCairoRenderer*>(this)->multMatrix(node.getGlobalTransformMatrix());
+	node.customDraw(this);
+	const_cast<ofCairoRenderer*>(this)->popMatrix();
 }
 
 void ofCairoRenderer::draw(const ofPath::Command & command) const{
@@ -531,7 +535,7 @@ void ofCairoRenderer::draw(const ofPixels & raw, float x, float y, float z, floa
 	int picsize = pix.getWidth()* pix.getHeight();
 	const unsigned char *imgPix = pix.getData();
 
-	static vector<unsigned char> swapPixels;
+	vector<unsigned char> swapPixels;
 
 	switch(pix.getImageType()){
 	case OF_IMAGE_COLOR:
@@ -619,38 +623,47 @@ void ofCairoRenderer::draw(const ofBaseVideoDraws & video, float x, float y, flo
 	draw(video.getPixels(),x,y,0,w,h,x,y,w,h);
 }
 
-//--------------------------------------------
-void ofCairoRenderer::bind(const ofBaseVideoDraws & video) const{
-
-}
-
-//--------------------------------------------
-void ofCairoRenderer::unbind(const ofBaseVideoDraws & video) const{
-
+ofPath & ofCairoRenderer::getPath(){
+	return path;
 }
 
 //--------------------------------------------
 void ofCairoRenderer::setRectMode(ofRectMode mode){
-	rectMode = mode;
+	currentStyle.rectMode = mode;
 }
 
 //--------------------------------------------
 ofRectMode ofCairoRenderer::getRectMode(){
-	return rectMode;
+	return currentStyle.rectMode;
 }
 
 //--------------------------------------------
 void ofCairoRenderer::setFillMode(ofFillFlag fill){
-	bFilled = fill;
+	currentStyle.bFill = fill;
+	if(currentStyle.bFill){
+		path.setFilled(true);
+		path.setStrokeWidth(0);
+	}else{
+		path.setFilled(false);
+		path.setStrokeWidth(currentStyle.lineWidth);
+	}
 }
 
 //--------------------------------------------
 ofFillFlag ofCairoRenderer::getFillMode(){
-	return bFilled;
+	if(currentStyle.bFill){
+		return OF_FILLED;
+	}else{
+		return OF_OUTLINE;
+	}
 }
 
 //--------------------------------------------
 void ofCairoRenderer::setLineWidth(float lineWidth){
+	currentStyle.lineWidth = lineWidth;
+	if(!currentStyle.bFill){
+		path.setStrokeWidth(lineWidth);
+	}
 	cairo_set_line_width( cr, lineWidth );
 }
 
@@ -925,8 +938,8 @@ void ofCairoRenderer::viewport(ofRectangle v){
 
 //----------------------------------------------------------
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
-	if(width < 0) width = ofGetWindowWidth();
-	if(height < 0) height = ofGetWindowHeight();
+	if(width < 0) width = originalViewport.width;
+	if(height < 0) height = originalViewport.height;
 
 	if (invertY){
 		y = -y;
@@ -947,8 +960,8 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 //----------------------------------------------------------
 void ofCairoRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
 	if(!b3D) return;
-	if(width < 0) width = ofGetWidth();
-	if(height < 0) height = ofGetHeight();
+	if(width < 0) width = viewportRect.width;
+	if(height < 0) height = viewportRect.height;
 	ofOrientation orientation = ofGetOrientation();
 
 	float viewW = viewportRect.width;
@@ -1016,8 +1029,8 @@ void ofCairoRenderer::setupScreenPerspective(float width, float height, float fo
 //----------------------------------------------------------
 void ofCairoRenderer::setupScreenOrtho(float width, float height, float nearDist, float farDist){
 	if(!b3D) return;
-	if(width < 0) width = ofGetWidth();
-	if(height < 0) height = ofGetHeight();
+	if(width < 0) width = viewportRect.width;
+	if(height < 0) height = viewportRect.height;
 	ofOrientation orientation = ofGetOrientation();
 
 	float viewW = viewportRect.width;
@@ -1140,6 +1153,11 @@ void ofCairoRenderer::setCircleResolution(int){
 
 }
 
+void ofCairoRenderer::setPolyMode(ofPolyWindingMode mode){
+	currentStyle.polyMode = mode;
+	path.setPolyWindingMode(mode);
+}
+
 //----------------------------------------------------------
 void ofCairoRenderer::setCoordHandedness(ofHandednessType handedness){
 
@@ -1152,12 +1170,15 @@ ofHandednessType ofCairoRenderer::getCoordHandedness() const{
 
 //----------------------------------------------------------
 void ofCairoRenderer::setupGraphicDefaults(){
+	setStyle(ofStyle());
+	path.setMode(ofPath::COMMANDS);
+	path.setUseShapeColor(false);
 };
 
 //----------------------------------------------------------
 void ofCairoRenderer::clear(){
 	if(!surface || ! cr) return;
-	cairo_set_source_rgba(cr,bgColor.r, bgColor.g, bgColor.b, bgColor.a);
+	cairo_set_source_rgba(cr,currentStyle.bgColor.r/255., currentStyle.bgColor.g/255., currentStyle.bgColor.b/255., currentStyle.bgColor.a/255.);
 	cairo_paint(cr);
 }
 
@@ -1178,6 +1199,32 @@ void ofCairoRenderer::clear(float brightness, float a) {
 void ofCairoRenderer::clearAlpha() {
 }
 
+
+void ofCairoRenderer::setBitmapTextMode(ofDrawBitmapMode mode){
+	currentStyle.drawBitmapMode = mode;
+}
+
+ofStyle ofCairoRenderer::getStyle() const{
+	return currentStyle;
+}
+
+void ofCairoRenderer::pushStyle(){
+	styleHistory.push_back(currentStyle);
+	//if we are over the max number of styles we have set, then delete the oldest styles.
+	if( styleHistory.size() > OF_MAX_STYLE_HISTORY ){
+		styleHistory.pop_front();
+		//should we warn here?
+		ofLogWarning("ofGraphics") << "ofPushStyle(): maximum number of style pushes << " << OF_MAX_STYLE_HISTORY << " reached, did you forget to pop somewhere?";
+	}
+}
+
+void ofCairoRenderer::popStyle(){
+	if( styleHistory.size() ){
+		setStyle(styleHistory.front());
+		styleHistory.pop_back();
+	}
+}
+
 //----------------------------------------------------------
 void ofCairoRenderer::setBackgroundAuto(bool bAuto){
 	bBackgroundAuto = bAuto;
@@ -1190,17 +1237,17 @@ bool ofCairoRenderer::getBackgroundAuto(){
 
 //----------------------------------------------------------
 void ofCairoRenderer::setBackgroundColor(const ofColor & c){
-	bgColor = c;
+	currentStyle.bgColor = c;
 }
 
 //----------------------------------------------------------
 ofColor ofCairoRenderer::getBackgroundColor(){
-	return bgColor;
+	return currentStyle.bgColor;
 }
 
 //----------------------------------------------------------
 void ofCairoRenderer::background(const ofColor & c){
-	bgColor = c;
+	setBackgroundColor(c);
 	clear(c.r,c.g,c.b,c.a);
 }
 
@@ -1221,7 +1268,7 @@ void ofCairoRenderer::background(int r, int g, int b, int a){
 
 
 //----------------------------------------------------------
-void ofCairoRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2){
+void ofCairoRenderer::drawLine(float x1, float y1, float z1, float x2, float y2, float z2) const{
 	cairo_new_path(cr);
 	cairo_move_to(cr,x1,y1);
 	cairo_line_to(cr,x2,y2);
@@ -1230,11 +1277,11 @@ void ofCairoRenderer::drawLine(float x1, float y1, float z1, float x2, float y2,
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::drawRectangle(float x, float y, float z, float w, float h){
+void ofCairoRenderer::drawRectangle(float x, float y, float z, float w, float h) const{
 
 	cairo_new_path(cr);
 
-	if (ofGetStyle().rectMode == OF_RECTMODE_CORNER){
+	if (currentStyle.rectMode == OF_RECTMODE_CORNER){
 		cairo_move_to(cr,x,y);
 		cairo_line_to(cr,x+w, y);
 		cairo_line_to(cr,x+w, y+h);
@@ -1248,7 +1295,7 @@ void ofCairoRenderer::drawRectangle(float x, float y, float z, float w, float h)
 
 	cairo_close_path(cr);
 
-	if(bFilled==OF_FILLED){
+	if(currentStyle.bFill==OF_FILLED){
 		cairo_fill( cr );
 	}else{
 		cairo_stroke( cr );
@@ -1256,7 +1303,7 @@ void ofCairoRenderer::drawRectangle(float x, float y, float z, float w, float h)
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3){
+void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3) const{
 	cairo_new_path(cr);
 
 	cairo_move_to(cr, x1, y1);
@@ -1266,7 +1313,7 @@ void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float
 
 	cairo_close_path(cr);
 
-	if(bFilled==OF_FILLED){
+	if(currentStyle.bFill==OF_FILLED){
 		cairo_fill( cr );
 	}else{
 		cairo_stroke( cr );
@@ -1274,99 +1321,16 @@ void ofCairoRenderer::drawTriangle(float x1, float y1, float z1, float x2, float
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::drawCircle(float x, float y, float z, float radius){
+void ofCairoRenderer::drawCircle(float x, float y, float z, float radius) const{
 	cairo_new_path(cr);
 	cairo_arc(cr, x,y,radius,0,2*PI);
 
 	cairo_close_path(cr);
 
-	if(bFilled==OF_FILLED){
+	if(currentStyle.bFill==OF_FILLED){
 		cairo_fill( cr );
 	}else{
 		cairo_stroke( cr );
-	}
-}
-
-//----------------------------------------------------------
-void ofCairoRenderer::setSphereResolution(int res) {
-	int n = res * 2;
-	float ndiv2=(float)n/2;
-	int stripVerts = (ndiv2*((n+1)*2));
-
-	if((int)sphereVerts.size() != stripVerts ) {
-		sphereVerts.clear();
-		sphereVerts.resize( (ndiv2*((n+1)*2)) );
-	} else {
-		return;
-	}
-
-	/*
-	 Original code by Paul Bourke
-	 A more efficient contribution by Federico Dosil (below)
-	 Draw a point for zero radius spheres
-	 Use CCW facet ordering
-	 http://paulbourke.net/texture_colour/texturemap/
-	 */
-
-	float theta2 = TWO_PI;
-	float phi1 = -HALF_PI;
-	float phi2 = HALF_PI;
-	float radius = 1.f; // normalize the verts //
-
-	int i, j;
-	float j1divn,idivn,dosdivn,unodivn=1/(float)n,t1,t2,t3,cost1,cost2,cte1,cte3;
-	cte3 = (theta2)/n;
-	cte1 = (phi2-phi1)/ndiv2;
-	dosdivn = 2*unodivn;
-	ofVec3f e,p,e2,p2;
-
-	// Handle special cases //
-	if (n < 0){
-		n = -n;
-		ndiv2 = -ndiv2;
-	}
-	if (n < 4) {
-		ofLogWarning("ofCairoRenderer") << "setSphereResolution(): ignoring low sphere resolution: " << n;
-	}
-
-	t2=phi1;
-	cost2=cos(phi1);
-	j1divn=0;
-
-	int cindex = 0; // current index //
-
-	for (j=0;j<ndiv2;j++) {
-		t1 = t2;
-		t2 += cte1;
-		t3 = -cte3;
-		cost1 = cost2;
-		cost2 = cos(t2);
-		e.y = sin(t1);
-		e2.y = sin(t2);
-		p.y = radius * e.y;
-		p2.y = radius * e2.y;
-
-		idivn=0;
-		j1divn+=dosdivn;
-		for (i=0;i<=n;i++) {
-			t3 += cte3;
-			e.x = cost1 * cos(t3);
-			e.z = cost1 * sin(t3);
-			p.x = radius * e.x;
-			p.z = radius * e.z;
-
-			cindex = (j * (n+1) + i) * 2;
-			sphereVerts[cindex].set(p.x,p.y,p.z);
-
-			e2.x = cost2 * cos(t3);
-			e2.z = cost2 * sin(t3);
-			p2.x = radius * e2.x;
-			p2.z = radius * e2.z;
-			cindex = (j * (n+1) + i) * 2 + 1;
-			sphereVerts[cindex].set(p2.x,p2.y,p2.z);
-
-			idivn += unodivn;
-		}
 	}
 }
 
@@ -1381,58 +1345,28 @@ void ofCairoRenderer::disableAntiAliasing(){
 }
 
 //----------------------------------------------------------
-void ofCairoRenderer::drawSphere(float x, float y, float z, float radius) {
-	int n = ofGetStyle().sphereResolution * 2;
-	float ndiv2=(float)n/2;
-	int cindex = 0;
-
-	if(sphereVerts.size() < 1) {
-		// double check to make sure that setSphereResolution has been called at least once //
-		setSphereResolution( ofGetStyle().sphereResolution );
-	}
-
-	spherePoints.resize( (n+1) * 2 );
-
-	ofVec3f sp;
-	int i, j;
-	for (j=0;j<ndiv2;j++) {
-		for (i=0;i<=n;i++) {
-			cindex = (j * (n+1) + i) * 2;
-			sp = sphereVerts[cindex] * radius;
-
-			spherePoints[i*2+0].set( sp.x+x, sp.y+y, sp.z+z );
-
-			cindex = (j * (n+1) + i) * 2 + 1;
-			sp = sphereVerts[cindex] * radius;
-			spherePoints[i*2+1].set( sp.x+x, sp.y+y, sp.z+z );
-		}
-		draw(spherePoints, OF_PRIMITIVE_TRIANGLE_STRIP);
-	}
-
-}
-
-//----------------------------------------------------------
-void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float height){
+void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float height) const{
+	ofCairoRenderer * mutThis = const_cast<ofCairoRenderer*>(this);
 	cairo_new_path(cr);
 	float ellipse_ratio = height/width;
-	pushMatrix();
-	translate(0,-y*ellipse_ratio);
-	scale(1,ellipse_ratio);
-	translate(0,y/ellipse_ratio);
+	mutThis->pushMatrix();
+	mutThis->translate(0,-y*ellipse_ratio);
+	mutThis->scale(1,ellipse_ratio);
+	mutThis->translate(0,y/ellipse_ratio);
 	cairo_arc(cr,x,y,width*0.5,0,360);
-	popMatrix();
+	mutThis->popMatrix();
 
 	cairo_close_path(cr);
 
 
-	if(bFilled==OF_FILLED){
+	if(currentStyle.bFill==OF_FILLED){
 		cairo_fill( cr );
 	}else{
 		cairo_stroke( cr );
 	}
 }
 
-void ofCairoRenderer::drawString(string text, float x, float y, float z, ofDrawBitmapMode mode){
+void ofCairoRenderer::drawString(string text, float x, float y, float z) const{
 	cairo_select_font_face (cr, "Mono", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cr, 10);
 	vector<string> lines = ofSplitString(text, "\n");
@@ -1440,6 +1374,10 @@ void ofCairoRenderer::drawString(string text, float x, float y, float z, ofDrawB
 		cairo_move_to (cr, x, y+i*14.3);
 		cairo_show_text (cr, lines[i].c_str() );
 	}
+}
+
+void ofCairoRenderer::drawString(const ofTrueTypeFont & font, string text, float x, float y) const{
+	font.drawStringAsShapes(text,x,y);
 }
 
 cairo_t * ofCairoRenderer::getCairoContext(){
@@ -1462,4 +1400,12 @@ ofBuffer & ofCairoRenderer::getContentBuffer(){
 		ofLogError("ofCairoRenderer") << "getContentBuffer(): can only get buffer from memory allocated renderer for svg or pdf";
 	}
 	return streamBuffer;
+}
+
+const of3dGraphics & ofCairoRenderer::get3dGraphics() const{
+	return graphics3d;
+}
+
+of3dGraphics & ofCairoRenderer::get3dGraphics(){
+	return graphics3d;
 }
