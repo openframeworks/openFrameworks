@@ -21,7 +21,14 @@
 #endif
 
 /// \brief Represents information about a sound device on the system.
-struct ofSoundDevice {
+class ofSoundDevice {
+public:
+	
+	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false) { }
+	
+	friend std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev);
+	friend std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs);
+	
 	std::string name;
 	unsigned int deviceID;
 	unsigned int inputChannels;
@@ -29,11 +36,6 @@ struct ofSoundDevice {
 	bool isDefaultInput;
 	bool isDefaultOutput;
 	std::vector<unsigned int> sampleRates;
-	
-	ofSoundDevice(): name("Unknown"), deviceID(0), inputChannels(0), outputChannels(0), isDefaultInput(false), isDefaultOutput(false) { }
-	
-	friend std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev);
-	friend std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs);
 };
 
 /// \brief Sets up and starts a global ofSoundStream.
