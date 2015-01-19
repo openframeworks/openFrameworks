@@ -322,9 +322,6 @@ function createPackage {
         cd $pkg_ofroot/addons
     done
     
-	#delete ofxSynth addon, still not stable
-	rm -Rf ofxSynth
-    
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
 		rm -Rf ofxAndroid
