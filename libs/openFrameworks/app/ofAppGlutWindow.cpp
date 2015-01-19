@@ -387,7 +387,7 @@ void ofAppGlutWindow::close(){
 #ifdef TARGET_LINUX
 	glutLeaveMainLoop();
 #else
-	ofExit(0);
+	std::exit(0);
 #endif
 }
 
