@@ -70,10 +70,9 @@ struct TESStesselator {
 
 	struct BucketAlloc* regionPool;
 
-	TESSindex vertexIndexCounter;
-	
+	void (*callCombine)( TESSreal coords[3], TESSreal weight[4] );
+
 	TESSreal *vertices;
-	TESSindex *vertexIndices;
 	int vertexCount;
 	TESSindex *elements;
 	int elementCount;

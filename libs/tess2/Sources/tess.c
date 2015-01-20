@@ -50,7 +50,7 @@ static void Normalize( TESSreal v[3] )
 {
 	TESSreal len = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
 
-	if( len <= 0 ) return;
+	assert( len > 0 );
 	len = sqrtf( len );
 	v[0] /= len;
 	v[1] /= len;
@@ -317,7 +317,7 @@ int tessMeshTessellateMonoRegion( TESSmesh *mesh, TESSface *face )
 	* be close to the edge we want.
 	*/
 	up = face->anEdge;
-	if(!( up->Lnext != up && up->Lnext->Lnext != up )) return 1;
+	assert( up->Lnext != up && up->Lnext->Lnext != up );
 
 	for( ; VertLeq( up->Dst, up->Org ); up = up->Lprev )
 		;
@@ -353,7 +353,7 @@ int tessMeshTessellateMonoRegion( TESSmesh *mesh, TESSface *face )
 	/* Now lo->Org == up->Dst == the leftmost vertex.  The remaining region
 	* can be tessellated in a fan from this leftmost vertex.
 	*/
-	if( lo->Lnext == up ) return 1;
+	assert( lo->Lnext != up );
 	while( lo->Lnext->Lnext != up ) {
 		TESShalfEdge *tempHalfEdge= tessMeshConnect( mesh, lo->Lnext, lo );
 		if (tempHalfEdge == NULL) return 0;
@@ -436,6 +436,8 @@ int tessMeshSetWindingNumber( TESSmesh *mesh, int value,
 	return 1;
 }
 
+static void noCombine( TESSreal coords[3], TESSreal weight[4] ) {}
+
 void* heapAlloc( void* userData, unsigned int size )
 {
 	return malloc( size );
@@ -504,6 +506,8 @@ TESStesselator* tessNewTess( TESSalloc* alloc )
 
 	tess->windingRule = TESS_WINDING_ODD;
 
+	tess->callCombine = &noCombine;
+
 	if (tess->alloc.regionBucketSize < 16)
 		tess->alloc.regionBucketSize = 16;
 	if (tess->alloc.regionBucketSize > 4096)
@@ -514,11 +518,7 @@ TESStesselator* tessNewTess( TESSalloc* alloc )
 	// Initialize to begin polygon.
 	tess->mesh = NULL;
 
-	tess->outOfMemory = 0;
-	tess->vertexIndexCounter = 0;
-	
 	tess->vertices = 0;
-	tess->vertexIndices = 0;
 	tess->vertexCount = 0;
 	tess->elements = 0;
 	tess->elementCount = 0;
@@ -540,10 +540,6 @@ void tessDeleteTess( TESStesselator *tess )
 	if (tess->vertices != NULL) {
 		alloc.memfree( alloc.userData, tess->vertices );
 		tess->vertices = 0;
-	}
-	if (tess->vertexIndices != NULL) {
-		alloc.memfree( alloc.userData, tess->vertexIndices );
-		tess->vertexIndices = 0;
 	}
 	if (tess->elements != NULL) {
 		alloc.memfree( alloc.userData, tess->elements );
@@ -568,9 +564,9 @@ void OutputPolymesh( TESStesselator *tess, TESSmesh *mesh, int elementType, int 
 	TESSvertex* v = 0;
 	TESSface* f = 0;
 	TESShalfEdge* edge = 0;
-	TESSindex maxFaceCount = 0;
-	TESSindex maxVertexCount = 0;
-	TESSindex faceVerts, i;
+	int maxFaceCount = 0;
+	int maxVertexCount = 0;
+	int faceVerts, i;
 	TESSindex *elements = 0;
 	TESSreal *vert;
 
@@ -610,7 +606,7 @@ void OutputPolymesh( TESStesselator *tess, TESSmesh *mesh, int elementType, int 
 		}
 		while (edge != f->anEdge);
 		
-		if(faceVerts > polySize ) continue;
+		assert( faceVerts <= polySize );
 
 		f->n = maxFaceCount;
 		++maxFaceCount;
@@ -635,28 +631,17 @@ void OutputPolymesh( TESStesselator *tess, TESSmesh *mesh, int elementType, int 
 		tess->outOfMemory = 1;
 		return;
 	}
-
-	tess->vertexIndices = (TESSindex*)tess->alloc.memalloc( tess->alloc.userData,
-														    sizeof(TESSindex) * tess->vertexCount );
-	if (!tess->vertexIndices)
-	{
-		tess->outOfMemory = 1;
-		return;
-	}
 	
 	// Output vertices.
 	for ( v = mesh->vHead.next; v != &mesh->vHead; v = v->next )
 	{
 		if ( v->n != TESS_UNDEF )
 		{
-			// Store coordinate
 			vert = &tess->vertices[v->n*vertexSize];
 			vert[0] = v->coords[0];
 			vert[1] = v->coords[1];
 			if ( vertexSize > 2 )
 				vert[2] = v->coords[2];
-			// Store vertex index.
-			tess->vertexIndices[v->n] = v->idx;
 		}
 	}
 
@@ -705,7 +690,6 @@ void OutputContours( TESStesselator *tess, TESSmesh *mesh, int vertexSize )
 	TESShalfEdge *start = 0;
 	TESSreal *verts = 0;
 	TESSindex *elements = 0;
-	TESSindex *vertInds = 0;
 	int startVert = 0;
 	int vertCount = 0;
 
@@ -729,31 +713,11 @@ void OutputContours( TESStesselator *tess, TESSmesh *mesh, int vertexSize )
 
 	tess->elements = (TESSindex*)tess->alloc.memalloc( tess->alloc.userData,
 													  sizeof(TESSindex) * tess->elementCount * 2 );
-	if (!tess->elements)
-	{
-		tess->outOfMemory = 1;
-		return;
-	}
-	
 	tess->vertices = (TESSreal*)tess->alloc.memalloc( tess->alloc.userData,
-													  sizeof(TESSreal) * tess->vertexCount * vertexSize );
-	if (!tess->vertices)
-	{
-		tess->outOfMemory = 1;
-		return;
-	}
+													 sizeof(TESSreal) * tess->vertexCount * vertexSize );
 
-	tess->vertexIndices = (TESSindex*)tess->alloc.memalloc( tess->alloc.userData,
-														    sizeof(TESSindex) * tess->vertexCount );
-	if (!tess->vertexIndices)
-	{
-		tess->outOfMemory = 1;
-		return;
-	}
-	
 	verts = tess->vertices;
 	elements = tess->elements;
-	vertInds = tess->vertexIndices;
 
 	startVert = 0;
 
@@ -769,7 +733,6 @@ void OutputContours( TESStesselator *tess, TESSmesh *mesh, int vertexSize )
 			*verts++ = edge->Org->coords[1];
 			if ( vertexSize > 2 )
 				*verts++ = edge->Org->coords[2];
-			*vertInds++ = edge->Org->idx;
 			++vertCount;
 			edge = edge->Lnext;
 		}
@@ -838,8 +801,6 @@ void tessAddContour( TESStesselator *tess, int size, const void* vertices,
 			e->Org->coords[2] = coords[2];
 		else
 			e->Org->coords[2] = 0;
-		/* Store the insertion number so that the vertex can be later recognized. */
-		e->Org->idx = tess->vertexIndexCounter++;
 
 		/* The winding of an edge says how the winding number changes as we
 		* cross from the edge''s right face to its left face.  We add the
@@ -865,13 +826,7 @@ int tessTesselate( TESStesselator *tess, int windingRule, int elementType,
 		tess->alloc.memfree( tess->alloc.userData, tess->elements );
 		tess->elements = 0;
 	}
-	if (tess->vertexIndices != NULL) {
-		tess->alloc.memfree( tess->alloc.userData, tess->vertexIndices );
-		tess->vertexIndices = 0;
-	}
 
-	tess->vertexIndexCounter = 0;
-	
 	if (normal)
 	{
 		tess->normal[0] = normal[0];
@@ -924,7 +879,7 @@ int tessTesselate( TESStesselator *tess, int windingRule, int elementType,
 	}
 	if (rc == 0) longjmp(tess->env,1);  /* could've used a label */
 
-	//tessMeshCheckMesh( mesh );
+	tessMeshCheckMesh( mesh );
 
 	if (elementType == TESS_BOUNDARY_CONTOURS) {
 		OutputContours( tess, mesh, vertexSize );     /* output contours */
@@ -952,17 +907,12 @@ const TESSreal* tessGetVertices( TESStesselator *tess )
 	return tess->vertices;
 }
 
-const TESSindex* tessGetVertexIndices( TESStesselator *tess )
-{
-	return tess->vertexIndices;
-}
-
 int tessGetElementCount( TESStesselator *tess )
 {
 	return tess->elementCount;
 }
 
-const TESSindex* tessGetElements( TESStesselator *tess )
+const int* tessGetElements( TESStesselator *tess )
 {
 	return tess->elements;
 }

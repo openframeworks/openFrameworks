@@ -143,7 +143,7 @@ static void DeleteRegion( TESStesselator *tess, ActiveRegion *reg )
 		* deleted with zero winding number (ie. it better not get merged
 		* with a real edge).
 		*/
-		if( reg->eUp->winding != 0 ) return;
+		assert( reg->eUp->winding == 0 );
 	}
 	reg->eUp->activeRegion = NULL;
 	dictDelete( tess->dict, reg->nodeUp );
@@ -156,7 +156,7 @@ static int FixUpperEdge( TESStesselator *tess, ActiveRegion *reg, TESShalfEdge *
 * Replace an upper edge which needs fixing (see ConnectRightVertex).
 */
 {
-	if(! reg->fixUpperEdge ) return 0;
+	assert( reg->fixUpperEdge );
 	if ( !tessMeshDelete( tess->mesh, reg->eUp ) ) return 0;
 	reg->fixUpperEdge = FALSE;
 	reg->eUp = newEdge;
@@ -237,7 +237,7 @@ static int IsWindingInside( TESStesselator *tess, int n )
 			return (n >= 2) || (n <= -2);
 	}
 	/*LINTED*/
-	//assert( FALSE );
+	assert( FALSE );
 	/*NOTREACHED*/
 
 	return( FALSE );
@@ -346,7 +346,7 @@ static void AddRightEdges( TESStesselator *tess, ActiveRegion *regUp,
 	/* Insert the new right-going edges in the dictionary */
 	e = eFirst;
 	do {
-		if(! VertLeq( e->Org, e->Dst )) return;
+		assert( VertLeq( e->Org, e->Dst ));
 		AddRegionBelow( tess, regUp, e->Sym );
 		e = e->Onext;
 	} while ( e != eLast );
@@ -388,7 +388,7 @@ static void AddRightEdges( TESStesselator *tess, ActiveRegion *regUp,
 		ePrev = e;
 	}
 	regPrev->dirty = TRUE;
-	if(!( regPrev->windingNumber - e->winding == reg->windingNumber )) return;
+	assert( regPrev->windingNumber - e->winding == reg->windingNumber );
 
 	if( cleanUp ) {
 		/* Check for intersections between newly adjacent edges. */
@@ -397,6 +397,19 @@ static void AddRightEdges( TESStesselator *tess, ActiveRegion *regUp,
 }
 
 
+static void CallCombine( TESStesselator *tess, TESSvertex *isect,
+						TESSreal weights[4], int needed )
+{
+	TESSreal coords[3];
+
+	/* Copy coord data in case the callback changes it. */
+	coords[0] = isect->coords[0];
+	coords[1] = isect->coords[1];
+	coords[2] = isect->coords[2];
+
+	(*tess->callCombine)( coords, weights );
+}
+
 static void SpliceMergeVertices( TESStesselator *tess, TESShalfEdge *e1,
 								TESShalfEdge *e2 )
 /*
@@ -404,6 +417,9 @@ static void SpliceMergeVertices( TESStesselator *tess, TESShalfEdge *e1,
 * e1->Org is kept, while e2->Org is discarded.
 */
 {
+	TESSreal weights[4] = { 0.5, 0.5, 0.0, 0.0 };
+
+	CallCombine( tess, e1->Org, weights, FALSE );
 	if ( !tessMeshSplice( tess->mesh, e1, e2 ) ) longjmp(tess->env,1); 
 }
 
@@ -440,9 +456,10 @@ static void GetIntersectData( TESStesselator *tess, TESSvertex *isect,
 	TESSreal weights[4];
 
 	isect->coords[0] = isect->coords[1] = isect->coords[2] = 0;
-	isect->idx = TESS_UNDEF;
 	VertexWeights( isect, orgUp, dstUp, &weights[0] );
 	VertexWeights( isect, orgLo, dstLo, &weights[2] );
+
+	CallCombine( tess, isect, weights, TRUE );
 }
 
 static int CheckForRightSplice( TESStesselator *tess, ActiveRegion *regUp )
@@ -527,7 +544,7 @@ static int CheckForLeftSplice( TESStesselator *tess, ActiveRegion *regUp )
 	TESShalfEdge *eLo = regLo->eUp;
 	TESShalfEdge *e;
 
-	if( VertEq( eUp->Dst, eLo->Dst )) return FALSE;
+	assert( ! VertEq( eUp->Dst, eLo->Dst ));
 
 	if( VertLeq( eUp->Dst, eLo->Dst )) {
 		if( EdgeSign( eUp->Dst, eLo->Dst, eUp->Org ) < 0 ) return FALSE;
@@ -574,11 +591,11 @@ static int CheckForIntersect( TESStesselator *tess, ActiveRegion *regUp )
 	TESSvertex isect, *orgMin;
 	TESShalfEdge *e;
 
-	if( VertEq( dstLo, dstUp )) return FALSE;
-	if( EdgeSign( dstUp, tess->event, orgUp ) > 0 ) return FALSE;
-	if( EdgeSign( dstLo, tess->event, orgLo ) < 0 ) return FALSE;
-	if(!( orgUp != tess->event && orgLo != tess->event )) return FALSE;
-	if(!( ! regUp->fixUpperEdge && ! regLo->fixUpperEdge )) return FALSE;
+	assert( ! VertEq( dstLo, dstUp ));
+	assert( EdgeSign( dstUp, tess->event, orgUp ) <= 0 );
+	assert( EdgeSign( dstLo, tess->event, orgLo ) >= 0 );
+	assert( orgUp != tess->event && orgLo != tess->event );
+	assert( ! regUp->fixUpperEdge && ! regLo->fixUpperEdge );
 
 	if( orgUp == orgLo ) return FALSE;	/* right endpoints are the same */
 
@@ -597,10 +614,10 @@ static int CheckForIntersect( TESStesselator *tess, ActiveRegion *regUp )
 
 	tesedgeIntersect( dstUp, orgUp, dstLo, orgLo, &isect );
 	/* The following properties are guaranteed: */
-	if(!( MIN( orgUp->t, dstUp->t ) <= isect.t )) return FALSE;
-	if(!( isect.t <= MAX( orgLo->t, dstLo->t ))) return FALSE;
-	if(!( MIN( dstLo->s, dstUp->s ) <= isect.s )) return FALSE;
-	if(!( isect.s <= MAX( orgLo->s, orgUp->s ))) return FALSE;
+	assert( MIN( orgUp->t, dstUp->t ) <= isect.t );
+	assert( isect.t <= MAX( orgLo->t, dstLo->t ));
+	assert( MIN( dstLo->s, dstUp->s ) <= isect.s );
+	assert( isect.s <= MAX( orgLo->s, orgUp->s ));
 
 	if( VertLeq( &isect, tess->event )) {
 		/* The intersection point lies slightly to the left of the sweep line,
@@ -903,7 +920,7 @@ static void ConnectLeftDegenerate( TESStesselator *tess,
 		/* e->Org is an unprocessed vertex - just combine them, and wait
 		* for e->Org to be pulled from the queue
 		*/
-		if(! TOLERANCE_NONZERO ) return;
+		assert( TOLERANCE_NONZERO );
 		SpliceMergeVertices( tess, e, vEvent->anEdge );
 		return;
 	}
@@ -924,7 +941,7 @@ static void ConnectLeftDegenerate( TESStesselator *tess,
 	/* vEvent coincides with e->Dst, which has already been processed.
 	* Splice in the additional right-going edges.
 	*/
-	if(! TOLERANCE_NONZERO ) return;
+	assert( TOLERANCE_NONZERO );
 	regUp = TopRightRegion( regUp );
 	reg = RegionBelow( regUp );
 	eTopRight = reg->eUp->Sym;
@@ -933,7 +950,7 @@ static void ConnectLeftDegenerate( TESStesselator *tess,
 		/* Here e->Dst has only a single fixable edge going right.
 		* We can delete it since now we have some real right-going edges.
 		*/
-		if( eTopLeft == eTopRight ) return;   /* there are some left edges too */
+		assert( eTopLeft != eTopRight );   /* there are some left edges too */
 		DeleteRegion( tess, reg );
 		if ( !tessMeshDelete( tess->mesh, eTopRight ) ) longjmp(tess->env,1);
 		eTopRight = eTopLeft->Oprev;
@@ -975,9 +992,6 @@ static void ConnectLeftVertex( TESStesselator *tess, TESSvertex *vEvent )
 	/* __GL_DICTLISTKEY */ /* tessDictListSearch */
 	regUp = (ActiveRegion *)dictKey( dictSearch( tess->dict, &tmp ));
 	regLo = RegionBelow( regUp );
-	if(!regUp) return;
-	if(!regLo) return;
-
 	eUp = regUp->eUp;
 	eLo = regLo->eUp;
 
@@ -1141,10 +1155,10 @@ static void DoneEdgeDict( TESStesselator *tess )
 		* created by ConnectRightVertex().
 		*/
 		if( ! reg->sentinel ) {
-			if(! reg->fixUpperEdge ) continue;
-			if( ++fixedEdges != 1 ) continue;
+			assert( reg->fixUpperEdge );
+			assert( ++fixedEdges == 1 );
 		}
-		if( reg->windingNumber != 0 ) continue;
+		assert( reg->windingNumber == 0 );
 		DeleteRegion( tess, reg );
 		/*    tessMeshDelete( reg->eUp );*/
 	}
@@ -1251,7 +1265,7 @@ static int RemoveDegenerateFaces( TESStesselator *tess, TESSmesh *mesh )
 	for( f = mesh->fHead.next; f != &mesh->fHead; f = fNext ) {
 		fNext = f->next;
 		e = f->anEdge;
-		if( e->Lnext == e ) continue;
+		assert( e->Lnext != e );
 
 		if( e->Lnext->Lnext == e ) {
 			/* A face with only two edges */
@@ -1315,7 +1329,7 @@ int tessComputeInterior( TESStesselator *tess )
 	DonePriorityQ( tess );
 
 	if ( !RemoveDegenerateFaces( tess, tess->mesh ) ) return 0;
-	//tessMeshCheckMesh( tess->mesh );
+	tessMeshCheckMesh( tess->mesh );
 
 	return 1;
 }

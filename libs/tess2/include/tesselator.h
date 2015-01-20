@@ -36,10 +36,6 @@
 extern "C" {
 #endif
 
-#if defined( __APPLE_CC__)
-	#include <TargetConditionals.h>
-#endif
-
 enum TessWindingRule
 {
 	TESS_WINDING_ODD,
@@ -68,17 +64,11 @@ enum TessElementType
 };
 
 typedef float TESSreal;
-//note this shouldn't be defined(TARGET_OS_IPHONE) as its always defined either 0 or 1
-#if TARGET_OS_IPHONE || ANDROID || __ARMEL__ || __EMSCRIPTEN__
-typedef unsigned short TESSindex;
-#else
-typedef unsigned int TESSindex;
-#endif
-
+typedef int TESSindex;
 typedef struct TESStesselator TESStesselator;
 typedef struct TESSalloc TESSalloc;
 
-#define TESS_UNDEF ((TESSindex)(~(TESSindex)0))
+#define TESS_UNDEF (~(TESSindex)0)
 
 // Custom memory allocator interface.
 // The internal memory allocator allocates mesh edges, vertices and faces
@@ -149,12 +139,6 @@ int tessGetVertexCount( TESStesselator *tess );
 // tessGetVertices() - Returns pointer to first coordinate of first vertex.
 const TESSreal* tessGetVertices( TESStesselator *tess );
 
-// tessGetVertexIndices() - Returns pointer to first vertex index.
-// Vertex indices can be used to map the generated vertices to the original vertices.
-// Every point added using tessAddContour() will get a new index starting at 0.
-// New vertices generated at the intersections of segments are assigned value TESS_UNDEF.
-const TESSindex* tessGetVertexIndices( TESStesselator *tess );
-	
 // tessGetElementCount() - Returns number of elements in the the tesselated output.
 int tessGetElementCount( TESStesselator *tess );
 
@@ -162,7 +146,7 @@ int tessGetElementCount( TESStesselator *tess );
 const TESSindex* tessGetElements( TESStesselator *tess );
 
 #ifdef __cplusplus
-}
+};
 #endif
 
 #endif // TESSELATOR_H

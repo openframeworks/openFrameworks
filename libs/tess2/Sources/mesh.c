@@ -122,7 +122,7 @@ static void MakeVertex( TESSvertex *newVertex,
 	TESSvertex *vPrev;
 	TESSvertex *vNew = newVertex;
 
-	if(vNew == NULL) return;
+	assert(vNew != NULL);
 
 	/* insert in circular doubly-linked list before vNext */
 	vPrev = vNext->prev;
@@ -154,7 +154,7 @@ static void MakeFace( TESSface *newFace, TESShalfEdge *eOrig, TESSface *fNext )
 	TESSface *fPrev;
 	TESSface *fNew = newFace;
 
-	if(fNew == NULL) return;
+	assert(fNew != NULL); 
 
 	/* insert in circular doubly-linked list before fNext */
 	fPrev = fNext->prev;
@@ -760,9 +760,7 @@ void tessMeshDeleteMesh( TESSalloc* alloc, TESSmesh *mesh )
 	while( fHead->next != fHead ) {
 		tessMeshZapFace( fHead->next );
 	}
-	if( mesh->vHead.next != &mesh->vHead ){
-		return;
-	}
+	assert( mesh->vHead.next == &mesh->vHead );
 
 	alloc->memfree( alloc->userData, mesh );
 }
