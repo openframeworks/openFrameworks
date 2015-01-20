@@ -58,10 +58,20 @@ JNIEnv * ofGetJNIEnv(){
 		ofLogError("ofAppAndroidWindow") << "couldn't get java virtual machine";
 		return NULL;
 	}
-	if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
+
+	int getEnvStat = vm->GetEnv((void**) &env, JNI_VERSION_1_4);
+
+	if (getEnvStat == JNI_EDETACHED) {
+
+		if (vm->AttachCurrentThread(&env, NULL) != 0) {
+			ofLogError("ofAppAndroidWindow") << "couldn't get environment using GetEnv()";
+			return NULL;
+		}
+	} else if (getEnvStat != JNI_OK) {
 		ofLogError("ofAppAndroidWindow") << "couldn't get environment using GetEnv()";
 		return NULL;
 	}
+
 	return env;
 }
 

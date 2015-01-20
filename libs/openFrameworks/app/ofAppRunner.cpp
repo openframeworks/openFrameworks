@@ -104,6 +104,11 @@ void ofInit(){
 	ofSetWorkingDirectoryToDefault();
 }
 
+//--------------------------------------
+shared_ptr<ofMainLoop> ofCreateMainLoop(){
+	if(!mainLoop) mainLoop = shared_ptr<ofMainLoop>(new ofMainLoop);
+	return mainLoop;
+}
 
 //--------------------------------------
 shared_ptr<ofMainLoop> ofGetMainLoop(){
@@ -150,8 +155,7 @@ void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 
 shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 	ofInit();
-	if(!mainLoop) mainLoop = shared_ptr<ofMainLoop>(new ofMainLoop);
-	return mainLoop->createWindow(settings);
+	return ofCreateMainLoop()->createWindow(settings);
 }
 
 //-----------------------	gets called when the app exits

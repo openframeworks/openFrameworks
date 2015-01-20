@@ -70,6 +70,7 @@ ofAppNoWindow::ofAppNoWindow(){
 }
 
 
+//----------------------------------------------------------
 void ofAppNoWindow::setup(const ofWindowSettings & settings){
 	width = settings.width;
 	height = settings.height;
@@ -77,63 +78,7 @@ void ofAppNoWindow::setup(const ofWindowSettings & settings){
 	ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofNoopRenderer));
 }
 
-//------------------------------------------------------------
-void ofAppNoWindow::run(ofBaseApp * appPtr){
-
-	ofAppPtr = appPtr;
-
-	#if defined TARGET_OSX || defined TARGET_LINUX
-	// for keyboard
-	//set_conio_terminal_mode();
-	#endif
-
-	events().notifySetup();
-
-    ofLogNotice("ofAppNoWindow")
-		<< "***" << endl
-		<< "***" << endl
-		<< "*** running a headless (no window) app" << endl
-		<< "***" << endl
-		<< "*** keyboard input works here" << endl
-		<< "***"<< endl
-		<< "*** press Esc or Ctrl-C to quit" << endl
-		<< "***" << endl;
-	while (!events().windowShouldClose())
-	{
-        /// listen for escape
-        #ifdef TARGET_WIN32
-        if (GetAsyncKeyState(VK_ESCAPE))
-        	events().notifyKeyPressed(OF_KEY_ESC);
-        #endif
-
-		#if defined TARGET_OSX || defined TARGET_LINUX
-		while ( !events().windowShouldClose() && kbhit() )
-		{
-			int key = getch();
-			if ( key == 27 )
-			{
-				events().notifyKeyPressed(OF_KEY_ESC);
-			}
-			else if ( key == /* ctrl-c */ 3 )
-			{
-				ofLogNotice("ofAppNoWindow") << "Ctrl-C pressed" << endl;
-				break;
-			}
-			else
-			{
-				events().notifyKeyPressed(key);
-			}
-		}
-		#endif
-
-
-		events().notifyUpdate();
-		events().notifyDraw();
-
-	}
-	events().notifyExit();
-}
-
+//----------------------------------------------------------
 void ofAppNoWindow::update(){
 
     /// listen for escape
@@ -143,7 +88,7 @@ void ofAppNoWindow::update(){
     #endif
 
 	#if defined TARGET_OSX || defined TARGET_LINUX
-	while ( !events().windowShouldClose() && kbhit() )
+	while ( kbhit() )
 	{
 		int key = getch();
 		if ( key == 27 )
@@ -166,6 +111,7 @@ void ofAppNoWindow::update(){
 	events().notifyUpdate();
 }
 
+//----------------------------------------------------------
 void ofAppNoWindow::draw(){
 	events().notifyDraw();
 }
@@ -183,28 +129,34 @@ void ofAppNoWindow::exitApp(){
 	OF_EXIT_APP(0);
 }
 
+//----------------------------------------------------------
 ofPoint	ofAppNoWindow::getWindowPosition(){
 	return ofPoint(0,0);
 }
 
+//----------------------------------------------------------
 ofPoint	ofAppNoWindow::getWindowSize(){
 	return ofPoint(width,height);
 }
 
+//----------------------------------------------------------
 ofPoint	ofAppNoWindow::getScreenSize(){
 	return ofPoint(width,height);
 }
 
 
+//----------------------------------------------------------
 int	ofAppNoWindow::getWidth(){
 	return width;
 }
 
+//----------------------------------------------------------
 int	ofAppNoWindow::getHeight(){
 	return height;
 }
 
 
+//----------------------------------------------------------
 ofCoreEvents & ofAppNoWindow::events(){
 	return coreEvents;
 }

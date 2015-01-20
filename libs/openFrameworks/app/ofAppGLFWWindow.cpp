@@ -265,10 +265,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	setWindowPosition(settings.position.x,settings.position.y);
 }
 
-//--------------------------------------------
-void ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
-}
-
 #ifdef TARGET_LINUX
 //------------------------------------------------------------
 void ofAppGLFWWindow::setWindowIcon(const string & path){
@@ -309,21 +305,6 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
 }
 
 //--------------------------------------------
-void ofAppGLFWWindow::run(ofBaseApp * appPtr){
-	ofAppPtr = appPtr;
-
-	glfwMakeContextCurrent(windowP);
-
-	events().notifySetup();
-	while(!glfwWindowShouldClose(windowP) && !events().windowShouldClose()){
-		glfwPollEvents();
-		currentRenderer->update();
-		events().notifyUpdate();
-		display();
-	}
-	events().notifyExit();
-}
-
 void ofAppGLFWWindow::update(){
 	glfwMakeContextCurrent(windowP);
 	glfwPollEvents();
@@ -331,16 +312,20 @@ void ofAppGLFWWindow::update(){
 	events().notifyUpdate();
 }
 
+//--------------------------------------------
 void ofAppGLFWWindow::draw(){
 	display();
 }
 
+//--------------------------------------------
 bool ofAppGLFWWindow::getWindowShouldClose(){
-	return glfwWindowShouldClose(windowP) || events().windowShouldClose();
+	return glfwWindowShouldClose(windowP);
 }
 
+//--------------------------------------------
 void ofAppGLFWWindow::setWindowShouldClose(){
 	glfwSetWindowShouldClose(windowP,1);
+	events().notifyExit();
 }
 
 //------------------------------------------------------------
@@ -357,8 +342,11 @@ void ofAppGLFWWindow::display(void){
 		if (nFramesSinceWindowResized < 3){
 			currentRenderer->clear();
 		} else {
-			if ( (events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && settings.doubleBuffering)    glfwSwapBuffers(windowP);
-			else                                                     glFlush();
+			if ( (events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && settings.doubleBuffering){
+				glfwSwapBuffers(windowP);
+			}else{
+				glFlush();
+			}
 		}
 	} else {
 		if(settings.doubleBuffering){
@@ -430,7 +418,6 @@ ofPoint ofAppGLFWWindow::getWindowPosition(){
 }
 
 //------------------------------------------------------------
-
 int ofAppGLFWWindow::getCurrentMonitor(){
 	int numberOfMonitors;
 	GLFWmonitor** monitors = glfwGetMonitors(&numberOfMonitors);
@@ -840,13 +827,6 @@ ofOrientation ofAppGLFWWindow::getOrientation(){
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::exitApp(){
-	// Terminate GLFW
-	glfwTerminate();
-	std::exit(0);
-}
-
-//------------------------------------------------------------
 static void rotateMouseXY(ofOrientation orientation, int w, int h, double &x, double &y) {
 	int savedY;
 	switch(orientation) {
@@ -1077,6 +1057,12 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 	instance->events().notifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
 
 	instance->nFramesSinceWindowResized = 0;
+}
+
+//--------------------------------------------
+void ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
+	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+	instance->events().notifyExit();
 }
 
 //------------------------------------------------------------

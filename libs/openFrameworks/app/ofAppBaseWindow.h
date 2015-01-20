@@ -21,9 +21,8 @@ public:
 	virtual void setup(const ofWindowSettings & settings)=0;
 	virtual void update()=0;
 	virtual void draw()=0;
-	virtual void run(ofBaseApp * appPtr) {}
 	virtual bool getWindowShouldClose(){
-		return events().windowShouldClose();
+		return false;
 	}
 	virtual void setWindowShouldClose(){
 		close();

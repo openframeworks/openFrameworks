@@ -23,34 +23,42 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream(){
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::listDevices(){
+vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(){
 	shared_ptr<RtAudio> audioTemp;
 	try {
 		audioTemp = shared_ptr<RtAudio>(new RtAudio());
 	} catch (RtError &error) {
 		error.printMessage();
-		return;
+		return vector<ofSoundDevice>();
 	}
- 	int devices = audioTemp->getDeviceCount();
+ 	int deviceCount = audioTemp->getDeviceCount();
 	RtAudio::DeviceInfo info;
-	for (int i=0; i< devices; i++) {
+	vector<ofSoundDevice> deviceList;
+	for (int i=0; i< deviceCount; i++) {
 		try {
 			info = audioTemp->getDeviceInfo(i);
 		} catch (RtError &error) {
+			ofLogError("ofRtAudioSoundStream") << "Error retrieving info for device " << i;
 			error.printMessage();
 			break;
 		}
-		ofLogNotice("ofRtAudioSoundStream") << "device " << i << " " << info.name << "";
-		if (info.isDefaultInput) ofLogNotice("ofRtAudioSoundStream") << "----* default ----*";
-		ofLogNotice("ofRtAudioSoundStream") << "maximum output channels " << info.outputChannels;
-		ofLogNotice("ofRtAudioSoundStream") << "maximum input channels " << info.inputChannels;
-		ofLogNotice("ofRtAudioSoundStream") << "-----------------------------------------";
+		
+		ofSoundDevice dev;
+		dev.deviceID = i;
+		dev.name = info.name;
+		dev.outputChannels = info.outputChannels;
+		dev.inputChannels = info.inputChannels;
+		dev.sampleRates = info.sampleRates;
+		dev.isDefaultInput = info.isDefaultInput;
+		dev.isDefaultOutput = info.isDefaultOutput;
+		deviceList.push_back(dev);
 	}
+	
+	return deviceList;
 }
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::setDeviceID(int _deviceID){
-	//deviceID = _deviceID;
     inDeviceID = outDeviceID = _deviceID;
 }
 

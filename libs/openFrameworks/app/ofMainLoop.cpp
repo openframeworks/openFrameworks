@@ -59,7 +59,6 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & se
 #endif
 	addWindow(window);
 	window->setup(settings);
-	ofAddListener(window->events().keyPressed,this,&ofMainLoop::keyPressed);
 	return window;
 }
 

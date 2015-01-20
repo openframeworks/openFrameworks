@@ -232,7 +232,6 @@ class ofCoreEvents {
 	double getLastFrameTime() const;
 	int getFrameNum() const;
 
-	bool windowShouldClose() const;
 	bool getMousePressed(int button=-1) const;
 	bool getKeyPressed(int key=-1) const;
 	int getMouseX() const;
@@ -263,7 +262,6 @@ class ofCoreEvents {
 	void notifyDragEvent(ofDragInfo info);
 
 private:
-	bool bShouldClose;
 	float targetRate;
 	bool bFrameRateSet;
 	ofTimer timer;

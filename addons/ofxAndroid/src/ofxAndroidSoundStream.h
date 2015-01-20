@@ -12,7 +12,7 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		ofxAndroidSoundStream();
         ~ofxAndroidSoundStream();
 		
-		void listDevices();
+		std::vector<ofSoundDevice> getDeviceList();
 		void setDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
