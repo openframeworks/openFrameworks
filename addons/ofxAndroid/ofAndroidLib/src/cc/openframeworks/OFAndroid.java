@@ -970,7 +970,7 @@ public class OFAndroid {
 		ofActivity.runOnUiThread(new Runnable(){
 			public void run() {
 				Toast toast = Toast.makeText(ofActivity, alertMsg, Toast.LENGTH_SHORT);
-	        	toast.show();
+				toast.show();
 			}
 		});
 	}
