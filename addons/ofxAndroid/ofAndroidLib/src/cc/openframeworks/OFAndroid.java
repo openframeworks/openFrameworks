@@ -44,6 +44,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 public class OFAndroid {
@@ -892,6 +893,7 @@ public class OFAndroid {
 	}
 	
 	private static boolean alertListResult;
+    private static int listBoxResult;
 	public static boolean alertListBox(String title, String[] list){  
 		final String[] alertList = list;
 		final String alertTitle = title;
@@ -903,11 +905,28 @@ public class OFAndroid {
 	        } 
 	    };*/
 	    alertListResult=false;
+        listBoxResult=-1;
 		ofActivity.runOnUiThread(new Runnable(){
 			public void run() {
 				final ListView listView = new ListView(ofActivity); 
-				final ListAdapter adapter = new ArrayAdapter<String>(ofActivity, android.R.layout.simple_list_item_1, alertList);
-				listView.setAdapter(adapter);
+				final ListAdapter adapter = new ArrayAdapter<String>(ofActivity, android.R.layout.simple_list_item_activated_1, alertList);
+                listView.setAdapter(adapter);
+                
+                // support multiple-choice lists in the future?
+                listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                
+                // add item click listener
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        // calling native function instead?
+                        // like: OFAndroid.ListEntryPressed(position);
+                        
+                        // set the result
+                        listBoxResult = position;
+                    }
+                });
+                
 				new AlertDialog.Builder(ofActivity)   
 					.setTitle(alertTitle)  
 					.setCancelable(false)  
@@ -915,7 +934,7 @@ public class OFAndroid {
 							new DialogInterface.OnClickListener() {  
 						public void onClick(DialogInterface dialog, int whichButton){
 							alertListResult = true;
-							//OFAndroid.okPressed();
+							OFAndroid.okPressed();
 							//handler.sendMessage(handler.obtainMessage());
 						}
 	
@@ -940,6 +959,11 @@ public class OFAndroid {
 	    return alertListResult;
 	}
 	
+    public static int getLastAlertListSelection(){
+        return listBoxResult;
+    }
+    
+    
 	public static void toast(String msg){  
 		if(msg=="") return;
 		final String alertMsg = msg;
