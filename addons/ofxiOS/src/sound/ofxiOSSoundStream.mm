@@ -6,6 +6,7 @@
 
 #include "ofxiOSSoundStream.h"
 #include "ofxiOSSoundStreamDelegate.h"
+#include "ofSoundStream.h"
 #include "ofBaseApp.h"
 
 #import "SoundInputStream.h"
@@ -33,8 +34,9 @@ ofxiOSSoundStream::~ofxiOSSoundStream() {
 }
 
 //------------------------------------------------------------------------------
-void ofxiOSSoundStream::listDevices() {
-    //
+vector<ofSoundDevice> ofxiOSSoundStream::getDeviceList() {
+	ofLogWarning("ofxiOSSoundStream") << "getDeviceList() isn't implemented on iOS";
+	return vector<ofSoundDevice>();
 }
 
 //------------------------------------------------------------------------------
@@ -43,13 +45,30 @@ void ofxiOSSoundStream::setDeviceID(int _deviceID) {
 }
 
 //------------------------------------------------------------------------------
+int ofxiOSSoundStream::getDeviceID() {
+	return 0;
+}
+
+//------------------------------------------------------------------------------
 void ofxiOSSoundStream::setInput(ofBaseSoundInput * soundInput) {
 	soundInputPtr = soundInput;
+	[(ofxiOSSoundStreamDelegate *)[(id)soundInputStream delegate] setInput:soundInputPtr];
 }
 
 //------------------------------------------------------------------------------
 void ofxiOSSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
 	soundOutputPtr = soundOutput;
+	[(ofxiOSSoundStreamDelegate *)[(id)soundOutputStream delegate] setOutput:soundOutputPtr];
+}
+
+//------------------------------------------------------------------------------
+ofBaseSoundInput * ofxiOSSoundStream::getInput(){
+	return soundInputPtr;
+}
+
+//------------------------------------------------------------------------------
+ofBaseSoundOutput * ofxiOSSoundStream::getOutput(){
+	return soundOutputPtr;
 }
 
 //------------------------------------------------------------------------------

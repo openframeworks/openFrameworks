@@ -4,8 +4,9 @@
 #include "ofLog.h"
 #include "of3dGraphics.h"
 
-ofNode::ofNode() : 
-	parent(NULL) {
+ofNode::ofNode()
+:parent(NULL)
+,legacyCustomDrawOverrided(true){
 	setPosition(ofVec3f(0, 0, 0));
 	setOrientation(ofVec3f(0, 0, 0));
 	setScale(1);
@@ -357,27 +358,32 @@ void ofNode::resetTransform() {
 
 //----------------------------------------
 void ofNode::draw()  const{
-	transformGL();
+	ofGetCurrentRenderer()->draw(*this);
+}
+
+//----------------------------------------
+void ofNode::customDraw(const ofBaseRenderer * renderer) const{
 	const_cast<ofNode*>(this)->customDraw();
-	restoreTransformGL();
+	if(!legacyCustomDrawOverrided){
+		renderer->drawBox(10);
+		renderer->draw(ofMesh::axis(20),OF_MESH_FILL);
+	}
 }
 
 //----------------------------------------
 void ofNode::customDraw(){
-	ofDrawBox(10);
-	ofDrawAxis(20);
+	legacyCustomDrawOverrided = false;
 }
 
 //----------------------------------------
-void ofNode::transformGL() const {
-	ofPushMatrix();
-	ofMultMatrix( getGlobalTransformMatrix() );
-	//glMultMatrixf( getGlobalTransformMatrix().getPtr() );
+void ofNode::transformGL(ofBaseRenderer * renderer) const {
+	renderer->pushMatrix();
+	renderer->multMatrix( getGlobalTransformMatrix() );
 }
 
 //----------------------------------------
-void ofNode::restoreTransformGL() const {
-	ofPopMatrix();
+void ofNode::restoreTransformGL(ofBaseRenderer * renderer) const {
+	renderer->popMatrix();
 }
 
 //----------------------------------------

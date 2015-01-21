@@ -53,7 +53,7 @@ void ofApp::update(){
 
      // rotate the points
      for (int i = 0; i < nPts; i++){
-        pts[i] = pts[i].rotated(speedOfRotation, rotateAmount);
+        pts[i] = pts[i].getRotated(speedOfRotation, rotateAmount);
      }
 
      // move them back

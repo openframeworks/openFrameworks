@@ -10,16 +10,18 @@
 
 class ofxiOSSoundStream : public ofBaseSoundStream {
 
-    public:
+	public:
 		ofxiOSSoundStream();
 		~ofxiOSSoundStream();
 		
 		/// these are not implemented on iOS
-		void listDevices();
+		std::vector<ofSoundDevice> getDeviceList();
 		void setDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
+		ofBaseSoundInput * getInput();
+		ofBaseSoundOutput * getOutput();
 		
 		/// currently, the number of buffers is always 1 on iOS and setting nBuffers has no effect
 		/// the max buffersize is 4096 
@@ -37,22 +39,22 @@ class ofxiOSSoundStream : public ofBaseSoundStream {
 		int getNumOutputChannels();
 		int getSampleRate();
 		int getBufferSize();
+		int getDeviceID();
 	
 		static bool setMixWithOtherApps(bool bMix);
 		
 	private:
-    
-        ofBaseSoundInput * soundInputPtr;
-        ofBaseSoundOutput * soundOutputPtr;
-    
-        void * soundInputStream;
-        void * soundOutputStream;
-    
-        int numOfInChannels;
-        int numOfOutChannels;
-        int sampleRate;
-        int bufferSize;
-        int numOfBuffers;
+		ofBaseSoundInput * soundInputPtr;
+		ofBaseSoundOutput * soundOutputPtr;
+
+		void * soundInputStream;
+		void * soundOutputStream;
+
+		int numOfInChannels;
+		int numOfOutChannels;
+		int sampleRate;
+		int bufferSize;
+		int numOfBuffers;
 };
 
 #define ofxiPhoneSoundStream ofxiOSSoundStream

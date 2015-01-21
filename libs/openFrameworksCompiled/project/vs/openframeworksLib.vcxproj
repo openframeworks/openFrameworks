@@ -58,6 +58,9 @@
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>
     </Bscmake>
+    <Lib>
+      <AdditionalDependencies>winmm.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -66,7 +69,11 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
+    <Lib>
+      <AdditionalDependencies>winmm.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\openFrameworks\3d\of3dPrimitives.h" />
@@ -79,6 +86,8 @@
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppGLFWWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppNoWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofBaseApp.h" />
+    <ClInclude Include="..\..\..\openFrameworks\app\ofMainLoop.h" />
+    <ClInclude Include="..\..\..\openFrameworks\app\ofWindowSettings.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofFbo.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLRenderer.h" />
@@ -116,8 +125,11 @@
     <ClInclude Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundBuffer.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundObject.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundStream.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameter.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameterGroup.h" />
@@ -157,6 +169,7 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppNoWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\app\ofMainLoop.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofFbo.cpp" />
@@ -186,8 +199,11 @@
     <ClCompile Include="..\..\..\openFrameworks\math\ofQuaternion.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofVec2f.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofVec4f.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundBuffer.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundObject.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofBaseTypes.cpp" />

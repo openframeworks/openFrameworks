@@ -10,9 +10,9 @@
 class ofxAndroidSoundStream : public ofBaseSoundStream{
 	public:
 		ofxAndroidSoundStream();
-		virtual ~ofxAndroidSoundStream();
+        ~ofxAndroidSoundStream();
 		
-		void listDevices();
+		std::vector<ofSoundDevice> getDeviceList();
 		void setDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
@@ -26,6 +26,7 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		
 		long unsigned long getTickCount();		
 
+        int getDeviceID(){return 0;}
 		int getNumInputChannels();
 		int getNumOutputChannels();
 		int getSampleRate();

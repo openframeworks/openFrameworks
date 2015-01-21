@@ -37,6 +37,7 @@ public:
 	float getShininess() const;
     
     struct Data{
+		Data();
         ofFloatColor diffuse;
         ofFloatColor ambient;
         ofFloatColor specular;
@@ -47,20 +48,16 @@ public:
     void setData(const ofMaterial::Data& data);
 	
     // apply the material
-	void begin();
-	void end();
+	void begin() const;
+	void end() const;
 
 private:
-	void initShaders();
-	void beginShader(int texType);
-	string vertexSource(int maxLights, bool hasTexture, bool textureRect);
-	string fragmentSource(int maxLights, bool hasTexture, bool textureRect);
+	void initShaders(ofGLProgrammableRenderer & renderer) const;
+	const ofShader & getShader(int textureTarget, ofGLProgrammableRenderer & renderer) const;
+	void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
+	void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
     
     Data data;
-    Data prev_data;
-    Data prev_data_back;
-
-	mutable const ofShader * currentShader;
 
 	static ofShader shaderNoTexture;
 	static ofShader shaderTexture2D;

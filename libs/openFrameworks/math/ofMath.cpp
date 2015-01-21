@@ -1,6 +1,5 @@
 #include "ofMath.h"
 #include "ofUtils.h"
-#include "ofAppRunner.h"
 #include "float.h"
 
 #ifndef TARGET_WIN32
@@ -116,8 +115,18 @@ float ofDist(float x1, float y1, float x2, float y2) {
 }
 
 //--------------------------------------------------
+float ofDist(float x1, float y1, float z1, float x2, float y2, float z2) {
+	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
+}
+
+//--------------------------------------------------
 float ofDistSquared(float x1, float y1, float x2, float y2) {
 	return ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
+}
+
+//--------------------------------------------------
+float ofDistSquared(float x1, float y1, float z1, float x2, float y2, float z2) {
+	return ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2) );
 }
 
 //--------------------------------------------------
@@ -181,16 +190,6 @@ float ofLerpDegrees(float currentAngle, float targetAngle, float pct) {
 //--------------------------------------------------
 float ofLerpRadians(float currentAngle, float targetAngle, float pct) {
 	return currentAngle + ofAngleDifferenceRadians(currentAngle,targetAngle) * pct;
-}
-
-//--------------------------------------------------
-float ofRandomWidth() {
-	return ofRandom(0.f, ofGetWidth());
-}
-
-//--------------------------------------------------
-float ofRandomHeight() {
-	return ofRandom(0.f, ofGetHeight());
 }
 
 //--------------------------------------------------

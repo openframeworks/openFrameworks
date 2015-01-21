@@ -40,9 +40,11 @@ enum ofTargetPlatform{
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated))
     #endif
 	#define OF_DEPRECATED(func) func __attribute__ ((deprecated))
+	#define OF_INTERNAL_DEPRECATED(func) func __attribute__ ((deprecated("OF core deprecated")))
 #elif defined(_MSC_VER)
 	#define OF_DEPRECATED_MSG(message, func) __declspec(deprecated(message)) func
 	#define OF_DEPRECATED(func) __declspec(deprecated) func
+	#define OF_INTERNAL_DEPRECATED(func) __declspec(deprecated("OF core deprecated")) func
 #else
 	#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
 	#define OF_DEPRECATED_MSG(message, func) func
