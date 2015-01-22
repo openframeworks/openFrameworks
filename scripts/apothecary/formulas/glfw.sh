@@ -8,18 +8,18 @@
 
 FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" "ios" "android" )
 
-# define the version
+# define the version - for now we need to pull from arturos master 
 VER=3.0.4
 
 # tools for git use
-GIT_URL=https://github.com/glfw/glfw.git
+GIT_URL=https://github.com/arturoc/glfw/archive/feature-keysUnicode.tar.gz
 GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -Lk https://github.com/glfw/glfw/archive/$GIT_TAG.tar.gz -o glfw-$GIT_TAG.tar.gz
-	tar -xf glfw-$GIT_TAG.tar.gz
-	mv glfw-$GIT_TAG glfw
+	curl -Lk $GIT_URL -o glfw-feature-keysUnicode.tar.gz
+	tar -xf glfw-feature-keysUnicode.tar.gz
+	mv glfw-feature-keysUnicode glfw
 	rm glfw*.tar.gz
 }
 
