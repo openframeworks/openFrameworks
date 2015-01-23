@@ -8,11 +8,11 @@
 # specify specfic build configs in poco/config using ./configure --config=NAME
 
 # define the version
-VER=apothecary-1.7
+VER=1.6.0-release
 
 # tools for git use
-GIT_URL=https://github.com/bakercp/poco
-GIT_TAG=poco-$VER
+GIT_URL=https://github.com/pocoproject/poco
+GIT_TAG=poco-1.6.0-release
 
 # For Poco Builds, we omit both Data/MySQL and Data/ODBC because they require
 # 3rd Party libraries.  See https://github.com/pocoproject/poco/blob/develop/README
