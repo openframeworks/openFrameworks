@@ -328,7 +328,7 @@ function copy() {
 		cp -v Dist/FreeImage.lib $1/lib/$TYPE/FreeImage.lib
 		cp -v Dist/FreeImage.dll $1/../../export/$TYPE/FreeImage.dll
 	elif [ "$TYPE" == "ios" ] ; then
-
+        cp -v Dist/*.h $1/include
         if [ -d $1/lib/$TYPE/ ]; then
             rm -r $1/lib/$TYPE/
         fi
