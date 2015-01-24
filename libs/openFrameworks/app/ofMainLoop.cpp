@@ -112,14 +112,15 @@ int ofMainLoop::loop(){
 }
 
 void ofMainLoop::loopOnce(){
-	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
+	for(auto i = windowsApps.begin();i!=windowsApps.end();){
 		if(i->first->getWindowShouldClose()){
 			i->first->close();
-			windowsApps.erase(i);
+			windowsApps.erase(i++);
 		}else{
 			currentWindow = i->first;
 			i->first->update();
 			i->first->draw();
+			++i;
 		}
 	}
 	if(pollEvents){
