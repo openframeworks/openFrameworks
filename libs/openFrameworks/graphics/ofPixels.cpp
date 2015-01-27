@@ -511,9 +511,8 @@ int ofPixels_<PixelType>::getPixelIndex(int x, int y) const {
 }
 
 template<typename PixelType>
-ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
+ofColor_<PixelType> ofPixels_<PixelType>::getColor(int index) const {
 	ofColor_<PixelType> c;
-	int index = getPixelIndex(x, y);
 
 	switch(pixelFormat){
 		case OF_PIXELS_RGB:
@@ -554,6 +553,11 @@ ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
 	}
 
 	return c;
+}
+
+template<typename PixelType>
+ofColor_<PixelType> ofPixels_<PixelType>::getColor(int x, int y) const {
+	return getColor(getPixelIndex(x, y));
 }
 
 template<typename PixelType>
