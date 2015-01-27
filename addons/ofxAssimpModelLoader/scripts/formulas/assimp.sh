@@ -188,8 +188,31 @@ function build() {
         done
 
         mkdir -p "lib/$TYPE"
+        cd "./builddir/$TYPE/"
 		# link into universal lib
-		command="lipo -create $libsToLink -o lib/$TYPE/libassimp.a"
+		echo "Running lipo to create fat lib"
+        echo "Please stand by..."
+
+        SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version` 
+        DEVELOPER=$XCODE_DEV_ROOT
+        TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
+        #           libassimp-armv7s.a \
+        $TOOLCHAIN/usr/bin/lipo -create libassimp-armv7.a \
+                    libassimp-arm64.a \
+                    libassimp-i386.a \
+                    libassimp-x86_64.a \
+                    -output "../../lib/$TYPE/assimp.a" 
+
+        cd ../../
+
+
+        if [ $? != 0 ];
+        then 
+            echo "Problem while creating fat lib with lipo"
+            exit 1
+        else
+            echo "Lipo Successful."
+        fi
 
 		echo "--------------------"
 		echo "Stripping any lingering symbols"
@@ -201,9 +224,10 @@ function build() {
 		SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
 		local TOBESTRIPPED
 		for TOBESTRIPPED in $( ls -1) ; do
-			strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
+			$TOOLCHAIN/usr/bin/strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
 			if [ $? != 0 ];
 		    then
+                tail -n 100 "${LOG}"
 		    	echo "Problem while stripping lib - Please check ${SLOG}"
 		    	exit 1
 		    else
@@ -214,9 +238,7 @@ function build() {
 		cd ../../
 		echo "--------------------"
 
-		echo "Completed."
-
-        $command || true
+		echo "Completed Assimp for $TYPE"
 	fi
 
 	if [ "$TYPE" == "osx" ] ; then
@@ -294,7 +316,7 @@ function copy() {
 	elif [ "$TYPE" == "osx" ] ; then
 		cp -Rv lib/libassimp-osx.a $1/lib/$TYPE/assimp.a
 	elif [ "$TYPE" == "ios" ] ; then
-		cp -Rv lib/$TYPE/libassimp.a $1/lib/$TYPE/assimp.a
+		cp -Rv lib/$TYPE/assimp.a $1/lib/$TYPE/assimp.a
 	else
 		cp -Rv lib/libassimp.a $1/lib/$TYPE/assimp.a
 	fi

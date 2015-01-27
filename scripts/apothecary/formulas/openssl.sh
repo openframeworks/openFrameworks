@@ -156,6 +156,7 @@ function build() {
 		    ./Configure $CONFIG_TARGET $BUILD_OPTS --openssldir="$CURRENTPATH/build/$TYPE/$OSX_ARCH" > "${LOG}" 2>&1
 
 			if [ $? != 0 ]; then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem during configure - Please check ${LOG}"
 		    	exit 1
 		    fi
@@ -201,6 +202,7 @@ function build() {
 			
 			if [ $? != 0 ];
 		    then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
 		    else
@@ -228,6 +230,25 @@ function build() {
 		echo "Building & staging fat libs"
 		lipo -c "build/$TYPE/i386/lib/libcrypto.a" "build/$TYPE/x86_64/lib/libcrypto.a" -o "lib/$TYPE/crypto.a"
 		lipo -c "build/$TYPE/i386/lib/libssl.a" "build/$TYPE/x86_64/lib/libssl.a" -o "lib/$TYPE/ssl.a"
+
+        cd lib/$TYPE
+        SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
+        local TOBESTRIPPED
+        for TOBESTRIPPED in $( ls -1) ; do
+            strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
+            if [ $? != 0 ];
+            then
+                tail -n 100 "${SLOG}"
+                echo "Problem while stripping lib - Please check ${SLOG}"
+                exit 1
+            else
+                echo "Strip Successful for ${SLOG}"
+            fi
+        done
+
+
+        cd ../../
+
 		
 		# ------------ END OS X Recipe.
 
@@ -409,6 +430,7 @@ function build() {
 		    fi
 
 		    if [ $? != 0 ]; then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem while configure - Please check ${LOG}"
 		    	exit 1
 		    fi
@@ -453,6 +475,7 @@ function build() {
 			make >> "${LOG}" 2>&1
 			if [ $? != 0 ];
 		    then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
 		    else
