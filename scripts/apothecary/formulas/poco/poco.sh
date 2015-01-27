@@ -100,17 +100,69 @@ function build() {
 	if [ "$TYPE" == "osx" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
+		CURRENTPATH=`pwd`
+		mkdir -p "$CURRENTPATH/build/$TYPE/LOG"
+		LOG="$CURRENTPATH/build/$TYPE/poco-configure-i386-${VER}.log"
+		set +e
+
+		echo "--------------------"
+		echo "Making Poco-${VER}"
+		echo "--------------------"
+		echo "Configuring for i386 libstdc++ ..."
+
 		# 32 bit
 		# For OS 10.9+ we must explicitly set libstdc++ for the 32-bit OSX build.
-		./configure $BUILD_OPTS --cflags=-stdlib=libstdc++ --config=Darwin32
-		make
+		./configure $BUILD_OPTS --cflags=-stdlib=libstdc++ --config=Darwin32 > "${LOG}" 2>&1
+		if [ $? != 0 ];
+		then
+			tail -n 100 "${LOG}"
+	    	echo "Problem while configuring - Please check ${LOG}"
+	    	exit 1
+	    else
+	    	tail -n 100 "${LOG}"
+	    	echo "Configure Successful"
+	    fi
+	    echo "--------------------"
+		echo "Running make"
+		LOG="$CURRENTPATH/build/$TYPE/poco-make-i386-${VER}.log"
+		make >> "${LOG}" 2>&1
+		if [ $? != 0 ];
+		then
+			tail -n 100 "${LOG}"
+	    	echo "Problem while make - Please check ${LOG}"
+	    	exit 1
+	    else
+	    	tail -n 100 "${LOG}"
+	    	echo "Make Successful"
+	    fi
 
 		# 64 bit
 
 		export POCO_ENABLE_CPP11=1
-
-		./configure $BUILD_OPTS --config=Darwin64-clang-libc++
-		make
+		LOG="$CURRENTPATH/build/$TYPE/poco-configure-x86_64-${VER}.log"
+		./configure $BUILD_OPTS --config=Darwin64-clang-libc++  > "${LOG}" 2>&1
+		if [ $? != 0 ];
+		then
+			tail -n 100 "${LOG}"
+	    	echo "Problem while configuring - Please check ${LOG}"
+	    	exit 1
+	    else
+	    	tail -n 100 "${LOG}"
+	    	echo "Configure Successful"
+	    fi
+	    echo "--------------------"
+		echo "Running make"
+		LOG="$CURRENTPATH/build/$TYPE/poco-make-x86_64-${VER}.log"
+		make >> "${LOG}" 2>&1
+		if [ $? != 0 ];
+		then
+			tail -n 100 "${LOG}"
+	    	echo "Problem while make - Please check ${LOG}"
+	    	exit 1
+	    else
+	    	tail -n 100 "${LOG}"
+	    	echo "Make Successful"
+	    fi
 
 		unset POCO_ENABLE_CPP11
 
@@ -252,6 +304,7 @@ function build() {
 			./configure $BUILD_OPTS --config=$BUILD_POCO_CONFIG_IPHONE > "${LOG}" 2>&1
 
 			if [ $? != 0 ]; then
+				tail -n 100 "${LOG}"
 		    	echo "Problem while configure - Please check ${LOG}"
 		    	exit 1
 		    else
@@ -259,15 +312,14 @@ function build() {
 		    fi
 		    echo "--------------------"
 		    echo "Running make for ${IOS_ARCH}"
-		    echo "To see status in realtime check:"
-		    echo " ${LOG}"
-			echo "Please stand by..."
 			make >> "${LOG}" 2>&1
 			if [ $? != 0 ];
 		    then
+		    	tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
 		    else
+		    	tail -n 10 "${LOG}"
 		    	echo "Make Successful for ${IOS_ARCH}"
 		    fi
 			unset POCO_TARGET_OSARCH IPHONE_SDK_VERSION_MIN OSFLAGS
@@ -299,6 +351,7 @@ function build() {
 			strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
 			if [ $? != 0 ];
 		    then
+		    	tail -n 100 "${SLOG}"
 		    	echo "Problem while stripping lib - Please check ${SLOG}"
 		    	exit 1
 		    else
