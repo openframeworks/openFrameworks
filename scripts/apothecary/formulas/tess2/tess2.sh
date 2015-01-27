@@ -170,6 +170,7 @@ function build() {
 
 			if [ $? != 0 ];
 		    then 
+		    	tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
 		    else
@@ -202,6 +203,7 @@ function build() {
 
 		if [ $? != 0 ];
 		then 
+			tail -n 10 "${LOG}"
 		    echo "Problem while creating fat lib with lipo - Please check ${LOG}"
 		    exit 1
 		else
@@ -219,6 +221,7 @@ function build() {
 		strip -x lib/$TYPE/libtess2.a >> "${SLOG}" 2>&1
 		if [ $? != 0 ];
 		then 
+			tail -n 100 "${SLOG}"
 		    echo "Problem while stripping lib - Please check ${SLOG}"
 		    exit 1
 		else
