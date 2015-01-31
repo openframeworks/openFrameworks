@@ -122,6 +122,12 @@
 		<Unit filename="../../../openFrameworks/app/ofBaseApp.h">
 			<Option virtualFolder="openframeworks/app/" />
 		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofMainLoop.cpp">
+			<Option virtualFolder="openframeworks/app/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/app/ofMainLoop.h">
+			<Option virtualFolder="openframeworks/app/" />
+		</Unit>
 		<Unit filename="../../../openFrameworks/communication/ofArduino.cpp">
 			<Option virtualFolder="openframeworks/communication/" />
 		</Unit>
@@ -339,6 +345,12 @@
 			<Option virtualFolder="openframeworks/sound/" />
 		</Unit>
 		<Unit filename="../../../openFrameworks/sound/ofRtAudioSoundStream.h">
+			<Option virtualFolder="openframeworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofSoundBuffer.cpp">
+			<Option virtualFolder="openframeworks/sound/" />
+		</Unit>
+		<Unit filename="../../../openFrameworks/sound/ofSoundBuffer.h">
 			<Option virtualFolder="openframeworks/sound/" />
 		</Unit>
 		<Unit filename="../../../openFrameworks/sound/ofSoundPlayer.cpp">
