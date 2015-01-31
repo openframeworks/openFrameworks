@@ -551,7 +551,8 @@ void ofFbo::allocate(Settings _settings) {
 		ofLogWarning("ofFbo") << "allocate(): no color buffers specified for frame buffer object " << fbo;
 	}
 	settings.internalformat = _settings.internalformat;
-
+	
+	dirty.resize(_settings.colorFormats.size(), true); // we start with all color buffers dirty.
 
 	// if textures are attached to a different fbo (e.g. if using MSAA) check it's status
 	if(fbo != fboTextures) {
@@ -583,8 +584,11 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 	glGenRenderbuffers(1, &buffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, buffer);
 #ifndef TARGET_OPENGLES
-	if(settings.numSamples==0) glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
-	else glRenderbufferStorageMultisample(GL_RENDERBUFFER, settings.numSamples, internalFormat, settings.width, settings.height);
+	if (settings.numSamples==0) {
+		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
+	} else {
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, settings.numSamples, internalFormat, settings.width, settings.height);
+	}
 #else
 	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, ofNextPow2(settings.width), ofNextPow2(settings.height));
 #endif
@@ -612,6 +616,8 @@ void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint
 	tex.allocate(texData);
 
     attachTexture(tex, internalFormat, attachmentPoint);
+	dirty.push_back(true);
+	activeDrawBuffers.push_back(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 }
 
 //----------------------------------------------------------
@@ -711,6 +717,18 @@ void ofFbo::unbind() const{
 		ofFbo::savedFramebuffer.pop();
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer);
+	
+	if (fbo != fboTextures){
+		// ---------| if fbo != fboTextures, we are dealing with an MSAA enabled FBO.
+		// all currently active draw buffers need to be flagged dirty
+		// if a draw buffer has been activated and then de-activated, it has been 
+		// flagged dirty at activation, so we can be sure all buffers which have 
+		// been rendered to are flagged dirty.
+		int numBuffersToFlag = min(dirty.size(), activeDrawBuffers.size());
+		for(int i=0; i < numBuffersToFlag; i++){
+			dirty[i] = true;
+		}
+	}
 }
 
 //----------------------------------------------------------
@@ -719,18 +737,13 @@ int ofFbo::getNumTextures() const {
 	return textures.size();
 }
 
-//TODO: Should we also check against card's max attachments or can we assume that's taken care of in texture setup? Still need to figure out MSAA in conjunction with MRT
 //----------------------------------------------------------
 
 void ofFbo::setActiveDrawBuffer(int i){
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-    if (i < getNumTextures()){
-        GLenum e = GL_COLOR_ATTACHMENT0 + i;
-        glDrawBuffer(e);
-    }else{
-		ofLogWarning("ofFbo") << "setActiveDrawBuffer(): fbo " << fbo << " couldn't set texture " << i << ", only " << getNumTextures() << "allocated";
-    }
+	vector<int> activebuffers(1, i);
+	setActiveDrawBuffers(activebuffers);
 #endif
 }
 
@@ -739,17 +752,20 @@ void ofFbo::setActiveDrawBuffer(int i){
 void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-    vector<GLenum> attachments;
+    int numBuffers = activeDrawBuffers.size();
+	activeDrawBuffers.clear();
+	activeDrawBuffers.resize(numBuffers, GL_NONE); // we initialise the vector with GL_NONE, so a buffer will not be written to unless activated.
     for(int i=0; i < (int)ids.size(); i++){
       int id = ids[i];
         if (id < getNumTextures()){
             GLenum e = GL_COLOR_ATTACHMENT0 + id;
-            attachments.push_back(e);
+            activeDrawBuffers[id] = e; // activate requested buffers
+			dirty[id] = true; // dirty activated draw buffers.
         }else{
             ofLogWarning("ofFbo") << "setActiveDrawBuffers(): fbo " << fbo << " couldn't set texture " << i << ", only " << getNumTextures() << "allocated";
         }
     }
-    glDrawBuffers(attachments.size(),&attachments[0]);
+    glDrawBuffers(activeDrawBuffers.size(),&activeDrawBuffers[0]);
 #endif
 }
 
@@ -758,16 +774,11 @@ void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
 void ofFbo::activateAllDrawBuffers(){
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-    vector<GLenum> attachments;
+    vector<int> activeBuffers(getNumTextures(),0);
     for(int i=0; i < getNumTextures(); i++){
-        if (i < getNumTextures()){
-            GLenum e = GL_COLOR_ATTACHMENT0 + i;
-            attachments.push_back(e);
-        }else{
-            ofLogWarning("ofFbo") << "activateAllDrawBuffers(): fbo " << fbo << " couldn't set texture " << i << ", only " << getNumTextures() << "allocated";
-        }
+            activeBuffers[i] = i;
     }
-    glDrawBuffers(attachments.size(),&attachments[0]);
+    setActiveDrawBuffers(activeBuffers);
 #endif
 }
 
@@ -878,7 +889,9 @@ void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 void ofFbo::updateTexture(int attachmentPoint) {
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
-	if(fbo != fboTextures && dirty) {
+	if(fbo != fboTextures && dirty[attachmentPoint]) {
+		
+		// ---------| invariant: if fbo != fboTextures, we are dealing with an MSAA enabled FBO.
 
 		if (!ofIsGLProgrammableRenderer()){
 			// save current drawbuffer
@@ -903,7 +916,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 			glPopAttrib();
 		}
 	
-		dirty = false;
+		dirty[attachmentPoint] = false;
 
 	}
 #endif

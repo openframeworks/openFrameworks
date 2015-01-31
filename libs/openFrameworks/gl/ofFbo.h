@@ -110,9 +110,8 @@ private:
 	GLuint				depthBuffer;
 	GLuint				stencilBuffer;
 
-
-	vector<GLuint>		colorBuffers;	// only used if using MSAA...maybe...what about MRT?
-	vector<ofTexture>	textures;
+	vector<GLuint>		colorBuffers;
+	vector<ofTexture>	textures;			
 
 	ofTexture			depthBufferTex;
 
@@ -120,9 +119,11 @@ private:
 	static int			_maxDrawBuffers;
 	static int			_maxSamples;
 
-	mutable bool		dirty;
 	static stack<GLuint> savedFramebuffer;	///< keeps track of currently bound framebuffers
 	static GLuint		boundFramebuffer;	///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
+
+	vector<GLenum>		activeDrawBuffers;  ///< table of currently active color draw buffers, allocate() defaults it to size(textures), with GL_COLOR_ATTACHMENT0..n as members, in order of allocation
+	mutable vector<bool> dirty;
 
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;
