@@ -1316,11 +1316,12 @@ void ofGLProgrammableRenderer::bind(const ofFbo & fbo, bool setupPerspective){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	fbo.unbind();
 	matrixStack.setRenderSurface(*window);
 	uploadMatrices();
 	popStyle();
 	popView();
+	
 }
 
 //----------------------------------------------------------
