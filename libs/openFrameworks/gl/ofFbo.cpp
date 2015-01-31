@@ -597,11 +597,21 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 //----------------------------------------------------------
 
 void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint) {
+	
+	ofTextureData texData;
+
+	texData.textureTarget = settings.textureTarget;
+	texData.width = settings.width;
+	texData.height = settings.height;
+	texData.glTypeInternal = internalFormat;
+	texData.bFlipTexture = false;
+	texData.wrapModeHorizontal = settings.wrapModeHorizontal;
+	texData.wrapModeVertical = settings.wrapModeVertical;
+	texData.magFilter = settings.maxFilter;
+	texData.minFilter = settings.minFilter;
+
 	ofTexture tex;
-	tex.allocate(settings.width, settings.height, internalFormat, settings.textureTarget == GL_TEXTURE_2D ? false : true);
-	tex.texData.bFlipTexture = false;
-	tex.setTextureWrap(settings.wrapModeHorizontal, settings.wrapModeVertical);
-	tex.setTextureMinMagFilter(settings.minFilter, settings.maxFilter);
+	tex.allocate(texData);
 
     attachTexture(tex, internalFormat, attachmentPoint);
 }
