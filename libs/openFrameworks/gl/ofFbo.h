@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofTexture.h"
+#include <stack>
 
 class ofFbo : public ofBaseDraws, public ofBaseHasTexture {
 public:
@@ -109,7 +110,6 @@ private:
 	GLuint				depthBuffer;
 	GLuint				stencilBuffer;
 
-	mutable GLint		savedFramebuffer;	// save bound framebuffer before switching
 
 	vector<GLuint>		colorBuffers;	// only used if using MSAA...maybe...what about MRT?
 	vector<ofTexture>	textures;
@@ -121,6 +121,8 @@ private:
 	static int			_maxSamples;
 
 	mutable bool		dirty;
+	static stack<GLuint> savedFramebuffer;	///< keeps track of currently bound framebuffers
+	static GLuint		boundFramebuffer;	///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
 
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;
