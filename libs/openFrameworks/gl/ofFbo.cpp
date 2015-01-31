@@ -210,6 +210,9 @@ static void releaseRB(GLuint id){
 }
 
 //--------------------------------------------------------------
+stack<GLuint> ofFbo::savedFramebuffer = stack<GLuint>();
+GLuint ofFbo::boundFramebuffer = 0;
+
 //-------------------------------------------------------------------------------------
 
 int	ofFbo::_maxColorAttachments = -1;
@@ -222,7 +225,6 @@ fbo(0),
 fboTextures(0),
 depthBuffer(0),
 stencilBuffer(0),
-savedFramebuffer(0),
 dirty(false),
 defaultTextureIndex(0),
 bIsAllocated(false)
@@ -275,8 +277,6 @@ ofFbo::ofFbo(const ofFbo & mom){
 	stencilBuffer = mom.stencilBuffer;
 	retainRB(stencilBuffer);
 
-	savedFramebuffer = mom.savedFramebuffer;
-
 	colorBuffers = mom.colorBuffers;
 	for(int i=0;i<(int)colorBuffers.size();i++){
 		retainRB(colorBuffers[i]);
@@ -306,8 +306,6 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 	}
 	stencilBuffer = mom.stencilBuffer;
 	retainRB(stencilBuffer);
-
-	savedFramebuffer = mom.savedFramebuffer;
 
 	colorBuffers = mom.colorBuffers;
 	for(int i=0;i<(int)colorBuffers.size();i++){
@@ -698,15 +696,21 @@ void ofFbo::end() const{
 //----------------------------------------------------------
 
 void ofFbo::bind() const{
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFramebuffer);
+	ofFbo::savedFramebuffer.push(ofFbo::boundFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	ofFbo::boundFramebuffer = fbo;
 }
 
 //----------------------------------------------------------
 
 void ofFbo::unbind() const{
-	glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
-	savedFramebuffer = 0;
+	if (ofFbo::savedFramebuffer.empty()){
+		boundFramebuffer = 0;
+	} else {
+		boundFramebuffer = ofFbo::savedFramebuffer.top();
+		ofFbo::savedFramebuffer.pop();
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer);
 }
 
 //----------------------------------------------------------
@@ -875,29 +879,25 @@ void ofFbo::updateTexture(int attachmentPoint) {
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
 	if(fbo != fboTextures && dirty) {
-		glGetIntegerv( GL_FRAMEBUFFER_BINDING, &savedFramebuffer );
 
 		if (!ofIsGLProgrammableRenderer()){
 			// save current drawbuffer
 			glPushAttrib(GL_COLOR_BUFFER_BIT);
 		}
-		// save current readbuffer
-		GLint readBuffer;
-		glGetIntegerv(GL_READ_BUFFER, &readBuffer);
 
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboTextures);
-		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboTextures);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint); 
 		glBlitFramebuffer(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, savedFramebuffer);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, savedFramebuffer);
-		glBindFramebuffer( GL_FRAMEBUFFER, savedFramebuffer );
-
-		// restore readbuffer
-		glReadBuffer(readBuffer);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, ofFbo::boundFramebuffer);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ofFbo::boundFramebuffer);
+		glBindFramebuffer( GL_FRAMEBUFFER, ofFbo::boundFramebuffer);
 		
+		glReadBuffer(GL_BACK);
+
+
 		if(!ofIsGLProgrammableRenderer()){
 		// restore drawbuffer
 			glPopAttrib();
