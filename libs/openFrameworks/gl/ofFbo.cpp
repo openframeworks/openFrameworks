@@ -209,6 +209,7 @@ static void releaseRB(GLuint id){
 	}
 }
 
+//--------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 
 int	ofFbo::_maxColorAttachments = -1;
@@ -577,6 +578,8 @@ bool ofFbo::isAllocated() const {
 	return bIsAllocated;
 }
 
+//----------------------------------------------------------
+
 GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
 	GLuint buffer;
 	glGenRenderbuffers(1, &buffer);
@@ -591,6 +594,7 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 	return buffer;
 }
 
+//----------------------------------------------------------
 
 void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint) {
 	ofTexture tex;
@@ -601,6 +605,8 @@ void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint
 
     attachTexture(tex, internalFormat, attachmentPoint);
 }
+
+//----------------------------------------------------------
 
 void ofFbo::attachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachmentPoint) {
     // bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
@@ -629,6 +635,9 @@ void ofFbo::attachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachm
 	glBindFramebuffer(GL_FRAMEBUFFER, temp);
 
 }
+
+//----------------------------------------------------------
+
 void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum  attachment, GLenum transferFormat, GLenum transferType){
 
 
@@ -644,6 +653,8 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);
 }
 
+//----------------------------------------------------------
+
 void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum  attachment){
 
 	// allocate depthBufferTex as depth buffer;
@@ -658,6 +669,7 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, depthBufferTex.texData.textureID, 0);
 }
 
+//----------------------------------------------------------
 
 void ofFbo::begin(bool setupScreen) const{
 	if(ofGetGLRenderer()){
@@ -665,28 +677,37 @@ void ofFbo::begin(bool setupScreen) const{
 	}
 }
 
+//----------------------------------------------------------
+
 void ofFbo::end() const{
 	if(ofGetGLRenderer()){
 		ofGetGLRenderer()->unbind(*this);
 	}
 }
 
+//----------------------------------------------------------
+
 void ofFbo::bind() const{
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &savedFramebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 
+//----------------------------------------------------------
 
 void ofFbo::unbind() const{
 	glBindFramebuffer(GL_FRAMEBUFFER, savedFramebuffer);
 	savedFramebuffer = 0;
 }
 
+//----------------------------------------------------------
+
 int ofFbo::getNumTextures() const {
 	return textures.size();
 }
 
 //TODO: Should we also check against card's max attachments or can we assume that's taken care of in texture setup? Still need to figure out MSAA in conjunction with MRT
+//----------------------------------------------------------
+
 void ofFbo::setActiveDrawBuffer(int i){
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
@@ -698,6 +719,8 @@ void ofFbo::setActiveDrawBuffer(int i){
     }
 #endif
 }
+
+//----------------------------------------------------------
 
 void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
 	if(!bIsAllocated) return;
@@ -716,6 +739,8 @@ void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
 #endif
 }
 
+//----------------------------------------------------------
+
 void ofFbo::activateAllDrawBuffers(){
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
@@ -732,16 +757,21 @@ void ofFbo::activateAllDrawBuffers(){
 #endif
 }
 
+//----------------------------------------------------------
 
 void ofFbo::setDefaultTextureIndex(int defaultTexture)
 {
 	defaultTextureIndex = defaultTexture;
 }
 
+//----------------------------------------------------------
+
 int ofFbo::getDefaultTextureIndex() const
 {
 	return defaultTextureIndex;
 }
+
+//----------------------------------------------------------
 
 ofTexture& ofFbo::getTextureReference(){
 	return getTexture();
