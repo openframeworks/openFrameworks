@@ -15,6 +15,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g3" />
+					<Add option="-std=gnu++11" />
 				</Compiler>
 			</Target>
 			<Target title="release">
@@ -26,6 +27,7 @@
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-O3" />
+					<Add option="-std=gnu++11" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
