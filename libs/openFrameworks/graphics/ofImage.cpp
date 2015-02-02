@@ -939,6 +939,12 @@ ofColor_<PixelType> ofImage_<PixelType>::getColor(int x, int y) const {
 
 //------------------------------------
 template<typename PixelType>
+ofColor_<PixelType> ofImage_<PixelType>::getColor(int index) const {
+	return pixels.getColor(index);
+}
+
+//------------------------------------
+template<typename PixelType>
 void ofImage_<PixelType>::setColor(int x, int y, const ofColor_<PixelType>& color) {
 	pixels.setColor(x, y, color);
 }
