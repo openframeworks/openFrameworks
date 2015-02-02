@@ -217,6 +217,9 @@ public:
 	
 	/// \brief Get the color at a x,y position
 	ofColor_<PixelType> getColor(int x, int y) const;
+
+	/// \brief Get the color at a specific index
+	ofColor_<PixelType> getColor(int index) const;
 	
 	/// \brief Set the color of the pixel at the x,y location
 	void setColor(int x, int y, const ofColor_<PixelType>& color);
