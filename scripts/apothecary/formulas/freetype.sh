@@ -61,7 +61,7 @@ function build() {
 		./configure --prefix=$BUILD_TO_DIR --without-bzip2 --enable-static=yes --enable-shared=no \
 			CFLAGS="-arch $OSX_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
 		make clean 
-		make
+		make -j
 		make install
 		cp $BUILD_TO_DIR/lib/libfreetype.a lib/$TYPE/libfreetype-$OSX_ARCH.a
 
@@ -73,14 +73,24 @@ function build() {
 		./configure --prefix=$BUILD_TO_DIR --without-bzip2 --enable-static=yes --enable-shared=no \
 			CFLAGS="-arch $OSX_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
 		make clean
-		make
+		make -j
 		make install
 		cp $BUILD_TO_DIR/lib/libfreetype.a lib/$TYPE/libfreetype-$OSX_ARCH.a
+
+
 
 		cd lib/$TYPE/
 		lipo -create libfreetype-i386.a \
 					libfreetype-x86_64.a \
 					-output libfreetype.a
+
+		# copy pkgconfig file to _buildroot/lib/pkgconfig
+		cp -v $BUILD_TO_DIR/lib/pkgconfig/freetype2.pc $BUILD_ROOT_DIR/lib/pkgconfig/
+
+		# # copy fat lib to where pkgconfig points to, so that subsequent build stages will find it.
+		# pkgconfig points to the $BUILD_TO_DIR
+		cp -vf libfreetype.a $BUILD_TO_DIR/lib/libfreetype.a
+
 		cd ../../
 
 		unset OSX_ARCH STDLIB TOOLCHAIN CC CPP CXX
