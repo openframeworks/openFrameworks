@@ -41,11 +41,11 @@ namespace ofxCv {
 			if(trackingColorMode == TRACK_COLOR_RGB) {
 				inRange(img, base - offset, base + offset, thresh);
 			} else {
-				if(TRACK_COLOR_H) {
+				if(trackingColorMode == TRACK_COLOR_H) {
 					offset[1] = 255;
 					offset[2] = 255;
 				}
-				if(TRACK_COLOR_HS) {
+				if(trackingColorMode == TRACK_COLOR_HS) {
 					offset[2] = 255;
 				}
 				cvtColor(img, hsvBuffer, CV_RGB2HSV);
