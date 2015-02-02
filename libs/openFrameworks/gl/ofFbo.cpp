@@ -702,7 +702,16 @@ void ofFbo::end() const{
 //----------------------------------------------------------
 
 void ofFbo::bind() const{
-	ofFbo::savedFramebuffer.push(ofFbo::boundFramebuffer);
+	GLint currentFramebufferBinding = ofFbo::boundFramebuffer;
+#ifdef TARGET_OPENGLES
+	// OpenGL ES might have set a default frame buffer for
+	// MSAA rendering to the window, bypassing ofFbo, so we
+	// can't trust ofFbo to have correctly tracked the bind
+	// state. Therefore, we are forced to use the slower glGet() method
+	// to be sure to get the correct default framebuffer.
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebufferBinding);
+#endif
+	ofFbo::savedFramebuffer.push(currentFramebufferBinding);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	ofFbo::boundFramebuffer = fbo;
 }
