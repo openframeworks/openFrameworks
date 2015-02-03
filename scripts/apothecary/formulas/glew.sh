@@ -65,11 +65,11 @@ function build() {
 function copy() {
 
 	# headers
-	rm -r $1/include
+	rm -rf $1/include
 	mkdir -p $1/include
 	cp -Rv include/* $1/include
 
-	rm -r $1/lib/$TYPE/*
+	rm -rf $1/lib/$TYPE/*
 	
 	
 	# libs
