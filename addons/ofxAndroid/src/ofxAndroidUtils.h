@@ -37,6 +37,10 @@ jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string meth
 jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...);
 jobject ofxJavaCallObjectMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...);
 
+void ofxJavaCallStaticVoidMethod(jclass classID, std::string methodName, std::string methodSignature, va_list args);
+void ofxJavaCallStaticVoidMethod(jclass classID, std::string methodName, std::string methodSignature, ...);
+void ofxJavaCallStaticVoidMethod(std::string className, std::string methodName, std::string methodSignature, ...);
+
 void ofxAndroidAlertBox(string msg);
 int ofxAndroidProgressBox(string msg);
 void ofxAndroidDismissProgressBox(int id);
