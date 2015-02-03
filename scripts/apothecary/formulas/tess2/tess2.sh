@@ -21,12 +21,14 @@ COMPILER_CTYPE=clang # clang, gcc
 COMPILER_CPPTYPE=clang++ # clang, gcc
 STDLIB=libc++
 
+GIT_REV=5bd98453656f79abb56defe324426b8dfec845d2
+
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -LO https://libtess2.googlecode.com/files/libtess2-$VER.zip
-	unzip -oq libtess2-$VER.zip
-	mv libtess2 tess2
-	rm libtess2-$VER.zip
+	curl -L https://github.com/memononen/libtess2/archive/$GIT_REV.zip -o libtess2.zip
+	unzip -oq libtess2.zip
+	mv libtess2-$GIT_REV tess2
+	rm libtess2.zip
 }
 
 # prepare the build environment, executed inside the lib src dir
