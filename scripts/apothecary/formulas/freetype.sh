@@ -83,6 +83,8 @@ function build() {
 		lipo -create libfreetype-i386.a \
 					libfreetype-x86_64.a \
 					-output libfreetype.a
+					
+		mkdir -p "$BUILD_ROOT_DIR/lib/pkgconfig/"
 
 		# copy pkgconfig file to _buildroot/lib/pkgconfig
 		cp -v $BUILD_TO_DIR/lib/pkgconfig/freetype2.pc $BUILD_ROOT_DIR/lib/pkgconfig/
