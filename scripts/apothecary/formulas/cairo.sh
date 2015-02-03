@@ -79,7 +79,7 @@ function build() {
 					--disable-xlib \
 					--disable-qt 
 
-		make
+		make -j
 		make install
 	fi
 
