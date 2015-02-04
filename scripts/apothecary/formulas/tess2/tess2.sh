@@ -92,8 +92,6 @@ function build() {
 			echo "Building library slice for ${OSX_ARCH}..."
 
 			cmake -G 'Unix Makefiles' \
-				-DCMAKE_C_FLAGS="-arch ${OSX_ARCH}" \
-				-DCMAKE_CXX_FLAGS="-arch ${OSX_ARCH}" \
 				.
 			make clean >> "${LOG}" 2>&1
 			make >> "${LOG}" 2>&1
