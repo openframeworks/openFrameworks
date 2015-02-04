@@ -99,6 +99,9 @@ Desktop.ini
 .csettings
 /libs/openFrameworksCompiled/project/android/paths.make
 
+# Android Studio
+*.iml
+
 #########################
 # miscellaneous
 #########################

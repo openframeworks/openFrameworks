@@ -1,0 +1,70 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "21.1.1"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 17
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    // Configure source folders like Eclipse
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            resources.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+/** Configure OpenFrameworks by writing paths.make */
+task configureOF(dependsOn: rootProject.ofNdkSetup) {
+    def projectRoot = file("$projectDir/../../../libs/openFrameworksCompiled/project")
+    ext.projectRoot = projectRoot.absolutePath
+
+    doLast {
+        def pathsFile = file("$projectRoot/android/paths.make")
+        pathsFile.withPrintWriter { out ->
+            out.println("NDK_ROOT=${rootProject.ofNdkSetup.ext.ndkDirectory}")
+            out.println("SDK_ROOT=${rootProject.ofNdkSetup.ext.sdkDirectory}")
+        }
+    }
+}
+
+task compileReleaseOF(dependsOn: configureOF) << {
+    rootProject.ofRunMake(["-C", configureOF.ext.projectRoot, "PLATFORM_OS=Android", "Release"])
+}
+
+task compileDebugOF(dependsOn: configureOF) << {
+    rootProject.ofRunMake(["-C", configureOF.ext.projectRoot, "PLATFORM_OS=Android", "Debug"])
+}
+
+task cleanOF(dependsOn: configureOF) << {
+    rootProject.ofRunMake(["-C", configureOF.ext.projectRoot, "PLATFORM_OS=Android", "clean"])
+}
+
+
+clean {
+    dependsOn cleanOF
+}
+
+project.afterEvaluate {
+    compileDebugNdk.dependsOn(compileDebugOF)
+    compileReleaseNdk.dependsOn(compileReleaseOF)
+}
