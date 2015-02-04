@@ -17,6 +17,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 @interface ofxiOSEAGLView() {
     BOOL bInit;
+	shared_ptr<ofBaseApp> appSharedPtr;
 }
 - (void)updateDimensions;
 @end
@@ -66,10 +67,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
             static_cast<ofGLRenderer*>(window->renderer().get())->setup();
         }
         
-        if(app != ofGetAppPtr()) {              // check if already running.
-            ofRunApp(shared_ptr<ofBaseApp>(app));    // this fallback only case occurs when app not created in main().
+        if(app != ofGetAppPtr()) {      // check if already running.
+			appSharedPtr = shared_ptr<ofBaseApp>(app);
+            ofRunApp(appSharedPtr);		// this fallback only case occurs when app not created in main().
         }
-        ofRegisterTouchEvents(app);
         ofxiOSAlerts.addListener(app);
 
         ofDisableTextureEdgeHack();
@@ -93,9 +94,11 @@ static ofxiOSEAGLView * _instanceRef = nil;
     if(!bInit) {
         return;
     }
-    
-    window->events().notifyExit();
-    
+
+	window->events().notifyExit();
+	
+	ofGetMainLoop()->exit();
+	
     [activeTouches release];
     
     delete screenSize;
@@ -105,25 +108,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
     delete windowPos;
     windowPos = NULL;
     
-    ofBaseApp * baseAppPtr = ofGetAppPtr();
-    ofRemoveListener(window->events().setup,          baseAppPtr, &ofBaseApp::setup,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().update,         baseAppPtr, &ofBaseApp::update,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().draw,           baseAppPtr, &ofBaseApp::draw,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().exit,           baseAppPtr, &ofBaseApp::exit,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().keyPressed,     baseAppPtr, &ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().keyReleased,    baseAppPtr, &ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().mouseMoved,     baseAppPtr, &ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().mouseDragged,   baseAppPtr, &ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().mousePressed,   baseAppPtr, &ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().mouseReleased,  baseAppPtr, &ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().windowResized,  baseAppPtr, &ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().windowEntered,  baseAppPtr, &ofBaseApp::windowEntry,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().messageEvent,   baseAppPtr, &ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
-    ofRemoveListener(window->events().fileDragEvent,  baseAppPtr, &ofBaseApp::dragged,OF_EVENT_ORDER_APP);
-    
-    ofUnregisterTouchEvents(app);
     ofxiOSAlerts.removeListener(app);
-    ofSetAppPtr(shared_ptr<ofBaseApp>((app = NULL)));
+
+	appSharedPtr = shared_ptr<ofBaseApp>((app = NULL));
+	ofSetAppPtr(appSharedPtr);
     
     window = NULL;
     
