@@ -119,9 +119,6 @@ private:
 	static int			_maxDrawBuffers;
 	static int			_maxSamples;
 
-	static stack<GLuint> savedFramebuffer;	///< keeps track of currently bound framebuffers
-	static GLuint		boundFramebuffer;	///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
-
 	vector<GLenum>		activeDrawBuffers;  ///< table of currently active color draw buffers, allocate() defaults it to size(textures), with GL_COLOR_ATTACHMENT0..n as members, in order of allocation
 	mutable vector<bool> dirty;
 
