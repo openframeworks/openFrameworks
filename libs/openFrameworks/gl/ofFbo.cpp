@@ -683,7 +683,7 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 
 void ofFbo::begin(bool setupScreen) const{
 	if(ofGetGLRenderer()){
-		ofGetGLRenderer()->bind(*this,setupScreen);
+		ofGetGLRenderer()->begin(*this,setupScreen);
 	}
 }
 
@@ -691,38 +691,24 @@ void ofFbo::begin(bool setupScreen) const{
 
 void ofFbo::end() const{
 	if(ofGetGLRenderer()){
-		ofGetGLRenderer()->unbind(*this);
+		ofGetGLRenderer()->end(*this);
 	}
 }
 
 //----------------------------------------------------------
 
 void ofFbo::bind() const{
-	GLint currentFramebufferBinding = ofFbo::boundFramebuffer;
-#ifdef TARGET_OPENGLES
-	// OpenGL ES might have set a default frame buffer for
-	// MSAA rendering to the window, bypassing ofFbo, so we
-	// can't trust ofFbo to have correctly tracked the bind
-	// state. Therefore, we are forced to use the slower glGet() method
-	// to be sure to get the correct default framebuffer.
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebufferBinding);
-#endif
-	ofFbo::savedFramebuffer.push(currentFramebufferBinding);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	ofFbo::boundFramebuffer = fbo;
+
+	ofGetGLRenderer()->bind(*this);
+	
 }
 
 //----------------------------------------------------------
 
 void ofFbo::unbind() const{
-	if (ofFbo::savedFramebuffer.empty()){
-		boundFramebuffer = 0;
-	} else {
-		boundFramebuffer = ofFbo::savedFramebuffer.top();
-		ofFbo::savedFramebuffer.pop();
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer);
-	
+
+	ofGetGLRenderer()->unbind(*this);
+
 	if (fbo != fboTextures){
 		// ---------| if fbo != fboTextures, we are dealing with an MSAA enabled FBO.
 		// all currently active draw buffers need to be flagged dirty
@@ -903,21 +889,20 @@ void ofFbo::updateTexture(int attachmentPoint) {
 			glPushAttrib(GL_COLOR_BUFFER_BIT);
 		}
 
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+		bind();
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboTextures);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint); 
 		glBlitFramebuffer(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, ofFbo::boundFramebuffer);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, ofFbo::boundFramebuffer);
-		glBindFramebuffer( GL_FRAMEBUFFER, ofFbo::boundFramebuffer);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0); // reset to defaults
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); 
+		unbind();
 		
 		glReadBuffer(GL_BACK);
 
-
 		if(!ofIsGLProgrammableRenderer()){
-		// restore drawbuffer
+			// restore current drawbuffer
 			glPopAttrib();
 		}
 	
