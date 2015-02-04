@@ -209,10 +209,6 @@ static void releaseRB(GLuint id){
 	}
 }
 
-//--------------------------------------------------------------
-stack<GLuint> ofFbo::savedFramebuffer = stack<GLuint>();
-GLuint ofFbo::boundFramebuffer = 0;
-
 //-------------------------------------------------------------------------------------
 
 int	ofFbo::_maxColorAttachments = -1;
