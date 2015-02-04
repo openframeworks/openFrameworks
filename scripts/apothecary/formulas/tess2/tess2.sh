@@ -21,7 +21,7 @@ COMPILER_CTYPE=clang # clang, gcc
 COMPILER_CPPTYPE=clang++ # clang, gcc
 STDLIB=libc++
 
-GIT_REV=master
+GIT_REV=24e4bdd4158909e9720422208ab0a0aca788e700
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -54,17 +54,70 @@ function build() {
 	
 	if [ "$TYPE" == "osx" ] ; then
 
-		local buildOpts="--build build/$TYPE"
+		OSX_ARCHS="i386 x86_64" 
 
-		# 32 bit
-		rm -f CMakeCache.txt
-		cmake -G 'Unix Makefiles' \
-			$buildOpts \
-			-DCMAKE_C_FLAGS="-arch i386 -arch x86_64" \
-			-DCMAKE_CXX_FLAGS="-arch i386 -arch x86_64" \
-			.
-		make clean 
-		make
+		for OSX_ARCH in ${OSX_ARCHS}
+		do
+
+			unset CFLAGS CPPFLAGS LINKFLAGS CXXFLAGS LDFLAGS
+			rm -f CMakeCache.txt
+			set +e
+
+
+			# Choose which stdlib to use:
+			# i386    : libstdc++
+			# x86_64  : libc++
+
+			case $OSX_ARCH in
+				i386 )
+					#	choose libstdc++ for i386
+					STD_LIB_FLAGS="-stdlib=libstdc++"
+					;;
+				x86_64 )
+					STD_LIB_FLAGS="-stdlib=libc++"
+					;;
+			esac
+			
+			OPTIM_FLAGS="-O3"				 # 	choose "fastest" optimisation
+
+			export CFLAGS="-arch $OSX_ARCH $OPTIM_FLAGS"
+			export CPPFLAGS=$CFLAGS
+			export LINKFLAGS="$CFLAGS $STD_LIB_FLAGS"
+			export LDFLAGS="$LINKFLAGS"
+			export CXXFLAGS=$CPPFLAGS
+
+
+			LOG="build-tess2-${VER}-${OSX_ARCH}-cmake.log"
+
+			echo "Building library slice for ${OSX_ARCH}..."
+
+			cmake -G 'Unix Makefiles' \
+				.
+			make clean >> "${LOG}" 2>&1
+			make >> "${LOG}" 2>&1
+
+			# now we need to create a directory were we can keep our current build result.
+
+			mkdir -p $TYPE
+			mv libtess2.a $TYPE/libtess2-$OSX_ARCH.a
+
+		done
+
+		# combine into fat lib using lipo
+		echo "Running lipo to create fat lib"
+		echo "Please stand by..."
+
+		LIPO_SLICES=	#initialise empty
+
+		for OSX_ARCH in ${OSX_ARCHS}; do
+			LIPO_SLICES+="${TYPE}/libtess2-${OSX_ARCH}.a "
+		done
+
+		LOG="build-tess2-${VER}-lipo.log"
+		lipo -create $LIPO_SLICES \
+			 -output libtess2.a \
+			 > "${LOG}" 2>&1
+
 
 	elif [ "$TYPE" == "vs" ] ; then
 		cmake -G "Visual Studio $VS_VER"
@@ -80,7 +133,6 @@ function build() {
 		
 		DEVELOPER=$XCODE_DEV_ROOT
 		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
-		VERSION=$VER
 
 		mkdir -p "builddir/$TYPE"
 	
