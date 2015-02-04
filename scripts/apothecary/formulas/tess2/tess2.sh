@@ -9,10 +9,10 @@
 # on ios, use some build scripts adapted from the Assimp project
 
 # define the version
-VER=1.0
+VER=1.1
 
 # tools for git use
-GIT_URL=https://github.com/memononen/libtess2.git
+GIT_URL=https://github.com/memononen/libtess2
 GIT_TAG=master
 
 CSTANDARD=c11 # c89 | c99 | c11 | gnu11
@@ -21,12 +21,14 @@ COMPILER_CTYPE=clang # clang, gcc
 COMPILER_CPPTYPE=clang++ # clang, gcc
 STDLIB=libc++
 
+GIT_REV=master
+
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -LO https://libtess2.googlecode.com/files/libtess2-$VER.zip
-	unzip -oq libtess2-$VER.zip
-	mv libtess2 tess2
-	rm libtess2-$VER.zip
+	curl -L $GIT_URL/archive/$GIT_REV.tar.gz -o libtess2-$GIT_REV.tar.gz
+	tar -xf libtess2-$GIT_REV.tar.gz
+	mv libtess2-$GIT_REV tess2
+	rm libtess2*.tar.gz
 }
 
 # prepare the build environment, executed inside the lib src dir
