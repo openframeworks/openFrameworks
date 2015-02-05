@@ -10,36 +10,46 @@
 #include "ofMain.h"
 #include "ILocationProvider.h"
 
-struct ofxGPSData
-{
-    bool hasLocation;
-    double longitude;
-    double latitude;
-    double locationAccuracy;
-    
-    bool hasAltitude;
-    double altitude;
-    double altitudeAccuracy;
-    
-    bool hasHeading;
-    double heading;
-    double headingAccuracy;
-    
-    Poco::Timestamp time;
-};
-
 class ofxGPS
 {
     
+private:
+    
+    static bool m_locationStarted;
+    static bool m_headingStarted;
+    
 public:
     
-    static std::shared_ptr<ofxGPS> create();
+    struct Data
+    {
+        bool hasLocation;
+        double longitude;
+        double latitude;
+        double locationAccuracy;
+        
+        bool hasAltitude;
+        double altitude;
+        double altitudeAccuracy;
+        
+        bool hasHeading;
+        double heading;
+        double headingAccuracy;
+        
+        Poco::Timestamp time;
+    };
     
-    virtual ~ofxGPS() {}
+    static bool locationStarted(){return m_locationStarted;}
+    static bool headingStarted(){return m_headingStarted;}
     
-    virtual ofxGPSData getGPSData() = 0;
+    static bool startLocation();
+    static bool startHeading();
     
-    static ofEvent<const ofxGPSData> gpsDataChangedEvent;
+    static void stopLocation();
+    static void stopHeading();
+    
+    static ofxGPS::Data getGPSData();
+    
+    static ofEvent<const ofxGPS::Data> gpsDataChangedEvent;
 };
 
 

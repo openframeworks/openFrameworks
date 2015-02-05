@@ -21,70 +21,91 @@
 
 //C++ class implementations
 
-ofEvent<const ofxGPSData> ofxGPS::gpsDataChangedEvent;
+bool ofxGPS::m_locationStarted = false;
+bool ofxGPS::m_headingStarted= false;
 
-//--------------------------------------------------------------
-ofxGPSImpliOS::ofxGPSImpliOS()
-{
-	coreLoc = [[ofxGPSImpliOSCoreLocationDelegate alloc] init];
+ofEvent<const ofxGPS::Data> ofxGPS::gpsDataChangedEvent;
+
+
+ofxGPSImpliOSCoreLocationDelegate* coreLoc = NULL;
+
+ofxGPSImpliOSCoreLocationDelegate* getCoreLocSafe() {
     
-    [coreLoc startLocation];
-    [coreLoc startHeading];
-    [coreLoc startMonitoringSignificantLocationChanges];
+    if (!coreLoc)
+        coreLoc = [[ofxGPSImpliOSCoreLocationDelegate alloc] init];
+    
+    return coreLoc;
 }
 
-//--------------------------------------------------------------
-ofxGPSImpliOS::~ofxGPSImpliOS()
+bool isMonitoring = false;
+
+void startMonitoring() {
+    
+    if (!isMonitoring) {
+        [getCoreLocSafe() startMonitoringSignificantLocationChanges];
+        isMonitoring= true;
+    }
+}
+
+void releaseCoreLocIfNeeded() {
+    
+    if (!ofxGPS::headingStarted() && !ofxGPS::locationStarted()) {
+        [coreLoc release];
+        isMonitoring= false;
+    }
+}
+
+ofxGPS::Data ofxGPS::getGPSData()
 {
-	[coreLoc release];
+    return [getCoreLocSafe() gpsData];
 }
 
-ofxGPSData ofxGPSImpliOS::getGPSData()
+//--------------------------------------------------------------
+
+bool ofxGPS::startHeading()
 {
-    return [coreLoc gpsData];
+    bool result = [getCoreLocSafe() startHeading];
+    
+    if (result) {
+        startMonitoring();
+        m_headingStarted = true;
+    }
+    
+    return result;
 }
 
 //--------------------------------------------------------------
 
-bool ofxGPSImpliOS::startHeading()
+void ofxGPS::stopHeading()
 {
-	return [coreLoc startHeading];
+    [getCoreLocSafe() stopHeading];
+    
+    m_headingStarted = false;
+    
+    releaseCoreLocIfNeeded();
 }
 
 //--------------------------------------------------------------
-
-void ofxGPSImpliOS::stopHeading()
+bool ofxGPS::startLocation()
 {
-	[coreLoc stopHeading];
+	bool result = [getCoreLocSafe() startLocation];
+    
+    if (result) {
+        startMonitoring();
+        m_locationStarted = true;
+    }
+    
+    return result;
 }
 
 //--------------------------------------------------------------
-bool ofxGPSImpliOS::startLocation()
+void ofxGPS::stopLocation()
 {
-	return [coreLoc startLocation];
-}
-
-//--------------------------------------------------------------
-void ofxGPSImpliOS::stopLocation()
-{
-	[coreLoc stopLocation];
-}
-
-//--------------------------------------------------------------
-bool ofxGPSImpliOS::startMonitoringSignificantLocationChanges() {
-  return [coreLoc startMonitoringSignificantLocationChanges];
-}
-
-//--------------------------------------------------------------
-void ofxGPSImpliOS::stopMonitoringSignificantLocationChanges() {
-  [coreLoc stopMonitoringSignificantLocationChanges];
-}
-
-//--------------------------------------------------------------
-
-std::shared_ptr<ofxGPS> ofxGPS::create()
-{
-    return std::shared_ptr<ofxGPS>(new ofxGPSImpliOS());
+	[getCoreLocSafe() stopLocation];
+    
+    m_locationStarted = false;
+    
+    releaseCoreLocIfNeeded();
 }
 
 //--------------------------------------------------------------

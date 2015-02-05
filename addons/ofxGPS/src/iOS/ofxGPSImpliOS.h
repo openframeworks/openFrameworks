@@ -49,7 +49,7 @@
 @property (nonatomic, readonly) double magneticHeading;
 @property (nonatomic, readonly) double trueHeading;
 @property (nonatomic, readonly) double headingAccuracy;
-@property (nonatomic, readonly) ofxGPSData gpsData;
+@property (nonatomic, readonly) ofxGPS::Data gpsData;
 
 - (id) init;
 - (void) dealloc;
@@ -73,31 +73,6 @@
 @end
 
 #define ofxiPhoneCoreLocationDelegate ofxiOSCoreLocationDelegate
-
-
-class ofxGPSImpliOS: public ofxGPS
-{
-    
-public:
-    
-    ofxGPSImpliOS();
-    ~ofxGPSImpliOS();
-
-    virtual ofxGPSData getGPSData();
-    
-    bool startHeading();
-    void stopHeading();
-    
-    bool startLocation();
-    void stopLocation();
-
-    bool startMonitoringSignificantLocationChanges();
-    void stopMonitoringSignificantLocationChanges();	
-    
-protected:
-
-    ofxGPSImpliOSCoreLocationDelegate *	coreLoc;
-};
 
 #define ofxiPhoneCoreLocation ofxiOSCoreLocation
 
