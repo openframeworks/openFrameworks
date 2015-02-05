@@ -845,7 +845,7 @@ public class OFAndroid {
 		positiveNegativeBox(msg,android.R.string.yes,android.R.string.no);
 	}
 
-	// deprecated
+	@Deprecated
     private static String textBoxResult="";
     // alert Textbox
 	public static void alertTextBox(String question, String text){  
@@ -901,7 +901,7 @@ public class OFAndroid {
 	    //alert.dismiss();
 	}
 	
-	// deprecated
+	@Deprecated
 	public static String getLastTextBoxResult(){
 		return textBoxResult;
 	}
