@@ -10,7 +10,7 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
 # define the version
-VER=stable_v19_20110326
+VER=44221
 
 # tools for git use
 GIT_URL=
@@ -24,13 +24,13 @@ function download() {
 	case $TYPE in
 		"osx" )
 			# download drive image for fmodex from fmod.org
-			curl -O http://www.fmod.org/download/fmodex/api/Mac/fmodapi44221mac-installer.dmg
+			curl -O http://www.fmod.org/download/fmodex/api/Mac/fmodapi${VER}mac-installer.dmg
 			# mount dmg
-			hdiutil attach fmodapi44221mac-installer.dmg -quiet
+			hdiutil attach fmodapi${VER}mac-installer.dmg -quiet
 			# copy contents into staging folder
 			cp -R "/Volumes/FMOD Programmers API Mac/FMOD Programmers API/api/" "fmodex"
 			# remove installer dmg
-			rm fmodapi44221mac-installer.dmg
+			rm fmodapi${VER}mac-installer.dmg
 			# unmount drive image
 			hdiutil detach "/Volumes/FMOD Programmers API Mac/" -quiet 
 			;;
