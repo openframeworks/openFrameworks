@@ -69,6 +69,7 @@ define parse_addon
 	$(eval ADDON_DEPENDENCIES= ) \
 	$(eval ADDON_DATA= ) \
 	$(eval ADDON_CFLAGS= ) \
+	$(eval ADDON_CPPFLAGS= ) \
 	$(eval ADDON_LDFLAGS= ) \
 	$(eval ADDON_PKG_CONFIG_LIBRARIES= ) \
 	$(eval ADDON_FRAMEWORKS= ) \
@@ -108,6 +109,7 @@ define parse_addon
 		) \
 	) \
 	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
+	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CPPFLAGS)) \
 	$(if $(strip $(ADDON_LIBS)), \
 		$(foreach addon_lib, $(strip $(ADDON_LIBS)), \
 			$(if $(wildcard $(addon)/$(addon_lib)), \
