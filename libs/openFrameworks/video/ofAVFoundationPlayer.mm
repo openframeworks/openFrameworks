@@ -53,9 +53,10 @@ bool ofAVFoundationPlayer::load(string name) {
 	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
 
 	BOOL bStream = NO;
-	bStream = bStream || ([videoPath containsString:@"http://"]);
-	bStream = bStream || ([videoPath containsString:@"https://"]);
-	bStream = bStream || ([videoPath containsString:@"rtsp://"]);
+	
+	bStream = bStream || (ofIsStringInString(name, "http://"));
+	bStream = bStream || (ofIsStringInString(name, "https://"));
+	bStream = bStream || (ofIsStringInString(name, "rtsp://"));
 	
 	NSURL * url = nil;
 	if(bStream == YES) {
