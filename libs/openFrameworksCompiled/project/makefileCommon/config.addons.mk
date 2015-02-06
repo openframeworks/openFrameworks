@@ -67,7 +67,7 @@ define parse_addon
 	$(eval ADDON_DATA= ) \
 	$(eval ADDON_INCLUDES= ) \
 	$(eval ADDON_CFLAGS= ) \
-	$(eval ADDON_PURECFLAGS= ) \
+	$(eval ADDON_CPPFLAGS= ) \
 	$(eval ADDON_LDFLAGS= ) \
 	$(eval ADDON_LIBS= ) \
 	$(eval ADDON_PKG_CONFIG_LIBRARIES= ) \
@@ -97,7 +97,7 @@ define parse_addon
 		$(eval PROJECT_ADDONS_INCLUDES += $(PARSED_ADDONS_INCLUDES)) \
 	) \
 	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CFLAGS)) \
-	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_PURECFLAGS)) \
+	$(eval PROJECT_ADDONS_CFLAGS += $(ADDON_CPPFLAGS)) \
 	$(if $(strip $(ADDON_LIBS)), \
 		$(eval PROJECT_ADDONS_LIBS += $(addprefix $(addon)/,$(ADDON_LIBS))), \
 		$(call parse_addons_libraries, $(addon)) \
