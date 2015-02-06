@@ -367,6 +367,14 @@ function copy() {
 		cp -v build/$TYPE/armeabi-v7a/lib/libfreetype.a $1/lib/$TYPE/armeabi-v7a/libfreetype.a
 		cp -v build/$TYPE/x86/lib/libfreetype.a $1/lib/$TYPE/x86/libfreetype.a
 	fi
+
+	# Copy License Files
+	rm -rf $1/license #remove any older files if exists
+	mkdir -p $1/license
+	cp -v docs/LICENSE.TXT $1/license/LICENSE.TXT
+	cp -v docs/FTL.TXT $1/license/FTL.TXT
+	cp -v docs/GPLv2.TXT $1/license/GPLv2.TXT
+
 }
 
 # executed inside the lib src dir

@@ -348,6 +348,13 @@ function copy() {
         mkdir -p $1/lib/$TYPE/x86
         cp -rv Dist/x86/*.a $1/lib/$TYPE/x86/
 	fi	
+
+    # Copy License Files
+    rm -rf $1/license #remove any older files if exists
+    mkdir -p $1/license
+    cp -v "license-fi.txt" "$1/license/license-fi.txt"
+    cp -v "license-gplv2.txt" "$1/license/license-gplv2.txt"
+    cp -v "license-gplv3.txt" "$1/license/license-gplv3.txt"
 }
 
 # executed inside the lib src dir

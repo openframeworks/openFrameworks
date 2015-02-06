@@ -95,6 +95,9 @@ function copy() {
 		cp -v librtaudio.a $1/lib/$TYPE/rtaudio.a
 	fi
 
+	# Copy License File
+    cp -v readme $1/readme
+
 }
 
 # executed inside the lib src dir
