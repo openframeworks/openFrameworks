@@ -321,6 +321,9 @@ function copy() {
 	else
 		cp -v libtess2.a $1/lib/$TYPE/tess2.a
 	fi
+
+	# Copy License File
+    cp -v LICENSE.txt $1/LICENSE.txt
 }
 
 # executed inside the lib src dir

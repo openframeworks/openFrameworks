@@ -504,6 +504,9 @@ function copy() {
 	else
 		echoWarning "TODO: copy $TYPE lib"
 	fi
+
+	# Copy License File
+    cp -v LICENSE $1/LICENSE
 }
 
 # executed inside the lib src dir

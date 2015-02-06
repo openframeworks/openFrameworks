@@ -123,6 +123,13 @@ function copy() {
 		cp -v $BUILD_ROOT_DIR/lib/libpixman-1.a $1/lib/$TYPE/pixman-1.a
 	fi
 
+	# Copy License Files
+	rm -rf $1/license #remove any older files if exists
+	mkdir -p $1/license
+	cp -v COPYING $1/license/COPYING
+	cp -v COPYING-LGPL-2.1 $1/license/COPYING-LGPL-2.1
+	cp -v COPYING-MPL-1.1 $1/license/COPYING-MPL-1.1
+
 }
 
 # executed inside the lib src dir

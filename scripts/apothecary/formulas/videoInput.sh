@@ -9,7 +9,7 @@
 FORMULA_TYPES=( "vs" "win_cb" )
 
 # define the version
-VER=update2013
+VER=master
 
 # tools for git use
 GIT_URL=https://github.com/ofTheo/videoInput.git
@@ -17,7 +17,7 @@ GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	git clone https://github.com/ofTheo/videoInput.git -b update2013
+	git clone https://github.com/ofTheo/videoInput.git
 }
 
 # prepare the build environment, executed inside the lib src dir
