@@ -19,11 +19,12 @@ GIT_TAG=$VER
 function download() {
 	# curl -Lk https://github.com/glfw/glfw/archive/$GIT_TAG.tar.gz -o glfw-$GIT_TAG.tar.gz
 	# temporary fix until https://github.com/openframeworks/openFrameworks/issues/3621 is resolved.
+	GIT_TAG=feature-keysUnicode
 	curl -Lk https://github.com/arturoc/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
+	# end fix
 	tar -xf glfw-$GIT_TAG.tar.gz
 	mv glfw-$GIT_TAG glfw
-	rm glfw*.tar.gz
-}
+	rm glfw*.tar.gz}
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
