@@ -940,16 +940,17 @@ BUILD_ROOT_DIR=$BUILD_DIR/$BUILDROOT_SUBDIR
 
 # set for android sdk info
 if [[ "$TYPE" == "android" ]] ; then
-	if [[ -x ../../libs/openFrameworksCompiled/project/android/paths.make ]] ; then
+	if [[ -e ../../libs/openFrameworksCompiled/project/android/paths.make ]] ; then
 		ANDROID_NDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep NDK_ROOT | sed 's/.*=\(.*\)/\1/'`
 		ANDROID_SDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep SDK_ROOT | sed 's/.*=\(.*\)/\1/'`
 		echoVerbose "Android NDK root: $ANDROID_NDK_ROOT"
 		echoVerbose "Android SDK root: $ANDROID_SDK_ROOT"
 	else
-		echoError "Targeting android, but can't find the SDK is we're missing"
+		echoError "Targeting android, but can't find the SDK. Missing"
 		echoError "libs/openFrameworksCompiled/project/android/paths.make ..."
 		echoError "See the following for info:"
 		echoError "libs/openFrameworksCompiled/project/android/paths.make.default"
+		exit 1
 	fi
 fi
 
