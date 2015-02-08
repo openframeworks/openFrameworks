@@ -64,7 +64,6 @@ function clean() {
 	
 	if [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: clean vs"
-	
 	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: clean win_cb"
 	fi
