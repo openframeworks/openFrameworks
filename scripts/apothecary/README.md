@@ -478,9 +478,9 @@ If you write a formula but can't finish/test it on all platforms, etc make a not
 
 Then we at least know what we're missing if the build process fails ...
 
-### Custom Apothecary Echo Wrappers
+#### Custom Apothecary Echo Wrappers
 
-There are a number of custom echo wrappers like `echoWarning`  which set the console color, etc. Use these for more informative info/debugging print instead of plain old `echo`:
+There are a number of custom echo wrappers like `echoWarning` which set the console color, etc. Use these for more informative info/debugging print instead of plain old `echo`:
 
     echoError "somethign bad happend, print in red"
 	
@@ -492,7 +492,7 @@ There are a number of custom echo wrappers like `echoWarning`  which set the con
 	
 	echoVerbose "for debugging, prints extra info in white when the -v verbose flag is used"
 	
-Note the verbose `-v` flag, apothecary will already print out info about what steps it's doing so you don;t need to add this to the formual files.
+Note the verbose `-v` flag. Apothecary will already print out info about what steps it's doing so you don't need to add this to the formula files.
 
 ### Additional Tips
 
