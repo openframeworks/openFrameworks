@@ -73,6 +73,9 @@ function copy() {
 		# copy lib
 		cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/
 	fi
+
+	# Copy License File
+    cp -v COPYING.txt $1/COPYING.txt
 }
 
 # executed inside the lib src dir
