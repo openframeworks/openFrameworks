@@ -1068,6 +1068,7 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode){
 		default:
 			break;
 	}
+	currentStyle.blendingMode = blendMode;
 }
 
 //----------------------------------------------------------
