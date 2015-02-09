@@ -1184,6 +1184,7 @@ void ofGLRenderer::setBlendMode(ofBlendMode blendMode){
 		default:
 			break;
 	}
+	currentStyle.blendingMode = blendMode;
 }
 
 void ofGLRenderer::setBitmapTextMode(ofDrawBitmapMode mode){
