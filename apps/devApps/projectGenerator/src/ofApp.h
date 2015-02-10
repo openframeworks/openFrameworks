@@ -13,6 +13,13 @@
 #include "ofxGui.h"
 #endif
 
+struct ofAddonData{
+    ofAddonData(string _absolutePath){
+        absolutePath = _absolutePath;
+    }
+    string absolutePath;
+};
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -41,6 +48,7 @@ class ofApp : public ofBaseApp{
         void updateProjectPressed();
         void createAndOpenPressed();
         void changeOFRootPressed();
+        void appendAddonsDirPressed();
 		
 		void setupDrawableOFPath();
 		
@@ -50,6 +58,7 @@ class ofApp : public ofBaseApp{
         string target;
 		vector <int> targetsToMake;
 		bool buildAllExamples;
+        vector <ofAddonData> addonList;
 
 #ifndef COMMAND_LINE_ONLY
 		string drawableOfPath;
@@ -57,7 +66,7 @@ class ofApp : public ofBaseApp{
 		ofPoint ofPathDrawPoint;
 
         ofxPanel panelAddons, panelOptions;
-        ofxButton createProject, updateProject, createAndOpen, changeOFRoot;
+        ofxButton createProject, updateProject, createAndOpen, changeOFRoot, appendAddonsDir;
 
 		ofxPanel examplesPanel;
 		ofxToggle osxToggle, iosToggle, wincbToggle, winvsToggle, linuxcbToggle, linux64cbToggle,linuxarmv6lcbToggle,linuxarmv7lcbToggle;

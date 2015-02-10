@@ -344,11 +344,9 @@ void ofAddon::fromFS(string path, string platform){
 
     clear();
     this->platform = platform;
-	name = ofFilePath::getFileName(path);
-	addonPath = ofFilePath::join(getAddonsRoot(),name);
-
+    name = ofFilePath::getFileName(path);
     string filePath = path + "/src";
-    string ofRootPath = ofFilePath::addTrailingSlash(getOFRoot()); //we need to add a trailing slash for the erase to work properly
+    addonPath = path;//ofFilePath::join(getAddonsRoot(),name);
 
     ofLogVerbose() << "in fromFS, trying src " << filePath;
 
@@ -356,8 +354,8 @@ void ofAddon::fromFS(string path, string platform){
     getFilesRecursively(filePath, srcFiles);
 
     for(int i=0;i<(int)srcFiles.size();i++){
-    	srcFiles[i].erase (srcFiles[i].begin(), srcFiles[i].begin()+ofRootPath.length());
-		//ofLogVerbose() << " srcFiles " << srcFiles[i];
+        srcFiles[i] = getRelPath(getOFRoot(), ofFilePath::getEnclosingDirectory(srcFiles[i])) + ofFilePath::getFileName(srcFiles[i]);
+		ofLogVerbose() << " srcFiles " << srcFiles[i];
     	int init = 0;
 #ifdef TARGET_WIN32
     	int end = srcFiles[i].rfind("\\");
@@ -386,7 +384,7 @@ void ofAddon::fromFS(string path, string platform){
 
     // I need to add libFiles to srcFiles
     for (int i = 0; i < (int)libFiles.size(); i++){
-    	libFiles[i].erase (libFiles[i].begin(), libFiles[i].begin()+ofRootPath.length());
+        libFiles[i] = getRelPath(getOFRoot(), ofFilePath::getEnclosingDirectory(libFiles[i])) + ofFilePath::getFileName(libFiles[i]);
 		//ofLogVerbose() << " libFiles " << libFiles[i];
     	int init = 0;
 #ifdef TARGET_WIN32
@@ -413,7 +411,7 @@ void ofAddon::fromFS(string path, string platform){
 #endif
         if (end > 0){
 
-            libs[i].erase (libs[i].begin(), libs[i].begin()+ofRootPath.length());
+            libs[i] = getRelPath(getOFRoot(), ofFilePath::getEnclosingDirectory(libs[i])) + ofFilePath::getFileName(libs[i]);
             libs[i] = pathToOF + libs[i];
         }
 
@@ -429,7 +427,7 @@ void ofAddon::fromFS(string path, string platform){
 #endif
         if (end > 0){
 
-            frameworks[i].erase (frameworks[i].begin(), frameworks[i].begin()+ofRootPath.length());
+            frameworks[i] = getRelPath(getOFRoot(), ofFilePath::getEnclosingDirectory(frameworks[i])) + ofFilePath::getFileName(frameworks[i]);
             frameworks[i] = pathToOF + frameworks[i];
         }
 
@@ -452,21 +450,21 @@ void ofAddon::fromFS(string path, string platform){
     // get every folder in addon/src and addon/libs
 
     vector < string > libFolders;
-    ofLogVerbose() << "trying get folders recursively " << (path + "/libs");
+    ofLogVerbose() << "trying get folders recursively " << libsPath;
 
 	// the dirList verbosity is crazy, so I'm setting this off for now.
-    getFoldersRecursively(path + "/libs", libFolders, platform);
+    getFoldersRecursively(libsPath, libFolders, platform);
     vector < string > srcFolders;
-    getFoldersRecursively(path + "/src", srcFolders, platform);
+    getFoldersRecursively(filePath, srcFolders, platform);
 
     for (int i = 0; i < (int)libFolders.size(); i++){
-        libFolders[i].erase (libFolders[i].begin(), libFolders[i].begin()+ofRootPath.length());
+        libFolders[i] = getRelPath(getOFRoot(), libFolders[i]);
         libFolders[i] = pathToOF + libFolders[i];
         paths.push_back(libFolders[i]);
     }
 
     for (int i = 0; i < (int)srcFolders.size(); i++){
-        srcFolders[i].erase (srcFolders[i].begin(), srcFolders[i].begin()+ofRootPath.length());
+        srcFolders[i] = getRelPath(getOFRoot(), srcFolders[i]);
         srcFolders[i] = pathToOF + srcFolders[i];
         paths.push_back(srcFolders[i]);
     }

@@ -45,11 +45,12 @@ void ofApp::setup(){
     ofDirectory addons(ofFilePath::join(getOFRoot(),"addons"));
     addons.listDir();
     for(int i=0;i<(int)addons.size();i++){
-    	string addon = addons.getName(i);
-    	if(addon.find("ofx")==0){
-    		ofxToggle * toggle = new ofxToggle();
-    		panelAddons.add(toggle->setup(addon,false,300));
-    	}
+        if (addons.getFile(i).isDirectory()){
+            string addon = addons.getName(i);
+            ofxToggle * toggle = new ofxToggle();
+            panelAddons.add(toggle->setup(addon,false,300));
+            addonList.push_back(ofAddonData(addons.getFile(i).getAbsolutePath()));
+        }
     }
 
     panelOptions.setup("","settings.xml",ofGetWidth()-panelAddons.getWidth()-10,120);
@@ -57,11 +58,13 @@ void ofApp::setup(){
     panelOptions.add(updateProject.setup("update project",300));
     panelOptions.add(createAndOpen.setup("create and open project",300));
     panelOptions.add(changeOFRoot.setup("change OF path",300));
+    panelOptions.add(appendAddonsDir.setup("add addons dir",300));
 
     createProject.addListener(this,&ofApp::createProjectPressed);
     updateProject.addListener(this,&ofApp::updateProjectPressed);
     createAndOpen.addListener(this,&ofApp::createAndOpenPressed);
     changeOFRoot.addListener(this,&ofApp::changeOFRootPressed);
+    appendAddonsDir.addListener(this,&ofApp::appendAddonsDirPressed);
 
 	examplesPanel.setup("generate examples", "examples.xml", 400, 10);
 	examplesPanel.add(generateButton.setup("<--Generate"));
@@ -237,16 +240,21 @@ ofFileDialogResult ofApp::makeNewProjectViaDialog(){
         project->setup(target);
         if(project->create(res.filePath)){
             vector<string> addonsToggles = panelAddons.getControlNames();
-            for (int i = 0; i < (int) addonsToggles.size(); i++){
-                ofxToggle toggle = panelAddons.getToggle(addonsToggles[i]);
-                if(toggle){
-                    ofAddon addon;
-                    addon.pathToOF = getOFRelPath(res.filePath);
-                    addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), addonsToggles[i]),target);
-                    printf("adding %s addons \n", addonsToggles[i].c_str());
-                    project->addAddon(addon);
-
+            for (int j = 0, n = 0; j < (int) panelAddons.getNumControls(); j++){
+                ofxToggle * control = dynamic_cast<ofxToggle*>(panelAddons.getControl(j));
+                if(control){
+                    //this is a Toggle type
+                    if (*control){
+                        //this Toggle is checked
+                        ofAddon addon;
+                        addon.pathToOF = getOFRelPath(res.filePath);
+                        addon.fromFS(addonList[n].absolutePath, target);
+                        printf("adding %s addon at %s \n", control->getName().c_str(), addonList[n].absolutePath.c_str());
+                        project->addAddon(addon);
+                    }
+                    n++;
                 }
+                //else try the next one
             }
             project->save(true);
         }
@@ -333,6 +341,25 @@ void ofApp::changeOFRootPressed(){
 	setupDrawableOFPath();
 }
 
+void ofApp::appendAddonsDirPressed(){
+    ofFileDialogResult res = ofSystemLoadDialog("Select an additional Addons directory",true);
+    if (res.fileName == "" || res.filePath == "") {
+        return;
+    }
+    
+    ofxLabel * label = new ofxLabel();
+    panelAddons.add(label->setup("dir", res.filePath));
+    ofDirectory addons(res.filePath);
+    addons.listDir();
+    for(int i=0;i<(int)addons.size();i++){
+        if (addons.getFile(i).isDirectory()){
+            string addon = addons.getName(i);
+            ofxToggle * toggle = new ofxToggle();
+            panelAddons.add(toggle->setup(addon,false,300));
+            addonList.push_back(ofAddonData(addons.getFile(i).getAbsolutePath()));
+        }
+    }
+}
 
 
 //--------------------------------------------------------------
