@@ -41,7 +41,7 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	:
+	: # noop
 	# mount install
 }
 
@@ -59,10 +59,7 @@ function copy() {
 		cp -Rv inc/* $1/include
 		# library files
 		cp -Rv lib/libfmodex.dylib $1/lib/$TYPE/
-	else
-		: #noop
 	fi
-	:
 }
 
 # executed inside the lib src dir
