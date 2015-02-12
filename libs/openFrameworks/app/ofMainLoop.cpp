@@ -88,6 +88,7 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> a
 		ofAddListener(window->events().touchUp,app.get(),&ofBaseApp::touchUp,OF_EVENT_ORDER_APP);
 	}
 	currentWindow = window;
+	currentWindow->makeCurrent();
 	if(!windowLoop){
 		window->events().notifySetup();
 	}
@@ -118,8 +119,9 @@ void ofMainLoop::loopOnce(){
 			windowsApps.erase(i);
 		}else{
 			currentWindow = i->first;
-			i->first->update();
-			i->first->draw();
+			currentWindow->makeCurrent();
+			currentWindow->update();
+			currentWindow->draw();
 		}
 	}
 	if(pollEvents){

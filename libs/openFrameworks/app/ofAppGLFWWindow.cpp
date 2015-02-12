@@ -306,8 +306,6 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
 
 //--------------------------------------------
 void ofAppGLFWWindow::update(){
-	glfwMakeContextCurrent(windowP);
-	glfwPollEvents();
 	currentRenderer->update();
 	events().notifyUpdate();
 }
@@ -1124,6 +1122,11 @@ void ofAppGLFWWindow::iconify(bool bIconify){
 		glfwRestoreWindow(windowP);
 }
 
+
+
+void ofAppGLFWWindow::makeCurrent(){
+	glfwMakeContextCurrent(windowP);
+}
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 Display* ofAppGLFWWindow::getX11Display(){
