@@ -25,7 +25,6 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	: # noop
 	mkdir -p lib/$TYPE
 }
 
@@ -56,7 +55,6 @@ function build() {
 		esac 
 
 		local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
-		
 
 		./configure --prefix=$BUILD_TO_DIR --without-bzip2 --enable-static=yes --enable-shared=no \
 			CFLAGS="-arch $OSX_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
@@ -76,8 +74,6 @@ function build() {
 		make -j
 		make install
 		cp $BUILD_TO_DIR/lib/libfreetype.a lib/$TYPE/libfreetype-$OSX_ARCH.a
-
-
 
 		cd lib/$TYPE/
 		lipo -create libfreetype-i386.a \
@@ -254,7 +250,6 @@ function build() {
 		    echo "Build Successful for $IOS_ARCH"
 		done
 
-
 		echo "-----------------"
 		echo `pwd`
 		echo "Finished for all architectures."
@@ -368,13 +363,12 @@ function copy() {
 		cp -v build/$TYPE/x86/lib/libfreetype.a $1/lib/$TYPE/x86/libfreetype.a
 	fi
 
-	# Copy License Files
-	rm -rf $1/license #remove any older files if exists
+	# copy license files
+	rm -rf $1/license # remove any older files if exists
 	mkdir -p $1/license
-	cp -v docs/LICENSE.TXT $1/license/LICENSE.TXT
-	cp -v docs/FTL.TXT $1/license/FTL.TXT
-	cp -v docs/GPLv2.TXT $1/license/GPLv2.TXT
-
+	cp -v docs/LICENSE.TXT $1/license/
+	cp -v docs/FTL.TXT $1/license/
+	cp -v docs/GPLv2.TXT $1/license/
 }
 
 # executed inside the lib src dir
@@ -382,7 +376,6 @@ function clean() {
 
 	if [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: clean vs"
-	
 	elif [ "$TYPE" == "android" ] ; then
 		make clean
 		rm -f build/$TYPE

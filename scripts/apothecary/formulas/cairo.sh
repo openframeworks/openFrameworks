@@ -57,7 +57,6 @@ function prepare() {
 	apothecaryDepend copy pixman
 	apothecaryDepend build freetype
 	apothecaryDepend copy freetype
-
 }
 
 # executed inside the lib src dir
@@ -82,7 +81,6 @@ function build() {
 		make -j
 		make install
 	fi
-
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
@@ -123,13 +121,12 @@ function copy() {
 		cp -v $BUILD_ROOT_DIR/lib/libpixman-1.a $1/lib/$TYPE/pixman-1.a
 	fi
 
-	# Copy License Files
-	rm -rf $1/license #remove any older files if exists
+	# copy license files
+	rm -rf $1/license # remove any older files if exists
 	mkdir -p $1/license
-	cp -v COPYING $1/license/COPYING
-	cp -v COPYING-LGPL-2.1 $1/license/COPYING-LGPL-2.1
-	cp -v COPYING-MPL-1.1 $1/license/COPYING-MPL-1.1
-
+	cp -v COPYING $1/license/
+	cp -v COPYING-LGPL-2.1 $1/license/
+	cp -v COPYING-MPL-1.1 $1/license/
 }
 
 # executed inside the lib src dir
