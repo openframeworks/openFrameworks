@@ -37,6 +37,7 @@ ofMainLoop::ofMainLoop()
 }
 
 ofMainLoop::~ofMainLoop() {
+	exit();
 }
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & settings){
@@ -87,6 +88,7 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> a
 		ofAddListener(window->events().touchUp,app.get(),&ofBaseApp::touchUp,OF_EVENT_ORDER_APP);
 	}
 	currentWindow = window;
+	currentWindow->makeCurrent();
 	if(!windowLoop){
 		window->events().notifySetup();
 	}
@@ -103,11 +105,10 @@ int ofMainLoop::loop(){
 		while(!bShouldClose && !windowsApps.empty()){
 			loopOnce();
 		}
+		exit();
 	}else{
 		windowLoop();
 	}
-	exitEvent.notify(this);
-	windowsApps.clear();
 	return status;
 }
 
@@ -118,13 +119,52 @@ void ofMainLoop::loopOnce(){
 			windowsApps.erase(i);
 		}else{
 			currentWindow = i->first;
-			i->first->update();
-			i->first->draw();
+			currentWindow->makeCurrent();
+			currentWindow->update();
+			currentWindow->draw();
 		}
 	}
 	if(pollEvents){
 		pollEvents();
 	}
+}
+
+void ofMainLoop::exit(){
+	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
+		shared_ptr<ofAppBaseWindow> window = i->first;
+		shared_ptr<ofBaseApp> app = i->second;
+		
+		if(window == NULL) {
+			continue;
+		}
+		if(app == NULL) {
+			continue;
+		}
+		
+		ofRemoveListener(window->events().setup,app.get(),&ofBaseApp::setup,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().update,app.get(),&ofBaseApp::update,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().draw,app.get(),&ofBaseApp::draw,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().exit,app.get(),&ofBaseApp::exit,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().keyPressed,app.get(),&ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().keyReleased,app.get(),&ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().mouseMoved,app.get(),&ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().mouseDragged,app.get(),&ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().mousePressed,app.get(),&ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().mouseReleased,app.get(),&ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().mouseScrolled,app.get(),&ofBaseApp::mouseScrolled,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().windowEntered,app.get(),&ofBaseApp::windowEntry,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().windowResized,app.get(),&ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().messageEvent,app.get(),&ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().fileDragEvent,app.get(),&ofBaseApp::dragged,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().touchCancelled,app.get(),&ofBaseApp::touchCancelled,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().touchDoubleTap,app.get(),&ofBaseApp::touchDoubleTap,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().touchDown,app.get(),&ofBaseApp::touchDown,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().touchMoved,app.get(),&ofBaseApp::touchMoved,OF_EVENT_ORDER_APP);
+		ofRemoveListener(window->events().touchUp,app.get(),&ofBaseApp::touchUp,OF_EVENT_ORDER_APP);
+	}
+	
+	exitEvent.notify(this);
+	windowsApps.clear();
 }
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){

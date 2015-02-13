@@ -33,6 +33,7 @@ public:
 	void run(shared_ptr<ofBaseApp> app);
 	int loop();
 	void loopOnce();
+	void exit();
 	ofCoreEvents & events();
 	void shouldClose(int status);
 	shared_ptr<ofAppBaseWindow> getCurrentWindow();
