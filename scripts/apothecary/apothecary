@@ -78,9 +78,9 @@ IOS_MIN_SDK_VER=5.1
 # used when building for vs
 VS_VER=11
 
-# used when compiling for android
-ANDROID_NDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep NDK_ROOT | sed 's/.*=\(.*\)/\1/'`
-ANDROID_SDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep SDK_ROOT | sed 's/.*=\(.*\)/\1/'`
+# paths to android SDK, etc
+ANDROID_NDK_ROOT=
+ANDROID_SDK_ROOT=
 ANDROID_PLATFORM=android-19
 
 ################################################################################
@@ -298,7 +298,6 @@ fi
 ################################################################################
 ### FUNCTIONS
 
-
 function installAndroidToolchain() {
 
 	local WD=$(pwd)
@@ -329,7 +328,6 @@ function installAndroidToolchain() {
 	cd $WD
 
 }
-
 
 # check if a given string matches anything in VALID_TYPES,
 # bool result is set to second argument
@@ -939,6 +937,22 @@ fi
 # dependency & build root dirs
 DEPENDS_FORMULA_DIR=$APOTHECARY_DIR/$REL_FORMULAS_DIR/$DEPENDS_SUBDIR
 BUILD_ROOT_DIR=$BUILD_DIR/$BUILDROOT_SUBDIR
+
+# set for android sdk info
+if [[ "$TYPE" == "android" ]] ; then
+	if [[ -e ../../libs/openFrameworksCompiled/project/android/paths.make ]] ; then
+		ANDROID_NDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep NDK_ROOT | sed 's/.*=\(.*\)/\1/'`
+		ANDROID_SDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep SDK_ROOT | sed 's/.*=\(.*\)/\1/'`
+		echoVerbose "Android NDK root: $ANDROID_NDK_ROOT"
+		echoVerbose "Android SDK root: $ANDROID_SDK_ROOT"
+	else
+		echoError "Targeting android, but can't find the SDK. Missing"
+		echoError "libs/openFrameworksCompiled/project/android/paths.make ..."
+		echoError "See the following for info:"
+		echoError "libs/openFrameworksCompiled/project/android/paths.make.default"
+		exit 1
+	fi
+fi
 
 # handle commands
 echoVerbose "Running: $A_CMD $*"

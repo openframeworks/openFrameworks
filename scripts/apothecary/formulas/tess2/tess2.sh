@@ -63,7 +63,6 @@ function build() {
 			rm -f CMakeCache.txt
 			set +e
 
-
 			# Choose which stdlib to use:
 			# i386    : libstdc++
 			# x86_64  : libc++
@@ -85,7 +84,6 @@ function build() {
 			export LINKFLAGS="$CFLAGS $STD_LIB_FLAGS"
 			export LDFLAGS="$LINKFLAGS"
 			export CXXFLAGS=$CPPFLAGS
-
 
 			LOG="build-tess2-${VER}-${OSX_ARCH}-cmake.log"
 
@@ -118,7 +116,6 @@ function build() {
 			 -output libtess2.a \
 			 > "${LOG}" 2>&1
 
-
 	elif [ "$TYPE" == "vs" ] ; then
 		cmake -G "Visual Studio $VS_VER"
 		vs-build "tess2.sln"
@@ -149,7 +146,6 @@ function build() {
 		           exit 1
 		          ;;
 		esac 
-
 		
 		export CC=$TOOLCHAIN/usr/bin/$COMPILER_CTYPE
 		export CPP=$TOOLCHAIN/usr/bin/$COMPILER_CPPTYPE
@@ -165,7 +161,6 @@ function build() {
 		EXTRA_LINK_FLAGS="-stdlib=libc++ -Os -fPIC"
 		EXTRA_FLAGS="$EXTRA_LINK_FLAGS -fvisibility-inlines-hidden"
 		
-
 		# loop through architectures! yay for loops!
 		for IOS_ARCH in ${IOS_ARCHS}
 		do
@@ -200,7 +195,6 @@ function build() {
 		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
 		    	MIN_TYPE=-mios-simulator-version-min=
 		    fi
-
 
 			export CFLAGS="-arch $IOS_ARCH -pipe -no-cpp-precomp -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/" 
 	
@@ -321,6 +315,9 @@ function copy() {
 	else
 		cp -v libtess2.a $1/lib/$TYPE/tess2.a
 	fi
+
+	# copy license file
+    cp -v LICENSE.txt $1/
 }
 
 # executed inside the lib src dir
