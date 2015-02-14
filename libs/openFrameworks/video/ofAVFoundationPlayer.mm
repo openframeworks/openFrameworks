@@ -42,8 +42,8 @@ ofAVFoundationPlayer::~ofAVFoundationPlayer() {
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::loadAsync(string name){
-	return loadPlayer(name, true);
+void ofAVFoundationPlayer::loadAsync(string name){
+	loadPlayer(name, true);
 }
 
 //--------------------------------------------------------------
