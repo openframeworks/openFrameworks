@@ -68,12 +68,13 @@ function copy() {
 		cp -v libkiss.a $1/lib/linux64/libkiss.a
 	fi
 
-	# Copy License File
-    cp -v COPYING $1/COPYING
+	# copy license file
+    cp -v COPYING $1/
 }
 
 # executed inside the lib src dir
 function clean() {
+	
 	if [ "$TYPE" == "linux" -o "$TYPE" == "linux64" ] ; then
 		make clean
 		rm -f *.a
