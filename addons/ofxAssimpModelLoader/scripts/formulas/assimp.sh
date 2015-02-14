@@ -321,8 +321,10 @@ function copy() {
 		cp -Rv lib/libassimp.a $1/lib/$TYPE/assimp.a
 	fi
 
-    # Copy License File
-    cp -v LICENSE $1/LICENSE
+    # copy license files
+    rm -rf $1/license # remove any older files if exists
+    mkdir -p $1/license
+    cp -v LICENSE $1/license/
 }
 
 # executed inside the lib src dir

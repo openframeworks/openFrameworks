@@ -57,6 +57,8 @@ function copy() {
 	else
 		echoWarning "TODO: $TYPE copy"
 	fi
+
+	echoWarning "TODO: License Copy"
 }
 
 # executed inside the lib src dir
