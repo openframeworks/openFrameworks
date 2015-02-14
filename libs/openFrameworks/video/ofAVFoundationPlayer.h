@@ -22,7 +22,7 @@ public:
 	~ofAVFoundationPlayer();
 	   
     bool load(string name);
-	bool loadAsync(string name);
+	void loadAsync(string name);
     void close();
     void update();
 
