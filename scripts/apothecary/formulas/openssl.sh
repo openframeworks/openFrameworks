@@ -28,11 +28,11 @@ function download() {
 	else 
 		echoError "Invalid shasum for $FILENAME."
 	fi
-
 }
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
+
 	if [ "$TYPE" == "ios" ] ; then
 		# create output directories
 		mkdir -p "src"
@@ -54,8 +54,6 @@ function prepare() {
         #mkdir -p lib/$TYPE/armv7s
 		mkdir -p lib/$TYPE/arm64
 
-		
-
 		# make copies of the source files before modifying
 		cp Makefile Makefile.orig
 		cp Configure Configure.orig
@@ -64,15 +62,11 @@ function prepare() {
 		mkdir -p lib/$TYPE
 		mkdir -p lib/include
  	fi
-
-
-
 }
 
 # executed inside the lib src dir
 function build() {
 	
-
 	if [ "$TYPE" == "osx" ] ; then
 		
 		local BUILD_OPTS="-no-shared -no-asm -no-ec_nistp_64_gcc_128 -no-gmp -no-jpake -no-krb5 -no-md2 -no-rc5 -no-rfc3779 -no-sctp -no-shared -no-store -no-unit-test -no-zlib -no-zlib-dynamic"
@@ -156,10 +150,10 @@ function build() {
 		    ./Configure $CONFIG_TARGET $BUILD_OPTS --openssldir="$CURRENTPATH/build/$TYPE/$OSX_ARCH" > "${LOG}" 2>&1
 
 			if [ $? != 0 ]; then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem during configure - Please check ${LOG}"
 		    	exit 1
 		    fi
-
 
             # we need to unset LANG otherwise sed will get upsed.
    			# unset LANG if defined
@@ -191,7 +185,6 @@ function build() {
                 export LC_CTYPE=$OLD_LC_CTYPE
             fi
 
-
 			echo "Running make for ${OSX_ARCH}"
 			echo "Please stand by..."
 
@@ -201,6 +194,7 @@ function build() {
 			
 			if [ $? != 0 ];
 		    then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
 		    else
@@ -228,6 +222,23 @@ function build() {
 		echo "Building & staging fat libs"
 		lipo -c "build/$TYPE/i386/lib/libcrypto.a" "build/$TYPE/x86_64/lib/libcrypto.a" -o "lib/$TYPE/crypto.a"
 		lipo -c "build/$TYPE/i386/lib/libssl.a" "build/$TYPE/x86_64/lib/libssl.a" -o "lib/$TYPE/ssl.a"
+
+        cd lib/$TYPE
+        SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
+        local TOBESTRIPPED
+        for TOBESTRIPPED in $( ls -1) ; do
+            strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
+            if [ $? != 0 ];
+            then
+                tail -n 100 "${SLOG}"
+                echo "Problem while stripping lib - Please check ${SLOG}"
+                exit 1
+            else
+                echo "Strip Successful for ${SLOG}"
+            fi
+        done
+
+        cd ../../
 		
 		# ------------ END OS X Recipe.
 
@@ -267,8 +278,6 @@ function build() {
 		DEVELOPER=$XCODE_DEV_ROOT
 		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
 		VERSION=$VER
-		
-
 
         local IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
 		local STDLIB="libc++"
@@ -369,8 +378,6 @@ function build() {
                 fi
 			fi
 
-
-
 			export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
 			export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
 			export BUILD_TOOLS="${DEVELOPER}"
@@ -387,7 +394,6 @@ function build() {
 		    elif [ "${IOS_ARCH}" == "i386" ]; then
 		    	MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
 		    fi
-			
 
 			echo "Compiler: $CC"
 			echo "Building openssl-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
@@ -409,6 +415,7 @@ function build() {
 		    fi
 
 		    if [ $? != 0 ]; then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem while configure - Please check ${LOG}"
 		    	exit 1
 		    fi
@@ -417,7 +424,6 @@ function build() {
 		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
 		    	MIN_TYPE=-mios-simulator-version-min=
 		    fi
-
 
             # unset LANG if defined
             if test ${LANG+defined};
@@ -453,6 +459,7 @@ function build() {
 			make >> "${LOG}" 2>&1
 			if [ $? != 0 ];
 		    then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
 		    else
@@ -506,6 +513,7 @@ function build() {
 		cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
 
 		unset TOOLCHAIN DEVELOPER
+
 	elif [ "$TYPE" == "android" ]; then
 		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
 		
@@ -672,6 +680,9 @@ function copy() {
 	else
 	 	echoWarning "TODO: copy $TYPE lib"
 	fi
+
+    # copy license file
+    cp -v LICENSE $1/
 }
 
 # executed inside the lib src dir

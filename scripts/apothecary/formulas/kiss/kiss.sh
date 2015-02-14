@@ -36,7 +36,6 @@ function build() {
 		gcc -I./include -c src/kiss_fftr.c -o kiss_fftr.o
 		ar r libkiss.a kiss.o
 		echoWarning "TODO: linux build"
-
 	
 	elif [ "$TYPE" == "linux64" ] ; then
 		echoWarning "TODO: linux64 build"
