@@ -166,9 +166,9 @@ static const NSString * ItemStatusContext;
 			
 			if(status != AVKeyValueStatusLoaded) {
 				NSLog(@"error loading asset tracks: %@", [error localizedDescription]);
-                if(!async){
-                    dispatch_semaphore_signal(sema);
-                }
+				if(!async){
+					dispatch_semaphore_signal(sema);
+				}
 				return;
 			}
 			
@@ -176,35 +176,35 @@ static const NSString * ItemStatusContext;
 			
 			if(CMTimeCompare(duration, kCMTimeZero) == 0) {
 				NSLog(@"track loaded with zero duration.");
-                if(!async){
-                    dispatch_semaphore_signal(sema);
-                }
+				if(!async){
+					dispatch_semaphore_signal(sema);
+				}
 				return;
 			}
 			
 			if(isfinite([self getDurationInSec]) == NO) {
 				NSLog(@"track loaded with infinite duration.");
-                if(!async){
-                    dispatch_semaphore_signal(sema);
-                }
+				if(!async){
+					dispatch_semaphore_signal(sema);
+				}
 				return;
 			}
 			
 			BOOL bOk = [self createAssetReaderWithTimeRange:CMTimeRangeMake(kCMTimeZero, duration)];
 			if(bOk == NO) {
 				NSLog(@"problem with creating asset reader.");
-                if(!async){
-                    dispatch_semaphore_signal(sema);
-                }
+				if(!async){
+					dispatch_semaphore_signal(sema);
+				}
 				return;
 			}
 			
 			NSArray * videoTracks = [self.asset tracksWithMediaType:AVMediaTypeVideo];
 			if([videoTracks count] == 0) {
 				NSLog(@"no video tracks found.");
-                if(!async){
-                    dispatch_semaphore_signal(sema);
-                }
+				if(!async){
+					dispatch_semaphore_signal(sema);
+				}
 				return;
 			}
 			
@@ -251,7 +251,7 @@ static const NSString * ItemStatusContext;
 		return bLoaded;
 	} else {
 		return YES;
-	}	
+	}
 }
 
 - (BOOL)createAssetReaderWithTimeRange:(CMTimeRange)timeRange {
