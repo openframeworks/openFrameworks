@@ -36,6 +36,7 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
+
 	if [ "$SHA" != "" ] ; then
 		git reset --hard $SHA
 	fi
@@ -137,7 +138,6 @@ function build() {
 	    fi
 
 		# 64 bit
-
 		export POCO_ENABLE_CPP11=1
 		LOG="$CURRENTPATH/build/$TYPE/poco-configure-x86_64-${VER}.log"
 		./configure $BUILD_OPTS --config=Darwin64-clang-libc++  > "${LOG}" 2>&1
@@ -359,7 +359,6 @@ function build() {
 		    fi
 		done
 
-
 		cd ../../
 
 		echo "--------------------"
@@ -505,8 +504,8 @@ function copy() {
 		echoWarning "TODO: copy $TYPE lib"
 	fi
 
-	# Copy License File
-    cp -v LICENSE $1/LICENSE
+	# copy license file
+    cp -v LICENSE $1/
 }
 
 # executed inside the lib src dir
@@ -523,5 +522,4 @@ function clean() {
 	else
 		make clean
 	fi
-
 }
