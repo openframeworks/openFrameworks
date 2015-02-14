@@ -59,8 +59,6 @@
 		6678E97619FEB2DF00C00581 /* ofSoundBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6678E97219FEB2DF00C00581 /* ofSoundBuffer.cpp */; };
 		6678E97719FEB2DF00C00581 /* ofSoundBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678E97319FEB2DF00C00581 /* ofSoundBuffer.h */; };
 		6678E97819FEB2DF00C00581 /* ofSoundUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678E97419FEB2DF00C00581 /* ofSoundUtils.h */; };
-		6678E98219FEB79200C00581 /* ofSoundObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6678E98019FEB79200C00581 /* ofSoundObject.cpp */; };
-		6678E98319FEB79200C00581 /* ofSoundObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 6678E98119FEB79200C00581 /* ofSoundObject.h */; };
 		66EA462B17A6D396009BB12A /* ofxOpenALSoundPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66EA462717A6D396009BB12A /* ofxOpenALSoundPlayer.cpp */; };
 		66EA462C17A6D396009BB12A /* ofxOpenALSoundPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 66EA462817A6D396009BB12A /* ofxOpenALSoundPlayer.h */; };
 		66EA462D17A6D396009BB12A /* SoundEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 66EA462917A6D396009BB12A /* SoundEngine.cpp */; };
@@ -278,8 +276,6 @@
 		6678E97219FEB2DF00C00581 /* ofSoundBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundBuffer.cpp; sourceTree = "<group>"; };
 		6678E97319FEB2DF00C00581 /* ofSoundBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundBuffer.h; sourceTree = "<group>"; };
 		6678E97419FEB2DF00C00581 /* ofSoundUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundUtils.h; sourceTree = "<group>"; };
-		6678E98019FEB79200C00581 /* ofSoundObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofSoundObject.cpp; sourceTree = "<group>"; };
-		6678E98119FEB79200C00581 /* ofSoundObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofSoundObject.h; sourceTree = "<group>"; };
 		66EA462717A6D396009BB12A /* ofxOpenALSoundPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOpenALSoundPlayer.cpp; sourceTree = "<group>"; };
 		66EA462817A6D396009BB12A /* ofxOpenALSoundPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOpenALSoundPlayer.h; sourceTree = "<group>"; };
 		66EA462917A6D396009BB12A /* SoundEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoundEngine.cpp; sourceTree = "<group>"; };
@@ -868,8 +864,6 @@
 				E4F76DD4176CB27200798745 /* ofBaseSoundStream.h */,
 				6678E97219FEB2DF00C00581 /* ofSoundBuffer.cpp */,
 				6678E97319FEB2DF00C00581 /* ofSoundBuffer.h */,
-				6678E98019FEB79200C00581 /* ofSoundObject.cpp */,
-				6678E98119FEB79200C00581 /* ofSoundObject.h */,
 				E4F76DDD176CB27200798745 /* ofSoundPlayer.cpp */,
 				E4F76DDE176CB27200798745 /* ofSoundPlayer.h */,
 				E4F76DDF176CB27200798745 /* ofSoundStream.cpp */,
@@ -1030,7 +1024,6 @@
 				15594FA515C56BB700727FF2 /* AVFoundationVideoGrabber.h in Headers */,
 				15594FA615C56BB700727FF2 /* AVFoundationVideoPlayer.h in Headers */,
 				15594FAD15C56C9500727FF2 /* ofxiOSAlerts.h in Headers */,
-				6678E98319FEB79200C00581 /* ofSoundObject.h in Headers */,
 				15594FAE15C56C9500727FF2 /* ofxiOSAlertsListener.h in Headers */,
 				15594FC515C56D1E00727FF2 /* ofxiOSCoreLocation.h in Headers */,
 				15594FC615C56D1E00727FF2 /* ofxiOSExternalDisplay.h in Headers */,
@@ -1132,7 +1125,6 @@
 				E4F76E51176CB27200798745 /* ofBitmapFont.cpp in Sources */,
 				E4F76E55176CB27200798745 /* ofGraphics.cpp in Sources */,
 				E4F76E57176CB27200798745 /* ofImage.cpp in Sources */,
-				6678E98219FEB79200C00581 /* ofSoundObject.cpp in Sources */,
 				E4F76E59176CB27200798745 /* ofPath.cpp in Sources */,
 				E4F76E5B176CB27200798745 /* ofPixels.cpp in Sources */,
 				E4F76E5D176CB27200798745 /* ofPolyline.cpp in Sources */,

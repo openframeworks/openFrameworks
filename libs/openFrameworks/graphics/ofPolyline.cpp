@@ -965,19 +965,22 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
         }
         area += points[points.size()-1].x * points[0].y - points[0].x * points[points.size()-1].y;
         area *= 0.5;
-
         
-        // centroid
-        // TODO: doesn't seem to work on all concave shapes
-        for(int i=0;i<(int)points.size()-1;i++){
-            centroid2D.x += (points[i].x + points[i+1].x) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
-            centroid2D.y += (points[i].y + points[i+1].y) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+        if(fabsf(area) < FLT_EPSILON) {
+            centroid2D = getBoundingBox().getCenter();
+        } else {
+            // centroid
+            // TODO: doesn't seem to work on all concave shapes
+            for(int i=0;i<(int)points.size()-1;i++){
+                centroid2D.x += (points[i].x + points[i+1].x) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+                centroid2D.y += (points[i].y + points[i+1].y) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+            }
+            centroid2D.x += (points[points.size()-1].x + points[0].x) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
+            centroid2D.y += (points[points.size()-1].y + points[0].y) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
+            
+            centroid2D.x /= (6*area);
+            centroid2D.y /= (6*area);
         }
-        centroid2D.x += (points[points.size()-1].x + points[0].x) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
-        centroid2D.y += (points[points.size()-1].y + points[0].y) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
-        
-        centroid2D.x /= (6*area);
-        centroid2D.y /= (6*area);
 
         
         // per vertex cache

@@ -4,7 +4,6 @@
 #include <limits>
 #include "ofMath.h"
 
-
 /// \class ofColor_
 /// ofColor represents a color in openFrameworks. Colors are usually defined by
 /// specifying a red, green, and blue component (RGB), and a transparency
@@ -94,7 +93,7 @@ public:
     ///     ofColor c;
     ///     ofSetColor(c); // Draw color is now white.
     /// ~~~~
-    ofColor_<PixelType>():
+    ofColor_():
         r(limit()),
         g(limit()),
         b(limit()),
@@ -114,10 +113,10 @@ public:
     /// \param green The green component.
     /// \param blue The blue component.
     /// \param alpha The alpha component.
-    ofColor_<PixelType>(float red,
-                        float green,
-                        float blue,
-                        float alpha = limit());
+    ofColor_(float red,
+				float green,
+				float blue,
+				float alpha = limit());
 
     /// \brief Construct a grayscale ofColor_ by specifying a single number.
     ///
@@ -131,7 +130,7 @@ public:
     /// ~~~~
     /// \param gray A grayscale value.
     /// \param alpha The opacity of the color.
-    ofColor_<PixelType>(float gray, float alpha = limit());
+    ofColor_(float gray, float alpha = limit());
 
     /// \brief Construct an ofColor_ from an existing ofColor_.
     ///
@@ -149,7 +148,7 @@ public:
     ///
     /// \param color The ofColor_ to copy.
     template<typename SrcType>
-    ofColor_<PixelType>(const ofColor_<SrcType>& color);
+    ofColor_(const ofColor_<SrcType>& color);
 
     /// \brief Construct an ofColor_ from an existing ofColor_.
     ///
@@ -159,7 +158,7 @@ public:
     ///
     /// \param color The ofColor_ to copy.
     /// \param alpha The new alpha value to replace the alpha value in color.
-    ofColor_<PixelType>(const ofColor_<PixelType>& color, float alpha);
+    ofColor_(const ofColor_<PixelType>& color, float alpha);
 
     /// \brief Create an ofColor_ from an HSB representation.
     ///
