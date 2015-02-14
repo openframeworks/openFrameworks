@@ -100,6 +100,21 @@ bool ofVideoPlayer::load(string name){
 }
 
 //---------------------------------------------------------------------------
+bool ofVideoPlayer::loadAsync(string name){
+	if( !player ){
+		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+		player->setPixelFormat(internalPixelFormat);
+	}
+	
+	bool bOk = player->loadAsync(name);
+	
+	if( bOk){
+		moviePath = name;
+	}
+	return bOk;
+}
+
+//---------------------------------------------------------------------------
 bool ofVideoPlayer::loadMovie(string name){
 	return load(name);
 }

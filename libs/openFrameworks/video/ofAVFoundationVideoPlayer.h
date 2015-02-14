@@ -59,6 +59,7 @@
     
     BOOL bWillBeUpdatedExternally;
     BOOL bReady;
+	BOOL bLoaded;
     BOOL bPlayStateBeforeLoad;
     BOOL bUpdateFirstFrame;
     BOOL bNewFrame;
@@ -80,9 +81,9 @@
 @property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
 @property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
 
-- (BOOL)loadWithFile:(NSString*)file;
-- (BOOL)loadWithPath:(NSString*)path;
-- (BOOL)loadWithURL:(NSURL*)url;
+- (BOOL)loadWithFile:(NSString*)file async:(BOOL)async;
+- (BOOL)loadWithPath:(NSString*)path async:(BOOL)async;
+- (BOOL)loadWithURL:(NSURL*)url async:(BOOL)async;
 - (void)unloadVideo;
 
 - (void)setVideoPosition:(CGPoint)position;

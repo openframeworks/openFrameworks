@@ -453,6 +453,7 @@ public:
 
 	//needs implementing
 	virtual bool				load(string name) = 0;
+	virtual bool				loadAsync(string name) = 0;
 
 	virtual void				play() = 0;
 	virtual void				stop() = 0;
