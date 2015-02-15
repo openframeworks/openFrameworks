@@ -116,7 +116,6 @@ int ofXml::getNumChildren() const
             numberOfChildren++;
         }
     }
-
     return numberOfChildren;
 }
 
@@ -545,13 +544,18 @@ bool ofXml::removeAttributes()
 }
 
 bool ofXml::removeContents() {
-    if(element)
+    if(element && element->hasChildNodes())
     {
-        Poco::XML::NodeList *list = element->childNodes();
-        for( int i = 0; i < (int)list->length(); i++) {
-            element->removeChild(list->item(i));
-        }
-        list->release();
+
+		Poco::XML::Node* swap;
+		Poco::XML::Node* n = element->firstChild();
+		while(n->nextSibling() != NULL)
+		{
+			swap = n->nextSibling();
+			element->removeChild(n);
+			n = swap;
+		}
+		
         return true;
     }
     return false;
