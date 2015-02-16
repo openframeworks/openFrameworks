@@ -1,6 +1,10 @@
 #pragma once
 
 #include "ofGstUtils.h"
+#ifdef OF_USE_GST_GL
+#define GST_USE_UNSTABLE_API
+#include <gst/gl/gl.h>
+#endif
 
 
 class ofGstVideoPlayer: public ofBaseVideoPlayer, public ofGstAppSink{
@@ -50,6 +54,7 @@ public:
 
 	ofPixels&		getPixels();
 	const ofPixels& getPixels() const;
+	ofTexture * getTexturePtr();
 
 	float 			getHeight() const;
 	float 			getWidth() const;
@@ -72,7 +77,6 @@ protected:
 
 private:
 	ofPixelFormat		internalPixelFormat;
-	bool				nativePixels;
 	guint64				nFrames;
 	int 				fps_n, fps_d;
 	bool				bIsStream;
@@ -80,4 +84,9 @@ private:
 	bool				bAsyncLoad;
 	bool				threadAppSink;
 	ofGstVideoUtils		videoUtils;
+
+#ifdef OF_USE_GST_GL
+	GstGLDisplay *		glDisplay;
+	GstGLContext *		glContext;
+#endif
 };
