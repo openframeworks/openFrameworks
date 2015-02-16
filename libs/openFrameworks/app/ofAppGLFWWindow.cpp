@@ -150,11 +150,13 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer);
 		}
 	#else
-		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_API);
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.glVersionMinor);
-		if((settings.glVersionMajor>=3 && settings.glVersionMinor>=2) || settings.glVersionMajor>=4){
+		if((settings.glVersionMajor==3 && settings.glVersionMinor>=2) || settings.glVersionMajor>=4){
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		}
+		if(settings.glVersionMajor>=3){
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
 		}else{
@@ -277,7 +279,7 @@ void ofAppGLFWWindow::setWindowIcon(const string & path){
 void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	iconSet = true;
 	int length = 2+iconPixels.getWidth()*iconPixels.getHeight();
-	unsigned long * buffer = new unsigned long[length];
+	vector<unsigned long> buffer(length);
 	buffer[0]=iconPixels.getWidth();
 	buffer[1]=iconPixels.getHeight();
 	for(int i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
@@ -288,8 +290,7 @@ void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	}
 
 	XChangeProperty(getX11Display(), getX11Window(), XInternAtom(getX11Display(), "_NET_WM_ICON", False), XA_CARDINAL, 32,
-						 PropModeReplace,  (const unsigned char*)buffer,  length);
-	delete[] buffer;
+						 PropModeReplace,  (const unsigned char*)buffer.data(),  length);
 	XFlush(getX11Display());
 }
 #endif
