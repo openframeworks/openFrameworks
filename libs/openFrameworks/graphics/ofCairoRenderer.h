@@ -33,7 +33,6 @@ public:
 
 	void startRender();
 	void finishRender();
-	void update();
 
 	using ofBaseRenderer::draw;
 	void draw(const ofPath & shape) const;
