@@ -24,7 +24,8 @@ function download() {
 	# end fix
 	tar -xf glfw-$GIT_TAG.tar.gz
 	mv glfw-$GIT_TAG glfw
-	rm glfw*.tar.gz}
+	rm glfw*.tar.gz
+}
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
