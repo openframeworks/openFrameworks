@@ -28,7 +28,7 @@ public:
 
 	/// \brief Set the field of view for a perspective camera.
 	///
-	/// This sets the horizontal field of view for the camera, in degrees.
+	/// This sets the vertical field of view for the camera, in degrees.
 	/// This only operates with perspective cameras, and will have no effect 
 	/// with cameras in orthographic mode. 
 	///
@@ -75,7 +75,7 @@ public:
 
 	/// \brief Get the camera's field of view, in degrees.
 	///
-	/// Get the horizontal camera's field of view, in degrees.  This is only
+	/// Get the camera's vertical field of view, in degrees.  This is only
     /// meaningful for perspective cameras.
 	///
 	/// \returns The camera's field of view, in degrees.
