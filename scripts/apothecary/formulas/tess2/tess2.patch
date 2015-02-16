@@ -1,7 +1,65 @@
-diff -ru tess2/Source/geom.c tess2/Source/geom.c
---- tess2/Source/geom.c
-+++ tess2/Source/geom.c
-@@ -55,7 +55,9 @@ TESSreal tesedgeEval( TESSvertex *u, TESSvertex *v, TESSvertex *w )
+From 5617c89c0f56a5b26aab1ceeb8d7b21dfa54439f Mon Sep 17 00:00:00 2001
+From: Daniel Rosser <danoli3@gmail.com>
+Date: Wed, 4 Feb 2015 12:24:13 +1100
+Subject: [PATCH] Patch
+
+---
+ Include/tesselator.h | 14 ++++++++++++--
+ Source/geom.c        | 17 ++++++++++++-----
+ Source/mesh.c        |  8 +++++---
+ Source/priorityq.c   | 17 ++++++++---------
+ Source/sweep.c       | 47 +++++++++++++++++++++++------------------------
+ Source/tess.c        | 19 +++++++++----------
+ 6 files changed, 69 insertions(+), 53 deletions(-)
+
+diff --git a/Include/tesselator.h b/Include/tesselator.h
+index c27541e..37429db 100755
+--- a/Include/tesselator.h
++++ b/Include/tesselator.h
+@@ -38,6 +38,10 @@ extern "C" {
+ 
+ // See OpenGL Red Book for description of the winding rules
+ // http://www.glprogramming.com/red/chapter11.html
++#if defined( __APPLE_CC__)
++	#include <TargetConditionals.h>
++#endif
++
+ enum TessWindingRule
+ {
+ 	TESS_WINDING_ODD,
+@@ -115,11 +119,17 @@ enum TessElementType
+ };
+ 
+ typedef float TESSreal;
+-typedef int TESSindex;
++//note this shouldn't be defined(TARGET_OS_IPHONE) as its always defined either 0 or 1
++#if TARGET_OS_IPHONE || ANDROID || __ARMEL__
++typedef unsigned short TESSindex;
++#else
++typedef unsigned int TESSindex;
++#endif
++
+ typedef struct TESStesselator TESStesselator;
+ typedef struct TESSalloc TESSalloc;
+ 
+-#define TESS_UNDEF (~(TESSindex)0)
++#define TESS_UNDEF ((TESSindex)(~(TESSindex)0))
+ 
+ #define TESS_NOTUSED(v) do { (void)(1 ? (void)0 : ( (void)(v) ) ); } while(0)
+ 
+diff --git a/Source/geom.c b/Source/geom.c
+index a49ea17..e22076b 100755
+--- a/Source/geom.c
++++ b/Source/geom.c
+@@ -30,7 +30,6 @@
+ */
+ 
+ //#include "tesos.h"
+-#include <assert.h>
+ #include "mesh.h"
+ #include "geom.h"
+ 
+@@ -55,7 +54,9 @@ TESSreal tesedgeEval( TESSvertex *u, TESSvertex *v, TESSvertex *w )
  	*/
  	TESSreal gapL, gapR;
  
@@ -12,7 +70,7 @@ diff -ru tess2/Source/geom.c tess2/Source/geom.c
  
  	gapL = v->s - u->s;
  	gapR = w->s - v->s;
-@@ -79,7 +81,9 @@ TESSreal tesedgeSign( TESSvertex *u, TESSvertex *v, TESSvertex *w )
+@@ -79,7 +80,9 @@ TESSreal tesedgeSign( TESSvertex *u, TESSvertex *v, TESSvertex *w )
  	*/
  	TESSreal gapL, gapR;
  
@@ -23,7 +81,7 @@ diff -ru tess2/Source/geom.c tess2/Source/geom.c
  
  	gapL = v->s - u->s;
  	gapR = w->s - v->s;
-@@ -110,7 +114,9 @@ TESSreal testransEval( TESSvertex *u, TESSvertex *v, TESSvertex *w )
+@@ -110,7 +113,9 @@ TESSreal testransEval( TESSvertex *u, TESSvertex *v, TESSvertex *w )
  	*/
  	TESSreal gapL, gapR;
  
@@ -34,7 +92,7 @@ diff -ru tess2/Source/geom.c tess2/Source/geom.c
  
  	gapL = v->t - u->t;
  	gapR = w->t - v->t;
-@@ -134,7 +140,9 @@ TESSreal testransSign( TESSvertex *u, TESSvertex *v, TESSvertex *w )
+@@ -134,7 +139,9 @@ TESSreal testransSign( TESSvertex *u, TESSvertex *v, TESSvertex *w )
  	*/
  	TESSreal gapL, gapR;
  
@@ -45,9 +103,10 @@ diff -ru tess2/Source/geom.c tess2/Source/geom.c
  
  	gapL = v->t - u->t;
  	gapR = w->t - v->t;
-diff -ru tess2/Source/mesh.c tess2/Source/mesh.c
---- tess2/Source/mesh.c
-+++ tess2/Source/mesh.c
+diff --git a/Source/mesh.c b/Source/mesh.c
+index 06a8ced..6b59074 100755
+--- a/Source/mesh.c
++++ b/Source/mesh.c
 @@ -122,7 +122,7 @@ static void MakeVertex( TESSvertex *newVertex,
  	TESSvertex *vPrev;
  	TESSvertex *vNew = newVertex;
@@ -77,10 +136,19 @@ diff -ru tess2/Source/mesh.c tess2/Source/mesh.c
  
  	alloc->memfree( alloc->userData, mesh );
  }
-diff -ru tess2/Source/priorityq.c tess2/Source/priorityq.c
---- tess2/Source/priorityq.c
-+++ tess2/Source/priorityq.c
-@@ -138,7 +138,7 @@ static void FloatDown( PriorityQHeap *pq, int curr )
+diff --git a/Source/priorityq.c b/Source/priorityq.c
+index 62a6654..a614a8a 100755
+--- a/Source/priorityq.c
++++ b/Source/priorityq.c
+@@ -31,7 +31,6 @@
+ 
+ //#include "tesos.h"
+ #include <stddef.h>
+-#include <assert.h>
+ #include "../Include/tesselator.h"
+ #include "priorityq.h"
+ 
+@@ -138,7 +137,7 @@ static void FloatDown( PriorityQHeap *pq, int curr )
  				++child;
  		}
  
@@ -89,7 +157,7 @@ diff -ru tess2/Source/priorityq.c tess2/Source/priorityq.c
  
  		hChild = n[child].handle;
  		if( child > pq->size || LEQ( h[hCurr].key, h[hChild].key )) {
-@@ -237,7 +237,7 @@ PQhandle pqHeapInsert( TESSalloc* alloc, PriorityQHeap *pq, PQkey keyNew )
+@@ -237,7 +236,7 @@ PQhandle pqHeapInsert( TESSalloc* alloc, PriorityQHeap *pq, PQkey keyNew )
  	if( pq->initialized ) {
  		FloatUp( pq, curr );
  	}
@@ -98,7 +166,7 @@ diff -ru tess2/Source/priorityq.c tess2/Source/priorityq.c
  	return free;
  }
  
-@@ -271,7 +271,7 @@ void pqHeapDelete( PriorityQHeap *pq, PQhandle hCurr )
+@@ -271,7 +270,7 @@ void pqHeapDelete( PriorityQHeap *pq, PQhandle hCurr )
  	PQhandleElem *h = pq->handles;
  	int curr;
  
@@ -107,7 +175,7 @@ diff -ru tess2/Source/priorityq.c tess2/Source/priorityq.c
  
  	curr = h[hCurr].node;
  	n[curr].handle = n[pq->size].handle;
-@@ -324,7 +324,7 @@ PriorityQ *pqNewPriorityQ( TESSalloc* alloc, int size, int (*leq)(PQkey key1, PQ
+@@ -324,7 +323,7 @@ PriorityQ *pqNewPriorityQ( TESSalloc* alloc, int size, int (*leq)(PQkey key1, PQ
  /* really tessPqSortDeletePriorityQ */
  void pqDeletePriorityQ( TESSalloc* alloc, PriorityQ *pq )
  {
@@ -116,7 +184,7 @@ diff -ru tess2/Source/priorityq.c tess2/Source/priorityq.c
  	if (pq->heap != NULL) pqHeapDeletePriorityQ( alloc, pq->heap );
  	if (pq->order != NULL) alloc->memfree( alloc->userData, pq->order );
  	if (pq->keys != NULL) alloc->memfree( alloc->userData, pq->keys );
-@@ -410,7 +410,7 @@ int pqInit( TESSalloc* alloc, PriorityQ *pq )
+@@ -410,7 +409,7 @@ int pqInit( TESSalloc* alloc, PriorityQ *pq )
  	p = pq->order;
  	r = p + pq->size - 1;
  	for( i = p; i < r; ++i ) {
@@ -125,7 +193,7 @@ diff -ru tess2/Source/priorityq.c tess2/Source/priorityq.c
  	}
  #endif
  
-@@ -445,8 +445,8 @@ PQhandle pqInsert( TESSalloc* alloc, PriorityQ *pq, PQkey keyNew )
+@@ -445,8 +444,8 @@ PQhandle pqInsert( TESSalloc* alloc, PriorityQ *pq, PQkey keyNew )
  			}
  		}
  	}
@@ -136,7 +204,7 @@ diff -ru tess2/Source/priorityq.c tess2/Source/priorityq.c
  
  	/* Negative handles index the sorted array. */
  	return -(curr+1);
-@@ -505,7 +505,7 @@ void pqDelete( PriorityQ *pq, PQhandle curr )
+@@ -505,7 +504,7 @@ void pqDelete( PriorityQ *pq, PQhandle curr )
  		return;
  	}
  	curr = -(curr+1);
@@ -145,10 +213,19 @@ diff -ru tess2/Source/priorityq.c tess2/Source/priorityq.c
  
  	pq->keys[curr] = NULL;
  	while( pq->size > 0 && *(pq->order[pq->size-1]) == NULL ) {
-diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
---- tess2/Source/sweep.c
-+++ tess2/Source/sweep.c
-@@ -143,7 +143,7 @@ static void DeleteRegion( TESStesselator *tess, ActiveRegion *reg )
+diff --git a/Source/sweep.c b/Source/sweep.c
+index 112f1ef..6dfded2 100755
+--- a/Source/sweep.c
++++ b/Source/sweep.c
+@@ -29,7 +29,6 @@
+ ** Author: Eric Veach, July 1994.
+ */
+ 
+-#include <assert.h>
+ #include <stddef.h>
+ #include <setjmp.h>		/* longjmp */
+ 
+@@ -143,7 +142,7 @@ static void DeleteRegion( TESStesselator *tess, ActiveRegion *reg )
  		* deleted with zero winding number (ie. it better not get merged
  		* with a real edge).
  		*/
@@ -157,7 +234,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  	}
  	reg->eUp->activeRegion = NULL;
  	dictDelete( tess->dict, reg->nodeUp );
-@@ -156,7 +156,7 @@ static int FixUpperEdge( TESStesselator *tess, ActiveRegion *reg, TESShalfEdge *
+@@ -156,7 +155,7 @@ static int FixUpperEdge( TESStesselator *tess, ActiveRegion *reg, TESShalfEdge *
  * Replace an upper edge which needs fixing (see ConnectRightVertex).
  */
  {
@@ -166,7 +243,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  	if ( !tessMeshDelete( tess->mesh, reg->eUp ) ) return 0;
  	reg->fixUpperEdge = FALSE;
  	reg->eUp = newEdge;
-@@ -237,7 +237,7 @@ static int IsWindingInside( TESStesselator *tess, int n )
+@@ -237,7 +236,7 @@ static int IsWindingInside( TESStesselator *tess, int n )
  			return (n >= 2) || (n <= -2);
  	}
  	/*LINTED*/
@@ -175,7 +252,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  	/*NOTREACHED*/
  
  	return( FALSE );
-@@ -346,7 +346,7 @@ static void AddRightEdges( TESStesselator *tess, ActiveRegion *regUp,
+@@ -346,7 +345,7 @@ static void AddRightEdges( TESStesselator *tess, ActiveRegion *regUp,
  	/* Insert the new right-going edges in the dictionary */
  	e = eFirst;
  	do {
@@ -184,7 +261,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  		AddRegionBelow( tess, regUp, e->Sym );
  		e = e->Onext;
  	} while ( e != eLast );
-@@ -388,7 +388,7 @@ static void AddRightEdges( TESStesselator *tess, ActiveRegion *regUp,
+@@ -388,7 +387,7 @@ static void AddRightEdges( TESStesselator *tess, ActiveRegion *regUp,
  		ePrev = e;
  	}
  	regPrev->dirty = TRUE;
@@ -193,7 +270,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  
  	if( cleanUp ) {
  		/* Check for intersections between newly adjacent edges. */
-@@ -527,7 +527,7 @@ static int CheckForLeftSplice( TESStesselator *tess, ActiveRegion *regUp )
+@@ -528,7 +527,7 @@ static int CheckForLeftSplice( TESStesselator *tess, ActiveRegion *regUp )
  	TESShalfEdge *eLo = regLo->eUp;
  	TESShalfEdge *e;
  
@@ -202,7 +279,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  
  	if( VertLeq( eUp->Dst, eLo->Dst )) {
  		if( EdgeSign( eUp->Dst, eLo->Dst, eUp->Org ) < 0 ) return FALSE;
-@@ -574,11 +574,11 @@ static int CheckForIntersect( TESStesselator *tess, ActiveRegion *regUp )
+@@ -575,11 +574,11 @@ static int CheckForIntersect( TESStesselator *tess, ActiveRegion *regUp )
  	TESSvertex isect, *orgMin;
  	TESShalfEdge *e;
  
@@ -219,7 +296,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  
  	if( orgUp == orgLo ) return FALSE;	/* right endpoints are the same */
  
-@@ -597,10 +597,10 @@ static int CheckForIntersect( TESStesselator *tess, ActiveRegion *regUp )
+@@ -598,10 +597,10 @@ static int CheckForIntersect( TESStesselator *tess, ActiveRegion *regUp )
  
  	tesedgeIntersect( dstUp, orgUp, dstLo, orgLo, &isect );
  	/* The following properties are guaranteed: */
@@ -234,7 +311,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  
  	if( VertLeq( &isect, tess->event )) {
  		/* The intersection point lies slightly to the left of the sweep line,
-@@ -903,7 +903,7 @@ static void ConnectLeftDegenerate( TESStesselator *tess,
+@@ -904,7 +903,7 @@ static void ConnectLeftDegenerate( TESStesselator *tess,
  		/* e->Org is an unprocessed vertex - just combine them, and wait
  		* for e->Org to be pulled from the queue
  		*/
@@ -243,7 +320,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  		SpliceMergeVertices( tess, e, vEvent->anEdge );
  		return;
  	}
-@@ -924,7 +924,7 @@ static void ConnectLeftDegenerate( TESStesselator *tess,
+@@ -925,7 +924,7 @@ static void ConnectLeftDegenerate( TESStesselator *tess,
  	/* vEvent coincides with e->Dst, which has already been processed.
  	* Splice in the additional right-going edges.
  	*/
@@ -252,7 +329,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  	regUp = TopRightRegion( regUp );
  	reg = RegionBelow( regUp );
  	eTopRight = reg->eUp->Sym;
-@@ -933,7 +933,7 @@ static void ConnectLeftDegenerate( TESStesselator *tess,
+@@ -934,7 +933,7 @@ static void ConnectLeftDegenerate( TESStesselator *tess,
  		/* Here e->Dst has only a single fixable edge going right.
  		* We can delete it since now we have some real right-going edges.
  		*/
@@ -261,7 +338,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  		DeleteRegion( tess, reg );
  		if ( !tessMeshDelete( tess->mesh, eTopRight ) ) longjmp(tess->env,1);
  		eTopRight = eTopLeft->Oprev;
-@@ -1142,10 +1141,10 @@ static void DoneEdgeDict( TESStesselator *tess )
+@@ -1145,10 +1144,10 @@ static void DoneEdgeDict( TESStesselator *tess )
  		* created by ConnectRightVertex().
  		*/
  		if( ! reg->sentinel ) {
@@ -275,7 +352,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  		DeleteRegion( tess, reg );
  		/*    tessMeshDelete( reg->eUp );*/
  	}
-@@ -1252,7 +1251,7 @@ static int RemoveDegenerateFaces( TESStesselator *tess, TESSmesh *mesh )
+@@ -1255,7 +1254,7 @@ static int RemoveDegenerateFaces( TESStesselator *tess, TESSmesh *mesh )
  	for( f = mesh->fHead.next; f != &mesh->fHead; f = fNext ) {
  		fNext = f->next;
  		e = f->anEdge;
@@ -284,7 +361,7 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  
  		if( e->Lnext->Lnext == e ) {
  			/* A face with only two edges */
-@@ -1316,7 +1315,7 @@ int tessComputeInterior( TESStesselator *tess )
+@@ -1319,7 +1318,7 @@ int tessComputeInterior( TESStesselator *tess )
  	DonePriorityQ( tess );
  
  	if ( !RemoveDegenerateFaces( tess, tess->mesh ) ) return 0;
@@ -293,10 +370,19 @@ diff -ru tess2/Source/sweep.c tess2/Source/sweep.c
  
  	return 1;
  }
-diff -ru tess2/Source/tess.c tess2/Source/tess.c
---- tess2/Source/tess.c
-+++ tess2/Source/tess.c
-@@ -50,7 +50,7 @@ static void Normalize( TESSreal v[3] )
+diff --git a/Source/tess.c b/Source/tess.c
+index 67c038f..81e12e1 100755
+--- a/Source/tess.c
++++ b/Source/tess.c
+@@ -30,7 +30,6 @@
+ */
+ 
+ #include <stddef.h>
+-#include <assert.h>
+ #include <setjmp.h>
+ #include "bucketalloc.h"
+ #include "tess.h"
+@@ -51,7 +50,7 @@ static void Normalize( TESSreal v[3] )
  {
  	TESSreal len = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
  
@@ -305,7 +391,7 @@ diff -ru tess2/Source/tess.c tess2/Source/tess.c
  	len = sqrtf( len );
  	v[0] /= len;
  	v[1] /= len;
-@@ -317,7 +317,7 @@ int tessMeshTessellateMonoRegion( TESSmesh *mesh, TESSface *face )
+@@ -328,7 +327,7 @@ int tessMeshTessellateMonoRegion( TESSmesh *mesh, TESSface *face )
  	* be close to the edge we want.
  	*/
  	up = face->anEdge;
@@ -314,7 +400,7 @@ diff -ru tess2/Source/tess.c tess2/Source/tess.c
  
  	for( ; VertLeq( up->Dst, up->Org ); up = up->Lprev )
  		;
-@@ -353,7 +353,7 @@ int tessMeshTessellateMonoRegion( TESSmesh *mesh, TESSface *face )
+@@ -364,7 +363,7 @@ int tessMeshTessellateMonoRegion( TESSmesh *mesh, TESSface *face )
  	/* Now lo->Org == up->Dst == the leftmost vertex.  The remaining region
  	* can be tessellated in a fan from this leftmost vertex.
  	*/
@@ -323,7 +409,7 @@ diff -ru tess2/Source/tess.c tess2/Source/tess.c
  	while( lo->Lnext->Lnext != up ) {
  		TESShalfEdge *tempHalfEdge= tessMeshConnect( mesh, lo->Lnext, lo );
  		if (tempHalfEdge == NULL) return 0;
-@@ -568,9 +568,9 @@ void OutputPolymesh( TESStesselator *tess, TESSmesh *mesh, int elementType, int
+@@ -582,9 +581,9 @@ void OutputPolymesh( TESStesselator *tess, TESSmesh *mesh, int elementType, int
  	TESSvertex* v = 0;
  	TESSface* f = 0;
  	TESShalfEdge* edge = 0;
@@ -336,7 +422,7 @@ diff -ru tess2/Source/tess.c tess2/Source/tess.c
  	TESSindex *elements = 0;
  	TESSreal *vert;
  
-@@ -610,7 +610,7 @@ void OutputPolymesh( TESStesselator *tess, TESSmesh *mesh, int elementType, int
+@@ -624,7 +623,7 @@ void OutputPolymesh( TESStesselator *tess, TESSmesh *mesh, int elementType, int
  		}
  		while (edge != f->anEdge);
  		
@@ -345,7 +431,7 @@ diff -ru tess2/Source/tess.c tess2/Source/tess.c
  
  		f->n = maxFaceCount;
  		++maxFaceCount;
-@@ -924,7 +924,7 @@ int tessTesselate( TESStesselator *tess, int windingRule, int elementType,
+@@ -938,7 +937,7 @@ int tessTesselate( TESStesselator *tess, int windingRule, int elementType,
  	}
  	if (rc == 0) longjmp(tess->env,1);  /* could've used a label */
  
@@ -354,7 +440,7 @@ diff -ru tess2/Source/tess.c tess2/Source/tess.c
  
  	if (elementType == TESS_BOUNDARY_CONTOURS) {
  		OutputContours( tess, mesh, vertexSize );     /* output contours */
-@@ -962,7 +962,7 @@ int tessGetElementCount( TESStesselator *tess )
+@@ -976,7 +975,7 @@ int tessGetElementCount( TESStesselator *tess )
  	return tess->elementCount;
  }
  
@@ -363,40 +449,6 @@ diff -ru tess2/Source/tess.c tess2/Source/tess.c
  {
  	return tess->elements;
  }
-diff -ru tess2/include/tesselator.h tess2/include/tesselator.h
---- tess2/include/tesselator.h
-+++ tess2/include/tesselator.h
-@@ -38,6 +38,10 @@
- 
- // See OpenGL Red Book for description of the winding rules
- // http://www.glprogramming.com/red/chapter11.html
-+#if defined( __APPLE_CC__)
-+	#include <TargetConditionals.h>
-+#endif
-+
- enum TessWindingRule
- {
- 	TESS_WINDING_ODD,
-@@ -115,11 +68,17 @@ enum TessElementType
- };
- 
- typedef float TESSreal;
--typedef int TESSindex;
-+//note this shouldn't be defined(TARGET_OS_IPHONE) as its always defined either 0 or 1
-+#if TARGET_OS_IPHONE || ANDROID || __ARMEL__
-+typedef unsigned short TESSindex;
-+#else
-+typedef unsigned int TESSindex;
-+#endif
-+
- typedef struct TESStesselator TESStesselator;
- typedef struct TESSalloc TESSalloc;
- 
--#define TESS_UNDEF (~(TESSindex)0)
-+#define TESS_UNDEF ((TESSindex)(~(TESSindex)0))
- 
- // Custom memory allocator interface.
- // The internal memory allocator allocates mesh edges, vertices and faces
 -- 
-1.8.3.msysgit.0
+1.9.3 (Apple Git-50)
 

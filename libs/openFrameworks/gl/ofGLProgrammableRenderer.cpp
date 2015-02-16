@@ -1068,6 +1068,7 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode){
 		default:
 			break;
 	}
+	currentStyle.blendingMode = blendMode;
 }
 
 //----------------------------------------------------------
@@ -1302,7 +1303,7 @@ void ofGLProgrammableRenderer::unbind(const ofShader & shader){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofFbo & fbo, bool setupPerspective){
-	matrixStack.pushView();
+	pushView();
 	pushStyle();
 	matrixStack.setRenderSurface(fbo);
 	viewport();
@@ -1320,7 +1321,7 @@ void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
 	matrixStack.setRenderSurface(*window);
 	uploadMatrices();
 	popStyle();
-	matrixStack.popView();
+	popView();
 }
 
 //----------------------------------------------------------

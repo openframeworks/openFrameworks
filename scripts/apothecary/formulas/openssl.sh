@@ -3,7 +3,7 @@
 # openssl
 
 # define the version
-VER=1.0.1j
+VER=1.0.1l
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
 
@@ -28,11 +28,11 @@ function download() {
 	else 
 		echoError "Invalid shasum for $FILENAME."
 	fi
-
 }
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
+
 	if [ "$TYPE" == "ios" ] ; then
 		# create output directories
 		mkdir -p "src"
@@ -54,8 +54,6 @@ function prepare() {
         #mkdir -p lib/$TYPE/armv7s
 		mkdir -p lib/$TYPE/arm64
 
-		
-
 		# make copies of the source files before modifying
 		cp Makefile Makefile.orig
 		cp Configure Configure.orig
@@ -64,15 +62,11 @@ function prepare() {
 		mkdir -p lib/$TYPE
 		mkdir -p lib/include
  	fi
-
-
-
 }
 
 # executed inside the lib src dir
 function build() {
 	
-
 	if [ "$TYPE" == "osx" ] ; then
 		
 		local BUILD_OPTS="-no-shared -no-asm -no-ec_nistp_64_gcc_128 -no-gmp -no-jpake -no-krb5 -no-md2 -no-rc5 -no-rfc3779 -no-sctp -no-shared -no-store -no-unit-test -no-zlib -no-zlib-dynamic"
@@ -106,13 +100,35 @@ function build() {
 
 			echo "Using Compiler: $THECOMPILER"
 
-			# patch the Configure file to make sure the correct compiler is invoked.
+			# unset LANG if defined
+			if test ${LANG+defined};
+			then
+				OLD_LANG=$LANG
+				unset LANG
+			fi
 
-			OLD_LANG=$LANG
-			unset LANG
-				sed -ie "s!\"darwin-i386-cc\",\"cc:-arch i386 -g3!\"darwin-i386-cc\",\"${THECOMPILER}:-arch i386 -g3!" Configure
-				sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
-			export LANG=$OLD_LANG
+            # unset LC_CTYPE if defined
+            if test ${LC_CTYPE+defined};
+            then
+                OLD_LC_CTYPE=$LC_CTYPE
+                LC_CTYPE=C
+            fi
+
+            # patch the Configure file to make sure the correct compiler is invoked.
+			sed -ie "s!\"darwin-i386-cc\",\"cc:-arch i386 -g3!\"darwin-i386-cc\",\"${THECOMPILER}:-arch i386 -g3!" Configure
+			sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
+
+            # reset LANG if it was defined
+			if test ${OLD_LANG+defined};
+			then
+				export LANG=$OLD_LANG
+			fi
+
+            # reset LC_CTYPE if it was defined
+            if test ${OLD_LC_CTYPE+defined};
+            then
+                export LC_CTYPE=$OLD_LC_CTYPE
+            fi
 
    			OSX_C_FLAGS="" 		# Flags for stdlib, std and arch
    			CONFIG_TARGET=""	# Which one of the target presets to use
@@ -134,18 +150,40 @@ function build() {
 		    ./Configure $CONFIG_TARGET $BUILD_OPTS --openssldir="$CURRENTPATH/build/$TYPE/$OSX_ARCH" > "${LOG}" 2>&1
 
 			if [ $? != 0 ]; then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem during configure - Please check ${LOG}"
 		    	exit 1
 		    fi
 
-		    # patching Makefile to use the correct c flags.
+            # we need to unset LANG otherwise sed will get upsed.
+   			# unset LANG if defined
+			if test ${LANG+defined};
+			then
+                OLD_LANG=$LANG
+				unset LANG
+			fi
 
-		    OLD_LANG=$LANG
-		    # we need to unset LANG otherwise sed will get upsed.
-			unset LANG
+            # unset LC_CTYPE if defined
+            if test ${LC_CTYPE+defined};
+            then
+                OLD_LC_CTYPE=$LC_CTYPE
+                LC_CTYPE=C
+            fi
+
+            # patching Makefile to use the correct c flags.
 			sed -ie "s!^CFLAG=!CFLAG=$OSX_C_FLAGS !" Makefile
-			export LANG=$OLD_LANG
 
+            # reset LANG if it was defined
+			if test ${OLD_LANG+defined};
+			then
+				export LANG=$OLD_LANG
+            fi
+
+            # reset LC_CTYPE if it was defined
+            if test ${OLD_LC_CTYPE+defined};
+            then
+                export LC_CTYPE=$OLD_LC_CTYPE
+            fi
 
 			echo "Running make for ${OSX_ARCH}"
 			echo "Please stand by..."
@@ -156,6 +194,7 @@ function build() {
 			
 			if [ $? != 0 ];
 		    then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
 		    else
@@ -183,6 +222,23 @@ function build() {
 		echo "Building & staging fat libs"
 		lipo -c "build/$TYPE/i386/lib/libcrypto.a" "build/$TYPE/x86_64/lib/libcrypto.a" -o "lib/$TYPE/crypto.a"
 		lipo -c "build/$TYPE/i386/lib/libssl.a" "build/$TYPE/x86_64/lib/libssl.a" -o "lib/$TYPE/ssl.a"
+
+        cd lib/$TYPE
+        SLOG="$CURRENTPATH/lib/$TYPE-stripping.log"
+        local TOBESTRIPPED
+        for TOBESTRIPPED in $( ls -1) ; do
+            strip -x $TOBESTRIPPED >> "${SLOG}" 2>&1
+            if [ $? != 0 ];
+            then
+                tail -n 100 "${SLOG}"
+                echo "Problem while stripping lib - Please check ${SLOG}"
+                exit 1
+            else
+                echo "Strip Successful for ${SLOG}"
+            fi
+        done
+
+        cd ../../
 		
 		# ------------ END OS X Recipe.
 
@@ -222,8 +278,6 @@ function build() {
 		DEVELOPER=$XCODE_DEV_ROOT
 		TOOLCHAIN=${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain
 		VERSION=$VER
-		
-
 
         local IOS_ARCHS="i386 x86_64 armv7 arm64" #armv7s
 		local STDLIB="libc++"
@@ -260,22 +314,69 @@ function build() {
 			if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]];
 			then
 				PLATFORM="iPhoneSimulator"
-				OLD_LANG=$LANG
-				unset LANG
+
+                # unset LANG if defined
+				if test ${LANG+defined};
+				then
+					OLD_LANG=$LANG
+					unset LANG
+				fi
+
+                # unset LC_CTYPE if defined
+                if test ${LC_CTYPE+defined};
+                then
+                    OLD_LC_CTYPE=$LC_CTYPE
+                    LC_CTYPE=C
+                fi
+
 				sed -ie "s!\"debug-darwin-i386-cc\",\"cc:-arch i386 -g3!\"debug-darwin-i386-cc\",\"$THECOMPILER:-arch i386 -g3!" Configure
 				sed -ie "s!\"darwin64-x86_64-cc\",\"cc:-arch x86_64 -O3!\"darwin64-x86_64-cc\",\"$THECOMPILER:-arch x86_64 -O3!" Configure
-				export LANG=$OLD_LANG
+
+                # reset LANG if it was defined
+				if test ${OLD_LANG+defined};
+				then
+					export LANG=$OLD_LANG
+                fi
+
+                # reset LC_CTYPE if it was defined
+                if test ${OLD_LC_CTYPE+defined};
+                then
+                    export LC_CTYPE=$OLD_LC_CTYPE
+                fi
+
 			else
 				cp "crypto/ui/ui_openssl.c" "crypto/ui/ui_openssl.c.orig"
 				sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
 				PLATFORM="iPhoneOS"
-				OLD_LANG=$LANG
-				unset LANG
-				sed -ie "s!\"iphoneos-cross\",\"llvm-gcc:-O3!\"iphoneos-cross\",\"$THECOMPILER:-Os!" Configure
-				export LANG=$OLD_LANG
-			fi
 
-		
+                # unset LANG if defined
+				if test ${LANG+defined};
+				then
+					OLD_LANG=$LANG				
+					unset LANG
+				fi
+
+                # unset LC_CTYPE if defined
+                if test ${LC_CTYPE+defined};
+                then
+                    OLD_LC_CTYPE=$LC_CTYPE
+                    LC_CTYPE=C
+                fi
+
+				sed -ie "s!\"iphoneos-cross\",\"llvm-gcc:-O3!\"iphoneos-cross\",\"$THECOMPILER:-Os!" Configure
+
+                # reset LANG if it was defined
+				if test ${OLD_LANG+defined};
+				then
+					export LANG=$OLD_LANG
+				fi
+
+                # reset LC_CTYPE if it was defined
+                if test ${OLD_LC_CTYPE+defined};
+                then
+                    export LC_CTYPE=$OLD_LC_CTYPE
+                fi
+			fi
 
 			export CROSS_TOP="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer"
 			export CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
@@ -293,7 +394,6 @@ function build() {
 		    elif [ "${IOS_ARCH}" == "i386" ]; then
 		    	MIN_IOS_VERSION=5.1 # 6.0 to prevent start linking errors
 		    fi
-			
 
 			echo "Compiler: $CC"
 			echo "Building openssl-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
@@ -315,6 +415,7 @@ function build() {
 		    fi
 
 		    if [ $? != 0 ]; then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem while configure - Please check ${LOG}"
 		    	exit 1
 		    fi
@@ -323,12 +424,34 @@ function build() {
 		    if [[ "${IOS_ARCH}" == "i386" || "${IOS_ARCH}" == "x86_64" ]]; then
 		    	MIN_TYPE=-mios-simulator-version-min=
 		    fi
-		    
-		    OLD_LANG=$LANG
-			unset LANG
-			sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -arch $IOS_ARCH -Os -fPIC -stdlib=libc++ $MIN_TYPE$MIN_IOS_VERSION !" Makefile
-			export LANG=$OLD_LANG
 
+            # unset LANG if defined
+            if test ${LANG+defined};
+			then
+			  OLD_LANG=$LANG
+				unset LANG
+			fi
+
+            # unset LC_CTYPE if defined
+            if test ${LC_CTYPE+defined};
+            then
+                OLD_LC_CTYPE=$LC_CTYPE
+                LC_CTYPE=C
+            fi
+
+			sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -arch $IOS_ARCH -Os -fPIC -stdlib=libc++ $MIN_TYPE$MIN_IOS_VERSION !" Makefile
+
+            # reset LANG if it was defined
+			if test ${OLD_LANG+defined};
+			then
+				export LANG=$OLD_LANG
+			fi
+
+            # reset LC_CTYPE if it was defined
+            if test ${OLD_LC_CTYPE+defined};
+            then
+                export LC_CTYPE=$OLD_LC_CTYPE
+            fi
 
 			echo "Running make for ${IOS_ARCH}"
 			echo "Please stand by..."
@@ -336,6 +459,7 @@ function build() {
 			make >> "${LOG}" 2>&1
 			if [ $? != 0 ];
 		    then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
 		    else
@@ -389,6 +513,7 @@ function build() {
 		cp "crypto/ui/ui_openssl.c.orig" "crypto/ui/ui_openssl.c"
 
 		unset TOOLCHAIN DEVELOPER
+
 	elif [ "$TYPE" == "android" ]; then
 		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
 		
@@ -555,6 +680,9 @@ function copy() {
 	else
 	 	echoWarning "TODO: copy $TYPE lib"
 	fi
+
+    # copy license file
+    cp -v LICENSE $1/
 }
 
 # executed inside the lib src dir

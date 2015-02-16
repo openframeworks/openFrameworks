@@ -160,3 +160,7 @@ int	ofAppNoWindow::getHeight(){
 ofCoreEvents & ofAppNoWindow::events(){
 	return coreEvents;
 }
+
+shared_ptr<ofBaseRenderer> & ofAppNoWindow::renderer(){
+	return currentRenderer;
+}

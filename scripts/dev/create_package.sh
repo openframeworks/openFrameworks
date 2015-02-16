@@ -352,8 +352,8 @@ function createPackage {
 	
 	#android, move paths.default.make to paths.make
 	if [ "$pkg_platform" == "android" ]; then
-	    cd ${pkg_root}
-	    mv libs/openFrameworksCompiled/android/paths.default.make libs/openFrameworksCompiled/android/paths.make
+	    cd ${pkg_ofroot}
+	    mv libs/openFrameworksCompiled/project/android/paths.default.make libs/openFrameworksCompiled/project/android/paths.make
 	fi
 
     #delete other platforms OF project files
@@ -365,7 +365,7 @@ function createPackage {
     #remove osx in ios from openFrameworksCompiled 
     #(can't delete by default since it needs to keep things in libs for the simulator)
     if [ "$pkg_platform" = "ios" ]; then
-	    rm -Rf ${pkg_ofroot}libs/openFrameworksCompiled/lib/osx
+	    rm -Rf ${pkg_ofroot}/libs/openFrameworksCompiled/lib/osx
     	rm -Rf ${pkg_ofroot}/libs/openFrameworksCompiled/project/osx
     fi
 
@@ -414,7 +414,6 @@ function createPackage {
 	if [ "$pkg_platform" == "ios" ]; then
 		rm -Rf osx
 	fi
-    rm create_package.sh
 
     #delete .svn dirs
     cd $pkg_ofroot
