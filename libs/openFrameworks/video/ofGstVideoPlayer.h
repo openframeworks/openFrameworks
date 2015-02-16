@@ -1,10 +1,6 @@
 #pragma once
 
 #include "ofGstUtils.h"
-#ifdef OF_USE_GST_GL
-#define GST_USE_UNSTABLE_API
-#include <gst/gl/gl.h>
-#endif
 
 
 class ofGstVideoPlayer: public ofBaseVideoPlayer, public ofGstAppSink{
@@ -84,9 +80,4 @@ private:
 	bool				bAsyncLoad;
 	bool				threadAppSink;
 	ofGstVideoUtils		videoUtils;
-
-#ifdef OF_USE_GST_GL
-	GstGLDisplay *		glDisplay;
-	GstGLContext *		glContext;
-#endif
 };

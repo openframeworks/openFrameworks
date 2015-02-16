@@ -17,6 +17,10 @@
 #include <queue>
 
 //#define OF_USE_GST_GL
+#ifdef OF_USE_GST_GL
+#define GST_USE_UNSTABLE_API
+#include <gst/gl/gl.h>
+#endif
 
 class ofGstAppSink;
 typedef struct _GstElement GstElement;
@@ -199,7 +203,7 @@ protected:
 	ofPixels		backPixels;
 	ofPixels		eventPixels;
 private:
-	//static gboolean	sync_bus_call (GstBus * bus, GstMessage * msg, gpointer data);
+	static gboolean	sync_bus_call (GstBus * bus, GstMessage * msg, gpointer data);
 	bool			bIsFrameNew;			// if we are new
 	bool			bHavePixelsChanged;
 	bool			bBackPixelsChanged;
@@ -215,6 +219,11 @@ private:
 	#endif
 #endif
 	ofPixelFormat	internalPixelFormat;
+
+#ifdef OF_USE_GST_GL
+	GstGLDisplay *		glDisplay;
+	GstGLContext *		glContext;
+#endif
 };
 
 
