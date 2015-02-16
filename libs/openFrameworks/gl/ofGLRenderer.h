@@ -26,7 +26,7 @@ public:
 
 	void startRender();
 	void finishRender();
-	void update();
+
 	using ofBaseRenderer::draw;
 	using ofBaseGLRenderer::draw;
 	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;

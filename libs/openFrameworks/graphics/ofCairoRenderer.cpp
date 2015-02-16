@@ -131,17 +131,8 @@ void ofCairoRenderer::close(){
 
 
 void ofCairoRenderer::startRender(){
-
-}
-
-void ofCairoRenderer::finishRender(){
-
-}
-
-void ofCairoRenderer::update(){
 	if(!surface || !cr)
-	setStyle(currentStyle);
-	cairo_surface_flush(surface);
+		setStyle(currentStyle);
 	if(page==0 || !multiPage){
 		page=1;
 	}else{
@@ -153,6 +144,10 @@ void ofCairoRenderer::update(){
 			cairo_copy_page(cr);
 		}
 	}
+}
+
+void ofCairoRenderer::finishRender(){
+	cairo_surface_flush(surface);
 }
 
 void ofCairoRenderer::setStyle(const ofStyle & style){

@@ -25,6 +25,7 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
+	: # noop
 	mkdir -p lib/$TYPE
 }
 
@@ -34,8 +35,9 @@ function build() {
 	if [ "$TYPE" == "osx" ] ; then
 		local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE/
 
-		local STDLIB="libstdc++"
-		local OSX_ARCH="i386"
+		# these flags are used to create a fat 32/64 binary with i386->libstdc++, x86_64->libc++
+		# see https://gist.github.com/tgfrerer/8e2d973ed0cfdd514de6
+		local FAT_CFLAGS="-arch i386 -arch x86_64 -stdlib=libstdc++ -Xarch_x86_64 -stdlib=libc++"
 
 		set -e
 		CURRENTPATH=`pwd`
@@ -57,28 +59,13 @@ function build() {
 		local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
 
 		./configure --prefix=$BUILD_TO_DIR --without-bzip2 --enable-static=yes --enable-shared=no \
-			CFLAGS="-arch $OSX_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
+			CFLAGS="$FAT_CFLAGS -pipe -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
 		make clean 
-		make -j
+		make
 		make install
-		cp $BUILD_TO_DIR/lib/libfreetype.a lib/$TYPE/libfreetype-$OSX_ARCH.a
-
-		unset OSX_ARCH STDLIB
-
-		# x86_64
-		local STDLIB="libc++"
-		local OSX_ARCH="x86_64"
-		./configure --prefix=$BUILD_TO_DIR --without-bzip2 --enable-static=yes --enable-shared=no \
-			CFLAGS="-arch $OSX_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
-		make clean
-		make -j
-		make install
-		cp $BUILD_TO_DIR/lib/libfreetype.a lib/$TYPE/libfreetype-$OSX_ARCH.a
+		cp $BUILD_TO_DIR/lib/libfreetype.a lib/$TYPE/libfreetype.a
 
 		cd lib/$TYPE/
-		lipo -create libfreetype-i386.a \
-					libfreetype-x86_64.a \
-					-output libfreetype.a
 					
 		mkdir -p "$BUILD_ROOT_DIR/lib/pkgconfig/"
 

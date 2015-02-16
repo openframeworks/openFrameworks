@@ -105,11 +105,6 @@ void ofGLProgrammableRenderer::finishRender() {
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::update(){
-    //
-}
-
-//----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)  const{
 	draw(vertexData, OF_MESH_FILL, useColors, useTextures, useNormals); // tig: use default mode if no render mode specified.
 }
