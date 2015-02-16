@@ -778,6 +778,10 @@ ofGstVideoUtils::ofGstVideoUtils(){
 	mapinfo 					= initMapinfo;
 #endif
 	internalPixelFormat			= OF_PIXELS_RGB;
+#ifdef OF_USE_GST_GL
+	glDisplay = NULL;
+	glContext = NULL;
+#endif
 }
 
 ofGstVideoUtils::~ofGstVideoUtils(){
@@ -1107,8 +1111,8 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 
 	auto glfilter = gst_bin_get_by_name(GST_BIN(getPipeline()),"gl_filter");
 
-	auto glDisplay = (GstGLDisplay *)gst_gl_display_x11_new_with_display(ofGetX11Display());
-	auto glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetGLXContext(),
+	glDisplay = (GstGLDisplay *)gst_gl_display_x11_new_with_display(ofGetX11Display());
+	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetGLXContext(),
 	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
 
 	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);

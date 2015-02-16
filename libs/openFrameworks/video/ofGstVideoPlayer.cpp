@@ -23,11 +23,6 @@ ofGstVideoPlayer::ofGstVideoPlayer(){
 	videoUtils.setSinkListener(this);
 	fps_d = 1;
 	fps_n = 1;
-
-#ifdef OF_USE_GST_GL
-	glDisplay = NULL;
-	glContext = NULL;
-#endif
 }
 
 ofGstVideoPlayer::~ofGstVideoPlayer(){
@@ -181,6 +176,7 @@ bool ofGstVideoPlayer::createPipeline(string name){
 	return ret;*/
 
 	return videoUtils.setPipeline("uridecodebin uri=" + name,internalPixelFormat,bIsStream,-1,-1);
+	//return videoUtils.setPipeline("filesrc location=" + name + " ! qtdemux ",internalPixelFormat,bIsStream,-1,-1);
 #endif
 }
 
@@ -193,6 +189,7 @@ bool ofGstVideoPlayer::load(string name){
 		name = name_ptr;
 		g_free(name_ptr);
 		if(err) g_free(err);
+		//name = ofToDataPath(name);
 		bIsStream = bAsyncLoad;
 	}else{
 		bIsStream = true;
