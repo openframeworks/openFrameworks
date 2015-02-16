@@ -37,6 +37,7 @@ void ofGLRenderer::setup(){
 }
 
 void ofGLRenderer::startRender(){
+    matrixStack.setRenderSurface(*window);
 	viewport();
     // to do non auto clear on PC for now - we do something like "single" buffering --
     // it's not that pretty but it work for the most part
@@ -54,11 +55,6 @@ void ofGLRenderer::startRender(){
 
 void ofGLRenderer::finishRender(){
 
-}
-
-//----------------------------------------------------------
-void ofGLRenderer::update(){
-    matrixStack.setRenderSurface(*window);
 }
 
 //----------------------------------------------------------

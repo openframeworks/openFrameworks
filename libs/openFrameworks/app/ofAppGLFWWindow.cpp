@@ -307,28 +307,11 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
 
 //--------------------------------------------
 void ofAppGLFWWindow::update(){
-	currentRenderer->update();
 	events().notifyUpdate();
 }
 
 //--------------------------------------------
 void ofAppGLFWWindow::draw(){
-	display();
-}
-
-//--------------------------------------------
-bool ofAppGLFWWindow::getWindowShouldClose(){
-	return glfwWindowShouldClose(windowP);
-}
-
-//--------------------------------------------
-void ofAppGLFWWindow::setWindowShouldClose(){
-	glfwSetWindowShouldClose(windowP,1);
-	events().notifyExit();
-}
-
-//------------------------------------------------------------
-void ofAppGLFWWindow::display(void){
 	currentRenderer->startRender();
 	if( bEnableSetupScreen ) currentRenderer->setupScreen();
 
@@ -371,8 +354,17 @@ void ofAppGLFWWindow::display(void){
 	currentRenderer->finishRender();
 
 	nFramesSinceWindowResized++;
+}
 
+//--------------------------------------------
+bool ofAppGLFWWindow::getWindowShouldClose(){
+	return glfwWindowShouldClose(windowP);
+}
 
+//--------------------------------------------
+void ofAppGLFWWindow::setWindowShouldClose(){
+	glfwSetWindowShouldClose(windowP,1);
+	events().notifyExit();
 }
 
 //------------------------------------------------------------
