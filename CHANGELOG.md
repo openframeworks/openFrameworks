@@ -109,6 +109,10 @@ PLATFORM SPECIFIC
 ### windows
 	+ activated high precission timming to fix inaccurate fps calculations
 
+### osx
+	/ moved system framework dependencies from Xcode project to CoreOF.xcconfig
+	/ removed GLUT from project template, see libs/glut/lib/osx if you need GLUT
+
 CORE ADDONS
 -----------
 ### ofxOpenCV

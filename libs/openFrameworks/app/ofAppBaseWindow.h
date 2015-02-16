@@ -66,6 +66,8 @@ public:
     virtual void    setClipboardString(const string& text) {}
     virtual string  getClipboardString() { return ""; }
 
+    virtual void makeCurrent(){};
+
     virtual void * getWindowContext(){return NULL;};
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
