@@ -160,35 +160,56 @@ char ofEasyCam::getTranslationKey(){
 
 //----------------------------------------
 void ofEasyCam::enableMouseInput(){
-	if(!bMouseInputEnabled){
-		bMouseInputEnabled = true;
-		bEventsSet = true;
+	if(!bMouseInputEnabled && events){
 		ofAddListener(events->update, this, &ofEasyCam::update);
 		ofAddListener(events->mouseDragged , this, &ofEasyCam::mouseDragged);
 		ofAddListener(events->mousePressed, this, &ofEasyCam::mousePressed);
 		ofAddListener(events->mouseReleased, this, &ofEasyCam::mouseReleased);
 		ofAddListener(events->mouseScrolled, this, &ofEasyCam::mouseScrolled);
 	}
+	// if enableMouseInput was called within ofApp::setup()
+	// `events` will still carry a null pointer, and bad things
+	// will happen. Therefore we only update the flag. 
+	bMouseInputEnabled = true;
+	// setEvents() is called upon first load, and will make sure 
+	// to enable the mouse input once the camera is fully loaded.
 }
 
 //----------------------------------------
 void ofEasyCam::disableMouseInput(){
-	if(bMouseInputEnabled){
-		bMouseInputEnabled = false;
+	if(bMouseInputEnabled && events){
 		ofRemoveListener(events->update, this, &ofEasyCam::update);
 		ofRemoveListener(events->mouseDragged, this, &ofEasyCam::mouseDragged);
 		ofRemoveListener(events->mousePressed, this, &ofEasyCam::mousePressed);
 		ofRemoveListener(events->mouseReleased, this, &ofEasyCam::mouseReleased);
 		ofRemoveListener(events->mouseScrolled, this, &ofEasyCam::mouseScrolled);
 	}
+	// if disableMouseInput was called within ofApp::setup()
+	// `events` will still carry a null pointer, and bad things
+	// will happen. Therefore we only update the flag. 
+	bMouseInputEnabled = false;
+	// setEvents() is called upon first load, and will make sure 
+	// to enable the mouse input once the camera is fully loaded.
 }
 
 //----------------------------------------
 void ofEasyCam::setEvents(ofCoreEvents & _events){
+	// If en/disableMouseInput were called within ofApp::setup(),
+	// bMouseInputEnabled will tell us about whether the camera
+	// mouse input needs to be initialised as enabled or disabled.
+	// we will still set `events`, so that subsequent enabling
+	// and disabling can work.
+
+	// we need a temporary copy of bMouseInputEnabled, since it will 
+	// get changed by disableMouseInput as a side-effect.
+	bool wasMouseInputEnabled = bMouseInputEnabled;
 	disableMouseInput();
-	bEventsSet = true;
 	events = &_events;
-	enableMouseInput();
+	if (wasMouseInputEnabled) {
+		// note: this will set bMouseInputEnabled to true as a side-effect.
+		enableMouseInput();
+	}
+	bEventsSet = true;
 }
 
 //----------------------------------------
