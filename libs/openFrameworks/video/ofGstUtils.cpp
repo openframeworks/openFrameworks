@@ -19,6 +19,7 @@
 #include "ofAppRunner.h"
 #ifdef OF_USE_GST_GL
 #include <gst/gl/x11/gstgldisplay_x11.h>
+#include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
 
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
@@ -1101,7 +1102,6 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 	string pipeline_string =
 		pipeline + " ! glcolorscale name=gl_filter ! appsink name=ofappsink enable-last-sample=0 caps=\"video/x-raw,format=RGBA\"";
 
-	glXMakeCurrent (ofGetX11Display(), None, 0);
 	bool ret;
 	if((w==-1 || h==-1) || pixelFormat==OF_PIXELS_NATIVE || allocate(w,h,pixelFormat)){
 		ret = setPipelineWithSink(pipeline_string,"ofappsink",isStream);
@@ -1111,6 +1111,8 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 
 	auto glfilter = gst_bin_get_by_name(GST_BIN(getPipeline()),"gl_filter");
 
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+	glXMakeCurrent (ofGetX11Display(), None, 0);
 	glDisplay = (GstGLDisplay *)gst_gl_display_x11_new_with_display(ofGetX11Display());
 	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetGLXContext(),
 	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
@@ -1124,6 +1126,24 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 	// gst_object_unref(bus);
 
 	glXMakeCurrent (ofGetX11Display(), ofGetX11Window(), ofGetGLXContext());
+#elif defined(TARGET_OPENGLES)
+	cout << "current display " << ofGetEGLDisplay() << endl;
+	eglMakeCurrent (eglGetDisplay(EGL_DEFAULT_DISPLAY), 0,0, 0);
+	glDisplay = (GstGLDisplay *)gst_gl_display_egl_new_with_egl_display(eglGetDisplay(EGL_DEFAULT_DISPLAY));
+	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetEGLContext(),
+	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
+
+	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
+	// FIXME: this seems to be the way to add the context in 1.4.5
+	//
+	// GstBus * bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
+	// gst_bus_enable_sync_message_emission (bus);
+	// g_signal_connect (bus, "sync-message", G_CALLBACK (sync_bus_call), this);
+	// gst_object_unref(bus);
+
+	eglMakeCurrent (ofGetEGLDisplay(), ofGetEGLSurface(), ofGetEGLSurface(), ofGetEGLContext());
+
+#endif
 
 	return ret;
 #endif
