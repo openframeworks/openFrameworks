@@ -213,7 +213,8 @@ static const char* eglErrorString(EGLint err) {
 
 
 //-------------------------------------------------------------------------------------
-ofAppEGLWindow::Settings::Settings() {
+ofAppEGLWindow::Settings::Settings()
+:ofGLESWindowSettings(){
 	eglWindowPreference = OF_APP_WINDOW_AUTO;
 	eglWindowOpacity = 255;
 
@@ -233,9 +234,26 @@ ofAppEGLWindow::Settings::Settings() {
 	layer = 0;
 }
 
-// TODO. we may not need these to be static, but we will
-// leave it this way for now in case future EGL windows 
-// use static callbacks (like glut)
+ofAppEGLWindow::Settings::Settings(const ofGLESWindowSettings & settings)
+:ofGLESWindowSettings(settings){
+	eglWindowPreference = OF_APP_WINDOW_AUTO;
+	eglWindowOpacity = 255;
+
+	// these are usually set as default, but set them here just to be sure
+	frameBufferAttributes[EGL_RED_SIZE]     = 8; // 8 bits for red
+	frameBufferAttributes[EGL_GREEN_SIZE]   = 8; // 8 bits for green
+	frameBufferAttributes[EGL_BLUE_SIZE]    = 8; // 8 bits for blue
+	frameBufferAttributes[EGL_ALPHA_SIZE]   = 8; // 8 bits for alpha
+	frameBufferAttributes[EGL_LUMINANCE_SIZE] = EGL_DONT_CARE; // 8 bits for alpha
+	frameBufferAttributes[EGL_DEPTH_SIZE]   = 24; // 24 bits for depth
+	frameBufferAttributes[EGL_STENCIL_SIZE] = 8; // 8 bits for stencil
+	frameBufferAttributes[EGL_SAMPLES]      = 1;
+
+	initialClearColor = ofColor(0.15 * 255, 0.15 * 255, 0.15 * 255, 255);
+
+	screenNum = 0; /* 0 = LCD on the raspberry pi */
+	layer = 0;
+}
 
 //------------------------------------------------------------
 ofAppEGLWindow::ofAppEGLWindow() {
@@ -246,16 +264,6 @@ ofAppEGLWindow::ofAppEGLWindow() {
 		ofLogError("ofAppEGLWindow") << "trying to create more than one instance";
 	}
 	instance = this;
-	init();
-}
-
-//------------------------------------------------------------
-ofAppEGLWindow::ofAppEGLWindow(Settings _settings) {
-	if(instance!=NULL){
-		ofLogError("ofAppEGLWindow") << "trying to create more than one instance";
-	}
-	instance = this;
-	init(_settings);
 }
 
 //------------------------------------------------------------
@@ -301,73 +309,6 @@ EGLint ofAppEGLWindow::getEglVersionMajor () const {
 //------------------------------------------------------------
 EGLint ofAppEGLWindow::getEglVersionMinor() const {
 	return eglVersionMinor;
-}
-
-//------------------------------------------------------------
-void ofAppEGLWindow::init(Settings _settings) {
-	windowMode      = OF_WINDOW;
-	bNewScreenMode  = true;
-	nFramesSinceWindowResized = 0;
-	buttonInUse     = 0;
-	bEnableSetupScreen  = true;
-	eglDisplayString   = "";
-	orientation     = OF_ORIENTATION_DEFAULT;
-
-	//TODO: 2.0f is an arbitrary factor that makes mouse speed ok at 1024x768,
-	// to be totally correct we might need to take into account screen size
-	// and add acceleration
-	mouseScaleX = 2.0f;
-	mouseScaleY = 2.0f;
-
-	isUsingX11      = false;
-	isWindowInited  = false;
-	isSurfaceInited = false;
-
-	// APPLY SETTINGS
-	settings = _settings;
-
-	eglDisplay = NULL;
-	eglSurface = NULL;
-	eglContext = NULL;
-	eglConfig  = NULL;
-	eglVersionMinor = -1;
-	eglVersionMinor = -1;
-	glesVersion = 1;
-
-	// X11 check
-	// char * pDisplay;
-	// pDisplay = getenv ("DISPLAY");
-	// bool bIsX11Available = (pDisplay != NULL);
-
-	bool bIsX11Available = getenv("DISPLAY") != NULL;
-
-	if(settings.eglWindowPreference == OF_APP_WINDOW_AUTO) {
-		if(bIsX11Available) {
-			isUsingX11 = true;
-		} else {
-			isUsingX11 = false;
-		}
-	} else if(settings.eglWindowPreference == OF_APP_WINDOW_NATIVE) {
-		isUsingX11 = false;
-	} else if(settings.eglWindowPreference == OF_APP_WINDOW_X11) {
-		isUsingX11 = true;
-		if(!bIsX11Available) {
-			isUsingX11 = false;
-			ofLogError("ofAppEGLWindow") << "init(): X11 window requested, but X11 is not available";
-		}
-	}
-
-	////////////////
-	// TODO remove the following ifdef once x11 is accelerated on RPI
-#ifdef TARGET_RASPBERRY_PI
-	if(isUsingX11) {
-		isUsingX11 = false;
-		ofLogWarning("ofAppEGLWindow") << "init(): X11 not availble on RPI yet, using a native window instead";
-	}
-#endif
-	////////////////
-
-	initNative();
 }
 
 //------------------------------------------------------------
@@ -423,7 +364,79 @@ EGLNativeDisplayType ofAppEGLWindow::getNativeDisplay() {
 }
 
 //------------------------------------------------------------
-void ofAppEGLWindow::setup(const ofGLESWindowSettings & settings) {
+void ofAppEGLWindow::setup(const ofGLESWindowSettings & settings){
+	const Settings * glSettings = dynamic_cast<const Settings*>(&settings);
+	if(glSettings){
+		setup(*glSettings);
+	}else{
+		setup(Settings(settings));
+	}
+}
+
+//------------------------------------------------------------
+void ofAppEGLWindow::setup(const Settings & _settings) {
+	settings = _settings;
+	windowMode      = OF_WINDOW;
+	bNewScreenMode  = true;
+	nFramesSinceWindowResized = 0;
+	buttonInUse     = 0;
+	bEnableSetupScreen  = true;
+	eglDisplayString   = "";
+	orientation     = OF_ORIENTATION_DEFAULT;
+
+	//TODO: 2.0f is an arbitrary factor that makes mouse speed ok at 1024x768,
+	// to be totally correct we might need to take into account screen size
+	// and add acceleration
+	mouseScaleX = 2.0f;
+	mouseScaleY = 2.0f;
+
+	isUsingX11      = false;
+	isWindowInited  = false;
+	isSurfaceInited = false;
+
+	eglDisplay = NULL;
+	eglSurface = NULL;
+	eglContext = NULL;
+	eglConfig  = NULL;
+	eglVersionMinor = -1;
+	eglVersionMinor = -1;
+	glesVersion = 1;
+
+	// X11 check
+	// char * pDisplay;
+	// pDisplay = getenv ("DISPLAY");
+	// bool bIsX11Available = (pDisplay != NULL);
+
+	bool bIsX11Available = getenv("DISPLAY") != NULL;
+
+	if(settings.eglWindowPreference == OF_APP_WINDOW_AUTO) {
+		if(bIsX11Available) {
+			isUsingX11 = true;
+		} else {
+			isUsingX11 = false;
+		}
+	} else if(settings.eglWindowPreference == OF_APP_WINDOW_NATIVE) {
+		isUsingX11 = false;
+	} else if(settings.eglWindowPreference == OF_APP_WINDOW_X11) {
+		isUsingX11 = true;
+		if(!bIsX11Available) {
+			isUsingX11 = false;
+			ofLogError("ofAppEGLWindow") << "init(): X11 window requested, but X11 is not available";
+		}
+	}
+
+	////////////////
+	// TODO remove the following ifdef once x11 is accelerated on RPI
+#ifdef TARGET_RASPBERRY_PI
+	if(isUsingX11) {
+		isUsingX11 = false;
+		ofLogWarning("ofAppEGLWindow") << "init(): X11 not availble on RPI yet, using a native window instead";
+	}
+#endif
+	////////////////
+
+	initNative();
+
 	glesVersion = settings.glesVersion;
 	// we set this here, and if we need to make a fullscreen
 	// app, we do it during the first loop.
@@ -473,7 +486,7 @@ void ofAppEGLWindow::setupPeripherals() {
 	if(!isUsingX11) {
 		// roll our own cursor!
 		mouseCursor.allocate(mouse_cursor_data.width,mouse_cursor_data.height,OF_IMAGE_COLOR_ALPHA);
-		MOUSE_CURSOR_RUN_LENGTH_DECODE(mouseCursor.getPixels(),mouse_cursor_data.rle_pixel_data,mouse_cursor_data.width*mouse_cursor_data.height,mouse_cursor_data.bpp);
+		MOUSE_CURSOR_RUN_LENGTH_DECODE(mouseCursor.getPixels().getData(),mouse_cursor_data.rle_pixel_data,mouse_cursor_data.width*mouse_cursor_data.height,mouse_cursor_data.bpp);
 		mouseCursor.update();
 		ofLogNotice("ofAppEGLWindow") << "setupPeripherals(): peripheral setup complete";
 		setupNativeEvents();
@@ -507,7 +520,7 @@ bool ofAppEGLWindow::createSurface() {
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): eglGetDisplay returned: " << eglDisplay;
 		return false;
 	}else{
-		ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL Display correctly set";
+		ofLogNotice("ofAppEGLWindow") << "createSurface(): EGL Display correctly set " << eglDisplay;
 	}
 
 	// initialize the EGL eglDisplay connection
@@ -833,7 +846,6 @@ void ofAppEGLWindow::draw() {
 			currentRenderer->setColor(255);
 			mouseCursor.draw(ofGetMouseX(),ofGetMouseY());
 
-			//TODO: we need a way of querying the previous state of texture hack
 			currentRenderer->popStyle();
 
 			if(bIsDepthTestEnabled == GL_TRUE) {
@@ -1916,7 +1928,7 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
 	// Gets the window parameters
 	sRootWindow = RootWindow(x11Display, x11ScreenNum);
 	i32Depth = DefaultDepth(x11Display, x11ScreenNum);
-	x11Visual = new XVisualInfo(); // TODO does this need to be deleted?
+	x11Visual = new XVisualInfo();
 
 	XMatchVisualInfo( x11Display,
 			x11ScreenNum,
@@ -1931,7 +1943,7 @@ bool ofAppEGLWindow::createX11NativeWindow(const ofRectangle& requestedWindowRec
 
 	x11Colormap = XCreateColormap( x11Display, sRootWindow, x11Visual->visual, AllocNone );
 
-	delete x11Visual; // TODO : is this ok?
+	delete x11Visual;
 
 	// set the colormap window attribuet
 	sWA.colormap = x11Colormap;
