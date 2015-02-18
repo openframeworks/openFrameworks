@@ -28,6 +28,8 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 	lightingEnabled = false;
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
 	window = _window;
+	currentFramebufferId = 0;
+	defaultFramebufferId = 0;
 }
 
 void ofGLRenderer::setup(){
@@ -37,6 +39,8 @@ void ofGLRenderer::setup(){
 }
 
 void ofGLRenderer::startRender(){
+	currentFramebufferId = defaultFramebufferId;
+	framebufferIdStack.push_back(defaultFramebufferId);
     matrixStack.setRenderSurface(*window);
 	viewport();
     // to do non auto clear on PC for now - we do something like "single" buffering --
@@ -54,7 +58,13 @@ void ofGLRenderer::startRender(){
 }
 
 void ofGLRenderer::finishRender(){
+	matrixStack.clearStacks();
+	framebufferIdStack.clear();
+}
 
+//----------------------------------------------------------
+void ofGLRenderer::update(){
+    
 }
 
 //----------------------------------------------------------
@@ -432,7 +442,7 @@ void ofGLRenderer::unbind(const ofShader & shader){
 
 
 //----------------------------------------------------------
-void ofGLRenderer::bind(const ofFbo & fbo, bool setupPerspective){
+void ofGLRenderer::begin(const ofFbo & fbo, bool setupPerspective){
 	pushView();
 	pushStyle();
 	matrixStack.setRenderSurface(fbo);
@@ -454,11 +464,38 @@ void ofGLRenderer::bind(const ofFbo & fbo, bool setupPerspective){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::unbind(const ofFbo & fbo){
+void ofGLRenderer::end(const ofFbo & fbo){
 	fbo.unbind();
 	matrixStack.setRenderSurface(*window);
 	popStyle();
 	popView();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofFbo & fbo){
+	GLint currentFramebufferBinding = currentFramebufferId;
+#ifdef TARGET_OPENGLES
+	// OpenGL ES might have set a default frame buffer for
+	// MSAA rendering to the window, bypassing ofFbo, so we
+	// can't trust ofFbo to have correctly tracked the bind
+	// state. Therefore, we are forced to use the slower glGet() method
+	// to be sure to get the correct default framebuffer.
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebufferBinding);
+#endif
+	framebufferIdStack.push_back(currentFramebufferBinding);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo.getFbo());
+	currentFramebufferId = fbo.getFbo();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::unbind(const ofFbo & fbo){
+	if (framebufferIdStack.empty()){
+		currentFramebufferId = 0;
+	} else {
+		currentFramebufferId = framebufferIdStack.back();
+		framebufferIdStack.pop_back();
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
 
 //----------------------------------------------------------
