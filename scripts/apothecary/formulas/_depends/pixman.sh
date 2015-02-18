@@ -29,12 +29,27 @@ function prepare() {
 # executed inside the lib src dir
 function build() {
 
-	./configure LDFLAGS="-arch i386 -arch x86_64" \
-				CFLAGS="-Os -arch i386 -arch x86_64" \
+	if [ "$TYPE" == "osx" ] ; then
+
+		# these flags are used to create a fat 32/64 binary with i386->libstdc++, x86_64->libc++
+		# see https://gist.github.com/tgfrerer/8e2d973ed0cfdd514de6
+		local FAT_LDFLAGS="-arch i386 -arch x86_64 -stdlib=libstdc++ -Xarch_x86_64 -stdlib=libc++"
+
+		./configure LDFLAGS="${FAT_LDFLAGS} " \
+				CFLAGS="-O3 ${FAT_LDFLAGS}" \
 				--prefix=$BUILD_ROOT_DIR \
 				--disable-dependency-tracking \
 				--disable-gtk \
 				--disable-shared
+	else
+	./configure LDFLAGS="-arch i386 -arch x86_64" \
+				CFLAGS="-O3 -arch i386 -arch x86_64" \
+				--prefix=$BUILD_ROOT_DIR \
+				--disable-dependency-tracking \
+				--disable-gtk \
+				--disable-shared
+	fi
+
 	
 	# only build & install lib, ignore demos/tests
 	cd pixman

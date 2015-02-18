@@ -32,7 +32,6 @@ public:
 
 	void setCurrentFBO(const ofFbo * fbo);
     
-	void update();
 	using ofBaseRenderer::draw;
 	using ofBaseGLRenderer::draw;
 	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;

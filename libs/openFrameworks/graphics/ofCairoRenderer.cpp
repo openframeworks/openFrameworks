@@ -131,17 +131,8 @@ void ofCairoRenderer::close(){
 
 
 void ofCairoRenderer::startRender(){
-
-}
-
-void ofCairoRenderer::finishRender(){
-
-}
-
-void ofCairoRenderer::update(){
 	if(!surface || !cr)
-	setStyle(currentStyle);
-	cairo_surface_flush(surface);
+		setStyle(currentStyle);
 	if(page==0 || !multiPage){
 		page=1;
 	}else{
@@ -153,6 +144,10 @@ void ofCairoRenderer::update(){
 			cairo_copy_page(cr);
 		}
 	}
+}
+
+void ofCairoRenderer::finishRender(){
+	cairo_surface_flush(surface);
 }
 
 void ofCairoRenderer::setStyle(const ofStyle & style){
@@ -1353,7 +1348,7 @@ void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float 
 	mutThis->translate(0,-y*ellipse_ratio);
 	mutThis->scale(1,ellipse_ratio);
 	mutThis->translate(0,y/ellipse_ratio);
-	cairo_arc(cr,x,y,width*0.5,0,360);
+	cairo_arc(cr,x,y,width*0.5,0,2*PI);
 	mutThis->popMatrix();
 
 	cairo_close_path(cr);

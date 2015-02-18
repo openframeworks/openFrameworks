@@ -10,24 +10,26 @@
 
 | Lib                             | osx | linux | linux64 | linuxarmv6l | linuxarmv7l | vs | win_cb | ios | android |
 |---------------------------------|-----|-------|---------|-------------|-------------|----|--------|-----|---------|
-| FreeImage                       | ✓?  | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | ✓?  | ✗       |
-| FreeType                        | ✓   | N/A   | N/A     | N/A         | N/A         | ?  | ?      | ?   | ?       |
-| cairo                           | ✓?  | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
-| fmodex                          | ✗   | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
+| FreeImage                       | ✓  | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | ✓?  | ✗       |
+| FreeType                        | ✓(pending [#3624][3624])| N/A   | N/A     | N/A         | N/A         | ?  | ?      | ?   | ?       |
+| cairo                           | ✓(pending [#3624][3624])| N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
+| fmodex                          | ✓C   | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
 | glew                            | ✓?  | ✗     | ✗       | ✗           | ✗           | ✓  | ✗      | N/A | N/A     |
-| glfw                            | ✗   | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | N/A | N/A     |
+| glfw                            | pending [#3621][3621]   | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | N/A | N/A     |
 | glu                             | N/A | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | ✗   | ✗       |
 | glut                            | ✗   | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | kiss                            | ✓C  | ✗     | ✗       | ✗           | ✗           | ✓C | ✓C     | ✓C  | ✓C      |
 | portaudio                       | ✓C  | ✓C    | ✓C      | ✗           | ✗           | ✓C | ✓C     | N/A | N/A     |
-| poco                            | ✓?  | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | ✓?  | ✗       |
+| poco                            | ✓  | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | ✓?  | ✗       |
 | quicktime                       | N/A | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | rtAudio                         | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
-| tess2                           | ✓?  | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | ✓?  | ✗       |
+| tess2                           | ✓ | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | ✓?  | ✗       |
 | videoInput                      | N/A | N/A   | N/A     | N/A         | N/A         | ✓  | ✗      | N/A | N/A     |
 | ofxAssimpModelLoader -> assimp  | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ✓?  | ✗       |
-| ofxOpenCV -> opencv             | ✗   | ✗     |         | ✗           | ✗           | ✗  | ✗      | ✗   | ✗       |
+| ofxOpenCV -> opencv             | ✓   | ✗     |         | ✗           | ✗           | ✗  | ✗      | ✓   | ✗       |
 | ofxOsc -> oscpack               | ✗C  | ✗C    | ✗C      | ✗C          | ✗C          | ✗C | ✗C     | ✗C  | ✗C      |
 | ofxSvg -> svgTiny               | ✗C  | ✗C    | ✗C      | ✗C          | ✗C          | ✗C | ✗C     | ✗C  | ✗C      |
 | ofxXmlSettings -> tinyxml       | ✗C  | ✗C    | ✗C      | ✗C          | ✗C          | ✗C | ✗C     | ✗C  | ✗C      |
 
+[3621]: https://github.com/openframeworks/openFrameworks/issues/3621
+[3624]: https://github.com/openframeworks/openFrameworks/issues/3624
