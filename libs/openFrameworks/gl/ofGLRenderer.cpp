@@ -63,11 +63,6 @@ void ofGLRenderer::finishRender(){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::update(){
-    
-}
-
-//----------------------------------------------------------
 void ofGLRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
 	if(vertexData.getNumVertices()){
 		glEnableClientState(GL_VERTEX_ARRAY);
