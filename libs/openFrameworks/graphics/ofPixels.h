@@ -217,6 +217,9 @@ public:
 	
 	/// \brief Get the color at a x,y position
 	ofColor_<PixelType> getColor(int x, int y) const;
+
+	/// \brief Get the color at a specific index
+	ofColor_<PixelType> getColor(int index) const;
 	
 	/// \brief Set the color of the pixel at the x,y location
 	void setColor(int x, int y, const ofColor_<PixelType>& color);
@@ -363,6 +366,7 @@ public:
         const PixelType & operator[](int idx) const;
 		int getComponentsPerPixel() const;
 		ofPixelFormat getPixelFormat() const;
+		ofColor_<PixelType> getColor() const;
 
 	private:
 		PixelType * pixel;
@@ -446,6 +450,7 @@ public:
 		const PixelType & operator[](int idx) const;
 		int getComponentsPerPixel() const;
 		ofPixelFormat getPixelFormat() const;
+		ofColor_<PixelType> getColor() const;
 
 	private:
 		const PixelType * pixel;
@@ -747,6 +752,51 @@ inline int ofPixels_<PixelType>::Pixel::getComponentsPerPixel() const{
 template<typename PixelType>
 inline ofPixelFormat ofPixels_<PixelType>::Pixel::getPixelFormat() const{
 	return pixelFormat;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+ofColor_<PixelType> ofPixels_<PixelType>::Pixel::getColor() const{
+	ofColor_<PixelType> c;
+	switch(pixelFormat){
+		case OF_PIXELS_RGB:
+			c.set( pixel[0], pixel[1], pixel[2] );
+			break;
+		case OF_PIXELS_BGR:
+			c.set( pixel[2], pixel[1], pixel[0] );
+			break;
+		case OF_PIXELS_RGBA:
+			c.set( pixel[0], pixel[1], pixel[2], pixel[3] );
+			break;
+		case OF_PIXELS_BGRA:
+			c.set( pixel[2], pixel[1], pixel[0], pixel[3] );
+			break;
+		case OF_PIXELS_GRAY:
+			c.set( pixel[0] );
+			break;
+		case OF_PIXELS_GRAY_ALPHA:
+			c.set( pixel[0], pixel[0], pixel[0], pixel[1] );
+			break;
+		case OF_PIXELS_RGB565:
+		case OF_PIXELS_NV12:
+		case OF_PIXELS_NV21:
+		case OF_PIXELS_YV12:
+		case OF_PIXELS_I420:
+		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_Y:
+		case OF_PIXELS_U:
+		case OF_PIXELS_V:
+		case OF_PIXELS_UV:
+		case OF_PIXELS_VU:
+		case OF_PIXELS_UNKNOWN:
+		default:
+			ofLogWarning() << "returning color not supported yet for " << ofToString(pixelFormat) << " format";
+			return 0;
+			break;
+	}
+
+	return c;
 }
 
 //----------------------------------------------------------------------
@@ -1055,6 +1105,51 @@ inline int ofPixels_<PixelType>::ConstPixel::getComponentsPerPixel() const{
 template<typename PixelType>
 inline ofPixelFormat ofPixels_<PixelType>::ConstPixel::getPixelFormat() const{
 	return pixelFormat;
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+ofColor_<PixelType> ofPixels_<PixelType>::ConstPixel::getColor() const{
+	ofColor_<PixelType> c;
+	switch(pixelFormat){
+		case OF_PIXELS_RGB:
+			c.set( pixel[0], pixel[1], pixel[2] );
+			break;
+		case OF_PIXELS_BGR:
+			c.set( pixel[2], pixel[1], pixel[0] );
+			break;
+		case OF_PIXELS_RGBA:
+			c.set( pixel[0], pixel[1], pixel[2], pixel[3] );
+			break;
+		case OF_PIXELS_BGRA:
+			c.set( pixel[2], pixel[1], pixel[0], pixel[3] );
+			break;
+		case OF_PIXELS_GRAY:
+			c.set( pixel[0] );
+			break;
+		case OF_PIXELS_GRAY_ALPHA:
+			c.set( pixel[0], pixel[0], pixel[0], pixel[1] );
+			break;
+		case OF_PIXELS_RGB565:
+		case OF_PIXELS_NV12:
+		case OF_PIXELS_NV21:
+		case OF_PIXELS_YV12:
+		case OF_PIXELS_I420:
+		case OF_PIXELS_YUY2:
+		case OF_PIXELS_UYVY:
+		case OF_PIXELS_Y:
+		case OF_PIXELS_U:
+		case OF_PIXELS_V:
+		case OF_PIXELS_UV:
+		case OF_PIXELS_VU:
+		case OF_PIXELS_UNKNOWN:
+		default:
+			ofLogWarning() << "returning color not supported yet for " << ofToString(pixelFormat) << " format";
+			return 0;
+			break;
+	}
+
+	return c;
 }
 
 //----------------------------------------------------------------------

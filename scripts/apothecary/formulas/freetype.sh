@@ -35,8 +35,9 @@ function build() {
 	if [ "$TYPE" == "osx" ] ; then
 		local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE/
 
-		local STDLIB="libstdc++"
-		local OSX_ARCH="i386"
+		# these flags are used to create a fat 32/64 binary with i386->libstdc++, x86_64->libc++
+		# see https://gist.github.com/tgfrerer/8e2d973ed0cfdd514de6
+		local FAT_CFLAGS="-arch i386 -arch x86_64 -stdlib=libstdc++ -Xarch_x86_64 -stdlib=libc++"
 
 		set -e
 		CURRENTPATH=`pwd`
@@ -56,31 +57,25 @@ function build() {
 		esac 
 
 		local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
-		
 
 		./configure --prefix=$BUILD_TO_DIR --without-bzip2 --enable-static=yes --enable-shared=no \
-			CFLAGS="-arch $OSX_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
+			CFLAGS="$FAT_CFLAGS -pipe -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
 		make clean 
 		make
 		make install
-		cp $BUILD_TO_DIR/lib/libfreetype.a lib/$TYPE/libfreetype-$OSX_ARCH.a
-
-		unset OSX_ARCH STDLIB
-
-		# x86_64
-		local STDLIB="libc++"
-		local OSX_ARCH="x86_64"
-		./configure --prefix=$BUILD_TO_DIR --without-bzip2 --enable-static=yes --enable-shared=no \
-			CFLAGS="-arch $OSX_ARCH -pipe -stdlib=$STDLIB -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
-		make clean
-		make
-		make install
-		cp $BUILD_TO_DIR/lib/libfreetype.a lib/$TYPE/libfreetype-$OSX_ARCH.a
+		cp $BUILD_TO_DIR/lib/libfreetype.a lib/$TYPE/libfreetype.a
 
 		cd lib/$TYPE/
-		lipo -create libfreetype-i386.a \
-					libfreetype-x86_64.a \
-					-output libfreetype.a
+					
+		mkdir -p "$BUILD_ROOT_DIR/lib/pkgconfig/"
+
+		# copy pkgconfig file to _buildroot/lib/pkgconfig
+		cp -v $BUILD_TO_DIR/lib/pkgconfig/freetype2.pc $BUILD_ROOT_DIR/lib/pkgconfig/
+
+		# # copy fat lib to where pkgconfig points to, so that subsequent build stages will find it.
+		# pkgconfig points to the $BUILD_TO_DIR
+		cp -vf libfreetype.a $BUILD_TO_DIR/lib/libfreetype.a
+
 		cd ../../
 
 		unset OSX_ARCH STDLIB TOOLCHAIN CC CPP CXX
@@ -242,7 +237,6 @@ function build() {
 		    echo "Build Successful for $IOS_ARCH"
 		done
 
-
 		echo "-----------------"
 		echo `pwd`
 		echo "Finished for all architectures."
@@ -355,6 +349,13 @@ function copy() {
 		cp -v build/$TYPE/armeabi-v7a/lib/libfreetype.a $1/lib/$TYPE/armeabi-v7a/libfreetype.a
 		cp -v build/$TYPE/x86/lib/libfreetype.a $1/lib/$TYPE/x86/libfreetype.a
 	fi
+
+	# copy license files
+	rm -rf $1/license # remove any older files if exists
+	mkdir -p $1/license
+	cp -v docs/LICENSE.TXT $1/license/
+	cp -v docs/FTL.TXT $1/license/
+	cp -v docs/GPLv2.TXT $1/license/
 }
 
 # executed inside the lib src dir
@@ -362,7 +363,6 @@ function clean() {
 
 	if [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: clean vs"
-	
 	elif [ "$TYPE" == "android" ] ; then
 		make clean
 		rm -f build/$TYPE

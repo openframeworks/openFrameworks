@@ -637,3 +637,43 @@ jobject ofxJavaCallObjectMethod(jobject object, std::string className, std::stri
 
 	return result;
 }
+
+
+void ofxJavaCallStaticVoidMethod(jclass classID, std::string methodName, std::string methodSignature, va_list args)
+{
+	jmethodID methodID = ofxJavaGetStaticMethodID(classID, methodName, methodSignature);
+
+	if (!methodID)
+		return;
+
+	ofGetJNIEnv()->CallStaticVoidMethodV(classID, methodID, args);
+}
+
+void ofxJavaCallStaticVoidMethod(jclass classID, std::string methodName, std::string methodSignature, ...)
+{
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	ofxJavaCallStaticVoidMethod(classID, methodName, methodSignature, args);
+
+	va_end(args);
+}
+
+void ofxJavaCallStaticVoidMethod(std::string className, std::string methodName, std::string methodSignature, ...)
+{
+	jclass classID = ofxJavaGetClassID(className);
+
+	if (!classID)
+		return;
+
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	ofxJavaCallStaticVoidMethod(classID, methodName, methodSignature, args);
+
+	va_end(args);
+
+	ofGetJNIEnv()->DeleteLocalRef(classID);
+}

@@ -17,7 +17,11 @@ GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -Lk https://github.com/glfw/glfw/archive/$GIT_TAG.tar.gz -o glfw-$GIT_TAG.tar.gz
+	# curl -Lk https://github.com/glfw/glfw/archive/$GIT_TAG.tar.gz -o glfw-$GIT_TAG.tar.gz
+	# temporary fix until https://github.com/openframeworks/openFrameworks/issues/3621 is resolved.
+	GIT_TAG=feature-keysUnicode
+	curl -Lk https://github.com/arturoc/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
+	# end fix
 	tar -xf glfw-$GIT_TAG.tar.gz
 	mv glfw-$GIT_TAG glfw
 	rm glfw*.tar.gz
@@ -35,7 +39,6 @@ function build() {
 	if [ "$TYPE" == "vs" ] ; then
 		cmake -G "Visual Studio $VS_VER"
 		vs-build "GLFW.sln"
-
 	else
 		# *nix build system
 
@@ -73,6 +76,9 @@ function copy() {
 		# copy lib
 		cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/
 	fi
+
+	# copy license file
+    cp -v COPYING.txt $1/
 }
 
 # executed inside the lib src dir
@@ -80,6 +86,6 @@ function clean() {
 	if [ "$TYPE" == "vs" ] ; then
 		rm -f *.lib
 	else
-		make clean;
+		make clean
 	fi
 }

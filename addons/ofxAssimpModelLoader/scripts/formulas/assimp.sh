@@ -320,6 +320,9 @@ function copy() {
 	else
 		cp -Rv lib/libassimp.a $1/lib/$TYPE/assimp.a
 	fi
+
+    # Copy License File
+    cp -v LICENSE $1/LICENSE
 }
 
 # executed inside the lib src dir
