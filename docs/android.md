@@ -39,6 +39,8 @@ Here are download links for r9d, which has been tested and works fine:
 - Linux 32-bit (x86): http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86.tar.bz2
 - Linux 64-bit (x86): http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86_64.tar.bz2 
 
+On Windows, you will also need to install MinGW in order to build openFrameworks. MinGW provides some essential build tools which are not included in the NDK. Follow just the "Installing the MinGW and Msys" instructions on this page: http://www.multigesture.net/articles/how-to-install-mingw-msys-and-eclipse-on-windows/.
+
 ### Download openFrameworks
 
 Download it from the downloads page:
