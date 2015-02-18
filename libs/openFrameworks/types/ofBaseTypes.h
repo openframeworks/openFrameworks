@@ -837,15 +837,20 @@ public:
 	using ofBaseRenderer::bind;
 	using ofBaseRenderer::unbind;
 	virtual void bind(const ofBaseMaterial & material)=0;
-	virtual void bind(const ofFbo & fbo, bool setupPerspective)=0;
 	virtual void bind(const ofShader & shader)=0;
 	virtual void bind(const ofTexture & texture, int location)=0;
 	virtual void bind(const ofBaseVideoDraws & video)=0;
 	virtual void unbind(const ofBaseMaterial & material)=0;
-	virtual void unbind(const ofFbo & fbo)=0;
 	virtual void unbind(const ofShader & shader)=0;
 	virtual void unbind(const ofTexture & texture, int location)=0;
 	virtual void unbind(const ofBaseVideoDraws & video)=0;
+
+
+	virtual void bind(const ofFbo & fbo)=0;
+	virtual void unbind(const ofFbo & fbo)=0;
+	virtual void begin(const ofFbo & fbo, bool setupPerspective)=0;
+	virtual void end(const ofFbo & fbo)=0;
+
 };
 
 
