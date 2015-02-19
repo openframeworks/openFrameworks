@@ -69,6 +69,10 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 	major = 3;
 	minor = 2;
 	window = _window;
+
+	currentFramebufferId = 0;
+	defaultFramebufferId = 0;
+
 }
 
 ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
@@ -77,6 +81,8 @@ ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::startRender() {
+	currentFramebufferId = defaultFramebufferId;
+	framebufferIdStack.push_back(defaultFramebufferId);
 	matrixStack.setRenderSurface(*window);
 	beginDefaultShader();
 	viewport();
@@ -100,8 +106,8 @@ void ofGLProgrammableRenderer::finishRender() {
 		glUseProgram(0);
 		if(!usingCustomShader) currentShader = NULL;
 	}
-	
 	matrixStack.clearStacks();
+	framebufferIdStack.clear();
 }
 
 //----------------------------------------------------------
@@ -1297,7 +1303,7 @@ void ofGLProgrammableRenderer::unbind(const ofShader & shader){
 
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::bind(const ofFbo & fbo, bool setupPerspective){
+void ofGLProgrammableRenderer::begin(const ofFbo & fbo, bool setupPerspective){
 	pushView();
 	pushStyle();
 	matrixStack.setRenderSurface(fbo);
@@ -1307,16 +1313,50 @@ void ofGLProgrammableRenderer::bind(const ofFbo & fbo, bool setupPerspective){
 	}else{
 		uploadMatrices();
 	}
-	fbo.bind();
+	bind(fbo);
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+void ofGLProgrammableRenderer::end(const ofFbo & fbo){
+	unbind(fbo);
 	matrixStack.setRenderSurface(*window);
 	uploadMatrices();
 	popStyle();
 	popView();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::bind(const ofFbo & fbo){
+	// this method could just as well have been placed in ofBaseGLRenderer
+	// and shared over both programmable and fixed function renderer.
+	// I'm keeping it here, so that if we want to do more fancyful
+	// named framebuffers with GL 4.5+, we can have 
+	// different implementations.
+
+	GLint currentFramebufferBinding = currentFramebufferId;
+#ifdef TARGET_OPENGLES
+	// OpenGL ES might have set a default frame buffer for
+	// MSAA rendering to the window, bypassing ofFbo, so we
+	// can't trust ofFbo to have correctly tracked the bind
+	// state. Therefore, we are forced to use the slower glGet() method
+	// to be sure to get the correct default framebuffer.
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebufferBinding);
+#endif
+	fbo.setPreviousFramebufferBinding(currentFramebufferBinding);
+	fbo.bind();
+	currentFramebufferId = fbo.getFbo();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
+	// fbo.unbind() will restore GL_FRAMEBUFFER target to
+	// fbo.previousFramebufferBinding
+	fbo.unbind();
+	// so we have to update currentFramebuffer accordingly.
+	currentFramebufferId = fbo.getPreviousFramebufferBinding();
+	// Now check if any MSAA render targets exist, and flag
+	// these dirty if need be.
+	fbo.flagDirty();
 }
 
 //----------------------------------------------------------
@@ -2559,3 +2599,4 @@ const of3dGraphics & ofGLProgrammableRenderer::get3dGraphics() const{
 of3dGraphics & ofGLProgrammableRenderer::get3dGraphics(){
 	return graphics3d;
 }
+
