@@ -180,6 +180,11 @@ bool ofGstVideoPlayer::createPipeline(string name){
 #endif
 }
 
+bool ofGstVideoPlayer::loadAsync(string name){
+	bIsStream = true;
+	return load(name);
+}
+
 bool ofGstVideoPlayer::load(string name){
 	if( name.find( "file://",0 ) != string::npos){
 		bIsStream = bAsyncLoad;
@@ -445,8 +450,4 @@ bool ofGstVideoPlayer::isThreadedAppSink() const{
 
 bool ofGstVideoPlayer::isFrameByFrame() const{
 	return videoUtils.isFrameByFrame();
-}
-
-void ofGstVideoPlayer::setAsynchronousLoad(bool async){
-	bAsyncLoad = async;
 }
