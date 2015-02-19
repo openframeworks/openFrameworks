@@ -28,6 +28,8 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 	lightingEnabled = false;
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
 	window = _window;
+	currentFramebufferId = 0;
+	defaultFramebufferId = 0;
 }
 
 void ofGLRenderer::setup(){
@@ -37,6 +39,7 @@ void ofGLRenderer::setup(){
 }
 
 void ofGLRenderer::startRender(){
+	currentFramebufferId = defaultFramebufferId;
     matrixStack.setRenderSurface(*window);
 	viewport();
     // to do non auto clear on PC for now - we do something like "single" buffering --
@@ -54,7 +57,7 @@ void ofGLRenderer::startRender(){
 }
 
 void ofGLRenderer::finishRender(){
-
+	matrixStack.clearStacks();
 }
 
 //----------------------------------------------------------
@@ -432,7 +435,7 @@ void ofGLRenderer::unbind(const ofShader & shader){
 
 
 //----------------------------------------------------------
-void ofGLRenderer::bind(const ofFbo & fbo, bool setupPerspective){
+void ofGLRenderer::begin(const ofFbo & fbo, bool setupPerspective){
 	pushView();
 	pushStyle();
 	matrixStack.setRenderSurface(fbo);
@@ -450,15 +453,43 @@ void ofGLRenderer::bind(const ofFbo & fbo, bool setupPerspective){
 		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
 		matrixMode(currentMode);
 	}
+	bind(fbo);
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::end(const ofFbo & fbo){
+	unbind(fbo);
+	matrixStack.setRenderSurface(*window);
+	popStyle();
+	popView();
+}
+
+//----------------------------------------------------------
+void ofGLRenderer::bind(const ofFbo & fbo){
+	GLint currentFramebufferBinding = currentFramebufferId;
+#ifdef TARGET_OPENGLES
+	// OpenGL ES might have set a default frame buffer for
+	// MSAA rendering to the window, bypassing ofFbo, so we
+	// can't trust ofFbo to have correctly tracked the bind
+	// state. Therefore, we are forced to use the slower glGet() method
+	// to be sure to get the correct default framebuffer.
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebufferBinding);
+#endif
+	fbo.setPreviousFramebufferBinding(currentFramebufferBinding);
 	fbo.bind();
+	currentFramebufferId = fbo.getFbo();
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::unbind(const ofFbo & fbo){
+	// fbo.unbind() will restore GL_FRAMEBUFFER target to
+	// fbo.previousFramebufferBinding
 	fbo.unbind();
-	matrixStack.setRenderSurface(*window);
-	popStyle();
-	popView();
+	// so we have to update currentFramebuffer accordingly.
+	currentFramebufferId = fbo.getPreviousFramebufferBinding();
+	// Now check if any MSAA render targets exist, and flag
+	// these dirty if need be.
+	fbo.flagDirty();
 }
 
 //----------------------------------------------------------

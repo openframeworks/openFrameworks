@@ -329,9 +329,13 @@ void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExten
 	allocate(texData,glFormat,pixelType);
 }
 
+//----------------------------------------------------------
+
 void ofTexture::allocate(const ofTextureData & textureData){
 	allocate(textureData,ofGetGLFormatFromInternal(textureData.glTypeInternal),ofGetGlTypeFromInternal(textureData.glTypeInternal));
 }
+
+//----------------------------------------------------------
 
 void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pixelType){
 	if( textureData.width <= 0.0 || textureData.height <= 0.0 ){
@@ -363,9 +367,9 @@ void ofTexture::allocate(const ofTextureData & textureData, int glFormat, int pi
 		texData.tex_t = texData.width / texData.tex_w;
 		texData.tex_u = texData.height / texData.tex_h;
 
-#ifndef TARGET_OPENGLES
-		if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB ) texData.textureTarget = GL_TEXTURE_2D;
-#endif
+//#ifndef TARGET_OPENGLES
+//		if( texData.textureTarget==GL_TEXTURE_RECTANGLE_ARB ) texData.textureTarget = GL_TEXTURE_2D;
+//#endif
 	}
 
 	// attempt to free the previous bound texture, if we can:
