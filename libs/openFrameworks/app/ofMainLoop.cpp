@@ -113,15 +113,16 @@ int ofMainLoop::loop(){
 }
 
 void ofMainLoop::loopOnce(){
-	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
+	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end() ;){
 		if(i->first->getWindowShouldClose()){
 			i->first->close();
-			windowsApps.erase(i);
+			i = windowsApps.erase(i); ///< i now points at the window after the one which was just erased
 		}else{
 			currentWindow = i->first;
 			currentWindow->makeCurrent();
 			currentWindow->update();
 			currentWindow->draw();
+			i++; ///< continue to next window
 		}
 	}
 	if(pollEvents){
