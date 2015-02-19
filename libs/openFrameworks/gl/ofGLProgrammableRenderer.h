@@ -195,6 +195,8 @@ public:
 	void bind(const ofFbo & fbo);
 	void unbind(const ofFbo & fbo);
 
+	const GLuint& getCurrentFramebufferId() const { return currentFramebufferId; };
+
 	void begin(const ofFbo & fbo, bool setupPerspective);
 	void end(const ofFbo & fbo);
 

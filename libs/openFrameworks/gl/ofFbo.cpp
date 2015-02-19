@@ -223,7 +223,8 @@ depthBuffer(0),
 stencilBuffer(0),
 dirty(false),
 defaultTextureIndex(0),
-bIsAllocated(false)
+bIsAllocated(false),
+previousFramebufferBinding(GL_NONE)
 {
 #ifdef TARGET_OPENGLES
 	if(!bglFunctionsInitialized){
@@ -280,6 +281,7 @@ ofFbo::ofFbo(const ofFbo & mom){
 	textures = mom.textures;
 	dirty = mom.dirty;
 	defaultTextureIndex = mom.defaultTextureIndex;
+	previousFramebufferBinding = mom.previousFramebufferBinding;
 }
 
 ofFbo & ofFbo::operator=(const ofFbo & mom){
@@ -310,6 +312,7 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 	textures = mom.textures;
 	dirty = mom.dirty;
 	defaultTextureIndex = mom.defaultTextureIndex;
+	previousFramebufferBinding = mom.previousFramebufferBinding;
 	return *this;
 }
 
@@ -349,15 +352,14 @@ void ofFbo::clear() {
 		releaseRB(stencilBuffer);
 		stencilBuffer = 0;
 	}
-
 	if(settings.numSamples && fboTextures){
 		releaseFB(fboTextures);
 		fboTextures = 0;
 	}
-
 	textures.clear();
-
-	for(int i=0; i<(int)colorBuffers.size(); i++) releaseRB(colorBuffers[i]);
+	for (int i=0; i < (int)colorBuffers.size(); i++) {
+		releaseRB(colorBuffers[i]);
+	}
 	colorBuffers.clear();
 	bIsAllocated = false;
 }
@@ -480,7 +482,16 @@ void ofFbo::allocate(Settings _settings) {
 	// all the renderbuffers are attached to this (whether MSAA is enabled or not)
 	glGenFramebuffers(1, &fbo);
 	retainFB(fbo);
-	bind();
+
+	GLint previousFboId = 0;
+
+	// note that we are using a glGetInteger method here, which may stall the pipeline.
+	// in the allocate() method, this is not that tragic since this will not be called 
+	// within the draw() loop. Here, we need not optimise for performance, but for 
+	// simplicity and readability .
+
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFboId);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 	//- USE REGULAR RENDER BUFFER
 	if(!_settings.depthStencilAsTexture){
@@ -558,8 +569,8 @@ void ofFbo::allocate(Settings _settings) {
 	// check everything is ok with this fbo
 	bIsAllocated = checkStatus();
 
-	// unbind it
-	unbind();
+	// restore previous framebuffer id
+	glBindFramebuffer(GL_FRAMEBUFFER, previousFboId);
 
     /* UNCOMMENT OUTSIDE OF DOING RELEASES
 	
@@ -682,39 +693,57 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 //----------------------------------------------------------
 
 void ofFbo::begin(bool setupScreen) const{
-	if(ofGetGLRenderer()){
-		ofGetGLRenderer()->begin(*this,setupScreen);
-	}
+	ofGetGLRenderer()->begin(*this,setupScreen);
 }
 
 //----------------------------------------------------------
 
 void ofFbo::end() const{
-	if(ofGetGLRenderer()){
-		ofGetGLRenderer()->end(*this);
-	}
+	ofGetGLRenderer()->end(*this);
+}
+
+//----------------------------------------------------------
+
+void ofFbo::setPreviousFramebufferBinding(const GLuint& previousFramebufferBinding_) const {
+	previousFramebufferBinding = previousFramebufferBinding_;
+}
+
+//----------------------------------------------------------
+
+const GLuint& ofFbo::getPreviousFramebufferBinding() const {
+	return previousFramebufferBinding;
 }
 
 //----------------------------------------------------------
 
 void ofFbo::bind() const{
-
-	ofGetGLRenderer()->bind(*this);
-	
+	if (previousFramebufferBinding == fbo){
+		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
+			"Most probably you forgot to end() the current framebuffer before calling begin() again.";
+		return;
+	}
+	// ----------| invariant: previous framebuffer is not the same as current framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 }
 
 //----------------------------------------------------------
 
 void ofFbo::unbind() const{
+	glBindFramebuffer(GL_FRAMEBUFFER, previousFramebufferBinding);
+}
 
-	ofGetGLRenderer()->unbind(*this);
+//----------------------------------------------------------
 
+void ofFbo::flagDirty() const{
 	if (fbo != fboTextures){
 		// ---------| if fbo != fboTextures, we are dealing with an MSAA enabled FBO.
-		// all currently active draw buffers need to be flagged dirty
-		// if a draw buffer has been activated and then de-activated, it has been 
+		//
+		// All currently active draw buffers need to be flagged dirty
+		//
+		// If a draw buffer has been activated and then de-activated, it has been 
 		// flagged dirty at activation, so we can be sure all buffers which have 
 		// been rendered to are flagged dirty.
+		// 
 		int numBuffersToFlag = min(dirty.size(), activeDrawBuffers.size());
 		for(int i=0; i < numBuffersToFlag; i++){
 			dirty[i] = true;
@@ -897,7 +926,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0); // reset to defaults
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); 
-		unbind();
+		unbind(); // this will restore GL_FRAMEBUFFER to previousFramebufferBinding
 		
 		glReadBuffer(GL_BACK);
 
@@ -905,9 +934,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 			// restore current drawbuffer
 			glPopAttrib();
 		}
-	
 		dirty[attachmentPoint] = false;
-
 	}
 #endif
 }

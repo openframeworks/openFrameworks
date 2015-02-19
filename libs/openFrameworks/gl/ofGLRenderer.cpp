@@ -40,7 +40,6 @@ void ofGLRenderer::setup(){
 
 void ofGLRenderer::startRender(){
 	currentFramebufferId = defaultFramebufferId;
-	framebufferIdStack.push_back(defaultFramebufferId);
     matrixStack.setRenderSurface(*window);
 	viewport();
     // to do non auto clear on PC for now - we do something like "single" buffering --
@@ -59,7 +58,6 @@ void ofGLRenderer::startRender(){
 
 void ofGLRenderer::finishRender(){
 	matrixStack.clearStacks();
-	framebufferIdStack.clear();
 }
 
 //----------------------------------------------------------
@@ -455,12 +453,12 @@ void ofGLRenderer::begin(const ofFbo & fbo, bool setupPerspective){
 		glLoadMatrixf(matrixStack.getProjectionMatrix().getPtr());
 		matrixMode(currentMode);
 	}
-	fbo.bind();
+	bind(fbo);
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::end(const ofFbo & fbo){
-	fbo.unbind();
+	unbind(fbo);
 	matrixStack.setRenderSurface(*window);
 	popStyle();
 	popView();
@@ -477,20 +475,21 @@ void ofGLRenderer::bind(const ofFbo & fbo){
 	// to be sure to get the correct default framebuffer.
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebufferBinding);
 #endif
-	framebufferIdStack.push_back(currentFramebufferBinding);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo.getFbo());
+	fbo.setPreviousFramebufferBinding(currentFramebufferBinding);
+	fbo.bind();
 	currentFramebufferId = fbo.getFbo();
 }
 
 //----------------------------------------------------------
 void ofGLRenderer::unbind(const ofFbo & fbo){
-	if (framebufferIdStack.empty()){
-		currentFramebufferId = 0;
-	} else {
-		currentFramebufferId = framebufferIdStack.back();
-		framebufferIdStack.pop_back();
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
+	// fbo.unbind() will restore GL_FRAMEBUFFER target to
+	// fbo.previousFramebufferBinding
+	fbo.unbind();
+	// so we have to update currentFramebuffer accordingly.
+	currentFramebufferId = fbo.getPreviousFramebufferBinding();
+	// Now check if any MSAA render targets exist, and flag
+	// these dirty if need be.
+	fbo.flagDirty();
 }
 
 //----------------------------------------------------------
