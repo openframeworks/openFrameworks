@@ -52,6 +52,7 @@ public:
 
 	ofPixels&		getPixels();
 	const ofPixels &		getPixels() const;
+	ofTexture * getTexturePtr();
 
 	float 			getHeight() const;
 	float 			getWidth() const;
