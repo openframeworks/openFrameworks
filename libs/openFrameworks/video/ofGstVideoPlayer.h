@@ -13,6 +13,7 @@ public:
 	bool 	setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat	getPixelFormat() const;
 	
+	bool	loadAsync(string name);
 	bool 	load(string uri);
 
 	void 	update();
@@ -59,7 +60,6 @@ public:
 	void setThreadAppSink(bool threaded);
 	bool isThreadedAppSink() const;
 	bool isFrameByFrame() const;
-	void setAsynchronousLoad(bool async);
 
 	ofGstVideoUtils * getGstVideoUtils();
 

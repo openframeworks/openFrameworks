@@ -261,7 +261,7 @@ bool ofGstUtils::startPipeline(){
 	}
 
 	// pause the pipeline
-	GstState targetState;
+	//GstState targetState;
 	GstState state;
 	auto ret = gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PAUSED);
     switch (ret) {
@@ -270,7 +270,7 @@ bool ofGstUtils::startPipeline(){
 			return false;
 			break;
 		case GST_STATE_CHANGE_NO_PREROLL:
-			ofLogNotice() << "Pipeline is live and does not need PREROLL waiting PLAY";
+			ofLogVerbose() << "Pipeline is live and does not need PREROLL waiting PLAY";
 			gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PLAYING);
 			if(isAppSink){
 				gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),1);
@@ -278,15 +278,17 @@ bool ofGstUtils::startPipeline(){
 			}
 			break;
 		case GST_STATE_CHANGE_ASYNC:
-			ofLogNotice() << "Pipeline is PREROLLING";
-			targetState = GST_STATE_PAUSED;
-			do{
-				gst_element_get_state(gstPipeline,&state,NULL,-1);
-			}while(state!=targetState);
-			ofLogNotice() << "Pipeline is PREROLLED";
+			ofLogVerbose() << "Pipeline is PREROLLING";
+			//targetState = GST_STATE_PAUSED;
+			if(!isStream && gst_element_get_state(gstPipeline,&state,NULL,5*GST_SECOND)!=GST_STATE_CHANGE_SUCCESS){
+				ofLogError("ofGstUtils") << "startPipeline(): unable to pause pipeline after 5s";
+				return false;
+			}else{
+				ofLogVerbose() << "Pipeline is PREROLLED";
+			}
 			break;
 		case GST_STATE_CHANGE_SUCCESS:
-			ofLogNotice() << "Pipeline is PREROLLED";
+			ofLogVerbose() << "Pipeline is PREROLLED";
 			break;
     }
 
@@ -295,13 +297,6 @@ bool ofGstUtils::startPipeline(){
 		bPlaying = true;
 		bLoaded = true;
 	}
-
-
-
-	/*if(!isStream){
-		setSpeed(1.0);
-	}*/
-
 
 	return true;
 }
