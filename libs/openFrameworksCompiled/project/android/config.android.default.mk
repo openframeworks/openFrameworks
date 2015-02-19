@@ -91,7 +91,11 @@ else
 	HOST_PLATFORM = darwin-x86
 endif
 else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/windows-x86_64),)
+	HOST_PLATFORM = windows-x86_64
+else
 	HOST_PLATFORM = windows
+endif
 	PWD = $(shell pwd)
 else
 ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/linux-x86_64),)
