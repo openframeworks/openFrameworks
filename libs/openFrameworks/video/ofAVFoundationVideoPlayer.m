@@ -128,20 +128,20 @@ static const NSString * ItemStatusContext;
 }
 
 //---------------------------------------------------------- load / unload.
-- (BOOL)loadWithFile:(NSString*)file async:(BOOL)async{
+- (BOOL)loadWithFile:(NSString*)file async:(BOOL)bAsync{
 	NSArray * fileSplit = [file componentsSeparatedByString:@"."];
 	NSURL * fileURL = [[NSBundle mainBundle] URLForResource:[fileSplit objectAtIndex:0]
 											  withExtension:[fileSplit objectAtIndex:1]];
 	
-	return [self loadWithURL:fileURL async:async];
+	return [self loadWithURL:fileURL async:bAsync];
 }
 
-- (BOOL)loadWithPath:(NSString*)path async:(BOOL)async{
+- (BOOL)loadWithPath:(NSString*)path async:(BOOL)bAsync{
 	NSURL * fileURL = [NSURL fileURLWithPath:path];
-	return [self loadWithURL:fileURL async:async];
+	return [self loadWithURL:fileURL async:bAsync];
 }
 
-- (BOOL)loadWithURL:(NSURL*)url async:(BOOL)async {
+- (BOOL)loadWithURL:(NSURL*)url async:(BOOL)bAsync {
 	
 	[self unloadVideo];     // unload video if one is already loaded.
 	
@@ -153,7 +153,7 @@ static const NSString * ItemStatusContext;
 	
 	dispatch_semaphore_t sema = dispatch_semaphore_create(0);
 	dispatch_queue_t queue;
-	if(async){
+	if(bAsync == YES){
 		queue = dispatch_get_main_queue();
 	} else {
 		queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -166,7 +166,7 @@ static const NSString * ItemStatusContext;
 			
 			if(status != AVKeyValueStatusLoaded) {
 				NSLog(@"error loading asset tracks: %@", [error localizedDescription]);
-				if(!async){
+				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
 				return;
@@ -176,7 +176,7 @@ static const NSString * ItemStatusContext;
 			
 			if(CMTimeCompare(duration, kCMTimeZero) == 0) {
 				NSLog(@"track loaded with zero duration.");
-				if(!async){
+				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
 				return;
@@ -184,7 +184,7 @@ static const NSString * ItemStatusContext;
 			
 			if(isfinite([self getDurationInSec]) == NO) {
 				NSLog(@"track loaded with infinite duration.");
-				if(!async){
+				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
 				return;
@@ -193,7 +193,7 @@ static const NSString * ItemStatusContext;
 			BOOL bOk = [self createAssetReaderWithTimeRange:CMTimeRangeMake(kCMTimeZero, duration)];
 			if(bOk == NO) {
 				NSLog(@"problem with creating asset reader.");
-				if(!async){
+				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
 				return;
@@ -202,7 +202,7 @@ static const NSString * ItemStatusContext;
 			NSArray * videoTracks = [self.asset tracksWithMediaType:AVMediaTypeVideo];
 			if([videoTracks count] == 0) {
 				NSLog(@"no video tracks found.");
-				if(!async){
+				if(bAsync == NO){
 					dispatch_semaphore_signal(sema);
 				}
 				return;
@@ -237,14 +237,14 @@ static const NSString * ItemStatusContext;
 			
 			bLoaded = true;
 			
-			if(!async){
+			if(bAsync == NO){
 				dispatch_semaphore_signal(sema);
 			}
 		}];
 	});
 	
 	// Wait for the dispatch semaphore signal
-	if(!async){
+	if(bAsync == NO){
 		dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
 		dispatch_release(sema);
 		

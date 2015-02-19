@@ -81,9 +81,9 @@
 @property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
 @property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
 
-- (BOOL)loadWithFile:(NSString*)file async:(BOOL)async;
-- (BOOL)loadWithPath:(NSString*)path async:(BOOL)async;
-- (BOOL)loadWithURL:(NSURL*)url async:(BOOL)async;
+- (BOOL)loadWithFile:(NSString*)file async:(BOOL)bAsync;
+- (BOOL)loadWithPath:(NSString*)path async:(BOOL)bAsync;
+- (BOOL)loadWithURL:(NSURL*)url async:(BOOL)bAsync;
 - (void)unloadVideo;
 
 - (void)setVideoPosition:(CGPoint)position;
