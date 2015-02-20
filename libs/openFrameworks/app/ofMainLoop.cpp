@@ -113,10 +113,10 @@ int ofMainLoop::loop(){
 }
 
 void ofMainLoop::loopOnce(){
-	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end() ;){
+	for(map<shared_ptr<ofAppBaseWindow>,shared_ptr<ofBaseApp> >::iterator i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end() ;){
 		if(i->first->getWindowShouldClose()){
 			i->first->close();
-			i = windowsApps.erase(i); ///< i now points at the window after the one which was just erased
+			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
 		}else{
 			currentWindow = i->first;
 			currentWindow->makeCurrent();
