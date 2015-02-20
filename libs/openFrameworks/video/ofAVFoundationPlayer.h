@@ -84,7 +84,7 @@ public:
     
 protected:
 	
-	bool loadPlayer(string name, bool async);
+	bool loadPlayer(string name, bool bAsync);
 
 #ifdef __OBJC__
 	ofAVFoundationVideoPlayer * videoPlayer;
