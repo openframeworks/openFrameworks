@@ -453,7 +453,8 @@ public:
 
 	//needs implementing
 	virtual bool				load(string name) = 0;
-
+	virtual void				loadAsync(string name);
+	
 	virtual void				play() = 0;
 	virtual void				stop() = 0;
 	virtual ofTexture *			getTexturePtr(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
