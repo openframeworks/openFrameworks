@@ -22,6 +22,7 @@ public:
 	~ofAVFoundationPlayer();
 	   
     bool load(string name);
+	void loadAsync(string name);
     void close();
     void update();
 
@@ -83,6 +84,8 @@ public:
     
 protected:
 	
+	bool loadPlayer(string name, bool bAsync);
+
 #ifdef __OBJC__
 	ofAVFoundationVideoPlayer * videoPlayer;
 #else

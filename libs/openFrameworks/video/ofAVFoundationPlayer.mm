@@ -42,7 +42,17 @@ ofAVFoundationPlayer::~ofAVFoundationPlayer() {
 }
 
 //--------------------------------------------------------------
+void ofAVFoundationPlayer::loadAsync(string name){
+	loadPlayer(name, true);
+}
+
+//--------------------------------------------------------------
 bool ofAVFoundationPlayer::load(string name) {
+	return loadPlayer(name, false);
+}
+
+//--------------------------------------------------------------
+bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	
     if(videoPlayer == NULL) {
         videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
@@ -65,7 +75,7 @@ bool ofAVFoundationPlayer::load(string name) {
 		url = [NSURL fileURLWithPath:videoLocalPath];
 	}
 	
-	[videoPlayer loadWithURL:url];
+	bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
 	
     bResetPixels = true;
     bUpdatePixels = true;
@@ -108,8 +118,8 @@ bool ofAVFoundationPlayer::load(string name) {
             ofLogWarning("ofxiOSVideoPlayer") << "load(): error when creating texture cache, " << err;
         }
     }
-    
-    return true;
+	
+    return bLoaded;
 }
 
 //--------------------------------------------------------------
