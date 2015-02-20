@@ -49,7 +49,7 @@ ofBaseVideoPlayer::~ofBaseVideoPlayer(){
 }
 
 void ofBaseVideoPlayer::loadAsync(string name){
-	ofLogWarning("ofBaseVideoPlayer") << "loadAsync() not implemented";
+	ofLogWarning("ofBaseVideoPlayer") << "loadAsync() not implemented, loading synchronously";
 	load(name);
 }
 
