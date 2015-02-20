@@ -250,6 +250,7 @@ static const NSString * ItemStatusContext;
 		
 		return bLoaded;
 	} else {
+		dispatch_release(sema);
 		return YES;
 	}
 }
