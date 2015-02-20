@@ -52,7 +52,7 @@ bool ofAVFoundationPlayer::load(string name) {
 }
 
 //--------------------------------------------------------------
-bool ofAVFoundationPlayer::loadPlayer(string name, bool async) {
+bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	
     if(videoPlayer == NULL) {
         videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
@@ -75,7 +75,7 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool async) {
 		url = [NSURL fileURLWithPath:videoLocalPath];
 	}
 	
-	bool loaded = [videoPlayer loadWithURL:url async:async];
+	bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
 	
     bResetPixels = true;
     bUpdatePixels = true;
@@ -119,7 +119,7 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool async) {
         }
     }
 	
-    return loaded;
+    return bLoaded;
 }
 
 //--------------------------------------------------------------
