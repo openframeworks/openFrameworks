@@ -13,7 +13,7 @@ public:
 	bool 	setPixelFormat(ofPixelFormat pixelFormat);
 	ofPixelFormat	getPixelFormat() const;
 	
-	bool	loadAsync(string name);
+	void	loadAsync(string name);
 	bool 	load(string uri);
 
 	void 	update();
