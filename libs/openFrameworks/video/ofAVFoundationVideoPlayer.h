@@ -138,4 +138,5 @@
 - (BOOL)getAutoplay;
 - (void)setWillBeUpdatedExternally:(BOOL)value;
 
+- (void)finalize;
 @end
