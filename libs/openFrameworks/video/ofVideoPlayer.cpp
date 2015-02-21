@@ -489,7 +489,10 @@ bool ofVideoPlayer::isPlaying() const{
 
 //----------------------------------------------------------
 bool ofVideoPlayer::isInitialized() const{
-	return player->isInitialized() && (!bUseTexture || tex[0].isAllocated() || player->getTexturePtr());
+	if( player ){
+		return player->isInitialized() && (!bUseTexture || tex[0].isAllocated() || player->getTexturePtr());
+	}
+	return false;
 }
 
 
