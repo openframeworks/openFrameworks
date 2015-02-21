@@ -180,9 +180,9 @@ bool ofGstVideoPlayer::createPipeline(string name){
 #endif
 }
 
-bool ofGstVideoPlayer::loadAsync(string name){
+void ofGstVideoPlayer::loadAsync(string name){
 	bIsStream = true;
-	return load(name);
+	load(name);
 }
 
 bool ofGstVideoPlayer::load(string name){
