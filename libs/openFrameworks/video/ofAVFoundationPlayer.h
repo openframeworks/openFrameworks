@@ -14,6 +14,10 @@
 #import "ofAVFoundationVideoPlayer.h"
 #endif
 
+#if defined TARGET_OF_IOS || defined TARGET_OSX
+#import <CoreVideo/CoreVideo.h>
+#endif
+
 class ofAVFoundationPlayer : public ofBaseVideoPlayer {
 	
 public:
@@ -101,5 +105,15 @@ protected:
     ofPixels pixels;
 	ofPixelFormat pixelFormat;
 	ofTexture videoTexture;
+	
+#ifdef TARGET_OF_IOS
+	CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
+	CVOpenGLESTextureRef _videoTextureRef = NULL;
+#endif
+	
+#ifdef TARGET_OSX
+	CVOpenGLTextureCacheRef _videoTextureCache = NULL;
+	CVOpenGLTextureRef _videoTextureRef = NULL;
+#endif
 };
 
