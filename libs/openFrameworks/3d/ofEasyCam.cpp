@@ -19,7 +19,7 @@ ofEasyCam::ofEasyCam(){
 	sensitivityZ= .7f;
 
 	bDistanceSet = false; 
-	bMouseInputEnabled = false;
+	bMouseInputEnabled = true;
 	bDoRotate = false;
 	bApplyInertia =false;
 	bDoTranslate = false;
