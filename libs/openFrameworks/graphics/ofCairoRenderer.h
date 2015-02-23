@@ -38,7 +38,6 @@ public:
 	void draw(const ofPath & shape) const;
 	void draw(const ofPath::Command & path) const;
 	void draw(const ofPolyline & poly) const;
-	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType ) const;
     void draw(const ofNode& node) const;
