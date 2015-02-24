@@ -61,61 +61,55 @@ void ofGLRenderer::finishRender(){
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
-	if(vertexData.getNumVertices()){
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData.getVerticesPointer()->x);
-	}
-	if(vertexData.getNumNormals() && useNormals){
-		glEnableClientState(GL_NORMAL_ARRAY);
-		glNormalPointer(GL_FLOAT, sizeof(ofVec3f), &vertexData.getNormalsPointer()->x);
-	}
-	if(vertexData.getNumColors() && useColors){
-		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4,GL_FLOAT, sizeof(ofFloatColor), &vertexData.getColorsPointer()->r);
-	}
-
-	if(vertexData.getNumTexCoords() && useTextures){
-		set<int>::iterator textureLocation = textureLocationsEnabled.begin();
-		for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
-			glActiveTexture(GL_TEXTURE0+*textureLocation);
-			glClientActiveTexture(GL_TEXTURE0+*textureLocation);
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-			glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-		}
-		glActiveTexture(GL_TEXTURE0);
-		glClientActiveTexture(GL_TEXTURE0);
-	}
-
-	if(vertexData.getNumIndices()){
-#ifdef TARGET_OPENGLES
-		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
-#else
-		glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_INT,vertexData.getIndexPointer());
-#endif
-	}else{
-		glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
-	}
-
-	if(vertexData.getNumColors() && useColors){
-		glDisableClientState(GL_COLOR_ARRAY);
-	}
-	if(vertexData.getNumNormals() && useNormals){
-		glDisableClientState(GL_NORMAL_ARRAY);
-	}
-	if(vertexData.getNumTexCoords() && useTextures){
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
-}
-
-//----------------------------------------------------------
 void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
 		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->startSmoothing();
 #ifndef TARGET_OPENGLES
-		glPushAttrib(GL_POLYGON_BIT);
 		glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
-		draw(vertexData,useColors,useTextures,useNormals);
-		glPopAttrib(); //TODO: GLES doesnt support polygon mode, add renderType to gl renderer?
+		if(vertexData.getNumVertices()){
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), &vertexData.getVerticesPointer()->x);
+		}
+		if(vertexData.getNumNormals() && useNormals){
+			glEnableClientState(GL_NORMAL_ARRAY);
+			glNormalPointer(GL_FLOAT, sizeof(ofVec3f), &vertexData.getNormalsPointer()->x);
+		}
+		if(vertexData.getNumColors() && useColors){
+			glEnableClientState(GL_COLOR_ARRAY);
+			glColorPointer(4,GL_FLOAT, sizeof(ofFloatColor), &vertexData.getColorsPointer()->r);
+		}
+
+		if(vertexData.getNumTexCoords() && useTextures){
+			set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+			for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+				glActiveTexture(GL_TEXTURE0+*textureLocation);
+				glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+			}
+			glActiveTexture(GL_TEXTURE0);
+			glClientActiveTexture(GL_TEXTURE0);
+		}
+
+		if(vertexData.getNumIndices()){
+	#ifdef TARGET_OPENGLES
+			glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_SHORT,vertexData.getIndexPointer());
+	#else
+			glDrawElements(ofGetGLPrimitiveMode(vertexData.getMode()), vertexData.getNumIndices(),GL_UNSIGNED_INT,vertexData.getIndexPointer());
+	#endif
+		}else{
+			glDrawArrays(ofGetGLPrimitiveMode(vertexData.getMode()), 0, vertexData.getNumVertices());
+		}
+
+		if(vertexData.getNumColors() && useColors){
+			glDisableClientState(GL_COLOR_ARRAY);
+		}
+		if(vertexData.getNumNormals() && useNormals){
+			glDisableClientState(GL_NORMAL_ARRAY);
+		}
+		if(vertexData.getNumTexCoords() && useTextures){
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		}
+		glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_FILL : GL_LINE);
 #else
 		if(vertexData.getNumVertices()){
 			glEnableClientState(GL_VERTEX_ARRAY);
@@ -186,7 +180,6 @@ void ofGLRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode render
 	if(mesh.getNumVertices()==0) return;
 	GLuint mode = ofGetGLPrimitiveMode(mesh.getMode());
 #ifndef TARGET_OPENGLES
-	glPushAttrib(GL_POLYGON_BIT);
 	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(renderType));
 	if(mesh.getNumIndices() && renderType!=OF_MESH_POINTS){
 		if (primCount <= 1) {
@@ -201,7 +194,7 @@ void ofGLRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRenderMode render
 			drawInstanced(mesh.getVbo(),mode,0,mesh.getNumVertices(),primCount);
 		}
 	}
-	glPopAttrib(); //TODO: GLES doesnt support polygon mode, add renderType to gl renderer?
+	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_FILL : GL_LINE);
 #else
 	if(renderType == OF_MESH_POINTS){
 		draw(mesh.getVbo(),GL_POINTS,0,mesh.getNumVertices());
@@ -292,7 +285,7 @@ void ofGLRenderer::draw(const ofImage & image, float x, float y, float z, float 
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
 			const_cast<ofGLRenderer*>(this)->bind(tex,0);
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 			const_cast<ofGLRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLRenderer") << "drawing an unallocated texture";
@@ -306,7 +299,7 @@ void ofGLRenderer::draw(const ofFloatImage & image, float x, float y, float z, f
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
 			const_cast<ofGLRenderer*>(this)->bind(tex,0);
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 			const_cast<ofGLRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
@@ -320,7 +313,7 @@ void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, f
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
 			const_cast<ofGLRenderer*>(this)->bind(tex,0);
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 			const_cast<ofGLRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
@@ -332,7 +325,7 @@ void ofGLRenderer::draw(const ofShortImage & image, float x, float y, float z, f
 void ofGLRenderer::draw(const ofTexture & tex, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{
 	if(tex.isAllocated()) {
 		const_cast<ofGLRenderer*>(this)->bind(tex,0);
-		draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+		draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 		const_cast<ofGLRenderer*>(this)->unbind(tex,0);
 	} else {
 		ofLogWarning("ofGLRenderer") << "draw(): texture is not allocated";
@@ -343,7 +336,7 @@ void ofGLRenderer::draw(const ofTexture & tex, float x, float y, float z, float 
 void ofGLRenderer::draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const{
 	if(video.isInitialized() && video.isUsingTexture()){
 		const_cast<ofGLRenderer*>(this)->bind(video);
-		draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,video.getWidth(),video.getHeight(),isVFlipped(),currentStyle.rectMode),false,true,false);
+		draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,video.getWidth(),video.getHeight(),isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 		const_cast<ofGLRenderer*>(this)->unbind(video);
 	}
 }
@@ -1083,9 +1076,17 @@ void ofGLRenderer::setFillMode(ofFillFlag fill){
 	if(currentStyle.bFill){
 		path.setFilled(true);
 		path.setStrokeWidth(0);
+		#ifndef TARGET_OPENGLES
+			// GLES does not support glPolygonMode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		#endif
 	}else{
 		path.setFilled(false);
 		path.setStrokeWidth(currentStyle.lineWidth);
+		#ifndef TARGET_OPENGLES
+			// GLES does not support glPolygonMode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		#endif
 	}
 }
 

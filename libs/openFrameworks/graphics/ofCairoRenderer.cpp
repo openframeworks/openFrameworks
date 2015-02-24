@@ -324,14 +324,17 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec) const{
 	return vec;
 }
 
-void ofCairoRenderer::draw(const ofMesh & primitive, bool useColors, bool useTextures, bool useNormals) const{
+void ofCairoRenderer::draw(const ofMesh & primitive, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
+    if(useColors || useTextures || useNormals){
+        ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support colors, textures, or normals. drawing wireframe ...";
+    }
 	if(primitive.getNumVertices() == 0){
 		return;
 	}
 	if(primitive.getNumIndices() == 0){
 		ofMesh indexedMesh = primitive;
 		indexedMesh.setupIndicesAuto();
-		draw(indexedMesh, useColors, useTextures, useNormals);
+		draw(indexedMesh, mode, useColors, useTextures, useNormals);
 		return;
 	}
 	cairo_new_path(cr);
@@ -393,13 +396,6 @@ void ofCairoRenderer::draw(const ofMesh & primitive, bool useColors, bool useTex
 
 		cairo_stroke( cr );
 	}
-}
-
-void ofCairoRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
-    if(useColors || useTextures || useNormals){
-        ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support colors, textures, or normals. drawing wireframe ...";
-    }
-	draw(vertexData,false,false,false);
 }
 
 //----------------------------------------------------------

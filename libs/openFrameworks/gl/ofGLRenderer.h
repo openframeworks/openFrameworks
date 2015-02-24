@@ -29,7 +29,6 @@ public:
 
 	using ofBaseRenderer::draw;
 	using ofBaseGLRenderer::draw;
-	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
     void draw(const ofNode& model) const;
