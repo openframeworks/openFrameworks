@@ -121,6 +121,9 @@ CORE ADDONS
 ### ofxSynth
     - Removed, see ofxMaxim for a replacement (https://github.com/micknoise/Maximilian)
 
+### ofxKinect
+    / Bugfix for kinects not keeping their IDs when using multiple kinects. 
+
 OF 0.8.4
 ========
 

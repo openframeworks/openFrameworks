@@ -187,13 +187,20 @@ void ofxKinect::setRegistration(bool bUseRegistration) {
 }
 
 //--------------------------------------------------------------------
-bool ofxKinect::open(int id) {
+bool ofxKinect::open(int deviceIndex) {
 	if(!bGrabberInited) {
 		ofLogWarning("ofxKinect") << "open(): cannot open, init not called";
 		return false;
 	}
 
-	if(!kinectContext.open(*this, id)) {
+    //we need to find the device id from the device list index.
+    //as the first device id could be 1 and not 0 when the device list is sorted by serial 
+    int deviceIDFromIndex = -1;
+    if( deviceIndex > -1 ){
+        deviceIDFromIndex = kinectContext.getDeviceId(deviceIndex);
+    }
+    
+	if(!kinectContext.open(*this, deviceIDFromIndex)) {
 		return false;
 	}
 
@@ -1099,6 +1106,23 @@ int ofxKinectContext::getDeviceIndex(string serial) {
 	for(unsigned int i = 0; i < deviceList.size(); ++i) {
 		if(deviceList[i].serial == serial)
 			return i;
+	}
+	return -1;
+}
+
+
+int ofxKinectContext::getDeviceId(int index) {
+    if( index >= 0 && index < deviceList.size() ){
+        return deviceList[index].id;
+    }
+	return -1;
+}
+
+int ofxKinectContext::getDeviceId(string serial){
+	for(unsigned int i = 0; i < deviceList.size(); ++i) {
+		if(deviceList[i].serial == serial){
+			return deviceList[i].id;
+        }
 	}
 	return -1;
 }
