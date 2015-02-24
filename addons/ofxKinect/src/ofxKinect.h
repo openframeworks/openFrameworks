@@ -85,11 +85,11 @@ public:
 
 	/// open the connection and start grabbing images
 	///
-	/// set the id to choose a kinect, see numAvailableDevices()
-	/// if you don't set the id (ie id=-1), the first available kinect will be used
+	/// set the deviceIndex to choose a kinect, see numAvailableDevices()
+	/// if you don't set the index (ie index=-1), the first available kinect will be used
 	///
-	/// note: this is the freenct bus id and may change each time the app is run
-	bool open(int id=-1);
+	/// note: this has changed so that a deviceIndex of 0 will also open the same device, regardless of the order in which it was plugged in
+	bool open(int deviceIndex=-1);
 	
 	/// open using a kinect unique serial number
 	///
@@ -470,6 +470,14 @@ public:
 	/// get the deviceList index from an id
 	/// returns -1 if not found
 	int getDeviceIndex(string serial);
+
+	/// get the deviceList id from an index
+	/// returns -1 if not found
+    int getDeviceId(int index);
+
+	/// get the deviceList id from a serial
+	/// returns -1 if not found
+    int getDeviceId(string serial);
 
 	/// is a device with this id already connected?
 	bool isConnected(int id);
