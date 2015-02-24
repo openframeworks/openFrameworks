@@ -200,6 +200,7 @@ private:
 	ofAppGLFWWindow(ofAppGLFWWindow & w){};
 	ofAppGLFWWindow & operator=(ofAppGLFWWindow & w){return w;};
 
+	static ofAppGLFWWindow * setCurrent(GLFWwindow* windowP);
 	static void 	mouse_cb(GLFWwindow* windowP_, int button, int state, int mods);
 	static void 	motion_cb(GLFWwindow* windowP_, double x, double y);
 	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, unsigned int codepoint, int action, int mods);

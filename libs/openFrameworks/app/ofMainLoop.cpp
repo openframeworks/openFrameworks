@@ -172,6 +172,22 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
 	return currentWindow;
 }
 
+void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
+	currentWindow = window;
+}
+
+void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
+	if(currentWindow.get() == window){
+		return;
+	}
+	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
+		if(i->first.get() == window){
+			currentWindow = i->first;
+			break;
+		}
+	}
+}
+
 shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){
 	return windowsApps[currentWindow];
 }
