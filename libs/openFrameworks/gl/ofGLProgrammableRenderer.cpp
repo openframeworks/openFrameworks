@@ -111,11 +111,6 @@ void ofGLProgrammableRenderer::finishRender() {
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)  const{
-	draw(vertexData, OF_MESH_FILL, useColors, useTextures, useNormals); // tig: use default mode if no render mode specified.
-}
-
-//----------------------------------------------------------
 void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{
 	if (vertexData.getVertices().empty()) return;
 	
@@ -257,7 +252,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 	// ideally the glPolygonMode (or the polygon draw mode) should be part of ofStyle so that we can keep track
 	// of its state on the client side...
 
-	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_LINE : GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_FILL : GL_LINE);
 #else
 	if(renderType == OF_MESH_POINTS){
 		draw(mesh.getVbo(),GL_POINTS,0,mesh.getNumVertices());
@@ -362,7 +357,7 @@ void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, flo
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
 			const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 			const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
@@ -377,7 +372,7 @@ void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
 			const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 			const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
@@ -392,7 +387,7 @@ void ofGLProgrammableRenderer::draw(const ofShortImage & image, float x, float y
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
 			const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 			const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
@@ -405,7 +400,7 @@ void ofGLProgrammableRenderer::draw(const ofTexture & tex, float x, float y, flo
 	const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 	if(tex.isAllocated()) {
 		const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
-		draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+		draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 		const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 	} else {
 		ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
@@ -418,7 +413,7 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 		return;
 	}
 	const_cast<ofGLProgrammableRenderer*>(this)->bind(video);
-	draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,w,h,isVFlipped(),currentStyle.rectMode),false,true,false);
+	draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,w,h,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 	const_cast<ofGLProgrammableRenderer*>(this)->unbind(video);
 }
 

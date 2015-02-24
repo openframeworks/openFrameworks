@@ -55,12 +55,6 @@ public:
 		 }
 	 }
 
-	 void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(vertexData,useColors, useTextures, useNormals);
-		 }
-	 }
-
 	 void draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(vertexData,mode,useColors,useTextures,useNormals);
