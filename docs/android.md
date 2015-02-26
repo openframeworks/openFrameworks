@@ -22,7 +22,7 @@ Setting up openFrameworks with Android Studio is fairly straightforward. The bas
 
 ### Install Android Studio and the SDK
 
-Download and install Android Studio from http://tools.android.com/download/studio/canary/latest (you need Android Studio 0.9.0 or higher). It should come with (or automatically install) a recent SDK, though you can customize the SDK version later from within Android Studio using **Tools ➞ Android ➞ SDK Manager**.
+Download and install Android Studio from http://tools.android.com/download/studio/stable (you need Android Studio 1.0 or higher). It should come with (or automatically install) a recent SDK, though you can customize the SDK version later from within Android Studio using **Tools ➞ Android ➞ SDK Manager**.
 
 In the event that Android Studio does not come with an SDK, you can install it from http://developer.android.com/sdk/index.html (under "Get the SDK for an existing IDE").
 
@@ -39,6 +39,8 @@ Here are download links for r9d, which has been tested and works fine:
 - Linux 32-bit (x86): http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86.tar.bz2
 - Linux 64-bit (x86): http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86_64.tar.bz2 
 
+On Windows, you will also need to install MinGW in order to build openFrameworks. MinGW provides some essential build tools which are not included in the NDK. Follow just the "Installing the MinGW and Msys" instructions on this page: http://www.multigesture.net/articles/how-to-install-mingw-msys-and-eclipse-on-windows/.
+
 ### Download openFrameworks
 
 Download it from the downloads page:
@@ -49,7 +51,7 @@ You may also check out the openFrameworks source from GitHub (under master branc
 
 ### Import the project
 
-At the Android Studio welcome screen select **Import Non-Android Studio project**, or use the **File ➞ Import Project** menu item. Browse to  the `settings.gradle` file in the `libs/openFrameworksCompiled/project/android` directory. Accept all the prompts and wait for Android Studio to set up the project.
+At the Android Studio welcome screen select **Import Project**, or use the **File ➞ Import Project** menu item. Browse to  the `settings.gradle` file in the `libs/openFrameworksCompiled/project/android` directory. Accept all the prompts and wait for Android Studio to set up the project.
 
 At this point you will get an error about the NDK not being configured. Onto the next step...
 

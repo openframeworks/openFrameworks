@@ -453,7 +453,8 @@ public:
 
 	//needs implementing
 	virtual bool				load(string name) = 0;
-
+	virtual void				loadAsync(string name);
+	
 	virtual void				play() = 0;
 	virtual void				stop() = 0;
 	virtual ofTexture *			getTexturePtr(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
@@ -501,7 +502,6 @@ public:
 
 	virtual void startRender() = 0;
 	virtual void finishRender() = 0;
-	virtual void update()=0;
 
 	virtual void draw(const ofPolyline & poly) const=0;
 	virtual void draw(const ofPath & shape) const=0;
@@ -514,7 +514,6 @@ public:
 	virtual void draw(const ofMesh & mesh, ofPolyRenderMode renderType) const{
 		draw(mesh,renderType,mesh.usingColors(),mesh.usingTextures(),mesh.usingNormals());
 	}
-	virtual void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const=0;
 	virtual void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const=0;
 	virtual void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const=0;
 	virtual void draw(const ofNode& model) const=0;
@@ -838,15 +837,20 @@ public:
 	using ofBaseRenderer::bind;
 	using ofBaseRenderer::unbind;
 	virtual void bind(const ofBaseMaterial & material)=0;
-	virtual void bind(const ofFbo & fbo, bool setupPerspective)=0;
 	virtual void bind(const ofShader & shader)=0;
 	virtual void bind(const ofTexture & texture, int location)=0;
 	virtual void bind(const ofBaseVideoDraws & video)=0;
 	virtual void unbind(const ofBaseMaterial & material)=0;
-	virtual void unbind(const ofFbo & fbo)=0;
 	virtual void unbind(const ofShader & shader)=0;
 	virtual void unbind(const ofTexture & texture, int location)=0;
 	virtual void unbind(const ofBaseVideoDraws & video)=0;
+
+	virtual const GLuint& getCurrentFramebufferId() const=0; ///< return id of ofFbo currently bound to renderer
+	virtual void bind(const ofFbo & fbo)=0;
+	virtual void unbind(const ofFbo & fbo)=0;
+	virtual void begin(const ofFbo & fbo, bool setupPerspective)=0;
+	virtual void end(const ofFbo & fbo)=0;
+
 };
 
 
