@@ -71,7 +71,6 @@ function copy() {
 
 	rm -rf $1/lib/$TYPE/*
 	
-	
 	# libs
 	if [ "$TYPE" == "osx" ] ; then
 		mkdir -p $1/lib/$TYPE

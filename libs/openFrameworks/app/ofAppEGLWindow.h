@@ -31,6 +31,10 @@
 #include "ofAppBaseWindow.h"
 #include "ofThread.h"
 #include "ofImage.h"
+#include "ofBaseTypes.h"
+#include "ofEvents.h"
+#include "ofConstants.h"
+#include "ofTypes.h"
 
 // include includes for both native and X11 possibilities
 #include <libudev.h>
@@ -72,16 +76,25 @@ public:
 	struct Settings;
 
 	ofAppEGLWindow();
-	ofAppEGLWindow(Settings settings);
 	virtual ~ofAppEGLWindow();
 
-    void setThreadTimeout(long timeOut){ threadTimeout = timeOut; }
-    void setGLESVersion(int glesVersion);
-	virtual void setupOpenGL(int w, int h, ofWindowMode screenMode);
+	static void loop(){};
+	static bool doesLoop(){ return false; }
+	static bool allowsMultiWindow(){ return false; }
+	static bool needsPolling(){ return true; }
+	static void pollEvents();
 
-	virtual void initializeWindow();
-	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr);
-	virtual void windowShouldClose();
+	void setup(const Settings & settings);
+	void setup(const ofGLESWindowSettings & settings);
+	void update();
+	void draw();
+	void close();
+	void makeCurrent();
+
+	ofCoreEvents & events();
+	shared_ptr<ofBaseRenderer> & renderer();
+
+    void setThreadTimeout(long timeOut){ threadTimeout = timeOut; }
 
 	virtual void hideCursor();
 	virtual void showCursor();
@@ -113,7 +126,7 @@ public:
 
 	virtual void	setVerticalSync(bool enabled);
 	
-	struct Settings {
+	struct Settings: public ofGLESWindowSettings {
 		ofAppEGLWindowType eglWindowPreference;  // what window type is preferred?
 		EGLint eglWindowOpacity; // 0-255 window alpha value
 
@@ -127,6 +140,7 @@ public:
 		int layer;
 
 		Settings();
+		Settings(const ofGLESWindowSettings & settings);
 	};
 
 	EGLDisplay getEglDisplay() const;
@@ -145,11 +159,6 @@ public:
 
 
 protected:
-	void init(Settings settings = Settings());
-
-	void idle();
-	void display();
-
 	void setWindowRect(const ofRectangle& requestedWindowRect);
 
 
@@ -162,8 +171,6 @@ protected:
 	int getWindowWidth();
 	int getWindowHeight();
 
-	bool     terminate;
-
 	ofWindowMode windowMode;
 	bool     bNewScreenMode;
 	int      buttonInUse;
@@ -173,7 +180,6 @@ protected:
 	string   eglDisplayString;
 	int      nFramesSinceWindowResized;
 	ofOrientation orientation;
-	ofBaseApp *  ofAppPtr;
 
 
 	void threadedFunction();
@@ -286,7 +292,7 @@ protected:
 	void readNativeKeyboardEvents();
 	void readNativeUDevEvents();
 
-	void handleX11Event(const XEvent& event);
+	static void handleX11Event(const XEvent& event);
 
 private:
 	Settings 			settings;
@@ -294,4 +300,7 @@ private:
 	bool keyboardDetected;
 	bool mouseDetected;
 	long threadTimeout;
+	ofCoreEvents coreEvents;
+	shared_ptr<ofBaseRenderer> currentRenderer;
+	static ofAppEGLWindow * instance;
 };

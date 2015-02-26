@@ -222,7 +222,7 @@ template<typename PixelType>
 void ofPixels_<PixelType>::copyFrom(const ofPixels_<PixelType> & mom){
 	if(mom.isAllocated()) {
 		allocate(mom.getWidth(), mom.getHeight(), mom.getPixelFormat());
-		memcpy(pixels, mom.getData(), mom.size() * sizeof(PixelType));
+		memcpy(pixels, mom.getData(), getTotalBytes());
 	}
 }
 
@@ -300,7 +300,7 @@ void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels,int w, in
 	width= w;
 	height = h;
 
-	pixelsSize = bytesFromPixelFormat<PixelType>(w,h,_pixelFormat);
+	pixelsSize = bytesFromPixelFormat<PixelType>(w,h,_pixelFormat) / sizeof(PixelType);
 
 	pixels = newPixels;
 	pixelsOwner = false;
@@ -386,7 +386,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 
 	int newSize = bytesFromPixelFormat<PixelType>(w,h,format);
 	//we check if we are already allocated at the right size
-	if(bAllocated && newSize==size()){
+	if(bAllocated && newSize==getTotalBytes()){
         pixelFormat = format;
         width = w;
         height = h;
@@ -400,7 +400,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 	width 		= w;
 	height 		= h;
 
-	pixelsSize = newSize;
+	pixelsSize = newSize / sizeof(PixelType);
 
 	pixels = new PixelType[newSize];
 	bAllocated = true;

@@ -32,10 +32,8 @@ public:
 
 	void setCurrentFBO(const ofFbo * fbo);
     
-	void update();
 	using ofBaseRenderer::draw;
 	using ofBaseGLRenderer::draw;
-	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
     void draw(const ofNode& node) const;
@@ -183,17 +181,23 @@ public:
 	const ofShader & getCurrentShader() const;
 
 	void bind(const ofBaseMaterial & material);
-	void bind(const ofFbo & fbo, bool setupPerspective);
 	void bind(const ofShader & shader);
 	void bind(const ofTexture & texture, int location);
 	void bind(const ofBaseVideoDraws & video);
 	void bind(const ofCamera & camera, const ofRectangle & viewport);
 	void unbind(const ofBaseMaterial & material);
-	void unbind(const ofFbo & fbo);
 	void unbind(const ofShader & shader);
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofBaseVideoDraws & video);
 	void unbind(const ofCamera & camera);
+
+	void bind(const ofFbo & fbo);
+	void unbind(const ofFbo & fbo);
+
+	const GLuint& getCurrentFramebufferId() const { return currentFramebufferId; };
+
+	void begin(const ofFbo & fbo, bool setupPerspective);
+	void end(const ofFbo & fbo);
 
 	ofStyle getStyle() const;
 	void pushStyle();
@@ -234,6 +238,7 @@ public:
 
 	const of3dGraphics & get3dGraphics() const;
 	of3dGraphics & get3dGraphics();
+
 private:
 
 
@@ -282,7 +287,6 @@ private:
 	ofPath path;
 	const ofAppBaseWindow * window;
 
-
 	ofShader defaultTexRectColor;
 	ofShader defaultTexRectNoColor;
 	ofShader defaultTex2DColor;
@@ -301,4 +305,17 @@ private:
 	ofShader shaderNV12Rect;
 	ofShader shaderNV21Rect;
 	ofShader shaderPlanarYUVRect;
+
+	//void setDefaultFramebufferId(const GLuint& fboId_); ///< windowing systems might use this to set the default framebuffer for this renderer.
+
+	//void pushFramebufferId(); // pushes currentFramebuffer onto framebufferStack
+	//const GLuint& popFramebufferId(); /// returns topmost element in framebufferIdStack or 0, removes topmost element from stack.
+	//const GLuint& getFramebufferId(); ///< returns current target bound to GL_FRAMEBUFFER_BINDING, initially set to defaultFramebufferId
+	//void setFramebufferId(const GLuint& fboId_); // sets the current framebuffer id
+
+	// framebuffer binding state
+	deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
+	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
+	GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
+
 };

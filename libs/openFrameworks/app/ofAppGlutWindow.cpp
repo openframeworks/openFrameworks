@@ -777,7 +777,6 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 
 //------------------------------------------------------------
 void ofAppGlutWindow::idle_cb(void) {
-	instance->currentRenderer->update();
 	instance->events().notifyUpdate();
 
 	glutPostRedisplay();

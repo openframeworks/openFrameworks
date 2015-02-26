@@ -116,6 +116,12 @@ void ofAppGLFWWindow::setup(const ofGLWindowSettings & settings){
 }
 
 void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
+	if(windowP){
+		ofLogError() << "window already setup, probably you are mixing old and new style setup";
+		ofLogError() << "call only ofCreateWindow(settings) or ofSetupOpenGL(...)";
+		ofLogError() << "calling window->setup() after ofCreateWindow() is not necesary and won't do anything";
+		return;
+	}
 	settings = _settings;
 
 	if(!glfwInit( )){
@@ -150,11 +156,13 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer);
 		}
 	#else
-		glfwWindowHint(GLFW_CLIENT_API,GLFW_OPENGL_API);
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.glVersionMajor);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.glVersionMinor);
-		if((settings.glVersionMajor>=3 && settings.glVersionMinor>=2) || settings.glVersionMajor>=4){
+		if((settings.glVersionMajor==3 && settings.glVersionMinor>=2) || settings.glVersionMajor>=4){
 			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		}
+		if(settings.glVersionMajor>=3){
 			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 			currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
 		}else{
@@ -249,7 +257,11 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
     ofLogVerbose() << "GL Version:" << glGetString(GL_VERSION);
 
     if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
+#ifndef TARGET_OPENGLES
     	static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glVersionMajor,settings.glVersionMinor);
+#else
+    	static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersion,0);
+#endif
     }else{
     	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
     }
@@ -277,7 +289,7 @@ void ofAppGLFWWindow::setWindowIcon(const string & path){
 void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	iconSet = true;
 	int length = 2+iconPixels.getWidth()*iconPixels.getHeight();
-	unsigned long * buffer = new unsigned long[length];
+	vector<unsigned long> buffer(length);
 	buffer[0]=iconPixels.getWidth();
 	buffer[1]=iconPixels.getHeight();
 	for(int i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
@@ -288,8 +300,7 @@ void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	}
 
 	XChangeProperty(getX11Display(), getX11Window(), XInternAtom(getX11Display(), "_NET_WM_ICON", False), XA_CARDINAL, 32,
-						 PropModeReplace,  (const unsigned char*)buffer,  length);
-	delete[] buffer;
+						 PropModeReplace,  (const unsigned char*)buffer.data(),  length);
 	XFlush(getX11Display());
 }
 #endif
@@ -306,30 +317,11 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
 
 //--------------------------------------------
 void ofAppGLFWWindow::update(){
-	glfwMakeContextCurrent(windowP);
-	glfwPollEvents();
-	currentRenderer->update();
 	events().notifyUpdate();
 }
 
 //--------------------------------------------
 void ofAppGLFWWindow::draw(){
-	display();
-}
-
-//--------------------------------------------
-bool ofAppGLFWWindow::getWindowShouldClose(){
-	return glfwWindowShouldClose(windowP);
-}
-
-//--------------------------------------------
-void ofAppGLFWWindow::setWindowShouldClose(){
-	glfwSetWindowShouldClose(windowP,1);
-	events().notifyExit();
-}
-
-//------------------------------------------------------------
-void ofAppGLFWWindow::display(void){
 	currentRenderer->startRender();
 	if( bEnableSetupScreen ) currentRenderer->setupScreen();
 
@@ -372,8 +364,17 @@ void ofAppGLFWWindow::display(void){
 	currentRenderer->finishRender();
 
 	nFramesSinceWindowResized++;
+}
 
+//--------------------------------------------
+bool ofAppGLFWWindow::getWindowShouldClose(){
+	return glfwWindowShouldClose(windowP);
+}
 
+//--------------------------------------------
+void ofAppGLFWWindow::setWindowShouldClose(){
+	glfwSetWindowShouldClose(windowP,1);
+	events().notifyExit();
 }
 
 //------------------------------------------------------------
@@ -854,9 +855,19 @@ static void rotateMouseXY(ofOrientation orientation, int w, int h, double &x, do
 }
 
 //------------------------------------------------------------
-void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
+ofAppGLFWWindow * ofAppGLFWWindow::setCurrent(GLFWwindow* windowP){
+	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP));
+	shared_ptr<ofMainLoop> mainLoop = ofGetMainLoop();
+	if(mainLoop){
+		mainLoop->setCurrentWindow(instance);
+	}
+	instance->makeCurrent();
+	return instance;
+}
 
-	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+//------------------------------------------------------------
+void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int mods) {
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 #ifdef TARGET_OSX
     //we do this as unlike glut, glfw doesn't report right click for ctrl click or middle click for alt click 
     if( instance->events().getKeyPressed(OF_KEY_CONTROL) && button == GLFW_MOUSE_BUTTON_LEFT){
@@ -893,7 +904,7 @@ void ofAppGLFWWindow::mouse_cb(GLFWwindow* windowP_, int button, int state, int 
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
-	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
 
 	if(!instance->buttonPressed){
@@ -905,14 +916,14 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::scroll_cb(GLFWwindow* windowP_, double x, double y) {
-	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	rotateMouseXY(instance->orientation, instance->getWidth(), instance->getHeight(), x, y);
 	instance->events().notifyMouseScrolled(x, y);
 }
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString) {
-	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	ofDragInfo drag;
 	drag.position.set(instance->events().getMouseX(), instance->events().getMouseY());
 	drag.files.resize(numFiles);
@@ -1041,7 +1052,7 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 			break;
 	}
 
-	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	if(action == GLFW_PRESS || action == GLFW_REPEAT){
 		instance->events().notifyKeyPressed(key,keycode,scancode,codepoint);
 	}else if (action == GLFW_RELEASE){
@@ -1051,7 +1062,7 @@ void ofAppGLFWWindow::keyboard_cb(GLFWwindow* windowP_, int keycode, int scancod
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
-	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->windowW = w;
 	instance->windowH = h;
 	instance->events().notifyWindowResized(w*instance->pixelScreenCoordScale, h*instance->pixelScreenCoordScale);
@@ -1061,7 +1072,7 @@ void ofAppGLFWWindow::resize_cb(GLFWwindow* windowP_,int w, int h) {
 
 //--------------------------------------------
 void ofAppGLFWWindow::exit_cb(GLFWwindow* windowP_){
-	ofAppGLFWWindow * instance = static_cast<ofAppGLFWWindow *>(glfwGetWindowUserPointer(windowP_));
+	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	instance->events().notifyExit();
 }
 
@@ -1124,6 +1135,11 @@ void ofAppGLFWWindow::iconify(bool bIconify){
 		glfwRestoreWindow(windowP);
 }
 
+
+
+void ofAppGLFWWindow::makeCurrent(){
+	glfwMakeContextCurrent(windowP);
+}
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 Display* ofAppGLFWWindow::getX11Display(){

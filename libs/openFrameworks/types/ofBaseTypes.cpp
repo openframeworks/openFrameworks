@@ -48,6 +48,11 @@ ofBaseVideoPlayer::~ofBaseVideoPlayer(){
 
 }
 
+void ofBaseVideoPlayer::loadAsync(string name){
+	ofLogWarning("ofBaseVideoPlayer") << "loadAsync() not implemented, loading synchronously";
+	load(name);
+}
+
 //---------------------------------------------------------------------------
 float ofBaseVideoPlayer::getPosition() const {
 	ofLogWarning("ofBaseVideoPlayer") << "getPosition() not implemented";
