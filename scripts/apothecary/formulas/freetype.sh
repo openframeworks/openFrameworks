@@ -201,7 +201,7 @@ function build() {
 			echo "Please stand by..."
 
 			echo "Configuring..."
-			./configure --without-bzip2 --prefix=$IOS_PREFIX --host=$IOS_HOST --enable-static=yes --enable-shared=no \
+			./configure --without-bzip2 --prefix=$IOS_PREFIX --host=$IOS_HOST --with-harfbuzz=no --enable-static=yes --enable-shared=no \
 			CC="$CC" \
 			CFLAGS="$CFLAGS" \
 			CXXFLAGS="$CXXFLAGS" \
