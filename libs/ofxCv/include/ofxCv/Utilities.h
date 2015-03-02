@@ -150,10 +150,10 @@ namespace ofxCv {
 	
 	Mat toCv(Mat& mat);
 	template <class T> inline Mat toCv(ofPixels_<T>& pix) {
-		return Mat(pix.getHeight(), pix.getWidth(), getCvImageType(pix), pix.getPixels(), 0);
+		return Mat(pix.getHeight(), pix.getWidth(), getCvImageType(pix), pix.getData(), 0);
 	}
 	template <class T> inline Mat toCv(ofBaseHasPixels_<T>& img) {
-		return toCv(img.getPixelsRef());
+		return toCv(img.getPixels());
 	}
 	Mat toCv(ofMesh& mesh);
 	Point2f toCv(ofVec2f vec);
