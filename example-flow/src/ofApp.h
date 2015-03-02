@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxAutoControlPanel.h"
 #include "ofxCv.h"
 
 class ofApp : public ofBaseApp{
@@ -17,6 +16,6 @@ public:
 	
 	ofxCv::Flow* curFlow;
 		
-	ofxAutoControlPanel panel;
+    ofxGui gui;
 };
 

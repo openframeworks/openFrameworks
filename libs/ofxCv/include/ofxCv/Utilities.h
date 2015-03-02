@@ -29,9 +29,40 @@ namespace ofxCv {
 	}
 	
 	// depth
+    inline int getDepth(int cvImageType) {
+        return CV_MAT_DEPTH(cvImageType);
+    }
 	inline int getDepth(Mat& mat) {
 		return mat.depth();
 	}
+    inline int getDepth(ofTexture& tex) {
+        // avoid "texture not allocated" warning
+        if(!tex.isAllocated()) {
+            return CV_8U;
+        }
+        int type = tex.getTextureData().glTypeInternal;
+        switch(type) {
+            case GL_RGBA:
+            case GL_RGB:
+            case GL_LUMINANCE_ALPHA:
+            case GL_LUMINANCE:
+                return CV_8U;
+                
+#ifndef TARGET_OPENGLES
+            case GL_RGBA8:
+            case GL_RGB8:
+            case GL_LUMINANCE8:
+            case GL_LUMINANCE8_ALPHA8:
+                return CV_8U;
+                
+            case GL_RGBA32F_ARB:
+            case GL_RGB32F_ARB:
+            case GL_LUMINANCE32F_ARB:
+                return CV_32F;
+#endif
+            default: return 0;
+        }
+    }
 	template <class T> inline int getDepth(ofPixels_<T>& pixels) {
 		switch(pixels.getBytesPerChannel()) {
 			case 4: return CV_32F;
@@ -46,7 +77,7 @@ namespace ofxCv {
 		return CV_8S;
 	}
 	template <class T> inline int getDepth(ofBaseHasPixels_<T>& img) {
-		return getDepth(img.getPixelsRef());
+		return getDepth(img.getPixels());
 	}
 	
 	// channels
@@ -63,11 +94,36 @@ namespace ofxCv {
 	inline int getChannels(Mat& mat) {
 		return mat.channels();
 	}
+    inline int getChannels(ofTexture& tex) {
+        // avoid "texture not allocated" warning
+        if(!tex.isAllocated()) {
+            return GL_RGB;
+        }
+        int type = tex.getTextureData().glTypeInternal;
+        switch(type) {
+            case GL_RGBA: return 4;
+            case GL_RGB: return 3;
+            case GL_LUMINANCE_ALPHA: return 2;
+            case GL_LUMINANCE: return 1;
+                
+#ifndef TARGET_OPENGLES
+            case GL_RGBA8: return 4;
+            case GL_RGB8: return 3;
+            case GL_LUMINANCE8: return 1;
+            case GL_LUMINANCE8_ALPHA8: return 2;
+                
+            case GL_RGBA32F_ARB: return 4;
+            case GL_RGB32F_ARB: return 3;
+            case GL_LUMINANCE32F_ARB: return 1;
+#endif
+            default: return 0;
+        }
+    }
 	template <class T> inline int getChannels(ofPixels_<T>& pixels) {
 		return pixels.getNumChannels();
 	}
 	template <class T> inline int getChannels(ofBaseHasPixels_<T>& img) {
-		return getChannels(img.getPixelsRef());
+		return getChannels(img.getPixels());
 	}
 	
 	// image type
@@ -87,16 +143,27 @@ namespace ofxCv {
 			case 1: default: return OF_IMAGE_GRAYSCALE;
 		}
 	}
-	inline ofImageType getOfImageType(Mat& mat) {
-		return getOfImageType(mat.type());
-	}
-	template <class T> inline ofImageType getOfImageType(T& img) {
-		switch(getChannels(img)) {
-			case 4: return OF_IMAGE_COLOR_ALPHA;
-			case 3: return OF_IMAGE_COLOR;
-			case 1: default: return OF_IMAGE_GRAYSCALE;
-		}
-	}
+    inline int getGlImageType(int cvImageType) {
+        int channels = getChannels(cvImageType);
+        int depth = getDepth(cvImageType);
+        switch(depth) {
+            case CV_8U:
+                switch(channels) {
+                    case 1: return GL_LUMINANCE;
+                    case 3: return GL_RGB;
+                    case 4: return GL_RGBA;
+                }
+#ifndef TARGET_OPENGLES
+            case CV_32F:
+                switch(channels) {
+                    case 1: return GL_LUMINANCE32F_ARB;
+                    case 3: return GL_RGB32F;
+                    case 4: return GL_RGBA32F;
+                }
+#endif
+        }
+        return 0;
+    }
 	
 	// allocation
 	// only happens when necessary
@@ -107,6 +174,13 @@ namespace ofxCv {
 			img.allocate(width, height, getOfImageType(cvType));
 		}
 	}
+    inline void allocate(ofTexture& img, int width, int height, int cvType) {
+        int iw = getWidth(img), ih = getHeight(img);
+        int it = getCvImageType(img);
+        if(iw != width || ih != height || it != cvType) {
+            img.allocate(width, height, getGlImageType(cvType));
+        }
+    }
 	inline void allocate(Mat& img, int width, int height, int cvType) {
 		int iw = getWidth(img), ih = getHeight(img);
 		int it = getCvImageType(img);
@@ -213,6 +287,6 @@ namespace ofxCv {
 	template <class T>
 	void toOf(Mat mat, ofImage_<T>& img) {
 		imitate(img, mat);
-		toOf(mat, img.getPixelsRef());
+		toOf(mat, img.getPixels());
 	}
 }

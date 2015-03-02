@@ -6,14 +6,14 @@ using namespace cv;
 void ofApp::setup() {
 	ofSetVerticalSync(true);
 	ofSetFrameRate(120);
-	finder.setup("haarcascade_frontalface_alt2.xml");
-	finder.setPreset(ObjectFinder::Fast);
+    finder.setup("haarcascade_frontalface_default.xml");
+    finder.setPreset(ObjectFinder::Fast);
 	cam.initGrabber(640, 480);
 }
 
 void ofApp::update() {
 	cam.update();
-	if(cam.isFrameNew()) {
+    if(cam.isFrameNew()) {
 		finder.update(cam);
 	}
 }

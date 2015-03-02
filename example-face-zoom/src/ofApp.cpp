@@ -7,7 +7,7 @@ void ofApp::setup() {
 	ofSetVerticalSync(true);
 	ofSetFrameRate(120);
 	
-	objectFinder.setup(ofToDataPath("haarcascade_frontalface_alt2.xml"));
+	objectFinder.setup(ofToDataPath("haarcascade_frontalface_default.xml"));
 	objectFinder.setPreset(ObjectFinder::Fast);
 	cam.initGrabber(640, 480);
 	cropped.allocate(ofGetWidth(), ofGetHeight(), OF_IMAGE_COLOR);

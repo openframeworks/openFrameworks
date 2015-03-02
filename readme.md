@@ -109,9 +109,13 @@ Because there are cases where in place usage will cause a compile error. More sp
 
 If you are writing a function that returns data, the ofxCv style is to call `imitate()` on the data to be returned from inside the function, allocating it as necessary.
 
-### drawMat()
+### drawMat() vs. toOf()
 
-Sometimes you want to draw a `Mat` to the screen directly, as quickly and easily as possible, and `drawMat()` will do this for you. `drawMat()` is not the most optimal way of drawing images to the screen, because it creates a texture every time it draws. If you want to draw things for efficiently, you should allocate an `ofImage img;`, use `Mat mat = toCv(img);` to treat it as a `Mat`, and then call `img.update()` to upload the modified pixels to the graphics card so you can see the results in `img.draw()`.
+Sometimes you want to draw a `Mat` to the screen directly, as quickly and easily as possible, and `drawMat()` will do this for you. `drawMat()` is not the most optimal way of drawing images to the screen, because it creates a texture every time it draws. If you want to draw things efficiently, you should allocate a texture using `ofImage img;` *once* and draw it using `img.draw()`.
+
+1. Either use `Mat mat = toCv(img);` to treat the `ofImage` as a `Mat`, modify the `mat`, then `img.update()` to upload the modified pixels to the GPU.
+2. Alternatively; call `toOf(mat, img)` each time after modifying the `Mat`. This will only reallocate the texture if necessary, e.g. when the size has changed.
+
 
 # Working with OpenCv 2
 

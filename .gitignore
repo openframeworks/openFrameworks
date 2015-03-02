@@ -1,4 +1,9 @@
 example-pulse/
+example-color-transfer/
+example-svm-smile/
+example-svm/
+example-tree/
+example-tsp/
 
 *.depend
 *.layout
