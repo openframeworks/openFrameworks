@@ -62,7 +62,7 @@ ofxOpenALSoundPlayer::ofxOpenALSoundPlayer() {
 
 ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() { 
 	
-	unloadSound();
+	unload();
 	numSounds--;
 	
 	soundPlayerLock().lock();
@@ -84,7 +84,7 @@ ofxOpenALSoundPlayer::~ofxOpenALSoundPlayer() {
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::loadSound(string fileName, bool stream) {
+bool ofxOpenALSoundPlayer::load(string fileName, bool stream) {
 	
 	if(!SoundEngineInitialized) {
 		ofxOpenALSoundPlayer::initializeSoundEngine();
@@ -122,7 +122,7 @@ bool ofxOpenALSoundPlayer::loadSound(string fileName, bool stream) {
 
 //--------------------------------------------------------------
 
-void ofxOpenALSoundPlayer::unloadSound() {
+void ofxOpenALSoundPlayer::unload() {
 	if(bLoadedOk)
 	{
 		if ( getIsPlaying() )

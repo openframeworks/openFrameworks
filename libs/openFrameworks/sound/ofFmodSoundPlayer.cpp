@@ -142,7 +142,7 @@ ofFmodSoundPlayer::ofFmodSoundPlayer(){
 }
 
 ofFmodSoundPlayer::~ofFmodSoundPlayer(){
-	unloadSound();
+	unload();
 }
 
 
@@ -171,7 +171,7 @@ void ofFmodSoundPlayer::closeFmod(){
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::loadSound(string fileName, bool stream){
+bool ofFmodSoundPlayer::load(string fileName, bool stream){
 
 	fileName = ofToDataPath(fileName);
 
@@ -192,7 +192,7 @@ bool ofFmodSoundPlayer::loadSound(string fileName, bool stream){
 	// & prevent user-created memory leaks
 	// if they call "loadSound" repeatedly, for example
 
-	unloadSound();
+	unload();
 
 	// [3] load sound
 
@@ -215,7 +215,7 @@ bool ofFmodSoundPlayer::loadSound(string fileName, bool stream){
 }
 
 //------------------------------------------------------------
-void ofFmodSoundPlayer::unloadSound(){
+void ofFmodSoundPlayer::unload(){
 	if (bLoadedOk){
 		stop();						// try to stop the sound
 		if(!isStreaming)FMOD_Sound_Release(sound);

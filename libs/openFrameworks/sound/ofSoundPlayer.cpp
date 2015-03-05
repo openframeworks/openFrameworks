@@ -74,18 +74,28 @@ shared_ptr<ofBaseSoundPlayer> ofSoundPlayer::getPlayer(){
 }
 
 //--------------------------------------------------------------------
-bool ofSoundPlayer::loadSound(string fileName, bool stream){
+bool ofSoundPlayer::load(string fileName, bool stream){
 	if( player ){
-		return player->loadSound(fileName, stream);
+		return player->load(fileName, stream);
 	}
 	return false;
 }
 
 //--------------------------------------------------------------------
-void ofSoundPlayer::unloadSound(){
+bool ofSoundPlayer::loadSound(string fileName, bool stream){
+	load(fileName,stream);
+}
+
+//--------------------------------------------------------------------
+void ofSoundPlayer::unload(){
 	if( player ){
-		player->unloadSound();
+		player->unload();
 	}
+}
+
+//--------------------------------------------------------------------
+void ofSoundPlayer::unloadSound(){
+	unload();
 }
 
 //--------------------------------------------------------------------
