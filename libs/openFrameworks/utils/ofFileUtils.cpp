@@ -110,7 +110,8 @@ void ofBuffer::clear(){
 //--------------------------------------------------
 void ofBuffer::allocate(long _size){
 	clear();
-	buffer.resize(_size);
+	//we always add a 0 at the end to avoid problems with strings
+	buffer.resize(_size + 1, 0);
 }
 
 //--------------------------------------------------
