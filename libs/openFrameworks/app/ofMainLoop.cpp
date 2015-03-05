@@ -169,7 +169,7 @@ void ofMainLoop::exit(){
 }
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
-	return currentWindow.lock();
+	return currentWindow;
 }
 
 void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
@@ -177,7 +177,7 @@ void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
 }
 
 void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
-	if(currentWindow.lock().get() == window){
+	if(currentWindow.get() == window){
 		return;
 	}
 	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
@@ -189,11 +189,11 @@ void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
 }
 
 shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){
-	return windowsApps[currentWindow.lock()];
+	return windowsApps[currentWindow];
 }
 
 ofCoreEvents & ofMainLoop::events(){
-	return currentWindow.lock()->events();
+	return currentWindow->events();
 }
 
 void ofMainLoop::shouldClose(int _status){
