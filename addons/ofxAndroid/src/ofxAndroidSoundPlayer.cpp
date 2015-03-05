@@ -42,7 +42,7 @@ ofxAndroidSoundPlayer::~ofxAndroidSoundPlayer(){
 
 
 //------------------------------------------------------------
-bool ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
+bool ofxAndroidSoundPlayer::load(string fileName, bool stream){
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "loadSound(): java SoundPlayer not loaded";
 		return false;
@@ -62,7 +62,7 @@ bool ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
 }
 
 //------------------------------------------------------------
-void ofxAndroidSoundPlayer::unloadSound(){
+void ofxAndroidSoundPlayer::unload(){
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "unloadSound(): java SoundPlayer not loaded";
 		return;

@@ -12,12 +12,12 @@ ofxiOSSoundPlayer::ofxiOSSoundPlayer() {
 }
 
 ofxiOSSoundPlayer::~ofxiOSSoundPlayer() {
-    unloadSound();
+    unload();
 }
 
-bool ofxiOSSoundPlayer::loadSound(string fileName, bool stream) {
+bool ofxiOSSoundPlayer::load(string fileName, bool stream) {
     if(soundPlayer != NULL) {
-        unloadSound();
+        unload();
     }
 
     string filePath = ofToDataPath(fileName);
@@ -27,7 +27,7 @@ bool ofxiOSSoundPlayer::loadSound(string fileName, bool stream) {
     return bOk;
 }
 
-void ofxiOSSoundPlayer::unloadSound() {
+void ofxiOSSoundPlayer::unload() {
     if(soundPlayer != NULL) {
         [(AVSoundPlayer *)soundPlayer unloadSound];
         [(AVSoundPlayer *)soundPlayer release];

@@ -39,8 +39,8 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 		ofFmodSoundPlayer();
 		virtual ~ofFmodSoundPlayer();
 
-		bool loadSound(string fileName, bool stream = false);
-		void unloadSound();
+		bool load(string fileName, bool stream = false);
+		void unload();
 		void play();
 		void stop();
 

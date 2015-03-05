@@ -47,7 +47,7 @@ ofSoundBuffer::~ofSoundBuffer() {
 
 }
 
-void ofSoundBuffer::copyFrom(short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
+void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
 	this->channels = numChannels;
 	this->samplerate = sampleRate;
 	buffer.resize(numFrames * numChannels);
@@ -57,14 +57,33 @@ void ofSoundBuffer::copyFrom(short * shortBuffer, std::size_t numFrames, std::si
 	checkSizeAndChannelsConsistency("copyFrom");
 }
 
-void ofSoundBuffer::copyFrom(float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
+void ofSoundBuffer::copyFrom(const float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
 	this->channels = numChannels;
 	this->samplerate = sampleRate;
 	buffer.assign(floatBuffer, floatBuffer + (numFrames * numChannels));
 	checkSizeAndChannelsConsistency("copyFrom");
 }
 
+void ofSoundBuffer::copyFrom(const vector<short> & shortBuffer, std::size_t numChannels, unsigned int sampleRate){
+	copyFrom(&shortBuffer[0],shortBuffer.size()/numChannels,numChannels,sampleRate);
+}
+
+void ofSoundBuffer::copyFrom(const vector<float> & floatBuffer, std::size_t numChannels, unsigned int sampleRate){
+	copyFrom(&floatBuffer[0],floatBuffer.size()/numChannels,numChannels,sampleRate);
+}
+
+void ofSoundBuffer::toShortPCM(vector<short> & dst) const{
+	dst.resize(size());
+	for(unsigned int i = 0; i < size(); i++){
+		dst[i] = buffer[i]*float(numeric_limits<short>::max());
+	}
+}
+
 vector<float> & ofSoundBuffer::getBuffer(){
+	return buffer;
+}
+
+const vector<float> & ofSoundBuffer::getBuffer() const{
 	return buffer;
 }
 

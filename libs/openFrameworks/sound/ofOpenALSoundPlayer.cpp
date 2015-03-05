@@ -124,7 +124,7 @@ ofOpenALSoundPlayer::ofOpenALSoundPlayer(){
 
 // ----------------------------------------------------------------------------
 ofOpenALSoundPlayer::~ofOpenALSoundPlayer(){
-	unloadSound();
+	unload();
 	kiss_fftr_free(fftCfg);
 	players().erase(this);
 }
@@ -420,7 +420,7 @@ bool ofOpenALSoundPlayer::readFile(string fileName, vector<short> & buffer){
 }
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
+bool ofOpenALSoundPlayer::load(string fileName, bool is_stream){
 
 	fileName = ofToDataPath(fileName);
 
@@ -435,7 +435,7 @@ bool ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 	// & prevent user-created memory leaks
 	// if they call "loadSound" repeatedly, for example
 
-	unloadSound();
+	unload();
 	ALenum format=AL_FORMAT_MONO16;
 	bLoadedOk = false;
 
@@ -631,7 +631,7 @@ void ofOpenALSoundPlayer::update(ofEventArgs & args){
 }
 
 //------------------------------------------------------------
-void ofOpenALSoundPlayer::unloadSound(){
+void ofOpenALSoundPlayer::unload(){
 	stop();
 	ofRemoveListener(ofEvents().update,this,&ofOpenALSoundPlayer::update);
 
