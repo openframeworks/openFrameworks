@@ -83,7 +83,7 @@ bool ofSoundPlayer::load(string fileName, bool stream){
 
 //--------------------------------------------------------------------
 bool ofSoundPlayer::loadSound(string fileName, bool stream){
-	load(fileName,stream);
+	return load(fileName,stream);
 }
 
 //--------------------------------------------------------------------
