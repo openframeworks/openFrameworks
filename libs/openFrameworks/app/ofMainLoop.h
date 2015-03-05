@@ -46,7 +46,7 @@ private:
 	void keyPressed(ofKeyEventArgs & key);
 	map<shared_ptr<ofAppBaseWindow>,shared_ptr<ofBaseApp> > windowsApps;
 	bool bShouldClose;
-	weak_ptr<ofAppBaseWindow> currentWindow;
+	shared_ptr<ofAppBaseWindow> currentWindow;
 	int status;
 	bool allowMultiWindow;
 	void (*windowLoop)(void);
