@@ -98,7 +98,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	bufferSize			= ofNextPow2(_bufferSize);	// must be pow2
 
 	try {
-		audio = shared_ptr<RtAudio>(new RtAudio);
+		audio = shared_ptr<RtAudio>(new RtAudio(RtAudio::LINUX_PULSE));
 	}	catch (RtError &error) {
 		error.printMessage();
 		return false;
@@ -240,6 +240,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 		if( rtStreamPtr->soundInputPtr != NULL ){
 			rtStreamPtr->inputBuffer.copyFrom(fPtrIn, nFramesPerBuffer, nInputChannels, rtStreamPtr->getSampleRate());
 			rtStreamPtr->applySoundStreamOriginInfo(rtStreamPtr->inputBuffer);
+			rtStreamPtr->inputBuffer.setTickCount(rtStreamPtr->tickCount);
 			rtStreamPtr->soundInputPtr->audioIn(rtStreamPtr->inputBuffer);
 		}
 		// [damian] not sure what this is for? assuming it's for underruns? or for when the sound system becomes broken?
@@ -253,6 +254,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 				rtStreamPtr->outputBuffer.setNumChannels(nOutputChannels);
 				rtStreamPtr->outputBuffer.resize(nFramesPerBuffer*nOutputChannels);
 			}
+			rtStreamPtr->outputBuffer.setTickCount(rtStreamPtr->tickCount);
 			rtStreamPtr->applySoundStreamOriginInfo(rtStreamPtr->outputBuffer);
 			rtStreamPtr->soundOutputPtr->audioOut(rtStreamPtr->outputBuffer);
 		}
