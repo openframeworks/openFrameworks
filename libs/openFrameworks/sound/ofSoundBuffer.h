@@ -118,6 +118,7 @@ public:
 	
 	/// return the ID of the device which generated this buffer
 	unsigned int getDeviceID() const { return soundStreamDeviceID; }
+	void setDeviceID(unsigned int id){ soundStreamDeviceID = id; }
 
 	/// access the sample at the given position in the buffer.
 	/// to retrieve the sample for channel channelIndex of frame frameIndex, do the following:
@@ -214,7 +215,6 @@ public:
 	vector<float> & getBuffer();
 	const vector<float> & getBuffer() const;
 
-	friend class ofBaseSoundStream;
 protected:
 
 	// checks that size() and number of channels are consistent, logs a warning if not. returns consistency check result.
@@ -227,5 +227,11 @@ protected:
 	unsigned long long tickCount;
 	int soundStreamDeviceID;
 };
+
+namespace std{
+	void swap(ofSoundBuffer & src, ofSoundBuffer & dst){
+		src.swap(dst);
+	}
+}
 
 #endif /* OFSOUNDBUFFER_H_ */

@@ -29,11 +29,4 @@ class ofBaseSoundStream{
 		virtual int getSampleRate() = 0;
 		virtual int getBufferSize() = 0;
 		virtual int getDeviceID() = 0;
-	
-		// deprecated
-		virtual std::vector<ofSoundDevice> OF_DEPRECATED_MSG("Use printDeviceList instead", listDevices());
-	
-	protected:
-		/// set tickCount and deviceID on the buffer
-		void applySoundStreamOriginInfo( ofSoundBuffer& buffer );
 };

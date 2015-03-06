@@ -98,7 +98,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	bufferSize			= ofNextPow2(_bufferSize);	// must be pow2
 
 	try {
-		audio = shared_ptr<RtAudio>(new RtAudio(RtAudio::LINUX_PULSE));
+		audio = shared_ptr<RtAudio>(new RtAudio());
 	}	catch (RtError &error) {
 		error.printMessage();
 		return false;
@@ -130,6 +130,8 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	options.flags = RTAUDIO_SCHEDULE_REALTIME;
 	options.numberOfBuffers = nBuffers;
 	options.priority = 1;
+	outputBuffer.setDeviceID(outDeviceID);
+	inputBuffer.setDeviceID(inDeviceID);
 
 	try {
 		audio ->openStream( (nOutputChannels>0)?&outputParameters:NULL, (nInputChannels>0)?&inputParameters:NULL, RTAUDIO_FLOAT32,
@@ -239,7 +241,6 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	if(nInputChannels > 0){
 		if( rtStreamPtr->soundInputPtr != NULL ){
 			rtStreamPtr->inputBuffer.copyFrom(fPtrIn, nFramesPerBuffer, nInputChannels, rtStreamPtr->getSampleRate());
-			rtStreamPtr->applySoundStreamOriginInfo(rtStreamPtr->inputBuffer);
 			rtStreamPtr->inputBuffer.setTickCount(rtStreamPtr->tickCount);
 			rtStreamPtr->soundInputPtr->audioIn(rtStreamPtr->inputBuffer);
 		}
@@ -255,7 +256,6 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 				rtStreamPtr->outputBuffer.resize(nFramesPerBuffer*nOutputChannels);
 			}
 			rtStreamPtr->outputBuffer.setTickCount(rtStreamPtr->tickCount);
-			rtStreamPtr->applySoundStreamOriginInfo(rtStreamPtr->outputBuffer);
 			rtStreamPtr->soundOutputPtr->audioOut(rtStreamPtr->outputBuffer);
 		}
 		rtStreamPtr->outputBuffer.copyTo(fPtrOut, nFramesPerBuffer, nOutputChannels,0);
