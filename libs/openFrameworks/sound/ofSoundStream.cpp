@@ -67,7 +67,7 @@ shared_ptr<ofBaseSoundStream> ofSoundStream::getSoundStream(){
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStream::getDeviceList(){
 	if( soundStream ){
-		return soundStream->listDevices();
+		return soundStream->getDeviceList();
 	} else {
 		return vector<ofSoundDevice>();
 	}
