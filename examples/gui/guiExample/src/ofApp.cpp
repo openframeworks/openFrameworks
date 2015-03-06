@@ -19,7 +19,7 @@ void ofApp::setup(){
 	gui.add(ringButton.setup("ring"));
 	gui.add(screenSize.setup("screen size", ""));
 
-	bHide = true;
+	bHide = false;
 
 	ring.loadSound("ring.wav");
 }
@@ -64,7 +64,7 @@ void ofApp::draw(){
 	
 	// auto draw?
 	// should the gui control hiding?
-	if( bHide ){
+	if( !bHide ){
 		gui.draw();
 	}
 }
