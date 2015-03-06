@@ -125,7 +125,7 @@ bool ofxOpenALSoundPlayer::load(string fileName, bool stream) {
 void ofxOpenALSoundPlayer::unload() {
 	if(bLoadedOk)
 	{
-		if ( getIsPlaying() )
+		if ( isPlaying() )
 			stop();
 		
 		bLoadedOk=false;
@@ -225,7 +225,7 @@ void ofxOpenALSoundPlayer::setPaused(bool bP) {
 	if(iAmAnMp3)
 		cerr<<"error, cannot set pause on mp3s in openAL"<<endl; // TODO
 	else {
-		bool isPlaying = getIsPlaying();
+		bool isPlaying = isPlaying();
 		bPaused = bP;
 		
 		if(bPaused && isPlaying)
@@ -287,7 +287,7 @@ void ofxOpenALSoundPlayer::setPositionMS(int ms){
 
 //--------------------------------------------------------------
 
-float ofxOpenALSoundPlayer::getPosition() {
+float ofxOpenALSoundPlayer::getPosition() const {
 	if ( !bLoadedOk ) 
 		return 0;
 
@@ -303,7 +303,7 @@ float ofxOpenALSoundPlayer::getPosition() {
 
 //--------------------------------------------------------------
 
-int ofxOpenALSoundPlayer::getPositionMS() {
+int ofxOpenALSoundPlayer::getPositionMS()  const{
 	if ( !bLoadedOk ) 
 		return 0;
 
@@ -319,7 +319,7 @@ int ofxOpenALSoundPlayer::getPositionMS() {
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::getIsPlaying() {
+bool ofxOpenALSoundPlayer::isPlaying()  const{
 	if ( !bLoadedOk ) 
 		return false;
 
@@ -337,24 +337,24 @@ bool ofxOpenALSoundPlayer::getIsPlaying() {
 
 //--------------------------------------------------------------
 
-float ofxOpenALSoundPlayer::getPitch() {
+float ofxOpenALSoundPlayer::getPitch()  const{
 	return pitch;
 }
 
 //--------------------------------------------------------------
 
-float ofxOpenALSoundPlayer::getPan() {
+float ofxOpenALSoundPlayer::getPan()  const{
 	return pan;
 }
 
 //--------------------------------------------------------------
 
-float ofxOpenALSoundPlayer::getVolume() {
+float ofxOpenALSoundPlayer::getVolume()  const{
     return volume;
 }
 
 //--------------------------------------------------------------
-bool ofxOpenALSoundPlayer::isLoaded() {
+bool ofxOpenALSoundPlayer::isLoaded()  const{
     return bLoadedOk;
 }
 

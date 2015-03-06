@@ -173,10 +173,11 @@ public class OFAndroidSoundPlayer extends OFAndroidObject{
 	}
 	
 	boolean getIsPlaying(){
-		if(stream)
+		if(stream){
 			return player!=null && player.isPlaying();
-		else
+		}else{
 			return bIsPlaying;
+		}
 	}
 	
 	float getSpeed(){

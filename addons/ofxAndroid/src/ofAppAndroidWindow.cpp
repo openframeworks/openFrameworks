@@ -8,6 +8,7 @@
 #include "ofAppAndroidWindow.h"
 
 #include <jni.h>
+#include <queue>
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"

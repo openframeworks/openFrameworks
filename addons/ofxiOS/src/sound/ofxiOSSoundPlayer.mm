@@ -110,49 +110,49 @@ void ofxiOSSoundPlayer::setPositionMS(int positionMS) {
     [(AVSoundPlayer *)soundPlayer positionMs:positionMS];
 }
 
-float ofxiOSSoundPlayer::getPosition() {
+float ofxiOSSoundPlayer::getPosition()  const{
     if(soundPlayer == NULL) {
         return 0;
     }
     return [(AVSoundPlayer *)soundPlayer position];
 }
 
-int ofxiOSSoundPlayer::getPositionMS() {
+int ofxiOSSoundPlayer::getPositionMS() const {
     if(soundPlayer == NULL) {
         return 0;
     }
     return [(AVSoundPlayer *)soundPlayer positionMs];
 }
 
-bool ofxiOSSoundPlayer::getIsPlaying() {
+bool ofxiOSSoundPlayer::isPlaying()  const{
     if(soundPlayer == NULL) {
         return false;
     }
     return [(AVSoundPlayer *)soundPlayer isPlaying];
 }
 
-float ofxiOSSoundPlayer::getSpeed() {
+float ofxiOSSoundPlayer::getSpeed()  const{
     if(soundPlayer == NULL) {
         return 0;
     }
     return [(AVSoundPlayer *)soundPlayer speed];
 }
 
-float ofxiOSSoundPlayer::getPan() {
+float ofxiOSSoundPlayer::getPan()  const{
     if(soundPlayer == NULL) {
         return 0;
     }
     return [(AVSoundPlayer *)soundPlayer pan];
 }
 
-bool ofxiOSSoundPlayer::isLoaded() {
+bool ofxiOSSoundPlayer::isLoaded()  const{
     if(soundPlayer == NULL) {
         return false;
     }
     return [(AVSoundPlayer *)soundPlayer isLoaded];
 }
 
-float ofxiOSSoundPlayer::getVolume() {
+float ofxiOSSoundPlayer::getVolume()  const{
     if(soundPlayer == NULL) {
         return false;
     }
