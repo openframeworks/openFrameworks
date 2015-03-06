@@ -39,7 +39,7 @@ ofxAndroidSoundStream::~ofxAndroidSoundStream(){
 	}
 }
 
-vector<ofSoundDevice> ofxAndroidSoundStream::getDeviceList(){
+vector<ofSoundDevice> ofxAndroidSoundStream::getDeviceList() const{
     ofLogWarning("ofxAndroidSoundStream") << "getDeviceList() isn't implemented on android";
     return vector<ofSoundDevice>();
 }
@@ -170,23 +170,23 @@ void ofxAndroidSoundStream::close(){
 		ofLogError("ofxAndroidSoundStream") << "close(): couldn't get OFAndroidSoundStream instance or stop method";
 }
 
-long unsigned long ofxAndroidSoundStream::getTickCount(){
+long unsigned long ofxAndroidSoundStream::getTickCount() const{
 	return tickCount;
 }
 
-int ofxAndroidSoundStream::getNumInputChannels(){
+int ofxAndroidSoundStream::getNumInputChannels() const{
 	return in_float_buffer.getNumChannels();
 }
 
-int ofxAndroidSoundStream::getNumOutputChannels(){
+int ofxAndroidSoundStream::getNumOutputChannels() const{
 	return out_float_buffer.getNumChannels();
 }
 
-int ofxAndroidSoundStream::getSampleRate(){
+int ofxAndroidSoundStream::getSampleRate() const{
 	return out_float_buffer.getSampleRate();
 }
 
-int ofxAndroidSoundStream::getBufferSize(){
+int ofxAndroidSoundStream::getBufferSize() const{
 	return out_float_buffer.getNumFrames();
 }
 
@@ -282,7 +282,7 @@ int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thi
 	return 0;
 }
 
-int ofxAndroidSoundStream::getMinOutBufferSize(int samplerate, int nchannels){
+int ofxAndroidSoundStream::getMinOutBufferSize(int samplerate, int nchannels) const{
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroidSoundStream");
 
 	if(javaClass==0){
@@ -299,7 +299,7 @@ int ofxAndroidSoundStream::getMinOutBufferSize(int samplerate, int nchannels){
 	return minBuff;
 }
 
-int ofxAndroidSoundStream::getMinInBufferSize(int samplerate, int nchannels){
+int ofxAndroidSoundStream::getMinInBufferSize(int samplerate, int nchannels) const{
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroidSoundStream");
 
 	if(javaClass==0){
@@ -315,7 +315,7 @@ int ofxAndroidSoundStream::getMinInBufferSize(int samplerate, int nchannels){
 	return ofGetJNIEnv()->CallStaticIntMethod(javaClass,getMinBuffSize,samplerate,nchannels);
 }
 
-bool ofxAndroidSoundStream::isHeadPhonesConnected(){
+bool ofxAndroidSoundStream::isHeadPhonesConnected() const{
 	return headphonesConnected;
 }
 

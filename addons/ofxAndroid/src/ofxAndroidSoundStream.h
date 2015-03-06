@@ -12,7 +12,7 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		ofxAndroidSoundStream();
         ~ofxAndroidSoundStream();
 		
-		std::vector<ofSoundDevice> getDeviceList();
+		std::vector<ofSoundDevice> getDeviceList() const;
 		void setDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
@@ -24,21 +24,21 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		void stop();
 		void close();
 		
-		long unsigned long getTickCount();		
+		long unsigned long getTickCount() const;
 
-        int getDeviceID(){return 0;}
-		int getNumInputChannels();
-		int getNumOutputChannels();
-		int getSampleRate();
-		int getBufferSize();
+        int getDeviceID() const{return 0;}
+		int getNumInputChannels() const;
+		int getNumOutputChannels() const;
+		int getSampleRate() const;
+		int getBufferSize() const;
 
 		int androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
 		int androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
 		
-		int getMinOutBufferSize(int samplerate, int nchannels);
-		int getMinInBufferSize(int samplerate, int nchannels);
+		int getMinOutBufferSize(int samplerate, int nchannels) const;
+		int getMinInBufferSize(int samplerate, int nchannels) const;
 
-		bool isHeadPhonesConnected();
+		bool isHeadPhonesConnected() const;
 
 		ofEvent<bool> headphonesConnectedE;
 

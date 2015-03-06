@@ -15,6 +15,10 @@ ofRtAudioSoundStream::ofRtAudioSoundStream(){
 	soundOutputPtr	= NULL;
 	soundInputPtr	= NULL;
 	tickCount= 0;
+	nOutputChannels = 0;
+	nInputChannels = 0;
+	bufferSize = 0;
+	sampleRate = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -23,7 +27,7 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream(){
 }
 
 //------------------------------------------------------------------------------
-vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList(){
+vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList() const{
 	shared_ptr<RtAudio> audioTemp;
 	try {
 		audioTemp = shared_ptr<RtAudio>(new RtAudio());
@@ -62,7 +66,7 @@ void ofRtAudioSoundStream::setDeviceID(int _deviceID){
     inDeviceID = outDeviceID = _deviceID;
 }
 
-int ofRtAudioSoundStream::getDeviceID() {
+int ofRtAudioSoundStream::getDeviceID()  const{
 	return inDeviceID;
 }
 
@@ -192,27 +196,27 @@ void ofRtAudioSoundStream::close(){
 }
 
 //------------------------------------------------------------------------------
-long unsigned long ofRtAudioSoundStream::getTickCount(){
+long unsigned long ofRtAudioSoundStream::getTickCount() const{
 	return tickCount;
 }
 
 //------------------------------------------------------------------------------
-int ofRtAudioSoundStream::getNumInputChannels(){
+int ofRtAudioSoundStream::getNumInputChannels() const{
 	return nInputChannels;
 }
 
 //------------------------------------------------------------------------------
-int ofRtAudioSoundStream::getNumOutputChannels(){
+int ofRtAudioSoundStream::getNumOutputChannels() const{
 	return nOutputChannels;
 }
 
 //------------------------------------------------------------------------------
-int ofRtAudioSoundStream::getSampleRate(){
+int ofRtAudioSoundStream::getSampleRate() const{
 	return sampleRate;
 }
 
 //------------------------------------------------------------------------------
-int ofRtAudioSoundStream::getBufferSize(){
+int ofRtAudioSoundStream::getBufferSize() const{
 	return bufferSize;
 }
 

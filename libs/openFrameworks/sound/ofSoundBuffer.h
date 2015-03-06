@@ -226,9 +226,7 @@ protected:
 };
 
 namespace std{
-	void swap(ofSoundBuffer & src, ofSoundBuffer & dst){
-		src.swap(dst);
-	}
+	void swap(ofSoundBuffer & src, ofSoundBuffer & dst);
 }
 
 #endif /* OFSOUNDBUFFER_H_ */
