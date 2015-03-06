@@ -227,8 +227,14 @@ int ofxAndroidSoundStream::androidInputAudioCallback(JNIEnv*  env, jobject  thiz
 	if(in_buffer == NULL) return 1; // this would imply 'Out of memory' exception
 
 	// 2) Perform input buffer copy (write into OpenFrameworks circular buffer)
-	for(int i=0;i<bufferSize*numChannels;i++){
-		input_buffer.write((float(in_buffer[i]) + 0.5f) * conv_factor);
+	if(out_float_buffer.getNumChannels()>0){
+		for(int i=0;i<bufferSize*numChannels;i++){
+			input_buffer.write((float(in_buffer[i]) + 0.5f) * conv_factor);
+		}
+	}else{
+		in_float_buffer.copyFrom(in_buffer,bufferSize,numChannels,in_float_buffer.getSampleRate());
+		in_float_buffer.setTickCount(tickCount);
+		soundInputPtr->audioIn(in_float_buffer);
 	}
 
 	// 3) Release critical JNI
