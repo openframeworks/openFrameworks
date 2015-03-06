@@ -95,6 +95,8 @@ public:
 	};
 	static InterpolationAlgorithm defaultAlgorithm;  //defaults to Linear for mobile, Hermite for desktop
 
+	void allocate(size_t numSamples, size_t numChannels);
+
 	/// sample rate of the audio in this buffer
 	int getSampleRate() const { return samplerate; }
 	void setSampleRate(int rate);
@@ -109,6 +111,7 @@ public:
 	
 	/// return the tickCount that was assigned by ofSoundStream (if this buffer originated from an ofSoundStream).
 	unsigned long long getTickCount() const { return tickCount; }
+	void setTickCount(unsigned long long tick){ tickCount = tick; }
 	
 	/// return the duration of audio in this buffer in milliseconds (==(getNumFrames()/getSampleRate())*1000)
 	unsigned long getDurationMS() const;
@@ -146,6 +149,7 @@ public:
 	void copyFrom(const vector<float> & floatBuffer, std::size_t numChannels, unsigned int sampleRate);
 
 	void toShortPCM(vector<short> & dst) const;
+	void toShortPCM(short * dst) const;
 
 	/// resize outBuffer to outNumFrames with outNumChannels, and then copy outNumFrames of data from us to outBuffer.
 	/// fromFrame is a frame offset. if we don't have enough source data, loop with fromFrame=0 until we have filled outBuffer.

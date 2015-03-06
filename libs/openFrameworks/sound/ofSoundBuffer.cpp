@@ -79,6 +79,12 @@ void ofSoundBuffer::toShortPCM(vector<short> & dst) const{
 	}
 }
 
+void ofSoundBuffer::toShortPCM(short * dst) const{
+	for(unsigned int i = 0; i < size(); i++){
+		dst[i] = buffer[i]*float(numeric_limits<short>::max());
+	}
+}
+
 vector<float> & ofSoundBuffer::getBuffer(){
 	return buffer;
 }
@@ -98,6 +104,11 @@ void ofSoundBuffer::setNumChannels(int channels){
 
 void ofSoundBuffer::setSampleRate(int rate){
 	samplerate = rate;
+}
+
+void ofSoundBuffer::allocate(size_t numSamples, size_t numChannels){
+	resize(numSamples*numChannels);
+	channels = numChannels;
 }
 
 void ofSoundBuffer::resize(std::size_t samples, float val){
