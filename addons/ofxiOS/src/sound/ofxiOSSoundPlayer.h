@@ -29,13 +29,13 @@ public:
     void setPosition(float pct);
     void setPositionMS(int ms);
     
-    float getPosition();
-    int getPositionMS();
-    bool getIsPlaying();
-    float getSpeed();
-    float getPan();
-    bool isLoaded();
-    float getVolume();
+    float getPosition() const;
+    int getPositionMS() const;
+    bool isPlaying() const;
+    float getSpeed() const;
+    float getPan() const;
+    bool isLoaded() const;
+    float getVolume() const;
     
     void * getAVSoundPlayer();
     

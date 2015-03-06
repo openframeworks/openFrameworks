@@ -22,14 +22,14 @@ public:
 	void setPosition(float pct); // 0 = start, 1 = end;
 	void setPositionMS(int ms);
 
-	float getPosition();
-	int getPositionMS();
-	bool getIsPlaying();
-	float getSpeed();
-	float getPan();
-	bool getIsPaused();
-	float getVolume();
-	bool isLoaded();
+	float getPosition() const;
+	int getPositionMS() const;
+	bool isPlaying() const;
+	float getSpeed() const;
+	float getPan() const;
+	bool isPaused() const;
+	float getVolume() const;
+	bool isLoaded() const;
 
 private:
 	jobject javaSoundPlayer;
