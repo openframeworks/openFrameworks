@@ -84,10 +84,7 @@
 class ofSoundBuffer {
 public:
 	ofSoundBuffer();
-	ofSoundBuffer(const ofSoundBuffer &other);
 	ofSoundBuffer(short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
-	ofSoundBuffer& operator=(ofSoundBuffer other);
-	~ofSoundBuffer();
 
 	enum InterpolationAlgorithm{
 		Linear,
