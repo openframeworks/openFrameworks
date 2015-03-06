@@ -92,9 +92,9 @@ void ofResumeVideoGrabbers(){
 		jobject camera = getCamera(env, javaClass, it->first);
 		((ofxAndroidVideoGrabber*)it->second->getGrabber().get())->loadTexture();
 
-		int texID= it->second->getTextureReference().texData.textureID;
-		int w=it->second->getTextureReference().texData.width;
-		int h=it->second->getTextureReference().texData.height;
+		int texID= it->second->getTexture().texData.textureID;
+		int w=it->second->getTexture().texData.width;
+		int h=it->second->getTexture().texData.height;
 		int framerate= ((ofxAndroidVideoGrabber*)it->second->getGrabber().get())->attemptFramerate;
 		env->CallVoidMethod(camera,javaInitGrabber,w,h,framerate,texID);
 	}

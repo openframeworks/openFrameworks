@@ -13,6 +13,7 @@
 	ofBaseSoundOutput * soundOutputApp;
 	std::shared_ptr<ofSoundBuffer> inputBuffer;
 	std::shared_ptr<ofSoundBuffer> outputBuffer;
+        unsigned long long tickCount;
 }
 
 @end
@@ -26,6 +27,7 @@
         soundOutputApp = NULL;
         inputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
         outputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
+	tickCount = 0;
     }
     return self;
 }
@@ -66,8 +68,10 @@
     if(soundOutputApp) {
 		outputBuffer->setNumChannels(numOfChannels);
 		outputBuffer->resize(bufferSize*numOfChannels);
+		outputBuffer->setTickCount(tickCount);
 		soundOutputApp->audioOut(*outputBuffer);
 		outputBuffer->copyTo(output, bufferSize, numOfChannels, 0);
+		tickCount++;
     }
 }
 
@@ -77,6 +81,7 @@
               numOfChannels:(NSInteger)numOfChannels {
     if(soundInputApp) {
 		inputBuffer->copyFrom(input, bufferSize, numOfChannels, inputBuffer->getSampleRate());
+		inputBuffer->setTickCount(tickCount);
 		soundInputApp->audioIn(*inputBuffer);
     }
 }

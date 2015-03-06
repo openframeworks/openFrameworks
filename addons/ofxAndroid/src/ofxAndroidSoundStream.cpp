@@ -23,19 +23,10 @@ ofxAndroidSoundStream::ofxAndroidSoundStream(){
 	out_buffer = NULL;
 	in_buffer = NULL;
 	
-	out_float_buffer = NULL;
-	in_float_buffer = NULL;
-	
 	soundInputPtr = NULL;
 	soundOutputPtr = NULL;
-	
-	outBufferSize = 0;
-	outChannels = 0;
-	inBufferSize = 0;
-	inChannels = 0;
 
 	isPaused = false;
-	sampleRate = 44100;
 	requestedBufferSize = 256;
 	totalOutRequestedBufferSize = totalInRequestedBufferSize = 0;
 	tickCount = 0;
@@ -48,7 +39,7 @@ ofxAndroidSoundStream::~ofxAndroidSoundStream(){
 	}
 }
 
-vector<ofSoundDevice> ofxAndroidSoundStream::getDeviceList(){
+vector<ofSoundDevice> ofxAndroidSoundStream::getDeviceList() const{
     ofLogWarning("ofxAndroidSoundStream") << "getDeviceList() isn't implemented on android";
     return vector<ofSoundDevice>();
 }
@@ -65,26 +56,22 @@ void ofxAndroidSoundStream::setOutput(ofBaseSoundOutput * _soundOutput){
 	soundOutputPtr = _soundOutput;
 }
 
-bool ofxAndroidSoundStream::setup(int outChannels, int _inChannels, int _sampleRate, int bufferSize, int nBuffers){
+bool ofxAndroidSoundStream::setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
 	if(instance!=NULL && instance!=this){
 		ofLogError("ofxAndroidSoundStream") << "setup(): multiple instances detected, only one instance allowed";
 		return false;
 	}
 
 	// Find the minimum input buffer size allowed by the Android device
-	int input_buffer_size = _inChannels*getMinInBufferSize(_sampleRate,_inChannels) * 2;
+	int input_buffer_size = inChannels*getMinInBufferSize(sampleRate,inChannels) * 2;
 	// setup size of input circular-buffer
 	input_buffer.setup(input_buffer_size,0);
 	
 	// deallocate and reallocate if setup() is called more than once
-	if(in_float_buffer != NULL){
-		delete[] in_float_buffer;
-	}
-	in_float_buffer = new float[bufferSize*_inChannels];
-
-	inBufferSize = bufferSize;
-	inChannels = _inChannels;
-	sampleRate = _sampleRate;
+	in_float_buffer.allocate(bufferSize,inChannels);
+	in_float_buffer.setSampleRate(sampleRate);
+	out_float_buffer.allocate(bufferSize,outChannels);
+	out_float_buffer.setSampleRate(sampleRate);
 
 	tickCount = 0;
 
@@ -124,6 +111,7 @@ bool ofxAndroidSoundStream::setup(int outChannels, int _inChannels, int _sampleR
 
 	// Store instance pointer to ofxAndroidSoundStream (singleton pattern)
 	instance = this;
+	isPaused = false;
 
 	return true;
 }
@@ -137,7 +125,11 @@ bool ofxAndroidSoundStream::setup(ofBaseApp * app, int outChannels, int inChanne
 }
 
 void ofxAndroidSoundStream::start(){
-	setup(outChannels,inChannels,sampleRate,requestedBufferSize,1);
+	if(isPaused){
+		resume();
+	}else{
+		setup(out_float_buffer.getNumChannels(),in_float_buffer.getNumChannels(),out_float_buffer.getSampleRate(),requestedBufferSize,1);
+	}
 }
 
 void ofxAndroidSoundStream::stop(){
@@ -178,24 +170,24 @@ void ofxAndroidSoundStream::close(){
 		ofLogError("ofxAndroidSoundStream") << "close(): couldn't get OFAndroidSoundStream instance or stop method";
 }
 
-long unsigned long ofxAndroidSoundStream::getTickCount(){
+long unsigned long ofxAndroidSoundStream::getTickCount() const{
 	return tickCount;
 }
 
-int ofxAndroidSoundStream::getNumInputChannels(){
-	return inChannels;
+int ofxAndroidSoundStream::getNumInputChannels() const{
+	return in_float_buffer.getNumChannels();
 }
 
-int ofxAndroidSoundStream::getNumOutputChannels(){
-	return outChannels;
+int ofxAndroidSoundStream::getNumOutputChannels() const{
+	return out_float_buffer.getNumChannels();
 }
 
-int ofxAndroidSoundStream::getSampleRate(){
-	return sampleRate;
+int ofxAndroidSoundStream::getSampleRate() const{
+	return out_float_buffer.getSampleRate();
 }
 
-int ofxAndroidSoundStream::getBufferSize(){
-	return inBufferSize;
+int ofxAndroidSoundStream::getBufferSize() const{
+	return out_float_buffer.getNumFrames();
 }
 
 void ofxAndroidSoundStream::pause(){
@@ -210,9 +202,10 @@ void ofxAndroidSoundStream::resume(){
 static const float conv_factor = 1/32767.5f;
 
 int ofxAndroidSoundStream::androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize){
-	//ofLogError("ofxAndroidSoundStream") <<  "input callback" << bufferSize;
 
-	if(!soundInputPtr || isPaused) return 0;
+	if(!soundInputPtr || isPaused){
+		return 0;
+	}
 
 	// /* comment this below out ?
 	// --- Handle INPUT buffer size changes ---
@@ -220,13 +213,8 @@ int ofxAndroidSoundStream::androidInputAudioCallback(JNIEnv*  env, jobject  thiz
 	// OR the number of output channels has changed
 	// OR the output buffer size has changed
 	// then: free/reallocate 'out_float_buffer' accordingly
-	if(!in_float_buffer || numChannels!=inChannels || bufferSize!=inBufferSize)
-	{
-		if(in_float_buffer) delete[] in_float_buffer;
-		in_float_buffer = new float[bufferSize*numChannels];
-
-		inBufferSize = bufferSize;
-		inChannels   = numChannels;
+	if(in_float_buffer.size() != numChannels * bufferSize){
+		in_float_buffer.allocate(bufferSize,numChannels);
 
 		ofLogNotice("ofxAndroidSoundStream") << "setting input buffers frames to: " << bufferSize;		
 	} // */
@@ -234,14 +222,19 @@ int ofxAndroidSoundStream::androidInputAudioCallback(JNIEnv*  env, jobject  thiz
 	// IMPORTANT: Critical buffers must be Acquired / Released ASAP:
 	// http://download.oracle.com/javase/1.3/docs/guide/jni/jni-12.html#GetPrimitiveArrayCritical
 
-        // 1) Get critical JNI buffer access
+    // 1) Get critical JNI buffer access
 	in_buffer = (short*)env->GetPrimitiveArrayCritical(array, NULL);
 	if(in_buffer == NULL) return 1; // this would imply 'Out of memory' exception
 
 	// 2) Perform input buffer copy (write into OpenFrameworks circular buffer)
-	for(int i=0;i<bufferSize*numChannels;i++){
-		//in_float_buffer[i] = (float(in_buffer[i]) + 0.5) * conv_factor;
-		input_buffer.write((float(in_buffer[i]) + 0.5f) * conv_factor);
+	if(out_float_buffer.getNumChannels()>0){
+		for(int i=0;i<bufferSize*numChannels;i++){
+			input_buffer.write((float(in_buffer[i]) + 0.5f) * conv_factor);
+		}
+	}else{
+		in_float_buffer.copyFrom(in_buffer,bufferSize,numChannels,in_float_buffer.getSampleRate());
+		in_float_buffer.setTickCount(tickCount);
+		soundInputPtr->audioIn(in_float_buffer);
 	}
 
 	// 3) Release critical JNI
@@ -252,55 +245,50 @@ int ofxAndroidSoundStream::androidInputAudioCallback(JNIEnv*  env, jobject  thiz
 
 int ofxAndroidSoundStream::androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize){
 
-	if(!soundOutputPtr || isPaused) return 0;
+	if((!soundOutputPtr && !soundInputPtr) || isPaused) return 0;
 
 	// --- Handle OUTPUT buffer size changes ---
 	// if our 'out_float_buffer' (used by the OF audio output callback) is not allocated
 	// OR the number of output channels has changed
 	// OR the output buffer size has changed
 	// then: free/reallocate 'out_float_buffer' accordingly
-	if(!out_float_buffer || numChannels!=outChannels || bufferSize!=outBufferSize)
-	{
-		if(out_float_buffer) delete[] out_float_buffer;
-		out_float_buffer = new float[bufferSize*numChannels];
-
-		outBufferSize = bufferSize;
-		outChannels   = numChannels;
+	if(out_float_buffer.size()!=bufferSize*numChannels){
+		out_float_buffer.allocate(bufferSize,numChannels);
 
 		ofLogNotice("ofxAndroidSoundStream") << "setting out buffers frames to: " << bufferSize;		
 	}
 
    	// First, the "sound input" circular buffer is handled into our "sound output" function.
 	//  (minimizing latency in full-duplex, see: http://www.portaudio.com/docs/v19-doxydocs/pa__process_8h.html )
-	if(inChannels>0){
-		for(int i=0;i<bufferSize*inChannels;i++){
+	if(soundInputPtr && in_float_buffer.getNumChannels()>0){
+		for(size_t i=0;i<in_float_buffer.size();i++){
 			in_float_buffer[i] = input_buffer.read(0);
 		}
-		soundInputPtr->audioIn(in_float_buffer,bufferSize,inChannels,0,tickCount);
+		in_float_buffer.setTickCount(tickCount);
+		soundInputPtr->audioIn(in_float_buffer);
 	}
 
 	// 1) Get critical JNI buffer access
-	out_buffer = (short*)env->GetPrimitiveArrayCritical(array, NULL);
-	if(!out_buffer) return 1;
+	if(soundOutputPtr){
+		out_buffer = (short*)env->GetPrimitiveArrayCritical(array, NULL);
+		if(!out_buffer) return 1;
 
-	// Call the ofApp soundOutput() Callback so that 'out_float_buffer' gets filled
-	memset(out_float_buffer, 0, bufferSize * numChannels * sizeof(float));
-	soundOutputPtr->audioOut(out_float_buffer,bufferSize,numChannels,0,tickCount);
+		// Call the ofApp soundOutput() Callback so that 'out_float_buffer' gets filled
+		out_float_buffer.set(0);
+		out_float_buffer.setTickCount(tickCount);
+		soundOutputPtr->audioOut(out_float_buffer);
+		out_float_buffer.toShortPCM(out_buffer);
 
-	// Convert from 4 byte floats to 16-bit integers (Android PCM format)
-	for(int i=0;i<bufferSize*numChannels ;i++){
-		float tempf = (out_float_buffer[i] * 32767.5f) - 0.5f;
-		out_buffer[i] = tempf;//lrintf( tempf - 0.5 );
+		// 3) Release critical JNI: now that the JNI output buffer has been populated, release it ASAP
+		env->ReleasePrimitiveArrayCritical(array,out_buffer,0);
 	}
-	tickCount++;
 
-	// 3) Release critical JNI: now that the JNI output buffer has been populated, release it ASAP
-	env->ReleasePrimitiveArrayCritical(array,out_buffer,0);
+	tickCount++;
 
 	return 0;
 }
 
-int ofxAndroidSoundStream::getMinOutBufferSize(int samplerate, int nchannels){
+int ofxAndroidSoundStream::getMinOutBufferSize(int samplerate, int nchannels) const{
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroidSoundStream");
 
 	if(javaClass==0){
@@ -317,7 +305,7 @@ int ofxAndroidSoundStream::getMinOutBufferSize(int samplerate, int nchannels){
 	return minBuff;
 }
 
-int ofxAndroidSoundStream::getMinInBufferSize(int samplerate, int nchannels){
+int ofxAndroidSoundStream::getMinInBufferSize(int samplerate, int nchannels) const{
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroidSoundStream");
 
 	if(javaClass==0){
@@ -333,7 +321,7 @@ int ofxAndroidSoundStream::getMinInBufferSize(int samplerate, int nchannels){
 	return ofGetJNIEnv()->CallStaticIntMethod(javaClass,getMinBuffSize,samplerate,nchannels);
 }
 
-bool ofxAndroidSoundStream::isHeadPhonesConnected(){
+bool ofxAndroidSoundStream::isHeadPhonesConnected() const{
 	return headphonesConnected;
 }
 

@@ -224,7 +224,7 @@ void ofFmodSoundPlayer::unload(){
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::getIsPlaying(){
+bool ofFmodSoundPlayer::isPlaying() const{
 
 	if (!bLoadedOk) return false;
 
@@ -234,28 +234,28 @@ bool ofFmodSoundPlayer::getIsPlaying(){
 }
 
 //------------------------------------------------------------
-float ofFmodSoundPlayer::getSpeed(){
+float ofFmodSoundPlayer::getSpeed() const{
 	return speed;
 }
 
 //------------------------------------------------------------
-float ofFmodSoundPlayer::getPan(){
+float ofFmodSoundPlayer::getPan() const{
 	return pan;
 }
 
 //------------------------------------------------------------
-float ofFmodSoundPlayer::getVolume(){
+float ofFmodSoundPlayer::getVolume() const{
 	return volume;
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::isLoaded(){
+bool ofFmodSoundPlayer::isLoaded() const{
 	return bLoadedOk;
 }
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setVolume(float vol){
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		FMOD_Channel_SetVolume(channel, vol);
 	}
 	volume = vol;
@@ -263,21 +263,21 @@ void ofFmodSoundPlayer::setVolume(float vol){
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setPosition(float pct){
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		int sampleToBeAt = (int)(length * pct);
 		FMOD_Channel_SetPosition(channel, sampleToBeAt, FMOD_TIMEUNIT_PCM);
 	}
 }
 
 void ofFmodSoundPlayer::setPositionMS(int ms) {
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		FMOD_Channel_SetPosition(channel, ms, FMOD_TIMEUNIT_MS);
 	}
 }
 
 //------------------------------------------------------------
-float ofFmodSoundPlayer::getPosition(){
-	if (getIsPlaying() == true){
+float ofFmodSoundPlayer::getPosition() const{
+	if (isPlaying()){
 		unsigned int sampleImAt;
 
 		FMOD_Channel_GetPosition(channel, &sampleImAt, FMOD_TIMEUNIT_PCM);
@@ -293,8 +293,8 @@ float ofFmodSoundPlayer::getPosition(){
 }
 
 //------------------------------------------------------------
-int ofFmodSoundPlayer::getPositionMS(){
-	if (getIsPlaying() == true){
+int ofFmodSoundPlayer::getPositionMS() const{
+	if (isPlaying()){
 		unsigned int sampleImAt;
 
 		FMOD_Channel_GetPosition(channel, &sampleImAt, FMOD_TIMEUNIT_MS);
@@ -309,7 +309,7 @@ int ofFmodSoundPlayer::getPositionMS(){
 void ofFmodSoundPlayer::setPan(float p){
 	pan = p;
 	p = ofClamp(p, -1, 1);
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		FMOD_Channel_SetPan(channel,p);
 	}
 }
@@ -317,7 +317,7 @@ void ofFmodSoundPlayer::setPan(float p){
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setPaused(bool bP){
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		FMOD_Channel_SetPaused(channel,bP);
 		bPaused = bP;
 	}
@@ -326,7 +326,7 @@ void ofFmodSoundPlayer::setPaused(bool bP){
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setSpeed(float spd){
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 			FMOD_Channel_SetFrequency(channel, internalFreq * spd);
 	}
 	speed = spd;
@@ -335,7 +335,7 @@ void ofFmodSoundPlayer::setSpeed(float spd){
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setLoop(bool bLp){
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		FMOD_Channel_SetMode(channel,  (bLp == true) ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
 	}
 	bLoop = bLp;
