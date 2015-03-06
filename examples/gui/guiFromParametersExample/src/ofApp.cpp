@@ -19,7 +19,7 @@ void ofApp::setup(){
 	gui.add(ringButton.setup("ring"));
 	gui.add(screenSize.set("screenSize", ""));
 	
-	bHide = true;
+	bHide = false;
 
 	ring.loadSound("ring.wav");
 }
@@ -61,7 +61,7 @@ void ofApp::draw(){
 		ofDrawCircle((ofVec2f)center, radius );
 	}
 	
-	if( bHide ){
+	if( !bHide ){
 		gui.draw();
 	}
 }
