@@ -80,16 +80,16 @@ public:
 	void	setPosition(float pct);
 	void    setPositionMS(int ms);
 
-	float	getPosition();
-	int		getPositionMS();
-	bool	getIsPlaying();
-	float	getPitch();
-	float	getSpeed(){return getPitch();}; // same as pitch. mapped for ofSoundPlayer compatibility
-	float   getVolume();
+	float	getPosition() const;
+	int	getPositionMS() const;
+	bool	isPlaying() const;
+	float	getPitch() const;
+	float	getSpeed() const{return getPitch();}; // same as pitch. mapped for ofSoundPlayer compatibility
+	float   getVolume() const;
     
-	float	getPan();
+	float	getPan() const;
 
-    bool    isLoaded();
+	bool    isLoaded() const;
 	
 	// IPHONE EXTRA FUNCTIONS
 	static void	vibrate();
