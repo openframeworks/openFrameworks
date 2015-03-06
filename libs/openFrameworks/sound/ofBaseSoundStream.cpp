@@ -4,6 +4,6 @@
 #include "ofSoundBuffer.h"
 #include "ofLog.h"
 
-void ofBaseSoundStream::printDeviceList() {
+void ofBaseSoundStream::printDeviceList() const {
 	ofLogNotice("ofBaseSoundStream::printDeviceList") << std::endl << getDeviceList();
 }

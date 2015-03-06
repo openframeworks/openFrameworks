@@ -128,13 +128,13 @@ public:
 	shared_ptr<ofBaseSoundStream> getSoundStream();
 	
 	/// \brief Prints a list of available audio devices to the console
-	void printDeviceList();
+	void printDeviceList() const;
 	
 	/// \brief Retrieves a list of available audio devices
-	std::vector<ofSoundDevice> getDeviceList();
+	std::vector<ofSoundDevice> getDeviceList() const;
 	
 	/// \brief Get all devices which match the arguments (name can be a partial match)
-	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX);
+	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX) const;
 	
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
 	void setDeviceID(int deviceID);
@@ -195,27 +195,27 @@ public:
 	///    secondsOfPlayback = (tickCount * bufferSize) / sampleRate
 	///
 	/// \return number of buffers passed through the stream since it started.
-	long unsigned long getTickCount();
+	long unsigned long getTickCount() const;
 	
 	/// \brief Queries the stream's number of input channels.
 	/// \return the number of input channels (e.g. 2 for stereo).
-	int getNumInputChannels();
+	int getNumInputChannels() const;
 	
 	/// \brief Queries the stream's number of output channels.
 	/// \return the number of output channels (e.g. 2 for stereo).
-	int getNumOutputChannels();
+	int getNumOutputChannels() const;
 	
 	/// \brief Queries the stream's sample rate
 	/// \return the current sample rate of the stream
 	/// \note The returned sample rate may differ from the requested sample rate.
-	int getSampleRate();
+	int getSampleRate() const;
 	
 	/// \brief Queries the stream's buffer size.
 	/// \return the current buffer size of the stream.
-	int getBufferSize();
+	int getBufferSize() const;
 	
 	/// \brief Retrieves a list of available audio devices and prints device descriptions to the console
-	OF_DEPRECATED_MSG("Use printDeviceList instead", std::vector<ofSoundDevice> listDevices());
+	OF_DEPRECATED_MSG("Use printDeviceList instead", std::vector<ofSoundDevice> listDevices() const);
 	
 protected:
 	shared_ptr<ofBaseSoundStream> soundStream;

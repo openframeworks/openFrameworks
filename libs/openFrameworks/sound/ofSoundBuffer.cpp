@@ -587,3 +587,10 @@ float ofSoundBuffer::fillWithTone( float pitchHz, float phase ){
 	}
 	return phase;
 }
+
+namespace std{
+	void swap(ofSoundBuffer & src, ofSoundBuffer & dst){
+		src.swap(dst);
+	}
+}
+
