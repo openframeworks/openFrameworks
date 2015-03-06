@@ -24,29 +24,11 @@ ofSoundBuffer::ofSoundBuffer()
 
 }
 
-ofSoundBuffer::ofSoundBuffer(const ofSoundBuffer &other)
-:buffer(other.buffer)
-,channels(other.channels)
-,samplerate(other.samplerate)
-,tickCount(other.tickCount)
-,soundStreamDeviceID(other.soundStreamDeviceID) {
-
-}
-
 ofSoundBuffer::ofSoundBuffer(short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate)
 :tickCount(0)
 ,soundStreamDeviceID(0) {
 	copyFrom(shortBuffer, numFrames, numChannels, sampleRate);
 	checkSizeAndChannelsConsistency("constructor");
-}
-
-ofSoundBuffer& ofSoundBuffer::operator=(ofSoundBuffer other) {
-	swap(other);
-	return *this;
-}
-
-ofSoundBuffer::~ofSoundBuffer() {
-
 }
 
 void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
