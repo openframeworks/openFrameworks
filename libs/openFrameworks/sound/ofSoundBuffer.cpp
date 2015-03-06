@@ -17,9 +17,10 @@ ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundB
 #endif
 
 ofSoundBuffer::ofSoundBuffer()
-: channels(1)
-, samplerate(44100)
-, tickCount(0) {
+:channels(1)
+,samplerate(44100)
+,tickCount(0)
+,soundStreamDeviceID(0){
 
 }
 
