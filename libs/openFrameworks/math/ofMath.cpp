@@ -203,13 +203,28 @@ float ofNoise(float x, float y){
 }
 
 //--------------------------------------------------
+float ofNoise( ofVec2f p ){
+	return ofNoise( p.x, p.y );
+}
+
+//--------------------------------------------------
 float ofNoise(float x, float y, float z){
 	return _slang_library_noise3(x,y,z)*0.5f + 0.5f;
 }
 
 //--------------------------------------------------
+float ofNoise( ofVec3f p ){
+	return ofNoise( p.x, p.y, p.z );
+}
+
+//--------------------------------------------------
 float ofNoise(float x, float y, float z, float w){
 	return _slang_library_noise4(x,y,z,w)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofNoise( ofVec4f p ){
+	return ofNoise( p.x, p.y, p.z, p.w );
 }
 
 //--------------------------------------------------
@@ -223,13 +238,28 @@ float ofSignedNoise(float x, float y){
 }
 
 //--------------------------------------------------
+float ofSignedNoise( ofVec2f p ){
+	return ofSignedNoise( p.x, p.y );
+}
+
+//--------------------------------------------------
 float ofSignedNoise(float x, float y, float z){
 	return _slang_library_noise3(x,y,z);
 }
 
 //--------------------------------------------------
+float ofSignedNoise( ofVec3f p ){
+	return ofSignedNoise( p.x, p.y, p.z );
+}
+
+//--------------------------------------------------
 float ofSignedNoise(float x, float y, float z, float w){
 	return _slang_library_noise4(x,y,z,w);
+}
+
+//--------------------------------------------------
+float ofSignedNoise( ofVec4f p ){
+	return ofSignedNoise( p.x, p.y, p.z, p.w );
 }
 
 //--------------------------------------------------
