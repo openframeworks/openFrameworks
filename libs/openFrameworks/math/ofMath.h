@@ -386,11 +386,20 @@ float ofNoise(float x);
 /// \brief Calculates a two dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x, float y);
 
+/// \brief Calculates a two dimensional Perlin noise value between 0.0...1.0.
+float ofNoise( ofVec2f p );
+
 /// \brief Calculates a three dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x, float y, float z);
 
+/// \brief Calculates a three dimensional Perlin noise value between 0.0...1.0.
+float ofNoise( ofVec3f p );
+
 /// \brief Calculates a four dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x, float y, float z, float w);
+
+/// \brief Calculates a four dimensional Perlin noise value between 0.0...1.0.
+float ofNoise( ofVec2f p );
 
 /// \brief Calculates a one dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x);
@@ -398,11 +407,20 @@ float ofSignedNoise(float x);
 /// \brief Calculates a two dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y);
 
+/// \brief Calculates a two dimensional Perlin noise value between -1.0...1.0.
+float ofSignedNoise( ofVec2f p );
+
 /// \brief Calculates a three dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y, float z);
 
+/// \brief Calculates a three dimensional Perlin noise value between -1.0...1.0.
+float ofSignedNoise( ofVec3f p );
+
 /// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y, float z, float w);
+
+/// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
+float ofSignedNoise( ofVec4f p );
 
 /// \}
 
