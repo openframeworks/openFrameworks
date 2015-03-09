@@ -203,13 +203,28 @@ float ofNoise(float x, float y){
 }
 
 //--------------------------------------------------
+float ofNoise(const ofVec2f& p){
+	return ofNoise( p.x, p.y );
+}
+
+//--------------------------------------------------
 float ofNoise(float x, float y, float z){
 	return _slang_library_noise3(x,y,z)*0.5f + 0.5f;
 }
 
 //--------------------------------------------------
+float ofNoise(const ofVec3f& p){
+	return ofNoise( p.x, p.y, p.z );
+}
+
+//--------------------------------------------------
 float ofNoise(float x, float y, float z, float w){
 	return _slang_library_noise4(x,y,z,w)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofNoise(const ofVec4f& p){
+	return ofNoise( p.x, p.y, p.z, p.w );
 }
 
 //--------------------------------------------------
@@ -223,8 +238,18 @@ float ofSignedNoise(float x, float y){
 }
 
 //--------------------------------------------------
+float ofSignedNoise(const ofVec2f& p){
+	return ofSignedNoise( p.x, p.y );
+}
+
+//--------------------------------------------------
 float ofSignedNoise(float x, float y, float z){
 	return _slang_library_noise3(x,y,z);
+}
+
+//--------------------------------------------------
+float ofSignedNoise(const ofVec3f& p){
+	return ofSignedNoise( p.x, p.y, p.z );
 }
 
 //--------------------------------------------------
@@ -233,17 +258,22 @@ float ofSignedNoise(float x, float y, float z, float w){
 }
 
 //--------------------------------------------------
-bool ofInsidePoly(float x, float y, const vector<ofPoint> & polygon){
+float ofSignedNoise(const ofVec4f& p){
+	return ofSignedNoise( p.x, p.y, p.z, p.w );
+}
+
+//--------------------------------------------------
+bool ofInsidePoly(float x, float y, const vector<ofPoint>& polygon){
     return ofPolyline::inside(x,y, ofPolyline(polygon));
 }
 
 //--------------------------------------------------
-bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly){
+bool ofInsidePoly(const ofPoint& p, const vector<ofPoint>& poly){
     return ofPolyline::inside(p.x,p.y, ofPolyline(poly));
 }
 
 //--------------------------------------------------
-bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint line2Start, ofPoint line2End, ofPoint & intersection){
+bool ofLineSegmentIntersection(const ofPoint& line1Start, const ofPoint& line1End, const ofPoint& line2Start, const ofPoint& line2End, ofPoint& intersection){
 	ofPoint diffLA, diffLB;
 	float compareA, compareB;
 	diffLA = line1End - line1Start;
@@ -273,13 +303,13 @@ bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint lin
 }
 
 //--------------------------------------------------
-ofPoint ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+ofPoint ofBezierPoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
     float tp = 1.0f - t;
     return a*tp*tp*tp + b*3*t*tp*tp + c*3*t*t*tp + d*t*t*t;
 }
 
 //--------------------------------------------------
-ofPoint ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+ofPoint ofCurvePoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
     ofPoint pt;
     float t2 = t * t;
     float t3 = t2 * t;
@@ -295,12 +325,12 @@ ofPoint ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
 }
 
 //--------------------------------------------------
-ofPoint ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+ofPoint ofBezierTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
     return (d-a-c*3+b*3)*(t*t)*3 + (a+c-b*2)*t*6 - a*3+b*3;
 }
 
 //--------------------------------------------------
-ofPoint ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+ofPoint ofCurveTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
     ofPoint v0 = ( c - a )*0.5;
     ofPoint v1 = ( d - b )*0.5;
     return ( b*2 -c*2 + v0 + v1)*(3*t*t) + ( c*3 - b*3 - v1 - v0*2 )*( 2*t) + v0;
