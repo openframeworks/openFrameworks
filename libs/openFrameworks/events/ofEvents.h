@@ -213,6 +213,8 @@ class ofCoreEvents {
 	ofEvent<ofMouseEventArgs> 	mousePressed;
 	ofEvent<ofMouseEventArgs> 	mouseReleased;
 	ofEvent<ofMouseEventArgs> 	mouseScrolled;
+	ofEvent<void>				mouseEntered;
+	ofEvent<void>				mouseExited;
 
 	ofEvent<ofTouchEventArgs>	touchDown;
 	ofEvent<ofTouchEventArgs>	touchUp;
@@ -253,6 +255,8 @@ class ofCoreEvents {
 	void notifyMouseDragged(int x, int y, int button);
 	void notifyMouseMoved(int x, int y);
 	void notifyMouseScrolled(float x, float y);
+	void notifyMouseEntered();
+	void notifyMouseExited();
 	void notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
 
 	void notifyExit();
@@ -286,6 +290,8 @@ void ofRegisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_AFT
 	ofAddListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
 	ofAddListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
 	ofAddListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
+	ofAddListener(ofEvents().mouseEntered,listener,&ListenerClass::mouseEntered,prio);
+	ofAddListener(ofEvents().mouseExited,listener,&ListenerClass::mouseExited,prio);
 }
 
 template<class ListenerClass>
@@ -320,6 +326,8 @@ void ofUnregisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_A
 	ofRemoveListener(ofEvents().mousePressed,listener,&ListenerClass::mousePressed,prio);
 	ofRemoveListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
 	ofRemoveListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
+	ofRemoveListener(ofEvents().mouseEntered,listener,&ListenerClass::mouseEntered,prio);
+	ofRemoveListener(ofEvents().mouseEntered,listener,&ListenerClass::mouseExited,prio);
 }
 
 template<class ListenerClass>
