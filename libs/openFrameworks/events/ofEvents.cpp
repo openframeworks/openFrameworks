@@ -84,6 +84,8 @@ void ofCoreEvents::disable(){
 	mousePressed.disable();
 	mouseMoved.disable();
 	mouseScrolled.disable();
+	mouseEntered.disable();
+	mouseExited.disable();
 	touchDown.disable();
 	touchUp.disable();
 	touchMoved.disable();
@@ -106,6 +108,8 @@ void ofCoreEvents::enable(){
 	mousePressed.enable();
 	mouseMoved.enable();
 	mouseScrolled.enable();
+	mouseEntered.enable();
+	mouseExited.enable();
 	touchDown.enable();
 	touchUp.enable();
 	touchMoved.enable();
@@ -385,6 +389,16 @@ void ofCoreEvents::notifyMouseMoved(int x, int y){
 
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Moved,x,y,0);
 	ofNotifyEvent( mouseMoved, mouseEventArgs );
+}
+
+//------------------------------------------
+void ofCoreEvents::notifyMouseEntered(){
+	ofNotifyEvent( mouseEntered );
+}
+
+//------------------------------------------
+void ofCoreEvents::notifyMouseExited(){
+	ofNotifyEvent( mouseExited );
 }
 
 //------------------------------------------
