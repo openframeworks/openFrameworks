@@ -31,17 +31,6 @@ class ofDragInfo{
 
 class ofEventArgs{};
 
-class ofEntryEventArgs : public ofEventArgs {
-public:
-	ofEntryEventArgs()
-	:state(0){}
-
-	ofEntryEventArgs(int state)
-	:state(state){}
-
-	int state;
-};
-
 class ofKeyEventArgs : public ofEventArgs {
 public:
 	enum Type{
@@ -204,7 +193,6 @@ class ofCoreEvents {
 	ofEvent<ofEventArgs> 		draw;
 	ofEvent<ofEventArgs> 		exit;
 
-	ofEvent<ofEntryEventArgs>	windowEntered;
 	ofEvent<ofResizeEventArgs> 	windowResized;
 
 	ofEvent<ofKeyEventArgs> 	keyPressed;
@@ -263,7 +251,6 @@ class ofCoreEvents {
 
 	void notifyExit();
 	void notifyWindowResized(int width, int height);
-	void notifyWindowEntry(int state);
 
 	void notifyDragEvent(ofDragInfo info);
 

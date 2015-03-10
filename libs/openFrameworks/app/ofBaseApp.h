@@ -34,8 +34,6 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		
 		virtual void dragEvent(ofDragInfo dragInfo) { }
 		virtual void gotMessage(ofMessage msg){ }
-	
-		virtual void windowEntry ( int state ) { }
 		
 		int mouseX, mouseY;			// for processing heads
 
@@ -91,9 +89,6 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		}
 		virtual void mouseExited( ofMouseEventArgs & mouse ){
 			mouseExited(mouse.x,mouse.y);
-		}
-		virtual void windowEntry(ofEntryEventArgs & entry){
-			windowEntry(entry.state);
 		}
 		virtual void dragged(ofDragInfo & drag){
 			dragEvent(drag);

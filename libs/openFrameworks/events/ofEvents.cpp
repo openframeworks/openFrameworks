@@ -436,13 +436,6 @@ void ofCoreEvents::notifyDragEvent(ofDragInfo info){
 }
 
 //------------------------------------------
-void ofCoreEvents::notifyWindowEntry( int state ) {
-	ofEntryEventArgs entryArgs(state);
-	ofNotifyEvent(windowEntered, entryArgs);
-
-}
-
-//------------------------------------------
 void ofSendMessage(ofMessage msg){
 	ofNotifyEvent(ofEvents().messageEvent, msg);
 }
