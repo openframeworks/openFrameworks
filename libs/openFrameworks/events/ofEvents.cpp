@@ -313,6 +313,12 @@ void ofCoreEvents::notifyMouseEvent(const ofMouseEventArgs & mouseEvent){
 		case ofMouseEventArgs::Scrolled:
 			notifyMouseScrolled(mouseEvent.x,mouseEvent.y);
 			break;
+		case ofMouseEventArgs::Entered:
+			notifyMouseEntered(mouseEvent.x,mouseEvent.y);
+			break;
+		case ofMouseEventArgs::Exited:
+			notifyMouseExited(mouseEvent.x,mouseEvent.y);
+			break;
 	}
 }
 
@@ -392,16 +398,6 @@ void ofCoreEvents::notifyMouseMoved(int x, int y){
 }
 
 //------------------------------------------
-void ofCoreEvents::notifyMouseEntered(){
-	ofNotifyEvent( mouseEntered );
-}
-
-//------------------------------------------
-void ofCoreEvents::notifyMouseExited(){
-	ofNotifyEvent( mouseExited );
-}
-
-//------------------------------------------
 void ofCoreEvents::notifyMouseScrolled(float x, float y){
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Scrolled,x,y);
 
@@ -409,6 +405,18 @@ void ofCoreEvents::notifyMouseScrolled(float x, float y){
 	mouseEventArgs.y = y;
 	mouseEventArgs.type = ofMouseEventArgs::Scrolled;
 	ofNotifyEvent( mouseScrolled, mouseEventArgs );
+}
+
+//------------------------------------------
+void ofCoreEvents::notifyMouseEntered(int x, int y){
+	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Entered,x,y);
+	ofNotifyEvent( mouseEntered, mouseEventArgs );
+}
+
+//------------------------------------------
+void ofCoreEvents::notifyMouseExited(int x, int y){
+	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Exited,x,y);
+	ofNotifyEvent( mouseExited, mouseEventArgs );
 }
 
 //------------------------------------------
