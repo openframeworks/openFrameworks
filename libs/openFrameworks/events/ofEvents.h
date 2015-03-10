@@ -92,7 +92,9 @@ class ofMouseEventArgs : public ofEventArgs, public ofVec2f {
 		Moved,
 		Released,
 		Dragged,
-		Scrolled
+		Scrolled,
+		Entered,
+		Exited
 	};
 
 	ofMouseEventArgs()
@@ -213,8 +215,8 @@ class ofCoreEvents {
 	ofEvent<ofMouseEventArgs> 	mousePressed;
 	ofEvent<ofMouseEventArgs> 	mouseReleased;
 	ofEvent<ofMouseEventArgs> 	mouseScrolled;
-	ofEvent<void>				mouseEntered;
-	ofEvent<void>				mouseExited;
+	ofEvent<ofMouseEventArgs> 	mouseEntered;
+	ofEvent<ofMouseEventArgs> 	mouseExited;
 
 	ofEvent<ofTouchEventArgs>	touchDown;
 	ofEvent<ofTouchEventArgs>	touchUp;
@@ -255,8 +257,8 @@ class ofCoreEvents {
 	void notifyMouseDragged(int x, int y, int button);
 	void notifyMouseMoved(int x, int y);
 	void notifyMouseScrolled(float x, float y);
-	void notifyMouseEntered();
-	void notifyMouseExited();
+	void notifyMouseEntered(int x, int y);
+	void notifyMouseExited(int x, int y);
 	void notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
 
 	void notifyExit();

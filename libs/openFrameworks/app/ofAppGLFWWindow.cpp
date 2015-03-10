@@ -919,9 +919,9 @@ void ofAppGLFWWindow::motion_cb(GLFWwindow* windowP_, double x, double y) {
 void ofAppGLFWWindow::entry_cb(GLFWwindow *windowP_, int entered) {
 	ofAppGLFWWindow * instance = setCurrent(windowP_);
 	if(entered){
-		instance->events().notifyMouseEntered();
+		instance->events().notifyMouseEntered(instance->events().getMouseX(), instance->events().getMouseY());
 	}else{
-		instance->events().notifyMouseExited();
+		instance->events().notifyMouseExited(instance->events().getMouseX(), instance->events().getMouseY());
 	}
 }
 
