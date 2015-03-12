@@ -7,7 +7,7 @@
 # Makefile build system, 
 # some Makefiles are out of date so patching/modification may be required
 
-FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" "linux64" )
 
 # define the version
 VER=3160 # 3.16.0
@@ -306,6 +306,12 @@ function build() {
         make -f Makefile.gnu libfreeimage.a
         mkdir -p Dist/$ABI
         mv libfreeimage.a Dist/$ABI
+  elif [ "$TYPE" == "linux64" ] ; then
+        ABI=x86_64
+        make clean
+        make -f Makefile.gnu libfreeimage.a
+        mkdir -p Dist
+        mv libfreeimage.a Dist/
 	fi
 }
 
@@ -345,7 +351,11 @@ function copy() {
         cp -rv Dist/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a/
         mkdir -p $1/lib/$TYPE/x86
         cp -rv Dist/x86/*.a $1/lib/$TYPE/x86/
-	fi	
+  elif [ "$TYPE" == "linux64" ] ; then
+        cp -v Source/FreeImage.h $1/include
+        mkdir -p $1/lib/$TYPE
+        cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
+  fi	
 
     # copy license files
     rm -rf $1/license # remove any older files if exists
