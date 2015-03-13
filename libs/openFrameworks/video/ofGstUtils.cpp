@@ -174,7 +174,7 @@ bool ofGstUtils::setPipelineWithSink(string pipeline, string sinkname, bool isSt
 
 	GError * error = NULL;
 	gstPipeline = gst_parse_launch (pipeline.c_str(), &error);
-
+	g_object_ref_sink(gstPipeline);
 	ofLogNotice("ofGstUtils") << "setPipelineWithSink(): gstreamer pipeline: " << pipeline;
 
 	if(error!=NULL){
