@@ -386,11 +386,20 @@ float ofNoise(float x);
 /// \brief Calculates a two dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x, float y);
 
+/// \brief Calculates a two dimensional Perlin noise value between 0.0...1.0.
+float ofNoise(const ofVec2f& p);
+
 /// \brief Calculates a three dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x, float y, float z);
 
+/// \brief Calculates a three dimensional Perlin noise value between 0.0...1.0.
+float ofNoise(const ofVec3f& p);
+
 /// \brief Calculates a four dimensional Perlin noise value between 0.0...1.0.
 float ofNoise(float x, float y, float z, float w);
+
+/// \brief Calculates a four dimensional Perlin noise value between 0.0...1.0.
+float ofNoise(const ofVec4f& p);
 
 /// \brief Calculates a one dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x);
@@ -398,11 +407,20 @@ float ofSignedNoise(float x);
 /// \brief Calculates a two dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y);
 
+/// \brief Calculates a two dimensional Perlin noise value between -1.0...1.0.
+float ofSignedNoise(const ofVec2f& p);
+
 /// \brief Calculates a three dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y, float z);
 
+/// \brief Calculates a three dimensional Perlin noise value between -1.0...1.0.
+float ofSignedNoise(const ofVec3f& p);
+
 /// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
 float ofSignedNoise(float x, float y, float z, float w);
+
+/// \brief Calculates a four dimensional Perlin noise value between -1.0...1.0.
+float ofSignedNoise(const ofVec4f& p);
 
 /// \}
 
@@ -415,13 +433,13 @@ float ofSignedNoise(float x, float y, float z, float w);
 /// \param y The y dimension of the coordinate.
 /// \param poly a vector of ofPoints defining a polygon.
 /// \returns True if the point defined by the coordinates is enclosed, false otherwise.
-bool ofInsidePoly(float x, float y, const vector<ofPoint> & poly);
+bool ofInsidePoly(float x, float y, const vector<ofPoint>& poly);
 
 /// \brief Determine if an ofPoint is within the polygon defined by a vector of ofPoints.
 /// \param p A point to check.
 /// \param poly A vector of ofPoints defining a polygon.
 /// \returns True if the ofPoint is enclosed, false otherwise.
-bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly);
+bool ofInsidePoly(const ofPoint & p, const vector<ofPoint>& poly);
 
 /// \brief Determine the intersection between two lines.
 /// \param line1Start Starting point for first line.
@@ -430,7 +448,7 @@ bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly);
 /// \param line2End End point for second line.
 /// \param intersection ofPoint reference in which to store the computed intersection point.
 /// \returns True if the lines intersect.
-bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint line2Start, ofPoint line2End, ofPoint & intersection);
+bool ofLineSegmentIntersection(const ofPoint& line1Start, const ofPoint& line1End, const ofPoint& line2Start, const ofPoint& line2End, ofPoint& intersection);
 
 /// \brief Given the four points that determine a bezier curve, return an interpolated point on the curve.
 /// \param a The beginning point of the curve.
@@ -439,7 +457,7 @@ bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint lin
 /// \param d The end point of the curve.
 /// \param t an offset along the curve, normalized between 0 and 1.
 /// \returns A ofPoint on the curve.
-ofPoint ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint ofBezierPoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
 
 /// \brief Given the four points that determine a Catmull Rom curve, return an interpolated point on the curve.
 /// \param a The first control point.
@@ -448,7 +466,7 @@ ofPoint ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 /// \param d The second control point.
 /// \param t an offset along the curve, normalized between 0 and 1.
 /// \returns A ofPoint on the curve.
-ofPoint ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint ofCurvePoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
 
 /// Given the four points that determine a bezier curve and an offset along the curve, return an tangent vector to a point on the curve.
 /// Currently this is not a normalized point, and will need to be normalized.
@@ -458,7 +476,7 @@ ofPoint ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 /// \param d The end point of the curve.
 /// \param t an offset along the curve, normalized between 0 and 1.
 /// \returns A ofPoint on the curve.
-ofPoint ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint ofBezierTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
 
 /// \brief Return a tangent point for an offset along a Catmull Rom curve.
 /// \param a The first control point.
@@ -467,18 +485,18 @@ ofPoint ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
 /// \param d The second control point.
 /// \param t an offset along the curve, normalized between 0 and 1.
 /// \returns A ofPoint on the curve.
-ofPoint ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t);
+ofPoint ofCurveTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t);
 
 template<typename Type>
-Type ofInterpolateCosine(Type y1, Type y2, float pct);
+Type ofInterpolateCosine(const Type& y1, const Type& y2, float pct);
 template<typename Type>
-Type ofInterpolateCubic(Type y0, Type y1, Type y2, Type y3, float pct);
+Type ofInterpolateCubic(const Type& y0, const Type& y1, const Type& y2, const Type& y3, float pct);
 template<typename Type>
-Type ofInterpolateCatmullRom(Type y0, Type y1, Type y2, Type y3, float pct);
+Type ofInterpolateCatmullRom(const Type& y0, const Type& y1, const Type& y2, const Type& y3, float pct);
 template<typename Type>
-Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct);
+Type ofInterpolateHermite(const Type& y0, const Type& y1, const Type& y2, const Type& y3, float pct);
 template<typename Type>
-Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias);
+Type ofInterpolateHermite(const Type& y0, const Type& y1, const Type& y2, const Type& y3, float pct, float tension, float bias);
 
 /// \}
 
@@ -513,7 +531,7 @@ int ofSign(float n);
 // from http://paulbourke.net/miscellaneous/interpolation/
 //--------------------------------------------------
 template<typename Type>
-Type ofInterpolateCosine(Type y1, Type y2, float pct){
+Type ofInterpolateCosine(const Type& y1, const Type& y2, float pct){
 	float pct2;
 
 	pct2 = (1-cos(pct*PI))/2;
@@ -523,7 +541,7 @@ Type ofInterpolateCosine(Type y1, Type y2, float pct){
 // from http://paulbourke.net/miscellaneous/interpolation/
 //--------------------------------------------------
 template<typename Type>
-Type ofInterpolateCubic(Type y0, Type y1, Type y2, Type y3, float pct){
+Type ofInterpolateCubic(const Type& y0, const Type& y1, const Type& y2, const Type& y3, float pct){
 	Type a0,a1,a2,a3;
 	float pct2;
 
@@ -539,7 +557,7 @@ Type ofInterpolateCubic(Type y0, Type y1, Type y2, Type y3, float pct){
 // from http://paulbourke.net/miscellaneous/interpolation/
 //--------------------------------------------------
 template<typename Type>
-Type ofInterpolateCatmullRom(Type y0, Type y1, Type y2, Type y3, float pct){
+Type ofInterpolateCatmullRom(const Type& y0, const Type& y1, const Type& y2, const Type& y3, float pct){
 	Type a0,a1,a2,a3;
 	float pct2 = pct*pct;
 	a0 = -0.5*y0 + 1.5*y1 - 1.5*y2 + 0.5*y3;
@@ -553,7 +571,7 @@ Type ofInterpolateCatmullRom(Type y0, Type y1, Type y2, Type y3, float pct){
 // laurent de soras
 //--------------------------------------------------
 template<typename Type>
-inline Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct){
+inline Type ofInterpolateHermite(const Type& y0, const Type& y1, const Type& y2, const Type& y3, float pct){
 	const Type c = (y2 - y0) * 0.5f;
 	const Type v = y1 - y2;
 	const Type w = c + v;
@@ -566,7 +584,7 @@ inline Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct){
 // from http://paulbourke.net/miscellaneous/interpolation/
 //--------------------------------------------------
 template<typename Type>
-Type ofInterpolateHermite(Type y0, Type y1, Type y2, Type y3, float pct, float tension, float bias){
+Type ofInterpolateHermite(const Type& y0, const Type& y1, const Type& y2, const Type& y3, float pct, float tension, float bias){
 	float pct2,pct3;
 	Type m0,m1;
 	Type a0,a1,a2,a3;
