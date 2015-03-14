@@ -14,7 +14,7 @@
 | FreeType                        | ✓   | N/A   | N/A     | N/A         | N/A         | ?  | ?      | ✓   | ?       |
 | tess2                           | ✓   | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | ✓   | ✗       |
 | Poco                            | ✓   | ✗     | ✗       | ✗           | ✗           | ✓? | ✗      | ✓   | ✗       |
-| OpenSSL                         | ✓   | ✗     | x       | ✗           | ✗           | ✗  | ✗      | ✓   | N/A     |
+| OpenSSL                         | ✓   | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ✓   | N/A     |
 | cairo                           | ✓   | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | fmodex                          | ✓C  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
 | glew                            | ✓   | ✗     | ✗       | ✗           | ✗           | ✓  | ✗      | N/A | N/A     |
