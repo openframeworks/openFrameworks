@@ -15,7 +15,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-	sprintf (timeString, "time: %i:%i:%i \nelapsed time %lli", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
+	timeString = "time: " + ofGetTimestampString("%H:%M:%S") + "\nelapsed time: " + ofToString(ofGetElapsedTimeMillis());
 	
 	float w = vagRounded.stringWidth(eventString);
 	float h = vagRounded.stringHeight(eventString);
@@ -37,166 +37,172 @@ void ofApp::draw(){
 
 
 //--------------------------------------------------------------
-void ofApp::keyPressed  (int key){ 
+void ofApp::keyPressed  (int key){
+
+	eventString = "keyPressed = (" + ofToString(key) + ") ";
+
 	if(key & OF_KEY_MODIFIER){
 		if(key >= OF_KEY_F1 && key <= OF_KEY_F12){
-			sprintf(eventString, "keyPressed = (%i) %s", key, ("F" + ofToString(key+1-OF_KEY_F1)).c_str());
+			eventString += "F" +  ofToString(key+1-OF_KEY_F1);
 		}else{
 			switch(key){
 			case OF_KEY_LEFT:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "LEFT");
+				eventString += "LEFT";
 				break;
 			case OF_KEY_UP:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "UP");
+				eventString += "UP";
 				break;
 			case OF_KEY_RIGHT:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "RIGHT");
+				eventString += "RIGHT";
 				break;
 			case OF_KEY_DOWN:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "DOWN");
+				eventString += "DOWN";
 				break;
 			case OF_KEY_PAGE_UP:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "PAGE UP");
+				eventString += "PAGE UP";
 				break;
 			case OF_KEY_PAGE_DOWN:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "PAGE DOWN");
+				eventString += "PAGE DOWN";
 				break;
 			case OF_KEY_HOME:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "HOME");
+				eventString += "HOME";
 				break;
 			case OF_KEY_END:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "END");
+				eventString += "END";
 				break;
 			case OF_KEY_INSERT:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "INSERT");
+				eventString += "INSERT";
 				break;
 			case OF_KEY_LEFT_SHIFT:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "LEFT SHIFT");
+				eventString += "LEFT SHIFT";
 				break;
 			case OF_KEY_LEFT_CONTROL:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "LEFT CONTROL");
+				eventString += "LEFT CONTROL";
 				break;
 			case OF_KEY_LEFT_SUPER:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "LEFT SUPER");
+				eventString += "LEFT SUPER";
 				break;
 			case OF_KEY_RIGHT_SHIFT:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "RIGHT SHIFT");
+				eventString += "RIGHT SHIFT";
 				break;
 			case OF_KEY_RIGHT_CONTROL:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "RIGHT CONTROL");
+				eventString += "RIGHT CONTROL";
 				break;
 			case OF_KEY_LEFT_ALT:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "LEFT ALT");
+				eventString += "LEFT ALT";
 				break;
             case OF_KEY_RIGHT_ALT:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "RIGHT ALT");
+				eventString += "RIGHT ALT";
 				break;
 			case OF_KEY_RIGHT_SUPER:
-				sprintf(eventString, "keyPressed = (%i) %s", key, "RIGHT SUPER");
+				eventString += "RIGHT SUPER";
 				break;
 			}
 		}
 	}else{
-		sprintf(eventString, "keyPressed = (%i) %c", key, (char)key);
+		eventString += (char)key;
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){ 
+	eventString = "keyReleased = (" + ofToString(key) + ") ";
+
 	if(key & OF_KEY_MODIFIER){
 		if(key >= OF_KEY_F1 && key <= OF_KEY_F12){
-			sprintf(eventString, "keyReleased = (%i) %s", key, ("F" + ofToString(key+1-OF_KEY_F1)).c_str());
+			eventString += "F" +  ofToString(key+1-OF_KEY_F1);
 		}else{
 			switch(key){
 			case OF_KEY_LEFT:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "LEFT");
+				eventString += "LEFT";
 				break;
 			case OF_KEY_UP:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "UP");
+				eventString += "UP";
 				break;
 			case OF_KEY_RIGHT:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT");
+				eventString += "RIGHT";
 				break;
 			case OF_KEY_DOWN:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "DOWN");
+				eventString += "DOWN";
 				break;
 			case OF_KEY_PAGE_UP:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "PAGE UP");
+				eventString += "PAGE UP";
 				break;
 			case OF_KEY_PAGE_DOWN:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "PAGE DOWN");
+				eventString += "PAGE DOWN";
 				break;
 			case OF_KEY_HOME:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "HOME");
+				eventString += "HOME";
 				break;
 			case OF_KEY_END:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "END");
+				eventString += "END";
 				break;
 			case OF_KEY_INSERT:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "INSERT");
+				eventString += "INSERT";
 				break;
 			case OF_KEY_LEFT_SHIFT:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "LEFT SHIFT");
+				eventString += "LEFT SHIFT";
 				break;
 			case OF_KEY_LEFT_CONTROL:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "LEFT CONTROL");
+				eventString += "LEFT CONTROL";
 				break;
 			case OF_KEY_LEFT_SUPER:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "LEFT SUPER");
+				eventString += "LEFT SUPER";
 				break;
 			case OF_KEY_RIGHT_SHIFT:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT SHIFT");
+				eventString += "RIGHT SHIFT";
 				break;
 			case OF_KEY_RIGHT_CONTROL:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT CONTROL");
+				eventString += "RIGHT CONTROL";
 				break;
 			case OF_KEY_LEFT_ALT:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "LEFT ALT");
+				eventString += "LEFT ALT";
 				break;
-			case OF_KEY_RIGHT_ALT:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT ALT");
+            case OF_KEY_RIGHT_ALT:
+				eventString += "RIGHT ALT";
 				break;
 			case OF_KEY_RIGHT_SUPER:
-				sprintf(eventString, "keyReleased = (%i) %s", key, "RIGHT SUPER");
+				eventString += "RIGHT SUPER";
 				break;
 			}
 		}
 	}else{
-		sprintf(eventString, "keyReleased = (%i) %c", key, (char)key);
+		eventString += (char)key;
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-	sprintf(eventString, "mouseMoved = (%i,%i)", x, y);
+	eventString = "mouseMoved = (" + ofToString(x) + ", " + ofToString(y) + ")";
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-	sprintf(eventString, "mouseDragged = (%i,%i - button %i)", x, y, button);
+	eventString = "mouseDragged = (" + ofToString(x) + ", " + ofToString(y) + " - button " + ofToString(button) + ")";
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	sprintf(eventString, "mousePressed = (%i,%i - button %i)", x, y, button);
+	eventString = "mousePressed = (" + ofToString(x) + ", " + ofToString(y) + " - button " + ofToString(button) + ")";
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-	sprintf(eventString, "mouseReleased = (%i,%i - button %i)", x, y, button);
+	eventString = "mouseReleased = (" + ofToString(x) + ", " + ofToString(y) + " - button " + ofToString(button) + ")";
 }
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-	sprintf(eventString, "resized = (%i,%i)", w, h);
+	eventString = "resized = (" + ofToString(w) + ", " + ofToString(h) + ")";
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){
-	sprintf(eventString, "gotMessage %s ", msg.message.c_str());
+	eventString = "gotMessage " + msg.message;
 }
 
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
-	sprintf(eventString, "%i files dragged into the window at (%i, %i)", (int)dragInfo.files.size(), (int)dragInfo.position.x, (int)dragInfo.position.y);
+	eventString = ofToString((int)dragInfo.files.size()) + " files dragged into the window at (" + ofToString((int)dragInfo.position.x) + ", " + ofToString((int)dragInfo.position.y) + ")";
+	
 }

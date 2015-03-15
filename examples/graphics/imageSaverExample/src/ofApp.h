@@ -21,7 +21,7 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);		
 		
 		int 				snapCounter;
-		char 				snapString[255];
+		string 				snapString;
 		ofImage 			img;
 		ofTrueTypeFont		cooper;
 		bool 				bSnapshot;		
