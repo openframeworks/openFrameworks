@@ -901,7 +901,7 @@ void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
 	int format = ofGetGLFormatFromInternal(settings.internalformat);
-	glReadPixels(0,0,settings.width, settings.height, format, GL_FLOAT, pixels.getPixels());
+	glReadPixels(0,0,settings.width, settings.height, format, GL_FLOAT, pixels.getData());
 	unbind();
 #endif
 }
