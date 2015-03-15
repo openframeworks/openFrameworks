@@ -7,7 +7,6 @@ void ofApp::setup(){
 	bSnapshot = false;
 	cooper.load("cooperBlack.ttf", 50);
 	phase = 0;
-	memset(snapString, 0, 255);		// clear the string by setting all chars to 0
 }
 
 
@@ -55,7 +54,7 @@ void ofApp::draw(){
 
 		string fileName = "snapshot_"+ofToString(10000+snapCounter)+".png";
 		img.save(fileName);
-		sprintf(snapString, "saved %s", fileName.c_str());
+		snapString = "saved " + fileName;
 		snapCounter++;
 		bSnapshot = false;
 	}

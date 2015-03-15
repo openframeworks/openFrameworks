@@ -177,12 +177,12 @@ void ofApp::keyPressed(int key){
 	switch(key) {
 		case 'c':
 			camToConfigure = 1 - camToConfigure;
-			printf("\n\n** MOVING CAMERA %i **\n", camToConfigure);
+			cout << "\n\n** MOVING CAMERA " + ofToString(camToConfigure) + "**\n";
 			break;
 			
 		case 'v':
 			camToView = 1 - camToView;
-			printf("\n\n** SHOWING CAMERA %i **\n", camToView);
+			cout << "\n\n** SHOWING CAMERA " + ofToString(camToView) + "**\n";
 			break;
 			
 			
@@ -251,12 +251,12 @@ void ofApp::keyPressed(int key){
 			
 	}
 	
-	printf("\n** MOVING CAMERA %i **\n", camToConfigure);
-	printf("POSITION: %f %f %f\n", n->getX(), n->getY(), n->getZ());
-	printf("X-AXIS: %f %f %f\n", n->getXAxis().x, n->getXAxis().y, n->getXAxis().z);
-	printf("Y-AXIS: %f %f %f\n", n->getYAxis().x, n->getYAxis().y, n->getYAxis().z);
-	printf("Z-AXIS: %f %f %f\n", n->getZAxis().x, n->getZAxis().y, n->getZAxis().z);
-	
+	cout << "\n** MOVING CAMERA " << ofToString(camToConfigure) << " **\n";  
+	cout << "POSITION: "+ ofToString(n->getX()) + " " + ofToString(n->getY()) + " " + ofToString(n->getZ()) + "\n";
+	cout << "X-AXIS: " + ofToString(n->getXAxis().x) + " " + ofToString(n->getXAxis().y) + " " + ofToString(n->getXAxis().z) + "\n";
+	cout << "Y-AXIS: " + ofToString(n->getYAxis().x) + " " + ofToString(n->getYAxis().y) + " " + ofToString(n->getYAxis().z) + "\n";
+	cout << "Z-AXIS: " + ofToString(n->getZAxis().x) + " " + ofToString(n->getZAxis().y) + " " + ofToString(n->getZAxis().z) + "\n";
+
 }
 
 //--------------------------------------------------------------

@@ -22,7 +22,7 @@ class ofApp : public ofBaseApp{
 				
 		float 			counter;
 		ofTrueTypeFont 	vagRounded;
-		char eventString[255];
-		char timeString[255];
+		string eventString;
+		string timeString;
 };
 
