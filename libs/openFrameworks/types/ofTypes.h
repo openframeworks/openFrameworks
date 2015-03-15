@@ -3,7 +3,7 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 
-#if (_MSC_VER) 
+#if (_MSC_VER) \
 	|| ((defined(TARGET_EMSCRIPTEN) \
 		|| defined(TARGET_LINUX) \
 		|| defined(TARGET_ANDROID) \
