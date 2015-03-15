@@ -22,7 +22,7 @@ void ofApp::setup(){
 	ofEnableAlphaBlending();
 	
 	// load font for displaying info
-	font.loadFont("verdana.ttf", 12);
+	font.load("verdana.ttf", 12);
 	
 	// open the mapview
 	mapKit.open();
