@@ -42,7 +42,7 @@ void ofApp::setup() {
         }
         
     } 
-    else printf("Could not find folder\n");
+    else ofLog(OF_LOG_WARNING) << "Could not find folder";
     
     // this toggle will tell the sequence
     // be be indepent of the app fps
