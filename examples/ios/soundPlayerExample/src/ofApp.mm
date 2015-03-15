@@ -33,7 +33,6 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-//	char tempStr[255];
     string tempStr;
     
 	float sectionWidth = ofGetWidth() / 3.0f;
