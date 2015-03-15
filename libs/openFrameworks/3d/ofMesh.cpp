@@ -1270,7 +1270,7 @@ void ofMesh::mergeDuplicateVertices() {
 }
 
 //----------------------------------------------------------
-ofMeshFace ofMesh::getFace(int faceId){
+ofMeshFace ofMesh::getFace(int faceId) const{
 	const vector<ofMeshFace> & faces = getUniqueFaces();
 	if(faces.size()>faceId){
 		return faces[faceId];
