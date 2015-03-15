@@ -8,8 +8,8 @@ public:
 	~ofxEmscriptenSoundPlayer();
 
 
-	bool loadSound(string fileName, bool stream = false);
-	void unloadSound();
+	bool load(string fileName, bool stream = false);
+	void unload();
 	void play();
 	void stop();
 
@@ -22,15 +22,15 @@ public:
 	void setPosition(float pct); // 0 = start, 1 = end;
 	void setPositionMS(int ms);
 
-	float getPosition();
-	int getPositionMS();
-	bool getIsPlaying();
-	float getSpeed();
-	float getPan();
-	bool isLoaded();
-	float getVolume();
-	int getDurationMS();
-	double getDurationSecs();
+	float getPosition() const;
+	int getPositionMS() const;
+	bool isPlaying() const;
+	float getSpeed() const;
+	float getPan() const;
+	bool isLoaded() const;
+	float getVolume() const;
+	int getDurationMS() const;
+	double getDurationSecs() const;
 
 	static float * getSystemSpectrum(int bands);
 

@@ -5,7 +5,7 @@
 ofBufferObject::Data::Data()
 :id(0)
 ,size(0)
-,lastTarget(GL_ARRAY_BUFFER){
+,lastTarget(-1){
 	
 	// tig: glGenBuffers does not actually create a buffer, it just 
 	//      returns the next available name, and only a subsequent 
@@ -109,7 +109,10 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 #endif
 
 	/// --------| invariant: direct state access is not available
-
+	if(this->data->lastTarget==-1){
+		ofLogError() << "this buffer has to be bound at least once to a target to be able to setData";
+		return;
+	}
 	bind(this->data->lastTarget);
 	glBufferData(this->data->lastTarget, bytes, data, usage);
 	unbind(this->data->lastTarget);

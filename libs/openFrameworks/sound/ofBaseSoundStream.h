@@ -3,8 +3,40 @@
 
 class ofBaseSoundInput;
 class ofBaseSoundOutput;
-class ofSoundDevice;
 class ofSoundBuffer;
+
+/// \class ofSoundDevice
+/// \brief Represents information about a sound device on the system.
+class ofSoundDevice {
+public:
+
+	ofSoundDevice();
+
+	friend std::ostream& operator << (std::ostream& os, const ofSoundDevice& dev);
+	friend std::ostream& operator << (std::ostream& os, const std::vector<ofSoundDevice>& devs);
+
+	/// \brief Descriptive name for the device
+	/// This is the same string that ofSoundStream::getMatchingDevices() will be looking for
+	std::string name;
+
+	/// \brief The device's unique ID (to be used in ofSoundStream::setDeviceID() )
+	unsigned int deviceID;
+
+	/// \brief Number of input channels the device supports
+	unsigned int inputChannels;
+
+	/// \brief Number of output channels the device supports
+	unsigned int outputChannels;
+
+	/// \brief If true, this device will be used by ofSoundStream unless changed with setDeviceID()
+	bool isDefaultInput;
+
+	/// \brief If true, this device will be used by ofSoundStream unless changed with setDeviceID()
+	bool isDefaultOutput;
+
+	/// \brief List of sample rates the device claims to support
+	std::vector<unsigned int> sampleRates;
+};
 
 class ofBaseSoundStream{
 	public:
