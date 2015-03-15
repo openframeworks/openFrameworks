@@ -223,7 +223,6 @@ private:
 	ofVec2f lensOffset;
 	bool forceAspectRatio;
 	float aspectRatio; // only used when forceAspect=true, = w / h
-	bool isActive;
 	bool vFlip;
 	shared_ptr<ofBaseRenderer> renderer;
 };
