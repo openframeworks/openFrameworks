@@ -29,13 +29,17 @@ ofxEmscriptenSoundStream::~ofxEmscriptenSoundStream() {
 	close();
 }
 
-vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList() {
-    ofLogWarning("ofxEmscriptenSoundStream") << "getDeviceList() isn't implemented for emscripten";
-    return vector<ofSoundDevice>();
+void ofxEmscriptenSoundStream::setDeviceID(int deviceID) {
+	ofLogWarning() << "ofSoundStream::setDeviceID() not supported in emscripten";
 }
 
-void ofxEmscriptenSoundStream::setDeviceID(int deviceID) {
+std::vector<ofSoundDevice> ofxEmscriptenSoundStream::getDeviceList() const{
+	ofLogWarning() << "ofSoundStream::getDeviceList() not supported in emscripten";
+	return vector<ofSoundDevice>();
+}
 
+int ofxEmscriptenSoundStream::getDeviceID() const{
+	return 0;
 }
 
 bool ofxEmscriptenSoundStream::setup(int outChannels, int inChannels,
@@ -78,23 +82,23 @@ void ofxEmscriptenSoundStream::close() {
 	html5audio_stream_free(stream);
 }
 
-unsigned long long ofxEmscriptenSoundStream::getTickCount() {
+unsigned long long ofxEmscriptenSoundStream::getTickCount() const{
 	return tickCount;
 }
 
-int ofxEmscriptenSoundStream::getNumInputChannels() {
+int ofxEmscriptenSoundStream::getNumInputChannels() const{
 	return inChannels;
 }
 
-int ofxEmscriptenSoundStream::getNumOutputChannels() {
+int ofxEmscriptenSoundStream::getNumOutputChannels() const{
 	return outChannels;
 }
 
-int ofxEmscriptenSoundStream::getSampleRate() {
+int ofxEmscriptenSoundStream::getSampleRate() const{
 	return html5audio_context_samplerate(context);
 }
 
-int ofxEmscriptenSoundStream::getBufferSize() {
+int ofxEmscriptenSoundStream::getBufferSize() const{
 	return bufferSize;
 }
 

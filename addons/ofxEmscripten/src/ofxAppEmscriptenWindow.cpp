@@ -12,8 +12,6 @@
 
 ofxAppEmscriptenWindow * ofxAppEmscriptenWindow::instance = NULL;
 
-void ofGLReadyCallback();
-
 // from http://cantuna.googlecode.com/svn-history/r16/trunk/src/screen.cpp
 #define CASE_STR(x,y) case x: str = y; break
 
@@ -53,8 +51,7 @@ ofxAppEmscriptenWindow::~ofxAppEmscriptenWindow() {
 	// TODO Auto-generated destructor stub
 }
 
-
-void ofxAppEmscriptenWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
+void ofxAppEmscriptenWindow::setup(const ofGLESWindowSettings & settings){
 	EGLint numConfigs;
 	EGLint majorVersion;
 	EGLint minorVersion;
@@ -117,12 +114,11 @@ void ofxAppEmscriptenWindow::setupOpenGL(int w, int h, ofWindowMode screenMode){
 		return;
 	}
 
-	setWindowShape(w,h);
+	setWindowShape(settings.width,settings.height);
 
-	ofGLReadyCallback();
-}
+	_renderer = make_shared<ofGLProgrammableRenderer>(this);
+	((ofGLProgrammableRenderer*)_renderer.get())->setup(2,0);
 
-void ofxAppEmscriptenWindow::initializeWindow(){
     emscripten_set_keydown_callback(0,this,1,&keydown_cb);
     emscripten_set_keyup_callback(0,this,1,&keyup_cb);
     emscripten_set_mousedown_callback(0,this,1,&mousedown_cb);
@@ -130,9 +126,9 @@ void ofxAppEmscriptenWindow::initializeWindow(){
     emscripten_set_mousemove_callback(0,this,1,&mousemoved_cb);
 }
 
-void ofxAppEmscriptenWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
+void ofxAppEmscriptenWindow::loop(){
 
-	ofNotifySetup();
+	instance->events().notifySetup();
 
 
 	// Emulate loop via callbacks
@@ -140,38 +136,19 @@ void ofxAppEmscriptenWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
 }
 
 void ofxAppEmscriptenWindow::update(){
-	ofNotifyUpdate();
+	events().notifyUpdate();
 }
 
 void ofxAppEmscriptenWindow::draw(){
 	///////////////////////////////////////////////////////////////////////////////////////
 	// set viewport, clear the screen
-	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-	if( renderer ){
-		renderer->startRender();
-	}
+	renderer()->startRender();
+	if( bEnableSetupScreen ) renderer()->setupScreen();
 
-	int width;
-	int height;
-	int isFullscreen;
-	emscripten_get_canvas_size( &width, &height, &isFullscreen );
+	events().notifyDraw();
 
-	ofViewport( 0, 0, width, height, false );    // used to be glViewport( 0, 0, width, height );
+	renderer()->finishRender();
 
-	float * bgPtr = ofBgColorPtr();
-	bool bClearAuto = ofbClearBg();
-
-	if( bClearAuto || ofGetFrameNum() < 3 ){
-		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
-	}
-
-	if( bEnableSetupScreen ) ofSetupScreen(); // this calls into the current renderer (ofSetupScreenPerspective)
-
-	ofNotifyDraw();
-
-	if( renderer ){
-		renderer->finishRender();
-	}
 
 	EGLBoolean success = eglSwapBuffers( display, surface );
 	if( !success ) {
@@ -192,7 +169,7 @@ int ofxAppEmscriptenWindow::keydown_cb(int eventType, const EmscriptenKeyboardEv
 	if(key==0){
 		key = keyEvent->which + 32;
 	}
-	ofNotifyKeyPressed(key);
+	instance->events().notifyKeyPressed(key);
 	return 0;
 }
 
@@ -201,26 +178,26 @@ int ofxAppEmscriptenWindow::keyup_cb(int eventType, const EmscriptenKeyboardEven
 	if(key==0){
 		key = keyEvent->which + 32;
 	}
-	ofNotifyKeyReleased(key);
+	instance->events().notifyKeyReleased(key);
 	return 0;
 }
 
 int ofxAppEmscriptenWindow::mousedown_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	ofNotifyMousePressed(ofGetMouseX(),ofGetMouseY(),mouseEvent->button);
+	instance->events().notifyMousePressed(ofGetMouseX(),ofGetMouseY(),mouseEvent->button);
 	return 0;
 }
 
 int ofxAppEmscriptenWindow::mouseup_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
-	ofNotifyMouseReleased(ofGetMouseX(),ofGetMouseY(),mouseEvent->button);
+	instance->events().notifyMouseReleased(ofGetMouseX(),ofGetMouseY(),mouseEvent->button);
 	return 0;
 
 }
 
 int ofxAppEmscriptenWindow::mousemoved_cb(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData){
 	if(ofGetMousePressed()){
-		ofNotifyMouseDragged(mouseEvent->canvasX,mouseEvent->canvasY,0);
+		instance->events().notifyMouseDragged(mouseEvent->canvasX,mouseEvent->canvasY,0);
 	}else{
-		ofNotifyMouseMoved(mouseEvent->canvasX,mouseEvent->canvasY);
+		instance->events().notifyMouseMoved(mouseEvent->canvasX,mouseEvent->canvasY);
 	}
 	return 0;
 
@@ -335,4 +312,11 @@ EGLSurface ofxAppEmscriptenWindow::getEGLSurface(){
 	return surface;
 }
 
+ofCoreEvents & ofxAppEmscriptenWindow::events(){
+	return _events;
+}
+
+shared_ptr<ofBaseRenderer> & ofxAppEmscriptenWindow::renderer(){
+	return _renderer;
+}
 
