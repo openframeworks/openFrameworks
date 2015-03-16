@@ -111,9 +111,7 @@ void ofVbo::VertexAttribute::bind() const{
 
 //--------------------------------------------------------------
 void ofVbo::VertexAttribute::setData(GLsizeiptr bytes, const void * data, GLenum usage){
-	buffer.bind(GL_ARRAY_BUFFER);
 	buffer.setData(bytes,data,usage);
-	buffer.unbind(GL_ARRAY_BUFFER);
 }
 
 //--------------------------------------------------------------
