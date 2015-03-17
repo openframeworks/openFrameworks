@@ -182,7 +182,7 @@ bool ofGstVideoPlayer::createPipeline(string name){
 }
 
 void ofGstVideoPlayer::loadAsync(string name){
-	bIsStream = true;
+	bAsyncLoad = true;
 	load(name);
 }
 
