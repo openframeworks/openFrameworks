@@ -212,7 +212,7 @@ private:
 	shared_ptr<GstBuffer> 	frontBuffer, backBuffer;
 #else
 	shared_ptr<GstSample> 	frontBuffer, backBuffer;
-	queue<shared_ptr<GstSample>> bufferQueue;
+	queue<shared_ptr<GstSample> > bufferQueue;
 	GstMapInfo mapinfo;
 	#ifdef OF_USE_GST_GL
 		ofTexture		frontTexture, backTexture;
