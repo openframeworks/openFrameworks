@@ -218,7 +218,7 @@ bool ofFmodSoundPlayer::load(string fileName, bool stream){
 void ofFmodSoundPlayer::unload(){
 	if (bLoadedOk){
 		stop();						// try to stop the sound
-		if(!isStreaming)FMOD_Sound_Release(sound);
+		FMOD_Sound_Release(sound);
 		bLoadedOk = false;
 	}
 }
