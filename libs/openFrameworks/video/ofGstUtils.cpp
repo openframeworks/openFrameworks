@@ -8,12 +8,19 @@
 #include <gst/video/gstvideometa.h>
 #endif
 
+#ifdef OF_USE_GST_GL
+#define GST_USE_UNSTABLE_API
+#include <gst/gl/gl.h>
+#endif
+
 #include <glib-object.h>
 #include <glib.h>
 #include <algorithm>
-
-
-
+#include "ofAppRunner.h"
+#ifdef OF_USE_GST_GL
+#include <gst/gl/x11/gstgldisplay_x11.h>
+#include <gst/gl/egl/gstgldisplay_egl.h>
+#endif
 
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
 
@@ -167,7 +174,7 @@ bool ofGstUtils::setPipelineWithSink(string pipeline, string sinkname, bool isSt
 
 	GError * error = NULL;
 	gstPipeline = gst_parse_launch (pipeline.c_str(), &error);
-
+	g_object_ref_sink(gstPipeline);
 	ofLogNotice("ofGstUtils") << "setPipelineWithSink(): gstreamer pipeline: " << pipeline;
 
 	if(error!=NULL){
@@ -231,41 +238,13 @@ bool ofGstUtils::startPipeline(){
 
 	gst_object_unref(bus);
 
-	if(gst_element_set_state (GST_ELEMENT(gstPipeline), GST_STATE_READY) ==	GST_STATE_CHANGE_FAILURE) {
-		ofLogError("ofGstUtils") << "startPipeline(): unable to set pipeline to ready";
-		return false;
-	}
-	if(gst_element_get_state (GST_ELEMENT(gstPipeline), NULL, NULL, 10 * GST_SECOND)==GST_STATE_CHANGE_FAILURE){
-		ofLogError("ofGstUtils") << "startPipeline(): unable to get pipeline ready status";
-		return false;
-	}
-
-	// pause the pipeline
-	if(gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PAUSED) ==	GST_STATE_CHANGE_FAILURE) {
-		ofLogError("ofGstUtils") << "startPipeline(): unable to pause pipeline";
-		return false;
-	}
-
-	// wait for paused state to query the duration
-	if(!isStream){
-		GstState state = GST_STATE_PAUSED;
-		if(gst_element_get_state(gstPipeline,&state,NULL,2*GST_SECOND)==GST_STATE_CHANGE_FAILURE){
-			ofLogError("ofGstUtils") << "startPipeline(): unable to get pipeline paused state";
-			return false;
-		}
-		bPlaying = true;
-		bLoaded = true;
-	}
-
-
-
 	if(isAppSink){
 		ofLogVerbose("ofGstUtils") << "startPipeline(): attaching callbacks";
 		// set the appsink to not emit signals, we are using callbacks instead
 		// and frameByFrame to get buffers by polling instead of callback
 		g_object_set (G_OBJECT (gstSink), "emit-signals", FALSE, "sync", !bFrameByFrame, (void*)NULL);
-		//gst_app_sink_set_drop(GST_APP_SINK(gstSink),1);
-		//gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),2);
+		// gst_app_sink_set_drop(GST_APP_SINK(gstSink),1);
+		// gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),2);
 
 		if(!bFrameByFrame){
 			GstAppSinkCallbacks gstCallbacks;
@@ -279,13 +258,45 @@ bool ofGstUtils::startPipeline(){
 
 			gst_app_sink_set_callbacks(GST_APP_SINK(gstSink), &gstCallbacks, this, NULL);
 		}
-
 	}
 
+	// pause the pipeline
+	//GstState targetState;
+	GstState state;
+	auto ret = gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PAUSED);
+    switch (ret) {
+		case GST_STATE_CHANGE_FAILURE:
+			ofLogError("ofGstUtils") << "startPipeline(): unable to pause pipeline";
+			return false;
+			break;
+		case GST_STATE_CHANGE_NO_PREROLL:
+			ofLogVerbose() << "Pipeline is live and does not need PREROLL waiting PLAY";
+			gst_element_set_state(GST_ELEMENT(gstPipeline), GST_STATE_PLAYING);
+			if(isAppSink){
+				gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink),1);
+				gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
+			}
+			break;
+		case GST_STATE_CHANGE_ASYNC:
+			ofLogVerbose() << "Pipeline is PREROLLING";
+			//targetState = GST_STATE_PAUSED;
+			if(!isStream && gst_element_get_state(gstPipeline,&state,NULL,5*GST_SECOND)!=GST_STATE_CHANGE_SUCCESS){
+				ofLogError("ofGstUtils") << "startPipeline(): unable to pause pipeline after 5s";
+				return false;
+			}else{
+				ofLogVerbose() << "Pipeline is PREROLLED";
+			}
+			break;
+		case GST_STATE_CHANGE_SUCCESS:
+			ofLogVerbose() << "Pipeline is PREROLLED";
+			break;
+    }
+
+	// wait for paused state to query the duration
 	if(!isStream){
-		setSpeed(1.0);
+		bPlaying = true;
+		bLoaded = true;
 	}
-
 
 	return true;
 }
@@ -543,12 +554,12 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 		case GST_MESSAGE_BUFFERING:
 			gint pctBuffered;
 			gst_message_parse_buffering(msg,&pctBuffered);
-			//ofLogVerbose("ofGstUtils") << "gstHandleMessage(): buffering " << pctBuffered;
-			/*if(pctBuffered<100){
+			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): buffering " << pctBuffered;
+			if(pctBuffered<100){
 				gst_element_set_state (gstPipeline, GST_STATE_PAUSED);
 			}else if(!bPaused){
 				gst_element_set_state (gstPipeline, GST_STATE_PLAYING);
-			}*/
+			}
 		break;
 
 #if GST_VERSION_MAJOR==0
@@ -580,7 +591,7 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 		}break;
 
 		case GST_MESSAGE_ASYNC_DONE:
-			//ofLogVerbose("ofGstUtils") << "gstHandleMessage(): async done";
+			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): async done";
 		break;
 
 		case GST_MESSAGE_ERROR: {
@@ -600,27 +611,22 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 
 		}break;
 
-			case GST_MESSAGE_EOS:{
-				//ofLogVerbose("ofGstUtils") << "gstHandleMessage(): end of the stream";
-				bool isClosing = closing;
-				eos_cb();
+		case GST_MESSAGE_EOS:{
+			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): end of the stream";
+			bool isClosing = closing;
+			eos_cb();
 
-				if(isClosing){
-					busWatchID = 0;
-					return false;
-				}
+			if(isClosing){
+				busWatchID = 0;
+				return false;
+			}
 
-				switch(loopMode){
+			switch(loopMode){
 
-					case OF_LOOP_NORMAL:{
-						GstFormat format = GST_FORMAT_TIME;
-						GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
-						gint64 pos;
-						#if GST_VERSION_MAJOR==0
-							gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
-						#else
-							gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
-						#endif
+				case OF_LOOP_NORMAL:{
+					GstFormat format = GST_FORMAT_TIME;
+					GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT);
+					if(speed>0){
 						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
 											speed,
 											format,
@@ -628,45 +634,83 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 											GST_SEEK_TYPE_SET,
 											0,
 											GST_SEEK_TYPE_SET,
-											durationNanos)) {
+											-1)) {
 							ofLogWarning("ofGstUtils") << "gstHandleMessage(): unable to seek";
 						}
-					}break;
-
-					case OF_LOOP_PALINDROME:{
-						GstFormat format = GST_FORMAT_TIME;
-						GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
-						gint64 pos;
-						#if GST_VERSION_MAJOR==0
-							gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
-						#else
-							gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
-						#endif
-						float loopSpeed;
-						if(pos>0)
-							loopSpeed=-speed;
-						else
-							loopSpeed=speed;
-						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
-											loopSpeed,
-											GST_FORMAT_UNDEFINED,
-											flags,
-											GST_SEEK_TYPE_NONE,
-											0,
-											GST_SEEK_TYPE_NONE,
-											0)) {
+					}else if(speed<0){
+						if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+								flags,
+								GST_SEEK_TYPE_SET,
+								0,
+								GST_SEEK_TYPE_SET,
+								durationNanos-1000000)) {
 							ofLogWarning("ofGstUtils") << "gstHandleMessage(): unable to seek";
 						}
-					}break;
+					}
+				}break;
 
-					default:
-					break;
-				}
+				case OF_LOOP_PALINDROME:{
+					GstFormat format = GST_FORMAT_TIME;
+					GstSeekFlags flags = (GstSeekFlags) (GST_SEEK_FLAG_FLUSH |GST_SEEK_FLAG_KEY_UNIT);
+					gint64 pos;
+					#if GST_VERSION_MAJOR==0
+						gst_element_query_position(GST_ELEMENT(gstPipeline),&format,&pos);
+					#else
+						gst_element_query_position(GST_ELEMENT(gstPipeline),format,&pos);
+					#endif
+					float loopSpeed;
+					if(pos>0)
+						loopSpeed=-speed;
+					else
+						loopSpeed=speed;
+					if(!gst_element_seek(GST_ELEMENT(gstPipeline),
+										loopSpeed,
+										GST_FORMAT_UNDEFINED,
+										flags,
+										GST_SEEK_TYPE_NONE,
+										0,
+										GST_SEEK_TYPE_NONE,
+										0)) {
+						ofLogWarning("ofGstUtils") << "gstHandleMessage(): unable to seek";
+					}
+				}break;
+
+				default:
+				break;
+			}
 
 		}break;
+		case GST_MESSAGE_LATENCY:
+			gst_bin_recalculate_latency (GST_BIN (getPipeline()));
+			break;
+		case GST_MESSAGE_REQUEST_STATE:	{
+			GstState state;
+			gchar *name = gst_object_get_path_string (GST_MESSAGE_SRC (msg));
 
+			gst_message_parse_request_state (msg, &state);
+			gst_element_set_state (getPipeline(), state);
+
+			g_free (name);
+			break;
+		}
+		case GST_MESSAGE_HAVE_CONTEXT:{
+			GstContext *context;
+			const gchar *context_type;
+			gchar *context_str;
+
+			gst_message_parse_have_context (msg, &context);
+
+			context_type = gst_context_get_context_type (context);
+			context_str = gst_structure_to_string (gst_context_get_structure (context));
+			ofLogNotice("ofGstUtils","Got context from element '%s': %s=%s\n",
+				GST_ELEMENT_NAME (GST_MESSAGE_SRC (msg)), context_type,
+				context_str);
+			g_free (context_str);
+			gst_context_unref (context);
+			break;
+		}
 		default:
-			//ofLogVerbose("ofGstUtils") << "gstHandleMessage(): unhandled message from " << GST_MESSAGE_SRC_NAME(msg);
+			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): unhandled message from " << GST_MESSAGE_SRC_NAME(msg);
 		break;
 	}
 
@@ -728,6 +772,10 @@ ofGstVideoUtils::ofGstVideoUtils(){
 	mapinfo 					= initMapinfo;
 #endif
 	internalPixelFormat			= OF_PIXELS_RGB;
+#ifdef OF_USE_GST_GL
+	glDisplay = NULL;
+	glContext = NULL;
+#endif
 }
 
 ofGstVideoUtils::~ofGstVideoUtils(){
@@ -743,8 +791,9 @@ void ofGstVideoUtils::close(){
 	bIsFrameNew					= false;
 	bHavePixelsChanged			= false;
 	bBackPixelsChanged			= false;
-	buffer.reset();
-	prevBuffer.reset();
+	frontBuffer.reset();
+	backBuffer.reset();
+	while(!bufferQueue.empty()) bufferQueue.pop();
 }
 
 bool ofGstVideoUtils::isInitialized() const{
@@ -763,6 +812,18 @@ const ofPixels & ofGstVideoUtils::getPixels() const{
 	return pixels;
 }
 
+ofTexture * ofGstVideoUtils::getTexture(){
+#ifdef OF_USE_GST_GL
+	if(frontTexture.isAllocated()){
+		return &frontTexture;
+	}else{
+		return NULL;
+	}
+#else
+	return NULL;
+#endif
+}
+
 void ofGstVideoUtils::update(){
 	if (isLoaded()){
 		if(!isFrameByFrame()){
@@ -771,7 +832,14 @@ void ofGstVideoUtils::update(){
 			if (bHavePixelsChanged){
 				bBackPixelsChanged=false;
 				swap(pixels,backPixels);
-				prevBuffer = buffer;
+				#ifdef OF_USE_GST_GL
+				if(backTexture.isAllocated()){
+					frontTexture.getTextureData() = backTexture.getTextureData();
+					frontTexture.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
+					frontTexture.setTextureWrap(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE);
+				}
+				#endif
+				frontBuffer = backBuffer;
 			}
 		}else{
 #if GST_VERSION_MAJOR==0
@@ -790,7 +858,7 @@ void ofGstVideoUtils::update(){
 			}
 		}
 #else
-			GstBuffer *buffer;
+			GstBuffer * buffer;
 			GstSample * sample;
 
 			//get the buffer from appsink
@@ -806,7 +874,7 @@ void ofGstVideoUtils::update(){
 					gst_buffer_map (buffer, &mapinfo, GST_MAP_READ);
 					//TODO: stride = mapinfo.size / height;
 					pixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-					prevBuffer = shared_ptr<GstSample>(sample,gst_sample_unref);
+					backBuffer = shared_ptr<GstSample>(sample,gst_sample_unref);
 					bHavePixelsChanged=true;
 					gst_buffer_unmap(buffer,&mapinfo);
 				}
@@ -948,7 +1016,44 @@ ofPixelFormat ofGstVideoUtils::getOFFormat(GstVideoFormat format){
 }
 #endif
 
+/*
+gboolean ofGstVideoUtils::sync_bus_call (GstBus * bus, GstMessage * msg, gpointer data)
+{
+	switch (GST_MESSAGE_TYPE (msg)) {
+		case GST_MESSAGE_NEED_CONTEXT:
+		{
+			ofGstVideoPlayer * player = (ofGstVideoPlayer*)data;
+			const gchar *context_type;
+
+			gst_message_parse_context_type (msg, &context_type);
+			ofLogNotice("ofGstVideoPlayer","got need context %s\n", context_type);
+
+			if (g_strcmp0 (context_type, GST_GL_DISPLAY_CONTEXT_TYPE) == 0) {
+				GstContext *display_context =
+				gst_context_new (GST_GL_DISPLAY_CONTEXT_TYPE, TRUE);
+				gst_context_set_gl_display (display_context, player->glDisplay);
+				//GstStructure *s = gst_context_writable_structure (display_context);
+				//gst_structure_set (s, "context", GST_GL_TYPE_CONTEXT, player->glContext,	NULL);
+				gst_element_set_context (GST_ELEMENT (msg->src), display_context);
+				return TRUE;
+			} else if (g_strcmp0 (context_type, "gst.gl.app_context") == 0) {
+				GstContext *app_context = gst_context_new ("gst.gl.app_context", TRUE);
+				GstStructure *s = gst_context_writable_structure (app_context);
+				gst_structure_set (s, "context", GST_GL_TYPE_CONTEXT, player->glContext,	NULL);
+				gst_element_set_context (GST_ELEMENT (msg->src), app_context);
+				return TRUE;
+			}
+			break;
+		}
+		default:
+		break;
+	}
+	return FALSE;
+}*/
+
 bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bool isStream, int w, int h){
+	internalPixelFormat = pixelFormat;
+#ifndef OF_USE_GST_GL
 	string caps;
 #if GST_VERSION_MAJOR==0
 	switch(pixelFormat){
@@ -979,14 +1084,62 @@ bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bo
 	}
 
 	string pipeline_string =
-		pipeline + " ! appsink name=ofappsink caps=\"" + caps + "\""; // caps=video/x-raw-rgb
+		pipeline + " ! appsink name=ofappsink enable-last-sample=0 caps=\"" + caps + "\"";
 
-	internalPixelFormat = pixelFormat;
 	if((w==-1 || h==-1) || pixelFormat==OF_PIXELS_NATIVE || allocate(w,h,pixelFormat)){
 		return setPipelineWithSink(pipeline_string,"ofappsink",isStream);
 	}else{
 		return false;
 	}
+#else
+	string pipeline_string =
+		pipeline + " ! glcolorscale name=gl_filter ! appsink name=ofappsink enable-last-sample=0 caps=\"video/x-raw,format=RGBA\"";
+
+	bool ret;
+	if((w==-1 || h==-1) || pixelFormat==OF_PIXELS_NATIVE || allocate(w,h,pixelFormat)){
+		ret = setPipelineWithSink(pipeline_string,"ofappsink",isStream);
+	}else{
+		ret = false;
+	}
+
+	auto glfilter = gst_bin_get_by_name(GST_BIN(getPipeline()),"gl_filter");
+
+#if defined(TARGET_LINUX) && !defined(TARGET_OPENGLES)
+	glXMakeCurrent (ofGetX11Display(), None, 0);
+	glDisplay = (GstGLDisplay *)gst_gl_display_x11_new_with_display(ofGetX11Display());
+	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetGLXContext(),
+	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
+
+	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
+	// FIXME: this seems to be the way to add the context in 1.4.5
+	//
+	// GstBus * bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
+	// gst_bus_enable_sync_message_emission (bus);
+	// g_signal_connect (bus, "sync-message", G_CALLBACK (sync_bus_call), this);
+	// gst_object_unref(bus);
+
+	glXMakeCurrent (ofGetX11Display(), ofGetX11Window(), ofGetGLXContext());
+#elif defined(TARGET_OPENGLES)
+	cout << "current display " << ofGetEGLDisplay() << endl;
+	eglMakeCurrent (eglGetDisplay(EGL_DEFAULT_DISPLAY), 0,0, 0);
+	glDisplay = (GstGLDisplay *)gst_gl_display_egl_new_with_egl_display(eglGetDisplay(EGL_DEFAULT_DISPLAY));
+	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetEGLContext(),
+	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
+
+	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
+	// FIXME: this seems to be the way to add the context in 1.4.5
+	//
+	// GstBus * bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
+	// gst_bus_enable_sync_message_emission (bus);
+	// g_signal_connect (bus, "sync-message", G_CALLBACK (sync_bus_call), this);
+	// gst_object_unref(bus);
+
+	eglMakeCurrent (ofGetEGLDisplay(), ofGetEGLSurface(), ofGetEGLSurface(), ofGetEGLContext());
+
+#endif
+
+	return ret;
+#endif
 }
 
 bool ofGstVideoUtils::setPixelFormat(ofPixelFormat pixelFormat){
@@ -1025,8 +1178,9 @@ void ofGstVideoUtils::reallocateOnNextFrame(){
 	bIsFrameNew					= false;
 	bHavePixelsChanged			= false;
 	bBackPixelsChanged			= false;
-	prevBuffer.reset();
-	buffer.reset();
+	frontBuffer.reset();
+	backBuffer.reset();
+	while(!bufferQueue.empty()) bufferQueue.pop();
 }
 
 #if GST_VERSION_MAJOR==0
@@ -1070,7 +1224,6 @@ GstFlowReturn ofGstVideoUtils::process_buffer(shared_ptr<GstBuffer> _buffer){
 static GstVideoInfo getVideoInfo(GstSample * sample){
     GstCaps *caps = gst_sample_get_caps(sample);
     GstVideoInfo vinfo;
-    gst_video_info_init (&vinfo);
     if(caps){
 		gst_video_info_from_caps (&vinfo, caps);
     }else{
@@ -1082,20 +1235,55 @@ static GstVideoInfo getVideoInfo(GstSample * sample){
 GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 	GstBuffer * _buffer = gst_sample_get_buffer(sample.get());
 
-	/* TODO: get GL and EGL buffers.
-	GstVideoGLTextureUploadMeta *upload_meta = gst_buffer_get_video_gl_texture_upload_meta (_buffer);
-	if(upload_meta){
-		cout << "got gl upload meta" << endl;
-		return GST_FLOW_OK;
-	}*/
+#ifdef OF_USE_GST_GL
+	if (gst_buffer_map (_buffer, &mapinfo, (GstMapFlags)(GST_MAP_READ | GST_MAP_GL))){
+		if (gst_is_gl_memory (mapinfo.memory)) {
+			bufferQueue.push(sample);
+			gst_buffer_unmap(_buffer, &mapinfo);
+			bool newTexture=false;
+			ofScopedLock lock(mutex);
+			while(bufferQueue.size()>2){
+				backBuffer = bufferQueue.front();
+				bufferQueue.pop();
+				newTexture = true;
+			}
+			if(newTexture){
+				GstBuffer * _buffer = gst_sample_get_buffer(backBuffer.get());
+				gst_buffer_map (_buffer, &mapinfo, (GstMapFlags)(GST_MAP_READ | GST_MAP_GL));
+				auto texId = *(guint*)mapinfo.data;
+				backTexture.setUseExternalTextureID(texId);
+				ofTextureData & texData = backTexture.getTextureData();
+				texData.bAllocated = true;
+				texData.bFlipTexture = false;
+				texData.glTypeInternal = GL_RGBA;
+				texData.height = getHeight();
+				texData.width = getWidth();
+				texData.magFilter = GL_LINEAR;
+				texData.minFilter = GL_LINEAR;
+				texData.tex_h = getHeight();
+				texData.tex_w = getWidth();
+				texData.tex_u = 1;
+				texData.tex_t = 1;
+				texData.textureID = texId;
+				texData.textureTarget = GL_TEXTURE_2D;
+				texData.wrapModeHorizontal = GL_CLAMP_TO_EDGE;
+				texData.wrapModeVertical = GL_CLAMP_TO_EDGE;
+				bBackPixelsChanged=true;
+				gst_buffer_unmap(_buffer,&mapinfo);
+			}
+			return GST_FLOW_OK;
+		}
+	}
+#endif
 
+	// video frame has normal texture
 	gst_buffer_map (_buffer, &mapinfo, GST_MAP_READ);
 	guint size = mapinfo.size;
 
 	int stride = 0;
 	if(pixels.isAllocated() && pixels.getTotalBytes()!=(int)size){
-		GstVideoInfo vinfo = getVideoInfo(sample.get());
-		stride = vinfo.stride[0];
+		GstVideoInfo v_info = getVideoInfo(sample.get());
+		stride = v_info.stride[0];
 
 		if(stride == (pixels.getWidth() * pixels.getBytesPerPixel())) {
 			ofLogError("ofGstVideoUtils") << "buffer_cb(): error on new buffer, buffer size: " << size << "!= init size: " << pixels.getTotalBytes();
@@ -1103,7 +1291,7 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 		}
 	}
 	mutex.lock();
-	buffer = sample;
+	backBuffer = sample;
 
 	if(pixels.isAllocated()){
 		if(stride > 0) {
@@ -1123,8 +1311,8 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 		if(appsink){
 			appsink->on_stream_prepared();
 		}else{
-			GstVideoInfo vinfo = getVideoInfo(sample.get());
-			allocate(vinfo.width,vinfo.height,getOFFormat(vinfo.finfo->format));
+			GstVideoInfo v_info = getVideoInfo(sample.get());
+			allocate(v_info.width,v_info.height,getOFFormat(v_info.finfo->format));
 		}
 	}
 	gst_buffer_unmap(_buffer, &mapinfo);

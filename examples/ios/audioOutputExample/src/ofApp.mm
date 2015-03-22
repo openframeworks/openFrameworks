@@ -85,11 +85,10 @@ void ofApp::draw(){
 	}
 
 	ofSetHexColor(0x333333);
-	char reportString[255];
-	sprintf(reportString, "volume: (%f) \npan: (%f)\nsynthesis: %s", volume, pan, bNoise ? "noise" : "sine wave");
-	sprintf(reportString, "%s (%fhz)", reportString, targetFrequency);
-
-	ofDrawBitmapString(reportString, leftX, topY + boxH + 20);
+	stringstream reportString;
+    reportString << "volume: (" << volume << ") \npan: (" << pan << ")\nsynthesis: " << ( bNoise ? "noise" : "sine wave" );
+    reportString << " (" << targetFrequency << "hz)\n";
+	ofDrawBitmapString(reportString.str(), leftX, topY + boxH + 20);
 
 }
 

@@ -8,6 +8,7 @@
 #include "ofAppAndroidWindow.h"
 
 #include <jni.h>
+#include <queue>
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
@@ -132,6 +133,12 @@ void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
 	}
 
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion);
+
+    if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
+    	static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersion,0);
+    }else{
+    	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
+    }
 }
 
 void ofAppAndroidWindow::update(){
@@ -403,7 +410,6 @@ Java_cc_openframeworks_OFAndroid_render( JNIEnv*  env, jclass  thiz )
 			events.pop();
 		}
 	}
-
 	window->events().notifyUpdate();
 
 

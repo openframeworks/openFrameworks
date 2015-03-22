@@ -50,8 +50,8 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		ofOpenALSoundPlayer();
 		virtual ~ofOpenALSoundPlayer();
 
-		bool loadSound(string fileName, bool stream = false);
-		void unloadSound();
+		bool load(string fileName, bool stream = false);
+		void unload();
 		void play();
 		void stop();
 
@@ -65,14 +65,14 @@ class ofOpenALSoundPlayer : public ofBaseSoundPlayer, public ofThread {
 		void setPositionMS(int ms);
 
 
-		float getPosition();
-		int getPositionMS();
-		bool getIsPlaying();
-		float getSpeed();
-		float getPan();
-        float getVolume();
-		bool getIsPaused();
-		bool isLoaded();
+		float getPosition() const;
+		int getPositionMS() const;
+		bool isPlaying() const;
+		float getSpeed() const;
+		float getPan() const;
+        float getVolume() const;
+		bool isPaused() const;
+		bool isLoaded() const;
 
 		static void initialize();
 		static void close();

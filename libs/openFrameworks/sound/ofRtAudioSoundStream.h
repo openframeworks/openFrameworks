@@ -14,7 +14,7 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		ofRtAudioSoundStream();
 		~ofRtAudioSoundStream();
 		
-		std::vector<ofSoundDevice> getDeviceList();
+		std::vector<ofSoundDevice> getDeviceList() const;
 		void setDeviceID(int deviceID);
 		void setInDeviceID(int deviceID);
 		void setOutDeviceID(int deviceID);
@@ -28,13 +28,13 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		void stop();
 		void close();
 		
-		long unsigned long getTickCount();		
+		long unsigned long getTickCount() const;
 
-		int getNumInputChannels();
-		int getNumOutputChannels();
-		int getSampleRate();
-		int getBufferSize();
-		int getDeviceID();
+		int getNumInputChannels() const;
+		int getNumOutputChannels() const;
+		int getSampleRate() const;
+		int getBufferSize() const;
+		int getDeviceID() const;
 	
 	private:
 		long unsigned long tickCount;

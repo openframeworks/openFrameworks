@@ -75,7 +75,7 @@ void ofAppNoWindow::setup(const ofWindowSettings & settings){
 	width = settings.width;
 	height = settings.height;
 
-	ofSetCurrentRenderer(shared_ptr<ofBaseRenderer>(new ofNoopRenderer));
+	currentRenderer = shared_ptr<ofBaseRenderer>(new ofNoopRenderer);
 }
 
 //----------------------------------------------------------
