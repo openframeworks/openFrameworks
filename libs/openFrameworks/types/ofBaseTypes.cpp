@@ -3,7 +3,7 @@
 #include "ofGLUtils.h"
 #include "ofGLProgrammableRenderer.h"
 #include "of3dGraphics.h"
-
+#include "ofSoundBuffer.h"
 
 //---------------------------------------------------------------------------
 ofBaseVideoGrabber::~ofBaseVideoGrabber(){
@@ -46,6 +46,11 @@ void ofBaseVideoGrabber::videoSettings(){
 //---------------------------------------------------------------------------
 ofBaseVideoPlayer::~ofBaseVideoPlayer(){
 
+}
+
+void ofBaseVideoPlayer::loadAsync(string name){
+	ofLogWarning("ofBaseVideoPlayer") << "loadAsync() not implemented, loading synchronously";
+	load(name);
 }
 
 //---------------------------------------------------------------------------
@@ -320,4 +325,30 @@ void ofBaseRenderer::drawRotationAxes(float radius, float stripWidth, int circle
 void ofBaseMaterial::uploadMatrices(const ofShader & shader,ofGLProgrammableRenderer & renderer) const{
 	const ofMatrix4x4 & normalMatrix = renderer.getCurrentNormalMatrix();
 	shader.setUniformMatrix4f("normalMatrix",normalMatrix);
+}
+
+
+void ofBaseSoundInput::audioIn( ofSoundBuffer& buffer ){
+	audioIn(&buffer[0], buffer.getNumFrames(), buffer.getNumChannels(), buffer.getDeviceID(), buffer.getTickCount());
+}
+
+void ofBaseSoundInput::audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
+	audioIn(input, bufferSize, nChannels);
+}
+
+void ofBaseSoundInput::audioIn( float * input, int bufferSize, int nChannels ){
+	audioReceived(input, bufferSize, nChannels);
+}
+
+
+void ofBaseSoundOutput::audioOut( ofSoundBuffer& buffer ){
+	audioOut(&buffer[0], buffer.getNumFrames(), buffer.getNumChannels(), buffer.getDeviceID(), buffer.getTickCount());
+}
+
+void ofBaseSoundOutput::audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
+	audioOut(output, bufferSize, nChannels);
+}
+
+void ofBaseSoundOutput::audioOut( float * output, int bufferSize, int nChannels ){
+	audioRequested(output, bufferSize, nChannels);
 }

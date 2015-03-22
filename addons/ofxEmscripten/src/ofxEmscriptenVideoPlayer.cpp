@@ -28,7 +28,7 @@ ofxEmscriptenVideoPlayer::~ofxEmscriptenVideoPlayer() {
 	html5video_player_delete(id);
 }
 
-bool ofxEmscriptenVideoPlayer::loadMovie(string name){
+bool ofxEmscriptenVideoPlayer::load(string name){
 	html5video_player_load(id,ofToDataPath(name).c_str());
 	return true;
 }

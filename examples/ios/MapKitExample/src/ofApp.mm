@@ -22,7 +22,7 @@ void ofApp::setup(){
 	ofEnableAlphaBlending();
 	
 	// load font for displaying info
-	font.loadFont("verdana.ttf", 12);
+	font.load("verdana.ttf", 12);
 	
 	// open the mapview
 	mapKit.open();
@@ -59,7 +59,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update() {
 	if(mapKit.isOpen()) {
-//		printf("User is %son screen\n", mapKit.isUserOnScreen() ? "" : "not ");
+//		ofLog() << "User is %son screen\n" << (mapKit.isUserOnScreen() ? "" : "not ");
 	}
 	
 }
@@ -108,27 +108,27 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::regionWillChange(bool animated){
-	printf("ofApp::regionWillChange | animated: %i\n", animated);
+	ofLog() << "ofApp::regionWillChange | animated: " << animated;
 }
 
 //--------------------------------------------------------------
 void ofApp::regionDidChange(bool animated){
-	printf("ofApp::regionDidChange | animated: %i\n", animated);
+	ofLog() << "ofApp::regionDidChange | animated: " << animated;
 }
 
 //--------------------------------------------------------------
 void ofApp::willStartLoadingMap(){
-	printf("ofApp::willStartLoadingMap\n");
+	ofLog() << "ofApp::willStartLoadingMap";
 }
 
 //--------------------------------------------------------------
 void ofApp::didFinishLoadingMap(){
-	printf("ofApp::didFinishLoadingMap\n");
+	ofLog() << "ofApp::didFinishLoadingMap";
 }
 
 //--------------------------------------------------------------
 void ofApp::errorLoadingMap(string errorDescription){
-	printf("ofApp::errorLoadingMap : %s\n", errorDescription.c_str());
+	ofLog() << "ofApp::errorLoadingMap : " << errorDescription;
 }
 
 //--------------------------------------------------------------

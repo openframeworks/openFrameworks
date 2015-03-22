@@ -84,16 +84,15 @@
 class ofSoundBuffer {
 public:
 	ofSoundBuffer();
-	ofSoundBuffer(const ofSoundBuffer &other);
 	ofSoundBuffer(short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
-	ofSoundBuffer& operator=(ofSoundBuffer other);
-	~ofSoundBuffer();
 
 	enum InterpolationAlgorithm{
 		Linear,
 		Hermite
 	};
 	static InterpolationAlgorithm defaultAlgorithm;  //defaults to Linear for mobile, Hermite for desktop
+
+	void allocate(size_t numSamples, size_t numChannels);
 
 	/// sample rate of the audio in this buffer
 	int getSampleRate() const { return samplerate; }
@@ -109,12 +108,14 @@ public:
 	
 	/// return the tickCount that was assigned by ofSoundStream (if this buffer originated from an ofSoundStream).
 	unsigned long long getTickCount() const { return tickCount; }
+	void setTickCount(unsigned long long tick){ tickCount = tick; }
 	
 	/// return the duration of audio in this buffer in milliseconds (==(getNumFrames()/getSampleRate())*1000)
 	unsigned long getDurationMS() const;
 	
 	/// return the ID of the device which generated this buffer
 	unsigned int getDeviceID() const { return soundStreamDeviceID; }
+	void setDeviceID(unsigned int id){ soundStreamDeviceID = id; }
 
 	/// access the sample at the given position in the buffer.
 	/// to retrieve the sample for channel channelIndex of frame frameIndex, do the following:
@@ -137,9 +138,16 @@ public:
 	void stereoPan(float left, float right);
 
 	/// copy length samples from shortBuffer and interpret as interleaved with the given number of channels at the given samplerate
-	void copyFrom(short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
+	void copyFrom(const short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
+
+	void copyFrom(const float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
+
+	void copyFrom(const vector<short> & shortBuffer, std::size_t numChannels, unsigned int sampleRate);
 	
-	void copyFrom(float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate);
+	void copyFrom(const vector<float> & floatBuffer, std::size_t numChannels, unsigned int sampleRate);
+
+	void toShortPCM(vector<short> & dst) const;
+	void toShortPCM(short * dst) const;
 
 	/// resize outBuffer to outNumFrames with outNumChannels, and then copy outNumFrames of data from us to outBuffer.
 	/// fromFrame is a frame offset. if we don't have enough source data, loop with fromFrame=0 until we have filled outBuffer.
@@ -202,8 +210,8 @@ public:
 	
 	/// return the underlying buffer. careful!
 	vector<float> & getBuffer();
+	const vector<float> & getBuffer() const;
 
-	friend class ofBaseSoundStream;
 protected:
 
 	// checks that size() and number of channels are consistent, logs a warning if not. returns consistency check result.
@@ -216,5 +224,9 @@ protected:
 	unsigned long long tickCount;
 	int soundStreamDeviceID;
 };
+
+namespace std{
+	void swap(ofSoundBuffer & src, ofSoundBuffer & dst);
+}
 
 #endif /* OFSOUNDBUFFER_H_ */

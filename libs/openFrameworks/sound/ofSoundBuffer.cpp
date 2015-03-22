@@ -17,37 +17,21 @@ ofSoundBuffer::InterpolationAlgorithm ofSoundBuffer::defaultAlgorithm = ofSoundB
 #endif
 
 ofSoundBuffer::ofSoundBuffer()
-: channels(1)
-, samplerate(44100)
-, tickCount(0) {
-
-}
-
-ofSoundBuffer::ofSoundBuffer(const ofSoundBuffer &other)
-: buffer(other.buffer)
-, channels(other.channels)
-, samplerate(other.samplerate)
-, tickCount(other.tickCount)
-, soundStreamDeviceID(other.soundStreamDeviceID) {
+:channels(1)
+,samplerate(44100)
+,tickCount(0)
+,soundStreamDeviceID(0){
 
 }
 
 ofSoundBuffer::ofSoundBuffer(short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate)
-: tickCount(0) {
+:tickCount(0)
+,soundStreamDeviceID(0) {
 	copyFrom(shortBuffer, numFrames, numChannels, sampleRate);
 	checkSizeAndChannelsConsistency("constructor");
 }
 
-ofSoundBuffer& ofSoundBuffer::operator=(ofSoundBuffer other) {
-	swap(other);
-	return *this;
-}
-
-ofSoundBuffer::~ofSoundBuffer() {
-
-}
-
-void ofSoundBuffer::copyFrom(short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
+void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
 	this->channels = numChannels;
 	this->samplerate = sampleRate;
 	buffer.resize(numFrames * numChannels);
@@ -57,14 +41,39 @@ void ofSoundBuffer::copyFrom(short * shortBuffer, std::size_t numFrames, std::si
 	checkSizeAndChannelsConsistency("copyFrom");
 }
 
-void ofSoundBuffer::copyFrom(float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
+void ofSoundBuffer::copyFrom(const float * floatBuffer, std::size_t numFrames, std::size_t numChannels, unsigned int sampleRate) {
 	this->channels = numChannels;
 	this->samplerate = sampleRate;
 	buffer.assign(floatBuffer, floatBuffer + (numFrames * numChannels));
 	checkSizeAndChannelsConsistency("copyFrom");
 }
 
+void ofSoundBuffer::copyFrom(const vector<short> & shortBuffer, std::size_t numChannels, unsigned int sampleRate){
+	copyFrom(&shortBuffer[0],shortBuffer.size()/numChannels,numChannels,sampleRate);
+}
+
+void ofSoundBuffer::copyFrom(const vector<float> & floatBuffer, std::size_t numChannels, unsigned int sampleRate){
+	copyFrom(&floatBuffer[0],floatBuffer.size()/numChannels,numChannels,sampleRate);
+}
+
+void ofSoundBuffer::toShortPCM(vector<short> & dst) const{
+	dst.resize(size());
+	for(unsigned int i = 0; i < size(); i++){
+		dst[i] = buffer[i]*float(numeric_limits<short>::max());
+	}
+}
+
+void ofSoundBuffer::toShortPCM(short * dst) const{
+	for(unsigned int i = 0; i < size(); i++){
+		dst[i] = buffer[i]*float(numeric_limits<short>::max());
+	}
+}
+
 vector<float> & ofSoundBuffer::getBuffer(){
+	return buffer;
+}
+
+const vector<float> & ofSoundBuffer::getBuffer() const{
 	return buffer;
 }
 
@@ -79,6 +88,11 @@ void ofSoundBuffer::setNumChannels(int channels){
 
 void ofSoundBuffer::setSampleRate(int rate){
 	samplerate = rate;
+}
+
+void ofSoundBuffer::allocate(size_t numSamples, size_t numChannels){
+	resize(numSamples*numChannels);
+	channels = numChannels;
 }
 
 void ofSoundBuffer::resize(std::size_t samples, float val){
@@ -573,3 +587,10 @@ float ofSoundBuffer::fillWithTone( float pitchHz, float phase ){
 	}
 	return phase;
 }
+
+namespace std{
+	void swap(ofSoundBuffer & src, ofSoundBuffer & dst){
+		src.swap(dst);
+	}
+}
+

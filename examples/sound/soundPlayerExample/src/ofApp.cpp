@@ -2,9 +2,9 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	synth.loadSound("sounds/synth.wav");
-	beats.loadSound("sounds/1085.mp3");
-	vocals.loadSound("sounds/Violet.mp3");
+	synth.load("sounds/synth.wav");
+	beats.load("sounds/1085.mp3");
+	vocals.load("sounds/Violet.mp3");
 	synth.setVolume(0.75f);
 	beats.setVolume(0.75f);
 	vocals.setVolume(0.5f);

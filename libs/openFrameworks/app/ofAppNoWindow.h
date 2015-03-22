@@ -60,9 +60,7 @@ private:
 	void draw(const ofPath & shape) const{}
 	void draw(const of3dPrimitive&, ofPolyRenderMode) const{}
 	void draw(const ofNode&) const{}
-	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{}
 	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const{}
-	void draw(const vector<ofPoint> & vertexData, ofPrimitiveMode drawMode) const{}
 	void draw(const ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
 	void draw(const ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}
 	void draw(const ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const{}

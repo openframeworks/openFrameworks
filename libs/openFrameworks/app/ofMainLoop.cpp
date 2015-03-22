@@ -88,7 +88,7 @@ void ofMainLoop::run(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> a
 		ofAddListener(window->events().touchUp,app.get(),&ofBaseApp::touchUp,OF_EVENT_ORDER_APP);
 	}
 	currentWindow = window;
-	currentWindow->makeCurrent();
+	window->makeCurrent();
 	if(!windowLoop){
 		window->events().notifySetup();
 	}
@@ -113,15 +113,16 @@ int ofMainLoop::loop(){
 }
 
 void ofMainLoop::loopOnce(){
-	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
+	for(map<shared_ptr<ofAppBaseWindow>,shared_ptr<ofBaseApp> >::iterator i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end() ;){
 		if(i->first->getWindowShouldClose()){
 			i->first->close();
-			windowsApps.erase(i);
+			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
 		}else{
 			currentWindow = i->first;
-			currentWindow->makeCurrent();
-			currentWindow->update();
-			currentWindow->draw();
+			i->first->makeCurrent();
+			i->first->update();
+			i->first->draw();
+			i++; ///< continue to next window
 		}
 	}
 	if(pollEvents){
@@ -169,6 +170,22 @@ void ofMainLoop::exit(){
 
 shared_ptr<ofAppBaseWindow> ofMainLoop::getCurrentWindow(){
 	return currentWindow;
+}
+
+void ofMainLoop::setCurrentWindow(shared_ptr<ofAppBaseWindow> window){
+	currentWindow = window;
+}
+
+void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
+	if(currentWindow.get() == window){
+		return;
+	}
+	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
+		if(i->first.get() == window){
+			currentWindow = i->first;
+			break;
+		}
+	}
 }
 
 shared_ptr<ofBaseApp> ofMainLoop::getCurrentApp(){

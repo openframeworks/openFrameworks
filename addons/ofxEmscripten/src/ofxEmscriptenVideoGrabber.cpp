@@ -32,7 +32,7 @@ vector<ofVideoDevice> ofxEmscriptenVideoGrabber::listDevices() const{
 	return vector<ofVideoDevice>();
 }
 
-bool ofxEmscriptenVideoGrabber::initGrabber(int w, int h){
+bool ofxEmscriptenVideoGrabber::setup(int w, int h){
 	if(id!=-1){
 		html5video_grabber_init(id,w,h,desiredFramerate);
 		switch(getPixelFormat()){
@@ -61,7 +61,7 @@ bool ofxEmscriptenVideoGrabber::isInitialized() const{
 }
 
 void ofxEmscriptenVideoGrabber::update(){
-	if(html5video_grabber_update(id,usePixels,pixels.getPixels())){
+	if(html5video_grabber_update(id,usePixels,pixels.getData())){
 		texture.texData.width = html5video_grabber_width(id);
 		texture.texData.height = html5video_grabber_height(id);
 		texture.texData.tex_w = texture.texData.width;
