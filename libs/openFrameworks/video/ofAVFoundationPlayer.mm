@@ -54,10 +54,18 @@ bool ofAVFoundationPlayer::load(string name) {
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	
-    if(videoPlayer == NULL) {
-        videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
-        [videoPlayer setWillBeUpdatedExternally:YES];
-    }
+    if(videoPlayer != NULL) {
+		// throw this player away, add it to GC
+		ofAVFoundationGC::instance()->addToGarbageQueue(videoPlayer);
+		videoPlayer = NULL;
+	}
+	
+	
+	// create a new player
+	videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
+	[videoPlayer setWillBeUpdatedExternally:YES];
+
+
 	
     NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
 	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
@@ -129,10 +137,12 @@ void ofAVFoundationPlayer::close() {
 		pixels.clear();
         
         videoTexture.clear();
+
+		// dispose videoplayer
+		ofAVFoundationGC::instance()->addToGarbageQueue(videoPlayer);
+
+		videoPlayer = NULL;
 		
-        videoPlayer.delegate = nil;
-		[videoPlayer release];
-        
         if(bTextureCacheSupported == true) {
             killTextureCache();
         }
@@ -729,3 +739,63 @@ ofTexture * ofAVFoundationPlayer::getTexture() {
     return getTexturePtr();
 }
 
+
+
+
+
+
+
+//--------------------------------------------------------------
+//--------------------------------------------------------------
+// GC singleton
+ofAVFoundationGC* ofAVFoundationGC::singleton = NULL;
+
+ofAVFoundationGC* ofAVFoundationGC::instance(){
+	
+	if (!singleton){   // Only allow one instance of class to be generated.
+		singleton = new ofAVFoundationGC();
+		singleton->startThread();
+	}
+	return singleton;
+}
+
+
+void ofAVFoundationGC::addToGarbageQueue(ofAVFoundationVideoPlayer * p){
+	lock();
+	p.delegate = nil;
+	videosPendingDeletion.push_back(p);
+	unlock();
+}
+
+
+void ofAVFoundationGC::threadedFunction(){
+	
+	ofAVFoundationVideoPlayer * toDel = NULL;
+	
+	while (isThreadRunning()) {
+		sleep(1);
+		lock();
+		if(videosPendingDeletion.size() > 0){
+			toDel = videosPendingDeletion[0];
+			videosPendingDeletion.erase(videosPendingDeletion.begin());
+		}
+		unlock();
+		if (toDel){ //we do this to avoid blocking the main thread inside the mutex
+			//as this is the "long" call
+			
+			//should call a finalizer insetead as pointed out in PR
+			[toDel release];
+			toDel = NULL;
+		}
+	}
+
+	// dispose all left over
+	while (videosPendingDeletion.size() > 0) {
+		toDel = videosPendingDeletion.front();
+		videosPendingDeletion.erase(videosPendingDeletion.begin());
+		if (toDel){
+			[toDel release];
+			toDel = NULL;
+		}
+	}
+}
