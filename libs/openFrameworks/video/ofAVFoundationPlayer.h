@@ -9,6 +9,7 @@
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 #include "ofTexture.h"
+#include "ofThread.h"
 
 #ifdef __OBJC__
 #import "ofAVFoundationVideoPlayer.h"
@@ -103,3 +104,29 @@ protected:
 	ofTexture videoTexture;
 };
 
+
+
+//--------------------------------------------------------------
+// garbage collector for videoplayers
+// destroying an AVAssetReader takes a while,
+// so do it on a thread
+#ifdef __OBJC__
+class ofAVFoundationGC : public ofThread {
+	
+public:
+	
+	static ofAVFoundationGC* instance();
+	void addToGarbageQueue(ofAVFoundationVideoPlayer*);
+	
+	
+private:
+	
+	ofAVFoundationGC(){}; //use instance()!
+	static ofAVFoundationGC*	singleton;
+	
+	vector<ofAVFoundationVideoPlayer*> videosPendingDeletion;
+	
+	void threadedFunction();
+	
+};
+#endif
