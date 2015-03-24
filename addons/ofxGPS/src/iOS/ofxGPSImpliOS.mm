@@ -67,7 +67,6 @@ bool ofxGPS::startHeading()
     bool result = [getCoreLocSafe() startHeading];
     
     if (result) {
-        startMonitoring();
         m_headingStarted = true;
     }
     
@@ -91,7 +90,6 @@ bool ofxGPS::startLocation()
 	bool result = [getCoreLocSafe() startLocation];
     
     if (result) {
-        startMonitoring();
         m_locationStarted = true;
     }
     
@@ -163,7 +161,6 @@ void ofxGPS::stopLocation()
 {
 	if([CLLocationManager headingAvailable])
 	{
-        [locationManager requestAlwaysAuthorization];
 		[locationManager startUpdatingHeading];
 		return true;
 	}
@@ -184,6 +181,9 @@ void ofxGPS::stopLocation()
 {
 	if([CLLocationManager locationServicesEnabled])
 	{
+        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+        locationManager.distanceFilter = kCLDistanceFilterNone;
+        [locationManager requestAlwaysAuthorization];
 		[locationManager startUpdatingLocation];
 		return true;
 	}
