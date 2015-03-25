@@ -56,7 +56,7 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	
     if(videoPlayer != NULL) {
 		// throw this player away, add it to GC
-		ofAVFoundationGC::instance()->addToGarbageQueue(videoPlayer);
+		ofAVFoundationGC::instance().addToGarbageQueue(videoPlayer);
 		videoPlayer = NULL;
 	}
 	
@@ -139,7 +139,8 @@ void ofAVFoundationPlayer::close() {
         videoTexture.clear();
 
 		// dispose videoplayer
-		ofAVFoundationGC::instance()->addToGarbageQueue(videoPlayer);
+		ofAVFoundationGC& inst = ofAVFoundationGC::instance();
+		inst.addToGarbageQueue(videoPlayer);
 
 		videoPlayer = NULL;
 		
@@ -747,18 +748,10 @@ ofTexture * ofAVFoundationPlayer::getTexture() {
 
 //--------------------------------------------------------------
 //--------------------------------------------------------------
-// GC singleton
-ofAVFoundationGC* ofAVFoundationGC::singleton = NULL;
-
-ofAVFoundationGC* ofAVFoundationGC::instance(){
-	
-	if (!singleton){   // Only allow one instance of class to be generated.
-		singleton = new ofAVFoundationGC();
-		singleton->startThread();
-	}
+ofAVFoundationGC& ofAVFoundationGC::instance(){
+	static ofAVFoundationGC singleton;
 	return singleton;
 }
-
 
 void ofAVFoundationGC::addToGarbageQueue(ofAVFoundationVideoPlayer * p){
 	lock();
@@ -767,6 +760,15 @@ void ofAVFoundationGC::addToGarbageQueue(ofAVFoundationVideoPlayer * p){
 	unlock();
 }
 
+ofAVFoundationGC::~ofAVFoundationGC(){
+	// end thread and clean up
+	waitForThread(true);
+}
+
+// private constructor
+ofAVFoundationGC::ofAVFoundationGC(){
+	startThread();
+}
 
 void ofAVFoundationGC::threadedFunction(){
 	
@@ -783,7 +785,7 @@ void ofAVFoundationGC::threadedFunction(){
 		if (toDel){ //we do this to avoid blocking the main thread inside the mutex
 			//as this is the "long" call
 			
-			//should call a finalizer insetead as pointed out in PR
+			//should call a finalizer instead...
 			[toDel release];
 			toDel = NULL;
 		}
