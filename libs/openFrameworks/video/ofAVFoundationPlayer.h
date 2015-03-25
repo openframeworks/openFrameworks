@@ -115,14 +115,15 @@ class ofAVFoundationGC : public ofThread {
 	
 public:
 	
-	static ofAVFoundationGC* instance();
+	~ofAVFoundationGC();
+	
+	static ofAVFoundationGC& instance();
 	void addToGarbageQueue(ofAVFoundationVideoPlayer*);
 	
 	
 private:
 	
-	ofAVFoundationGC(){}; //use instance()!
-	static ofAVFoundationGC*	singleton;
+	ofAVFoundationGC(); //use instance()!
 	
 	vector<ofAVFoundationVideoPlayer*> videosPendingDeletion;
 	
