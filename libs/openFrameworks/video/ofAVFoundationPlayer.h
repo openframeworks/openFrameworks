@@ -126,7 +126,7 @@ private:
 	ofAVFoundationGC(); //use instance()!
 	
 	vector<ofAVFoundationVideoPlayer*> videosPendingDeletion;
-	
+	dispatch_semaphore_t sema;
 	void threadedFunction();
 	
 };
