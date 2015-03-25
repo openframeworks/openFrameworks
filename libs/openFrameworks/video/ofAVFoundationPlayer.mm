@@ -756,6 +756,7 @@ ofAVFoundationGC& ofAVFoundationGC::instance(){
 void ofAVFoundationGC::addToGarbageQueue(ofAVFoundationVideoPlayer * p){
 	lock();
 	p.delegate = nil;
+	[p pause];
 	videosPendingDeletion.push_back(p);
 	unlock();
 	dispatch_semaphore_signal(sema);
