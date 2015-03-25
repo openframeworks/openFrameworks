@@ -758,15 +758,20 @@ void ofAVFoundationGC::addToGarbageQueue(ofAVFoundationVideoPlayer * p){
 	p.delegate = nil;
 	videosPendingDeletion.push_back(p);
 	unlock();
+	dispatch_semaphore_signal(sema);
 }
 
 ofAVFoundationGC::~ofAVFoundationGC(){
 	// end thread and clean up
-	waitForThread(true);
+	stopThread();
+	dispatch_semaphore_signal(sema);
+	waitForThread();
+	dispatch_release(sema);
 }
 
 // private constructor
 ofAVFoundationGC::ofAVFoundationGC(){
+	sema = dispatch_semaphore_create(0);
 	startThread();
 }
 
@@ -774,8 +779,12 @@ void ofAVFoundationGC::threadedFunction(){
 	
 	ofAVFoundationVideoPlayer * toDel = NULL;
 	
+	
 	while (isThreadRunning()) {
-		sleep(1);
+		
+		// wait for signal
+		dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+		
 		lock();
 		if(videosPendingDeletion.size() > 0){
 			toDel = videosPendingDeletion[0];
