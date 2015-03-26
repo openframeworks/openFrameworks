@@ -153,11 +153,13 @@ static const NSString * ItemStatusContext;
 	
 	dispatch_semaphore_t sema = dispatch_semaphore_create(0);
 	dispatch_queue_t queue;
-	if(bAsync == YES){
-		queue = dispatch_get_main_queue();
-	} else {
-		queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-	}
+//	if(bAsync == YES){
+//		queue = dispatch_get_main_queue();
+//	} else {
+//		
+//	}
+
+	queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 	
 	dispatch_async(queue, ^{
 		[self.asset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:kTracksKey] completionHandler:^{
@@ -261,6 +263,13 @@ static const NSString * ItemStatusContext;
 	audioSampleTime = timeRange.start;
 	
 	NSError *error = nil;
+
+	// safety
+	if (self.assetReader != nil) {
+		[self.assetReader cancelReading];
+		self.assetReader = nil;
+	}
+	
 	self.assetReader = [AVAssetReader assetReaderWithAsset:self.asset error:&error];
 	
 	if(error) {
@@ -677,6 +686,8 @@ static const NSString * ItemStatusContext;
 		bFinished = NO;
 	}
 	
+	// expensive call?
+	// destroy it on a thread?
 	[self.assetReader cancelReading];
 	self.assetReader = nil;
 	self.assetReaderVideoTrackOutput = nil;
