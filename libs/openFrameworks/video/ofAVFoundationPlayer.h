@@ -85,12 +85,12 @@ public:
     
 protected:
 	
-	bool loadPlayer(string name, bool bAsync);
+    bool loadPlayer(string name, bool bAsync);
 
 #ifdef __OBJC__
-	ofAVFoundationVideoPlayer * videoPlayer;
+    ofAVFoundationVideoPlayer * videoPlayer;
 #else
-	void * videoPlayer;
+    void * videoPlayer;
 #endif
     
     bool bFrameNew;
@@ -100,8 +100,8 @@ protected:
     bool bTextureCacheSupported;
 	
     ofPixels pixels;
-	ofPixelFormat pixelFormat;
-	ofTexture videoTexture;
+    ofPixelFormat pixelFormat;
+    ofTexture videoTexture;
 };
 
 
@@ -115,19 +115,19 @@ class ofAVFoundationGC : public ofThread {
 	
 public:
 	
-	~ofAVFoundationGC();
-	
-	static ofAVFoundationGC& instance();
-	void addToGarbageQueue(ofAVFoundationVideoPlayer*);
+    ~ofAVFoundationGC();
+
+    static ofAVFoundationGC& instance();
+    void addToGarbageQueue(ofAVFoundationVideoPlayer*);
 	
 	
 private:
 	
-	ofAVFoundationGC(); //use instance()!
-	
-	vector<ofAVFoundationVideoPlayer*> videosPendingDeletion;
-	dispatch_semaphore_t sema;
-	void threadedFunction();
+    ofAVFoundationGC(); //use instance()!
+
+    vector<ofAVFoundationVideoPlayer*> videosPendingDeletion;
+    dispatch_semaphore_t sema;
+    void threadedFunction();
 	
 };
 #endif

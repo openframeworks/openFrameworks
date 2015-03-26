@@ -20,7 +20,7 @@ CVOpenGLTextureRef _videoTextureRef = NULL;
 #endif
 
 ofAVFoundationPlayer::ofAVFoundationPlayer() {
-	videoPlayer = NULL;
+    videoPlayer = NULL;
     pixelFormat = OF_PIXELS_RGBA;
 	
     bFrameNew = false;
@@ -38,57 +38,57 @@ ofAVFoundationPlayer::ofAVFoundationPlayer() {
 
 //--------------------------------------------------------------
 ofAVFoundationPlayer::~ofAVFoundationPlayer() {
-	close();
+    close();
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::loadAsync(string name){
-	loadPlayer(name, true);
+    loadPlayer(name, true);
 }
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::load(string name) {
-	return loadPlayer(name, false);
+    return loadPlayer(name, false);
 }
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	
     if(videoPlayer != NULL) {
-		// throw this player away, add it to GC
-		ofAVFoundationGC::instance().addToGarbageQueue(videoPlayer);
-		videoPlayer = NULL;
-	}
-	
-	
-	// create a new player
-	videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
-	[videoPlayer setWillBeUpdatedExternally:YES];
+        // throw this player away, add it to GC
+        ofAVFoundationGC::instance().addToGarbageQueue(videoPlayer);
+        videoPlayer = NULL;
+    }
+
+
+    // create a new player
+    videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
+    [videoPlayer setWillBeUpdatedExternally:YES];
 
 
 	
     NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
-	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
+    NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
 
-	BOOL bStream = NO;
-	
-	bStream = bStream || (ofIsStringInString(name, "http://"));
-	bStream = bStream || (ofIsStringInString(name, "https://"));
-	bStream = bStream || (ofIsStringInString(name, "rtsp://"));
-	
-	NSURL * url = nil;
-	if(bStream == YES) {
-		url = [NSURL URLWithString:videoPath];
-	} else {
-		url = [NSURL fileURLWithPath:videoLocalPath];
-	}
-	
-	bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
+    BOOL bStream = NO;
+
+    bStream = bStream || (ofIsStringInString(name, "http://"));
+    bStream = bStream || (ofIsStringInString(name, "https://"));
+    bStream = bStream || (ofIsStringInString(name, "rtsp://"));
+
+    NSURL * url = nil;
+    if(bStream == YES) {
+        url = [NSURL URLWithString:videoPath];
+    } else {
+        url = [NSURL fileURLWithPath:videoLocalPath];
+    }
+
+    bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
 	
     bResetPixels = true;
     bUpdatePixels = true;
     bUpdateTexture = true;
-    
+
     bool bCreateTextureCache = true;
     bCreateTextureCache = bCreateTextureCache && (bTextureCacheSupported == true);
     bCreateTextureCache = bCreateTextureCache && (_videoTextureCache == NULL);
@@ -132,23 +132,21 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::close() {
-	if(videoPlayer != NULL) {
+    if(videoPlayer != NULL) {
 		
-		pixels.clear();
+        pixels.clear();
         
         videoTexture.clear();
 
-		// dispose videoplayer
-		ofAVFoundationGC& inst = ofAVFoundationGC::instance();
-		inst.addToGarbageQueue(videoPlayer);
-
-		videoPlayer = NULL;
+        // dispose videoplayer
+        ofAVFoundationGC::instance().addToGarbageQueue(videoPlayer);
+        videoPlayer = NULL;
 		
         if(bTextureCacheSupported == true) {
             killTextureCache();
         }
-	}
-	videoPlayer = NULL;
+    }
+    videoPlayer = NULL;
     
     bFrameNew = false;
     bResetPixels = false;
@@ -174,12 +172,12 @@ bool ofAVFoundationPlayer::setPixelFormat(ofPixelFormat value) {
     pixelFormat = value;
     bResetPixels = true;
     
-	return true;
+    return true;
 }
 
 //--------------------------------------------------------------
 ofPixelFormat ofAVFoundationPlayer::getPixelFormat() const{
-	return pixelFormat;
+    return pixelFormat;
 }
 
 //--------------------------------------------------------------
@@ -229,7 +227,7 @@ void ofAVFoundationPlayer::play() {
         ofLogWarning("ofxiOSVideoPlayer") << "play(): video not loaded";
     }
     
-	[videoPlayer play];
+    [videoPlayer play];
 }
 
 //--------------------------------------------------------------
@@ -749,65 +747,70 @@ ofTexture * ofAVFoundationPlayer::getTexture() {
 //--------------------------------------------------------------
 //--------------------------------------------------------------
 ofAVFoundationGC& ofAVFoundationGC::instance(){
-	static ofAVFoundationGC singleton;
-	return singleton;
+    static ofAVFoundationGC singleton;
+    return singleton;
 }
 
 void ofAVFoundationGC::addToGarbageQueue(ofAVFoundationVideoPlayer * p){
-	lock();
-	p.delegate = nil;
-	[p pause];
-	videosPendingDeletion.push_back(p);
-	unlock();
-	dispatch_semaphore_signal(sema);
+    lock();
+    p.delegate = nil;
+    [p pause];
+    videosPendingDeletion.push_back(p);
+    unlock();
+    dispatch_semaphore_signal(sema);
 }
 
 ofAVFoundationGC::~ofAVFoundationGC(){
-	// end thread and clean up
-	stopThread();
-	dispatch_semaphore_signal(sema);
-	waitForThread();
-	dispatch_release(sema);
+    // end thread and clean up
+    stopThread();
+    dispatch_semaphore_signal(sema);
+    waitForThread();
+    dispatch_release(sema);
 }
 
 // private constructor
 ofAVFoundationGC::ofAVFoundationGC(){
-	sema = dispatch_semaphore_create(0);
-	startThread();
+    sema = dispatch_semaphore_create(0);
+    startThread();
 }
 
 void ofAVFoundationGC::threadedFunction(){
-	
-	ofAVFoundationVideoPlayer * toDel = NULL;
-	
-	
-	while (isThreadRunning()) {
-		
-		// wait for signal
-		dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-		
-		lock();
-		if(videosPendingDeletion.size() > 0){
-			toDel = videosPendingDeletion[0];
-			videosPendingDeletion.erase(videosPendingDeletion.begin());
-		}
-		unlock();
-		if (toDel){ //we do this to avoid blocking the main thread inside the mutex
-			//as this is the "long" call
-			
-			//should call a finalizer instead...
-			[toDel release];
-			toDel = NULL;
-		}
-	}
 
-	// dispose all left over
-	while (videosPendingDeletion.size() > 0) {
-		toDel = videosPendingDeletion.front();
-		videosPendingDeletion.erase(videosPendingDeletion.begin());
-		if (toDel){
-			[toDel release];
-			toDel = NULL;
-		}
-	}
+
+    ofAVFoundationVideoPlayer * toDel = NULL;
+
+
+    while (isThreadRunning()) {
+        
+        // wait for signal
+        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
+        
+        lock();
+        if(videosPendingDeletion.size() > 0){
+            toDel = videosPendingDeletion[0];
+            videosPendingDeletion.erase(videosPendingDeletion.begin());
+        }
+        unlock();
+        if (toDel){ //we do this to avoid blocking the main thread inside the mutex
+            //as this is the "long" call
+            
+            //should call a finalizer instead...
+            @autoreleasepool {
+                [toDel release];
+                toDel = NULL;
+            }			
+        }
+    }
+
+    // dispose all left over
+    @autoreleasepool {
+        while (videosPendingDeletion.size() > 0) {
+            toDel = videosPendingDeletion.front();
+            videosPendingDeletion.erase(videosPendingDeletion.begin());
+            if (toDel){
+                [toDel release];
+                toDel = NULL;
+            }
+        }
+    }
 }
