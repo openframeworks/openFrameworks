@@ -89,10 +89,11 @@ static const NSString * ItemStatusContext;
 	
 	// safety
 	[self cleanup];
+	
 	[super dealloc];
 }
 
-- (void)finalize {
+- (void)cleanupAndAutorelease {
 	
 	[self cleanup];
 	[self autorelease];
