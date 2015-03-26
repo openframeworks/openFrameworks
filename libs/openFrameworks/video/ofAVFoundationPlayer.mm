@@ -131,7 +131,7 @@ void ofAVFoundationPlayer::close() {
         videoTexture.clear();
 		
         videoPlayer.delegate = nil;
-		[videoPlayer release];
+		[videoPlayer cleanupAndAutorelease];
         
         if(bTextureCacheSupported == true) {
             killTextureCache();
