@@ -92,7 +92,7 @@ static const NSString * ItemStatusContext;
 	[super dealloc];
 }
 
-- (void)finalize {
+- (void)cleanupAndAutorelease {
 	
 	[self cleanup];
 	[self autorelease];
