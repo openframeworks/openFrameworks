@@ -766,9 +766,7 @@ ofAVFoundationGC::ofAVFoundationGC(){
 
 void ofAVFoundationGC::threadedFunction(){
 
-
     ofAVFoundationVideoPlayer * toDel = NULL;
-
 
     while (isThreadRunning()) {
         
@@ -786,7 +784,7 @@ void ofAVFoundationGC::threadedFunction(){
             
             //should call a finalizer instead...
             @autoreleasepool {
-                [toDel release];
+                [toDel cleanupAndAutorelease];
                 toDel = NULL;
             }			
         }
