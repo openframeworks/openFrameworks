@@ -14,6 +14,13 @@ static NSString * const kStatusKey = @"status";
 static NSString * const kRateKey = @"rate";
 static NSString * const kCurrentItemKey = @"currentItem";
 
+//---------------------------------------------------------- video player privates.
+@interface ofAVFoundationVideoPlayer()
+
+- (void)cleanup;
+
+@end
+
 //---------------------------------------------------------- video player.
 @implementation ofAVFoundationVideoPlayer
 
@@ -77,11 +84,27 @@ static const NSString * ItemStatusContext;
 	return self;
 }
 
+//---------------------------------------------------------- cleanup / dispose.
 - (void)dealloc {
 	
-	[(ofAVFoundationVideoPlayerView *)self.playerView setPlayer:nil];
-	[self.playerView removeFromSuperview];
-	self.playerView = nil;
+	// safety
+	[self cleanup];
+	[super dealloc];
+}
+
+- (void)finalize {
+	
+	[self cleanup];
+	[self autorelease];
+}
+
+- (void)cleanup {
+	
+	if(self.playerView != nil) {
+		[(ofAVFoundationVideoPlayerView *)self.playerView setPlayer:nil];
+		[self.playerView removeFromSuperview];
+		self.playerView = nil;
+	}
 	
 	if(self.playerItem != nil) {
 		NSNotificationCenter * notificationCenter = [NSNotificationCenter defaultCenter];
@@ -94,13 +117,18 @@ static const NSString * ItemStatusContext;
 	}
 	
 	[self removeTimeObserverFromPlayer];
-	[_player removeObserver:self forKeyPath:kRateKey];
 	
-	self.player = nil;
-	[_player release];
+	if(self.player != nil) {
+		[_player removeObserver:self forKeyPath:kRateKey];
+		
+		self.player = nil;
+	}
 	
-	[self.assetReader cancelReading];
-	self.assetReader = nil;
+	if(self.assetReader != nil) {
+		[self.assetReader cancelReading];
+		self.assetReader = nil;
+	}
+	
 	self.assetReaderVideoTrackOutput = nil;
 	self.assetReaderAudioTrackOutput = nil;
 	self.asset = nil;
@@ -114,8 +142,7 @@ static const NSString * ItemStatusContext;
 		CFRelease(audioSampleBuffer);
 		audioSampleBuffer = nil;
 	}
-	
-	[super dealloc];
+
 }
 
 //---------------------------------------------------------- position / size.
