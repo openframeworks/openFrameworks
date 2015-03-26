@@ -9,16 +9,6 @@
 #import "ofAVFoundationVideoPlayer.h"
 
 //--------------------------------------------------------------
-#ifdef TARGET_OF_IOS
-CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
-CVOpenGLESTextureRef _videoTextureRef = NULL;
-#endif
-
-#ifdef TARGET_OSX
-CVOpenGLTextureCacheRef _videoTextureCache = NULL;
-CVOpenGLTextureRef _videoTextureRef = NULL;
-#endif
-
 ofAVFoundationPlayer::ofAVFoundationPlayer() {
     videoPlayer = NULL;
     pixelFormat = OF_PIXELS_RGBA;
