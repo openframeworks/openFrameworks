@@ -181,13 +181,11 @@ static const NSString * ItemStatusContext;
 	
 	dispatch_semaphore_t sema = dispatch_semaphore_create(0);
 	dispatch_queue_t queue;
-//	if(bAsync == YES){
-//		queue = dispatch_get_main_queue();
-//	} else {
-//		
-//	}
-
-	queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+	if(bAsync == YES){
+		queue = dispatch_get_main_queue();
+	} else {
+		queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+	}
 	
 	dispatch_async(queue, ^{
 		[self.asset loadValuesAsynchronouslyForKeys:[NSArray arrayWithObject:kTracksKey] completionHandler:^{
