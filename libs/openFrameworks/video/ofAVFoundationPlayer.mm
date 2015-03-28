@@ -115,7 +115,7 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 #endif
         
         if(err) {
-            ofLogWarning("ofxiOSVideoPlayer") << "load(): error when creating texture cache, " << err;
+            ofLogWarning("ofAVFoundationPlayer") << "load(): error when creating texture cache, " << err << ".";
         }
     }
 	
@@ -152,7 +152,7 @@ bool ofAVFoundationPlayer::setPixelFormat(ofPixelFormat value) {
     bValid = bValid || (value == OF_PIXELS_RGBA);
     
     if(bValid == false) {
-        ofLogWarning("ofxiOSVideoPlayer") << "setPixelFormat(): unsupported ofPixelFormat, " << value;
+        ofLogWarning("ofAVFoundationPlayer") << "setPixelFormat(): unsupported ofPixelFormat, " << value << ".";
         return false;
     }
     
@@ -215,7 +215,7 @@ void ofAVFoundationPlayer::draw(float x, float y, float w, float h) {
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::play() {
     if(videoPlayer == NULL) {
-        ofLogWarning("ofxiOSVideoPlayer") << "play(): video not loaded";
+        ofLogWarning("ofAVFoundationPlayer") << "play(): video not loaded.";
     }
     
 	[videoPlayer play];
@@ -246,7 +246,7 @@ const ofPixels & ofAVFoundationPlayer::getPixels() const {
 
 ofPixels & ofAVFoundationPlayer::getPixels() {
     if(isLoaded() == false) {
-        ofLogError("ofxiOSVideoPlayer") << "getPixels(): Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixels.";
+        ofLogError("ofAVFoundationPlayer") << "getPixels(): Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixels.";
         return pixels;
     }
     
@@ -307,7 +307,7 @@ ofPixels & ofAVFoundationPlayer::getPixels() {
 #ifdef __IPHONE_6_0
             err = vImageConvert_BGRA8888toRGB888(&src, &dest, 0);
 #else
-            ofLogError("ofxiOSVideoPlayer") << "getPixels(): OF_PIXELS_RGB is not supported, use setPixelFormat() to set the pixel format to OF_PIXELS_RGBA";
+            ofLogError("ofAVFoundationPlayer") << "getPixels(): OF_PIXELS_RGB is not supported, use setPixelFormat() to set the pixel format to OF_PIXELS_RGBA.";
 #endif
         }
     }
@@ -315,7 +315,7 @@ ofPixels & ofAVFoundationPlayer::getPixels() {
     CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
     
     if(err != kvImageNoError) {
-        ofLogError("ofxiOSVideoPlayer") << "getPixels(): error in pixel copy, vImage_error = " << err;
+        ofLogError("ofAVFoundationPlayer") << "getPixels(): error in pixel copy, vImage_error = " << err << ".";
     }
     
     bUpdatePixels = false;
@@ -350,7 +350,7 @@ ofTexture * ofAVFoundationPlayer::getTexturePtr() {
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
         
         if(getWidth() > maxTextureSize || getHeight() > maxTextureSize) {
-            ofLogWarning("ofxiOSVideoPlayer") << "getTexturePtr(): " << getWidth() << "x" << getHeight() << " video image is bigger then max supported texture size " << maxTextureSize;
+            ofLogWarning("ofAVFoundationPlayer") << "getTexturePtr(): " << getWidth() << "x" << getHeight() << " video image is bigger then max supported texture size " << maxTextureSize << ".";
             return NULL;
         }
         
@@ -444,7 +444,7 @@ void ofAVFoundationPlayer::initTextureCache() {
     }
     
     if(err) {
-        ofLogError("ofxiOSVideoPlayer") << "initTextureCache(): error creating texture cache from image " << err;
+        ofLogError("ofAVFoundationPlayer") << "initTextureCache(): error creating texture cache from image " << err << ".";
     }
     
     CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
@@ -609,7 +609,7 @@ void ofAVFoundationPlayer::setVolume(float volume) {
         return;
     }
 	if(volume > 1.0) {
-		ofLogWarning("ofxiOSVideoPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0";
+		ofLogWarning("ofAVFoundationPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0.";
 		volume = 1.0;
 	}
     [videoPlayer setVolume:volume];
