@@ -44,6 +44,8 @@ static ofPtr<ofAppBaseWindow> 		window;
 	#include "ofAppAndroidWindow.h"
 #elif defined(TARGET_RASPBERRY_PI)
 	#include "ofAppEGLWindow.h"
+#elif defined(TARGET_OPENGLES)
+	#include "ofAppEGLWindow.h"
 #else
 	#include "ofAppGLFWWindow.h"
 #endif
@@ -152,7 +154,7 @@ void ofSetupOpenGL(ofPtr<ofAppBaseWindow> windowPtr, int w, int h, int screenMod
 	window = windowPtr;
 
 	if(ofIsGLProgrammableRenderer()){
-        #if defined(TARGET_RASPBERRY_PI)
+        #if defined(TARGET_RASPBERRY_PI) || defined(TARGET_OPENGLES)
 		static_cast<ofAppEGLWindow*>(window.get())->setGLESVersion(2);
 		#elif defined(TARGET_LINUX_ARM)
 		static_cast<ofAppGLFWWindow*>(window.get())->setOpenGLVersion(2,0);
@@ -206,7 +208,7 @@ void ofSetupOpenGL(int w, int h, int screenMode){
 		window = ofPtr<ofAppBaseWindow>(new ofAppiOSWindow());
 	#elif defined(TARGET_ANDROID)
 		window = ofPtr<ofAppBaseWindow>(new ofAppAndroidWindow());
-	#elif defined(TARGET_RASPBERRY_PI)
+	#elif defined(TARGET_RASPBERRY_PI) || defined(TARGET_OPENGLES)
 		window = ofPtr<ofAppBaseWindow>(new ofAppEGLWindow());
     #else
 		window = ofPtr<ofAppBaseWindow>(new ofAppGLFWWindow());

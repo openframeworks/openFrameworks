@@ -76,6 +76,7 @@ enum ofTargetPlatform{
 	#define TARGET_LINUX_ARM
 #else
 	#define TARGET_LINUX
+	//#define TARGET_OPENGLES
 #endif
 //-------------------------------
 
@@ -165,15 +166,17 @@ enum ofTargetPlatform{
     	#ifdef TARGET_RASPBERRY_PI
         	#include "bcm_host.h"
         #endif
-       
-		#include "GLES/gl.h"
-		#include "GLES/glext.h" 
-		#include "GLES2/gl2.h"
-		#include "GLES2/gl2ext.h"
-		
-		#define EGL_EGLEXT_PROTOTYPES
-		#include "EGL/egl.h"
-		#include "EGL/eglext.h"
+    #endif
+
+    #ifdef TARGET_OPENGLES    
+	#include "GLES/gl.h"
+	#include "GLES/glext.h" 
+	#include "GLES2/gl2.h"
+	#include "GLES2/gl2ext.h"
+	
+	#define EGL_EGLEXT_PROTOTYPES
+	#include "EGL/egl.h"
+	#include "EGL/eglext.h"
     #else // normal linux
         #include <GL/glew.h>
         #include <GL/gl.h>

@@ -73,7 +73,7 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_DEFINES =
+PLATFORM_DEFINES = TARGET_OPENGLES
 
 # add OF_USING_GTK define IF we have it defined as a system library
 ifeq ($(HAS_SYSTEM_GTK2),0)
@@ -179,11 +179,11 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrab
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
 
-ifeq ($(LINUX_ARM),1)
+#ifeq ($(LINUX_ARM),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
-else
-	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
-endif
+#else
+#	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
+#endif
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
@@ -236,11 +236,11 @@ PLATFORM_HEADER_SEARCH_PATHS =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBRARIES =
+PLATFORM_LIBRARIES = EGL Xinerama
 
-ifneq ($(LINUX_ARM),1)
-	PLATFORM_LIBRARIES += glut
-endif
+#ifneq ($(LINUX_ARM),1)
+#	PLATFORM_LIBRARIES += glut
+#endif
 ifneq ($(PLATFORM_ARCH),armv6l)
     PLATFORM_LIBRARIES += X11 
     PLATFORM_LIBRARIES += Xrandr
