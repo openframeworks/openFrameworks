@@ -106,10 +106,10 @@ void ofxCvColorImage::setFromPixels( const unsigned char* _pixels, int w, int h 
 	}
 	
 	if( cvImage->width*cvImage->nChannels == cvImage->widthStep ){
-		memcpy( cvImage->imageData,  _pixels, w*h*3);
+		memcpy( cvImage->imageData,  _pixels, w*h*iplchannels);
 	}else{		
 		for( int i=0; i < height; i++ ) {
-			memcpy( cvImage->imageData + (i*cvImage->widthStep), _pixels + (i*w*3),width*3 );
+			memcpy( cvImage->imageData + (i*cvImage->widthStep), _pixels + (i*w*iplchannels),width*iplchannels );
 		}
 	}
 	
@@ -134,9 +134,9 @@ void ofxCvColorImage::setRoiFromPixels( const unsigned char* _pixels, int w, int
     if( iRoi.width > 0 && iRoi.height > 0 ) {
         // copy pixels from _pixels, however many we have or will fit in cvImage
         for( int i=0; i < iRoi.height; i++ ) {
-            memcpy( cvImage->imageData + ((i+(int)iRoi.y)*cvImage->widthStep) + (int)iRoi.x*3,
-                    _pixels + (i*w*3),
-                    (int)(iRoi.width*3) );
+            memcpy( cvImage->imageData + ((i+(int)iRoi.y)*cvImage->widthStep) + (int)iRoi.x*iplchannels,
+                    _pixels + (i*w*iplchannels),
+                    (int)(iRoi.width*iplchannels) );
         }
         flagImageChanged();
     } else {
@@ -170,8 +170,8 @@ void ofxCvColorImage::setFromGrayscalePlanarImages( ofxCvGrayscaleImage& red, of
 
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::operator = ( unsigned char* _pixels ) {
-    setFromPixels( _pixels, width, height );
+void ofxCvColorImage::operator = ( const ofPixels & _pixels ) {
+    setFromPixels( _pixels );
 }
 
 //--------------------------------------------------------------------------------
@@ -405,7 +405,7 @@ void ofxCvColorImage::resize( int w, int h ) {
     // note, one image copy operation could be ommitted by
     // reusing the temporal image storage
 
-    IplImage* temp = cvCreateImage( cvSize(w,h), IPL_DEPTH_8U, 3 );
+    IplImage* temp = cvCreateImage( cvSize(w,h), IPL_DEPTH_8U, iplchannels );
     cvResize( cvImage, temp );
     clear();
     allocate( w, h );

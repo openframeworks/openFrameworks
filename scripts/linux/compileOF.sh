@@ -18,7 +18,7 @@ exit_code=$?
 if [ $exit_code != 0 ]; then
   echo "there has been a problem compiling Debug OF library"
   echo "please report this problem in the forums"
-  chown -R $ID:$GROUP_ID ../lib/${LIBSPATH}/*
+  chown -R $ID:$GROUP_ID ../lib/*
   exit $exit_code
 fi
 
@@ -27,10 +27,10 @@ exit_code=$?
 if [ $exit_code != 0 ]; then
   echo "there has been a problem compiling Release OF library"
   echo "please report this problem in the forums"
-  chown -R $ID:$GROUP_ID ../lib/${LIBSPATH}/*
+  chown -R $ID:$GROUP_ID ../lib/*
   exit $exit_code
 fi
 
-chown -R $ID:$GROUP_ID ../lib/${LIBSPATH}/*
+chown -R $ID:$GROUP_ID ../lib/*
 
 

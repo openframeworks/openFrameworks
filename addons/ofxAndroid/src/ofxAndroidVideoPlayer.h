@@ -20,36 +20,37 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		ofxAndroidVideoPlayer();
 		virtual ~ofxAndroidVideoPlayer();
 
-		bool loadMovie(string fileName);
+		bool load(string fileName);
 		void close(); // empty!
 		void update();
 
 		void play();
 		void stop();
 
-		bool isLoaded();
-		bool isPlaying();
-		bool isPaused();
-		bool isFrameNew(){ return bIsFrameNew;};
+		bool isLoaded() const;
+		bool isPlaying() const;
+		bool isPaused() const;
+		bool isFrameNew() const { return bIsFrameNew;};
 
-		ofTexture *	getTexture();
+		ofTexture *	getTexturePtr();
 		void reloadTexture();
 		void unloadTexture();
+		void removeTexture();
 
-		float getWidth();
-		float getHeight();
+		float getWidth() const;
+		float getHeight() const;
 
-		unsigned char * getPixels(){ return NULL;}; // no pixels in town!
-		ofPixels& getPixelsRef(){return pixels;}  // no pixels in town!
+        ofPixels& getPixels() {return pixels;}
+        const ofPixels& getPixels() const {return pixels;}
 
-		bool setPixelFormat(ofPixelFormat pixelFormat){ return false;};  // no pixels in town!
-		ofPixelFormat getPixelFormat(){ return OF_PIXELS_RGBA;};  // no pixels in town!
+		bool setPixelFormat(ofPixelFormat pixelFormat){ return false;};
+		ofPixelFormat getPixelFormat() const { return OF_PIXELS_RGBA;};
 
 		//should implement!
 		//float getSpeed();
-		float getPosition();
-		float getDuration();
-		bool  getIsMovieDone();
+		float getPosition() const;
+		float getDuration() const;
+		bool  getIsMovieDone() const;
 
 		void setPosition(float pct);
 		void setPaused(bool bPause);
@@ -58,7 +59,7 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		//void setSpeed(float speed);
 		//void setFrame(int frame);  // frame 0 = first frame...
 
-		ofLoopType getLoopState();
+		ofLoopType getLoopState() const;
 		//int	getCurrentFrame();
 		//int	getTotalNumFrames();
 

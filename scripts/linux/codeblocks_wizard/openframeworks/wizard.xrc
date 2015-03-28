@@ -70,7 +70,6 @@ setup for you.
             <item>ofxDirList</item>		
 			<item>ofxMultiTouch</item>		
             <item>ofxNetwork</item>
-            <item>ofxSynth</item>
             <item>ofxThreadedImageLoader</item>            
             <item>ofxVectorGraphics</item>            
           </content>

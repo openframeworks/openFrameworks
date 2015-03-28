@@ -34,7 +34,7 @@ ofDirectShowGrabber::~ofDirectShowGrabber(){
 
 
 //--------------------------------------------------------------------
-bool ofDirectShowGrabber::initGrabber(int w, int h){
+bool ofDirectShowGrabber::setup(int w, int h){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_DIRECTSHOW
@@ -99,13 +99,13 @@ bool ofDirectShowGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofDirectShowGrabber::getPixelFormat(){
+ofPixelFormat ofDirectShowGrabber::getPixelFormat() const {
 	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
 	return OF_PIXELS_RGB;
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofDirectShowGrabber::listDevices(){
+vector<ofVideoDevice> ofDirectShowGrabber::listDevices() const {
     
     vector <ofVideoDevice> devices; 
 	
@@ -242,28 +242,33 @@ void ofDirectShowGrabber::clearMemory(){
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofDirectShowGrabber::getPixels(){
-	return pixels.getPixels();
+ofPixels& ofDirectShowGrabber::getPixels(){
+	return pixels;
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofDirectShowGrabber::getPixelsRef(){
+const ofPixels& ofDirectShowGrabber::getPixels() const {
 	return pixels;
 }
 
 //--------------------------------------------------------------------
-float ofDirectShowGrabber::getWidth(){
+float ofDirectShowGrabber::getWidth() const {
 	return width;
 }
 
 //--------------------------------------------------------------------
-float ofDirectShowGrabber::getHeight(){
+float ofDirectShowGrabber::getHeight() const {
 	return height;
 }
 
 //---------------------------------------------------------------------------
-bool  ofDirectShowGrabber::isFrameNew(){
+bool  ofDirectShowGrabber::isFrameNew() const{
 	return bIsFrameNew;
+}
+
+//---------------------------------------------------------------------------
+bool  ofDirectShowGrabber::isInitialized() const{
+	return bGrabberInited;
 }
 
 //--------------------------------------------------------------------

@@ -37,37 +37,52 @@
 	#define OF_VID_GRABBER_TYPE ofxAndroidVideoGrabber
 #endif
 
+#ifdef OF_VIDEO_CAPTURE_EMSCRIPTEN
+	#include "ofxEmscriptenVideoGrabber.h"
+	#define OF_VID_GRABBER_TYPE ofxEmscriptenVideoGrabber
+#endif
+
 class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 
 	public :
 
 		ofVideoGrabber();
 		virtual ~ofVideoGrabber();
-		
-		void					setGrabber(ofPtr<ofBaseVideoGrabber> newGrabber);
-		ofPtr<ofBaseVideoGrabber> getGrabber();
 
-		vector<ofVideoDevice> listDevices();
-		bool				isFrameNew();
+		vector<ofVideoDevice> listDevices() const;
+		bool				isFrameNew() const;
 		void				update();
 		void				close();	
-		bool				initGrabber(int w, int h){return initGrabber(w,h,true);}
-		bool				initGrabber(int w, int h, bool bTexture);
+		bool				setup(int w, int h){return setup(w,h,true);}
+		bool				setup(int w, int h, bool bTexture);
+		OF_DEPRECATED_MSG("Use setup instead",bool initGrabber(int w, int h){return setup(w,h);})
+		OF_DEPRECATED_MSG("Use setup instead",bool initGrabber(int w, int h, bool bTexture));
 		
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat 		getPixelFormat();
+		ofPixelFormat 		getPixelFormat() const;
 		
 		void				videoSettings();
-		unsigned char 	*	getPixels();
-		ofPixelsRef			getPixelsRef();
-		ofTexture &			getTextureReference();
+		ofPixels& 			getPixels();
+		const ofPixels&		getPixels() const;
+        OF_DEPRECATED_MSG("Use getPixels() instead", ofPixels&	getPixelsRef());
+        OF_DEPRECATED_MSG("Use getPixels() instead", const ofPixels&  getPixelsRef() const);
+		ofTexture &			getTexture();
+		const ofTexture &	getTexture() const;
+		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
+		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
+		vector<ofTexture> & getTexturePlanes();
+		const vector<ofTexture> & getTexturePlanes() const;
 		void				setVerbose(bool bTalkToMe);
 		void				setDeviceID(int _deviceID);
 		void				setDesiredFrameRate(int framerate);
 		void				setUseTexture(bool bUse);
-		void				draw(float x, float y, float w, float h);
-		void				draw(float x, float y);
+		bool 				isUsingTexture() const;
+		void				draw(float x, float y, float w, float h) const;
+		void				draw(float x, float y) const;
 		using ofBaseDraws::draw;
+
+		void 				bind() const;
+		void 				unbind() const;
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -75,26 +90,37 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
         void				setAnchorPoint(float x, float y);				//set the anchor point in pixels
         void				resetAnchor();								//resets the anchor to (0, 0)
 
-		float				getHeight();
-		float				getWidth();
+		float				getHeight() const;
+		float				getWidth() const;
 
-		bool				isInitialized();
+		bool				isInitialized() const;
+
+		void					setGrabber(shared_ptr<ofBaseVideoGrabber> newGrabber);
+		shared_ptr<ofBaseVideoGrabber> getGrabber();
+		const shared_ptr<ofBaseVideoGrabber> getGrabber() const;
+
+		template<typename GrabberType>
+		shared_ptr<GrabberType> getGrabber(){
+			return dynamic_pointer_cast<GrabberType>(getGrabber());
+		}
+
+		template<typename GrabberType>
+		const shared_ptr<GrabberType> getGrabber() const{
+			return dynamic_pointer_cast<GrabberType>(getGrabber());
+		}
 
 		//this is kept as legacy to support people accessing width and height directly. 
-		int					height;
-		int					width;
+		mutable int height;
+		mutable int width;
 
 	private:
 		
-		ofTexture tex;
+		vector<ofTexture> tex;
 		bool bUseTexture;
-		bool bInitialized;
-		ofPtr<ofBaseVideoGrabber> grabber;
-		int RequestedDeviceID;
-		
-		bool grabberRunning; //this keeps track of whether the grabber opened sucessfully and is still open. //TODO: maybe expose this in a method? 
-		
-		ofPixelFormat internalPixelFormat;
+		shared_ptr<ofBaseVideoGrabber> grabber;
+		int requestedDeviceID;
+
+		mutable ofPixelFormat internalPixelFormat;
 		int desiredFramerate;
 };
 

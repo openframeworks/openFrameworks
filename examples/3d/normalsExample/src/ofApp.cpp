@@ -38,8 +38,8 @@ void ofApp::setup(){
         ofVec3f next(radius*cos(nextTheta),radius*sin(nextTheta),radius*zamt*sin(zfreq*nextTheta) );
         
         // our normals for each triangle face is the cross product of the two vectors making up that sliver 
-        ofVec3f previousFaceNormal = prev.crossed(p);
-        ofVec3f nextFaceNormal = p.crossed(next);
+        ofVec3f previousFaceNormal = prev.getCrossed(p);
+        ofVec3f nextFaceNormal = p.getCrossed(next);
         
         /* notice here we go in the same direction: previous->current,current->next;
            we could similarly go next->current,current-prev, which would flip all of our normals;
@@ -112,12 +112,12 @@ void ofApp::draw(){
         ofDisableLighting();
         ofSetColor(255,255,255,70);         
         for(unsigned int i=0; i < n.size() ;i++){
-            ofLine(v[i].x,v[i].y,v[i].z,
+            ofDrawLine(v[i].x,v[i].y,v[i].z,
                    v[i].x+n[i].x*normalLength,v[i].y+n[i].y*normalLength,v[i].z+n[i].z*normalLength);
 
-            ofLine(.98*v[i].x,.98*v[i].y,.98*v[i].z,
+            ofDrawLine(.98*v[i].x,.98*v[i].y,.98*v[i].z,
                    .98*v[i].x+n[i].x*normalLength*.2,.98*v[i].y+n[i].y*normalLength*.2,.98*v[i].z+n[i].z*normalLength*.2);
-            ofLine(.98*v[i].x+n[i].x*normalLength*.2,.98*v[i].y+n[i].y*normalLength*.2,.98*v[i].z+n[i].z*normalLength*.2,
+            ofDrawLine(.98*v[i].x+n[i].x*normalLength*.2,.98*v[i].y+n[i].y*normalLength*.2,.98*v[i].z+n[i].z*normalLength*.2,
                    v[i].x+n[i].x*normalLength*.2,v[i].y+n[i].y*normalLength*.2,v[i].z+n[i].z*normalLength*.2);
         }
     }

@@ -19,7 +19,7 @@ void ofApp::setup(){
 	gui.add(ringButton.setup("ring"));
 	gui.add(screenSize.setup("screen size", ""));
 
-	bHide = true;
+	bHide = false;
 
 	ring.loadSound("ring.wav");
 }
@@ -56,15 +56,15 @@ void ofApp::draw(){
 
 	ofSetColor(color);
 	if(twoCircles){
-		ofCircle(center->x-radius*.5, center->y, radius );
-		ofCircle(center->x+radius*.5, center->y, radius );
+		ofDrawCircle(center->x-radius*.5, center->y, radius );
+		ofDrawCircle(center->x+radius*.5, center->y, radius );
 	}else{
-		ofCircle((ofVec2f)center, radius );
+		ofDrawCircle((ofVec2f)center, radius );
 	}
 	
 	// auto draw?
 	// should the gui control hiding?
-	if( bHide ){
+	if( !bHide ){
 		gui.draw();
 	}
 }

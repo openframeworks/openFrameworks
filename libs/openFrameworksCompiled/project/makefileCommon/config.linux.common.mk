@@ -73,7 +73,7 @@ endif
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_DEFINES = TARGET_OPENGLES
+PLATFORM_DEFINES =
 
 # add OF_USING_GTK define IF we have it defined as a system library
 ifeq ($(HAS_SYSTEM_GTK2),0)
@@ -116,7 +116,7 @@ PLATFORM_REQUIRED_ADDONS =
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -Wall 
+PLATFORM_CFLAGS = -Wall -std=c++0x
 
 
 ################################################################################
@@ -178,6 +178,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 
 #ifeq ($(LINUX_ARM),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
@@ -187,6 +188,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGra
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/cairo/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glu/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
@@ -238,9 +240,15 @@ PLATFORM_HEADER_SEARCH_PATHS =
 
 PLATFORM_LIBRARIES = EGL Xinerama
 
-#ifneq ($(LINUX_ARM),1)
-#	PLATFORM_LIBRARIES += glut
-#endif
+ifneq ($(LINUX_ARM),1)
+ifeq ($(findstring TARGET_OPENGLES,$(PLATFORM_DEFINES)),)
+	PLATFORM_LIBRARIES += glut
+	
+	#PLATFORM_LIBRARIES += gstgl-1.0 
+	#PLATFORM_LIBRARIES += SM 
+	#PLATFORM_LIBRARIES += ICE
+endif
+endif
 ifneq ($(PLATFORM_ARCH),armv6l)
     PLATFORM_LIBRARIES += X11 
     PLATFORM_LIBRARIES += Xrandr
@@ -267,43 +275,41 @@ PLATFORM_SHARED_LIBRARIES =
 
 #openframeworks core third party
 
-#ifneq ($(CROSS_COMPILING),1)
-	PLATFORM_PKG_CONFIG_LIBRARIES =
-	PLATFORM_PKG_CONFIG_LIBRARIES += cairo
-	PLATFORM_PKG_CONFIG_LIBRARIES += zlib
-	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
-	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
-	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
-	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-$(GST_VERSION)
-	PLATFORM_PKG_CONFIG_LIBRARIES += libudev
-	PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
-	PLATFORM_PKG_CONFIG_LIBRARIES += fontconfig
-	PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
-	PLATFORM_PKG_CONFIG_LIBRARIES += openal
-	PLATFORM_PKG_CONFIG_LIBRARIES += openssl
-	PLATFORM_PKG_CONFIG_LIBRARIES += libpulse-simple
-	PLATFORM_PKG_CONFIG_LIBRARIES += alsa
+PLATFORM_PKG_CONFIG_LIBRARIES =
+PLATFORM_PKG_CONFIG_LIBRARIES += cairo
+PLATFORM_PKG_CONFIG_LIBRARIES += zlib
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += libudev
+PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
+PLATFORM_PKG_CONFIG_LIBRARIES += fontconfig
+PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
+PLATFORM_PKG_CONFIG_LIBRARIES += openal
+PLATFORM_PKG_CONFIG_LIBRARIES += openssl
+PLATFORM_PKG_CONFIG_LIBRARIES += libpulse-simple
+PLATFORM_PKG_CONFIG_LIBRARIES += alsa
 
-	ifneq ($(LINUX_ARM),1)
-		PLATFORM_PKG_CONFIG_LIBRARIES += gl
-		PLATFORM_PKG_CONFIG_LIBRARIES += glu
-		PLATFORM_PKG_CONFIG_LIBRARIES += glew
+ifneq ($(LINUX_ARM),1)
+	PLATFORM_PKG_CONFIG_LIBRARIES += gl
+	PLATFORM_PKG_CONFIG_LIBRARIES += glu
+	PLATFORM_PKG_CONFIG_LIBRARIES += glew
+endif
+
+# conditionally add GTK
+ifeq ($(HAS_SYSTEM_GTK3),0)
+    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-3.0
+else
+	ifeq ($(HAS_SYSTEM_GTK2),0)
+	    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
 	endif
-	
-	# conditionally add GTK
-	ifeq ($(HAS_SYSTEM_GTK3),0)
-	    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-3.0
-	else
-		ifeq ($(HAS_SYSTEM_GTK2),0)
-		    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
-		endif
-	endif
-	
-	# conditionally add mpg123
-	ifeq ($(HAS_SYSTEM_MPG123),0)
-	    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
-	endif
-#endif
+endif
+
+# conditionally add mpg123
+ifeq ($(HAS_SYSTEM_MPG123),0)
+    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+endif
 
 ################################################################################
 # PLATFORM LIBRARY SEARCH PATHS

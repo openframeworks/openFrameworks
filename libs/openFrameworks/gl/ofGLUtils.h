@@ -15,6 +15,7 @@
 class ofShader;
 class ofGLProgrammableRenderer;
 class ofBaseGLRenderer;
+class ofTexture;
 
 enum ofPrimitiveMode{
 	OF_PRIMITIVE_TRIANGLES,
@@ -23,7 +24,14 @@ enum ofPrimitiveMode{
 	OF_PRIMITIVE_LINES,
 	OF_PRIMITIVE_LINE_STRIP,
 	OF_PRIMITIVE_LINE_LOOP,
-	OF_PRIMITIVE_POINTS
+	OF_PRIMITIVE_POINTS,
+#ifndef TARGET_OPENGLES
+    OF_PRIMITIVE_LINES_ADJACENCY,
+    OF_PRIMITIVE_LINE_STRIP_ADJACENCY,
+    OF_PRIMITIVE_TRIANGLES_ADJACENCY,
+    OF_PRIMITIVE_TRIANGLE_STRIP_ADJACENCY,
+    OF_PRIMITIVE_PATCHES
+#endif
 };
 
 enum ofPolyRenderMode{
@@ -42,48 +50,7 @@ string ofGetGlInternalFormatName(int glInternalFormat);
 int ofGetGLFormatFromInternal(int glInternalFormat);
 int ofGetGlTypeFromInternal(int glInternalFormat);
 
-ofPtr<ofGLProgrammableRenderer> ofGetGLProgrammableRenderer();
-ofPtr<ofBaseGLRenderer> ofGetGLRenderer();
-
-template<class T>
-int ofGetGlFormat(const ofPixels_<T> & pixels) {
-	switch(pixels.getNumChannels()) {
-		case 4:
-			return GL_RGBA;
-			break;
-		case 3:
-			return GL_RGB;
-			break;
-		case 2:
-#ifndef TARGET_OPENGLES
-			if(ofGetGLProgrammableRenderer()){
-				return GL_RG;
-			}else{
-#endif
-				return GL_LUMINANCE_ALPHA;
-#ifndef TARGET_OPENGLES
-			}
-#endif
-			break;
-
-		case 1:
-#ifndef TARGET_OPENGLES
-			if(ofGetGLProgrammableRenderer()){
-				return GL_RED;
-			}else{
-#endif
-				return GL_LUMINANCE;
-#ifndef TARGET_OPENGLES
-			}
-#endif
-			break;
-
-		default:
-			ofLogError("ofGLUtils") << "ofGetGlFormatAndType(): internal format not recognized, returning GL_RGBA";
-			return GL_RGBA;
-			break;
-	}
-}
+shared_ptr<ofBaseGLRenderer> ofGetGLRenderer();
 
 
 int ofGetGlType(const ofPixels & pixels);
@@ -102,15 +69,24 @@ GLuint ofGetGLPrimitiveMode(ofPrimitiveMode mode);
 ofPrimitiveMode ofGetOFPrimitiveMode(GLuint mode);
 
 int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat);
-int ofGetGLTypeFromPixelFormat(ofPixelFormat pixelFormat);
+int ofGetGLFormatFromPixelFormat(ofPixelFormat pixelFormat);
+int ofGetBytesPerChannelFromGLType(int glType);
 int ofGetNumChannelsFromGLFormat(int glFormat);
-void ofSetPixelStorei(int w, int bpc, int numChannels);
+void ofSetPixelStoreiAlignment(GLenum pname, int w, int bpc, int numChannels);
+void ofSetPixelStoreiAlignment(GLenum panme, int stride);
 
-vector<string> ofGLSupportedExtensions();
+//vector<string> ofGLSupportedExtensions();
 bool ofGLCheckExtension(string searchName);
 bool ofGLSupportsNPOTTextures();
 
 bool ofIsGLProgrammableRenderer();
+
+template<class T>
+int ofGetGlFormat(const ofPixels_<T> & pixels) {
+	return ofGetGLFormatFromPixelFormat(pixels.getPixelFormat());
+}
+
+string ofGLSLVersionFromGL(int major, int minor);
 
 
 #ifndef TARGET_OPENGLES
@@ -164,9 +140,12 @@ bool ofIsGLProgrammableRenderer();
 	#ifdef GL_DEPTH_COMPONENT32_OES
         #define GL_DEPTH_COMPONENT32						GL_DEPTH_COMPONENT32_OES
     #endif
-    #ifdef TARGET_OF_IOS
+    #ifdef TARGET_OPENGLES
         #ifndef GL_UNSIGNED_INT
             #define GL_UNSIGNED_INT                         GL_UNSIGNED_INT_OES
+        #endif
+        #ifndef GL_HALF_FLOAT
+            #define GL_HALF_FLOAT                           GL_HALF_FLOAT_OES
         #endif
     #endif
 #endif

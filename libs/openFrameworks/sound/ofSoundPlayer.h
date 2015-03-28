@@ -58,6 +58,11 @@ float * ofSoundGetSpectrum(int nBands);
 inline void ofSoundShutdown(){}
 #endif
 
+#ifdef OF_SOUND_PLAYER_EMSCRIPTEN
+#include "ofxEmscriptenSoundPlayer.h"
+#define OF_SOUND_PLAYER_TYPE ofxEmscriptenSoundPlayer
+#endif
+
 #ifdef TARGET_LINUX_ARM
 inline void ofSoundShutdown(){}
 #endif
@@ -73,8 +78,8 @@ class ofSoundPlayer : public ofBaseSoundPlayer {
 public:
     ofSoundPlayer();
 
-    void setPlayer(ofPtr<ofBaseSoundPlayer> newPlayer);
-    ofPtr<ofBaseSoundPlayer> getPlayer();
+    void setPlayer(shared_ptr<ofBaseSoundPlayer> newPlayer);
+    shared_ptr<ofBaseSoundPlayer> getPlayer();
 
     /// \brief Tells the sound player which file to play.
     ///
@@ -82,10 +87,12 @@ public:
     ///
     /// \param fileName Path to the sound file, relative to your app's data folder.
     /// \param stream set "true" to enable streaming from disk (for large files).
-    bool loadSound(string fileName, bool stream = false);
+    bool load(string fileName, bool stream = false);
+    OF_DEPRECATED_MSG("Use load",bool loadSound(string fileName, bool stream = false));
 
     /// \brief Stops and unloads the current sound.
-    void unloadSound();
+    void unload();
+    OF_DEPRECATED_MSG("Use load",void unloadSound());
     
     /// \brief Starts playback.
     void play();
@@ -127,33 +134,34 @@ public:
 
     /// \brief Gets position of the playhead.
     /// \return playhead position in milliseconds.
-    int getPositionMS();
+    int getPositionMS() const;
 
     /// \brief Gets position of the playhead.
     /// \return playhead position as a float between 0 and 1.
-    float getPosition();
+    float getPosition() const;
 
     /// \brief Gets current playback state.
     /// \return true if the player is currently playing a file.
-    bool getIsPlaying();
+    bool isPlaying() const;
+    OF_DEPRECATED_MSG("Use isPlaying",bool getIsPlaying() const);
 
     /// \brief Gets playback speed.
     /// \return playback speed (see ofSoundPlayer::setSpeed()).
-    float getSpeed();
+    float getSpeed() const;
     
     /// \brief Gets stereo pan.
     /// \return stereo pan in the range -1 to 1.
-    float getPan();
+    float getPan() const;
 
     /// \brief Gets current volume.
     /// \return current volume in the range 0 to 1.
-    float getVolume();
+    float getVolume() const;
 
     /// \brief Queries the player to see if its file was loaded successfully.
     /// \return whether or not the player is ready to begin playback.
-    bool isLoaded(); 		
+    bool isLoaded() const;
 
 protected:
-    ofPtr<ofBaseSoundPlayer> player;
+    shared_ptr<ofBaseSoundPlayer> player;
 
 };

@@ -44,11 +44,11 @@ void ofApp::setup(){
     // vidRecorder->setVideoCodec(videoCodecs[2]);
 	
     // 5. Initialize the grabber.
-    vidGrabber.initGrabber(1280, 720);
+    vidGrabber.setup(1280, 720);
 
     // If desired, you can disable the preview video.  This can
     // help help speed up recording and remove recording glitches.
-    // vidRecorder->initGrabberWithoutPreview();
+    // vidRecorder->setupWithoutPreview();
     
     // 6. Initialize recording on the grabber.  Call initRecording()
     // once after you've initialized the grabber.
@@ -82,8 +82,8 @@ void ofApp::draw(){
     ofPushStyle();
     ofSetColor(0);
     ofFill();
-    ofRect(previewWindow);
-    ofRect(playbackWindow);
+    ofDrawRectangle(previewWindow);
+    ofDrawRectangle(playbackWindow);
     ofPopStyle();
     
     // draw the preview if available
@@ -101,8 +101,8 @@ void ofApp::draw(){
 		// x out to show there is no video preview
         ofSetColor(255);
 		ofSetLineWidth(3);
-		ofLine(20, 20, 640+20, 480+20);
-		ofLine(20+640, 20, 20, 480+20);
+		ofDrawLine(20, 20, 640+20, 480+20);
+		ofDrawLine(20+640, 20, 20, 480+20);
 		ofPopStyle();
 	}
     
@@ -129,7 +129,7 @@ void ofApp::draw(){
     else{
     	ofSetColor(255,80);
     }
-    ofRect(previewWindow);
+    ofDrawRectangle(previewWindow);
     ofPopStyle();
     
     
@@ -205,7 +205,7 @@ void ofApp::keyReleased(int key){
 void ofApp::videoSaved(ofVideoSavedEventArgs& e){
 	// the ofQTKitGrabber sends a message with the file name and any errors when the video is done recording
 	if(e.error.empty()){
-	    recordedVideoPlayback.loadMovie(e.videoPath);
+	    recordedVideoPlayback.load(e.videoPath);
 	    recordedVideoPlayback.play();
         
         if(bLaunchInQuicktime) {

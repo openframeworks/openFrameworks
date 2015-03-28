@@ -13,7 +13,7 @@ class ThreadedObject: public ofThread
 public:
     /// Create a ThreadedObject and initialize the member
     /// variable in an initialization list.
-    ThreadedObject(): count(0)
+    ThreadedObject(): count(0), shouldThrowTestException(false)
     {
     }
 
@@ -54,6 +54,19 @@ public:
 
                 // Sleep for 1 second.
                 sleep(1000);
+
+                if(shouldThrowTestException > 0)
+                {
+                    shouldThrowTestException = 0;
+
+                    // Throw an exception to test the global ofBaseThreadErrorHandler.
+                    // Users that require more specialized exception handling,
+                    // should make sure that their threaded objects catch all
+                    // exceptions. ofBaseThreadErrorHandler is only used as a
+                    // way to provide better debugging / logging information in
+                    // the event of an uncaught exception.
+                    throw Poco::ApplicationException("We just threw a test exception!");
+                }
             }
             else
             {
@@ -102,13 +115,24 @@ public:
         return count;
     }
 
+    void throwTestException()
+    {
+        shouldThrowTestException = 1;
+    }
+
 protected:
+    // A flag to check and see if we should throw a test exception.
+    Poco::AtomicCounter shouldThrowTestException;
+
     // This is a simple variable that we aim to always access from both the
     // main thread AND this threaded object.  Therefore, we need to protect it
     // with the mutex.  In the case of simple numerical variables, some
     // garuntee thread safety for small integral types, but for the sake of
     // illustration, we use an int.  This int could represent ANY complex data
     // type that needs to be protected.
+    //
+    // Note, if we simply want to count in a thread-safe manner without worrying
+    // about mutexes, we might use Poco::AtomicCounter instead.
     int count;
 
 };

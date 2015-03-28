@@ -9,11 +9,11 @@ void ofApp::setup(){
 	capH = 240;
 
 	#ifdef _USE_LIVE_VIDEO
-		vidGrabber.initGrabber(capW, capH);
+		vidGrabber.setup(capW, capH);
 		capW = vidGrabber.getWidth();
 		capH = vidGrabber.getHeight();
     #else	
-        vidPlayer.loadMovie("fingers.m4v");
+        vidPlayer.load("fingers.m4v");
         vidPlayer.setLoopState(OF_LOOP_NORMAL);
 		vidPlayer.play();
 	#endif
@@ -102,9 +102,10 @@ void ofApp::draw(){
 	// finally, a report:
 
 	ofSetHexColor(0xffffff);
-	char reportStr[1024];
-	sprintf(reportStr, "bg subtraction and blob detection\npress ' ' to capture bg\nthreshold %i\nnum blobs found %i, fps: %f", threshold, contourFinder.nBlobs, ofGetFrameRate());
-	ofDrawBitmapString(reportStr, 4, 380);
+	stringstream reportStr;
+    reportStr << "bg subtraction and blob detection\npress ' ' to capture bg\n";
+    reportStr << "threshold "<< threshold << "\nnum blobs found " << contourFinder.nBlobs << " fps: " << ofGetFrameRate();
+	ofDrawBitmapString(reportStr.str(), 4, 380);
 }
     
 //--------------------------------------------------------------

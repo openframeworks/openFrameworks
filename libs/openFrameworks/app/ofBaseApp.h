@@ -28,6 +28,7 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		virtual void mouseDragged( int x, int y, int button ){}
 		virtual void mousePressed( int x, int y, int button ){}
 		virtual void mouseReleased(int x, int y, int button ){}
+		virtual void mouseScrolled( float x, float y ){}
 		
 		virtual void dragEvent(ofDragInfo dragInfo) { }
 		virtual void gotMessage(ofMessage msg){ }
@@ -80,6 +81,9 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 			mouseY=mouse.y;
 			mouseReleased(mouse.x,mouse.y,mouse.button);
 		}
+		virtual void mouseScrolled( ofMouseEventArgs & mouse ){
+			mouseScrolled(mouse.x,mouse.y);
+		}
 		virtual void windowEntry(ofEntryEventArgs & entry){
 			windowEntry(entry.state);
 		}
@@ -88,6 +92,28 @@ class ofBaseApp : public ofBaseSoundInput, public ofBaseSoundOutput{
 		}
 		virtual void messageReceived(ofMessage & message){
 			gotMessage(message);
+		}
+
+		virtual void touchDown(int x, int y, int id) {};
+		virtual void touchMoved(int x, int y, int id) {};
+		virtual void touchUp(int x, int y, int id) {};
+		virtual void touchDoubleTap(int x, int y, int id) {};
+		virtual void touchCancelled(int x, int y, int id) {};
+
+		virtual void touchDown(ofTouchEventArgs & touch) {
+			touchDown(touch.x, touch.y, touch.id);
+		};
+		virtual void touchMoved(ofTouchEventArgs & touch) {
+			touchMoved(touch.x, touch.y, touch.id);
+		};
+		virtual void touchUp(ofTouchEventArgs & touch) {
+			touchUp(touch.x, touch.y, touch.id);
+		};
+		virtual void touchDoubleTap(ofTouchEventArgs & touch) {
+			touchDoubleTap(touch.x, touch.y, touch.id);
+		};
+		virtual void touchCancelled(ofTouchEventArgs & touch){
+			touchCancelled(touch.x, touch.y, touch.id);
 		}
 };
 

@@ -14,7 +14,7 @@ void ofApp::setup(){
 	ofEnableNormalizedTexCoords();
 	
 	// loads the OF logo from disk
-	ofLogo.loadImage("of.png");
+	ofLogo.load("of.png");
 	
 	// draw the ofBox outlines with some weight
 	ofSetLineWidth(10);

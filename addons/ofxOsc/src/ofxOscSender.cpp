@@ -47,12 +47,16 @@ ofxOscSender::~ofxOscSender()
 		shutdown();
 }
 
-void ofxOscSender::setup( std::string hostname, int port )
+void ofxOscSender::setup( std::string hostname, int port, bool enableBroadcast )
 {
+    if( UdpSocket::GetUdpBufferSize() == 0 ){
+        UdpSocket::SetUdpBufferSize(65535);
+    }
+
 	if ( socket )
 		shutdown();
 	
-	socket = new UdpTransmitSocket( IpEndpointName( hostname.c_str(), port ) );
+    socket = new UdpTransmitSocket(IpEndpointName( hostname.c_str(), port), enableBroadcast);
 }
 
 void ofxOscSender::shutdown()
@@ -76,7 +80,7 @@ void ofxOscSender::sendBundle( ofxOscBundle& bundle )
 	socket->Send( p.Data(), p.Size() );
 }
 
-void ofxOscSender::sendMessage( ofxOscMessage& message )
+void ofxOscSender::sendMessage( ofxOscMessage& message, bool wrapInBundle )
 {
     //setting this much larger as it gets trimmed down to the size its using before being sent.
     //TODO: much better if we could make this dynamic? Maybe have ofxOscMessage return its size?
@@ -85,10 +89,10 @@ void ofxOscSender::sendMessage( ofxOscMessage& message )
     osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
 
 	// serialise the message
-	p << osc::BeginBundleImmediate;
+	if(wrapInBundle) p << osc::BeginBundleImmediate;
 	appendMessage( message, p );
-	p << osc::EndBundle;
-    
+	if(wrapInBundle) p << osc::EndBundle;
+
 	socket->Send( p.Data(), p.Size() );
 }
 
@@ -112,7 +116,7 @@ void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 		if(address.length()) address += "/";
 		ofxOscMessage msg;
 		appendParameter(msg,parameter,address);
-		sendMessage(msg);
+		sendMessage(msg, false);
 	}
 }
 
@@ -180,7 +184,7 @@ void ofxOscSender::appendMessage( ofxOscMessage& message, osc::OutboundPacketStr
 			p << message.getArgAsString( i ).c_str();
         else if ( message.getArgType( i ) == OFXOSC_TYPE_BLOB ){
             ofBuffer buff = message.getArgAsBlob(i);
-            osc::Blob b(buff.getBinaryBuffer(), (unsigned long)buff.size());
+            osc::Blob b(buff.getData(), (unsigned long)buff.size());
             p << b; 
 		}else
 		{

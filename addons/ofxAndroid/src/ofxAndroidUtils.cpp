@@ -423,3 +423,257 @@ ofxAndroidEventsClass & ofxAndroidEvents(){
 	static ofxAndroidEventsClass * events = new ofxAndroidEventsClass;
 	return *events;
 }
+
+jmethodID ofxJavaGetMethodID(jclass classID, std::string methodName, std::string methodSignature) {
+
+	jmethodID result = ofGetJNIEnv()->GetMethodID(classID, methodName.c_str(), methodSignature.c_str());
+
+	if(!result){
+
+		ofLogError("ofxJavaGetMethodID") << "couldn't find instance method '"
+		<< methodName << "' with signature '"
+		<< methodSignature << "' in class '"
+		<< ofxJavaGetClassName(classID) << "'";
+		return NULL;
+	}
+
+	return result;
+}
+
+jmethodID ofxJavaGetStaticMethodID(jclass classID, std::string methodName, std::string methodSignature) {
+
+	jmethodID result = ofGetJNIEnv()->GetStaticMethodID(classID, methodName.c_str(), methodSignature.c_str());
+
+	if(!result){
+
+		ofLogError("ofxJavaGetStaticMethodID") << "couldn't find static method '"
+		<< methodName << "' with signature '"
+		<< methodSignature << "' in class '"
+		<< ofxJavaGetClassName(classID) << "'";
+		return NULL;
+	}
+
+	return result;
+}
+
+std::string ofxJavaGetClassName(jclass classID)
+{
+	return "[UNKNOWN]"; //TODO
+}
+
+jclass ofxJavaGetClassID(std::string className)
+{
+	jclass result = ofGetJNIEnv()->FindClass(className.c_str());
+
+	if(!result){
+
+		ofLogError("ofxJavaGetClassID") << "couldn't find class '"
+        << className << "'";
+		return NULL;
+	}
+
+	return result;
+}
+
+jfieldID ofxJavaGetStaticFieldID(jclass classID, std::string fieldName, std::string fieldType) {
+	jfieldID result = ofGetJNIEnv()->GetStaticFieldID(classID, fieldName.c_str(), fieldType.c_str());
+
+	if(!result){
+
+		ofLogError("ofxJavaGetStaticFieldID") << "couldn't find static field '" <<
+        fieldName << "' of type '" <<
+        fieldType << "' in class '" <<
+        ofxJavaGetClassName(classID) << "'";
+		return NULL;
+	}
+
+	return result;
+}
+
+jobject ofxJavaGetStaticObjectField(jclass classID, std::string fieldName, std::string fieldType) {
+
+	jfieldID fieldID = ofxJavaGetStaticFieldID(classID, fieldName, fieldType);
+
+	if (!fieldID)
+		return NULL;
+
+	return ofGetJNIEnv()->GetStaticObjectField(classID, fieldID);
+}
+
+jobject ofxJavaGetStaticObjectField(std::string className, std::string fieldName, std::string fieldType) {
+
+	jclass classID = ofxJavaGetClassID(className);
+
+	if (!classID)
+		return NULL;
+
+	jobject result = ofxJavaGetStaticObjectField(classID, fieldName, fieldType);
+
+	ofGetJNIEnv()->DeleteLocalRef(classID);
+
+	return result;
+}
+
+void ofxJavaCallVoidMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, va_list args){
+	jmethodID methodID = ofxJavaGetMethodID(classID, methodName, methodSignature);
+
+	if (!methodID)
+		return;
+
+	ofGetJNIEnv()->CallVoidMethodV(object, methodID, args);
+}
+
+void ofxJavaCallVoidMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...) {
+
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	ofxJavaCallVoidMethod(object, classID, methodName, methodSignature, args);
+
+	va_end(args);
+}
+
+void ofxJavaCallVoidMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...)
+{
+	jclass classID = ofxJavaGetClassID(className);
+
+	if (!classID)
+		return;
+
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	ofxJavaCallVoidMethod(object, classID, methodName, methodSignature, args);
+
+	va_end(args);
+
+	ofGetJNIEnv()->DeleteLocalRef(classID);
+}
+
+jobject ofxJavaCallStaticObjectMethod(jclass classID, std::string methodName, std::string methodSignature, va_list args)
+{
+	jmethodID methodID = ofxJavaGetStaticMethodID(classID, methodName, methodSignature);
+
+	if (!methodID)
+		return NULL;
+
+	return ofGetJNIEnv()->CallStaticObjectMethodV(classID, methodID, args);
+}
+
+jobject ofxJavaCallStaticObjectMethod(jclass classID, std::string methodName, std::string methodSignature, ...)
+{
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	jobject result = ofxJavaCallStaticObjectMethod(classID, methodName, methodSignature, args);
+
+	va_end(args);
+
+	return result;
+}
+
+jobject ofxJavaCallStaticObjectMethod(std::string className, std::string methodName, std::string methodSignature, ...)
+{
+	jclass classID = ofxJavaGetClassID(className);
+
+	if (!classID)
+		return NULL;
+
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	jobject result = ofxJavaCallStaticObjectMethod(classID, methodName, methodSignature, args);
+
+	va_end(args);
+
+	ofGetJNIEnv()->DeleteLocalRef(classID);
+
+	return result;
+}
+
+jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, va_list args)
+{
+	jmethodID methodID = ofxJavaGetMethodID(classID, methodName, methodSignature);
+
+	if (!methodID)
+		return NULL;
+
+	return ofGetJNIEnv()->CallObjectMethodV(object, methodID, args);
+}
+
+jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...)
+{
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	jobject result = ofxJavaCallObjectMethod(object, classID, methodName, methodSignature, args);
+
+	va_end(args);
+
+	return result;
+}
+
+jobject ofxJavaCallObjectMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...)
+{
+	jclass classID = ofxJavaGetClassID(className);
+
+	if (!classID)
+		return NULL;
+
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	jobject result = ofxJavaCallObjectMethod(object, classID, methodName, methodSignature, args);
+
+	va_end(args);
+
+	ofGetJNIEnv()->DeleteLocalRef(classID);
+
+	return result;
+}
+
+
+void ofxJavaCallStaticVoidMethod(jclass classID, std::string methodName, std::string methodSignature, va_list args)
+{
+	jmethodID methodID = ofxJavaGetStaticMethodID(classID, methodName, methodSignature);
+
+	if (!methodID)
+		return;
+
+	ofGetJNIEnv()->CallStaticVoidMethodV(classID, methodID, args);
+}
+
+void ofxJavaCallStaticVoidMethod(jclass classID, std::string methodName, std::string methodSignature, ...)
+{
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	ofxJavaCallStaticVoidMethod(classID, methodName, methodSignature, args);
+
+	va_end(args);
+}
+
+void ofxJavaCallStaticVoidMethod(std::string className, std::string methodName, std::string methodSignature, ...)
+{
+	jclass classID = ofxJavaGetClassID(className);
+
+	if (!classID)
+		return;
+
+	va_list args;
+
+	va_start(args, methodSignature);
+
+	ofxJavaCallStaticVoidMethod(classID, methodName, methodSignature, args);
+
+	va_end(args);
+
+	ofGetJNIEnv()->DeleteLocalRef(classID);
+}

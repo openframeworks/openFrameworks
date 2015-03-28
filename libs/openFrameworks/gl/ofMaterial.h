@@ -1,5 +1,7 @@
 #pragma once
 #include "ofColor.h"
+#include "ofShader.h"
+#include "ofBaseTypes.h"
 
 /**
  * Material concept: "Anything graphical applied to the polygons"
@@ -15,7 +17,7 @@
  */
 
 
-class ofMaterial {
+class ofMaterial: public ofBaseMaterial {
 public:
 	ofMaterial();
 	virtual ~ofMaterial(){};
@@ -28,27 +30,40 @@ public:
 	void setEmissiveColor(ofFloatColor oEmmisive);
 	void setShininess(float nShininess);
 
-	ofFloatColor getDiffuseColor();
-	ofFloatColor getAmbientColor();
-	ofFloatColor getSpecularColor();
-	ofFloatColor getEmissiveColor();
-	float getShininess();
+	ofFloatColor getDiffuseColor() const;
+	ofFloatColor getAmbientColor() const;
+	ofFloatColor getSpecularColor() const;
+	ofFloatColor getEmissiveColor() const;
+	float getShininess() const;
+    
+    struct Data{
+		Data();
+        ofFloatColor diffuse;
+        ofFloatColor ambient;
+        ofFloatColor specular;
+        ofFloatColor emissive;
+        float shininess;
+    };
+    Data getData() const;
+    void setData(const ofMaterial::Data& data);
 	
-	// apply the material
-	virtual void begin();
-	virtual void end();
-	
+    // apply the material
+	void begin() const;
+	void end() const;
+
 private:
-	ofFloatColor diffuse;
-	ofFloatColor ambient;
-	ofFloatColor specular;
-	ofFloatColor emissive;
-	float shininess;
+	void initShaders(ofGLProgrammableRenderer & renderer) const;
+	const ofShader & getShader(int textureTarget, ofGLProgrammableRenderer & renderer) const;
+	void updateMaterial(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
+	void updateLights(const ofShader & shader,ofGLProgrammableRenderer & renderer) const;
+    
+    Data data;
 
-
-	ofFloatColor prev_diffuse, prev_diffuse_back;
-	ofFloatColor prev_ambient, prev_ambient_back;
-	ofFloatColor prev_specular, prev_specular_back;
-	ofFloatColor prev_emissive, prev_emissive_back;
-	float prev_shininess, prev_shininess_back;
+	static ofShader shaderNoTexture;
+	static ofShader shaderTexture2D;
+	static ofShader shaderTextureRect;
+	static bool shadersInitialized;
+	static size_t shaderLights;
+	static string vertexShader;
+	static string fragmentShader;
 };

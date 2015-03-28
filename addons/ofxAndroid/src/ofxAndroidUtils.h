@@ -16,10 +16,30 @@ JNIEnv * ofGetJNIEnv();
 jclass ofGetJavaOFAndroid();
 jobject ofGetOFActivityObject();
 
-//void ofRunApp( ofxAndroidApp * app);
+jmethodID ofxJavaGetMethodID(jclass classID, std::string methodName, std::string methodSignature);
+jmethodID ofxJavaGetStaticMethodID(jclass classID, std::string methodName, std::string methodSignature);
+std::string ofxJavaGetClassName(jclass classID);
+jclass ofxJavaGetClassID(std::string className);
+jfieldID ofxJavaGetStaticFieldID(jclass classID, std::string fieldName, std::string fieldType);
 
+jobject ofxJavaGetStaticObjectField(jclass classID, std::string fieldName, std::string fieldType);
+jobject ofxJavaGetStaticObjectField(std::string className, std::string fieldName, std::string fieldType);
 
-void ofxRegisterMultitouch(ofxAndroidApp * app);
+void ofxJavaCallVoidMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, va_list args);
+void ofxJavaCallVoidMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...);
+void ofxJavaCallVoidMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...);
+
+jobject ofxJavaCallStaticObjectMethod(jclass classID, std::string methodName, std::string methodSignature, va_list args);
+jobject ofxJavaCallStaticObjectMethod(jclass classID, std::string methodName, std::string methodSignature, ...);
+jobject ofxJavaCallStaticObjectMethod(std::string className, std::string methodName, std::string methodSignature, ...);
+
+jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, va_list args);
+jobject ofxJavaCallObjectMethod(jobject object, jclass classID, std::string methodName, std::string methodSignature, ...);
+jobject ofxJavaCallObjectMethod(jobject object, std::string className, std::string methodName, std::string methodSignature, ...);
+
+void ofxJavaCallStaticVoidMethod(jclass classID, std::string methodName, std::string methodSignature, va_list args);
+void ofxJavaCallStaticVoidMethod(jclass classID, std::string methodName, std::string methodSignature, ...);
+void ofxJavaCallStaticVoidMethod(std::string className, std::string methodName, std::string methodSignature, ...);
 
 void ofxAndroidAlertBox(string msg);
 int ofxAndroidProgressBox(string msg);

@@ -1,10 +1,10 @@
 #pragma once
-
+#include "ofConstants.h"
+#ifndef TARGET_NO_THREADS
 
 #include "Poco/AtomicCounter.h"
 #include "Poco/Thread.h"
 #include "Poco/Runnable.h"
-#include "ofConstants.h"
 #include "ofTypes.h"
 
 
@@ -58,6 +58,14 @@
 /// Poco::FastMutex directly rather than using ofThread.  Further, cross
 /// platform thread management will be alleviated with the std::thread
 /// support library included with C++11.
+///
+/// Uncaught Exceptions throw from within ofThread will cause the thread to stop
+/// and the Exception will be delivered to the default ofBaseThreadErrorHandler.
+/// The ofBaseThreadErrorHandler will print the exception details, if available.
+/// The ofBaseThreadErrorHandler offers no opportunity to take corrective action
+/// and only allows the user to receive more valuable debugging information
+/// about the uncaught exception.  Users should design ofThread subclasses to
+/// catch and respond to all anticipated exceptions.
 class ofThread: protected Poco::Runnable {
 public:
     /// \brief Create an ofThread.
@@ -363,3 +371,19 @@ private:
     bool threadBeingWaitedFor;
 
 };
+
+#else
+
+class ofThread{
+public:
+	void lock(){}
+	void unlock(){}
+	void startThread(){}
+	void stopThread(){};
+	bool isThreadRunning(){return false;}
+
+    enum {
+        INFINITE_JOIN_TIMEOUT = LONG_MAX
+    };
+};
+#endif

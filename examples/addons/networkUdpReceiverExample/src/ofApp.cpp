@@ -41,12 +41,12 @@ void ofApp::update(){
 void ofApp::draw(){
     ofFill();
     ofSetHexColor(0xFFFFFF);
-    ofRect(0,0,200,30);
+    ofDrawRectangle(0,0,200,30);
 	ofSetHexColor(0x101010);
 	ofDrawBitmapString("UDP Receiver Example ", 10, 20);
 
 	for(unsigned int i=1;i<stroke.size();i++){
-		ofLine(stroke[i-1].x,stroke[i-1].y,stroke[i].x,stroke[i].y);
+		ofDrawLine(stroke[i-1].x,stroke[i-1].y,stroke[i].x,stroke[i].y);
 	}
 }
 
