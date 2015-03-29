@@ -44,12 +44,8 @@ bool ofAVFoundationPlayer::load(string name) {
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 	
-    if(videoPlayer != NULL) {
-        // throw this player away, add it to GC
-        ofAVFoundationGC::instance().addToGarbageQueue(videoPlayer);
-        videoPlayer = NULL;
-    }
-
+	// dispose videoplayer, texture and texture-caches
+	close();
 
     // create a new player
     videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
