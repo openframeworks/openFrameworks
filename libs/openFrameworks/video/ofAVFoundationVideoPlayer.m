@@ -123,6 +123,7 @@ static const NSString * ItemStatusContext;
 		[_player removeObserver:self forKeyPath:kRateKey];
 		
 		self.player = nil;
+		[_player release];
 	}
 	
 	if(self.assetReader != nil) {
