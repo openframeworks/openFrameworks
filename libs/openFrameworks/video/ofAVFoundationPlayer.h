@@ -47,6 +47,7 @@ public:
     ofPixels & getPixels();
     ofTexture * getTexturePtr();
     void initTextureCache();
+    void killTexture();
     void killTextureCache();
 	
     float getWidth() const;
@@ -90,6 +91,7 @@ public:
 protected:
 	
     bool loadPlayer(string name, bool bAsync);
+	void disposePlayer();
 
 #ifdef __OBJC__
     ofAVFoundationVideoPlayer * videoPlayer;

@@ -43,10 +43,26 @@ bool ofAVFoundationPlayer::load(string name) {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
-	
-	// dispose videoplayer, texture and texture-caches
-	close();
 
+
+	// dispose videoplayer, clear pixels, clear texture
+	if(videoPlayer != NULL) {
+		
+		pixels.clear();
+		videoTexture.clear();
+		
+		// dispose videoplayer
+		disposePlayer();
+		
+		if (_videoTextureRef != NULL) {
+			killTexture();
+		}
+		
+		videoPlayer = NULL;
+	}
+	bFrameNew = false;
+
+	
     // create a new player
     videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
     [videoPlayer setWillBeUpdatedExternally:YES];
@@ -116,6 +132,26 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
     return bLoaded;
 }
 
+void ofAVFoundationPlayer::disposePlayer() {
+	
+	if (videoPlayer == NULL)
+		return;
+	
+	
+	// dispose videoplayer
+	__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
+	
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+		
+		@autoreleasepool {
+			// we always need to call cleanup before releasing the player!
+			[currentPlayer cleanup];
+			[currentPlayer autorelease];
+		}
+		
+	});
+}
+
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::close() {
     if(videoPlayer != NULL) {
@@ -124,18 +160,7 @@ void ofAVFoundationPlayer::close() {
         
         videoTexture.clear();
 
-        // dispose videoplayer
-		__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
-		
-		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-			
-			@autoreleasepool {
-				[currentPlayer cleanup];
-				[currentPlayer autorelease];
-			}
-			
-		});
-		
+		disposePlayer();
 		
         if(bTextureCacheSupported == true) {
             killTextureCache();
@@ -474,28 +499,32 @@ void ofAVFoundationPlayer::initTextureCache() {
 #endif
 }
 
-void ofAVFoundationPlayer::killTextureCache() {
+void ofAVFoundationPlayer::killTexture() {
 #ifdef TARGET_OF_IOS
-    
-    if(_videoTextureRef) {
-        CFRelease(_videoTextureRef);
-        _videoTextureRef = NULL;
-    }
+	if(_videoTextureRef) {
+		CFRelease(_videoTextureRef);
+		_videoTextureRef = NULL;
+	}
+#elif defined TARGET_OSX
+	if (_videoTextureRef != NULL) {
+		CVOpenGLTextureRelease(_videoTextureRef);
+		_videoTextureRef = NULL;
+	}
+#endif
+}
 
+void ofAVFoundationPlayer::killTextureCache() {
+	
+	killTexture();
+	
+#ifdef TARGET_OF_IOS
     if(_videoTextureCache) {
         CFRelease(_videoTextureCache);
         _videoTextureCache = NULL;
     }
-    
 #endif
     
 #ifdef TARGET_OSX
-    
-    if (_videoTextureRef != NULL) {
-        CVOpenGLTextureRelease(_videoTextureRef);
-        _videoTextureRef = NULL;
-    }
-    
     if(_videoTextureCache != NULL) {
         CVOpenGLTextureCacheRelease(_videoTextureCache);
         _videoTextureCache = NULL;
