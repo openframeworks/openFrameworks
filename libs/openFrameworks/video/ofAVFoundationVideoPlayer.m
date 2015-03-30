@@ -79,12 +79,6 @@ static const NSString * ItemStatusContext;
 
 //---------------------------------------------------------- cleanup / dispose.
 - (void)dealloc {
-	// safety
-	[self cleanup];
-	[super dealloc];
-}
-
-- (void)cleanup {
 	
 	if(self.playerView != nil) {
 		[(ofAVFoundationVideoPlayerView *)self.playerView setPlayer:nil];
@@ -129,6 +123,13 @@ static const NSString * ItemStatusContext;
 		CFRelease(audioSampleBuffer);
 		audioSampleBuffer = nil;
 	}
+
+	
+	[super dealloc];
+}
+
+- (void)cleanup {
+	
 }
 
 //---------------------------------------------------------- position / size.
