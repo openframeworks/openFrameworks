@@ -45,3 +45,4 @@ PLATFORM_CFLAGS += -mtune=native
 ################################################################################
 
 PLATFORM_DEFINES += TARGET_OPENGLES
+PLATFORM_LIBRARIES += EGL GLESv2

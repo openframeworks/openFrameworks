@@ -238,7 +238,7 @@ PLATFORM_HEADER_SEARCH_PATHS =
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-PLATFORM_LIBRARIES = EGL Xinerama
+PLATFORM_LIBRARIES =
 
 ifneq ($(LINUX_ARM),1)
 ifeq ($(findstring TARGET_OPENGLES,$(PLATFORM_DEFINES)),)
