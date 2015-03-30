@@ -14,13 +14,6 @@ static NSString * const kStatusKey = @"status";
 static NSString * const kRateKey = @"rate";
 static NSString * const kCurrentItemKey = @"currentItem";
 
-//---------------------------------------------------------- video player privates.
-@interface ofAVFoundationVideoPlayer()
-
-- (void)cleanup;
-
-@end
-
 //---------------------------------------------------------- video player.
 @implementation ofAVFoundationVideoPlayer
 
@@ -86,17 +79,9 @@ static const NSString * ItemStatusContext;
 
 //---------------------------------------------------------- cleanup / dispose.
 - (void)dealloc {
-	
 	// safety
 	[self cleanup];
-	
 	[super dealloc];
-}
-
-- (void)cleanupAndAutorelease {
-	
-	[self cleanup];
-	[self autorelease];
 }
 
 - (void)cleanup {
@@ -135,16 +120,15 @@ static const NSString * ItemStatusContext;
 	self.assetReaderAudioTrackOutput = nil;
 	self.asset = nil;
 	
-	if(videoSampleBuffer) {
+	if(videoSampleBuffer != nil) {
 		CFRelease(videoSampleBuffer);
 		videoSampleBuffer = nil;
 	}
 	
-	if(audioSampleBuffer) {
+	if(audioSampleBuffer != nil) {
 		CFRelease(audioSampleBuffer);
 		audioSampleBuffer = nil;
 	}
-
 }
 
 //---------------------------------------------------------- position / size.

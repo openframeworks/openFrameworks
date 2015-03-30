@@ -138,5 +138,5 @@
 - (BOOL)getAutoplay;
 - (void)setWillBeUpdatedExternally:(BOOL)value;
 
-- (void)cleanupAndAutorelease;
+- (void)cleanup;
 @end
