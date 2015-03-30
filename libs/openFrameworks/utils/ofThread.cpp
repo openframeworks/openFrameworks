@@ -193,6 +193,4 @@ void ofThread::run(){
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
-
-	ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Thread Finished.";
 }
