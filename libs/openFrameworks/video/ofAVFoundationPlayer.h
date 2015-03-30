@@ -118,30 +118,3 @@ protected:
 #endif
 };
 
-
-
-//--------------------------------------------------------------
-// garbage collector for videoplayers
-// destroying an AVAssetReader takes a while,
-// so do it on a thread
-#ifdef __OBJC__
-class ofAVFoundationGC : public ofThread {
-	
-public:
-	
-    ~ofAVFoundationGC();
-
-    static ofAVFoundationGC& instance();
-    void addToGarbageQueue(ofAVFoundationVideoPlayer*);
-	
-	
-private:
-	
-    ofAVFoundationGC(); //use instance()!
-
-    vector<ofAVFoundationVideoPlayer*> videosPendingDeletion;
-    dispatch_semaphore_t sema;
-    void threadedFunction();
-	
-};
-#endif
