@@ -125,8 +125,17 @@ void ofAVFoundationPlayer::close() {
         videoTexture.clear();
 
         // dispose videoplayer
-        ofAVFoundationGC::instance().addToGarbageQueue(videoPlayer);
-        videoPlayer = NULL;
+		__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
+		
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+			
+			@autoreleasepool {
+				[currentPlayer cleanup];
+				[currentPlayer autorelease];
+			}
+			
+		});
+		
 		
         if(bTextureCacheSupported == true) {
             killTextureCache();
@@ -724,77 +733,3 @@ ofTexture * ofAVFoundationPlayer::getTexture() {
     return getTexturePtr();
 }
 
-
-
-
-
-
-
-//--------------------------------------------------------------
-//--------------------------------------------------------------
-ofAVFoundationGC& ofAVFoundationGC::instance(){
-    static ofAVFoundationGC singleton;
-    return singleton;
-}
-
-void ofAVFoundationGC::addToGarbageQueue(ofAVFoundationVideoPlayer * p){
-    lock();
-    p.delegate = nil;
-    [p pause];
-    videosPendingDeletion.push_back(p);
-    unlock();
-    dispatch_semaphore_signal(sema);
-}
-
-ofAVFoundationGC::~ofAVFoundationGC(){
-    // end thread and clean up
-    stopThread();
-    dispatch_semaphore_signal(sema);
-    waitForThread();
-    dispatch_release(sema);
-}
-
-// private constructor
-ofAVFoundationGC::ofAVFoundationGC(){
-    sema = dispatch_semaphore_create(0);
-    startThread();
-}
-
-void ofAVFoundationGC::threadedFunction(){
-
-    ofAVFoundationVideoPlayer * toDel = NULL;
-
-    while (isThreadRunning()) {
-        
-        // wait for signal
-        dispatch_semaphore_wait(sema, DISPATCH_TIME_FOREVER);
-        
-        lock();
-        if(videosPendingDeletion.size() > 0){
-            toDel = videosPendingDeletion[0];
-            videosPendingDeletion.erase(videosPendingDeletion.begin());
-        }
-        unlock();
-        if (toDel){ //we do this to avoid blocking the main thread inside the mutex
-            //as this is the "long" call
-            
-            //should call a finalizer instead...
-            @autoreleasepool {
-                [toDel cleanupAndAutorelease];
-                toDel = NULL;
-            }			
-        }
-    }
-
-    // dispose all left over
-    @autoreleasepool {
-        while (videosPendingDeletion.size() > 0) {
-            toDel = videosPendingDeletion.front();
-            videosPendingDeletion.erase(videosPendingDeletion.begin());
-            if (toDel){
-                [toDel release];
-                toDel = NULL;
-            }
-        }
-    }
-}
