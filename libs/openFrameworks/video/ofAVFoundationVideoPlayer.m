@@ -78,7 +78,9 @@ static const NSString * ItemStatusContext;
 }
 
 //---------------------------------------------------------- cleanup / dispose.
-- (void)cleanup {
+- (void)dealloc
+{
+	NSLog(@"dealloc");
 	
 	if(self.playerView != nil) {
 		[(ofAVFoundationVideoPlayerView *)self.playerView setPlayer:nil];
@@ -123,7 +125,10 @@ static const NSString * ItemStatusContext;
 		CFRelease(audioSampleBuffer);
 		audioSampleBuffer = nil;
 	}
+	
+	[super dealloc];
 }
+
 
 //---------------------------------------------------------- position / size.
 - (void)setVideoPosition:(CGPoint)position {
