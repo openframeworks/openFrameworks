@@ -79,9 +79,7 @@ static const NSString * ItemStatusContext;
 
 //---------------------------------------------------------- cleanup / dispose.
 - (void)dealloc
-{
-	NSLog(@"dealloc");
-	
+{	
 	if(self.playerView != nil) {
 		[(ofAVFoundationVideoPlayerView *)self.playerView setPlayer:nil];
 		[self.playerView removeFromSuperview];
