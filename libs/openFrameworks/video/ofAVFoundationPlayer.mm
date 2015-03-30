@@ -144,8 +144,6 @@ void ofAVFoundationPlayer::disposePlayer() {
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
 		
 		@autoreleasepool {
-			// we always need to call cleanup before releasing the player!
-			[currentPlayer cleanup];
 			[currentPlayer autorelease];
 		}
 		
@@ -238,7 +236,9 @@ void ofAVFoundationPlayer::draw(const ofRectangle & rect) {
 }
 
 void ofAVFoundationPlayer::draw(float x, float y, float w, float h) {
-    getTexturePtr()->draw(x, y, w, h);
+	if(videoPlayer != NULL) {
+		getTexturePtr()->draw(x, y, w, h);
+	}
 }
 
 //--------------------------------------------------------------
