@@ -619,21 +619,22 @@ static const NSString * ItemStatusContext;
 		return;
 	}
 	
-	if(timeObserver){
+	if(timeObserver != nil){
 		return;
 	}
 	
 	double interval = 1.0 / (double)timeObserverFps;
 	
+	__block ofAVFoundationVideoPlayer* refToSelf = self;
 	timeObserver = [[_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(interval, NSEC_PER_SEC)
 														  queue:dispatch_get_main_queue() usingBlock:
 					 ^(CMTime time) {
-						 [self update];
+						 [refToSelf update];
 					 }] retain];
 }
 
 - (void)removeTimeObserverFromPlayer {
-	if(timeObserver) {
+	if(timeObserver != nil) {
 		[_player removeTimeObserver:timeObserver];
 		[timeObserver release];
 		timeObserver = nil;
