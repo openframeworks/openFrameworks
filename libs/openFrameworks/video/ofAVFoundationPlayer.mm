@@ -132,11 +132,14 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
     return bLoaded;
 }
 
+//--------------------------------------------------------------
 void ofAVFoundationPlayer::disposePlayer() {
 	
 	if (videoPlayer == NULL)
 		return;
 	
+	// pause player, stop updates
+	[videoPlayer pause];
 	
 	// dispose videoplayer
 	__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
@@ -160,12 +163,14 @@ void ofAVFoundationPlayer::close() {
 
 		disposePlayer();
 		
-        if(bTextureCacheSupported == true) {
-            killTextureCache();
-        }
+		videoPlayer = NULL;
     }
-    videoPlayer = NULL;
-    
+	
+	// in any case get rid of the textures
+	if(bTextureCacheSupported == true) {
+		killTextureCache();
+	}
+	
     bFrameNew = false;
     bResetPixels = false;
     bUpdatePixels = false;
