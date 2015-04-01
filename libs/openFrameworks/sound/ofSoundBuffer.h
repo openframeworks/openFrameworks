@@ -111,7 +111,9 @@ public:
 	void setTickCount(unsigned long long tick){ tickCount = tick; }
 	
 	/// return the duration of audio in this buffer in milliseconds (==(getNumFrames()/getSampleRate())*1000)
-	unsigned long getDurationMS() const;
+	uint64_t getDurationMS() const;
+	uint64_t getDurationMicros() const;
+	uint64_t getDurationNanos() const;
 	
 	/// return the ID of the device which generated this buffer
 	unsigned int getDeviceID() const { return soundStreamDeviceID; }
