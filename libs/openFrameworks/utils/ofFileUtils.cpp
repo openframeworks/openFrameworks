@@ -1237,6 +1237,7 @@ int ofDirectory::listDir(string directory){
 
 //------------------------------------------------------------------------------------------------------------
 int ofDirectory::listDir(){
+	files.clear();
 	Path base(path());
 	if(path().empty()){
 		ofLogError("ofDirectory") << "listDir(): directory path is empty";
