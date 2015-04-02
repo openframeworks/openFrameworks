@@ -274,7 +274,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
 	glfwSetDropCallback(windowP, drop_cb);
-	setWindowPosition(settings.position.x,settings.position.y);
+	if (settings.isPositionSet()) {
+		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+	}
 }
 
 #ifdef TARGET_LINUX
