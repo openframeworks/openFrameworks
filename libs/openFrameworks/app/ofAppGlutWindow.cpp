@@ -335,7 +335,9 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 		setWindowIcon(iconPixels);
     }
 #endif
-	setWindowPosition(settings.position.x,settings.position.y);
+	if (settings.isPositionSet()) {
+		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+	}
 }
 
 #ifdef TARGET_LINUX
