@@ -9,14 +9,14 @@ int main( ){
 
 	settings.width = 600;
 	settings.height = 600;
-	settings.position.x = 300;
+	settings.setPosition(ofVec2f(300,0));
 	settings.resizable = true;
 	settings.numSamples = 8;
 	shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(settings);
 
 	settings.width = 300;
 	settings.height = 300;
-	settings.position.x = 0;
+	settings.setPosition.(ofVec2f(0,0));
 	settings.resizable = false;
 	settings.numSamples = 4;
 	settings.shareContextWith = mainWindow;
