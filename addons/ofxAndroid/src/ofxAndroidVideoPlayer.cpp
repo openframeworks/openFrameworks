@@ -8,30 +8,7 @@
 #include "ofxAndroidVideoPlayer.h"
 #include "ofxAndroidUtils.h"
 #include "ofLog.h"
-#include <set>
 
-//---------------------------------------------------------------------------
-static set<ofxAndroidVideoPlayer*> & all_videoplayers(){
-	static set<ofxAndroidVideoPlayer*> *all_videoplayers = new set<ofxAndroidVideoPlayer*>;
-	return *all_videoplayers;
-}
-
-void ofPauseVideoPlayers(){
-	ofLogVerbose("ofxAndroidVideoPlayer") << "ofPauseVideoPlayers(): releasing textures";
-	set<ofxAndroidVideoPlayer*>::iterator it;
-	for(it=all_videoplayers().begin();it!=all_videoplayers().end();it++){
-		(*it)->unloadTexture();
-	}
-}
-
-void ofResumeVideoPlayers(){
-	ofLogVerbose("ofxAndroidVideoPlayer") << "ofResumeVideoPlayers(): trying to allocate textures";
-	set<ofxAndroidVideoPlayer*>::iterator it;
-	for(it=all_videoplayers().begin();it!=all_videoplayers().end();it++){
-		(*it)->reloadTexture();
-	}
-	ofLogVerbose("ofxAndroidVideoPlayer") << "ofResumeVideoPlayers(): textures allocated";
-}
 
 //---------------------------------------------------------------------------
 void ofxAndroidVideoPlayer::reloadTexture(){
@@ -69,17 +46,9 @@ void ofxAndroidVideoPlayer::unloadTexture(){
 	texture.texData.textureID=0;
 }
 
-//---------------------------------------------------------------------------
-void ofxAndroidVideoPlayer::removeTexture(){
-	texture.texData.textureID=0;
-	texture.texData.bAllocated = false;
-}
-
 
 //---------------------------------------------------------------------------
 ofxAndroidVideoPlayer::ofxAndroidVideoPlayer(){
-
-	all_videoplayers().insert(this);
 
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
@@ -113,13 +82,13 @@ ofxAndroidVideoPlayer::ofxAndroidVideoPlayer(){
 	jfloatArray localMatrixJava = env->NewFloatArray(16);
 	matrixJava = (jfloatArray) env->NewGlobalRef(localMatrixJava);
 
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofxAndroidVideoPlayer::unloadTexture);
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofxAndroidVideoPlayer::reloadTexture);
+
 }
 
 //---------------------------------------------------------------------------
 ofxAndroidVideoPlayer::~ofxAndroidVideoPlayer(){
-
-	all_videoplayers().erase(this);
-
 	JNIEnv *env = ofGetJNIEnv();
 	if(javaVideoPlayer) env->DeleteGlobalRef(javaVideoPlayer);
 	if(javaClass) env->DeleteGlobalRef(javaClass);

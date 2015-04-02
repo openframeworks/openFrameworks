@@ -9,62 +9,8 @@
 #include "Poco/URI.h"
 #include "Poco/Exception.h"
 #endif
-
 #if defined(TARGET_ANDROID)
-#include <set>
-	// android destroys the opengl context on screen orientation change
-	// or when the application runs in the background so we need to reload
-	// all the textures when the context is created again.
-	// keeping a pointer to all the images we can tell them to reload from a static method
-	static set<ofImage *> & all_images(){
-		static set<ofImage *> * images = new set<ofImage *>;
-		return *images;
-	}
-	static set<ofFloatImage *> & all_float_images(){
-		static set<ofFloatImage *> * images = new set<ofFloatImage *>;
-		return *images;
-	}
-
-	static set<ofShortImage *> & all_short_images(){
-		static set<ofShortImage *> * images = new set<ofShortImage *>;
-		return *images;
-	}
-
-	static void registerImage(ofImage * img){
-		all_images().insert(img);
-	}
-
-	static void registerImage(ofFloatImage * img){
-		all_float_images().insert(img);
-	}
-
-	static void registerImage(ofShortImage * img){
-		all_short_images().insert(img);
-	}
-
-	static void unregisterImage(ofImage * img){
-		all_images().erase(img);
-	}
-
-	static void unregisterImage(ofFloatImage * img){
-		all_float_images().erase(img);
-	}
-
-	static void unregisterImage(ofShortImage * img){
-		all_short_images().erase(img);
-	}
-
-	void ofReloadAllImageTextures(){
-		for(auto img: all_images()){
-			img->update();
-		}
-		for(auto img: all_short_images()){
-			img->update();
-		}
-		for(auto img: all_float_images()){
-			img->update();
-		}
-	}
+#include "ofxAndroidUtils.h"
 #endif
 
 
@@ -583,7 +529,6 @@ ofImage_<PixelType>::ofImage_(){
 
 	//----------------------- init free image if necessary
 	ofInitFreeImage();
-
 }
 
 //----------------------------------------------------------
@@ -638,18 +583,24 @@ ofImage_<PixelType>& ofImage_<PixelType>::operator=(const ofImage_<PixelType>& m
 	if(&mom==this) return *this;
 	clone(mom);
 	update();
+
+	#if defined(TARGET_ANDROID)
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
+	#endif
 	return *this;
 }
 
 //----------------------------------------------------------
 template<typename PixelType>
 ofImage_<PixelType>::ofImage_(const ofImage_<PixelType>& mom) {
-#if defined(TARGET_ANDROID)
-	registerImage(this);
-#endif
 	clear();
 	clone(mom);
 	update();
+	#if defined(TARGET_ANDROID)
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
+	#endif
 }
 
 //----------------------------------------------------------
@@ -673,9 +624,10 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 //----------------------------------------------------------
 template<typename PixelType>
 bool ofImage_<PixelType>::load(string fileName){
-#if defined(TARGET_ANDROID)
-	registerImage(this);
-#endif
+	#if defined(TARGET_ANDROID)
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
+	#endif
 	bool bLoadedOk = ofLoadImage(pixels, fileName);
 	if (!bLoadedOk) {
 		ofLogError("ofImage") << "loadImage(): couldn't load image from \"" << fileName << "\"";
@@ -695,9 +647,10 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 //----------------------------------------------------------
 template<typename PixelType>
 bool ofImage_<PixelType>::load(const ofBuffer & buffer){
-#if defined(TARGET_ANDROID)
-	registerImage(this);
-#endif
+	#if defined(TARGET_ANDROID)
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
+	#endif
 	bool bLoadedOk = ofLoadImage(pixels, buffer);
 	if (!bLoadedOk) {
 		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer";
@@ -827,7 +780,8 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 		return;
 	}
 #if defined(TARGET_ANDROID)
-	registerImage(this);
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
 #endif
 	pixels.allocate(w, h, newType);
 
@@ -850,7 +804,8 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 template<typename PixelType>
 void ofImage_<PixelType>::clear(){
 #if defined(TARGET_ANDROID)
-	unregisterImage(this);
+	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
+	ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
 #endif
 	pixels.clear();
 	if(bUseTexture)	tex.clear();
@@ -1153,6 +1108,13 @@ void ofImage_<PixelType>::changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageT
 	if (convertedBmp != NULL) {
 		FreeImage_Unload(convertedBmp);
 	}
+}
+
+
+//----------------------------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::unloadTexture(){
+	tex.clear();
 }
 
 //----------------------------------------------------------

@@ -235,7 +235,7 @@ template <class TObj>
 class ofDelegate<TObj, void, false>: public Poco::AbstractPriorityDelegate<void>
 {
 public:
-	typedef void (TObj::*NotifyMethod)();
+	typedef bool (TObj::*NotifyMethod)();
 
 	ofDelegate(TObj* obj, NotifyMethod method, int prio):
 		Poco::AbstractPriorityDelegate<void>(prio),
