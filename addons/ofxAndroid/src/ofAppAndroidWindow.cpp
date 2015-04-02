@@ -20,6 +20,7 @@
 #include "ofGLProgrammableRenderer.h"
 #include "ofGLRenderer.h"
 #include "ofBaseTypes.h"
+using namespace std;
 
 static bool paused=true;
 static bool surfaceDestroyed=false;
@@ -32,7 +33,6 @@ static bool bSetupScreen = true;
 
 static JavaVM *ofJavaVM=0;
 
-static ofxAndroidApp * androidApp;
 static ofAppAndroidWindow * window;
 
 static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
@@ -232,17 +232,6 @@ shared_ptr<ofBaseRenderer> & ofAppAndroidWindow::renderer(){
 	return currentRenderer;
 }
 
-void ofPauseVideoGrabbers();
-void ofResumeVideoGrabbers();
-
-void ofxAndroidSoundStreamPause();
-void ofxAndroidSoundStreamResume();
-
-void ofPauseVideoPlayers();
-void ofResumeVideoPlayers();
-
-void ofReloadGLResources();
-
 extern "C"{
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved)
@@ -274,19 +263,14 @@ Java_cc_openframeworks_OFAndroid_onRestart( JNIEnv*  env, jobject  thiz ){
 void
 Java_cc_openframeworks_OFAndroid_onPause( JNIEnv*  env, jobject  thiz ){
 	paused = true;
-	ofxAndroidSoundStreamPause();
-	if(androidApp) androidApp->pause();
+	ofNotifyEvent(ofxAndroidEvents().pause);
 }
 
 void
 Java_cc_openframeworks_OFAndroid_onResume( JNIEnv*  env, jobject  thiz ){
 	ofLogNotice("ofAppAndroidWindow") << "onResume";
 	if(paused){
-		if(androidApp){
-			androidApp->resume();
-		}
-		ofxAndroidSoundStreamResume();
-
+		ofNotifyEvent(ofxAndroidEvents().resume);
 		paused = false;
 	}
 }
@@ -306,10 +290,7 @@ void
 Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz ){
 	surfaceDestroyed = true;
 	ofLogNotice("ofAppAndroidWindow") << "onSurfaceDestroyed";
-	ofPauseVideoGrabbers();
-	if(androidApp){
-		androidApp->unloadTextures();
-	}
+	ofNotifyEvent(ofxAndroidEvents().unloadGL);
 }
 
 void
@@ -317,23 +298,12 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 	if(appSetup){
 		ofLogNotice("ofAppAndroidWindow") << "onSurfaceCreated";
 		if(!surfaceDestroyed){
-			ofPauseVideoGrabbers();
-			ofPauseVideoPlayers();
-			if(androidApp){
-				androidApp->unloadTextures();
-			}
+			ofNotifyEvent(ofxAndroidEvents().unloadGL);
 		}
-
-		//ofGLReadyCallback();
-
-		ofReloadGLResources();
-		ofResumeVideoGrabbers();
-		ofResumeVideoPlayers();
-
-		if(androidApp){
-			androidApp->reloadTextures();
-		}
+		ofNotifyEvent(ofxAndroidEvents().reloadGL);
+		ofPushStyle();
 		window->renderer()->setupGraphicDefaults();
+		ofPopStyle();
 		surfaceDestroyed = false;
 	}else{
 	    if(window->renderer()->getType()==ofGLProgrammableRenderer::TYPE){
@@ -525,9 +495,8 @@ Java_cc_openframeworks_OFAndroid_onTouchDoubleTap(JNIEnv*  env, jclass  thiz, ji
 
 void
 Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, jint swipeDir){
-	if(androidApp){
-		androidApp->swipe((ofxAndroidSwipeDir)swipeDir,id);
-	}
+	ofxAndroidSwipeEventArgs swipe{(ofxAndroidSwipeDir)swipeDir,id};
+	ofNotifyEvent(ofxAndroidEvents().swipe,swipe);
 }
 
 void
@@ -542,45 +511,55 @@ Java_cc_openframeworks_OFAndroid_onKeyUp(JNIEnv*  env, jobject  thiz, jint  keyC
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onBackPressed(){
-	ofLogVerbose("ofAppAndroidWindow") << "back pressed";
-	if(androidApp) return androidApp->backPressed();
-	else return false;
+	try{
+		ofxAndroidEvents().backPressed.notify(nullptr);
+	}catch(...){
+		return true;
+	}
+	return false;
 }
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onMenuItemSelected( JNIEnv*  env, jobject  thiz, jstring menu_id){
 	jboolean iscopy;
-	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
-	if(androidApp) return androidApp->menuItemSelected(menu_id_str);
-	else return false;
+	const char * menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
+	if(!menu_id_str) return false;
+	try{
+		string id_str(menu_id_str);
+		ofxAndroidEvents().menuItemSelected.notify(nullptr,id_str);
+	}catch(...){
+		return true;
+	}
+	return false;
 }
 
 jboolean
 Java_cc_openframeworks_OFAndroid_onMenuItemChecked( JNIEnv*  env, jobject  thiz, jstring menu_id, jboolean checked){
 	jboolean iscopy;
 	const char *menu_id_str = env->GetStringUTFChars(menu_id, &iscopy);
-	if(androidApp && menu_id_str) return androidApp->menuItemChecked(menu_id_str,checked);
-	else return false;
+	if(!menu_id_str) return false;
+	try{
+		string id_str(menu_id_str);
+		ofxAndroidEvents().menuItemChecked.notify(nullptr,id_str);
+	}catch(...){
+		return true;
+	}
+	return false;
 }
 
 void
 Java_cc_openframeworks_OFAndroid_okPressed( JNIEnv*  env, jobject  thiz ){
-	if(androidApp) androidApp->okPressed();
-	bool yes = true;
-	ofNotifyEvent(ofxAndroidEvents().okPressed,yes);
+	ofNotifyEvent(ofxAndroidEvents().okPressed);
 }
 
 void
 Java_cc_openframeworks_OFAndroid_cancelPressed( JNIEnv*  env, jobject  thiz ){
-	if(androidApp) androidApp->cancelPressed();
-	bool yes = true;
-	ofNotifyEvent(ofxAndroidEvents().cancelPressed,yes);
+	ofNotifyEvent(ofxAndroidEvents().cancelPressed);
 }
 
 void
 Java_cc_openframeworks_OFAndroid_networkConnected( JNIEnv*  env, jobject  thiz, jboolean connected){
 	bool bConnected = (bool)connected;
-	if(androidApp) androidApp->networkConnected(bConnected);
 	ofNotifyEvent(ofxAndroidEvents().networkConnected,bConnected);
 }
 }
