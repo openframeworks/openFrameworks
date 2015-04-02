@@ -6,14 +6,31 @@ public:
 	:width(1024)
 	,height(768)
 	,position(0,0)
+	,positionSet(false)
 	,windowMode(OF_WINDOW){}
 
 	virtual ~ofWindowSettings(){};
 
 	int width;
 	int height;
-	ofVec2f position;
 	ofWindowMode windowMode;
+
+	void setPosition(const ofVec2f & position) {
+		this->position = position;
+		this->positionSet = true;
+	}
+
+	const ofVec2f & getPosition() const {
+		return position;
+	}
+
+	bool isPositionSet() const {
+		return positionSet;
+	}
+
+protected:
+	ofVec2f position;
+	bool positionSet;
 };
 
 class ofGLWindowSettings: public ofWindowSettings{
