@@ -5,9 +5,9 @@ public:
 	ofWindowSettings()
 	:width(1024)
 	,height(768)
+	,windowMode(OF_WINDOW)
 	,position(0,0)
-	,positionSet(false)
-	,windowMode(OF_WINDOW){}
+	,positionSet(false){}
 
 	virtual ~ofWindowSettings(){};
 
