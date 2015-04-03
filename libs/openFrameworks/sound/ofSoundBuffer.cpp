@@ -292,6 +292,15 @@ void ofSoundBuffer::addTo(float * outBuffer, std::size_t nFrames, std::size_t ou
 	}
 }
 
+
+void ofSoundBuffer::append(ofSoundBuffer & other){
+	if(other.getNumChannels() != getNumChannels()){
+		ofLogError() << "can't append sound buffers with different num channels";
+		return;
+	}
+	buffer.insert(buffer.end(),other.buffer.begin(),other.buffer.end());
+}
+
 static bool prepareBufferForResampling(const ofSoundBuffer &in, ofSoundBuffer &out, unsigned int numFrames) {
 	unsigned int totalOutBufferSize = numFrames * in.getNumChannels();
 	
