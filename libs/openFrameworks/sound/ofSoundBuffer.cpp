@@ -78,15 +78,15 @@ const vector<float> & ofSoundBuffer::getBuffer() const{
 }
 
 uint64_t ofSoundBuffer::getDurationMS() const{
-	return getNumFrames() * 1000 / double(samplerate);
+	return uint64_t(getNumFrames()) * uint64_t(1000) / uint64_t(samplerate);
 }
 
 uint64_t ofSoundBuffer::getDurationMicros() const{
-	return getNumFrames() * 1000000 / samplerate;
+	return uint64_t(getNumFrames()) * uint64_t(1000000) / uint64_t(samplerate);
 }
 
 uint64_t ofSoundBuffer::getDurationNanos() const{
-	return getNumFrames() * 1000000000 / samplerate;
+	return uint64_t(getNumFrames()) * uint64_t(1000000000) / uint64_t(samplerate);
 }
 
 void ofSoundBuffer::setNumChannels(int channels){
