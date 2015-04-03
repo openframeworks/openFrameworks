@@ -1104,12 +1104,13 @@ public class OFAndroid {
 	 */
 	public static boolean keyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0)) {
-            if( onBackPressed() ) {
+		mGLView.queueEvent(new Runnable() {
+        		@Override
+        		public void run() {
+        			onBackPressed();
+        		}
+        		});
             	return true;
-           	} else {
-           		// let the Android system handle the back button
-           		return false;
-           	}
         }
 		
         if (KeyEvent.isModifierKey(keyCode)) {
@@ -1120,8 +1121,13 @@ public class OFAndroid {
         }
         else
         {
-        	int unicodeChar = event.getUnicodeChar();
-        	onKeyDown(unicodeChar);
+        	final int unicodeChar = event.getUnicodeChar();
+        	mGLView.queueEvent(new Runnable() {
+        		@Override
+        		public void run() {
+        			onKeyDown(unicodeChar);
+        		}
+        	});
 
         	// return false to let Android handle certain keys
     		// like the back and menu keys
@@ -1144,8 +1150,13 @@ public class OFAndroid {
         }
         else
         {
-    		int unicodeChar = event.getUnicodeChar();
-    		onKeyUp(unicodeChar);
+    		final int unicodeChar = event.getUnicodeChar();
+        	mGLView.queueEvent(new Runnable() {
+        		@Override
+        		public void run() {
+        			onKeyUp(unicodeChar);
+        		}
+        	});
     		
     		// return false to let Android handle certain keys
     		// like the back and menu keys
