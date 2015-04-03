@@ -23,6 +23,7 @@ ofRtAudioSoundStream::ofRtAudioSoundStream(){
 
 //------------------------------------------------------------------------------
 ofRtAudioSoundStream::~ofRtAudioSoundStream(){
+	stop();
 	close();
 }
 
