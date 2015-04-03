@@ -164,6 +164,8 @@ public:
 	/// as addTo above but reads outNumFrames and outNumChannels from outBuffer
 	void addTo(ofSoundBuffer & outBuffer, std::size_t fromFrame = 0, bool loop = false) const;
 
+	void append(ofSoundBuffer & other);
+
 	/// copy sample data to out, where out is already allocated to match outNumFrames and outNumChannels (ie outNumFrames*outNumChannels samples).
 	/// fromFrame is a frame offset. if we don't have enough source data, loop with fromFrame=0 until we have filled the out buffer.
 	/// if out has fewer channels than our buffer, just copy the first outNumChannels of our data and skip the rest.
