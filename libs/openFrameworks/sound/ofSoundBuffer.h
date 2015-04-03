@@ -107,7 +107,7 @@ public:
 	unsigned long getNumFrames() const { return size()/getNumChannels(); }
 	
 	/// return the tickCount that was assigned by ofSoundStream (if this buffer originated from an ofSoundStream).
-	unsigned long long getTickCount() const { return tickCount; }
+	uint64_t getTickCount() const { return tickCount; }
 	void setTickCount(unsigned long long tick){ tickCount = tick; }
 	
 	/// return the duration of audio in this buffer in milliseconds (==(getNumFrames()/getSampleRate())*1000)
@@ -225,7 +225,7 @@ protected:
 	std::size_t channels;
 	unsigned int samplerate;
 
-	unsigned long long tickCount;
+	uint64_t tickCount;
 	int soundStreamDeviceID;
 };
 
