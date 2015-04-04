@@ -137,6 +137,14 @@ void ofVboMesh::updateVbo(){
 		vboNumColors = getNumColors();
 		vboNumTexCoords = getNumTexCoords();
 		vboNumNormals = getNumNormals();
+
+		// we need to call these to reset the changed flags or else next frame
+		// data will be updated again.
+		haveVertsChanged();
+		haveColorsChanged();
+		haveNormalsChanged();
+		haveTexCoordsChanged();
+		haveIndicesChanged();
 	}else{
 
 		if(haveVertsChanged()){
