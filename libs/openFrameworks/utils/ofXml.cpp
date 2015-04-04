@@ -38,7 +38,7 @@ ofXml::ofXml() {
 bool ofXml::load(const string & path){
 	ofFile file(path, ofFile::ReadOnly);
 	if(!file.exists()) {
-		ofLogError("ofxXml") << "couldn't load, \"" << file.getFileName() << "\" not found";
+		ofLogError("ofXml") << "couldn't load, \"" << file.getFileName() << "\" not found";
 		return false;
 	}
 	ofBuffer xmlBuffer(file);
