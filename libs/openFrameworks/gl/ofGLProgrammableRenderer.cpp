@@ -54,6 +54,7 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
     texCoordsEnabled = false;
     normalsEnabled = false;
 	settingDefaultShader = false;
+	usingVideoShader = false;
 	usingCustomShader = false;
 
 	wrongUseLoggedOnce = false;
@@ -488,18 +489,17 @@ void ofGLProgrammableRenderer::bind(const ofBaseVideoDraws & video){
 		return;
 	}
 	const ofShader * shader = NULL;
-	bool binded = false;
 	if(!usingCustomShader){
 		shader = getVideoShader(video);
 		if(shader){
-			shader->begin();
+			bind(*shader);
 			setVideoShaderUniforms(video,*shader);
-			binded = true;
+			usingVideoShader = true;
 		}
 	}
 
-	if(!binded){
-		video.getTexture().bind();
+	if(!usingVideoShader){
+		bind(video.getTexture(),0);
 	}
 }
 
@@ -508,20 +508,12 @@ void ofGLProgrammableRenderer::unbind(const ofBaseVideoDraws & video){
 	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
 		return;
 	}
-	const ofShader * shader = NULL;
-	bool unbinded = false;
-	if(!usingCustomShader){
-		shader = getVideoShader(video);
-		if(shader){
-			shader->end();
-			unbinded = true;
-		}
+	if(usingVideoShader){
+		unbind(*currentShader);
+	}else{
+		unbind(video.getTexture(),0);
 	}
-
-	if(!unbinded){
-		video.getTexture().unbind();
-	}
-
+	usingVideoShader = false;
 }
 
 //----------------------------------------------------------
@@ -2425,6 +2417,7 @@ void ofGLProgrammableRenderer::setVideoShaderUniforms(const ofBaseVideoDraws & v
 #ifndef TARGET_OPENGLES
 			}
 #endif
+			shader.setUniformTexture("src_tex_unit0",video.getTexturePlanes()[0],0);
 			break;
 		case OF_PIXELS_NV12:
 		case OF_PIXELS_NV21:
