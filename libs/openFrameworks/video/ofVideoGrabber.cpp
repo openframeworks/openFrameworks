@@ -240,8 +240,9 @@ void ofVideoGrabber::update(){
 					if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
 						tex[i].setRGToRGBASwizzles(true);
 					}
+				}else{
+					tex[i].loadData(plane);
 				}
-				tex[i].loadData(plane);
 			}
 		}
 	}
