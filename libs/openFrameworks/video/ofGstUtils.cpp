@@ -776,6 +776,7 @@ ofGstVideoUtils::ofGstVideoUtils(){
 	glDisplay = NULL;
 	glContext = NULL;
 #endif
+	copyPixels = false;
 }
 
 ofGstVideoUtils::~ofGstVideoUtils(){
@@ -839,7 +840,9 @@ void ofGstVideoUtils::update(){
 					frontTexture.setTextureWrap(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE);
 				}
 				#endif
-				frontBuffer = backBuffer;
+				if(!copyPixels){
+					frontBuffer = backBuffer;
+				}
 			}
 		}else{
 #if GST_VERSION_MAJOR==0
@@ -1051,6 +1054,10 @@ gboolean ofGstVideoUtils::sync_bus_call (GstBus * bus, GstMessage * msg, gpointe
 	return FALSE;
 }*/
 
+void ofGstVideoUtils::setCopyPixels(bool copy){
+	copyPixels = copy;
+}
+
 bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bool isStream, int w, int h){
 	internalPixelFormat = pixelFormat;
 #ifndef OF_USE_GST_GL
@@ -1155,7 +1162,7 @@ bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 	Poco::ScopedLock<ofMutex> lock(mutex);
 #if GST_VERSION_MAJOR>0
 	if(pixelFormat!=internalPixelFormat){
-		ofLogNotice("ofGstVideoPlayer") << "allocating with " << w << "x" << h << " " << getGstFormatName(pixelFormat);
+		ofLogNotice("ofGstVideoUtils") << "allocating with " << w << "x" << h << " " << getGstFormatName(pixelFormat);
 	}
 #endif
 	pixels.allocate(w,h,pixelFormat);
@@ -1165,7 +1172,6 @@ bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 
 	bHavePixelsChanged = false;
 	bBackPixelsChanged = true;
-
 
 	internalPixelFormat = pixelFormat;
 	return pixels.isAllocated();
@@ -1291,14 +1297,18 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 		}
 	}
 	mutex.lock();
-	backBuffer = sample;
+	if(!copyPixels){
+		backBuffer = sample;
+	}
 
 	if(pixels.isAllocated()){
 		if(stride > 0) {
 			backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
-		} else {
+		} else if(!copyPixels){
 			backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 			eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+		}else{
+			backPixels.setFromPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 		}
 
 		bBackPixelsChanged=true;
