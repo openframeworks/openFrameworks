@@ -286,6 +286,9 @@ public:
 	/// \brief The video device hardware name.
 	string hardwareName;
 
+	/// \brief Unique identifier for the device if it has one. 
+	string serialID;
+
 	/// \brief A list of video device formats provided by the device.
 	/// \sa ofVideoFormat
 	vector<ofVideoFormat> formats;
