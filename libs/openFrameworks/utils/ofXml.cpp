@@ -98,6 +98,10 @@ void ofXml::deserialize(ofAbstractParameter & parameter){
 				parameter.cast<float>() = getFloatValue(name);
 			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
 				parameter.cast<bool>() = getBoolValue(name);
+			}else if(parameter.type()==typeid(ofParameter<long>).name()){
+				parameter.cast<long>() = getLongValue(name);
+			}else if(parameter.type()==typeid(ofParameter<long long>).name()){
+				parameter.cast<long long>() = getLongValue(name);
 			}else if(parameter.type()==typeid(ofParameter<string>).name()){
 				parameter.cast<string>() = getValue(name);
 			}else{
@@ -271,6 +275,14 @@ bool ofXml::getBoolValue() const{
 
 bool ofXml::getBoolValue(const string & path) const{
 	return getValue<bool>(path,false);
+}
+
+long long ofXml::getLongValue() const{
+	return ofToLong(getValue());
+}
+
+long long ofXml::getLongValue(const string & path) const{
+	return getValue<long long>(path,0);
 }
 
 

@@ -53,6 +53,8 @@ public:
     float			getFloatValue(const string & path) const;
     bool			getBoolValue() const;
     bool			getBoolValue(const string & path) const;
+    long long		getLongValue() const;
+    long long 		getLongValue(const string& path) const;
 
     bool            setValue(const string& path, const string& value);
     
