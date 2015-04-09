@@ -588,6 +588,19 @@ const char * ofFromString(const string & value);
 /// \returns the integer represented by the string or 0 on failure.
 int ofToInt(const string& intString);
 
+// --------------------------------------------
+/// \name Number conversion
+/// \{
+
+/// \brief Convert a string to a long long integer.
+///
+/// Converts a `std::string` representation of a long long integer
+/// (e.g., `"9223372036854775807"`) to an actual `long long int`.
+///
+/// \param The string representation of the long long integer.
+/// \returns the long long integer represented by the string or 0 on failure.
+long long ofToLong(const string& intString);
+
 /// \brief Convert a string to a float.
 ///
 /// Converts a std::string representation of a float (e.g., `"3.14"`) to an

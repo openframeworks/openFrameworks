@@ -475,6 +475,14 @@ double ofToDouble(const string& doubleString) {
 }
 
 //----------------------------------------
+long long ofToLong(const string& longString) {
+	long long x = 0;
+	istringstream cur(longString);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
 bool ofToBool(const string& boolString) {
 	static const string trueString = "true";
 	static const string falseString = "false";
