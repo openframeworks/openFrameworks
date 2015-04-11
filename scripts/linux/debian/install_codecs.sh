@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ $EUID != 0 ]; then
+if [ $(id -u) != 0 ]; then
 	echo "this script must be run using sudo"
 	echo ""
 	echo "usage:"
