@@ -9,9 +9,14 @@
 #include "ofBaseTypes.h"
 #include "ofPixels.h"
 #include "ofTexture.h"
+#include "ofThread.h"
 
 #ifdef __OBJC__
 #import "ofAVFoundationVideoPlayer.h"
+#endif
+
+#if defined TARGET_OF_IOS || defined TARGET_OSX
+#import <CoreVideo/CoreVideo.h>
 #endif
 
 class ofAVFoundationPlayer : public ofBaseVideoPlayer {
@@ -22,6 +27,7 @@ public:
 	~ofAVFoundationPlayer();
 	   
     bool load(string name);
+	void loadAsync(string name);
     void close();
     void update();
 
@@ -41,6 +47,7 @@ public:
     ofPixels & getPixels();
     ofTexture * getTexturePtr();
     void initTextureCache();
+    void killTexture();
     void killTextureCache();
 	
     float getWidth() const;
@@ -83,10 +90,13 @@ public:
     
 protected:
 	
+    bool loadPlayer(string name, bool bAsync);
+	void disposePlayer();
+
 #ifdef __OBJC__
-	ofAVFoundationVideoPlayer * videoPlayer;
+    ofAVFoundationVideoPlayer * videoPlayer;
 #else
-	void * videoPlayer;
+    void * videoPlayer;
 #endif
     
     bool bFrameNew;
@@ -98,5 +108,15 @@ protected:
     ofPixels pixels;
 	ofPixelFormat pixelFormat;
 	ofTexture videoTexture;
+	
+#ifdef TARGET_OF_IOS
+	CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
+	CVOpenGLESTextureRef _videoTextureRef = NULL;
+#endif
+	
+#ifdef TARGET_OSX
+	CVOpenGLTextureCacheRef _videoTextureCache = NULL;
+	CVOpenGLTextureRef _videoTextureRef = NULL;
+#endif
 };
 

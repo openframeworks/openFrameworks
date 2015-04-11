@@ -14,7 +14,7 @@ public:
 	ofxEmscriptenSoundStream();
 	~ofxEmscriptenSoundStream();
 
-	std::vector<ofSoundDevice> getDeviceList();
+	std::vector<ofSoundDevice> getDeviceList() const;
 	void setDeviceID(int deviceID);
 	bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
 	bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
@@ -25,11 +25,12 @@ public:
 	void stop();
 	void close();
 
-	long unsigned long getTickCount();
-	int getNumInputChannels();
-	int getNumOutputChannels();
-	int getSampleRate();
-	int getBufferSize();
+	long unsigned long getTickCount() const;
+	int getNumInputChannels() const;
+	int getNumOutputChannels() const;
+	int getSampleRate() const;
+	int getBufferSize() const;
+	int getDeviceID() const;
 
 private:
 	static void audio_cb(int bufferSize, int inputChannels, int outputChannels, void * userData);

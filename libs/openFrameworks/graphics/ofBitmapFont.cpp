@@ -1,6 +1,9 @@
 
 #include "ofBitmapFont.h"
 
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
 
 // ==============================================================
 // this license below is from freeGlut, (freeglut_font_data.c)
@@ -443,6 +446,22 @@ ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofDrawBitmapMode
 	charMesh.getTexCoords().resize(vertexCount);
 	return charMesh;
 
+}
+
+ofBitmapFont::ofBitmapFont(){
+#ifdef TARGET_ANDROID
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofBitmapFont::unloadTexture);
+#endif
+}
+
+ofBitmapFont::~ofBitmapFont(){
+#ifdef TARGET_ANDROID
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofBitmapFont::unloadTexture);
+#endif
+}
+
+void ofBitmapFont::unloadTexture(){
+	texture.clear();
 }
 
 const ofTexture & ofBitmapFont::getTexture() const{

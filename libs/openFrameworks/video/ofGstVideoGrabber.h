@@ -22,6 +22,7 @@ struct ofGstDevice{
   string video_device;
   string gstreamer_src;
   string product_name;
+  string serial_id;
   vector<ofGstVideoFormat> video_formats;
   int current_format;
 };
@@ -52,6 +53,7 @@ public:
 
 	ofPixels&		getPixels();
 	const ofPixels &		getPixels() const;
+	ofTexture * getTexturePtr();
 
 	float 			getHeight() const;
 	float 			getWidth() const;

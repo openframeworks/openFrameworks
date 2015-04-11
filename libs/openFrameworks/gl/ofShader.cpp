@@ -199,7 +199,11 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
     
 	if(status == GL_TRUE){
 		ofLogVerbose("ofShader") << "setupShaderFromSource(): " << nameForType(type) + " shader compiled";
+#ifdef TARGET_EMSCRIPTEN
+		checkShaderInfoLog(shader, type, OF_LOG_VERBOSE);
+#else
 		checkShaderInfoLog(shader, type, OF_LOG_WARNING);
+#endif
 	}else if (status == GL_FALSE) {
 		ofLogError("ofShader") << "setupShaderFromSource(): " << nameForType(type) + " shader failed to compile";
 		checkShaderInfoLog(shader, type, OF_LOG_ERROR);

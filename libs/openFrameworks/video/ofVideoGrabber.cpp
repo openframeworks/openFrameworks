@@ -4,11 +4,6 @@
 #include "ofConstants.h"
 #include "ofAppRunner.h"
 
-#ifdef TARGET_ANDROID
-	extern bool ofxAndroidInitGrabber(ofVideoGrabber * grabber);
-	extern bool ofxAndroidCloseGrabber(ofVideoGrabber * grabber);
-#endif
-
 //--------------------------------------------------------------------
 ofVideoGrabber::ofVideoGrabber(){
 	bUseTexture			= false;
@@ -18,18 +13,10 @@ ofVideoGrabber::ofVideoGrabber(){
 	height				= 0;
 	width				= 0;
 	tex.resize(1);
-
-#ifdef TARGET_ANDROID
-	if(!ofxAndroidInitGrabber(this)) return;
-#endif
-
 }
 
 //--------------------------------------------------------------------
 ofVideoGrabber::~ofVideoGrabber(){
-#ifdef TARGET_ANDROID
-	ofxAndroidCloseGrabber(this);
-#endif
 }
 
 //--------------------------------------------------------------------
@@ -253,8 +240,9 @@ void ofVideoGrabber::update(){
 					if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
 						tex[i].setRGToRGBASwizzles(true);
 					}
+				}else{
+					tex[i].loadData(plane);
 				}
-				tex[i].loadData(plane);
 			}
 		}
 	}
