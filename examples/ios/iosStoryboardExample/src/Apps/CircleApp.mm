@@ -19,7 +19,7 @@ void CircleApp::setup() {
     if (ofxiOSGetOFWindow()-> isRetinaSupportedOnDevice())
         fontSize *= 2;
     
-    font.loadFont("fonts/mono0755.ttf", fontSize);
+    font.load("fonts/mono0755.ttf", fontSize);
 }
 
 //--------------------------------------------------------------

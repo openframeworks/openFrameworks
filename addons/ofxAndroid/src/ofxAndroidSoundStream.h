@@ -1,18 +1,18 @@
 #pragma once
 
 #include <jni.h>
-#include <queue>
 
 #include "ofConstants.h"
 #include "ofBaseSoundStream.h"
 #include "ofxAndroidCircBuffer.h"
+#include "ofSoundBuffer.h"
 
 class ofxAndroidSoundStream : public ofBaseSoundStream{
 	public:
 		ofxAndroidSoundStream();
         ~ofxAndroidSoundStream();
 		
-		std::vector<ofSoundDevice> getDeviceList();
+		std::vector<ofSoundDevice> getDeviceList() const;
 		void setDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
@@ -24,27 +24,26 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		void stop();
 		void close();
 		
-		long unsigned long getTickCount();		
+		long unsigned long getTickCount() const;
 
-        int getDeviceID(){return 0;}
-		int getNumInputChannels();
-		int getNumOutputChannels();
-		int getSampleRate();
-		int getBufferSize();
+        int getDeviceID() const{return 0;}
+		int getNumInputChannels() const;
+		int getNumOutputChannels() const;
+		int getSampleRate() const;
+		int getBufferSize() const;
 
 		int androidInputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
 		int androidOutputAudioCallback(JNIEnv*  env, jobject  thiz,jshortArray array, jint numChannels, jint bufferSize);
 		
-		int getMinOutBufferSize(int samplerate, int nchannels);
-		int getMinInBufferSize(int samplerate, int nchannels);
+		int getMinOutBufferSize(int samplerate, int nchannels) const;
+		int getMinInBufferSize(int samplerate, int nchannels) const;
 
-		bool isHeadPhonesConnected();
+		bool isHeadPhonesConnected() const;
 
 		ofEvent<bool> headphonesConnectedE;
 
 	private:
 		long unsigned long	tickCount;
-		int			sampleRate;
 		// pointers to OF audio callback classes
 		ofBaseSoundInput *  soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
@@ -54,9 +53,7 @@ class ofxAndroidSoundStream : public ofBaseSoundStream{
 		// 16-bits integers buffers used for Android PCM data
 		short * out_buffer, * in_buffer;
 		// 32-bits float buffers used by OF audio callbacks
-		float * out_float_buffer, * in_float_buffer;
-		// I/O buffers sizes/channels
-		int outBufferSize, outChannels, inBufferSize, inChannels;
+		ofSoundBuffer in_float_buffer, out_float_buffer;
 		//
 		int  requestedBufferSize;
 		int  totalOutRequestedBufferSize;

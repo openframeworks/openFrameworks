@@ -109,7 +109,6 @@ void ofBufferObject::setData(GLsizeiptr bytes, const void * data, GLenum usage){
 #endif
 
 	/// --------| invariant: direct state access is not available
-
 	bind(this->data->lastTarget);
 	glBufferData(this->data->lastTarget, bytes, data, usage);
 	unbind(this->data->lastTarget);

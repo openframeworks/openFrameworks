@@ -16,6 +16,7 @@ public:
 	int getAsync(string url, string name=""); // returns id
 	ofHttpResponse saveTo(string url, string path);
 	int saveAsync(string url, string path);
+	ofHttpResponse handleRequest(ofHttpRequest request);
 	void remove(int id);
 	void clear();
 	void stop();

@@ -9,6 +9,7 @@ public:
 	ofVboMesh();
 	ofVboMesh(const ofMesh & mom);
 	void operator=(const ofMesh & mom);
+	virtual ~ofVboMesh();
 	void setUsage(int usage);
 
     void enableColors();
@@ -34,6 +35,7 @@ public:
 	
 private:
 	void updateVbo();
+	void unloadVbo();
 	ofVbo vbo;
 	int usage;
 	int vboNumVerts, vboNumIndices, vboNumNormals, vboNumTexCoords, vboNumColors;

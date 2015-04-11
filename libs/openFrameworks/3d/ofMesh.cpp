@@ -1270,6 +1270,17 @@ void ofMesh::mergeDuplicateVertices() {
 }
 
 //----------------------------------------------------------
+ofMeshFace ofMesh::getFace(int faceId) const{
+	const vector<ofMeshFace> & faces = getUniqueFaces();
+	if(faces.size()>faceId){
+		return faces[faceId];
+	}else{
+		ofLogError() << "couldn't find face " << faceId;
+		return ofMeshFace();
+	}
+}
+
+//----------------------------------------------------------
 const vector<ofMeshFace> & ofMesh::getUniqueFaces() const{
     if(bFacesDirty){
 		// if we are doing triangles, we have to use a vert and normal for each triangle

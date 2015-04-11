@@ -335,7 +335,9 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 		setWindowIcon(iconPixels);
     }
 #endif
-	setWindowPosition(settings.position.x,settings.position.y);
+	if (settings.isPositionSet()) {
+		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+	}
 }
 
 #ifdef TARGET_LINUX
@@ -777,7 +779,6 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 
 //------------------------------------------------------------
 void ofAppGlutWindow::idle_cb(void) {
-	instance->currentRenderer->update();
 	instance->events().notifyUpdate();
 
 	glutPostRedisplay();

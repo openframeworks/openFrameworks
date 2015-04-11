@@ -8,7 +8,6 @@
 #pragma once
 
 #include <jni.h>
-#include "ofxAndroidApp.h"
 #include "ofSoundStream.h"
 
 JavaVM * ofGetJavaVMPtr();
@@ -90,11 +89,33 @@ inline void ofxAndroidSetViewItemChecked(string item_name, bool checked){
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setViewItemChecked,ofGetJNIEnv()->NewStringUTF(item_name.c_str()),checked);
 }
 
+enum ofxAndroidSwipeDir{
+	OFX_ANDROID_SWIPE_UP    = 1,
+	OFX_ANDROID_SWIPE_DOWN  = 2,
+	OFX_ANDROID_SWIPE_LEFT  = 3,
+	OFX_ANDROID_SWIPE_RIGHT = 4
+};
+
+struct ofxAndroidSwipeEventArgs{
+	ofxAndroidSwipeDir dir;
+	int id;
+};
+
 class ofxAndroidEventsClass{
 public:
-	ofEvent<bool> okPressed;
-	ofEvent<bool> cancelPressed;
+	ofEvent<void> okPressed;
+	ofEvent<void> cancelPressed;
+	ofEvent<void> backPressed;
 	ofEvent<bool> networkConnected;
+	ofEvent<void> pause;
+	ofEvent<void> resume;
+	ofEvent<void> unloadGL;
+	ofEvent<void> reloadGL;
+	ofEvent<ofxAndroidSwipeEventArgs> swipe;
+
+	ofEvent<std::string> menuItemSelected;
+	ofEvent<std::string> menuItemChecked;
+
 };
 
 ofxAndroidEventsClass & ofxAndroidEvents();

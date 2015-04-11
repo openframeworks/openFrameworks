@@ -222,7 +222,7 @@ template<typename PixelType>
 void ofPixels_<PixelType>::copyFrom(const ofPixels_<PixelType> & mom){
 	if(mom.isAllocated()) {
 		allocate(mom.getWidth(), mom.getHeight(), mom.getPixelFormat());
-		memcpy(pixels, mom.getData(), mom.size() * sizeof(PixelType));
+		memcpy(pixels, mom.getData(), getTotalBytes());
 	}
 }
 
@@ -272,7 +272,7 @@ void ofPixels_<PixelType>::set(int channel,PixelType val){
 template<typename PixelType>
 void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, int channels){
 	allocate(w, h, channels);
-	memcpy(pixels, newPixels, w * h * getBytesPerPixel());
+	memcpy(pixels, newPixels, getTotalBytes());
 }
 
 template<typename PixelType>
@@ -284,7 +284,7 @@ void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int
 template<typename PixelType>
 void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, ofPixelFormat format){
 	allocate(w,h,format);
-	memcpy(pixels, newPixels, w * h * getBytesPerPixel());
+	memcpy(pixels, newPixels, getTotalBytes());
 }
 
 
@@ -300,7 +300,7 @@ void ofPixels_<PixelType>::setFromExternalPixels(PixelType * newPixels,int w, in
 	width= w;
 	height = h;
 
-	pixelsSize = bytesFromPixelFormat<PixelType>(w,h,_pixelFormat);
+	pixelsSize = bytesFromPixelFormat<PixelType>(w,h,_pixelFormat) / sizeof(PixelType);
 
 	pixels = newPixels;
 	pixelsOwner = false;
@@ -322,7 +322,7 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 		return;
 	}
 	allocate(width, height, _pixelFormat);
-	int dstStride = width * getBytesPerPixel();
+	int dstStride = width * pixelBytesFromPixelFormat<PixelType>(_pixelFormat);
 	const unsigned char* src = (unsigned char*) newPixels;
 	unsigned char* dst =  (unsigned char*) pixels;
 	for(int i = 0; i < height; i++) {
@@ -386,7 +386,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 
 	int newSize = bytesFromPixelFormat<PixelType>(w,h,format);
 	//we check if we are already allocated at the right size
-	if(bAllocated && newSize==size()){
+	if(bAllocated && newSize==getTotalBytes()){
         pixelFormat = format;
         width = w;
         height = h;
@@ -400,7 +400,7 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 	width 		= w;
 	height 		= h;
 
-	pixelsSize = newSize;
+	pixelsSize = newSize / sizeof(PixelType);
 
 	pixels = new PixelType[newSize];
 	bAllocated = true;
@@ -977,8 +977,9 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 
 	if(rotation == 1){
 		PixelType * srcPixels = pixels;
-		PixelType * startPixels = dst.getData() + (strideDst - channels);
-		for (int i = 0; i < height; ++i, --startPixels){
+		PixelType * startPixels = dst.getData() + strideDst;
+		for (int i = 0; i < height; ++i){
+			startPixels -= channels;
 			PixelType * dstPixels = startPixels;
 			for (int j = 0; j < width; ++j){
 				for (int k = 0; k < channels; ++k){
@@ -990,8 +991,9 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 		}
 	} else if(rotation == 3){
 		PixelType * dstPixels = dst.pixels;
-		PixelType * startPixels = pixels + (strideSrc - channels);
-		for (int i = 0; i < dst.height; ++i, --startPixels){
+		PixelType * startPixels = pixels + strideSrc;
+		for (int i = 0; i < dst.height; ++i){
+			startPixels -= channels;
 			PixelType * srcPixels = startPixels;
 			for (int j = 0; j < dst.width; ++j){
 				for (int k = 0; k < channels; ++k){

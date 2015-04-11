@@ -78,9 +78,9 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 		}
 		
 		int minBufferSize = android.media.AudioRecord.getMinBufferSize(sampleRate, inChannels, AudioFormat.ENCODING_PCM_16BIT)/2;
-		int inBufferSize = minBufferSize>requestedBufferSize?minBufferSize:requestedBufferSize;
+		int inBufferSize = requestedBufferSize;//minBufferSize>requestedBufferSize?minBufferSize:requestedBufferSize;
 		
-		iTrack = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, inChannels, AudioFormat.ENCODING_PCM_16BIT, inBufferSize*2);
+		iTrack = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, inChannels, AudioFormat.ENCODING_PCM_16BIT, minBufferSize>requestedBufferSize?minBufferSize:requestedBufferSize);
 		
 		
 		inBuffer = new short[inBufferSize*numIns];
@@ -194,9 +194,19 @@ public class OFAndroidSoundStream extends OFAndroidObject implements Runnable, O
 				onPeriodicNotification(oTrack);
 			}
 		}*/
-		
-		oTrack.play();
+		if(oTrack!=null){
+			oTrack.play();
+		}
 		started = true;
+	}
+	
+	public void stop(){
+		if(oTrack!=null){
+			oTrack.stop();
+		}
+		if(iTrack!=null){
+			iTrack.stop();
+		}
 	}
 	
 	private Integer sampleRate;
