@@ -25,11 +25,11 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-	ringButton.removeListener(this,&ofApp::ringButtonPressed);
+	ringButton.removeListener(this, &ofApp::ringButtonPressed);
 }
 
 //--------------------------------------------------------------
-void ofApp::circleResolutionChanged(int & circleResolution){
+void ofApp::circleResolutionChanged(int &circleResolution){
 	ofSetCircleResolution(circleResolution);
 }
 
