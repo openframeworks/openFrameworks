@@ -316,8 +316,10 @@ function copy() {
 		cp -v libtess2.a $1/lib/$TYPE/tess2.a
 	fi
 
-	# copy license file
-    cp -v LICENSE.txt $1/
+	# copy license files
+	rm -rf $1/license # remove any older files if exists
+	mkdir -p $1/license
+	cp -v LICENSE.txt $1/license/
 }
 
 # executed inside the lib src dir

@@ -59,10 +59,10 @@ the examples, and have fun!
 b) Other distributions
 ----------------------
 
-If you are using a different distribution than ubuntu, debian, fedora or arch,
+If you are using a different distribution than ubuntu, debian, fedora or archlinux,
 please take a look at one of the `install_dependencies.sh` scripts from
 one of the supported distributions to know what libraries you need to install.
-Also, if you have problems or manage to install OF in any other distribution
+Also, if you have problems or manage to install OF in any other distribution,
 please post in the forums so we can add it to the next release.
 
 
@@ -107,7 +107,7 @@ add its name in a new line in this file.
 g) Post build steps:
 --------------------
     
-some folks have mentioned trouble with post-build step which copies the export
+Some folks have mentioned trouble with post-build step which copies the export
 directory into the bin folder. if you have issues, please let us know,
 and especially what Linux you are running, what version of Code::Blocks, etc...
 (please read the readme in export to understand the post build step).
@@ -134,7 +134,7 @@ h) Other scripts
 
 We've created a /scripts directory to make everyone life easier, and to get a
 hang of building / cleaning multiple projects at once.
-Also, you can enable or diable running app from within CB via our hacked out
+Also, you can enable or disable running app from within CB via our hacked out
 build = build + run system.
 We are hoping that crafty folk will get into scripting, esp. as it relates to
 addons, etc. Please share any helpful scripts on the forum.
@@ -154,8 +154,8 @@ as possible.
 Libs 
 ----
 The `export/` folder contains necessary components that need to be exported with the application:
-contains .so (shared objects) that the app needs to run against this allows OF linux apps to be released in a very portable way  
-users of the apps shouldn't need to install anything besides glut (which should be installed in most cases).
+contains .so (shared objects) that the app needs to run against this allows OF linux apps to be released in a very portable way. 
+Users of the apps shouldn't need to install anything besides glut (which should be installed in most cases).
 
 
 many thanks!! OFteam
