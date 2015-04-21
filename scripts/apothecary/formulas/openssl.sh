@@ -3,7 +3,7 @@
 # openssl
 
 # define the version
-VER=1.0.1l
+VER=1.0.2a
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
 
@@ -682,7 +682,9 @@ function copy() {
 	fi
 
     # copy license file
-    cp -v LICENSE $1/
+    rm -rf $1/license # remove any older files if exists
+    mkdir -p $1/license
+    cp -v LICENSE $1/license/
 }
 
 # executed inside the lib src dir

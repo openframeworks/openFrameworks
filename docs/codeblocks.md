@@ -3,7 +3,7 @@
 Code::Blocks - Windows
 ======================
 
-We like Code::Blocks for Windows development since it's light weight, and avoids some of the quirkiness of windows visual studio. here's a step by step tutorial to get up and running.  
+We like Code::Blocks for Windows development since it's light weight, and avoids some of the quirkiness of Windows Visual Studio. Here's a step by step tutorial to get up and running.  
 **Note**: [Additions](#additions) are required to run openFrameworks. Please do not skip this step. 
 
 Installation
@@ -37,11 +37,11 @@ will recompile the openframeworks library as needed.
 
 ### A few points:
 
-1. It's easy to open up multiple projects into the workspace.  remember to close the workspace before working 
+1. It's easy to open up multiple projects into the workspace.  Remember to close the workspace before working 
 with a new project.  If you accidently open up other projects into the workspace, just don't save it. 
 
 2. Within each workspace, it's easy to highlight which project you want to build by clicking it.  
-choose the "project", ie, imageSaverExample as opposed to the openframeworks lib.
+Choose the "project", ie, imageSaverExample as opposed to the openframeworks lib.
 
 New project
 -----------
