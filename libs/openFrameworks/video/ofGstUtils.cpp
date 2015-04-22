@@ -21,6 +21,10 @@
 #include <gst/gl/x11/gstgldisplay_x11.h>
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
+#ifdef TARGET_WIN32
+#include <winbase.h>	// to use SetEnvironmentVariableA
+#endif
+
 
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
 
@@ -118,7 +122,9 @@ ofGstUtils::ofGstUtils() {
 	if(!gst_inited){
 #ifdef TARGET_WIN32
 		string gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
-		putenv(("GST_PLUGIN_PATH_1_0=" + ofFilePath::join(gst_path, "lib\\gstreamer-1.0") + ";.").c_str());
+		//putenv(("GST_PLUGIN_PATH_1_0=" + ofFilePath::join(gst_path, "lib\\gstreamer-1.0") + ";.").c_str());
+		// to make it compatible with gcc and C++11 standard
+		SetEnvironmentVariableA("GST_PLUGIN_PATH_1_0", ofFilePath::join(gst_path, "lib\\gstreamer-1.0").c_str());
 #endif
 		gst_init (NULL, NULL);
 		gst_inited=true;
