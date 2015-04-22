@@ -25,8 +25,6 @@ struct ofxAndroidVideoGrabber::Data{
 	bool newPixels;
 	int attemptFramerate;
 	jobject javaVideoGrabber;
-	unsigned char * currentFrame;
-	jarray currentArray;
 	Data();
 	~Data();
 	void onAppPause();
@@ -61,9 +59,7 @@ ofxAndroidVideoGrabber::Data::Data()
 ,appPaused(false)
 ,newPixels(false)
 ,attemptFramerate(-1)
-,javaVideoGrabber(nullptr)
-,currentFrame(nullptr)
-,currentArray(nullptr){
+,javaVideoGrabber(nullptr){
 	JNIEnv *env = ofGetJNIEnv();
 
 	jclass javaClass = getJavaClass();
@@ -613,36 +609,27 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 	auto data = instances()[cameraId].lock();
 	if(!data) return 1;
 
-	if(data->currentFrame != nullptr && data->currentArray!=nullptr){
-		env->ReleasePrimitiveArrayCritical(data->currentArray,data->currentFrame ,0);
-		data->currentArray = nullptr;
-	}
-	data->currentFrame = (unsigned char*)env->GetPrimitiveArrayCritical(array, NULL);
-	if(!data->currentFrame) return 1;
-	data->currentArray = array;
+	auto currentFrame = (unsigned char*)env->GetPrimitiveArrayCritical(array, NULL);
+	if(!currentFrame) return 1;
 
-	ofPixels & pixels = data->frontPixels;
+	ofPixels & pixels = data->backPixels;
 	bool needsResize=false;
 	if(pixels.getWidth()!=width || pixels.getHeight()!=height){
 		needsResize = true;
-		data->backPixels.allocate(width,height,data->internalPixelFormat);
+		pixels.allocate(width,height,data->internalPixelFormat);
 	}
 
 
 
 	//time_one_frame = ofGetSystemTime();
 	if(data->internalPixelFormat==OF_PIXELS_RGB){
-		ConvertYUV2RGB(data->currentFrame, 					// y component
-				data->currentFrame+(width*height),		// uv components
-				data->backPixels.getData(),width,height);
+		ConvertYUV2RGB(currentFrame, 					// y component
+				currentFrame+(width*height),			// uv components
+				pixels.getData(),width,height);
 	}else if(data->internalPixelFormat==OF_PIXELS_RGB565){
-		ConvertYUV2toRGB565(data->currentFrame,data->backPixels.getData(),width,height);
+		ConvertYUV2toRGB565(currentFrame,pixels.getData(),width,height);
 	}else if(data->internalPixelFormat==OF_PIXELS_MONO){
-		if(!needsResize){
-			data->backPixels.setFromExternalPixels(data->currentFrame,width,height,OF_IMAGE_GRAYSCALE);
-		}else{
-			data->backPixels.setFromPixels(data->currentFrame,width,height,OF_IMAGE_GRAYSCALE);
-		}
+		pixels.setFromPixels(currentFrame,width,height,OF_IMAGE_GRAYSCALE);
 	}
 
 	if(needsResize){
@@ -655,6 +642,7 @@ Java_cc_openframeworks_OFAndroidVideoGrabber_newFrame(JNIEnv*  env, jobject  thi
 		ofLogNotice("ofxAndroidVideoGrabber") << "avg time: " << float(acc_time)/float(num_frames);
 	}*/
 
+	env->ReleasePrimitiveArrayCritical(array,currentFrame ,0);
 	data->newPixels = true;
 	return 0;
 }

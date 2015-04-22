@@ -499,6 +499,37 @@ Java_cc_openframeworks_OFAndroid_onSwipe(JNIEnv*  env, jclass  thiz, jint id, ji
 	ofNotifyEvent(ofxAndroidEvents().swipe,swipe);
 }
 
+jboolean
+Java_cc_openframeworks_OFAndroid_onScale(JNIEnv*  env, jclass  thiz, jobject detector){
+	try{
+		ofxAndroidScaleEventArgs scale(detector);
+		ofxAndroidEvents().scale.notify(nullptr,scale);
+	}catch(...){
+		return true;
+	}
+	return false;
+}
+
+jboolean
+Java_cc_openframeworks_OFAndroid_onScaleBegin(JNIEnv*  env, jclass  thiz, jobject detector){
+	try{
+		ofxAndroidScaleEventArgs scale(detector);
+		ofxAndroidEvents().scaleBegin.notify(nullptr,scale);
+	}catch(...){
+		return true;
+	}
+	return false;
+}
+
+void
+Java_cc_openframeworks_OFAndroid_onScaleEnd(JNIEnv*  env, jclass  thiz, jobject detector){
+	try{
+		ofxAndroidScaleEventArgs scale(detector);
+		ofxAndroidEvents().scaleEnd.notify(nullptr,scale);
+	}catch(...){
+	}
+}
+
 void
 Java_cc_openframeworks_OFAndroid_onKeyDown(JNIEnv*  env, jobject  thiz, jint  keyCode){
 	window->events().notifyKeyPressed(keyCode);
