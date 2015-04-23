@@ -685,18 +685,19 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
             int xpos;
 			int ypos;
 			glfwGetMonitorPos(monitors[currentMonitor], &xpos, &ypos);
- 
-			// find the backing scale factor if needed.
-			// in case we're using HDPI backingscale might be 2.
 
-			float backingScale = cocoaWindow.screen.backingScaleFactor;
+			// Scale (if needed) to physical pixels size, since setWindowPosition
+			// uses physical pixel dimensions. On HIDPI screens pixelScreenCoordScale
+			// is likely to be 2, on "normal" screens pixelScreenCoordScale will be 1:
+			xpos *= pixelScreenCoordScale;
+			ypos *= pixelScreenCoordScale;
 			
             //we do this as setWindowShape affects the position of the monitor
             //normally we would just call setWindowShape first, but on multi monitor you see the window bleed onto the second monitor as it first changes shape and is then repositioned.
             //this first moves it over in X, does the screen resize and then by calling it again its set correctly in y.
-			setWindowPosition(xpos * backingScale, ypos * backingScale);
+			setWindowPosition(xpos, ypos);
             setWindowShape(screenSize.x, screenSize.y);
-			setWindowPosition(xpos * backingScale, ypos * backingScale);
+			setWindowPosition(xpos, ypos);
 		}else{
             //for OS X we need to set this first as the window size affects the window positon
             setWindowShape(screenSize.x, screenSize.y);
