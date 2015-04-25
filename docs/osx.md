@@ -9,7 +9,7 @@ Installing Xcode
 ----------------
 openFrameworks is primarily developed with Xcode 4+, but may work with other versions. 
 
-To install Xcode, you need to register as an Apple developer and download the Xcode disk image from: https://connect.apple.com/
+To install Xcode, you need to register as an Apple developer and download the Xcode disk image from: https://developer.apple.com/xcode/downloads/
 
 More detailed instructions are available at:
 http://openframeworks.cc/setup/xcode

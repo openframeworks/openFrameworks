@@ -75,7 +75,7 @@ They don't have to be in-depth, just a brief summary of what the commit contains
 - Submit from a dedicated branch on your own repository **branched off from current `master`**. Your branch should be only about a single topic or area of openFrameworks. 
 If you have multiple things to submit, make separate branches for each topic and submit multiple pull requests. 
 (This makes it easier to review different parts of your code separately, and get it into the core faster.)
-- The branch name should start with either __feature-__ for features or __fugfix-__ for bug fixes.
+- The branch name should start with either __feature-__ for features or __bugfix-__ for bug fixes.
   - For example, if your patch adds code to draw ellipses, your branch should be called something like __feature-draw-ellipses__.
   - Remember, _commit early, commit often_ - use commits to isolate small subsets of code. 
 This granularity makes the code easier to deal with in cases where some things have to be modified/isolated/removed from the pull request.
