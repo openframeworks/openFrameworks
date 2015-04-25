@@ -166,9 +166,14 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
 	addr_in.sin_port  = htons(usPort); // short, network byte order
 	addr_in.sin_addr  = *((struct in_addr *)he->h_addr);
 
-    // set to non-blocking before connect
-    if (m_dwTimeoutConnect != NO_TIMEOUT) fcntl(m_hSocket, F_SETFL, O_NONBLOCK);
-    
+	// set to non-blocking before connect
+	#ifdef TARGET_WIN32
+		unsigned long iMode = 1;
+		if (m_dwTimeoutConnect != NO_TIMEOUT) ioctlsocket(m_hSocket, FIONBIO, &iMode);
+	#else
+		if (m_dwTimeoutConnect != NO_TIMEOUT) fcntl(m_hSocket, F_SETFL, O_NONBLOCK);
+	#endif
+
 	bool ret = (connect(m_hSocket, (sockaddr *)&addr_in, sizeof(sockaddr)) != SOCKET_ERROR);
     
     // set a timeout
@@ -181,7 +186,7 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
         if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 1) {
             int so_error;
             socklen_t len = sizeof so_error;
-            getsockopt(m_hSocket, SOL_SOCKET, SO_ERROR, &so_error, &len);
+            getsockopt(m_hSocket, SOL_SOCKET, SO_ERROR, (char*)&so_error, &len);
             if (so_error == 0) {
                 return true;
             } 
