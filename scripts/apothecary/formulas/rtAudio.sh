@@ -96,7 +96,9 @@ function copy() {
 	fi
 
 	# copy license file
-    cp -v readme $1/
+	rm -rf $1/license # remove any older files if exists
+	mkdir -p $1/license
+	cp -v readme $1/license/
 }
 
 # executed inside the lib src dir
