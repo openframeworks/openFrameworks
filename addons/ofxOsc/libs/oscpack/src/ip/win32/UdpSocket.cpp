@@ -114,8 +114,8 @@ public:
         }
 
         if( UdpSocket::maxBufferSize > 0 ){
-            setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, reinterpret_cast<const char*>(&UdpSocket::maxBufferSize), sizeof(UdpSocket::maxBufferSize));
-            setsockopt(socket_, SOL_SOCKET, SO_RCVBUF, reinterpret_cast<const char*>(&UdpSocket::maxBufferSize), sizeof(UdpSocket::maxBufferSize));
+            setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, (char*)(&UdpSocket::maxBufferSize), sizeof(UdpSocket::maxBufferSize));
+            setsockopt(socket_, SOL_SOCKET, SO_RCVBUF, (char*)(&UdpSocket::maxBufferSize), sizeof(UdpSocket::maxBufferSize));
         }
         
 		std::memset( &sendToAddr_, 0, sizeof(sendToAddr_) );
