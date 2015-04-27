@@ -663,7 +663,7 @@ void ofxAssimpModelLoader::setScale(float x, float y, float z){
 }
 
 //-------------------------------------------
-void ofxAssimpModelLoader::setScaleNomalization(bool normalize) {
+void ofxAssimpModelLoader::setScaleNormalization(bool normalize) {
     normalizeScale = normalize;
 
     updateModelMatrix();

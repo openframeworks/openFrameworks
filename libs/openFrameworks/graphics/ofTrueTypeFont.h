@@ -50,9 +50,9 @@ typedef struct FT_FaceRec_*  FT_Face;
 
 /// \name Fonts
 /// \{
-const static string OF_TTF_SANS = "sans-serif";
-const static string OF_TTF_SERIF = "serif";
-const static string OF_TTF_MONO = "monospace";
+static const string OF_TTF_SANS = "sans-serif";
+static const string OF_TTF_SERIF = "serif";
+static const string OF_TTF_MONO = "monospace";
 /// \}
 
 
