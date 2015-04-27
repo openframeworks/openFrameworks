@@ -61,7 +61,7 @@ class ofxAssimpModelLoader{
         void setRotation(int which, float angle, float rot_x, float rot_y, float r_z);
 
         // Scale the model to the screen automatically.
-        void setScaleNomalization(bool normalize);
+        void setScaleNormalization(bool normalize);
         void setNormalizationFactor(float factor);
 
         vector<string> getMeshNames();
