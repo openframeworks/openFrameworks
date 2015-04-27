@@ -934,7 +934,7 @@ void ofMatrix4x4::makeLookAtMatrix(const ofVec3f& eye,const ofVec3f& center,cons
 	_mat[0].set(xaxis.x, xaxis.y, xaxis.z, 0);
 	_mat[1].set(yaxis.x, yaxis.y, yaxis.z, 0);
 	_mat[2].set(zaxis.x, zaxis.y, zaxis.z, 0);
-	_mat[3] = eye;
+	_mat[3].set(eye.x, eye.y, eye.z, 1);
 }
 
 void ofMatrix4x4::getLookAt(ofVec3f& eye,ofVec3f& center,ofVec3f& up,float lookDistance) const
