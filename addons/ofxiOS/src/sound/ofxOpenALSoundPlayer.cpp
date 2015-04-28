@@ -223,15 +223,22 @@ void ofxOpenALSoundPlayer::setPaused(bool bP) {
 		return;
 	
 	if(iAmAnMp3)
-		cerr<<"error, cannot set pause on mp3s in openAL"<<endl; // TODO
+		ofLogError("Error, cannot set pause on mp3s in openAL"); // @todo
+		if(iAmAnMp3)
+			stopped = SoundEngine_getBackgroundMusicStopped();
+		if(!stopped) // if not stopped, run the update to see if maybe we should be...
+			update();
 	else {
-		bool isPlaying = isPlaying();
+		
+		bool isSoundPlaying = isPlaying();
 		bPaused = bP;
 		
-		if(bPaused && isPlaying)
+		if(bPaused && isSoundPlaying) {
 			SoundEngine_PauseEffect(myPrimedId);
-		else if(!bPaused && !isPlaying)
+			
+		} else if(!bPaused && !isSoundPlaying) {
 			play();
+		}
 	}
 }
 
@@ -303,7 +310,7 @@ float ofxOpenALSoundPlayer::getPosition() const {
 
 //--------------------------------------------------------------
 
-int ofxOpenALSoundPlayer::getPositionMS()  const{
+int ofxOpenALSoundPlayer::getPositionMS() const {
 	if ( !bLoadedOk ) 
 		return 0;
 
@@ -319,17 +326,15 @@ int ofxOpenALSoundPlayer::getPositionMS()  const{
 
 //--------------------------------------------------------------
 
-bool ofxOpenALSoundPlayer::isPlaying()  const{
+bool ofxOpenALSoundPlayer::isPlaying() const {
 	if ( !bLoadedOk ) 
 		return false;
-
+	
+	bool isMP3AndStopped = false;
 	if(iAmAnMp3)
-		stopped = SoundEngine_getBackgroundMusicStopped();
+		isMP3AndStopped = SoundEngine_getBackgroundMusicStopped();
 	
-	if(!stopped) // if not stopped, run the update to see if maybe we should be...
-		update();
-	
-	if(stopped || bPaused)
+	if(stopped || bPaused || isMP3AndStopped)
 		return false;
 	else
 		return true;
