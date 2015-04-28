@@ -3,27 +3,17 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetBackgroundColor(0);
-	ofSetFrameRate(60);
-	matrices.resize(600);
-	nodes.resize(600);
+	matrices.resize(1200);
+	nodes.resize(matrices.size());
 	buffer.allocate();
 	buffer.bind(GL_TEXTURE_BUFFER);
 	buffer.setData(matrices,GL_STREAM_DRAW);
 
-	ofTextureData texData;
-	texData.glTypeInternal = GL_RGBA32F;
-	texData.textureTarget = GL_TEXTURE_BUFFER;
-	texData.width = matrices.size();
-	texData.height = 1;
-	tex.allocate(texData);
-	tex.bind();
-	glTexBuffer(GL_TEXTURE_BUFFER,GL_RGBA32F,buffer.getId());
-	tex.unbind();
+	tex.allocate(buffer,GL_RGBA32F);
 
 	shader.load("vert.glsl","frag.glsl");
 	shader.begin();
 	shader.setUniformTexture("tex",tex,0);
-	shader.setUniform1i("numInstances",matrices.size());
 	shader.end();
 
 	mesh = ofMesh::box(50,50,50,1,1,1);
