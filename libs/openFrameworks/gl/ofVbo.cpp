@@ -89,7 +89,8 @@ ofVbo::VertexAttribute::VertexAttribute()
 ,offset(0)
 ,numCoords(0)
 ,location(0)
-,normalize(false){
+,normalize(false)
+,divisor(0){
 
 }
 
@@ -158,6 +159,7 @@ void ofVbo::VertexAttribute::enable() const{
 	bind();
 	glEnableVertexAttribArray(location);
 	glVertexAttribPointer(location, numCoords, GL_FLOAT, normalize?GL_TRUE:GL_FALSE, stride, (void*)offset);
+	glVertexAttribDivisor(location, divisor);
 	unbind();
 }
 
@@ -453,6 +455,11 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 	}
 
 	getOrCreateAttr(location).setData(attrib0x,numCoords,total,usage,stride,normalize);
+}
+
+
+void ofVbo::setAttributeDivisor(int location, int divisor){
+	getOrCreateAttr(location).divisor = divisor;
 }
 
 //--------------------------------------------------------------

@@ -21,7 +21,6 @@ class ofApp : public ofBaseApp{
 		
 		ofTexture tex;
 		ofBufferObject buffer;
-		vector<ofNode> nodes;
 		vector<ofMatrix4x4> matrices;
 		ofVboMesh mesh;
 		ofShader shader;
