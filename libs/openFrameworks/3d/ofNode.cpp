@@ -15,9 +15,9 @@ ofNode::ofNode()
 //----------------------------------------
 void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
     if(bMaintainGlobalTransform) {
-        ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
+		ofMatrix4x4 postParentGlobalTransform = parent.getGlobalTransformMatrix().getInverse() * getGlobalTransformMatrix();
         this->parent = &parent;
-        setTransformMatrix(globalTransform);
+		setTransformMatrix(postParentGlobalTransform);
     } else {
         this->parent = &parent;
     }
