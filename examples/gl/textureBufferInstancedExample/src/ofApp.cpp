@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetBackgroundColor(0);
-	matrices.resize(1200);
+	matrices.resize(3000);
 
 	// upload the transformation for each box using a
 	// texture buffer.
@@ -50,7 +50,7 @@ void ofApp::setup(){
 void ofApp::update(){
 	// update each box transformation
 	float movementSpeed = .1;
-	float spacing = 1;
+	float spacing = 0.5;
 	float now = ofGetElapsedTimef();
 	float cloudSize = ofGetWidth()*4;
 	for(int i=0;i<matrices.size();i++){
