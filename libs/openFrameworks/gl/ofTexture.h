@@ -384,6 +384,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param bUseARBExtension Set to true to use rectangular textures.
 	virtual void allocate(const ofFloatPixels& pix, bool bUseARBExtension);
 
+#ifndef TARGET_OPENGLES
 	/// \brief Allocate texture using an ofBufferObject instead of RAM memory.
 	///
 	/// Uses a gpu buffer as data for the texture instead of pixels in RAM
@@ -396,6 +397,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param buffer Reference to ofBufferObject instance.
 	/// \param glInternalFormat Internal pixel format of the data.
 	void allocate(const ofBufferObject & buffer, int glInternalFormat);
+#endif
 
 
 	/// \brief Determine whether the texture has been allocated.

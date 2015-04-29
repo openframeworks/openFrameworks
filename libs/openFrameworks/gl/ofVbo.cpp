@@ -61,28 +61,6 @@ static void releaseVAO(GLuint id){
 	}
 }
 
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-static set<ofVbo*> & allVbos(){
-	static set<ofVbo*> * allVbos = new set<ofVbo*>;
-	return *allVbos;
-}
-
-static void registerVbo(ofVbo*vbo){
-	allVbos().insert(vbo);
-}
-
-static void unregisterVbo(ofVbo*vbo){
-	allVbos().erase(vbo);
-}
-
-void ofRegenerateAllVbos(){
-	set<ofVbo*>::iterator it;
-	for(it=allVbos().begin();it!=allVbos().end();it++){
-		(*it)->clear();
-	}
-}
-#endif
-
 //--------------------------------------------------------------
 ofVbo::VertexAttribute::VertexAttribute()
 :stride(0)
@@ -159,7 +137,9 @@ void ofVbo::VertexAttribute::enable() const{
 	bind();
 	glEnableVertexAttribArray(location);
 	glVertexAttribPointer(location, numCoords, GL_FLOAT, normalize?GL_TRUE:GL_FALSE, stride, (void*)offset);
+#ifndef TARGET_OPENGLES
 	glVertexAttribDivisor(location, divisor);
+#endif
 	unbind();
 }
 
@@ -340,11 +320,6 @@ void ofVbo::setVertexData(const ofVec2f * verts, int total, int usage) {
 
 //--------------------------------------------------------------
 void ofVbo::setVertexData(const float * vert0x, int numCoords, int total, int usage, int stride) {
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-	if(!positionAttribute.isAllocated()){
-		registerVbo(this);
-	}
-	#endif
 	positionAttribute.setData(vert0x, numCoords, total, usage, stride);
 	bUsingVerts = true;
 	totalVerts = total;
@@ -436,11 +411,6 @@ ofVbo::VertexAttribute & ofVbo::getOrCreateAttr(int location){
 //--------------------------------------------------------------
 void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords, int total, int usage, int stride){
 	if(ofIsGLProgrammableRenderer() && location==ofShader::POSITION_ATTRIBUTE){
-		#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-			if(!positionAttribute.isAllocated()){
-				registerVbo(this);
-			}
-		#endif
 		totalVerts = total;
 	}
 
@@ -457,10 +427,12 @@ void ofVbo::setAttributeData(int location, const float * attrib0x, int numCoords
 	getOrCreateAttr(location).setData(attrib0x,numCoords,total,usage,stride,normalize);
 }
 
-
+#ifndef TARGET_OPENGLES
+//--------------------------------------------------------------
 void ofVbo::setAttributeDivisor(int location, int divisor){
 	getOrCreateAttr(location).divisor = divisor;
 }
+#endif
 
 //--------------------------------------------------------------
 void ofVbo::updateMesh(const ofMesh & mesh){
@@ -682,11 +654,6 @@ GLuint ofVbo::getAttributeId(int location) const {
 
 //--------------------------------------------------------------
 void ofVbo::setVertexBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset){
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-	if(!positionAttribute.isAllocated()){
-		registerVbo(this);
-	}
-#endif
 	positionAttribute.setBuffer(buffer, numCoords, stride, offset);
 	bUsingVerts = true;
 
@@ -732,11 +699,6 @@ void ofVbo::setIndexBuffer(ofBufferObject & buffer){
 
 //--------------------------------------------------------------
 void ofVbo::setAttributeBuffer(int location, ofBufferObject & buffer, int numCoords, int stride, int offset){
-#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-	if(ofIsGLProgrammableRenderer() && location==ofShader::POSITION_ATTRIBUTE && !positionAttribute.isAllocated()){
-		registerVbo(this);
-	}
-#endif
 	if(ofIsGLProgrammableRenderer() && !hasAttribute(location)){
 		vaoChanged = true;
 		bUsingVerts |= (location == ofShader::POSITION_ATTRIBUTE);
@@ -980,9 +942,6 @@ void ofVbo::clear(){
 		releaseVAO(vaoID);
 		vaoID=0;
 	}
-	#if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
-		unregisterVbo(this);
-	#endif
 }
 
 

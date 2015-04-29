@@ -310,6 +310,7 @@ void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
 	loadData(pix);
 }
 
+#ifndef TARGET_OPENGLES
 //----------------------------------------------------------
 void ofTexture::allocate(const ofBufferObject & buffer, int glInternalFormat){
 	texData.glTypeInternal = glInternalFormat;
@@ -319,6 +320,7 @@ void ofTexture::allocate(const ofBufferObject & buffer, int glInternalFormat){
 	glTexBuffer(GL_TEXTURE_BUFFER,GL_RGBA32F,buffer.getId());
 	glBindTexture(texData.textureTarget,0);
 }
+#endif
 
 //----------------------------------------------------------
 void ofTexture::allocate(int w, int h, int internalGlDataType, bool bUseARBExtension, int glFormat, int pixelType){
