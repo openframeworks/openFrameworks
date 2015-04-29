@@ -19,7 +19,6 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
         touchListener = new View.OnTouchListener() {
         	
             public boolean onTouch(View v, MotionEvent event) {
-            	v.performClick();
             	final int action = event.getAction();
             	final int pointerIndex = (action & MotionEvent.ACTION_POINTER_INDEX_MASK) 
                 >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
