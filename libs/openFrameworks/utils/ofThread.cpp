@@ -183,11 +183,11 @@ void ofThread::run(){
 	try{
 		threadedFunction();
 	}catch(const Poco::Exception& exc){
-        ofLogFatalError("ofThreadErrorLogger::exception") << exc.displayText();
+		ofLogFatalError("ofThreadErrorLogger::exception") << exc.displayText();
 	}catch(const std::exception& exc){
 		ofLogFatalError("ofThreadErrorLogger::exception") << exc.what();
 	}catch(...){
-        ofLogFatalError("ofThreadErrorLogger::exception") << "Unknown exception.";
+		ofLogFatalError("ofThreadErrorLogger::exception") << "Unknown exception.";
 	}
 
     _threadRunning = false;
