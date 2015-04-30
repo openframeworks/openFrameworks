@@ -1,32 +1,30 @@
-
 #pragma once
 
-#include "ofConstants.h"
-#include "ofParameter.h"
-#include "ofParameterGroup.h"
-#include "ofBaseTypes.h"
 
 #include <numeric>
 
+#include "ofConstants.h"
+#include "ofBaseTypes.h"
+#include "ofParameter.h"
+#include "ofParameterGroup.h"
+
+#include <Poco/DOM/Attr.h>
+#include <Poco/DOM/ChildNodesList.h>
 #include <Poco/DOM/Document.h>
 #include <Poco/DOM/DocumentFragment.h>
-#include <Poco/DOM/Element.h>
-#include <Poco/DOM/DOMParser.h>
-
 #include <Poco/DOM/DOMException.h>
+#include <Poco/DOM/DOMParser.h>
+#include <Poco/DOM/DOMWriter.h>
+#include <Poco/DOM/Element.h>
+#include <Poco/DOM/NamedNodeMap.h>
+#include <Poco/DOM/Node.h>
+#include <Poco/DOM/NodeFilter.h>
+#include <Poco/DOM/NodeIterator.h>
+#include <Poco/DOM/Text.h>
 #include <Poco/SAX/SAXException.h>
 #include <Poco/XML/XMLString.h>
 #include <Poco/XML/XMLWriter.h>
-#include <Poco/DOM/DOMParser.h>
-#include <Poco/DOM/DOMWriter.h>
-#include <Poco/DOM/Document.h>
-#include <Poco/DOM/Attr.h>
-#include <Poco/DOM/Node.h>
-#include <Poco/DOM/Text.h>
-#include <Poco/DOM/NodeIterator.h>
-#include <Poco/DOM/NodeFilter.h>
-#include <Poco/DOM/NamedNodeMap.h>  
-#include <Poco/DOM/ChildNodesList.h>
+
 
 class ofXml: public ofBaseFileSerializer {
     
