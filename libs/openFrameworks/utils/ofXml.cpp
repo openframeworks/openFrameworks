@@ -98,8 +98,8 @@ void ofXml::deserialize(ofAbstractParameter& parameter){
 				parameter.cast<float>() = getFloatValue(name);
 			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
 				parameter.cast<bool>() = getBoolValue(name);
-			}else if(parameter.type()==typeid(ofParameter<string>).name()){
-				parameter.cast<string>() = getValue(name);
+			}else if(parameter.type()==typeid(ofParameter<std::string>).name()){
+				parameter.cast<std::string>() = getValue(name);
 			}else{
 				parameter.fromString(getValue(name));
 			}
@@ -108,14 +108,15 @@ void ofXml::deserialize(ofAbstractParameter& parameter){
 
 }
 
-int ofXml::getNumChildren() const
+std::size_t ofXml::getNumChildren() const
 {
 	if(!element) return 0;
 
-    int numberOfChildren = 0;
+    std::size_t numberOfChildren = 0;
+	
     Poco::XML::NodeList *list = element->childNodes();
     
-    for(int i=0; i < (int)list->length(); i++) {
+    for(std::size_t i=0; i < list->length(); i++) {
         if(list->item(i) && list->item(i)->nodeType() == Poco::XML::Node::ELEMENT_NODE) {
             numberOfChildren++;
         }
@@ -123,14 +124,14 @@ int ofXml::getNumChildren() const
     return numberOfChildren;
 }
 
-int ofXml::getNumChildren(const std::string& path) const
+std::size_t ofXml::getNumChildren(const std::string& path) const
 {
 	if(!element) return 0;
 
-    int numberOfChildren = 0;
+    std::size_t numberOfChildren = 0;
     Poco::XML::NodeList *list = element->childNodes();
 
-    for(int i=0; i < (int)list->length(); i++) {
+    for(std::size_t i=0; i < list->length(); i++) {
         if(list->item(i) && list->item(i)->nodeType() == Poco::XML::Node::ELEMENT_NODE) {
             std::string nodeName = list->item(i)->localName();
             if(path.compare(nodeName) == 0) {
@@ -194,7 +195,7 @@ void ofXml::addXml(ofXml& xml, bool copyAll) {
 
 bool ofXml::addChild(const std::string& path)
 {
-    std::vector<string> tokens;
+	std::vector<std::string> tokens;
     
     if(path.find('/') != std::string::npos) {
         tokens = tokenize(path, "/");
@@ -208,7 +209,7 @@ bool ofXml::addChild(const std::string& path)
         
         std::vector<Poco::XML::Element*> toBeReleased;
         
-        for(int i = 0; i < (int)tokens.size(); i++)
+		for(std::size_t i = 0; i < tokens.size(); i++)
         {
             Poco::XML::Element *pe = getPocoDocument()->createElement(tokens.at(i));
             el->appendChild(pe);
@@ -295,10 +296,10 @@ bool ofXml::setToChild(int index)
         }
     }
     
-    int numberOfChildren = 0;
+    std::size_t numberOfChildren = 0;
     Poco::XML::NodeList *list = element->childNodes();
 
-    for(int i=0; i < (int)list->length() && numberOfChildren < index + 1; i++) {
+    for(std::size_t i=0; i < list->length() && numberOfChildren < index + 1; i++) {
         if(list->item(i) && list->item(i)->nodeType() == Poco::XML::Node::ELEMENT_NODE) {
             if(numberOfChildren == index) {
                 element = (Poco::XML::Element*) list->item(i);
@@ -488,7 +489,7 @@ bool ofXml::removeAttribute(const std::string& path)
     if(e) {
         Poco::XML::NamedNodeMap *map = e->attributes();
         
-        for(int i = 0; i < (int)map->length(); i++) {
+        for(std::size_t i = 0; i < map->length(); i++) {
             if(map->item(i)->nodeName() == attributeName) {
                 e->removeAttribute(map->item(i)->nodeName());
             }
@@ -520,7 +521,7 @@ bool ofXml::removeAttributes(const std::string& path)
     if(e) {
         Poco::XML::NamedNodeMap *map = e->attributes();
         
-        for(int i = 0; i < (int)map->length(); i++) {
+        for(std::size_t i = 0; i < map->length(); i++) {
             e->removeAttribute(map->item(i)->nodeName());
         }
         
@@ -536,7 +537,7 @@ bool ofXml::removeAttributes()
     if(element) {
         Poco::XML::NamedNodeMap *map = element->attributes();
         
-        for(int i = 0; i < (int)map->length(); i++) {
+        for(std::size_t i = 0; i < map->length(); i++) {
             element->removeAttribute(map->item(i)->nodeName());
         }
         
@@ -578,7 +579,7 @@ bool ofXml::removeContents(const std::string& path) {
     
     if(e) {
         Poco::XML::NodeList *list = e->childNodes();
-        for( int i = 0; i < (int)list->length(); i++) {
+        for(std::size_t i = 0; i < list->length(); i++) {
             element->removeChild(list->item(i));
         }
         list->release();
@@ -656,7 +657,7 @@ std::map<std::string, std::string> ofXml::getAttributes() const // works for bot
     if(element){
     
         Poco::AutoPtr<Poco::XML::NamedNodeMap> attr = element->attributes();
-        for( int i = 0; i < (int)attr->length(); i++) {
+        for(std::size_t i = 0; i < attr->length(); i++) {
             attrMap[attr->item(i)->nodeName()] = attr->item(i)->nodeValue();
         }
     } else {
@@ -705,7 +706,7 @@ bool ofXml::setAttribute(const std::string& path, const std::string& value)
     
     if(!curElement) { // if it doesn't exist
         
-        std::vector<string> tokens;
+		std::vector<std::string> tokens;
         
         if(path.find('/') != std::string::npos) {
             tokens = tokenize(pathToAttribute, "/");
@@ -718,10 +719,10 @@ bool ofXml::setAttribute(const std::string& path, const std::string& value)
             curElement = element;
             
             // find the last existing tag
-            int lastExistingTag = 0;
+            std::size_t lastExistingTag = 0;
             
             // can't use reverse_iterator b/c accumulate doesn't like it
-            for(vector<string>::iterator it = tokens.end(); it != tokens.begin(); it--) 
+			for(std::vector<std::string>::iterator it = tokens.end(); it != tokens.begin(); it--)
             {
                 std::string empty = "";
                 std::string concat = accumulate(tokens.begin(), it, std::string());
@@ -734,7 +735,7 @@ bool ofXml::setAttribute(const std::string& path, const std::string& value)
             }
             
             // create all the tags that don't exist
-            for(int i = lastExistingTag; i < (int)tokens.size(); i++)
+            for(std::size_t i = lastExistingTag; i < tokens.size(); i++)
             {
                 Poco::XML::Element *newElement = getPocoDocument()->createElement(tokens.at(i));
                 curElement->appendChild(newElement);

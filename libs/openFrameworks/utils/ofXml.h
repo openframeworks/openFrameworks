@@ -57,8 +57,8 @@ public:
     bool setAttribute(const std::string& path, const std::string& value);
     
     std::map<std::string, std::string> getAttributes() const;
-    int getNumChildren() const;
-    int getNumChildren(const std::string& path) const;
+    std::size_t getNumChildren() const;
+	std::size_t getNumChildren(const std::string& path) const;
 
     bool removeAttribute(const std::string& path);
     bool removeAttributes(const std::string& path); // removes attributes for the passed path
