@@ -1,8 +1,7 @@
-
 #include "ofXml.h"
 
 ofXml::~ofXml() {
-	releaseAll();
+    releaseAll();
 }
 
 ofXml::ofXml(const std::string& path) {
@@ -16,14 +15,14 @@ ofXml::ofXml( const ofXml& rhs ) {
     document = new Poco::XML::Document();
     Poco::XML::Node *n = document->importNode(rhs.getPocoDocument()->documentElement(), true);
     document->appendChild(n);
-    
+
     element = document->documentElement();
 }
 
 const ofXml& ofXml::operator =( const ofXml& rhs ) {
-	if(&rhs==this) return *this;
+    if(&rhs==this) return *this;
 
-	releaseAll();
+    releaseAll();
 
     document = (Poco::XML::Document*) rhs.document->cloneNode(true);
     element = document->documentElement();
@@ -36,13 +35,13 @@ ofXml::ofXml() {
 }
 
 bool ofXml::load(const std::string& path){
-	ofFile file(path, ofFile::ReadOnly);
-	if(!file.exists()) {
-		ofLogError("ofXml") << "couldn't load, \"" << file.getFileName() << "\" not found";
-		return false;
-	}
-	ofBuffer xmlBuffer(file);
-	return loadFromBuffer(xmlBuffer);
+    ofFile file(path, ofFile::ReadOnly);
+    if(!file.exists()) {
+        ofLogError("ofXml") << "couldn't load, \"" << file.getFileName() << "\" not found";
+        return false;
+    }
+    ofBuffer xmlBuffer(file);
+    return loadFromBuffer(xmlBuffer);
 }
 
 bool ofXml::save(const std::string& path){
@@ -52,70 +51,69 @@ bool ofXml::save(const std::string& path){
 }
 
 void ofXml::serialize(const ofAbstractParameter& parameter){
-	if(!parameter.isSerializable()) return;
-	string name = parameter.getEscapedName();
-	if(name=="") name="UnknownName";
-	if(parameter.type()==typeid(ofParameterGroup).name()){
-		const ofParameterGroup& group = static_cast<const ofParameterGroup&>(parameter);
-		if(!exists(name)){
-			addChild(name);
-			ofLogVerbose("ofXml") << "creating group " << name;
-		}
-		setTo(name);
-		ofLogVerbose("ofXml") << "group " << name;
-		for(int i=0;i<group.size();i++){
-			serialize(group.get(i));
-		}
-		ofLogVerbose("ofXml") << "end group " << name;
-		setToParent();
-	}else{
-		string value = parameter.toString();
-		if(!exists(name)){
-			addChild(name);
-			ofLogVerbose("ofXml") << "creating tag " << name;
-		}
-		ofLogVerbose("ofXml") << "setting tag " << name << ": " << value;
-		setValue(name,value);
-	}
+    if(!parameter.isSerializable()) return;
+    string name = parameter.getEscapedName();
+    if(name=="") name="UnknownName";
+    if(parameter.type()==typeid(ofParameterGroup).name()){
+        const ofParameterGroup& group = static_cast<const ofParameterGroup&>(parameter);
+        if(!exists(name)){
+            addChild(name);
+            ofLogVerbose("ofXml") << "creating group " << name;
+        }
+        setTo(name);
+        ofLogVerbose("ofXml") << "group " << name;
+        for(int i=0;i<group.size();i++){
+            serialize(group.get(i));
+        }
+        ofLogVerbose("ofXml") << "end group " << name;
+        setToParent();
+    }else{
+        string value = parameter.toString();
+        if(!exists(name)){
+            addChild(name);
+            ofLogVerbose("ofXml") << "creating tag " << name;
+        }
+        ofLogVerbose("ofXml") << "setting tag " << name << ": " << value;
+        setValue(name,value);
+    }
 }
 
 void ofXml::deserialize(ofAbstractParameter& parameter){
-	if(!parameter.isSerializable()) return;
-	string name = parameter.getEscapedName();
-	if(parameter.type()==typeid(ofParameterGroup).name()){
-		ofParameterGroup& group = static_cast<ofParameterGroup&>(parameter);
-		if(setTo(name)){
-			for(int i=0;i<group.size();i++){
-				deserialize(group.get(i));
-			}
-			setToParent();
-		}
-	}else{
-		if(exists(name)){
-			if(parameter.type()==typeid(ofParameter<int>).name()){
-				parameter.cast<int>() = getIntValue(name);
-			}else if(parameter.type()==typeid(ofParameter<float>).name()){
-				parameter.cast<float>() = getFloatValue(name);
-			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
-				parameter.cast<bool>() = getBoolValue(name);
-			}else if(parameter.type()==typeid(ofParameter<std::string>).name()){
-				parameter.cast<std::string>() = getValue(name);
-			}else{
-				parameter.fromString(getValue(name));
-			}
-		}
-	}
+    if(!parameter.isSerializable()) return;
+    string name = parameter.getEscapedName();
+    if(parameter.type()==typeid(ofParameterGroup).name()){
+        ofParameterGroup& group = static_cast<ofParameterGroup&>(parameter);
+        if(setTo(name)){
+            for(int i=0;i<group.size();i++){
+                deserialize(group.get(i));
+            }
+            setToParent();
+        }
+    }else{
+        if(exists(name)){
+            if(parameter.type()==typeid(ofParameter<int>).name()){
+                parameter.cast<int>() = getIntValue(name);
+            }else if(parameter.type()==typeid(ofParameter<float>).name()){
+                parameter.cast<float>() = getFloatValue(name);
+            }else if(parameter.type()==typeid(ofParameter<bool>).name()){
+                parameter.cast<bool>() = getBoolValue(name);
+            }else if(parameter.type()==typeid(ofParameter<std::string>).name()){
+                parameter.cast<std::string>() = getValue(name);
+            }else{
+                parameter.fromString(getValue(name));
+            }
+        }
+    }
 
 }
 
-std::size_t ofXml::getNumChildren() const
-{
-	if(!element) return 0;
+std::size_t ofXml::getNumChildren() const{
+    if(!element) return 0;
 
     std::size_t numberOfChildren = 0;
-	
+
     Poco::XML::NodeList *list = element->childNodes();
-    
+
     for(std::size_t i=0; i < list->length(); i++) {
         if(list->item(i) && list->item(i)->nodeType() == Poco::XML::Node::ELEMENT_NODE) {
             numberOfChildren++;
@@ -124,9 +122,8 @@ std::size_t ofXml::getNumChildren() const
     return numberOfChildren;
 }
 
-std::size_t ofXml::getNumChildren(const std::string& path) const
-{
-	if(!element) return 0;
+std::size_t ofXml::getNumChildren(const std::string& path) const{
+    if(!element) return 0;
 
     std::size_t numberOfChildren = 0;
     Poco::XML::NodeList *list = element->childNodes();
@@ -139,39 +136,38 @@ std::size_t ofXml::getNumChildren(const std::string& path) const
             }
         }
     }
-    
+
     return numberOfChildren;
-    
+
 }
 
-std::string ofXml::toString() const
-{
+std::string ofXml::toString() const {
     ostringstream stream;
-    
+
     Poco::XML::DOMWriter writer;
     writer.setOptions(Poco::XML::XMLWriter::PRETTY_PRINT);
     if(document) {
         try {
             writer.writeNode( stream, getPocoDocument() );
-		} catch(const std::exception& e) {
+        } catch(const std::exception& e) {
             ofLogError("ofXml") << "toString(): " << e.what();
         }
     } else if(element){
         element->normalize();
         writer.writeNode( stream, element );
     }
-    
+
     std::string tmp = stream.str();
-    
+
     // don't know how else to get rid of the hidden <#text></#text> nodes :/
     ofStringReplace(tmp, "<#text>", "");
     ofStringReplace(tmp, "</#text>", "");
-    
+
     return tmp;
 }
 
 void ofXml::addXml(ofXml& xml, bool copyAll) {
-    
+
     Poco::XML::Node *n = 0;
     if(copyAll) {
         n = document->importNode(xml.getPocoDocument()->documentElement(), true);
@@ -190,33 +186,32 @@ void ofXml::addXml(ofXml& xml, bool copyAll) {
     } else {
         document->appendChild(n);
     }
-    
 }
 
 bool ofXml::addChild(const std::string& path)
 {
-	std::vector<std::string> tokens;
-    
+    std::vector<std::string> tokens;
+
     if(path.find('/') != std::string::npos) {
         tokens = tokenize(path, "/");
     }
-    
+
     // is this a tokenized tag?
-    if(tokens.size() > 1) 
+    if(tokens.size() > 1)
     {
         // don't 'push' down into the new nodes
         Poco::XML::Element *el = element;
-        
+
         std::vector<Poco::XML::Element*> toBeReleased;
-        
-		for(std::size_t i = 0; i < tokens.size(); i++)
+
+        for(std::size_t i = 0; i < tokens.size(); i++)
         {
             Poco::XML::Element *pe = getPocoDocument()->createElement(tokens.at(i));
             el->appendChild(pe);
             toBeReleased.push_back(pe);
             el = pe;
         }
-        
+
         if(element) {
             element->appendChild(el);
         } else {
@@ -224,10 +219,10 @@ bool ofXml::addChild(const std::string& path)
         }
 
         return true;
-        
+
     } else {
         Poco::XML::Element* pe = getPocoDocument()->createElement(path);
-        
+
         if(element) {
             element->appendChild(pe);
         } else {
@@ -247,31 +242,31 @@ std::string ofXml::getValue() const
 }
 
 std::string ofXml::getValue(const std::string& path) const{
-	return getValue<std::string>(path, "");
+    return getValue<std::string>(path, "");
 }
 
 int ofXml::getIntValue() const{
-	return ofToInt(getValue());
+    return ofToInt(getValue());
 }
 
-int	ofXml::getIntValue(const std::string& path) const{
-	return getValue<int>(path,0);
+int    ofXml::getIntValue(const std::string& path) const{
+    return getValue<int>(path,0);
 }
 
 float ofXml::getFloatValue() const{
-	return ofToFloat(getValue());
+    return ofToFloat(getValue());
 }
 
 float ofXml::getFloatValue(const std::string& path) const{
-	return getValue<float>(path,0.0);
+    return getValue<float>(path,0.0);
 }
 
 bool ofXml::getBoolValue() const{
-	return ofToBool(getValue());
+    return ofToBool(getValue());
 }
 
 bool ofXml::getBoolValue(const std::string& path) const{
-	return getValue<bool>(path,false);
+    return getValue<bool>(path,false);
 }
 
 
@@ -286,7 +281,7 @@ bool ofXml::reset() {
 
 bool ofXml::setToChild(int index)
 {
-    
+
     if(!element) {
         if((Poco::XML::Element*) document->documentElement()->firstChild()) {
             element = (Poco::XML::Element*) document->documentElement()->firstChild();
@@ -295,7 +290,7 @@ bool ofXml::setToChild(int index)
             return false;
         }
     }
-    
+
     std::size_t numberOfChildren = 0;
     Poco::XML::NodeList *list = element->childNodes();
 
@@ -308,9 +303,9 @@ bool ofXml::setToChild(int index)
             numberOfChildren++;
         }
     }
-    
+
     return false;
-    
+
 }
 
 bool ofXml::setToParent()
@@ -327,7 +322,7 @@ bool ofXml::setToParent()
 
 bool ofXml::setToParent(int numLevelsUp) {
     if(element) {
-        
+
         int i = 0;
         while( i < numLevelsUp ) {
             if(element->parentNode()) {
@@ -338,13 +333,13 @@ bool ofXml::setToParent(int numLevelsUp) {
             }
             i++;
         }
-        
+
         return true;
     }
-    
+
     ofLogWarning("ofXml") << "setToParent(): no element set yet";
     return false;
-    
+
 }
 
 bool ofXml::setToSibling()
@@ -356,16 +351,16 @@ bool ofXml::setToSibling()
         ofLogWarning("ofXml") << "setToSibling() << no element set yet";
         return false;
     }
-    
+
     // empty space in the XML doc is treated as text nodes. blerg.
     while(node && node->nodeType() == Poco::XML::Node::TEXT_NODE) {
         node = (Poco::XML::Element*) node->nextSibling();
     }
-    
+
     if(!node || node->nodeType() == Poco::XML::Node::TEXT_NODE) {
         return false;
     }
-    
+
     // we're cool
     element = node;
     return true;
@@ -380,12 +375,12 @@ bool ofXml::setToPrevSibling()
         ofLogWarning("ofXml") << "setToPrevSibling(): no element set yet";
         return false;
     }
-    
+
     // empty space in the XML doc is treated as text nodes. blerg.
     while(node && node->nodeType() == Poco::XML::Node::TEXT_NODE) {
         node = (Poco::XML::Element*) node->previousSibling();
     }
-    
+
     if(!node || node->nodeType() == Poco::XML::Node::TEXT_NODE) {
         return false;
     }
@@ -403,16 +398,16 @@ bool ofXml::setValue(const std::string& path, const std::string& value)
         ofLogWarning("ofXml") << "setValue(): no element set yet";
         return false;
     }
-    
+
     if(!e) {
         ofLogWarning("ofXml") <<  "setValue(): path \"" + path + "\" doesn't exist";
         return false;
     }
-    
+
     if(!e->firstChild()){
-    	Poco::XML::Text *node = getPocoDocument()->createTextNode(ofToString(value));
-    	e->appendChild(node);
-    	node->release();
+        Poco::XML::Text *node = getPocoDocument()->createTextNode(ofToString(value));
+        e->appendChild(node);
+        node->release();
         return true;
     }
 
@@ -422,7 +417,7 @@ bool ofXml::setValue(const std::string& path, const std::string& value)
         node->release();
         return true;
     }else{
-    	return false;
+        return false;
     }
 }
 
@@ -442,7 +437,7 @@ std::string ofXml::getAttribute(const std::string& path) const {
         ofLogWarning("ofXml") << "getAttribute(): no element set yet";
         return "";
     }
-    
+
     if(e) {
         return e->getNodeValue(); // this will be the value of the attribute
     }
@@ -452,12 +447,12 @@ std::string ofXml::getAttribute(const std::string& path) const {
 bool ofXml::removeAttribute(const std::string& path)
 {
 
-	std::string attributeName;
-	std::string pathToAttribute;
+    std::string attributeName;
+    std::string pathToAttribute;
 
     Poco::XML::Element *e;
     if(element) {
-        
+
         bool hasPath = false;
 
         // you can pass either /node[@attr] or just attr
@@ -474,7 +469,7 @@ bool ofXml::removeAttribute(const std::string& path)
         {
             attributeName = path;
         }
-        
+
         if(hasPath) {
             e = (Poco::XML::Element*) element->getNodeByPath(pathToAttribute);
         } else {
@@ -485,16 +480,16 @@ bool ofXml::removeAttribute(const std::string& path)
         ofLogWarning("ofXml") << "clearAttributes(): no element set yet";
         return false;
     }
-    
+
     if(e) {
         Poco::XML::NamedNodeMap *map = e->attributes();
-        
+
         for(std::size_t i = 0; i < map->length(); i++) {
             if(map->item(i)->nodeName() == attributeName) {
                 e->removeAttribute(map->item(i)->nodeName());
             }
         }
-        
+
         map->release();
         return true;
     }
@@ -517,14 +512,14 @@ bool ofXml::removeAttributes(const std::string& path)
         ofLogWarning("ofXml") << "clearAttributes(): no element set yet";
         return false;
     }
-    
+
     if(e) {
         Poco::XML::NamedNodeMap *map = e->attributes();
-        
+
         for(std::size_t i = 0; i < map->length(); i++) {
             e->removeAttribute(map->item(i)->nodeName());
         }
-        
+
         map->release();
         return true;
     }
@@ -536,11 +531,11 @@ bool ofXml::removeAttributes()
 
     if(element) {
         Poco::XML::NamedNodeMap *map = element->attributes();
-        
+
         for(std::size_t i = 0; i < map->length(); i++) {
             element->removeAttribute(map->item(i)->nodeName());
         }
-        
+
         map->release();
         return true;
     }
@@ -553,22 +548,22 @@ bool ofXml::removeContents() {
     if(element && element->hasChildNodes())
     {
 
-		Poco::XML::Node* swap;
-		Poco::XML::Node* n = element->firstChild();
-		while(n->nextSibling() != NULL)
-		{
-			swap = n->nextSibling();
-			element->removeChild(n);
-			n = swap;
-		}
-		
+        Poco::XML::Node* swap;
+        Poco::XML::Node* n = element->firstChild();
+        while(n->nextSibling() != NULL)
+        {
+            swap = n->nextSibling();
+            element->removeChild(n);
+            n = swap;
+        }
+
         return true;
     }
     return false;
 }
 
 bool ofXml::removeContents(const std::string& path) {
-    
+
     Poco::XML::Element *e;
     if(element) {
         e = (Poco::XML::Element*) element->getNodeByPath(path);
@@ -576,7 +571,7 @@ bool ofXml::removeContents(const std::string& path) {
         ofLogWarning("ofXml") << "clearContents(): no element set yet";
         return false;
     }
-    
+
     if(e) {
         Poco::XML::NodeList *list = e->childNodes();
         for(std::size_t i = 0; i < list->length(); i++) {
@@ -590,7 +585,7 @@ bool ofXml::removeContents(const std::string& path) {
 
 
 void ofXml::clear(){
-	releaseAll();
+    releaseAll();
     document = new Poco::XML::Document(); // we create this so that they can be merged later
     element = document->documentElement();
 }
@@ -600,7 +595,7 @@ void ofXml::releaseAll(){
         document->release();
         document = 0;
     }
-    
+
     element = 0;
 }
 
@@ -613,7 +608,7 @@ bool ofXml::remove(const std::string& path) // works for both attributes and tag
         ofLogWarning("ofXml") << "remove(): no element set yet";
         return false;
     }
-    
+
     if(node) {
         Poco::XML::Node *n = node->parentNode()->removeChild(node);
         n->release();
@@ -624,14 +619,14 @@ bool ofXml::remove(const std::string& path) // works for both attributes and tag
 
 
 void ofXml::remove(){
-	Poco::XML::Node * parent = element->parentNode();
-	if(parent){
-		parent->removeChild(element);
-		element->release();
-		element = (Poco::XML::Element*)parent;
-	}else{
-		clear();
-	}
+    Poco::XML::Node * parent = element->parentNode();
+    if(parent){
+        parent->removeChild(element);
+        element->release();
+        element = (Poco::XML::Element*)parent;
+    }else{
+        clear();
+    }
 }
 
 bool ofXml::exists(const std::string& path) const // works for both attributes and tags
@@ -642,7 +637,7 @@ bool ofXml::exists(const std::string& path) const // works for both attributes a
     } else {
         return false;
     }
-    
+
     if(node) {
         return true;
     }
@@ -651,11 +646,11 @@ bool ofXml::exists(const std::string& path) const // works for both attributes a
 
 std::map<std::string, std::string> ofXml::getAttributes() const // works for both attributes and tags
 {
-    
+
     std::map<std::string, std::string> attrMap;
-    
+
     if(element){
-    
+
         Poco::AutoPtr<Poco::XML::NamedNodeMap> attr = element->attributes();
         for(std::size_t i = 0; i < attr->length(); i++) {
             attrMap[attr->item(i)->nodeName()] = attr->item(i)->nodeValue();
@@ -664,16 +659,16 @@ std::map<std::string, std::string> ofXml::getAttributes() const // works for bot
         ofLogWarning("ofXml") << "getAttribute(): no element set";
     }
 
-    return attrMap; 
+    return attrMap;
 }
 
 
 //---------------------------------------------------------
 bool ofXml::setAttribute(const std::string& path, const std::string& value)
 {
-    
-	std::string attributeName;
-	std::string pathToAttribute;
+
+    std::string attributeName;
+    std::string pathToAttribute;
     bool hasPath = false;
 
     // you can pass either /node[@attr] or just attr
@@ -690,39 +685,39 @@ bool ofXml::setAttribute(const std::string& path, const std::string& value)
     {
         attributeName = path;
     }
-    
+
     // we don't have a path to resolve
     Poco::AutoPtr<Poco::XML::Attr> attr = getPocoDocument()->createAttribute(attributeName);
     attr->setValue(value);
-    
+
     if(!hasPath) {
         Poco::AutoPtr<Poco::XML::NamedNodeMap> map = element->attributes();
         map->setNamedItem(attr);
         return true; // and we're done
     }
-    
+
     // we have a path to resolve
     Poco::XML::Element* curElement = getPocoElement(pathToAttribute);
-    
+
     if(!curElement) { // if it doesn't exist
-        
-		std::vector<std::string> tokens;
-        
+
+        std::vector<std::string> tokens;
+
         if(path.find('/') != std::string::npos) {
             tokens = tokenize(pathToAttribute, "/");
         }
-        
+
         // is this a tokenized tag?
-        if(tokens.size() > 1) 
+        if(tokens.size() > 1)
         {
             // don't 'push' down into the new nodes
             curElement = element;
-            
+
             // find the last existing tag
             std::size_t lastExistingTag = 0;
-            
+
             // can't use reverse_iterator b/c accumulate doesn't like it
-			for(std::vector<std::string>::iterator it = tokens.end(); it != tokens.begin(); it--)
+            for(std::vector<std::string>::iterator it = tokens.end(); it != tokens.begin(); it--)
             {
                 std::string empty = "";
                 std::string concat = accumulate(tokens.begin(), it, std::string());
@@ -733,16 +728,16 @@ bool ofXml::setAttribute(const std::string& path, const std::string& value)
                     break;
                 }
             }
-            
+
             // create all the tags that don't exist
             for(std::size_t i = lastExistingTag; i < tokens.size(); i++)
             {
                 Poco::XML::Element *newElement = getPocoDocument()->createElement(tokens.at(i));
                 curElement->appendChild(newElement);
                 curElement = newElement;
-                
+
             }
-            
+
             curElement->setAttribute(attributeName, value);
             return true;
         }
@@ -759,7 +754,7 @@ bool ofXml::setAttribute(const std::string& path, const std::string& value)
                 curElement->appendChild(newElement);
                 curElement = newElement;
             }
-            
+
             curElement->setAttribute(attributeName, value);
             return true;
         }
@@ -771,23 +766,23 @@ bool ofXml::setAttribute(const std::string& path, const std::string& value)
 bool ofXml::loadFromBuffer(const std::string& buffer)
 {
     Poco::XML::DOMParser parser;
-    
+
     // release and null out if we already have a document
     if(document) {
         document->release();
     }
-    
+
     try {
         document = parser.parseString(buffer);
-    	element = (Poco::XML::Element*) document->firstChild();
-    	document->normalize();
-    	return true;
-	} catch(const Poco::XML::SAXException& e) {
-		ofLogError("ofXml") << "parse error: " << e.message();
+        element = (Poco::XML::Element*) document->firstChild();
+        document->normalize();
+        return true;
+    } catch(const Poco::XML::SAXException& e) {
+        ofLogError("ofXml") << "parse error: " << e.message();
         document = new Poco::XML::Document;
         element = document->documentElement();
         return false;
-	} catch(const std::exception& e) {
+    } catch(const std::exception& e) {
         short msg = atoi(e.what());
         ofLogError("ofXml") << "parse error: " << DOMErrorMessage(msg);
         document = new Poco::XML::Document;
@@ -808,7 +803,7 @@ std::string ofXml::getName() const
 
 bool ofXml::setTo(const std::string& path)
 {
-    
+
     if(!element) {
         if(document->documentElement()) {
             element = document->documentElement();
@@ -817,19 +812,19 @@ bool ofXml::setTo(const std::string& path)
             return false;
         }
     }
-        
-    
+
+
     // one case: we're at the root, but we don't know it yet:
     if(element == document->documentElement() && element->nodeName() == path ) {
         return true;
     }
-    
+
     //ofLogNotice("ofXml") << path << " " << path.find("../");
-    
+
     // another: let's go up a little
     if(path.find("../") != std::string::npos)
     {
-        
+
         Poco::XML::Element* prev = element;
         Poco::XML::Element* parent = NULL;
         std::size_t count = 0;
@@ -838,7 +833,7 @@ bool ofXml::setTo(const std::string& path)
              offset != std::string::npos;
              offset = path.find("../", offset + 3))
         {
-            
+
             if(count == 0) {
                 parent = (Poco::XML::Element*) element->parentNode();
             } else {
@@ -846,18 +841,18 @@ bool ofXml::setTo(const std::string& path)
             }
             ++count;
         }
-        
+
         //ofLogNotice("ofXml") << (count * 3) << " " << path.size();
-        
+
         if( (count * 3) > path.size() - 1 ) {
-            
+
             element = parent;
             return true;
-            
+
         } else if (parent) {
-            
+
             std::string remainingPath = path.substr((count * 3), path.size() - (count * 3));
-            
+
             element = (Poco::XML::Element*) parent->getNodeByPath(remainingPath);
 
              if(!element) {
@@ -872,7 +867,7 @@ bool ofXml::setTo(const std::string& path)
             return false;
         }
     }  else if(path.find("//") != std::string::npos) {
-        
+
         // another: we're looking all over
         Poco::XML::Element* prev = element;
         element = (Poco::XML::Element*) document->getNodeByPath(path);
@@ -881,7 +876,7 @@ bool ofXml::setTo(const std::string& path)
             ofLogWarning("ofXml") << "setCurrentElement(): passed invalid path \"" << path << "\"";
             return false;
         }
-        
+
     } else {
         // another: we're actually looking down into the thing :)
         Poco::XML::Element* prev = element;
@@ -900,9 +895,9 @@ const Poco::XML::Element* ofXml::getPocoElement() const
     return element;
 }
 
-Poco::XML::Element* ofXml::getPocoElement() 
+Poco::XML::Element* ofXml::getPocoElement()
 {
-	return element;
+    return element;
 }
 
 Poco::XML::Element* ofXml::getPocoElement(const std::string& path)
@@ -913,7 +908,7 @@ Poco::XML::Element* ofXml::getPocoElement(const std::string& path)
     if(ind != string::npos) {
         copy = path.substr(0, ind);
     }
-    
+
     if(element) {
         return (Poco::XML::Element*) element->getNodeByPath(copy);
     } else {
@@ -929,7 +924,7 @@ const Poco::XML::Element* ofXml::getPocoElement(const std::string& path) const
     // does it have an attribute? just in case
     std::size_t ind = copy.find("[@");
 
-	if(ind != string::npos) {
+    if(ind != string::npos) {
         copy = path.substr(0, ind);
     }
 
@@ -955,7 +950,7 @@ const Poco::XML::Document* ofXml::getPocoDocument() const  {
 std::string ofXml::DOMErrorMessage(short msg)
 {
     switch(msg) {
-        case 1:            
+        case 1:
             return "INDEX_SIZE_ERR";
             break;/// index or size is negative or greater than allowed value
         case 2:
@@ -1001,7 +996,28 @@ std::string ofXml::DOMErrorMessage(short msg)
             return "INVALID_ACCESS_ERR";          /// an attempt is made to use an object that is not or is no longer usable
             break;
     }
-    
+
     return "DOM ERROR";
-    
+
+}
+
+
+std::vector<std::string> ofXml::tokenize(const std::string& str, const std::string& delim)
+{
+    std::vector<std::string> tokens;
+
+    std::size_t p0 = 0;
+    std::size_t p1 = std::string::npos;
+
+    while(p0 != std::string::npos)
+    {
+        p1 = str.find_first_of(delim, p0);
+        if(p1 != p0)
+        {
+            std::string token = str.substr(p0, p1 - p0);
+            tokens.push_back(token);
+        }
+        p0 = str.find_first_not_of(delim, p1);
+    }
+    return tokens;
 }
