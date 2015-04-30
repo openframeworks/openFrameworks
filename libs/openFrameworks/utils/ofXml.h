@@ -27,87 +27,89 @@
 
 
 class ofXml: public ofBaseFileSerializer {
-    
 public:
-    
     ofXml();
     ~ofXml();
 
-    ofXml( const string & path );
-    ofXml( const ofXml& rhs );
-    const ofXml& operator =( const ofXml& rhs );
+	ofXml(const std::string& path);
+    ofXml(const ofXml& rhs);
 
-	bool load(const string & path);
-	bool save(const string & path);
+    const ofXml& operator = (const ofXml& rhs);
 
-    bool            addChild( const string& path );
-    void            addXml( ofXml& xml, bool copyAll = false);
+	bool load(const std::string& path);
+	bool save(const std::string& path);
 
-    string          getValue() const;
-    string          getValue(const string & path) const;
-    int				getIntValue() const;
-    int				getIntValue(const string & path) const;
-    float			getFloatValue() const;
-    float			getFloatValue(const string & path) const;
-    bool			getBoolValue() const;
-    bool			getBoolValue(const string & path) const;
+	bool addChild(const std::string& path);
+    void addXml(ofXml& xml, bool copyAll = false);
 
-    bool            setValue(const string& path, const string& value);
+	std::string getValue() const;
+	std::string getValue(const std::string& path) const;
+    int getIntValue() const;
+	int getIntValue(const std::string& path) const;
+    float getFloatValue() const;
+    float getFloatValue(const std::string& path) const;
+    bool getBoolValue() const;
+    bool getBoolValue(const std::string& path) const;
+
+    bool setValue(const std::string& path, const std::string& value);
     
-    string          getAttribute(const string& path) const;
-    bool            setAttribute(const string& path, const string& value);
-    map<string, string> getAttributes() const;
-    int             getNumChildren() const;
-    int             getNumChildren(const string& path) const;
+    std::string getAttribute(const std::string& path) const;
+    bool setAttribute(const std::string& path, const std::string& value);
+    
+    std::map<std::string, std::string> getAttributes() const;
+    int getNumChildren() const;
+    int getNumChildren(const std::string& path) const;
 
-    bool            removeAttribute(const string& path);
-    bool            removeAttributes(const string& path); // removes attributes for the passed path
-    bool            removeAttributes(); // removes attributes for the element ofXml is pointing to
-    bool            removeContents(const string& path); // removes the path passed as parameter
-    bool            removeContents(); // removes the childs of the current element
-    bool            remove(const string& path); // removes both attributes and tags for the passed path
-    void            remove(); // removes the current element and all its children,
+    bool removeAttribute(const std::string& path);
+    bool removeAttributes(const std::string& path); // removes attributes for the passed path
+    bool removeAttributes(); // removes attributes for the element ofXml is pointing to
+    bool removeContents(const std::string& path); // removes the path passed as parameter
+    bool removeContents(); // removes the childs of the current element
+    bool remove(const std::string& path); // removes both attributes and tags for the passed path
+    void remove(); // removes the current element and all its children,
     						  // the current element will point to it's parent afterwards
     						  // if the current element is the document root this will act as clear()
 
-    bool            exists(const string& path) const; // works for both attributes and tags
+    bool exists(const std::string& path) const; // works for both attributes and tags
     
-    void			clear();  // clears the full document and points the current element to the root
+    void clear();  // clears the full document and points the current element to the root
 
-    string          getName() const;
-    bool            reset();
+    std::string getName() const;
+    bool reset();
 
-    bool            setToChild(int index);
-    bool            setTo(const string& path);
-    bool            setToParent();
-    bool            setToParent(int numLevelsUp);
-    bool            setToSibling();
-    bool            setToPrevSibling();
+    bool setToChild(int index);
+    bool setTo(const std::string& path);
+    bool setToParent();
+    bool setToParent(int numLevelsUp);
+    bool setToSibling();
+    bool setToPrevSibling();
     
-    bool            loadFromBuffer( const string& buffer );
+    bool loadFromBuffer(const std::string& buffer);
     
-    string          toString() const;
+    std::string toString() const;
     
     // serializer
-	void serialize(const ofAbstractParameter & parameter);
-	void deserialize(ofAbstractParameter & parameter);
+	void serialize(const ofAbstractParameter& parameter);
+	void deserialize(ofAbstractParameter& parameter);
 
     //////////////////////////////////////////////////////////////////
     // please excuse our mess: templated get/set
     //////////////////////////////////////////////////////////////////
     
     // a pretty useful tokenization system:
-    static vector<string> tokenize(const string & str, const string & delim)
+	static std::vector<std::string> tokenize(const std::string& str, const std::string& delim)
     {
-        vector<string> tokens;
+        std::vector<std::string> tokens;
         
-        size_t p0 = 0, p1 = string::npos;
-        while(p0 != string::npos)
+		std::size_t p0 = 0;
+		std::size_t p1 = std::string::npos;
+
+        while(p0 != std::string::npos)
         {
             p1 = str.find_first_of(delim, p0);
             if(p1 != p0)
             {
-                string token = str.substr(p0, p1 - p0);
+                std::string token = str.substr(p0, p1 - p0);
                 tokens.push_back(token);
             }
             p0 = str.find_first_not_of(delim, p1);
@@ -116,12 +118,12 @@ public:
     }
     
     // templated to be anything
-    template <class T> bool addValue(const string& path, T data=T(), bool createEntirePath = false)
+    template <class T> bool addValue(const std::string& path, T data=T(), bool createEntirePath = false)
     {
-        string value = ofToString(data);
-        vector<string> tokens;
+        std::string value = ofToString(data);
+        std::vector<std::string> tokens;
         
-        if(path.find('/') != string::npos) {
+        if(path.find('/') != std::string::npos) {
             tokens = tokenize(path, "/");
         }
         
@@ -159,7 +161,7 @@ public:
                     
                     lastElement->appendChild( text );
                     
-                } catch ( Poco::XML::DOMException &e ) {
+                } catch (const Poco::XML::DOMException& e ) {
                     ofLogError("ofxXml") << "addValue(): couldn't set node value: " << DOMErrorMessage(e.code());
                     return false;
                 }
@@ -183,7 +185,7 @@ public:
                     newElement->appendChild(text);
                     text->release();
                     
-                } catch ( Poco::XML::DOMException &e ) {
+                } catch (const Poco::XML::DOMException& e ) {
                     ofLogError("ofxXml") << "addValue(): couldn't set node value: " << DOMErrorMessage(e.code());
                     return false;
                 }
@@ -201,7 +203,7 @@ public:
 
     
     // templated to be anything
-    template <class T> T getValue(const string& path, T returnVal=T()) const
+    template <class T> T getValue(const std::string& path, T returnVal=T()) const
     {
     	if(element){
 			if(path == ""){
@@ -225,9 +227,9 @@ public:
     // these are advanced, you probably don't want to use them
     
     Poco::XML::Element*        getPocoElement();
-    Poco::XML::Element*        getPocoElement(const string& path);
+    Poco::XML::Element*        getPocoElement(const std::string& path);
     const Poco::XML::Element*  getPocoElement() const;
-    const Poco::XML::Element*  getPocoElement(const string& path) const;
+    const Poco::XML::Element*  getPocoElement(const std::string& path) const;
     
     Poco::XML::Document*       getPocoDocument();
     const Poco::XML::Document* getPocoDocument() const;
@@ -235,7 +237,7 @@ public:
        
 protected:
     void releaseAll();
-    string DOMErrorMessage(short msg);
+    std::string DOMErrorMessage(short msg);
 
     Poco::XML::Document *document;
     Poco::XML::Element *element;
