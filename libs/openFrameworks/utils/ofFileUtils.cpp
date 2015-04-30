@@ -1257,7 +1257,11 @@ int ofDirectory::listDir(){
 		Path curPath(originalDirectory);
 		curPath.setFileName(fileStrings[i]);
 		try{
+#if __cplusplus>=201103
+			files.emplace_back(curPath.toString(), ofFile::Reference);
+#else
 			files.push_back(ofFile(curPath.toString(), ofFile::Reference));
+#endif
 		}catch(Poco::Exception & e){
 			ofLogWarning() << "couldn't add file " << e.what();
 		}
