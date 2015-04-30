@@ -69,7 +69,6 @@ void ofInit(){
 	static bool initialized = false;
 	if(initialized) return;
 	initialized = true;
-	Poco::ErrorHandler::set(new ofThreadErrorLogger);
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
     // manage own exit
