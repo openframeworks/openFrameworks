@@ -4,10 +4,6 @@
 #include "ofConstants.h"
 #include "ofFileUtils.h"
 #include "ofTypes.h"
-#ifdef TARGET_ANDROID
-#include <jni.h>
-JavaVM * ofGetJavaVMPtr();
-#endif
 
 /// \file
 /// ofLog provides an interface for writing text output from your app.
