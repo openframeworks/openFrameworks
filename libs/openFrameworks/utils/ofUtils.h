@@ -826,7 +826,7 @@ unsigned int ofGetVersionPatch();
 ///
 /// For pre-release versions of openFrameworks, including development versions,
 /// this string will describe the pre-release state. Examples might include
-/// "master", "rc1", "rc2", etc.  For all official releases, this string will be
+/// "master", "rc1", "rc2", etc.  For all stable releases, this string will be
 /// empty.
 ///
 /// \sa http://semver.org/
