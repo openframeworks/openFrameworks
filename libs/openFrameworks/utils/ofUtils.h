@@ -820,13 +820,18 @@ unsigned int ofGetVersionMinor();
 /// \returns The patch version number.
 unsigned int ofGetVersionPatch();
 
-/// \brief Get the version tag of openFrameworks.
+/// \brief Get the pre-release version of openFrameworks.
 ///
 /// openFrameworks uses the semantic versioning system.
 ///
+/// For pre-release versions of openFrameworks, including development versions,
+/// this string will describe the pre-release state. Examples might include
+/// "master", "rc1", "rc2", etc.  For all official releases, this string will be
+/// empty.
+///
 /// \sa http://semver.org/
-/// \returns The version tag, which can be an empty string.
-std::string ofGetVersionTag();
+/// \returns The pre-release version string.
+std::string ofGetVersionPreRelease();
 
 
 /// \}

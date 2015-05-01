@@ -739,9 +739,9 @@ string ofGetVersionInfo(){
 	stringstream sstr;
 	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH;
 
-	if (sizeof(OF_VERSION_TAG) > 1)
+	if (sizeof(OF_VERSION_PRE_RELEASE) > 1)
 	{
-		sstr << "-" << OF_VERSION_TAG;
+		sstr << "-" << OF_VERSION_PRE_RELEASE;
 	}
 
 	sstr << std::endl;
@@ -760,8 +760,8 @@ unsigned int ofGetVersionPatch() {
 	return OF_VERSION_PATCH;
 }
 
-std::string ofGetVersionTag() {
-	return OF_VERSION_TAG;
+std::string ofGetVersionPreRelease() {
+	return OF_VERSION_PRE_RELEASE;
 }
 
 
