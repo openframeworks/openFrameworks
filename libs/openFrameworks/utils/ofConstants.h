@@ -5,7 +5,7 @@
 #define OF_VERSION_MAJOR 0
 #define OF_VERSION_MINOR 9
 #define OF_VERSION_PATCH 0
-#define OF_VERSION_TAG "develop"
+#define OF_VERSION_TAG "master"
 
 //-------------------------------
 
