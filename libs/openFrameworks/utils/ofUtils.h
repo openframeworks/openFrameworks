@@ -820,6 +820,15 @@ unsigned int ofGetVersionMinor();
 /// \returns The patch version number.
 unsigned int ofGetVersionPatch();
 
+/// \brief Get the version tag of openFrameworks.
+///
+/// openFrameworks uses the semantic versioning system.
+///
+/// \sa http://semver.org/
+/// \returns The version tag, which can be an empty string.
+std::string ofGetVersionTag();
+
+
 /// \}
 
 // --------------------------------------------
