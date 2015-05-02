@@ -53,7 +53,7 @@ public:
 	
 	/// \cond INTERNAL
 	// Should this be moved to private?
-	// The values of the matrix, stored in row-major style
+	/// The values of the matrix, stored in row-major style
 	ofVec4f _mat[4];
 	/// \endcond
 
@@ -63,145 +63,145 @@ public:
 	/// \name Construct a matrix
 	/// \{
 
-	// \brief The default constructor provides an identity matrix 
+	/// \brief The default constructor provides an identity matrix 
 	ofMatrix4x4() {
 		makeIdentityMatrix();
 	}
 
-	// \brief You can pass another ofMatrix4x4 to create a copy
+	/// \brief You can pass another ofMatrix4x4 to create a copy
 	ofMatrix4x4( const ofMatrix4x4& mat) {
 		set(mat.getPtr());
 	}
 
-	// \brief You can pass a pointer to floats, and the first 16 contents will be extracted into this matrix.
-	// Note: the validity of these values is not checked!
+	/// \brief You can pass a pointer to floats, and the first 16 contents will be extracted into this matrix.
+	/// Note: the validity of these values is not checked!
 	ofMatrix4x4( float const * const ptr ) {
 		set(ptr);
 	}
 
-	// \brief Rotation matrices can be constructed from a quaternion
+	/// \brief Rotation matrices can be constructed from a quaternion
 	ofMatrix4x4( const ofQuaternion& quat ) {
 		makeRotationMatrix(quat);
 	}
 
-	// \brief You can pass all 16 values of the matrix as positional arguments (in row-major order)
+	/// \brief You can pass all 16 values of the matrix as positional arguments (in row-major order)
 	ofMatrix4x4(	float a00, float a01, float a02, float a03,
 	              float a10, float a11, float a12, float a13,
 	              float a20, float a21, float a22, float a23,
 	              float a30, float a31, float a32, float a33);
 
-	// \brief destructor
+	/// \brief destructor
 	~ofMatrix4x4() {}
 
-	// Init matrix as identity, scale, translation...
-	// all make* methods delete the current data
+	/// Init matrix as identity, scale, translation...
+	/// all make* methods delete the current data
 	
-	// \brief Matrix becomes the identity matrix
+	/// \brief Matrix becomes the identity matrix
 	void makeIdentityMatrix();
 
-	// \brief Matrix becomes a scale matrix with values only in the diagonal.
-	// Accepts x, y, z scale values as a vector or separately
+	/// \brief Matrix becomes a scale matrix with values only in the diagonal.
+	/// Accepts x, y, z scale values as a vector or separately
 	void makeScaleMatrix( const ofVec3f& );
 	void makeScaleMatrix( float, float, float );
 
-	// \brief Matrix becomes a translation matrix with values only in the fourth column.
-	// Accepts x, y, z translation values as a vector or separately
+	/// \brief Matrix becomes a translation matrix with values only in the fourth column.
+	/// Accepts x, y, z translation values as a vector or separately
 	void makeTranslationMatrix( const ofVec3f& );
 	void makeTranslationMatrix( float, float, float );
 
-	// \brief Matrix becomes a rotation matrix with values in the first three rows and columns.
-	// \brief Matrix becomes a rotation from the first vector direction to the second
+	/// \brief Matrix becomes a rotation matrix with values in the first three rows and columns.
+	/// \brief Matrix becomes a rotation from the first vector direction to the second
 	void makeRotationMatrix( const ofVec3f& from, const ofVec3f& to );
-	// \brief Matrix becomes a rotation of angle (degrees) around the vector axis.
+	/// \brief Matrix becomes a rotation of angle (degrees) around the vector axis.
 	void makeRotationMatrix( float angle, const ofVec3f& axis );
-	// \brief Matrix becomes a rotation of angle (degrees) around the axis specified positionally
+	/// \brief Matrix becomes a rotation of angle (degrees) around the axis specified positionally
 	void makeRotationMatrix( float angle, float x, float y, float z );
-	// \brief Matrix becomes a rotation that matches the quaternion's orientation.
+	/// \brief Matrix becomes a rotation that matches the quaternion's orientation.
 	void makeRotationMatrix( const ofQuaternion& );
-	// \brief Matrix becomes a rotation that is the result of computing a rotation
-	// for each of the provided axes, in order of parameters.
+	/// \brief Matrix becomes a rotation that is the result of computing a rotation
+	/// for each of the provided axes, in order of parameters.
 	void makeRotationMatrix( float angle1, const ofVec3f& axis1,
 	                 float angle2, const ofVec3f& axis2,
 	                 float angle3, const ofVec3f& axis3);
 
 
-	// init related to another matrix
-	// \brief Matrix becomes the inverse of the provided matrix.
+	/// init related to another matrix
+	/// \brief Matrix becomes the inverse of the provided matrix.
 	bool makeInvertOf( const ofMatrix4x4& rhs);
-	// \brief Matrix becomes an orthonormalized version of the provided matrix.
-	// The basis vectors (the 3x3 chunk embedded in the upper left of the matrix)
-	// are normalized and it is ensured that they are orthogonal (perpendicular)
-	// to each other. This means the resulting matrix will only create rotations,
-	// and "removes" any scaling effect.
+	/// \brief Matrix becomes an orthonormalized version of the provided matrix.
+	/// The basis vectors (the 3x3 chunk embedded in the upper left of the matrix)
+	/// are normalized and it is ensured that they are orthogonal (perpendicular)
+	/// to each other. This means the resulting matrix will only create rotations,
+	/// and "removes" any scaling effect.
 	void makeOrthoNormalOf(const ofMatrix4x4& rhs);
-	// \brief Matrix becomes the result of the multiplication of two other matrices
+	/// \brief Matrix becomes the result of the multiplication of two other matrices
 	void makeFromMultiplicationOf( const ofMatrix4x4&, const ofMatrix4x4& );
 	
-	//---------------------------------------------
-	// init as opengl related matrix for perspective settings
-	// see opengl docs of the related funciton for further details
+	///---------------------------------------------
+	/// init as opengl related matrix for perspective settings
+	/// see opengl docs of the related funciton for further details
 
-	// glOrtho
-	// \brief Matrix becomes an orthographic projection matrix with a
-	// box-shaped viewing volume described by the six parameters.
-	// left, right, bottom, and top essentially specify coordinates in
-	// the zNear clipping plane.
+	/// glOrtho
+	/// \brief Matrix becomes an orthographic projection matrix with a
+	/// box-shaped viewing volume described by the six parameters.
+	/// left, right, bottom, and top essentially specify coordinates in
+	/// the zNear clipping plane.
 	void makeOrthoMatrix(double left,   double right,
 	               double bottom, double top,
 	               double zNear,  double zFar);
 
-	// glOrtho2D
-	// \brief Matrix becomes a 2D orthographic projection matrix with a 
-	// box-shaped viewing volume described by the four parameters
-	// plus, implicitly, a zNear of -1 and a zFar of 1
+	/// glOrtho2D
+	/// \brief Matrix becomes a 2D orthographic projection matrix with a 
+	/// box-shaped viewing volume described by the four parameters
+	/// plus, implicitly, a zNear of -1 and a zFar of 1
 	void makeOrtho2DMatrix(double left,   double right,
 	                        double bottom, double top);
 
-	// glFrustum
-	// \brief Matrix becomes a perspective projection matrix with a frustum-shaped
-	// viewing volume defined by the six parameters.
-	// left, right, top, and bottom specify coordinates in the zNear
-	// clipping plane, and the zNear and zFar parameters define the distances
-	// to the edges of the view volume. Note that the resulting volume can be
-	// vertically and horizontally asymmetrical around the center of the near plane.
+	/// glFrustum
+	/// \brief Matrix becomes a perspective projection matrix with a frustum-shaped
+	/// viewing volume defined by the six parameters.
+	/// left, right, top, and bottom specify coordinates in the zNear
+	/// clipping plane, and the zNear and zFar parameters define the distances
+	/// to the edges of the view volume. Note that the resulting volume can be
+	/// vertically and horizontally asymmetrical around the center of the near plane.
 	void makeFrustumMatrix(double left,   double right,
 	                 double bottom, double top,
 	                 double zNear,  double zFar);
 
-	// gluPerspective
-	// Aspect ratio is defined as width/height.
-	// Matrix becomes a perspective projection matrix with a frustum-shaped
-	// viewing volume defined by the four parameters. The fovy and aspect ratio
-	// are used to compute the positions of the left, right, top, and bottom sides
-	// of the viewing volume in the zNear plane. Note that the resulting volume is
-	// both vertically and horizontally symmetrical around the center of the near plane.
+	/// gluPerspective
+	/// Aspect ratio is defined as width/height.
+	/// Matrix becomes a perspective projection matrix with a frustum-shaped
+	/// viewing volume defined by the four parameters. The fovy and aspect ratio
+	/// are used to compute the positions of the left, right, top, and bottom sides
+	/// of the viewing volume in the zNear plane. Note that the resulting volume is
+	/// both vertically and horizontally symmetrical around the center of the near plane.
 	void makePerspectiveMatrix(double fovy,  double aspectRatio,
 						 double zNear, double zFar);
 
 
-	// makeLookAtMatrix:
-	// creates a transformation matrix positioned at 'eye'
-	// pointing at (along z axis) 'center'
-	// this is what you use if you want an object to look at a point
-	// Matrix becomes a combination of a translation to 'eye' and a rotation matrix which
-	// orients an object to look towards 'center' along its z-axis.
-	// \cond INTERNAL:
-	// Does this orient the object along its positive or its negative z-axis?
-	// \endcond
+	/// makeLookAtMatrix:
+	/// creates a transformation matrix positioned at 'eye'
+	/// pointing at (along z axis) 'center'
+	/// this is what you use if you want an object to look at a point
+	/// Matrix becomes a combination of a translation to 'eye' and a rotation matrix which
+	/// orients an object to look towards 'center' along its z-axis.
+	/// \cond INTERNAL:
+	/// Does this orient the object along its positive or its negative z-axis?
+	/// \endcond
 	void makeLookAtMatrix(const ofVec3f& eye, const ofVec3f& center, const ofVec3f& up);
 	
 	
-	// makeLookAtViewMatrix:
-	// creates *the inverse of* a transformation matrix positioned at 'eye'
-	// pointing at (along z axis) 'center'
-	// this is what you use when you want your view matrix looking at a point
-	// (the inverse of makeLookAtMatrix), same as gluLookAt
-	// This matrix will also cause a translation equal to -eye.
+	/// makeLookAtViewMatrix:
+	/// creates *the inverse of* a transformation matrix positioned at 'eye'
+	/// pointing at (along z axis) 'center'
+	/// this is what you use when you want your view matrix looking at a point
+	/// (the inverse of makeLookAtMatrix), same as gluLookAt
+	/// This matrix will also cause a translation equal to -eye.
 	void makeLookAtViewMatrix(const ofVec3f& eye, const ofVec3f& center, const ofVec3f& up);
 
-	// static utility functions to create new matrices. These functions are, generally,
-	// the equivalent of declaring a matrix, calling the corresponding "make..." function on it,
-	// and returning it.
+	/// static utility functions to create new matrices. These functions are, generally,
+	/// the equivalent of declaring a matrix, calling the corresponding "make..." function on it,
+	/// and returning it.
 	inline static ofMatrix4x4 newIdentityMatrix( void );
 	inline static ofMatrix4x4 newScaleMatrix( const ofVec3f& sv);
 	inline static ofMatrix4x4 newScaleMatrix( float sx, float sy, float sz);
@@ -215,27 +215,27 @@ public:
 	                                   float angle3, const ofVec3f& axis3);
 	inline static ofMatrix4x4 newRotationMatrix( const ofQuaternion& quat);
 
-	// create new matrices related to glFunctions. See the description of the make* methods for more info.
+	/// create new matrices related to glFunctions. See the description of the make* methods for more info.
 
-	// glOrtho
+	/// glOrtho
 	inline static ofMatrix4x4 newOrthoMatrix(double left,   double right,
 	                                 double bottom, double top,
 	                                 double zNear,  double zFar);
 
-	// glOrtho2D
+	/// glOrtho2D
 	inline static ofMatrix4x4 newOrtho2DMatrix(double left,   double right,
 	                                   double bottom, double top);
 
-	// glFrustum
+	/// glFrustum
 	inline static ofMatrix4x4 newFrustumMatrix(double left,   double right,
 	                                   double bottom, double top,
 	                                   double zNear,  double zFar);
 
-	// gluPerspective
+	/// gluPerspective
 	inline static ofMatrix4x4 newPerspectiveMatrix(double fovy,  double aspectRatio,
 	                                       double zNear, double zFar);
 
-	// gluLookAt
+	/// gluLookAt
 	inline static ofMatrix4x4 newLookAtMatrix(const ofVec3f& eye,
 	                                  const ofVec3f& center,
 	                                  const ofVec3f& up);
@@ -249,17 +249,17 @@ public:
 		return _mat[row][col];
 	}
 
-	// \brief Read data with `matrix(row, col)`
+	/// \brief Read data with `matrix(row, col)`
 	float operator()(int row, int col) const {
 		return _mat[row][col];
 	}
 
-	// \brief returns a copy of row i
+	/// \brief returns a copy of row i
 	ofVec3f getRowAsVec3f(int i) const {
 		return ofVec3f(_mat[i][0], _mat[i][1], _mat[i][2]);
 	}
 	
-	// \brief returns a copy of row i
+	/// \brief returns a copy of row i
 	ofVec4f getRowAsVec4f(int i) const {
 		return _mat[i];
 	}
@@ -269,8 +269,8 @@ public:
 	friend istream& operator>>(istream& is, ofMatrix4x4& M);
 	/// \endcond
 	
-	// \brief Access the internal data in `float*` format
-	// useful for opengl matrix transformations
+	/// \brief Access the internal data in `float*` format
+	/// useful for opengl matrix transformations
 	float * getPtr() {
 		return (float*)_mat;
 	}
@@ -350,7 +350,7 @@ public:
 	bool getPerspective(double& fovy,  double& aspectRatio,
 	                    double& zNear, double& zFar) const;
 
-	// will only work for modelview matrices
+	/// will only work for modelview matrices
 	void getLookAt(ofVec3f& eye, ofVec3f& center, ofVec3f& up,
 	               float lookDistance = 1.0f) const;
 
@@ -363,7 +363,7 @@ public:
 					ofVec3f& scale,
 					ofQuaternion& so ) const;
 
-	// create new matrices as transformation of another
+	/// create new matrices as transformation of another
 	inline static ofMatrix4x4 getInverseOf( const ofMatrix4x4& matrix);
 	inline static ofMatrix4x4 getTransposedOf( const ofMatrix4x4& matrix);
 	inline static ofMatrix4x4 getOrthoNormalOf(const ofMatrix4x4& matrix);
@@ -428,16 +428,16 @@ public:
 	/// \brief post-multiply by another matrix. This matrix becomes `this * other`
 	void postMult( const ofMatrix4x4& );
 
-	// \brief Vector * matrix multiplication. This
-	// operation implicitly treats vectors as row-matrices
+	/// \brief Vector * matrix multiplication. This
+	/// operation implicitly treats vectors as row-matrices
 	inline ofVec3f preMult( const ofVec3f& v ) const;
 	inline ofVec4f preMult( const ofVec4f& v ) const;
 
-	// \brief pre-multiply by another matrix. This matrix becomes `other * this`
+	/// \brief pre-multiply by another matrix. This matrix becomes `other * this`
 	void preMult( const ofMatrix4x4& );
 
-	// \brief Equivalent to calling postMult(other) but you can do
-	// someMatrix *= someMatrix without breaking const-correctness
+	/// \brief Equivalent to calling postMult(other) but you can do
+	/// someMatrix *= someMatrix without breaking const-correctness
 	inline void operator *= ( const ofMatrix4x4& other ) {
 		if ( this == &other ) {
 			ofMatrix4x4 temp(other);
@@ -445,7 +445,7 @@ public:
 		} else postMult( other );
 	}
 
-	// \brief creates a new matrix from the product of two matrices
+	/// \brief creates a new matrix from the product of two matrices
 	inline ofMatrix4x4 operator * ( const ofMatrix4x4 &m ) const {
 		ofMatrix4x4 r;
 		r.makeFromMultiplicationOf(*this, m);
@@ -465,13 +465,13 @@ public:
 
 
 	//---------------------------------------------
-	// specialized postMult methods, usually you want to use this
-	// for transforming ofVec not preMult
-	// equivalent to postMult(newTranslationMatrix(v)); */
+	/// specialized postMult methods, usually you want to use this
+	/// for transforming ofVec not preMult
+	/// equivalent to postMult(newTranslationMatrix(v)); */
 	inline void postMultTranslate( const ofVec3f& v );
-	// equivalent to postMult(scale(v));
+	/// equivalent to postMult(scale(v));
 	inline void postMultScale( const ofVec3f& v );
-	// equivalent to postMult(newRotationMatrix(q));
+	/// equivalent to postMult(newRotationMatrix(q));
 	inline void postMultRotate( const ofQuaternion& q );
 
 	// AARON METHODS
@@ -481,11 +481,11 @@ public:
 
 
 	//---------------------------------------------
-	// equivalent to preMult(newScaleMatrix(v));
+	/// equivalent to preMult(newScaleMatrix(v));
 	inline void preMultScale( const ofVec3f& v );
-	// equivalent to preMult(newTranslationMatrix(v));
+	/// equivalent to preMult(newTranslationMatrix(v));
 	inline void preMultTranslate( const ofVec3f& v );
-	// equivalent to preMult(newRotationMatrix(q));
+	/// equivalent to preMult(newRotationMatrix(q));
 	inline void preMultRotate( const ofQuaternion& q );
 
 
@@ -495,16 +495,16 @@ public:
 	/// \name Matrix transformation
 	/// \{
 
-	// set methods: all these alter the components
-	// deleting the previous data only in that components
+	/// set methods: all these alter the components
+	/// deleting the previous data only in that components
 	void setRotate(const ofQuaternion& q);
 	void setTranslation( float tx, float ty, float tz );
 	void setTranslation( const ofVec3f& v );
 
-	// all these apply the transformations over the
-	// current one, it's actually postMult... and behaves
-	// the opposite to the equivalent gl functions
-	// glTranslate + glRotate == rotate + translate
+	/// all these apply the transformations over the
+	/// current one, it's actually postMult... and behaves
+	/// the opposite to the equivalent gl functions
+	/// glTranslate + glRotate == rotate + translate
 	void rotate(float angle, float x, float y, float z);
 	void rotateRad(float angle, float x, float y, float z);
 	void rotate(const ofQuaternion& q);
@@ -513,9 +513,9 @@ public:
 	void scale(float x, float y, float z);
 	void scale( const ofVec3f& v );
 
-	// all these apply the transformations over the
-	// current one, it's actually preMult... and behaves
-	// the the same the equivalent gl functions
+	/// all these apply the transformations over the
+	/// current one, it's actually preMult... and behaves
+	/// the the same the equivalent gl functions
 	void glRotate(float angle, float x, float y, float z);
 	void glRotateRad(float angle, float x, float y, float z);
 	void glRotate(const ofQuaternion& q);
@@ -525,20 +525,20 @@ public:
 	void glScale( const ofVec3f& v );
 
 	//---------------------------------------------
-	// get methods: return matrix components
-	// rotation and scale can only be used if the matrix
-	// only has rotation or scale.
-	// for matrices with both use decompose instead.
+	/// get methods: return matrix components
+	/// rotation and scale can only be used if the matrix
+	/// only has rotation or scale.
+	/// for matrices with both use decompose instead.
 	ofQuaternion getRotate() const;
 	ofVec3f getTranslation() const;
 	ofVec3f getScale() const;
 
 
 	//---------------------------------------------
-	// apply a 3x3 transform of v*M[0..2,0..2].
+	/// apply a 3x3 transform of v*M[0..2,0..2].
 	inline static ofVec3f transform3x3(const ofVec3f& v, const ofMatrix4x4& m);
 
-	// apply a 3x3 transform of M[0..2,0..2]*v.
+	/// apply a 3x3 transform of M[0..2,0..2]*v.
 	inline static ofVec3f transform3x3(const ofMatrix4x4& m, const ofVec3f& v);
 
 
@@ -795,8 +795,8 @@ inline ofVec3f ofMatrix4x4::preMult( const ofVec3f& v ) const {
 	                 (_mat[0][2]*v.x + _mat[1][2]*v.y + _mat[2][2]*v.z + _mat[3][2])*d);
 }
 
-// \brief post-multiplies the vector by the matrix (i.e. returns M mult v).
-// The vector is implicitly treated as a column-matrix
+/// \brief post-multiplies the vector by the matrix (i.e. returns M mult v).
+/// The vector is implicitly treated as a column-matrix
 inline ofVec4f ofMatrix4x4::postMult( const ofVec4f& v ) const {
 	return ofVec4f( (_mat[0][0]*v.x + _mat[0][1]*v.y + _mat[0][2]*v.z + _mat[0][3]*v.w),
 	                 (_mat[1][0]*v.x + _mat[1][1]*v.y + _mat[1][2]*v.z + _mat[1][3]*v.w),
@@ -804,8 +804,8 @@ inline ofVec4f ofMatrix4x4::postMult( const ofVec4f& v ) const {
 	                 (_mat[3][0]*v.x + _mat[3][1]*v.y + _mat[3][2]*v.z + _mat[3][3]*v.w)) ;
 }
 
-// \brief pre-multiplies the vector by the matrix (i.e. returns v mult M)
-// The vector is implicitly treated as a row-matrix
+/// \brief pre-multiplies the vector by the matrix (i.e. returns v mult M)
+/// The vector is implicitly treated as a row-matrix
 inline ofVec4f ofMatrix4x4::preMult( const ofVec4f& v ) const {
 	return ofVec4f( (_mat[0][0]*v.x + _mat[1][0]*v.y + _mat[2][0]*v.z + _mat[3][0]*v.w),
 	                 (_mat[0][1]*v.x + _mat[1][1]*v.y + _mat[2][1]*v.z + _mat[3][1]*v.w),
@@ -813,24 +813,24 @@ inline ofVec4f ofMatrix4x4::preMult( const ofVec4f& v ) const {
 	                 (_mat[0][3]*v.x + _mat[1][3]*v.y + _mat[2][3]*v.z + _mat[3][3]*v.w));
 }
 
-// \brief performs a pre-multiplication transformation on the vector using only the
-// upper left 3x3 portion of the matrix (i.e. only the rotation part).
+/// \brief performs a pre-multiplication transformation on the vector using only the
+/// upper left 3x3 portion of the matrix (i.e. only the rotation part).
 inline ofVec3f ofMatrix4x4::transform3x3(const ofVec3f& v, const ofMatrix4x4& m) {
 	return ofVec3f( (m._mat[0][0]*v.x + m._mat[1][0]*v.y + m._mat[2][0]*v.z),
 	                 (m._mat[0][1]*v.x + m._mat[1][1]*v.y + m._mat[2][1]*v.z),
 	                 (m._mat[0][2]*v.x + m._mat[1][2]*v.y + m._mat[2][2]*v.z));
 }
 
-// \brief performs a post-multiplication transformation on the vector using only the
-// upper left 3x3 portion of the matrix (i.e. only the rotation part).
+/// \brief performs a post-multiplication transformation on the vector using only the
+/// upper left 3x3 portion of the matrix (i.e. only the rotation part).
 inline ofVec3f ofMatrix4x4::transform3x3(const ofMatrix4x4& m, const ofVec3f& v) {
 	return ofVec3f( (m._mat[0][0]*v.x + m._mat[0][1]*v.y + m._mat[0][2]*v.z),
 	                 (m._mat[1][0]*v.x + m._mat[1][1]*v.y + m._mat[1][2]*v.z),
 	                 (m._mat[2][0]*v.x + m._mat[2][1]*v.y + m._mat[2][2]*v.z) ) ;
 }
 
-// \brief translates this matrix by treating the ofVec3f like a translation matrix,
-// and multiplying this Matrix by it in a pre-multiplication manner (T mult M)
+/// \brief translates this matrix by treating the ofVec3f like a translation matrix,
+/// and multiplying this Matrix by it in a pre-multiplication manner (T mult M)
 inline void ofMatrix4x4::preMultTranslate( const ofVec3f& v ) {
 	for (unsigned i = 0; i < 3; ++i) {
 		float tmp = v.getPtr()[i];
@@ -843,8 +843,8 @@ inline void ofMatrix4x4::preMultTranslate( const ofVec3f& v ) {
 	}
 }
 
-// \brief translates this matrix by treating the ofVec3f like a translation matrix,
-// and multiplying this Matrix by it in a post-multiplication manner (M mult T)
+/// \brief translates this matrix by treating the ofVec3f like a translation matrix,
+/// and multiplying this Matrix by it in a post-multiplication manner (M mult T)
 inline void ofMatrix4x4::postMultTranslate( const ofVec3f& v ) {
 	for (unsigned i = 0; i < 3; ++i) {
 		float tmp = v.getPtr()[i];
@@ -858,7 +858,7 @@ inline void ofMatrix4x4::postMultTranslate( const ofVec3f& v ) {
 }
 
 // AARON METHOD
-// \brief the positional argument version of the above
+/// \brief the positional argument version of the above
 inline void ofMatrix4x4::postMultTranslate( float x, float y, float z) {
 	if (x != 0) {
 		_mat[0][0] += x * _mat[0][3];
@@ -880,8 +880,8 @@ inline void ofMatrix4x4::postMultTranslate( float x, float y, float z) {
 	}
 }
 
-// \brief treats the ofVec3f like a scaling matrix and edits this Matrix
-// by multiplying the vector with it in a pre-multiplication style (V mult M)
+/// \brief treats the ofVec3f like a scaling matrix and edits this Matrix
+/// by multiplying the vector with it in a pre-multiplication style (V mult M)
 inline void ofMatrix4x4::preMultScale( const ofVec3f& v ) {
 	_mat[0][0] *= v.getPtr()[0];
 	_mat[0][1] *= v.getPtr()[0];
@@ -897,8 +897,8 @@ inline void ofMatrix4x4::preMultScale( const ofVec3f& v ) {
 	_mat[2][3] *= v.getPtr()[2];
 }
 
-// \brief treats the ofVec3f like a scaling matrix and edits this Matrix
-// by multiplying the vector with it in a post-multiplication style (M mult V)
+/// \brief treats the ofVec3f like a scaling matrix and edits this Matrix
+/// by multiplying the vector with it in a post-multiplication style (M mult V)
 inline void ofMatrix4x4::postMultScale( const ofVec3f& v ) {
 	_mat[0][0] *= v.getPtr()[0];
 	_mat[1][0] *= v.getPtr()[0];
@@ -914,42 +914,42 @@ inline void ofMatrix4x4::postMultScale( const ofVec3f& v ) {
 	_mat[3][2] *= v.getPtr()[2];
 }
 
-// \brief rotates this Matrix by the provided quaternion
+/// \brief rotates this Matrix by the provided quaternion
 inline void ofMatrix4x4::rotate(const ofQuaternion& q){
 	postMultRotate(q);
 }
 
-// \brief rotates this Matrix by the provided angle (in degrees) around an axis defined by the three values
+/// \brief rotates this Matrix by the provided angle (in degrees) around an axis defined by the three values
 inline void ofMatrix4x4::rotate(float angle, float x, float y, float z){
 	postMultRotate(angle,x,y,z);
 }
 
-// \brief Rotates this Matrix by the provided angle (in Radians) around an axis defined by the three values
+/// \brief Rotates this Matrix by the provided angle (in Radians) around an axis defined by the three values
 inline void ofMatrix4x4::rotateRad(float angle, float x, float y, float z){
 	postMultRotate(angle*RAD_TO_DEG,x,y,z);
 }
 
-// \brief Translates this matrix by the provided amount
+/// \brief Translates this matrix by the provided amount
 inline void ofMatrix4x4::translate( float tx, float ty, float tz ){
 	postMultTranslate(tx,ty,tz);
 }
 
-// \brief Translates this matrix by the provided vector
+/// \brief Translates this matrix by the provided vector
 inline void ofMatrix4x4::translate( const ofVec3f& v ){
 	postMultTranslate(v);
 }
 
-// \brief scales this matrix by the provided scales
+/// \brief scales this matrix by the provided scales
 inline void ofMatrix4x4::scale(float x, float y, float z){
 	postMultScale(x,y,z);
 }
 
-// \brief scales this matrix, treating the ofVec3f as the diagonal of a scaling matrix.
+/// \brief scales this matrix, treating the ofVec3f as the diagonal of a scaling matrix.
 inline void ofMatrix4x4::scale( const ofVec3f& v ){
 	postMultScale(v);
 }
 
-// implementation of the gl-style pre-multiplication versions of the above functions
+/// implementation of the gl-style pre-multiplication versions of the above functions
 inline void ofMatrix4x4::glRotate(float angle, float x, float y, float z){
 	preMultRotate(ofQuaternion(angle,ofVec3f(x,y,z)));
 }
@@ -1018,11 +1018,11 @@ inline void ofMatrix4x4::postMultRotate(float angle, float x, float y, float z) 
 	postMult(r);
 }
 
-// \brief provides Vector3 * Matrix multiplication. Vectors are implicitly treated as row-matrices.
+/// \brief provides Vector3 * Matrix multiplication. Vectors are implicitly treated as row-matrices.
 inline ofVec3f operator* (const ofVec3f& v, const ofMatrix4x4& m ) {
 	return m.preMult(v);
 }
-// \brief provides Vector4 * Matrix multiplication. Vectors are implicitly treated as row-matrices.
+/// \brief provides Vector4 * Matrix multiplication. Vectors are implicitly treated as row-matrices.
 inline ofVec4f operator* (const ofVec4f& v, const ofMatrix4x4& m ) {
 	return m.preMult(v);
 }
