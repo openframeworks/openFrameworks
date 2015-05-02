@@ -795,6 +795,8 @@ inline ofVec3f ofMatrix4x4::preMult( const ofVec3f& v ) const {
 	                 (_mat[0][2]*v.x + _mat[1][2]*v.y + _mat[2][2]*v.z + _mat[3][2])*d);
 }
 
+// \brief post-multiplies the vector by the matrix (i.e. returns M mult v).
+// The vector is implicitly treated as a column-matrix
 inline ofVec4f ofMatrix4x4::postMult( const ofVec4f& v ) const {
 	return ofVec4f( (_mat[0][0]*v.x + _mat[0][1]*v.y + _mat[0][2]*v.z + _mat[0][3]*v.w),
 	                 (_mat[1][0]*v.x + _mat[1][1]*v.y + _mat[1][2]*v.z + _mat[1][3]*v.w),
@@ -802,18 +804,25 @@ inline ofVec4f ofMatrix4x4::postMult( const ofVec4f& v ) const {
 	                 (_mat[3][0]*v.x + _mat[3][1]*v.y + _mat[3][2]*v.z + _mat[3][3]*v.w)) ;
 }
 
+// \brief pre-multiplies the vector by the matrix (i.e. returns v mult M)
+// The vector is implicitly treated as a row-matrix
 inline ofVec4f ofMatrix4x4::preMult( const ofVec4f& v ) const {
 	return ofVec4f( (_mat[0][0]*v.x + _mat[1][0]*v.y + _mat[2][0]*v.z + _mat[3][0]*v.w),
 	                 (_mat[0][1]*v.x + _mat[1][1]*v.y + _mat[2][1]*v.z + _mat[3][1]*v.w),
 	                 (_mat[0][2]*v.x + _mat[1][2]*v.y + _mat[2][2]*v.z + _mat[3][2]*v.w),
 	                 (_mat[0][3]*v.x + _mat[1][3]*v.y + _mat[2][3]*v.z + _mat[3][3]*v.w));
 }
+
+// \brief performs a pre-multiplication transformation on the vector using only the
+// upper left 3x3 portion of the matrix (i.e. only the rotation part).
 inline ofVec3f ofMatrix4x4::transform3x3(const ofVec3f& v, const ofMatrix4x4& m) {
 	return ofVec3f( (m._mat[0][0]*v.x + m._mat[1][0]*v.y + m._mat[2][0]*v.z),
 	                 (m._mat[0][1]*v.x + m._mat[1][1]*v.y + m._mat[2][1]*v.z),
 	                 (m._mat[0][2]*v.x + m._mat[1][2]*v.y + m._mat[2][2]*v.z));
 }
 
+// \brief performs a post-multiplication transformation on the vector using only the
+// upper left 3x3 portion of the matrix (i.e. only the rotation part).
 inline ofVec3f ofMatrix4x4::transform3x3(const ofMatrix4x4& m, const ofVec3f& v) {
 	return ofVec3f( (m._mat[0][0]*v.x + m._mat[0][1]*v.y + m._mat[0][2]*v.z),
 	                 (m._mat[1][0]*v.x + m._mat[1][1]*v.y + m._mat[1][2]*v.z),
