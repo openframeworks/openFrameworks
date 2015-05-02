@@ -1018,11 +1018,11 @@ inline void ofMatrix4x4::postMultRotate(float angle, float x, float y, float z) 
 	postMult(r);
 }
 
-
-
+// \brief provides Vector3 * Matrix multiplication. Vectors are implicitly treated as row-matrices.
 inline ofVec3f operator* (const ofVec3f& v, const ofMatrix4x4& m ) {
 	return m.preMult(v);
 }
+// \brief provides Vector4 * Matrix multiplication. Vectors are implicitly treated as row-matrices.
 inline ofVec4f operator* (const ofVec4f& v, const ofMatrix4x4& m ) {
 	return m.preMult(v);
 }
