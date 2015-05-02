@@ -30,20 +30,20 @@
 /// 
 /// Not particularly exciting, but you can see how they'd be useful. Luckily most
 /// of the need to transform, rotate, scale, shear, or further bazzlemunge (just
-/// kidding, bazzlemunging is not a thing) stuff in OF is handled internally by
+/// kidding, bazzlemunging is not a thing) stuff in oF is handled internally by
 /// objects like ofNode or ofCamera.
 /// 
-/// OF uses row-vector style by default, meaning that when transforming a vector
+/// oF uses row-vector style by default, meaning that when transforming a vector
 /// by multiplying with a matrix, you should put the vector on the left side and
 /// the matrix (or matrices) to its right. When multiplying by multiple matrices,
 /// the order of application of the transforms is left-to-right. This means that
 /// the standard order of manipulation operations is vector * scale * rotate * translate.
 /// 
 /// Note that in GLSL, this convention is reversed, and column-vector style is used.
-/// OF uploads the matrices correctly, but you should reverse the order of your manipulations
+/// oF uploads the matrices correctly, but you should reverse the order of your manipulations
 /// to, e.g. translate * rotate * scale * vector.
 /// 
-/// OF still lets you do matrix-vector multiplication with the vector
+/// oF still lets you do matrix-vector multiplication with the vector
 /// on the right if that's your preferred style. You can perform matrix transformations
 /// that use the OpenGL style by using functions like glTranslate, glRotate, and glScale.
 /// 
