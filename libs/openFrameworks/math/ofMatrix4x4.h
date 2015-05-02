@@ -96,26 +96,45 @@ public:
 	// Init matrix as identity, scale, translation...
 	// all make* methods delete the current data
 	
+	// \brief Matrix becomes the identity matrix
 	void makeIdentityMatrix();
 
+	// \brief Matrix becomes a scale matrix with values only in the diagonal.
+	// Accepts x, y, z scale values as a vector or separately
 	void makeScaleMatrix( const ofVec3f& );
 	void makeScaleMatrix( float, float, float );
 
+	// \brief Matrix becomes a translation matrix with values only in the fourth column.
+	// Accepts x, y, z translation values as a vector or separately
 	void makeTranslationMatrix( const ofVec3f& );
 	void makeTranslationMatrix( float, float, float );
 
+	// \brief Matrix becomes a rotation matrix with values in the first three rows and columns.
+	// \brief Matrix becomes a rotation from the first vector direction to the second
 	void makeRotationMatrix( const ofVec3f& from, const ofVec3f& to );
+	// \brief Matrix becomes a rotation of angle (degrees) around the vector axis.
 	void makeRotationMatrix( float angle, const ofVec3f& axis );
+	// \brief Matrix becomes a rotation of angle (degrees) around the axis specified positionally
 	void makeRotationMatrix( float angle, float x, float y, float z );
+	// \brief Matrix becomes a rotation that matches the quaternion's orientation.
 	void makeRotationMatrix( const ofQuaternion& );
+	// \brief Matrix becomes a rotation that is the result of computing a rotation
+	// for each of the provided axes, in order of parameters.
 	void makeRotationMatrix( float angle1, const ofVec3f& axis1,
 	                 float angle2, const ofVec3f& axis2,
 	                 float angle3, const ofVec3f& axis3);
 
 
 	// init related to another matrix
+	// \brief Matrix becomes the inverse of the provided matrix.
 	bool makeInvertOf( const ofMatrix4x4& rhs);
+	// \brief Matrix becomes an orthonormalized version of the provided matrix.
+	// The basis vectors (the 3x3 chunk embedded in the upper left of the matrix)
+	// are normalized and it is ensured that they are orthogonal (perpendicular)
+	// to each other. This means the resulting matrix will only create rotations,
+	// and "removes" any scaling effect.
 	void makeOrthoNormalOf(const ofMatrix4x4& rhs);
+	// \brief Matrix becomes the result of the multiplication of two other matrices
 	void makeFromMultiplicationOf( const ofMatrix4x4&, const ofMatrix4x4& );
 	
 	//---------------------------------------------
@@ -123,21 +142,39 @@ public:
 	// see opengl docs of the related funciton for further details
 
 	// glOrtho
+	// \brief Matrix becomes an orthographic projection matrix with a
+	// box-shaped viewing volume described by the six parameters.
+	// left, right, bottom, and top essentially specify coordinates in
+	// the zNear clipping plane.
 	void makeOrthoMatrix(double left,   double right,
 	               double bottom, double top,
 	               double zNear,  double zFar);
 
 	// glOrtho2D
+	// \brief Matrix becomes a 2D orthographic projection matrix with a 
+	// box-shaped viewing volume described by the four parameters
+	// plus, implicitly, a zNear of -1 and a zFar of 1
 	void makeOrtho2DMatrix(double left,   double right,
 	                        double bottom, double top);
 
 	// glFrustum
+	// \brief Matrix becomes a perspective projection matrix with a frustum-shaped
+	// viewing volume defined by the six parameters.
+	// left, right, top, and bottom specify coordinates in the zNear
+	// clipping plane, and the zNear and zFar parameters define the distances
+	// to the edges of the view volume. Note that the resulting volume can be
+	// vertically and horizontally asymmetrical around the center of the near plane.
 	void makeFrustumMatrix(double left,   double right,
 	                 double bottom, double top,
 	                 double zNear,  double zFar);
 
 	// gluPerspective
 	// Aspect ratio is defined as width/height.
+	// Matrix becomes a perspective projection matrix with a frustum-shaped
+	// viewing volume defined by the four parameters. The fovy and aspect ratio
+	// are used to compute the positions of the left, right, top, and bottom sides
+	// of the viewing volume in the zNear plane. Note that the resulting volume is
+	// both vertically and horizontally symmetrical around the center of the near plane.
 	void makePerspectiveMatrix(double fovy,  double aspectRatio,
 						 double zNear, double zFar);
 
@@ -146,6 +183,11 @@ public:
 	// creates a transformation matrix positioned at 'eye'
 	// pointing at (along z axis) 'center'
 	// this is what you use if you want an object to look at a point
+	// Matrix becomes a combination of a translation to 'eye' and a rotation matrix which
+	// orients an object to look towards 'center' along its z-axis.
+	// \cond INTERNAL:
+	// Does this orient the object along its positive or its negative z-axis?
+	// \endcond
 	void makeLookAtMatrix(const ofVec3f& eye, const ofVec3f& center, const ofVec3f& up);
 	
 	
@@ -154,6 +196,7 @@ public:
 	// pointing at (along z axis) 'center'
 	// this is what you use when you want your view matrix looking at a point
 	// (the inverse of makeLookAtMatrix), same as gluLookAt
+	// This matrix will also cause a translation equal to -eye.
 	void makeLookAtViewMatrix(const ofVec3f& eye, const ofVec3f& center, const ofVec3f& up);
 
 	// basic utility functions to create new matrices
