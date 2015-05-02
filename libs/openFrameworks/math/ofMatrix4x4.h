@@ -417,9 +417,9 @@ public:
 	/// ofMatrix4x4 T = ofMatrix4x4::newTranlationMatrix(b);
 	/// ofVec3f c = a*R*T;
 	/// ~~~~~
-	/// where `*` is calling postMult()
 	///
 	inline ofVec3f postMult( const ofVec3f& v ) const;
+	/// where `*` is calling preMult()
 
 	inline ofVec4f postMult( const ofVec4f& v ) const;
 
