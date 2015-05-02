@@ -829,6 +829,8 @@ inline ofVec3f ofMatrix4x4::transform3x3(const ofMatrix4x4& m, const ofVec3f& v)
 	                 (m._mat[2][0]*v.x + m._mat[2][1]*v.y + m._mat[2][2]*v.z) ) ;
 }
 
+// \brief translates this matrix by treating the ofVec3f like a translation matrix,
+// and multiplying this Matrix by it in a pre-multiplication manner (T mult M)
 inline void ofMatrix4x4::preMultTranslate( const ofVec3f& v ) {
 	for (unsigned i = 0; i < 3; ++i) {
 		float tmp = v.getPtr()[i];
@@ -841,6 +843,8 @@ inline void ofMatrix4x4::preMultTranslate( const ofVec3f& v ) {
 	}
 }
 
+// \brief translates this matrix by treating the ofVec3f like a translation matrix,
+// and multiplying this Matrix by it in a post-multiplication manner (M mult T)
 inline void ofMatrix4x4::postMultTranslate( const ofVec3f& v ) {
 	for (unsigned i = 0; i < 3; ++i) {
 		float tmp = v.getPtr()[i];
@@ -854,6 +858,7 @@ inline void ofMatrix4x4::postMultTranslate( const ofVec3f& v ) {
 }
 
 // AARON METHOD
+// \brief the positional argument version of the above
 inline void ofMatrix4x4::postMultTranslate( float x, float y, float z) {
 	if (x != 0) {
 		_mat[0][0] += x * _mat[0][3];
@@ -875,6 +880,8 @@ inline void ofMatrix4x4::postMultTranslate( float x, float y, float z) {
 	}
 }
 
+// \brief treats the ofVec3f like a scaling matrix and edits this Matrix
+// by multiplying the vector with it in a pre-multiplication style (V mult M)
 inline void ofMatrix4x4::preMultScale( const ofVec3f& v ) {
 	_mat[0][0] *= v.getPtr()[0];
 	_mat[0][1] *= v.getPtr()[0];
@@ -890,6 +897,8 @@ inline void ofMatrix4x4::preMultScale( const ofVec3f& v ) {
 	_mat[2][3] *= v.getPtr()[2];
 }
 
+// \brief treats the ofVec3f like a scaling matrix and edits this Matrix
+// by multiplying the vector with it in a post-multiplication style (M mult V)
 inline void ofMatrix4x4::postMultScale( const ofVec3f& v ) {
 	_mat[0][0] *= v.getPtr()[0];
 	_mat[1][0] *= v.getPtr()[0];
@@ -905,34 +914,42 @@ inline void ofMatrix4x4::postMultScale( const ofVec3f& v ) {
 	_mat[3][2] *= v.getPtr()[2];
 }
 
+// \brief rotates this Matrix by the provided quaternion
 inline void ofMatrix4x4::rotate(const ofQuaternion& q){
 	postMultRotate(q);
 }
 
+// \brief rotates this Matrix by the provided angle (in degrees) around an axis defined by the three values
 inline void ofMatrix4x4::rotate(float angle, float x, float y, float z){
 	postMultRotate(angle,x,y,z);
 }
 
+// \brief Rotates this Matrix by the provided angle (in Radians) around an axis defined by the three values
 inline void ofMatrix4x4::rotateRad(float angle, float x, float y, float z){
 	postMultRotate(angle*RAD_TO_DEG,x,y,z);
 }
 
+// \brief Translates this matrix by the provided amount
 inline void ofMatrix4x4::translate( float tx, float ty, float tz ){
 	postMultTranslate(tx,ty,tz);
 }
 
+// \brief Translates this matrix by the provided vector
 inline void ofMatrix4x4::translate( const ofVec3f& v ){
 	postMultTranslate(v);
 }
 
+// \brief scales this matrix by the provided scales
 inline void ofMatrix4x4::scale(float x, float y, float z){
 	postMultScale(x,y,z);
 }
 
+// \brief scales this matrix, treating the ofVec3f as the diagonal of a scaling matrix.
 inline void ofMatrix4x4::scale( const ofVec3f& v ){
 	postMultScale(v);
 }
 
+// implementation of the gl-style pre-multiplication versions of the above functions
 inline void ofMatrix4x4::glRotate(float angle, float x, float y, float z){
 	preMultRotate(ofQuaternion(angle,ofVec3f(x,y,z)));
 }
