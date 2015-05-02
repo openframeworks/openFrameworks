@@ -199,7 +199,9 @@ public:
 	// This matrix will also cause a translation equal to -eye.
 	void makeLookAtViewMatrix(const ofVec3f& eye, const ofVec3f& center, const ofVec3f& up);
 
-	// basic utility functions to create new matrices
+	// static utility functions to create new matrices. These functions are, generally,
+	// the equivalent of declaring a matrix, calling the corresponding "make..." function on it,
+	// and returning it.
 	inline static ofMatrix4x4 newIdentityMatrix( void );
 	inline static ofMatrix4x4 newScaleMatrix( const ofVec3f& sv);
 	inline static ofMatrix4x4 newScaleMatrix( float sx, float sy, float sz);
@@ -213,9 +215,7 @@ public:
 	                                   float angle3, const ofVec3f& axis3);
 	inline static ofMatrix4x4 newRotationMatrix( const ofQuaternion& quat);
 
-	
-
-	// create new matrices related to glFunctions
+	// create new matrices related to glFunctions. See the description of the make* methods for more info.
 
 	// glOrtho
 	inline static ofMatrix4x4 newOrthoMatrix(double left,   double right,
