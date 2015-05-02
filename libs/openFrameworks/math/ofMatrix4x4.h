@@ -53,6 +53,7 @@ public:
 	
 	/// \cond INTERNAL
 	// Should this be moved to private?
+	// The values of the matrix, stored in row-major style
 	ofVec4f _mat[4];
 	/// \endcond
 
@@ -62,19 +63,28 @@ public:
 	/// \name Construct a matrix
 	/// \{
 
+	// \brief The default constructor provides an identity matrix 
 	ofMatrix4x4() {
 		makeIdentityMatrix();
 	}
+
+	// \brief You can pass another ofMatrix4x4 to create a copy
 	ofMatrix4x4( const ofMatrix4x4& mat) {
 		set(mat.getPtr());
 	}
+
+	// \brief You can pass a pointer to floats, and the first 16 contents will be extracted into this matrix.
+	// Note: the validity of these values is not checked!
 	ofMatrix4x4( float const * const ptr ) {
 		set(ptr);
 	}
+
+	// \brief Rotation matrices can be constructed from a quaternion
 	ofMatrix4x4( const ofQuaternion& quat ) {
 		makeRotationMatrix(quat);
 	}
 
+	// \brief You can pass all 16 values of the matrix as positional arguments (in row-major order)
 	ofMatrix4x4(	float a00, float a01, float a02, float a03,
 	              float a10, float a11, float a12, float a13,
 	              float a20, float a21, float a22, float a23,
