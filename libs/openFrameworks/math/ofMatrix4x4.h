@@ -249,15 +249,17 @@ public:
 		return _mat[row][col];
 	}
 
-	// \brief Read data
+	// \brief Read data with `matrix(row, col)`
 	float operator()(int row, int col) const {
 		return _mat[row][col];
 	}
 
+	// \brief returns a copy of row i
 	ofVec3f getRowAsVec3f(int i) const {
 		return ofVec3f(_mat[i][0], _mat[i][1], _mat[i][2]);
 	}
 	
+	// \brief returns a copy of row i
 	ofVec4f getRowAsVec4f(int i) const {
 		return _mat[i];
 	}
@@ -304,6 +306,7 @@ public:
 
 	
 	/// \brief Set the data of the matrix
+	/// These functions are analogous to the corresponding constructors.
 	void set(const ofMatrix4x4& rhs);
 	void set(float const * const ptr);
 	void set(double const * const ptr);
@@ -340,7 +343,7 @@ public:
 	/// shear will be lost.
 	/// Asymmetric matrices occur when stereo, power walls, caves and
 	/// reality center display are used.
-	/// In these configuration one should use the AsFrustum method instead.
+	/// In these configuration one should use the getFrustum method instead.
 	///
 	/// \returns false if matrix is not a perspective matrix,
 	/// where parameter values are undefined.
