@@ -640,23 +640,23 @@ public:
 	void glScale( const ofVec3f& v );
 	/// \}
 
-	//---------------------------------------------
-	/// get methods: return matrix components
-	/// rotation and scale can only be used if the matrix
-	/// only has rotation or scale.
-	/// for matrices with both use decompose instead.
+	/// \name Get Methods
+	/// \{
+	/// 
+	/// These return matrix components. getRotate and getScale can only be 
+	/// used if the matrix only has rotation or only has scale, since these
+	/// transform values are stored in the same area of the matrix.
+	/// For matrices with both use decompose instead.
 	ofQuaternion getRotate() const;
 	ofVec3f getTranslation() const;
 	ofVec3f getScale() const;
+	/// \}
 
-
-	//---------------------------------------------
-	/// apply a 3x3 transform of v*M[0..2,0..2].
+	/// \brief Apply a 3x3 transform (no translation) of v * M.
 	inline static ofVec3f transform3x3(const ofVec3f& v, const ofMatrix4x4& m);
 
-	/// apply a 3x3 transform of M[0..2,0..2]*v.
+	/// \brief Apply a 3x3 transform (no translation) of M * v.
 	inline static ofVec3f transform3x3(const ofMatrix4x4& m, const ofVec3f& v);
-
 
 	/// \}
 	
