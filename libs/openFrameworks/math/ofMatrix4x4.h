@@ -62,10 +62,7 @@ public:
 	// Should this be moved to private?
 	/// \endcond
 
-
-
-	//---------------------
-	/// \name Construct a matrix
+	/// \name Constructors
 	/// \{
 
 	/// \brief The default constructor provides an identity matrix.
@@ -100,7 +97,8 @@ public:
 	              float a10, float a11, float a12, float a13,
 	              float a20, float a21, float a22, float a23,
 	              float a30, float a31, float a32, float a33);
-	/// \}
+
+	/// \} end Constructor group
 
 	/// \brief destructor.
 	~ofMatrix4x4() {}
