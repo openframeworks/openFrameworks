@@ -451,19 +451,9 @@ public:
 	/// \name Matrix multiplication
 	/// \{
 
-	/// \brief Vector multiplication
-	/// although opengl uses premultiplication
-	/// because of the way matrices are used in opengl:
-	///
-	/// ofMatrix4x4:
-	/// 
-	/// |   |   |   |   |
-	/// |:-:|:-:|:-:|:-:|
-	/// | 0 | 1 | 2 | 3 |
-	/// | 4 | 5 | 6 | 7 |
-	/// | 8 | 9 | 10| 11|
-	/// | 12| 13| 14| 15|
-	///
+	/// Although OpenGL uses post-multiplication (vector-on-the-right) with
+	/// column-major matrix memory layout, oF uses pre-multiplication
+	/// (vector-on-the-left) with row-major matrix memory layout by default.
 	/// 
 	/// openGL:
 	///
@@ -473,28 +463,45 @@ public:
 	/// | 1 | 5 | 9 | 13|
 	/// | 2 | 6 | 10| 14|
 	/// | 3 | 7 | 11| 15|
-	///
-	/// in memory though both are layed in the same way
-	/// so when uploading a matrix it just works without
-	/// needing to transpose
-	///
-	/// so although opengl docs explain transformations
-	/// like:
-	///
-	/// ~~~~~{.cpp}
-	/// ofVec3f c = rotateZ 30º ofVec3f a around ofVec3f b
-	/// ~~~~~
-	///
-	/// openGL docs says: `c = T(b)*R(30)*a`
-	///
-	/// with ofMatrix4x4:
-	/// ~~~~~{.cpp}
-	/// ofMatrix4x4 R = ofMatrix4x4::newRotationMatrix(30,0,0,1);
-	/// ofMatrix4x4 T = ofMatrix4x4::newTranlationMatrix(b);
-	/// ofVec3f c = a*R*T;
-	/// ~~~~~
-	/// where `*` is calling preMult()
 	/// 
+	/// ofMatrix4x4:
+	/// 
+	/// |   |   |   |   |
+	/// |:-:|:-:|:-:|:-:|
+	/// | 0 | 1 | 2 | 3 |
+	/// | 4 | 5 | 6 | 7 |
+	/// | 8 | 9 | 10| 11|
+	/// | 12| 13| 14| 15|
+	///
+	/// However, the two memory layouts are compatible because of a funny trick.
+	/// 
+	/// When the ofMatrix4x4 is uploaded into OpenGL's memory, OpenGL treats it
+	/// like a column-major matrix. The rows of the ofMatrix4x4 are loaded as
+	/// columns for the GLSL mat4. The result is that the matrix is transposed.
+	/// This seems like a bug, but it's in fact exactly what we want, because to
+	/// do the transition from pre-multiplication to post-multiplication style,
+	/// we need to perform the very same transpose.
+	/// 
+	/// By using pre-multiplication, oF treats vectors as 1x4 matrices, since 
+	/// that provides a valid 1x4 * 4x4 operation. When moving to
+	/// post-multiplication, OpenGL is treating vectors like columns, 
+	/// providing a similarly valid 4x4 * 4x1 operation. This means that the
+	///  resulting vector in OGL-land is the transpose of the result when
+	/// done in oF-land.
+	/// 
+	/// Recall that in matrix multiplication,
+	/// 
+	/// (V * M * S)^T = (S^T) * (M^T) * (V^T)
+	/// 
+	/// What this means is that to convert from pre-multiplication to 
+	/// post-multiplication, we need to transpose our matrices (and vectors) 
+	/// and reverse the order of multiplication. You're already reversing
+	/// the order of multiplication by writing your shaders with the vector
+	/// on the right, and the implicit transpose that happens when your matrix
+	/// is uploaded to GL memory accomplishes the transposition for free!
+	/// 
+	/// For more information on this subject, check out
+	/// [this post](http://seanmiddleditch.com/matrices-handedness-pre-and-post-multiplication-row-vs-column-major-and-notations/).
 
 	/// \brief Matrix * vector multiplication. This operation
 	/// implicitly treat vectors as column-matrices
