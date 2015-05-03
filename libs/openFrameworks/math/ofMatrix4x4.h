@@ -256,14 +256,25 @@ public:
 
 	/// \} end make* group
 
-	/// static utility functions to create new matrices. These functions are, generally,
-	/// the equivalent of declaring a matrix, calling the corresponding "make..." function on it,
-	/// and returning it.
+	/// \name Static new* matrix functions
+	/// \{
+	/// 
+	/// These are static utility functions to create new matrices. These
+	/// functions generally return the equivalent of declaring a matrix and
+	/// calling the corresponding "make..." function on it.
+
+	/// \sa makeIdentityMatrix
 	inline static ofMatrix4x4 newIdentityMatrix( void );
+
+	/// \sa makeScaleMatrix
 	inline static ofMatrix4x4 newScaleMatrix( const ofVec3f& sv);
 	inline static ofMatrix4x4 newScaleMatrix( float sx, float sy, float sz);
+
+	/// \sa makeTranslationMatrix
 	inline static ofMatrix4x4 newTranslationMatrix( const ofVec3f& dv);
 	inline static ofMatrix4x4 newTranslationMatrix( float x, float y, float z);
+
+	/// \sa makeRotationMatrix
 	inline static ofMatrix4x4 newRotationMatrix( const ofVec3f& from, const ofVec3f& to);
 	inline static ofMatrix4x4 newRotationMatrix( float angle, float x, float y, float z);
 	inline static ofMatrix4x4 newRotationMatrix( float angle, const ofVec3f& axis);
@@ -272,30 +283,33 @@ public:
 	                                   float angle3, const ofVec3f& axis3);
 	inline static ofMatrix4x4 newRotationMatrix( const ofQuaternion& quat);
 
-	/// create new matrices related to glFunctions. See the description of the make* methods for more info.
+	/// These functions create new matrices related to glFunctions. See 
+	/// the description of the corresponding make* methods for more info.
 
-	/// glOrtho
+	/// \sa makeOrthoMatrix
 	inline static ofMatrix4x4 newOrthoMatrix(double left,   double right,
 	                                 double bottom, double top,
 	                                 double zNear,  double zFar);
 
-	/// glOrtho2D
+	/// \sa makeOrtho2DMatrix
 	inline static ofMatrix4x4 newOrtho2DMatrix(double left,   double right,
 	                                   double bottom, double top);
 
-	/// glFrustum
+	/// \sa makeFrustumMatrix
 	inline static ofMatrix4x4 newFrustumMatrix(double left,   double right,
 	                                   double bottom, double top,
 	                                   double zNear,  double zFar);
 
-	/// gluPerspective
+	/// \sa makePerspectiveMatrix
 	inline static ofMatrix4x4 newPerspectiveMatrix(double fovy,  double aspectRatio,
 	                                       double zNear, double zFar);
 
-	/// gluLookAt
+	/// \sa makeLookAtMatrix
 	inline static ofMatrix4x4 newLookAtMatrix(const ofVec3f& eye,
 	                                  const ofVec3f& center,
 	                                  const ofVec3f& up);
+
+	/// \} end Static new* matrix group
 
 	//---------------------
 	/// \name Accessors
