@@ -349,21 +349,21 @@ public:
 		return (const float *)_mat;
 	}
 	
-	/// \}
+	/// \} end accessors group
 
 	//---------------------
 	/// \name Checking
 	/// \{
-
 	
-	/// \brief Check if the matrix is valid
+	/// \brief Checks if the matrix is valid by ensuring its items are numbers.
 	bool isValid() const {
 		return !isNaN();
 	}
 
+	/// \brief Checks if the matrix contains items that are not numbers.
 	bool isNaN() const;
 
-	/// \brief Check matrix identity
+	/// \brief Checks if the matrix is the identity matrix.
 	bool isIdentity() const;
 
 	/// \}
@@ -372,11 +372,12 @@ public:
 	/// \name Setters
 	/// \{
 
-	/// \brief Copy a matrix using `=` operator
+	/// \brief Copy a matrix using `=` operator.
 	ofMatrix4x4& operator = (const ofMatrix4x4& rhs);
 
 	
-	/// \brief Set the data of the matrix
+	/// \brief Set the data of the matrix.
+	/// 
 	/// These functions are analogous to the corresponding constructors.
 	void set(const ofMatrix4x4& rhs);
 	void set(float const * const ptr);
