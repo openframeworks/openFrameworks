@@ -555,31 +555,26 @@ public:
 		return postMult(v);
 	}
 
+	/// These are specialized postMult methods, usually you want to use these
+	/// for transforming with ofVec.
 
-	//---------------------------------------------
-	/// specialized postMult methods, usually you want to use this
-	/// for transforming ofVec not preMult
-	/// equivalent to postMult(newTranslationMatrix(v)); */
+	/// \brief Equivalent to postMult(newTranslationMatrix(v)).
 	inline void postMultTranslate( const ofVec3f& v );
-	/// equivalent to postMult(scale(v));
+	/// \brief Equivalent to postMult(scale(v)).
 	inline void postMultScale( const ofVec3f& v );
-	/// equivalent to postMult(newRotationMatrix(q));
+	/// \brief Equivalent to postMult(newRotationMatrix(q)).
 	inline void postMultRotate( const ofQuaternion& q );
 
-	// AARON METHODS
 	inline void postMultTranslate(float x, float y, float z);
 	inline void postMultRotate(float angle, float x, float y, float z);
 	inline void postMultScale(float x, float y, float z);
 
-
-	//---------------------------------------------
-	/// equivalent to preMult(newScaleMatrix(v));
+	/// \brief Equivalent to preMult(newScaleMatrix(v)).
 	inline void preMultScale( const ofVec3f& v );
-	/// equivalent to preMult(newTranslationMatrix(v));
+	/// \brief Equivalent to preMult(newTranslationMatrix(v)).
 	inline void preMultTranslate( const ofVec3f& v );
-	/// equivalent to preMult(newRotationMatrix(q));
+	/// \brief Equivalent to preMult(newRotationMatrix(q)).
 	inline void preMultRotate( const ofQuaternion& q );
-
 
 	/// \}
 
