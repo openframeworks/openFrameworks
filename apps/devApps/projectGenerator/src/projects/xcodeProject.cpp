@@ -128,6 +128,7 @@ STRINGIFY(
           <key>OTHER_LDFLAGS</key>
           <array>
           <string>$(OF_CORE_LIBS)</string>
+          <string>$(OF_CORE_FRAMEWORKS)</string>
           </array>
 
 );

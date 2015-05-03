@@ -183,9 +183,7 @@ void baseProject::parseAddons(){
         if (line.size() > 0){           // non empty line
             if(line[0] != '#') {        // line is not a comment
                 ofAddon addon;
-                cout << projectDir << endl;
                 addon.pathToOF = getOFRelPath(projectDir);
-                cout << addon.pathToOF << endl;
                 addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), line),target);
                 addAddon(addon);
             }
