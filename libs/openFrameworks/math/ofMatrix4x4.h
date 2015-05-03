@@ -16,15 +16,16 @@
 #include "ofConstants.h"
 #include <cmath>
 
-/// \brief The ofMatrix4x4 is the big class of the math part of openFrameworks. You'll
-/// sometimes see it used for doing things like setting where the camera in OepnGL
-/// (the mathematically calculated one, not the ofCamera one) is looking or is
-/// pointedA, or figuring how to position something in 3d space, doing scaling,
-/// etc. The great thing about the 4x4 matrix is that it can do all these things
-/// at the same time. A single ofMatrix4x4 can represent a ton of different
-/// information about a stuff that goes on in doing 3d programming: where an
-/// object is, how you want to scale an object, where a camera is. Let's look at a
-/// few really basic examples:
+/// \brief The ofMatrix4x4 is the big class of the math part of openFrameworks.
+/// 
+/// You'll sometimes see it used for doing things like setting where the camera
+/// in OpenGL (the mathematically calculated one, not the ofCamera one) is 
+/// looking or is pointedA, or figuring how to position something in 3d space, 
+/// doing scaling, etc. The great thing about the 4x4 matrix is that it can do 
+/// all these things at the same time. A single ofMatrix4x4 can represent a ton 
+/// of different information about a stuff that goes on in doing 3d 
+/// programming: where an object is, how you want to scale an object, where a 
+/// camera is. Let's look at a few really basic examples:
 /// 
 /// ![MATS](math/mats.png)
 /// 
@@ -37,15 +38,19 @@
 /// by multiplying with a matrix, you should put the vector on the left side and
 /// the matrix (or matrices) to its right. When multiplying by multiple matrices,
 /// the order of application of the transforms is left-to-right. This means that
-/// the standard order of manipulation operations is vector * scale * rotate * translate.
+/// the standard order of manipulation operations is 
+/// vector * scale * rotate * translate.
 /// 
-/// Note that in GLSL, this convention is reversed, and column-vector style is used.
-/// oF uploads the matrices correctly, but you should reverse the order of your manipulations
-/// to, e.g. translate * rotate * scale * vector.
+/// Note that in GLSL, this convention is reversed, and column-vector style is
+/// used. oF uploads the matrices to the GL context correctly, but you should
+/// reverse the order of your vertex manipulations to right-to-left style, e.g.
+/// translate * rotate * scale * vector.
 /// 
-/// oF still lets you do matrix-vector multiplication with the vector
-/// on the right if that's your preferred style. You can perform matrix transformations
-/// that use the OpenGL style by using functions like glTranslate, glRotate, and glScale.
+/// On the application side, oF has operators which let you do matrix-vector 
+/// multiplication with the vector on the right if that's your preferred style. 
+/// To set up a combined transformation matrix for working in this style, you
+/// should do matrix transformations with the functions like glTranslate,
+/// glRotate, and glScale.
 /// 
 class ofMatrix4x4 {
 public:
