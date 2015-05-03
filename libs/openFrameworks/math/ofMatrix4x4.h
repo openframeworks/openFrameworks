@@ -503,24 +503,33 @@ public:
 	/// For more information on this subject, check out
 	/// [this post](http://seanmiddleditch.com/matrices-handedness-pre-and-post-multiplication-row-vs-column-major-and-notations/).
 
-	/// \brief Matrix * vector multiplication. This operation
-	/// implicitly treat vectors as column-matrices
+	/// \brief Matrix * vector multiplication.
+	/// 
+	/// This operation implicitly treat vectors as column-matrices.
 	inline ofVec3f postMult( const ofVec3f& v ) const;
 	inline ofVec4f postMult( const ofVec4f& v ) const;
 
-	/// \brief post-multiply by another matrix. This matrix becomes `this * other`
+	/// \brief Post-multiply by another matrix.
+	/// 
+	/// This matrix becomes `this * other`.
 	void postMult( const ofMatrix4x4& );
 
-	/// \brief Vector * matrix multiplication. This
-	/// operation implicitly treats vectors as row-matrices
+	/// \brief Vector * matrix multiplication.
+	/// 
+	/// This operation implicitly treats vectors as row-matrices.
 	inline ofVec3f preMult( const ofVec3f& v ) const;
 	inline ofVec4f preMult( const ofVec4f& v ) const;
 
-	/// \brief pre-multiply by another matrix. This matrix becomes `other * this`
+	/// \brief Pre-multiply by another matrix.
+	/// 
+	/// This matrix becomes `other * this`.
 	void preMult( const ofMatrix4x4& );
 
-	/// \brief Equivalent to calling postMult(other) but you can do
-	/// someMatrix *= someMatrix without breaking const-correctness
+	/// \brief The *= operation for matrices.
+	/// 
+	/// This is equivalent to calling postMult(other), but it allows you to do
+	/// someMatrix *= someMatrix without breaking const-correctness. Calling
+	/// someMatrix.postMult(someMatrix) won't work.
 	inline void operator *= ( const ofMatrix4x4& other ) {
 		if ( this == &other ) {
 			ofMatrix4x4 temp(other);
@@ -528,20 +537,20 @@ public:
 		} else postMult( other );
 	}
 
-	/// \brief creates a new matrix from the product of two matrices
+	/// \brief creates a new matrix from the product of two matrices.
 	inline ofMatrix4x4 operator * ( const ofMatrix4x4 &m ) const {
 		ofMatrix4x4 r;
 		r.makeFromMultiplicationOf(*this, m);
 		return  r;
 	}
-	
 
-	/// \brief Matrix * vector multiplication. Calls postMult()
+	/// \brief Matrix * Vector operator.
+	/// 
+	/// Calls postMult() internally.
 	inline ofVec3f operator* (const ofVec3f& v) const {
 		return postMult(v);
 	}
-	
-	/// \brief Matrix * vector multiplication. Calls postMult()
+
 	inline ofVec4f operator* (const ofVec4f& v) const {
 		return postMult(v);
 	}
