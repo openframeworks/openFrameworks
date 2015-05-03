@@ -425,10 +425,6 @@ bool ofXml::setValue(const string& path, const string& value)
     }
 }
 
-bool ofXml::setValue(const string& path, const int& value){
-    return setValue(path, ofToString(value));
-}
-
 string ofXml::getAttribute(const string& path) const {
 
     Poco::XML::Node *e;
