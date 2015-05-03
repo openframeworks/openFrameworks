@@ -582,34 +582,63 @@ public:
 	/// \name Matrix transformation
 	/// \{
 
-	/// set methods: all these alter the components
-	/// deleting the previous data only in that components
+	/// \name Set methods
+	/// \{
+	/// 
+	/// All of these methods alter the components,
+	/// deleting the previous data only in that component.
 	void setRotate(const ofQuaternion& q);
 	void setTranslation( float tx, float ty, float tz );
 	void setTranslation( const ofVec3f& v );
+	/// \}
 
-	/// all these apply the transformations over the
-	/// current one, it's actually postMult... and behaves
-	/// the opposite to the equivalent gl functions
-	/// glTranslate + glRotate == rotate + translate
+	/// \name PostMult Transformations
+	/// \{
+	/// 
+	/// All of these methods apply the transformations over the current one,
+	/// calling postMult under the hood. These work as the opposite of the 
+	/// equivalent OpenGL functions.
+	/// 
+	/// For example, glTranslate + glRotate == rotate + translate.
+
+	/// \brief Rotates by angle (degrees) around the given x, y, z axis.
 	void rotate(float angle, float x, float y, float z);
+	/// \brief Rotates by angle (radians) around the given x, y, z axis.
 	void rotateRad(float angle, float x, float y, float z);
+	/// \brief Rotates based on the quarternion.
 	void rotate(const ofQuaternion& q);
+	/// \brief Translates by tx, ty, tz.
 	void translate( float tx, float ty, float tz );
+	/// \brief Translates along the vector.
 	void translate( const ofVec3f& v );
+	/// \brief Scales each axis by the corresponding x, y, z.
 	void scale(float x, float y, float z);
+	/// \brief Scales each axis by the corresponding x, y, z of the vector.
 	void scale( const ofVec3f& v );
+	/// \}
 
-	/// all these apply the transformations over the
-	/// current one, it's actually preMult... and behaves
-	/// the the same the equivalent gl functions
+	/// \name PreMult Transformations
+	/// \{
+	/// 
+	/// All of these methods apply the transformations over the current one,
+	/// calling preMult under the hood. These work the the same the equivalent 
+	/// OpenGL functions.
+
+	/// \sa rotate
 	void glRotate(float angle, float x, float y, float z);
+	/// \sa rotate
 	void glRotateRad(float angle, float x, float y, float z);
+	/// \sa rotate
 	void glRotate(const ofQuaternion& q);
+	/// \sa translate
 	void glTranslate( float tx, float ty, float tz );
+	/// \sa translate
 	void glTranslate( const ofVec3f& v );
+	/// \sa scale
 	void glScale(float x, float y, float z);
+	/// \sa scale
 	void glScale( const ofVec3f& v );
+	/// \}
 
 	//---------------------------------------------
 	/// get methods: return matrix components
