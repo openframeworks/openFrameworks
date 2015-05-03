@@ -393,17 +393,17 @@ public:
 	/// \name Getters
 	/// \{
 
-	/// \brief Get the inverse matrix
+	/// \brief Gets the inverse matrix.
 	ofMatrix4x4 getInverse() const;
 
-
-	/// \brief Get the perspective components from a matrix
-	/// this only works with pure perspective projection matrices
+	/// \brief Get the perspective components from a matrix.
+	/// 
+	/// This only works with pure perspective projection matrices.
 	bool getOrtho(double& left,   double& right,
 	              double& bottom, double& top,
 	              double& zNear,  double& zFar) const;
 
-	
+	/// \brief Gets the perspective components for a frustum projection matrix.
 	bool getFrustum(double& left,   double& right,
 	                double& bottom, double& top,
 	                double& zNear,  double& zFar) const;
@@ -422,11 +422,11 @@ public:
 	bool getPerspective(double& fovy,  double& aspectRatio,
 	                    double& zNear, double& zFar) const;
 
-	/// will only work for modelview matrices
+	/// \brief Gets the lookAt determiners of the matrix.
+	/// 
+	/// This function will only work for modelview matrices.
 	void getLookAt(ofVec3f& eye, ofVec3f& center, ofVec3f& up,
 	               float lookDistance = 1.0f) const;
-
-
 
 	/// \brief Decompose the matrix into translation, rotation,
 	/// scale and scale orientation.
@@ -435,9 +435,13 @@ public:
 					ofVec3f& scale,
 					ofQuaternion& so ) const;
 
-	/// create new matrices as transformation of another
+	/// Create new matrices as transformation of another.
+
+	/// \brief Makes a new matrix which is the inverse of the given matrix.
 	inline static ofMatrix4x4 getInverseOf( const ofMatrix4x4& matrix);
+	/// \brief Makes a new matrix which is the transpose of the given matrix.
 	inline static ofMatrix4x4 getTransposedOf( const ofMatrix4x4& matrix);
+	/// \brief Makes a new matrix which is the given matrix, normalized.
 	inline static ofMatrix4x4 getOrthoNormalOf(const ofMatrix4x4& matrix);
 
 
