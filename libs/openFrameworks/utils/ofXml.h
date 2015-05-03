@@ -55,6 +55,7 @@ public:
     bool			getBoolValue(const string & path) const;
 
     bool            setValue(const string& path, const string& value);
+    bool            setValue(const string& path, const int& value);
     
     string          getAttribute(const string& path) const;
     bool            setAttribute(const string& path, const string& value);

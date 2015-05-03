@@ -218,6 +218,7 @@ CORE
 	/ ofThread now uses Class name for logging channel (was thread name)
 	/ ofURLFileLoader: better shutdown, don't shutdown if it wasn't initialized + wait thread
 	/ ofXml: fixes crash on empty document
+	/ ofXml: added support for setValue as int
 	/ ofSystem: fix for second and later calls failing
 	+ ofThread argument for tryJoin time.
 	/ ofThread overall, documentation and example fixes
