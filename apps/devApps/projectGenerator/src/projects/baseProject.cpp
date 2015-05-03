@@ -173,16 +173,24 @@ void baseProject::addAddon(ofAddon & addon){
 
 void baseProject::parseAddons(){
 	ofFile addonsMake(ofFilePath::join(projectDir,"addons.make"));
-	ofBuffer addonsMakeMem;
-	addonsMake >> addonsMakeMem;
+    ofBuffer addonsMakeMem;
+    addonsMake >> addonsMakeMem;
+    
+    string line = addonsMakeMem.getFirstLine();
+    
 	while(!addonsMakeMem.isLastLine()){
-	    string line = addonsMakeMem.getNextLine();
-	    if(line[0] == '#') continue;
-		ofAddon addon;
-		cout << projectDir << endl;
-		addon.pathToOF = getOFRelPath(projectDir);
-		cout << addon.pathToOF << endl;
-		addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), line),target);
-		addAddon(addon);
+        
+        if (line.size() > 0){           // non empty line
+            if(line[0] != '#') {        // line is not a comment
+                ofAddon addon;
+                cout << projectDir << endl;
+                addon.pathToOF = getOFRelPath(projectDir);
+                cout << addon.pathToOF << endl;
+                addon.fromFS(ofFilePath::join(ofFilePath::join(getOFRoot(), "addons"), line),target);
+                addAddon(addon);
+            }
+        }
+        
+        line = addonsMakeMem.getNextLine();
 	}
 }
