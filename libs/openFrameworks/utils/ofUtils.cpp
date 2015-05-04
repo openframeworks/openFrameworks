@@ -737,7 +737,14 @@ void ofLaunchBrowser(const string& _url, bool uriEncodeQuery){
 //--------------------------------------------------
 string ofGetVersionInfo(){
 	stringstream sstr;
-	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH << endl;
+	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH;
+
+	if (!std::string(OF_VERSION_PRE_RELEASE).empty())
+	{
+		sstr << "-" << OF_VERSION_PRE_RELEASE;
+	}
+
+	sstr << std::endl;
 	return sstr.str();
 }
 
@@ -752,6 +759,11 @@ unsigned int ofGetVersionMinor() {
 unsigned int ofGetVersionPatch() {
 	return OF_VERSION_PATCH;
 }
+
+std::string ofGetVersionPreRelease() {
+	return OF_VERSION_PRE_RELEASE;
+}
+
 
 //---- new to 006
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413
