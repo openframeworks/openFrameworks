@@ -153,6 +153,7 @@ void ofBufferObject::unmap(){
 #ifdef GLEW_ARB_direct_state_access
 	if (GLEW_ARB_direct_state_access) {
 		glUnmapNamedBuffer(data->id);
+		return;
 	}
 #endif
 
