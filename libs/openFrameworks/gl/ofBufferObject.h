@@ -130,6 +130,7 @@ private:
 		GLuint id;
 		GLsizeiptr size;
 		GLenum lastTarget;
+		bool useDSA;
 	};
 	shared_ptr<Data> data;
 };
