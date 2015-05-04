@@ -21,7 +21,6 @@ ofBufferObject::Data::Data()
 #ifdef GLEW_ARB_direct_state_access
 	if (ofGLCheckExtension("GL_ARB_direct_state_access")) {
 		useDSA = true;
-		cout << "using dsa" << endl;
 		// the above condition is only true if GLEW can provide us
 		// with direct state access methods. we use this to test
 		// whether the driver is OpenGL 4.5 ready.
