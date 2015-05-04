@@ -739,7 +739,7 @@ string ofGetVersionInfo(){
 	stringstream sstr;
 	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH;
 
-	if (sizeof(OF_VERSION_PRE_RELEASE) > 1)
+	if (!std::string(OF_VERSION_PRE_RELEASE).empty())
 	{
 		sstr << "-" << OF_VERSION_PRE_RELEASE;
 	}
