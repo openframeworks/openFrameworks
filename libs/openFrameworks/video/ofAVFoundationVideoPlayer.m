@@ -242,7 +242,7 @@ static const NSString * ItemStatusContext;
 									 object:self.playerItem];
 			
 			[_player replaceCurrentItemWithPlayerItem:self.playerItem];
-			
+			_player.volume = volume;
 			[self addTimeObserverToPlayer];
 			
 			bLoaded = true;
@@ -840,19 +840,7 @@ static const NSString * ItemStatusContext;
 		return;
 	}
 	
-	NSArray * audioTracks = [self.asset tracksWithMediaType:AVMediaTypeAudio];
-	NSMutableArray * allAudioParams = [NSMutableArray array];
-	for(AVAssetTrack * track in audioTracks) {
-		AVMutableAudioMixInputParameters * audioInputParams = [AVMutableAudioMixInputParameters audioMixInputParameters];
-		[audioInputParams setVolume:volume atTime:kCMTimeZero];
-		[audioInputParams setTrackID:[track trackID]];
-		[allAudioParams addObject:audioInputParams];
-	}
-	
-	AVMutableAudioMix * audioMix = [AVMutableAudioMix audioMix];
-	[audioMix setInputParameters:allAudioParams];
-	
-	[self.playerItem setAudioMix:audioMix];
+	_player.volume = value;
 }
 
 - (float)getVolume {
