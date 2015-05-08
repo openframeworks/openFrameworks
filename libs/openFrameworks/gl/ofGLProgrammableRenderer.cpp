@@ -1453,6 +1453,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 	if(!uniqueShader || currentMaterial){
 		if(currentMaterial){
 			nextShader = &currentMaterial->getShader(currentTextureTarget,*this);
+			currentMaterial->updateMaterial(*nextShader,*this);
 		}else if(bitmapStringEnabled){
 			nextShader = &bitmapStringShader;
 
