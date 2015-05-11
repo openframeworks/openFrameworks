@@ -1,5 +1,6 @@
 #include "ofxSlider.h"
 #include "ofGraphics.h"
+using namespace std;
 
 template<typename Type>
 ofxSlider<Type>::ofxSlider(){

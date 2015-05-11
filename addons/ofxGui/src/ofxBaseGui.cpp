@@ -2,6 +2,7 @@
 #include "ofXml.h"
 #include "ofImage.h"
 #include "ofBitmapFont.h"
+using namespace std;
 
 
 void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0){
