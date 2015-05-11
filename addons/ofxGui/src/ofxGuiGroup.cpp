@@ -3,6 +3,7 @@
 #include "ofxSliderGroup.h"
 #include "ofGraphics.h"
 #include "ofxLabel.h"
+using namespace std;
 
 ofxGuiGroup::ofxGuiGroup(){
 	minimized = false;
@@ -176,7 +177,9 @@ void ofxGuiGroup::add(ofParameter<ofFloatColor> & parameter){
 
 void ofxGuiGroup::clear(){
 	collection.clear();
+	parameters.clear();
 	b.height = header + spacing + spacingNextElement ;
+	sizeChangedCB();
 }
 
 bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
