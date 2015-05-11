@@ -18,6 +18,9 @@
 class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();
+	~ofParameterGroup();
+	ofParameterGroup(const ofParameterGroup& other);
+	ofParameterGroup & operator=(const ofParameterGroup& other);
 
 	void add(ofAbstractParameter & param);
 
@@ -71,7 +74,6 @@ public:
 	string getType(int position) const;
 	int getPosition(string name) const;
 
-	ofParameterGroup & operator=(const ofParameterGroup&);
 	friend ostream& operator<<(ostream& os, const ofParameterGroup& group);
 
 	string getName() const;
@@ -122,21 +124,6 @@ private:
 	};
 	shared_ptr<Value> obj;
 };
-
-ofParameterGroup & ofParameterGroup::operator=(const ofParameterGroup& mom){
-
-	// copy object
-	obj = mom.obj;
-	
-	// correct parent of parameters
-	vector<shared_ptr<ofAbstractParameter> >::iterator it = obj->parameters.begin();
-	while(it != obj->parameters.end()){
-		(*it)->setParent(this);
-		it++;
-	}
-	
-	return *this;
-}
 
 template<typename ParameterType>
 ofParameter<ParameterType> ofParameterGroup::get(string name) const{
