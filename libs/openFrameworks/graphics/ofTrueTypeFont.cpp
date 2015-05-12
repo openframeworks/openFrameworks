@@ -170,18 +170,7 @@ static ofTTFCharacter makeContoursForCharacter(FT_Face &face){
 }
 
 #if defined(TARGET_ANDROID)
-	#include <set>
-	static set<ofTrueTypeFont*> & all_fonts(){
-		static set<ofTrueTypeFont*> *all_fonts = new set<ofTrueTypeFont*>;
-		return *all_fonts;
-	}
-
-	void ofReloadAllFontTextures(){
-		for(auto font: all_fonts()){
-			font->reloadTextures();
-		}
-	}
-
+#include "ofxAndroidUtils.h"
 #endif
 
 bool compare_cps(const charProps & c1, const charProps & c2){
@@ -354,9 +343,6 @@ bool ofTrueTypeFont::initLibraries(){
 ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
-	#if defined(TARGET_ANDROID)
-		all_fonts().insert(this);
-	#endif
 	letterSpacing = 1;
 	spaceSize = 1;
 
@@ -378,25 +364,19 @@ ofTrueTypeFont::ofTrueTypeFont(){
 ofTrueTypeFont::~ofTrueTypeFont(){
 
 	if(face) FT_Done_Face(face);
-
-	if (bLoadedOk){
-		unloadTextures();
-	}
-
 	#if defined(TARGET_ANDROID)
-		all_fonts().erase(this);
+	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
+	ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
 	#endif
 }
 
 void ofTrueTypeFont::unloadTextures(){
 	if(!bLoadedOk) return;
-
 	texAtlas.clear();
-	bLoadedOk = false;
 }
 
 void ofTrueTypeFont::reloadTextures(){
-	load(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
+	if(bLoadedOk) load(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
 }
 
 static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string & filename){
@@ -451,16 +431,15 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 
 //-----------------------------------------------------------
 bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
+	#if defined(TARGET_ANDROID)
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
+	#endif
 	int border = 1;
 	initLibraries();
 
-	//------------------------------------------------
-	if (bLoadedOk == true){
-
-		// we've already been loaded, try to clean up :
-		unloadTextures();
-	}
-	//------------------------------------------------
+	// if we've already been loaded, try to clean up :
+	unloadTextures();
 
 	if( _dpi == 0 ){
 		_dpi = ttfGlobalDpi;

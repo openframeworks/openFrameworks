@@ -9,11 +9,11 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
 # define the version
-VER=2.5.3
+VER=2.5.5
 
 # tools for git use
 GIT_URL=http://git.savannah.gnu.org/r/freetype/freetype2.git
-GIT_TAG=VER-2-5-3
+GIT_TAG=VER-2-5-5
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -58,7 +58,7 @@ function build() {
 
 		local TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain 
 
-		./configure --prefix=$BUILD_TO_DIR --without-bzip2 --enable-static=yes --enable-shared=no \
+		./configure --prefix=$BUILD_TO_DIR --without-bzip2 --with-harfbuzz=no --enable-static=yes --enable-shared=no \
 			CFLAGS="$FAT_CFLAGS -pipe -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
 		make clean 
 		make
@@ -201,7 +201,7 @@ function build() {
 			echo "Please stand by..."
 
 			echo "Configuring..."
-			./configure --without-bzip2 --prefix=$IOS_PREFIX --host=$IOS_HOST --enable-static=yes --enable-shared=no \
+			./configure --without-bzip2 --prefix=$IOS_PREFIX --host=$IOS_HOST --with-harfbuzz=no --enable-static=yes --enable-shared=no \
 			CC="$CC" \
 			CFLAGS="$CFLAGS" \
 			CXXFLAGS="$CXXFLAGS" \

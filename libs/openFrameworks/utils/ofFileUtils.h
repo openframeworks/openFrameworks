@@ -65,6 +65,7 @@ public:
         Line operator++(int);
         bool operator!=(Line const& rhs) const;
         bool operator==(Line const& rhs) const;
+        bool empty() const;
 
 	private:
         string line;

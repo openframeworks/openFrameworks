@@ -18,6 +18,9 @@
 class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();
+	~ofParameterGroup();
+	ofParameterGroup(const ofParameterGroup& other);
+	ofParameterGroup & operator=(const ofParameterGroup& other);
 
 	void add(ofAbstractParameter & param);
 
@@ -121,7 +124,6 @@ private:
 	};
 	shared_ptr<Value> obj;
 };
-
 
 template<typename ParameterType>
 ofParameter<ParameterType> ofParameterGroup::get(string name) const{

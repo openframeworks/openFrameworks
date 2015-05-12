@@ -16,7 +16,7 @@ public:
 	~ofxEmscriptenVideoGrabber();
 
 	vector<ofVideoDevice>	listDevices() const;
-	bool	initGrabber(int w, int h);
+	bool	setup(int w, int h);
 	bool	isInitialized() const;
 	void	update();
 	bool	isFrameNew() const;
