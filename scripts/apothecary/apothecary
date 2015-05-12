@@ -491,7 +491,12 @@ function doCommand() {
 					# process all formulas in scripts/formulas
 					local addonFormula
 					for addonFormula in $( ls -1 $FORMULA_DIR) ; do
-						doCommand $shouldSource $cmd $FORMULA_DIR/$addonFormula
+						# is the file in the directory a valid formula extension
+						if [ -e $FORMULA_DIR -a "${addonFormula##*.}" == "sh" ] ; then
+							doCommand $shouldSource $cmd $FORMULA_DIR/$addonFormula
+						else 
+							echoVerbose "Unknown formula extension '$addonFormula' with extension: ${addonFormula##*.}"
+						fi
 					done
 					
 					# back to default
