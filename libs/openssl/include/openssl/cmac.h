@@ -1,10 +1,10 @@
-/* crypto/ui/ui.h -*- mode:C; c-file-style: "eay" -*- */
+/* crypto/cmac/cmac.h */
 /*
- * Written by Richard Levitte (richard@levitte.org) for the OpenSSL project
- * 2001.
+ * Written by Dr Stephen N Henson (steve@openssl.org) for the OpenSSL
+ * project.
  */
 /* ====================================================================
- * Copyright (c) 2001 The OpenSSL Project.  All rights reserved.
+ * Copyright (c) 2010 The OpenSSL Project.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,12 +21,12 @@
  * 3. All advertising materials mentioning features or use of this
  *    software must display the following acknowledgment:
  *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
+ *    for use in the OpenSSL Toolkit. (http://www.OpenSSL.org/)"
  *
  * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
  *    endorse or promote products derived from this software without
  *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
+ *    licensing@OpenSSL.org.
  *
  * 5. Products derived from this software may not be called "OpenSSL"
  *    nor may "OpenSSL" appear in their names without prior written
@@ -35,7 +35,7 @@
  * 6. Redistributions of any form whatsoever must retain the following
  *    acknowledgment:
  *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
+ *    for use in the OpenSSL Toolkit (http://www.OpenSSL.org/)"
  *
  * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
  * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -50,37 +50,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
- *
  */
 
-#ifndef HEADER_UI_COMPAT_H
-# define HEADER_UI_COMPAT_H
+#ifndef HEADER_CMAC_H
+# define HEADER_CMAC_H
 
-# include <openssl/opensslconf.h>
-# include <openssl/ui.h>
-
-#ifdef  __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
-/*
- * The following functions were previously part of the DES section, and are
- * provided here for backward compatibility reasons.
- */
+# include <openssl/evp.h>
 
-# define des_read_pw_string(b,l,p,v) \
-        _ossl_old_des_read_pw_string((b),(l),(p),(v))
-# define des_read_pw(b,bf,s,p,v) \
-        _ossl_old_des_read_pw((b),(bf),(s),(p),(v))
+/* Opaque */
+typedef struct CMAC_CTX_st CMAC_CTX;
 
-int _ossl_old_des_read_pw_string(char *buf, int length, const char *prompt,
-                                 int verify);
-int _ossl_old_des_read_pw(char *buf, char *buff, int size, const char *prompt,
-                          int verify);
+CMAC_CTX *CMAC_CTX_new(void);
+void CMAC_CTX_cleanup(CMAC_CTX *ctx);
+void CMAC_CTX_free(CMAC_CTX *ctx);
+EVP_CIPHER_CTX *CMAC_CTX_get0_cipher_ctx(CMAC_CTX *ctx);
+int CMAC_CTX_copy(CMAC_CTX *out, const CMAC_CTX *in);
+
+int CMAC_Init(CMAC_CTX *ctx, const void *key, size_t keylen,
+              const EVP_CIPHER *cipher, ENGINE *impl);
+int CMAC_Update(CMAC_CTX *ctx, const void *data, size_t dlen);
+int CMAC_Final(CMAC_CTX *ctx, unsigned char *out, size_t *poutlen);
+int CMAC_resume(CMAC_CTX *ctx);
 
 #ifdef  __cplusplus
 }
