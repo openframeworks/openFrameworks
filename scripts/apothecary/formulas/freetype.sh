@@ -9,11 +9,11 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
 # define the version
-VER=2.5.3
+VER=2.5.5
 
 # tools for git use
 GIT_URL=http://git.savannah.gnu.org/r/freetype/freetype2.git
-GIT_TAG=VER-2-5-3
+GIT_TAG=VER-2-5-5
 
 # download the source code and unpack it into LIB_NAME
 function download() {
