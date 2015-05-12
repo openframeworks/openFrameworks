@@ -1078,6 +1078,10 @@ void ofMesh::save(string path, bool useBinary) const{
 					os.write((char*) &curIndex, sizeof(int));
 				}
 			} else {
+				if (i+2 >= data.getNumIndices())
+				{
+					break;
+				}
 				os << (int) faceSize << " " << data.getIndex(i) << " " << data.getIndex(i+1) << " " << data.getIndex(i+2) << endl;
 			}
 		}
