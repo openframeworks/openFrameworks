@@ -29,7 +29,6 @@
 ** Author: Eric Veach, July 1994.
 */
 
-#include <assert.h>
 #include <stddef.h>
 #include <setjmp.h>		/* longjmp */
 
@@ -438,6 +437,7 @@ static void GetIntersectData( TESStesselator *tess, TESSvertex *isect,
  */
 {
 	TESSreal weights[4];
+	TESS_NOTUSED( tess );
 
 	isect->coords[0] = isect->coords[1] = isect->coords[2] = 0;
 	isect->idx = TESS_UNDEF;
@@ -975,9 +975,10 @@ static void ConnectLeftVertex( TESStesselator *tess, TESSvertex *vEvent )
 	/* __GL_DICTLISTKEY */ /* tessDictListSearch */
 	regUp = (ActiveRegion *)dictKey( dictSearch( tess->dict, &tmp ));
 	regLo = RegionBelow( regUp );
-	if(!regUp) return;
-	if(!regLo) return;
-
+	if( !regLo ) {
+		// This may happen if the input polygon is coplanar.
+		return;
+	}
 	eUp = regUp->eUp;
 	eLo = regLo->eUp;
 
@@ -1119,10 +1120,12 @@ static void InitEdgeDict( TESStesselator *tess )
 	w = (tess->bmax[0] - tess->bmin[0]);
 	h = (tess->bmax[1] - tess->bmin[1]);
 
-	smin = tess->bmin[0] - w;
-	smax = tess->bmax[0] + w;
-	tmin = tess->bmin[1] - h;
-	tmax = tess->bmax[1] + h;
+        /* If the bbox is empty, ensure that sentinels are not coincident by
+           slightly enlarging it. */
+	smin = tess->bmin[0] - (w > 0 ? w : 0.01);
+        smax = tess->bmax[0] + (w > 0 ? w : 0.01);
+        tmin = tess->bmin[1] - (h > 0 ? h : 0.01);
+        tmax = tess->bmax[1] + (h > 0 ? h : 0.01);
 
 	AddSentinel( tess, smin, smax, tmin );
 	AddSentinel( tess, smin, smax, tmax );
