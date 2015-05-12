@@ -33,9 +33,6 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		bool isFrameNew() const { return bIsFrameNew;};
 
 		ofTexture *	getTexturePtr();
-		void reloadTexture();
-		void unloadTexture();
-		void removeTexture();
 
 		float getWidth() const;
 		float getHeight() const;
@@ -68,6 +65,8 @@ class ofxAndroidVideoPlayer: public ofBaseVideoPlayer{
 		//void previousFrame();
 
 	private:
+		void reloadTexture();
+		void unloadTexture();
 
 		jobject javaVideoPlayer;
 		jclass javaClass;

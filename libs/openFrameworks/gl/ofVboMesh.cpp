@@ -1,6 +1,10 @@
 #include "ofVboMesh.h"
 #include "ofBaseTypes.h"
 
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
+
 ofVboMesh::ofVboMesh(){
 	usage= GL_STATIC_DRAW;
 	vboNumIndices = 0;
@@ -24,6 +28,12 @@ ofVboMesh::ofVboMesh(const ofMesh & mom)
 void ofVboMesh::operator=(const ofMesh & mom)
 {
 	((ofMesh&)(*this)) = mom;
+}
+
+ofVboMesh::~ofVboMesh(){
+#ifdef TARGET_ANDROID
+	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofVboMesh::unloadVbo);
+#endif
 }
 
 void ofVboMesh::setUsage(int _usage){
@@ -98,8 +108,15 @@ void ofVboMesh::draw(ofPolyRenderMode drawMode) const{
 	drawInstanced(drawMode, 1);
 }
 
+void ofVboMesh::unloadVbo(){
+	vbo.clear();
+}
+
 void ofVboMesh::updateVbo(){
 	if(!vbo.getIsAllocated()){
+		#ifdef TARGET_ANDROID
+			ofAddListener(ofxAndroidEvents().unloadGL,this,&ofVboMesh::unloadVbo);
+		#endif
 		if(getNumVertices()){
 			vbo.setVertexData(getVerticesPointer(),getNumVertices(),usage);
 		}
@@ -120,6 +137,14 @@ void ofVboMesh::updateVbo(){
 		vboNumColors = getNumColors();
 		vboNumTexCoords = getNumTexCoords();
 		vboNumNormals = getNumNormals();
+
+		// we need to call these to reset the changed flags or else next frame
+		// data will be updated again.
+		haveVertsChanged();
+		haveColorsChanged();
+		haveNormalsChanged();
+		haveTexCoordsChanged();
+		haveIndicesChanged();
 	}else{
 
 		if(haveVertsChanged()){

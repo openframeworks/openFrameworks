@@ -10,6 +10,10 @@
 
 #include <gst/video/video.h>
 
+#ifdef TARGET_LINUX
+#include <sys/utsname.h>
+#endif
+
 //-------------------------------------------------
 //----------------------------------------- grabber
 //-------------------------------------------------
@@ -93,6 +97,7 @@ static void get_video_devices (ofGstCamData & cam_data)
 		struct video_capability v1cap;
 		string vendor_id;
 		string product_id;
+		string serial_id;
 
 		const char * dev_node = udev_device_get_devnode(device);
 		struct udev_list_entry * properties = udev_device_get_properties_list_entry(device);
@@ -106,6 +111,10 @@ static void get_video_devices (ofGstCamData & cam_data)
 
 			if(strcmp(name,"ID_MODEL_ID")==0){
 				product_id = udev_list_entry_get_value(property);
+			}
+
+			if(strcmp(name,"ID_SERIAL")==0){
+				serial_id = udev_list_entry_get_value(property);;
 			}
 
 		}
@@ -166,6 +175,7 @@ static void get_video_devices (ofGstCamData & cam_data)
 		gst_device.video_device = dev_node;
 		gst_device.gstreamer_src = gstreamer_src;
 		gst_device.product_name = product_name;
+		gst_device.serial_id = serial_id;
 		cam_data.webcam_devices.push_back(gst_device);
 		/*cam_data.webcam_devices[cam_data.num_webcam_devices].video_device      = dev_node;
 		cam_data.webcam_devices[cam_data.num_webcam_devices].gstreamer_src     = gstreamer_src;
@@ -633,6 +643,7 @@ vector<ofVideoDevice> ofGstVideoGrabber::listDevices() const {
         devices[i].bAvailable = true; 
 		devices[i].deviceName = camData.webcam_devices[i].product_name;
 		devices[i].hardwareName = camData.webcam_devices[i].video_device;
+		devices[i].serialID = camData.webcam_devices[i].serial_id;
 		devices[i].formats.resize(camData.webcam_devices[i].video_formats.size());
 		for(int j=0;j<(int)camData.webcam_devices[i].video_formats.size();j++){
 			devices[i].formats[j].pixelFormat = ofPixelFormatFromGstFormat(camData.webcam_devices[i].video_formats[j].format_name);
@@ -727,12 +738,17 @@ bool ofGstVideoGrabber::setup(int w, int h){
 #else
 	string pipeline_string;
 	string format_str_pipeline;
+	string fix_v4l2_316;
+#if defined(TARGET_LINUX) && !defined(OF_USE_GST_GL) && GST_VERSION_MAJOR>0 && GST_VERSION_MINOR>2
+	videoUtils.setCopyPixels(true);
+#endif
 	if(internalPixelFormat!=OF_PIXELS_NATIVE){
 		string decodebin, scale;
-		if(format.mimetype == "video/x-bayer")
+		if(format.mimetype == "video/x-bayer"){
 			decodebin = "! bayer2rgb ";
-		else if(gst_video_format_from_string(format.format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED || gst_video_format_from_string(format.format_name.c_str()) ==GST_VIDEO_FORMAT_UNKNOWN)
+		}else if(gst_video_format_from_string(format.format_name.c_str()) == GST_VIDEO_FORMAT_ENCODED || gst_video_format_from_string(format.format_name.c_str()) ==GST_VIDEO_FORMAT_UNKNOWN){
 			decodebin = "! decodebin ";
+		}
 
 		if(format.format_name!=ofGstVideoUtils::getGstFormatName(internalPixelFormat)){
 			scale = "! videoconvert ";
@@ -741,6 +757,7 @@ bool ofGstVideoGrabber::setup(int w, int h){
 		if( w!=format.width || h!=format.height ){
 			scale = "! videoscale method=2 ";
 		}
+
 		if(format.format_name==""){
 			format_str_pipeline = "%s name=video_source device=%s ! "
 									 "%s,width=%d,height=%d,framerate=%d/%d "
@@ -755,7 +772,7 @@ bool ofGstVideoGrabber::setup(int w, int h){
 							  format.height,
 							  format.choosen_framerate.numerator,
 							  format.choosen_framerate.denominator,
-							  decodebin.c_str(), scale.c_str());
+							  decodebin.c_str(), (scale + fix_v4l2_316).c_str());
 		}else{
 			format_str_pipeline = "%s name=video_source device=%s ! "
 									 "%s,format=%s,width=%d,height=%d,framerate=%d/%d "
@@ -771,13 +788,13 @@ bool ofGstVideoGrabber::setup(int w, int h){
 							  format.height,
 							  format.choosen_framerate.numerator,
 							  format.choosen_framerate.denominator,
-							  decodebin.c_str(), scale.c_str());
+							  decodebin.c_str(), (scale + fix_v4l2_316).c_str());
 		}
 	}else{
-		format_str_pipeline = "v4l2src name=video_source device=/dev/video%d ! video/x-raw,framerate=%d/1";
+		format_str_pipeline = "v4l2src name=video_source device=/dev/video%d ! video/x-raw,framerate=%d/1 %s";
 		pipeline_string=g_strdup_printf (
 				format_str_pipeline.c_str(),
-				deviceID,attemptFramerate);
+				deviceID,attemptFramerate,fix_v4l2_316.c_str());
 
 
 	}
@@ -785,12 +802,7 @@ bool ofGstVideoGrabber::setup(int w, int h){
 
 
 
-	if(	videoUtils.setPipeline(pipeline_string,internalPixelFormat,false,w,h) && videoUtils.startPipeline()){
-		videoUtils.play();
-		return true;
-	}else{
-		return false;
-	}
+	return videoUtils.setPipeline(pipeline_string,internalPixelFormat,false,w,h) && videoUtils.startPipeline();
 }
 
 void ofGstVideoGrabber::setDesiredFrameRate(int framerate){
@@ -803,7 +815,7 @@ ofGstVideoUtils * ofGstVideoGrabber::getGstVideoUtils(){
 
 
 void ofGstVideoGrabber::update(){
-	videoUtils.update();
+ 	videoUtils.update();
 }
 
 bool ofGstVideoGrabber::isFrameNew() const {
@@ -817,6 +829,10 @@ ofPixels& ofGstVideoGrabber::getPixels(){
 
 const ofPixels & ofGstVideoGrabber::getPixels() const {
 	return videoUtils.getPixels();
+}
+
+ofTexture * ofGstVideoGrabber::getTexturePtr(){
+	return videoUtils.getTexture();
 }
 
 float ofGstVideoGrabber::getHeight() const {

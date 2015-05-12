@@ -41,6 +41,11 @@ int ofxEmscriptenURLFileLoader::saveAsync(string url, string path){
 	return 0;
 }
 
+ofHttpResponse handleRequest(ofHttpRequest request){
+	ofLogWarning() << "handleRequest is still not implemented on emscripten";
+	return ofHttpResponse();
+}
+
 void ofxEmscriptenURLFileLoader::remove(int id){
 
 }

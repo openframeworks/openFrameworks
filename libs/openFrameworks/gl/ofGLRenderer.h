@@ -26,10 +26,9 @@ public:
 
 	void startRender();
 	void finishRender();
-	void update();
+
 	using ofBaseRenderer::draw;
 	using ofBaseGLRenderer::draw;
-	void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
     void draw(const of3dPrimitive& model, ofPolyRenderMode renderType) const;
     void draw(const ofNode& model) const;
@@ -191,16 +190,22 @@ public:
 
 	void bind(const ofBaseVideoDraws & video);
 	void bind(const ofBaseMaterial & material);
-	void bind(const ofFbo & fbo, bool setupPerspective);
 	void bind(const ofShader & shader);
 	void bind(const ofTexture & texture, int location);
 	void bind(const ofCamera & camera, const ofRectangle & viewport);
 	void unbind(const ofBaseVideoDraws & video);
 	void unbind(const ofBaseMaterial & material);
-	void unbind(const ofFbo & fbo);
 	void unbind(const ofShader & shader);
 	void unbind(const ofTexture & texture, int location);
 	void unbind(const ofCamera & camera);
+
+	void begin(const ofFbo & fbo, bool setupPerspective);
+	void end(const ofFbo & fbo);
+
+	void bind(const ofFbo & fbo);
+	void unbind(const ofFbo & fbo);
+
+	const GLuint& getCurrentFramebufferId() const { return currentFramebufferId; };
 
 	int getGLVersionMajor();
 	int getGLVersionMinor();
@@ -236,4 +241,8 @@ private:
 	ofBitmapFont bitmapFont;
 	ofPath path;
 	const ofAppBaseWindow * window;
+
+	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
+	GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
+
 };

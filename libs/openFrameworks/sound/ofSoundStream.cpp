@@ -65,23 +65,23 @@ shared_ptr<ofBaseSoundStream> ofSoundStream::getSoundStream(){
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::getDeviceList(){
+vector<ofSoundDevice> ofSoundStream::getDeviceList() const{
 	if( soundStream ){
-		return soundStream->listDevices();
+		return soundStream->getDeviceList();
 	} else {
 		return vector<ofSoundDevice>();
 	}
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::listDevices(){
+vector<ofSoundDevice> ofSoundStream::listDevices() const{
 	vector<ofSoundDevice> deviceList = getDeviceList();
 	ofLogNotice("ofSoundStream::listDevices") << std::endl << deviceList;
 	return deviceList;
 }
 
 //------------------------------------------------------------
-void ofSoundStream::printDeviceList() {
+void ofSoundStream::printDeviceList()  const{
 	if( soundStream ) {
 		soundStream->printDeviceList();
 	}
@@ -161,7 +161,7 @@ void ofSoundStream::close(){
 }
 
 //------------------------------------------------------------
-long unsigned long ofSoundStream::getTickCount(){
+long unsigned long ofSoundStream::getTickCount() const{
 	if( soundStream ){
 		return soundStream->getTickCount();
 	}
@@ -169,7 +169,7 @@ long unsigned long ofSoundStream::getTickCount(){
 }
 
 //------------------------------------------------------------
-int ofSoundStream::getNumInputChannels(){
+int ofSoundStream::getNumInputChannels() const{
 	if( soundStream ){
 		return soundStream->getNumInputChannels();
 	}
@@ -177,7 +177,7 @@ int ofSoundStream::getNumInputChannels(){
 }
 
 //------------------------------------------------------------
-int ofSoundStream::getNumOutputChannels(){
+int ofSoundStream::getNumOutputChannels() const{
 	if( soundStream ){
 		return soundStream->getNumOutputChannels();
 	}
@@ -185,7 +185,7 @@ int ofSoundStream::getNumOutputChannels(){
 }
 
 //------------------------------------------------------------
-int ofSoundStream::getSampleRate(){
+int ofSoundStream::getSampleRate() const{
 	if( soundStream ){
 		return soundStream->getSampleRate();
 	}
@@ -193,7 +193,7 @@ int ofSoundStream::getSampleRate(){
 }
 
 //------------------------------------------------------------
-int ofSoundStream::getBufferSize(){
+int ofSoundStream::getBufferSize() const{
 	if( soundStream ){
 		return soundStream->getBufferSize();
 	}
@@ -212,7 +212,7 @@ ofSoundDevice::ofSoundDevice()
 }
 
 //------------------------------------------------------------
-vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels) {
+vector<ofSoundDevice> ofSoundStream::getMatchingDevices(const std::string& name, unsigned int inChannels, unsigned int outChannels) const {
 	vector<ofSoundDevice> devs = getDeviceList();
 	vector<ofSoundDevice> hits;
 	

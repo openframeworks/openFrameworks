@@ -3,7 +3,7 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 
-#if (_MSC_VER) || ((defined(TARGET_EMSCRIPTEN) || defined(TARGET_LINUX) || defined(TARGET_OF_IOS)) && __cplusplus>=201103L)
+#if (_MSC_VER) || ((defined(TARGET_EMSCRIPTEN) || defined(TARGET_LINUX) || defined(TARGET_OF_IOS)) || defined(TARGET_ANDROID)) && __cplusplus>=201103L)
 #include <memory>
 #else
 #include <tr1/memory>
@@ -285,6 +285,9 @@ public:
 
 	/// \brief The video device hardware name.
 	string hardwareName;
+
+	/// \brief Unique identifier for the device if it has one. 
+	string serialID;
 
 	/// \brief A list of video device formats provided by the device.
 	/// \sa ofVideoFormat

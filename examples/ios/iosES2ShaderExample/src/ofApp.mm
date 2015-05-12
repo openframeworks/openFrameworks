@@ -12,7 +12,7 @@ void ofApp::setup(){
     
 	//we load a font and tell OF to make outlines so we can draw it as GL shapes rather than textures
     int fontSize = ofGetWidth() / 10;
-	font.loadFont("type/verdana.ttf", fontSize, true, false, true, 0.4, 72);
+	font.load("type/verdana.ttf", fontSize, true, false, true, 0.4, 72);
 }
 
 //--------------------------------------------------------------

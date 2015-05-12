@@ -15,8 +15,8 @@ public:
     ofxiOSSoundPlayer();
     ~ofxiOSSoundPlayer();
     
-    bool loadSound(string fileName, bool stream = false);
-    void unloadSound();
+    bool load(string fileName, bool stream = false);
+    void unload();
     void play();
     void stop();
 	
@@ -29,13 +29,13 @@ public:
     void setPosition(float pct);
     void setPositionMS(int ms);
     
-    float getPosition();
-    int getPositionMS();
-    bool getIsPlaying();
-    float getSpeed();
-    float getPan();
-    bool isLoaded();
-    float getVolume();
+    float getPosition() const;
+    int getPositionMS() const;
+    bool isPlaying() const;
+    float getSpeed() const;
+    float getPan() const;
+    bool isLoaded() const;
+    float getVolume() const;
     
     void * getAVSoundPlayer();
     
