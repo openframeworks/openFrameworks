@@ -30,7 +30,6 @@
 */
 
 //#include "tesos.h"
-#include <assert.h>
 #include "mesh.h"
 #include "geom.h"
 
