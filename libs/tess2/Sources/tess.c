@@ -30,7 +30,6 @@
 */
 
 #include <stddef.h>
-#include <assert.h>
 #include <setjmp.h>
 #include "bucketalloc.h"
 #include "tess.h"
@@ -46,6 +45,7 @@
 
 #define Dot(u,v)	(u[0]*v[0] + u[1]*v[1] + u[2]*v[2])
 
+#if defined(FOR_TRITE_TEST_PROGRAM) || defined(TRUE_PROJECT)
 static void Normalize( TESSreal v[3] )
 {
 	TESSreal len = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
@@ -56,6 +56,7 @@ static void Normalize( TESSreal v[3] )
 	v[1] /= len;
 	v[2] /= len;
 }
+#endif
 
 #define ABS(x)	((x) < 0 ? -(x) : (x))
 
@@ -65,6 +66,15 @@ static int LongAxis( TESSreal v[3] )
 
 	if( ABS(v[1]) > ABS(v[0]) ) { i = 1; }
 	if( ABS(v[2]) > ABS(v[i]) ) { i = 2; }
+	return i;
+}
+
+static int ShortAxis( TESSreal v[3] )
+{
+	int i = 0;
+
+	if( ABS(v[1]) < ABS(v[0]) ) { i = 1; }
+	if( ABS(v[2]) < ABS(v[i]) ) { i = 2; }
 	return i;
 }
 
@@ -134,7 +144,7 @@ static void ComputeNormal( TESStesselator *tess, TESSreal norm[3] )
 	if( maxLen2 <= 0 ) {
 		/* All points lie on a single line -- any decent normal will do */
 		norm[0] = norm[1] = norm[2] = 0;
-		norm[LongAxis(d1)] = 1;
+		norm[ShortAxis(d1)] = 1;
 	}
 }
 
@@ -438,16 +448,19 @@ int tessMeshSetWindingNumber( TESSmesh *mesh, int value,
 
 void* heapAlloc( void* userData, unsigned int size )
 {
+	TESS_NOTUSED( userData );
 	return malloc( size );
 }
 
 void* heapRealloc( void *userData, void* ptr, unsigned int size )
 {
+	TESS_NOTUSED( userData );
 	return realloc( ptr, size );
 }
 
 void heapFree( void* userData, void* ptr )
 {
+	TESS_NOTUSED( userData );
 	free( ptr );
 }
 
