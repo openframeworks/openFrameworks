@@ -23,7 +23,7 @@ ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x
 		loadIcons();
 	}
 	registerMouseEvents();
-	generateDraw();
+	setNeedsRedraw();
 }
 
 ofxPanel::~ofxPanel(){

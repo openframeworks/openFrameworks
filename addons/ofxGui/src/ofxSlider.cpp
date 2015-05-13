@@ -28,10 +28,10 @@ ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, flo
 	b.width = width;
 	b.height = height;
 	bGuiActive = false;
+	setNeedsRedraw();
 
 	value.addListener(this,&ofxSlider::valueChanged);
 	registerMouseEvents();
-	generateDraw();
 	return this;
 }
 
@@ -236,7 +236,7 @@ void ofxSlider<Type>::setUpdateOnReleaseOnly(bool _bUpdateOnReleaseOnly){
 
 template<typename Type>
 void ofxSlider<Type>::valueChanged(Type & value){
-	generateDraw();
+    setNeedsRedraw();
 }
 
 template class ofxSlider<int>;
