@@ -2,7 +2,7 @@
 
 #import "VideoPlayerControls.h"
 #import "VideoPlayerControlsDelegateForOF.h"
-#import "AVFoundationVideoPlayer.h"
+#import "ofAVFoundationVideoPlayer.h"
 
 //-------------------------------------------------------------- video controls.
 static VideoPlayerControls * controls = nil;
@@ -21,8 +21,8 @@ void ofApp::setup() {
     controls.delegate = [[VideoPlayerControlsDelegateForOF alloc] initWithApp:this];
     [ofxiOSGetGLParentView() addSubview:controls.view];
     
-    AVFoundationVideoPlayer * avVideoPlayer;
-    avVideoPlayer = (AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
+    ofAVFoundationVideoPlayer * avVideoPlayer;
+    avVideoPlayer = (ofAVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
     [avVideoPlayer setVideoPosition:CGPointMake(0, 240)];
     [ofxiOSGetGLParentView() insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
     avVideoPlayer.playerView.hidden = YES;
@@ -126,8 +126,8 @@ void ofApp::loadPressed() {
     video.load("hands.m4v");
     video.play();
     
-    AVFoundationVideoPlayer * avVideoPlayer;
-    avVideoPlayer = (AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
+    ofAVFoundationVideoPlayer * avVideoPlayer;
+    avVideoPlayer = (ofAVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer();
     [avVideoPlayer setVideoPosition:CGPointMake(0, 240)];
     [ofxiOSGetGLParentView() insertSubview:avVideoPlayer.playerView belowSubview:controls.view];
     avVideoPlayer.playerView.hidden = YES;
@@ -151,12 +151,12 @@ void ofApp::loopOffPressed() {
 }
 
 void ofApp::nativeOnPressed() {
-    [(AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer() playerView].hidden = NO;
+    [(ofAVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer() playerView].hidden = NO;
     [controls setNative:YES];
 }
 
 void ofApp::nativeOffPressed() {
-    [(AVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer() playerView].hidden = YES;
+    [(ofAVFoundationVideoPlayer *)video.getAVFoundationVideoPlayer() playerView].hidden = YES;
     [controls setNative:NO];
 }
 
