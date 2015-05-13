@@ -26,8 +26,8 @@
 | quicktime                       | N/A | N/A   | N/A     | N/A         | N/A         | ✗  | ✗      | N/A | N/A     |
 | rtAudio                         | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | N/A | N/A     |
 | videoInput                      | N/A | N/A   | N/A     | N/A         | N/A         | ✓  | ✗      | N/A | N/A     |
-| ofxAssimpModelLoader -> assimp  | ☁   | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ☁   | ✗       |
-| ofxOpenCV -> opencv             | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ☁   | ✗       |
+| ofxAssimpModelLoader -> assimp  | ☁   | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ✓?  | ✗       |
+| ofxOpenCV -> opencv             | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ✓?  | ✗       |
 | ofxOsc -> oscpack               | ✗C  | ✗C    | ✗C      | ✗C          | ✗C          | ✗C | ✗C     | ✗C  | ✗C      |
 | ofxSvg -> svgTiny               | ✗C  | ✗C    | ✗C      | ✗C          | ✗C          | ✗C | ✗C     | ✗C  | ✗C      |
 | ofxXmlSettings -> tinyxml       | ✗C  | ✗C    | ✗C      | ✗C          | ✗C          | ✗C | ✗C     | ✗C  | ✗C      |
