@@ -14,7 +14,7 @@ ofxLabel* ofxLabel::setup(ofParameter<string> _label, float width, float height)
     label.makeReferenceTo(_label);
     b.width  = width;
     b.height = height;
-    generateDraw();
+    setNeedsRedraw();
     label.addListener(this,&ofxLabel::valueChanged);
     return this;
 }
@@ -65,5 +65,5 @@ ofAbstractParameter & ofxLabel::getParameter(){
 }
 
 void ofxLabel::valueChanged(string & value){
-	generateDraw();
+    setNeedsRedraw();
 }
