@@ -73,16 +73,13 @@ CVAPI(CvFont) cvFontQt(const char* nameFont, int pointSize CV_DEFAULT(-1), CvSca
 
 CVAPI(void) cvAddText(const CvArr* img, const char* text, CvPoint org, CvFont *arg2);
 
-CVAPI(void) cvDisplayOverlay(const char* name, const char* text, int delayms);
-CVAPI(void) cvDisplayStatusBar(const char* name, const char* text, int delayms);
-
-typedef void (CV_CDECL *CvOpenGLCallback)(void* userdata);
-CVAPI(void) cvCreateOpenGLCallback( const char* window_name, CvOpenGLCallback callbackOpenGL, void* userdata CV_DEFAULT(NULL), double angle CV_DEFAULT(-1), double zmin CV_DEFAULT(-1), double zmax CV_DEFAULT(-1));
+CVAPI(void) cvDisplayOverlay(const char* name, const char* text, int delayms CV_DEFAULT(0));
+CVAPI(void) cvDisplayStatusBar(const char* name, const char* text, int delayms CV_DEFAULT(0));
 
 CVAPI(void) cvSaveWindowParameters(const char* name);
 CVAPI(void) cvLoadWindowParameters(const char* name);
 CVAPI(int) cvStartLoop(int (*pt2Func)(int argc, char *argv[]), int argc, char* argv[]);
-CVAPI(void) cvStopLoop();
+CVAPI(void) cvStopLoop( void );
 
 typedef void (CV_CDECL *CvButtonCallback)(int state, void* userdata);
 enum {CV_PUSH_BUTTON = 0, CV_CHECKBOX = 1, CV_RADIOBOX = 2};
@@ -93,24 +90,26 @@ CVAPI(int) cvCreateButton( const char* button_name CV_DEFAULT(NULL),CvButtonCall
 /* this function is used to set some external parameters in case of X Window */
 CVAPI(int) cvInitSystem( int argc, char** argv );
 
-CVAPI(int) cvStartWindowThread();
+CVAPI(int) cvStartWindowThread( void );
 
 // ---------  YV ---------
 enum
 {
     //These 3 flags are used by cvSet/GetWindowProperty
-    CV_WND_PROP_FULLSCREEN = 0,//to change/get window's fullscreen property
-    CV_WND_PROP_AUTOSIZE   = 1,//to change/get window's autosize property
-    CV_WND_PROP_ASPECTRATIO= 2,//to change/get window's aspectratio property
-    //
+    CV_WND_PROP_FULLSCREEN = 0, //to change/get window's fullscreen property
+    CV_WND_PROP_AUTOSIZE   = 1, //to change/get window's autosize property
+    CV_WND_PROP_ASPECTRATIO= 2, //to change/get window's aspectratio property
+    CV_WND_PROP_OPENGL     = 3, //to change/get window's opengl support
+
     //These 2 flags are used by cvNamedWindow and cvSet/GetWindowProperty
-    CV_WINDOW_NORMAL       = 0x00000000,//the user can resize the window (no constraint)  / also use to switch a fullscreen window to a normal size
-    CV_WINDOW_AUTOSIZE     = 0x00000001,//the user cannot resize the window, the size is constrainted by the image displayed
-    //
+    CV_WINDOW_NORMAL       = 0x00000000, //the user can resize the window (no constraint)  / also use to switch a fullscreen window to a normal size
+    CV_WINDOW_AUTOSIZE     = 0x00000001, //the user cannot resize the window, the size is constrainted by the image displayed
+    CV_WINDOW_OPENGL       = 0x00001000, //window with opengl support
+
     //Those flags are only for Qt
-    CV_GUI_EXPANDED         = 0x00000000,//status bar and tool bar
-    CV_GUI_NORMAL           = 0x00000010,//old fashious way
-    //
+    CV_GUI_EXPANDED         = 0x00000000, //status bar and tool bar
+    CV_GUI_NORMAL           = 0x00000010, //old fashious way
+
     //These 3 flags are used by cvNamedWindow and cvSet/GetWindowProperty
     CV_WINDOW_FULLSCREEN   = 1,//change the window to fullscreen
     CV_WINDOW_FREERATIO    = 0x00000100,//the image expends as much as it can (no ratio constraint)
@@ -217,6 +216,13 @@ enum
 {
     CV_IMWRITE_JPEG_QUALITY =1,
     CV_IMWRITE_PNG_COMPRESSION =16,
+    CV_IMWRITE_PNG_STRATEGY =17,
+    CV_IMWRITE_PNG_BILEVEL =18,
+    CV_IMWRITE_PNG_STRATEGY_DEFAULT =0,
+    CV_IMWRITE_PNG_STRATEGY_FILTERED =1,
+    CV_IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY =2,
+    CV_IMWRITE_PNG_STRATEGY_RLE =3,
+    CV_IMWRITE_PNG_STRATEGY_FIXED =4,
     CV_IMWRITE_PXM_BINARY =32
 };
 
@@ -243,6 +249,15 @@ CVAPI(void) cvConvertImage( const CvArr* src, CvArr* dst, int flags CV_DEFAULT(0
 
 /* wait for key event infinitely (delay<=0) or for "delay" milliseconds */
 CVAPI(int) cvWaitKey(int delay CV_DEFAULT(0));
+
+// OpenGL support
+
+typedef void (CV_CDECL *CvOpenGlDrawCallback)(void* userdata);
+CVAPI(void) cvSetOpenGlDrawCallback(const char* window_name, CvOpenGlDrawCallback callback, void* userdata CV_DEFAULT(NULL));
+
+CVAPI(void) cvSetOpenGlContext(const char* window_name);
+CVAPI(void) cvUpdateWindow(const char* window_name);
+
 
 /****************************************************************************************\
 *                         Working with Video Files and Cameras                           *
@@ -282,14 +297,24 @@ enum
     CV_CAP_UNICAP   =600,   // Unicap drivers
 
     CV_CAP_DSHOW    =700,   // DirectShow (via videoInput)
+    CV_CAP_MSMF     =1400,  // Microsoft Media Foundation (via videoInput)
 
     CV_CAP_PVAPI    =800,   // PvAPI, Prosilica GigE SDK
 
     CV_CAP_OPENNI   =900,   // OpenNI (for Kinect)
+    CV_CAP_OPENNI_ASUS =910,   // OpenNI (for Asus Xtion)
 
     CV_CAP_ANDROID  =1000,  // Android
-    
-    CV_CAP_XIAPI    =1100   // XIMEA Camera API
+    CV_CAP_ANDROID_BACK =CV_CAP_ANDROID+99, // Android back camera
+    CV_CAP_ANDROID_FRONT =CV_CAP_ANDROID+98, // Android front camera
+
+    CV_CAP_XIAPI    =1100,   // XIMEA Camera API
+
+    CV_CAP_AVFOUNDATION = 1200,  // AVFoundation framework for iOS (OS X Lion will have the same API)
+
+    CV_CAP_GIGANETIX = 1300,  // Smartek Giganetix GigEVisionSDK
+
+    CV_CAP_INTELPERC = 1500 // Intel Perceptual Computing SDK
 };
 
 /* start capturing frames from camera: index = camera_index + domain_offset (CV_CAP_*) */
@@ -349,46 +374,67 @@ enum
     CV_CAP_PROP_TRIGGER       =24,
     CV_CAP_PROP_TRIGGER_DELAY =25,
     CV_CAP_PROP_WHITE_BALANCE_RED_V =26,
-    CV_CAP_PROP_MAX_DC1394    =27,
+    CV_CAP_PROP_ZOOM          =27,
+    CV_CAP_PROP_FOCUS         =28,
+    CV_CAP_PROP_GUID          =29,
+    CV_CAP_PROP_ISO_SPEED     =30,
+    CV_CAP_PROP_MAX_DC1394    =31,
+    CV_CAP_PROP_BACKLIGHT     =32,
+    CV_CAP_PROP_PAN           =33,
+    CV_CAP_PROP_TILT          =34,
+    CV_CAP_PROP_ROLL          =35,
+    CV_CAP_PROP_IRIS          =36,
+    CV_CAP_PROP_SETTINGS      =37,
+
     CV_CAP_PROP_AUTOGRAB      =1024, // property for highgui class CvCapture_Android only
     CV_CAP_PROP_SUPPORTED_PREVIEW_SIZES_STRING=1025, // readonly, tricky property, returns cpnst char* indeed
     CV_CAP_PROP_PREVIEW_FORMAT=1026, // readonly, tricky property, returns cpnst char* indeed
+
     // OpenNI map generators
-    CV_CAP_OPENNI_DEPTH_GENERATOR = 0,
-    CV_CAP_OPENNI_IMAGE_GENERATOR = 1 << 31,
-    CV_CAP_OPENNI_GENERATORS_MASK = 1 << 31,
+    CV_CAP_OPENNI_DEPTH_GENERATOR = 1 << 31,
+    CV_CAP_OPENNI_IMAGE_GENERATOR = 1 << 30,
+    CV_CAP_OPENNI_GENERATORS_MASK = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_OPENNI_IMAGE_GENERATOR,
 
     // Properties of cameras available through OpenNI interfaces
-    CV_CAP_PROP_OPENNI_OUTPUT_MODE      = 100,
-    CV_CAP_PROP_OPENNI_FRAME_MAX_DEPTH  = 101, // in mm
-    CV_CAP_PROP_OPENNI_BASELINE         = 102, // in mm
-    CV_CAP_PROP_OPENNI_FOCAL_LENGTH     = 103, // in pixels
-    CV_CAP_PROP_OPENNI_REGISTRATION_ON  = 104, // flag
-    CV_CAP_PROP_OPENNI_REGISTRATION     = CV_CAP_PROP_OPENNI_REGISTRATION_ON, // flag that synchronizes the remapping depth map to image map
-                                                                              // by changing depth generator's view point (if the flag is "on") or
-                                                                              // sets this view point to its normal one (if the flag is "off").
-    CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE = CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_OPENNI_OUTPUT_MODE,
-    CV_CAP_OPENNI_DEPTH_GENERATOR_BASELINE = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_BASELINE,
-    CV_CAP_OPENNI_DEPTH_GENERATOR_FOCAL_LENGTH = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_FOCAL_LENGTH,
-    CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION_ON = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_REGISTRATION_ON,
-    
+    CV_CAP_PROP_OPENNI_OUTPUT_MODE     = 100,
+    CV_CAP_PROP_OPENNI_FRAME_MAX_DEPTH = 101, // in mm
+    CV_CAP_PROP_OPENNI_BASELINE        = 102, // in mm
+    CV_CAP_PROP_OPENNI_FOCAL_LENGTH    = 103, // in pixels
+    CV_CAP_PROP_OPENNI_REGISTRATION    = 104, // flag
+    CV_CAP_PROP_OPENNI_REGISTRATION_ON = CV_CAP_PROP_OPENNI_REGISTRATION, // flag that synchronizes the remapping depth map to image map
+                                                                          // by changing depth generator's view point (if the flag is "on") or
+                                                                          // sets this view point to its normal one (if the flag is "off").
+    CV_CAP_PROP_OPENNI_APPROX_FRAME_SYNC = 105,
+    CV_CAP_PROP_OPENNI_MAX_BUFFER_SIZE   = 106,
+    CV_CAP_PROP_OPENNI_CIRCLE_BUFFER     = 107,
+    CV_CAP_PROP_OPENNI_MAX_TIME_DURATION = 108,
+
+    CV_CAP_PROP_OPENNI_GENERATOR_PRESENT = 109,
+
+    CV_CAP_OPENNI_IMAGE_GENERATOR_PRESENT         = CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_OPENNI_GENERATOR_PRESENT,
+    CV_CAP_OPENNI_IMAGE_GENERATOR_OUTPUT_MODE     = CV_CAP_OPENNI_IMAGE_GENERATOR + CV_CAP_PROP_OPENNI_OUTPUT_MODE,
+    CV_CAP_OPENNI_DEPTH_GENERATOR_BASELINE        = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_BASELINE,
+    CV_CAP_OPENNI_DEPTH_GENERATOR_FOCAL_LENGTH    = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_FOCAL_LENGTH,
+    CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION    = CV_CAP_OPENNI_DEPTH_GENERATOR + CV_CAP_PROP_OPENNI_REGISTRATION,
+    CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION_ON = CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION,
+
     // Properties of cameras available through GStreamer interface
     CV_CAP_GSTREAMER_QUEUE_LENGTH   = 200, // default is 1
     CV_CAP_PROP_PVAPI_MULTICASTIP   = 300, // ip for anable multicast master mode. 0 for disable multicast
-    
+
     // Properties of cameras available through XIMEA SDK interface
-    CV_CAP_PROP_XI_DOWNSAMPLING  = 400,      // Change image resolution by binning or skipping.  
+    CV_CAP_PROP_XI_DOWNSAMPLING  = 400,      // Change image resolution by binning or skipping.
     CV_CAP_PROP_XI_DATA_FORMAT   = 401,       // Output data format.
     CV_CAP_PROP_XI_OFFSET_X      = 402,      // Horizontal offset from the origin to the area of interest (in pixels).
     CV_CAP_PROP_XI_OFFSET_Y      = 403,      // Vertical offset from the origin to the area of interest (in pixels).
     CV_CAP_PROP_XI_TRG_SOURCE    = 404,      // Defines source of trigger.
     CV_CAP_PROP_XI_TRG_SOFTWARE  = 405,      // Generates an internal trigger. PRM_TRG_SOURCE must be set to TRG_SOFTWARE.
-    CV_CAP_PROP_XI_GPI_SELECTOR  = 406,      // Selects general purpose input 
+    CV_CAP_PROP_XI_GPI_SELECTOR  = 406,      // Selects general purpose input
     CV_CAP_PROP_XI_GPI_MODE      = 407,      // Set general purpose input mode
     CV_CAP_PROP_XI_GPI_LEVEL     = 408,      // Get general purpose level
-    CV_CAP_PROP_XI_GPO_SELECTOR  = 409,      // Selects general purpose output 
+    CV_CAP_PROP_XI_GPO_SELECTOR  = 409,      // Selects general purpose output
     CV_CAP_PROP_XI_GPO_MODE      = 410,      // Set general purpose output mode
-    CV_CAP_PROP_XI_LED_SELECTOR  = 411,      // Selects camera signalling LED 
+    CV_CAP_PROP_XI_LED_SELECTOR  = 411,      // Selects camera signalling LED
     CV_CAP_PROP_XI_LED_MODE      = 412,      // Define camera signalling LED functionality
     CV_CAP_PROP_XI_MANUAL_WB     = 413,      // Calculates White Balance(must be called during acquisition)
     CV_CAP_PROP_XI_AUTO_WB       = 414,      // Automatic white balance
@@ -397,7 +443,48 @@ enum
     CV_CAP_PROP_XI_AE_MAX_LIMIT  = 417,      // Maximum limit of exposure in AEAG procedure
     CV_CAP_PROP_XI_AG_MAX_LIMIT  = 418,      // Maximum limit of gain in AEAG procedure
     CV_CAP_PROP_XI_AEAG_LEVEL    = 419,       // Average intensity of output signal AEAG should achieve(in %)
-    CV_CAP_PROP_XI_TIMEOUT       = 420       // Image capture timeout in milliseconds
+    CV_CAP_PROP_XI_TIMEOUT       = 420,       // Image capture timeout in milliseconds
+
+    // Properties for Android cameras
+    CV_CAP_PROP_ANDROID_FLASH_MODE = 8001,
+    CV_CAP_PROP_ANDROID_FOCUS_MODE = 8002,
+    CV_CAP_PROP_ANDROID_WHITE_BALANCE = 8003,
+    CV_CAP_PROP_ANDROID_ANTIBANDING = 8004,
+    CV_CAP_PROP_ANDROID_FOCAL_LENGTH = 8005,
+    CV_CAP_PROP_ANDROID_FOCUS_DISTANCE_NEAR = 8006,
+    CV_CAP_PROP_ANDROID_FOCUS_DISTANCE_OPTIMAL = 8007,
+    CV_CAP_PROP_ANDROID_FOCUS_DISTANCE_FAR = 8008,
+    CV_CAP_PROP_ANDROID_EXPOSE_LOCK = 8009,
+    CV_CAP_PROP_ANDROID_WHITEBALANCE_LOCK = 8010,
+
+    // Properties of cameras available through AVFOUNDATION interface
+    CV_CAP_PROP_IOS_DEVICE_FOCUS = 9001,
+    CV_CAP_PROP_IOS_DEVICE_EXPOSURE = 9002,
+    CV_CAP_PROP_IOS_DEVICE_FLASH = 9003,
+    CV_CAP_PROP_IOS_DEVICE_WHITEBALANCE = 9004,
+    CV_CAP_PROP_IOS_DEVICE_TORCH = 9005,
+
+    // Properties of cameras available through Smartek Giganetix Ethernet Vision interface
+    /* --- Vladimir Litvinenko (litvinenko.vladimir@gmail.com) --- */
+    CV_CAP_PROP_GIGA_FRAME_OFFSET_X = 10001,
+    CV_CAP_PROP_GIGA_FRAME_OFFSET_Y = 10002,
+    CV_CAP_PROP_GIGA_FRAME_WIDTH_MAX = 10003,
+    CV_CAP_PROP_GIGA_FRAME_HEIGH_MAX = 10004,
+    CV_CAP_PROP_GIGA_FRAME_SENS_WIDTH = 10005,
+    CV_CAP_PROP_GIGA_FRAME_SENS_HEIGH = 10006,
+
+    CV_CAP_PROP_INTELPERC_PROFILE_COUNT               = 11001,
+    CV_CAP_PROP_INTELPERC_PROFILE_IDX                 = 11002,
+    CV_CAP_PROP_INTELPERC_DEPTH_LOW_CONFIDENCE_VALUE  = 11003,
+    CV_CAP_PROP_INTELPERC_DEPTH_SATURATION_VALUE      = 11004,
+    CV_CAP_PROP_INTELPERC_DEPTH_CONFIDENCE_THRESHOLD  = 11005,
+    CV_CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_HORZ     = 11006,
+    CV_CAP_PROP_INTELPERC_DEPTH_FOCAL_LENGTH_VERT     = 11007,
+
+    // Intel PerC streams
+    CV_CAP_INTELPERC_DEPTH_GENERATOR = 1 << 29,
+    CV_CAP_INTELPERC_IMAGE_GENERATOR = 1 << 28,
+    CV_CAP_INTELPERC_GENERATORS_MASK = CV_CAP_INTELPERC_DEPTH_GENERATOR + CV_CAP_INTELPERC_IMAGE_GENERATOR
 };
 
 enum
@@ -418,18 +505,73 @@ enum
 enum
 {
     CV_CAP_OPENNI_VGA_30HZ     = 0,
-    CV_CAP_OPENNI_SXGA_15HZ    = 1
+    CV_CAP_OPENNI_SXGA_15HZ    = 1,
+    CV_CAP_OPENNI_SXGA_30HZ    = 2,
+    CV_CAP_OPENNI_QVGA_30HZ    = 3,
+    CV_CAP_OPENNI_QVGA_60HZ    = 4
 };
 
 //supported by Android camera output formats
 enum
 {
-  CV_CAP_ANDROID_COLOR_FRAME_BGR = 0, //BGR
-  CV_CAP_ANDROID_COLOR_FRAME = CV_CAP_ANDROID_COLOR_FRAME_BGR,
-  CV_CAP_ANDROID_GREY_FRAME  = 1,  //Y
-  CV_CAP_ANDROID_COLOR_FRAME_RGB = 2,
-  CV_CAP_ANDROID_COLOR_FRAME_BGRA = 3,
-  CV_CAP_ANDROID_COLOR_FRAME_RGBA = 4
+    CV_CAP_ANDROID_COLOR_FRAME_BGR = 0, //BGR
+    CV_CAP_ANDROID_COLOR_FRAME = CV_CAP_ANDROID_COLOR_FRAME_BGR,
+    CV_CAP_ANDROID_GREY_FRAME  = 1,  //Y
+    CV_CAP_ANDROID_COLOR_FRAME_RGB = 2,
+    CV_CAP_ANDROID_COLOR_FRAME_BGRA = 3,
+    CV_CAP_ANDROID_COLOR_FRAME_RGBA = 4
+};
+
+// supported Android camera flash modes
+enum
+{
+    CV_CAP_ANDROID_FLASH_MODE_AUTO = 0,
+    CV_CAP_ANDROID_FLASH_MODE_OFF,
+    CV_CAP_ANDROID_FLASH_MODE_ON,
+    CV_CAP_ANDROID_FLASH_MODE_RED_EYE,
+    CV_CAP_ANDROID_FLASH_MODE_TORCH
+};
+
+// supported Android camera focus modes
+enum
+{
+    CV_CAP_ANDROID_FOCUS_MODE_AUTO = 0,
+    CV_CAP_ANDROID_FOCUS_MODE_CONTINUOUS_PICTURE,
+    CV_CAP_ANDROID_FOCUS_MODE_CONTINUOUS_VIDEO,
+    CV_CAP_ANDROID_FOCUS_MODE_EDOF,
+    CV_CAP_ANDROID_FOCUS_MODE_FIXED,
+    CV_CAP_ANDROID_FOCUS_MODE_INFINITY,
+    CV_CAP_ANDROID_FOCUS_MODE_MACRO
+};
+
+// supported Android camera white balance modes
+enum
+{
+    CV_CAP_ANDROID_WHITE_BALANCE_AUTO = 0,
+    CV_CAP_ANDROID_WHITE_BALANCE_CLOUDY_DAYLIGHT,
+    CV_CAP_ANDROID_WHITE_BALANCE_DAYLIGHT,
+    CV_CAP_ANDROID_WHITE_BALANCE_FLUORESCENT,
+    CV_CAP_ANDROID_WHITE_BALANCE_INCANDESCENT,
+    CV_CAP_ANDROID_WHITE_BALANCE_SHADE,
+    CV_CAP_ANDROID_WHITE_BALANCE_TWILIGHT,
+    CV_CAP_ANDROID_WHITE_BALANCE_WARM_FLUORESCENT
+};
+
+// supported Android camera antibanding modes
+enum
+{
+    CV_CAP_ANDROID_ANTIBANDING_50HZ = 0,
+    CV_CAP_ANDROID_ANTIBANDING_60HZ,
+    CV_CAP_ANDROID_ANTIBANDING_AUTO,
+    CV_CAP_ANDROID_ANTIBANDING_OFF
+};
+
+enum
+{
+    CV_CAP_INTELPERC_DEPTH_MAP              = 0, // Each pixel is a 16-bit integer. The value indicates the distance from an object to the camera's XY plane or the Cartesian depth.
+    CV_CAP_INTELPERC_UVDEPTH_MAP            = 1, // Each pixel contains two 32-bit floating point values in the range of 0-1, representing the mapping of depth coordinates to the color coordinates.
+    CV_CAP_INTELPERC_IR_MAP                 = 2, // Each pixel is a 16-bit integer. The value indicates the intensity of the reflected laser beam.
+    CV_CAP_INTELPERC_IMAGE                  = 3
 };
 
 /* retrieve or set capture properties */
@@ -437,14 +579,16 @@ CVAPI(double) cvGetCaptureProperty( CvCapture* capture, int property_id );
 CVAPI(int)    cvSetCaptureProperty( CvCapture* capture, int property_id, double value );
 
 // Return the type of the capturer (eg, CV_CAP_V4W, CV_CAP_UNICAP), which is unknown if created with CV_CAP_ANY
-CVAPI(int)    cvGetCaptureDomain( CvCapture* capture);  
+CVAPI(int)    cvGetCaptureDomain( CvCapture* capture);
 
 /* "black box" video file writer structure */
 typedef struct CvVideoWriter CvVideoWriter;
 
+#define CV_FOURCC_MACRO(c1, c2, c3, c4) (((c1) & 255) + (((c2) & 255) << 8) + (((c3) & 255) << 16) + (((c4) & 255) << 24))
+
 CV_INLINE int CV_FOURCC(char c1, char c2, char c3, char c4)
 {
-    return (c1 & 255) + ((c2 & 255) << 8) + ((c3 &255) << 16) + ((c4 & 255) << 24);
+    return CV_FOURCC_MACRO(c1, c2, c3, c4);
 }
 
 #define CV_FOURCC_PROMPT -1  /* Open Codec Selection Dialog (Windows only) */

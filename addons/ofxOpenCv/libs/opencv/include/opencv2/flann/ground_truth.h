@@ -42,12 +42,11 @@ template <typename Distance>
 void find_nearest(const Matrix<typename Distance::ElementType>& dataset, typename Distance::ElementType* query, int* matches, int nn,
                   int skip = 0, Distance distance = Distance())
 {
-    typedef typename Distance::ElementType ElementType;
     typedef typename Distance::ResultType DistanceType;
     int n = nn + skip;
 
-    int* match = new int[n];
-    DistanceType* dists = new DistanceType[n];
+    std::vector<int> match(n);
+    std::vector<DistanceType> dists(n);
 
     dists[0] = distance(dataset[0], query, dataset.cols);
     match[0] = 0;
@@ -57,12 +56,12 @@ void find_nearest(const Matrix<typename Distance::ElementType>& dataset, typenam
         DistanceType tmp = distance(dataset[i], query, dataset.cols);
 
         if (dcnt<n) {
-            match[dcnt] = i;
+            match[dcnt] = (int)i;
             dists[dcnt++] = tmp;
         }
         else if (tmp < dists[dcnt-1]) {
             dists[dcnt-1] = tmp;
-            match[dcnt-1] = i;
+            match[dcnt-1] = (int)i;
         }
 
         int j = dcnt-1;
@@ -77,9 +76,6 @@ void find_nearest(const Matrix<typename Distance::ElementType>& dataset, typenam
     for (int i=0; i<nn; ++i) {
         matches[i] = match[i+skip];
     }
-
-    delete[] match;
-    delete[] dists;
 }
 
 
