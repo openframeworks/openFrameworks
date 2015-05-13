@@ -1,5 +1,5 @@
 #pragma once
-		#include <stdint.h>
+#include <stdint.h>
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
@@ -65,10 +65,11 @@ enum ofTargetPlatform{
     #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
     #include <TargetConditionals.h>
 
-	#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
+	#if TARGET_OS_IPHONE_SIMULATOR || TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE || TARGET_IPHONE
 		#define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
 		#define TARGET_OPENGLES
+        #include <unistd.h>
 	#else
 		#define TARGET_OSX
 	#endif

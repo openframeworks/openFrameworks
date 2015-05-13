@@ -151,7 +151,7 @@
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
-				<string>armv7</string>
+				<string>$(ARCHS_STANDARD)</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -173,7 +173,7 @@
 				<key>PRODUCT_NAME</key>
 				<string>${TARGET_NAME}</string>
 				<key>VALID_ARCHS</key>
-				<string>armv7</string>
+				<string>$(ARCHS_STANDARD)</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
@@ -679,7 +679,7 @@
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
 				<string>YES</string>
 				<key>CLANG_CXX_LIBRARY</key>
-				<string>libstdc++</string>
+				<string>libc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
@@ -687,7 +687,7 @@
 				<key>COMPRESS_PNG_FILES</key>
 				<string>NO</string>
 				<key>GCC_C_LANGUAGE_STANDARD</key>
-				<string>c99</string>
+				<string>c11</string>
 				<key>GCC_OPTIMIZATION_LEVEL</key>
 				<string>0</string>
 				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
@@ -715,7 +715,7 @@
 				<key>TARGETED_DEVICE_FAMILY</key>
 				<string>1</string>
 				<key>VALID_ARCHS</key>
-				<string>armv7</string>
+				<string>$(ARCHS_STANDARD)</string>
 				<key>WARNING_LDFLAGS</key>
 				<string>-no_arch_warnings</string>
 			</dict>
@@ -733,7 +733,7 @@
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
 				<string>YES</string>
 				<key>CLANG_CXX_LIBRARY</key>
-				<string>libstdc++</string>
+				<string>libc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
@@ -741,7 +741,7 @@
 				<key>COMPRESS_PNG_FILES</key>
 				<string>NO</string>
 				<key>GCC_C_LANGUAGE_STANDARD</key>
-				<string>c99</string>
+				<string>c11</string>
 				<key>GCC_DYNAMIC_NO_PIC</key>
 				<string>NO</string>
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
@@ -765,7 +765,7 @@
 				<key>TARGETED_DEVICE_FAMILY</key>
 				<string>1</string>
 				<key>VALID_ARCHS</key>
-				<string>armv7</string>
+				<string>$(ARCHS_STANDARD)</string>
 				<key>WARNING_LDFLAGS</key>
 				<string>-no_arch_warnings</string>
 			</dict>
