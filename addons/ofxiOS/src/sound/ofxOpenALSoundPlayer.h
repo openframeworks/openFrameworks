@@ -82,7 +82,7 @@ public:
 
 	float	getPosition() const;
 	int	getPositionMS() const;
-	bool	isPlaying() const;
+	bool	isPlaying();
 	float	getPitch() const;
 	float	getSpeed() const{return getPitch();}; // same as pitch. mapped for ofSoundPlayer compatibility
 	float   getVolume() const;
