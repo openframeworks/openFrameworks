@@ -1,5 +1,5 @@
 /* ==================================================================================================== */
-/* FMOD Ex - codec development header file. Copyright (c), Firelight Technologies Pty, Ltd. 2004-2009.  */
+/* FMOD Ex - codec development header file. Copyright (c), Firelight Technologies Pty, Ltd. 2004-2011.  */
 /*                                                                                                      */
 /* Use this header if you are wanting to develop your own file format plugin to use with                */
 /* FMOD's codec system.  With this header you can make your own fileformat plugin that FMOD             */
@@ -38,7 +38,7 @@ typedef FMOD_RESULT (F_CALLBACK *FMOD_CODEC_GETWAVEFORMAT)       (FMOD_CODEC_STA
     Members marked with [out] mean the variable is modified by FMOD and is for reading purposes only.  Do not change this value.<br>
 
     [PLATFORMS]
-    Win32, Win64, Linux, Linux64, Macintosh, Xbox, Xbox360, PlayStation 2, GameCube, PlayStation Portable, PlayStation 3, Wii
+    Win32, Win64, Linux, Linux64, Macintosh, Xbox360, PlayStation Portable, PlayStation 3, Wii, iPhone, 3GS, NGP, Android
 
     [SEE_ALSO]
     FMOD_CODEC_STATE
@@ -81,7 +81,7 @@ typedef struct FMOD_CODEC_DESCRIPTION
     When a sound has 1 or more subsounds, you must play the individual sounds specified by first obtaining the subsound with Sound::getSubSound.
     
     [PLATFORMS]
-    Win32, Win64, Linux, Linux64, Macintosh, Xbox, Xbox360, PlayStation 2, GameCube, PlayStation Portable, PlayStation 3, Wii
+    Win32, Win64, Linux, Linux64, Macintosh, Xbox360, PlayStation Portable, PlayStation 3, Wii, iPhone, 3GS, NGP, Android
 
     [SEE_ALSO]
     FMOD_SOUND_FORMAT
@@ -130,7 +130,7 @@ struct FMOD_CODEC_WAVEFORMAT
     When a sound has 1 or more subsounds, you must play the individual sounds specified by first obtaining the subsound with Sound::getSubSound.
     
     [PLATFORMS]
-    Win32, Win64, Linux, Linux64, Macintosh, Xbox, Xbox360, PlayStation 2, GameCube, PlayStation Portable, PlayStation 3, Wii
+    Win32, Win64, Linux, Linux64, Macintosh, Xbox360, PlayStation Portable, PlayStation 3, Wii, iPhone, 3GS, NGP, Android
 
     [SEE_ALSO]
     FMOD_SOUND_FORMAT
