@@ -87,11 +87,11 @@
     
     bool bDoesHWOrientation = ofxiOSGetOFWindow()->doesHWOrientation();
     
-    int iOrient  = [[UIApplication sharedApplication] statusBarOrientation];
+    UIInterfaceOrientation iOrient  = [[UIApplication sharedApplication] statusBarOrientation];
     // is the os version less than 6.0? 
     if( [[[UIDevice currentDevice] systemVersion] compare:@"6.0" options:NSNumericSearch] == NSOrderedAscending ) {
-        iOrient = [[UIDevice currentDevice] orientation];
-        
+		iOrient = UIInterfaceOrientationPortrait;
+		
         UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
         switch (deviceOrientation) {
             case UIDeviceOrientationPortrait:

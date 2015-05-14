@@ -1,10 +1,10 @@
 #include "ofxAssimpModelLoader.h"
 #include "ofxAssimpUtils.h"
 
-#include "assimp.h"
-#include "aiScene.h"
-#include "aiConfig.h"
-#include "aiPostProcess.h"
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <assimp/config.h>
 
 ofxAssimpModelLoader::ofxAssimpModelLoader(){
 	clear();
@@ -34,7 +34,7 @@ bool ofxAssimpModelLoader::loadModel(string modelName, bool optimize){
     unsigned int flags = initImportProperties(optimize);
     
     // loads scene from file
-    scene = shared_ptr<const aiScene>(aiImportFile(file.getAbsolutePath().c_str(), flags),aiReleaseImport);
+    scene = shared_ptr<const aiScene>(aiImportFileExWithProperties(file.getAbsolutePath().c_str(), flags, NULL, store.get()), aiReleaseImport);
     
     bool bOk = processScene();
     return bOk;
@@ -53,17 +53,21 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
     unsigned int flags = initImportProperties(optimize);
     
     // loads scene from memory buffer - note this will not work for multipart files (obj, md3, etc)
-    scene = shared_ptr<const aiScene>(aiImportFileFromMemory(buffer.getData(), buffer.size(), flags, extension),aiReleaseImport);
+    scene = shared_ptr<const aiScene>(aiImportFileFromMemoryWithProperties(buffer.getBinaryBuffer(), buffer.size(), flags, extension, store.get()), aiReleaseImport);
     
     bool bOk = processScene();
     return bOk;
 }
 
 unsigned int ofxAssimpModelLoader::initImportProperties(bool optimize) {
+    store.reset();
+    
+    aiPropertyStore * storePtr = aiCreatePropertyStore();
+    store = ( shared_ptr <aiPropertyStore> )storePtr;
     
     // only ever give us triangles.
-    aiSetImportPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
-    aiSetImportPropertyInteger(AI_CONFIG_PP_PTV_NORMALIZE, true);
+    aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE | aiPrimitiveType_POINT );
+    aiSetImportPropertyInteger(store.get(), AI_CONFIG_PP_PTV_NORMALIZE, true);
     
     // aiProcess_FlipUVs is for VAR code. Not needed otherwise. Not sure why.
     unsigned int flags = aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_FlipUVs;
@@ -436,9 +440,9 @@ void ofxAssimpModelLoader::updateBones() {
 			modelMeshes[i].validCache = false;
 		}
         
-		modelMeshes[i].animatedPos.assign(modelMeshes[i].animatedPos.size(),0);
+		modelMeshes[i].animatedPos.assign(modelMeshes[i].animatedPos.size(), aiVector3D(0.0f));
 		if(mesh->HasNormals()){
-			modelMeshes[i].animatedNorm.assign(modelMeshes[i].animatedNorm.size(),0);
+			modelMeshes[i].animatedNorm.assign(modelMeshes[i].animatedNorm.size(), aiVector3D(0.0f));
 		}
 		// loop through all vertex weights of all bones
 		for(unsigned int a=0; a<mesh->mNumBones; ++a) {
@@ -600,9 +604,9 @@ ofxAssimpMeshHelper & ofxAssimpModelLoader::getMeshHelper(int meshIndex) {
 }
 
 //-------------------------------------------
-void ofxAssimpModelLoader::getBoundingBoxWithMinVector(struct aiVector3D* min, struct aiVector3D* max)
+void ofxAssimpModelLoader::getBoundingBoxWithMinVector( aiVector3D* min, aiVector3D* max)
 {
-	struct aiMatrix4x4 trafo;
+    aiMatrix4x4 trafo;
 	aiIdentityMatrix4(&trafo);
 
 	min->x = min->y = min->z =  1e10f;
@@ -612,9 +616,9 @@ void ofxAssimpModelLoader::getBoundingBoxWithMinVector(struct aiVector3D* min, s
 }
 
 //-------------------------------------------
-void ofxAssimpModelLoader::getBoundingBoxForNode(const struct aiNode* nd,  struct aiVector3D* min, struct aiVector3D* max, struct aiMatrix4x4* trafo)
+void ofxAssimpModelLoader::getBoundingBoxForNode(const aiNode* nd, aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo)
 {
-	struct aiMatrix4x4 prev;
+    aiMatrix4x4 prev;
 	unsigned int n = 0, t;
 
 	prev = *trafo;
@@ -623,7 +627,7 @@ void ofxAssimpModelLoader::getBoundingBoxForNode(const struct aiNode* nd,  struc
 	for (; n < nd->mNumMeshes; ++n){
 		const struct aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
 		for (t = 0; t < mesh->mNumVertices; ++t){
-        	struct aiVector3D tmp = mesh->mVertices[t];
+            aiVector3D tmp = mesh->mVertices[t];
 			aiTransformVecByMatrix4(&tmp,trafo);
 
 
