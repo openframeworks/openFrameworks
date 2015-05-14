@@ -195,7 +195,7 @@
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.6</string>
+				<string>10.8</string>
 				<key>ONLY_ACTIVE_ARCH</key>
 				<string>YES</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
@@ -253,7 +253,7 @@
 				<key>GCC_WARN_UNUSED_VARIABLE</key>
 				<string>NO</string>
 				<key>MACOSX_DEPLOYMENT_TARGET</key>
-				<string>10.6</string>
+				<string>10.8</string>
 				<key>OTHER_CPLUSPLUSFLAGS</key>
 				<array>
 					<string>-D__MACOSX_CORE__</string>
