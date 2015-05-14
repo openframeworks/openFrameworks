@@ -66,10 +66,8 @@ cairo_quartz_surface_get_cg_context (cairo_surface_t *surface);
 cairo_public cairo_font_face_t *
 cairo_quartz_font_face_create_for_cgfont (CGFontRef font);
 
-#ifndef __LP64__
 cairo_public cairo_font_face_t *
 cairo_quartz_font_face_create_for_atsu_font_id (ATSUFontID font_id);
-#endif
 
 #endif /* CAIRO_HAS_QUARTZ_FONT */
 
