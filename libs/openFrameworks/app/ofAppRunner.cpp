@@ -1,5 +1,7 @@
 #include "ofAppRunner.h"
 
+#include "Poco/Net/Net.h"
+
 #include "ofBaseApp.h"
 #include "ofAppBaseWindow.h"
 
@@ -170,6 +172,7 @@ void ofExitCallback(){
 	#ifndef TARGET_EMSCRIPTEN
 		ofURLFileLoaderShutdown();
 	#endif
+    Poco::Net::uninitializeNetwork();
 
 	#ifndef TARGET_NO_SOUND
 		//------------------------
@@ -192,10 +195,6 @@ void ofExitCallback(){
 	#ifdef WIN32_HIGH_RES_TIMING
 		timeEndPeriod(1);
 	#endif
-
-	// static deinitialization happens after this finishes
-	// every object should have ended by now and won't receive any
-	// events
 }
 
 //--------------------------------------
