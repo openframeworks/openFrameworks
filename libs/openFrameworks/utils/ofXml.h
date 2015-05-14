@@ -207,7 +207,7 @@ public:
     {
     	if(element){
 			if(path == ""){
-				if(element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
+				if(element->firstChild() && element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
 					return ofFromString<T>(element->innerText());
 				} else {
 					ofLogWarning("ofXml") << "getValue(): path \"" << path<< "\" not found when getting value";
