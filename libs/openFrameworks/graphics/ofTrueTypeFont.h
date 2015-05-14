@@ -282,9 +282,6 @@ public:
 	const ofMesh & getStringMesh(string s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
 
-	void bind();
-	void unbind();
-
 	/// \}
 	
 protected:
