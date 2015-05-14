@@ -5,10 +5,10 @@
 
 #if (_MSC_VER) \
 	|| ((defined(TARGET_EMSCRIPTEN) \
-		|| defined(TARGET_LINUX) \
-		|| defined(TARGET_ANDROID) \
-		|| defined(TARGET_OSX) \
-	) && __cplusplus>=201103L)
+	|| defined(TARGET_OF_IOS) \
+	|| defined(TARGET_LINUX) \
+	|| defined(TARGET_OSX) \
+) && __cplusplus>=201103L)
 #include <memory>
 #else
 #include <tr1/memory>
