@@ -37,7 +37,7 @@
 #include "mesh.h"
 #include "dict.h"
 #include "priorityq.h"
-#include "../Include/tesselator.h"
+#include "tesselator.h"
 
 #ifdef __cplusplus
 extern "C" {
