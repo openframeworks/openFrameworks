@@ -43,6 +43,6 @@ int main(){
          *
          **/
         
-        return ofRunApp(new SquareApp());
+        return ofRunApp(new ofApp());
     }
 }
