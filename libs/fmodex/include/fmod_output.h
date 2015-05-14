@@ -1,5 +1,5 @@
 /* ==================================================================================================== */
-/* FMOD Ex - output development header file. Copyright (c), Firelight Technologies Pty, Ltd. 2004-2009. */
+/* FMOD Ex - output development header file. Copyright (c), Firelight Technologies Pty, Ltd. 2004-2011. */
 /*                                                                                                      */
 /* Use this header if you are wanting to develop your own output plugin to use with                     */
 /* FMOD's output system.  With this header you can make your own output plugin that FMOD                */
@@ -41,7 +41,7 @@ typedef FMOD_RESULT (F_CALLBACK *FMOD_OUTPUT_READFROMMIXER)        (FMOD_OUTPUT_
     Members marked with [out] mean the variable is modified by FMOD and is for reading purposes only.  Do not change this value.<br>
 
     [PLATFORMS]
-    Win32, Win64, Linux, Linux64, Macintosh, Xbox, Xbox360, PlayStation 2, GameCube, PlayStation Portable, PlayStation 3, Wii
+    Win32, Win64, Linux, Linux64, Macintosh, Xbox360, PlayStation Portable, PlayStation 3, Wii, iPhone, 3GS, NGP, Android
 
     [SEE_ALSO]
     FMOD_OUTPUT_STATE
@@ -76,7 +76,7 @@ typedef struct FMOD_OUTPUT_DESCRIPTION
     Members marked with [out] mean the variable is modified by FMOD and is for reading purposes only.  Do not change this value.<br>
 
     [PLATFORMS]
-    Win32, Win64, Linux, Linux64, Macintosh, Xbox, Xbox360, PlayStation 2, GameCube, PlayStation Portable, PlayStation 3, Wii
+    Win32, Win64, Linux, Linux64, Macintosh, Xbox360, PlayStation Portable, PlayStation 3, Wii, iPhone, 3GS, NGP, Android
 
     [SEE_ALSO]
     FMOD_OUTPUT_DESCRIPTION
