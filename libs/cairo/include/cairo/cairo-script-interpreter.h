@@ -65,6 +65,12 @@ typedef void
 (*csi_copy_page_func_t) (void *closure,
 			 cairo_t *cr);
 
+typedef cairo_surface_t *
+(*csi_create_source_image_t) (void *closure,
+			      cairo_format_t format,
+			      int width, int height,
+			      long uid);
+
 typedef struct _cairo_script_interpreter_hooks {
     void *closure;
     csi_surface_create_func_t surface_create;
@@ -73,6 +79,7 @@ typedef struct _cairo_script_interpreter_hooks {
     csi_destroy_func_t context_destroy;
     csi_show_page_func_t show_page;
     csi_copy_page_func_t copy_page;
+    csi_create_source_image_t create_source_image;
 } cairo_script_interpreter_hooks_t;
 
 cairo_public cairo_script_interpreter_t *
