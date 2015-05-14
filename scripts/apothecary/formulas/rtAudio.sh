@@ -48,8 +48,8 @@ function build() {
 		/usr/bin/g++ -O2 \
 					 -Wall \
 					 -fPIC \
+					 -stdlib=libstdc++ \
 					 -arch i386 \
-					 -arch x86_64 \
 					 -Iinclude \
 					 -DHAVE_GETTIMEOFDAY \
 					 -D__MACOSX_CORE__ \
@@ -58,6 +58,22 @@ function build() {
 
 		/usr/bin/ar ruv librtaudio.a RtAudio.o
 		/usr/bin/ranlib librtaudio.a
+
+		/usr/bin/g++ -O2 \
+					 -Wall \
+					 -fPIC \
+					 -stdlib=libc++ \
+					 -arch x86_64 \
+					 -Iinclude \
+					 -DHAVE_GETTIMEOFDAY \
+					 -D__MACOSX_CORE__ \
+					 -c RtAudio.cpp \
+					 -o RtAudio.o
+
+		/usr/bin/ar ruv librtaudio-x86_64.a RtAudio.o
+		/usr/bin/ranlib librtaudio-x86_64.a
+
+		lipo -c librtaudio.a librtaudio-x86_64.a -o librtaudio.a
 
 	else
 
