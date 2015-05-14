@@ -1,3 +1,19 @@
+ARCHS = $(ARCHS_STANDARD_32_64_BIT)	// this allows you to select target architecture in dropdown menu
+VALID_ARCHS = x86_64 i386
+
+ONLY_ACTIVE_ARCH = YES      // this makes sure not to build an universal binary
+
+//// define which C++ library is required to build, based on target architecture
+
+CLANG_CXX_LIBRARY[arch=i386] = libstdc++
+CLANG_CXX_LANGUAGE_STANDARD[arch=i386] = gnu++98
+
+CLANG_CXX_LIBRARY[arch=x86_64] = libc++
+CLANG_CXX_LANGUAGE_STANDARD[arch=x86_64] = c++11
+
+MACOSX_DEPLOYMENT_TARGET = 10.7		// libstdc++ is only available in 10.7+
+
+
 HEADER_OF = "$(OF_PATH)/libs/openFrameworks/**"
 HEADER_FREETYPE = "$(OF_PATH)/libs/freetype/include"
 HEADER_FREETYPE2 = "$(OF_PATH)/libs/freetype/include/freetype2"
@@ -34,10 +50,11 @@ LIB_CAIRO3 = "$(OF_PATH)/libs/cairo/lib/osx/pixman-1.a"
 LIB_OPENSSL1 = "$(OF_PATH)/libs/openssl/lib/osx/crypto.a"
 LIB_OPENSSL2 = "$(OF_PATH)/libs/openssl/lib/osx/ssl.a"
 
-OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework IOKit -framework OpenGL -framework QuartzCore -framework QuickTime -framework QTKit -framework GLUT
 
-OF_CORE_LIBS = $(OF_CORE_FRAMEWORKS) $(LIB_POCO_1) $(LIB_POCO_2) $(LIB_POCO_3) $(LIB_POCO_4) $(LIB_POCO_5) $(LIB_POCO_6) $(LIB_POCO_7) $(LIB_POCO_8) $(LIB_POCO_9) $(LIB_POCO_10) $(LIB_TESS) $(LIB_GLEW) $(LIB_CAIRO1) $(LIB_CAIRO2) $(LIB_CAIRO3) $(LIB_FMODEX) $(LIB_RTAUDIO) $(LIB_OPENSSL1) $(LIB_OPENSSL2) $(LIB_GLFW) $(LIB_FREEIMAGE) $(LIB_FREETYPE)
+OF_CORE_LIBS = $(LIB_POCO_1) $(LIB_POCO_2) $(LIB_POCO_3) $(LIB_POCO_4) $(LIB_POCO_5) $(LIB_POCO_6) $(LIB_POCO_7) $(LIB_POCO_8) $(LIB_POCO_9) $(LIB_POCO_10) $(LIB_TESS) $(LIB_GLEW) $(LIB_CAIRO1) $(LIB_CAIRO2) $(LIB_CAIRO3) $(LIB_FMODEX) $(LIB_RTAUDIO) $(LIB_OPENSSL1) $(LIB_OPENSSL2) $(LIB_GLFW) $(LIB_FREEIMAGE) $(LIB_FREETYPE)
+
 OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_POCO) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_CAIRO) $(HEADER_RTAUDIO) $(HEADER_GLFW)
 
-// define which C++ library is required to build and avoid tr1/memory hangups
-CLANG_CXX_LIBRARY = libstdc++
+OF_CORE_FRAMEWORKS = -framework Accelerate -framework AGL -framework AppKit -framework ApplicationServices -framework AudioToolbox -framework AVFoundation -framework Cocoa -framework CoreAudio -framework CoreFoundation -framework CoreMedia -framework CoreServices -framework CoreVideo -framework IOKit -framework OpenGL -framework QuartzCore -framework QuickTime -framework QTKit -framework GLUT
+
+

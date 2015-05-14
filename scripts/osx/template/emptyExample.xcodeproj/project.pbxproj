@@ -162,8 +162,6 @@
 			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
-				<key>ARCHS</key>
-				<string>$(ARCHS_STANDARD_32_BIT)</string>
 				<key>CONFIGURATION_BUILD_DIR</key>
 				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>
@@ -218,8 +216,6 @@
 			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
-				<key>ARCHS</key>
-				<string>$(ARCHS_STANDARD_32_BIT)</string>
 				<key>CONFIGURATION_BUILD_DIR</key>
 				<string>$(SRCROOT)/bin/</string>
 				<key>COPY_PHASE_STRIP</key>
@@ -352,6 +348,8 @@
 		</dict>
 		<key>E4B69B600A3A1757003C02F2</key>
 		<dict>
+			<key>baseConfigurationReference</key>
+			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>COMBINE_HIDPI_IMAGES</key>
@@ -393,6 +391,8 @@
 		</dict>
 		<key>E4B69B610A3A1757003C02F2</key>
 		<dict>
+			<key>baseConfigurationReference</key>
+			<string>E4EB6923138AFD0F00A09F29</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>COMBINE_HIDPI_IMAGES</key>
@@ -424,6 +424,8 @@
 				<string>$(TARGET_NAME)</string>
 				<key>WRAPPER_EXTENSION</key>
 				<string>app</string>
+				<key>baseConfigurationReference</key>
+				<string>E4EB6923138AFD0F00A09F29</string>
 			</dict>
 			<key>isa</key>
 			<string>XCBuildConfiguration</string>
