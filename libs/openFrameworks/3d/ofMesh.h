@@ -125,7 +125,7 @@ public:
     static ofMesh sphere(float radius, int res=12, 
     	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh icosahedron(float radius);
-    static ofMesh icosphere(float radius, int iterations=2);
+    static ofMesh icosphere(float radius, std::size_t iterations=2);
   	///
 	///	\brief A helper method that returns a cylinder made of triangles. 
 	/// The resolution settings for the radius, height, and cap are optional 
