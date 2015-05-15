@@ -5,7 +5,7 @@ static string voices[24] = {"Agnes", "Albert", "Alex", "Bad News", "Bahh", "Bell
 //--------------------------------------------------------------
 void ofApp::setup() {
 
-    font.loadFont("verdana.ttf", 34);
+	font.load("verdana.ttf", 34);
     voice = "Cellos";
     bRandomVoice = false;
 
@@ -109,6 +109,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

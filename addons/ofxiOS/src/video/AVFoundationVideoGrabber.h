@@ -12,7 +12,6 @@
 #include "ofxiOS.h"
 #include "ofxiOSExtras.h"
 
-#if defined  __arm__
 
 class AVFoundationVideoGrabber;
 
@@ -52,7 +51,8 @@ class AVFoundationVideoGrabber{
 		void clear();
 		void setCaptureRate(int capRate);
 	
-		bool initGrabber(int w, int h);
+        bool initGrabber(int w, int h);
+        bool isInitialized();
 		void updatePixelsCB( CGImageRef & ref );
 	
 		void update();
@@ -85,7 +85,7 @@ class AVFoundationVideoGrabber{
 		
 		
 		int device;
-	
+        bool bIsInit;
 		bool bHavePixelsChanged;
 		
 		int fps;
@@ -95,5 +95,4 @@ class AVFoundationVideoGrabber{
 };
 
 
-#endif	// (__arm__) compile only for ARM
 

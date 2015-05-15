@@ -14,7 +14,7 @@ void ofApp::setup(){
 	ofEnableNormalizedTexCoords();
 	
 	// loads the OF logo from disk
-	ofLogo.loadImage("of.png");
+	ofLogo.load("of.png");
 	
 	// draw the ofBox outlines with some weight
 	ofSetLineWidth(10);
@@ -98,6 +98,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

@@ -38,6 +38,11 @@ function copy() {
 	# headers
 	mkdir -p $1/include
 	cp -Rv include/* $1/include
+
+	# copy license file
+    rm -rf $1/license # remove any older files if exists
+    mkdir -p $1/license
+    cp -v LICENSE.txt $1/license/
 }
 
 # executed inside the lib src dir

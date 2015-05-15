@@ -45,7 +45,7 @@ void ofApp::update(){
         // check for an image being sent (note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through ) 
         else if(m.getAddress() == "/image" ){
             ofBuffer buffer = m.getArgAsBlob(0);
-            receivedImage.loadImage(buffer);
+            receivedImage.load(buffer);
         }
 		else{
 			// unrecognized message: display on the bottom of the screen
@@ -133,6 +133,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

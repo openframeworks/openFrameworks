@@ -4,6 +4,7 @@
 
 #include "ofBaseSoundStream.h"
 #include "ofTypes.h"
+#include "ofSoundBuffer.h"
 
 class RtAudio;
 typedef unsigned int RtAudioStreamStatus;
@@ -13,10 +14,10 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		ofRtAudioSoundStream();
 		~ofRtAudioSoundStream();
 		
-		void listDevices();
+		std::vector<ofSoundDevice> getDeviceList() const;
 		void setDeviceID(int deviceID);
-        void setInDeviceID(int deviceID);
-        void setOutDeviceID(int deviceID);
+		void setInDeviceID(int deviceID);
+		void setOutDeviceID(int deviceID);
 
 		void setInput(ofBaseSoundInput * soundInput);
 		void setOutput(ofBaseSoundOutput * soundOutput);
@@ -27,25 +28,28 @@ class ofRtAudioSoundStream : public ofBaseSoundStream{
 		void stop();
 		void close();
 		
-		long unsigned long getTickCount();		
+		long unsigned long getTickCount() const;
 
-		int getNumInputChannels();
-		int getNumOutputChannels();
-		int getSampleRate();
-		int getBufferSize();
+		int getNumInputChannels() const;
+		int getNumOutputChannels() const;
+		int getSampleRate() const;
+		int getBufferSize() const;
+		int getDeviceID() const;
 	
-		
 	private:
-		long unsigned long	tickCount;
-		shared_ptr<RtAudio>		audio;
-		int					sampleRate;
-		int					outDeviceID, inDeviceID;
-		int					bufferSize;
-		int					nInputChannels;
-		int					nOutputChannels;
-		ofBaseSoundInput *  soundInputPtr;
+		long unsigned long tickCount;
+		shared_ptr<RtAudio>	audio;
+		int sampleRate;
+		int outDeviceID;
+		int inDeviceID;
+		int bufferSize;
+		int nInputChannels;
+		int nOutputChannels;
+		ofBaseSoundInput * soundInputPtr;
 		ofBaseSoundOutput * soundOutputPtr;
-		
+		ofSoundBuffer inputBuffer;
+		ofSoundBuffer outputBuffer;
+	
 		static int rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int bufferSize, double streamTime, RtAudioStreamStatus status, void *data);
 
 };

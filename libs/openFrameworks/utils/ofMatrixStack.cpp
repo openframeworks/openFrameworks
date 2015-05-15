@@ -9,12 +9,12 @@
 #include "ofAppBaseWindow.h"
 #include "ofFbo.h"
 
-ofMatrixStack::ofMatrixStack(const ofAppBaseWindow & window)
+ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 :vFlipped(true)
 ,orientation(OF_ORIENTATION_DEFAULT)
 ,handedness(OF_LEFT_HANDED)
 ,currentFbo(NULL)
-,currentWindow(const_cast<ofAppBaseWindow*>(&window))
+,currentWindow(const_cast<ofAppBaseWindow*>(window))
 ,currentMatrixMode(OF_MATRIX_MODELVIEW)
 ,currentMatrix(&modelViewMatrix)
 {
@@ -128,6 +128,7 @@ void ofMatrixStack::viewport(float x, float y, float width, float height, bool v
 	if(width < 0 || height < 0){
 		width = getRenderSurfaceWidth();
 		height = getRenderSurfaceHeight();
+		vflip = isVFlipped();
 	}
 
 	if (vflip){
@@ -137,35 +138,35 @@ void ofMatrixStack::viewport(float x, float y, float width, float height, bool v
 	currentViewport.set(x,y,width,height);
 }
 
-ofRectangle ofMatrixStack::getCurrentViewport(){
-	ofRectangle currentViewport = this->currentViewport;
+ofRectangle ofMatrixStack::getCurrentViewport() const{
+	ofRectangle tmpCurrentViewport = currentViewport;
 	if (isVFlipped()){
-		currentViewport.y = getRenderSurfaceHeight() - (currentViewport.y + currentViewport.height);
+		tmpCurrentViewport.y = getRenderSurfaceHeight() - (tmpCurrentViewport.y + tmpCurrentViewport.height);
 	}
 
 	if(!doesHWOrientation() && (orientation==OF_ORIENTATION_90_LEFT || orientation==OF_ORIENTATION_90_RIGHT)){
-		swap(currentViewport.width,currentViewport.height);
-		swap(currentViewport.x,currentViewport.y);
+		swap(tmpCurrentViewport.width,tmpCurrentViewport.height);
+		swap(tmpCurrentViewport.x,tmpCurrentViewport.y);
 	}
+	return tmpCurrentViewport;
+}
+
+ofRectangle ofMatrixStack::getNativeViewport() const{
 	return currentViewport;
 }
 
-ofRectangle ofMatrixStack::getNativeViewport(){
-	return currentViewport;
+ofRectangle ofMatrixStack::getFullSurfaceViewport() const{
+	if(currentFbo){
+		return ofRectangle(0,0,currentFbo->getWidth(),currentFbo->getHeight());
+	}else if(currentWindow){
+		return ofRectangle(0,0,currentWindow->getWidth(),currentWindow->getHeight());
+	}else{
+		return ofRectangle();
+	}
 }
 
 void ofMatrixStack::nativeViewport(ofRectangle viewport){
 	currentViewport=viewport;
-}
-
-void ofMatrixStack::loadViewMatrix(const ofMatrix4x4 & matrix){
-	viewMatrix = matrix;
-	modelViewMatrix = matrix;
-}
-
-void ofMatrixStack::multViewMatrix(const ofMatrix4x4 & matrix){
-	viewMatrix.preMult(matrix);
-	modelViewMatrix.preMult(matrix);
 }
 
 const ofMatrix4x4 & ofMatrixStack::getViewMatrix() const{
@@ -381,6 +382,22 @@ void ofMatrixStack::multMatrix (const float * m){
 	updatedRelatedMatrices();
 }
 
+void ofMatrixStack::loadViewMatrix(const ofMatrix4x4 & matrix){
+	ofMatrixMode lastMatrixMode = currentMatrixMode;
+	currentMatrixMode = OF_MATRIX_MODELVIEW;
+	viewMatrix = matrix;
+	loadMatrix(matrix.getPtr());
+	currentMatrixMode = lastMatrixMode;
+}
+
+void ofMatrixStack::multViewMatrix(const ofMatrix4x4 & matrix){
+	ofMatrixMode lastMatrixMode = currentMatrixMode;
+	currentMatrixMode = OF_MATRIX_MODELVIEW;
+	viewMatrix.preMult(matrix);
+	multMatrix(matrix.getPtr());
+	currentMatrixMode = lastMatrixMode;
+}
+
 
 void ofMatrixStack::updatedRelatedMatrices(){
 	switch(currentMatrixMode){
@@ -396,3 +413,10 @@ void ofMatrixStack::updatedRelatedMatrices(){
 	}
 }
 
+bool ofMatrixStack::doesHardwareOrientation() const{
+	if(currentFbo){
+		return true;
+	}else{
+		return currentWindow->doesHWOrientation();
+	}
+}

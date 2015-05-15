@@ -8,6 +8,7 @@
 #include "ofxPanel.h"
 #include "ofGraphics.h"
 #include "ofImage.h"
+using namespace std;
 
 ofImage ofxPanel::loadIcon;
 ofImage ofxPanel::saveIcon;
@@ -18,6 +19,11 @@ ofxPanel::ofxPanel()
 ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x, float y)
 : ofxGuiGroup(parameters, filename, x, y)
 , bGrabbed(false){
+	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
+		loadIcons();
+	}
+	registerMouseEvents();
+	setNeedsRedraw();
 }
 
 ofxPanel::~ofxPanel(){
@@ -48,8 +54,8 @@ void ofxPanel::loadIcons(){
 	loadStencilFromHex(loadIcon, loadIconData);
 	loadStencilFromHex(saveIcon, saveIconData);
 
-	loadIcon.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
-	saveIcon.getTextureReference().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+	loadIcon.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
+	saveIcon.getTexture().setTextureMinMagFilter(GL_NEAREST,GL_NEAREST);
 }
 
 void ofxPanel::generateDraw(){

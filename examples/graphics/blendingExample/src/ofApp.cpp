@@ -2,32 +2,26 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	 
-    alpha = 0;
-	counter = 0;
+    eventString = "Alpha";
 
-    sprintf(eventString, "Alpha"); 
-
-	vagRounded.loadFont("vag.ttf", 32);
+	vagRounded.load("vag.ttf", 32);
 	ofBackground(50,50,50);	
 
     rainbow.allocate(256, 256, OF_IMAGE_COLOR_ALPHA);
-    rainbow.loadImage("rainbow.tiff");
+    rainbow.load("rainbow.tiff");
+	blendMode = OF_BLENDMODE_ALPHA;
 }
 
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	counter = counter + 0.033f;
 
-    alpha += 0.01;
-   
-    alpha = (alpha > 1.0) ? 1.0 : alpha;
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-    sprintf(timeString, "Press 1 - 5 to switch blend modes");
+    timeString = "Press 1 - 5 to switch blend modes";
 	
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     
@@ -60,23 +54,23 @@ void ofApp::keyPressed  (int key){
     switch (key) {
         case 49:
             blendMode = OF_BLENDMODE_ALPHA;
-            sprintf(eventString, "Alpha"); 
+            eventString = "Alpha";
             break;
         case 50:
             blendMode = OF_BLENDMODE_ADD;
-            sprintf(eventString, "Add"); 
+            eventString = "Add";
             break;
         case 51:
             blendMode = OF_BLENDMODE_MULTIPLY;
-            sprintf(eventString, "Multiply"); 
+            eventString = "Multiply";
             break;
         case 52:
             blendMode = OF_BLENDMODE_SUBTRACT;
-            sprintf(eventString, "Subtract"); 
+            eventString = "Subtract";
             break;
         case 53:
             blendMode = OF_BLENDMODE_SCREEN;
-            sprintf(eventString, "Screen"); 
+            eventString = "Screen";
             break;
         default:
             break;
@@ -105,6 +99,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

@@ -52,7 +52,7 @@ void ofApp::draw(){
 	ofSetColor(220);
 	for(int x = 0; x < 1000; x += 20){
 		for(int y = 0; y < 1000; y += 20){
-			ofCircle(x, y, sin((x + y) / 100.0f + ofGetElapsedTimef()) * 5.0f);
+			ofDrawCircle(x, y, sin((x + y) / 100.0f + ofGetElapsedTimef()) * 5.0f);
 		}
 	}
 
@@ -102,11 +102,11 @@ void ofApp::drawViewportOutline(const ofRectangle & viewport){
 	ofFill();
 	ofSetColor(50);
 	ofSetLineWidth(0);
-	ofRect(viewport);
+	ofDrawRectangle(viewport);
 	ofNoFill();
 	ofSetColor(25);
 	ofSetLineWidth(1.0f);
-	ofRect(viewport);
+	ofDrawRectangle(viewport);
 	ofPopStyle();
 }
 
@@ -140,6 +140,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

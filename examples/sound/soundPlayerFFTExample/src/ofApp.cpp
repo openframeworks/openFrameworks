@@ -5,10 +5,10 @@
 void ofApp::setup(){	 
 
 	// load in sounds:
-	beat.loadSound("sounds/jdee_beat.mp3");
-	ow.loadSound("sounds/ow.mp3");	
-	dog.loadSound("sounds/dog.mp3");	
-	rooster.loadSound("sounds/rooster.mp3");
+	beat.load("sounds/jdee_beat.mp3");
+	ow.load("sounds/ow.mp3");
+	dog.load("sounds/dog.mp3");
+	rooster.load("sounds/rooster.mp3");
 	
 	// we will bounce a circle using these variables:
 	px = 300;
@@ -93,7 +93,7 @@ void ofApp::draw(){
 	
 	ofEnableAlphaBlending();
 		ofSetColor(255,255,255,100);
-		ofRect(100,ofGetHeight()-300,5*128,200);
+		ofDrawRectangle(100,ofGetHeight()-300,5*128,200);
 	ofDisableAlphaBlending();
 	
 	// draw the fft resutls:
@@ -103,18 +103,18 @@ void ofApp::draw(){
 	for (int i = 0;i < nBandsToGet; i++){
 		// (we use negative height here, because we want to flip them
 		// because the top corner is 0,0)
-		ofRect(100+i*width,ofGetHeight()-100,width,-(fftSmoothed[i] * 200));
+		ofDrawRectangle(100+i*width,ofGetHeight()-100,width,-(fftSmoothed[i] * 200));
 	}
 	
 	// finally draw the playing circle:
 
 	ofEnableAlphaBlending();
 		ofSetColor(255,255,255,20);
-		ofCircle(px, py,50);	
+		ofDrawCircle(px, py,50);
 	ofDisableAlphaBlending();
 	
 	ofSetHexColor(0xffffff);
-	ofCircle(px, py,8);
+	ofDrawCircle(px, py,8);
 }
 
 
@@ -150,6 +150,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

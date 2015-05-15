@@ -2,28 +2,18 @@
 #import "ofxiOSExtras.h"
 #import "AVFoundationVideoPlayer.h"
 
-#ifdef __IPHONE_5_0
 CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
 CVOpenGLESTextureRef _videoTextureRef = NULL;
-#endif
 
 ofxiOSVideoPlayer::ofxiOSVideoPlayer() {
 	videoPlayer = NULL;
-	pixelsRGB = NULL;
-	pixelsRGBA = NULL;
-    internalGLFormat = GL_RGB;
-	internalPixelFormat = OF_PIXELS_RGB;
+	pixelFormat = OF_PIXELS_RGBA;
 	
     bFrameNew = false;
     bResetPixels = false;
-    bResetTexture = false;
     bUpdatePixels = false;
-    bUpdatePixelsToRgb = false;
     bUpdateTexture = false;
-    bTextureCacheSupported = false;
-#ifdef __IPHONE_5_0    
     bTextureCacheSupported = (CVOpenGLESTextureCacheCreate != NULL);
-#endif
     bTextureCacheEnabled = true;
 }
 
@@ -39,12 +29,11 @@ void ofxiOSVideoPlayer::enableTextureCache() {
 
 void ofxiOSVideoPlayer::disableTextureCache() {
     bTextureCacheEnabled = false;
-    bResetTexture = true;
     killTextureCache();
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::loadMovie(string name) {
+bool ofxiOSVideoPlayer::load(string name) {
 	
     if(!videoPlayer) {
         videoPlayer = [[AVFoundationVideoPlayer alloc] init];
@@ -55,12 +44,9 @@ bool ofxiOSVideoPlayer::loadMovie(string name) {
     [(AVFoundationVideoPlayer*)videoPlayer loadWithPath:videoPath];
     
     bResetPixels = true;
-    bResetTexture = true;
     bUpdatePixels = true;
-    bUpdatePixelsToRgb = true;
     bUpdateTexture = true;
     
-#ifdef __IPHONE_5_0
     if(bTextureCacheSupported == true && bTextureCacheEnabled == true) {
         if(_videoTextureCache == NULL) {
 #ifdef __IPHONE_6_0
@@ -77,11 +63,10 @@ bool ofxiOSVideoPlayer::loadMovie(string name) {
                                                         &_videoTextureCache);
 #endif
             if(err) {
-                NSLog(@"Error at CVOpenGLESTextureCacheCreate %d", err);
-            }    
+                ofLogWarning("ofxiOSVideoPlayer::load()") << "Error at CVOpenGLESTextureCacheCreate " << err;
+            }
         }
     }
-#endif
     
     return true;
 }
@@ -90,15 +75,7 @@ bool ofxiOSVideoPlayer::loadMovie(string name) {
 void ofxiOSVideoPlayer::close() {
 	if(videoPlayer != NULL) {
 		
-		if(pixelsRGBA != NULL) {
-			free(pixelsRGBA);
-			pixelsRGBA = NULL;
-		}
-        
-		if(pixelsRGB != NULL) {
-			free(pixelsRGB);
-			pixelsRGB = NULL;
-		}
+        pixels.clear();
         
         videoTexture.clear();
 		
@@ -113,34 +90,35 @@ void ofxiOSVideoPlayer::close() {
     
     bFrameNew = false;
     bResetPixels = false;
-    bResetTexture = false;
     bUpdatePixels = false;
-    bUpdatePixelsToRgb = false;
     bUpdateTexture = false;
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::setPixelFormat(ofPixelFormat _internalPixelFormat) {
-	if(_internalPixelFormat == OF_PIXELS_RGB) {
-		internalPixelFormat = _internalPixelFormat;
-		internalGLFormat = GL_RGB;
-		return true;		
-    } else if(_internalPixelFormat == OF_PIXELS_RGBA) {
-		internalPixelFormat = _internalPixelFormat;
-		internalGLFormat = GL_RGBA;
-		return true;
-    } else if(_internalPixelFormat == OF_PIXELS_BGRA) {
-		internalPixelFormat = _internalPixelFormat;	
-		internalGLFormat = GL_BGRA;
-		return true;
+bool ofxiOSVideoPlayer::setPixelFormat(ofPixelFormat value) {
+    bool bValid = false;
+    bValid = bValid || (value == OF_PIXELS_RGB);
+    bValid = bValid || (value == OF_PIXELS_RGBA);
+    
+    if(bValid == false) {
+        ofLogWarning("ofxiOSVideoPlayer::setPixelFormat()") << "unsupported ofPixelFormat " << value;
+        return false;
     }
-	return false;
+    
+    if(pixelFormat == value) {
+        return true;
+    }
+    
+    pixelFormat = value;
+    bResetPixels = true;
+    
+	return true;
 }
 
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofxiOSVideoPlayer::getPixelFormat(){
-	return internalPixelFormat;
+ofPixelFormat ofxiOSVideoPlayer::getPixelFormat() const {
+	return pixelFormat;
 }
 
 //----------------------------------------
@@ -163,7 +141,6 @@ void ofxiOSVideoPlayer::update() {
          *  this ensures the pixels are updated only once per frame.
          */
         bUpdatePixels = true;
-        bUpdatePixelsToRgb = true;
         bUpdateTexture = true;
     }
 }
@@ -171,7 +148,7 @@ void ofxiOSVideoPlayer::update() {
 //----------------------------------------
 void ofxiOSVideoPlayer::play() {
     if(videoPlayer == NULL) {
-        ofLogWarning("ofxiOSVideoPlayer") << "play(): video not loaded";
+        ofLogWarning("ofxiOSVideoPlayer::play()") << "video not loaded";
     }
     
 	[(AVFoundationVideoPlayer *)videoPlayer play];
@@ -188,7 +165,7 @@ void ofxiOSVideoPlayer::stop() {
 }		
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::isFrameNew() {
+bool ofxiOSVideoPlayer::isFrameNew() const {
 	if(videoPlayer != NULL) {
 		return bFrameNew;
 	}	
@@ -196,148 +173,92 @@ bool ofxiOSVideoPlayer::isFrameNew() {
 }
 
 //----------------------------------------
-unsigned char * ofxiOSVideoPlayer::getPixels() {
-    
-	if(isLoaded() == false) {
-        return NULL;
-	}
-	
-    if(bUpdatePixels == false) {
-        
-        // if pixels have not changed,
-        // return the already calculated pixels.
-        
-        if(internalGLFormat == GL_RGB) {
-            
-            updatePixelsToRGB();
-            return pixelsRGB;
-            
-        } else if(internalGLFormat == GL_RGBA || internalGLFormat == GL_BGRA) {
-            
-            return pixelsRGBA;
-        }
+ofPixels & ofxiOSVideoPlayer::getPixels() {
+    if(isLoaded() == false) {
+        ofLogError("ofxiOSVideoPlayer::getPixels()") << "Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixels.";
+        return pixels;
     }
     
-    CGImageRef currentFrameRef;
+    if(bUpdatePixels == false) {
+        // if pixels have not changed,
+        // return the already calculated pixels.
+        return pixels;
+    }
     
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-    
-    CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame];
-    
-    /*Lock the image buffer*/
-    CVPixelBufferLockBaseAddress(imageBuffer,0);
-    
-    /*Get information about the image*/
-    uint8_t *baseAddress	= (uint8_t *)CVPixelBufferGetBaseAddress(imageBuffer);
-    size_t bytesPerRow		= CVPixelBufferGetBytesPerRow(imageBuffer);
-    size_t width			= CVPixelBufferGetWidth(imageBuffer);
-    size_t height			= CVPixelBufferGetHeight(imageBuffer);
-    
-    /*Create a CGImageRef from the CVImageBufferRef*/
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGContextRef newContext = CGBitmapContextCreate(baseAddress,
-                                                    width,
-                                                    height,
-                                                    8,
-                                                    bytesPerRow,
-                                                    colorSpace,
-                                                    kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
-    CGImageRef newImage	= CGBitmapContextCreateImage(newContext);
-    
-    currentFrameRef = CGImageCreateCopy(newImage);
-    
-    /*We release some components*/
-    CGContextRelease(newContext);
-    CGColorSpaceRelease(colorSpace);
-    
-    /*We relase the CGImageRef*/
-    CGImageRelease(newImage);
-    
-    /*We unlock the  image buffer*/
-    CVPixelBufferUnlockBaseAddress(imageBuffer,0);
-    
-    if(bResetPixels) {
-        
-        if(pixelsRGBA != NULL) {
-            free(pixelsRGBA);
-            pixelsRGBA = NULL;
-        }
-        
-        if(pixelsRGB != NULL) {
-            free(pixelsRGB);
-            pixelsRGB = NULL;
-        }
-        
-        pixelsRGBA = (GLubyte *) malloc(width * height * 4);
-        pixelsRGB  = (GLubyte *) malloc(width * height * 3);
-        
+    if(bResetPixels == true) {
+        pixels.allocate(getWidth(), getHeight(), pixelFormat);
         bResetPixels = false;
     }
     
-    [pool drain];
+    CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame];
     
-    CGContextRef spriteContext;
-    spriteContext = CGBitmapContextCreate(pixelsRGBA,
-                                          width,
-                                          height,
-                                          CGImageGetBitsPerComponent(currentFrameRef),
-                                          width * 4,
-                                          CGImageGetColorSpace(currentFrameRef),
-                                          kCGImageAlphaPremultipliedLast);
+    CVPixelBufferLockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
     
-    CGContextDrawImage(spriteContext,
-                       CGRectMake(0.0, 0.0, (CGFloat)width, (CGFloat)height),
-                       currentFrameRef);
+    unsigned long imageBufferPixelFormat = CVPixelBufferGetPixelFormatType(imageBuffer);
     
-    CGContextRelease(spriteContext);
+    vImage_Buffer src = {
+        CVPixelBufferGetBaseAddress(imageBuffer),
+        CVPixelBufferGetHeight(imageBuffer),
+        CVPixelBufferGetWidth(imageBuffer),
+        CVPixelBufferGetBytesPerRow(imageBuffer)
+    };
     
-    if(internalGLFormat == GL_RGB) {
-        updatePixelsToRGB();
-    } else if(internalGLFormat == GL_RGBA || internalGLFormat == GL_BGRA) {
-        // pixels are already 4 channel.
-        // return pixelsRaw instead of pixels (further down).
+    vImage_Buffer dest = {
+        pixels.getData(),
+        static_cast<vImagePixelCount>(pixels.getHeight()),
+        static_cast<vImagePixelCount>(pixels.getWidth()),
+        static_cast<size_t>(pixels.getWidth() * pixels.getNumChannels())
+    };
+    
+    vImage_Error err = kvImageNoError;
+    
+    if(pixelFormat == OF_PIXELS_RGBA) {
+        
+        if(imageBufferPixelFormat == kCVPixelFormatType_32ARGB) {
+            
+            uint8_t permuteMap[4] = { 1, 2, 3, 0 };
+            err = vImagePermuteChannels_ARGB8888(&src, &dest, permuteMap, 0);
+            
+        } else if(imageBufferPixelFormat == kCVPixelFormatType_32BGRA) {
+            
+            uint8_t permuteMap[4] = { 2, 1, 0, 3 };
+            err = vImagePermuteChannels_ARGB8888(&src, &dest, permuteMap, 0);
+        }
+    
+    } else if(pixelFormat == OF_PIXELS_RGB) {
+        
+        if(imageBufferPixelFormat == kCVPixelFormatType_32ARGB) {
+            
+            err = vImageConvert_ARGB8888toRGB888(&src, &dest, 0);
+            
+        } else if(imageBufferPixelFormat == kCVPixelFormatType_32BGRA) {
+            
+#ifdef __IPHONE_6_0
+            err = vImageConvert_BGRA8888toRGB888(&src, &dest, 0);
+#else
+            ofLogError("ofxiOSVideoPlayer::getPixels()") << "OF_PIXELS_RGB is not supported, use setPixelFormat() to set the pixel format to OF_PIXELS_RGBA";
+#endif
+        }
     }
     
-    CGImageRelease(currentFrameRef);
+    CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
+    
+    if(err != kvImageNoError) {
+        ofLogError("ofxiOSVideoPlayer::getPixels()") << "Error in Pixel Copy vImage_error " << err;
+    }
     
     bUpdatePixels = false;
     
-    if(internalGLFormat == GL_RGB) {
-        return pixelsRGB;
-    }  else if(internalGLFormat == GL_RGBA || internalGLFormat == GL_BGRA) {
-        return pixelsRGBA;
-    }
-    
-    return NULL;
-}
-
-void ofxiOSVideoPlayer::updatePixelsToRGB () {
-    if(!bUpdatePixelsToRgb) {
-        return;
-    }
-    
-    int width = [(AVFoundationVideoPlayer *)videoPlayer getWidth];
-    int height = [(AVFoundationVideoPlayer *)videoPlayer getHeight];
-
-    unsigned int *isrc4 = (unsigned int *)pixelsRGBA;
-    unsigned int *idst3 = (unsigned int *)pixelsRGB;
-    unsigned int *ilast4 = &isrc4[width*height-1];
-    while (isrc4 < ilast4){
-        *(idst3++) = *(isrc4++);
-        idst3 = (unsigned int *) (((unsigned char *) idst3) - 1);
-    }
-    
-    bUpdatePixelsToRgb = false;
+    return pixels;
 }
 
 //----------------------------------------
-ofPixelsRef ofxiOSVideoPlayer::getPixelsRef() {
-    static ofPixels dummy;
-    return dummy;
+const ofPixels & ofxiOSVideoPlayer::getPixels() const {
+    return const_cast<ofxiOSVideoPlayer*>(this)->getPixels();
 }
 
 //----------------------------------------
-ofTexture * ofxiOSVideoPlayer::getTexture() {
+ofTexture * ofxiOSVideoPlayer::getTexturePtr() {
     
     if(isLoaded() == false) {
         return &videoTexture;
@@ -364,26 +285,13 @@ ofTexture * ofxiOSVideoPlayer::getTexture() {
         
         if([(AVFoundationVideoPlayer *)videoPlayer getWidth] > maxTextureSize || 
            [(AVFoundationVideoPlayer *)videoPlayer getHeight] > maxTextureSize) {
-            ofLogWarning("ofxiOSVideoPlayer") << "getTexture(): "
-				<< [(AVFoundationVideoPlayer *)videoPlayer getWidth] << "x" << [(AVFoundationVideoPlayer *)videoPlayer getHeight]
-				<< " video image is bigger then max supported texture size " << maxTextureSize;
+            ofLogWarning("ofxiOSVideoPlayer::getTexturePtr()")
+            << [(AVFoundationVideoPlayer *)videoPlayer getWidth] << "x" << [(AVFoundationVideoPlayer *)videoPlayer getHeight]
+            << " video image is bigger then max supported texture size " << maxTextureSize;
             return NULL;
         }
         
-        if(bResetTexture) {
-            
-            videoTexture.allocate([(AVFoundationVideoPlayer *)videoPlayer getWidth], 
-                                  [(AVFoundationVideoPlayer *)videoPlayer getHeight], 
-                                  GL_RGBA);
-        }
-        
-        GLint internalGLFormatCopy = internalGLFormat;
-        internalGLFormat = GL_RGBA;
-        videoTexture.loadData(getPixels(), 
-                              [(AVFoundationVideoPlayer *)videoPlayer getWidth], 
-                              [(AVFoundationVideoPlayer *)videoPlayer getHeight], 
-                              internalGLFormat);
-        internalGLFormat = internalGLFormatCopy;
+        videoTexture.loadData(getPixels());
     }
     
     bUpdateTexture = false;
@@ -393,8 +301,7 @@ ofTexture * ofxiOSVideoPlayer::getTexture() {
 
 //---------------------------------------- texture cache
 void ofxiOSVideoPlayer::initTextureCache() {
-#ifdef __IPHONE_5_0
-    
+
     CVImageBufferRef imageBuffer = [(AVFoundationVideoPlayer *)videoPlayer getCurrentFrame];
     if(imageBuffer == nil) {
         return;
@@ -455,7 +362,7 @@ void ofxiOSVideoPlayer::initTextureCache() {
     }
     
     if(err) {
-        NSLog(@"Error at CVOpenGLESTextureCacheCreateTextureFromImage %d", err);
+        ofLogError("ofxiOSVideoPlayer::initTextureCache()") << "Error at CVOpenGLESTextureCacheCreateTextureFromImage " << err;
     }
     
     CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
@@ -465,13 +372,9 @@ void ofxiOSVideoPlayer::initTextureCache() {
         CFRelease(_videoTextureRef);
         _videoTextureRef = NULL;
     }
-    
-#endif
 }
 
 void ofxiOSVideoPlayer::killTextureCache() {
-#ifdef __IPHONE_5_0
-    
     if(_videoTextureRef) {
         CFRelease(_videoTextureRef);
         _videoTextureRef = NULL;
@@ -481,12 +384,10 @@ void ofxiOSVideoPlayer::killTextureCache() {
         CFRelease(_videoTextureCache);
         _videoTextureCache = NULL;
     }
-    
-#endif
 }
 
 //----------------------------------------
-float ofxiOSVideoPlayer::getWidth() {
+float ofxiOSVideoPlayer::getWidth() const {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -495,7 +396,7 @@ float ofxiOSVideoPlayer::getWidth() {
 }
 
 //----------------------------------------
-float ofxiOSVideoPlayer::getHeight() {
+float ofxiOSVideoPlayer::getHeight() const {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -504,7 +405,7 @@ float ofxiOSVideoPlayer::getHeight() {
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::isPaused() {
+bool ofxiOSVideoPlayer::isPaused() const {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -513,7 +414,7 @@ bool ofxiOSVideoPlayer::isPaused() {
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::isLoaded() {
+bool ofxiOSVideoPlayer::isLoaded() const {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -522,7 +423,7 @@ bool ofxiOSVideoPlayer::isLoaded() {
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::isPlaying() {
+bool ofxiOSVideoPlayer::isPlaying() const {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -531,7 +432,7 @@ bool ofxiOSVideoPlayer::isPlaying() {
 }
 
 //----------------------------------------
-float ofxiOSVideoPlayer::getPosition() {
+float ofxiOSVideoPlayer::getPosition() const {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -540,7 +441,7 @@ float ofxiOSVideoPlayer::getPosition() {
 }
 
 //----------------------------------------
-float ofxiOSVideoPlayer::getSpeed() {
+float ofxiOSVideoPlayer::getSpeed() const {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -549,7 +450,7 @@ float ofxiOSVideoPlayer::getSpeed() {
 }
 
 //----------------------------------------
-float ofxiOSVideoPlayer::getDuration() {
+float ofxiOSVideoPlayer::getDuration() const {
     if(videoPlayer == NULL) {
         return 0;
     }
@@ -558,7 +459,7 @@ float ofxiOSVideoPlayer::getDuration() {
 }
 
 //----------------------------------------
-bool ofxiOSVideoPlayer::getIsMovieDone() {
+bool ofxiOSVideoPlayer::getIsMovieDone() const {
     if(videoPlayer == NULL) {
         return false;
     }
@@ -593,8 +494,8 @@ void ofxiOSVideoPlayer::setVolume(float volume) {
     if(videoPlayer == NULL) {
         return;
     }
-	if ( volume > 1.0f ){
-		ofLogWarning("ofxiOSVideoPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0";
+	if(volume > 1.0f) {
+		ofLogWarning("ofxiOSVideoPlayer::setVolume()") << "expected range is 0-1, limiting requested volume " << volume << " to 1.0";
 		volume = 1.0f;
 	}
     [((AVFoundationVideoPlayer *)videoPlayer) setVolume:volume];    
@@ -633,7 +534,7 @@ void ofxiOSVideoPlayer::setFrame(int frame) {
 }
 
 //----------------------------------------
-int	ofxiOSVideoPlayer::getCurrentFrame() {
+int	ofxiOSVideoPlayer::getCurrentFrame() const {
     if(videoPlayer == NULL){
         return 0;
     }
@@ -641,7 +542,7 @@ int	ofxiOSVideoPlayer::getCurrentFrame() {
 }
 
 //----------------------------------------
-int	ofxiOSVideoPlayer::getTotalNumFrames() {
+int	ofxiOSVideoPlayer::getTotalNumFrames() const {
     if(videoPlayer == NULL){
         return 0;
     }
@@ -649,7 +550,7 @@ int	ofxiOSVideoPlayer::getTotalNumFrames() {
 }
 
 //----------------------------------------
-ofLoopType	ofxiOSVideoPlayer::getLoopState() {
+ofLoopType	ofxiOSVideoPlayer::getLoopState() const {
     if(videoPlayer == NULL) {
         return OF_LOOP_NONE;
     }
@@ -686,3 +587,21 @@ void ofxiOSVideoPlayer::previousFrame() {
 void * ofxiOSVideoPlayer::getAVFoundationVideoPlayer() {
     return videoPlayer;
 }
+
+//---------------------------------------- DEPRECATED.
+bool ofxiOSVideoPlayer::loadMovie(string name) {
+    return load(name);
+}
+
+ofPixels & ofxiOSVideoPlayer::getPixelsRef() {
+    return getPixels();
+}
+
+const ofPixels & ofxiOSVideoPlayer::getPixelsRef() const {
+    return getPixels();
+}
+
+ofTexture * ofxiOSVideoPlayer::getTexture() {
+    return getTexturePtr();
+}
+

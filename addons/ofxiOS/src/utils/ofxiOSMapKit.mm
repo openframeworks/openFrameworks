@@ -29,7 +29,6 @@
  * ***********************************************************************/ 
 
 #include <Availability.h>
-#ifdef __IPHONE_3_0
 
 #include "ofxiOSMapKit.h"
 #include "ofxiOSExtras.h"
@@ -111,7 +110,7 @@ void ofxiOSMapKit::_setRegion(CLLocationCoordinate2D center, MKCoordinateSpan sp
 void ofxiOSMapKit::setType(ofxiOSMapKitType type) {
     if(isOpen()) {
         ofLogVerbose("ofxiOSMapKit") << "setType(): setting map type: " << (int) type;
-        mapView.mapType = type;
+        mapView.mapType = (MKMapType)type;
     }
 }
 
@@ -264,6 +263,3 @@ void ofxiOSMapKit::errorLoadingMap(string errorDescription) {
 		o->errorLoadingMap(errorDescription);
 	}
 }
-
-
-#endif

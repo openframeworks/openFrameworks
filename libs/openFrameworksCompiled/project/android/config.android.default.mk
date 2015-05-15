@@ -33,7 +33,7 @@ include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 ARCH = android
 
 ifndef ABIS_TO_COMPILE_RELEASE
-	ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon x86
+	ABIS_TO_COMPILE_RELEASE = armv7 neon x86
 endif
 
 ifndef ABIS_TO_COMPILE_DEBUG
@@ -91,7 +91,11 @@ else
 	HOST_PLATFORM = darwin-x86
 endif
 else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/windows-x86_64),)
+	HOST_PLATFORM = windows-x86_64
+else
 	HOST_PLATFORM = windows
+endif
 	PWD = $(shell pwd)
 else
 ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/linux-x86_64),)
@@ -170,7 +174,7 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid
 PLATFORM_CFLAGS = -Wall -std=c++11
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
+PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-sections -fdata-sections
 
 
 ifeq ($(ABI),armv7)
@@ -202,7 +206,7 @@ PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-st
 ifneq ($(ABI),x86)
 PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 
 endif
-PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
+PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -222,8 +226,11 @@ PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
 
+# RELEASE options
+PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -s
+
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g -D_DEBUG
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -250,6 +257,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
@@ -426,7 +434,7 @@ PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$
 PLATFORM_AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 
 #ifeq (,$(findstring MINGW32_NT,$(shell uname)))
-ZIPWINDOWS=..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ./res/raw/$(RESFILE)
+ZIPWINDOWS=..\\..\\..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ../../res/raw/$(RESFILE)
 #endif
 
 afterplatform:$(RESFILE)
@@ -454,6 +462,7 @@ afterplatform:$(RESFILE)
 	@if [ "$(findstring armv5,$(ABIS_TO_COMPILE))" = "armv5" ]; then \
 		echo create gdb.setup for armeabi; \
 		echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup; \
+		echo "set sysroot $(SYSROOT)" >> libs/armeabi/gdb.setup; \
 		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup; \
 		echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup; \
 		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi/gdb.setup; \
@@ -464,6 +473,7 @@ afterplatform:$(RESFILE)
 	@if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ]; then \
 		echo create gdb.setup for armeabi-v7a; \
 		echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup; \
+		echo "set sysroot $(SYSROOT)" >> libs/armeabi-v7a/gdb.setup; \
 		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup; \
 		echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup; \
 		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi-v7a/gdb.setup; \
@@ -474,6 +484,7 @@ afterplatform:$(RESFILE)
 	@if [ "$(findstring x86,$(ABIS_TO_COMPILE))" = "x86" ]; then \
 		echo create gdb.setup for x86; \
 		echo "set solib-search-path $(PWD)/obj/local/x86:$(PWD)/libs/x86" > libs/x86/gdb.setup; \
+		echo "set sysroot $(SYSROOT)" >> libs/x86/gdb.setup; \
 		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/x86/gdb.setup; \
 		echo "directory $(PWD)/src" >> libs/x86/gdb.setup; \
 		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/x86/gdb.setup; \
@@ -527,40 +538,40 @@ afterplatform:$(RESFILE)
 	
 $(RESFILE): $(DATA_FILES)
 	@echo compressing and copying resources from bin/data into res
-	cd $(PROJECT_PATH); \
+	cd "$(PROJECT_PATH)"; \
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
 		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 			echo "Windows Platform. Running Zip..."; \
-			cmd //c $(ZIPWINDOWS) ./bin/data/ && exit; \
+			cmd //c $(ZIPWINDOWS) * && exit; \
 		else \
-			cd bin/data; \
 			zip -r ../../res/raw/$(RESNAME).zip *; \
-			cd ../..; \
 		fi; \
+		cd ../..; \
 	fi
 
 install:	
-	cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	cd "$(OF_ROOT)/addons/ofxAndroid/ofAndroidLib"; \
 	echo installing on $(HOST_PLATFORM); \
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	else \
 	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	fi 
-	cd $(PROJECT_PATH); \
+	cd "$(PROJECT_PATH)"; \
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
+		cd bin/data; \
 		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 			echo "Windows Platform. Running Zip..."; \
-			cmd //c $(ZIPWINDOWS) ./bin/data/ && exit; \
+			cmd //c $(ZIPWINDOWS) * && exit; \
 		else \
-			cd bin/data; \
 			zip -r ../../res/raw/$(RESNAME).zip; *; \
-			cd ../..; \
 		fi; \
+		cd ../..; \
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
 	#touch AndroidManifest.xml

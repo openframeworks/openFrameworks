@@ -57,7 +57,6 @@ function prepare() {
 	apothecaryDepend copy pixman
 	apothecaryDepend build freetype
 	apothecaryDepend copy freetype
-
 }
 
 # executed inside the lib src dir
@@ -65,6 +64,21 @@ function build() {
 
 	if [ "$TYPE" == "vs" ] ; then
 		make -f Makefile.win32
+	elif [ "$TYPE" == "osx" ] ; then
+		./configure PKG_CONFIG="$BUILD_ROOT_DIR/bin/pkg-config" \
+					PKG_CONFIG_PATH="$BUILD_ROOT_DIR/lib/pkgconfig" \
+					LDFLAGS="-arch i386 -stdlib=libstdc++ -arch x86_64 -Xarch_x86_64 -stdlib=libc++" \
+					CFLAGS="-Os -arch i386 -stdlib=libstdc++ -arch x86_64 -Xarch_x86_64 -stdlib=libc++" \
+					--prefix=$BUILD_ROOT_DIR \
+					--disable-gtk-doc \
+					--disable-gtk-doc-html \
+					--disable-gtk-doc-pdf \
+					--disable-full-testing \
+					--disable-dependency-tracking \
+					--disable-xlib \
+					--disable-qt 
+		make
+		make install
 	else 
 		./configure PKG_CONFIG="$BUILD_ROOT_DIR/bin/pkg-config" \
 					PKG_CONFIG_PATH="$BUILD_ROOT_DIR/lib/pkgconfig" \
@@ -78,11 +92,9 @@ function build() {
 					--disable-dependency-tracking \
 					--disable-xlib \
 					--disable-qt 
-
 		make
 		make install
 	fi
-
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
@@ -117,12 +129,18 @@ function copy() {
 
 	elif [ "$TYPE" == "osx" -o "$TYPE" == "win_cb" ] ; then
 		if [ "$TYPE" == "osx" ] ; then
-			cp -v $BUILD_ROOT_DIR/lib/libcairo-script-interpreter.a $1/lib/$TYPE/libcairo-script-interpreter.a
+			cp -v $BUILD_ROOT_DIR/lib/libcairo-script-interpreter.a $1/lib/$TYPE/cairo-script-interpreter.a
 		fi
 		cp -v $BUILD_ROOT_DIR/lib/libcairo.a $1/lib/$TYPE/cairo.a
 		cp -v $BUILD_ROOT_DIR/lib/libpixman-1.a $1/lib/$TYPE/pixman-1.a
 	fi
 
+	# copy license files
+	rm -rf $1/license # remove any older files if exists
+	mkdir -p $1/license
+	cp -v COPYING $1/license/
+	cp -v COPYING-LGPL-2.1 $1/license/
+	cp -v COPYING-MPL-1.1 $1/license/
 }
 
 # executed inside the lib src dir

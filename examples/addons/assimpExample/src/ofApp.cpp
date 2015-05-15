@@ -52,10 +52,6 @@ void ofApp::draw(){
     model.drawFaces();
     ofPopMatrix();
 
-   if(ofGetGLProgrammableRenderer()){
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    }
     glEnable(GL_NORMALIZE);
 
     ofPushMatrix();
@@ -79,10 +75,6 @@ void ofApp::draw(){
         meshHelper.getTextureRef().unbind();
     }
     ofPopMatrix();
-
-    if(ofGetGLProgrammableRenderer()){
-    	glPopAttrib();
-    }
     
     ofDisableDepthTest();
     light.disable();
@@ -174,6 +166,16 @@ void ofApp::mouseReleased(int x, int y, int button){
         model.setPausedForAllAnimations(false);
     }
     bAnimateMouse = false;
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

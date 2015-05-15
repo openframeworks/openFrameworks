@@ -6,7 +6,7 @@ void ofApp::setup(){
 	ofBackground(255,255,255);
 	ofSetLogLevel(OF_LOG_NOTICE);
 	ofSetOrientation(OF_ORIENTATION_90_LEFT);
-	grabber.initGrabber(320,240);
+	grabber.setup(320,240);
 
 	one_second_time = ofGetElapsedTimeMillis();
 	camera_fps = 0;

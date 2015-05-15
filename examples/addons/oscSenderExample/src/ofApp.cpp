@@ -51,7 +51,7 @@ void ofApp::keyPressed(int key){
     //send an image. (Note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through )
 
     if( key == 'i' || key == 'I'){
-        img.loadImage(imgAsBuffer);
+        img.load(imgAsBuffer);
 
         ofxOscMessage m;
         m.setAddress("/image");
@@ -94,6 +94,16 @@ void ofApp::mouseReleased(int x, int y, int button){
 	m.setAddress("/mouse/button");
 	m.addStringArg("up");
 	sender.sendMessage(m, false);
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

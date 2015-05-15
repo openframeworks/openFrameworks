@@ -1,17 +1,21 @@
 package cc.openframeworks;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
 
-class OFGestureListener extends SimpleOnGestureListener implements OnClickListener {
+class OFGestureListener extends SimpleOnGestureListener implements OnClickListener, OnScaleGestureListener {
 	
 
 	OFGestureListener(Activity activity){
 		gestureDetector = new GestureDetector(activity,this);
+		scaleDetector = new ScaleGestureDetector(activity, this);
         touchListener = new View.OnTouchListener() {
         	
             public boolean onTouch(View v, MotionEvent event) {
@@ -25,32 +29,33 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
             		for(int i=0; i<event.getHistorySize(); i++)
             		{            			
 		                for(int j=0; j<event.getPointerCount(); j++){	                			
-	                		OFAndroid.onTouchMoved(event.getPointerId(j), event.getHistoricalX(j, i), event.getHistoricalY(j, i), event.getHistoricalPressure(j, i));
+	                		OFAndroid.onTouchMoved(event.getPointerId(j), event.getHistoricalX(j, i), event.getHistoricalY(j, i), event.getHistoricalPressure(j, i), event.getHistoricalTouchMajor(j, i), event.getHistoricalTouchMinor(j, i), event.getHistoricalOrientation(j, i));
 	                	}            			
                 	}
 	            	for(int i=0; i<event.getPointerCount(); i++){
-	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i));
+	            		OFAndroid.onTouchMoved(event.getPointerId(i), event.getX(i), event.getY(i), event.getPressure(i), event.getTouchMajor(i), event.getTouchMinor(i), event.getOrientation(i));
 	            	}
                 }
 	            	break;
                 case MotionEvent.ACTION_POINTER_UP:
                 case MotionEvent.ACTION_UP:
-                	OFAndroid.onTouchUp(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
+                	OFAndroid.onTouchUp(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex), event.getTouchMajor(pointerIndex), event.getTouchMinor(pointerIndex), event.getOrientation(pointerIndex));
                 	break;
                 case MotionEvent.ACTION_POINTER_DOWN:
                 case MotionEvent.ACTION_DOWN:
-                	OFAndroid.onTouchDown(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex));
+                	OFAndroid.onTouchDown(pointerId, event.getX(pointerIndex), event.getY(pointerIndex), event.getPressure(pointerIndex), event.getTouchMajor(pointerIndex), event.getTouchMinor(pointerIndex), event.getOrientation(pointerIndex));
                 	break;
                 case MotionEvent.ACTION_CANCEL:
                 	OFAndroid.onTouchCancelled(pointerId,event.getX(),event.getY());
                 	break;
                 }
-                return gestureDetector.onTouchEvent(event);
+                return gestureDetector.onTouchEvent(event) || scaleDetector.onTouchEvent(event);
             }
             
         };
 	}
 	
+	// Gesture listener
 	public void onClick(View view) {
 	}
 
@@ -133,8 +138,25 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	public boolean onSingleTapUp(MotionEvent event) {
 		return super.onSingleTapUp(event);
 	}
+	
+	// Scale listener
+	@Override
+	public boolean onScale(ScaleGestureDetector detector) {
+		return OFAndroid.onScale(detector);
+	}
+
+	@Override
+	public boolean onScaleBegin(ScaleGestureDetector detector) {
+		return OFAndroid.onScaleBegin(detector);
+	}
+
+	@Override
+	public void onScaleEnd(ScaleGestureDetector detector) {
+		OFAndroid.onScaleEnd(detector);
+	}
 
     private GestureDetector gestureDetector;
+    private ScaleGestureDetector scaleDetector;
     View.OnTouchListener touchListener;
     public static int swipe_Min_Distance = 100;
     public static int swipe_Max_Distance = 350;

@@ -5,9 +5,9 @@ void ofApp::setup(){
 
 	#ifdef _USE_LIVE_VIDEO
         vidGrabber.setVerbose(true);
-        vidGrabber.initGrabber(320,240);
+        vidGrabber.setup(320,240);
 	#else
-        vidPlayer.loadMovie("fingers.mov");
+        vidPlayer.load("fingers.mov");
         vidPlayer.play();
 	#endif
 
@@ -37,9 +37,9 @@ void ofApp::update(){
 	if (bNewFrame){
 
 		#ifdef _USE_LIVE_VIDEO
-            colorImg.setFromPixels(vidGrabber.getPixels(), 320,240);
+            colorImg.setFromPixels(vidGrabber.getPixels());
 	    #else
-            colorImg.setFromPixels(vidPlayer.getPixels(), 320,240);
+            colorImg.setFromPixels(vidPlayer.getPixels());
         #endif
 
         grayImage = colorImg;
@@ -73,7 +73,7 @@ void ofApp::draw(){
 
 	ofFill();
 	ofSetHexColor(0x333333);
-	ofRect(360,540,320,240);
+	ofDrawRectangle(360,540,320,240);
 	ofSetHexColor(0xffffff);
 
 	// we could draw the whole contour finder
@@ -144,6 +144,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

@@ -29,12 +29,12 @@ void ofApp::draw(){
     
     // the background to the progress bar
     ofSetColor(100);
-    ofRect((ofGetWidth()-barWidth)/2, ofGetHeight()/2, barWidth, 30);
+    ofDrawRectangle((ofGetWidth()-barWidth)/2, ofGetHeight()/2, barWidth, 30);
     
     // get the percantage of the timer
     float pct = ofMap(timer, 0.0, endTime, 0.0, 1.0, true);
     ofSetHexColor(0xf02589);
-    ofRect((ofGetWidth()-barWidth)/2, ofGetHeight()/2, barWidth*pct, 30);
+    ofDrawRectangle((ofGetWidth()-barWidth)/2, ofGetHeight()/2, barWidth*pct, 30);
 
     // draw the percantage
     ofSetColor(20);
@@ -95,6 +95,16 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

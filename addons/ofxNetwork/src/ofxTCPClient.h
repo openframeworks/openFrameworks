@@ -9,11 +9,6 @@
 //#define STR_END_MSG "[/TCP]"
 //#define STR_END_MSG_LEN 6
 
-#ifndef TARGET_WIN32
-	#define TCP_CONNRESET ECONNRESET
-#else
-	#define TCP_CONNRESET WSAECONNRESET
-#endif
 
 class ofxTCPClient{
 
@@ -70,6 +65,10 @@ class ofxTCPClient{
 		//pass in buffer to be filled - make sure the buffer
 		//is at least as big as numBytes
 		int receiveRawBytes(char * receiveBytes, int numBytes);
+
+		//fill a buffer as much as possible but leave the data on the TCP stack
+		//amount of filled-bytes returned
+		int peekReceiveRawBytes(char * receiveBytes, int numBytes);
 
 		//same as receive for binary data
 		//pass in buffer to be filled - make sure the buffer

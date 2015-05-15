@@ -30,7 +30,7 @@ void ofApp::setup(){
 	// 1 buffer
 	ofSoundStreamSetup(0, 1, this, sampleRate, initialBufferSize, 1);
     
-    sound.loadSound("sounds/beat.caf");
+    sound.load("sounds/beat.caf");
     sound.setLoop(true);
     sound.play();
     sound.setVolume(0);
@@ -50,14 +50,14 @@ void ofApp::draw(){
     ofSetLineWidth(2);
     
     float y1 = ofGetHeight() * 0.5;
-    ofLine(0, y1, ofGetWidth(), y1);
+    ofDrawLine(0, y1, ofGetWidth(), y1);
     
 	for(int i=0; i<initialBufferSize; i++){
         float p = i / (float)(initialBufferSize-1);
         float x = p * ofGetWidth();
         float y2 = y1 + buffer[i] * 200;
 
-		ofLine(x, y1, x, y2);
+		ofDrawLine(x, y1, x, y2);
 	}
     ofPopStyle();
 

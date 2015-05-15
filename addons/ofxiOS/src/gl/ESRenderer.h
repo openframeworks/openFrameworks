@@ -12,8 +12,9 @@
 #import <OpenGLES/EAGLDrawable.h>
 
 typedef enum {
-    ESRendererVersion_11,
-    ESRendererVersion_20
+    ESRendererVersion_11 = 1,
+    ESRendererVersion_20 = 2,
+    ESRendererVersion_30 = 3
 } ESRendererVersion;
 
 @protocol ESRenderer <NSObject>

@@ -9,13 +9,14 @@ public:
 	~ofxToggle();
 	ofxToggle(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
 	ofxToggle * setup(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
-	ofxToggle * setup(string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
+	ofxToggle * setup(std::string toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
 	
 
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);
 	virtual bool mouseDragged(ofMouseEventArgs & args);
 	virtual bool mouseReleased(ofMouseEventArgs & args);
+	virtual bool mouseScrolled(ofMouseEventArgs & args){return false;}
 	
 
 	template<class ListenerClass, typename ListenerMethod>
