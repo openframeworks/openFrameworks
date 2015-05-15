@@ -1035,7 +1035,7 @@ void ofMesh::save(string path, bool useBinary) const{
 
 	os << "end_header" << endl;
 
-	for(int i = 0; i < data.getNumVertices(); i++){
+	for(std::size_t i = 0; i < data.getNumVertices(); i++){
 		if(useBinary) {
 			os.write((char*) &data.getVertices()[i], sizeof(ofVec3f));
 		} else {
@@ -1070,27 +1070,27 @@ void ofMesh::save(string path, bool useBinary) const{
 	}
 
 	if(data.getNumIndices()) {
-		for(int i = 0; i < data.getNumIndices(); i += faceSize) {
+		for(std::size_t i = 0; i < data.getNumIndices(); i += faceSize) {
 			if(useBinary) {
 				os.write((char*) &faceSize, sizeof(unsigned char));
-				for(int j = 0; j < faceSize; j++) {
-					int curIndex = data.getIndex(i + j);
-					os.write((char*) &curIndex, sizeof(int));
+				for(std::size_t j = 0; j < faceSize; j++) {
+					std::size_t curIndex = data.getIndex(i + j);
+					os.write((char*) &curIndex, sizeof(std::size_t));
 				}
 			} else {
-				os << (int) faceSize << " " << data.getIndex(i) << " " << data.getIndex(i+1) << " " << data.getIndex(i+2) << endl;
+				os << (std::size_t) faceSize << " " << data.getIndex(i) << " " << data.getIndex(i+1) << " " << data.getIndex(i+2) << endl;
 			}
 		}
 	} else if(data.getMode() == OF_PRIMITIVE_TRIANGLES) {
-		for(int i = 0; i < data.getNumVertices(); i += faceSize) {
-			int indices[] = {i, i + 1, i + 2};
+		for(std::size_t i = 0; i < data.getNumVertices(); i += faceSize) {
+			std::size_t indices[] = {i, i + 1, i + 2};
 			if(useBinary) {
 				os.write((char*) &faceSize, sizeof(unsigned char));
-				for(int j = 0; j < faceSize; j++) {
-					os.write((char*) &indices[j], sizeof(int));
+				for(std::size_t j = 0; j < faceSize; j++) {
+					os.write((char*) &indices[j], sizeof(std::size_t));
 				}
 			} else {
-				os << (int) faceSize << " " << indices[0] << " " << indices[1] << " " << indices[2] << endl;
+				os << (std::size_t) faceSize << " " << indices[0] << " " << indices[1] << " " << indices[2] << endl;
 			}
 		}
 	}
@@ -1293,9 +1293,9 @@ const vector<ofMeshFace> & ofMesh::getUniqueFaces() const{
 		bool bHasTexcoords  = hasTexCoords();
 
 		if( getMode() == OF_PRIMITIVE_TRIANGLES) {
-			for(ofIndexType j = 0; j < indices.size(); j += 3) {
+			for(std::size_t j = 0; j < indices.size(); j += 3) {
 				ofMeshFace & tri = faces[triindex];
-				for(int k = 0; k < 3; k++) {
+				for(std::size_t k = 0; k < 3; k++) {
 					index = indices[j+k];
 					tri.setVertex( k, vertices[index] );
 					if(bHasNormals)
@@ -1383,7 +1383,7 @@ void ofMesh::setFromTriangles( const vector<ofMeshFace>& tris, bool bUseFaceNorm
     
     int i = 0;
     for(it = tris.begin(); it != tris.end(); it++) {
-        for(int k = 0; k < 3; k++) {
+        for(std::size_t k = 0; k < 3; k++) {
             vertices[i] = it->getVertex(k);
             if(it->hasTexcoords())
             	texCoords[i] = it->getTexCoord(k);
