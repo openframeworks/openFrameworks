@@ -145,7 +145,7 @@ void of3dPrimitive::mapTexCoords( float u1, float v1, float u2, float v2 ) {
     //setTexCoords( u1, v1, u2, v2 );
     ofVec4f prevTcoord = getTexCoords();
     
-    for(int j = 0; j < getMesh().getNumTexCoords(); j++ ) {
+	for(std::size_t j = 0; j < getMesh().getNumTexCoords(); j++ ) {
         ofVec2f tcoord = getMesh().getTexCoord(j);
         tcoord.x = ofMap(tcoord.x, prevTcoord.x, prevTcoord.z, u1, u2);
         tcoord.y = ofMap(tcoord.y, prevTcoord.y, prevTcoord.w, v1, v2);
