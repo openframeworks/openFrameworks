@@ -1,6 +1,8 @@
 #include "ofVideoPlayer.h"
 #include "ofUtils.h"
-#include "ofGraphics.h"
+#include "ofAppRunner.h"
+
+
 
 //---------------------------------------------------------------------------
 ofVideoPlayer::ofVideoPlayer (){
@@ -9,6 +11,7 @@ ofVideoPlayer::ofVideoPlayer (){
 	internalPixelFormat = OF_PIXELS_RGB;
 	height 				= 0;
 	width 				= 0;
+	tex.resize(1);
 }
 
 //---------------------------------------------------------------------------
@@ -20,6 +23,13 @@ void ofVideoPlayer::setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer){
 
 //---------------------------------------------------------------------------
 shared_ptr<ofBaseVideoPlayer> ofVideoPlayer::getPlayer(){
+	if( !player ){
+		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+	}
+	return player;
+}
+
+const shared_ptr<ofBaseVideoPlayer>	ofVideoPlayer::getPlayer() const{
 	return player;
 }
 
@@ -48,7 +58,7 @@ bool ofVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat) {
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofVideoPlayer::getPixelFormat(){
+ofPixelFormat ofVideoPlayer::getPixelFormat() const{
 	if( player ){
 		internalPixelFormat = player->getPixelFormat();
 	}
@@ -56,25 +66,33 @@ ofPixelFormat ofVideoPlayer::getPixelFormat(){
 }
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::loadMovie(string name){
+bool ofVideoPlayer::load(string name){
 	if( !player ){
 		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
 		player->setPixelFormat(internalPixelFormat);
 	}
 	
-	bool bOk = player->loadMovie(name);
+	bool bOk = player->load(name);
 	width	 = player->getWidth();
 	height	 = player->getHeight();
 
 	if( bOk){
         moviePath = name;
-        if(bUseTexture ){
-            if(width!=0 && height!=0) {
-                tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
-        		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
-        			tex.setRGToRGBASwizzles(true);
-        		}
-            }
+        if(bUseTexture){
+        	if(player->getTexturePtr()==NULL){
+				if(width!=0 && height!=0) {
+					tex.resize(max(player->getPixels().getNumPlanes(),1));
+					for(int i=0;i<player->getPixels().getNumPlanes();i++){
+						ofPixels plane = player->getPixels().getPlane(i);
+						tex[i].allocate(plane);
+						if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
+							tex[i].setRGToRGBASwizzles(true);
+						}
+					}
+				}
+        	}else{
+        		playerTex = player->getTexturePtr();
+        	}
         }
     }
 	
@@ -82,54 +100,95 @@ bool ofVideoPlayer::loadMovie(string name){
 }
 
 //---------------------------------------------------------------------------
-string ofVideoPlayer::getMoviePath(){
+void ofVideoPlayer::loadAsync(string name){
+	if( !player ){
+		setPlayer( shared_ptr<OF_VID_PLAYER_TYPE>(new OF_VID_PLAYER_TYPE) );
+		player->setPixelFormat(internalPixelFormat);
+	}
+	
+	player->loadAsync(name);
+	moviePath = name;
+}
+
+//---------------------------------------------------------------------------
+bool ofVideoPlayer::loadMovie(string name){
+	return load(name);
+}
+
+//---------------------------------------------------------------------------
+string ofVideoPlayer::getMoviePath() const{
     return moviePath;	
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofVideoPlayer::getPixels(){
-	if( player ){
-		return player->getPixels();
-	}
-	return NULL;	
+ofPixels & ofVideoPlayer::getPixels(){
+	return getPlayer()->getPixels();
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofVideoPlayer::getPixelsRef(){
-	return player->getPixelsRef();
+const ofPixels&	ofVideoPlayer::getPixels() const{
+	return getPlayer()->getPixels();
 }
 
-//
 //---------------------------------------------------------------------------
-//ofPixels ofVideoPlayer::getOFPixels(){
-//	if( player ){
-//		return player->getOFPixels();
-//	}
-//	return ofPixels();
-//}
-//
-//---------------------------------------------------------------------------
-//ofPixels ofVideoPlayer::getOFPixels() const{
-//	if( player ){
-//		return player->getOFPixels();
-//	}
-//	return ofPixels();
-//}
+ofPixels& ofVideoPlayer::getPixelsRef(){
+	return getPlayer()->getPixels();
+}
 
 //---------------------------------------------------------------------------
-//for getting a reference to the texture
-ofTexture & ofVideoPlayer::getTextureReference(){
+const ofPixels& ofVideoPlayer::getPixelsRef() const{
+	return getPlayer()->getPixels();
+}
+
+//---------------------------------------------------------------------------
+ofTexture & ofVideoPlayer::getTexture(){
 	if(playerTex == NULL){
-		return tex;
-	}
-	else{
+		return tex[0];
+	}else{
 		return *playerTex;
 	}
 }
 
+//---------------------------------------------------------------------------
+const ofTexture & ofVideoPlayer::getTexture() const{
+	if(playerTex == NULL){
+		return tex[0];
+	}else{
+		return *playerTex;
+	}
+}
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::isFrameNew(){
+ofTexture & ofVideoPlayer::getTextureReference(){
+	return getTexture();
+}
+
+//---------------------------------------------------------------------------
+const ofTexture & ofVideoPlayer::getTextureReference() const{
+	return getTexture();
+}
+
+//---------------------------------------------------------------------------
+vector<ofTexture> & ofVideoPlayer::getTexturePlanes(){
+	if(playerTex != NULL){
+		tex.clear();
+		tex.push_back(*playerTex);
+	}
+	return tex;
+}
+
+//---------------------------------------------------------------------------
+const vector<ofTexture> & ofVideoPlayer::getTexturePlanes() const{
+	if(playerTex != NULL){
+		ofVideoPlayer * mutThis = const_cast<ofVideoPlayer*>(this);
+		mutThis->tex.clear();
+		mutThis->tex.push_back(*playerTex);
+	}
+	return tex;
+}
+
+//---------------------------------------------------------------------------
+bool ofVideoPlayer::isFrameNew() const{
 	if( player ){
 		return player->isFrameNew();
 	}
@@ -146,28 +205,24 @@ void ofVideoPlayer::update(){
 		
 		if( bUseTexture && player->isFrameNew() ) {
 			
-			playerTex = player->getTexture();
+			playerTex = player->getTexturePtr();
 			
 			if(playerTex == NULL){
-				unsigned char *pxls = player->getPixels();
-				
-				bool bDiffPixFormat = ( tex.bAllocated() && tex.texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(internalPixelFormat) );
-				
-				//TODO: we might be able to do something smarter here for not re-allocating movies of the same size and type. 
-				if(width==0 || height==0 || bDiffPixFormat ){ //added a check if the pixel format and the texture don't match
-					if(player->getWidth() != 0 && player->getHeight() != 0) {
-					
-						if(tex.bAllocated())
-							tex.clear();
-
-						tex.allocate(width, height, ofGetGLInternalFormatFromPixelFormat(internalPixelFormat));
-		        		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
-		        			tex.setRGToRGBASwizzles(true);
-		        		}
-						tex.loadData(pxls, tex.getWidth(), tex.getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
+				if(int(tex.size())!=player->getPixels().getNumPlanes()){
+					tex.resize(max(player->getPixels().getNumPlanes(),1));
+				}
+				if(player->getWidth() != 0 && player->getHeight() != 0) {
+					for(int i=0;i<player->getPixels().getNumPlanes();i++){
+						ofPixels plane = player->getPixels().getPlane(i);
+						bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
+						if(bDiffPixFormat || !tex[i].isAllocated() || tex[i].getWidth() != plane.getWidth() || tex[i].getHeight() != plane.getHeight()){
+							tex[i].allocate(plane);
+							if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
+								tex[i].setRGToRGBASwizzles(true);
+							}
+						}
+						tex[i].loadData(plane);
 					}
-				}else{					
-					tex.loadData(pxls, width, height, ofGetGLTypeFromPixelFormat(internalPixelFormat));
 				}
 			}
 		}
@@ -220,7 +275,7 @@ void ofVideoPlayer::setLoopState(ofLoopType state){
 	}
 }
 
-ofLoopType ofVideoPlayer::getLoopState(){
+ofLoopType ofVideoPlayer::getLoopState() const{
 	if( player ){
 		return player->getLoopState();
 	}else{
@@ -244,7 +299,7 @@ void ofVideoPlayer::setFrame(int frame){
 
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getDuration(){
+float ofVideoPlayer::getDuration() const{
 	if( player ){
 		return player->getDuration();
 	}
@@ -253,7 +308,7 @@ float ofVideoPlayer::getDuration(){
 }
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getPosition(){
+float ofVideoPlayer::getPosition() const{
 	if( player ){
 		return player->getPosition();
 	}
@@ -261,7 +316,7 @@ float ofVideoPlayer::getPosition(){
 }
 
 //---------------------------------------------------------------------------
-int ofVideoPlayer::getCurrentFrame(){
+int ofVideoPlayer::getCurrentFrame() const{
 	if( player ){
 		return player->getCurrentFrame();
 	}
@@ -270,7 +325,7 @@ int ofVideoPlayer::getCurrentFrame(){
 
 
 //---------------------------------------------------------------------------
-bool ofVideoPlayer::getIsMovieDone(){
+bool ofVideoPlayer::getIsMovieDone() const{
 	if( player ){
 		return player->getIsMovieDone();
 	}
@@ -306,7 +361,7 @@ void ofVideoPlayer::setSpeed(float _speed){
 }
 
 //---------------------------------------------------------------------------
-float ofVideoPlayer::getSpeed(){
+float ofVideoPlayer::getSpeed() const{
 	if( player ){
 		return player->getSpeed();
 	}
@@ -323,41 +378,69 @@ void ofVideoPlayer::setPaused(bool _bPause){
 //------------------------------------
 void ofVideoPlayer::setUseTexture(bool bUse){
 	bUseTexture = bUse;
-	if(bUse && player && !player->getTexture() && getWidth()!=0 && getHeight()!=0 && !tex.isAllocated()){
-		tex.allocate(getWidth(), getHeight(), ofGetGLTypeFromPixelFormat(internalPixelFormat));
-		if(ofGetGLProgrammableRenderer() && internalPixelFormat == OF_PIXELS_MONO){
-			tex.setRGToRGBASwizzles(true);
+	if(bUse && player && !player->getTexturePtr() && getWidth()!=0 && getHeight()!=0){
+		for(int i=0;i<player->getPixels().getNumPlanes();i++){
+			ofPixels plane = player->getPixels().getPlane(i);
+			bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
+			if(!tex[i].isAllocated() || bDiffPixFormat){
+				tex[i].allocate(plane);
+			}
+			if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
+				tex[i].setRGToRGBASwizzles(true);
+			}
 		}
 	}
 }
 
+//------------------------------------
+bool ofVideoPlayer::isUsingTexture() const{
+	return bUseTexture;
+}
+
 //----------------------------------------------------------
 void ofVideoPlayer::setAnchorPercent(float xPct, float yPct){
-	getTextureReference().setAnchorPercent(xPct, yPct);
+	getTexture().setAnchorPercent(xPct, yPct);
 }
 
 //----------------------------------------------------------
 void ofVideoPlayer::setAnchorPoint(float x, float y){
-	getTextureReference().setAnchorPoint(x, y);
+	getTexture().setAnchorPoint(x, y);
 }
 
 //----------------------------------------------------------
 void ofVideoPlayer::resetAnchor(){
-	getTextureReference().resetAnchor();
+	getTexture().resetAnchor();
 }
 
 //------------------------------------
-void ofVideoPlayer::draw(float _x, float _y, float _w, float _h){
-	getTextureReference().draw(_x, _y, _w, _h);	
+void ofVideoPlayer::draw(float _x, float _y, float _w, float _h) const{
+	ofGetCurrentRenderer()->draw(*this,_x,_y,_w,_h);
 }
 
 //------------------------------------
-void ofVideoPlayer::draw(float _x, float _y){
-	getTextureReference().draw(_x, _y);
+void ofVideoPlayer::draw(float _x, float _y) const{
+	draw(_x, _y, width, height);
+}
+
+
+//------------------------------------
+void ofVideoPlayer::bind() const{
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		renderer->bind(*this);
+	}
 }
 
 //------------------------------------
-int ofVideoPlayer::getTotalNumFrames(){
+void ofVideoPlayer::unbind() const{
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		renderer->unbind(*this);
+	}
+}
+
+//------------------------------------
+int ofVideoPlayer::getTotalNumFrames() const{
 	if( player ){
 		return player->getTotalNumFrames();
 	}
@@ -365,7 +448,7 @@ int ofVideoPlayer::getTotalNumFrames(){
 }
 
 //----------------------------------------------------------
-float ofVideoPlayer::getWidth(){
+float ofVideoPlayer::getWidth() const{
 	if( player ){
 		width = player->getWidth();
 	}
@@ -373,7 +456,7 @@ float ofVideoPlayer::getWidth(){
 }
 
 //----------------------------------------------------------
-float ofVideoPlayer::getHeight(){
+float ofVideoPlayer::getHeight() const{
 	if( player ){
 		height = player->getHeight();
 	}
@@ -381,7 +464,7 @@ float ofVideoPlayer::getHeight(){
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isPaused(){
+bool ofVideoPlayer::isPaused() const{
 	if( player ){
 		return player->isPaused();
 	}
@@ -389,7 +472,7 @@ bool ofVideoPlayer::isPaused(){
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isLoaded(){
+bool ofVideoPlayer::isLoaded() const{
 	if( player ){
 		return player->isLoaded();
 	}
@@ -397,9 +480,19 @@ bool ofVideoPlayer::isLoaded(){
 }
 
 //----------------------------------------------------------
-bool ofVideoPlayer::isPlaying(){
+bool ofVideoPlayer::isPlaying() const{
 	if( player ){
 		return player->isPlaying();
 	}
 	return false;
 }
+
+//----------------------------------------------------------
+bool ofVideoPlayer::isInitialized() const{
+	if( player ){
+		return player->isInitialized() && (!bUseTexture || tex[0].isAllocated() || player->getTexturePtr());
+	}
+	return false;
+}
+
+

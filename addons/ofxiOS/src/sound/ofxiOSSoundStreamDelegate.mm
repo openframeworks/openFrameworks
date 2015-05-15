@@ -6,6 +6,17 @@
 
 #import "ofxiOSSoundStreamDelegate.h"
 #import "ofBaseTypes.h"
+#import "ofSoundBuffer.h"
+
+@interface ofxiOSSoundStreamDelegate() {
+	ofBaseSoundInput * soundInputApp;
+	ofBaseSoundOutput * soundOutputApp;
+	std::shared_ptr<ofSoundBuffer> inputBuffer;
+	std::shared_ptr<ofSoundBuffer> outputBuffer;
+        unsigned long long tickCount;
+}
+
+@end
 
 @implementation ofxiOSSoundStreamDelegate
 
@@ -14,6 +25,9 @@
     if(self) {
         soundInputApp = NULL;
         soundOutputApp = NULL;
+        inputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
+        outputBuffer = std::shared_ptr<ofSoundBuffer>(new ofSoundBuffer);
+	tickCount = 0;
     }
     return self;
 }
@@ -40,24 +54,36 @@
     return self;
 }
 
+- (void)setInput:(ofBaseSoundInput *)input{
+	soundInputApp = input;
+}
+- (void)setOutput:(ofBaseSoundOutput *)output{
+	soundOutputApp = output;
+}
+
 - (void)soundStreamRequested:(id)sender
                       output:(float *)output
                   bufferSize:(NSInteger)bufferSize
                numOfChannels:(NSInteger)numOfChannels {
-    if(soundOutputApp == NULL) {
-        return;
+    if(soundOutputApp) {
+		outputBuffer->setNumChannels(numOfChannels);
+		outputBuffer->resize(bufferSize*numOfChannels);
+		outputBuffer->setTickCount(tickCount);
+		soundOutputApp->audioOut(*outputBuffer);
+		outputBuffer->copyTo(output, bufferSize, numOfChannels, 0);
+		tickCount++;
     }
-    soundOutputApp->audioOut(output, bufferSize, numOfChannels);
 }
 
 - (void)soundStreamReceived:(id)sender
                       input:(float *)input
                  bufferSize:(NSInteger)bufferSize
               numOfChannels:(NSInteger)numOfChannels {
-    if(soundInputApp == NULL) {
-        return;
+    if(soundInputApp) {
+		inputBuffer->copyFrom(input, bufferSize, numOfChannels, inputBuffer->getSampleRate());
+		inputBuffer->setTickCount(tickCount);
+		soundInputApp->audioIn(*inputBuffer);
     }
-    soundInputApp->audioIn(input, bufferSize, numOfChannels);
 }
 
 - (void)soundStreamBeginInterruption:(id)sender {

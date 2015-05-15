@@ -15,21 +15,22 @@ public:
 	ofxEmscriptenVideoGrabber();
 	~ofxEmscriptenVideoGrabber();
 
-	vector<ofVideoDevice>	listDevices();
-	bool	initGrabber(int w, int h);
+	vector<ofVideoDevice>	listDevices() const;
+	bool	setup(int w, int h);
+	bool	isInitialized() const;
 	void	update();
-	bool	isFrameNew();
+	bool	isFrameNew() const;
 
-	unsigned char 	* getPixels();
-	ofPixels & 		  getPixelsRef();
+	ofPixels &  getPixels();
+	const ofPixels & getPixels() const;
 
 	void	close();
 
-	float	getHeight();
-	float	getWidth();
+	float	getHeight() const;
+	float	getWidth() const;
 
 	bool setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat getPixelFormat();
+	ofPixelFormat getPixelFormat() const;
 
 	ofTexture * getTexture();
 

@@ -36,6 +36,7 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
+
 	# The ./configure / MAKEFILE sequence is broken for OSX, making it 
 	# impossible to create universal libs in one pass.  As a result, we compile
 	# the project manually according to the author's page:
@@ -47,8 +48,8 @@ function build() {
 		/usr/bin/g++ -O2 \
 					 -Wall \
 					 -fPIC \
+					 -stdlib=libstdc++ \
 					 -arch i386 \
-					 -arch x86_64 \
 					 -Iinclude \
 					 -DHAVE_GETTIMEOFDAY \
 					 -D__MACOSX_CORE__ \
@@ -57,6 +58,22 @@ function build() {
 
 		/usr/bin/ar ruv librtaudio.a RtAudio.o
 		/usr/bin/ranlib librtaudio.a
+
+		/usr/bin/g++ -O2 \
+					 -Wall \
+					 -fPIC \
+					 -stdlib=libc++ \
+					 -arch x86_64 \
+					 -Iinclude \
+					 -DHAVE_GETTIMEOFDAY \
+					 -D__MACOSX_CORE__ \
+					 -c RtAudio.cpp \
+					 -o RtAudio.o
+
+		/usr/bin/ar ruv librtaudio-x86_64.a RtAudio.o
+		/usr/bin/ranlib librtaudio-x86_64.a
+
+		lipo -c librtaudio.a librtaudio-x86_64.a -o librtaudio.a
 
 	else
 
@@ -72,7 +89,6 @@ function build() {
 
 	# clean up env vars
 	# unset PKG_CONFIG PKG_CONFIG_PATH
-
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
@@ -95,10 +111,15 @@ function copy() {
 		cp -v librtaudio.a $1/lib/$TYPE/rtaudio.a
 	fi
 
+	# copy license file
+	rm -rf $1/license # remove any older files if exists
+	mkdir -p $1/license
+	cp -v readme $1/license/
 }
 
 # executed inside the lib src dir
 function clean() {
+	
 	if [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: clean vs"
 	else
@@ -107,6 +128,4 @@ function clean() {
 
 	# manually clean dependencies
 	#apothecaryDependencies clean
-
-
 }

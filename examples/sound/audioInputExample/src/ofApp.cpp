@@ -13,7 +13,7 @@ void ofApp::setup(){
 	// 256 samples per buffer
 	// 4 num buffers (latency)
 	
-	soundStream.listDevices();
+	soundStream.printDeviceList();
 	
 	//if you want to set a different device id 
 	//soundStream.setDeviceID(0); //bear in mind the device id corresponds to all audio devices, including  input-only and output-only devices.
@@ -66,7 +66,7 @@ void ofApp::draw(){
 		ofDrawBitmapString("Left Channel", 4, 18);
 		
 		ofSetLineWidth(1);	
-		ofRect(0, 0, 512, 200);
+		ofDrawRectangle(0, 0, 512, 200);
 
 		ofSetColor(245, 58, 135);
 		ofSetLineWidth(3);
@@ -89,7 +89,7 @@ void ofApp::draw(){
 		ofDrawBitmapString("Right Channel", 4, 18);
 		
 		ofSetLineWidth(1);	
-		ofRect(0, 0, 512, 200);
+		ofDrawRectangle(0, 0, 512, 200);
 
 		ofSetColor(245, 58, 135);
 		ofSetLineWidth(3);
@@ -110,11 +110,11 @@ void ofApp::draw(){
 			
 		ofSetColor(225);
 		ofDrawBitmapString("Scaled average vol (0-100): " + ofToString(scaledVol * 100.0, 0), 4, 18);
-		ofRect(0, 0, 400, 400);
+		ofDrawRectangle(0, 0, 400, 400);
 		
 		ofSetColor(245, 58, 135);
 		ofFill();		
-		ofCircle(200, 200, scaledVol * 190.0f);
+		ofDrawCircle(200, 200, scaledVol * 190.0f);
 		
 		//lets draw the volume history as a graph
 		ofBeginShape();
@@ -202,6 +202,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

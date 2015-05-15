@@ -29,7 +29,7 @@ public:
         // Allocate
         for(int i = 0; i < 2; i++){
             FBOs[i].allocate(_width,_height, _internalformat );
-            FBOs[i].getTextureReference().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
+            FBOs[i].getTexture().setTextureMinMagFilter(GL_NEAREST, GL_NEAREST);
         }
         
         // Clean
@@ -76,6 +76,8 @@ public:
     void mouseDragged(int x, int y, int button);
     void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
+    void mouseEntered(int x, int y);
+    void mouseExited(int x, int y);
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);

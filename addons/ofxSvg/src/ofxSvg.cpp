@@ -62,6 +62,8 @@ void ofxSVG::setupDiagram(struct svgtiny_diagram * diagram){
 	width = diagram->width;
 	height = diagram->height;
 
+	paths.clear();
+
 	for(int i = 0; i < (int)diagram->shape_count; i++){
 		if(diagram->shape[i].path){
 			paths.push_back(ofPath());
@@ -113,4 +115,8 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 			i += 1;
 		}
 	}
+}
+
+const vector <ofPath> & ofxSVG::getPaths() const{
+    return paths;
 }

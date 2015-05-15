@@ -68,28 +68,27 @@ void ofApp::draw(){
 
 	// draw the left:
 	ofSetHexColor(0x333333);
-	ofRect(leftX, topY, boxW, boxH);
+	ofDrawRectangle(leftX, topY, boxW, boxH);
 	ofSetHexColor(0xFFFFFF);
 	for(int i = 0; i < initialBufferSize; i++){
 		float x = ofMap(i, 0, initialBufferSize, 0, boxW, true);
-		ofLine(leftX + x,topY + boxH / 2,leftX + x, topY + boxH / 2 + lAudio[i] * boxH * 0.5);
+		ofDrawLine(leftX + x,topY + boxH / 2,leftX + x, topY + boxH / 2 + lAudio[i] * boxH * 0.5);
 	}
 
 	// draw the right:
 	ofSetHexColor(0x333333);
-	ofRect(rightX, topY, boxW, boxH);
+	ofDrawRectangle(rightX, topY, boxW, boxH);
 	ofSetHexColor(0xFFFFFF);
 	for(int i = 0; i < initialBufferSize; i++){
 		float x = ofMap(i, 0, initialBufferSize, 0, boxW, true);	
-		ofLine(rightX + x, topY + boxH / 2, rightX + x, topY + boxH / 2 + rAudio[i] * boxH * 0.5);
+		ofDrawLine(rightX + x, topY + boxH / 2, rightX + x, topY + boxH / 2 + rAudio[i] * boxH * 0.5);
 	}
 
 	ofSetHexColor(0x333333);
-	char reportString[255];
-	sprintf(reportString, "volume: (%f) \npan: (%f)\nsynthesis: %s", volume, pan, bNoise ? "noise" : "sine wave");
-	sprintf(reportString, "%s (%fhz)", reportString, targetFrequency);
-
-	ofDrawBitmapString(reportString, leftX, topY + boxH + 20);
+	stringstream reportString;
+    reportString << "volume: (" << volume << ") \npan: (" << pan << ")\nsynthesis: " << ( bNoise ? "noise" : "sine wave" );
+    reportString << " (" << targetFrequency << "hz)\n";
+	ofDrawBitmapString(reportString.str(), leftX, topY + boxH + 20);
 
 }
 

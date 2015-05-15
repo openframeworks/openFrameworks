@@ -36,9 +36,9 @@ void ofApp::setup(){
     buttonState = "digital pin:";
     potValue = "analog pin:";
 
-	bgImage.loadImage("background.png");
-	font.loadFont("franklinGothic.otf", 20);
-    smallFont.loadFont("franklinGothic.otf", 14);
+	bgImage.load("background.png");
+	font.load("franklinGothic.otf", 20);
+    smallFont.load("franklinGothic.otf", 14);
 
     // replace the string below with the serial port for your Arduino board
     // you can get this from the Arduino application or via command line
@@ -143,7 +143,7 @@ void ofApp::draw(){
     
     ofEnableAlphaBlending();
     ofSetColor(0, 0, 0, 127);
-    ofRect(510, 15, 275, 150);
+    ofDrawRectangle(510, 15, 275, 150);
     ofDisableAlphaBlending();
     
     ofSetColor(255, 255, 255);
@@ -204,6 +204,16 @@ void ofApp::mousePressed(int x, int y, int button){
 void ofApp::mouseReleased(int x, int y, int button){
     // turn off the onboard LED when the application window is clicked
 	ard.sendDigital(13, ARD_LOW);
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

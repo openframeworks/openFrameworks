@@ -1,10 +1,12 @@
 #include "ofxSlider.h"
 #include "ofGraphics.h"
+using namespace std;
 
 template<typename Type>
 ofxSlider<Type>::ofxSlider(){
 	bUpdateOnReleaseOnly = false;
 	bGuiActive = false;
+	mouseInside = false;
 }
 
 template<typename Type>
@@ -26,10 +28,10 @@ ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, flo
 	b.width = width;
 	b.height = height;
 	bGuiActive = false;
+	setNeedsRedraw();
 
 	value.addListener(this,&ofxSlider::valueChanged);
 	registerMouseEvents();
-	generateDraw();
 	return this;
 }
 
@@ -61,11 +63,8 @@ Type ofxSlider<Type>::getMax(){
 
 template<typename Type>
 bool ofxSlider<Type>::mouseMoved(ofMouseEventArgs & args){
-	if(isGuiDrawing() && b.inside(ofPoint(args.x,args.y))){
-		return true;
-	}else{
-		return false;
-	}
+	mouseInside = isGuiDrawing() && b.inside(ofPoint(args.x,args.y));
+	return mouseInside;
 }
 
 template<typename Type>
@@ -98,6 +97,39 @@ bool ofxSlider<Type>::mouseReleased(ofMouseEventArgs & args){
 
 	bGuiActive = false;
 	if(attended){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+template<typename Type>
+bool ofxSlider<Type>::mouseScrolled(ofMouseEventArgs & args){
+	if(mouseInside){
+		if(args.y>0 || args.y<0){
+			double range = value.getMax() - value.getMin();
+			range /= b.width*4;
+			Type newValue = value + ofMap(args.y,-1,1,-range, range);
+			newValue = ofClamp(newValue,value.getMin(),value.getMax());
+			value = newValue;
+		}
+		return true;
+	}else{
+		return false;
+	}
+}
+
+template<>
+bool ofxSlider<int>::mouseScrolled(ofMouseEventArgs & args){
+	if(mouseInside){
+		if(args.y>0 || args.y<0){
+			double range = value.getMax() - value.getMin();
+			range /= b.width*4;
+			range = max(range, 1.0);
+			int newValue = value + ofMap(args.y,-1,1,-range, range);
+			newValue = ofClamp(newValue,value.getMin(),value.getMax());
+			value = newValue;
+		}
 		return true;
 	}else{
 		return false;
@@ -204,7 +236,7 @@ void ofxSlider<Type>::setUpdateOnReleaseOnly(bool _bUpdateOnReleaseOnly){
 
 template<typename Type>
 void ofxSlider<Type>::valueChanged(Type & value){
-	generateDraw();
+    setNeedsRedraw();
 }
 
 template class ofxSlider<int>;

@@ -8,7 +8,7 @@ void ofApp::setup(){
 	ofBackground(255);	
 	ofSetLogLevel(OF_LOG_VERBOSE);
 	
-	font.loadFont("DIN.otf", 64);
+	font.load("DIN.otf", 64);
 	
 	serial.listDevices();
 	vector <ofSerialDeviceInfo> deviceList = serial.getDeviceList();
@@ -109,6 +109,16 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
 	
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

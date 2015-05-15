@@ -93,7 +93,7 @@ void ofApp::setup(){
 
 	//load a monospaced font
 	//which we will use to show part of the xml structure
-	TTF.loadFont("mono.ttf", 7);
+	TTF.load("mono.ttf", 7);
 }
 
 //--------------------------------------------------------------
@@ -132,8 +132,8 @@ void ofApp::draw(){
 	ofEnableAlphaBlending();
 	ofSetColor(0, 0, 0, 200);
 
-	ofRect(0, 0, ofGetWidth(), 36);
-	ofRect(0, ofGetHeight()-20, ofGetWidth(), 20);
+	ofDrawRectangle(0, 0, ofGetWidth(), 36);
+	ofDrawRectangle(0, ofGetHeight()-20, ofGetWidth(), 20);
 
 	//we draw our status message at the top
 	//ofSetColor(210, 90, 100);

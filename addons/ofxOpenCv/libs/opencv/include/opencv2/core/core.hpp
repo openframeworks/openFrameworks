@@ -61,11 +61,12 @@
 #include <new>
 #include <string>
 #include <vector>
+#include <sstream>
 #endif // SKIP_INCLUDES
 
 /*! \namespace cv
     Namespace where all the C++ OpenCV functionality resides
-*/ 
+*/
 namespace cv {
 
 #undef abs
@@ -76,45 +77,65 @@ namespace cv {
 using std::vector;
 using std::string;
 using std::ptrdiff_t;
-    
-template<typename _Tp> class CV_EXPORTS Size_;
-template<typename _Tp> class CV_EXPORTS Point_;
-template<typename _Tp> class CV_EXPORTS Rect_;
-template<typename _Tp, int cn> class CV_EXPORTS Vec;
-template<typename _Tp, int m, int n> class CV_EXPORTS Matx;
-    
+
+template<typename _Tp> class Size_;
+template<typename _Tp> class Point_;
+template<typename _Tp> class Rect_;
+template<typename _Tp, int cn> class Vec;
+template<typename _Tp, int m, int n> class Matx;
+
 typedef std::string String;
-typedef std::basic_string<wchar_t> WString;
 
 class Mat;
 class SparseMat;
 typedef Mat MatND;
+
+namespace ogl {
+    class Buffer;
+    class Texture2D;
+    class Arrays;
+}
+
+// < Deprecated
+class GlBuffer;
+class GlTexture;
+class GlArrays;
+class GlCamera;
+// >
+
+namespace gpu {
+    class GpuMat;
+}
 
 class CV_EXPORTS MatExpr;
 class CV_EXPORTS MatOp_Base;
 class CV_EXPORTS MatArg;
 class CV_EXPORTS MatConstIterator;
 
-template<typename _Tp> class CV_EXPORTS Mat_;
-template<typename _Tp> class CV_EXPORTS MatIterator_;
-template<typename _Tp> class CV_EXPORTS MatConstIterator_;
-template<typename _Tp> class CV_EXPORTS MatCommaInitializer_;
-    
+template<typename _Tp> class Mat_;
+template<typename _Tp> class MatIterator_;
+template<typename _Tp> class MatConstIterator_;
+template<typename _Tp> class MatCommaInitializer_;
+
+#if !defined(ANDROID) || (defined(_GLIBCXX_USE_WCHAR_T) && _GLIBCXX_USE_WCHAR_T)
+typedef std::basic_string<wchar_t> WString;
+
 CV_EXPORTS string fromUtf16(const WString& str);
 CV_EXPORTS WString toUtf16(const string& str);
+#endif
 
 CV_EXPORTS string format( const char* fmt, ... );
 CV_EXPORTS string tempfile( const char* suffix CV_DEFAULT(0));
-    
+
 // matrix decomposition types
 enum { DECOMP_LU=0, DECOMP_SVD=1, DECOMP_EIG=2, DECOMP_CHOLESKY=3, DECOMP_QR=4, DECOMP_NORMAL=16 };
-enum { NORM_INF=1, NORM_L1=2, NORM_L2=4, NORM_TYPE_MASK=7, NORM_RELATIVE=8, NORM_MINMAX=32};
+enum { NORM_INF=1, NORM_L1=2, NORM_L2=4, NORM_L2SQR=5, NORM_HAMMING=6, NORM_HAMMING2=7, NORM_TYPE_MASK=7, NORM_RELATIVE=8, NORM_MINMAX=32 };
 enum { CMP_EQ=0, CMP_GT=1, CMP_GE=2, CMP_LT=3, CMP_LE=4, CMP_NE=5 };
 enum { GEMM_1_T=1, GEMM_2_T=2, GEMM_3_T=4 };
 enum { DFT_INVERSE=1, DFT_SCALE=2, DFT_ROWS=4, DFT_COMPLEX_OUTPUT=16, DFT_REAL_OUTPUT=32,
     DCT_INVERSE = DFT_INVERSE, DCT_ROWS=DFT_ROWS };
 
-    
+
 /*!
  The standard OpenCV exception class.
  Instances of the class are thrown by various functions and methods in the case of critical errors.
@@ -135,27 +156,27 @@ public:
 
     /*!
      \return the error description and the context as a text string.
-    */ 
+    */
     virtual const char *what() const throw();
     void formatMessage();
-    
+
     string msg; ///< the formatted error message
 
     int code; ///< error code @see CVStatus
     string err; ///< error description
-    string func; ///< function name. Available only when the compiler supports __func__ macro
+    string func; ///< function name. Available only when the compiler supports getting it
     string file; ///< source file name where the error has occured
-    int line; ///< line number in the source file where the error has occured 
+    int line; ///< line number in the source file where the error has occured
 };
 
 
 //! Signals an error and raises the exception.
- 
+
 /*!
   By default the function prints information about the error to stderr,
   then it either stops if setBreakOnError() had been called before or raises the exception.
   It is possible to alternate error processing by using redirectError().
- 
+
   \param exc the exception raisen.
  */
 CV_EXPORTS void error( const Exception& exc );
@@ -165,11 +186,11 @@ CV_EXPORTS void error( const Exception& exc );
 /*!
   When the break-on-error mode is set, the default error handler
   issues a hardware exception, which can make debugging more convenient.
- 
+
   \return the previous state
  */
 CV_EXPORTS bool setBreakOnError(bool flag);
-    
+
 typedef int (CV_CDECL *ErrorCallback)( int status, const char* func_name,
                                        const char* err_msg, const char* file_name,
                                        int line, void* userdata );
@@ -178,35 +199,42 @@ typedef int (CV_CDECL *ErrorCallback)( int status, const char* func_name,
 
 /*!
   The function sets the new error handler, called from cv::error().
-  
+
   \param errCallback the new error handler. If NULL, the default error handler is used.
   \param userdata the optional user data pointer, passed to the callback.
   \param prevUserdata the optional output parameter where the previous user data pointer is stored
-  
+
   \return the previous error handler
-*/  
+*/
 CV_EXPORTS ErrorCallback redirectError( ErrorCallback errCallback,
                                         void* userdata=0, void** prevUserdata=0);
-    
-#ifdef __GNUC__
-#define CV_Error( code, msg ) cv::error( cv::Exception(code, msg, __func__, __FILE__, __LINE__) )
-#define CV_Error_( code, args ) cv::error( cv::Exception(code, cv::format args, __func__, __FILE__, __LINE__) )
-#define CV_Assert( expr ) if((expr)) ; else cv::error( cv::Exception(CV_StsAssert, #expr, __func__, __FILE__, __LINE__) )
+
+
+#if defined __GNUC__
+#define CV_Func __func__
+#elif defined _MSC_VER
+#define CV_Func __FUNCTION__
 #else
-#define CV_Error( code, msg ) cv::error( cv::Exception(code, msg, "", __FILE__, __LINE__) )
-#define CV_Error_( code, args ) cv::error( cv::Exception(code, cv::format args, "", __FILE__, __LINE__) )
-#define CV_Assert( expr ) if((expr)) ; else cv::error( cv::Exception(CV_StsAssert, #expr, "", __FILE__, __LINE__) )
+#define CV_Func ""
 #endif
-    
+
+#define CV_Error( code, msg ) cv::error( cv::Exception(code, msg, CV_Func, __FILE__, __LINE__) )
+#define CV_Error_( code, args ) cv::error( cv::Exception(code, cv::format args, CV_Func, __FILE__, __LINE__) )
+#define CV_Assert( expr ) if(!!(expr)) ; else cv::error( cv::Exception(CV_StsAssert, #expr, CV_Func, __FILE__, __LINE__) )
+
 #ifdef _DEBUG
 #define CV_DbgAssert(expr) CV_Assert(expr)
 #else
 #define CV_DbgAssert(expr)
 #endif
 
+CV_EXPORTS void glob(String pattern, std::vector<String>& result, bool recursive = false);
+
 CV_EXPORTS void setNumThreads(int nthreads);
 CV_EXPORTS int getNumThreads();
 CV_EXPORTS int getThreadNum();
+
+CV_EXPORTS_W const string& getBuildInformation();
 
 //! Returns the number of ticks.
 
@@ -223,7 +251,7 @@ CV_EXPORTS_W int64 getTickCount();
 
   The function returns the number of ticks (as returned by cv::getTickCount()) per second.
   The following code computes the execution time in milliseconds:
-  
+
   \code
   double exec_time = (double)getTickCount();
   // do something ...
@@ -244,7 +272,7 @@ CV_EXPORTS_W int64 getCPUTickCount();
 
 /*!
   Returns SSE etc. support status
-  
+
   The function returns true if certain hardware features are available.
   Currently, the following features are recognized:
   - CV_CPU_MMX - MMX
@@ -256,7 +284,7 @@ CV_EXPORTS_W int64 getCPUTickCount();
   - CV_CPU_SSE4_2 - SSE 4.2
   - CV_CPU_POPCNT - POPCOUNT
   - CV_CPU_AVX - AVX
-  
+
   \note {Note that the function output is not static. Once you called cv::useOptimized(false),
   most of the hardware acceleration is disabled and thus the function will returns false,
   until you call cv::useOptimized(true)}
@@ -265,22 +293,22 @@ CV_EXPORTS_W bool checkHardwareSupport(int feature);
 
 //! returns the number of CPUs (including hyper-threading)
 CV_EXPORTS_W int getNumberOfCPUs();
-    
+
 /*!
   Allocates memory buffer
-  
+
   This is specialized OpenCV memory allocation function that returns properly aligned memory buffers.
   The usage is identical to malloc(). The allocated buffers must be freed with cv::fastFree().
   If there is not enough memory, the function calls cv::error(), which raises an exception.
-  
+
   \param bufSize buffer size in bytes
   \return the allocated memory buffer.
-*/ 
+*/
 CV_EXPORTS void* fastMalloc(size_t bufSize);
 
 /*!
   Frees the memory allocated with cv::fastMalloc
-  
+
   This is the corresponding deallocation function for cv::fastMalloc().
   When ptr==NULL, the function has no effect.
 */
@@ -298,10 +326,10 @@ template<typename _Tp> static inline void deallocate(_Tp* ptr, size_t)
 
 /*!
   Aligns pointer by the certain number of bytes
-  
+
   This small inline function aligns the pointer by the certian number of bytes by shifting
   it forward by 0 or a positive offset.
-*/  
+*/
 template<typename _Tp> static inline _Tp* alignPtr(_Tp* ptr, int n=(int)sizeof(_Tp))
 {
     return (_Tp*)(((size_t)ptr + n-1) & -n);
@@ -309,38 +337,39 @@ template<typename _Tp> static inline _Tp* alignPtr(_Tp* ptr, int n=(int)sizeof(_
 
 /*!
   Aligns buffer size by the certain number of bytes
-  
+
   This small inline function aligns a buffer size by the certian number of bytes by enlarging it.
 */
 static inline size_t alignSize(size_t sz, int n)
 {
+    assert((n & (n - 1)) == 0); // n is a power of 2
     return (sz + n-1) & -n;
 }
 
 /*!
   Turns on/off available optimization
-  
+
   The function turns on or off the optimized code in OpenCV. Some optimization can not be enabled
   or disabled, but, for example, most of SSE code in OpenCV can be temporarily turned on or off this way.
-  
+
   \note{Since optimization may imply using special data structures, it may be unsafe
   to call this function anywhere in the code. Instead, call it somewhere at the top level.}
-*/  
+*/
 CV_EXPORTS_W void setUseOptimized(bool onoff);
 
 /*!
   Returns the current optimization status
-  
+
   The function returns the current optimization status, which is controlled by cv::setUseOptimized().
-*/  
+*/
 CV_EXPORTS_W bool useOptimized();
 
 /*!
   The STL-compilant memory Allocator based on cv::fastMalloc() and cv::fastFree()
 */
-template<typename _Tp> class CV_EXPORTS Allocator
+template<typename _Tp> class Allocator
 {
-public: 
+public:
     typedef _Tp value_type;
     typedef value_type* pointer;
     typedef const value_type* const_pointer;
@@ -372,15 +401,15 @@ public:
     void destroy(pointer p) { p->~_Tp(); }
 };
 
-/////////////////////// Vec (used as element of multi-channel images ///////////////////// 
+/////////////////////// Vec (used as element of multi-channel images /////////////////////
 
 /*!
   A helper class for cv::DataType
-  
+
   The class is specialized for each fundamental numerical data type supported by OpenCV.
   It provides DataDepth<T>::value constant.
-*/  
-template<typename _Tp> class CV_EXPORTS DataDepth {};
+*/
+template<typename _Tp> class DataDepth {};
 
 template<> class DataDepth<bool> { public: enum { value = CV_8U, fmt=(int)'u' }; };
 template<> class DataDepth<uchar> { public: enum { value = CV_8U, fmt=(int)'u' }; };
@@ -397,42 +426,42 @@ template<typename _Tp> class DataDepth<_Tp*> { public: enum { value = CV_USRTYPE
 
 
 ////////////////////////////// Small Matrix ///////////////////////////
-    
+
 /*!
  A short numerical vector.
- 
+
  This template class represents short numerical vectors (of 1, 2, 3, 4 ... elements)
  on which you can perform basic arithmetical operations, access individual elements using [] operator etc.
  The vectors are allocated on stack, as opposite to std::valarray, std::vector, cv::Mat etc.,
  which elements are dynamically allocated in the heap.
- 
+
  The template takes 2 parameters:
  -# _Tp element type
  -# cn the number of elements
- 
+
  In addition to the universal notation like Vec<float, 3>, you can use shorter aliases
- for the most popular specialized variants of Vec, e.g. Vec3f ~ Vec<float, 3>. 
+ for the most popular specialized variants of Vec, e.g. Vec3f ~ Vec<float, 3>.
  */
-    
+
 struct CV_EXPORTS Matx_AddOp {};
 struct CV_EXPORTS Matx_SubOp {};
 struct CV_EXPORTS Matx_ScaleOp {};
 struct CV_EXPORTS Matx_MulOp {};
 struct CV_EXPORTS Matx_MatMulOp {};
 struct CV_EXPORTS Matx_TOp {};
-    
-template<typename _Tp, int m, int n> class CV_EXPORTS Matx
+
+template<typename _Tp, int m, int n> class Matx
 {
 public:
     typedef _Tp value_type;
-    typedef Matx<_Tp, MIN(m, n), 1> diag_type;
+    typedef Matx<_Tp, (m < n ? m : n), 1> diag_type;
     typedef Matx<_Tp, m, n> mat_type;
     enum { depth = DataDepth<_Tp>::value, rows = m, cols = n, channels = rows*cols,
            type = CV_MAKETYPE(depth, channels) };
-    
+
     //! default constructor
     Matx();
-    
+
     Matx(_Tp v0); //!< 1x1 matrix
     Matx(_Tp v0, _Tp v1); //!< 1x2 or 2x1 matrix
     Matx(_Tp v0, _Tp v1, _Tp v2); //!< 1x3 or 3x1 matrix
@@ -451,7 +480,7 @@ public:
          _Tp v8, _Tp v9, _Tp v10, _Tp v11,
          _Tp v12, _Tp v13, _Tp v14, _Tp v15); //!< 1x16, 4x4 or 16x1 matrix
     explicit Matx(const _Tp* vals); //!< initialize from a plain array
-    
+
     static Matx all(_Tp alpha);
     static Matx zeros();
     static Matx ones();
@@ -459,52 +488,52 @@ public:
     static Matx diag(const diag_type& d);
     static Matx randu(_Tp a, _Tp b);
     static Matx randn(_Tp a, _Tp b);
-    
+
     //! dot product computed with the default precision
     _Tp dot(const Matx<_Tp, m, n>& v) const;
-    
+
     //! dot product computed in double-precision arithmetics
     double ddot(const Matx<_Tp, m, n>& v) const;
 
     //! convertion to another data type
     template<typename T2> operator Matx<T2, m, n>() const;
-    
+
     //! change the matrix shape
     template<int m1, int n1> Matx<_Tp, m1, n1> reshape() const;
-    
+
     //! extract part of the matrix
     template<int m1, int n1> Matx<_Tp, m1, n1> get_minor(int i, int j) const;
-    
+
     //! extract the matrix row
     Matx<_Tp, 1, n> row(int i) const;
-    
+
     //! extract the matrix column
     Matx<_Tp, m, 1> col(int i) const;
-    
+
     //! extract the matrix diagonal
-    Matx<_Tp, MIN(m,n), 1> diag() const;
-    
+    diag_type diag() const;
+
     //! transpose the matrix
     Matx<_Tp, n, m> t() const;
-    
+
     //! invert matrix the matrix
     Matx<_Tp, n, m> inv(int method=DECOMP_LU) const;
-    
+
     //! solve linear system
     template<int l> Matx<_Tp, n, l> solve(const Matx<_Tp, m, l>& rhs, int flags=DECOMP_LU) const;
-    Matx<_Tp, n, 1> solve(const Matx<_Tp, m, 1>& rhs, int method) const;
-    
+    Vec<_Tp, n> solve(const Vec<_Tp, m>& rhs, int method) const;
+
     //! multiply two matrices element-wise
     Matx<_Tp, m, n> mul(const Matx<_Tp, m, n>& a) const;
-    
+
     //! element access
     const _Tp& operator ()(int i, int j) const;
     _Tp& operator ()(int i, int j);
-    
+
     //! 1D element access
     const _Tp& operator ()(int i) const;
     _Tp& operator ()(int i);
-    
+
     Matx(const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b, Matx_AddOp);
     Matx(const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b, Matx_SubOp);
     template<typename _T2> Matx(const Matx<_Tp, m, n>& a, _T2 alpha, Matx_ScaleOp);
@@ -515,7 +544,7 @@ public:
     _Tp val[m*n]; //< matrix elements
 };
 
-    
+
 typedef Matx<float, 1, 2> Matx12f;
 typedef Matx<double, 1, 2> Matx12d;
 typedef Matx<float, 1, 3> Matx13f;
@@ -524,7 +553,7 @@ typedef Matx<float, 1, 4> Matx14f;
 typedef Matx<double, 1, 4> Matx14d;
 typedef Matx<float, 1, 6> Matx16f;
 typedef Matx<double, 1, 6> Matx16d;
-    
+
 typedef Matx<float, 2, 1> Matx21f;
 typedef Matx<double, 2, 1> Matx21d;
 typedef Matx<float, 3, 1> Matx31f;
@@ -540,42 +569,42 @@ typedef Matx<float, 2, 3> Matx23f;
 typedef Matx<double, 2, 3> Matx23d;
 typedef Matx<float, 3, 2> Matx32f;
 typedef Matx<double, 3, 2> Matx32d;
-    
+
 typedef Matx<float, 3, 3> Matx33f;
 typedef Matx<double, 3, 3> Matx33d;
-    
+
 typedef Matx<float, 3, 4> Matx34f;
 typedef Matx<double, 3, 4> Matx34d;
 typedef Matx<float, 4, 3> Matx43f;
 typedef Matx<double, 4, 3> Matx43d;
-    
+
 typedef Matx<float, 4, 4> Matx44f;
 typedef Matx<double, 4, 4> Matx44d;
 typedef Matx<float, 6, 6> Matx66f;
-typedef Matx<double, 6, 6> Matx66d;    
+typedef Matx<double, 6, 6> Matx66d;
 
 
 /*!
   A short numerical vector.
-  
+
   This template class represents short numerical vectors (of 1, 2, 3, 4 ... elements)
   on which you can perform basic arithmetical operations, access individual elements using [] operator etc.
   The vectors are allocated on stack, as opposite to std::valarray, std::vector, cv::Mat etc.,
   which elements are dynamically allocated in the heap.
-  
+
   The template takes 2 parameters:
   -# _Tp element type
   -# cn the number of elements
-  
+
   In addition to the universal notation like Vec<float, 3>, you can use shorter aliases
-  for the most popular specialized variants of Vec, e.g. Vec3f ~ Vec<float, 3>. 
-*/ 
-template<typename _Tp, int cn> class CV_EXPORTS Vec : public Matx<_Tp, cn, 1>
+  for the most popular specialized variants of Vec, e.g. Vec3f ~ Vec<float, 3>.
+*/
+template<typename _Tp, int cn> class Vec : public Matx<_Tp, cn, 1>
 {
 public:
     typedef _Tp value_type;
     enum { depth = DataDepth<_Tp>::value, channels = cn, type = CV_MAKETYPE(depth, channels) };
-    
+
     //! default constructor
     Vec();
 
@@ -592,15 +621,18 @@ public:
     explicit Vec(const _Tp* values);
 
     Vec(const Vec<_Tp, cn>& v);
-    
+
     static Vec all(_Tp alpha);
 
     //! per-element multiplication
     Vec mul(const Vec<_Tp, cn>& v) const;
-    
+
+    //! conjugation (makes sense for complex numbers and quaternions)
+    Vec conj() const;
+
     /*!
       cross product of the two 3D vectors.
-    
+
       For other dimensionalities the exception is raised
     */
     Vec cross(const Vec& v) const;
@@ -608,13 +640,13 @@ public:
     template<typename T2> operator Vec<T2, cn>() const;
     //! conversion to 4-element CvScalar.
     operator CvScalar() const;
-    
+
     /*! element access */
     const _Tp& operator [](int i) const;
     _Tp& operator[](int i);
     const _Tp& operator ()(int i) const;
     _Tp& operator ()(int i);
-    
+
     Vec(const Matx<_Tp, cn, 1>& a, const Matx<_Tp, cn, 1>& b, Matx_AddOp);
     Vec(const Matx<_Tp, cn, 1>& a, const Matx<_Tp, cn, 1>& b, Matx_SubOp);
     template<typename _T2> Vec(const Matx<_Tp, cn, 1>& a, _T2 alpha, Matx_ScaleOp);
@@ -635,8 +667,8 @@ typedef Vec<short, 4> Vec4s;
 
 typedef Vec<ushort, 2> Vec2w;
 typedef Vec<ushort, 3> Vec3w;
-typedef Vec<ushort, 4> Vec4w;    
-    
+typedef Vec<ushort, 4> Vec4w;
+
 typedef Vec<int, 2> Vec2i;
 typedef Vec<int, 3> Vec3i;
 typedef Vec<int, 4> Vec4i;
@@ -658,12 +690,12 @@ typedef Vec<double, 6> Vec6d;
 
 /*!
   A complex number class.
-  
+
   The template class is similar and compatible with std::complex, however it provides slightly
   more convenient access to the real and imaginary parts using through the simple field access, as opposite
   to std::complex::real() and std::complex::imag().
 */
-template<typename _Tp> class CV_EXPORTS Complex
+template<typename _Tp> class Complex
 {
 public:
 
@@ -694,16 +726,16 @@ typedef Complex<double> Complexd;
 
 /*!
   template 2D point class.
-  
+
   The class defines a point in 2D space. Data type of the point coordinates is specified
-  as a template parameter. There are a few shorter aliases available for user convenience. 
+  as a template parameter. There are a few shorter aliases available for user convenience.
   See cv::Point, cv::Point2i, cv::Point2f and cv::Point2d.
-*/  
-template<typename _Tp> class CV_EXPORTS Point_
+*/
+template<typename _Tp> class Point_
 {
 public:
     typedef _Tp value_type;
-    
+
     // various constructors
     Point_();
     Point_(_Tp _x, _Tp _y);
@@ -726,25 +758,27 @@ public:
     _Tp dot(const Point_& pt) const;
     //! dot product computed in double-precision arithmetics
     double ddot(const Point_& pt) const;
+    //! cross-product
+    double cross(const Point_& pt) const;
     //! checks whether the point is inside the specified rectangle
     bool inside(const Rect_<_Tp>& r) const;
-    
+
     _Tp x, y; //< the point coordinates
 };
 
 /*!
   template 3D point class.
-  
+
   The class defines a point in 3D space. Data type of the point coordinates is specified
   as a template parameter.
-  
+
   \see cv::Point3i, cv::Point3f and cv::Point3d
 */
-template<typename _Tp> class CV_EXPORTS Point3_
+template<typename _Tp> class Point3_
 {
 public:
     typedef _Tp value_type;
-    
+
     // various constructors
     Point3_();
     Point3_(_Tp _x, _Tp _y, _Tp _z);
@@ -767,7 +801,7 @@ public:
     double ddot(const Point3_& pt) const;
     //! cross product of the 2 3D points
     Point3_ cross(const Point3_& pt) const;
-    
+
     _Tp x, y, z; //< the point coordinates
 };
 
@@ -775,15 +809,15 @@ public:
 
 /*!
   The 2D size class
-  
+
   The class represents the size of a 2D rectangle, image size, matrix size etc.
   Normally, cv::Size ~ cv::Size_<int> is used.
 */
-template<typename _Tp> class CV_EXPORTS Size_
+template<typename _Tp> class Size_
 {
 public:
     typedef _Tp value_type;
-    
+
     //! various constructors
     Size_();
     Size_(_Tp _width, _Tp _height);
@@ -798,7 +832,7 @@ public:
 
     //! conversion of another data type.
     template<typename _Tp2> operator Size_<_Tp2>() const;
-    
+
     //! conversion to the old-style OpenCV types
     operator CvSize() const;
     operator CvSize2D32f() const;
@@ -810,15 +844,15 @@ public:
 
 /*!
   The 2D up-right rectangle class
-  
+
   The class represents a 2D rectangle with coordinates of the specified data type.
   Normally, cv::Rect ~ cv::Rect_<int> is used.
 */
-template<typename _Tp> class CV_EXPORTS Rect_
+template<typename _Tp> class Rect_
 {
 public:
     typedef _Tp value_type;
-    
+
     //! various constructors
     Rect_();
     Rect_(_Tp _x, _Tp _y, _Tp _width, _Tp _height);
@@ -832,7 +866,7 @@ public:
     Point_<_Tp> tl() const;
     //! the bottom-right corner
     Point_<_Tp> br() const;
-    
+
     //! size (width, height) of the rectangle
     Size_<_Tp> size() const;
     //! area (width*height) of the rectangle
@@ -852,12 +886,13 @@ public:
 
 /*!
   \typedef
-  
+
   shorter aliases for the most popular cv::Point_<>, cv::Size_<> and cv::Rect_<> specializations
 */
 typedef Point_<int> Point2i;
 typedef Point2i Point;
 typedef Size_<int> Size2i;
+typedef Size_<double> Size2d;
 typedef Size2i Size;
 typedef Rect_<int> Rect;
 typedef Point_<float> Point2f;
@@ -870,17 +905,17 @@ typedef Point3_<double> Point3d;
 
 /*!
   The rotated 2D rectangle.
-  
+
   The class represents rotated (i.e. not up-right) rectangles on a plane.
   Each rectangle is described by the center point (mass center), length of each side
   (represented by cv::Size2f structure) and the rotation angle in degrees.
-*/  
+*/
 class CV_EXPORTS RotatedRect
 {
 public:
     //! various constructors
     RotatedRect();
-    RotatedRect(const Point2f& _center, const Size2f& _size, float _angle);
+    RotatedRect(const Point2f& center, const Size2f& size, float angle);
     RotatedRect(const CvBox2D& box);
 
     //! returns 4 vertices of the rectangle
@@ -889,21 +924,21 @@ public:
     Rect boundingRect() const;
     //! conversion to the old-style CvBox2D structure
     operator CvBox2D() const;
-    
+
     Point2f center; //< the rectangle mass center
     Size2f size;    //< width and height of the rectangle
-    float angle;    //< the rotation angle. When the angle is 0, 90, 180, 270 etc., the rectangle becomes an up-right rectangle. 
+    float angle;    //< the rotation angle. When the angle is 0, 90, 180, 270 etc., the rectangle becomes an up-right rectangle.
 };
 
 //////////////////////////////// Scalar_ ///////////////////////////////
 
 /*!
    The template scalar class.
-   
+
    This is partially specialized cv::Vec class with the number of elements = 4, i.e. a short vector of four elements.
-   Normally, cv::Scalar ~ cv::Scalar_<double> is used. 
+   Normally, cv::Scalar ~ cv::Scalar_<double> is used.
 */
-template<typename _Tp> class CV_EXPORTS Scalar_ : public Vec<_Tp, 4>
+template<typename _Tp> class Scalar_ : public Vec<_Tp, 4>
 {
 public:
     //! various constructors
@@ -922,10 +957,10 @@ public:
 
     //! per-element product
     Scalar_<_Tp> mul(const Scalar_<_Tp>& t, double scale=1 ) const;
-    
+
     // returns (v0, -v1, -v2, -v3)
     Scalar_<_Tp> conj() const;
-    
+
     // returns true iff v1 == v2 == v3 == 0
     bool isReal() const;
 };
@@ -938,7 +973,7 @@ CV_EXPORTS void scalarToRawData(const Scalar& s, void* buf, int type, int unroll
 
 /*!
    The 2D range class
-   
+
    This is the class used to specify a continuous subsequence, i.e. part of a contour, or a column span in a matrix.
 */
 class CV_EXPORTS Range
@@ -959,7 +994,7 @@ public:
 
 /*!
    Informative template class for OpenCV "scalars".
-   
+
    The class is specialized for each primitive numerical type supported by OpenCV (such as unsigned char or float),
    as well as for more complex types, like cv::Complex<>, std::complex<>, cv::Vec<> etc.
    The common property of all such types (called "scalars", do not confuse it with cv::Scalar_)
@@ -975,7 +1010,6 @@ public:
     typedef value_type work_type;
     typedef value_type channel_type;
     typedef value_type vec_type;
-    
     enum { generic_type = 1, depth = -1, channels = 1, fmt=0,
         type = CV_MAKETYPE(depth, channels) };
 };
@@ -1088,6 +1122,18 @@ public:
            type = CV_MAKETYPE(depth, channels) };
 };
 
+template<typename _Tp, int m, int n> class DataType<Matx<_Tp, m, n> >
+{
+public:
+    typedef Matx<_Tp, m, n> value_type;
+    typedef Matx<typename DataType<_Tp>::work_type, m, n> work_type;
+    typedef _Tp channel_type;
+    typedef value_type vec_type;
+    enum { generic_type = 0, depth = DataDepth<channel_type>::value, channels = m*n,
+        fmt = ((channels-1)<<8) + DataDepth<channel_type>::fmt,
+        type = CV_MAKETYPE(depth, channels) };
+};
+
 template<typename _Tp, int cn> class DataType<Vec<_Tp, cn> >
 {
 public:
@@ -1196,31 +1242,30 @@ public:
     typedef Vec<channel_type, channels> vec_type;
 };
 
-    
 //////////////////// generic_type ref-counting pointer class for C/C++ objects ////////////////////////
 
 /*!
   Smart pointer to dynamically allocated objects.
-  
+
   This is template pointer-wrapping class that stores the associated reference counter along with the
   object pointer. The class is similar to std::smart_ptr<> from the recent addons to the C++ standard,
   but is shorter to write :) and self-contained (i.e. does add any dependency on the compiler or an external library).
-  
+
   Basically, you can use "Ptr<MyObjectType> ptr" (or faster "const Ptr<MyObjectType>& ptr" for read-only access)
   everywhere instead of "MyObjectType* ptr", where MyObjectType is some C structure or a C++ class.
   To make it all work, you need to specialize Ptr<>::delete_obj(), like:
-  
+
   \code
   template<> void Ptr<MyObjectType>::delete_obj() { call_destructor_func(obj); }
   \endcode
-  
+
   \note{if MyObjectType is a C++ class with a destructor, you do not need to specialize delete_obj(),
   since the default implementation calls "delete obj;"}
-  
+
   \note{Another good property of the class is that the operations on the reference counter are atomic,
   i.e. it is safe to use the class in multi-threaded applications}
 */
-template<typename _Tp> class CV_EXPORTS Ptr
+template<typename _Tp> class Ptr
 {
 public:
     //! empty constructor
@@ -1231,6 +1276,7 @@ public:
     ~Ptr();
     //! copy constructor. Copies the members and calls addref()
     Ptr(const Ptr& ptr);
+    template<typename _Tp2> Ptr(const Ptr<_Tp2>& ptr);
     //! copy operator. Calls ptr.addref() and release() before copying the members
     Ptr& operator = (const Ptr& ptr);
     //! increments the reference counter
@@ -1242,43 +1288,79 @@ public:
     //! returns true iff obj==NULL
     bool empty() const;
 
-    
+    //! cast pointer to another type
+    template<typename _Tp2> Ptr<_Tp2> ptr();
+    template<typename _Tp2> const Ptr<_Tp2> ptr() const;
+
     //! helper operators making "Ptr<T> ptr" use very similar to "T* ptr".
     _Tp* operator -> ();
     const _Tp* operator -> () const;
 
     operator _Tp* ();
     operator const _Tp*() const;
-    
-protected:
+
     _Tp* obj; //< the object pointer.
     int* refcount; //< the associated reference counter
 };
 
-    
+
 //////////////////////// Input/Output Array Arguments /////////////////////////////////
-    
+
 /*!
- Proxy datatype for passing Mat's and vector<>'s as input parameters 
+ Proxy datatype for passing Mat's and vector<>'s as input parameters
  */
 class CV_EXPORTS _InputArray
 {
 public:
-    enum { KIND_SHIFT=16, NONE=0<<KIND_SHIFT, MAT=1<<KIND_SHIFT,
-        MATX=2<<KIND_SHIFT, STD_VECTOR=3<<KIND_SHIFT,
-        STD_VECTOR_VECTOR=4<<KIND_SHIFT,
-        STD_VECTOR_MAT=5<<KIND_SHIFT, EXPR=6<<KIND_SHIFT };
+    enum {
+        KIND_SHIFT = 16,
+        FIXED_TYPE = 0x8000 << KIND_SHIFT,
+        FIXED_SIZE = 0x4000 << KIND_SHIFT,
+        KIND_MASK = ~(FIXED_TYPE|FIXED_SIZE) - (1 << KIND_SHIFT) + 1,
+
+        NONE              = 0 << KIND_SHIFT,
+        MAT               = 1 << KIND_SHIFT,
+        MATX              = 2 << KIND_SHIFT,
+        STD_VECTOR        = 3 << KIND_SHIFT,
+        STD_VECTOR_VECTOR = 4 << KIND_SHIFT,
+        STD_VECTOR_MAT    = 5 << KIND_SHIFT,
+        EXPR              = 6 << KIND_SHIFT,
+        OPENGL_BUFFER     = 7 << KIND_SHIFT,
+        OPENGL_TEXTURE    = 8 << KIND_SHIFT,
+        GPU_MAT           = 9 << KIND_SHIFT,
+        OCL_MAT           =10 << KIND_SHIFT
+    };
     _InputArray();
+
     _InputArray(const Mat& m);
     _InputArray(const MatExpr& expr);
+    template<typename _Tp> _InputArray(const _Tp* vec, int n);
     template<typename _Tp> _InputArray(const vector<_Tp>& vec);
     template<typename _Tp> _InputArray(const vector<vector<_Tp> >& vec);
     _InputArray(const vector<Mat>& vec);
+    template<typename _Tp> _InputArray(const vector<Mat_<_Tp> >& vec);
+    template<typename _Tp> _InputArray(const Mat_<_Tp>& m);
     template<typename _Tp, int m, int n> _InputArray(const Matx<_Tp, m, n>& matx);
     _InputArray(const Scalar& s);
     _InputArray(const double& val);
+    // < Deprecated
+    _InputArray(const GlBuffer& buf);
+    _InputArray(const GlTexture& tex);
+    // >
+    _InputArray(const gpu::GpuMat& d_mat);
+    _InputArray(const ogl::Buffer& buf);
+    _InputArray(const ogl::Texture2D& tex);
+
     virtual Mat getMat(int i=-1) const;
     virtual void getMatVector(vector<Mat>& mv) const;
+    // < Deprecated
+    virtual GlBuffer getGlBuffer() const;
+    virtual GlTexture getGlTexture() const;
+    // >
+    virtual gpu::GpuMat getGpuMat() const;
+    /*virtual*/ ogl::Buffer getOGlBuffer() const;
+    /*virtual*/ ogl::Texture2D getOGlTexture2D() const;
+
     virtual int kind() const;
     virtual Size size(int i=-1) const;
     virtual size_t total(int i=-1) const;
@@ -1286,6 +1368,10 @@ public:
     virtual int depth(int i=-1) const;
     virtual int channels(int i=-1) const;
     virtual bool empty() const;
+
+#ifdef OPENCV_CAN_BREAK_BINARY_COMPATIBILITY
+    virtual ~_InputArray();
+#endif
 
     int flags;
     void* obj;
@@ -1309,26 +1395,53 @@ enum
 
 
 /*!
- Proxy datatype for passing Mat's and vector<>'s as input parameters 
+ Proxy datatype for passing Mat's and vector<>'s as input parameters
  */
 class CV_EXPORTS _OutputArray : public _InputArray
 {
 public:
     _OutputArray();
+
     _OutputArray(Mat& m);
     template<typename _Tp> _OutputArray(vector<_Tp>& vec);
     template<typename _Tp> _OutputArray(vector<vector<_Tp> >& vec);
     _OutputArray(vector<Mat>& vec);
+    template<typename _Tp> _OutputArray(vector<Mat_<_Tp> >& vec);
+    template<typename _Tp> _OutputArray(Mat_<_Tp>& m);
     template<typename _Tp, int m, int n> _OutputArray(Matx<_Tp, m, n>& matx);
+    template<typename _Tp> _OutputArray(_Tp* vec, int n);
+    _OutputArray(gpu::GpuMat& d_mat);
+    _OutputArray(ogl::Buffer& buf);
+    _OutputArray(ogl::Texture2D& tex);
+
+    _OutputArray(const Mat& m);
+    template<typename _Tp> _OutputArray(const vector<_Tp>& vec);
+    template<typename _Tp> _OutputArray(const vector<vector<_Tp> >& vec);
+    _OutputArray(const vector<Mat>& vec);
+    template<typename _Tp> _OutputArray(const vector<Mat_<_Tp> >& vec);
+    template<typename _Tp> _OutputArray(const Mat_<_Tp>& m);
+    template<typename _Tp, int m, int n> _OutputArray(const Matx<_Tp, m, n>& matx);
+    template<typename _Tp> _OutputArray(const _Tp* vec, int n);
+    _OutputArray(const gpu::GpuMat& d_mat);
+    _OutputArray(const ogl::Buffer& buf);
+    _OutputArray(const ogl::Texture2D& tex);
+
     virtual bool fixedSize() const;
     virtual bool fixedType() const;
     virtual bool needed() const;
     virtual Mat& getMatRef(int i=-1) const;
-    virtual void create(Size sz, int type, int i=-1, bool allocateVector=false, int fixedDepthMask=0) const;
+    /*virtual*/ gpu::GpuMat& getGpuMatRef() const;
+    /*virtual*/ ogl::Buffer& getOGlBufferRef() const;
+    /*virtual*/ ogl::Texture2D& getOGlTexture2DRef() const;
+    virtual void create(Size sz, int type, int i=-1, bool allowTransposed=false, int fixedDepthMask=0) const;
     virtual void create(int rows, int cols, int type, int i=-1, bool allowTransposed=false, int fixedDepthMask=0) const;
     virtual void create(int dims, const int* size, int type, int i=-1, bool allowTransposed=false, int fixedDepthMask=0) const;
     virtual void release() const;
     virtual void clear() const;
+
+#ifdef OPENCV_CAN_BREAK_BINARY_COMPATIBILITY
+    virtual ~_OutputArray();
+#endif
 };
 
 typedef const _InputArray& InputArray;
@@ -1348,7 +1461,7 @@ static inline size_t getElemSize(int type) { return CV_ELEM_SIZE(type); }
 
 /*!
    Custom array allocator
- 
+
 */
 class CV_EXPORTS MatAllocator
 {
@@ -1359,10 +1472,10 @@ public:
                           uchar*& datastart, uchar*& data, size_t* step) = 0;
     virtual void deallocate(int* refcount, uchar* datastart, uchar* data) = 0;
 };
-    
+
 /*!
    The n-dimensional matrix class.
-   
+
    The class represents an n-dimensional dense numerical array that can act as
    a matrix, image, optical flow map, 3-focal tensor etc.
    It is very similar to CvMat and CvMatND types from earlier versions of OpenCV,
@@ -1451,13 +1564,13 @@ public:
          \endcode
 
       <li> for quick initialization of small matrices and/or super-fast element access
-      
+
          \code
          double m[3][3] = {{a, b, c}, {d, e, f}, {g, h, i}};
          cv::Mat M = cv::Mat(3, 3, CV_64F, m).inv();
          \endcode
-      </ol>   
-   
+      </ol>
+
        partial yet very common cases of this "user-allocated data" case are conversions
        from CvMat and IplImage to cv::Mat. For this purpose there are special constructors
        taking pointers to CvMat or IplImage and the optional
@@ -1467,7 +1580,7 @@ public:
        cv::Mat::operator CvMat() an cv::Mat::operator IplImage().
        The operators do not copy the data.
 
-    
+
        \code
        IplImage* img = cvLoadImage("greatwave.jpg", 1);
        Mat mtx(img); // convert IplImage* -> cv::Mat
@@ -1484,7 +1597,7 @@ public:
    \endcode
 
    <li> by using comma-separated initializer:
- 
+
    \code
    // create 3x3 double-precision identity matrix
    Mat M = (Mat_<double>(3,3) << 1, 0, 0, 0, 1, 0, 0, 0, 1);
@@ -1508,7 +1621,7 @@ public:
    cv::Mat::rows contains the number of matrix rows and cv::Mat::cols - the number of matrix columns. There is yet another member,
    cv::Mat::step that is used to actually compute address of a matrix element. cv::Mat::step is needed because the matrix can be
    a part of another matrix or because there can some padding space in the end of each row for a proper alignment.
- 
+
    \image html roi.png
 
    Given these parameters, address of the matrix element M_{ij} is computed as following:
@@ -1579,23 +1692,23 @@ public:
     Mat();
     //! constructs 2D matrix of the specified size and type
     // (_type is CV_8UC1, CV_64FC3, CV_32SC(12) etc.)
-    Mat(int _rows, int _cols, int _type);
-    Mat(Size _size, int _type);
+    Mat(int rows, int cols, int type);
+    Mat(Size size, int type);
     //! constucts 2D matrix and fills it with the specified value _s.
-    Mat(int _rows, int _cols, int _type, const Scalar& _s);
-    Mat(Size _size, int _type, const Scalar& _s);
-    
+    Mat(int rows, int cols, int type, const Scalar& s);
+    Mat(Size size, int type, const Scalar& s);
+
     //! constructs n-dimensional matrix
-    Mat(int _ndims, const int* _sizes, int _type);
-    Mat(int _ndims, const int* _sizes, int _type, const Scalar& _s);
-    
+    Mat(int ndims, const int* sizes, int type);
+    Mat(int ndims, const int* sizes, int type, const Scalar& s);
+
     //! copy constructor
     Mat(const Mat& m);
     //! constructor for matrix headers pointing to user-allocated data
-    Mat(int _rows, int _cols, int _type, void* _data, size_t _step=AUTO_STEP);
-    Mat(Size _size, int _type, void* _data, size_t _step=AUTO_STEP);
-    Mat(int _ndims, const int* _sizes, int _type, void* _data, const size_t* _steps=0);
-    
+    Mat(int rows, int cols, int type, void* data, size_t step=AUTO_STEP);
+    Mat(Size size, int type, void* data, size_t step=AUTO_STEP);
+    Mat(int ndims, const int* sizes, int type, void* data, const size_t* steps=0);
+
     //! creates a matrix header for a part of the bigger matrix
     Mat(const Mat& m, const Range& rowRange, const Range& colRange=Range::all());
     Mat(const Mat& m, const Rect& roi);
@@ -1609,17 +1722,19 @@ public:
     //! builds matrix from std::vector with or without copying the data
     template<typename _Tp> explicit Mat(const vector<_Tp>& vec, bool copyData=false);
     //! builds matrix from cv::Vec; the data is copied by default
-    template<typename _Tp, int n> explicit Mat(const Vec<_Tp, n>& vec,
-                                               bool copyData=true);
+    template<typename _Tp, int n> explicit Mat(const Vec<_Tp, n>& vec, bool copyData=true);
     //! builds matrix from cv::Matx; the data is copied by default
-    template<typename _Tp, int m, int n> explicit Mat(const Matx<_Tp, m, n>& mtx,
-                                                      bool copyData=true);
+    template<typename _Tp, int m, int n> explicit Mat(const Matx<_Tp, m, n>& mtx, bool copyData=true);
     //! builds matrix from a 2D point
     template<typename _Tp> explicit Mat(const Point_<_Tp>& pt, bool copyData=true);
     //! builds matrix from a 3D point
     template<typename _Tp> explicit Mat(const Point3_<_Tp>& pt, bool copyData=true);
     //! builds matrix from comma initializer
     template<typename _Tp> explicit Mat(const MatCommaInitializer_<_Tp>& commaInitializer);
+
+    //! download data from GpuMat
+    explicit Mat(const gpu::GpuMat& m);
+
     //! destructor - calls release()
     ~Mat();
     //! assignment operators
@@ -1662,8 +1777,8 @@ public:
     Mat& setTo(InputArray value, InputArray mask=noArray());
     //! creates alternative matrix header for the same data, with different
     // number of channels and/or different number of rows. see cvReshape.
-    Mat reshape(int _cn, int _rows=0) const;
-    Mat reshape(int _cn, int _newndims, const int* _newsz) const;
+    Mat reshape(int cn, int rows=0) const;
+    Mat reshape(int cn, int newndims, const int* newsz) const;
 
     //! matrix transposition by means of matrix expressions
     MatExpr t() const;
@@ -1671,7 +1786,7 @@ public:
     MatExpr inv(int method=DECOMP_LU) const;
     //! per-element matrix multiplication by means of matrix expressions
     MatExpr mul(InputArray m, double scale=1) const;
-    
+
     //! computes cross-product of 2 3D vectors
     Mat cross(InputArray m) const;
     //! computes dot-product
@@ -1689,21 +1804,21 @@ public:
 
     //! allocates new matrix data unless the matrix already has specified size and type.
     // previous data is unreferenced if needed.
-    void create(int _rows, int _cols, int _type);
-    void create(Size _size, int _type);
-    void create(int _ndims, const int* _sizes, int _type);
-    
+    void create(int rows, int cols, int type);
+    void create(Size size, int type);
+    void create(int ndims, const int* sizes, int type);
+
     //! increases the reference counter; use with care to avoid memleaks
     void addref();
     //! decreases reference counter;
     // deallocates the data when reference counter reaches 0.
     void release();
-    
+
     //! deallocates the matrix data
     void deallocate();
     //! internal use function; properly re-allocates _size, _step arrays
     void copySize(const Mat& m);
-    
+
     //! reserves enough space to fit sz hyper-planes
     void reserve(size_t sz);
     //! resizes matrix to the specified number of hyper-planes
@@ -1718,7 +1833,7 @@ public:
     void push_back(const Mat& m);
     //! removes several hyper-planes from bottom of the matrix
     void pop_back(size_t nelems=1);
-    
+
     //! locates matrix header within a parent matrix. See below
     void locateROI( Size& wholeSize, Point& ofs ) const;
     //! moves/resizes the current matrix ROI inside the parent matrix.
@@ -1735,19 +1850,19 @@ public:
     operator CvMatND() const;
     //! converts header to IplImage; no data is copied
     operator IplImage() const;
-    
+
     template<typename _Tp> operator vector<_Tp>() const;
     template<typename _Tp, int n> operator Vec<_Tp, n>() const;
     template<typename _Tp, int m, int n> operator Matx<_Tp, m, n>() const;
-    
+
     //! returns true iff the matrix data is continuous
     // (i.e. when there are no gaps between successive rows).
     // similar to CV_IS_MAT_CONT(cvmat->type)
     bool isContinuous() const;
-    
+
     //! returns true if the matrix is a submatrix of another matrix
     bool isSubmatrix() const;
-    
+
     //! returns element size in bytes,
     // similar to CV_ELEM_SIZE(cvmat->type)
     size_t elemSize() const;
@@ -1765,66 +1880,66 @@ public:
     bool empty() const;
     //! returns the total number of matrix elements
     size_t total() const;
-    
+
     //! returns N if the matrix is 1-channel (N x ptdim) or ptdim-channel (1 x N) or (N x 1); negative number otherwise
     int checkVector(int elemChannels, int depth=-1, bool requireContinuous=true) const;
 
     //! returns pointer to i0-th submatrix along the dimension #0
     uchar* ptr(int i0=0);
     const uchar* ptr(int i0=0) const;
-    
+
     //! returns pointer to (i0,i1) submatrix along the dimensions #0 and #1
     uchar* ptr(int i0, int i1);
     const uchar* ptr(int i0, int i1) const;
-    
+
     //! returns pointer to (i0,i1,i3) submatrix along the dimensions #0, #1, #2
     uchar* ptr(int i0, int i1, int i2);
     const uchar* ptr(int i0, int i1, int i2) const;
-    
+
     //! returns pointer to the matrix element
     uchar* ptr(const int* idx);
     //! returns read-only pointer to the matrix element
     const uchar* ptr(const int* idx) const;
-    
+
     template<int n> uchar* ptr(const Vec<int, n>& idx);
     template<int n> const uchar* ptr(const Vec<int, n>& idx) const;
 
     //! template version of the above method
     template<typename _Tp> _Tp* ptr(int i0=0);
     template<typename _Tp> const _Tp* ptr(int i0=0) const;
-    
+
     template<typename _Tp> _Tp* ptr(int i0, int i1);
     template<typename _Tp> const _Tp* ptr(int i0, int i1) const;
-    
+
     template<typename _Tp> _Tp* ptr(int i0, int i1, int i2);
     template<typename _Tp> const _Tp* ptr(int i0, int i1, int i2) const;
-    
+
     template<typename _Tp> _Tp* ptr(const int* idx);
     template<typename _Tp> const _Tp* ptr(const int* idx) const;
-    
+
     template<typename _Tp, int n> _Tp* ptr(const Vec<int, n>& idx);
     template<typename _Tp, int n> const _Tp* ptr(const Vec<int, n>& idx) const;
-    
+
     //! the same as above, with the pointer dereferencing
     template<typename _Tp> _Tp& at(int i0=0);
     template<typename _Tp> const _Tp& at(int i0=0) const;
-    
+
     template<typename _Tp> _Tp& at(int i0, int i1);
     template<typename _Tp> const _Tp& at(int i0, int i1) const;
-    
+
     template<typename _Tp> _Tp& at(int i0, int i1, int i2);
     template<typename _Tp> const _Tp& at(int i0, int i1, int i2) const;
-    
+
     template<typename _Tp> _Tp& at(const int* idx);
     template<typename _Tp> const _Tp& at(const int* idx) const;
-    
+
     template<typename _Tp, int n> _Tp& at(const Vec<int, n>& idx);
     template<typename _Tp, int n> const _Tp& at(const Vec<int, n>& idx) const;
-    
+
     //! special versions for 2D arrays (especially convenient for referencing image pixels)
     template<typename _Tp> _Tp& at(Point pt);
     template<typename _Tp> const _Tp& at(Point pt) const;
-    
+
     //! template methods for iteration over matrix elements.
     // the iterators take care of skipping gaps in the end of rows (if any)
     template<typename _Tp> MatIterator_<_Tp> begin();
@@ -1851,15 +1966,15 @@ public:
     //! pointer to the reference counter;
     // when matrix points to user-allocated data, the pointer is NULL
     int* refcount;
-    
+
     //! helper fields used in locateROI and adjustROI
     uchar* datastart;
     uchar* dataend;
     uchar* datalimit;
-    
+
     //! custom allocator
     MatAllocator* allocator;
-    
+
     struct CV_EXPORTS MSize
     {
         MSize(int* _p);
@@ -1869,10 +1984,10 @@ public:
         operator const int*() const;
         bool operator == (const MSize& sz) const;
         bool operator != (const MSize& sz) const;
-        
+
         int* p;
     };
-    
+
     struct CV_EXPORTS MStep
     {
         MStep();
@@ -1881,21 +1996,24 @@ public:
         size_t& operator[](int i);
         operator size_t() const;
         MStep& operator = (size_t s);
-        
+
         size_t* p;
         size_t buf[2];
     protected:
         MStep& operator = (const MStep&);
     };
-    
+
     MSize size;
     MStep step;
+
+protected:
+    void initEmpty();
 };
 
 
 /*!
    Random Number Generator
- 
+
    The class implements RNG using Multiply-with-Carry algorithm
 */
 class CV_EXPORTS RNG
@@ -1904,7 +2022,7 @@ public:
     enum { UNIFORM=0, NORMAL=1 };
 
     RNG();
-    RNG(uint64 _state);
+    RNG(uint64 state);
     //! updates the state and returns the next 32-bit unsigned integer random number
     unsigned next();
 
@@ -1914,7 +2032,7 @@ public:
     operator short();
     operator unsigned();
     //! returns a random integer sampled uniformly from [0, N).
-    unsigned operator()(unsigned N);
+    unsigned operator ()(unsigned N);
     unsigned operator ()();
     operator int();
     operator float();
@@ -1925,13 +2043,47 @@ public:
     float uniform(float a, float b);
     //! returns uniformly distributed double-precision floating-point random number from [a,b) range
     double uniform(double a, double b);
-    void fill( InputOutputArray mat, int distType, InputArray a, InputArray b );
+    void fill( InputOutputArray mat, int distType, InputArray a, InputArray b, bool saturateRange=false );
     //! returns Gaussian random variate with mean zero.
     double gaussian(double sigma);
 
     uint64 state;
 };
 
+/*!
+   Random Number Generator - MT
+
+   The class implements RNG using the Mersenne Twister algorithm
+*/
+class CV_EXPORTS RNG_MT19937
+{
+public:
+    RNG_MT19937();
+    RNG_MT19937(unsigned s);
+    void seed(unsigned s);
+
+    unsigned next();
+
+    operator int();
+    operator unsigned();
+    operator float();
+    operator double();
+
+    unsigned operator ()(unsigned N);
+    unsigned operator ()();
+
+    //! returns uniformly distributed integer random number from [a,b) range
+    int uniform(int a, int b);
+    //! returns uniformly distributed floating-point random number from [a,b) range
+    float uniform(float a, float b);
+    //! returns uniformly distributed double-precision floating-point random number from [a,b) range
+    double uniform(double a, double b);
+
+private:
+    enum PeriodParameters {N = 624, M = 397};
+    unsigned state[N];
+    int mti;
+};
 
 /*!
  Termination criteria in iterative algorithms
@@ -1949,51 +2101,60 @@ public:
     //! default constructor
     TermCriteria();
     //! full constructor
-    TermCriteria(int _type, int _maxCount, double _epsilon);
+    TermCriteria(int type, int maxCount, double epsilon);
     //! conversion from CvTermCriteria
     TermCriteria(const CvTermCriteria& criteria);
-    //! conversion from CvTermCriteria
+    //! conversion to CvTermCriteria
     operator CvTermCriteria() const;
-    
+
     int type; //!< the type of termination criteria: COUNT, EPS or COUNT + EPS
     int maxCount; // the maximum number of iterations/elements
     double epsilon; // the desired accuracy
 };
 
-    
+
+typedef void (*BinaryFunc)(const uchar* src1, size_t step1,
+                           const uchar* src2, size_t step2,
+                           uchar* dst, size_t step, Size sz,
+                           void*);
+
+CV_EXPORTS BinaryFunc getConvertFunc(int sdepth, int ddepth);
+CV_EXPORTS BinaryFunc getConvertScaleFunc(int sdepth, int ddepth);
+CV_EXPORTS BinaryFunc getCopyMaskFunc(size_t esz);
+
 //! swaps two matrices
 CV_EXPORTS void swap(Mat& a, Mat& b);
-    
+
 //! converts array (CvMat or IplImage) to cv::Mat
 CV_EXPORTS Mat cvarrToMat(const CvArr* arr, bool copyData=false,
                           bool allowND=true, int coiMode=0);
 //! extracts Channel of Interest from CvMat or IplImage and makes cv::Mat out of it.
 CV_EXPORTS void extractImageCOI(const CvArr* arr, OutputArray coiimg, int coi=-1);
 //! inserts single-channel cv::Mat into a multi-channel CvMat or IplImage
-CV_EXPORTS void insertImageCOI(InputArray coiimg, CvArr* arr, int coi=-1);  
+CV_EXPORTS void insertImageCOI(InputArray coiimg, CvArr* arr, int coi=-1);
 
 //! adds one matrix to another (dst = src1 + src2)
 CV_EXPORTS_W void add(InputArray src1, InputArray src2, OutputArray dst,
                       InputArray mask=noArray(), int dtype=-1);
-//! subtracts one matrix from another (dst = src1 - src2) 
+//! subtracts one matrix from another (dst = src1 - src2)
 CV_EXPORTS_W void subtract(InputArray src1, InputArray src2, OutputArray dst,
                            InputArray mask=noArray(), int dtype=-1);
 
 //! computes element-wise weighted product of the two arrays (dst = scale*src1*src2)
 CV_EXPORTS_W void multiply(InputArray src1, InputArray src2,
                            OutputArray dst, double scale=1, int dtype=-1);
-    
+
 //! computes element-wise weighted quotient of the two arrays (dst = scale*src1/src2)
 CV_EXPORTS_W void divide(InputArray src1, InputArray src2, OutputArray dst,
                          double scale=1, int dtype=-1);
-    
+
 //! computes element-wise weighted reciprocal of an array (dst = scale/src2)
 CV_EXPORTS_W void divide(double scale, InputArray src2,
                          OutputArray dst, int dtype=-1);
 
 //! adds scaled array to another one (dst = alpha*src1 + src2)
 CV_EXPORTS_W void scaleAdd(InputArray src1, double alpha, InputArray src2, OutputArray dst);
-    
+
 //! computes weighted sum of two arrays (dst = alpha*src1 + beta*src2 + gamma)
 CV_EXPORTS_W void addWeighted(InputArray src1, double alpha, InputArray src2,
                               double beta, double gamma, OutputArray dst, int dtype=-1);
@@ -2006,9 +2167,12 @@ CV_EXPORTS_W void LUT(InputArray src, InputArray lut, OutputArray dst,
                       int interpolation=0);
 
 //! computes sum of array elements
-CV_EXPORTS_AS(sumElems) Scalar sum(InputArray src); 
+CV_EXPORTS_AS(sumElems) Scalar sum(InputArray src);
 //! computes the number of nonzero array elements
 CV_EXPORTS_W int countNonZero( InputArray src );
+//! returns the list of locations of non-zero pixels
+CV_EXPORTS_W void findNonZero( InputArray src, OutputArray idx );
+
 //! computes mean value of selected array elements
 CV_EXPORTS_W Scalar mean(InputArray src, InputArray mask=noArray());
 //! computes mean value and standard deviation of all or selected array elements
@@ -2019,7 +2183,15 @@ CV_EXPORTS_W double norm(InputArray src1, int normType=NORM_L2, InputArray mask=
 //! computes norm of selected part of the difference between two arrays
 CV_EXPORTS_W double norm(InputArray src1, InputArray src2,
                          int normType=NORM_L2, InputArray mask=noArray());
-//! scales and shifts array elements so that either the specified norm (alpha) or the minimum (alpha) and maximum (beta) array values get the specified values 
+
+//! naive nearest neighbor finder
+CV_EXPORTS_W void batchDistance(InputArray src1, InputArray src2,
+                                OutputArray dist, int dtype, OutputArray nidx,
+                                int normType=NORM_L2, int K=0,
+                                InputArray mask=noArray(), int update=0,
+                                bool crosscheck=false);
+
+//! scales and shifts array elements so that either the specified norm (alpha) or the minimum (alpha) and maximum (beta) array values get the specified values
 CV_EXPORTS_W void normalize( InputArray src, OutputArray dst, double alpha=1, double beta=0,
                              int norm_type=NORM_L2, int dtype=-1, InputArray mask=noArray());
 
@@ -2029,20 +2201,24 @@ CV_EXPORTS_W void minMaxLoc(InputArray src, CV_OUT double* minVal,
                            CV_OUT Point* maxLoc=0, InputArray mask=noArray());
 CV_EXPORTS void minMaxIdx(InputArray src, double* minVal, double* maxVal,
                           int* minIdx=0, int* maxIdx=0, InputArray mask=noArray());
-    
+
 //! transforms 2D matrix to 1D row or column vector by taking sum, minimum, maximum or mean value over all the rows
 CV_EXPORTS_W void reduce(InputArray src, OutputArray dst, int dim, int rtype, int dtype=-1);
 
 //! makes multi-channel array out of several single-channel arrays
 CV_EXPORTS void merge(const Mat* mv, size_t count, OutputArray dst);
+CV_EXPORTS void merge(const vector<Mat>& mv, OutputArray dst );
+
 //! makes multi-channel array out of several single-channel arrays
-CV_EXPORTS_W void merge(const vector<Mat>& mv, OutputArray dst);
-    
+CV_EXPORTS_W void merge(InputArrayOfArrays mv, OutputArray dst);
+
 //! copies each plane of a multi-channel array to a dedicated array
 CV_EXPORTS void split(const Mat& src, Mat* mvbegin);
+CV_EXPORTS void split(const Mat& m, vector<Mat>& mv );
+
 //! copies each plane of a multi-channel array to a dedicated array
-CV_EXPORTS_W void split(const Mat& m, CV_OUT vector<Mat>& mv);
-    
+CV_EXPORTS_W void split(InputArray m, OutputArrayOfArrays mv);
+
 //! copies selected channels from the input arrays to the selected channels of the output arrays
 CV_EXPORTS void mixChannels(const Mat* src, size_t nsrcs, Mat* dst, size_t ndsts,
                             const int* fromTo, size_t npairs);
@@ -2056,22 +2232,22 @@ CV_EXPORTS_W void extractChannel(InputArray src, OutputArray dst, int coi);
 
 //! inserts a single channel to dst (coi is 0-based index)
 CV_EXPORTS_W void insertChannel(InputArray src, InputOutputArray dst, int coi);
-    
+
 //! reverses the order of the rows, columns or both in a matrix
 CV_EXPORTS_W void flip(InputArray src, OutputArray dst, int flipCode);
 
 //! replicates the input matrix the specified number of times in the horizontal and/or vertical direction
 CV_EXPORTS_W void repeat(InputArray src, int ny, int nx, OutputArray dst);
 CV_EXPORTS Mat repeat(const Mat& src, int ny, int nx);
-        
+
 CV_EXPORTS void hconcat(const Mat* src, size_t nsrc, OutputArray dst);
 CV_EXPORTS void hconcat(InputArray src1, InputArray src2, OutputArray dst);
-CV_EXPORTS_W void hconcat(InputArray src, OutputArray dst);
+CV_EXPORTS_W void hconcat(InputArrayOfArrays src, OutputArray dst);
 
 CV_EXPORTS void vconcat(const Mat* src, size_t nsrc, OutputArray dst);
 CV_EXPORTS void vconcat(InputArray src1, InputArray src2, OutputArray dst);
-CV_EXPORTS_W void vconcat(InputArray src, OutputArray dst);
-    
+CV_EXPORTS_W void vconcat(InputArrayOfArrays src, OutputArray dst);
+
 //! computes bitwise conjunction of the two arrays (dst = src1 & src2)
 CV_EXPORTS_W void bitwise_and(InputArray src1, InputArray src2,
                               OutputArray dst, InputArray mask=noArray());
@@ -2086,9 +2262,9 @@ CV_EXPORTS_W void bitwise_not(InputArray src, OutputArray dst,
                               InputArray mask=noArray());
 //! computes element-wise absolute difference of two arrays (dst = abs(src1 - src2))
 CV_EXPORTS_W void absdiff(InputArray src1, InputArray src2, OutputArray dst);
-//! set mask elements for those array elements which are within the element-specific bounding box (dst = lowerb <= src && src < upperb)    
+//! set mask elements for those array elements which are within the element-specific bounding box (dst = lowerb <= src && src < upperb)
 CV_EXPORTS_W void inRange(InputArray src, InputArray lowerb,
-                          InputArray upperb, OutputArray dst);    
+                          InputArray upperb, OutputArray dst);
 //! compares elements of two arrays (dst = src1 <cmpop> src2)
 CV_EXPORTS_W void compare(InputArray src1, InputArray src2, OutputArray dst, int cmpop);
 //! computes per-element minimum of two arrays (dst = min(src1, src2))
@@ -2103,11 +2279,11 @@ CV_EXPORTS void min(const Mat& src1, double src2, Mat& dst);
 //! computes per-element maximum of two arrays (dst = max(src1, src2))
 CV_EXPORTS void max(const Mat& src1, const Mat& src2, Mat& dst);
 //! computes per-element maximum of array and scalar (dst = max(src1, src2))
-CV_EXPORTS void max(const Mat& src1, double src2, Mat& dst);    
-    
+CV_EXPORTS void max(const Mat& src1, double src2, Mat& dst);
+
 //! computes square root of each matrix element (dst = src**0.5)
 CV_EXPORTS_W void sqrt(InputArray src, OutputArray dst);
-//! raises the input matrix elements to the specified power (b = a**power) 
+//! raises the input matrix elements to the specified power (b = a**power)
 CV_EXPORTS_W void pow(InputArray src, double power, OutputArray dst);
 //! computes exponent of each matrix element (dst = e**src)
 CV_EXPORTS_W void exp(InputArray src, OutputArray dst);
@@ -2117,6 +2293,12 @@ CV_EXPORTS_W void log(InputArray src, OutputArray dst);
 CV_EXPORTS_W float cubeRoot(float val);
 //! computes the angle in degrees (0..360) of the vector (x,y)
 CV_EXPORTS_W float fastAtan2(float y, float x);
+
+CV_EXPORTS void exp(const float* src, float* dst, int n);
+CV_EXPORTS void log(const float* src, float* dst, int n);
+CV_EXPORTS void fastAtan2(const float* y, const float* x, float* dst, int n, bool angleInDegrees);
+CV_EXPORTS void magnitude(const float* x, const float* y, float* dst, int n);
+
 //! converts polar coordinates to Cartesian
 CV_EXPORTS_W void polarToCart(InputArray magnitude, InputArray angle,
                               OutputArray x, OutputArray y, bool angleInDegrees=false);
@@ -2130,8 +2312,11 @@ CV_EXPORTS_W void phase(InputArray x, InputArray y, OutputArray angle,
 //! computes magnitude (magnitude(i)) of each (x(i), y(i)) vector
 CV_EXPORTS_W void magnitude(InputArray x, InputArray y, OutputArray magnitude);
 //! checks that each matrix element is within the specified range.
-CV_EXPORTS_W bool checkRange(InputArray a, bool quiet=true, CV_OUT Point* pt=0,
+CV_EXPORTS_W bool checkRange(InputArray a, bool quiet=true, CV_OUT Point* pos=0,
                             double minVal=-DBL_MAX, double maxVal=DBL_MAX);
+//! converts NaN's to the given number
+CV_EXPORTS_W void patchNaNs(InputOutputArray a, double val=0);
+
 //! implements generalized matrix product algorithm GEMM from BLAS
 CV_EXPORTS_W void gemm(InputArray src1, InputArray src2, double alpha,
                        InputArray src3, double gamma, OutputArray dst, int flags=0);
@@ -2146,7 +2331,7 @@ CV_EXPORTS_W void transform(InputArray src, OutputArray dst, InputArray m );
 //! performs perspective transformation of each element of multi-channel input matrix
 CV_EXPORTS_W void perspectiveTransform(InputArray src, OutputArray dst, InputArray m );
 
-//! extends the symmetrical matrix from the lower half or from the upper half 
+//! extends the symmetrical matrix from the lower half or from the upper half
 CV_EXPORTS_W void completeSymm(InputOutputArray mtx, bool lowerToUpper=false);
 //! initializes scaled identity matrix
 CV_EXPORTS_W void setIdentity(InputOutputArray mtx, const Scalar& s=Scalar(1));
@@ -2162,10 +2347,10 @@ CV_EXPORTS_W bool solve(InputArray src1, InputArray src2,
 
 enum
 {
-	SORT_EVERY_ROW=0,
-	SORT_EVERY_COLUMN=1,
-	SORT_ASCENDING=0,
-	SORT_DESCENDING=16
+    SORT_EVERY_ROW=0,
+    SORT_EVERY_COLUMN=1,
+    SORT_ASCENDING=0,
+    SORT_DESCENDING=16
 };
 
 //! sorts independently each matrix row or each matrix column
@@ -2188,12 +2373,12 @@ CV_EXPORTS_W bool eigen(InputArray src, bool computeEigenvectors,
 
 enum
 {
-	COVAR_SCRAMBLED=0,
-	COVAR_NORMAL=1,
-	COVAR_USE_AVG=2,
-	COVAR_SCALE=4,
-	COVAR_ROWS=8,
-	COVAR_COLS=16
+    COVAR_SCRAMBLED=0,
+    COVAR_NORMAL=1,
+    COVAR_USE_AVG=2,
+    COVAR_SCALE=4,
+    COVAR_ROWS=8,
+    COVAR_COLS=16
 };
 
 //! computes covariation matrix of a set of samples
@@ -2205,7 +2390,7 @@ CV_EXPORTS_W void calcCovarMatrix( InputArray samples, OutputArray covar,
 
 /*!
     Principal Component Analysis
- 
+
     The class PCA is used to compute the special basis for a set of vectors.
     The basis will consist of eigenvectors of the covariance matrix computed
     from the input set of vectors. After PCA is performed, vectors can be transformed from
@@ -2213,12 +2398,12 @@ CV_EXPORTS_W void calcCovarMatrix( InputArray samples, OutputArray covar,
     prominent eigenvectors (called the principal components),
     corresponding to the largest eigenvalues of the covariation matrix.
     Thus the dimensionality of the vector and the correlation between the coordinates is reduced.
- 
+
     The following sample is the function that takes two matrices. The first one stores the set
     of vectors (a row per vector) that is used to compute PCA, the second one stores another
     "test" set of vectors (a row per vector) that are first compressed with PCA,
     then reconstructed back and then the reconstruction error norm is computed and printed for each vector.
- 
+
     \code
     using namespace cv;
 
@@ -2238,9 +2423,9 @@ CV_EXPORTS_W void calcCovarMatrix( InputArray samples, OutputArray covar,
         if( !testset.data )
             return pca;
         CV_Assert( testset.cols == pcaset.cols );
- 
+
         compressed.create(testset.rows, maxComponents, testset.type());
-     
+
         Mat reconstructed;
         for( int i = 0; i < testset.rows; i++ )
         {
@@ -2264,8 +2449,10 @@ public:
     PCA();
     //! the constructor that performs PCA
     PCA(InputArray data, InputArray mean, int flags, int maxComponents=0);
+    PCA(InputArray data, InputArray mean, int flags, double retainedVariance);
     //! operator that performs PCA. The previously stored data, if any, is released
     PCA& operator()(InputArray data, InputArray mean, int flags, int maxComponents=0);
+    PCA& computeVar(InputArray data, InputArray mean, int flags, double retainedVariance);
     //! projects vector from the original space to the principal components subspace
     Mat project(InputArray vec) const;
     //! projects vector from the original space to the principal components subspace
@@ -2282,7 +2469,10 @@ public:
 
 CV_EXPORTS_W void PCACompute(InputArray data, CV_OUT InputOutputArray mean,
                              OutputArray eigenvectors, int maxComponents=0);
-    
+
+CV_EXPORTS_W void PCAComputeVar(InputArray data, CV_OUT InputOutputArray mean,
+                             OutputArray eigenvectors, double retainedVariance);
+
 CV_EXPORTS_W void PCAProject(InputArray data, InputArray mean,
                              InputArray eigenvectors, OutputArray result);
 
@@ -2292,11 +2482,11 @@ CV_EXPORTS_W void PCABackProject(InputArray data, InputArray mean,
 
 /*!
     Singular Value Decomposition class
- 
+
     The class is used to compute Singular Value Decomposition of a floating-point matrix and then
     use it to solve least-square problems, under-determined linear systems, invert matrices,
     compute condition numbers etc.
-    
+
     For a bit faster operation you can pass flags=SVD::MODIFY_A|... to modify the decomposed matrix
     when it is not necessarily to preserve it. If you want to compute condition number of a matrix
     or absolute value of its determinant - you do not need SVD::u or SVD::vt,
@@ -2323,17 +2513,17 @@ public:
     static void backSubst( InputArray w, InputArray u,
                            InputArray vt, InputArray rhs,
                            OutputArray dst );
-    
+
     template<typename _Tp, int m, int n, int nm> static void compute( const Matx<_Tp, m, n>& a,
         Matx<_Tp, nm, 1>& w, Matx<_Tp, m, nm>& u, Matx<_Tp, n, nm>& vt );
     template<typename _Tp, int m, int n, int nm> static void compute( const Matx<_Tp, m, n>& a,
         Matx<_Tp, nm, 1>& w );
     template<typename _Tp, int m, int n, int nm, int nb> static void backSubst( const Matx<_Tp, nm, 1>& w,
         const Matx<_Tp, m, nm>& u, const Matx<_Tp, n, nm>& vt, const Matx<_Tp, m, nb>& rhs, Matx<_Tp, n, nb>& dst );
-    
+
     //! finds dst = arg min_{|dst|=1} |m*dst|
     static void solveZ( InputArray src, OutputArray dst );
-    //! performs back substitution, so that dst is the solution or pseudo-solution of m*dst = rhs, where m is the decomposed matrix 
+    //! performs back substitution, so that dst is the solution or pseudo-solution of m*dst = rhs, where m is the decomposed matrix
     void backSubst( InputArray rhs, OutputArray dst ) const;
 
     Mat u, w, vt;
@@ -2388,7 +2578,7 @@ template<typename _Tp> static inline _Tp randu() { return (_Tp)theRNG(); }
 
 //! fills array with uniformly-distributed random numbers from the range [low, high)
 CV_EXPORTS_W void randu(InputOutputArray dst, InputArray low, InputArray high);
-    
+
 //! fills array with normally-distributed random numbers with the specified mean and the standard deviation
 CV_EXPORTS_W void randn(InputOutputArray dst, InputArray mean, InputArray stddev);
 
@@ -2397,32 +2587,32 @@ CV_EXPORTS void randShuffle(InputOutputArray dst, double iterFactor=1., RNG* rng
 CV_EXPORTS_AS(randShuffle) void randShuffle_(InputOutputArray dst, double iterFactor=1.);
 
 //! draws the line segment (pt1, pt2) in the image
-CV_EXPORTS_W void line(Mat& img, Point pt1, Point pt2, const Scalar& color,
+CV_EXPORTS_W void line(CV_IN_OUT Mat& img, Point pt1, Point pt2, const Scalar& color,
                      int thickness=1, int lineType=8, int shift=0);
 
 //! draws the rectangle outline or a solid rectangle with the opposite corners pt1 and pt2 in the image
-CV_EXPORTS_W void rectangle(Mat& img, Point pt1, Point pt2,
+CV_EXPORTS_W void rectangle(CV_IN_OUT Mat& img, Point pt1, Point pt2,
                           const Scalar& color, int thickness=1,
                           int lineType=8, int shift=0);
-    
-//! draws the rectangle outline or a solid rectangle covering rec in the image 
-CV_EXPORTS void rectangle(Mat& img, Rect rec,
+
+//! draws the rectangle outline or a solid rectangle covering rec in the image
+CV_EXPORTS void rectangle(CV_IN_OUT Mat& img, Rect rec,
                           const Scalar& color, int thickness=1,
                           int lineType=8, int shift=0);
 
 //! draws the circle outline or a solid circle in the image
-CV_EXPORTS_W void circle(Mat& img, Point center, int radius,
+CV_EXPORTS_W void circle(CV_IN_OUT Mat& img, Point center, int radius,
                        const Scalar& color, int thickness=1,
                        int lineType=8, int shift=0);
 
 //! draws an elliptic arc, ellipse sector or a rotated ellipse in the image
-CV_EXPORTS_W void ellipse(Mat& img, Point center, Size axes,
+CV_EXPORTS_W void ellipse(CV_IN_OUT Mat& img, Point center, Size axes,
                         double angle, double startAngle, double endAngle,
                         const Scalar& color, int thickness=1,
                         int lineType=8, int shift=0);
 
 //! draws a rotated ellipse in the image
-CV_EXPORTS_W void ellipse(Mat& img, const RotatedRect& box, const Scalar& color,
+CV_EXPORTS_W void ellipse(CV_IN_OUT Mat& img, const RotatedRect& box, const Scalar& color,
                         int thickness=1, int lineType=8);
 
 //! draws a filled convex polygon in the image
@@ -2460,7 +2650,7 @@ CV_EXPORTS_W bool clipLine(Rect imgRect, CV_OUT CV_IN_OUT Point& pt1, CV_OUT CV_
 
 /*!
    Line iterator class
- 
+
    The class is used to iterate over all the pixels on the raster line
    segment connecting two specified points.
 */
@@ -2508,7 +2698,7 @@ enum
 //! renders text string in the image
 CV_EXPORTS_W void putText( Mat& img, const string& text, Point org,
                          int fontFace, double fontScale, Scalar color,
-                         int thickness=1, int linetype=8,
+                         int thickness=1, int lineType=8,
                          bool bottomLeftOrigin=false );
 
 //! returns bounding box of the text string
@@ -2520,11 +2710,11 @@ CV_EXPORTS_W Size getTextSize(const string& text, int fontFace,
 
 /*!
  Template matrix class derived from Mat
- 
+
  The class Mat_ is a "thin" template wrapper on top of cv::Mat. It does not have any extra data fields,
  nor it or cv::Mat have any virtual methods and thus references or pointers to these two classes
  can be safely converted one to another. But do it with care, for example:
- 
+
  \code
  // create 100x100 8-bit matrix
  Mat M(100,100,CV_8U);
@@ -2533,12 +2723,12 @@ CV_EXPORTS_W Size getTextSize(const string& text, int fontFace,
  // the program will likely crash at the statement below
  M1(99,99) = 1.f;
  \endcode
- 
+
  While cv::Mat is sufficient in most cases, cv::Mat_ can be more convenient if you use a lot of element
  access operations and if you know matrix type at compile time.
  Note that cv::Mat::at<_Tp>(int y, int x) and cv::Mat_<_Tp>::operator ()(int y, int x) do absolutely the
  same thing and run at the same speed, but the latter is certainly shorter:
- 
+
  \code
  Mat_<double> M(20,20);
  for(int i = 0; i < M.rows; i++)
@@ -2548,9 +2738,9 @@ CV_EXPORTS_W Size getTextSize(const string& text, int fontFace,
  eigen(M,E,V);
  cout << E.at<double>(0,0)/E.at<double>(M.rows-1,0);
  \endcode
- 
+
  It is easy to use Mat_ for multi-channel images/matrices - just pass cv::Vec as cv::Mat_ template parameter:
- 
+
  \code
  // allocate 320x240 color image and fill it with green (in RGB space)
  Mat_<Vec3b> img(240, 320, Vec3b(0,255,0));
@@ -2563,14 +2753,14 @@ CV_EXPORTS_W Size getTextSize(const string& text, int fontFace,
        img(i,j)[2] ^= (uchar)(i ^ j); // img(y,x)[c] accesses c-th channel of the pixel (x,y)
  \endcode
 */
-template<typename _Tp> class CV_EXPORTS Mat_ : public Mat
+template<typename _Tp> class Mat_ : public Mat
 {
 public:
     typedef _Tp value_type;
     typedef typename DataType<_Tp>::channel_type channel_type;
     typedef MatIterator_<_Tp> iterator;
     typedef MatConstIterator_<_Tp> const_iterator;
-    
+
     //! default constructor
     Mat_();
     //! equivalent to Mat(_rows, _cols, DataType<_Tp>::type)
@@ -2579,7 +2769,7 @@ public:
     Mat_(int _rows, int _cols, const _Tp& value);
     //! equivalent to Mat(_size, DataType<_Tp>::type)
     explicit Mat_(Size _size);
-    //! constructor that sets each matrix element to specified value 
+    //! constructor that sets each matrix element to specified value
     Mat_(Size _size, const _Tp& value);
     //! n-dim array constructor
     Mat_(int _ndims, const int* _sizes);
@@ -2659,13 +2849,12 @@ public:
     static MatExpr eye(Size size);
 
     //! some more overriden methods
-    Mat_ reshape(int _rows) const;
     Mat_& adjustROI( int dtop, int dbottom, int dleft, int dright );
     Mat_ operator()( const Range& rowRange, const Range& colRange ) const;
     Mat_ operator()( const Rect& roi ) const;
     Mat_ operator()( const Range* ranges ) const;
 
-    //! more convenient forms of row and element access operators 
+    //! more convenient forms of row and element access operators
     _Tp* operator [](int y);
     const _Tp* operator [](int y) const;
 
@@ -2673,12 +2862,12 @@ public:
     _Tp& operator ()(const int* idx);
     //! returns read-only reference to the specified element
     const _Tp& operator ()(const int* idx) const;
-    
+
     //! returns reference to the specified element
     template<int n> _Tp& operator ()(const Vec<int, n>& idx);
     //! returns read-only reference to the specified element
     template<int n> const _Tp& operator ()(const Vec<int, n>& idx) const;
-    
+
     //! returns reference to the specified element (1D case)
     _Tp& operator ()(int idx0);
     //! returns read-only reference to the specified element (1D case)
@@ -2691,7 +2880,7 @@ public:
     _Tp& operator ()(int idx0, int idx1, int idx2);
     //! returns read-only reference to the specified element (3D case)
     const _Tp& operator ()(int idx0, int idx1, int idx2) const;
-    
+
     _Tp& operator ()(Point pt);
     const _Tp& operator ()(Point pt) const;
 
@@ -2743,10 +2932,10 @@ public:
     typedef const uchar** pointer;
     typedef uchar* reference;
     typedef std::random_access_iterator_tag iterator_category;
-    
+
     //! default constructor
     MatConstIterator();
-    //! constructor that sets the iterator to the beginning of the matrix 
+    //! constructor that sets the iterator to the beginning of the matrix
     MatConstIterator(const Mat* _m);
     //! constructor that sets the iterator to the specified element of the matrix
     MatConstIterator(const Mat* _m, int _row, int _col=0);
@@ -2756,14 +2945,14 @@ public:
     MatConstIterator(const Mat* _m, const int* _idx);
     //! copy constructor
     MatConstIterator(const MatConstIterator& it);
-    
+
     //! copy operator
     MatConstIterator& operator = (const MatConstIterator& it);
     //! returns the current matrix element
     uchar* operator *() const;
     //! returns the i-th matrix element, relative to the current
     uchar* operator [](ptrdiff_t i) const;
-    
+
     //! shifts the iterator forward by the specified number of elements
     MatConstIterator& operator += (ptrdiff_t ofs);
     //! shifts the iterator backward by the specified number of elements
@@ -2783,20 +2972,20 @@ public:
     ptrdiff_t lpos() const;
     void seek(ptrdiff_t ofs, bool relative=false);
     void seek(const int* _idx, bool relative=false);
-    
+
     const Mat* m;
     size_t elemSize;
     uchar* ptr;
     uchar* sliceStart;
     uchar* sliceEnd;
 };
-    
+
 /*!
  Matrix read-only iterator
- 
- */    
+
+ */
 template<typename _Tp>
-class CV_EXPORTS MatConstIterator_ : public MatConstIterator
+class MatConstIterator_ : public MatConstIterator
 {
 public:
     typedef _Tp value_type;
@@ -2807,7 +2996,7 @@ public:
 
     //! default constructor
     MatConstIterator_();
-    //! constructor that sets the iterator to the beginning of the matrix 
+    //! constructor that sets the iterator to the beginning of the matrix
     MatConstIterator_(const Mat_<_Tp>* _m);
     //! constructor that sets the iterator to the specified element of the matrix
     MatConstIterator_(const Mat_<_Tp>* _m, int _row, int _col=0);
@@ -2824,7 +3013,7 @@ public:
     _Tp operator *() const;
     //! returns the i-th matrix element, relative to the current
     _Tp operator [](ptrdiff_t i) const;
-    
+
     //! shifts the iterator forward by the specified number of elements
     MatConstIterator_& operator += (ptrdiff_t ofs);
     //! shifts the iterator backward by the specified number of elements
@@ -2844,10 +3033,10 @@ public:
 
 /*!
  Matrix read-write iterator
- 
+
 */
 template<typename _Tp>
-class CV_EXPORTS MatIterator_ : public MatConstIterator_<_Tp>
+class MatIterator_ : public MatConstIterator_<_Tp>
 {
 public:
     typedef _Tp* pointer;
@@ -2856,7 +3045,7 @@ public:
 
     //! the default constructor
     MatIterator_();
-    //! constructor that sets the iterator to the beginning of the matrix 
+    //! constructor that sets the iterator to the beginning of the matrix
     MatIterator_(Mat_<_Tp>* _m);
     //! constructor that sets the iterator to the specified element of the matrix
     MatIterator_(Mat_<_Tp>* _m, int _row, int _col=0);
@@ -2888,22 +3077,22 @@ public:
     MatIterator_ operator ++(int);
 };
 
-template<typename _Tp> class CV_EXPORTS MatOp_Iter_;
+template<typename _Tp> class MatOp_Iter_;
 
 /*!
  Comma-separated Matrix Initializer
- 
+
  The class instances are usually not created explicitly.
  Instead, they are created on "matrix << firstValue" operator.
- 
+
  The sample below initializes 2x2 rotation matrix:
- 
+
  \code
  double angle = 30, a = cos(angle*CV_PI/180), b = sin(angle*CV_PI/180);
  Mat R = (Mat_<double>(2,2) << a, -b, b, a);
  \endcode
-*/ 
-template<typename _Tp> class CV_EXPORTS MatCommaInitializer_
+*/
+template<typename _Tp> class MatCommaInitializer_
 {
 public:
     //! the constructor, created by "matrix << firstValue" operator, where matrix is cv::Mat
@@ -2918,7 +3107,7 @@ protected:
 };
 
 
-template<typename _Tp, int m, int n> class CV_EXPORTS MatxCommaInitializer
+template<typename _Tp, int m, int n> class MatxCommaInitializer
 {
 public:
     MatxCommaInitializer(Matx<_Tp, m, n>* _mtx);
@@ -2929,17 +3118,17 @@ public:
     int idx;
 };
 
-template<typename _Tp, int m> class CV_EXPORTS VecCommaInitializer : public MatxCommaInitializer<_Tp, m, 1>
+template<typename _Tp, int m> class VecCommaInitializer : public MatxCommaInitializer<_Tp, m, 1>
 {
 public:
     VecCommaInitializer(Vec<_Tp, m>* _vec);
     template<typename T2> VecCommaInitializer<_Tp, m>& operator , (T2 val);
     Vec<_Tp, m> operator *() const;
 };
-        
+
 /*!
  Automatically Allocated Buffer Class
- 
+
  The class is used for temporary buffers in functions and methods.
  If a temporary buffer is usually small (a few K's of memory),
  but its size depends on the parameters, it makes sense to create a small
@@ -2948,15 +3137,15 @@ public:
  and released after the processing. Therefore, in typical cases, when the buffer size is small,
  there is no overhead associated with malloc()/free().
  At the same time, there is no limit on the size of processed data.
- 
+
  This is what AutoBuffer does. The template takes 2 parameters - type of the buffer elements and
  the number of stack-allocated elements. Here is how the class is used:
- 
+
  \code
  void my_func(const cv::Mat& m)
  {
     cv::AutoBuffer<float, 1000> buf; // create automatic buffer containing 1000 floats
- 
+
     buf.allocate(m.rows); // if m.rows <= 1000, the pre-allocated buffer is used,
                           // otherwise the buffer of "m.rows" floats will be allocated
                           // dynamically and deallocated in cv::AutoBuffer destructor
@@ -2964,7 +3153,7 @@ public:
  }
  \endcode
 */
-template<typename _Tp, size_t fixed_size=4096/sizeof(_Tp)+8> class CV_EXPORTS AutoBuffer
+template<typename _Tp, size_t fixed_size=4096/sizeof(_Tp)+8> class AutoBuffer
 {
 public:
     typedef _Tp value_type;
@@ -2974,10 +3163,10 @@ public:
     AutoBuffer();
     //! constructor taking the real buffer size
     AutoBuffer(size_t _size);
-    //! destructor. calls deallocate() 
+    //! destructor. calls deallocate()
     ~AutoBuffer();
 
-    //! allocates the new buffer of size _size. if the _size is small enough, stack-allocated buffer is used 
+    //! allocates the new buffer of size _size. if the _size is small enough, stack-allocated buffer is used
     void allocate(size_t _size);
     //! deallocates the buffer if it was dynamically allocated
     void deallocate();
@@ -2999,18 +3188,18 @@ protected:
 
 /*!
  n-Dimensional Dense Matrix Iterator Class.
- 
+
  The class cv::NAryMatIterator is used for iterating over one or more n-dimensional dense arrays (cv::Mat's).
- 
+
  The iterator is completely different from cv::Mat_ and cv::SparseMat_ iterators.
  It iterates through the slices (or planes), not the elements, where "slice" is a continuous part of the arrays.
- 
+
  Here is the example on how the iterator can be used to normalize 3D histogram:
- 
+
  \code
  void normalizeColorHist(Mat& hist)
  {
- #if 1    
+ #if 1
      // intialize iterator (the style is different from STL).
      // after initialization the iterator will contain
      // the number of slices or planes
@@ -3040,7 +3229,7 @@ protected:
  #endif
  }
  \endcode
- 
+
  You can iterate through several matrices simultaneously as long as they have the same geometry
  (dimensionality and all the dimension sizes are the same), which is useful for binary
  and n-ary operations on such matrices. Just pass those matrices to cv::MatNDIterator.
@@ -3059,7 +3248,7 @@ public:
     //! the separate iterator initialization method
     void init(const Mat** arrays, Mat* planes, uchar** ptrs, int narrays=-1);
 
-    //! proceeds to the next plane of every iterated matrix 
+    //! proceeds to the next plane of every iterated matrix
     NAryMatIterator& operator ++();
     //! proceeds to the next plane of every iterated matrix (postfix increment operator)
     NAryMatIterator operator ++(int);
@@ -3080,7 +3269,7 @@ protected:
     int iterdepth;
     size_t idx;
 };
-    
+
 //typedef NAryMatIterator NAryMatNDIterator;
 
 typedef void (*ConvertData)(const void* from, void* to, int cn);
@@ -3091,7 +3280,7 @@ CV_EXPORTS ConvertData getConvertElem(int fromType, int toType);
 //! returns the function for converting pixels from one data type to another with the optional scaling
 CV_EXPORTS ConvertScaleData getConvertScaleElem(int fromType, int toType);
 
-    
+
 /////////////////////////// multi-dimensional sparse matrix //////////////////////////
 
 class SparseMatIterator;
@@ -3101,14 +3290,14 @@ template<typename _Tp> class SparseMatConstIterator_;
 
 /*!
  Sparse matrix class.
- 
+
  The class represents multi-dimensional sparse numerical arrays. Such a sparse array can store elements
  of any type that cv::Mat is able to store. "Sparse" means that only non-zero elements
  are stored (though, as a result of some operations on a sparse matrix, some of its stored elements
  can actually become 0. It's user responsibility to detect such elements and delete them using cv::SparseMat::erase().
  The non-zero elements are stored in a hash table that grows when it's filled enough,
  so that the search time remains O(1) in average. Elements can be accessed using the following methods:
- 
+
  <ol>
  <li>Query operations: cv::SparseMat::ptr() and the higher-level cv::SparseMat::ref(),
       cv::SparseMat::value() and cv::SparseMat::find, for example:
@@ -3124,7 +3313,7 @@ template<typename _Tp> class SparseMatConstIterator_;
      sparse_mat.ref<float>(idx) += 1.f;
  }
  \endcode
- 
+
  <li>Sparse matrix iterators. Like cv::Mat iterators and unlike cv::Mat iterators, the sparse matrix iterators are STL-style,
  that is, the iteration is done as following:
  \code
@@ -3141,7 +3330,7 @@ template<typename _Tp> class SparseMatConstIterator_;
      printf("(")
      for(int i = 0; i < dims; i++)
         printf("%3d%c", n->idx[i], i < dims-1 ? ',' : ')');
-     printf(": %f\n", *it);    
+     printf(": %f\n", *it);
      s += *it;
  }
  printf("Element sum is %g\n", s);
@@ -3149,11 +3338,11 @@ template<typename _Tp> class SparseMatConstIterator_;
  If you run this loop, you will notice that elements are enumerated
  in no any logical order (lexicographical etc.),
  they come in the same order as they stored in the hash table, i.e. semi-randomly.
- 
+
  You may collect pointers to the nodes and sort them to get the proper ordering.
  Note, however, that pointers to the nodes may become invalid when you add more
  elements to the matrix; this is because of possible buffer reallocation.
- 
+
  <li>A combination of the above 2 methods when you need to process 2 or more sparse
  matrices simultaneously, e.g. this is how you can compute unnormalized
  cross-correlation of the 2 floating-point sparse matrices:
@@ -3226,15 +3415,13 @@ public:
     //! converts dense 2d matrix to the sparse form
     /*!
      \param m the input matrix
-     \param try1d if true and m is a single-column matrix (Nx1),
-            then the sparse matrix will be 1-dimensional.
-    */ 
+    */
     explicit SparseMat(const Mat& m);
     //! converts old-style sparse matrix to the new-style. All the data is copied
     SparseMat(const CvSparseMat* m);
     //! the destructor
     ~SparseMat();
-    
+
     //! assignment operator. This is O(1) operation, i.e. no data is copied
     SparseMat& operator = (const SparseMat& m);
     //! equivalent to the corresponding constructor
@@ -3242,7 +3429,7 @@ public:
 
     //! creates full copy of the matrix
     SparseMat clone() const;
-    
+
     //! copies all the data to the destination matrix. All the previous content of m is erased
     void copyTo( SparseMat& m ) const;
     //! converts sparse matrix to dense matrix.
@@ -3262,10 +3449,10 @@ public:
 
     //! reallocates sparse matrix.
     /*!
-        If the matrix already had the proper size and type, 
+        If the matrix already had the proper size and type,
         it is simply cleared with clear(), otherwise,
         the old matrix is released (using release()) and the new one is allocated.
-    */ 
+    */
     void create(int dims, const int* _sizes, int _type);
     //! sets all the sparse matrix elements to 0, which means clearing the hash table.
     void clear();
@@ -3280,14 +3467,14 @@ public:
     size_t elemSize() const;
     //! returns elemSize()/channels()
     size_t elemSize1() const;
-    
+
     //! returns type of sparse matrix elements
     int type() const;
     //! returns the depth of sparse matrix elements
     int depth() const;
     //! returns the number of channels
     int channels() const;
-    
+
     //! returns the array of sizes, or NULL if the matrix is not allocated
     const int* size() const;
     //! returns the size of i-th matrix dimension (or 0)
@@ -3296,7 +3483,7 @@ public:
     int dims() const;
     //! returns the number of non-zero elements (=the number of hash table nodes)
     size_t nzcount() const;
-    
+
     //! computes the element hash value (1D case)
     size_t hash(int i0) const;
     //! computes the element hash value (2D case)
@@ -3305,11 +3492,11 @@ public:
     size_t hash(int i0, int i1, int i2) const;
     //! computes the element hash value (nD case)
     size_t hash(const int* idx) const;
-    
+
     //@{
     /*!
      specialized variants for 1D, 2D, 3D cases and the generic_type one for n-D case.
-    
+
      return pointer to the matrix element.
      <ul>
       <li>if the element is there (it's non-zero), the pointer to it is returned
@@ -3333,27 +3520,27 @@ public:
     //@{
     /*!
      return read-write reference to the specified sparse matrix element.
-     
+
      ref<_Tp>(i0,...[,hashval]) is equivalent to *(_Tp*)ptr(i0,...,true[,hashval]).
      The methods always return a valid reference.
-     If the element did not exist, it is created and initialiazed with 0. 
+     If the element did not exist, it is created and initialiazed with 0.
     */
     //! returns reference to the specified element (1D case)
-    template<typename _Tp> _Tp& ref(int i0, size_t* hashval=0);   
+    template<typename _Tp> _Tp& ref(int i0, size_t* hashval=0);
     //! returns reference to the specified element (2D case)
-    template<typename _Tp> _Tp& ref(int i0, int i1, size_t* hashval=0);   
+    template<typename _Tp> _Tp& ref(int i0, int i1, size_t* hashval=0);
     //! returns reference to the specified element (3D case)
     template<typename _Tp> _Tp& ref(int i0, int i1, int i2, size_t* hashval=0);
     //! returns reference to the specified element (nD case)
     template<typename _Tp> _Tp& ref(const int* idx, size_t* hashval=0);
     //@}
-    
+
     //@{
     /*!
      return value of the specified sparse matrix element.
-     
+
      value<_Tp>(i0,...[,hashval]) is equivalent
-     
+
      \code
      { const _Tp* p = find<_Tp>(i0,...[,hashval]); return p ? *p : _Tp(); }
      \endcode
@@ -3369,13 +3556,13 @@ public:
     //! returns value of the specified element (nD case)
     template<typename _Tp> _Tp value(const int* idx, size_t* hashval=0) const;
     //@}
-    
+
     //@{
     /*!
      Return pointer to the specified sparse matrix element if it exists
-     
+
      find<_Tp>(i0,...[,hashval]) is equivalent to (_const Tp*)ptr(i0,...false[,hashval]).
-     
+
      If the specified element does not exist, the methods return NULL.
     */
     //! returns pointer to the specified element (1D case)
@@ -3397,7 +3584,7 @@ public:
     //@{
     /*!
        return the sparse matrix iterator pointing to the first sparse matrix element
-    */ 
+    */
     //! returns the sparse matrix iterator at the matrix beginning
     SparseMatIterator begin();
     //! returns the sparse matrix iterator at the matrix beginning
@@ -3409,7 +3596,7 @@ public:
     //@}
     /*!
        return the sparse matrix iterator pointing to the element following the last sparse matrix element
-    */ 
+    */
     //! returns the sparse matrix iterator at the matrix end
     SparseMatIterator end();
     //! returns the read-only sparse matrix iterator at the matrix end
@@ -3423,7 +3610,7 @@ public:
     template<typename _Tp> _Tp& value(Node* n);
     //! returns the value stored in the sparse martix node
     template<typename _Tp> const _Tp& value(const Node* n) const;
-    
+
     ////////////// some internal-use methods ///////////////
     Node* node(size_t nidx);
     const Node* node(size_t nidx) const;
@@ -3443,13 +3630,13 @@ CV_EXPORTS void minMaxLoc(const SparseMat& a, double* minVal,
                           double* maxVal, int* minIdx=0, int* maxIdx=0);
 //! computes norm of a sparse matrix
 CV_EXPORTS double norm( const SparseMat& src, int normType );
-//! scales and shifts array elements so that either the specified norm (alpha) or the minimum (alpha) and maximum (beta) array values get the specified values 
+//! scales and shifts array elements so that either the specified norm (alpha) or the minimum (alpha) and maximum (beta) array values get the specified values
 CV_EXPORTS void normalize( const SparseMat& src, SparseMat& dst, double alpha, int normType );
 
 /*!
  Read-Only Sparse Matrix Iterator.
  Here is how to use the iterator to compute the sum of floating-point sparse matrix elements:
- 
+
  \code
  SparseMatConstIterator it = m.begin(), it_end = m.end();
  double s = 0;
@@ -3475,7 +3662,7 @@ public:
     template<typename _Tp> const _Tp& value() const;
     //! returns the current node of the sparse matrix. it.node->idx is the current element index
     const SparseMat::Node* node() const;
-    
+
     //! moves iterator to the previous element
     SparseMatConstIterator& operator --();
     //! moves iterator to the previous element
@@ -3484,7 +3671,7 @@ public:
     SparseMatConstIterator& operator ++();
     //! moves iterator to the next element
     SparseMatConstIterator operator ++(int);
-    
+
     //! moves iterator to the element after the last element
     void seekEnd();
 
@@ -3495,7 +3682,7 @@ public:
 
 /*!
  Read-write Sparse Matrix Iterator
- 
+
  The class is similar to cv::SparseMatConstIterator,
  but can be used for in-place modification of the matrix elements.
 */
@@ -3517,7 +3704,7 @@ public:
     template<typename _Tp> _Tp& value() const;
     //! returns pointer to the current sparse matrix node. it.node->idx is the index of the current element (do not modify it!)
     SparseMat::Node* node() const;
-    
+
     //! moves iterator to the next element
     SparseMatIterator& operator ++();
     //! moves iterator to the next element
@@ -3526,9 +3713,9 @@ public:
 
 /*!
  The Template Sparse Matrix class derived from cv::SparseMat
- 
+
  The class provides slightly more convenient operations for accessing elements.
- 
+
  \code
  SparseMat m;
  ...
@@ -3536,8 +3723,8 @@ public:
  m_.ref(1)++; // equivalent to m.ref<int>(1)++;
  m_.ref(2) += m_(3); // equivalent to m.ref<int>(2) += m.value<int>(3);
  \endcode
-*/ 
-template<typename _Tp> class CV_EXPORTS SparseMat_ : public SparseMat
+*/
+template<typename _Tp> class SparseMat_ : public SparseMat
 {
 public:
     typedef SparseMatIterator_<_Tp> iterator;
@@ -3557,7 +3744,7 @@ public:
     SparseMat_(const CvSparseMat* m);
     //! the assignment operator. If DataType<_Tp>.type != m.type(), the m elements are converted
     SparseMat_& operator = (const SparseMat& m);
-    //! the assignment operator. This is O(1) operation - no data is copied 
+    //! the assignment operator. This is O(1) operation - no data is copied
     SparseMat_& operator = (const SparseMat_& m);
     //! converts dense matrix to the sparse form
     SparseMat_& operator = (const Mat& m);
@@ -3575,7 +3762,7 @@ public:
     int depth() const;
     //! returns the number of channels in each matrix element
     int channels() const;
-    
+
     //! equivalent to SparseMat::ref<_Tp>(i0, hashval)
     _Tp& ref(int i0, size_t* hashval=0);
     //! equivalent to SparseMat::ref<_Tp>(i0, i1, hashval)
@@ -3584,7 +3771,7 @@ public:
     _Tp& ref(int i0, int i1, int i2, size_t* hashval=0);
     //! equivalent to SparseMat::ref<_Tp>(idx, hashval)
     _Tp& ref(const int* idx, size_t* hashval=0);
-    
+
     //! equivalent to SparseMat::value<_Tp>(i0, hashval)
     _Tp operator()(int i0, size_t* hashval=0) const;
     //! equivalent to SparseMat::value<_Tp>(i0, i1, hashval)
@@ -3607,19 +3794,20 @@ public:
 
 /*!
  Template Read-Only Sparse Matrix Iterator Class.
- 
+
  This is the derived from SparseMatConstIterator class that
  introduces more convenient operator *() for accessing the current element.
 */
-template<typename _Tp> class CV_EXPORTS SparseMatConstIterator_ : public SparseMatConstIterator
+template<typename _Tp> class SparseMatConstIterator_ : public SparseMatConstIterator
 {
 public:
     typedef std::forward_iterator_tag iterator_category;
-    
+
     //! the default constructor
     SparseMatConstIterator_();
     //! the full constructor setting the iterator to the first sparse matrix element
     SparseMatConstIterator_(const SparseMat_<_Tp>* _m);
+    SparseMatConstIterator_(const SparseMat* _m);
     //! the copy constructor
     SparseMatConstIterator_(const SparseMatConstIterator_& it);
 
@@ -3627,7 +3815,7 @@ public:
     SparseMatConstIterator_& operator = (const SparseMatConstIterator_& it);
     //! the element access operator
     const _Tp& operator *() const;
-    
+
     //! moves iterator to the next element
     SparseMatConstIterator_& operator ++();
     //! moves iterator to the next element
@@ -3636,27 +3824,28 @@ public:
 
 /*!
  Template Read-Write Sparse Matrix Iterator Class.
- 
+
  This is the derived from cv::SparseMatConstIterator_ class that
  introduces more convenient operator *() for accessing the current element.
 */
-template<typename _Tp> class CV_EXPORTS SparseMatIterator_ : public SparseMatConstIterator_<_Tp>
+template<typename _Tp> class SparseMatIterator_ : public SparseMatConstIterator_<_Tp>
 {
 public:
     typedef std::forward_iterator_tag iterator_category;
-    
+
     //! the default constructor
     SparseMatIterator_();
     //! the full constructor setting the iterator to the first sparse matrix element
     SparseMatIterator_(SparseMat_<_Tp>* _m);
+    SparseMatIterator_(SparseMat* _m);
     //! the copy constructor
     SparseMatIterator_(const SparseMatIterator_& it);
 
-    //! the assignment operator 
+    //! the assignment operator
     SparseMatIterator_& operator = (const SparseMatIterator_& it);
     //! returns the reference to the current element
     _Tp& operator *() const;
-    
+
     //! moves the iterator to the next element
     SparseMatIterator_& operator ++();
     //! moves the iterator to the next element
@@ -3667,19 +3856,19 @@ public:
 
 /*!
  Fast Nearest Neighbor Search Class.
- 
+
  The class implements D. Lowe BBF (Best-Bin-First) algorithm for the last
  approximate (or accurate) nearest neighbor search in multi-dimensional spaces.
- 
+
  First, a set of vectors is passed to KDTree::KDTree() constructor
  or KDTree::build() method, where it is reordered.
- 
+
  Then arbitrary vectors can be passed to KDTree::findNearest() methods, which
  find the K nearest neighbors among the vectors from the initial set.
  The user can balance between the speed and accuracy of the search by varying Emax
  parameter, which is the number of leaves that the algorithm checks.
  The larger parameter values yield more accurate results at the expense of lower processing speed.
- 
+
  \code
  KDTree T(points, false);
  const int K = 3, Emax = INT_MAX;
@@ -3688,13 +3877,13 @@ public:
  T.findNearest(query_vec, K, Emax, idx, 0, dist);
  CV_Assert(dist[0] <= dist[1] && dist[1] <= dist[2]);
  \endcode
-*/ 
+*/
 class CV_EXPORTS_W KDTree
 {
 public:
     /*!
         The node of the search tree.
-    */  
+    */
     struct Node
     {
         Node() : idx(-1), left(-1), right(-1), boundary(0.f) {}
@@ -3726,7 +3915,7 @@ public:
                             OutputArray neighbors=noArray(),
                             OutputArray dist=noArray(),
                             OutputArray labels=noArray()) const;
-    //! finds all the points from the initial set that belong to the specified box 
+    //! finds all the points from the initial set that belong to the specified box
     CV_WRAP void findOrthoRange(InputArray minBounds,
                                 InputArray maxBounds,
                                 OutputArray neighborsIdx,
@@ -3753,34 +3942,34 @@ class CV_EXPORTS FileNode;
 
 /*!
  XML/YAML File Storage Class.
- 
+
  The class describes an object associated with XML or YAML file.
  It can be used to store data to such a file or read and decode the data.
- 
+
  The storage is organized as a tree of nested sequences (or lists) and mappings.
  Sequence is a heterogenious array, which elements are accessed by indices or sequentially using an iterator.
  Mapping is analogue of std::map or C structure, which elements are accessed by names.
  The most top level structure is a mapping.
- Leaves of the file storage tree are integers, floating-point numbers and text strings. 
- 
+ Leaves of the file storage tree are integers, floating-point numbers and text strings.
+
  For example, the following code:
- 
+
  \code
  // open file storage for writing. Type of the file is determined from the extension
  FileStorage fs("test.yml", FileStorage::WRITE);
  fs << "test_int" << 5 << "test_real" << 3.1 << "test_string" << "ABCDEFGH";
  fs << "test_mat" << Mat::eye(3,3,CV_32F);
- 
+
  fs << "test_list" << "[" << 0.0000000000001 << 2 << CV_PI << -3435345 << "2-502 2-029 3egegeg" <<
  "{:" << "month" << 12 << "day" << 31 << "year" << 1969 << "}" << "]";
  fs << "test_map" << "{" << "x" << 1 << "y" << 2 << "width" << 100 << "height" << 200 << "lbp" << "[:";
- 
+
  const uchar arr[] = {0, 1, 1, 0, 1, 1, 0, 1};
  fs.writeRaw("u", arr, (int)(sizeof(arr)/sizeof(arr[0])));
- 
+
  fs << "]" << "}";
  \endcode
- 
+
  will produce the following file:
 
  \verbatim
@@ -3807,9 +3996,9 @@ class CV_EXPORTS FileNode;
      height: 200
      lbp: [ 0, 1, 1, 0, 1, 1, 0, 1 ]
  \endverbatim
- 
+
  and to read the file above, the following code can be used:
- 
+
  \code
  // open file storage for reading.
  // Type of the file is determined from the content, not the extension
@@ -3817,10 +4006,10 @@ class CV_EXPORTS FileNode;
  int test_int = (int)fs["test_int"];
  double test_real = (double)fs["test_real"];
  string test_string = (string)fs["test_string"];
- 
+
  Mat M;
  fs["test_mat"] >> M;
- 
+
  FileNode tl = fs["test_list"];
  CV_Assert(tl.type() == FileNode::SEQ && tl.size() == 6);
  double tl0 = (double)tl[0];
@@ -3829,18 +4018,18 @@ class CV_EXPORTS FileNode;
  int tl3 = (int)tl[3];
  string tl4 = (string)tl[4];
  CV_Assert(tl[5].type() == FileNode::MAP && tl[5].size() == 3);
- 
+
  int month = (int)tl[5]["month"];
  int day = (int)tl[5]["day"];
  int year = (int)tl[5]["year"];
- 
+
  FileNode tm = fs["test_map"];
- 
+
  int x = (int)tm["x"];
  int y = (int)tm["y"];
  int width = (int)tm["width"];
  int height = (int)tm["height"];
-  
+
  int lbp_val = 0;
  FileNodeIterator it = tm["lbp"].begin();
 
@@ -3856,11 +4045,16 @@ public:
     {
         READ=0, //! read mode
         WRITE=1, //! write mode
-        APPEND=2 //! append mode
+        APPEND=2, //! append mode
+        MEMORY=4,
+        FORMAT_MASK=(7<<3),
+        FORMAT_AUTO=0,
+        FORMAT_XML=(1<<3),
+        FORMAT_YAML=(2<<3)
     };
     enum
     {
-        UNDEFINED=0, 
+        UNDEFINED=0,
         VALUE_EXPECTED=1,
         NAME_EXPECTED=2,
         INSIDE_MAP=4
@@ -3868,8 +4062,8 @@ public:
     //! the default constructor
     CV_WRAP FileStorage();
     //! the full constructor that opens file storage for reading or writing
-    CV_WRAP FileStorage(const string& filename, int flags, const string& encoding=string());
-    //! the constructor that takes pointer to the C FileStorage structure 
+    CV_WRAP FileStorage(const string& source, int flags, const string& encoding=string());
+    //! the constructor that takes pointer to the C FileStorage structure
     FileStorage(CvFileStorage* fs);
     //! the destructor. calls release()
     virtual ~FileStorage();
@@ -3880,6 +4074,8 @@ public:
     CV_WRAP virtual bool isOpened() const;
     //! closes the file and releases all the memory buffers
     CV_WRAP virtual void release();
+    //! closes the file, releases all the memory buffers and returns the text string
+    CV_WRAP string releaseAndGetString();
 
     //! returns the first element of the top-level mapping
     CV_WRAP FileNode getFirstTopLevelNode() const;
@@ -3912,11 +4108,11 @@ class CV_EXPORTS FileNodeIterator;
 
 /*!
  File Storage Node class
- 
+
  The node is used to store each and every element of the file storage opened for reading -
  from the primitive objects, such as numbers and text strings, to the complex nodes:
  sequences, mappings and the registered objects.
- 
+
  Note that file nodes are only used for navigating file storages opened for reading.
  When a file storage is opened for writing, no data is stored in memory after it is written.
 */
@@ -3932,7 +4128,7 @@ public:
         FLOAT=REAL, //!< synonym or REAL
         STR=3, //!< text string in UTF-8 encoding
         STRING=STR, //!< synonym for STR
-        REF=4, //!< integer of size size_t. Typically used for storing complex dynamic structures where some elements reference the others 
+        REF=4, //!< integer of size size_t. Typically used for storing complex dynamic structures where some elements reference the others
         SEQ=5, //!< sequence
         MAP=6, //!< mapping
         TYPE_MASK=7,
@@ -3956,9 +4152,9 @@ public:
     //! returns type of the node
     CV_WRAP int type() const;
 
-    //! returns true if the node is empty 
+    //! returns true if the node is empty
     CV_WRAP bool empty() const;
-    //! returns true if the node is a "none" object 
+    //! returns true if the node is a "none" object
     CV_WRAP bool isNone() const;
     //! returns true if the node is a sequence
     CV_WRAP bool isSeq() const;
@@ -3984,7 +4180,7 @@ public:
     operator double() const;
     //! returns the node content as text string
     operator string() const;
-    
+
     //! returns pointer to the underlying file node
     CvFileNode* operator *();
     //! returns pointer to the underlying file node
@@ -4008,7 +4204,7 @@ public:
 
 /*!
  File Node Iterator
- 
+
  The class is used for iterating sequences (usually) and mappings.
  */
 class CV_EXPORTS FileNodeIterator
@@ -4034,14 +4230,14 @@ public:
     //! moves iterator to the previous node
     FileNodeIterator operator -- (int);
     //! moves iterator forward by the specified offset (possibly negative)
-    FileNodeIterator& operator += (int);
+    FileNodeIterator& operator += (int ofs);
     //! moves iterator backward by the specified offset (possibly negative)
-    FileNodeIterator& operator -= (int);
+    FileNodeIterator& operator -= (int ofs);
 
     //! reads the next maxCount elements (or less, if the sequence/mapping last element occurs earlier) to the buffer with the specified format
     FileNodeIterator& readRaw( const string& fmt, uchar* vec,
                                size_t maxCount=(size_t)INT_MAX );
-    
+
     const CvFileStorage* fs;
     const CvFileNode* container;
     CvSeqReader reader;
@@ -4059,17 +4255,17 @@ typedef Ptr<CvMemStorage> MemStorage;
 
  The class provides more convenient access to sequence elements,
  STL-style operations and iterators.
- 
+
  \note The class is targeted for simple data types,
     i.e. no constructors or destructors
     are called for the sequence elements.
 */
-template<typename _Tp> class CV_EXPORTS Seq
+template<typename _Tp> class Seq
 {
 public:
     typedef SeqIterator<_Tp> iterator;
     typedef SeqIterator<_Tp> const_iterator;
-    
+
     //! the default constructor
     Seq();
     //! the constructor for wrapping CvSeq structure. The real element type in CvSeq should match _Tp.
@@ -4112,7 +4308,7 @@ public:
     void remove(int idx);
     //! removes the specified subsequence
     void remove(const Range& r);
-    
+
     //! returns reference to the first sequence element
     _Tp& front();
     //! returns read-only reference to the first sequence element
@@ -4139,15 +4335,15 @@ public:
     void copyTo(vector<_Tp>& vec, const Range& range=Range::all()) const;
     //! returns the vector containing all the sequence elements
     operator vector<_Tp>() const;
-    
+
     CvSeq* seq;
 };
 
-    
+
 /*!
  STL-style Sequence Iterator inherited from the CvSeqReader structure
 */
-template<typename _Tp> class CV_EXPORTS SeqIterator : public CvSeqReader
+template<typename _Tp> class SeqIterator : public CvSeqReader
 {
 public:
     //! the default constructor
@@ -4182,53 +4378,298 @@ public:
 };
 
 
-#if 0
-class CV_EXPORTS AlgorithmImpl;
+class CV_EXPORTS Algorithm;
+class CV_EXPORTS AlgorithmInfo;
+struct CV_EXPORTS AlgorithmInfoData;
+
+template<typename _Tp> struct ParamType {};
 
 /*!
   Base class for high-level OpenCV algorithms
-*/    
-class CV_EXPORTS Algorithm
+*/
+class CV_EXPORTS_W Algorithm
 {
 public:
+    Algorithm();
     virtual ~Algorithm();
-    virtual string name() const;
-    
-    template<typename _Tp> _Tp get(int paramId) const;
-    template<typename _Tp> bool set(int paramId, const _Tp& value);
-    string paramName(int paramId) const;
-    string paramHelp(int paramId) const;
-    int paramType(int paramId) const;
-    int findParam(const string& name) const;
-    template<typename _Tp> _Tp paramDefaultValue(int paramId) const;
-    template<typename _Tp> bool paramRange(int paramId, _Tp& minVal, _Tp& maxVal) const;
-    
-    virtual void getParams(vector<int>& ids) const;
-    virtual void write(vector<uchar>& buf) const;
-    virtual bool read(const vector<uchar>& buf);
-    
+    string name() const;
+
+    template<typename _Tp> typename ParamType<_Tp>::member_type get(const string& name) const;
+    template<typename _Tp> typename ParamType<_Tp>::member_type get(const char* name) const;
+
+    CV_WRAP int getInt(const string& name) const;
+    CV_WRAP double getDouble(const string& name) const;
+    CV_WRAP bool getBool(const string& name) const;
+    CV_WRAP string getString(const string& name) const;
+    CV_WRAP Mat getMat(const string& name) const;
+    CV_WRAP vector<Mat> getMatVector(const string& name) const;
+    CV_WRAP Ptr<Algorithm> getAlgorithm(const string& name) const;
+
+    void set(const string& name, int value);
+    void set(const string& name, double value);
+    void set(const string& name, bool value);
+    void set(const string& name, const string& value);
+    void set(const string& name, const Mat& value);
+    void set(const string& name, const vector<Mat>& value);
+    void set(const string& name, const Ptr<Algorithm>& value);
+    template<typename _Tp> void set(const string& name, const Ptr<_Tp>& value);
+
+    CV_WRAP void setInt(const string& name, int value);
+    CV_WRAP void setDouble(const string& name, double value);
+    CV_WRAP void setBool(const string& name, bool value);
+    CV_WRAP void setString(const string& name, const string& value);
+    CV_WRAP void setMat(const string& name, const Mat& value);
+    CV_WRAP void setMatVector(const string& name, const vector<Mat>& value);
+    CV_WRAP void setAlgorithm(const string& name, const Ptr<Algorithm>& value);
+    template<typename _Tp> void setAlgorithm(const string& name, const Ptr<_Tp>& value);
+
+    void set(const char* name, int value);
+    void set(const char* name, double value);
+    void set(const char* name, bool value);
+    void set(const char* name, const string& value);
+    void set(const char* name, const Mat& value);
+    void set(const char* name, const vector<Mat>& value);
+    void set(const char* name, const Ptr<Algorithm>& value);
+    template<typename _Tp> void set(const char* name, const Ptr<_Tp>& value);
+
+    void setInt(const char* name, int value);
+    void setDouble(const char* name, double value);
+    void setBool(const char* name, bool value);
+    void setString(const char* name, const string& value);
+    void setMat(const char* name, const Mat& value);
+    void setMatVector(const char* name, const vector<Mat>& value);
+    void setAlgorithm(const char* name, const Ptr<Algorithm>& value);
+    template<typename _Tp> void setAlgorithm(const char* name, const Ptr<_Tp>& value);
+
+    CV_WRAP string paramHelp(const string& name) const;
+    int paramType(const char* name) const;
+    CV_WRAP int paramType(const string& name) const;
+    CV_WRAP void getParams(CV_OUT vector<string>& names) const;
+
+
+    virtual void write(FileStorage& fs) const;
+    virtual void read(const FileNode& fn);
+
     typedef Algorithm* (*Constructor)(void);
-    static void add(const string& name, Constructor create);
-    static void getList(vector<string>& algorithms);
-    static Ptr<Algorithm> create(const string& name);
-    
-protected:
-    template<typename _Tp> void addParam(int propId, _Tp& value, bool readOnly, const string& name,
-                                         const string& help=string(), const _Tp& defaultValue=_Tp(),
-                                         _Tp (Algorithm::*getter)()=0, bool (Algorithm::*setter)(const _Tp&)=0);
-    template<typename _Tp> void setParamRange(int propId, const _Tp& minVal, const _Tp& maxVal);
-    
-    bool set_(int paramId, int argType, const void* value);
-    void get_(int paramId, int argType, void* value);
-    void paramDefaultValue_(int paramId, int argType, void* value);
-    void paramRange_(int paramId, int argType, void* minval, void* maxval);
-    void addParam_(int propId, int argType, void* value, bool readOnly, const string& name,
-                  const string& help, const void* defaultValue, void* getter, void* setter);
-    void setParamRange_(int propId, int argType, const void* minVal, const void* maxVal);
-    
-    Ptr<AlgorithmImpl> impl;
+    typedef int (Algorithm::*Getter)() const;
+    typedef void (Algorithm::*Setter)(int);
+
+    CV_WRAP static void getList(CV_OUT vector<string>& algorithms);
+    CV_WRAP static Ptr<Algorithm> _create(const string& name);
+    template<typename _Tp> static Ptr<_Tp> create(const string& name);
+
+    virtual AlgorithmInfo* info() const /* TODO: make it = 0;*/ { return 0; }
 };
-#endif
+
+
+class CV_EXPORTS AlgorithmInfo
+{
+public:
+    friend class Algorithm;
+    AlgorithmInfo(const string& name, Algorithm::Constructor create);
+    ~AlgorithmInfo();
+    void get(const Algorithm* algo, const char* name, int argType, void* value) const;
+    void addParam_(Algorithm& algo, const char* name, int argType,
+                   void* value, bool readOnly,
+                   Algorithm::Getter getter, Algorithm::Setter setter,
+                   const string& help=string());
+    string paramHelp(const char* name) const;
+    int paramType(const char* name) const;
+    void getParams(vector<string>& names) const;
+
+    void write(const Algorithm* algo, FileStorage& fs) const;
+    void read(Algorithm* algo, const FileNode& fn) const;
+    string name() const;
+
+    void addParam(Algorithm& algo, const char* name,
+                  int& value, bool readOnly=false,
+                  int (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(int)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  short& value, bool readOnly=false,
+                  int (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(int)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  bool& value, bool readOnly=false,
+                  int (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(int)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  double& value, bool readOnly=false,
+                  double (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(double)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  string& value, bool readOnly=false,
+                  string (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(const string&)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  Mat& value, bool readOnly=false,
+                  Mat (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(const Mat&)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  vector<Mat>& value, bool readOnly=false,
+                  vector<Mat> (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(const vector<Mat>&)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  Ptr<Algorithm>& value, bool readOnly=false,
+                  Ptr<Algorithm> (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(const Ptr<Algorithm>&)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  float& value, bool readOnly=false,
+                  float (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(float)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  unsigned int& value, bool readOnly=false,
+                  unsigned int (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(unsigned int)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  uint64& value, bool readOnly=false,
+                  uint64 (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(uint64)=0,
+                  const string& help=string());
+    void addParam(Algorithm& algo, const char* name,
+                  uchar& value, bool readOnly=false,
+                  uchar (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(uchar)=0,
+                  const string& help=string());
+    template<typename _Tp, typename _Base> void addParam(Algorithm& algo, const char* name,
+                  Ptr<_Tp>& value, bool readOnly=false,
+                  Ptr<_Tp> (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(const Ptr<_Tp>&)=0,
+                  const string& help=string());
+    template<typename _Tp> void addParam(Algorithm& algo, const char* name,
+                  Ptr<_Tp>& value, bool readOnly=false,
+                  Ptr<_Tp> (Algorithm::*getter)()=0,
+                  void (Algorithm::*setter)(const Ptr<_Tp>&)=0,
+                  const string& help=string());
+protected:
+    AlgorithmInfoData* data;
+    void set(Algorithm* algo, const char* name, int argType,
+              const void* value, bool force=false) const;
+};
+
+
+struct CV_EXPORTS Param
+{
+    enum { INT=0, BOOLEAN=1, REAL=2, STRING=3, MAT=4, MAT_VECTOR=5, ALGORITHM=6, FLOAT=7, UNSIGNED_INT=8, UINT64=9, SHORT=10, UCHAR=11 };
+
+    Param();
+    Param(int _type, bool _readonly, int _offset,
+          Algorithm::Getter _getter=0,
+          Algorithm::Setter _setter=0,
+          const string& _help=string());
+    int type;
+    int offset;
+    bool readonly;
+    Algorithm::Getter getter;
+    Algorithm::Setter setter;
+    string help;
+};
+
+template<> struct ParamType<bool>
+{
+    typedef bool const_param_type;
+    typedef bool member_type;
+
+    enum { type = Param::BOOLEAN };
+};
+
+template<> struct ParamType<int>
+{
+    typedef int const_param_type;
+    typedef int member_type;
+
+    enum { type = Param::INT };
+};
+
+template<> struct ParamType<short>
+{
+    typedef int const_param_type;
+    typedef int member_type;
+
+    enum { type = Param::SHORT };
+};
+
+template<> struct ParamType<double>
+{
+    typedef double const_param_type;
+    typedef double member_type;
+
+    enum { type = Param::REAL };
+};
+
+template<> struct ParamType<string>
+{
+    typedef const string& const_param_type;
+    typedef string member_type;
+
+    enum { type = Param::STRING };
+};
+
+template<> struct ParamType<Mat>
+{
+    typedef const Mat& const_param_type;
+    typedef Mat member_type;
+
+    enum { type = Param::MAT };
+};
+
+template<> struct ParamType<vector<Mat> >
+{
+    typedef const vector<Mat>& const_param_type;
+    typedef vector<Mat> member_type;
+
+    enum { type = Param::MAT_VECTOR };
+};
+
+template<> struct ParamType<Algorithm>
+{
+    typedef const Ptr<Algorithm>& const_param_type;
+    typedef Ptr<Algorithm> member_type;
+
+    enum { type = Param::ALGORITHM };
+};
+
+template<> struct ParamType<float>
+{
+    typedef float const_param_type;
+    typedef float member_type;
+
+    enum { type = Param::FLOAT };
+};
+
+template<> struct ParamType<unsigned>
+{
+    typedef unsigned const_param_type;
+    typedef unsigned member_type;
+
+    enum { type = Param::UNSIGNED_INT };
+};
+
+template<> struct ParamType<uint64>
+{
+    typedef uint64 const_param_type;
+    typedef uint64 member_type;
+
+    enum { type = Param::UINT64 };
+};
+
+template<> struct ParamType<uchar>
+{
+    typedef uchar const_param_type;
+    typedef uchar member_type;
+
+    enum { type = Param::UCHAR };
+};
 
 /*!
 "\nThe CommandLineParser class is designed for command line arguments parsing\n"
@@ -4276,7 +4717,7 @@ class CV_EXPORTS CommandLineParser
     public:
 
     //! the default constructor
-      CommandLineParser(int argc, const char* argv[], const char* key_map);
+      CommandLineParser(int argc, const char* const argv[], const char* key_map);
 
     //! get parameter, you can choose: delete spaces in end and begin or not
     template<typename _Tp>
@@ -4287,7 +4728,7 @@ class CV_EXPORTS CommandLineParser
             return _Tp();
         }
         std::string str = getString(name);
-        return analizeValue<_Tp>(str, space_delete);
+        return analyzeValue<_Tp>(str, space_delete);
     }
 
     //! print short name, full name, current value and help for all params
@@ -4300,12 +4741,12 @@ class CV_EXPORTS CommandLineParser
     bool has(const std::string& keys);
 
     template<typename _Tp>
-    _Tp analizeValue(const std::string& str, bool space_delete=false);
+    _Tp analyzeValue(const std::string& str, bool space_delete=false);
 
     template<typename _Tp>
     static _Tp getData(const std::string& str)
     {
-        _Tp res;
+        _Tp res = _Tp();
         std::stringstream s1(str);
         s1 >> res;
         return res;
@@ -4320,19 +4761,92 @@ template<> CV_EXPORTS
 bool CommandLineParser::get<bool>(const std::string& name, bool space_delete);
 
 template<> CV_EXPORTS
-std::string CommandLineParser::analizeValue<std::string>(const std::string& str, bool space_delete);
+std::string CommandLineParser::analyzeValue<std::string>(const std::string& str, bool space_delete);
 
 template<> CV_EXPORTS
-int CommandLineParser::analizeValue<int>(const std::string& str, bool space_delete);
+int CommandLineParser::analyzeValue<int>(const std::string& str, bool space_delete);
 
 template<> CV_EXPORTS
-unsigned CommandLineParser::analizeValue<unsigned int>(const std::string& str, bool space_delete);
+unsigned int CommandLineParser::analyzeValue<unsigned int>(const std::string& str, bool space_delete);
 
 template<> CV_EXPORTS
-float CommandLineParser::analizeValue<float>(const std::string& str, bool space_delete);
+uint64 CommandLineParser::analyzeValue<uint64>(const std::string& str, bool space_delete);
 
 template<> CV_EXPORTS
-double CommandLineParser::analizeValue<double>(const std::string& str, bool space_delete);
+float CommandLineParser::analyzeValue<float>(const std::string& str, bool space_delete);
+
+template<> CV_EXPORTS
+double CommandLineParser::analyzeValue<double>(const std::string& str, bool space_delete);
+
+
+/////////////////////////////// Parallel Primitives //////////////////////////////////
+
+// a base body class
+class CV_EXPORTS ParallelLoopBody
+{
+public:
+    virtual ~ParallelLoopBody();
+    virtual void operator() (const Range& range) const = 0;
+};
+
+CV_EXPORTS void parallel_for_(const Range& range, const ParallelLoopBody& body, double nstripes=-1.);
+
+/////////////////////////// Synchronization Primitives ///////////////////////////////
+
+class CV_EXPORTS Mutex
+{
+public:
+    Mutex();
+    ~Mutex();
+    Mutex(const Mutex& m);
+    Mutex& operator = (const Mutex& m);
+
+    void lock();
+    bool trylock();
+    void unlock();
+
+    struct Impl;
+protected:
+    Impl* impl;
+};
+
+class CV_EXPORTS AutoLock
+{
+public:
+    AutoLock(Mutex& m) : mutex(&m) { mutex->lock(); }
+    ~AutoLock() { mutex->unlock(); }
+protected:
+    Mutex* mutex;
+private:
+    AutoLock(const AutoLock&);
+    AutoLock& operator = (const AutoLock&);
+};
+
+class TLSDataContainer
+{
+private:
+    int key_;
+protected:
+    CV_EXPORTS TLSDataContainer();
+    CV_EXPORTS ~TLSDataContainer(); // virtual is not required
+public:
+    virtual void* createDataInstance() const = 0;
+    virtual void deleteDataInstance(void* data) const = 0;
+
+    CV_EXPORTS void* getData() const;
+};
+
+template <typename T>
+class TLSData : protected TLSDataContainer
+{
+public:
+    inline TLSData() {}
+    inline ~TLSData() {}
+    inline T* get() const { return (T*)getData(); }
+private:
+    virtual void* createDataInstance() const { return new T; }
+    virtual void deleteDataInstance(void* data) const { delete (T*)data; }
+};
 
 }
 

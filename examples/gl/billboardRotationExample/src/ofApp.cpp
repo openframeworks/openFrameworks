@@ -18,14 +18,14 @@ void ofApp::setup() {
 	
 	// set the vertex data
 	vbo.setVertexData(pos, NUM_BILLBOARDS, GL_DYNAMIC_DRAW);
-	if(ofGetGLProgrammableRenderer()){
+	if(ofIsGLProgrammableRenderer()){
 		shader.load("shaderGL3/Billboard");
 	}else{
 		shader.load("shaderGL2/Billboard");
 	}
 	
 	ofDisableArbTex();
-	texture.loadImage("snow.png");
+	texture.load("snow.png");
 
 	// we are getting the location of the point size attribute
 	// we then set the pointSizes to the vertex attritbute
@@ -83,7 +83,7 @@ void ofApp::draw() {
 	ofEnablePointSprites();
 	
 	
-	texture.getTextureReference().bind();
+	texture.getTexture().bind();
 	vbo.updateVertexData(pos, NUM_BILLBOARDS);
 
 	// rotate the snow based on the velocity
@@ -91,14 +91,10 @@ void ofApp::draw() {
 	vbo.updateAttributeData(angleLoc, rotations, NUM_BILLBOARDS);
 
 	vbo.draw(GL_POINTS, 0, NUM_BILLBOARDS);
-	texture.getTextureReference().unbind();
+	texture.getTexture().unbind();
 
 	ofDisablePointSprites();
 	shader.end();
-	
-	// disable vertex attributes
-	//glDisableVertexAttribArray(pointAttLoc);
-	//glDisableVertexAttribArray(angleLoc);
 }
 
 //--------------------------------------------------------------
@@ -130,6 +126,16 @@ void ofApp::mousePressed(int x, int y, int button) {
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button) {
 	
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

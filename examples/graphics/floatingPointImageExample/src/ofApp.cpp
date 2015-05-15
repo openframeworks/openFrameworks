@@ -29,7 +29,7 @@ void ofApp::setup(){
 	//note: you can get nicer anti-aliased rendering ( with slower fps ) 
 	//if you uncomment the appropriate line in main.cpp
 
-	img.loadImage("nyc-small.exr");
+	img.load("nyc-small.exr");
 	
 	light.enable();
 	light.setPosition(+500, 0, 0);
@@ -97,6 +97,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

@@ -183,7 +183,6 @@ ifeq ($(PLATFORM_RUN_COMMAND),)
 else
 	@$(PLATFORM_RUN_COMMAND)
 endif
-	
 
 #This rule does the compilation
 #$(OBJS): $(SOURCES)
@@ -292,6 +291,11 @@ $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.S
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
 
+$(OF_PROJECT_OBJ_OUPUT_PATH)libs/openFrameworks/%.o: $(OF_ROOT)/libs/openFrameworks/%.cpp
+	@echo "Compiling" $<
+	@mkdir -p $(@D)
+	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)libs/openFrameworks/$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)libs/openFrameworks/$*.o -o $@ -c $<
+	
 $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS) $(TARGET_LIBS)
 	@echo 'Linking $(TARGET) for $(ABI_LIB_SUBPATH)'
 	@mkdir -p $(@D)
@@ -323,7 +327,7 @@ endif
 	@rm -rf bin/libs
 
 after: $(TARGET_NAME)
-	cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/
+	@if [ -d $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH) ]; then cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/; fi
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"

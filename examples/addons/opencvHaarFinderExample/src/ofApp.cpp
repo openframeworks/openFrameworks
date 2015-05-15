@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	img.loadImage("test.jpg");
+	img.load("test.jpg");
 	finder.setup("haarcascade_frontalface_default.xml");
 	finder.findHaarObjects(img);
 }
@@ -18,7 +18,7 @@ void ofApp::draw(){
 	ofNoFill();
 	for(unsigned int i = 0; i < finder.blobs.size(); i++) {
 		ofRectangle cur = finder.blobs[i].boundingRect;
-		ofRect(cur.x, cur.y, cur.width, cur.height);
+		ofDrawRectangle(cur.x, cur.y, cur.width, cur.height);
 	}
 }
 
@@ -49,6 +49,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

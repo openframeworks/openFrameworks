@@ -47,12 +47,16 @@ ofxOscSender::~ofxOscSender()
 		shutdown();
 }
 
-void ofxOscSender::setup( std::string hostname, int port )
+void ofxOscSender::setup( std::string hostname, int port, bool enableBroadcast )
 {
+    if( UdpSocket::GetUdpBufferSize() == 0 ){
+        UdpSocket::SetUdpBufferSize(65535);
+    }
+
 	if ( socket )
 		shutdown();
 	
-	socket = new UdpTransmitSocket( IpEndpointName( hostname.c_str(), port ) );
+    socket = new UdpTransmitSocket(IpEndpointName( hostname.c_str(), port), enableBroadcast);
 }
 
 void ofxOscSender::shutdown()
@@ -180,7 +184,7 @@ void ofxOscSender::appendMessage( ofxOscMessage& message, osc::OutboundPacketStr
 			p << message.getArgAsString( i ).c_str();
         else if ( message.getArgType( i ) == OFXOSC_TYPE_BLOB ){
             ofBuffer buff = message.getArgAsBlob(i);
-            osc::Blob b(buff.getBinaryBuffer(), (unsigned long)buff.size());
+            osc::Blob b(buff.getData(), (unsigned long)buff.size());
             p << b; 
 		}else
 		{

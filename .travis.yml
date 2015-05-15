@@ -1,0 +1,27 @@
+language: node_js
+node_js: '0.10'
+env:
+  global:
+    - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
+branches:
+  only:
+    - master
+notifications:
+  email:
+    - jonas@halfdanj.dk
+before_install:
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sudo apt-get install python-software-properties; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sudo apt-add-repository -y ppa:libreoffice/libreoffice-4-2; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sudo apt-get update; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sudo apt-get install doxygen; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then sudo apt-get install ncftp; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then gem install sass --version "=3.2.12"; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then gem install compass --version "=0.12.2"; fi'
+script:
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then cd scripts/; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then git clone https://github.com/halfdanJ/ofDocGenerator; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then cd ofDocGenerator; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then npm install; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then npm run start; fi'
+after_success:
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" && $FTP_USER ]]; then ncftpput -R -v -u $FTP_USER -p $FTP_PASSWORD 104.130.212.175 / output/*; fi'

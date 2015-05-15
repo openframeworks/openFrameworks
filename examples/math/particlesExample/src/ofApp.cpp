@@ -57,9 +57,9 @@ void ofApp::draw(){
 	if( currentMode == PARTICLE_MODE_NEAREST_POINTS ){
 		for(unsigned int i = 0; i < attractPoints.size(); i++){
 			ofNoFill();
-			ofCircle(attractPointsWithMovement[i], 10);
+			ofDrawCircle(attractPointsWithMovement[i], 10);
 			ofFill();
-			ofCircle(attractPointsWithMovement[i], 4);
+			ofDrawCircle(attractPointsWithMovement[i], 4);
 		}
 	}
 
@@ -114,6 +114,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

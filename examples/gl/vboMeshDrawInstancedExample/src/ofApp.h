@@ -17,8 +17,8 @@ class ofApp : public ofBaseApp{
 	
 	ofEasyCam	mCamMain;
 
-	ofPtr<ofShader>	mShdInstanced;
-	ofTexture		mTexDepth;
+	shared_ptr<ofShader>	mShdInstanced;
+	ofTexture	mTexDepth;
 	
 	bool isShaderDirty;
 	
@@ -33,6 +33,8 @@ public:
 	void mouseDragged(int x, int y, int button);
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
+	void mouseEntered(int x, int y);
+	void mouseExited(int x, int y);
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);

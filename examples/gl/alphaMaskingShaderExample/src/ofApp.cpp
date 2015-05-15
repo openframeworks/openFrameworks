@@ -4,9 +4,9 @@
 void ofApp::setup(){
     ofEnableAlphaBlending();
     
-    srcImg.loadImage("A.jpg");
-    dstImg.loadImage("B.jpg");
-    brushImg.loadImage("brush.png");
+    srcImg.load("A.jpg");
+    dstImg.load("B.jpg");
+    brushImg.load("brush.png");
     
     int width = srcImg.getWidth();
     int height = srcImg.getHeight();
@@ -29,7 +29,7 @@ void ofApp::setup(){
     #ifdef TARGET_OPENGLES
     shader.load("shaders_gles/alphamask.vert","shaders_gles/alphamask.frag");
     #else
-    if(ofGetGLProgrammableRenderer()){
+    if(ofIsGLProgrammableRenderer()){
     	string vertex = "#version 150\n\
     	\n\
 		uniform mat4 projectionMatrix;\n\
@@ -117,7 +117,7 @@ void ofApp::update(){
     ofClear(0, 0, 0, 0); 
     
     shader.begin();
-    shader.setUniformTexture("maskTex", maskFbo.getTextureReference(), 1 );
+    shader.setUniformTexture("maskTex", maskFbo.getTexture(), 1 );
     
     srcImg.draw(0,0);
 
@@ -168,6 +168,16 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
     bBrushDown = false;
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

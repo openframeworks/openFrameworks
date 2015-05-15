@@ -82,15 +82,15 @@ void ofxSimpleSlider::draw(ofEventArgs& event){
 	ofNoFill();
 	ofSetLineWidth(1.0);
 	ofSetColor(64,64,64, sliderAlpha); 
-	ofRect(0,0, width,height); 
+	ofDrawRectangle(0,0, width,height); 
 	
 	// draw spine
 	ofSetLineWidth(1.0);
 	ofSetColor(0,0,0, spineAlpha); 
 	if (bVertical){
-		ofLine(width/2,0, width/2,height); 
+		ofDrawLine(width/2,0, width/2,height); 
 	} else {
-		ofLine(0,height/2, width,height/2); 
+		ofDrawLine(0,height/2, width,height/2); 
 	}
 	
 	// draw thumb
@@ -98,10 +98,10 @@ void ofxSimpleSlider::draw(ofEventArgs& event){
 	ofSetColor(0,0,0, thumbAlpha);
 	if (bVertical){
 		float thumbY = ofMap(percent, 0,1, height,0, true);
-		ofLine(0,thumbY, width,thumbY); 
+		ofDrawLine(0,thumbY, width,thumbY); 
 	} else {
 		float thumbX = ofMap(percent, 0,1, 0,width, true);
-		ofLine(thumbX,0, thumbX,height); 
+		ofDrawLine(thumbX,0, thumbX,height); 
 	}
 	
 	// draw numeric value 

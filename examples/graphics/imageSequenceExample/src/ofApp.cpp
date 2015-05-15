@@ -37,12 +37,12 @@ void ofApp::setup() {
             // add the image to the vector
             string filePath = dir.getPath(i);
             images.push_back(ofImage());
-            images.back().loadImage(filePath);
+            images.back().load(filePath);
             
         }
         
     } 
-    else printf("Could not find folder\n");
+    else ofLog(OF_LOG_WARNING) << "Could not find folder";
     
     // this toggle will tell the sequence
     // be be indepent of the app fps
@@ -108,7 +108,7 @@ void ofApp::draw() {
     
     // how fast is the app running and some other info
     ofSetColor(50);
-    ofRect(0, 0, 200, 200);
+    ofDrawRectangle(0, 0, 200, 200);
     ofSetColor(200);
     string info;
     info += ofToString(frameIndex)+" sequence index\n";
@@ -161,6 +161,16 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
     
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

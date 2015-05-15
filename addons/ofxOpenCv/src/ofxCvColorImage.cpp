@@ -170,8 +170,8 @@ void ofxCvColorImage::setFromGrayscalePlanarImages( ofxCvGrayscaleImage& red, of
 
 
 //--------------------------------------------------------------------------------
-void ofxCvColorImage::operator = ( unsigned char* _pixels ) {
-    setFromPixels( _pixels, width, height );
+void ofxCvColorImage::operator = ( const ofPixels & _pixels ) {
+    setFromPixels( _pixels );
 }
 
 //--------------------------------------------------------------------------------

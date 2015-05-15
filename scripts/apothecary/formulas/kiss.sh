@@ -29,7 +29,7 @@ function prepare() {
 		cp -Rv $FORMULA_DIR/Makefile.linux .
 	elif [ "$TYPE" == "linux64" ] ; then
 		cp -Rv $FORMULA_DIR/Makefile.linux64 .
-	else
+	fi
 }
 
 # executed inside the lib src dir
@@ -67,10 +67,16 @@ function copy() {
 		mkdir -p $1/lib/linux64
 		cp -v libkiss.a $1/lib/linux64/libkiss.a
 	fi
+
+	# copy license file
+	rm -rf $1/license # remove any older files if exists
+	mkdir -p $1/license
+	cp -v COPYING $1/license/
 }
 
 # executed inside the lib src dir
 function clean() {
+	
 	if [ "$TYPE" == "linux" -o "$TYPE" == "linux64" ] ; then
 		make clean
 		rm -f *.a

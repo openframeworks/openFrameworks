@@ -141,12 +141,12 @@ ofQuickTimePlayer::~ofQuickTimePlayer(){
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofQuickTimePlayer::getPixels(){
-	return pixels.getPixels();
+ofPixels& ofQuickTimePlayer::getPixels(){
+	return pixels;
 }
 
 //---------------------------------------------------------------------------
-ofPixelsRef ofQuickTimePlayer::getPixelsRef(){
+const ofPixels& ofQuickTimePlayer::getPixels() const {
 	return pixels;
 }
 
@@ -197,7 +197,7 @@ void ofQuickTimePlayer::update(){
 }
 
 //---------------------------------------------------------------------------
-bool ofQuickTimePlayer::isFrameNew(){
+bool ofQuickTimePlayer::isFrameNew() const{
 	return bIsFrameNew;
 }
 //---------------------------------------------------------------------------
@@ -270,7 +270,7 @@ void ofQuickTimePlayer::createImgMemAndGWorld(){
 
 
 //---------------------------------------------------------------------------
-bool ofQuickTimePlayer::loadMovie(string name){
+bool ofQuickTimePlayer::load(string name){
 
 
 	//--------------------------------------
@@ -548,7 +548,7 @@ void ofQuickTimePlayer::setLoopState(ofLoopType state){
 }
 
 //---------------------------------------------------------------------------
-ofLoopType ofQuickTimePlayer::getLoopState(){
+ofLoopType ofQuickTimePlayer::getLoopState() const{
 	return currentLoopState;
 }
 
@@ -621,7 +621,7 @@ void ofQuickTimePlayer::setFrame(int frame){
 
 
 //---------------------------------------------------------------------------
-float ofQuickTimePlayer::getDuration(){
+float ofQuickTimePlayer::getDuration() const{
 	if( !isLoaded() ){
 		ofLogError("ofQuickTimePlayer") << "getDuration(): movie not loaded";
 		return 0.0;
@@ -640,7 +640,7 @@ float ofQuickTimePlayer::getDuration(){
 }
 
 //---------------------------------------------------------------------------
-float ofQuickTimePlayer::getPosition(){
+float ofQuickTimePlayer::getPosition() const{
 	if( !isLoaded() ){
 		ofLogError("ofQuickTimePlayer") << "getPosition(): movie not loaded";
 		return 0.0;
@@ -663,7 +663,7 @@ float ofQuickTimePlayer::getPosition(){
 }
 
 //---------------------------------------------------------------------------
-int ofQuickTimePlayer::getCurrentFrame(){
+int ofQuickTimePlayer::getCurrentFrame() const{
 	if( !isLoaded() ){
 		ofLogError("ofQuickTimePlayer") << "getCurrentFrame(): movie not loaded";
 		return 0;
@@ -704,14 +704,14 @@ bool ofQuickTimePlayer::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofQuickTimePlayer::getPixelFormat(){
+ofPixelFormat ofQuickTimePlayer::getPixelFormat() const{
 	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
 	return OF_PIXELS_RGB;
 }
 
 
 //---------------------------------------------------------------------------
-bool ofQuickTimePlayer::getIsMovieDone(){
+bool ofQuickTimePlayer::getIsMovieDone() const{
 	if( !isLoaded() ){
 		ofLogError("ofQuickTimePlayer") << "getIsMovieDone(): movie not loaded";
 		return false;
@@ -846,37 +846,37 @@ void ofQuickTimePlayer::clearMemory(){
 }
 
 //---------------------------------------------------------------------------
-float ofQuickTimePlayer::getSpeed(){
+float ofQuickTimePlayer::getSpeed() const{
 	return speed;
 }
 
 //------------------------------------
-int ofQuickTimePlayer::getTotalNumFrames(){
+int ofQuickTimePlayer::getTotalNumFrames() const{
 	return nFrames;
 }
 
 //----------------------------------------------------------
-float ofQuickTimePlayer::getWidth(){
+float ofQuickTimePlayer::getWidth() const{
 	return (float)width;
 }
 
 //----------------------------------------------------------
-float ofQuickTimePlayer::getHeight(){
+float ofQuickTimePlayer::getHeight() const{
 	return (float)height;
 }
 
 //----------------------------------------------------------
-bool ofQuickTimePlayer::isPaused(){
+bool ofQuickTimePlayer::isPaused() const{
 	return bPaused;
 }
 
 //----------------------------------------------------------
-bool ofQuickTimePlayer::isLoaded(){
+bool ofQuickTimePlayer::isLoaded() const{
 	return bLoaded;
 }
 
 //----------------------------------------------------------
-bool ofQuickTimePlayer::isPlaying(){
+bool ofQuickTimePlayer::isPlaying() const{
 	return bPlaying;
 }
 

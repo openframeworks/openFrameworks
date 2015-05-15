@@ -8,30 +8,7 @@
 #include "ofxAndroidVideoPlayer.h"
 #include "ofxAndroidUtils.h"
 #include "ofLog.h"
-#include <set>
 
-//---------------------------------------------------------------------------
-static set<ofxAndroidVideoPlayer*> & all_videoplayers(){
-	static set<ofxAndroidVideoPlayer*> *all_videoplayers = new set<ofxAndroidVideoPlayer*>;
-	return *all_videoplayers;
-}
-
-void ofPauseVideoPlayers(){
-	ofLogVerbose("ofxAndroidVideoPlayer") << "ofPauseVideoPlayers(): releasing textures";
-	set<ofxAndroidVideoPlayer*>::iterator it;
-	for(it=all_videoplayers().begin();it!=all_videoplayers().end();it++){
-		(*it)->unloadTexture();
-	}
-}
-
-void ofResumeVideoPlayers(){
-	ofLogVerbose("ofxAndroidVideoPlayer") << "ofResumeVideoPlayers(): trying to allocate textures";
-	set<ofxAndroidVideoPlayer*>::iterator it;
-	for(it=all_videoplayers().begin();it!=all_videoplayers().end();it++){
-		(*it)->reloadTexture();
-	}
-	ofLogVerbose("ofxAndroidVideoPlayer") << "ofResumeVideoPlayers(): textures allocated";
-}
 
 //---------------------------------------------------------------------------
 void ofxAndroidVideoPlayer::reloadTexture(){
@@ -73,8 +50,6 @@ void ofxAndroidVideoPlayer::unloadTexture(){
 //---------------------------------------------------------------------------
 ofxAndroidVideoPlayer::ofxAndroidVideoPlayer(){
 
-	all_videoplayers().insert(this);
-
 	JNIEnv *env = ofGetJNIEnv();
 	if (!env) {
 		ofLogError("ofxAndroidVideoPlayer") << "constructor: couldn't get environment using GetEnv()";
@@ -107,13 +82,13 @@ ofxAndroidVideoPlayer::ofxAndroidVideoPlayer(){
 	jfloatArray localMatrixJava = env->NewFloatArray(16);
 	matrixJava = (jfloatArray) env->NewGlobalRef(localMatrixJava);
 
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofxAndroidVideoPlayer::unloadTexture);
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofxAndroidVideoPlayer::reloadTexture);
+
 }
 
 //---------------------------------------------------------------------------
 ofxAndroidVideoPlayer::~ofxAndroidVideoPlayer(){
-
-	all_videoplayers().erase(this);
-
 	JNIEnv *env = ofGetJNIEnv();
 	if(javaVideoPlayer) env->DeleteGlobalRef(javaVideoPlayer);
 	if(javaClass) env->DeleteGlobalRef(javaClass);
@@ -122,17 +97,17 @@ ofxAndroidVideoPlayer::~ofxAndroidVideoPlayer(){
 
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::loadMovie(string fileName){
+bool ofxAndroidVideoPlayer::load(string fileName){
 
 	if(!javaVideoPlayer){
-		ofLogError("ofxAndroidVideoPlayer") << "loadMovie(): java soundVideoPlayer not loaded";
+		ofLogError("ofxAndroidVideoPlayer") << "load(): java soundVideoPlayer not loaded";
 		return false;
 	}
 
 	JNIEnv *env = ofGetJNIEnv();
 	jmethodID javaLoadMethod = env->GetMethodID(javaClass,"loadMovie","(Ljava/lang/String;)V");
 	if(!javaLoadMethod){
-		ofLogError("ofxAndroidVideoPlayer") << "loadMovie(): couldn't get java loadVideo for VideoPlayer";
+		ofLogError("ofxAndroidVideoPlayer") << "load(): couldn't get java loadVideo for VideoPlayer";
 		return false;
 	}
 
@@ -241,7 +216,7 @@ void ofxAndroidVideoPlayer::stop(){
 
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::isPaused(){
+bool ofxAndroidVideoPlayer::isPaused() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "isPaused(): java VideoPlayer not loaded";
@@ -266,7 +241,7 @@ bool ofxAndroidVideoPlayer::isPaused(){
 
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::isLoaded(){
+bool ofxAndroidVideoPlayer::isLoaded() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "isLoaded(): java VideoPlayer not loaded";
@@ -290,7 +265,7 @@ bool ofxAndroidVideoPlayer::isLoaded(){
 };
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::isPlaying(){
+bool ofxAndroidVideoPlayer::isPlaying() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "isPlaying(): java VideoPlayer not loaded";
@@ -314,22 +289,22 @@ bool ofxAndroidVideoPlayer::isPlaying(){
 };
 
 //---------------------------------------------------------------------------
-ofTexture * ofxAndroidVideoPlayer::getTexture(){
+ofTexture * ofxAndroidVideoPlayer::getTexturePtr(){
 	return & texture;
 }
 
 //---------------------------------------------------------------------------
-float ofxAndroidVideoPlayer::getWidth(){
+float ofxAndroidVideoPlayer::getWidth() const {
 	return width;
 };
 
 //---------------------------------------------------------------------------
-float ofxAndroidVideoPlayer::getHeight(){
+float ofxAndroidVideoPlayer::getHeight() const {
 	return height;
 };
 
 //---------------------------------------------------------------------------
-float ofxAndroidVideoPlayer::getPosition(){
+float ofxAndroidVideoPlayer::getPosition() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "getPosition(): java VideoPlayer not loaded";
@@ -353,7 +328,7 @@ float ofxAndroidVideoPlayer::getPosition(){
 };
 
 //---------------------------------------------------------------------------
-float ofxAndroidVideoPlayer::getDuration(){
+float ofxAndroidVideoPlayer::getDuration() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "getDuration(): java VideoPlayer not loaded";
@@ -377,7 +352,7 @@ float ofxAndroidVideoPlayer::getDuration(){
 };
 
 //---------------------------------------------------------------------------
-bool ofxAndroidVideoPlayer::getIsMovieDone(){
+bool ofxAndroidVideoPlayer::getIsMovieDone() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "getIsMovieDone(): java VideoPlayer not loaded";
@@ -507,7 +482,7 @@ void ofxAndroidVideoPlayer::setLoopState(ofLoopType state){
 };
 
 //------------------------------------------------------------
-ofLoopType ofxAndroidVideoPlayer::getLoopState(){
+ofLoopType ofxAndroidVideoPlayer::getLoopState() const {
 
 	if(!javaVideoPlayer){
 		ofLogError("ofxAndroidVideoPlayer") << "getLoopState(): java VideoPlayer not loaded";

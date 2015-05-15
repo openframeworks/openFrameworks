@@ -8,6 +8,35 @@ ofParameterGroup::ofParameterGroup()
 
 }
 
+ofParameterGroup::~ofParameterGroup(){
+	for(auto & p: obj->parameters){
+		p->setParent(NULL);
+	}
+}
+
+ofParameterGroup::ofParameterGroup(const ofParameterGroup& mom){
+	// copy object
+	obj = mom.obj;
+
+	// correct parent of parameters
+	for(auto & p: obj->parameters){
+		p->setParent(this);
+	}
+}
+
+ofParameterGroup & ofParameterGroup::operator=(const ofParameterGroup& mom){
+
+	// copy object
+	obj = mom.obj;
+
+	// correct parent of parameters
+	for(auto & p: obj->parameters){
+		p->setParent(this);
+	}
+
+	return *this;
+}
+
 void ofParameterGroup::add(ofAbstractParameter & param){
 	shared_ptr<ofAbstractParameter> group = param.newReference();
 	obj->parameters.push_back(group);
@@ -264,3 +293,36 @@ const ofParameterGroup * ofParameterGroup::getParent() const{
 ofParameterGroup * ofParameterGroup::getParent(){
 	return obj->parent;
 }
+
+vector<shared_ptr<ofAbstractParameter> >::iterator ofParameterGroup::begin(){
+	return obj->parameters.begin();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::iterator ofParameterGroup::end(){
+	return obj->parameters.end();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::const_iterator ofParameterGroup::begin() const{
+	return obj->parameters.begin();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::const_iterator ofParameterGroup::end() const{
+	return obj->parameters.end();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::reverse_iterator ofParameterGroup::rbegin(){
+	return obj->parameters.rbegin();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::reverse_iterator ofParameterGroup::rend(){
+	return obj->parameters.rend();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGroup::rbegin() const{
+	return obj->parameters.rbegin();
+}
+
+vector<shared_ptr<ofAbstractParameter> >::const_reverse_iterator ofParameterGroup::rend() const{
+	return obj->parameters.rend();
+}
+

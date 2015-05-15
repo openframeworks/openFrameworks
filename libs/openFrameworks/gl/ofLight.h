@@ -30,7 +30,7 @@ void ofEnableSeparateSpecularLight();
 void ofDisableSeparateSpecularLight();
 bool ofGetLightingEnabled();
 void ofSetSmoothLighting(bool b);
-void ofSetGlobalAmbientColor(const ofColor& c);
+void ofSetGlobalAmbientColor(const ofFloatColor& c);
 const ofFloatColor & ofGetGlobalAmbientColor();
 
 //----------------------------------------
@@ -62,7 +62,7 @@ public:
     float getAttenuationQuadratic() const;
 
     void setAreaLight(float width, float height);
-    bool getIsAreaLight();
+    bool getIsAreaLight() const;
 	
 	int getType() const;
 	
@@ -75,8 +75,6 @@ public:
 	ofFloatColor getSpecularColor() const;
 	
 	int getLightID() const;
-
-	void customDraw();
 
 	class Data{
 	public:
@@ -106,11 +104,11 @@ public:
 	    ofVec3f right;
 	};
 	
-	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
 private:
+	void customDraw(const ofBaseRenderer * renderer) const;
 	shared_ptr<Data> data;
-	
 	// update opengl light 
+	// this method overrides ofNode to catch the changes and update glLightv(GL_POSITION)
 	virtual void onPositionChanged();
 	virtual void onOrientationChanged();
 };
