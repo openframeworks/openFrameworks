@@ -4,29 +4,27 @@ using namespace ofxCv;
 using namespace cv;
 
 void ofApp::setup() {
+    ofBackground(0);
+    
 	camera.initGrabber(320, 240);
 	
-	panel.setup(250, 800);
-	
-	panel.addPanel("Optical Flow");
-	
-	panel.addSlider("pyrScale", .5, 0, 1);
-	panel.addSlider("levels", 4, 1, 8, true);
-	panel.addSlider("winsize", 8, 4, 64, true);
-	panel.addSlider("iterations", 2, 1, 8, true);
-	panel.addSlider("polyN", 7, 5, 10, true);
-	panel.addSlider("polySigma", 1.5, 1.1, 2);
-	panel.addToggle("OPTFLOW_FARNEBACK_GAUSSIAN", false);
-	
-	panel.addToggle("useFarneback", true);
-	panel.addSlider("winSize", 32, 4, 64, true);
-	panel.addSlider("maxLevel", 3, 0, 8, true);
-	
-	panel.addSlider("maxFeatures", 200, 1, 1000);
-	panel.addSlider("qualityLevel", 0.01, 0.001, .02);
-	panel.addSlider("minDistance", 4, 1, 16);
+    gui.setup();
+    
+    gui.add(lkMaxLevel.set("lkMaxLevel", 3, 0, 8));
+    gui.add(lkMaxFeatures.set("lkMaxFeatures", 200, 1, 1000));
+    gui.add(lkQualityLevel.set("lkQualityLevel", 0.01, 0.001, .02));
+    gui.add(lkMinDistance.set("lkMinDistance", 4, 1, 16));
+    gui.add(lkWinSize.set("lkWinSize", 8, 4, 64));
+    gui.add(usefb.set("Use Farneback", true));
+	gui.add(fbPyrScale.set("fbPyrScale", .5, 0, .99));
+	gui.add(fbLevels.set("fbLevels", 4, 1, 8));
+    gui.add(fbIterations.set("fbIterations", 2, 1, 8));
+    gui.add(fbPolyN.set("fbPolyN", 7, 5, 10));
+    gui.add(fbPolySigma.set("fbPolySigma", 1.5, 1.1, 2));
+    gui.add(fbUseGaussian.set("fbUseGaussian", false));
+    gui.add(fbWinSize.set("winSize", 32, 4, 64));
 
-	curFlow = &farneback;
+	curFlow = &fb;
 }
 
 void ofApp::update(){
@@ -34,36 +32,35 @@ void ofApp::update(){
 	
 	if(camera.isFrameNew()) {
 		
-		
-		if(panel.getValueB("useFarneback")) {
-			curFlow = &farneback;
-			farneback.setPyramidScale( panel.getValueF("pyrScale") );
-			farneback.setNumLevels( panel.getValueF("levels") );
-			farneback.setWindowSize( panel.getValueF("winsize") );
-			farneback.setNumIterations( panel.getValueF("iterations") );
-			farneback.setPolyN( panel.getValueF("polyN") );
-			farneback.setPolySigma( panel.getValueF("polySigma") );
-			farneback.setUseGaussian(panel.getValueB("OPTFLOW_FARNEBACK_GAUSSIAN"));
-			
+		if(usefb) {
+			curFlow = &fb;
+			fb.setPyramidScale(fbPyrScale);
+			fb.setNumLevels(fbLevels);
+			fb.setWindowSize(fbWinSize);
+			fb.setNumIterations(fbIterations);
+			fb.setPolyN(fbPolyN);
+			fb.setPolySigma(fbPolySigma);
+            fb.setUseGaussian(fbUseGaussian);
 		} else {
-			curFlow = &pyrLk;
-			pyrLk.setMaxFeatures( panel.getValueI("maxFeatures") );
-			pyrLk.setQualityLevel( panel.getValueF("qualityLevel") );
-			pyrLk.setMinDistance( panel.getValueF("minDistance") );			 	
-			pyrLk.setWindowSize( panel.getValueI("winSize") );
-			pyrLk.setMaxLevel( panel.getValueI("maxLevel") );
+			curFlow = &lk;
+			lk.setMaxFeatures(lkMaxFeatures);
+			lk.setQualityLevel(lkQualityLevel);
+			lk.setMinDistance(lkMinDistance);
+			lk.setWindowSize(lkWinSize);
+			lk.setMaxLevel(lkMaxLevel);
 		}
 		
-		//check it out that that you can use Flow polymorphically
+		// you can use Flow polymorphically
 		curFlow->calcOpticalFlow(camera);
 	}
 }
 
 void ofApp::draw(){
-	ofBackground(0);
-		
-	ofSetColor(255);
-	camera.draw(400,100,640,480);
-	curFlow->draw(400,100,640,480);
-	
+    ofPushMatrix();
+    ofTranslate(250, 100);
+	camera.draw(0,0,640,480);
+    curFlow->draw(0,0,640,480);
+    ofDrawBitmapStringHighlight(ofToString((int) ofGetFrameRate()) + "fps", 10, 20);
+    ofPopMatrix();
+    gui.draw();
 }
