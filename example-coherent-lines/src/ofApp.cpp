@@ -4,15 +4,14 @@ using namespace ofxCv;
 using namespace cv;
 
 void ofApp::setup() {
-	ofSetVerticalSync(true);
-	
+    ofBackground(255);
 	ofDirectory dir;
 	dir.allowExt("png");
 	dir.open(".");
 	dir.listDir();
 	for(int i = 0; i < dir.size(); i++) {
 		ofImage cur;
-		cur.loadImage(dir.getName(i));
+		cur.load(dir.getName(i));
 		cur.setImageType(OF_IMAGE_GRAYSCALE);
 		input.push_back(cur);
 		output.push_back(cur);
@@ -20,38 +19,22 @@ void ofApp::setup() {
 	}
 	
 	gui.setup();
-	gui.addPanel("Settings");
-	gui.addToggle("doFDoG", true);
-	gui.addSlider("halfw", 4, 1, 8, true);
-	gui.addSlider("smoothPasses", 2, 1, 4, true);
-	gui.addSlider("sigma1", 0.68, 0.01, 2.0, false);
-	gui.addSlider("sigma2", 6.0, 0.01, 10.0, false);
-	gui.addSlider("tau", 0.974, 0.8, 1.0, false);
-	gui.addSlider("black", -8, -255, 255, true);
-	gui.addToggle("doThresh", true);
-	gui.addSlider("thresh", 150, 0, 255, false);
-	gui.addToggle("doThin", true);
-	gui.addToggle("doCanny", true);
-	gui.addSlider("cannyParam1", 400, 0, 1024, true);
-	gui.addSlider("cannyParam2", 600, 0, 1024, true);
-	gui.loadSettings("settings.xml");
+    gui.add(doFDoG.set("doFDoG", true));
+    gui.add(halfw.set("halfw", 4, 1, 8));
+    gui.add(smoothPasses.set("smoothPasses", 2, 1, 4));
+    gui.add(sigma1.set("sigma1", 0.68, 0.01, 2.0));
+    gui.add(sigma2.set("sigma2", 6.0, 0.01, 10.0));
+    gui.add(tau.set("tau", 0.974, 0.8, 1.0));
+    gui.add(black.set("black", -8, -255, 255));
+    gui.add(doThresh.set("doThresh", true));
+    gui.add(thresh.set("thresh", 150, 0, 255));
+    gui.add(doThin.set("doThin", true));
+    gui.add(doCanny.set("doCanny", true));
+    gui.add(cannyParam1.set("cannyParam1", 400, 0, 1024));
+    gui.add(cannyParam2.set("cannyParam2", 600, 0, 1024));
 }
 
 void ofApp::update(){
-	bool doFDoG = gui.getValueB("doFDoG");
-	bool doCanny = gui.getValueB("doCanny");
-	bool doThin = gui.getValueB("doThin");
-	bool doThresh = gui.getValueB("doThresh");
-	int black = gui.getValueI("black");
-	float sigma1 = gui.getValueF("sigma1");
-	float sigma2 = gui.getValueF("sigma2");
-	float tau = gui.getValueF("tau");
-	float thresh = gui.getValueF("thresh");
-	int halfw = gui.getValueI("halfw");
-	int smoothPasses = gui.getValueI("smoothPasses");
-	int cannyParam1 = gui.getValueI("cannyParam1");
-	int cannyParam2 = gui.getValueI("cannyParam2");
-	
 	for(int i = 0; i < input.size(); i++) {
 		if(doFDoG) {
 			CLD(input[i], output[i], halfw, smoothPasses, sigma1, sigma2, tau, black);
@@ -72,7 +55,8 @@ void ofApp::update(){
 }
 
 void ofApp::draw(){
-	ofBackground(255);
+    gui.draw();
+    
 	ofTranslate(300, 0);
 	for(int i = 0; i < input.size(); i++) {
 		ofEnableBlendMode(OF_BLENDMODE_ALPHA);

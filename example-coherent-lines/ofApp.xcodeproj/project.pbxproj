@@ -22,6 +22,14 @@
 		279DC4D01B0605EA00A55C78 /* Wrappers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 279DC4C21B0605EA00A55C78 /* Wrappers.cpp */; };
 		279DC4D11B0605EA00A55C78 /* opencv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 279DC4C31B0605EA00A55C78 /* opencv.a */; };
 		279DC4D41B0605F900A55C78 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 279DC4D21B0605F900A55C78 /* ofApp.cpp */; };
+		279DC5051B061C5200A55C78 /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 279DC4F41B061C5200A55C78 /* ofxBaseGui.cpp */; };
+		279DC5061B061C5200A55C78 /* ofxButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 279DC4F61B061C5200A55C78 /* ofxButton.cpp */; };
+		279DC5071B061C5200A55C78 /* ofxGuiGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 279DC4F91B061C5200A55C78 /* ofxGuiGroup.cpp */; };
+		279DC5081B061C5200A55C78 /* ofxLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 279DC4FB1B061C5200A55C78 /* ofxLabel.cpp */; };
+		279DC5091B061C5200A55C78 /* ofxPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 279DC4FD1B061C5200A55C78 /* ofxPanel.cpp */; };
+		279DC50A1B061C5200A55C78 /* ofxSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 279DC4FF1B061C5200A55C78 /* ofxSlider.cpp */; };
+		279DC50B1B061C5200A55C78 /* ofxSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 279DC5011B061C5200A55C78 /* ofxSliderGroup.cpp */; };
+		279DC50C1B061C5200A55C78 /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 279DC5031B061C5200A55C78 /* ofxToggle.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
 /* End PBXBuildFile section */
@@ -89,6 +97,23 @@
 		279DC4C31B0605EA00A55C78 /* opencv.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = opencv.a; path = ../../ofxOpenCv/libs/opencv/lib/osx/opencv.a; sourceTree = "<group>"; };
 		279DC4D21B0605F900A55C78 /* ofApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofApp.cpp; sourceTree = "<group>"; };
 		279DC4D31B0605F900A55C78 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofApp.h; sourceTree = "<group>"; };
+		279DC4F41B061C5200A55C78 /* ofxBaseGui.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxBaseGui.cpp; sourceTree = "<group>"; };
+		279DC4F51B061C5200A55C78 /* ofxBaseGui.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxBaseGui.h; sourceTree = "<group>"; };
+		279DC4F61B061C5200A55C78 /* ofxButton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxButton.cpp; sourceTree = "<group>"; };
+		279DC4F71B061C5200A55C78 /* ofxButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxButton.h; sourceTree = "<group>"; };
+		279DC4F81B061C5200A55C78 /* ofxGui.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxGui.h; sourceTree = "<group>"; };
+		279DC4F91B061C5200A55C78 /* ofxGuiGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxGuiGroup.cpp; sourceTree = "<group>"; };
+		279DC4FA1B061C5200A55C78 /* ofxGuiGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxGuiGroup.h; sourceTree = "<group>"; };
+		279DC4FB1B061C5200A55C78 /* ofxLabel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLabel.cpp; sourceTree = "<group>"; };
+		279DC4FC1B061C5200A55C78 /* ofxLabel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxLabel.h; sourceTree = "<group>"; };
+		279DC4FD1B061C5200A55C78 /* ofxPanel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxPanel.cpp; sourceTree = "<group>"; };
+		279DC4FE1B061C5200A55C78 /* ofxPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxPanel.h; sourceTree = "<group>"; };
+		279DC4FF1B061C5200A55C78 /* ofxSlider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxSlider.cpp; sourceTree = "<group>"; };
+		279DC5001B061C5200A55C78 /* ofxSlider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxSlider.h; sourceTree = "<group>"; };
+		279DC5011B061C5200A55C78 /* ofxSliderGroup.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxSliderGroup.cpp; sourceTree = "<group>"; };
+		279DC5021B061C5200A55C78 /* ofxSliderGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxSliderGroup.h; sourceTree = "<group>"; };
+		279DC5031B061C5200A55C78 /* ofxToggle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxToggle.cpp; sourceTree = "<group>"; };
+		279DC5041B061C5200A55C78 /* ofxToggle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxToggle.h; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E4B69B5B0A3A1756003C02F2 /* ofAppDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ofAppDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
@@ -230,10 +255,44 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		279DC4F21B061C5200A55C78 /* ofxGui */ = {
+			isa = PBXGroup;
+			children = (
+				279DC4F31B061C5200A55C78 /* src */,
+			);
+			name = ofxGui;
+			sourceTree = "<group>";
+		};
+		279DC4F31B061C5200A55C78 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				279DC4F41B061C5200A55C78 /* ofxBaseGui.cpp */,
+				279DC4F51B061C5200A55C78 /* ofxBaseGui.h */,
+				279DC4F61B061C5200A55C78 /* ofxButton.cpp */,
+				279DC4F71B061C5200A55C78 /* ofxButton.h */,
+				279DC4F81B061C5200A55C78 /* ofxGui.h */,
+				279DC4F91B061C5200A55C78 /* ofxGuiGroup.cpp */,
+				279DC4FA1B061C5200A55C78 /* ofxGuiGroup.h */,
+				279DC4FB1B061C5200A55C78 /* ofxLabel.cpp */,
+				279DC4FC1B061C5200A55C78 /* ofxLabel.h */,
+				279DC4FD1B061C5200A55C78 /* ofxPanel.cpp */,
+				279DC4FE1B061C5200A55C78 /* ofxPanel.h */,
+				279DC4FF1B061C5200A55C78 /* ofxSlider.cpp */,
+				279DC5001B061C5200A55C78 /* ofxSlider.h */,
+				279DC5011B061C5200A55C78 /* ofxSliderGroup.cpp */,
+				279DC5021B061C5200A55C78 /* ofxSliderGroup.h */,
+				279DC5031B061C5200A55C78 /* ofxToggle.cpp */,
+				279DC5041B061C5200A55C78 /* ofxToggle.h */,
+			);
+			name = src;
+			path = ../../ofxGui/src;
+			sourceTree = "<group>";
+		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
 				279DC49A1B0605EA00A55C78 /* ofxCv */,
+				279DC4F21B061C5200A55C78 /* ofxGui */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -365,9 +424,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				279DC4CC1B0605EA00A55C78 /* ObjectFinder.cpp in Sources */,
+				279DC50A1B061C5200A55C78 /* ofxSlider.cpp in Sources */,
+				279DC5081B061C5200A55C78 /* ofxLabel.cpp in Sources */,
 				279DC4D41B0605F900A55C78 /* ofApp.cpp in Sources */,
 				279DC4C61B0605EA00A55C78 /* Calibration.cpp in Sources */,
+				279DC50C1B061C5200A55C78 /* ofxToggle.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
+				279DC5061B061C5200A55C78 /* ofxButton.cpp in Sources */,
 				279DC4C41B0605EA00A55C78 /* ETF.cpp in Sources */,
 				279DC4C51B0605EA00A55C78 /* fdog.cpp in Sources */,
 				279DC4CB1B0605EA00A55C78 /* Kalman.cpp in Sources */,
@@ -376,8 +439,12 @@
 				279DC4CE1B0605EA00A55C78 /* Tracker.cpp in Sources */,
 				279DC4C71B0605EA00A55C78 /* ContourFinder.cpp in Sources */,
 				279DC4CD1B0605EA00A55C78 /* RunningBackground.cpp in Sources */,
+				279DC5071B061C5200A55C78 /* ofxGuiGroup.cpp in Sources */,
+				279DC50B1B061C5200A55C78 /* ofxSliderGroup.cpp in Sources */,
+				279DC5051B061C5200A55C78 /* ofxBaseGui.cpp in Sources */,
 				279DC4D01B0605EA00A55C78 /* Wrappers.cpp in Sources */,
 				279DC4CA1B0605EA00A55C78 /* Helpers.cpp in Sources */,
+				279DC5091B061C5200A55C78 /* ofxPanel.cpp in Sources */,
 				279DC4CF1B0605EA00A55C78 /* Utilities.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

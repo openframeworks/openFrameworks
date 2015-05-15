@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxAutoControlPanel.h"
+#include "ofxGui.h"
 #include "ofxCv.h"
 
 class ofApp : public ofBaseApp{
@@ -12,5 +12,9 @@ public:
 	
 	vector<ofImage> input, output, canny;
 	
-	ofxAutoControlPanel gui;
+    ofParameter<float> sigma1, sigma2, tau;
+    ofParameter<int> halfw, smoothPasses, black, thresh, cannyParam1, cannyParam2;
+    ofParameter<bool> doFDoG, doThresh, doThin, doCanny;
+    
+	ofxPanel gui;
 };
