@@ -146,7 +146,7 @@ void ofMesh::addVertices(const vector<ofVec3f>& verts){
 }
 
 //--------------------------------------------------------------
-void ofMesh::addVertices(const ofVec3f* verts, int amt){
+void ofMesh::addVertices(const ofVec3f* verts, std::size_t amt){
 	vertices.insert(vertices.end(),verts,verts+amt);
 	bVertsChanged = true;
 	bFacesDirty = true;
@@ -167,7 +167,7 @@ void ofMesh::addColors(const vector<ofFloatColor>& cols){
 }
 
 //--------------------------------------------------------------
-void ofMesh::addColors(const ofFloatColor* cols, int amt){
+void ofMesh::addColors(const ofFloatColor* cols, std::size_t amt){
 	colors.insert(colors.end(),cols,cols+amt);
 	bColorsChanged = true;
 	bFacesDirty = true;
@@ -188,7 +188,7 @@ void ofMesh::addNormals(const vector<ofVec3f>& norms){
 }
 
 //--------------------------------------------------------------
-void ofMesh::addNormals(const ofVec3f* norms, int amt){
+void ofMesh::addNormals(const ofVec3f* norms, std::size_t amt){
 	normals.insert(normals.end(),norms,norms+amt);
 	bNormalsChanged = true;
 	bFacesDirty = true;
@@ -210,7 +210,7 @@ void ofMesh::addTexCoords(const vector<ofVec2f>& tCoords){
 }
 
 //--------------------------------------------------------------
-void ofMesh::addTexCoords(const ofVec2f* tCoords, int amt){
+void ofMesh::addTexCoords(const ofVec2f* tCoords, std::size_t amt){
 	texCoords.insert(texCoords.end(),tCoords,tCoords+amt);
 	bTexCoordsChanged = true;
 	bFacesDirty = true;
@@ -236,7 +236,7 @@ void ofMesh::addIndices(const vector<ofIndexType>& inds){
 }
 
 //--------------------------------------------------------------
-void ofMesh::addIndices(const ofIndexType* inds, int amt){
+void ofMesh::addIndices(const ofIndexType* inds, std::size_t amt){
 	indices.insert(indices.end(),inds,inds+amt);
 	bIndicesChanged = true;
 	bFacesDirty = true;
@@ -333,28 +333,28 @@ ofVec2f ofMesh::getTexCoord(ofIndexType i) const{
 }
 
 //--------------------------------------------------------------
-int ofMesh::getNumVertices() const{
-	return (int)vertices.size();
+std::size_t ofMesh::getNumVertices() const{
+	return vertices.size();
 }
 
 //--------------------------------------------------------------
-int ofMesh::getNumColors() const{
-	return (int)colors.size();
+std::size_t ofMesh::getNumColors() const{
+	return colors.size();
 }
 
 //--------------------------------------------------------------
-int ofMesh::getNumNormals() const{
-	return (int)normals.size();
+std::size_t ofMesh::getNumNormals() const{
+	return normals.size();
 }
 
 //--------------------------------------------------------------
-int ofMesh::getNumTexCoords() const{
-	return (int)texCoords.size();
+std::size_t ofMesh::getNumTexCoords() const{
+	return texCoords.size();
 }
 
 //--------------------------------------------------------------
-int ofMesh::getNumIndices() const{
-	return (int)indices.size();
+std::size_t ofMesh::getNumIndices() const{
+	return indices.size();
 }
 
 /*
@@ -617,8 +617,8 @@ void ofMesh::setupIndicesAuto(){
 	bIndicesChanged = true;
 	bFacesDirty = true;
 	indices.resize(vertices.size());
-	for(int i = 0; i < (int)vertices.size();i++){
-		indices[i]=(ofIndexType)i;
+	for(ofIndexType i = 0; i < vertices.size();i++){
+		indices[i]=i;
 	}
 }
 
@@ -747,7 +747,7 @@ bool ofMesh::usingIndices() const{
 
 //--------------------------------------------------------------
 void ofMesh::append(const ofMesh & mesh){
-	int prevNumVertices = vertices.size();
+	ofIndexType prevNumVertices = vertices.size();
 	if(mesh.getNumVertices()){
 		vertices.insert(vertices.end(),mesh.getVertices().begin(),mesh.getVertices().end());
 	}
@@ -1105,15 +1105,15 @@ void ofMesh::setColorForIndices( ofIndexType startIndex, ofIndexType endIndex, o
         getColors().resize( getNumVertices() );
     }
     
-    for(int i = startIndex; i < endIndex; i++) {
+    for(ofIndexType i = startIndex; i < endIndex; i++) {
         setColor( getIndex(i), color);
     }
 }
 
 //----------------------------------------------------------
 ofMesh ofMesh::getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex ) const {
-    int startVertIndex  = 0;
-    int endVertIndex    = 0;
+    ofIndexType startVertIndex  = 0;
+    ofIndexType endVertIndex    = 0;
     
     if(startIndex >= getNumIndices() ) {
         startVertIndex = 0;
@@ -1722,7 +1722,7 @@ ofMesh ofMesh::icosahedron(float radius) {
     mesh.addVertex(invnorm*ofVec3f(-1,  -phi,0));//10
     mesh.addVertex(invnorm*ofVec3f( 1,  -phi,0));//11
     
-    int firstFaces[] = {
+    ofIndexType firstFaces[] = {
         0,1,2,
         0,3,1,
         0,4,5,
@@ -1745,11 +1745,11 @@ ofMesh ofMesh::icosahedron(float radius) {
         10,11,9
     };
     
-    for(int i = 0; i < mesh.getNumVertices(); i++) {
+    for(ofIndexType i = 0; i < mesh.getNumVertices(); i++) {
         mesh.setVertex(i, mesh.getVertex(i) * radius);
     }
     
-    for(int i = 0; i < 60; i+=3) {
+    for(ofIndexType i = 0; i < 60; i+=3) {
         mesh.addTriangle(firstFaces[i], firstFaces[i+1], firstFaces[i+2]);
     }
     
@@ -1769,7 +1769,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
     vector<ofVec3f> vertices = icosahedron.getVertices();
     vector<ofIndexType> faces = icosahedron.getIndices();
     
-    int size = faces.size();
+    ofIndexType size = faces.size();
     
     /// Step 2 : tessellate
     for (ofIndexType iteration = 0; iteration < iterations; iteration++)
@@ -1778,7 +1778,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
         vector<ofIndexType> newFaces;
         newFaces.clear();
         //newFaces.resize(size);
-        for (int i=0; i<size/12; i++)
+        for (ofIndexType i=0; i<size/12; i++)
         {
             int i1 = faces[i*3];
             int i2 = faces[i*3+1];
@@ -1868,14 +1868,14 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
         ofVec2f t = texCoords[index] + ofVec2f(1.f, 0.f);
         vertices.push_back(v);
         texCoords.push_back(t);
-        int newIndex = vertices.size()-1;
+        ofIndexType newIndex = vertices.size()-1;
         //reassign indices
         for (ofIndexType j=0;j<faces.size();j++)
         {
             if (faces[j]==index)
             {
-                int index1 = faces[(j+1)%3+(j/3)*3];
-                int index2 = faces[(j+2)%3+(j/3)*3];
+                ofIndexType index1 = faces[(j+1)%3+(j/3)*3];
+                ofIndexType index2 = faces[(j+2)%3+(j/3)*3];
                 if ((texCoords[index1].x>0.5) || (texCoords[index2].x>0.5))
                 {
                     faces[j] = newIndex;
@@ -1888,7 +1888,7 @@ ofMesh ofMesh::icosphere(float radius, int iterations) {
 	// i wish there was a more elegant way to do this, but anything happening before "split vertices"
 	// makes things very, very complicated.
 	
-	for (int i = 0; i < (int)faces.size(); i+=3) {
+	for (ofIndexType i = 0; i < faces.size(); i+=3) {
 		std::swap(faces[i+1], faces[i+2]);
 	}
 
@@ -2575,38 +2575,38 @@ void ofMeshFace::calculateFaceNormal() const{
     bFaceNormalDirty = false;
 }
 
-void ofMeshFace::setVertex( int index, const ofVec3f& v ) {
+void ofMeshFace::setVertex( ofIndexType index, const ofVec3f& v ) {
     vertices[index].set( v );
     bFaceNormalDirty = true;
 }
 
-const ofVec3f& ofMeshFace::getVertex( int index ) const{
+const ofVec3f& ofMeshFace::getVertex( ofIndexType index ) const{
     return vertices[index];
 }
 
-void ofMeshFace::setNormal( int index, const ofVec3f& n ) {
+void ofMeshFace::setNormal( ofIndexType index, const ofVec3f& n ) {
     normals[index] = n;
     bHasNormals = true;
 }
 
-const ofVec3f& ofMeshFace::getNormal( int index ) const{
+const ofVec3f& ofMeshFace::getNormal( ofIndexType index ) const{
     return normals[ index ];
 }
 
-void ofMeshFace::setColor( int index, const ofFloatColor& color ) {
+void ofMeshFace::setColor( ofIndexType index, const ofFloatColor& color ) {
     colors[index] = color;
     bHasColors = true;
 }
 
-const ofFloatColor& ofMeshFace::getColor(int index) const{
+const ofFloatColor& ofMeshFace::getColor( ofIndexType index) const{
     return colors[index];
 }
 
-void ofMeshFace::setTexCoord( int index, const ofVec2f& tCoord ) {
+void ofMeshFace::setTexCoord( ofIndexType index, const ofVec2f& tCoord ) {
     texCoords[index] = tCoord;
     bHasTexcoords = true;
 }
-const ofVec2f& ofMeshFace::getTexCoord( int index ) const{
+const ofVec2f& ofMeshFace::getTexCoord( ofIndexType index ) const{
     return texCoords[index];
 }
 
