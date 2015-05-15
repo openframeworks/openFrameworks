@@ -586,6 +586,7 @@ protected:
     /// \cond INTERNAL
     void changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageType type);
     void resizePixels(ofPixels_<PixelType> &pix, int newWidth, int newHeight);
+    void unloadTexture();
     
     ofPixels_<PixelType> pixels;
     bool bUseTexture;

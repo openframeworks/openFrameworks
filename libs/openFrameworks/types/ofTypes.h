@@ -3,7 +3,12 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 
-#if (_MSC_VER) || ((defined(TARGET_EMSCRIPTEN) || defined(TARGET_LINUX) || defined(TARGET_ANDROID)) && __cplusplus>=201103L)
+#if (_MSC_VER) \
+	|| ((defined(TARGET_EMSCRIPTEN) \
+	|| defined(TARGET_OF_IOS) \
+	|| defined(TARGET_LINUX) \
+	|| defined(TARGET_OSX) \
+) && __cplusplus>=201103L)
 #include <memory>
 #else
 #include <tr1/memory>
@@ -286,6 +291,9 @@ public:
 	/// \brief The video device hardware name.
 	string hardwareName;
 
+	/// \brief Unique identifier for the device if it has one. 
+	string serialID;
+
 	/// \brief A list of video device formats provided by the device.
 	/// \sa ofVideoFormat
 	vector<ofVideoFormat> formats;
@@ -345,7 +353,7 @@ public:
 	template<typename Tp1>
 	ofPtr(const ofPtr<Tp1>& __r, std::_Dynamic_tag)
 	: std::shared_ptr<T>(__r, std:::_Dynamic_tag()) { }
-#elif !defined(TARGET_EMSCRIPTEN) && !defined(TARGET_LINUX)
+#elif !defined(TARGET_EMSCRIPTEN) && !defined(TARGET_LINUX) && !defined(TARGET_OF_IOS)
 	template<typename Tp1>
 	ofPtr(const ofPtr<Tp1>& __r, std::__dynamic_cast_tag)
 	: std::shared_ptr<T>(__r, std::__dynamic_cast_tag()) { }
@@ -367,7 +375,7 @@ template<typename _Tp, typename _Tp1>
 ofPtr<_Tp>
 	dynamic_pointer_cast(const ofPtr<_Tp1>& __r)
 { return ofPtr<_Tp>(__r, std::_Dynamic_tag()); }
-#elif !defined(TARGET_EMSCRIPTEN) && !defined(TARGET_LINUX)
+#elif !defined(TARGET_EMSCRIPTEN) && !defined(TARGET_LINUX) && !defined(TARGET_OF_IOS)
 template<typename _Tp, typename _Tp1>
 ofPtr<_Tp>
 	dynamic_pointer_cast(const ofPtr<_Tp1>& __r)

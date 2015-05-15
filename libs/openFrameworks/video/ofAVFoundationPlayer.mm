@@ -9,18 +9,8 @@
 #import "ofAVFoundationVideoPlayer.h"
 
 //--------------------------------------------------------------
-#ifdef TARGET_OF_IOS
-CVOpenGLESTextureCacheRef _videoTextureCache = NULL;
-CVOpenGLESTextureRef _videoTextureRef = NULL;
-#endif
-
-#ifdef TARGET_OSX
-CVOpenGLTextureCacheRef _videoTextureCache = NULL;
-CVOpenGLTextureRef _videoTextureRef = NULL;
-#endif
-
 ofAVFoundationPlayer::ofAVFoundationPlayer() {
-	videoPlayer = NULL;
+    videoPlayer = NULL;
     pixelFormat = OF_PIXELS_RGBA;
 	
     bFrameNew = false;
@@ -38,49 +28,69 @@ ofAVFoundationPlayer::ofAVFoundationPlayer() {
 
 //--------------------------------------------------------------
 ofAVFoundationPlayer::~ofAVFoundationPlayer() {
-	close();
+    close();
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::loadAsync(string name){
-	loadPlayer(name, true);
+    loadPlayer(name, true);
 }
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::load(string name) {
-	return loadPlayer(name, false);
+    return loadPlayer(name, false);
 }
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
+
+
+	// dispose videoplayer, clear pixels, clear texture
+	if(videoPlayer != NULL) {
+		
+		pixels.clear();
+		videoTexture.clear();
+		
+		// dispose videoplayer
+		disposePlayer();
+		
+		if (_videoTextureRef != NULL) {
+			killTexture();
+		}
+		
+		videoPlayer = NULL;
+	}
+	bFrameNew = false;
+
 	
-    if(videoPlayer == NULL) {
-        videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
-        [videoPlayer setWillBeUpdatedExternally:YES];
-    }
+    // create a new player
+    videoPlayer = [[ofAVFoundationVideoPlayer alloc] init];
+    [videoPlayer setWillBeUpdatedExternally:YES];
+
+
 	
     NSString * videoPath = [NSString stringWithUTF8String:name.c_str()];
-	NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
+    NSString * videoLocalPath = [NSString stringWithUTF8String:ofToDataPath(name).c_str()];
 
-	BOOL bStream = NO;
-	
-	bStream = bStream || (ofIsStringInString(name, "http://"));
-	bStream = bStream || (ofIsStringInString(name, "https://"));
-	bStream = bStream || (ofIsStringInString(name, "rtsp://"));
-	
-	NSURL * url = nil;
-	if(bStream == YES) {
-		url = [NSURL URLWithString:videoPath];
-	} else {
-		url = [NSURL fileURLWithPath:videoLocalPath];
-	}
-	
-	bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
+    BOOL bStream = NO;
+
+    bStream = bStream || (ofIsStringInString(name, "http://"));
+    bStream = bStream || (ofIsStringInString(name, "https://"));
+    bStream = bStream || (ofIsStringInString(name, "rtsp://"));
+
+    NSURL * url = nil;
+    if(bStream == YES) {
+        url = [NSURL URLWithString:videoPath];
+    } else {
+        url = [NSURL fileURLWithPath:videoLocalPath];
+    }
+
+    bool bLoaded = [videoPlayer loadWithURL:url async:bAsync];
 	
     bResetPixels = true;
     bUpdatePixels = true;
     bUpdateTexture = true;
-    
+
     bool bCreateTextureCache = true;
     bCreateTextureCache = bCreateTextureCache && (bTextureCacheSupported == true);
     bCreateTextureCache = bCreateTextureCache && (_videoTextureCache == NULL);
@@ -115,7 +125,7 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 #endif
         
         if(err) {
-            ofLogWarning("ofxiOSVideoPlayer") << "load(): error when creating texture cache, " << err;
+            ofLogWarning("ofAVFoundationPlayer") << "load(): error when creating texture cache, " << err << ".";
         }
     }
 	
@@ -123,22 +133,44 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 }
 
 //--------------------------------------------------------------
-void ofAVFoundationPlayer::close() {
-	if(videoPlayer != NULL) {
+void ofAVFoundationPlayer::disposePlayer() {
+	
+	if (videoPlayer == NULL)
+		return;
+	
+	// pause player, stop updates
+	[videoPlayer pause];
+	
+	// dispose videoplayer
+	__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
+	
+	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
 		
-		pixels.clear();
+		@autoreleasepool {
+			[currentPlayer autorelease];
+		}
+		
+	});
+}
+
+//--------------------------------------------------------------
+void ofAVFoundationPlayer::close() {
+    if(videoPlayer != NULL) {
+		
+        pixels.clear();
         
         videoTexture.clear();
+
+		disposePlayer();
 		
-        videoPlayer.delegate = nil;
-		[videoPlayer release];
-        
-        if(bTextureCacheSupported == true) {
-            killTextureCache();
-        }
+		videoPlayer = NULL;
+    }
+	
+	// in any case get rid of the textures
+	if(bTextureCacheSupported == true) {
+		killTextureCache();
 	}
-	videoPlayer = NULL;
-    
+	
     bFrameNew = false;
     bResetPixels = false;
     bUpdatePixels = false;
@@ -152,7 +184,7 @@ bool ofAVFoundationPlayer::setPixelFormat(ofPixelFormat value) {
     bValid = bValid || (value == OF_PIXELS_RGBA);
     
     if(bValid == false) {
-        ofLogWarning("ofxiOSVideoPlayer") << "setPixelFormat(): unsupported ofPixelFormat, " << value;
+        ofLogWarning("ofAVFoundationPlayer") << "setPixelFormat(): unsupported ofPixelFormat, " << value << ".";
         return false;
     }
     
@@ -163,12 +195,12 @@ bool ofAVFoundationPlayer::setPixelFormat(ofPixelFormat value) {
     pixelFormat = value;
     bResetPixels = true;
     
-	return true;
+    return true;
 }
 
 //--------------------------------------------------------------
 ofPixelFormat ofAVFoundationPlayer::getPixelFormat() const{
-	return pixelFormat;
+    return pixelFormat;
 }
 
 //--------------------------------------------------------------
@@ -209,16 +241,18 @@ void ofAVFoundationPlayer::draw(const ofRectangle & rect) {
 }
 
 void ofAVFoundationPlayer::draw(float x, float y, float w, float h) {
-    getTexturePtr()->draw(x, y, w, h);
+	if(videoPlayer != NULL) {
+		getTexturePtr()->draw(x, y, w, h);
+	}
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::play() {
     if(videoPlayer == NULL) {
-        ofLogWarning("ofxiOSVideoPlayer") << "play(): video not loaded";
+        ofLogWarning("ofAVFoundationPlayer") << "play(): video not loaded.";
     }
     
-	[videoPlayer play];
+    [videoPlayer play];
 }
 
 //--------------------------------------------------------------
@@ -246,7 +280,7 @@ const ofPixels & ofAVFoundationPlayer::getPixels() const {
 
 ofPixels & ofAVFoundationPlayer::getPixels() {
     if(isLoaded() == false) {
-        ofLogError("ofxiOSVideoPlayer") << "getPixels(): Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixels.";
+        ofLogError("ofAVFoundationPlayer") << "getPixels(): Returning pixels that may be unallocated. Make sure to initialize the video player before calling getPixels.";
         return pixels;
     }
     
@@ -307,7 +341,7 @@ ofPixels & ofAVFoundationPlayer::getPixels() {
 #ifdef __IPHONE_6_0
             err = vImageConvert_BGRA8888toRGB888(&src, &dest, 0);
 #else
-            ofLogError("ofxiOSVideoPlayer") << "getPixels(): OF_PIXELS_RGB is not supported, use setPixelFormat() to set the pixel format to OF_PIXELS_RGBA";
+            ofLogError("ofAVFoundationPlayer") << "getPixels(): OF_PIXELS_RGB is not supported, use setPixelFormat() to set the pixel format to OF_PIXELS_RGBA.";
 #endif
         }
     }
@@ -315,7 +349,7 @@ ofPixels & ofAVFoundationPlayer::getPixels() {
     CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
     
     if(err != kvImageNoError) {
-        ofLogError("ofxiOSVideoPlayer") << "getPixels(): error in pixel copy, vImage_error = " << err;
+        ofLogError("ofAVFoundationPlayer") << "getPixels(): error in pixel copy, vImage_error = " << err << ".";
     }
     
     bUpdatePixels = false;
@@ -350,7 +384,7 @@ ofTexture * ofAVFoundationPlayer::getTexturePtr() {
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
         
         if(getWidth() > maxTextureSize || getHeight() > maxTextureSize) {
-            ofLogWarning("ofxiOSVideoPlayer") << "getTexturePtr(): " << getWidth() << "x" << getHeight() << " video image is bigger then max supported texture size " << maxTextureSize;
+            ofLogWarning("ofAVFoundationPlayer") << "getTexturePtr(): " << getWidth() << "x" << getHeight() << " video image is bigger then max supported texture size " << maxTextureSize << ".";
             return NULL;
         }
         
@@ -444,7 +478,7 @@ void ofAVFoundationPlayer::initTextureCache() {
     }
     
     if(err) {
-        ofLogError("ofxiOSVideoPlayer") << "initTextureCache(): error creating texture cache from image " << err;
+        ofLogError("ofAVFoundationPlayer") << "initTextureCache(): error creating texture cache from image " << err << ".";
     }
     
     CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
@@ -470,28 +504,32 @@ void ofAVFoundationPlayer::initTextureCache() {
 #endif
 }
 
-void ofAVFoundationPlayer::killTextureCache() {
+void ofAVFoundationPlayer::killTexture() {
 #ifdef TARGET_OF_IOS
-    
-    if(_videoTextureRef) {
-        CFRelease(_videoTextureRef);
-        _videoTextureRef = NULL;
-    }
+	if(_videoTextureRef) {
+		CFRelease(_videoTextureRef);
+		_videoTextureRef = NULL;
+	}
+#elif defined TARGET_OSX
+	if (_videoTextureRef != NULL) {
+		CVOpenGLTextureRelease(_videoTextureRef);
+		_videoTextureRef = NULL;
+	}
+#endif
+}
 
+void ofAVFoundationPlayer::killTextureCache() {
+	
+	killTexture();
+	
+#ifdef TARGET_OF_IOS
     if(_videoTextureCache) {
         CFRelease(_videoTextureCache);
         _videoTextureCache = NULL;
     }
-    
 #endif
     
 #ifdef TARGET_OSX
-    
-    if (_videoTextureRef != NULL) {
-        CVOpenGLTextureRelease(_videoTextureRef);
-        _videoTextureRef = NULL;
-    }
-    
     if(_videoTextureCache != NULL) {
         CVOpenGLTextureCacheRelease(_videoTextureCache);
         _videoTextureCache = NULL;
@@ -609,7 +647,7 @@ void ofAVFoundationPlayer::setVolume(float volume) {
         return;
     }
 	if(volume > 1.0) {
-		ofLogWarning("ofxiOSVideoPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0";
+		ofLogWarning("ofAVFoundationPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0.";
 		volume = 1.0;
 	}
     [videoPlayer setVolume:volume];

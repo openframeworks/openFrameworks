@@ -70,6 +70,9 @@ CORE
 	/ ofImage::saveImage() -> save()
 	+ ofBeginSaveScreenAsSVG
 
+### sound
+	/ ofFmodSoundPlayer: fix for file handles not being closed
+
 ### utils
 	/ better timming in fps calculation
 	+ ofFpsCounter allows to easily meassure the fps of any element
@@ -86,6 +89,7 @@ CORE
 	/ gstreamer: faster reload by default and optional asynchronous load
 	/ ofVideoPlayer::loadMovie() -> load()
 	/ ofVideoGrabber::initGrabber() -> setup()
+
 
 PLATFORM SPECIFIC
 -----------------

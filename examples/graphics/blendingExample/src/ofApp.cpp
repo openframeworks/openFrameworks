@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	 
-    sprintf(eventString, "Alpha"); 
+    eventString = "Alpha";
 
 	vagRounded.load("vag.ttf", 32);
 	ofBackground(50,50,50);	
@@ -21,7 +21,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 	
-    sprintf(timeString, "Press 1 - 5 to switch blend modes");
+    timeString = "Press 1 - 5 to switch blend modes";
 	
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     
@@ -54,23 +54,23 @@ void ofApp::keyPressed  (int key){
     switch (key) {
         case 49:
             blendMode = OF_BLENDMODE_ALPHA;
-            sprintf(eventString, "Alpha"); 
+            eventString = "Alpha";
             break;
         case 50:
             blendMode = OF_BLENDMODE_ADD;
-            sprintf(eventString, "Add"); 
+            eventString = "Add";
             break;
         case 51:
             blendMode = OF_BLENDMODE_MULTIPLY;
-            sprintf(eventString, "Multiply"); 
+            eventString = "Multiply";
             break;
         case 52:
             blendMode = OF_BLENDMODE_SUBTRACT;
-            sprintf(eventString, "Subtract"); 
+            eventString = "Subtract";
             break;
         case 53:
             blendMode = OF_BLENDMODE_SCREEN;
-            sprintf(eventString, "Screen"); 
+            eventString = "Screen";
             break;
         default:
             break;

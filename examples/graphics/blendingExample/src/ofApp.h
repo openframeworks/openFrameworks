@@ -26,7 +26,7 @@ class ofApp : public ofBaseApp{
         ofBlendMode blendMode;
         ofImage rainbow;
 		ofTrueTypeFont 	vagRounded;
-		char eventString[255];
-		char timeString[255];
+        string eventString;
+        string timeString;
 };
 

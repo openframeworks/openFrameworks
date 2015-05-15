@@ -271,7 +271,7 @@ private:
 	const ofShader * currentShader;
 
 	bool verticesEnabled, colorsEnabled, texCoordsEnabled, normalsEnabled, bitmapStringEnabled;
-	bool usingCustomShader, settingDefaultShader;
+	bool usingCustomShader, settingDefaultShader, usingVideoShader;
 	int currentTextureTarget;
 
 	bool wrongUseLoggedOnce;

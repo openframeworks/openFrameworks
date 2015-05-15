@@ -50,7 +50,7 @@
 -(IBAction)adjustPoints:(id)sender{
 	
 	UISlider * slider = sender;
-	printf("slider value is - %f\n", [slider value]);
+	cout << "slider value is - "  << [slider value] << "\n";
 	
 	myApp->numPoints = 3 + [slider value] * 28;
 	

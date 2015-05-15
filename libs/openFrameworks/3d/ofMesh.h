@@ -326,7 +326,7 @@ public:
     /// \{
 
 	/// \returns the vector that contains all of the faces of the mesh. This isn't currently implemented.
-	vector<int>& getFace(int faceId);
+    ofMeshFace getFace(int faceId) const;
 
     /// \brief Get normals for each face
     /// As a default it only calculates the normal for the face as a whole but 

@@ -1199,6 +1199,7 @@
 		BB24DED310DA7A3F00E9C588 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
@@ -1224,6 +1225,7 @@
 		BB24DED410DA7A3F00E9C588 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = NO;
@@ -1250,6 +1252,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E41D3E9113B38BE900A75A5D /* Debug.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/debug/";
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
@@ -1259,7 +1262,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SYMROOT = "$(SRCROOT)/../../lib/ios/";
-				VALID_ARCHS = armv7;
+				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",
@@ -1271,6 +1274,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E41D3E9213B38BE900A75A5D /* Release.xcconfig */;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../lib/ios/";
 				CONFIGURATION_TEMP_DIR = "$(SRCROOT)/../../lib/ios/build/release/";
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
@@ -1280,7 +1284,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SYMROOT = "$(SRCROOT)/../../lib/ios/";
-				VALID_ARCHS = armv7;
+				VALID_ARCHS = "$(ARCHS_STANDARD)";
 				WARNING_CFLAGS = (
 					"-Wno-non-virtual-dtor",
 					"-Wno-overloaded-virtual",

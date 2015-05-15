@@ -97,6 +97,7 @@ static void get_video_devices (ofGstCamData & cam_data)
 		struct video_capability v1cap;
 		string vendor_id;
 		string product_id;
+		string serial_id;
 
 		const char * dev_node = udev_device_get_devnode(device);
 		struct udev_list_entry * properties = udev_device_get_properties_list_entry(device);
@@ -110,6 +111,10 @@ static void get_video_devices (ofGstCamData & cam_data)
 
 			if(strcmp(name,"ID_MODEL_ID")==0){
 				product_id = udev_list_entry_get_value(property);
+			}
+
+			if(strcmp(name,"ID_SERIAL")==0){
+				serial_id = udev_list_entry_get_value(property);;
 			}
 
 		}
@@ -170,6 +175,7 @@ static void get_video_devices (ofGstCamData & cam_data)
 		gst_device.video_device = dev_node;
 		gst_device.gstreamer_src = gstreamer_src;
 		gst_device.product_name = product_name;
+		gst_device.serial_id = serial_id;
 		cam_data.webcam_devices.push_back(gst_device);
 		/*cam_data.webcam_devices[cam_data.num_webcam_devices].video_device      = dev_node;
 		cam_data.webcam_devices[cam_data.num_webcam_devices].gstreamer_src     = gstreamer_src;
@@ -637,6 +643,7 @@ vector<ofVideoDevice> ofGstVideoGrabber::listDevices() const {
         devices[i].bAvailable = true; 
 		devices[i].deviceName = camData.webcam_devices[i].product_name;
 		devices[i].hardwareName = camData.webcam_devices[i].video_device;
+		devices[i].serialID = camData.webcam_devices[i].serial_id;
 		devices[i].formats.resize(camData.webcam_devices[i].video_formats.size());
 		for(int j=0;j<(int)camData.webcam_devices[i].video_formats.size();j++){
 			devices[i].formats[j].pixelFormat = ofPixelFormatFromGstFormat(camData.webcam_devices[i].video_formats[j].format_name);
@@ -733,11 +740,7 @@ bool ofGstVideoGrabber::setup(int w, int h){
 	string format_str_pipeline;
 	string fix_v4l2_316;
 #if defined(TARGET_LINUX) && !defined(OF_USE_GST_GL) && GST_VERSION_MAJOR>0 && GST_VERSION_MINOR>2
-	struct utsname uname_info;
-	if(fix_v4l2_316=="" && uname(&uname_info)==0 && string(uname_info.release).substr(0,4)=="3.16"){
-		ofLogWarning() << "detected linux " << uname_info.release << " adding videorate to pipeline to solve https://bugzilla.gnome.org/show_bug.cgi?id=737427";
-		fix_v4l2_316 = " ! videorate skip-to-first=true drop-only=true max-rate=10000";
-	}
+	videoUtils.setCopyPixels(true);
 #endif
 	if(internalPixelFormat!=OF_PIXELS_NATIVE){
 		string decodebin, scale;
