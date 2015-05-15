@@ -326,7 +326,7 @@ public:
     /// \{
 
 	/// \returns the vector that contains all of the faces of the mesh. This isn't currently implemented.
-    ofMeshFace getFace(int faceId) const;
+    ofMeshFace getFace(ofIndexType faceId) const;
 
     /// \brief Get normals for each face
     /// As a default it only calculates the normal for the face as a whole but 
@@ -567,12 +567,12 @@ public:
     virtual void disableIndices();
     virtual bool usingIndices() const;
 
-    void setColorForIndices( int startIndex, int endIndex, ofColor color );
+    void setColorForIndices( ofIndexType startIndex, ofIndexType endIndex, ofColor color );
 
     /// The new mesh includes the mesh mode, colors, textures, and normals of the original mesh (assuming any were added).
     /// \returns a mesh made up of a range of indices from startIndex to the endIndex. 
-    ofMesh getMeshForIndices( int startIndex, int endIndex ) const;
-    ofMesh getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const;
+    ofMesh getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex ) const;
+    ofMesh getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex, ofIndexType startVertIndex, ofIndexType endVertIndex ) const;
     
 	
 	/// \}
