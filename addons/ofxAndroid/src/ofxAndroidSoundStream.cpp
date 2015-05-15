@@ -31,12 +31,18 @@ ofxAndroidSoundStream::ofxAndroidSoundStream(){
 	totalOutRequestedBufferSize = totalInRequestedBufferSize = 0;
 	tickCount = 0;
 	headphonesConnected = false;
+
+	ofAddListener(ofxAndroidEvents().pause,this,&ofxAndroidSoundStream::pause);
+	ofAddListener(ofxAndroidEvents().resume,this,&ofxAndroidSoundStream::resume);
 }
 
 ofxAndroidSoundStream::~ofxAndroidSoundStream(){
 	if(instance==this){
 		instance = NULL;
 	}
+
+	ofRemoveListener(ofxAndroidEvents().pause,this,&ofxAndroidSoundStream::pause);
+	ofRemoveListener(ofxAndroidEvents().resume,this,&ofxAndroidSoundStream::resume);
 }
 
 vector<ofSoundDevice> ofxAndroidSoundStream::getDeviceList() const{
@@ -323,18 +329,6 @@ int ofxAndroidSoundStream::getMinInBufferSize(int samplerate, int nchannels) con
 
 bool ofxAndroidSoundStream::isHeadPhonesConnected() const{
 	return headphonesConnected;
-}
-
-void ofxAndroidSoundStreamPause(){
-	if(instance){
-		instance->pause();
-	}
-}
-
-void ofxAndroidSoundStreamResume(){
-	if(instance){
-		instance->resume();
-	}
 }
 
 extern "C"{

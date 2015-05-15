@@ -3,7 +3,7 @@
 //
 // Design and implementation by
 // - Floris van den Berg (flvdberg@wxs.nl)
-// - HervŽ Drolon (drolon@infonie.fr)
+// - Hervé Drolon (drolon@infonie.fr)
 //
 // Contributors:
 // - see changes log named 'Whatsnew.txt', see header of each .h and .cpp file
@@ -30,7 +30,7 @@
 
 #define FREEIMAGE_MAJOR_VERSION   3
 #define FREEIMAGE_MINOR_VERSION   15
-#define FREEIMAGE_RELEASE_SERIAL  3
+#define FREEIMAGE_RELEASE_SERIAL  4
 
 // Compiler options ---------------------------------------------------------
 
@@ -136,28 +136,28 @@ FI_STRUCT (FIMULTIBITMAP) { void *data; };
 #ifndef _MSC_VER
 // define portable types for 32-bit / 64-bit OS
 #include <inttypes.h>
-#define BOOL int32_t
-#define BYTE uint8_t
-#define WORD uint16_t
-#define DWORD uint32_t
-#define LONG int32_t
-#define FIINT64 int64_t
-#define FIUINT64 uint64_t
+typedef int32_t BOOL;
+typedef uint8_t BYTE;
+typedef uint16_t WORD;
+typedef uint32_t DWORD;
+typedef int32_t LONG;
+typedef int64_t INT64;
+typedef uint64_t UINT64;
 #else
 // MS is not C99 ISO compliant
-#define BOOL long
-#define BYTE unsigned char
-#define WORD unsigned short
-#define DWORD unsigned long
-#define LONG long
-#define FIINT64 signed __int64
-#define FIUINT64 unsigned __int64 
+typedef long BOOL;
+typedef unsigned char BYTE;
+typedef unsigned short WORD;
+typedef unsigned long DWORD;
+typedef long LONG;
+typedef signed __int64 INT64;
+typedef unsigned __int64 UINT64;
 #endif // _MSC_VER
 
 #if (defined(_WIN32) || defined(__WIN32__))
 #pragma pack(push, 1)
 #else
-#pragma pack(1)	  	
+#pragma pack(1)
 #endif // WIN32
 
 typedef struct tagRGBQUAD {
@@ -649,7 +649,7 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 
 // Load / Save flag constants -----------------------------------------------
 
-#define FIF_LOAD_NOPIXELS 0x8000 // loading: load the image header only (not supported by all plugins)
+#define FIF_LOAD_NOPIXELS 0x8000 // loading: load the image header only (not supported by all plugins, default to full loading)
 
 #define BMP_DEFAULT         0
 #define BMP_SAVE_RLE        1
@@ -678,6 +678,7 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 #define JPEG_ACCURATE       0x0002	// load the file with the best quality, sacrificing some speed
 #define JPEG_CMYK			0x0004	// load separated CMYK "as is" (use | to combine with other load flags)
 #define JPEG_EXIFROTATE		0x0008	// load and rotate according to Exif 'Orientation' tag if available
+#define JPEG_GREYSCALE		0x0010	// load and convert to a 8-bit greyscale image
 #define JPEG_QUALITYSUPERB  0x80	// save with superb quality (100:1)
 #define JPEG_QUALITYGOOD    0x0100	// save with good quality (75:1)
 #define JPEG_QUALITYNORMAL  0x0200	// save with normal quality (50:1)
@@ -1099,13 +1100,5 @@ DLL_API FIBITMAP *DLL_CALLCONV FreeImage_MultigridPoissonSolver(FIBITMAP *Laplac
 #ifdef __cplusplus
 }
 #endif
-
-#undef BOOL
-#undef BYTE
-#undef WORD
-#undef DWORD
-#undef LONG
-#undef FIINT64
-#undef FIUINT64
 
 #endif // FREEIMAGE_H

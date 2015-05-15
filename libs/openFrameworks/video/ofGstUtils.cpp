@@ -21,6 +21,10 @@
 #include <gst/gl/x11/gstgldisplay_x11.h>
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
+#ifdef TARGET_WIN32
+#include <winbase.h>	// to use SetEnvironmentVariableA
+#endif
+
 
 ofGstUtils::ofGstMainLoopThread * ofGstUtils::mainLoop;
 
@@ -118,7 +122,9 @@ ofGstUtils::ofGstUtils() {
 	if(!gst_inited){
 #ifdef TARGET_WIN32
 		string gst_path = g_getenv("GSTREAMER_1_0_ROOT_X86");
-		putenv(("GST_PLUGIN_PATH_1_0=" + ofFilePath::join(gst_path, "lib\\gstreamer-1.0") + ";.").c_str());
+		//putenv(("GST_PLUGIN_PATH_1_0=" + ofFilePath::join(gst_path, "lib\\gstreamer-1.0") + ";.").c_str());
+		// to make it compatible with gcc and C++11 standard
+		SetEnvironmentVariableA("GST_PLUGIN_PATH_1_0", ofFilePath::join(gst_path, "lib\\gstreamer-1.0").c_str());
 #endif
 		gst_init (NULL, NULL);
 		gst_inited=true;
@@ -174,7 +180,7 @@ bool ofGstUtils::setPipelineWithSink(string pipeline, string sinkname, bool isSt
 
 	GError * error = NULL;
 	gstPipeline = gst_parse_launch (pipeline.c_str(), &error);
-
+	g_object_ref_sink(gstPipeline);
 	ofLogNotice("ofGstUtils") << "setPipelineWithSink(): gstreamer pipeline: " << pipeline;
 
 	if(error!=NULL){
@@ -634,18 +640,16 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 											GST_SEEK_TYPE_SET,
 											0,
 											GST_SEEK_TYPE_SET,
-											durationNanos)) {
+											-1)) {
 							ofLogWarning("ofGstUtils") << "gstHandleMessage(): unable to seek";
 						}
 					}else if(speed<0){
-						if(!gst_element_seek(GST_ELEMENT(gstPipeline),
-											speed,
-											format,
-											flags,
-											GST_SEEK_TYPE_SET,
-											durationNanos,
-											GST_SEEK_TYPE_NONE,
-											0)) {
+						if(!gst_element_seek(GST_ELEMENT(gstPipeline),speed, 	format,
+								flags,
+								GST_SEEK_TYPE_SET,
+								0,
+								GST_SEEK_TYPE_SET,
+								durationNanos-1000000)) {
 							ofLogWarning("ofGstUtils") << "gstHandleMessage(): unable to seek";
 						}
 					}
@@ -778,6 +782,7 @@ ofGstVideoUtils::ofGstVideoUtils(){
 	glDisplay = NULL;
 	glContext = NULL;
 #endif
+	copyPixels = false;
 }
 
 ofGstVideoUtils::~ofGstVideoUtils(){
@@ -841,7 +846,9 @@ void ofGstVideoUtils::update(){
 					frontTexture.setTextureWrap(GL_CLAMP_TO_EDGE,GL_CLAMP_TO_EDGE);
 				}
 				#endif
-				frontBuffer = backBuffer;
+				if(!copyPixels){
+					frontBuffer = backBuffer;
+				}
 			}
 		}else{
 #if GST_VERSION_MAJOR==0
@@ -1053,6 +1060,10 @@ gboolean ofGstVideoUtils::sync_bus_call (GstBus * bus, GstMessage * msg, gpointe
 	return FALSE;
 }*/
 
+void ofGstVideoUtils::setCopyPixels(bool copy){
+	copyPixels = copy;
+}
+
 bool ofGstVideoUtils::setPipeline(string pipeline, ofPixelFormat pixelFormat, bool isStream, int w, int h){
 	internalPixelFormat = pixelFormat;
 #ifndef OF_USE_GST_GL
@@ -1157,7 +1168,7 @@ bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 	Poco::ScopedLock<ofMutex> lock(mutex);
 #if GST_VERSION_MAJOR>0
 	if(pixelFormat!=internalPixelFormat){
-		ofLogNotice("ofGstVideoPlayer") << "allocating with " << w << "x" << h << " " << getGstFormatName(pixelFormat);
+		ofLogNotice("ofGstVideoUtils") << "allocating with " << w << "x" << h << " " << getGstFormatName(pixelFormat);
 	}
 #endif
 	pixels.allocate(w,h,pixelFormat);
@@ -1167,7 +1178,6 @@ bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 
 	bHavePixelsChanged = false;
 	bBackPixelsChanged = true;
-
 
 	internalPixelFormat = pixelFormat;
 	return pixels.isAllocated();
@@ -1293,14 +1303,18 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 		}
 	}
 	mutex.lock();
-	backBuffer = sample;
+	if(!copyPixels){
+		backBuffer = sample;
+	}
 
 	if(pixels.isAllocated()){
 		if(stride > 0) {
 			backPixels.setFromAlignedPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
-		} else {
+		} else if(!copyPixels){
 			backPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 			eventPixels.setFromExternalPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+		}else{
+			backPixels.setFromPixels(mapinfo.data,pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
 		}
 
 		bBackPixelsChanged=true;

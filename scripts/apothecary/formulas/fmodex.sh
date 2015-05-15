@@ -60,6 +60,8 @@ function copy() {
 		# library files
 		cp -Rv lib/libfmodex.dylib $1/lib/$TYPE/
 	fi
+
+	echoWarning "TODO: Copy License"
 }
 
 # executed inside the lib src dir

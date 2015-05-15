@@ -1,17 +1,21 @@
 package cc.openframeworks;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.View;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
 
-class OFGestureListener extends SimpleOnGestureListener implements OnClickListener {
+class OFGestureListener extends SimpleOnGestureListener implements OnClickListener, OnScaleGestureListener {
 	
 
 	OFGestureListener(Activity activity){
 		gestureDetector = new GestureDetector(activity,this);
+		scaleDetector = new ScaleGestureDetector(activity, this);
         touchListener = new View.OnTouchListener() {
         	
             public boolean onTouch(View v, MotionEvent event) {
@@ -45,12 +49,13 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
                 	OFAndroid.onTouchCancelled(pointerId,event.getX(),event.getY());
                 	break;
                 }
-                return gestureDetector.onTouchEvent(event);
+                return gestureDetector.onTouchEvent(event) || scaleDetector.onTouchEvent(event);
             }
             
         };
 	}
 	
+	// Gesture listener
 	public void onClick(View view) {
 	}
 
@@ -133,8 +138,25 @@ class OFGestureListener extends SimpleOnGestureListener implements OnClickListen
 	public boolean onSingleTapUp(MotionEvent event) {
 		return super.onSingleTapUp(event);
 	}
+	
+	// Scale listener
+	@Override
+	public boolean onScale(ScaleGestureDetector detector) {
+		return OFAndroid.onScale(detector);
+	}
+
+	@Override
+	public boolean onScaleBegin(ScaleGestureDetector detector) {
+		return OFAndroid.onScaleBegin(detector);
+	}
+
+	@Override
+	public void onScaleEnd(ScaleGestureDetector detector) {
+		OFAndroid.onScaleEnd(detector);
+	}
 
     private GestureDetector gestureDetector;
+    private ScaleGestureDetector scaleDetector;
     View.OnTouchListener touchListener;
     public static int swipe_Min_Distance = 100;
     public static int swipe_Max_Distance = 350;

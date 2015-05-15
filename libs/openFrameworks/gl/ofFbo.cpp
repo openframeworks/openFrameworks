@@ -9,6 +9,9 @@
 #ifdef TARGET_OPENGLES
 #include <dlfcn.h>
 #endif
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
 
 
 /*
@@ -362,6 +365,9 @@ void ofFbo::clear() {
 	}
 	colorBuffers.clear();
 	bIsAllocated = false;
+#ifdef TARGET_ANDROID
+	ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofFbo::reloadFbo);
+#endif
 }
 
 void ofFbo::destroy() {
@@ -578,6 +584,15 @@ void ofFbo::allocate(Settings _settings) {
 	if(settings != _settings) ofLogWarning("ofFbo") << "allocation not complete, passed settings not equal to created ones, this is an internal OF bug";
     
     */
+#ifdef TARGET_ANDROID
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofFbo::reloadFbo);
+#endif
+}
+
+void ofFbo::reloadFbo(){
+	if(bIsAllocated){
+		allocate(settings);
+	}
 }
 
 bool ofFbo::isAllocated() const {
@@ -901,7 +916,7 @@ void ofFbo::readToPixels(ofFloatPixels & pixels, int attachmentPoint) const{
 	pixels.allocate(settings.width,settings.height,ofGetImageTypeFromGLType(settings.internalformat));
 	bind();
 	int format = ofGetGLFormatFromInternal(settings.internalformat);
-	glReadPixels(0,0,settings.width, settings.height, format, GL_FLOAT, pixels.getPixels());
+	glReadPixels(0,0,settings.width, settings.height, format, GL_FLOAT, pixels.getData());
 	unbind();
 #endif
 }

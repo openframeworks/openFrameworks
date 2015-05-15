@@ -16,7 +16,7 @@ public:
 	~ofxEmscriptenVideoPlayer();
 
 	//needs implementing
-	bool				loadMovie(string name);
+	bool				load(string name);
 	void				close();
 	void				update();
 

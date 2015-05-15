@@ -272,7 +272,7 @@ void ofPixels_<PixelType>::set(int channel,PixelType val){
 template<typename PixelType>
 void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, int channels){
 	allocate(w, h, channels);
-	memcpy(pixels, newPixels, w * h * getBytesPerPixel());
+	memcpy(pixels, newPixels, getTotalBytes());
 }
 
 template<typename PixelType>
@@ -284,7 +284,7 @@ void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int
 template<typename PixelType>
 void ofPixels_<PixelType>::setFromPixels(const PixelType * newPixels, int w, int h, ofPixelFormat format){
 	allocate(w,h,format);
-	memcpy(pixels, newPixels, w * h * getBytesPerPixel());
+	memcpy(pixels, newPixels, getTotalBytes());
 }
 
 
@@ -322,7 +322,7 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 		return;
 	}
 	allocate(width, height, _pixelFormat);
-	int dstStride = width * getBytesPerPixel();
+	int dstStride = width * pixelBytesFromPixelFormat<PixelType>(_pixelFormat);
 	const unsigned char* src = (unsigned char*) newPixels;
 	unsigned char* dst =  (unsigned char*) pixels;
 	for(int i = 0; i < height; i++) {
@@ -977,8 +977,9 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 
 	if(rotation == 1){
 		PixelType * srcPixels = pixels;
-		PixelType * startPixels = dst.getData() + (strideDst - channels);
-		for (int i = 0; i < height; ++i, --startPixels){
+		PixelType * startPixels = dst.getData() + strideDst;
+		for (int i = 0; i < height; ++i){
+			startPixels -= channels;
 			PixelType * dstPixels = startPixels;
 			for (int j = 0; j < width; ++j){
 				for (int k = 0; k < channels; ++k){
@@ -990,8 +991,9 @@ void ofPixels_<PixelType>::rotate90To(ofPixels_<PixelType> & dst, int nClockwise
 		}
 	} else if(rotation == 3){
 		PixelType * dstPixels = dst.pixels;
-		PixelType * startPixels = pixels + (strideSrc - channels);
-		for (int i = 0; i < dst.height; ++i, --startPixels){
+		PixelType * startPixels = pixels + strideSrc;
+		for (int i = 0; i < dst.height; ++i){
+			startPixels -= channels;
 			PixelType * srcPixels = startPixels;
 			for (int j = 0; j < dst.width; ++j){
 				for (int k = 0; k < channels; ++k){

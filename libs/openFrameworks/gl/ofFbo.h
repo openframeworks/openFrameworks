@@ -178,7 +178,7 @@ private:
 	bool				bIsAllocated;
 
 	mutable GLuint		previousFramebufferBinding;
-
+	void reloadFbo();
 #ifdef TARGET_OPENGLES
 	static bool bglFunctionsInitialized;
 #endif

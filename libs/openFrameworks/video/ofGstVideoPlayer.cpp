@@ -118,6 +118,7 @@ bool ofGstVideoPlayer::createPipeline(string name){
 	#else
 		GstElement * gstPipeline = gst_element_factory_make("playbin","player");
 	#endif
+	g_object_ref_sink(gstPipeline);
 	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
 
 	// create the oF appsink for video rgb without sync to clock
@@ -181,7 +182,7 @@ bool ofGstVideoPlayer::createPipeline(string name){
 }
 
 void ofGstVideoPlayer::loadAsync(string name){
-	bIsStream = true;
+	bAsyncLoad = true;
 	load(name);
 }
 

@@ -179,6 +179,10 @@ public:
 #endif
 
 	bool			isInitialized() const;
+	
+	// copy pixels from gst buffer to avoid
+	// https://bugzilla.gnome.org/show_bug.cgi?id=737427
+	void setCopyPixels(bool copy);
 
 	// this events happen in a different thread
 	// do not use them for opengl stuff
@@ -212,13 +216,14 @@ private:
 	shared_ptr<GstBuffer> 	frontBuffer, backBuffer;
 #else
 	shared_ptr<GstSample> 	frontBuffer, backBuffer;
-	queue<shared_ptr<GstSample>> bufferQueue;
+	queue<shared_ptr<GstSample> > bufferQueue;
 	GstMapInfo mapinfo;
 	#ifdef OF_USE_GST_GL
 		ofTexture		frontTexture, backTexture;
 	#endif
 #endif
 	ofPixelFormat	internalPixelFormat;
+	bool copyPixels; // fix for certain versions bug with v4l2
 
 #ifdef OF_USE_GST_GL
 	GstGLDisplay *		glDisplay;

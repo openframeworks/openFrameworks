@@ -50,9 +50,9 @@ typedef struct FT_FaceRec_*  FT_Face;
 
 /// \name Fonts
 /// \{
-const static string OF_TTF_SANS = "sans-serif";
-const static string OF_TTF_SERIF = "serif";
-const static string OF_TTF_MONO = "monospace";
+static const string OF_TTF_SANS = "sans-serif";
+static const string OF_TTF_SERIF = "serif";
+static const string OF_TTF_MONO = "monospace";
 /// \}
 
 
@@ -281,9 +281,6 @@ public:
 	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=true, bool filled=true) const;
 	const ofMesh & getStringMesh(string s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
-
-	void bind();
-	void unbind();
 
 	/// \}
 	
