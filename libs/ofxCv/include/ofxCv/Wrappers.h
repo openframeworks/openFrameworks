@@ -379,7 +379,7 @@ cv::name(xMat, yMat, resultMat);\
 	void fillPoly(vector<cv::Point>& points, D& dst) {
 		cv::Mat dstMat = toCv(dst);
 		const cv::Point* ppt[1] = { &(points[0]) };
-		int npt[] = { points.size() };
+		int npt[] = { (int) points.size() };
 		dstMat.setTo(Scalar(0));
 		fillPoly(dstMat, ppt, npt, 1, Scalar(255));
 	}
@@ -422,6 +422,14 @@ cv::name(xMat, yMat, resultMat);\
 			cv::flip(dstMat, dstMat, 0);
 		}
 	}
+    
+    template <class S, class D>
+    void transpose(S& src, D& dst) {
+        Mat srcMat = toCv(src);
+        allocate(dst, srcMat.rows, srcMat.cols, srcMat.type());
+        Mat dstMat = toCv(dst);
+        cv::transpose(srcMat, dstMat);
+    }
 	
 	// finds the 3x4 matrix that best describes the (premultiplied) affine transformation between two point clouds
 	ofMatrix4x4 estimateAffine3D(vector<ofVec3f>& from, vector<ofVec3f>& to, float accuracy = .99);

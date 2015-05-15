@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxCv.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
 public:
@@ -16,6 +17,6 @@ public:
 	
 	ofxCv::Flow* curFlow;
 		
-    ofxGui gui;
+    ofxPanel gui;
 };
 
