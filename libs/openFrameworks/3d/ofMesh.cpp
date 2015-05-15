@@ -1099,7 +1099,7 @@ void ofMesh::save(string path, bool useBinary) const{
 }
 
 //----------------------------------------------------------
-void ofMesh::setColorForIndices( int startIndex, int endIndex, ofColor color ) {
+void ofMesh::setColorForIndices( ofIndexType startIndex, ofIndexType endIndex, ofColor color ) {
     if(!hasColors()) {
         // no colors for vertices, so we must set them here //
         getColors().resize( getNumVertices() );
