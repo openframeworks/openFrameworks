@@ -781,13 +781,13 @@ void ofMesh::load(string path){
 	int orderVertices=-1;
 	int orderIndices=-1;
 
-	int vertexCoordsFound=0;
-	int colorCompsFound=0;
-	int texCoordsFound=0;
-	int normalsCoordsFound=0;
+	ofIndexType vertexCoordsFound=0;
+	ofIndexType colorCompsFound=0;
+	ofIndexType texCoordsFound=0;
+	ofIndexType normalsCoordsFound=0;
 
-	int currentVertex = 0;
-	int currentFace = 0;
+	ofIndexType currentVertex = 0;
+	ofIndexType currentFace = 0;
 	
 	bool floatColor = false;
 
@@ -1762,7 +1762,7 @@ ofMesh ofMesh::icosahedron(float radius) {
 // http://code.google.com/p/ogre-procedural/source/browse/library/src/ProceduralIcoSphereGenerator.cpp
 // For the latest info, see http://code.google.com/p/ogre-procedural/ //
 //----------------------------------------------------------
-ofMesh ofMesh::icosphere(float radius, int iterations) {
+ofMesh ofMesh::icosphere(float radius, std::size_t iterations) {
     
     //ofMesh icosahedron = ofGetIcosahedronMesh( 1.f );
     ofMesh icosahedron = ofMesh::icosahedron( 1.f );
