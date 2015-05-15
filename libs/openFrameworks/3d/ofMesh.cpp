@@ -1024,7 +1024,7 @@ void ofMesh::save(string path, bool useBinary) const{
 		}
 	}
 
-	unsigned char faceSize = 3;
+	std::size_t faceSize = 3;
 	if(data.getNumIndices()){
 		os << "element face " << data.getNumIndices() / faceSize << endl;
 		os << "property list uchar int vertex_indices" << endl;
