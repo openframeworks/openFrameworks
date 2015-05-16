@@ -153,12 +153,16 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 		  arg != m.ArgumentsEnd();
 		  ++arg )
 	{
-		if ( arg->IsInt32() )
+		if ( arg->IsBool())
+			ofMessage->addBoolArg( arg->AsBoolUnchecked() );
+		else if ( arg->IsInt32() )
 			ofMessage->addIntArg( arg->AsInt32Unchecked() );
 		else if ( arg->IsInt64() )
 			ofMessage->addInt64Arg( arg->AsInt64Unchecked() );
-		else if ( arg->IsFloat() )
-			ofMessage->addFloatArg( arg->AsFloatUnchecked() );
+        else if ( arg->IsFloat() )
+            ofMessage->addFloatArg( arg->AsFloatUnchecked() );
+        else if ( arg->IsDouble() )
+            ofMessage->addDoubleArg( arg->AsDoubleUnchecked() );
 		else if ( arg->IsString() )
 			ofMessage->addStringArg( arg->AsStringUnchecked() );
 		else if ( arg->IsBlob() ){
@@ -257,6 +261,8 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
                         p->cast<int>() = msg.getArgAsInt32(0);
                     }else if(p->type()==typeid(ofParameter<float>).name() && msg.getArgType(0)==OFXOSC_TYPE_FLOAT){
                         p->cast<float>() = msg.getArgAsFloat(0);
+                    }else if(p->type()==typeid(ofParameter<double>).name() && msg.getArgType(0)==OFXOSC_TYPE_DOUBLE){
+                        p->cast<double>() = msg.getArgAsDouble(0);
                     }else if(p->type()==typeid(ofParameter<bool>).name() && msg.getArgType(0)==OFXOSC_TYPE_INT32){
                         p->cast<bool>() = msg.getArgAsInt32(0);
                     }else if(msg.getArgType(0)==OFXOSC_TYPE_STRING){

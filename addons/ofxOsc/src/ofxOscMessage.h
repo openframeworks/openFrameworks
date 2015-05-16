@@ -67,21 +67,25 @@ public:
 	/// ensure that the type matches what you're requesting
 	/// (eg for an int argument, getArgType(index)==OF_TYPE_INT32
 	/// or getArgTypeName(index)=="int32")
+	bool getArgAsBool(int index) const;
 	int32_t getArgAsInt32( int index ) const;
 	uint64_t getArgAsInt64( int index ) const;
 	float getArgAsFloat( int index ) const;
+	double getArgAsDouble( int index ) const;
 	string getArgAsString( int index ) const;
 	ofBuffer getArgAsBlob( int index ) const;
 
 	/// message construction
-	void setAddress( string _address ) { address = _address; };
+	void setAddress(const string& _address ) { address = _address; };
 	/// host and port of the remote endpoint
-	void setRemoteEndpoint( string host, int port ) { remote_host = host; remote_port = port; }
+	void setRemoteEndpoint(const string& host, int port ) { remote_host = host; remote_port = port; }
+	void addBoolArg(bool argument);
 	void addIntArg( int32_t argument );
 	void addInt64Arg( uint64_t argument );
 	void addFloatArg( float argument );
-	void addStringArg( string argument );
-	void addBlobArg( ofBuffer argument );
+	void addDoubleArg( double argument );
+	void addStringArg( const string& argument );
+	void addBlobArg(const ofBuffer& argument );
 
 private:
 
@@ -90,6 +94,4 @@ private:
 
 	string remote_host;
 	int remote_port;
-
-
 };

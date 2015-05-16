@@ -82,6 +82,18 @@ string ofxOscMessage::getArgTypeName( int index ) const
         return args[index]->getTypeName();
 }
 
+bool ofxOscMessage::getArgAsBool(int index) const
+{
+	if(getArgType(index) == OFXOSC_TYPE_TRUE or getArgType(index) == OFXOSC_TYPE_FALSE)
+	{
+		return ((ofxOscArgBool*)args[index])->get();
+	}
+	else
+	{
+		ofLogError("ofxOscMessage") << "getArgAsBool(): argument " << index << " is not a bool";
+		return false;
+	}
+}
 
 int32_t ofxOscMessage::getArgAsInt32( int index ) const
 {
@@ -142,6 +154,26 @@ float ofxOscMessage::getArgAsFloat( int index ) const
 }
 
 
+double ofxOscMessage::getArgAsDouble( int index ) const
+{
+    if ( getArgType(index) != OFXOSC_TYPE_DOUBLE )
+    {
+        if ( getArgType( index ) == OFXOSC_TYPE_INT32 )
+        {
+            ofLogWarning("ofxOscMessage") << "getArgAsDouble(): converting double to int32 for argument " << index;
+            return ((ofxOscArgInt32*)args[index])->get();
+        }
+        else
+        {
+            ofLogError("ofxOscMessage") << "getArgAsDouble(): argument " << index << " is not a number";
+            return 0;
+        }
+    }
+    else
+        return ((ofxOscArgDouble*)args[index])->get();
+}
+
+
 string ofxOscMessage::getArgAsString( int index ) const
 {
     if ( getArgType(index) != OFXOSC_TYPE_STRING )
@@ -189,6 +221,10 @@ set methods
 
 */
 
+void ofxOscMessage::addBoolArg( bool argument )
+{
+	args.push_back( new ofxOscArgBool( argument ) );
+}
 
 void ofxOscMessage::addIntArg( int32_t argument )
 {
@@ -205,15 +241,20 @@ void ofxOscMessage::addInt64Arg( uint64_t argument )
 
 void ofxOscMessage::addFloatArg( float argument )
 {
-	args.push_back( new ofxOscArgFloat( argument ) );
+    args.push_back( new ofxOscArgFloat( argument ) );
 }
 
-void ofxOscMessage::addStringArg( string argument )
+void ofxOscMessage::addDoubleArg( double argument )
+{
+	args.push_back( new ofxOscArgDouble( argument ) );
+}
+
+void ofxOscMessage::addStringArg( const string& argument )
 {
 	args.push_back( new ofxOscArgString( argument ) );
 }
 
-void ofxOscMessage::addBlobArg( ofBuffer argument )
+void ofxOscMessage::addBlobArg( const ofBuffer& argument )
 {
 	args.push_back( new ofxOscArgBlob( argument ) );
 }
@@ -237,12 +278,16 @@ ofxOscMessage& ofxOscMessage::copy( const ofxOscMessage& other )
 	for ( int i=0; i<(int)other.args.size(); ++i )
 	{
 		ofxOscArgType argType = other.getArgType( i );
-		if ( argType == OFXOSC_TYPE_INT32 )
+		if ( argType == OFXOSC_TYPE_TRUE or argType == OFXOSC_TYPE_FALSE )
+			args.push_back( new ofxOscArgBool( other.getArgAsBool( i ) ) );
+		else if ( argType == OFXOSC_TYPE_INT32 )
 			args.push_back( new ofxOscArgInt32( other.getArgAsInt32( i ) ) );
 		else if ( argType == OFXOSC_TYPE_INT64 )
 			args.push_back( new ofxOscArgInt64( other.getArgAsInt64( i ) ) );
-		else if ( argType == OFXOSC_TYPE_FLOAT )
-			args.push_back( new ofxOscArgFloat( other.getArgAsFloat( i ) ) );
+        else if ( argType == OFXOSC_TYPE_FLOAT )
+            args.push_back( new ofxOscArgFloat( other.getArgAsFloat( i ) ) );
+        else if ( argType == OFXOSC_TYPE_DOUBLE )
+            args.push_back( new ofxOscArgDouble( other.getArgAsDouble( i ) ) );
 		else if ( argType == OFXOSC_TYPE_STRING )
 			args.push_back( new ofxOscArgString( other.getArgAsString( i ) ) );
 		else if ( argType == OFXOSC_TYPE_BLOB )
