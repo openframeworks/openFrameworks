@@ -74,8 +74,12 @@ void ofTimer::calculateNextPeriod(){
         nextWakeTime.tv_nsec-=NANOS_PER_SEC*secs;
         nextWakeTime.tv_sec+=secs;
     }
+#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
     timespec now;
     clock_gettime(CLOCK_MONOTONIC,&now);
+#else
+    ofGetMonotonicTime(now.tv_sec,now.tv_ns);
+#endif
     if(nextWakeTime<now){
         reset();
     }
