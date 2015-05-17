@@ -32,8 +32,21 @@ if [ $exit_code = 0 ]; then
     GTK_VERSION=-3
 fi
 
+#checking for distrib tagged xserver-xorg
+XTAG=$(dpkg -l |grep xserver-xorg-core|grep ii|awk '{print $2}'|sed "s/xserver-xorg-core//")
+if [ ! -z $XTAG ]
+then
+	read -p " installing OF dependencies with "${XTAG}" packages, confirm Y/N ?" -n 1 -r
+	if [[ $REPLY =~ ^[Yy]$ ]]
+	then
+		echo "installation of OF dependencies with "${XTAG}" packages confirmed"
+	else
+		XTAG="" 
+	fi
+fi
+
 echo "installing OF dependencies"
-apt-get install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev python-lxml python-argparse libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev
+apt-get install freeglut3-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev${XTAG} libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev python-lxml python-argparse libfreetype6-dev libssl-dev libpulse-dev libusb-1.0-0-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev
 exit_code=$?
 if [ $exit_code != 0 ]; then
     echo "error installing dependencies, there could be an error with your internet connection"
