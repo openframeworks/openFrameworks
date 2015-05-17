@@ -46,7 +46,7 @@ void ofSeedRandom(int val) {
 
 //--------------------------------------------------
 float ofRandom(float max) {
-	return max * rand() / (RAND_MAX + 1.0f);
+	return max * ofRandomuf();
 }
 
 //--------------------------------------------------
@@ -55,17 +55,17 @@ float ofRandom(float x, float y) {
 	if (x == y) return x; 			// float == ?, wise? epsilon?
 	float high = MAX(x,y);
 	float low = MIN(x,y);
-	return low + ((high - low) * rand() / (RAND_MAX + 1.0f));
+	return low + ((high - low) * ofRandomuf());
 }
 
 //--------------------------------------------------
 float ofRandomf() {
-	return rand() / (RAND_MAX + 1.0f) * 2.0f - 1.0f;
+	return ofRandomuf() * 2.0f - 1.0f;
 }
 
 //--------------------------------------------------
 float ofRandomuf() {
-	return rand() / (RAND_MAX + 1.0f);
+	return rand() / (static_cast<double>(RAND_MAX) + 1.0);
 }
 
 //---- new to 006
