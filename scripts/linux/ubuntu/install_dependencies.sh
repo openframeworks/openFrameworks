@@ -36,9 +36,10 @@ fi
 XTAG=$(dpkg -l |grep xserver-xorg-core|grep ii|awk '{print $2}'|sed "s/xserver-xorg-core//")
 if [ ! -z $XTAG ]
 then
-	read -p " installing OF dependencies with "${XTAG}" packages, confirm Y/N ?" -n 1 -r
+	read -p " installing OF dependencies with "${XTAG}" packages, confirm Y/N ? " -n 1 -r
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
+		echo
 		echo "installation of OF dependencies with "${XTAG}" packages confirmed"
 	else
 		XTAG="" 
