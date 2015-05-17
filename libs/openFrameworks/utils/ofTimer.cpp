@@ -19,7 +19,7 @@ void ofTimer::reset(){
 #elif defined(TARGET_WIN32)
 	GetSystemTimeAsFileTime((LPFILETIME)&nextWakeTime);
 #else
-	ofGetMonotonicTime(nextWakeTime.tv_sec,nextWakeTime.tv_ns);
+	ofGetMonotonicTime(nextWakeTime.tv_sec,nextWakeTime.tv_nsec);
 #endif
 	calculateNextPeriod();
 }
@@ -36,9 +36,9 @@ void ofTimer::waitNext(){
 #elif defined(TARGET_WIN32)
 	WaitForSingleObject(hTimer, INFINITE);
 #else
-	timespec now;
-	ofGetMonotonicTime(now.sec, now.ns);
-	int64_t waitNanos = ((int64_t)(nextWakeTime.tv_sec - now.tv_sec))*1000000000 + ((int64_t)(nextWakeTime.tv_ns - now.tv_ns));
+	sec_ns now;
+	ofGetMonotonicTime(now.tv_sec, now.tv_nsec);
+	int64_t waitNanos = ((int64_t)(nextWakeTime.tv_sec - now.tv_sec))*1000000000 + ((int64_t)(nextWakeTime.tv_nsec - now.tv_nsec));
 	if(waitNanos > 0){
 		timespec waittime;
 		timespec remainder;
@@ -50,7 +50,7 @@ void ofTimer::waitNext(){
 	calculateNextPeriod();
 }
 
-#ifndef TARGET_WIN32
+#if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
 static bool operator<(const timespec & time1, const timespec & time2){
     return time1.tv_sec < time2.tv_sec || (time1.tv_sec == time2.tv_sec && time1.tv_nsec < time2.tv_nsec);
 }
@@ -74,11 +74,12 @@ void ofTimer::calculateNextPeriod(){
         nextWakeTime.tv_nsec-=NANOS_PER_SEC*secs;
         nextWakeTime.tv_sec+=secs;
     }
-    timespec now;
 #if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI))
+    timespec now;
     clock_gettime(CLOCK_MONOTONIC,&now);
 #else
-    ofGetMonotonicTime(now.tv_sec,now.tv_ns);
+    sec_ns now;
+    ofGetMonotonicTime(now.tv_sec,now.tv_nsec);
 #endif
     if(nextWakeTime<now){
         reset();

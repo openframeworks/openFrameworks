@@ -39,7 +39,7 @@ float ofGetElapsedTimef();
 /// program startup.
 ///
 /// \returns the elapsed time in milliseconds (1000 milliseconds = 1 second).
-unsigned long long ofGetElapsedTimeMillis();
+uint64_t ofGetElapsedTimeMillis();
 
 /// \brief Get the elapsed time in microseconds.
 ///
@@ -48,7 +48,7 @@ unsigned long long ofGetElapsedTimeMillis();
 /// startup.
 ///
 /// \returns the elapsed time in microseconds (1000000 microseconds = 1 second).
-unsigned long long ofGetElapsedTimeMicros();
+uint64_t ofGetElapsedTimeMicros();
 
 /// \brief Get the number of frames rendered since the program started.
 /// \returns the number of frames rendered since the program started.
@@ -80,11 +80,11 @@ unsigned int ofGetUnixTime();
 
 /// \brief Get the system time in milliseconds.
 /// \returns the system time in milliseconds.
-unsigned long long ofGetSystemTime();
+uint64_t ofGetSystemTime();
 
 /// \brief Get the system time in microseconds.
 /// \returns the system time in microseconds.
-unsigned long long ofGetSystemTimeMicros();
+uint64_t ofGetSystemTimeMicros();
 
 /// \brief Sleeps the current thread for the specified amount of milliseconds.
 /// \param millis The number of millseconds to sleep.
