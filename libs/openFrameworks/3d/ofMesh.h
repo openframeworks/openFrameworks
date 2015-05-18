@@ -125,7 +125,7 @@ public:
     static ofMesh sphere(float radius, int res=12, 
     	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
     static ofMesh icosahedron(float radius);
-    static ofMesh icosphere(float radius, int iterations=2);
+    static ofMesh icosphere(float radius, std::size_t iterations=2);
   	///
 	///	\brief A helper method that returns a cylinder made of triangles. 
 	/// The resolution settings for the radius, height, and cap are optional 
@@ -194,7 +194,7 @@ public:
 	/// Because you are using a pointer to the array you also have to define 
 	/// the length of the array as an int (amt). The vertices are added at the 
 	/// end of the current vertices list.
-	void addVertices(const ofVec3f* verts, int amt);
+	void addVertices(const ofVec3f* verts, std::size_t amt);
 
 	/// \brief Removes the vertex at the index in the vector.
 	void removeVertex(ofIndexType index);
@@ -210,7 +210,7 @@ public:
 
   	/// \returns the size of the vertices vector for the mesh. 
   	/// This will tell you how many vertices are contained in the mesh.
-	int getNumVertices() const;
+	std::size_t getNumVertices() const;
 
 	/// \returns a pointer to the vertices that the mesh contains.
 	ofVec3f* getVerticesPointer();
@@ -271,9 +271,9 @@ public:
 
 	/// \brief Add an array of normals to the mesh. 
 	/// Because you are using a pointer to the array you also have to define 
-	/// the length of the array as an int (amt). The normals are added at the 
+	/// the length of the array as an std::size_t (amt). The normals are added at the
 	/// end of the current normals list.
-	void addNormals(const ofVec3f* norms, int amt);
+	void addNormals(const ofVec3f* norms, std::size_t amt);
 
 	/// \brief Remove a normal.
 	void removeNormal(ofIndexType index);
@@ -286,7 +286,7 @@ public:
 
 	/// \brief This will tell you how many normals are contained in the mesh.
 	/// \returns the size of the normals vector for the mesh. 
-	int getNumNormals() const;
+	std::size_t getNumNormals() const;
 
 	/// \returns a pointer to the normals that the mesh contains.
 	ofVec3f* getNormalsPointer();
@@ -326,7 +326,7 @@ public:
     /// \{
 
 	/// \returns the vector that contains all of the faces of the mesh. This isn't currently implemented.
-    ofMeshFace getFace(int faceId) const;
+    ofMeshFace getFace(ofIndexType faceId) const;
 
     /// \brief Get normals for each face
     /// As a default it only calculates the normal for the face as a whole but 
@@ -355,7 +355,7 @@ public:
 	void addColors(const vector<ofFloatColor>& cols);
 
 	/// \brief This adds a pointer of colors to the ofMesh instance with the amount passed as the second parameter.
-	void addColors(const ofFloatColor* cols, int amt);
+	void addColors(const ofFloatColor* cols, std::size_t amt);
 
 	/// \brief Remove a color at the index in the colors vector.
 	void removeColor(ofIndexType index);
@@ -368,7 +368,7 @@ public:
 
 	/// \returns the size of the colors vector for the mesh. 
 	/// This will tell you how many colors are contained in the mesh.
-	int getNumColors() const;
+	std::size_t getNumColors() const;
 
 	/// Use this if you plan to change the colors as part of this call as it will force a reset of the cache.
 	/// \returns a pointer that contains all of the colors of the mesh, if it has any. 
@@ -424,10 +424,10 @@ public:
 
 	/// \brief  Add an array of texture coordinates to the mesh. 
 	/// Because you are using a pointer to the array you also have to define 
-	/// the length of the array as an int (amt). 
+	/// the length of the array as an std::size_t (amt).
 	/// The texture coordinates are added at the end of the current texture 
 	/// coordinates list.
-	void addTexCoords(const ofVec2f* tCoords, int amt);
+	void addTexCoords(const ofVec2f* tCoords, std::size_t amt);
 
 	/// \brief  Remove a Vec2f representing the texture coordinate.
 	void removeTexCoord(ofIndexType index);
@@ -438,7 +438,7 @@ public:
 
 	/// \brief This will tell you how many texture coordinates are contained in the mesh.
 	/// \returns the size of the texture coordinates vector for the mesh.
-	int getNumTexCoords() const;
+	std::size_t getNumTexCoords() const;
 
 	/// \returns a pointer to the texture coords that the mesh contains.
 	ofVec2f* getTexCoordsPointer();
@@ -521,7 +521,7 @@ public:
 
 	/// \brief This adds indices to the ofMesh by pointing to an array of indices.
 	/// The "amt" defines the length of the array.
-	void addIndices(const ofIndexType* inds, int amt);
+	void addIndices(const ofIndexType* inds, std::size_t amt);
 
 	/// \brief Removes an index.
 	void removeIndex(ofIndexType index);
@@ -535,7 +535,7 @@ public:
 
 	/// \brief This will tell you how many indices are contained in the mesh.
 	/// \returns the size of the indices vector for the mesh. 
-	int getNumIndices() const;
+	std::size_t getNumIndices() const;
 
 	/// \returns a pointer to the indices that the mesh contains.
 	ofIndexType* getIndexPointer();
@@ -567,12 +567,12 @@ public:
     virtual void disableIndices();
     virtual bool usingIndices() const;
 
-    void setColorForIndices( int startIndex, int endIndex, ofColor color );
+    void setColorForIndices( ofIndexType startIndex, ofIndexType endIndex, ofColor color );
 
     /// The new mesh includes the mesh mode, colors, textures, and normals of the original mesh (assuming any were added).
     /// \returns a mesh made up of a range of indices from startIndex to the endIndex. 
-    ofMesh getMeshForIndices( int startIndex, int endIndex ) const;
-    ofMesh getMeshForIndices( int startIndex, int endIndex, int startVertIndex, int endVertIndex ) const;
+    ofMesh getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex ) const;
+    ofMesh getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex, ofIndexType startVertIndex, ofIndexType endVertIndex ) const;
     
 	
 	/// \}
@@ -667,17 +667,17 @@ public:
 
     const ofVec3f & getFaceNormal() const;
 
-    void setVertex( int index, const ofVec3f& v );
-    const ofVec3f& getVertex( int index ) const;
+    void setVertex( ofIndexType index, const ofVec3f& v );
+    const ofVec3f& getVertex( ofIndexType index ) const;
 
-    void setNormal( int index, const ofVec3f& n );
-    const ofVec3f& getNormal( int index ) const;
+    void setNormal( ofIndexType index, const ofVec3f& n );
+    const ofVec3f& getNormal( ofIndexType  index ) const;
 
-    void setColor( int index, const ofFloatColor& color );
-    const ofFloatColor& getColor(int index) const;
+    void setColor( ofIndexType index, const ofFloatColor& color );
+    const ofFloatColor& getColor(ofIndexType  index) const;
 
-    void setTexCoord( int index, const ofVec2f& tCoord );
-    const ofVec2f& getTexCoord( int index ) const;
+    void setTexCoord( ofIndexType index, const ofVec2f& tCoord );
+    const ofVec2f& getTexCoord( ofIndexType index ) const;
 
     void setHasColors( bool bColors );
     void setHasNormals( bool bNormals );
