@@ -3,7 +3,7 @@
 #define NANOS_PER_SEC 1000000000
 #define NANOS_TO_SEC .000000001
 
-void ofGetMonotonicTime(unsigned long long & seconds, unsigned long long & nanoseconds);
+void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds);
 
 ofFpsCounter::ofFpsCounter()
 :nFrameCount(0)
@@ -36,9 +36,9 @@ ofFpsCounter::ofFpsCounter(double targetFPS)
 }
 
 void ofFpsCounter::newFrame(){
-	unsigned long long secsNow, nanosNow;
+	uint64_t secsNow, nanosNow;
 	ofGetMonotonicTime(secsNow,nanosNow);
-	unsigned long long oneSecDiff = (secsNow-secsOneSec)*NANOS_PER_SEC + (long long)nanosNow-nanosOneSec;
+	uint64_t oneSecDiff = (secsNow-secsOneSec)*NANOS_PER_SEC + (int64_t)nanosNow-nanosOneSec;
 
 	if( oneSecDiff  >= NANOS_PER_SEC ){
 		fps = nFramesForFPS/(oneSecDiff*NANOS_TO_SEC);

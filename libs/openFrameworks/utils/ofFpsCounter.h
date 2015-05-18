@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ofConstants.h"
+
 class ofFpsCounter {
 public:
 	ofFpsCounter();
@@ -12,9 +14,9 @@ public:
 
 private:
 	unsigned int nFrameCount;
-	unsigned long long secsThen, nanosThen;
+	uint64_t secsThen, nanosThen;
 	double fps;
 	unsigned int nFramesForFPS;
-	unsigned long long secsOneSec, nanosOneSec;
-	unsigned long long lastFrameTime;
+	uint64_t secsOneSec, nanosOneSec;
+	uint64_t lastFrameTime;
 };
