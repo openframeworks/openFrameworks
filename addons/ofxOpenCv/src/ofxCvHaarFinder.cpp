@@ -80,15 +80,15 @@ int ofxCvHaarFinder::findHaarObjects(ofImage& input, int minWidth, int minHeight
 
 	ofxCvGrayscaleImage gray;
 	gray.setUseTexture(false);
-	gray.allocate(input.width, input.height);
+	gray.allocate(input.getWidth(), input.getHeight());
 
-	if( input.type == OF_IMAGE_COLOR ){
+	if( input.getImageType() == OF_IMAGE_COLOR ){
 		ofxCvColorImage color;
 		color.setUseTexture(false);
-		color.allocate(input.width, input.height);
+		color.allocate(input.getWidth(), input.getHeight());
 		color = input.getPixels();
 		gray = color;
-	}else if( input.type == OF_IMAGE_GRAYSCALE ){
+	}else if( input.getImageType() == OF_IMAGE_GRAYSCALE ){
 		gray = input.getPixels();
 	}else{
 		ofLogError("ofxCvHaarFinder") << "findHaarObjects(): OF_IMAGE_RGBA image type not supported";

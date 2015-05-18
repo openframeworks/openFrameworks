@@ -453,6 +453,7 @@ public:
     /// \param type The type of image, one of the following:
     /// `OF_IMAGE_GRAYSCALE`, `OF_IMAGE_COLOR`, `OF_IMAGE_COLOR_ALPHA`
     void setImageType(ofImageType type);
+    ofImageType getImageType() const;
     
     /// \}
     /// \name Modifiers
@@ -590,7 +591,7 @@ protected:
     int width;  ///< \brief Image width in pixels.
     int height; ///< \brief Image Height in pixels.
     int bpp;    ///< \brief Bits per image pixel.
-    int type;   ///< \brief Image type.
+    ofImageType type;   ///< \brief Image type.
     /// \endcond
 };
 
