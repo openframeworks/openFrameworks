@@ -576,11 +576,6 @@ public:
     ofImage_<PixelType>& operator= (const ofImage_<SrcType>& mom);
     
     /// \}
-    
-    int width;  ///< \brief Image width in pixels.
-    int height; ///< \brief Image Height in pixels.
-    int bpp;    ///< \brief Bits per image pixel.
-    int type;   ///< \brief Image type.
     ///< \sa ofImageType
 protected:
     /// \cond INTERNAL
@@ -591,6 +586,11 @@ protected:
     ofPixels_<PixelType> pixels;
     bool bUseTexture;
     ofTexture tex;
+
+    int width;  ///< \brief Image width in pixels.
+    int height; ///< \brief Image Height in pixels.
+    int bpp;    ///< \brief Bits per image pixel.
+    int type;   ///< \brief Image type.
     /// \endcond
 };
 
