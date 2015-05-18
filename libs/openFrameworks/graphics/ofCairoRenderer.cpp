@@ -343,7 +343,7 @@ void ofCairoRenderer::draw(const ofMesh & primitive, ofPolyRenderMode mode, bool
 	cairo_matrix_init_identity(&matrix);
 	cairo_new_path(cr);
 
-	int i = 1;
+	std::size_t i = 1;
 	ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
 	ofVec3f v2;
 	cairo_move_to(cr,v.x,v.y);

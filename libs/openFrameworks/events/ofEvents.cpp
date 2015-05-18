@@ -84,6 +84,8 @@ void ofCoreEvents::disable(){
 	mousePressed.disable();
 	mouseMoved.disable();
 	mouseScrolled.disable();
+	mouseEntered.disable();
+	mouseExited.disable();
 	touchDown.disable();
 	touchUp.disable();
 	touchMoved.disable();
@@ -106,6 +108,8 @@ void ofCoreEvents::enable(){
 	mousePressed.enable();
 	mouseMoved.enable();
 	mouseScrolled.enable();
+	mouseEntered.enable();
+	mouseExited.enable();
 	touchDown.enable();
 	touchUp.enable();
 	touchMoved.enable();
@@ -309,6 +313,12 @@ void ofCoreEvents::notifyMouseEvent(const ofMouseEventArgs & mouseEvent){
 		case ofMouseEventArgs::Scrolled:
 			notifyMouseScrolled(mouseEvent.x,mouseEvent.y);
 			break;
+		case ofMouseEventArgs::Entered:
+			notifyMouseEntered(mouseEvent.x,mouseEvent.y);
+			break;
+		case ofMouseEventArgs::Exited:
+			notifyMouseExited(mouseEvent.x,mouseEvent.y);
+			break;
 	}
 }
 
@@ -398,6 +408,18 @@ void ofCoreEvents::notifyMouseScrolled(float x, float y){
 }
 
 //------------------------------------------
+void ofCoreEvents::notifyMouseEntered(int x, int y){
+	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Entered,x,y);
+	ofNotifyEvent( mouseEntered, mouseEventArgs );
+}
+
+//------------------------------------------
+void ofCoreEvents::notifyMouseExited(int x, int y){
+	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Exited,x,y);
+	ofNotifyEvent( mouseExited, mouseEventArgs );
+}
+
+//------------------------------------------
 void ofCoreEvents::notifyExit(){
 	ofNotifyEvent( exit, voidEventArgs );
 }
@@ -411,13 +433,6 @@ void ofCoreEvents::notifyWindowResized(int width, int height){
 //------------------------------------------
 void ofCoreEvents::notifyDragEvent(ofDragInfo info){
 	ofNotifyEvent(fileDragEvent, info);
-}
-
-//------------------------------------------
-void ofCoreEvents::notifyWindowEntry( int state ) {
-	ofEntryEventArgs entryArgs(state);
-	ofNotifyEvent(windowEntered, entryArgs);
-
 }
 
 //------------------------------------------
