@@ -27,7 +27,7 @@
 +CPP_I386 = $(shell xcrun -find clang++)
 +CPP_X86_64 = $(shell xcrun -find clang++)
 +
-+COMPILERFLAGS = -Os -fexceptions -fvisibility=hidden -DNO_LCMS -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -mmacosx-version-min=$(MACOSX_MIN_SDK)
++COMPILERFLAGS = -Os -fexceptions -fvisibility=hidden -DNO_LCMS -DNDEBUG -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -mmacosx-version-min=$(MACOSX_MIN_SDK)
 +
  COMPILERFLAGS_I386 = -arch i386
  COMPILERFLAGS_X86_64 = -arch x86_64
