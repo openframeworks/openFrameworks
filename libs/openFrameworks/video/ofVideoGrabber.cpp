@@ -10,8 +10,6 @@ ofVideoGrabber::ofVideoGrabber(){
 	requestedDeviceID	= -1;
 	internalPixelFormat = OF_PIXELS_RGB;
 	desiredFramerate 	= -1;
-	height				= 0;
-	width				= 0;
 	tex.resize(1);
 }
 
@@ -60,8 +58,6 @@ bool ofVideoGrabber::setup(int w, int h, bool setUseTexture){
 	}
 
 	grabber->setup(w, h);
-	width			= (int)grabber->getWidth();
-	height			= (int)grabber->getHeight();
 
 	if( grabber->isInitialized() && bUseTexture ){
 		if(!grabber->getTexturePtr()){
@@ -226,8 +222,6 @@ bool  ofVideoGrabber::isFrameNew() const{
 void ofVideoGrabber::update(){
 	if(grabber){
 		grabber->update();
-		width = grabber->getWidth();
-		height = grabber->getHeight();
 		if( bUseTexture && !grabber->getTexturePtr() && grabber->isFrameNew() ){
 			if(int(tex.size())!=grabber->getPixels().getNumPlanes()){
 				tex.resize(grabber->getPixels().getNumPlanes());
@@ -235,7 +229,7 @@ void ofVideoGrabber::update(){
 			for(int i=0;i<grabber->getPixels().getNumPlanes();i++){
 				ofPixels plane = grabber->getPixels().getPlane(i);
 				bool bDiffPixFormat = ( tex[i].isAllocated() && tex[i].texData.glTypeInternal != ofGetGLInternalFormatFromPixelFormat(plane.getPixelFormat()) );
-				if(width==0 || height==0 || bDiffPixFormat || !tex[i].isAllocated() ){
+				if(bDiffPixFormat || !tex[i].isAllocated() ){
 					tex[i].allocate(plane);
 					if(ofIsGLProgrammableRenderer() && plane.getPixelFormat() == OF_PIXELS_GRAY){
 						tex[i].setRGToRGBASwizzles(true);
@@ -296,7 +290,7 @@ void ofVideoGrabber::draw(float _x, float _y, float _w, float _h) const{
 
 //------------------------------------
 void ofVideoGrabber::draw(float _x, float _y) const{
-	draw(_x, _y,width,height);
+	draw(_x, _y,getWidth(),getHeight());
 }
 
 
@@ -319,17 +313,19 @@ void ofVideoGrabber::unbind() const{
 //----------------------------------------------------------
 float ofVideoGrabber::getHeight() const{
 	if(grabber){
-		height = grabber->getHeight();
+		return grabber->getHeight();
+	}else{
+		return 0;
 	}
-	return (float)height;
 }
 
 //----------------------------------------------------------
 float ofVideoGrabber::getWidth() const{
 	if(grabber){
-		width = grabber->getWidth();
+		return grabber->getWidth();
+	}else{
+		return 0;
 	}
-	return (float)width;
 }
 
 //----------------------------------------------------------

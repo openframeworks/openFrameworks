@@ -109,10 +109,6 @@ class ofVideoGrabber : public ofBaseVideoGrabber,public ofBaseVideoDraws{
 			return dynamic_pointer_cast<GrabberType>(getGrabber());
 		}
 
-		//this is kept as legacy to support people accessing width and height directly. 
-		mutable int height;
-		mutable int width;
-
 	private:
 		
 		vector<ofTexture> tex;
