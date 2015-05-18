@@ -260,6 +260,7 @@ ifneq ($(PLATFORM_ARCH),armv6l)
 endif
     
 PLATFORM_LIBRARIES += freeimage
+PLATFORM_LIBRARIES += rtaudio
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
