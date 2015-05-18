@@ -46,6 +46,7 @@ ofPath::ofPath(){
 	bHasChanged = false;
 	bUseShapeColor = true;
 	bNeedsPolylinesGeneration = false;
+	cachedTessellationValid = true;
 	clear();
 }
 
