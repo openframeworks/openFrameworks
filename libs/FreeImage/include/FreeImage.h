@@ -29,8 +29,8 @@
 // Version information ------------------------------------------------------
 
 #define FREEIMAGE_MAJOR_VERSION   3
-#define FREEIMAGE_MINOR_VERSION   15
-#define FREEIMAGE_RELEASE_SERIAL  4
+#define FREEIMAGE_MINOR_VERSION   16
+#define FREEIMAGE_RELEASE_SERIAL  0
 
 // Compiler options ---------------------------------------------------------
 
@@ -403,7 +403,9 @@ FI_ENUM(FREE_IMAGE_FORMAT) {
 	FIF_JP2		= 31,
 	FIF_PFM		= 32,
 	FIF_PICT	= 33,
-	FIF_RAW		= 34
+	FIF_RAW		= 34,
+	FIF_WEBP	= 35,
+	FIF_JXR		= 36
 };
 
 /** Image type used in FreeImage.
@@ -649,94 +651,99 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 
 // Load / Save flag constants -----------------------------------------------
 
-#define FIF_LOAD_NOPIXELS 0x8000 // loading: load the image header only (not supported by all plugins, default to full loading)
+#define FIF_LOAD_NOPIXELS 0x8000	//! loading: load the image header only (not supported by all plugins, default to full loading)
 
 #define BMP_DEFAULT         0
 #define BMP_SAVE_RLE        1
 #define CUT_DEFAULT         0
 #define DDS_DEFAULT			0
-#define EXR_DEFAULT			0		// save data as half with piz-based wavelet compression
-#define EXR_FLOAT			0x0001	// save data as float instead of as half (not recommended)
-#define EXR_NONE			0x0002	// save with no compression
-#define EXR_ZIP				0x0004	// save with zlib compression, in blocks of 16 scan lines
-#define EXR_PIZ				0x0008	// save with piz-based wavelet compression
-#define EXR_PXR24			0x0010	// save with lossy 24-bit float compression
-#define EXR_B44				0x0020	// save with lossy 44% float compression - goes to 22% when combined with EXR_LC
-#define EXR_LC				0x0040	// save images with one luminance and two chroma channels, rather than as RGB (lossy compression)
+#define EXR_DEFAULT			0		//! save data as half with piz-based wavelet compression
+#define EXR_FLOAT			0x0001	//! save data as float instead of as half (not recommended)
+#define EXR_NONE			0x0002	//! save with no compression
+#define EXR_ZIP				0x0004	//! save with zlib compression, in blocks of 16 scan lines
+#define EXR_PIZ				0x0008	//! save with piz-based wavelet compression
+#define EXR_PXR24			0x0010	//! save with lossy 24-bit float compression
+#define EXR_B44				0x0020	//! save with lossy 44% float compression - goes to 22% when combined with EXR_LC
+#define EXR_LC				0x0040	//! save images with one luminance and two chroma channels, rather than as RGB (lossy compression)
 #define FAXG3_DEFAULT		0
 #define GIF_DEFAULT			0
-#define GIF_LOAD256			1		// Load the image as a 256 color image with ununsed palette entries, if it's 16 or 2 color
-#define GIF_PLAYBACK		2		// 'Play' the GIF to generate each frame (as 32bpp) instead of returning raw frame data when loading
+#define GIF_LOAD256			1		//! load the image as a 256 color image with ununsed palette entries, if it's 16 or 2 color
+#define GIF_PLAYBACK		2		//! 'Play' the GIF to generate each frame (as 32bpp) instead of returning raw frame data when loading
 #define HDR_DEFAULT			0
 #define ICO_DEFAULT         0
-#define ICO_MAKEALPHA		1		// convert to 32bpp and create an alpha channel from the AND-mask when loading
+#define ICO_MAKEALPHA		1		//! convert to 32bpp and create an alpha channel from the AND-mask when loading
 #define IFF_DEFAULT         0
-#define J2K_DEFAULT			0		// save with a 16:1 rate
-#define JP2_DEFAULT			0		// save with a 16:1 rate
-#define JPEG_DEFAULT        0		// loading (see JPEG_FAST); saving (see JPEG_QUALITYGOOD|JPEG_SUBSAMPLING_420)
-#define JPEG_FAST           0x0001	// load the file as fast as possible, sacrificing some quality
-#define JPEG_ACCURATE       0x0002	// load the file with the best quality, sacrificing some speed
-#define JPEG_CMYK			0x0004	// load separated CMYK "as is" (use | to combine with other load flags)
-#define JPEG_EXIFROTATE		0x0008	// load and rotate according to Exif 'Orientation' tag if available
-#define JPEG_GREYSCALE		0x0010	// load and convert to a 8-bit greyscale image
-#define JPEG_QUALITYSUPERB  0x80	// save with superb quality (100:1)
-#define JPEG_QUALITYGOOD    0x0100	// save with good quality (75:1)
-#define JPEG_QUALITYNORMAL  0x0200	// save with normal quality (50:1)
-#define JPEG_QUALITYAVERAGE 0x0400	// save with average quality (25:1)
-#define JPEG_QUALITYBAD     0x0800	// save with bad quality (10:1)
-#define JPEG_PROGRESSIVE	0x2000	// save as a progressive-JPEG (use | to combine with other save flags)
-#define JPEG_SUBSAMPLING_411 0x1000		// save with high 4x1 chroma subsampling (4:1:1) 
-#define JPEG_SUBSAMPLING_420 0x4000		// save with medium 2x2 medium chroma subsampling (4:2:0) - default value
-#define JPEG_SUBSAMPLING_422 0x8000		// save with low 2x1 chroma subsampling (4:2:2) 
-#define JPEG_SUBSAMPLING_444 0x10000	// save with no chroma subsampling (4:4:4)
-#define JPEG_OPTIMIZE		0x20000		// on saving, compute optimal Huffman coding tables (can reduce a few percent of file size)
-#define JPEG_BASELINE		0x40000		// save basic JPEG, without metadata or any markers
+#define J2K_DEFAULT			0		//! save with a 16:1 rate
+#define JP2_DEFAULT			0		//! save with a 16:1 rate
+#define JPEG_DEFAULT        0		//! loading (see JPEG_FAST); saving (see JPEG_QUALITYGOOD|JPEG_SUBSAMPLING_420)
+#define JPEG_FAST           0x0001	//! load the file as fast as possible, sacrificing some quality
+#define JPEG_ACCURATE       0x0002	//! load the file with the best quality, sacrificing some speed
+#define JPEG_CMYK			0x0004	//! load separated CMYK "as is" (use | to combine with other load flags)
+#define JPEG_EXIFROTATE		0x0008	//! load and rotate according to Exif 'Orientation' tag if available
+#define JPEG_GREYSCALE		0x0010	//! load and convert to a 8-bit greyscale image
+#define JPEG_QUALITYSUPERB  0x80	//! save with superb quality (100:1)
+#define JPEG_QUALITYGOOD    0x0100	//! save with good quality (75:1)
+#define JPEG_QUALITYNORMAL  0x0200	//! save with normal quality (50:1)
+#define JPEG_QUALITYAVERAGE 0x0400	//! save with average quality (25:1)
+#define JPEG_QUALITYBAD     0x0800	//! save with bad quality (10:1)
+#define JPEG_PROGRESSIVE	0x2000	//! save as a progressive-JPEG (use | to combine with other save flags)
+#define JPEG_SUBSAMPLING_411 0x1000		//! save with high 4x1 chroma subsampling (4:1:1) 
+#define JPEG_SUBSAMPLING_420 0x4000		//! save with medium 2x2 medium chroma subsampling (4:2:0) - default value
+#define JPEG_SUBSAMPLING_422 0x8000		//! save with low 2x1 chroma subsampling (4:2:2) 
+#define JPEG_SUBSAMPLING_444 0x10000	//! save with no chroma subsampling (4:4:4)
+#define JPEG_OPTIMIZE		0x20000		//! on saving, compute optimal Huffman coding tables (can reduce a few percent of file size)
+#define JPEG_BASELINE		0x40000		//! save basic JPEG, without metadata or any markers
 #define KOALA_DEFAULT       0
 #define LBM_DEFAULT         0
 #define MNG_DEFAULT         0
 #define PCD_DEFAULT         0
-#define PCD_BASE            1		// load the bitmap sized 768 x 512
-#define PCD_BASEDIV4        2		// load the bitmap sized 384 x 256
-#define PCD_BASEDIV16       3		// load the bitmap sized 192 x 128
+#define PCD_BASE            1		//! load the bitmap sized 768 x 512
+#define PCD_BASEDIV4        2		//! load the bitmap sized 384 x 256
+#define PCD_BASEDIV16       3		//! load the bitmap sized 192 x 128
 #define PCX_DEFAULT         0
 #define PFM_DEFAULT         0
 #define PICT_DEFAULT        0
 #define PNG_DEFAULT         0
-#define PNG_IGNOREGAMMA		1		// loading: avoid gamma correction
-#define PNG_Z_BEST_SPEED			0x0001	// save using ZLib level 1 compression flag (default value is 6)
-#define PNG_Z_DEFAULT_COMPRESSION	0x0006	// save using ZLib level 6 compression flag (default recommended value)
-#define PNG_Z_BEST_COMPRESSION		0x0009	// save using ZLib level 9 compression flag (default value is 6)
-#define PNG_Z_NO_COMPRESSION		0x0100	// save without ZLib compression
-#define PNG_INTERLACED				0x0200	// save using Adam7 interlacing (use | to combine with other save flags)
+#define PNG_IGNOREGAMMA		1		//! loading: avoid gamma correction
+#define PNG_Z_BEST_SPEED			0x0001	//! save using ZLib level 1 compression flag (default value is 6)
+#define PNG_Z_DEFAULT_COMPRESSION	0x0006	//! save using ZLib level 6 compression flag (default recommended value)
+#define PNG_Z_BEST_COMPRESSION		0x0009	//! save using ZLib level 9 compression flag (default value is 6)
+#define PNG_Z_NO_COMPRESSION		0x0100	//! save without ZLib compression
+#define PNG_INTERLACED				0x0200	//! save using Adam7 interlacing (use | to combine with other save flags)
 #define PNM_DEFAULT         0
-#define PNM_SAVE_RAW        0       // If set the writer saves in RAW format (i.e. P4, P5 or P6)
-#define PNM_SAVE_ASCII      1       // If set the writer saves in ASCII format (i.e. P1, P2 or P3)
+#define PNM_SAVE_RAW        0       //! if set the writer saves in RAW format (i.e. P4, P5 or P6)
+#define PNM_SAVE_ASCII      1       //! if set the writer saves in ASCII format (i.e. P1, P2 or P3)
 #define PSD_DEFAULT         0
-#define PSD_CMYK			1		// reads tags for separated CMYK (default is conversion to RGB)
-#define PSD_LAB				2		// reads tags for CIELab (default is conversion to RGB)
+#define PSD_CMYK			1		//! reads tags for separated CMYK (default is conversion to RGB)
+#define PSD_LAB				2		//! reads tags for CIELab (default is conversion to RGB)
 #define RAS_DEFAULT         0
-#define RAW_DEFAULT         0		// load the file as linear RGB 48-bit
-#define RAW_PREVIEW			1		// try to load the embedded JPEG preview with included Exif Data or default to RGB 24-bit
-#define RAW_DISPLAY			2		// load the file as RGB 24-bit
-#define RAW_HALFSIZE		4		// output a half-size color image
+#define RAW_DEFAULT         0		//! load the file as linear RGB 48-bit
+#define RAW_PREVIEW			1		//! try to load the embedded JPEG preview with included Exif Data or default to RGB 24-bit
+#define RAW_DISPLAY			2		//! load the file as RGB 24-bit
+#define RAW_HALFSIZE		4		//! output a half-size color image
 #define SGI_DEFAULT			0
 #define TARGA_DEFAULT       0
-#define TARGA_LOAD_RGB888   1       // If set the loader converts RGB555 and ARGB8888 -> RGB888.
-#define TARGA_SAVE_RLE		2		// If set, the writer saves with RLE compression
+#define TARGA_LOAD_RGB888   1       //! if set the loader converts RGB555 and ARGB8888 -> RGB888.
+#define TARGA_SAVE_RLE		2		//! if set, the writer saves with RLE compression
 #define TIFF_DEFAULT        0
-#define TIFF_CMYK			0x0001	// reads/stores tags for separated CMYK (use | to combine with compression flags)
-#define TIFF_PACKBITS       0x0100  // save using PACKBITS compression
-#define TIFF_DEFLATE        0x0200  // save using DEFLATE compression (a.k.a. ZLIB compression)
-#define TIFF_ADOBE_DEFLATE  0x0400  // save using ADOBE DEFLATE compression
-#define TIFF_NONE           0x0800  // save without any compression
-#define TIFF_CCITTFAX3		0x1000  // save using CCITT Group 3 fax encoding
-#define TIFF_CCITTFAX4		0x2000  // save using CCITT Group 4 fax encoding
-#define TIFF_LZW			0x4000	// save using LZW compression
-#define TIFF_JPEG			0x8000	// save using JPEG compression
-#define TIFF_LOGLUV			0x10000	// save using LogLuv compression
+#define TIFF_CMYK			0x0001	//! reads/stores tags for separated CMYK (use | to combine with compression flags)
+#define TIFF_PACKBITS       0x0100  //! save using PACKBITS compression
+#define TIFF_DEFLATE        0x0200  //! save using DEFLATE compression (a.k.a. ZLIB compression)
+#define TIFF_ADOBE_DEFLATE  0x0400  //! save using ADOBE DEFLATE compression
+#define TIFF_NONE           0x0800  //! save without any compression
+#define TIFF_CCITTFAX3		0x1000  //! save using CCITT Group 3 fax encoding
+#define TIFF_CCITTFAX4		0x2000  //! save using CCITT Group 4 fax encoding
+#define TIFF_LZW			0x4000	//! save using LZW compression
+#define TIFF_JPEG			0x8000	//! save using JPEG compression
+#define TIFF_LOGLUV			0x10000	//! save using LogLuv compression
 #define WBMP_DEFAULT        0
 #define XBM_DEFAULT			0
 #define XPM_DEFAULT			0
+#define WEBP_DEFAULT		0		//! save with good quality (75:1)
+#define WEBP_LOSSLESS		0x100	//! save in lossless mode
+#define JXR_DEFAULT			0		//! save with quality 80 and no chroma subsampling (4:4:4)
+#define JXR_LOSSLESS		0x0064	//! save lossless
+#define JXR_PROGRESSIVE		0x2000	//! save as a progressive-JXR (use | to combine with other save flags)
 
 // Background filling options ---------------------------------------------------------
 // Constants used in FreeImage_FillBackground and FreeImage_EnlargeCanvas
@@ -979,7 +986,8 @@ DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToRGB16(FIBITMAP *dib);
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToStandardType(FIBITMAP *src, BOOL scale_linear FI_DEFAULT(TRUE));
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToType(FIBITMAP *src, FREE_IMAGE_TYPE dst_type, BOOL scale_linear FI_DEFAULT(TRUE));
 
-// tone mapping operators
+// Tone mapping operators ---------------------------------------------------
+
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ToneMapping(FIBITMAP *dib, FREE_IMAGE_TMO tmo, double first_param FI_DEFAULT(0), double second_param FI_DEFAULT(0));
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_TmoDrago03(FIBITMAP *src, double gamma FI_DEFAULT(2.2), double exposure FI_DEFAULT(0));
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_TmoReinhard05(FIBITMAP *src, double intensity FI_DEFAULT(0), double contrast FI_DEFAULT(0));
@@ -996,7 +1004,7 @@ DLL_API DWORD DLL_CALLCONV FreeImage_ZLibGUnzip(BYTE *target, DWORD target_size,
 DLL_API DWORD DLL_CALLCONV FreeImage_ZLibCRC32(DWORD crc, BYTE *source, DWORD source_size);
 
 // --------------------------------------------------------------------------
-// Metadata routines --------------------------------------------------------
+// Metadata routines
 // --------------------------------------------------------------------------
 
 // tag creation / destruction
@@ -1038,7 +1046,21 @@ DLL_API BOOL DLL_CALLCONV FreeImage_CloneMetadata(FIBITMAP *dst, FIBITMAP *src);
 DLL_API const char* DLL_CALLCONV FreeImage_TagToString(FREE_IMAGE_MDMODEL model, FITAG *tag, char *Make FI_DEFAULT(NULL));
 
 // --------------------------------------------------------------------------
-// Image manipulation toolkit -----------------------------------------------
+// JPEG lossless transformation routines
+// --------------------------------------------------------------------------
+
+DLL_API BOOL DLL_CALLCONV FreeImage_JPEGTransform(const char *src_file, const char *dst_file, FREE_IMAGE_JPEG_OPERATION operation, BOOL perfect FI_DEFAULT(TRUE));
+DLL_API BOOL DLL_CALLCONV FreeImage_JPEGTransformU(const wchar_t *src_file, const wchar_t *dst_file, FREE_IMAGE_JPEG_OPERATION operation, BOOL perfect FI_DEFAULT(TRUE));
+DLL_API BOOL DLL_CALLCONV FreeImage_JPEGCrop(const char *src_file, const char *dst_file, int left, int top, int right, int bottom);
+DLL_API BOOL DLL_CALLCONV FreeImage_JPEGCropU(const wchar_t *src_file, const wchar_t *dst_file, int left, int top, int right, int bottom);
+DLL_API BOOL DLL_CALLCONV FreeImage_JPEGTransformFromHandle(FreeImageIO* src_io, fi_handle src_handle, FreeImageIO* dst_io, fi_handle dst_handle, FREE_IMAGE_JPEG_OPERATION operation, int* left, int* top, int* right, int* bottom, BOOL perfect FI_DEFAULT(TRUE));
+DLL_API BOOL DLL_CALLCONV FreeImage_JPEGTransformCombined(const char *src_file, const char *dst_file, FREE_IMAGE_JPEG_OPERATION operation, int* left, int* top, int* right, int* bottom, BOOL perfect FI_DEFAULT(TRUE));
+DLL_API BOOL DLL_CALLCONV FreeImage_JPEGTransformCombinedU(const wchar_t *src_file, const wchar_t *dst_file, FREE_IMAGE_JPEG_OPERATION operation, int* left, int* top, int* right, int* bottom, BOOL perfect FI_DEFAULT(TRUE));
+DLL_API BOOL DLL_CALLCONV FreeImage_JPEGTransformCombinedFromMemory(FIMEMORY* src_stream, FIMEMORY* dst_stream, FREE_IMAGE_JPEG_OPERATION operation, int* left, int* top, int* right, int* bottom, BOOL perfect FI_DEFAULT(TRUE));
+
+
+// --------------------------------------------------------------------------
+// Image manipulation toolkit
 // --------------------------------------------------------------------------
 
 // rotation and flipping
@@ -1048,11 +1070,9 @@ DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Rotate(FIBITMAP *dib, double angle, con
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_RotateEx(FIBITMAP *dib, double angle, double x_shift, double y_shift, double x_origin, double y_origin, BOOL use_mask);
 DLL_API BOOL DLL_CALLCONV FreeImage_FlipHorizontal(FIBITMAP *dib);
 DLL_API BOOL DLL_CALLCONV FreeImage_FlipVertical(FIBITMAP *dib);
-DLL_API BOOL DLL_CALLCONV FreeImage_JPEGTransform(const char *src_file, const char *dst_file, FREE_IMAGE_JPEG_OPERATION operation, BOOL perfect FI_DEFAULT(FALSE));
-DLL_API BOOL DLL_CALLCONV FreeImage_JPEGTransformU(const wchar_t *src_file, const wchar_t *dst_file, FREE_IMAGE_JPEG_OPERATION operation, BOOL perfect FI_DEFAULT(FALSE));
 
 // upsampling / downsampling
-DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Rescale(FIBITMAP *dib, int dst_width, int dst_height, FREE_IMAGE_FILTER filter);
+DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Rescale(FIBITMAP *dib, int dst_width, int dst_height, FREE_IMAGE_FILTER filter FI_DEFAULT(FILTER_CATMULLROM));
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_MakeThumbnail(FIBITMAP *dib, int max_pixel_size, BOOL convert FI_DEFAULT(TRUE));
 
 // color manipulation routines (point operations)
@@ -1079,8 +1099,6 @@ DLL_API BOOL DLL_CALLCONV FreeImage_SetComplexChannel(FIBITMAP *dst, FIBITMAP *s
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Copy(FIBITMAP *dib, int left, int top, int right, int bottom);
 DLL_API BOOL DLL_CALLCONV FreeImage_Paste(FIBITMAP *dst, FIBITMAP *src, int left, int top, int alpha);
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Composite(FIBITMAP *fg, BOOL useFileBkg FI_DEFAULT(FALSE), RGBQUAD *appBkColor FI_DEFAULT(NULL), FIBITMAP *bg FI_DEFAULT(NULL));
-DLL_API BOOL DLL_CALLCONV FreeImage_JPEGCrop(const char *src_file, const char *dst_file, int left, int top, int right, int bottom);
-DLL_API BOOL DLL_CALLCONV FreeImage_JPEGCropU(const wchar_t *src_file, const wchar_t *dst_file, int left, int top, int right, int bottom);
 DLL_API BOOL DLL_CALLCONV FreeImage_PreMultiplyWithAlpha(FIBITMAP *dib);
 
 // background filling routines
