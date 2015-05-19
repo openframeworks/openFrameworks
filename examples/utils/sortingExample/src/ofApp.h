@@ -27,6 +27,9 @@ public:
     void mouseReleased(int x, int y, int button);
     void mouseEntered(int x, int y);
     void mouseExited(int x, int y);
+    void windowResized(int w, int h);
+    void gotMessage(ofMessage msg);
+    void dragEvent(ofDragInfo dragInfo);
     
     static bool sortOnABC(const LyricWord &a, const LyricWord &b);
     static bool sortOnOccurrences(const LyricWord &a, const LyricWord &b);
