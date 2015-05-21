@@ -86,7 +86,6 @@
 	#include "ofSoundStream.h"
 	#include "ofSoundPlayer.h"
 	#include "ofSoundBuffer.h"
-	#include "ofSoundObject.h"
 #endif
 
 //--------------------------

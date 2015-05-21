@@ -15,8 +15,8 @@ public:
 	ofBaseSoundPlayer(){};
 	virtual ~ofBaseSoundPlayer(){};
 	
-	virtual bool loadSound(string fileName, bool stream = false) = 0;
-	virtual void unloadSound() = 0;
+	virtual bool load(string fileName, bool stream = false)=0;
+	virtual void unload()=0;
 	virtual void play() = 0;
 	virtual void stop() = 0;
 	
@@ -29,12 +29,12 @@ public:
 	virtual void setPosition(float pct) = 0; // 0 = start, 1 = end;
 	virtual void setPositionMS(int ms) = 0;
 
-	virtual float getPosition() = 0;
-	virtual int getPositionMS() = 0;
-	virtual bool getIsPlaying() = 0;
-	virtual float getSpeed() = 0;
-	virtual float getPan() = 0;
-	virtual bool isLoaded() = 0;
-	virtual float getVolume() = 0;
+	virtual float getPosition() const = 0;
+	virtual int getPositionMS() const = 0;
+	virtual bool isPlaying() const = 0;
+	virtual float getSpeed() const = 0;
+	virtual float getPan() const = 0;
+	virtual bool isLoaded() const = 0;
+	virtual float getVolume() const = 0;
 	
 };

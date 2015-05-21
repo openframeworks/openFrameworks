@@ -91,7 +91,11 @@ else
 	HOST_PLATFORM = darwin-x86
 endif
 else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/windows-x86_64),)
+	HOST_PLATFORM = windows-x86_64
+else
 	HOST_PLATFORM = windows
+endif
 	PWD = $(shell pwd)
 else
 ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/linux-x86_64),)
@@ -534,7 +538,7 @@ afterplatform:$(RESFILE)
 	
 $(RESFILE): $(DATA_FILES)
 	@echo compressing and copying resources from bin/data into res
-	cd $(PROJECT_PATH); \
+	cd "$(PROJECT_PATH)"; \
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
@@ -549,14 +553,14 @@ $(RESFILE): $(DATA_FILES)
 	fi
 
 install:	
-	cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	cd "$(OF_ROOT)/addons/ofxAndroid/ofAndroidLib"; \
 	echo installing on $(HOST_PLATFORM); \
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	else \
 	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	fi 
-	cd $(PROJECT_PATH); \
+	cd "$(PROJECT_PATH)"; \
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \

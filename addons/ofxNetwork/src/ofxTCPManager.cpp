@@ -29,6 +29,7 @@ ofxTCPManager::ofxTCPManager()
   m_dwTimeoutSend= OF_TCP_DEFAULT_TIMEOUT;
   m_dwTimeoutReceive= OF_TCP_DEFAULT_TIMEOUT;
   m_dwTimeoutAccept= OF_TCP_DEFAULT_TIMEOUT;
+  m_dwTimeoutConnect= 5;//OF_TCP_DEFAULT_TIMEOUT;
   m_iListenPort= -1;
   m_closing = false;
   m_iMaxConnections = 100;
@@ -130,7 +131,9 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
   if (m_hSocket == INVALID_SOCKET) return(false);
 
   if (m_dwTimeoutAccept != NO_TIMEOUT) {
-    fd_set fd= {1, m_hSocket};
+	  fd_set fd;
+	  FD_ZERO(&fd);
+	  FD_SET(m_hSocket, &fd);
 	  timeval tv= {(time_t)m_dwTimeoutAccept, 0};
 	  if(select(0, &fd, NULL, NULL, &tv) == 0) {
 		  ofxNetworkCheckError();
@@ -144,6 +147,7 @@ bool ofxTCPManager::Accept(ofxTCPManager& sConnect)
   if(!ret && !m_closing) ofxNetworkCheckError();
   return ret;
 }
+
 
 //--------------------------------------------------------------------------------
 bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
@@ -162,8 +166,34 @@ bool ofxTCPManager::Connect(char *pAddrStr, unsigned short usPort)
 	addr_in.sin_port  = htons(usPort); // short, network byte order
 	addr_in.sin_addr  = *((struct in_addr *)he->h_addr);
 
+	// set to non-blocking before connect
+	#ifdef TARGET_WIN32
+		unsigned long iMode = 1;
+		if (m_dwTimeoutConnect != NO_TIMEOUT) ioctlsocket(m_hSocket, FIONBIO, &iMode);
+	#else
+		if (m_dwTimeoutConnect != NO_TIMEOUT) fcntl(m_hSocket, F_SETFL, O_NONBLOCK);
+	#endif
+
 	bool ret = (connect(m_hSocket, (sockaddr *)&addr_in, sizeof(sockaddr)) != SOCKET_ERROR);
-	if(!ret) ofxNetworkCheckError();
+    
+    // set a timeout
+    if (m_dwTimeoutConnect != NO_TIMEOUT) {
+        fd_set fd;
+        FD_ZERO(&fd);
+        FD_SET(m_hSocket, &fd);
+        timeval	tv=	{(time_t)m_dwTimeoutConnect, 0};
+        fd_set fdset;
+        if(select(m_hSocket+1,NULL,&fd,NULL,&tv)== 1) {
+            int so_error;
+            socklen_t len = sizeof so_error;
+            getsockopt(m_hSocket, SOL_SOCKET, SO_ERROR, (char*)&so_error, &len);
+            if (so_error == 0) {
+                return true;
+            } 
+        }
+    }
+    
+    if(!ret) ofxNetworkCheckError();    
 	return ret;
 }
 
@@ -432,6 +462,9 @@ bool ofxTCPManager::GetInetAddr(LPINETADDR pInetAddr)
 	return ret;
 }
 
+void ofxTCPManager::SetTimeoutConnect(int timeoutInSeconds) {
+	m_dwTimeoutConnect= timeoutInSeconds;
+}
 void ofxTCPManager::SetTimeoutSend(int timeoutInSeconds) {
 	m_dwTimeoutSend= timeoutInSeconds;
 }
@@ -440,6 +473,9 @@ void ofxTCPManager::SetTimeoutReceive(int timeoutInSeconds) {
 }
 void ofxTCPManager::SetTimeoutAccept(int timeoutInSeconds) {
 	m_dwTimeoutAccept= timeoutInSeconds;
+}
+int ofxTCPManager::GetTimeoutConnect() {
+	return m_dwTimeoutConnect;
 }
 int ofxTCPManager::GetTimeoutSend() {
 	return m_dwTimeoutSend;

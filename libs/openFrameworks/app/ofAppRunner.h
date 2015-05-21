@@ -15,10 +15,8 @@ class ofBaseRenderer;
 class ofCoreEvents;
 
 void ofInit();
-shared_ptr<ofMainLoop> ofCreateMainLoop();
-void 		ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
+void ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
 shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings);	// sets up the opengl context!
-
 shared_ptr<ofMainLoop> ofGetMainLoop();
 
 template<typename Window>
@@ -28,7 +26,7 @@ void ofSetupOpenGL(shared_ptr<Window> windowPtr, int w, int h, ofWindowMode scre
 	settings.width = w;
 	settings.height = h;
 	settings.windowMode = screenMode;
-	ofCreateMainLoop()->addWindow(windowPtr);
+	ofGetMainLoop()->addWindow(windowPtr);
 	windowPtr->setup(settings);
 }
 

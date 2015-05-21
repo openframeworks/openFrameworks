@@ -36,8 +36,12 @@ ofXml::ofXml() {
 }
 
 bool ofXml::load(const string & path){
-	ofFile xmlFile(path,ofFile::ReadOnly);
-	ofBuffer xmlBuffer(xmlFile);
+	ofFile file(path, ofFile::ReadOnly);
+	if(!file.exists()) {
+		ofLogError("ofXml") << "couldn't load, \"" << file.getFileName() << "\" not found";
+		return false;
+	}
+	ofBuffer xmlBuffer(file);
 	return loadFromBuffer(xmlBuffer);
 }
 
@@ -116,7 +120,6 @@ int ofXml::getNumChildren() const
             numberOfChildren++;
         }
     }
-
     return numberOfChildren;
 }
 
@@ -545,13 +548,18 @@ bool ofXml::removeAttributes()
 }
 
 bool ofXml::removeContents() {
-    if(element)
+    if(element && element->hasChildNodes())
     {
-        Poco::XML::NodeList *list = element->childNodes();
-        for( int i = 0; i < (int)list->length(); i++) {
-            element->removeChild(list->item(i));
-        }
-        list->release();
+
+		Poco::XML::Node* swap;
+		Poco::XML::Node* n = element->firstChild();
+		while(n->nextSibling() != NULL)
+		{
+			swap = n->nextSibling();
+			element->removeChild(n);
+			n = swap;
+		}
+		
         return true;
     }
     return false;
@@ -771,12 +779,16 @@ bool ofXml::loadFromBuffer( const string& buffer )
     	element = (Poco::XML::Element*) document->firstChild();
     	document->normalize();
     	return true;
-    } catch( const exception & e ) {
-        short msg = atoi(e.what());
-        ofLogError("ofXml") << "loadFromBuffer(): " << DOMErrorMessage(msg);
+	} catch( const Poco::XML::SAXException & e ) {
+		ofLogError("ofXml") << "parse error: " << e.message();
         document = new Poco::XML::Document;
         element = document->documentElement();
-        //ofLogNotice("ofXml") << "element " << element;
+        return false;
+    } catch( const exception & e ) {
+        short msg = atoi(e.what());
+        ofLogError("ofXml") << "parse error: " << DOMErrorMessage(msg);
+        document = new Poco::XML::Document;
+        element = document->documentElement();
         return false;
     }
 }

@@ -64,26 +64,12 @@ void ofThread::startThread(bool mutexBlocks, bool verbose){
 //-------------------------------------------------
 bool ofThread::lock(){
 	if(_mutexBlocks){
-        if(isCurrentThread()){
-            ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - ofThread waiting for its own mutex to be unlocked.";
-        }else{
-            ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - External thread waiting for ofThread mutex to be unlocked";
-        }
 		mutex.lock();
-
 	}else{
 		if(!mutex.tryLock()){
-			ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Mutex is already locked, tryLock failed.";
-			return false;
+			return false; // mutex is locked, tryLock failed
 		}
 	}
-
-    if(isCurrentThread()){
-        ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - ofThread locked its own mutex.";
-    }else{
-        ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - External thread locked the ofThread mutex.";
-    }
-
 	return true;
 }
 
@@ -91,12 +77,6 @@ bool ofThread::lock(){
 //-------------------------------------------------
 void ofThread::unlock(){
 	mutex.unlock();
-
-    if(isCurrentThread()){
-        ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - ofThread unlocked its own mutex.";
-    } else {
-        ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - External thread unlocked the ofThread mutex.";
-    }
 }
 
 
@@ -113,16 +93,12 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds){
 
 		// tell thread to stop
 		if(callStopThread){
-            stopThread();
-			ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Signaled to stop.";
+            stopThread(); // signalled to stop
 		}
 
 		// wait for the thread to finish
-		ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - waiting to stop";
-
         if(isCurrentThread()){
-			ofLogWarning("ofThread") << "- name: " << getThreadName() << " - waitForThread should only be called from outside the this ofThread.";
-			return;
+			return; // waitForThread should only be called outside thread
 		}
 
         if (INFINITE_JOIN_TIMEOUT == milliseconds){
@@ -130,7 +106,7 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds){
         }else{
             // Wait for "joinWaitMillis" milliseconds for thread to finish
             if(!thread.tryJoin(milliseconds)){
-                ofLogError("ofThread") << "- name: " << getThreadName() << " - Unable to completely waitForThread.";
+				// unable to completely wait for thread
             }
         }
     }
@@ -195,7 +171,6 @@ void ofThread::threadedFunction(){
 
 //-------------------------------------------------
 void ofThread::run(){
-	//ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Started Thread.";
 #ifdef TARGET_ANDROID
 	JNIEnv * env;
 	jint attachResult = ofGetJavaVMPtr()->AttachCurrentThread(&env,NULL);
@@ -218,6 +193,4 @@ void ofThread::run(){
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
-
-	ofLogVerbose("ofThread") << "- name: " << getThreadName() << " - Thread Finished.";
 }

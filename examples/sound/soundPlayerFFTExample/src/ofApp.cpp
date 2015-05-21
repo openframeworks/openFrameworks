@@ -5,10 +5,10 @@
 void ofApp::setup(){	 
 
 	// load in sounds:
-	beat.loadSound("sounds/jdee_beat.mp3");
-	ow.loadSound("sounds/ow.mp3");	
-	dog.loadSound("sounds/dog.mp3");	
-	rooster.loadSound("sounds/rooster.mp3");
+	beat.load("sounds/jdee_beat.mp3");
+	ow.load("sounds/ow.mp3");
+	dog.load("sounds/dog.mp3");
+	rooster.load("sounds/rooster.mp3");
 	
 	// we will bounce a circle using these variables:
 	px = 300;
@@ -150,6 +150,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

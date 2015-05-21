@@ -322,9 +322,6 @@ function createPackage {
         cd $pkg_ofroot/addons
     done
     
-	#delete ofxSynth addon, still not stable
-	rm -Rf ofxSynth
-    
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
 		rm -Rf ofxAndroid
@@ -355,8 +352,8 @@ function createPackage {
 	
 	#android, move paths.default.make to paths.make
 	if [ "$pkg_platform" == "android" ]; then
-	    cd ${pkg_root}
-	    mv libs/openFrameworksCompiled/android/paths.default.make libs/openFrameworksCompiled/android/paths.make
+	    cd ${pkg_ofroot}
+	    mv libs/openFrameworksCompiled/project/android/paths.default.make libs/openFrameworksCompiled/project/android/paths.make
 	fi
 
     #delete other platforms OF project files
@@ -368,7 +365,7 @@ function createPackage {
     #remove osx in ios from openFrameworksCompiled 
     #(can't delete by default since it needs to keep things in libs for the simulator)
     if [ "$pkg_platform" = "ios" ]; then
-	    rm -Rf ${pkg_ofroot}libs/openFrameworksCompiled/lib/osx
+	    rm -Rf ${pkg_ofroot}/libs/openFrameworksCompiled/lib/osx
     	rm -Rf ${pkg_ofroot}/libs/openFrameworksCompiled/project/osx
     fi
 
@@ -417,7 +414,6 @@ function createPackage {
 	if [ "$pkg_platform" == "ios" ]; then
 		rm -Rf osx
 	fi
-    rm create_package.sh
 
     #delete .svn dirs
     cd $pkg_ofroot
@@ -493,7 +489,7 @@ function createPackage {
     if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
-        tar czf of_v${pkg_version}_${pkg_platform}_release.tar.gz of_v${pkg_version}_${pkg_platform}_release
+        COPYFILE_DISABLE=true tar czf of_v${pkg_version}_${pkg_platform}_release.tar.gz of_v${pkg_version}_${pkg_platform}_release
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     else
         mkdir of_v${pkg_version}_${pkg_platform}_release
@@ -519,7 +515,7 @@ if [ "$platform" = "all" ]; then
     echo dir: $PWD
     mkdir of_v${version}_all
     mv addons apps export libs other scripts $packageroot/of_v${version}_all
-    tar czf of_v$version_all_FAT.tar.gz of_v${version}_all
+    COPYFILE_DISABLE=true tar czf of_v$version_all_FAT.tar.gz of_v${version}_all
     rm -Rf of_v${version}_all
     mv * $packageroot/..
     #rm -Rf $packageroot

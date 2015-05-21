@@ -131,17 +131,8 @@ void ofCairoRenderer::close(){
 
 
 void ofCairoRenderer::startRender(){
-
-}
-
-void ofCairoRenderer::finishRender(){
-
-}
-
-void ofCairoRenderer::update(){
 	if(!surface || !cr)
-	setStyle(currentStyle);
-	cairo_surface_flush(surface);
+		setStyle(currentStyle);
 	if(page==0 || !multiPage){
 		page=1;
 	}else{
@@ -153,6 +144,10 @@ void ofCairoRenderer::update(){
 			cairo_copy_page(cr);
 		}
 	}
+}
+
+void ofCairoRenderer::finishRender(){
+	cairo_surface_flush(surface);
 }
 
 void ofCairoRenderer::setStyle(const ofStyle & style){
@@ -329,14 +324,17 @@ ofVec3f ofCairoRenderer::transform(ofVec3f vec) const{
 	return vec;
 }
 
-void ofCairoRenderer::draw(const ofMesh & primitive, bool useColors, bool useTextures, bool useNormals) const{
+void ofCairoRenderer::draw(const ofMesh & primitive, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
+    if(useColors || useTextures || useNormals){
+        ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support colors, textures, or normals. drawing wireframe ...";
+    }
 	if(primitive.getNumVertices() == 0){
 		return;
 	}
 	if(primitive.getNumIndices() == 0){
 		ofMesh indexedMesh = primitive;
 		indexedMesh.setupIndicesAuto();
-		draw(indexedMesh, useColors, useTextures, useNormals);
+		draw(indexedMesh, mode, useColors, useTextures, useNormals);
 		return;
 	}
 	cairo_new_path(cr);
@@ -345,7 +343,7 @@ void ofCairoRenderer::draw(const ofMesh & primitive, bool useColors, bool useTex
 	cairo_matrix_init_identity(&matrix);
 	cairo_new_path(cr);
 
-	int i = 1;
+	std::size_t i = 1;
 	ofVec3f v = transform(primitive.getVertex(primitive.getIndex(0)));
 	ofVec3f v2;
 	cairo_move_to(cr,v.x,v.y);
@@ -398,13 +396,6 @@ void ofCairoRenderer::draw(const ofMesh & primitive, bool useColors, bool useTex
 
 		cairo_stroke( cr );
 	}
-}
-
-void ofCairoRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode mode, bool useColors, bool useTextures, bool useNormals) const{
-    if(useColors || useTextures || useNormals){
-        ofLogWarning("ofCairoRenderer") << "draw(): cairo mesh rendering doesn't support colors, textures, or normals. drawing wireframe ...";
-    }
-	draw(vertexData,false,false,false);
 }
 
 //----------------------------------------------------------
@@ -1353,7 +1344,7 @@ void ofCairoRenderer::drawEllipse(float x, float y, float z, float width, float 
 	mutThis->translate(0,-y*ellipse_ratio);
 	mutThis->scale(1,ellipse_ratio);
 	mutThis->translate(0,y/ellipse_ratio);
-	cairo_arc(cr,x,y,width*0.5,0,360);
+	cairo_arc(cr,x,y,width*0.5,0,2*PI);
 	mutThis->popMatrix();
 
 	cairo_close_path(cr);

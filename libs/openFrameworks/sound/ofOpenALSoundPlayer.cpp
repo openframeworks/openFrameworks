@@ -124,7 +124,7 @@ ofOpenALSoundPlayer::ofOpenALSoundPlayer(){
 
 // ----------------------------------------------------------------------------
 ofOpenALSoundPlayer::~ofOpenALSoundPlayer(){
-	unloadSound();
+	unload();
 	kiss_fftr_free(fftCfg);
 	players().erase(this);
 }
@@ -420,7 +420,7 @@ bool ofOpenALSoundPlayer::readFile(string fileName, vector<short> & buffer){
 }
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
+bool ofOpenALSoundPlayer::load(string fileName, bool is_stream){
 
 	fileName = ofToDataPath(fileName);
 
@@ -435,7 +435,7 @@ bool ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 	// & prevent user-created memory leaks
 	// if they call "loadSound" repeatedly, for example
 
-	unloadSound();
+	unload();
 	ALenum format=AL_FORMAT_MONO16;
 	bLoadedOk = false;
 
@@ -556,7 +556,7 @@ bool ofOpenALSoundPlayer::loadSound(string fileName, bool is_stream){
 }
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::isLoaded(){
+bool ofOpenALSoundPlayer::isLoaded() const{
 	return bLoadedOk;
 }
 
@@ -631,7 +631,7 @@ void ofOpenALSoundPlayer::update(ofEventArgs & args){
 }
 
 //------------------------------------------------------------
-void ofOpenALSoundPlayer::unloadSound(){
+void ofOpenALSoundPlayer::unload(){
 	stop();
 	ofRemoveListener(ofEvents().update,this,&ofOpenALSoundPlayer::update);
 
@@ -665,7 +665,7 @@ void ofOpenALSoundPlayer::unloadSound(){
 }
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::getIsPlaying(){
+bool ofOpenALSoundPlayer::isPlaying() const{
 	if(sources.empty()) return false;
 	if(isStreaming) return isThreadRunning();
 	ALint state;
@@ -678,7 +678,7 @@ bool ofOpenALSoundPlayer::getIsPlaying(){
 }
 
 //------------------------------------------------------------
-bool ofOpenALSoundPlayer::getIsPaused(){
+bool ofOpenALSoundPlayer::isPaused() const{
 	if(sources.empty()) return false;
 	ALint state;
 	bool paused=true;
@@ -690,17 +690,17 @@ bool ofOpenALSoundPlayer::getIsPaused(){
 }
 
 //------------------------------------------------------------
-float ofOpenALSoundPlayer::getSpeed(){
+float ofOpenALSoundPlayer::getSpeed() const{
 	return speed;
 }
 
 //------------------------------------------------------------
-float ofOpenALSoundPlayer::getPan(){
+float ofOpenALSoundPlayer::getPan() const{
 	return pan;
 }
 
 //------------------------------------------------------------
-float ofOpenALSoundPlayer::getVolume(){
+float ofOpenALSoundPlayer::getVolume() const{
 	return volume;
 }
 
@@ -739,7 +739,7 @@ void ofOpenALSoundPlayer::setPositionMS(int ms){
 }
 
 //------------------------------------------------------------
-float ofOpenALSoundPlayer::getPosition(){
+float ofOpenALSoundPlayer::getPosition() const{
 	if(duration==0 || sources.empty())
 		return 0;
 	else
@@ -747,7 +747,7 @@ float ofOpenALSoundPlayer::getPosition(){
 }
 
 //------------------------------------------------------------
-int ofOpenALSoundPlayer::getPositionMS(){
+int ofOpenALSoundPlayer::getPositionMS() const{
 	if(sources.empty()) return 0;
 	float pos;
 #ifdef OF_USING_MPG123
@@ -989,7 +989,7 @@ float * ofOpenALSoundPlayer::getSystemSpectrum(int bands){
 
 	set<ofOpenALSoundPlayer*>::iterator it;
 	for(it=players().begin();it!=players().end();it++){
-		if(!(*it)->getIsPlaying()) continue;
+		if(!(*it)->isPlaying()) continue;
 		float * buffer = (*it)->getCurrentBufferSum(signalSize);
 		for(int i=0;i<signalSize;i++){
 			systemWindowedSignal[i]+=buffer[i];

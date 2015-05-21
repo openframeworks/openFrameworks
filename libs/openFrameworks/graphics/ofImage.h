@@ -366,7 +366,13 @@ public:
     /// \param y y position of pixel
     /// \returns The ofColor representing the pixels at the x and y position passed in.
     ofColor_<PixelType> getColor(int x, int y) const;
-    
+
+	/// \brief This returns the ofColor representing the pixels at the index
+	/// passed in.
+	/// \param index index into pixel data
+	/// \returns The ofColor representing the pixels at the index position passed in.
+	ofColor_<PixelType> getColor(int index) const;
+   
     /// \brief Get height of image as a float.
     /// \returns Height of image as float.
     float getHeight() const;
@@ -580,6 +586,7 @@ protected:
     /// \cond INTERNAL
     void changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageType type);
     void resizePixels(ofPixels_<PixelType> &pix, int newWidth, int newHeight);
+    void unloadTexture();
     
     ofPixels_<PixelType> pixels;
     bool bUseTexture;

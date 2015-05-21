@@ -54,6 +54,7 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
     texCoordsEnabled = false;
     normalsEnabled = false;
 	settingDefaultShader = false;
+	usingVideoShader = false;
 	usingCustomShader = false;
 
 	wrongUseLoggedOnce = false;
@@ -69,6 +70,10 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 	major = 3;
 	minor = 2;
 	window = _window;
+
+	currentFramebufferId = 0;
+	defaultFramebufferId = 0;
+
 }
 
 ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
@@ -77,6 +82,8 @@ ofGLProgrammableRenderer::~ofGLProgrammableRenderer() {
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::startRender() {
+	currentFramebufferId = defaultFramebufferId;
+	framebufferIdStack.push_back(defaultFramebufferId);
 	matrixStack.setRenderSurface(*window);
 	beginDefaultShader();
 	viewport();
@@ -100,18 +107,8 @@ void ofGLProgrammableRenderer::finishRender() {
 		glUseProgram(0);
 		if(!usingCustomShader) currentShader = NULL;
 	}
-	
 	matrixStack.clearStacks();
-}
-
-//----------------------------------------------------------
-void ofGLProgrammableRenderer::update(){
-    //
-}
-
-//----------------------------------------------------------
-void ofGLProgrammableRenderer::draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)  const{
-	draw(vertexData, OF_MESH_FILL, useColors, useTextures, useNormals); // tig: use default mode if no render mode specified.
+	framebufferIdStack.clear();
 }
 
 //----------------------------------------------------------
@@ -256,7 +253,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVboMesh & mesh, ofPolyRende
 	// ideally the glPolygonMode (or the polygon draw mode) should be part of ofStyle so that we can keep track
 	// of its state on the client side...
 
-	//glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_LINE : GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_FILL : GL_LINE);
 #else
 	if(renderType == OF_MESH_POINTS){
 		draw(mesh.getVbo(),GL_POINTS,0,mesh.getNumVertices());
@@ -361,7 +358,7 @@ void ofGLProgrammableRenderer::draw(const ofImage & image, float x, float y, flo
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
 			const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 			const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
@@ -376,7 +373,7 @@ void ofGLProgrammableRenderer::draw(const ofFloatImage & image, float x, float y
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
 			const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 			const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
@@ -391,7 +388,7 @@ void ofGLProgrammableRenderer::draw(const ofShortImage & image, float x, float y
 		const ofTexture& tex = image.getTexture();
 		if(tex.isAllocated()) {
 			const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
-			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+			draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 			const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 		} else {
 			ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
@@ -404,7 +401,7 @@ void ofGLProgrammableRenderer::draw(const ofTexture & tex, float x, float y, flo
 	const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(true,false,true,false);
 	if(tex.isAllocated()) {
 		const_cast<ofGLProgrammableRenderer*>(this)->bind(tex,0);
-		draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),false,true,false);
+		draw(tex.getMeshForSubsection(x,y,z,w,h,sx,sy,sw,sh,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 		const_cast<ofGLProgrammableRenderer*>(this)->unbind(tex,0);
 	} else {
 		ofLogWarning("ofGLProgrammableRenderer") << "draw(): texture is not allocated";
@@ -417,7 +414,7 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 		return;
 	}
 	const_cast<ofGLProgrammableRenderer*>(this)->bind(video);
-	draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,w,h,isVFlipped(),currentStyle.rectMode),false,true,false);
+	draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,w,h,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 	const_cast<ofGLProgrammableRenderer*>(this)->unbind(video);
 }
 
@@ -492,18 +489,17 @@ void ofGLProgrammableRenderer::bind(const ofBaseVideoDraws & video){
 		return;
 	}
 	const ofShader * shader = NULL;
-	bool binded = false;
 	if(!usingCustomShader){
 		shader = getVideoShader(video);
 		if(shader){
-			shader->begin();
+			bind(*shader);
 			setVideoShaderUniforms(video,*shader);
-			binded = true;
+			usingVideoShader = true;
 		}
 	}
 
-	if(!binded){
-		video.getTexture().bind();
+	if(!usingVideoShader){
+		bind(video.getTexture(),0);
 	}
 }
 
@@ -512,20 +508,12 @@ void ofGLProgrammableRenderer::unbind(const ofBaseVideoDraws & video){
 	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
 		return;
 	}
-	const ofShader * shader = NULL;
-	bool unbinded = false;
-	if(!usingCustomShader){
-		shader = getVideoShader(video);
-		if(shader){
-			shader->end();
-			unbinded = true;
-		}
+	if(usingVideoShader){
+		unbind(*currentShader);
+	}else{
+		unbind(video.getTexture(),0);
 	}
-
-	if(!unbinded){
-		video.getTexture().unbind();
-	}
-
+	usingVideoShader = false;
 }
 
 //----------------------------------------------------------
@@ -956,9 +944,17 @@ void ofGLProgrammableRenderer::setFillMode(ofFillFlag fill){
 	if(currentStyle.bFill){
 		path.setFilled(true);
 		path.setStrokeWidth(0);
+		#ifndef TARGET_OPENGLES
+			// GLES does not support glPolygonMode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		#endif
 	}else{
 		path.setFilled(false);
 		path.setStrokeWidth(currentStyle.lineWidth);
+		#ifndef TARGET_OPENGLES
+			// GLES does not support glPolygonMode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		#endif
 	}
 }
 
@@ -1060,6 +1056,7 @@ void ofGLProgrammableRenderer::setBlendMode(ofBlendMode blendMode){
 		default:
 			break;
 	}
+	currentStyle.blendingMode = blendMode;
 }
 
 //----------------------------------------------------------
@@ -1293,8 +1290,9 @@ void ofGLProgrammableRenderer::unbind(const ofShader & shader){
 
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::bind(const ofFbo & fbo, bool setupPerspective){
-	matrixStack.pushView();
+void ofGLProgrammableRenderer::begin(const ofFbo & fbo, bool setupPerspective){
+	pushView();
+	pushStyle();
 	matrixStack.setRenderSurface(fbo);
 	viewport();
 	if(setupPerspective){
@@ -1302,15 +1300,50 @@ void ofGLProgrammableRenderer::bind(const ofFbo & fbo, bool setupPerspective){
 	}else{
 		uploadMatrices();
 	}
+	bind(fbo);
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::end(const ofFbo & fbo){
+	unbind(fbo);
+	matrixStack.setRenderSurface(*window);
+	uploadMatrices();
+	popStyle();
+	popView();
+}
+
+//----------------------------------------------------------
+void ofGLProgrammableRenderer::bind(const ofFbo & fbo){
+	// this method could just as well have been placed in ofBaseGLRenderer
+	// and shared over both programmable and fixed function renderer.
+	// I'm keeping it here, so that if we want to do more fancyful
+	// named framebuffers with GL 4.5+, we can have 
+	// different implementations.
+
+	GLint currentFramebufferBinding = currentFramebufferId;
+#ifdef TARGET_OPENGLES
+	// OpenGL ES might have set a default frame buffer for
+	// MSAA rendering to the window, bypassing ofFbo, so we
+	// can't trust ofFbo to have correctly tracked the bind
+	// state. Therefore, we are forced to use the slower glGet() method
+	// to be sure to get the correct default framebuffer.
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebufferBinding);
+#endif
+	fbo.setPreviousFramebufferBinding(currentFramebufferBinding);
 	fbo.bind();
+	currentFramebufferId = fbo.getFbo();
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(const ofFbo & fbo){
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	matrixStack.setRenderSurface(*window);
-	uploadMatrices();
-	matrixStack.popView();
+	// fbo.unbind() will restore GL_FRAMEBUFFER target to
+	// fbo.previousFramebufferBinding
+	fbo.unbind();
+	// so we have to update currentFramebuffer accordingly.
+	currentFramebufferId = fbo.getPreviousFramebufferBinding();
+	// Now check if any MSAA render targets exist, and flag
+	// these dirty if need be.
+	fbo.flagDirty();
 }
 
 //----------------------------------------------------------
@@ -1420,6 +1453,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 	if(!uniqueShader || currentMaterial){
 		if(currentMaterial){
 			nextShader = &currentMaterial->getShader(currentTextureTarget,*this);
+			currentMaterial->updateMaterial(*nextShader,*this);
 		}else if(bitmapStringEnabled){
 			nextShader = &bitmapStringShader;
 
@@ -2384,6 +2418,7 @@ void ofGLProgrammableRenderer::setVideoShaderUniforms(const ofBaseVideoDraws & v
 #ifndef TARGET_OPENGLES
 			}
 #endif
+			shader.setUniformTexture("src_tex_unit0",video.getTexturePlanes()[0],0);
 			break;
 		case OF_PIXELS_NV12:
 		case OF_PIXELS_NV21:
@@ -2553,3 +2588,4 @@ const of3dGraphics & ofGLProgrammableRenderer::get3dGraphics() const{
 of3dGraphics & ofGLProgrammableRenderer::get3dGraphics(){
 	return graphics3d;
 }
+

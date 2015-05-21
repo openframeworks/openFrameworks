@@ -123,7 +123,7 @@ void HandleFiles(WPARAM wParam)
     // allocated by the application is released.
     DragFinish(hDrop);
 
-	ofAppPtr->dragEvent(info);
+	instance->events().notifyDragEvent(info);
 
 }
 
@@ -335,7 +335,9 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 		setWindowIcon(iconPixels);
     }
 #endif
-	setWindowPosition(settings.position.x,settings.position.y);
+	if (settings.isPositionSet()) {
+		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+	}
 }
 
 #ifdef TARGET_LINUX
@@ -387,7 +389,7 @@ void ofAppGlutWindow::close(){
 #ifdef TARGET_LINUX
 	glutLeaveMainLoop();
 #else
-	ofExit(0);
+	std::exit(0);
 #endif
 }
 
@@ -777,7 +779,6 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 
 //------------------------------------------------------------
 void ofAppGlutWindow::idle_cb(void) {
-	instance->currentRenderer->update();
 	instance->events().notifyUpdate();
 
 	glutPostRedisplay();
@@ -816,7 +817,11 @@ void ofAppGlutWindow::resize_cb(int w, int h) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::entry_cb(int state) {
-	instance->events().notifyWindowEntry( state );
+	if (state == GLUT_ENTERED){
+		instance->events().notifyMouseEntered(instance->events().getMouseX(), instance->events().getMouseY());
+	}else if (state == GLUT_LEFT){
+		instance->events().notifyMouseExited(instance->events().getMouseX(), instance->events().getMouseY());
+	}
 }
 
 //------------------------------------------------------------

@@ -8,12 +8,19 @@
 #include "ofTypes.h"
 #include "ofEvents.h"
 #include "ofThread.h"
-
 #define GST_DISABLE_DEPRECATED
 #include <gst/gst.h>
 #include <gst/gstpad.h>
 #include <gst/video/video.h>
 #include "Poco/Condition.h"
+#include "ofTexture.h"
+#include <queue>
+
+//#define OF_USE_GST_GL
+#ifdef OF_USE_GST_GL
+#define GST_USE_UNSTABLE_API
+#include <gst/gl/gl.h>
+#endif
 
 class ofGstAppSink;
 typedef struct _GstElement GstElement;
@@ -157,6 +164,7 @@ public:
 	bool 			isFrameNew() const;
 	ofPixels&		getPixels();
 	const ofPixels&	getPixels() const;
+	ofTexture * 	getTexture();
 	void 			update();
 
 	float 			getHeight() const;
@@ -171,6 +179,10 @@ public:
 #endif
 
 	bool			isInitialized() const;
+	
+	// copy pixels from gst buffer to avoid
+	// https://bugzilla.gnome.org/show_bug.cgi?id=737427
+	void setCopyPixels(bool copy);
 
 	// this events happen in a different thread
 	// do not use them for opengl stuff
@@ -195,17 +207,28 @@ protected:
 	ofPixels		backPixels;
 	ofPixels		eventPixels;
 private:
+	static gboolean	sync_bus_call (GstBus * bus, GstMessage * msg, gpointer data);
 	bool			bIsFrameNew;			// if we are new
 	bool			bHavePixelsChanged;
 	bool			bBackPixelsChanged;
 	ofMutex			mutex;
 #if GST_VERSION_MAJOR==0
-	shared_ptr<GstBuffer> 	buffer, prevBuffer;
+	shared_ptr<GstBuffer> 	frontBuffer, backBuffer;
 #else
-	shared_ptr<GstSample> 	buffer, prevBuffer;
+	shared_ptr<GstSample> 	frontBuffer, backBuffer;
+	queue<shared_ptr<GstSample> > bufferQueue;
 	GstMapInfo mapinfo;
+	#ifdef OF_USE_GST_GL
+		ofTexture		frontTexture, backTexture;
+	#endif
 #endif
 	ofPixelFormat	internalPixelFormat;
+	bool copyPixels; // fix for certain versions bug with v4l2
+
+#ifdef OF_USE_GST_GL
+	GstGLDisplay *		glDisplay;
+	GstGLContext *		glContext;
+#endif
 };
 
 

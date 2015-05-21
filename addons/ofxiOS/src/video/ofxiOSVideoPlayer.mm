@@ -205,9 +205,9 @@ ofPixels & ofxiOSVideoPlayer::getPixels() {
     
     vImage_Buffer dest = {
         pixels.getData(),
-        pixels.getHeight(),
-        pixels.getWidth(),
-        pixels.getWidth() * pixels.getNumChannels()
+        static_cast<vImagePixelCount>(pixels.getHeight()),
+        static_cast<vImagePixelCount>(pixels.getWidth()),
+        static_cast<size_t>(pixels.getWidth() * pixels.getNumChannels())
     };
     
     vImage_Error err = kvImageNoError;
