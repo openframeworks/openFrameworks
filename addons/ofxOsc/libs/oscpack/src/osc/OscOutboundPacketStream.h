@@ -38,6 +38,7 @@
 #define INCLUDED_OSCPACK_OSCOUTBOUNDPACKETSTREAM_H
 
 #include <cstring> // size_t
+#include <iostream> 
 
 #include "OscTypes.h"
 #include "OscException.h"
@@ -114,7 +115,7 @@ public:
     OutboundPacketStream& operator<<( char rhs );
     OutboundPacketStream& operator<<( const RgbaColor& rhs );
     OutboundPacketStream& operator<<( const MidiMessage& rhs );
-    OutboundPacketStream& operator<<( int64 rhs );
+    OutboundPacketStream& operator<<( int64_t rhs );
     OutboundPacketStream& operator<<( const TimeTag& rhs );
     OutboundPacketStream& operator<<( double rhs );
     OutboundPacketStream& operator<<( const char* rhs );
