@@ -159,15 +159,32 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 			ofMessage->addInt64Arg( arg->AsInt64Unchecked() );
 		else if ( arg->IsFloat() )
 			ofMessage->addFloatArg( arg->AsFloatUnchecked() );
+		else if ( arg->IsDouble() )
+			ofMessage->addDoubleArg( arg->AsDoubleUnchecked() );
 		else if ( arg->IsString() )
 			ofMessage->addStringArg( arg->AsStringUnchecked() );
+		else if ( arg->IsSymbol() )
+			ofMessage->addSymbolArg( arg->AsSymbolUnchecked() );
+		else if ( arg->IsChar() )
+			ofMessage->addCharArg( arg->AsCharUnchecked() );
+		else if ( arg->IsMidiMessage() )
+			ofMessage->addMidiMessageArg( arg->AsMidiMessageUnchecked() );
+		else if ( arg->IsBool())
+			ofMessage->addBoolArg( arg->AsBoolUnchecked() );
+		else if ( arg->IsInfinitum() )
+			ofMessage->addTriggerArg();
+		else if ( arg->IsTimeTag() )
+			ofMessage->addTimetagArg( arg->AsTimeTagUnchecked() );
+		else if ( arg->IsRgbaColor() )
+			ofMessage->addRgbaColorArg( arg->AsRgbaColorUnchecked() );
 		else if ( arg->IsBlob() ){
             const char * dataPtr;
             osc::osc_bundle_element_size_t len = 0;
             arg->AsBlobUnchecked((const void*&)dataPtr, len);
             ofBuffer buffer(dataPtr, len);
 			ofMessage->addBlobArg( buffer );
-		}else
+		}
+		else
 		{
 			ofLogError("ofxOscReceiver") << "ProcessMessage: argument in message " << m.AddressPattern() << " is not an int, float, or string";
 		}
@@ -257,8 +274,17 @@ bool ofxOscReceiver::getParameter(ofAbstractParameter & parameter){
                         p->cast<int>() = msg.getArgAsInt32(0);
                     }else if(p->type()==typeid(ofParameter<float>).name() && msg.getArgType(0)==OFXOSC_TYPE_FLOAT){
                         p->cast<float>() = msg.getArgAsFloat(0);
-                    }else if(p->type()==typeid(ofParameter<bool>).name() && msg.getArgType(0)==OFXOSC_TYPE_INT32){
-                        p->cast<bool>() = msg.getArgAsInt32(0);
+                    }else if(p->type()==typeid(ofParameter<double>).name() && msg.getArgType(0)==OFXOSC_TYPE_DOUBLE){
+                        p->cast<double>() = msg.getArgAsDouble(0);
+                    }else if(p->type()==typeid(ofParameter<bool>).name() && (msg.getArgType(0)==OFXOSC_TYPE_TRUE
+																			|| msg.getArgType(0)==OFXOSC_TYPE_FALSE
+																			|| msg.getArgType(0)==OFXOSC_TYPE_INT32
+																			|| msg.getArgType(0)==OFXOSC_TYPE_INT64
+																			|| msg.getArgType(0)==OFXOSC_TYPE_FLOAT
+																			|| msg.getArgType(0)==OFXOSC_TYPE_DOUBLE
+																			|| msg.getArgType(0)==OFXOSC_TYPE_STRING
+																			|| msg.getArgType(0)==OFXOSC_TYPE_SYMBOL)){
+                        p->cast<bool>() = msg.getArgAsBool(0);
                     }else if(msg.getArgType(0)==OFXOSC_TYPE_STRING){
                         p->fromString(msg.getArgAsString(0));
                     }

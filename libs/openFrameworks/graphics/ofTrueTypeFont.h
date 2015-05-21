@@ -90,7 +90,7 @@ public:
 	bool load(string filename,
                   int fontsize,
                   bool _bAntiAliased=true,
-                  bool _bFullCharacterSet=false,
+                  bool _bFullCharacterSet=true,
                   bool makeContours=false,
                   float simplifyAmt=0.3,
                   int dpi=0);
@@ -248,7 +248,7 @@ public:
 	/// \param x X position of returned rectangle.
 	/// \param y Y position of returned rectangle.
 	/// \returns Returns the bounding box of a string as a rectangle.
-	ofRectangle getStringBoundingBox(string s, float x, float y) const;
+	ofRectangle getStringBoundingBox(string s, float x, float y, bool vflip=true) const;
 
 	/// \}
 	/// \name Drawing
