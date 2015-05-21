@@ -46,26 +46,31 @@ void ofSeedRandom(int val) {
 
 //--------------------------------------------------
 float ofRandom(float max) {
-	return max * ofRandomuf();
+	return ofRandom(0.0f, max);
 }
 
 //--------------------------------------------------
 float ofRandom(float x, float y) {
 	// if there is no range, return the value
-	if (x == y) return x; 			// float == ?, wise? epsilon?
-	float high = MAX(x,y);
-	float low = MIN(x,y);
-	return low + ((high - low) * ofRandomuf());
+	if (x == y) return x;
+	float high = MAX(x, y);
+	float low = MIN(x, y);
+	float range = high - low;
+	range -= std::numeric_limits<float>::epsilon();
+	float denominator = RAND_MAX / range;
+	float result = rand() / denominator;
+	result += low;
+	return result;
 }
 
 //--------------------------------------------------
 float ofRandomf() {
-	return ofRandomuf() * 2.0f - 1.0f;
+	return ofRandom(-1.0f, 1.0f);
 }
 
 //--------------------------------------------------
 float ofRandomuf() {
-	return rand() / (static_cast<double>(RAND_MAX) + 1.0);
+	return ofRandom(1.0f);
 }
 
 //---- new to 006
