@@ -6,8 +6,10 @@
 #pragma once
 
 #include "ofMain.h"
-#include "assimp.h"
-#include "aiScene.h"
+
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 class ofxAssimpAnimation {
 

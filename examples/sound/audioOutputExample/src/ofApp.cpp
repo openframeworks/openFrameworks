@@ -22,7 +22,7 @@ void ofApp::setup(){
 	lAudio.assign(bufferSize, 0.0);
 	rAudio.assign(bufferSize, 0.0);
 	
-	//soundStream.listDevices();
+	soundStream.printDeviceList();
 	
 	//if you want to set the device id to be different than the default
 	//soundStream.setDeviceID(1); 	//note some devices are input only and some are output only 
@@ -158,6 +158,16 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
 	bNoise = false;
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

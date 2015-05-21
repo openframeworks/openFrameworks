@@ -8,7 +8,9 @@
 #ifndef OFAPPEMSCRIPTENWINDOW_H_
 #define OFAPPEMSCRIPTENWINDOW_H_
 
+#include "ofConstants.h"
 #include "ofAppBaseWindow.h"
+#include "ofEvents.h"
 #include "EGL/egl.h"
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
@@ -18,9 +20,14 @@ public:
 	ofxAppEmscriptenWindow();
 	~ofxAppEmscriptenWindow();
 
-	void setupOpenGL(int w, int h, ofWindowMode screenMode);
-	void initializeWindow();
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+	static bool allowsMultiWindow(){ return false; }
+	static bool doesLoop(){ return true; }
+	static bool needsPolling(){ return false; }
+	static void pollEvents(){}
+	static void loop();
+
+
+	void setup(const ofGLESWindowSettings & settings);
 
 	void hideCursor();
 	void showCursor();
@@ -56,6 +63,10 @@ public:
 	EGLContext getEGLContext();
 	EGLSurface getEGLSurface();
 
+	ofCoreEvents & events();
+	shared_ptr<ofBaseRenderer> & renderer();
+
+
 private:
 	static void display_cb();
 	static int keydown_cb(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData);
@@ -70,6 +81,8 @@ private:
 	EGLSurface surface;
     static ofxAppEmscriptenWindow * instance;
     bool bEnableSetupScreen;
+    ofCoreEvents _events;
+    shared_ptr<ofBaseRenderer> _renderer;
 };
 
 #endif /* OFAPPEMSCRIPTENWINDOW_H_ */

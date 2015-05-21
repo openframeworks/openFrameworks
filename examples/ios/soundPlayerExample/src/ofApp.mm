@@ -6,10 +6,10 @@ void ofApp::setup(){
     ofBackground(255);
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);
 	
-	synth.loadSound("sounds/synth.mp3"); // compressed mp3 format.
+	synth.load("sounds/synth.mp3"); // compressed mp3 format.
     synth.setVolume(0.75);
     
-	beats.loadSound("sounds/1085.caf"); // uncompressed caf format.
+	beats.load("sounds/1085.caf"); // uncompressed caf format.
     beats.setVolume(0.75);
     
     // in iOS, openFrameworks uses ofxiOSSoundPlayer to play sound.
@@ -22,7 +22,7 @@ void ofApp::setup(){
     [vocals loadWithFile:@"sounds/Violet.wav"]; // uncompressed wav format.
     [vocals volume:0.5];
     
-    font.loadFont("fonts/Sudbury_Basin_3D.ttf", 18);
+    font.load("fonts/Sudbury_Basin_3D.ttf", 18);
 }
 
 //--------------------------------------------------------------
@@ -33,8 +33,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-	char tempStr[255];
-	
+    string tempStr;
+    
 	float sectionWidth = ofGetWidth() / 3.0f;
 
     // draw the background colors:
@@ -46,7 +46,7 @@ void ofApp::draw(){
 	ofDrawRectangle(sectionWidth * 2, 0, sectionWidth, ofGetHeight());
     
 	//---------------------------------- synth:
-	if(synth.getIsPlaying()) {
+	if(synth.isPlaying()) {
         ofSetHexColor(0xFF0000);
     } else {
         ofSetHexColor(0x000000);
@@ -54,11 +54,11 @@ void ofApp::draw(){
 	font.drawString("synth !!", 10,50);
 	
 	ofSetColor(0);
-	sprintf(tempStr, "click to play\nposition: %f\nspeed: %f\npan: %f", synth.getPosition(),  synth.getSpeed(), synth.getPan());
+    tempStr = "click to play\nposition: " + ofToString(synth.getPosition()) + "\nspeed: " + ofToString(synth.getSpeed()) + "\npan:" + ofToString(synth.getPan());
 	ofDrawBitmapString(tempStr, 10, ofGetHeight() - 50);
     
 	//---------------------------------- beats:
-	if (beats.getIsPlaying()) {
+	if (beats.isPlaying()) {
         ofSetHexColor(0xFF0000);
     } else {
         ofSetHexColor(0x000000);
@@ -66,7 +66,7 @@ void ofApp::draw(){
 	font.drawString("beats !!", sectionWidth + 10, 50);
     
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play\nposition: %f\nspeed: %f\npan: %f", beats.getPosition(),  beats.getSpeed(), beats.getPan());
+    tempStr = "click to play\nposition: " + ofToString(beats.getPosition()) + "\nspeed: " + ofToString(beats.getSpeed()) + "\npan: " + ofToString(beats.getPan());
 	ofDrawBitmapString(tempStr, sectionWidth + 10, ofGetHeight() - 50);
     
 	//---------------------------------- vocals:
@@ -78,7 +78,7 @@ void ofApp::draw(){
 	font.drawString("vocals !!", sectionWidth * 2 + 10, 50);
     
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play\nposition: %f\nspeed: %f\npan: %f", [vocals position],  [vocals speed], [vocals pan]);
+    tempStr = "click to play\nposition: " + ofToString(vocals.position) + "\nspeed: " + ofToString(vocals.speed) + "\npan: " + ofToString(vocals.pan);
 	ofDrawBitmapString(tempStr, sectionWidth * 2 + 10, ofGetHeight() - 50);
 }
 

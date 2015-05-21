@@ -12,7 +12,7 @@ public:
 	~ofxSlider();
 	ofxSlider(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
 	ofxSlider* setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
-	ofxSlider* setup(string sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
+	ofxSlider* setup(std::string sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	
 	void setMin(Type min);
 	Type getMin();

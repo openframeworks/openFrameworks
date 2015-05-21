@@ -280,7 +280,7 @@ bool ofAppiOSWindow::enableRendererES2() {
     if(isRendererES2() == true) {
         return false;
     }
-    shared_ptr<ofBaseRenderer> renderer(new ofGLProgrammableRenderer(false));
+    shared_ptr<ofBaseRenderer>renderer (new ofGLProgrammableRenderer(this));
     ofSetCurrentRenderer(renderer);
     return true;
 }
@@ -289,7 +289,7 @@ bool ofAppiOSWindow::enableRendererES1() {
     if(isRendererES1() == true) {
         return false;
     }
-    shared_ptr<ofBaseRenderer> renderer(new ofGLRenderer(false));
+    shared_ptr<ofBaseRenderer> renderer(new ofGLRenderer(this));
     ofSetCurrentRenderer(renderer);
     return true;
 }

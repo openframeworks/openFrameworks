@@ -18,6 +18,7 @@ GIT_TAG=3.16.0
 
 # download the source code and unpack it into LIB_NAME
 function download() {
+
 	if [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
 		# For win32, we simply download the pre-compiled binaries.
 		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER"Win32.zip
@@ -190,7 +191,7 @@ function build() {
 			export EXTRA_PLATFORM_LDFLAGS="$EXTRA_PLATFORM_LDFLAGS -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -Wl,-dead_strip -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/ $MIN_TYPE$MIN_IOS_VERSION "
 
 		   	EXTRA_LINK_FLAGS="-arch $IOS_ARCH -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-shorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DHAVE_UNISTD_H=1 -DOPJ_STATIC -DNO_LCMS -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -DLIBRAW_NODLL -DLIBRAW_LIBRARY_BUILD -DFREEIMAGE_LIB -fexceptions -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -Wno-sign-conversion -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -DNDEBUG -fPIC -fexceptions -fvisibility=hidden"
-			EXTRA_FLAGS="$EXTRA_LINK_FLAGS -ffast-math -DPNG_ARM_NEON_OPT=0 -DDISABLE_PERF_MEASUREMENT $MIN_TYPE$MIN_IOS_VERSION -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/"
+			EXTRA_FLAGS="$EXTRA_LINK_FLAGS -DNDEBUG -ffast-math -DPNG_ARM_NEON_OPT=0 -DDISABLE_PERF_MEASUREMENT $MIN_TYPE$MIN_IOS_VERSION -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/"
 
 		    export CC="$CC $EXTRA_FLAGS"
 			export CFLAGS="-arch $IOS_ARCH $EXTRA_FLAGS"
@@ -207,11 +208,11 @@ function build() {
 			echo "Running make for ${IOS_ARCH}"
 			echo "Please stand by..."
 
-			
 			# run makefile
 			make -f Makefile.ios >> "${LOG}" 2>&1
 			if [ $? != 0 ];
 		    then 
+                tail -n 100 "${LOG}"
 		    	echo "Problem while make - Please check ${LOG}"
 		    	exit 1
 		    else
@@ -238,7 +239,6 @@ function build() {
 		mkdir -p "$CURRENTPATH/builddir/$TYPE/$IOS_ARCH"
 		LOG="$CURRENTPATH/builddir/$TYPE/build-freeimage-${VER}-lipo.log"
 
-
 		cd Dist/$TYPE/
 		# link into universal lib
 		echo "Running lipo to create fat lib"
@@ -250,9 +250,9 @@ function build() {
 					libfreeimage-x86_64.a \
 					-output freeimage.a >> "${LOG}" 2>&1
 
-
 		if [ $? != 0 ];
 		then 
+            tail -n 100 "${LOG}"
 		    echo "Problem while creating fat lib with lipo - Please check ${LOG}"
 		    exit 1
 		else
@@ -267,6 +267,7 @@ function build() {
 		strip -x freeimage.a  >> "${LOG}" 2>&1
 		if [ $? != 0 ];
 		then 
+            tail -n 10 "${LOG}"
 		    echo "Problem while stripping lib - Please check ${LOG}"
 		    exit 1
 		else
@@ -328,7 +329,7 @@ function copy() {
 		cp -v Dist/FreeImage.lib $1/lib/$TYPE/FreeImage.lib
 		cp -v Dist/FreeImage.dll $1/../../export/$TYPE/FreeImage.dll
 	elif [ "$TYPE" == "ios" ] ; then
-
+        cp -v Dist/*.h $1/include
         if [ -d $1/lib/$TYPE/ ]; then
             rm -r $1/lib/$TYPE/
         fi
@@ -345,6 +346,13 @@ function copy() {
         mkdir -p $1/lib/$TYPE/x86
         cp -rv Dist/x86/*.a $1/lib/$TYPE/x86/
 	fi	
+
+    # copy license files
+    rm -rf $1/license # remove any older files if exists
+    mkdir -p $1/license
+    cp -v license-fi.txt $1/license/
+    cp -v license-gplv2.txt $1/license/
+    cp -v license-gplv3.txt $1/license/
 }
 
 # executed inside the lib src dir
@@ -354,7 +362,6 @@ function clean() {
 		echoWarning "TODO: clean android"
 	elif [ "$TYPE" == "ios" ] ; then
 		# clean up compiled libraries
-		
 		make clean
 		rm -rf Dist
 		rm -f *.a *.lib
@@ -366,5 +373,4 @@ function clean() {
 		# run dedicated clean script
 		clean.sh
 	fi
-
 }

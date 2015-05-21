@@ -16,11 +16,9 @@ export TOOLCHAIN_PATH=${NDK_ROOT}/toolchains/${TOOLCHAIN}/prebuilt/${HOST_PLATFO
 export CC=${NDK_ROOT}/toolchains/${TOOLCHAIN}/prebuilt/${HOST_PLATFORM}/bin/${ANDROID_PREFIX}-gcc
 export CXX=${NDK_ROOT}/toolchains/${TOOLCHAIN}/prebuilt/${HOST_PLATFORM}/bin/${ANDROID_PREFIX}-g++
 export AR=${NDK_ROOT}/toolchains/${TOOLCHAIN}/prebuilt/${HOST_PLATFORM}/bin/${ANDROID_PREFIX}-ar
-export CFLAGS="--sysroot=${SYSROOT} -fno-short-enums"
-
-#export CFLAGS="$CFLAGS -I${SYSROOT}/usr/include/ -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/include -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/libs/${ABI}/include -I${NDK_ROOT}/sources/android/cpufeatures"
-export CFLAGS="$CFLAGS -I${SYSROOT}/usr/include/ -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/include -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/libs/${ABI}/include"
-export LDFLAGS="--sysroot=${SYSROOT} -L${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/libs/${ABI} -lz -lsupc++ -llog -ldl -lm -lc -lgnustl_static -lgcc"
+export CFLAGS="-nostdlib --sysroot=${SYSROOT} -fno-short-enums"
+export CFLAGS="$CFLAGS -I${SYSROOT}/usr/include/ -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/include -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/libs/${ABI}/include -I${NDK_ROOT}/sources/android/cpufeatures"
+export LDFLAGS="--sysroot=${SYSROOT} -nostdlib -L${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/libs/${ABI} -lz -lsupc++ -llog -ldl -lm -lc -lgnustl_static -lgcc"
 
 if [ $ABI = armeabi-v7a ]; then
     export CFLAGS="$CFLAGS -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"

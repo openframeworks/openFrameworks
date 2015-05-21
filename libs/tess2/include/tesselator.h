@@ -36,6 +36,8 @@
 extern "C" {
 #endif
 
+// See OpenGL Red Book for description of the winding rules
+// http://www.glprogramming.com/red/chapter11.html
 #if defined( __APPLE_CC__)
 	#include <TargetConditionals.h>
 #endif
@@ -49,17 +51,66 @@ enum TessWindingRule
 	TESS_WINDING_ABS_GEQ_TWO,
 };
 
+// The contents of the tessGetElements() depends on element type being passed to tessTesselate().
 // Tesselation result element types:
-// TESS_TRIANGLES
-//   Each element is defined as array of 3 TESSindex.
-//   The 3 values in the array defines indices to each vertex of a triangle.
-// TESS_CONNECTED_TRIANGLES
-//   Each element is defined as array of 6 TESSindex.
-//   The first 3 values in the array defines indices to each vertex of a triangle.
-//   The second 3 values in the array defines indices to each of neighbour element or -1 if there is no neighbour.
+// TESS_POLYGONS
+//   Each element in the element array is polygon defined as 'polySize' number of vertex indices.
+//   If a polygon has than 'polySize' vertices, the remaining indices are stored as TESS_UNDEF.
+//   Example, drawing a polygon:
+//     const int nelems = tessGetElementCount(tess);
+//     const TESSindex* elems = tessGetElements(tess);
+//     for (int i = 0; i < nelems; i++) {
+//         const TESSindex* poly = &elems[i * polySize];
+//         glBegin(GL_POLYGON);
+//         for (int j = 0; j < polySize; j++) {
+//             if (poly[j] == TESS_UNDEF) break;
+//             glVertex2fv(&verts[poly[j]*vertexSize]);
+//         }
+//         glEnd();
+//     }
+//
+// TESS_CONNECTED_POLYGONS
+//   Each element in the element array is polygon defined as 'polySize' number of vertex indices,
+//   followed by 'polySize' indices to neighour polygons, that is each element is 'polySize' * 2 indices.
+//   If a polygon has than 'polySize' vertices, the remaining indices are stored as TESS_UNDEF.
+//   If a polygon edge is a boundary, that is, not connected to another polygon, the neighbour index is TESS_UNDEF.
+//   Example, flood fill based on seed polygon:
+//     const int nelems = tessGetElementCount(tess);
+//     const TESSindex* elems = tessGetElements(tess);
+//     unsigned char* visited = (unsigned char*)calloc(nelems);
+//     TESSindex stack[50];
+//     int nstack = 0;
+//     stack[nstack++] = seedPoly;
+//     visited[startPoly] = 1;
+//     while (nstack > 0) {
+//         TESSindex idx = stack[--nstack];
+//			const TESSindex* poly = &elems[idx * polySize * 2];
+//			const TESSindex* nei = &poly[polySize];
+//          for (int i = 0; i < polySize; i++) {
+//              if (poly[i] == TESS_UNDEF) break;
+//              if (nei[i] != TESS_UNDEF && !visited[nei[i]])
+//	                stack[nstack++] = nei[i];
+//                  visited[nei[i]] = 1;
+//              }
+//          }
+//     }
+//
 // TESS_BOUNDARY_CONTOURS
-//   Each element is defined as array of 2 TESSindex.
+//   Each element in the element array is [base index, count] pair defining a range of vertices for a contour.
 //   The first value is index to first vertex in contour and the second value is number of vertices in the contour.
+//   Example, drawing contours:
+//     const int nelems = tessGetElementCount(tess);
+//     const TESSindex* elems = tessGetElements(tess);
+//     for (int i = 0; i < nelems; i++) {
+//         const TESSindex base = elems[i * 2];
+//         const TESSindex count = elems[i * 2 + 1];
+//         glBegin(GL_LINE_LOOP);
+//         for (int j = 0; j < count; j++) {
+//             glVertex2fv(&verts[(base+j) * vertexSize]);
+//         }
+//         glEnd();
+//     }
+//
 enum TessElementType
 {
 	TESS_POLYGONS,
@@ -69,7 +120,7 @@ enum TessElementType
 
 typedef float TESSreal;
 //note this shouldn't be defined(TARGET_OS_IPHONE) as its always defined either 0 or 1
-#if TARGET_OS_IPHONE || ANDROID || __ARMEL__ || __EMSCRIPTEN__
+#if TARGET_OS_IPHONE || ANDROID || __ARMEL__
 typedef unsigned short TESSindex;
 #else
 typedef unsigned int TESSindex;
@@ -79,6 +130,8 @@ typedef struct TESStesselator TESStesselator;
 typedef struct TESSalloc TESSalloc;
 
 #define TESS_UNDEF ((TESSindex)(~(TESSindex)0))
+
+#define TESS_NOTUSED(v) do { (void)(1 ? (void)0 : ( (void)(v) ) ); } while(0)
 
 // Custom memory allocator interface.
 // The internal memory allocator allocates mesh edges, vertices and faces
@@ -109,9 +162,19 @@ struct TESSalloc
 	int regionBucketSize;		// 256
 	int extraVertices;			// Number of extra vertices allocated for the priority queue.
 };
-	
+
+
+//
+// Example use:
+//
+//
+//
+//
+
 // tessNewTess() - Creates a new tesselator.
 // Use tessDeleteTess() to delete the tesselator.
+// Parameters:
+//   alloc - pointer to a filled TESSalloc struct or NULL to use default malloc based allocator.
 // Returns:
 //   new tesselator object.
 TESStesselator* tessNewTess( TESSalloc* alloc );
@@ -162,7 +225,7 @@ int tessGetElementCount( TESStesselator *tess );
 const TESSindex* tessGetElements( TESStesselator *tess );
 
 #ifdef __cplusplus
-}
+};
 #endif
 
 #endif // TESSELATOR_H

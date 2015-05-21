@@ -44,315 +44,17 @@
 #define __OPENCV_BACKGROUND_SEGM_HPP__
 
 #include "opencv2/core/core.hpp"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/****************************************************************************************\
-*                           Background/foreground segmentation                           *
-\****************************************************************************************/
-
-/* We discriminate between foreground and background pixels
- * by building and maintaining a model of the background.
- * Any pixel which does not fit this model is then deemed
- * to be foreground.
- *
- * At present we support two core background models,
- * one of which has two variations:
- *
- *  o CV_BG_MODEL_FGD: latest and greatest algorithm, described in
- *    
- *	 Foreground Object Detection from Videos Containing Complex Background.
- *	 Liyuan Li, Weimin Huang, Irene Y.H. Gu, and Qi Tian. 
- *	 ACM MM2003 9p
- *
- *  o CV_BG_MODEL_FGD_SIMPLE:
- *       A code comment describes this as a simplified version of the above,
- *       but the code is in fact currently identical
- *
- *  o CV_BG_MODEL_MOG: "Mixture of Gaussians", older algorithm, described in
- *
- *       Moving target classification and tracking from real-time video.
- *       A Lipton, H Fujijoshi, R Patil
- *       Proceedings IEEE Workshop on Application of Computer Vision pp 8-14 1998
- *
- *       Learning patterns of activity using real-time tracking
- *       C Stauffer and W Grimson  August 2000
- *       IEEE Transactions on Pattern Analysis and Machine Intelligence 22(8):747-757
- */
-
-
-#define CV_BG_MODEL_FGD		0
-#define CV_BG_MODEL_MOG		1			/* "Mixture of Gaussians".	*/
-#define CV_BG_MODEL_FGD_SIMPLE	2
-
-struct CvBGStatModel;
-
-typedef void (CV_CDECL * CvReleaseBGStatModel)( struct CvBGStatModel** bg_model );
-typedef int (CV_CDECL * CvUpdateBGStatModel)( IplImage* curr_frame, struct CvBGStatModel* bg_model,
-                                              double learningRate );
-
-#define CV_BG_STAT_MODEL_FIELDS()                                                   \
-    int             type; /*type of BG model*/                                      \
-    CvReleaseBGStatModel release;                                                   \
-    CvUpdateBGStatModel update;                                                     \
-    IplImage*       background;   /*8UC3 reference background image*/               \
-    IplImage*       foreground;   /*8UC1 foreground image*/                         \
-    IplImage**      layers;       /*8UC3 reference background image, can be null */ \
-    int             layer_count;  /* can be zero */                                 \
-    CvMemStorage*   storage;      /*storage for foreground_regions*/                \
-    CvSeq*          foreground_regions /*foreground object contours*/
-
-typedef struct CvBGStatModel
-{
-    CV_BG_STAT_MODEL_FIELDS();
-} CvBGStatModel;
-
-// 
-
-// Releases memory used by BGStatModel
-CVAPI(void) cvReleaseBGStatModel( CvBGStatModel** bg_model );
-
-// Updates statistical model and returns number of found foreground regions
-CVAPI(int) cvUpdateBGStatModel( IplImage* current_frame, CvBGStatModel*  bg_model,
-                                double learningRate CV_DEFAULT(-1));
-
-// Performs FG post-processing using segmentation
-// (all pixels of a region will be classified as foreground if majority of pixels of the region are FG).
-// parameters:
-//      segments - pointer to result of segmentation (for example MeanShiftSegmentation)
-//      bg_model - pointer to CvBGStatModel structure
-CVAPI(void) cvRefineForegroundMaskBySegm( CvSeq* segments, CvBGStatModel*  bg_model );
-
-/* Common use change detection function */
-CVAPI(int)  cvChangeDetection( IplImage*  prev_frame,
-                               IplImage*  curr_frame,
-                               IplImage*  change_mask );
-
-/*
-  Interface of ACM MM2003 algorithm
-*/
-
-/* Default parameters of foreground detection algorithm: */
-#define  CV_BGFG_FGD_LC              128
-#define  CV_BGFG_FGD_N1C             15
-#define  CV_BGFG_FGD_N2C             25
-
-#define  CV_BGFG_FGD_LCC             64
-#define  CV_BGFG_FGD_N1CC            25
-#define  CV_BGFG_FGD_N2CC            40
-
-/* Background reference image update parameter: */
-#define  CV_BGFG_FGD_ALPHA_1         0.1f
-
-/* stat model update parameter
- * 0.002f ~ 1K frame(~45sec), 0.005 ~ 18sec (if 25fps and absolutely static BG)
- */
-#define  CV_BGFG_FGD_ALPHA_2         0.005f
-
-/* start value for alpha parameter (to fast initiate statistic model) */
-#define  CV_BGFG_FGD_ALPHA_3         0.1f
-
-#define  CV_BGFG_FGD_DELTA           2
-
-#define  CV_BGFG_FGD_T               0.9f
-
-#define  CV_BGFG_FGD_MINAREA         15.f
-
-#define  CV_BGFG_FGD_BG_UPDATE_TRESH 0.5f
-
-/* See the above-referenced Li/Huang/Gu/Tian paper
- * for a full description of these background-model
- * tuning parameters.
- *
- * Nomenclature:  'c'  == "color", a three-component red/green/blue vector.
- *                         We use histograms of these to model the range of
- *                         colors we've seen at a given background pixel.
- *
- *                'cc' == "color co-occurrence", a six-component vector giving
- *                         RGB color for both this frame and preceding frame.
- *                             We use histograms of these to model the range of
- *                         color CHANGES we've seen at a given background pixel.
- */
-typedef struct CvFGDStatModelParams
-{
-    int    Lc;			/* Quantized levels per 'color' component. Power of two, typically 32, 64 or 128.				*/
-    int    N1c;			/* Number of color vectors used to model normal background color variation at a given pixel.			*/
-    int    N2c;			/* Number of color vectors retained at given pixel.  Must be > N1c, typically ~ 5/3 of N1c.			*/
-				/* Used to allow the first N1c vectors to adapt over time to changing background.				*/
-
-    int    Lcc;			/* Quantized levels per 'color co-occurrence' component.  Power of two, typically 16, 32 or 64.			*/
-    int    N1cc;		/* Number of color co-occurrence vectors used to model normal background color variation at a given pixel.	*/
-    int    N2cc;		/* Number of color co-occurrence vectors retained at given pixel.  Must be > N1cc, typically ~ 5/3 of N1cc.	*/
-				/* Used to allow the first N1cc vectors to adapt over time to changing background.				*/
-
-    int    is_obj_without_holes;/* If TRUE we ignore holes within foreground blobs. Defaults to TRUE.						*/
-    int    perform_morphing;	/* Number of erode-dilate-erode foreground-blob cleanup iterations.						*/
-				/* These erase one-pixel junk blobs and merge almost-touching blobs. Default value is 1.			*/
-
-    float  alpha1;		/* How quickly we forget old background pixel values seen.  Typically set to 0.1  				*/
-    float  alpha2;		/* "Controls speed of feature learning". Depends on T. Typical value circa 0.005. 				*/
-    float  alpha3;		/* Alternate to alpha2, used (e.g.) for quicker initial convergence. Typical value 0.1.				*/
-
-    float  delta;		/* Affects color and color co-occurrence quantization, typically set to 2.					*/
-    float  T;			/* "A percentage value which determines when new features can be recognized as new background." (Typically 0.9).*/
-    float  minArea;		/* Discard foreground blobs whose bounding box is smaller than this threshold.					*/
-} CvFGDStatModelParams;
-
-typedef struct CvBGPixelCStatTable
-{
-    float          Pv, Pvb;
-    uchar          v[3];
-} CvBGPixelCStatTable;
-
-typedef struct CvBGPixelCCStatTable
-{
-    float          Pv, Pvb;
-    uchar          v[6];
-} CvBGPixelCCStatTable;
-
-typedef struct CvBGPixelStat
-{
-    float                 Pbc;
-    float                 Pbcc;
-    CvBGPixelCStatTable*  ctable;
-    CvBGPixelCCStatTable* cctable;
-    uchar                 is_trained_st_model;
-    uchar                 is_trained_dyn_model;
-} CvBGPixelStat;
-
-
-typedef struct CvFGDStatModel
-{
-    CV_BG_STAT_MODEL_FIELDS();
-    CvBGPixelStat*         pixel_stat;
-    IplImage*              Ftd;
-    IplImage*              Fbd;
-    IplImage*              prev_frame;
-    CvFGDStatModelParams   params;
-} CvFGDStatModel;
-
-/* Creates FGD model */
-CVAPI(CvBGStatModel*) cvCreateFGDStatModel( IplImage* first_frame,
-                    CvFGDStatModelParams* parameters CV_DEFAULT(NULL));
-
-/* 
-   Interface of Gaussian mixture algorithm
-
-   "An improved adaptive background mixture model for real-time tracking with shadow detection"
-   P. KadewTraKuPong and R. Bowden,
-   Proc. 2nd European Workshp on Advanced Video-Based Surveillance Systems, 2001."
-   http://personal.ee.surrey.ac.uk/Personal/R.Bowden/publications/avbs01/avbs01.pdf
-*/
-
-/* Note:  "MOG" == "Mixture Of Gaussians": */
-
-#define CV_BGFG_MOG_MAX_NGAUSSIANS 500
-
-/* default parameters of gaussian background detection algorithm */
-#define CV_BGFG_MOG_BACKGROUND_THRESHOLD     0.7     /* threshold sum of weights for background test */
-#define CV_BGFG_MOG_STD_THRESHOLD            2.5     /* lambda=2.5 is 99% */
-#define CV_BGFG_MOG_WINDOW_SIZE              200     /* Learning rate; alpha = 1/CV_GBG_WINDOW_SIZE */
-#define CV_BGFG_MOG_NGAUSSIANS               5       /* = K = number of Gaussians in mixture */
-#define CV_BGFG_MOG_WEIGHT_INIT              0.05
-#define CV_BGFG_MOG_SIGMA_INIT               30
-#define CV_BGFG_MOG_MINAREA                  15.f
-
-
-#define CV_BGFG_MOG_NCOLORS                  3
-
-typedef struct CvGaussBGStatModelParams
-{    
-    int     win_size;               /* = 1/alpha */
-    int     n_gauss;
-    double  bg_threshold, std_threshold, minArea;
-    double  weight_init, variance_init;
-}CvGaussBGStatModelParams;
-
-typedef struct CvGaussBGValues
-{
-    int         match_sum;
-    double      weight;
-    double      variance[CV_BGFG_MOG_NCOLORS];
-    double      mean[CV_BGFG_MOG_NCOLORS];
-} CvGaussBGValues;
-
-typedef struct CvGaussBGPoint
-{
-    CvGaussBGValues* g_values;
-} CvGaussBGPoint;
-
-
-typedef struct CvGaussBGModel
-{
-    CV_BG_STAT_MODEL_FIELDS();
-    CvGaussBGStatModelParams   params;    
-    CvGaussBGPoint*            g_point;    
-    int                        countFrames;
-} CvGaussBGModel;
-
-
-/* Creates Gaussian mixture background model */
-CVAPI(CvBGStatModel*) cvCreateGaussianBGModel( IplImage* first_frame,
-                CvGaussBGStatModelParams* parameters CV_DEFAULT(NULL));
-
-
-typedef struct CvBGCodeBookElem
-{
-    struct CvBGCodeBookElem* next;
-    int tLastUpdate;
-    int stale;
-    uchar boxMin[3];
-    uchar boxMax[3];
-    uchar learnMin[3];
-    uchar learnMax[3];
-} CvBGCodeBookElem;
-
-typedef struct CvBGCodeBookModel
-{
-    CvSize size;
-    int t;
-    uchar cbBounds[3];
-    uchar modMin[3];
-    uchar modMax[3];
-    CvBGCodeBookElem** cbmap;
-    CvMemStorage* storage;
-    CvBGCodeBookElem* freeList;
-} CvBGCodeBookModel;
-
-CVAPI(CvBGCodeBookModel*) cvCreateBGCodeBookModel();
-CVAPI(void) cvReleaseBGCodeBookModel( CvBGCodeBookModel** model );
-
-CVAPI(void) cvBGCodeBookUpdate( CvBGCodeBookModel* model, const CvArr* image,
-                                CvRect roi CV_DEFAULT(cvRect(0,0,0,0)),
-                                const CvArr* mask CV_DEFAULT(0) );
-
-CVAPI(int) cvBGCodeBookDiff( const CvBGCodeBookModel* model, const CvArr* image,
-                             CvArr* fgmask, CvRect roi CV_DEFAULT(cvRect(0,0,0,0)) );
-
-CVAPI(void) cvBGCodeBookClearStale( CvBGCodeBookModel* model, int staleThresh,
-                                    CvRect roi CV_DEFAULT(cvRect(0,0,0,0)),
-                                    const CvArr* mask CV_DEFAULT(0) );
-
-CVAPI(CvSeq*) cvSegmentFGMask( CvArr *fgmask, int poly1Hull0 CV_DEFAULT(1),
-                               float perimScale CV_DEFAULT(4.f),
-                               CvMemStorage* storage CV_DEFAULT(0),
-                               CvPoint offset CV_DEFAULT(cvPoint(0,0)));
-
-#ifdef __cplusplus
-}
-
+#include <list>
 namespace cv
 {
 
 /*!
  The Base Class for Background/Foreground Segmentation
- 
+
  The class is only used to define the common interface for
  the whole family of background/foreground segmentation algorithms.
 */
-class CV_EXPORTS_W BackgroundSubtractor
+class CV_EXPORTS_W BackgroundSubtractor : public Algorithm
 {
 public:
     //! the virtual destructor
@@ -368,13 +70,13 @@ public:
 
 /*!
  Gaussian Mixture-based Backbround/Foreground Segmentation Algorithm
- 
+
  The class implements the following algorithm:
  "An improved adaptive background mixture model for real-time tracking with shadow detection"
  P. KadewTraKuPong and R. Bowden,
  Proc. 2nd European Workshp on Advanced Video-Based Surveillance Systems, 2001."
  http://personal.ee.surrey.ac.uk/Personal/R.Bowden/publications/avbs01/avbs01.pdf
- 
+
 */
 class CV_EXPORTS_W BackgroundSubtractorMOG : public BackgroundSubtractor
 {
@@ -387,10 +89,13 @@ public:
     virtual ~BackgroundSubtractorMOG();
     //! the update operator
     virtual void operator()(InputArray image, OutputArray fgmask, double learningRate=0);
-    
+
     //! re-initiaization method
     virtual void initialize(Size frameSize, int frameType);
-    
+
+    virtual AlgorithmInfo* info() const;
+
+protected:
     Size frameSize;
     int frameType;
     Mat bgmodel;
@@ -400,27 +105,37 @@ public:
     double varThreshold;
     double backgroundRatio;
     double noiseSigma;
-};	
+};
 
 
-class CV_EXPORTS BackgroundSubtractorMOG2 : public BackgroundSubtractor
+/*!
+ The class implements the following algorithm:
+ "Improved adaptive Gausian mixture model for background subtraction"
+ Z.Zivkovic
+ International Conference Pattern Recognition, UK, August, 2004.
+ http://www.zoranz.net/Publications/zivkovic2004ICPR.pdf
+*/
+class CV_EXPORTS_W BackgroundSubtractorMOG2 : public BackgroundSubtractor
 {
 public:
     //! the default constructor
-    BackgroundSubtractorMOG2();
+    CV_WRAP BackgroundSubtractorMOG2();
     //! the full constructor that takes the length of the history, the number of gaussian mixtures, the background ratio parameter and the noise strength
-    BackgroundSubtractorMOG2(int history,  float varThreshold, bool bShadowDetection=1);
+    CV_WRAP BackgroundSubtractorMOG2(int history,  float varThreshold, bool bShadowDetection=true);
     //! the destructor
     virtual ~BackgroundSubtractorMOG2();
     //! the update operator
     virtual void operator()(InputArray image, OutputArray fgmask, double learningRate=-1);
-    
+
     //! computes a background image which are the mean of all background gaussians
     virtual void getBackgroundImage(OutputArray backgroundImage) const;
-    
+
     //! re-initiaization method
     virtual void initialize(Size frameSize, int frameType);
-    
+
+    virtual AlgorithmInfo* info() const;
+
+protected:
     Size frameSize;
     int frameType;
     Mat bgmodel;
@@ -428,24 +143,24 @@ public:
     int nframes;
     int history;
     int nmixtures;
-    //! here it is the maximum allowed number of mixture comonents.
+    //! here it is the maximum allowed number of mixture components.
     //! Actual number is determined dynamically per pixel
-    float varThreshold;
-    // threshold on the squared Mahalan. dist. to decide if it is well described
-    //by the background model or not. Related to Cthr from the paper.
-    //This does not influence the update of the background. A typical value could be 4 sigma
-    //and that is varThreshold=4*4=16; Corresponds to Tb in the paper.
-    
+    double varThreshold;
+    // threshold on the squared Mahalanobis distance to decide if it is well described
+    // by the background model or not. Related to Cthr from the paper.
+    // This does not influence the update of the background. A typical value could be 4 sigma
+    // and that is varThreshold=4*4=16; Corresponds to Tb in the paper.
+
     /////////////////////////
-    //less important parameters - things you might change but be carefull
+    // less important parameters - things you might change but be carefull
     ////////////////////////
     float backgroundRatio;
-    //corresponds to fTB=1-cf from the paper
-    //TB - threshold when the component becomes significant enough to be included into
-    //the background model. It is the TB=1-cf from the paper. So I use cf=0.1 => TB=0.
-    //For alpha=0.001 it means that the mode should exist for approximately 105 frames before
-    //it is considered foreground
-    //float noiseSigma;
+    // corresponds to fTB=1-cf from the paper
+    // TB - threshold when the component becomes significant enough to be included into
+    // the background model. It is the TB=1-cf from the paper. So I use cf=0.1 => TB=0.
+    // For alpha=0.001 it means that the mode should exist for approximately 105 frames before
+    // it is considered foreground
+    // float noiseSigma;
     float varThresholdGen;
     //correspondts to Tg - threshold on the squared Mahalan. dist. to decide
     //when a sample is close to the existing components. If it is not close
@@ -464,7 +179,7 @@ public:
     //this is related to the number of samples needed to accept that a component
     //actually exists. We use CT=0.05 of all the samples. By setting CT=0 you get
     //the standard Stauffer&Grimson algorithm (maybe not exact but very similar)
-    
+
     //shadow detection parameters
     bool bShadowDetection;//default 1 - do shadow detection
     unsigned char nShadowDetection;//do shadow detection - insert this value as the detection result - 127 default value
@@ -473,9 +188,75 @@ public:
     //version of the background. Tau is a threshold on how much darker the shadow can be.
     //Tau= 0.5 means that if pixel is more than 2 times darker then it is not shadow
     //See: Prati,Mikic,Trivedi,Cucchiarra,"Detecting Moving Shadows...",IEEE PAMI,2003.
-};	    
-    
+};
+
+/**
+ * Background Subtractor module. Takes a series of images and returns a sequence of mask (8UC1)
+ * images of the same size, where 255 indicates Foreground and 0 represents Background.
+ * This class implements an algorithm described in "Visual Tracking of Human Visitors under
+ * Variable-Lighting Conditions for a Responsive Audio Art Installation," A. Godbehere,
+ * A. Matsukawa, K. Goldberg, American Control Conference, Montreal, June 2012.
+ */
+class CV_EXPORTS BackgroundSubtractorGMG: public cv::BackgroundSubtractor
+{
+public:
+    BackgroundSubtractorGMG();
+    virtual ~BackgroundSubtractorGMG();
+    virtual AlgorithmInfo* info() const;
+
+    /**
+     * Validate parameters and set up data structures for appropriate image size.
+     * Must call before running on data.
+     * @param frameSize input frame size
+     * @param min       minimum value taken on by pixels in image sequence. Usually 0
+     * @param max       maximum value taken on by pixels in image sequence. e.g. 1.0 or 255
+     */
+    void initialize(cv::Size frameSize, double min, double max);
+
+    /**
+     * Performs single-frame background subtraction and builds up a statistical background image
+     * model.
+     * @param image Input image
+     * @param fgmask Output mask image representing foreground and background pixels
+     */
+    virtual void operator()(InputArray image, OutputArray fgmask, double learningRate=-1.0);
+
+    /**
+     * Releases all inner buffers.
+     */
+    void release();
+
+    //! Total number of distinct colors to maintain in histogram.
+    int     maxFeatures;
+    //! Set between 0.0 and 1.0, determines how quickly features are "forgotten" from histograms.
+    double  learningRate;
+    //! Number of frames of video to use to initialize histograms.
+    int     numInitializationFrames;
+    //! Number of discrete levels in each channel to be used in histograms.
+    int     quantizationLevels;
+    //! Prior probability that any given pixel is a background pixel. A sensitivity parameter.
+    double  backgroundPrior;
+    //! Value above which pixel is determined to be FG.
+    double  decisionThreshold;
+    //! Smoothing radius, in pixels, for cleaning up FG image.
+    int     smoothingRadius;
+    //! Perform background model update
+    bool updateBackgroundModel;
+
+private:
+    double maxVal_;
+    double minVal_;
+
+    cv::Size frameSize_;
+    int frameNum_;
+
+    cv::Mat_<int> nfeatures_;
+    cv::Mat_<unsigned int> colors_;
+    cv::Mat_<float> weights_;
+
+    cv::Mat buf_;
+};
+
 }
-#endif
 
 #endif

@@ -541,7 +541,7 @@ OutboundPacketStream& OutboundPacketStream::operator<<( const MidiMessage& rhs )
 }
 
 
-OutboundPacketStream& OutboundPacketStream::operator<<( int64 rhs )
+OutboundPacketStream& OutboundPacketStream::operator<<( int64_t rhs )
 {
     CheckForAvailableArgumentSpace(8);
 

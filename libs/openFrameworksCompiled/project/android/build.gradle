@@ -1,0 +1,148 @@
+// build.gradle project file for Android Studio support
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.0.1'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+// OpenFrameworks support functions
+/**
+ * Initialization task to set up NDK paths.
+ */
+task ofNdkSetup {
+    logger.lifecycle name
+
+    /* Find NDK directory */
+    def localProperties = new File(rootDir, "local.properties")
+    if (!localProperties.exists()) {
+        throw new GradleException("local.properties is missing!")
+    }
+
+    Properties properties = new Properties()
+    localProperties.withInputStream { instr ->
+        properties.load(instr)
+    }
+    String sdkDirectory = properties.get("sdk.dir")
+    String ndkDirectory = properties.get("ndk.dir")
+    if (ndkDirectory == null) {
+        throw new GradleException("NDK not configured. Add ndk.dir=/path/to/ndk to local.properties.")
+    }
+    if (ndkDirectory.contains(' ')) {
+        // Make really hates spaces in filenames, so we have to avoid them.
+        throw new GradleException("NDK path cannot contain spaces; please move the NDK.")
+    }
+    def ndkDir = new File(ndkDirectory)
+    if (!ndkDir.directory) {
+        throw new GradleException("NDK directory is invalid. Check ndk.dir path in local.properties.")
+    }
+
+    /* Find suitable make executable */
+    def make = null;
+    def num_parallel = Runtime.runtime.availableProcessors() - 1; // Assume that parallel support works on most systems
+
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        /* Require MinGW on Windows */
+        make = "make"
+        def proc = [make, "--version"].execute()
+        proc.waitFor()
+        if (proc.exitValue() != 0) {
+            throw new GradleException("Building on Windows requires MinGW to be installed!")
+        }
+        def makever = proc.in.text
+        if (!makever.contains("GNU Make")) {
+            throw new GradleException("make executable does not refer to GNU Make: please check that you have added MinGW to the system PATH variable!")
+        }
+        if (makever.contains("3.81")) {
+            /* GNU Make 3.81 on MinGW has a bug that prevents parallel builds from working. */
+            logger.info " -> disabling parallel build for msys-make 3.81"
+            num_parallel = 1;
+        }
+
+        /* Test to see that MinGW is installed properly */
+        proc = ["sh", "-c", "find --version"].execute()
+        proc.waitFor()
+        if (proc.exitValue() != 0) {
+            throw new GradleException("Building on Windows requires MinGW and msys to be on PATH!\nPlease add both MinGW\\bin and MinGW\\msys\\1.0\\bin to your system PATH variable.")
+        }
+
+        /* Replace backslashes by forward slashes to make Make happy */
+        ndkDirectory = ndkDirectory.replace('\\','/');
+    }
+
+    new File(ndkDirectory, "prebuilt").eachDir { dir ->
+        if(make != null)
+            return
+
+        def binDir = new File(dir, "bin");
+        for(fn in ["make", "make.exe"]) {
+            def makeFile = new File(binDir, fn);
+            if(makeFile.exists()) {
+                def proc = [makeFile.absolutePath, "--version"].execute()
+                proc.waitFor()
+                if(proc.exitValue() == 0) {
+                    make = makeFile;
+                }
+            }
+        }
+    }
+
+    if(make == null) {
+        throw new GradleException("GNU make not found in NDK...")
+    }
+
+    logger.info " -> found make '$make'"
+    if (num_parallel > 1) {
+        logger.info " -> using $num_parallel parallel jobs"
+    }
+
+
+    ext.sdkDirectory = sdkDirectory
+    ext.ndkDirectory = ndkDirectory
+    ext.make = make
+    ext.num_parallel = num_parallel
+}
+
+/**
+ * Helper function to run make with a given set of options
+ */
+def ofRunMake(List opts) {
+    def num_parallel = rootProject.ofNdkSetup.ext.num_parallel
+    if (num_parallel > 1) {
+        opts.add(0, "-j$num_parallel")
+    }
+    List cmd = [rootProject.ofNdkSetup.ext.make] + opts
+    logger.info("Executing make command " + cmd)
+    def proc = cmd.execute()
+    proc.in.eachLine {line ->
+        logger.lifecycle(line)
+    }
+    proc.err.eachLine {line ->
+        if(line.contains(": warning:")) {
+            logger.warn(line)
+        } else if(line.contains(": error:") || line.contains(": ***")) {
+            logger.error(line)
+        } else {
+            logger.quiet(line)
+        }
+    }
+    proc.waitFor()
+    if(proc.exitValue() != 0) {
+        throw new GradleException("make failed with exit status " + proc.exitValue())
+    }
+}

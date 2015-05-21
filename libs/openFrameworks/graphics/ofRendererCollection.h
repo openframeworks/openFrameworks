@@ -41,12 +41,6 @@ public:
 		 }
 	 }
 
-	 void update(){
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->update();
-		 }
-	 }
-
 
 	 using ofBaseRenderer::draw;
 
@@ -58,12 +52,6 @@ public:
 	 void draw(const ofPath & shape) const{
 		 for(int i=0;i<(int)renderers.size();i++){
 			 renderers[i]->draw(shape);
-		 }
-	 }
-
-	 void draw(const ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals) const{
-		 for(int i=0;i<(int)renderers.size();i++){
-			 renderers[i]->draw(vertexData,useColors, useTextures, useNormals);
 		 }
 	 }
 

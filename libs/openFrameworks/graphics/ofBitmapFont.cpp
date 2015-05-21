@@ -1,6 +1,9 @@
 
 #include "ofBitmapFont.h"
 
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
 
 // ==============================================================
 // this license below is from freeGlut, (freeglut_font_data.c)
@@ -445,6 +448,22 @@ ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofDrawBitmapMode
 
 }
 
+ofBitmapFont::ofBitmapFont(){
+#ifdef TARGET_ANDROID
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofBitmapFont::unloadTexture);
+#endif
+}
+
+ofBitmapFont::~ofBitmapFont(){
+#ifdef TARGET_ANDROID
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofBitmapFont::unloadTexture);
+#endif
+}
+
+void ofBitmapFont::unloadTexture(){
+	texture.clear();
+}
+
 const ofTexture & ofBitmapFont::getTexture() const{
 	if(!texture.isAllocated()){
 		ofBitmapFont::init();
@@ -460,7 +479,7 @@ ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y) cons
 	const ofMesh & mesh = getMesh(text,x,y);
 	ofVec2f max(numeric_limits<float>::min(),numeric_limits<float>::min());
 	ofVec2f min(numeric_limits<float>::max(),numeric_limits<float>::max());
-	for(int i=0;i< mesh.getNumVertices(); i++){
+	for(std::size_t i=0;i< mesh.getNumVertices(); i++){
 		const ofVec3f & p = mesh.getVertex(i);
 		if(p.x<min.x) min.x = p.x;
 		if(p.y<min.y) min.y = p.y;

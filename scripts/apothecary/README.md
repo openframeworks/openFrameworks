@@ -469,7 +469,7 @@ Bash provides an easy way to debug scripts by `set -x`. Put this command in your
 
 **PLEASE PLEASE PLEASE comment your formulas!** Writing build scripts sucks! Don't make it even more hell for people that have to try and maintain what you've done. Note *any* assumptions you're making **especially** regarding things that may change based on newer releases of a library.
 
-Last, if you write a formula but can't finish/test it on all platforms, etc make a note of this using the `echoWarning` print command. This is a function provided by apothecary that prints text in <span style="color: #FF0">yellow (caution, right?)</span>. Start your info string with with "TODO: ":
+If you write a formula but can't finish/test it on all platforms, etc make a note of this using the `echoWarning` print command. This is a function provided by apothecary that prints text in <span style="color: #FF0">yellow (caution, right?)</span>. Start your info string with with "TODO: ":
 
 	if [ "$TYPE" == "win_cb" ] then ;
 		echoWarning "TODO: build win_cb"
@@ -477,6 +477,22 @@ Last, if you write a formula but can't finish/test it on all platforms, etc make
 	...
 
 Then we at least know what we're missing if the build process fails ...
+
+#### Custom Apothecary Echo Wrappers
+
+There are a number of custom echo wrappers like `echoWarning` which set the console color, etc. Use these for more informative info/debugging print instead of plain old `echo`:
+
+    echoError "somethign bad happend, print in red"
+	
+	echoWarning "something didn't work, print in yellow"
+	
+	echoInfo "regular print in white"
+	
+	echoSuccess "something worked, so print in green"
+	
+	echoVerbose "for debugging, prints extra info in white when the -v verbose flag is used"
+	
+Note the verbose `-v` flag. Apothecary will already print out info about what steps it's doing so you don't need to add this to the formula files.
 
 ### Additional Tips
 

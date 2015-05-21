@@ -65,12 +65,11 @@ function build() {
 function copy() {
 
 	# headers
-	rm -r $1/include
+	rm -rf $1/include
 	mkdir -p $1/include
 	cp -Rv include/* $1/include
 
-	rm -r $1/lib/$TYPE/*
-	
+	rm -rf $1/lib/$TYPE/*
 	
 	# libs
 	if [ "$TYPE" == "osx" ] ; then
@@ -86,6 +85,11 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/libglew32.a $1/lib/$TYPE
 	fi
+
+	# copy license files
+	rm -rf $1/license # remove any older files if exists
+	mkdir -p $1/license
+	cp -v LICENSE.txt $1/license/
 }
 
 # executed inside the lib src dir

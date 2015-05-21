@@ -10,12 +10,12 @@
 #include <gst/video/video.h>
 #include <gst/app/gstappsink.h>
 #include "ofConstants.h"
+#include "ofGstUtils.h"
 
 
 ofGstVideoPlayer::ofGstVideoPlayer(){
 	nFrames						= 0;
 	internalPixelFormat			= OF_PIXELS_RGB;
-	nativePixels				= false;
 	bIsStream					= false;
 	bIsAllocated				= false;
 	threadAppSink				= false;
@@ -31,9 +31,6 @@ ofGstVideoPlayer::~ofGstVideoPlayer(){
 
 bool ofGstVideoPlayer::setPixelFormat(ofPixelFormat pixelFormat){
 	internalPixelFormat = pixelFormat;
-	if(pixelFormat==OF_PIXELS_NATIVE){
-		nativePixels = true;
-	}
 	return true;
 }
 
@@ -41,22 +38,9 @@ ofPixelFormat ofGstVideoPlayer::getPixelFormat() const {
 	return internalPixelFormat;
 }
 
+
 bool ofGstVideoPlayer::createPipeline(string name){
-#if GST_VERSION_MAJOR==0
-	GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
-#else
-	GstElement * gstPipeline = gst_element_factory_make("playbin","player");
-#endif
-	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
-
-	// create the oF appsink for video rgb without sync to clock
-	GstElement * gstSink = gst_element_factory_make("appsink", "app_sink");
-
-	gst_base_sink_set_sync(GST_BASE_SINK(gstSink), true);
-	gst_app_sink_set_max_buffers(GST_APP_SINK(gstSink), 8);
-	gst_app_sink_set_drop (GST_APP_SINK(gstSink),true);
-	gst_base_sink_set_max_lateness  (GST_BASE_SINK(gstSink), -1);
-
+#ifndef OF_USE_GST_GL
 #if GST_VERSION_MAJOR==0
 	GstCaps *caps;
 	int bpp;
@@ -120,11 +104,7 @@ bool ofGstVideoPlayer::createPipeline(string name){
 
 	GstCaps *caps;
 	if(internalPixelFormat==OF_PIXELS_NATIVE){
-		//caps = gst_caps_new_any();
 		caps = gst_caps_from_string((mime + ",format={RGBA,BGRA,RGB,BGR,RGB16,GRAY8,YV12,I420,NV12,NV21,YUY2}").c_str());
-		/*
-		GstCapsFeatures *features = gst_caps_features_new (GST_CAPS_FEATURE_META_GST_VIDEO_GL_TEXTURE_UPLOAD_META, NULL);
-		gst_caps_set_features (caps, 0, features);*/
 	}else{
 		string format = ofGstVideoUtils::getGstFormatName(internalPixelFormat);
 		caps = gst_caps_new_simple(mime.c_str(),
@@ -133,7 +113,16 @@ bool ofGstVideoPlayer::createPipeline(string name){
 	}
 #endif
 
+	#if GST_VERSION_MAJOR==0
+		GstElement * gstPipeline = gst_element_factory_make("playbin2","player");
+	#else
+		GstElement * gstPipeline = gst_element_factory_make("playbin","player");
+	#endif
+	g_object_ref_sink(gstPipeline);
+	g_object_set(G_OBJECT(gstPipeline), "uri", name.c_str(), (void*)NULL);
 
+	// create the oF appsink for video rgb without sync to clock
+	GstElement * gstSink = gst_element_factory_make("appsink", "app_sink");
 	gst_app_sink_set_caps(GST_APP_SINK(gstSink), caps);
 	gst_caps_unref(caps);
 
@@ -155,34 +144,46 @@ bool ofGstVideoPlayer::createPipeline(string name){
 		g_object_set (G_OBJECT(gstPipeline),"video-sink",gstSink,(void*)NULL);
 	}
 
-#ifdef TARGET_WIN32
-	GstElement *audioSink = gst_element_factory_make("directsoundsink", NULL);
-	g_object_set (G_OBJECT(gstPipeline),"audio-sink",audioSink,(void*)NULL);
-#endif
-
-#ifdef TARGET_LINUX_ARM
-#if GST_VERSION_MINOR<4
-	/*if(dynamic_cast<ofAppEGLWindow*>(ofGetWindowPtr())){
-		EGLDisplay display = ((ofAppEGLWindow*)ofGetWindowPtr())->getEglDisplay();
-		GstEGLDisplay * gstEGLDisplay = gst_egl_display_new (display,NULL);
-		GstContext *context = gst_context_new_egl_display(gstEGLDisplay,true);
-		GstMessage * msg = gst_message_new_have_context (GST_OBJECT (gstPipeline), context);
-		gst_element_post_message (GST_ELEMENT_CAST (gstPipeline), msg);
-	}*/
-#else
-
-	/*if(dynamic_cast<ofAppEGLWindow*>(ofGetWindowPtr())){
-		EGLDisplay display = ((ofAppEGLWindow*)ofGetWindowPtr())->getEglDisplay();
-		GstGLDisplayEGL * gstEGLDisplay = gst_gl_display_egl_new_with_egl_display (display);
-		GstContext *context = gst_context_new();
-		gst_gl_display_create_context (context, gstEGLDisplay);
-		GstMessage * msg = gst_message_new_have_context (GST_OBJECT (gstPipeline), context);
-		gst_element_post_message (GST_ELEMENT_CAST (gstPipeline), msg);
-	}*/
-#endif
-#endif
+	#ifdef TARGET_WIN32
+		GstElement *audioSink = gst_element_factory_make("directsoundsink", NULL);
+		g_object_set (G_OBJECT(gstPipeline),"audio-sink",audioSink,(void*)NULL);
+	#endif
 
 	return videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
+
+#else
+	/*auto gstPipeline = gst_parse_launch(("uridecodebin uri=" + name + " ! glcolorscale name=gl_filter ! appsink name=app_sink").c_str(),NULL);
+	auto gstSink = gst_bin_get_by_name(GST_BIN(gstPipeline),"app_sink");
+	auto glfilter = gst_bin_get_by_name(GST_BIN(gstPipeline),"gl_filter");
+	gst_app_sink_set_caps(GST_APP_SINK(gstSink), caps);
+	gst_caps_unref(caps);
+
+	glXMakeCurrent (ofGetX11Display(), None, 0);
+	glDisplay = (GstGLDisplay *)gst_gl_display_x11_new_with_display(ofGetX11Display());
+	glContext = gst_gl_context_new_wrapped (glDisplay, (guintptr) ofGetGLXContext(),
+	    		  GST_GL_PLATFORM_GLX, GST_GL_API_OPENGL);
+
+	g_object_set (G_OBJECT (glfilter), "other-context", glContext, NULL);
+
+	// FIXME: this seems to be the way to add the context in 1.4.5
+	//
+	// GstBus * bus = gst_pipeline_get_bus (GST_PIPELINE(gstPipeline));
+	// gst_bus_enable_sync_message_emission (bus);
+	// g_signal_connect (bus, "sync-message", G_CALLBACK (sync_bus_call), this);
+	// gst_object_unref(bus);
+
+	auto ret = videoUtils.setPipelineWithSink(gstPipeline,gstSink,bIsStream);
+	glXMakeCurrent (ofGetX11Display(), ofGetX11Window(), ofGetGLXContext());
+	return ret;*/
+
+	return videoUtils.setPipeline("uridecodebin uri=" + name,internalPixelFormat,bIsStream,-1,-1);
+	//return videoUtils.setPipeline("filesrc location=" + name + " ! qtdemux ",internalPixelFormat,bIsStream,-1,-1);
+#endif
+}
+
+void ofGstVideoPlayer::loadAsync(string name){
+	bAsyncLoad = true;
+	load(name);
 }
 
 bool ofGstVideoPlayer::load(string name){
@@ -194,6 +195,7 @@ bool ofGstVideoPlayer::load(string name){
 		name = name_ptr;
 		g_free(name_ptr);
 		if(err) g_free(err);
+		//name = ofToDataPath(name);
 		bIsStream = bAsyncLoad;
 	}else{
 		bIsStream = true;
@@ -423,6 +425,10 @@ const ofPixels& ofGstVideoPlayer::getPixels() const {
 	return videoUtils.getPixels();
 }
 
+ofTexture * ofGstVideoPlayer::getTexturePtr(){
+	return videoUtils.getTexture();
+}
+
 float ofGstVideoPlayer::getHeight() const {
 	return videoUtils.getHeight();
 }
@@ -445,8 +451,4 @@ bool ofGstVideoPlayer::isThreadedAppSink() const{
 
 bool ofGstVideoPlayer::isFrameByFrame() const{
 	return videoUtils.isFrameByFrame();
-}
-
-void ofGstVideoPlayer::setAsynchronousLoad(bool async){
-	bAsyncLoad = async;
 }

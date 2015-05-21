@@ -30,7 +30,7 @@ ifndef PLATFORM_VARIANT
     PLATFORM_VARIANT = default
 endif
 
-ifdef EMSCRIPTEN
+ifeq ($(CC),$(EMSCRIPTEN)/emcc)
 	PLATFORM_OS=emscripten
 endif
 

@@ -6,6 +6,7 @@
 
 #include "ofxiOSSoundStream.h"
 #include "ofxiOSSoundStreamDelegate.h"
+#include "ofSoundStream.h"
 #include "ofBaseApp.h"
 
 #import "SoundInputStream.h"
@@ -33,8 +34,9 @@ ofxiOSSoundStream::~ofxiOSSoundStream() {
 }
 
 //------------------------------------------------------------------------------
-void ofxiOSSoundStream::listDevices() {
-    //
+vector<ofSoundDevice> ofxiOSSoundStream::getDeviceList()  const{
+	ofLogWarning("ofxiOSSoundStream") << "getDeviceList() isn't implemented on iOS";
+	return vector<ofSoundDevice>();
 }
 
 //------------------------------------------------------------------------------
@@ -43,7 +45,7 @@ void ofxiOSSoundStream::setDeviceID(int _deviceID) {
 }
 
 //------------------------------------------------------------------------------
-int ofxiOSSoundStream::getDeviceID() {
+int ofxiOSSoundStream::getDeviceID()  const{
 	return 0;
 }
 
@@ -157,27 +159,27 @@ void ofxiOSSoundStream::close(){
 }
 
 //------------------------------------------------------------------------------
-long unsigned long ofxiOSSoundStream::getTickCount(){
+long unsigned long ofxiOSSoundStream::getTickCount() const{
 	return 0;
 }
 
 //------------------------------------------------------------------------------
-int ofxiOSSoundStream::getNumOutputChannels(){
+int ofxiOSSoundStream::getNumOutputChannels() const{
 	return numOfOutChannels;
 }
 
 //------------------------------------------------------------------------------
-int ofxiOSSoundStream::getNumInputChannels(){
+int ofxiOSSoundStream::getNumInputChannels() const{
 	return numOfInChannels;
 }
 
 //------------------------------------------------------------------------------
-int ofxiOSSoundStream::getSampleRate(){
+int ofxiOSSoundStream::getSampleRate() const{
     return sampleRate;
 }
 
 //------------------------------------------------------------------------------
-int ofxiOSSoundStream::getBufferSize(){
+int ofxiOSSoundStream::getBufferSize() const{
     return bufferSize;
 }
 
