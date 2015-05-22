@@ -157,7 +157,9 @@ public:
 
 	// cairo specifics
 	cairo_t * getCairoContext();
+	void setCairoContext(cairo_t * cr);
 	cairo_surface_t * getCairoSurface();
+	void setCairoSurface(cairo_surface_t * surface);
 	ofPixels & getImageSurfacePixels();
 	ofBuffer & getContentBuffer();
 
