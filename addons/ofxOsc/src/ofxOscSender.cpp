@@ -179,7 +179,7 @@ void ofxOscSender::appendMessage( ofxOscMessage& message, osc::OutboundPacketStr
 		if ( message.getArgType(i) == OFXOSC_TYPE_INT32 )
 			p << message.getArgAsInt32( i );
 		else if ( message.getArgType(i) == OFXOSC_TYPE_INT64 )
-			p << message.getArgAsInt64( i );
+			p << (osc::int64)message.getArgAsInt64( i );
 		else if ( message.getArgType( i ) == OFXOSC_TYPE_FLOAT )
 			p << message.getArgAsFloat( i );
 		else if ( message.getArgType( i ) == OFXOSC_TYPE_DOUBLE )
