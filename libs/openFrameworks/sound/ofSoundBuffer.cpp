@@ -202,7 +202,7 @@ void ofSoundBuffer::addTo(ofSoundBuffer & outBuffer, std::size_t fromFrame, bool
 void ofSoundBuffer::copyTo(float * outBuffer, std::size_t nFrames, std::size_t outChannels, std::size_t fromFrame, bool loop) const{
 	// figure out how many frames we can copy before we need to stop or loop
 	std::size_t nFramesToCopy = nFrames;
-	if (int(this->getNumFrames() - fromFrame) < nFrames){
+	if ((fromFrame + nFrames) >= this->getNumFrames()){
 		nFramesToCopy = this->getNumFrames() - fromFrame;
 	}
 		
@@ -251,7 +251,7 @@ void ofSoundBuffer::copyTo(float * outBuffer, std::size_t nFrames, std::size_t o
 void ofSoundBuffer::addTo(float * outBuffer, std::size_t nFrames, std::size_t outChannels, std::size_t fromFrame, bool loop) const{
 	// figure out how many frames we can copy before we need to stop or loop
 	std::size_t nFramesToCopy = nFrames;
-	if (int(this->getNumFrames() - fromFrame) < nFrames){
+	if ((fromFrame + nFrames) >= this->getNumFrames()){
 		nFramesToCopy = this->getNumFrames() - fromFrame;
 	}
 
