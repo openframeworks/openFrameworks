@@ -195,7 +195,7 @@ void ofxOscSender::appendMessage( ofxOscMessage& message, osc::OutboundPacketStr
 		else if ( message.getArgType( i ) == OFXOSC_TYPE_TRIGGER )
 			p << message.getArgAsTrigger( i );
 		else if ( message.getArgType( i ) == OFXOSC_TYPE_TIMETAG )
-			p << message.getArgAsTimetag( i );
+			p << (osc::int64)message.getArgAsTimetag( i );
 		//else if ( message.getArgType( i ) == OFXOSC_TYPE_RGBA_COLOR )
 		//	p << message.getArgAsRgbaColor( i );
         else if ( message.getArgType( i ) == OFXOSC_TYPE_BLOB ){
