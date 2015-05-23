@@ -51,15 +51,15 @@ float ofRandom(float max) {
 
 //--------------------------------------------------
 float ofRandom(float x, float y) {
+    static constexpr float epsilon_smaller = 1.0f - FLT_EPSILON,
+                           float_rand_max = static_cast<float>(RAND_MAX);
 	// if there is no range, return the value
-	if (x == y) return x;
+	if (fabsf(x - y) < FLT_EPSILON) return x;
 	float high = MAX(x, y);
 	float low = MIN(x, y);
-	float range = high - low;
-	range -= std::numeric_limits<float>::epsilon();
-	float denominator = RAND_MAX / range;
-	float result = rand() / denominator;
-	result += low;
+    float range = high - low;
+	float result = rand() / float_rand_max * range;
+	result = result * epsilon_smaller + low;
 	return result;
 }
 
