@@ -144,7 +144,18 @@
     if(currentInterfaceOrientation == interfaceOrientation && !bFirstUpdate) {
         return;
     }
-    
+	
+	if(pendingInterfaceOrientation != interfaceOrientation) {
+		CGSize screenSize = [UIScreen mainScreen].bounds.size;
+		CGRect bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
+		if(UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
+			bounds.size.width   = screenSize.height;
+			bounds.size.height  = screenSize.width;
+		}
+		self.glView.bounds = bounds;
+		[self.glView updateDimensions];
+	}
+	
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
     CGPoint center;
     CGRect bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
@@ -164,10 +175,19 @@
             bounds.size.height = screenSize.width;
         }
     } else {
-        center.x = screenSize.width * 0.5;
-        center.y = screenSize.height * 0.5;
+		if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+			center.x = screenSize.height * 0.5;
+			center.y = screenSize.width * 0.5;
+		} else {
+			center.x = screenSize.width * 0.5;
+			center.y = screenSize.height * 0.5;
+		}
+		if(UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
+			bounds.size.width = screenSize.height;
+			bounds.size.height = screenSize.width;
+		}
     }
-    
+	
     float rot1 = [self rotationForOrientation:currentInterfaceOrientation];
     float rot2 = [self rotationForOrientation:interfaceOrientation];
     float rot3 = rot2 - rot1;
@@ -263,25 +283,18 @@
 //-------------------------------------------------------------- iOS6.
 #ifdef __IPHONE_6_0
 - (NSUInteger)supportedInterfaceOrientations {
-    if(pendingInterfaceOrientation >= 0 && !bReadyToRotate) {
-        currentInterfaceOrientation = pendingInterfaceOrientation;
-    }
     switch (currentInterfaceOrientation) {
         case UIInterfaceOrientationPortrait:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortrait %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskPortrait;
+			return UIInterfaceOrientationMaskPortrait;
             break;
         case UIInterfaceOrientationPortraitUpsideDown:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortraitUpsideDown %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskPortraitUpsideDown;
+			return UIInterfaceOrientationMaskPortraitUpsideDown;
             break;
         case UIInterfaceOrientationLandscapeLeft:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationMaskLandscapeLeft %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskLandscapeLeft;
+			return UIInterfaceOrientationMaskLandscapeLeft;
             break;
         case UIInterfaceOrientationLandscapeRight:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationLandscapeRight %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskLandscapeRight;
+			return UIInterfaceOrientationMaskLandscapeRight;
             break;
         default:
             break;
@@ -297,6 +310,10 @@
 
 - (BOOL)isReadyToRotate {
     return bReadyToRotate;
+}
+
+-(BOOL)prefersStatusBarHidden{
+	return YES;
 }
 
 @end
