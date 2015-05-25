@@ -67,6 +67,12 @@ function prepare() {
 		cd ../../
 
 	elif [ "$TYPE" == "vs" ] ; then
+		#change the build win cmd file for vs2015 compatibility
+		rm buildwin.cmd
+		CURRENTPATH=`pwd`
+		cp -v $FORMULA_DIR/buildwin.cmd $CURRENTPATH
+		
+		
 		# Patch the components to exclude those that we aren't using.
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/components.patch 2>/dev/null ; then
 			patch -p0 -u < $FORMULA_DIR/components.patch
@@ -183,17 +189,12 @@ function build() {
 
 	elif [ "$TYPE" == "vs" ] ; then
 		if [ $ARCH == 32 ] ; then
-			cmake -G "Visual Studio $VS_VER"
-			vs-build "Poco.sln"
-			vs-build "Poco.sln" Build "Debug"
+			cmd //c buildwin.cmd ${VS_VER}0 upgrade static_md both Win32 nosamples notests
+			cmd //c buildwin.cmd ${VS_VER}0 build static_md both Win32 nosamples notests
 		elif [ $ARCH == 64 ] ; then
-			cmake -G "Visual Studio $VS_VER Win64" 
-			vs-build "Poco.sln" Build "Release|x64"
-			vs-build "Poco.sln" Build "Debug|x64"
+			cmd //c buildwin.cmd ${VS_VER}0 upgrade static_md both x64 nosamples notests
+			cmd //c buildwin.cmd ${VS_VER}0 build static_md both x64 nosamples notests
 		fi
-		#cmd //c buildwin.cmd ${VS_VER}0 build static_md both Win32 nosamples notests
-		#cmd //c buildwin.cmd ${VS_VER}0 build static_md both x64 nosamples notests
-		#cmd //c buildwin.cmd 120 build static_md both x64 nosamples notests
 	elif [ "$TYPE" == "win_cb" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
@@ -487,12 +488,10 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		if [ $ARCH == 32 ] ; then
 			mkdir -p $1/lib/$TYPE/Win32
-			cp -v lib/Release/*.lib $1/lib/$TYPE/Win32
-			cp -v lib/Debug/*.lib $1/lib/$TYPE/Win32
+			cp -v lib/*.lib $1/lib/$TYPE/Win32
 		elif [ $ARCH == 64 ] ; then
 			mkdir -p $1/lib/$TYPE/x64
-			cp -v lib/Release/*.lib $1/lib/$TYPE/x64
-			cp -v lib/Debug/*.lib $1/lib/$TYPE/x64
+			cp -v lib64/*.lib $1/lib/$TYPE/x64
 		fi
 		
 	elif [ "$TYPE" == "win_cb" ] ; then
@@ -533,8 +532,9 @@ function copy() {
 function clean() {
 
 	if [ "$TYPE" == "vs" ] ; then
-		#cmd //c buildwin.cmd ${VS_VER}0 clean static_md both Win32 nosamples notests
-		vs-clean "Poco.sln"
+		cmd //c buildwin.cmd ${VS_VER}0 clean static_md both Win32 nosamples notests
+		cmd //c buildwin.cmd ${VS_VER}0 clean static_md both x64 nosamples notests
+		#vs-clean "Poco.sln"
 	elif [ "$TYPE" == "android" ] ; then
 		export PATH=$PATH:$ANDROID_TOOLCHAIN_ANDROIDEABI/bin:$ANDROID_TOOLCHAIN_X86/bin
 		make clean ANDROID_ABI=armeabi
