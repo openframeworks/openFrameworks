@@ -76,7 +76,7 @@ IOS_SDK_VER=8.1
 IOS_MIN_SDK_VER=5.1
 
 # used when building for vs
-VS_VER=11
+VS_VER=14
 
 # paths to android SDK, etc
 ANDROID_NDK_ROOT=
@@ -786,7 +786,7 @@ function gitclone() {
 # example: vs-build "./tess2.sln" Build Debug
 # http://msdn.microsoft.com/library/vstudio/b20w810z.aspx
 function vs-build() {
-	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /'${2:-Build}' '${3:-Release}''
+	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /'${2:-Build}' "'${3:-Release}'"'
 }
 
 # visual studio upgrader

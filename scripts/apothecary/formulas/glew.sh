@@ -19,6 +19,7 @@ GIT_TAG=glew-$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
+	#echo ${VS_VER}0
 	curl -LO http://downloads.sourceforge.net/project/glew/glew/$VER/glew-$VER.tgz
 	tar -xf glew-$VER.tgz
 	mv glew-$VER glew
@@ -50,10 +51,12 @@ function build() {
 		lipo -c libGLEW-i386.a libGLEW-x86_64.a -o libGLEW.a
 
 	elif [ "$TYPE" == "vs" ] ; then
-		cd build/vc10
+		cd build/vc12 #this upgrades without issue to vs2015
 		#vs-clean "glew.sln"
-		#vs-upgrade "glew.sln"
-		vs-build "glew_static.vcxproj"
+		vs-upgrade "glew.sln"
+		vs-build "glew_static.vcxproj" Build "Release|Win32"
+		vs-build "glew_static.vcxproj" Build "Release|x64"
+		#mv lib/Release/x64/glew32s.lib glew64s.lib
 		cd ../../
 	elif [ "$TYPE" == "win_cb" ] ; then
 		make clean
@@ -78,6 +81,7 @@ function copy() {
 
 	elif [ "$TYPE" == "vs" ] ; then
 		mkdir -p $1/lib/$TYPE
+		cp -v lib/Release/x64/glew32s.lib $1/lib/$TYPE/glew64s.lib
 		cp -v lib/Release/Win32/glew32s.lib $1/lib/$TYPE
 
 	elif [ "$TYPE" == "win_cb" ] ; then
@@ -96,7 +100,7 @@ function copy() {
 function clean() {
 
 	if [ "$TYPE" == "vs" ] ; then
-		cd build/vc10
+		cd build/vc12
 		vs-clean "glew.sln"
 		cd ../../
 	else

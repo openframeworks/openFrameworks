@@ -19,14 +19,22 @@ function download() {
 	if ! [ -f $FILENAME.sha1 ]; then
 		curl -O https://www.openssl.org/source/$FILENAME.tar.gz.sha1
 	fi
-	
-	if [ "$(shasum $FILENAME.tar.gz | awk '{print $1}')" == "$(cat $FILENAME.tar.gz.sha1)" ] ;  then  
+	if [ "$TYPE" == "vs" ] ; then
+		#hasSha=$(cmd.exe /c 'call 'CertUtil' '-hashfile' '$FILENAME.tar.gz' 'SHA1'')
+		echo "TO DO: check against the SHA for windows"
 		tar -xvf $FILENAME.tar.gz
 		mv $FILENAME openssl
 		rm $FILENAME.tar.gz
 		rm $FILENAME.tar.gz.sha1
-	else 
-		echoError "Invalid shasum for $FILENAME."
+	else
+		if [ "$(shasum $FILENAME.tar.gz | awk '{print $1}')" == "$(cat $FILENAME.tar.gz.sha1)" ] ;  then  
+			tar -xvf $FILENAME.tar.gz
+			mv $FILENAME openssl
+			rm $FILENAME.tar.gz
+			rm $FILENAME.tar.gz.sha1
+		else 
+			echoError "Invalid shasum for $FILENAME."
+		fi
 	fi
 }
 
@@ -242,8 +250,24 @@ function build() {
 		
 		# ------------ END OS X Recipe.
 
-	# elif [ "$TYPE" == "vs" ] ; then
-	# 	# cmd //c buildwin.cmd ${VS_VER}0 build static_md both Win32 nosamples notests
+	 elif [ "$TYPE" == "vs" ] ; then
+		if [ $ARCH == 32 ] ; then
+			perl Configure VC-WIN32 no-shared no-idea #no-asm
+			cmd.exe /c 'ms\do_ms'
+			CURRENTPATH=`pwd`
+			#echo ${CURRENTPATH}
+			WINPATH=$(echo "$CURRENTPATH" | sed -e 's/^\///' -e 's/\//\\/g' -e 's/^./\0:/')
+			#echo ${WINPATH}
+			#do a cd because any spaces in the path like program files leads to errors
+			#cmd.exe /c 'cd %VS'${VS_VER}'0COMNTOOLS%\..\..\VC\bin && nmake -f '${WINPATH}'\ms\nt.mak'
+			#cmd.exe /c 'cd %VS'${VS_VER}'0COMNTOOLS%\..\..\VC\bin && nmake -f '${WINPATH}'\ms\nt.mak install'
+		elif [ $ARCH == 64 ] ; then
+			perl Configure VC-WIN64A no-shared no-idea no-asm
+			cmd.exe /c 'call ms/do_win64a'
+			#cmd.exe /c 'nmake -f ms\nt.mak'
+			#cmd.exe /c 'nmake -f ms\nt.mak install'
+		fi
+	 	# cmd //c buildwin.cmd ${VS_VER}0 build static_md both Win32 nosamples notests
 
 	# elif [ "$TYPE" == "win_cb" ] ; then
 	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
@@ -399,7 +423,7 @@ function build() {
 			echo "Building openssl-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
 
 			set +e
-			if [[ "$VERSION" =~ 1.0.0. ]]; then
+			if [ "$VERSION" =~ 1.0.0. ]; then
 				echo "Building for OpenSSL Version before 1.0.0"
 	    		./Configure BSD-generic32 -no-asm --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH" > "${LOG}" 2>&1
 			elif [ "${IOS_ARCH}" == "i386" ]; then
