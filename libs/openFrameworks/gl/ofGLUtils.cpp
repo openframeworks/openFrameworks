@@ -192,6 +192,7 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 	switch(glInternalFormat) {
 		case GL_RGB:
 		case GL_RGBA:
+		case GL_BGRA:
 		case GL_LUMINANCE:
 		case GL_LUMINANCE_ALPHA:
 		case GL_ALPHA:
@@ -255,8 +256,6 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 
 		case GL_STENCIL_INDEX:
 			return GL_UNSIGNED_BYTE;
-		case GL_BGRA:
-			return GL_BGRA;
 
 		default:
 			ofLogError("ofGLUtils") << "ofGetGlTypeFromInternal(): unknown internal format " << glInternalFormat << ", returning GL_UNSIGNED_BYTE";
