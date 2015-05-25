@@ -177,6 +177,8 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 #endif
 			case GL_ALPHA:
 				return GL_ALPHA;
+			case GL_BGRA:
+				return GL_BGRA;
 
 			default:
 				ofLogError("ofGLUtils") << "ofGetGLFormatFromInternal(): unknown internal format " << glInternalFormat << ", returning GL_RGBA";
@@ -253,6 +255,8 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 
 		case GL_STENCIL_INDEX:
 			return GL_UNSIGNED_BYTE;
+		case GL_BGRA:
+			return GL_BGRA;
 
 		default:
 			ofLogError("ofGLUtils") << "ofGetGlTypeFromInternal(): unknown internal format " << glInternalFormat << ", returning GL_UNSIGNED_BYTE";
