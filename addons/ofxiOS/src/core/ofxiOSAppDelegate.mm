@@ -171,9 +171,7 @@
 		}
 		
         if(!bDoesHWOrientation) {
-			//[[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation animated:NO];
             [self.glViewController rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:false];
-			//ofSetOrientation(requested);
 		} else {
             [[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation animated:NO];
             [self.glViewController rotateToInterfaceOrientation:interfaceOrientation animated:false];
