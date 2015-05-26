@@ -89,8 +89,6 @@ function prepare() {
 
 		# replace OPENSSL_LIB=%OPENSSL_DIR%\lib;%OPENSSL_DIR%\lib\VC with OPENSSL_LIB=%OPENSSL_DIR%\lib\vs
 		sed -i.tmp "s|%OPENSSL_DIR%\\\lib;.*|%OPENSSL_DIR%\\\lib\\\vs|g" buildwin.cmd
-	elif [ "$TYPE" == "android" ] ; then
-		installAndroidToolchain
 	fi
 
 }
@@ -376,10 +374,6 @@ function build() {
 	elif [ "$TYPE" == "android" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
-		local OLD_PATH=$PATH
-
-		export PATH=$PATH:$BUILD_DIR/Toolchains/Android/androideabi/bin:$BUILD_DIR/Toolchains/Android/x86/bin
-
 		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
 
 		# get the absolute path to the included openssl libs
@@ -390,30 +384,37 @@ function build() {
 
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
-		./configure $BUILD_OPTS \
-					--include-path=$OPENSSL_INCLUDE \
-					--library-path=$OPENSSL_LIBS/armeabi \
-					--config=Android
+        export PATH=$PATH:$PWD/AndroidToolchain/bin
+		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/android.patch 2>/dev/null ; then
+			patch -p0 -u < $FORMULA_DIR/android.patch
+		fi
 
-		make ANDROID_ABI=armeabi
-
+        #armv7
+		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
+        rm -rf AndroidToolchain
+        $NDK_ROOT/build/tools/make-standalone-toolchain.sh --platform=android-21 --install-dir=./AndroidToolchain --toolchain=arm-linux-androideabi-4.9
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/armeabi-v7a \
 					--config=Android
 
+        make clean
 		make ANDROID_ABI=armeabi-v7a
 
+        #x86
+		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
+        rm -rf AndroidToolchain
+        $NDK_ROOT/build/tools/make-standalone-toolchain.sh --platform=android-21 --install-dir=./AndroidToolchain --toolchain=x86-4.9
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/x86 \
 					--config=Android
 
+        make clean
 		make ANDROID_ABI=x86
 
 		echo `pwd`
 
-		rm -v lib/Android/armeabi/*d.a
 		rm -v lib/Android/armeabi-v7a/*d.a
 		rm -v lib/Android/x86/*d.a
 
@@ -492,9 +493,6 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/armv7l/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "android" ] ; then
-		mkdir -p $1/lib/$TYPE/armeabi
-		cp -v lib/Android/armeabi/*.a $1/lib/$TYPE/armeabi
-
 		mkdir -p $1/lib/$TYPE/armeabi-v7a
 		cp -v lib/Android/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a
 
