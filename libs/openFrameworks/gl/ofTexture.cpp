@@ -536,7 +536,12 @@ void ofTexture::loadData(const ofBufferObject & buffer, int glFormat, int glType
 void ofTexture::loadData(const void * data, int w, int h, int glFormat, int glType){
 
 	if(w > texData.tex_w || h > texData.tex_h) {
-		allocate(w, h, glFormat, glFormat, glType);
+		if(isAllocated()){
+			allocate(w, h, texData.glTypeInternal, glFormat, glType);
+		}else{
+			// TODO: guess correct internal from glFormat
+			allocate(w, h, glFormat, glFormat, glType);
+		}
 	}
 	
 	// compute new tex co-ords based on the ratio of data's w, h to texture w,h;
