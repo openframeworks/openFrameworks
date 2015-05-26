@@ -30,7 +30,7 @@ rem
 rem VS_VERSION is required argument. Default is build all.
 
 rem Change OPENSSL_DIR to match your setup
-set OPENSSL_DIR=c:\\Users\Dominic\Documents\github\openFrameworks\\libs\openssl
+set OPENSSL_DIR=
 set OPENSSL_INCLUDE=%OPENSSL_DIR%\include
 set OPENSSL_LIB=%OPENSSL_DIR%\lib\vs
 set INCLUDE=%INCLUDE%;%OPENSSL_INCLUDE%
@@ -85,14 +85,14 @@ if not defined VCINSTALLDIR (
           if %PLATFORM%==x64 (
             call "%VS120COMNTOOLS%..\..\%VS_64_BIT_ENV%"
           ) else (
-            call "%VS120COMNTOOLS%vsvars32.bat
+            call "%VS120COMNTOOLS%vsvars32.bat"
           )  
       ) else (
         if %VS_VERSION%==vs140 (
           if %PLATFORM%==x64 (
             call "%VS140COMNTOOLS%..\..\%VS_64_BIT_ENV%"
           ) else (
-            call "%VS140COMNTOOLS%vsvars32.bat
+            call "%VS140COMNTOOLS%vsvars32.bat"
           )     
         ) 
 		)
