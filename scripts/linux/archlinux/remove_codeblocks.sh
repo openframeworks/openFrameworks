@@ -1,0 +1,1 @@
+pacman -Rs codeblocks

@@ -1,0 +1,28 @@
+DEFINES=-DTARGET_OPENGLES
+DEFINES+=-DTARGET_OPENGLES2
+CC=gcc
+
+CFLAGS=$(DEFINES)
+CFLAGS+=-I./include
+
+LIB=libtess2.a
+LIBDEST=./lib/linuxarmv7l/
+SRC=./Sources
+
+LIBSRC= $(SRC)/bucketalloc.c $(SRC)/dict.c $(SRC)/geom.c $(SRC)/mesh.c $(SRC)/priorityq.c $(SRC)/sweep.c $(SRC)/tess.c 
+
+LIBOBJ=$(LIBSRC:.c=.o)  
+
+install: $(LIB)
+	@echo lib Makefile - installing $(LIB)
+	@install -m 444 $(LIB) $(LIBDEST)
+
+$(LIB): $(LIBOBJ)
+	@echo lib Makefile - archiving $(LIB)
+	@$(AR) r $(LIB) $(LIBOBJ)
+
+.c.o:
+	@echo lib Makefile - compiling $<
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+

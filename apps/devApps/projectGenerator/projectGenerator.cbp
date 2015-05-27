@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="projectGenerator" />
+		<Option makefile="makefile" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="addons\;src\;" />
+		<Build>
+			<Target title="release">
+				<Option output="bin/$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin" />
+				<Option object_output="obj/Release" />
+				<Option external_deps="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworks.lib;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworks.lib" />
+				</Linker>
+			</Target>
+			<Target title="debug">
+				<Option output="bin/$(PROJECT_NAME)_DEBUG" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin" />
+				<Option object_output="obj/Debug/" />
+				<Option external_deps="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworksDebug.lib;" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworksDebug.lib" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wno-multichar" />
+			<Add directory="../../../libs/glu/include" />
+			<Add directory="../../../libs/freetype/include" />
+			<Add directory="../../../libs/freetype/include/freetype2" />
+			<Add directory="../../../libs/FreeImage/include" />
+			<Add directory="../../../libs/quicktime/include" />
+			<Add directory="../../../libs/rtAudio/include" />
+			<Add directory="../../../libs/fmodex/include" />
+			<Add directory="../../../libs/videoInput/include" />
+			<Add directory="../../../libs/glew/include" />
+			<Add directory="../../../libs/glut/include" />
+			<Add directory="../../../libs/openFrameworks" />
+			<Add directory="../../../libs/openFrameworks/3d" />
+			<Add directory="../../../libs/openFrameworks/app" />
+			<Add directory="../../../libs/openFrameworks/communication" />
+			<Add directory="../../../libs/openFrameworks/events" />
+			<Add directory="../../../libs/openFrameworks/gl" />
+			<Add directory="../../../libs/openFrameworks/graphics" />
+			<Add directory="../../../libs/openFrameworks/math" />
+			<Add directory="../../../libs/openFrameworks/sound" />
+			<Add directory="../../../libs/openFrameworks/types" />
+			<Add directory="../../../libs/openFrameworks/utils" />
+			<Add directory="../../../libs/openFrameworks/video" />
+			<Add directory="../../../libs/poco/include" />
+			<Add directory="../../../libs/tess2/include" />
+			<Add directory="../../../libs/cairo/include/cairo" />
+			<Add directory="src/pugixmlLib/src" />
+			<Add directory="src/addons" />
+			<Add directory="src/projects" />
+			<Add directory="src/utils" />
+			<Add directory="../../../addons/ofxXmlSettings/libs/" />
+			<Add directory="../../../addons/ofxXmlSettings/src" />
+			<Add directory="../../../addons/ofxGui/src" />
+		</Compiler>
+		<Linker>
+			<Add library="..\..\..\libs\FreeImage\lib\win_cb\FreeImage.lib" />
+			<Add library="..\..\..\libs\rtAudio\lib\win_cb\librtaudio.a" />
+			<Add library="..\..\..\libs\quicktime\lib\win_cb\qtmlClient.lib" />
+			<Add library="..\..\..\libs\cairo\lib\win_cb\libcairo.a" />
+			<Add library="..\..\..\libs\cairo\lib\win_cb\libpixman-1.a" />
+			<Add library="..\..\..\libs\freetype\lib\win_cb\libfreetype.a" />
+			<Add library="..\..\..\libs\glut\lib\win_cb\libglut.a" />
+			<Add library="..\..\..\libs\glfw\lib\win_cb\libglfw3.a" />
+			<Add library="..\..\..\libs\videoInput\lib\win_cb\videoInputLib.a" />
+			<Add library="..\..\..\libs\fmodex\lib\win_cb\libfmodex.a" />
+			<Add library="..\..\..\libs\glew\lib\win_cb\glew32s.lib" />
+			<Add library="..\..\..\libs\glu\lib\win_cb\glu32.lib" />
+			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoNetSSL.a" />
+			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoCrypto.a" />
+			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoNet.a" />
+			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoUtil.a" />
+			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoXML.a" />
+			<Add library="..\..\..\libs\poco\lib\win_cb\libPocoFoundation.a" />
+			<Add library="..\..\..\libs\openssl\lib\win_cb\libssl.a" />
+			<Add library="..\..\..\libs\openssl\lib\win_cb\libcrypto.a" />
+			<Add library="..\..\..\libs\tess2\lib\win_cb\libtess2.a" />
+			<Add library="opengl32" />
+			<Add library="gdi32" />
+			<Add library="msimg32" />
+			<Add library="glu32" />
+			<Add library="dsound" />
+			<Add library="winmm" />
+			<Add library="dxguid" />
+			<Add library="strmbase" />
+			<Add library="strmiids" />
+			<Add library="z" />
+			<Add library="uuid" />
+			<Add library="ole32" />
+			<Add library="oleaut32" />
+			<Add library="setupapi" />
+			<Add library="wsock32" />
+			<Add library="ws2_32" />
+			<Add library="Iphlpapi" />
+			<Add library="Comdlg32" />
+		</Linker>
+		<ExtraCommands>
+			<Add after='xcopy /e /i /y &quot;$(PROJECT_DIR)..\..\..\export\win_cb\*.dll&quot;  &quot;$(PROJECT_DIR)bin&quot;' />
+			<Add after='cmd /c if not exist &quot;$(PROJECT_DIR)bin/data&quot; mkdir &quot;$(PROJECT_DIR)bin/data&quot;' />
+			<Mode after="always" />
+		</ExtraCommands>
+		<Unit filename="../../../addons/ofxGui/src/ofxBaseGui.cpp" />
+		<Unit filename="../../../addons/ofxGui/src/ofxBaseGui.h" />
+		<Unit filename="../../../addons/ofxGui/src/ofxButton.cpp" />
+		<Unit filename="../../../addons/ofxGui/src/ofxButton.h" />
+		<Unit filename="../../../addons/ofxGui/src/ofxGui.h" />
+		<Unit filename="../../../addons/ofxGui/src/ofxGuiGroup.cpp" />
+		<Unit filename="../../../addons/ofxGui/src/ofxGuiGroup.h" />
+		<Unit filename="../../../addons/ofxGui/src/ofxLabel.cpp" />
+		<Unit filename="../../../addons/ofxGui/src/ofxLabel.h" />
+		<Unit filename="../../../addons/ofxGui/src/ofxPanel.cpp" />
+		<Unit filename="../../../addons/ofxGui/src/ofxPanel.h" />
+		<Unit filename="../../../addons/ofxGui/src/ofxSlider.cpp" />
+		<Unit filename="../../../addons/ofxGui/src/ofxSlider.h" />
+		<Unit filename="../../../addons/ofxGui/src/ofxSliderGroup.cpp" />
+		<Unit filename="../../../addons/ofxGui/src/ofxSliderGroup.h" />
+		<Unit filename="../../../addons/ofxGui/src/ofxToggle.cpp" />
+		<Unit filename="../../../addons/ofxGui/src/ofxToggle.h" />
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml.cpp" />
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxml.h" />
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxmlerror.cpp" />
+		<Unit filename="../../../addons/ofxXmlSettings/libs/tinyxmlparser.cpp" />
+		<Unit filename="../../../addons/ofxXmlSettings/src/ofxXmlSettings.cpp" />
+		<Unit filename="../../../addons/ofxXmlSettings/src/ofxXmlSettings.h" />
+		<Unit filename="../../../libs/openFrameworks/types/ofXml.h" />
+		<Unit filename="icon.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="src/addons/ofAddon.cpp" />
+		<Unit filename="src/addons/ofAddon.h" />
+		<Unit filename="src/main.cpp">
+			<Option virtualFolder="src" />
+		</Unit>
+		<Unit filename="src/projects/CBLinuxProject.cpp" />
+		<Unit filename="src/projects/CBLinuxProject.h" />
+		<Unit filename="src/projects/CBWinProject.cpp" />
+		<Unit filename="src/projects/CBWinProject.h" />
+		<Unit filename="src/projects/baseProject.cpp" />
+		<Unit filename="src/projects/baseProject.h" />
+		<Unit filename="src/projects/visualStudioProject.cpp" />
+		<Unit filename="src/projects/visualStudioProject.h" />
+		<Unit filename="src/projects/xcodeProject.cpp" />
+		<Unit filename="src/projects/xcodeProject.h" />
+		<Unit filename="src/pugixmlLib/src/pugiconfig.hpp" />
+		<Unit filename="src/pugixmlLib/src/pugixml.cpp" />
+		<Unit filename="src/pugixmlLib/src/pugixml.hpp" />
+		<Unit filename="src/ofApp.cpp">
+			<Option virtualFolder="src" />
+		</Unit>
+		<Unit filename="src/ofApp.h">
+			<Option virtualFolder="src" />
+		</Unit>
+		<Unit filename="src/utils/Utils.cpp" />
+		<Unit filename="src/utils/Utils.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

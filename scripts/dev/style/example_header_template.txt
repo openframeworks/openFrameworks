@@ -1,0 +1,4 @@
+// name: Example Name
+// summary: short description of the example
+// version: release date and version
+// author: Your Name <email@address.com> http://website.com

@@ -1,0 +1,2 @@
+Simply place this file in /etc/udev/rules.d and you'll no longer need
+to run your apps as root.

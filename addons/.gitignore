@@ -1,0 +1,27 @@
+#########################
+# core addons
+#########################
+
+!.project
+!.cproject
+!ofx3DModelLoader
+!ofxAccelerometer
+!ofxAndroid
+ofxAndroid/ofAndroidLib/bin
+ofxAndroid/ofAndroidLib/gen
+!ofxAssimpModelLoader
+!ofxGui
+!ofxiOS
+!ofxKinect
+!ofxMultiTouch
+!ofxNetwork
+!ofxOpenCv
+!ofxOsc
+!ofxSvg
+!ofxThreadedImageLoader
+!ofxVectorGraphics
+!ofxXmlSettings
+!ofxEmscripten
+
+# don't ignore the .gitignore file
+!.gitignore

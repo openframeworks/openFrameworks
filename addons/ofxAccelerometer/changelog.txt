@@ -1,0 +1,24 @@
+ofxAccelerometer changelog
+
+v0.4	07/04/2009
+--------------------
+- changed license to revised BSD (a lot more more permissive than GPL)
+
+
+v0.3
+--------------------
+- added orientation matrix
+- separate smoothing values for force & orientation
+- you can also read the raw unsmoothed data too
+
+
+v0.2
+--------------------
+- renamed from ofxAccel to ofxAccelerometer
+- changed from static methods, to normal and extern initialized at startup
+- renamed getAccel() to getForce()
+
+
+v0.1
+--------------------
+- initial version

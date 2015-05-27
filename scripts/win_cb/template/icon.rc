@@ -1,0 +1,2 @@
+//TODO: figure out how to do debug and release icons
+MAINICON ICON "../../../libs/openFrameworksCompiled/project/win_cb/icon.ico"

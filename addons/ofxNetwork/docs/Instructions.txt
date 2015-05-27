@@ -1,0 +1,128 @@
+ofTCPServer & ofTCPClient install instructions
+
+NOTE: ofTCPServer and ofTCPClient require ofThread - please checkout ofThread first and follow the instructions to install ofThread before installing ofTCPClient and ofTCPServer.
+NOTE: Windows users will need to add ws2_32.lib to your project. This is part of the Windows SDK.
+      For Codewarrior it is here: C:/Program Files/Metrowerks/CodeWarrior/Win32-x86 Support/Libraries/Win32SDK/
+      For Visual Studio it is here C:/Program Files/Microsoft Platform SDK for Windows Server 2003 R2/Lib
+      For Dev-C++ it is here C:/Dev-Cpp/lib -- for Dev-C++ it is called libws2_32.a
+
+      It is strongly encourage to copy the lib to your openFrameworks libs/ folder and then add to your project.
+
++++++ Step 0 ++++++
+Copy ofTCPServer.h and .cpp and ofTCPClient.h and .cpp to libs/ofAddons/communication/
+
++++++ Step 1 ++++++
+Duplicate a project twice and rename one tcpServerExample and tcpClientExample replace testApp.h testApp.cpp and main.cpp with the replacement for each example. 
+
++++++ Step 2 ++++++ 
+
+Drag the ofTCPServer and ofTCPClient files from libs/ofAddons/communication/
+into your project. As well as ofAddons.h from libs/ofAddons/
+
+in ofAddons.h you should have:
+
+#ifndef _OF_ADDONS_H_
+#define _OF_ADDONS_H_
+
+//--------------------------
+// utils
+#include "ofThread.h"
+
+//--------------------------
+// communication
+#include "ofTCPServer.h"
+#include "ofTCPClient.h"
+
+//--------------------------
+// graphics
+
+
+//--------------------------
+// app
+
+
+//--------------------------
+// audio
+
+
+//--------------------------
+// video
+
+#endif
+
+
++++++ Step 3 ++++++
+Add the folder tcpUdpManager to your main libs folder. 
+Then drag folder into both projects.
+
+
++++++ Step 4 ++++++
+in of Constants.h change the line 
+
+// then the the platform specific includes:
+#ifdef TARGET_WIN32
+
+To:
+
+// then the the platform specific includes:
+#ifdef TARGET_WIN32
+	//this is for TryEnterCriticalSection
+	//http://www.zeroc.com/forums/help-center/351-ice-1-2-tryentercriticalsection-problem.html
+	#ifndef _WIN32_WINNT
+		#   define _WIN32_WINNT 0x400
+	#endif
+
+
+
++++++ Step 5 ++++++
+To run the demo app make sure in ofConstants.h you have 
+
+using namespace std;
+#include <string>   
+#include <sstream>  //for ostringsream
+#include <iomanip>  //for setprecision
+
+
++++++ Step 6 ++++++
+Also to run the demo make sure you have in ofUtils.cpp
+
+//--------------------------------------------------
+string ofToString(double value, int precision){
+	stringstream sstr;
+	sstr << fixed << setprecision(precision) << value;
+	return sstr.str();
+}
+
+//--------------------------------------------------
+string ofToString(int value){
+	stringstream sstr;
+	sstr << value;
+	return sstr.str();
+}
+
+And also in in ofUtils.h:
+
+string  ofToString(double value, int precision = 7);
+string  ofToString(int  value);
+
+
++++++ Step 7 ++++++
+Add ofSleepMillis()
+
+add the line bellow to ofAppRunner.h:
+void		ofSleepMillis(int millis);
+
+
+and add the code bellow to ofAppRunner.cpp
+//--------------------------------------
+void ofSleepMillis(int millis){
+	#ifdef TARGET_WIN32
+		Sleep(millis);			//windows sleep in milliseconds
+	#else
+		usleep(millis * 1000);	//mac sleep in microseconds - cooler :)
+	#endif 
+}
+
++++++ Step 8 ++++++
+Make sure you add the fonts needed and specify the corrent path to their location.
+

@@ -1,0 +1,10 @@
+For a list of libfreenect authors, please see the Git history of the project,
+such as with 'git log'. This file will contain a list of authors on release
+snapshots of libfreenect.
+
+THIS FILE IS NOT VALID FOR NON-GIT DISTRIBUTIONS. If you wish to redistribute
+libfreenect source code outside of the Git infrastructure, you MUST either use
+a release version or generate a complete CONTRIB file valid for the source Git
+revision tree that you use for your distribution. Redistributions of libfreenect
+source code without a valid CONTRIB file and without Git metadata are not
+compliant with the license.
