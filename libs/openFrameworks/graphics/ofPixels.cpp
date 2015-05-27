@@ -1036,6 +1036,7 @@ void ofPixels_<PixelType>::rotate90(int nClockwiseRotations){
 	std::swap(newPixels.pixels,pixels);
 	width = newPixels.width;
 	height = newPixels.height;
+	pixelsSize = newPixels.size();
 
 }
 
@@ -1138,6 +1139,7 @@ bool ofPixels_<PixelType>::resize(int dstWidth, int dstHeight, ofInterpolationMe
 	pixels = dstPixels.getData();
 	width  = dstWidth;
 	height = dstHeight;
+	pixelsSize = dstPixels.size();
 	dstPixels.pixelsOwner = false;
 	return true;
 }
