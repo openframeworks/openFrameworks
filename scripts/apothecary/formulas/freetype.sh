@@ -294,7 +294,7 @@ function build() {
 		# armv7
 		ABI=armeabi-v7a
 		local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE/$ABI
-		source ../../formulas/android_configure.sh $ABI
+		source ../../android_configure.sh $ABI
 
 		./configure --prefix=$BUILD_TO_DIR --host armv7a-linux-android --with-harfbuzz=no --enable-static=yes --enable-shared=no 
 		make clean 
@@ -304,7 +304,7 @@ function build() {
 		# x86
 		ABI=x86
 		local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE/$ABI
-		source ../../formulas/android_configure.sh $ABI
+		source ../../android_configure.sh $ABI
 
 		./configure --prefix=$BUILD_TO_DIR --host x86-linux-android --with-harfbuzz=no --enable-static=yes --enable-shared=no 
 		make clean 

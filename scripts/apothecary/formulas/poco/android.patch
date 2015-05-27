@@ -1,0 +1,12 @@
+--- Foundation/src/Process_UNIX.cpp Aug 18 21:39:41 2014
++++ Foundation/src/Process_UNIX.cpp Aug 18 21:39:51 2014
+@@ -200,7 +200,8 @@
+ 		if (outPipe) outPipe->close(Pipe::CLOSE_BOTH);
+ 		if (errPipe) errPipe->close(Pipe::CLOSE_BOTH);
+ 		// close all open file descriptors other than stdin, stdout, stderr
+-		for (int i = 3; i < getdtablesize(); ++i)
++		struct rlimit r1;
++		for (int i = 3; i < getrlimit(RLIMIT_NOFILE, &r1); ++i)
+ 		{
+ 			close(i);
+ 		}
