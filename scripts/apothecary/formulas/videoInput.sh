@@ -32,9 +32,7 @@ function build() {
 
 	if [ "$TYPE" == "vs" ] ; then
 		cd VS-videoInputcompileAsLib
-		vs-build "videoInput.sln" Build Release
-		vs-build "videoInput.sln" Build Debug
-
+		if [ $ARCH == 32 ] ; then
 	elif [ "$TYPE" == "win_cb" ] ; then
 		cd CodeBlocks-compileAsLib/videoInputLib
 		# run CodeBlocks on videoInputLib.cpb somehow
@@ -66,6 +64,7 @@ function clean() {
 	
 	if [ "$TYPE" == "vs" ] ; then
 		echoWarning "TODO: clean vs"
+		vs-clean "videoInput.sln"
 	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: clean win_cb"
 	fi
