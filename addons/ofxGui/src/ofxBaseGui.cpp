@@ -5,7 +5,7 @@
 using namespace std;
 
 
-void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0){
+void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
 	ofxBaseGui::loadFont(fontPath,fontsize,_bAntiAliased,_bFullCharacterSet,dpi);
 }
 
