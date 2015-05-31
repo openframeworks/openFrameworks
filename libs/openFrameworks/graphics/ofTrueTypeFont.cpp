@@ -28,6 +28,13 @@ static bool librariesInitialized = false;
 static FT_Library library;
 
 //--------------------------------------------------------
+void ofTrueTypeShutdown(){
+#ifdef TARGET_LINUX
+	FcFini();
+#endif
+}
+
+//--------------------------------------------------------
 void ofTrueTypeFont::setGlobalDpi(int newDpi){
 	ttfGlobalDpi = newDpi;
 }
