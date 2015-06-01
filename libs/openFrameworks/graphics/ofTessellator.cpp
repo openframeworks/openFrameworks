@@ -62,12 +62,18 @@ ofTessellator::~ofTessellator(){
 
 //----------------------------------------------------------
 ofTessellator::ofTessellator(const ofTessellator & mom){
-	if(&mom != this) init();
+	if(&mom != this){
+		if(cacheTess) tessDeleteTess(cacheTess);
+		init();
+	}
 }
 
 //----------------------------------------------------------
 ofTessellator & ofTessellator::operator=(const ofTessellator & mom){
-	if(&mom != this) init();
+	if(&mom != this){
+		if(cacheTess) tessDeleteTess(cacheTess);
+		init();
+	}
 	return *this;
 }
 
