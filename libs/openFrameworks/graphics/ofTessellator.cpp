@@ -52,7 +52,7 @@ void memFree( void *userData, void *ptr ){
 
 //----------------------------------------------------------
 ofTessellator::ofTessellator()
-  : cacheTess(nullptr)
+  : cacheTess(NULL)
 {
 	init();
 }
@@ -64,7 +64,7 @@ ofTessellator::~ofTessellator(){
 
 //----------------------------------------------------------
 ofTessellator::ofTessellator(const ofTessellator & mom)
-  : cacheTess(nullptr)
+  : cacheTess(NULL)
 {
 	if(&mom != this){
 		if(cacheTess) tessDeleteTess(cacheTess);
