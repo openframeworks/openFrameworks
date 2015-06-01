@@ -33,8 +33,6 @@
 		676672A31A749D1900400051 /* ofAVFoundationVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.m */; };
 		676672A41A749D1900400051 /* ofAVFoundationPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6766729E1A749D1900400051 /* ofAVFoundationPlayer.h */; };
 		676672A51A749D1900400051 /* ofAVFoundationVideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 6766729F1A749D1900400051 /* ofAVFoundationVideoPlayer.h */; };
-		676672A61A749D1900400051 /* ofAVFoundationVideoPlayerView.h in Headers */ = {isa = PBXBuildFile; fileRef = 676672A01A749D1900400051 /* ofAVFoundationVideoPlayerView.h */; };
-		676672A71A749D1900400051 /* ofAVFoundationVideoPlayerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 676672A11A749D1900400051 /* ofAVFoundationVideoPlayerView.m */; };
 		676672A81A749D1900400051 /* ofAVFoundationPlayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 676672A21A749D1900400051 /* ofAVFoundationPlayer.mm */; };
 		67D96B971651AF6D00D5242D /* ofGLUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 67D96B941651AF6D00D5242D /* ofGLUtils.cpp */; };
 		692C298B19DC5C5500C27C5D /* ofFpsCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 692C298719DC5C5500C27C5D /* ofFpsCounter.cpp */; };
@@ -188,8 +186,6 @@
 		6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ofAVFoundationVideoPlayer.m; sourceTree = "<group>"; };
 		6766729E1A749D1900400051 /* ofAVFoundationPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAVFoundationPlayer.h; sourceTree = "<group>"; };
 		6766729F1A749D1900400051 /* ofAVFoundationVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAVFoundationVideoPlayer.h; sourceTree = "<group>"; };
-		676672A01A749D1900400051 /* ofAVFoundationVideoPlayerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAVFoundationVideoPlayerView.h; sourceTree = "<group>"; };
-		676672A11A749D1900400051 /* ofAVFoundationVideoPlayerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ofAVFoundationVideoPlayerView.m; sourceTree = "<group>"; };
 		676672A21A749D1900400051 /* ofAVFoundationPlayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ofAVFoundationPlayer.mm; sourceTree = "<group>"; };
 		67D96B941651AF6D00D5242D /* ofGLUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofGLUtils.cpp; path = gl/ofGLUtils.cpp; sourceTree = "<group>"; };
 		692C298719DC5C5500C27C5D /* ofFpsCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofFpsCounter.cpp; sourceTree = "<group>"; };
@@ -455,8 +451,6 @@
 				E703368F15D4B03E009A3FDE /* ofQTKitPlayer.h */,
 				FDFC9EF01600D70500EDD797 /* ofQTKitMovieRenderer.h */,
 				FDFC9EF11600D70600EDD797 /* ofQTKitMovieRenderer.m */,
-				676672A01A749D1900400051 /* ofAVFoundationVideoPlayerView.h */,
-				676672A11A749D1900400051 /* ofAVFoundationVideoPlayerView.m */,
 				6766729F1A749D1900400051 /* ofAVFoundationVideoPlayer.h */,
 				6766729D1A749D1900400051 /* ofAVFoundationVideoPlayer.m */,
 				6766729E1A749D1900400051 /* ofAVFoundationPlayer.h */,
@@ -637,7 +631,6 @@
 				E4B5AE2112D94F9B00BA355D /* ofQuickTimeGrabber.h in Headers */,
 				692C298E19DC5C5500C27C5D /* ofTimer.h in Headers */,
 				E4F3BA6812F4C4BF002D19BB /* of3dUtils.h in Headers */,
-				676672A61A749D1900400051 /* ofAVFoundationVideoPlayerView.h in Headers */,
 				E4F3BA6A12F4C4BF002D19BB /* ofCamera.h in Headers */,
 				E4F3BA6C12F4C4BF002D19BB /* ofEasyCam.h in Headers */,
 				E4F3BA7412F4C4BF002D19BB /* ofNode.h in Headers */,
@@ -788,7 +781,6 @@
 				E4F3BAC312F4C72F002D19BB /* ofMatrix3x3.cpp in Sources */,
 				E4F3BAC512F4C72F002D19BB /* ofMatrix4x4.cpp in Sources */,
 				6678E96C19FEAE1900C00581 /* ofBaseSoundStream.cpp in Sources */,
-				676672A71A749D1900400051 /* ofAVFoundationVideoPlayerView.m in Sources */,
 				E4F3BAC712F4C72F002D19BB /* ofQuaternion.cpp in Sources */,
 				E4F3BAC912F4C72F002D19BB /* ofVec2f.cpp in Sources */,
 				E4F3BACC12F4C72F002D19BB /* ofVec4f.cpp in Sources */,
