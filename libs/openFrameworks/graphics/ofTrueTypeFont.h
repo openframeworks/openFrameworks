@@ -56,6 +56,9 @@ static const string OF_TTF_MONO = "monospace";
 /// \}
 
 
+void ofTrueTypeShutdown();
+
+
 
 class ofTrueTypeFont{
 
