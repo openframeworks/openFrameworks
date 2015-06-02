@@ -516,107 +516,40 @@ function build() {
 
 	elif [ "$TYPE" == "android" ]; then
 		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
+        perl -pi -e 's/install: all install_docs install_sw/install: install_docs install_sw/g' Makefile.org
 		
         # armv7
         ABI=armeabi-v7a
         local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
-        source ../../formulas/android_configure.sh $ABI
-        export CC="$CC $CFLAGS $LDFLAGS"
-        ./Configure --prefix=$BUILD_TO_DIR -no-ssl2 -no-ssl3 -no-comp -no-hw -no-engine android-armv7 #--host armv7a-linux-android --enable-static=yes --enable-shared=no
+        source ../../android_configure.sh $ABI
+        export CC="$CC $CFLAGS"
+        ./Configure --prefix=$BUILD_TO_DIR no-ssl2 no-ssl3 no-comp no-hw no-engine no-shared android-armv7
         make clean
-        make
+        make deps
+        make build_libs
         make install
+        cp libssl.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
+        cp libcrypto.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
         
         # x86
         ABI=x86
         local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
-        source ../../formulas/android_configure.sh $ABI
+        source ../../android_configure.sh $ABI
         export CC="$CC $CFLAGS $LDFLAGS"
-        ./Configure --prefix=$BUILD_TO_DIR -no-ssl2 -no-ssl3 -no-comp -no-hw -no-engine android-x86 #--host x86-linux-android --enable-static=yes --enable-shared=no
+        export LDCMD="-lz -lsupc++ -llog -ldl -lm -lc -lgnustl_static -lgcc"
+        ./Configure --prefix=$BUILD_TO_DIR no-ssl2 no-ssl3 no-comp no-hw no-engine no-shared android-x86
         make clean
-        make
-        make install
+        make deps
+        make build_libs
+        mkdir -p $BUILD_DIR/openssl/build/$TYPE/$ABI/lib
+        cp libssl.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
+        cp libcrypto.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
 
 	else 
 
 		echoWarning "TODO: build $TYPE lib"
 
-	fi # end iOS Build
-
-
-	# elif [ "$TYPE" == "android" ] ; then
-	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
-		
-	# 	# local OLD_PATH=$PATH
-
-	# 	# export PATH=$PATH:$BUILD_DIR/Toolchains/Android/androideabi/bin:$BUILD_DIR/Toolchains/Android/x86/bin
-
-	# 	# local OF_LIBS_OPENSSL="../../../../libs/openssl/"
-
-	# 	# # get the absolute path to the included openssl libs
-	# 	# local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
-
-	# 	# local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
-	# 	# local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/
-
-	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
-
-	# 	# ./configure $BUILD_OPTS \
-	# 	# 			--include-path=$OPENSSL_INCLUDE \
-	# 	# 			--library-path=$OPENSSL_LIBS/armeabi \
-	# 	# 			--config=Android
-
-	# 	# make ANDROID_ABI=armeabi
-
-	# 	# ./configure $BUILD_OPTS \
-	# 	# 			--include-path=$OPENSSL_INCLUDE \
-	# 	# 			--library-path=$OPENSSL_LIBS/armeabi-v7a \
-	# 	# 			--config=Android
-
-	# 	# make ANDROID_ABI=armeabi-v7a
-
-	# 	# ./configure $BUILD_OPTS \
-	# 	# 			--include-path=$OPENSSL_INCLUDE \
-	# 	# 			--library-path=$OPENSSL_LIBS/x86 \
-	# 	# 			--config=Android
-
-	# 	# make ANDROID_ABI=x86
-
-	# 	# echo `pwd`
-
-	# 	# rm -v lib/Android/armeabi/*d.a
-	# 	# rm -v lib/Android/armeabi-v7a/*d.a
-	# 	# rm -v lib/Android/x86/*d.a
-
-	# 	# export PATH=$OLD_PATH
-
-	# elif [ "$TYPE" == "linux" ] ; then
-	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
-	# 	# ./configure $BUILD_OPTS
-	# 	# make
-	# 	# # delete debug builds
-	# 	# rm lib/Linux/$(uname -m)/*d.a
-	# elif [ "$TYPE" == "linux64" ] ; then
-	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
-	# 	# ./configure $BUILD_OPTS
-	# 	# make
-	# 	# # delete debug builds
-	# 	# rm lib/Linux/x86_64/*d.a
-	# elif [ "$TYPE" == "linuxarmv6l" ] ; then
-	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
-	# 	# ./configure $BUILD_OPTS
-	# 	# make
-	# 	# # delete debug builds
-	# 	# rm lib/Linux/armv6l/*d.a
-	# elif [ "$TYPE" == "linuxarmv7l" ] ; then
-	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
-	# 	# ./configure $BUILD_OPTS
-	# 	# make
-	# 	# # delete debug builds
-	# 	# rm lib/Linux/armv7l/*d.a
-	# else 
-	# 	echoWarning "TODO: build $TYPE lib"
-	# fi
+	fi
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
@@ -624,11 +557,35 @@ function copy() {
 	#echoWarning "TODO: copy $TYPE lib"
 
 	# # headers
+	if [ -f $1/include/openssl/opensslconf_osx.h ]; then
+        cp $1/include/openssl/opensslconf_osx.h /tmp/
+    fi
+	if [ -f $1/include/openssl/opensslconf_ios.h ]; then
+        cp $1/include/openssl/opensslconf_ios.h /tmp/
+    fi
+	if [ -f $1/include/openssl/opensslconf_win32.h ]; then
+        cp $1/include/openssl/opensslconf_win32.h /tmp/
+    fi
+	if [ -f $1/include/openssl/opensslconf_android.h ]; then
+        cp $1/include/openssl/opensslconf_android.h /tmp/
+    fi
 	if [ -d $1/include/ ]; then
 	    rm -r $1/include/
 	fi
 	
-	mkdir -pv $1/include/
+	mkdir -pv $1/include/openssl/
+	if [ -f /tmp/opensslconf_osx.h ]; then
+        mv /tmp/opensslconf_osx.h $1/include/openssl/
+    fi
+	if [ -f /tmp/opensslconf_ios.h ]; then
+        mv /tmp/opensslconf_ios.h $1/include/openssl/
+    fi
+	if [ -f /tmp/opensslconf_win32.h ]; then
+        mv /tmp/opensslconf_win32.h $1/include/openssl/
+    fi
+	if [ -f /tmp/opensslconf_android.h ]; then
+        mv /tmp/opensslconf_android.h $1/include/openssl/
+    fi
 	# storing a copy of the include in lib/include/
 	# set via: cp -R "build/$TYPE/x86_64/include/" "lib/include/"
 
@@ -637,11 +594,13 @@ function copy() {
 
 	# libs
 	 if [ "$TYPE" == "osx" ] ; then
-	    cp -Rv lib/include/ $1/include/
+        mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_osx.h
+	    cp -Rv lib/include/* $1/include/
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	 elif [ "$TYPE" == "ios" ] ; then
-	    cp -Rv lib/include/ $1/include/
+        mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_ios.h
+	    cp -Rv lib/include/* $1/include/
 	 	mkdir -p $1/lib/$TYPE
 	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	# elif [ "$TYPE" == "vs" ] ; then
@@ -650,20 +609,9 @@ function copy() {
 	# elif [ "$TYPE" == "win_cb" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
-	# elif [ "$TYPE" == "linux" ] ; then
-	# 	mkdir -p $1/lib/$TYPE
-	# 	cp -v lib/Linux/$(uname -m)/*.a $1/lib/$TYPE
-	# elif [ "$TYPE" == "linux64" ] ; then
-	# 	mkdir -p $1/lib/$TYPE
-	# 	cp -v lib/Linux/x86_64/*.a $1/lib/$TYPE
-	# elif [ "$TYPE" == "linuxarmv6l" ] ; then
-	# 	mkdir -p $1/lib/$TYPE
-	# 	cp -v lib/Linux/armv6l/*.a $1/lib/$TYPE
-	# elif [ "$TYPE" == "linuxarmv7l" ] ; then
-	# 	mkdir -p $1/lib/$TYPE
-	# 	cp -v lib/Linux/armv7l/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "android" ] ; then
-	    cp -Rv build/android/armeabi-v7a/include/ $1/
+        mv build/include/openssl/opensslconf.h build/include/openssl/opensslconf_android.h
+	    cp -Rv build/android/armeabi-v7a/include/* $1/include/
 	    if [ -d $1/lib/$TYPE/ ]; then
 	        rm -r $1/lib/$TYPE/
 	    fi
@@ -671,6 +619,9 @@ function copy() {
 		cp -rv build/android/armeabi-v7a/lib/*.a $1/lib/$TYPE/armeabi-v7a/
 	    mkdir -p $1/lib/$TYPE/x86
 		cp -rv build/android/x86/lib/*.a $1/lib/$TYPE/x86/
+
+        git checkout ../../libs/openssl/include/openssl/comp.h
+        git checkout ../../libs/openssl/include/openssl/engine.h
 
 	# 	mkdir -p $1/lib/$TYPE/armeabi-v7a
 	# 	cp -v lib/Android/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a
@@ -685,6 +636,20 @@ function copy() {
     rm -rf $1/license # remove any older files if exists
     mkdir -p $1/license
     cp -v LICENSE $1/license/
+
+    # opensslconf.h might be different per platform.
+    # we add a platform suffix and include the correct one from the original
+    cat > $1/include/openssl/opensslconf.h << ENDFILE
+#if defined( __WIN32__ ) || defined( _WIN32 )
+#   include <openssl/opensslconf_win32.h>
+#elif TARGET_OS_IPHONE_SIMULATOR || TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE || TARGET_IPHONE
+#   include <openssl/opensslconf_ios.h>
+#elif defined(__APPLE_CC__)
+#   include <openssl/opensslconf_osx.h>
+#elif defined (__ANDROID__)
+#   include <openssl/opensslconf_android.h>
+#endif
+ENDFILE
 }
 
 # executed inside the lib src dir

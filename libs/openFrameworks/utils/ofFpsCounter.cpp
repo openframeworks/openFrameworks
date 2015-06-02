@@ -10,13 +10,9 @@ ofFpsCounter::ofFpsCounter()
 ,secsThen(0)
 ,nanosThen(0)
 ,fps(0)
-,nFramesForFPS(0)
-,secsOneSec(0)
-,nanosOneSec(0)
-,lastFrameTime(0){
+,lastFrameTime(0)
+,targetFps(60){
 	ofGetMonotonicTime(secsThen,nanosThen);
-	secsOneSec = secsThen;
-	nanosOneSec = nanosThen;
 }
 
 
@@ -26,38 +22,45 @@ ofFpsCounter::ofFpsCounter(double targetFPS)
 ,secsThen(0)
 ,nanosThen(0)
 ,fps(targetFPS)
-,nFramesForFPS(0)
-,secsOneSec(0)
-,nanosOneSec(0)
-,lastFrameTime(0){
+,lastFrameTime(0)
+,targetFps(targetFPS){
 	ofGetMonotonicTime(secsThen,nanosThen);
-	secsOneSec = secsThen;
-	nanosOneSec = nanosThen;
 }
 
 void ofFpsCounter::newFrame(){
 	uint64_t secsNow, nanosNow;
 	ofGetMonotonicTime(secsNow,nanosNow);
-	uint64_t oneSecDiff = (secsNow-secsOneSec)*NANOS_PER_SEC + (int64_t)nanosNow-nanosOneSec;
-
-	if( oneSecDiff  >= NANOS_PER_SEC ){
-		fps = nFramesForFPS/(oneSecDiff*NANOS_TO_SEC);
-		secsOneSec  = secsNow;
-		nanosOneSec  = nanosNow;
-		nFramesForFPS = 0;
-	}else{
-		double deltaTime = ((double)oneSecDiff)*NANOS_TO_SEC;
-		if( deltaTime > 0.0 ){
-			fps = fps*0.99 + (nFramesForFPS/deltaTime)*0.01;
-		}
-	}
+	auto now = secsNow + nanosNow/double(NANOS_PER_SEC);
+	update(now);
+	timestamps.push(now);
 
 	lastFrameTime = (secsNow-secsThen)*NANOS_PER_SEC + (long long)nanosNow-nanosThen;
 	secsThen = secsNow;
 	nanosThen = nanosNow;
-
-	nFramesForFPS++;
 	nFrameCount++;
+}
+
+void ofFpsCounter::update(){
+	uint64_t secsNow, nanosNow;
+	ofGetMonotonicTime(secsNow,nanosNow);
+	auto now = secsNow + nanosNow/double(NANOS_PER_SEC);
+	update(now);
+}
+
+void ofFpsCounter::update(double now){
+	while(!timestamps.empty() && timestamps.front() + 2 < now){
+		timestamps.pop();
+	}
+
+	auto diff = 0.0;
+	if(!timestamps.empty() && timestamps.front() + 0.5 < now){
+		diff = now - timestamps.front();
+	}
+	if(diff>0.0){
+		fps = timestamps.size() / diff;
+	}else{
+		fps = timestamps.size();
+	}
 }
 
 double ofFpsCounter::getFps() const{
