@@ -288,7 +288,7 @@ function build() {
         # armv7
         ABI=armeabi-v7a
         local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
-        source ../../formulas/android_configure.sh $ABI
+        source ../../android_configure.sh $ABI
         export CC="$CC $CFLAGS $LDFLAGS"
         export CXX="$CXX $CFLAGS $LDFLAGS"
         make clean -f Makefile.gnu
@@ -299,7 +299,7 @@ function build() {
         # x86
         ABI=x86
         local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
-        source ../../formulas/android_configure.sh $ABI
+        source ../../android_configure.sh $ABI
         export CC="$CC $CFLAGS $LDFLAGS"
         export CXX="$CXX $CFLAGS $LDFLAGS"
         make clean -f Makefile.gnu

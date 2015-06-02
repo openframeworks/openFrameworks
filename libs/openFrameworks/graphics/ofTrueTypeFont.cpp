@@ -28,6 +28,13 @@ static bool librariesInitialized = false;
 static FT_Library library;
 
 //--------------------------------------------------------
+void ofTrueTypeShutdown(){
+#ifdef TARGET_LINUX
+	FcFini();
+#endif
+}
+
+//--------------------------------------------------------
 void ofTrueTypeFont::setGlobalDpi(int newDpi){
 	ttfGlobalDpi = newDpi;
 }
@@ -305,6 +312,8 @@ static string linuxFontPathByName(string fontname){
 
 	if(!fontMatch){
 		ofLogError() << "linuxFontPathByName(): couldn't match font file or system font with name \"" << fontname << "\"";
+		FcPatternDestroy(fontMatch);
+		FcPatternDestroy(pattern);
 		return "";
 	}
 	FcChar8	*file;
@@ -312,8 +321,12 @@ static string linuxFontPathByName(string fontname){
 		filename = (const char*)file;
 	}else{
 		ofLogError() << "linuxFontPathByName(): couldn't find font match for \"" << fontname << "\"";
+		FcPatternDestroy(fontMatch);
+		FcPatternDestroy(pattern);
 		return "";
 	}
+	FcPatternDestroy(fontMatch);
+	FcPatternDestroy(pattern);
 	return filename;
 }
 #endif
