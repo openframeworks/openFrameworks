@@ -50,6 +50,6 @@ bool ofxButton::mouseDragged(ofMouseEventArgs & args){
 
 void ofxButton::valueChanged(bool & v){
 	if(!v){
-		ofNotifyEvent(triggerEvent);
+		ofNotifyEvent(triggerEvent, this);
 	}
 }
