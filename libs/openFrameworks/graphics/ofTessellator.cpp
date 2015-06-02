@@ -51,7 +51,9 @@ void memFree( void *userData, void *ptr ){
 }
 
 //----------------------------------------------------------
-ofTessellator::ofTessellator(){
+ofTessellator::ofTessellator()
+  : cacheTess(NULL)
+{
 	init();
 }
 
@@ -61,13 +63,21 @@ ofTessellator::~ofTessellator(){
 }
 
 //----------------------------------------------------------
-ofTessellator::ofTessellator(const ofTessellator & mom){
-	if(&mom != this) init();
+ofTessellator::ofTessellator(const ofTessellator & mom)
+  : cacheTess(NULL)
+{
+	if(&mom != this){
+		if(cacheTess) tessDeleteTess(cacheTess);
+		init();
+	}
 }
 
 //----------------------------------------------------------
 ofTessellator & ofTessellator::operator=(const ofTessellator & mom){
-	if(&mom != this) init();
+	if(&mom != this){
+		if(cacheTess) tessDeleteTess(cacheTess);
+		init();
+	}
 	return *this;
 }
 
