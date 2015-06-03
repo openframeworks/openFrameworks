@@ -46,27 +46,24 @@ void ofSeedRandom(int val) {
 
 //--------------------------------------------------
 float ofRandom(float max) {
-	if(max == 0.0f) return 0.0f;
-	return MIN(0.0f, max) + ((fabs(max) * rand() / float(RAND_MAX))) * (1.0f-std::numeric_limits<float>::epsilon());
+	return (max * (rand() / float(RAND_MAX))) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //--------------------------------------------------
 float ofRandom(float x, float y) {
-	// if there is no range, return the value
-	if (x == y) return x;           // float == ?, wise? epsilon?
-	float high = MAX(x,y);
-	float low = MIN(x,y);
-	return low + (((high - low) * rand() / float(RAND_MAX))) * (1.0f-std::numeric_limits<float>::epsilon());
+	float high = MAX(x, y);
+	float low = MIN(x, y);
+	return max(low, (low + ((high - low) * rand() / float(RAND_MAX))) * (1.0f-std::numeric_limits<float>::epsilon()));
 }
 
 //--------------------------------------------------
 float ofRandomf() {
-	return 2.0 * rand() / float(RAND_MAX) * (1.0f-std::numeric_limits<float>::epsilon()) - 1.0f;
+	return -1.0f + 2.0f * (rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //--------------------------------------------------
 float ofRandomuf() {
-	return rand() / float(RAND_MAX) * (1.0f-std::numeric_limits<float>::epsilon());
+	return rand() / float(RAND_MAX) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //---- new to 006
