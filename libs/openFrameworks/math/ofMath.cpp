@@ -46,24 +46,24 @@ void ofSeedRandom(int val) {
 
 //--------------------------------------------------
 float ofRandom(float max) {
-	return (max * (rand() / float(RAND_MAX))) * (1.0f - std::numeric_limits<float>::epsilon());
+	return (max * rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //--------------------------------------------------
 float ofRandom(float x, float y) {
 	float high = MAX(x, y);
 	float low = MIN(x, y);
-	return max(low, (low + ((high - low) * rand() / float(RAND_MAX))) * (1.0f-std::numeric_limits<float>::epsilon()));
+	return max(low, (low + ((high - low) * rand() / float(RAND_MAX))) * (1.0f - std::numeric_limits<float>::epsilon()));
 }
 
 //--------------------------------------------------
 float ofRandomf() {
-	return -1.0f + 2.0f * (rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
+	return -1.0f + (2.0f * rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //--------------------------------------------------
 float ofRandomuf() {
-	return rand() / float(RAND_MAX) * (1.0f - std::numeric_limits<float>::epsilon());
+	return (rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //---- new to 006
