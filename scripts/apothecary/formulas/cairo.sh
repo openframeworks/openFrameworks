@@ -51,6 +51,12 @@ function download() {
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
 	if [ "$TYPE" == "vs" ] ; then
+	
+		apothecaryDependencies prepare
+		
+		apothecaryDepend build libpng
+		apothecaryDepend build freetype
+		
 		cd ../Cairo-VS
 		
 		cp -Rv ../cairo/* cairo
@@ -58,11 +64,6 @@ function prepare() {
 		cp -Rv ../libpng/* libpng
 		cp -Rv ../pixman/* pixman
 		cp -Rv ../zlib/* zlib
-		
-		apothecaryDependencies prepare
-		
-		apothecaryDepend build libpng
-		apothecaryDepend build freetype
 		
 		cp -v ../libpng/projects/visualc71/Win32_LIB_Release/*.lib libs
 		cp -v ../libpng/projects/visualc71/Win32_LIB_Release/ZLib/*.lib libs
