@@ -85,17 +85,11 @@ function build() {
 		echo "$BUILD_DIR"
 	
 	elif [ "$TYPE" == "vs" ] ; then
-   		#make clean
-        # Force config: auto detection is wrong
-        #cp -v builds/win32/w32-vcc.mk config.mk
-        #make
 		
 		cd builds/windows/vc2010 #this upgrades without issue to vs2015
-		#vs-clean "glew.sln"
 		vs-upgrade "freetype.sln"
 		vs-build "freetype.vcxproj" Build "Release|Win32"
 		vs-build "freetype.vcxproj" Build "Release|x64"
-		#mv lib/Release/x64/glew32s.lib glew64s.lib
 		cd ../../../
 	
 	elif [ "$TYPE" == "win_cb" ] ; then

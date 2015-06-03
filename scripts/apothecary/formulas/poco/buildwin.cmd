@@ -384,7 +384,7 @@ echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo.
 
-  devenv !PROJECT_FILE! /Upgrade
+  !BUILD_TOOL! !PROJECT_FILE! /Upgrade
   if ERRORLEVEL 1 exit /b 1
   echo. && echo. && echo.
 
