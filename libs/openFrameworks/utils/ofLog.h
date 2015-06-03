@@ -661,29 +661,4 @@ private:
 	
 };
 
-
-/// \brief An error logger class used to catch exceptions inside of threads.
-class ofThreadErrorLogger: public Poco::ErrorHandler{
-public:
-	/// \brief Destroy the ofThreadErrorLogger.
-    virtual ~ofThreadErrorLogger(){}
-
-	/// \brief Catch an exception.
-	/// \param exc The exception.
-    virtual void exception(const Poco::Exception& exc){
-        ofLogFatalError("ofThreadErrorLogger::exception") << exc.displayText();
-    }
-
-	/// \brief Catch an exception.
-	/// \param exc The exception.
-    virtual void exception(const std::exception& exc){
-        ofLogFatalError("ofThreadErrorLogger::exception") << exc.what();
-    }
-
-	/// \brief Catch an exception.
-    virtual void exception(){
-        ofLogFatalError("ofThreadErrorLogger::exception") << "Unknown exception.";
-    }
-};
-
 /// \endcond
