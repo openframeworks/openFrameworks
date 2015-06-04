@@ -401,7 +401,7 @@ private:
 #endif
 	bool				cachedTessellationValid;
 
-#if __cplusplus>=201103
+#if !defined(TARGET_OSX) && __cplusplus>=201103
 	static thread_local ofTessellator tessellator;
 #else
 	ofTessellator tessellator;
