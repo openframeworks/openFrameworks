@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Poco/ErrorHandler.h"
 #include "ofConstants.h"
 #include "ofFileUtils.h"
 #include "ofTypes.h"
