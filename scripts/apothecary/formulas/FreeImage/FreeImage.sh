@@ -324,10 +324,10 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
 	elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
-		#mkdir -p $1/Win32/include
-		#mkdir -p $1/x64/include
-	    cp -v Dist/x32/*.h $1/include/Win32
-		cp -v Dist/x64/*.h $1/include/x64
+		mkdir -p $1/include #/Win32
+		#mkdir -p $1/include/x64
+	    cp -v Dist/x32/*.h $1/include #/Win32/
+		#cp -v Dist/x64/*.h $1/include/x64/
 		mkdir -p $1/lib/$TYPE/Win32
 		mkdir -p $1/lib/$TYPE/x64
 		cp -v Dist/x32/FreeImage.lib $1/lib/$TYPE/Win32/FreeImage.lib

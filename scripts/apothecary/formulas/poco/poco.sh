@@ -14,6 +14,13 @@ VER=1.6.0-release
 GIT_URL=https://github.com/pocoproject/poco
 GIT_TAG=poco-1.6.0-release
 
+#dependencies
+FORMULA_DEPENDS=( "openssl" )
+
+# tell apothecary we want to manually call the dependency commands
+# as we set some env vars for osx the depends need to know about
+FORMULA_DEPENDS_MANUAL=1
+
 # For Poco Builds, we omit both Data/MySQL and Data/ODBC because they require
 # 3rd Party libraries.  See https://github.com/pocoproject/poco/blob/develop/README
 # for more information.
@@ -40,6 +47,13 @@ function prepare() {
 	if [ "$SHA" != "" ] ; then
 		git reset --hard $SHA
 	fi
+	
+	# manually prepare dependencies
+	apothecaryDependencies prepare
+
+	# Build and copy all dependencies in preparation
+	apothecaryDepend build openssl
+	apothecaryDepend copy openssl
 
 	# make backups of the ios config files since we need to edit them
 	if [ "$TYPE" == "ios" ] ; then

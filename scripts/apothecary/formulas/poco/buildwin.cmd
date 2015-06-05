@@ -30,11 +30,20 @@ rem
 rem VS_VERSION is required argument. Default is build all.
 
 rem Change OPENSSL_DIR to match your setup
-set OPENSSL_DIR=
+set OPENSSL_DIR=C:\OpenSSL
 set OPENSSL_INCLUDE=%OPENSSL_DIR%\include
-set OPENSSL_LIB=%OPENSSL_DIR%\lib\vs
+if "%5"=="" (
+	set OPENSSL_LIB=%OPENSSL_DIR%\lib\vs\Win32
+)
+else (
+	set OPENSSL_LIB=%OPENSSL_DIR%\lib\vs\%5
+)
 set INCLUDE=%INCLUDE%;%OPENSSL_INCLUDE%
 set LIB=%LIB%;%OPENSSL_LIB%
+
+echo OpenSSL Lib Dir %LIB%
+echo OpenSSL Include Dir %OPENSSL_INCLUDE%
+echo Building For %1 %2 %3 %4 %5 %6 %7 %8
 
 rem Change MYSQL_DIR to match your setup
 set MYSQL_DIR=C:\PROGRA~1\MySQL\MYSQLS~1.5
@@ -384,7 +393,7 @@ echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo.
 
-  !BUILD_TOOL! !PROJECT_FILE! /Upgrade
+  devenv !PROJECT_FILE! /Upgrade
   if ERRORLEVEL 1 exit /b 1
   echo. && echo. && echo.
 

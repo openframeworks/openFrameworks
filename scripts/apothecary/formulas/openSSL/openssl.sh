@@ -70,7 +70,9 @@ function prepare() {
 		mkdir -p lib/$TYPE
 		mkdir -p lib/include
  	elif  [ "$TYPE" == "vs" ] ; then
-		patch -p1 -u < $FORMULA_DIR/winOpenSSL.patch
+		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/winOpenSSL.patch 2>/dev/null ; then
+			patch -p1 -u < $FORMULA_DIR/winOpenSSL.patch
+		fi
 	fi
 }
 
@@ -648,16 +650,18 @@ function copy() {
 	#echoWarning "TODO: copy $TYPE lib"
 
 	# # headers
-	if [ -d $1/include/ ]; then
-	    rm -r $1/include/
-	fi
+	#deleting these is problematic when we do separate builds
+#	if [ -d $1/include/ ]; then
+#	    rm -r $1/include/
+#	fi
 	
 	mkdir -pv $1/include/
 	# storing a copy of the include in lib/include/
 	# set via: cp -R "build/$TYPE/x86_64/include/" "lib/include/"
 
 	# suppress file not found errors
-	rm -rf $1/lib/$TYPE/* 2> /dev/null
+	#same here doesn't seem to be a solid reason to delete the files
+	#rm -rf $1/lib/$TYPE/* 2> /dev/null
 
 	# libs
 	if [ "$TYPE" == "osx" ] ; then
@@ -671,12 +675,22 @@ function copy() {
 	elif [ "$TYPE" == "vs" ] ; then	 
 		if [ $ARCH == 32 ] ; then
 			cp -Rv ms/Win32/include/openssl $1/include/
+			rm -rf $1/lib/$TYPE/Win32
 			mkdir -p $1/lib/$TYPE/Win32
-			cp -v ms/Win32/lib/*.lib $1/lib/$TYPE/Win32
+			cp -v ms/Win32/lib/*.lib $1/lib/$TYPE/Win32/
+			for f in $1/lib/$TYPE/Win32/*; do
+				base=`basename $f .lib`
+				mv -v $f $1/lib/$TYPE/Win32/${base}md.lib
+			done
 		elif [ $ARCH == 64 ] ; then
 			cp -Rv ms/X64/include/openssl $1/include/
+			rm -rf $1/lib/$TYPE/x64
 			mkdir -p $1/lib/$TYPE/x64
-			cp -v ms/x64/lib/*.lib $1/lib/$TYPE/x64
+			cp -v ms/x64/lib/*.lib $1/lib/$TYPE/x64/
+			for f in $1/lib/$TYPE/x64/*; do
+				base=`basename $f .lib`
+				mv -v $f $1/lib/$TYPE/x64/${base}md.lib
+			done
 		fi
 	 	
 	# elif [ "$TYPE" == "win_cb" ] ; then

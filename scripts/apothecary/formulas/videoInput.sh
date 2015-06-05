@@ -34,8 +34,9 @@ function build() {
 		cd VS-videoInputcompileAsLib
 		if [ $ARCH == 32 ] ; then
 			vs-build "videoInput.sln"
+			vs-build "videoInput.sln" Build "Debug"
 		elif [ $ARCH == 64 ] ; then
-			vs-build "videoInput.sln" Build  "Release|x64"
+			vs-build "videoInput.sln" Build "Release|x64"
 			vs-build "videoInput.sln" Build "Debug|x64"
 		fi
 	elif [ "$TYPE" == "win_cb" ] ; then
