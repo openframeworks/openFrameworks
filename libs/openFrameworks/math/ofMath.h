@@ -18,9 +18,9 @@
 ///
 /// \warning Many ofRandom-style functions wrap `rand()` which is not reentrant
 /// or thread safe.  To generate random numbers simultaneously in multiple
-/// threads, consider using an instance of Poco::Random in each thread.
+/// threads, consider using c++11 uniform_real_distribution.
 ///
-/// \sa http://pocoproject.org/docs/Poco.Random.html
+/// \sa http://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
 
 /// \name Random Numbers
 /// \{
