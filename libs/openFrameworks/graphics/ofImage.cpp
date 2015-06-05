@@ -6,8 +6,7 @@
 
 #ifndef TARGET_EMSCRIPTEN
 #include "ofURLFileLoader.h"
-#include "Poco/URI.h"
-#include "Poco/Exception.h"
+#include "network/uri.hpp"
 #endif
 #if defined(TARGET_ANDROID)
 #include "ofxAndroidUtils.h"
@@ -174,15 +173,14 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 
 #ifndef TARGET_EMSCRIPTEN
 	// Attempt to parse the fileName as a url - specifically it must be a full address starting with http/https
-	// Poco::URI normalizes to lowercase
-	Poco::URI uri;
+	network::uri uri;
     try {
-        uri = Poco::URI(fileName);
-    } catch(const Poco::SyntaxException& exc){
-        ofLogError("ofImage") << "loadImage(): malformed url when loading image from url \"" << fileName << "\": " << exc.displayText();
+        uri = network::uri(fileName);
+    } catch(const std::exception & exc){
+        ofLogError("ofImage") << "loadImage(): malformed url when loading image from url \"" << fileName << "\": " << exc.what();
 		return false;
     }
-	if(uri.getScheme() == "http" || uri.getScheme() == "https"){
+	if(uri.scheme() != boost::none && (uri.scheme().get() == "http" || uri.scheme().get() == "https")){
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
 #endif
@@ -987,14 +985,29 @@ void ofImage_<unsigned char>::grabScreen(int x, int y, int w, int h){
 
 //------------------------------------
 template<typename PixelType>
-void ofImage_<PixelType>::grabScreen(int x, int y, int w, int h){
+void ofGrabScreen(ofPixels_<PixelType> & pixels, int x, int y, int w, int h){
 	ofPixels p;
 	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
 	if(renderer){
 		renderer->saveScreen(x,y,w,h,p);
 		pixels = p;
-		update();
 	}
+}
+
+//------------------------------------
+template<>
+void ofGrabScreen(ofPixels & p, int x, int y, int w, int h){
+	shared_ptr<ofBaseGLRenderer> renderer = ofGetGLRenderer();
+	if(renderer){
+		renderer->saveScreen(x,y,w,h,p);
+	}
+}
+
+//------------------------------------
+template<typename PixelType>
+void ofImage_<PixelType>::grabScreen(int x, int y, int w, int h){
+	ofGrabScreen(pixels,x,y,w,h);
+	update();
 }
 
 //------------------------------------
