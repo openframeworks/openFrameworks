@@ -353,10 +353,6 @@ typedef TESSindex ofIndexType;
   #endif
 #endif
 
-// comment out this line to disable all poco related code
-#define OF_USING_POCO
-
-
 //we don't want to break old code that uses ofSimpleApp
 //so we forward declare ofBaseApp and make ofSimpleApp mean the same thing
 class ofBaseApp;
