@@ -29,7 +29,7 @@
 // Version information ------------------------------------------------------
 
 #define FREEIMAGE_MAJOR_VERSION   3
-#define FREEIMAGE_MINOR_VERSION   16
+#define FREEIMAGE_MINOR_VERSION   17
 #define FREEIMAGE_RELEASE_SERIAL  0
 
 // Compiler options ---------------------------------------------------------
@@ -69,22 +69,36 @@
 	#endif // WIN32 / !WIN32
 #endif // FREEIMAGE_LIB
 
-// Some versions of gcc may have BYTE_ORDER or __BYTE_ORDER defined
+// Endianness:
+// Some versions of gcc may have BYTE_ORDER or __BYTE_ORDER defined.
 // If your big endian system isn't being detected, add an OS specific check
-#if (defined(BYTE_ORDER) && BYTE_ORDER==BIG_ENDIAN) || \
-	(defined(__BYTE_ORDER) && __BYTE_ORDER==__BIG_ENDIAN) || \
-	defined(__BIG_ENDIAN__)
-#define FREEIMAGE_BIGENDIAN
-#endif // BYTE_ORDER
+// or define any of FREEIMAGE_BIGENDIAN and FREEIMAGE_LITTLEENDIAN directly
+// to specify the desired endianness.
+#if (!defined(FREEIMAGE_BIGENDIAN) && !defined(FREEIMAGE_LITTLEENDIAN))
+	#if (defined(BYTE_ORDER) && BYTE_ORDER==BIG_ENDIAN) || (defined(__BYTE_ORDER) && __BYTE_ORDER==__BIG_ENDIAN) || defined(__BIG_ENDIAN__)
+		#define FREEIMAGE_BIGENDIAN
+	#endif // BYTE_ORDER
+#endif // !FREEIMAGE_[BIG|LITTLE]ENDIAN
 
-// This really only affects 24 and 32 bit formats, the rest are always RGB order.
-#define FREEIMAGE_COLORORDER_BGR	0
-#define FREEIMAGE_COLORORDER_RGB	1
-#if defined(FREEIMAGE_BIGENDIAN)
-#define FREEIMAGE_COLORORDER FREEIMAGE_COLORORDER_RGB
-#else
-#define FREEIMAGE_COLORORDER FREEIMAGE_COLORORDER_BGR
-#endif
+// Color-Order:
+// The specified order of color components red, green and blue affects 24-
+// and 32-bit images of type FIT_BITMAP as well as the colors that are part
+// of a color palette. All other images always use RGB order. By default,
+// color order is coupled to endianness:
+// little-endian -> BGR
+// big-endian    -> RGB
+// However, you can always define FREEIMAGE_COLORORDER to any of the known
+// orders FREEIMAGE_COLORORDER_BGR (0) and FREEIMAGE_COLORORDER_RGB (1) to
+// specify your preferred color order.
+#define FREEIMAGE_COLORORDER_BGR    0
+#define FREEIMAGE_COLORORDER_RGB    1
+#if (!defined(FREEIMAGE_COLORORDER)) || ((FREEIMAGE_COLORORDER != FREEIMAGE_COLORORDER_BGR) && (FREEIMAGE_COLORORDER != FREEIMAGE_COLORORDER_RGB))
+	#if defined(FREEIMAGE_BIGENDIAN)
+		#define FREEIMAGE_COLORORDER FREEIMAGE_COLORORDER_RGB
+	#else
+		#define FREEIMAGE_COLORORDER FREEIMAGE_COLORORDER_BGR
+	#endif // FREEIMAGE_BIGENDIAN
+#endif // FREEIMAGE_COLORORDER
 
 // Ensure 4-byte enums if we're using Borland C++ compilers
 #if defined(__BORLANDC__)
@@ -357,9 +371,9 @@ typedef struct tagFICOMPLEX {
 #define FIICC_COLOR_IS_CMYK		0x01
 
 FI_STRUCT (FIICCPROFILE) { 
-	WORD    flags;	// info flag
-	DWORD	size;	// profile's size measured in bytes
-	void   *data;	// points to a block of contiguous memory containing the profile
+	WORD    flags;	//! info flag
+	DWORD	size;	//! profile's size measured in bytes
+	void   *data;	//! points to a block of contiguous memory containing the profile
 };
 
 // Important enums ----------------------------------------------------------
@@ -411,102 +425,103 @@ FI_ENUM(FREE_IMAGE_FORMAT) {
 /** Image type used in FreeImage.
 */
 FI_ENUM(FREE_IMAGE_TYPE) {
-	FIT_UNKNOWN = 0,	// unknown type
-	FIT_BITMAP  = 1,	// standard image			: 1-, 4-, 8-, 16-, 24-, 32-bit
-	FIT_UINT16	= 2,	// array of unsigned short	: unsigned 16-bit
-	FIT_INT16	= 3,	// array of short			: signed 16-bit
-	FIT_UINT32	= 4,	// array of unsigned long	: unsigned 32-bit
-	FIT_INT32	= 5,	// array of long			: signed 32-bit
-	FIT_FLOAT	= 6,	// array of float			: 32-bit IEEE floating point
-	FIT_DOUBLE	= 7,	// array of double			: 64-bit IEEE floating point
-	FIT_COMPLEX	= 8,	// array of FICOMPLEX		: 2 x 64-bit IEEE floating point
-	FIT_RGB16	= 9,	// 48-bit RGB image			: 3 x 16-bit
-	FIT_RGBA16	= 10,	// 64-bit RGBA image		: 4 x 16-bit
-	FIT_RGBF	= 11,	// 96-bit RGB float image	: 3 x 32-bit IEEE floating point
-	FIT_RGBAF	= 12	// 128-bit RGBA float image	: 4 x 32-bit IEEE floating point
+	FIT_UNKNOWN = 0,	//! unknown type
+	FIT_BITMAP  = 1,	//! standard image			: 1-, 4-, 8-, 16-, 24-, 32-bit
+	FIT_UINT16	= 2,	//! array of unsigned short	: unsigned 16-bit
+	FIT_INT16	= 3,	//! array of short			: signed 16-bit
+	FIT_UINT32	= 4,	//! array of unsigned long	: unsigned 32-bit
+	FIT_INT32	= 5,	//! array of long			: signed 32-bit
+	FIT_FLOAT	= 6,	//! array of float			: 32-bit IEEE floating point
+	FIT_DOUBLE	= 7,	//! array of double			: 64-bit IEEE floating point
+	FIT_COMPLEX	= 8,	//! array of FICOMPLEX		: 2 x 64-bit IEEE floating point
+	FIT_RGB16	= 9,	//! 48-bit RGB image			: 3 x 16-bit
+	FIT_RGBA16	= 10,	//! 64-bit RGBA image		: 4 x 16-bit
+	FIT_RGBF	= 11,	//! 96-bit RGB float image	: 3 x 32-bit IEEE floating point
+	FIT_RGBAF	= 12	//! 128-bit RGBA float image	: 4 x 32-bit IEEE floating point
 };
 
 /** Image color type used in FreeImage.
 */
 FI_ENUM(FREE_IMAGE_COLOR_TYPE) {
-	FIC_MINISWHITE = 0,		// min value is white
-    FIC_MINISBLACK = 1,		// min value is black
-    FIC_RGB        = 2,		// RGB color model
-    FIC_PALETTE    = 3,		// color map indexed
-	FIC_RGBALPHA   = 4,		// RGB color model with alpha channel
-	FIC_CMYK       = 5		// CMYK color model
+	FIC_MINISWHITE = 0,		//! min value is white
+    FIC_MINISBLACK = 1,		//! min value is black
+    FIC_RGB        = 2,		//! RGB color model
+    FIC_PALETTE    = 3,		//! color map indexed
+	FIC_RGBALPHA   = 4,		//! RGB color model with alpha channel
+	FIC_CMYK       = 5		//! CMYK color model
 };
 
 /** Color quantization algorithms.
 Constants used in FreeImage_ColorQuantize.
 */
 FI_ENUM(FREE_IMAGE_QUANTIZE) {
-    FIQ_WUQUANT = 0,		// Xiaolin Wu color quantization algorithm
-    FIQ_NNQUANT = 1			// NeuQuant neural-net quantization algorithm by Anthony Dekker
+    FIQ_WUQUANT = 0,		//! Xiaolin Wu color quantization algorithm
+    FIQ_NNQUANT = 1,		//! NeuQuant neural-net quantization algorithm by Anthony Dekker
+	FIQ_LFPQUANT = 2		//! Lossless Fast Pseudo-Quantization Algorithm by Carsten Klein
 };
 
 /** Dithering algorithms.
 Constants used in FreeImage_Dither.
 */
 FI_ENUM(FREE_IMAGE_DITHER) {
-    FID_FS			= 0,	// Floyd & Steinberg error diffusion
-	FID_BAYER4x4	= 1,	// Bayer ordered dispersed dot dithering (order 2 dithering matrix)
-	FID_BAYER8x8	= 2,	// Bayer ordered dispersed dot dithering (order 3 dithering matrix)
-	FID_CLUSTER6x6	= 3,	// Ordered clustered dot dithering (order 3 - 6x6 matrix)
-	FID_CLUSTER8x8	= 4,	// Ordered clustered dot dithering (order 4 - 8x8 matrix)
-	FID_CLUSTER16x16= 5,	// Ordered clustered dot dithering (order 8 - 16x16 matrix)
-	FID_BAYER16x16	= 6		// Bayer ordered dispersed dot dithering (order 4 dithering matrix)
+    FID_FS			= 0,	//! Floyd & Steinberg error diffusion
+	FID_BAYER4x4	= 1,	//! Bayer ordered dispersed dot dithering (order 2 dithering matrix)
+	FID_BAYER8x8	= 2,	//! Bayer ordered dispersed dot dithering (order 3 dithering matrix)
+	FID_CLUSTER6x6	= 3,	//! Ordered clustered dot dithering (order 3 - 6x6 matrix)
+	FID_CLUSTER8x8	= 4,	//! Ordered clustered dot dithering (order 4 - 8x8 matrix)
+	FID_CLUSTER16x16= 5,	//! Ordered clustered dot dithering (order 8 - 16x16 matrix)
+	FID_BAYER16x16	= 6		//! Bayer ordered dispersed dot dithering (order 4 dithering matrix)
 };
 
 /** Lossless JPEG transformations
 Constants used in FreeImage_JPEGTransform
 */
 FI_ENUM(FREE_IMAGE_JPEG_OPERATION) {
-	FIJPEG_OP_NONE			= 0,	// no transformation
-	FIJPEG_OP_FLIP_H		= 1,	// horizontal flip
-	FIJPEG_OP_FLIP_V		= 2,	// vertical flip
-	FIJPEG_OP_TRANSPOSE		= 3,	// transpose across UL-to-LR axis
-	FIJPEG_OP_TRANSVERSE	= 4,	// transpose across UR-to-LL axis
-	FIJPEG_OP_ROTATE_90		= 5,	// 90-degree clockwise rotation
-	FIJPEG_OP_ROTATE_180	= 6,	// 180-degree rotation
-	FIJPEG_OP_ROTATE_270	= 7		// 270-degree clockwise (or 90 ccw)
+	FIJPEG_OP_NONE			= 0,	//! no transformation
+	FIJPEG_OP_FLIP_H		= 1,	//! horizontal flip
+	FIJPEG_OP_FLIP_V		= 2,	//! vertical flip
+	FIJPEG_OP_TRANSPOSE		= 3,	//! transpose across UL-to-LR axis
+	FIJPEG_OP_TRANSVERSE	= 4,	//! transpose across UR-to-LL axis
+	FIJPEG_OP_ROTATE_90		= 5,	//! 90-degree clockwise rotation
+	FIJPEG_OP_ROTATE_180	= 6,	//! 180-degree rotation
+	FIJPEG_OP_ROTATE_270	= 7		//! 270-degree clockwise (or 90 ccw)
 };
 
 /** Tone mapping operators.
 Constants used in FreeImage_ToneMapping.
 */
 FI_ENUM(FREE_IMAGE_TMO) {
-    FITMO_DRAGO03	 = 0,	// Adaptive logarithmic mapping (F. Drago, 2003)
-	FITMO_REINHARD05 = 1,	// Dynamic range reduction inspired by photoreceptor physiology (E. Reinhard, 2005)
-	FITMO_FATTAL02	 = 2	// Gradient domain high dynamic range compression (R. Fattal, 2002)
+    FITMO_DRAGO03	 = 0,	//! Adaptive logarithmic mapping (F. Drago, 2003)
+	FITMO_REINHARD05 = 1,	//! Dynamic range reduction inspired by photoreceptor physiology (E. Reinhard, 2005)
+	FITMO_FATTAL02	 = 2	//! Gradient domain high dynamic range compression (R. Fattal, 2002)
 };
 
 /** Upsampling / downsampling filters. 
 Constants used in FreeImage_Rescale.
 */
 FI_ENUM(FREE_IMAGE_FILTER) {
-	FILTER_BOX		  = 0,	// Box, pulse, Fourier window, 1st order (constant) b-spline
-	FILTER_BICUBIC	  = 1,	// Mitchell & Netravali's two-param cubic filter
-	FILTER_BILINEAR   = 2,	// Bilinear filter
-	FILTER_BSPLINE	  = 3,	// 4th order (cubic) b-spline
-	FILTER_CATMULLROM = 4,	// Catmull-Rom spline, Overhauser spline
-	FILTER_LANCZOS3	  = 5	// Lanczos3 filter
+	FILTER_BOX		  = 0,	//! Box, pulse, Fourier window, 1st order (constant) b-spline
+	FILTER_BICUBIC	  = 1,	//! Mitchell & Netravali's two-param cubic filter
+	FILTER_BILINEAR   = 2,	//! Bilinear filter
+	FILTER_BSPLINE	  = 3,	//! 4th order (cubic) b-spline
+	FILTER_CATMULLROM = 4,	//! Catmull-Rom spline, Overhauser spline
+	FILTER_LANCZOS3	  = 5	//! Lanczos3 filter
 };
 
 /** Color channels.
 Constants used in color manipulation routines.
 */
 FI_ENUM(FREE_IMAGE_COLOR_CHANNEL) {
-	FICC_RGB	= 0,	// Use red, green and blue channels
-	FICC_RED	= 1,	// Use red channel
-	FICC_GREEN	= 2,	// Use green channel
-	FICC_BLUE	= 3,	// Use blue channel
-	FICC_ALPHA	= 4,	// Use alpha channel
-	FICC_BLACK	= 5,	// Use black channel
-	FICC_REAL	= 6,	// Complex images: use real part
-	FICC_IMAG	= 7,	// Complex images: use imaginary part
-	FICC_MAG	= 8,	// Complex images: use magnitude
-	FICC_PHASE	= 9		// Complex images: use phase
+	FICC_RGB	= 0,	//! Use red, green and blue channels
+	FICC_RED	= 1,	//! Use red channel
+	FICC_GREEN	= 2,	//! Use green channel
+	FICC_BLUE	= 3,	//! Use blue channel
+	FICC_ALPHA	= 4,	//! Use alpha channel
+	FICC_BLACK	= 5,	//! Use black channel
+	FICC_REAL	= 6,	//! Complex images: use real part
+	FICC_IMAG	= 7,	//! Complex images: use imaginary part
+	FICC_MAG	= 8,	//! Complex images: use magnitude
+	FICC_PHASE	= 9		//! Complex images: use phase
 };
 
 // Metadata support ---------------------------------------------------------
@@ -517,24 +532,24 @@ FI_ENUM(FREE_IMAGE_COLOR_CHANNEL) {
   Note: RATIONALs are the ratio of two 32-bit integer values.
 */
 FI_ENUM(FREE_IMAGE_MDTYPE) {
-	FIDT_NOTYPE		= 0,	// placeholder 
-	FIDT_BYTE		= 1,	// 8-bit unsigned integer 
-	FIDT_ASCII		= 2,	// 8-bit bytes w/ last byte null 
-	FIDT_SHORT		= 3,	// 16-bit unsigned integer 
-	FIDT_LONG		= 4,	// 32-bit unsigned integer 
-	FIDT_RATIONAL	= 5,	// 64-bit unsigned fraction 
-	FIDT_SBYTE		= 6,	// 8-bit signed integer 
-	FIDT_UNDEFINED	= 7,	// 8-bit untyped data 
-	FIDT_SSHORT		= 8,	// 16-bit signed integer 
-	FIDT_SLONG		= 9,	// 32-bit signed integer 
-	FIDT_SRATIONAL	= 10,	// 64-bit signed fraction 
-	FIDT_FLOAT		= 11,	// 32-bit IEEE floating point 
-	FIDT_DOUBLE		= 12,	// 64-bit IEEE floating point 
-	FIDT_IFD		= 13,	// 32-bit unsigned integer (offset) 
-	FIDT_PALETTE	= 14,	// 32-bit RGBQUAD 
-	FIDT_LONG8		= 16,	// 64-bit unsigned integer 
-	FIDT_SLONG8		= 17,	// 64-bit signed integer
-	FIDT_IFD8		= 18	// 64-bit unsigned integer (offset)
+	FIDT_NOTYPE		= 0,	//! placeholder 
+	FIDT_BYTE		= 1,	//! 8-bit unsigned integer 
+	FIDT_ASCII		= 2,	//! 8-bit bytes w/ last byte null 
+	FIDT_SHORT		= 3,	//! 16-bit unsigned integer 
+	FIDT_LONG		= 4,	//! 32-bit unsigned integer 
+	FIDT_RATIONAL	= 5,	//! 64-bit unsigned fraction 
+	FIDT_SBYTE		= 6,	//! 8-bit signed integer 
+	FIDT_UNDEFINED	= 7,	//! 8-bit untyped data 
+	FIDT_SSHORT		= 8,	//! 16-bit signed integer 
+	FIDT_SLONG		= 9,	//! 32-bit signed integer 
+	FIDT_SRATIONAL	= 10,	//! 64-bit signed fraction 
+	FIDT_FLOAT		= 11,	//! 32-bit IEEE floating point 
+	FIDT_DOUBLE		= 12,	//! 64-bit IEEE floating point 
+	FIDT_IFD		= 13,	//! 32-bit unsigned integer (offset) 
+	FIDT_PALETTE	= 14,	//! 32-bit RGBQUAD 
+	FIDT_LONG8		= 16,	//! 64-bit unsigned integer 
+	FIDT_SLONG8		= 17,	//! 64-bit signed integer
+	FIDT_IFD8		= 18	//! 64-bit unsigned integer (offset)
 };
 
 /**
@@ -542,18 +557,18 @@ FI_ENUM(FREE_IMAGE_MDTYPE) {
 */
 FI_ENUM(FREE_IMAGE_MDMODEL) {
 	FIMD_NODATA			= -1,
-	FIMD_COMMENTS		= 0,	// single comment or keywords
-	FIMD_EXIF_MAIN		= 1,	// Exif-TIFF metadata
-	FIMD_EXIF_EXIF		= 2,	// Exif-specific metadata
-	FIMD_EXIF_GPS		= 3,	// Exif GPS metadata
-	FIMD_EXIF_MAKERNOTE = 4,	// Exif maker note metadata
-	FIMD_EXIF_INTEROP	= 5,	// Exif interoperability metadata
-	FIMD_IPTC			= 6,	// IPTC/NAA metadata
-	FIMD_XMP			= 7,	// Abobe XMP metadata
-	FIMD_GEOTIFF		= 8,	// GeoTIFF metadata
-	FIMD_ANIMATION		= 9,	// Animation metadata
-	FIMD_CUSTOM			= 10,	// Used to attach other metadata types to a dib
-	FIMD_EXIF_RAW		= 11	// Exif metadata as a raw buffer
+	FIMD_COMMENTS		= 0,	//! single comment or keywords
+	FIMD_EXIF_MAIN		= 1,	//! Exif-TIFF metadata
+	FIMD_EXIF_EXIF		= 2,	//! Exif-specific metadata
+	FIMD_EXIF_GPS		= 3,	//! Exif GPS metadata
+	FIMD_EXIF_MAKERNOTE = 4,	//! Exif maker note metadata
+	FIMD_EXIF_INTEROP	= 5,	//! Exif interoperability metadata
+	FIMD_IPTC			= 6,	//! IPTC/NAA metadata
+	FIMD_XMP			= 7,	//! Abobe XMP metadata
+	FIMD_GEOTIFF		= 8,	//! GeoTIFF metadata
+	FIMD_ANIMATION		= 9,	//! Animation metadata
+	FIMD_CUSTOM			= 10,	//! Used to attach other metadata types to a dib
+	FIMD_EXIF_RAW		= 11	//! Exif metadata as a raw buffer
 };
 
 /**
@@ -584,10 +599,10 @@ typedef long (DLL_CALLCONV *FI_TellProc) (fi_handle handle);
 #endif // WIN32
 
 FI_STRUCT(FreeImageIO) {
-	FI_ReadProc  read_proc;     // pointer to the function used to read data
-    FI_WriteProc write_proc;    // pointer to the function used to write data
-    FI_SeekProc  seek_proc;     // pointer to the function used to seek
-    FI_TellProc  tell_proc;     // pointer to the function used to aquire the current position
+	FI_ReadProc  read_proc;     //! pointer to the function used to read data
+    FI_WriteProc write_proc;    //! pointer to the function used to write data
+    FI_SeekProc  seek_proc;     //! pointer to the function used to seek
+    FI_TellProc  tell_proc;     //! pointer to the function used to aquire the current position
 };
 
 #if (defined(_WIN32) || defined(__WIN32__))
@@ -721,6 +736,7 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 #define RAW_PREVIEW			1		//! try to load the embedded JPEG preview with included Exif Data or default to RGB 24-bit
 #define RAW_DISPLAY			2		//! load the file as RGB 24-bit
 #define RAW_HALFSIZE		4		//! output a half-size color image
+#define RAW_UNPROCESSED		8		//! output a FIT_UINT16 raw Bayer image
 #define SGI_DEFAULT			0
 #define TARGA_DEFAULT       0
 #define TARGA_LOAD_RGB888   1       //! if set the loader converts RGB555 and ARGB8888 -> RGB888.
@@ -748,11 +764,18 @@ typedef void (DLL_CALLCONV *FI_InitProc)(Plugin *plugin, int format_id);
 // Background filling options ---------------------------------------------------------
 // Constants used in FreeImage_FillBackground and FreeImage_EnlargeCanvas
 
-#define FI_COLOR_IS_RGB_COLOR			0x00	// RGBQUAD color is a RGB color (contains no valid alpha channel)
-#define FI_COLOR_IS_RGBA_COLOR			0x01	// RGBQUAD color is a RGBA color (contains a valid alpha channel)
-#define FI_COLOR_FIND_EQUAL_COLOR		0x02	// For palettized images: lookup equal RGB color from palette
-#define FI_COLOR_ALPHA_IS_INDEX			0x04	// The color's rgbReserved member (alpha) contains the palette index to be used
+#define FI_COLOR_IS_RGB_COLOR			0x00	//! RGBQUAD color is a RGB color (contains no valid alpha channel)
+#define FI_COLOR_IS_RGBA_COLOR			0x01	//! RGBQUAD color is a RGBA color (contains a valid alpha channel)
+#define FI_COLOR_FIND_EQUAL_COLOR		0x02	//! For palettized images: lookup equal RGB color from palette
+#define FI_COLOR_ALPHA_IS_INDEX			0x04	//! The color's rgbReserved member (alpha) contains the palette index to be used
 #define FI_COLOR_PALETTE_SEARCH_MASK	(FI_COLOR_FIND_EQUAL_COLOR | FI_COLOR_ALPHA_IS_INDEX)	// No color lookup is performed
+
+// RescaleEx options ---------------------------------------------------------
+// Constants used in FreeImage_RescaleEx
+
+#define FI_RESCALE_DEFAULT			0x00    //! default options; none of the following other options apply
+#define FI_RESCALE_TRUE_COLOR		0x01	//! for non-transparent greyscale images, convert to 24-bit if src bitdepth <= 8 (default is a 8-bit greyscale image). 
+#define FI_RESCALE_OMIT_METADATA	0x02	//! do not copy metadata to the rescaled image
 
 
 #ifdef __cplusplus
@@ -886,6 +909,7 @@ DLL_API unsigned DLL_CALLCONV FreeImage_GetHeight(FIBITMAP *dib);
 DLL_API unsigned DLL_CALLCONV FreeImage_GetLine(FIBITMAP *dib);
 DLL_API unsigned DLL_CALLCONV FreeImage_GetPitch(FIBITMAP *dib);
 DLL_API unsigned DLL_CALLCONV FreeImage_GetDIBSize(FIBITMAP *dib);
+DLL_API unsigned DLL_CALLCONV FreeImage_GetMemorySize(FIBITMAP *dib);
 DLL_API RGBQUAD *DLL_CALLCONV FreeImage_GetPalette(FIBITMAP *dib);
 
 DLL_API unsigned DLL_CALLCONV FreeImage_GetDotsPerMeterX(FIBITMAP *dib);
@@ -976,12 +1000,15 @@ DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Threshold(FIBITMAP *dib, BYTE T);
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Dither(FIBITMAP *dib, FREE_IMAGE_DITHER algorithm);
 
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertFromRawBits(BYTE *bits, int width, int height, int pitch, unsigned bpp, unsigned red_mask, unsigned green_mask, unsigned blue_mask, BOOL topdown FI_DEFAULT(FALSE));
+DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertFromRawBitsEx(BOOL copySource, BYTE *bits, FREE_IMAGE_TYPE type, int width, int height, int pitch, unsigned bpp, unsigned red_mask, unsigned green_mask, unsigned blue_mask, BOOL topdown FI_DEFAULT(FALSE));
 DLL_API void DLL_CALLCONV FreeImage_ConvertToRawBits(BYTE *bits, FIBITMAP *dib, int pitch, unsigned bpp, unsigned red_mask, unsigned green_mask, unsigned blue_mask, BOOL topdown FI_DEFAULT(FALSE));
 
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToFloat(FIBITMAP *dib);
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToRGBF(FIBITMAP *dib);
+DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToRGBAF(FIBITMAP *dib);
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToUINT16(FIBITMAP *dib);
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToRGB16(FIBITMAP *dib);
+DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToRGBA16(FIBITMAP *dib);
 
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToStandardType(FIBITMAP *src, BOOL scale_linear FI_DEFAULT(TRUE));
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_ConvertToType(FIBITMAP *src, FREE_IMAGE_TYPE dst_type, BOOL scale_linear FI_DEFAULT(TRUE));
@@ -1037,6 +1064,7 @@ DLL_API void DLL_CALLCONV FreeImage_FindCloseMetadata(FIMETADATA *mdhandle);
 // metadata setter and getter
 DLL_API BOOL DLL_CALLCONV FreeImage_SetMetadata(FREE_IMAGE_MDMODEL model, FIBITMAP *dib, const char *key, FITAG *tag);
 DLL_API BOOL DLL_CALLCONV FreeImage_GetMetadata(FREE_IMAGE_MDMODEL model, FIBITMAP *dib, const char *key, FITAG **tag);
+DLL_API BOOL DLL_CALLCONV FreeImage_SetMetadataKeyValue(FREE_IMAGE_MDMODEL model, FIBITMAP *dib, const char *key, const char *value);
 
 // helpers
 DLL_API unsigned DLL_CALLCONV FreeImage_GetMetadataCount(FREE_IMAGE_MDMODEL model, FIBITMAP *dib);
@@ -1074,6 +1102,7 @@ DLL_API BOOL DLL_CALLCONV FreeImage_FlipVertical(FIBITMAP *dib);
 // upsampling / downsampling
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Rescale(FIBITMAP *dib, int dst_width, int dst_height, FREE_IMAGE_FILTER filter FI_DEFAULT(FILTER_CATMULLROM));
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_MakeThumbnail(FIBITMAP *dib, int max_pixel_size, BOOL convert FI_DEFAULT(TRUE));
+DLL_API FIBITMAP *DLL_CALLCONV FreeImage_RescaleRect(FIBITMAP *dib, int dst_width, int dst_height, int left, int top, int right, int bottom, FREE_IMAGE_FILTER filter FI_DEFAULT(FILTER_CATMULLROM), unsigned flags FI_DEFAULT(0));
 
 // color manipulation routines (point operations)
 DLL_API BOOL DLL_CALLCONV FreeImage_AdjustCurve(FIBITMAP *dib, BYTE *LUT, FREE_IMAGE_COLOR_CHANNEL channel);
@@ -1098,6 +1127,8 @@ DLL_API BOOL DLL_CALLCONV FreeImage_SetComplexChannel(FIBITMAP *dst, FIBITMAP *s
 // copy / paste / composite routines
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Copy(FIBITMAP *dib, int left, int top, int right, int bottom);
 DLL_API BOOL DLL_CALLCONV FreeImage_Paste(FIBITMAP *dst, FIBITMAP *src, int left, int top, int alpha);
+DLL_API FIBITMAP *DLL_CALLCONV FreeImage_CreateView(FIBITMAP *dib, unsigned left, unsigned top, unsigned right, unsigned bottom);
+
 DLL_API FIBITMAP *DLL_CALLCONV FreeImage_Composite(FIBITMAP *fg, BOOL useFileBkg FI_DEFAULT(FALSE), RGBQUAD *appBkColor FI_DEFAULT(NULL), FIBITMAP *bg FI_DEFAULT(NULL));
 DLL_API BOOL DLL_CALLCONV FreeImage_PreMultiplyWithAlpha(FIBITMAP *dib);
 
