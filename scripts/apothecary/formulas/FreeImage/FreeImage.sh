@@ -10,20 +10,20 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
 # define the version
-VER=3160 # 3.16.0
+VER=3170 # 3.16.0
 
 # tools for git use
 GIT_URL=https://github.com/danoli3/FreeImage
-GIT_TAG=3.16.0
+GIT_TAG=3.17.0
 
 # download the source code and unpack it into LIB_NAME
 function download() {
 
 	if [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
 		# For win32, we simply download the pre-compiled binaries.
-		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER"Win32.zip
-		unzip -qo FreeImage"$VER"Win32.zip
-		rm FreeImage"$VER"Win32.zip
+		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER"Win32Win64.zip
+		unzip -qo FreeImage"$VER"Win32Win64.zip
+		rm FreeImage"$VER"Win32Win64.zip
 	elif [[ "${TYPE}" == "osx" || "${TYPE}" == "ios" ]]; then
         # Fixed issues for OSX / iOS for FreeImage compiling in git repo.
         echo "Downloading from $GIT_URL for OSX/iOS"
@@ -191,7 +191,7 @@ function build() {
 			export EXTRA_PLATFORM_LDFLAGS="$EXTRA_PLATFORM_LDFLAGS -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -Wl,-dead_strip -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/ $MIN_TYPE$MIN_IOS_VERSION "
 
 		   	EXTRA_LINK_FLAGS="-arch $IOS_ARCH -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-shorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -DHAVE_UNISTD_H=1 -DOPJ_STATIC -DNO_LCMS -D__ANSI__ -DDISABLE_PERF_MEASUREMENT -DLIBRAW_NODLL -DLIBRAW_LIBRARY_BUILD -DFREEIMAGE_LIB -fexceptions -fasm-blocks -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -Wno-sign-conversion -Wmost -Wno-four-char-constants -Wno-unknown-pragmas -DNDEBUG -fPIC -fexceptions -fvisibility=hidden"
-			EXTRA_FLAGS="$EXTRA_LINK_FLAGS -DNDEBUG -ffast-math -DPNG_ARM_NEON_OPT=0 -DDISABLE_PERF_MEASUREMENT $MIN_TYPE$MIN_IOS_VERSION -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/"
+			EXTRA_FLAGS="$EXTRA_LINK_FLAGS -ffast-math -DPNG_ARM_NEON_OPT=0 -DDISABLE_PERF_MEASUREMENT $MIN_TYPE$MIN_IOS_VERSION -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/"
 
 		    export CC="$CC $EXTRA_FLAGS"
 			export CFLAGS="-arch $IOS_ARCH $EXTRA_FLAGS"
@@ -324,10 +324,16 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
 	elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
-	    cp -v Dist/*.h $1/include
-		mkdir -p $1/lib/$TYPE
-		cp -v Dist/FreeImage.lib $1/lib/$TYPE/FreeImage.lib
-		cp -v Dist/FreeImage.dll $1/../../export/$TYPE/FreeImage.dll
+		mkdir -p $1/include #/Win32
+		#mkdir -p $1/include/x64
+	    cp -v Dist/x32/*.h $1/include #/Win32/
+		#cp -v Dist/x64/*.h $1/include/x64/
+		mkdir -p $1/lib/$TYPE/Win32
+		mkdir -p $1/lib/$TYPE/x64
+		cp -v Dist/x32/FreeImage.lib $1/lib/$TYPE/Win32/FreeImage.lib
+		cp -v Dist/x32/FreeImage.dll $1/../../export/$TYPE/FreeImage32.dll
+		cp -v Dist/x64/FreeImage.lib $1/lib/$TYPE/x64/FreeImage.lib
+		cp -v Dist/x64/FreeImage.dll $1/../../export/$TYPE/FreeImage64.dll
 	elif [ "$TYPE" == "ios" ] ; then
         cp -v Dist/*.h $1/include
         if [ -d $1/lib/$TYPE/ ]; then
