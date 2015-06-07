@@ -2,7 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofTessellator.h"
 
-#if __cplusplus>=201103
+#if !defined(TARGET_OSX) && !defined(TARGET_OF_IOS) && __cplusplus>=201103
 	thread_local ofTessellator ofPath::tessellator;
 #endif
 
