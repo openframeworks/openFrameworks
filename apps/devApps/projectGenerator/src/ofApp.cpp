@@ -338,7 +338,15 @@ void ofApp::changeOFRootPressed(){
 //--------------------------------------------------------------
 void ofApp::update(){
 
-
+	//-------------------------------------
+	// addons panels can be really long, so use the mouse pos to move them if we need to
+	//-------------------------------------
+	
+	if (panelAddons.getShape().height > ofGetHeight()){
+		float pct = ofMap(ofGetMouseY(), 0,ofGetHeight(), 0,1,true);
+		float diff = panelAddons.getShape().height - ofGetHeight();
+		panelAddons.setPosition(panelAddons.getPosition().x,-diff * pct);
+	}
 
 }
 
