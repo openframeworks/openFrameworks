@@ -1146,7 +1146,7 @@ int ofDirectory::listDir(){
 #if __cplusplus>=201103
 			files.emplace_back(dir_iter->path().native(), ofFile::Reference);
 #else
-			files.push_back(dir_iter->path().native(), ofFile::Reference);
+			files.push_back(ofFile(dir_iter->path().native(), ofFile::Reference));
 #endif
 		}
 	}else{
@@ -1432,7 +1432,7 @@ string ofFilePath::getPathForDirectory(string path){
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
 	auto sep = std::filesystem::path("/").make_preferred();
-	if(ofToString(path.back())!=sep.string()){
+	if(!path.empty() && ofToString(path[path.size()-1])!=sep.string()){
 		return (std::filesystem::path(path) / sep).native();
 	}else{
 		return path;
