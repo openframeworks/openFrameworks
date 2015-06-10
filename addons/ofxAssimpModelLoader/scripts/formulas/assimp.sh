@@ -248,41 +248,9 @@ function build() {
 		local buildOpts="--build build/$TYPE -DASSIMP_BUILD_STATIC_LIB=1 -DASSIMP_BUILD_SHARED_LIB=0 -DASSIMP_ENABLE_BOOST_WORKAROUND=1"
 
 		# 32 bit
-		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch i386 -O3 -DNDEBUG -funroll-loops" -DCMAKE_CXX_FLAGS="-arch i386 -stdlib=libstdc++ -O3 -DNDEBUG -funroll-loops" .
+		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch i386 -arch x86_64 -O3 -DNDEBUG -funroll-loops" -DCMAKE_CXX_FLAGS="-arch i386 -arch x86_64 -stdlib=libc++ -O3 -DNDEBUG -funroll-loops" .
 		make assimp
-		mv lib/libassimp.a lib/libassimp-osx-i386.a
-		make clean
-
-		# 64 bit
-		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch x86_64 -O3 -DNDEBUG -funroll-loops" -DCMAKE_CXX_FLAGS="-arch x86_64 -stdlib=libc++ -O3 -DNDEBUG -funroll-loops" .
-		make assimp 
-		mv lib/libassimp.a lib/libassimp-osx-x86_64.a
-		make clean
-
-		# link into universal lib
-		lipo -c lib/libassimp-osx-i386.a lib/libassimp-osx-x86_64.a -o lib/libassimp-osx.a
-
-	elif [ "$TYPE" == "osx-clang-libc++" ] ; then
-		echoWarning "WARNING: this needs to be updated - do we even need it anymore?"
-
-		# warning, assimp on github uses the ASSIMP_ prefix for CMake options ...
-		# these may need to be updated for a new release
-		local buildOpts="--build build/$TYPE"
-
-		export CPP=`xcrun -find clang++`
-		export CXX=`xcrun -find clang++`
-		export CXXCPP=`xcrun -find clang++`
-		export CC=`xcrun -find clang`
 		
-		# 32 bit
-		cmake -G 'Unix Makefiles' $buildOpts -DCMAKE_C_FLAGS="-arch i386 $assimp_flags" -DCMAKE_CXX_FLAGS="-arch i386 -std=c++11 -stdlib=libc++ $assimp_flags" .
-		make assimp -j 
-		mv lib/libassimp.a lib/libassimp-i386.a
-		make clean
-
-		# rename lib
-		libtool -c lib/libassimp-i386.a -o lib/libassimp-osx.a
-
 	elif [ "$TYPE" == "linux" ] ; then
 		echoWarning "TODO: linux build"
 
@@ -314,11 +282,11 @@ function copy() {
 	if [ "$TYPE" == "vs" ] ; then
 		cp -Rv lib/libassimp.lib $1/lib/$TYPE/assimp.lib
 	elif [ "$TYPE" == "osx" ] ; then
-		cp -Rv lib/libassimp-osx.a $1/lib/$TYPE/assimp.a
+		cp -Rv lib/libassimp.a $1/lib/$TYPE/assimp.a
 	elif [ "$TYPE" == "ios" ] ; then
 		cp -Rv lib/$TYPE/assimp.a $1/lib/$TYPE/assimp.a
 	else
-		cp -Rv lib/libassimp.a $1/lib/$TYPE/assimp.a
+		cp -Rv lib/libassimp.a $1/lib/$TYPE/libassimp.a
 	fi
 
     # copy license files

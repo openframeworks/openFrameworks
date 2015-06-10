@@ -27,7 +27,7 @@ local LIB_FOLDER_IOS_SIM="$LIB_FOLDER-IOSIM"
 function download() {
   curl -Lk https://github.com/Itseez/opencv/archive/$VER.tar.gz -o opencv-$VER.tar.gz
   tar -xf opencv-$VER.tar.gz
-  mv opencv-$VER opencv
+  mv opencv-$VER OpenCv
   rm opencv*.tar.gz
 }
  
@@ -43,197 +43,6 @@ function prepare() {
   fi
   cd ../../../
 }
- 
-function build_osx() {
-
-  SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version` 
-  set -e
-  CURRENTPATH=`pwd`
-
-  echo "--------------------"
-  echo $CURRENTPATH
-  # Validate environment
-  case $XCODE_DEV_ROOT in  
-       *\ * )
-             echo "Your Xcode path contains whitespaces, which is not supported."
-             exit 1
-            ;;
-  esac
-  case $CURRENTPATH in  
-       *\ * )
-             echo "Your path contains whitespaces, which is not supported by 'make install'."
-             exit 1
-            ;;
-  esac 
-
-  mkdir -p "$CURRENTPATH/build/$TYPE/"
-  
-  echo "--------------------"
-
-  isBuilding=true;
- 
-
-  echo "Running cmake"
-  if [ "$1" == "64" ] ; then
-    LOG="$CURRENTPATH/build/$TYPE/opencv2-x86_64-${VER}.log"
-    echo "Log:" >> "${LOG}" 2>&1
-    while $isBuilding; do theTail="$(tail -n 1 ${LOG})"; echo $theTail | cut -c -70 ; echo "...";sleep 30; done & # fix for 10 min time out travis
-
-    set +e
-    cmake . -DCMAKE_INSTALL_PREFIX=$LIB_FOLDER64 \
-      -DGLFW_BUILD_UNIVERSAL=ON \
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 \
-      -DCMAKE_OSX_ARCHITECTURES="x86_64" \
-      -DENABLE_FAST_MATH=ON \
-      -DCMAKE_CXX_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
-      -DCMAKE_C_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
-      -DCMAKE_BUILD_TYPE="Release" \
-      -DBUILD_SHARED_LIBS=OFF \
-      -DBUILD_DOCS=OFF \
-      -DBUILD_EXAMPLES=OFF \
-      -DBUILD_FAT_JAVA_LIB=OFF \
-      -DBUILD_JASPER=OFF \
-      -DBUILD_PACKAGE=OFF \
-      -DBUILD_opencv_java=OFF \
-      -DBUILD_opencv_python=OFF \
-      -DBUILD_opencv_apps=OFF \
-      -DBUILD_JPEG=OFF \
-      -DBUILD_PNG=OFF \
-      -DWITH_1394=OFF \
-      -DWITH_CARBON=OFF \
-      -DWITH_JPEG=OFF \
-      -DWITH_PNG=OFF \
-      -DWITH_FFMPEG=OFF \
-      -DWITH_OPENCL=OFF \
-      -DWITH_OPENCLAMDBLAS=OFF \
-      -DWITH_OPENCLAMDFFT=OFF \
-      -DWITH_GIGEAPI=OFF \
-      -DWITH_CUDA=OFF \
-      -DWITH_CUFFT=OFF \
-      -DWITH_JASPER=OFF \
-      -DWITH_LIBV4L=OFF \
-      -DWITH_IMAGEIO=OFF \
-      -DWITH_IPP=OFF \
-      -DWITH_OPENNI=OFF \
-      -DWITH_QT=OFF \
-      -DWITH_QUICKTIME=OFF \
-      -DWITH_V4L=OFF \
-      -DWITH_PVAPI=OFF \
-      -DBUILD_TESTS=OFF \
-      -DBUILD_PERF_TESTS=OFF >> "${LOG}" 2>&1
-
-      if [ $? != 0 ];
-      then
-        tail -n 10 "${LOG}"
-        echo "Problem while CMAKE - Please check ${LOG}"
-        exit 1
-      else
-        tail -n 10 "${LOG}"
-        echo "CMAKE Successful for x86_64"
-      fi
-  elif [ "$1" == "32" ] ; then
-    LOG="$CURRENTPATH/build/$TYPE/opencv2-i386-${VER}.log"
-    while $isBuilding; do theTail="$(tail -n 1 ${LOG})"; echo $theTail | cut -c -70 ; echo "...";sleep 30; done & # fix for 10 min time out travis
-    echo "Log:" >> "${LOG}" 2>&1
-    set +e
-    # NB - using a special BUILD_ROOT_DIR
-    cmake . -DCMAKE_INSTALL_PREFIX=$LIB_FOLDER32 \
-      -DGLFW_BUILD_UNIVERSAL=ON \
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=10.6 \
-      -DCMAKE_OSX_ARCHITECTURES="i386" \
-      -DENABLE_FAST_MATH=ON \
-      -DCMAKE_CXX_FLAGS="-fvisibility-inlines-hidden -stdlib=libstdc++ -O3" \
-      -DCMAKE_C_FLAGS="-fvisibility-inlines-hidden -stdlib=libstdc++ -O3" \
-      -DCMAKE_BUILD_TYPE="Release" \
-      -DBUILD_SHARED_LIBS=OFF \
-      -DBUILD_DOCS=OFF \
-      -DBUILD_EXAMPLES=OFF \
-      -DBUILD_FAT_JAVA_LIB=OFF \
-      -DBUILD_JASPER=OFF \
-      -DBUILD_PACKAGE=OFF \
-      -DBUILD_opencv_java=OFF \
-      -DBUILD_opencv_python=OFF \
-      -DBUILD_opencv_apps=OFF \
-      -DBUILD_JPEG=OFF \
-      -DBUILD_PNG=OFF \
-      -DWITH_1394=OFF \
-      -DWITH_CARBON=OFF \
-      -DWITH_FFMPEG=OFF \
-      -DWITH_OPENCL=OFF \
-      -DWITH_OPENCLAMDBLAS=OFF \
-      -DWITH_OPENCLAMDFFT=OFF \
-      -DWITH_GIGEAPI=OFF \
-      -DWITH_CUDA=OFF \
-      -DWITH_CUFFT=OFF \
-      -DWITH_JASPER=OFF \
-      -DWITH_JPEG=OFF \
-      -DWITH_PNG=OFF \
-      -DWITH_LIBV4L=OFF \
-      -DWITH_IMAGEIO=OFF \
-      -DWITH_IPP=OFF \
-      -DWITH_OPENNI=OFF \
-      -DWITH_QT=OFF \
-      -DWITH_QUICKTIME=OFF \
-      -DWITH_V4L=OFF \
-      -DWITH_PVAPI=OFF \
-      -DBUILD_TESTS=OFF \
-      -DBUILD_PERF_TESTS=OFF >> "${LOG}" 2>&1
-
-      if [ $? != 0 ];
-      then
-        tail -n 10 "${LOG}"
-        echo "Problem while CMAKE - Please check ${LOG}"
-        exit 1
-      else
-        tail -n 10 "${LOG}"
-        echo "CMAKE Successful for i386"
-      fi
-  fi
-
-  echo "--------------------"
-  echo "Running make clean"
- 
-  make clean >> "${LOG}" 2>&1
-  if [ $? != 0 ];
-    then
-      tail -n 10 "${LOG}"
-      echo "Problem while make clean- Please check ${LOG}"
-      exit 1
-    else
-      tail -n 10 "${LOG}"
-      echo "Make Clean Successful"
-  fi
-
-  echo "--------------------"
-  echo "Running make"
-  make >> "${LOG}" 2>&1
-  if [ $? != 0 ];
-    then
-      tail -n 10 "${LOG}"
-      echo "Problem while make - Please check ${LOG}"
-      exit 1
-    else
-      tail -n 10 "${LOG}"
-      echo "Make  Successful"
-  fi
-  echo "--------------------"
-  echo "Running make install"
-  make install >> "${LOG}" 2>&1
-    if [ $? != 0 ];
-      then
-        tail -n 10 "${LOG}"
-        echo "Problem while make install - Please check ${LOG}"
-        exit 1
-      else
-        tail -n 10 "${LOG}"
-        echo "Make install Successful"
-    fi
-
-    isBuilding=false;
-}
-
-
-
 
 function make_universal_binary() {
   shopt -s nullglob
@@ -271,29 +80,80 @@ function make_universal_binary() {
 function build() {
   rm -f CMakeCache.txt
  
-  LIB_FOLDER="$BUILD_ROOT_DIR/$TYPE/FAT/OpenCv"
-  LIB_FOLDER32="$BUILD_ROOT_DIR/$TYPE/32bit/OpenCv"
-  LIB_FOLDER64="$BUILD_ROOT_DIR/$TYPE/64bit/OpenCv"
+  LIB_FOLDER="$BUILD_DIR/OpenCv/build/$TYPE/"
 
   if [ "$TYPE" == "osx" ] ; then
-    # 64-bit OF transition, build x86-64 and i386 separately
     rm -f CMakeCache.txt
-    build_osx "64";
-    rm -f CMakeCache.txt
-    build_osx "32";
+    LOG="$LIB_FOLDER/opencv2-${VER}.log"
+    echo "Logging to $LOG"
+    mkdir -p $LIB_FOLDER
+    cd build
+    echo "Log:" >> "${LOG}" 2>&1
+    set +e
+    cmake .. -DCMAKE_INSTALL_PREFIX=$LIB_FOLDER \
+      -DGLFW_BUILD_UNIVERSAL=ON \
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 \
+      -DENABLE_FAST_MATH=ON \
+      -DCMAKE_CXX_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
+      -DCMAKE_C_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
+      -DCMAKE_BUILD_TYPE="Release" \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DBUILD_DOCS=OFF \
+      -DBUILD_EXAMPLES=OFF \
+      -DBUILD_FAT_JAVA_LIB=OFF \
+      -DBUILD_JASPER=OFF \
+      -DBUILD_PACKAGE=OFF \
+      -DBUILD_opencv_java=OFF \
+      -DBUILD_opencv_python=OFF \
+      -DBUILD_opencv_apps=OFF \
+      -DBUILD_JPEG=OFF \
+      -DBUILD_PNG=OFF \
+      -DWITH_1394=OFF \
+      -DWITH_CARBON=OFF \
+      -DWITH_JPEG=OFF \
+      -DWITH_PNG=OFF \
+      -DWITH_FFMPEG=OFF \
+      -DWITH_OPENCL=OFF \
+      -DWITH_OPENCLAMDBLAS=OFF \
+      -DWITH_OPENCLAMDFFT=OFF \
+      -DWITH_GIGEAPI=OFF \
+      -DWITH_CUDA=OFF \
+      -DWITH_CUFFT=OFF \
+      -DWITH_JASPER=OFF \
+      -DWITH_LIBV4L=OFF \
+      -DWITH_IMAGEIO=OFF \
+      -DWITH_IPP=OFF \
+      -DWITH_OPENNI=OFF \
+      -DWITH_QT=OFF \
+      -DWITH_QUICKTIME=OFF \
+      -DWITH_V4L=OFF \
+      -DWITH_PVAPI=OFF \
+      -DBUILD_TESTS=OFF \
+      -DBUILD_PERF_TESTS=OFF | tee ${LOG}
+    echo "CMAKE Successful"
+    echo "--------------------"
+    echo "Running make clean"
 
-	 mkdir -p $LIB_FOLDER/include
-	 mkdir -p $LIB_FOLDER/lib
- 
-    # lipo shit together
-    make_universal_binary "$LIB_FOLDER64" "$LIB_FOLDER32" "$LIB_FOLDER" 
+    make clean | tee ${LOG}
+    echo "Make Clean Successful"
 
-    # copy headers
-    cp -R $LIB_FOLDER64/include/opencv $LIB_FOLDER/include/opencv
-    cp -R $LIB_FOLDER64/include/opencv2 $LIB_FOLDER/include/opencv2
-  fi
+    echo "--------------------"
+    echo "Running make"
+    make -j4 | tee ${LOG}
+    echo "Make  Successful"
 
-  if [ "$TYPE" == "ios" ] ; then
+    echo "--------------------"
+    echo "Running make install"
+    make install | tee ${LOG}
+    echo "Make install Successful"
+    
+    echo "--------------------"
+    echo "Joining all libs in one"
+    outputlist="lib/lib*.a"
+    libtool -static $outputlist -o "$LIB_FOLDER/lib/opencv.a" | tee ${LOG}
+    echo "Joining all libs in one Successful"
+    
+  elif [ "$TYPE" == "ios" ] ; then
 
     local LIB_FOLDER_IOS="$BUILD_ROOT_DIR/$TYPE/iOS/OpenCv"
     local LIB_FOLDER_IOS_SIM="$BUILD_ROOT_DIR/$TYPE/iOS_SIMULATOR/OpenCv"
@@ -540,8 +400,6 @@ function build() {
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 
-  LIB_FOLDER="$BUILD_ROOT_DIR/$TYPE/FAT/OpenCv"
-
   # prepare headers directory if needed
   mkdir -p $1/include
  
@@ -551,6 +409,9 @@ function copy() {
   if [ "$TYPE" == "osx" ] ; then
     # Standard *nix style copy.
     # copy headers
+
+    LIB_FOLDER="$BUILD_DIR/OpenCv/build/$TYPE/"
+    
     cp -R $LIB_FOLDER/include/ $1/include/
  
     # copy lib
@@ -560,6 +421,8 @@ function copy() {
   if [ "$TYPE" == "ios" ] ; then
     # Standard *nix style copy.
     # copy headers
+
+    LIB_FOLDER="$BUILD_ROOT_DIR/$TYPE/FAT/OpenCv"
 
     cp -Rv lib/include/ $1/include/
     mkdir -p $1/lib/$TYPE
