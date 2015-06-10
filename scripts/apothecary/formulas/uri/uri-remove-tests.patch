@@ -1,0 +1,18 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8147d01..8565d95 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -50,13 +50,6 @@ endif(WIN32)
+ 
+ add_subdirectory(src)
+ 
+-# Testing
+-if (CMAKE_PROJECT_NAME STREQUAL "Uri" OR CPP-NETLIB_BUILD_TESTS)
+-  enable_testing()
+-  find_package(GTest REQUIRED)
+-  add_subdirectory(test)
+-endif()
+-
+ # Documentation
+ find_package(Doxygen)
+ if (DOXYGEN_FOUND)

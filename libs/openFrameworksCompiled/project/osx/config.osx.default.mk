@@ -74,11 +74,11 @@ ifndef MAC_OS_MIN_VERSION
 endif
 
 ifndef MAC_OS_STD_LIB
-	MAC_OS_STD_LIB = libstdc++
+	MAC_OS_STD_LIB = libc++
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
-PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
+PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB) -std=c++11
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
 PLATFORM_CFLAGS += -Wall
@@ -118,11 +118,11 @@ ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo
 endif
 
 # Optimization options (http://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
-PLATFORM_CFLAGS += -finline-functions
+#PLATFORM_CFLAGS += -finline-functions
 #PLATFORM_CFLAGS += -funroll-all-loops
 #PLATFORM_CFLAGS += -Os
 
-PLATFORM_CFLAGS += -arch i386
+#PLATFORM_CFLAGS += -arch i386
 
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
@@ -156,7 +156,7 @@ endif
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
-PLATFORM_LDFLAGS += -arch i386
+#PLATFORM_LDFLAGS += -arch i386
 PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
 
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
@@ -212,6 +212,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 
