@@ -7,7 +7,7 @@
 # Makefile build system, 
 # some Makefiles are out of date so patching/modification may be required
 
-FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" "emscripten")
 
 # define the version
 VER=3160 # 3.16.0
@@ -61,6 +61,9 @@ function prepare() {
 		# copy across new Makefile for iOS.
 		cp -v $FORMULA_DIR/Makefile.ios Makefile.ios
 	elif [ "$TYPE" == "android" ]; then
+	local BUILD_TO_DIR=$BUILD_DIR/FreeImage_patched
+	cp -r $BUILD_DIR/FreeImage $BUILD_DIR/FreeImage_patched
+	cd $BUILD_DIR/FreeImage_patched
 	    sed -i "s/#define HAVE_SEARCH_H/\/\/#define HAVE_SEARCH_H/g" Source/LibTIFF4/tif_config.h
 	    cat > Source/LibRawLite/src/swab.h << ENDDELIM
 	    #include <stdint.h>
@@ -284,28 +287,57 @@ function build() {
 
 	elif [ "$TYPE" == "android" ] ; then
         source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
+        local BUILD_TO_DIR=$BUILD_DIR/FreeImage/build/$TYPE
+        rm -rf $BUILD_DIR/FreeImagePatched
+        cp -r $BUILD_DIR/FreeImage $BUILD_DIR/FreeImagePatched
+        cd $BUILD_DIR/FreeImagePatched
         
         # armv7
         ABI=armeabi-v7a
-        local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
+        local BUILD_TO_DIR=$BUILD_DIR/FreeImagePatched/build/$TYPE/$ABI
         source ../../android_configure.sh $ABI
         export CC="$CC $CFLAGS $LDFLAGS"
         export CXX="$CXX $CFLAGS $LDFLAGS"
         make clean -f Makefile.gnu
         make -f Makefile.gnu libfreeimage.a
-        mkdir -p Dist/$ABI
-        mv libfreeimage.a Dist/$ABI
+        mkdir -p $BUILD_DIR/FreeImage/Dist/$ABI
+        mv libfreeimage.a $BUILD_DIR/FreeImage/Dist/$ABI
         
         # x86
         ABI=x86
-        local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
+        local BUILD_TO_DIR=$BUILD_DIR/FreeImagePatched/build/$TYPE/$ABI
         source ../../android_configure.sh $ABI
         export CC="$CC $CFLAGS $LDFLAGS"
         export CXX="$CXX $CFLAGS $LDFLAGS"
         make clean -f Makefile.gnu
         make -f Makefile.gnu libfreeimage.a
-        mkdir -p Dist/$ABI
-        mv libfreeimage.a Dist/$ABI
+        mkdir -p $BUILD_DIR/FreeImage/Dist/$ABI
+        mv libfreeimage.a $BUILD_DIR/FreeImage/Dist/$ABI
+        cd $BUILD_DIR/FreeImage
+        #rm -r $BUILD_DIR/FreeImage_patched
+    elif [ "$TYPE" == "emscripten" ]; then
+        local BUILD_TO_DIR=$BUILD_DIR/FreeImage/build/$TYPE
+        rm -rf $BUILD_DIR/FreeImagePatched
+        cp -r $BUILD_DIR/FreeImage $BUILD_DIR/FreeImagePatched
+        echo "#include <unistd.h>" > $BUILD_DIR/FreeImagePatched/Source/ZLib/gzlib.c
+        cat $BUILD_DIR/FreeImage/Source/ZLib/gzlib.c >> $BUILD_DIR/FreeImagePatched/Source/ZLib/gzlib.c
+        echo "#include <unistd.h>" > $BUILD_DIR/FreeImagePatched/Source/ZLib/gzread.c
+        cat $BUILD_DIR/FreeImage/Source/ZLib/gzread.c >> $BUILD_DIR/FreeImagePatched/Source/ZLib/gzread.c
+        echo "#include <unistd.h>" > $BUILD_DIR/FreeImagePatched/Source/ZLib/gzwrite.c
+        cat $BUILD_DIR/FreeImage/Source/ZLib/gzread.c >> $BUILD_DIR/FreeImagePatched/Source/ZLib/gzwrite.c
+        echo "" > $BUILD_DIR/FreeImagePatched/Source/LibRawLite/src/swab.h
+        echo "#include <byteswap.h>" > $BUILD_DIR/FreeImagePatched/Source/LibJXR/image/decode/segdec.c
+        echo "#define _byteswap_ulong __bswap_32" >> $BUILD_DIR/FreeImagePatched/Source/LibJXR/image/decode/segdec.c
+        cat $BUILD_DIR/FreeImage/Source/LibJXR/image/decode/segdec.c >> $BUILD_DIR/FreeImagePatched/Source/LibJXR/image/decode/segdec.c
+        echo "#include <wchar.h>" > $BUILD_DIR/FreeImagePatched/Source/LibJXR/jxrgluelib/JXRGlueJxr.c
+        cat $BUILD_DIR/FreeImage/Source/LibJXR/jxrgluelib/JXRGlueJxr.c >> $BUILD_DIR/FreeImagePatched/Source/LibJXR/jxrgluelib/JXRGlueJxr.c
+        cd $BUILD_DIR/FreeImagePatched
+        emmake make clean -f Makefile.gnu
+        emmake make -f Makefile.gnu libfreeimage.a
+        mkdir -p $BUILD_DIR/FreeImage/Dist/
+        mv libfreeimage.a $BUILD_DIR/FreeImage/Dist/
+        cd $BUILD_DIR/FreeImage
+        #rm -rf $BUILD_DIR/FreeImagePatched
 	fi
 }
 
@@ -345,6 +377,13 @@ function copy() {
         cp -rv Dist/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a/
         mkdir -p $1/lib/$TYPE/x86
         cp -rv Dist/x86/*.a $1/lib/$TYPE/x86/
+    elif [ "$TYPE" == "emscripten" ]; then
+        cp Source/FreeImage.h $1/include
+        if [ -d $1/lib/$TYPE/ ]; then
+            rm -r $1/lib/$TYPE/
+        fi
+        mkdir -p $1/lib/$TYPE
+        cp -rv Dist/libfreeimage.a $1/lib/$TYPE/
 	fi	
 
     # copy license files
@@ -359,7 +398,19 @@ function copy() {
 function clean() {
 	
 	if [ "$TYPE" == "android" ] ; then
-		echoWarning "TODO: clean android"
+		make clean 
+		rm -rf Dist
+		rm -f *.a
+		rm -f builddir/$TYPE
+		rm -f builddir
+		rm -f lib		
+	elif [ "$TYPE" == "emscripten" ] ; then
+	    make clean
+	    rm -rf Dist
+		rm -f *.a
+		rm -f builddir/$TYPE
+		rm -f builddir
+		rm -f lib		
 	elif [ "$TYPE" == "ios" ] ; then
 		# clean up compiled libraries
 		make clean
