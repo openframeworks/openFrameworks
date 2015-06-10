@@ -53,7 +53,7 @@ FT_BEGIN_HEADER
   /**********************************************************************
    *
    * @enum:
-   *    BDF_PropertyType
+   *    FT_PropertyType
    *
    * @description:
    *    A list of BDF property types.
@@ -200,7 +200,7 @@ FT_BEGIN_HEADER
                        const char*       prop_name,
                        BDF_PropertyRec  *aproperty );
 
-  /* */
+ /* */
 
 FT_END_HEADER
 

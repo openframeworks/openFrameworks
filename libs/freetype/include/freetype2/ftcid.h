@@ -156,8 +156,7 @@ FT_BEGIN_HEADER
                                FT_UInt   glyph_index,
                                FT_UInt  *cid );
 
-  /* */
-
+ /* */
 
 FT_END_HEADER
 
