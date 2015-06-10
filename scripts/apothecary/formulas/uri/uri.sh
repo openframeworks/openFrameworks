@@ -5,7 +5,7 @@
 # 
 # uses cmake build system
 
-FORMULA_TYPES=( "osx" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "win_cb" "ios" "android" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "emscripten" )
 
 # define the version
 COMMIT=55ec3cd78918c42dfb874e01c9745b4daf51091b
@@ -14,6 +14,7 @@ GIT_URL=https://github.com/cpp-netlib/uri.git
 # download the source code and unpack it into LIB_NAME
 function download() {
 	git clone ${GIT_URL} uri
+	cd uri
 	git checkout ${COMMIT}
 }
 
@@ -24,25 +25,34 @@ function prepare() {
 
 # executed inside the lib src dir
 function build() {
+	git checkout .
+	rm -r _build
+	mkdir -p _build
+	pwd
 	if [ "$TYPE" == "wincb" ] ; then
-		: #noop by now
+	    git apply ../../formulas/uri/uri-remove-tests.patch
+	    cd _build
+		#noop by now
 	elif [ "$TYPE" == "osx" ]; then
-		git checkout .
-		git apply ../../formulas/uri/uri-remove-tests.patch
+	    git apply ../../formulas/uri/uri-remove-tests.patch
+	    cd _build
 		export BOOST_LIBRARYDIR=../boost/stage/lib
 		export BOOST_INCLUDEDIR=../boost/
-		mkdir -p _build
-		cd _build
 		cmake -DCMAKE_BUILD_TYPE=Release \
 			  -DCMAKE_C_FLAGS="-arch i386 -arch x86_64" \
 			  -DCMAKE_CXX_FLAGS="-arch i386 -arch x86_64" \
 			  ..
 		make
+	elif [ "$TYPE" == "emscripten" ]; then
+		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
+		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
+	    git apply ../../formulas/uri/uri-emscripten.patch
+	    cd _build
+    	pwd
+		emcmake cmake .. -DCMAKE_CXX_FLAGS=-I${BOOST_INCLUDEDIR} -DCMAKE_BUILD_TYPE=Release -DBOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib -DBoost_INCLUDE_DIR=${BUILD_DIR}/boost
+		make
 	elif [ "$TYPE" == "linux" ] || [ "$TYPE" == "linux64" ] || [ "$TYPE" == "linuxarmv6l" ] || [ "$TYPE" == "linuxarmv7l" ]; then
-		git checkout .
-		git apply ../../formulas/uri/uri-remove-tests.patch
-		mkdir -p _build
-		cd _build
+	    cd _build
 		cmake -DCMAKE_BUILD_TYPE=Release ..
 		make
 	fi
@@ -59,11 +69,14 @@ function copy() {
 
 	if [ "$TYPE" == "wincb" ] ; then
 		: #noop by now
-	else
+	elif [ "$TYPE" == "osx" ] || [ "$TYPE" == "ios" ] || [ "$TYPE" == "android" ]; then
 		cp _build/src/*.a $1/lib/$TYPE/
 		cp -r src/network $1/include/
 		../boost/dist/bin/bcp --scan --boost=../boost $(find src/network/ -name "*.hpp") install_dir
 		rsync -ar install_dir/boost/* $1/../boost/include/boost/
+	else
+        cp _build/src/*.a $1/lib/$TYPE/
+        cp -r src/network $1/include/
 	fi
 
 	# copy license file
