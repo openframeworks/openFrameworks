@@ -177,11 +177,11 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
     try {
         uri = network::uri(fileName);
     } catch(const std::exception & exc){
-        ofLogError("ofImage") << "loadImage(): malformed url when loading image from url \"" << fileName << "\": " << exc.what();
-		return false;
     }
 	if(uri.scheme() != boost::none && (uri.scheme().get() == "http" || uri.scheme().get() == "https")){
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
+	}else if(uri.scheme()!=boost::none){
+		ofLogError() << "protocol " << uri.scheme().get() << " not supported";
 	}
 #endif
 	
