@@ -29,7 +29,7 @@
     label.backgroundColor = [UIColor colorWithWhite:1 alpha:0.95];
     label.textColor = [UIColor colorWithWhite:0 alpha:1];
     label.text = [text uppercaseString];
-    label.textAlignment = UITextAlignmentCenter;
+    label.textAlignment = NSTextAlignmentCenter;
     label.font = font;
     label.userInteractionEnabled = NO;
     label.exclusiveTouch = NO;

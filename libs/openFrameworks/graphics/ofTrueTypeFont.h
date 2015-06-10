@@ -50,10 +50,13 @@ typedef struct FT_FaceRec_*  FT_Face;
 
 /// \name Fonts
 /// \{
-const static string OF_TTF_SANS = "sans-serif";
-const static string OF_TTF_SERIF = "serif";
-const static string OF_TTF_MONO = "monospace";
+static const string OF_TTF_SANS = "sans-serif";
+static const string OF_TTF_SERIF = "serif";
+static const string OF_TTF_MONO = "monospace";
 /// \}
+
+
+void ofTrueTypeShutdown();
 
 
 
@@ -90,7 +93,7 @@ public:
 	bool load(string filename,
                   int fontsize,
                   bool _bAntiAliased=true,
-                  bool _bFullCharacterSet=false,
+                  bool _bFullCharacterSet=true,
                   bool makeContours=false,
                   float simplifyAmt=0.3,
                   int dpi=0);
@@ -248,7 +251,7 @@ public:
 	/// \param x X position of returned rectangle.
 	/// \param y Y position of returned rectangle.
 	/// \returns Returns the bounding box of a string as a rectangle.
-	ofRectangle getStringBoundingBox(string s, float x, float y) const;
+	ofRectangle getStringBoundingBox(string s, float x, float y, bool vflip=true) const;
 
 	/// \}
 	/// \name Drawing
@@ -281,9 +284,6 @@ public:
 	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=true, bool filled=true) const;
 	const ofMesh & getStringMesh(string s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
-
-	void bind();
-	void unbind();
 
 	/// \}
 	

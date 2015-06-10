@@ -817,7 +817,11 @@ void ofAppGlutWindow::resize_cb(int w, int h) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::entry_cb(int state) {
-	instance->events().notifyWindowEntry( state );
+	if (state == GLUT_ENTERED){
+		instance->events().notifyMouseEntered(instance->events().getMouseX(), instance->events().getMouseY());
+	}else if (state == GLUT_LEFT){
+		instance->events().notifyMouseExited(instance->events().getMouseX(), instance->events().getMouseY());
+	}
 }
 
 //------------------------------------------------------------

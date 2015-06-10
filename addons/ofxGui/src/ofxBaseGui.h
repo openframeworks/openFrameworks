@@ -13,16 +13,16 @@ public:
 	virtual ~ofxBaseGui();
 	void draw();
 	
-	void saveToFile(string filename);
-	void loadFromFile(string filename);
+	void saveToFile(std::string filename);
+	void loadFromFile(std::string filename);
 	
 	void setDefaultSerializer(std::shared_ptr<ofBaseFileSerializer> serializer);
 
 	virtual void saveTo(ofBaseSerializer& serializer);
 	virtual void loadFrom(ofBaseSerializer& serializer);
 	
-	string getName();
-	void setName(string name);
+	std::string getName();
+	void setName(std::string name);
 
 	virtual void setPosition(ofPoint p);
 	virtual void setPosition(float x, float y);
@@ -58,7 +58,7 @@ public:
 	static void setDefaultHeight(int height);
 
 	virtual ofAbstractParameter & getParameter() = 0;
-	static void loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
+	static void loadFont(std::string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
 	static void setUseTTF(bool bUseTTF);
     
     void registerMouseEvents();
@@ -69,21 +69,23 @@ public:
 	virtual bool mouseDragged(ofMouseEventArgs & args) = 0;
 	virtual bool mouseReleased(ofMouseEventArgs & args) = 0;
 	virtual bool mouseScrolled(ofMouseEventArgs & args) = 0;
+	virtual void mouseEntered(ofMouseEventArgs & args){}
+	virtual void mouseExited(ofMouseEventArgs & args){}
 protected:
 	virtual void render()=0;
 	bool isGuiDrawing();
 	virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
 	void bindFontTexture();
 	void unbindFontTexture();
-	ofMesh getTextMesh(const string & text, float x, float y);
-	ofRectangle getTextBoundingBox(const string & text,float x, float y);
+	ofMesh getTextMesh(const std::string & text, float x, float y);
+	ofRectangle getTextBoundingBox(const std::string & text,float x, float y);
 
 	ofRectangle b;
 	static ofTrueTypeFont font;
 	static bool fontLoaded;
 	static bool useTTF;
 	static ofBitmapFont bitmapFont;
-	shared_ptr<ofBaseFileSerializer> serializer;
+	std::shared_ptr<ofBaseFileSerializer> serializer;
 
 	static ofColor headerBackgroundColor;
 	static ofColor backgroundColor;
@@ -101,12 +103,14 @@ protected:
 	static int defaultWidth;
 	static int defaultHeight;
 
-	static string saveStencilToHex(ofImage& img);
+	static std::string saveStencilToHex(ofImage& img);
 	static void loadStencilFromHex(ofImage& img, unsigned char* data) ;
 
-	virtual void generateDraw(){};
+	void setNeedsRedraw();
+	virtual void generateDraw()=0;
 
 private:
+	bool needsRedraw;
 	unsigned long currentFrame;
     bool bRegisteredForMouseEvents;
 }; 

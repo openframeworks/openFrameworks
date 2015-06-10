@@ -6,11 +6,11 @@
 class ofxLabel: public ofxBaseGui {
 public:
     ofxLabel(){}
-    ofxLabel(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
+    ofxLabel(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);
     virtual ~ofxLabel();
 
-    ofxLabel * setup(ofParameter<string> _label, float width = defaultWidth, float height = defaultHeight);
-    ofxLabel * setup(string labelName, string label, float width = defaultWidth, float height = defaultHeight);
+    ofxLabel * setup(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);
+    ofxLabel * setup(std::string labelName, std::string label, float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!
     virtual bool mouseMoved(ofMouseEventArgs & args){return false;}
@@ -34,16 +34,16 @@ public:
 	}
 
 
-    string operator=(string v) { label = v; return v; }
-    operator const string & ()       { return label; }
+	std::string operator=(std::string v) { label = v; return v; }
+    operator const std::string & ()       { return label; }
 
     ofAbstractParameter & getParameter();
 
 protected:
     void render();
-    ofParameter<string> label;
+    ofParameter<std::string> label;
     void generateDraw();
-    void valueChanged(string & value);
+    void valueChanged(std::string & value);
     bool setValue(float mx, float my, bool bCheckBounds){return false;}
     ofPath bg;
     ofVboMesh textMesh;

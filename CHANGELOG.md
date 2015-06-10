@@ -13,6 +13,7 @@ CORE
 ### app
 	/ setupOpenGL and ofApp___Window use ofWindowMode instead of int
 	/ fix exit callbacks to allow for calling of the destructors, and better signal handling
+	/ changed windowEntry event to mouseEntered/mouseExted, added these callbacks when registering for mouse events
 
 ### 3d
 	/ ofEasyCam: removes roll rotation when rotating inside the arcball

@@ -9,11 +9,11 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
 # define the version
-VER=2.5.3
+VER=2.5.5
 
 # tools for git use
 GIT_URL=http://git.savannah.gnu.org/r/freetype/freetype2.git
-GIT_TAG=VER-2-5-3
+GIT_TAG=VER-2-5-5
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -294,7 +294,7 @@ function build() {
 		# armv7
 		ABI=armeabi-v7a
 		local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE/$ABI
-		source ../../formulas/android_configure.sh $ABI
+		source ../../android_configure.sh $ABI
 
 		./configure --prefix=$BUILD_TO_DIR --host armv7a-linux-android --with-harfbuzz=no --enable-static=yes --enable-shared=no 
 		make clean 
@@ -304,7 +304,7 @@ function build() {
 		# x86
 		ABI=x86
 		local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE/$ABI
-		source ../../formulas/android_configure.sh $ABI
+		source ../../android_configure.sh $ABI
 
 		./configure --prefix=$BUILD_TO_DIR --host x86-linux-android --with-harfbuzz=no --enable-static=yes --enable-shared=no 
 		make clean 

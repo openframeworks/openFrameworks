@@ -18,6 +18,24 @@
 class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();
+	~ofParameterGroup();
+#if __cplusplus>=201103
+	template<typename ...Args>
+	ofParameterGroup(const string & name, Args&... p)
+	:obj(new Value){
+		add(p...);
+		setName(name);
+	}
+
+	template<typename ...Args>
+	void add(ofAbstractParameter & p, Args&... parameters){
+		cout << "adding " << p.getName() << endl;
+		add(p);
+		add(parameters...);
+	}
+#endif
+	ofParameterGroup(const ofParameterGroup& other);
+	ofParameterGroup & operator=(const ofParameterGroup& other);
 
 	void add(ofAbstractParameter & param);
 
@@ -121,7 +139,6 @@ private:
 	};
 	shared_ptr<Value> obj;
 };
-
 
 template<typename ParameterType>
 ofParameter<ParameterType> ofParameterGroup::get(string name) const{

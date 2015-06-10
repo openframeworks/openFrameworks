@@ -116,3 +116,7 @@ void ofxSVG::setupShape(struct svgtiny_shape * shape, ofPath & path){
 		}
 	}
 }
+
+const vector <ofPath> & ofxSVG::getPaths() const{
+    return paths;
+}

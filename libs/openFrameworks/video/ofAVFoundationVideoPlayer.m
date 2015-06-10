@@ -18,7 +18,6 @@ static NSString * const kCurrentItemKey = @"currentItem";
 @implementation ofAVFoundationVideoPlayer
 
 @synthesize delegate;
-@synthesize playerView = _playerView;
 @synthesize player = _player;
 @synthesize playerItem = _playerItem;
 @synthesize asset = _asset;
@@ -32,10 +31,7 @@ static const NSString * ItemStatusContext;
 	self = [super init];
 	if(self) {
 		
-		self.playerView = [[[ofAVFoundationVideoPlayerView alloc] initVideoPlayerView] autorelease];
-		
 		self.player = [[[AVPlayer alloc] init] autorelease];
-		[(ofAVFoundationVideoPlayerView *)self.playerView setPlayer:_player];
 		
 		[_player addObserver:self
 				  forKeyPath:kRateKey
@@ -79,13 +75,7 @@ static const NSString * ItemStatusContext;
 
 //---------------------------------------------------------- cleanup / dispose.
 - (void)dealloc
-{	
-	if(self.playerView != nil) {
-		[(ofAVFoundationVideoPlayerView *)self.playerView setPlayer:nil];
-		[self.playerView removeFromSuperview];
-		self.playerView = nil;
-	}
-	
+{
 	if(self.playerItem != nil) {
 		NSNotificationCenter * notificationCenter = [NSNotificationCenter defaultCenter];
 		[notificationCenter removeObserver:self
@@ -128,14 +118,6 @@ static const NSString * ItemStatusContext;
 }
 
 
-//---------------------------------------------------------- position / size.
-- (void)setVideoPosition:(CGPoint)position {
-	[self.playerView setVideoPosition:position];
-}
-
-- (void)setVideoSize:(CGSize)size {
-	[self.playerView setVideoSize:size];
-}
 
 //---------------------------------------------------------- load / unload.
 - (BOOL)loadWithFile:(NSString*)file async:(BOOL)bAsync{
@@ -223,9 +205,8 @@ static const NSString * ItemStatusContext;
 			videoWidth = [track naturalSize].width;
 			videoHeight = [track naturalSize].height;
 			
-			NSLog(@"video loaded at %i x %i", videoWidth, videoHeight);
+			NSLog(@"video loaded at %li x %li", (long)videoWidth, (long)videoHeight);
 			
-			[self setVideoSize:CGSizeMake(videoWidth, videoHeight)];
 			
 			//------------------------------------------------------------ create player item.
 			self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset];
@@ -295,6 +276,7 @@ static const NSString * ItemStatusContext;
 	[videoOutputSettings setObject:[NSNumber numberWithInt:kCVPixelFormatType_32ARGB]
 							forKey:(NSString*)kCVPixelBufferPixelFormatTypeKey];
 #endif
+	
 	
 	NSArray * videoTracks = [self.asset tracksWithMediaType:AVMediaTypeVideo];
 	if([videoTracks count] > 0) {
@@ -887,54 +869,5 @@ static const NSString * ItemStatusContext;
 - (void)setWillBeUpdatedExternally:(BOOL)value {
 	bWillBeUpdatedExternally = value;
 }
-
-#ifdef TARGET_IOS
-//---------------------------------------------------------- uiimage.
-static UIImage * imageFromSampleBuffer(CMSampleBufferRef sampleBuffer) {
-	
-	CVImageBufferRef imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-	// Lock the base address of the pixel buffer.
-	CVPixelBufferLockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
-	
-	// Get the number of bytes per row for the pixel buffer.
-	size_t bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer);
-	// Get the pixel buffer width and height.
-	size_t width = CVPixelBufferGetWidth(imageBuffer);
-	size_t height = CVPixelBufferGetHeight(imageBuffer);
-	
-	// Create a device-dependent RGB color space.
-	static CGColorSpaceRef colorSpace = NULL;
-	if (colorSpace == NULL) {
-		colorSpace = CGColorSpaceCreateDeviceRGB();
-		if (colorSpace == NULL) {
-			// Handle the error appropriately.
-			return nil;
-		}
-	}
-	
-	// Get the base address of the pixel buffer.
-	void *baseAddress = CVPixelBufferGetBaseAddress(imageBuffer);
-	// Get the data size for contiguous planes of the pixel buffer.
-	size_t bufferSize = CVPixelBufferGetDataSize(imageBuffer);
-	
-	// Create a Quartz direct-access data provider that uses data we supply.
-	CGDataProviderRef dataProvider =
-	CGDataProviderCreateWithData(NULL, baseAddress, bufferSize, NULL);
-	// Create a bitmap image from data supplied by the data provider.
-	CGImageRef cgImage =
-	CGImageCreate(width, height, 8, 32, bytesPerRow,
-				  colorSpace, kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little,
-				  dataProvider, NULL, true, kCGRenderingIntentDefault);
-	CGDataProviderRelease(dataProvider);
-	
-	// Create and return an image object to represent the Quartz image.
-	UIImage *image = [UIImage imageWithCGImage:cgImage];
-	CGImageRelease(cgImage);
-	
-	CVPixelBufferUnlockBaseAddress(imageBuffer, kCVPixelBufferLock_ReadOnly);
-	
-	return image;
-}
-#endif
 
 @end

@@ -401,8 +401,11 @@ private:
 #endif
 	bool				cachedTessellationValid;
 
+#if HAS_TLS
+	static thread_local ofTessellator tessellator;
+#else
 	ofTessellator tessellator;
-
+#endif
 	bool				bHasChanged;
 	int					prevCurveRes;
 	int					curveResolution;

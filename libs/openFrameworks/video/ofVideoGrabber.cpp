@@ -334,5 +334,5 @@ float ofVideoGrabber::getWidth() const{
 
 //----------------------------------------------------------
 bool ofVideoGrabber::isInitialized() const{
-	return grabber->isInitialized() && (!bUseTexture || tex[0].isAllocated() || grabber->getTexturePtr());
+	return grabber && grabber->isInitialized() && (!bUseTexture || tex[0].isAllocated() || grabber->getTexturePtr());
 }

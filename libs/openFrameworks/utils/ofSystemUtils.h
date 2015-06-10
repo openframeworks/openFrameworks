@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ofConstants.h"
 
 class ofFileDialogResult{
 	public:
