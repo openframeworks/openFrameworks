@@ -172,7 +172,7 @@ void printGLInfo(){
     vendor =      (char*)glGetString(GL_VENDOR);
     renderer =    (char*)glGetString(GL_RENDERER);
 
-    cout << "version=" << version << "\nvendor=" << vendor << "\nrenderer=" << renderer\n";
+    cout << "version=" << version << "\nvendor=" << vendor << "\nrenderer=" << renderer << "\n";
 
 }
 
@@ -335,6 +335,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

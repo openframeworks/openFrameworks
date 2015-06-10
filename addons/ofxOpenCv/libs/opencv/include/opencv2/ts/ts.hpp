@@ -1,13 +1,35 @@
 #ifndef __OPENCV_GTESTCV_HPP__
 #define __OPENCV_GTESTCV_HPP__
 
-#ifndef GTEST_CREATE_AS_SHARED_LIBRARY
-#define GTEST_LINKED_AS_SHARED_LIBRARY 1
-#endif
-
 #include <stdarg.h> // for va_list
 
+#ifdef HAVE_WINRT
+    #pragma warning(disable:4447) // Disable warning 'main' signature found without threading model
+#endif
+
+#ifdef _MSC_VER
+#pragma warning( disable: 4127 )
+#endif
+
+#define GTEST_DONT_DEFINE_FAIL      0
+#define GTEST_DONT_DEFINE_SUCCEED   0
+#define GTEST_DONT_DEFINE_ASSERT_EQ 0
+#define GTEST_DONT_DEFINE_ASSERT_NE 0
+#define GTEST_DONT_DEFINE_ASSERT_LE 0
+#define GTEST_DONT_DEFINE_ASSERT_LT 0
+#define GTEST_DONT_DEFINE_ASSERT_GE 0
+#define GTEST_DONT_DEFINE_ASSERT_GT 0
+#define GTEST_DONT_DEFINE_TEST      0
+
 #include "opencv2/ts/ts_gtest.h"
+
+#ifndef GTEST_USES_SIMPLE_RE
+#  define GTEST_USES_SIMPLE_RE 0
+#endif
+#ifndef GTEST_USES_POSIX_RE
+#  define GTEST_USES_POSIX_RE 0
+#endif
+
 #include "opencv2/core/core.hpp"
 
 namespace cvtest
@@ -23,9 +45,9 @@ using cv::Point;
 using cv::Rect;
 
 class CV_EXPORTS TS;
-    
+
 CV_EXPORTS int64 readSeed(const char* str);
-    
+
 CV_EXPORTS void randUni( RNG& rng, Mat& a, const Scalar& param1, const Scalar& param2 );
 
 inline unsigned randInt( RNG& rng )
@@ -37,13 +59,13 @@ inline  double randReal( RNG& rng )
 {
     return (double)rng;
 }
-    
-    
+
+
 CV_EXPORTS const char* getTypeName( int type );
 CV_EXPORTS int typeByName( const char* type_name );
 
 CV_EXPORTS string vec2str(const string& sep, const int* v, size_t nelems);
-    
+
 inline int clipInt( int val, int min_val, int max_val )
 {
     if( val < min_val )
@@ -55,9 +77,9 @@ inline int clipInt( int val, int min_val, int max_val )
 
 CV_EXPORTS double getMinVal(int depth);
 CV_EXPORTS double getMaxVal(int depth);
-    
+
 CV_EXPORTS Size randomSize(RNG& rng, double maxSizeLog);
-CV_EXPORTS void randomSize(RNG& rng, int minDims, int maxDims, double maxSizeLog, vector<int>& sz);    
+CV_EXPORTS void randomSize(RNG& rng, int minDims, int maxDims, double maxSizeLog, vector<int>& sz);
 CV_EXPORTS int randomType(RNG& rng, int typeMask, int minChannels, int maxChannels);
 CV_EXPORTS Mat randomMat(RNG& rng, Size size, int type, double minVal, double maxVal, bool useRoi);
 CV_EXPORTS Mat randomMat(RNG& rng, const vector<int>& size, int type, double minVal, double maxVal, bool useRoi);
@@ -69,7 +91,7 @@ CV_EXPORTS void divide(const Mat& a, const Mat& b, Mat& c, double alpha=1);
 CV_EXPORTS void convert(const Mat& src, Mat& dst, int dtype, double alpha=1, double beta=0);
 CV_EXPORTS void copy(const Mat& src, Mat& dst, const Mat& mask=Mat(), bool invertMask=false);
 CV_EXPORTS void set(Mat& dst, const Scalar& gamma, const Mat& mask=Mat());
-    
+
 // working with multi-channel arrays
 CV_EXPORTS void extract( const Mat& a, Mat& plane, int coi );
 CV_EXPORTS void insert( const Mat& plane, Mat& a, int coi );
@@ -77,10 +99,10 @@ CV_EXPORTS void insert( const Mat& plane, Mat& a, int coi );
 // checks that the array does not have NaNs and/or Infs and all the elements are
 // within [min_val,max_val). idx is the index of the first "bad" element.
 CV_EXPORTS int check( const Mat& data, double min_val, double max_val, vector<int>* idx );
-    
+
 // modifies values that are close to zero
 CV_EXPORTS void  patchZeros( Mat& mat, double level );
-    
+
 CV_EXPORTS void transpose(const Mat& src, Mat& dst);
 CV_EXPORTS void erode(const Mat& src, Mat& dst, const Mat& _kernel, Point anchor=Point(-1,-1),
                       int borderType=IPL_BORDER_CONSTANT, const Scalar& borderValue=Scalar());
@@ -93,17 +115,17 @@ CV_EXPORTS void copyMakeBorder(const Mat& src, Mat& dst, int top, int bottom, in
                                int borderType, const Scalar& borderValue=Scalar());
 CV_EXPORTS Mat calcSobelKernel2D( int dx, int dy, int apertureSize, int origin=0 );
 CV_EXPORTS Mat calcLaplaceKernel2D( int aperture_size );
-    
+
 CV_EXPORTS void initUndistortMap( const Mat& a, const Mat& k, Size sz, Mat& mapx, Mat& mapy );
-    
+
 CV_EXPORTS void minMaxLoc(const Mat& src, double* minval, double* maxval,
                           vector<int>* minloc, vector<int>* maxloc, const Mat& mask=Mat());
 CV_EXPORTS double norm(const Mat& src, int normType, const Mat& mask=Mat());
 CV_EXPORTS double norm(const Mat& src1, const Mat& src2, int normType, const Mat& mask=Mat());
 CV_EXPORTS Scalar mean(const Mat& src, const Mat& mask=Mat());
-    
+
 CV_EXPORTS bool cmpUlps(const Mat& data, const Mat& refdata, int expMaxDiff, double* realMaxDiff, vector<int>* idx);
-    
+
 // compares two arrays. max_diff is the maximum actual difference,
 // success_err_level is maximum allowed difference, idx is the index of the first
 // element for which difference is >success_err_level
@@ -111,23 +133,23 @@ CV_EXPORTS bool cmpUlps(const Mat& data, const Mat& refdata, int expMaxDiff, dou
 CV_EXPORTS int cmpEps( const Mat& data, const Mat& refdata, double* max_diff,
                        double success_err_level, vector<int>* idx,
                        bool element_wise_relative_error );
-    
+
 // a wrapper for the previous function. in case of error prints the message to log file.
 CV_EXPORTS int cmpEps2( TS* ts, const Mat& data, const Mat& refdata, double success_err_level,
                         bool element_wise_relative_error, const char* desc );
-    
+
 CV_EXPORTS int cmpEps2_64f( TS* ts, const double* val, const double* refval, int len,
                         double eps, const char* param_name );
-    
+
 CV_EXPORTS void logicOp(const Mat& src1, const Mat& src2, Mat& dst, char c);
 CV_EXPORTS void logicOp(const Mat& src, const Scalar& s, Mat& dst, char c);
 CV_EXPORTS void min(const Mat& src1, const Mat& src2, Mat& dst);
-CV_EXPORTS void min(const Mat& src, double s, Mat& dst);    
+CV_EXPORTS void min(const Mat& src, double s, Mat& dst);
 CV_EXPORTS void max(const Mat& src1, const Mat& src2, Mat& dst);
-CV_EXPORTS void max(const Mat& src, double s, Mat& dst);    
-    
+CV_EXPORTS void max(const Mat& src, double s, Mat& dst);
+
 CV_EXPORTS void compare(const Mat& src1, const Mat& src2, Mat& dst, int cmpop);
-CV_EXPORTS void compare(const Mat& src, double s, Mat& dst, int cmpop);    
+CV_EXPORTS void compare(const Mat& src, double s, Mat& dst, int cmpop);
 CV_EXPORTS void gemm(const Mat& src1, const Mat& src2, double alpha,
                      const Mat& src3, double beta, Mat& dst, int flags);
     CV_EXPORTS void transform( const Mat& src, Mat& dst, const Mat& transmat, const Mat& shift );
@@ -139,16 +161,16 @@ struct CV_EXPORTS MatInfo
     const Mat* m;
 };
 
-CV_EXPORTS std::ostream& operator << (std::ostream& out, const MatInfo& m);    
-    
+CV_EXPORTS std::ostream& operator << (std::ostream& out, const MatInfo& m);
+
 struct CV_EXPORTS MatComparator
 {
 public:
     MatComparator(double maxdiff, int context);
-    
+
     ::testing::AssertionResult operator()(const char* expr1, const char* expr2,
                                           const Mat& m1, const Mat& m2);
-    
+
     double maxdiff;
     double realmaxdiff;
     vector<int> loc0;
@@ -222,7 +244,7 @@ protected:
 struct TestInfo
 {
     TestInfo();
-    
+
     // pointer to the test
     BaseTest* test;
 
@@ -231,7 +253,7 @@ struct TestInfo
 
     // seed value right before the data for the failed test case is prepared.
     uint64 rng_seed;
-    
+
     // seed value right before running the test
     uint64 rng_seed0;
 
@@ -247,18 +269,18 @@ struct TestInfo
 struct CV_EXPORTS TSParams
 {
     TSParams();
-    
+
     // RNG seed, passed to and updated by every test executed.
     uint64 rng_seed;
-    
+
     // whether to use IPP, MKL etc. or not
     bool use_optimized;
-    
+
     // extensivity of the tests, scale factor for test_case_count
     double test_case_count_scale;
 };
 
-    
+
 class CV_EXPORTS TS
 {
 public:
@@ -281,10 +303,10 @@ public:
     };
 
     static TS* ptr();
-    
+
     // initialize test system before running the first test
     virtual void init( const string& modulename );
-    
+
     // low-level printing functions that are used by individual tests and by the system itself
     virtual void printf( int streams, const char* fmt, ... );
     virtual void vprintf( int streams, const char* fmt, va_list arglist );
@@ -296,7 +318,7 @@ public:
 
     // sets information about a failed test
     virtual void set_failed_test_info( int fail_code );
-    
+
     virtual void set_gtest_status();
 
     // test error codes
@@ -350,7 +372,7 @@ public:
         // processing time (in this case there should be possibility to interrupt such a function
         FAIL_HANG=-13,
 
-        // unexpected responce on passing bad arguments to the tested function
+        // unexpected response on passing bad arguments to the tested function
         // (the function crashed, proceed succesfully (while it should not), or returned
         // error code that is different from what is expected)
         FAIL_BAD_ARG_CHECK=-14,
@@ -382,7 +404,7 @@ public:
 
     // returns textual description of failure code
     static string str_from_code( int code );
-    
+
 protected:
 
     // these are allocated within a test to try keep them valid in case of stack corruption
@@ -390,10 +412,10 @@ protected:
 
     // information about the current test
     TestInfo current_test_info;
-        
+
     // the path to data files used by tests
     string data_path;
-    
+
     TSParams params;
     std::string output_buf[MAX_IDX];
 };
@@ -452,7 +474,7 @@ protected:
     virtual void run_func(void) = 0;
     int test_case_idx;
     int progress;
-    double t, freq;   
+    double t, freq;
 
     template<class F>
     int run_test_case( int expected_code, const string& _descr, F f)
@@ -470,7 +492,7 @@ protected:
             t = new_t;
         }
         progress = update_progress(progress, test_case_idx, 0, dt);
-        
+
         int errcount = 0;
         bool thrown = false;
         const char* descr = _descr.c_str() ? _descr.c_str() : "";
@@ -503,22 +525,32 @@ protected:
             errcount = 1;
         }
         test_case_idx++;
-        
+
         return errcount;
     }
 };
-    
+
 struct CV_EXPORTS DefaultRngAuto
 {
     const uint64 old_state;
-    
+
     DefaultRngAuto() : old_state(cv::theRNG().state) { cv::theRNG().state = (uint64)-1; }
     ~DefaultRngAuto() { cv::theRNG().state = old_state; }
-    
+
     DefaultRngAuto& operator=(const DefaultRngAuto&);
 };
-    
+
 }
+
+namespace cvtest
+{
+
+// test images generation functions
+CV_EXPORTS void fillGradient(Mat& img, int delta = 5);
+CV_EXPORTS void smoothBorder(Mat& img, const Scalar& color, int delta = 3);
+
+CV_EXPORTS void printVersionInfo(bool useStdOut = true);
+} //namespace cvtest
 
 // fills c with zeros
 CV_EXPORTS void cvTsZero( CvMat* c, const CvMat* mask=0 );
@@ -532,13 +564,33 @@ CV_EXPORTS void  cvTsConvert( const CvMat* src, CvMat* dst );
 CV_EXPORTS void cvTsGEMM( const CvMat* a, const CvMat* b, double alpha,
                          const CvMat* c, double beta, CvMat* d, int flags );
 
-#define CV_TEST_MAIN(resourcesubdir) \
+#ifndef __CV_TEST_EXEC_ARGS
+#if defined(_MSC_VER) && (_MSC_VER <= 1400)
+#define __CV_TEST_EXEC_ARGS(...)    \
+    while (++argc >= (--argc,-1)) {__VA_ARGS__; break;} /*this ugly construction is needed for VS 2005*/
+#else
+#define __CV_TEST_EXEC_ARGS(...)    \
+    __VA_ARGS__;
+#endif
+#endif
+
+#define CV_TEST_MAIN(resourcesubdir, ...) \
 int main(int argc, char **argv) \
 { \
     cvtest::TS::ptr()->init(resourcesubdir); \
     ::testing::InitGoogleTest(&argc, argv); \
+    cvtest::printVersionInfo(); \
+    __CV_TEST_EXEC_ARGS(__VA_ARGS__) \
     return RUN_ALL_TESTS(); \
 }
 
+// This usually only makes sense in perf tests with several implementations,
+// some of which are not available.
+#define CV_TEST_FAIL_NO_IMPL() do { \
+    ::testing::Test::RecordProperty("custom_status", "noimpl"); \
+    FAIL() << "No equivalent implementation."; \
+} while (0)
+
 #endif
 
+#include "ts_perf.hpp"

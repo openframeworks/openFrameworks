@@ -2,9 +2,10 @@
 #include "ofXml.h"
 #include "ofImage.h"
 #include "ofBitmapFont.h"
+using namespace std;
 
 
-void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0){
+void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
 	ofxBaseGui::loadFont(fontPath,fontsize,_bAntiAliased,_bFullCharacterSet,dpi);
 }
 
@@ -72,6 +73,7 @@ ofxBaseGui::ofxBaseGui(){
 	thisFillColor=fillColor;
 
 	bRegisteredForMouseEvents = false;
+	needsRedraw = true;
 
 	/*if(!fontLoaded){
 		loadFont(OF_TTF_MONO,10,true,true);
@@ -114,6 +116,10 @@ void ofxBaseGui::unregisterMouseEvents(){
 }
 
 void ofxBaseGui::draw(){
+    if(needsRedraw){
+        generateDraw();
+        needsRedraw = false;
+    }
 	currentFrame = ofGetFrameNum();
 	render();
 }
@@ -199,23 +205,23 @@ void ofxBaseGui::setPosition(ofPoint p){
 void ofxBaseGui::setPosition(float x, float y){
 	b.x = x;
 	b.y = y;
-	generateDraw();
+	setNeedsRedraw();
 }
 
 void ofxBaseGui::setSize(float w, float h){
 	b.width = w;
 	b.height = h;
-	generateDraw();
+	setNeedsRedraw();
 }
 
 void ofxBaseGui::setShape(ofRectangle r){
 	b = r;
-	generateDraw();
+	setNeedsRedraw();
 }
 
 void ofxBaseGui::setShape(float x, float y, float w, float h){
 	b.set(x,y,w,h);
-	generateDraw();
+	setNeedsRedraw();
 }
 
 ofPoint ofxBaseGui::getPosition(){
@@ -255,27 +261,27 @@ ofColor ofxBaseGui::getFillColor(){
 }
 
 void ofxBaseGui::setHeaderBackgroundColor(const ofColor & color){
-	generateDraw();
+    setNeedsRedraw();
 	thisHeaderBackgroundColor = color;
 }
 
 void ofxBaseGui::setBackgroundColor(const ofColor & color){
-	generateDraw();
+    setNeedsRedraw();
 	thisBackgroundColor = color;
 }
 
 void ofxBaseGui::setBorderColor(const ofColor & color){
-	generateDraw();
+    setNeedsRedraw();
 	thisBorderColor = color;
 }
 
 void ofxBaseGui::setTextColor(const ofColor & color){
-	generateDraw();
+    setNeedsRedraw();
 	thisTextColor = color;
 }
 
 void ofxBaseGui::setFillColor(const ofColor & color){
-	generateDraw();
+    setNeedsRedraw();
 	thisFillColor = color;
 }
 
@@ -309,6 +315,10 @@ void ofxBaseGui::setDefaultWidth(int width){
 
 void ofxBaseGui::setDefaultHeight(int height){
 	defaultHeight = height;
+}
+
+void ofxBaseGui::setNeedsRedraw(){
+    needsRedraw = true;
 }
 
 string ofxBaseGui::saveStencilToHex(ofImage& img) {

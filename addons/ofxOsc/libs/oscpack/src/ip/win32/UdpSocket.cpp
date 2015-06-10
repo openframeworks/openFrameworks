@@ -114,8 +114,8 @@ public:
         }
 
         if( UdpSocket::maxBufferSize > 0 ){
-            setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, &UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
-            setsockopt(socket_, SOL_SOCKET, SO_RCVBUF, &UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
+            setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, (const char*)&UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
+            setsockopt(socket_, SOL_SOCKET, SO_RCVBUF, (const char*)&UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
         }
         
 		std::memset( &sendToAddr_, 0, sizeof(sendToAddr_) );
@@ -452,7 +452,7 @@ public:
                 maxSize = 4098;
             }
             const unsigned long MAX_BUFFER_SIZE = maxSize;
-            data = new char[ MAX_BUFFER_SIZE ];
+            char * data = new char[ MAX_BUFFER_SIZE ];
 		IpEndpointName remoteEndpoint;
 
 		while( !break_ ){

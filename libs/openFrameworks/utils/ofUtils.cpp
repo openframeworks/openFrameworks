@@ -56,12 +56,12 @@
 #endif
 
 static bool enableDataPath = true;
-static unsigned long long startTimeSeconds;   //  better at the first frame ?? (currently, there is some delay from static init, to running.
-static unsigned long long startTimeNanos;
+static uint64_t startTimeSeconds;   //  better at the first frame ?? (currently, there is some delay from static init, to running.
+static uint64_t startTimeNanos;
 
 
 //--------------------------------------
-void ofGetMonotonicTime(unsigned long long & seconds, unsigned long long & nanoseconds){
+void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
 #if (defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)) || defined(TARGET_EMSCRIPTEN)
 	struct timespec now;
 	clock_gettime(CLOCK_MONOTONIC, &now);
@@ -92,25 +92,25 @@ void ofGetMonotonicTime(unsigned long long & seconds, unsigned long long & nanos
 
 
 //--------------------------------------
-unsigned long long ofGetElapsedTimeMillis(){
-	unsigned long long seconds;
-	unsigned long long nanos;
+uint64_t ofGetElapsedTimeMillis(){
+    uint64_t seconds;
+    uint64_t nanos;
 	ofGetMonotonicTime(seconds,nanos);
 	return (seconds - startTimeSeconds)*1000 + ((long long)(nanos - startTimeNanos))/1000000;
 }
 
 //--------------------------------------
-unsigned long long ofGetElapsedTimeMicros(){
-	unsigned long long seconds;
-	unsigned long long nanos;
+uint64_t ofGetElapsedTimeMicros(){
+    uint64_t seconds;
+    uint64_t nanos;
 	ofGetMonotonicTime(seconds,nanos);
 	return (seconds - startTimeSeconds)*1000000 + ((long long)(nanos - startTimeNanos))/1000;
 }
 
 //--------------------------------------
 float ofGetElapsedTimef(){
-	unsigned long long seconds;
-	unsigned long long nanos;
+    uint64_t seconds;
+    uint64_t nanos;
 	ofGetMonotonicTime(seconds,nanos);
 	return (seconds - startTimeSeconds) + ((long long)(nanos - startTimeNanos))/1000000000.;
 }
@@ -127,14 +127,14 @@ void ofResetElapsedTimeCounter(){
  * when subtracting an initial start time, unless the total time exceeds
  * 32-bit, where the GLUT API return value is also overflowed.
  */
-unsigned long long ofGetSystemTime( ) {
-	unsigned long long seconds, nanoseconds;
+uint64_t ofGetSystemTime( ) {
+	uint64_t seconds, nanoseconds;
 	ofGetMonotonicTime(seconds,nanoseconds);
 	return seconds * 1000 + nanoseconds / 1000000;
 }
 
-unsigned long long ofGetSystemTimeMicros( ) {
-	unsigned long long seconds, nanoseconds;
+uint64_t ofGetSystemTimeMicros( ) {
+    uint64_t seconds, nanoseconds;
 	ofGetMonotonicTime(seconds,nanoseconds);
 	return seconds * 1000000 + nanoseconds / 1000;
 }
@@ -737,7 +737,14 @@ void ofLaunchBrowser(const string& _url, bool uriEncodeQuery){
 //--------------------------------------------------
 string ofGetVersionInfo(){
 	stringstream sstr;
-	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH << endl;
+	sstr << OF_VERSION_MAJOR << "." << OF_VERSION_MINOR << "." << OF_VERSION_PATCH;
+
+	if (!std::string(OF_VERSION_PRE_RELEASE).empty())
+	{
+		sstr << "-" << OF_VERSION_PRE_RELEASE;
+	}
+
+	sstr << std::endl;
 	return sstr.str();
 }
 
@@ -752,6 +759,11 @@ unsigned int ofGetVersionMinor() {
 unsigned int ofGetVersionPatch() {
 	return OF_VERSION_PATCH;
 }
+
+std::string ofGetVersionPreRelease() {
+	return OF_VERSION_PRE_RELEASE;
+}
+
 
 //---- new to 006
 //from the forums http://www.openframeworks.cc/forum/viewtopic.php?t=1413

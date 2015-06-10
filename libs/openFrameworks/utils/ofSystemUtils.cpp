@@ -609,7 +609,7 @@ string ofSystemTextBoxDialog(string question, string text){
 		[alert setMessageText:[NSString stringWithCString:question.c_str()
 												 encoding:NSUTF8StringEncoding]];
 		// create text field
-		NSTextField* label = [[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))];
+		NSTextField* label = [[[NSTextField alloc] initWithFrame:NSRectFromCGRect(CGRectMake(0,0,300,40))] autorelease];
 		[label setStringValue:[NSString stringWithCString:text.c_str()
 												 encoding:NSUTF8StringEncoding]];
 		// add text field to alert dialog

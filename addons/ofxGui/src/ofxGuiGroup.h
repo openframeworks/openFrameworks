@@ -8,17 +8,17 @@
 class ofxGuiGroup : public ofxBaseGui {
 public:
 	ofxGuiGroup();
-	ofxGuiGroup(const ofParameterGroup & parameters, string _filename="settings.xml", float x = 10, float y = 10);
+	ofxGuiGroup(const ofParameterGroup & parameters, std::string _filename="settings.xml", float x = 10, float y = 10);
     virtual ~ofxGuiGroup() {}
-    virtual ofxGuiGroup * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
-	virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
+    virtual ofxGuiGroup * setup(std::string collectionName="", std::string filename="settings.xml", float x = 10, float y = 10);
+	virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, std::string filename="settings.xml", float x = 10, float y = 10);
     
 	void add(ofxBaseGui * element);
     void add(const ofParameterGroup & parameters);
 	void add(ofParameter<float> & parameter);
 	void add(ofParameter<int> & parameter);
 	void add(ofParameter<bool> & parameter);
-	void add(ofParameter<string> & parameter);
+	void add(ofParameter<std::string> & parameter);
     void add(ofParameter<ofVec2f> & parameter);
     void add(ofParameter<ofVec3f> & parameter);
     void add(ofParameter<ofVec4f> & parameter);
@@ -42,16 +42,16 @@ public:
 	virtual bool mouseScrolled(ofMouseEventArgs & args);
 	
 	
-	vector<string> getControlNames();
+	std::vector<std::string> getControlNames();
 	int getNumControls();
     
-	ofxIntSlider & getIntSlider(string name);
-	ofxFloatSlider & getFloatSlider(string name);
-	ofxToggle & getToggle(string name);
-	ofxButton & getButton(string name);
-	ofxGuiGroup & getGroup(string name);
+	ofxIntSlider & getIntSlider(std::string name);
+	ofxFloatSlider & getFloatSlider(std::string name);
+	ofxToggle & getToggle(std::string name);
+	ofxButton & getButton(std::string name);
+	ofxGuiGroup & getGroup(std::string name);
     
-	ofxBaseGui * getControl(string name);
+	ofxBaseGui * getControl(std::string name);
 	ofxBaseGui * getControl(int num);
     
 	virtual ofAbstractParameter & getParameter();
@@ -67,14 +67,14 @@ protected:
 	float header;
 	
     template<class ControlType>
-	ControlType & getControlType(string name);
+	ControlType & getControlType(std::string name);
 
     virtual void generateDraw();
 
-	vector <ofxBaseGui *> collection;
+    std::vector <ofxBaseGui *> collection;
 	ofParameterGroup parameters;
 	
-	string filename;
+	std::string filename;
 	bool minimized;
 	bool bGuiActive;
 
@@ -84,7 +84,7 @@ protected:
 };
 
 template<class ControlType>
-ControlType & ofxGuiGroup::getControlType(string name){
+ControlType & ofxGuiGroup::getControlType(std::string name){
 	ControlType * control = dynamic_cast<ControlType*>(getControl(name));
 	if(control){
 		return *control;

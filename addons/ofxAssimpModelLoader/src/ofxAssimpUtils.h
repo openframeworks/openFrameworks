@@ -8,8 +8,9 @@
 
 #include "ofMain.h"
 #include "ofxAssimpMeshHelper.h"
-#include "assimp.h"
-#include "aiMesh.h"
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 //--------------------------------------------------------------
 static inline ofFloatColor aiColorToOfColor(const aiColor4D& c){

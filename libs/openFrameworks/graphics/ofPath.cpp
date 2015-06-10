@@ -2,6 +2,10 @@
 #include "ofAppRunner.h"
 #include "ofTessellator.h"
 
+#if HAS_TLS
+	thread_local ofTessellator ofPath::tessellator;
+#endif
+
 ofPath::Command::Command(Type type)
 :type(type){
 
@@ -46,6 +50,7 @@ ofPath::ofPath(){
 	bHasChanged = false;
 	bUseShapeColor = true;
 	bNeedsPolylinesGeneration = false;
+	cachedTessellationValid = true;
 	clear();
 }
 

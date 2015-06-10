@@ -2,6 +2,7 @@
 #include "ofConstants.h"
 #include <queue>
 #include "Poco/Condition.h"
+#include "ofUtils.h"
 
 /// Communication channel between different threads
 /// allows for multithreaded programming without using

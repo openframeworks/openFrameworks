@@ -3,6 +3,7 @@
 #include "ofxSliderGroup.h"
 #include "ofGraphics.h"
 #include "ofxLabel.h"
+using namespace std;
 
 ofxGuiGroup::ofxGuiGroup(){
 	minimized = false;
@@ -83,7 +84,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 	parameters = _parameters;
     registerMouseEvents();
 
-	generateDraw();
+	setNeedsRedraw();
     
 	return this;
 }
@@ -112,7 +113,7 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	}
     
 	parameters.add(element->getParameter());
-	generateDraw();
+	setNeedsRedraw();
 }
 
 void ofxGuiGroup::setWidthElements(float w){
@@ -125,7 +126,7 @@ void ofxGuiGroup::setWidthElements(float w){
 		}
 	}
 	sizeChangedCB();
-	generateDraw();
+	setNeedsRedraw();
 }
 
 void ofxGuiGroup::add(const ofParameterGroup & parameters){
@@ -176,7 +177,9 @@ void ofxGuiGroup::add(ofParameter<ofFloatColor> & parameter){
 
 void ofxGuiGroup::clear(){
 	collection.clear();
+	parameters.clear();
 	b.height = header + spacing + spacingNextElement ;
+	sizeChangedCB();
 }
 
 bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
@@ -358,7 +361,7 @@ void ofxGuiGroup::minimize(){
 	minimized=true;
 	b.height = header + spacing + spacingNextElement + 1 /*border*/;
 	if(parent) parent->sizeChangedCB();
-	generateDraw();
+	setNeedsRedraw();
 }
 
 void ofxGuiGroup::maximize(){
@@ -367,7 +370,7 @@ void ofxGuiGroup::maximize(){
 		b.height += collection[i]->getHeight() + spacing;
 	}
 	if(parent) parent->sizeChangedCB();
-	generateDraw();
+	setNeedsRedraw();
 }
 
 void ofxGuiGroup::minimizeAll(){
@@ -397,7 +400,7 @@ void ofxGuiGroup::sizeChangedCB(){
 	}
 	b.height = y - b.y;
 	if(parent) parent->sizeChangedCB();
-	generateDraw();
+	setNeedsRedraw();
 }
 
 
@@ -424,7 +427,7 @@ void ofxGuiGroup::setPosition(ofPoint p){
 	}
 
 	b.setPosition(p);
-	generateDraw();
+	setNeedsRedraw();
 }
 
 void ofxGuiGroup::setPosition(float x, float y){

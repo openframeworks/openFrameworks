@@ -13,6 +13,7 @@
     UIInterfaceOrientation pendingInterfaceOrientation;
     BOOL bReadyToRotate;
     BOOL bFirstUpdate;
+	BOOL bAnimated;
 }
 @end
 
@@ -26,6 +27,7 @@
         currentInterfaceOrientation = pendingInterfaceOrientation = self.interfaceOrientation;
         bReadyToRotate  = NO;
         bFirstUpdate    = NO;
+		bAnimated		= NO;
         
         self.glView = [[[ofxiOSEAGLView alloc] initWithFrame:frame andApp:app] autorelease];
         self.glView.delegate = self;
@@ -124,6 +126,7 @@
 
 - (void)rotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
                             animated:(BOOL)animated {
+	bAnimated = animated;
     if(bReadyToRotate == NO) {
         pendingInterfaceOrientation = interfaceOrientation;
         
@@ -144,30 +147,48 @@
     if(currentInterfaceOrientation == interfaceOrientation && !bFirstUpdate) {
         return;
     }
-    
+	
+	if(pendingInterfaceOrientation != interfaceOrientation) {
+		CGSize screenSize = [UIScreen mainScreen].bounds.size;
+		CGRect bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
+		if(UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
+			bounds.size.width   = screenSize.height;
+			bounds.size.height  = screenSize.width;
+		}
+		self.glView.bounds = bounds;
+		[self.glView updateDimensions];
+	}
+	
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
     CGPoint center;
     CGRect bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
-
-    // Is the iOS version less than 8?
-    if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
-        if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
-            center.x = screenSize.height * 0.5;
-            center.y = screenSize.width * 0.5;
-        } else {
-            center.x = screenSize.width * 0.5;
-            center.y = screenSize.height * 0.5;
-        }
-
-        if(UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
-            bounds.size.width = screenSize.height;
-            bounds.size.height = screenSize.width;
-        }
-    } else {
-        center.x = screenSize.width * 0.5;
-        center.y = screenSize.height * 0.5;
-    }
-    
+	
+	if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+		center.x = screenSize.height * 0.5;
+		center.y = screenSize.width * 0.5;
+	} else {
+		center.x = screenSize.width * 0.5;
+		center.y = screenSize.height * 0.5;
+	}
+	
+	// Is the iOS version less than 8?
+	if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
+		if(UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
+			bounds.size.width = screenSize.height;
+			bounds.size.height = screenSize.width;
+		}
+	} else {
+		// Fixes for iOS 8 Portrait to Landscape issues
+		if((UIInterfaceOrientationIsPortrait(interfaceOrientation) && screenSize.width >= screenSize.height) ||
+		   (UIInterfaceOrientationIsLandscape(interfaceOrientation) && screenSize.height >= screenSize.width)) {
+			bounds.size.width = screenSize.height;
+			bounds.size.height = screenSize.width;
+		} else {
+			bounds.size.width = screenSize.width;
+			bounds.size.height = screenSize.height;
+		}
+	}
+	
     float rot1 = [self rotationForOrientation:currentInterfaceOrientation];
     float rot2 = [self rotationForOrientation:interfaceOrientation];
     float rot3 = rot2 - rot1;
@@ -209,6 +230,7 @@
     // The window calls the root view controller’s willRotateToInterfaceOrientation:duration: method.
     // Container view controllers forward this message on to the currently displayed content view controllers.
     // You can override this method in your custom content view controllers to hide views or make other changes to your view layout before the interface is rotated.
+	// Deprecated in iOS 8. See viewWillTransitionToSize below.
 }
 
 - (void)viewWillLayoutSubviews {
@@ -226,6 +248,7 @@
     // CALLBACK 3.
     // This method is called from within an animation block so that any property changes you make
     // are animated at the same time as other animations that comprise the rotation.
+	// Deprecated in iOS 8. See viewWillTransitionToSize below.
     
     CGSize screenSize = [UIScreen mainScreen].bounds.size;
 
@@ -244,9 +267,52 @@
         center.y = screenSize.height * 0.5;
     }
     
-    self.glView.center = center;
-    self.glView.transform = CGAffineTransformMakeRotation(0);
+	if(bAnimated) {
+		NSTimeInterval duration = 0.3;
+		[self.glView.layer removeAllAnimations];
+		[UIView animateWithDuration:duration animations:^{
+			self.glView.center = center;
+			self.glView.transform = CGAffineTransformMakeRotation(0);
+		}];
+	} else {
+		self.glView.center = center;
+		self.glView.transform = CGAffineTransformMakeRotation(0);
+	}
 }
+
+#ifdef __IPHONE_8_0
+// iOS8+ version of willAnimateRotationToInterfaceOrientation
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+	CGSize screenSize = size;
+	
+	CGPoint center;
+	// Is the iOS version less than 8?
+	if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
+		if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+			center.x = screenSize.height * 0.5;
+			center.y = screenSize.width * 0.5;
+		} else {
+			center.x = screenSize.width * 0.5;
+			center.y = screenSize.height * 0.5;
+		}
+	} else {
+		center.x = screenSize.width * 0.5;
+		center.y = screenSize.height * 0.5;
+	}
+	
+	if(bAnimated) {
+		NSTimeInterval duration = 0.3;
+		[self.glView.layer removeAllAnimations];
+		[UIView animateWithDuration:duration animations:^{
+			self.glView.center = center;
+			self.glView.transform = CGAffineTransformMakeRotation(0);
+		}];
+	} else {
+		self.glView.center = center;
+		self.glView.transform = CGAffineTransformMakeRotation(0);
+	}
+}
+#endif
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 
@@ -263,25 +329,18 @@
 //-------------------------------------------------------------- iOS6.
 #ifdef __IPHONE_6_0
 - (NSUInteger)supportedInterfaceOrientations {
-    if(pendingInterfaceOrientation >= 0 && !bReadyToRotate) {
-        currentInterfaceOrientation = pendingInterfaceOrientation;
-    }
     switch (currentInterfaceOrientation) {
         case UIInterfaceOrientationPortrait:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortrait %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskPortrait;
+			return UIInterfaceOrientationMaskPortrait;
             break;
         case UIInterfaceOrientationPortraitUpsideDown:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationPortraitUpsideDown %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskPortraitUpsideDown;
+			return UIInterfaceOrientationMaskPortraitUpsideDown;
             break;
         case UIInterfaceOrientationLandscapeLeft:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationMaskLandscapeLeft %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskLandscapeLeft;
+			return UIInterfaceOrientationMaskLandscapeLeft;
             break;
         case UIInterfaceOrientationLandscapeRight:
-//            NSLog(@"ofxiPhoneViewController :: supportedInterfaceOrientations : UIInterfaceOrientationLandscapeRight %i", currentInterfaceOrientation);
-            return UIInterfaceOrientationMaskLandscapeRight;
+			return UIInterfaceOrientationMaskLandscapeRight;
             break;
         default:
             break;
@@ -289,14 +348,19 @@
     // defaults to orientations selected in the .plist file ('Supported Interface Orientations' in the XCode Project)
     return -1; 
 }
-#endif
-
 - (BOOL)shouldAutorotate {
-    return YES;
+	return YES;
 }
+#endif
 
 - (BOOL)isReadyToRotate {
     return bReadyToRotate;
 }
+
+#ifdef __IPHONE_7_0
+-(BOOL)prefersStatusBarHidden{
+	return YES;
+}
+#endif
 
 @end

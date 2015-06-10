@@ -8,11 +8,40 @@ ofParameterGroup::ofParameterGroup()
 
 }
 
-void ofParameterGroup::add(ofAbstractParameter & param){
-	shared_ptr<ofAbstractParameter> group = param.newReference();
-	obj->parameters.push_back(group);
-	obj->parametersIndex[group->getEscapedName()] = obj->parameters.size()-1;
-	group->setParent(this);
+ofParameterGroup::~ofParameterGroup(){
+	for(auto & p: obj->parameters){
+		p->setParent(NULL);
+	}
+}
+
+ofParameterGroup::ofParameterGroup(const ofParameterGroup& mom){
+	// copy object
+	obj = mom.obj;
+
+	// correct parent of parameters
+	for(auto & p: obj->parameters){
+		p->setParent(this);
+	}
+}
+
+ofParameterGroup & ofParameterGroup::operator=(const ofParameterGroup& mom){
+
+	// copy object
+	obj = mom.obj;
+
+	// correct parent of parameters
+	for(auto & p: obj->parameters){
+		p->setParent(this);
+	}
+
+	return *this;
+}
+
+void ofParameterGroup::add(ofAbstractParameter & parameter){
+	shared_ptr<ofAbstractParameter> param = parameter.newReference();
+	obj->parameters.push_back(param);
+	obj->parametersIndex[param->getEscapedName()] = obj->parameters.size()-1;
+	param->setParent(this);
 }
 
 void ofParameterGroup::clear(){

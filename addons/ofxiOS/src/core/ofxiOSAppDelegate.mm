@@ -87,11 +87,11 @@
     
     bool bDoesHWOrientation = ofxiOSGetOFWindow()->doesHWOrientation();
     
-    int iOrient  = [[UIApplication sharedApplication] statusBarOrientation];
+    UIInterfaceOrientation iOrient  = [[UIApplication sharedApplication] statusBarOrientation];
     // is the os version less than 6.0? 
     if( [[[UIDevice currentDevice] systemVersion] compare:@"6.0" options:NSNumericSearch] == NSOrderedAscending ) {
-        iOrient = [[UIDevice currentDevice] orientation];
-        
+		iOrient = UIInterfaceOrientationPortrait;
+		
         UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
         switch (deviceOrientation) {
             case UIDeviceOrientationPortrait:
@@ -129,23 +129,18 @@
         
         ofOrientation defaultOrient = OF_ORIENTATION_UNKNOWN;
         if(bDoesHWOrientation) {
-            
             // update the window orientation based on the orientation of the device //
             switch (iOrient) {
                 case UIInterfaceOrientationPortrait:
-//                    NSLog(@"applicationDidFinishLaunnching :: portrait");
                     defaultOrient = OF_ORIENTATION_DEFAULT;
                     break;
                 case UIInterfaceOrientationPortraitUpsideDown:
-//                    NSLog(@"applicationDidFinishLaunnching :: upside down");
                     defaultOrient = OF_ORIENTATION_180;
                     break;
                 case UIInterfaceOrientationLandscapeLeft:
-//                    NSLog(@"applicationDidFinishLaunnching :: landscape left");
                     defaultOrient = OF_ORIENTATION_90_RIGHT;
                     break;
                 case UIInterfaceOrientationLandscapeRight:
-//                    NSLog(@"applicationDidFinishLaunnching :: landscape right");
                     defaultOrient = OF_ORIENTATION_90_LEFT;
                     break;
             }
@@ -159,30 +154,27 @@
         self.window.rootViewController = self.glViewController;
         
         ofOrientation requested = ofGetOrientation();
-        
+		UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationPortrait;
+		switch (requested) {
+			case OF_ORIENTATION_DEFAULT:
+				interfaceOrientation = UIInterfaceOrientationPortrait;
+				break;
+			case OF_ORIENTATION_180:
+				interfaceOrientation = UIInterfaceOrientationPortraitUpsideDown;
+				break;
+			case OF_ORIENTATION_90_RIGHT:
+				interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
+				break;
+			case OF_ORIENTATION_90_LEFT:
+				interfaceOrientation = UIInterfaceOrientationLandscapeRight;
+				break;
+		}
+		
         if(!bDoesHWOrientation) {
             [self.glViewController rotateToInterfaceOrientation:UIInterfaceOrientationPortrait animated:false];
-        } else {
-            UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationPortrait;
-            switch (requested) {
-                case OF_ORIENTATION_DEFAULT:
-                    interfaceOrientation = UIInterfaceOrientationPortrait;
-                    break;
-                case OF_ORIENTATION_180:
-                    interfaceOrientation = UIInterfaceOrientationPortraitUpsideDown;
-                    break;
-                case OF_ORIENTATION_90_RIGHT:
-                    interfaceOrientation = UIInterfaceOrientationLandscapeLeft;
-                    break;
-                case OF_ORIENTATION_90_LEFT:
-                    interfaceOrientation = UIInterfaceOrientationLandscapeRight;
-                    break;
-            }
-            
+		} else {
             [[UIApplication sharedApplication] setStatusBarOrientation:interfaceOrientation animated:NO];
-            //            self.glViewController.currentInterfaceOrientation = interfaceOrientation;
             [self.glViewController rotateToInterfaceOrientation:interfaceOrientation animated:false];
-            
             ofSetOrientation(requested);
         }
         
@@ -374,5 +366,6 @@
     
     return YES;
 }
+
 
 @end

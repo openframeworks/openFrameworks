@@ -32,8 +32,8 @@ vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList() const{
 	shared_ptr<RtAudio> audioTemp;
 	try {
 		audioTemp = shared_ptr<RtAudio>(new RtAudio());
-	} catch (RtError &error) {
-		error.printMessage();
+	} catch (std::exception &error) {
+   		ofLogError() << error.what();
 		return vector<ofSoundDevice>();
 	}
  	int deviceCount = audioTemp->getDeviceCount();
@@ -42,9 +42,9 @@ vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList() const{
 	for (int i=0; i< deviceCount; i++) {
 		try {
 			info = audioTemp->getDeviceInfo(i);
-		} catch (RtError &error) {
+		} catch (std::exception &error) {
 			ofLogError("ofRtAudioSoundStream") << "Error retrieving info for device " << i;
-			error.printMessage();
+	   		ofLogError() << error.what();
 			break;
 		}
 		
@@ -104,8 +104,8 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 
 	try {
 		audio = shared_ptr<RtAudio>(new RtAudio());
-	}	catch (RtError &error) {
-		error.printMessage();
+	} catch (std::exception &error) {
+   		ofLogError() << error.what();
 		return false;
 	}
 
@@ -142,10 +142,10 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 		audio ->openStream( (nOutputChannels>0)?&outputParameters:NULL, (nInputChannels>0)?&inputParameters:NULL, RTAUDIO_FLOAT32,
 							sampleRate, &bufferFrames, &rtAudioCallback, this, &options);
 		audio->startStream();
-	} catch (RtError &error) {
-		error.printMessage();
-		return false;
-	}
+	} catch (std::exception &error) {
+   		ofLogError() << error.what();
+   		return false;
+ 	}
 	return true;
 }
 
@@ -162,9 +162,9 @@ void ofRtAudioSoundStream::start(){
 
 	try{
 		audio->startStream();
-	} catch (RtError &error) {
-		error.printMessage();
-	}
+	} catch (std::exception &error) {
+   		ofLogError() << error.what();
+ 	}
 }
 
 //------------------------------------------------------------------------------
@@ -175,8 +175,8 @@ void ofRtAudioSoundStream::stop(){
 		if(audio->isStreamRunning()) {
     		audio->stopStream();
 		}
-  	} catch (RtError &error) {
-   		error.printMessage();
+  	} catch (std::exception &error) {
+   		ofLogError() << error.what();
  	}
 }
 
@@ -188,8 +188,8 @@ void ofRtAudioSoundStream::close(){
 		if(audio->isStreamOpen()) {
     		audio->closeStream();
 		}
-  	} catch (RtError &error) {
-   		error.printMessage();
+  	} catch (std::exception &error) {
+   		ofLogError() << error.what();
  	}
 	soundOutputPtr	= NULL;
 	soundInputPtr	= NULL;

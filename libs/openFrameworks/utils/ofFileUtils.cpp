@@ -23,27 +23,27 @@ size_t ofBuffer::ioSize = 1024;
 
 //--------------------------------------------------
 ofBuffer::ofBuffer()
-:currentLine(begin(),end()){
+:currentLine(end(),end()){
 	buffer.resize(1);
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const char * _buffer, unsigned int size)
 :buffer(_buffer,_buffer+size)
-,currentLine(begin(),end()){
+,currentLine(end(),end()){
 	buffer.resize(buffer.size()+1,0);
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(const string & text)
 :buffer(text.begin(),text.end())
-,currentLine(begin(),end()){
+,currentLine(end(),end()){
 	buffer.resize(buffer.size()+1,0);
 }
 
 //--------------------------------------------------
 ofBuffer::ofBuffer(istream & stream)
-:currentLine(begin(),end()){
+:currentLine(end(),end()){
 	set(stream);
 }
 
@@ -62,7 +62,6 @@ bool ofBuffer::set(istream & stream){
 		buffer.insert(buffer.end(),aux_buffer.begin(),aux_buffer.begin()+stream.gcount());
 	}
 	buffer.push_back(0);
-	currentLine = getLines().begin();
 	return true;
 }
 
@@ -79,32 +78,27 @@ bool ofBuffer::writeTo(ostream & stream) const {
 void ofBuffer::set(const char * _buffer, unsigned int _size){
 	buffer.assign(_buffer,_buffer+_size);
 	buffer.resize(buffer.size()+1,0);
-	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::set(const string & text){
 	set(text.c_str(),text.size());
-	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::append(const string& _buffer){
 	append(_buffer.c_str(), _buffer.size());
-	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::append(const char * _buffer, unsigned int _size){
 	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
 	buffer.back() = 0;
-	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
 void ofBuffer::clear(){
 	buffer.resize(1,0);
-	currentLine = getLines().begin();
 }
 
 //--------------------------------------------------
@@ -175,7 +169,11 @@ void ofBuffer::setIOBufferSize(size_t _ioSize){
 
 //--------------------------------------------------
 string ofBuffer::getNextLine(){
-	++currentLine;
+	if(currentLine.empty()){
+		currentLine = getLines().begin();
+	}else{
+		++currentLine;
+	}
 	return currentLine.asString();
 }
 
@@ -302,6 +300,10 @@ bool ofBuffer::Line::operator!=(Line const& rhs) const{
 //--------------------------------------------------
 bool ofBuffer::Line::operator==(Line const& rhs) const{
 	return rhs._begin == _begin && rhs._end == _end;
+}
+
+bool ofBuffer::Line::empty() const{
+	return _begin == _end;
 }
 
 //--------------------------------------------------
@@ -1257,7 +1259,11 @@ int ofDirectory::listDir(){
 		Path curPath(originalDirectory);
 		curPath.setFileName(fileStrings[i]);
 		try{
+#if __cplusplus>=201103
+			files.emplace_back(curPath.toString(), ofFile::Reference);
+#else
 			files.push_back(ofFile(curPath.toString(), ofFile::Reference));
+#endif
 		}catch(Poco::Exception & e){
 			ofLogWarning() << "couldn't add file " << e.what();
 		}
