@@ -226,6 +226,7 @@ FT_BEGIN_HEADER
                    FT_UInt        num_params,
                    FT_Parameter*  parameters );
 
+
   /* */
 
 
