@@ -11,6 +11,7 @@ ofxAndroid/ofAndroidLib/bin
 ofxAndroid/ofAndroidLib/gen
 !ofxAssimpModelLoader
 !ofxGui
+!ofxGPS
 !ofxiOS
 !ofxKinect
 !ofxMultiTouch
