@@ -3,22 +3,15 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 
-#if (_MSC_VER) \
-	|| ((defined(TARGET_EMSCRIPTEN) \
-	|| defined(TARGET_OF_IOS) \
-	|| defined(TARGET_LINUX) \
-	|| defined(TARGET_OSX) \
-) && __cplusplus>=201103L)
+#if __cplusplus>=201103L
 #include <memory>
 #else
 #include <tr1/memory>
 // import smart pointers utils into std
 namespace std {
-#if __cplusplus<201103L
 	using std::tr1::shared_ptr;
 	using std::tr1::weak_ptr;
 	using std::tr1::enable_shared_from_this;
-#endif
 	using std::tr1::static_pointer_cast;
 	using std::tr1::dynamic_pointer_cast;
 	using std::tr1::const_pointer_cast;
