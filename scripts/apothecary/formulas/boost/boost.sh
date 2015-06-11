@@ -42,10 +42,25 @@ function build() {
 		./b2 -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11 -stdlib=libc++ -arch i386 -arch x86_64" linkflags="-stdlib=libc++" threading=multi variant=release --build-dir=build --stage-dir=stage link=static stage
 		cd tools/bcp  
 		../../b2
+		
 	elif [ "$TYPE" == "emscripten" ]; then
-		./b2 -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11" threading=single variant=release --build-dir=build --stage-dir=stage stage
-		cd tools/bcp  
-		../../b2
+	    cp $FORMULA_DIR/project-config-emscripten.jam project-config.jam
+		./b2 -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11" threading=single variant=release --build-dir=build --stage-dir=stage link=static stage
+		
+	elif [ "$TYPE" == "android" ]; then
+	    rm -rf stage
+	    
+	    ABI=armeabi-v7a
+	    source ../../android_configure.sh $ABI
+	    cp $FORMULA_DIR/project-config-android_arm.jam project-config.jam
+		./b2 -j${PARALLEL_MAKE} toolset=gcc cxxflags="-std=c++11 $CFLAGS" threading=multi threadapi=pthread target-os=android variant=release --build-dir=build_arm link=static stage
+		mv stage stage_arm
+		
+	    ABI=x86
+	    source ../../android_configure.sh $ABI
+	    cp $FORMULA_DIR/project-config-android_x86.jam project-config.jam
+		./b2 -j${PARALLEL_MAKE} toolset=gcc cxxflags="-std=c++11 $CFLAGS" threading=multi threadapi=pthread target-os=android variant=release --build-dir=build_x86 link=static stage
+		mv stage stage_x86
 	fi
 }
 
@@ -66,10 +81,16 @@ function copy() {
 		cp stage/lib/libboost_filesystem.a $1/lib/$TYPE/boost_filesystem.a
 		cp stage/lib/libboost_system.a $1/lib/$TYPE/boost_system.a
 	elif [ "$TYPE" == "emscripten" ]; then
-		dist/bin/bcp filesystem install_dir
-		rsync -ar install_dir/boost/* $1/include/boost/
-		cp stage/lib/libboost_filesystem.so $1/lib/$TYPE/boost_filesystem.so
-		cp stage/lib/libboost_system.so $1/lib/$TYPE/boost_system.so
+		cp stage/lib/*.a $1/lib/$TYPE/
+		mkdir -p $1/include/boost/preprocessor/debug/
+		cp boost/preprocessor/debug/error.hpp $1/include/boost/preprocessor/debug/
+	elif [ "$TYPE" == "android" ]; then
+	    mkdir -p $1/lib/$TYPE/armeabi-v7a
+	    mkdir -p $1/lib/$TYPE/x86
+		cp stage_arm/lib/*.a $1/lib/$TYPE/armeabi-v7a/
+		cp stage_x86/lib/*.a $1/lib/$TYPE/x86/
+		mkdir -p $1/include/boost/preprocessor/debug/
+		cp boost/preprocessor/debug/error.hpp $1/include/boost/preprocessor/debug/
 	fi
 
 	# copy license file
