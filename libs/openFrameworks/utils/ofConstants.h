@@ -397,7 +397,9 @@ typedef ofBaseApp ofSimpleApp;
 	#include <memory>
 #else
 	#include <tr1/unordered_map>
+namespace std{
 	using std::tr1::unordered_map;
+}
 #endif
 
 using namespace std;
