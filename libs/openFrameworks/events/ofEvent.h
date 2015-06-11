@@ -50,8 +50,8 @@ protected:
     template<typename TFunction>
     void add(TFunction * f){
         std::unique_lock<std::mutex> lck(mtx);
-        auto it = functions.cbegin();
-        for(; it!=functions.cend(); ++it){
+        auto it = functions.begin();
+        for(; it!=functions.end(); ++it){
         	if((*it)->priority>f->priority) break;
         }
     	functions.emplace(it, f);
