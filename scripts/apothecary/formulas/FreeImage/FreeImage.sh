@@ -100,7 +100,7 @@ ENDDELIM
 function build() {
 	
 	if [ "$TYPE" == "osx" ] ; then
-		make -f Makefile.osx
+		make -j${PARALLEL_MAKE} -f Makefile.osx
 
 		strip -x Dist/libfreeimage.a
 
@@ -212,7 +212,7 @@ function build() {
 			echo "Please stand by..."
 
 			# run makefile
-			make -f Makefile.ios >> "${LOG}" 2>&1
+			make -j${PARALLEL_MAKE} -f Makefile.ios >> "${LOG}" 2>&1
 			if [ $? != 0 ];
 		    then 
                 tail -n 100 "${LOG}"
@@ -299,7 +299,7 @@ function build() {
         export CC="$CC $CFLAGS $LDFLAGS"
         export CXX="$CXX $CFLAGS $LDFLAGS"
         make clean -f Makefile.gnu
-        make -f Makefile.gnu libfreeimage.a
+        make -j${PARALLEL_MAKE} -f Makefile.gnu libfreeimage.a
         mkdir -p $BUILD_DIR/FreeImage/Dist/$ABI
         mv libfreeimage.a $BUILD_DIR/FreeImage/Dist/$ABI
         
@@ -310,7 +310,7 @@ function build() {
         export CC="$CC $CFLAGS $LDFLAGS"
         export CXX="$CXX $CFLAGS $LDFLAGS"
         make clean -f Makefile.gnu
-        make -f Makefile.gnu libfreeimage.a
+        make -j${PARALLEL_MAKE} -f Makefile.gnu libfreeimage.a
         mkdir -p $BUILD_DIR/FreeImage/Dist/$ABI
         mv libfreeimage.a $BUILD_DIR/FreeImage/Dist/$ABI
         cd $BUILD_DIR/FreeImage
@@ -333,7 +333,7 @@ function build() {
         cat $BUILD_DIR/FreeImage/Source/LibJXR/jxrgluelib/JXRGlueJxr.c >> $BUILD_DIR/FreeImagePatched/Source/LibJXR/jxrgluelib/JXRGlueJxr.c
         cd $BUILD_DIR/FreeImagePatched
         emmake make clean -f Makefile.gnu
-        emmake make -f Makefile.gnu libfreeimage.a
+        emmake make -j${PARALLEL_MAKE} -f Makefile.gnu libfreeimage.a
         mkdir -p $BUILD_DIR/FreeImage/Dist/
         mv libfreeimage.a $BUILD_DIR/FreeImage/Dist/
         cd $BUILD_DIR/FreeImage

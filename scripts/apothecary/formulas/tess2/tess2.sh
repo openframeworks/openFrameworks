@@ -79,7 +79,7 @@ function build() {
 			
 			OPTIM_FLAGS="-O3"				 # 	choose "fastest" optimisation
 
-			export CFLAGS="-arch $OSX_ARCH $OPTIM_FLAGS"
+			export CFLAGS="-arch $OSX_ARCH $OPTIM_FLAGS -NDEBUG"
 			export CPPFLAGS=$CFLAGS
 			export LINKFLAGS="$CFLAGS $STD_LIB_FLAGS"
 			export LDFLAGS="$LINKFLAGS"
@@ -92,7 +92,7 @@ function build() {
 			cmake -G 'Unix Makefiles' \
 				.
 			make clean >> "${LOG}" 2>&1
-			make >> "${LOG}" 2>&1
+			make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
 
 			# now we need to create a directory were we can keep our current build result.
 
@@ -196,7 +196,7 @@ function build() {
 		    	MIN_TYPE=-mios-simulator-version-min=
 		    fi
 
-			export CFLAGS="-arch $IOS_ARCH -pipe -no-cpp-precomp -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/" 
+			export CFLAGS="-arch $IOS_ARCH -pipe -no-cpp-precomp -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/ -NDEBUG" 
 	
 			export CPPFLAGS=$CFLAGS
 			export LINKFLAGS="$CFLAGS $EXTRA_LINK_FLAGS"
@@ -214,7 +214,7 @@ function build() {
 
 			cmake -G 'Unix Makefiles' 
 			make clean >> "${LOG}" 2>&1
-			make >> "${LOG}" 2>&1
+			make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
 
 			if [ $? != 0 ];
 		    then 

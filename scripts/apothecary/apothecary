@@ -58,6 +58,10 @@ BUILD_DIR=
 # full path to the destination dir for compiled libs
 LIBS_DIR=
 
+# number of parallel tasks to run on make.
+# formulas should pass this as -j${PARALLEL_MAKE} to make
+PARALLEL_MAKE=1
+
 ### Xcode/ios specific settings
 
 # xcode Developer root
@@ -256,7 +260,7 @@ echoVerbose() {
 #### PARSE COMMANDLINE
 
 # from http://www.mkssoftware.com/docs/man1/getopts.1.asp
-while getopts t:a:b:d:s:hgvx opt ; do
+while getopts t:a:b:d:s:j:hgvx opt ; do
 	case "$opt" in
 		t) # set the library build type
 		   TYPE="$OPTARG" ;;
@@ -268,6 +272,8 @@ while getopts t:a:b:d:s:hgvx opt ; do
 		   LIBS_DIR="$OPTARG" ;;
 		s) # set the git tag to switch version
 		   SWITCH_VER="$OPTARG" ;;
+		j) # set the -j parameter for make
+		   PARALLEL_MAKE="$OPTARG" ;;
 		g) # set git usage
 		   USE_GIT=1 ;;
 		h) # print help and exit
@@ -310,12 +316,27 @@ function installAndroidToolchain() {
 
 
 	cd $ANDROID_NDK_ROOT/build/tools
+	
+	local HOST=$(${BUILD_DIR}/../ostype.sh)
+	
+	if [ "${HOST}" == "linux" ]; then
+	    ANDROID_HOST="linux-x86"
+	elif [ "${HOST}" == "linux64" ]; then
+	    ANDROID_HOST="linux-x86_64"
+	elif [ "${HOST}" == "osx" ]; then
+	    ANDROID_HOST="Darwin"
+	else
+	    echoError "Building for android only supported on linux and osx by now"
+	    exit 1
+	fi
 
-	if [ ! -d "$BUILD_DIR/Toolchains/Android/androideabi" ]; then
+	if [ ! -d "$BUILD_DIR/Toolchains/Android/arm" ]; then
 		./make-standalone-toolchain.sh \
 			--ndk-dir=$ANDROID_NDK_ROOT \
 			--platform=$ANDROID_PLATFORM \
-			--install-dir=$BUILD_DIR/Toolchains/Android/androideabi
+			--install-dir=$BUILD_DIR/Toolchains/Android/arm \
+			--arch=arm \
+			--system=${ANDROID_HOST}
 	fi
 
 
@@ -324,7 +345,8 @@ function installAndroidToolchain() {
 			--ndk-dir=$ANDROID_NDK_ROOT \
 			--platform=$ANDROID_PLATFORM \
 			--install-dir=$BUILD_DIR/Toolchains/Android/x86 \
-			--arch=x86 
+			--arch=x86  \
+			--system=${ANDROID_HOST}
 	fi
 
 	cd $WD
@@ -590,9 +612,10 @@ function downloadFormula(){
 		if [ ! -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
 			gitclone $1 $GIT_URL ${GIT_TAG:-master}
 		else
-			download
+			download $1
 		fi
-		if [ ! -e $1 ] ; then
+		
+		if [ ! -d $BUILD_DIR/$1 ] ; then
 			echoError " It looks like downloading failed for \"$1\""
 			exit 1
 		fi
@@ -625,10 +648,10 @@ function prepareFormula() {
 	
 	# dependencies
 	if [ FORMULA_DEPENDS_MANUAL == 0 ] ; then
-		apothecaryDependencies prepare
+		apothecaryDependencies prepare $1
 	fi
 	
-	prepare
+	prepare $1
 	
 	cd $APOTHECARY_DIR
 }
@@ -656,7 +679,7 @@ function buildFormula() {
 		apothecaryDependencies copy
 	fi
 
-	build
+	build $1
 
 	cd $APOTHECARY_DIR
 }
@@ -947,11 +970,10 @@ BUILD_ROOT_DIR=$BUILD_DIR/$BUILDROOT_SUBDIR
 
 # set for android sdk info
 if [[ "$TYPE" == "android" ]] ; then
-	if [[ -e ../../libs/openFrameworksCompiled/project/android/paths.make ]] ; then
-		ANDROID_NDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep NDK_ROOT | sed 's/.*=\(.*\)/\1/'`
-		ANDROID_SDK_ROOT=`cat ../../libs/openFrameworksCompiled/project/android/paths.make | grep SDK_ROOT | sed 's/.*=\(.*\)/\1/'`
+	if [[ -e ${LIBS_DIR}/openFrameworksCompiled/project/android/paths.make ]] ; then
+		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
+		ANDROID_NDK_ROOT=${NDK_ROOT}
 		echoVerbose "Android NDK root: $ANDROID_NDK_ROOT"
-		echoVerbose "Android SDK root: $ANDROID_SDK_ROOT"
 	else
 		echoError "Targeting android, but can't find the SDK. Missing"
 		echoError "libs/openFrameworksCompiled/project/android/paths.make ..."

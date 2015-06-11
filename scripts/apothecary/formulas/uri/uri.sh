@@ -42,7 +42,7 @@ function build() {
 			  -DCMAKE_C_FLAGS="-arch i386 -arch x86_64" \
 			  -DCMAKE_CXX_FLAGS="-arch i386 -arch x86_64" \
 			  ..
-		make
+		make -j${PARALLEL_MAKE}
 	elif [ "$TYPE" == "emscripten" ]; then
 		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
 		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
@@ -50,11 +50,11 @@ function build() {
 	    cd _build
     	pwd
 		emcmake cmake .. -DCMAKE_CXX_FLAGS=-I${BOOST_INCLUDEDIR} -DCMAKE_BUILD_TYPE=Release -DBOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib -DBoost_INCLUDE_DIR=${BUILD_DIR}/boost
-		make
+		make -j${PARALLEL_MAKE}
 	elif [ "$TYPE" == "linux" ] || [ "$TYPE" == "linux64" ] || [ "$TYPE" == "linuxarmv6l" ] || [ "$TYPE" == "linuxarmv7l" ]; then
 	    cd _build
 		cmake -DCMAKE_BUILD_TYPE=Release ..
-		make
+		make -j${PARALLEL_MAKE}
 	fi
 }
 

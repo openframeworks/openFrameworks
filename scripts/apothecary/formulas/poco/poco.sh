@@ -124,7 +124,7 @@ function build() {
 	    echo "--------------------"
 		echo "Running make"
 		LOG="$CURRENTPATH/build/$TYPE/poco-make-i386-${VER}.log"
-		make -j4 #>> "${LOG}" 2>&1
+		make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
 		if [ $? != 0 ];
 		then
 			tail -n 100 "${LOG}"
@@ -151,7 +151,7 @@ function build() {
 	    echo "--------------------"
 		echo "Running make"
 		LOG="$CURRENTPATH/build/$TYPE/poco-make-x86_64-${VER}.log"
-		make >> "${LOG}" 2>&1
+		make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
 		if [ $? != 0 ];
 		then
 			tail -n 100 "${LOG}"
@@ -199,7 +199,7 @@ function build() {
 					--library-path=$OPENSSL_LIBS \
 					--config=MinGW
 
-		make
+		make -j${PARALLEL_MAKE}
 
 		# Delete debug libs.
 		lib/MinGW/i686/*d.a
@@ -310,7 +310,7 @@ function build() {
 		    fi
 		    echo "--------------------"
 		    echo "Running make for ${IOS_ARCH}"
-			make >> "${LOG}" 2>&1
+			make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
 			if [ $? != 0 ];
 		    then
 		    	tail -n 100 "${LOG}"
@@ -399,7 +399,7 @@ function build() {
 					--config=Android
 
         make clean
-		make ANDROID_ABI=armeabi-v7a
+		make -j${PARALLEL_MAKE} ANDROID_ABI=armeabi-v7a
 
         #x86
 		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
@@ -411,7 +411,7 @@ function build() {
 					--config=Android
 
         make clean
-		make ANDROID_ABI=x86
+		make -j${PARALLEL_MAKE} ANDROID_ABI=x86
 
 		echo `pwd`
 
@@ -423,7 +423,7 @@ function build() {
 	elif [ "$TYPE" == "linux" ] || [ "$TYPE" == "linux64" ] || [ "$TYPE" == "linuxarmv6l" ] || [ "$TYPE" == "linuxarmv7l" ]; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 		./configure $BUILD_OPTS
-		make
+		make -j${PARALLEL_MAKE}
 		# delete debug builds
 		rm lib/Linux/$(uname -m)/*d.a
 	else

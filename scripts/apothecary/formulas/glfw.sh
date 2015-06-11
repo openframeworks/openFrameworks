@@ -56,7 +56,7 @@ function build() {
 				-DGLFW_BUILD_UNIVERSAL=ON 
 
  		make clean
- 		make
+ 		make -j${PARALLEL_MAKE}
  		make install
 	fi
 }

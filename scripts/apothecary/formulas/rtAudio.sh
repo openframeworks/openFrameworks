@@ -80,7 +80,7 @@ function build() {
 		if [ "$TYPE" == "linux" -o "$TYPE" == "linux64" ] ; then
 			local API="--with-alsa" # jack or pulse as well?
 			./configure --with-alsa
-			make 
+			make  -j${PARALLEL_MAKE}
 		elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
 			local API="--with-ds" # asio as well?
 			echoWarning "TODO: build $TYPE"
