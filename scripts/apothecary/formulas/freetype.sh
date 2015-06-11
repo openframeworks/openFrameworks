@@ -6,7 +6,7 @@
 #
 # an autotools project
 
-FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" "emscripten" )
 
 # define the version
 VER=2.5.5
@@ -313,6 +313,25 @@ function build() {
 
 		echo "-----------"
 		echo "$BUILD_DIR"
+	elif [ "$TYPE" == "emscripten" ]; then
+	    if [ "$EMSCRIPTEN" == "" ]; then
+	        echo "error emscripten is not installed or environment not set"
+	        exit 1
+	    fi
+	    local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE
+	    ./configure --prefix=$BUILD_TO_DIR --with-harfbuzz=no --enable-static=yes --enable-shared=no --with-zlib=no --with-png=no
+	    make clean
+	    make
+	    cp $BUILD_DIR/freetype/objs/apinames .
+	    emconfigure ./configure --prefix=$BUILD_TO_DIR --with-harfbuzz=no --enable-static=yes --enable-shared=no --with-zlib=no --with-png=no
+	    emmake make clean
+	    cp apinames $BUILD_DIR/freetype/objs/
+	    emmake make
+	    emmake make install
+	    emcc objs/*.o -o build/$TYPE/lib/libfreetype.bc
+		echo "-----------"
+		echo "$BUILD_DIR"
+	    
 	fi
 }
 
@@ -348,6 +367,8 @@ function copy() {
 	elif [ "$TYPE" == "android" ] ; then
 		cp -v build/$TYPE/armeabi-v7a/lib/libfreetype.a $1/lib/$TYPE/armeabi-v7a/libfreetype.a
 		cp -v build/$TYPE/x86/lib/libfreetype.a $1/lib/$TYPE/x86/libfreetype.a
+	elif [ "$TYPE" == "emscripten" ] ; then
+		cp -v build/$TYPE/lib/libfreetype.bc $1/lib/$TYPE/libfreetype.bc
 	fi
 
 	# copy license files

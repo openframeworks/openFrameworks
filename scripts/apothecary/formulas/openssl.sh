@@ -3,6 +3,8 @@
 # openssl
 
 # define the version
+FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
+
 VER=1.0.2a
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
