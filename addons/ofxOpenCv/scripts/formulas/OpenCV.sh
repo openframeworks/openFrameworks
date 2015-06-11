@@ -44,38 +44,6 @@ function prepare() {
   cd ../../../
 }
 
-function make_universal_binary() {
-  shopt -s nullglob
-
-  src1="$1"
-  src2="$2"
-  dst="$3"
-
-  libs="$src1/lib/libopencv*.a"
-
-  for lib in $libs
-  do
-    fname=$(basename "$lib"); 
-    otherLib="$src2/lib/$fname"
-    echo "lipoing $fname"
-    lipo -create $lib $otherLib -o "$dst/lib/$fname" || true
-  done
-
-  thirdparty="$src1/share/OpenCV/3rdparty/lib/*.a"
-
-  for lib in $thirdparty
-  do
-    fname=$(basename "$lib"); 
-    otherLib="$src2/share/OpenCV/3rdparty/lib/$fname"
-    echo "lipoing $fname"
-    lipo -create $lib $otherLib -o "$dst/lib/$fname" || true
-  done
-
-  outputlist="$dst/lib/lib*.a"
-
-  libtool -static $outputlist -o "$dst/lib/opencv.a"
-}
-
 # executed inside the lib src dir
 function build() {
   rm -f CMakeCache.txt
