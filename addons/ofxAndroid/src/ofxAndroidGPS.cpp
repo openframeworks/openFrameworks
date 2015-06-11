@@ -1,5 +1,6 @@
 #include "ofxAndroidGPS.h"
 #include "ofxAndroidUtils.h"
+#include "ofLog.h"
 #include <jni.h>
 
 ofEvent<ofxLocation> ofxAndroidGPS::locationChangedE;
