@@ -79,7 +79,7 @@ function build() {
 			
 			OPTIM_FLAGS="-O3"				 # 	choose "fastest" optimisation
 
-			export CFLAGS="-arch $OSX_ARCH $OPTIM_FLAGS -NDEBUG"
+			export CFLAGS="-arch $OSX_ARCH $OPTIM_FLAGS -DNDEBUG"
 			export CPPFLAGS=$CFLAGS
 			export LINKFLAGS="$CFLAGS $STD_LIB_FLAGS"
 			export LDFLAGS="$LINKFLAGS"
@@ -196,7 +196,7 @@ function build() {
 		    	MIN_TYPE=-mios-simulator-version-min=
 		    fi
 
-			export CFLAGS="-arch $IOS_ARCH -pipe -no-cpp-precomp -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/ -NDEBUG" 
+			export CFLAGS="-arch $IOS_ARCH -pipe -no-cpp-precomp -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} $MIN_TYPE$MIN_IOS_VERSION -I${CROSS_TOP}/SDKs/${CROSS_SDK}/usr/include/ -DNDEBUG" 
 	
 			export CPPFLAGS=$CFLAGS
 			export LINKFLAGS="$CFLAGS $EXTRA_LINK_FLAGS"
@@ -283,7 +283,13 @@ function build() {
 
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: android build"
-
+		
+	elif [ "$TYPE" == "emscripten" ] ; then
+    	cp -v $FORMULA_DIR/CMakeLists.txt .
+    	mkdir -p build
+    	cd build
+    	emcmake cmake .. -DCMAKE_C_FLAGS=-DNDEBUG
+    	emmake make -j${PARALLEL_MAKE}
 	else 
 		cmake -G "Unix Makefiles" --build build/$TYPE ../../
 		make
@@ -294,12 +300,9 @@ function build() {
 function copy() {
 	
 	# headers
+	rm -r $1/include
 	mkdir -p $1/include
-	cp -Rv Include/ $1/include
-
-	# source
-	mkdir -p $1/Sources
-	cp -Rv Source/ $1/Sources
+	cp -Rv Include/* $1/include/
 
 	# lib
 	mkdir -p $1/lib/$TYPE
@@ -311,6 +314,9 @@ function copy() {
 
 	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: copy android lib"
+
+	elif [ "$TYPE" == "emscripten" ] ; then
+		cp -v build/libtess2.a $1/lib/$TYPE/libtess2.a
 
 	else
 		cp -v libtess2.a $1/lib/$TYPE/tess2.a
