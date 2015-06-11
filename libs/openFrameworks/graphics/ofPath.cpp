@@ -2,10 +2,10 @@
 #include "ofAppRunner.h"
 #include "ofTessellator.h"
 
-#if !defined(TARGET_EMSCRIPTEN) && HAS_TLS
-	thread_local ofTessellator ofPath::tessellator;
-#else
+#if defined(TARGET_EMSCRIPTEN)
 	ofTessellator ofPath::tessellator;
+#elif HAS_TLS
+        thread_local ofTessellator ofPath::tessellator;
 #endif
 
 ofPath::Command::Command(Type type)
