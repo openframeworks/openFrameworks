@@ -36,9 +36,9 @@ function prepare() {
 function build() {
 
 	if [ "$TYPE" == "linux" ] ; then
-		make -f Makefile.linux	
+		make  -j${PARALLEL_MAKE} -f Makefile.linux	
 	elif [ "$TYPE" == "linux64" ] ; then
-		make -f Makefile.linux64	
+		make  -j${PARALLEL_MAKE} -f Makefile.linux64	
 	else
 		echo "build not needed for $TYPE"
 	fi
