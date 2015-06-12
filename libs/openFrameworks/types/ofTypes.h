@@ -3,22 +3,6 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 
-#if __cplusplus>=201103L
-#include <memory>
-#else
-#include <tr1/memory>
-// import smart pointers utils into std
-namespace std {
-	using std::tr1::shared_ptr;
-	using std::tr1::weak_ptr;
-	using std::tr1::enable_shared_from_this;
-	using std::tr1::static_pointer_cast;
-	using std::tr1::dynamic_pointer_cast;
-	using std::tr1::const_pointer_cast;
-	using std::tr1::__dynamic_cast_tag;
-}
-#endif
-
 class ofSerial;
 
 /// \brief Describes a Serial device, including ID, name and path.
@@ -310,7 +294,7 @@ public:
 //----------------------------------------------------------
 // ofPtr
 //----------------------------------------------------------
-#if __cplusplus >= 201103L
+#if HAS_CPP11
 template <typename T>
 using ofPtr = std::shared_ptr<T>;
 #endif
