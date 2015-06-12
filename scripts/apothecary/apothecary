@@ -76,7 +76,8 @@ IOS_SDK_VER=8.1
 IOS_MIN_SDK_VER=5.1
 
 # used when building for vs
-VS_VER=11
+VS_VER=14
+VS_64_BIT_ENV='VC\bin\x86_amd64\vcvarsx86_amd64.bat'
 
 # paths to android SDK, etc
 ANDROID_NDK_ROOT=
@@ -583,7 +584,43 @@ function downloadFormula(){
 	cd $BUILD_DIR
 
 	if [ -e $1 ] ; then
-		echo "... skipping, src dir already exists"
+		#we have to remove these when we build with different architectures in vs
+		if [ "$1" == "glfw" ] ; then
+			rm -r glfw
+			if [ ! -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
+				gitclone $1 $GIT_URL ${GIT_TAG:-master}
+			else
+				download
+			fi
+			if [ ! -e $1 ] ; then
+				echoError " It looks like downloading failed for \"$1\""
+				exit 1
+			fi
+		elif [ "$1" == "rtAudio" ] ; then
+			rm -r rtAudio
+			if [ ! -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
+				gitclone $1 $GIT_URL ${GIT_TAG:-master}
+			else
+				download
+			fi
+			if [ ! -e $1 ] ; then
+				echoError " It looks like downloading failed for \"$1\""
+				exit 1
+			fi
+		elif [ "$1" == "tess2" ] ; then
+			rm -r tess2
+			if [ ! -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
+				gitclone $1 $GIT_URL ${GIT_TAG:-master}
+			else
+				download
+			fi
+			if [ ! -e $1 ] ; then
+				echoError " It looks like downloading failed for \"$1\""
+				exit 1
+			fi
+		else
+			echo "... skipping, src dir already exists"
+		fi
 	else
 		if [ ! -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
 			gitclone $1 $GIT_URL ${GIT_TAG:-master}
@@ -786,20 +823,33 @@ function gitclone() {
 # example: vs-build "./tess2.sln" Build Debug
 # http://msdn.microsoft.com/library/vstudio/b20w810z.aspx
 function vs-build() {
-	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /'${2:-Build}' '${3:-Release}''
+	if [ $ARCH == 32 ] ; then
+		cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /'${2:-Build}' "'${3:-Release}'"'
+	elif [ $ARCH == 64 ] ; then
+		cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%..\..\'${VS_64_BIT_ENV}'" && '$VS_BUILD_TOOL' '$1' /'${2:-Build}' "'${3:-Release}'"'
+	fi
 }
 
 # visual studio upgrader
 # http://msdn.microsoft.com/en-us/library/vstudio/w15a82ay(v=vs.110).aspx
 function vs-upgrade() {
-	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /Upgrade'
+	if [ $ARCH == 32 ] ; then
+		cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /Upgrade'
+	elif [ $ARCH == 64 ] ; then
+		cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%..\..\'${VS_64_BIT_ENV}'" && '$VS_BUILD_TOOL' '$1' /Upgrade'
+	fi
 }
 
 # visual studio clean
 # http://msdn.microsoft.com/en-us/library/vstudio/w15a82ay(v=vs.110).aspx
 function vs-clean() {
-	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /Clean Release'
-	cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /Clean Debug'
+	if [ $ARCH == 32 ] ; then
+		cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /Clean Release'
+		cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && '$VS_BUILD_TOOL' '$1' /Clean Debug'
+	elif [ $ARCH == 64 ] ; then
+		cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%..\..\'${VS_64_BIT_ENV}'" && '$VS_BUILD_TOOL' '$1' /Clean Release'
+		cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%..\..\'${VS_64_BIT_ENV}'" && '$VS_BUILD_TOOL' '$1' /Clean Debug'
+	fi
 }
 
 ################################################################################

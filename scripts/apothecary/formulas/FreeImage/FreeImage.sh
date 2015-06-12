@@ -10,20 +10,20 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
 # define the version
-VER=3160 # 3.16.0
+VER=3170 # 3.16.0
 
 # tools for git use
 GIT_URL=https://github.com/danoli3/FreeImage
-GIT_TAG=3.16.0
+GIT_TAG=3.17.0
 
 # download the source code and unpack it into LIB_NAME
 function download() {
 
 	if [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
 		# For win32, we simply download the pre-compiled binaries.
-		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER"Win32.zip
-		unzip -qo FreeImage"$VER"Win32.zip
-		rm FreeImage"$VER"Win32.zip
+		curl -LO http://downloads.sourceforge.net/freeimage/FreeImage"$VER"Win32Win64.zip
+		unzip -qo FreeImage"$VER"Win32Win64.zip
+		rm FreeImage"$VER"Win32Win64.zip
 	elif [[ "${TYPE}" == "osx" || "${TYPE}" == "ios" ]]; then
         # Fixed issues for OSX / iOS for FreeImage compiling in git repo.
         echo "Downloading from $GIT_URL for OSX/iOS"
@@ -324,10 +324,16 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v Dist/libfreeimage.a $1/lib/$TYPE/freeimage.a
 	elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
-	    cp -v Dist/*.h $1/include
-		mkdir -p $1/lib/$TYPE
-		cp -v Dist/FreeImage.lib $1/lib/$TYPE/FreeImage.lib
-		cp -v Dist/FreeImage.dll $1/../../export/$TYPE/FreeImage.dll
+		mkdir -p $1/include #/Win32
+		#mkdir -p $1/include/x64
+	    cp -v Dist/x32/*.h $1/include #/Win32/
+		#cp -v Dist/x64/*.h $1/include/x64/
+		mkdir -p $1/lib/$TYPE/Win32
+		mkdir -p $1/lib/$TYPE/x64
+		cp -v Dist/x32/FreeImage.lib $1/lib/$TYPE/Win32/FreeImage.lib
+		cp -v Dist/x32/FreeImage.dll $1/../../export/$TYPE/FreeImage32.dll
+		cp -v Dist/x64/FreeImage.lib $1/lib/$TYPE/x64/FreeImage.lib
+		cp -v Dist/x64/FreeImage.dll $1/../../export/$TYPE/FreeImage64.dll
 	elif [ "$TYPE" == "ios" ] ; then
         cp -v Dist/*.h $1/include
         if [ -d $1/lib/$TYPE/ ]; then
