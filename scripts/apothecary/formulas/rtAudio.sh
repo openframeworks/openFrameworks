@@ -76,23 +76,20 @@ function build() {
 
 		lipo -c librtaudio.a librtaudio-x86_64.a -o librtaudio.a
 
-	else
-
-		if [ "$TYPE" == "linux" -o "$TYPE" == "linux64" ] ; then
-			local API="--with-alsa" # jack or pulse as well?
-			./configure --with-alsa
-			make 
-		elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
-			local API="--with-wasapi --with-ds" # asio as well?
-			if [ $ARCH == 32 ] ; then
-				cmake -G "Visual Studio $VS_VER"  -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON
-				vs-build "rtaudio_static.vcxproj"
-				vs-build "rtaudio_static.vcxproj" Build "Debug"
-			elif [ $ARCH == 64 ] ; then
-				cmake -G "Visual Studio $VS_VER Win64" -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON
-				vs-build "rtaudio_static.vcxproj" Build "Release|x64"
-				vs-build "rtaudio_static.vcxproj" Build "Debug|x64"
-			fi
+	elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
+		local API="--with-wasapi --with-ds" # asio as well?
+		if [ $ARCH == 32 ] ; then
+			mkdir -p build_vs_32
+			cd build_vs_32
+			cmake .. -G "Visual Studio $VS_VER"  -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON
+			vs-build "rtaudio_static.vcxproj"
+			vs-build "rtaudio_static.vcxproj" Build "Debug"
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p build_vs_64
+			cd build_vs_64
+			cmake .. -G "Visual Studio $VS_VER Win64" -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON
+			vs-build "rtaudio_static.vcxproj" Build "Release|x64"
+			vs-build "rtaudio_static.vcxproj" Build "Debug|x64"
 		fi
 	fi
 
@@ -113,12 +110,12 @@ function copy() {
 	if [ "$TYPE" == "vs" ] ; then
 		if [ $ARCH == 32 ] ; then
 			mkdir -p $1/lib/$TYPE/Win32
-			cp -v Release/rtaudio_static.lib $1/lib/$TYPE/Win32/rtAudio.lib
-			cp -v Debug/rtaudio_static.lib $1/lib/$TYPE/Win32/rtAudioD.lib
+			cp -v build_vs_32/Release/rtaudio_static.lib $1/lib/$TYPE/Win32/rtAudio.lib
+			cp -v build_vs_32/Debug/rtaudio_static.lib $1/lib/$TYPE/Win32/rtAudioD.lib
 		elif [ $ARCH == 64 ] ; then
 			mkdir -p $1/lib/$TYPE/x64
-			cp -v Release/rtaudio_static.lib $1/lib/$TYPE/x64/rtAudio.lib
-			cp -v Debug/rtaudio_static.lib $1/lib/$TYPE/x64/rtAudioD.lib
+			cp -v build_vs_64/Release/rtaudio_static.lib $1/lib/$TYPE/x64/rtAudio.lib
+			cp -v build_vs_64/Debug/rtaudio_static.lib $1/lib/$TYPE/x64/rtAudioD.lib
 		fi
 		
 

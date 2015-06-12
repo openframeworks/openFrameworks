@@ -30,17 +30,9 @@ GIT_TAG=$VER
 # download the source code and unpack it into LIB_NAME
 function download() {
 	curl -LO http://cairographics.org/releases/cairo-$VER.tar.xz
-	if [ "$TYPE" == "vs" ] ; then
-		7z e cairo-$VER.tar.xz
-		7z x cairo-$VER.tar
-		mv cairo-$VER cairo
-		rm cairo-$VER.tar.xz
-		rm cairo-$VER.tar
-	else
-		tar -xf cairo-$VER.tar.xz
-		mv cairo-$VER cairo
-		rm cairo-$VER.tar.xz
-	fi
+	tar -xz cairo-$VER.tar.xz
+	mv cairo-$VER cairo
+	rm cairo-$VER.tar.xz
 	# manually download dependencies
 	apothecaryDependencies download
 	if [ "$TYPE" == "vs" ] ; then
