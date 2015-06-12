@@ -596,6 +596,9 @@ function copy() {
 	if [ -f $1/include/openssl/opensslconf_android.h ]; then
         cp $1/include/openssl/opensslconf_android.h /tmp/
     fi
+	if [ -f $1/include/openssl/opensslconf_vs.h ]; then
+        cp $1/include/openssl/opensslconf_vs.h /tmp/
+    fi
 	if [ -d $1/include/ ]; then
 	    rm -r $1/include/
 	fi
@@ -612,6 +615,9 @@ function copy() {
     fi
 	if [ -f /tmp/opensslconf_android.h ]; then
         mv /tmp/opensslconf_android.h $1/include/openssl/
+    fi
+	if [ -f /tmp/opensslconf_vs.h ]; then
+        mv /tmp/opensslconf_vs.h $1/include/openssl/
     fi
 	
 	# storing a copy of the include in lib/include/
