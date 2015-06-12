@@ -1,0 +1,13 @@
+--- /util/mk1mf.pl	Mon May 25 22:21:41 2015
++++ /util/mk1mf.pl	Mon May 25 22:13:09 2015
+@@ -341,7 +341,7 @@
+ for (;;)
+	{
+	chop;
+-
++! 	s/\r$//; #remove carriage return too! 
+	($key,$val)=/^([^=]+)=(.*)/;
+	if ($key eq "RELATIVE_DIRECTORY")
+		{
+		
+		

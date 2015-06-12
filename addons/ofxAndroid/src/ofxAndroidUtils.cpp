@@ -1,11 +1,16 @@
 
 #include "ofxAndroidUtils.h"
-
 // fix for undefined symbols from ndk r8c
 extern "C" {
   extern void *__dso_handle __attribute__((__visibility__ ("hidden")));
   void *__dso_handle;
 }
+
+extern int atexit (void (*func)(void)) noexcept;
+int atexit (void (*func)(void)){
+	return 0;
+}
+#include "ofLog.h"
 
 bool ofxAndroidIsOnline(){
 	jclass javaClass = ofGetJavaOFAndroid();
@@ -336,6 +341,22 @@ void ofxAndroidDisableMulticast(){
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method);
+}
+
+void ofxAndroidSetViewItemChecked(string item_name, bool checked){
+	jclass javaClass = ofGetJavaOFAndroid();
+
+	if(javaClass==0){
+		ofLog(OF_LOG_ERROR,"ofxAndroidSetViewItemChecked: cannot find OFAndroid java class");
+		return;
+	}
+
+	jmethodID setViewItemChecked = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setViewItemChecked","(Ljava/lang/String;Z)V");
+	if(!setViewItemChecked){
+		ofLog(OF_LOG_ERROR,"cannot find OFAndroid setViewItemChecked method");
+		return;
+	}
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,setViewItemChecked,ofGetJNIEnv()->NewStringUTF(item_name.c_str()),checked);
 }
 
 string ofxAndroidRandomUUID(){

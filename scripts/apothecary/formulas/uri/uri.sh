@@ -33,6 +33,7 @@ function build() {
 	    git apply ../../formulas/uri/uri-remove-tests.patch
 	    cd _build
 		#noop by now
+	
 	elif [ "$TYPE" == "osx" ]; then
 	    git apply ../../formulas/uri/uri-remove-tests.patch
 	    cd _build
@@ -42,7 +43,8 @@ function build() {
 			  -DCMAKE_C_FLAGS="-arch i386 -arch x86_64" \
 			  -DCMAKE_CXX_FLAGS="-arch i386 -arch x86_64" \
 			  ..
-		make
+		make -j${PARALLEL_MAKE}
+	
 	elif [ "$TYPE" == "emscripten" ]; then
 		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
 		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
@@ -50,11 +52,34 @@ function build() {
 	    cd _build
     	pwd
 		emcmake cmake .. -DCMAKE_CXX_FLAGS=-I${BOOST_INCLUDEDIR} -DCMAKE_BUILD_TYPE=Release -DBOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib -DBoost_INCLUDE_DIR=${BUILD_DIR}/boost
-		make
+		emmake make -j${PARALLEL_MAKE}
+	
+	elif [ "$TYPE" == "android" ]; then
+	    git apply ../../formulas/uri/uri-remove-tests.patch
+		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
+	    
+	    ABI=armeabi-v7a
+	    source ../../android_configure.sh $ABI
+		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage_arm/lib
+		mkdir -p build_arm
+		cd build_arm
+		cmake .. -DCMAKE_CXX_FLAGS="-I${BOOST_INCLUDEDIR} $CFLAGS" -DCMAKE_BUILD_TYPE=Release -DBOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage_arm/lib -DBoost_INCLUDE_DIR=${BUILD_DIR}/boost
+		make -j${PARALLEL_MAKE}
+		cd ..
+		
+	    ABI=x86
+	    source ../../android_configure.sh $ABI
+		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage_x86/lib
+		mkdir -p build_x86
+		cd build_x86
+		cmake .. -DCMAKE_CXX_FLAGS="-I${BOOST_INCLUDEDIR} $CFLAGS" -DCMAKE_BUILD_TYPE=Release -DBOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage_x86/lib -DBoost_INCLUDE_DIR=${BUILD_DIR}/boost
+		make -j${PARALLEL_MAKE}
+		cd ..
+	
 	elif [ "$TYPE" == "linux" ] || [ "$TYPE" == "linux64" ] || [ "$TYPE" == "linuxarmv6l" ] || [ "$TYPE" == "linuxarmv7l" ]; then
 	    cd _build
 		cmake -DCMAKE_BUILD_TYPE=Release ..
-		make
+		make -j${PARALLEL_MAKE}
 	fi
 }
 
@@ -69,13 +94,21 @@ function copy() {
 
 	if [ "$TYPE" == "wincb" ] ; then
 		: #noop by now
-	elif [ "$TYPE" == "osx" ] || [ "$TYPE" == "ios" ] || [ "$TYPE" == "android" ]; then
+	elif [ "$TYPE" == "osx" ] || [ "$TYPE" == "ios" ]; then
 		cp _build/src/*.a $1/lib/$TYPE/
 		cp -r src/network $1/include/
 		../boost/dist/bin/bcp --scan --boost=../boost $(find src/network/ -name "*.hpp") install_dir
 		rsync -ar install_dir/boost/* $1/../boost/include/boost/
-	else
+	elif [ "$TYPE" == "emscripten" ]; then
         cp _build/src/*.a $1/lib/$TYPE/
+        cp -r src/network $1/include/
+    elif [ "$TYPE" == "android" ]; then
+        rm -r $1/lib/$TYPE/armeabi-v7a
+        rm -r $1/lib/$TYPE/x86
+        mkdir -p $1/lib/$TYPE/armeabi-v7a
+        mkdir -p $1/lib/$TYPE/x86
+        cp build_arm/src/*.a $1/lib/$TYPE/armeabi-v7a/
+        cp build_x86/src/*.a $1/lib/$TYPE/x86/
         cp -r src/network $1/include/
 	fi
 
