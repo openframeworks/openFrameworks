@@ -584,43 +584,7 @@ function downloadFormula(){
 	cd $BUILD_DIR
 
 	if [ -e $1 ] ; then
-		#we have to remove these when we build with different architectures in vs
-		if [ "$1" == "glfw" ] ; then
-			rm -r glfw
-			if [ ! -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
-				gitclone $1 $GIT_URL ${GIT_TAG:-master}
-			else
-				download
-			fi
-			if [ ! -e $1 ] ; then
-				echoError " It looks like downloading failed for \"$1\""
-				exit 1
-			fi
-		elif [ "$1" == "rtAudio" ] ; then
-			rm -r rtAudio
-			if [ ! -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
-				gitclone $1 $GIT_URL ${GIT_TAG:-master}
-			else
-				download
-			fi
-			if [ ! -e $1 ] ; then
-				echoError " It looks like downloading failed for \"$1\""
-				exit 1
-			fi
-		elif [ "$1" == "tess2" ] ; then
-			rm -r tess2
-			if [ ! -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
-				gitclone $1 $GIT_URL ${GIT_TAG:-master}
-			else
-				download
-			fi
-			if [ ! -e $1 ] ; then
-				echoError " It looks like downloading failed for \"$1\""
-				exit 1
-			fi
-		else
-			echo "... skipping, src dir already exists"
-		fi
+		echo "... skipping, src dir already exists"
 	else
 		if [ ! -z "$USE_GIT" ] && [[ "${GIT_URL:+x}" ]] ; then
 			gitclone $1 $GIT_URL ${GIT_TAG:-master}

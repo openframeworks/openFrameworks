@@ -118,10 +118,14 @@ function build() {
 
 	elif [ "$TYPE" == "vs" ] ; then
 		if [ $ARCH == 32 ] ; then
-			cmake -G "Visual Studio $VS_VER"
+			mkdir -p build_vs_32
+			cd build_vs_32
+			cmake .. -G "Visual Studio $VS_VER"
 			vs-build "tess2.sln"
 		elif [ $ARCH == 64 ] ; then
-			cmake -G "Visual Studio $VS_VER Win64"
+			mkdir -p build_vs_64
+			cd build_vs_64
+			cmake .. -G "Visual Studio $VS_VER Win64"
 			vs-build "tess2.sln" Build "Release|x64"
 		fi
 		
@@ -312,10 +316,10 @@ function copy() {
 	if [ "$TYPE" == "vs" ] ; then 
 		if [ $ARCH == 32 ] ; then
 			mkdir -p $1/lib/$TYPE/Win32
-			cp -v Release/tess2.lib $1/lib/$TYPE/Win32/tess2.lib
+			cp -v build_vs_32/Release/tess2.lib $1/lib/$TYPE/Win32/tess2.lib
 		elif [ $ARCH == 64 ] ; then
 			mkdir -p $1/lib/$TYPE/x64
-			cp -v Release/tess2.lib $1/lib/$TYPE/x64/tess2.lib
+			cp -v build_vs_64/Release/tess2.lib $1/lib/$TYPE/x64/tess2.lib
 		fi
 	elif [ "$TYPE" == "ios" ] ; then 
 		cp -v lib/$TYPE/libtess2.a $1/lib/$TYPE/tess2.a
