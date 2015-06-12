@@ -15,18 +15,19 @@ FORMULA_TYPES=( "osx" "linux" "linux64" "vs" "win_cb" )
 #FORMULA_DEPENDS_MANUAL=1
 
 # define the version
-VER=4.0.12
+VER=4.1.1
 
 # tools for git use
-GIT_URL=
-GIT_TAG=
+GIT_URL=https://github.com/thestk/rtaudio
+GIT_TAG=master
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -O http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-$VER.tar.gz
-	tar -xf rtaudio-$VER.tar.gz
-	mv rtaudio-$VER rtAudio
-	rm rtaudio-$VER.tar.gz
+	#curl -O http://www.music.mcgill.ca/~gary/rtaudio/release/rtaudio-$VER.tar.gz
+	curl -Lk $GIT_URL/archive/master.tar.gz -o  rtAudio-$GIT_TAG.tar.gz
+	tar -xf rtaudio-$GIT_TAG.tar.gz
+	mv rtaudio-$GIT_TAG rtAudio
+	rm rtaudio-$GIT_TAG.tar.gz
 }
 
 # prepare the build environment, executed inside the lib src dir
@@ -82,8 +83,16 @@ function build() {
 			./configure --with-alsa
 			make 
 		elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
-			local API="--with-ds" # asio as well?
-			echoWarning "TODO: build $TYPE"
+			local API="--with-wasapi --with-ds" # asio as well?
+			if [ $ARCH == 32 ] ; then
+				cmake -G "Visual Studio $VS_VER"  -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON
+				vs-build "rtaudio_static.vcxproj"
+				vs-build "rtaudio_static.vcxproj" Build "Debug"
+			elif [ $ARCH == 64 ] ; then
+				cmake -G "Visual Studio $VS_VER Win64" -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON
+				vs-build "rtaudio_static.vcxproj" Build "Release|x64"
+				vs-build "rtaudio_static.vcxproj" Build "Debug|x64"
+			fi
 		fi
 	fi
 
@@ -97,12 +106,21 @@ function copy() {
 	# headers
 	mkdir -p $1/include
 	cp -v RtAudio.h $1/include
-	cp -v RtError.h $1/include
+	#cp -v RtError.h $1/include #no longer a part of rtAudio
 
 	# libs
 	mkdir -p $1/lib/$TYPE
 	if [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: copy vs lib"
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v Release/rtaudio_static.lib $1/lib/$TYPE/Win32/rtAudio.lib
+			cp -v Debug/rtaudio_static.lib $1/lib/$TYPE/Win32/rtAudioD.lib
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v Release/rtaudio_static.lib $1/lib/$TYPE/x64/rtAudio.lib
+			cp -v Debug/rtaudio_static.lib $1/lib/$TYPE/x64/rtAudioD.lib
+		fi
+		
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: copy win_cb lib"
@@ -121,7 +139,7 @@ function copy() {
 function clean() {
 	
 	if [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: clean vs"
+		vs-clean "rtaudio_static.vcxproj"
 	else
 		make clean
 	fi
