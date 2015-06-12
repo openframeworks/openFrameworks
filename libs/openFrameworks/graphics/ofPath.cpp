@@ -2,7 +2,7 @@
 #include "ofAppRunner.h"
 #include "ofTessellator.h"
 
-#if __cplusplus>=201103
+#if HAS_TLS
 	thread_local ofTessellator ofPath::tessellator;
 #endif
 
