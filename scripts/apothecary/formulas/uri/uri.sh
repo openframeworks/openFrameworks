@@ -5,7 +5,7 @@
 # 
 # uses cmake build system
 
-FORMULA_TYPES=( "osx" "win_cb" "ios" "android" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "emscripten" )
+FORMULA_TYPES=( "osx" "win_cb" "ios" "android" "linux" "linux64" "linuxarmv6l" "linuxarmv7l" "emscripten" "vs" )
 
 # define the version
 COMMIT=55ec3cd78918c42dfb874e01c9745b4daf51091b
@@ -26,19 +26,34 @@ function prepare() {
 # executed inside the lib src dir
 function build() {
 	git checkout .
-	rm -r _build
+	rm -rf _build
 	mkdir -p _build
 	pwd
 	if [ "$TYPE" == "wincb" ] ; then
 	    git apply ../../formulas/uri/uri-remove-tests.patch
 	    cd _build
 		#noop by now
+		
+	elif [ "$TYPE" == "vs" ] ; then
+	    git apply ../../formulas/uri/uri-remove-tests.patch
+	    mkdir -p build_vs$ARCH
+		cd build_vs$ARCH
+		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
+		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
+		cmake .. -G "Visual Studio $VS_VER"  
+		if [ $ARCH == 32 ] ; then
+			vs-build "ALL_BUILD.vcxproj"
+			vs-build "ALL_BUILD.vcxproj" Build "Debug"
+		elif [ $ARCH == 64 ] ; then
+			vs-build "ALL_BUILD.vcxproj" Build "Release|x64"
+			vs-build "ALL_BUILD.vcxproj" Build "Debug|x64"
+		fi
 	
 	elif [ "$TYPE" == "osx" ]; then
 	    git apply ../../formulas/uri/uri-remove-tests.patch
 	    cd _build
-		export BOOST_LIBRARYDIR=../boost/stage/lib
-		export BOOST_INCLUDEDIR=../boost/
+		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
+		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
 		cmake -DCMAKE_BUILD_TYPE=Release \
 			  -DCMAKE_C_FLAGS="-arch i386 -arch x86_64" \
 			  -DCMAKE_CXX_FLAGS="-arch i386 -arch x86_64" \
@@ -94,6 +109,18 @@ function copy() {
 
 	if [ "$TYPE" == "wincb" ] ; then
 		: #noop by now
+		
+	elif [ "$TYPE" == "vs" ] ; then
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v build_vs32/src/Release/network-uri.lib $1/lib/$TYPE/Win32/
+			cp -v build_vs32/src/Debug/network-uri.lib $1/lib/$TYPE/Win32/network-uri_debug.lib
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v build_vs64/src/Release/network-uri.lib $1/lib/$TYPE/x64/
+			cp -v build_vs64/src/Debug/network-uri.lib $1/lib/$TYPE/x64/network-uri_debug.lib
+		fi
+		
 	elif [ "$TYPE" == "osx" ] || [ "$TYPE" == "ios" ]; then
 		cp _build/src/*.a $1/lib/$TYPE/
 		cp -r src/network $1/include/
