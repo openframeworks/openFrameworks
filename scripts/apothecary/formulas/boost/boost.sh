@@ -82,15 +82,11 @@ function copy() {
 		cp stage/lib/libboost_system.a $1/lib/$TYPE/boost_system.a
 	elif [ "$TYPE" == "emscripten" ]; then
 		cp stage/lib/*.a $1/lib/$TYPE/
-		mkdir -p $1/include/boost/preprocessor/debug/
-		cp boost/preprocessor/debug/error.hpp $1/include/boost/preprocessor/debug/
 	elif [ "$TYPE" == "android" ]; then
 	    mkdir -p $1/lib/$TYPE/armeabi-v7a
 	    mkdir -p $1/lib/$TYPE/x86
 		cp stage_arm/lib/*.a $1/lib/$TYPE/armeabi-v7a/
 		cp stage_x86/lib/*.a $1/lib/$TYPE/x86/
-		mkdir -p $1/include/boost/preprocessor/debug/
-		cp boost/preprocessor/debug/error.hpp $1/include/boost/preprocessor/debug/
 	fi
 
 	# copy license file
