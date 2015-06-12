@@ -1259,7 +1259,7 @@ int ofDirectory::listDir(){
 		Path curPath(originalDirectory);
 		curPath.setFileName(fileStrings[i]);
 		try{
-#if __cplusplus>=201103
+#if HAS_CPP11
 			files.emplace_back(curPath.toString(), ofFile::Reference);
 #else
 			files.push_back(ofFile(curPath.toString(), ofFile::Reference));
