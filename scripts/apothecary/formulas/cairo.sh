@@ -30,7 +30,7 @@ GIT_TAG=$VER
 # download the source code and unpack it into LIB_NAME
 function download() {
 	curl -LO http://cairographics.org/releases/cairo-$VER.tar.xz
-	tar -xz cairo-$VER.tar.xz
+	tar -xf cairo-$VER.tar.xz
 	mv cairo-$VER cairo
 	rm cairo-$VER.tar.xz
 	# manually download dependencies
@@ -140,35 +140,20 @@ function copy() {
 		mkdir -p $1/include/cairo
 
 		# copy the cairo headers
-		cp -Rv cairo/src/*.h $1/include/cairo
-
-		# make the path in the libs dir
-		mkdir -p $1/include/libpng16
-
-		# copy the cairo headers
-		cp -Rv libpng/*.h $1/include/libpng16
-
-		# make the path in the libs dir
-		mkdir -p $1/include/pixman-1
-
-		# copy the cairo headers
-		cp -Rv pixman/pixman/*.h $1/include/pixman-1
-
-		# copy the png symlinks
-		cp -v libpng/png*.h $1/include/
-
-		
+		cp -Rv cairo/src/*.h $1/include/cairo		
 		
 		if [ $ARCH == 32 ] ; then
 			# make the libs path 
 			mkdir -p $1/lib/$TYPE/Win32
 			cp -v Cairo-VS/projects/Release/cairo.lib $1/lib/$TYPE/Win32/cairo-static.lib
 			cp -v Cairo-VS/projects/Release/pixman.lib $1/lib/$TYPE/Win32/pixman-1.lib
+			cp -v Cairo-VS/projects/Release/libpng.lib $1/lib/$TYPE/Win32/libpng.lib
 		elif [ $ARCH == 64 ] ; then
 			# make the libs path 
 			mkdir -p $1/lib/$TYPE/x64
 			cp -v Cairo-VS/projects/x64/Release/cairo.lib $1/lib/$TYPE/x64/cairo-static.lib
 			cp -v Cairo-VS/projects/x64/Release/pixman.lib $1/lib/$TYPE/x64/pixman-1.lib
+			cp -v Cairo-VS/projects/x64/Release/libpng.lib $1/lib/$TYPE/Win32/libpng.lib
 		fi
 		cd cairo
 
@@ -179,30 +164,15 @@ function copy() {
 		# copy the cairo headers
 		cp -Rv $BUILD_ROOT_DIR/include/cairo/* $1/include/cairo
 
-		# make the path in the libs dir
-		mkdir -p $1/include/libpng16
-
-		# copy the cairo headers
-		cp -Rv $BUILD_ROOT_DIR/include/libpng16/* $1/include/libpng16
-
-		# make the path in the libs dir
-		mkdir -p $1/include/pixman-1
-
-		# copy the cairo headers
-		cp -Rv $BUILD_ROOT_DIR/include/pixman-1/* $1/include/pixman-1
-
-		# copy the png symlinks
-		cp -v $BUILD_ROOT_DIR/include/png* $1/include/
-
 		# make the libs path 
 		mkdir -p $1/lib/$TYPE
-
 	
 		if [ "$TYPE" == "osx" ] ; then
 			cp -v $BUILD_ROOT_DIR/lib/libcairo-script-interpreter.a $1/lib/$TYPE/cairo-script-interpreter.a
 		fi
 		cp -v $BUILD_ROOT_DIR/lib/libcairo.a $1/lib/$TYPE/cairo.a
 		cp -v $BUILD_ROOT_DIR/lib/libpixman-1.a $1/lib/$TYPE/pixman-1.a
+		cp -v $BUILD_ROOT_DIR/lib/libpng.a $1/lib/$TYPE/png.a
 	fi
 
 	# copy license files
