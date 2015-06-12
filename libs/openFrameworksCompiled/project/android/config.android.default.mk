@@ -60,15 +60,15 @@ PLATFORM_DEFINES =
 PLATFORM_DEFINES = ANDROID
 
 ifndef $(NDK_PLATFORM)
-	NDK_PLATFORM = android-17
+	NDK_PLATFORM = android-21
 endif
 
 ifndef $(SDK_TARGET)
-	SDK_TARGET = android-17
+	SDK_TARGET = android-21
 endif
 
 ifndef $(GCC_VERSION)
-	GCC_VERSION = 4.8
+	GCC_VERSION = 4.9
 endif
 
 PROJECT_PATH=$(PWD)
@@ -285,6 +285,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/portaudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/lib/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 
 # android project folders
 PROJECT_EXCLUSIONS += ./gen

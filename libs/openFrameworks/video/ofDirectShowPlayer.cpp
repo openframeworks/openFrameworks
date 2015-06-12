@@ -604,8 +604,6 @@ class DirectShowVideo : public ISampleGrabberCB{
             IPin* pinIn = 0;
             IPin* pinOut = 0;
 
-            IBaseFilter * m_pColorSpace;
-
             m_pGraph->FindFilterByName(L"Video Renderer", &m_pVideoRenderer);
             if (FAILED(hr)){
                 printf("failed to find the video renderer\n");

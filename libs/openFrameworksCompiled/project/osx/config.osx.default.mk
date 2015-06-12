@@ -78,7 +78,7 @@ ifndef MAC_OS_STD_LIB
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
-PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB) -std=c++11
+PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
 PLATFORM_CFLAGS += -Wall
@@ -140,6 +140,7 @@ PLATFORM_CFLAGS += -mssse3
 PLATFORM_CFLAGS += -fmessage-length=0
 
 PLATFORM_CXXFLAGS += -x objective-c++
+PLATFORM_CXXFLAGS += -std=c++11
 
 ifeq ($(USE_GST),1)
 	PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
@@ -283,6 +284,8 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
+PLATFORM_FRAMEWORKS += QTKit
+PLATFORM_FRAMEWORKS += GLUT
 PLATFORM_FRAMEWORKS += AGL
 PLATFORM_FRAMEWORKS += ApplicationServices
 PLATFORM_FRAMEWORKS += AudioToolbox

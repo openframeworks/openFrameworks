@@ -6,7 +6,7 @@
 #
 # uses a CMake build system
  
-FORMULA_TYPES=( "osx" "ios" )
+FORMULA_TYPES=( "osx" "ios" "android" "emscripten" )
  
 # define the version
 VER=2.4.9
@@ -16,7 +16,7 @@ GIT_URL=https://github.com/Itseez/opencv.git
 GIT_TAG=$VER
 
 # these paths don't really matter - they are set correctly further down
-local LIB_FOLDER="$BUILD_ROOT_DIR/OpenCv"
+local LIB_FOLDER="$BUILD_ROOT_DIR/opencv"
 local LIB_FOLDER32="$LIB_FOLDER-32"
 local LIB_FOLDER64="$LIB_FOLDER-64"
 local LIB_FOLDER_IOS="$LIB_FOLDER-IOS"
@@ -27,7 +27,7 @@ local LIB_FOLDER_IOS_SIM="$LIB_FOLDER-IOSIM"
 function download() {
   curl -Lk https://github.com/Itseez/opencv/archive/$VER.tar.gz -o opencv-$VER.tar.gz
   tar -xf opencv-$VER.tar.gz
-  mv opencv-$VER OpenCv
+  mv opencv-$VER $1
   rm opencv*.tar.gz
 }
  
@@ -48,7 +48,7 @@ function prepare() {
 function build() {
   rm -f CMakeCache.txt
  
-  LIB_FOLDER="$BUILD_DIR/OpenCv/build/$TYPE/"
+  LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE/"
 
   if [ "$TYPE" == "osx" ] ; then
     rm -f CMakeCache.txt
@@ -61,7 +61,7 @@ function build() {
     cmake .. -DCMAKE_INSTALL_PREFIX=$LIB_FOLDER \
       -DGLFW_BUILD_UNIVERSAL=ON \
       -DCMAKE_OSX_DEPLOYMENT_TARGET=10.7 \
-      -DENABLE_FAST_MATH=ON \
+      -DENABLE_FAST_MATH=OFF \
       -DCMAKE_CXX_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
       -DCMAKE_C_FLAGS="-fvisibility-inlines-hidden -stdlib=libc++ -O3" \
       -DCMAKE_BUILD_TYPE="Release" \
@@ -107,7 +107,7 @@ function build() {
 
     echo "--------------------"
     echo "Running make"
-    make -j4 | tee ${LOG}
+    make -j${PARALLEL_MAKE} | tee ${LOG}
     echo "Make  Successful"
 
     echo "--------------------"
@@ -123,8 +123,8 @@ function build() {
     
   elif [ "$TYPE" == "ios" ] ; then
 
-    local LIB_FOLDER_IOS="$BUILD_ROOT_DIR/$TYPE/iOS/OpenCv"
-    local LIB_FOLDER_IOS_SIM="$BUILD_ROOT_DIR/$TYPE/iOS_SIMULATOR/OpenCv"
+    local LIB_FOLDER_IOS="$BUILD_ROOT_DIR/$TYPE/iOS/opencv"
+    local LIB_FOLDER_IOS_SIM="$BUILD_ROOT_DIR/$TYPE/iOS_SIMULATOR/opencv"
 
 
     # This was quite helpful as a reference: https://github.com/x2on/OpenSSL-for-iPhone
@@ -225,7 +225,7 @@ function build() {
       -DCMAKE_OSX_ARCHITECTURES="${IOS_ARCH}" \
       -DCMAKE_XCODE_EFFECTIVE_PLATFORMS="-$PLATFORM" \
       -DGLFW_BUILD_UNIVERSAL=ON \
-      -DENABLE_FAST_MATH=ON \
+      -DENABLE_FAST_MATH=OFF \
       -DCMAKE_CXX_FLAGS="-stdlib=libc++ -fvisibility=hidden -fPIC -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -DNDEBUG -Os $MIN_TYPE$IPHONE_SDK_VERSION_MIN" \
       -DCMAKE_C_FLAGS="-stdlib=libc++ -fvisibility=hidden -fPIC -isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} -DNDEBUG -Os $MIN_TYPE$IPHONE_SDK_VERSION_MIN"  \
       -DCMAKE_BUILD_TYPE="Release" \
@@ -288,7 +288,7 @@ function build() {
 
     echo "--------------------"
     echo "Running make for ${IOS_ARCH}"
-    make >> "${LOG}" 2>&1
+    make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
     if [ $? != 0 ];
       then
         tail -n 10 "${LOG}"
@@ -360,6 +360,131 @@ function build() {
     cd ../../
 
   # end if iOS
+  
+  elif [ "$TYPE" == "android" ]; then
+    export ANDROID_NDK=${ANDROID_NDK_ROOT}
+    cd platforms
+    cp ${FORMULA_DIR}/android.toolchain.cmake android/
+    
+    rm -rf build_android_arm
+    rm -rf build_android_x86
+    
+    scripts/cmake_android_arm.sh \
+      -DCMAKE_BUILD_TYPE="Release" \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DBUILD_DOCS=OFF \
+      -DBUILD_EXAMPLES=OFF \
+      -DBUILD_FAT_JAVA_LIB=OFF \
+      -DBUILD_JASPER=OFF \
+      -DBUILD_PACKAGE=OFF \
+      -DBUILD_opencv_java=OFF \
+      -DBUILD_opencv_python=OFF \
+      -DBUILD_opencv_apps=OFF \
+      -DBUILD_JPEG=OFF \
+      -DBUILD_PNG=OFF \
+      -DHAVE_opencv_androidcamera=OFF \
+      -DWITH_TIFF=OFF \
+      -DWITH_OPENEXR=OFF \
+      -DWITH_1394=OFF \
+      -DWITH_JPEG=OFF \
+      -DWITH_PNG=OFF \
+      -DWITH_FFMPEG=OFF \
+      -DWITH_OPENCL=OFF \
+      -DWITH_GIGEAPI=OFF \
+      -DWITH_CUDA=OFF \
+      -DWITH_CUFFT=OFF \
+      -DWITH_JASPER=OFF \
+      -DWITH_IMAGEIO=OFF \
+      -DWITH_IPP=OFF \
+      -DWITH_OPENNI=OFF \
+      -DWITH_QT=OFF \
+      -DWITH_QUICKTIME=OFF \
+      -DWITH_V4L=OFF \
+      -DWITH_PVAPI=OFF \
+      -DBUILD_TESTS=OFF \
+      -DBUILD_PERF_TESTS=OFF
+    cd build_android_arm
+    make -j${PARALLEL_MAKE}
+    cd ..
+    
+    scripts/cmake_android_x86.sh \
+      -DCMAKE_BUILD_TYPE="Release" \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DBUILD_DOCS=OFF \
+      -DBUILD_EXAMPLES=OFF \
+      -DBUILD_FAT_JAVA_LIB=OFF \
+      -DBUILD_JASPER=OFF \
+      -DBUILD_PACKAGE=OFF \
+      -DBUILD_opencv_java=OFF \
+      -DBUILD_opencv_python=OFF \
+      -DBUILD_opencv_apps=OFF \
+      -DBUILD_JPEG=OFF \
+      -DBUILD_PNG=OFF \
+      -DHAVE_opencv_androidcamera=OFF \
+      -DWITH_TIFF=OFF \
+      -DWITH_OPENEXR=OFF \
+      -DWITH_1394=OFF \
+      -DWITH_JPEG=OFF \
+      -DWITH_PNG=OFF \
+      -DWITH_FFMPEG=OFF \
+      -DWITH_OPENCL=OFF \
+      -DWITH_GIGEAPI=OFF \
+      -DWITH_CUDA=OFF \
+      -DWITH_CUFFT=OFF \
+      -DWITH_JASPER=OFF \
+      -DWITH_IMAGEIO=OFF \
+      -DWITH_IPP=OFF \
+      -DWITH_OPENNI=OFF \
+      -DWITH_QT=OFF \
+      -DWITH_QUICKTIME=OFF \
+      -DWITH_V4L=OFF \
+      -DWITH_PVAPI=OFF \
+      -DBUILD_TESTS=OFF \
+      -DBUILD_PERF_TESTS=OFF
+    cd build_android_x86
+    make -j${PARALLEL_MAKE}
+    cd ..
+    
+  elif [ "$TYPE" == "emscripten" ]; then
+    mkdir -p build_${TYPE}
+    cd build_${TYPE}
+    emcmake cmake .. -DCMAKE_INSTALL_PREFIX="${BUILD_DIR}/${1}/build_$TYPE/install" \
+      -DCMAKE_BUILD_TYPE="Release" \
+      -DCMAKE_C_FLAGS=-I${EMSCRIPTEN}/system/lib/libcxxabi/include/ \
+      -DCMAKE_CXX_FLAGS=-I${EMSCRIPTEN}/system/lib/libcxxabi/include/ \
+      -DBUILD_SHARED_LIBS=OFF \
+      -DBUILD_DOCS=OFF \
+      -DBUILD_EXAMPLES=OFF \
+      -DBUILD_FAT_JAVA_LIB=OFF \
+      -DBUILD_JASPER=OFF \
+      -DBUILD_PACKAGE=OFF \
+      -DBUILD_opencv_java=OFF \
+      -DBUILD_opencv_python=OFF \
+      -DBUILD_opencv_apps=OFF \
+      -DBUILD_JPEG=OFF \
+      -DBUILD_PNG=OFF \
+      -DWITH_TIFF=OFF \
+      -DWITH_OPENEXR=OFF \
+      -DWITH_1394=OFF \
+      -DWITH_JPEG=OFF \
+      -DWITH_PNG=OFF \
+      -DWITH_FFMPEG=OFF \
+      -DWITH_OPENCL=OFF \
+      -DWITH_GIGEAPI=OFF \
+      -DWITH_CUDA=OFF \
+      -DWITH_CUFFT=OFF \
+      -DWITH_JASPER=OFF \
+      -DWITH_IMAGEIO=OFF \
+      -DWITH_IPP=OFF \
+      -DWITH_OPENNI=OFF \
+      -DWITH_QT=OFF \
+      -DWITH_QUICKTIME=OFF \
+      -DWITH_V4L=OFF \
+      -DWITH_PVAPI=OFF \
+      -DBUILD_TESTS=OFF \
+      -DBUILD_PERF_TESTS=OFF
+    make -j${PARALLEL_MAKE}
+    make install
   fi 
 
 }
@@ -378,7 +503,7 @@ function copy() {
     # Standard *nix style copy.
     # copy headers
 
-    LIB_FOLDER="$BUILD_DIR/OpenCv/build/$TYPE/"
+    LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE/"
     
     cp -R $LIB_FOLDER/include/ $1/include/
  
@@ -390,11 +515,24 @@ function copy() {
     # Standard *nix style copy.
     # copy headers
 
-    LIB_FOLDER="$BUILD_ROOT_DIR/$TYPE/FAT/OpenCv"
+    LIB_FOLDER="$BUILD_ROOT_DIR/$TYPE/FAT/opencv"
 
     cp -Rv lib/include/ $1/include/
     mkdir -p $1/lib/$TYPE
     cp -v lib/$TYPE/*.a $1/lib/$TYPE
+  fi
+  
+  if [ "$TYPE" == "android" ]; then
+    cp -r include/opencv $1/include/
+    cp -r include/opencv2 $1/include/
+    
+    rm -f platforms/build_android_arm/lib/armeabi-v7a/*pch_dephelp.a
+    rm -f platforms/build_android_arm/lib/armeabi-v7a/*.so
+    cp -r platforms/build_android_arm/lib/armeabi-v7a $1/lib/$TYPE/
+    
+    rm -f platforms/build_android_x86/lib/x86/*pch_dephelp.a
+    rm -f platforms/build_android_x86/lib/x86/*.so
+    cp -r platforms/build_android_x86/lib/x86 $1/lib/$TYPE/
   fi
 
   # copy license file
