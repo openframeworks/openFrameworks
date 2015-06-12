@@ -14,6 +14,13 @@ VER=1.6.0-release
 GIT_URL=https://github.com/pocoproject/poco
 GIT_TAG=poco-1.6.0-release
 
+#dependencies
+FORMULA_DEPENDS=( "openssl" )
+
+# tell apothecary we want to manually call the dependency commands
+# as we set some env vars for osx the depends need to know about
+FORMULA_DEPENDS_MANUAL=1
+
 # For Poco Builds, we omit both Data/MySQL and Data/ODBC because they require
 # 3rd Party libraries.  See https://github.com/pocoproject/poco/blob/develop/README
 # for more information.
@@ -40,6 +47,13 @@ function prepare() {
 	if [ "$SHA" != "" ] ; then
 		git reset --hard $SHA
 	fi
+	
+	# manually prepare dependencies
+	apothecaryDependencies prepare
+
+	# Build and copy all dependencies in preparation
+	apothecaryDepend build openssl
+	apothecaryDepend copy openssl
 
 	# make backups of the ios config files since we need to edit them
 	if [ "$TYPE" == "ios" ] ; then
@@ -67,6 +81,12 @@ function prepare() {
 		cd ../../
 
 	elif [ "$TYPE" == "vs" ] ; then
+		#change the build win cmd file for vs2015 compatibility
+		rm buildwin.cmd
+		CURRENTPATH=`pwd`
+		cp -v $FORMULA_DIR/buildwin.cmd $CURRENTPATH
+		
+		
 		# Patch the components to exclude those that we aren't using.
 		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/components.patch 2>/dev/null ; then
 			patch -p0 -u < $FORMULA_DIR/components.patch
@@ -89,6 +109,8 @@ function prepare() {
 
 		# replace OPENSSL_LIB=%OPENSSL_DIR%\lib;%OPENSSL_DIR%\lib\VC with OPENSSL_LIB=%OPENSSL_DIR%\lib\vs
 		sed -i.tmp "s|%OPENSSL_DIR%\\\lib;.*|%OPENSSL_DIR%\\\lib\\\vs|g" buildwin.cmd
+	elif [ "$TYPE" == "android" ] ; then
+		installAndroidToolchain
 	fi
 
 }
@@ -180,8 +202,13 @@ function build() {
 		done
 
 	elif [ "$TYPE" == "vs" ] ; then
-		cmd //c buildwin.cmd ${VS_VER}0 build static_md both Win32 nosamples notests
-
+		if [ $ARCH == 32 ] ; then
+			cmd //c buildwin.cmd ${VS_VER}0 upgrade static_md both Win32 nosamples notests
+			cmd //c buildwin.cmd ${VS_VER}0 build static_md both Win32 nosamples notests
+		elif [ $ARCH == 64 ] ; then
+			cmd //c buildwin.cmd ${VS_VER}0 upgrade static_md both x64 nosamples notests
+			cmd //c buildwin.cmd ${VS_VER}0 build static_md both x64 nosamples notests
+		fi
 	elif [ "$TYPE" == "win_cb" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
@@ -374,6 +401,10 @@ function build() {
 	elif [ "$TYPE" == "android" ] ; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
+		local OLD_PATH=$PATH
+
+		export PATH=$PATH:$BUILD_DIR/Toolchains/Android/androideabi/bin:$BUILD_DIR/Toolchains/Android/x86/bin
+
 		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
 
 		# get the absolute path to the included openssl libs
@@ -384,37 +415,30 @@ function build() {
 
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
-        export PATH=$PATH:$PWD/AndroidToolchain/bin
-		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/android.patch 2>/dev/null ; then
-			patch -p0 -u < $FORMULA_DIR/android.patch
-		fi
+		./configure $BUILD_OPTS \
+					--include-path=$OPENSSL_INCLUDE \
+					--library-path=$OPENSSL_LIBS/armeabi \
+					--config=Android
 
-        #armv7
-		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
-        rm -rf AndroidToolchain
-        $NDK_ROOT/build/tools/make-standalone-toolchain.sh --platform=android-21 --install-dir=./AndroidToolchain --toolchain=arm-linux-androideabi-4.9
+		make ANDROID_ABI=armeabi
+
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/armeabi-v7a \
 					--config=Android
 
-        make clean
 		make ANDROID_ABI=armeabi-v7a
 
-        #x86
-		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
-        rm -rf AndroidToolchain
-        $NDK_ROOT/build/tools/make-standalone-toolchain.sh --platform=android-21 --install-dir=./AndroidToolchain --toolchain=x86-4.9
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/x86 \
 					--config=Android
 
-        make clean
 		make ANDROID_ABI=x86
 
 		echo `pwd`
 
+		rm -v lib/Android/armeabi/*d.a
 		rm -v lib/Android/armeabi-v7a/*d.a
 		rm -v lib/Android/x86/*d.a
 
@@ -476,7 +500,14 @@ function copy() {
 		cp -v lib/$TYPE/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "vs" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/*.lib $1/lib/$TYPE
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v lib/*.lib $1/lib/$TYPE/Win32
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v lib64/*.lib $1/lib/$TYPE/x64
+		fi
+		
 	elif [ "$TYPE" == "win_cb" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
@@ -493,6 +524,9 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/armv7l/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "android" ] ; then
+		mkdir -p $1/lib/$TYPE/armeabi
+		cp -v lib/Android/armeabi/*.a $1/lib/$TYPE/armeabi
+
 		mkdir -p $1/lib/$TYPE/armeabi-v7a
 		cp -v lib/Android/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a
 
@@ -513,6 +547,8 @@ function clean() {
 
 	if [ "$TYPE" == "vs" ] ; then
 		cmd //c buildwin.cmd ${VS_VER}0 clean static_md both Win32 nosamples notests
+		cmd //c buildwin.cmd ${VS_VER}0 clean static_md both x64 nosamples notests
+		#vs-clean "Poco.sln"
 	elif [ "$TYPE" == "android" ] ; then
 		export PATH=$PATH:$ANDROID_TOOLCHAIN_ANDROIDEABI/bin:$ANDROID_TOOLCHAIN_X86/bin
 		make clean ANDROID_ABI=armeabi

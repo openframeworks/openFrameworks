@@ -19,14 +19,22 @@ function download() {
 	if ! [ -f $FILENAME.sha1 ]; then
 		curl -O https://www.openssl.org/source/$FILENAME.tar.gz.sha1
 	fi
-	
-	if [ "$(shasum $FILENAME.tar.gz | awk '{print $1}')" == "$(cat $FILENAME.tar.gz.sha1)" ] ;  then  
+	if [ "$TYPE" == "vs" ] ; then
+		#hasSha=$(cmd.exe /c 'call 'CertUtil' '-hashfile' '$FILENAME.tar.gz' 'SHA1'')
+		echo "TO DO: check against the SHA for windows"
 		tar -xvf $FILENAME.tar.gz
 		mv $FILENAME openssl
 		rm $FILENAME.tar.gz
 		rm $FILENAME.tar.gz.sha1
-	else 
-		echoError "Invalid shasum for $FILENAME."
+	else
+		if [ "$(shasum $FILENAME.tar.gz | awk '{print $1}')" == "$(cat $FILENAME.tar.gz.sha1)" ] ;  then  
+			tar -xvf $FILENAME.tar.gz
+			mv $FILENAME openssl
+			rm $FILENAME.tar.gz
+			rm $FILENAME.tar.gz.sha1
+		else 
+			echoError "Invalid shasum for $FILENAME."
+		fi
 	fi
 }
 
@@ -61,7 +69,11 @@ function prepare() {
  	elif  [ "$TYPE" == "osx" ] ; then
 		mkdir -p lib/$TYPE
 		mkdir -p lib/include
- 	fi
+ 	elif  [ "$TYPE" == "vs" ] ; then
+		if patch -p1 -u -N --dry-run --silent < $FORMULA_DIR/winOpenSSL.patch 2>/dev/null ; then
+			patch -p1 -u < $FORMULA_DIR/winOpenSSL.patch
+		fi
+	fi
 }
 
 # executed inside the lib src dir
@@ -242,9 +254,23 @@ function build() {
 		
 		# ------------ END OS X Recipe.
 
-	# elif [ "$TYPE" == "vs" ] ; then
-	# 	# cmd //c buildwin.cmd ${VS_VER}0 build static_md both Win32 nosamples notests
-
+	 elif [ "$TYPE" == "vs" ] ; then
+		CURRENTPATH=`pwd`
+		cp -v $FORMULA_DIR/buildwin.cmd $CURRENTPATH
+		WINPATH=$(echo "$CURRENTPATH" | sed -e 's/^\///' -e 's/\//\\/g' -e 's/^./\0:/')
+		if [ $ARCH == 32 ] ; then
+			if [ -d ms/Win32 ]; then
+				rm -r ms/Win32
+			fi
+			mkdir ms/Win32
+			cmd //c buildwin.cmd Win32 "${WINPATH}"
+		elif [ $ARCH == 64 ] ; then
+			if [ -d ms/x64 ]; then
+				rm -r ms/x64
+			fi
+			mkdir ms/x64
+			cmd //c buildwin.cmd x64 "${WINPATH}"
+		fi
 	# elif [ "$TYPE" == "win_cb" ] ; then
 	# 	# local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PocoDoc,ProGen"
 
@@ -399,7 +425,7 @@ function build() {
 			echo "Building openssl-${VER} for ${PLATFORM} ${SDKVERSION} ${IOS_ARCH} : iOS Minimum=$MIN_IOS_VERSION"
 
 			set +e
-			if [[ "$VERSION" =~ 1.0.0. ]]; then
+			if [ "$VERSION" =~ 1.0.0. ]; then
 				echo "Building for OpenSSL Version before 1.0.0"
 	    		./Configure BSD-generic32 -no-asm --openssldir="$CURRENTPATH/build/$TYPE/$IOS_ARCH" > "${LOG}" 2>&1
 			elif [ "${IOS_ARCH}" == "i386" ]; then
@@ -516,7 +542,7 @@ function build() {
 
 	elif [ "$TYPE" == "android" ]; then
 		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
-        perl -pi -e 's/install: all install_docs install_sw/install: install_docs install_sw/g' Makefile.org
+		perl -pi -e 's/install: all install_docs install_sw/install: install_docs install_sw/g' Makefile.org
 		
         # armv7
         ABI=armeabi-v7a
@@ -528,7 +554,7 @@ function build() {
         make deps
         make build_libs
         make install
-        cp libssl.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
+		cp libssl.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
         cp libcrypto.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
         
         # x86
@@ -557,6 +583,7 @@ function copy() {
 	#echoWarning "TODO: copy $TYPE lib"
 
 	# # headers
+	#deleting these is problematic when we do separate builds
 	if [ -f $1/include/openssl/opensslconf_osx.h ]; then
         cp $1/include/openssl/opensslconf_osx.h /tmp/
     fi
@@ -586,31 +613,52 @@ function copy() {
 	if [ -f /tmp/opensslconf_android.h ]; then
         mv /tmp/opensslconf_android.h $1/include/openssl/
     fi
+	
 	# storing a copy of the include in lib/include/
 	# set via: cp -R "build/$TYPE/x86_64/include/" "lib/include/"
 
 	# suppress file not found errors
-	rm -rf $1/lib/$TYPE/* 2> /dev/null
+	#same here doesn't seem to be a solid reason to delete the files
+	#rm -rf $1/lib/$TYPE/* 2> /dev/null
 
 	# libs
-	 if [ "$TYPE" == "osx" ] ; then
-        mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_osx.h
+	if [ "$TYPE" == "osx" ] ; then
+		mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_osx.h
 	    cp -Rv lib/include/* $1/include/
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/$TYPE/*.a $1/lib/$TYPE
-	 elif [ "$TYPE" == "ios" ] ; then
-        mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_ios.h
+	elif [ "$TYPE" == "ios" ] ; then
+	    mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_ios.h
 	    cp -Rv lib/include/* $1/include/
 	 	mkdir -p $1/lib/$TYPE
 	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
-	# elif [ "$TYPE" == "vs" ] ; then
-	# 	mkdir -p $1/lib/$TYPE
-	# 	cp -v lib/*.lib $1/lib/$TYPE
+	elif [ "$TYPE" == "vs" ] ; then	 
+		if [ $ARCH == 32 ] ; then
+			cp -Rv ms/Win32/include/openssl $1/include/
+			rm -rf $1/lib/$TYPE/Win32
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v ms/Win32/lib/*.lib $1/lib/$TYPE/Win32/
+			for f in $1/lib/$TYPE/Win32/*; do
+				base=`basename $f .lib`
+				mv -v $f $1/lib/$TYPE/Win32/${base}md.lib
+			done
+		elif [ $ARCH == 64 ] ; then
+			cp -Rv ms/X64/include/openssl $1/include/
+			rm -rf $1/lib/$TYPE/x64
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v ms/x64/lib/*.lib $1/lib/$TYPE/x64/
+			for f in $1/lib/$TYPE/x64/*; do
+				base=`basename $f .lib`
+				mv -v $f $1/lib/$TYPE/x64/${base}md.lib
+			done
+		fi
+	 	
 	# elif [ "$TYPE" == "win_cb" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
+	
 	elif [ "$TYPE" == "android" ] ; then
-        mv build/include/openssl/opensslconf.h build/include/openssl/opensslconf_android.h
+	    mv build/include/openssl/opensslconf.h build/include/openssl/opensslconf_android.h
 	    cp -Rv build/android/armeabi-v7a/include/* $1/include/
 	    if [ -d $1/lib/$TYPE/ ]; then
 	        rm -r $1/lib/$TYPE/
@@ -620,7 +668,7 @@ function copy() {
 	    mkdir -p $1/lib/$TYPE/x86
 		cp -rv build/android/x86/lib/*.a $1/lib/$TYPE/x86/
 
-        git checkout ../../libs/openssl/include/openssl/comp.h
+		git checkout ../../libs/openssl/include/openssl/comp.h
         git checkout ../../libs/openssl/include/openssl/engine.h
 
 	# 	mkdir -p $1/lib/$TYPE/armeabi-v7a
@@ -636,10 +684,11 @@ function copy() {
     rm -rf $1/license # remove any older files if exists
     mkdir -p $1/license
     cp -v LICENSE $1/license/
-
+	
+	
     # opensslconf.h might be different per platform.
     # we add a platform suffix and include the correct one from the original
-    cat > $1/include/openssl/opensslconf.h << ENDFILE
+ #   cat > $1/include/openssl/opensslconf.h 
 #if defined( __WIN32__ ) || defined( _WIN32 )
 #   include <openssl/opensslconf_win32.h>
 #elif TARGET_OS_IPHONE_SIMULATOR || TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE || TARGET_IPHONE
@@ -649,7 +698,6 @@ function copy() {
 #elif defined (__ANDROID__)
 #   include <openssl/opensslconf_android.h>
 #endif
-ENDFILE
 }
 
 # executed inside the lib src dir
