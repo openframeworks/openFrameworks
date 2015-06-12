@@ -5,7 +5,7 @@
 # 
 # uses a own build system
 
-FORMULA_TYPES=( "osx" "win_cb" "ios" "android" "emscripten" )
+FORMULA_TYPES=( "osx" "win_cb" "ios" "android" "emscripten" "vs" )
 
 # define the version
 VERSION=1.58.0
@@ -18,7 +18,7 @@ URL=http://sourceforge.net/projects/boost/files/boost/${VERSION}/${TARBALL}/down
 # download the source code and unpack it into LIB_NAME
 function download() {
 	curl -Lk ${URL} > ${TARBALL}
-	tar -xzf ${TARBALL}
+	tar -xf ${TARBALL}
 	mv boost_${VERSION_UNDERSCORES} boost
 	rm ${TARBALL}
 }
@@ -28,7 +28,9 @@ function prepare() {
 	if [ "$TYPE" == "osx" ] || [ "$TYPE" == "ios" ] || [ "$TYPE" == "emscripten" ]; then
 		./bootstrap.sh --with-toolset=clang --with-libraries=filesystem
 	elif [ "$TYPE" == "android" ]; then
-		./bootstrap.sh --with-toolset=gcc --with-libraries=filesystem
+		./bootstrap.sh --with-toolset=gcc --with-libraries=filesystemel
+	elif [ "$TYPE" == "vs" ]; then
+		cmd.exe /c "bootstrap"
 	else
 		./bootstrap.bat
 	fi
@@ -38,6 +40,16 @@ function prepare() {
 function build() {
 	if [ "$TYPE" == "wincb" ] ; then
 		: #noop by now
+		
+	elif [ "$TYPE" == "vs" ]; then
+		./b2 -j${PARALLEL_MAKE} threading=multi variant=release --build-dir=build --with-filesystem link=static address-model=$ARCH stage
+		./b2 -j${PARALLEL_MAKE} threading=multi variant=debug --build-dir=build --with-filesystem link=static address-model=$ARCH stage
+		mv stage stage_$ARCH
+		
+		cd tools/bcp  
+		../../b2
+		
+		
 	elif [ "$TYPE" == "osx" ] || [ "$TYPE" == "ios" ]; then
 		./b2 -j${PARALLEL_MAKE} toolset=clang cxxflags="-std=c++11 -stdlib=libc++ -arch i386 -arch x86_64" linkflags="-stdlib=libc++" threading=multi variant=release --build-dir=build --stage-dir=stage link=static stage
 		cd tools/bcp  
@@ -75,6 +87,20 @@ function copy() {
 	
 	if [ "$TYPE" == "wincb" ] ; then
 		: #noop by now
+	elif [ "$TYPE" == "vs" ] ; then
+		if [ "$ARCH" == "32" ]; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp stage_$ARCH/lib/libboost_filesystem-vc140-mt-1_58.lib $1/lib/$TYPE/Win32/
+			cp stage_$ARCH/lib/libboost_system-vc140-mt-1_58.lib $1/lib/$TYPE/Win32/
+			cp stage_$ARCH/lib/libboost_filesystem-vc140-mt-gd-1_58.lib $1/lib/$TYPE/Win32/
+			cp stage_$ARCH/lib/libboost_system-vc140-mt-gd-1_58.lib $1/lib/$TYPE/Win32/
+		elif [ "$ARCH" == "64" ]; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp stage_$ARCH/lib/libboost_filesystem-vc140-mt-1_58.lib $1/lib/$TYPE/x64/
+			cp stage_$ARCH/lib/libboost_system-vc140-mt-1_58.lib $1/lib/$TYPE/x64/
+			cp stage_$ARCH/lib/libboost_filesystem-vc140-mt-gd-1_58.lib $1/lib/$TYPE/x64/
+			cp stage_$ARCH/lib/libboost_system-vc140-mt-gd-1_58.lib $1/lib/$TYPE/x64/
+		fi
 	elif [ "$TYPE" == "osx" ] || [ "$TYPE" == "ios" ]; then
 		dist/bin/bcp filesystem install_dir
 		rsync -ar install_dir/boost/* $1/include/boost/
