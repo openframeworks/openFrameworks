@@ -18,7 +18,7 @@ class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();
 	~ofParameterGroup();
-#if __cplusplus>=201103
+#if HAS_CPP11
 	template<typename ...Args>
 	ofParameterGroup(const string & name, Args&... p)
 	:obj(new Value){
