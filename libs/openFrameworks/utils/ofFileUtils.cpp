@@ -1592,7 +1592,7 @@ string ofFilePath::getFileName(string filePath, bool bRelativeToData){
 	try{
 		fileName = myPath.getFileName();
 	}
-	catch(Poco::Exception & except){
+	catch(Poco::Exception & ){
 		return "";
 	}
 

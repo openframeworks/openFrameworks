@@ -105,6 +105,7 @@ enum ofTargetPlatform{
 		#include <stdint.h>
 		#include <functional>
 		#pragma warning(disable : 4068)		// unknown pragmas
+		#pragma warning(disable : 4756)		// overflow in constant arithmetic
 		#pragma warning(disable : 4800)		// 'Boolean' : forcing value to bool 'true' or 'false'
 
 		// make microsoft visual studio complain less about double / float conversion and
