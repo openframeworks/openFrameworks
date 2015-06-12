@@ -356,8 +356,14 @@ typedef TESSindex ofIndexType;
 //------------------------------------------------ thread local storage
 // xcode has a bug where it won't support tls on some versions even
 // on c++11, this is a workaround that bug
-#if (!defined(TARGET_OSX) && !defined(TARGET_OF_IOS) || __has_feature(cxx_thread_local)) && __cplusplus>=201103
-#define HAS_TLS
+#if __cplusplus>=201103
+	#if !defined(TARGET_OSX) && !defined(TARGET_OF_IOS)
+		#define HAS_TLS 1
+	#elif __clang__
+		#if __has_feature(cxx_thread_local)
+			#define HAS_TLS 1
+		#endif
+	#endif
 #endif
 
 //we don't want to break old code that uses ofSimpleApp
@@ -391,7 +397,9 @@ typedef ofBaseApp ofSimpleApp;
 	#include <memory>
 #else
 	#include <tr1/unordered_map>
+namespace std{
 	using std::tr1::unordered_map;
+}
 #endif
 
 using namespace std;
