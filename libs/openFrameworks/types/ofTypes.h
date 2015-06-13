@@ -73,7 +73,7 @@ class ofSerialDeviceInfo{
 //----------------------------------------------------------
 
 
-#if __cplusplus>=201103
+#if HAS_CPP11
 #include <mutex>
 #else
 #include "Poco/Mutex.h"
@@ -109,7 +109,7 @@ class ofSerialDeviceInfo{
 ///
 /// \sa http://www.cplusplus.com/reference/mutex/mutex/
 /// \sa http://www.appinf.com/docs/poco/Poco.FastMutex.html
-#if __cplusplus>=201103
+#if HAS_CPP11
 typedef std::mutex ofMutex;
 #else
 typedef Poco::FastMutex ofMutex;
@@ -151,7 +151,7 @@ typedef Poco::FastMutex ofMutex;
 /// \sa http://en.cppreference.com/w/cpp/thread/lock_guard
 /// \sa http://www.appinf.com/docs/poco/Poco.ScopedLock.html
 /// \sa ofMutex
-#if __cplusplus>=201103
+#if HAS_CPP11
 typedef std::unique_lock<std::mutex> ofScopedLock;
 #else
 typedef Poco::FastMutex::ScopedLock ofScopedLock;

@@ -176,7 +176,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 	network::uri uri;
     try {
         uri = network::uri(fileName);
-    } catch(const std::exception & exc){
+    } catch(const std::exception &){
     }
 	if(uri.scheme() != boost::none && (uri.scheme().get() == "http" || uri.scheme().get() == "https")){
 		return ofLoadImage(pix, ofLoadURL(fileName).data);

@@ -2,7 +2,7 @@
 #include "ofImage.h"
 #include "ofFileUtils.h"
 
-#if __cplusplus>=201103
+#if HAS_CPP11
 #include <chrono>
 #endif
 
@@ -167,7 +167,7 @@ string ofGetTimestampString(){
 //--------------------------------------------------
 string ofGetTimestampString(const string& timestampFormat){
 	std::stringstream str;
-#if __cplusplus>=201103
+#if HAS_CPP11
 	auto now = std::chrono::system_clock::now();
 	auto t = std::chrono::system_clock::to_time_t(now);    std::chrono::duration<double> s = now - std::chrono::system_clock::from_time_t(t);
     int ms = s.count() * 1000;
@@ -320,11 +320,11 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	
 	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
-	if (defaultWorkingDirectory().toString() != getWorkingDir().toString()) {
+	if (defaultWorkingDirectory() != std::filesystem::current_path()) {
 		// change our cwd back to where it was on app load
-		int ret = chdir(defaultWorkingDirectory().toString().c_str());
+		int ret = chdir(defaultWorkingDirectory().string().c_str());
 		if(ret==-1){
-			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory().toString();
+			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory();
 		}
 	}
 #endif
@@ -342,11 +342,11 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// here we check whether path already refers to the data folder by looking for common elements
 	// if the path begins with the full contents of dataPathRoot then the data path has already been added
 	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
-	string strippedDataPath = dataPath.native();
+	auto strippedDataPath = dataPath.string();
 	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
 	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
 	
-	if (inputPath.native().find(strippedDataPath) != 0) {
+	if (inputPath.string().find(strippedDataPath) != 0) {
 		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
 		outputPath = dataPath / inputPath;
 	} else {
@@ -357,10 +357,10 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// finally, if we do want an absolute path and we don't already have one
 	if (makeAbsolute) {
 		// then we return the absolute form of the path
-		return std::filesystem::absolute(outputPath).native();
+		return std::filesystem::absolute(outputPath).string();
 	} else {
 		// or output the relative path
-		return outputPath.native();
+		return outputPath.string();
 	}
 }
 
