@@ -93,7 +93,7 @@ public:
 		return true;
 	}
 
-#if __cplusplus>=201103
+#if HAS_CPP11
 	/// sends a value by moving it to avoid a copy.
 	/// the original is invalidated. use like:
 	///
