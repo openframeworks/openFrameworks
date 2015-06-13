@@ -39,8 +39,17 @@ function build() {
 	rm -f CMakeCache.txt
 
 	if [ "$TYPE" == "vs" ] ; then
-		cmake -G "Visual Studio $VS_VER"
-		vs-build "GLFW.sln"
+		if [ $ARCH == 32 ] ; then
+			mkdir -p build_vs_32
+			cd build_vs_32
+			cmake .. -G "Visual Studio $VS_VER"
+			vs-build "GLFW.sln"
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p build_vs_64
+			cd build_vs_64
+			cmake .. -G "Visual Studio $VS_VER Win64"
+			vs-build "GLFW.sln" Build "Release|x64"
+		fi
 	else
 		# *nix build system
 
@@ -69,8 +78,15 @@ function copy() {
 	mkdir -p $1/lib/$TYPE
 
 	if [ "$TYPE" == "vs" ] ; then
-	    cp -Rv include/* $1/include
-		cp -v src/Release/glfw3.lib $1/lib/$TYPE/glfw3.lib
+		cp -Rv include/* $1/include
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v build_vs_32/src/Release/glfw3.lib $1/lib/$TYPE/Win32/glfw3.lib
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v build_vs_64/src/Release/glfw3.lib $1/lib/$TYPE/x64/glfw3.lib
+		fi
+	    
 	else
 		# Standard *nix style copy.
 		# copy headers

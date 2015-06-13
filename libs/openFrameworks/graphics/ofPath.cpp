@@ -3,7 +3,7 @@
 #include "ofTessellator.h"
 
 #if HAS_TLS
-thread_local ofTessellator ofPath::tessellator;
+	thread_local ofTessellator ofPath::tessellator;
 #endif
 
 ofPath::Command::Command(Type type)

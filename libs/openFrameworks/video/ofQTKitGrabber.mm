@@ -143,9 +143,7 @@
 + (NSArray*) listVideoDevices
 {
     //create a session for enumerating devices
-    QTCaptureSession * tmpSession = [[[QTCaptureSession alloc] init] autorelease];
-    
-	NSArray* videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] 
+	NSArray* videoDevices = [[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo]
 							 arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]];
 	
     ofLogVerbose("ofQTKitGrabber") << "listing video devices:";
@@ -158,8 +156,6 @@
 + (NSArray*) listAudioDevices
 {
     //create a session for enumerating devices
-    QTCaptureSession * tmpSession = [[[QTCaptureSession alloc] init] autorelease];
-
 	NSArray* audioDevices = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeSound];
 	
     ofLogVerbose("ofQTKitGrabber") << "listing audio devices:";
@@ -307,7 +303,7 @@
 		success = [_selectedVideoDevice open:&error];
 		if(success){
 			// Create a device input for the device and add it to the session
-			self.videoDeviceInput = [[QTCaptureDeviceInput alloc] initWithDevice:_selectedVideoDevice];
+			self.videoDeviceInput = [QTCaptureDeviceInput deviceInputWithDevice:_selectedVideoDevice];
 			
 			success = [self.session addInput:self.videoDeviceInput error:&error];
 			if(!success || error != nil){
@@ -343,7 +339,7 @@
 		success = [_selectedAudioDevice open:&error];
 		if(success){
 			// Create a device input for the device and add it to the session
-			self.audioDeviceInput = [[QTCaptureDeviceInput alloc] initWithDevice:_selectedAudioDevice];
+			self.audioDeviceInput = [QTCaptureDeviceInput deviceInputWithDevice:_selectedAudioDevice];
 			
 			success = [self.session addInput:self.audioDeviceInput error:&error];
 			if(!success && error != nil){
@@ -367,7 +363,7 @@
 	NSError *error = nil;
 	
 	// Create the movie file output and add it to the session
-	self.captureMovieFileOutput = [[QTCaptureMovieFileOutput alloc] init];
+	self.captureMovieFileOutput = [[[QTCaptureMovieFileOutput alloc] init] autorelease];
     [self.captureMovieFileOutput setDelegate:self];
     
 	success = [self.session addOutput:captureMovieFileOutput error:&error];
