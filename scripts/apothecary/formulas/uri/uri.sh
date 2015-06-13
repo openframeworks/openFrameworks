@@ -38,13 +38,14 @@ function build() {
 	    git apply ../../formulas/uri/uri-remove-tests.patch
 	    mkdir -p build_vs$ARCH
 		cd build_vs$ARCH
-		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
 		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
-		cmake .. -G "Visual Studio $VS_VER"  
+		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage_$ARCH/lib
 		if [ $ARCH == 32 ] ; then
+			cmake .. -G "Visual Studio $VS_VER"  
 			vs-build "ALL_BUILD.vcxproj"
 			vs-build "ALL_BUILD.vcxproj" Build "Debug"
 		elif [ $ARCH == 64 ] ; then
+			cmake .. -G "Visual Studio $VS_VER Win64"  
 			vs-build "ALL_BUILD.vcxproj" Build "Release|x64"
 			vs-build "ALL_BUILD.vcxproj" Build "Debug|x64"
 		fi
