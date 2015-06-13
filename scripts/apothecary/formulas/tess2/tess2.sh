@@ -305,11 +305,11 @@ function copy() {
 	
 	# headers
 	mkdir -p $1/include
-	cp -Rv Include/ $1/include
+	cp -Rv Include/* $1/include/
 
 	# source
 	mkdir -p $1/Sources
-	cp -Rv Source/ $1/Sources
+	cp -Rv Source/* $1/Sources/
 
 	# lib
 	mkdir -p $1/lib/$TYPE
