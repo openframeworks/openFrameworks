@@ -522,7 +522,6 @@ ofFileDialogResult ofSystemSaveDialog(string defaultName, string messageName){
 
 
 	wchar_t fileName[MAX_PATH] = L"";
-	char * extension;
 	OPENFILENAMEW ofn;
     memset(&ofn, 0, sizeof(OPENFILENAME));
 	ofn.lStructSize = sizeof(OPENFILENAME);
