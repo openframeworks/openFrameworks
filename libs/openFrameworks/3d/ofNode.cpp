@@ -377,8 +377,7 @@ void ofNode::customDraw(){
 
 //----------------------------------------
 void ofNode::transformGL(ofBaseRenderer * renderer) const {
-	if( renderer == NULL )
-	{
+	if( renderer == NULL ) {
 		renderer = ofGetCurrentRenderer().get();
 	}
 	renderer->pushMatrix();
