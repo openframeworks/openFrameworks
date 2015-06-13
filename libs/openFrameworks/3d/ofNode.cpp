@@ -377,12 +377,18 @@ void ofNode::customDraw(){
 
 //----------------------------------------
 void ofNode::transformGL(ofBaseRenderer * renderer) const {
+	if( renderer == NULL ) {
+		renderer = ofGetCurrentRenderer().get();
+	}
 	renderer->pushMatrix();
 	renderer->multMatrix( getGlobalTransformMatrix() );
 }
 
 //----------------------------------------
 void ofNode::restoreTransformGL(ofBaseRenderer * renderer) const {
+	if( renderer == NULL ) {
+		renderer = ofGetCurrentRenderer().get();
+	}
 	renderer->popMatrix();
 }
 
