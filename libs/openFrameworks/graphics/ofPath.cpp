@@ -2,13 +2,13 @@
 #include "ofAppRunner.h"
 #include "ofTessellator.h"
 
-#if __cplusplus>=201103
-	thread_local ofTessellator ofPath::tessellator;
+#if HAS_TLS
+thread_local ofTessellator ofPath::tessellator;
 #endif
 
 ofPath::Command::Command(Type type)
 :type(type){
-
+	
 }
 
 //----------------------------------------------------------
@@ -171,11 +171,11 @@ void ofPath::quadBezierTo(float cx1, float cy1, float cz1, float cx2, float cy2,
 
 //----------------------------------------------------------
 void ofPath::arc(const ofPoint & centre, float radiusX, float radiusY, float angleBegin, float angleEnd, bool clockwise){
-    if(clockwise) {
-        arc(centre,radiusX,radiusY,angleBegin,angleEnd);
-    } else {
-        arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd);
-    }
+	if(clockwise) {
+		arc(centre,radiusX,radiusY,angleBegin,angleEnd);
+	} else {
+		arcNegative(centre,radiusX,radiusY,angleBegin,angleEnd);
+	}
 }
 
 //----------------------------------------------------------
@@ -323,50 +323,50 @@ void ofPath::rectRounded(float x, float y, float w, float h, float r){
 
 //----------------------------------------------------------
 void ofPath::rectRounded(const ofPoint & p, float w, float h, float topLeftRadius,
-														float topRightRadius,
-														float bottomRightRadius,
-														float bottomLeftRadius){
-
+						 float topRightRadius,
+						 float bottomRightRadius,
+						 float bottomLeftRadius){
+	
 	rectRounded(p.x,p.y,p.z,w,h,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
 }
 
 //----------------------------------------------------------
 void ofPath::rectRounded(const ofRectangle & b, float topLeftRadius,
-										  float topRightRadius,
-										  float bottomRightRadius,
-										  float bottomLeftRadius){
+						 float topRightRadius,
+						 float bottomRightRadius,
+						 float bottomLeftRadius){
 	rectRounded(b.x,b.y,0,b.width,b.height,topLeftRadius,topRightRadius,bottomRightRadius,bottomLeftRadius);
 }
 
 //----------------------------------------------------------
 void ofPath::rectRounded(float x, float y, float z, float w, float h, float topLeftRadius,
-												  float topRightRadius,
-												  float bottomRightRadius,
-												  float bottomLeftRadius){
+						 float topRightRadius,
+						 float bottomRightRadius,
+						 float bottomLeftRadius){
 	// since we support w / h < 0, canonicalize the rectangle for easier drawing
 	if(w < 0.0f) {
 		x += w;
 		w *= -1.0f;
 	}
-
+	
 	if(h < 0.0f) {
 		y += h;
 		h *= -1.0f;
 	}
-
+	
 	// keep radii in check
 	float maxRadius = MIN(w / 2.0f, h / 2.0f);
 	topLeftRadius        = MIN(topLeftRadius,     maxRadius);
 	topRightRadius       = MIN(topRightRadius,    maxRadius);
 	bottomRightRadius    = MIN(bottomRightRadius, maxRadius);
 	bottomLeftRadius     = MIN(bottomLeftRadius,  maxRadius);
-
+	
 	// if all radii are ~= 0.0f, then render as a normal rectangle
 	if((fabs(topLeftRadius)     < FLT_EPSILON) &&
 	   (fabs(topRightRadius)    < FLT_EPSILON) &&
 	   (fabs(bottomRightRadius) < FLT_EPSILON) &&
 	   (fabs(bottomLeftRadius)  < FLT_EPSILON)) {
-
+		
 		// rect mode respect happens in ofRect
 		rectangle(x, y, z, w, h);
 	} else {
@@ -374,38 +374,38 @@ void ofPath::rectRounded(float x, float y, float z, float w, float h, float topL
 		float right  = x + w;
 		float top    = y;
 		float bottom = y + h;
-
-
+		
+		
 		moveTo(left + topLeftRadius, top, z);
-
+		
 		// top right
 		if(fabs(topRightRadius) >= FLT_EPSILON) {
 			arc(right - topRightRadius, top + topRightRadius, z, topRightRadius, topRightRadius, 270, 360);
 		} else {
 			lineTo(right, top, z);
 		}
-
+		
 		lineTo(right, bottom - bottomRightRadius);
 		// bottom right
 		if(fabs(bottomRightRadius) >= FLT_EPSILON) {
 			arc(right - bottomRightRadius, bottom - bottomRightRadius, z, bottomRightRadius, bottomRightRadius, 0, 90);
 		}
-
+		
 		lineTo(left + bottomLeftRadius, bottom, z);
-
+		
 		// bottom left
 		if(fabs(bottomLeftRadius) >= FLT_EPSILON) {
 			arc(left + bottomLeftRadius, bottom - bottomLeftRadius, z, bottomLeftRadius, bottomLeftRadius, 90, 180);
 		}
-
+		
 		lineTo(left, top + topLeftRadius, z);
-
+		
 		// top left
 		if(fabs(topLeftRadius) >= FLT_EPSILON) {
 			arc(left + topLeftRadius, top + topLeftRadius, z, topLeftRadius, topLeftRadius, 180, 270);
 		}
 		close();
-
+		
 	}
 }
 
@@ -494,41 +494,41 @@ void ofPath::generatePolylinesFromCommands(){
 	if(mode==POLYLINES || commands.empty()) return;
 	if(bNeedsPolylinesGeneration || curveResolution!=prevCurveRes){
 		prevCurveRes = curveResolution;
-
+		
 		polylines.clear();
 		int j=-1;
-
+		
 		for(int i=0; i<(int)commands.size();i++){
 			switch(commands[i].type){
-			case Command::moveTo:
-				polylines.push_back(ofPolyline());
-				j++;
-				polylines[j].addVertex(commands[i].to);
-				break;
-			case Command::lineTo:
-				polylines[j].addVertex(commands[i].to);
-				break;
-			case Command::curveTo:
-				polylines[j].curveTo(commands[i].to, curveResolution);
-				break;
-			case Command::bezierTo:
-				polylines[j].bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
-				break;
-			case Command::quadBezierTo:
-				polylines[j].quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
-				break;
-			case Command::arc:
-				polylines[j].arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, circleResolution);
-				break;
-			case Command::arcNegative:
-				polylines[j].arcNegative(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, circleResolution);
-				break;
-			case Command::close:
-				polylines[j].setClosed(true);
-				break;
+				case Command::moveTo:
+					polylines.push_back(ofPolyline());
+					j++;
+					polylines[j].addVertex(commands[i].to);
+					break;
+				case Command::lineTo:
+					polylines[j].addVertex(commands[i].to);
+					break;
+				case Command::curveTo:
+					polylines[j].curveTo(commands[i].to, curveResolution);
+					break;
+				case Command::bezierTo:
+					polylines[j].bezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
+					break;
+				case Command::quadBezierTo:
+					polylines[j].quadBezierTo(commands[i].cp1,commands[i].cp2,commands[i].to, curveResolution);
+					break;
+				case Command::arc:
+					polylines[j].arc(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, circleResolution);
+					break;
+				case Command::arcNegative:
+					polylines[j].arcNegative(commands[i].to,commands[i].radiusX,commands[i].radiusY,commands[i].angleBegin,commands[i].angleEnd, circleResolution);
+					break;
+				case Command::close:
+					polylines[j].setClosed(true);
+					break;
 			}
 		}
-
+		
 		bNeedsPolylinesGeneration = false;
 		bNeedsTessellation = true;
 		cachedTessellationValid=false;
