@@ -74,7 +74,7 @@ ifndef MAC_OS_MIN_VERSION
 endif
 
 ifndef MAC_OS_STD_LIB
-	MAC_OS_STD_LIB = libstdc++
+	MAC_OS_STD_LIB = libc++
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
@@ -122,7 +122,7 @@ PLATFORM_CFLAGS += -finline-functions
 #PLATFORM_CFLAGS += -funroll-all-loops
 #PLATFORM_CFLAGS += -Os
 
-PLATFORM_CFLAGS += -arch i386
+#PLATFORM_CFLAGS += -arch i386
 
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
@@ -140,6 +140,7 @@ PLATFORM_CFLAGS += -mssse3
 PLATFORM_CFLAGS += -fmessage-length=0
 
 PLATFORM_CXXFLAGS += -x objective-c++
+PLATFORM_CXXFLAGS += -std=c++11
 
 ifeq ($(USE_GST),1)
 	PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
@@ -156,8 +157,8 @@ endif
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
-PLATFORM_LDFLAGS += -arch i386
-PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
+#PLATFORM_LDFLAGS += -arch i386
+#PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
 
 PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
 
@@ -296,7 +297,6 @@ PLATFORM_FRAMEWORKS += CoreAudio
 PLATFORM_FRAMEWORKS += CoreFoundation
 PLATFORM_FRAMEWORKS += CoreServices
 PLATFORM_FRAMEWORKS += OpenGL
-PLATFORM_FRAMEWORKS += QuickTime
 PLATFORM_FRAMEWORKS += IOKit
 PLATFORM_FRAMEWORKS += Cocoa
 PLATFORM_FRAMEWORKS += CoreVideo
