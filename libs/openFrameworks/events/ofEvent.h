@@ -1,6 +1,6 @@
 #pragma once
 
-#if __cplusplus>=201103
+#if HAS_CPP11
 #include <vector>
 #include <functional>
 #include <mutex>
