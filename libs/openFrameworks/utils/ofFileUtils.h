@@ -3,6 +3,9 @@
 #include "ofConstants.h"
 #if _MSC_VER
 #include <filesystem>
+namespace std {
+	namespace filesystem = tr2::sys;
+}
 #else
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
@@ -149,7 +152,7 @@ public:
 	ofFile & operator= (const ofFile & mom);
 	~ofFile();
 
-	bool open(string path, Mode mode=ReadOnly, bool binary=false);
+	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=false);
 	bool changeMode(Mode mode, bool binary=false); // reopens a file to the same path with a different mode;
 	void close();
 	bool create();

@@ -12,7 +12,7 @@
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
 
-#if __cplusplus>=201103
+#if HAS_CPP11
 	#include <regex>
 #else
 	#include "Poco/RegularExpression.h"

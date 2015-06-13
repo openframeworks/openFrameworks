@@ -372,7 +372,7 @@ ofFile::ofFile()
 ofFile::ofFile(const std::filesystem::path & path, Mode mode, bool binary)
 :mode(mode)
 ,binary(true){
-	open(path.native(), mode, binary);
+	open(path, mode, binary);
 }
 
 //-------------------------------------------------------------------------------------------------------------
@@ -401,7 +401,7 @@ void ofFile::copyFrom(const ofFile & mom){
 			new_mode = ReadOnly;
 			ofLogWarning("ofFile") << "copyFrom(): copying a writable file, opening new copy as read only";
 		}
-		open(mom.myFile.native(), new_mode, mom.binary);
+		open(mom.myFile.string(), new_mode, mom.binary);
 	}
 }
 
@@ -447,9 +447,9 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::open(string _path, Mode _mode, bool binary){
+bool ofFile::open(const std::filesystem::path & _path, Mode _mode, bool binary){
 	close();
-	myFile = std::filesystem::path(ofToDataPath(_path));
+	myFile = std::filesystem::path(ofToDataPath(_path.string()));
 	return openStream(_mode, binary);
 }
 
@@ -481,7 +481,7 @@ void ofFile::close(){
 bool ofFile::create(){
 	bool success = false;
 
-	if(myFile.native() != ""){
+	if(myFile.string().empty()){
 		auto mode = this->mode;
 		success = open(path(),ofFile::WriteOnly);
 		open(path(),mode);
@@ -492,7 +492,7 @@ bool ofFile::create(){
 
 //------------------------------------------------------------------------------------------------------------
 ofBuffer ofFile::readToBuffer(){
-	if(myFile.native() == "" || !std::filesystem::exists(myFile)){
+	if(myFile.string().empty() || !std::filesystem::exists(myFile)){
 		return ofBuffer();
 	}
 
@@ -501,11 +501,11 @@ ofBuffer ofFile::readToBuffer(){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::writeFromBuffer(const ofBuffer & buffer){
-	if(myFile.native() == ""){
+	if(myFile.string().empty()){
 		return false;
 	}
 	if(!isWriteMode()){
-		ofLogError("ofFile") << "writeFromBuffer(): trying to write to read only file \"" << myFile.native() << "\"";
+		ofLogError("ofFile") << "writeFromBuffer(): trying to write to read only file \"" << myFile.string() << "\"";
 	}
 	return buffer.writeTo(*this);
 }
@@ -526,22 +526,22 @@ bool ofFile::exists() const {
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::path() const {
-	return myFile.native();
+	return myFile.string();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getExtension() const {
-	return myFile.extension().native();
+	return myFile.extension().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getFileName() const {
-	return myFile.filename().native();
+	return myFile.filename().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getBaseName() const {
-	return ofFilePath::removeExt(myFile.filename().native());
+	return ofFilePath::removeExt(myFile.filename().string());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -604,7 +604,7 @@ bool ofFile::canWrite() const {
 bool ofFile::canExecute() const {
 	auto perm = std::filesystem::status(myFile).permissions();
 #ifdef TARGET_WIN32
-	return std::filesystem::extension(myFile) == "exe";
+	return myFile.extension() == "exe";
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
@@ -635,21 +635,25 @@ bool ofFile::isDirectory() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isDevice() const {
+#ifdef TARGET_WIN32
+	return false;
+#else
 	return std::filesystem::status(myFile).type() == std::filesystem::block_file;
+#endif
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isHidden() const {
 #ifdef TARGET_WINDOWS
 #else
-	return myFile.filename().native()[0] == '.';
+	return myFile.filename().string()[0] == '.';
 #endif
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setWriteable(bool flag){
 	try{
-		std::filesystem::permissions(myFile,std::filesystem::owner_write | std::filesystem::add_perms);
+		std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::add_perms);
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
 	}
@@ -658,9 +662,9 @@ void ofFile::setWriteable(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setReadOnly(bool flag){
 	try{
-		std::filesystem::permissions(myFile,std::filesystem::owner_read | std::filesystem::remove_perms);
-		std::filesystem::permissions(myFile,std::filesystem::group_read | std::filesystem::remove_perms);
-		std::filesystem::permissions(myFile,std::filesystem::others_read | std::filesystem::remove_perms);
+		std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::remove_perms);
+		std::filesystem::permissions(myFile,std::filesystem::perms::group_read | std::filesystem::perms::remove_perms);
+		std::filesystem::permissions(myFile,std::filesystem::perms::others_read | std::filesystem::perms::remove_perms);
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
 	}
@@ -669,7 +673,11 @@ void ofFile::setReadOnly(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setExecutable(bool flag){
 	try{
-		std::filesystem::permissions(myFile,std::filesystem::owner_exe | std::filesystem::add_perms);
+#ifdef TARGET_WIN32
+		std::filesystem::permissions(myFile,std::filesystem::perms::owner_exec | std::filesystem::perms::add_perms);
+#else
+		std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);
+#endif
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
 	}
@@ -753,7 +761,7 @@ bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::remove(bool recursive){
-	if(myFile.native().empty()){
+	if(myFile.string().empty()){
 		ofLogError("ofFile") << "remove(): file path is empty";
 		return false;
 	}
@@ -770,7 +778,7 @@ bool ofFile::remove(bool recursive){
 		}
 	}
 	catch(std::exception & except){
-		ofLogError("ofFile") << "remove(): unable to remove \"" << myFile.native() << "\": " << except.what();
+		ofLogError("ofFile") << "remove(): unable to remove \"" << myFile << "\": " << except.what();
 		return false;
 	}
 
@@ -942,7 +950,7 @@ void ofDirectory::close(){
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::create(bool recursive){
 
-	if(!myDir.native().empty()){
+	if(!myDir.string().empty()){
 		try{
 			if(recursive){
 				std::filesystem::create_directories(myDir);
@@ -966,12 +974,12 @@ bool ofDirectory::exists() const {
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::path() const {
-	return myDir.native();
+	return myDir.string();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getAbsolutePath() const {
-	return std::filesystem::absolute(myDir).native();
+	return std::filesystem::absolute(myDir).string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1021,7 +1029,7 @@ bool ofDirectory::isDirectory() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
-	if(myDir.native().empty()){
+	if(myDir.string().empty()){
 		ofLogError("ofDirectory") << "copyTo(): destination path is empty";
 		return false;
 	}
@@ -1055,7 +1063,7 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::moveTo(string path, bool bRelativeToData, bool overwrite){
-	if(myDir.native().empty()){
+	if(myDir.string().empty()){
 		ofLogError("ofDirectory") << "moveTo(): destination path is empty";
 		return false;
 	}
@@ -1132,7 +1140,7 @@ int ofDirectory::listDir(){
 		return 0;
 	}
 	if(!std::filesystem::exists(myDir)){
-		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir.native() << "\"";
+		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
 		return 0;
 	}
 	
@@ -1144,13 +1152,13 @@ int ofDirectory::listDir(){
 	if ( std::filesystem::exists(myDir) && std::filesystem::is_directory(myDir)){
 		for( std::filesystem::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
 #if HAS_CPP11
-			files.emplace_back(dir_iter->path().native(), ofFile::Reference);
+			files.emplace_back(dir_iter->path().string(), ofFile::Reference);
 #else
-			files.push_back(ofFile(dir_iter->path().native(), ofFile::Reference));
+			files.push_back(ofFile(dir_iter->path().string(), ofFile::Reference));
 #endif
 		}
 	}else{
-		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir.native() << "\"";
+		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
 		return 0;
 	}
 
@@ -1433,7 +1441,7 @@ string ofFilePath::getPathForDirectory(string path){
 	// if it's a unix-style "/" path it will add a "/"
 	auto sep = std::filesystem::path("/").make_preferred();
 	if(!path.empty() && ofToString(path[path.size()-1])!=sep.string()){
-		return (std::filesystem::path(path) / sep).native();
+		return (std::filesystem::path(path) / sep).string();
 	}else{
 		return path;
 	}
@@ -1454,7 +1462,7 @@ string ofFilePath::getFileName(string filePath, bool bRelativeToData){
 		filePath = ofToDataPath(filePath);
 	}
 
-	return std::filesystem::path(filePath).filename().native();
+	return std::filesystem::path(filePath).filename().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1467,7 +1475,7 @@ string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
 	if(bRelativeToData){
 		filePath = ofToDataPath(filePath);
 	}
-	return std::filesystem::path(filePath).parent_path().native();
+	return std::filesystem::path(filePath).parent_path().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1481,7 +1489,7 @@ string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	return std::filesystem::absolute(path).native();
+	return std::filesystem::canonical(std::filesystem::absolute(path)).string();
 }
 
 
@@ -1504,7 +1512,7 @@ string ofFilePath::getCurrentWorkingDirectory(){
 		pathWithoutApp = pathOSXStr.substr(0, found);
 		return pathWithoutApp;
 	#else
-		return std::filesystem::current_path().native();
+		return std::filesystem::current_path().string();
 	#endif
 }
 

@@ -66,7 +66,7 @@ bool ofThread::lock(){
 	if(_mutexBlocks){
 		mutex.lock();
 	}else{
-#if __cplusplus>=201103
+#if HAS_CPP11
 		if(!mutex.try_lock()){
 #else
 		if(!mutex.tryLock()){
