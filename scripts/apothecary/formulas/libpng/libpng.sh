@@ -76,13 +76,7 @@ function build() {
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
 	if [ "$TYPE" == "vs" ] ; then
-		if [ $ARCH == 32 ] ; then
-			mkdir -p $1/../cairo/lib/vs/Win32/
-			cp projects/visualc71/Win32_LIB_Release/libpng.lib $1/../cairo/lib/vs/Win32/
-		elif [ $ARCH == 64 ] ; then
-			mkdir -p $1/../cairo/lib/vs/x64/
-			cp projects/visualc71/Win32_LIB_Release/libpng.lib $1/../cairo/lib/vs/x64/
-		fi
+	    : noop
 	else
 		make install
 	fi
