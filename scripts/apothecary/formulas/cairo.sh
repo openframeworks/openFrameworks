@@ -29,14 +29,28 @@ GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
+	if [ "$TYPE" == "vs" ] ; then
+		# Download the xz extractor.
+		curl -LO http://tukaani.org/xz/xz-5.2.1-windows.zip
+
+		# Unzip xz and save it to the local directory.
+		unzip -j xz-5.2.1-windows.zip bin_x86-64/xz.exe -d .
+	fi
+
 	curl -LO http://cairographics.org/releases/cairo-$VER.tar.xz
 	tar -xf cairo-$VER.tar.xz
 	mv cairo-$VER cairo
 	rm cairo-$VER.tar.xz
+
 	# manually download dependencies
 	apothecaryDependencies download
+
 	if [ "$TYPE" == "vs" ] ; then
+		# Get the custom cairo visual studio solution.
 		git clone https://github.com/DomAmato/Cairo-VS
+
+		# Remove the xz extractor.
+		rm xz.exe
 	fi
 }
 
@@ -46,7 +60,6 @@ function prepare() {
 	
 		apothecaryDependencies prepare
 		
-		apothecaryDepend build libpng
 		apothecaryDepend build freetype
 		
 		cd ../Cairo-VS
@@ -57,8 +70,6 @@ function prepare() {
 		cp -Rv ../pixman/* pixman
 		cp -Rv ../zlib/* zlib
 		
-		cp -v ../libpng/projects/visualc71/Win32_LIB_Release/*.lib libs
-		cp -v ../libpng/projects/visualc71/Win32_LIB_Release/ZLib/*.lib libs
 		if [ $ARCH == 32 ] ; then
 			cp -v ../freetype/objs/vc2010/Win32/*.lib libs/freetype.lib
 		elif [ $ARCH == 64 ] ; then
@@ -147,13 +158,13 @@ function copy() {
 			mkdir -p $1/lib/$TYPE/Win32
 			cp -v Cairo-VS/projects/Release/cairo.lib $1/lib/$TYPE/Win32/cairo-static.lib
 			cp -v Cairo-VS/projects/Release/pixman.lib $1/lib/$TYPE/Win32/pixman-1.lib
-			cp -v Cairo-VS/projects/Release/libpng.lib $1/lib/$TYPE/Win32/libpng.lib
+			cp -v Cairo-VS/libs/libpng.lib $1/lib/$TYPE/Win32
 		elif [ $ARCH == 64 ] ; then
 			# make the libs path 
 			mkdir -p $1/lib/$TYPE/x64
 			cp -v Cairo-VS/projects/x64/Release/cairo.lib $1/lib/$TYPE/x64/cairo-static.lib
 			cp -v Cairo-VS/projects/x64/Release/pixman.lib $1/lib/$TYPE/x64/pixman-1.lib
-			cp -v Cairo-VS/projects/x64/Release/libpng.lib $1/lib/$TYPE/Win32/libpng.lib
+			cp -v Cairo-VS/libs/libpng.lib $1/lib/$TYPE/x64
 		fi
 		cd cairo
 
