@@ -18,7 +18,7 @@ class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();
 	~ofParameterGroup();
-#if HAS_CPP11
+
 	template<typename ...Args>
 	ofParameterGroup(const string & name, Args&... p)
 	:obj(new Value){
@@ -32,7 +32,7 @@ public:
 		add(p);
 		add(parameters...);
 	}
-#endif
+
 	ofParameterGroup(const ofParameterGroup& other);
 	ofParameterGroup & operator=(const ofParameterGroup& other);
 

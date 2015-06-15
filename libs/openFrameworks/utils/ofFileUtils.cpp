@@ -1151,11 +1151,7 @@ int ofDirectory::listDir(){
 	std::filesystem::directory_iterator end_iter;
 	if ( std::filesystem::exists(myDir) && std::filesystem::is_directory(myDir)){
 		for( std::filesystem::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
-#if HAS_CPP11
 			files.emplace_back(dir_iter->path().string(), ofFile::Reference);
-#else
-			files.push_back(ofFile(dir_iter->path().string(), ofFile::Reference));
-#endif
 		}
 	}else{
 		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";

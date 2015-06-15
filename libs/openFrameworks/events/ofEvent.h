@@ -1,6 +1,5 @@
 #pragma once
 
-#if HAS_CPP11
 #include <vector>
 #include <functional>
 #include <mutex>
@@ -251,69 +250,3 @@ public:
         }
     }
 };
-#else
-
-//-----------------------------------------
-// define ofEvent as a poco FIFOEvent
-// to create your own events use:
-// ofEvent<argType> myEvent
-
-
-#include "Poco/PriorityEvent.h"
-#include "Poco/PriorityDelegate.h"
-#include "ofDelegate.h"
-
-namespace Poco{
-	template<class TObj, class T>
-	ofDelegate<TObj,T,false> priorityDelegate(TObj * listener, bool(TObj::*method)(T&t), int priority){
-		return ofDelegate<TObj,T,false>(listener,method,priority);
-	}
-
-	template<class TObj, class T>
-	ofDelegate<TObj,T,true> priorityDelegate(TObj * listener, bool(TObj::*method)(const void *, T&t), int priority){
-		return ofDelegate<TObj,T,false>(listener,method,priority);
-	}
-
-	template<class TObj>
-	ofDelegate<TObj,void,false> priorityDelegate(TObj * listener, bool(TObj::*method)(), int priority){
-		return ofDelegate<TObj,void,false>(listener,method,priority);
-	}
-
-	template<class TObj>
-	ofDelegate<TObj,void,true> priorityDelegate(TObj * listener, bool(TObj::*method)(const void *), int priority){
-		return ofDelegate<TObj,void,false>(listener,method,priority);
-	}
-}
-
-template <typename ArgumentsType>
-class ofEvent: public Poco::PriorityEvent<ArgumentsType> {
-public:
-
-	ofEvent():Poco::PriorityEvent<ArgumentsType>(){
-
-	}
-
-	// allow copy of events, by copying everything except the mutex
-	ofEvent(const ofEvent<ArgumentsType> & mom)
-	:Poco::PriorityEvent<ArgumentsType>()
-	{
-		this->_enabled = mom._enabled;
-	}
-
-	ofEvent<ArgumentsType> & operator=(const ofEvent<ArgumentsType> & mom){
-		if(&mom == this) return *this;
-		this->_enabled = mom._enabled;
-		return *this;
-	}
-
-    template<class TObj, typename TMethod>
-    void add(TObj * listener, TMethod method, int priority){
-        *this += Poco::priorityDelegate(listener,method,priority);
-    }
-
-    template<class TObj, typename TMethod>
-    void remove(TObj * listener, TMethod method, int priority){
-        *this -= Poco::priorityDelegate(listener,method,priority);
-    }
-};
-#endif

@@ -2,10 +2,7 @@
 #include "ofImage.h"
 #include "ofFileUtils.h"
 
-#if HAS_CPP11
 #include <chrono>
-#endif
-
 #include <numeric>
 #include <locale>
 #include "utf8.h"
@@ -167,16 +164,9 @@ string ofGetTimestampString(){
 //--------------------------------------------------
 string ofGetTimestampString(const string& timestampFormat){
 	std::stringstream str;
-#if HAS_CPP11
 	auto now = std::chrono::system_clock::now();
 	auto t = std::chrono::system_clock::to_time_t(now);    std::chrono::duration<double> s = now - std::chrono::system_clock::from_time_t(t);
     int ms = s.count() * 1000;
-#else
-	struct timeval now;
-	gettimeofday( &now, NULL );
-	time_t t = (time_t)now.tv_sec;
-	int ms = now.tv_usec / 1000;
-#endif
 	auto tm = *std::localtime(&t);
 	constexpr int bufsize = 256;
 	char buf[bufsize];

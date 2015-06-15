@@ -93,7 +93,6 @@ public:
 		return true;
 	}
 
-#if HAS_CPP11
 	/// sends a value by moving it to avoid a copy.
 	/// the original is invalidated. use like:
 	///
@@ -109,7 +108,6 @@ public:
 		condition.notify_all();
 		return true;
 	}
-#endif
 
 	/// closes the channel, from here on
 	/// no new messages can be sent or received

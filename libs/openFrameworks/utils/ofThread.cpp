@@ -66,11 +66,7 @@ bool ofThread::lock(){
 	if(_mutexBlocks){
 		mutex.lock();
 	}else{
-#if HAS_CPP11
 		if(!mutex.try_lock()){
-#else
-		if(!mutex.tryLock()){
-#endif
 			return false; // mutex is locked, tryLock failed
 		}
 	}
