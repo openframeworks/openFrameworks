@@ -1,8 +1,18 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "Poco/File.h"
-
+#if _MSC_VER
+#include <filesystem>
+namespace std {
+	namespace filesystem = tr2::sys;
+}
+#else
+#define BOOST_NO_CXX11_SCOPED_ENUMS
+#include <boost/filesystem.hpp>
+namespace std{
+	namespace filesystem = boost::filesystem;
+}
+#endif
 //----------------------------------------------------------
 // ofBuffer
 //----------------------------------------------------------
@@ -137,12 +147,12 @@ public:
 	};
 
 	ofFile();
-	ofFile(string filePath, Mode mode=ReadOnly, bool binary=false);
+	ofFile(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	ofFile(const ofFile & mom);
 	ofFile & operator= (const ofFile & mom);
 	~ofFile();
 
-	bool open(string path, Mode mode=ReadOnly, bool binary=false);
+	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=false);
 	bool changeMode(Mode mode, bool binary=false); // reopens a file to the same path with a different mode;
 	void close();
 	bool create();
@@ -180,9 +190,6 @@ public:
 	bool remove(bool recursive=false);
 
 	uint64_t getSize() const;
-
-	//if you want access to a few other things
-	Poco::File & getPocoFile();
 
 	//this allows to compare files by their paths, also provides sorting and use as key in stl containers
 	bool operator==(const ofFile & file) const;
@@ -228,7 +235,7 @@ private:
 	bool isWriteMode();
 	bool openStream(Mode _mode, bool binary);
 	void copyFrom(const ofFile & mom);
-	Poco::File myFile;
+	std::filesystem::path myFile;
 	Mode mode;
 	bool binary;
 };
@@ -289,11 +296,6 @@ public:
 	unsigned int size();
 	int numFiles(); // numFiles is deprecated, use size()
 
-
-
-	//if you want access to a few other things
-	Poco::File & getPocoFile();
-
 	//this allows to compare dirs by their paths, also provides sorting and use as key in stl containers
 	bool operator==(const ofDirectory & dir);
 	bool operator!=(const ofDirectory & dir);
@@ -322,7 +324,7 @@ public:
 	vector<ofFile>::const_reverse_iterator rend() const;
 
 private:
-	Poco::File myDir;
+	std::filesystem::path myDir;
 	string originalDirectory;
 	vector <string> extensions;
 	vector <ofFile> files;

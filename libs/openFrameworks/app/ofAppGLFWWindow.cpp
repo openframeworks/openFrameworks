@@ -5,7 +5,7 @@
 #include "ofGLRenderer.h"
 #include "ofGLProgrammableRenderer.h"
 #include "ofAppRunner.h"
-#include "Poco/URI.h"
+#include "ofFileUtils.h"
 
 #ifdef TARGET_LINUX
 	#include "ofIcon.h"
@@ -947,7 +947,7 @@ void ofAppGLFWWindow::drop_cb(GLFWwindow* windowP_, int numFiles, const char** d
 	drag.position.set(instance->events().getMouseX(), instance->events().getMouseY());
 	drag.files.resize(numFiles);
 	for(int i=0; i<(int)drag.files.size(); i++){
-		drag.files[i] = Poco::Path(dropString[i]).toString();
+		drag.files[i] = std::filesystem::path(dropString[i]).string();
 	}
 	instance->events().notifyDragEvent(drag);
 }

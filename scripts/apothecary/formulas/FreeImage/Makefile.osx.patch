@@ -33,7 +33,7 @@
  COMPILERFLAGS_X86_64 = -arch x86_64
 -COMPILERPPFLAGS = -Wno-ctor-dtor-privacy
 +
-+COMPILERPPFLAGS_I386 = -Wno-ctor-dtor-privacy -stdlib=libstdc++
++COMPILERPPFLAGS_I386 = -Wno-ctor-dtor-privacy -stdlib=libc++ -stdlib=libc++ -Wc++11-narrowing
 +COMPILERPPFLAGS_X86_64 = -Wno-ctor-dtor-privacy -stdlib=libc++ -stdlib=libc++ -Wc++11-narrowing
 +
  INCLUDE += 

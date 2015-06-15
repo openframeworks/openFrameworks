@@ -118,7 +118,7 @@ ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo
 endif
 
 # Optimization options (http://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
-PLATFORM_CFLAGS += -finline-functions
+#PLATFORM_CFLAGS += -finline-functions
 #PLATFORM_CFLAGS += -funroll-all-loops
 #PLATFORM_CFLAGS += -Os
 
@@ -160,7 +160,7 @@ PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 #PLATFORM_LDFLAGS += -arch i386
 #PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
 
-PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
+PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -213,17 +213,13 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 
 # third party static libs (this may not matter due to exclusions in poco's libsorder.make)
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoData.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataMySQL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataODBC.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataSQLite.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoZip.a
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/lib/$(PLATFORM_LIB_SUBPATH)/%
+
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS

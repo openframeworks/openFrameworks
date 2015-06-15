@@ -61,10 +61,11 @@ function build() {
 				-DGLFW_BUILD_TESTS=OFF \
 				-DGLFW_BUILD_EXAMPLES=OFF \
 				-DBUILD_SHARED_LIBS=OFF \
+				-DCMAKE_BUILD_TYPE=Release \
 				-DGLFW_BUILD_UNIVERSAL=ON 
 
  		make clean
- 		make
+ 		make -j${PARALLEL_MAKE}
  		make install
 	fi
 }
@@ -92,7 +93,7 @@ function copy() {
 		# copy headers
 		cp -Rv $BUILD_ROOT_DIR/include/GLFW/* $1/include/GLFW/
 		# copy lib
-		cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/
+		cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/glfw3.a
 	fi
 
 	# copy license file
