@@ -22,7 +22,7 @@ ifndef SHELL
 endif
 
 ifndef OF_ROOT
-    OF_ROOT=../../..
+    OF_ROOT=$(realpath ../../..)
 endif
 
 # if the user has not specified a special variant, then use the default variant
