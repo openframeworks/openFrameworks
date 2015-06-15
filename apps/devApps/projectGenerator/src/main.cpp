@@ -11,6 +11,7 @@ int main(  int argc, char *argv[]  ){
     cout << "In main." << endl;
     
     cout << "ofGetTargetPlatform=" << ofGetTargetPlatform() << endl;
+    ofSetLogLevel(OF_LOG_NOTICE);
     
 #ifdef TARGET_LINUX
 	if(argc==1){

@@ -43,6 +43,7 @@ void parseAddonsDotMake(string path, vector < string > & addons);
 void fixSlashOrder(string & toFix);
 string unsplitString (vector < string > strings, string deliminator );
 
+string getRelPath(string from, string to);
 string getOFRelPath(string from);
 
 bool checkConfigExists();
