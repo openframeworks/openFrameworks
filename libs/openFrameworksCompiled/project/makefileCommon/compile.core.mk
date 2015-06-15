@@ -29,7 +29,9 @@ ifdef PROJECT_AR
     AR = $(PROJECT_AR)
 endif
 
-ifeq ($strip($(PLATFORM_ARFLAGS)),)
+ifdef PLATFORM_ARFLAGS
+	ARFLAGS = $(PLATFORM_ARFLAGS)
+else
 	ARFLAGS = -cr
 endif
 
