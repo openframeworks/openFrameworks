@@ -116,7 +116,33 @@ PLATFORM_REQUIRED_ADDONS =
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -Wall -std=c++0x
+# find out version of gcc:
+# < 4.7.x  c++0x
+# >= 4.7.x c++11
+# >= 4.9.x c++14
+# other compilers c++11 by now
+ifeq ($(CXX),g++)
+	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
+	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
+	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 7)
+	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
+	ifeq ("$(GCC_MAJOR_EQ_4)","1")
+		ifeq ("$(GCC_MINOR_GTEQ_7)","0")
+			PLATFORM_CFLAGS = -Wall -std=c++0x
+		else
+			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
+				PLATFORM_CFLAGS = -Wall -std=c++14
+			else
+				PLATFORM_CFLAGS = -Wall -std=c++11
+			endif
+		endif
+	endif
+	ifeq ("$(GCC_MAJOR_GT_4)","1")
+		PLATFORM_CFLAGS = -Wall -std=c++14
+	endif
+else
+	PLATFORM_CFLAGS = -Wall -std=c++11
+endif
 
 
 ################################################################################
