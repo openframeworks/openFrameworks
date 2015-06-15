@@ -673,11 +673,7 @@ void ofFile::setReadOnly(bool flag){
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setExecutable(bool flag){
 	try{
-#ifdef TARGET_WIN32
-		std::filesystem::permissions(myFile,std::filesystem::perms::owner_exec | std::filesystem::perms::add_perms);
-#else
 		std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);
-#endif
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
 	}
@@ -1384,9 +1380,10 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addLeadingSlash(string path){
-	if(path.length() > 0){
-		if(path[0] != '/'){
-			path = "/" + path;
+	auto sep = std::filesystem::path("/").make_preferred();
+	if(!path.empty()){
+		if(ofToString(path[0]) != sep.string()){
+			path = (sep / path).string();
 		}
 	}
 	return path;
@@ -1394,9 +1391,10 @@ string ofFilePath::addLeadingSlash(string path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addTrailingSlash(string path){
-	if(path.length() > 0){
-		if(path[path.length() - 1] != '/'){
-			path += "/";
+	auto sep = std::filesystem::path("/").make_preferred();
+	if(!path.empty()){
+		if(ofToString(path.back()) != sep.string()){
+			path = (path / sep).string();
 		}
 	}
 	return path;
@@ -1436,7 +1434,7 @@ string ofFilePath::getPathForDirectory(string path){
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
 	auto sep = std::filesystem::path("/").make_preferred();
-	if(!path.empty() && ofToString(path[path.size()-1])!=sep.string()){
+	if(!path.empty() && ofToString(path.back())!=sep.string()){
 		return (std::filesystem::path(path) / sep).string();
 	}else{
 		return path;
@@ -1479,13 +1477,12 @@ bool ofFilePath::createEnclosingDirectory(string filePath, bool bRelativeToData,
 	return ofDirectory::createDirectory(ofFilePath::getEnclosingDirectory(filePath), bRelativeToData, bRecursive);
 }
 
-
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	return std::filesystem::canonical(std::filesystem::absolute(path)).string();
+	return std::filesystem::canonical(path).string();
 }
 
 
@@ -1513,7 +1510,7 @@ string ofFilePath::getCurrentWorkingDirectory(){
 }
 
 string ofFilePath::join(string path1, string path2){
-	return removeTrailingSlash(path1) + addLeadingSlash(path2);
+	return (std::filesystem::path(path1) / std::filesystem::path(path2)).string();
 }
 
 string ofFilePath::getCurrentExePath(){

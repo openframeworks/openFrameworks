@@ -2,9 +2,10 @@
 
 #include "ofConstants.h"
 #if _MSC_VER
-#include <filesystem>
+//#define BOOST_NO_CXX11_SCOPED_ENUMS
+#include <boost/filesystem.hpp>
 namespace std {
-	namespace filesystem = tr2::sys;
+	namespace filesystem = boost::filesystem;
 }
 #else
 #define BOOST_NO_CXX11_SCOPED_ENUMS
