@@ -130,11 +130,11 @@ function build() {
 		echo "--------------------"
 		echo "Making Poco-${VER}"
 		echo "--------------------"
-		echo "Configuring for i386 libstdc++ ..."
+		echo "Configuring for i386 libc++ ..."
 
 		# 32 bit
 		# For OS 10.9+ we must explicitly set libstdc++ for the 32-bit OSX build.
-		./configure $BUILD_OPTS --cflags=-stdlib=libstdc++ --config=Darwin32 > "${LOG}" 2>&1
+		./configure $BUILD_OPTS --config=Darwin32-clang-libc++ > "${LOG}" 2>&1
 		if [ $? != 0 ];
 		then
 			tail -n 100 "${LOG}"
@@ -147,7 +147,7 @@ function build() {
 	    echo "--------------------"
 		echo "Running make"
 		LOG="$CURRENTPATH/build/$TYPE/poco-make-i386-${VER}.log"
-		make >> "${LOG}" 2>&1
+		make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
 		if [ $? != 0 ];
 		then
 			tail -n 100 "${LOG}"
@@ -174,7 +174,7 @@ function build() {
 	    echo "--------------------"
 		echo "Running make"
 		LOG="$CURRENTPATH/build/$TYPE/poco-make-x86_64-${VER}.log"
-		make >> "${LOG}" 2>&1
+		make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
 		if [ $? != 0 ];
 		then
 			tail -n 100 "${LOG}"
@@ -227,7 +227,7 @@ function build() {
 					--library-path=$OPENSSL_LIBS \
 					--config=MinGW
 
-		make
+		make -j${PARALLEL_MAKE}
 
 		# Delete debug libs.
 		lib/MinGW/i686/*d.a
@@ -338,7 +338,7 @@ function build() {
 		    fi
 		    echo "--------------------"
 		    echo "Running make for ${IOS_ARCH}"
-			make >> "${LOG}" 2>&1
+			make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
 			if [ $? != 0 ];
 		    then
 		    	tail -n 100 "${LOG}"
@@ -428,14 +428,14 @@ function build() {
 					--library-path=$OPENSSL_LIBS/armeabi-v7a \
 					--config=Android
 
-		make ANDROID_ABI=armeabi-v7a
+		make -j${PARALLEL_MAKE} ANDROID_ABI=armeabi-v7a
 
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/x86 \
 					--config=Android
 
-		make ANDROID_ABI=x86
+		make -j${PARALLEL_MAKE} ANDROID_ABI=x86
 
 		echo `pwd`
 
@@ -445,30 +445,12 @@ function build() {
 
 		export PATH=$OLD_PATH
 
-	elif [ "$TYPE" == "linux" ] ; then
+	elif [ "$TYPE" == "linux" ] || [ "$TYPE" == "linux64" ] || [ "$TYPE" == "linuxarmv6l" ] || [ "$TYPE" == "linuxarmv7l" ]; then
 		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 		./configure $BUILD_OPTS
-		make
+		make -j${PARALLEL_MAKE}
 		# delete debug builds
 		rm lib/Linux/$(uname -m)/*d.a
-	elif [ "$TYPE" == "linux64" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
-		./configure $BUILD_OPTS
-		make
-		# delete debug builds
-		rm lib/Linux/x86_64/*d.a
-	elif [ "$TYPE" == "linuxarmv6l" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
-		./configure $BUILD_OPTS
-		make
-		# delete debug builds
-		rm lib/Linux/armv6l/*d.a
-	elif [ "$TYPE" == "linuxarmv7l" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
-		./configure $BUILD_OPTS
-		make
-		# delete debug builds
-		rm lib/Linux/armv7l/*d.a
 	else
 		echoWarning "TODO: build $TYPE lib"
 	fi

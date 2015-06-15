@@ -151,11 +151,7 @@ void ofURLFileLoaderImpl::threadedFunction() {
 			if(cancelledRequests.find(request.getID())==cancelledRequests.end()){
 				ofHttpResponse response(handleRequest(request));
 				int status = response.status;
-#if HAS_CPP11
 				if(!responses.send(move(response))){
-#else
-				if(!responses.send(response)){
-#endif
 					break;
 				}
 				if(status==-1){

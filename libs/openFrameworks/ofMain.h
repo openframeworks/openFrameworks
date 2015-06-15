@@ -6,11 +6,12 @@
 #include "ofFileUtils.h"
 #include "ofLog.h"
 #include "ofSystemUtils.h"
-#include "ofThread.h"
-#include "ofThreadChannel.h"
 #include "ofURLFileLoader.h"
 #include "ofUtils.h"
+#if !defined(TARGET_EMSCRIPTEN)
+#include "ofThread.h"
 #include "ofThreadChannel.h"
+#endif
 #include "ofFpsCounter.h"
 
 //--------------------------
@@ -20,7 +21,9 @@
 #include "ofColor.h"
 #include "ofPoint.h"
 #include "ofRectangle.h"
+#if !defined(TARGET_EMSCRIPTEN)
 #include "ofXml.h"
+#endif
 #include "ofParameter.h"
 #include "ofParameterGroup.h"
 

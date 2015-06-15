@@ -3,6 +3,8 @@
 # openssl
 
 # define the version
+FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
+
 VER=1.0.2c
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
@@ -551,8 +553,8 @@ function build() {
         export CC="$CC $CFLAGS"
         ./Configure --prefix=$BUILD_TO_DIR no-ssl2 no-ssl3 no-comp no-hw no-engine no-shared android-armv7
         make clean
-        make deps
-        make build_libs
+        make deps -j${PARALLEL_MAKE}
+        make build_libs -j${PARALLEL_MAKE}
         make install
 		cp libssl.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
         cp libcrypto.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
@@ -565,8 +567,8 @@ function build() {
         export LDCMD="-lz -lsupc++ -llog -ldl -lm -lc -lgnustl_static -lgcc"
         ./Configure --prefix=$BUILD_TO_DIR no-ssl2 no-ssl3 no-comp no-hw no-engine no-shared android-x86
         make clean
-        make deps
-        make build_libs
+        make deps -j${PARALLEL_MAKE}
+        make build_libs -j${PARALLEL_MAKE}
         mkdir -p $BUILD_DIR/openssl/build/$TYPE/$ABI/lib
         cp libssl.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
         cp libcrypto.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/

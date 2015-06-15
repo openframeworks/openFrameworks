@@ -6,7 +6,7 @@
 #
 # an autotools project
 
-FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
+FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" "emscripten" )
 
 # define the version
 VER=2.5.5
@@ -38,7 +38,7 @@ function build() {
 
 		# these flags are used to create a fat 32/64 binary with i386->libstdc++, x86_64->libc++
 		# see https://gist.github.com/tgfrerer/8e2d973ed0cfdd514de6
-		local FAT_CFLAGS="-arch i386 -arch x86_64 -stdlib=libstdc++ -Xarch_x86_64 -stdlib=libc++"
+		local FAT_CFLAGS="-arch i386 -arch x86_64 -stdlib=libc++"
 
 		set -e
 		CURRENTPATH=`pwd`
@@ -62,7 +62,7 @@ function build() {
 		./configure --prefix=$BUILD_TO_DIR --without-bzip2 --with-harfbuzz=no --enable-static=yes --enable-shared=no \
 			CFLAGS="$FAT_CFLAGS -pipe -Wno-trigraphs -fpascal-strings -O2 -Wreturn-type -Wunused-variable -fmessage-length=0 -fvisibility=hidden"
 		make clean 
-		make
+		make -j${PARALLEL_MAKE}
 		make install
 		cp $BUILD_TO_DIR/lib/libfreetype.a lib/$TYPE/libfreetype.a
 
@@ -101,7 +101,7 @@ function build() {
 		fi
 		
 		make clean; 
-		make
+		make -j${PARALLEL_MAKE}
 
 	elif [ "$TYPE" == "ios" ] ; then
 
@@ -214,7 +214,7 @@ function build() {
 	        NM=$NM \
 			LDFLAGS="$LDFLAGS" >> "${LOG}" 2>&1
 			echo "Making..."
-			make >> "${LOG}" 2>&1
+			make -j${PARALLEL_MAKE} >> "${LOG}" 2>&1
 			if [ $? != 0 ];
 		    then 
 		    	tail -n 100 "${LOG}"
@@ -301,7 +301,7 @@ function build() {
 
 		./configure --prefix=$BUILD_TO_DIR --host armv7a-linux-android --with-harfbuzz=no --enable-static=yes --enable-shared=no 
 		make clean 
-		make
+		make -j${PARALLEL_MAKE}
 		make install
 		
 		# x86
@@ -311,11 +311,30 @@ function build() {
 
 		./configure --prefix=$BUILD_TO_DIR --host x86-linux-android --with-harfbuzz=no --enable-static=yes --enable-shared=no 
 		make clean 
-		make
+		make -j${PARALLEL_MAKE}
 		make install
 
 		echo "-----------"
 		echo "$BUILD_DIR"
+	elif [ "$TYPE" == "emscripten" ]; then
+	    if [ "$EMSCRIPTEN" == "" ]; then
+	        echo "error emscripten is not installed or environment not set"
+	        exit 1
+	    fi
+	    local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE
+	    ./configure --prefix=$BUILD_TO_DIR --with-harfbuzz=no --enable-static=yes --enable-shared=no --with-zlib=no --with-png=no
+	    make clean
+	    make -j${PARALLEL_MAKE}
+	    cp $BUILD_DIR/freetype/objs/apinames .
+	    emconfigure ./configure --prefix=$BUILD_TO_DIR --with-harfbuzz=no --enable-static=yes --enable-shared=no --with-zlib=no --with-png=no
+	    emmake make clean
+	    cp apinames $BUILD_DIR/freetype/objs/
+	    emmake make -j${PARALLEL_MAKE}
+	    emmake make install
+	    emcc objs/*.o -o build/$TYPE/lib/libfreetype.bc
+		echo "-----------"
+		echo "$BUILD_DIR"
+	    
 	fi
 }
 
@@ -353,6 +372,8 @@ function copy() {
 	elif [ "$TYPE" == "android" ] ; then
 		cp -v build/$TYPE/armeabi-v7a/lib/libfreetype.a $1/lib/$TYPE/armeabi-v7a/libfreetype.a
 		cp -v build/$TYPE/x86/lib/libfreetype.a $1/lib/$TYPE/x86/libfreetype.a
+	elif [ "$TYPE" == "emscripten" ] ; then
+		cp -v build/$TYPE/lib/libfreetype.bc $1/lib/$TYPE/libfreetype.bc
 	fi
 
 	# copy license files

@@ -121,7 +121,7 @@ function build() {
 					--disable-dependency-tracking \
 					--disable-xlib \
 					--disable-qt 
-		make
+		make -j${PARALLEL_MAKE} 
 		make install
 	else 
 		./configure PKG_CONFIG="$BUILD_ROOT_DIR/bin/pkg-config" \
@@ -136,7 +136,7 @@ function build() {
 					--disable-dependency-tracking \
 					--disable-xlib \
 					--disable-qt 
-		make
+		make -j${PARALLEL_MAKE} 
 		make install
 	fi
 }

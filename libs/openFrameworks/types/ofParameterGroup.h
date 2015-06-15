@@ -9,7 +9,6 @@
 #define OFXPARAMETERGROUP_H_
 
 #include <map>
-#include "Poco/Any.h"
 #include "ofConstants.h"
 #include "ofLog.h"
 #include "ofParameter.h"
@@ -19,7 +18,7 @@ class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();
 	~ofParameterGroup();
-#if HAS_CPP11
+
 	template<typename ...Args>
 	ofParameterGroup(const string & name, Args&... p)
 	:obj(new Value){
@@ -29,11 +28,10 @@ public:
 
 	template<typename ...Args>
 	void add(ofAbstractParameter & p, Args&... parameters){
-		cout << "adding " << p.getName() << endl;
 		add(p);
 		add(parameters...);
 	}
-#endif
+
 	ofParameterGroup(const ofParameterGroup& other);
 	ofParameterGroup & operator=(const ofParameterGroup& other);
 
