@@ -618,7 +618,7 @@ string ofToLower(const string & src, const string & locale){
 	utf8::iterator<const char*> end((&src.back())+1, &src.front(), (&src.back())+1);
 	while(it!=end){
 		auto next = *it++;
-		utf8::append(std::tolower<wchar_t>(next, std::locale(locale.c_str())), std::back_inserter(dst));
+		ofAppendUTF8(dst, next);
 	}
 	return dst;
 }
@@ -630,7 +630,7 @@ string ofToUpper(const string & src, const string & locale){
 	utf8::iterator<const char*> end((&src.back())+1, &src.front(), (&src.back())+1);
 	while(it!=end){
 		auto next = *it++;
-		utf8::append(std::toupper<wchar_t>(next, std::locale(locale.c_str())), std::back_inserter(dst));
+		ofAppendUTF8(dst, next);
 	}
 	return dst;
 }
