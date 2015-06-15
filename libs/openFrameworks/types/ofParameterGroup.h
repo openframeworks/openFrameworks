@@ -28,7 +28,6 @@ public:
 
 	template<typename ...Args>
 	void add(ofAbstractParameter & p, Args&... parameters){
-		cout << "adding " << p.getName() << endl;
 		add(p);
 		add(parameters...);
 	}
