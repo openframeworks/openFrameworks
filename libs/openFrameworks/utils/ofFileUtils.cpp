@@ -1047,11 +1047,19 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 		}
 		else{
 			ofLogWarning("ofDirectory") << "copyTo(): dest \"" << path << "\" already exists, set bool overwrite to true to overwrite it";
+			return false;
 		}
 	}
 
 	try{
-		std::filesystem::copy(myDir,path);
+		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
+#ifdef _MSC_VER
+		// microsoft implements copy differently
+		// https://msdn.microsoft.com/en-us/library/dn986845(v=vs.140).aspx
+		std::filesystem::copy(myDir, path, std::filesystem::copy_options::recursive);
+#else
+		std::filesystem::copy(myDir, path);
+#endif
 	}
 	catch(std::exception & except){
 		ofLogError("ofDirectory") << "copyTo(): unable to copy \"" << path << "\": " << except.what();
@@ -1485,7 +1493,40 @@ string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
+#ifndef _MSC_VER
+	// this compilation path is for non visual studio compilers.
 	return std::filesystem::canonical(std::filesystem::absolute(path)).string();
+#else
+	// In VS2015, std::filesystem::canonical does not properly resolve paths 
+	// which contain multiple "../../", 
+	// so we follow @michael-anderson's answer from stackoverflow:
+	//
+	// http://stackoverflow.com/questions/1746136/how-do-i-normalize-a-pathname-using-boostfilesystem
+
+	std::filesystem::path abs_p = std::filesystem::absolute(path);
+	std::filesystem::path result;
+
+	for (std::filesystem::path::iterator it = abs_p.begin(); it != abs_p.end(); ++it) {
+		if (*it == "..") {
+			// /a/b/.. is not necessarily /a if b is a symbolic link
+			if (std::filesystem::is_symlink(result))
+				result /= *it;
+			// /a/b/../.. is not /a/b/.. under most circumstances
+			// We can end up with ..s in our result because of symbolic links
+			else if (result.filename() == "..")
+				result /= *it;
+			// Otherwise it should be safe to resolve the parent
+			else
+				result = result.parent_path();
+		} else if (*it == ".") {
+			// Ignore
+		} else {
+			// Just cat other path entries
+			result /= *it;
+		}
+	}
+	return result.string();
+#endif 
 }
 
 
