@@ -49,6 +49,7 @@ function prepare() {
 	fi
 	
 	# manually prepare dependencies
+	apothecaryDependencies download
 	apothecaryDependencies prepare
 
 	# Build and copy all dependencies in preparation

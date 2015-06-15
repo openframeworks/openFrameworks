@@ -5,7 +5,7 @@
 # define the version
 FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
-VER=1.0.2a
+VER=1.0.2c
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
 
@@ -24,7 +24,7 @@ function download() {
 	if [ "$TYPE" == "vs" ] ; then
 		#hasSha=$(cmd.exe /c 'call 'CertUtil' '-hashfile' '$FILENAME.tar.gz' 'SHA1'')
 		echo "TO DO: check against the SHA for windows"
-		tar -xvf $FILENAME.tar.gz
+		tar -xf $FILENAME.tar.gz
 		mv $FILENAME openssl
 		rm $FILENAME.tar.gz
 		rm $FILENAME.tar.gz.sha1
