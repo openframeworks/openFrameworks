@@ -681,6 +681,9 @@ void ofFile::setExecutable(bool flag){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
+	if(isDirectory()){
+		return ofDirectory(myFile).copyTo(path,bRelativeToData,overwrite);
+	}
 	if(path.empty()){
 		ofLogError("ofFile") << "copyTo(): destination path is empty";
 		return false;
@@ -704,9 +707,8 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 
 	try{
 		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
-		std::filesystem::copy_file(myFile,path);
-	}
-	catch(std::exception & except){
+		std::filesystem::copy(myFile,path);
+	}catch(std::exception & except){
 		ofLogError("ofFile") <<  "copyTo(): unable to copy \"" << path << "\":" << except.what();
 		return false;
 	}
@@ -836,8 +838,7 @@ bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  b
 	if(ofFile::doesFileExist(pathDst, bRelativeToData)){
 		if(overwrite){
 			ofFile::removeFile(pathDst, bRelativeToData);
-		}
-		else{
+		}else{
 			ofLogWarning("ofFile") << "copyFromTo(): destination file/directory \"" << pathSrc << "\"exists,"
 			<< " set bool overwrite to true if you want to overwrite it";
 		}
@@ -925,17 +926,16 @@ ofDirectory::ofDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-ofDirectory::ofDirectory(string path){
+ofDirectory::ofDirectory(const std::filesystem::path & path){
 	showHidden = false;
 	open(path);
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::open(string path){
-	path = ofFilePath::getPathForDirectory(path);
-	originalDirectory = path;
+void ofDirectory::open(const std::filesystem::path & path){
+	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
-	myDir = std::filesystem::path(ofToDataPath(path));
+	myDir = std::filesystem::path(ofToDataPath(originalDirectory));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1026,40 +1026,49 @@ bool ofDirectory::isDirectory() const {
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 	if(myDir.string().empty()){
-		ofLogError("ofDirectory") << "copyTo(): destination path is empty";
+		ofLogError("ofDirectory") << "copyTo(): source path is empty";
 		return false;
 	}
 	if(!std::filesystem::exists(myDir)){
 		ofLogError("ofDirectory") << "copyTo(): source directory does not exist";
 		return false;
 	}
+	if(!std::filesystem::is_directory(myDir)){
+		ofLogError("ofDirectory") << "copyTo(): source path is not a directory";
+		return false;
+	}
 
 	if(bRelativeToData){
 		path = ofToDataPath(path, bRelativeToData);
 	}
+
 	if(ofDirectory::doesDirectoryExist(path, bRelativeToData)){
 		if(overwrite){
 			ofDirectory::removeDirectory(path, true, bRelativeToData);
-		}
-		else{
+		}else{
 			ofLogWarning("ofDirectory") << "copyTo(): dest \"" << path << "\" already exists, set bool overwrite to true to overwrite it";
 			return false;
 		}
 	}
 
-	try{
-		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
-#ifdef _MSC_VER
-		// microsoft implements copy differently
-		// https://msdn.microsoft.com/en-us/library/dn986845(v=vs.140).aspx
-		std::filesystem::copy(myDir, path, std::filesystem::copy_options::recursive);
-#else
-		std::filesystem::copy(myDir, path);
-#endif
-	}
-	catch(std::exception & except){
-		ofLogError("ofDirectory") << "copyTo(): unable to copy \"" << path << "\": " << except.what();
-		return false;
+	ofDirectory(path).create(true);
+	// Iterate through the source directory
+	for(std::filesystem::directory_iterator file(myDir); file != std::filesystem::directory_iterator(); ++file){
+		auto currentPath = std::filesystem::absolute(file->path());
+		auto dst = std::filesystem::path(path) / currentPath.filename();
+		cout << "copying" << dst << endl;
+		if(std::filesystem::is_directory(currentPath)){
+			cout << "is_directory" << endl;
+			ofDirectory current(currentPath);
+			// Found directory: Recursion
+			if(!current.copyTo(dst.string(),false)){
+				cout << "failed" << endl;
+				return false;
+			}
+		}else{
+			cout << "is_file" << endl;
+			ofFile(file->path()).copyTo(dst.string(),false);
+		}
 	}
 
 	return true;
