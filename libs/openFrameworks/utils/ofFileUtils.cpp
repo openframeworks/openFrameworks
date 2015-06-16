@@ -1043,11 +1043,19 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 		}
 		else{
 			ofLogWarning("ofDirectory") << "copyTo(): dest \"" << path << "\" already exists, set bool overwrite to true to overwrite it";
+			return false;
 		}
 	}
 
 	try{
-		std::filesystem::copy(myDir,path);
+		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
+#ifdef _MSC_VER
+		// microsoft implements copy differently
+		// https://msdn.microsoft.com/en-us/library/dn986845(v=vs.140).aspx
+		std::filesystem::copy(myDir, path, std::filesystem::copy_options::recursive);
+#else
+		std::filesystem::copy(myDir, path);
+#endif
 	}
 	catch(std::exception & except){
 		ofLogError("ofDirectory") << "copyTo(): unable to copy \"" << path << "\": " << except.what();
@@ -1482,7 +1490,7 @@ string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	return std::filesystem::canonical(path).string();
+	return std::filesystem::canonical(std::filesystem::absolute(path)).string();
 }
 
 
