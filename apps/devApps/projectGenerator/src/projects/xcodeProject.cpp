@@ -139,7 +139,6 @@ STRINGIFY(
           <key>OTHER_CPLUSPLUSFLAGS</key>
           <array>
 		  <string>"-D__MACOSX_CORE__"</string>
-		  <string>"-lpthread"</string>
 		  <string>"-mtune=native"</string>
           </array>
 
