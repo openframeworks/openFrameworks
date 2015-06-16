@@ -5,6 +5,8 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 #include "ofAppRunner.h"
+#include <condition_variable>
+#include <mutex>
 
 #ifdef TARGET_WIN32
 #include <winuser.h>
@@ -103,7 +105,7 @@ struct FileDialogData{
 	string results;
 	bool done;
 	Poco::Condition condition;
-	ofMutex mutex;
+	std::mutex mutex;
 };
 
 gboolean file_dialog_gtk(gpointer userdata){
@@ -150,8 +152,8 @@ struct TextDialogData{
 	string text;
 	string question;
 	bool done;
-	Poco::Condition condition;
-	ofMutex mutex;
+	std::condition_variable condition;
+	std::mutex mutex;
 };
 
 gboolean alert_dialog_gtk(gpointer userdata){
@@ -161,7 +163,7 @@ gboolean alert_dialog_gtk(gpointer userdata){
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 	dialogData->mutex.lock();
-	dialogData->condition.signal();
+	dialogData->condition.notify_all();
 	dialogData->done = true;
 	dialogData->mutex.unlock();
 
@@ -181,7 +183,7 @@ gboolean text_dialog_gtk(gpointer userdata){
 	}
 	gtk_widget_destroy (dialog);
 	dialogData->mutex.lock();
-	dialogData->condition.signal();
+	dialogData->condition.notify_all();
 	dialogData->done = true;
 	dialogData->mutex.unlock();
 
@@ -279,8 +281,8 @@ void ofSystemAlertDialog(string errorMessage){
 		dialogData.done = false;
 		g_main_context_invoke(g_main_loop_get_context(ofGstUtils::getGstMainLoop()), &alert_dialog_gtk, &dialogData);
 		if(!dialogData.done){
-			dialogData.mutex.lock();
-			dialogData.condition.wait(dialogData.mutex);
+			std::unique_lock<std::mutex> lock(dialogData.mutex);
+			dialogData.condition.wait(lock);
 		}
 	#endif
 
@@ -593,8 +595,8 @@ string ofSystemTextBoxDialog(string question, string text){
 	dialogData.question = question;
 	g_main_context_invoke(g_main_loop_get_context(ofGstUtils::getGstMainLoop()), &text_dialog_gtk, &dialogData);
 	if(!dialogData.done){
-		dialogData.mutex.lock();
-		dialogData.condition.wait(dialogData.mutex);
+		std::unique_lock<std::mutex> lock(dialogData.mutex);
+		dialogData.condition.wait(lock);
 	}
 	text = dialogData.text;
 #endif
