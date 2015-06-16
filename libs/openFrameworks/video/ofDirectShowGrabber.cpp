@@ -192,9 +192,9 @@ void ofDirectShowGrabber::update(){
 
 							int posPix = (((int)posy * inputW * 3) + ((int)posx * 3));
 
-							pixels.getPixels()[(j*width*3) + i*3    ] = viPixels[posPix  ];
-							pixels.getPixels()[(j*width*3) + i*3 + 1] = viPixels[posPix+1];
-							pixels.getPixels()[(j*width*3) + i*3 + 2] = viPixels[posPix+2];
+							pixels.getData()[(j*width*3) + i*3    ] = viPixels[posPix  ];
+							pixels.getData()[(j*width*3) + i*3 + 1] = viPixels[posPix+1];
+							pixels.getData()[(j*width*3) + i*3 + 2] = viPixels[posPix+2];
 
 						}
 					}
