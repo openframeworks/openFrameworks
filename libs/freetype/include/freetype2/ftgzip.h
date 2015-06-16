@@ -137,7 +137,8 @@ FT_BEGIN_HEADER
                       const FT_Byte*  input,
                       FT_ULong        input_len );
 
-  /* */
+
+ /* */
 
 
 FT_END_HEADER

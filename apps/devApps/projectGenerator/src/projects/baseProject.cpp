@@ -27,8 +27,8 @@ bool baseProject::create(string path){
         bDoesDirExist = true;
     }else{
         ofDirectory project(projectDir);
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"src"),ofFilePath::join(projectDir,"src"));
-        ofFile::copyFromTo(ofFilePath::join(templatePath,"bin"),ofFilePath::join(projectDir,"bin"));
+        ofDirectory(ofFilePath::join(templatePath,"src")).copyTo(ofFilePath::join(projectDir,"src"));
+        ofDirectory(ofFilePath::join(templatePath,"bin")).copyTo(ofFilePath::join(projectDir,"bin"));
     }
 
     // if overwrite then ask for permission...

@@ -400,9 +400,13 @@ private:
 	ofVboMesh			cachedTessellation;
 #endif
 	bool				cachedTessellationValid;
-
+#if defined(TARGET_EMSCRIPTEN)
+	static ofTessellator tessellator;
+#elif HAS_TLS
+	static thread_local ofTessellator tessellator;
+#else
 	ofTessellator tessellator;
-
+#endif
 	bool				bHasChanged;
 	int					prevCurveRes;
 	int					curveResolution;

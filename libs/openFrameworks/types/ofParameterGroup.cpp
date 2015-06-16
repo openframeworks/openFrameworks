@@ -37,11 +37,11 @@ ofParameterGroup & ofParameterGroup::operator=(const ofParameterGroup& mom){
 	return *this;
 }
 
-void ofParameterGroup::add(ofAbstractParameter & param){
-	shared_ptr<ofAbstractParameter> group = param.newReference();
-	obj->parameters.push_back(group);
-	obj->parametersIndex[group->getEscapedName()] = obj->parameters.size()-1;
-	group->setParent(this);
+void ofParameterGroup::add(ofAbstractParameter & parameter){
+	shared_ptr<ofAbstractParameter> param = parameter.newReference();
+	obj->parameters.push_back(param);
+	obj->parametersIndex[param->getEscapedName()] = obj->parameters.size()-1;
+	param->setParent(this);
 }
 
 void ofParameterGroup::clear(){

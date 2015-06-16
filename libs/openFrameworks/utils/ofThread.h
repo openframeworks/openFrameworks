@@ -356,7 +356,7 @@ protected:
     ///
     ///     ofScopedLock lock(mutex);
     ///
-    mutable ofMutex mutex;
+    mutable std::mutex mutex;
 
 private:
     void run();

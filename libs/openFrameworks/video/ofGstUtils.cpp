@@ -169,9 +169,8 @@ void ofGstUtils::eos_cb(){
 	bIsMovieDone = true;
 	if(appsink && !isAppSink) appsink->on_eos();
 	if(closing){
-		eosMutex.lock();
-		eosCondition.signal();
-		eosMutex.unlock();
+		std::unique_lock<std::mutex> lck(eosMutex);
+		eosCondition.notify_all();
 	}
 }
 
@@ -500,15 +499,12 @@ void ofGstUtils::setSpeed(float _speed){
 void ofGstUtils::close(){
 	if(bPlaying){
 		if(!bIsMovieDone && !bPaused && !isStream){
-			eosMutex.lock();
+			std::unique_lock<std::mutex> lck(eosMutex);
 			closing = true;
 			gst_element_send_event(gstPipeline,gst_event_new_eos());
-			try{
-				eosCondition.wait(eosMutex,5000);
-			}catch(const Poco::TimeoutException & e){
+			if(eosCondition.wait_for(lck,std::chrono::milliseconds(5000))==std::cv_status::timeout){
 				ofLogWarning("ofGstUtils") << "didn't received EOS in 5s, closing pipeline anyway";
 			}
-			eosMutex.unlock();
 			closing = false;
 		}
 	}
@@ -791,7 +787,7 @@ ofGstVideoUtils::~ofGstVideoUtils(){
 
 void ofGstVideoUtils::close(){
 	ofGstUtils::close();
-	ofScopedLock lock(mutex);
+	std::unique_lock<std::mutex> lock(mutex);
 	pixels.clear();
 	backPixels.clear();
 	eventPixels.clear();
@@ -834,7 +830,7 @@ ofTexture * ofGstVideoUtils::getTexture(){
 void ofGstVideoUtils::update(){
 	if (isLoaded()){
 		if(!isFrameByFrame()){
-			ofScopedLock lock(mutex);
+			std::unique_lock<std::mutex> lock(mutex);
 			bHavePixelsChanged = bBackPixelsChanged;
 			if (bHavePixelsChanged){
 				bBackPixelsChanged=false;
@@ -1165,7 +1161,7 @@ ofPixelFormat ofGstVideoUtils::getPixelFormat() const{
 }
 
 bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
-	Poco::ScopedLock<ofMutex> lock(mutex);
+	std::unique_lock<std::mutex> lock(mutex);
 #if GST_VERSION_MAJOR>0
 	if(pixelFormat!=internalPixelFormat){
 		ofLogNotice("ofGstVideoUtils") << "allocating with " << w << "x" << h << " " << getGstFormatName(pixelFormat);
@@ -1184,7 +1180,7 @@ bool ofGstVideoUtils::allocate(int w, int h, ofPixelFormat pixelFormat){
 }
 
 void ofGstVideoUtils::reallocateOnNextFrame(){
-	Poco::ScopedLock<ofMutex> lock(mutex);
+	std::unique_lock<std::mutex> lock(mutex);
 	pixels.clear();
 	backPixels.clear();
 	bIsFrameNew					= false;
