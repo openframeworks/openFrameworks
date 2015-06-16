@@ -285,7 +285,7 @@ public:
 	string getName(unsigned int position); // e.g., "image.png"
 	string getPath(unsigned int position);
 	ofFile getFile(unsigned int position, ofFile::Mode mode=ofFile::Reference, bool binary=false);
-	vector<ofFile> getFiles();
+	const vector<ofFile> & getFiles() const;
 
 	ofFile operator[](unsigned int position);
 
@@ -315,12 +315,8 @@ public:
 	static bool doesDirectoryExist(string dirPath, bool bRelativeToData = true);
 	static bool removeDirectory(string path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
-	vector<ofFile>::iterator begin();
-	vector<ofFile>::iterator end();
 	vector<ofFile>::const_iterator begin() const;
 	vector<ofFile>::const_iterator end() const;
-	vector<ofFile>::reverse_iterator rbegin();
-	vector<ofFile>::reverse_iterator rend();
 	vector<ofFile>::const_reverse_iterator rbegin() const;
 	vector<ofFile>::const_reverse_iterator rend() const;
 
