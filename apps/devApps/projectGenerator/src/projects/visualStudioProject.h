@@ -3,7 +3,6 @@
 #define VSWINPROJECT_H_
 
 #include "ofConstants.h"
-#include "pugixml.hpp"
 #include "ofAddon.h"
 #include "baseProject.h"
 
@@ -22,7 +21,8 @@ public:
     void addSrc(string srcFile, string folder, SrcType type=DEFAULT);
     void addInclude(string includeName);
     void addLibrary(string libraryName, LibType libType);
-    void addCFLAG(string cflag, LibType libType = RELEASE_LIB);
+    void addCFLAG(string cflag, LibType libType = RELEASE_LIB); // C
+    void addCPPFLAG(string cppflag, LibType libType = RELEASE_LIB); // C++
 
     void addAddon(ofAddon & addon);
 

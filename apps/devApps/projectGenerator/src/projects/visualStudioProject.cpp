@@ -308,6 +308,28 @@ void visualStudioProject::addCFLAG(string cflag, LibType libType){
 
 }
 
+void visualStudioProject::addCPPFLAG(string cppflag, LibType libType){
+	pugi::xpath_node_set items = doc.select_nodes("//ItemDefinitionGroup");
+	for(int i=0;i<items.size();i++){
+		pugi::xml_node additionalOptions;
+		bool found=false;
+		if(libType==RELEASE_LIB && string(items[i].node().attribute("Condition").value())=="'$(Configuration)|$(Platform)'=='Release|Win32'"){
+			additionalOptions = items[i].node().child("ClCompile").child("AdditionalOptions");
+			found = true;
+		}else if(libType==DEBUG_LIB && string(items[i].node().attribute("Condition").value())=="'$(Configuration)|$(Platform)'=='Debug|Win32'"){
+			additionalOptions = items[i].node().child("ClCompile").child("AdditionalOptions");
+			found = true;
+		}
+		if(!found) continue;
+		if(!additionalOptions){
+			items[i].node().child("ClCompile").append_child("AdditionalOptions").append_child(pugi::node_pcdata).set_value(cppflag.c_str());
+		}else{
+			additionalOptions.set_value((string(additionalOptions.value()) + " " + cppflag).c_str());
+		}
+	}
+
+}
+
 void visualStudioProject::addAddon(ofAddon & addon){
     for(int i=0;i<(int)addons.size();i++){
 		if(addons[i].name==addon.name) return;
@@ -410,19 +432,19 @@ void visualStudioProject::addAddon(ofAddon & addon){
     }
 
     for(int i=0;i<(int)addon.cppsrcFiles.size(); i++){
-        ofLogVerbose() << "adding addon c srcFiles: " << addon.cppsrcFiles[i];
+        ofLogVerbose() << "adding addon cpp srcFiles: " << addon.cppsrcFiles[i];
 		if(addon.filesToFolders[addon.cppsrcFiles[i]]=="") addon.filesToFolders[addon.cppsrcFiles[i]]="other";
         addSrc(addon.cppsrcFiles[i],addon.filesToFolders[addon.cppsrcFiles[i]],C);
     }
 
     for(int i=0;i<(int)addon.headersrcFiles.size(); i++){
-        ofLogVerbose() << "adding addon c srcFiles: " << addon.headersrcFiles[i];
+        ofLogVerbose() << "adding addon header srcFiles: " << addon.headersrcFiles[i];
 		if(addon.filesToFolders[addon.headersrcFiles[i]]=="") addon.filesToFolders[addon.headersrcFiles[i]]="other";
         addSrc(addon.headersrcFiles[i],addon.filesToFolders[addon.headersrcFiles[i]],C);
     }
 
     for(int i=0;i<(int)addon.objcsrcFiles.size(); i++){
-        ofLogVerbose() << "adding addon c srcFiles: " << addon.objcsrcFiles[i];
+        ofLogVerbose() << "adding addon objc srcFiles: " << addon.objcsrcFiles[i];
 		if(addon.filesToFolders[addon.objcsrcFiles[i]]=="") addon.filesToFolders[addon.objcsrcFiles[i]]="other";
         addSrc(addon.objcsrcFiles[i],addon.filesToFolders[addon.objcsrcFiles[i]],C);
     }
@@ -434,7 +456,14 @@ void visualStudioProject::addAddon(ofAddon & addon){
 	}
 
 	for(int i=0;i<(int)addon.cflags.size();i++){
+		ofLogVerbose() << "adding addon cflags: " << addon.cflags[i];
 		addCFLAG(addon.cflags[i],RELEASE_LIB);
 		addCFLAG(addon.cflags[i],DEBUG_LIB);
+	}
+	
+	for(int i=0;i<(int)addon.cppflags.size();i++){
+		ofLogVerbose() << "adding addon cppflags: " << addon.cppflags[i];
+		addCPPFLAG(addon.cppflags[i],RELEASE_LIB);
+		addCPPFLAG(addon.cppflags[i],DEBUG_LIB);
 	}
 }

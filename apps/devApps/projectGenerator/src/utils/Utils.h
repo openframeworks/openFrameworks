@@ -8,11 +8,13 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
-#include "ofConstants.h"
-
 #include "pugixml.hpp"
 
-#include "ofMain.h"
+#include "ofConstants.h"
+#include "ofFileUtils.h"
+#include "ofLog.h"
+#include "ofUtils.h"
+#include "ofSystemUtils.h"
 
 
 string generateUUID(string input);

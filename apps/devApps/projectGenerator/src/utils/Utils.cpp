@@ -389,7 +389,7 @@ void getLibsRecursively(const string & path, vector < string > & libFiles, vecto
 							}
 						}
 					}
-                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
+                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc" || ext == "cxx" || ext == "m" || ext == "mm"){
                     libFiles.push_back(dir.getPath(i));
                 }
                 

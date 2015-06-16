@@ -1,7 +1,7 @@
 /**
- * pugixml parser - version 1.0
+ * pugixml parser - version 1.6
  * --------------------------------------------------------
- * Copyright (C) 2006-2010, by Arseny Kapoulkine (arseny.kapoulkine@gmail.com)
+ * Copyright (C) 2006-2015, by Arseny Kapoulkine (arseny.kapoulkine@gmail.com)
  * Report bugs and download new versions at http://pugixml.org/
  *
  * This library is distributed under the MIT License. See notice at the end
@@ -11,7 +11,8 @@
  * Copyright (C) 2003, by Kristen Wegner (kristen@tima.net)
  */
 
-#pragma once
+#ifndef HEADER_PUGICONFIG_HPP
+#define HEADER_PUGICONFIG_HPP
 
 // Uncomment this to enable wchar_t mode
 // #define PUGIXML_WCHAR_MODE
@@ -20,11 +21,9 @@
 // #define PUGIXML_NO_XPATH
 
 // Uncomment this to disable STL
-// Note: you can't use XPath with PUGIXML_NO_STL
 // #define PUGIXML_NO_STL
 
 // Uncomment this to disable exceptions
-// Note: you can't use XPath with PUGIXML_NO_EXCEPTIONS
 // #define PUGIXML_NO_EXCEPTIONS
 
 // Set this to control attributes for public classes/functions, i.e.:
@@ -33,9 +32,21 @@
 // #define PUGIXML_FUNCTION __fastcall // to set calling conventions to all public functions to fastcall
 // In absence of PUGIXML_CLASS/PUGIXML_FUNCTION definitions PUGIXML_API is used instead
 
+// Tune these constants to adjust memory-related behavior
+// #define PUGIXML_MEMORY_PAGE_SIZE 32768
+// #define PUGIXML_MEMORY_OUTPUT_STACK 10240
+// #define PUGIXML_MEMORY_XPATH_PAGE_SIZE 4096
+
+// Uncomment this to switch to header-only version
+// #define PUGIXML_HEADER_ONLY
+
+// Uncomment this to enable long long support
+// #define PUGIXML_HAS_LONG_LONG
+
+#endif
 
 /**
- * Copyright (c) 2006-2010 Arseny Kapoulkine
+ * Copyright (c) 2006-2015 Arseny Kapoulkine
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
