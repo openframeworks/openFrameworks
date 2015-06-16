@@ -518,10 +518,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
-				OTHER_CPLUSPLUSFLAGS = (
-					"-D__MACOSX_CORE__",
-					"-lpthread",
-				);
+				OTHER_CPLUSPLUSFLAGS = "-D__MACOSX_CORE__";
 			};
 			name = Debug;
 		};
@@ -547,10 +544,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
-				OTHER_CPLUSPLUSFLAGS = (
-					"-D__MACOSX_CORE__",
-					"-lpthread",
-				);
+				OTHER_CPLUSPLUSFLAGS = "-D__MACOSX_CORE__";
 			};
 			name = Release;
 		};
