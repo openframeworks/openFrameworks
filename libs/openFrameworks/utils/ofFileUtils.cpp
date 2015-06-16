@@ -414,7 +414,9 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 		case WriteOnly:
 		case ReadWrite:
 		case Append:
-			ofFilePath::createEnclosingDirectory(path());
+			if(!ofDirectory::doesDirectoryExist(path())){
+				ofFilePath::createEnclosingDirectory(path());
+			}
 			break;
 		case Reference:
 		case ReadOnly:
