@@ -44,10 +44,7 @@ function prepare() {
 	
 	if [ "$TYPE" == "osx" ] ; then
 
-		# patch outdated Makefile.osx provided with FreeImage, check if patch was applied first
-		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/Makefile.osx.patch 2>/dev/null ; then
-			patch -p0 -u < $FORMULA_DIR/Makefile.osx.patch
-		fi
+		cp -rf $FORMULA_DIR/Makefile.osx Makefile.osx
 
 		# set SDK using apothecary settings
 		sed -i tmp "s|MACOSX_SDK =.*|MACOSX_SDK = $OSX_SDK_VER|" Makefile.osx
