@@ -101,10 +101,8 @@ void ofApp::drawScene(bool isPreview){
 		
 		ofMultMatrix(headTrackedCamera.getProjectionMatrix().getInverse());
 		
-		ofPushStyle();
 		ofNoFill();
 		ofDrawBox(2.0f);
-		ofPopStyle();
 		
 		headTrackedCamera.restoreTransformGL();
 		//
@@ -123,6 +121,7 @@ void ofApp::drawScene(bool isPreview){
 		window.drawVertices();
 		//
 		//--
+        ofPopStyle();
 	}
 	
 	ofPushStyle();
