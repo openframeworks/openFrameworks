@@ -414,7 +414,9 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 		case WriteOnly:
 		case ReadWrite:
 		case Append:
-			ofFilePath::createEnclosingDirectory(path());
+			if(!ofDirectory(ofFilePath::getEnclosingDirectory(path())).exists()){
+				ofFilePath::createEnclosingDirectory(path());
+			}
 			break;
 		case Reference:
 		case ReadOnly:
@@ -481,7 +483,7 @@ void ofFile::close(){
 bool ofFile::create(){
 	bool success = false;
 
-	if(myFile.string().empty()){
+	if(!myFile.string().empty()){
 		auto mode = this->mode;
 		success = open(path(),ofFile::WriteOnly);
 		open(path(),mode);
@@ -531,7 +533,12 @@ string ofFile::path() const {
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getExtension() const {
-	return myFile.extension().string();
+	auto dotext = myFile.extension().string();
+	if(!dotext.empty() && dotext.front()=='.'){
+		return std::string(dotext.begin()+1,dotext.end());
+	}else{
+		return dotext;
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -706,7 +713,9 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 	}
 
 	try{
-		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
+		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
+			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
+		}
 		std::filesystem::copy(myFile,path);
 	}catch(std::exception & except){
 		ofLogError("ofFile") <<  "copyTo(): unable to copy \"" << path << "\":" << except.what();
@@ -740,7 +749,9 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 	}
 
 	try{
-		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
+		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
+			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
+		}
 		std::filesystem::rename(myFile,path);
 		myFile = path;
 	}
@@ -764,7 +775,7 @@ bool ofFile::remove(bool recursive){
 		return false;
 	}
 	if(!exists()){
-		ofLogError("ofFile") << "copyTo(): file does not exist";
+		ofLogError("ofFile") << "remove(): file does not exist";
 		return false;
 	}
 
@@ -774,8 +785,7 @@ bool ofFile::remove(bool recursive){
 		}else{
 			std::filesystem::remove(myFile);
 		}
-	}
-	catch(std::exception & except){
+	}catch(std::exception & except){
 		ofLogError("ofFile") << "remove(): unable to remove \"" << myFile << "\": " << except.what();
 		return false;
 	}
@@ -785,7 +795,12 @@ bool ofFile::remove(bool recursive){
 
 //------------------------------------------------------------------------------------------------------------
 uint64_t ofFile::getSize() const {
-	return std::filesystem::file_size(myFile);
+	try{
+		return std::filesystem::file_size(myFile);
+	}catch(std::exception & except){
+		ofLogError("ofFile") << "getSize(): unable to get size of \"" << myFile << "\": " << except.what();
+		return 0;
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1056,17 +1071,13 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 	for(std::filesystem::directory_iterator file(myDir); file != std::filesystem::directory_iterator(); ++file){
 		auto currentPath = std::filesystem::absolute(file->path());
 		auto dst = std::filesystem::path(path) / currentPath.filename();
-		cout << "copying" << dst << endl;
 		if(std::filesystem::is_directory(currentPath)){
-			cout << "is_directory" << endl;
 			ofDirectory current(currentPath);
 			// Found directory: Recursion
 			if(!current.copyTo(dst.string(),false)){
-				cout << "failed" << endl;
 				return false;
 			}
 		}else{
-			cout << "is_file" << endl;
 			ofFile(file->path()).copyTo(dst.string(),false);
 		}
 	}
@@ -1219,6 +1230,9 @@ ofFile ofDirectory::operator[](unsigned int position){
 
 //------------------------------------------------------------------------------------------------------------
 vector<ofFile>ofDirectory::getFiles(){
+	if(files.empty()){
+		listDir();
+	}
 	return files;
 }
 
