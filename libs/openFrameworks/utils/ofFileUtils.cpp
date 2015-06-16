@@ -611,7 +611,7 @@ bool ofFile::canWrite() const {
 bool ofFile::canExecute() const {
 	auto perm = std::filesystem::status(myFile).permissions();
 #ifdef TARGET_WIN32
-	return myFile.extension() == "exe";
+	return getExtension() == "exe";
 #else
 	struct stat info;
 	stat(path().c_str(), &info);  // Error check omitted
