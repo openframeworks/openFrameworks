@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 44;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -78,7 +78,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1120712214AE3D410035CB7E /* foreach.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = foreach.hpp; path = src/pugixmlLib/contrib/foreach.hpp; sourceTree = SOURCE_ROOT; };
 		1120712414AE3D4F0035CB7E /* baseProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseProject.h; sourceTree = "<group>"; };
 		1120712B14AE3D4F0035CB7E /* xcodeProject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = xcodeProject.cpp; sourceTree = "<group>"; };
 		1120712C14AE3D4F0035CB7E /* xcodeProject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xcodeProject.h; sourceTree = "<group>"; };
@@ -226,7 +225,6 @@
 			isa = PBXGroup;
 			children = (
 				E495DF7F1788972000994238 /* pugixml.cpp */,
-				1120712214AE3D410035CB7E /* foreach.hpp */,
 				119B95D714A65CA0001E1E20 /* pugiconfig.hpp */,
 				119B95D814A65CA0001E1E20 /* pugixml.hpp */,
 			);

@@ -36,7 +36,8 @@ public:
     
     // From addon_config.mk
     vector < string > dependencies;
-    vector < string > cflags;
+    vector < string > cflags;   // C_FLAGS
+    vector < string > cppflags; // CXX_FLAGS
     vector < string > ldflags;
     vector < string > pkgConfigLibs; 	// linux only
     vector < string > frameworks;		// osx only

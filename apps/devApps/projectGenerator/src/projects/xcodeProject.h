@@ -25,7 +25,8 @@ public:
     void addInclude(string includeName);
     void addLibrary(string libraryName, LibType libType = RELEASE_LIB);
     void addLDFLAG(string ldflag, LibType libType = RELEASE_LIB);
-    void addCFLAG(string cflag, LibType libType = RELEASE_LIB);
+    void addCFLAG(string cflag, LibType libType = RELEASE_LIB); // Other C Flags
+    void addCPPFLAG(string cppflag, LibType libType = RELEASE_LIB); // Other C++ Flags
     
     // specific to OSX
     void addFramework(string name, string path);
@@ -44,6 +45,8 @@ public:
 	string buildPhaseUUID;
     string frameworksUUID;
     string buildPhaseResourcesUUID;
+    string frameworksBuildPhaseUUID;
+    
 
     pugi::xml_node findOrMakeFolderSet( pugi::xml_node nodeToAddTo, vector < string > & folders, string pathForHash);
 	pugi::xml_node insertPoint;         // where are we inserting items (at the second dict tag,
