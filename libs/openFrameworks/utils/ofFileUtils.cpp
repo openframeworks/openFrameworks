@@ -548,7 +548,7 @@ string ofFile::getFileName() const {
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getBaseName() const {
-	return ofFilePath::removeExt(myFile.filename().string());
+	return std::filesystem::basename(myFile);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -659,19 +659,19 @@ bool ofFile::isHidden() const {
 
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setWriteable(bool flag){
-	try{
-		std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::add_perms);
-	}catch(std::exception & e){
-		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
-	}
+	setReadOnly(!flag);
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setReadOnly(bool flag){
 	try{
-		std::filesystem::permissions(myFile,std::filesystem::perms::owner_read | std::filesystem::perms::remove_perms);
-		std::filesystem::permissions(myFile,std::filesystem::perms::group_read | std::filesystem::perms::remove_perms);
-		std::filesystem::permissions(myFile,std::filesystem::perms::others_read | std::filesystem::perms::remove_perms);
+		if(flag){
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
+		}else{
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::add_perms);
+		}
 	}catch(std::exception & e){
 		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
 	}
@@ -1087,37 +1087,11 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::moveTo(string path, bool bRelativeToData, bool overwrite){
-	if(myDir.string().empty()){
-		ofLogError("ofDirectory") << "moveTo(): destination path is empty";
+	if(copyTo(path,bRelativeToData,overwrite)){
+		return remove(true);
+	}else{
 		return false;
 	}
-	if(!std::filesystem::exists(myDir)){
-		ofLogError("ofDirectory") << "moveTo(): source directory does not exist";
-		return false;
-	}
-
-	if(bRelativeToData){
-		path = ofToDataPath(path, bRelativeToData);
-	}
-	if(ofDirectory::doesDirectoryExist(path, bRelativeToData)){
-		if(overwrite){
-			ofDirectory::removeDirectory(path, true, bRelativeToData);
-		}
-		else{
-			ofLogWarning("ofDirectory") << "moveTo(): destination folder already exists, set bool overwrite to true to overwrite it";
-		}
-	}
-
-	try{
-		std::filesystem::copy(myDir,path);
-		std::filesystem::remove(myDir);
-	}
-	catch(std::exception & except){
-		ofLogError("ofDirectory") << "moveTo(): unable to move \"" << path << "\": " << except.what();
-		return false;
-	}
-
-	return true;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1132,9 +1106,12 @@ bool ofDirectory::remove(bool recursive){
 	}
 
 	try{
-		std::filesystem::remove(myDir);
-	}
-	catch(std::exception & except){
+		if(recursive){
+			std::filesystem::remove_all(myDir);
+		}else{
+			std::filesystem::remove(myDir);
+		}
+	}catch(std::exception & except){
 		ofLogError("ofDirectory") << "remove(): unable to remove file/directory: " << except.what();
 		return false;
 	}
@@ -1229,9 +1206,9 @@ ofFile ofDirectory::operator[](unsigned int position){
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>ofDirectory::getFiles(){
+const vector<ofFile> & ofDirectory::getFiles() const{
 	if(files.empty()){
-		listDir();
+		const_cast<ofDirectory*>(this)->listDir();
 	}
 	return files;
 }
@@ -1362,18 +1339,8 @@ bool ofDirectory::operator>=(const ofDirectory & dir){
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::iterator ofDirectory::begin(){
-	return files.begin();
-}
-
-//------------------------------------------------------------------------------------------------------------
-vector<ofFile>::iterator ofDirectory::end(){
-	return files.end();
-}
-
-//------------------------------------------------------------------------------------------------------------
 vector<ofFile>::const_iterator ofDirectory::begin() const{
-	return files.begin();
+	return getFiles().begin();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1382,18 +1349,8 @@ vector<ofFile>::const_iterator ofDirectory::end() const{
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::reverse_iterator ofDirectory::rbegin(){
-	return files.rbegin();
-}
-
-//------------------------------------------------------------------------------------------------------------
-vector<ofFile>::reverse_iterator ofDirectory::rend(){
-	return files.rend();
-}
-
-//------------------------------------------------------------------------------------------------------------
 vector<ofFile>::const_reverse_iterator ofDirectory::rbegin() const{
-	return files.rbegin();
+	return getFiles().rbegin();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1434,28 +1391,12 @@ string ofFilePath::addTrailingSlash(string path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getFileExt(string filename){
-	std::string::size_type idx;
-	idx = filename.rfind('.');
-
-	if(idx != std::string::npos){
-		return filename.substr(idx + 1);
-	}
-	else{
-		return "";
-	}
+	return ofFile(filename,ofFile::Reference).getExtension();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::removeExt(string filename){
-	std::string::size_type idx;
-	idx = filename.rfind('.');
-
-	if(idx != std::string::npos){
-		return filename.substr(0, idx);
-	}
-	else{
-		return filename;
-	}
+	return ofFile(filename,ofFile::Reference).getBaseName();
 }
 
 
@@ -1492,7 +1433,7 @@ string ofFilePath::getFileName(string filePath, bool bRelativeToData){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getBaseName(string filePath){
-	return removeExt(getFileName(filePath));
+	return ofFile(filePath).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1513,7 +1454,7 @@ string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	return std::filesystem::canonical(std::filesystem::absolute(path)).string();
+	return std::filesystem::canonical(path).string();
 }
 
 
