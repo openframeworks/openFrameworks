@@ -704,11 +704,15 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(path, bRelativeToData);
+		if(isFile() && ofFile(path).isDirectory()){
+			path = ofFilePath::join(path,getFileName());
 		}
-		else{
-			ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+		if(ofFile::doesFileExist(path, bRelativeToData)){
+			if(overwrite){
+				ofFile::removeFile(path, bRelativeToData);
+			}else{
+				ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+			}
 		}
 	}
 
@@ -740,11 +744,15 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(path, bRelativeToData);
+		if(isFile() && ofFile(path).isDirectory()){
+			path = ofFilePath::join(path,getFileName());
 		}
-		else{
-			ofLogWarning("ofFile") << "moveTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+		if(ofFile::doesFileExist(path, bRelativeToData)){
+			if(overwrite){
+				ofFile::removeFile(path, bRelativeToData);
+			}else{
+				ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+			}
 		}
 	}
 
@@ -838,56 +846,13 @@ bool ofFile::operator>=(const ofFile & file) const {
 //------------------------------------------------------------------------------------------------------------
 
 bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  bool overwrite){
-	if(bRelativeToData){
-		pathSrc = ofToDataPath(pathSrc);
-	}
-	if(bRelativeToData){
-		pathDst = ofToDataPath(pathDst);
-	}
-
-	if(!ofFile::doesFileExist(pathSrc, bRelativeToData)){
-		ofLogError("ofFile") << "copyFromTo(): source file/directory doesn't exist: \"" << pathSrc << "\"";
-		return false;
-	}
-
-	if(ofFile::doesFileExist(pathDst, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(pathDst, bRelativeToData);
-		}else{
-			ofLogWarning("ofFile") << "copyFromTo(): destination file/directory \"" << pathSrc << "\"exists,"
-			<< " set bool overwrite to true if you want to overwrite it";
-		}
-	}
-
-	return ofFile(pathSrc).copyTo(pathDst);
+	return ofFile(pathSrc).copyTo(pathDst,bRelativeToData,overwrite);
 }
 
 //be careful with slashes here - appending a slash when moving a folder will causes mad headaches
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::moveFromTo(string pathSrc, string pathDst, bool bRelativeToData, bool overwrite){
-	if(bRelativeToData){
-		pathSrc = ofToDataPath(pathSrc);
-	}
-	if(bRelativeToData){
-		pathDst = ofToDataPath(pathDst);
-	}
-
-	if(!ofFile::doesFileExist(pathSrc, bRelativeToData)){
-		ofLogError("ofFile") << "moveFromTo(): source file/directory doesn't exist: \"" << pathSrc << "\"";
-		return false;
-	}
-
-	if(ofFile::doesFileExist(pathDst, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(pathDst, bRelativeToData);
-		}
-		else{
-			ofLogWarning("ofFile") << "moveFromTo(): destination file/folder \"" << pathDst << "\" exists,"
-			<< " set bool overwrite to true if you want to overwrite it";
-		}
-	}
-
-	return ofFile(pathSrc).moveTo(pathDst);
+	return ofFile(pathSrc).moveTo(pathDst,bRelativeToData,overwrite);
 }
 
 //------------------------------------------------------------------------------------------------------------
