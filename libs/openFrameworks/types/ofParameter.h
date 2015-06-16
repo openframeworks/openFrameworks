@@ -3,6 +3,7 @@
 #include "ofEvents.h"
 #include "ofTypes.h"
 #include "ofUtils.h"
+#include "ofConstants.h"
 
 template<typename ParameterType>
 class ofParameter;

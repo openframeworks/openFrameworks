@@ -8,7 +8,14 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Accelerate/Accelerate.h>
-#import "ofAVFoundationVideoPlayerView.h"
+
+//----------------------------------------------------------
+#include <TargetConditionals.h>
+#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
+#define TARGET_IOS
+#else
+#define TARGET_OSX
+#endif
 
 @class AVPlayer;
 @class AVPlayerItem;
@@ -30,8 +37,7 @@
 @interface ofAVFoundationVideoPlayer : NSObject {
 
     id<OFAVFoundationVideoPlayerDelegate> delegate;
-    
-    ofAVFoundationVideoPlayerView * _playerView;
+	
     AVPlayer * _player;
     AVPlayerItem * _playerItem;
     AVAsset * _asset;
@@ -73,7 +79,6 @@
 }
 
 @property (nonatomic, assign) id delegate;
-@property (nonatomic, retain) ofAVFoundationVideoPlayerView * playerView;
 @property (nonatomic, retain) AVPlayer * player;
 @property (nonatomic, retain) AVPlayerItem * playerItem;
 @property (nonatomic, retain) AVAsset * asset;
@@ -85,9 +90,6 @@
 - (BOOL)loadWithPath:(NSString*)path async:(BOOL)bAsync;
 - (BOOL)loadWithURL:(NSURL*)url async:(BOOL)bAsync;
 - (void)unloadVideo;
-
-- (void)setVideoPosition:(CGPoint)position;
-- (void)setVideoSize:(CGSize)size;
 
 - (void)update;
 

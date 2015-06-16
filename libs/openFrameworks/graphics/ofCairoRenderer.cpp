@@ -78,7 +78,7 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 		}
 		break;
 	case IMAGE:
-		imageBuffer.allocate(_viewport.width, _viewport.height, 4);
+		imageBuffer.allocate(_viewport.width, _viewport.height, OF_PIXELS_BGRA);
 		imageBuffer.set(0);
 		surface = cairo_image_surface_create_for_data(imageBuffer.getData(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
 		break;
@@ -98,8 +98,6 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	page = 0;
 	b3D = b3D_;
 	multiPage = multiPage_;
-	setStyle(currentStyle);
-	clear();
 }
 
 void ofCairoRenderer::setupMemoryOnly(Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
@@ -116,7 +114,6 @@ void ofCairoRenderer::close(){
 	if(surface){
 		cairo_surface_flush(surface);
 		if(type==IMAGE && filename!=""){
-			imageBuffer.swapRgb();
 			ofSaveImage(imageBuffer,filename);
 		}
 		cairo_surface_finish(surface);
@@ -1164,6 +1161,7 @@ void ofCairoRenderer::setupGraphicDefaults(){
 	setStyle(ofStyle());
 	path.setMode(ofPath::COMMANDS);
 	path.setUseShapeColor(false);
+	clear();
 };
 
 //----------------------------------------------------------

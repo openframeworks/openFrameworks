@@ -74,7 +74,7 @@ ifndef MAC_OS_MIN_VERSION
 endif
 
 ifndef MAC_OS_STD_LIB
-	MAC_OS_STD_LIB = libstdc++
+	MAC_OS_STD_LIB = libc++
 endif
 
 # Link against libstdc++ to silence tr1/memory errors on latest versions of osx
@@ -118,11 +118,11 @@ ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo
 endif
 
 # Optimization options (http://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
-PLATFORM_CFLAGS += -finline-functions
+#PLATFORM_CFLAGS += -finline-functions
 #PLATFORM_CFLAGS += -funroll-all-loops
 #PLATFORM_CFLAGS += -Os
 
-PLATFORM_CFLAGS += -arch i386
+#PLATFORM_CFLAGS += -arch i386
 
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
@@ -140,6 +140,7 @@ PLATFORM_CFLAGS += -mssse3
 PLATFORM_CFLAGS += -fmessage-length=0
 
 PLATFORM_CXXFLAGS += -x objective-c++
+PLATFORM_CXXFLAGS += -std=c++11
 
 ifeq ($(USE_GST),1)
 	PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
@@ -156,10 +157,10 @@ endif
 
 PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
-PLATFORM_LDFLAGS += -arch i386
-PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
+#PLATFORM_LDFLAGS += -arch i386
+#PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
 
-PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
+PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -212,17 +213,13 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 
 # third party static libs (this may not matter due to exclusions in poco's libsorder.make)
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoData.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataMySQL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataODBC.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataSQLite.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoZip.a
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/lib/$(PLATFORM_LIB_SUBPATH)/%
+
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
@@ -296,7 +293,6 @@ PLATFORM_FRAMEWORKS += CoreAudio
 PLATFORM_FRAMEWORKS += CoreFoundation
 PLATFORM_FRAMEWORKS += CoreServices
 PLATFORM_FRAMEWORKS += OpenGL
-PLATFORM_FRAMEWORKS += QuickTime
 PLATFORM_FRAMEWORKS += IOKit
 PLATFORM_FRAMEWORKS += Cocoa
 PLATFORM_FRAMEWORKS += CoreVideo

@@ -583,11 +583,11 @@ public:
 
     /// \brief Test two colors for equality.
     /// \returns true iff the R, G, B and A components are all equal.
-    bool operator == (const ofColor_<PixelType>& color);
+    bool operator == (const ofColor_<PixelType>& color) const;
 
     /// \brief Test two colors for inequality.
     /// \returns true iff any of the R, G, B or A components are not equal.
-    bool operator != (const ofColor_<PixelType>& color);
+    bool operator != (const ofColor_<PixelType>& color) const;
 
     /// \brief Clamped addition operator.
     ///

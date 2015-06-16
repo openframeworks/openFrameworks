@@ -27,6 +27,14 @@ function prepare() {
 function build() {
 	if [ "$TYPE" == "osx" ] ; then
 		echo "build not needed for $TYPE"
+	elif [ "$TYPE" == "vs" ] ; then
+		if [ $ARCH == 32 ] ; then
+			cmake -G "Visual Studio $VS_VER"
+			vs-build "zlib.sln"
+		elif [ $ARCH == 64 ] ; then
+			cmake -G "Visual Studio $VS_VER Win64"
+			vs-build "zlib.sln" Build "Release|x64"
+		fi
 	else
 		./configure --static \
 					--prefix=$BUILD_ROOT_DIR \
@@ -39,12 +47,24 @@ function build() {
 function copy() {
 	if [ "$TYPE" == "osx" ] ; then
 		return
+	elif [ "$TYPE" == "vs" ] ; then
+		if [ $ARCH == 32 ] ; then
+			cp -v Release/zlib.dll $1/../../export/$TYPE/Win32/Zlib.dll
+		elif [ $ARCH == 64 ] ; then
+			cp -v Release/zlib.dll $1/../../export/$TYPE/x64/Zlib.dll
+		fi
+		
+	else
+		make install
 	fi
-	make install
 }
 
 # executed inside the lib src dir
 function clean() {
-	make uninstall
-	make clean
+	if [ "$TYPE" == "vs" ] ; then
+		vs-clean "zlib.sln"
+	else
+		make uninstall
+		make clean
+	fi
 }

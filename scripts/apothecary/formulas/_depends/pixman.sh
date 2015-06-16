@@ -4,7 +4,7 @@
 # http://pixman.org/
 
 # define the version
-VER=0.30.0
+VER=0.32.4
 
 # tools for git use
 GIT_URL=http://anongit.freedesktop.org/git/pixman.git
@@ -20,9 +20,13 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
+	if [ "$TYPE" == "vs" ] ; then
+		echo "handled in the cairo script"
 	# generate the configure script if it's not there
-	if [ ! -f configure ] ; then
-		./autogen.sh
+	else 
+		if [ ! -f configure ] ; then
+			./autogen.sh
+		fi
 	fi
 }
 
@@ -41,6 +45,20 @@ function build() {
 				--disable-dependency-tracking \
 				--disable-gtk \
 				--disable-shared
+		# only build & install lib, ignore demos/tests
+		cd pixman
+		make clean
+		make
+	elif [ "$TYPE" == "vs" ] ; then
+		echo "build is handled in the cairo script"
+#		sed s/-MD/-MT/ Makefile.win32 > Makefile.fixed
+#		mv Makefile.fixed Makefile.win32
+		
+#		CURRENTPATH=`pwd`
+#		WINPATH=$(echo "$CURRENTPATH" | sed -e 's/^\///' -e 's/\//\\/g' -e 's/^./\0:/')
+#		cmd.exe /c 'call "%VS'${VS_VER}'0COMNTOOLS%vsvars32.bat" && nmake -f Makefile.win32 "CFG=release"'
+		
+		#cmd.exe /c 'nmake -f Makefile.win32 "CFG=release"'
 	else
 	./configure LDFLAGS="-arch i386 -arch x86_64" \
 				CFLAGS="-O3 -arch i386 -arch x86_64" \
@@ -48,25 +66,29 @@ function build() {
 				--disable-dependency-tracking \
 				--disable-gtk \
 				--disable-shared
+		# only build & install lib, ignore demos/tests
+		cd pixman
+		make clean
+		make
 	fi
 
 	
-	# only build & install lib, ignore demos/tests
-	cd pixman
-	make clean
-	make
+	
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
-	
-	# lib
-	cd pixman
-	make install
-	
-	# pkg-config info
-	cd ../
-	make install-pkgconfigDATA
+	if [ "$TYPE" == "vs" ] ; then
+		echo "copy vs"
+	else
+		# lib
+		cd pixman
+		make install
+		
+		# pkg-config info
+		cd ../
+		make install-pkgconfigDATA
+	fi
 }
 
 # executed inside the lib src dir
