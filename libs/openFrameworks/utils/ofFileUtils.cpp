@@ -1406,7 +1406,7 @@ string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
 	if(bRelativeToData){
 		filePath = ofToDataPath(filePath);
 	}
-	return std::filesystem::path(filePath).parent_path().string();
+	return addTrailingSlash(std::filesystem::path(filePath).parent_path().string());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1419,7 +1419,11 @@ string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	return std::filesystem::canonical(path).string();
+	try{
+		return std::filesystem::canonical(path).string();
+	}catch(...){
+		return path;
+	}
 }
 
 
