@@ -104,6 +104,7 @@ class ofSerialDeviceInfo{
 ///
 /// \sa http://www.cplusplus.com/reference/mutex/mutex/
 /// \sa http://www.appinf.com/docs/poco/Poco.FastMutex.html
+[[deprecated("Use std::mutex instead")]]
 typedef std::mutex ofMutex;
 
 /// \brief A typedef for a cross-platform scoped mutex.
@@ -142,6 +143,7 @@ typedef std::mutex ofMutex;
 /// \sa http://en.cppreference.com/w/cpp/thread/lock_guard
 /// \sa http://www.appinf.com/docs/poco/Poco.ScopedLock.html
 /// \sa ofMutex
+[[deprecated("use std::unique_lock instead")]]
 typedef std::unique_lock<std::mutex> ofScopedLock;
 
 /// \brief Contains general information about the style of ofGraphics
