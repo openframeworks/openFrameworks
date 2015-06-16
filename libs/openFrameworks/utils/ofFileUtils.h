@@ -245,9 +245,9 @@ class ofDirectory{
 
 public:
 	ofDirectory();
-	ofDirectory(string path);
+	ofDirectory(const std::filesystem::path & path);
 
-	void open(string path);
+	void open(const std::filesystem::path & path);
 	void close();
 	bool create(bool recursive = false);
 
