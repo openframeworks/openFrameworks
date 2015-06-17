@@ -32,6 +32,7 @@ void ofApp::setup(){
 	model.setPosition(ofGetWidth()*.5, ofGetHeight() * 0.75, 0);
 	
 	light.enable();
+    light.setPosition(model.getPosition() + ofPoint(0, 0, 1600));
 }
 
 //--------------------------------------------------------------
