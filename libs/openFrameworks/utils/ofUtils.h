@@ -453,7 +453,7 @@ string ofVAArgsToString(const char * format, va_list args);
 /// \{
 
 
-/// \brief Convert a value to a string.
+/// \brief Convert a value (not numeric type) to a string.
 ///
 /// ofToString does its best to convert any value to a string. If the data type
 /// implements a stream << operator, then it will be converted.
@@ -469,10 +469,29 @@ string ofVAArgsToString(const char * format, va_list args);
 /// \param value The value to convert to a string.
 /// \returns A string representing the value or an empty string on failure.
 template <class T>
-string ofToString(const T& value){
+typename std::enable_if<!std::is_arithmetic<T>::value, string>::type ofToString(const T& value) {
 	ostringstream out;
 	out << value;
 	return out.str();
+}
+
+/// \brief Convert a numeric type to a string.
+///
+/// ofToString only wrap the std::to_string, if argument is typed as numeric type.
+///
+/// Example:
+/// ~~~~{.cpp}
+///		std::string str = "framerate is ";
+///		str += ofToString(ofGetFrameRate()) + " fps";
+///		// The string now containes something like "framerate is 60 fps".
+/// ~~~~
+///
+/// \tparam T The data type of the numeric value to convert to a string.
+/// \param value The value to convert to a string.
+/// \returns A string representing the value or an empty string on failure.
+template <class T>
+typename std::enable_if<std::is_arithmetic<T>::value, string>::type ofToString(const T value) {
+    return std::to_string(value);
 }
 
 /// \brief Convert a value to a string with a specific precision.
