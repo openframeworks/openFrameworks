@@ -5,6 +5,7 @@
 #include <mutex>
 #include <thread>
 #include <memory>
+#include <iterator>
 
 class ofEventAttendedException: public std::exception{};
 

@@ -15,6 +15,7 @@
 		22769592170D9DD200604FC3 /* ofMatrixStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 22769590170D9DD200604FC3 /* ofMatrixStack.h */; };
 		2292E73E19E3049700DE9411 /* ofBufferObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2292E73C19E3049700DE9411 /* ofBufferObject.cpp */; };
 		2292E73F19E3049700DE9411 /* ofBufferObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 2292E73D19E3049700DE9411 /* ofBufferObject.h */; };
+		229EB9A61B3181C800FF7B5F /* ofEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 229EB9A51B3181C800FF7B5F /* ofEvent.h */; };
 		22A1C453170AFCB60079E473 /* ofRendererCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */; };
 		22FAD01E17049373002A7EB3 /* ofAppGLFWWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */; };
 		22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */; };
@@ -168,6 +169,7 @@
 		22769590170D9DD200604FC3 /* ofMatrixStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofMatrixStack.h; sourceTree = "<group>"; };
 		2292E73C19E3049700DE9411 /* ofBufferObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofBufferObject.cpp; path = gl/ofBufferObject.cpp; sourceTree = "<group>"; };
 		2292E73D19E3049700DE9411 /* ofBufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofBufferObject.h; path = gl/ofBufferObject.h; sourceTree = "<group>"; };
+		229EB9A51B3181C800FF7B5F /* ofEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofEvent.h; sourceTree = "<group>"; };
 		22A1C452170AFCB60079E473 /* ofRendererCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofRendererCollection.cpp; sourceTree = "<group>"; };
 		22FAD01C17049373002A7EB3 /* ofAppGLFWWindow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = ofAppGLFWWindow.cpp; sourceTree = "<group>"; };
 		22FAD01D17049373002A7EB3 /* ofAppGLFWWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofAppGLFWWindow.h; sourceTree = "<group>"; };
@@ -424,6 +426,7 @@
 		E4B27AB910CBE92A00536013 /* events */ = {
 			isa = PBXGroup;
 			children = (
+				229EB9A51B3181C800FF7B5F /* ofEvent.h */,
 				E4998A25128A39480094AC3F /* ofEvents.cpp */,
 				E4B27ABA10CBE92A00536013 /* ofEvents.h */,
 				E4B27ABB10CBE92A00536013 /* ofEventUtils.h */,
@@ -698,6 +701,7 @@
 				2E6EA7011603A9E400B7ADF3 /* of3dGraphics.h in Headers */,
 				2292E73F19E3049700DE9411 /* ofBufferObject.h in Headers */,
 				2E6EA7061603AABD00B7ADF3 /* of3dPrimitives.h in Headers */,
+				229EB9A61B3181C800FF7B5F /* ofEvent.h in Headers */,
 				22FAD01F17049373002A7EB3 /* ofAppGLFWWindow.h in Headers */,
 				22769592170D9DD200604FC3 /* ofMatrixStack.h in Headers */,
 				22246D94176C9987008A8AF4 /* ofGLProgrammableRenderer.h in Headers */,
