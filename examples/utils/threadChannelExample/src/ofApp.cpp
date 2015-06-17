@@ -2,7 +2,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	grabber.setDeviceID(1);
 	grabber.setup(640,480);
 }
 
