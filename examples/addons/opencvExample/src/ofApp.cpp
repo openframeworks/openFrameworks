@@ -9,6 +9,7 @@ void ofApp::setup(){
 	#else
         vidPlayer.load("fingers.mov");
         vidPlayer.play();
+        vidPlayer.setLoopState(OF_LOOP_NORMAL);
 	#endif
 
     colorImg.allocate(320,240);
