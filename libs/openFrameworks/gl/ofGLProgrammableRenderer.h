@@ -30,8 +30,6 @@ public:
     void startRender();
     void finishRender();
 
-	void setCurrentFBO(const ofFbo * fbo);
-    
 	using ofBaseRenderer::draw;
 	using ofBaseGLRenderer::draw;
 	void draw(const ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals) const;
