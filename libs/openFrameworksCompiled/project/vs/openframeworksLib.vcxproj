@@ -142,6 +142,7 @@
     <ClInclude Include="..\..\..\openFrameworks\app\ofBaseApp.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofMainLoop.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofWindowSettings.h" />
+    <ClInclude Include="..\..\..\openFrameworks\events\ofEvent.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofFbo.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLRenderer.h" />
