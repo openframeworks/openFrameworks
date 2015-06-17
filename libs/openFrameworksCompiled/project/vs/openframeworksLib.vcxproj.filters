@@ -276,6 +276,9 @@
     <ClInclude Include="..\..\..\openFrameworks\app\ofWindowSettings.h">
       <Filter>libs\openFrameworks\app</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\openFrameworks\events\ofEvent.h">
+      <Filter>libs\openFrameworks\events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp">
