@@ -20,17 +20,17 @@ ImgAnalysisThread::~ImgAnalysisThread(){
 	// when the class is destroyed
 	// close both channels and wait for
 	// the thread to finish
-	toAnalize.close();
-	analized.close();
+	toAnalyze.close();
+	analyzed.close();
 	waitForThread(true);
 }
 
-void ImgAnalysisThread::analize(ofPixels & pixels){
+void ImgAnalysisThread::analyze(ofPixels & pixels){
 	// send the frame to the thread for analyzing
 	// this makes a copy but we can't avoid it anyway if
 	// we want to update the grabber while analyzing
 	// previous frames
-	toAnalize.send(pixels);
+	toAnalyze.send(pixels);
 }
 
 void ImgAnalysisThread::update(){
@@ -40,7 +40,7 @@ void ImgAnalysisThread::update(){
 	// the analysis
 	// tryReceive doesn't reallocate or make any copies
 	newFrame = false;
-	while(analized.tryReceive(pixels)){
+	while(analyzed.tryReceive(pixels)){
 		newFrame = true;
 	}
 	if(newFrame){
@@ -75,7 +75,7 @@ void ImgAnalysisThread::threadedFunction(){
 		// the CPU at all, until a frame arrives.
 		// also receive doesn't allocate or make any copies
 		ofPixels pixels;
-		if(toAnalize.receive(pixels)){
+		if(toAnalyze.receive(pixels)){
 			// we have a new frame, process it, the analysis
 			// here is just a thresholding for the sake of
 			// simplicity
@@ -89,9 +89,9 @@ void ImgAnalysisThread::threadedFunction(){
 			// main thread. in c++11 we can move it to
 			// avoid a copy
 #if __cplusplus>=201103
-			analized.send(std::move(pixels));
+			analyzed.send(std::move(pixels));
 #else
-			analized.send(pixels);
+			analyzed.send(pixels);
 #endif
 		}else{
 			// if receive returns false the channel
