@@ -23,6 +23,6 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
 		ofVideoGrabber grabber;
-		ImgAnalysisThread analizer;
+		ImgAnalysisThread analyzer;
 
 };
