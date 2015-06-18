@@ -157,7 +157,7 @@ public:
         		std::unique_lock<std::mutex> lck(mtx);
         		std::transform(functions.begin(), functions.end(),
         				std::back_inserter(functions_copy),
-						[&](unique_ptr<ofBaseEvent::Function>&f){return f.get();});
+						[&](std::unique_ptr<ofBaseEvent::Function>&f){return f.get();});
         	}
 			for(auto & f: functions_copy){
 				if(static_cast<BaseFunction*>(f)->call(sender,param)){
@@ -253,7 +253,7 @@ public:
         		std::unique_lock<std::mutex> lck(mtx);
         		std::transform(functions.begin(), functions.end(),
         				std::back_inserter(functions_copy),
-						[&](unique_ptr<ofBaseEvent::Function> & f){return f.get();});
+						[&](std::unique_ptr<ofBaseEvent::Function> & f){return f.get();});
         	}
 			for(auto & f: functions_copy){
 				if(static_cast<BaseFunction*>(f)->call(sender)){
