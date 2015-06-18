@@ -25,6 +25,6 @@ private:
 	void parameterChanged( ofAbstractParameter & parameter );
 	ofxOscSender sender;
 	ofxOscReceiver receiver;
-	ofParameterGroup * syncGroup;
+	ofParameterGroup syncGroup;
 	bool updatingParameter;
 };
