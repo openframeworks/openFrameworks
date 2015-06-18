@@ -156,7 +156,9 @@ void ofSleepMillis(int millis){
 //default ofGetTimestampString returns in this format: 2011-01-15-18-29-35-299
 //--------------------------------------------------
 string ofGetTimestampString(){
+
 	string timeFormat = "%Y-%m-%d-%H-%M-%S-%i";
+
 	return ofGetTimestampString(timeFormat);
 }
 
@@ -170,11 +172,18 @@ string ofGetTimestampString(const string& timestampFormat){
 	auto tm = *std::localtime(&t);
 	constexpr int bufsize = 256;
 	char buf[bufsize];
-	if (std::strftime(buf,bufsize,timestampFormat.c_str(),&tm) != 0){
+
+	// Beware! an invalid timestamp string crashes windows apps.
+	// so we have to filter out %i (which is not supported by vs)
+	// earlier.
+	auto tmpTimestampFormat = timestampFormat;
+	ofStringReplace(tmpTimestampFormat, "%i", ofToString(ms));
+	
+	if (strftime(buf,bufsize, tmpTimestampFormat.c_str(),&tm) != 0){
 		str << buf;
 	}
 	auto ret = str.str();
-	ofStringReplace(ret,"%i",ofToString(ms));
+	
 
     return ret;
 }
