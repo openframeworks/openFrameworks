@@ -468,11 +468,7 @@ string ofParameter<ParameterType>::toString() const{
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::fromString(const string & str){
-	ParameterType v;
-	stringstream sstr;
-	sstr << str;
-	sstr >> v;
-	set(v);
+	set(ofFromString<ParameterType>(str));
 }
 
 
