@@ -14,6 +14,10 @@ class ofReadOnlyParameter;
 
 class ofParameterGroup;
 
+
+
+//----------------------------------------------------------------------
+/// Base class for ofParameter, ofReadOnlyParameter and ofParameterGroup
 class ofAbstractParameter{
 public:
 	virtual ~ofAbstractParameter(){};
@@ -51,6 +55,12 @@ protected:
 };
 
 
+
+
+
+//----------------------------------------------------------------------
+/// A collection of parameters with events to notify if a parameter changed
+/// and serialization facilities
 class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();
@@ -195,6 +205,66 @@ ofParameter<ParameterType> ofParameterGroup::get(int pos) const{
 
 
 
+//----------------------------------------------------------------------
+// Mechanism to provide min and max default values for types where it makes sense
+template<typename T, bool B>
+struct ofTypeInfo_ {
+};
+
+// Types with numeric_limits resolve to this template specialization:
+template<typename T>
+struct ofTypeInfo_<T, true> {
+    static T min() { return std::numeric_limits<T>::is_signed ? -std::numeric_limits<T>::max() : 0; }
+    static T max() { return std::numeric_limits<T>::max(); }
+};
+
+// Types without numeric_limits resolve to this template specialization:
+template<typename T>
+struct ofTypeInfo_<T, false> {
+    static T min() { return T(); }
+    static T max() { return T(); }
+};
+
+template<typename T>
+struct ofTypeInfo : public ofTypeInfo_<T, std::numeric_limits<T>::is_specialized> {
+};
+
+// Here we provide some of our own specializations:
+template<>
+struct ofTypeInfo <ofVec2f> {
+    static ofVec2f min() { return ofVec2f(-std::numeric_limits<float>::max()); };
+    static ofVec2f max() { return ofVec3f(std::numeric_limits<float>::max()); };
+};
+
+template<>
+struct ofTypeInfo <ofVec3f> {
+    static ofVec3f min() { return ofVec3f(-std::numeric_limits<float>::max()); };
+    static ofVec3f max() { return ofVec3f(std::numeric_limits<float>::max()); };
+};
+
+template<>
+struct ofTypeInfo <ofVec4f> {
+    static ofVec4f min() { return ofVec4f(-std::numeric_limits<float>::max()); };
+    static ofVec4f max() { return ofVec4f(std::numeric_limits<float>::max()); };
+};
+
+template<>
+template<typename T>
+struct ofTypeInfo <ofColor_<T>> {
+    static ofColor_<T> min() { return ofColor_<T>(0,0); };
+    static ofColor_<T> max() { return ofColor_<T>(ofColor_<T>::limit(),ofColor_<T>::limit()); };
+};
+
+
+
+
+
+//----------------------------------------------------------------------
+/// Holds a value and notify it's listeners when it changes. Can be used as
+/// the value itself. For example an ofParameter<int> can be added, multiplied
+/// substracted... with another number.
+/// for ofParameter of other objects it's methods can be access using pointer
+/// syntax ->
 template<typename ParameterType>
 class ofParameter: public ofAbstractParameter{
 public:
@@ -280,16 +350,22 @@ private:
 	class Value{
 	public:
 		Value()
-		:bInNotify(false)
+		:min(ofTypeInfo<ParameterType>::min())
+		,max(ofTypeInfo<ParameterType>::min())
+		,bInNotify(false)
 		,serializable(true){};
 
 		Value(ParameterType v)
 		:value(v)
+		,min(ofTypeInfo<ParameterType>::min())
+		,max(ofTypeInfo<ParameterType>::min())
 		,bInNotify(false)
 		,serializable(true){};
 
 		Value(string name, ParameterType v)
 		:name(name)
+		,min(ofTypeInfo<ParameterType>::min())
+		,max(ofTypeInfo<ParameterType>::min())
 		,value(v)
 		,bInNotify(false)
 		,serializable(true){};
@@ -609,9 +685,12 @@ void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 
 
 
-template <typename T>
-struct FriendMaker {typedef T Type;};
 
+
+
+//----------------------------------------------------------------------
+/// Same as ofParameter but can only be modified by a friend class specified
+/// as the second template argument
 template<typename ParameterType,typename Friend>
 class ofReadOnlyParameter: public ofAbstractParameter{
 public:
