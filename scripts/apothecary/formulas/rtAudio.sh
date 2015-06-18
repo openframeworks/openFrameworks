@@ -49,7 +49,7 @@ function build() {
 		/usr/bin/g++ -O2 \
 					 -Wall \
 					 -fPIC \
-					 -stdlib=libstdc++ \
+					 -stdlib=libc++ \
 					 -arch i386 \
 					 -Iinclude \
 					 -DHAVE_GETTIMEOFDAY \
