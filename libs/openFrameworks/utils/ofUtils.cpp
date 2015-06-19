@@ -483,7 +483,11 @@ bool ofToBool(const string& boolString) {
 	if(lower == "false") {
 		return false;
 	}
-	return (bool)std::stoi(lower);
+	try {
+		return (bool)std::stoi(lower);
+	} catch(...) {
+		return false;
+	}
 }
 
 //----------------------------------------
