@@ -444,7 +444,7 @@ float ofxAndroidSoundPlayer::getVolume() const{
 		return 0;
 	}
 
-	jmethodID javaVolumeMethod = env->GetMethodID(javaClass,"getVolume","(V)F");
+	jmethodID javaVolumeMethod = env->GetMethodID(javaClass,"getVolume","()F");
 	if(!javaVolumeMethod){
 		ofLogError("ofxAndroidSoundPlayer") << "getVolume(): couldn't get java getVolume for SoundPlayer";
 		return 0;

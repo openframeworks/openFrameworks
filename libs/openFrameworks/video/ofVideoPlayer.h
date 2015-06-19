@@ -138,10 +138,6 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 			return dynamic_pointer_cast<PlayerType>(getPlayer());
 		}
 
-		//this is kept as legacy to support people accessing width and height directly. 
-		mutable int         height;
-		mutable int         width;
-
 	private:
 		void initDefaultPlayer();
 		shared_ptr<ofBaseVideoPlayer>		player;
