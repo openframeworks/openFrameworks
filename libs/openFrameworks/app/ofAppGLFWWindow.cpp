@@ -296,10 +296,10 @@ void ofAppGLFWWindow::setWindowIcon(const ofPixels & iconPixels){
 	buffer[0]=iconPixels.getWidth();
 	buffer[1]=iconPixels.getHeight();
 	for(int i=0;i<iconPixels.getWidth()*iconPixels.getHeight();i++){
-		buffer[i+2] = iconPixels[i*4+3]<<24;
-		buffer[i+2] += iconPixels[i*4]<<16;
+		buffer[i+2]  = iconPixels[i*4+3]<<24;
+		buffer[i+2] += iconPixels[i*4+0]<<16;
 		buffer[i+2] += iconPixels[i*4+1]<<8;
-		buffer[i+2] += iconPixels[i*4];
+		buffer[i+2] += iconPixels[i*4+2];
 	}
 
 	XChangeProperty(getX11Display(), getX11Window(), XInternAtom(getX11Display(), "_NET_WM_ICON", False), XA_CARDINAL, 32,

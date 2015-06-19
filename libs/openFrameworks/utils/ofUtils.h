@@ -130,6 +130,7 @@ string ofGetTimestampString();
 ///
 /// \param timestampFormat The formatting pattern.
 /// \returns the formatted timestamp as a string.
+/// \warning an invalid timestampFormat may crash windows apps.
 string ofGetTimestampString(const string& timestampFormat);
 
 /// \brief Get the current year.

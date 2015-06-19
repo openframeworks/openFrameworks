@@ -156,7 +156,9 @@ void ofSleepMillis(int millis){
 //default ofGetTimestampString returns in this format: 2011-01-15-18-29-35-299
 //--------------------------------------------------
 string ofGetTimestampString(){
+
 	string timeFormat = "%Y-%m-%d-%H-%M-%S-%i";
+
 	return ofGetTimestampString(timeFormat);
 }
 
@@ -170,11 +172,18 @@ string ofGetTimestampString(const string& timestampFormat){
 	auto tm = *std::localtime(&t);
 	constexpr int bufsize = 256;
 	char buf[bufsize];
-	if (std::strftime(buf,bufsize,timestampFormat.c_str(),&tm) != 0){
+
+	// Beware! an invalid timestamp string crashes windows apps.
+	// so we have to filter out %i (which is not supported by vs)
+	// earlier.
+	auto tmpTimestampFormat = timestampFormat;
+	ofStringReplace(tmpTimestampFormat, "%i", ofToString(ms));
+	
+	if (strftime(buf,bufsize, tmpTimestampFormat.c_str(),&tm) != 0){
 		str << buf;
 	}
 	auto ret = str.str();
-	ofStringReplace(ret,"%i",ofToString(ms));
+	
 
     return ret;
 }
@@ -615,26 +624,34 @@ int ofStringTimesInString(const string& haystack, const string& needle){
 
 //--------------------------------------------------
 string ofToLower(const string & src, const string & locale){
+	std::string src_valid;
 	std::string dst;
-	utf8::iterator<const char*> it(&src.front(), &src.front(), (&src.back())+1);
-	utf8::iterator<const char*> end((&src.back())+1, &src.front(), (&src.back())+1);
+	utf8::replace_invalid(src.begin(),src.end(),back_inserter(src_valid));
+	utf8::iterator<const char*> it(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
+	utf8::iterator<const char*> end((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
 	std::locale loc(locale.c_str());
 	while(it!=end){
-		auto next = *it++;
-		ofAppendUTF8(dst,std::tolower<wchar_t>(next, loc));
+		try{
+			auto next = *it++;
+			utf8::append(std::tolower<wchar_t>(next, loc), back_inserter(dst));
+		}catch(...){break;}
 	}
 	return dst;
 }
 
 //--------------------------------------------------
 string ofToUpper(const string & src, const string & locale){
+	std::string src_valid;
 	std::string dst;
-	utf8::iterator<const char*> it(&src.front(), &src.front(), (&src.back())+1);
-	utf8::iterator<const char*> end((&src.back())+1, &src.front(), (&src.back())+1);
+	utf8::replace_invalid(src.begin(),src.end(),back_inserter(src_valid));
+	utf8::iterator<const char*> it(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
+	utf8::iterator<const char*> end((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
 	std::locale loc(locale.c_str());
 	while(it!=end){
-		auto next = *it++;
-		ofAppendUTF8(dst,std::toupper<wchar_t>(next, loc));
+		try{
+			auto next = *it++;
+			utf8::append(std::toupper<wchar_t>(next, loc), back_inserter(dst));
+		}catch(...){break;}
 	}
 	return dst;
 }
