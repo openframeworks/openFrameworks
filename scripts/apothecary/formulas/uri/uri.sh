@@ -55,6 +55,7 @@ function build() {
 	
 	elif [ "$TYPE" == "osx" ]; then
 	    git apply ../../formulas/uri/uri-remove-tests.patch
+	    git apply ../../formulas/uri/uri_xcode_fix.patch
 	    cd _build
 		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
 		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
@@ -66,6 +67,7 @@ function build() {
 	
 	elif [ "$TYPE" == "ios" ]; then
         git apply ../../formulas/uri/uri-remove-tests.patch
+        git apply ../../formulas/uri/uri_xcode_fix.patch
         export TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain
         export TARGET_IOS
         
