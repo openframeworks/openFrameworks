@@ -248,7 +248,6 @@ struct ofTypeInfo <ofVec4f> {
     static ofVec4f max() { return ofVec4f(std::numeric_limits<float>::max()); };
 };
 
-template<>
 template<typename T>
 struct ofTypeInfo <ofColor_<T>> {
     static ofColor_<T> min() { return ofColor_<T>(0,0); };
