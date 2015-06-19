@@ -40,8 +40,9 @@ void ofApp::draw(){
     ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     
 	ofEnableDepthTest();
-    
+#ifndef TARGET_PROGRAMMABLE_GL    
     glShadeModel(GL_SMOOTH); //some model / light stuff
+#endif
     light.enable();
     ofEnableSeparateSpecularLight();
 
@@ -51,9 +52,9 @@ void ofApp::draw(){
     ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
     model.drawFaces();
     ofPopMatrix();
-
+#ifndef TARGET_PROGRAMMABLE_GL    
     glEnable(GL_NORMALIZE);
-
+#endif
     ofPushMatrix();
     ofTranslate(model.getPosition().x-300, model.getPosition().y, 0);
     ofRotate(-mouseX, 0, 1, 0);
