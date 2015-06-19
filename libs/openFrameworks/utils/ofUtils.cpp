@@ -618,7 +618,11 @@ string ofToLower(const string & src, const string & locale){
 	utf8::replace_invalid(src.begin(),src.end(),back_inserter(src_valid));
 	utf8::iterator<const char*> it(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
 	utf8::iterator<const char*> end((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
-	std::locale loc(locale.c_str());
+	std::locale loc;
+	try{
+		loc = std::locale(locale.c_str());
+	}catch(...){
+	}
 	while(it!=end){
 		try{
 			auto next = *it++;
@@ -635,7 +639,11 @@ string ofToUpper(const string & src, const string & locale){
 	utf8::replace_invalid(src.begin(),src.end(),back_inserter(src_valid));
 	utf8::iterator<const char*> it(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
 	utf8::iterator<const char*> end((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
-	std::locale loc(locale.c_str());
+	std::locale loc;
+	try{
+		loc = std::locale(locale.c_str());
+	}catch(...){
+	}
 	while(it!=end){
 		try{
 			auto next = *it++;
