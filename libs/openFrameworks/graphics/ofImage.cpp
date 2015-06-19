@@ -1019,6 +1019,12 @@ void ofImage_<PixelType>::setImageType(ofImageType newType){
 
 //------------------------------------
 template<typename PixelType>
+ofImageType ofImage_<PixelType>::getImageType() const{
+	return type;
+}
+
+//------------------------------------
+template<typename PixelType>
 void ofImage_<PixelType>::resize(int newWidth, int newHeight){
 	if(newWidth == width && newHeight == height) return;
 
