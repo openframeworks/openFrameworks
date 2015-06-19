@@ -454,7 +454,7 @@ bool ofToBool(const string& boolString) {
 	if(lower == "false") {
 		return false;
 	}
-	return (bool)std::stoi(boolString);
+	return (bool)std::stoi(lower);
 }
 
 //----------------------------------------
