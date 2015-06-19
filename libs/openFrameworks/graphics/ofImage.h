@@ -453,6 +453,7 @@ public:
     /// \param type The type of image, one of the following:
     /// `OF_IMAGE_GRAYSCALE`, `OF_IMAGE_COLOR`, `OF_IMAGE_COLOR_ALPHA`
     void setImageType(ofImageType type);
+    ofImageType getImageType() const;
     
     /// \}
     /// \name Modifiers
@@ -576,11 +577,6 @@ public:
     ofImage_<PixelType>& operator= (const ofImage_<SrcType>& mom);
     
     /// \}
-    
-    int width;  ///< \brief Image width in pixels.
-    int height; ///< \brief Image Height in pixels.
-    int bpp;    ///< \brief Bits per image pixel.
-    int type;   ///< \brief Image type.
     ///< \sa ofImageType
 protected:
     /// \cond INTERNAL
@@ -591,6 +587,11 @@ protected:
     ofPixels_<PixelType> pixels;
     bool bUseTexture;
     ofTexture tex;
+
+    int width;  ///< \brief Image width in pixels.
+    int height; ///< \brief Image Height in pixels.
+    int bpp;    ///< \brief Bits per image pixel.
+    ofImageType type;   ///< \brief Image type.
     /// \endcond
 };
 
