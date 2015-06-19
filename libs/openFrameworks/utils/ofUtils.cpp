@@ -389,17 +389,29 @@ string ofToHex(const char* value) {
 
 //----------------------------------------
 int ofToInt(const string& intString) {
-	return std::stoi(intString);;
+	try {
+		return std::stoi(intString);;
+	} catch(...) {
+		return 0;
+	}
 }
 
 //----------------------------------------
 int ofHexToInt(const string& intHexString) {
-	return std::stoi(intHexString, nullptr, 16);
+	try {
+		return std::stoi(intHexString, nullptr, 16);
+	} catch(...) {
+		return 0;
+	}
 }
 
 //----------------------------------------
 char ofHexToChar(const string& charHexString) {
-	return (char) std::stoi(charHexString, nullptr, 16);
+	try {
+		return (char) std::stoi(charHexString, nullptr, 16);
+	} catch(...) {
+		return 0;
+	}
 }
 
 //----------------------------------------
@@ -437,12 +449,20 @@ string ofHexToString(const string& stringHexString) {
 
 //----------------------------------------
 float ofToFloat(const string& floatString) {
-	return std::stof(floatString);
+	try {
+		return std::stof(floatString);
+	} catch(...) {
+		return 0.0f;
+	}
 }
 
 //----------------------------------------
 double ofToDouble(const string& doubleString) {
-	return std::stod(doubleString);
+	try {
+		return std::stod(doubleString);
+	} catch(...) {
+		return 0.0;
+	}
 }
 
 //----------------------------------------
