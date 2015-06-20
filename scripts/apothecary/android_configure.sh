@@ -17,6 +17,7 @@ export PATH=${PATH}:${TOOLCHAIN_PATH}
 export CC=${TOOLCHAIN_PATH}/${ANDROID_PREFIX}-gcc
 export CXX=${TOOLCHAIN_PATH}/${ANDROID_PREFIX}-g++
 export AR=${TOOLCHAIN_PATH}/${ANDROID_PREFIX}-ar
+export RANLIB=${TOOLCHAIN_PATH}/${ANDROID_PREFIX}-ranlib
 export CFLAGS="-nostdlib --sysroot=${SYSROOT} -fno-short-enums"
 export CFLAGS="$CFLAGS -I${SYSROOT}/usr/include/ -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/include -I${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/libs/${ABI}/include -I${NDK_ROOT}/sources/android/cpufeatures"
 export LDFLAGS="--sysroot=${SYSROOT} -nostdlib -L${NDK_ROOT}/sources/cxx-stl/gnu-libstdc++/${TOOLCHAIN_VERSION}/libs/${ABI} -lz -lsupc++ -llog -ldl -lm -lc -lgnustl_static -lgcc"
