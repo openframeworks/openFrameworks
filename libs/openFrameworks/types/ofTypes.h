@@ -3,22 +3,6 @@
 #include "ofConstants.h"
 #include "ofColor.h"
 
-#if __cplusplus>=201103L
-#include <memory>
-#else
-#include <tr1/memory>
-// import smart pointers utils into std
-namespace std {
-	using std::tr1::shared_ptr;
-	using std::tr1::weak_ptr;
-	using std::tr1::enable_shared_from_this;
-	using std::tr1::static_pointer_cast;
-	using std::tr1::dynamic_pointer_cast;
-	using std::tr1::const_pointer_cast;
-	using std::tr1::__dynamic_cast_tag;
-}
-#endif
-
 class ofSerial;
 
 /// \brief Describes a Serial device, including ID, name and path.
@@ -84,13 +68,11 @@ class ofSerialDeviceInfo{
 		/// \endcond
 };
 
-
 //----------------------------------------------------------
 // ofMutex
 //----------------------------------------------------------
 
-#include "Poco/Mutex.h"
-
+#include <mutex>
 /// \brief A typedef for a cross-platform mutex.
 ///
 /// A mutex is used to lock data when it is accessible from multiple threads.
@@ -122,7 +104,10 @@ class ofSerialDeviceInfo{
 ///
 /// \sa http://www.cplusplus.com/reference/mutex/mutex/
 /// \sa http://www.appinf.com/docs/poco/Poco.FastMutex.html
-typedef Poco::FastMutex ofMutex;
+#ifndef _MSC_VER
+[[deprecated("Use std::mutex instead")]]
+#endif
+typedef std::mutex ofMutex;
 
 /// \brief A typedef for a cross-platform scoped mutex.
 ///
@@ -160,7 +145,10 @@ typedef Poco::FastMutex ofMutex;
 /// \sa http://en.cppreference.com/w/cpp/thread/lock_guard
 /// \sa http://www.appinf.com/docs/poco/Poco.ScopedLock.html
 /// \sa ofMutex
-typedef Poco::FastMutex::ScopedLock ofScopedLock;
+#ifndef _MSC_VER
+[[deprecated("use std::unique_lock instead")]]
+#endif
+typedef std::unique_lock<std::mutex> ofScopedLock;
 
 /// \brief Contains general information about the style of ofGraphics
 /// elements such as color, line width and others.
@@ -299,79 +287,5 @@ public:
 //----------------------------------------------------------
 // ofPtr
 //----------------------------------------------------------
-#if __cplusplus >= 201103L
 template <typename T>
 using ofPtr = std::shared_ptr<T>;
-#else
-template <typename T>
-class ofPtr: public std::shared_ptr<T>
-{
-
-public:
-
-	OF_DEPRECATED_MSG("Use std::shared_ptr instead",ofPtr());
-
-	  template<typename Tp1>
-		explicit
-		OF_DEPRECATED_MSG("Use std::shared_ptr instead",ofPtr(Tp1* __p));
-
-	  template<typename Tp1, typename _Deleter>
-		ofPtr(Tp1* __p, _Deleter __d)
-	: std::shared_ptr<T>(__p, __d) { }
-
-	  template<typename Tp1, typename _Deleter, typename _Alloc>
-		ofPtr(Tp1* __p, _Deleter __d, const _Alloc& __a)
-	: std::shared_ptr<T>(__p, __d, __a) { }
-
-	  // Aliasing constructor
-	  template<typename Tp1>
-		ofPtr(const ofPtr<Tp1>& __r, T* __p)
-	: std::shared_ptr<T>(__r, __p) { }
-
-	  template<typename Tp1>
-		ofPtr(const ofPtr<Tp1>& __r)
-	: std::shared_ptr<T>(__r) { }
-
-	  template<typename Tp1>
-		ofPtr(const std::shared_ptr<Tp1>& __r)
-	: std::shared_ptr<T>(__r) { }
-
-	  template<typename Tp1>
-		explicit
-		ofPtr(const std::weak_ptr<Tp1>& __r)
-	: std::shared_ptr<T>(__r) { }
-
-	// tgfrerer: extends ofPtr facade to allow dynamic_pointer_cast, pt.1
-#if (_MSC_VER)
-	template<typename Tp1>
-	ofPtr(const ofPtr<Tp1>& __r, std::_Dynamic_tag)
-	: std::shared_ptr<T>(__r, std:::_Dynamic_tag()) { }
-#elif !defined(TARGET_EMSCRIPTEN) && !defined(TARGET_LINUX) && !defined(TARGET_OF_IOS)
-	template<typename Tp1>
-	ofPtr(const ofPtr<Tp1>& __r, std::__dynamic_cast_tag)
-	: std::shared_ptr<T>(__r, std::__dynamic_cast_tag()) { }
-#endif
-};
-
-template<typename T>
-ofPtr<T>::ofPtr()
-: std::shared_ptr<T>() { }
-
-template<typename T>
-template<typename Tp1>
-ofPtr<T>::ofPtr(Tp1* __p)
-: std::shared_ptr<T>(__p) { }
-
-// tgfrerer: extends ofPtr facade to allow dynamic_pointer_cast, pt. 2
-#if (_MSC_VER)
-template<typename _Tp, typename _Tp1>
-ofPtr<_Tp>
-	dynamic_pointer_cast(const ofPtr<_Tp1>& __r)
-{ return ofPtr<_Tp>(__r, std::_Dynamic_tag()); }
-#elif !defined(TARGET_EMSCRIPTEN) && !defined(TARGET_LINUX) && !defined(TARGET_OF_IOS)
-template<typename _Tp, typename _Tp1>
-ofPtr<_Tp>
-	dynamic_pointer_cast(const ofPtr<_Tp1>& __r)
-{ return ofPtr<_Tp>(__r, std::__dynamic_cast_tag()); }
-#endif
-#endif

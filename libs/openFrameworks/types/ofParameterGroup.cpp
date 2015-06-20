@@ -1,4 +1,3 @@
-#include "ofParameterGroup.h"
 #include "ofUtils.h"
 #include "ofParameter.h"
 
@@ -8,40 +7,11 @@ ofParameterGroup::ofParameterGroup()
 
 }
 
-ofParameterGroup::~ofParameterGroup(){
-	for(auto & p: obj->parameters){
-		p->setParent(NULL);
-	}
-}
-
-ofParameterGroup::ofParameterGroup(const ofParameterGroup& mom){
-	// copy object
-	obj = mom.obj;
-
-	// correct parent of parameters
-	for(auto & p: obj->parameters){
-		p->setParent(this);
-	}
-}
-
-ofParameterGroup & ofParameterGroup::operator=(const ofParameterGroup& mom){
-
-	// copy object
-	obj = mom.obj;
-
-	// correct parent of parameters
-	for(auto & p: obj->parameters){
-		p->setParent(this);
-	}
-
-	return *this;
-}
-
 void ofParameterGroup::add(ofAbstractParameter & parameter){
 	shared_ptr<ofAbstractParameter> param = parameter.newReference();
 	obj->parameters.push_back(param);
 	obj->parametersIndex[param->getEscapedName()] = obj->parameters.size()-1;
-	param->setParent(this);
+	param->setParent(*this);
 }
 
 void ofParameterGroup::clear(){
@@ -192,8 +162,8 @@ string ofParameterGroup::getName() const{
 	return obj->name;
 }
 
-void ofParameterGroup::setName(string _name){
-	obj->name = _name;
+void ofParameterGroup::setName(const string & name){
+	obj->name = name;
 }
 
 string ofParameterGroup::getEscapedName() const{
@@ -208,6 +178,10 @@ string ofParameterGroup::toString() const{
 	stringstream out;
 	out << *this;
 	return out.str();
+}
+
+void ofParameterGroup::fromString(const string & name){
+	ofLogWarning() << "ofParameterGroup doesn't implement fromString yet";
 }
 
 
@@ -249,9 +223,26 @@ bool ofParameterGroup::contains(string name){
 	return obj->parametersIndex.find(escape(name))!=obj->parametersIndex.end();
 }
 
-void ofParameterGroup::notifyParameterChanged(ofAbstractParameter & param){
+void ofParameterGroup::Value::notifyParameterChanged(ofAbstractParameter & param){
 	ofNotifyEvent(parameterChangedE,param);
-	if(getParent()) getParent()->notifyParameterChanged(param);
+	parents.erase(std::remove_if(parents.begin(),parents.end(),[&param](weak_ptr<Value> p){
+		auto parent = p.lock();
+		if(parent) parent->notifyParameterChanged(param);
+		return !parent;
+	}),parents.end());
+}
+
+const ofParameterGroup ofParameterGroup::getFirstParent() const{
+	auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](weak_ptr<Value> p){return p.lock()!=nullptr;});
+	if(first!=obj->parents.end()){
+		return first->lock();
+	}else{
+		return shared_ptr<Value>(nullptr);
+	}
+}
+
+ofEvent<ofAbstractParameter> & ofParameterGroup::parameterChangedE(){
+	return obj->parameterChangedE;
 }
 
 ofAbstractParameter & ofParameterGroup::back(){
@@ -282,16 +273,12 @@ shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
 	return shared_ptr<ofAbstractParameter>(new ofParameterGroup(*this));
 }
 
-void ofParameterGroup::setParent(ofParameterGroup * _parent){
-	obj->parent = _parent;
+void ofParameterGroup::setParent(ofParameterGroup & parent){
+	obj->parents.emplace_back(parent.obj);
 }
 
-const ofParameterGroup * ofParameterGroup::getParent() const{
-	return obj->parent;
-}
-
-ofParameterGroup * ofParameterGroup::getParent(){
-	return obj->parent;
+ofParameterGroup::operator bool() const{
+	return obj != nullptr;
 }
 
 vector<shared_ptr<ofAbstractParameter> >::iterator ofParameterGroup::begin(){

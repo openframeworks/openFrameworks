@@ -116,7 +116,33 @@ PLATFORM_REQUIRED_ADDONS =
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -Wall -std=c++0x
+# find out version of gcc:
+# < 4.7.x  c++0x
+# >= 4.7.x c++11
+# >= 4.9.x c++14
+# other compilers c++11 by now
+ifeq ($(CXX),g++)
+	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
+	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
+	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 7)
+	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
+	ifeq ("$(GCC_MAJOR_EQ_4)","1")
+		ifeq ("$(GCC_MINOR_GTEQ_7)","0")
+			PLATFORM_CFLAGS = -Wall -std=c++0x
+		else
+			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
+				PLATFORM_CFLAGS = -Wall -std=c++14
+			else
+				PLATFORM_CFLAGS = -Wall -std=c++11
+			endif
+		endif
+	endif
+	ifeq ("$(GCC_MAJOR_GT_4)","1")
+		PLATFORM_CFLAGS = -Wall -std=c++14
+	endif
+else
+	PLATFORM_CFLAGS = -Wall -std=c++11
+endif
 
 
 ################################################################################
@@ -202,6 +228,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 
 ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
@@ -261,12 +288,18 @@ endif
     
 PLATFORM_LIBRARIES += freeimage
 PLATFORM_LIBRARIES += rtaudio
+PLATFORM_LIBRARIES += boost_filesystem
+PLATFORM_LIBRARIES += boost_system
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoJSON.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoMongoDB.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoDataSQLite.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoData.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a

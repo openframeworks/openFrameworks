@@ -129,6 +129,11 @@ CORE ADDONS
 ### ofxKinect
     / Bugfix for kinects not keeping their IDs when using multiple kinects. 
 
+PROJECT GENERATOR
+-----------------
+
++ Added scroll feature in the Addons part of the (full) Project Generator
+
 OF 0.8.4
 ========
 

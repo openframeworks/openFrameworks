@@ -218,6 +218,9 @@ FT_BEGIN_HEADER
   } FT_MM_Var;
 
 
+  /* */
+
+
   /*************************************************************************/
   /*                                                                       */
   /* <Function>                                                            */
@@ -361,6 +364,7 @@ FT_BEGIN_HEADER
   FT_Set_Var_Blend_Coordinates( FT_Face    face,
                                 FT_UInt    num_coords,
                                 FT_Fixed*  coords );
+
 
   /* */
 

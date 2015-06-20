@@ -247,7 +247,7 @@ void ofxAssimpModelLoader::loadGLResources(){
             string modelFolder = file.getEnclosingDirectory();
             string relTexPath = ofFilePath::getEnclosingDirectory(texPath.data,false);
             string texFile = ofFilePath::getFileName(texPath.data);
-            string realPath = modelFolder + relTexPath  + texFile;
+            string realPath = ofFilePath::join(ofFilePath::join(modelFolder, relTexPath), texFile);
             
             if(ofFile::doesFileExist(realPath) == false) {
                 ofLogError("ofxAssimpModelLoader") << "loadGLResource(): texture doesn't exist: \""

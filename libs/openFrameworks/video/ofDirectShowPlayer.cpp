@@ -550,8 +550,9 @@ class DirectShowVideo : public ISampleGrabberCB{
                 tearDown(); 
                 return false;
             }
-
-            hr = m_pGrabber->SetBufferSamples(TRUE);
+            
+            //apparently setting to TRUE causes a small memory leak
+            hr = m_pGrabber->SetBufferSamples(FALSE);
             if (FAILED(hr)){
                 printf("unable to set buffer samples\n");
                 tearDown(); 
@@ -603,8 +604,6 @@ class DirectShowVideo : public ISampleGrabberCB{
             IBaseFilter * m_pVideoRenderer;
             IPin* pinIn = 0;
             IPin* pinOut = 0;
-
-            IBaseFilter * m_pColorSpace;
 
             m_pGraph->FindFilterByName(L"Video Renderer", &m_pVideoRenderer);
             if (FAILED(hr)){

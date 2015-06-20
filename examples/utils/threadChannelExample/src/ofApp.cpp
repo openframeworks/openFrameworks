@@ -2,7 +2,6 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	grabber.setDeviceID(1);
 	grabber.setup(640,480);
 }
 
@@ -10,15 +9,15 @@ void ofApp::setup(){
 void ofApp::update(){
 	grabber.update();
 	if(grabber.isFrameNew()){
-		analizer.analize(grabber.getPixels());
+		analyzer.analyze(grabber.getPixels());
 	}
-	analizer.update();
+	analyzer.update();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	grabber.draw(0,0);
-	analizer.draw(640,0);
+	analyzer.draw(640,0);
 }
 
 //--------------------------------------------------------------

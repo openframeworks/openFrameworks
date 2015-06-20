@@ -21,7 +21,7 @@
 
 
 // adding this for vc2010 compile: error C3861: 'closeQuicktime': identifier not found
-#if defined (TARGET_WIN32) || defined(TARGET_OSX)
+#if defined(TARGET_OSX)
 	#include "ofQtUtils.h"
 #endif
 
@@ -69,7 +69,6 @@ void ofInit(){
 	static bool initialized = false;
 	if(initialized) return;
 	initialized = true;
-	Poco::ErrorHandler::set(new ofThreadErrorLogger);
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
     // manage own exit

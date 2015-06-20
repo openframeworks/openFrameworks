@@ -1,0 +1,57 @@
+diff --git a/src/detail/uri_parse.cpp b/src/detail/uri_parse.cpp
+index 54ec59c..708f35e 100644
+--- a/src/detail/uri_parse.cpp
++++ b/src/detail/uri_parse.cpp
+@@ -81,9 +81,8 @@ namespace network {
+ 
+         ipvfuture %= qi::lit('v') >> +qi::xdigit >> '.' >>
+                      +(unreserved | sub_delims | ':');
+-
+-        ipv6address %= qi::raw
+-            [qi::repeat(6)[h16 >> ':'] >> ls32 |
++        
++        auto a = qi::repeat(6)[h16 >> ':'] >> ls32 |
+              "::" >> qi::repeat(5)[h16 >> ':'] >> ls32 |
+              -qi::raw[h16] >> "::" >> qi::repeat(4)[h16 >> ':'] >> ls32 |
+              -qi::raw[h16] >> "::" >> qi::repeat(3)[h16 >> ':'] >> ls32 |
+@@ -96,20 +95,23 @@ namespace network {
+              -qi::raw[qi::repeat(1)[(h16 >> ':')] >> h16] >> "::" >>
+                  qi::repeat(2)[h16 >> ':'] >> ls32 |
+              -qi::raw[qi::repeat(1)[(h16 >> ':')] >> h16] >> "::" >> h16 >>
+-                 ':' >> ls32 |
+-             -qi::raw[qi::repeat(1)[(h16 >> ':')] >> h16] >> "::" >> ls32 |
++                 ':' >> ls32;
++                 
++        auto b =  -qi::raw[qi::repeat(1)[(h16 >> ':')] >> h16] >> "::" >> ls32 |
+              -qi::raw[qi::repeat(1)[(h16 >> ':')] >> h16] >> "::" >> h16 |
+              -qi::raw[qi::repeat(1)[(h16 >> ':')] >> h16] >> "::" |
+              -qi::raw[qi::repeat(2)[(h16 >> ':')] >> h16] >> "::" >>
+                  qi::repeat(2)[h16 >> ':'] >> ls32 |
+              -qi::raw[qi::repeat(2)[(h16 >> ':')] >> h16] >> "::" >> h16 >>
+-                 ':' >> ls32 |
+-             -qi::raw[qi::repeat(2)[(h16 >> ':')] >> h16] >> "::" >> ls32 |
++                 ':' >> ls32;
++                 
++        auto c =  -qi::raw[qi::repeat(2)[(h16 >> ':')] >> h16] >> "::" >> ls32 |
+              -qi::raw[qi::repeat(2)[(h16 >> ':')] >> h16] >> "::" >> h16 |
+              -qi::raw[qi::repeat(2)[(h16 >> ':')] >> h16] >> "::" |
+              -qi::raw[qi::repeat(3)[(h16 >> ':')] >> h16] >> "::" >> h16 >>
+-                 ':' >> ls32 |
+-             -qi::raw[qi::repeat(3)[(h16 >> ':')] >> h16] >> "::" >> ls32 |
++                 ':' >> ls32;
++
++        auto d =  -qi::raw[qi::repeat(3)[(h16 >> ':')] >> h16] >> "::" >> ls32 |
+              -qi::raw[qi::repeat(3)[(h16 >> ':')] >> h16] >> "::" >> h16 |
+              -qi::raw[qi::repeat(3)[(h16 >> ':')] >> h16] >> "::" |
+              -qi::raw[qi::repeat(4)[(h16 >> ':')] >> h16] >> "::" >> ls32 |
+@@ -117,8 +119,8 @@ namespace network {
+              -qi::raw[qi::repeat(4)[(h16 >> ':')] >> h16] >> "::" |
+              -qi::raw[qi::repeat(5)[(h16 >> ':')] >> h16] >> "::" >> h16 |
+              -qi::raw[qi::repeat(5)[(h16 >> ':')] >> h16] >> "::" |
+-             -qi::raw[qi::repeat(6)[(h16 >> ':')] >> h16] >> "::"];
+-
++             -qi::raw[qi::repeat(6)[(h16 >> ':')] >> h16] >> "::";
++        ipv6address %= qi::raw[ a | b | c | d ];
+         // ls32 = ( h16 ":" h16 ) / IPv4address
+         ls32 %= (h16 >> ':' >> h16) | ipv4address;
+ 

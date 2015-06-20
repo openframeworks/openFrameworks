@@ -565,7 +565,7 @@ void ofOpenALSoundPlayer::threadedFunction(){
 	vector<vector<short> > multibuffer;
 	multibuffer.resize(channels);
 	while(isThreadRunning()){
-		ofScopedLock lock(mutex);
+		std::unique_lock<std::mutex> lock(mutex);
 		for(int i=0; i<int(sources.size())/channels; i++){
 			int processed;
 			alGetSourcei(sources[i*channels], AL_BUFFERS_PROCESSED, &processed);
@@ -637,7 +637,7 @@ void ofOpenALSoundPlayer::unload(){
 
 	// Only lock the thread where necessary.
 	{
-		ofScopedLock lock(mutex);
+		std::unique_lock<std::mutex> lock(mutex);
 
 		// Delete sources before buffers.
 		alDeleteSources(sources.size(),&sources[0]);
@@ -794,7 +794,7 @@ void ofOpenALSoundPlayer::setPan(float p){
 //------------------------------------------------------------
 void ofOpenALSoundPlayer::setPaused(bool bP){
 	if(sources.empty()) return;
-	ofScopedLock lock(mutex);
+	std::unique_lock<std::mutex> lock(mutex);
 	if(bP){
 		alSourcePausev(sources.size(),&sources[0]);
 		if(isStreaming){
@@ -847,7 +847,7 @@ void ofOpenALSoundPlayer::setMultiPlay(bool bMp){
 
 // ----------------------------------------------------------------------------
 void ofOpenALSoundPlayer::play(){
-	ofScopedLock lock(mutex);
+	std::unique_lock<std::mutex> lock(mutex);
 	int err = glGetError();
 
 	// if the sound is set to multiplay, then create new sources,
@@ -899,7 +899,7 @@ void ofOpenALSoundPlayer::play(){
 // ----------------------------------------------------------------------------
 void ofOpenALSoundPlayer::stop(){
 	if(sources.empty()) return;
-	ofScopedLock lock(mutex);
+	std::unique_lock<std::mutex> lock(mutex);
 	alSourceStopv(channels,&sources[sources.size()-channels]);
 	if(isStreaming){
 		setPosition(0);
