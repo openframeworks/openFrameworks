@@ -1,14 +1,15 @@
 #include "ofFileUtils.h"
 #ifndef TARGET_WIN32
- #include <pwd.h>
+	#include <pwd.h>
+	#include <sys/stat.h>
 #endif
 
 #include "ofUtils.h"
 
 
 #ifdef TARGET_OSX
- #include <mach-o/dyld.h>       /* _NSGetExecutablePath */
- #include <limits.h>        /* PATH_MAX */
+	#include <mach-o/dyld.h>       /* _NSGetExecutablePath */
+	#include <limits.h>        /* PATH_MAX */
 #endif
 
 
@@ -362,28 +363,15 @@ bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary){
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
-
-#include "Poco/Util/FilesystemConfiguration.h"
-#include "Poco/File.h"
-#include "Poco/Path.h"
-#include "Poco/DirectoryIterator.h"
-#include "Poco/StringTokenizer.h"
-#include "Poco/Exception.h"
-#include "Poco/FileStream.h"
-#include "Poco/String.h"
-
-using namespace Poco;
-
 //------------------------------------------------------------------------------------------------------------
 ofFile::ofFile()
 :mode(Reference)
-,binary(false){
+,binary(true){
 }
 
-//------------------------------------------------------------------------------------------------------------
-ofFile::ofFile(string path, Mode mode, bool binary)
-:mode(Reference)
-,binary(false){
+ofFile::ofFile(const std::filesystem::path & path, Mode mode, bool binary)
+:mode(mode)
+,binary(true){
 	open(path, mode, binary);
 }
 
@@ -395,7 +383,7 @@ ofFile::~ofFile(){
 //-------------------------------------------------------------------------------------------------------------
 ofFile::ofFile(const ofFile & mom)
 :mode(Reference)
-,binary(false){
+,binary(true){
 	copyFrom(mom);
 }
 
@@ -413,7 +401,7 @@ void ofFile::copyFrom(const ofFile & mom){
 			new_mode = ReadOnly;
 			ofLogWarning("ofFile") << "copyFrom(): copying a writable file, opening new copy as read only";
 		}
-		open(mom.myFile.path(), new_mode, mom.binary);
+		open(mom.myFile.string(), new_mode, mom.binary);
 	}
 }
 
@@ -426,7 +414,9 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 		case WriteOnly:
 		case ReadWrite:
 		case Append:
-			ofFilePath::createEnclosingDirectory(path());
+			if(!ofDirectory(ofFilePath::getEnclosingDirectory(path())).exists()){
+				ofFilePath::createEnclosingDirectory(path());
+			}
 			break;
 		case Reference:
 		case ReadOnly:
@@ -438,8 +428,8 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 			break;
 
 		case ReadOnly:
-			if(exists()){
-			 fstream::open(path().c_str(), ios::in | binary_mode);
+			if(exists() && isFile()){
+				fstream::open(path().c_str(), ios::in | binary_mode);
 			}
 			break;
 
@@ -459,9 +449,9 @@ bool ofFile::openStream(Mode _mode, bool _binary){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::open(string _path, Mode _mode, bool binary){
+bool ofFile::open(const std::filesystem::path & _path, Mode _mode, bool binary){
 	close();
-	myFile = File(ofToDataPath(_path));
+	myFile = std::filesystem::path(ofToDataPath(_path.string()));
 	return openStream(_mode, binary);
 }
 
@@ -470,7 +460,7 @@ bool ofFile::changeMode(Mode _mode, bool binary){
 	if(_mode != mode){
 		string _path = path();
 		close();
-		myFile = File(_path);
+		myFile = std::filesystem::path(_path);
 		return openStream(_mode, binary);
 	}
 	else{
@@ -485,7 +475,7 @@ bool ofFile::isWriteMode(){
 
 //-------------------------------------------------------------------------------------------------------------
 void ofFile::close(){
-	myFile = File();
+	myFile = std::filesystem::path();
 	if(mode!=Reference) fstream::close();
 }
 
@@ -493,14 +483,10 @@ void ofFile::close(){
 bool ofFile::create(){
 	bool success = false;
 
-	if(myFile.path() != ""){
-		try{
-			success = myFile.createFile();
-		}
-		catch(Poco::Exception & except){
-			ofLogError("ofFile") << "create(): " << except.displayText();
-			return false;
-		}
+	if(!myFile.string().empty()){
+		auto mode = this->mode;
+		success = open(path(),ofFile::WriteOnly);
+		open(path(),mode);
 	}
 
 	return success;
@@ -508,7 +494,7 @@ bool ofFile::create(){
 
 //------------------------------------------------------------------------------------------------------------
 ofBuffer ofFile::readToBuffer(){
-	if(myFile.path() == "" || myFile.exists() == false){
+	if(myFile.string().empty() || !std::filesystem::exists(myFile)){
 		return ofBuffer();
 	}
 
@@ -517,11 +503,11 @@ ofBuffer ofFile::readToBuffer(){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::writeFromBuffer(const ofBuffer & buffer){
-	if(myFile.path() == ""){
+	if(myFile.string().empty()){
 		return false;
 	}
 	if(!isWriteMode()){
-		ofLogError("ofFile") << "writeFromBuffer(): trying to write to read only file \"" << myFile.path() << "\"";
+		ofLogError("ofFile") << "writeFromBuffer(): trying to write to read only file \"" << myFile.string() << "\"";
 	}
 	return buffer.writeTo(*this);
 }
@@ -531,39 +517,38 @@ filebuf *ofFile::getFileBuffer() const {
 	return rdbuf();
 }
 
-
-//-- poco wrappers
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::exists() const {
 	if(path().empty()){
 		return false;
 	}
-	try{
-		return myFile.exists();
-	}
-	catch(...){
-	}
-	return false;
+
+	return std::filesystem::exists(myFile);
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::path() const {
-	return myFile.path();
+	return myFile.string();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getExtension() const {
-	return ofFilePath::getFileExt(path());
+	auto dotext = myFile.extension().string();
+	if(!dotext.empty() && dotext.front()=='.'){
+		return std::string(dotext.begin()+1,dotext.end());
+	}else{
+		return dotext;
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getFileName() const {
-	return ofFilePath::getFileName(path());
+	return myFile.filename().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getBaseName() const {
-	return ofFilePath::removeExt(ofFilePath::getFileName(path()));
+	return std::filesystem::basename(myFile);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -578,118 +563,139 @@ string ofFile::getAbsolutePath() const {
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canRead() const {
-	try{
-		return myFile.canRead();
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't check canRead" << e.what();
+	auto perm = std::filesystem::status(myFile).permissions();
+#ifdef TARGET_WIN32
+	DWORD attr = GetFileAttributes(myFile.native().c_str());
+	if (attr == INVALID_FILE_ATTRIBUTES)
+	{
+		return false;
 	}
-	return false;
+	return true;
+#else
+	struct stat info;
+	stat(path().c_str(), &info);  // Error check omitted
+	if(geteuid() == info.st_uid){
+		return perm & std::filesystem::owner_read;
+	}else if (getegid() == info.st_gid){
+		return perm & std::filesystem::group_read;
+	}else{
+		return perm & std::filesystem::others_read;
+	}
+#endif
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canWrite() const {
-	try{
-		return myFile.canWrite();
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't check canWrite" << e.what();
+	auto perm = std::filesystem::status(myFile).permissions();
+#ifdef TARGET_WIN32
+	DWORD attr = GetFileAttributes(myFile.native().c_str());
+	if (attr == INVALID_FILE_ATTRIBUTES){
+		return false;
+	}else{
+		return (attr & FILE_ATTRIBUTE_READONLY) == 0;
 	}
-	return false;
+#else
+	struct stat info;
+	stat(path().c_str(), &info);  // Error check omitted
+	if(geteuid() == info.st_uid){
+		return perm & std::filesystem::owner_write;
+	}else if (getegid() == info.st_gid){
+		return perm & std::filesystem::group_write;
+	}else{
+		return perm & std::filesystem::others_write;
+	}
+#endif
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::canExecute() const {
-	try{
-		return myFile.canExecute();
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't check canExecute" << e.what();
+	auto perm = std::filesystem::status(myFile).permissions();
+#ifdef TARGET_WIN32
+	return getExtension() == "exe";
+#else
+	struct stat info;
+	stat(path().c_str(), &info);  // Error check omitted
+	if(geteuid() == info.st_uid){
+		return perm & std::filesystem::owner_exe;
+	}else if (getegid() == info.st_gid){
+		return perm & std::filesystem::group_exe;
+	}else{
+		return perm & std::filesystem::others_exe;
 	}
-	return false;
+#endif
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isFile() const {
-	try{
-		return myFile.isFile();
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't check isFile" << e.what();
-	}
-	return false;
+	return std::filesystem::is_regular_file(myFile);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isLink() const {
-	try{
-		return myFile.isLink();
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't check isLink" << e.what();
-	}
-	return false;
+	return std::filesystem::is_symlink(myFile);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isDirectory() const {
-	try{
-		return myFile.isDirectory();
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't check isDirectory" << e.what();
-	}
-	return false;
+	return std::filesystem::is_directory(myFile);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isDevice() const {
-	try{
-		return myFile.isDevice();
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't check isDevice" << e.what();
-	}
+#ifdef TARGET_WIN32
 	return false;
+#else
+	return std::filesystem::status(myFile).type() == std::filesystem::block_file;
+#endif
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::isHidden() const {
-	try{
-		return myFile.isHidden();
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't check isHidden" << e.what();
-	}
-	return false;
+#ifdef TARGET_WINDOWS
+#else
+	return myFile.filename().string()[0] == '.';
+#endif
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setWriteable(bool flag){
-	try{
-		myFile.setWriteable(flag);
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't setWriteable" << e.what();
-	}
+	setReadOnly(!flag);
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setReadOnly(bool flag){
 	try{
-		myFile.setReadOnly(flag);
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't setReadOnly" << e.what();
+		if(flag){
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::remove_perms);
+		}else{
+			std::filesystem::permissions(myFile,std::filesystem::perms::owner_write | std::filesystem::perms::add_perms);
+		}
+	}catch(std::exception & e){
+		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
 	}
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofFile::setExecutable(bool flag){
 	try{
-		myFile.setExecutable(flag);
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofFile") << "Couldn't check setExecutable" << e.what();
+		std::filesystem::permissions(myFile, std::filesystem::perms::owner_exe | std::filesystem::perms::add_perms);
+	}catch(std::exception & e){
+		ofLogError() << "Couldn't set write permission on " << myFile << ": " << e.what();
 	}
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
+	if(isDirectory()){
+		return ofDirectory(myFile).copyTo(path,bRelativeToData,overwrite);
+	}
 	if(path.empty()){
 		ofLogError("ofFile") << "copyTo(): destination path is empty";
 		return false;
 	}
-	if(!myFile.exists()){
+	if(!exists()){
 		ofLogError("ofFile") << "copyTo(): source file does not exist";
 		return false;
 	}
@@ -698,20 +704,25 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(path, bRelativeToData);
+		if(isFile() && ofFile(path).isDirectory()){
+			path = ofFilePath::join(path,getFileName());
 		}
-		else{
-			ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+		if(ofFile::doesFileExist(path, bRelativeToData)){
+			if(overwrite){
+				ofFile::removeFile(path, bRelativeToData);
+			}else{
+				ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+			}
 		}
 	}
 
 	try{
-		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
-		myFile.copyTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofFile") <<  "copyTo(): unable to copy \"" << path << "\":" << except.displayText();
+		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
+			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
+		}
+		std::filesystem::copy(myFile,path);
+	}catch(std::exception & except){
+		ofLogError("ofFile") <<  "copyTo(): unable to copy \"" << path << "\":" << except.what();
 		return false;
 	}
 
@@ -724,7 +735,7 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 		ofLogError("ofFile") << "moveTo(): destination path is empty";
 		return false;
 	}
-	if(!myFile.exists()){
+	if(!exists()){
 		ofLogError("ofFile") << "moveTo(): source file does not exist";
 		return false;
 	}
@@ -733,20 +744,27 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 		path = ofToDataPath(path);
 	}
 	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(path, bRelativeToData);
+		if(isFile() && ofFile(path).isDirectory()){
+			path = ofFilePath::join(path,getFileName());
 		}
-		else{
-			ofLogWarning("ofFile") << "moveTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+		if(ofFile::doesFileExist(path, bRelativeToData)){
+			if(overwrite){
+				ofFile::removeFile(path, bRelativeToData);
+			}else{
+				ofLogWarning("ofFile") << "copyTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
+			}
 		}
 	}
 
 	try{
-		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
-		myFile.moveTo(path);
+		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
+			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
+		}
+		std::filesystem::rename(myFile,path);
+		myFile = path;
 	}
-	catch(Poco::Exception & except){
-		ofLogError("ofFile") << "moveTo(): unable to move \"" << path << "\":" << except.displayText();
+	catch(std::exception & except){
+		ofLogError("ofFile") << "moveTo(): unable to move \"" << path << "\":" << except.what();
 		return false;
 	}
 
@@ -755,56 +773,28 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
-	if(path.empty()){
-		ofLogError("ofFile") << "renameTo(): destination path is empty";
-		return false;
-	}
-	if(!myFile.exists()){
-		ofLogError("ofFile") << "renameTo(): source file does not exist";
-		return false;
-	}
-
-	if(bRelativeToData){
-		path = ofToDataPath(path);
-	}
-	if(ofFile::doesFileExist(path, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(path, bRelativeToData);
-		}
-		else{
-			ofLogWarning("ofFile") << "renameTo(): destination file \"" << path << "\" already exists, set bool overwrite to true if you want to overwrite it";
-			return false;
-		}
-	}
-
-	try{
-		ofFilePath::createEnclosingDirectory(path, bRelativeToData);
-		myFile.renameTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofFile") << "renameTo(): unable to rename \"" << path << "\":" << except.displayText();
-		return false;
-	}
-
-	return true;
+	return moveTo(path,bRelativeToData,overwrite);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::remove(bool recursive){
-	if(myFile.path().empty()){
+	if(myFile.string().empty()){
 		ofLogError("ofFile") << "remove(): file path is empty";
 		return false;
 	}
-	if(!myFile.exists()){
-		ofLogError("ofFile") << "copyTo(): file does not exist";
+	if(!exists()){
+		ofLogError("ofFile") << "remove(): file does not exist";
 		return false;
 	}
 
 	try{
-		myFile.remove(recursive);
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofFile") << "remove(): unable to remove \"" << myFile.path() << "\": " << except.displayText();
+		if(recursive){
+			std::filesystem::remove_all(myFile);
+		}else{
+			std::filesystem::remove(myFile);
+		}
+	}catch(std::exception & except){
+		ofLogError("ofFile") << "remove(): unable to remove \"" << myFile << "\": " << except.what();
 		return false;
 	}
 
@@ -813,7 +803,12 @@ bool ofFile::remove(bool recursive){
 
 //------------------------------------------------------------------------------------------------------------
 uint64_t ofFile::getSize() const {
-	return myFile.getSize();
+	try{
+		return std::filesystem::file_size(myFile);
+	}catch(std::exception & except){
+		ofLogError("ofFile") << "getSize(): unable to get size of \"" << myFile << "\": " << except.what();
+		return 0;
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -851,73 +846,13 @@ bool ofFile::operator>=(const ofFile & file) const {
 //------------------------------------------------------------------------------------------------------------
 
 bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  bool overwrite){
-	if(bRelativeToData){
-		pathSrc = ofToDataPath(pathSrc);
-	}
-	if(bRelativeToData){
-		pathDst = ofToDataPath(pathDst);
-	}
-
-	if(!ofFile::doesFileExist(pathSrc, bRelativeToData)){
-		ofLogError("ofFile") << "copyFromTo(): source file/directory doesn't exist: \"" << pathSrc << "\"";
-		return false;
-	}
-
-	if(ofFile::doesFileExist(pathDst, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(pathDst, bRelativeToData);
-		}
-		else{
-			ofLogWarning("ofFile") << "copyFromTo(): destination file/directory \"" << pathSrc << "\"exists,"
-			<< " set bool overwrite to true if you want to overwrite it";
-		}
-	}
-
-	File fileSrc(pathSrc);
-	try{
-		fileSrc.copyTo(pathDst);
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofFile") << "copyFromTo(): unable to copy \"" << pathSrc << "\": " <<  except.displayText();
-		return false;
-	}
-	return true;
+	return ofFile(pathSrc).copyTo(pathDst,bRelativeToData,overwrite);
 }
 
 //be careful with slashes here - appending a slash when moving a folder will causes mad headaches
 //------------------------------------------------------------------------------------------------------------
 bool ofFile::moveFromTo(string pathSrc, string pathDst, bool bRelativeToData, bool overwrite){
-	if(bRelativeToData){
-		pathSrc = ofToDataPath(pathSrc);
-	}
-	if(bRelativeToData){
-		pathDst = ofToDataPath(pathDst);
-	}
-
-	if(!ofFile::doesFileExist(pathSrc, bRelativeToData)){
-		ofLogError("ofFile") << "moveFromTo(): source file/directory doesn't exist: \"" << pathSrc << "\"";
-		return false;
-	}
-
-	if(ofFile::doesFileExist(pathDst, bRelativeToData)){
-		if(overwrite){
-			ofFile::removeFile(pathDst, bRelativeToData);
-		}
-		else{
-			ofLogWarning("ofFile") << "moveFromTo(): destination file/folder \"" << pathDst << "\" exists,"
-			<< " set bool overwrite to true if you want to overwrite it";
-		}
-	}
-
-	File fileSrc(pathSrc);
-	try{
-		fileSrc.moveTo(pathDst);
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofFile") << "moveFromTo(): unable to move \"" << pathSrc << "\" to \"" << pathDst << "\": " << except.displayText();
-		return false;
-	}
-	return true;
+	return ofFile(pathSrc).moveTo(pathDst,bRelativeToData,overwrite);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -925,7 +860,7 @@ bool ofFile::doesFileExist(string fPath,  bool bRelativeToData){
 	if(bRelativeToData){
 		fPath = ofToDataPath(fPath);
 	}
-	File file(fPath);
+	ofFile file(fPath);
 	return !fPath.empty() && file.exists();
 }
 
@@ -934,20 +869,9 @@ bool ofFile::removeFile(string path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	File file(path);
-	try{
-		file.remove();
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofFile") << "removeFile(): unable to remove file \"" << path << "\": "<< except.displayText();
-		return false;
-	}
-	return true;
+	return ofFile(path).remove();
 }
 
-Poco::File & ofFile::getPocoFile(){
-	return myFile;
-}
 
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
@@ -970,8 +894,8 @@ class ExtensionComparator : public unary_function<ofFile, bool> {
 	public:
 		vector<string> * extensions;
 		inline bool operator()(const ofFile & file){
-			Path curPath(file.path());
-			string curExtension = toLower(curPath.getExtension());
+			std::filesystem::path curPath(file.path());
+			string curExtension = ofToLower(curPath.extension().string());
 			return !ofContains(*extensions, curExtension);
 		}
 };
@@ -982,37 +906,36 @@ ofDirectory::ofDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-ofDirectory::ofDirectory(string path){
+ofDirectory::ofDirectory(const std::filesystem::path & path){
 	showHidden = false;
 	open(path);
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::open(string path){
-	path = ofFilePath::getPathForDirectory(path);
-	originalDirectory = path;
+void ofDirectory::open(const std::filesystem::path & path){
+	originalDirectory = ofFilePath::getPathForDirectory(path.string());
 	files.clear();
-	myDir = File(ofToDataPath(path));
+	myDir = std::filesystem::path(ofToDataPath(originalDirectory));
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::close(){
-	myDir = File();
+	myDir = std::filesystem::path();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::create(bool recursive){
 
-	if(myDir.path() != ""){
+	if(!myDir.string().empty()){
 		try{
 			if(recursive){
-				myDir.createDirectories();
-			}
-			else{myDir.createDirectory();
+				std::filesystem::create_directories(myDir);
+			}else{
+				std::filesystem::create_directory(myDir);
 			}
 		}
-		catch(Poco::Exception & except){
-			ofLogError("ofDirectory") << "create(): " << except.displayText();
+		catch(std::exception & except){
+			ofLogError("ofDirectory") << "create(): " << except.what();
 			return false;
 		}
 	}
@@ -1022,69 +945,52 @@ bool ofDirectory::create(bool recursive){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::exists() const {
-	return myDir.exists();
+	return std::filesystem::exists(myDir);
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::path() const {
-	return myDir.path();
+	return myDir.string();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getAbsolutePath() const {
-	return ofFilePath::getAbsolutePath(path());
+	return std::filesystem::absolute(myDir).string();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::canRead() const {
-	return myDir.canRead();
+	return ofFile(myDir,ofFile::Reference).canRead();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::canWrite() const {
-	return myDir.canWrite();
+	return ofFile(myDir,ofFile::Reference).canWrite();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::canExecute() const {
-	return myDir.canExecute();
+	return ofFile(myDir,ofFile::Reference).canExecute();
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::isHidden() const {
-	try{
-		return myDir.isHidden();
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofDirectory") << "Couldn't check isHidden" << e.what();
-	}
-	return false;
+	return ofFile(myDir,ofFile::Reference).isHidden();
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::setWriteable(bool flag){
-	try{
-		myDir.setWriteable(flag);
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofDirectory") << "Couldn't setWriteable" << e.what();
-	}
+	return ofFile(myDir,ofFile::Reference).setWriteable(flag);
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::setReadOnly(bool flag){
-	try{
-		myDir.setReadOnly(flag);
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofDirectory") << "Couldn't check isHidden" << e.what();
-	}
+	return ofFile(myDir,ofFile::Reference).setReadOnly(flag);
 }
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::setExecutable(bool flag){
-	try{
-		myDir.setExecutable(flag);
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofDirectory") << "Couldn't setExecutable" << e.what();
-	}
+	return ofFile(myDir,ofFile::Reference).setExecutable(flag);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1094,43 +1000,51 @@ void ofDirectory::setShowHidden(bool showHidden){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::isDirectory() const {
-	try{
-		return myDir.isDirectory();
-	}catch(Poco::Exception & e){
-		ofLogWarning("ofDirectory") << "Couldn't check isDirectory" << e.what();
-	}
-	return false;
+	return std::filesystem::is_directory(myDir);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
-	if(myDir.path().empty()){
-		ofLogError("ofDirectory") << "copyTo(): destination path is empty";
+	if(myDir.string().empty()){
+		ofLogError("ofDirectory") << "copyTo(): source path is empty";
 		return false;
 	}
-	if(!myDir.exists()){
+	if(!std::filesystem::exists(myDir)){
 		ofLogError("ofDirectory") << "copyTo(): source directory does not exist";
+		return false;
+	}
+	if(!std::filesystem::is_directory(myDir)){
+		ofLogError("ofDirectory") << "copyTo(): source path is not a directory";
 		return false;
 	}
 
 	if(bRelativeToData){
 		path = ofToDataPath(path, bRelativeToData);
 	}
+
 	if(ofDirectory::doesDirectoryExist(path, bRelativeToData)){
 		if(overwrite){
 			ofDirectory::removeDirectory(path, true, bRelativeToData);
-		}
-		else{
+		}else{
 			ofLogWarning("ofDirectory") << "copyTo(): dest \"" << path << "\" already exists, set bool overwrite to true to overwrite it";
+			return false;
 		}
 	}
 
-	try{
-		myDir.copyTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofDirectory") << "copyTo(): unable to copy \"" << path << "\": " << except.displayText();
-		return false;
+	ofDirectory(path).create(true);
+	// Iterate through the source directory
+	for(std::filesystem::directory_iterator file(myDir); file != std::filesystem::directory_iterator(); ++file){
+		auto currentPath = std::filesystem::absolute(file->path());
+		auto dst = std::filesystem::path(path) / currentPath.filename();
+		if(std::filesystem::is_directory(currentPath)){
+			ofDirectory current(currentPath);
+			// Found directory: Recursion
+			if(!current.copyTo(dst.string(),false)){
+				return false;
+			}
+		}else{
+			ofFile(file->path()).copyTo(dst.string(),false);
+		}
 	}
 
 	return true;
@@ -1138,85 +1052,32 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::moveTo(string path, bool bRelativeToData, bool overwrite){
-	if(myDir.path().empty()){
-		ofLogError("ofDirectory") << "moveTo(): destination path is empty";
+	if(copyTo(path,bRelativeToData,overwrite)){
+		return remove(true);
+	}else{
 		return false;
 	}
-	if(!myDir.exists()){
-		ofLogError("ofDirectory") << "moveTo(): source directory does not exist";
-		return false;
-	}
-
-	if(bRelativeToData){
-		path = ofToDataPath(path, bRelativeToData);
-	}
-	if(ofDirectory::doesDirectoryExist(path, bRelativeToData)){
-		if(overwrite){
-			ofDirectory::removeDirectory(path, true, bRelativeToData);
-		}
-		else{
-			ofLogWarning("ofDirectory") << "moveTo(): destination folder already exists, set bool overwrite to true to overwrite it";
-		}
-	}
-
-	try{
-		myDir.moveTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofDirectory") << "moveTo(): unable to move \"" << path << "\": " << except.displayText();
-		return false;
-	}
-
-	return true;
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::renameTo(string path, bool bRelativeToData, bool overwrite){
-	if(myDir.path().empty()){
-		ofLogError("ofDirectory") << "renameTo(): destination path is empty";
-		return false;
-	}
-	if(!myDir.exists()){
-		ofLogError("ofDirectory") << "renameTo(): source directory does not exist";
-		return false;
-	}
-
-	if(bRelativeToData){
-		path = ofToDataPath(path);
-	}
-	if(ofDirectory::doesDirectoryExist(path, bRelativeToData)){
-		if(overwrite){
-			ofDirectory::removeDirectory(path, true, bRelativeToData);
-		}
-		else{
-			ofLogWarning("ofDirectory") << "renameTo(): destination directory \"" << path << "\" already exists,"
-			<< " set bool overwrite to true to overwrite it";
-			return false;
-		}
-	}
-
-	try{
-		myDir.renameTo(path);
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofDirectory") << "renameTo(): unable to rename \"" << myDir.path() << "\" to \"" << path << "\": " << except.displayText();
-		return false;
-	}
-
-	return true;
+	return moveTo(path, bRelativeToData, overwrite);
 }
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::remove(bool recursive){
-	if(path().empty() || !myDir.exists()){
+	if(path().empty() || !std::filesystem::exists(myDir)){
 		return false;
 	}
 
 	try{
-		myDir.remove(recursive);
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofDirectory") << "remove(): unable to remove file/directory: " << except.displayText();
+		if(recursive){
+			std::filesystem::remove_all(myDir);
+		}else{
+			std::filesystem::remove(myDir);
+		}
+	}catch(std::exception & except){
+		ofLogError("ofDirectory") << "remove(): unable to remove file/directory: " << except.what();
 		return false;
 	}
 
@@ -1228,7 +1089,7 @@ void ofDirectory::allowExt(string extension){
 	if(extension == "*"){
 		ofLogWarning("ofDirectory") << "allowExt(): wildcard extension * is deprecated";
 	}
-	extensions.push_back(toLower(extension));
+	extensions.push_back(ofToLower(extension));
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1240,13 +1101,12 @@ int ofDirectory::listDir(string directory){
 //------------------------------------------------------------------------------------------------------------
 int ofDirectory::listDir(){
 	files.clear();
-	Path base(path());
 	if(path().empty()){
 		ofLogError("ofDirectory") << "listDir(): directory path is empty";
 		return 0;
 	}
-	if(!myDir.exists()){
-		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir.path() << "\"";
+	if(!std::filesystem::exists(myDir)){
+		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
 		return 0;
 	}
 	
@@ -1254,19 +1114,14 @@ int ofDirectory::listDir(){
 	// so we need to use File::list(vector<string>) and build a vector<File>
 	// in the future the following can be replaced width: cur.list(files);
 	vector<string>fileStrings;
-	myDir.list(fileStrings);
-	for(int i = 0; i < (int)fileStrings.size(); i++){
-		Path curPath(originalDirectory);
-		curPath.setFileName(fileStrings[i]);
-		try{
-#if __cplusplus>=201103
-			files.emplace_back(curPath.toString(), ofFile::Reference);
-#else
-			files.push_back(ofFile(curPath.toString(), ofFile::Reference));
-#endif
-		}catch(Poco::Exception & e){
-			ofLogWarning() << "couldn't add file " << e.what();
+	std::filesystem::directory_iterator end_iter;
+	if ( std::filesystem::exists(myDir) && std::filesystem::is_directory(myDir)){
+		for( std::filesystem::directory_iterator dir_iter(myDir) ; dir_iter != end_iter ; ++dir_iter){
+			files.emplace_back(dir_iter->path().string(), ofFile::Reference);
 		}
+	}else{
+		ofLogError("ofDirectory") << "listDir:() source directory does not exist: \"" << myDir << "\"";
+		return 0;
 	}
 
 	if(!showHidden){
@@ -1296,8 +1151,7 @@ string ofDirectory::getOriginalDirectory(){
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getName(unsigned int position){
-	Path cur(files.at(position).path());
-	return cur.getFileName();
+	return files.at(position).getFileName();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1317,7 +1171,10 @@ ofFile ofDirectory::operator[](unsigned int position){
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>ofDirectory::getFiles(){
+const vector<ofFile> & ofDirectory::getFiles() const{
+	if(files.empty()){
+		const_cast<ofDirectory*>(this)->listDir();
+	}
 	return files;
 }
 
@@ -1332,7 +1189,7 @@ void ofDirectory::reset(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool natural(const ofFile& a, const ofFile& b) {
+static bool natural(const ofFile& a, const ofFile& b) {
 	string aname = a.getBaseName(), bname = b.getBaseName();
 	int aint = ofToInt(aname), bint = ofToInt(bname);
 	if(ofToString(aint) == aname && ofToString(bint) == bname) {
@@ -1366,15 +1223,7 @@ bool ofDirectory::removeDirectory(string path, bool deleteIfNotEmpty, bool bRela
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-	File file(path);
-	try{
-		file.remove(deleteIfNotEmpty);
-	}
-	catch(Poco::Exception & except){
-		ofLogError("ofDirectory") << "deleteDirectory(): unable to delete directory \"" << path << "\": " << except.displayText();
-		return false;
-	}
-	return true;
+	return ofFile(path).remove(deleteIfNotEmpty);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1383,19 +1232,16 @@ bool ofDirectory::createDirectory(string dirPath, bool bRelativeToData, bool rec
 		dirPath = ofToDataPath(dirPath);
 	}
 
-	File file(dirPath);
 	bool success = false;
 	try{
 		if(!recursive){
-			success = file.createDirectory();
-		}
-		else{
-			file.createDirectories();
-			success = true;
+			success = std::filesystem::create_directory(dirPath);
+		}else{
+			success = std::filesystem::create_directories(dirPath);
 		}
 	}
-	catch(Poco::Exception & except){
-		ofLogError("ofDirectory") << "createDirectory(): couldn't create directory \"" << dirPath << "\": " << except.displayText();
+	catch(std::exception & except){
+		ofLogError("ofDirectory") << "createDirectory(): couldn't create directory \"" << dirPath << "\": " << except.what();
 		return false;
 	}
 
@@ -1412,8 +1258,7 @@ bool ofDirectory::doesDirectoryExist(string dirPath, bool bRelativeToData){
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
-	File file(dirPath);
-	return file.exists();
+	return std::filesystem::exists(dirPath);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1421,20 +1266,11 @@ bool ofDirectory::isDirectoryEmpty(string dirPath, bool bRelativeToData){
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
-	File file(dirPath);
-	if(!dirPath.empty() && file.exists() && file.isDirectory()){
-		vector<string>contents;
-		file.list(contents);
-		if(contents.size() == 0){
-			return true;
-		}
+
+	if(!dirPath.empty() && std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath)){
+		return std::filesystem::directory_iterator(dirPath) == std::filesystem::directory_iterator();
 	}
 	return false;
-}
-
-//------------------------------------------------------------------------------------------------------------
-Poco::File & ofDirectory::getPocoFile(){
-	return myDir;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1468,18 +1304,8 @@ bool ofDirectory::operator>=(const ofDirectory & dir){
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::iterator ofDirectory::begin(){
-	return files.begin();
-}
-
-//------------------------------------------------------------------------------------------------------------
-vector<ofFile>::iterator ofDirectory::end(){
-	return files.end();
-}
-
-//------------------------------------------------------------------------------------------------------------
 vector<ofFile>::const_iterator ofDirectory::begin() const{
-	return files.begin();
+	return getFiles().begin();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1488,18 +1314,8 @@ vector<ofFile>::const_iterator ofDirectory::end() const{
 }
 
 //------------------------------------------------------------------------------------------------------------
-vector<ofFile>::reverse_iterator ofDirectory::rbegin(){
-	return files.rbegin();
-}
-
-//------------------------------------------------------------------------------------------------------------
-vector<ofFile>::reverse_iterator ofDirectory::rend(){
-	return files.rend();
-}
-
-//------------------------------------------------------------------------------------------------------------
 vector<ofFile>::const_reverse_iterator ofDirectory::rbegin() const{
-	return files.rbegin();
+	return getFiles().rbegin();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1517,9 +1333,10 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addLeadingSlash(string path){
-	if(path.length() > 0){
-		if(path[0] != '/'){
-			path = "/" + path;
+	auto sep = std::filesystem::path("/").make_preferred();
+	if(!path.empty()){
+		if(ofToString(path[0]) != sep.string()){
+			path = (sep / path).string();
 		}
 	}
 	return path;
@@ -1527,9 +1344,10 @@ string ofFilePath::addLeadingSlash(string path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addTrailingSlash(string path){
-	if(path.length() > 0){
-		if(path[path.length() - 1] != '/'){
-			path += "/";
+	auto sep = std::filesystem::path("/").make_preferred();
+	if(!path.empty()){
+		if(ofToString(path.back()) != sep.string()){
+			path = (path / sep).string();
 		}
 	}
 	return path;
@@ -1538,28 +1356,12 @@ string ofFilePath::addTrailingSlash(string path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getFileExt(string filename){
-	std::string::size_type idx;
-	idx = filename.rfind('.');
-
-	if(idx != std::string::npos){
-		return filename.substr(idx + 1);
-	}
-	else{
-		return "";
-	}
+	return ofFile(filename,ofFile::Reference).getExtension();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::removeExt(string filename){
-	std::string::size_type idx;
-	idx = filename.rfind('.');
-
-	if(idx != std::string::npos){
-		return filename.substr(0, idx);
-	}
-	else{
-		return filename;
-	}
+	return ofFile(filename,ofFile::Reference).getBaseName();
 }
 
 
@@ -1568,7 +1370,12 @@ string ofFilePath::getPathForDirectory(string path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
-	return Path::forDirectory(path).toString();
+	auto sep = std::filesystem::path("/").make_preferred();
+	if(!path.empty() && ofToString(path.back())!=sep.string()){
+		return (std::filesystem::path(path) / sep).string();
+	}else{
+		return path;
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1586,22 +1393,12 @@ string ofFilePath::getFileName(string filePath, bool bRelativeToData){
 		filePath = ofToDataPath(filePath);
 	}
 
-	string fileName;
-
-	Path myPath(filePath);
-	try{
-		fileName = myPath.getFileName();
-	}
-	catch(Poco::Exception & except){
-		return "";
-	}
-
-	return fileName;
+	return std::filesystem::path(filePath).filename().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getBaseName(string filePath){
-	return removeExt(getFileName(filePath));
+	return ofFile(filePath).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1609,10 +1406,7 @@ string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
 	if(bRelativeToData){
 		filePath = ofToDataPath(filePath);
 	}
-
-	Path myPath(filePath);
-
-	return myPath.parent().toString();
+	return addTrailingSlash(std::filesystem::path(filePath).parent_path().string());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1620,23 +1414,22 @@ bool ofFilePath::createEnclosingDirectory(string filePath, bool bRelativeToData,
 	return ofDirectory::createDirectory(ofFilePath::getEnclosingDirectory(filePath), bRelativeToData, bRecursive);
 }
 
-
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
-
-	Path myPath(path);
-
-	return myPath.makeAbsolute().toString();
+	try{
+		return std::filesystem::canonical(path).string();
+	}catch(...){
+		return path;
+	}
 }
 
 
 //------------------------------------------------------------------------------------------------------------
 bool ofFilePath::isAbsolute(string path){
-	Path p(path);
-	return p.isAbsolute();
+	return std::filesystem::path(path).is_absolute();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1653,12 +1446,12 @@ string ofFilePath::getCurrentWorkingDirectory(){
 		pathWithoutApp = pathOSXStr.substr(0, found);
 		return pathWithoutApp;
 	#else
-		return Path::current();
+		return std::filesystem::current_path().string();
 	#endif
 }
 
 string ofFilePath::join(string path1, string path2){
-	return removeTrailingSlash(path1) + addLeadingSlash(path2);
+	return (std::filesystem::path(path1) / std::filesystem::path(path2)).string();
 }
 
 string ofFilePath::getCurrentExePath(){

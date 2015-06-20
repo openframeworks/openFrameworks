@@ -151,11 +151,7 @@ void ofURLFileLoaderImpl::threadedFunction() {
 			if(cancelledRequests.find(request.getID())==cancelledRequests.end()){
 				ofHttpResponse response(handleRequest(request));
 				int status = response.status;
-#if __cplusplus>=201103
 				if(!responses.send(move(response))){
-#else
-				if(!responses.send(response)){
-#endif
 					break;
 				}
 				if(status==-1){

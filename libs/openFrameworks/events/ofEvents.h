@@ -316,7 +316,7 @@ void ofUnregisterMouseEvents(ListenerClass * listener, int prio=OF_EVENT_ORDER_A
 	ofRemoveListener(ofEvents().mouseReleased,listener,&ListenerClass::mouseReleased,prio);
 	ofRemoveListener(ofEvents().mouseScrolled,listener,&ListenerClass::mouseScrolled,prio);
 	ofRemoveListener(ofEvents().mouseEntered,listener,&ListenerClass::mouseEntered,prio);
-	ofRemoveListener(ofEvents().mouseEntered,listener,&ListenerClass::mouseExited,prio);
+	ofRemoveListener(ofEvents().mouseExited,listener,&ListenerClass::mouseExited,prio);
 }
 
 template<class ListenerClass>

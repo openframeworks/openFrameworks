@@ -747,7 +747,7 @@
 				<key>GCC_GENERATE_DEBUGGING_SYMBOLS</key>
 				<string>NO</string>
 				<key>GCC_OPTIMIZATION_LEVEL</key>
-				<string>3</string>
+				<string>s</string>
 				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
 				<string>NO</string>
 				<key>GCC_THUMB_SUPPORT</key>

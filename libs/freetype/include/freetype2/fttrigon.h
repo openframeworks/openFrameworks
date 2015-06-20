@@ -237,7 +237,7 @@ FT_BEGIN_HEADER
    *
    * @input:
    *   angle ::
-   *     The input angle.
+   *     The address of angle.
    *
    */
   FT_EXPORT( void )
@@ -259,7 +259,7 @@ FT_BEGIN_HEADER
    *
    * @input:
    *   angle ::
-   *     The input angle.
+   *     The address of angle.
    *
    */
   FT_EXPORT( void )

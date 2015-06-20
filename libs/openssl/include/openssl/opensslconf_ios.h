@@ -110,8 +110,8 @@ extern "C" {
 
 #if !(defined(VMS) || defined(__VMS)) /* VMS uses logical names instead */
 #if defined(HEADER_CRYPTLIB_H) && !defined(OPENSSLDIR)
-#define ENGINESDIR "/Users/theo/Documents/CODE/__OPENFRAMEWORKS/gitOF/openFrameworks/scripts/apothecary/build/openssl/build/osx/x86_64/lib/engines"
-#define OPENSSLDIR "/Users/theo/Documents/CODE/__OPENFRAMEWORKS/gitOF/openFrameworks/scripts/apothecary/build/openssl/build/osx/x86_64"
+#define ENGINESDIR ""
+#define OPENSSLDIR ""
 #endif
 #endif
 

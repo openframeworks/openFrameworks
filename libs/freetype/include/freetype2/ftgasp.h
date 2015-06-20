@@ -120,8 +120,7 @@
   FT_Get_Gasp( FT_Face  face,
                FT_UInt  ppem );
 
-  /* */
-
+/* */
 
 #endif /* _FT_GASP_H_ */
 

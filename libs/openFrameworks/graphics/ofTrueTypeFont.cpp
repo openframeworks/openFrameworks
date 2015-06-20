@@ -17,10 +17,7 @@
 #include "ofUtils.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
-#include "Poco/TextConverter.h"
-#include "Poco/UTF8Encoding.h"
-#include "Poco/Latin1Encoding.h"
-#include "Poco/Latin9Encoding.h"
+#include "utf8.h"
 
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
@@ -370,7 +367,6 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	bFullCharacterSet = 0;
 	descenderHeight = 0;
 	dpi = 96;
-	encoding = OF_ENCODING_UTF8;
 	fontSize = 0;
 	lineHeight = 0;
 	nCharacters = 0;
@@ -605,10 +601,10 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 			// 1-bit format, hella funky
 			// here we unpack it:
 			unsigned char *src =  bitmap.buffer;
-			for(int j=0; j <bitmap.rows;j++) {
+			for(unsigned int j=0; j <bitmap.rows;j++) {
 				unsigned char b=0;
 				unsigned char *bptr =  src;
-				for(int k=0; k < bitmap.width ; k++){
+				for(unsigned int k=0; k < bitmap.width ; k++){
 					expanded_data[i][2*(k+j*width)] = 255;
 
 					if (k%8==0){
@@ -699,14 +695,6 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 	// ------------- close the library and typeface
   	bLoadedOk = true;
 	return true;
-}
-
-ofTextEncoding ofTrueTypeFont::getEncoding() const {
-	return encoding;
-}
-
-void ofTrueTypeFont::setEncoding(ofTextEncoding _encoding) {
-	encoding = _encoding;
 }
 
 //-----------------------------------------------------------
@@ -863,12 +851,6 @@ int ofTrueTypeFont::getKerning(int c, int prevC) const{
 
 //-----------------------------------------------------------
 vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip, bool filled) const{
-	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
-		string o;
-		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(str,o);
-		str=o;
-	}
-
 	vector<ofTTFCharacter> shapes;
 
 	if (!bLoadedOk){
@@ -876,7 +858,6 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip,
 		return shapes;
 	};
 
-	GLint		index	= 0;
 	GLfloat		X		= 0;
 	GLfloat		Y		= 0;
 	int newLineDirection		= 1;
@@ -888,27 +869,32 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip,
 		newLineDirection = -1;
 	}
 
-
-	int len = (int)str.length();
+	utf8::iterator<const char*> it(&str.front(), &str.front(), (&str.back())+1);
+	utf8::iterator<const char*> end((&str.back())+1, &str.front(), (&str.back())+1);
     int prevCy = -1;
-	while(index < len){
-		int cy = (unsigned char)str[index] - NUM_CHARACTER_TO_START;
-		if (cy < nCharacters){ 			// full char set or not?
-			if (str[index] == '\n') {
-				Y += lineHeight*newLineDirection;
-				X = 0 ; //reset X Pos back to zero
-			} else if(cy > -1){
-				shapes.push_back(getCharacterAsPoints((unsigned char)str[index],vflip,filled));
+	while(it != end){
+		try{
+			auto c = *it;
+			int cy = c - NUM_CHARACTER_TO_START;
+			if (cy < nCharacters){ 			// full char set or not?
+				if (c == '\n') {
+					Y += lineHeight*newLineDirection;
+					X = 0 ; //reset X Pos back to zero
+				} else if(cy > -1){
+					shapes.push_back(getCharacterAsPoints(c,vflip,filled));
 
-                X += getKerning(cy,prevCy);
-                
-				shapes.back().translate(ofPoint(X,Y));
+					X += getKerning(cy,prevCy);
 
-				X += cps[cy].advance * letterSpacing;
+					shapes.back().translate(ofPoint(X,Y));
+
+					X += cps[cy].advance * letterSpacing;
+				}
 			}
+			++it;
+			prevCy = cy;
+		}catch(...){
+			break;
 		}
-		index++;
-		prevCy = cy;
 	}
 	return shapes;
 
@@ -966,15 +952,7 @@ float ofTrueTypeFont::stringHeight(string c) const{
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::createStringMesh(string c, float x, float y, bool vFlipped) const{
-	
-	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
-		string o;
-		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(c,o);
-		c=o;
-	}
-	
-	GLint		index	= 0;
+void ofTrueTypeFont::createStringMesh(string str, float x, float y, bool vFlipped) const{
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
 	int newLineDirection		= 1;
@@ -986,24 +964,29 @@ void ofTrueTypeFont::createStringMesh(string c, float x, float y, bool vFlipped)
 		newLineDirection = -1;
 	}
 
-	int len = (int)c.length();
-
 	int prevCy = -1;
-	while(index < len){
-		int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
-		if (cy < nCharacters){ 			// full char set or not?
-			if (c[index] == '\n') {
-				Y += lineHeight*newLineDirection;
-				X = x ; //reset X Pos back to zero
-				prevCy = -1;
-			} else if(cy > -1){
-	            X += getKerning(cy,prevCy);
-				drawChar(cy, X, Y, vFlipped);
-				X += cps[cy].advance * letterSpacing;
+	utf8::iterator<const char*> it(&str.front(), &str.front(), (&str.back())+1);
+	utf8::iterator<const char*> end((&str.back())+1, &str.front(), (&str.back())+1);
+	while(it != end){
+		try{
+			auto c = *it;
+			int cy = c - NUM_CHARACTER_TO_START;
+			if (cy < nCharacters){ 			// full char set or not?
+				if (c == '\n') {
+					Y += lineHeight*newLineDirection;
+					X = x ; //reset X Pos back to zero
+					prevCy = -1;
+				} else if(cy > -1){
+					X += getKerning(cy,prevCy);
+					drawChar(cy, X, Y, vFlipped);
+					X += cps[cy].advance * letterSpacing;
+				}
 			}
+			++it;
+			prevCy = cy;
+		}catch(...){
+			break;
 		}
-		index++;
-		prevCy = cy;
 	}
 }
 
@@ -1031,7 +1014,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) const{
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) const{
+void ofTrueTypeFont::drawStringAsShapes(string str, float x, float y) const{
 
     if (!bLoadedOk){
     	ofLogError("ofTrueTypeFont") << "drawStringAsShapes(): font not allocated: line " << __LINE__ << " in " << __FILE__;
@@ -1044,13 +1027,6 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) const{
 		return;
 	}
 
-	if(bFullCharacterSet && encoding==OF_ENCODING_UTF8){
-		string o;
-		Poco::TextConverter(Poco::UTF8Encoding(),Poco::Latin9Encoding()).convert(c,o);
-		c=o;
-	}
-
-	GLint		index	= 0;
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
 	int newLineDirection		= 1;
@@ -1062,23 +1038,29 @@ void ofTrueTypeFont::drawStringAsShapes(string c, float x, float y) const{
 		newLineDirection = -1;
 	}
 
-	int len = (int)c.length();
     int prevCy = -1;
-	while(index < len){
-		int cy = (unsigned char)c[index] - NUM_CHARACTER_TO_START;
-		if (cy < nCharacters){ 			// full char set or not?
-		  if (c[index] == '\n') {
-				Y += lineHeight*newLineDirection;
-				X = x ; //reset X Pos back to zero
-				prevCy = -1;
-		  } else if(cy > -1){
-	            X += getKerning(cy,prevCy);
-				drawCharAsShape((unsigned char)c[index], X, Y, ofIsVFlipped(), ofGetStyle().bFill);
-				X += cps[cy].advance * letterSpacing;
-		  }
+	utf8::iterator<const char*> it(&str.front(), &str.front(), (&str.back())+1);
+	utf8::iterator<const char*> end((&str.back())+1, &str.front(), (&str.back())+1);
+	while(it != end){
+		try{
+			auto c = *it;
+			int cy = c - NUM_CHARACTER_TO_START;
+			if (cy < nCharacters){ 			// full char set or not?
+			  if (c == '\n') {
+					Y += lineHeight*newLineDirection;
+					X = x ; //reset X Pos back to zero
+					prevCy = -1;
+			  } else if(cy > -1){
+					X += getKerning(cy,prevCy);
+					drawCharAsShape(c, X, Y, ofIsVFlipped(), ofGetStyle().bFill);
+					X += cps[cy].advance * letterSpacing;
+			  }
+			}
+			++it;
+			prevCy = cy;
+		}catch(...){
+			break;
 		}
-		index++;
-		prevCy = cy;
 	}
 
 }

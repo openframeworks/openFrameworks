@@ -66,7 +66,7 @@ bool ofThread::lock(){
 	if(_mutexBlocks){
 		mutex.lock();
 	}else{
-		if(!mutex.tryLock()){
+		if(!mutex.try_lock()){
 			return false; // mutex is locked, tryLock failed
 		}
 	}
@@ -180,11 +180,19 @@ void ofThread::run(){
 #endif
 	// user function
     // should loop endlessly.
-	threadedFunction();
+	try{
+		threadedFunction();
+	}catch(const Poco::Exception& exc){
+		ofLogFatalError("ofThreadErrorLogger::exception") << exc.displayText();
+	}catch(const std::exception& exc){
+		ofLogFatalError("ofThreadErrorLogger::exception") << exc.what();
+	}catch(...){
+		ofLogFatalError("ofThreadErrorLogger::exception") << "Unknown exception.";
+	}
 
     _threadRunning = false;
 
-#if !defined(TARGET_WIN32) && !defined(TARGET_ANDROID)
+#if !defined(TARGET_WIN32)
 	// FIXME: this won't be needed once we update POCO https://github.com/pocoproject/poco/issues/79
 	if(!threadBeingWaitedFor){ //if threadedFunction() ended and the thread is not being waited for, detach it before exiting.
 		pthread_detach(pthread_self());

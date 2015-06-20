@@ -14,7 +14,7 @@
 
 FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
-FORMULA_DEPENDS=( "pkg-config" "libpng" "pixman" "freetype" )
+FORMULA_DEPENDS=( "pkg-config" "zlib" "libpng" "pixman" "freetype" )
 
 # tell apothecary we want to manually call the dependency commands
 # as we set some env vars for osx the depends need to know about
@@ -29,6 +29,14 @@ GIT_TAG=$VER
 
 # download the source code and unpack it into LIB_NAME
 function download() {
+	if [ "$TYPE" == "vs" ] ; then
+		# Download the xz extractor.
+		curl -LO http://tukaani.org/xz/xz-5.2.1-windows.zip
+
+		# Unzip xz and save it to the local directory.
+		unzip -j xz-5.2.1-windows.zip bin_x86-64/xz.exe -d .
+	fi
+
 	curl -LO http://cairographics.org/releases/cairo-$VER.tar.xz
 	tar -xf cairo-$VER.tar.xz
 	mv cairo-$VER cairo
@@ -36,34 +44,70 @@ function download() {
 
 	# manually download dependencies
 	apothecaryDependencies download
+
+	if [ "$TYPE" == "vs" ] ; then
+		# Get the custom cairo visual studio solution.
+		git clone https://github.com/DomAmato/Cairo-VS
+
+		# Remove the xz extractor.
+		rm xz.exe
+	fi
 }
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
-	# generate the configure script if it's not there
-	if [ ! -f configure ] ; then
-		./autogen.sh
+	if [ "$TYPE" == "vs" ] ; then
+	
+		apothecaryDependencies prepare
+		
+		apothecaryDepend build freetype
+		
+		cd ../Cairo-VS
+		
+		cp -Rv ../cairo/* cairo
+		cp -Rv ../freetype/* freetype
+		cp -Rv ../libpng/* libpng
+		cp -Rv ../pixman/* pixman
+		cp -Rv ../zlib/* zlib
+		
+		if [ $ARCH == 32 ] ; then
+			cp -v ../freetype/objs/vc2010/Win32/*.lib libs/freetype.lib
+		elif [ $ARCH == 64 ] ; then
+			cp -v ../freetype/objs/vc2010/x64/*.lib libs/freetype.lib
+		fi
+		
+	else
+		# generate the configure script if it's not there
+		if [ ! -f configure ] ; then
+			./autogen.sh
+		fi
+
+		# manually prepare dependencies
+		apothecaryDependencies prepare
+
+		# Build and copy all dependencies in preparation
+		apothecaryDepend build pkg-config
+		apothecaryDepend copy pkg-config
+		apothecaryDepend build libpng
+		apothecaryDepend copy libpng
+		apothecaryDepend build pixman
+		apothecaryDepend copy pixman
+		apothecaryDepend build freetype
+		apothecaryDepend copy freetype
 	fi
-
-	# manually prepare dependencies
-	apothecaryDependencies prepare
-
-	# Build and copy all dependencies in preparation
-	apothecaryDepend build pkg-config
-	apothecaryDepend copy pkg-config
-	apothecaryDepend build libpng
-	apothecaryDepend copy libpng
-	apothecaryDepend build pixman
-	apothecaryDepend copy pixman
-	apothecaryDepend build freetype
-	apothecaryDepend copy freetype
 }
 
 # executed inside the lib src dir
 function build() {
 
 	if [ "$TYPE" == "vs" ] ; then
-		make -f Makefile.win32
+		cd ../Cairo-VS/projects
+		if [ $ARCH == 32 ] ; then
+			vs-build "cairo.sln"
+		elif [ $ARCH == 64 ] ; then
+			vs-build "cairo.sln" Build "Release|x64"
+		fi
+		 
 	elif [ "$TYPE" == "osx" ] ; then
 		./configure PKG_CONFIG="$BUILD_ROOT_DIR/bin/pkg-config" \
 					PKG_CONFIG_PATH="$BUILD_ROOT_DIR/lib/pkgconfig" \
@@ -77,7 +121,7 @@ function build() {
 					--disable-dependency-tracking \
 					--disable-xlib \
 					--disable-qt 
-		make
+		make -j${PARALLEL_MAKE} 
 		make install
 	else 
 		./configure PKG_CONFIG="$BUILD_ROOT_DIR/bin/pkg-config" \
@@ -92,47 +136,54 @@ function build() {
 					--disable-dependency-tracking \
 					--disable-xlib \
 					--disable-qt 
-		make
+		make -j${PARALLEL_MAKE} 
 		make install
 	fi
 }
 
 # executed inside the lib src dir, first arg $1 is the dest libs dir root
 function copy() {
-
-	# make the path in the libs dir
-	mkdir -p $1/include/cairo
-
-	# copy the cairo headers
-	cp -Rv $BUILD_ROOT_DIR/include/cairo/* $1/include/cairo
-
-	# make the path in the libs dir
-	mkdir -p $1/include/libpng16
-
-	# copy the cairo headers
-	cp -Rv $BUILD_ROOT_DIR/include/libpng16/* $1/include/libpng16
-
-	# make the path in the libs dir
-	mkdir -p $1/include/pixman-1
-
-	# copy the cairo headers
-	cp -Rv $BUILD_ROOT_DIR/include/pixman-1/* $1/include/pixman-1
-
-	# copy the png symlinks
-	cp -v $BUILD_ROOT_DIR/include/png* $1/include/
-
-	# make the libs path 
-	mkdir -p $1/lib/$TYPE
-
 	if [ "$TYPE" == "vs" ] ; then
-		echoWarning "copy vs lib"
+		cd ..
+		#this copies all header files but we dont need all of them it seems
+		#maybe alter the VS-Cairo build to separate necessary headers
+		# make the path in the libs dir
+		mkdir -p $1/include/cairo
+
+		# copy the cairo headers
+		cp -Rv cairo/src/*.h $1/include/cairo		
+		
+		if [ $ARCH == 32 ] ; then
+			# make the libs path 
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v Cairo-VS/projects/Release/cairo.lib $1/lib/$TYPE/Win32/cairo-static.lib
+			cp -v Cairo-VS/projects/Release/pixman.lib $1/lib/$TYPE/Win32/pixman-1.lib
+			cp -v Cairo-VS/libs/libpng.lib $1/lib/$TYPE/Win32
+		elif [ $ARCH == 64 ] ; then
+			# make the libs path 
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v Cairo-VS/projects/x64/Release/cairo.lib $1/lib/$TYPE/x64/cairo-static.lib
+			cp -v Cairo-VS/projects/x64/Release/pixman.lib $1/lib/$TYPE/x64/pixman-1.lib
+			cp -v Cairo-VS/libs/libpng.lib $1/lib/$TYPE/x64
+		fi
+		cd cairo
 
 	elif [ "$TYPE" == "osx" -o "$TYPE" == "win_cb" ] ; then
+		# make the path in the libs dir
+		mkdir -p $1/include/cairo
+
+		# copy the cairo headers
+		cp -Rv $BUILD_ROOT_DIR/include/cairo/* $1/include/cairo
+
+		# make the libs path 
+		mkdir -p $1/lib/$TYPE
+	
 		if [ "$TYPE" == "osx" ] ; then
 			cp -v $BUILD_ROOT_DIR/lib/libcairo-script-interpreter.a $1/lib/$TYPE/cairo-script-interpreter.a
 		fi
 		cp -v $BUILD_ROOT_DIR/lib/libcairo.a $1/lib/$TYPE/cairo.a
 		cp -v $BUILD_ROOT_DIR/lib/libpixman-1.a $1/lib/$TYPE/pixman-1.a
+		cp -v $BUILD_ROOT_DIR/lib/libpng.a $1/lib/$TYPE/png.a
 	fi
 
 	# copy license files

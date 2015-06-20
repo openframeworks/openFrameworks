@@ -5,7 +5,7 @@ class ImgAnalysisThread: public ofThread {
 public:
 	ImgAnalysisThread();
 	~ImgAnalysisThread();
-	void analize(ofPixels & pixels);
+	void analyze(ofPixels & pixels);
 	void update();
 	bool isFrameNew();
 	ofPixels & getPixels();
@@ -15,8 +15,8 @@ public:
 
 private:
 	void threadedFunction();
-	ofThreadChannel<ofPixels> toAnalize;
-	ofThreadChannel<ofPixels> analized;
+	ofThreadChannel<ofPixels> toAnalyze;
+	ofThreadChannel<ofPixels> analyzed;
 	ofPixels pixels;
 	ofTexture texture;
 	bool newFrame;

@@ -34,10 +34,9 @@
 #include "keep_alive.h"
 
 #ifdef _MSC_VER
-	# define sleep(x) Sleep((x)*1000) 
-#endif 
+	#define sleep(x) Sleep((x)*1000)
+#endif
 
-//fix for CodeBlocks
 #ifndef LIBUSB_CALL
     #define LIBUSB_CALL
 #endif // LIBUSB_CALL

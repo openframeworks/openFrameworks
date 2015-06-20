@@ -20,9 +20,9 @@ function download() {
 	# curl -Lk https://github.com/glfw/glfw/archive/$GIT_TAG.tar.gz -o glfw-$GIT_TAG.tar.gz
 	# temporary fix until https://github.com/openframeworks/openFrameworks/issues/3621 is resolved.
 	GIT_TAG=feature-keysUnicode
-	#curl -Lk https://github.com/arturoc/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
+	curl -Lk https://github.com/arturoc/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
 	# need this version for cursor hotfix + arturos key modifiers 
-	curl -Lk https://github.com/ofTheo/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
+	# curl -Lk https://github.com/ofTheo/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
 	# end fix
 	tar -xf glfw-$GIT_TAG.tar.gz
 	mv glfw-$GIT_TAG glfw
@@ -39,8 +39,17 @@ function build() {
 	rm -f CMakeCache.txt
 
 	if [ "$TYPE" == "vs" ] ; then
-		cmake -G "Visual Studio $VS_VER"
-		vs-build "GLFW.sln"
+		if [ $ARCH == 32 ] ; then
+			mkdir -p build_vs_32
+			cd build_vs_32
+			cmake .. -G "Visual Studio $VS_VER"
+			vs-build "GLFW.sln"
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p build_vs_64
+			cd build_vs_64
+			cmake .. -G "Visual Studio $VS_VER Win64"
+			vs-build "GLFW.sln" Build "Release|x64"
+		fi
 	else
 		# *nix build system
 
@@ -52,10 +61,11 @@ function build() {
 				-DGLFW_BUILD_TESTS=OFF \
 				-DGLFW_BUILD_EXAMPLES=OFF \
 				-DBUILD_SHARED_LIBS=OFF \
+				-DCMAKE_BUILD_TYPE=Release \
 				-DGLFW_BUILD_UNIVERSAL=ON 
 
  		make clean
- 		make
+ 		make -j${PARALLEL_MAKE}
  		make install
 	fi
 }
@@ -69,14 +79,21 @@ function copy() {
 	mkdir -p $1/lib/$TYPE
 
 	if [ "$TYPE" == "vs" ] ; then
-	    cp -Rv include/* $1/include
-		cp -v src/Release/glfw3.lib $1/lib/$TYPE/glfw3.lib
+		cp -Rv include/* $1/include
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v build_vs_32/src/Release/glfw3.lib $1/lib/$TYPE/Win32/glfw3.lib
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v build_vs_64/src/Release/glfw3.lib $1/lib/$TYPE/x64/glfw3.lib
+		fi
+	    
 	else
 		# Standard *nix style copy.
 		# copy headers
 		cp -Rv $BUILD_ROOT_DIR/include/GLFW/* $1/include/GLFW/
 		# copy lib
-		cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/
+		cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/glfw3.a
 	fi
 
 	# copy license file

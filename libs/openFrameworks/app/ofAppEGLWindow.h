@@ -60,6 +60,8 @@
 #include <queue>
 #include <map>
 
+#include <EGL/egl.h>
+
 // TODO: this shold be passed in with the other window settings, like window alpha, etc.
 enum ofAppEGLWindowType {
 	OF_APP_WINDOW_AUTO,
@@ -127,6 +129,7 @@ public:
 	virtual void	setVerticalSync(bool enabled);
 	
 	struct Settings: public ofGLESWindowSettings {
+        public:
 		ofAppEGLWindowType eglWindowPreference;  // what window type is preferred?
 		EGLint eglWindowOpacity; // 0-255 window alpha value
 
