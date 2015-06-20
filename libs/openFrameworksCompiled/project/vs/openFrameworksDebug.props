@@ -15,10 +15,12 @@
     <Link>
       <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs\Win32;..\..\..\libs\glfw\lib\vs\Win32;..\..\..\libs\rtAudio\lib\vs\Win32;..\..\..\libs\FreeImage\lib\vs\Win32;..\..\..\libs\freetype\lib\vs\Win32;..\..\..\libs\quicktime\lib\vs\Win32;..\..\..\libs\fmodex\lib\vs\Win32;..\..\..\libs\videoInput\lib\vs\Win32;..\..\..\libs\cairo\lib\vs\Win32;..\..\..\libs\glew\lib\vs\Win32;..\..\..\libs\glu\lib\vs\Win32;..\..\..\libs\openssl\lib\vs\Win32;..\..\..\libs\Poco\lib\vs\Win32;..\..\..\libs\tess2\lib\vs\Win32;..\..\..\libs\uri\lib\vs\Win32;..\..\..\libs\boost\lib\vs\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>cairo-static.lib;pixman-1.lib;libpng.lib;msimg32.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;Vfw32.lib;comctl32.lib;glut32.lib;rtAudioD.lib;videoInputD.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;glew32s.lib;fmodex_vc.lib;glu32.lib;ssleay32MD.lib;libeay32MD.lib;crypt32.lib;PocoFoundationmdd.lib;PocoNetmdd.lib;PocoUtilmdd.lib;PocoXMLmdd.lib;Ws2_32.lib;tess2.lib;glfw3.lib;network-uri_debug.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <IgnoreSpecificDefaultLibraries>PocoFoundationmdd.lib;atlthunk.lib;msvcrt;libcmt;LIBC;LIBCMTD</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /e /i /y "$(ProjectDir)..\..\..\export\vs\*.dll" "$(ProjectDir)bin"</Command>
+      <Command>robocopy "$(ProjectDir)../../../export/vs/$(Platform_Actual)/" "$(ProjectDir)bin/" "*.dll" /njs /njh /np /fp /bytes
+if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
@@ -30,10 +32,12 @@
     <Link>
       <AdditionalLibraryDirectories>..\..\..\libs\glfw\lib\vs\x64;..\..\..\libs\rtAudio\lib\vs\x64;..\..\..\libs\FreeImage\lib\vs\x64;..\..\..\libs\freetype\lib\vs\x64;..\..\..\libs\fmodex\lib\vs\x64;..\..\..\libs\videoInput\lib\vs\x64;..\..\..\libs\cairo\lib\vs\x64;..\..\..\libs\glew\lib\vs\x64;..\..\..\libs\glu\lib\vs\x64;..\..\..\libs\openssl\lib\vs\x64;..\..\..\libs\Poco\lib\vs\x64;..\..\..\libs\tess2\lib\vs\x64;..\..\..\libs\uri\lib\vs\x64;..\..\..\libs\boost\lib\vs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>cairo-static.lib;pixman-1.lib;libpng.lib;msimg32.lib;OpenGL32.lib;kernel32.lib;setupapi.lib;Vfw32.lib;comctl32.lib;rtAudioD.lib;videoInputD.lib;libfreetype.lib;FreeImage.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;glew32s.lib;fmodex64_vc.lib;ssleay32MD.lib;libeay32MD.lib;crypt32.lib;PocoFoundationmdd.lib;PocoNetmdd.lib;PocoUtilmdd.lib;PocoXMLmdd.lib;Ws2_32.lib;tess2.lib;glfw3.lib;network-uri_debug.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <IgnoreSpecificDefaultLibraries>PocoFoundationmdd.lib;atlthunk.lib;msvcrt;libcmt;LIBC;LIBCMTD</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /e /i /y "$(ProjectDir)..\..\..\export\vs\*.dll" "$(ProjectDir)bin"</Command>
+      <Command>robocopy "$(ProjectDir)../../../export/vs/$(Platform_Actual)/" "$(ProjectDir)bin/" "*.dll" /njs /njh /np /fp /bytes
+if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup />
