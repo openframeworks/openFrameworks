@@ -20,9 +20,9 @@ function download() {
 	# curl -Lk https://github.com/glfw/glfw/archive/$GIT_TAG.tar.gz -o glfw-$GIT_TAG.tar.gz
 	# temporary fix until https://github.com/openframeworks/openFrameworks/issues/3621 is resolved.
 	GIT_TAG=feature-keysUnicode
-	#curl -Lk https://github.com/arturoc/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
+	curl -Lk https://github.com/arturoc/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
 	# need this version for cursor hotfix + arturos key modifiers 
-	curl -Lk https://github.com/ofTheo/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
+	# curl -Lk https://github.com/ofTheo/glfw/archive/feature-keysUnicode.tar.gz -o glfw-$GIT_TAG.tar.gz
 	# end fix
 	tar -xf glfw-$GIT_TAG.tar.gz
 	mv glfw-$GIT_TAG glfw

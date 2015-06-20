@@ -545,33 +545,43 @@ function build() {
 	elif [ "$TYPE" == "android" ]; then
 		source $LIBS_DIR/openFrameworksCompiled/project/android/paths.make
 		perl -pi -e 's/install: all install_docs install_sw/install: install_docs install_sw/g' Makefile.org
+		export _ANDROID_NDK_ROOT=$NDK_ROOT
+		export FIPS_SIG=
+		curl -O http://wiki.openssl.org/images/7/70/Setenv-android.sh
+		perl -pi -e 's/^_ANDROID_EABI=(.*)$/#_ANDROID_EABI=\1/g' Setenv-android.sh
+		perl -pi -e 's/^_ANDROID_ARCH=(.*)$/#_ANDROID_ARCH=\1/g' Setenv-android.sh
+		perl -pi -e 's/^_ANDROID_API=(.*)$/#_ANDROID_API=\1/g' Setenv-android.sh
 		
         # armv7
-        ABI=armeabi-v7a
-        local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
-        source ../../android_configure.sh $ABI
-        export CC="$CC $CFLAGS"
-        ./Configure --prefix=$BUILD_TO_DIR no-ssl2 no-ssl3 no-comp no-hw no-engine no-shared android-armv7
+        export _ANDROID_EABI=arm-linux-androideabi-4.9
+		export _ANDROID_ARCH=arch-arm
+		export _ANDROID_API=android-21
+        local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/armeabi-v7a
+        mkdir -p $BUILD_TO_DIR
+        source Setenv-android.sh
+        ./config --openssldir=$BUILD_TO_DIR no-ssl2 no-ssl3 no-comp no-hw no-engine no-shared
         make clean
-        make deps -j${PARALLEL_MAKE}
-        make build_libs -j${PARALLEL_MAKE}
-        make install
-		cp libssl.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
-        cp libcrypto.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
+        make depend -j${PARALLEL_MAKE}
+        make all -j${PARALLEL_MAKE}
+        mkdir -p $BUILD_TO_DIR/lib
+		cp libssl.a $BUILD_TO_DIR/lib/
+        cp libcrypto.a $BUILD_TO_DIR/lib/
         
         # x86
         ABI=x86
-        local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/$ABI
-        source ../../android_configure.sh $ABI
-        export CC="$CC $CFLAGS $LDFLAGS"
-        export LDCMD="-lz -lsupc++ -llog -ldl -lm -lc -lgnustl_static -lgcc"
-        ./Configure --prefix=$BUILD_TO_DIR no-ssl2 no-ssl3 no-comp no-hw no-engine no-shared android-x86
+        export _ANDROID_EABI=arm-linux-androideabi-4.9
+		export _ANDROID_ARCH=arch-arm
+		export _ANDROID_API=android-21
+        local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/x86
+        mkdir -p $BUILD_TO_DIR
+        source Setenv-android.sh
+        ./config --openssldir=$BUILD_TO_DIR no-ssl2 no-ssl3 no-comp no-hw no-engine no-shared
         make clean
-        make deps -j${PARALLEL_MAKE}
+        make depend -j${PARALLEL_MAKE}
         make build_libs -j${PARALLEL_MAKE}
-        mkdir -p $BUILD_DIR/openssl/build/$TYPE/$ABI/lib
-        cp libssl.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
-        cp libcrypto.a $BUILD_DIR/openssl/build/$TYPE/$ABI/lib/
+        mkdir -p $BUILD_TO_DIR/lib
+        cp libssl.a $BUILD_TO_DIR/lib/
+        cp libcrypto.a $BUILD_TO_DIR/lib/
 
 	else 
 
@@ -585,42 +595,11 @@ function copy() {
 	#echoWarning "TODO: copy $TYPE lib"
 
 	# # headers
-	#deleting these is problematic when we do separate builds
-	if [ -f $1/include/openssl/opensslconf_osx.h ]; then
-        cp $1/include/openssl/opensslconf_osx.h /tmp/
-    fi
-	if [ -f lib/include/openssl/opensslconf_ios.h ]; then
-        cp lib/include/openssl/opensslconf_ios.h /tmp/
-    fi
-	if [ -f $1/include/openssl/opensslconf_win32.h ]; then
-        cp $1/include/openssl/opensslconf_win32.h /tmp/
-    fi
-	if [ -f $1/include/openssl/opensslconf_android.h ]; then
-        cp $1/include/openssl/opensslconf_android.h /tmp/
-    fi
-	if [ -f $1/include/openssl/opensslconf_vs.h ]; then
-        cp $1/include/openssl/opensslconf_vs.h /tmp/
-    fi
 	if [ -d $1/include/ ]; then
 	    rm -r $1/include/
 	fi
 	
 	mkdir -pv $1/include/openssl/
-	if [ -f /tmp/opensslconf_osx.h ]; then
-        mv /tmp/opensslconf_osx.h $1/include/openssl/
-    fi
-	if [ -f /tmp/opensslconf_ios.h ]; then
-        mv /tmp/opensslconf_ios.h $1/include/openssl/
-    fi
-	if [ -f /tmp/opensslconf_win32.h ]; then
-        mv /tmp/opensslconf_win32.h $1/include/openssl/
-    fi
-	if [ -f /tmp/opensslconf_android.h ]; then
-        mv /tmp/opensslconf_android.h $1/include/openssl/
-    fi
-	if [ -f /tmp/opensslconf_vs.h ]; then
-        mv /tmp/opensslconf_vs.h $1/include/openssl/
-    fi
 	
 	# storing a copy of the include in lib/include/
 	# set via: cp -R "build/$TYPE/x86_64/include/" "lib/include/"
@@ -635,11 +614,19 @@ function copy() {
 	    cp -Rv lib/include/* $1/include/
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/$TYPE/*.a $1/lib/$TYPE
+		git checkout $1/include/openssl/opensslconf_ios.h
+    	git checkout $1/include/openssl/opensslconf_android.h
+    	git checkout $1/include/openssl/opensslconf_vs.h
+    	git checkout $1/include/openssl/opensslconf_win32.h
 	elif [ "$TYPE" == "ios" ] ; then
 	    mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_ios.h
 	    cp -Rv lib/include/* $1/include/
 	 	mkdir -p $1/lib/$TYPE
 	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
+		git checkout $1/include/openssl/opensslconf_osx.h
+    	git checkout $1/include/openssl/opensslconf_android.h
+    	git checkout $1/include/openssl/opensslconf_vs.h
+    	git checkout $1/include/openssl/opensslconf_win32.h
 	elif [ "$TYPE" == "vs" ] ; then	 
 		if [ $ARCH == 32 ] ; then
 			cp -Rv ms/Win32/include/openssl $1/include/
@@ -661,13 +648,17 @@ function copy() {
 			done
 		fi
 	 	
+		git checkout $1/include/openssl/opensslconf_ios.h
+		git checkout $1/include/openssl/opensslconf_osx.h
+    	git checkout $1/include/openssl/opensslconf_android.h
+    	git checkout $1/include/openssl/opensslconf_win32.h
 	# elif [ "$TYPE" == "win_cb" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
 	
 	elif [ "$TYPE" == "android" ] ; then
-	    mv build/include/openssl/opensslconf.h build/include/openssl/opensslconf_android.h
-	    cp -Rv build/android/armeabi-v7a/include/* $1/include/
+	    mv include/openssl/opensslconf.h include/openssl/opensslconf_android.h
+	    cp -Rv include/openssl $1/include/
 	    if [ -d $1/lib/$TYPE/ ]; then
 	        rm -r $1/lib/$TYPE/
 	    fi
@@ -675,9 +666,14 @@ function copy() {
 		cp -rv build/android/armeabi-v7a/lib/*.a $1/lib/$TYPE/armeabi-v7a/
 	    mkdir -p $1/lib/$TYPE/x86
 		cp -rv build/android/x86/lib/*.a $1/lib/$TYPE/x86/
+	    mv include/openssl/opensslconf_android.h include/openssl/opensslconf.h
 
-		git checkout ../../libs/openssl/include/openssl/comp.h
-        git checkout ../../libs/openssl/include/openssl/engine.h
+		git checkout $1/include/openssl/comp.h
+        git checkout $1/include/openssl/engine.h
+		git checkout $1/include/openssl/opensslconf_osx.h
+    	git checkout $1/include/openssl/opensslconf_ios.h
+    	git checkout $1/include/openssl/opensslconf_vs.h
+    	git checkout $1/include/openssl/opensslconf_win32.h
 
 	# 	mkdir -p $1/lib/$TYPE/armeabi-v7a
 	# 	cp -v lib/Android/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a
