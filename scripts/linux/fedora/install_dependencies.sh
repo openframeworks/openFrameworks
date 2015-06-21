@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## thanks to Claudio for details on packages to install on fedora
 if [ $EUID != 0 ]; then
