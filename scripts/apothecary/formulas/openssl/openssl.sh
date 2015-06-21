@@ -601,8 +601,14 @@ function copy() {
 	
 	mkdir -pv $1/include/openssl/
 	
-	# storing a copy of the include in lib/include/
-	# set via: cp -R "build/$TYPE/x86_64/include/" "lib/include/"
+	# opensslconf.h is different in every platform, we need to copy
+	# it as opensslconf_$(TYPE).h and use a modified version of 
+	# opensslconf.h that detects the platform and includes the 
+	# correct one. Then every platform checkouts the rest of the config
+	# files that were deleted here
+	mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_osx.h
+    cp -Rv lib/include/* $1/include/
+    cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
 
 	# suppress file not found errors
 	#same here doesn't seem to be a solid reason to delete the files
@@ -610,8 +616,6 @@ function copy() {
 
 	# libs
 	if [ "$TYPE" == "osx" ] ; then
-		mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_osx.h
-	    cp -Rv lib/include/* $1/include/
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/$TYPE/*.a $1/lib/$TYPE
 		git checkout $1/include/openssl/opensslconf_ios.h
@@ -619,8 +623,6 @@ function copy() {
     	git checkout $1/include/openssl/opensslconf_vs.h
     	git checkout $1/include/openssl/opensslconf_win32.h
 	elif [ "$TYPE" == "ios" ] ; then
-	    mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_ios.h
-	    cp -Rv lib/include/* $1/include/
 	 	mkdir -p $1/lib/$TYPE
 	 	cp -v lib/$TYPE/*.a $1/lib/$TYPE
 		git checkout $1/include/openssl/opensslconf_osx.h
@@ -628,8 +630,6 @@ function copy() {
     	git checkout $1/include/openssl/opensslconf_vs.h
     	git checkout $1/include/openssl/opensslconf_win32.h
 	elif [ "$TYPE" == "vs" ] ; then	 
-	    mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_vs.h
-	    cp -Rv lib/include/* $1/include/
 		if [ $ARCH == 32 ] ; then
 			rm -rf $1/lib/$TYPE/Win32
 			mkdir -p $1/lib/$TYPE/Win32
@@ -657,8 +657,6 @@ function copy() {
 	# 	cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
 	
 	elif [ "$TYPE" == "android" ] ; then
-	    mv include/openssl/opensslconf.h include/openssl/opensslconf_android.h
-	    cp -Rv include/openssl $1/include/
 	    if [ -d $1/lib/$TYPE/ ]; then
 	        rm -r $1/lib/$TYPE/
 	    fi
@@ -690,8 +688,6 @@ function copy() {
     cp -v LICENSE $1/license/
 	
 	
-    # opensslconf.h might be different per platform. Copy custom file
-    cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
 }
 
 # executed inside the lib src dir
