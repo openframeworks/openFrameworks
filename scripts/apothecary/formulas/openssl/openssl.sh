@@ -628,8 +628,9 @@ function copy() {
     	git checkout $1/include/openssl/opensslconf_vs.h
     	git checkout $1/include/openssl/opensslconf_win32.h
 	elif [ "$TYPE" == "vs" ] ; then	 
+	    mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_vs.h
+	    cp -Rv lib/include/* $1/include/
 		if [ $ARCH == 32 ] ; then
-			cp -Rv ms/Win32/include/openssl $1/include/
 			rm -rf $1/lib/$TYPE/Win32
 			mkdir -p $1/lib/$TYPE/Win32
 			cp -v ms/Win32/lib/*.lib $1/lib/$TYPE/Win32/
@@ -638,7 +639,6 @@ function copy() {
 				mv -v $f $1/lib/$TYPE/Win32/${base}md.lib
 			done
 		elif [ $ARCH == 64 ] ; then
-			cp -Rv ms/X64/include/openssl $1/include/
 			rm -rf $1/lib/$TYPE/x64
 			mkdir -p $1/lib/$TYPE/x64
 			cp -v ms/x64/lib/*.lib $1/lib/$TYPE/x64/
@@ -652,7 +652,6 @@ function copy() {
 		git checkout $1/include/openssl/opensslconf_osx.h
     	git checkout $1/include/openssl/opensslconf_android.h
     	git checkout $1/include/openssl/opensslconf_win32.h
-    	git checkout $1/include/openssl/opensslconf_vs.h
 	# elif [ "$TYPE" == "win_cb" ] ; then
 	# 	mkdir -p $1/lib/$TYPE
 	# 	cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
