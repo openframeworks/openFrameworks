@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 echo "inserting gstreamer 1.0 repository"
 rm /etc/apt/sources.list.d/gstreamer.list
 touch /etc/apt/sources.list.d/gstreamer.list
