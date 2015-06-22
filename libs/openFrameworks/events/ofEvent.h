@@ -16,6 +16,29 @@ public:
 
 	}
 
+	ofBaseEvent(const ofBaseEvent & mom)
+	:enabled(mom.enabled){
+		std::unique_lock<std::mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
+		std::transform(functions.begin(), functions.end(),std::back_inserter(functions),
+			[&](std::unique_ptr<Function>&f){
+				return std::unique_ptr<Function>(new Function(*f));
+			});
+	}
+
+	ofBaseEvent & operator=(const ofBaseEvent & mom){
+		if(&mom==this){
+			return *this;
+		}
+		std::unique_lock<std::mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
+		std::transform(functions.begin(), functions.end(),std::back_inserter(functions),
+			[&](std::unique_ptr<Function>&f){
+				return std::unique_ptr<Function>(new Function(*f));
+			});
+		return *this;
+	}
+
+	virtual ~ofBaseEvent(){}
+
     void enable() {
     	enabled = true;
     }
