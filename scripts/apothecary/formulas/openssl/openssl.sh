@@ -606,7 +606,7 @@ function copy() {
 	# opensslconf.h that detects the platform and includes the 
 	# correct one. Then every platform checkouts the rest of the config
 	# files that were deleted here
-	mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_osx.h
+	mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_${TYPE}.h
     cp -Rv lib/include/* $1/include/
     cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
 
