@@ -71,7 +71,7 @@ void ofApp::draw(){
 
 	ofSetColor(255);
 	for(unsigned int j = 0; j < images.size(); j ++){
-		if( images[j].width > 0 ){
+		if( images[j].getWidth() > 0 ){
 			
 			float tw = 300;
 			float th = 200;
