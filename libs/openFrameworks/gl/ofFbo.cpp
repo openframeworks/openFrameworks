@@ -364,6 +364,7 @@ void ofFbo::clear() {
 		releaseRB(colorBuffers[i]);
 	}
 	colorBuffers.clear();
+	activeDrawBuffers.clear();
 	bIsAllocated = false;
 #ifdef TARGET_ANDROID
 	ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofFbo::reloadFbo);
