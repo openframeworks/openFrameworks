@@ -607,7 +607,7 @@ function copy() {
 	# correct one. Then every platform checkouts the rest of the config
 	# files that were deleted here
 	mv lib/include/openssl/opensslconf.h lib/include/openssl/opensslconf_${TYPE}.h
-    cp -Rv lib/include/* $1/include/
+    cp -Rv lib/include/openssl/* $1/include/openssl/
     cp -v $FORMULA_DIR/opensslconf.h $1/include/openssl/opensslconf.h
 
 	# suppress file not found errors
