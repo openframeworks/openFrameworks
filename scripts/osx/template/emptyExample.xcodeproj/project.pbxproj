@@ -88,6 +88,7 @@
 				<string>E4EB6923138AFD0F00A09F29</string>
 				<string>E4B69E1C0A3A1BDC003C02F2</string>
 				<string>E4EEC9E9138DF44700A80321</string>
+				<string>FDD38AF31B39DFC30089D714</string>
 				<string>BB4B014C10F69532006C3DED</string>
 				<string>E4B69B5B0A3A1756003C02F2</string>
 			</array>
@@ -379,6 +380,11 @@
 				<string>$(HOME)/Applications</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
 				<string>$(inherited)</string>
+				<key>OTHER_CPLUSPLUSFLAGS</key>
+				<array>
+					<string>-D__MACOSX_CORE__</string>
+					<string>-mtune=native</string>
+				</array>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)Debug</string>
 				<key>WRAPPER_EXTENSION</key>
@@ -420,6 +426,11 @@
 				<string>$(HOME)/Applications</string>
 				<key>LIBRARY_SEARCH_PATHS</key>
 				<string>$(inherited)</string>
+				<key>OTHER_CPLUSPLUSFLAGS</key>
+				<array>
+					<string>-D__MACOSX_CORE__</string>
+					<string>-mtune=native</string>
+				</array>
 				<key>PRODUCT_NAME</key>
 				<string>$(TARGET_NAME)</string>
 				<key>WRAPPER_EXTENSION</key>
@@ -550,7 +561,9 @@ cp -f "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 			<key>dstSubfolderSpec</key>
 			<string>10</string>
 			<key>files</key>
-			<array/>
+			<array>
+				<string>FDD38AF21B39DFBE0089D714</string>
+			</array>
 			<key>isa</key>
 			<string>PBXCopyFilesBuildPhase</string>
 			<key>runOnlyForDeploymentPostprocessing</key>
@@ -617,6 +630,47 @@ cp -f "$ICON_FILE" "$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/Resources/"
 			<string>PBXGroup</string>
 			<key>name</key>
 			<string>openFrameworks</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>FDD38AF11B39DFBE0089D714</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>GLUT.framework</string>
+			<key>path</key>
+			<string>../../../libs/glut/lib/osx/GLUT.framework</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>FDD38AF21B39DFBE0089D714</key>
+		<dict>
+			<key>fileRef</key>
+			<string>FDD38AF11B39DFBE0089D714</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+			<key>settings</key>
+			<dict>
+				<key>ATTRIBUTES</key>
+				<array>
+					<string>CodeSignOnCopy</string>
+					<string>RemoveHeadersOnCopy</string>
+				</array>
+			</dict>
+		</dict>
+		<key>FDD38AF31B39DFC30089D714</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>FDD38AF11B39DFBE0089D714</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>frameworks</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
