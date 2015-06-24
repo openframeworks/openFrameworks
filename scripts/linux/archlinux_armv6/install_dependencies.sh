@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $EUID != 0 ]; then
 	echo "this script must be run as root"
@@ -10,7 +10,7 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
-pacman -Sy --needed make pkg-config gcc openal python-lxml glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav raspberrypi-firmware gst-omx-rpi assimp rtaudio
+pacman -Sy --needed make pkg-config gcc openal python-lxml glew freeglut freeimage gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-libav raspberrypi-firmware gst-omx-rpi assimp rtaudio boost
 
 exit_code=$?
 if [ $exit_code != 0 ]; then
