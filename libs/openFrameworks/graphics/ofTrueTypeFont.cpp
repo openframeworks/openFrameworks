@@ -13,6 +13,7 @@
 #include FT_TRIGONOMETRY_H
 
 #include <algorithm>
+#include <numeric>
 
 #include "ofUtils.h"
 #include "ofGraphics.h"
