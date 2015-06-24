@@ -73,6 +73,7 @@ public:
 	static constexpr range BlockElement{0x2580, 0x259F};
 	static constexpr range GeometricShapes{0x25A0, 0x25FF};
 	static constexpr range MiscSymbols{0x2600, 0x26FF};
+	static constexpr range Dingbats{0x2700, 0x27BF};
 	static constexpr range Hiragana{0x3040, 0x309F};
 	static constexpr range Katakana{0x30A0, 0x30FF};
 	static constexpr range HangulCompatJamo{0x3130, 0x318F};
@@ -89,6 +90,9 @@ public:
 	static constexpr range KanaSupplement{0x1B000, 0x1B0FF};
 	static constexpr range RumiNumericalSymbols{0x10E60, 0x10E7F};
 	static constexpr range ArabicMath{0x1EE00, 0x1EEFF};
+	static constexpr range MiscSymbolsAndPictographs{0x1F300, 0x1F5FF};
+	static constexpr range Emoticons{0x1F600, 0x1F64F};
+	static constexpr range TransportAndMap{0x1F680, 0x1F6FF};
 };
 
 
