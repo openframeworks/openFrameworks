@@ -14,7 +14,7 @@ GIT_URL=
 # GIT_URL=https://github.com/assimp/assimp.git
 GIT_TAG=
 
-FORMULA_TYPES=( "osx" "osx-clang-libc++" "ios" "android" "emscripten" )
+FORMULA_TYPES=( "osx" "osx-clang-libc++" "ios" "vs" "android" "emscripten" )
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -252,7 +252,25 @@ function build() {
 		make assimp -j${PARALLEL_MAKE}
 
 	elif [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: vs build"
+		if [ $ARCH == 32 ] ; then
+			mkdir -p build_vs_32
+			cd build_vs_32
+			cmake .. -G "Visual Studio $VS_VER" \
+			-DASSIMP_BUILD_ASSIMP_TOOLS=OFF \
+			-DBUILD_SHARED_LIBS=YES \
+			-DASSIMP_BUILD_TESTS=OFF \
+			-DASSIMP_INSTALL_PDB=OFF 
+			vs-build "Assimp.sln"
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p build_vs_64
+			cd build_vs_64
+			cmake .. -G "Visual Studio $VS_VER Win64" \
+			-DASSIMP_BUILD_ASSIMP_TOOLS=OFF \
+			-DBUILD_SHARED_LIBS=YES \
+			-DASSIMP_BUILD_TESTS=OFF \
+			-DASSIMP_INSTALL_PDB=OFF 
+			vs-build "Assimp.sln" Build "Release|x64"
+		fi
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: win_cb build"
@@ -300,15 +318,28 @@ function build() {
 function copy() {
 
 	# headers
-	mkdir -p $1/include
-    rm -r $1/include/assimp || true
-    rm -r $1/include/* || true
-	cp -Rv include/* $1/include
+	mkdir -p $1/../../addons/ofxAssimpModelLoader/libs/assimp/include
+    rm -r $1/../../addons/ofxAssimpModelLoader/libs/assimp/include/assimp || true
+    rm -r $1/../../addons/ofxAssimpModelLoader/libs/assimp/include/* || true
+	cp -Rv include/* $1/../../addons/ofxAssimpModelLoader/libs/assimp/include
 
 	# libs
 	mkdir -p $1/lib/$TYPE
 	if [ "$TYPE" == "vs" ] ; then
-		cp -Rv lib/libassimp.lib $1/lib/$TYPE/assimp.lib
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/../../addons/ofxAssimpModelLoader/libs/assimp/lib/$TYPE/Win32
+			#copy the cv libs
+			cp -v build_vs_32/code/Release/*.lib $1/../../addons/ofxAssimpModelLoader/libs/assimp/lib/$TYPE/Win32/
+			
+			cp -v build_vs_32/code/Release/*.dll $1/../../export/$TYPE/Win32/
+			
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/../../addons/ofxAssimpModelLoader/libs/assimp/lib/$TYPE/x64
+			#copy the cv libs
+			cp -v build_vs_64/code/Release/*.lib $1/../../addons/ofxAssimpModelLoader/libs/assimp/lib/$TYPE/x64/
+			
+			cp -v build_vs_64/code/Release/*.dll $1/../../export/$TYPE/x64/
+		fi
 	elif [ "$TYPE" == "osx" ] ; then
 		cp -Rv lib/libassimp.a $1/lib/$TYPE/assimp.a
 	elif [ "$TYPE" == "ios" ] ; then
@@ -323,9 +354,9 @@ function copy() {
 	fi
 
     # copy license files
-    rm -rf $1/license # remove any older files if exists
-    mkdir -p $1/license
-    cp -v LICENSE $1/license/
+    rm -rf $1/../../addons/ofxAssimpModelLoader/libs/assimp/license # remove any older files if exists
+    mkdir -p $1/../../addons/ofxAssimpModelLoader/libs/assimp/license
+    cp -v LICENSE $1/../../addons/ofxAssimpModelLoader/libs/assimp/license/
 }
 
 # executed inside the lib src dir
