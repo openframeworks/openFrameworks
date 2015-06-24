@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 echo "inserting gstreamer 1.0 repository"
 rm /etc/apt/sources.list.d/gstreamer.list
 touch /etc/apt/sources.list.d/gstreamer.list
@@ -16,7 +18,7 @@ if [ $exit_code = 0 ]; then
 fi
 
 echo "installing OF dependencies"
-apt-get install libmpg123-dev alsa-base alsa-tools alsa-utils libupnp-dev automake cvs libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libgtk2.0-dev python-lxml python-argparse libfreetype6-dev libassimp-dev portaudio19-dev libssl-dev libpulse-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev
+apt-get install libmpg123-dev alsa-base alsa-tools alsa-utils libupnp-dev automake cvs libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libasound2-dev libxmu-dev libxxf86vm-dev g++ libgl1-mesa-dev libglu1-mesa-dev libraw1394-dev libudev-dev libdrm-dev libglew-dev libopenal-dev libsndfile-dev libfreeimage-dev libcairo2-dev libgtk2.0-dev python-lxml python-argparse libfreetype6-dev libassimp-dev portaudio19-dev libssl-dev libpulse-dev libgtk${GTK_VERSION}-dev  libopencv-dev libassimp-dev librtaudio-dev libboost-filesystem-dev
 exit_code=$?
 if [ $exit_code != 0 ]; then
     echo "error installing dependencies, there could be an error with your internet connection"
