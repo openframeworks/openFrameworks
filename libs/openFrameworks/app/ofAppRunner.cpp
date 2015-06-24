@@ -110,6 +110,11 @@ shared_ptr<ofMainLoop> ofGetMainLoop(){
 }
 
 //--------------------------------------
+void ofSetMainLoop(shared_ptr<ofMainLoop> newMainLoop) {
+	mainLoop() = newMainLoop;
+}
+
+//--------------------------------------
 int ofRunApp(ofBaseApp * OFSA){
 	return ofRunApp(shared_ptr<ofBaseApp>(OFSA));
 }
