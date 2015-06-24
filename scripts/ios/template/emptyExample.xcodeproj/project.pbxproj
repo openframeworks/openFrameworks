@@ -682,6 +682,8 @@
 				<string>libc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
+				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
 				<string>iPhone Developer</string>
 				<key>COMPRESS_PNG_FILES</key>
@@ -735,6 +737,8 @@
 				<key>CLANG_CXX_LIBRARY</key>
 				<string>libc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
+				<string></string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
 				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
 				<string>iPhone Developer</string>
