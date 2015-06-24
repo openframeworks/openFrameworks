@@ -24,26 +24,8 @@
 
 /// \cond INTERNAL
 
-//--------------------------------------------------
-typedef struct {
-	int characterIndex;
-	int glyph;
-	int height;
-	int width;
-	int bearingX, bearingY;
-	int xmin, xmax, ymin, ymax;
-	int advance;
-	float tW,tH;
-	float t1,t2,v1,v2;
-} charProps;
-
 
 typedef ofPath ofTTFCharacter;
-
-//--------------------------------------------------
-#define NUM_CHARACTER_TO_START		32		// 0 - 32 are control characters, no graphics needed.
-
-
 typedef struct FT_FaceRec_*  FT_Face;
 
 /// \endcond
@@ -58,7 +40,72 @@ static const string OF_TTF_MONO = "monospace";
 
 void ofTrueTypeShutdown();
 
+class ofUnicode{
+public:
+	struct range{
+		uint32_t begin;
+		uint32_t end;
 
+		uint32_t getNumGlyphs() const{
+			return end - begin + 1;
+		}
+	};
+
+	static constexpr range Latin{32, 0x007F};
+	static constexpr range Latin1Supplement{32,0x00FF};
+	static constexpr range Greek{0x0370, 0x03FF};
+	static constexpr range Cyrillic{0x0400, 0x04FF};
+	static constexpr range Arabic{0x0600, 0x077F};
+	static constexpr range ArabicSupplement{0x0750, 0x077F};
+	static constexpr range ArabicExtendedA{0x08A0, 0x08FF};
+	static constexpr range HangulJamo{0x1100, 0x11FF};
+	static constexpr range LatinExtendedAdditional{0x1E00, 0x1EFF};
+	static constexpr range GreekExtended{0x1F00, 0x1FFF};
+	static constexpr range GeneralPunctuation{0x2000, 0x206F};
+	static constexpr range SuperAndSubScripts{0x2070, 0x209F};
+	static constexpr range CurrencySymbols{0x20A0, 0x20CF};
+	static constexpr range LetterLikeSymbols{0x2100, 0x214F};
+	static constexpr range NumberForms{0x2150, 0x218F};
+	static constexpr range Arrows{0x2190, 0x21FF};
+	static constexpr range MathOperators{0x2200, 0x22FF};
+	static constexpr range MiscTechnical{0x2300, 0x23FF};
+	static constexpr range BoxDrawing{0x2500, 0x257F};
+	static constexpr range BlockElement{0x2580, 0x259F};
+	static constexpr range GeometricShapes{0x25A0, 0x25FF};
+	static constexpr range MiscSymbols{0x2600, 0x26FF};
+	static constexpr range Hiragana{0x3040, 0x309F};
+	static constexpr range Katakana{0x30A0, 0x30FF};
+	static constexpr range HangulCompatJamo{0x3130, 0x318F};
+	static constexpr range KatakanaPhoneticExtensions{0x31F0, 0x31FF};
+	static constexpr range CJKLettersAndMonths{0x3200, 0x32FF};
+	static constexpr range CJKUnified{0x4E00, 0x9FD5};
+	static constexpr range HangulExtendedA{0xA960, 0xA97F};
+	static constexpr range HangulSyllables{0xAC00, 0xD7AF};
+	static constexpr range HangulExtendedB{0xD7B0, 0xD7FF};
+	static constexpr range AlphabeticPresentationForms{0xFB00, 0xFB4F};
+	static constexpr range ArabicPresFormsA{0xFB50, 0xFDFF};
+	static constexpr range ArabicPresFormsB{0xFE70, 0xFEFF};
+	static constexpr range KatakanaHalfAndFullwidthForms{0xFF00, 0xFFEF};
+	static constexpr range KanaSupplement{0x1B000, 0x1B0FF};
+	static constexpr range RumiNumericalSymbols{0x10E60, 0x10E7F};
+	static constexpr range ArabicMath{0x1EE00, 0x1EEFF};
+};
+
+
+class ofTtfSettings{
+public:
+	ofTtfSettings(const string & name, int size)
+	:fontName(name)
+	,fontSize(size){}
+
+	string fontName;
+	int fontSize;
+	bool antialiased = true;
+	bool contours = false;
+	bool simplifyAmt = 0.3;
+	int dpi = 0;
+	vector<ofUnicode::range> ranges;
+};
 
 class ofTrueTypeFont{
 
@@ -97,6 +144,7 @@ public:
                   bool makeContours=false,
                   float simplifyAmt=0.3,
                   int dpi=0);
+
 	OF_DEPRECATED_MSG("Use load instead",bool loadFont(string filename,
                   int fontsize,
                   bool _bAntiAliased=true,
@@ -105,6 +153,8 @@ public:
                   float simplifyAmt=0.3,
                   int dpi=0));
 	
+	bool load(const ofTtfSettings & settings);
+
 	/// \brief Has the font been loaded successfully?
 	/// \returns true if the font was loaded.
 	bool isLoaded() const;
@@ -259,20 +309,18 @@ public:
 	int	getNumCharacters() const;
 	
 	/// \todo
-	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=true, bool filled=true) const;
+	ofTTFCharacter getCharacterAsPoints(uint32_t character, bool vflip=true, bool filled=true) const;
 	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=true, bool filled=true) const;
 	const ofMesh & getStringMesh(string s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
-
+	ofTexture getStringTexture(string s, bool vflip=true) const;
+	bool isValidGlyph(uint32_t) const;
 	/// \}
-	
+
 protected:
 	/// \cond INTERNAL
 	
 	bool bLoadedOk;
-	bool bAntiAliased;
-	bool bFullCharacterSet;
-	int nCharacters;
 	
 	vector <ofTTFCharacter> charOutlines;
 	vector <ofTTFCharacter> charOutlinesNonVFlipped;
@@ -285,21 +333,40 @@ protected:
 	ofRectangle glyphBBox;
 	float letterSpacing;
 	float spaceSize;
-
-	vector<charProps> cps; // properties for each character
-
-	int fontSize;
-	bool bMakeContours;
-	float simplifyAmt;
-	int dpi;
+	float fontUnitScale;
 
 
-    int getKerning(int c, int prevC) const;
-	void drawChar(int c, float x, float y, bool vFlipped) const;
-	void drawCharAsShape(int c, float x, float y, bool vFlipped, bool filled) const;
+	struct glyphProps{
+		int64_t characterIndex;
+		uint32_t glyph;
+		int height;
+		int width;
+		int bearingX, bearingY;
+		int xmin, xmax, ymin, ymax;
+		int advance;
+		float tW,tH;
+		float t1,t2,v1,v2;
+	};
+
+	struct glyph{
+		glyphProps props;
+		ofPixels pixels;
+	};
+
+	vector<glyphProps> cps; // properties for each character
+
+	ofTtfSettings settings;
+	unordered_map<uint32_t,size_t> glyphIndexMap;
+
+
+    int getKerning(uint32_t c, uint32_t prevC) const;
+	void drawChar(uint32_t c, float x, float y, bool vFlipped) const;
+	void drawCharAsShape(uint32_t c, float x, float y, bool vFlipped, bool filled) const;
 	void createStringMesh(string s, float x, float y, bool vFlipped) const;
-	
-	string filename;
+	glyph loadGlyph(uint32_t utf8) const;
+	const glyphProps & getGlyphProperties(uint32_t glyph) const;
+	void iterateString(const string & str, float x, float y, bool vFlipped, std::function<void(uint32_t, ofVec2f)> f) const;
+	size_t indexForGlyph(uint32_t glyph) const;
 
 	ofTexture texAtlas;
 	mutable ofMesh stringQuads;
@@ -311,13 +378,16 @@ private:
 	friend void ofUnloadAllFontTextures();
 	friend void ofReloadAllFontTextures();
 #endif
-	FT_Face		face;
+	shared_ptr<struct FT_FaceRec_>	face;
+	static const glyphProps invalidProps;
 	void		unloadTextures();
 	void		reloadTextures();
 	static bool	initLibraries();
 	static void finishLibraries();
 
 	friend void ofExitCallback();
+	friend class ofTtfBuilder;
+
 };
 
 
