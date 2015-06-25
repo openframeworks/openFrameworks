@@ -51,52 +51,129 @@ public:
 		}
 	};
 
-	static constexpr range Latin{32, 0x007F};
-	static constexpr range Latin1Supplement{32,0x00FF};
-	static constexpr range Greek{0x0370, 0x03FF};
-	static constexpr range Cyrillic{0x0400, 0x04FF};
-	static constexpr range Arabic{0x0600, 0x077F};
-	static constexpr range ArabicSupplement{0x0750, 0x077F};
-	static constexpr range ArabicExtendedA{0x08A0, 0x08FF};
-	static constexpr range HangulJamo{0x1100, 0x11FF};
-	static constexpr range LatinExtendedAdditional{0x1E00, 0x1EFF};
-	static constexpr range GreekExtended{0x1F00, 0x1FFF};
-	static constexpr range GeneralPunctuation{0x2000, 0x206F};
-	static constexpr range SuperAndSubScripts{0x2070, 0x209F};
-	static constexpr range CurrencySymbols{0x20A0, 0x20CF};
-	static constexpr range LetterLikeSymbols{0x2100, 0x214F};
-	static constexpr range NumberForms{0x2150, 0x218F};
-	static constexpr range Arrows{0x2190, 0x21FF};
-	static constexpr range MathOperators{0x2200, 0x22FF};
-	static constexpr range MiscTechnical{0x2300, 0x23FF};
-	static constexpr range BoxDrawing{0x2500, 0x257F};
-	static constexpr range BlockElement{0x2580, 0x259F};
-	static constexpr range GeometricShapes{0x25A0, 0x25FF};
-	static constexpr range MiscSymbols{0x2600, 0x26FF};
-	static constexpr range Dingbats{0x2700, 0x27BF};
-	static constexpr range Hiragana{0x3040, 0x309F};
-	static constexpr range Katakana{0x30A0, 0x30FF};
-	static constexpr range HangulCompatJamo{0x3130, 0x318F};
-	static constexpr range KatakanaPhoneticExtensions{0x31F0, 0x31FF};
-	static constexpr range CJKLettersAndMonths{0x3200, 0x32FF};
-	static constexpr range CJKUnified{0x4E00, 0x9FD5};
-	static constexpr range HangulExtendedA{0xA960, 0xA97F};
-	static constexpr range HangulSyllables{0xAC00, 0xD7AF};
-	static constexpr range HangulExtendedB{0xD7B0, 0xD7FF};
-	static constexpr range AlphabeticPresentationForms{0xFB00, 0xFB4F};
-	static constexpr range ArabicPresFormsA{0xFB50, 0xFDFF};
-	static constexpr range ArabicPresFormsB{0xFE70, 0xFEFF};
-	static constexpr range KatakanaHalfAndFullwidthForms{0xFF00, 0xFFEF};
-	static constexpr range KanaSupplement{0x1B000, 0x1B0FF};
-	static constexpr range RumiNumericalSymbols{0x10E60, 0x10E7F};
-	static constexpr range ArabicMath{0x1EE00, 0x1EEFF};
-	static constexpr range MiscSymbolsAndPictographs{0x1F300, 0x1F5FF};
-	static constexpr range Emoticons{0x1F600, 0x1F64F};
-	static constexpr range TransportAndMap{0x1F680, 0x1F6FF};
+	static constexpr range Space {32, 32};
+	static constexpr range Latin {32, 0x007F};
+	static constexpr range Latin1Supplement {32,0x00FF};
+	static constexpr range Greek {0x0370, 0x03FF};
+	static constexpr range Cyrillic {0x0400, 0x04FF};
+	static constexpr range Arabic {0x0600, 0x077F};
+	static constexpr range ArabicSupplement {0x0750, 0x077F};
+	static constexpr range ArabicExtendedA {0x08A0, 0x08FF};
+	static constexpr range Devanagari {0x0900, 0x097F};
+	static constexpr range HangulJamo {0x1100, 0x11FF};
+	static constexpr range VedicExtensions {0x1CD0, 0x1CFF};
+	static constexpr range LatinExtendedAdditional {0x1E00, 0x1EFF};
+	static constexpr range GreekExtended {0x1F00, 0x1FFF};
+	static constexpr range GeneralPunctuation {0x2000, 0x206F};
+	static constexpr range SuperAndSubScripts {0x2070, 0x209F};
+	static constexpr range CurrencySymbols {0x20A0, 0x20CF};
+	static constexpr range LetterLikeSymbols {0x2100, 0x214F};
+	static constexpr range NumberForms {0x2150, 0x218F};
+	static constexpr range Arrows {0x2190, 0x21FF};
+	static constexpr range MathOperators {0x2200, 0x22FF};
+	static constexpr range MiscTechnical {0x2300, 0x23FF};
+	static constexpr range BoxDrawing {0x2500, 0x257F};
+	static constexpr range BlockElement {0x2580, 0x259F};
+	static constexpr range GeometricShapes {0x25A0, 0x25FF};
+	static constexpr range MiscSymbols {0x2600, 0x26FF};
+	static constexpr range Dingbats {0x2700, 0x27BF};
+	static constexpr range Hiragana {0x3040, 0x309F};
+	static constexpr range Katakana {0x30A0, 0x30FF};
+	static constexpr range HangulCompatJamo {0x3130, 0x318F};
+	static constexpr range KatakanaPhoneticExtensions {0x31F0, 0x31FF};
+	static constexpr range CJKLettersAndMonths {0x3200, 0x32FF};
+	static constexpr range CJKUnified {0x4E00, 0x9FD5};
+	static constexpr range DevanagariExtended {0xA8E0, 0xA8FF};
+	static constexpr range HangulExtendedA {0xA960, 0xA97F};
+	static constexpr range HangulSyllables {0xAC00, 0xD7AF};
+	static constexpr range HangulExtendedB {0xD7B0, 0xD7FF};
+	static constexpr range AlphabeticPresentationForms {0xFB00, 0xFB4F};
+	static constexpr range ArabicPresFormsA {0xFB50, 0xFDFF};
+	static constexpr range ArabicPresFormsB {0xFE70, 0xFEFF};
+	static constexpr range KatakanaHalfAndFullwidthForms {0xFF00, 0xFFEF};
+	static constexpr range KanaSupplement {0x1B000, 0x1B0FF};
+	static constexpr range RumiNumericalSymbols {0x10E60, 0x10E7F};
+	static constexpr range ArabicMath {0x1EE00, 0x1EEFF};
+	static constexpr range MiscSymbolsAndPictographs {0x1F300, 0x1F5FF};
+	static constexpr range Emoticons {0x1F600, 0x1F64F};
+	static constexpr range TransportAndMap {0x1F680, 0x1F6FF};
+
+};
+
+class ofAlphabet{
+public:
+	static constexpr std::initializer_list<ofUnicode::range> Emoji {
+		ofUnicode::Space,
+		ofUnicode::Hiragana,
+		ofUnicode::Katakana,
+		ofUnicode::KatakanaPhoneticExtensions,
+		ofUnicode::CJKLettersAndMonths,
+		ofUnicode::CJKUnified
+	};
+
+	static constexpr std::initializer_list<ofUnicode::range> Japanese {
+		ofUnicode::Space,
+		ofUnicode::Hiragana,
+		ofUnicode::Katakana,
+		ofUnicode::KatakanaPhoneticExtensions,
+		ofUnicode::CJKLettersAndMonths,
+		ofUnicode::CJKUnified
+	};
+
+	static constexpr std::initializer_list<ofUnicode::range> Chinese {
+		ofUnicode::Space,
+		ofUnicode::CJKLettersAndMonths,
+		ofUnicode::CJKUnified
+	};
+
+	static constexpr std::initializer_list<ofUnicode::range> Korean {
+		ofUnicode::Space,
+		ofUnicode::HangulJamo,
+		ofUnicode::HangulCompatJamo,
+		ofUnicode::HangulExtendedA,
+		ofUnicode::HangulExtendedB,
+		ofUnicode::HangulSyllables
+	};
+
+	static constexpr std::initializer_list<ofUnicode::range> Arabic {
+		ofUnicode::Space,
+		ofUnicode::Arabic,
+		ofUnicode::ArabicExtendedA,
+		ofUnicode::ArabicMath,
+		ofUnicode::ArabicPresFormsA,
+		ofUnicode::ArabicPresFormsB
+	};
+
+	static constexpr std::initializer_list<ofUnicode::range> Devanagari{
+		ofUnicode::Devanagari,
+		ofUnicode::DevanagariExtended,
+		ofUnicode::VedicExtensions
+	};
+
+	static constexpr std::initializer_list<ofUnicode::range> Latin {
+		ofUnicode::Latin1Supplement,
+		ofUnicode::LatinExtendedAdditional
+	};
+
+	static constexpr std::initializer_list<ofUnicode::range> Greek {
+		ofUnicode::Space,
+		ofUnicode::Greek,
+		ofUnicode::GreekExtended
+	};
+
+	static constexpr std::initializer_list<ofUnicode::range> Cyrillic {
+		ofUnicode::Space,
+		ofUnicode::Cyrillic
+	};
 };
 
 
+
+
 class ofTtfSettings{
+	friend class ofTrueTypeFont;
+	vector<ofUnicode::range> ranges;
+
 public:
 	ofTtfSettings(const string & name, int size)
 	:fontName(name)
@@ -108,8 +185,22 @@ public:
 	bool contours = false;
 	bool simplifyAmt = 0.3;
 	int dpi = 0;
-	vector<ofUnicode::range> ranges;
+
+	enum Direction{
+		LeftToRight,
+		RightToLeft
+	};
+	Direction direction = LeftToRight;
+
+	void add(std::initializer_list<ofUnicode::range> alphabet){
+		ranges.insert(ranges.end(), alphabet);
+	}
+
+	void add(const ofUnicode::range & range){
+		ranges.push_back(range);
+	}
 };
+
 
 class ofTrueTypeFont{
 
@@ -321,6 +412,7 @@ public:
 	bool isValidGlyph(uint32_t) const;
 	/// \}
 
+	void setDirection(ofTtfSettings::Direction direction);
 protected:
 	/// \cond INTERNAL
 	
@@ -390,8 +482,5 @@ private:
 	static void finishLibraries();
 
 	friend void ofExitCallback();
-	friend class ofTtfBuilder;
 
 };
-
-
