@@ -222,10 +222,10 @@ void xcodeProject::saveWorkspaceXML(){
 
 void xcodeProject::saveMakefile(){
     string makefile = ofFilePath::join(projectDir,"Makefile");
-    ofFile::copyFromTo(templatePath + "Makefile", makefile);
+    ofFile::copyFromTo(templatePath + "Makefile", makefile, true, true);
 
     string configmake = ofFilePath::join(projectDir,"config.make");
-    ofFile::copyFromTo(templatePath + "config.make", configmake);
+    ofFile::copyFromTo(templatePath + "config.make", configmake, true, true);
 }
 
 

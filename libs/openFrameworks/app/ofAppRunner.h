@@ -18,6 +18,7 @@ void ofInit();
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode);	// sets up the opengl context!
 shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings);	// sets up the opengl context!
 shared_ptr<ofMainLoop> ofGetMainLoop();
+void ofSetMainLoop(shared_ptr<ofMainLoop> mainLoop);
 
 template<typename Window>
 void ofSetupOpenGL(shared_ptr<Window> windowPtr, int w, int h, ofWindowMode screenMode){
