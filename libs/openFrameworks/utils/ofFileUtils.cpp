@@ -879,27 +879,6 @@ bool ofFile::removeFile(string path, bool bRelativeToData){
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
-
-//----------------------------------------
-// Simple example of a boolean function that can be used
-// with ofRemove to remove items from vectors.
-bool hiddenFile(ofFile file){
-	return file.isHidden();
-}
-
-//----------------------------------------
-// Advanced example of a class that has a boolean function
-// that can be used with ofRemove to remove items from vectors.
-class ExtensionComparator : public unary_function<ofFile, bool> {
-	public:
-		vector<string> * extensions;
-		inline bool operator()(const ofFile & file){
-			std::filesystem::path curPath(file.path());
-			string curExtension = ofToLower(curPath.extension().string());
-			return !ofContains(*extensions, curExtension);
-		}
-};
-
 //------------------------------------------------------------------------------------------------------------
 ofDirectory::ofDirectory(){
 	showHidden = false;
@@ -1125,13 +1104,15 @@ int ofDirectory::listDir(){
 	}
 
 	if(!showHidden){
-		ofRemove(files, hiddenFile);
+		ofRemove(files, [](ofFile & file){
+			return file.isHidden();
+		});
 	}
 
 	if(!extensions.empty() && !ofContains(extensions, (string)"*")){
-		ExtensionComparator extensionFilter;
-		extensionFilter.extensions = &extensions;
-		ofRemove(files, extensionFilter);
+		ofRemove(files, [&](ofFile & file){
+			return std::find(extensions.begin(), extensions.end(), ofToLower(file.getExtension())) == extensions.end();
+		});
 	}
 
 	if(ofGetLogLevel() == OF_LOG_VERBOSE){
