@@ -186,6 +186,8 @@ public:
 	/// copied doesn't fit into the destination then the image is cropped.
 	bool pasteInto(ofPixels_<PixelType> &dst, int x, int y) const;
 
+	bool blendInto(ofPixels_<PixelType> &dst, int x, int y) const;
+
 	/// \brief Swaps the R and B channels of an
 	/// image, leaving the G and A channels as is.
 	void swapRgb();
