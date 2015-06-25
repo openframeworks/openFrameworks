@@ -863,13 +863,8 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 	int	xmin, ymin, xmax, ymax;
 	float t1, v1, t2, v2;
 	auto props = getGlyphProperties(c);
-	if(settings.direction == ofTtfSettings::RightToLeft){
-		t1		= props.t1;
-		t2		= props.t2;
-	}else{
-		t1		= props.t2;
-		t2		= props.t1;
-	}
+	t1		= props.t1;
+	t2		= props.t2;
 	v2		= props.v2;
 	v1		= props.v1;
 
