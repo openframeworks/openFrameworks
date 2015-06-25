@@ -27,7 +27,9 @@ constexpr ofUnicode::range ofUnicode::Cyrillic;
 constexpr ofUnicode::range ofUnicode::Arabic;
 constexpr ofUnicode::range ofUnicode::ArabicSupplement;
 constexpr ofUnicode::range ofUnicode::ArabicExtendedA;
+constexpr ofUnicode::range ofUnicode::Devanagari;
 constexpr ofUnicode::range ofUnicode::HangulJamo;
+constexpr ofUnicode::range ofUnicode::VedicExtensions;
 constexpr ofUnicode::range ofUnicode::LatinExtendedAdditional;
 constexpr ofUnicode::range ofUnicode::GreekExtended;
 constexpr ofUnicode::range ofUnicode::GeneralPunctuation;
@@ -42,12 +44,14 @@ constexpr ofUnicode::range ofUnicode::BoxDrawing;
 constexpr ofUnicode::range ofUnicode::BlockElement;
 constexpr ofUnicode::range ofUnicode::GeometricShapes;
 constexpr ofUnicode::range ofUnicode::MiscSymbols;
+constexpr ofUnicode::range ofUnicode::Dingbats;
 constexpr ofUnicode::range ofUnicode::Hiragana;
 constexpr ofUnicode::range ofUnicode::Katakana;
 constexpr ofUnicode::range ofUnicode::HangulCompatJamo;
 constexpr ofUnicode::range ofUnicode::KatakanaPhoneticExtensions;
 constexpr ofUnicode::range ofUnicode::CJKLettersAndMonths;
 constexpr ofUnicode::range ofUnicode::CJKUnified;
+constexpr ofUnicode::range ofUnicode::DevanagariExtended;
 constexpr ofUnicode::range ofUnicode::HangulExtendedA;
 constexpr ofUnicode::range ofUnicode::HangulSyllables;
 constexpr ofUnicode::range ofUnicode::HangulExtendedB;
@@ -58,6 +62,19 @@ constexpr ofUnicode::range ofUnicode::KatakanaHalfAndFullwidthForms;
 constexpr ofUnicode::range ofUnicode::KanaSupplement;
 constexpr ofUnicode::range ofUnicode::RumiNumericalSymbols;
 constexpr ofUnicode::range ofUnicode::ArabicMath;
+constexpr ofUnicode::range ofUnicode::MiscSymbolsAndPictographs;
+constexpr ofUnicode::range ofUnicode::Emoticons;
+constexpr ofUnicode::range ofUnicode::TransportAndMap;
+constexpr ofUnicode::range ofUnicode::Space;
+
+constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Emoji;
+constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Japanese;
+constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Chinese;
+constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Korean;
+constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Arabic;
+constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Latin;
+constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Greek;
+constexpr std::initializer_list<ofUnicode::range> ofAlphabet::Cyrillic;
 
 const ofTrueTypeFont::glyphProps ofTrueTypeFont::invalidProps{
 	-1,
@@ -492,7 +509,7 @@ ofTrueTypeFont::glyph ofTrueTypeFont::loadGlyph(uint32_t utf8) const{
 		return aGlyph;
 	}
 
-	if (settings.antialiased == true) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+	if (settings.antialiased) FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
 	else FT_Render_Glyph(face->glyph, FT_RENDER_MODE_MONO);
 
 
@@ -846,9 +863,14 @@ void ofTrueTypeFont::drawChar(uint32_t c, float x, float y, bool vFlipped) const
 	int	xmin, ymin, xmax, ymax;
 	float t1, v1, t2, v2;
 	auto props = getGlyphProperties(c);
-	t2		= props.t2;
+	if(settings.direction == ofTtfSettings::RightToLeft){
+		t1		= props.t1;
+		t2		= props.t2;
+	}else{
+		t1		= props.t2;
+		t2		= props.t1;
+	}
 	v2		= props.v2;
-	t1		= props.t1;
 	v1		= props.v1;
 
 	xmin		= props.xmin+x;
@@ -906,6 +928,8 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 		newLineDirection = -1;
 	}
 
+	int directionX = settings.direction == ofTtfSettings::LeftToRight?1:-1;
+
 	string str_valid;
 	utf8::replace_invalid(str.begin(),str.end(),back_inserter(str_valid));
 	utf8::iterator<const char*> it(&str_valid.front(), &str_valid.front(), (&str_valid.back())+1);
@@ -919,15 +943,15 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 				pos.x = x ; //reset X Pos back to zero
 				prevC = 0;
 			}if (c == '\t') {
-				pos.x += getGlyphProperties(' ').advance * letterSpacing * 4;
+				pos.x += getGlyphProperties(' ').advance * letterSpacing * 4 * directionX;
 				prevC = c;
 			} else if(isValidGlyph(c)) {
 				const auto & props = getGlyphProperties(c);
 				if(prevC>0){
-					pos.x += getKerning(c,prevC);
+					pos.x += getKerning(c,prevC) * directionX;
 				}
 				f(c,pos);
-				pos.x += props.advance * letterSpacing;
+				pos.x += props.advance * letterSpacing * directionX;
 				prevC = c;
 			}
 			++it;
@@ -935,6 +959,11 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 			break;
 		}
 	}
+}
+
+//-----------------------------------------------------------
+void ofTrueTypeFont::setDirection(ofTtfSettings::Direction direction){
+	settings.direction = direction;
 }
 
 //-----------------------------------------------------------
@@ -1056,11 +1085,13 @@ ofTexture ofTrueTypeFont::getStringTexture(string str, bool vflip) const{string 
 				x = 0 ; //reset X Pos back to zero
 				prevC = 0;
 			} else {
+				glyphs.push_back(loadGlyph(c));
 				if(prevC>0){
 					x += getKerning(c,prevC);
+				}else if(settings.direction == ofTtfSettings::RightToLeft){
+					x += glyphs.back().props.width;
 				}
 				glyphPositions.emplace_back(x,y);
-				glyphs.push_back(loadGlyph(c));
 				x += glyphs.back().props.advance * letterSpacing;
 			}
 			++it;
@@ -1078,7 +1109,11 @@ ofTexture ofTrueTypeFont::getStringTexture(string str, bool vflip) const{string 
 	totalPixels.set(1,0);
 	int i = 0;
 	for(auto & g: glyphs){
-		g.pixels.pasteInto(totalPixels, glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
+		if(settings.direction == ofTtfSettings::LeftToRight){
+			g.pixels.pasteInto(totalPixels, glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
+		}else{
+			g.pixels.pasteInto(totalPixels, x-glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
+		}
 		i++;
 	}
 	tex.allocate(totalPixels);
