@@ -37,7 +37,7 @@ void ofApp::draw(){
 
 
 	//---------------------------------- synth:
-	if (synth.getIsPlaying()) ofSetHexColor(0xFF0000);
+	if (synth.isPlaying()) ofSetHexColor(0xFF0000);
 	else ofSetHexColor(0x000000);
 	font.drawString("synth !!", 50,50);
 
@@ -48,7 +48,7 @@ void ofApp::draw(){
 
 
 	//---------------------------------- beats:
-	if (beats.getIsPlaying()) ofSetHexColor(0xFF0000);
+	if (beats.isPlaying()) ofSetHexColor(0xFF0000);
 	else ofSetHexColor(0x000000);
 	font.drawString("beats !!", widthDiv+50,50);
 
@@ -57,7 +57,7 @@ void ofApp::draw(){
 	ofDrawBitmapString(tempStr, widthDiv+50,ofGetHeight()-50);
 
 	//---------------------------------- vocals:
-	if (vocals.getIsPlaying()) ofSetHexColor(0xFF0000);
+	if (vocals.isPlaying()) ofSetHexColor(0xFF0000);
 	else ofSetHexColor(0x000000);
 	font.drawString("vocals !!", widthDiv*2+50,50);
 
