@@ -15,9 +15,29 @@ texture3DS::texture3DS(string filename, const int textureId){
 		ofLogError("texture3DS") << "couldn't open " << filename;
     }
 
-    m_width     = img.width;
-    m_height    = img.height;
-    m_bpp       = img.bpp;
+    m_width     = img.getWidth();
+    m_height    = img.getHeight();
+    switch( img.getImageType() ){
+        case OF_IMAGE_UNDEFINED:
+            m_bpp = 0;
+            break;
+            
+        case OF_IMAGE_GRAYSCALE:
+            m_bpp = 8;
+            break;
+            
+        case OF_IMAGE_COLOR:
+            m_bpp = 24;
+            break;
+            
+        case OF_IMAGE_COLOR_ALPHA:
+            m_bpp = 32;
+            break;
+            
+        default:
+            m_bpp = 0;
+            break;
+    }
 
     if( m_width <= 0 || m_height <= 0){
 		ofLogError("texture3DS") << "dimensions less than 0 \"" << filename << "\": " << m_width << "x" << m_height;
