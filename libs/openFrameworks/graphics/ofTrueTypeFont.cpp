@@ -943,7 +943,7 @@ void ofTrueTypeFont::iterateString(const string & str, float x, float y, bool vF
 			} else if(isValidGlyph(c)) {
 				const auto & props = getGlyphProperties(c);
 				if(prevC>0){
-					pos.x += getKerning(c,prevC) * directionX;
+					pos.x += getKerning(c,prevC);// * directionX;
 				}
 				f(c,pos);
 				pos.x += props.advance * letterSpacing * directionX;
@@ -1063,15 +1063,17 @@ const ofTexture & ofTrueTypeFont::getFontTexture() const{
 }
 
 //-----------------------------------------------------------
-ofTexture ofTrueTypeFont::getStringTexture(string str, bool vflip) const{string str_valid;
+ofTexture ofTrueTypeFont::getStringTexture(string str, bool vflip) const{
+    string str_valid;
 	utf8::replace_invalid(str.begin(),str.end(),back_inserter(str_valid));
+	vector<glyph> glyphs;
+	vector<ofVec2f> glyphPositions;
 	utf8::iterator<const char*> it(&str_valid.front(), &str_valid.front(), (&str_valid.back())+1);
 	utf8::iterator<const char*> end((&str_valid.back())+1, &str_valid.front(), (&str_valid.back())+1);
 	int	x = 0;
 	int	y = 0;
+	int height = 0;
 	uint32_t prevC = 0;
-	vector<glyph> glyphs;
-	vector<ofVec2f> glyphPositions;
 	while(it != end){
 		try{
 			auto c = *it;
@@ -1088,6 +1090,7 @@ ofTexture ofTrueTypeFont::getStringTexture(string str, bool vflip) const{string 
 				}
 				glyphPositions.emplace_back(x,y);
 				x += glyphs.back().props.advance * letterSpacing;
+				height = max(height,glyphs.back().props.ymax + y + (int)getLineHeight());
 			}
 			++it;
 			prevC = c;
@@ -1095,21 +1098,23 @@ ofTexture ofTrueTypeFont::getStringTexture(string str, bool vflip) const{string 
 			break;
 		}
 	}
-
 	ofTexture tex;
 	ofPixels totalPixels;
-	totalPixels.allocate(x, y+getLineHeight(), OF_PIXELS_GRAY_ALPHA);
+	totalPixels.allocate(x, height, OF_PIXELS_GRAY_ALPHA);
 	//-------------------------------- clear data:
 	totalPixels.set(0,255); // every luminance pixel = 255
 	totalPixels.set(1,0);
-	int i = 0;
+	size_t i = 0;
 	for(auto & g: glyphs){
 		if(settings.direction == ofTtfSettings::LeftToRight){
-			g.pixels.pasteInto(totalPixels, glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
+			g.pixels.blendInto(totalPixels, glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
 		}else{
-			g.pixels.pasteInto(totalPixels, x-glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
+			g.pixels.blendInto(totalPixels, x-glyphPositions[i].x, glyphPositions[i].y + getLineHeight() + g.props.ymin + getDescenderHeight() );
 		}
 		i++;
+		if(i==glyphPositions.size()){
+			break;
+		}
 	}
 	tex.allocate(totalPixels);
 	return tex;
