@@ -27,7 +27,7 @@ class ofApp : public ofBaseApp{
 		double pulsePhase;
 		double sampleRate;
 	
-		ofMutex audioMutex;
+		mutex audioMutex;
 		ofSoundBuffer lastBuffer;
 		ofPolyline waveform;
 		float rms;
