@@ -108,10 +108,10 @@ public:
         ofDrawBitmapString(ss.str(), 50, 56);
     }
 
-    // Use ofScopedLock to protect a copy of count while getting a copy.
+    // Use unique_lock to protect a copy of count while getting a copy.
     int getCount()
     {
-        ofScopedLock lock(mutex);
+        std::unique_lock<std::mutex> lock(mutex);
         return count;
     }
 
