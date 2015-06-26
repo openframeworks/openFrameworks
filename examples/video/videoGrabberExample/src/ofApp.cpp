@@ -9,11 +9,11 @@ void ofApp::setup(){
     vector<ofVideoDevice> devices = vidGrabber.listDevices();
 
     for(int i = 0; i < devices.size(); i++){
-        cout << devices[i].id << ": " << devices[i].deviceName;
+        ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
         if(devices[i].bAvailable){
-            cout << endl;
+            ofLogNotice() << endl;
         }else{
-            cout << " - unavailable " << endl;
+            ofLogNotice() << " - unavailable " << endl;
         }
     }
 
