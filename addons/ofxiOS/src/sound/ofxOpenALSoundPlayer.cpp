@@ -30,8 +30,8 @@ UInt32	numSounds;
 bool	mp3Loaded;
 
 
-static ofMutex& soundPlayerLock() {
-    static ofMutex* m = new ofMutex;
+static std::mutex& soundPlayerLock() {
+  static std::mutex* m = new std::mutex;
     return *m;
 }
 
