@@ -1249,7 +1249,7 @@ GstFlowReturn ofGstVideoUtils::process_sample(shared_ptr<GstSample> sample){
 			bufferQueue.push(sample);
 			gst_buffer_unmap(_buffer, &mapinfo);
 			bool newTexture=false;
-			ofScopedLock lock(mutex);
+			std::unique_lock<std::mutex> lock(mutex);
 			while(bufferQueue.size()>2){
 				backBuffer = bufferQueue.front();
 				bufferQueue.pop();
