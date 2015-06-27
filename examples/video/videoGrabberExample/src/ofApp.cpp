@@ -19,7 +19,7 @@ void ofApp::setup(){
 
     vidGrabber.setDeviceID(0);
     vidGrabber.setDesiredFrameRate(60);
-    vidGrabber.setup(camWidth, camHeight);
+    vidGrabber.initGrabber(camWidth, camHeight);
 
     videoInverted.allocate(camWidth, camHeight, OF_PIXELS_RGB);
     videoTexture.allocate(videoInverted);
