@@ -37,6 +37,7 @@ class ofxCvContourFinder : public ofBaseDraws {
                                // of the contour, if the contour runs
                                // along a straight line, for example...
 
+    using ofBaseDraws::draw;
     virtual void  draw() const { draw(0,0, _width, _height); };
     virtual void  draw( float x, float y ) const { draw(x,y, _width, _height); };
     virtual void  draw( float x, float y, float w, float h ) const;
