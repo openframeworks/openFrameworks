@@ -44,6 +44,7 @@ class ofxCvContourFinder : public ofBaseDraws {
 	virtual void  draw(const ofPoint & point) const;
 	virtual void  draw(const ofRectangle & rect) const;
 	virtual void setAnchorPercent(float xPct, float yPct);
+    using ofBaseDraws::setAnchorPoint;
     virtual void setAnchorPoint(int x, int y);
 	virtual void resetAnchor();      
     //virtual ofxCvBlob  getBlob(int num);
