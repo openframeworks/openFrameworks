@@ -33,12 +33,12 @@ function build() {
 	mkdir -p _build
 	pwd
 	if [ "$TYPE" == "wincb" ] ; then
-	    git apply ../../formulas/uri/uri-remove-tests.patch
+	    git apply $FORMULA_DIR/uri-remove-tests.patch
 	    cd _build
 		#noop by now
 		
 	elif [ "$TYPE" == "vs" ] ; then
-	    git apply ../../formulas/uri/uri-remove-tests.patch
+	    git apply $FORMULA_DIR/uri-remove-tests.patch
 	    mkdir -p build_vs$ARCH
 		cd build_vs$ARCH
 		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
@@ -54,8 +54,8 @@ function build() {
 		fi
 	
 	elif [ "$TYPE" == "osx" ]; then
-	    git apply ../../formulas/uri/uri-remove-tests.patch
-	    git apply ../../formulas/uri/uri_xcode_fix.patch
+	    git apply $FORMULA_DIR/uri-remove-tests.patch
+	    git apply $FORMULA_DIR/uri_xcode_fix.patch
 	    cd _build
 		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
 		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
@@ -66,8 +66,8 @@ function build() {
 		make -j${PARALLEL_MAKE}
 	
 	elif [ "$TYPE" == "ios" ]; then
-        git apply ../../formulas/uri/uri-remove-tests.patch
-        git apply ../../formulas/uri/uri_xcode_fix.patch
+        git apply $FORMULA_DIR/uri-remove-tests.patch
+        git apply $FORMULA_DIR/uri_xcode_fix.patch
         export TOOLCHAIN=$XCODE_DEV_ROOT/Toolchains/XcodeDefault.xctoolchain
         export TARGET_IOS
         
@@ -149,8 +149,14 @@ function build() {
             export RANLIB=$TOOLCHAIN/usr/bin/ranlib
             export LIBTOOL=$TOOLCHAIN/usr/bin/libtool
 
-            export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
-            export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
+            export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/lib/ios
+            export BOOST_INCLUDEDIR=${BUILD_DIR}/boost
+            export Boost_DIR=${BUILD_DIR}/boost
+            export Boost_FILESYSTEM_LIBRARY_DEBUG=${BOOST_LIBRARYDIR}/boost_filesystem.a
+            export Boost_FILESYSTEM_LIBRARY_RELEASE=${Boost_FILESYSTEM_LIBRARY_DEBUG}
+            export Boost_LIBRARY_DIR=${BOOST_LIBRARYDIR}
+            export Boost_SYSTEM_LIBRARY_DEBUG=${BOOST_LIBRARYDIR}/boost_system.a
+            export Boost_SYSTEM_LIBRARY_RELEASE=${BOOST_LIBRARYDIR}/boost_system.a
 
 
             export EXTRA_PLATFORM_CFLAGS="$EXTRA_PLATFORM_CFLAGS"
@@ -174,13 +180,18 @@ function build() {
             echo "Running make for ${IOS_ARCH}"
             echo "Please stand by..."
 
-            
             cd "_build"
-            export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
-            export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
             cmake -DCMAKE_BUILD_TYPE=MINSIZEREL \
                   -DCMAKE_C_FLAGS="$CFLAGS" \
-                  -DCMAKE_CXX_FLAGS="$CXXFLAGS" \
+                  -DCMAKE_CXX_FLAGS="-I${BOOST_INCLUDEDIR} $CXXFLAGS" \
+                  -DBOOST_LIBRARYDIR="${BOOST_LIBRARYDIR}" \
+                  -DBoost_INCLUDE_DIR="${BOOST_INCLUDEDIR}" \
+                  -DBoost_DIR="${Boost_DIR}" \
+                  -DBoost_FILESYSTEM_LIBRARY_DEBUG="${Boost_FILESYSTEM_LIBRARY_DEBUG}" \
+                  -DBoost_FILESYSTEM_LIBRARY_RELEASE="${Boost_FILESYSTEM_LIBRARY_RELEASE}" \
+                  -DBoost_LIBRARY_DIR="${Boost_LIBRARY_DIR}" \
+                  -DBoost_SYSTEM_LIBRARY_DEBUG="${Boost_SYSTEM_LIBRARY_DEBUG}" \
+                  -DBoost_SYSTEM_LIBRARY_RELEASE="${Boost_SYSTEM_LIBRARY_RELEASE}" \
                   ..
             make -j${PARALLEL_MAKE}
             # Copy compiled type lib to common store so we can fat lib at the end.
@@ -216,14 +227,14 @@ function build() {
     elif [ "$TYPE" == "emscripten" ]; then
 		export BOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib
 		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
-	    git apply ../../formulas/uri/uri-emscripten.patch
+	    git apply $FORMULA_DIR/uri-emscripten.patch
 	    cd _build
     	pwd
 		emcmake cmake .. -DCMAKE_CXX_FLAGS=-I${BOOST_INCLUDEDIR} -DCMAKE_BUILD_TYPE=Release -DBOOST_LIBRARYDIR=${BUILD_DIR}/boost/stage/lib -DBoost_INCLUDE_DIR=${BUILD_DIR}/boost
 		emmake make -j${PARALLEL_MAKE}
 	
 	elif [ "$TYPE" == "android" ]; then
-	    git apply ../../formulas/uri/uri-remove-tests.patch
+	    git apply $FORMULA_DIR/uri-remove-tests.patch
 		export BOOST_INCLUDEDIR=${BUILD_DIR}/boost/
 	    
 	    ABI=armeabi-v7a

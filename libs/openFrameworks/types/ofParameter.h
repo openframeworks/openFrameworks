@@ -345,6 +345,15 @@ public:
 	shared_ptr<ofAbstractParameter> newReference() const;
 
 	void setParent(ofParameterGroup & _parent);
+
+	const ofParameterGroup getFirstParent() const{
+		auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](weak_ptr<ofParameterGroup::Value> p){return p.lock()!=nullptr;});
+		if(first!=obj->parents.end()){
+			return first->lock();
+		}else{
+			return shared_ptr<ofParameterGroup::Value>(nullptr);
+		}
+	}
 private:
 	class Value{
 	public:
@@ -390,16 +399,6 @@ private:
 
 	void eventsSetValue(ParameterType v);
 	void noEventsSetValue(ParameterType v);
-
-	const ofParameterGroup getFirstParent() const{
-		auto first = std::find_if(obj->parents.begin(),obj->parents.end(),[](weak_ptr<ofParameterGroup::Value> p){return p.lock()!=nullptr;});
-		if(first!=obj->parents.end()){
-			return first->lock();
-		}else{
-			return shared_ptr<ofParameterGroup::Value>(nullptr);
-		}
-	}
-
 };
 
 
@@ -723,6 +722,7 @@ protected:
 	void enableEvents();
 	void disableEvents();
 	bool isSerializable() const;
+	void setSerializable(bool s);
 
 	void makeReferenceTo(ofReadOnlyParameter<ParameterType,Friend> mom);
 	void makeReferenceTo(ofParameter<ParameterType> mom);
@@ -772,7 +772,7 @@ protected:
 	void setParent(ofParameterGroup & _parent);
 
 	const ofParameterGroup getFirstParent() const{
-		return parameter.getFirstParameter();
+		return parameter.getFirstParent();
 	}
 
 
@@ -876,6 +876,10 @@ inline bool ofReadOnlyParameter<ParameterType,Friend>::isSerializable() const{
 	return parameter.isSerializable();
 }
 
+template<typename ParameterType,typename Friend>
+inline void ofReadOnlyParameter<ParameterType,Friend>::setSerializable(bool s){
+	parameter.setSerializable(s);
+}
 
 template<typename ParameterType,typename Friend>
 inline void ofReadOnlyParameter<ParameterType,Friend>::makeReferenceTo(ofReadOnlyParameter<ParameterType,Friend> mom){

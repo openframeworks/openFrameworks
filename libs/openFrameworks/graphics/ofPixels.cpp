@@ -1308,7 +1308,7 @@ bool ofPixels_<PixelType>::resizeTo(ofPixels_<PixelType>& dst, ofInterpolationMe
 //----------------------------------------------------------------------
 template<typename PixelType>
 bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo) const{
-	if (!(isAllocated()) || !(dst.isAllocated()) || getBytesPerPixel() != dst.getBytesPerPixel() || xTo>=dst.getWidth() || yTo>=dst.getHeight()) return false;
+	if (!(isAllocated()) || !(dst.isAllocated()) || getBytesPerPixel() != dst.getBytesPerPixel() || xTo + getWidth()>dst.getWidth() || yTo + getHeight()>dst.getHeight()) return false;
 
 	int bytesToCopyPerRow = (xTo + getWidth()<=dst.getWidth() ? getWidth() : dst.getWidth()-xTo) * getBytesPerPixel();
 	int columnsToCopy = yTo + getHeight() <= dst.getHeight() ? getHeight() : dst.getHeight()-yTo;
@@ -1321,6 +1321,60 @@ bool ofPixels_<PixelType>::pasteInto(ofPixels_<PixelType> &dst, int xTo, int yTo
 		memcpy(dstPix,srcPix,bytesToCopyPerRow);
 		dstPix += dstStride;
 		srcPix += srcStride;
+	}
+
+	return true;
+}
+
+
+template<typename A, typename B>
+inline A clampedAdd(const A& a, const B& b) {
+	return CLAMP((float) a + (float) b, 0, ofColor_<A>::limit());
+}
+
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+bool ofPixels_<PixelType>::blendInto(ofPixels_<PixelType> &dst, int xTo, int yTo) const{
+	if (!(isAllocated()) || !(dst.isAllocated()) || getBytesPerPixel() != dst.getBytesPerPixel() || xTo + getWidth()>dst.getWidth() || yTo + getHeight()>dst.getHeight() || getNumChannels()==0) return false;
+
+	std::function<void(const ConstPixel&,Pixel&)> blendFunc;
+	switch(getNumChannels()){
+	case 1:
+		blendFunc = [](const ConstPixel&src, Pixel&dst){
+			dst[0] = clampedAdd(src[0], dst[0]);
+		};
+		break;
+	case 2:
+		blendFunc = [](const ConstPixel&src, Pixel&dst){
+			dst[0] = clampedAdd(src[0], dst[0] / ofColor_<PixelType>::limit() * (ofColor_<PixelType>::limit() - src[1]));
+			dst[1] = clampedAdd(src[1], dst[1] / ofColor_<PixelType>::limit() * (ofColor_<PixelType>::limit() - src[1]));
+		};
+		break;
+	case 3:
+		blendFunc = [](const ConstPixel&src, Pixel&dst){
+			dst[0] = clampedAdd(src[0], dst[0]);
+			dst[1] = clampedAdd(src[1], dst[1]);
+			dst[2] = clampedAdd(src[2], dst[2]);
+		};
+		break;
+	case 4:
+		blendFunc = [](const ConstPixel&src, Pixel&dst){
+			dst[0] = clampedAdd(src[0], dst[0] / ofColor_<PixelType>::limit() * (ofColor_<PixelType>::limit() - src[3]));
+			dst[1] = clampedAdd(src[1], dst[1] / ofColor_<PixelType>::limit() * (ofColor_<PixelType>::limit() - src[3]));
+			dst[2] = clampedAdd(src[2], dst[2] / ofColor_<PixelType>::limit() * (ofColor_<PixelType>::limit() - src[3]));
+			dst[3] = clampedAdd(src[3], dst[3] / ofColor_<PixelType>::limit() * (ofColor_<PixelType>::limit() - src[3]));
+		};
+		break;
+	}
+	auto dstLine = dst.getLine(yTo);
+	for(auto line: getConstLines()){
+		auto dstPixel = dstLine.getPixels().begin() + xTo;
+		for(auto p: line.getPixels()){
+			blendFunc(p,dstPixel);
+			dstPixel++;
+		}
+		dstLine++;
 	}
 
 	return true;

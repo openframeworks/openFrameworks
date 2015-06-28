@@ -6,7 +6,16 @@
 #include <numeric>
 #include <locale>
 #include "utf8.h"
+
+#if defined(TARGET_OF_IOS)
+#include "Poco/String.h"
+#include "Poco/UTF8String.h"
+#include "Poco/LocalDateTime.h"
+#include "Poco/DateTimeFormatter.h"
+#include "Poco/URI.h"
+#else
 #include <network/uri.hpp>
+#endif
 
 
 #ifdef TARGET_WIN32
@@ -738,8 +747,32 @@ string ofVAArgsToString(const char * format, va_list args){
 
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
+	
+	
+#if defined(TARGET_OF_IOS)
+	Poco::URI uri;
+	try {
+		uri = Poco::URI(url);
+	} catch(const Poco::SyntaxException& exc) {
+		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.displayText();
+		return;
+	}
+	
+	if(uriEncodeQuery) {
+		uri.setQuery(uri.getRawQuery()); // URI encodes during set
+	}
+	
+	// http://support.microsoft.com/kb/224816
+	// make sure it is a properly formatted url:
+	//   some platforms, like Android, require urls to start with lower-case http/https
+	//   Poco::URI automatically converts the scheme to lower case
+	if(uri.getScheme() != "http" && uri.getScheme() != "https"){
+		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.toString() << "\"";
+		return;
+	}
+#else
     network::uri uri;
-    
+	
     try {
         if(uriEncodeQuery) {
         	auto pos_q = url.find("?");
@@ -769,6 +802,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.string() << "\"";
 		return;
 	}
+#endif
 
 	#ifdef TARGET_WIN32
 		#if (_MSC_VER)
