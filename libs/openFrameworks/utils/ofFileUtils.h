@@ -220,7 +220,11 @@ public:
 	// write_file << file.getFileBuffer();
 	filebuf * getFileBuffer() const;
 	
+	operator std::filesystem::path(){
+		return myFile;
+	}
 	
+
 	//-------
 	//static helpers
 	//-------
@@ -305,6 +309,9 @@ public:
 	bool operator>(const ofDirectory & dir);
 	bool operator>=(const ofDirectory & dir);
 
+	operator std::filesystem::path(){
+		return myDir;
+	}
 
 	//-------
 	//static helpers
