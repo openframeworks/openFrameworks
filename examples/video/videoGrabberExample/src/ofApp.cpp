@@ -9,10 +9,10 @@ void ofApp::setup(){
     vector<ofVideoDevice> devices = vidGrabber.listDevices();
 
     for(int i = 0; i < devices.size(); i++){
-        if(cams[i].bAvailable){
-	    ofLogNotice() << cams[i].id << ": " << cams[i].deviceName;
+        if(devices[i].bAvailable){
+            ofLogNotice() << devices[i].id << ": " << devices[i].deviceName;
         }else{
-	    ofLogNotice() << cams[i].id << ": " << cams[i].deviceName << " - unavailable ";
+            ofLogNotice() << devices[i].id << ": " << devices[i].deviceName << " - unavailable ";
         }
     }
 
