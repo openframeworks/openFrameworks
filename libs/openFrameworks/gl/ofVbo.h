@@ -133,10 +133,6 @@ public:
 	int getNumVertices() const;
 	int getNumIndices() const;
 	
-
-	static void disableVAOs();
-	static void enableVAOs();
-
 	bool hasAttribute(int attributePos_) const;
 
 private:
