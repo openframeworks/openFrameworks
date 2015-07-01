@@ -134,7 +134,7 @@ void ofApp::keyPressed(int key){
 			typeStr.clear();
 			bFirst = false;
 		}
-		typeStr.append(1, (char)key);
+		ofAppendUTF8(typeStr,key);
 	}
 }
 
