@@ -11,7 +11,7 @@ Examples of unacceptable behavior includes the use of sexual language or imagery
 * Attempt collaboration before conflict.
 * Be mindful of other community members.
 
-Alert any one of the core members ([Zach](https://github.com/ofZach), [Theo](https://github.com/ofTheo), [Arturo](https://github.com/arturoc)) or the community organizer ([Kyle](https://github.com/kylemcdonald)) if you notice a dangerous situation, someone in distress, or violations of this Code of Conduct, even if they seem inconsequential.
+Alert [the core](of@openframeworks.cc) if you notice a dangerous situation, someone in distress, or violations of this Code of Conduct, even if they seem inconsequential.
 
 Project maintainers have the right and responsibility to remove, edit, or reject comments, commits, code, wiki edits, issues, and other contributions that are not aligned to this Code of Conduct. Contributors who do not follow the Code of Conduct will be removed from the project team.
 
