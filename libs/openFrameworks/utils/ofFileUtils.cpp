@@ -548,7 +548,7 @@ string ofFile::getFileName() const {
 
 //------------------------------------------------------------------------------------------------------------
 string ofFile::getBaseName() const {
-	return std::filesystem::basename(myFile);
+	return myFile.stem().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1325,6 +1325,7 @@ string ofFilePath::addLeadingSlash(string path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::addTrailingSlash(string path){
+	path = std::filesystem::path(path).make_preferred().string();
 	auto sep = std::filesystem::path("/").make_preferred();
 	if(!path.empty()){
 		if(ofToString(path.back()) != sep.string()){
@@ -1431,10 +1432,12 @@ string ofFilePath::getCurrentWorkingDirectory(){
 	#endif
 }
 
+//------------------------------------------------------------------------------------------------------------
 string ofFilePath::join(string path1, string path2){
 	return (std::filesystem::path(path1) / std::filesystem::path(path2)).string();
 }
 
+//------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentExePath(){
 	#if defined(TARGET_LINUX) || defined(TARGET_ANDROID)
 		char buff[FILENAME_MAX];
@@ -1465,10 +1468,12 @@ string ofFilePath::getCurrentExePath(){
 	return "";
 }
 
+//------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentExeDir(){
 	return getEnclosingDirectory(getCurrentExePath(), false);
 }
 
+//------------------------------------------------------------------------------------------------------------
 string ofFilePath::getUserHomeDir(){
 	#ifdef TARGET_WIN32
 		// getenv will return any Environent Variable on Windows
