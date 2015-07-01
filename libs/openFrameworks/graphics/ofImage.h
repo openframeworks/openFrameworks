@@ -142,7 +142,7 @@ public:
     /// \brief Whether the image has been allocated either by a call to
     /// allocate or by loading pixel data into the image.
     /// \returns true if the image has been allocated.
-    bool isAllocated() {return pixels.isAllocated();};
+    bool isAllocated() const {return pixels.isAllocated();};
     
     /// \brief Whether the image has been allocated either by a call to
     /// allocate or by loading pixel data into the image.
