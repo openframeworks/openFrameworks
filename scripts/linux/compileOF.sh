@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export LC_ALL=C
 
@@ -13,7 +13,7 @@ WHO=`who am i`;ID=`echo ${WHO%% *}`
 GROUP_ID=`id --group -n ${ID}`
 
 cd ../../libs/openFrameworksCompiled/project
-make Debug
+make -j`getconf _NPROCESSORS_ONLN` Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then
   echo "there has been a problem compiling Debug OF library"
@@ -22,7 +22,7 @@ if [ $exit_code != 0 ]; then
   exit $exit_code
 fi
 
-make Release
+make -j`getconf _NPROCESSORS_ONLN` Release
 exit_code=$?
 if [ $exit_code != 0 ]; then
   echo "there has been a problem compiling Release OF library"
@@ -32,5 +32,3 @@ if [ $exit_code != 0 ]; then
 fi
 
 chown -R $ID:$GROUP_ID ../lib/*
-
-
