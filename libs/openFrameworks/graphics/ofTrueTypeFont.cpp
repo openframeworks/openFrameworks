@@ -17,7 +17,6 @@
 #include "ofUtils.h"
 #include "ofGraphics.h"
 #include "ofAppRunner.h"
-#include "utf8.h"
 
 static bool printVectorInfo = false;
 static int ttfGlobalDpi = 96;
@@ -869,12 +868,9 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip,
 		newLineDirection = -1;
 	}
 
-	utf8::iterator<const char*> it(&str.front(), &str.front(), (&str.back())+1);
-	utf8::iterator<const char*> end((&str.back())+1, &str.front(), (&str.back())+1);
-    int prevCy = -1;
-	while(it != end){
-		try{
-			auto c = *it;
+	try{
+		int prevCy = -1;
+		for(auto c: ofUTF8Iterator(str)){
 			int cy = c - NUM_CHARACTER_TO_START;
 			if (cy < nCharacters){ 			// full char set or not?
 				if (c == '\n') {
@@ -890,11 +886,10 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip,
 					X += cps[cy].advance * letterSpacing;
 				}
 			}
-			++it;
 			prevCy = cy;
-		}catch(...){
-			break;
 		}
+	}catch(...){
+
 	}
 	return shapes;
 
@@ -953,6 +948,7 @@ float ofTrueTypeFont::stringHeight(string c) const{
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::createStringMesh(string str, float x, float y, bool vFlipped) const{
+	stringQuads.clear();
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
 	int newLineDirection		= 1;
@@ -965,11 +961,8 @@ void ofTrueTypeFont::createStringMesh(string str, float x, float y, bool vFlippe
 	}
 
 	int prevCy = -1;
-	utf8::iterator<const char*> it(&str.front(), &str.front(), (&str.back())+1);
-	utf8::iterator<const char*> end((&str.back())+1, &str.front(), (&str.back())+1);
-	while(it != end){
-		try{
-			auto c = *it;
+	try{
+		for(auto c: ofUTF8Iterator(str)){
 			int cy = c - NUM_CHARACTER_TO_START;
 			if (cy < nCharacters){ 			// full char set or not?
 				if (c == '\n') {
@@ -982,17 +975,15 @@ void ofTrueTypeFont::createStringMesh(string str, float x, float y, bool vFlippe
 					X += cps[cy].advance * letterSpacing;
 				}
 			}
-			++it;
 			prevCy = cy;
-		}catch(...){
-			break;
 		}
+	}catch(...){
+
 	}
 }
 
 //-----------------------------------------------------------
 const ofMesh & ofTrueTypeFont::getStringMesh(string c, float x, float y, bool vFlipped) const{
-	stringQuads.clear();
 	createStringMesh(c,x,y,vFlipped);
 	return stringQuads;
 }
@@ -1015,7 +1006,6 @@ void ofTrueTypeFont::drawString(string c, float x, float y) const{
 
 //-----------------------------------------------------------
 void ofTrueTypeFont::drawStringAsShapes(string str, float x, float y) const{
-
     if (!bLoadedOk){
     	ofLogError("ofTrueTypeFont") << "drawStringAsShapes(): font not allocated: line " << __LINE__ << " in " << __FILE__;
     	return;
@@ -1039,11 +1029,8 @@ void ofTrueTypeFont::drawStringAsShapes(string str, float x, float y) const{
 	}
 
     int prevCy = -1;
-	utf8::iterator<const char*> it(&str.front(), &str.front(), (&str.back())+1);
-	utf8::iterator<const char*> end((&str.back())+1, &str.front(), (&str.back())+1);
-	while(it != end){
-		try{
-			auto c = *it;
+    try{
+		for(auto c: ofUTF8Iterator(str)){
 			int cy = c - NUM_CHARACTER_TO_START;
 			if (cy < nCharacters){ 			// full char set or not?
 			  if (c == '\n') {
@@ -1056,12 +1043,10 @@ void ofTrueTypeFont::drawStringAsShapes(string str, float x, float y) const{
 					X += cps[cy].advance * letterSpacing;
 			  }
 			}
-			++it;
 			prevCy = cy;
-		}catch(...){
-			break;
 		}
-	}
+    }catch(...){
+    }
 
 }
 

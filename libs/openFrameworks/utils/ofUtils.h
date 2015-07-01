@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "utf8.h"
 #include <bitset> // For ofToBinary.
 
 #include "ofLog.h"
@@ -893,5 +894,28 @@ string ofSystem(const string& command);
 /// \brief Get the target platform of the current system.
 /// \returns the current ofTargetPlatform.
 ofTargetPlatform ofGetTargetPlatform();
+
+
+/// Allows to iterate over a string's utf8 codepoints.
+/// The easiest way to use it is with a c++11 range style
+/// for loop like:
+///
+/// for(auto c: ofUTF8Iterator(str)){
+/// ...
+/// }
+///
+/// which will iterate through all the utf8 codepoints in the
+/// string.
+class ofUTF8Iterator{
+public:
+	ofUTF8Iterator(const string & str);
+	utf8::iterator<const char*> begin() const;
+	utf8::iterator<const char*> end() const;
+
+private:
+	utf8::iterator<const char*> _begin;
+	utf8::iterator<const char*> _end;
+	string src_valid;
+};
 
 /// \}
