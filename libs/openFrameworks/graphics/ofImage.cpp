@@ -967,8 +967,8 @@ void ofImage_<PixelType>::update(){
 	bpp = pixels.getBitsPerPixel();
 	type = pixels.getImageType();
 	if (pixels.isAllocated() && bUseTexture){
-		int glTypeInternal = ofGetGlInternalFormat(pixels);
-		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glTypeInternal != glTypeInternal){
+		int glInternalFormat = ofGetGlInternalFormat(pixels);
+		if(!tex.isAllocated() || tex.getWidth() != width || tex.getHeight() != height || tex.getTextureData().glInternalFormat != glInternalFormat){
 			tex.allocate(pixels);
 			if(ofIsGLProgrammableRenderer() && (pixels.getPixelFormat()==OF_PIXELS_GRAY || pixels.getPixelFormat()==OF_PIXELS_GRAY_ALPHA)){
 				tex.setRGToRGBASwizzles(true);
