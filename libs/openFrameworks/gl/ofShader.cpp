@@ -381,7 +381,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 			std::regex intel("^[0-9]+:([0-9]+)\\([0-9]+\\):.*$");
 			std::smatch matches;
 			string infoString = (infoBuffer != NULL) ? ofTrim(infoBuffer): "";
-			if (std::regex_match(infoString, matches, intel) || std::regex_match(infoString, matches, nvidia_ati)){
+			if (std::regex_search(infoString, matches, intel) || std::regex_search(infoString, matches, nvidia_ati)){
 				ofBuffer buf = shaderSource[type];
 				ofBuffer::Line line = buf.getLines().begin();
 				int  offendingLineNumber = ofToInt(matches[1]);
