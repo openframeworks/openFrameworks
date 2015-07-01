@@ -5,7 +5,6 @@
 #include <chrono>
 #include <numeric>
 #include <locale>
-#include "utf8.h"
 
 #if defined(TARGET_OF_IOS)
 #include "Poco/String.h"
@@ -629,44 +628,56 @@ int ofStringTimesInString(const string& haystack, const string& needle){
 	return count;
 }
 
+
+ofUTF8Iterator::ofUTF8Iterator(const string & str){
+	try{
+		utf8::replace_invalid(str.begin(),str.end(),back_inserter(src_valid));
+		_begin = utf8::iterator<const char*>(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
+		_end = utf8::iterator<const char*>((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
+	}catch(...){
+		_begin = utf8::iterator<const char*>();
+		_end = utf8::iterator<const char*>();
+	}
+}
+
+utf8::iterator<const char*> ofUTF8Iterator::begin() const{
+	return _begin;
+}
+
+utf8::iterator<const char*> ofUTF8Iterator::end() const{
+	return _end;
+}
+
 //--------------------------------------------------
 string ofToLower(const string & src, const string & locale){
-	std::string src_valid;
 	std::string dst;
-	utf8::replace_invalid(src.begin(),src.end(),back_inserter(src_valid));
-	utf8::iterator<const char*> it(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
-	utf8::iterator<const char*> end((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
 	std::locale loc;
 	try{
 		loc = std::locale(locale.c_str());
 	}catch(...){
 	}
-	while(it!=end){
-		try{
-			auto next = *it++;
-			utf8::append(std::tolower<wchar_t>(next, loc), back_inserter(dst));
-		}catch(...){break;}
+	try{
+		for(auto c: ofUTF8Iterator(src)){
+			utf8::append(std::tolower<wchar_t>(c, loc), back_inserter(dst));
+		}
+	}catch(...){
 	}
 	return dst;
 }
 
 //--------------------------------------------------
 string ofToUpper(const string & src, const string & locale){
-	std::string src_valid;
 	std::string dst;
-	utf8::replace_invalid(src.begin(),src.end(),back_inserter(src_valid));
-	utf8::iterator<const char*> it(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
-	utf8::iterator<const char*> end((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
 	std::locale loc;
 	try{
 		loc = std::locale(locale.c_str());
 	}catch(...){
 	}
-	while(it!=end){
-		try{
-			auto next = *it++;
-			utf8::append(std::toupper<wchar_t>(next, loc), back_inserter(dst));
-		}catch(...){break;}
+	try{
+		for(auto c: ofUTF8Iterator(src)){
+			utf8::append(std::toupper<wchar_t>(c, loc), back_inserter(dst));
+		}
+	}catch(...){
 	}
 	return dst;
 }
