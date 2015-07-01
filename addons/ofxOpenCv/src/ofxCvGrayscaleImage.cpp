@@ -249,11 +249,11 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
                                    ofxCvGrayscaleImage& dad ) {
 
 	if( !mom.bAllocated ){
-		ofLogError("ofxCvGrayscaleImage") << "absDiff(): source image mom not allocated";	
+		ofLogError("ofxCvGrayscaleImage") << "absDiff(): first source image (mom) not allocated";
 		return;	
 	}
 	if( !dad.bAllocated ){
-		ofLogError("ofxCvGrayscaleImage") << "absDiff(): source image dad not allocated";
+		ofLogError("ofxCvGrayscaleImage") << "absDiff(): second source image (dad) not allocated";
 		return;	
 	}	
 	if( !bAllocated ){
@@ -271,7 +271,7 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
         cvAbsDiff( mom.getCvImage(), dad.getCvImage(), cvImage );
         flagImageChanged();
     } else {
-        ofLogError("ofxCvGrayscaleImage") << "absDiff(): source image size mismatch between mom & dad";
+        ofLogError("ofxCvGrayscaleImage") << "absDiff(): source image size mismatch between first (mom) & second (dad) image";
     }
 
 }

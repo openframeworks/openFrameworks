@@ -950,6 +950,7 @@ void ofVbo::clear(){
 //--------------------------------------------------------------
 void ofVbo::clearVertices(){
 	positionAttribute = VertexAttribute();
+	positionAttribute.location = ofShader::POSITION_ATTRIBUTE;
 	bUsingVerts = false;
 	totalVerts = 0;
 }
@@ -957,12 +958,14 @@ void ofVbo::clearVertices(){
 //--------------------------------------------------------------
 void ofVbo::clearNormals(){
 	normalAttribute = VertexAttribute();
+	normalAttribute.location = ofShader::NORMAL_ATTRIBUTE;
 	bUsingNormals = false;
 }
 
 //--------------------------------------------------------------
 void ofVbo::clearColors(){
 	colorAttribute = VertexAttribute();
+	colorAttribute.location = ofShader::COLOR_ATTRIBUTE;
 	bUsingColors = false;
 	
 }
@@ -970,6 +973,7 @@ void ofVbo::clearColors(){
 //--------------------------------------------------------------
 void ofVbo::clearTexCoords(){
 	texCoordAttribute = VertexAttribute();
+	texCoordAttribute.location = ofShader::TEXCOORD_ATTRIBUTE;
 	bUsingTexCoords = false;
 }
 
