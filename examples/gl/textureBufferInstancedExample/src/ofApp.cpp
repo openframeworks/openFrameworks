@@ -14,8 +14,10 @@ void ofApp::setup(){
 	buffer.setData(matrices,GL_STREAM_DRAW);
 
 	// using GL_RGBA32F allows to read each row of each matrix
-	// as a float vec4 from the shader
-	tex.allocate(buffer,GL_RGBA32F);
+	// as a float vec4 from the shader.
+	// Note that we're allocating the texture as a Buffer Texture:
+	// https://www.opengl.org/wiki/Buffer_Texture
+	tex.allocateAsBufferTexture(buffer,GL_RGBA32F);
 
 	// now we bind the texture to the shader as a uniform
 	// so we can read the texture buffer from it
