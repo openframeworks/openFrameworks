@@ -47,9 +47,9 @@ public:
 
 	virtual bool isSerializable() const = 0;
 	virtual shared_ptr<ofAbstractParameter> newReference() const = 0;
+	virtual const ofParameterGroup getFirstParent() const = 0;
 
 protected:
-	virtual const ofParameterGroup getFirstParent() const = 0;
 	virtual void setSerializable(bool serializable)=0;
 	virtual string escape(string str) const;
 };
