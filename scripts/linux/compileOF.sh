@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
-
+set -e
 export LC_ALL=C
+
+function compilation_cores() {
+    # leave one core for the host system to
+    # continue its work
+    local sys_cores=`getconf _NPROCESSORS_ONLN`
+    if [ $sys_cores -gt 1 ]; then
+	echo $(($sys_cores-1))
+    else
+	echo 1
+    fi
+}
 
 ARCH=$(uname -m)
 if [ "$ARCH" = "x86_64" ]; then
@@ -13,7 +24,8 @@ WHO=`who am i`;ID=`echo ${WHO%% *}`
 GROUP_ID=`id --group -n ${ID}`
 
 cd ../../libs/openFrameworksCompiled/project
-make -j`getconf _NPROCESSORS_ONLN` Debug
+
+make -j`compilation_cores` Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then
   echo "there has been a problem compiling Debug OF library"
@@ -22,7 +34,7 @@ if [ $exit_code != 0 ]; then
   exit $exit_code
 fi
 
-make -j`getconf _NPROCESSORS_ONLN` Release
+make -j`compilation_cores` Release
 exit_code=$?
 if [ $exit_code != 0 ]; then
   echo "there has been a problem compiling Release OF library"
