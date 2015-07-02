@@ -47,9 +47,9 @@ public:
 
 	virtual bool isSerializable() const = 0;
 	virtual shared_ptr<ofAbstractParameter> newReference() const = 0;
-	virtual const ofParameterGroup getFirstParent() const = 0;
 
 protected:
+	virtual const ofParameterGroup getFirstParent() const = 0;
 	virtual void setSerializable(bool serializable)=0;
 	virtual string escape(string str) const;
 };
@@ -155,8 +155,6 @@ public:
 
 	ofEvent<ofAbstractParameter> & parameterChangedE();
 
-	const ofParameterGroup getFirstParent() const;
-
 	vector<shared_ptr<ofAbstractParameter> >::iterator begin();
 	vector<shared_ptr<ofAbstractParameter> >::iterator end();
 	vector<shared_ptr<ofAbstractParameter> >::const_iterator begin() const;
@@ -190,6 +188,8 @@ private:
 
 	template<typename T, typename F>
 	friend class ofReadOnlyParameter;
+
+	const ofParameterGroup getFirstParent() const;
 };
 
 template<typename ParameterType>
