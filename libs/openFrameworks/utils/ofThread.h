@@ -270,35 +270,6 @@ public:
     /// \returns A reference to the backing Poco thread.
     const std::thread & getNativeThread() const;
 
-    /// \brief A query to see if the current thread is the main thread.
-    ///
-    /// Some functions (e.g. OpenGL calls) can only be executed
-    /// the main thread.  This static function will tell the user
-    /// what thread is currently active at the moment the method
-    /// is called.
-    ///
-    ///     if (ofThread::isMainThread())
-    ///     {
-    ///         ofLogNotice() << "This is the main thread!";
-    ///     }
-    ///     else
-    ///     {
-    ///         ofLogNotice() << "This is NOT the main thread.";
-    ///     }
-    ///
-    /// \returns true iff the current thread is the main thread.
-    static bool isMainThread();
-
-    /// \brief Get the current Poco thread.
-    ///
-    /// In most cases, it is more appropriate to query the current
-    /// thread by calling isCurrentThread() on an active thread or
-    /// by calling ofThread::isMainThread().  See the method
-    /// documentation for more information on those methods.
-    ///
-    /// \returns A pointer to the current active thread OR 0 iff the main
-    ///     application thread is active.
-    static std::thread * getCurrentNativeThread();
 
     enum {
         INFINITE_JOIN_TIMEOUT = -1
