@@ -105,7 +105,8 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds){
 		}
 
         if (INFINITE_JOIN_TIMEOUT == milliseconds){
-            thread.join();
+        	std::unique_lock<std::mutex> lck(mutex);
+        	timeoutJoin.wait(lck);
         }else{
             // Wait for "joinWaitMillis" milliseconds for thread to finish
         	std::unique_lock<std::mutex> lck(mutex);
@@ -187,6 +188,7 @@ void ofThread::run(){
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
+    std::unique_lock<std::mutex> lck(mutex);
 	threadRunning = false;
 	threadDone = true;
 	timeoutJoin.notify_all();
