@@ -10,9 +10,9 @@
 
 //-------------------------------------------------
 ofThread::ofThread()
-:threadRunningDone(make_pair(false,true))
+:threadRunning(false)
+,threadDone(true)
 ,mutexBlocks(true)
-,threadBeingWaitedFor(false)
 ,name(""){
 }
 
@@ -24,7 +24,7 @@ ofThread::~ofThread(){
 
 //-------------------------------------------------
 bool ofThread::isThreadRunning() const{
-    return std::pair<bool,bool>(threadRunningDone).first;
+    return threadRunning;
 }
 
 
@@ -46,12 +46,13 @@ void ofThread::setThreadName(const std::string & name){
 
 //-------------------------------------------------
 void ofThread::startThread(bool mutexBlocks){
-	if(std::pair<bool,bool>(threadRunningDone).first || !std::pair<bool,bool>(threadRunningDone).second){
+	if(threadRunning || !threadDone){
 		ofLogWarning("ofThread") << "- name: " << getThreadName() << " - Cannot start, thread already running.";
 		return;
 	}
 
-    threadRunningDone = make_pair(true,false);
+    threadDone = false;
+    threadRunning = true;
     this->mutexBlocks = mutexBlocks;
 
 	thread = std::thread(std::bind(&ofThread::run,this));
@@ -86,15 +87,13 @@ void ofThread::unlock(){
 
 //-------------------------------------------------
 void ofThread::stopThread(){
-    threadRunningDone = make_pair(false, std::pair<bool,bool>(threadRunningDone).second);
+    threadRunning = false;
 }
 
 
 //-------------------------------------------------
 void ofThread::waitForThread(bool callStopThread, long milliseconds){
-	if(!((std::pair<bool,bool>)threadRunningDone).second){
-		threadBeingWaitedFor = true;
-
+	if(!threadDone){
 		// tell thread to stop
 		if(callStopThread){
             stopThread(); // signalled to stop
@@ -188,6 +187,7 @@ void ofThread::run(){
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
-	threadRunningDone = make_pair(false,true);
+	threadRunning = false;
+	threadDone = true;
 	timeoutJoin.notify_all();
 }
