@@ -6,12 +6,7 @@
 
 #ifndef TARGET_EMSCRIPTEN
 	#include "ofURLFileLoader.h"
-	#if defined(TARGET_OF_IOS)
-		#include "Poco/URI.h"
-		#include "Poco/Exception.h"
-	#else
-		#include "network/uri.hpp"
-	#endif
+	#include "Poco/URI.h"
 #endif
 #if defined(TARGET_ANDROID)
 #include "ofxAndroidUtils.h"
@@ -177,30 +172,16 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 	ofInitFreeImage();
 
 #ifndef TARGET_EMSCRIPTEN
-	#if defined(TARGET_OF_IOS)
 	Poco::URI uri;
 	try {
 		uri = Poco::URI(fileName);
-	} catch(const Poco::SyntaxException& exc){
-		ofLogError("ofImage") << "loadImage(): malformed url when loading image from url \"" << fileName << "\": " << exc.displayText();
+	} catch(const std::exception & exc){
+		ofLogError("ofImage") << "loadImage(): malformed uri when loading image from uri \"" << fileName << "\": " << exc.what();
 		return false;
 	}
 	if(uri.getScheme() == "http" || uri.getScheme() == "https"){
 		return ofLoadImage(pix, ofLoadURL(fileName).data);
 	}
-	#else
-	// Attempt to parse the fileName as a url - specifically it must be a full address starting with http/https
-	network::uri uri;
-    try {
-        uri = network::uri(fileName);
-    } catch(const std::exception &){
-    }
-	if(uri.scheme() != boost::none && (uri.scheme().get() == "http" || uri.scheme().get() == "https")){
-		return ofLoadImage(pix, ofLoadURL(fileName).data);
-	}else if(uri.scheme()!=boost::none){
-		ofLogError() << "protocol " << uri.scheme().get() << " not supported";
-	}
-	#endif
 #endif
 	
 	fileName = ofToDataPath(fileName);
