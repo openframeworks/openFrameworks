@@ -361,14 +361,13 @@ private:
     void run();
 
     ///< \brief Is the thread running?
-    std::atomic<std::pair<bool,bool>> threadRunningDone;
+    std::atomic<bool> threadRunning;
+    std::atomic<bool> threadDone;
 
     ///< \brief Should the mutex block?
     std::atomic<bool> mutexBlocks;
 
-    std::atomic<bool> threadBeingWaitedFor;
-
-    std::atomic<std::string> name;
+    std::string name;
 
     std::condition_variable timeoutJoin;
 
