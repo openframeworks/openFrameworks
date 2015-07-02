@@ -2,9 +2,10 @@
 #include "ofConstants.h"
 #ifndef TARGET_NO_THREADS
 
-#include "Poco/AtomicCounter.h"
-#include "Poco/Thread.h"
-#include "Poco/Runnable.h"
+#include <atomic>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 #include "ofTypes.h"
 
 
@@ -66,7 +67,7 @@
 /// and only allows the user to receive more valuable debugging information
 /// about the uncaught exception.  Users should design ofThread subclasses to
 /// catch and respond to all anticipated exceptions.
-class ofThread: protected Poco::Runnable {
+class ofThread {
 public:
     /// \brief Create an ofThread.
     ofThread();
@@ -87,11 +88,13 @@ public:
 
     /// \brief Get the unique thread id.
     /// \note This is NOT the the same as the operating thread id!
-    int getThreadId() const;
+    std::thread::id getThreadId() const;
 
     /// \brief Get the unique thread name, in the form of "Thread id#"
     /// \returns the Thread ID string.
     std::string getThreadName() const;
+
+    void setThreadName(const std::string & name);
 
     /// \deprecated
     /// \brief Start the thread with options.
@@ -256,7 +259,7 @@ public:
     /// underlying Poco::Thread directly.
     ///
     /// \returns A reference to the backing Poco thread.
-    Poco::Thread& getPocoThread();
+    std::thread& getNativeThread();
 
     /// \brief Get a const reference to the underlying Poco thread.
     ///
@@ -265,7 +268,7 @@ public:
     /// underlying Poco::Thread directly.
     ///
     /// \returns A reference to the backing Poco thread.
-    const Poco::Thread& getPocoThread() const;
+    const std::thread & getNativeThread() const;
 
     /// \brief A query to see if the current thread is the main thread.
     ///
@@ -286,11 +289,6 @@ public:
     /// \returns true iff the current thread is the main thread.
     static bool isMainThread();
 
-    /// \deprecated
-    /// \warning This function is dangerous and should no longer be used.
-    OF_DEPRECATED_MSG("use ofThread::getCurrentPocoThread() == &yourThread.getPocoThread() to compare threads.",
-                      static ofThread* getCurrentThread());
-
     /// \brief Get the current Poco thread.
     ///
     /// In most cases, it is more appropriate to query the current
@@ -300,7 +298,7 @@ public:
     ///
     /// \returns A pointer to the current active thread OR 0 iff the main
     ///     application thread is active.
-    static Poco::Thread* getCurrentPocoThread();
+    static std::thread * getCurrentNativeThread();
 
     enum {
         INFINITE_JOIN_TIMEOUT = -1
@@ -347,7 +345,7 @@ protected:
     virtual void threadedFunction();
 
     /// \brief The Poco::Thread that runs the Poco::Runnable.
-    Poco::Thread thread;
+    std::thread thread;
 
     /// \brief The internal mutex called through lock() & unlock().
     ///
@@ -356,19 +354,23 @@ protected:
     ///
     ///     ofScopedLock lock(mutex);
     ///
-    mutable std::mutex mutex;
+    std::mutex mutex;
 
 private:
+    ///< \brief Implements Poco::Runnable::run().
     void run();
-        ///< \brief Implements Poco::Runnable::run().
 
-    Poco::AtomicCounter _threadRunning;
-        ///< \brief Is the thread running?
+    ///< \brief Is the thread running?
+    std::atomic<std::pair<bool,bool>> threadRunningDone;
 
-    Poco::AtomicCounter _mutexBlocks;
-        ///< \brief Should the mutex block?
+    ///< \brief Should the mutex block?
+    std::atomic<bool> mutexBlocks;
 
-    bool threadBeingWaitedFor;
+    std::atomic<bool> threadBeingWaitedFor;
+
+    std::atomic<std::string> name;
+
+    std::condition_variable timeoutJoin;
 
 };
 

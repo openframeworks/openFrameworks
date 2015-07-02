@@ -140,7 +140,7 @@ void ofURLFileLoaderImpl::stop() {
 }
 
 void ofURLFileLoaderImpl::threadedFunction() {
-	thread.setName("ofURLFileLoader " + thread.name());
+	setThreadName("ofURLFileLoader " + ofToString(getThreadId()));
 	while( isThreadRunning() ){
 		int cancelled;
 		while(cancelRequestQueue.tryReceive(cancelled)){
