@@ -655,6 +655,7 @@ string ofToLower(const string & src, const string & locale){
 	try{
 		loc = std::locale(locale.c_str());
 	}catch(...){
+		ofLogWarning("ofToLower") << "Couldn't create locale " << locale << " using default, " << loc.name();
 	}
 	try{
 		for(auto c: ofUTF8Iterator(src)){
@@ -672,6 +673,7 @@ string ofToUpper(const string & src, const string & locale){
 	try{
 		loc = std::locale(locale.c_str());
 	}catch(...){
+		ofLogWarning("ofToUpper") << "Couldn't create locale " << locale << " using default, " << loc.name();
 	}
 	try{
 		for(auto c: ofUTF8Iterator(src)){

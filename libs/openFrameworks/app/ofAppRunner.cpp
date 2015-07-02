@@ -102,6 +102,12 @@ void ofInit(){
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
 	ofSetWorkingDirectoryToDefault();
+
+	try{
+		std::locale::global(std::locale("C.UTF-8"));
+	}catch(...){
+		ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions won't work correctly for non ansi characters unless you specify a UTF-8 locale manually using std::locale::global(std::locale(\"locale\"))";
+	}
 }
 
 //--------------------------------------
