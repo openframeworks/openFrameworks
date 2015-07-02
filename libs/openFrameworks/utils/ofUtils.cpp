@@ -686,7 +686,7 @@ string ofToUpper(const string & src, const string & locale){
 //--------------------------------------------------
 string ofTrimFront(const string & src, const string& locale_){
 	std::locale loc = getLocale(locale_);
-	auto front = std::find_if_not(src.begin(),src.end(),[&loc](int c){return std::isspace(c,loc);});
+	auto front = std::find_if_not(src.begin(),src.end(),[&loc](wchar_t c){return std::isspace(c,loc);});
 	return std::string(front,src.end());
 }
 
@@ -699,15 +699,15 @@ string ofTrimBack(const string & src, const string& locale_){
 	catch (...) {
 		ofLogWarning("ofToUpper") << "Couldn't create locale " << locale_ << " using default, " << loc.name();
 	}
-	auto back = std::find_if_not(src.rbegin(),src.rend(),[&loc](int c){return std::isspace(c,loc);}).base();
+	auto back = std::find_if_not(src.rbegin(),src.rend(),[&loc](wchar_t c){return std::isspace(c,loc);}).base();
 	return std::string(src.begin(),back);
 }
 
 //--------------------------------------------------
 string ofTrim(const string & src, const string& locale_){
 	std::locale loc = getLocale(locale_);
-	auto front = std::find_if_not(src.begin(),src.end(),[&loc](int c){return std::isspace(c,loc);});
-	auto back = std::find_if_not(src.rbegin(),src.rend(),[&loc](int c){return std::isspace(c,loc);}).base();
+	auto front = std::find_if_not(src.begin(),src.end(),[&loc](wchar_t c){return std::isspace(c,loc);});
+	auto back = std::find_if_not(src.rbegin(),src.rend(),[&loc](wchar_t c){return std::isspace(c,loc);}).base();
 	return (back<=front ? std::string() : std::string(front,back));
 }
 
