@@ -884,7 +884,9 @@ void ofSaveViewport(const string& filename);
 /// \param url the URL to open.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
+#ifndef TARGET_EMSCRIPTEN
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery=false);
+#endif
 
 /// \brief Executes a system command. Similar to run a command in terminal.
 /// \note Will block until the executed program/command has finished.

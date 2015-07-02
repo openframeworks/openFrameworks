@@ -6,14 +6,8 @@
 #include <numeric>
 #include <locale>
 
-#if defined(TARGET_OF_IOS)
-#include "Poco/String.h"
-#include "Poco/UTF8String.h"
-#include "Poco/LocalDateTime.h"
-#include "Poco/DateTimeFormatter.h"
+#if !defined(TARGET_EMSCRIPTEN)
 #include "Poco/URI.h"
-#else
-#include <network/uri.hpp>
 #endif
 
 
@@ -758,16 +752,14 @@ string ofVAArgsToString(const char * format, va_list args){
 	return retStr;
 }
 
+#ifndef TARGET_EMSCRIPTEN
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
-	
-	
-#if defined(TARGET_OF_IOS)
 	Poco::URI uri;
 	try {
 		uri = Poco::URI(url);
-	} catch(const Poco::SyntaxException& exc) {
-		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.displayText();
+	} catch(const std::exception & exc) {
+		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
 		return;
 	}
 	
@@ -783,54 +775,21 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.toString() << "\"";
 		return;
 	}
-#else
-    network::uri uri;
-	
-    try {
-        if(uriEncodeQuery) {
-        	auto pos_q = url.find("?");
-        	if(pos_q!=std::string::npos){
-				std::string encoded;
-				network::uri::encode_query(url.begin() + pos_q + 1, url.end(), std::back_inserter(encoded));
-				cout << encoded << endl;
-				uri = network::uri_builder(network::uri(url.begin(), url.begin() + pos_q))
-					.query(encoded)
-					.uri();
-        	}else{
-                uri = network::uri(url);
-        	}
-        }else{
-            uri = network::uri(url);
-        }
-    } catch(const std::exception& exc) {
-        ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
-        return;
-    }
-        
-	// http://support.microsoft.com/kb/224816
-	// make sure it is a properly formatted url:
-	//   some platforms, like Android, require urls to start with lower-case http/https
-    //   Poco::URI automatically converts the scheme to lower case
-	if(uri.scheme() != boost::none && uri.scheme().get() != "http" && uri.scheme().get() != "https"){
-		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.string() << "\"";
-		return;
-	}
-#endif
 
 	#ifdef TARGET_WIN32
 		#if (_MSC_VER)
 		// microsoft visual studio yaks about strings, wide chars, unicode, etc
-		ShellExecuteA(NULL, "open", uri.string().c_str(),
+		ShellExecuteA(NULL, "open", uri.toString().c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#else
-		ShellExecute(NULL, "open", uri.string().c_str(),
+		ShellExecute(NULL, "open", uri.toString().c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#endif
 	#endif
 
 	#ifdef TARGET_OSX
         // could also do with LSOpenCFURLRef
-		string commandStr = "open \"" + uri.string() + "\"";
+		string commandStr = "open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
         if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -838,8 +797,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_LINUX
-        cout << uri.string() << endl;
-		string commandStr = "xdg-open \"" + uri.string() + "\"";
+		string commandStr = "xdg-open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
 		if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -847,13 +805,14 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_OF_IOS
-		ofxiOSLaunchBrowser(url);
+		ofxiOSLaunchBrowser(uri.toString());
 	#endif
 
 	#ifdef TARGET_ANDROID
-		ofxAndroidLaunchBrowser(url);
+		ofxAndroidLaunchBrowser(uri.toString());
 	#endif
 }
+#endif
 
 //--------------------------------------------------
 string ofGetVersionInfo(){
