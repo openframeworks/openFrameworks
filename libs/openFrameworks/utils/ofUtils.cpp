@@ -643,14 +643,24 @@ utf8::iterator<const char*> ofUTF8Iterator::end() const{
 }
 
 //--------------------------------------------------
+// helper method to get locale from name
+std::locale getLocale(const string & locale) {
+	try {
+		std::locale loc;
+		loc = std::locale(locale.c_str());
+		return std::move(loc);
+	}
+	catch (...) {
+		std::locale loc;
+		ofLogWarning("ofToLower") << "Couldn't create locale " << locale << " using default, " << loc.name();
+		return std::move(loc); // we weren't sucessful, so we're using the default locale.
+	}
+}
+
+//--------------------------------------------------
 string ofToLower(const string & src, const string & locale){
 	std::string dst;
-	std::locale loc;
-	try{
-		loc = std::locale(locale.c_str());
-	}catch(...){
-		ofLogWarning("ofToLower") << "Couldn't create locale " << locale << " using default, " << loc.name();
-	}
+	std::locale loc = getLocale(locale);
 	try{
 		for(auto c: ofUTF8Iterator(src)){
 			utf8::append(std::tolower<wchar_t>(c, loc), back_inserter(dst));
@@ -663,12 +673,7 @@ string ofToLower(const string & src, const string & locale){
 //--------------------------------------------------
 string ofToUpper(const string & src, const string & locale){
 	std::string dst;
-	std::locale loc;
-	try{
-		loc = std::locale(locale.c_str());
-	}catch(...){
-		ofLogWarning("ofToUpper") << "Couldn't create locale " << locale << " using default, " << loc.name();
-	}
+	std::locale loc = getLocale(locale);
 	try{
 		for(auto c: ofUTF8Iterator(src)){
 			utf8::append(std::toupper<wchar_t>(c, loc), back_inserter(dst));
@@ -678,22 +683,35 @@ string ofToUpper(const string & src, const string & locale){
 	return dst;
 }
 
-string ofTrimFront(const string & src){
-	auto front = std::find_if_not(src.begin(),src.end(),[](int c){return std::isspace(c);});
+//--------------------------------------------------
+string ofTrimFront(const string & src, const string& locale_){
+	std::locale loc = getLocale(locale_);
+	auto front = std::find_if_not(src.begin(),src.end(),[&loc](int c){return std::isspace(c,loc);});
 	return std::string(front,src.end());
 }
 
-string ofTrimBack(const string & src){
-	auto back = std::find_if_not(src.rbegin(),src.rend(),[](int c){return std::isspace(c);}).base();
+//--------------------------------------------------
+string ofTrimBack(const string & src, const string& locale_){
+	std::locale loc;
+	try {
+		loc = std::locale(locale_.c_str());
+	}
+	catch (...) {
+		ofLogWarning("ofToUpper") << "Couldn't create locale " << locale_ << " using default, " << loc.name();
+	}
+	auto back = std::find_if_not(src.rbegin(),src.rend(),[&loc](int c){return std::isspace(c,loc);}).base();
 	return std::string(src.begin(),back);
 }
 
-string ofTrim(const string & src){
-	auto front = std::find_if_not(src.begin(),src.end(),[](int c){return std::isspace(c);});
-	auto back = std::find_if_not(src.rbegin(),src.rend(),[](int c){return std::isspace(c);}).base();
+//--------------------------------------------------
+string ofTrim(const string & src, const string& locale_){
+	std::locale loc = getLocale(locale_);
+	auto front = std::find_if_not(src.begin(),src.end(),[&loc](int c){return std::isspace(c,loc);});
+	auto back = std::find_if_not(src.rbegin(),src.rend(),[&loc](int c){return std::isspace(c,loc);}).base();
 	return (back<=front ? std::string() : std::string(front,back));
 }
 
+//--------------------------------------------------
 void ofAppendUTF8(string & str, int utf8){
 	try{
 		utf8::append(utf8, back_inserter(str));
