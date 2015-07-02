@@ -256,6 +256,7 @@ function build() {
 		cd ..
 	
 	elif [ "$TYPE" == "linux" ] || [ "$TYPE" == "linux64" ] || [ "$TYPE" == "linuxarmv6l" ] || [ "$TYPE" == "linuxarmv7l" ]; then
+	    git apply $FORMULA_DIR/uri-remove-tests.patch
 	    cd _build
 		cmake -DCMAKE_BUILD_TYPE=Release ..
 		make -j${PARALLEL_MAKE}
