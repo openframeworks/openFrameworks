@@ -369,7 +369,7 @@ private:
 
     std::string name;
 
-    std::condition_variable timeoutJoin;
+    std::condition_variable joinCondition;
 
 };
 
