@@ -104,10 +104,15 @@ void ofInit(){
 	ofSetWorkingDirectoryToDefault();
 
 #ifdef TARGET_LINUX
-	try{
-		std::locale::global(std::locale("C.UTF-8"));
-	}catch(...){
-		ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions won't work correctly for non ansi characters unless you specify a UTF-8 locale manually using std::locale::global(std::locale(\"locale\"))";
+	if(std::locale().name() == "C"){
+		try{
+			std::locale::global(std::locale("C.UTF-8"));
+		}catch(...){
+			ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
+					"won't work correctly for non ansi characters unless you specify a UTF-8 locale\n"
+					"manually using std::locale::global(std::locale(\"locale\"))\n"
+					"available locales can be queried with 'locale -a' in a terminal.";
+		}
 	}
 #endif
 }
