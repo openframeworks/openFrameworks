@@ -1,10 +1,11 @@
 #!/bin/bash
 
 ## This script is to build the OpenFrameworks documentation automatically
-CURRENT_BRANCH=$(git symbolic-ref HEAD 2>/dev/null | cut -d"/" -f 3);
-echo "Current Branch: $CURRENT_BRANCH"
+
+
+echo "Current Branch: $TRAVIS_BRANCH"
 ### Only build documentation on the master branch.
-if [ "$CURRENT_BRANCH" == "master" ]; then
+if [ "$TRAVIS_BRANCH" == "master" ]; then
     if [ "$1" == "before_install" ]; then
         if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then 
             echo "Documentation Before Install"
