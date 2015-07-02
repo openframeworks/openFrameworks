@@ -139,6 +139,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwWindowHint(GLFW_ALPHA_BITS, settings.alphaBits);
 	glfwWindowHint(GLFW_DEPTH_BITS, settings.depthBits);
 	glfwWindowHint(GLFW_STENCIL_BITS, settings.stencilBits);
+	glfwWindowHint(GLFW_STEREO, settings.stereo);
 	glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS,settings.doubleBuffering?1:0);
