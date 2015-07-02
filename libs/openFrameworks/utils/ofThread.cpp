@@ -147,19 +147,6 @@ const std::thread & ofThread::getNativeThread() const{
 	return thread;
 }
 
-
-//-------------------------------------------------
-bool ofThread::isMainThread(){
-    return false;
-}
-
-
-//-------------------------------------------------
-std::thread * ofThread::getCurrentNativeThread(){
-	return nullptr;
-}
-
-
 //-------------------------------------------------
 void ofThread::threadedFunction(){
 	ofLogWarning("ofThread") << "- name: " << getThreadName() << " - Override ofThread::threadedFunction() in your ofThread subclass.";
