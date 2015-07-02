@@ -155,6 +155,8 @@ public:
 
 	ofEvent<ofAbstractParameter> & parameterChangedE();
 
+	const ofParameterGroup getFirstParent() const;
+
 	vector<shared_ptr<ofAbstractParameter> >::iterator begin();
 	vector<shared_ptr<ofAbstractParameter> >::iterator end();
 	vector<shared_ptr<ofAbstractParameter> >::const_iterator begin() const;
@@ -188,8 +190,6 @@ private:
 
 	template<typename T, typename F>
 	friend class ofReadOnlyParameter;
-
-	const ofParameterGroup getFirstParent() const;
 };
 
 template<typename ParameterType>
