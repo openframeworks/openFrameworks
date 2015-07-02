@@ -312,7 +312,7 @@ void ofTexture::allocate(const ofFloatPixels& pix, bool bUseARBExtention){
 
 #ifndef TARGET_OPENGLES
 //----------------------------------------------------------
-void ofTexture::allocate(const ofBufferObject & buffer, int glInternalFormat){
+void ofTexture::allocateAsBufferTexture(const ofBufferObject & buffer, int glInternalFormat){
 	texData.glTypeInternal = glInternalFormat;
 	texData.textureTarget = GL_TEXTURE_BUFFER;
 	allocate(texData);

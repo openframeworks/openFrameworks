@@ -385,18 +385,21 @@ class ofTexture : public ofBaseDraws {
 	virtual void allocate(const ofFloatPixels& pix, bool bUseARBExtension);
 
 #ifndef TARGET_OPENGLES
-	/// \brief Allocate texture using an ofBufferObject instead of RAM memory.
+	/// \brief Allocate texture as a Buffer Texture.
 	///
-	/// Uses a gpu buffer as data for the texture instead of pixels in RAM
+	/// Uses a GPU buffer as data for the texture instead of pixels in RAM
 	/// Allows to use texture buffer objects (TBO) which make it easier to send big
 	/// amounts of data to a shader as a uniform.
+	/// 
+	/// Buffer textures are 1D textures, and may only be sampled using texelFetch 
+	/// in GLSL.
 	///
 	/// See textureBufferInstanceExample and https://www.opengl.org/wiki/Buffer_Texture
 	///
 	/// \sa allocate(const ofBufferObject & buffer, int glInternalFormat)
 	/// \param buffer Reference to ofBufferObject instance.
 	/// \param glInternalFormat Internal pixel format of the data.
-	void allocate(const ofBufferObject & buffer, int glInternalFormat);
+	void allocateAsBufferTexture(const ofBufferObject & buffer, int glInternalFormat);
 #endif
 
 
