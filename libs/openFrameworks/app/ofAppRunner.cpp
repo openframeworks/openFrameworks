@@ -32,8 +32,14 @@
 
 //--------------------------------------
 shared_ptr<ofMainLoop> & mainLoop(){
-	static shared_ptr<ofMainLoop> mainLoop(new ofMainLoop);
-	return mainLoop;
+	static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
+	return *mainLoop;
+}
+
+
+static bool & initialized(){
+	static bool * initialized = new bool(false);
+	return *initialized;
 }
 
 void ofExitCallback();
@@ -66,9 +72,8 @@ void ofURLFileLoaderShutdown();
 #endif
 
 void ofInit(){
-	static bool initialized = false;
-	if(initialized) return;
-	initialized = true;
+	if(initialized()) return;
+	initialized() = true;
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
     // manage own exit
@@ -135,7 +140,7 @@ int ofRunApp(ofBaseApp * OFSA){
 //--------------------------------------
 int ofRunApp(shared_ptr<ofBaseApp> app){
 	mainLoop()->run(app);
-	return mainLoop()->loop();
+	return ofRunMainLoop();
 }
 
 
@@ -145,7 +150,11 @@ void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
 }
 
 int ofRunMainLoop(){
-	return mainLoop()->loop();
+	auto ret = mainLoop()->loop();
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
+	ofExitCallback();
+#endif
+	return ret;
 }
 
 //--------------------------------------
@@ -175,6 +184,8 @@ shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 //							at the end of the application
 
 void ofExitCallback(){
+	if(!initialized()) return;
+
 	// controlled destruction of the mainLoop before
 	// any other deinitialization
 	mainLoop().reset();
@@ -217,6 +228,8 @@ void ofExitCallback(){
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
 	// events
+
+	initialized() = false;
 }
 
 //--------------------------------------
