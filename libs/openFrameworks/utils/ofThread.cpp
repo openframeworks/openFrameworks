@@ -106,11 +106,11 @@ void ofThread::waitForThread(bool callStopThread, long milliseconds){
 
         if (INFINITE_JOIN_TIMEOUT == milliseconds){
         	std::unique_lock<std::mutex> lck(mutex);
-        	timeoutJoin.wait(lck);
+        	joinCondition.wait(lck);
         }else{
             // Wait for "joinWaitMillis" milliseconds for thread to finish
         	std::unique_lock<std::mutex> lck(mutex);
-            if(timeoutJoin.wait_for(lck,std::chrono::milliseconds(milliseconds))==std::cv_status::timeout){
+            if(joinCondition.wait_for(lck,std::chrono::milliseconds(milliseconds))==std::cv_status::timeout){
 				// unable to completely wait for thread
             }
         }
@@ -175,6 +175,7 @@ void ofThread::run(){
 		ofLogWarning() << "couldn't attach new thread to java vm";
 	}
 #endif
+
 	// user function
     // should loop endlessly.
 	try{
@@ -188,8 +189,9 @@ void ofThread::run(){
 #ifdef TARGET_ANDROID
 	attachResult = ofGetJavaVMPtr()->DetachCurrentThread();
 #endif
+
     std::unique_lock<std::mutex> lck(mutex);
 	threadRunning = false;
 	threadDone = true;
-	timeoutJoin.notify_all();
+	joinCondition.notify_all();
 }
