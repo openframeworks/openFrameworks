@@ -415,7 +415,7 @@ int ofStringTimesInString(const string& haystack, const string& needle);
 ///
 /// \param src The UTF-8 encoded string to convert to lowercase.
 /// \returns the UTF-8 encoded string as all lowercase characters.
-string ofToLower(const string& src, const string & locale="C.UTF-8");
+string ofToLower(const string& src, const string & locale="");
 
 /// \brief Converts all characters in the string to uppercase.
 ///
@@ -430,7 +430,7 @@ string ofToLower(const string& src, const string & locale="C.UTF-8");
 ///
 /// \param src The UTF-8 encoded string to convert to uppercase.
 /// \returns the UTF-8 encoded string as all uppercase characters.
-string ofToUpper(const string& src, const string & locale="C.UTF-8");
+string ofToUpper(const string& src, const string & locale="");
 
 string ofTrimFront(const string & src);
 string ofTrimBack(const string & src);
