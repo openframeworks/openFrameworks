@@ -13,15 +13,15 @@ env:
 before_install:
     $BEFORE_THE_INSTALL
 install: 
-    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test --yes
-    - sudo add-apt-repository ppa:gstreamer-developers/ppa --yes
-    - sudo add-apt-repository ppa:boost-latest/ppa --yes
     - sudo scripts/linux/debian/install_dependencies.sh
-    - sudo apt-get remove libboost-filesystem-dev
-    - sudo apt-get install libboost-filesystem1.55-dev
-    - sudo apt-get install g++-4.9
+    #- sudo add-apt-repository ppa:ubuntu-toolchain-r/test --yes
+    #- sudo add-apt-repository ppa:gstreamer-developers/ppa --yes
+    #- sudo add-apt-repository ppa:boost-latest/ppa --yes
+    #- sudo apt-get remove libboost-filesystem-dev
+    #- sudo apt-get install libboost-filesystem1.55-dev
+    #- sudo apt-get install g++-4.9
     #- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-    - export CXX=g++-4.9
+    #- export CXX=g++-4.9
 script:
     $SCRIPT_TO_RUN
 after_success:
