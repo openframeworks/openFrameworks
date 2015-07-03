@@ -432,9 +432,9 @@ string ofToLower(const string& src, const string & locale="");
 /// \returns the UTF-8 encoded string as all uppercase characters.
 string ofToUpper(const string& src, const string & locale="");
 
-string ofTrimFront(const string & src);
-string ofTrimBack(const string & src);
-string ofTrim(const string & src);
+string ofTrimFront(const string & src, const string & locale = "");
+string ofTrimBack(const string & src, const string & locale = "");
+string ofTrim(const string & src, const string & locale = "");
 
 void ofAppendUTF8(string & str, int utf8);
 
@@ -911,13 +911,13 @@ ofTargetPlatform ofGetTargetPlatform();
 class ofUTF8Iterator{
 public:
 	ofUTF8Iterator(const string & str);
-	utf8::iterator<const char*> begin() const;
-	utf8::iterator<const char*> end() const;
+	utf8::iterator<std::string::const_iterator> begin() const;
+	utf8::iterator<std::string::const_iterator> end() const;
+	utf8::iterator<std::string::const_reverse_iterator> rbegin() const;
+	utf8::iterator<std::string::const_reverse_iterator> rend() const;
 
 private:
-	utf8::iterator<const char*> _begin;
-	utf8::iterator<const char*> _end;
-	string src_valid;
+	std::string src_valid;
 };
 
 /// \}
