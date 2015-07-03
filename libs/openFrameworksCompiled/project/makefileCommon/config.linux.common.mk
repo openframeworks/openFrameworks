@@ -141,7 +141,11 @@ ifeq ($(CXX),g++)
 		PLATFORM_CFLAGS = -Wall -std=c++14
 	endif
 else
-	PLATFORM_CFLAGS = -Wall -std=c++11
+	ifeq ($(CXX),g++-5)
+		PLATFORM_CFLAGS = -Wall -std=c++14
+	else
+		PLATFORM_CFLAGS = -Wall -std=c++11
+	endif
 endif
 
 
