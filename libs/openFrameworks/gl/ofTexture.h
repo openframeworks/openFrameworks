@@ -681,7 +681,7 @@ class ofTexture : public ofBaseDraws {
 	///
 	void unbind(int textureLocation=0) const;
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) && defined(glBindImageTexture)
 	/// Calls glBindImageTexture on the texture
 	///
 	/// Binds the texture as an read or write image, only available since OpenGL 4.2
