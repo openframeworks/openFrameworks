@@ -17,7 +17,7 @@ SCRIPTPATH=`pwd`
 popd > /dev/null
 
 cd ${SCRIPTPATH}/../../libs/openFrameworksCompiled/project
-make -j`getconf _NPROCESSORS_ONLN` Debug
+make Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then
   echo "there has been a problem compiling Debug OF library"
@@ -26,7 +26,7 @@ if [ $exit_code != 0 ]; then
   exit $exit_code
 fi
 
-make -j`getconf _NPROCESSORS_ONLN` Release
+make Release
 exit_code=$?
 if [ $exit_code != 0 ]; then
   echo "there has been a problem compiling Release OF library"
