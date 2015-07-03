@@ -3,7 +3,7 @@
 
 openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welcome!
 
-[![Build status, Visual Studio](https://ci.appveyor.com/api/projects/status/sm9jxy0u56bl8syi?svg=true)](https://ci.appveyor.com/project/arturoc/openframeworks)
+Build status, VisualStudio: [![Build status, Visual Studio](https://ci.appveyor.com/api/projects/status/sm9jxy0u56bl8syi?svg=true)](https://ci.appveyor.com/project/arturoc/openframeworks)
 
 folder structure
 --------
