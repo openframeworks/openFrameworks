@@ -13,10 +13,10 @@ env:
 before_install:
     $BEFORE_THE_INSTALL
 install: 
-    sudo scripts/linux/debian/install_dependencies.sh
-    sudo add-apt-repository ppa:ubuntu-toolchain-r/test --yes
-    sudo apt-get install g++-4.9;
-    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 50
+    - sudo scripts/linux/debian/install_dependencies.sh
+    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test --yes
+    - sudo apt-get install g++-4.9
+    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 50
 script:
     $SCRIPT_TO_RUN
 after_success:
