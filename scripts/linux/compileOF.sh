@@ -12,7 +12,11 @@ fi
 WHO=`who am i`;ID=`echo ${WHO%% *}`
 GROUP_ID=`id --group -n ${ID}`
 
-cd ../../libs/openFrameworksCompiled/project
+pushd `dirname $0` > /dev/null
+SCRIPTPATH=`pwd`
+popd > /dev/null
+
+cd ${SCRIPTPATH}/../../libs/openFrameworksCompiled/project
 make -j`getconf _NPROCESSORS_ONLN` Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then

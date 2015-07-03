@@ -1,11 +1,12 @@
 language: c++
 node_js: '0.10'
 sudo: required
+install: sudo scripts/linux/debian/install_dependencies.sh
 env:
   global:
     - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
   matrix:
-    - NAME="Linux" BEFORE_THE_INSTALL="" SCRIPT_TO_RUN="cd scripts/linux/debian/; sudo install_dependencies.sh" AFTER_THE_SUCCESS="echo 'openFrameworks Linux Build Passing'"
+    - NAME="Linux" BEFORE_THE_INSTALL="" SCRIPT_TO_RUN="scripts/linux/compileOF.sh" AFTER_THE_SUCCESS="echo 'openFrameworks Linux Build Passing'"
     #- NAME="OSX" BEFORE_THE_INSTALL="" SCRIPT_TO_RUN="scripts/osx/testTemplate.sh" AFTER_THE_SUCCESS="echo 'openFrameworks OSX Build Passing'"
     #- NAME="iOS" BEFORE_THE_INSTALL="" SCRIPT_TO_RUN="scripts/ios/testTemplate.sh" AFTER_THE_SUCCESS="echo 'openFrameworks iOS Build Passing'"
     #- NAME="Docs" BEFORE_THE_INSTALL="scripts/dev/documentation.sh before_install" SCRIPT_TO_RUN="scripts/dev/documentation.sh script" AFTER_THE_SUCCESS="scripts/dev/documentation.sh after_success"
