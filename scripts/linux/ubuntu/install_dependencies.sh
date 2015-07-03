@@ -9,8 +9,8 @@ if [ $EUID != 0 ]; then
    exit 1
 fi
 
-MAJOR_VERSION=lsb_release -r | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g"
-MINOR_VERSION=lsb_release -r | cut -f2 -d: | cut -f2 -d.
+MAJOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
+MINOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f2 -d.)
 
 if [ $(expr MAJOR_VERSION \<= 12 ) -eq 1 ]; then
     echo "Your ubuntu version is too old try using an older version of openFrameworks or updating your system"
