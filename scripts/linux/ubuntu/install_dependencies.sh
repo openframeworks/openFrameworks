@@ -12,17 +12,17 @@ fi
 MAJOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f1 -d. | sed "s/\t//g")
 MINOR_VERSION=$(lsb_release -r | cut -f2 -d: | cut -f2 -d.)
 
-if [ $(expr MAJOR_VERSION \<= 12 ) -eq 1 ]; then
+if [ $(expr $MAJOR_VERSION \<= 12 ) -eq 1 ]; then
     echo "Your ubuntu version is too old try using an older version of openFrameworks or updating your system"
     exit 1
-elif [ $(expr MAJOR_VERSION \<= 14 ) -eq 1 ]; then
+elif [ $(expr $MAJOR_VERSION \<= 13 ) -eq 1 ]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
+    add-apt-repository ppa:gstreamer-developers/ppa --yes
     add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=4.9
     BOOST_VER=4.9
-elif [ $(expr MAJOR_VERSION \<= 13 ) -eq 1 ]; then
+elif [ $(expr $MAJOR_VERSION \<= 14 ) -eq 1 ]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
-    add-apt-repository ppa:gstreamer-developers/ppa --yes
     add-apt-repository ppa:boost-latest/ppa --yes
     CXX_VER=4.9
     BOOST_VER=4.9
