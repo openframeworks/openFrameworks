@@ -626,35 +626,58 @@ int ofStringTimesInString(const string& haystack, const string& needle){
 ofUTF8Iterator::ofUTF8Iterator(const string & str){
 	try{
 		utf8::replace_invalid(str.begin(),str.end(),back_inserter(src_valid));
-		_begin = utf8::iterator<const char*>(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
-		_end = utf8::iterator<const char*>((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
 	}catch(...){
-		_begin = utf8::iterator<const char*>();
-		_end = utf8::iterator<const char*>();
 	}
 }
 
-utf8::iterator<const char*> ofUTF8Iterator::begin() const{
-	return _begin;
+utf8::iterator<std::string::const_iterator> ofUTF8Iterator::begin() const{
+	try {
+		return utf8::iterator<std::string::const_iterator>(src_valid.begin(), src_valid.begin(), src_valid.end());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_iterator>();
+	}
 }
 
-utf8::iterator<const char*> ofUTF8Iterator::end() const{
-	return _end;
+utf8::iterator<std::string::const_iterator> ofUTF8Iterator::end() const{
+	try {
+		return utf8::iterator<std::string::const_iterator>(src_valid.end(), src_valid.begin(), src_valid.end());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_iterator>();
+	}
 }
+
+utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rbegin() const {
+	try {
+		return utf8::iterator<std::string::const_reverse_iterator>(src_valid.rbegin(), src_valid.rbegin(), src_valid.rend());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_reverse_iterator>();
+	}
+}
+
+utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rend() const {
+	try {
+		return utf8::iterator<std::string::const_reverse_iterator>(src_valid.rbegin(), src_valid.rbegin(), src_valid.rend());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_reverse_iterator>();
+	}
+}
+
 
 //--------------------------------------------------
 // helper method to get locale from name
-std::locale getLocale(const string & locale) {
+static std::locale getLocale(const string & locale) {
+	std::locale loc;
 	try {
-		std::locale loc;
 		loc = std::locale(locale.c_str());
-		return std::move(loc);
 	}
 	catch (...) {
-		std::locale loc;
-		ofLogWarning("ofToLower") << "Couldn't create locale " << locale << " using default, " << loc.name();
-		return std::move(loc); // we weren't sucessful, so we're using the default locale.
+		ofLogWarning("ofUtils") << "Couldn't create locale " << locale << " using default, " << loc.name();
 	}
+	return loc;
 }
 
 //--------------------------------------------------
@@ -684,30 +707,27 @@ string ofToUpper(const string & src, const string & locale){
 }
 
 //--------------------------------------------------
-string ofTrimFront(const string & src, const string& locale_){
-	std::locale loc = getLocale(locale_);
-	auto front = std::find_if_not(src.begin(),src.end(),[&loc](wchar_t c){return std::isspace(c,loc);});
-	return std::string(front,src.end());
+string ofTrimFront(const string & src, const string& locale){
+	std::locale loc = getLocale(locale);
+	auto it = ofUTF8Iterator(src);
+	auto front = std::find_if_not(it.begin(),it.end(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);});
+	return std::string(front,it.end());
 }
 
 //--------------------------------------------------
-string ofTrimBack(const string & src, const string& locale_){
-	std::locale loc;
-	try {
-		loc = std::locale(locale_.c_str());
-	}
-	catch (...) {
-		ofLogWarning("ofToUpper") << "Couldn't create locale " << locale_ << " using default, " << loc.name();
-	}
-	auto back = std::find_if_not(src.rbegin(),src.rend(),[&loc](wchar_t c){return std::isspace(c,loc);}).base();
-	return std::string(src.begin(),back);
+string ofTrimBack(const string & src, const string& locale){
+	std::locale loc = getLocale(locale);
+	auto it = ofUTF8Iterator(src);
+	auto back = std::find_if_not(it.rbegin(),it.rend(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base().base();
+	return std::string(it.begin().base(),back);
 }
 
 //--------------------------------------------------
-string ofTrim(const string & src, const string& locale_){
-	std::locale loc = getLocale(locale_);
-	auto front = std::find_if_not(src.begin(),src.end(),[&loc](wchar_t c){return std::isspace(c,loc);});
-	auto back = std::find_if_not(src.rbegin(),src.rend(),[&loc](wchar_t c){return std::isspace(c,loc);}).base();
+string ofTrim(const string & src, const string& locale){
+	std::locale loc = getLocale(locale);
+	auto it = ofUTF8Iterator(src);
+	auto front = std::find_if_not(it.begin(),it.end(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base();
+	auto back = std::find_if_not(it.rbegin(), it.rend(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base().base();
 	return (back<=front ? std::string() : std::string(front,back));
 }
 

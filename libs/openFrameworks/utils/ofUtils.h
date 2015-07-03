@@ -911,13 +911,13 @@ ofTargetPlatform ofGetTargetPlatform();
 class ofUTF8Iterator{
 public:
 	ofUTF8Iterator(const string & str);
-	utf8::iterator<const char*> begin() const;
-	utf8::iterator<const char*> end() const;
+	utf8::iterator<std::string::const_iterator> begin() const;
+	utf8::iterator<std::string::const_iterator> end() const;
+	utf8::iterator<std::string::const_reverse_iterator> rbegin() const;
+	utf8::iterator<std::string::const_reverse_iterator> rend() const;
 
 private:
-	utf8::iterator<const char*> _begin;
-	utf8::iterator<const char*> _end;
-	string src_valid;
+	std::string src_valid;
 };
 
 /// \}
