@@ -2,7 +2,7 @@
 
 One of the goals of openFrameworks is to be inclusive to the largest number of contributors, with the most varied and diverse backgrounds possible. As such, we are committed to providing a friendly, safe and welcoming environment for all, regardless of gender, sexual orientation, ability, socioeconomic status, age, level of experience, personal appearance, ethnicity, religion or philosophy.
 
-As the openFrameworks community, we pledge to respect all members who contribute through reporting issues, posting feature requests, updating documentation, submitting pull requests or patches, engage in discussion on the forum, mailing list or IRC, participate in meetups and workshops, or who are involved in any way with openFrameworks.
+As the openFrameworks community, we pledge to respect both old and new members who post on the forum, chat on IRC, post on mailing lists, report issues, post feature requests, submit pull requests or patches, update documentation, participate in meetups and workshops, or are involved in any way with openFrameworks.
 
 Examples of unacceptable behavior include the use of sexual language or imagery, derogatory comments or personal attacks, trolling, public or private harassment, insults, exclusion, or other disrespectful conduct. We promise each other to:
 
