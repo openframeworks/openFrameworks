@@ -140,9 +140,13 @@ int ofRunApp(ofBaseApp * OFSA){
 //--------------------------------------
 int ofRunApp(shared_ptr<ofBaseApp> app){
 	mainLoop()->run(app);
-	return ofRunMainLoop();
+	auto ret = ofRunMainLoop();
+	app.reset();
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
+	ofExitCallback();
+#endif
+	return ret;
 }
-
 
 //--------------------------------------
 void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
@@ -151,9 +155,6 @@ void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
 
 int ofRunMainLoop(){
 	auto ret = mainLoop()->loop();
-#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
-	ofExitCallback();
-#endif
 	return ret;
 }
 
@@ -188,7 +189,7 @@ void ofExitCallback(){
 
 	// controlled destruction of the mainLoop before
 	// any other deinitialization
-	mainLoop().reset();
+	mainLoop()->exit();
 
 	// everything should be destroyed here, except for
 	// static objects
