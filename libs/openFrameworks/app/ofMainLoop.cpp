@@ -148,9 +148,9 @@ void ofMainLoop::loopOnce(){
 }
 
 void ofMainLoop::exit(){
-	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
-		shared_ptr<ofAppBaseWindow> window = i->first;
-		shared_ptr<ofBaseApp> app = i->second;
+	for(auto i: windowsApps){
+		shared_ptr<ofAppBaseWindow> window = i.first;
+		shared_ptr<ofBaseApp> app = i.second;
 		
 		if(window == NULL) {
 			continue;
