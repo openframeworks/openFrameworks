@@ -1,0 +1,21 @@
+language: c++
+node_js: '0.10'
+sudo: required
+compiler: gcc
+env:
+  global:
+    - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
+  matrix:
+    - NAME="Linux" BEFORE_THE_INSTALL="" SCRIPT_TO_RUN="scripts/linux/compileOF.sh -t" AFTER_THE_SUCCESS="echo 'openFrameworks Linux Build Passing'"
+before_install:
+    $BEFORE_THE_INSTALL
+install: 
+    - sudo scripts/linux/ubuntu/install_dependencies.sh
+    - export CXX=g++-4.9
+script:
+    $SCRIPT_TO_RUN
+after_success:
+    $AFTER_THE_SUCCESS
+git:
+    depth: 1
+
