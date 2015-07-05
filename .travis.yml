@@ -12,11 +12,17 @@ env:
     - NAME="ios" \ 
         SCRIPT_PATH="scripts/$NAME" \
         SCRIPT="$SCRIPT_PATH/testTemplate.sh"
+    - NAME="android" \ 
+        SCRIPT_PATH="scripts/$NAME" \
+        OF_ROOT="$PWD" \
+        SCRIPT="$SCRIPT_PATH/testTemplate.sh"
     - NAME="docs" \
         SCRIPT_PATH="scripts/dev" \
         SCRIPT="$SCRIPT_PATH/documentation.sh"
 before_install:
     "if [ \"$NAME\" == \"docs\" ]; then scripts/dev/documentation.sh before_install; fi"
+install:
+    "if [ \"$NAME\" == \"android\" ]; then scripts/android/install_tests_env.sh; fi"
 script:
     "$SCRIPT"
 after_success:
