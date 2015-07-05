@@ -551,27 +551,27 @@ function build() {
 		perl -pi -e 's/^_ANDROID_EABI=(.*)$/#_ANDROID_EABI=\1/g' Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_ARCH=(.*)$/#_ANDROID_ARCH=\1/g' Setenv-android.sh
 		perl -pi -e 's/^_ANDROID_API=(.*)$/#_ANDROID_API=\1/g' Setenv-android.sh
+		export _ANDROID_API=android-21
 		
         # armv7
+        echoInfo "Compiling armv7"
         export _ANDROID_EABI=arm-linux-androideabi-4.9
 		export _ANDROID_ARCH=arch-arm
-		export _ANDROID_API=android-21
         local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/armeabi-v7a
         mkdir -p $BUILD_TO_DIR
         source Setenv-android.sh
         ./config --openssldir=$BUILD_TO_DIR no-ssl2 no-ssl3 no-comp no-hw no-engine no-shared
         make clean
         make depend -j${PARALLEL_MAKE}
-        make all -j${PARALLEL_MAKE}
+        make build_libs -j${PARALLEL_MAKE}
         mkdir -p $BUILD_TO_DIR/lib
 		cp libssl.a $BUILD_TO_DIR/lib/
         cp libcrypto.a $BUILD_TO_DIR/lib/
         
         # x86
-        ABI=x86
-        export _ANDROID_EABI=arm-linux-androideabi-4.9
-		export _ANDROID_ARCH=arch-arm
-		export _ANDROID_API=android-21
+        echoInfo "Compiling x86"
+        export _ANDROID_EABI=x86-4.9
+		export _ANDROID_ARCH=arch-x86
         local BUILD_TO_DIR=$BUILD_DIR/openssl/build/$TYPE/x86
         mkdir -p $BUILD_TO_DIR
         source Setenv-android.sh
