@@ -5,9 +5,9 @@ openFrameworks is a C++ toolkit for creative coding.  If you are new to OF, welc
 
 ##Build status
 
-OSX and iOS     [![Build Status](https://travis-ci.org/openframeworks/openFrameworks.svg?branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
+OSX, iOS and Android     [![Build Status](https://travis-ci.org/openframeworks/openFrameworks.svg?branch=master)](https://travis-ci.org/openframeworks/openFrameworks)
 
-visual studio   [![Build status](https://ci.appveyor.com/api/projects/status/sm9jxy0u56bl8syi/branch/master?svg=true)](https://ci.appveyor.com/project/arturoc/openframeworks/branch/master) 
+Visual studio   [![Build status](https://ci.appveyor.com/api/projects/status/sm9jxy0u56bl8syi/branch/master?svg=true)](https://ci.appveyor.com/project/arturoc/openframeworks/branch/master) 
 
 folder structure
 --------
