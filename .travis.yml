@@ -13,7 +13,7 @@ env:
         SCRIPT_PATH="scripts/$NAME" \
         SCRIPT="$SCRIPT_PATH/testTemplate.sh"
     - NAME="android-armv7" \ 
-        SCRIPT_PATH="scripts/$NAME" \
+        SCRIPT_PATH="scripts/android" \
         OF_ROOT="$PWD" \
         SCRIPT="$SCRIPT_PATH/testTemplate.sh armv7"
     - NAME="android-x86" \ 
