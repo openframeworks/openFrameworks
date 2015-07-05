@@ -14,17 +14,17 @@ endif
 ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	TARGET_NAME = Debug
 	CFLAGS += -DDEBUG
-	
+
 	ifndef RUN_TARGET
 		RUN_TARGET = RunDebug
 	endif
-	
+
 	ifndef PLATFORM_PROJECT_DEBUG_TARGET
 		TARGET = bin/$(APPNAME)_debug
 	else
 		TARGET = $(PLATFORM_PROJECT_DEBUG_TARGET)
 	endif
-	
+
 	ifndef PLATFORM_PROJECT_DEBUG_BIN_NAME
 		BIN_NAME = $(APPNAME)_debug
 	else
@@ -32,23 +32,23 @@ ifeq ($(findstring Debug,$(MAKECMDGOALS)),Debug)
 	endif
 else ifeq ($(findstring Release,$(MAKECMDGOALS)),Release)
 	TARGET_NAME = Release
-	
+
 	ifndef RUN_TARGET
 		RUN_TARGET = RunRelease
 	endif
-	
+
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
 		TARGET = bin/$(APPNAME)
 	else
 		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
 	endif
-	
+
 	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
 		BIN_NAME = $(APPNAME)
 	else
 		BIN_NAME = $(PLATFORM_PROJECT_RELEASE_BIN_NAME)
 	endif
-	
+
 else ifeq ($(MAKECMDGOALS),run)
 	TARGET_NAME = Release
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
@@ -61,20 +61,20 @@ else ifeq ($(MAKECMDGOALS),run)
 	else
 		BIN_NAME = $(PLATFORM_PROJECT_RELEASE_BIN_NAME)
 	endif	
-	
+
 else ifeq ($(MAKECMDGOALS),)
 	TARGET_NAME = Release
-	
+
 	ifndef RUN_TARGET
 		RUN_TARGET = run
 	endif
-	
+
 	ifndef PLATFORM_PROJECT_RELEASE_TARGET
 		TARGET = bin/$(APPNAME)
 	else
 		TARGET = $(PLATFORM_PROJECT_RELEASE_TARGET)
 	endif
-	
+
 	ifndef PLATFORM_PROJECT_RELEASE_BIN_NAME
 		BIN_NAME = $(APPNAME)
 	else
@@ -121,7 +121,7 @@ endif
 
 .PHONY: all Debug Release after clean CleanDebug CleanRelease help
 
-	
+
 Release: 
 	@echo Compiling OF library for Release
 	@$(MAKE) -C $(OF_ROOT)/libs/openFrameworksCompiled/project/ Release PLATFORM_OS=$(PLATFORM_OS) ABIS_TO_COMPILE_RELEASE="$(ABIS_TO_COMPILE_RELEASE)"
@@ -162,7 +162,7 @@ DebugABI: $(TARGET)
 
 all:
 	$(MAKE) Debug
-	
+
 run:
 ifeq ($(PLATFORM_RUN_COMMAND),)
 	@cd bin;./$(BIN_NAME)
@@ -200,22 +200,22 @@ $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.cc
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.m
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.mm
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.c
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_ROOT)/%.S
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -235,22 +235,22 @@ $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.cc
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.m
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.mm
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.c
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -270,22 +270,22 @@ $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.cc
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.m
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.mm
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.c
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.d -MT $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
-	
+
 $(OF_ROOT)/addons/$(OF_PROJECT_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/addons/%.S
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -295,11 +295,11 @@ $(OF_PROJECT_OBJ_OUPUT_PATH)libs/openFrameworks/%.o: $(OF_ROOT)/libs/openFramewo
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUPUT_PATH)libs/openFrameworks/$*.d -MT $(OF_PROJECT_OBJ_OUPUT_PATH)libs/openFrameworks/$*.o -o $@ -c $<
-	
+
 $(TARGET): $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(OF_PROJECT_LIBS) $(TARGET_LIBS)
 	@echo 'Linking $(TARGET) for $(ABI_LIB_SUBPATH)'
 	@mkdir -p $(@D)
-	$(CXX) -o $@ $(OPTIMIZATION_LDFLAGS) $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(LDFLAGS) $(OF_CORE_LIBS) 
+	$(CXX) -o $@ $(OPTIMIZATION_LDFLAGS) $(OF_PROJECT_OBJS) $(OF_PROJECT_ADDONS_OBJS) $(TARGET_LIBS) $(OF_PROJECT_LIBS) $(LDFLAGS) $(OF_CORE_LIBS)
 
 
 clean:
@@ -313,7 +313,7 @@ endif
 	rm -rf $(OF_PROJECT_OBJ_OUPUT_PATH)
 	rm -f $(TARGET)
 	rm -rf $(BIN_NAME)
-	
+
 $(CLEANTARGET):
 ifndef ABIS_TO_COMPILE
 	@$(MAKE) $(CLEANTARGET)ABI
@@ -339,7 +339,7 @@ after: $(TARGET_NAME)
 	@echo "     "
 	@echo "     $(MAKE) $(RUN_TARGET)"
 	@echo
-	
+
 copyaddonsdata:
 	@mkdir -p bin/data
 	@cp -rf $(PROJECT_ADDONS_DATA) bin/data/
@@ -374,14 +374,14 @@ help:
 	@echo in this directory and add the names of the addons you want to
 	@echo include
 	@echo
-	
-		
+
+
 #legacy targets
 AndroidRelease:
 	$(MAKE) Release PLATFORM_OS=Android
-	
+
 AndroidDebug:
 	$(MAKE) Debug PLATFORM_OS=Android
-	
+
 CleanAndroid:
 	$(MAKE) clean PLATFORM_OS=Android
