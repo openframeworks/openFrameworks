@@ -12,17 +12,21 @@ env:
     - NAME="ios" \ 
         SCRIPT_PATH="scripts/$NAME" \
         SCRIPT="$SCRIPT_PATH/testTemplate.sh"
-    - NAME="android" \ 
+    - NAME="android-armv7" \ 
         SCRIPT_PATH="scripts/$NAME" \
         OF_ROOT="$PWD" \
-        SCRIPT="$SCRIPT_PATH/testTemplate.sh"
+        SCRIPT="$SCRIPT_PATH/testTemplate.sh armv7"
+    - NAME="android-x86" \ 
+        SCRIPT_PATH="scripts/$NAME" \
+        OF_ROOT="$PWD" \
+        SCRIPT="$SCRIPT_PATH/testTemplate.sh x86"
     - NAME="docs" \
         SCRIPT_PATH="scripts/dev" \
         SCRIPT="$SCRIPT_PATH/documentation.sh"
 before_install:
     "if [ \"$NAME\" == \"docs\" ]; then scripts/dev/documentation.sh before_install; fi"
 install:
-    "if [ \"$NAME\" == \"android\" ]; then scripts/android/install_tests_env.sh; fi"
+    "if [ \"$NAME\" == \"android-armv7\" ] || [ \"$NAME\" == \"android-x86\" ]; then scripts/android/install_tests_env.sh; fi"
 script:
     "$SCRIPT"
 after_success:
