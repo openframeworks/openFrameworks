@@ -5,16 +5,9 @@
 #include <chrono>
 #include <numeric>
 #include <locale>
-#include "utf8.h"
 
-#if defined(TARGET_OF_IOS)
-#include "Poco/String.h"
-#include "Poco/UTF8String.h"
-#include "Poco/LocalDateTime.h"
-#include "Poco/DateTimeFormatter.h"
+#if !defined(TARGET_EMSCRIPTEN)
 #include "Poco/URI.h"
-#else
-#include <network/uri.hpp>
 #endif
 
 
@@ -629,64 +622,116 @@ int ofStringTimesInString(const string& haystack, const string& needle){
 	return count;
 }
 
-//--------------------------------------------------
-string ofToLower(const string & src, const string & locale){
-	std::string src_valid;
-	std::string dst;
-	utf8::replace_invalid(src.begin(),src.end(),back_inserter(src_valid));
-	utf8::iterator<const char*> it(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
-	utf8::iterator<const char*> end((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
-	std::locale loc;
+
+ofUTF8Iterator::ofUTF8Iterator(const string & str){
 	try{
-		loc = std::locale(locale.c_str());
+		utf8::replace_invalid(str.begin(),str.end(),back_inserter(src_valid));
 	}catch(...){
 	}
-	while(it!=end){
-		try{
-			auto next = *it++;
-			utf8::append(std::tolower<wchar_t>(next, loc), back_inserter(dst));
-		}catch(...){break;}
+}
+
+utf8::iterator<std::string::const_iterator> ofUTF8Iterator::begin() const{
+	try {
+		return utf8::iterator<std::string::const_iterator>(src_valid.begin(), src_valid.begin(), src_valid.end());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_iterator>();
+	}
+}
+
+utf8::iterator<std::string::const_iterator> ofUTF8Iterator::end() const{
+	try {
+		return utf8::iterator<std::string::const_iterator>(src_valid.end(), src_valid.begin(), src_valid.end());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_iterator>();
+	}
+}
+
+utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rbegin() const {
+	try {
+		return utf8::iterator<std::string::const_reverse_iterator>(src_valid.rbegin(), src_valid.rbegin(), src_valid.rend());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_reverse_iterator>();
+	}
+}
+
+utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rend() const {
+	try {
+		return utf8::iterator<std::string::const_reverse_iterator>(src_valid.rbegin(), src_valid.rbegin(), src_valid.rend());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_reverse_iterator>();
+	}
+}
+
+
+//--------------------------------------------------
+// helper method to get locale from name
+static std::locale getLocale(const string & locale) {
+	std::locale loc;
+	try {
+		loc = std::locale(locale.c_str());
+	}
+	catch (...) {
+		ofLogWarning("ofUtils") << "Couldn't create locale " << locale << " using default, " << loc.name();
+	}
+	return loc;
+}
+
+//--------------------------------------------------
+string ofToLower(const string & src, const string & locale){
+	std::string dst;
+	std::locale loc = getLocale(locale);
+	try{
+		for(auto c: ofUTF8Iterator(src)){
+			utf8::append(std::tolower<wchar_t>(c, loc), back_inserter(dst));
+		}
+	}catch(...){
 	}
 	return dst;
 }
 
 //--------------------------------------------------
 string ofToUpper(const string & src, const string & locale){
-	std::string src_valid;
 	std::string dst;
-	utf8::replace_invalid(src.begin(),src.end(),back_inserter(src_valid));
-	utf8::iterator<const char*> it(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
-	utf8::iterator<const char*> end((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
-	std::locale loc;
+	std::locale loc = getLocale(locale);
 	try{
-		loc = std::locale(locale.c_str());
+		for(auto c: ofUTF8Iterator(src)){
+			utf8::append(std::toupper<wchar_t>(c, loc), back_inserter(dst));
+		}
 	}catch(...){
-	}
-	while(it!=end){
-		try{
-			auto next = *it++;
-			utf8::append(std::toupper<wchar_t>(next, loc), back_inserter(dst));
-		}catch(...){break;}
 	}
 	return dst;
 }
 
-string ofTrimFront(const string & src){
-	auto front = std::find_if_not(src.begin(),src.end(),[](int c){return std::isspace(c);});
-	return std::string(front,src.end());
+//--------------------------------------------------
+string ofTrimFront(const string & src, const string& locale){
+	std::locale loc = getLocale(locale);
+	auto it = ofUTF8Iterator(src);
+	auto front = std::find_if_not(it.begin(),it.end(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);});
+	return std::string(front,it.end());
 }
 
-string ofTrimBack(const string & src){
-	auto back = std::find_if_not(src.rbegin(),src.rend(),[](int c){return std::isspace(c);}).base();
-	return std::string(src.begin(),back);
+//--------------------------------------------------
+string ofTrimBack(const string & src, const string& locale){
+	std::locale loc = getLocale(locale);
+	auto it = ofUTF8Iterator(src);
+	auto back = std::find_if_not(it.rbegin(),it.rend(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base().base();
+	return std::string(it.begin().base(),back);
 }
 
-string ofTrim(const string & src){
-	auto front = std::find_if_not(src.begin(),src.end(),[](int c){return std::isspace(c);});
-	auto back = std::find_if_not(src.rbegin(),src.rend(),[](int c){return std::isspace(c);}).base();
+//--------------------------------------------------
+string ofTrim(const string & src, const string& locale){
+	std::locale loc = getLocale(locale);
+	auto it = ofUTF8Iterator(src);
+	auto front = std::find_if_not(it.begin(),it.end(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base();
+	auto back = std::find_if_not(it.rbegin(), it.rend(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base().base();
 	return (back<=front ? std::string() : std::string(front,back));
 }
 
+//--------------------------------------------------
 void ofAppendUTF8(string & str, int utf8){
 	try{
 		utf8::append(utf8, back_inserter(str));
@@ -745,16 +790,14 @@ string ofVAArgsToString(const char * format, va_list args){
 	return retStr;
 }
 
+#ifndef TARGET_EMSCRIPTEN
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
-	
-	
-#if defined(TARGET_OF_IOS)
 	Poco::URI uri;
 	try {
 		uri = Poco::URI(url);
-	} catch(const Poco::SyntaxException& exc) {
-		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.displayText();
+	} catch(const std::exception & exc) {
+		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
 		return;
 	}
 	
@@ -770,54 +813,21 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.toString() << "\"";
 		return;
 	}
-#else
-    network::uri uri;
-	
-    try {
-        if(uriEncodeQuery) {
-        	auto pos_q = url.find("?");
-        	if(pos_q!=std::string::npos){
-				std::string encoded;
-				network::uri::encode_query(url.begin() + pos_q + 1, url.end(), std::back_inserter(encoded));
-				cout << encoded << endl;
-				uri = network::uri_builder(network::uri(url.begin(), url.begin() + pos_q))
-					.query(encoded)
-					.uri();
-        	}else{
-                uri = network::uri(url);
-        	}
-        }else{
-            uri = network::uri(url);
-        }
-    } catch(const std::exception& exc) {
-        ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
-        return;
-    }
-        
-	// http://support.microsoft.com/kb/224816
-	// make sure it is a properly formatted url:
-	//   some platforms, like Android, require urls to start with lower-case http/https
-    //   Poco::URI automatically converts the scheme to lower case
-	if(uri.scheme() != boost::none && uri.scheme().get() != "http" && uri.scheme().get() != "https"){
-		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.string() << "\"";
-		return;
-	}
-#endif
 
 	#ifdef TARGET_WIN32
 		#if (_MSC_VER)
 		// microsoft visual studio yaks about strings, wide chars, unicode, etc
-		ShellExecuteA(NULL, "open", uri.string().c_str(),
+		ShellExecuteA(NULL, "open", uri.toString().c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#else
-		ShellExecute(NULL, "open", uri.string().c_str(),
+		ShellExecute(NULL, "open", uri.toString().c_str(),
                 NULL, NULL, SW_SHOWNORMAL);
 		#endif
 	#endif
 
 	#ifdef TARGET_OSX
         // could also do with LSOpenCFURLRef
-		string commandStr = "open \"" + uri.string() + "\"";
+		string commandStr = "open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
         if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -825,8 +835,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_LINUX
-        cout << uri.string() << endl;
-		string commandStr = "xdg-open \"" + uri.string() + "\"";
+		string commandStr = "xdg-open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
 		if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -834,13 +843,14 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_OF_IOS
-		ofxiOSLaunchBrowser(url);
+		ofxiOSLaunchBrowser(uri.toString());
 	#endif
 
 	#ifdef TARGET_ANDROID
-		ofxAndroidLaunchBrowser(url);
+		ofxAndroidLaunchBrowser(uri.toString());
 	#endif
 }
+#endif
 
 //--------------------------------------------------
 string ofGetVersionInfo(){

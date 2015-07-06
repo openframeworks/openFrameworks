@@ -32,8 +32,14 @@
 
 //--------------------------------------
 shared_ptr<ofMainLoop> & mainLoop(){
-	static shared_ptr<ofMainLoop> mainLoop(new ofMainLoop);
-	return mainLoop;
+	static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
+	return *mainLoop;
+}
+
+
+static bool & initialized(){
+	static bool * initialized = new bool(false);
+	return *initialized;
 }
 
 void ofExitCallback();
@@ -66,9 +72,8 @@ void ofURLFileLoaderShutdown();
 #endif
 
 void ofInit(){
-	static bool initialized = false;
-	if(initialized) return;
-	initialized = true;
+	if(initialized()) return;
+	initialized() = true;
 
 #if defined(TARGET_ANDROID) || defined(TARGET_OF_IOS)
     // manage own exit
@@ -102,6 +107,19 @@ void ofInit(){
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
 	ofSetWorkingDirectoryToDefault();
+
+#ifdef TARGET_LINUX
+	if(std::locale().name() == "C"){
+		try{
+			std::locale::global(std::locale("C.UTF-8"));
+		}catch(...){
+			ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
+					"won't work correctly for non ansi characters unless you specify a UTF-8 locale\n"
+					"manually using std::locale::global(std::locale(\"locale\"))\n"
+					"available locales can be queried with 'locale -a' in a terminal.";
+		}
+	}
+#endif
 }
 
 //--------------------------------------
@@ -122,9 +140,13 @@ int ofRunApp(ofBaseApp * OFSA){
 //--------------------------------------
 int ofRunApp(shared_ptr<ofBaseApp> app){
 	mainLoop()->run(app);
-	return mainLoop()->loop();
+	auto ret = ofRunMainLoop();
+	app.reset();
+#if !defined(TARGET_ANDROID) && !defined(TARGET_OF_IOS)
+	ofExitCallback();
+#endif
+	return ret;
 }
-
 
 //--------------------------------------
 void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
@@ -132,7 +154,8 @@ void ofRunApp(shared_ptr<ofAppBaseWindow> window, shared_ptr<ofBaseApp> app){
 }
 
 int ofRunMainLoop(){
-	return mainLoop()->loop();
+	auto ret = mainLoop()->loop();
+	return ret;
 }
 
 //--------------------------------------
@@ -162,9 +185,11 @@ shared_ptr<ofAppBaseWindow> ofCreateWindow(const ofWindowSettings & settings){
 //							at the end of the application
 
 void ofExitCallback(){
+	if(!initialized()) return;
+
 	// controlled destruction of the mainLoop before
 	// any other deinitialization
-	mainLoop().reset();
+	mainLoop()->exit();
 
 	// everything should be destroyed here, except for
 	// static objects
@@ -204,6 +229,8 @@ void ofExitCallback(){
 	// static deinitialization happens after this finishes
 	// every object should have ended by now and won't receive any
 	// events
+
+	initialized() = false;
 }
 
 //--------------------------------------

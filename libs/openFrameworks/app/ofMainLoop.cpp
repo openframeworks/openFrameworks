@@ -130,7 +130,7 @@ int ofMainLoop::loop(){
 }
 
 void ofMainLoop::loopOnce(){
-	for(map<shared_ptr<ofAppBaseWindow>,shared_ptr<ofBaseApp> >::iterator i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end() ;){
+	for(auto i = windowsApps.begin(); !windowsApps.empty() && i != windowsApps.end();){
 		if(i->first->getWindowShouldClose()){
 			i->first->close();
 			windowsApps.erase(i++); ///< i now points at the window after the one which was just erased
@@ -148,9 +148,9 @@ void ofMainLoop::loopOnce(){
 }
 
 void ofMainLoop::exit(){
-	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
-		shared_ptr<ofAppBaseWindow> window = i->first;
-		shared_ptr<ofBaseApp> app = i->second;
+	for(auto i: windowsApps){
+		shared_ptr<ofAppBaseWindow> window = i.first;
+		shared_ptr<ofBaseApp> app = i.second;
 		
 		if(window == NULL) {
 			continue;
@@ -212,9 +212,9 @@ void ofMainLoop::setCurrentWindow(ofAppBaseWindow * window){
 	if(currentWindow.get() == window){
 		return;
 	}
-	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
-		if(i->first.get() == window){
-			currentWindow = i->first;
+	for(auto i: windowsApps){
+		if(i.first.get() == window){
+			currentWindow = i.first;
 			break;
 		}
 	}
@@ -229,8 +229,8 @@ ofCoreEvents & ofMainLoop::events(){
 }
 
 void ofMainLoop::shouldClose(int _status){
-	for(auto i = windowsApps.begin();i!=windowsApps.end();i++){
-		i->first->setWindowShouldClose();
+	for(auto i: windowsApps){
+		i.first->setWindowShouldClose();
 	}
 	bShouldClose = true;
 	status = _status;

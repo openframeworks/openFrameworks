@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "utf8.h"
 #include <bitset> // For ofToBinary.
 
 #include "ofLog.h"
@@ -414,7 +415,7 @@ int ofStringTimesInString(const string& haystack, const string& needle);
 ///
 /// \param src The UTF-8 encoded string to convert to lowercase.
 /// \returns the UTF-8 encoded string as all lowercase characters.
-string ofToLower(const string& src, const string & locale="C.UTF-8");
+string ofToLower(const string& src, const string & locale="");
 
 /// \brief Converts all characters in the string to uppercase.
 ///
@@ -429,11 +430,11 @@ string ofToLower(const string& src, const string & locale="C.UTF-8");
 ///
 /// \param src The UTF-8 encoded string to convert to uppercase.
 /// \returns the UTF-8 encoded string as all uppercase characters.
-string ofToUpper(const string& src, const string & locale="C.UTF-8");
+string ofToUpper(const string& src, const string & locale="");
 
-string ofTrimFront(const string & src);
-string ofTrimBack(const string & src);
-string ofTrim(const string & src);
+string ofTrimFront(const string & src, const string & locale = "");
+string ofTrimBack(const string & src, const string & locale = "");
+string ofTrim(const string & src, const string & locale = "");
 
 void ofAppendUTF8(string & str, int utf8);
 
@@ -883,7 +884,9 @@ void ofSaveViewport(const string& filename);
 /// \param url the URL to open.
 /// \param uriEncodeQuery true if the query parameters in the given URL have
 /// already been URL encoded.
+#ifndef TARGET_EMSCRIPTEN
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery=false);
+#endif
 
 /// \brief Executes a system command. Similar to run a command in terminal.
 /// \note Will block until the executed program/command has finished.
@@ -893,5 +896,28 @@ string ofSystem(const string& command);
 /// \brief Get the target platform of the current system.
 /// \returns the current ofTargetPlatform.
 ofTargetPlatform ofGetTargetPlatform();
+
+
+/// Allows to iterate over a string's utf8 codepoints.
+/// The easiest way to use it is with a c++11 range style
+/// for loop like:
+///
+/// for(auto c: ofUTF8Iterator(str)){
+/// ...
+/// }
+///
+/// which will iterate through all the utf8 codepoints in the
+/// string.
+class ofUTF8Iterator{
+public:
+	ofUTF8Iterator(const string & str);
+	utf8::iterator<std::string::const_iterator> begin() const;
+	utf8::iterator<std::string::const_iterator> end() const;
+	utf8::iterator<std::string::const_reverse_iterator> rbegin() const;
+	utf8::iterator<std::string::const_reverse_iterator> rend() const;
+
+private:
+	std::string src_valid;
+};
 
 /// \}

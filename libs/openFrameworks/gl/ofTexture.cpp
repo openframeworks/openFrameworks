@@ -317,7 +317,7 @@ void ofTexture::allocate(const ofBufferObject & buffer, int glInternalFormat){
 	texData.textureTarget = GL_TEXTURE_BUFFER;
 	allocate(texData);
 	glBindTexture(texData.textureTarget,texData.textureID);
-	glTexBuffer(GL_TEXTURE_BUFFER,GL_RGBA32F,buffer.getId());
+	glTexBuffer(GL_TEXTURE_BUFFER, glInternalFormat,buffer.getId());
 	glBindTexture(texData.textureTarget,0);
 }
 #endif
@@ -716,7 +716,7 @@ void ofTexture::unbind(int textureLocation) const{
 	ofGetGLRenderer()->unbind(*this,textureLocation);
 }
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) && defined(glBindImageTexture)
 //----------------------------------------------------------
 void ofTexture::bindAsImage(GLuint unit, GLenum access, GLint level, GLboolean layered, GLint layer){
 	glBindImageTexture(unit,texData.textureID,level,layered,layer,access,texData.glInternalFormat);

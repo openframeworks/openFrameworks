@@ -414,7 +414,7 @@ void ofGLProgrammableRenderer::draw(const ofBaseVideoDraws & video, float x, flo
 		return;
 	}
 	const_cast<ofGLProgrammableRenderer*>(this)->bind(video);
-	draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,w,h,isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
+	draw(video.getTexture().getMeshForSubsection(x,y,0,w,h,0,0,video.getWidth(),video.getHeight(),isVFlipped(),currentStyle.rectMode),OF_MESH_FILL,false,true,false);
 	const_cast<ofGLProgrammableRenderer*>(this)->unbind(video);
 }
 
