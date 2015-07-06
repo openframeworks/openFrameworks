@@ -628,7 +628,7 @@ void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint
 	texData.textureTarget = settings.textureTarget;
 	texData.width = settings.width;
 	texData.height = settings.height;
-	texData.glTypeInternal = internalFormat;
+	texData.glInternalFormat = internalFormat;
 	texData.bFlipTexture = false;
 	texData.wrapModeHorizontal = settings.wrapModeHorizontal;
 	texData.wrapModeVertical = settings.wrapModeVertical;
@@ -679,7 +679,7 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 
 
 	// allocate depthBufferTex as depth buffer;
-	depthBufferTex.texData.glTypeInternal = internalformat;
+	depthBufferTex.texData.glInternalFormat = internalformat;
 	depthBufferTex.texData.textureTarget = target;
 	depthBufferTex.texData.bFlipTexture = false;
 	depthBufferTex.texData.width = settings.width;
@@ -695,7 +695,7 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum  attachment){
 
 	// allocate depthBufferTex as depth buffer;
-	depthBufferTex.texData.glTypeInternal = internalformat;
+	depthBufferTex.texData.glInternalFormat = internalformat;
 	depthBufferTex.texData.textureTarget = target;
 	depthBufferTex.texData.bFlipTexture = false;
 	depthBufferTex.texData.width = settings.width;
