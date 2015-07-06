@@ -70,13 +70,13 @@ void ofxEmscriptenVideoGrabber::update(){
 			texture.texData.bFlipTexture = false;
 			switch(getPixelFormat()){
 			case OF_PIXELS_RGBA:
-				texture.texData.glTypeInternal = GL_RGBA;
+				texture.texData.glInternalFormat = GL_RGBA;
 				break;
 			case OF_PIXELS_RGB:
-				texture.texData.glTypeInternal = GL_RGB;
+				texture.texData.glInternalFormat = GL_RGB;
 				break;
 			case OF_PIXELS_MONO:
-				texture.texData.glTypeInternal = GL_LUMINANCE;
+				texture.texData.glInternalFormat = GL_LUMINANCE;
 				break;
 			default:
 				ofLogError() << "unknown pixel format, can't allocating texture";
