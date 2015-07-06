@@ -52,6 +52,7 @@ CORE
 	  `ofVbo::setAttributeData(ofShader::TEXCOORD_ATTRIBUTE, ...)` which allows
 	  for 3d texture coordinates.
 	/ Fix ofTexture::readToPixels for non RGBA or 4 aligned formats
+	/ Rename ofTextureData.glTypeInternal -> ofTextureDataData.glInternalFormat (this brings the parameter's name into sync with the OpenGL enum it represents)
 ### graphics
 	+ ofTruetypeFont: kerning and better hinting and spacing
 	+ ofDrawBitmapString: can draw any type not only strings
