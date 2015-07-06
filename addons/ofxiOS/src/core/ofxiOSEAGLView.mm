@@ -252,8 +252,10 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
         if([touch tapCount] == 2){
-            ofNotifyEvent(window->events().touchDoubleTap,touchArgs);	// send doubletap
+			touchArgs.type = ofTouchEventArgs::doubleTap;
+			ofNotifyEvent(window->events().touchDoubleTap,touchArgs);	// send doubletap
         }
+		touchArgs.type = ofTouchEventArgs::down;
 		ofNotifyEvent(window->events().touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
 	}	
 }
@@ -285,6 +287,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
+		touchArgs.type = ofTouchEventArgs::move;
 		ofNotifyEvent(window->events().touchMoved, touchArgs);
 	}
 }
@@ -319,6 +322,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
+		touchArgs.type = ofTouchEventArgs::up;
 		ofNotifyEvent(window->events().touchUp, touchArgs);
 	}
 }
@@ -347,6 +351,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
+		touchArgs.type = ofTouchEventArgs::cancel;
 		ofNotifyEvent(window->events().touchCancelled, touchArgs);
 	}
 	
