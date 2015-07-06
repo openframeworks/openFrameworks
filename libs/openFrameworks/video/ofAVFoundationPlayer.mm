@@ -444,7 +444,7 @@ void ofAVFoundationPlayer::initTextureCache() {
                                                        imageBuffer,             // CVImageBufferRef sourceImage
                                                        NULL,                    // CFDictionaryRef textureAttributes
                                                        texData.textureTarget,   // GLenum target
-                                                       texData.glTypeInternal,  // GLint internalFormat
+                                                       texData.glInternalFormat,  // GLint internalFormat
                                                        texData.width,           // GLsizei width
                                                        texData.height,          // GLsizei height
                                                        GL_BGRA,                 // GLenum format
