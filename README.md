@@ -9,7 +9,7 @@ OSX, iOS and Android     [![Build Status](https://travis-ci.org/openframeworks/o
 
 Visual studio [![Build status](https://ci.appveyor.com/api/projects/status/sm9jxy0u56bl8syi/branch/master?svg=true)](https://ci.appveyor.com/project/arturoc/openframeworks/branch/master)
 
-
+Linux   [![Build Status](https://travis-ci.org/openframeworkstests/openFrameworks.svg)](https://travis-ci.org/openframeworkstests/openFrameworks)
 
 folder structure
 --------
