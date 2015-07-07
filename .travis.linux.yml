@@ -6,7 +6,7 @@ env:
   global:
     - secure: HghPHJcGdn25WfyZmAIkYElnbnmrTswegCrq6rsrsBma116POdP0JD+kOFOs3gF8Ix1BWSkJbueBmQwQ644+qHX4YT5ct0WXkCYohWvtaZPtgai3hF4aoN4nS72V8wVIyIUfe+DRQGivGk2Ne8eFVUO+SBouy7Ci10KPZM3nla0=
   matrix:
-    - NAME="Linux" \
+    - NAME="linux" \
         SCRIPT_PATH="scripts/android" \
         OF_ROOT="$PWD" \
         SCRIPT="scripts/linux/testTemplate.sh"
