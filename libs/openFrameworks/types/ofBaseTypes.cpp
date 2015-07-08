@@ -340,6 +340,8 @@ void ofBaseSoundInput::audioIn( float * input, int bufferSize, int nChannels ){
 	audioReceived(input, bufferSize, nChannels);
 }
 
+void ofBaseSoundInput::audioReceived( float * input, int bufferSize, int nChannels ){
+}
 
 void ofBaseSoundOutput::audioOut( ofSoundBuffer& buffer ){
 	audioOut(&buffer[0], buffer.getNumFrames(), buffer.getNumChannels(), buffer.getDeviceID(), buffer.getTickCount());
@@ -352,3 +354,7 @@ void ofBaseSoundOutput::audioOut( float * output, int bufferSize, int nChannels,
 void ofBaseSoundOutput::audioOut( float * output, int bufferSize, int nChannels ){
 	audioRequested(output, bufferSize, nChannels);
 }
+
+void ofBaseSoundOutput::audioRequested( float * output, int bufferSize, int nChannels ){
+}
+
