@@ -2,13 +2,16 @@ language: c++
 node_js: '0.10'
 sudo: required
 compiler: gcc
+cache: 
+    - ccache
+    - apt
 env:
   matrix:
     - NAME="linux" \
         SCRIPT_PATH="scripts/android" \
         OF_ROOT="$PWD" \
         SCRIPT="scripts/linux/testTemplate.sh"
-install: 
+before_install: 
     - sudo scripts/linux/ubuntu/install_dependencies.sh
     - export CXX=g++-4.9
 script:
