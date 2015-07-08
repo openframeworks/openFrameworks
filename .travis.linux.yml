@@ -1,9 +1,9 @@
 language: c++
 sudo: required
 compiler: gcc
-cache: 
-    - ccache
-    - apt
+#cache: 
+#    - ccache
+#    - apt
 env:
   matrix:
     - NAME="linux" \
