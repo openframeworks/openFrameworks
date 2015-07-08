@@ -474,7 +474,7 @@ void ofAppGlutWindow::setWindowShape(int w, int h){
 //------------------------------------------------------------
 void ofAppGlutWindow::hideCursor(){
 	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
-		 CGDisplayHideCursor(NULL);
+		 CGDisplayHideCursor(0);
 	#else
 		glutSetCursor(GLUT_CURSOR_NONE);
 	#endif
@@ -483,7 +483,7 @@ void ofAppGlutWindow::hideCursor(){
 //------------------------------------------------------------
 void ofAppGlutWindow::showCursor(){
 	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
-		 CGDisplayShowCursor(NULL);
+		 CGDisplayShowCursor(0);
 	#else
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	#endif
