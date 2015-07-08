@@ -16,13 +16,13 @@ public:
 	// update more often
 	void update();
 	double getFps() const;
-	unsigned int getNumFrames() const;
+	unsigned long long getNumFrames() const;
 	unsigned long long getLastFrameNanos() const;
 	double getLastFrameSecs() const;
 
 private:
 	void update(double now);
-	unsigned int nFrameCount;
+	unsigned long long nFrameCount;
 	uint64_t secsThen, nanosThen;
 	double fps;
 	uint64_t lastFrameTime;

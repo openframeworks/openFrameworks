@@ -51,7 +51,7 @@ uint64_t ofGetElapsedTimeMicros();
 
 /// \brief Get the number of frames rendered since the program started.
 /// \returns the number of frames rendered since the program started.
-int ofGetFrameNum();
+unsigned long long ofGetFrameNum();
 
 /// \}
 
