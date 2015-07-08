@@ -289,12 +289,21 @@ class ofBaseSoundInput{
 	public:
 		/// \brief Destroy the ofBaseSoundInput.
 		virtual ~ofBaseSoundInput() {};
-	
+
+		/// \brief Receive an audio buffer.
+	    /// \param buffer An audio buffer.
 		virtual void audioIn( ofSoundBuffer& buffer );
+
+		/// \deprecated This legacy method is deprecated and will be removed.
+		/// Use void audioIn(ofSoundBuffer& buffer) instead.
 		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount );
-		/// \todo
+
+		/// \deprecated This legacy method is deprecated and will be removed.
+		/// Use void audioIn(ofSoundBuffer& buffer) instead.
 		virtual void audioIn( float * input, int bufferSize, int nChannels );
-		/// \todo
+
+		/// \deprecated This legacy method is deprecated and will be removed.
+		/// Use void audioIn(ofSoundBuffer& buffer) instead.
 		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
 };
 
@@ -305,16 +314,21 @@ class ofBaseSoundOutput{
 		/// \brief Destroy the ofBaseSoundOutput.
 		virtual ~ofBaseSoundOutput() {};
 	
+		/// \brief Output an audio buffer.
+		/// \param buffer An audio buffer.
 		virtual void audioOut( ofSoundBuffer& buffer );
-		/// \todo
+
+		/// \deprecated This legacy method is deprecated and will be removed.
+		/// Use void audioOut(ofSoundBuffer& buffer) instead.
 		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  );
-		/// \todo
+
+		/// \deprecated This legacy method is deprecated and will be removed.
+		/// Use void audioOut(ofSoundBuffer& buffer) instead.
 		virtual void audioOut( float * output, int bufferSize, int nChannels );
 
-		/// \todo
-		/// \note This is a legacy method.
-		virtual void audioRequested( float * output, int bufferSize, int nChannels ){
-		}
+		/// \deprecated This legacy method is deprecated and will be removed.
+		/// Use void audioOut(ofSoundBuffer& buffer) instead.
+		virtual void audioRequested( float * output, int bufferSize, int nChannels ){}
 };
 
 
