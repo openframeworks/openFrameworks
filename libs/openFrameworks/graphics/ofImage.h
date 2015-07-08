@@ -164,7 +164,7 @@ public:
     /// \param fileName Program looks for image given by fileName, relative to
     /// the data folder.
     /// \returns true if image loaded correctly.
-    bool load(string fileName);
+    bool load(const string& fileName);
     
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().
