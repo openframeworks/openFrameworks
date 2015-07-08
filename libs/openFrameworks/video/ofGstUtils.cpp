@@ -97,7 +97,7 @@ ofGstUtils::ofGstUtils() {
 	bPaused						= false;
 	bIsMovieDone				= false;
 	bPlaying					= false;
-	loopMode					= OF_LOOP_NONE;
+	loopMode					= OF_LOOP_NORMAL;
 	bFrameByFrame 				= false;
 
 	gstPipeline					= NULL;
