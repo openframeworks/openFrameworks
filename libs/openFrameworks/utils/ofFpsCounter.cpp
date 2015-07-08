@@ -67,11 +67,11 @@ double ofFpsCounter::getFps() const{
 	return fps;
 }
 
-unsigned int ofFpsCounter::getNumFrames() const{
+uint64_t ofFpsCounter::getNumFrames() const{
 	return nFrameCount;
 }
 
-unsigned long long ofFpsCounter::getLastFrameNanos() const{
+uint64_t ofFpsCounter::getLastFrameNanos() const{
 	return lastFrameTime;
 }
 

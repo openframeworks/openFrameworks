@@ -25,7 +25,7 @@ double ofGetLastFrameTime(){
 }
 
 //--------------------------------------
-int ofGetFrameNum(){
+uint64_t ofGetFrameNum(){
 	return ofEvents().getFrameNum();
 }
 
