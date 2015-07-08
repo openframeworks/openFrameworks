@@ -291,11 +291,9 @@ class ofBaseSoundInput{
 		virtual ~ofBaseSoundInput() {};
 	
 		virtual void audioIn( ofSoundBuffer& buffer );
-		virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount );
-		/// \todo
-		virtual void audioIn( float * input, int bufferSize, int nChannels );
-		/// \todo
-		virtual void audioReceived( float * input, int bufferSize, int nChannels ){}
+		OF_DEPRECATED_MSG("Use audioIn(ofSoundBuffer& buffer) instead.", virtual void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ));
+		OF_DEPRECATED_MSG("Use audioIn(ofSoundBuffer& buffer) instead.", virtual void audioIn( float * input, int bufferSize, int nChannels ));
+		OF_DEPRECATED_MSG("Use audioIn(ofSoundBuffer& buffer) instead.", virtual void audioReceived( float * input, int bufferSize, int nChannels ));
 };
 
 
@@ -306,15 +304,9 @@ class ofBaseSoundOutput{
 		virtual ~ofBaseSoundOutput() {};
 	
 		virtual void audioOut( ofSoundBuffer& buffer );
-		/// \todo
-		virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  );
-		/// \todo
-		virtual void audioOut( float * output, int bufferSize, int nChannels );
-
-		/// \todo
-		/// \note This is a legacy method.
-		virtual void audioRequested( float * output, int bufferSize, int nChannels ){
-		}
+		OF_DEPRECATED_MSG("Use audioOut(ofSoundBuffer& buffer) instead.", virtual void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ));
+		OF_DEPRECATED_MSG("Use audioOut(ofSoundBuffer& buffer) instead.", virtual void audioOut( float * output, int bufferSize, int nChannels ));
+		OF_DEPRECATED_MSG("Use audioOut(ofSoundBuffer& buffer) instead.", virtual void audioRequested( float * output, int bufferSize, int nChannels ));
 };
 
 
