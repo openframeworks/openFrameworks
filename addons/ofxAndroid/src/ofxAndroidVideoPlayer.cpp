@@ -137,7 +137,7 @@ bool ofxAndroidVideoPlayer::load(string fileName){
 	td.tex_t = 1; // Hack!
 	td.tex_u = 1;
 	td.textureTarget = GL_TEXTURE_EXTERNAL_OES;
-	td.glTypeInternal = GL_RGBA;
+	td.glInternalFormat = GL_RGBA;
 	td.bFlipTexture = false;
 
 	// hack to initialize gl resources from outside ofTexture
