@@ -331,19 +331,19 @@ ofHttpResponse::operator ofBuffer&(){
 
 
 
-ofHttpResponse ofLoadURL(string url){
+ofHttpResponse ofLoadURL(const string& url){
 	return getFileLoader().get(url);
 }
 
-int ofLoadURLAsync(string url, string name){
+int ofLoadURLAsync(const string&  url, const string&  name){
 	return getFileLoader().getAsync(url,name);
 }
 
-ofHttpResponse ofSaveURLTo(string url, string path){
+ofHttpResponse ofSaveURLTo(const string& url, const string& path){
 	return getFileLoader().saveTo(url,path);
 }
 
-int ofSaveURLAsync(string url, string path){
+int ofSaveURLAsync(const string& url, const string& path){
 	return getFileLoader().saveAsync(url,path);
 }
 
