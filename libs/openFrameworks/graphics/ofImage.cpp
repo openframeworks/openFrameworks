@@ -799,6 +799,12 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 
 //------------------------------------
 template<typename PixelType>
+bool ofImage_<PixelType>::bAllocated(){
+    return pixels.isAllocated();
+}
+
+//------------------------------------
+template<typename PixelType>
 void ofImage_<PixelType>::clear(){
 #if defined(TARGET_ANDROID)
 	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
