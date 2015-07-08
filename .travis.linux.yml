@@ -1,5 +1,4 @@
 language: c++
-node_js: '0.10'
 sudo: required
 compiler: gcc
 cache: 
@@ -8,7 +7,6 @@ cache:
 env:
   matrix:
     - NAME="linux" \
-        SCRIPT_PATH="scripts/android" \
         OF_ROOT="$PWD" \
         SCRIPT="scripts/linux/testTemplate.sh"
 before_install: 
