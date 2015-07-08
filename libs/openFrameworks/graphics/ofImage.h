@@ -148,7 +148,7 @@ public:
     /// allocate or by loading pixel data into the image.
     /// \deprecated Use isAllocated() instead
     /// \returns true if the image has been allocated.
-    bool bAllocated() {return pixels.isAllocated();};   // legacy function
+    OF_DEPRECATED_MSG("Use isAllocated()", bool bAllocated());
     
     /// \brief This clears the texture and pixels contained within the ofImage.
     void clear();
@@ -164,7 +164,7 @@ public:
     /// \param fileName Program looks for image given by fileName, relative to
     /// the data folder.
     /// \returns true if image loaded correctly.
-    bool load(string fileName);
+    bool load(const string& fileName);
     
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().

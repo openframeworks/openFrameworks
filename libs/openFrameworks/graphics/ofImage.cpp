@@ -620,7 +620,7 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::load(string fileName){
+bool ofImage_<PixelType>::load(const string& fileName){
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
@@ -796,6 +796,12 @@ void ofImage_<PixelType>::allocate(int w, int h, ofImageType newType){
 	type	= pixels.getImageType();
 }
 
+
+//------------------------------------
+template<typename PixelType>
+bool ofImage_<PixelType>::bAllocated(){
+    return pixels.isAllocated();
+}
 
 //------------------------------------
 template<typename PixelType>
