@@ -100,11 +100,11 @@ public:
 	/// resample by changing the playback speed, keeping the same sampleRate
 	void resample(float speed, InterpolationAlgorithm algorithm=defaultAlgorithm);
 	/// the number of channels per frame
-	int getNumChannels() const { return channels; }
+	int getNumChannels() const { return (int) channels; }
 	/// set the number of channels. does not change the underlying data, ie causes getNumFrames() to return a different result.
 	void setNumChannels(int channels);
 	/// the number of frames, ie the number of sets of (getNumChannels()) samples
-	unsigned long getNumFrames() const { return size()/getNumChannels(); }
+	unsigned long getNumFrames() const { return (unsigned long) size() / (unsigned long) getNumChannels(); }
 	
 	/// return the tickCount that was assigned by ofSoundStream (if this buffer originated from an ofSoundStream).
 	uint64_t getTickCount() const { return tickCount; }
