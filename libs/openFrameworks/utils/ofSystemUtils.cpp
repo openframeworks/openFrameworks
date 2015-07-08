@@ -616,6 +616,7 @@ string ofSystemTextBoxDialog(string question, string text){
 		// add text field to alert dialog
 		[alert setAccessoryView:label];
 		NSInteger returnCode = [alert runModal];
+		restoreAppWindowFocus();
 		// if OK was clicked, assign value to text
 		if ( returnCode == NSAlertFirstButtonReturn )
 			text = [[label stringValue] UTF8String];
