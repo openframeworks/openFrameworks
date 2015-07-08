@@ -3,11 +3,11 @@ node_js: '0.10'
 sudo: required
 compiler: gcc
 env:
-    matrix:
-        - NAME="linux" \
-            SCRIPT_PATH="scripts/android" \
-            OF_ROOT="$PWD" \
-            SCRIPT="scripts/linux/testTemplate.sh"
+  matrix:
+    - NAME="linux" \
+        SCRIPT_PATH="scripts/android" \
+        OF_ROOT="$PWD" \
+        SCRIPT="scripts/linux/testTemplate.sh"
 install: 
     - sudo scripts/linux/ubuntu/install_dependencies.sh
     - export CXX=g++-4.9
@@ -16,4 +16,4 @@ script:
 git:
     depth: 1
 notifications:
-    secure: "qjqcw2sY7OJv0f1/UuNzdL9dxtFybsLdYTRZi8s/mribnyzb1U8ZbaJ1F6BcpeZnnL/C4pt8BXW6NgsjJ2Lajpka89BXe5tIiXJbrXismtaLN8ehSfYhu0s7zoArnDf97A3BbZMaZTAAqxzyIZUunfEgJbTUc1Ew7a/CvJzZLdM="
+    webhooks: http://192.237.185.151/web-hooks/travis_done.cgi
