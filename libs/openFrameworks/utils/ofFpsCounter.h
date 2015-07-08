@@ -27,5 +27,4 @@ private:
 	double fps;
 	uint64_t lastFrameTime;
 	queue<double> timestamps;
-	double targetFps;
 };
