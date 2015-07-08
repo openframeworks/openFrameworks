@@ -56,7 +56,7 @@ void		ofExit(int status=0);
 //-------------------------- time
 float 		ofGetFrameRate();
 float 		ofGetTargetFrameRate();
-int			ofGetFrameNum();
+unsigned long long ofGetFrameNum();
 void 		ofSetFrameRate(int targetRate);
 double		ofGetLastFrameTime();
 

@@ -25,7 +25,7 @@ double ofGetLastFrameTime(){
 }
 
 //--------------------------------------
-int ofGetFrameNum(){
+unsigned long long ofGetFrameNum(){
 	return ofEvents().getFrameNum();
 }
 
@@ -152,7 +152,7 @@ double ofCoreEvents::getLastFrameTime() const{
 }
 
 //--------------------------------------
-int ofCoreEvents::getFrameNum() const{
+unsigned long long ofCoreEvents::getFrameNum() const{
 	return fps.getNumFrames();
 }
 
