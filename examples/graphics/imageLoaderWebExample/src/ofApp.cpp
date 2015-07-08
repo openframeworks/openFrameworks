@@ -35,7 +35,7 @@ void ofApp::draw(){
 		ofDrawBitmapString("loading...", 10, ofGetHeight()+20);
 	float divider = ofMap( mouseX, 0, ofGetWidth(), 1, 48, true );
 	
-	if(img.bAllocated()){
+	if(img.isAllocated()){
 		for(int y = 0; y < img.getHeight(); y+= divider){
 			for(int x = 0; x < img.getWidth(); x+=divider){
 				ofColor c = img.getColor(x, y);
