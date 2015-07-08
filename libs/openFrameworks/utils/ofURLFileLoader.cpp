@@ -98,7 +98,7 @@ int ofURLFileLoaderImpl::getAsync(string url, string name){
 	ofHttpRequest request(url,name);
 	requests.send(request);
 	start();
-	return request.getID();
+	return request.getId();
 }
 
 
@@ -111,7 +111,7 @@ int ofURLFileLoaderImpl::saveAsync(string url, string path){
 	ofHttpRequest request(url,path,true);
 	requests.send(request);
 	start();
-	return request.getID();
+	return request.getId();
 }
 
 void ofURLFileLoaderImpl::remove(int id){
@@ -148,7 +148,7 @@ void ofURLFileLoaderImpl::threadedFunction() {
 		}
 		ofHttpRequest request;
 		if(requests.receive(request)){
-			if(cancelledRequests.find(request.getID())==cancelledRequests.end()){
+			if(cancelledRequests.find(request.getId())==cancelledRequests.end()){
 				ofHttpResponse response(handleRequest(request));
 				int status = response.status;
 				if(!responses.send(move(response))){
@@ -281,6 +281,56 @@ static ofURLFileLoader & getFileLoader(){
 	initialized = true;
 	return *fileLoader;
 }
+
+
+ofHttpRequest::ofHttpRequest()
+:saveTo(false)
+,id(nextID++)
+{
+}
+
+ofHttpRequest::ofHttpRequest(const string& url, const string& name,bool saveTo)
+:url(url)
+,name(name)
+,saveTo(saveTo)
+,id(nextID++)
+{
+}
+
+int ofHttpRequest::getId() const {
+	return id;
+}
+
+int ofHttpRequest::getID(){
+	return id;
+}
+
+
+ofHttpResponse::ofHttpResponse()
+:status(0)
+{
+}
+
+ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, const ofBuffer& data, int status, const string& error)
+:request(request)
+,data(data)
+,status(status)
+,error(error)
+{
+}
+
+ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, int status, const string& error)
+:request(request)
+,status(status)
+,error(error)
+{
+}
+
+ofHttpResponse::operator ofBuffer&(){
+	return data;
+}
+
+
 
 ofHttpResponse ofLoadURL(string url){
 	return getFileLoader().get(url);
