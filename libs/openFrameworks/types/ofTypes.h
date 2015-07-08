@@ -287,7 +287,7 @@ using ofPtr = std::shared_ptr<T>;
 
 
 // This is a helper method for make unique on platforms that support C++11, but not C++14.
-#if !defined(NO_OF_MAKE_UNIQUE) && (__cplusplus <= 201103L || _MSC_VER < 1800)
+#if !defined(NO_OF_MAKE_UNIQUE) && (defined(_MSC_VER) && _MSC_VER < 1800) || (!defined(_MSC_VER) && __cplusplus <= 201103L)
 
 // Implementation for C++11 platforms that do not yet have std::make_unique.
 // Implementation from http://stackoverflow.com/a/13512344/1518329
