@@ -94,7 +94,7 @@ ofHttpResponse ofURLFileLoaderImpl::get(const string& url) {
 
 
 int ofURLFileLoaderImpl::getAsync(const string& url, const string& name){
-	ofHttpRequest request(url, name.empty() ? url : "");
+    ofHttpRequest request(url, name.empty() ? url : name);
 	requests.send(request);
 	start();
 	return request.getId();
