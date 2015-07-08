@@ -148,7 +148,7 @@ public:
     /// allocate or by loading pixel data into the image.
     /// \deprecated Use isAllocated() instead
     /// \returns true if the image has been allocated.
-    bool bAllocated() {return pixels.isAllocated();};   // legacy function
+    OF_DEPRECATED_MSG("Use isAllocated()", bool bAllocated());
     
     /// \brief This clears the texture and pixels contained within the ofImage.
     void clear();
