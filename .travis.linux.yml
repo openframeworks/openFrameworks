@@ -3,13 +3,11 @@ node_js: '0.10'
 sudo: required
 compiler: gcc
 env:
-  global:
-    - secure: HghPHJcGdn25WfyZmAIkYElnbnmrTswegCrq6rsrsBma116POdP0JD+kOFOs3gF8Ix1BWSkJbueBmQwQ644+qHX4YT5ct0WXkCYohWvtaZPtgai3hF4aoN4nS72V8wVIyIUfe+DRQGivGk2Ne8eFVUO+SBouy7Ci10KPZM3nla0=
-  matrix:
-    - NAME="linux" \
-        SCRIPT_PATH="scripts/android" \
-        OF_ROOT="$PWD" \
-        SCRIPT="scripts/linux/testTemplate.sh"
+    matrix:
+        - NAME="linux" \
+            SCRIPT_PATH="scripts/android" \
+            OF_ROOT="$PWD" \
+            SCRIPT="scripts/linux/testTemplate.sh"
 install: 
     - sudo scripts/linux/ubuntu/install_dependencies.sh
     - export CXX=g++-4.9
@@ -18,4 +16,4 @@ script:
 git:
     depth: 1
 notifications:
-    webhooks: http://192.237.185.151/web-hooks/done.cgi
+    secure: "qjqcw2sY7OJv0f1/UuNzdL9dxtFybsLdYTRZi8s/mribnyzb1U8ZbaJ1F6BcpeZnnL/C4pt8BXW6NgsjJ2Lajpka89BXe5tIiXJbrXismtaLN8ehSfYhu0s7zoArnDf97A3BbZMaZTAAqxzyIZUunfEgJbTUc1Ew7a/CvJzZLdM="
