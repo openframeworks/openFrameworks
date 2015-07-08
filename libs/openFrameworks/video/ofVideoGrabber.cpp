@@ -129,7 +129,7 @@ void ofVideoGrabber::setVerbose(bool bTalkToMe){
 void ofVideoGrabber::setDeviceID(int _deviceID){
 	requestedDeviceID = _deviceID;
 	if( grabber && grabber->isInitialized() ){
-		ofLogWarning("ofxVideoGrabber") << "setDeviceID(): can't set device while grabber is running";
+		ofLogWarning("ofVideoGrabber") << "setDeviceID(): can't set device while grabber is running.";
 	}
 }
 
