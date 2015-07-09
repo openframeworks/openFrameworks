@@ -47,7 +47,7 @@ public:
     	enabled = false;
     }
 
-	bool isEnabled() {
+	bool isEnabled() const {
 		return enabled;
 	}
 
