@@ -108,7 +108,7 @@ public:
 	
 	/// return the tickCount that was assigned by ofSoundStream (if this buffer originated from an ofSoundStream).
 	uint64_t getTickCount() const { return tickCount; }
-	void setTickCount(unsigned long long tick){ tickCount = tick; }
+	void setTickCount(uint64_t tick){ tickCount = tick; }
 	
 	/// return the duration of audio in this buffer in milliseconds (==(getNumFrames()/getSampleRate())*1000)
 	uint64_t getDurationMS() const;
