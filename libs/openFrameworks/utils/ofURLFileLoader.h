@@ -35,10 +35,10 @@ public:
 	string				error;
 };
 
-ofHttpResponse ofLoadURL(string url);
-int ofLoadURLAsync(string url, string name=""); // returns id
-ofHttpResponse ofSaveURLTo(string url, string path);
-int ofSaveURLAsync(string url, string path);
+ofHttpResponse ofLoadURL(const string& url);
+int ofLoadURLAsync(const string& url, const string& name=""); // returns id
+ofHttpResponse ofSaveURLTo(const string& url, const string& path);
+int ofSaveURLAsync(const string& url, const string& path);
 void ofRemoveURLRequest(int id);
 void ofRemoveAllURLRequests();
 
@@ -61,10 +61,10 @@ class ofBaseURLFileLoader;
 class ofURLFileLoader  {
     public:
         ofURLFileLoader();	
-        ofHttpResponse get(string url);
-        int getAsync(string url, string name=""); // returns id
-        ofHttpResponse saveTo(string url, string path);
-        int saveAsync(string url, string path);
+        ofHttpResponse get(const string& url);
+        int getAsync(const string& url, const string& name=""); // returns id
+        ofHttpResponse saveTo(const string& url, const string& path);
+        int saveAsync(const string& url, const string& path);
 		void remove(int id);
 		void clear();
         void stop();
