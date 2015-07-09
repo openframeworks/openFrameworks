@@ -35,7 +35,7 @@ void ofSoundBuffer::copyFrom(const short * shortBuffer, std::size_t numFrames, s
 	this->channels = numChannels;
 	this->samplerate = sampleRate;
 	buffer.resize(numFrames * numChannels);
-	for(unsigned int i = 0; i < size(); i++){
+	for(std::size_t i = 0; i < size(); i++){
 		buffer[i] = shortBuffer[i]/float(numeric_limits<short>::max());
 	}
 	checkSizeAndChannelsConsistency("copyFrom");
@@ -58,13 +58,13 @@ void ofSoundBuffer::copyFrom(const vector<float> & floatBuffer, std::size_t numC
 
 void ofSoundBuffer::toShortPCM(vector<short> & dst) const{
 	dst.resize(size());
-	for(unsigned int i = 0; i < size(); i++){
+	for(std::size_t i = 0; i < size(); i++){
 		dst[i] = buffer[i]*float(numeric_limits<short>::max());
 	}
 }
 
 void ofSoundBuffer::toShortPCM(short * dst) const{
-	for(unsigned int i = 0; i < size(); i++){
+	for(std::size_t i = 0; i < size(); i++){
 		dst[i] = buffer[i]*float(numeric_limits<short>::max());
 	}
 }
@@ -94,7 +94,7 @@ void ofSoundBuffer::setNumChannels(int channels){
 	checkSizeAndChannelsConsistency("setNumChannels");
 }
 
-void ofSoundBuffer::setSampleRate(int rate){
+void ofSoundBuffer::setSampleRate(unsigned int rate){
 	samplerate = rate;
 }
 
@@ -159,7 +159,7 @@ ofSoundBuffer ofSoundBuffer::operator*(float value){
 }
 
 ofSoundBuffer & ofSoundBuffer::operator*=(float value){
-	for(unsigned int i=0;i<buffer.size();i++){
+	for(std::size_t i=0;i<buffer.size();i++){
 		buffer[i] *= value;
 	}
 	return *this;
@@ -171,7 +171,7 @@ void ofSoundBuffer::stereoPan(float left, float right){
 		return;
 	}
 	float * bufferPtr = &buffer[0];
-	for(unsigned int i=0;i<getNumFrames();i++){
+	for(std::size_t i=0;i<getNumFrames();i++){
 		*bufferPtr++ *= left;
 		*bufferPtr++ *= right;
 	}
@@ -301,8 +301,8 @@ void ofSoundBuffer::append(ofSoundBuffer & other){
 	buffer.insert(buffer.end(),other.buffer.begin(),other.buffer.end());
 }
 
-static bool prepareBufferForResampling(const ofSoundBuffer &in, ofSoundBuffer &out, unsigned int numFrames) {
-	unsigned int totalOutBufferSize = numFrames * in.getNumChannels();
+static bool prepareBufferForResampling(const ofSoundBuffer &in, ofSoundBuffer &out, std::size_t numFrames) {
+	std::size_t totalOutBufferSize = numFrames * in.getNumChannels();
 	
 	if(totalOutBufferSize < out.getBuffer().max_size()) {
 		out.resize(totalOutBufferSize,0);
@@ -318,10 +318,10 @@ static bool prepareBufferForResampling(const ofSoundBuffer &in, ofSoundBuffer &o
 
 // based on maximilian optimized for performance.
 // might lose 1 or 2 samples when it reaches the end of the buffer
-void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop) const {
+void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const {
 	
-	int inChannels = getNumChannels();
-	unsigned long inFrames = getNumFrames();
+	std::size_t inChannels = getNumChannels();
+	std::size_t inFrames = getNumFrames();
 	bool bufferReady = prepareBufferForResampling(*this, outBuffer, numFrames);
 	
 	if(!bufferReady) {
@@ -329,13 +329,13 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, unsigned int from
 		return;
 	}
 	
-	unsigned int start = fromFrame;
-	unsigned int end = start*inChannels + double(numFrames*inChannels)*speed;
+	std::size_t start = fromFrame;
+	std::size_t end = start*inChannels + double(numFrames*inChannels)*speed;
 	double position = start;
-	unsigned int intPosition = position;
+	std::size_t intPosition = position;
 	float increment = speed;
-	unsigned int copySize = inChannels*sizeof(float);
-	unsigned int to;
+	std::size_t copySize = inChannels*sizeof(float);
+	std::size_t to;
 	
 	if(end<size()-2*inChannels){
 		to = numFrames;
@@ -349,7 +349,7 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, unsigned int from
 	float * resBufferPtr = &outBuffer[0];
 	float a, b;
 	
-	for(unsigned int i=0;i<to;i++){
+	for(std::size_t i=0;i<to;i++){
 		intPosition *= inChannels;
 		for(int j=0;j<inChannels;j++){
 			a = buffer[intPosition];
@@ -364,9 +364,9 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, unsigned int from
 		to = numFrames-to;
 		if(loop){
 			intPosition %= inFrames;
-			for(unsigned int i=0;i<to;i++){
+			for(std::size_t i=0;i<to;i++){
 				intPosition *= inChannels;
-				for(int j=0;j<inChannels;j++){
+				for(std::size_t j=0;j<inChannels;j++){
 					a = buffer[intPosition];
 					b = buffer[intPosition+inChannels];
 					*resBufferPtr++ = (b-a)*remainder+a;
@@ -383,10 +383,10 @@ void ofSoundBuffer::linearResampleTo(ofSoundBuffer &outBuffer, unsigned int from
 
 // based on maximilian optimized for performance.
 // might lose 1 to 3 samples when it reaches the end of the buffer
-void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, unsigned int fromFrame, unsigned int numFrames, float speed, bool loop) const {
+void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const {
 	
-	int inChannels = getNumChannels();
-	unsigned long inFrames = getNumFrames();
+	std::size_t inChannels = getNumChannels();
+	std::size_t inFrames = getNumFrames();
 	bool bufferReady = prepareBufferForResampling(*this, outBuffer, numFrames);
 	
 	if(!bufferReady) {
@@ -394,14 +394,14 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, unsigned int fro
 		return;
 	}
 	
-	unsigned int start = fromFrame;
-	unsigned int end = start*inChannels + double(numFrames*inChannels)*speed;
+	std::size_t start = fromFrame;
+	std::size_t end = start*inChannels + double(numFrames*inChannels)*speed;
 	double position = start;
-	unsigned int intPosition = position;
+	std::size_t intPosition = position;
 	float remainder = position - intPosition;
 	float increment = speed;
-	unsigned int copySize = inChannels*sizeof(float);
-	unsigned int to;
+	std::size_t copySize = inChannels*sizeof(float);
+	std::size_t to;
 	
 	if(end<size()-3*inChannels){
 		to = numFrames;
@@ -413,7 +413,7 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, unsigned int fro
 	
 	float * resBufferPtr = &outBuffer[0];
 	float a,b,c,d;
-	unsigned int from = 0;
+	std::size_t from = 0;
 	
 	while(intPosition==0){
 		intPosition *= inChannels;
@@ -430,9 +430,9 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, unsigned int fro
 		from++;
 	}
 	
-	for(unsigned int i=from;i<to;++i){
+	for(std::size_t i=from;i<to;++i){
 		intPosition *= inChannels;
-		for(int j=0;j<inChannels;++j){
+		for(std::size_t j=0;j<inChannels;++j){
 			a=buffer[intPosition+j-inChannels];
 			b=buffer[intPosition+j];
 			c=buffer[intPosition+j+inChannels];
@@ -448,8 +448,8 @@ void ofSoundBuffer::hermiteResampleTo(ofSoundBuffer &outBuffer, unsigned int fro
 		to = numFrames-to;
 		if(loop){
 			intPosition %= size();
-			for(unsigned int i=0;i<to;++i){
-				for(int j=0;j<inChannels;++j){
+			for(std::size_t i=0;i<to;++i){
+				for(std::size_t j=0;j<inChannels;++j){
 					a=buffer[intPosition+j-inChannels];
 					b=buffer[intPosition+j];
 					c=buffer[intPosition+j+inChannels];
@@ -530,7 +530,7 @@ float ofSoundBuffer::getRMSAmplitude() const {
 	return sqrt(acc / (double)buffer.size());
 }
 
-float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel) const {
+float ofSoundBuffer::getRMSAmplitudeChannel(std::size_t channel) const {
 	if(channel > channels - 1) {
 		return 0;
 	}
@@ -545,11 +545,11 @@ float ofSoundBuffer::getRMSAmplitudeChannel(unsigned int channel) const {
 
 void ofSoundBuffer::normalize(float level){
 	float maxAmplitude = 0;
-	for(unsigned i = 0; i < size(); i++) {
+	for(std::size_t i = 0; i < size(); i++) {
 		maxAmplitude = max(maxAmplitude, abs(buffer[i]));
 	}
 	float normalizationFactor = level/maxAmplitude;
-	for(unsigned i = 0; i < size(); i++) {
+	for(std::size_t i = 0; i < size(); i++) {
 		buffer[i] *= normalizationFactor;
 	}
 }
@@ -589,16 +589,16 @@ bool ofSoundBuffer::trimSilence(float threshold, bool trimStart, bool trimEnd) {
 }
 
 void ofSoundBuffer::fillWithNoise(float amplitude){
-	for ( unsigned i=0; i<size(); i++ ) {
+	for (std::size_t i=0; i<size(); i++ ) {
 		buffer[i] = ofRandom(-amplitude, amplitude);
 	}
 }
 
 float ofSoundBuffer::fillWithTone( float pitchHz, float phase ){
 	float step = TWO_PI*(pitchHz/samplerate);
-	for ( unsigned i=0; i<size()/channels; i++ ) {
-		unsigned int base = i*channels;
-		for ( unsigned j=0; j<channels; j++)
+	for (std::size_t i=0; i<size()/channels; i++ ) {
+		std::size_t base = i*channels;
+		for (std::size_t j=0; j<channels; j++)
 			buffer[base+j] = sinf(phase);
 		phase += step;
 	}
