@@ -475,9 +475,9 @@ double ofToDouble(const string& doubleString) {
 }
 
 //----------------------------------------
-long long ofToLong(const string& longString) {
-	long long x = 0;
-	istringstream cur(longString);
+int64_t ofToInt64(const string& intString) {
+	int64_t x = 0;
+	istringstream cur(intString);
 	cur >> x;
 	return x;
 }
