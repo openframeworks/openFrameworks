@@ -592,14 +592,14 @@ int ofToInt(const string& intString);
 /// \name Number conversion
 /// \{
 
-/// \brief Convert a string to a long long integer.
+/// \brief Convert a string to a int64_t.
 ///
-/// Converts a `std::string` representation of a long long integer
-/// (e.g., `"9223372036854775807"`) to an actual `long long int`.
+/// Converts a `std::string` representation of a long integer
+/// (e.g., `"9223372036854775807"`) to an actual `int64_t`.
 ///
-/// \param The string representation of the long long integer.
-/// \returns the long long integer represented by the string or 0 on failure.
-long long ofToLong(const string& intString);
+/// \param The string representation of the long integer.
+/// \returns the long integer represented by the string or 0 on failure.
+int64_t ofToInt64(const string& intString);
 
 /// \brief Convert a string to a float.
 ///
