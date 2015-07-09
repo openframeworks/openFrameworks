@@ -856,10 +856,10 @@ public:
 class ofBaseURLFileLoader{
 public:
 	virtual ~ofBaseURLFileLoader(){};
-	virtual ofHttpResponse get(string url)=0;
-	virtual int getAsync(string url, string name="")=0;
-	virtual ofHttpResponse saveTo(string url, string path)=0;
-	virtual int saveAsync(string url, string path)=0;
+	virtual ofHttpResponse get(const string& url)=0;
+	virtual int getAsync(const string& url, const string& name="")=0;
+	virtual ofHttpResponse saveTo(const string& url, const string& path)=0;
+	virtual int saveAsync(const string& url, const string& path)=0;
 	virtual void remove(int id)=0;
 	virtual void clear()=0;
 	virtual void stop()=0;
