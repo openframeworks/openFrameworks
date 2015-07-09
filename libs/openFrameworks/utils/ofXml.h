@@ -49,6 +49,8 @@ public:
     string          getValue(const string & path) const;
     int				getIntValue() const;
     int				getIntValue(const string & path) const;
+    int64_t getInt64Value() const;
+    int64_t getInt64Value(const string& path) const;
     float			getFloatValue() const;
     float			getFloatValue(const string & path) const;
     bool			getBoolValue() const;
