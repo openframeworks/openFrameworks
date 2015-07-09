@@ -47,6 +47,14 @@ public:
     	enabled = false;
     }
 
+	bool isEnabled() const {
+		return enabled;
+	}
+
+	std::size_t size() const {
+		return functions.size();
+	}
+
     class Function{
     public:
     	int priority;
