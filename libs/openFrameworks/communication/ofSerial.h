@@ -79,9 +79,7 @@ public:
 	/// device 0 - COM2
 	/// device 1 - COM4
 	/// ~~~~
-	
-	//old method - deprecated
-	void enumerateDevices();
+	OF_DEPRECATED_MSG("Use listDevices() instead", void enumerateDevices());
 	
 	/// \brief Returns a vector of ofSerialDeviceInfo instances with the
 	/// devicePath, deviceName, deviceID set.
