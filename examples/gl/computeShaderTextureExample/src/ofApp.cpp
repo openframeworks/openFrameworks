@@ -31,6 +31,7 @@ void ofApp::update(){
 			bg.loadData(player.getPixels());
 			grabBG = false;
 		}
+                player.getTexture().bindAsImage(0,GL_READ_ONLY);
 		shader.begin();
 		shader.setUniform1f("elapsedTime",ofGetElapsedTimef());
 		shader.dispatchCompute(player.getWidth()/32, player.getHeight()/30, 1);
