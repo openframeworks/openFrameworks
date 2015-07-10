@@ -16,16 +16,15 @@ public:
 	// update more often
 	void update();
 	double getFps() const;
-	unsigned int getNumFrames() const;
-	unsigned long long getLastFrameNanos() const;
+	uint64_t getNumFrames() const;
+	uint64_t getLastFrameNanos() const;
 	double getLastFrameSecs() const;
 
 private:
 	void update(double now);
-	unsigned int nFrameCount;
+	uint64_t nFrameCount;
 	uint64_t secsThen, nanosThen;
 	double fps;
 	uint64_t lastFrameTime;
 	queue<double> timestamps;
-	double targetFps;
 };

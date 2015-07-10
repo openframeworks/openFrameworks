@@ -14,7 +14,7 @@ GIT_URL=
 # GIT_URL=https://github.com/assimp/assimp.git
 GIT_TAG=
 
-FORMULA_TYPES=( "osx" "osx-clang-libc++" "ios" "android" "emscripten" )
+FORMULA_TYPES=( "osx" "osx-clang-libc++" "ios" "android" "emscripten" "vs" )
 
 # download the source code and unpack it into LIB_NAME
 function download() {
@@ -31,8 +31,11 @@ function download() {
     if [ "$TYPE" == "ios" ] ; then
 
     	echo "iOS"
-
+    elif [ "$TYPE" == "vs" ] ; then
+		#ADDED EXCEPTION, FIX DOESN'T WORK IN VS
+    	echo "VS"
 	else 
+		echo "$TYPE"
 
     	sed -i -e 's/SET ( ASSIMP_BUILD_STATIC_LIB OFF/SET ( ASSIMP_BUILD_STATIC_LIB ON/g' assimp/CMakeLists.txt
     	sed -i -e 's/option ( BUILD_SHARED_LIBS "Build a shared version of the library" ON )/option ( BUILD_SHARED_LIBS "Build a shared version of the library" OFF )/g' assimp/CMakeLists.txt
@@ -252,7 +255,31 @@ function build() {
 		make assimp -j${PARALLEL_MAKE}
 
 	elif [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: vs build"
+		
+		#architecture selection inspired int he tess formula, shouldn't build both architectures in the same run?
+		echo "building $TYPE | $ARCH | $VS_VER"
+		echo "--------------------"
+		local buildOpts=" -DASSIMP_BUILD_STATIC_LIB=0 -DASSIMP_ENABLE_BOOST_WORKAROUND=1 -DASSIMP_BUILD_ASSIMP_TOOLS=0"
+		local generatorName="Visual Studio "
+		generatorName+=$VS_VER
+		if [ $ARCH == 32 ] ; then
+			mkdir -p build_vs_32
+			cd build_vs_32
+			cmake .. -G "$generatorName" $buildOpts  
+			vs-build "Assimp.sln" build "Release|Win32"
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p build_vs_64
+			cd build_vs_64
+			generatorName+=' Win64'
+			cmake .. -G "$generatorName" $buildOpts  
+			vs-build "Assimp.sln" build "Release|x64"
+		fi
+		cd ..		
+		#cleanup to not fail if the other platform is called
+		rm -f CMakeCache.txt
+		echo "--------------------"
+		echo "Completed Assimp for $TYPE | $ARCH | $VS_VER"
+
 
 	elif [ "$TYPE" == "win_cb" ] ; then
 		echoWarning "TODO: win_cb build"
@@ -261,7 +288,7 @@ function build() {
         
 		# warning, assimp on github uses the ASSIMP_ prefix for CMake options ...
 		# these may need to be updated for a new release
-		local buildOpts="--build build/$TYPE -DASSIMP_BUILD_STATIC_LIB=1 -DASSIMP_BUILD_SHARED_LIB=0 -DASSIMP_ENABLE_BOOST_WORKAROUND=1"
+		local buildOpts="--build build/$TYPE -DASSIMP_BUILD_STATIC_LIB=1 -DASSIMP_BUILD_SHARED_LIB=0 -DASSIMP_ENABLE_BOOST_WORKAROUND=1 -DASSIMP_ENABLE_BOOST_WORKAROUND=1"
 		
 
 		# arm
@@ -308,7 +335,15 @@ function copy() {
 	# libs
 	mkdir -p $1/lib/$TYPE
 	if [ "$TYPE" == "vs" ] ; then
-		cp -Rv lib/libassimp.lib $1/lib/$TYPE/assimp.lib
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			cp -v build_vs_32/code/Release/assimp.lib $1/lib/$TYPE/Win32/assimp.lib
+			cp -v build_vs_32/code/Release/assimp.dll ../../../../export/vs/Win32/assimp.dll
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			cp -v build_vs_64/code/Release/assimp.lib $1/lib/$TYPE/x64/assimp.lib
+			cp -v build_vs_64/code/Release/assimp.dll ../../../../export/vs/x64/assimp.dll
+		fi
 	elif [ "$TYPE" == "osx" ] ; then
 		cp -Rv lib/libassimp.a $1/lib/$TYPE/assimp.a
 	elif [ "$TYPE" == "ios" ] ; then
@@ -332,9 +367,15 @@ function copy() {
 function clean() {
 
 	if [ "$TYPE" == "vs" ] ; then
-		echoWarning "TODO: clean vs"
+		if [ $ARCH == 32 ] ; then
+			vs-clean "build_vs_32/Assimp.sln";
+		elif [ $ARCH == 64 ] ; then
+			vs-clean "build_vs_64/Assimp.sln";
+		fi
+		rm -f CMakeCache.txt
+		echo "Assimp VS | $TYPE | $ARCH cleaned"
 
-	elif [ "$TYPE" == "vs" ] ; then
+	elif [ "$TYPE" == "android" ] ; then
 		echoWarning "TODO: clean android"
 
 	else

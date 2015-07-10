@@ -51,7 +51,7 @@ uint64_t ofGetElapsedTimeMicros();
 
 /// \brief Get the number of frames rendered since the program started.
 /// \returns the number of frames rendered since the program started.
-int ofGetFrameNum();
+uint64_t ofGetFrameNum();
 
 /// \}
 
@@ -593,6 +593,19 @@ const char * ofFromString(const string & value);
 /// \param The string representation of the integer.
 /// \returns the integer represented by the string or 0 on failure.
 int ofToInt(const string& intString);
+
+// --------------------------------------------
+/// \name Number conversion
+/// \{
+
+/// \brief Convert a string to a int64_t.
+///
+/// Converts a `std::string` representation of a long integer
+/// (e.g., `"9223372036854775807"`) to an actual `int64_t`.
+///
+/// \param The string representation of the long integer.
+/// \returns the long integer represented by the string or 0 on failure.
+int64_t ofToInt64(const string& intString);
 
 /// \brief Convert a string to a float.
 ///
