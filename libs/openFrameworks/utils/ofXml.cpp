@@ -99,6 +99,8 @@ void ofXml::deserialize(ofAbstractParameter & parameter){
 				parameter.cast<float>() = getFloatValue(name);
 			}else if(parameter.type()==typeid(ofParameter<bool>).name()){
 				parameter.cast<bool>() = getBoolValue(name);
+			}else if(parameter.type()==typeid(ofParameter<int64_t>).name()){
+				parameter.cast<int64_t>() = getInt64Value(name);
 			}else if(parameter.type()==typeid(ofParameter<string>).name()){
 				parameter.cast<string>() = getValue(name);
 			}else{
@@ -272,6 +274,14 @@ bool ofXml::getBoolValue() const{
 
 bool ofXml::getBoolValue(const string & path) const{
 	return getValue<bool>(path,false);
+}
+
+int64_t ofXml::getInt64Value() const{
+	return ofToInt64(getValue());
+}
+
+int64_t ofXml::getInt64Value(const string & path) const{
+	return getValue<int64_t>(path,0);
 }
 
 

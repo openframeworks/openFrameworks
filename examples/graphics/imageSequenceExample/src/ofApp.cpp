@@ -77,9 +77,8 @@ void ofApp::draw() {
     // this is the total time of the animation based on fps
     //float totalTime = images.size() / sequenceFPS;
     
-    
-    int frameIndex = 0;
-    
+    uint64_t frameIndex = 0;
+
     if(bFrameIndependent) {
         // calculate the frame index based on the app time
         // and the desired sequence fps. then mod to wrap

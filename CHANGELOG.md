@@ -73,7 +73,7 @@ CORE
 
 ### sound
 	/ ofFmodSoundPlayer: fix for file handles not being closed
-
+    / Deprecated all ofBaseSoundInput/Output methods that do not take an ofSoundBuffer.
 ### utils
 	/ better timming in fps calculation
 	+ ofFpsCounter allows to easily meassure the fps of any element
@@ -128,7 +128,7 @@ CORE ADDONS
     - Removed, see ofxMaxim for a replacement (https://github.com/micknoise/Maximilian)
 
 ### ofxKinect
-    / Bugfix for kinects not keeping their IDs when using multiple kinects. 
+    / Bugfix for kinects not keeping their IDs when using multiple kinects.
 
 PROJECT GENERATOR
 -----------------

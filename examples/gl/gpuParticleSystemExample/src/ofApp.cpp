@@ -12,14 +12,19 @@ void ofApp::setup(){
     
     string shadersFolder;
     if(ofIsGLProgrammableRenderer()){
-    	shadersFolder="shaders_programmable";
+    	shadersFolder="shaders_gl3";
     }else{
     	shadersFolder="shaders";
     }
 
     // Loading the Shaders
-    updatePos.load("",shadersFolder+"/posUpdate.frag");// shader for updating the texture that store the particles position on RG channels
-    updateVel.load("",shadersFolder+"/velUpdate.frag");// shader for updating the texture that store the particles velocity on RG channels
+    if(ofIsGLProgrammableRenderer()){
+        updatePos.load(shadersFolder+"/passthru.vert", shadersFolder+"/posUpdate.frag");// shader for updating the texture that store the particles position on RG channels
+        updateVel.load(shadersFolder+"/passthru.vert", shadersFolder+"/velUpdate.frag");// shader for updating the texture that store the particles velocity on RG channels
+    }else{
+        updatePos.load("",shadersFolder+"/posUpdate.frag");// shader for updating the texture that store the particles position on RG channels
+        updateVel.load("",shadersFolder+"/velUpdate.frag");// shader for updating the texture that store the particles velocity on RG channels
+    }
     
     // Frag, Vert and Geo shaders for the rendering process of the spark image
     updateRender.setGeometryInputType(GL_POINTS);
