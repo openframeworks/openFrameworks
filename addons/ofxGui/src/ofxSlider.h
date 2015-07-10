@@ -54,8 +54,8 @@ protected:
 	bool bGuiActive;
 	bool mouseInside;
 	bool setValue(float mx, float my, bool bCheck);
-	void generateDraw();
-	void generateText();
+	virtual void generateDraw();
+	virtual void generateText();
 	void valueChanged(Type & value);
 	ofPath bg, bar;
 	ofVboMesh textMesh;
