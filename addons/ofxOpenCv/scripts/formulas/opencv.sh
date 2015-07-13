@@ -582,11 +582,11 @@ function build() {
 function copy() {
 
   # prepare headers directory if needed
-  mkdir -p $1/../../addons/ofxOpenCv/libs/opencv/include
- 
+  mkdir -p $1/include
+
   # prepare libs directory if needed
-  mkdir -p $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE
- 
+  mkdir -p $1/lib/$TYPE
+
   if [ "$TYPE" == "osx" ] ; then
     # Standard *nix style copy.
     # copy headers
@@ -600,7 +600,7 @@ function copy() {
 	
   elif [ "$TYPE" == "vs" ] ; then 
 		if [ $ARCH == 32 ] ; then
-			mkdir -p $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32
+			mkdir -p $1/lib/$TYPE/Win32
 			#copy the cv libs
 			cp -v build_vs_32/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
 			cp -v build_vs_32/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
@@ -608,7 +608,7 @@ function copy() {
 			cp -v build_vs_32/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
 			cp -v build_vs_32/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
 		elif [ $ARCH == 64 ] ; then
-			mkdir -p $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64
+			mkdir -p $1/lib/$TYPE/x64
 			#copy the cv libs
 			cp -v build_vs_64/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
 			cp -v build_vs_64/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
@@ -639,9 +639,9 @@ function copy() {
   fi
 
   # copy license file
-  rm -rf $1/../../addons/ofxOpenCv/libs/opencv/license # remove any older files if exists
-  mkdir -p $1/../../addons/ofxOpenCv/libs/opencv/license
-  cp -v LICENSE $1/../../addons/ofxOpenCv/libs/opencv/license/
+  rm -rf $1/license # remove any older files if exists
+  mkdir -p $1/license
+  cp -v LICENSE $1/license/
 
 }
  
