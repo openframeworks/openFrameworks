@@ -1,35 +1,40 @@
-
-language: objective-c
-compiler: clang
-node_js: '0.10'
+os:
+  - linux
+language: c++
+compiler: gcc
 env:
   global:
     - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
   matrix:
-    - NAME="osx" \
-        SCRIPT_PATH="scripts/$NAME" \
-        SCRIPT="$SCRIPT_PATH/testTemplate.sh"
-    - NAME="ios" \ 
-        SCRIPT_PATH="scripts/$NAME" \
-        SCRIPT="$SCRIPT_PATH/testTemplate.sh"
-    - NAME="android-armv7" \ 
-        SCRIPT_PATH="scripts/android" \
-        OF_ROOT="$PWD" \
-        SCRIPT="$SCRIPT_PATH/testTemplate.sh armv7"
-    - NAME="android-x86" \ 
-        SCRIPT_PATH="scripts/android" \
-        OF_ROOT="$PWD" \
-        SCRIPT="$SCRIPT_PATH/testTemplate.sh x86"
-    - NAME="docs" \
-        SCRIPT_PATH="scripts/dev" \
-        SCRIPT="$SCRIPT_PATH/documentation.sh"
+    - TARGET="linux"
+    - TARGET="android" OPT="armv7"
+    - TARGET="android" OPT="x86"
+    - TARGET="docs"
+matrix:
+  include:
+    # fully specify builds, include can't dynamically expand matrix entries
+    - os: osx
+      compiler: clang
+      env: TARGET="osx"
+    - os: osx
+      compiler: clang
+      env: TARGET="ios"
+  allow_failures:
+    - env: TARGET="docs"
 before_install:
-    "if [ \"$NAME\" == \"docs\" ]; then scripts/dev/documentation.sh before_install; fi"
+    # should source before_install.sh so we can export CXX in the linux script.
+    # instead, export CXX here, because sourcing messes up Travis log output
+    # remove this when switching to newer Ubuntu with appropriate gcc version.
+    - if [ "$TARGET" == "docs" ] || [ "$TARGET" == "linux" ]; then
+        scripts/ci/$TARGET/before_install.sh;
+        export CXX=g++-4.9;
+      fi
 install:
-    "if [ \"$NAME\" == \"android-armv7\" ] || [ \"$NAME\" == \"android-x86\" ]; then scripts/android/install_tests_env.sh; fi"
+    if [ "$TARGET" == "android" ]; then scripts/ci/$TARGET/install.sh; fi
 script:
-    "$SCRIPT"
+    - scripts/ci/$TARGET/build.sh $OPT
 after_success:
-    "if [ \"$NAME\" == \"docs\" ]; then scripts/dev/documentation.sh after_success; fi"
+    # this will only run fully on a commit, not a PR, due to secure above
+    if [ "$TARGET" == "docs" ]; then scripts/ci/$TARGET/after_success.sh; fi
 git:
     depth: 10

@@ -1,0 +1,10 @@
+llvm-*
+stlport
+x86-4.8
+docs
+android-1*
+*mips*
+*4.8*
+*4.6*
+python2.7
+perl5
