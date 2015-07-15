@@ -6,7 +6,7 @@
 #
 # uses a CMake build system
  
-FORMULA_TYPES=( "osx" "ios" "android" "emscripten" )
+FORMULA_TYPES=( "osx" "ios" "vs" "android" "emscripten" )
  
 # define the version
 VER=2.4.9
@@ -120,6 +120,94 @@ function build() {
     outputlist="lib/lib*.a"
     libtool -static $outputlist -o "$LIB_FOLDER/lib/opencv.a" | tee ${LOG}
     echo "Joining all libs in one Successful"
+	
+  elif [ "$TYPE" == "vs" ] ; then
+    rm -f CMakeCache.txt
+	#LIB_FOLDER="$BUILD_DIR/opencv/build/$TYPE"
+	mkdir -p $LIB_FOLDER
+    LOG="$LIB_FOLDER/opencv2-${VER}.log"
+    echo "Logging to $LOG"
+    echo "Log:" >> "${LOG}" 2>&1
+    set +e
+	if [ $ARCH == 32 ] ; then
+		mkdir -p build_vs_32
+		cd build_vs_32
+		cmake .. -G "Visual Studio $VS_VER"\
+		-DBUILD_PNG=OFF \
+		-DWITH_OPENCLAMDBLAS=OFF \
+		-DBUILD_TESTS=OFF \
+		-DWITH_CUDA=OFF \
+		-DWITH_FFMPEG=OFF \
+		-DWITH_WIN32UI=OFF \
+		-DBUILD_PACKAGE=OFF \
+		-DWITH_JASPER=OFF \
+		-DWITH_OPENEXR=OFF \
+		-DWITH_GIGEAPI=OFF \
+		-DWITH_JPEG=OFF \
+		-DBUILD_WITH_DEBUG_INFO=OFF \
+		-DWITH_CUFFT=OFF \
+		-DBUILD_TIFF=OFF \
+		-DBUILD_JPEG=OFF \
+		-DWITH_OPENCLAMDFFT=OFF \
+		-DBUILD_WITH_STATIC_CRT=OFF \
+		-DBUILD_opencv_java=OFF \
+		-DBUILD_opencv_python=OFF \
+		-DBUILD_opencv_apps=OFF \
+		-DBUILD_PERF_TESTS=OFF \
+		-DBUILD_JASPER=OFF \
+		-DBUILD_DOCS=OFF \
+		-DWITH_TIFF=OFF \
+		-DWITH_1394=OFF \
+		-DWITH_EIGEN=OFF \
+		-DBUILD_OPENEXR=OFF \
+		-DWITH_DSHOW=OFF \
+		-DWITH_VFW=OFF \
+		-DBUILD_SHARED_LIBS=OFF \
+		-DWITH_PNG=OFF \
+		-DWITH_OPENCL=OFF \
+		-DWITH_PVAPI=OFF  | tee ${LOG} 
+		vs-build "OpenCV.sln"
+		vs-build "OpenCV.sln" Build "Debug"
+	elif [ $ARCH == 64 ] ; then
+		mkdir -p build_vs_64
+		cd build_vs_64
+		cmake .. -G "Visual Studio $VS_VER Win64" \
+		-DBUILD_PNG=OFF \
+		-DWITH_OPENCLAMDBLAS=OFF \
+		-DBUILD_TESTS=OFF \
+		-DWITH_CUDA=OFF \
+		-DWITH_FFMPEG=OFF \
+		-DWITH_WIN32UI=OFF \
+		-DBUILD_PACKAGE=OFF \
+		-DWITH_JASPER=OFF \
+		-DWITH_OPENEXR=OFF \
+		-DWITH_GIGEAPI=OFF \
+		-DWITH_JPEG=OFF \
+		-DBUILD_WITH_DEBUG_INFO=OFF \
+		-DWITH_CUFFT=OFF \
+		-DBUILD_TIFF=OFF \
+		-DBUILD_JPEG=OFF \
+		-DWITH_OPENCLAMDFFT=OFF \
+		-DBUILD_WITH_STATIC_CRT=OFF \
+		-DBUILD_opencv_java=OFF \
+		-DBUILD_opencv_python=OFF \
+		-DBUILD_opencv_apps=OFF \
+		-DBUILD_PERF_TESTS=OFF \
+		-DBUILD_JASPER=OFF \
+		-DBUILD_DOCS=OFF \
+		-DWITH_TIFF=OFF \
+		-DWITH_1394=OFF \
+		-DWITH_EIGEN=OFF \
+		-DBUILD_OPENEXR=OFF \
+		-DWITH_DSHOW=OFF \
+		-DWITH_VFW=OFF \
+		-DBUILD_SHARED_LIBS=OFF \
+		-DWITH_PNG=OFF \
+		-DWITH_OPENCL=OFF \
+		-DWITH_PVAPI=OFF  | tee ${LOG} 
+		vs-build "OpenCV.sln" Build "Release|x64"
+		vs-build "OpenCV.sln" Build "Debug|x64"
+	fi
     
   elif [ "$TYPE" == "ios" ] ; then
 
@@ -495,10 +583,10 @@ function copy() {
 
   # prepare headers directory if needed
   mkdir -p $1/include
- 
+
   # prepare libs directory if needed
   mkdir -p $1/lib/$TYPE
- 
+
   if [ "$TYPE" == "osx" ] ; then
     # Standard *nix style copy.
     # copy headers
@@ -509,9 +597,26 @@ function copy() {
  
     # copy lib
     cp -R $LIB_FOLDER/lib/opencv.a $1/lib/$TYPE/
-  fi
-
-  if [ "$TYPE" == "ios" ] ; then
+	
+  elif [ "$TYPE" == "vs" ] ; then 
+		if [ $ARCH == 32 ] ; then
+			mkdir -p $1/lib/$TYPE/Win32
+			#copy the cv libs
+			cp -v build_vs_32/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
+			cp -v build_vs_32/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
+			#copy the zlib 
+			cp -v build_vs_32/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
+			cp -v build_vs_32/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/Win32/
+		elif [ $ARCH == 64 ] ; then
+			mkdir -p $1/lib/$TYPE/x64
+			#copy the cv libs
+			cp -v build_vs_64/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
+			cp -v build_vs_64/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
+			#copy the zlib 
+			cp -v build_vs_64/3rdparty/lib/Release/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
+			cp -v build_vs_64/3rdparty/lib/Debug/*.lib $1/../../addons/ofxOpenCv/libs/opencv/lib/$TYPE/x64/
+		fi
+  elif [ "$TYPE" == "ios" ] ; then
     # Standard *nix style copy.
     # copy headers
 
@@ -520,9 +625,7 @@ function copy() {
     cp -Rv lib/include/ $1/include/
     mkdir -p $1/lib/$TYPE
     cp -v lib/$TYPE/*.a $1/lib/$TYPE
-  fi
-  
-  if [ "$TYPE" == "android" ]; then
+  elif [ "$TYPE" == "android" ]; then
     cp -r include/opencv $1/include/
     cp -r include/opencv2 $1/include/
     
