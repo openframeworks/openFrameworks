@@ -334,8 +334,6 @@ static const NSString * ItemStatusContext;
 
 - (BOOL)createAssetReaderWithTimeRange:(CMTimeRange)timeRange {
 	
-//	videoSampleTime = videoSampleTimePrev = timeRange.start;
-//	audioSampleTime = timeRange.start;
 	videoSampleTime = videoSampleTimePrev = kCMTimeNegativeInfinity;
 	audioSampleTime = kCMTimeNegativeInfinity;
 	
