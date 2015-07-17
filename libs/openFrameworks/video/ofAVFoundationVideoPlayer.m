@@ -893,12 +893,12 @@ static const NSString * ItemStatusContext;
 #else
 	if (frames < 0) {
 
-		float timeSec = CMTimeGetSeconds(currentTime) - (1.0/frameRate);
+		double timeSec = CMTimeGetSeconds(currentTime) - (1.0/frameRate);
 		[self seekToTime:CMTimeMakeWithSeconds(timeSec, NSEC_PER_SEC)];
 		
 	} else if (![self isFinished] && frames > 0) {
 
-		float timeSec = CMTimeGetSeconds(currentTime) + (1.0/frameRate);
+		double timeSec = CMTimeGetSeconds(currentTime) + (1.0/frameRate);
 		CMTime time = CMTimeMakeWithSeconds(timeSec, NSEC_PER_SEC);
 		
 		bSeeking = YES;
