@@ -955,14 +955,7 @@ static const NSString * ItemStatusContext;
 	time = CMTimeMaximum(time, kCMTimeZero);
 	time = CMTimeMinimum(time, duration);
 	
-	// improve frame accuracy
-	// by start reading one frame before requested time
-	CMTime timeMinusOne = CMTimeMakeWithSeconds(CMTimeGetSeconds(time) - (1.0/frameRate), NSEC_PER_SEC);
-	// restrict time
-	timeMinusOne = CMTimeMaximum(timeMinusOne, kCMTimeZero);
-	timeMinusOne = CMTimeMinimum(timeMinusOne, duration);
-	
-	[self createAssetReaderWithTimeRange:CMTimeRangeMake(timeMinusOne, duration)];
+	[self createAssetReaderWithTimeRange:CMTimeRangeMake(time, duration)];
 	
 	// set reader to real requested time
 	[_player seekToTime:time
