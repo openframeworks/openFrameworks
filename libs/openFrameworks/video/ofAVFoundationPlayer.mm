@@ -17,13 +17,6 @@ ofAVFoundationPlayer::ofAVFoundationPlayer() {
     bResetPixels = false;
     bUpdatePixels = false;
     bUpdateTexture = false;
-    bTextureCacheSupported = false;
-#ifdef TARGET_OF_IOS
-    bTextureCacheSupported = (CVOpenGLESTextureCacheCreate != NULL);
-#endif
-#ifdef TARGET_OSX
-    bTextureCacheSupported = (CVOpenGLTextureCacheCreate != NULL);
-#endif
 }
 
 //--------------------------------------------------------------
@@ -91,43 +84,39 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
     bUpdatePixels = true;
     bUpdateTexture = true;
 
-    bool bCreateTextureCache = true;
-    bCreateTextureCache = bCreateTextureCache && (bTextureCacheSupported == true);
-    bCreateTextureCache = bCreateTextureCache && (_videoTextureCache == NULL);
-    
-    if(bCreateTextureCache == true) {
 
-        CVReturn err;
-        
+
+	CVReturn err;
+	
 #if defined(TARGET_OF_IOS) && defined(__IPHONE_6_0)
-        err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                           NULL,
-                                           [EAGLContext currentContext],
-                                           NULL,
-                                           &_videoTextureCache);
+	err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
+									   NULL,
+									   [EAGLContext currentContext],
+									   NULL,
+									   &_videoTextureCache);
 #endif
-        
+	
 #if defined(TARGET_OF_IOS) && !defined(__IPHONE_6_0)
-        err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
-                                           NULL,
-                                           (__bridge void *)[EAGLContext currentContext],
-                                           NULL,
-                                           &_videoTextureCache);
+	err = CVOpenGLESTextureCacheCreate(kCFAllocatorDefault,
+									   NULL,
+									   (__bridge void *)[EAGLContext currentContext],
+									   NULL,
+									   &_videoTextureCache);
 #endif
-        
+	
 #ifdef TARGET_OSX
-        err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
-                                         NULL,
-                                         CGLGetCurrentContext(),
-                                         CGLGetPixelFormat(CGLGetCurrentContext()),
-                                         NULL,
-                                         &_videoTextureCache);
+	err = CVOpenGLTextureCacheCreate(kCFAllocatorDefault,
+									 NULL,
+									 CGLGetCurrentContext(),
+									 CGLGetPixelFormat(CGLGetCurrentContext()),
+									 NULL,
+									 &_videoTextureCache);
 #endif
-        
-        if(err) {
-            ofLogWarning("ofAVFoundationPlayer") << "load(): error when creating texture cache, " << err << ".";
-        }
-    }
+	
+	if(err) {
+		ofLogWarning("ofAVFoundationPlayer") << "load(): error when creating texture cache, " << err << ".";
+	}
+	
 	
     return bLoaded;
 }
@@ -167,9 +156,7 @@ void ofAVFoundationPlayer::close() {
     }
 	
 	// in any case get rid of the textures
-	if(bTextureCacheSupported == true) {
-		killTextureCache();
-	}
+	killTextureCache();
 	
     bFrameNew = false;
     bResetPixels = false;
@@ -368,28 +355,7 @@ ofTexture * ofAVFoundationPlayer::getTexturePtr() {
         return &videoTexture;
     }
     
-    if(bTextureCacheSupported == true) {
-        
-        initTextureCache();
-        
-    } else {
-        
-        /**
-         *  no video texture cache.
-         *  load texture from pixels.
-         *  this method is the slower alternative.
-         */
-        
-        int maxTextureSize = 0;
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-        
-        if(getWidth() > maxTextureSize || getHeight() > maxTextureSize) {
-            ofLogWarning("ofAVFoundationPlayer") << "getTexturePtr(): " << getWidth() << "x" << getHeight() << " video image is bigger then max supported texture size " << maxTextureSize << ".";
-            return NULL;
-        }
-        
-        videoTexture.loadData(getPixels());
-    }
+    initTextureCache();
     
     bUpdateTexture = false;
     
