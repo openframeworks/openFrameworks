@@ -8,7 +8,7 @@
 
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
 
-#define USE_VIDEO_OUTPUT 0//(defined(MAC_OS_X_VERSION_10_8) || defined(iOS6))
+#define USE_VIDEO_OUTPUT (defined(MAC_OS_X_VERSION_10_8) || defined(iOS6))
 
 static NSString * const kTracksKey = @"tracks";
 static NSString * const kPlayableKey = @"playable";
