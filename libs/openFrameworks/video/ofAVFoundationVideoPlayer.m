@@ -8,7 +8,7 @@
 
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
 
-#define USE_VIDEO_OUTPUT (defined(MAC_OS_X_VERSION_10_8) || defined(iOS6))
+#define USE_VIDEO_OUTPUT 0//(defined(MAC_OS_X_VERSION_10_8) || defined(iOS6))
 
 static NSString * const kTracksKey = @"tracks";
 static NSString * const kPlayableKey = @"playable";
@@ -83,8 +83,8 @@ static const NSString * ItemStatusContext;
 		
 		videoSampleBuffer = nil;
 		audioSampleBuffer = nil;
-		videoSampleTime = kCMTimeZero;
-		audioSampleTime = kCMTimeZero;
+		videoSampleTime = kCMTimeNegativeInfinity;//kCMTimeZero;
+		audioSampleTime = kCMTimeNegativeInfinity;//kCMTimeZero;
 		synchSampleTime = kCMTimeInvalid;
 		duration = kCMTimeZero;
 		currentTime = kCMTimeZero;
@@ -182,8 +182,9 @@ static const NSString * ItemStatusContext;
 	
 	[self unloadVideo];     // unload video if one is already loaded.
 	
-	NSDictionary *options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:AVURLAssetPreferPreciseDurationAndTimingKey];
+	NSDictionary *options = @{(id)AVURLAssetPreferPreciseDurationAndTimingKey:@(YES)};
 	self.asset = [AVURLAsset URLAssetWithURL:url options:options];
+	
 	if(self.asset == nil) {
 		NSLog(@"error loading asset: %@", [url description]);
 		return NO;
@@ -256,6 +257,7 @@ static const NSString * ItemStatusContext;
 			
 			NSLog(@"video loaded at %li x %li @ %f fps", (long)videoWidth, (long)videoHeight, frameRate);
 			
+			currentTime = CMTimeMakeWithSeconds((1.0/frameRate), NSEC_PER_SEC);//kCMTimeZero;
 			
 			
 			//------------------------------------------------------------ create player item.
@@ -332,9 +334,12 @@ static const NSString * ItemStatusContext;
 
 - (BOOL)createAssetReaderWithTimeRange:(CMTimeRange)timeRange {
 	
-	videoSampleTime = videoSampleTimePrev = timeRange.start;
-	audioSampleTime = timeRange.start;
+//	videoSampleTime = videoSampleTimePrev = timeRange.start;
+//	audioSampleTime = timeRange.start;
+	videoSampleTime = videoSampleTimePrev = kCMTimeNegativeInfinity;
+	audioSampleTime = kCMTimeNegativeInfinity;
 	
+
 	NSError *error = nil;
 	
 	// safety
@@ -469,8 +474,8 @@ static const NSString * ItemStatusContext;
 	bFinished = NO;
 	bWasPlayingBackwards = NO;
 	
-	videoSampleTime = kCMTimeZero;
-	audioSampleTime = kCMTimeZero;
+	videoSampleTime = kCMTimeNegativeInfinity;
+	audioSampleTime = kCMTimeNegativeInfinity;
 	synchSampleTime = kCMTimeInvalid;
 	duration = kCMTimeZero;
 	currentTime = kCMTimeZero;
@@ -756,15 +761,13 @@ static const NSString * ItemStatusContext;
 	while(bSampleVideo == true &&                                       // video sampling is on.
 		  self.assetReaderVideoTrackOutput != nil &&                    // asset has a video track.
 		  self.assetReader.status == AVAssetReaderStatusReading &&      // asset read is in reading state.
-		  ((CMTimeCompare(videoSampleTime, currentTime) == -1) ||        // timestamp is less then currentTime.
-		   (CMTimeCompare(videoSampleTime, currentTime) == 0)))           // timestamp is equal currentTime.
+		  ((CMTimeCompare(videoSampleTime, currentTime) == -1) ))       // timestamp is less then currentTime.
+		   
 	{
 		CMSampleBufferRef videoBufferTemp;
-		
+
 		@try {
 			videoBufferTemp = [self.assetReaderVideoTrackOutput copyNextSampleBuffer];
-			
-			
 		} @catch (NSException * e) {
 			break;
 		}
@@ -777,7 +780,6 @@ static const NSString * ItemStatusContext;
 			videoSampleBuffer = videoBufferTemp; // save reference to new buffer.
 			
 			videoSampleTime = CMSampleBufferGetPresentationTimeStamp(videoSampleBuffer);
-			
 			
 			bCopiedNewSamples = YES;
 		} else {
@@ -811,7 +813,6 @@ static const NSString * ItemStatusContext;
 			break;
 		}
 	}
-	
 	
 	if(bCopiedNewSamples == true) {
 		bNewFrame = CMTimeCompare(videoSampleTime, videoSampleTimePrev) == 1;
@@ -885,7 +886,36 @@ static const NSString * ItemStatusContext;
 
 - (void)stepByCount:(long)frames
 {
+	if(![self isReady]) {
+		return;
+	}
+	
+#if USE_VIDEO_OUTPUT
 	[_player.currentItem stepByCount:frames];
+#else
+	if (frames < 0) {
+
+		float timeSec = CMTimeGetSeconds(currentTime) - (1.0/frameRate);
+		[self seekToTime:CMTimeMakeWithSeconds(timeSec, NSEC_PER_SEC)];
+		
+	} else if (![self isFinished] && frames > 0) {
+
+		float timeSec = CMTimeGetSeconds(currentTime) + (1.0/frameRate);
+		CMTime time = CMTimeMakeWithSeconds(timeSec, NSEC_PER_SEC);
+		
+		bSeeking = YES;
+		time = CMTimeMaximum(time, kCMTimeZero);
+		time = CMTimeMinimum(time, duration);
+		
+		// frames are preloaded, only seek player
+		[_player seekToTime:time
+			toleranceBefore:kCMTimePositiveInfinity
+			 toleranceAfter:kCMTimePositiveInfinity
+		  completionHandler:^(BOOL finished) {
+			  bSeeking = NO;
+		  }];
+	}
+#endif
 }
 
 //---------------------------------------------------------- seek.
@@ -913,7 +943,6 @@ static const NSString * ItemStatusContext;
 		bFinished = NO;
 	}
 	
-	
 	// TODO?
 	// expensive call?
 	// destroy it on a thread?
@@ -924,9 +953,20 @@ static const NSString * ItemStatusContext;
 	
 	bSeeking = YES;
 	
+	// restrict time
 	time = CMTimeMaximum(time, kCMTimeZero);
 	time = CMTimeMinimum(time, duration);
 	
+	// improve frame accuracy
+	// by start reading one frame before requested time
+	CMTime timeMinusOne = CMTimeMakeWithSeconds(CMTimeGetSeconds(time) - (1.0/frameRate), NSEC_PER_SEC);
+	// restrict time
+	timeMinusOne = CMTimeMaximum(timeMinusOne, kCMTimeZero);
+	timeMinusOne = CMTimeMinimum(timeMinusOne, duration);
+	
+	[self createAssetReaderWithTimeRange:CMTimeRangeMake(timeMinusOne, duration)];
+	
+	// set reader to real requested time
 	[_player seekToTime:time
 		toleranceBefore:tolerance
 		 toleranceAfter:tolerance
@@ -1010,7 +1050,7 @@ static const NSString * ItemStatusContext;
 }
 
 - (double)getCurrentTimeInSec {
-	return CMTimeGetSeconds(currentTime);
+	return CMTimeGetSeconds(videoSampleTime);
 }
 
 - (CMTime)getDuration {
