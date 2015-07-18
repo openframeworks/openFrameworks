@@ -42,11 +42,14 @@
 // application creates multiple sockets from different threads at runtime you
 // should instantiate one of these in main just to make sure the networking
 // layer is initialized.
-class NetworkInitializer{
+
+namespace ofx {
+class NetworkInitializer {
 public:
-    NetworkInitializer();
-    ~NetworkInitializer();
+	NetworkInitializer();
+	~NetworkInitializer();
 };
+}
 
 
 // return ip address of host name in host byte order

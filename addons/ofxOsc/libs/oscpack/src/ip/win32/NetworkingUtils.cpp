@@ -45,6 +45,8 @@
 static LONG initCount_ = 0;
 static bool winsockInitialized_ = false;
 
+using namespace ofx;
+
 NetworkInitializer::NetworkInitializer()
 {
     if( InterlockedIncrement( &initCount_ ) == 1 ){
