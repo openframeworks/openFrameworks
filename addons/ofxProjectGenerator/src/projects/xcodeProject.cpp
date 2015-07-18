@@ -1033,7 +1033,7 @@ void xcodeProject::addAddon(ofAddon & addon){
     for(int i=0;i<(int)addon.frameworks.size(); i++){
         ofLogNotice() << "adding addon frameworks: " << addon.frameworks[i];
         
-        unsigned int found=addon.frameworks[i].find('/');
+        size_t found=addon.frameworks[i].find('/');
         if (found==std::string::npos){
              addFramework( addon.frameworks[i] + ".framework", "/System/Library/Frameworks/" + addon.frameworks[i] + ".framework");
         } else {
