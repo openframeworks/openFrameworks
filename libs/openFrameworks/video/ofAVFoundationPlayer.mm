@@ -21,8 +21,8 @@ ofAVFoundationPlayer::ofAVFoundationPlayer() {
 #ifdef TARGET_OF_IOS
     bTextureCacheSupported = (CVOpenGLESTextureCacheCreate != NULL);
 #endif
-#ifdef TARGET_OSX
-    bTextureCacheSupported = (CVOpenGLTextureCacheCreate != NULL);
+#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_4)
+	bTextureCacheSupported = true;
 #endif
 }
 
@@ -44,23 +44,22 @@ bool ofAVFoundationPlayer::load(string name) {
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 
-
-	// dispose videoplayer, clear pixels, clear texture
-	if(videoPlayer != NULL) {
-		
-		pixels.clear();
-		videoTexture.clear();
-		
-		// dispose videoplayer
-		disposePlayer();
-		
-		if (_videoTextureRef != NULL) {
-			killTexture();
-		}
-		
-		videoPlayer = NULL;
-	}
-	bFrameNew = false;
+    // dispose videoplayer, clear pixels, clear texture
+    if(videoPlayer != NULL) {
+        
+        pixels.clear();
+        videoTexture.clear();
+        
+        // dispose videoplayer
+        disposePlayer();
+        
+        if (_videoTextureRef != NULL) {
+            killTexture();
+        }
+        
+        videoPlayer = NULL;
+    }
+    bFrameNew = false;
 
 	
     // create a new player
@@ -135,22 +134,21 @@ bool ofAVFoundationPlayer::loadPlayer(string name, bool bAsync) {
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::disposePlayer() {
 	
-	if (videoPlayer == NULL)
-		return;
-	
-	// pause player, stop updates
-	[videoPlayer pause];
-	
-	// dispose videoplayer
-	__block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
-	
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-		
-		@autoreleasepool {
-			[currentPlayer autorelease];
-		}
-		
-	});
+    if (videoPlayer == NULL)
+        return;
+
+    // pause player, stop updates
+    [videoPlayer pause];
+
+    // dispose videoplayer
+    __block ofAVFoundationVideoPlayer *currentPlayer = videoPlayer;
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        
+        @autoreleasepool {
+            [currentPlayer autorelease];
+        }
+    });
 }
 
 //--------------------------------------------------------------
@@ -161,15 +159,15 @@ void ofAVFoundationPlayer::close() {
         
         videoTexture.clear();
 
-		disposePlayer();
-		
-		videoPlayer = NULL;
+        disposePlayer();
+
+        videoPlayer = NULL;
     }
 	
-	// in any case get rid of the textures
-	if(bTextureCacheSupported == true) {
-		killTextureCache();
-	}
+    // in any case get rid of the textures
+    if(bTextureCacheSupported == true) {
+        killTextureCache();
+    }
 	
     bFrameNew = false;
     bResetPixels = false;
@@ -241,9 +239,9 @@ void ofAVFoundationPlayer::draw(const ofRectangle & rect) {
 }
 
 void ofAVFoundationPlayer::draw(float x, float y, float w, float h) {
-	if(videoPlayer != NULL) {
-		getTexturePtr()->draw(x, y, w, h);
-	}
+    if(videoPlayer != NULL) {
+        getTexturePtr()->draw(x, y, w, h);
+    }
 }
 
 //--------------------------------------------------------------
@@ -267,10 +265,10 @@ void ofAVFoundationPlayer::stop() {
 
 //--------------------------------------------------------------
 bool ofAVFoundationPlayer::isFrameNew() const {
-	if(videoPlayer != NULL) {
-		return bFrameNew;
-	}	
-	return false;
+    if(videoPlayer != NULL) {
+        return bFrameNew;
+    }	
+    return false;
 }
 
 //--------------------------------------------------------------
@@ -506,21 +504,21 @@ void ofAVFoundationPlayer::initTextureCache() {
 
 void ofAVFoundationPlayer::killTexture() {
 #ifdef TARGET_OF_IOS
-	if(_videoTextureRef) {
-		CFRelease(_videoTextureRef);
-		_videoTextureRef = NULL;
-	}
+    if(_videoTextureRef) {
+        CFRelease(_videoTextureRef);
+        _videoTextureRef = NULL;
+    }
 #elif defined TARGET_OSX
-	if (_videoTextureRef != NULL) {
-		CVOpenGLTextureRelease(_videoTextureRef);
-		_videoTextureRef = NULL;
-	}
+    if (_videoTextureRef != NULL) {
+        CVOpenGLTextureRelease(_videoTextureRef);
+        _videoTextureRef = NULL;
+    }
 #endif
 }
 
 void ofAVFoundationPlayer::killTextureCache() {
 	
-	killTexture();
+    killTexture();
 	
 #ifdef TARGET_OF_IOS
     if(_videoTextureCache) {
@@ -646,10 +644,10 @@ void ofAVFoundationPlayer::setVolume(float volume) {
     if(videoPlayer == NULL) {
         return;
     }
-	if(volume > 1.0) {
-		ofLogWarning("ofAVFoundationPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0.";
-		volume = 1.0;
-	}
+    if(volume > 1.0) {
+        ofLogWarning("ofAVFoundationPlayer") << "setVolume(): expected range is 0-1, limiting requested volume " << volume << " to 1.0.";
+        volume = 1.0;
+    }
     [videoPlayer setVolume:volume];
 }
 
@@ -658,13 +656,8 @@ void ofAVFoundationPlayer::setLoopState(ofLoopType state) {
     if(videoPlayer == NULL) {
         return;
     }
-    
-    bool bLoop = false;
-    if((state == OF_LOOP_NORMAL) || 
-       (state == OF_LOOP_PALINDROME)) {
-        bLoop = true;
-    }
-    [videoPlayer setLoop:bLoop];
+	
+    [videoPlayer setLoop:(playerLoopType)state];
 }
 
 //--------------------------------------------------------------
@@ -725,21 +718,27 @@ void ofAVFoundationPlayer::firstFrame() {
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::nextFrame() {
-    int nextFrameNum = ofClamp(getCurrentFrame() + 1, 0, getTotalNumFrames());
-    setFrame(nextFrameNum);
+    if(videoPlayer == NULL) {
+        return;
+    }
+
+    [videoPlayer stepByCount:1];
 }
 
 //--------------------------------------------------------------
 void ofAVFoundationPlayer::previousFrame() {
-    int prevFrameNum = ofClamp(getCurrentFrame() - 1, 0, getTotalNumFrames());
-    setFrame(prevFrameNum);
+    if(videoPlayer == NULL) {
+        return;
+    }
+
+    [videoPlayer stepByCount:-1];
 }
 
 //--------------------------------------------------------------
 #ifdef __OBJC__
 
 ofAVFoundationVideoPlayer * ofAVFoundationPlayer::getAVFoundationVideoPlayer() {
-	return videoPlayer;
+    return videoPlayer;
 }
 
 #else
