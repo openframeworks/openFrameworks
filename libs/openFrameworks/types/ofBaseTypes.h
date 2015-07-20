@@ -841,10 +841,9 @@ public:
 	virtual void unbind(const ofShader & shader)=0;
 	virtual void unbind(const ofTexture & texture, int location)=0;
 	virtual void unbind(const ofBaseVideoDraws & video)=0;
-
-	virtual const GLuint& getCurrentFramebufferId() const=0; ///< return id of ofFbo currently bound to renderer
 	virtual void bind(const ofFbo & fbo)=0;
 	virtual void unbind(const ofFbo & fbo)=0;
+	virtual void bindForBlitting(const ofFbo & fbo, int attachmentPoint)=0;
 	virtual void begin(const ofFbo & fbo, bool setupPerspective)=0;
 	virtual void end(const ofFbo & fbo)=0;
 
