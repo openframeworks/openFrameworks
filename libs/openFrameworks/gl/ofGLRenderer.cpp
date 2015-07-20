@@ -500,7 +500,7 @@ void ofGLRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int att
 	currentFramebufferId = fboSrc.getFbo();
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getFboTextures());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer());
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 }
 
