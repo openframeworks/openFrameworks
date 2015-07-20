@@ -51,7 +51,7 @@ public:
 protected:
 	virtual const ofParameterGroup getFirstParent() const = 0;
 	virtual void setSerializable(bool serializable)=0;
-	virtual string escape(string str) const;
+	virtual string escape(const string& str) const;
 };
 
 
@@ -83,18 +83,18 @@ public:
 
 	void clear();
 
-	ofParameter<bool> getBool(string name) const;
-	ofParameter<int> getInt(string name) const;
-	ofParameter<float> getFloat(string name) const;
-	ofParameter<char> getChar(string name) const;
-	ofParameter<string> getString(string name)	 const;
-	ofParameter<ofPoint> getPoint(string name)	 const;
-	ofParameter<ofVec2f> getVec2f(string name) const;
-	ofParameter<ofVec3f> getVec3f(string name) const;
-	ofParameter<ofVec4f> getVec4f(string name) const;
-	ofParameter<ofColor> getColor(string name) const;
-	ofParameter<ofShortColor> getShortColor(string name) const;
-	ofParameter<ofFloatColor> getFloatColor(string name) const;
+	ofParameter<bool> getBool(const string& name) const;
+	ofParameter<int> getInt(const string& name) const;
+	ofParameter<float> getFloat(const string& name) const;
+	ofParameter<char> getChar(const string& name) const;
+	ofParameter<string> getString(const string& name)	 const;
+	ofParameter<ofPoint> getPoint(const string& name)	 const;
+	ofParameter<ofVec2f> getVec2f(const string& name) const;
+	ofParameter<ofVec3f> getVec3f(const string& name) const;
+	ofParameter<ofVec4f> getVec4f(const string& name) const;
+	ofParameter<ofColor> getColor(const string& name) const;
+	ofParameter<ofShortColor> getShortColor(const string& name) const;
+	ofParameter<ofFloatColor> getFloatColor(const string& name) const;
 
 	ofParameterGroup getGroup(string name) const;
 
@@ -113,14 +113,14 @@ public:
 	ofParameter<ofFloatColor> getFloatColor(int pos) const;
 	ofParameterGroup getGroup(int pos) const;
 
-	ofAbstractParameter & get(string name) const;
+	ofAbstractParameter & get(const string& name) const;
 	ofAbstractParameter & get(int pos) const;
 
-	ofAbstractParameter & operator[](string name) const;
+	ofAbstractParameter & operator[](const string& name) const;
 	ofAbstractParameter & operator[](int pos) const;
 
 	template<typename ParameterType>
-	ofParameter<ParameterType> get(string name) const;
+	ofParameter<ParameterType> get(const string& name) const;
 
 	template<typename ParameterType>
 	ofParameter<ParameterType> get(int pos) const;
@@ -128,17 +128,17 @@ public:
 	int size() const;
 	string getName(int position) const;
 	string getType(int position) const;
-	int getPosition(string name) const;
+	int getPosition(const string& name) const;
 
 	friend ostream& operator<<(ostream& os, const ofParameterGroup& group);
 
 	string getName() const;
-	void setName(const string & name);
+	void setName(const string& name);
 	string getEscapedName() const;
 	string toString() const;
-	void fromString(const string & name);
+	void fromString(const string& name);
 
-	bool contains(string name);
+	bool contains(const string& name);
 
 	ofAbstractParameter & back();
 	ofAbstractParameter & front();
@@ -193,7 +193,7 @@ private:
 };
 
 template<typename ParameterType>
-ofParameter<ParameterType> ofParameterGroup::get(string name) const{
+ofParameter<ParameterType> ofParameterGroup::get(const string& name) const{
 	return static_cast<ofParameter<ParameterType>& >(get(name));
 }
 
@@ -269,8 +269,8 @@ class ofParameter: public ofAbstractParameter{
 public:
 	ofParameter();
 	ofParameter(ParameterType v);
-	ofParameter(string name, ParameterType v);
-	ofParameter(string name, ParameterType v, ParameterType min, ParameterType max);
+	ofParameter(const string& name, ParameterType v);
+	ofParameter(const string& name, ParameterType v, ParameterType min, ParameterType max);
 
 	const ParameterType & get() const;
 	const ParameterType * operator->() const;
@@ -333,8 +333,8 @@ public:
 
 
 	ofParameter<ParameterType> & set(ParameterType v);
-	ofParameter<ParameterType> & set(string name, ParameterType value);
-	ofParameter<ParameterType> & set(string name, ParameterType value, ParameterType min, ParameterType max);
+	ofParameter<ParameterType> & set(const string& name, ParameterType value);
+	ofParameter<ParameterType> & set(const string& name, ParameterType value, ParameterType min, ParameterType max);
 
 	void setMin(ParameterType min);
 	void setMax(ParameterType max);
@@ -413,12 +413,12 @@ ofParameter<ParameterType>::ofParameter(ParameterType v)
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue) {}
 
 template<typename ParameterType>
-ofParameter<ParameterType>::ofParameter(string name, ParameterType v)
+ofParameter<ParameterType>::ofParameter(const string& name, ParameterType v)
 :obj(shared_ptr<Value>(new Value(name, v)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
 template<typename ParameterType>
-ofParameter<ParameterType>::ofParameter(string name, ParameterType v, ParameterType min, ParameterType max)
+ofParameter<ParameterType>::ofParameter(const string& name, ParameterType v, ParameterType min, ParameterType max)
 :obj(shared_ptr<Value>(new Value(name, v, min, max)))
 ,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
 
@@ -442,7 +442,7 @@ inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(ParameterTyp
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::set(string name, ParameterType value, ParameterType min, ParameterType max){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, ParameterType value, ParameterType min, ParameterType max){
 	setName(name);
 	set(value);
 	setMin(min);
@@ -451,7 +451,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::set(string name, Parame
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::set(string name, ParameterType value){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, ParameterType value){
 	setName(name);
 	set(value);
 	return *this;
@@ -695,8 +695,8 @@ public:
 	ofReadOnlyParameter();
 	ofReadOnlyParameter(ofParameter<ParameterType> & p);
 	ofReadOnlyParameter(ParameterType v);
-	ofReadOnlyParameter(string name, ParameterType v);
-	ofReadOnlyParameter(string name, ParameterType v, ParameterType min, ParameterType max);
+	ofReadOnlyParameter(const string& name, ParameterType v);
+	ofReadOnlyParameter(const string& name, ParameterType v, ParameterType min, ParameterType max);
 
 	const ParameterType & get() const;
 	const ParameterType * operator->() const;
@@ -761,8 +761,8 @@ protected:
 
 	ofReadOnlyParameter<ParameterType,Friend>& set(ParameterType v);
 	
-	ofReadOnlyParameter<ParameterType,Friend>& set(string name, ParameterType value);
-	ofReadOnlyParameter<ParameterType,Friend>& set(string name, ParameterType value, ParameterType min, ParameterType max);
+	ofReadOnlyParameter<ParameterType,Friend>& set(const string& name, ParameterType value);
+	ofReadOnlyParameter<ParameterType,Friend>& set(const string& name, ParameterType value, ParameterType min, ParameterType max);
 
 	void setMin(ParameterType min);
 	void setMax(ParameterType max);
@@ -794,11 +794,11 @@ inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ParameterT
 :parameter(v){}
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(string name, ParameterType v)
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const string& name, ParameterType v)
 :parameter(name,v){}
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(string name, ParameterType v, ParameterType min, ParameterType max)
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const string& name, ParameterType v, ParameterType min, ParameterType max)
 :parameter(name,v,min,max){}
 
 
@@ -1011,13 +1011,13 @@ inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<Parameter
 }
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(string name, ParameterType value){
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(const string& name, ParameterType value){
 	parameter.set(name,value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(string name, ParameterType value, ParameterType min, ParameterType max){
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(const string& name, ParameterType value, ParameterType min, ParameterType max){
 	parameter.set(name,value,min,max);
 	return *this;
 }

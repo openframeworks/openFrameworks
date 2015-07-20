@@ -19,51 +19,51 @@ void ofParameterGroup::clear(){
 	obj->parametersIndex.clear();
 }
 
-ofParameter<bool> ofParameterGroup::getBool(string name) const	{
+ofParameter<bool> ofParameterGroup::getBool(const string& name) const	{
 	return get<bool>(name);
 }
 
-ofParameter<int> ofParameterGroup::getInt(string name) const{
+ofParameter<int> ofParameterGroup::getInt(const string& name) const{
 	return get<int>(name);
 }
 
-ofParameter<float> ofParameterGroup::getFloat(string name) const{
+ofParameter<float> ofParameterGroup::getFloat(const string& name) const{
 	return get<float>(name);
 }
 
-ofParameter<char> ofParameterGroup::getChar(string name) const{
+ofParameter<char> ofParameterGroup::getChar(const string& name) const{
 	return get<char>(name);
 }
 
-ofParameter<string> ofParameterGroup::getString(string name) const{
+ofParameter<string> ofParameterGroup::getString(const string& name) const{
 	return get<string>(name);
 }
 
-ofParameter<ofPoint> ofParameterGroup::getPoint(string name) const{
+ofParameter<ofPoint> ofParameterGroup::getPoint(const string& name) const{
 	return get<ofPoint>(name);
 }
 
-ofParameter<ofVec2f> ofParameterGroup::getVec2f(string name) const{
+ofParameter<ofVec2f> ofParameterGroup::getVec2f(const string& name) const{
 	return get<ofVec2f>(name);
 }
 
-ofParameter<ofVec3f> ofParameterGroup::getVec3f(string name) const{
+ofParameter<ofVec3f> ofParameterGroup::getVec3f(const string& name) const{
 	return get<ofVec3f>(name);
 }
 
-ofParameter<ofVec4f> ofParameterGroup::getVec4f(string name) const{
+ofParameter<ofVec4f> ofParameterGroup::getVec4f(const string& name) const{
 	return get<ofVec4f>(name);
 }
 
-ofParameter<ofColor> ofParameterGroup::getColor(string name) const{
+ofParameter<ofColor> ofParameterGroup::getColor(const string& name) const{
 	return get<ofColor>(name);
 }
 
-ofParameter<ofShortColor> ofParameterGroup::getShortColor(string name) const{
+ofParameter<ofShortColor> ofParameterGroup::getShortColor(const string& name) const{
 	return get<ofShortColor>(name);
 }
 
-ofParameter<ofFloatColor> ofParameterGroup::getFloatColor(string name) const{
+ofParameter<ofFloatColor> ofParameterGroup::getFloatColor(const string& name) const{
 	return get<ofFloatColor>(name);
 }
 
@@ -152,7 +152,7 @@ string ofParameterGroup::getType(int position) const{
 }
 
 
-int ofParameterGroup::getPosition(string name) const{
+int ofParameterGroup::getPosition(const string& name) const{
 	if(obj->parametersIndex.find(escape(name))!=obj->parametersIndex.end())
 		return obj->parametersIndex.find(escape(name))->second;
 	return -1;
@@ -185,7 +185,7 @@ void ofParameterGroup::fromString(const string & name){
 }
 
 
-ofAbstractParameter & ofParameterGroup::get(string name) const{
+ofAbstractParameter & ofParameterGroup::get(const string& name) const{
 	map<string,int>::const_iterator it = obj->parametersIndex.find(escape(name));
 	int index = it->second;
 	return get(index);
@@ -196,7 +196,7 @@ ofAbstractParameter & ofParameterGroup::get(int pos) const{
 }
 
 
-ofAbstractParameter & ofParameterGroup::operator[](string name) const{
+ofAbstractParameter & ofParameterGroup::operator[](const string& name) const{
 	return get(name);
 }
 
@@ -219,7 +219,7 @@ ostream& operator<<(ostream& os, const ofParameterGroup& group) {
 	return os;
 }
 
-bool ofParameterGroup::contains(string name){
+bool ofParameterGroup::contains(const string& name){
 	return obj->parametersIndex.find(escape(name))!=obj->parametersIndex.end();
 }
 
