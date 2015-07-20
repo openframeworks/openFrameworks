@@ -1029,6 +1029,12 @@ public:
     /// \returns The translated ofRectangle.
     ofRectangle operator + (const ofPoint& p);
 
+	/// \brief Returns a new ofRectangle where the x and y-positions of the
+	/// rectangle are offset by the (x, y) coordinates of the ofPoint.
+	/// \param p The point to translate.
+	/// \returns The translated ofRectangle.
+	ofRectangle operator - (const ofPoint& p);
+
     /// \brief If both ofRectangles have the same x, y, width, and height,
     /// they are considered equal.
     /// \param rect The rectangle to compare.
