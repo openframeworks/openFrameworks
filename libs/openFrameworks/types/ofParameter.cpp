@@ -7,7 +7,10 @@ string ofAbstractParameter::getEscapedName() const{
 }
 
 
-string ofAbstractParameter::escape(string str) const{
+string ofAbstractParameter::escape(const string& _str) const{
+
+	std::string str(_str);
+
 	ofStringReplace(str, " ", "_");
 	ofStringReplace(str, "<", "_");
 	ofStringReplace(str, ">", "_");
@@ -21,6 +24,7 @@ string ofAbstractParameter::escape(string str) const{
 	ofStringReplace(str, "/", "_");
 	ofStringReplace(str, "\\", "_");
 	ofStringReplace(str, ".", "_");
+	
 	return str;
 }
 
