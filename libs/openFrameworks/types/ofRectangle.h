@@ -151,6 +151,11 @@ public:
     /// \param p The position as an ofPoint.
     void setPosition(const ofPoint& p);
 
+	/// \brief Set the size of the rectangle.
+	/// \param w The new width.
+	/// \param h The new height.
+	void setSize(float w, float h);
+
     /// \brief Set position and size of the rectangle from the center.
     ///
     /// The center of the rectangle is defined and the width and height grow
