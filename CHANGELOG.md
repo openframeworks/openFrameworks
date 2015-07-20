@@ -91,7 +91,8 @@ CORE
 	/ ofVideoPlayer::loadMovie() -> load()
 	/ ofVideoGrabber::initGrabber() -> setup()
 ### types
-    + ofRectangle: added `setSize` method.
+	+ ofRectangle: added `setSize` method.
+	+ ofRectangle: added `operator -` method.
 
 PLATFORM SPECIFIC
 -----------------
