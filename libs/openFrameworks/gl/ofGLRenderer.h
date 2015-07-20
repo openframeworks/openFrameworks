@@ -203,7 +203,7 @@ public:
 	void end(const ofFbo & fbo);
 
 	void bind(const ofFbo & fbo);
-	void bindForBlitting(const ofFbo & fbo, int attachmentPoint);
+	void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint);
 	void unbind(const ofFbo & fbo);
 
 	int getGLVersionMajor();

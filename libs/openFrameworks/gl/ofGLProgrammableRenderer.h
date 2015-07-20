@@ -190,7 +190,7 @@ public:
 	void unbind(const ofCamera & camera);
 
 	void bind(const ofFbo & fbo);
-	void bindForBlitting(const ofFbo & fbo, int attachmentPoint);
+	void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint);
 	void unbind(const ofFbo & fbo);
 
 	void begin(const ofFbo & fbo, bool setupPerspective);
