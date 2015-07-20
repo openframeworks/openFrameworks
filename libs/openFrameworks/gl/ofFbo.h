@@ -107,8 +107,14 @@ public:
 	void setActiveDrawBuffers(const vector<int>& i);
 	void activateAllDrawBuffers();
 
-	GLuint getFbo() const;	// returns id of Fbo for advanced actions
-	GLuint getFboTextures() const;	// returns id of Fbo for texture attachments for advanced actions
+	OF_DEPRECATED_MSG("Use getId()", GLuint getFbo() const);
+
+	/// returns id of the underlying GL object for advanced actions
+	GLuint getId() const;
+
+	/// returns id of Fbo for texture attachments
+	/// which is different when the fbo is using MSAA
+	GLuint getIdDrawBuffer() const;
 
 	static bool	checkGLSupport();
 	static int maxColorAttachments();	// return max color attachments
