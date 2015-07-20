@@ -935,7 +935,7 @@ void ofFbo::updateTexture(int attachmentPoint) {
 
 		auto renderer = settings.renderer.lock();
 		if(renderer){
-			renderer->bindForBlitting(*this,attachmentPoint);
+			renderer->bindForBlitting(*this,*this,attachmentPoint);
 			glBlitFramebuffer(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 			renderer->unbind(*this);
 		

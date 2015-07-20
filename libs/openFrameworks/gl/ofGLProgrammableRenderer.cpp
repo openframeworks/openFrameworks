@@ -1338,8 +1338,8 @@ void ofGLProgrammableRenderer::bind(const ofFbo & fbo){
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fbo, int attachmentPoint){
-	if (currentFramebufferId == fbo.getFbo()){
+void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint){
+	if (currentFramebufferId == fboSrc.getFbo()){
 		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
 			"Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
@@ -1350,10 +1350,10 @@ void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fbo, int attachment
 	// named framebuffers with GL 4.5+, we can have
 	// different implementations.
 	framebufferIdStack.push_back(currentFramebufferId);
-	currentFramebufferId = fbo.getFbo();
+	currentFramebufferId = fboSrc.getFbo();
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo.getFboTextures());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getFboTextures());
 	glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 }
 
