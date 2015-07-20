@@ -190,9 +190,8 @@ public:
 	void unbind(const ofCamera & camera);
 
 	void bind(const ofFbo & fbo);
+	void bindForBlitting(const ofFbo & fbo, int attachmentPoint);
 	void unbind(const ofFbo & fbo);
-
-	const GLuint& getCurrentFramebufferId() const { return currentFramebufferId; };
 
 	void begin(const ofFbo & fbo, bool setupPerspective);
 	void end(const ofFbo & fbo);

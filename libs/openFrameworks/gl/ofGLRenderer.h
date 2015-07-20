@@ -203,9 +203,8 @@ public:
 	void end(const ofFbo & fbo);
 
 	void bind(const ofFbo & fbo);
+	void bindForBlitting(const ofFbo & fbo, int attachmentPoint);
 	void unbind(const ofFbo & fbo);
-
-	const GLuint& getCurrentFramebufferId() const { return currentFramebufferId; };
 
 	int getGLVersionMajor();
 	int getGLVersionMinor();
@@ -242,6 +241,7 @@ private:
 	ofPath path;
 	const ofAppBaseWindow * window;
 
+	deque<GLuint> framebufferIdStack;	///< keeps track of currently bound framebuffers
 	GLuint defaultFramebufferId;		///< default GL_FRAMEBUFFER_BINDING, windowing frameworks might want to set this to their MSAA framebuffer, defaults to 0
 	GLuint currentFramebufferId;		///< the framebuffer id currently bound to the GL_FRAMEBUFFER target
 
