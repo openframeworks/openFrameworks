@@ -934,16 +934,21 @@ void ofFbo::updateTexture(int attachmentPoint) {
 			glPushAttrib(GL_COLOR_BUFFER_BIT);
 		}
 
-		bind();
+		// Because we temporarily change global Fbo binding state
+		// when blitting from one framebuffer to the other, we first have 
+		// to query the renderer for its binding state, and store it.
+		GLuint rendererFboBindingState = ofGetGLRenderer()->getCurrentFramebufferId();
+		
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboTextures);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint); 
 		glBlitFramebuffer(0, 0, settings.width, settings.height, 0, 0, settings.width, settings.height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0); // reset to defaults
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); 
-		unbind(); // this will restore GL_FRAMEBUFFER to previousFramebufferBinding
-		
+		// Restore renderer Fbo binding state
+		glBindFramebuffer(GL_FRAMEBUFFER, rendererFboBindingState);
+
+		// Set ReadBuffer state to GL_BACK (default)
 		glReadBuffer(GL_BACK);
 
 		if(!ofIsGLProgrammableRenderer()){

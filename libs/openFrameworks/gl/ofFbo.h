@@ -94,11 +94,11 @@ public:
 
 	void flagDirty() const; ///< check whether attached MSAA buffers need updating
 
-	/// \brief    Explicityl resolve MSAA render buffers into textures 
-	/// \note     if using MSAA, we will have rendered into a colorbuffer, not directly 
-	///           into the texture call this to blit from the colorbuffer into the texture 
-	///           so we can use the results for rendering, or input to a shader etc.
-	/// \note     This will get called implicitly upon getTexture();
+	/// \brief    Explicitly resolve MSAA render buffers into textures 
+	/// \note     If using MSAA, we will have rendered into a colorbuffer, not directly 
+	///           into the texture. Call this to blit from the colorbuffer into the texture 
+	///           so you can use the results for rendering, or input to a shader etc.
+	/// \note     This is called implicitly upon getTexture();
 	void updateTexture(int attachmentPoint);
 
 
