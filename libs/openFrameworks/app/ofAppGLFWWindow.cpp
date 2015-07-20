@@ -649,12 +649,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
 #elif defined(TARGET_OSX)
 	if( windowMode == OF_FULLSCREEN){
-        int nonFullScreenX = getWindowPosition().x;
-        int nonFullScreenY = getWindowPosition().y;
- 
-		int nonFullScreenW = getWindowSize().x;
-		int nonFullScreenH = getWindowSize().y;
- 
 		//----------------------------------------------------
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);

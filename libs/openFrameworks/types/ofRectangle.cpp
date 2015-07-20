@@ -94,6 +94,13 @@ void ofRectangle::setPosition(const ofPoint& p) {
 }
 
 //----------------------------------------------------------
+void ofRectangle::setSize(float w, float h) {
+	width = w;
+	height = h;
+}
+
+
+//----------------------------------------------------------
 void ofRectangle::setFromCenter(float px, float py, float w, float h) {
     set(px - w*0.5f, py - h*0.5f, w, h);
 }
