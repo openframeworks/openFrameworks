@@ -8,6 +8,8 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Accelerate/Accelerate.h>
+#import <CoreMedia/CoreMedia.h>
+
 
 //----------------------------------------------------------
 #include <TargetConditionals.h>
@@ -17,41 +19,27 @@
 #define TARGET_OSX
 #endif
 
-@class AVPlayer;
-@class AVPlayerItem;
-@class AVAsset;
-@class AVAssetReader;
-@class AVAssetReaderOutput;
+// so we are independend from oF in this class
+typedef enum _playerLoopType{
+    LOOP_NONE=0x01,
+    LOOP_PALINDROME=0x02,
+    LOOP_NORMAL=0x03
+} playerLoopType;
 
-//---------------------------------------------------------- video player delegate.
-@protocol OFAVFoundationVideoPlayerDelegate <NSObject>
-@optional
-- (void)playerReady;
-- (void)playerDidProgress;
-- (void)playerDidFinishSeeking;
-- (void)playerDidFinishPlayingVideo;
-- (void)playerError:(NSString *)error;
-@end
 
 //---------------------------------------------------------- video player.
-@interface ofAVFoundationVideoPlayer : NSObject {
-
-    id<OFAVFoundationVideoPlayerDelegate> delegate;
+@interface ofAVFoundationVideoPlayer : NSObject <AVPlayerItemOutputPullDelegate> {
 	
     AVPlayer * _player;
+	AVAsset * _asset;
     AVPlayerItem * _playerItem;
-    AVAsset * _asset;
-    AVAssetReader * _assetReader;
-    AVAssetReaderTrackOutput * _assetReaderVideoTrackOutput;
-    AVAssetReaderTrackOutput * _assetReaderAudioTrackOutput;
-    
+	
     id timeObserver;
-    int timeObserverFps;
     
 	CMSampleBufferRef videoSampleBuffer;
     CMSampleBufferRef audioSampleBuffer;
     CMTime videoSampleTime;
-    CMTime videoSampleTimePrev;
+	CMTime videoSampleTimePrev;
     CMTime audioSampleTime;
     CMTime synchSampleTime;
 	CMTime duration;
@@ -62,7 +50,9 @@
     
     NSInteger videoWidth;
     NSInteger videoHeight;
-    
+	
+    playerLoopType loop;
+	
     BOOL bWillBeUpdatedExternally;
     BOOL bReady;
 	BOOL bLoaded;
@@ -70,21 +60,17 @@
     BOOL bUpdateFirstFrame;
     BOOL bNewFrame;
     BOOL bPlaying;
+	BOOL bWasPlayingBackwards; // for optimisation
     BOOL bFinished;
     BOOL bAutoPlayOnLoad;
-    BOOL bLoop;
     BOOL bSeeking;
-    BOOL bSampleVideo;
-    BOOL bSampleAudio;
+    BOOL bSampleVideo; // default to YES
+    BOOL bSampleAudio; // default to NO
 }
 
-@property (nonatomic, assign) id delegate;
 @property (nonatomic, retain) AVPlayer * player;
-@property (nonatomic, retain) AVPlayerItem * playerItem;
 @property (nonatomic, retain) AVAsset * asset;
-@property (nonatomic, retain) AVAssetReader * assetReader;
-@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
-@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
+@property (nonatomic, retain) AVPlayerItem * playerItem;
 
 - (BOOL)loadWithFile:(NSString*)file async:(BOOL)bAsync;
 - (BOOL)loadWithPath:(NSString*)path async:(BOOL)bAsync;
@@ -97,7 +83,10 @@
 - (void)pause;
 - (void)togglePlayPause;
 
+- (void)stepByCount:(long)frames;
+
 - (void)seekToStart;
+- (void)seekToEnd;
 - (void)seekToTime:(CMTime)time;
 - (void)seekToTime:(CMTime)time withTolerance:(CMTime)tolerance;
 
@@ -132,8 +121,8 @@
 - (float)getPosition;
 - (void)setVolume:(float)volume;
 - (float)getVolume;
-- (void)setLoop:(BOOL)bLoop;
-- (BOOL)getLoop;
+- (void)setLoop:(playerLoopType)loop;
+- (playerLoopType)getLoop;
 - (void)setSpeed:(float)speed;
 - (float)getSpeed;
 - (void)setAutoplay:(BOOL)bAutoplay;
