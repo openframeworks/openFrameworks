@@ -1322,7 +1322,7 @@ void ofGLProgrammableRenderer::end(const ofFbo & fbo){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofFbo & fbo){
-	if (currentFramebufferId == fbo.getFbo()){
+	if (currentFramebufferId == fbo.getId()){
 		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
 			"Most probably you forgot to end() the current framebuffer before calling begin() again.";
 		return;
@@ -1333,13 +1333,13 @@ void ofGLProgrammableRenderer::bind(const ofFbo & fbo){
 	// named framebuffers with GL 4.5+, we can have 
 	// different implementations.
 	framebufferIdStack.push_back(currentFramebufferId);
-	currentFramebufferId = fbo.getFbo();
+	currentFramebufferId = fbo.getId();
 	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint){
-	if (currentFramebufferId == fboSrc.getFbo()){
+	if (currentFramebufferId == fboSrc.getId()){
 		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
 			"Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
@@ -1350,7 +1350,7 @@ void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fbo
 	// named framebuffers with GL 4.5+, we can have
 	// different implementations.
 	framebufferIdStack.push_back(currentFramebufferId);
-	currentFramebufferId = fboSrc.getId()();
+	currentFramebufferId = fboSrc.getId();
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
 	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer()());
