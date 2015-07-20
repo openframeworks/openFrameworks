@@ -158,6 +158,10 @@ bool ofFbo::Settings::operator!=(const Settings & other){
 		ofLogError() << "settings numSamples differs from source";
 		return true;
 	}
+	if(renderer.lock() != other.renderer.lock()){
+		ofLogError() << "settings renderers are different";
+		return true;
+	}
 	return false;
 }
 
