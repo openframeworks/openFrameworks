@@ -52,6 +52,13 @@ ofArduino::ofArduino(){
     _digitalHistoryLength = 2;
     _stringHistoryLength = 1;
     _sysExHistoryLength = 1;
+    _initialized = false;
+    _totalDigitalPins = 0;
+    _executeMultiByteCommand = 0x00; // 0x00 a pin mode (input), not a command in Firmata -> fail hard
+    _multiByteChannel = 0;
+    _firmwareVersionSum = 0;
+    connected = false;
+    connectTime = 0.0f;
 
     _majorProtocolVersion = 0;
     _minorProtocolVersion = 0;

@@ -400,10 +400,10 @@ public:
 	/// \}
 	
 protected:
-	bool _initialized;
+	bool _initialized;  // indicate that pins are initialized
 	
 	void initPins();
-	int _totalDigitalPins;
+	int _totalDigitalPins;  // indicate the total number of digital pins of the board in use
 	
 	void sendDigitalPinReporting(int pin, int mode);
 	// sets pin reporting to ARD_ON or ARD_OFF
@@ -431,11 +431,11 @@ protected:
 	
 	// --- data processing variables
 	int _waitForData;
-	int _executeMultiByteCommand;
+	int _executeMultiByteCommand;  // indicate Firmata command to execute
 	int _multiByteChannel; // indicates which pin data came from
 	
 	// --- data holders
-	unsigned char _storedInputData[FIRMATA_MAX_DATA_BYTES];
+	unsigned char _storedInputData[FIRMATA_MAX_DATA_BYTES]={UCHAR_MAX};
 	vector<unsigned char> _sysExData;
 	int _majorProtocolVersion;
 	int _minorProtocolVersion;
@@ -443,7 +443,7 @@ protected:
 	int _minorFirmwareVersion;
 	string _firmwareName;
 	
-	// sum of majorFirmwareVersion * 10 + minorFirmwareVersion
+	// sum of majorFirmwareVersion * 10 + minorFirmwareVersion -> Firmata (?)
 	int _firmwareVersionSum;
 	
 	list<vector<unsigned char> > _sysExHistory;
@@ -458,31 +458,31 @@ protected:
 	list<int> _digitalHistory[ARD_TOTAL_DIGITAL_PINS];
 	// a history of received data for each digital pin
 	
-	int _digitalPinMode[ARD_TOTAL_DIGITAL_PINS];
+	int _digitalPinMode[ARD_TOTAL_DIGITAL_PINS]={INT_MAX};
 	// the modes for all digital pins
 	
-	int _digitalPinValue[ARD_TOTAL_DIGITAL_PINS];
+	int _digitalPinValue[ARD_TOTAL_DIGITAL_PINS]={INT_MAX};
 	// the last set values (DIGITAL/PWM) on all digital pins
 	
-	int _digitalPortValue[ARD_TOTAL_PORTS];
+	int _digitalPortValue[ARD_TOTAL_PORTS]={INT_MAX};
 	// the last set values on all ports
 	
-	int _digitalPortReporting[ARD_TOTAL_PORTS];
+	int _digitalPortReporting[ARD_TOTAL_PORTS]={INT_MAX};
 	// whether pin reporting is enabled / disabled
 	
-	int _digitalPinReporting[ARD_TOTAL_DIGITAL_PINS];
+	int _digitalPinReporting[ARD_TOTAL_DIGITAL_PINS]={INT_MAX};
 	// whether pin reporting is enabled / disabled
 	
-	int _analogPinReporting[ARD_TOTAL_ANALOG_PINS];
+	int _analogPinReporting[ARD_TOTAL_ANALOG_PINS]={INT_MAX};
 	// whether pin reporting is enabled / disabled
 	
 	bool bUseDelay;
 	
-	bool connected;
+	bool connected;  // true if serial connection to Arduino exists
 	
-	float connectTime;
+	float connectTime;  // (running) time of establishing serial connection
 	
-	int _servoValue[ARD_TOTAL_DIGITAL_PINS];
+	int _servoValue[ARD_TOTAL_DIGITAL_PINS]={INT_MAX};
 	// the last set servo values
 	
 };
