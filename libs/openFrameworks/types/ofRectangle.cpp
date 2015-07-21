@@ -690,6 +690,14 @@ ofRectangle ofRectangle::operator + (const ofPoint & point){
 }
 
 //----------------------------------------------------------
+ofRectangle ofRectangle::operator - (const ofPoint & point){
+	ofRectangle rect=*this;
+	rect.x -= point.x;
+	rect.y -= point.y;
+	return rect;
+}
+
+//----------------------------------------------------------
 bool ofRectangle::operator == (const ofRectangle& rect) const {
 	return (x == rect.x) && (y == rect.y) && (width == rect.width) && (height == rect.height);
 }
