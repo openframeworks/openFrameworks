@@ -97,6 +97,7 @@ ofFbo::Settings::Settings(std::shared_ptr<ofBaseGLRenderer> renderer) {
 	}
 }
 
+//--------------------------------------------------------------
 bool ofFbo::Settings::operator!=(const Settings & other){
 	if(width != other.width){
 		ofLogError() << "settings width differs from source";
@@ -165,6 +166,7 @@ bool ofFbo::Settings::operator!=(const Settings & other){
 	return false;
 }
 
+//--------------------------------------------------------------
 static map<GLuint,int> & getIdsFB(){
 	static map<GLuint,int> * idsFB = new map<GLuint,int>;
 	return *idsFB;
@@ -193,6 +195,7 @@ static void releaseFB(GLuint id){
 	}
 }
 
+//--------------------------------------------------------------
 static map<GLuint,int> & getIdsRB(){
 	static map<GLuint,int> * idsRB = new map<GLuint,int>;
 	return *idsRB;
@@ -222,12 +225,12 @@ static void releaseRB(GLuint id){
 }
 
 //-------------------------------------------------------------------------------------
-
 int	ofFbo::_maxColorAttachments = -1;
 int	ofFbo::_maxDrawBuffers = -1;
 int	ofFbo::_maxSamples = -1;
 
 
+//--------------------------------------------------------------
 ofFbo::ofFbo():
 fbo(0),
 fboTextures(0),
@@ -266,6 +269,7 @@ bIsAllocated(false)
 #endif
 }
 
+//--------------------------------------------------------------
 ofFbo::ofFbo(const ofFbo & mom){
 	settings = mom.settings;
 	bIsAllocated = mom.bIsAllocated;
@@ -294,6 +298,7 @@ ofFbo::ofFbo(const ofFbo & mom){
 	defaultTextureIndex = mom.defaultTextureIndex;
 }
 
+//--------------------------------------------------------------
 ofFbo & ofFbo::operator=(const ofFbo & mom){
 	if(&mom==this) return *this;
 	clear();
@@ -325,26 +330,31 @@ ofFbo & ofFbo::operator=(const ofFbo & mom){
 	return *this;
 }
 
+//--------------------------------------------------------------
 ofFbo::~ofFbo(){
 	clear();
 }
 
+//--------------------------------------------------------------
 int	ofFbo::maxColorAttachments() {
 	if(_maxColorAttachments<0) checkGLSupport();
 	return _maxColorAttachments;
 }
 
+//--------------------------------------------------------------
 int	ofFbo::maxDrawBuffers() {
 	if(_maxDrawBuffers<0) checkGLSupport();
 	return _maxDrawBuffers;
 }
 
+//--------------------------------------------------------------
 int	ofFbo::maxSamples() {
 	if(_maxSamples<0) checkGLSupport();
 	return _maxSamples;
 }
 
 
+//--------------------------------------------------------------
 void ofFbo::clear() {
 	if(fbo){
 		releaseFB(fbo);
@@ -377,10 +387,12 @@ void ofFbo::clear() {
 #endif
 }
 
+//--------------------------------------------------------------
 void ofFbo::destroy() {
 	clear();
 }
 
+//--------------------------------------------------------------
 bool ofFbo::checkGLSupport() {
 #ifndef TARGET_OPENGLES
 	
@@ -415,6 +427,7 @@ bool ofFbo::checkGLSupport() {
 }
 
 
+//--------------------------------------------------------------
 void ofFbo::allocate(int width, int height, int internalformat, int numSamples) {
 
 	settings.width			= width;
@@ -437,6 +450,7 @@ void ofFbo::allocate(int width, int height, int internalformat, int numSamples) 
 	allocate(settings);
 }
 
+//--------------------------------------------------------------
 void ofFbo::allocate(Settings _settings) {
 	if(!checkGLSupport()) return;
 
@@ -597,18 +611,19 @@ void ofFbo::allocate(Settings _settings) {
 #endif
 }
 
+//--------------------------------------------------------------
 void ofFbo::reloadFbo(){
 	if(bIsAllocated){
 		allocate(settings);
 	}
 }
 
+//--------------------------------------------------------------
 bool ofFbo::isAllocated() const {
 	return bIsAllocated;
 }
 
 //----------------------------------------------------------
-
 GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachmentPoint) {
 	GLuint buffer;
 	glGenRenderbuffers(1, &buffer);
@@ -627,7 +642,6 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 }
 
 //----------------------------------------------------------
-
 void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint) {
 	
 	ofTextureData texData;
@@ -651,7 +665,6 @@ void ofFbo::createAndAttachTexture(GLenum internalFormat, GLenum attachmentPoint
 }
 
 //----------------------------------------------------------
-
 void ofFbo::attachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachmentPoint) {
     // bind fbo for textures (if using MSAA this is the newly created fbo, otherwise its the same fbo as before)
 	GLint temp;
@@ -681,7 +694,6 @@ void ofFbo::attachTexture(ofTexture & tex, GLenum internalFormat, GLenum attachm
 }
 
 //----------------------------------------------------------
-
 void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum  attachment, GLenum transferFormat, GLenum transferType){
 
 
@@ -698,7 +710,6 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 }
 
 //----------------------------------------------------------
-
 void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalformat, GLenum  attachment){
 
 	// allocate depthBufferTex as depth buffer;
@@ -714,7 +725,6 @@ void ofFbo::createAndAttachDepthStencilTexture(GLenum target, GLint internalform
 }
 
 //----------------------------------------------------------
-
 void ofFbo::begin(bool setupScreen) const{
 	auto renderer = settings.renderer.lock();
 	if(renderer){
@@ -723,7 +733,6 @@ void ofFbo::begin(bool setupScreen) const{
 }
 
 //----------------------------------------------------------
-
 void ofFbo::end() const{
 	auto renderer = settings.renderer.lock();
 	if(renderer){
@@ -732,7 +741,6 @@ void ofFbo::end() const{
 }
 
 //----------------------------------------------------------
-
 void ofFbo::bind() const{
 	auto renderer = settings.renderer.lock();
 	if(renderer){
@@ -741,7 +749,6 @@ void ofFbo::bind() const{
 }
 
 //----------------------------------------------------------
-
 void ofFbo::unbind() const{
 	auto renderer = settings.renderer.lock();
 	if(renderer){
@@ -750,7 +757,6 @@ void ofFbo::unbind() const{
 }
 
 //----------------------------------------------------------
-
 void ofFbo::flagDirty() const{
 	if (fbo != fboTextures){
 		// ---------| if fbo != fboTextures, we are dealing with an MSAA enabled FBO.
@@ -769,13 +775,11 @@ void ofFbo::flagDirty() const{
 }
 
 //----------------------------------------------------------
-
 int ofFbo::getNumTextures() const {
 	return textures.size();
 }
 
 //----------------------------------------------------------
-
 void ofFbo::setActiveDrawBuffer(int i){
 	if(!bIsAllocated) return;
 #ifndef TARGET_OPENGLES
@@ -824,7 +828,6 @@ void ofFbo::setDefaultTextureIndex(int defaultTexture)
 }
 
 //----------------------------------------------------------
-
 int ofFbo::getDefaultTextureIndex() const
 {
 	return defaultTextureIndex;
