@@ -33,12 +33,6 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 }
 
 void ofGLRenderer::setup(){
-	setupGraphicDefaults();
-	viewport();
-	setupScreenPerspective();
-}
-
-void ofGLRenderer::startRender(){
 #ifdef TARGET_OPENGLES
 	// OpenGL ES might have set a default frame buffer for
 	// MSAA rendering to the window, bypassing ofFbo, so we
@@ -49,6 +43,12 @@ void ofGLRenderer::startRender(){
 	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
 	defaultFramebufferId = currentFrameBuffer;
 #endif
+	setupGraphicDefaults();
+	viewport();
+	setupScreenPerspective();
+}
+
+void ofGLRenderer::startRender(){
 	currentFramebufferId = defaultFramebufferId;
 	framebufferIdStack.push_back(defaultFramebufferId);
     matrixStack.setRenderSurface(*window);
