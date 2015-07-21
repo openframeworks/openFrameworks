@@ -432,8 +432,8 @@ protected:
 	
 	// --- data processing variables
 	int _waitForData;
-	int _executeMultiByteCommand;  // indicate Firmata command to execute
-	int _multiByteChannel; // indicates which pin data came from
+	int _executeMultiByteCommand;  ///< \brief Indicate Firmata command to execute.
+	int _multiByteChannel;  ///< \brief Indicates which pin the data came from.
 	
 	// --- data holders
 	unsigned char _storedInputData[FIRMATA_MAX_DATA_BYTES]={UCHAR_MAX};
@@ -479,9 +479,9 @@ protected:
 	
 	bool bUseDelay;
 	
-	bool connected;  // true if serial connection to Arduino exists
+	bool connected;  ///< \brief This yields true if a serial connection to Arduino exists.
 	
-	float connectTime;  // (running) time of establishing serial connection
+	float connectTime;  ///< \brief This represents the (running) time of establishing a serial connection.
 	
 	int _servoValue[ARD_TOTAL_DIGITAL_PINS]={INT_MAX};
 	// the last set servo values
