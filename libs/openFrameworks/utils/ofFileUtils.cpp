@@ -1343,7 +1343,7 @@ string ofFilePath::getFileExt(string filename){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::removeExt(string filename){
-	return ofFile(filename,ofFile::Reference).getBaseName();
+	return ofFilePath::join(getEnclosingDirectory(filename,false), ofFile(filename,ofFile::Reference).getBaseName());
 }
 
 
