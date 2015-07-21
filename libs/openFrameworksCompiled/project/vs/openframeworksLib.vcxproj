@@ -192,6 +192,7 @@
     <ClInclude Include="..\..\..\openFrameworks\utils\ofNoise.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofSystemUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofThread.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofThreadChannel.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofTimer.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofURLFileLoader.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofUtils.h" />
