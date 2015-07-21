@@ -203,7 +203,9 @@ public:
 	void end(const ofFbo & fbo);
 
 	void bind(const ofFbo & fbo);
+#ifndef TARGET_OPENGLES
 	void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint);
+#endif
 	void unbind(const ofFbo & fbo);
 
 	int getGLVersionMajor();

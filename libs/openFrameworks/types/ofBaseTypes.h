@@ -843,7 +843,9 @@ public:
 	virtual void unbind(const ofBaseVideoDraws & video)=0;
 	virtual void bind(const ofFbo & fbo)=0;
 	virtual void unbind(const ofFbo & fbo)=0;
+#ifndef TARGET_OPENGLES
 	virtual void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint=0)=0;
+#endif
 	virtual void begin(const ofFbo & fbo, bool setupPerspective)=0;
 	virtual void end(const ofFbo & fbo)=0;
 
