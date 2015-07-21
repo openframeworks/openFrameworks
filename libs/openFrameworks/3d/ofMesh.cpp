@@ -20,6 +20,13 @@ ofMesh::ofMesh(){
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(ofPrimitiveMode mode, const vector<ofVec3f>& verts){
+    bColorsChanged = false;
+    bNormalsChanged = false;
+    bTexCoordsChanged = false;
+    useColors = true;
+    useTextures = true;
+    useNormals = true;
+    useIndices = true;
     setMode(mode);
     addVertices(verts);
 }
