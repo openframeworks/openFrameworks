@@ -6,6 +6,7 @@
 #include "ofParameterGroup.h"
 
 class ofxGuiGroup : public ofxBaseGui {
+
 public:
 	ofxGuiGroup();
 	ofxGuiGroup(const ofParameterGroup & parameters, std::string _filename="settings.xml", float x = 10, float y = 10);
@@ -61,7 +62,7 @@ public:
 protected:
 	virtual void render();
     virtual bool setValue(float mx, float my, bool bCheck);
-    void sizeChangedCB();
+    virtual void sizeChangedCB();
     
 	float spacing,spacingNextElement;
 	float header;
@@ -78,7 +79,6 @@ protected:
 	bool minimized;
 	bool bGuiActive;
 
-	ofxGuiGroup * parent;
 	ofPath border, headerBg;
 	ofVboMesh textMesh;
 };

@@ -71,6 +71,11 @@ public:
 	virtual bool mouseScrolled(ofMouseEventArgs & args) = 0;
 	virtual void mouseEntered(ofMouseEventArgs & args){}
 	virtual void mouseExited(ofMouseEventArgs & args){}
+
+    virtual void sizeChangedCB();
+    void setParent(ofxBaseGui* parent);
+    ofxBaseGui* getParent();
+
 protected:
 	virtual void render()=0;
 	bool isGuiDrawing();
@@ -102,6 +107,8 @@ protected:
 	static int textPadding;
 	static int defaultWidth;
 	static int defaultHeight;
+
+    ofxBaseGui * parent;
 
 	static std::string saveStencilToHex(ofImage& img);
 	static void loadStencilFromHex(ofImage& img, unsigned char* data) ;
