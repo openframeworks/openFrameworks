@@ -24,6 +24,7 @@
  */
 #pragma once
 
+#include <climits>
 #include <list>
 #include <vector>
 #include <string>
