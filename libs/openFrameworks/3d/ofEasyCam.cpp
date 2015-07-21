@@ -30,6 +30,7 @@ ofEasyCam::ofEasyCam(){
 	doTranslationKey = 'm';
 	bEventsSet = false;
 	events = NULL;
+	rotationFactor = 0.0f;
 
 	reset();
 }
