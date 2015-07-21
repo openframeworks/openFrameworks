@@ -46,20 +46,20 @@
 // TODO throw event or exception if the serial port goes down...
 //---------------------------------------------------------------------------
 ofArduino::ofArduino(){
-	_portStatus=-1;
-	_waitForData=0;
-	_analogHistoryLength = 2;
-	_digitalHistoryLength = 2;
-	_stringHistoryLength = 1;
-	_sysExHistoryLength = 1;
+    _portStatus=-1;
+    _waitForData=0;
+    _analogHistoryLength = 2;
+    _digitalHistoryLength = 2;
+    _stringHistoryLength = 1;
+    _sysExHistoryLength = 1;
 
-	_majorProtocolVersion = 0;
-	_minorProtocolVersion = 0;
-	_majorFirmwareVersion = 0;
-	_minorFirmwareVersion = 0;
-	_firmwareName = "Unknown";
+    _majorProtocolVersion = 0;
+    _minorProtocolVersion = 0;
+    _majorFirmwareVersion = 0;
+    _minorFirmwareVersion = 0;
+    _firmwareName = "Unknown";
 
-	bUseDelay = true;
+    bUseDelay = true;
 }
 
 ofArduino::~ofArduino() {
