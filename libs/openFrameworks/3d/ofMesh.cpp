@@ -4,13 +4,13 @@
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(){
-	mode = OF_PRIMITIVE_TRIANGLES;
-	bVertsChanged = false;
-	bColorsChanged = false;
-	bNormalsChanged = false;
-	bTexCoordsChanged = false;
-	bIndicesChanged = false;
-	bFacesDirty = false;
+    mode = OF_PRIMITIVE_TRIANGLES;
+    bVertsChanged = false;
+    bColorsChanged = false;
+    bNormalsChanged = false;
+    bTexCoordsChanged = false;
+    bIndicesChanged = false;
+    bFacesDirty = false;
     useColors = true;
     useTextures = true;
     useNormals = true;
@@ -20,8 +20,8 @@ ofMesh::ofMesh(){
 
 //--------------------------------------------------------------
 ofMesh::ofMesh(ofPrimitiveMode mode, const vector<ofVec3f>& verts){
-	setMode(mode);
-	addVertices(verts);
+    setMode(mode);
+    addVertices(verts);
 }
 
 //--------------------------------------------------------------
