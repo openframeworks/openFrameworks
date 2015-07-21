@@ -89,7 +89,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 	return this;
 }
 
-void ofxGuiGroup::add(ofxBaseGui * element){
+ofxBaseGui* ofxGuiGroup::add(ofxBaseGui * element){
 	collection.push_back( element );
 
 	element->setPosition(b.x, b.y + b.height  + spacing);
@@ -114,6 +114,7 @@ void ofxGuiGroup::add(ofxBaseGui * element){
     
 	parameters.add(element->getParameter());
 	setNeedsRedraw();
+    return element;
 }
 
 void ofxGuiGroup::setWidthElements(float w){
@@ -129,50 +130,50 @@ void ofxGuiGroup::setWidthElements(float w){
 	setNeedsRedraw();
 }
 
-void ofxGuiGroup::add(const ofParameterGroup & parameters){
+ofxBaseGui* ofxGuiGroup::add(const ofParameterGroup & parameters){
 	ofxGuiGroup * panel = new ofxGuiGroup(parameters);
 	panel->parent = this;
-	add(panel);
+    return add(panel);
 }
 
-void ofxGuiGroup::add(ofParameter<float> & parameter){
-	add(new ofxFloatSlider(parameter,b.width));
+ofxBaseGui* ofxGuiGroup::add(ofParameter<float> & parameter){
+    return add(new ofxFloatSlider(parameter,b.width));
 }
 
-void ofxGuiGroup::add(ofParameter<int> & parameter){
-	add(new ofxIntSlider(parameter,b.width));
+ofxBaseGui* ofxGuiGroup::add(ofParameter<int> & parameter){
+    return add(new ofxIntSlider(parameter,b.width));
 }
 
-void ofxGuiGroup::add(ofParameter<bool> & parameter){
-	add(new ofxToggle(parameter,b.width));
+ofxBaseGui* ofxGuiGroup::add(ofParameter<bool> & parameter){
+    return add(new ofxToggle(parameter,b.width));
 }
 
-void ofxGuiGroup::add(ofParameter<string> & parameter){
-	add(new ofxLabel(parameter,b.width));
+ofxBaseGui* ofxGuiGroup::add(ofParameter<string> & parameter){
+    return add(new ofxLabel(parameter,b.width));
 }
 
-void ofxGuiGroup::add(ofParameter<ofVec2f> & parameter){
-	add(new ofxVecSlider_<ofVec2f>(parameter,b.width));
+ofxBaseGui* ofxGuiGroup::add(ofParameter<ofVec2f> & parameter){
+    return add(new ofxVecSlider_<ofVec2f>(parameter,b.width));
 }
 
-void ofxGuiGroup::add(ofParameter<ofVec3f> & parameter){
-	add(new ofxVecSlider_<ofVec3f>(parameter,b.width));
+ofxBaseGui* ofxGuiGroup::add(ofParameter<ofVec3f> & parameter){
+    return add(new ofxVecSlider_<ofVec3f>(parameter,b.width));
 }
 
-void ofxGuiGroup::add(ofParameter<ofVec4f> & parameter){
-	add(new ofxVecSlider_<ofVec4f>(parameter,b.width));
+ofxBaseGui* ofxGuiGroup::add(ofParameter<ofVec4f> & parameter){
+    return add(new ofxVecSlider_<ofVec4f>(parameter,b.width));
 }
 
-void ofxGuiGroup::add(ofParameter<ofColor> & parameter){
-	add(new ofxColorSlider_<unsigned char>(parameter,b.width));
+ofxBaseGui* ofxGuiGroup::add(ofParameter<ofColor> & parameter){
+    return add(new ofxColorSlider_<unsigned char>(parameter,b.width));
 }
 
-void ofxGuiGroup::add(ofParameter<ofShortColor> & parameter){
-	add(new ofxColorSlider_<unsigned short>(parameter,b.width));
+ofxBaseGui* ofxGuiGroup::add(ofParameter<ofShortColor> & parameter){
+    return add(new ofxColorSlider_<unsigned short>(parameter,b.width));
 }
 
-void ofxGuiGroup::add(ofParameter<ofFloatColor> & parameter){
-	add(new ofxColorSlider_<float>(parameter,b.width));
+ofxBaseGui* ofxGuiGroup::add(ofParameter<ofFloatColor> & parameter){
+    return add(new ofxColorSlider_<float>(parameter,b.width));
 }
 
 void ofxGuiGroup::clear(){

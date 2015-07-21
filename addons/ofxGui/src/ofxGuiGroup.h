@@ -13,18 +13,18 @@ public:
     virtual ofxGuiGroup * setup(std::string collectionName="", std::string filename="settings.xml", float x = 10, float y = 10);
 	virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, std::string filename="settings.xml", float x = 10, float y = 10);
     
-	void add(ofxBaseGui * element);
-    void add(const ofParameterGroup & parameters);
-	void add(ofParameter<float> & parameter);
-	void add(ofParameter<int> & parameter);
-	void add(ofParameter<bool> & parameter);
-	void add(ofParameter<std::string> & parameter);
-    void add(ofParameter<ofVec2f> & parameter);
-    void add(ofParameter<ofVec3f> & parameter);
-    void add(ofParameter<ofVec4f> & parameter);
-    void add(ofParameter<ofColor> & parameter);
-    void add(ofParameter<ofShortColor> & parameter);
-    void add(ofParameter<ofFloatColor> & parameter);
+    ofxBaseGui* add(ofxBaseGui * element);
+    ofxBaseGui* add(const ofParameterGroup & parameters);
+    ofxBaseGui* add(ofParameter<float> & parameter);
+    ofxBaseGui* add(ofParameter<int> & parameter);
+    ofxBaseGui* add(ofParameter<bool> & parameter);
+    ofxBaseGui* add(ofParameter<std::string> & parameter);
+    ofxBaseGui* add(ofParameter<ofVec2f> & parameter);
+    ofxBaseGui* add(ofParameter<ofVec3f> & parameter);
+    ofxBaseGui* add(ofParameter<ofVec4f> & parameter);
+    ofxBaseGui* add(ofParameter<ofColor> & parameter);
+    ofxBaseGui* add(ofParameter<ofShortColor> & parameter);
+    ofxBaseGui* add(ofParameter<ofFloatColor> & parameter);
 
     void minimize();
     void maximize();
