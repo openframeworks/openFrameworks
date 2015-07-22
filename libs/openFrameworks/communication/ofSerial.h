@@ -256,25 +256,51 @@ public:
     /// \}
 
 protected:
+    /// \brief Enumerate all devices attached to a serial port.
+    ///
+    /// This method tries to collect basic information about all devices
+    /// attached to a serial port.
+    /// \see ofSerial::listDevices()
+    /// \see enumerateWin32Ports()
     void buildDeviceList();
-    string deviceType;
-    vector <ofSerialDeviceInfo> devices;
+
+    string deviceType;  ///\< \brief Name of the device on the other end of the serial connection.
+    vector <ofSerialDeviceInfo> devices;  ///\< This vector stores information about all serial devices found.
     bool bHaveEnumeratedDevices;  ///\< \brief Indicate having enumerated devices (serial ports) available.
-    bool bInited;
+    bool bInited;  ///\< \brief Indicate the successful initialization of the serial connection.
 
 #ifdef TARGET_WIN32
 
-    char** portNamesShort; //[MAX_SERIAL_PORTS];
-    char** portNamesFriendly; ///[MAX_SERIAL_PORTS];
-    HANDLE hComm; // the handle to the serial port pc
-    int nPorts;
-    bool bPortsEnumerated;
+    /// \brief Enumerate all serial ports on Microsoft Windows.
+    ///
+    /// This method tries to collect basic information about all devices
+    /// attached to a serial port on Microsoft Windows platforms.
+    /// \see ofSerial::listDevices()
+    /// \see ofSerial::buildDeviceList()
     void enumerateWin32Ports();
-    COMMTIMEOUTS oldTimeout; // we alter this, so keep a record
+
+    COMMTIMEOUTS oldTimeout;
+        ///\< \brief The old serial connection timeout.
+        /// This is needed to restore settings on Microsoft Windows
+        /// platforms upon closing the serial connection.
+    char** portNamesShort;
+        ///\< \brief Short names of COM ports on Microsoft Windows.
+        /// Short names only identify/name the COM port. The length
+        /// of the array is limited to MAX_SERIAL_PORTS.
+        ///\see ofSerial::portNamesFriendly
+    char** portNamesFriendly;
+        ///\< \brief Friendly names of COM ports on Microsoft Windows.
+        /// The friendly names often describe/name the device attached to
+        /// a particular serial port. The length of the array is limited
+        /// to MAX_SERIAL_PORTS.
+        ///\see ofSerial::portNamesShort
+    HANDLE hComm; ///\< This is the handler for the serial port on Microsoft Windows.
+    int nPorts;  ///\< \brief Number of serial devices (ports) on Microsoft Windows.
+    bool bPortsEnumerated;  ///\< \brief Indicate that all serial ports (on Microsoft Windows) have been enumerated.
 
 #else
     int fd; ///< \brief File descriptor for the serial port.
-    struct termios oldoptions;
+    struct termios oldoptions;  ///< \brief This is the set of (current) terminal attributes to be reused when changing a subset of options.
 #endif
 
 };

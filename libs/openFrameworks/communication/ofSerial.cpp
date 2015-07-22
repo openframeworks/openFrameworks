@@ -30,15 +30,15 @@ void ofSerial::enumerateWin32Ports(){
 
     HDEVINFO hDevInfo = NULL;
     SP_DEVINFO_DATA DeviceInterfaceData;
-    int i = 0;
     DWORD dataType, actualSize = 0;
-    unsigned char dataBuf[MAX_PATH + 1];
 
     // Reset Port List
     nPorts = 0;
     // Search device set
     hDevInfo = SetupDiGetClassDevs((struct _GUID *)&GUID_SERENUM_BUS_ENUMERATOR, 0, 0, DIGCF_PRESENT);
     if(hDevInfo){
+        int i = 0;
+        unsigned char dataBuf[MAX_PATH + 1];
         while(TRUE){
             ZeroMemory(&DeviceInterfaceData, sizeof(DeviceInterfaceData));
             DeviceInterfaceData.cbSize = sizeof(DeviceInterfaceData);
@@ -167,16 +167,16 @@ void ofSerial::buildDeviceList(){
 
     #if defined( TARGET_OSX ) || defined( TARGET_LINUX )
         DIR *dir;
-        struct dirent *entry;
         dir = opendir("/dev");
 
         string deviceName = "";
-        int deviceCount = 0;
 
         if(dir == NULL){
             ofLogError("ofSerial") << "buildDeviceList(): error listing devices in /dev";
         } else {
+            int deviceCount = 0;
             //for each device
+            struct dirent *entry;
             while((entry = readdir(dir)) != NULL){
                 deviceName = (char *)entry->d_name;
 
