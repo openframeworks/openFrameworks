@@ -57,6 +57,30 @@ ofArduino::ofArduino(){
     _executeMultiByteCommand = 0x00; // 0x00 a pin mode (input), not a command in Firmata -> fail hard
     _multiByteChannel = 0;
     _firmwareVersionSum = 0;
+    for(unsigned char& e : _storedInputData){
+        e = UCHAR_MAX;
+    }
+    for(int& e : _digitalPinMode){
+        e = INT_MAX;
+    }
+    for(int& e : _digitalPinValue){
+        e = INT_MAX;
+    }
+    for(int& e : _digitalPortValue){
+        e = INT_MAX;
+    }
+    for(int& e : _digitalPortReporting){
+        e = INT_MAX;
+    }
+    for(int& e : _digitalPinReporting){
+        e = INT_MAX;
+    }
+    for(int& e : _analogPinReporting){
+        e = INT_MAX;
+    }
+    for(int& e : _servoValue){
+        e = INT_MAX;
+    }
     connected = false;
     connectTime = 0.0f;
 

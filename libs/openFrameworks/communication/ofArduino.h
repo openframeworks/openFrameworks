@@ -436,7 +436,7 @@ protected:
 	int _multiByteChannel;  ///< \brief Indicates which pin the data came from.
 	
 	// --- data holders
-	unsigned char _storedInputData[FIRMATA_MAX_DATA_BYTES]={UCHAR_MAX};
+	unsigned char _storedInputData[FIRMATA_MAX_DATA_BYTES];
 	vector<unsigned char> _sysExData;
 	int _majorProtocolVersion;
 	int _minorProtocolVersion;
@@ -459,22 +459,22 @@ protected:
 	list<int> _digitalHistory[ARD_TOTAL_DIGITAL_PINS];
 	// a history of received data for each digital pin
 	
-	int _digitalPinMode[ARD_TOTAL_DIGITAL_PINS]={INT_MAX};
+	int _digitalPinMode[ARD_TOTAL_DIGITAL_PINS];
 	// the modes for all digital pins
 	
-	int _digitalPinValue[ARD_TOTAL_DIGITAL_PINS]={INT_MAX};
+	int _digitalPinValue[ARD_TOTAL_DIGITAL_PINS];
 	// the last set values (DIGITAL/PWM) on all digital pins
 	
-	int _digitalPortValue[ARD_TOTAL_PORTS]={INT_MAX};
+	int _digitalPortValue[ARD_TOTAL_PORTS];
 	// the last set values on all ports
 	
-	int _digitalPortReporting[ARD_TOTAL_PORTS]={INT_MAX};
+	int _digitalPortReporting[ARD_TOTAL_PORTS];
 	// whether pin reporting is enabled / disabled
 	
-	int _digitalPinReporting[ARD_TOTAL_DIGITAL_PINS]={INT_MAX};
+	int _digitalPinReporting[ARD_TOTAL_DIGITAL_PINS];
 	// whether pin reporting is enabled / disabled
 	
-	int _analogPinReporting[ARD_TOTAL_ANALOG_PINS]={INT_MAX};
+	int _analogPinReporting[ARD_TOTAL_ANALOG_PINS];
 	// whether pin reporting is enabled / disabled
 	
 	bool bUseDelay;
@@ -483,7 +483,7 @@ protected:
 	
 	float connectTime;  ///< \brief This represents the (running) time of establishing a serial connection.
 	
-	int _servoValue[ARD_TOTAL_DIGITAL_PINS]={INT_MAX};
+	int _servoValue[ARD_TOTAL_DIGITAL_PINS];
 	// the last set servo values
 	
 };
