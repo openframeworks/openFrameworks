@@ -6,8 +6,7 @@
 using namespace std;
 
 ofxGuiGroup::ofxGuiGroup(){
-	minimized = false;
-	parent = NULL;
+    minimized = false;
 	spacing  = 1;
 	spacingNextElement = 3;
 	header = defaultHeight;
@@ -99,11 +98,12 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	//if(b.width<element->getWidth()) b.width = element->getWidth();
     
     element->unregisterMouseEvents();
+
+    element->setParent(this);
     
 	ofxGuiGroup * subgroup = dynamic_cast<ofxGuiGroup*>(element);
 	if(subgroup!=NULL){
-		subgroup->filename = filename;
-		subgroup->parent = this;
+        subgroup->filename = filename;
 		subgroup->setWidthElements(b.width*.98);
 	}else{
 		if(parent!=NULL){

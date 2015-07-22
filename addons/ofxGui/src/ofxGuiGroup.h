@@ -34,6 +34,8 @@ public:
 	void setWidthElements(float w);
 
 	void clear();
+
+    virtual void sizeChangedCB();
 	
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);
@@ -61,7 +63,6 @@ public:
 protected:
 	virtual void render();
     virtual bool setValue(float mx, float my, bool bCheck);
-    void sizeChangedCB();
     
 	float spacing,spacingNextElement;
 	float header;
@@ -78,7 +79,6 @@ protected:
 	bool minimized;
 	bool bGuiActive;
 
-	ofxGuiGroup * parent;
 	ofPath border, headerBg;
 	ofVboMesh textMesh;
 };
