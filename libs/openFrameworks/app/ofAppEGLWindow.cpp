@@ -257,13 +257,13 @@ ofAppEGLWindow::Settings::Settings(const ofGLESWindowSettings & settings)
 
 //------------------------------------------------------------
 ofAppEGLWindow::ofAppEGLWindow() {
-	keyboardDetected = false;
-	mouseDetected	= false;
-	threadTimeout = ofThread::INFINITE_JOIN_TIMEOUT;
-	if(instance!=NULL){
-		ofLogError("ofAppEGLWindow") << "trying to create more than one instance";
-	}
-	instance = this;
+    keyboardDetected = false;
+    mouseDetected = false;
+    threadTimeout = ofThread::INFINITE_JOIN_TIMEOUT;
+    if(instance!=NULL){
+        ofLogError("ofAppEGLWindow") << "trying to create more than one instance";
+    }
+    instance = this;
 }
 
 //------------------------------------------------------------
