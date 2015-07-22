@@ -175,13 +175,13 @@ protected:
 	int getWindowHeight();
 
 	ofWindowMode windowMode;
-	bool     bNewScreenMode;
-	int      buttonInUse;
-	bool     bEnableSetupScreen;
-	bool	 bShowCursor;
+	bool     bNewScreenMode;  ///< \brief This indicates if a (new) window rectangle has to be adjusted.
+	int      buttonInUse;  ///< \brief Mouse button currently in use.
+	bool     bEnableSetupScreen;  ///< \brief This indicates the need/intent to draw a setup screen.
+	bool	 bShowCursor;  ///< \brief Indicate the visibility of the (mouse) cursor.
 
 	string   eglDisplayString;
-	int      nFramesSinceWindowResized;
+	int      nFramesSinceWindowResized;  ///< \brief The number of frames passed/shown since the window got resized.
 	ofOrientation orientation;
 
 
@@ -193,8 +193,8 @@ protected:
 
 	// TODO: getters and setters?  OR automatically set based on 
 	// OS or screen size?  Should be changed when screen is resized?
-	float mouseScaleX;
-	float mouseScaleY;
+	float mouseScaleX;  ///< \brief Amount by which to mouse movements along the X axis.
+	float mouseScaleY;  ///< \brief Amount by which to mouse movements along the Y axis.
 
 
 	// float getMouseScaleX() const;
@@ -238,10 +238,10 @@ protected:
 	bool createWindow(const ofRectangle& requestedWindowRect);
 	bool destroyWindow();
 
-	bool isUsingX11;
+	bool isUsingX11;  ///< \brief Indicate the use of the X Window System.
 
-	bool isWindowInited;
-	bool isSurfaceInited;
+	bool isWindowInited;  ///< \brief Indicate that the window is (properly) initialized.
+	bool isSurfaceInited;  ///< \brief Indicate that the surface is (properly) initialized.
 
 	void initNative();
 	void exitNative();
@@ -270,10 +270,10 @@ protected:
 	// create a window without using x11.
 #endif
 
-	Display*	x11Display;
-	Screen*		x11Screen;
+	Display*	x11Display;  ///< \brief Indicate which X11 display is in use (currently).
+	Screen*		x11Screen;  ///< \brief Indicate which X11 screen is in use (currently).
 	Window		x11Window;
-	long 		x11ScreenNum;
+	long 		x11ScreenNum;  ///< \brief The number of the X11 screen is in use (currently).
 	bool createX11NativeWindow(const ofRectangle& requestedWindowRect);
 	 
 //------------------------------------------------------------
@@ -299,7 +299,7 @@ protected:
 
 private:
 	Settings 			settings;
-	int glesVersion;
+	int glesVersion;  ///< \brief Indicate the version of OpenGL for Embedded Systems.
 	bool keyboardDetected;
 	bool mouseDetected;
 	long threadTimeout;

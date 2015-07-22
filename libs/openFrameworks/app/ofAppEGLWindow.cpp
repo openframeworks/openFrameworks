@@ -260,6 +260,21 @@ ofAppEGLWindow::ofAppEGLWindow() {
     keyboardDetected = false;
     mouseDetected = false;
     threadTimeout = ofThread::INFINITE_JOIN_TIMEOUT;
+    bNewScreenMode = false;
+    buttonInUse = -1;
+    bEnableSetupScreen = false;
+    bShowCursor = true;
+    nFramesSinceWindowResized = 0;
+    mouseScaleX = 2.0f;
+    mouseScaleY = 2.0f;
+    isUsingX11 = false;
+    isWindowInited = false;
+    isSurfaceInited = false;
+    x11Display = NULL;
+    x11Screen = NULL;
+    x11ScreenNum = 0l;
+    glesVersion = 1;
+
     if(instance!=NULL){
         ofLogError("ofAppEGLWindow") << "trying to create more than one instance";
     }
