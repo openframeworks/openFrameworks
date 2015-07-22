@@ -6,118 +6,120 @@
 #include "ofTrueTypeFont.h"
 #include "ofBitmapFont.h"
 
-class ofxBaseGui{
-public:
-	ofxBaseGui();
-	
-	virtual ~ofxBaseGui();
-	void draw();
-	
-	void saveToFile(std::string filename);
-	void loadFromFile(std::string filename);
-	
-	void setDefaultSerializer(std::shared_ptr<ofBaseFileSerializer> serializer);
+class ofxBaseGui {
+	public:
+		ofxBaseGui();
 
-	virtual void saveTo(ofBaseSerializer& serializer);
-	virtual void loadFrom(ofBaseSerializer& serializer);
-	
-	std::string getName();
-	void setName(std::string name);
+		virtual ~ofxBaseGui();
+		void draw();
 
-	virtual void setPosition(ofPoint p);
-	virtual void setPosition(float x, float y);
-	virtual void setSize(float w, float h);
-	virtual void setShape(ofRectangle r);
-	virtual void setShape(float x, float y, float w, float h);
+		void saveToFile(std::string filename);
+		void loadFromFile(std::string filename);
 
-	ofPoint getPosition();
-	ofRectangle getShape();
-	float getWidth();
-	float getHeight();
+		void setDefaultSerializer(std::shared_ptr <ofBaseFileSerializer> serializer);
 
-	ofColor getHeaderBackgroundColor();
-	ofColor getBackgroundColor();
-	ofColor getBorderColor();
-	ofColor getTextColor();
-	ofColor getFillColor();
+		virtual void saveTo(ofBaseSerializer & serializer);
+		virtual void loadFrom(ofBaseSerializer & serializer);
 
-	void setHeaderBackgroundColor(const ofColor & color);
-	void setBackgroundColor(const ofColor & color);
-	void setBorderColor(const ofColor & color);
-	void setTextColor(const ofColor & color);
-	void setFillColor(const ofColor & color);
+		std::string getName();
+		void setName(std::string name);
 
-	static void setDefaultHeaderBackgroundColor(const ofColor & color);
-	static void setDefaultBackgroundColor(const ofColor & color);
-	static void setDefaultBorderColor(const ofColor & color);
-	static void setDefaultTextColor(const ofColor & color);
-	static void setDefaultFillColor(const ofColor & color);
+		virtual void setPosition(ofPoint p);
+		virtual void setPosition(float x, float y);
+		virtual void setSize(float w, float h);
+		virtual void setShape(ofRectangle r);
+		virtual void setShape(float x, float y, float w, float h);
 
-	static void setDefaultTextPadding(int padding);
-	static void setDefaultWidth(int width);
-	static void setDefaultHeight(int height);
+		ofPoint getPosition();
+		ofRectangle getShape();
+		float getWidth();
+		float getHeight();
 
-	virtual ofAbstractParameter & getParameter() = 0;
-	static void loadFont(std::string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
-	static void setUseTTF(bool bUseTTF);
-    
-    void registerMouseEvents();
-    void unregisterMouseEvents();
+		ofColor getHeaderBackgroundColor();
+		ofColor getBackgroundColor();
+		ofColor getBorderColor();
+		ofColor getTextColor();
+		ofColor getFillColor();
 
-    virtual void sizeChangedCB();
-    void setParent(ofxBaseGui* parent);
-    ofxBaseGui* getParent();
+		void setHeaderBackgroundColor(const ofColor & color);
+		void setBackgroundColor(const ofColor & color);
+		void setBorderColor(const ofColor & color);
+		void setTextColor(const ofColor & color);
+		void setFillColor(const ofColor & color);
 
-	virtual bool mouseMoved(ofMouseEventArgs & args) = 0;
-	virtual bool mousePressed(ofMouseEventArgs & args) = 0;
-	virtual bool mouseDragged(ofMouseEventArgs & args) = 0;
-	virtual bool mouseReleased(ofMouseEventArgs & args) = 0;
-	virtual bool mouseScrolled(ofMouseEventArgs & args) = 0;
-	virtual void mouseEntered(ofMouseEventArgs & args){}
-	virtual void mouseExited(ofMouseEventArgs & args){}
+		static void setDefaultHeaderBackgroundColor(const ofColor & color);
+		static void setDefaultBackgroundColor(const ofColor & color);
+		static void setDefaultBorderColor(const ofColor & color);
+		static void setDefaultTextColor(const ofColor & color);
+		static void setDefaultFillColor(const ofColor & color);
 
-protected:
-	virtual void render()=0;
-	bool isGuiDrawing();
-	virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
-	void bindFontTexture();
-	void unbindFontTexture();
-	ofMesh getTextMesh(const std::string & text, float x, float y);
-	ofRectangle getTextBoundingBox(const std::string & text,float x, float y);
+		static void setDefaultTextPadding(int padding);
+		static void setDefaultWidth(int width);
+		static void setDefaultHeight(int height);
 
-    ofxBaseGui * parent;
+		virtual ofAbstractParameter & getParameter() = 0;
+		static void loadFont(std::string filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
+		static void setUseTTF(bool bUseTTF);
 
-	ofRectangle b;
-	static ofTrueTypeFont font;
-	static bool fontLoaded;
-	static bool useTTF;
-	static ofBitmapFont bitmapFont;
-	std::shared_ptr<ofBaseFileSerializer> serializer;
+		void registerMouseEvents();
+		void unregisterMouseEvents();
 
-	static ofColor headerBackgroundColor;
-	static ofColor backgroundColor;
-	static ofColor borderColor;
-	static ofColor textColor;
-	static ofColor fillColor;
+		virtual void sizeChangedCB();
+		void setParent(ofxBaseGui * parent);
+		ofxBaseGui * getParent();
 
-	ofColor thisHeaderBackgroundColor;
-	ofColor thisBackgroundColor;
-	ofColor thisBorderColor;
-	ofColor thisTextColor;
-	ofColor thisFillColor;
+		virtual bool mouseMoved(ofMouseEventArgs & args) = 0;
+		virtual bool mousePressed(ofMouseEventArgs & args) = 0;
+		virtual bool mouseDragged(ofMouseEventArgs & args) = 0;
+		virtual bool mouseReleased(ofMouseEventArgs & args) = 0;
+		virtual bool mouseScrolled(ofMouseEventArgs & args) = 0;
+		virtual void mouseEntered(ofMouseEventArgs & args){
+		}
+		virtual void mouseExited(ofMouseEventArgs & args){
+		}
 
-	static int textPadding;
-	static int defaultWidth;
-	static int defaultHeight;
+	protected:
+		virtual void render() = 0;
+		bool isGuiDrawing();
+		virtual bool setValue(float mx, float my, bool bCheckBounds) = 0;
+		void bindFontTexture();
+		void unbindFontTexture();
+		ofMesh getTextMesh(const std::string & text, float x, float y);
+		ofRectangle getTextBoundingBox(const std::string & text, float x, float y);
 
-	static std::string saveStencilToHex(ofImage& img);
-	static void loadStencilFromHex(ofImage& img, unsigned char* data) ;
+		ofxBaseGui * parent;
 
-	void setNeedsRedraw();
-	virtual void generateDraw()=0;
+		ofRectangle b;
+		static ofTrueTypeFont font;
+		static bool fontLoaded;
+		static bool useTTF;
+		static ofBitmapFont bitmapFont;
+		std::shared_ptr <ofBaseFileSerializer> serializer;
 
-private:
-	bool needsRedraw;
-	unsigned long currentFrame;
-    bool bRegisteredForMouseEvents;
-}; 
+		static ofColor headerBackgroundColor;
+		static ofColor backgroundColor;
+		static ofColor borderColor;
+		static ofColor textColor;
+		static ofColor fillColor;
+
+		ofColor thisHeaderBackgroundColor;
+		ofColor thisBackgroundColor;
+		ofColor thisBorderColor;
+		ofColor thisTextColor;
+		ofColor thisFillColor;
+
+		static int textPadding;
+		static int defaultWidth;
+		static int defaultHeight;
+
+		static std::string saveStencilToHex(ofImage & img);
+		static void loadStencilFromHex(ofImage & img, unsigned char * data);
+
+		void setNeedsRedraw();
+		virtual void generateDraw() = 0;
+
+	private:
+		bool needsRedraw;
+		unsigned long currentFrame;
+		bool bRegisteredForMouseEvents;
+};
