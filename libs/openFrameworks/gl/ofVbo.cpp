@@ -658,7 +658,7 @@ GLuint ofVbo::getAttributeId(int location) const {
 void ofVbo::setVertexBuffer(ofBufferObject & buffer, int numCoords, int stride, int offset){
 	positionAttribute.setBuffer(buffer, numCoords, stride, offset);
 	bUsingVerts = true;
-
+	vaoChanged = true;
 	// Calculate the total number of vertices based on what we know:
 	int tmpStride = stride;
 	if (tmpStride == 0) {
