@@ -128,8 +128,7 @@ void ofxBaseGui::draw(){
 bool ofxBaseGui::isGuiDrawing(){
 	if(ofGetFrameNum() - currentFrame > 1){
 		return false;
-	}
-	else{
+	} else{
 		return true;
 	}
 }
@@ -137,8 +136,7 @@ bool ofxBaseGui::isGuiDrawing(){
 void ofxBaseGui::bindFontTexture(){
 	if(useTTF){
 		font.getFontTexture().bind();
-	}
-	else{
+	} else{
 		bitmapFont.getTexture().bind();
 	}
 }
@@ -146,8 +144,7 @@ void ofxBaseGui::bindFontTexture(){
 void ofxBaseGui::unbindFontTexture(){
 	if(useTTF){
 		font.getFontTexture().unbind();
-	}
-	else{
+	} else{
 		bitmapFont.getTexture().unbind();
 	}
 }
@@ -156,8 +153,7 @@ void ofxBaseGui::unbindFontTexture(){
 ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
 	if(useTTF){
 		return font.getStringMesh(text, x, y);
-	}
-	else{
+	} else{
 		return bitmapFont.getMesh(text, x, y);
 	}
 }
@@ -165,8 +161,7 @@ ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
 ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y){
 	if(useTTF){
 		return font.getStringBoundingBox(text, x, y);
-	}
-	else{
+	} else{
 		return bitmapFont.getBoundingBox(text, x, y);
 	}
 }
@@ -354,8 +349,7 @@ string ofxBaseGui::saveStencilToHex(ofImage & img){
 			if(i < n){
 				strm << ",";
 			}
-		}
-		else{
+		} else{
 			shift++;
 		}
 	}

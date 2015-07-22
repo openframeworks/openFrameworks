@@ -32,8 +32,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 	spacingNextElement = 3;
 	if(parent != NULL){
 		b.width = parent->getWidth();
-	}
-	else{
+	} else{
 		b.width = defaultWidth;
 	}
 	clear();
@@ -45,49 +44,38 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _f
 		if(type == typeid(ofParameter <int> ).name()){
 			ofParameter <int> p = _parameters.getInt(i);
 			add(p);
-		}
-		else if(type == typeid(ofParameter <float> ).name()){
+		} else if(type == typeid(ofParameter <float> ).name()){
 			ofParameter <float> p = _parameters.getFloat(i);
 			add(p);
-		}
-		else if(type == typeid(ofParameter <bool> ).name()){
+		} else if(type == typeid(ofParameter <bool> ).name()){
 			ofParameter <bool> p = _parameters.getBool(i);
 			add(p);
-		}
-		else if(type == typeid(ofParameter <ofVec2f> ).name()){
+		} else if(type == typeid(ofParameter <ofVec2f> ).name()){
 			ofParameter <ofVec2f> p = _parameters.getVec2f(i);
 			add(p);
-		}
-		else if(type == typeid(ofParameter <ofVec3f> ).name()){
+		} else if(type == typeid(ofParameter <ofVec3f> ).name()){
 			ofParameter <ofVec3f> p = _parameters.getVec3f(i);
 			add(p);
-		}
-		else if(type == typeid(ofParameter <ofVec4f> ).name()){
+		} else if(type == typeid(ofParameter <ofVec4f> ).name()){
 			ofParameter <ofVec4f> p = _parameters.getVec4f(i);
 			add(p);
-		}
-		else if(type == typeid(ofParameter <ofColor> ).name()){
+		} else if(type == typeid(ofParameter <ofColor> ).name()){
 			ofParameter <ofColor> p = _parameters.getColor(i);
 			add(p);
-		}
-		else if(type == typeid(ofParameter <ofShortColor> ).name()){
+		} else if(type == typeid(ofParameter <ofShortColor> ).name()){
 			ofParameter <ofShortColor> p = _parameters.getShortColor(i);
 			add(p);
-		}
-		else if(type == typeid(ofParameter <ofFloatColor> ).name()){
+		} else if(type == typeid(ofParameter <ofFloatColor> ).name()){
 			ofParameter <ofFloatColor> p = _parameters.getFloatColor(i);
 			add(p);
-		}
-		else if(type == typeid(ofParameter <string> ).name()){
+		} else if(type == typeid(ofParameter <string> ).name()){
 			ofParameter <string> p = _parameters.getString(i);
 			add(p);
-		}
-		else if(type == typeid(ofParameterGroup).name()){
+		} else if(type == typeid(ofParameterGroup).name()){
 			ofParameterGroup p = _parameters.getGroup(i);
 			ofxGuiGroup * panel = new ofxGuiGroup(p);
 			add(panel);
-		}
-		else{
+		} else{
 			ofLogWarning() << "ofxBaseGroup; no control for parameter of type " << type;
 		}
 	}
@@ -117,8 +105,7 @@ ofxBaseGui * ofxGuiGroup::add(ofxBaseGui * element){
 	if(subgroup != NULL){
 		subgroup->filename = filename;
 		subgroup->setWidthElements(b.width * .98);
-	}
-	else{
+	} else{
 		if(parent != NULL){
 			element->setSize(b.width * .98, element->getHeight());
 			element->setPosition(b.x + b.width - element->getWidth(), element->getPosition().y);
@@ -205,8 +192,7 @@ bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
 	}
 	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
 		return true;
-	}
-	else{
+	} else{
 		return false;
 	}
 }
@@ -251,8 +237,7 @@ bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 	}
 	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
 		return true;
-	}
-	else{
+	} else{
 		return false;
 	}
 }
@@ -266,8 +251,7 @@ bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
 	}
 	if(isGuiDrawing() && b.inside(ofPoint(args.x, args.y))){
 		return true;
-	}
-	else{
+	} else{
 		return false;
 	}
 }
@@ -287,8 +271,7 @@ void ofxGuiGroup::generateDraw(){
 	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y + spacingNextElement);
 	if(minimized){
 		textMesh.append(getTextMesh("+", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y + spacingNextElement));
-	}
-	else{
+	} else{
 		textMesh.append(getTextMesh("-", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y + spacingNextElement));
 	}
 }
@@ -374,8 +357,7 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 				minimized = !minimized;
 				if(minimized){
 					minimize();
-				}
-				else{
+				} else{
 					maximize();
 				}
 				return true;
@@ -428,8 +410,7 @@ void ofxGuiGroup::sizeChangedCB(){
 	float y;
 	if(parent){
 		y = b.y  + header + spacing + spacingNextElement;
-	}
-	else{
+	} else{
 		y = b.y  + header + spacing;
 	}
 	for(int i = 0; i < (int)collection.size(); i++){
@@ -451,8 +432,7 @@ int ofxGuiGroup::getNumControls(){
 ofxBaseGui * ofxGuiGroup::getControl(int num){
 	if(num < (int)collection.size()){
 		return collection[num];
-	}
-	else{
+	} else{
 		return NULL;
 	}
 }

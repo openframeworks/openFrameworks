@@ -89,8 +89,7 @@ ControlType & ofxGuiGroup::getControlType(std::string name){
 	ControlType * control = dynamic_cast <ControlType *>(getControl(name));
 	if(control){
 		return *control;
-	}
-	else{
+	} else{
 		ofLogWarning() << "getControlType " << name << " not found, creating new";
 		control = new ControlType;
 		control->setName(name);
