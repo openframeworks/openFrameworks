@@ -41,22 +41,22 @@
 ///     serial.setup(0, 57600);
 /// ~~~~
 class ofSerial {
-    
+
 public:
     /// \name Constructor and Destructor
     /// \{
-    
+
     /// Initializes the serial connection, but doesn't actually open the
     /// connection to any devices. You'll need to use the setup() method
     /// before doing that.
     ofSerial();
-    
+
     virtual ~ofSerial();
-    
+
     /// \}
     /// \name List Devices
     /// \{
-    
+
     /// \brief This lists all the available serial devices to the console or
     /// standard output.
     ///
@@ -65,7 +65,7 @@ public:
     /// you're expecting if you want to use it to dynamically connect to a
     /// device.
     void listDevices();
-    
+
     /// \brief Prints out the available serial devices.
     ///
     /// On OSX and Linux it might list something like this:
@@ -80,15 +80,15 @@ public:
     /// device 1 - COM4
     /// ~~~~
     OF_DEPRECATED_MSG("Use listDevices() instead", void enumerateDevices());
-    
+
     /// \brief Returns a vector of ofSerialDeviceInfo instances with the
     /// devicePath, deviceName, deviceID set.
     vector <ofSerialDeviceInfo> getDeviceList();
-    
+
     /// \}
     /// \name Serial Connection
     /// \{
-    
+
     /// \brief Attempts to setup the first available device at a baud rate of 9600.
     /// ~~~~{.cpp}
     ///     ofSerial mySerial;
@@ -97,7 +97,7 @@ public:
     ///     }
     /// ~~~~
     bool setup();
-    
+
     /// \brief Opens the serial port, with the given name and baud rate.
     ///
     /// On OSX and Linux, it might look like:
@@ -112,7 +112,7 @@ public:
     ///     mySerial.setup("COM4", 57600);
     /// ~~~~
     bool setup(string portName, int baudrate);
-    
+
     /// \brief Opens the serial port based on the order in which is listed and
     /// sets the baud rate.
     ///
@@ -122,16 +122,16 @@ public:
     /// mySerial.setup(0, 9600);
     /// ~~~~
     bool setup(int deviceNumber, int baudrate);
-    
+
     bool isInitialized() const;
-    
+
     /// \brief Closes the connection to the serial device.
     void close();
-    
+
     /// \}
     /// \name Read Data
     /// \{
-    
+
     /// \brief The available method is useful when you want to know how many bytes
     /// are available in the serial port. For instance, if you only want to
     /// read when there are 8 bytes waiting for you, you would do:
@@ -145,7 +145,7 @@ public:
     /// This is useful when you know how long a complete message from a device
     /// is going to be.
     int    available();
-    
+
     /// \brief Reads 'length' bytes from the connected serial device.
     ///
     /// In some cases it may read less than 'length' bytes, so for reliable
@@ -190,7 +190,7 @@ public:
     /// trying to receieve ints or signed chars over a serial connection you'll
     /// need to do some bit manipulation to correctly interpret that values.
     int readBytes(unsigned char * buffer, int length);
-    
+
     /// \brief Reads and returns a single byte from the requested device.
     ///
     /// ~~~~{.cpp}
@@ -211,11 +211,11 @@ public:
     /// \returns The single byte as integer. If there is no data it will return
     /// `OF_SERIAL_NO_DATA`, and on error it returns `OF_SERIAL_ERROR`
     int readByte();
-    
+
     /// \}
     /// \name Write Data
     /// \{
-    
+
     /// \brief This writes bytes into the serial buffer from the buffer pointer passed in
     ///
     /// ~~~~{.cpp}
@@ -223,7 +223,7 @@ public:
     ///     device.writeBytes(&buf[0], 3);
     /// ~~~~
     int writeBytes(unsigned char * buffer, int length);
-    
+
     /// \brief Writes a single byte to the connected serial device.
     ///
     /// Check the return value to be sure the data was written.
@@ -236,37 +236,34 @@ public:
     ///       ofLog(OF_LOG_ERROR, "Byte was not written to serial port");
     /// ~~~~
     bool writeByte(unsigned char singleByte);
-    
+
     /// \}
     /// \name Clear Data
     /// \{
-    
+
     /// \brief Clears data from one or both of the serial buffers.
     ///
     /// Any data in the cleared buffers is discarded.
     /// \param flushIn If true then it clears the incoming data buffer
     /// \param fluhOut If true then it clears the outgoing data buffer.
     void flush(bool flushIn = true, bool flushOut = true);
-    
+
     /// \brief Drain is only available on OSX and Linux and is very similar to
     /// flush(), but blocks until all the data has been written to or read
     /// from the serial port.
     void drain();
-    
+
     /// \}
-    
+
 protected:
     void buildDeviceList();
-    
     string deviceType;
     vector <ofSerialDeviceInfo> devices;
-    
     bool bHaveEnumeratedDevices;
-    
     bool bInited;
-    
+
 #ifdef TARGET_WIN32
-    
+
     char** portNamesShort;//[MAX_SERIAL_PORTS];
     char** portNamesFriendly; ///[MAX_SERIAL_PORTS];
     HANDLE hComm;        // the handle to the serial port pc
@@ -274,17 +271,15 @@ protected:
     bool bPortsEnumerated;
     void enumerateWin32Ports();
     COMMTIMEOUTS oldTimeout;    // we alter this, so keep a record
-    
+
 #else
     int fd;    // the handle to the serial port mac
     struct termios oldoptions;
 #endif
-    
+
 };
 
 //----------------------------------------------------------------------
-
-
 // this serial code contains small portions of the following code-examples:
 // ---------------------------------------------------
 // http://todbot.com/arduino/host/arduino-serial/arduino-serial.c
@@ -294,11 +289,11 @@ protected:
 
 // to do:
 // ----------------------------
-// a)     support blocking / non-blocking
-// b)     support numChars available type functions
-// c)   can we reduce the number of includes here?
+// a) support blocking / non-blocking
+// b) support numChars available type functions
+// c) can we reduce the number of includes here?
 
-//     useful :
+// useful :
 //     http://en.wikibooks.org/wiki/Serial_Programming:Unix/termios
 //     http://www.keyspan.com/downloads-files/developer/win/USBSerial/html/DevDocsUSBSerial.html
 // ----------------------------
@@ -307,5 +302,3 @@ protected:
 // if has evolved ways of dealing with blocking
 // and non-blocking instances)
 // ----------------------------
-
-
