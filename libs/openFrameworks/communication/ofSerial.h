@@ -144,7 +144,7 @@ public:
     ///
     /// This is useful when you know how long a complete message from a device
     /// is going to be.
-    int    available();
+    int available();
 
     /// \brief Reads 'length' bytes from the connected serial device.
     ///
@@ -264,16 +264,16 @@ protected:
 
 #ifdef TARGET_WIN32
 
-    char** portNamesShort;//[MAX_SERIAL_PORTS];
+    char** portNamesShort; //[MAX_SERIAL_PORTS];
     char** portNamesFriendly; ///[MAX_SERIAL_PORTS];
-    HANDLE hComm;        // the handle to the serial port pc
-    int    nPorts;
+    HANDLE hComm; // the handle to the serial port pc
+    int nPorts;
     bool bPortsEnumerated;
     void enumerateWin32Ports();
-    COMMTIMEOUTS oldTimeout;    // we alter this, so keep a record
+    COMMTIMEOUTS oldTimeout; // we alter this, so keep a record
 
 #else
-    int fd;    // the handle to the serial port mac
+    int fd; // the handle to the serial port mac
     struct termios oldoptions;
 #endif
 
