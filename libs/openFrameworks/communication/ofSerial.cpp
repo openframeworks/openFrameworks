@@ -101,8 +101,13 @@ ofSerial::ofSerial(){
             portNamesFriendly[i] = new char[MAX_PATH];
         }
 
+    #else
+
+	fd = -1;
+
     #endif
 
+    bHaveEnumeratedDevices = false;
     bInited = false;
 }
 

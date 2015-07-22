@@ -259,7 +259,7 @@ protected:
     void buildDeviceList();
     string deviceType;
     vector <ofSerialDeviceInfo> devices;
-    bool bHaveEnumeratedDevices;
+    bool bHaveEnumeratedDevices;  ///\< \brief Indicate having enumerated devices (serial ports) available.
     bool bInited;
 
 #ifdef TARGET_WIN32
@@ -273,7 +273,7 @@ protected:
     COMMTIMEOUTS oldTimeout; // we alter this, so keep a record
 
 #else
-    int fd; // the handle to the serial port mac
+    int fd; ///< \brief File descriptor for the serial port.
     struct termios oldoptions;
 #endif
 
