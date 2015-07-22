@@ -34,11 +34,11 @@
 /// To start up a serial connection to another device you do the following:
 ///
 /// ~~~~{.cpp}
-///     serial.listDevices();
-///     vector <ofSerialDeviceInfo> deviceList = serial.getDeviceList();
+/// serial.listDevices();
+/// vector <ofSerialDeviceInfo> deviceList = serial.getDeviceList();
 ///
-///        // Open the first device and talk to it at 57600 baud
-///     serial.setup(0, 57600);
+/// // Open the first device and talk to it at 57600 baud
+/// serial.setup(0, 57600);
 /// ~~~~
 class ofSerial {
 
@@ -91,10 +91,10 @@ public:
 
     /// \brief Attempts to setup the first available device at a baud rate of 9600.
     /// ~~~~{.cpp}
-    ///     ofSerial mySerial;
-    ///     if( mySerial.setup() ){
-    ///         ofLog("serial is setup!");
-    ///     }
+    /// ofSerial mySerial;
+    /// if( mySerial.setup() ){
+    ///     ofLog("serial is setup!");
+    /// }
     /// ~~~~
     bool setup();
 
@@ -102,14 +102,14 @@ public:
     ///
     /// On OSX and Linux, it might look like:
     /// ~~~~{.cpp}
-    ///     ofSerial mySerial;
-    ///     mySerial.setup("/dev/cu.USA19H181P1.1", 57600);
+    /// ofSerial mySerial;
+    /// mySerial.setup("/dev/cu.USA19H181P1.1", 57600);
     /// ~~~~
     ///
     /// On Windows, like:
     /// ~~~~{.cpp}
-    ///     ofSerial mySerial;
-    ///     mySerial.setup("COM4", 57600);
+    /// ofSerial mySerial;
+    /// mySerial.setup("COM4", 57600);
     /// ~~~~
     bool setup(string portName, int baudrate);
 
@@ -138,7 +138,7 @@ public:
     ///
     /// ~~~~{.cpp}
     /// if(device.available() > 8) {
-    ///   device.readBytes(buffer, 8);
+    ///     device.readBytes(buffer, 8);
     /// }
     /// ~~~~
     ///
@@ -194,18 +194,18 @@ public:
     /// \brief Reads and returns a single byte from the requested device.
     ///
     /// ~~~~{.cpp}
-    ///     ofSerial mySerial;
-    ///     mySerial.setup(0, 57600);
+    /// ofSerial mySerial;
+    /// mySerial.setup(0, 57600);
     ///
-    ///     int myByte = mySerial.readByte();
+    /// int myByte = mySerial.readByte();
     ///
-    ///     if ( myByte == OF_SERIAL_NO_DATA ){
-    ///         printf("no data was read");
-    ///     } else if ( myByte == OF_SERIAL_ERROR ){
-    ///         printf("an error occurred");
-    ///     } else {
-    ///         printf("myByte is %d", myByte);
-    ///        }
+    /// if ( myByte == OF_SERIAL_NO_DATA ){
+    ///     printf("no data was read");
+    /// } else if ( myByte == OF_SERIAL_ERROR ){
+    ///     printf("an error occurred");
+    /// } else {
+    ///     printf("myByte is %d", myByte);
+    /// }
     /// ~~~~
     ///
     /// \returns The single byte as integer. If there is no data it will return
@@ -219,8 +219,8 @@ public:
     /// \brief This writes bytes into the serial buffer from the buffer pointer passed in
     ///
     /// ~~~~{.cpp}
-    ///     unsigned char buf[3] = {'o', 'f', '!'};
-    ///     device.writeBytes(&buf[0], 3);
+    /// unsigned char buf[3] = {'o', 'f', '!'};
+    /// device.writeBytes(&buf[0], 3);
     /// ~~~~
     int writeBytes(unsigned char * buffer, int length);
 
@@ -228,12 +228,12 @@ public:
     ///
     /// Check the return value to be sure the data was written.
     /// ~~~~{.cpp}
-    ///     ofSerial mySerial;
-    ///     mySerial.setup(0, 57600);
-    ///     unsigned char myByte = 225;
-    ///     bool byteWasWritten = mySerial.writeByte(myByte);
-    ///     if ( !byteWasWritten )
-    ///       ofLog(OF_LOG_ERROR, "Byte was not written to serial port");
+    /// ofSerial mySerial;
+    /// mySerial.setup(0, 57600);
+    /// unsigned char myByte = 225;
+    /// bool byteWasWritten = mySerial.writeByte(myByte);
+    /// if ( !byteWasWritten )
+    ///     ofLog(OF_LOG_ERROR, "Byte was not written to serial port");
     /// ~~~~
     bool writeByte(unsigned char singleByte);
 
