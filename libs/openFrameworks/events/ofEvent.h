@@ -11,13 +11,19 @@ class ofEventAttendedException: public std::exception{};
 
 class ofBaseEvent{
 public:
-    ofBaseEvent()
-    :enabled(true){
-
+    /// \brief Basic constructor enabling an ofBaseEvent.
+    ///
+    /// \see ofBaseEvent::ofBaseEvent(const ofBaseEvent & mom)
+    /// \see ofBaseEvent::enable()
+    /// \see ofBaseEvent::disable()
+    /// \see ofBaseEvent::isEnabled()
+    ofBaseEvent(): enabled(true){
     }
 
-    ofBaseEvent(const ofBaseEvent & mom)
-    :enabled(mom.enabled){
+    /// \brief Copy-constructor for ofBaseEvent.
+    ///
+    /// \see ofBaseEvent::ofBaseEvent()
+    ofBaseEvent(const ofBaseEvent & mom): enabled(mom.enabled){
         std::unique_lock<std::mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
         std::transform(functions.begin(), functions.end(),std::back_inserter(functions),
             [&](std::unique_ptr<Function>&f){
