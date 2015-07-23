@@ -41,6 +41,7 @@ public:
             [&](std::unique_ptr<Function>&f){
                 return std::unique_ptr<Function>(new Function(*f));
             });
+        enabled = mom.enabled;
         return *this;
     }
 
