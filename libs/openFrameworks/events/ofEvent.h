@@ -31,6 +31,7 @@ public:
             });
     }
 
+    /// \brief Overloading the assignment operator.
     ofBaseEvent & operator=(const ofBaseEvent & mom){
         if(&mom==this){
             return *this;
