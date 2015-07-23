@@ -96,7 +96,7 @@ public:
 	ofCoreEvents & events();
 	shared_ptr<ofBaseRenderer> & renderer();
 
-    void setThreadTimeout(long timeOut){ threadTimeout = timeOut; }
+	void setThreadTimeout(long timeOut){ threadTimeout = timeOut; }
 
 	virtual void hideCursor();
 	virtual void showCursor();
@@ -129,7 +129,7 @@ public:
 	virtual void	setVerticalSync(bool enabled);
 	
 	struct Settings: public ofGLESWindowSettings {
-        public:
+		public:
 		ofAppEGLWindowType eglWindowPreference;  // what window type is preferred?
 		EGLint eglWindowOpacity; // 0-255 window alpha value
 
@@ -175,13 +175,13 @@ protected:
 	int getWindowHeight();
 
 	ofWindowMode windowMode;
-	bool     bNewScreenMode;  ///< \brief This indicates if a (new) window rectangle has to be adjusted.
-	int      buttonInUse;  ///< \brief Mouse button currently in use.
-	bool     bEnableSetupScreen;  ///< \brief This indicates the need/intent to draw a setup screen.
-	bool	 bShowCursor;  ///< \brief Indicate the visibility of the (mouse) cursor.
+	bool  bNewScreenMode;  ///< \brief This indicates if a (new) window rectangle has to be adjusted.
+	int	buttonInUse;  ///< \brief Mouse button currently in use.
+	bool bEnableSetupScreen;  ///< \brief This indicates the need/intent to draw a setup screen.
+	bool bShowCursor;  ///< \brief Indicate the visibility of the (mouse) cursor.
 
 	string   eglDisplayString;
-	int      nFramesSinceWindowResized;  ///< \brief The number of frames passed/shown since the window got resized.
+	int	  nFramesSinceWindowResized;  ///< \brief The number of frames passed/shown since the window got resized.
 	ofOrientation orientation;
 
 
@@ -219,10 +219,10 @@ protected:
 	EGLSurface eglSurface;
 	EGLContext eglContext;
 
-    EGLConfig eglConfig;
+	EGLConfig eglConfig;
 
 	EGLint eglVersionMajor;
-    EGLint eglVersionMinor;
+	EGLint eglVersionMinor;
 
 //------------------------------------------------------------
 // PLATFORM SPECIFIC WINDOWING
@@ -256,12 +256,12 @@ protected:
 	EGL_DISPMANX_WINDOW_T dispman_native_window; // rpi
 
 	DISPMANX_UPDATE_HANDLE_T dispman_update;
-    DISPMANX_ELEMENT_HANDLE_T dispman_element;
-    DISPMANX_DISPLAY_HANDLE_T dispman_display;
+	DISPMANX_ELEMENT_HANDLE_T dispman_element;
+	DISPMANX_DISPLAY_HANDLE_T dispman_display;
 
-	DISPMANX_CLAMP_T 		  dispman_clamp;
-	DISPMANX_TRANSFORM_T 	  dispman_transform;
-    VC_DISPMANX_ALPHA_T       dispman_alpha;
+	DISPMANX_CLAMP_T  dispman_clamp;
+	DISPMANX_TRANSFORM_T dispman_transform;
+	VC_DISPMANX_ALPHA_T	dispman_alpha;
 	
 	bool createRPiNativeWindow(const ofRectangle& requestedWindowRect);
 
