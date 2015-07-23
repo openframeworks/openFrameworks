@@ -73,12 +73,12 @@ Press the Play button next to the `androidEmptyExample` shown in the toolbar. Wi
 
 1. Copy the provided example app (make sure to put it in a subdirectory of `apps`, at the same level as the sample)
 2. Double-click on `build.gradle` and press "Add Now..."
-3. If that doesn't work, add the project to `settings.gradle` manually.
+3. If that doesn't work, add a line to `settings.gradle` including your project manually.
 4. Perform a project sync (it should prompt you to do this).
 
 ## Creating projects from examples
 
-1. Copy the `build.gradle` file from `androidEmptyExample` into the examples directory.
+1. Copy the `build.gradle` file from `androidEmptyExample` into the directory of the example you want to use.
 2. Follow steps 2-4 above.
 
 ## Troubleshooting
