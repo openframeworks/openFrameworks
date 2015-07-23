@@ -45,14 +45,27 @@ public:
 
     virtual ~ofBaseEvent(){}
 
+    /// \brief Enable an event.
+    ///
+    /// \see ofBaseEvent::disable()
+    /// \see ofBaseEvent::isEnabled()
     void enable() {
         enabled = true;
     }
 
+    /// \brief Disable an event.
+    ///
+    /// \see ofBaseEvent::enable()
+    /// \see ofBaseEvent::isEnabled()
     void disable() {
         enabled = false;
     }
 
+    /// \brief Check whether an event is enabled or not.
+    ///
+    /// \returns true if enables
+    /// \see ofBaseEvent::enable()
+    /// \see ofBaseEvent::disable()
     bool isEnabled() const {
         return enabled;
     }
