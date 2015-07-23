@@ -40,34 +40,34 @@
  * software can test whether it will be compatible with the currently installed firmware.
  */
 
-#define FIRMATA_MAJOR_VERSION                           2 // for non-compatible changes
-#define FIRMATA_MINOR_VERSION                           0 // for backwards compatible changes
-#define FIRMATA_MAX_DATA_BYTES                          32 // max number of data bytes in non-Sysex messages
+#define FIRMATA_MAJOR_VERSION						   2 // for non-compatible changes
+#define FIRMATA_MINOR_VERSION						   0 // for backwards compatible changes
+#define FIRMATA_MAX_DATA_BYTES						  32 // max number of data bytes in non-Sysex messages
 // message command bytes (128-255/0x80-0xFF)
-#define FIRMATA_DIGITAL_MESSAGE                         0x90 // send data for a digital pin
-#define FIRMATA_ANALOG_MESSAGE                          0xE0 // send data for an analog pin (or PWM)
-#define FIRMATA_REPORT_ANALOG                           0xC0 // enable analog input by pin #
-#define FIRMATA_REPORT_DIGITAL                          0xD0 // enable digital input by port pair
+#define FIRMATA_DIGITAL_MESSAGE						 0x90 // send data for a digital pin
+#define FIRMATA_ANALOG_MESSAGE						  0xE0 // send data for an analog pin (or PWM)
+#define FIRMATA_REPORT_ANALOG						   0xC0 // enable analog input by pin #
+#define FIRMATA_REPORT_DIGITAL						  0xD0 // enable digital input by port pair
 //
-#define FIRMATA_SET_PIN_MODE                            0xF4 // set a pin to INPUT/OUTPUT/PWM/etc
+#define FIRMATA_SET_PIN_MODE							0xF4 // set a pin to INPUT/OUTPUT/PWM/etc
 //
-#define FIRMATA_REPORT_VERSION                          0xF9 // report protocol version
-#define FIRMATA_SYSTEM_RESET                            0xFF // reset from MIDI
+#define FIRMATA_REPORT_VERSION						  0xF9 // report protocol version
+#define FIRMATA_SYSTEM_RESET							0xFF // reset from MIDI
 //
-#define FIRMATA_START_SYSEX                             0xF0 // start a MIDI Sysex message
-#define FIRMATA_END_SYSEX                               0xF7 // end a MIDI Sysex message
+#define FIRMATA_START_SYSEX							 0xF0 // start a MIDI Sysex message
+#define FIRMATA_END_SYSEX							   0xF7 // end a MIDI Sysex message
 // pin modes
-#define FIRMATA_INPUT                                   0x00
-#define FIRMATA_OUTPUT                                  0x01
-#define FIRMATA_ANALOG                                  0x02 // analog pin in analogInput mode
-#define FIRMATA_PWM                                     0x03 // digital pin in PWM output mode
-#define FIRMATA_SERVO                                   0x04 // digital pin in Servo output mode
+#define FIRMATA_INPUT								   0x00
+#define FIRMATA_OUTPUT								  0x01
+#define FIRMATA_ANALOG								  0x02 // analog pin in analogInput mode
+#define FIRMATA_PWM									 0x03 // digital pin in PWM output mode
+#define FIRMATA_SERVO								   0x04 // digital pin in Servo output mode
 #define SHIFT											0x05 // shiftIn/shiftOut mode
 #define I2C												0x06 // pin included in I2C setup
 #define TOTAL_PIN_MODES 7 
 // extended command set using SysEx (0-127/0x00-0x7F)
 /* 0x00-0x0F reserved for custom commands */
-#define FIRMATA_SYSEX_SERVO_CONFIG                      0x70 // set max angle, minPulse, maxPulse, freq
+#define FIRMATA_SYSEX_SERVO_CONFIG					  0x70 // set max angle, minPulse, maxPulse, freq
 #define FIRMATA_SYSEX_FIRMATA_STRING					0x71 // a string message with 14-bits per char
 #define SHIFT_DATA										0x75 // a bitstram to/from a shift register
 #define I2C_REQUEST										0x76 // send an I2C read/write request
@@ -82,59 +82,59 @@
 #define ANALOG_MAPPING_RESPONSE							0x6A // reply with mapping info
 #define FIRMATA_SYSEX_REPORT_FIRMWARE					0x79 // report name and version of the firmware
 #define SAMPLING_INTERVAL								0x7A // set the poll rate of the main loop 
-#define FIRMATA_SYSEX_NON_REALTIME                      0x7E // MIDI Reserved for non-realtime messages
-#define FIRMATA_SYSEX_REALTIME                          0x7F // MIDI Reserved for realtime messages
+#define FIRMATA_SYSEX_NON_REALTIME					  0x7E // MIDI Reserved for non-realtime messages
+#define FIRMATA_SYSEX_REALTIME						  0x7F // MIDI Reserved for realtime messages
 
 // ---- arduino constants (for Arduino NG and Diecimila)
 
 // board settings
 #define ARD_TOTAL_DIGITAL_PINS							22 // total number of pins currently supported
 #define ARD_TOTAL_ANALOG_PINS							6
-#define ARD_TOTAL_PORTS                                 3 // total number of ports for the board
+#define ARD_TOTAL_PORTS								 3 // total number of ports for the board
 // pin modes
-#define ARD_INPUT                                       0x00
-#define ARD_OUTPUT                                      0x01
-#define ARD_ANALOG                                      0x02 // analog pin in analogInput mode
-#define ARD_PWM                                         0x03 // digital pin in PWM output mode
-#define ARD_SERVO                                       0x04 // digital pin in Servo output mode
-#define ARD_HIGH                                        1
-#define ARD_LOW                                         0
-#define ARD_ON                                          1
-#define ARD_OFF                                         0
+#define ARD_INPUT									   0x00
+#define ARD_OUTPUT									  0x01
+#define ARD_ANALOG									  0x02 // analog pin in analogInput mode
+#define ARD_PWM										 0x03 // digital pin in PWM output mode
+#define ARD_SERVO									   0x04 // digital pin in Servo output mode
+#define ARD_HIGH										1
+#define ARD_LOW										 0
+#define ARD_ON										  1
+#define ARD_OFF										 0
 
 /*
  #if defined(__AVR_ATmega168__)  // Arduino NG and Diecimila
- #define ARD_TOTAL_ANALOG_PINS       8
- #define ARD_TOTAL_DIGITAL_PINS      22 // 14 digital + 8 analog
- #define ARD_TOTAL_PORTS             3 // total number of ports for the board
- #define ARD_ANALOG_PORT             2 // port# of analog used as digital
+ #define ARD_TOTAL_ANALOG_PINS	   8
+ #define ARD_TOTAL_DIGITAL_PINS	  22 // 14 digital + 8 analog
+ #define ARD_TOTAL_PORTS			 3 // total number of ports for the board
+ #define ARD_ANALOG_PORT			 2 // port# of analog used as digital
  #elif defined(__AVR_ATmega8__)  // old Arduinos
- #define ARD_TOTAL_ANALOG_PINS       6
- #define ARD_TOTAL_DIGITAL_PINS      20 // 14 digital + 6 analog
- #define ARD_TOTAL_PORTS             3  // total number of ports for the board
- #define ARD_ANALOG_PORT             2  // port# of analog used as digital
+ #define ARD_TOTAL_ANALOG_PINS	   6
+ #define ARD_TOTAL_DIGITAL_PINS	  20 // 14 digital + 6 analog
+ #define ARD_TOTAL_PORTS			 3  // total number of ports for the board
+ #define ARD_ANALOG_PORT			 2  // port# of analog used as digital
  #elif defined(__AVR_ATmega128__)// Wiring
- #define ARD_TOTAL_ANALOG_PINS       8
- #define ARD_TOTAL_DIGITAL_PINS      43
- #define ARD_TOTAL_PORTS             5 // total number of ports for the board
- #define ARD_ANALOG_PORT             2 // port# of analog used as digital
+ #define ARD_TOTAL_ANALOG_PINS	   8
+ #define ARD_TOTAL_DIGITAL_PINS	  43
+ #define ARD_TOTAL_PORTS			 5 // total number of ports for the board
+ #define ARD_ANALOG_PORT			 2 // port# of analog used as digital
  #else // anything else
- #define ARD_TOTAL_ANALOG_PINS       6
- #define ARD_TOTAL_DIGITAL_PINS      14
- #define ARD_TOTAL_PORTS             3 // total number of ports for the board
- #define ARD_ANALOG_PORT             2 // port# of analog used as digital
+ #define ARD_TOTAL_ANALOG_PINS	   6
+ #define ARD_TOTAL_DIGITAL_PINS	  14
+ #define ARD_TOTAL_PORTS			 3 // total number of ports for the board
+ #define ARD_ANALOG_PORT			 2 // port# of analog used as digital
  #endif
  */
 
 // DEPRECATED as of firmata v2.2
-#define SYSEX_SERVO_ATTACH                      0x00
-#define SYSEX_SERVO_DETACH                      0x01
-#define SYSEX_SERVO_WRITE                       0x02
+#define SYSEX_SERVO_ATTACH					  0x00
+#define SYSEX_SERVO_DETACH					  0x01
+#define SYSEX_SERVO_WRITE					   0x02
 
 #define OF_ARDUINO_DELAY_LENGTH					4.0
 
 #define FIRMWARE2_2								22
-#define FIRMWARE2_3                             23
+#define FIRMWARE2_3							 23
 
 
 /// \brief This is a way to control an Arduino that has had the firmata library
@@ -279,9 +279,9 @@ public:
 	/// against this with an if() statement which is handy:
 	/// ~~~~{.cpp}
 	/// 	if(arduino.getDigital(pin)){
-	/// 	    // do something on high
+	/// 		// do something on high
 	/// 	} else {
-	/// 	    // do something on low
+	/// 		// do something on low
 	/// 	}
 	/// ~~~~
 	/// \note Pin 16-21 can also be used if analog inputs 0-5 are used as digital pins
