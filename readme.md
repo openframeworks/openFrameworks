@@ -1,6 +1,6 @@
 # Introduction
 
-ofxCv represents an alternative approach to wrapping OpenCV for openFrameworks. It is designed for openFrameworks 007+ compatibility only. My first goal is to have a complete substitute for ofxOpenCv, at which point I will start versioning releases. Until then, I don't recommend that anyone use it as it will be undergoing irregular massive rehauling.
+ofxCv represents an alternative approach to wrapping OpenCV for openFrameworks. It is designed for openFrameworks 007+ compatibility only.
 
 # Installation
 
@@ -12,6 +12,8 @@ Either clone out the source code using git:
 Or download the source from GitHub [here](https://github.com/kylemcdonald/ofxCv/archive/master.zip), unzip the folder, rename it from `ofxCv-master` to `ofxCv` and place it in your `openFrameworks/addons` folder.
 
 You don't need to move any of the examples anywhere, you can run them in place.
+
+**Important**: if you are using the most up-to-date version of openFrameworks from GitHub, or using the nightly builds, make sure to use [ofxCv/develop](https://github.com/kylemcdonald/ofxCv/tree/develop).
 
 # Goals
 
@@ -50,6 +52,8 @@ Using ofxCv requires:
 Your linker will also need to know where the OpenCv headers are. In XCode this means modifying one line in Project.xconfig:
 
 	HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS) "../../../addons/ofxOpenCv/libs/opencv/include/" "../../../addons/ofxCv/libs/ofxCv/include/"
+	
+Alternatively, I recommend using [OFPlugin](https://github.com/admsyn/OFPlugin) to add ofxCv to your project.
 
 ## Including ofxCv
 
