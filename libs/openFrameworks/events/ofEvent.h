@@ -79,8 +79,7 @@ public:
     public:
         int priority;
 
-        Function(int priority)
-        :priority(priority){}
+        Function(int priority): priority(priority){}
 
         virtual ~Function(){}
 
@@ -127,8 +126,7 @@ template<typename T>
 class ofEvent: public ofBaseEvent{
     class BaseFunction: public ofBaseEvent::Function{
     public:
-        BaseFunction(int priority)
-        :ofBaseEvent::Function(priority){}
+        BaseFunction(int priority): ofBaseEvent::Function(priority){}
         virtual ~BaseFunction(){}
         virtual bool call(const void * sender, T & param) = 0;
     };
