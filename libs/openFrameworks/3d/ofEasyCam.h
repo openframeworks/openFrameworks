@@ -47,6 +47,7 @@ public:
 
     /// \brief Set the camera's distance to the target.
     /// \param distance The distance to the target.
+	/// \note This call works in setup(). A call to setPosition() does not.
 	void setDistance(float distance);
 
     /// \brief Get the distance to the target.
