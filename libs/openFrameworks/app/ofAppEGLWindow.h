@@ -101,32 +101,32 @@ public:
 	virtual void hideCursor();
 	virtual void showCursor();
 
-	virtual void	setWindowPosition(int x, int y);
-	virtual void	setWindowShape(int w, int h);
+	virtual void setWindowPosition(int x, int y);
+	virtual void setWindowShape(int w, int h);
 
 	virtual ofPoint	getWindowPosition();
 	virtual ofPoint	getWindowSize();
 	virtual ofPoint	getScreenSize();
 
-	virtual void			setOrientation(ofOrientation orientation);
-	virtual ofOrientation	getOrientation();
-	virtual bool			doesHWOrientation();
+	virtual void setOrientation(ofOrientation orientation);
+	virtual ofOrientation getOrientation();
+	virtual bool doesHWOrientation();
 
 	//this is used by ofGetWidth and now determines the window width based on orientation
-	virtual int		getWidth();
-	virtual int		getHeight();
+	virtual int	getWidth();
+	virtual int	getHeight();
 
-	virtual void	setWindowTitle(string title); // TODO const correct
+	virtual void setWindowTitle(string title); // TODO const correct
 
-	virtual ofWindowMode	getWindowMode();
+	virtual ofWindowMode getWindowMode();
 
-	virtual void	setFullscreen(bool fullscreen);
-	virtual void	toggleFullscreen();
+	virtual void setFullscreen(bool fullscreen);
+	virtual void toggleFullscreen();
 
-	virtual void	enableSetupScreen();
-	virtual void	disableSetupScreen();
+	virtual void enableSetupScreen();
+	virtual void disableSetupScreen();
 
-	virtual void	setVerticalSync(bool enabled);
+	virtual void setVerticalSync(bool enabled);
 	
 	struct Settings: public ofGLESWindowSettings {
 		public:
@@ -151,11 +151,11 @@ public:
 	EGLContext getEglContext() const;
 
 #ifndef TARGET_RASPBERRY_PI
-	Display* 	getX11Display();
-	Window  	getX11Window();
+	Display* getX11Display();
+	Window getX11Window();
 #endif
 
-	EGLConfig  getEglConfig() const;
+	EGLConfig getEglConfig() const;
 
 	EGLint getEglVersionMajor () const;
 	EGLint getEglVersionMinor() const;
@@ -175,13 +175,13 @@ protected:
 	int getWindowHeight();
 
 	ofWindowMode windowMode;
-	bool  bNewScreenMode;  ///< \brief This indicates if a (new) window rectangle has to be adjusted.
+	bool bNewScreenMode;  ///< \brief This indicates if a (new) window rectangle has to be adjusted.
 	int	buttonInUse;  ///< \brief Mouse button currently in use.
 	bool bEnableSetupScreen;  ///< \brief This indicates the need/intent to draw a setup screen.
 	bool bShowCursor;  ///< \brief Indicate the visibility of the (mouse) cursor.
 
-	string   eglDisplayString;
-	int	  nFramesSinceWindowResized;  ///< \brief The number of frames passed/shown since the window got resized.
+	string eglDisplayString;
+	int nFramesSinceWindowResized;  ///< \brief The number of frames passed/shown since the window got resized.
 	ofOrientation orientation;
 
 
@@ -270,10 +270,10 @@ protected:
 	// create a window without using x11.
 #endif
 
-	Display*	x11Display;  ///< \brief Indicate which X11 display is in use (currently).
-	Screen*		x11Screen;  ///< \brief Indicate which X11 screen is in use (currently).
-	Window		x11Window;
-	long 		x11ScreenNum;  ///< \brief The number of the X11 screen is in use (currently).
+	Display* x11Display;  ///< \brief Indicate which X11 display is in use (currently).
+	Screen* x11Screen;  ///< \brief Indicate which X11 screen is in use (currently).
+	Window x11Window;
+	long x11ScreenNum;  ///< \brief The number of the X11 screen is in use (currently).
 	bool createX11NativeWindow(const ofRectangle& requestedWindowRect);
 	 
 //------------------------------------------------------------
@@ -298,7 +298,7 @@ protected:
 	static void handleX11Event(const XEvent& event);
 
 private:
-	Settings 			settings;
+	Settings settings;
 	int glesVersion;  ///< \brief Indicate the version of OpenGL for Embedded Systems.
 	bool keyboardDetected;
 	bool mouseDetected;
