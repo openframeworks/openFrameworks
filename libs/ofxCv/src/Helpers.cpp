@@ -29,7 +29,7 @@ namespace ofxCv {
     void copy(S& src, ofTexture& tex) {
         imitate(tex, src);
         int w = tex.getWidth(), h = tex.getHeight();
-        int glType = tex.getTextureData().glTypeInternal;
+        int glType = tex.getTextureData().glInternalFormat;
         Mat mat = toCv(src);
 		tex.loadData(mat.ptr(), w, h, glType);
     }

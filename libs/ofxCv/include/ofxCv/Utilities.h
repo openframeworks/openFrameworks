@@ -40,7 +40,7 @@ namespace ofxCv {
         if(!tex.isAllocated()) {
             return CV_8U;
         }
-        int type = tex.getTextureData().glTypeInternal;
+        int type = tex.getTextureData().glInternalFormat;
         switch(type) {
             case GL_RGBA:
             case GL_RGB:
@@ -99,7 +99,7 @@ namespace ofxCv {
         if(!tex.isAllocated()) {
             return GL_RGB;
         }
-        int type = tex.getTextureData().glTypeInternal;
+        int type = tex.getTextureData().glInternalFormat;
         switch(type) {
             case GL_RGBA: return 4;
             case GL_RGB: return 3;
