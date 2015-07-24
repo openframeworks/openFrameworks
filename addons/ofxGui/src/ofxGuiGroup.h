@@ -14,6 +14,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, std::string filename = "settings.xml", float x = 10, float y = 10);
 
 		void add(ofxBaseGui * element);
+		void add(ofxGuiGroup * element);
 		void add(const ofParameterGroup & parameters);
 		void add(ofParameter <float> & parameter);
 		void add(ofParameter <int> & parameter);
@@ -60,6 +61,9 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		virtual void setPosition(ofPoint p);
 		virtual void setPosition(float x, float y);
+		virtual void setSize(float w, float h);
+		virtual void setShape(ofRectangle r);
+		virtual void setShape(float x, float y, float w, float h);
 	protected:
 		virtual void render();
 		virtual bool setValue(float mx, float my, bool bCheck);

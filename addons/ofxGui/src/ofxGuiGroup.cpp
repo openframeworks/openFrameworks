@@ -96,41 +96,34 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	collection.push_back(element);
 
 	element->setPosition(b.x, b.y + b.height  + spacing);
-
+	element->setSize(getWidth(), element->getHeight());
 	b.height += element->getHeight() + spacing;
-
-	//if(b.width<element->getWidth()) b.width = element->getWidth();
 
 	element->unregisterMouseEvents();
 	ofAddListener(element->sizeChangedE,this,&ofxGuiGroup::sizeChangedCB);
 
-	ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(element);
-	if(subgroup != NULL){
-		subgroup->spacingFirstElement = 3;
-		subgroup->filename = filename;
-		subgroup->setWidthElements(b.width * .98);
-	}
-
 	parameters.add(element->getParameter());
 	setNeedsRedraw();
+}
+
+
+void ofxGuiGroup::add(ofxGuiGroup * element){
+	element->spacingFirstElement = 3;
+	element->filename = filename;
+	add(static_cast<ofxBaseGui*>(element));
 }
 
 void ofxGuiGroup::setWidthElements(float w){
 	for(int i = 0; i < (int)collection.size(); i++){
 		collection[i]->setSize(w, collection[i]->getHeight());
 		collection[i]->setPosition(b.x + b.width - w, collection[i]->getPosition().y);
-		ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(collection[i]);
-		if(subgroup != NULL){
-			subgroup->setWidthElements(w * .98);
-		}
 	}
 	sizeChangedCB();
 	setNeedsRedraw();
 }
 
 void ofxGuiGroup::add(const ofParameterGroup & parameters){
-	ofxGuiGroup * panel = new ofxGuiGroup(parameters);
-	add(panel);
+	add(new ofxGuiGroup(parameters));
 }
 
 void ofxGuiGroup::add(ofParameter <float> & parameter){
@@ -440,4 +433,20 @@ void ofxGuiGroup::setPosition(ofPoint p){
 
 void ofxGuiGroup::setPosition(float x, float y){
 	setPosition(ofVec2f(x, y));
+}
+
+void ofxGuiGroup::setSize(float w, float h){
+	ofxBaseGui::setSize(w,h);
+	setWidthElements(w * .98);
+}
+
+void ofxGuiGroup::setShape(ofRectangle r){
+	ofxBaseGui::setShape(r);
+	setWidthElements(r.width * .98);
+}
+
+void ofxGuiGroup::setShape(float x, float y, float w, float h){
+	ofxBaseGui::setShape(x,y,w,h);
+	setWidthElements(w * .98);
+
 }
