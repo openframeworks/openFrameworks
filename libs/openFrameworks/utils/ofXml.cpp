@@ -796,6 +796,7 @@ string ofXml::getName() const {
 
 
 bool ofXml::setTo(const string & path){
+	// get the root node if needed
 	if(!element){
 		if(document->documentElement()){
 			element = document->documentElement();
@@ -810,7 +811,8 @@ bool ofXml::setTo(const string & path){
 		return true;
 	}
 
-	//ofLogNotice("ofXml") << path << " " << path.find("../");
+	//ofLogNotice("Debug") << "node name = " << element->nodeName();
+	//ofLogNotice("Debug") << "path = " << path;
 
 	// another: let's go up a little
 	if(path.find("../") != string::npos){
@@ -829,8 +831,6 @@ bool ofXml::setTo(const string & path){
 			}
 			++count;
 		}
-
-		//ofLogNotice("ofXml") << (count * 3) << " " << path.size();
 
 		if((count * 3) > (int)path.size() - 1){
 			element = parent;
