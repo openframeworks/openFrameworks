@@ -5,8 +5,8 @@
 using namespace std;
 
 
-void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
-	ofxBaseGui::loadFont(fontPath,fontsize,_bAntiAliased,_bFullCharacterSet,dpi);
+void ofxGuiSetFont(const string & fontPath, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
+	ofxBaseGui::loadFont(fontPath, fontsize, _bAntiAliased, _bFullCharacterSet, dpi);
 }
 
 void ofxGuiSetBitmapFont(){
@@ -49,7 +49,7 @@ void ofxGuiSetDefaultHeight(int height){
 ofColor
 ofxBaseGui::headerBackgroundColor(64),
 ofxBaseGui::backgroundColor(0),
-ofxBaseGui::borderColor(120,100),
+ofxBaseGui::borderColor(120, 100),
 ofxBaseGui::textColor(255),
 ofxBaseGui::fillColor(128);
 
@@ -63,34 +63,35 @@ bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
 
 ofxBaseGui::ofxBaseGui(){
+	parent = NULL;
 	currentFrame = ofGetFrameNum();
-	serializer = std::shared_ptr<ofBaseFileSerializer>(new ofXml);
+	serializer = std::shared_ptr <ofBaseFileSerializer>(new ofXml);
 
-	thisHeaderBackgroundColor=headerBackgroundColor;
-	thisBackgroundColor=backgroundColor;
-	thisBorderColor=borderColor;
-	thisTextColor=textColor;
-	thisFillColor=fillColor;
+	thisHeaderBackgroundColor = headerBackgroundColor;
+	thisBackgroundColor = backgroundColor;
+	thisBorderColor = borderColor;
+	thisTextColor = textColor;
+	thisFillColor = fillColor;
 
 	bRegisteredForMouseEvents = false;
 	needsRedraw = true;
 
 	/*if(!fontLoaded){
-		loadFont(OF_TTF_MONO,10,true,true);
-		useTTF=false;
+	    loadFont(OF_TTF_MONO,10,true,true);
+	    useTTF=false;
 	}*/
 
 }
 
 void ofxBaseGui::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
-	font.load(filename,fontsize,_bAntiAliased,_bFullCharacterSet,dpi);
+	font.load(filename, fontsize, _bAntiAliased, _bFullCharacterSet, dpi);
 	fontLoaded = true;
 	useTTF = true;
 }
 
 void ofxBaseGui::setUseTTF(bool bUseTTF){
 	if(bUseTTF && !fontLoaded){
-		loadFont(OF_TTF_MONO,10,true,true);
+		loadFont(OF_TTF_MONO, 10, true, true);
 	}
 	useTTF = bUseTTF;
 }
@@ -100,7 +101,7 @@ ofxBaseGui::~ofxBaseGui(){
 }
 
 void ofxBaseGui::registerMouseEvents(){
-	if(bRegisteredForMouseEvents == true) {
+	if(bRegisteredForMouseEvents == true){
 		return; // already registered.
 	}
 	bRegisteredForMouseEvents = true;
@@ -108,7 +109,7 @@ void ofxBaseGui::registerMouseEvents(){
 }
 
 void ofxBaseGui::unregisterMouseEvents(){
-	if(bRegisteredForMouseEvents == false) {
+	if(bRegisteredForMouseEvents == false){
 		return; // not registered.
 	}
 	ofUnregisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
@@ -116,16 +117,16 @@ void ofxBaseGui::unregisterMouseEvents(){
 }
 
 void ofxBaseGui::draw(){
-    if(needsRedraw){
-        generateDraw();
-        needsRedraw = false;
-    }
+	if(needsRedraw){
+		generateDraw();
+		needsRedraw = false;
+	}
 	currentFrame = ofGetFrameNum();
 	render();
 }
 
 bool ofxBaseGui::isGuiDrawing(){
-	if( ofGetFrameNum() - currentFrame > 1 ){
+	if(ofGetFrameNum() - currentFrame > 1){
 		return false;
 	}else{
 		return true;
@@ -151,42 +152,42 @@ void ofxBaseGui::unbindFontTexture(){
 
 ofMesh ofxBaseGui::getTextMesh(const string & text, float x, float y){
 	if(useTTF){
-		return font.getStringMesh(text,x,y);
+		return font.getStringMesh(text, x, y);
 	}else{
-		return bitmapFont.getMesh(text,x,y);
+		return bitmapFont.getMesh(text, x, y);
 	}
 }
 
-ofRectangle ofxBaseGui::getTextBoundingBox(const string & text,float x, float y){
+ofRectangle ofxBaseGui::getTextBoundingBox(const string & text, float x, float y){
 	if(useTTF){
-		return font.getStringBoundingBox(text,x,y);
+		return font.getStringBoundingBox(text, x, y);
 	}else{
-		return bitmapFont.getBoundingBox(text,x,y);
+		return bitmapFont.getBoundingBox(text, x, y);
 	}
 }
 
-void ofxBaseGui::saveToFile(string filename) {
+void ofxBaseGui::saveToFile(string filename){
 	serializer->load(filename);
 	saveTo(*serializer);
 	serializer->save(filename);
 }
 
-void ofxBaseGui::loadFromFile(string filename) {
+void ofxBaseGui::loadFromFile(string filename){
 	serializer->load(filename);
 	loadFrom(*serializer);
 }
 
 
-void ofxBaseGui::saveTo(ofBaseSerializer& serializer){
+void ofxBaseGui::saveTo(ofBaseSerializer & serializer){
 	serializer.serialize(getParameter());
 }
 
-void ofxBaseGui::loadFrom(ofBaseSerializer& serializer){
+void ofxBaseGui::loadFrom(ofBaseSerializer & serializer){
 	serializer.deserialize(getParameter());
 }
 
 
-void ofxBaseGui::setDefaultSerializer(std::shared_ptr<ofBaseFileSerializer> _serializer){
+void ofxBaseGui::setDefaultSerializer(std::shared_ptr <ofBaseFileSerializer> _serializer){
 	serializer = _serializer;
 }
 
@@ -199,7 +200,7 @@ void ofxBaseGui::setName(string _name){
 }
 
 void ofxBaseGui::setPosition(ofPoint p){
-	setPosition(p.x,p.y);
+	setPosition(p.x, p.y);
 }
 
 void ofxBaseGui::setPosition(float x, float y){
@@ -211,21 +212,21 @@ void ofxBaseGui::setPosition(float x, float y){
 void ofxBaseGui::setSize(float w, float h){
 	b.width = w;
 	b.height = h;
-	setNeedsRedraw();
+	sizeChangedCB();
 }
 
 void ofxBaseGui::setShape(ofRectangle r){
 	b = r;
-	setNeedsRedraw();
+	sizeChangedCB();
 }
 
 void ofxBaseGui::setShape(float x, float y, float w, float h){
-	b.set(x,y,w,h);
-	setNeedsRedraw();
+	b.set(x, y, w, h);
+	sizeChangedCB();
 }
 
 ofPoint ofxBaseGui::getPosition(){
-	return ofPoint(b.x,b.y);
+	return ofPoint(b.x, b.y);
 }
 
 ofRectangle ofxBaseGui::getShape(){
@@ -261,27 +262,27 @@ ofColor ofxBaseGui::getFillColor(){
 }
 
 void ofxBaseGui::setHeaderBackgroundColor(const ofColor & color){
-    setNeedsRedraw();
+	setNeedsRedraw();
 	thisHeaderBackgroundColor = color;
 }
 
 void ofxBaseGui::setBackgroundColor(const ofColor & color){
-    setNeedsRedraw();
+	setNeedsRedraw();
 	thisBackgroundColor = color;
 }
 
 void ofxBaseGui::setBorderColor(const ofColor & color){
-    setNeedsRedraw();
+	setNeedsRedraw();
 	thisBorderColor = color;
 }
 
 void ofxBaseGui::setTextColor(const ofColor & color){
-    setNeedsRedraw();
+	setNeedsRedraw();
 	thisTextColor = color;
 }
 
 void ofxBaseGui::setFillColor(const ofColor & color){
-    setNeedsRedraw();
+	setNeedsRedraw();
 	thisFillColor = color;
 }
 
@@ -317,11 +318,18 @@ void ofxBaseGui::setDefaultHeight(int height){
 	defaultHeight = height;
 }
 
-void ofxBaseGui::setNeedsRedraw(){
-    needsRedraw = true;
+void ofxBaseGui::sizeChangedCB(){
+	if(parent){
+		parent->sizeChangedCB();
+	}
+	setNeedsRedraw();
 }
 
-string ofxBaseGui::saveStencilToHex(ofImage& img) {
+void ofxBaseGui::setNeedsRedraw(){
+	needsRedraw = true;
+}
+
+string ofxBaseGui::saveStencilToHex(ofImage & img){
 	stringstream strm;
 	int width = img.getWidth();
 	int height = img.getHeight();
@@ -329,19 +337,19 @@ string ofxBaseGui::saveStencilToHex(ofImage& img) {
 	unsigned char cur = 0;
 	int shift = 0;
 	strm << "{";
-	for(int i = 0; i < n;) {
-		if(img.getPixels()[i * 4 + 3] > 0) {
+	for(int i = 0; i < n;){
+		if(img.getPixels()[i * 4 + 3] > 0){
 			cur |= 1 << shift;
 		}
 		i++;
-		if(i % 8 == 0) {
-			strm << "0x" << hex << (unsigned int) cur;
+		if(i % 8 == 0){
+			strm << "0x" << hex << (unsigned int)cur;
 			cur = 0;
 			shift = 0;
-			if(i < n) {
+			if(i < n){
 				strm << ",";
 			}
-		} else {
+		}else{
 			shift++;
 		}
 	}
@@ -349,14 +357,14 @@ string ofxBaseGui::saveStencilToHex(ofImage& img) {
 	return strm.str();
 }
 
-void ofxBaseGui::loadStencilFromHex(ofImage& img, unsigned char* data) {
+void ofxBaseGui::loadStencilFromHex(ofImage & img, unsigned char * data){
 	int width = img.getWidth();
 	int height = img.getHeight();
 	int i = 0;
 	ofColor on(255, 255);
 	ofColor off(255, 0);
-	for(int y = 0; y < height; y++) {
-		for(int x = 0; x < width; x++) {
+	for(int y = 0; y < height; y++){
+		for(int x = 0; x < width; x++){
 			int shift = i % 8;
 			int offset = i / 8;
 			bool cur = (data[offset] >> shift) & 1;
@@ -365,4 +373,12 @@ void ofxBaseGui::loadStencilFromHex(ofImage& img, unsigned char* data) {
 		}
 	}
 	img.update();
+}
+
+void ofxBaseGui::setParent(ofxBaseGui * parent){
+	this->parent = parent;
+}
+
+ofxBaseGui * ofxBaseGui::getParent(){
+	return parent;
 }
