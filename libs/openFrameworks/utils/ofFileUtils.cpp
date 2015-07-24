@@ -29,7 +29,7 @@ ofBuffer::ofBuffer()
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(const char * _buffer, unsigned int size)
+ofBuffer::ofBuffer(const char * _buffer, std::size_t size)
 :buffer(_buffer,_buffer+size)
 ,currentLine(end(),end()){
 	buffer.resize(buffer.size()+1,0);
@@ -76,7 +76,7 @@ bool ofBuffer::writeTo(ostream & stream) const {
 }
 
 //--------------------------------------------------
-void ofBuffer::set(const char * _buffer, unsigned int _size){
+void ofBuffer::set(const char * _buffer, std::size_t _size){
 	buffer.assign(_buffer,_buffer+_size);
 	buffer.resize(buffer.size()+1,0);
 }
@@ -92,7 +92,7 @@ void ofBuffer::append(const string& _buffer){
 }
 
 //--------------------------------------------------
-void ofBuffer::append(const char * _buffer, unsigned int _size){
+void ofBuffer::append(const char * _buffer, std::size_t _size){
 	buffer.insert(buffer.end()-1,_buffer,_buffer+_size);
 	buffer.back() = 0;
 }
@@ -103,7 +103,7 @@ void ofBuffer::clear(){
 }
 
 //--------------------------------------------------
-void ofBuffer::allocate(long _size){
+void ofBuffer::allocate(std::size_t _size){
 	clear();
 	//we always add a 0 at the end to avoid problems with strings
 	buffer.resize(_size + 1, 0);
@@ -687,7 +687,9 @@ void ofFile::setExecutable(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
+bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite){
+	std::string path = _path;
+
 	if(isDirectory()){
 		return ofDirectory(myFile).copyTo(path,bRelativeToData,overwrite);
 	}
@@ -730,7 +732,9 @@ bool ofFile::copyTo(string path, bool bRelativeToData, bool overwrite){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
+bool ofFile::moveTo(const string& _path, bool bRelativeToData, bool overwrite){
+	std::string path = _path;
+
 	if(path.empty()){
 		ofLogError("ofFile") << "moveTo(): destination path is empty";
 		return false;
@@ -772,7 +776,7 @@ bool ofFile::moveTo(string path, bool bRelativeToData, bool overwrite){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::renameTo(string path, bool bRelativeToData, bool overwrite){
+bool ofFile::renameTo(const string& path, bool bRelativeToData, bool overwrite){
 	return moveTo(path,bRelativeToData,overwrite);
 }
 
@@ -845,18 +849,19 @@ bool ofFile::operator>=(const ofFile & file) const {
 // ofFile Static Methods
 //------------------------------------------------------------------------------------------------------------
 
-bool ofFile::copyFromTo(string pathSrc, string pathDst, bool bRelativeToData,  bool overwrite){
+bool ofFile::copyFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData,  bool overwrite){
 	return ofFile(pathSrc).copyTo(pathDst,bRelativeToData,overwrite);
 }
 
 //be careful with slashes here - appending a slash when moving a folder will causes mad headaches
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::moveFromTo(string pathSrc, string pathDst, bool bRelativeToData, bool overwrite){
-	return ofFile(pathSrc).moveTo(pathDst,bRelativeToData,overwrite);
+bool ofFile::moveFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData, bool overwrite){
+	return ofFile(pathSrc).moveTo(pathDst, bRelativeToData, overwrite);
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::doesFileExist(string fPath,  bool bRelativeToData){
+bool ofFile::doesFileExist(const std::string& _fPath, bool bRelativeToData){
+	std::string fPath = _fPath;
 	if(bRelativeToData){
 		fPath = ofToDataPath(fPath);
 	}
@@ -865,7 +870,8 @@ bool ofFile::doesFileExist(string fPath,  bool bRelativeToData){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::removeFile(string path, bool bRelativeToData){
+bool ofFile::removeFile(const std::string& _path, bool bRelativeToData){
+	std::string path = _path;
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
@@ -983,7 +989,9 @@ bool ofDirectory::isDirectory() const {
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
+bool ofDirectory::copyTo(const std::string& _path, bool bRelativeToData, bool overwrite){
+	std::string path = _path;
+
 	if(myDir.string().empty()){
 		ofLogError("ofDirectory") << "copyTo(): source path is empty";
 		return false;
@@ -1030,7 +1038,7 @@ bool ofDirectory::copyTo(string path, bool bRelativeToData, bool overwrite){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::moveTo(string path, bool bRelativeToData, bool overwrite){
+bool ofDirectory::moveTo(const std::string& path, bool bRelativeToData, bool overwrite){
 	if(copyTo(path,bRelativeToData,overwrite)){
 		return remove(true);
 	}else{
@@ -1039,7 +1047,7 @@ bool ofDirectory::moveTo(string path, bool bRelativeToData, bool overwrite){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::renameTo(string path, bool bRelativeToData, bool overwrite){
+bool ofDirectory::renameTo(const std::string& path, bool bRelativeToData, bool overwrite){
 	return moveTo(path, bRelativeToData, overwrite);
 }
 
@@ -1064,7 +1072,7 @@ bool ofDirectory::remove(bool recursive){
 }
 
 //------------------------------------------------------------------------------------------------------------
-void ofDirectory::allowExt(string extension){
+void ofDirectory::allowExt(const std::string& extension){
 	if(extension == "*"){
 		ofLogWarning("ofDirectory") << "allowExt(): wildcard extension * is deprecated";
 	}
@@ -1072,13 +1080,13 @@ void ofDirectory::allowExt(string extension){
 }
 
 //------------------------------------------------------------------------------------------------------------
-int ofDirectory::listDir(string directory){
+std::size_t ofDirectory::listDir(const std::string& directory){
 	open(directory);
 	return listDir();
 }
 
 //------------------------------------------------------------------------------------------------------------
-int ofDirectory::listDir(){
+std::size_t ofDirectory::listDir(){
 	files.clear();
 	if(path().empty()){
 		ofLogError("ofDirectory") << "listDir(): directory path is empty";
@@ -1126,28 +1134,28 @@ int ofDirectory::listDir(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getOriginalDirectory(){
+string ofDirectory::getOriginalDirectory() const {
 	return originalDirectory;
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getName(unsigned int position){
+string ofDirectory::getName(std::size_t position) const{
 	return files.at(position).getFileName();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofDirectory::getPath(unsigned int position){
+string ofDirectory::getPath(std::size_t position) const{
 	return originalDirectory + getName(position);
 }
 
 //------------------------------------------------------------------------------------------------------------
-ofFile ofDirectory::getFile(unsigned int position, ofFile::Mode mode, bool binary){
+ofFile ofDirectory::getFile(std::size_t position, ofFile::Mode mode, bool binary) const {
 	ofFile file = files[position];
 	file.changeMode(mode, binary);
 	return file;
 }
 
-ofFile ofDirectory::operator[](unsigned int position){
+ofFile ofDirectory::operator[](std::size_t position) const {
 	return getFile(position);
 }
 
@@ -1160,7 +1168,7 @@ const vector<ofFile> & ofDirectory::getFiles() const{
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::getShowHidden(){
+bool ofDirectory::getShowHidden() const{
 	return showHidden;
 }
 
@@ -1186,13 +1194,13 @@ void ofDirectory::sort(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-unsigned int ofDirectory::size(){
+std::size_t ofDirectory::size() const{
 	return files.size();
 }
 
 //------------------------------------------------------------------------------------------------------------
 int ofDirectory::numFiles(){
-	return size();
+	return static_cast<int>(size());
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1200,7 +1208,9 @@ int ofDirectory::numFiles(){
 //------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::removeDirectory(string path, bool deleteIfNotEmpty, bool bRelativeToData){
+bool ofDirectory::removeDirectory(const std::string& _path, bool deleteIfNotEmpty, bool bRelativeToData){
+	std::string path = _path;
+
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
@@ -1208,7 +1218,9 @@ bool ofDirectory::removeDirectory(string path, bool deleteIfNotEmpty, bool bRela
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::createDirectory(string dirPath, bool bRelativeToData, bool recursive){
+bool ofDirectory::createDirectory(const std::string& _dirPath, bool bRelativeToData, bool recursive){
+	std::string dirPath = _dirPath;
+
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
@@ -1235,7 +1247,8 @@ bool ofDirectory::createDirectory(string dirPath, bool bRelativeToData, bool rec
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::doesDirectoryExist(string dirPath, bool bRelativeToData){
+bool ofDirectory::doesDirectoryExist(const std::string& _dirPath, bool bRelativeToData){
+	std::string dirPath = _dirPath;
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
@@ -1243,7 +1256,8 @@ bool ofDirectory::doesDirectoryExist(string dirPath, bool bRelativeToData){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::isDirectoryEmpty(string dirPath, bool bRelativeToData){
+bool ofDirectory::isDirectoryEmpty(const std::string& _dirPath, bool bRelativeToData){
+	std::string dirPath = _dirPath;
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
@@ -1313,7 +1327,8 @@ vector<ofFile>::const_reverse_iterator ofDirectory::rend() const{
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::addLeadingSlash(string path){
+string ofFilePath::addLeadingSlash(const std::string& _path){
+	std::string path = _path;
 	auto sep = std::filesystem::path("/").make_preferred();
 	if(!path.empty()){
 		if(ofToString(path[0]) != sep.string()){
@@ -1324,7 +1339,8 @@ string ofFilePath::addLeadingSlash(string path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::addTrailingSlash(string path){
+string ofFilePath::addTrailingSlash(const std::string& _path){
+	std::string path = _path;
 	path = std::filesystem::path(path).make_preferred().string();
 	auto sep = std::filesystem::path("/").make_preferred();
 	if(!path.empty()){
@@ -1337,18 +1353,18 @@ string ofFilePath::addTrailingSlash(string path){
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getFileExt(string filename){
+string ofFilePath::getFileExt(const std::string& filename){
 	return ofFile(filename,ofFile::Reference).getExtension();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::removeExt(string filename){
+string ofFilePath::removeExt(const std::string& filename){
 	return ofFilePath::join(getEnclosingDirectory(filename,false), ofFile(filename,ofFile::Reference).getBaseName());
 }
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getPathForDirectory(string path){
+string ofFilePath::getPathForDirectory(const std::string& path){
 	// if a trailing slash is missing from a path, this will clean it up
 	// if it's a windows-style "\" path it will add a "\"
 	// if it's a unix-style "/" path it will add a "/"
@@ -1361,7 +1377,8 @@ string ofFilePath::getPathForDirectory(string path){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::removeTrailingSlash(string path){
+string ofFilePath::removeTrailingSlash(const std::string& _path){
+	std::string path = _path;
 	if(path.length() > 0 && (path[path.length() - 1] == '/' || path[path.length() - 1] == '\\')){
 		path = path.substr(0, path.length() - 1);
 	}
@@ -1370,7 +1387,9 @@ string ofFilePath::removeTrailingSlash(string path){
 
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getFileName(string filePath, bool bRelativeToData){
+string ofFilePath::getFileName(const std::string& _filePath, bool bRelativeToData){
+	std::string filePath = _filePath;
+
 	if(bRelativeToData){
 		filePath = ofToDataPath(filePath);
 	}
@@ -1379,12 +1398,13 @@ string ofFilePath::getFileName(string filePath, bool bRelativeToData){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getBaseName(string filePath){
+string ofFilePath::getBaseName(const std::string& filePath){
 	return ofFile(filePath).getBaseName();
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
+string ofFilePath::getEnclosingDirectory(const std::string& _filePath, bool bRelativeToData){
+	std::string filePath = _filePath;
 	if(bRelativeToData){
 		filePath = ofToDataPath(filePath);
 	}
@@ -1392,12 +1412,13 @@ string ofFilePath::getEnclosingDirectory(string filePath, bool bRelativeToData){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFilePath::createEnclosingDirectory(string filePath, bool bRelativeToData, bool bRecursive) {
+bool ofFilePath::createEnclosingDirectory(const std::string& filePath, bool bRelativeToData, bool bRecursive) {
 	return ofDirectory::createDirectory(ofFilePath::getEnclosingDirectory(filePath), bRelativeToData, bRecursive);
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
+string ofFilePath::getAbsolutePath(const std::string& _path, bool bRelativeToData){
+	std::string path = _path;
 	if(bRelativeToData){
 		path = ofToDataPath(path);
 	}
@@ -1410,7 +1431,7 @@ string ofFilePath::getAbsolutePath(string path, bool bRelativeToData){
 
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFilePath::isAbsolute(string path){
+bool ofFilePath::isAbsolute(const std::string& path){
 	return std::filesystem::path(path).is_absolute();
 }
 
@@ -1433,7 +1454,7 @@ string ofFilePath::getCurrentWorkingDirectory(){
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::join(string path1, string path2){
+string ofFilePath::join(const std::string& path1, const std::string& path2){
 	return (std::filesystem::path(path1) / std::filesystem::path(path2)).string();
 }
 
