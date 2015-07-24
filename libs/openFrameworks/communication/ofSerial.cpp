@@ -398,28 +398,16 @@ bool ofSerial::setup(string portName, int baud){
 		// now try the settings:
 		COMMCONFIG cfg;
 		DWORD cfgSize;
-		char buf[80];
+		WCHAR buf[80];
 
 		cfgSize = sizeof(cfg);
 		GetCommConfig(hComm, &cfg, &cfgSize);
 		int bps = baud;
-		sprintf(buf, "baud=%d parity=N data=8 stop=1", bps);
+		swprintf(buf, L"baud=%d parity=N data=8 stop=1", bps);
 
-		#if (_MSC_VER)	// microsoft visual studio
-			// msvc doesn't like BuildCommDCB,
-			//so we need to use this version: BuildCommDCBA
-			if(!BuildCommDCBA(buf, &cfg.dcb)){
-				ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
-			}
-
-		#else
-
-			if(!BuildCommDCB(buf, &cfg.dcb)){
-				ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
-			}
-
-		#endif
-
+		if(!BuildCommDCBW(buf, &cfg.dcb)){
+			ofLogError("ofSerial") << "setup(): unable to build comm dcb, (" << buf << ")";
+		}
 
 		// Set baudrate and bits etc.
 		// Note that BuildCommDCB() clears XON/XOFF and hardware control by default
