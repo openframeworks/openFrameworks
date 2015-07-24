@@ -30,4 +30,3 @@
 | ofxOpenCV -> opencv             | ✓?  | ✗     | ✗       | ✗           | ✗           | ✗  | ✗      | ✓?  | ✗       |
 | ofxOsc -> oscpack               | ✗C  | ✗C    | ✗C      | ✗C          | ✗C          | ✗C | ✗C     | ✗C  | ✗C      |
 | ofxSvg -> svgTiny               | ✗C  | ✗C    | ✗C      | ✗C          | ✗C          | ✗C | ✗C     | ✗C  | ✗C      |
-| ofxXmlSettings -> tinyxml       | ✗C  | ✗C    | ✗C      | ✗C          | ✗C          | ✗C | ✗C     | ✗C  | ✗C      |
