@@ -840,11 +840,11 @@ bool ofXml::setTo(const string & path){
 			element = (Poco::XML::Element *)parent->getNodeByPath(remainingPath);
 			if(!element){
 				element = prev;
-				ofLogWarning("ofXml") << "setCurrentElement(): passed invalid path \"" << remainingPath << "\"";
+				ofLogWarning("ofXml") << "setTo(): passed invalid path \"" << remainingPath << "\"";
 				return false;
 			}
 		}else{
-			ofLogWarning("ofXml") << "setCurrentElement(): parent is null.";
+			ofLogWarning("ofXml") << "setTo(): parent is null.";
 			return false;
 		}
 	}else if(path.find("//") != string::npos){
@@ -853,7 +853,7 @@ bool ofXml::setTo(const string & path){
 		element = (Poco::XML::Element *)document->getNodeByPath(path);
 		if(!element){
 			element = prev;
-			ofLogWarning("ofXml") << "setCurrentElement(): passed invalid path \"" << path << "\"";
+			ofLogWarning("ofXml") << "setTo(): passed invalid path \"" << path << "\"";
 			return false;
 		}
 	}else{
@@ -862,7 +862,7 @@ bool ofXml::setTo(const string & path){
 		element = (Poco::XML::Element *)element->getNodeByPath(path);
 		if(!element){
 			element = prev;
-			ofLogWarning("ofXml") << "setCurrentElement(): passed invalid path \"" << path << "\"";
+			ofLogWarning("ofXml") << "setTo(): passed invalid path \"" << path << "\"";
 			return false;
 		}
 	}
