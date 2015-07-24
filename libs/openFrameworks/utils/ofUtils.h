@@ -323,7 +323,7 @@ void ofSort(vector<T>& values, BoolFunction compare) {
 /// \returns true the index of the first target value found.
 /// \sa http://www.cplusplus.com/reference/iterator/distance/
 template <class T>
-unsigned int ofFind(const vector<T>& values, const T& target) {
+std::size_t ofFind(const vector<T>& values, const T& target) {
 	return distance(values.begin(), find(values.begin(), values.end(), target));
 }
 
@@ -400,7 +400,7 @@ bool ofIsStringInString(const string& haystack, const string& needle);
 /// \brief Check how many times a string contains another string.
 /// \param haystack The string to check for occurrence in .
 /// \param needle The string to check for.
-int ofStringTimesInString(const string& haystack, const string& needle);
+std::size_t ofStringTimesInString(const string& haystack, const string& needle);
 
 /// \brief Converts all characters in a string to lowercase.
 ///

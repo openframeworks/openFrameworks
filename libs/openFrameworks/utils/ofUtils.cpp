@@ -383,8 +383,8 @@ template <>
 string ofToHex(const string& value) {
 	ostringstream out;
 	// how many bytes are in the string
-	int numBytes = value.size();
-	for(int i = 0; i < numBytes; i++) {
+	std::size_t numBytes = value.size();
+	for(std::size_t i = 0; i < numBytes; i++) {
 		// print each byte as a 2-character wide hex value
 		out << setfill('0') << setw(2) << hex << (unsigned int) ((unsigned char)value[i]);
 	}
@@ -439,8 +439,8 @@ string ofHexToString(const string& stringHexString) {
 	stringstream out;
 	stringstream stream(stringHexString);
 	// a hex string has two characters per byte
-	int numBytes = stringHexString.size() / 2;
-	for(int i = 0; i < numBytes; i++) {
+	std::size_t numBytes = stringHexString.size() / 2;
+	for(std::size_t i = 0; i < numBytes; i++) {
 		string curByte;
 		// grab two characters from the hex string
 		stream >> setw(2) >> curByte;
@@ -505,8 +505,8 @@ char ofToChar(const string& charString) {
 //----------------------------------------
 template <> string ofToBinary(const string& value) {
 	stringstream out;
-	int numBytes = value.size();
-	for(int i = 0; i < numBytes; i++) {
+	std::size_t numBytes = value.size();
+	for(std::size_t i = 0; i < numBytes; i++) {
 		bitset<8> bitBuffer(value[i]);
 		out << bitBuffer;
 	}
@@ -550,8 +550,8 @@ string ofBinaryToString(const string& value) {
 	ostringstream out;
 	stringstream stream(value);
 	bitset<8> byteString;
-	int numBytes = value.size() / 8;
-	for(int i = 0; i < numBytes; i++) {
+	std::size_t numBytes = value.size() / 8;
+	for(std::size_t i = 0; i < numBytes; i++) {
 		stream >> byteString;
 		out << (char) byteString.to_ulong();
 	}
@@ -616,7 +616,7 @@ bool ofIsStringInString(const string& haystack, const string& needle){
 }
 
 //--------------------------------------------------
-int ofStringTimesInString(const string& haystack, const string& needle){
+std::size_t ofStringTimesInString(const string& haystack, const string& needle){
 	const size_t step = needle.size();
 
 	size_t count(0);
