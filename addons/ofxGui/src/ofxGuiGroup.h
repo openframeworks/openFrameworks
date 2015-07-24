@@ -9,8 +9,7 @@ class ofxGuiGroup : public ofxBaseGui {
 	public:
 		ofxGuiGroup();
 		ofxGuiGroup(const ofParameterGroup & parameters, std::string _filename = "settings.xml", float x = 10, float y = 10);
-		virtual ~ofxGuiGroup(){
-		}
+		virtual ~ofxGuiGroup();
 		virtual ofxGuiGroup * setup(std::string collectionName = "", std::string filename = "settings.xml", float x = 10, float y = 10);
 		virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, std::string filename = "settings.xml", float x = 10, float y = 10);
 
@@ -65,7 +64,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		virtual void render();
 		virtual bool setValue(float mx, float my, bool bCheck);
 
-		float spacing, spacingNextElement;
+		float spacing, spacingNextElement, spacingFirstElement;
 		float header;
 
 		template <class ControlType>

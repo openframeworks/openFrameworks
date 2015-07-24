@@ -9,14 +9,24 @@ ofxGuiGroup::ofxGuiGroup(){
 	minimized = false;
 	spacing = 1;
 	spacingNextElement = 3;
+	spacingFirstElement = 0;
 	header = defaultHeight;
 	bGuiActive = false;
 }
 
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, string filename, float x, float y){
 	minimized = false;
-	parent = NULL;
+	spacing = 1;
+	spacingNextElement = 3;
+	spacingFirstElement = 0;
+	header = defaultHeight;
 	setup(parameters, filename, x, y);
+}
+
+ofxGuiGroup::~ofxGuiGroup(){
+	for(auto e: collection){
+		ofRemoveListener(e->sizeChangedE,this,&ofxGuiGroup::sizeChangedCB);
+	}
 }
 
 ofxGuiGroup * ofxGuiGroup::setup(string collectionName, string filename, float x, float y){
@@ -27,14 +37,8 @@ ofxGuiGroup * ofxGuiGroup::setup(string collectionName, string filename, float x
 ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _filename, float x, float y){
 	b.x = x;
 	b.y = y;
-	header = defaultHeight;
 	spacing = 1;
-	spacingNextElement = 3;
-	if(parent != NULL){
-		b.width = parent->getWidth();
-	}else{
-		b.width = defaultWidth;
-	}
+	b.width = defaultWidth;
 	clear();
 	filename = _filename;
 	bGuiActive = false;
@@ -98,18 +102,13 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	//if(b.width<element->getWidth()) b.width = element->getWidth();
 
 	element->unregisterMouseEvents();
-
-	element->setParent(this);
+	ofAddListener(element->sizeChangedE,this,&ofxGuiGroup::sizeChangedCB);
 
 	ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(element);
 	if(subgroup != NULL){
+		subgroup->spacingFirstElement = 3;
 		subgroup->filename = filename;
 		subgroup->setWidthElements(b.width * .98);
-	}else{
-		if(parent != NULL){
-			element->setSize(b.width * .98, element->getHeight());
-			element->setPosition(b.x + b.width - element->getWidth(), element->getPosition().y);
-		}
 	}
 
 	parameters.add(element->getParameter());
@@ -131,7 +130,6 @@ void ofxGuiGroup::setWidthElements(float w){
 
 void ofxGuiGroup::add(const ofParameterGroup & parameters){
 	ofxGuiGroup * panel = new ofxGuiGroup(parameters);
-	panel->parent = this;
 	add(panel);
 }
 
@@ -370,9 +368,7 @@ bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
 void ofxGuiGroup::minimize(){
 	minimized = true;
 	b.height = header + spacing + spacingNextElement + 1 /*border*/;
-	if(parent){
-		parent->sizeChangedCB();
-	}
+	sizeChangedE.notify(this);
 	setNeedsRedraw();
 }
 
@@ -381,9 +377,7 @@ void ofxGuiGroup::maximize(){
 	for(int i = 0; i < (int)collection.size(); i++){
 		b.height += collection[i]->getHeight() + spacing;
 	}
-	if(parent){
-		parent->sizeChangedCB();
-	}
+	sizeChangedE.notify(this);
 	setNeedsRedraw();
 }
 
@@ -406,20 +400,13 @@ void ofxGuiGroup::maximizeAll(){
 }
 
 void ofxGuiGroup::sizeChangedCB(){
-	float y;
-	if(parent){
-		y = b.y  + header + spacing + spacingNextElement;
-	}else{
-		y = b.y  + header + spacing;
-	}
+	float y = b.y  + header + spacing + spacingFirstElement;
 	for(int i = 0; i < (int)collection.size(); i++){
 		collection[i]->setPosition(collection[i]->getPosition().x, y + spacing);
 		y += collection[i]->getHeight() + spacing;
 	}
 	b.height = y - b.y;
-	if(parent){
-		parent->sizeChangedCB();
-	}
+	sizeChangedE.notify(this);
 	setNeedsRedraw();
 }
 

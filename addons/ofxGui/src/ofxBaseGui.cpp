@@ -63,7 +63,6 @@ bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
 
 ofxBaseGui::ofxBaseGui(){
-	parent = NULL;
 	currentFrame = ofGetFrameNum();
 	serializer = std::shared_ptr <ofBaseFileSerializer>(new ofXml);
 
@@ -212,17 +211,20 @@ void ofxBaseGui::setPosition(float x, float y){
 void ofxBaseGui::setSize(float w, float h){
 	b.width = w;
 	b.height = h;
-	sizeChangedCB();
+	sizeChangedE.notify(this);
+	setNeedsRedraw();
 }
 
 void ofxBaseGui::setShape(ofRectangle r){
 	b = r;
-	sizeChangedCB();
+	sizeChangedE.notify(this);
+	setNeedsRedraw();
 }
 
 void ofxBaseGui::setShape(float x, float y, float w, float h){
 	b.set(x, y, w, h);
-	sizeChangedCB();
+	sizeChangedE.notify(this);
+	setNeedsRedraw();
 }
 
 ofPoint ofxBaseGui::getPosition(){
@@ -318,13 +320,6 @@ void ofxBaseGui::setDefaultHeight(int height){
 	defaultHeight = height;
 }
 
-void ofxBaseGui::sizeChangedCB(){
-	if(parent){
-		parent->sizeChangedCB();
-	}
-	setNeedsRedraw();
-}
-
 void ofxBaseGui::setNeedsRedraw(){
 	needsRedraw = true;
 }
@@ -373,12 +368,4 @@ void ofxBaseGui::loadStencilFromHex(ofImage & img, unsigned char * data){
 		}
 	}
 	img.update();
-}
-
-void ofxBaseGui::setParent(ofxBaseGui * parent){
-	this->parent = parent;
-}
-
-ofxBaseGui * ofxBaseGui::getParent(){
-	return parent;
 }

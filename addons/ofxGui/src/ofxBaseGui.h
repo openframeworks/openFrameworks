@@ -64,10 +64,6 @@ class ofxBaseGui {
 		void registerMouseEvents();
 		void unregisterMouseEvents();
 
-		virtual void sizeChangedCB();
-		void setParent(ofxBaseGui * parent);
-		ofxBaseGui * getParent();
-
 		virtual bool mouseMoved(ofMouseEventArgs & args) = 0;
 		virtual bool mousePressed(ofMouseEventArgs & args) = 0;
 		virtual bool mouseDragged(ofMouseEventArgs & args) = 0;
@@ -78,6 +74,8 @@ class ofxBaseGui {
 		virtual void mouseExited(ofMouseEventArgs & args){
 		}
 
+		ofEvent<void> sizeChangedE;
+
 	protected:
 		virtual void render() = 0;
 		bool isGuiDrawing();
@@ -86,8 +84,6 @@ class ofxBaseGui {
 		void unbindFontTexture();
 		ofMesh getTextMesh(const std::string & text, float x, float y);
 		ofRectangle getTextBoundingBox(const std::string & text, float x, float y);
-
-		ofxBaseGui * parent;
 
 		ofRectangle b;
 		static ofTrueTypeFont font;
