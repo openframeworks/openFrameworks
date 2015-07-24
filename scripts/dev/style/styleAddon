@@ -19,7 +19,7 @@ function printUsage() {
 	echo "	styleAddon dirname"
 	echo
 	echo "Example:"
-	echo "	styleAddon ofxXmlSettings"
+	echo "	styleAddon ofxNetwork"
 	echo
 }
 
