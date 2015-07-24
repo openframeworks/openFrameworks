@@ -323,7 +323,7 @@ void ofSort(vector<T>& values, BoolFunction compare) {
 /// \returns true the index of the first target value found.
 /// \sa http://www.cplusplus.com/reference/iterator/distance/
 template <class T>
-unsigned int ofFind(const vector<T>& values, const T& target) {
+std::size_t ofFind(const vector<T>& values, const T& target) {
 	return distance(values.begin(), find(values.begin(), values.end(), target));
 }
 
