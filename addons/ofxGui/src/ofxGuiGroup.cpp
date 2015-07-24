@@ -14,18 +14,18 @@ ofxGuiGroup::ofxGuiGroup(){
 	bGuiActive = false;
 }
 
-ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, string filename, float x, float y){
+ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
 	minimized = false;
 	parent = NULL;
     setup(parameters, filename, x, y);
 }
 
-ofxGuiGroup * ofxGuiGroup::setup(string collectionName, string filename, float x, float y){
+ofxGuiGroup * ofxGuiGroup::setup(const std::string& collectionName, const std::string& filename, float x, float y){
 	parameters.setName(collectionName);
 	return setup(parameters,filename,x,y);
 }
 
-ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, string _filename, float x, float y){
+ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y){
 	b.x = x;
 	b.y = y;
 	header = defaultHeight;
@@ -300,27 +300,27 @@ vector<string> ofxGuiGroup::getControlNames(){
 	return names;
 }
 
-ofxIntSlider & ofxGuiGroup::getIntSlider(string name){
+ofxIntSlider & ofxGuiGroup::getIntSlider(const std::string& name){
 	return getControlType<ofxIntSlider>(name);
 }
 
-ofxFloatSlider & ofxGuiGroup::getFloatSlider(string name){
+ofxFloatSlider & ofxGuiGroup::getFloatSlider(const std::string& name){
 	return getControlType<ofxFloatSlider>(name);
 }
 
-ofxToggle & ofxGuiGroup::getToggle(string name){
+ofxToggle & ofxGuiGroup::getToggle(const std::string& name){
 	return getControlType<ofxToggle>(name);
 }
 
-ofxButton & ofxGuiGroup::getButton(string name){
+ofxButton & ofxGuiGroup::getButton(const std::string& name){
 	return getControlType<ofxButton>(name);
 }
 
-ofxGuiGroup & ofxGuiGroup::getGroup(string name){
+ofxGuiGroup & ofxGuiGroup::getGroup(const std::string& name){
 	return getControlType<ofxGuiGroup>(name);
 }
 
-ofxBaseGui * ofxGuiGroup::getControl(string name){
+ofxBaseGui * ofxGuiGroup::getControl(const std::string& name){
 	for(int i=0; i<(int)collection.size(); i++){
 		if(collection[i]->getName()==name){
 			return collection[i];
@@ -419,7 +419,7 @@ ofAbstractParameter & ofxGuiGroup::getParameter(){
 	return parameters;
 }
 
-void ofxGuiGroup::setPosition(ofPoint p){
+void ofxGuiGroup::setPosition(const ofPoint& p){
 	ofVec2f diff = p - b.getPosition();
 
 	for(int i=0;i<(int)collection.size();i++){

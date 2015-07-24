@@ -30,7 +30,7 @@ ofxPanel::~ofxPanel(){
 	//
 }
 
-ofxPanel * ofxPanel::setup(string collectionName, string filename, float x, float y){
+ofxPanel * ofxPanel::setup(const std::string& collectionName, string filename, float x, float y){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
