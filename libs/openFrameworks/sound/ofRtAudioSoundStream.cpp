@@ -241,7 +241,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	// doesn't produce audio, we pass silence instead of duplex...
 	
 	int nInputChannels = rtStreamPtr->getNumInputChannels();
-	int nOutputChannels = rtStreamPtr->getNumOutputChannels();
+	std::size_t nOutputChannels = rtStreamPtr->getNumOutputChannels();
 	
 	if(nInputChannels > 0){
 		if( rtStreamPtr->soundInputPtr != NULL ){
@@ -256,7 +256,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	if (nOutputChannels > 0) {
 		if( rtStreamPtr->soundOutputPtr != NULL ){
 			
-			if ( rtStreamPtr->outputBuffer.size() != nFramesPerBuffer*nOutputChannels || rtStreamPtr->outputBuffer.getNumChannels()!=nOutputChannels ){
+		  if ( rtStreamPtr->outputBuffer.size() != nFramesPerBuffer*nOutputChannels || rtStreamPtr->outputBuffer.getNumChannels() != nOutputChannels ){
 				rtStreamPtr->outputBuffer.setNumChannels(nOutputChannels);
 				rtStreamPtr->outputBuffer.resize(nFramesPerBuffer*nOutputChannels);
 			}
