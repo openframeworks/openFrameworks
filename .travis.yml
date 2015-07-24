@@ -2,13 +2,12 @@ os:
   - linux
 language: c++
 compiler: gcc
+sudo: required
 env:
   global:
     - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
   matrix:
     - TARGET="linux"
-    - TARGET="android" OPT="armv7"
-    - TARGET="android" OPT="x86"
     - TARGET="docs"
 matrix:
   include:
@@ -19,6 +18,18 @@ matrix:
     - os: osx
       compiler: clang
       env: TARGET="ios"
+    - env: TARGET="android" OPT="armv7"
+      sudo: false
+      addons:
+        apt:
+          packages:
+          - p7zip-full
+    - env: TARGET="android" OPT="x86"
+      sudo: false
+      addons:
+        apt:
+          packages:
+          - p7zip-full          
   allow_failures:
     # temporary until we find out how to prevent (spurious) build failures
     - env: TARGET="docs"
