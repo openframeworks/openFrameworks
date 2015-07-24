@@ -152,7 +152,7 @@ double ofCoreEvents::getLastFrameTime() const{
 }
 
 //--------------------------------------
-int ofCoreEvents::getFrameNum() const{
+uint64_t ofCoreEvents::getFrameNum() const{
 	return fps.getNumFrames();
 }
 
