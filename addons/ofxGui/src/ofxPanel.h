@@ -10,7 +10,7 @@ public:
 	ofxPanel(const ofParameterGroup & parameters, std::string filename="settings.xml", float x = 10, float y = 10);
 	~ofxPanel();
 
-	ofxPanel * setup(std::string collectionName="", std::string filename="settings.xml", float x = 10, float y = 10);
+	ofxPanel * setup(const std::string& collectionName="", std::string filename="settings.xml", float x = 10, float y = 10);
 	ofxPanel * setup(const ofParameterGroup & parameters, std::string filename="settings.xml", float x = 10, float y = 10);
 
 	bool mouseReleased(ofMouseEventArgs & args);
