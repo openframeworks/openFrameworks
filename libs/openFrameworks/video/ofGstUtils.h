@@ -106,7 +106,7 @@ private:
 	GstElement 	*		gstPipeline;
 
 	float				speed;
-	mutable int64_t		durationNanos;
+	mutable gint64		durationNanos;
 	bool				isAppSink;
 	std::condition_variable		eosCondition;
 	std::mutex			eosMutex;
