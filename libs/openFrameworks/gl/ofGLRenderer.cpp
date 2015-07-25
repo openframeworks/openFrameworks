@@ -1859,12 +1859,14 @@ void ofGLRenderer::saveScreen(int x, int y, int w, int h, ofPixels & pixels){
 	int sw = getViewportWidth();
 	int numPixels   = w*h;
 	if( numPixels == 0 ){
-		ofLogError("ofImage") << "grabScreen(): unable to grab screen, image width and/or height are 0: " << w << "x" << h;
+		ofLogError("ofGLRenderer") << "grabScreen(): unable to grab screen, image width and/or height are 0: " << w << "x" << h;
 		return;
 	}
 	pixels.allocate(w, h, OF_PIXELS_RGBA);
 
 	switch(matrixStack.getOrientation()){
+	case OF_ORIENTATION_UNKNOWN:
+		ofLogWarning("ofGLRenderer") << "matrixStack orientation unknown, using default.";
 	case OF_ORIENTATION_DEFAULT:
 
 		if(isVFlipped()){
