@@ -44,7 +44,7 @@ int kbhit()
     struct timeval tv = { 0L, 0L };
     fd_set fds;
     FD_SET(0, &fds);
-    return select(1, &fds, NULL, NULL, &tv);
+    return select(1, &fds, nullptr, nullptr, &tv);
 }
 
 int getch()
@@ -64,7 +64,7 @@ const string ofNoopRenderer::TYPE="NOOP";
 
 //----------------------------------------------------------
 ofAppNoWindow::ofAppNoWindow(){
-	ofAppPtr = NULL;
+	ofAppPtr = nullptr;
 	width = 0;
 	height = 0;
 }

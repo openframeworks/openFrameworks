@@ -29,7 +29,7 @@ ofEasyCam::ofEasyCam(){
 	bAutoDistance = true;
 	doTranslationKey = 'm';
 	bEventsSet = false;
-	events = NULL;
+	events = nullptr;
 	rotationFactor = 0.0f;
 
 	reset();
