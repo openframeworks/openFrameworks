@@ -242,7 +242,18 @@ bool ofXml::addChild( const string& path )
 
 string ofXml::getValue() const
 {
-    if(element && element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
+  //if we don't have a DOM element, return the default value
+  if(!element){
+	return "";
+  }
+
+  // firstChild() may return a NULL pointer
+  if(NULL == element->firstChild()){
+	// return default value in this case
+	return "";
+  }
+  // no NULL pointer -> save to call nodeType()
+    if(element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
         return element->innerText();
     }
     return "";
