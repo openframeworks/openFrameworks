@@ -463,7 +463,7 @@ class ofTexture : public ofBaseDraws {
 	/// load, i.e. we can upload GL_BGRA pixels into a GL_RGBA texture but the
 	/// number of channels need to match according to the OpenGL standard.
 	/// 
-	/// \param data Pointer to byte pixel data. Must not be NULL.
+	/// \param data Pointer to byte pixel data. Must not be nullptr.
 	/// \param w Pixel data width.
 	/// \param h Pixel data height.
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
@@ -471,7 +471,7 @@ class ofTexture : public ofBaseDraws {
 
 	/// \brief Load short (2 byte) pixel data.
 	/// \sa loadData(const unsigned char* const data, int w, int h, int glFormat)
-	/// \param data Pointer to byte pixel data. Must not be NULL.
+	/// \param data Pointer to byte pixel data. Must not be nullptr.
 	/// \param w Pixel data width.
 	/// \param h Pixel data height.
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
@@ -479,7 +479,7 @@ class ofTexture : public ofBaseDraws {
 
 	/// \brief Load float pixel data.
 	/// \sa loadData(const unsigned char* const data, int w, int h, int glFormat)
-	/// \param data Pointer to byte pixel data. Must not be NULL.
+	/// \param data Pointer to byte pixel data. Must not be nullptr.
 	/// \param w Pixel data width.
 	/// \param h Pixel data height.
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
@@ -936,7 +936,7 @@ protected:
 	/// load, i.e. we can upload GL_BGRA pixels into a GL_RGBA texture but the
 	/// number of channels need to match according to the OpenGL standard.
 	///
-	/// \param data Pointer to byte pixel data. Must not be NULL.
+	/// \param data Pointer to byte pixel data. Must not be nullptr.
 	/// \param w Pixel data width.
 	/// \param h Pixel data height.
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.

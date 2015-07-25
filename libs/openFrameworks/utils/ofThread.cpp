@@ -173,7 +173,7 @@ void ofThread::threadedFunction(){
 void ofThread::run(){
 #ifdef TARGET_ANDROID
 	JNIEnv * env;
-	jint attachResult = ofGetJavaVMPtr()->AttachCurrentThread(&env,NULL);
+	jint attachResult = ofGetJavaVMPtr()->AttachCurrentThread(&env,nullptr);
 	if(attachResult!=0){
 		ofLogWarning() << "couldn't attach new thread to java vm";
 	}
