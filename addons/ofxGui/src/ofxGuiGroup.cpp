@@ -84,44 +84,37 @@ ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 }
 
 
-void ofxGuiGroup::addParametersFrom(const ofParameterGroup & _parameters){
-	for(int i = 0; i < _parameters.size(); i++){
-		string type = _parameters.getType(i);
-		if(type == typeid(ofParameter <int> ).name()){
-			ofParameter <int> p = _parameters.getInt(i);
-			add(p);
-		}else if(type == typeid(ofParameter <float> ).name()){
-			ofParameter <float> p = _parameters.getFloat(i);
-			add(p);
-		}else if(type == typeid(ofParameter <bool> ).name()){
-			ofParameter <bool> p = _parameters.getBool(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofVec2f> ).name()){
-			ofParameter <ofVec2f> p = _parameters.getVec2f(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofVec3f> ).name()){
-			ofParameter <ofVec3f> p = _parameters.getVec3f(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofVec4f> ).name()){
-			ofParameter <ofVec4f> p = _parameters.getVec4f(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofColor> ).name()){
-			ofParameter <ofColor> p = _parameters.getColor(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofShortColor> ).name()){
-			ofParameter <ofShortColor> p = _parameters.getShortColor(i);
-			add(p);
-		}else if(type == typeid(ofParameter <ofFloatColor> ).name()){
-			ofParameter <ofFloatColor> p = _parameters.getFloatColor(i);
-			add(p);
-		}else if(type == typeid(ofParameter <string> ).name()){
-			ofParameter <string> p = _parameters.getString(i);
-			add(p);
+void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters){
+	for(auto & p: parameters){
+		if(p->isReadOnly()){
+			ofLogWarning("ofxGui") << "Trying to add " << p->getName() << ": read only parameters not supported yet in ofxGui";
+			continue;
+		}
+		string type = p->type();
+		if(type == typeid(ofParameter<int>).name()){
+			add(p->cast<int>());
+		}else if(type == typeid(ofParameter<float>).name()){
+			add(p->cast<float>());
+		}else if(type == typeid(ofParameter<bool>).name()){
+			add(p->cast<bool>());
+		}else if(type == typeid(ofParameter<ofVec2f>).name()){
+			add(p->cast<ofVec2f>());
+		}else if(type == typeid(ofParameter<ofVec3f>).name()){
+			add(p->cast<ofVec3f>());
+		}else if(type == typeid(ofParameter<ofVec4f>).name()){
+			add(p->cast<ofVec4f>());
+		}else if(type == typeid(ofParameter<ofColor>).name()){
+			add(p->cast<ofColor>());
+		}else if(type == typeid(ofParameter<ofShortColor>).name()){
+			add(p->cast<ofShortColor>());
+		}else if(type == typeid(ofParameter<ofFloatColor>).name()){
+			add(p->cast<ofFloatColor>());
+		}else if(type == typeid(ofParameter<string>).name()){
+			add(p->cast<string>());
 		}else if(type == typeid(ofParameterGroup).name()){
-			ofParameterGroup p = _parameters.getGroup(i);
-			add(p);
+			add(p->castGroup());
 		}else{
-			ofLogWarning() << "ofxBaseGroup; no control for parameter of type " << type;
+			ofLogWarning("ofxGui") << "Trying to add " << p->getName() << ": ofxBaseGroup; no control for parameter of type " << type;
 		}
 	}
 }
@@ -166,9 +159,9 @@ void ofxGuiGroup::addOwned(ofxGuiGroup * element){
 }
 
 void ofxGuiGroup::setWidthElements(float w){
-    for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setSize(w, collection[i]->getHeight());
-		collection[i]->setPosition(b.x + b.width - w, collection[i]->getPosition().y);
+    for(auto & e: collection){
+		e->setSize(w, e->getHeight());
+		e->setPosition(b.x + b.width - w, e->getPosition().y);
 	}
 	sizeChangedCB();
 	setNeedsRedraw();
@@ -227,8 +220,8 @@ void ofxGuiGroup::clear(){
 
 bool ofxGuiGroup::mouseMoved(ofMouseEventArgs & args){
 	ofMouseEventArgs a = args;
-	for(std::size_t i = 0; i < collection.size(); i++){
-		if(collection[i]->mouseMoved(a)){
+	for(auto & e: collection){
+		if(e->mouseMoved(a)){
 			return true;
 		}
 	}
@@ -245,8 +238,8 @@ bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 	}
 	if(bGuiActive){
 		ofMouseEventArgs a = args;
-		for(std::size_t i = 0; i < collection.size(); i++){
-			if(collection[i]->mousePressed(a)){
+		for(auto & e: collection){
+			if(e->mousePressed(a)){
 				return true;
 			}
 		}
@@ -260,8 +253,8 @@ bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
 	}
 	if(bGuiActive){
 		ofMouseEventArgs a = args;
-		for(std::size_t i = 0; i < collection.size(); i++){
-			if(collection[i]->mouseDragged(a)){
+		for(auto & e: collection){
+			if(e->mouseDragged(a)){
 				return true;
 			}
 		}
@@ -271,9 +264,9 @@ bool ofxGuiGroup::mouseDragged(ofMouseEventArgs & args){
 
 bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 	bGuiActive = false;
-	for(std::size_t k = 0; k < collection.size(); k++){
+	for(auto & e: collection){
 		ofMouseEventArgs a = args;
-		if(collection[k]->mouseReleased(a)){
+		if(e->mouseReleased(a)){
 			return true;
 		}
 	}
@@ -286,8 +279,8 @@ bool ofxGuiGroup::mouseReleased(ofMouseEventArgs & args){
 
 bool ofxGuiGroup::mouseScrolled(ofMouseEventArgs & args){
 	ofMouseEventArgs a = args;
-	for(std::size_t i = 0; i < collection.size(); i++){
-		if(collection[i]->mouseScrolled(a)){
+	for(auto & e: collection){
+		if(e->mouseScrolled(a)){
 			return true;
 		}
 	}
@@ -347,8 +340,8 @@ void ofxGuiGroup::render(){
 
 vector <string> ofxGuiGroup::getControlNames() const{
 	vector <string> names;
-	for(std::size_t i = 0; i < collection.size(); i++){
-		names.push_back(collection[i]->getName());
+	for(auto & e: collection){
+		names.push_back(e->getName());
 	}
 	return names;
 }
@@ -374,16 +367,15 @@ ofxGuiGroup & ofxGuiGroup::getGroup(const std::string& name){
 }
 
 ofxBaseGui * ofxGuiGroup::getControl(const std::string& name){
-    for(std::size_t i = 0; i < collection.size(); i++){
-		if(collection[i]->getName() == name){
-			return collection[i];
+	for(auto & e: collection){
+		if(e->getName() == name){
+			return e;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
-
 	if(!isGuiDrawing()){
 		bGuiActive = false;
 		return false;
@@ -419,16 +411,16 @@ void ofxGuiGroup::minimize(){
 
 void ofxGuiGroup::maximize(){
 	minimized = false;
-    for(std::size_t i = 0; i < collection.size(); i++){
-		b.height += collection[i]->getHeight() + spacing;
+	for(auto & e: collection){
+		b.height += e->getHeight() + spacing;
 	}
 	sizeChangedE.notify(this);
 	setNeedsRedraw();
 }
 
 void ofxGuiGroup::minimizeAll(){
-	for(std::size_t i = 0; i < collection.size(); i++){
-		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(collection[i]);
+	for(auto & e: collection){
+		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
 		if(group){
 			group->minimize();
 		}
@@ -436,8 +428,8 @@ void ofxGuiGroup::minimizeAll(){
 }
 
 void ofxGuiGroup::maximizeAll(){
-	for(std::size_t i = 0; i < collection.size(); i++){
-		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(collection[i]);
+	for(auto & e: collection){
+		ofxGuiGroup * group = dynamic_cast <ofxGuiGroup *>(e);
 		if(group){
 			group->maximize();
 		}
@@ -446,9 +438,9 @@ void ofxGuiGroup::maximizeAll(){
 
 void ofxGuiGroup::sizeChangedCB(){
 	float y = b.y  + header + spacing + spacingFirstElement;
-	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setPosition(collection[i]->getPosition().x, y + spacing);
-		y += collection[i]->getHeight() + spacing;
+	for(auto & e: collection){
+		e->setPosition(e->getPosition().x, y + spacing);
+		y += e->getHeight() + spacing;
 	}
 	b.height = y - b.y;
 	sizeChangedE.notify(this);
@@ -475,8 +467,8 @@ ofAbstractParameter & ofxGuiGroup::getParameter(){
 void ofxGuiGroup::setPosition(ofPoint p){
 	ofVec2f diff = p - b.getPosition();
 
-	for(std::size_t i = 0; i < collection.size(); i++){
-		collection[i]->setPosition(collection[i]->getPosition() + diff);
+	for(auto & e: collection){
+		e->setPosition(e->getPosition() + diff);
 	}
 
 	b.setPosition(p);

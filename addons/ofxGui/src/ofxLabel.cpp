@@ -14,7 +14,8 @@ ofxLabel::ofxLabel(ofParameter<std::string> _label, const Config & config)
     label.addListener(this,&ofxLabel::valueChanged);
 }
 
-ofxLabel::ofxLabel(ofParameter<string> _label, float width, float height){
+ofxLabel::ofxLabel(ofParameter<string> _label, float width, float height)
+:ofxBaseGui(Config()){
 	setup(_label,width,height);
 }
 
