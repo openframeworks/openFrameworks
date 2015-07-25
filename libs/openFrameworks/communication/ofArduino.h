@@ -174,13 +174,13 @@ public:
 	/// \param device The name of the device.
 	/// You can get the name from the Arduino IDE
 	/// \param baud The baud rate the connection uses
-	bool connect(string device, int baud = 57600);
+	bool connect(const std::string& device, int baud = 57600);
 	
 	/// \brief Returns true if a succesfull connection has been established
 	/// and the Arduino has reported a firmware
-	bool isInitialized();
+	bool isInitialized() const;
 	
-	bool isArduinoReady();
+	bool isArduinoReady() const;
 	
 	/// \brief Closes the serial port connection.
 	/// Does not turn the Arduino off.
@@ -255,10 +255,15 @@ public:
 	/// commands.
 	void sendByte(unsigned char byte);
 	
+	/// \brief Send value as two 7 bit bytes.
+	///
+	/// Sends a value as two 7-bit bytes without wrapping it in a firmata
+	/// message.  Values in the range 0 - 16384 will be sent as two bytes
+	/// within the 0-127 data range.
+	///
+	/// \param value The value to send.
 	void sendValueAsTwo7bitBytes(int value);
-	// sends a value as two 7-bit bytes without wrapping it in a firmata message
-	// values in the range 0 - 16384 will be sent as two bytes within the 0-127 data range.
-	
+
 	/// \}
 	/// \name Getters
 	/// \{
@@ -269,7 +274,7 @@ public:
 	///
 	/// On the Arduino Uno the following pins are supported: 3, 5, 6, 9, 10 and 11
 	/// \note Pin 16-21 can also be used if analog inputs 0-5 are used as digital pins
-	int getPwm(int pin);
+	int getPwm(int pin) const;
 	
 	/// \brief Returns the last received value (if the pin mode is ARD_INPUT)
 	/// or the last set value (if the pin mode is ARD_OUTPUT) for the given
@@ -279,41 +284,41 @@ public:
 	/// against this with an if() statement which is handy:
 	/// ~~~~{.cpp}
 	/// 	if(arduino.getDigital(pin)){
-	/// 		// do something on high
+	/// 	    // do something on high
 	/// 	} else {
-	/// 		// do something on low
+	/// 	    // do something on low
 	/// 	}
 	/// ~~~~
 	/// \note Pin 16-21 can also be used if analog inputs 0-5 are used as digital pins
-	int getDigital(int pin);
+	int getDigital(int pin) const;
 	
 	/// \brief Returns the analog in value that the pin is currently reading.
 	/// because the Arduino has a 10 bit ADC you get between 0 and 1023 for
 	/// possible values.
 	///
 	/// \param pin The pin number (0-5)
-	int getAnalog(int pin);
+	int getAnalog(int pin) const;
 	
-	/// \brief Returns the last received SysEx message
-	vector<unsigned char> getSysEx();
-	
-	/// \brief Returns the last received string
-	string getString();
-	
-	/// \brief Returns the major firmware version
-	int getMajorProtocolVersion();
-	
-	/// \brief Returns the minor firmware version
-	int getMinorProtocolVersion();
+	/// \returns the last received SysEx message.
+	vector<unsigned char> getSysEx() const;
+
+	/// \returns the last received string.
+	string getString() const;
 	
 	/// \brief Returns the major firmware version
-	int getMajorFirmwareVersion();
+	int getMajorProtocolVersion() const;
 	
-	/// \brief Returns the minor firmware version
-	int getMinorFirmwareVersion();
+	/// \returns the minor firmware version.
+	int getMinorProtocolVersion() const;
 	
-	/// \brief Returns the name of the firmware
-	string getFirmwareName();
+	/// \returns the major firmware version.
+	int getMajorFirmwareVersion() const;
+	
+	/// \returns the minor firmware version.
+	int getMinorFirmwareVersion() const;
+	
+	/// \returns the name of the firmware.
+	string getFirmwareName() const;
 	
 	/// \brief Returns a pointer to the digital data history list for the
 	/// given pin
@@ -322,23 +327,23 @@ public:
 	/// \param pin The pin number (2-13)
 	list<int>* getDigitalHistory(int pin);
 	
-	/// \brief Returns a pointer to the analog data history list for the given pin
-	/// \param pin On the Arduino Uno pin: 0-5
+	/// \brief Returns a pointer to the analog data history list for the given pin.
+	/// \param pin The Arduino Uno pin: 0-5
 	list<int>* getAnalogHistory(int pin);
 	
-	/// \brief Returns a pointer to the SysEx history
+	/// \returns a pointer to the SysEx history.
 	list<vector<unsigned char> >* getSysExHistory();
 	
-	/// \brief Returns a pointer to the string history
+	/// \returns a pointer to the string history.
 	list<string>* getStringHistory();
 	
 	/// \brief Get the pin mode of the given pin
 	///
-	/// Returns `ARD_INPUT`, `ARD_OUTPUT`, `ARD_PWM`, `ARD_SERVO`, `ARD_ANALOG`
-	int getDigitalPinMode(int pin);
+	/// \returns `ARD_INPUT`, `ARD_OUTPUT`, `ARD_PWM`, `ARD_SERVO`, `ARD_ANALOG`
+	int getDigitalPinMode(int pin) const;
 	
-	/// \brief Returns `ARD_ON` or `ARD_OFF`
-	int getAnalogPinReporting(int pin);
+	/// \returns `ARD_ON` or `ARD_OFF`
+	int getAnalogPinReporting(int pin) const;
 	
 	/// \brief Useful for parsing SysEx messages
 	int getValueFromTwo7bitBytes(unsigned char lsb, unsigned char msb);
@@ -348,23 +353,23 @@ public:
 	/// \{
 	
 	/// \brief Triggered when a digital pin changes value, the pin that
-	/// changed is passed as an argument
+	/// changed is passed as an argument.
 	ofEvent<const int> EDigitalPinChanged;
 	
 	/// \brief Triggered when an analog pin changes value, the pin that
-	/// changed is passed as an argument
+	/// changed is passed as an argument.
 	ofEvent<const int> EAnalogPinChanged;
 	
-	/// \brief triggered when a SysEx message that isn't in the extended
+	/// \brief Triggered when a SysEx message that isn't in the extended
 	/// command set is received, the SysEx message is passed as an argument
 	ofEvent<const vector<unsigned char> > ESysExReceived;
 	
 	/// \brief Triggered when a protocol version is received, the major version
-	/// is passed as an argument
+	/// is passed as an argument.
 	ofEvent<const int> EProtocolVersionReceived;
 	
 	/// \brief Triggered when a firmware version is received, the major version
-	/// is passed as an argument
+	/// is passed as an argument.
 	ofEvent<const int> EFirmwareVersionReceived;
 	
 	/// \brief Triggered when the firmware version is received upon connect,
@@ -394,17 +399,16 @@ public:
 	/// \note sendServoDetach DEPRECATED as of Firmata 2.2
 	void sendServoDetach(int pin);
 	
-	/// \brief Returns the last set servo value for a pin if the pin has a
-	/// servo attached
-	int getServo(int pin);
+	/// \returns the last set servo value for a pin if the pin has a servo attached.
+	int getServo(int pin) const;
 	
 	/// \}
 	
 protected:
-	bool _initialized;  // indicate that pins are initialized
+	mutable bool _initialized;  ///\< \brief Indicate that pins are initialized.
 	
-	void initPins();
-	int _totalDigitalPins;  // indicate the total number of digital pins of the board in use
+	void initPins() const;
+	mutable int _totalDigitalPins;  ///\< \brief Indicate the total number of digital pins of the board in use.
 	
 	void sendDigitalPinReporting(int pin, int mode);
 	// sets pin reporting to ARD_ON or ARD_OFF
@@ -453,37 +457,37 @@ protected:
 	list<string> _stringHistory;
 	// maintains a history of received strings
 	
-	list<int> _analogHistory[ARD_TOTAL_ANALOG_PINS];
+	mutable list<int> _analogHistory[ARD_TOTAL_ANALOG_PINS];
 	// a history of received data for each analog pin
 	
-	list<int> _digitalHistory[ARD_TOTAL_DIGITAL_PINS];
+	mutable list<int> _digitalHistory[ARD_TOTAL_DIGITAL_PINS];
 	// a history of received data for each digital pin
 	
-	int _digitalPinMode[ARD_TOTAL_DIGITAL_PINS];
+	mutable int _digitalPinMode[ARD_TOTAL_DIGITAL_PINS];
 	// the modes for all digital pins
 	
-	int _digitalPinValue[ARD_TOTAL_DIGITAL_PINS];
+	mutable int _digitalPinValue[ARD_TOTAL_DIGITAL_PINS];
 	// the last set values (DIGITAL/PWM) on all digital pins
 	
-	int _digitalPortValue[ARD_TOTAL_PORTS];
+	mutable int _digitalPortValue[ARD_TOTAL_PORTS];
 	// the last set values on all ports
 	
-	int _digitalPortReporting[ARD_TOTAL_PORTS];
+	mutable int _digitalPortReporting[ARD_TOTAL_PORTS];
 	// whether pin reporting is enabled / disabled
 	
-	int _digitalPinReporting[ARD_TOTAL_DIGITAL_PINS];
+	mutable int _digitalPinReporting[ARD_TOTAL_DIGITAL_PINS];
 	// whether pin reporting is enabled / disabled
 	
-	int _analogPinReporting[ARD_TOTAL_ANALOG_PINS];
+	mutable int _analogPinReporting[ARD_TOTAL_ANALOG_PINS];
 	// whether pin reporting is enabled / disabled
 	
 	bool bUseDelay;
 	
-	bool connected;  ///< \brief This yields true if a serial connection to Arduino exists.
+	mutable bool connected;  ///< \brief This yields true if a serial connection to Arduino exists.
 	
 	float connectTime;  ///< \brief This represents the (running) time of establishing a serial connection.
 	
-	int _servoValue[ARD_TOTAL_DIGITAL_PINS];
+	mutable int _servoValue[ARD_TOTAL_DIGITAL_PINS];
 	// the last set servo values
 	
 };

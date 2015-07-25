@@ -51,7 +51,7 @@ static ofAppGlutWindow * instance;
 //------------------------------------------------
 
 static WNDPROC currentWndProc;
-static HWND handle  = NULL;
+static HWND handle  = nullptr;
 
 // This function takes in a wParam from the WM_DROPFILES message and
 // prints all the files to a message box.
@@ -105,9 +105,9 @@ void HandleFiles(WPARAM wParam)
 
     HDROP hdrop = (HDROP)(wParam);
 	int index, length;
-	count = DragQueryFile(hdrop, 0xFFFFFFFF, NULL, 0);
+	count = DragQueryFile(hdrop, 0xFFFFFFFF, nullptr, 0);
 	for (index=0; index<count; ++index) {
-	  length = DragQueryFile(hdrop, index, NULL, 0);
+	  length = DragQueryFile(hdrop, index, nullptr, 0);
 	  if (length > 0) {
 	    TCHAR* lpstr = new TCHAR[length+1];
 	    DragQueryFile(hdrop, index, lpstr, length+1);

@@ -492,7 +492,7 @@ ofPolyline ofPolyline::getResampledByCount(int count) const {
 static ofPoint getClosestPointUtil(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* normalizedPosition) {
 	// if p1 is coincident with p2, there is no line
 	if(p1 == p2) {
-		if(normalizedPosition != NULL) {
+		if(normalizedPosition != nullptr) {
 			*normalizedPosition = 0;
 		}
 		return p1;
@@ -510,7 +510,7 @@ static ofPoint getClosestPointUtil(const ofPoint& p1, const ofPoint& p2, const o
 	} else if(u < 0) {
 		u = 0;
 	}
-	if(normalizedPosition != NULL) {
+	if(normalizedPosition != nullptr) {
 		*normalizedPosition = u;
 	}
 	return p1.getInterpolated(p2, u);
@@ -523,7 +523,7 @@ ofPoint ofPolyline::getClosestPoint(const ofPoint& target, unsigned int* nearest
 	const ofPolyline & polyline = *this;
     
 	if(polyline.size() < 2) {
-		if(nearestIndex != NULL) {
+		if(nearestIndex != nullptr) {
 			nearestIndex = 0;
 		}
 		return target;
@@ -554,7 +554,7 @@ ofPoint ofPolyline::getClosestPoint(const ofPoint& target, unsigned int* nearest
 		}
 	}
 	
-	if(nearestIndex != NULL) {
+	if(nearestIndex != nullptr) {
 		if(normalizedPosition > .5) {
 			nearest++;
 			if(nearest == polyline.size()) {

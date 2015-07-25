@@ -33,6 +33,16 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 }
 
 void ofGLRenderer::setup(){
+#ifdef TARGET_OPENGLES
+	// OpenGL ES might have set a default frame buffer for
+	// MSAA rendering to the window, bypassing ofFbo, so we
+	// can't trust ofFbo to have correctly tracked the bind
+	// state. Therefore, we are forced to use the slower glGet() method
+	// to be sure to get the correct default framebuffer.
+	GLint currentFrameBuffer;
+	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
+	defaultFramebufferId = currentFrameBuffer;
+#endif
 	setupGraphicDefaults();
 	viewport();
 	setupScreenPerspective();
@@ -40,6 +50,7 @@ void ofGLRenderer::setup(){
 
 void ofGLRenderer::startRender(){
 	currentFramebufferId = defaultFramebufferId;
+	framebufferIdStack.push_back(defaultFramebufferId);
     matrixStack.setRenderSurface(*window);
 	viewport();
     // to do non auto clear on PC for now - we do something like "single" buffering --
@@ -58,6 +69,7 @@ void ofGLRenderer::startRender(){
 
 void ofGLRenderer::finishRender(){
 	matrixStack.clearStacks();
+	framebufferIdStack.clear();
 }
 
 //----------------------------------------------------------
@@ -355,9 +367,9 @@ void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt) con
 	if(vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
-        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, nullptr);
 #else
-        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, nullptr);
 #endif
 		vbo.unbind();
 	}
@@ -389,9 +401,9 @@ void ofGLRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int
         // unfortunately there is currently no easy way within oF to query the current OpenGL version.
         // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
         ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
+        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
 #else
-        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
+        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, nullptr, primCount);
 #endif
 		vbo.unbind();
 	}
@@ -459,29 +471,53 @@ void ofGLRenderer::end(const ofFbo & fbo){
 
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofFbo & fbo){
-	GLint currentFramebufferBinding = currentFramebufferId;
-#ifdef TARGET_OPENGLES
-	// OpenGL ES might have set a default frame buffer for
-	// MSAA rendering to the window, bypassing ofFbo, so we
-	// can't trust ofFbo to have correctly tracked the bind
-	// state. Therefore, we are forced to use the slower glGet() method
-	// to be sure to get the correct default framebuffer.
-	glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFramebufferBinding);
-#endif
-	fbo.setPreviousFramebufferBinding(currentFramebufferBinding);
-	fbo.bind();
-	currentFramebufferId = fbo.getFbo();
+	if (currentFramebufferId == fbo.getId()){
+		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
+			"Most probably you forgot to end() the current framebuffer before calling begin() again.";
+		return;
+	}
+	// this method could just as well have been placed in ofBaseGLRenderer
+	// and shared over both programmable and fixed function renderer.
+	// I'm keeping it here, so that if we want to do more fancyful
+	// named framebuffers with GL 4.5+, we can have
+	// different implementations.
+	framebufferIdStack.push_back(currentFramebufferId);
+	currentFramebufferId = fbo.getId();
+	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 }
+
+#ifndef TARGET_OPENGLES
+//----------------------------------------------------------
+void ofGLRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint){
+	if (currentFramebufferId == fboSrc.getId()){
+		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
+			"Most probably you forgot to end() the current framebuffer before calling getTexture().";
+		return;
+	}
+	// this method could just as well have been placed in ofBaseGLRenderer
+	// and shared over both programmable and fixed function renderer.
+	// I'm keeping it here, so that if we want to do more fancyful
+	// named framebuffers with GL 4.5+, we can have
+	// different implementations.
+	framebufferIdStack.push_back(currentFramebufferId);
+	currentFramebufferId = fboSrc.getId();
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebufferId);
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst.getIdDrawBuffer());
+	glDrawBuffer(GL_COLOR_ATTACHMENT0 + attachmentPoint);
+}
+#endif
 
 //----------------------------------------------------------
 void ofGLRenderer::unbind(const ofFbo & fbo){
-	// fbo.unbind() will restore GL_FRAMEBUFFER target to
-	// fbo.previousFramebufferBinding
-	fbo.unbind();
-	// so we have to update currentFramebuffer accordingly.
-	currentFramebufferId = fbo.getPreviousFramebufferBinding();
-	// Now check if any MSAA render targets exist, and flag
-	// these dirty if need be.
+	if(framebufferIdStack.empty()){
+		ofLogError() << "unbalanced fbo bind/unbind binding default framebuffer";
+		currentFramebufferId = defaultFramebufferId;
+	}else{
+		currentFramebufferId = framebufferIdStack.back();
+		framebufferIdStack.pop_back();
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, currentFramebufferId);
 	fbo.flagDirty();
 }
 

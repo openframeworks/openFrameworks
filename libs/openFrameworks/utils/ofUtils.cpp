@@ -81,7 +81,7 @@ void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
 	nanoseconds = (counter.QuadPart % freq.QuadPart)*1000000000/freq.QuadPart;
 #else
 	struct timeval now;
-	gettimeofday( &now, NULL );
+	gettimeofday( &now, nullptr );
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_usec * 1000;
 #endif
@@ -138,7 +138,7 @@ uint64_t ofGetSystemTimeMicros( ) {
 
 //--------------------------------------------------
 unsigned int ofGetUnixTime(){
-	return (unsigned int)time(NULL);
+	return (unsigned int)time(nullptr);
 }
 
 
@@ -383,8 +383,8 @@ template <>
 string ofToHex(const string& value) {
 	ostringstream out;
 	// how many bytes are in the string
-	int numBytes = value.size();
-	for(int i = 0; i < numBytes; i++) {
+	std::size_t numBytes = value.size();
+	for(std::size_t i = 0; i < numBytes; i++) {
 		// print each byte as a 2-character wide hex value
 		out << setfill('0') << setw(2) << hex << (unsigned int) ((unsigned char)value[i]);
 	}
@@ -439,8 +439,8 @@ string ofHexToString(const string& stringHexString) {
 	stringstream out;
 	stringstream stream(stringHexString);
 	// a hex string has two characters per byte
-	int numBytes = stringHexString.size() / 2;
-	for(int i = 0; i < numBytes; i++) {
+	std::size_t numBytes = stringHexString.size() / 2;
+	for(std::size_t i = 0; i < numBytes; i++) {
 		string curByte;
 		// grab two characters from the hex string
 		stream >> setw(2) >> curByte;
@@ -505,8 +505,8 @@ char ofToChar(const string& charString) {
 //----------------------------------------
 template <> string ofToBinary(const string& value) {
 	stringstream out;
-	int numBytes = value.size();
-	for(int i = 0; i < numBytes; i++) {
+	std::size_t numBytes = value.size();
+	for(std::size_t i = 0; i < numBytes; i++) {
 		bitset<8> bitBuffer(value[i]);
 		out << bitBuffer;
 	}
@@ -550,8 +550,8 @@ string ofBinaryToString(const string& value) {
 	ostringstream out;
 	stringstream stream(value);
 	bitset<8> byteString;
-	int numBytes = value.size() / 8;
-	for(int i = 0; i < numBytes; i++) {
+	std::size_t numBytes = value.size() / 8;
+	for(std::size_t i = 0; i < numBytes; i++) {
 		stream >> byteString;
 		out << (char) byteString.to_ulong();
 	}
@@ -616,7 +616,7 @@ bool ofIsStringInString(const string& haystack, const string& needle){
 }
 
 //--------------------------------------------------
-int ofStringTimesInString(const string& haystack, const string& needle){
+std::size_t ofStringTimesInString(const string& haystack, const string& needle){
 	const size_t step = needle.size();
 
 	size_t count(0);
@@ -752,14 +752,14 @@ string ofVAArgsToString(const char * format, ...){
 	// http://www.codeproject.com/KB/string/string_format.aspx
 	char aux_buffer[10000];
 	string retStr("");
-	if (NULL != format){
+	if (nullptr != format){
 
 		va_list marker;
 
 		// initialize variable arguments
 		va_start(marker, format);
 
-		// Get formatted string length adding one for NULL
+		// Get formatted string length adding one for nullptr
 		size_t len = vsprintf(aux_buffer, format, marker) + 1;
 
 		// Reset variable arguments
@@ -788,9 +788,9 @@ string ofVAArgsToString(const char * format, va_list args){
 	// http://www.codeproject.com/KB/string/string_format.aspx
 	char aux_buffer[10000];
 	string retStr("");
-	if (NULL != format){
+	if (nullptr != format){
 
-		// Get formatted string length adding one for NULL
+		// Get formatted string length adding one for nullptr
 		vsprintf(aux_buffer, format, args);
 		retStr = aux_buffer;
 
@@ -825,11 +825,11 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#ifdef TARGET_WIN32
 		#if (_MSC_VER)
 		// microsoft visual studio yaks about strings, wide chars, unicode, etc
-		ShellExecuteA(NULL, "open", uri.toString().c_str(),
-                NULL, NULL, SW_SHOWNORMAL);
+		ShellExecuteA(nullptr, "open", uri.toString().c_str(),
+                nullptr, nullptr, SW_SHOWNORMAL);
 		#else
-		ShellExecute(NULL, "open", uri.toString().c_str(),
-                NULL, NULL, SW_SHOWNORMAL);
+		ShellExecute(nullptr, "open", uri.toString().c_str(),
+                nullptr, nullptr, SW_SHOWNORMAL);
 		#endif
 	#endif
 
@@ -933,7 +933,7 @@ void ofSaveFrame(bool bUseViewport){
 
 //--------------------------------------------------
 string ofSystem(const string& command){
-	FILE * ret = NULL;
+	FILE * ret = nullptr;
 #ifdef TARGET_WIN32
 	ret = _popen(command.c_str(),"r");
 #else 
@@ -943,7 +943,7 @@ string ofSystem(const string& command){
 	string strret;
 	int c;
 
-	if (ret == NULL){
+	if (ret == nullptr){
 		ofLogError("ofUtils") << "ofSystem(): error opening return file for command \"" << command  << "\"";
 	}else{
 		c = fgetc (ret);

@@ -133,8 +133,8 @@ ofOpenALSoundPlayer::~ofOpenALSoundPlayer(){
 // this should only be called once
 void ofOpenALSoundPlayer::initialize(){
 	if(!alDevice){
-		alDevice = alcOpenDevice(NULL);
-		alContext = alcCreateContext(alDevice,NULL);
+		alDevice = alcOpenDevice(nullptr);
+		alContext = alcCreateContext(alDevice,nullptr);
 		alcMakeContextCurrent (alContext);
 		alListener3f(AL_POSITION, 0,0,0);
 #ifdef OF_USING_MPG123
@@ -161,7 +161,7 @@ void ofOpenALSoundPlayer::createWindow(int size){
 void ofOpenALSoundPlayer::close(){
 	if(alDevice){
 		alcCloseDevice(alDevice);
-		alDevice = NULL;
+		alDevice = nullptr;
 		alcDestroyContext(alContext);
 		alContext = 0;
 #ifdef OF_USING_MPG123
@@ -227,7 +227,7 @@ bool ofOpenALSoundPlayer::sfReadFile(string path, vector<short> & buffer, vector
 //------------------------------------------------------------
 bool ofOpenALSoundPlayer::mpg123ReadFile(string path,vector<short> & buffer,vector<float> & fftAuxBuffer){
 	int err = MPG123_OK;
-	mpg123_handle * f = mpg123_new(NULL,&err);
+	mpg123_handle * f = mpg123_new(nullptr,&err);
 	if(mpg123_open(f,path.c_str())!=MPG123_OK){
 		ofLogError("ofOpenALSoundPlayer") << "mpg123ReadFile(): couldn't read \"" << path << "\"";
 		return false;
@@ -329,7 +329,7 @@ bool ofOpenALSoundPlayer::sfStream(string path,vector<short> & buffer,vector<flo
 bool ofOpenALSoundPlayer::mpg123Stream(string path,vector<short> & buffer,vector<float> & fftAuxBuffer){
 	if(!mp3streamf){
 		int err = MPG123_OK;
-		mp3streamf = mpg123_new(NULL,&err);
+		mp3streamf = mpg123_new(nullptr,&err);
 		if(mpg123_open(mp3streamf,path.c_str())!=MPG123_OK){
 			mpg123_close(mp3streamf);
 			mpg123_delete(mp3streamf);
@@ -912,7 +912,7 @@ void ofOpenALSoundPlayer::initFFT(int bands){
 	if(int(bins.size())==bands) return;
 	int signalSize = (bands-1)*2;
 	if(fftCfg!=0) kiss_fftr_free(fftCfg);
-	fftCfg = kiss_fftr_alloc(signalSize, 0, NULL, NULL);
+	fftCfg = kiss_fftr_alloc(signalSize, 0, nullptr, nullptr);
 	cx_out.resize(bands);
 	bins.resize(bands);
 	createWindow(signalSize);
@@ -923,7 +923,7 @@ void ofOpenALSoundPlayer::initSystemFFT(int bands){
 	if(int(systemBins.size())==bands) return;
 	int signalSize = (bands-1)*2;
 	if(systemFftCfg!=0) kiss_fftr_free(systemFftCfg);
-	systemFftCfg = kiss_fftr_alloc(signalSize, 0, NULL, NULL);
+	systemFftCfg = kiss_fftr_alloc(signalSize, 0, nullptr, nullptr);
 	systemCx_out.resize(bands);
 	systemBins.resize(bands);
 	createWindow(signalSize);

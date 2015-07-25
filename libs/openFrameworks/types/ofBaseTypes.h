@@ -411,8 +411,8 @@ class ofBaseVideoGrabber: virtual public ofBaseVideo{
 	/// \note Subclasses should implement this method only if internal API can
 	/// upload video grabber pixels directly to an ofTexture.
 	///
-	/// \returns the internal ofTexture pointer or NULL if not available.
-	virtual ofTexture * getTexturePtr(){ return NULL; }
+	/// \returns the internal ofTexture pointer or nullptr if not available.
+	virtual ofTexture * getTexturePtr(){ return nullptr; }
 
 	/// \brief Set the video grabber's hardware verbosity level.
 	/// \param bTalkToMe true if verbose grabber logging feedback is required.
@@ -454,7 +454,7 @@ public:
 	
 	virtual void				play() = 0;
 	virtual void				stop() = 0;
-	virtual ofTexture *			getTexturePtr(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
+	virtual ofTexture *			getTexturePtr(){return nullptr;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
 
 	virtual float 				getWidth() const = 0;
 	virtual float 				getHeight() const = 0;
@@ -841,10 +841,11 @@ public:
 	virtual void unbind(const ofShader & shader)=0;
 	virtual void unbind(const ofTexture & texture, int location)=0;
 	virtual void unbind(const ofBaseVideoDraws & video)=0;
-
-	virtual const GLuint& getCurrentFramebufferId() const=0; ///< return id of ofFbo currently bound to renderer
 	virtual void bind(const ofFbo & fbo)=0;
 	virtual void unbind(const ofFbo & fbo)=0;
+#ifndef TARGET_OPENGLES
+	virtual void bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint=0)=0;
+#endif
 	virtual void begin(const ofFbo & fbo, bool setupPerspective)=0;
 	virtual void end(const ofFbo & fbo)=0;
 

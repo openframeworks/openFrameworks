@@ -254,7 +254,7 @@ int32_t ofxOscMessage::getArgAsMidiMessage(int index) const
 bool ofxOscMessage::getArgAsBool(int index) const
 {
 	ofxOscArgType incomingArgType = getArgType( index );
-	if(incomingArgType == OFXOSC_TYPE_TRUE or incomingArgType == OFXOSC_TYPE_FALSE)
+	if(incomingArgType == OFXOSC_TYPE_TRUE || incomingArgType == OFXOSC_TYPE_FALSE)
 	{
 		return ((ofxOscArgBool*)args[index])->get();
 	}
@@ -274,7 +274,7 @@ bool ofxOscMessage::getArgAsBool(int index) const
 	{
 		return ((ofxOscArgDouble*)args[index])->get() > 0;
 	}
-	else if(incomingArgType == OFXOSC_TYPE_STRING or incomingArgType == OFXOSC_TYPE_SYMBOL)
+	else if(incomingArgType == OFXOSC_TYPE_STRING || incomingArgType == OFXOSC_TYPE_SYMBOL)
 	{
 		return ((ofxOscArgString*)args[index])->get() == "true";
 	}
@@ -443,7 +443,7 @@ ofxOscMessage& ofxOscMessage::copy( const ofxOscMessage& other )
 	for ( int i=0; i<(int)other.args.size(); ++i )
 	{
 		ofxOscArgType argType = other.getArgType( i );
-		if ( argType == OFXOSC_TYPE_TRUE or argType == OFXOSC_TYPE_FALSE )
+		if ( argType == OFXOSC_TYPE_TRUE || argType == OFXOSC_TYPE_FALSE )
 			args.push_back( new ofxOscArgBool( other.getArgAsBool( i ) ) );
 		else if ( argType == OFXOSC_TYPE_INT32 )
 			args.push_back( new ofxOscArgInt32( other.getArgAsInt32( i ) ) );
