@@ -151,6 +151,10 @@ string ofParameterGroup::getType(int position) const{
 	else return obj->parameters[position]->type();
 }
 
+bool ofParameterGroup::getIsReadOnly(int position) const{
+	if(position>=size()) return true;
+	else return obj->parameters[position]->isReadOnly();
+}
 
 int ofParameterGroup::getPosition(const string& name) const{
 	if(obj->parametersIndex.find(escape(name))!=obj->parametersIndex.end())
@@ -267,6 +271,10 @@ void ofParameterGroup::setSerializable(bool _serializable){
 
 bool ofParameterGroup::isSerializable() const{
 	return obj->serializable;
+}
+
+bool ofParameterGroup::isReadOnly() const{
+	return false;
 }
 
 shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{

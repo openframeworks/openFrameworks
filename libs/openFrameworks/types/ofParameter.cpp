@@ -43,6 +43,15 @@ vector<string> ofAbstractParameter::getGroupHierarchyNames() const{
 	return hierarchy;
 }
 
+
+ofParameterGroup & ofAbstractParameter::castGroup(){
+	return static_cast<ofParameterGroup& >(*this);
+}
+
+const ofParameterGroup & ofAbstractParameter::castGroup() const{
+	return static_cast<const ofParameterGroup&>(*this);
+}
+
 ostream& operator<<(ostream& os, const ofAbstractParameter& p){
 	os << p.toString();
 	return os;
