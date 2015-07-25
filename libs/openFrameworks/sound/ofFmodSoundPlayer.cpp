@@ -155,7 +155,7 @@ void ofFmodSoundPlayer::initializeFmod(){
 		#ifdef TARGET_LINUX
 			FMOD_System_SetOutput(sys,FMOD_OUTPUTTYPE_ALSA);
 		#endif
-		FMOD_System_Init(sys, 32, FMOD_INIT_NORMAL, NULL);  //do we want just 32 channels?
+		FMOD_System_Init(sys, 32, FMOD_INIT_NORMAL, nullptr);  //do we want just 32 channels?
 		FMOD_System_GetMasterChannelGroup(sys, &channelgroup);
 		bFmodInitialized_ = true;
 	}
@@ -200,7 +200,7 @@ bool ofFmodSoundPlayer::load(string fileName, bool stream){
 	int fmodFlags =  FMOD_SOFTWARE;
 	if(stream)fmodFlags =  FMOD_SOFTWARE | FMOD_CREATESTREAM;
 
-	result = FMOD_System_CreateSound(sys, fileName.c_str(),  fmodFlags, NULL, &sound);
+	result = FMOD_System_CreateSound(sys, fileName.c_str(),  fmodFlags, nullptr, &sound);
 
 	if (result != FMOD_OK){
 		bLoadedOk = false;

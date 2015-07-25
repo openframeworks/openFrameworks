@@ -32,8 +32,8 @@ ofMainLoop::ofMainLoop()
 :bShouldClose(false)
 ,status(0)
 ,allowMultiWindow(true)
-,windowLoop(NULL)
-,pollEvents(NULL)
+,windowLoop(nullptr)
+,pollEvents(nullptr)
 ,escapeQuits(true){
 
 }
@@ -152,10 +152,10 @@ void ofMainLoop::exit(){
 		shared_ptr<ofAppBaseWindow> window = i.first;
 		shared_ptr<ofBaseApp> app = i.second;
 		
-		if(window == NULL) {
+		if(window == nullptr) {
 			continue;
 		}
-		if(app == NULL) {
+		if(app == nullptr) {
 			continue;
 		}
 		

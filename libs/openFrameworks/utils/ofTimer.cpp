@@ -7,7 +7,7 @@ void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds);
 ofTimer::ofTimer()
 :nanosPerPeriod(0)
 #ifdef TARGET_WIN32
-,hTimer(CreateWaitableTimer(NULL, TRUE, NULL))
+,hTimer(CreateWaitableTimer(nullptr, TRUE, nullptr))
 #endif
 {
 
@@ -65,7 +65,7 @@ void ofTimer::calculateNextPeriod(){
 	if(nextWakeTime.QuadPart<now.QuadPart){
 	    reset();
 	}else{
-	    SetWaitableTimer(hTimer, &nextWakeTime, 0, NULL, NULL, 0);
+	    SetWaitableTimer(hTimer, &nextWakeTime, 0, nullptr, nullptr, 0);
 	}
 #else
     nextWakeTime.tv_nsec += nanosPerPeriod;
