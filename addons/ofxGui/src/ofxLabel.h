@@ -14,8 +14,8 @@ public:
     ofxLabel(ofParameter<std::string> _label, float width, float height = defaultHeight);
     virtual ~ofxLabel();
 
-    ofxLabel * setup(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);
-    ofxLabel * setup(const std::string& labelName, std::string label, float width = defaultWidth, float height = defaultHeight);
+    ofxLabel & setup(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);
+    ofxLabel & setup(const std::string& labelName, std::string label, float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!
     virtual bool mouseMoved(ofMouseEventArgs & args){return false;}

@@ -61,12 +61,12 @@ ofxGuiGroup::~ofxGuiGroup(){
 	}
 }
 
-ofxGuiGroup * ofxGuiGroup::setup(const std::string& collectionName, const std::string& filename, float x, float y){
+ofxGuiGroup & ofxGuiGroup::setup(const std::string& collectionName, const std::string& filename, float x, float y){
 	parameters.setName(collectionName);
 	return setup(parameters, filename, x, y);
 }
 
-ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y){
+ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y){
 	b.x = x;
 	b.y = y;
 	spacing = 1;
@@ -80,7 +80,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	registerMouseEvents();
 	setNeedsRedraw();
 
-	return this;
+	return *this;
 }
 
 
@@ -126,9 +126,17 @@ void ofxGuiGroup::addParametersFrom(const ofParameterGroup & _parameters){
 	}
 }
 
+void ofxGuiGroup::add(ofxBaseGui & element){
+	add(&element);
+}
+
+
+void ofxGuiGroup::add(ofxGuiGroup & element){
+	add(&element);
+}
+
 void ofxGuiGroup::add(ofxBaseGui * element){
 	collection.push_back(element);
-
 	element->setPosition(b.x, b.y + b.height  + spacing);
 	element->setSize(getWidth(), element->getHeight());
 	b.height += element->getHeight() + spacing;
@@ -140,11 +148,21 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	setNeedsRedraw();
 }
 
-
 void ofxGuiGroup::add(ofxGuiGroup * element){
 	element->spacingFirstElement = 3;
 	element->filename = filename;
 	add(static_cast<ofxBaseGui*>(element));
+
+}
+
+void ofxGuiGroup::addOwned(ofxBaseGui * element){
+	collectionOwned.emplace_back(element);
+	add(element);
+}
+
+void ofxGuiGroup::addOwned(ofxGuiGroup * element){
+	collectionOwned.emplace_back(element);
+	add(element);
 }
 
 void ofxGuiGroup::setWidthElements(float w){
@@ -157,47 +175,47 @@ void ofxGuiGroup::setWidthElements(float w){
 }
 
 void ofxGuiGroup::add(const ofParameterGroup & parameters){
-	add(new ofxGuiGroup(parameters));
+	addOwned(new ofxGuiGroup(parameters));
 }
 
 void ofxGuiGroup::add(ofParameter <float> & parameter){
-	add(new ofxFloatSlider(parameter, b.width));
+	addOwned(new ofxFloatSlider(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <int> & parameter){
-	add(new ofxIntSlider(parameter, b.width));
+	addOwned(new ofxIntSlider(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <bool> & parameter){
-	add(new ofxToggle(parameter, b.width));
+	addOwned(new ofxToggle(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <string> & parameter){
-	add(new ofxLabel(parameter, b.width));
+	addOwned(new ofxLabel(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
-	add(new ofxVecSlider_ <ofVec2f>(parameter, b.width));
+	addOwned(new ofxVecSlider_ <ofVec2f>(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec3f> & parameter){
-	add(new ofxVecSlider_ <ofVec3f>(parameter, b.width));
+	addOwned(new ofxVecSlider_ <ofVec3f>(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec4f> & parameter){
-	add(new ofxVecSlider_ <ofVec4f>(parameter, b.width));
+	addOwned(new ofxVecSlider_ <ofVec4f>(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <ofColor> & parameter){
-	add(new ofxColorSlider_ <unsigned char>(parameter, b.width));
+	addOwned(new ofxColorSlider_ <unsigned char>(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <ofShortColor> & parameter){
-	add(new ofxColorSlider_ <unsigned short>(parameter, b.width));
+	addOwned(new ofxColorSlider_ <unsigned short>(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
-	add(new ofxColorSlider_ <float>(parameter, b.width));
+	addOwned(new ofxColorSlider_ <float>(parameter, b.width));
 }
 
 void ofxGuiGroup::clear(){
@@ -454,7 +472,7 @@ ofAbstractParameter & ofxGuiGroup::getParameter(){
 	return parameters;
 }
 
-void ofxGuiGroup::setPosition(const ofPoint& p){
+void ofxGuiGroup::setPosition(ofPoint p){
 	ofVec2f diff = p - b.getPosition();
 
 	for(std::size_t i = 0; i < collection.size(); i++){
@@ -482,5 +500,4 @@ void ofxGuiGroup::setShape(ofRectangle r){
 void ofxGuiGroup::setShape(float x, float y, float w, float h){
 	ofxBaseGui::setShape(x,y,w,h);
 	setWidthElements(w * .98);
-
 }

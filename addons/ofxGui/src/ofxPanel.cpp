@@ -30,20 +30,20 @@ ofxPanel::~ofxPanel(){
 	//
 }
 
-ofxPanel * ofxPanel::setup(const std::string& collectionName, const std::string& filename, float x, float y){
+ofxPanel & ofxPanel::setup(const std::string& collectionName, const std::string& filename, float x, float y){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
 	registerMouseEvents();
-	return (ofxPanel*)ofxGuiGroup::setup(collectionName,filename,x,y);
+	return (ofxPanel&)ofxGuiGroup::setup(collectionName,filename,x,y);
 }
 
-ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
+ofxPanel & ofxPanel::setup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
 	registerMouseEvents();
-	return (ofxPanel*)ofxGuiGroup::setup(parameters,filename,x,y);
+	return (ofxPanel&)ofxGuiGroup::setup(parameters,filename,x,y);
 }
 
 void ofxPanel::loadIcons(){

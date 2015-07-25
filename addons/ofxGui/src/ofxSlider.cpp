@@ -33,7 +33,7 @@ ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, float width, float height){
 }
 
 template<typename Type>
-ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, float height){
+ofxSlider<Type> & ofxSlider<Type>::setup(ofParameter<Type> _val, float width, float height){
 	bUpdateOnReleaseOnly = false;
 	value.makeReferenceTo(_val);
 	b.x = 0;
@@ -45,11 +45,11 @@ ofxSlider<Type>* ofxSlider<Type>::setup(ofParameter<Type> _val, float width, flo
 
 	value.addListener(this,&ofxSlider::valueChanged);
 	registerMouseEvents();
-	return this;
+	return *this;
 }
 
 template<typename Type>
-ofxSlider<Type>* ofxSlider<Type>::setup(const std::string& sliderName, Type _val, Type _min, Type _max, float width, float height){
+ofxSlider<Type> & ofxSlider<Type>::setup(const std::string& sliderName, Type _val, Type _min, Type _max, float width, float height){
 	value.set(sliderName,_val,_min,_max);
 	return setup(value,width,height);
 }

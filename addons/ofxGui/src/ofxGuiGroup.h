@@ -23,11 +23,11 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename, float x = 10, float y = 10);
 		virtual ~ofxGuiGroup();
 
-		virtual ofxGuiGroup * setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
-		virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
+		virtual ofxGuiGroup & setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
+		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
 
-		void add(ofxBaseGui * element);
-		void add(ofxGuiGroup * element);
+		void add(ofxBaseGui & element);
+		void add(ofxGuiGroup & element);
 		void add(const ofParameterGroup & parameters);
 		void add(ofParameter <float> & parameter);
 		void add(ofParameter <int> & parameter);
@@ -80,7 +80,7 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		virtual ofAbstractParameter & getParameter();
 
-		virtual void setPosition(const ofPoint& p);
+		virtual void setPosition(ofPoint p);
 		virtual void setPosition(float x, float y);
 		virtual void setSize(float w, float h);
 		virtual void setShape(ofRectangle r);
@@ -108,6 +108,12 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		ofPath border, headerBg;
 		ofVboMesh textMesh;
+	private:
+		std::vector <std::unique_ptr<ofxBaseGui>> collectionOwned;
+		void add(ofxBaseGui * element);
+		void add(ofxGuiGroup * element);
+		void addOwned(ofxBaseGui * element);
+		void addOwned(ofxGuiGroup * element);
 };
 
 template <class ControlType>
