@@ -90,7 +90,9 @@ CORE
 	/ gstreamer: faster reload by default and optional asynchronous load
 	/ ofVideoPlayer::loadMovie() -> load()
 	/ ofVideoGrabber::initGrabber() -> setup()
-
+### types
+	+ ofRectangle: added `setSize` method.
+	+ ofRectangle: added `operator -` method.
 
 PLATFORM SPECIFIC
 -----------------

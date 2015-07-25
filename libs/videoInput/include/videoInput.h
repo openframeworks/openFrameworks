@@ -37,7 +37,7 @@ Thanks to:
 */
 /////////////////////////////////////////////////////////
 
-
+#pragma comment(lib,"Strmiids.lib") 
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -49,7 +49,7 @@ Thanks to:
 
 //this is for TryEnterCriticalSection
 #ifndef _WIN32_WINNT
-	#   define _WIN32_WINNT 0x400
+	#   define _WIN32_WINNT 0x501
 #endif
 #include <windows.h>
 

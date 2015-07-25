@@ -14,7 +14,7 @@ public:
 
 	void allocate(int width, int height, int internalformat = GL_RGBA, int numSamples = 0);
 	//void allocateForShadow( int width, int height );
-	void allocate(Settings settings = Settings());
+	void allocate(Settings settings = Settings(nullptr));
 	bool isAllocated() const;
 
 	OF_DEPRECATED_MSG("Use clear instead",void destroy());
@@ -84,14 +84,6 @@ public:
 	/// \sa       void setPreviousFramebufferBinding(const GLuint& previousFramebufferBinding_) const
 	void unbind() const;
 
-	/// \brief    Set framebuffer id to restore to upon unbind()
-	/// \sa       void unbind() const
-	void setPreviousFramebufferBinding(const GLuint& previousFramebufferBinding_) const;
-
-	/// \brief    Returns the id of the framebuffer that was bound before this one
-	/// \default  GL_NONE (no previous framebuffer bound)
-	const GLuint& getPreviousFramebufferBinding() const;
-
 	void flagDirty() const; ///< check whether attached MSAA buffers need updating
 
 	/// \brief    Explicityl resolve MSAA render buffers into textures 
@@ -115,7 +107,14 @@ public:
 	void setActiveDrawBuffers(const vector<int>& i);
 	void activateAllDrawBuffers();
 
-	GLuint getFbo() const;	// returns GLuint of Fbo for advanced actions
+	OF_DEPRECATED_MSG("Use getId()", GLuint getFbo() const);
+
+	/// returns id of the underlying GL object for advanced actions
+	GLuint getId() const;
+
+	/// returns id of Fbo for texture attachments
+	/// which is different when the fbo is using MSAA
+	GLuint getIdDrawBuffer() const;
 
 	static bool	checkGLSupport();
 	static int maxColorAttachments();	// return max color attachments
@@ -141,9 +140,11 @@ public:
 		int		minFilter;				// GL_NEAREST, GL_LINEAR etc.
 		int		maxFilter;				// GL_NEAREST, GL_LINEAR etc.
 		int		numSamples;				// number of samples for multisampling (set 0 to disable)
-
-		Settings();
+		Settings(std::shared_ptr<ofBaseGLRenderer> renderer=nullptr);
 		bool operator!=(const Settings & other);
+	private:
+		std::weak_ptr<ofBaseGLRenderer> renderer;
+		friend class ofFbo;
 	};
 private:
 	Settings 			settings;
@@ -176,8 +177,6 @@ private:
 
 	int 				defaultTextureIndex; //used for getTextureReference
 	bool				bIsAllocated;
-
-	mutable GLuint		previousFramebufferBinding;
 	void reloadFbo();
 #ifdef TARGET_OPENGLES
 	static bool bglFunctionsInitialized;

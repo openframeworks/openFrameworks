@@ -133,7 +133,7 @@ public:
         if(tokens.size() > 1)
         {
             // don't 'push' down into the new nodes
-            Poco::XML::Element* firstElement=NULL, *lastElement=NULL;
+            Poco::XML::Element* firstElement=nullptr, *lastElement=nullptr;
             if(element) {
                 lastElement = element;
             }

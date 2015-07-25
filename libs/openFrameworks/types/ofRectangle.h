@@ -151,6 +151,11 @@ public:
     /// \param p The position as an ofPoint.
     void setPosition(const ofPoint& p);
 
+	/// \brief Set the size of the rectangle.
+	/// \param w The new width.
+	/// \param h The new height.
+	void setSize(float w, float h);
+
     /// \brief Set position and size of the rectangle from the center.
     ///
     /// The center of the rectangle is defined and the width and height grow
@@ -1023,6 +1028,12 @@ public:
     /// \param p The point to translate.
     /// \returns The translated ofRectangle.
     ofRectangle operator + (const ofPoint& p);
+
+	/// \brief Returns a new ofRectangle where the x and y-positions of the
+	/// rectangle are offset by the (x, y) coordinates of the ofPoint.
+	/// \param p The point to translate.
+	/// \returns The translated ofRectangle.
+	ofRectangle operator - (const ofPoint& p);
 
     /// \brief If both ofRectangles have the same x, y, width, and height,
     /// they are considered equal.

@@ -320,7 +320,7 @@ static const unsigned char* bmpChar_8x13_Map[] = {	bmpChar_8x13_000,bmpChar_8x13
 													bmpChar_8x13_192,bmpChar_8x13_193,bmpChar_8x13_194,bmpChar_8x13_195,bmpChar_8x13_196,bmpChar_8x13_197,bmpChar_8x13_198,bmpChar_8x13_199,bmpChar_8x13_200,bmpChar_8x13_201,bmpChar_8x13_202,bmpChar_8x13_203,bmpChar_8x13_204,bmpChar_8x13_205,bmpChar_8x13_206,bmpChar_8x13_207,
 													bmpChar_8x13_208,bmpChar_8x13_209,bmpChar_8x13_210,bmpChar_8x13_211,bmpChar_8x13_212,bmpChar_8x13_213,bmpChar_8x13_214,bmpChar_8x13_215,bmpChar_8x13_216,bmpChar_8x13_217,bmpChar_8x13_218,bmpChar_8x13_219,bmpChar_8x13_220,bmpChar_8x13_221,bmpChar_8x13_222,bmpChar_8x13_223,
 													bmpChar_8x13_224,bmpChar_8x13_225,bmpChar_8x13_226,bmpChar_8x13_227,bmpChar_8x13_228,bmpChar_8x13_229,bmpChar_8x13_230,bmpChar_8x13_231,bmpChar_8x13_232,bmpChar_8x13_233,bmpChar_8x13_234,bmpChar_8x13_235,bmpChar_8x13_236,bmpChar_8x13_237,bmpChar_8x13_238,bmpChar_8x13_239,
-													bmpChar_8x13_240,bmpChar_8x13_241,bmpChar_8x13_242,bmpChar_8x13_243,bmpChar_8x13_244,bmpChar_8x13_245,bmpChar_8x13_246,bmpChar_8x13_247,bmpChar_8x13_248,bmpChar_8x13_249,bmpChar_8x13_250,bmpChar_8x13_251,bmpChar_8x13_252,bmpChar_8x13_253,bmpChar_8x13_254,bmpChar_8x13_255,NULL};
+													bmpChar_8x13_240,bmpChar_8x13_241,bmpChar_8x13_242,bmpChar_8x13_243,bmpChar_8x13_244,bmpChar_8x13_245,bmpChar_8x13_246,bmpChar_8x13_247,bmpChar_8x13_248,bmpChar_8x13_249,bmpChar_8x13_250,bmpChar_8x13_251,bmpChar_8x13_252,bmpChar_8x13_253,bmpChar_8x13_254,bmpChar_8x13_255,nullptr};
 
 
 
