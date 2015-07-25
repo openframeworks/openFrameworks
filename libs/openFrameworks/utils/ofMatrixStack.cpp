@@ -13,7 +13,7 @@ ofMatrixStack::ofMatrixStack(const ofAppBaseWindow * window)
 :vFlipped(true)
 ,orientation(OF_ORIENTATION_DEFAULT)
 ,handedness(OF_LEFT_HANDED)
-,currentFbo(NULL)
+,currentFbo(nullptr)
 ,currentWindow(const_cast<ofAppBaseWindow*>(window))
 ,currentMatrixMode(OF_MATRIX_MODELVIEW)
 ,currentMatrix(&modelViewMatrix)
@@ -28,7 +28,7 @@ void ofMatrixStack::setRenderSurface(const ofFbo & fbo){
 
 void ofMatrixStack::setRenderSurface(const ofAppBaseWindow & window){
 	currentWindow = const_cast<ofAppBaseWindow*>(&window);
-	currentFbo = NULL;
+	currentFbo = nullptr;
 	setOrientation(orientation,vFlipped);
 }
 

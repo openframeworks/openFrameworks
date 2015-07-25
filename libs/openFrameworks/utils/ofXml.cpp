@@ -564,7 +564,7 @@ bool ofXml::removeContents() {
 
 		Poco::XML::Node* swap;
 		Poco::XML::Node* n = element->firstChild();
-		while(n->nextSibling() != NULL)
+		while(n->nextSibling() != nullptr)
 		{
 			swap = n->nextSibling();
 			element->removeChild(n);
@@ -780,7 +780,7 @@ bool ofXml::loadFromBuffer( const string& buffer )
 {
     Poco::XML::DOMParser parser;
     
-    // release and null out if we already have a document
+    // release and nullptr out if we already have a document
     if(document) {
         document->release();
     }
@@ -839,7 +839,7 @@ bool ofXml::setTo(const string& path)
     {
         
         Poco::XML::Element* prev = element;
-        Poco::XML::Element* parent = NULL;
+        Poco::XML::Element* parent = nullptr;
         int count = 0;
         size_t offset;
         for (offset = path.find("../");
@@ -876,7 +876,7 @@ bool ofXml::setTo(const string& path)
         }
         else
         {
-            ofLogWarning("ofXml") << "setCurrentElement(): parent is null.";
+            ofLogWarning("ofXml") << "setCurrentElement(): parent is nullptr.";
             return false;
         }
     }  else if(path.find("//") != string::npos) {
@@ -926,7 +926,7 @@ Poco::XML::Element* ofXml::getPocoElement(const string& path)
         return (Poco::XML::Element*) element->getNodeByPath(copy);
     } else {
         ofLogWarning("ofXml") << "getPocoElement(): no element to get yet ";
-        return NULL;
+        return nullptr;
     }
 
 }
@@ -944,7 +944,7 @@ const Poco::XML::Element* ofXml::getPocoElement(const string& path) const
         return (Poco::XML::Element*) element->getNodeByPath(copy);
     } else {
         ofLogWarning("ofXml") << "getPocoElement(): no element to get yet ";
-        return NULL;
+        return nullptr;
     }
 
 }

@@ -112,7 +112,7 @@ void ofBuffer::allocate(std::size_t _size){
 //--------------------------------------------------
 char * ofBuffer::getData(){
 	if(buffer.empty()){
-		return NULL;
+		return nullptr;
 	}
 	return &buffer[0];
 }
@@ -120,7 +120,7 @@ char * ofBuffer::getData(){
 //--------------------------------------------------
 const char * ofBuffer::getData() const{
 	if(buffer.empty()){
-		return NULL;
+		return nullptr;
 	}
 	return &buffer[0];
 }
@@ -1479,7 +1479,7 @@ string ofFilePath::getCurrentExePath(){
 		return path;
 	#elif defined(TARGET_WIN32)
 		vector<char> executablePath(MAX_PATH);
-		DWORD result = ::GetModuleFileNameA(NULL, &executablePath[0], static_cast<DWORD>(executablePath.size()));
+		DWORD result = ::GetModuleFileNameA(nullptr, &executablePath[0], static_cast<DWORD>(executablePath.size()));
 		if(result == 0) {
 			ofLogError("ofFilePath") << "getCurrentExePath(): couldn't get path, GetModuleFileNameA failed";
 		}else{

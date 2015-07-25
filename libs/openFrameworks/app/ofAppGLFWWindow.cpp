@@ -40,12 +40,12 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
 	orientation 		= OF_ORIENTATION_DEFAULT;
 	windowMode			= OF_WINDOW;
 
-	ofAppPtr			= NULL;
+	ofAppPtr			= nullptr;
 
     pixelScreenCoordScale = 1;
 	nFramesSinceWindowResized = 0;
 	iconSet = false;
-	windowP = NULL;
+	windowP = nullptr;
 	windowW = 0;
 	windowH = 0;
 
@@ -59,7 +59,7 @@ ofAppGLFWWindow::~ofAppGLFWWindow(){
 void ofAppGLFWWindow::close(){
 	if(windowP){
 		glfwDestroyWindow(windowP);
-		windowP = NULL;
+		windowP = nullptr;
 		events().disable();
 	}
 }
@@ -171,7 +171,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 	#endif
 
-	GLFWwindow * sharedContext = NULL;
+	GLFWwindow * sharedContext = nullptr;
 	if(settings.shareContextWith){
 		sharedContext = (GLFWwindow*)settings.shareContextWith->getWindowContext();
 	}
@@ -186,7 +186,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			return;
 		}
 	}else{
-		windowP = glfwCreateWindow(settings.width, settings.height, "", NULL, sharedContext);
+		windowP = glfwCreateWindow(settings.width, settings.height, "", nullptr, sharedContext);
 		if(!windowP){
 			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 		}
@@ -1118,7 +1118,7 @@ string ofAppGLFWWindow::getClipboardString() {
 //------------------------------------------------------------
 void ofAppGLFWWindow::listVideoModes(){
 	int numModes;
-	const GLFWvidmode * vidModes = glfwGetVideoModes(NULL, &numModes );
+	const GLFWvidmode * vidModes = glfwGetVideoModes(nullptr, &numModes );
 	for(int i=0; i<numModes; i++){
 		ofLogNotice() << vidModes[i].width << " x " << vidModes[i].height
 		<< vidModes[i].redBits+vidModes[i].greenBits+vidModes[i].blueBits << "bit";
