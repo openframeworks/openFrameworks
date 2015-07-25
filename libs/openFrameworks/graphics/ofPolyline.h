@@ -395,7 +395,7 @@ public:
 	/// \brief Gets the point on the line closest to the target. You can also
 	/// optionally pass a pointer to/address of an unsigned int to get the
 	/// index of the closest vertex	
-	ofPoint getClosestPoint(const ofPoint& target, unsigned int* nearestIndex = NULL) const;
+	ofPoint getClosestPoint(const ofPoint& target, unsigned int* nearestIndex = nullptr) const;
 	
 
 	/// \}
