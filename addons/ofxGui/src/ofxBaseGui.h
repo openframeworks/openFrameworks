@@ -11,6 +11,9 @@ class ofxBaseGui {
 		ofxBaseGui();
 
 		virtual ~ofxBaseGui();
+		ofxBaseGui(const ofxBaseGui &) = delete;
+		ofxBaseGui & operator=(const ofxBaseGui &) = delete;
+
 		void draw();
 
 		void saveToFile(const std::string& filename);

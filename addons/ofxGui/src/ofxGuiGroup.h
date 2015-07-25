@@ -10,6 +10,9 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofxGuiGroup();
 		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename = "settings.xml", float x = 10, float y = 10);
 		virtual ~ofxGuiGroup();
+		ofxGuiGroup(const ofxGuiGroup &) = delete;
+		ofxGuiGroup & operator=(const ofxGuiGroup &) = delete;
+
 		virtual ofxGuiGroup * setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
 		virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
 
@@ -26,6 +29,11 @@ class ofxGuiGroup : public ofxBaseGui {
 		void add(ofParameter <ofColor> & parameter);
 		void add(ofParameter <ofShortColor> & parameter);
 		void add(ofParameter <ofFloatColor> & parameter);
+
+		template<class GuiType, typename ...Args>
+		void add(Args... p){
+			add(new GuiType(p...));
+		}
 
 		void minimize();
 		void maximize();
