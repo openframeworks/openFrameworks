@@ -718,9 +718,9 @@ public:
 
 	string getName() const;
 
-	ParameterType getMin();
+	ParameterType getMin() const;
 
-	ParameterType getMax();
+	ParameterType getMax() const;
 
 	string toString() const;
 
@@ -841,13 +841,13 @@ inline string ofReadOnlyParameter<ParameterType,Friend>::getName() const{
 
 
 template<typename ParameterType,typename Friend>
-inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMin(){
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMin() const{
 	return parameter.getMin();
 }
 
 
 template<typename ParameterType,typename Friend>
-inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMax(){
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMax() const{
 	return parameter.getMax();
 }
 
