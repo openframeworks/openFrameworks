@@ -5,8 +5,13 @@
 
 class ofxLabel: public ofxBaseGui {
 public:
-    ofxLabel(){}
-    ofxLabel(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);
+	struct Config: public ofxBaseGui::Config{
+		typedef ofxLabel ParentType;
+	};
+
+    ofxLabel();
+    ofxLabel(ofParameter<std::string> _label, const Config & config = Config());
+    ofxLabel(ofParameter<std::string> _label, float width, float height = defaultHeight);
     virtual ~ofxLabel();
 
     ofxLabel * setup(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);

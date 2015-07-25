@@ -2,6 +2,18 @@
 #include "ofGraphics.h"
 using namespace std;
 
+ofxLabel::ofxLabel()
+:ofxBaseGui(Config()){
+
+}
+
+ofxLabel::ofxLabel(ofParameter<std::string> _label, const Config & config)
+:ofxBaseGui(config){
+    label.makeReferenceTo(_label);
+    setNeedsRedraw();
+    label.addListener(this,&ofxLabel::valueChanged);
+}
+
 ofxLabel::ofxLabel(ofParameter<string> _label, float width, float height){
 	setup(_label,width,height);
 }

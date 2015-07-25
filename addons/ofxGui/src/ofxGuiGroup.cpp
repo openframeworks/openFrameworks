@@ -5,13 +5,45 @@
 #include "ofxLabel.h"
 using namespace std;
 
-ofxGuiGroup::ofxGuiGroup(){
-	minimized = false;
-	spacing = 1;
-	spacingNextElement = 3;
-	spacingFirstElement = 0;
-	header = defaultHeight;
-	bGuiActive = false;
+ofxGuiGroup::ofxGuiGroup()
+:ofxBaseGui(Config())
+,spacing(Config().spacing)
+,spacingNextElement(Config().spacingNextElement)
+,spacingFirstElement(Config().spacingFirstElement)
+,header(Config().header)
+,filename(Config().filename)
+,minimized(Config().minimized)
+,bGuiActive(false){
+}
+
+ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters)
+:ofxBaseGui(Config())
+,spacing(Config().spacing)
+,spacingNextElement(Config().spacingNextElement)
+,spacingFirstElement(Config().spacingFirstElement)
+,header(Config().header)
+,filename(Config().filename)
+,minimized(Config().minimized)
+,bGuiActive(false){
+	addParametersFrom(_parameters);
+	parameters = _parameters;
+	registerMouseEvents();
+	setNeedsRedraw();
+}
+
+ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & config)
+:ofxBaseGui(config)
+,spacing(config.spacing)
+,spacingNextElement(config.spacingNextElement)
+,spacingFirstElement(config.spacingFirstElement)
+,header(config.header)
+,filename(config.filename)
+,minimized(config.minimized)
+,bGuiActive(false){
+	addParametersFrom(_parameters);
+	parameters = _parameters;
+	registerMouseEvents();
+	setNeedsRedraw();
 }
 
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
@@ -43,6 +75,16 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	filename = _filename;
 	bGuiActive = false;
 
+	addParametersFrom(_parameters);
+	parameters = _parameters;
+	registerMouseEvents();
+	setNeedsRedraw();
+
+	return this;
+}
+
+
+void ofxGuiGroup::addParametersFrom(const ofParameterGroup & _parameters){
 	for(int i = 0; i < _parameters.size(); i++){
 		string type = _parameters.getType(i);
 		if(type == typeid(ofParameter <int> ).name()){
@@ -77,19 +119,11 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 			add(p);
 		}else if(type == typeid(ofParameterGroup).name()){
 			ofParameterGroup p = _parameters.getGroup(i);
-			ofxGuiGroup * panel = new ofxGuiGroup(p);
-			add(panel);
+			add(p);
 		}else{
 			ofLogWarning() << "ofxBaseGroup; no control for parameter of type " << type;
 		}
 	}
-
-	parameters = _parameters;
-	registerMouseEvents();
-
-	setNeedsRedraw();
-
-	return this;
 }
 
 void ofxGuiGroup::add(ofxBaseGui * element){

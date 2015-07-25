@@ -1,8 +1,11 @@
 #include "ofxButton.h"
 using namespace std;
 
-ofxButton::ofxButton(){
+ofxButton::ofxButton(const Config & config)
+:ofxToggle(ofParameter<bool>{config.name,false}, config){
 	value.setSerializable(false);
+	registerMouseEvents();
+	value.addListener(this,&ofxButton::valueChanged);
 }
 
 ofxButton::~ofxButton(){

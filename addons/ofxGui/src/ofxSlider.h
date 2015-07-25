@@ -8,9 +8,15 @@ class ofxSlider : public ofxBaseGui{
 	friend class ofPanel;
 	
 public:	
+	struct Config: public ofxBaseGui::Config{
+		typedef ofxSlider<Type> ParentType;
+		bool updateOnReleaseOnly = false;
+	};
+
 	ofxSlider();
 	~ofxSlider();
-	ofxSlider(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
+	ofxSlider(ofParameter<Type> _val, const Config & config = Config());
+	ofxSlider(ofParameter<Type> _val, float width, float height = defaultHeight);
 	ofxSlider* setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
 	ofxSlider* setup(const std::string& sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	

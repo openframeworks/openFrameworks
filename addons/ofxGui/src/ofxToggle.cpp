@@ -2,6 +2,25 @@
 #include "ofGraphics.h"
 using namespace std;
 
+ofxToggle::ofxToggle()
+:ofxBaseGui(Config())
+,bGuiActive(false){
+	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+	value.addListener(this,&ofxToggle::valueChanged);
+	registerMouseEvents();
+	setNeedsRedraw();
+}
+
+ofxToggle::ofxToggle(ofParameter<bool> _bVal, const Config & config)
+:ofxBaseGui(config)
+,bGuiActive(false){
+	value.makeReferenceTo(_bVal);
+	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+	value.addListener(this,&ofxToggle::valueChanged);
+	registerMouseEvents();
+	setNeedsRedraw();
+}
+
 ofxToggle::ofxToggle(ofParameter<bool> _bVal, float width, float height){
 	setup(_bVal,width,height);
 }

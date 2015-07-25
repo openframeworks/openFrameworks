@@ -5,9 +5,14 @@
 
 class ofxToggle : public ofxBaseGui{
 public:
-	ofxToggle(){};
+	struct Config: public ofxBaseGui::Config{
+		typedef ofxToggle ParentType;
+	};
+
+	ofxToggle();
+	ofxToggle(ofParameter<bool> _bVal, const Config & config = Config());
 	~ofxToggle();
-	ofxToggle(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
+	ofxToggle(ofParameter<bool> _bVal, float width, float height = defaultHeight);
 	ofxToggle * setup(ofParameter<bool> _bVal, float width = defaultWidth, float height = defaultHeight);
 	ofxToggle * setup(const std::string& toggleName, bool _bVal, float width = defaultWidth, float height = defaultHeight);
 	

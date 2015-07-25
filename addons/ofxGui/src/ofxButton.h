@@ -7,7 +7,12 @@ class ofxButton : public ofxToggle{
 	friend class ofPanel;
 	
 public:
-	ofxButton();
+	struct Config: public ofxToggle::Config{
+		typedef ofxButton ParentType;
+		std::string name;
+	};
+
+	ofxButton(const Config & config = Config());
 	~ofxButton();
     ofxButton* setup(const std::string& toggleName, float width = defaultWidth, float height = defaultHeight);
 

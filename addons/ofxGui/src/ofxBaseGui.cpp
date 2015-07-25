@@ -62,23 +62,31 @@ bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
 
-ofxBaseGui::ofxBaseGui(){
-	currentFrame = ofGetFrameNum();
-	serializer = std::shared_ptr <ofBaseFileSerializer>(new ofXml);
+ofxBaseGui::ofxBaseGui()
+:b(Config().shape)
+,serializer(new ofXml)
+,thisHeaderBackgroundColor(Config().headerBackgroundColor)
+,thisBackgroundColor(Config().backgroundColor)
+,thisBorderColor(Config().borderColor)
+,thisTextColor(Config().textColor)
+,thisFillColor(Config().fillColor)
+,needsRedraw(true)
+,currentFrame(ofGetFrameNum())
+,bRegisteredForMouseEvents(false){
 
-	thisHeaderBackgroundColor = headerBackgroundColor;
-	thisBackgroundColor = backgroundColor;
-	thisBorderColor = borderColor;
-	thisTextColor = textColor;
-	thisFillColor = fillColor;
+}
 
-	bRegisteredForMouseEvents = false;
-	needsRedraw = true;
-
-	/*if(!fontLoaded){
-	    loadFont(OF_TTF_MONO,10,true,true);
-	    useTTF=false;
-	}*/
+ofxBaseGui::ofxBaseGui(const Config & config)
+:b(config.shape)
+,serializer(new ofXml)
+,thisHeaderBackgroundColor(config.headerBackgroundColor)
+,thisBackgroundColor(config.backgroundColor)
+,thisBorderColor(config.borderColor)
+,thisTextColor(config.textColor)
+,thisFillColor(config.fillColor)
+,needsRedraw(true)
+,currentFrame(ofGetFrameNum())
+,bRegisteredForMouseEvents(false){
 
 }
 

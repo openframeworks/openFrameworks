@@ -6,10 +6,12 @@
 template<class VecType>
 class ofxVecSlider_ : public ofxGuiGroup {
 public:
-    ofxVecSlider_(){
-        sliderChanging = false;
-    };
-    ofxVecSlider_(ofParameter<VecType> value, float width = defaultWidth, float height = defaultHeight);
+	struct Config: public ofxGuiGroup::Config{
+		typedef ofxVecSlider_ ParentType;
+	};
+	ofxVecSlider_();
+    ofxVecSlider_(ofParameter<VecType> value, const Config & config = Config());
+    ofxVecSlider_(ofParameter<VecType> value, float width, float height = defaultHeight);
 
     ofxVecSlider_ * setup(ofParameter<VecType> value, float width = defaultWidth, float height = defaultHeight);
     ofxVecSlider_ * setup(const std::string& controlName, const VecType & value, const VecType & min, const VecType & max, float width = defaultWidth, float height = defaultHeight);
@@ -35,9 +37,12 @@ template<typename ColorType>
 class ofxColorSlider_: public ofxGuiGroup{
 
 public:
-	ofxColorSlider_(){
-	    sliderChanging = false;
+	struct Config: public ofxGuiGroup::Config{
+		typedef ofxColorSlider_ ParentType;
 	};
+
+	ofxColorSlider_();
+	ofxColorSlider_(ofParameter<ofColor_<ColorType>> value, const Config & config = Config());
 	ofxColorSlider_(ofParameter<ofColor_<ColorType> > value, float width = defaultWidth, float height = defaultHeight);
 
 	ofxColorSlider_ * setup(ofParameter<ofColor_<ColorType> > value, float width = defaultWidth, float height = defaultHeight);

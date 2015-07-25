@@ -8,8 +8,16 @@
 
 class ofxBaseGui {
 	public:
+		struct Config{
+			ofColor headerBackgroundColor = ofxBaseGui::headerBackgroundColor;
+			ofColor backgroundColor = ofxBaseGui::backgroundColor;
+			ofColor borderColor = ofxBaseGui::borderColor;
+			ofColor textColor = ofxBaseGui::textColor;
+			ofColor fillColor = ofxBaseGui::fillColor;
+			ofRectangle shape{0.0f, 0.0f, (float)defaultWidth, (float)defaultHeight};
+		};
 		ofxBaseGui();
-
+		ofxBaseGui(const Config & config);
 		virtual ~ofxBaseGui();
 		ofxBaseGui(const ofxBaseGui &) = delete;
 		ofxBaseGui & operator=(const ofxBaseGui &) = delete;

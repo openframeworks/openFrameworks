@@ -7,11 +7,21 @@
 
 class ofxGuiGroup : public ofxBaseGui {
 	public:
+		struct Config: public ofxBaseGui::Config{
+			typedef ofxGuiGroup ParentType;
+			std::string filename = "settings.xml";
+			bool minimized = false;
+			float spacing = 1;
+			float spacingNextElement = 3;
+			float spacingFirstElement = 0;
+			float header = defaultHeight;
+		};
+
 		ofxGuiGroup();
-		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename = "settings.xml", float x = 10, float y = 10);
+		ofxGuiGroup(const ofParameterGroup & parameters);
+		ofxGuiGroup(const ofParameterGroup & parameters, const Config & config);
+		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename, float x = 10, float y = 10);
 		virtual ~ofxGuiGroup();
-		ofxGuiGroup(const ofxGuiGroup &) = delete;
-		ofxGuiGroup & operator=(const ofxGuiGroup &) = delete;
 
 		virtual ofxGuiGroup * setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
 		virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
@@ -30,17 +40,20 @@ class ofxGuiGroup : public ofxBaseGui {
 		void add(ofParameter <ofShortColor> & parameter);
 		void add(ofParameter <ofFloatColor> & parameter);
 
-		template<class GuiType, typename ...Args>
-		void add(Args... p){
-			add(new GuiType(p...));
+		template<class Config, typename Type>
+		void add(ofParameter<Type> p, const Config & config = Config()){
+			add(new typename Config::ParentType(p,config));
+		}
+
+		template<class Config, typename Type>
+		void add(ofParameterGroup p, const Config & config = Config()){
+			add(new typename Config::ParentType(p,config));
 		}
 
 		void minimize();
 		void maximize();
 		void minimizeAll();
 		void maximizeAll();
-
-		void setWidthElements(float w);
 
 		void clear();
 
@@ -75,6 +88,8 @@ class ofxGuiGroup : public ofxBaseGui {
 	protected:
 		virtual void render();
 		virtual bool setValue(float mx, float my, bool bCheck);
+		void setWidthElements(float w);
+		void addParametersFrom(const ofParameterGroup & parameters);
 
 		float spacing, spacingNextElement, spacingFirstElement;
 		float header;

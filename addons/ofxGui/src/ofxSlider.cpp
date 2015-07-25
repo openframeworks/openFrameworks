@@ -15,6 +15,19 @@ ofxSlider<Type>::~ofxSlider(){
 }
 
 template<typename Type>
+ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, const Config & config)
+:ofxBaseGui(config)
+,bUpdateOnReleaseOnly(config.updateOnReleaseOnly)
+,bGuiActive(false)
+,mouseInside(false)
+{
+	value.makeReferenceTo(_val);
+	value.addListener(this,&ofxSlider::valueChanged);
+	setNeedsRedraw();
+	registerMouseEvents();
+}
+
+template<typename Type>
 ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, float width, float height){
 	setup(_val,width,height);
 }

@@ -2,6 +2,17 @@
 using namespace std;
 
 template<class VecType>
+ofxVecSlider_<VecType>::ofxVecSlider_()
+:sliderChanging(false){
+}
+
+template<class VecType>
+ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, const Config & config)
+:sliderChanging(false){
+    setup(value, config.shape.width, config.shape.height);
+}
+
+template<class VecType>
 ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, float width, float height){
 	sliderChanging = false;
     setup(value, width, height);
@@ -85,6 +96,18 @@ template class ofxVecSlider_<ofVec2f>;
 template class ofxVecSlider_<ofVec3f>;
 template class ofxVecSlider_<ofVec4f>;
 
+
+template<class ColorType>
+ofxColorSlider_<ColorType>::ofxColorSlider_()
+:sliderChanging(false){
+
+}
+
+template<class ColorType>
+ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType>> value, const Config & config)
+:sliderChanging(false){
+    setup(value, config.shape.width, config.shape.height);
+}
 
 template<class ColorType>
 ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType> > value, float width, float height){
