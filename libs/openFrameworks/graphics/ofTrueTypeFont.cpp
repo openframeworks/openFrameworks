@@ -600,10 +600,10 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 			// 1-bit format, hella funky
 			// here we unpack it:
 			unsigned char *src =  bitmap.buffer;
-			for(unsigned int j=0; j <bitmap.rows;j++) {
+			for(int j=0; j <bitmap.rows;j++) {
 				unsigned char b=0;
 				unsigned char *bptr =  src;
-				for(unsigned int k=0; k < bitmap.width ; k++){
+				for(int k=0; k < bitmap.width ; k++){
 					expanded_data[i][2*(k+j*width)] = 255;
 
 					if (k%8==0){
