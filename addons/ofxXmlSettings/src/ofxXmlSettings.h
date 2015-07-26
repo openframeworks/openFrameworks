@@ -47,36 +47,36 @@ using namespace std;
 class ofxXmlSettings: public ofBaseFileSerializer{
 
 	public:
-        ofxXmlSettings();
-        ofxXmlSettings(const string& xmlFile);
+        OF_DEPRECATED_MSG("Use ofXml instead.", ofxXmlSettings() );
+        OF_DEPRECATED_MSG("Use ofXml instead.", ofxXmlSettings(const string& xmlFile) );
 
         ~ofxXmlSettings();
 
-		void setVerbose(bool _verbose);
+		OF_DEPRECATED_MSG("ofXml is going to replace ofxXmlSettings, but has no matching method.", void setVerbose(bool _verbose) );
 
-		bool loadFile(const string& xmlFile);
-		bool saveFile(const string& xmlFile);
-		bool saveFile();
+		OF_DEPRECATED_MSG("Use ofXml::load().", bool loadFile(const string& xmlFile) );
+		OF_DEPRECATED_MSG("Use ofXml::save().", bool saveFile(const string& xmlFile) );
+		OF_DEPRECATED_MSG("Use ofXml::save().", bool saveFile() );
 
-		bool load(const string & path);
-		bool save(const string & path);
+		OF_DEPRECATED_MSG("Use ofXml::load().", bool load(const string & path) );
+		OF_DEPRECATED_MSG("Use ofXml::save().", bool save(const string & path) );
 
-		void clearTagContents(const string& tag, int which = 0);
-		void removeTag(const string& tag, int which = 0);
+		OF_DEPRECATED_MSG("Use ofXml::removeContents().", void clearTagContents(const string& tag, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::removeContents().", void removeTag(const string& tag, int which = 0) );
 
-		bool tagExists(const string& tag, int which = 0);
+		OF_DEPRECATED_MSG("Use ofXml::exists().", bool tagExists(const string& tag, int which = 0) );
 
 		// removes all tags from within either the whole document
 		// or the tag you are currently at using pushTag
-		void	clear();
+		OF_DEPRECATED_MSG("Use ofXml::clear().", void clear() );
 
-		int 	getValue(const string&  tag, int            defaultValue, int which = 0);
-		double 	getValue(const string&  tag, double         defaultValue, int which = 0);
-		string 	getValue(const string&  tag, const string& 	defaultValue, int which = 0);
+		OF_DEPRECATED_MSG("Use ofXml::getIntValue().", int getValue(const string& tag, int defaultValue, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::getFloatValue().", double getValue(const string& tag, double defaultValue, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::getValue().", string getValue(const string& tag, const string& defaultValue, int which = 0) );
 
-		int 	setValue(const string&  tag, int            value, int which = 0);
-		int 	setValue(const string&  tag, double         value, int which = 0);
-		int 	setValue(const string&  tag, const string& 	value, int which = 0);
+		OF_DEPRECATED_MSG("Use ofXml::setValue().", int setValue(const string& tag, int value, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::setValue().", int setValue(const string& tag, double value, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::setValue().", int setValue(const string& tag, const string& value, int which = 0) );
 
 		//advanced
 
@@ -88,16 +88,16 @@ class ofxXmlSettings: public ofBaseFileSerializer{
 		//the pushed tag - normally addValue only lets you create multiple tags of the same
 		//at the top most level.
 
-		bool	pushTag(const string&  tag, int which = 0);
-		int		popTag();
-		int		getPushLevel();
+		OF_DEPRECATED_MSG("Use ofXml::setTo().", bool pushTag(const string& tag, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::setTo().", int popTag() );
+		OF_DEPRECATED_MSG("Use ofXml::setTo().", int getPushLevel() );
 
 		//-- numTags
 		//this only works for tags at the current root level
 		//use pushTag and popTag to get number of tags whithin other tags
 		// both getNumTags("PT"); and getNumTags("PT:X"); will just return the
 		//number of <PT> tags at the current root level.
-		int		getNumTags(const string& tag);
+		OF_DEPRECATED_MSG("Use ofXml::getNumChildren().", int getNumTags(const string& tag) );
 
 		//-- addValue/addTag
 		//adds a tag to the document even if a tag with the same name
@@ -107,51 +107,51 @@ class ofxXmlSettings: public ofBaseFileSerializer{
 		//-- important - this only works for top level tags
 		//   to put multiple tags inside other tags - use pushTag() and popTag()
 
-		int 	addValue(const string&  tag, int            value);
-		int 	addValue(const string&  tag, double         value);
-		int 	addValue(const string&  tag, const string& 	value);
+		OF_DEPRECATED_MSG("Use ofXml::addValue()", int addValue(const string&  tag, int value) );
+		OF_DEPRECATED_MSG("Use ofXml::addValue()", int addValue(const string&  tag, double value) );
+		OF_DEPRECATED_MSG("Use ofXml::addValue()", int addValue(const string&  tag, const string&	value) );
 
-		int		addTag(const string& tag); //adds an empty tag at the current level
+		OF_DEPRECATED_MSG("Use ofXml::setToParent() and ofXml::addChild()",int addTag(const string& tag) ); //adds an empty tag at the current level
 
-		void serialize(const ofAbstractParameter & parameter);
-		void deserialize(ofAbstractParameter & parameter);
+		OF_DEPRECATED_MSG("Use ofXml::serialize()", void serialize(const ofAbstractParameter & parameter) );
+		OF_DEPRECATED_MSG("Use ofXml::deserialize()", void deserialize(ofAbstractParameter & parameter) );
 
 
         // Attribute-related methods
-		int		addAttribute(const string& tag, const string& attribute, int value, int which = 0);
-		int		addAttribute(const string& tag, const string& attribute, double value, int which = 0);
-		int		addAttribute(const string& tag, const string& attribute, const string& value, int which = 0);
+		OF_DEPRECATED_MSG("Use ofXml::addAttribute()", int addAttribute(const string& tag, const string& attribute, int value, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::addAttribute()", int addAttribute(const string& tag, const string& attribute, double value, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::addAttribute()", int addAttribute(const string& tag, const string& attribute, const string& value, int which = 0) );
 
-		int		addAttribute(const string& tag, const string& attribute, int value);
-		int		addAttribute(const string& tag, const string& attribute, double value);
-		int		addAttribute(const string& tag, const string& attribute, const string& value);
+		OF_DEPRECATED_MSG("Use ofXml::addAttribute()", int addAttribute(const string& tag, const string& attribute, int value) );
+		OF_DEPRECATED_MSG("Use ofXml::addAttribute()", int addAttribute(const string& tag, const string& attribute, double value) );
+		OF_DEPRECATED_MSG("Use ofXml::addAttribute()", int addAttribute(const string& tag, const string& attribute, const string& value) );
 
-		void	removeAttribute(const string& tag, const string& attribute, int which = 0);
-		void	clearTagAttributes(const string& tag, int which = 0);
+		OF_DEPRECATED_MSG("Use ofXml::removeAttribute()", void removeAttribute(const string& tag, const string& attribute, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::removeAttribute()", void clearTagAttributes(const string& tag, int which = 0) );
 
-		int		getNumAttributes(const string& tag, int which = 0);
+		OF_DEPRECATED_MSG("Use ofXml::getAttributes()", int getNumAttributes(const string& tag, int which = 0) );
 
-		bool	attributeExists(const string& tag, const string& attribute, int which = 0);
+		OF_DEPRECATED_MSG("ofXml is going to replace ofxXmlSettings, maybe ofXml::getAttribute()?", bool attributeExists(const string& tag, const string& attribute, int which = 0) );
 
-		bool    getAttributeNames(const string& tag, vector<string>& outNames, int which = 0);
+		OF_DEPRECATED_MSG("Use ofXml::getAttributes()", bool getAttributeNames(const string& tag, vector<string>& outNames, int which = 0) );
 
-		int		getAttribute(const string& tag, const string& attribute, int defaultValue, int which = 0);
-		double	getAttribute(const string& tag, const string& attribute, double defaultValue, int which = 0);
-		string	getAttribute(const string& tag, const string& attribute, const string& defaultValue, int which = 0);
+		OF_DEPRECATED_MSG("Use ofXml::getAttribute()", int getAttribute(const string& tag, const string& attribute, int defaultValue, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::getAttribute()", double getAttribute(const string& tag, const string& attribute, double defaultValue, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::getAttribute()", string getAttribute(const string& tag, const string& attribute, const string& defaultValue, int which = 0) );
 
-		int		setAttribute(const string& tag, const string& attribute, int value, int which = 0);
-		int		setAttribute(const string& tag, const string& attribute, double value, int which = 0);
-		int		setAttribute(const string& tag, const string& attribute, const string& value, int which = 0);
+		OF_DEPRECATED_MSG("Use ofXml::setAttribute()", int setAttribute(const string& tag, const string& attribute, int value, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::setAttribute()", int setAttribute(const string& tag, const string& attribute, double value, int which = 0) );
+		OF_DEPRECATED_MSG("Use ofXml::setAttribute()", int setAttribute(const string& tag, const string& attribute, const string& value, int which = 0) );
 
-		int		setAttribute(const string& tag, const string& attribute, int value);
-		int		setAttribute(const string& tag, const string& attribute, double value);
-		int		setAttribute(const string& tag, const string& attribute, const string& value);
+		OF_DEPRECATED_MSG("Use ofXml::setAttribute()", int setAttribute(const string& tag, const string& attribute, int value) );
+		OF_DEPRECATED_MSG("Use ofXml::setAttribute()", int setAttribute(const string& tag, const string& attribute, double value) );
+		OF_DEPRECATED_MSG("Use ofXml::setAttribute()", int setAttribute(const string& tag, const string& attribute, const string& value) );
 
-		bool	loadFromBuffer( string buffer );
-		void	copyXmlToString(string & str);
+		OF_DEPRECATED_MSG("Use ofXml::loadFromBuffer()", bool loadFromBuffer( string buffer ) );
+		OF_DEPRECATED_MSG("Use ofXml::toString()", void	copyXmlToString(string & str) );
 
-		TiXmlDocument 	doc;
-		bool 			bDocLoaded;
+		OF_DEPRECATED_MSG("ofXml is going to replace ofxXmlSettings, but has no matching attribute.", TiXmlDocument doc );
+		OF_DEPRECATED_MSG("ofXml is going to replace ofxXmlSettings, but has no matching attribute.", bool bDocLoaded );
 
 	protected:
 
