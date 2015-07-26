@@ -139,7 +139,7 @@ void ofNotifyEvent(EventType & event, ArgumentsType & args, SenderType * sender)
 template <class EventType,typename ArgumentsType>
 void ofNotifyEvent(EventType & event, ArgumentsType & args){
 	try{
-		event.notify(NULL,args);
+		event.notify(nullptr,args);
 	}catch(ofEventAttendedException &){
 
 	}
@@ -157,7 +157,7 @@ void ofNotifyEvent(EventType & event, const ArgumentsType & args, SenderType * s
 template <class EventType,typename ArgumentsType>
 void ofNotifyEvent(EventType & event, const ArgumentsType & args){
 	try{
-		event.notify(NULL,args);
+		event.notify(nullptr,args);
 	}catch(ofEventAttendedException &){
 
 	}
@@ -174,7 +174,7 @@ void ofNotifyEvent(ofEvent<void> & event, SenderType * sender){
 
 inline void ofNotifyEvent(ofEvent<void> & event){
 	try{
-		event.notify(NULL);
+		event.notify(nullptr);
 	}catch(ofEventAttendedException &){
 
 	}

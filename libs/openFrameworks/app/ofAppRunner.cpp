@@ -59,11 +59,11 @@ void ofURLFileLoaderShutdown();
 			ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
 		}
 
-		signal(SIGTERM, NULL);
-		signal(SIGQUIT, NULL);
-		signal(SIGINT,  NULL);
-		signal(SIGHUP,  NULL);
-		signal(SIGABRT, NULL);
+		signal(SIGTERM, nullptr);
+		signal(SIGQUIT, nullptr);
+		signal(SIGINT,  nullptr);
+		signal(SIGHUP,  nullptr);
+		signal(SIGABRT, nullptr);
 
 		if(mainLoop()){
 			mainLoop()->shouldClose(signum);

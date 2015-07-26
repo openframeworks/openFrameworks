@@ -92,7 +92,7 @@ static void restoreAppWindowFocus(){
 #endif
 
 gboolean init_gtk(gpointer userdata){
-	int argc=0; char **argv = NULL;
+	int argc=0; char **argv = nullptr;
 	gtk_init (&argc, &argv);
 
 	return FALSE;
@@ -110,7 +110,7 @@ struct FileDialogData{
 
 gboolean file_dialog_gtk(gpointer userdata){
 	FileDialogData * dialogData = (FileDialogData*)userdata;
-	const gchar* button_name = NULL;
+	const gchar* button_name = nullptr;
 	switch(dialogData->action){
 	case GTK_FILE_CHOOSER_ACTION_OPEN:
 		button_name = OPEN_BUTTON;
@@ -125,13 +125,13 @@ gboolean file_dialog_gtk(gpointer userdata){
 		break;
 	}
 
-	if(button_name!=NULL){
+	if(button_name!=nullptr){
 		GtkWidget *dialog = gtk_file_chooser_dialog_new (dialogData->windowTitle.c_str(),
-							  NULL,
+							  nullptr,
 							  dialogData->action,
 							  button_name, GTK_RESPONSE_ACCEPT,
 							  CANCEL_BUTTON, GTK_RESPONSE_CANCEL,
-							  NULL);
+							  nullptr);
 
 		gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(dialog),dialogData->defaultName.c_str());
 
@@ -158,7 +158,7 @@ struct TextDialogData{
 
 gboolean alert_dialog_gtk(gpointer userdata){
 	TextDialogData * dialogData = (TextDialogData*)userdata;
-	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", dialogData->text.c_str());
+	GtkWidget* dialog = gtk_message_dialog_new (nullptr, (GtkDialogFlags) 0, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", dialogData->text.c_str());
 	gtk_widget_grab_focus(gtk_dialog_get_widget_for_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK));
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
@@ -172,7 +172,7 @@ gboolean alert_dialog_gtk(gpointer userdata){
 
 gboolean text_dialog_gtk(gpointer userdata){
 	TextDialogData * dialogData = (TextDialogData*)userdata;
-	GtkWidget* dialog = gtk_message_dialog_new (NULL, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, (GtkButtonsType) GTK_BUTTONS_OK_CANCEL, "%s", dialogData->question.c_str() );
+	GtkWidget* dialog = gtk_message_dialog_new (nullptr, (GtkDialogFlags) 0, GTK_MESSAGE_QUESTION, (GtkButtonsType) GTK_BUTTONS_OK_CANCEL, "%s", dialogData->question.c_str() );
 	GtkWidget* content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	GtkWidget* textbox = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(textbox),dialogData->text.c_str());
@@ -196,7 +196,7 @@ static void initGTK(){
 		#if !defined(TARGET_RASPBERRY_PI) 
 		XInitThreads();
 		#endif
-		int argc=0; char **argv = NULL;
+		int argc=0; char **argv = nullptr;
 		gtk_init (&argc, &argv);
 		ofGstUtils::startGstMainLoop();
 		initialized = true;
@@ -260,7 +260,7 @@ void ofSystemAlertDialog(string errorMessage){
 		// http://www.cplusplus.com/reference/clibrary/cstdlib/mbstowcs/
 		mbstowcs(widearray, errorMessage.c_str(), length);
 		// launch the alert:
-		MessageBoxW(NULL, widearray, L"alert", MB_OK);
+		MessageBoxW(nullptr, widearray, L"alert", MB_OK);
 		// clear the allocated memory:
 		delete widearray;
 	#endif
@@ -397,7 +397,7 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 			wcscpy_s(szTitle, convertNarrowToWide(windowTitle).c_str());
 			ofn.lpstrTitle = szTitle;
 		} else {
-			ofn.lpstrTitle = NULL;
+			ofn.lpstrTitle = nullptr;
 		}
 
 		ofn.lpstrFilter = L"All\0";
@@ -440,8 +440,8 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		if(SHGetMalloc(&lpMalloc) != S_OK){
 			//TODO: deal with some sort of error here?
 		}
-		bi.hwndOwner        =   NULL;
-		bi.pidlRoot         =   NULL;
+		bi.hwndOwner        =   nullptr;
+		bi.pidlRoot         =   nullptr;
 		bi.pszDisplayName   =   wideCharacterBuffer;
 		bi.lpszTitle        =   wideWindowTitle;
 		bi.ulFlags          =   BIF_RETURNFSANCESTORS | BIF_RETURNONLYFSDIRS | BIF_USENEWUI;
@@ -646,17 +646,17 @@ string ofSystemTextBoxDialog(string question, string text){
 		wc.hInstance     = GetModuleHandle(0);
 		wc.lpszClassName = g_szClassName;
 		wc.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
-		wc.lpszMenuName  = NULL;
-		wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
-		wc.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
-		wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
+		wc.lpszMenuName  = nullptr;
+		wc.hCursor       = LoadCursor(nullptr, IDC_ARROW);
+		wc.hIcon         = LoadIcon(nullptr, IDI_APPLICATION);
+		wc.hIconSm       = LoadIcon(nullptr, IDI_APPLICATION);
 		if(!RegisterClassEx(&wc)){
 			DWORD err=GetLastError();
 			if ((err==ERROR_CLASS_ALREADY_EXISTS)){
                 ; // we are ok
                 // http://stackoverflow.com/questions/5791996/re-registering-user-defined-window-class-c
             } else {
-			MessageBox(NULL, L"Window Registration Failed!\0", L"Error!\0",
+			MessageBox(nullptr, L"Window Registration Failed!\0", L"Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
 		}
@@ -667,12 +667,12 @@ string ofSystemTextBoxDialog(string question, string text){
 			convertNarrowToWide(question).c_str(),
 			WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU,
 			CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
-			WindowFromDC(wglGetCurrentDC()), NULL, GetModuleHandle(0),NULL);
+			WindowFromDC(wglGetCurrentDC()), nullptr, GetModuleHandle(0),nullptr);
 
-		if(dialog == NULL)
+		if(dialog == nullptr)
 		{
 			
-			MessageBox(NULL,L"Window Creation Failed!\0", L"Error!\0",
+			MessageBox(nullptr,L"Window Creation Failed!\0", L"Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
 			
@@ -681,16 +681,16 @@ string ofSystemTextBoxDialog(string question, string text){
 		EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
 		HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT\0", convertNarrowToWide(text).c_str(),
 			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-			10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
+			10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(nullptr), nullptr);
 
 
 		HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, L"BUTTON\0", L"OK\0",
 			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-			10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(NULL), NULL);
+			10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(nullptr), nullptr);
 
 		HWND cancelButton = CreateWindowEx(WS_EX_CLIENTEDGE, L"BUTTON\0", L"Cancel\0",
 			WS_CHILD | WS_VISIBLE,
-			80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(NULL), NULL);
+			80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(nullptr), nullptr);
 
 		SetFocus( hEdit );
 
@@ -766,10 +766,10 @@ string ofSystemTextBoxDialog(string question, string text){
 		wc.hInstance     = GetModuleHandle(0);
 		wc.lpszClassName = g_szClassName;
 		wc.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
-		wc.lpszMenuName  = NULL;
-		wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
-		wc.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
-		wc.hIconSm       = LoadIcon(NULL, IDI_APPLICATION);
+		wc.lpszMenuName  = nullptr;
+		wc.hCursor       = LoadCursor(nullptr, IDC_ARROW);
+		wc.hIcon         = LoadIcon(nullptr, IDI_APPLICATION);
+		wc.hIconSm       = LoadIcon(nullptr, IDI_APPLICATION);
 		if(!RegisterClassEx(&wc))
 		{
 
@@ -778,7 +778,7 @@ string ofSystemTextBoxDialog(string question, string text){
                 ; // we are ok
                 // http://stackoverflow.com/questions/5791996/re-registering-user-defined-window-class-c
             } else {
-			MessageBox(NULL, "Window Registration Failed!\0", "Error!\0",
+			MessageBox(nullptr, "Window Registration Failed!\0", "Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
 		}
@@ -791,11 +791,11 @@ string ofSystemTextBoxDialog(string question, string text){
 			question.c_str(),
 			WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU,
 			CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
-			WindowFromDC(wglGetCurrentDC()), NULL, GetModuleHandle(0),NULL);
+			WindowFromDC(wglGetCurrentDC()), nullptr, GetModuleHandle(0),nullptr);
 
-		if(dialog == NULL)
+		if(dialog == nullptr)
 		{
-			MessageBox(NULL, "Window Creation Failed!\0", "Error!\0",
+			MessageBox(nullptr, "Window Creation Failed!\0", "Error!\0",
 				MB_ICONEXCLAMATION | MB_OK);
 			return text;
 		}
@@ -803,16 +803,16 @@ string ofSystemTextBoxDialog(string question, string text){
 		EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
 		HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT\0", text.c_str(),
 			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-			10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(NULL), NULL);
+			10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(nullptr), nullptr);
 
 
 		HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON\0", "OK\0",
 			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-			10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(NULL), NULL);
+			10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(nullptr), nullptr);
 
 		HWND cancelButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON\0", "Cancel\0",
 			WS_CHILD | WS_VISIBLE,
-			80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(NULL), NULL);
+			80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(nullptr), nullptr);
 
 		SetFocus( hEdit );
 
