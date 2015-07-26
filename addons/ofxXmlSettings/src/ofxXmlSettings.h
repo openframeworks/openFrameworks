@@ -44,11 +44,11 @@ using namespace std;
 
 #define MAX_TAG_VALUE_LENGTH_IN_CHARS		1024
 
-class ofxXmlSettings: public ofBaseFileSerializer{
+OF_DEPRECATED_MSG("ofXml is going to replace ofxXmlSetting", class ofxXmlSettings: public ofBaseFileSerializer{
 
 	public:
-        OF_DEPRECATED_MSG("Use ofXml instead.", ofxXmlSettings() );
-        OF_DEPRECATED_MSG("Use ofXml instead.", ofxXmlSettings(const string& xmlFile) );
+        ofxXmlSettings();
+        ofxXmlSettings(const string& xmlFile);
 
         ~ofxXmlSettings();
 
@@ -170,3 +170,4 @@ class ofxXmlSettings: public ofBaseFileSerializer{
         bool readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which);
         bool readStringAttribute(const string& tag, const string& attribute, string& outValue, int which);
 };   
+);
