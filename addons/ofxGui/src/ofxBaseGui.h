@@ -9,8 +9,6 @@
 class ofxBaseGui {
 	public:
 		struct Config{
-			Config(){};
-			Config(const ofxBaseGui::Config & c){}
 			ofColor headerBackgroundColor = ofxBaseGui::headerBackgroundColor;
 			ofColor backgroundColor = ofxBaseGui::backgroundColor;
 			ofColor borderColor = ofxBaseGui::borderColor;
@@ -24,6 +22,7 @@ class ofxBaseGui {
 		ofxBaseGui(const ofxBaseGui &) = delete;
 		ofxBaseGui & operator=(const ofxBaseGui &) = delete;
 
+		void setup(const Config & config);
 		void draw();
 
 		void saveToFile(const std::string& filename);

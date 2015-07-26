@@ -27,47 +27,65 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename, float x = 10, float y = 10);
 		virtual ~ofxGuiGroup();
 
+		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const Config & config);
 		virtual ofxGuiGroup & setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
 		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
 
 		void add(ofxBaseGui & element);
 		void add(ofxGuiGroup & element);
 
-		template<class Config = ofxBaseGui::Config>
-		void add(ofParameter <float> & parameter, const Config & config = Config());
+		void add(ofParameter <float> & parameter);
+		void add(ofParameter <int> & parameter);
+		void add(ofParameter <bool> & parameter);
+		void add(ofParameter <std::string> & parameter);
+		void add(ofParameter <ofVec2f> & parameter);
+		void add(ofParameter <ofVec3f> & parameter);
+		void add(ofParameter <ofVec4f> & parameter);
+		void add(ofParameter <ofColor> & parameter);
+		void add(ofParameter <ofShortColor> & parameter);
+		void add(ofParameter <ofFloatColor> & parameter);
 
-		template<class Config = ofxBaseGui::Config>
-		void add(ofParameter <int> & parameter, const Config & config = Config());
+		template<class GuiType, typename Type>
+		void add(ofParameter<Type> p);
 
-		template<class Config = ofxBaseGui::Config>
-		void add(ofParameter <bool> & parameter, const Config & config = Config());
+		template<class GuiType=ofxGuiGroup>
+		void add(ofParameterGroup p);
 
-		template<class Config = ofxBaseGui::Config>
-		void add(ofParameter <std::string> & parameter, const Config & config = Config());
+		template<class Config>
+		void add(ofParameter <float> & parameter, const Config & config);
 
-		template<class Config = ofxBaseGui::Config>
-		void add(ofParameter <ofVec2f> & parameter, const Config & config = Config());
+		template<class Config>
+		void add(ofParameter <int> & parameter, const Config & config);
 
-		template<class Config = ofxBaseGui::Config>
-		void add(ofParameter <ofVec3f> & parameter, const Config & config = Config());
+		template<class Config>
+		void add(ofParameter <bool> & parameter, const Config & config);
 
-		template<class Config = ofxBaseGui::Config>
-		void add(ofParameter <ofVec4f> & parameter, const Config & config = Config());
+		template<class Config>
+		void add(ofParameter <std::string> & parameter, const Config & config);
 
-		template<class Config = ofxBaseGui::Config>
-		void add(ofParameter <ofColor> & parameter, const Config & config = Config());
+		template<class Config>
+		void add(ofParameter <ofVec2f> & parameter, const Config & config);
 
-		template<class Config = ofxBaseGui::Config>
-		void add(ofParameter <ofShortColor> & parameter, const Config & config = Config());
+		template<class Config>
+		void add(ofParameter <ofVec3f> & parameter, const Config & config);
 
-		template<class Config = ofxBaseGui::Config>
-		void add(ofParameter <ofFloatColor> & parameter, const Config & config = Config());
+		template<class Config>
+		void add(ofParameter <ofVec4f> & parameter, const Config & config);
 
-		template<class GuiType, typename Type, class Config = typename GuiType::Config>
-		void add(ofParameter<Type> p, const Config & config = Config());
+		template<class Config>
+		void add(ofParameter <ofColor> & parameter, const Config & config);
 
-		template<class GuiType=ofxGuiGroup, class Config=ofxGuiGroup::Config>
-		void add(ofParameterGroup p, const Config & config = Config());
+		template<class Config>
+		void add(ofParameter <ofShortColor> & parameter, const Config & config);
+
+		template<class Config>
+		void add(ofParameter <ofFloatColor> & parameter, const Config & config);
+
+		template<class GuiType, typename Type, class Config>
+		void add(ofParameter<Type> p, const Config & config);
+
+		template<class GuiType=ofxGuiGroup, class Config>
+		void add(ofParameterGroup p, const Config & config);
 
 		void minimize();
 		void maximize();
@@ -127,6 +145,7 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		ofPath border, headerBg;
 		ofVboMesh textMesh;
+		Config config;
 	private:
 		std::vector <std::unique_ptr<ofxBaseGui>> collectionOwned;
 		void add(ofxBaseGui * element);
@@ -179,3 +198,13 @@ void ofxGuiGroup::add(ofParameterGroup p, const C & config){
 	addOwned(new GuiType(p,config));
 }
 
+
+template<class GuiType, typename Type>
+void ofxGuiGroup::add(ofParameter<Type> p){
+	add<GuiType>(p,this->config);
+}
+
+template<class GuiType>
+void ofxGuiGroup::add(ofParameterGroup p){
+	add<GuiType>(p,this->config);
+}

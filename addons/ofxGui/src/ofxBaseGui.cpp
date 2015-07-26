@@ -90,6 +90,15 @@ ofxBaseGui::ofxBaseGui(const Config & config)
 
 }
 
+void ofxBaseGui::setup(const Config & config){
+	b = config.shape;
+	thisHeaderBackgroundColor = config.headerBackgroundColor;
+	thisBackgroundColor = config.backgroundColor;
+	thisBorderColor = config.borderColor;
+	thisTextColor = config.textColor;
+	thisFillColor = config.fillColor;
+}
+
 void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
 	font.load(filename, fontsize, _bAntiAliased, _bFullCharacterSet, dpi);
 	fontLoaded = true;

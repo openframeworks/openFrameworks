@@ -38,7 +38,8 @@ ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & co
 ,header(config.header)
 ,filename(config.filename)
 ,minimized(config.minimized)
-,bGuiActive(false){
+,bGuiActive(false)
+,config(config){
 	addParametersFrom(_parameters);
 	parameters = _parameters;
 	registerMouseEvents();
@@ -58,6 +59,23 @@ ofxGuiGroup::~ofxGuiGroup(){
 	for(auto e: collection){
 		ofRemoveListener(e->sizeChangedE,this,&ofxGuiGroup::sizeChangedCB);
 	}
+}
+
+ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & parameters, const Config & config){
+	ofxBaseGui::setup(config);
+	spacing = config.spacing;
+	spacingNextElement = config.spacingNextElement;
+	spacingFirstElement = config.spacingFirstElement;
+	header = config.header;
+	filename = config.filename;
+	minimized = config.minimized;
+	bGuiActive = false;
+	this->config = config;
+	addParametersFrom(parameters);
+	this->parameters = parameters;
+	registerMouseEvents();
+	setNeedsRedraw();
+	return *this;
 }
 
 ofxGuiGroup & ofxGuiGroup::setup(const std::string& collectionName, const std::string& filename, float x, float y){
@@ -91,27 +109,27 @@ void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters){
 		}
 		string type = p->type();
 		if(type == typeid(ofParameter<int>).name()){
-			add(p->cast<int>());
+			add(p->cast<int>(), config);
 		}else if(type == typeid(ofParameter<float>).name()){
-			add(p->cast<float>());
+			add(p->cast<float>(), config);
 		}else if(type == typeid(ofParameter<bool>).name()){
-			add(p->cast<bool>());
+			add(p->cast<bool>(), config);
 		}else if(type == typeid(ofParameter<ofVec2f>).name()){
-			add(p->cast<ofVec2f>());
+			add(p->cast<ofVec2f>(), config);
 		}else if(type == typeid(ofParameter<ofVec3f>).name()){
-			add(p->cast<ofVec3f>());
+			add(p->cast<ofVec3f>(), config);
 		}else if(type == typeid(ofParameter<ofVec4f>).name()){
-			add(p->cast<ofVec4f>());
+			add(p->cast<ofVec4f>(), config);
 		}else if(type == typeid(ofParameter<ofColor>).name()){
-			add(p->cast<ofColor>());
+			add(p->cast<ofColor>(), config);
 		}else if(type == typeid(ofParameter<ofShortColor>).name()){
-			add(p->cast<ofShortColor>());
+			add(p->cast<ofShortColor>(), config);
 		}else if(type == typeid(ofParameter<ofFloatColor>).name()){
-			add(p->cast<ofFloatColor>());
+			add(p->cast<ofFloatColor>(), config);
 		}else if(type == typeid(ofParameter<string>).name()){
-			add(p->cast<string>());
+			add(p->cast<string>(), config);
 		}else if(type == typeid(ofParameterGroup).name()){
-			add(p->castGroup());
+			add(p->castGroup(), config);
 		}else{
 			ofLogWarning("ofxGui") << "Trying to add " << p->getName() << ": ofxBaseGroup; no control for parameter of type " << type;
 		}
@@ -125,6 +143,46 @@ void ofxGuiGroup::add(ofxBaseGui & element){
 
 void ofxGuiGroup::add(ofxGuiGroup & element){
 	add(&element);
+}
+
+void ofxGuiGroup::add(ofParameter <float> & parameter){
+	add(parameter, this->config);
+}
+
+void ofxGuiGroup::add(ofParameter <int> & parameter){
+	add(parameter, this->config);
+}
+
+void ofxGuiGroup::add(ofParameter <bool> & parameter){
+	add(parameter, this->config);
+}
+
+void ofxGuiGroup::add(ofParameter <std::string> & parameter){
+	add(parameter, this->config);
+}
+
+void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
+	add(parameter, this->config);
+}
+
+void ofxGuiGroup::add(ofParameter <ofVec3f> & parameter){
+	add(parameter, this->config);
+}
+
+void ofxGuiGroup::add(ofParameter <ofVec4f> & parameter){
+	add(parameter, this->config);
+}
+
+void ofxGuiGroup::add(ofParameter <ofColor> & parameter){
+	add(parameter, this->config);
+}
+
+void ofxGuiGroup::add(ofParameter <ofShortColor> & parameter){
+	add(parameter, this->config);
+}
+
+void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
+	add(parameter, this->config);
 }
 
 void ofxGuiGroup::add(ofxBaseGui * element){
