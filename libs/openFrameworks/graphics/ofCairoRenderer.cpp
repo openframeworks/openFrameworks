@@ -18,8 +18,8 @@ _cairo_status ofCairoRenderer::stream_function(void *closure,const unsigned char
 ofCairoRenderer::ofCairoRenderer()
 :graphics3d(this){
 	type = PDF;
-	surface = NULL;
-	cr = NULL;
+	surface = nullptr;
+	cr = nullptr;
 	bBackgroundAuto = true;
 	page = 0;
 	multiPage = false;
@@ -118,11 +118,11 @@ void ofCairoRenderer::close(){
 		}
 		cairo_surface_finish(surface);
 		cairo_surface_destroy(surface);
-		surface = NULL;
+		surface = nullptr;
 	}
 	if(cr){
 		cairo_destroy(cr);
-		cr = NULL;
+		cr = nullptr;
 	}
 }
 

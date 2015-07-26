@@ -170,13 +170,13 @@ this media.
 void MovieGetVideoMediaAndMediaHandler(Movie inMovie, Media *outMedia, MediaHandler *outMediaHandler)
 {
 
-  *outMedia = NULL;
-  *outMediaHandler = NULL;
+  *outMedia = nullptr;
+  *outMediaHandler = nullptr;
 
   /* get first video track */
   Track videoTrack = GetMovieIndTrackType(inMovie, 1, kCharacteristicHasVideoFrameRate,
               movieTrackCharacteristic | movieTrackEnabledOnly);
-  if (videoTrack != NULL)
+  if (videoTrack != nullptr)
   {
     /* get media ref. for track's sample data */
     *outMedia = GetTrackMedia(videoTrack);
@@ -282,8 +282,8 @@ OSErr MediaGetStaticFrameRate(Media inMovieMedia, double *outFPS)
 OSErr GetSettingsPreference(CFStringRef inKey, UserData *outUserData)
 {
   CFPropertyListRef theCFSettings;
-  Handle            theHandle = NULL;
-  UserData          theUserData = NULL;
+  Handle            theHandle = nullptr;
+  UserData          theUserData = nullptr;
   OSErr             err = paramErr;
 
   // read the new setttings from our preferences
@@ -315,7 +315,7 @@ OSErr SaveSettingsPreference(CFStringRef inKey, UserData inUserData)
   Handle    hSettings;
   OSErr     err;
 
-  if (NULL == inUserData) return paramErr;
+  if (nullptr == inUserData) return paramErr;
 
   hSettings = NewHandle(0);
   err = MemError();

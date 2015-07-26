@@ -352,7 +352,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 			std::regex nvidia_ati("^.*[(:]{1}(\\d+)[:)]{1}.*");
 			std::regex intel("^[0-9]+:([0-9]+)\\([0-9]+\\):.*$");
 			std::smatch matches;
-			string infoString = (infoBuffer != NULL) ? ofTrim(infoBuffer): "";
+			string infoString = (infoBuffer != nullptr) ? ofTrim(infoBuffer): "";
 			if (std::regex_search(infoString, matches, intel) || std::regex_search(infoString, matches, nvidia_ati)){
 				ofBuffer buf = shaderSource[type];
 				ofBuffer::Line line = buf.getLines().begin();
@@ -386,7 +386,7 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 		if (shaderSource.find(GL_FRAGMENT_SHADER) != shaderSource.end()) {
 			std::regex re(",.line.([^\\)]*)");
 			std::smatch matches;
-			string infoString = (infoBuffer != NULL) ? string(infoBuffer): "";
+			string infoString = (infoBuffer != nullptr) ? string(infoBuffer): "";
 			std::regex_match(infoString, matches, re);
 			ofBuffer buf = shaderSource[GL_FRAGMENT_SHADER];
 			ofBuffer::Line line = buf.getLines().begin();

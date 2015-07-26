@@ -48,7 +48,7 @@ bool visualStudioProject::createProjectFile(){
 
         // vcx has unixy paths:
         //..\..\..\libs
-        findandreplaceInTexfile(project, "../../../", relRoot);
+        findandreplaceInTexfile(project, "..\\..\\..\\", relRoot);
     }
 
     return true;

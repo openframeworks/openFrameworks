@@ -11,13 +11,19 @@ class ofEventAttendedException: public std::exception{};
 
 class ofBaseEvent{
 public:
-	ofBaseEvent()
-	:enabled(true){
-
+	/// \brief Basic constructor enabling an ofBaseEvent.
+	///
+	/// \see ofBaseEvent::ofBaseEvent(const ofBaseEvent & mom)
+	/// \see ofBaseEvent::enable()
+	/// \see ofBaseEvent::disable()
+	/// \see ofBaseEvent::isEnabled()
+	ofBaseEvent(): enabled(true){
 	}
 
-	ofBaseEvent(const ofBaseEvent & mom)
-	:enabled(mom.enabled){
+	/// \brief Copy-constructor for ofBaseEvent.
+	///
+	/// \see ofBaseEvent::ofBaseEvent()
+	ofBaseEvent(const ofBaseEvent & mom): enabled(mom.enabled){
 		std::unique_lock<std::mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
 		std::transform(functions.begin(), functions.end(),std::back_inserter(functions),
 			[&](std::unique_ptr<Function>&f){
@@ -25,6 +31,7 @@ public:
 			});
 	}
 
+	/// \brief Overloading the assignment operator.
 	ofBaseEvent & operator=(const ofBaseEvent & mom){
 		if(&mom==this){
 			return *this;
@@ -34,19 +41,33 @@ public:
 			[&](std::unique_ptr<Function>&f){
 				return std::unique_ptr<Function>(new Function(*f));
 			});
+		enabled = mom.enabled;
 		return *this;
 	}
 
 	virtual ~ofBaseEvent(){}
 
-    void enable() {
-    	enabled = true;
-    }
+	/// \brief Enable an event.
+	///
+	/// \see ofBaseEvent::disable()
+	/// \see ofBaseEvent::isEnabled()
+	void enable() {
+		enabled = true;
+	}
 
-    void disable() {
-    	enabled = false;
-    }
+	/// \brief Disable an event.
+	///
+	/// \see ofBaseEvent::enable()
+	/// \see ofBaseEvent::isEnabled()
+	void disable() {
+		enabled = false;
+	}
 
+	/// \brief Check whether an event is enabled or not.
+	///
+	/// \returns true if enables
+	/// \see ofBaseEvent::enable()
+	/// \see ofBaseEvent::disable()
 	bool isEnabled() const {
 		return enabled;
 	}
@@ -55,51 +76,50 @@ public:
 		return functions.size();
 	}
 
-    class Function{
-    public:
-    	int priority;
+	class Function{
+	public:
+		int priority;
 
-    	Function(int priority)
-    	:priority(priority){}
+		Function(int priority): priority(priority){}
 
-    	virtual ~Function(){}
+		virtual ~Function(){}
 
-    	template<typename F>
-    	bool operator==(const F & f1){
-    		const auto * thisAsF = dynamic_cast<const F*>(this);
-    		auto ret = thisAsF && f1.priority == priority;
-    		if(ret){
-    			if(f1.listener!=nullptr && f1.method!=nullptr){
-    				ret &= f1.listener == thisAsF->listener && f1.method == thisAsF->method;
-    			}
-    		}
-    		return ret;
-    	}
-    };
+		template<typename F>
+		bool operator==(const F & f1){
+			const auto * thisAsF = dynamic_cast<const F*>(this);
+			auto ret = thisAsF && f1.priority == priority;
+			if(ret){
+				if(f1.listener!=nullptr && f1.method!=nullptr){
+					ret &= f1.listener == thisAsF->listener && f1.method == thisAsF->method;
+				}
+			}
+			return ret;
+		}
+	};
 
 protected:
-    template<typename TFunction>
-    void add(TFunction * f){
-        std::unique_lock<std::mutex> lck(mtx);
-        auto it = functions.begin();
-        for(; it!=functions.end(); ++it){
-        	if((*it)->priority>f->priority) break;
-        }
-    	functions.emplace(it, f);
-    }
+	template<typename TFunction>
+	void add(TFunction * f){
+		std::unique_lock<std::mutex> lck(mtx);
+		auto it = functions.begin();
+		for(; it!=functions.end(); ++it){
+			if((*it)->priority>f->priority) break;
+		}
+		functions.emplace(it, f);
+	}
 
-    template<typename TFunction>
-    void remove(const TFunction & function){
-        std::unique_lock<std::mutex> lck(mtx);
-    	functions.erase(std::remove_if(functions.begin(), functions.end(),
-    		[&](const std::unique_ptr<Function> & f){
-        		return *f == function;
-        	}), functions.end());
-    }
+	template<typename TFunction>
+	void remove(const TFunction & function){
+		std::unique_lock<std::mutex> lck(mtx);
+		functions.erase(std::remove_if(functions.begin(), functions.end(),
+			[&](const std::unique_ptr<Function> & f){
+				return *f == function;
+			}), functions.end());
+	}
 
-    std::mutex mtx;
-    std::vector<std::unique_ptr<Function>> functions;
-    bool enabled;
+	std::mutex mtx;
+	std::vector<std::unique_ptr<Function>> functions;
+	bool enabled;
 };
 
 
@@ -107,8 +127,7 @@ template<typename T>
 class ofEvent: public ofBaseEvent{
 	class BaseFunction: public ofBaseEvent::Function{
 	public:
-		BaseFunction(int priority)
-		:ofBaseEvent::Function(priority){}
+		BaseFunction(int priority): ofBaseEvent::Function(priority){}
 		virtual ~BaseFunction(){}
 		virtual bool call(const void * sender, T & param) = 0;
 	};
@@ -171,32 +190,32 @@ class ofEvent: public ofBaseEvent{
 		}
 	};
 public:
-    template<class TObj, typename TMethod>
-    void add(TObj * listener, TMethod method, int priority){
-        ofBaseEvent::add(new Function<TObj,TMethod>(listener,method,priority));
-    }
+	template<class TObj, typename TMethod>
+	void add(TObj * listener, TMethod method, int priority){
+		ofBaseEvent::add(new Function<TObj,TMethod>(listener,method,priority));
+	}
 
-    template<class TObj, typename TMethod>
-    void remove(TObj * listener, TMethod method, int priority){
-        ofBaseEvent::remove(Function<TObj,TMethod>(listener,method,priority));
-    }
+	template<class TObj, typename TMethod>
+	void remove(TObj * listener, TMethod method, int priority){
+		ofBaseEvent::remove(Function<TObj,TMethod>(listener,method,priority));
+	}
 
-    void notify(const void* sender, T & param){
-        if(enabled){
-        	std::vector<ofBaseEvent::Function*> functions_copy;
-        	{
-        		std::unique_lock<std::mutex> lck(mtx);
-        		std::transform(functions.begin(), functions.end(),
-        				std::back_inserter(functions_copy),
+	void notify(const void* sender, T & param){
+		if(enabled){
+			std::vector<ofBaseEvent::Function*> functions_copy;
+			{
+				std::unique_lock<std::mutex> lck(mtx);
+				std::transform(functions.begin(), functions.end(),
+						std::back_inserter(functions_copy),
 						[&](std::unique_ptr<ofBaseEvent::Function>&f){return f.get();});
-        	}
+			}
 			for(auto & f: functions_copy){
 				if(static_cast<BaseFunction*>(f)->call(sender,param)){
 					throw ofEventAttendedException();
 				}
 			}
-        }
-    }
+		}
+	}
 };
 
 template<>
@@ -267,30 +286,30 @@ class ofEvent<void>: public ofBaseEvent{
 		}
 	};
 public:
-    template<class TObj, typename TMethod>
-    void add(TObj * listener, TMethod method, int priority){
-        ofBaseEvent::add(new Function<TObj,TMethod>(listener,method,priority));
-    }
+	template<class TObj, typename TMethod>
+	void add(TObj * listener, TMethod method, int priority){
+		ofBaseEvent::add(new Function<TObj,TMethod>(listener,method,priority));
+	}
 
-    template<class TObj, typename TMethod>
-    void remove(TObj * listener, TMethod method, int priority){
-        ofBaseEvent::remove(Function<TObj,TMethod>(listener,method,priority));
-    }
+	template<class TObj, typename TMethod>
+	void remove(TObj * listener, TMethod method, int priority){
+		ofBaseEvent::remove(Function<TObj,TMethod>(listener,method,priority));
+	}
 
-    void notify(const void* sender){
-        if(enabled){
-        	std::vector<ofBaseEvent::Function*> functions_copy;
-        	{
-        		std::unique_lock<std::mutex> lck(mtx);
-        		std::transform(functions.begin(), functions.end(),
-        				std::back_inserter(functions_copy),
+	void notify(const void* sender){
+		if(enabled){
+			std::vector<ofBaseEvent::Function*> functions_copy;
+			{
+				std::unique_lock<std::mutex> lck(mtx);
+				std::transform(functions.begin(), functions.end(),
+						std::back_inserter(functions_copy),
 						[&](std::unique_ptr<ofBaseEvent::Function> & f){return f.get();});
-        	}
+			}
 			for(auto & f: functions_copy){
 				if(static_cast<BaseFunction*>(f)->call(sender)){
 					throw ofEventAttendedException();
 				}
 			}
-        }
-    }
+		}
+	}
 };

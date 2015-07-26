@@ -61,10 +61,10 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 
 	uniqueShader = false;
 
-	currentShader = NULL;
+	currentShader = nullptr;
 
 	currentTextureTarget = OF_NO_TEXTURE;
-	currentMaterial = NULL;
+	currentMaterial = nullptr;
 	alphaMaskTextureTarget = OF_NO_TEXTURE;
 
 	major = 3;
@@ -105,7 +105,7 @@ void ofGLProgrammableRenderer::startRender() {
 void ofGLProgrammableRenderer::finishRender() {
 	if (!uniqueShader) {
 		glUseProgram(0);
-		if(!usingCustomShader) currentShader = NULL;
+		if(!usingCustomShader) currentShader = nullptr;
 	}
 	matrixStack.clearStacks();
 	framebufferIdStack.clear();
@@ -434,9 +434,9 @@ void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, 
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
 #ifdef TARGET_OPENGLES
-        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, NULL);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, nullptr);
 #else
-        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, NULL);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, nullptr);
 #endif
 		vbo.unbind();
 	}
@@ -470,9 +470,9 @@ void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint d
         // unfortunately there is currently no easy way within oF to query the current OpenGL version.
         // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
         ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
-        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, NULL, primCount);
+        // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
 #else
-        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, NULL, primCount);
+        glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_INT, nullptr, primCount);
 #endif
 		vbo.unbind();
 	}
@@ -488,7 +488,7 @@ void ofGLProgrammableRenderer::bind(const ofBaseVideoDraws & video){
 	if(!video.isInitialized() || !video.isUsingTexture() || video.getTexturePlanes().empty()){
 		return;
 	}
-	const ofShader * shader = NULL;
+	const ofShader * shader = nullptr;
 	if(!usingCustomShader){
 		shader = getVideoShader(video);
 		if(shader){
@@ -1371,7 +1371,7 @@ void ofGLProgrammableRenderer::bind(const ofBaseMaterial & material){
 
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::unbind(const ofBaseMaterial & material){
-	currentMaterial = NULL;
+	currentMaterial = nullptr;
 }
 
 //----------------------------------------------------------
@@ -1466,7 +1466,7 @@ void ofGLProgrammableRenderer::setDefaultUniforms(){
 void ofGLProgrammableRenderer::beginDefaultShader(){
 	if(usingCustomShader && !currentMaterial)	return;
 
-	const ofShader * nextShader = NULL;
+	const ofShader * nextShader = nullptr;
 
 	if(!uniqueShader || currentMaterial){
 		if(currentMaterial){
@@ -2363,7 +2363,7 @@ void ofGLProgrammableRenderer::setup(int _major, int _minor){
 }
 
 const ofShader * ofGLProgrammableRenderer::getVideoShader(const ofBaseVideoDraws & video) const{
-	const ofShader * shader = NULL;
+	const ofShader * shader = nullptr;
 	GLenum target = video.getTexture().getTextureData().textureTarget;
 	switch(video.getPixelFormat()){
 		case OF_PIXELS_YUY2:

@@ -68,10 +68,10 @@ public:
 
     virtual void makeCurrent(){};
 
-    virtual void * getWindowContext(){return NULL;};
+    virtual void * getWindowContext(){return nullptr;};
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
-	virtual Display* getX11Display(){return NULL;}
+	virtual Display* getX11Display(){return nullptr;}
 	virtual Window  getX11Window() {return 0;}
 #endif
 
@@ -86,8 +86,8 @@ public:
 #endif
 
 #if defined(TARGET_OSX)
-	virtual void * getNSGLContext(){return NULL;}
-	virtual void * getCocoaWindow(){return NULL;}
+	virtual void * getNSGLContext(){return nullptr;}
+	virtual void * getCocoaWindow(){return nullptr;}
 #endif
 
 #if defined(TARGET_WIN32)

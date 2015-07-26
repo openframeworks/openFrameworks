@@ -163,7 +163,7 @@ const ofPixels& ofVideoGrabber::getPixelsRef() const{
 
 //------------------------------------
 ofTexture & ofVideoGrabber::getTexture(){
-	if(grabber->getTexturePtr() == NULL){
+	if(grabber->getTexturePtr() == nullptr){
 		return tex[0];
 	}
 	else{
@@ -173,7 +173,7 @@ ofTexture & ofVideoGrabber::getTexture(){
 
 //------------------------------------
 const ofTexture & ofVideoGrabber::getTexture() const{
-	if(grabber->getTexturePtr() == NULL){
+	if(grabber->getTexturePtr() == nullptr){
 		return tex[0];
 	}
 	else{
@@ -193,7 +193,7 @@ const ofTexture & ofVideoGrabber::getTextureReference() const{
 
 //------------------------------------
 vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
-	if(grabber->getTexturePtr() != NULL){
+	if(grabber->getTexturePtr() != nullptr){
 		tex.clear();
 		tex.push_back(*grabber->getTexturePtr());
 	}
@@ -202,7 +202,7 @@ vector<ofTexture> & ofVideoGrabber::getTexturePlanes(){
 
 //------------------------------------
 const vector<ofTexture> & ofVideoGrabber::getTexturePlanes() const{
-	if(grabber->getTexturePtr() != NULL){
+	if(grabber->getTexturePtr() != nullptr){
 		ofVideoGrabber* mutThis = const_cast<ofVideoGrabber*>(this);
 		mutThis->tex.clear();
 		mutThis->tex.push_back(*grabber->getTexturePtr());

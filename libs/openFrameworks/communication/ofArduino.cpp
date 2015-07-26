@@ -68,7 +68,7 @@ ofArduino::~ofArduino() {
 
 // initialize pins once we get the Firmata version back from the Arduino board
 // the version is sent automatically by the Arduino board on startup
-void ofArduino::initPins() {
+void ofArduino::initPins() const {
     int firstAnalogPin;
     
     if (_initialized) return;   // already initialized
@@ -111,7 +111,7 @@ void ofArduino::initPins() {
     _initialized = true;
 }
 
-bool ofArduino::connect(string device, int baud){
+bool ofArduino::connect(const std::string& device, int baud){
 	connectTime = ofGetElapsedTimef();
 	_initialized = false;
 	_port.listDevices();
@@ -121,7 +121,7 @@ bool ofArduino::connect(string device, int baud){
 
 // this method is not recommended
 // the preferred method is to listen for the EInitialized event in your application
-bool ofArduino::isArduinoReady(){	
+bool ofArduino::isArduinoReady() const {
 	if(bUseDelay) {
 		if (_initialized || (ofGetElapsedTimef() - connectTime) > OF_ARDUINO_DELAY_LENGTH) {
 			initPins();
@@ -171,14 +171,14 @@ void ofArduino::update(){
 	}
 }
 
-int ofArduino::getAnalog(int pin){
+int ofArduino::getAnalog(int pin) const {
 	if(_analogHistory[pin].size()>0)
 		return _analogHistory[pin].front();
 	else
 		return -1;
 }
 
-int ofArduino::getDigital(int pin){
+int ofArduino::getDigital(int pin) const {
 	if(_digitalPinMode[pin]==ARD_INPUT && _digitalHistory[pin].size()>0)
 		return _digitalHistory[pin].front();
 	else if (_digitalPinMode[pin]==ARD_OUTPUT)
@@ -187,22 +187,22 @@ int ofArduino::getDigital(int pin){
 		return -1;
 }
 
-int ofArduino::getPwm(int pin){
+int ofArduino::getPwm(int pin) const {
 	if(_digitalPinMode[pin]==ARD_PWM)
 		return _digitalPinValue[pin];
 	else
 		return -1;
 }
 
-vector<unsigned char> ofArduino::getSysEx(){
+vector<unsigned char> ofArduino::getSysEx() const {
 	return _sysExHistory.front();
 }
 
-string ofArduino::getString(){
+string ofArduino::getString() const {
 	return _stringHistory.front();
 }
 
-int ofArduino::getDigitalPinMode(int pin){
+int ofArduino::getDigitalPinMode(int pin) const {
 	return _digitalPinMode[pin];
 }
 
@@ -344,7 +344,7 @@ void ofArduino::sendDigitalPinMode(int pin, int mode){
 	}
 }
 
-int ofArduino::getAnalogPinReporting(int pin){
+int ofArduino::getAnalogPinReporting(int pin) const {
 	return _analogPinReporting[pin];
 }
 
@@ -364,27 +364,27 @@ list<string>* ofArduino::getStringHistory(){
 	return &_stringHistory;
 }
 
-int ofArduino::getMajorProtocolVersion(){
+int ofArduino::getMajorProtocolVersion() const {
 	return _majorFirmwareVersion;
 }
 
-int ofArduino::getMinorProtocolVersion(){
+int ofArduino::getMinorProtocolVersion() const {
 	return _minorFirmwareVersion;
 }
 
-int ofArduino::getMajorFirmwareVersion(){
+int ofArduino::getMajorFirmwareVersion() const {
 	return _majorFirmwareVersion;
 }
 
-int ofArduino::getMinorFirmwareVersion(){
+int ofArduino::getMinorFirmwareVersion() const {
 	return _minorFirmwareVersion;
 }
 
-string ofArduino::getFirmwareName(){
+string ofArduino::getFirmwareName() const {
 	return _firmwareName;
 }
 
-bool ofArduino::isInitialized(){
+bool ofArduino::isInitialized() const {
 	return _initialized;
 }
 
@@ -789,7 +789,7 @@ void ofArduino::sendServoDetach(int pin) {
 	_digitalPinMode[pin]=ARD_OUTPUT;
 }
 
-int ofArduino::getServo(int pin){
+int ofArduino::getServo(int pin) const {
 	if(_digitalPinMode[pin]==ARD_SERVO)
 		// for firmata v2.2 and greater
 		if (_firmwareVersionSum >= FIRMWARE2_2) {
