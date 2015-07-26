@@ -51,7 +51,7 @@ This script runs the OF styler on the src directory of a given addon.
 
 Example:
 
-	styleAddon ofxXmlSettings
+	styleAddon ofxNetwork
 
 ## styleOFCore
 
