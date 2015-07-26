@@ -136,7 +136,7 @@ ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
     config.shape.height = height;
     for (int i=0; i<4; i++) {
     	ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
-        add(p,config);
+        add<ofxSlider<ColorType>>(p,config);
         p.addListener(this, & ofxColorSlider_::changeSlider);
         collection[i]->setFillColor(value.get());
     }

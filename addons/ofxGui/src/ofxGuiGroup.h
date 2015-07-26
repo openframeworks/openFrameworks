@@ -3,12 +3,16 @@
 
 #include "ofxSlider.h"
 #include "ofxButton.h"
+#include "ofxLabel.h"
 #include "ofParameterGroup.h"
 
 class ofxGuiGroup : public ofxBaseGui {
 	public:
 		struct Config: public ofxBaseGui::Config{
-			typedef ofxGuiGroup ParentType;
+			Config(){}
+			Config(const ofxBaseGui::Config & c)
+			:ofxBaseGui::Config(c){}
+
 			std::string filename = "settings.xml";
 			bool minimized = false;
 			float spacing = 1;
@@ -28,27 +32,42 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		void add(ofxBaseGui & element);
 		void add(ofxGuiGroup & element);
-		void add(const ofParameterGroup & parameters);
-		void add(ofParameter <float> & parameter);
-		void add(ofParameter <int> & parameter);
-		void add(ofParameter <bool> & parameter);
-		void add(ofParameter <std::string> & parameter);
-		void add(ofParameter <ofVec2f> & parameter);
-		void add(ofParameter <ofVec3f> & parameter);
-		void add(ofParameter <ofVec4f> & parameter);
-		void add(ofParameter <ofColor> & parameter);
-		void add(ofParameter <ofShortColor> & parameter);
-		void add(ofParameter <ofFloatColor> & parameter);
 
-		template<class Config, typename Type>
-		void add(ofParameter<Type> p, const Config & config = Config()){
-			add(new typename Config::ParentType(p,config));
-		}
+		template<class Config = ofxBaseGui::Config>
+		void add(ofParameter <float> & parameter, const Config & config = Config());
 
-		template<class Config, typename Type>
-		void add(ofParameterGroup p, const Config & config = Config()){
-			add(new typename Config::ParentType(p,config));
-		}
+		template<class Config = ofxBaseGui::Config>
+		void add(ofParameter <int> & parameter, const Config & config = Config());
+
+		template<class Config = ofxBaseGui::Config>
+		void add(ofParameter <bool> & parameter, const Config & config = Config());
+
+		template<class Config = ofxBaseGui::Config>
+		void add(ofParameter <std::string> & parameter, const Config & config = Config());
+
+		template<class Config = ofxBaseGui::Config>
+		void add(ofParameter <ofVec2f> & parameter, const Config & config = Config());
+
+		template<class Config = ofxBaseGui::Config>
+		void add(ofParameter <ofVec3f> & parameter, const Config & config = Config());
+
+		template<class Config = ofxBaseGui::Config>
+		void add(ofParameter <ofVec4f> & parameter, const Config & config = Config());
+
+		template<class Config = ofxBaseGui::Config>
+		void add(ofParameter <ofColor> & parameter, const Config & config = Config());
+
+		template<class Config = ofxBaseGui::Config>
+		void add(ofParameter <ofShortColor> & parameter, const Config & config = Config());
+
+		template<class Config = ofxBaseGui::Config>
+		void add(ofParameter <ofFloatColor> & parameter, const Config & config = Config());
+
+		template<class GuiType, typename Type, class Config = typename GuiType::Config>
+		void add(ofParameter<Type> p, const Config & config = Config());
+
+		template<class GuiType=ofxGuiGroup, class Config=ofxGuiGroup::Config>
+		void add(ofParameterGroup p, const Config & config = Config());
 
 		void minimize();
 		void maximize();
@@ -129,3 +148,34 @@ ControlType & ofxGuiGroup::getControlType(const std::string& name){
 		return *control;
 	}
 }
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <float> & parameter, const C & config){
+	add<ofxFloatSlider>(parameter, config);
+}
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <int> & parameter, const C & config){
+	add<ofxIntSlider>(parameter, config);
+}
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <bool> & parameter, const C & config){
+	add<ofxToggle>(parameter, config);
+}
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <std::string> & parameter, const C & config){
+	add<ofxLabel>(parameter, config);
+}
+
+template<class GuiType, typename Type, class C>
+void ofxGuiGroup::add(ofParameter<Type> p, const C & config){
+	addOwned(new GuiType(p,config));
+}
+
+template<class GuiType, class C>
+void ofxGuiGroup::add(ofParameterGroup p, const C & config){
+	addOwned(new GuiType(p,config));
+}
+

@@ -1,13 +1,17 @@
 #pragma once
 
 #include "ofxGuiGroup.h"
-#include "ofxSlider.h"
+
 
 template<class VecType>
 class ofxVecSlider_ : public ofxGuiGroup {
 public:
 	struct Config: public ofxGuiGroup::Config{
-		typedef ofxVecSlider_ ParentType;
+		Config(){}
+		Config(const ofxGuiGroup::Config & c)
+		:ofxGuiGroup::Config(c){}
+		Config(const ofxBaseGui::Config & c)
+		:ofxGuiGroup::Config(c){}
 	};
 	ofxVecSlider_();
     ofxVecSlider_(ofParameter<VecType> value, const Config & config = Config());
@@ -38,7 +42,11 @@ class ofxColorSlider_: public ofxGuiGroup{
 
 public:
 	struct Config: public ofxGuiGroup::Config{
-		typedef ofxColorSlider_ ParentType;
+		Config(){}
+		Config(const ofxGuiGroup::Config & c)
+		:ofxGuiGroup::Config(c){}
+		Config(const ofxBaseGui::Config & c)
+		:ofxGuiGroup::Config(c){}
 	};
 
 	ofxColorSlider_();
@@ -62,3 +70,33 @@ protected:
 typedef ofxColorSlider_<unsigned char> ofxColorSlider;
 typedef ofxColorSlider_<unsigned short> ofxShortColorSlider;
 typedef ofxColorSlider_<float> ofxFloatColorSlider;
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter, const C & config){
+	add<ofxVec2Slider>(parameter, config);
+}
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <ofVec3f> & parameter, const C & config){
+	add<ofxVec3Slider>(parameter, config);
+}
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <ofVec4f> & parameter, const C & config){
+	add<ofxVec4Slider>(parameter, config);
+}
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <ofColor> & parameter, const C & config){
+	add<ofxColorSlider>(parameter, config);
+}
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <ofShortColor> & parameter, const C & config){
+	add<ofxShortColorSlider>(parameter, config);
+}
+
+template<class C>
+void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter, const C & config){
+	add<ofxFloatColorSlider>(parameter, config);
+}

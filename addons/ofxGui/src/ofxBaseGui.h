@@ -9,6 +9,8 @@
 class ofxBaseGui {
 	public:
 		struct Config{
+			Config(){};
+			Config(const ofxBaseGui::Config & c){}
 			ofColor headerBackgroundColor = ofxBaseGui::headerBackgroundColor;
 			ofColor backgroundColor = ofxBaseGui::backgroundColor;
 			ofColor borderColor = ofxBaseGui::borderColor;

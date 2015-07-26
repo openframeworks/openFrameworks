@@ -6,7 +6,9 @@
 class ofxLabel: public ofxBaseGui {
 public:
 	struct Config: public ofxBaseGui::Config{
-		typedef ofxLabel ParentType;
+		Config(){}
+		Config(const ofxBaseGui::Config & c)
+		:ofxBaseGui::Config(c){}
 	};
 
     ofxLabel();

@@ -6,7 +6,9 @@
 class ofxToggle : public ofxBaseGui{
 public:
 	struct Config: public ofxBaseGui::Config{
-		typedef ofxToggle ParentType;
+		Config(){}
+		Config(const ofxBaseGui::Config & c)
+		:ofxBaseGui::Config(c){}
 	};
 
 	ofxToggle();

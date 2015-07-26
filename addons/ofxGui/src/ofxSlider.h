@@ -7,7 +7,9 @@ template<typename Type>
 class ofxSlider : public ofxBaseGui{
 public:	
 	struct Config: public ofxBaseGui::Config{
-		typedef ofxSlider<Type> ParentType;
+		Config(){}
+		Config(const ofxBaseGui::Config & c)
+		:ofxBaseGui::Config(c){}
 		bool updateOnReleaseOnly = false;
 	};
 

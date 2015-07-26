@@ -4,11 +4,13 @@
 #include "ofParameter.h"
 
 class ofxButton : public ofxToggle{
-	friend class ofPanel;
-	
 public:
 	struct Config: public ofxToggle::Config{
-		typedef ofxButton ParentType;
+		Config(){}
+		Config(const ofxToggle::Config & c)
+		:ofxToggle::Config(c){}
+		Config(const ofxBaseGui::Config & c)
+		:ofxToggle::Config(c){}
 		std::string name;
 	};
 

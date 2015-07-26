@@ -1,8 +1,7 @@
 #include "ofxGuiGroup.h"
 #include "ofxPanel.h"
-#include "ofxSliderGroup.h"
 #include "ofGraphics.h"
-#include "ofxLabel.h"
+#include "ofxSliderGroup.h"
 using namespace std;
 
 ofxGuiGroup::ofxGuiGroup()
@@ -165,50 +164,6 @@ void ofxGuiGroup::setWidthElements(float w){
 	}
 	sizeChangedCB();
 	setNeedsRedraw();
-}
-
-void ofxGuiGroup::add(const ofParameterGroup & parameters){
-	addOwned(new ofxGuiGroup(parameters));
-}
-
-void ofxGuiGroup::add(ofParameter <float> & parameter){
-	addOwned(new ofxFloatSlider(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <int> & parameter){
-	addOwned(new ofxIntSlider(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <bool> & parameter){
-	addOwned(new ofxToggle(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <string> & parameter){
-	addOwned(new ofxLabel(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
-	addOwned(new ofxVecSlider_ <ofVec2f>(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <ofVec3f> & parameter){
-	addOwned(new ofxVecSlider_ <ofVec3f>(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <ofVec4f> & parameter){
-	addOwned(new ofxVecSlider_ <ofVec4f>(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <ofColor> & parameter){
-	addOwned(new ofxColorSlider_ <unsigned char>(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <ofShortColor> & parameter){
-	addOwned(new ofxColorSlider_ <unsigned short>(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
-	addOwned(new ofxColorSlider_ <float>(parameter, b.width));
 }
 
 void ofxGuiGroup::clear(){
