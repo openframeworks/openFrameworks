@@ -27,12 +27,12 @@ void ofApp::draw(){
     
 	// display instructions
 	string buf;
-	buf = "sending OSC messages to " + string(HOST) + ":" + ofToString(PORT);
+	buf = "sending osc messages to" + string(HOST) + ofToString(PORT);
 	ofDrawBitmapString(buf, 10, 20);
-	ofDrawBitmapString("move the mouse to send OSC message [/mouse/position <x> <y>]", 10, 50);
-	ofDrawBitmapString("click to send OSC message [/mouse/button <button> <\"up\"|\"down\">]", 10, 65);
-	ofDrawBitmapString("press A to send OSC message [/test 1 3.5 hello <time>]", 10, 80);
-	ofDrawBitmapString("press I to send a (small) image as a OSC blob to [/image]", 10, 95);
+	ofDrawBitmapString("move the mouse to send osc message [/mouse/position <x> <y>]", 10, 50);
+	ofDrawBitmapString("click to send osc message [/mouse/button <button> <\"up\"|\"down\">]", 10, 65);
+	ofDrawBitmapString("press A to send osc message [/test 1 3.5 hello <time>]", 10, 80);
+	ofDrawBitmapString("press I to send a (small) image as a osc blob to [/image]", 10, 95);
 
 }
 
@@ -84,6 +84,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 void ofApp::mousePressed(int x, int y, int button){
 	ofxOscMessage m;
 	m.setAddress("/mouse/button");
+	m.addIntArg(button);
 	m.addStringArg("down");
 	sender.sendMessage(m, false);
 }
@@ -92,6 +93,7 @@ void ofApp::mousePressed(int x, int y, int button){
 void ofApp::mouseReleased(int x, int y, int button){
 	ofxOscMessage m;
 	m.setAddress("/mouse/button");
+	m.addIntArg(button);
 	m.addStringArg("up");
 	sender.sendMessage(m, false);
 
