@@ -27,7 +27,7 @@ void ofApp::draw(){
     
 	// display instructions
 	string buf;
-	buf = "sending OSC messages to" + string(HOST) + ofToString(PORT);
+	buf = "sending OSC messages to " + string(HOST) + ":" + ofToString(PORT);
 	ofDrawBitmapString(buf, 10, 20);
 	ofDrawBitmapString("move the mouse to send OSC message [/mouse/position <x> <y>]", 10, 50);
 	ofDrawBitmapString("click to send OSC message [/mouse/button <button> <\"up\"|\"down\">]", 10, 65);
