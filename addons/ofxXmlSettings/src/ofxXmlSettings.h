@@ -169,5 +169,5 @@ OF_DEPRECATED_MSG("ofXml is going to replace ofxXmlSetting", class ofxXmlSetting
         bool readIntAttribute(const string& tag, const string& attribute, int& valueString, int which);
         bool readDoubleAttribute(const string& tag, const string& attribute, double& outValue, int which);
         bool readStringAttribute(const string& tag, const string& attribute, string& outValue, int which);
-};   
+}
 );
