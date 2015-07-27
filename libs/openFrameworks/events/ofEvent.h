@@ -248,11 +248,11 @@ public:
 	}
 
 	inline void notify(const void* sender, T & param){
-		if(this->template enabled && !this->template functions.empty()){
+		if(ofEvent<T,Mutex>::enabled && !ofEvent<T,Mutex>::functions.empty()){
 			std::vector<of::priv::Function<T>*> functions_copy;
 			{
-				std::unique_lock<Mutex> lck(this->template mtx);
-				std::transform(this->template functions.begin(), this->template functions.end(),
+				std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::mtx);
+				std::transform(ofEvent<T,Mutex>::functions.begin(), ofEvent<T,Mutex>::functions.end(),
 						std::back_inserter(functions_copy),
 						[&](of::priv::Function<T>&f){return &f;});
 			}
@@ -362,11 +362,11 @@ public:
 	}
 
 	void notify(const void* sender){
-		if(this->template enabled && !this->template functions.empty()){
+		if(ofEvent<void,Mutex>::enabled && !ofEvent<void,Mutex>::functions.empty()){
 			std::vector<of::priv::Function<void>*> functions_copy;
 			{
-				std::unique_lock<Mutex> lck(this->template mtx);
-				std::transform(this->template functions.begin(), this->template functions.end(),
+				std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::mtx);
+				std::transform(ofEvent<void,Mutex>::functions.begin(), ofEvent<void,Mutex>::functions.end(),
 						std::back_inserter(functions_copy),
 						[&](of::priv::Function<void> & f){return &f;});
 			}
@@ -385,8 +385,8 @@ template<typename T>
 class ofFastEvent: public ofEvent<T,of::priv::NoopMutex>{
 public:
 	inline void notify(const void* sender, T & param){
-		if(this->template enabled && !this->template functions.empty()){
-			for(auto & f: this->template functions){
+		if(ofFastEvent::enabled && !ofFastEvent::functions.empty()){
+			for(auto & f: ofFastEvent::functions){
 				if(f.function(sender,param)){
 					throw ofEventAttendedException();
 				}
