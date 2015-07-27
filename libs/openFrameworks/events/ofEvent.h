@@ -30,7 +30,7 @@ public:
 		std::unique_lock<Mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
 		std::transform(functions.begin(), functions.end(),std::back_inserter(functions),
 			[&](Function&f){
-				return std::unique_ptr<Function>(new Function(*f));
+				return std::unique_ptr<Function>(new Function(f));
 			});
 	}
 
