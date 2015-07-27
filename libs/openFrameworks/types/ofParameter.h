@@ -42,10 +42,15 @@ public:
 		return static_cast<const ofParameter<ParameterType> &>(*this);
 	}
 
+	ofParameterGroup & castGroup();
+
+	const ofParameterGroup & castGroup() const;
+
 	friend ostream& operator<<(ostream& os, const ofAbstractParameter& p);
 	friend istream& operator>>(istream& is, ofAbstractParameter& p);
 
 	virtual bool isSerializable() const = 0;
+	virtual bool isReadOnly() const = 0;
 	virtual shared_ptr<ofAbstractParameter> newReference() const = 0;
 
 protected:
@@ -128,6 +133,7 @@ public:
 	int size() const;
 	string getName(int position) const;
 	string getType(int position) const;
+	bool getIsReadOnly(int position) const;
 	int getPosition(const string& name) const;
 
 	friend ostream& operator<<(ostream& os, const ofParameterGroup& group);
@@ -147,6 +153,7 @@ public:
 
 	void setSerializable(bool serializable);
 	bool isSerializable() const;
+	bool isReadOnly() const;
 	shared_ptr<ofAbstractParameter> newReference() const;
 
 	void setParent(ofParameterGroup & parent);
@@ -205,54 +212,60 @@ ofParameter<ParameterType> ofParameterGroup::get(int pos) const{
 
 
 
-//----------------------------------------------------------------------
-// Mechanism to provide min and max default values for types where it makes sense
-template<typename T, bool B>
-struct ofTypeInfo_ {
-};
+/*! \cond PRIVATE */
+namespace of{
+namespace priv{
+	//----------------------------------------------------------------------
+	// Mechanism to provide min and max default values for types where it makes sense
+	template<typename T, bool B>
+	struct TypeInfo_ {
+	};
 
-// Types with numeric_limits resolve to this template specialization:
-template<typename T>
-struct ofTypeInfo_<T, true> {
-    static T min() { return std::numeric_limits<T>::is_signed ? -std::numeric_limits<T>::max() : 0; }
-    static T max() { return std::numeric_limits<T>::max(); }
-};
+	// Types with numeric_limits resolve to this template specialization:
+	template<typename T>
+	struct TypeInfo_<T, true> {
+		static T min() { return std::numeric_limits<T>::lowest(); }
+		static T max() { return std::numeric_limits<T>::max(); }
+	};
 
-// Types without numeric_limits resolve to this template specialization:
-template<typename T>
-struct ofTypeInfo_<T, false> {
-    static T min() { return T(); }
-    static T max() { return T(); }
-};
+	// Types without numeric_limits resolve to this template specialization:
+	template<typename T>
+	struct TypeInfo_<T, false> {
+		static T min() { return T(); }
+		static T max() { return T(); }
+	};
 
-template<typename T>
-struct ofTypeInfo : public ofTypeInfo_<T, std::numeric_limits<T>::is_specialized> {
-};
+	template<typename T>
+	struct TypeInfo : public of::priv::TypeInfo_<T, std::numeric_limits<T>::is_specialized> {
+	};
 
-// Here we provide some of our own specializations:
-template<>
-struct ofTypeInfo <ofVec2f> {
-    static ofVec2f min() { return ofVec2f(-std::numeric_limits<float>::max()); };
-    static ofVec2f max() { return ofVec3f(std::numeric_limits<float>::max()); };
-};
+	// Here we provide some of our own specializations:
+	template<>
+	struct TypeInfo <ofVec2f> {
+		static ofVec2f min() { return ofVec2f(std::numeric_limits<float>::lowest()); };
+		static ofVec2f max() { return ofVec3f(std::numeric_limits<float>::max()); };
+	};
 
-template<>
-struct ofTypeInfo <ofVec3f> {
-    static ofVec3f min() { return ofVec3f(-std::numeric_limits<float>::max()); };
-    static ofVec3f max() { return ofVec3f(std::numeric_limits<float>::max()); };
-};
+	template<>
+	struct TypeInfo <ofVec3f> {
+		static ofVec3f min() { return ofVec3f(std::numeric_limits<float>::lowest()); };
+		static ofVec3f max() { return ofVec3f(std::numeric_limits<float>::max()); };
+	};
 
-template<>
-struct ofTypeInfo <ofVec4f> {
-    static ofVec4f min() { return ofVec4f(-std::numeric_limits<float>::max()); };
-    static ofVec4f max() { return ofVec4f(std::numeric_limits<float>::max()); };
-};
+	template<>
+	struct TypeInfo <ofVec4f> {
+		static ofVec4f min() { return ofVec4f(std::numeric_limits<float>::lowest()); };
+		static ofVec4f max() { return ofVec4f(std::numeric_limits<float>::max()); };
+	};
 
-template<typename T>
-struct ofTypeInfo <ofColor_<T>> {
-    static ofColor_<T> min() { return ofColor_<T>(0,0); };
-    static ofColor_<T> max() { return ofColor_<T>(ofColor_<T>::limit(),ofColor_<T>::limit()); };
-};
+	template<typename T>
+	struct TypeInfo <ofColor_<T>> {
+		static ofColor_<T> min() { return ofColor_<T>(0,0); };
+		static ofColor_<T> max() { return ofColor_<T>(ofColor_<T>::limit(),ofColor_<T>::limit()); };
+	};
+}
+}
+/*! \endcond */
 
 
 
@@ -268,9 +281,9 @@ template<typename ParameterType>
 class ofParameter: public ofAbstractParameter{
 public:
 	ofParameter();
-	ofParameter(ParameterType v);
-	ofParameter(const string& name, ParameterType v);
-	ofParameter(const string& name, ParameterType v, ParameterType min, ParameterType max);
+	ofParameter(const ParameterType & v);
+	ofParameter(const string& name, const ParameterType & v);
+	ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
 	const ParameterType & get() const;
 	const ParameterType * operator->() const;
@@ -286,18 +299,19 @@ public:
 	string toString() const;
 
 	template<class ListenerClass, typename ListenerMethod>
-	void addListener(ListenerClass * listener, ListenerMethod method){
-		ofAddListener(obj->changedE,listener,method);
+	void addListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP){
+		ofAddListener(obj->changedE,listener,method,prio);
 	}
 
 	template<class ListenerClass, typename ListenerMethod>
-	void removeListener(ListenerClass * listener, ListenerMethod method){
-		ofRemoveListener(obj->changedE,listener,method);
+	void removeListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP){
+		ofRemoveListener(obj->changedE,listener,method,prio);
 	}
 
 	void enableEvents();
 	void disableEvents();
 	bool isSerializable() const;
+	bool isReadOnly() const;
 
 	void makeReferenceTo(ofParameter<ParameterType> mom);
 
@@ -332,12 +346,12 @@ public:
 	ofParameter<ParameterType> & operator>>=(const OtherType & v);
 
 
-	ofParameter<ParameterType> & set(ParameterType v);
-	ofParameter<ParameterType> & set(const string& name, ParameterType value);
-	ofParameter<ParameterType> & set(const string& name, ParameterType value, ParameterType min, ParameterType max);
+	ofParameter<ParameterType> & set(const ParameterType & v);
+	ofParameter<ParameterType> & set(const string& name, const ParameterType & v);
+	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
-	void setMin(ParameterType min);
-	void setMax(ParameterType max);
+	void setMin(const ParameterType & min);
+	void setMax(const ParameterType & max);
 
 	void fromString(const string & name);
 
@@ -358,23 +372,23 @@ private:
 	class Value{
 	public:
 		Value()
-		:min(ofTypeInfo<ParameterType>::min())
-		,max(ofTypeInfo<ParameterType>::min())
+		:min(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::min())
 		,bInNotify(false)
 		,serializable(true){};
 
 		Value(ParameterType v)
 		:value(v)
-		,min(ofTypeInfo<ParameterType>::min())
-		,max(ofTypeInfo<ParameterType>::min())
+		,min(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::min())
 		,bInNotify(false)
 		,serializable(true){};
 
 		Value(string name, ParameterType v)
 		:name(name)
-		,min(ofTypeInfo<ParameterType>::min())
-		,max(ofTypeInfo<ParameterType>::min())
 		,value(v)
+		,min(of::priv::TypeInfo<ParameterType>::min())
+		,max(of::priv::TypeInfo<ParameterType>::min())
 		,bInNotify(false)
 		,serializable(true){};
 
@@ -387,7 +401,7 @@ private:
 		,serializable(true){};
 
 		string name;
-		ParameterType value, prevValue;
+		ParameterType value;
 		ParameterType min, max;
 		ofEvent<ParameterType> changedE;
 		bool bInNotify;
@@ -395,36 +409,36 @@ private:
 		vector<weak_ptr<ofParameterGroup::Value>> parents;
 	};
 	shared_ptr<Value> obj;
-	void (ofParameter<ParameterType>::*setMethod)(ParameterType v);
+	std::function<void(const ParameterType & v)> setMethod;
 
-	void eventsSetValue(ParameterType v);
-	void noEventsSetValue(ParameterType v);
+	void eventsSetValue(const ParameterType & v);
+	void noEventsSetValue(const ParameterType & v);
 };
 
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter()
 :obj(new Value)
-,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
 
 template<typename ParameterType>
-ofParameter<ParameterType>::ofParameter(ParameterType v)
+ofParameter<ParameterType>::ofParameter(const ParameterType & v)
 :obj(shared_ptr<Value>(new Value(v)))
-,setMethod(&ofParameter<ParameterType>::eventsSetValue) {}
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)) {}
 
 template<typename ParameterType>
-ofParameter<ParameterType>::ofParameter(const string& name, ParameterType v)
+ofParameter<ParameterType>::ofParameter(const string& name, const ParameterType & v)
 :obj(shared_ptr<Value>(new Value(name, v)))
-,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
 
 template<typename ParameterType>
-ofParameter<ParameterType>::ofParameter(const string& name, ParameterType v, ParameterType min, ParameterType max)
+ofParameter<ParameterType>::ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max)
 :obj(shared_ptr<Value>(new Value(name, v, min, max)))
-,setMethod(&ofParameter<ParameterType>::eventsSetValue){}
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
 
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator=(const ofParameter<ParameterType> & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator=(const ofParameter<ParameterType> & v){
 	set(v);
 	return *this;
 }
@@ -436,13 +450,13 @@ inline const ParameterType & ofParameter<ParameterType>::operator=(const Paramet
 }
 
 template<typename ParameterType>
-inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(ParameterType v){
-	(this->*setMethod)(v);
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(const ParameterType & v){
+	setMethod(v);
 	return *this;
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, ParameterType value, ParameterType min, ParameterType max){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max){
 	setName(name);
 	set(value);
 	setMin(min);
@@ -451,7 +465,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name,
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, ParameterType value){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value){
 	setName(name);
 	set(value);
 	return *this;
@@ -467,7 +481,7 @@ inline const ParameterType * ofParameter<ParameterType>::operator->() const{
 }
 
 template<typename ParameterType>
-inline void ofParameter<ParameterType>::eventsSetValue(ParameterType v){
+inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
 	if(obj->bInNotify) {
 		noEventsSetValue(v);
 		return;
@@ -475,16 +489,18 @@ inline void ofParameter<ParameterType>::eventsSetValue(ParameterType v){
 	obj->bInNotify = true;
 	obj->value = v;
 	ofNotifyEvent(obj->changedE,obj->value,this);
-	obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),[this](weak_ptr<ofParameterGroup::Value> p){
-		auto parent = p.lock();
-		if(parent) parent->notifyParameterChanged(*this);
-		return !parent;
-	}),obj->parents.end());
+	if(!obj->parents.empty()){
+		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),[this](weak_ptr<ofParameterGroup::Value> p){
+			auto parent = p.lock();
+			if(parent) parent->notifyParameterChanged(*this);
+			return !parent;
+		}),obj->parents.end());
+	}
 	obj->bInNotify = false;
 }
 
 template<typename ParameterType>
-inline void ofParameter<ParameterType>::noEventsSetValue(ParameterType v){
+inline void ofParameter<ParameterType>::noEventsSetValue(const ParameterType & v){
 	obj->value = v;
 }
 
@@ -500,7 +516,12 @@ bool ofParameter<ParameterType>::isSerializable() const{
 }
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::setMin(ParameterType min){
+bool ofParameter<ParameterType>::isReadOnly() const{
+	return false;
+}
+
+template<typename ParameterType>
+void ofParameter<ParameterType>::setMin(const ParameterType & min){
 	obj->min = min;
 }
 
@@ -510,7 +531,7 @@ ParameterType ofParameter<ParameterType>::getMin() const {
 }
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::setMax(ParameterType max){
+void ofParameter<ParameterType>::setMax(const ParameterType & max){
 	obj->max = max;
 }
 
@@ -548,16 +569,16 @@ void ofParameter<ParameterType>::fromString(const string & str){
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::enableEvents(){
-	setMethod = &ofParameter<ParameterType>::eventsSetValue;
+	setMethod = std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1);
 }
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::disableEvents(){
-	setMethod = &ofParameter<ParameterType>::noEventsSetValue;
+	setMethod = std::bind(&ofParameter<ParameterType>::noEventsSetValue,this, std::placeholders::_1);
 }
 
 template<typename ParameterType>
-ParameterType ofParameter<ParameterType>::operator++(int v){
+inline ParameterType ofParameter<ParameterType>::operator++(int v){
 	ParameterType r = obj->value;
 	obj->value++;
 	set(obj->value);
@@ -565,14 +586,14 @@ ParameterType ofParameter<ParameterType>::operator++(int v){
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator++(){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator++(){
 	++obj->value;
 	set(obj->value);
 	return *this;
 }
 
 template<typename ParameterType>
-ParameterType ofParameter<ParameterType>::operator--(int v){
+inline ParameterType ofParameter<ParameterType>::operator--(int v){
 	ParameterType r = obj->value;
 	obj->value--;
 	set(obj->value);
@@ -580,7 +601,7 @@ ParameterType ofParameter<ParameterType>::operator--(int v){
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator--(){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator--(){
 	--obj->value;
 	set(obj->value);
 	return *this;
@@ -588,7 +609,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::operator--(){
 
 template<typename ParameterType>
 template<typename OtherType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator+=(const OtherType & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator+=(const OtherType & v){
 	obj->value+=v;
 	set(obj->value);
 	return *this;
@@ -596,7 +617,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::operator+=(const OtherT
 
 template<typename ParameterType>
 template<typename OtherType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator-=(const OtherType & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator-=(const OtherType & v){
 	obj->value-=v;
 	set(obj->value);
 	return *this;
@@ -604,7 +625,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::operator-=(const OtherT
 
 template<typename ParameterType>
 template<typename OtherType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator*=(const OtherType & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator*=(const OtherType & v){
 	obj->value*=v;
 	set(obj->value);
 	return *this;
@@ -612,7 +633,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::operator*=(const OtherT
 
 template<typename ParameterType>
 template<typename OtherType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator/=(const OtherType & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator/=(const OtherType & v){
 	obj->value/=v;
 	set(obj->value);
 	return *this;
@@ -620,7 +641,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::operator/=(const OtherT
 
 template<typename ParameterType>
 template<typename OtherType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator%=(const OtherType & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator%=(const OtherType & v){
 	obj->value%=v;
 	set(obj->value);
 	return *this;
@@ -628,7 +649,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::operator%=(const OtherT
 
 template<typename ParameterType>
 template<typename OtherType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator&=(const OtherType & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator&=(const OtherType & v){
 	obj->value&=v;
 	set(obj->value);
 	return *this;
@@ -644,7 +665,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::operator|=(const OtherT
 
 template<typename ParameterType>
 template<typename OtherType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator^=(const OtherType & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator^=(const OtherType & v){
 	obj->value^=v;
 	set(obj->value);
 	return *this;
@@ -652,7 +673,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::operator^=(const OtherT
 
 template<typename ParameterType>
 template<typename OtherType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator<<=(const OtherType & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator<<=(const OtherType & v){
 	obj->value<<=v;
 	set(obj->value);
 	return *this;
@@ -660,7 +681,7 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::operator<<=(const Other
 
 template<typename ParameterType>
 template<typename OtherType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::operator>>=(const OtherType & v){
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator>>=(const OtherType & v){
 	obj->value>>=v;
 	set(obj->value);
 	return *this;
@@ -694,9 +715,9 @@ class ofReadOnlyParameter: public ofAbstractParameter{
 public:
 	ofReadOnlyParameter();
 	ofReadOnlyParameter(ofParameter<ParameterType> & p);
-	ofReadOnlyParameter(ParameterType v);
-	ofReadOnlyParameter(const string& name, ParameterType v);
-	ofReadOnlyParameter(const string& name, ParameterType v, ParameterType min, ParameterType max);
+	ofReadOnlyParameter(const ParameterType & v);
+	ofReadOnlyParameter(const string& name, const ParameterType & v);
+	ofReadOnlyParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
 	const ParameterType & get() const;
 	const ParameterType * operator->() const;
@@ -704,24 +725,26 @@ public:
 
 	string getName() const;
 
-	ParameterType getMin();
+	ParameterType getMin() const;
 
-	ParameterType getMax();
+	ParameterType getMax() const;
 
 	string toString() const;
 
 	template<class ListenerClass, typename ListenerMethod>
-	void addListener(ListenerClass * listener, ListenerMethod method);
+	void addListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP);
 
 	template<class ListenerClass, typename ListenerMethod>
-	void removeListener(ListenerClass * listener, ListenerMethod method);
+	void removeListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP);
+
 	shared_ptr<ofAbstractParameter> newReference() const;
+	bool isSerializable() const;
+	bool isReadOnly() const;
 
 protected:
 	void setName(const string & name);
 	void enableEvents();
 	void disableEvents();
-	bool isSerializable() const;
 	void setSerializable(bool s);
 
 	void makeReferenceTo(ofReadOnlyParameter<ParameterType,Friend> mom);
@@ -759,13 +782,13 @@ protected:
 	ofReadOnlyParameter<ParameterType,Friend>& operator>>=(const OtherType & v);
 
 
-	ofReadOnlyParameter<ParameterType,Friend>& set(ParameterType v);
+	ofReadOnlyParameter<ParameterType,Friend>& set(const ParameterType & v);
 	
-	ofReadOnlyParameter<ParameterType,Friend>& set(const string& name, ParameterType value);
-	ofReadOnlyParameter<ParameterType,Friend>& set(const string& name, ParameterType value, ParameterType min, ParameterType max);
+	ofReadOnlyParameter<ParameterType,Friend>& set(const string& name, const ParameterType & value);
+	ofReadOnlyParameter<ParameterType,Friend>& set(const string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max);
 
-	void setMin(ParameterType min);
-	void setMax(ParameterType max);
+	void setMin(const ParameterType & min);
+	void setMax(const ParameterType & max);
 
 	void fromString(const string & str);
 
@@ -779,6 +802,7 @@ protected:
 	ofParameter<ParameterType> parameter;
 	
 	friend class ofParameterGroup;
+	friend Friend;
 };
 
 
@@ -790,15 +814,15 @@ inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ofParamete
 :parameter(p){}
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ParameterType v)
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const ParameterType & v)
 :parameter(v){}
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const string& name, ParameterType v)
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const string& name, const ParameterType & v)
 :parameter(name,v){}
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const string& name, ParameterType v, ParameterType min, ParameterType max)
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max)
 :parameter(name,v,min,max){}
 
 
@@ -825,13 +849,13 @@ inline string ofReadOnlyParameter<ParameterType,Friend>::getName() const{
 
 
 template<typename ParameterType,typename Friend>
-inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMin(){
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMin() const{
 	return parameter.getMin();
 }
 
 
 template<typename ParameterType,typename Friend>
-inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMax(){
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::getMax() const{
 	return parameter.getMax();
 }
 
@@ -844,15 +868,15 @@ inline string ofReadOnlyParameter<ParameterType,Friend>::toString() const{
 
 template<typename ParameterType,typename Friend>
 template<class ListenerClass, typename ListenerMethod>
-inline void ofReadOnlyParameter<ParameterType,Friend>::addListener(ListenerClass * listener, ListenerMethod method){
-	parameter.addListener(listener,method);
+inline void ofReadOnlyParameter<ParameterType,Friend>::addListener(ListenerClass * listener, ListenerMethod method, int prio){
+	parameter.addListener(listener,method,prio);
 }
 
 
 template<typename ParameterType,typename Friend>
 template<class ListenerClass, typename ListenerMethod>
-inline void ofReadOnlyParameter<ParameterType,Friend>::removeListener(ListenerClass * listener, ListenerMethod method){
-	parameter.removeListener(listener,method);
+inline void ofReadOnlyParameter<ParameterType,Friend>::removeListener(ListenerClass * listener, ListenerMethod method, int prio){
+	parameter.removeListener(listener,method,prio);
 }
 
 
@@ -874,6 +898,11 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::disableEvents(){
 template<typename ParameterType,typename Friend>
 inline bool ofReadOnlyParameter<ParameterType,Friend>::isSerializable() const{
 	return parameter.isSerializable();
+}
+
+template<typename ParameterType,typename Friend>
+inline bool ofReadOnlyParameter<ParameterType,Friend>::isReadOnly() const{
+	return true;
 }
 
 template<typename ParameterType,typename Friend>
@@ -1005,31 +1034,31 @@ inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<Parameter
 
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(ParameterType v){
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(const ParameterType & v){
 	parameter.set(v);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(const string& name, ParameterType value){
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(const string& name, const ParameterType & value){
 	parameter.set(name,value);
 	return *this;
 }
 
 template<typename ParameterType,typename Friend>
-inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(const string& name, ParameterType value, ParameterType min, ParameterType max){
+inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<ParameterType,Friend>::set(const string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max){
 	parameter.set(name,value,min,max);
 	return *this;
 }
 
 
 template<typename ParameterType,typename Friend>
-inline void ofReadOnlyParameter<ParameterType,Friend>::setMin(ParameterType min){
+inline void ofReadOnlyParameter<ParameterType,Friend>::setMin(const ParameterType & min){
 	parameter.setMin(min);
 }
 
 template<typename ParameterType,typename Friend>
-inline void ofReadOnlyParameter<ParameterType,Friend>::setMax(ParameterType max){
+inline void ofReadOnlyParameter<ParameterType,Friend>::setMax(const ParameterType & max){
 	parameter.setMax(max);
 }
 
@@ -1041,7 +1070,7 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::fromString(const string &
 
 template<typename ParameterType,typename Friend>
 shared_ptr<ofAbstractParameter> ofReadOnlyParameter<ParameterType,Friend>::newReference() const{
-	return shared_ptr<ofAbstractParameter>(new ofParameter<ParameterType>(*this));
+	return shared_ptr<ofAbstractParameter>(new ofReadOnlyParameter<ParameterType,Friend>(*this));
 }
 
 template<typename ParameterType,typename Friend>

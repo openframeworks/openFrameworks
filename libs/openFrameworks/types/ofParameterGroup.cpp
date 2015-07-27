@@ -269,6 +269,10 @@ bool ofParameterGroup::isSerializable() const{
 	return obj->serializable;
 }
 
+bool ofParameterGroup::isReadOnly() const{
+	return false;
+}
+
 shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
 	return shared_ptr<ofAbstractParameter>(new ofParameterGroup(*this));
 }
