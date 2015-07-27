@@ -81,7 +81,7 @@ void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
 	nanoseconds = (counter.QuadPart % freq.QuadPart)*1000000000/freq.QuadPart;
 #else
 	struct timeval now;
-	gettimeofday( &now, NULL );
+	gettimeofday( &now, nullptr );
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_usec * 1000;
 #endif
@@ -138,7 +138,7 @@ uint64_t ofGetSystemTimeMicros( ) {
 
 //--------------------------------------------------
 unsigned int ofGetUnixTime(){
-	return (unsigned int)time(NULL);
+	return (unsigned int)time(nullptr);
 }
 
 
@@ -752,14 +752,14 @@ string ofVAArgsToString(const char * format, ...){
 	// http://www.codeproject.com/KB/string/string_format.aspx
 	char aux_buffer[10000];
 	string retStr("");
-	if (NULL != format){
+	if (nullptr != format){
 
 		va_list marker;
 
 		// initialize variable arguments
 		va_start(marker, format);
 
-		// Get formatted string length adding one for NULL
+		// Get formatted string length adding one for nullptr
 		size_t len = vsprintf(aux_buffer, format, marker) + 1;
 
 		// Reset variable arguments
@@ -788,9 +788,9 @@ string ofVAArgsToString(const char * format, va_list args){
 	// http://www.codeproject.com/KB/string/string_format.aspx
 	char aux_buffer[10000];
 	string retStr("");
-	if (NULL != format){
+	if (nullptr != format){
 
-		// Get formatted string length adding one for NULL
+		// Get formatted string length adding one for nullptr
 		vsprintf(aux_buffer, format, args);
 		retStr = aux_buffer;
 
@@ -825,11 +825,11 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#ifdef TARGET_WIN32
 		#if (_MSC_VER)
 		// microsoft visual studio yaks about strings, wide chars, unicode, etc
-		ShellExecuteA(NULL, "open", uri.toString().c_str(),
-                NULL, NULL, SW_SHOWNORMAL);
+		ShellExecuteA(nullptr, "open", uri.toString().c_str(),
+                nullptr, nullptr, SW_SHOWNORMAL);
 		#else
-		ShellExecute(NULL, "open", uri.toString().c_str(),
-                NULL, NULL, SW_SHOWNORMAL);
+		ShellExecute(nullptr, "open", uri.toString().c_str(),
+                nullptr, nullptr, SW_SHOWNORMAL);
 		#endif
 	#endif
 
@@ -933,7 +933,7 @@ void ofSaveFrame(bool bUseViewport){
 
 //--------------------------------------------------
 string ofSystem(const string& command){
-	FILE * ret = NULL;
+	FILE * ret = nullptr;
 #ifdef TARGET_WIN32
 	ret = _popen(command.c_str(),"r");
 #else 
@@ -943,7 +943,7 @@ string ofSystem(const string& command){
 	string strret;
 	int c;
 
-	if (ret == NULL){
+	if (ret == nullptr){
 		ofLogError("ofUtils") << "ofSystem(): error opening return file for command \"" << command  << "\"";
 	}else{
 		c = fgetc (ret);

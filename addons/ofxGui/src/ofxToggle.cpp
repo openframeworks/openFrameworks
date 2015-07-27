@@ -27,7 +27,7 @@ ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height)
 
 }
 
-ofxToggle * ofxToggle::setup(string toggleName, bool _bVal, float width, float height){
+ofxToggle * ofxToggle::setup(const std::string& toggleName, bool _bVal, float width, float height){
 	value.set(toggleName,_bVal);
 	return setup(value,width,height);
 }

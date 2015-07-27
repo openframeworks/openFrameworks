@@ -6,7 +6,7 @@ ofSoundStream soundStreamOutput;
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr){
-	if( appPtr == NULL ){
+	if( appPtr == nullptr ){
 		appPtr = ofGetAppPtr();
 	}
 	ofSoundStreamSetup(nOutputChannels, nInputChannels, appPtr, 44100, 256, 4);

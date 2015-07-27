@@ -5,7 +5,7 @@
 #include "of3dGraphics.h"
 
 ofNode::ofNode()
-:parent(NULL)
+:parent(nullptr)
 ,legacyCustomDrawOverrided(true){
 	setPosition(ofVec3f(0, 0, 0));
 	setOrientation(ofVec3f(0, 0, 0));
@@ -27,10 +27,10 @@ void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
 void ofNode::clearParent(bool bMaintainGlobalTransform) {
     if(bMaintainGlobalTransform) {
         ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
-        this->parent = NULL;
+        this->parent = nullptr;
         setTransformMatrix(globalTransform);
     } else {
-        this->parent = NULL;
+        this->parent = nullptr;
     }
 }
 
@@ -71,7 +71,7 @@ void ofNode::setGlobalPosition(float px, float py, float pz) {
 
 //----------------------------------------
 void ofNode::setGlobalPosition(const ofVec3f& p) {
-	if(parent == NULL) {
+	if(parent == nullptr) {
 		setPosition(p);
 	} else {
 		setPosition(p * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix()));
@@ -112,7 +112,7 @@ void ofNode::setOrientation(const ofVec3f& eulerAngles) {
 
 //----------------------------------------
 void ofNode::setGlobalOrientation(const ofQuaternion& q) {
-	if(parent == NULL) {
+	if(parent == nullptr) {
 		setOrientation(q);
 	} else {
 		ofMatrix4x4 invParent(ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix()));
@@ -377,7 +377,7 @@ void ofNode::customDraw(){
 
 //----------------------------------------
 void ofNode::transformGL(ofBaseRenderer * renderer) const {
-	if( renderer == NULL ) {
+	if( renderer == nullptr ) {
 		renderer = ofGetCurrentRenderer().get();
 	}
 	renderer->pushMatrix();
@@ -386,7 +386,7 @@ void ofNode::transformGL(ofBaseRenderer * renderer) const {
 
 //----------------------------------------
 void ofNode::restoreTransformGL(ofBaseRenderer * renderer) const {
-	if( renderer == NULL ) {
+	if( renderer == nullptr ) {
 		renderer = ofGetCurrentRenderer().get();
 	}
 	renderer->popMatrix();

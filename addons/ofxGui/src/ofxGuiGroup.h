@@ -8,11 +8,11 @@
 class ofxGuiGroup : public ofxBaseGui {
 	public:
 		ofxGuiGroup();
-		ofxGuiGroup(const ofParameterGroup & parameters, std::string _filename = "settings.xml", float x = 10, float y = 10);
+		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename = "settings.xml", float x = 10, float y = 10);
 		virtual ~ofxGuiGroup(){
 		}
-		virtual ofxGuiGroup * setup(std::string collectionName = "", std::string filename = "settings.xml", float x = 10, float y = 10);
-		virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, std::string filename = "settings.xml", float x = 10, float y = 10);
+		virtual ofxGuiGroup * setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
+		virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
 
 		void add(ofxBaseGui * element);
 		void add(const ofParameterGroup & parameters);
@@ -45,21 +45,21 @@ class ofxGuiGroup : public ofxBaseGui {
 		virtual bool mouseScrolled(ofMouseEventArgs & args);
 
 
-		std::vector <std::string> getControlNames();
-		int getNumControls();
+		std::vector <std::string> getControlNames() const;
+		std::size_t getNumControls() const;
 
-		ofxIntSlider & getIntSlider(std::string name);
-		ofxFloatSlider & getFloatSlider(std::string name);
-		ofxToggle & getToggle(std::string name);
-		ofxButton & getButton(std::string name);
-		ofxGuiGroup & getGroup(std::string name);
+		ofxIntSlider & getIntSlider(const std::string& name);
+		ofxFloatSlider & getFloatSlider(const std::string& name);
+		ofxToggle & getToggle(const std::string& name);
+		ofxButton & getButton(const std::string& name);
+		ofxGuiGroup & getGroup(const std::string& name);
 
-		ofxBaseGui * getControl(std::string name);
-		ofxBaseGui * getControl(int num);
+		ofxBaseGui * getControl(const std::string& name);
+		ofxBaseGui * getControl(std::size_t num);
 
 		virtual ofAbstractParameter & getParameter();
 
-		virtual void setPosition(ofPoint p);
+		virtual void setPosition(const ofPoint& p);
 		virtual void setPosition(float x, float y);
 	protected:
 		virtual void render();
@@ -69,7 +69,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		float header;
 
 		template <class ControlType>
-		ControlType & getControlType(std::string name);
+		ControlType & getControlType(const std::string& name);
 
 		virtual void generateDraw();
 
@@ -85,7 +85,7 @@ class ofxGuiGroup : public ofxBaseGui {
 };
 
 template <class ControlType>
-ControlType & ofxGuiGroup::getControlType(std::string name){
+ControlType & ofxGuiGroup::getControlType(const std::string& name){
 	ControlType * control = dynamic_cast <ControlType *>(getControl(name));
 	if(control){
 		return *control;

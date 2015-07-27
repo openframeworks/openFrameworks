@@ -28,7 +28,7 @@ void ofSerial::enumerateWin32Ports(){
 		return;
 	}
 
-	HDEVINFO hDevInfo = NULL;
+	HDEVINFO hDevInfo = nullptr;
 	SP_DEVINFO_DATA DeviceInterfaceData;
 	DWORD dataType, actualSize = 0;
 
@@ -60,8 +60,8 @@ void ofSerial::enumerateWin32Ports(){
 
 			 // turn blahblahblah(COM4) into COM4
 
-			 char * begin = NULL;
-			 char * end = NULL;
+			 char * begin = nullptr;
+			 char * end = nullptr;
 			 begin = strstr((char *)dataBuf, "COM");
 
 			 if(begin){
@@ -136,8 +136,8 @@ ofSerial::~ofSerial(){
 //----------------------------------------------------------------
 static bool isDeviceArduino( ofSerialDeviceInfo & A ){
 	//TODO - this should be ofStringInString
-	return (strstr(A.getDeviceName().c_str(), "usbserial") != NULL
-			|| strstr(A.getDeviceName().c_str(), "usbmodem") != NULL);
+	return (strstr(A.getDeviceName().c_str(), "usbserial") != nullptr
+			|| strstr(A.getDeviceName().c_str(), "usbmodem") != nullptr);
 }
 
 //----------------------------------------------------------------
@@ -171,13 +171,13 @@ void ofSerial::buildDeviceList(){
 
 		string deviceName = "";
 
-		if(dir == NULL){
+		if(dir == nullptr){
 			ofLogError("ofSerial") << "buildDeviceList(): error listing devices in /dev";
 		} else {
 			int deviceCount = 0;
 			//for each device
 			struct dirent *entry;
-			while((entry = readdir(dir)) != NULL){
+			while((entry = readdir(dir)) != nullptr){
 				deviceName = (char *)entry->d_name;
 
 				//we go through the prefixes

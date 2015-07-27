@@ -185,7 +185,7 @@ bool compare_cps(const charProps & c1, const charProps & c2){
 #ifdef TARGET_OSX
 //------------------------------------------------------------------
 static string osxFontPathByName( string fontname ){
-	CFStringRef targetName = CFStringCreateWithCString(NULL, fontname.c_str(), kCFStringEncodingUTF8);
+	CFStringRef targetName = CFStringCreateWithCString(nullptr, fontname.c_str(), kCFStringEncodingUTF8);
 	CTFontDescriptorRef targetDescriptor = CTFontDescriptorCreateWithNameAndSize(targetName, 0.0);
 	CFURLRef targetURL = (CFURLRef) CTFontDescriptorCopyAttribute(targetDescriptor, kCTFontURLAttribute);
 	string fontPath = "";
@@ -230,7 +230,7 @@ void initWindows(){
 
 	// get font_file_name -> font_face mapping from the "Fonts" registry key
 
-	l_ret = RegQueryInfoKeyW(key_ft, NULL, NULL, NULL, NULL, NULL, NULL, &value_count, NULL, &max_data_len, NULL, NULL);
+	l_ret = RegQueryInfoKeyW(key_ft, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &value_count, nullptr, &max_data_len, nullptr, nullptr);
 	if(l_ret != ERROR_SUCCESS){
 	    ofLogError("ofTrueTypeFont") << "initWindows(): couldn't query registery for fonts";
         return;
@@ -244,13 +244,13 @@ void initWindows(){
 
 	// max_data_len is in BYTE
 	value_data = static_cast<BYTE *>(HeapAlloc(GetProcessHeap(), HEAP_GENERATE_EXCEPTIONS, max_data_len));
-	if(value_data == NULL) return;
+	if(value_data == nullptr) return;
 
 	char value_name_char[2048];
 	char value_data_char[2048];
 	/*char ppidl[2048];
 	char fontsPath[2048];
-    SHGetKnownFolderIDList(FOLDERID_Fonts, 0, NULL, &ppidl);
+    SHGetKnownFolderIDList(FOLDERID_Fonts, 0, nullptr, &ppidl);
     SHGetPathFromIDList(ppidl,&fontsPath);*/
     string fontsDir = getenv ("windir");
     fontsDir += "\\Fonts\\";
@@ -259,7 +259,7 @@ void initWindows(){
 			DWORD name_len = 2048;
 			DWORD data_len = max_data_len;
 
-			l_ret = RegEnumValueW(key_ft, i, value_name, &name_len, NULL, NULL, value_data, &data_len);
+			l_ret = RegEnumValueW(key_ft, i, value_name, &name_len, nullptr, nullptr, value_data, &data_len);
 			if(l_ret != ERROR_SUCCESS){
 			     ofLogError("ofTrueTypeFont") << "initWindows(): couldn't read registry key for font type";
 			     continue;
@@ -303,7 +303,7 @@ static string linuxFontPathByName(string fontname){
 	}
 	FcDefaultSubstitute(pattern);
 	FcResult result;
-	FcPattern * fontMatch=NULL;
+	FcPattern * fontMatch=nullptr;
 	fontMatch = FcFontMatch(0,pattern,&result);
 
 	if(!fontMatch){
@@ -360,7 +360,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	spaceSize = 1;
 
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
-	face = NULL;
+	face = nullptr;
 	ascenderHeight = 0;
 	bAntiAliased = 0;
 	bFullCharacterSet = 0;
