@@ -521,11 +521,6 @@ bool ofParameter<ParameterType>::isReadOnly() const{
 }
 
 template<typename ParameterType>
-bool ofParameter<ParameterType>::isReadOnly() const{
-	return false;
-}
-
-template<typename ParameterType>
 void ofParameter<ParameterType>::setMin(const ParameterType & min){
 	obj->min = min;
 }
