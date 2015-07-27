@@ -43,7 +43,6 @@ public:
 	}
 
 	ofParameterGroup & castGroup();
-
 	const ofParameterGroup & castGroup() const;
 
 	friend ostream& operator<<(ostream& os, const ofAbstractParameter& p);
