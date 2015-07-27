@@ -20,8 +20,14 @@ matrix:
       env: TARGET="ios"
     - env: TARGET="android" OPT="armv7"
       sudo: false
+      cache:
+        directories:
+        - ~/android-ndk-r10e
     - env: TARGET="android" OPT="x86"
       sudo: false
+      cache:
+        directories:
+        - ~/android-ndk-r10e
   allow_failures:
     # temporary until we find out how to prevent (spurious) build failures
     - env: TARGET="docs"
