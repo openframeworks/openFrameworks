@@ -26,12 +26,10 @@ public:
 	/// \brief Copy-constructor for ofBaseEvent.
 	///
 	/// \see ofBaseEvent::ofBaseEvent()
-	ofBaseEvent(const ofBaseEvent & mom): enabled(mom.enabled){
+	ofBaseEvent(const ofBaseEvent & mom)
+	:enabled(mom.enabled){
 		std::unique_lock<Mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
-		std::transform(functions.begin(), functions.end(),std::back_inserter(functions),
-			[&](Function&f){
-				return std::unique_ptr<Function>(new Function(f));
-			});
+		functions = mom.functions;
 	}
 
 	/// \brief Overloading the assignment operator.
@@ -111,6 +109,27 @@ namespace priv{
 
 	class BaseFunctionId{};
 
+	template <class T>
+	class clone_ptr : public std::unique_ptr<T> {
+	public:
+		clone_ptr(T * t)
+		  :std::unique_ptr<T>(t) { };
+
+		clone_ptr(std::unique_ptr<T> && t)
+		  :std::unique_ptr<T>(std::move(t)) { };
+
+		clone_ptr(clone_ptr<T> && other) = default;
+		clone_ptr<T> & operator=(clone_ptr<T> && other) = default;
+
+		clone_ptr(const clone_ptr<T> & other)
+		  :std::unique_ptr<T>(new T(*other)) { }
+
+		clone_ptr & operator=(const clone_ptr<T> & other) {
+			this->reset(new T(*other));
+			return *this;
+		}
+	};
+
 	template<typename T>
 	class Function{
 	public:
@@ -127,7 +146,7 @@ namespace priv{
 
 		int priority;
 		std::function<bool(const void*,T&)> function;
-		std::unique_ptr<BaseFunctionId> id;
+		clone_ptr<BaseFunctionId> id;
 	};
 
 	template<>
@@ -146,7 +165,7 @@ namespace priv{
 
 		int priority;
 		std::function<bool(const void*)> function;
-		std::unique_ptr<BaseFunctionId> id;
+		clone_ptr<BaseFunctionId> id;
 	};
 }
 }
