@@ -56,7 +56,7 @@ void ofBufferObject::allocate(GLsizeiptr bytes, const void * data, GLenum usage)
 }
 
 bool ofBufferObject::isAllocated() const{
-	return data.get() != NULL;
+	return data.get() != nullptr;
 }
 
 void ofBufferObject::bind(GLenum target) const{
@@ -135,7 +135,7 @@ void ofBufferObject::updateData(GLintptr offset, GLsizeiptr bytes, const void * 
 
 #ifndef TARGET_OPENGLES
 void * ofBufferObject::map(GLenum access){
-	if(!this->data) return NULL;
+	if(!this->data) return nullptr;
 
 #ifdef GLEW_ARB_direct_state_access
 	if (data->useDSA) {
@@ -170,7 +170,7 @@ void ofBufferObject::unmap(){
 }
 
 void * ofBufferObject::mapRange(GLintptr offset, GLsizeiptr length, GLenum access){
-	if(!this->data) return NULL;
+	if(!this->data) return nullptr;
 
 #ifdef GLEW_ARB_direct_state_access
 	if (data->useDSA) {

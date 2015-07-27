@@ -13,8 +13,8 @@ class ofxBaseGui {
 		virtual ~ofxBaseGui();
 		void draw();
 
-		void saveToFile(std::string filename);
-		void loadFromFile(std::string filename);
+		void saveToFile(const std::string& filename);
+		void loadFromFile(const std::string& filename);
 
 		void setDefaultSerializer(std::shared_ptr <ofBaseFileSerializer> serializer);
 
@@ -22,7 +22,7 @@ class ofxBaseGui {
 		virtual void loadFrom(ofBaseSerializer & serializer);
 
 		std::string getName();
-		void setName(std::string name);
+		void setName(const std::string& name);
 
 		virtual void setPosition(ofPoint p);
 		virtual void setPosition(float x, float y);
@@ -30,16 +30,16 @@ class ofxBaseGui {
 		virtual void setShape(ofRectangle r);
 		virtual void setShape(float x, float y, float w, float h);
 
-		ofPoint getPosition();
-		ofRectangle getShape();
-		float getWidth();
-		float getHeight();
+		ofPoint getPosition() const;
+		ofRectangle getShape() const;
+		float getWidth() const;
+		float getHeight() const;
 
-		ofColor getHeaderBackgroundColor();
-		ofColor getBackgroundColor();
-		ofColor getBorderColor();
-		ofColor getTextColor();
-		ofColor getFillColor();
+		ofColor getHeaderBackgroundColor() const;
+		ofColor getBackgroundColor() const;
+		ofColor getBorderColor() const;
+		ofColor getTextColor() const;
+		ofColor getFillColor() const;
 
 		void setHeaderBackgroundColor(const ofColor & color);
 		void setBackgroundColor(const ofColor & color);
@@ -58,7 +58,7 @@ class ofxBaseGui {
 		static void setDefaultHeight(int height);
 
 		virtual ofAbstractParameter & getParameter() = 0;
-		static void loadFont(std::string filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
+		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
 		static void setUseTTF(bool bUseTTF);
 
 		void registerMouseEvents();
@@ -112,7 +112,7 @@ class ofxBaseGui {
 		static int defaultWidth;
 		static int defaultHeight;
 
-		static std::string saveStencilToHex(ofImage & img);
+		static std::string saveStencilToHex(const ofImage & img);
 		static void loadStencilFromHex(ofImage & img, unsigned char * data);
 
 		void setNeedsRedraw();

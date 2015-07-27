@@ -185,7 +185,7 @@ ofPixels_<PixelType>::ofPixels_(){
 	bAllocated = false;
 	pixelsOwner = false;
 	pixelFormat = OF_PIXELS_UNKNOWN;
-	pixels = NULL;
+	pixels = nullptr;
 	pixelsSize = 0;
 	width = 0;
 	height = 0;
@@ -202,7 +202,7 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<PixelType> & mom){
 	bAllocated = false;
 	pixelsOwner = false;
 	pixelsSize = 0;
-	pixels = NULL;
+	pixels = nullptr;
 	width = 0;
 	height = 0;
 	pixelFormat = OF_PIXELS_UNKNOWN;
@@ -452,7 +452,7 @@ template<typename PixelType>
 void ofPixels_<PixelType>::clear(){
 	if(pixels){
 		if(pixelsOwner) delete[] pixels;
-		pixels = NULL;
+		pixels = nullptr;
 	}
 
 	width			= 0;

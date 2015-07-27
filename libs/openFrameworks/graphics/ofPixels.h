@@ -565,7 +565,7 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
 	bAllocated = false;
 	pixelsOwner = false;
 	pixelsSize = 0;
-	pixels = NULL;
+	pixels = nullptr;
 	width = 0;
 	height = 0;
 	pixelFormat = OF_PIXELS_UNKNOWN;

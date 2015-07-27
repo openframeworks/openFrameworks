@@ -279,9 +279,9 @@ public:
 	void setName(const string & name);
 	string getName() const;
 
-	ParameterType getMin();
+	ParameterType getMin() const;
 
-	ParameterType getMax();
+	ParameterType getMax() const;
 
 	string toString() const;
 
@@ -505,7 +505,7 @@ void ofParameter<ParameterType>::setMin(ParameterType min){
 }
 
 template<typename ParameterType>
-ParameterType ofParameter<ParameterType>::getMin(){
+ParameterType ofParameter<ParameterType>::getMin() const {
 	return obj->min;
 }
 
@@ -515,7 +515,7 @@ void ofParameter<ParameterType>::setMax(ParameterType max){
 }
 
 template<typename ParameterType>
-ParameterType ofParameter<ParameterType>::getMax(){
+ParameterType ofParameter<ParameterType>::getMax() const {
 	return obj->max;
 }
 
