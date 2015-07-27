@@ -31,6 +31,7 @@ matrix:
   allow_failures:
     # temporary until we find out how to prevent (spurious) build failures
     - env: TARGET="docs"
+    - env: TARGET="linux"
 before_install:
     # should source before_install.sh so we can export CXX in the linux script.
     # instead, export CXX here, because sourcing messes up Travis log output
