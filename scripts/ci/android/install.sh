@@ -5,7 +5,10 @@ set -o pipefail
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 cd ~
 # check if cached directory exists
-if [ ! -d "android-ndk-r10e" ]; then
+if [ "$(ls -A android-ndk-r10e)" ]; then
+    echo "Using cached NDK"
+    ls -A android-ndk-r10e
+else
     echo "Downloading NDK"
     # curl -Lk http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin -o ndk.bin
     # get slimmed and recompressed NDK from our server instead
@@ -18,8 +21,6 @@ if [ ! -d "android-ndk-r10e" ]; then
     # extract customized NDK:
     tar -xjf ndk.bin
     rm ndk.bin
-else
-    echo "Using cached NDK"
 fi
 NDK_ROOT=$(echo ${PWD} | sed "s/\//\\\\\//g")
 cat $ROOT/libs/openFrameworksCompiled/project/android/paths.default.make | sed s/path_to/${NDK_ROOT}/ > $ROOT/libs/openFrameworksCompiled/project/android/paths.make
