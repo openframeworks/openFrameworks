@@ -87,6 +87,9 @@ class ofxGuiGroup : public ofxBaseGui {
 		template<class GuiType=ofxGuiGroup, class Config>
 		void add(ofParameterGroup p, const Config & config);
 
+		template<class GuiType, class Config>
+		void add(const Config & config);
+
 		void minimize();
 		void maximize();
 		void minimizeAll();
@@ -124,17 +127,19 @@ class ofxGuiGroup : public ofxBaseGui {
 		virtual void setShape(float x, float y, float w, float h);
 	protected:
 		virtual void render();
+		virtual void generateDraw();
 		virtual bool setValue(float mx, float my, bool bCheck);
+		virtual void addOwned(ofxBaseGui * element);
+		virtual void addOwned(ofxGuiGroup * element);
+		virtual void add(ofxBaseGui * element);
+		virtual void add(ofxGuiGroup * element);
+		template <class ControlType>
+		ControlType & getControlType(const std::string& name);
 		void setWidthElements(float w);
 		void addParametersFrom(const ofParameterGroup & parameters);
 
 		float spacing, spacingNextElement, spacingFirstElement;
 		float header;
-
-		template <class ControlType>
-		ControlType & getControlType(const std::string& name);
-
-		virtual void generateDraw();
 
 		std::vector <ofxBaseGui *> collection;
 		ofParameterGroup parameters;
@@ -148,10 +153,6 @@ class ofxGuiGroup : public ofxBaseGui {
 		Config config;
 	private:
 		std::vector <std::unique_ptr<ofxBaseGui>> collectionOwned;
-		void add(ofxBaseGui * element);
-		void add(ofxGuiGroup * element);
-		void addOwned(ofxBaseGui * element);
-		void addOwned(ofxGuiGroup * element);
 };
 
 template <class ControlType>
@@ -198,6 +199,10 @@ void ofxGuiGroup::add(ofParameterGroup p, const C & config){
 	addOwned(new GuiType(p,config));
 }
 
+template<class GuiType, class C>
+void ofxGuiGroup::add(const C & config){
+	addOwned(new GuiType(config));
+}
 
 template<class GuiType, typename Type>
 void ofxGuiGroup::add(ofParameter<Type> p){
