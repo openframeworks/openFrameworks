@@ -592,7 +592,7 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 
 		if (bAntiAliased == true){
 			ofPixels bitmapPixels;
-			bitmapPixels.setFromExternalPixels(bitmap.buffer,bitmap.width,bitmap.rows,OF_PIXELS_GRAY);
+			bitmapPixels.setFromExternalPixels(bitmap.buffer,width,height,OF_PIXELS_GRAY);
 			expanded_data[i].setChannel(1,bitmapPixels);
 		} else {
 			//-----------------------------------
@@ -600,10 +600,10 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 			// 1-bit format, hella funky
 			// here we unpack it:
 			unsigned char *src =  bitmap.buffer;
-			for(int j=0; j <bitmap.rows;j++) {
+			for(int j=0; j < height; j++) {
 				unsigned char b=0;
 				unsigned char *bptr =  src;
-				for(int k=0; k < bitmap.width ; k++){
+				for(int k=0; k < width; k++){
 					expanded_data[i][2*(k+j*width)] = 255;
 
 					if (k%8==0){
