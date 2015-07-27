@@ -242,7 +242,18 @@ bool ofXml::addChild( const string& path )
 
 string ofXml::getValue() const
 {
-    if(element && element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
+  //if we don't have a DOM element, return the default value
+  if(!element){
+	return "";
+  }
+
+  // firstChild() may return a NULL pointer
+  if(NULL == element->firstChild()){
+	// return default value in this case
+	return "";
+  }
+  // no NULL pointer -> save to call nodeType()
+    if(element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
         return element->innerText();
     }
     return "";
@@ -366,17 +377,27 @@ bool ofXml::setToSibling()
         ofLogWarning("ofXml") << "setToSibling() << no element set yet";
         return false;
     }
-    
-    // empty space in the XML doc is treated as text nodes. blerg.
-    while(node && node->nodeType() == Poco::XML::Node::TEXT_NODE) {
-        node = (Poco::XML::Element*) node->nextSibling();
-    }
-    
-    if(!node || node->nodeType() == Poco::XML::Node::TEXT_NODE) {
+
+	/* If we get NULL for node, then we do not have a sibling.
+	   We can only savely check the type on a non-Null node (thus
+	   avoiding NULL-pointer dereferences). Empty space is treated
+	   as a text node and we do not want that. We are also not
+	   interessted in comments. If we find a non-TEXT_NODE or
+	   non-COMMENT_NODE, we do not look further for a sibling. */
+	while(NULL != node){
+	  if((node->nodeType() == Poco::XML::Node::TEXT_NODE)
+		 || (node->nodeType() == Poco::XML::Node::COMMENT_NODE)) {
+		node = (Poco::XML::Element*) node->nextSibling();
+	  } else {
+		break;
+	  }
+	}
+	// make sure we actually got a sibling
+    if(NULL == node) {
         return false;
     }
-    
-    // we're cool
+
+    // we're cool now
     element = node;
     return true;
 }
