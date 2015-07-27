@@ -20,16 +20,8 @@ matrix:
       env: TARGET="ios"
     - env: TARGET="android" OPT="armv7"
       sudo: false
-      addons:
-        apt:
-          packages:
-          - p7zip-full
     - env: TARGET="android" OPT="x86"
       sudo: false
-      addons:
-        apt:
-          packages:
-          - p7zip-full  
   allow_failures:
     # temporary until we find out how to prevent (spurious) build failures
     - env: TARGET="docs"

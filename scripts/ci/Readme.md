@@ -9,5 +9,6 @@ This folder contains the scripts necessary for the Continuous Integration tests 
 ## Future fixes
 * (New Ubuntu) remove the -no-install-recommends from the docs before_install script
 * (New Ubuntu) probably remove the gcc export from .travis.yml
-* In `linux/build.sh`, exporting `$CXX` does not currently make Make see it
+* In `linux/build.sh`, exporting `$CXX` does not currently make Make see it, so a workaround was implemented
+* Android install uses a customized NDK as Travis can't extract the "normal" way due to memory constraints
 * A helper script in /ci would be nice to enable people to easily run a whole build locally
