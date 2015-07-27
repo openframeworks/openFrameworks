@@ -107,7 +107,12 @@ namespace priv{
 		void unlock(){}
 	};
 
-	class BaseFunctionId{};
+	class BaseFunctionId{
+	public:
+		virtual ~BaseFunctionId(){};
+		virtual bool operator==(const BaseFunctionId &) const = 0;
+		virtual BaseFunctionId * clone() const = 0;
+	};
 
 	template <class T>
 	class clone_ptr : public std::unique_ptr<T> {
@@ -122,10 +127,10 @@ namespace priv{
 		clone_ptr<T> & operator=(clone_ptr<T> && other) = default;
 
 		clone_ptr(const clone_ptr<T> & other)
-		  :std::unique_ptr<T>(new T(*other)) { }
+		  :std::unique_ptr<T>(other->clone()) { }
 
 		clone_ptr & operator=(const clone_ptr<T> & other) {
-			this->reset(new T(*other));
+			this->reset(other->clone());
 			return *this;
 		}
 	};
@@ -138,10 +143,8 @@ namespace priv{
 		,function(function)
 		,id(std::move(id)){}
 
-		template<typename F>
-		bool operator==(const F & f1) const{
-			const auto * thisAsF = dynamic_cast<const F*>(this);
-			return thisAsF && f1.priority == priority && id == f1.id;
+		bool operator==(const Function<T> & f) const{
+			return f.priority == priority && *id == *f.id;
 		}
 
 		int priority;
@@ -157,10 +160,8 @@ namespace priv{
 		,function(function)
 		,id(std::move(id)){}
 
-		template<typename F>
-		bool operator==(const F & f1) const{
-			const auto * thisAsF = dynamic_cast<const F*>(this);
-			return thisAsF && f1.priority == priority && id == f1.id;
+		bool operator==(const Function<void> & f) const{
+			return f.priority == priority && *id == *f.id;
 		}
 
 		int priority;
@@ -187,9 +188,18 @@ protected:
 
 		}
 
+		BaseFunctionId * clone() const{
+			return new FunctionId<TObj,TMethod>(listener, method);
+		}
+
 		template<typename F>
 		bool operator==(const F & f1) const{
 			return f1.listener == this->listener && f1.method == this->method;
+		}
+
+		bool operator==(const BaseFunctionId & f) const{
+			const auto * other = dynamic_cast<const FunctionId<TObj,TMethod>*>(&f);
+			return other && other->listener == this->listener && other->method == this->method;
 		}
 	};
 
@@ -300,9 +310,18 @@ protected:
 
 		}
 
+		BaseFunctionId * clone() const{
+			return new FunctionId<TObj,TMethod>(listener, method);
+		}
+
 		template<typename F>
 		bool operator==(const F & f1) const{
 			return f1.listener == this->listener && f1.method == this->method;
+		}
+
+		bool operator==(const BaseFunctionId & f) const{
+			const auto * other = dynamic_cast<const FunctionId<TObj,TMethod>*>(&f);
+			return other && other->listener == this->listener && other->method == this->method;
 		}
 	};
 
