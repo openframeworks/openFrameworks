@@ -118,7 +118,7 @@ int ofXml::getNumChildren() const
     int numberOfChildren = 0;
     Poco::XML::NodeList *list = element->childNodes();
     
-    for(int i=0; i < (int)list->length(); i++) {
+    for(unsigned long i=0; i < list->length(); i++) {
         if(list->item(i) && list->item(i)->nodeType() == Poco::XML::Node::ELEMENT_NODE) {
             numberOfChildren++;
         }
@@ -133,7 +133,7 @@ int ofXml::getNumChildren(const string& path) const
     int numberOfChildren = 0;
     Poco::XML::NodeList *list = element->childNodes();
 
-    for(int i=0; i < (int)list->length(); i++) {
+    for(unsigned long i=0; i < list->length(); i++) {
         if(list->item(i) && list->item(i)->nodeType() == Poco::XML::Node::ELEMENT_NODE) {
             string nodeName = list->item(i)->localName();
             if(path.compare(nodeName) == 0) {
@@ -211,7 +211,7 @@ bool ofXml::addChild( const string& path )
         
         vector<Poco::XML::Element*> toBeReleased;
         
-        for(int i = 0; i < (int)tokens.size(); i++)
+		for(std::size_t i = 0; i < tokens.size(); i++)
         {
             Poco::XML::Element *pe = getPocoDocument()->createElement(tokens.at(i));
             el->appendChild(pe);
@@ -317,10 +317,10 @@ bool ofXml::setToChild(int index)
         }
     }
     
-    int numberOfChildren = 0;
+	unsigned long numberOfChildren = 0;
     Poco::XML::NodeList *list = element->childNodes();
 
-    for(int i=0; i < (int)list->length() && numberOfChildren < index + 1; i++) {
+    for(unsigned long i=0; i < list->length() && numberOfChildren < index + 1; i++) {
         if(list->item(i) && list->item(i)->nodeType() == Poco::XML::Node::ELEMENT_NODE) {
             if(numberOfChildren == index) {
                 element = (Poco::XML::Element*) list->item(i);
@@ -519,7 +519,7 @@ bool ofXml::removeAttribute(const string& path)
     if(e) {
         Poco::XML::NamedNodeMap *map = e->attributes();
         
-        for(int i = 0; i < (int)map->length(); i++) {
+		for(unsigned long i = 0; i < map->length(); i++) {
             if(map->item(i)->nodeName() == attributeName) {
                 e->removeAttribute(map->item(i)->nodeName());
             }
@@ -551,7 +551,7 @@ bool ofXml::removeAttributes(const string& path)
     if(e) {
         Poco::XML::NamedNodeMap *map = e->attributes();
         
-        for(int i = 0; i < (int)map->length(); i++) {
+        for(unsigned long i = 0; i < map->length(); i++) {
             e->removeAttribute(map->item(i)->nodeName());
         }
         
@@ -567,7 +567,7 @@ bool ofXml::removeAttributes()
     if(element) {
         Poco::XML::NamedNodeMap *map = element->attributes();
         
-        for(int i = 0; i < (int)map->length(); i++) {
+        for(unsigned long i = 0; i < map->length(); i++) {
             element->removeAttribute(map->item(i)->nodeName());
         }
         
@@ -609,7 +609,7 @@ bool ofXml::removeContents(const string& path) {
     
     if(e) {
         Poco::XML::NodeList *list = e->childNodes();
-        for( int i = 0; i < (int)list->length(); i++) {
+        for(unsigned long i = 0; i < list->length(); i++) {
             element->removeChild(list->item(i));
         }
         list->release();
@@ -687,7 +687,7 @@ map<string, string> ofXml::getAttributes() const // works for both attributes an
     if(element){
     
         Poco::AutoPtr<Poco::XML::NamedNodeMap> attr = element->attributes();
-        for( int i = 0; i < (int)attr->length(); i++) {
+        for(unsigned long i = 0; i < attr->length(); i++) {
             attrMap[attr->item(i)->nodeName()] = attr->item(i)->nodeValue();
         }
     } else {
@@ -708,9 +708,9 @@ bool ofXml::setAttribute(const string& path, const string& value)
     // you can pass either /node[@attr] or just attr
     if(path.find("[@") != string::npos)
     {
-        int attrBegin = path.find("[@");
-        int start = attrBegin + 2;
-        int end = path.find("]", start);
+        size_t attrBegin = path.find("[@");
+        size_t start = attrBegin + 2;
+        size_t end = path.find("]", start);
         attributeName = path.substr( start, end - start );
         pathToAttribute = path.substr(0, attrBegin);
         hasPath = true;
@@ -748,7 +748,7 @@ bool ofXml::setAttribute(const string& path, const string& value)
             curElement = element;
             
             // find the last existing tag
-            int lastExistingTag = 0;
+            size_t lastExistingTag = 0;
             
             // can't use reverse_iterator b/c accumulate doesn't like it
             for(vector<string>::iterator it = tokens.end(); it != tokens.begin(); it--) 
@@ -764,7 +764,7 @@ bool ofXml::setAttribute(const string& path, const string& value)
             }
             
             // create all the tags that don't exist
-            for(int i = lastExistingTag; i < (int)tokens.size(); i++)
+			for(size_t i = lastExistingTag; i < tokens.size(); i++)
             {
                 Poco::XML::Element *newElement = getPocoDocument()->createElement(tokens.at(i));
                 curElement->appendChild(newElement);
@@ -861,7 +861,7 @@ bool ofXml::setTo(const string& path)
         
         Poco::XML::Element* prev = element;
         Poco::XML::Element* parent = nullptr;
-        int count = 0;
+		size_t count = 0;
         size_t offset;
         for (offset = path.find("../");
              offset != std::string::npos;
@@ -878,7 +878,7 @@ bool ofXml::setTo(const string& path)
         
         //ofLogNotice("ofXml") << (count * 3) << " " << path.size();
         
-        if( (count * 3) > (int)path.size() - 1 ) {
+        if( (count * 3) > path.size() - 1 ) {
             
             element = parent;
             return true;
@@ -938,8 +938,8 @@ Poco::XML::Element* ofXml::getPocoElement(const string& path)
 {
     string copy = path;
     // does it have an attribute? just in case
-    int ind = copy.find("[@");
-    if(ind != (int)string::npos) {
+    std::size_t ind = copy.find("[@");
+    if(ind != string::npos) {
         copy = path.substr(0, ind);
     }
     
@@ -956,8 +956,8 @@ const Poco::XML::Element* ofXml::getPocoElement(const string& path) const
 {
     string copy = path;
     // does it have an attribute? just in case
-    int ind = copy.find("[@");
-    if(ind != (int)string::npos) {
+	std::size_t ind = copy.find("[@");
+    if(ind != string::npos) {
         copy = path.substr(0, ind);
     }
 
