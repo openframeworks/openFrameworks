@@ -142,7 +142,7 @@ public:
                 firstElement = lastElement;
             }
             
-            for(int i = 0; i < (int)tokens.size(); i++)
+			for(std::size_t i = 0; i < tokens.size(); i++)
             {
                 Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
                 

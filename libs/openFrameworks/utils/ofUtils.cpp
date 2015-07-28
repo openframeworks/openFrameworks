@@ -823,14 +823,8 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	}
 
 	#ifdef TARGET_WIN32
-		#if (_MSC_VER)
-		// microsoft visual studio yaks about strings, wide chars, unicode, etc
 		ShellExecuteA(nullptr, "open", uri.toString().c_str(),
                 nullptr, nullptr, SW_SHOWNORMAL);
-		#else
-		ShellExecute(nullptr, "open", uri.toString().c_str(),
-                nullptr, nullptr, SW_SHOWNORMAL);
-		#endif
 	#endif
 
 	#ifdef TARGET_OSX
