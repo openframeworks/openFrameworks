@@ -8,26 +8,34 @@ env:
     - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
   matrix:
     - TARGET="linux"
-    - TARGET="docs"
 matrix:
   include:
     # fully specify builds, include can't dynamically expand matrix entries
+    # relative order of sudo and env is important so that addons: is recognized
     - os: osx
       compiler: clang
       env: TARGET="osx"
     - os: osx
       compiler: clang
       env: TARGET="ios"
-    - env: TARGET="android" OPT="armv7"
-      sudo: false
+    - sudo: false
+      env: TARGET="android" OPT="armv7"
       cache:
         directories:
         - ~/android-ndk-r10e
-    - env: TARGET="android" OPT="x86"
-      sudo: false
+    - sudo: false
+      env: TARGET="android" OPT="x86"
       cache:
         directories:
         - ~/android-ndk-r10e
+    - sudo: false
+      env: TARGET="docs"
+      addons:
+        apt:
+          packages:
+          - python-software-properties
+          - doxygen
+          - ncftp
   allow_failures:
     # temporary until we find out how to prevent (spurious) build failures
     - env: TARGET="docs"
