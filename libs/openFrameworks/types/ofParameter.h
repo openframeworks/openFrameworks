@@ -103,35 +103,35 @@ public:
 	ofParameterGroup getGroup(string name) const;
 
 
-	ofParameter<bool> getBool(int pos) const;
-	ofParameter<int> getInt(int pos) const;
-	ofParameter<float> getFloat(int pos) const;
-	ofParameter<char> getChar(int pos) const;
-	ofParameter<string> getString(int pos)	 const;
-	ofParameter<ofPoint> getPoint(int pos)	 const;
-	ofParameter<ofVec2f> getVec2f(int pos) const;
-	ofParameter<ofVec3f> getVec3f(int pos) const;
-	ofParameter<ofVec4f> getVec4f(int pos) const;
-	ofParameter<ofColor> getColor(int pose) const;
-	ofParameter<ofShortColor> getShortColor(int pos) const;
-	ofParameter<ofFloatColor> getFloatColor(int pos) const;
-	ofParameterGroup getGroup(int pos) const;
+	ofParameter<bool> getBool(std::size_t pos) const;
+	ofParameter<int> getInt(std::size_t pos) const;
+	ofParameter<float> getFloat(std::size_t pos) const;
+	ofParameter<char> getChar(std::size_t pos) const;
+	ofParameter<string> getString(std::size_t pos)	 const;
+	ofParameter<ofPoint> getPoint(std::size_t pos)	 const;
+	ofParameter<ofVec2f> getVec2f(std::size_t pos) const;
+	ofParameter<ofVec3f> getVec3f(std::size_t pos) const;
+	ofParameter<ofVec4f> getVec4f(std::size_t pos) const;
+	ofParameter<ofColor> getColor(std::size_t pose) const;
+	ofParameter<ofShortColor> getShortColor(std::size_t pos) const;
+	ofParameter<ofFloatColor> getFloatColor(std::size_t pos) const;
+	ofParameterGroup getGroup(std::size_t pos) const;
 
 	ofAbstractParameter & get(const string& name) const;
-	ofAbstractParameter & get(int pos) const;
+	ofAbstractParameter & get(std::size_t pos) const;
 
 	ofAbstractParameter & operator[](const string& name) const;
-	ofAbstractParameter & operator[](int pos) const;
+	ofAbstractParameter & operator[](std::size_t pos) const;
 
 	template<typename ParameterType>
 	ofParameter<ParameterType> get(const string& name) const;
 
 	template<typename ParameterType>
-	ofParameter<ParameterType> get(int pos) const;
+	ofParameter<ParameterType> get(std::size_t pos) const;
 
-	int size() const;
-	string getName(int position) const;
-	string getType(int position) const;
+	std::size_t size() const;
+	string getName(std::size_t position) const;
+	string getType(std::size_t position) const;
 	bool getIsReadOnly(int position) const;
 	int getPosition(const string& name) const;
 
@@ -178,7 +178,7 @@ private:
 
 		void notifyParameterChanged(ofAbstractParameter & param);
 
-		map<string,int> parametersIndex;
+		map<string,std::size_t> parametersIndex;
 		vector<shared_ptr<ofAbstractParameter> > parameters;
 		string name;
 		bool serializable;
@@ -204,7 +204,7 @@ ofParameter<ParameterType> ofParameterGroup::get(const string& name) const{
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> ofParameterGroup::get(int pos) const{
+ofParameter<ParameterType> ofParameterGroup::get(std::size_t pos) const{
 	return static_cast<ofParameter<ParameterType>& >(get(pos));
 }
 
