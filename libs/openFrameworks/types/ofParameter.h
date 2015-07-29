@@ -607,12 +607,12 @@ void ofParameter<ParameterType>::fromString(const string & str){
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::enableEvents(){
-	setMethod = std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1);
+	setMethod = std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1);
 }
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::disableEvents(){
-	setMethod = std::bind(&ofParameter<ParameterType>::noEventsSetValue,this, std::placeholders::_1);
+	setMethod = std::bind(&ofParameter<ParameterType>::noEventsSetValue, this, std::placeholders::_1);
 }
 
 template<typename ParameterType>
