@@ -1104,12 +1104,22 @@ void xcodeProject::addAddon(ofAddon & addon){
              addFramework( addon.frameworks[i] + ".framework", "/System/Library/Frameworks/" + addon.frameworks[i] + ".framework", "");
         } else {
             
-            vector < string > pathSplit = ofSplitString(addon.frameworks[i], "/");
+            if (ofIsStringInString(addon.frameworks[i], "/System/Library")){
+                
+                vector < string > pathSplit = ofSplitString(addon.frameworks[i], "/");
+                
+                addFramework(pathSplit[pathSplit.size()-1],
+                             addon.frameworks[i],
+                             "");
+                
+            } else {
             
-            addFramework(pathSplit[pathSplit.size()-1],
-                         addon.frameworks[i],
-                         addon.filesToFolders[addon.frameworks[i]]);
-            
+                vector < string > pathSplit = ofSplitString(addon.frameworks[i], "/");
+                
+                addFramework(pathSplit[pathSplit.size()-1],
+                             addon.frameworks[i],
+                             addon.filesToFolders[addon.frameworks[i]]);
+            }
         }
                                                                                             
                                                                                             //
