@@ -345,9 +345,9 @@ public:
 	ofParameter<ParameterType> & operator>>=(const OtherType & v);
 
 
-	ofParameter<ParameterType> & set(const ParameterType & v, bool disableNotification = false);
-	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, bool disableNotification = false);
-	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, bool disableNotification = false);
+	ofParameter<ParameterType> & set(const ParameterType & v, bool disableEventNotifications = false);
+	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, bool disableEventNotifications = false);
+	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, bool disableEventNotifications = false);
 
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
@@ -449,8 +449,8 @@ inline const ParameterType & ofParameter<ParameterType>::operator=(const Paramet
 }
 
 template<typename ParameterType>
-inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(const ParameterType & v, bool disableNofifications){
-    if (disableNofifications) {
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(const ParameterType & v, bool disableEventNotifications){
+    if (disableEventNotifications) {
         noEventsSetValue(v);
     }
     else
@@ -461,18 +461,18 @@ inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(const Parame
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max, bool disableNofifications){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max, bool disableEventNotifications){
 	setName(name);
-	set(value, disableNofifications);
+	set(value, disableEventNotifications);
 	setMin(min);
 	setMax(max);
 	return *this;
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, bool disableNofifications){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, bool disableEventNotifications){
 	setName(name);
-	set(value, disableNofifications);
+	set(value, disableEventNotifications);
 	return *this;
 }
 
