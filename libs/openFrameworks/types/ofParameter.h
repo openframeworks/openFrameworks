@@ -268,14 +268,16 @@ namespace priv{
 
 
 
-
-
-//----------------------------------------------------------------------
-/// Holds a value and notify it's listeners when it changes. Can be used as
-/// the value itself. For example an ofParameter<int> can be added, multiplied
-/// substracted... with another number.
-/// for ofParameter of other objects it's methods can be access using pointer
-/// syntax ->
+/// \brief ofParameter holds a value and notifies its listeners when it changes.
+///
+/// ofParameter can be used as the value itself. For example an `ofParameter<int>`
+/// can be added, multiplied, substracted, etc with another number.
+///
+/// An ofParameter with a custom object such as `ofParameter<MyObject> myObject`,
+/// `MyObject`'s methods can be accessed using pointer syntax,
+/// e.g. `myObject->myMethod();`.
+///
+/// \tparam ParameterType The data wrapped by the ofParameter.
 template<typename ParameterType>
 class ofParameter: public ofAbstractParameter{
 public:
@@ -703,12 +705,16 @@ void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 
 
 
-
-
-
-//----------------------------------------------------------------------
-/// Same as ofParameter but can only be modified by a friend class specified
-/// as the second template argument
+/// \brief ofReadOnlyParameter holds a value and notifies its listeners when it changes.
+///
+/// ofReadOnlyParameter is a "read only" version of `ofPareameter`.  "Friend"
+/// classes specified in the template arguments allow other classes
+/// write-access to the internal data.  Otherwise, all other access is
+/// "read only".
+///
+/// \sa ofParameter
+/// \tparam ParameterType The data wrapped by the ofParameter.
+/// \tparam ParameterType The type of the "friend" class with write access.
 template<typename ParameterType,typename Friend>
 class ofReadOnlyParameter: public ofAbstractParameter{
 public:
