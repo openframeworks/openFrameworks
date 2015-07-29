@@ -420,22 +420,22 @@ private:
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter()
 :obj(std::make_shared<Value>())
-,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const ParameterType & v)
 :obj(std::make_shared<Value>(v))
-,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)) {}
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) {}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const string& name, const ParameterType & v)
 :obj(std::make_shared<Value>(name, v))
-,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max)
 :obj(std::make_shared<Value>(name, v, min, max))
-,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
 
 template<typename ParameterType>
