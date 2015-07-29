@@ -273,7 +273,7 @@ namespace priv{
 /// ofParameter can be used as the value itself. For example an `ofParameter<int>`
 /// can be added, multiplied, substracted, etc with another number.
 ///
-/// An ofParameter with a custom object such as `ofParameter<MyObject> myObject`,
+/// For an ofParameter with a custom object such as `ofParameter<MyObject> myObject`,
 /// `MyObject`'s methods can be accessed using pointer syntax,
 /// e.g. `myObject->myMethod();`.
 ///
