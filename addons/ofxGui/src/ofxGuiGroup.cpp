@@ -15,7 +15,7 @@ ofxGuiGroup::ofxGuiGroup(){
 
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
 	minimized = false;
-	parent = NULL;
+	parent = nullptr;
 	setup(parameters, filename, x, y);
 }
 
@@ -30,7 +30,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	header = defaultHeight;
 	spacing = 1;
 	spacingNextElement = 3;
-	if(parent != NULL){
+	if(parent != nullptr){
 		b.width = parent->getWidth();
 	}else{
 		b.width = defaultWidth;
@@ -102,11 +102,11 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 	element->setParent(this);
 
 	ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(element);
-	if(subgroup != NULL){
+	if(subgroup != nullptr){
 		subgroup->filename = filename;
 		subgroup->setWidthElements(b.width * .98);
 	}else{
-		if(parent != NULL){
+		if(parent != nullptr){
 			element->setSize(b.width * .98, element->getHeight());
 			element->setPosition(b.x + b.width - element->getWidth(), element->getPosition().y);
 		}
@@ -121,7 +121,7 @@ void ofxGuiGroup::setWidthElements(float w){
 		collection[i]->setSize(w, collection[i]->getHeight());
 		collection[i]->setPosition(b.x + b.width - w, collection[i]->getPosition().y);
 		ofxGuiGroup * subgroup = dynamic_cast <ofxGuiGroup *>(collection[i]);
-		if(subgroup != NULL){
+		if(subgroup != nullptr){
 			subgroup->setWidthElements(w * .98);
 		}
 	}
@@ -336,7 +336,7 @@ ofxBaseGui * ofxGuiGroup::getControl(const std::string& name){
 			return collection[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool ofxGuiGroup::setValue(float mx, float my, bool bCheck){
@@ -432,7 +432,7 @@ ofxBaseGui * ofxGuiGroup::getControl(std::size_t num){
 	if(num < collection.size()){
 		return collection[num];
 	}else{
-		return NULL;
+		return nullptr;
 	}
 }
 
