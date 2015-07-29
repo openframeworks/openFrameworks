@@ -345,9 +345,9 @@ public:
 	ofParameter<ParameterType> & operator>>=(const OtherType & v);
 
 
-	ofParameter<ParameterType> & set(const ParameterType & v);
-	ofParameter<ParameterType> & set(const string& name, const ParameterType & v);
-	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
+	ofParameter<ParameterType> & set(const ParameterType & v, bool disableNotification = false);
+	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, bool disableNotification = false);
+	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max, bool disableNotification = false);
 
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
@@ -449,24 +449,30 @@ inline const ParameterType & ofParameter<ParameterType>::operator=(const Paramet
 }
 
 template<typename ParameterType>
-inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(const ParameterType & v){
-	setMethod(v);
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::set(const ParameterType & v, bool disableNofifications){
+    if (disableNofifications) {
+        noEventsSetValue(v);
+    }
+    else
+    {
+        setMethod(v);
+    }
 	return *this;
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, const ParameterType & min, const ParameterType & max, bool disableNofifications){
 	setName(name);
-	set(value);
+	set(value, disableNofifications);
 	setMin(min);
 	setMax(max);
 	return *this;
 }
 
 template<typename ParameterType>
-ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value){
+ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name, const ParameterType & value, bool disableNofifications){
 	setName(name);
-	set(value);
+	set(value, disableNofifications);
 	return *this;
 }
 
