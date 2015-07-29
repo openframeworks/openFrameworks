@@ -91,8 +91,8 @@ public:
 	ofParameter<int> getInt(const string& name) const;
 	ofParameter<float> getFloat(const string& name) const;
 	ofParameter<char> getChar(const string& name) const;
-	ofParameter<string> getString(const string& name)	 const;
-	ofParameter<ofPoint> getPoint(const string& name)	 const;
+	ofParameter<string> getString(const string& name) const;
+	ofParameter<ofPoint> getPoint(const string& name) const;
 	ofParameter<ofVec2f> getVec2f(const string& name) const;
 	ofParameter<ofVec3f> getVec3f(const string& name) const;
 	ofParameter<ofVec4f> getVec4f(const string& name) const;
@@ -107,8 +107,8 @@ public:
 	ofParameter<int> getInt(std::size_t pos) const;
 	ofParameter<float> getFloat(std::size_t pos) const;
 	ofParameter<char> getChar(std::size_t pos) const;
-	ofParameter<string> getString(std::size_t pos)	 const;
-	ofParameter<ofPoint> getPoint(std::size_t pos)	 const;
+	ofParameter<string> getString(std::size_t pos) const;
+	ofParameter<ofPoint> getPoint(std::size_t pos) const;
 	ofParameter<ofVec2f> getVec2f(std::size_t pos) const;
 	ofParameter<ofVec3f> getVec3f(std::size_t pos) const;
 	ofParameter<ofVec4f> getVec4f(std::size_t pos) const;
