@@ -483,21 +483,58 @@ inline const ParameterType * ofParameter<ParameterType>::operator->() const{
 
 template<typename ParameterType>
 inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
-	if(obj->bInNotify) {
+
+    // If the object is notifying its parents, just set the value without triggering an event.
+    if(obj->bInNotify)
+    {
 		noEventsSetValue(v);
-		return;
 	}
-	obj->bInNotify = true;
-	obj->value = v;
-	ofNotifyEvent(obj->changedE,obj->value,this);
-	if(!obj->parents.empty()){
-		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),[this](weak_ptr<ofParameterGroup::Value> p){
-			auto parent = p.lock();
-			if(parent) parent->notifyParameterChanged(*this);
-			return !parent;
-		}),obj->parents.end());
-	}
-	obj->bInNotify = false;
+    else
+    {
+        // Mark the object as in its notification loop.
+        obj->bInNotify = true;
+
+        // Set the value.
+        obj->value = v;
+
+        // Notify any local subscribers.
+        ofNotifyEvent(obj->changedE,obj->value,this);
+
+        // Notify all parents, if there are any.
+        if(!obj->parents.empty())
+        {
+
+            // This lambda will conditionally notify a parent if its child
+            // value has changed.
+            //
+            // If it was successful (i.e. the parent pointer is valid) the
+            // lambda will return false.  If it was unsuccessful (i.e. the
+            // parent pointer is invalid) the lambda will return true.
+            //
+            // This return value is used by the std::remove_if algorithm
+            // to erase invalid parents from this object's parent list.
+            auto notifyParents = [this](weak_ptr<ofParameterGroup::Value> p){
+                // Try to get a valid shared pointer ot the parent.
+                auto parent = p.lock();
+
+                // If the parent's shared pointer is not nullptr, notify it.
+                if(parent != nullptr) {
+                    parent->notifyParameterChanged(*this);
+                    return false;
+                } else {
+                    return true;
+                }
+            };
+
+            // Erase each invalid parent and notify all valid parents of this
+            // object's changed value.
+            obj->parents.erase(std::remove_if(obj->parents.begin(),
+                                              obj->parents.end(),
+                                              notifyParents),
+                               obj->parents.end());
+        }
+        obj->bInNotify = false;
+    }
 }
 
 template<typename ParameterType>
