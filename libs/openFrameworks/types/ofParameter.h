@@ -71,7 +71,7 @@ public:
 
 	template<typename ...Args>
 	ofParameterGroup(const string & name, Args&... p)
-	:obj(new Value){
+    :obj(std::make_shared<Value>()){
 		add(p...);
 		setName(name);
 	}
@@ -100,7 +100,7 @@ public:
 	ofParameter<ofShortColor> getShortColor(const string& name) const;
 	ofParameter<ofFloatColor> getFloatColor(const string& name) const;
 
-	ofParameterGroup getGroup(string name) const;
+	ofParameterGroup getGroup(const string& name) const;
 
 
 	ofParameter<bool> getBool(std::size_t pos) const;
@@ -417,22 +417,22 @@ private:
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter()
-:obj(new Value)
+:obj(std::make_shared<Value>())
 ,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const ParameterType & v)
-:obj(shared_ptr<Value>(new Value(v)))
+:obj(std::make_shared<Value>(v))
 ,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)) {}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const string& name, const ParameterType & v)
-:obj(shared_ptr<Value>(new Value(name, v)))
+:obj(std::make_shared<Value>(name, v))
 ,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max)
-:obj(shared_ptr<Value>(new Value(name, v, min, max)))
+:obj(std::make_shared<Value>(name, v, min, max))
 ,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
 
 
@@ -693,7 +693,7 @@ void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> mom)
 
 template<typename ParameterType>
 shared_ptr<ofAbstractParameter> ofParameter<ParameterType>::newReference() const{
-	return shared_ptr<ofAbstractParameter>(new ofParameter<ParameterType>(*this));
+    return std::make_shared<ofParameter<ParameterType>>(*this);
 }
 
 template<typename ParameterType>
@@ -1069,7 +1069,7 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::fromString(const string &
 
 template<typename ParameterType,typename Friend>
 shared_ptr<ofAbstractParameter> ofReadOnlyParameter<ParameterType,Friend>::newReference() const{
-	return shared_ptr<ofAbstractParameter>(new ofReadOnlyParameter<ParameterType,Friend>(*this));
+	return shared_ptr<ofReadOnlyParameter<ParameterType,Friend>>(*this);
 }
 
 template<typename ParameterType,typename Friend>
