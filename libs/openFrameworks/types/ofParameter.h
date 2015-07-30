@@ -69,6 +69,7 @@ class ofParameterGroup: public ofAbstractParameter {
 public:
 	ofParameterGroup();
 
+
 	template<typename ...Args>
 	ofParameterGroup(const string & name, Args&... p)
 	:obj(new Value){

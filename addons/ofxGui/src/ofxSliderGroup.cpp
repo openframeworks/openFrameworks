@@ -2,13 +2,25 @@
 using namespace std;
 
 template<class VecType>
+ofxVecSlider_<VecType>::ofxVecSlider_()
+:sliderChanging(false){
+}
+
+template<class VecType>
+ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, const Config & config)
+:ofxGuiGroup(ofParameterGroup(), config)
+,sliderChanging(false){
+    setup(value, config.shape.width, config.shape.height);
+}
+
+template<class VecType>
 ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, float width, float height){
 	sliderChanging = false;
     setup(value, width, height);
 }
 
 template<class VecType>
-ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(ofParameter<VecType> value, float width, float height){
+ofxVecSlider_<VecType> & ofxVecSlider_<VecType>::setup(ofParameter<VecType> value, float width, float height){
     ofxGuiGroup::setup(value.getName(), "", 0, 0);
     
     parameters.clear();
@@ -21,20 +33,20 @@ ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(ofParameter<VecType> valu
     VecType val = value;
     VecType min = value.getMin();
     VecType max = value.getMax();
-    
+    ofxFloatSlider::Config config = this->config;
     for (int i=0; i<VecType::DIM; i++) {
     	ofParameter<float> p(names[i], val[i], min[i], max[i]);
-        add(new ofxSlider<float>(p, width, height));
+        add(p,config);
         p.addListener(this, & ofxVecSlider_::changeSlider);
     }
 
     sliderChanging = false;
-    return this;
+    return *this;
 
 }
 
 template<class VecType>
-ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(const std::string& controlName, const VecType & v, const VecType & min, const VecType & max, float width, float height){
+ofxVecSlider_<VecType> & ofxVecSlider_<VecType>::setup(const std::string& controlName, const VecType & v, const VecType & min, const VecType & max, float width, float height){
 	value.set(controlName,v,min,max);
 	return setup(value,width,height);
 }
@@ -87,13 +99,26 @@ template class ofxVecSlider_<ofVec4f>;
 
 
 template<class ColorType>
+ofxColorSlider_<ColorType>::ofxColorSlider_()
+:sliderChanging(false){
+
+}
+
+template<class ColorType>
+ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType>> value, const Config & config)
+:ofxGuiGroup(ofParameterGroup(), config)
+,sliderChanging(false){
+    setup(value, config.shape.width, config.shape.height);
+}
+
+template<class ColorType>
 ofxColorSlider_<ColorType>::ofxColorSlider_(ofParameter<ofColor_<ColorType> > value, float width, float height){
 	sliderChanging = false;
     setup(value, width, height);
 }
 
 template<class ColorType>
-ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofColor_<ColorType> > value, float width, float height){
+ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(ofParameter<ofColor_<ColorType> > value, float width, float height){
     ofxGuiGroup::setup(value.getName(), "", 0, 0);
     parameters.clear();
 
@@ -105,21 +130,21 @@ ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
     ofColor_<ColorType> val = value;
     ofColor_<ColorType> min = value.getMin();
     ofColor_<ColorType> max = value.getMax();
-
+    typename ofxSlider<ColorType>::Config config = this->config;
     for (int i=0; i<4; i++) {
     	ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
-        add(new ofxSlider<ColorType>(p, width, height));
+        add<ofxSlider<ColorType>>(p,config);
         p.addListener(this, & ofxColorSlider_::changeSlider);
         collection[i]->setFillColor(value.get());
     }
 
     sliderChanging = false;
-    return this;
+    return *this;
 }
 
 
 template<class ColorType>
-ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(const std::string& controlName, const ofColor_<ColorType> & v, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width, float height){
+ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(const std::string& controlName, const ofColor_<ColorType> & v, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width, float height){
     value.set(controlName, v, min, max);
 	return setup(value,width,height);
 }

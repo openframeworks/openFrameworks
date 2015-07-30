@@ -1,15 +1,18 @@
 #include "ofxButton.h"
 using namespace std;
 
-ofxButton::ofxButton(){
+ofxButton::ofxButton(const Config & config)
+:ofxToggle(ofParameter<bool>{config.name,false}, config){
 	value.setSerializable(false);
+	registerMouseEvents();
+	value.addListener(this,&ofxButton::valueChanged);
 }
 
 ofxButton::~ofxButton(){
 	//
 }
 
-ofxButton* ofxButton::setup(const std::string& toggleName, float width, float height){
+ofxButton & ofxButton::setup(const std::string& toggleName, float width, float height){
 	setName(toggleName);
 	b.x = 0;
 	b.y = 0;
@@ -23,7 +26,7 @@ ofxButton* ofxButton::setup(const std::string& toggleName, float width, float he
 
 	value.addListener(this,&ofxButton::valueChanged);
 
-	return this;
+	return *this;
 }
 
 bool ofxButton::mouseReleased(ofMouseEventArgs & args){

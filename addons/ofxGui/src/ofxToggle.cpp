@@ -2,6 +2,25 @@
 #include "ofGraphics.h"
 using namespace std;
 
+ofxToggle::ofxToggle()
+:ofxBaseGui(Config())
+,bGuiActive(false){
+	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+	value.addListener(this,&ofxToggle::valueChanged);
+	registerMouseEvents();
+	setNeedsRedraw();
+}
+
+ofxToggle::ofxToggle(ofParameter<bool> _bVal, const Config & config)
+:ofxBaseGui(config)
+,bGuiActive(false){
+	value.makeReferenceTo(_bVal);
+	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+	value.addListener(this,&ofxToggle::valueChanged);
+	registerMouseEvents();
+	setNeedsRedraw();
+}
+
 ofxToggle::ofxToggle(ofParameter<bool> _bVal, float width, float height){
 	setup(_bVal,width,height);
 }
@@ -10,7 +29,7 @@ ofxToggle::~ofxToggle(){
 	value.removeListener(this,&ofxToggle::valueChanged);
 }
 
-ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height){
+ofxToggle & ofxToggle::setup(ofParameter<bool> _bVal, float width, float height){
 	b.x = 0;
 	b.y = 0;
 	b.width = width;
@@ -23,11 +42,11 @@ ofxToggle * ofxToggle::setup(ofParameter<bool> _bVal, float width, float height)
 	registerMouseEvents();
 	setNeedsRedraw();
 
-	return this;
+	return *this;
 
 }
 
-ofxToggle * ofxToggle::setup(const std::string& toggleName, bool _bVal, float width, float height){
+ofxToggle & ofxToggle::setup(const std::string& toggleName, bool _bVal, float width, float height){
 	value.set(toggleName,_bVal);
 	return setup(value,width,height);
 }

@@ -151,6 +151,10 @@ string ofParameterGroup::getType(std::size_t position) const{
 	else return obj->parameters[position]->type();
 }
 
+bool ofParameterGroup::getIsReadOnly(int position) const{
+	if(position>=size()) return true;
+	else return obj->parameters[position]->isReadOnly();
+}
 
 int ofParameterGroup::getPosition(const string& name) const{
 	if(obj->parametersIndex.find(escape(name))!=obj->parametersIndex.end())

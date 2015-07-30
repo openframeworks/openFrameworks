@@ -4,12 +4,19 @@
 #include "ofParameter.h"
 
 class ofxButton : public ofxToggle{
-	friend class ofPanel;
-	
 public:
-	ofxButton();
+	struct Config: public ofxToggle::Config{
+		Config(){}
+		Config(const ofxToggle::Config & c)
+		:ofxToggle::Config(c){}
+		Config(const ofxBaseGui::Config & c)
+		:ofxToggle::Config(c){}
+		std::string name;
+	};
+
+	ofxButton(const Config & config = Config());
 	~ofxButton();
-    ofxButton* setup(const std::string& toggleName, float width = defaultWidth, float height = defaultHeight);
+    ofxButton & setup(const std::string& toggleName, float width = defaultWidth, float height = defaultHeight);
 
 	virtual bool mouseReleased(ofMouseEventArgs & args);
 	virtual bool mouseMoved(ofMouseEventArgs & args);

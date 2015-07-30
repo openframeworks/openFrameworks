@@ -62,25 +62,41 @@ bool ofxBaseGui::fontLoaded = false;
 bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
 
-ofxBaseGui::ofxBaseGui(){
-	parent = NULL;
-	currentFrame = ofGetFrameNum();
-	serializer = std::shared_ptr <ofBaseFileSerializer>(new ofXml);
+ofxBaseGui::ofxBaseGui()
+:b(Config().shape)
+,serializer(new ofXml)
+,thisHeaderBackgroundColor(Config().headerBackgroundColor)
+,thisBackgroundColor(Config().backgroundColor)
+,thisBorderColor(Config().borderColor)
+,thisTextColor(Config().textColor)
+,thisFillColor(Config().fillColor)
+,needsRedraw(true)
+,currentFrame(ofGetFrameNum())
+,bRegisteredForMouseEvents(false){
 
-	thisHeaderBackgroundColor = headerBackgroundColor;
-	thisBackgroundColor = backgroundColor;
-	thisBorderColor = borderColor;
-	thisTextColor = textColor;
-	thisFillColor = fillColor;
+}
 
-	bRegisteredForMouseEvents = false;
-	needsRedraw = true;
+ofxBaseGui::ofxBaseGui(const Config & config)
+:b(config.shape)
+,serializer(new ofXml)
+,thisHeaderBackgroundColor(config.headerBackgroundColor)
+,thisBackgroundColor(config.backgroundColor)
+,thisBorderColor(config.borderColor)
+,thisTextColor(config.textColor)
+,thisFillColor(config.fillColor)
+,needsRedraw(true)
+,currentFrame(ofGetFrameNum())
+,bRegisteredForMouseEvents(false){
 
-	/*if(!fontLoaded){
-	    loadFont(OF_TTF_MONO,10,true,true);
-	    useTTF=false;
-	}*/
+}
 
+void ofxBaseGui::setup(const Config & config){
+	b = config.shape;
+	thisHeaderBackgroundColor = config.headerBackgroundColor;
+	thisBackgroundColor = config.backgroundColor;
+	thisBorderColor = config.borderColor;
+	thisTextColor = config.textColor;
+	thisFillColor = config.fillColor;
 }
 
 void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
@@ -212,17 +228,20 @@ void ofxBaseGui::setPosition(float x, float y){
 void ofxBaseGui::setSize(float w, float h){
 	b.width = w;
 	b.height = h;
-	sizeChangedCB();
+	sizeChangedE.notify(this);
+	setNeedsRedraw();
 }
 
 void ofxBaseGui::setShape(ofRectangle r){
 	b = r;
-	sizeChangedCB();
+	sizeChangedE.notify(this);
+	setNeedsRedraw();
 }
 
 void ofxBaseGui::setShape(float x, float y, float w, float h){
 	b.set(x, y, w, h);
-	sizeChangedCB();
+	sizeChangedE.notify(this);
+	setNeedsRedraw();
 }
 
 ofPoint ofxBaseGui::getPosition() const {
@@ -318,13 +337,6 @@ void ofxBaseGui::setDefaultHeight(int height){
 	defaultHeight = height;
 }
 
-void ofxBaseGui::sizeChangedCB(){
-	if(parent){
-		parent->sizeChangedCB();
-	}
-	setNeedsRedraw();
-}
-
 void ofxBaseGui::setNeedsRedraw(){
 	needsRedraw = true;
 }
@@ -373,12 +385,4 @@ void ofxBaseGui::loadStencilFromHex(ofImage & img, unsigned char * data){
 		}
 	}
 	img.update();
-}
-
-void ofxBaseGui::setParent(ofxBaseGui * parent){
-	this->parent = parent;
-}
-
-ofxBaseGui * ofxBaseGui::getParent(){
-	return parent;
 }
