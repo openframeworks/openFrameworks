@@ -351,6 +351,8 @@ public:
 	ofParameter<ParameterType> & set(const string& name, const ParameterType & v);
 	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
+    ofParameter<ParameterType> & setWithoutEventNotifcations(const ParameterType & v);
+
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
 
@@ -470,6 +472,12 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name,
 	setName(name);
 	set(value);
 	return *this;
+}
+
+template<typename ParameterType>
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::setWithoutEventNotifcations(const ParameterType & v){
+    noEventsSetValue(v);
+    return *this;
 }
 
 template<typename ParameterType>
