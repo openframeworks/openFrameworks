@@ -2,7 +2,7 @@
 #include "ofParameter.h"
 
 ofParameterGroup::ofParameterGroup()
-:obj(new Value)
+:obj(std::make_shared<Value>())
 {
 
 }
@@ -67,7 +67,7 @@ ofParameter<ofFloatColor> ofParameterGroup::getFloatColor(const string& name) co
 	return get<ofFloatColor>(name);
 }
 
-ofParameterGroup ofParameterGroup::getGroup(string name) const{
+ofParameterGroup ofParameterGroup::getGroup(const string& name) const{
 	return static_cast<ofParameterGroup& >(get(name));
 }
 
@@ -274,7 +274,7 @@ bool ofParameterGroup::isReadOnly() const{
 }
 
 shared_ptr<ofAbstractParameter> ofParameterGroup::newReference() const{
-	return shared_ptr<ofAbstractParameter>(new ofParameterGroup(*this));
+	return std::make_shared<ofParameterGroup>(*this);
 }
 
 void ofParameterGroup::setParent(ofParameterGroup & parent){
