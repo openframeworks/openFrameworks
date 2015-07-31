@@ -71,7 +71,7 @@ public:
 
 	template<typename ...Args>
 	ofParameterGroup(const string & name, Args&... p)
-	:obj(new Value){
+    :obj(std::make_shared<Value>()){
 		add(p...);
 		setName(name);
 	}
@@ -91,8 +91,8 @@ public:
 	ofParameter<int> getInt(const string& name) const;
 	ofParameter<float> getFloat(const string& name) const;
 	ofParameter<char> getChar(const string& name) const;
-	ofParameter<string> getString(const string& name)	 const;
-	ofParameter<ofPoint> getPoint(const string& name)	 const;
+	ofParameter<string> getString(const string& name) const;
+	ofParameter<ofPoint> getPoint(const string& name) const;
 	ofParameter<ofVec2f> getVec2f(const string& name) const;
 	ofParameter<ofVec3f> getVec3f(const string& name) const;
 	ofParameter<ofVec4f> getVec4f(const string& name) const;
@@ -100,15 +100,15 @@ public:
 	ofParameter<ofShortColor> getShortColor(const string& name) const;
 	ofParameter<ofFloatColor> getFloatColor(const string& name) const;
 
-	ofParameterGroup getGroup(string name) const;
+	ofParameterGroup getGroup(const string& name) const;
 
 
 	ofParameter<bool> getBool(std::size_t pos) const;
 	ofParameter<int> getInt(std::size_t pos) const;
 	ofParameter<float> getFloat(std::size_t pos) const;
 	ofParameter<char> getChar(std::size_t pos) const;
-	ofParameter<string> getString(std::size_t pos)	 const;
-	ofParameter<ofPoint> getPoint(std::size_t pos)	 const;
+	ofParameter<string> getString(std::size_t pos) const;
+	ofParameter<ofPoint> getPoint(std::size_t pos) const;
 	ofParameter<ofVec2f> getVec2f(std::size_t pos) const;
 	ofParameter<ofVec3f> getVec3f(std::size_t pos) const;
 	ofParameter<ofVec4f> getVec4f(std::size_t pos) const;
@@ -268,14 +268,16 @@ namespace priv{
 
 
 
-
-
-//----------------------------------------------------------------------
-/// Holds a value and notify it's listeners when it changes. Can be used as
-/// the value itself. For example an ofParameter<int> can be added, multiplied
-/// substracted... with another number.
-/// for ofParameter of other objects it's methods can be access using pointer
-/// syntax ->
+/// \brief ofParameter holds a value and notifies its listeners when it changes.
+///
+/// ofParameter can be used as the value itself. For example an `ofParameter<int>`
+/// can be added, multiplied, substracted, etc with another number.
+///
+/// For an ofParameter with a custom object such as `ofParameter<MyObject> myObject`,
+/// `MyObject`'s methods can be accessed using pointer syntax,
+/// e.g. `myObject->myMethod();`.
+///
+/// \tparam ParameterType The data wrapped by the ofParameter.
 template<typename ParameterType>
 class ofParameter: public ofAbstractParameter{
 public:
@@ -349,6 +351,8 @@ public:
 	ofParameter<ParameterType> & set(const string& name, const ParameterType & v);
 	ofParameter<ParameterType> & set(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
 
+    ofParameter<ParameterType> & setWithoutEventNotifcations(const ParameterType & v);
+
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
 
@@ -417,23 +421,23 @@ private:
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter()
-:obj(new Value)
-,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
+:obj(std::make_shared<Value>())
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const ParameterType & v)
-:obj(shared_ptr<Value>(new Value(v)))
-,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)) {}
+:obj(std::make_shared<Value>(v))
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)) {}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const string& name, const ParameterType & v)
-:obj(shared_ptr<Value>(new Value(name, v)))
-,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
+:obj(std::make_shared<Value>(name, v))
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
 template<typename ParameterType>
 ofParameter<ParameterType>::ofParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max)
-:obj(shared_ptr<Value>(new Value(name, v, min, max)))
-,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1)){}
+:obj(std::make_shared<Value>(name, v, min, max))
+,setMethod(std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1)){}
 
 
 template<typename ParameterType>
@@ -471,6 +475,12 @@ ofParameter<ParameterType> & ofParameter<ParameterType>::set(const string& name,
 }
 
 template<typename ParameterType>
+inline ofParameter<ParameterType> & ofParameter<ParameterType>::setWithoutEventNotifcations(const ParameterType & v){
+    noEventsSetValue(v);
+    return *this;
+}
+
+template<typename ParameterType>
 inline const ParameterType & ofParameter<ParameterType>::get() const{
 	return obj->value;
 }
@@ -481,21 +491,58 @@ inline const ParameterType * ofParameter<ParameterType>::operator->() const{
 
 template<typename ParameterType>
 inline void ofParameter<ParameterType>::eventsSetValue(const ParameterType & v){
-	if(obj->bInNotify) {
+
+    // If the object is notifying its parents, just set the value without triggering an event.
+    if(obj->bInNotify)
+    {
 		noEventsSetValue(v);
-		return;
 	}
-	obj->bInNotify = true;
-	obj->value = v;
-	ofNotifyEvent(obj->changedE,obj->value,this);
-	if(!obj->parents.empty()){
-		obj->parents.erase(std::remove_if(obj->parents.begin(),obj->parents.end(),[this](weak_ptr<ofParameterGroup::Value> p){
-			auto parent = p.lock();
-			if(parent) parent->notifyParameterChanged(*this);
-			return !parent;
-		}),obj->parents.end());
-	}
-	obj->bInNotify = false;
+    else
+    {
+        // Mark the object as in its notification loop.
+        obj->bInNotify = true;
+
+        // Set the value.
+        obj->value = v;
+
+        // Notify any local subscribers.
+        ofNotifyEvent(obj->changedE,obj->value,this);
+
+        // Notify all parents, if there are any.
+        if(!obj->parents.empty())
+        {
+
+            // This lambda will conditionally notify a parent if its child
+            // value has changed.
+            //
+            // If it was successful (i.e. the parent pointer is valid) the
+            // lambda will return false.  If it was unsuccessful (i.e. the
+            // parent pointer is invalid) the lambda will return true.
+            //
+            // This return value is used by the std::remove_if algorithm
+            // to erase invalid parents from this object's parent list.
+            auto notifyParents = [this](weak_ptr<ofParameterGroup::Value> p){
+                // Try to get a valid shared pointer ot the parent.
+                auto parent = p.lock();
+
+                // If the parent's shared pointer is not nullptr, notify it.
+                if(parent != nullptr) {
+                    parent->notifyParameterChanged(*this);
+                    return false;
+                } else {
+                    return true;
+                }
+            };
+
+            // Erase each invalid parent and notify all valid parents of this
+            // object's changed value.
+            obj->parents.erase(std::remove_if(obj->parents.begin(),
+                                              obj->parents.end(),
+                                              notifyParents),
+                               obj->parents.end());
+        }
+        obj->bInNotify = false;
+    }
 }
 
 template<typename ParameterType>
@@ -568,12 +615,12 @@ void ofParameter<ParameterType>::fromString(const string & str){
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::enableEvents(){
-	setMethod = std::bind(&ofParameter<ParameterType>::eventsSetValue,this, std::placeholders::_1);
+	setMethod = std::bind(&ofParameter<ParameterType>::eventsSetValue, this, std::placeholders::_1);
 }
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::disableEvents(){
-	setMethod = std::bind(&ofParameter<ParameterType>::noEventsSetValue,this, std::placeholders::_1);
+	setMethod = std::bind(&ofParameter<ParameterType>::noEventsSetValue, this, std::placeholders::_1);
 }
 
 template<typename ParameterType>
@@ -693,7 +740,7 @@ void ofParameter<ParameterType>::makeReferenceTo(ofParameter<ParameterType> mom)
 
 template<typename ParameterType>
 shared_ptr<ofAbstractParameter> ofParameter<ParameterType>::newReference() const{
-	return shared_ptr<ofAbstractParameter>(new ofParameter<ParameterType>(*this));
+    return std::make_shared<ofParameter<ParameterType>>(*this);
 }
 
 template<typename ParameterType>
@@ -703,12 +750,16 @@ void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 
 
 
-
-
-
-//----------------------------------------------------------------------
-/// Same as ofParameter but can only be modified by a friend class specified
-/// as the second template argument
+/// \brief ofReadOnlyParameter holds a value and notifies its listeners when it changes.
+///
+/// ofReadOnlyParameter is a "read only" version of `ofPareameter`.  "Friend"
+/// classes specified in the template arguments allow other classes
+/// write-access to the internal data.  Otherwise, all other access is
+/// "read only".
+///
+/// \sa ofParameter
+/// \tparam ParameterType The data wrapped by the ofParameter.
+/// \tparam ParameterType The type of the "friend" class with write access.
 template<typename ParameterType,typename Friend>
 class ofReadOnlyParameter: public ofAbstractParameter{
 public:
@@ -1069,7 +1120,7 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::fromString(const string &
 
 template<typename ParameterType,typename Friend>
 shared_ptr<ofAbstractParameter> ofReadOnlyParameter<ParameterType,Friend>::newReference() const{
-	return shared_ptr<ofAbstractParameter>(new ofReadOnlyParameter<ParameterType,Friend>(*this));
+	return shared_ptr<ofReadOnlyParameter<ParameterType,Friend>>(*this);
 }
 
 template<typename ParameterType,typename Friend>

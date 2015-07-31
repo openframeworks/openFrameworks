@@ -18,6 +18,9 @@
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-std=gnu++11" />
+					<Add option="-DUNICODE" />
+					<Add option="-D_UNICODE" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -34,6 +37,9 @@
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-std=gnu++11" />
+					<Add option="-DUNICODE" />
+					<Add option="-D_UNICODE" />
 				</Compiler>
 				<Linker>
 					<Add option="../../../libs/openFrameworksCompiled/lib/win_cb/openFrameworksDebug.lib" />
