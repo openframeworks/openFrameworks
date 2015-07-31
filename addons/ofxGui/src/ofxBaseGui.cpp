@@ -63,9 +63,9 @@ bool ofxBaseGui::useTTF = false;
 ofBitmapFont ofxBaseGui::bitmapFont;
 
 ofxBaseGui::ofxBaseGui(){
-	parent = NULL;
+	parent = nullptr;
 	currentFrame = ofGetFrameNum();
-	serializer = std::shared_ptr <ofBaseFileSerializer>(new ofXml);
+    serializer = std::make_shared<ofXml>();
 
 	thisHeaderBackgroundColor = headerBackgroundColor;
 	thisBackgroundColor = backgroundColor;

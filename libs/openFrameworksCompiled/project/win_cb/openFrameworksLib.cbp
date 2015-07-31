@@ -16,6 +16,8 @@
 				<Compiler>
 					<Add option="-g3" />
 					<Add option="-std=gnu++11" />
+					<Add option="-DUNICODE" />
+					<Add option="-D_UNICODE" />
 				</Compiler>
 			</Target>
 			<Target title="release">
@@ -28,6 +30,8 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-std=gnu++11" />
+					<Add option="-DUNICODE" />
+					<Add option="-D_UNICODE" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
