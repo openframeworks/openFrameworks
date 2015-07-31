@@ -113,10 +113,12 @@ void ofInit(){
 		try{
 			std::locale::global(std::locale("C.UTF-8"));
 		}catch(...){
-			ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
-					"won't work correctly for non ansi characters unless you specify a UTF-8 locale\n"
-					"manually using std::locale::global(std::locale(\"locale\"))\n"
-					"available locales can be queried with 'locale -a' in a terminal.";
+			if(ofToLower(std::locale("").name()).find("utf-8")==std::string::npos){
+				ofLogWarning("ofInit") << "Couldn't set UTF-8 locale, string manipulation functions\n"
+						"won't work correctly for non ansi characters unless you specify a UTF-8 locale\n"
+						"manually using std::locale::global(std::locale(\"locale\"))\n"
+						"available locales can be queried with 'locale -a' in a terminal.";
+			}
 		}
 	}
 #endif
