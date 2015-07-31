@@ -128,8 +128,7 @@ void ofCairoRenderer::close(){
 
 
 void ofCairoRenderer::startRender(){
-	if(!surface || !cr)
-		setStyle(currentStyle);
+	setStyle(currentStyle);
 	if(page==0 || !multiPage){
 		page=1;
 	}else{
@@ -709,6 +708,7 @@ void ofCairoRenderer::setColor(int r, int g, int b){
 //--------------------------------------------
 void ofCairoRenderer::setColor(int r, int g, int b, int a){
 	cairo_set_source_rgba(cr, (float)r/255.0, (float)g/255.0, (float)b/255.0, (float)a/255.0);
+	currentStyle.color.set(r,g,b,a);
 };
 
 //--------------------------------------------
@@ -928,6 +928,7 @@ void ofCairoRenderer::viewport(ofRectangle v){
 void ofCairoRenderer::viewport(float x, float y, float width, float height, bool invertY){
 	if(width < 0) width = originalViewport.width;
 	if(height < 0) height = originalViewport.height;
+	cout << "setting viewport to:" << width << ", " << height << endl;
 
 	if (invertY){
 		y = -y;
@@ -948,12 +949,12 @@ void ofCairoRenderer::viewport(float x, float y, float width, float height, bool
 //----------------------------------------------------------
 void ofCairoRenderer::setupScreenPerspective(float width, float height, float fov, float nearDist, float farDist){
 	if(!b3D) return;
-	if(width < 0) width = viewportRect.width;
-	if(height < 0) height = viewportRect.height;
+	if(width < 0) width = originalViewport.width;
+	if(height < 0) height = originalViewport.height;
 	ofOrientation orientation = ofGetOrientation();
 
-	float viewW = viewportRect.width;
-	float viewH = viewportRect.height;
+	float viewW = originalViewport.width;
+	float viewH = originalViewport.height;
 
 	float eyeX = viewW / 2;
 	float eyeY = viewH / 2;
@@ -1169,6 +1170,7 @@ void ofCairoRenderer::clear(){
 	if(!surface || ! cr) return;
 	cairo_set_source_rgba(cr,currentStyle.bgColor.r/255., currentStyle.bgColor.g/255., currentStyle.bgColor.b/255., currentStyle.bgColor.a/255.);
 	cairo_paint(cr);
+	setColor(currentStyle.color);
 }
 
 //----------------------------------------------------------
@@ -1176,6 +1178,7 @@ void ofCairoRenderer::clear(float r, float g, float b, float a) {
 	if(!surface || ! cr) return;
 	cairo_set_source_rgba(cr,r/255., g/255., b/255., a/255.);
 	cairo_paint(cr);
+	setColor(currentStyle.color);
 
 }
 
