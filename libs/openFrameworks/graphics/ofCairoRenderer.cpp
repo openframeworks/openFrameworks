@@ -31,9 +31,9 @@ ofCairoRenderer::~ofCairoRenderer(){
 	close();
 }
 
-void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
-	if( _viewport.width == 0 || _viewport.height == 0 ){
-		_viewport.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
+void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
+	if( outputsize.width == 0 || outputsize.height == 0 ){
+		outputsize.set(0, 0, ofGetViewportWidth(), ofGetViewportHeight());
 	}
 
 	filename = _filename;
@@ -65,22 +65,22 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 	switch(type){
 	case PDF:
 		if(filename==""){
-			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,_viewport.width, _viewport.height);
+			surface = cairo_pdf_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
-			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+			surface = cairo_pdf_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
 		}
 		break;
 	case SVG:
 		if(filename==""){
-			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,_viewport.width, _viewport.height);
+			surface = cairo_svg_surface_create_for_stream(&ofCairoRenderer::stream_function,this,outputsize.width, outputsize.height);
 		}else{
-			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),_viewport.width, _viewport.height);
+			surface = cairo_svg_surface_create(ofToDataPath(filename).c_str(),outputsize.width, outputsize.height);
 		}
 		break;
 	case IMAGE:
-		imageBuffer.allocate(_viewport.width, _viewport.height, OF_PIXELS_BGRA);
+		imageBuffer.allocate(outputsize.width, outputsize.height, OF_PIXELS_BGRA);
 		imageBuffer.set(0);
-		surface = cairo_image_surface_create_for_data(imageBuffer.getData(),CAIRO_FORMAT_ARGB32,_viewport.width, _viewport.height,_viewport.width*4);
+		surface = cairo_image_surface_create_for_data(imageBuffer.getData(),CAIRO_FORMAT_ARGB32,outputsize.width, outputsize.height,outputsize.width*4);
 		break;
 	case FROM_FILE_EXTENSION:
 		ofLogFatalError("ofCairoRenderer") << "setup(): couldn't determine type from extension for filename: \"" << _filename << "\"!";
@@ -92,16 +92,16 @@ void ofCairoRenderer::setup(string _filename, Type _type, bool multiPage_, bool 
 
 	cr = cairo_create(surface);
 	cairo_set_antialias(cr,CAIRO_ANTIALIAS_SUBPIXEL);
-	viewportRect = _viewport;
-	originalViewport = _viewport;
+	viewportRect = outputsize;
+	originalViewport = outputsize;
 	viewport(viewportRect);
 	page = 0;
 	b3D = b3D_;
 	multiPage = multiPage_;
 }
 
-void ofCairoRenderer::setupMemoryOnly(Type _type, bool multiPage_, bool b3D_, ofRectangle _viewport){
-	setup("",_type,multiPage_,b3D_,_viewport);
+void ofCairoRenderer::setupMemoryOnly(Type _type, bool multiPage_, bool b3D_, ofRectangle outputsize){
+	setup("",_type,multiPage_,b3D_,outputsize);
 }
 
 void ofCairoRenderer::flush(){
