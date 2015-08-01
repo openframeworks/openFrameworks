@@ -26,6 +26,8 @@ architectures:
 
 notes:
   * armv7s removed since potential performance gains not worth the binary size increase, see #3423 for more discussion
+  * arm64 supported until Xcode 5 (OS X 10.8+)
+  * Apple iOS store requires 64bit support
 
 
 # Linux #
@@ -59,4 +61,4 @@ architectures:
 
 notes:
   * QTKitVideo pipeline will be deprecated, but essential for 10.7 support.
-
+  * 10.8 recommended minimum (to use Xcode 5)
