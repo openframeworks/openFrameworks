@@ -3,14 +3,17 @@ As of 0.9, the following platforms are supported:
 # Android #
 
 versions: ?
+
 architectures:
   * armeabi-v7a
   * i386
 
+
 # Emscripten #
 
 notes: VM
-	
+
+
 # iOS #
 
 versions: iOS 5 - 8 (FAT Bundle with libc++ for all archs)
@@ -28,6 +31,7 @@ notes:
 # Linux #
 
 versions: Debian, Arch, Ubuntu, Fedora
+
 architectures:
   * i386
   * x86_64
@@ -37,7 +41,9 @@ architectures:
 # Microsoft Windows #
 
 versions: Win7 - Win8
+
 architectures: ?
+
 notes:
   * Visual Studio 2012 for i386
   * MinGW / Codeblocks 12.11 i386
@@ -46,6 +52,7 @@ notes:
 # OS X #
 
 versions: 10.7 - 10.10 (FAT Bundle)
+
 architectures:
   * i386 (with libc++)
   * x86_64 (with libc++)
