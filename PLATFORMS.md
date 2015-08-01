@@ -48,7 +48,7 @@ architectures: ?
 
 notes:
   * Visual Studio 2012 for i386
-  * MinGW / Codeblocks 12.11 i386
+  * MinGW / Codeblocks 12.11 for i386
 
 
 # OS X #
