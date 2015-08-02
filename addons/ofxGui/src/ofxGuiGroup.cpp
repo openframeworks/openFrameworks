@@ -15,21 +15,6 @@ ofxGuiGroup::ofxGuiGroup()
 ,bGuiActive(false){
 }
 
-ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters)
-:ofxBaseGui(Config())
-,spacing(Config().spacing)
-,spacingNextElement(Config().spacingNextElement)
-,spacingFirstElement(Config().spacingFirstElement)
-,header(Config().header)
-,filename(Config().filename)
-,minimized(Config().minimized)
-,bGuiActive(false){
-	addParametersFrom(_parameters);
-	parameters = _parameters;
-	registerMouseEvents();
-	setNeedsRedraw();
-}
-
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & config)
 :ofxBaseGui(config)
 ,spacing(config.spacing)

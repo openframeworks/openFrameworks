@@ -21,9 +21,8 @@ class ofxGuiGroup : public ofxBaseGui {
 			float header = defaultHeight;
 		};
 
-		ofxGuiGroup();
-		ofxGuiGroup(const ofParameterGroup & parameters);
-		ofxGuiGroup(const ofParameterGroup & parameters, const Config & config);
+        ofxGuiGroup();
+        ofxGuiGroup(const ofParameterGroup & parameters, const Config & config = Config());
 		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename, float x = 10, float y = 10);
 		virtual ~ofxGuiGroup();
 
