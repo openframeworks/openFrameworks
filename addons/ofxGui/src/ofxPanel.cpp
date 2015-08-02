@@ -90,7 +90,7 @@ void ofxPanel::generateDraw(){
 
 void ofxPanel::generateDrawHeader(){
     headerBg.clear();
-    headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
+    headerBg.setFillColor(thisHeaderBackgroundColor);
     headerBg.setFilled(true);
     headerBg.rectangle(b.x,b.y+1,b.width,header);
 
