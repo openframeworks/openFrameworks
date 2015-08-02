@@ -6,6 +6,10 @@
 #include "ofxPanel.h"
 #include "ofxButton.h"
 #include "ofxLabel.h"
+#include "ofxMinimalButton.h"
+#include "ofxMinimalToggle.h"
+#include "ofxVerticalSlider.h"
+#include "ofxRotarySlider.h"
 
 void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
 void ofxGuiSetBitmapFont();
