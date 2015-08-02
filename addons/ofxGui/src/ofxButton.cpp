@@ -2,14 +2,14 @@
 using namespace std;
 
 ofxButton::ofxButton(const Config & config)
-:ofxToggle(ofParameter<bool>{config.name,false}, config){
+:ofxToggle(ofParameter<bool>(config.name,false), config){
 	value.setSerializable(false);
 	registerMouseEvents();
 	value.addListener(this,&ofxButton::valueChanged);
 }
 
 ofxButton::~ofxButton(){
-	//
+    value.removeListener(this,&ofxButton::valueChanged);
 }
 
 ofxButton & ofxButton::setup(const std::string& toggleName, float width, float height){
