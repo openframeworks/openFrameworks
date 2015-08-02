@@ -18,7 +18,8 @@ class ofxGuiGroup : public ofxBaseGui {
 			float spacing = 1;
 			float spacingNextElement = 3;
 			float spacingFirstElement = 0;
-			float header = defaultHeight;
+            float header = defaultHeight;
+            bool showHeader = true;
 		};
 
         ofxGuiGroup();
@@ -146,6 +147,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		std::string filename;
 		bool minimized;
 		bool bGuiActive;
+        bool bShowHeader;
 
 		ofPath border, headerBg;
 		ofVboMesh textMesh;

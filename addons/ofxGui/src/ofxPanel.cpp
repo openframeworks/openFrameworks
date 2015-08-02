@@ -83,22 +83,27 @@ void ofxPanel::generateDraw(){
 	border.setFilled(false);
 	border.rectangle(b.x,b.y,b.width+1,b.height-spacingNextElement);
 
+    if(bShowHeader){
+        generateDrawHeader();
+    }
+}
 
-	headerBg.clear();
-	headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
-	headerBg.setFilled(true);
-	headerBg.rectangle(b.x,b.y+1,b.width,header);
+void ofxPanel::generateDrawHeader(){
+    headerBg.clear();
+    headerBg.setFillColor(ofColor(thisHeaderBackgroundColor,180));
+    headerBg.setFilled(true);
+    headerBg.rectangle(b.x,b.y+1,b.width,header);
 
-	float iconHeight = header*.5;
-	float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
-	int iconSpacing = iconWidth*.5;
+    float iconHeight = header*.5;
+    float iconWidth = loadIcon.getWidth()/loadIcon.getHeight()*iconHeight;
+    int iconSpacing = iconWidth*.5;
 
-	loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + textPadding);
-	loadBox.y = b.y + header / 2. - iconHeight / 2.;
-	loadBox.width = iconWidth;
-	loadBox.height = iconHeight;
-	saveBox.set(loadBox);
-	saveBox.x += iconWidth + iconSpacing;
+    loadBox.x = b.getMaxX() - (iconWidth * 2 + iconSpacing + textPadding);
+    loadBox.y = b.y + header / 2. - iconHeight / 2.;
+    loadBox.width = iconWidth;
+    loadBox.height = iconHeight;
+    saveBox.set(loadBox);
+    saveBox.x += iconWidth + iconSpacing;
 
     if(bShowName){
         textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
@@ -107,7 +112,9 @@ void ofxPanel::generateDraw(){
 
 void ofxPanel::render(){
 	border.draw();
-	headerBg.draw();
+    if(bShowHeader){
+        headerBg.draw();
+    }
 
 	ofBlendMode blendMode = ofGetStyle().blendingMode;
 	if(blendMode!=OF_BLENDMODE_ALPHA){
@@ -115,20 +122,9 @@ void ofxPanel::render(){
 	}
 	ofColor c = ofGetStyle().color;
 
-    if(bShowName){
-        ofSetColor(thisTextColor);
-        bindFontTexture();
-        textMesh.draw();
-        unbindFontTexture();
+    if(bShowHeader){
+        renderHeader();
     }
-
-	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
-	ofDisableTextureEdgeHack();
-	loadIcon.draw(loadBox);
-	saveIcon.draw(saveBox);
-	if(texHackEnabled){
-		ofEnableTextureEdgeHack();
-	}
 
 	for(std::size_t i = 0; i < collection.size(); i++){
 		collection[i]->draw();
@@ -138,6 +134,24 @@ void ofxPanel::render(){
 	if(blendMode!=OF_BLENDMODE_ALPHA){
 		ofEnableBlendMode(blendMode);
 	}
+}
+
+void ofxPanel::renderHeader() {
+    ofSetColor(thisTextColor);
+
+    if(bShowName){
+        bindFontTexture();
+        textMesh.draw();
+        unbindFontTexture();
+    }
+
+    bool texHackEnabled = ofIsTextureEdgeHackEnabled();
+    ofDisableTextureEdgeHack();
+    loadIcon.draw(loadBox);
+    saveIcon.draw(saveBox);
+    if(texHackEnabled){
+        ofEnableTextureEdgeHack();
+    }
 }
 
 bool ofxPanel::mouseReleased(ofMouseEventArgs & args){
@@ -161,23 +175,25 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 		if( b.inside(mx, my) ){
 			bGuiActive = true;
 
-			if( my > b.y && my <= b.y + header ){
-				bGrabbed = true;
-				grabPt.set(mx-b.x, my-b.y);
-			} else{
-				bGrabbed = false;
-			}
+            if(bShowHeader){
+                if( my > b.y && my <= b.y + header ){
+                    bGrabbed = true;
+                    grabPt.set(mx-b.x, my-b.y);
+                } else{
+                    bGrabbed = false;
+                }
 
-			if(loadBox.inside(mx, my)) {
-				loadFromFile(filename);
-				ofNotifyEvent(loadPressedE,this);
-				return true;
-			}
-			if(saveBox.inside(mx, my)) {
-				saveToFile(filename);
-				ofNotifyEvent(savePressedE,this);
-				return true;
-			}
+                if(loadBox.inside(mx, my)) {
+                    loadFromFile(filename);
+                    ofNotifyEvent(loadPressedE,this);
+                    return true;
+                }
+                if(saveBox.inside(mx, my)) {
+                    saveToFile(filename);
+                    ofNotifyEvent(savePressedE,this);
+                    return true;
+                }
+            }
 		}
 	} else if( bGrabbed ){
 		setPosition(mx - grabPt.x,my - grabPt.y);

@@ -30,8 +30,10 @@ public:
 	ofEvent<void> savePressedE;
 protected:
 	void render();
+    void renderHeader();
 	bool setValue(float mx, float my, bool bCheck);
 	void generateDraw();
+    void generateDrawHeader();
 	void loadIcons();
 private:
 	ofRectangle loadBox, saveBox;
