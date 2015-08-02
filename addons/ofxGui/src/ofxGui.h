@@ -13,6 +13,7 @@
 #include "ofxGuiSpacer.h"
 #include "ofxGuiGraphics.h"
 #include "ofxGuiZoomableGraphics.h"
+#include "ofxGuiMatrix.h"
 
 void ofxGuiSetFont(const string & fontPath,int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, int dpi=0);
 void ofxGuiSetBitmapFont();
