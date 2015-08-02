@@ -174,7 +174,9 @@ void ofxSlider<Type>::generateDraw(){
 	bar.setFilled(true);
 	bar.rectangle(b.x+1, b.y+1, valAsPct, b.height-2);
 
-	generateText();
+    if(bShowName){
+        generateText();
+    }
 }
 
 
@@ -199,20 +201,22 @@ void ofxSlider<Type>::render(){
 	bg.draw();
 	bar.draw();
 
-	ofBlendMode blendMode = ofGetStyle().blendingMode;
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableAlphaBlending();
-	}
-	ofSetColor(thisTextColor);
+    if(bShowName){
+        ofBlendMode blendMode = ofGetStyle().blendingMode;
+        if(blendMode!=OF_BLENDMODE_ALPHA){
+            ofEnableAlphaBlending();
+        }
+        ofSetColor(thisTextColor);
 
-	bindFontTexture();
-	textMesh.draw();
-	unbindFontTexture();
+        bindFontTexture();
+        textMesh.draw();
+        unbindFontTexture();
 
-	ofSetColor(c);
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableBlendMode(blendMode);
-	}
+        ofSetColor(c);
+        if(blendMode!=OF_BLENDMODE_ALPHA){
+            ofEnableBlendMode(blendMode);
+        }
+    }
 }
 
 

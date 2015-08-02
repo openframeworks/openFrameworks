@@ -42,14 +42,17 @@ void ofxLabel::generateDraw(){
 
 	bg.setFillColor(thisBackgroundColor);
 	bg.setFilled(true);
-	bg.rectangle(b);
+    bg.rectangle(b);
 
-    string name;
-    if(!getName().empty()){
-    	name = getName() + ": ";
+    if(bShowName){
+        string name;
+        if(!getName().empty()){
+            name = getName() + ": ";
+        }
+        textMesh = getTextMesh(name + (string)label, b.x + textPadding, b.y + b.height / 2 + 4);
+    }else {
+        textMesh = getTextMesh((string)label, b.x + textPadding, b.y + b.height / 2 + 4);
     }
-
-    textMesh = getTextMesh(name + (string)label, b.x + textPadding, b.y + b.height / 2 + 4);
 }
 
 void ofxLabel::render() {

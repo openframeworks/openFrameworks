@@ -316,7 +316,10 @@ void ofxGuiGroup::generateDraw(){
 	headerBg.setFilled(true);
 	headerBg.rectangle(b.x, b.y + 1 + spacingNextElement, b.width, header);
 
-	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y + spacingNextElement);
+    textMesh.clear();
+    if(bShowName){
+        textMesh.append(getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y + spacingNextElement));
+    }
 	if(minimized){
 		textMesh.append(getTextMesh("+", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y + spacingNextElement));
 	}else{

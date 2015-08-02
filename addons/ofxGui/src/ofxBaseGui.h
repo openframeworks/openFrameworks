@@ -15,6 +15,7 @@ class ofxBaseGui {
 			ofColor textColor = ofxBaseGui::textColor;
 			ofColor fillColor = ofxBaseGui::fillColor;
 			ofRectangle shape{0.0f, 0.0f, (float)defaultWidth, (float)defaultHeight};
+            bool showName = true;
 		};
 		ofxBaseGui();
 		ofxBaseGui(const Config & config);
@@ -69,6 +70,8 @@ class ofxBaseGui {
 		static void setDefaultWidth(int width);
 		static void setDefaultHeight(int height);
 
+        void setShowName(bool show);
+
 		virtual ofAbstractParameter & getParameter() = 0;
 		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
 		static void setUseTTF(bool bUseTTF);
@@ -119,6 +122,8 @@ class ofxBaseGui {
 		static int textPadding;
 		static int defaultWidth;
 		static int defaultHeight;
+
+        bool bShowName;
 
 		static std::string saveStencilToHex(const ofImage & img);
 		static void loadStencilFromHex(ofImage & img, unsigned char * data);

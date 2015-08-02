@@ -100,7 +100,9 @@ void ofxPanel::generateDraw(){
 	saveBox.set(loadBox);
 	saveBox.x += iconWidth + iconSpacing;
 
-	textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+    if(bShowName){
+        textMesh = getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y);
+    }
 }
 
 void ofxPanel::render(){
@@ -112,11 +114,13 @@ void ofxPanel::render(){
 		ofEnableAlphaBlending();
 	}
 	ofColor c = ofGetStyle().color;
-	ofSetColor(thisTextColor);
 
-	bindFontTexture();
-	textMesh.draw();
-	unbindFontTexture();
+    if(bShowName){
+        ofSetColor(thisTextColor);
+        bindFontTexture();
+        textMesh.draw();
+        unbindFontTexture();
+    }
 
 	bool texHackEnabled = ofIsTextureEdgeHackEnabled();
 	ofDisableTextureEdgeHack();

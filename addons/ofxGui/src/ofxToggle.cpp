@@ -111,7 +111,9 @@ void ofxToggle::generateDraw(){
 	cross.moveTo(b.getPosition()+checkboxRect.getTopRight());
 	cross.lineTo(b.getPosition()+checkboxRect.getBottomLeft());
 
-	textMesh = getTextMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
+    if(bShowName){
+        textMesh = getTextMesh(getName(), b.x+textPadding + checkboxRect.width, b.y+b.height / 2 + 4);
+    }
 }
 
 void ofxToggle::render(){
@@ -122,21 +124,23 @@ void ofxToggle::render(){
 		cross.draw();
 	}
 
-	ofColor c = ofGetStyle().color;
-	ofBlendMode blendMode = ofGetStyle().blendingMode;
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableAlphaBlending();
-	}
-	ofSetColor(thisTextColor);
+    if(bShowName){
+        ofColor c = ofGetStyle().color;
+        ofBlendMode blendMode = ofGetStyle().blendingMode;
+        if(blendMode!=OF_BLENDMODE_ALPHA){
+            ofEnableAlphaBlending();
+        }
+        ofSetColor(thisTextColor);
 
-	bindFontTexture();
-	textMesh.draw();
-	unbindFontTexture();
+        bindFontTexture();
+        textMesh.draw();
+        unbindFontTexture();
 
-	ofSetColor(c);
-	if(blendMode!=OF_BLENDMODE_ALPHA){
-		ofEnableBlendMode(blendMode);
-	}
+        ofSetColor(c);
+        if(blendMode!=OF_BLENDMODE_ALPHA){
+            ofEnableBlendMode(blendMode);
+        }
+    }
 }
 
 bool ofxToggle::operator=(bool v){

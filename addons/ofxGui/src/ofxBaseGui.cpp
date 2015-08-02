@@ -70,6 +70,7 @@ ofxBaseGui::ofxBaseGui()
 ,thisBorderColor(Config().borderColor)
 ,thisTextColor(Config().textColor)
 ,thisFillColor(Config().fillColor)
+,bShowName(Config().showName)
 ,needsRedraw(true)
 ,currentFrame(ofGetFrameNum())
 ,bRegisteredForMouseEvents(false){
@@ -84,6 +85,7 @@ ofxBaseGui::ofxBaseGui(const Config & config)
 ,thisBorderColor(config.borderColor)
 ,thisTextColor(config.textColor)
 ,thisFillColor(config.fillColor)
+,bShowName(config.showName)
 ,needsRedraw(true)
 ,currentFrame(ofGetFrameNum())
 ,bRegisteredForMouseEvents(false){
@@ -345,6 +347,11 @@ void ofxBaseGui::setDefaultHeight(int height){
 
 void ofxBaseGui::setNeedsRedraw(){
 	needsRedraw = true;
+}
+
+void ofxBaseGui::setShowName(bool show){
+    bShowName = show;
+    setNeedsRedraw();
 }
 
 string ofxBaseGui::saveStencilToHex(const ofImage & img){
