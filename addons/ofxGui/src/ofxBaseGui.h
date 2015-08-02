@@ -38,9 +38,9 @@ class ofxBaseGui {
 
 		virtual void setPosition(ofPoint p);
 		virtual void setPosition(float x, float y);
-		virtual void setSize(float w, float h);
-		virtual void setShape(ofRectangle r);
-		virtual void setShape(float x, float y, float w, float h);
+        virtual void setSize(float w, float h, bool callback = true);
+        virtual void setShape(ofRectangle r, bool callback = true);
+        virtual void setShape(float x, float y, float w, float h, bool callback = true);
 
 		ofPoint getPosition() const;
 		ofRectangle getShape() const;

@@ -492,17 +492,23 @@ void ofxGuiGroup::setPosition(float x, float y){
 	setPosition(ofVec2f(x, y));
 }
 
-void ofxGuiGroup::setSize(float w, float h){
-	ofxBaseGui::setSize(w,h);
-	setWidthElements(w * .98);
+void ofxGuiGroup::setSize(float w, float h, bool callback){
+    ofxBaseGui::setSize(w,h,callback);
+    if(callback) {
+        setWidthElements(w * .98);
+    }
 }
 
-void ofxGuiGroup::setShape(ofRectangle r){
-	ofxBaseGui::setShape(r);
-	setWidthElements(r.width * .98);
+void ofxGuiGroup::setShape(ofRectangle r, bool callback){
+    ofxBaseGui::setShape(r,callback);
+    if(callback) {
+        setWidthElements(r.width * .98);
+    }
 }
 
-void ofxGuiGroup::setShape(float x, float y, float w, float h){
-	ofxBaseGui::setShape(x,y,w,h);
-	setWidthElements(w * .98);
+void ofxGuiGroup::setShape(float x, float y, float w, float h, bool callback){
+    ofxBaseGui::setShape(x,y,w,h,callback);
+    if(callback) {
+        setWidthElements(w * .98);
+    }
 }

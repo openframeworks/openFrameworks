@@ -225,22 +225,28 @@ void ofxBaseGui::setPosition(float x, float y){
 	setNeedsRedraw();
 }
 
-void ofxBaseGui::setSize(float w, float h){
+void ofxBaseGui::setSize(float w, float h, bool callback){
 	b.width = w;
 	b.height = h;
-	sizeChangedE.notify(this);
+    if(callback){
+        sizeChangedE.notify(this);
+    }
 	setNeedsRedraw();
 }
 
-void ofxBaseGui::setShape(ofRectangle r){
+void ofxBaseGui::setShape(ofRectangle r, bool callback){
 	b = r;
-	sizeChangedE.notify(this);
+    if(callback){
+        sizeChangedE.notify(this);
+    }
 	setNeedsRedraw();
 }
 
-void ofxBaseGui::setShape(float x, float y, float w, float h){
+void ofxBaseGui::setShape(float x, float y, float w, float h, bool callback){
 	b.set(x, y, w, h);
-	sizeChangedE.notify(this);
+    if(callback){
+        sizeChangedE.notify(this);
+    }
 	setNeedsRedraw();
 }
 
