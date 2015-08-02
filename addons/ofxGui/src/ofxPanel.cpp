@@ -78,9 +78,8 @@ void ofxPanel::loadIcons(){
 
 void ofxPanel::generateDraw(){
 	border.clear();
-	border.setStrokeColor(thisBorderColor);
-	border.setStrokeWidth(1);
-	border.setFilled(false);
+    border.setFillColor(thisBorderColor);
+    border.setFilled(true);
 	border.rectangle(b.x,b.y,b.width+1,b.height-spacingNextElement);
 
     if(bShowHeader){
