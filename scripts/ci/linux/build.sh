@@ -9,9 +9,25 @@ CUSTOMFLAGS="-ftrack-macro-expansion=0"
 
 echo "Building OF core"
 cd $ROOT
+# this carries over to subsequent compilations of examples
 echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux64/config.linux64.default.mk
 cd libs/openFrameworksCompiled/project
 make Debug
+
+echo "Building emptyExample"
+cd $ROOT
+cp scripts/linux/template/linux64/Makefile examples/empty/emptyExample/
+cp scripts/linux/template/linux64/config.make examples/empty/emptyExample/
+cd examples/empty/emptyExample
+make Debug
+
+# skip this for now as too many parts don't work (due to 12.04?)
+#echo "Building allAddonsExample"
+#cd $ROOT
+#cp scripts/linux/template/linux64/Makefile examples/addons/allAddonsExample/
+#cp scripts/linux/template/linux64/config.make examples/addons/allAddonsExample/
+#cd examples/addons/allAddonsExample/
+#make Debug
 
 echo "Unit tests"
 cd $ROOT/tests
