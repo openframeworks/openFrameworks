@@ -468,6 +468,15 @@ void ofxGuiGroup::sizeChangedCB(){
 	setNeedsRedraw();
 }
 
+void ofxGuiGroup::setShowHeader(bool show) {
+    if(show == false){
+        if(minimized)
+            maximize();
+    }
+    bShowHeader = show;
+    sizeChangedCB();
+    setNeedsRedraw();
+ }
 
 std::size_t ofxGuiGroup::getNumControls() const {
 	return collection.size();

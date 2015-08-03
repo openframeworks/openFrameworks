@@ -125,6 +125,9 @@ class ofxGuiGroup : public ofxBaseGui {
         virtual void setSize(float w, float h, bool callback = true);
         virtual void setShape(ofRectangle r, bool callback = true);
         virtual void setShape(float x, float y, float w, float h, bool callback = true);
+
+        void setShowHeader(bool show);
+
 	protected:
 		virtual void render();
 		virtual void generateDraw();
