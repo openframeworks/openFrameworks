@@ -4,13 +4,14 @@
 using namespace std;
 
 template <typename Type> ofxRotarySlider <Type>::ofxRotarySlider(){
+    this->setSize(this->getWidth(), Config().shape.height);
 }
 
 template <typename Type> ofxRotarySlider <Type>::~ofxRotarySlider(){
 }
 
 template <typename Type> ofxRotarySlider <Type>::ofxRotarySlider(ofParameter <Type> _val, const Config & config) :
-	ofxSlider <Type>(_val, config){
+    ofxSlider <Type>(_val, config){
 }
 
 template <typename Type>

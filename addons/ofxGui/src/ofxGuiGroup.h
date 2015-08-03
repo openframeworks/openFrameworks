@@ -227,10 +227,10 @@ void ofxGuiGroup::add(const C & config){
 
 template<class GuiType, typename Type>
 void ofxGuiGroup::add(ofParameter<Type> p){
-	add<GuiType>(p,this->config);
+    add<GuiType>(p,typename GuiType::Config());
 }
 
 template<class GuiType>
 void ofxGuiGroup::add(ofParameterGroup p){
-	add<GuiType>(p,this->config);
+    add<GuiType>(p,typename GuiType::Config());
 }
