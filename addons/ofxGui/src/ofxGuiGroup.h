@@ -20,6 +20,7 @@ class ofxGuiGroup : public ofxBaseGui {
 			float spacingFirstElement = 0;
             float header = defaultHeight;
             bool showHeader = true;
+            bool vertical = true;
             bool exclusiveToggles = false;
 		};
 
@@ -127,6 +128,9 @@ class ofxGuiGroup : public ofxBaseGui {
         virtual void setShape(ofRectangle r, bool callback = true);
         virtual void setShape(float x, float y, float w, float h, bool callback = true);
 
+        void setAlignHorizontal();
+        void setAlignVertical();
+
         void setShowHeader(bool show);
 
         void setExclusiveToggles(bool exclusive);
@@ -162,6 +166,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		bool minimized;
 		bool bGuiActive;
         bool bShowHeader;
+        bool bVertical;
         bool bExclusiveToggles;
 
 		ofPath border, headerBg;

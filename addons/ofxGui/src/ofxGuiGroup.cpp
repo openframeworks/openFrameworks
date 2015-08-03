@@ -13,6 +13,7 @@ ofxGuiGroup::ofxGuiGroup()
 ,filename(Config().filename)
 ,minimized(Config().minimized)
 ,bShowHeader(Config().showHeader)
+,bVertical(Config().vertical)
 ,bExclusiveToggles(Config().exclusiveToggles)
 ,active_toggle_index(-1)
 ,bGuiActive(false){
@@ -27,6 +28,7 @@ ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & co
 ,filename(config.filename)
 ,minimized(config.minimized)
 ,bShowHeader(config.showHeader)
+,bVertical(config.vertical)
 ,bExclusiveToggles(config.exclusiveToggles)
 ,active_toggle_index(-1)
 ,bGuiActive(false)
@@ -44,6 +46,7 @@ ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const std::string&
 	spacingFirstElement = 0;
 	header = defaultHeight;
     bShowHeader = true;
+    bVertical = true;
     bExclusiveToggles = false;
     active_toggle_index = -1;
 	setup(parameters, filename, x, y);
@@ -64,6 +67,7 @@ ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & parameters, const Conf
 	filename = config.filename;
 	minimized = config.minimized;
     bShowHeader = config.showHeader;
+    bVertical = config.vertical;
 	bGuiActive = false;
 	this->config = config;
 	addParametersFrom(parameters);
@@ -182,9 +186,32 @@ void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
 
 void ofxGuiGroup::add(ofxBaseGui * element){
 	collection.push_back(element);
-	element->setPosition(b.x, b.y + b.height  + spacing);
-	element->setSize(getWidth(), element->getHeight());
-	b.height += element->getHeight() + spacing;
+
+    if(bVertical || collection.size() == 1) {
+        if(bVertical){
+            element->setSize(b.width-1, element->getHeight());
+        }
+        if(collection.size() == 1) {
+            if(bShowHeader){
+                element->setPosition(b.x, b.y + header + spacing + spacingFirstElement);
+            }else{
+                element->setPosition(b.x, b.y + spacing + spacingFirstElement);
+            }
+        }else{
+            ofxBaseGui* last = collection.at(collection.size()-2);
+            element->setPosition(b.x, last->getShape().getBottom()+spacing);
+        }
+
+    }else{
+        ofRectangle last_shape = collection[collection.size()-2]->getShape();
+        element->setPosition(last_shape.x + last_shape.getWidth() + spacing, last_shape.y);
+    }
+
+    //change size of group if element is bigger than group
+    b.height = element->getShape().getBottom() + 1 - b.y;
+    if(getShape().getRight()+ 1 < element->getShape().getRight()) {
+        b.width = element->getShape().getRight() + 1 - b.x;
+    }
 
 	element->unregisterMouseEvents();
 	ofAddListener(element->sizeChangedE,this,&ofxGuiGroup::sizeChangedCB);
@@ -215,12 +242,17 @@ void ofxGuiGroup::addOwned(ofxGuiGroup * element){
 }
 
 void ofxGuiGroup::setWidthElements(float w){
-    for(auto & e: collection){
-		e->setSize(w, e->getHeight());
-		e->setPosition(b.x + b.width - w, e->getPosition().y);
-	}
-	sizeChangedCB();
-	setNeedsRedraw();
+    if(bVertical){
+        for(auto & e: collection){
+            e->setSize(w, e->getHeight());
+            e->setPosition(b.x + b.width - w, e->getPosition().y);
+        }
+        sizeChangedCB();
+        setNeedsRedraw();
+    }
+    else{
+        //TODO
+    }
 }
 
 void ofxGuiGroup::clear(){
@@ -316,22 +348,22 @@ void ofxGuiGroup::generateDraw(){
 	border.clear();
 	border.setFillColor(ofColor(thisBorderColor, 180));
 	border.setFilled(true);
-	border.rectangle(b.x, b.y + spacingNextElement, b.width + 1, b.height);
+    border.rectangle(b.x, b.y, b.width, b.height);
 
     if(bShowHeader){
         headerBg.clear();
         headerBg.setFillColor(thisHeaderBackgroundColor);
         headerBg.setFilled(true);
-        headerBg.rectangle(b.x, b.y + 1 + spacingNextElement, b.width, header);
+        headerBg.rectangle(b.x, b.y, b.width, header);
 
         textMesh.clear();
         if(bShowName){
-            textMesh.append(getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y + spacingNextElement));
+            textMesh.append(getTextMesh(getName(), textPadding + b.x, header / 2 + 4 + b.y));
         }
         if(minimized){
-            textMesh.append(getTextMesh("+", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y + spacingNextElement));
+            textMesh.append(getTextMesh("+", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y));
         }else{
-            textMesh.append(getTextMesh("-", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y + spacingNextElement));
+            textMesh.append(getTextMesh("-", b.width - textPadding - 8 + b.x, header / 2 + 4 + b.y));
         }
     }
 }
@@ -445,9 +477,20 @@ void ofxGuiGroup::minimize(){
 
 void ofxGuiGroup::maximize(){
 	minimized = false;
-	for(auto & e: collection){
-		b.height += e->getHeight() + spacing;
-	}
+    if(bVertical) {
+        if(collection.size() > 0){
+            b.height = collection.at(collection.size()-1)->getShape().getBottom() + 1 - b.y;
+        }
+    }
+    else {
+        auto max_h = 0;
+        for(auto & e: collection){
+            if(max_h < e->getShape().getBottom()) {
+                max_h = e->getShape().getBottom();
+            }
+        }
+        b.height = max_h + 1 - b.y;
+    }
 	sizeChangedE.notify(this);
 	setNeedsRedraw();
 }
@@ -471,17 +514,44 @@ void ofxGuiGroup::maximizeAll(){
 }
 
 void ofxGuiGroup::sizeChangedCB(){
-    float y = b.y  + spacing + spacingFirstElement;
+    float x = b.x;
+    float y = b.y + spacing + spacingFirstElement;
     if(bShowHeader){
         y += header;
     }
-	for(auto & e: collection){
-		e->setPosition(e->getPosition().x, y + spacing);
-		y += e->getHeight() + spacing;
-	}
-	b.height = y - b.y;
+
+    if(bVertical){
+        for(auto & e: collection){
+            e->setPosition(e->getPosition().x,y + spacing);
+            e->setSize(b.width-1, e->getHeight(), false);
+            y += e->getHeight()+spacing;
+        }
+        b.height = y - b.y;
+    }else{
+        float max_h = 0;
+        for(auto & e: collection){
+            e->setPosition(x,y + spacing);
+            x += e->getWidth() + spacing;
+            if(max_h < e->getHeight()){
+                max_h = e->getHeight();
+            }
+        }
+        y += max_h+spacing;
+        b.width = x - b.x;
+        b.height = y - b.y;
+    }
 	sizeChangedE.notify(this);
 	setNeedsRedraw();
+}
+
+void ofxGuiGroup::setAlignHorizontal() {
+    bVertical = false;
+    sizeChangedCB();
+}
+
+void ofxGuiGroup::setAlignVertical() {
+    bVertical = true;
+    sizeChangedCB();
 }
 
 void ofxGuiGroup::setShowHeader(bool show) {
