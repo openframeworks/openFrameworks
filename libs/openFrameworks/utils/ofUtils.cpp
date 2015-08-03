@@ -179,7 +179,7 @@ string ofGetTimestampString(const string& timestampFormat){
 	// so we have to filter out %i (which is not supported by vs)
 	// earlier.
 	auto tmpTimestampFormat = timestampFormat;
-	ofStringReplace(tmpTimestampFormat, "%i", ofToString(ms));
+	ofStringReplace(tmpTimestampFormat, "%i", ofToString(ms, 3, '0'));
 	
 	if (strftime(buf,bufsize, tmpTimestampFormat.c_str(),&tm) != 0){
 		str << buf;
