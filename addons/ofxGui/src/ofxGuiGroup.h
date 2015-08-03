@@ -20,6 +20,7 @@ class ofxGuiGroup : public ofxBaseGui {
 			float spacingFirstElement = 0;
             float header = defaultHeight;
             bool showHeader = true;
+            bool exclusiveToggles = false;
 		};
 
         ofxGuiGroup();
@@ -128,6 +129,11 @@ class ofxGuiGroup : public ofxBaseGui {
 
         void setShowHeader(bool show);
 
+        void setExclusiveToggles(bool exclusive);
+        bool setActiveToggle(int index);
+        bool setActiveToggle(ofxToggle* toggle);
+        int getActiveToggleIndex();
+
 	protected:
 		virtual void render();
 		virtual void generateDraw();
@@ -141,6 +147,11 @@ class ofxGuiGroup : public ofxBaseGui {
 		void setWidthElements(float w);
 		void addParametersFrom(const ofParameterGroup & parameters);
 
+        int active_toggle_index;
+        bool processToggles(ofxToggle *toggle, ofMouseEventArgs a);
+        void setOneToggleActive();
+        void deactivateAllOtherToggles(ofxToggle* toggle);
+
 		float spacing, spacingNextElement, spacingFirstElement;
 		float header;
 
@@ -151,6 +162,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		bool minimized;
 		bool bGuiActive;
         bool bShowHeader;
+        bool bExclusiveToggles;
 
 		ofPath border, headerBg;
 		ofVboMesh textMesh;

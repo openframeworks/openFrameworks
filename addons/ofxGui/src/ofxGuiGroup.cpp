@@ -13,6 +13,8 @@ ofxGuiGroup::ofxGuiGroup()
 ,filename(Config().filename)
 ,minimized(Config().minimized)
 ,bShowHeader(Config().showHeader)
+,bExclusiveToggles(Config().exclusiveToggles)
+,active_toggle_index(-1)
 ,bGuiActive(false){
 }
 
@@ -25,6 +27,8 @@ ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & co
 ,filename(config.filename)
 ,minimized(config.minimized)
 ,bShowHeader(config.showHeader)
+,bExclusiveToggles(config.exclusiveToggles)
+,active_toggle_index(-1)
 ,bGuiActive(false)
 ,config(config){
 	addParametersFrom(_parameters);
@@ -40,6 +44,8 @@ ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const std::string&
 	spacingFirstElement = 0;
 	header = defaultHeight;
     bShowHeader = true;
+    bExclusiveToggles = false;
+    active_toggle_index = -1;
 	setup(parameters, filename, x, y);
 }
 
@@ -185,6 +191,10 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 
 	parameters.add(element->getParameter());
 	setNeedsRedraw();
+
+    if(bExclusiveToggles) {
+        setOneToggleActive();
+    }
 }
 
 void ofxGuiGroup::add(ofxGuiGroup * element){
@@ -220,6 +230,7 @@ void ofxGuiGroup::clear(){
     if(bShowHeader){
         b.height += header;
     }
+    active_toggle_index = -1;
 	sizeChangedCB();
 }
 
@@ -244,9 +255,14 @@ bool ofxGuiGroup::mousePressed(ofMouseEventArgs & args){
 	if(bGuiActive){
 		ofMouseEventArgs a = args;
 		for(auto & e: collection){
-			if(e->mousePressed(a)){
-				return true;
-			}
+            ofxToggle* toggle = dynamic_cast<ofxToggle*>(e);
+            if(toggle && bExclusiveToggles){
+                if(processToggles(toggle, a)) return true;
+            }else{
+                if(e->mousePressed(a)){
+                    return true;
+                }
+            }
 		}
 	}
 	return false;
@@ -528,4 +544,73 @@ void ofxGuiGroup::setShape(float x, float y, float w, float h, bool callback){
     if(callback) {
         setWidthElements(w * .98);
     }
+}
+
+bool ofxGuiGroup::processToggles(ofxToggle* toggle, ofMouseEventArgs a) {
+    if(bExclusiveToggles) {
+        if(!toggle->getParameter().cast<bool>().get()) {
+            if(toggle->mousePressed(a)) {
+                deactivateAllOtherToggles(toggle);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void ofxGuiGroup::setExclusiveToggles(bool exclusive) {
+    bExclusiveToggles = exclusive;
+    if(bExclusiveToggles) {
+        setOneToggleActive();
+    }
+}
+
+bool ofxGuiGroup::setActiveToggle(ofxToggle* toggle) {
+    if(!toggle->getParameter().cast<bool>().get()) {
+        *toggle = true;
+        deactivateAllOtherToggles(toggle);
+        return true;
+    }
+    return false;
+}
+
+bool ofxGuiGroup::setActiveToggle(int index) {
+    if(ofxToggle* toggle = dynamic_cast<ofxToggle*>(collection[index])) {
+        return setActiveToggle(toggle);
+    }
+    else {
+        ofLogError("ofxGuiGroup", "cannot activate control " + ofToString(index) + " because it's no ofxToggle.");
+        return false;
+    }
+}
+
+void ofxGuiGroup::deactivateAllOtherToggles(ofxToggle *toggle) {
+    if(bExclusiveToggles) {
+        for(int i = 0; i < (int)collection.size(); i++){
+            if(ofxToggle* t = dynamic_cast<ofxToggle*>(collection[i])) {
+                if(t != toggle) {
+                   *t = false;
+                }
+                else {
+                    active_toggle_index = i;
+                }
+            }
+        }
+    }
+}
+
+void ofxGuiGroup::setOneToggleActive() {
+    if(active_toggle_index == -1){
+        for(auto &e : collection){
+            if(ofxToggle* t = dynamic_cast<ofxToggle*>(e)) {
+                setActiveToggle(t);
+                return;
+            }
+        }
+    }
+}
+
+
+int ofxGuiGroup::getActiveToggleIndex() {
+    return active_toggle_index;
 }
