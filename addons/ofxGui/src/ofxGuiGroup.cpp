@@ -202,7 +202,6 @@ void ofxGuiGroup::add(ofxGuiGroup * element){
 	element->spacingFirstElement = 3;
 	element->filename = filename;
 	add(static_cast<ofxBaseGui*>(element));
-
 }
 
 void ofxGuiGroup::addOwned(ofxBaseGui * element){

@@ -90,6 +90,9 @@ class ofxGuiGroup : public ofxBaseGui {
 		template<class GuiType, class Config>
 		void add(const Config & config);
 
+		template<class GuiType>
+		void add();
+
 		void minimize();
 		void maximize();
 		void minimizeAll();
@@ -191,17 +194,34 @@ void ofxGuiGroup::add(ofParameter <std::string> & parameter, const C & config){
 
 template<class GuiType, typename Type, class C>
 void ofxGuiGroup::add(ofParameter<Type> p, const C & config){
-	addOwned(new GuiType(p,config));
+	auto inContainerConfig = config;
+	inContainerConfig.inContainer = true;
+	inContainerConfig.layout = this->layout;
+	addOwned(new GuiType(p,inContainerConfig));
 }
 
 template<class GuiType, class C>
 void ofxGuiGroup::add(ofParameterGroup p, const C & config){
-	addOwned(new GuiType(p,config));
+	auto inContainerConfig = config;
+	inContainerConfig.inContainer = true;
+	inContainerConfig.layout = this->layout;
+	addOwned(new GuiType(p,inContainerConfig));
 }
 
 template<class GuiType, class C>
 void ofxGuiGroup::add(const C & config){
-	addOwned(new GuiType(config));
+	auto inContainerConfig = config;
+	inContainerConfig.inContainer = true;
+	inContainerConfig.layout = this->layout;
+	addOwned(new GuiType(inContainerConfig));
+}
+
+template<class GuiType>
+void ofxGuiGroup::add(){
+	auto inContainerConfig = config;
+	inContainerConfig.inContainer = true;
+	inContainerConfig.layout = this->layout;
+	addOwned(new GuiType(inContainerConfig));
 }
 
 template<class GuiType, typename Type>

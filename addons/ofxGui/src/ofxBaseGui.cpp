@@ -70,6 +70,8 @@ ofxBaseGui::ofxBaseGui()
 ,thisBorderColor(Config().borderColor)
 ,thisTextColor(Config().textColor)
 ,thisFillColor(Config().fillColor)
+,inContainer(Config().inContainer)
+,layout(Config().layout)
 ,needsRedraw(true)
 ,currentFrame(ofGetFrameNum())
 ,bRegisteredForMouseEvents(false){
@@ -84,6 +86,8 @@ ofxBaseGui::ofxBaseGui(const Config & config)
 ,thisBorderColor(config.borderColor)
 ,thisTextColor(config.textColor)
 ,thisFillColor(config.fillColor)
+,inContainer(config.inContainer)
+,layout(config.layout)
 ,needsRedraw(true)
 ,currentFrame(ofGetFrameNum())
 ,bRegisteredForMouseEvents(false){
@@ -97,6 +101,8 @@ void ofxBaseGui::setup(const Config & config){
 	thisBorderColor = config.borderColor;
 	thisTextColor = config.textColor;
 	thisFillColor = config.fillColor;
+	inContainer = config.inContainer;
+	layout = config.layout;
 }
 
 void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
@@ -242,6 +248,14 @@ void ofxBaseGui::setShape(float x, float y, float w, float h){
 	b.set(x, y, w, h);
 	sizeChangedE.notify(this);
 	setNeedsRedraw();
+}
+
+void ofxBaseGui::setInContainer(bool inContainer){
+	this->inContainer = inContainer;
+}
+
+void ofxBaseGui::setLayout(Layout layout){
+	this->layout = layout;
 }
 
 ofPoint ofxBaseGui::getPosition() const {
