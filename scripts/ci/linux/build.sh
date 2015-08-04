@@ -7,6 +7,9 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 #export CXXFLAGS="$(CXXFLAGS) --param ftrack-macro-expansion=0"
 CUSTOMFLAGS="-ftrack-macro-expansion=0"
 
+echo "Memory usage debugging output"
+ps aux --sort -rss | head -n20
+
 echo "Building OF core"
 cd $ROOT
 # this carries over to subsequent compilations of examples
