@@ -113,8 +113,7 @@ public:
 	/// \name Font Settings
 	/// \{
 	
-	// set the default dpi for all typefaces.
-	/// \todo
+	/// \brief Set the default dpi for all typefaces.
 	static void setGlobalDpi(int newDpi);
 	
 	/// \brief Is the font anti-aliased?
@@ -258,7 +257,7 @@ public:
 	/// \returns Number of characters in loaded character set.
 	int	getNumCharacters() const;
 	
-	/// \todo
+	/// \todo Document.
 	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=true, bool filled=true) const;
 	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=true, bool filled=true) const;
 	const ofMesh & getStringMesh(string s, float x, float y, bool vflip=true) const;
