@@ -297,8 +297,8 @@ class ofTexture : public ofBaseDraws {
 	/// \sa allocate(int w, int h, int glInternalFormat)
 	/// \param w Desired width in pixels.
 	/// \param h Desired height in pixels.
-	/// \param glInternalFormat
-	/// \param glFormat
+	/// \param glInternalFormat The internal openGL format.
+	/// \param glFormat The openGL format.
 	/// \param pixelType GL pixel type: GL_UNSIGNED_BYTE, GL_FLOAT, etc.
 	virtual void allocate(int w, int h, int glInternalFormat, int glFormat, int pixelType);
 	
@@ -313,7 +313,7 @@ class ofTexture : public ofBaseDraws {
 	/// \sa allocate(int w, int h, int glInternalFormat)
 	/// \param w Desired width in pixels.
 	/// \param h Desired height in pixels.
-	/// \param glInternalFormat
+	/// \param glInternalFormat The internal openGL format.
 	/// \param bUseARBExtension Set to true to use rectangular textures.
 	virtual void allocate(int w, int h, int glInternalFormat, bool bUseARBExtension);
 
