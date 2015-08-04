@@ -7,8 +7,11 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 #export CXXFLAGS="$(CXXFLAGS) --param ftrack-macro-expansion=0"
 CUSTOMFLAGS="-ftrack-macro-expansion=0"
 
+echo "Stop services started by default to save memory"
+sudo service mysql stop
+sudo service postgresql stop
 echo "Memory usage debugging output"
-ps aux --sort -rss | head -n20
+ps aux --sort -rss | head -n15
 
 echo "Building OF core"
 cd $ROOT
