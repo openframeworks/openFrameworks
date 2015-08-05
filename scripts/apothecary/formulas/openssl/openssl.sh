@@ -6,6 +6,7 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" "ios" "android" )
 
 VER=1.0.2c
+VERDIR=1.0.2
 CSTANDARD=gnu11 # c89 | c99 | c11 | gnu11
 COMPILER_TYPE=clang # clang, gcc
 
@@ -15,11 +16,11 @@ function download() {
 	local FILENAME=openssl-$VER
 
 	if ! [ -f $FILENAME ]; then
-		curl -O https://www.openssl.org/source/$FILENAME.tar.gz
+		curl -O https://www.openssl.org/source/old/$VERDIR/$FILENAME.tar.gz
 	fi
 
 	if ! [ -f $FILENAME.sha1 ]; then
-		curl -O https://www.openssl.org/source/$FILENAME.tar.gz.sha1
+		curl -O https://www.openssl.org/source/old/$VERDIR/$FILENAME.tar.gz.sha1
 	fi
 	if [ "$TYPE" == "vs" ] ; then
 		#hasSha=$(cmd.exe /c 'call 'CertUtil' '-hashfile' '$FILENAME.tar.gz' 'SHA1'')

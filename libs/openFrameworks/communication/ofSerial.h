@@ -245,7 +245,7 @@ public:
 	///
 	/// Any data in the cleared buffers is discarded.
 	/// \param flushIn If true then it clears the incoming data buffer
-	/// \param fluhOut If true then it clears the outgoing data buffer.
+	/// \param flushOut If true then it clears the outgoing data buffer.
 	void flush(bool flushIn = true, bool flushOut = true);
 
 	/// \brief Drain is only available on OSX and Linux and is very similar to

@@ -16,7 +16,7 @@
 /// the pixels.
 ///
 
-/// \todo
+/// \todo Needs documentation.
 enum ofImageQualityType {
     OF_IMAGE_QUALITY_BEST,
     OF_IMAGE_QUALITY_HIGH,
@@ -25,7 +25,7 @@ enum ofImageQualityType {
     OF_IMAGE_QUALITY_WORST
 };
 
-/// \todo
+/// \todo Needs documentation.
 enum ofImageFormat {
     OF_IMAGE_FORMAT_BMP     = 0,
     OF_IMAGE_FORMAT_ICO     = 1,
@@ -68,36 +68,37 @@ enum ofImageFormat {
 //----------------------------------------------------
 // FreeImage based stuff
 
-/// \todo
+/// \todo Needs documentation.
 bool ofLoadImage(ofPixels & pix, string path);
 bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
 
-/// \todo
+/// \todo Needs documentation.
 bool ofLoadImage(ofFloatPixels & pix, string path);
 bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer);
 
-/// \todo
+/// \todo Needs documentation.
 bool ofLoadImage(ofShortPixels & pix, string path);
 bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer);
 
-/// \todo
+/// \todo Needs documentation.
 bool ofLoadImage(ofTexture & tex, string path);
 bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer);
 
-/// \todo
+/// \todo Needs documentation.
 void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
-/// \todo
+/// \todo Needs documentation.
 void ofSaveImage(ofFloatPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofFloatPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
-/// \todo
+/// \todo Needs documentation.
 void ofSaveImage(ofShortPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format = OF_IMAGE_FORMAT_PNG, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
 
-// when we exit, we shut down ofImage
-/// \todo
+/// \brief Deallocates FreeImage resources.
+///
+/// Used internally during shutdown.
 void ofCloseFreeImage();
 
 

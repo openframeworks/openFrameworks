@@ -278,7 +278,7 @@ public:
 	/// \brief Remove a normal.
 	void removeNormal(ofIndexType index);
 
-	/// \todo
+	/// \todo Documentation.
 	void setNormal(ofIndexType index, const ofVec3f& n);
 
 	/// \brief Remove all the normals.
@@ -343,7 +343,8 @@ public:
 	/// \name Colors
 	/// \{
 
-	/// \brief \returns the color at the index in the colors vector.
+	/// \brief Get the color at the index in the colors vector.
+    /// \returns the color at the index in the colors vector.
 	ofFloatColor getColor(ofIndexType i) const;
 
 	/// \brief This adds a color to the mesh,
