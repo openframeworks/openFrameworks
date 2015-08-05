@@ -668,7 +668,7 @@ ofColor_<PixelType> & ofColor_<PixelType>::operator /= (const float& val){
 
 
 template<typename PixelType>
-const PixelType & ofColor_<PixelType>::operator [] (int n) const{
+const PixelType & ofColor_<PixelType>::operator [] (std::size_t n) const{
 	switch( n ){
 		case 0:
 			return r;
@@ -685,7 +685,7 @@ const PixelType & ofColor_<PixelType>::operator [] (int n) const{
 }
 
 template<typename PixelType>
-PixelType & ofColor_<PixelType>::operator [] (int n){
+PixelType & ofColor_<PixelType>::operator [] (std::size_t n){
 	switch( n ){
 		case 0:
 			return r;

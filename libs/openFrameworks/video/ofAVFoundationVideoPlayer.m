@@ -11,10 +11,8 @@
 #define USE_VIDEO_OUTPUT (defined(MAC_OS_X_VERSION_10_8) || defined(iOS6))
 
 static NSString * const kTracksKey = @"tracks";
-static NSString * const kPlayableKey = @"playable";
 static NSString * const kStatusKey = @"status";
 static NSString * const kRateKey = @"rate";
-static NSString * const kCurrentItemKey = @"currentItem";
 
 @interface ofAVFoundationVideoPlayer ()
 {
