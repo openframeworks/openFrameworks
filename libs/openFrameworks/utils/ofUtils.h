@@ -735,11 +735,11 @@ char ofToChar(const string& charString);
 template <class T>
 string ofToBinary(const T& value) {
 	ostringstream out;
-	const char* data = (const char*) &value;
+	const unsigned long long* data = static_cast<unsigned long long*>(&value);
 	// the number of bytes is determined by the datatype
-	int numBytes = sizeof(T);
+	std::size_t numBytes = sizeof(T);
 	// the bytes are stored backwards (least significant first)
-	for(int i = numBytes - 1; i >= 0; i--) {
+	for (std::size_t i = numBytes; i-- > 0;){
 		bitset<8> cur(data[i]);
 		out << cur;
 	}

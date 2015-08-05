@@ -61,7 +61,7 @@ public:
 
     bool operator==( const ofVec4f& vec ) const;
     bool operator!=( const ofVec4f& vec ) const;
-    bool match( const ofVec4f& vec, float tolerance=0.0001) const;
+    bool match( const ofVec4f& vec, float tolerance = 0.0001f) const;
 	
 	/// \}
 
