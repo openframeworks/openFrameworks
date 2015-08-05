@@ -126,7 +126,7 @@ public:
 	/// \returns true if the font was allocated with a full character set.
 	bool hasFullCharacterSet() const;
 	
-	/// \brief Get the number characters in the loaded character set.
+	/// \brief Get the number of characters in the loaded character set.
 	/// 
 	/// If you allocate the font using different parameters, you can load in partial 
 	/// and full character sets, this helps you know how many characters it can represent.
@@ -215,7 +215,7 @@ public:
 	/// This is essentially the width component of the ofTrueTypeFont::getStringBoundingBox() rectangle.
 	///
 	/// \param s The string to get the width of.
-	/// \returns Returns the string width. 
+	/// \returns the string width. 
 	float stringWidth(const std::string& s) const;
 
 	/// \brief Returns the string height.
