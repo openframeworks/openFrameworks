@@ -65,10 +65,10 @@ class ofTrueTypeFont{
 public:
 
 
-	/// \todo
+	/// \brief Construct a default ofTrueTypeFont.
 	ofTrueTypeFont();
 
-	/// \todo
+	/// \brief Destroy the ofTrueTypeFont.
 	virtual ~ofTrueTypeFont();
 
 	/// \name Load Font
@@ -86,7 +86,7 @@ public:
     /// \param fontsize The size in pixels to load the font.
     /// \param _bAntiAliased true if the font should be anti-aliased.
     /// \param _bFullCharacterSet true if the full character set should be cached.
-    /// \param makeControus true if the vector contours should be cached.
+    /// \param makeContours true if the vector contours should be cached.
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
@@ -113,8 +113,7 @@ public:
 	/// \name Font Settings
 	/// \{
 	
-	// set the default dpi for all typefaces.
-	/// \todo
+	/// \brief Set the default dpi for all typefaces.
 	static void setGlobalDpi(int newDpi);
 	
 	/// \brief Is the font anti-aliased?
@@ -258,7 +257,7 @@ public:
 	/// \returns Number of characters in loaded character set.
 	int	getNumCharacters() const;
 	
-	/// \todo
+	/// \todo Document.
 	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=true, bool filled=true) const;
 	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=true, bool filled=true) const;
 	const ofMesh & getStringMesh(string s, float x, float y, bool vflip=true) const;
