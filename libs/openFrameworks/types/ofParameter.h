@@ -765,6 +765,7 @@ class ofReadOnlyParameter: public ofAbstractParameter{
 public:
 	ofReadOnlyParameter();
 	ofReadOnlyParameter(ofParameter<ParameterType> & p);
+	ofReadOnlyParameter(ofReadOnlyParameter<ParameterType,Friend> & p);
 	ofReadOnlyParameter(const ParameterType & v);
 	ofReadOnlyParameter(const string& name, const ParameterType & v);
 	ofReadOnlyParameter(const string& name, const ParameterType & v, const ParameterType & min, const ParameterType & max);
@@ -861,6 +862,10 @@ inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(){}
 
 template<typename ParameterType,typename Friend>
 inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ofParameter<ParameterType> & p)
+:parameter(p){}
+
+template<typename ParameterType,typename Friend>
+inline ofReadOnlyParameter<ParameterType,Friend>::ofReadOnlyParameter(ofReadOnlyParameter<ParameterType,Friend> & p)
 :parameter(p){}
 
 template<typename ParameterType,typename Friend>
@@ -1120,7 +1125,7 @@ inline void ofReadOnlyParameter<ParameterType,Friend>::fromString(const string &
 
 template<typename ParameterType,typename Friend>
 shared_ptr<ofAbstractParameter> ofReadOnlyParameter<ParameterType,Friend>::newReference() const{
-	return shared_ptr<ofReadOnlyParameter<ParameterType,Friend>>(*this);
+	return std::make_shared<ofReadOnlyParameter<ParameterType,Friend>>(*this);
 }
 
 template<typename ParameterType,typename Friend>
