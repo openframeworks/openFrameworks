@@ -1,5 +1,3 @@
-os:
-  - linux
 language: c++
 compiler: gcc
 sudo: true
@@ -18,17 +16,20 @@ matrix:
     - os: osx
       compiler: clang
       env: TARGET="ios"
-    - sudo: false
+    - os: linux
+      sudo: false
       env: TARGET="android" OPT="armv7"
       cache:
         directories:
         - ~/android-ndk-r10e
-    - sudo: false
+    - os: linux
+      sudo: false
       env: TARGET="android" OPT="x86"
       cache:
         directories:
         - ~/android-ndk-r10e
-    - sudo: false
+    - os: linux
+      sudo: false
       env: TARGET="docs"
       addons:
         apt:
