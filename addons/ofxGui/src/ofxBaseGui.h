@@ -8,12 +8,18 @@
 
 class ofxBaseGui {
 	public:
+		enum Layout{
+			Horizontal,
+			Vertical
+		};
 		struct Config{
 			ofColor headerBackgroundColor = ofxBaseGui::headerBackgroundColor;
 			ofColor backgroundColor = ofxBaseGui::backgroundColor;
 			ofColor borderColor = ofxBaseGui::borderColor;
 			ofColor textColor = ofxBaseGui::textColor;
 			ofColor fillColor = ofxBaseGui::fillColor;
+			Layout layout = Vertical;
+			bool inContainer = false;
 			ofRectangle shape{0.0f, 0.0f, (float)defaultWidth, (float)defaultHeight};
             bool showName = true;
 		};
@@ -38,10 +44,13 @@ class ofxBaseGui {
 		void setName(const std::string& name);
 
 		virtual void setPosition(ofPoint p);
-		virtual void setPosition(float x, float y);
-        virtual void setSize(float w, float h, bool callback = true);
-        virtual void setShape(ofRectangle r, bool callback = true);
-        virtual void setShape(float x, float y, float w, float h, bool callback = true);
+        virtual void setPosition(float x, float y);
+
+		virtual void setSize(float w, float h);
+		virtual void setShape(ofRectangle r);
+		virtual void setShape(float x, float y, float w, float h);
+		virtual void setInContainer(bool inContainer=true);
+        virtual void setLayout(Layout layout=Vertical);
 
 		ofPoint getPosition() const;
 		ofRectangle getShape() const;
@@ -118,6 +127,8 @@ class ofxBaseGui {
 		ofColor thisBorderColor;
 		ofColor thisTextColor;
 		ofColor thisFillColor;
+		bool inContainer;
+		Layout layout;
 
 		static int textPadding;
 		static int defaultWidth;
