@@ -215,7 +215,7 @@ public:
 	///
 	/// \param s The string to get the width of.
 	/// \returns Returns the string width. 
-	float stringWidth(string s) const;
+	float stringWidth(const string& s) const;
 
 	/// \brief Returns the string height.
 	///
@@ -223,14 +223,14 @@ public:
 	///
 	/// \param s The string to get the height of.
 	/// \returns Returns the string height. 
-	float stringHeight(string s) const;
+	float stringHeight(const string& s) const;
 
 	/// \brief Returns the bounding box of a string as a rectangle.
 	/// \param s The string to get bounding box of.
 	/// \param x X position of returned rectangle.
 	/// \param y Y position of returned rectangle.
 	/// \returns Returns the bounding box of a string as a rectangle.
-	ofRectangle getStringBoundingBox(string s, float x, float y, bool vflip=true) const;
+	ofRectangle getStringBoundingBox(const string& s, float x, float y, bool vflip=true) const;
 
 	/// \}
 	/// \name Drawing
@@ -240,7 +240,7 @@ public:
 	/// \param s String to draw
 	/// \param x X position of string
 	/// \param y Y position of string
-	void drawString(string s, float x, float y) const;
+	void drawString(const std::string& s, float x, float y) const;
 
 	/// \brief Draws the string as if it was geometrical shapes.
 	/// 
@@ -248,7 +248,7 @@ public:
 	/// 
 	/// \param x X position of shapes
 	/// \param y Y position of shapes
-	void drawStringAsShapes(string s, float x, float y) const;
+	void drawStringAsShapes(const std::string& s, float x, float y) const;
 
 	/// \brief Get the num chars in the loaded character set.
 	/// 
@@ -260,8 +260,8 @@ public:
 	
 	/// \todo
 	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=true, bool filled=true) const;
-	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=true, bool filled=true) const;
-	const ofMesh & getStringMesh(string s, float x, float y, bool vflip=true) const;
+	vector<ofTTFCharacter> getStringAsPoints(const std::string& str, bool vflip=true, bool filled=true) const;
+	const ofMesh & getStringMesh(const std::string& s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
 
 	/// \}
@@ -297,7 +297,7 @@ protected:
     int getKerning(int c, int prevC) const;
 	void drawChar(int c, float x, float y, bool vFlipped) const;
 	void drawCharAsShape(int c, float x, float y, bool vFlipped, bool filled) const;
-	void createStringMesh(string s, float x, float y, bool vFlipped) const;
+	void createStringMesh(const string& s, float x, float y, bool vFlipped) const;
 	
 	string filename;
 
