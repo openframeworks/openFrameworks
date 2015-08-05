@@ -280,11 +280,11 @@ void initWindows(){
 }
 
 
-static string winFontPathByName( string fontname ){
+static std::string winFontPathByName(const std::string& fontname ){
     if(fonts_table.find(fontname)!=fonts_table.end()){
         return fonts_table[fontname];
     }
-    for(map<string,string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
+    for(map<std::string,std::string>::iterator it = fonts_table.begin(); it!=fonts_table.end(); it++){
         if(ofIsStringInString(ofToLower(it->first),ofToLower(fontname))) return it->second;
     }
     return "";
@@ -293,8 +293,8 @@ static string winFontPathByName( string fontname ){
 
 #ifdef TARGET_LINUX
 //------------------------------------------------------------------
-static string linuxFontPathByName(string fontname){
-	string filename;
+static std::string linuxFontPathByName(const std::string& fontname){
+	std::string filename;
 	FcPattern * pattern = FcNameParse((const FcChar8*)fontname.c_str());
 	FcBool ret = FcConfigSubstitute(0,pattern,FcMatchPattern);
 	if(!ret){
@@ -391,7 +391,8 @@ void ofTrueTypeFont::reloadTextures(){
 	if(bLoadedOk) load(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
 }
 
-static bool loadFontFace(string fontname, int _fontSize, FT_Face & face, string & filename){
+static bool loadFontFace(const std::string& _fontname, int _fontSize, FT_Face & face, std::string& filename){
+	std::string fontname = _fontname;
 	filename = ofToDataPath(fontname,true);
 	ofFile fontFile(filename,ofFile::Reference);
 	int fontID = 0;
@@ -442,7 +443,7 @@ bool ofTrueTypeFont::loadFont(string _filename, int _fontSize, bool _bAntiAliase
 }
 
 //-----------------------------------------------------------
-bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
+bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAntiAliased, bool _bFullCharacterSet, bool _makeContours, float _simplifyAmt, int _dpi) {
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofTrueTypeFont::unloadTextures);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofTrueTypeFont::reloadTextures);
