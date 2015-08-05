@@ -8,10 +8,13 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 CUSTOMFLAGS="-ftrack-macro-expansion=0"
 
 echo "Stop services started by default to save memory"
-sudo service mysql stop
-sudo service postgresql stop
+# use this instead of sudo service stop because that fails on travis sometimes
+# see http://stackoverflow.com/a/27410479/599884
+# maybe can switch when 14.04 dist gets activated
+sudo /etc/init.d/mysql stop
+sudo /etc/init.d/postgresql stop
 echo "Memory usage debugging output"
-ps aux --sort -rss | head -n15
+ps aux --sort -rss | head -n10
 
 echo "Building OF core"
 cd $ROOT
