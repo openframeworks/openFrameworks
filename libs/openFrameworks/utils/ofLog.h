@@ -438,7 +438,7 @@ class ofLog{
 		/// This allows the class to use the << std::ostream to catch function
 		/// pointers such as std::endl and std::hex.
 		///
-		/// \param A function pointer that takes a std::ostream as an argument.
+		/// \param func A function pointer that takes a std::ostream as an argument.
 		/// \returns A reference to itself.
 		ofLog& operator<<(std::ostream& (*func)(std::ostream&)){
 			func(message);
