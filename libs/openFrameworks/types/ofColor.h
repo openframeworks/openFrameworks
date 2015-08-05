@@ -541,7 +541,7 @@ public:
     /// Use this function to get this maximum number..
     ///
     /// \returns The value associated with a fully saturated color component.
-    static float limit();
+    static PixelType limit();
 
     /// \}
 

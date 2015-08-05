@@ -95,14 +95,14 @@ public:
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=true,
                   bool makeContours=false,
-                  float simplifyAmt=0.3,
+                  float simplifyAmt=0.3f,
                   int dpi=0);
 	OF_DEPRECATED_MSG("Use load instead",bool loadFont(string filename,
                   int fontsize,
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=false,
                   bool makeContours=false,
-                  float simplifyAmt=0.3,
+                  float simplifyAmt=0.3f,
                   int dpi=0));
 	
 	/// \brief Has the font been loaded successfully?
