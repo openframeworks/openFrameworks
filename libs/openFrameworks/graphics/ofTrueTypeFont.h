@@ -143,7 +143,7 @@ public:
 	int getSize() const;
 	
 	/// \brief Computes line height based on font size.
-	/// \returns Returns current line height.
+	/// \returns the current line height.
 	float getLineHeight() const;
 
 	/// \brief Sets line height for text drawn on screen. 
@@ -159,7 +159,7 @@ public:
 	/// The meaning of "character" coordinate depends on the font. Some fonts take accents into account,
 	/// others do not, and still others define it simply to be the highest coordinate over all glyphs.
 	///
-	/// \returns Returns font ascender height in pixels.
+	/// \returns the font ascender height in pixels.
 	float getAscenderHeight() const;
 
 	/// \brief Get the descender distance for this font.
@@ -169,7 +169,7 @@ public:
 	/// others do not, and still others define it simply to be the lowest coordinate over all glyphs.
 	/// This value will be negative for descenders below the baseline (which is typical).
 	///
-	/// \returns Returns font descender height in pixels.
+	/// \returns the font descender height in pixels.
 	float getDescenderHeight() const;
 
 	/// \brief Get the global bounding box for this font.
@@ -178,7 +178,7 @@ public:
     /// Glyphs are drawn starting from (0,0) in the returned box (though note that the box can
     /// extend in any direction out from the origin).
     ///
-	/// \returns Returns font descender height in pixels.
+	/// \returns the font descender height in pixels.
     const ofRectangle & getGlyphBBox() const;
 
 	/// \brief Returns letter spacing of font object.
@@ -186,7 +186,7 @@ public:
 	/// You can control this by the ofTrueTypeFont::setLetterSpacing() function. 1.0 = default spacing, 
 	/// less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
 	///
-	/// \returns Returns letter spacing of font object.
+	/// \returns the letter spacing of font object.
 	float getLetterSpacing() const;
 
 	/// \brief Sets the letter spacing of the font object.
@@ -200,7 +200,7 @@ public:
 	/// It's a scalar for the width of the letter 'p', so 1.0 means that a space will be the size of the lower 
 	/// case 'p' of that font. 2.0 means that it's 2 times the size of the lower case 'p', etc.
 	///
-	/// \returns Returns a variable that represents how wide spaces are.
+	/// \returns the width of the space.
 	float getSpaceSize() const;
 
 	/// \brief Sets the size of the space ' ' character. 
@@ -223,14 +223,14 @@ public:
 	/// This is essentially the height component of the ofTrueTypeFont::getStringBoundingBox() rectangle.
 	///
 	/// \param s The string to get the height of.
-	/// \returns Returns the string height. 
+	/// \returns the string height.
 	float stringHeight(const std::string& s) const;
 
 	/// \brief Returns the bounding box of a string as a rectangle.
 	/// \param s The string to get bounding box of.
 	/// \param x X position of returned rectangle.
 	/// \param y Y position of returned rectangle.
-	/// \returns Returns the bounding box of a string as a rectangle.
+	/// \returns the bounding box of a string as a rectangle.
 	ofRectangle getStringBoundingBox(const std::string& s, float x, float y, bool vflip=true) const;
 
 	/// \}
