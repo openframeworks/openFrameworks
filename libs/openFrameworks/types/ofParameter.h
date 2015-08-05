@@ -387,16 +387,16 @@ private:
 		,bInNotify(false)
 		,serializable(true){};
 
-		Value(string name, ParameterType v)
-		:name(name)
+		Value(const string& _name, ParameterType v)
+		:name(_name)
 		,value(v)
 		,min(of::priv::TypeInfo<ParameterType>::min())
 		,max(of::priv::TypeInfo<ParameterType>::min())
 		,bInNotify(false)
 		,serializable(true){};
 
-		Value(string name, ParameterType v, ParameterType min, ParameterType max)
-		:name(name)
+		Value(const string& _name, ParameterType v, ParameterType min, ParameterType max)
+		:name(_name)
 		,value(v)
 		,min(min)
 		,max(max)

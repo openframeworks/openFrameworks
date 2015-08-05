@@ -20,13 +20,13 @@ public:
 	void allocate(GLsizeiptr bytes, const void * data, GLenum usage);
 
 	template<typename T>
-	void allocate(const vector<T> & data, GLenum usage){
-		allocate(data.size()*sizeof(T),&data[0],usage);
+	void allocate(const vector<T> & _data, GLenum _usage){
+		allocate(_data.size()*sizeof(T),&_data[0],_usage);
 	}
 
 	template<typename T>
-	void allocate(const ofPixels_<T> & data, GLenum usage){
-		allocate(data.size()*sizeof(T),data.getData(),usage);
+	void allocate(const ofPixels_<T> & _data, GLenum _usage){
+		allocate(_data.size()*sizeof(T),_data.getData(),_usage);
 	}
 
 	/// true if allocate was called before
