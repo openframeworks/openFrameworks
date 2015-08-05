@@ -308,8 +308,8 @@ void ofSort(vector<T>& values) {
 ///    9, 8, 7, 6, 5, 4, 3, 2, 1, 0.
 ///
 /// \tparam T the type contained by the vector.
-/// \param The vector of values to be sorted.
-/// \param The comparison function.
+/// \param values The vector of values to be sorted.
+/// \param compare The comparison function.
 /// \sa http://www.cplusplus.com/reference/algorithm/sort/
 template<class T, class BoolFunction>
 void ofSort(vector<T>& values, BoolFunction compare) {
@@ -590,7 +590,7 @@ const char * ofFromString(const string & value);
 /// Converts a `std::string` representation of an int (e.g., `"3"`) to an actual
 /// `int`.
 ///
-/// \param The string representation of the integer.
+/// \param intString The string representation of the integer.
 /// \returns the integer represented by the string or 0 on failure.
 int ofToInt(const string& intString);
 
@@ -603,7 +603,7 @@ int ofToInt(const string& intString);
 /// Converts a `std::string` representation of a long integer
 /// (e.g., `"9223372036854775807"`) to an actual `int64_t`.
 ///
-/// \param The string representation of the long integer.
+/// \param intString The string representation of the long integer.
 /// \returns the long integer represented by the string or 0 on failure.
 int64_t ofToInt64(const string& intString);
 
@@ -612,7 +612,7 @@ int64_t ofToInt64(const string& intString);
 /// Converts a std::string representation of a float (e.g., `"3.14"`) to an
 /// actual `float`.
 ///
-/// \param The string representation of the float.
+/// \param floatString string representation of the float.
 /// \returns the float represented by the string or 0 on failure.
 float ofToFloat(const string& floatString);
 
@@ -621,7 +621,7 @@ float ofToFloat(const string& floatString);
 /// Converts a std::string representation of a double (e.g., `"3.14"`) to an
 /// actual `double`.
 ///
-/// \param The string representation of the double.
+/// \param doubleString The string representation of the double.
 /// \returns the double represented by the string or 0 on failure.
 double ofToDouble(const string& doubleString);
 
@@ -631,7 +631,7 @@ double ofToDouble(const string& doubleString);
 /// actual `bool` using a case-insensitive comparison against the words `"true"`
 /// and `"false"`.
 ///
-/// \param The string representation of the boolean.
+/// \param boolString The string representation of the boolean.
 /// \returns the boolean represented by the string or 0 on failure.
 bool ofToBool(const string& boolString);
 

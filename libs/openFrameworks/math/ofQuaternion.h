@@ -121,7 +121,7 @@ public:
     void makeRotate(float angle1, const ofVec3f& axis1, float angle2, const ofVec3f& axis2, float angle3, const ofVec3f& axis3);
     
     
-    /// \briew Make a rotation Quat which will rotate vec1 to vec2.
+    /// \brief Make a rotation Quat which will rotate vec1 to vec2.
     /// Generally take a dot product to get the angle between these
     /// and then use a cross product to get the rotation axis
     /// Watch out for the two special cases when the vectors

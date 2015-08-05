@@ -20,7 +20,7 @@
 /// 
 /// You'll sometimes see it used for doing things like setting where the camera
 /// in OpenGL (the mathematically calculated one, not the ofCamera one) is 
-/// looking or is pointedA, or figuring how to position something in 3d space, 
+/// looking or is pointed, or figuring how to position something in 3d space,
 /// doing scaling, etc. The great thing about the 4x4 matrix is that it can do 
 /// all these things at the same time. A single ofMatrix4x4 can represent a ton 
 /// of different information about a stuff that goes on in doing 3d 
@@ -145,7 +145,7 @@ public:
 	/// \param z Z-value of the rotation axis.
 	void makeRotationMatrix( float angle, float x, float y, float z );
 	/// \param quaternion Matrix becomes a rotation that produces the quaternion's orientation.
-	void makeRotationMatrix( const ofQuaternion& );
+	void makeRotationMatrix( const ofQuaternion& quaternion );
 	/// \brief Matrix becomes a rotation around multiple axes.
 	/// 
 	/// The final rotation is the result of rotating around each of the three
@@ -316,22 +316,22 @@ public:
 	/// \{
 
 	/// \brief Write data with `matrix(row,col)=number`
-	float& operator()(int row, int col) {
+	float& operator()(std::size_t row, std::size_t col) {
 		return _mat[row][col];
 	}
 
 	/// \brief Read data with `matrix(row, col)`
-	float operator()(int row, int col) const {
+	float operator()(std::size_t row, std::size_t col) const {
 		return _mat[row][col];
 	}
 
 	/// \brief returns a copy of row i
-	ofVec3f getRowAsVec3f(int i) const {
+	ofVec3f getRowAsVec3f(std::size_t i) const {
 		return ofVec3f(_mat[i][0], _mat[i][1], _mat[i][2]);
 	}
 	
 	/// \brief returns a copy of row i
-	ofVec4f getRowAsVec4f(int i) const {
+	ofVec4f getRowAsVec4f(std::size_t i) const {
 		return _mat[i];
 	}
 	
@@ -756,12 +756,12 @@ inline void ofMatrix4x4::set(const ofMatrix4x4& rhs) {
 
 inline void ofMatrix4x4::set(float const * const ptr) {
 	float* local_ptr = (float*)_mat;
-	for (int i = 0;i < 16;++i) local_ptr[i] = (float)ptr[i];
+	for (std::size_t i = 0;i < 16;++i) local_ptr[i] = (float)ptr[i];
 }
 
 inline void ofMatrix4x4::set(double const * const ptr) {
 	float* local_ptr = (float*)_mat;
-	for (int i = 0;i < 16;++i) local_ptr[i] = (float)ptr[i];
+	for (std::size_t i = 0;i < 16;++i) local_ptr[i] = (float)ptr[i];
 }
 
 inline bool ofMatrix4x4::isIdentity() const {
@@ -962,7 +962,7 @@ inline void ofMatrix4x4::preMultTranslate( const ofVec3f& v ) {
 /// \brief translates this matrix by treating the ofVec3f like a translation matrix,
 /// and multiplying this Matrix by it in a post-multiplication manner (M mult T)
 inline void ofMatrix4x4::postMultTranslate( const ofVec3f& v ) {
-	for (unsigned i = 0; i < 3; ++i) {
+	for (std::size_t i = 0; i < 3; ++i) {
 		float tmp = v.getPtr()[i];
 		if (tmp == 0)
 			continue;
