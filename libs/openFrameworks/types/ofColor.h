@@ -760,7 +760,7 @@ public:
     ///
     /// \param n An index 0-3 of the component to get.
     /// \returns The value of the requested component.
-    const PixelType& operator [] (int n) const;
+    const PixelType& operator [] (std::size_t n) const;
 
     /// \brief Array subscript operator.
     ///
@@ -774,7 +774,7 @@ public:
     ///
     /// \param n An index 0-3 of the component to get.
     /// \returns The value of the requested component.
-    PixelType& operator [] (int n);
+	PixelType& operator [] (std::size_t n);
 
     /// \brief An output stream operator.
     ///
