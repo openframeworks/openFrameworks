@@ -722,7 +722,7 @@ bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite){
 		if(!ofDirectory(ofFilePath::getEnclosingDirectory(path,bRelativeToData)).exists()){
 			ofFilePath::createEnclosingDirectory(path, bRelativeToData);
 		}
-		std::filesystem::copy(myFile,path);
+		std::filesystem::copy_file(myFile,path);
 	}catch(std::exception & except){
 		ofLogError("ofFile") <<  "copyTo(): unable to copy \"" << path << "\":" << except.what();
 		return false;

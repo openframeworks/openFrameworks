@@ -87,9 +87,6 @@ public:
 	/// ofVec3f v3(0.1, 0.3); // v3.x is 0.1, v3.y is 0.3
 	/// ~~~~
 	///
-	/// \param x The x component
-	/// \param y The y component
-	/// \returns A new ofVec2f with the `x` and `y` components set to 0
 	ofVec2f();
 
 	/// \brief Construct a 2D vector with `x` and `y` set to `scalar`
@@ -105,7 +102,6 @@ public:
 	///
 	/// \param x The x component
 	/// \param y The y component
-	/// \returns A new ofVec2f with the `x` and `y` components set
 	ofVec2f( float x, float y );
 
 	/// \brief Create a 2D vector (ofVec2f) from a 3D vector (ofVec3f) by

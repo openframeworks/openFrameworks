@@ -101,7 +101,8 @@ public:
 	
 	
 	/// \brief Multiply a matrix by a matrix entry by entry (i.e. a*a, b*b, c*c...)
-	/// \brief This is referred to as an entrywise, Hadamard, or Schur product	
+	///
+	/// This is referred to as an entrywise, Hadamard, or Schur product.
 	ofMatrix3x3 entrywiseTimes(const ofMatrix3x3& A);
 
 	/// \}
