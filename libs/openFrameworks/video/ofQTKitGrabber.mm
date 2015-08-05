@@ -129,7 +129,6 @@
 
 + (NSInteger) getIndexofStringInArray:(NSArray*)someArray stringToFind:(NSString*)someStringDescription
 {
-	NSInteger count = 0;
 	NSInteger index = -1;
 	
 	for (id object in someArray) {
@@ -430,8 +429,6 @@
 - (void) startRecording:(NSString*)filePath
 {
 	if (isRecordReady) {
-		
-		BOOL success = YES;
 		
         // make sure last movie has stopped
 		if (isRecording){
