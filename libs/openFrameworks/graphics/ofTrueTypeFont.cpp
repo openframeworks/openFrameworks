@@ -184,7 +184,7 @@ bool compare_cps(const charProps & c1, const charProps & c2){
 
 #ifdef TARGET_OSX
 //------------------------------------------------------------------
-static string osxFontPathByName( string fontname ){
+static std::string osxFontPathByName(const std::string& fontname){
 	CFStringRef targetName = CFStringCreateWithCString(nullptr, fontname.c_str(), kCFStringEncodingUTF8);
 	CTFontDescriptorRef targetDescriptor = CTFontDescriptorCreateWithNameAndSize(targetName, 0.0);
 	CFURLRef targetURL = (CFURLRef) CTFontDescriptorCopyAttribute(targetDescriptor, kCTFontURLAttribute);
@@ -193,7 +193,7 @@ static string osxFontPathByName( string fontname ){
 	if(targetURL) {
 		UInt8 buffer[PATH_MAX];
 		CFURLGetFileSystemRepresentation(targetURL, true, buffer, PATH_MAX);
-		fontPath = string((char *)buffer);
+		fontPath = std::string((char *)buffer);
 		CFRelease(targetURL);
 	}
 	
@@ -207,7 +207,7 @@ static string osxFontPathByName( string fontname ){
 #ifdef TARGET_WIN32
 #include <map>
 // font font face -> file name name mapping
-static map<string, string> fonts_table;
+static map<std::string, std::string> fonts_table;
 // read font linking information from registry, and store in std::map
 //------------------------------------------------------------------
 void initWindows(){
@@ -252,7 +252,7 @@ void initWindows(){
 	char fontsPath[2048];
     SHGetKnownFolderIDList(FOLDERID_Fonts, 0, nullptr, &ppidl);
     SHGetPathFromIDList(ppidl,&fontsPath);*/
-    string fontsDir = getenv ("windir");
+	std::string fontsDir = getenv ("windir");
     fontsDir += "\\Fonts\\";
 	for (DWORD i = 0; i < value_count; ++i)
 	{
@@ -267,8 +267,8 @@ void initWindows(){
 
             wcstombs(value_name_char,value_name,2048);
 			wcstombs(value_data_char,reinterpret_cast<wchar_t *>(value_data),2048);
-			string curr_face = value_name_char;
-			string font_file = value_data_char;
+			std::string curr_face = value_name_char;
+			std::string font_file = value_data_char;
 			curr_face = curr_face.substr(0, curr_face.find('(') - 1);
 			fonts_table[curr_face] = fontsDir + font_file;
 	}
