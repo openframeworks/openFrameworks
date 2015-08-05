@@ -117,7 +117,9 @@ void ofSoundBuffer::set(float value){
 	checkSizeAndChannelsConsistency("set");
 }
 
-bool ofSoundBuffer::checkSizeAndChannelsConsistency( string function ) {
+bool ofSoundBuffer::checkSizeAndChannelsConsistency(const std::string& _function ) {
+	std::string function = _function;
+
 	if ( function.size()!= 0 ){
 		function += ": ";
 	}

@@ -849,7 +849,7 @@ int ofTrueTypeFont::getKerning(int c, int prevC) const{
 }
 
 //-----------------------------------------------------------
-vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(string str, bool vflip, bool filled) const{
+vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(const std::string& str, bool vflip, bool filled) const{
 	vector<ofTTFCharacter> shapes;
 
 	if (!bLoadedOk){
@@ -918,13 +918,13 @@ void ofTrueTypeFont::drawCharAsShape(int c, float x, float y, bool vFlipped, boo
 }
 
 //-----------------------------------------------------------
-float ofTrueTypeFont::stringWidth(string c) const{
+float ofTrueTypeFont::stringWidth(const std::string& c) const{
     ofRectangle rect = getStringBoundingBox(c, 0,0);
     return rect.width;
 }
 
 //-----------------------------------------------------------
-ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y, bool vflip) const{
+ofRectangle ofTrueTypeFont::getStringBoundingBox(const std::string& c, float x, float y, bool vflip) const{
 	ofMesh mesh = getStringMesh(c,x,y,vflip);
 	ofRectangle bb(std::numeric_limits<float>::max(),std::numeric_limits<float>::max(),0,0);
 	float maxX = std::numeric_limits<float>::min();
@@ -941,13 +941,13 @@ ofRectangle ofTrueTypeFont::getStringBoundingBox(string c, float x, float y, boo
 }
 
 //-----------------------------------------------------------
-float ofTrueTypeFont::stringHeight(string c) const{
+float ofTrueTypeFont::stringHeight(const std::string& c) const{
     ofRectangle rect = getStringBoundingBox(c, 0,0);
     return rect.height;
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::createStringMesh(string str, float x, float y, bool vFlipped) const{
+void ofTrueTypeFont::createStringMesh(const std::string& str, float x, float y, bool vFlipped) const{
 	stringQuads.clear();
 	GLfloat		X		= x;
 	GLfloat		Y		= y;
@@ -983,7 +983,7 @@ void ofTrueTypeFont::createStringMesh(string str, float x, float y, bool vFlippe
 }
 
 //-----------------------------------------------------------
-const ofMesh & ofTrueTypeFont::getStringMesh(string c, float x, float y, bool vFlipped) const{
+const ofMesh & ofTrueTypeFont::getStringMesh(const std::string& c, float x, float y, bool vFlipped) const{
 	createStringMesh(c,x,y,vFlipped);
 	return stringQuads;
 }
@@ -994,7 +994,7 @@ const ofTexture & ofTrueTypeFont::getFontTexture() const{
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::drawString(string c, float x, float y) const{
+void ofTrueTypeFont::drawString(const std::string& c, float x, float y) const{
 	if (!bLoadedOk){
 		ofLogError("ofTrueTypeFont") << "drawString(): font not allocated";
 		return;
@@ -1005,7 +1005,7 @@ void ofTrueTypeFont::drawString(string c, float x, float y) const{
 }
 
 //-----------------------------------------------------------
-void ofTrueTypeFont::drawStringAsShapes(string str, float x, float y) const{
+void ofTrueTypeFont::drawStringAsShapes(const std::string& str, float x, float y) const{
     if (!bLoadedOk){
     	ofLogError("ofTrueTypeFont") << "drawStringAsShapes(): font not allocated: line " << __LINE__ << " in " << __FILE__;
     	return;

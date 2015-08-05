@@ -219,7 +219,7 @@ public:
 protected:
 
 	// checks that size() and number of channels are consistent, logs a warning if not. returns consistency check result.
-	bool checkSizeAndChannelsConsistency( string function="" );  
+	bool checkSizeAndChannelsConsistency(const std::string& function="" );
 
 	vector<float> buffer;
 	std::size_t channels;
