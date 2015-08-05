@@ -526,8 +526,8 @@ public:
     ///
     /// \param hue A reference to the hue to fill. Will be in the range of
     ///     0 - limit().
-    /// \param hue A reference to the saturation to fill. Will be in the range
-    ///     of 0 - limit().
+    /// \param saturation A reference to the saturation to fill. Will be in the
+	///		range of 0 - limit().
     /// \param brightness A reference to the brightness to fill. Will be in the
     ///     range of 0 - limit().
     void getHsb(float& hue, float& saturation, float& brightness) const;
@@ -538,7 +538,7 @@ public:
     /// ofShortColor), the maximum value different. For a ofFloatColor the
     /// maximum is `1.0`, but for a ofColor it's `255`.
     ///
-    /// Use this function to get this maximum number..
+    /// Use this function to get this maximum number.
     ///
     /// \returns The value associated with a fully saturated color component.
     static float limit();
@@ -577,9 +577,9 @@ public:
     ///     ofColor myColor(127, 127, 127, 255);
     /// ~~~~~
     ///
-    /// \param val The grayscale value.
+    /// \param value The grayscale value.
     /// \returns A reference to itself.
-    ofColor_<PixelType>& operator = (const float& val);
+    ofColor_<PixelType>& operator = (const float& value);
 
     /// \brief Test two colors for equality.
     /// \returns true iff the R, G, B and A components are all equal.
@@ -607,7 +607,7 @@ public:
     ///
     /// \param color The value to add.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator +  (const float& val) const;
+    ofColor_<PixelType>  operator +  (const float& color) const;
 
     /// \brief Clamped addition operator.
     ///
@@ -627,7 +627,7 @@ public:
     ///
     /// \param color The value to add.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator += (const float& val);
+    ofColor_<PixelType>& operator += (const float& color);
 
     /// \brief Clamped subtraction operator.
     ///
@@ -646,9 +646,9 @@ public:
     ///
     /// \warning The alpha component is ignored.
     ///
-    /// \param color The value to subtract.
+    /// \param value The value to subtract.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator -  (const float& val) const;
+    ofColor_<PixelType>  operator -  (const float& value) const;
 
     /// \brief Clamped subtraction operator.
     ///
@@ -666,7 +666,7 @@ public:
     ///
     /// \param color The value to subtract.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator -= (const float& val);
+    ofColor_<PixelType>& operator -= (const float& color);
 
     /// \brief Clamped multiplication operator.
     ///
@@ -685,9 +685,9 @@ public:
     ///
     /// \warning The alpha component is ignored.
     ///
-    /// \param color The value to multiply.
+    /// \param value The value to multiply.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator *  (const float& val) const;
+    ofColor_<PixelType>  operator *  (const float& value) const;
 
     /// \brief Clamped multiplication operator.
     ///
@@ -706,9 +706,9 @@ public:
     ///
     /// \warning The alpha component is ignored.
     ///
-    /// \param color The scaler value.
+    /// \param value The scaler value.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator *= (const float& val);
+    ofColor_<PixelType>& operator *= (const float& value);
 
     /// \brief Clamped division operator.
     ///
@@ -726,9 +726,9 @@ public:
     ///
     /// \warning The alpha component is ignored.
     ///
-    /// \param val The divisor value.
+    /// \param value The divisor value.
     /// \returns The new clamped color.
-    ofColor_<PixelType>  operator /  (const float& val) const;
+    ofColor_<PixelType>  operator /  (const float& value) const;
 
     /// \brief Clamped division operator.
     ///
@@ -744,9 +744,9 @@ public:
     ///
     /// \warning The alpha component is ignored.
     ///
-    /// \param valu The divisor value.
+    /// \param value The divisor value.
     /// \returns A reference to itself, the new clamped color.
-    ofColor_<PixelType>& operator /= (const float& val);
+    ofColor_<PixelType>& operator /= (const float& value);
 
     /// \brief Array subscript operator.
     ///
@@ -760,7 +760,7 @@ public:
     ///
     /// \param n An index 0-3 of the component to get.
     /// \returns The value of the requested component.
-    const PixelType& operator [] (int n) const;
+    const PixelType& operator [] (std::size_t n) const;
 
     /// \brief Array subscript operator.
     ///
@@ -774,7 +774,7 @@ public:
     ///
     /// \param n An index 0-3 of the component to get.
     /// \returns The value of the requested component.
-    PixelType& operator [] (int n);
+	PixelType& operator [] (std::size_t n);
 
     /// \brief An output stream operator.
     ///

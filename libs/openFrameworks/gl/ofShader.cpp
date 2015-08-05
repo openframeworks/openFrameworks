@@ -702,7 +702,7 @@ void ofShader::setUniform4fv(const string & name, const float* v, int count)  co
 
 //--------------------------------------------------------------
 void ofShader::setUniforms(const ofParameterGroup & parameters) const{
-	for(int i=0;i<parameters.size();i++){
+	for(std::size_t i=0;i<parameters.size();i++){
 		if(parameters[i].type()==typeid(ofParameter<int>).name()){
 			setUniform1i(parameters[i].getEscapedName(),parameters[i].cast<int>());
 		}else if(parameters[i].type()==typeid(ofParameter<float>).name()){
