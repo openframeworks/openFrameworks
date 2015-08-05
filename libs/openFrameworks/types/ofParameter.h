@@ -759,7 +759,7 @@ void ofParameter<ParameterType>::setParent(ofParameterGroup & parent){
 ///
 /// \sa ofParameter
 /// \tparam ParameterType The data wrapped by the ofParameter.
-/// \tparam ParameterType The type of the "friend" class with write access.
+/// \tparam Friend The type of the "friend" class with write access.
 template<typename ParameterType,typename Friend>
 class ofReadOnlyParameter: public ofAbstractParameter{
 public:

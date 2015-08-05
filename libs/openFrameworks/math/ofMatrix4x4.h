@@ -20,7 +20,7 @@
 /// 
 /// You'll sometimes see it used for doing things like setting where the camera
 /// in OpenGL (the mathematically calculated one, not the ofCamera one) is 
-/// looking or is pointedA, or figuring how to position something in 3d space, 
+/// looking or is pointed, or figuring how to position something in 3d space,
 /// doing scaling, etc. The great thing about the 4x4 matrix is that it can do 
 /// all these things at the same time. A single ofMatrix4x4 can represent a ton 
 /// of different information about a stuff that goes on in doing 3d 
@@ -145,7 +145,7 @@ public:
 	/// \param z Z-value of the rotation axis.
 	void makeRotationMatrix( float angle, float x, float y, float z );
 	/// \param quaternion Matrix becomes a rotation that produces the quaternion's orientation.
-	void makeRotationMatrix( const ofQuaternion& );
+	void makeRotationMatrix( const ofQuaternion& quaternion );
 	/// \brief Matrix becomes a rotation around multiple axes.
 	/// 
 	/// The final rotation is the result of rotating around each of the three
