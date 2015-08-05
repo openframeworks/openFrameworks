@@ -624,7 +624,7 @@ void ofParameter<ParameterType>::disableEvents(){
 }
 
 template<typename ParameterType>
-inline ParameterType ofParameter<ParameterType>::operator++(int v){
+inline ParameterType ofParameter<ParameterType>::operator++(int){
 	ParameterType r = obj->value;
 	obj->value++;
 	set(obj->value);
@@ -639,7 +639,7 @@ inline ofParameter<ParameterType> & ofParameter<ParameterType>::operator++(){
 }
 
 template<typename ParameterType>
-inline ParameterType ofParameter<ParameterType>::operator--(int v){
+inline ParameterType ofParameter<ParameterType>::operator--(int){
 	ParameterType r = obj->value;
 	obj->value--;
 	set(obj->value);
@@ -990,7 +990,7 @@ inline const ParameterType & ofReadOnlyParameter<ParameterType,Friend>::operator
 
 
 template<typename ParameterType,typename Friend>
-inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator++(int v){
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator++(int){
 	return parameter++;
 }
 
@@ -1001,7 +1001,7 @@ inline ofReadOnlyParameter<ParameterType,Friend> & ofReadOnlyParameter<Parameter
 
 
 template<typename ParameterType,typename Friend>
-inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator--(int v){
+inline ParameterType ofReadOnlyParameter<ParameterType,Friend>::operator--(int){
 	return parameter--;
 }
 

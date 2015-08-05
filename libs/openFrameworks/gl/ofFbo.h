@@ -41,7 +41,7 @@ public:
 	const ofTexture & getTexture() const ;
 	const ofTexture & getTexture(int attachmentPoint) const;
 	const ofTexture & getDepthTexture() const;
-	void setUseTexture(bool bUseTex){ /*irrelevant*/ };
+	void setUseTexture(bool){ /*irrelevant*/ };
 	bool isUsingTexture() const {return true;}
 
 	/// \brief    Sets up the framebuffer and binds it for rendering.
