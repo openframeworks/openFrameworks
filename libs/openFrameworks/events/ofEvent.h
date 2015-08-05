@@ -138,10 +138,10 @@ namespace priv{
 	template<typename T>
 	class Function{
 	public:
-		Function(int priority, std::function<bool(const void*,T&)> function,  std::unique_ptr<BaseFunctionId>&& id )
-		:priority(priority)
-		,function(function)
-		,id(std::move(id)){}
+		Function(int _priority, std::function<bool(const void*,T&)> _function,  std::unique_ptr<BaseFunctionId>&& _id )
+		:priority(_priority)
+		,function(_function)
+		,id(std::move(_id)){}
 
 		bool operator==(const Function<T> & f) const{
 			return f.priority == priority && *id == *f.id;
@@ -155,10 +155,10 @@ namespace priv{
 	template<>
 	class Function<void>{
 	public:
-		Function(int priority, std::function<bool(const void*)> function,  std::unique_ptr<BaseFunctionId> && id )
-		:priority(priority)
-		,function(function)
-		,id(std::move(id)){}
+		Function(int _priority, std::function<bool(const void*)> _function,  std::unique_ptr<BaseFunctionId> && _id )
+		:priority(_priority)
+		,function(_function)
+		,id(std::move(_id)){}
 
 		bool operator==(const Function<void> & f) const{
 			return f.priority == priority && *id == *f.id;
@@ -182,9 +182,9 @@ protected:
 		TObj * listener;
 		TMethod method;
 
-		FunctionId(TObj * listener, TMethod method)
-		:listener(listener)
-		,method(method){
+		FunctionId(TObj * _listener, TMethod _method)
+		:listener(_listener)
+		,method(_method){
 
 		}
 
@@ -304,9 +304,9 @@ protected:
 		TObj * listener;
 		TMethod method;
 
-		FunctionId(TObj * listener, TMethod method)
-		:listener(listener)
-		,method(method){
+		FunctionId(TObj * _listener, TMethod _method)
+		:listener(_listener)
+		,method(_method){
 
 		}
 
