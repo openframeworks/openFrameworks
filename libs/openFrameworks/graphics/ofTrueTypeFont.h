@@ -132,7 +132,7 @@ public:
 	/// and full character sets, this helps you know how many characters it can represent.
 	///
 	/// \returns Number of characters in loaded character set.
-	int	getNumCharacters();	
+	int	getNumCharacters() const;
 
 	/// \}
 	/// \name Font Size
@@ -251,14 +251,6 @@ public:
 	/// \param y Y position of shapes
 	void drawStringAsShapes(const std::string& s, float x, float y) const;
 
-	/// \brief Get the num chars in the loaded character set.
-	/// 
-	/// If you allocate the font using different paramters, you can load in partial 
-	/// and full character sets, this helps you know how many characters it can represent.
-	///
-	/// \returns Number of characters in loaded character set.
-	int	getNumCharacters() const;
-	
 	/// \todo Documentation.
 	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=true, bool filled=true) const;
 	vector<ofTTFCharacter> getStringAsPoints(const std::string& str, bool vflip=true, bool filled=true) const;
