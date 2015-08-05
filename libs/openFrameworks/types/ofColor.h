@@ -113,10 +113,7 @@ public:
     /// \param green The green component.
     /// \param blue The blue component.
     /// \param alpha The alpha component.
-    ofColor_(float red,
-				float green,
-				float blue,
-				float alpha = limit());
+    ofColor_(float red, float green, float blue, float alpha = limit());
 
     /// \brief Construct a grayscale ofColor_ by specifying a single number.
     ///
@@ -541,7 +538,7 @@ public:
     /// Use this function to get this maximum number.
     ///
     /// \returns The value associated with a fully saturated color component.
-    static PixelType limit();
+    static float limit();
 
     /// \}
 
