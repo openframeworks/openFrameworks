@@ -90,13 +90,14 @@ public:
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
-	bool load(string filename,
+	bool load(const std::string& filename,
                   int fontsize,
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=true,
                   bool makeContours=false,
                   float simplifyAmt=0.3,
                   int dpi=0);
+
 	OF_DEPRECATED_MSG("Use load instead",bool loadFont(string filename,
                   int fontsize,
                   bool _bAntiAliased=true,
@@ -215,7 +216,7 @@ public:
 	///
 	/// \param s The string to get the width of.
 	/// \returns Returns the string width. 
-	float stringWidth(const string& s) const;
+	float stringWidth(const std::string& s) const;
 
 	/// \brief Returns the string height.
 	///
@@ -223,14 +224,14 @@ public:
 	///
 	/// \param s The string to get the height of.
 	/// \returns Returns the string height. 
-	float stringHeight(const string& s) const;
+	float stringHeight(const std::string& s) const;
 
 	/// \brief Returns the bounding box of a string as a rectangle.
 	/// \param s The string to get bounding box of.
 	/// \param x X position of returned rectangle.
 	/// \param y Y position of returned rectangle.
 	/// \returns Returns the bounding box of a string as a rectangle.
-	ofRectangle getStringBoundingBox(const string& s, float x, float y, bool vflip=true) const;
+	ofRectangle getStringBoundingBox(const std::string& s, float x, float y, bool vflip=true) const;
 
 	/// \}
 	/// \name Drawing
@@ -258,7 +259,7 @@ public:
 	/// \returns Number of characters in loaded character set.
 	int	getNumCharacters() const;
 	
-	/// \todo
+	/// \todo Documentation.
 	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=true, bool filled=true) const;
 	vector<ofTTFCharacter> getStringAsPoints(const std::string& str, bool vflip=true, bool filled=true) const;
 	const ofMesh & getStringMesh(const std::string& s, float x, float y, bool vflip=true) const;
@@ -297,9 +298,9 @@ protected:
     int getKerning(int c, int prevC) const;
 	void drawChar(int c, float x, float y, bool vFlipped) const;
 	void drawCharAsShape(int c, float x, float y, bool vFlipped, bool filled) const;
-	void createStringMesh(const string& s, float x, float y, bool vFlipped) const;
+	void createStringMesh(const std::string& s, float x, float y, bool vFlipped) const;
 	
-	string filename;
+	std::string filename;
 
 	ofTexture texAtlas;
 	mutable ofMesh stringQuads;
