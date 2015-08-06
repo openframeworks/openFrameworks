@@ -13,7 +13,9 @@
 int main( ){
 
 #ifdef USE_PROGRAMMABLE_RENDERER
-    ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
+	ofGLWindowSettings settings;
+	settings.setGLVersion(3,2);
+	ofCreateWindow(settings);
 #endif
     
 	ofSetupOpenGL(1024,768, OF_WINDOW);			// <-------- setup the GL context
