@@ -559,8 +559,11 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 		// -------------------------
 		// info about the character:
 		FT_Bitmap& bitmap= face->glyph->bitmap;
-		int width  = bitmap.width;
-		int height = bitmap.rows;
+
+		// Note: Using decltype here to avoid warnings across
+		// platforms using differing versions of freetype 2.
+		decltype(bitmap.width) width  = bitmap.width;
+		decltype(bitmap.rows) height = bitmap.rows;
 
 		cps[i].characterIndex	= i;
 		cps[i].glyph			= glyph;
@@ -600,10 +603,10 @@ bool ofTrueTypeFont::load(string _filename, int _fontSize, bool _bAntiAliased, b
 			// 1-bit format, hella funky
 			// here we unpack it:
 			unsigned char *src =  bitmap.buffer;
-			for(int j=0; j < height; j++) {
+			for(decltype(height) j=0; j < height; j++) {
 				unsigned char b=0;
 				unsigned char *bptr =  src;
-				for(int k=0; k < width; k++){
+				for(decltype(width) k=0; k < width; k++){
 					expanded_data[i][2*(k+j*width)] = 255;
 
 					if (k%8==0){
