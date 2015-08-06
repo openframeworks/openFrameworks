@@ -378,14 +378,14 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		wchar_t szFileName[MAX_PATH];
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-			wcscpy_s(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+			wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
 		}else{
 		    //szFileName = L"";
 			memset(szFileName,  0, sizeof(szFileName));
 		}
 
 		if (windowTitle != "") {
-			wcscpy_s(szTitle, convertNarrowToWide(windowTitle).c_str());
+			wcscpy(szTitle, convertNarrowToWide(windowTitle).c_str());
 			ofn.lpstrTitle = szTitle;
 		} else {
 			ofn.lpstrTitle = nullptr;
