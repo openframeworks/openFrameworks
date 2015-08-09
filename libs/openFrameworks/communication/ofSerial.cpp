@@ -17,10 +17,10 @@
 
 #ifdef TARGET_WIN32
 
-#ifdef __MINGW32__
+/*#ifdef __MINGW32__
   // declares DEFINE_GUID
   #include <initguid.h>
-#endif
+#endif*/
 
 // needed for serial bus enumeration:
 // 4d36e978-e325-11ce-bfc1-08002be10318}
