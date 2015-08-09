@@ -854,7 +854,7 @@ void ofGstVideoUtils::update(){
 			}
 		}else{
 #if GST_VERSION_MAJOR==0
-			ofLogError() << "frame by frame doesn't work any more in 0.10"
+			ofLogError() << "frame by frame doesn't work any more in 0.10";
 #else
 			GstBuffer * buffer;
 			GstSample * sample;
@@ -1201,11 +1201,11 @@ GstFlowReturn ofGstVideoUtils::process_buffer(shared_ptr<GstBuffer> _buffer){
 	if(pixels.isAllocated()){
 		backBuffer = _buffer;
         if(stride > 0) {
-            backPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
+            backPixels.setFromAlignedPixels(GST_BUFFER_DATA (backBuffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
         }
         else {
-            backPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
-            eventPixels.setFromExternalPixels(GST_BUFFER_DATA (buffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+            backPixels.setFromExternalPixels(GST_BUFFER_DATA (backBuffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
+            eventPixels.setFromExternalPixels(GST_BUFFER_DATA (backBuffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat());
         }
 		bBackPixelsChanged=true;
 		mutex.unlock();
