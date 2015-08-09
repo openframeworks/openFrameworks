@@ -76,7 +76,7 @@ function build() {
 
 		lipo -c librtaudio.a librtaudio-x86_64.a -o librtaudio.a
 
-	elif [ "$TYPE" == "vs" -o "$TYPE" == "win_cb" ] ; then
+	elif [ "$TYPE" == "vs" ] ; then
 		local API="--with-wasapi --with-ds" # asio as well?
 		if [ $ARCH == 32 ] ; then
 			mkdir -p build_vs_32
@@ -91,6 +91,13 @@ function build() {
 			vs-build "rtaudio_static.vcxproj" Build "Release|x64"
 			vs-build "rtaudio_static.vcxproj" Build "Debug|x64"
 		fi
+
+	elif [ "$TYPE" == "win_cb" ] ; then
+		local API="--with-wasapi --with-ds" # asio as well?
+		mkdir -p build
+		cd build
+		cmake .. -G "Unix Makefiles"  -DAUDIO_WINDOWS_WASAPI=ON -DAUDIO_WINDOWS_DS=ON -DAUDIO_WINDOWS_ASIO=ON -DCMAKE_C_COMPILER=/mingw32/bin/clang.exe -DCMAKE_CXX_COMPILER=/mingw32/bin/clang++.exe -DBUILD_TESTING=OFF
+		make
 	fi
 
 	# clean up env vars
@@ -120,7 +127,7 @@ function copy() {
 		
 
 	elif [ "$TYPE" == "win_cb" ] ; then
-		echoWarning "TODO: copy win_cb lib"
+		cp -v build/librtaudio_static.a $1/lib/$TYPE/librtaudio.a
 	
 	else
 		cp -v librtaudio.a $1/lib/$TYPE/rtaudio.a
