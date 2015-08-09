@@ -799,7 +799,10 @@ void ofGstVideoUtils::close(){
 	bBackPixelsChanged			= false;
 	frontBuffer.reset();
 	backBuffer.reset();
+	
+#if GST_VERSION_MAJOR==1
 	while(!bufferQueue.empty()) bufferQueue.pop();
+#endif
 }
 
 bool ofGstVideoUtils::isInitialized() const{
@@ -851,20 +854,7 @@ void ofGstVideoUtils::update(){
 			}
 		}else{
 #if GST_VERSION_MAJOR==0
-			GstBuffer *buffer;
-
-			//get the buffer from appsink
-			if(isPaused()) buffer = gst_app_sink_pull_preroll (GST_APP_SINK (getSink()));
-			else buffer = gst_app_sink_pull_buffer (GST_APP_SINK (getSink()));
-
-			if(buffer){
-				if(pixels.isAllocated()){
-					pixels.setFromExternalPixels(GST_BUFFER_DATA (buffer),pixels.getWidth(),pixels.getHeight(),pixels.getNumChannels());
-					prevBuffer = shared_ptr<GstBuffer>(buffer,gst_buffer_unref);;
-					bHavePixelsChanged=true;
-				}
-			}
-		}
+			ofLogError() << "frame by frame doesn't work any more in 0.10"
 #else
 			GstBuffer * buffer;
 			GstSample * sample;
@@ -1191,7 +1181,9 @@ void ofGstVideoUtils::reallocateOnNextFrame(){
 	bBackPixelsChanged			= false;
 	frontBuffer.reset();
 	backBuffer.reset();
+#if GST_VERSION_MAJOR==1
 	while(!bufferQueue.empty()) bufferQueue.pop();
+#endif
 }
 
 #if GST_VERSION_MAJOR==0
@@ -1207,7 +1199,7 @@ GstFlowReturn ofGstVideoUtils::process_buffer(shared_ptr<GstBuffer> _buffer){
 	}
 	mutex.lock();
 	if(pixels.isAllocated()){
-		buffer = _buffer;
+		backBuffer = _buffer;
         if(stride > 0) {
             backPixels.setFromAlignedPixels(GST_BUFFER_DATA (buffer.get()),pixels.getWidth(),pixels.getHeight(),pixels.getPixelFormat(),stride);
         }
