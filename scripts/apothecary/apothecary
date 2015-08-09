@@ -88,7 +88,7 @@ VS_64_BIT_ENV='VC\bin\x86_amd64\vcvarsx86_amd64.bat'
 # paths to android SDK, etc
 ANDROID_NDK_ROOT=
 ANDROID_SDK_ROOT=
-ANDROID_PLATFORM=android-21
+ANDROID_PLATFORM=android-19
 
 ################################################################################
 ### PRIVATE VARS, for internal use

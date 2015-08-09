@@ -60,7 +60,7 @@ PLATFORM_DEFINES =
 PLATFORM_DEFINES = ANDROID
 
 ifndef $(NDK_PLATFORM)
-	NDK_PLATFORM = android-21
+	NDK_PLATFORM = android-19
 endif
 
 ifndef $(SDK_TARGET)
