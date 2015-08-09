@@ -217,6 +217,8 @@ else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
 endif
 
+PKG_CONFIG ?= pkg-config
+
 
 ################################ FLAGS #########################################
 # define the location of the core path
