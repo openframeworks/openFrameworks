@@ -877,8 +877,8 @@ void ofGstVideoUtils::update(){
 					gst_buffer_unmap(buffer,&mapinfo);
 				}
 			}
-		}
 #endif
+		}
 	}else{
 		ofLogWarning("ofGstVideoUtils") << "update(): ofGstVideoUtils not loaded";
 	}
