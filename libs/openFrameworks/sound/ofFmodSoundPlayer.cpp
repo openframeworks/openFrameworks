@@ -159,8 +159,11 @@ void ofFmodSoundPlayer::initializeFmod(){
 		
 		FMOD_System_Create(&sys);
 		
-		// set buffersize
-		FMOD_System_SetDSPBufferSize (sys, buffersize, 4);
+		// set buffersize, keep number of buffers
+		unsigned int bsTmp;
+		int nbTmp;
+		FMOD_System_GetDSPBufferSize(sys, &bsTmp, &nbTmp);
+		FMOD_System_SetDSPBufferSize(sys, buffersize, nbTmp);
 
 		#ifdef TARGET_LINUX
 			FMOD_System_SetOutput(sys,FMOD_OUTPUTTYPE_ALSA);
@@ -170,6 +173,8 @@ void ofFmodSoundPlayer::initializeFmod(){
 		bFmodInitialized_ = true;
 	}
 }
+
+
 
 
 //---------------------------------------
