@@ -29,6 +29,7 @@ void ofFmodSoundStopAll();
 void ofFmodSoundSetVolume(float vol);
 void ofFmodSoundUpdate();						// calls FMOD update.
 float * ofFmodSoundGetSpectrum(int nBands);		// max 512...
+void ofFmodSetBuffersize(unsigned int bs);
 
 
 // --------------------- player functions:
@@ -63,6 +64,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 
 		static void initializeFmod();
 		static void closeFmod();
+	
 
 		bool isStreaming;
 		bool bMultiPlay;
