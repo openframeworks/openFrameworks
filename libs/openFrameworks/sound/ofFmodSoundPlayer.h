@@ -64,6 +64,7 @@ class ofFmodSoundPlayer : public ofBaseSoundPlayer {
 
 		static void initializeFmod();
 		static void closeFmod();
+	
 
 		bool isStreaming;
 		bool bMultiPlay;
