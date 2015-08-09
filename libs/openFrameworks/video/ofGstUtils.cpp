@@ -695,6 +695,8 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 			g_free (name);
 			break;
 		}
+		
+#if GST_VERSION_MAJOR==1
 		case GST_MESSAGE_HAVE_CONTEXT:{
 			GstContext *context;
 			const gchar *context_type;
@@ -711,6 +713,7 @@ bool ofGstUtils::gstHandleMessage(GstBus * bus, GstMessage * msg){
 			gst_context_unref (context);
 			break;
 		}
+#endif
 		default:
 			ofLogVerbose("ofGstUtils") << "gstHandleMessage(): unhandled message from " << GST_MESSAGE_SRC_NAME(msg);
 		break;
