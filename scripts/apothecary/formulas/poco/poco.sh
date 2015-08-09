@@ -48,13 +48,15 @@ function prepare() {
 		git reset --hard $SHA
 	fi
 	
-	# manually prepare dependencies
-	apothecaryDependencies download
-	apothecaryDependencies prepare
+	if [ "$TYPE" != "win_cb" ] && [ "$TYPE" != "linux" ]; then
+		# manually prepare dependencies
+		apothecaryDependencies download
+		apothecaryDependencies prepare
 
-	# Build and copy all dependencies in preparation
-	apothecaryDepend build openssl
-	apothecaryDepend copy openssl
+		# Build and copy all dependencies in preparation
+		apothecaryDepend build openssl
+		apothecaryDepend copy openssl
+	fi
 
 	# make backups of the ios config files since we need to edit them
 	if [ "$TYPE" == "ios" ] ; then
@@ -218,26 +220,17 @@ function build() {
 			cmd //c buildwin.cmd ${VS_VER}0 build static_md both x64 nosamples notests
 		fi
 	elif [ "$TYPE" == "win_cb" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
-
-		# Locate the path of the openssl libs distributed with openFrameworks.
-		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
-
-		# get the absolute path to the included openssl libs
-		local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
-
-		local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
-		local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/win_cb
+	    cp $FORMULA_DIR/MinGWConfig64 build/config/MinGW
+		local BUILD_OPTS="--no-tests --no-samples --static  --no-sharedlibs --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
 		./configure $BUILD_OPTS \
-					--include-path=$OPENSSL_INCLUDE \
-					--library-path=$OPENSSL_LIBS \
 					--config=MinGW
 
 		make -j${PARALLEL_MAKE}
 
 		# Delete debug libs.
-		lib/MinGW/i686/*d.a
+		rm -f lib/MinGW/i686/*d.a
+		rm -f lib/MinGW/x86_64/*d.a
 
 	elif [ "$TYPE" == "ios" ] ; then
 
@@ -492,7 +485,8 @@ function copy() {
 		
 	elif [ "$TYPE" == "win_cb" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
+		cp -vf lib/MinGW/i686/*.a $1/lib/$TYPE
+		#cp -vf lib/MinGW/x86_64/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "linux" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/$(uname -m)/*.a $1/lib/$TYPE

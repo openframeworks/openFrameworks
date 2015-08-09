@@ -28,6 +28,19 @@
 PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug
 PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME)
 PLATFORM_RUN_COMMAND = 
+#ifneq (,$(findstring MINMGW64_NT,$(PLATFORM_OS)))
+MSYS2_ROOT = /mingw32
+PLATFORM_CFLAGS += -std=gnu++14 -I$(MSYS2_ROOT)/include/cairo -I$(MSYS2_ROOT)/include/glib-2.0 -I$(MSYS2_ROOT)/lib/glib-2.0/include -I$(MSYS2_ROOT)/include/pixman-1 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/freetype2 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/harfbuzz -I$(MSYS2_ROOT)/include/libpng16 -DUNICODE -D_UNICODE -DPOCO_STATIC 
+#PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER 
+PLATFORM_LDFLAGS += -L$(MSYS_ROOT)/lib -L$(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)
+#ifeq ($(PLATFORM_ARCH),x86_64)
+CC = $(MSYS2_ROOT)/bin/clang
+CXX = $(MSYS2_ROOT)/bin/clang++
+PLATFORM_AR = $(MSYS2_ROOT)/bin/ar
+PLATFORM_LD = $(MSYS2_ROOT)/bin/ld
+PLATFORM_PKG_CONFIG = $(MSYS2_ROOT)/bin/pkg-config
+#endif
+#endif
 
 ##########################################################################################
 # PLATFORM DEFINES
@@ -84,17 +97,6 @@ ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo
 	PLATFORM_CFLAGS += -mtune=native
 endif
 
-# Optimization options (http://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
-PLATFORM_CFLAGS += -finline-functions
-#PLATFORM_CFLAGS += -funroll-all-loops
-#PLATFORM_CFLAGS += -Os
-
-PLATFORM_CFLAGS += -funroll-loops 
-PLATFORM_CFLAGS += -mssse3
-PLATFORM_CFLAGS += -fmessage-length=0
-
-PLATFORM_CFLAGS += -Wno-multichar
-PLATFORM_CFLAGS += -g 
 
 ################################################################################
 # PLATFORM LDFLAGS
@@ -143,17 +145,17 @@ PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
-#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
-
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
-
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 
 PLATFORM_CORE_EXCLUSIONS += %.mm
 PLATFORM_CORE_EXCLUSIONS += %.m
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
+#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppEGLWindow.cpp
 
 # third party
 
@@ -161,8 +163,16 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
-#PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 #PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/cairo/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 
 
 ##########################################################################################
@@ -195,8 +205,10 @@ PLATFORM_HEADER_SEARCH_PATHS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_LIBRARIES += opengl32 gdi32 msimg32 glu32 dsound winmm dxguid strmiids 
+PLATFORM_LIBRARIES += opengl32 gdi32 msimg32 glu32 dsound winmm strmiids #dxguid  
 PLATFORM_LIBRARIES += uuid ole32 oleaut32 setupapi wsock32 ws2_32 Iphlpapi Comdlg32
+PLATFORM_LIBRARIES += freeimage boost_filesystem-mt boost_system-mt freetype cairo
+#PLATFORM_LIBRARIES += gstapp-1.0 gstvideo-1.0 gstbase-1.0 gstreamer-1.0 gobject-2.0 glib-2.0 intl
 
 #static libraries (fully qualified paths)
 # libssl and libcrypto need to come *after* Poco libs for the linker, and the Poco libs 
@@ -212,13 +224,15 @@ PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPoco
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoMongoDB.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoData.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoDataSQLite.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libssl.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/openssl/lib/$(ABI_LIB_SUBPATH)/libcrypto.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/videoInput/lib/$(ABI_LIB_SUBPATH)/videoInputLib.a 
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/FreeImage/lib/$(ABI_LIB_SUBPATH)/FreeImage.lib 
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/quicktime/lib/$(ABI_LIB_SUBPATH)/qtmlClient.lib 
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/glew/lib/$(ABI_LIB_SUBPATH)/libglew32.a 
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/glu/lib/$(ABI_LIB_SUBPATH)/glu32.lib
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/quicktime/lib/$(ABI_LIB_SUBPATH)/qtmlClient.lib
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/quicktime/lib/$(ABI_LIB_SUBPATH)/Rave.lib
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/quicktime/lib/$(ABI_LIB_SUBPATH)/QTSClient.lib
+
+PLATFORM_PKG_CONFIG_LIBRARIES =
+PLATFORM_PKG_CONFIG_LIBRARIES += zlib
+PLATFORM_PKG_CONFIG_LIBRARIES += openssl
+PLATFORM_PKG_CONFIG_LIBRARIES += glew
+#PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-1.0
 
 # shared libraries 
 PLATFORM_SHARED_LIBRARIES =
