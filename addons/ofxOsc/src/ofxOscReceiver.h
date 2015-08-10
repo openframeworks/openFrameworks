@@ -67,7 +67,7 @@ public:
 
 protected:
 	/// process an incoming osc message and add it to the queue
-	virtual void ProcessMessage( const osc::ReceivedMessage &m, const IpEndpointName& remoteEndpoint );
+	virtual void ProcessMessage( const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint );
 
 private:
 	// shutdown the listener
@@ -83,7 +83,7 @@ private:
 	std::deque< ofxOscMessage* > messages;
 
 	// socket to listen on
-	UdpListeningReceiveSocket* listen_socket;
+	osc::UdpListeningReceiveSocket* listen_socket;
 
 	// mutex helpers
 	void grabMutex();

@@ -49,14 +49,14 @@ ofxOscSender::~ofxOscSender()
 
 void ofxOscSender::setup( std::string hostname, int port, bool enableBroadcast )
 {
-    if( UdpSocket::GetUdpBufferSize() == 0 ){
-        UdpSocket::SetUdpBufferSize(65535);
+    if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
+    	osc::UdpSocket::SetUdpBufferSize(65535);
     }
 
 	if ( socket )
 		shutdown();
 	
-    socket = new UdpTransmitSocket(IpEndpointName( hostname.c_str(), port), enableBroadcast);
+    socket = new osc::UdpTransmitSocket(osc::IpEndpointName( hostname.c_str(), port), enableBroadcast);
 }
 
 void ofxOscSender::shutdown()
