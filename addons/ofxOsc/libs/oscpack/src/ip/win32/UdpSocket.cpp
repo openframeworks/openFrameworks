@@ -91,6 +91,7 @@ static IpEndpointName IpEndpointNameFromSockaddr( const struct sockaddr_in& sock
 		);
 }
 
+unsigned long UdpSocket::maxBufferSize = 0;
 
 class UdpSocket::Implementation{
     NetworkInitializer networkInitializer_;
@@ -113,6 +114,11 @@ public:
             throw std::runtime_error("unable to create udp socket\n");
         }
 
+        if( UdpSocket::maxBufferSize > 0 ){
+            setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, (const char*)&UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
+            setsockopt(socket_, SOL_SOCKET, SO_RCVBUF, (const char*)&UdpSocket::maxBufferSize, sizeof(UdpSocket::maxBufferSize));
+        }
+        
 		std::memset( &sendToAddr_, 0, sizeof(sendToAddr_) );
         sendToAddr_.sin_family = AF_INET;
 	}
@@ -182,9 +188,11 @@ public:
 		return IpEndpointNameFromSockaddr( sockAddr );
 	}
 
-	void Connect( const IpEndpointName& remoteEndpoint )
+	void Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false )
 	{
 		SockaddrFromIpEndpointName( connectedAddr_, remoteEndpoint );
+       
+        SetEnableBroadcast(enableBroadcast);
        
         if (connect(socket_, (struct sockaddr *)&connectedAddr_, sizeof(connectedAddr_)) < 0) {
             throw std::runtime_error("unable to connect udp socket\n");
@@ -208,10 +216,12 @@ public:
         sendto( socket_, data, (int)size, 0, (sockaddr*)&sendToAddr_, sizeof(sendToAddr_) );
 	}
 
-	void Bind( const IpEndpointName& localEndpoint )
+	void Bind( const IpEndpointName& localEndpoint, bool allowReuse = false )
 	{
 		struct sockaddr_in bindSockAddr;
 		SockaddrFromIpEndpointName( bindSockAddr, localEndpoint );
+
+        SetAllowReuse(allowReuse);
 
         if (bind(socket_, (struct sockaddr *)&bindSockAddr, sizeof(bindSockAddr)) < 0) {
             throw std::runtime_error("unable to bind udp socket\n");
@@ -253,6 +263,14 @@ UdpSocket::~UdpSocket()
 	delete impl_;
 }
 
+void UdpSocket::SetUdpBufferSize( unsigned long bufferSize ){
+    UdpSocket::maxBufferSize = bufferSize; 
+}
+
+unsigned long UdpSocket::GetUdpBufferSize(){
+    return UdpSocket::maxBufferSize;
+}
+
 void UdpSocket::SetEnableBroadcast( bool enableBroadcast )
 {
     impl_->SetEnableBroadcast( enableBroadcast );
@@ -268,9 +286,9 @@ IpEndpointName UdpSocket::LocalEndpointFor( const IpEndpointName& remoteEndpoint
 	return impl_->LocalEndpointFor( remoteEndpoint );
 }
 
-void UdpSocket::Connect( const IpEndpointName& remoteEndpoint )
+void UdpSocket::Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast )
 {
-	impl_->Connect( remoteEndpoint );
+	impl_->Connect( remoteEndpoint, enableBroadcast );
 }
 
 void UdpSocket::Send( const char *data, std::size_t size )
@@ -283,9 +301,9 @@ void UdpSocket::SendTo( const IpEndpointName& remoteEndpoint, const char *data, 
 	impl_->SendTo( remoteEndpoint, data, size );
 }
 
-void UdpSocket::Bind( const IpEndpointName& localEndpoint )
+void UdpSocket::Bind( const IpEndpointName& localEndpoint, bool allowReuse )
 {
-	impl_->Bind( localEndpoint );
+	impl_->Bind( localEndpoint, allowReuse );
 }
 
 bool UdpSocket::IsBound() const
