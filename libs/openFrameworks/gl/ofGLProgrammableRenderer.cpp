@@ -2552,6 +2552,7 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 	pixels.allocate(w, h, OF_PIXELS_RGBA);
 
 	switch(matrixStack.getOrientation()){
+	case OF_ORIENTATION_UNKNOWN:
 	case OF_ORIENTATION_DEFAULT:
 
 		if(isVFlipped()){
