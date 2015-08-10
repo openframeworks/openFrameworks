@@ -200,7 +200,7 @@ void xcodeProject::setup(){
 		buildPhaseUUID	= "E4D8936E11527B74007E1F53";
 		resourcesUUID   = "BB24DD8F10DA77E000E9C588";
         buildPhaseResourcesUUID = "BB24DDCA10DA781C00E9C588";
-        frameworksUUID  = "E7E077E715D3B6510020DFD4";   //PBXFrameworksBuildPhase  // todo: check this?
+        frameworksUUID  = "E41D421413B3A95300A75A5D";   //PBXFrameworksBuildPhase  // todo: check this?
 	}
 }
 
@@ -208,7 +208,10 @@ void xcodeProject::setup(){
 void xcodeProject::saveScheme(){
 
 	string schemeFolder = projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/";
-    ofDirectory::removeDirectory(schemeFolder, true);
+    
+    if (ofDirectory::doesDirectoryExist(schemeFolder)){
+        ofDirectory::removeDirectory(schemeFolder, true);
+    }
 	ofDirectory::createDirectory(schemeFolder, false, true);
     
 	string schemeToD = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + " Debug.xcscheme";
@@ -232,8 +235,15 @@ void xcodeProject::saveWorkspaceXML(){
 	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
 	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
 
-	ofFile::removeFile(xcodeProjectWorkspace);
-	ofDirectory::removeDirectory(workspaceFolder, true);
+    
+    if (ofFile::doesFileExist(xcodeProjectWorkspace)){
+        ofFile::removeFile(xcodeProjectWorkspace);
+    }
+    
+    if (ofDirectory::doesDirectoryExist(workspaceFolder)){
+        ofDirectory::removeDirectory(workspaceFolder, true);
+    }
+    
 	ofDirectory::createDirectory(workspaceFolder, false, true);
     ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
     findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
@@ -253,7 +263,10 @@ bool xcodeProject::createProjectFile(){
     // todo: some error checking.
 
     string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
-    ofDirectory::removeDirectory(xcodeProject, true);
+    
+    if (ofDirectory::doesDirectoryExist(xcodeProject)){
+        ofDirectory::removeDirectory(xcodeProject, true);
+    }
    
 	ofDirectory xcodeDir(xcodeProject);
 	xcodeDir.create(true);
@@ -1101,7 +1114,7 @@ void xcodeProject::addAddon(ofAddon & addon){
         
         size_t found=addon.frameworks[i].find('/');
         if (found==std::string::npos){
-             addFramework( addon.frameworks[i] + ".framework", "/System/Library/Frameworks/" + addon.frameworks[i] + ".framework", "");
+             addFramework( addon.frameworks[i] + ".framework", "/System/Library/Frameworks/" + addon.frameworks[i] + ".framework", "addons/" + addon.name + "/frameworks");
         } else {
             
             if (ofIsStringInString(addon.frameworks[i], "/System/Library")){
@@ -1110,7 +1123,7 @@ void xcodeProject::addAddon(ofAddon & addon){
                 
                 addFramework(pathSplit[pathSplit.size()-1],
                              addon.frameworks[i],
-                             "");
+                             "addons/" + addon.name + "/frameworks");
                 
             } else {
             
