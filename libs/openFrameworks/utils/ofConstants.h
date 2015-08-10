@@ -351,12 +351,14 @@ typedef TESSindex ofIndexType;
 //------------------------------------------------ thread local storage
 // clang has a bug where it won't support tls on some versions even
 // on c++11, this is a workaround that bug
-#if __clang__
-	#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__)
+#ifndef HAS_TLS
+	#if __clang__
+		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__)
+			#define HAS_TLS 1
+		#endif
+	#else
 		#define HAS_TLS 1
 	#endif
-#else
-	#define HAS_TLS 1
 #endif
 
 //we don't want to break old code that uses ofSimpleApp
