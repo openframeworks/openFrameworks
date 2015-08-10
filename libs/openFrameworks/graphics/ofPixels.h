@@ -1021,7 +1021,7 @@ inline typename ofPixels_<PixelType>::Lines ofPixels_<PixelType>::getLines(){
 //----------------------------------------------------------------------
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixels ofPixels_<PixelType>::getPixelsIter(){
-	return Pixels(begin(),end(),getNumChannels(),pixelFormat);
+	return Pixels(begin(),end()-getNumChannels(),getNumChannels(),pixelFormat);
 }
 
 //----------------------------------------------------------------------
