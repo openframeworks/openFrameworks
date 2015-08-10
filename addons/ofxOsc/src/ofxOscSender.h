@@ -57,7 +57,8 @@ public:
 	~ofxOscSender();
 
 	/// send messages to hostname and port
-	void setup( std::string hostname, int port, bool enableBroadcast = true );
+	void setup( std::string hostname, int port );
+	void setupForBroadcast( std::string broadcastAddr, int port );
 
 	/// send the given message
 	void sendMessage( ofxOscMessage& message, bool wrapInBundle = true );
@@ -68,6 +69,7 @@ public:
 
 
 private:
+	void setup(osc::UdpTransmitSocket * socket);
 	void shutdown();
 		
 	// helper methods for constructing messages

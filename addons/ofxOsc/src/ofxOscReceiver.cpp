@@ -39,8 +39,18 @@ ofxOscReceiver::ofxOscReceiver()
 	listen_socket = NULL;
 }
 
-void ofxOscReceiver::setup( int listen_port, bool allowReuse )
+void ofxOscReceiver::setup( int listen_port )
 {
+	setup(new osc::UdpListeningReceiveSocket( osc::IpEndpointName( osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, false ));
+}
+
+void ofxOscReceiver::setupWithSocketReuse( int listen_port )
+{
+	setup(new osc::UdpListeningReceiveSocket( osc::IpEndpointName( osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, true ));
+}
+
+
+void ofxOscReceiver::setup(osc::UdpListeningReceiveSocket * socket){
     if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
     	osc::UdpSocket::SetUdpBufferSize(65535);
     }
@@ -58,7 +68,7 @@ void ofxOscReceiver::setup( int listen_port, bool allowReuse )
 	
 	// create socket
 	socketHasShutdown = false;
-	listen_socket = new osc::UdpListeningReceiveSocket( osc::IpEndpointName( osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, allowReuse );
+	listen_socket = socket;
 
 	// start thread
 	#ifdef TARGET_WIN32
