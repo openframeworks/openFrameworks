@@ -4,7 +4,6 @@
 #include "ofParameter.h"
 
 class ofxMinimalButton : public ofxMinimalToggle {
-	friend class ofPanel;
 
 	public:
 		struct Config : public ofxMinimalToggle::Config {
@@ -17,14 +16,12 @@ class ofxMinimalButton : public ofxMinimalToggle {
 			std::string name;
 		};
 
-		ofxMinimalButton(const Config & config = Config());
+        ofxMinimalButton();
+        ofxMinimalButton(const Config & config);
 		~ofxMinimalButton();
 		ofxMinimalButton & setup(const std::string & toggleName, float width = defaultWidth, float height = defaultHeight);
 
-		virtual bool mouseReleased(ofMouseEventArgs & args);
-		virtual bool mouseMoved(ofMouseEventArgs & args);
-		virtual bool mousePressed(ofMouseEventArgs & args);
-		virtual bool mouseDragged(ofMouseEventArgs & args);
+        virtual bool mouseReleased(ofMouseEventArgs & args);
 
 		template <class ListenerClass, typename ListenerMethod>
 		void addListener(ListenerClass * listener, ListenerMethod method){

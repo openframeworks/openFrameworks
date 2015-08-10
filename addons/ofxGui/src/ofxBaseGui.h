@@ -51,6 +51,7 @@ class ofxBaseGui {
 		virtual void setShape(float x, float y, float w, float h);
 		virtual void setInContainer(bool inContainer=true);
         virtual void setLayout(Layout layout=Vertical);
+        Layout getLayout() const;
 
 		ofPoint getPosition() const;
 		ofRectangle getShape() const;

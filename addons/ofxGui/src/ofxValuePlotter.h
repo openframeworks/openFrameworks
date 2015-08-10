@@ -16,14 +16,12 @@ class ofxValuePlotter : public ofxBaseGui {
 		};
 
 		ofxValuePlotter();
-		ofxValuePlotter(const Config & config);
-		ofxValuePlotter(string label, float minValue = Config().minValue, float maxValue = Config().maxValue, int plotSize = Config().plotSize, float width = defaultWidth, float height = defaultHeight);
+        ofxValuePlotter(ofParameter<float> value, const Config & config);
 		virtual ~ofxValuePlotter();
 
 		ofxValuePlotter & setup(const Config & config);
 		ofxValuePlotter & setup(string label = "", float minValue = Config().minValue, float maxValue = Config().maxValue, int plotSize = Config().plotSize, float width = defaultWidth, float height = defaultHeight);
 
-		void update(float value);
 		void setDecimalPlace(int place);
 
 		// Abstract methods we must implement, but have no need for!
@@ -56,11 +54,13 @@ class ofxValuePlotter : public ofxBaseGui {
 		ofVboMesh textMesh;
 		vector <float> buffer;
 		int plotSize;
-		ofPath plot;
-		float lastVal;
+        ofPath plot;
 		float minVal, maxVal;
 		bool autoscale;
 		int decimalPlace;
 		ofParameter <string> label;
+        ofParameter<float> value;
+
+        void valueChanged(float & value);
 
 };

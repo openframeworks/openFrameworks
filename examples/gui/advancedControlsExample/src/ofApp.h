@@ -24,16 +24,13 @@ class ofApp : public ofBaseApp {
 
 	private:
 
-		ofxPanel panel1, panel2, panel3, panel4, panel5;
+        ofxPanel panel1, panel2, panel3;
 		ofxGuiGroup rotary;
-		ofxGuiMatrix matrix;
+        ofxGuiMatrix matrix;
 
-		ofImage img;
-        ofxGuiGraphics canvas;
-        ofxGuiZoomableGraphics zcanvas;
+        ofImage img;
 
-		ofxFpsPlotter fps;
-		ofxMinimalButton button;
+        ofxMinimalButton button;
 
 		ofParameter <string> label_param;
 		ofParameter <bool> toggle_param;

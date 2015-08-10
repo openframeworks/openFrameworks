@@ -30,19 +30,6 @@ ofxGuiMatrix::ofxGuiMatrix(const ofParameterGroup & parameters, const Config & c
 	setNeedsRedraw();
 }
 
-ofxGuiMatrix::ofxGuiMatrix(const ofParameterGroup & parameters, int cols, const std::string & filename, float x, float y) :
-	ofxGuiGroup(parameters, filename, x, y)
-	,
-	w_matrix(Config().shape.width)
-	,
-	w_element(0)
-	,
-	h_element(Config().rowHeight){
-	setColNum(cols);
-	sizeChangedCB();
-	setNeedsRedraw();
-}
-
 ofxGuiMatrix & ofxGuiMatrix::setup(const ofParameterGroup & parameters, const Config & config){
 	ofxGuiGroup::setup(parameters, config);
 	setColNum(config.columnCount);
@@ -66,7 +53,7 @@ ofxGuiMatrix & ofxGuiMatrix::setup(const ofParameterGroup & _parameters, int col
 }
 
 void ofxGuiMatrix::add(ofxBaseGui * element){
-	collection.push_back(element);
+    collection.push_back(element);
 
 	element->unregisterMouseEvents();
 
@@ -92,6 +79,7 @@ void ofxGuiMatrix::scaleWidthElements(float factor){
 void ofxGuiMatrix::maximize(){
 	minimized = false;
 	b.height += (h_element + spacing) * getRowNum();
+    ofNotifyEvent(sizeChangedE, this);
 	setNeedsRedraw();
 }
 
@@ -116,7 +104,9 @@ void ofxGuiMatrix::sizeChangedCB(){
 			y_e = (int)(i / numCol);
 		}
 
+        collection[i]->sizeChangedE.disable();
 		collection[i]->setSize(w_element, h_element);
+        collection[i]->sizeChangedE.enable();
 
 		if(i == 0){
 			collection[i]->setPosition(x, y);
@@ -129,6 +119,7 @@ void ofxGuiMatrix::sizeChangedCB(){
 
 	b.height = y + (h_element + spacing) * getRowNum() + spacing - b.y;
 
+    ofNotifyEvent(sizeChangedE,this);
 	setNeedsRedraw();
 }
 

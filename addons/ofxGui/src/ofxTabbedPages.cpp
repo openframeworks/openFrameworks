@@ -16,7 +16,7 @@ ofxTabbedPages & ofxTabbedPages::setup(string collectionName, string filename, f
 	tabs.setup("tabs");
 	tabs.setShowHeader(false);
 	tabs.setExclusiveToggles(true);
-	tabs.setAlignHorizontal();
+    tabs.setLayout(ofxBaseGui::Horizontal);
 	tabs.setBorderColor(ofColor(0, 0, 0, 0));
 	tabs.setDefaultBackgroundColor(thisBorderColor);
 	tabs.setDefaultBorderColor(thisBorderColor);
@@ -32,7 +32,7 @@ ofxTabbedPages & ofxTabbedPages::setup(string collectionName, string filename, f
 	return *this;
 }
 
-void ofxTabbedPages::add(ofxGuiGroup *element){
+void ofxTabbedPages::add(ofxGuiPage *element){
 	collection.push_back(element);
 
 	parameters_tabs.push_back(ofParameter <bool>(element->getName(), false));
@@ -187,9 +187,12 @@ void ofxTabbedPages::setSizeToElement(ofxBaseGui * element){
 void ofxTabbedPages::sizeChangedCB(){
 	tabs.setShape(tabShape);
 
-	for(int i = 1; i < (int)collection.size(); i++){
-		collection[i]->setShape(pagesShape, false);
+    for(int i = 1; i < (int)collection.size(); i++){
+        collection[i]->sizeChangedE.disable();
+        collection[i]->setShape(pagesShape);
+        collection[i]->sizeChangedE.enable();
 	}
+    ofNotifyEvent(sizeChangedE,this);
 	setNeedsRedraw();
 }
 

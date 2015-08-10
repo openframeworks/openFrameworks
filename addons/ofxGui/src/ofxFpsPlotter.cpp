@@ -4,34 +4,36 @@
 ofxFpsPlotter::ofxFpsPlotter(){
 }
 
-ofxFpsPlotter::ofxFpsPlotter(const Config & config){
-	setup(config);
-}
-
-ofxFpsPlotter::ofxFpsPlotter(float minValue, float maxValue, int plotSize, float width, float height){
-	setup(minValue, maxValue, plotSize, width, height);
+ofxFpsPlotter::ofxFpsPlotter(const ofxValuePlotter::Config & config)
+:ofxValuePlotter(ofParameter<float>("fps",0),config){
+    if(minVal == maxVal) {
+        if(ofGetTargetFrameRate() > 0) {
+            minVal = 0;
+            maxVal = ofGetTargetFrameRate();
+        }
+    }
+    setDecimalPlace(0);
+    ofAddListener(ofEvents().update,this,&ofxFpsPlotter::update);
 }
 
 ofxFpsPlotter::~ofxFpsPlotter(){
+    ofRemoveListener(ofEvents().update,this,&ofxFpsPlotter::update);
 }
 
-ofxFpsPlotter & ofxFpsPlotter::setup(const Config & config){
-	return setup(config.minValue, config.maxValue, config.plotSize);
+ofxFpsPlotter & ofxFpsPlotter::setup(string label, float minValue, float maxValue, int plotSize, float width, float height){
+    ofxValuePlotter::setup(label, minValue, maxValue, plotSize, width, height);
+    if(minVal == maxVal) {
+        if(ofGetTargetFrameRate() > 0) {
+            minVal = 0;
+            maxVal = ofGetTargetFrameRate();
+        }
+    }
+    setDecimalPlace(0);
+    ofAddListener(ofEvents().update,this,&ofxFpsPlotter::update);
 }
 
-ofxFpsPlotter & ofxFpsPlotter::setup(float minValue, float maxValue, int plotSize, float width, float height){
-	if(minValue == maxValue){
-		if(ofGetTargetFrameRate() > 0){
-			minValue = 0;
-			maxValue = ofGetTargetFrameRate();
-		}
-	}
-	ofxValuePlotter::setup("FPS", minValue, maxValue, plotSize, width, height);
-	setDecimalPlace(0);
-	return *this;
-}
-
-void ofxFpsPlotter::update(){
-	ofxValuePlotter::update(ofGetFrameRate());
+void ofxFpsPlotter::update(ofEventArgs &){
+    value = ofGetFrameRate();
+    setNeedsRedraw();
 }
 

@@ -13,7 +13,6 @@ public:
 
     ofxLabel();
     ofxLabel(ofParameter<std::string> _label, const Config & config = Config());
-    ofxLabel(ofParameter<std::string> _label, float width, float height = defaultHeight);
     virtual ~ofxLabel();
 
     ofxLabel & setup(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);
@@ -26,8 +25,8 @@ public:
     virtual bool mouseReleased(ofMouseEventArgs & args){return false;}
     virtual bool mouseScrolled(ofMouseEventArgs & args){return false;}
 
-	virtual void saveTo(ofBaseSerializer& serializer){};
-	virtual void loadFrom(ofBaseSerializer& serializer){};
+    virtual void saveTo(ofBaseSerializer& serializer){}
+    virtual void loadFrom(ofBaseSerializer& serializer){}
 
 
 	template<class ListenerClass, typename ListenerMethod>

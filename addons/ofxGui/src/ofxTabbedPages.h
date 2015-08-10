@@ -5,12 +5,27 @@
 class ofxTabbedPages : public ofxGuiPage {
 
 	public:
+
+        struct Config: public ofxGuiPage::Config{
+            Config(){}
+            Config(const ofxGuiPage::Config & c)
+            :ofxGuiPage::Config(c){}
+            Config(const ofxGuiGroup::Config & c)
+            :ofxGuiPage::Config(c){}
+            Config(const ofxBaseGui::Config & c)
+            :ofxGuiPage::Config(c){}
+
+            float tabWidth = 100;
+            float tabHeight = defaultHeight;
+        };
+
 		ofxTabbedPages();
+        ofxTabbedPages(const Config & config);
 		~ofxTabbedPages();
 
-		ofxTabbedPages & setup(std::string collectionName = "", std::string filename = "settings.xml", float x = 10, float y = 10);
+        ofxTabbedPages & setup(std::string collectionName = "", std::string filename = "settings.xml", float x = 10, float y = 10);
 
-        virtual void add(ofxGuiGroup * element);
+        using ofxGuiGroup::add;
 
 		void clear();
 
@@ -27,11 +42,12 @@ class ofxTabbedPages : public ofxGuiPage {
 		void updateContentShapes();
 		void setSizeToElement(ofxBaseGui * element);
 		virtual void sizeChangedCB();
+        virtual void add(ofxGuiPage * element);
 
 	private:
 
 		ofxGuiGroup tabs;
-		vector <ofParameter <bool> > parameters_tabs;
+        std::vector <ofParameter <bool> > parameters_tabs;
 		float tabHeight, tabWidth;
 		ofRectangle pagesShape, tabShape;
 		ofPath bg;

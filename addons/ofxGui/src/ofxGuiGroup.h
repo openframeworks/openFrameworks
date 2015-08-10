@@ -20,13 +20,11 @@ class ofxGuiGroup : public ofxBaseGui {
 			float spacingFirstElement = 0;
             float header = defaultHeight;
             bool showHeader = true;
-            bool vertical = true;
             bool exclusiveToggles = false;
 		};
 
         ofxGuiGroup();
         ofxGuiGroup(const ofParameterGroup & parameters, const Config & config = Config());
-		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename, float x = 10, float y = 10);
 		virtual ~ofxGuiGroup();
 
 		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const Config & config);
@@ -95,6 +93,8 @@ class ofxGuiGroup : public ofxBaseGui {
 		template<class GuiType>
 		void add();
 
+        void addSpacer(float size);
+
 		void minimize();
 		void maximize();
 		void minimizeAll();
@@ -114,32 +114,26 @@ class ofxGuiGroup : public ofxBaseGui {
 		std::vector <std::string> getControlNames() const;
 		std::size_t getNumControls() const;
 
-		ofxIntSlider & getIntSlider(const std::string& name);
-		ofxFloatSlider & getFloatSlider(const std::string& name);
-		ofxToggle & getToggle(const std::string& name);
-		ofxButton & getButton(const std::string& name);
-		ofxGuiGroup & getGroup(const std::string& name);
+        ofxIntSlider & getIntSlider(const std::string& name);
+        ofxFloatSlider & getFloatSlider(const std::string& name);
+        ofxToggle & getToggle(const std::string& name);
+        ofxButton & getButton(const std::string& name);
+        ofxGuiGroup & getGroup(const std::string& name);
 
-		ofxBaseGui * getControl(const std::string& name);
-		ofxBaseGui * getControl(std::size_t num);
+        ofxBaseGui * getControl(const std::string& name);
+        ofxBaseGui * getControl(std::size_t num);
 
 		virtual ofAbstractParameter & getParameter();
 
 		virtual void setPosition(ofPoint p);
-		virtual void setPosition(float x, float y);
-        virtual void setSize(float w, float h, bool callback = true);
-        virtual void setShape(ofRectangle r, bool callback = true);
-        virtual void setShape(float x, float y, float w, float h, bool callback = true);
-
-        void setAlignHorizontal();
-        void setAlignVertical();
+        virtual void setPosition(float x, float y);
 
         void setShowHeader(bool show);
 
         void setExclusiveToggles(bool exclusive);
         bool setActiveToggle(int index);
         bool setActiveToggle(ofxToggle* toggle);
-        int getActiveToggleIndex();
+        int getActiveToggleIndex() const;
 
 	protected:
 		virtual void render();
@@ -152,12 +146,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		template <class ControlType>
 		ControlType & getControlType(const std::string& name);
 		void setWidthElements(float w);
-		void addParametersFrom(const ofParameterGroup & parameters);
-
-        int active_toggle_index;
-        bool processToggles(ofxToggle *toggle, ofMouseEventArgs a);
-        void setOneToggleActive();
-        void deactivateAllOtherToggles(ofxToggle* toggle);
+        void addParametersFrom(const ofParameterGroup & parameters);
 
 		float spacing, spacingNextElement, spacingFirstElement;
 		float header;
@@ -167,10 +156,14 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		std::string filename;
 		bool minimized;
-		bool bGuiActive;
         bool bShowHeader;
-        bool bVertical;
         bool bExclusiveToggles;
+		bool bGuiActive;
+
+        int active_toggle_index;
+        bool processToggles(ofxToggle *toggle, ofMouseEventArgs a);
+        void setOneToggleActive();
+        void deactivateAllOtherToggles(ofxToggle* toggle);
 
 		ofPath border, headerBg;
 		ofVboMesh textMesh;
@@ -217,7 +210,7 @@ template<class GuiType, typename Type, class C>
 void ofxGuiGroup::add(ofParameter<Type> p, const C & config){
 	auto inContainerConfig = config;
 	inContainerConfig.inContainer = true;
-	inContainerConfig.layout = this->layout;
+//	inContainerConfig.layout = this->layout;
 	addOwned(new GuiType(p,inContainerConfig));
 }
 
@@ -225,7 +218,7 @@ template<class GuiType, class C>
 void ofxGuiGroup::add(ofParameterGroup p, const C & config){
 	auto inContainerConfig = config;
 	inContainerConfig.inContainer = true;
-	inContainerConfig.layout = this->layout;
+//	inContainerConfig.layout = this->layout;
 	addOwned(new GuiType(p,inContainerConfig));
 }
 
@@ -233,15 +226,15 @@ template<class GuiType, class C>
 void ofxGuiGroup::add(const C & config){
 	auto inContainerConfig = config;
 	inContainerConfig.inContainer = true;
-	inContainerConfig.layout = this->layout;
+//	inContainerConfig.layout = this->layout;
 	addOwned(new GuiType(inContainerConfig));
 }
 
 template<class GuiType>
 void ofxGuiGroup::add(){
-	auto inContainerConfig = config;
+    typename GuiType::Config inContainerConfig = config;
 	inContainerConfig.inContainer = true;
-	inContainerConfig.layout = this->layout;
+//	inContainerConfig.layout = this->layout;
 	addOwned(new GuiType(inContainerConfig));
 }
 

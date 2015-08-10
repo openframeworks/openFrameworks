@@ -5,16 +5,13 @@ using namespace std;
 ofxValuePlotter::ofxValuePlotter(){
 }
 
-ofxValuePlotter::ofxValuePlotter(const Config & config = Config()) :
+ofxValuePlotter::ofxValuePlotter(ofParameter<float> value, const Config & config = Config()) :
 	ofxBaseGui(config){
 	setup(config);
 }
 
-ofxValuePlotter::ofxValuePlotter(string label, float minValue, float maxValue, int plotSize, float width, float height){
-	setup(label, minValue, maxValue, plotSize, width, height);
-}
-
 ofxValuePlotter::~ofxValuePlotter(){
+    value.removeListener(this,&ofxValuePlotter::valueChanged);
 }
 
 ofxValuePlotter & ofxValuePlotter::setup(const Config & config){
@@ -29,31 +26,10 @@ ofxValuePlotter & ofxValuePlotter::setup(string label, float minValue, float max
 	autoscale = minVal == maxVal;
 	buffer.clear();
 	this->plotSize = plotSize;
+    value.addListener(this,&ofxValuePlotter::valueChanged);
 	setName(label);
 	setNeedsRedraw();
 	return *this;
-}
-
-void ofxValuePlotter::update(float value){
-	lastVal = value;
-	if(plotSize > 0){
-		buffer.push_back(value);
-
-		if((int)buffer.size() > plotSize){
-			buffer.erase(buffer.begin(), buffer.begin() + 1);
-		}
-		if(autoscale){
-			if(value < minVal){
-				minVal = value;
-			}
-			if(value > maxVal){
-				maxVal = value;
-			}
-		}
-	}
-
-	setNeedsRedraw();
-
 }
 
 void ofxValuePlotter::setDecimalPlace(int place){
@@ -61,20 +37,22 @@ void ofxValuePlotter::setDecimalPlace(int place){
 }
 
 void ofxValuePlotter::generateDraw(){
+
 	bg.clear();
 
 	bg.setFillColor(thisBackgroundColor);
 	bg.setFilled(true);
 	bg.rectangle(b);
 
-	label = ofToString(lastVal, decimalPlace);
+    label = ofToString(value.get(), decimalPlace);
 	if(bShowName){
-		label = ofToString(lastVal, decimalPlace) + " " + this->getName();
-	}
+        label += " " + this->getName();
+    }
 
 	textMesh = getTextMesh(label, b.x + textPadding, b.y + b.height / 2 + 4);
 
 	if(plotSize > 0){
+
 		plot.clear();
 		if(minVal != maxVal && buffer.size() > 1){
 			plot.moveTo(b.x, b.y + b.height);
@@ -118,4 +96,23 @@ void ofxValuePlotter::render(){
 
 ofAbstractParameter & ofxValuePlotter::getParameter(){
 	return label;
+}
+
+void ofxValuePlotter::valueChanged(float & value){
+    if(plotSize > 0){
+        buffer.push_back(value);
+
+        if((int)buffer.size() > plotSize){
+            buffer.erase(buffer.begin(), buffer.begin() + 1);
+        }
+        if(autoscale){
+            if(value < minVal){
+                minVal = value;
+            }
+            if(value > maxVal){
+                maxVal = value;
+            }
+        }
+    }
+    setNeedsRedraw();
 }

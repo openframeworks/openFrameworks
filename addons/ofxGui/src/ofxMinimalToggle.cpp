@@ -7,56 +7,31 @@ ofxMinimalToggle::ofxMinimalToggle() :
 	thisBorderColor = thisFillColor;
 }
 
-ofxMinimalToggle::ofxMinimalToggle(ofParameter <bool> _bVal, const Config & config){
+ofxMinimalToggle::ofxMinimalToggle(ofParameter <bool> val, const Config & config)
+:ofxToggle(val,config){
 	thisBorderColor = thisFillColor;
-	setup(_bVal, config.shape.width, config.shape.height);
+    if(b.width == 0) {
+        b. width = getTextWidth(val.getName(), config.shape.height);
+    }
 }
 
 ofxMinimalToggle::~ofxMinimalToggle(){
-	value.removeListener(this, &ofxMinimalToggle::valueChanged);
 }
 
-ofxMinimalToggle & ofxMinimalToggle::setup(ofParameter <bool> _bVal, float width, float height){
-	if(width == 0){
-		width = getTextWidth(_bVal.getName(), height);
-	}
-	b.x = 0;
-	b.y = 0;
-	b.width = width;
-	b.height = height;
-	bGuiActive = false;
-	value.makeReferenceTo(_bVal);
-
-	value.addListener(this, &ofxMinimalToggle::valueChanged);
-	registerMouseEvents();
-	setNeedsRedraw();
+ofxMinimalToggle & ofxMinimalToggle::setup(ofParameter <bool> val, float width, float height){
+    ofxToggle::setup(val,width,height);
+    if(b.width == 0){
+        b.width = getTextWidth(val.getName(), height);
+    }
 
 	return *this;
 
 }
 
-ofxMinimalToggle & ofxMinimalToggle::setup(const string & toggleName, bool _bVal, float width, float height){
-	value.set(toggleName, _bVal);
+ofxMinimalToggle & ofxMinimalToggle::setup(const string & toggleName, bool val, float width, float height){
+    value.set(toggleName, val);
 	return setup(value, width, height);
 }
-
-
-bool ofxMinimalToggle::mouseMoved(ofMouseEventArgs & args){
-	return ofxToggle::mouseMoved(args);
-}
-
-bool ofxMinimalToggle::mousePressed(ofMouseEventArgs & args){
-	return ofxToggle::mousePressed(args);
-}
-
-bool ofxMinimalToggle::mouseDragged(ofMouseEventArgs & args){
-	return ofxToggle::mouseDragged(args);
-}
-
-bool ofxMinimalToggle::mouseReleased(ofMouseEventArgs & args){
-	return ofxToggle::mouseReleased(args);
-}
-
 
 void ofxMinimalToggle::generateDraw(){
 	checkboxRect.set(1, 1, b.width - 2, b.height - 2);
@@ -108,11 +83,7 @@ void ofxMinimalToggle::render(){
     }
 }
 
-bool ofxMinimalToggle::setValue(float mx, float my, bool bCheck){
-	return ofxToggle::setValue(mx, my, bCheck);
-}
-
-float ofxMinimalToggle::getTextWidth(string text, float _height){
+float ofxMinimalToggle::getTextWidth(std::string text, float _height){
 	float _width = 0;
 	ofVboMesh mesh = getTextMesh(text, 0, _height / 2 + 4);
 	for(unsigned int i = 0; i < mesh.getVertices().size(); i++){
@@ -124,6 +95,3 @@ float ofxMinimalToggle::getTextWidth(string text, float _height){
 	return _width;
 }
 
-void ofxMinimalToggle::valueChanged(bool & value){
-	ofxToggle::valueChanged(value);
-}

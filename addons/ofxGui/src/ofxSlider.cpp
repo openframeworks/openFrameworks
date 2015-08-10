@@ -4,9 +4,9 @@ using namespace std;
 
 template<typename Type>
 ofxSlider<Type>::ofxSlider(){
-	bUpdateOnReleaseOnly = false;
-	bGuiActive = false;
-	mouseInside = false;
+    bUpdateOnReleaseOnly = false;
+    bGuiActive = false;
+    mouseInside = false;
 }
 
 template<typename Type>
@@ -19,33 +19,17 @@ ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, const Config & config)
 :ofxBaseGui(config)
 ,bUpdateOnReleaseOnly(config.updateOnReleaseOnly)
 ,bGuiActive(false)
-,mouseInside(false)
-{
+,mouseInside(false){
+    if(layout == ofxBaseGui::Vertical){
+        float _w = b.width;
+        float _h = b.height;
+        b.height = _w;
+        b.width = _h;
+    }
 	value.makeReferenceTo(_val);
 	value.addListener(this,&ofxSlider::valueChanged);
 	setNeedsRedraw();
 	registerMouseEvents();
-}
-
-template<typename Type>
-ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, float width, float height){
-	setup(_val,width,height);
-}
-
-template<typename Type>
-ofxSlider<Type> & ofxSlider<Type>::setup(ofParameter<Type> _val, float width, float height){
-	bUpdateOnReleaseOnly = false;
-	value.makeReferenceTo(_val);
-	b.x = 0;
-	b.y = 0;
-	b.width = width;
-	b.height = height;
-	bGuiActive = false;
-	setNeedsRedraw();
-
-	value.addListener(this,&ofxSlider::valueChanged);
-	registerMouseEvents();
-	return *this;
 }
 
 template<typename Type>
@@ -169,10 +153,19 @@ void ofxSlider<Type>::generateDraw(){
 	bg.setFilled(true);
 	bg.rectangle(b);
 
-	float valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
+    float valAsPct;
+    if(layout == ofxBaseGui::Horizontal){
+        valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.width-2, true );
+    }else{
+        valAsPct = ofMap( value, value.getMin(), value.getMax(), 0, b.height-2, true );
+    }
 	bar.setFillColor(thisFillColor);
 	bar.setFilled(true);
-	bar.rectangle(b.x+1, b.y+1, valAsPct, b.height-2);
+    if(layout == ofxBaseGui::Horizontal){
+        bar.rectangle(b.x+1, b.y+1, valAsPct, b.height-2);
+    }else{
+        bar.rectangle(b.x + 1, b.y + b.height - 1 - valAsPct, b.width - 2, valAsPct);
+    }
 
     if(bShowName){
         generateText();
@@ -182,16 +175,48 @@ void ofxSlider<Type>::generateDraw(){
 
 template<typename Type>
 void ofxSlider<Type>::generateText(){
-	string valStr = ofToString(value);
-	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+    if(layout == ofxBaseGui::Horizontal){
+        string valStr = ofToString(value);
+        textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+        textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+    }else{
+        this->textMesh.clear();
+        if(this->bShowName){
+            string nameStr = this->getName();
+            while(this->getTextBoundingBox(nameStr, 0, 0).getWidth() + this->textPadding * 2 > this->b.getWidth() && nameStr.length() > 1){
+                nameStr = nameStr.substr(0, nameStr.size() - 1);
+            }
+            this->textMesh.append(this->getTextMesh(nameStr, this->b.x + this->textPadding, this->b.y + this->textPadding + this->getTextBoundingBox(nameStr, 0, 0).height));
+        }
+        string valStr = ofToString(this->value);
+        while(this->getTextBoundingBox(valStr, 0, 0).getWidth() + this->textPadding * 2 > this->b.getWidth() && valStr.length() > 1){
+            valStr = valStr.substr(0, valStr.size() - 1);
+        }
+        this->textMesh.append(this->getTextMesh(valStr, this->b.x + this->textPadding, this->b.y + this->b.height - this->textPadding));
+    }
 }
 
 template<>
 void ofxSlider<unsigned char>::generateText(){
-	string valStr = ofToString((int)value);
-	textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
-	textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+    if(layout == ofxBaseGui::Horizontal){
+        string valStr = ofToString(value);
+        textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+        textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
+    }else{
+        this->textMesh.clear();
+        if(this->bShowName){
+            string nameStr = this->getName();
+            while(this->getTextBoundingBox(nameStr, 0, 0).getWidth() + this->textPadding * 2 > this->b.getWidth() && nameStr.length() > 1){
+                nameStr = nameStr.substr(0, nameStr.size() - 1);
+            }
+            this->textMesh.append(this->getTextMesh(nameStr, this->b.x + this->textPadding, this->b.y + this->textPadding + this->getTextBoundingBox(nameStr, 0, 0).height));
+        }
+        string valStr = ofToString(this->value);
+        while(this->getTextBoundingBox(valStr, 0, 0).getWidth() + this->textPadding * 2 > this->b.getWidth() && valStr.length() > 1){
+            valStr = valStr.substr(0, valStr.size() - 1);
+        }
+        this->textMesh.append(this->getTextMesh(valStr, this->b.x + this->textPadding, this->b.y + this->b.height - this->textPadding));
+    }
 }
 
 template<typename Type>
@@ -234,7 +259,11 @@ bool ofxSlider<Type>::setValue(float mx, float my, bool bCheck){
 		}
 	}
 	if( bGuiActive ){
-		value = ofMap(mx, b.x, b.x + b.width, value.getMin(), value.getMax(), true);
+        if(layout == ofxBaseGui::Horizontal){
+            value = ofMap(mx, b.x, b.x + b.width, value.getMin(), value.getMax(), true);
+        }else{
+            value = ofMap(my, b.y + b.height, b.y, value.getMin(), value.getMax(), true);
+        }
 		return true;
 	}
 	return false;

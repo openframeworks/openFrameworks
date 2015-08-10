@@ -76,15 +76,3 @@ void ofxGuiPage::sizeChangedCB(){
 	sizeChangedE.notify(this);
 	setNeedsRedraw();
 }
-
-void ofxGuiPage::setSize(float w, float h, bool callBack){
-	ofxBaseGui::setSize(w, h, callBack);
-}
-
-void ofxGuiPage::setShape(ofRectangle r, bool callBack){
-	ofxBaseGui::setShape(r, callBack);
-}
-
-void ofxGuiPage::setShape(float x, float y, float w, float h, bool callBack){
-	ofxBaseGui::setShape(x, y, w, h, callBack);
-}

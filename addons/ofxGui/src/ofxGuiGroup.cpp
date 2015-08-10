@@ -2,21 +2,10 @@
 #include "ofxPanel.h"
 #include "ofGraphics.h"
 #include "ofxSliderGroup.h"
+#include "ofxGuiSpacer.h"
 using namespace std;
 
-ofxGuiGroup::ofxGuiGroup()
-:ofxBaseGui(Config())
-,spacing(Config().spacing)
-,spacingNextElement(Config().spacingNextElement)
-,spacingFirstElement(Config().spacingFirstElement)
-,header(Config().header)
-,filename(Config().filename)
-,minimized(Config().minimized)
-,bShowHeader(Config().showHeader)
-,bVertical(Config().vertical)
-,bExclusiveToggles(Config().exclusiveToggles)
-,active_toggle_index(-1)
-,bGuiActive(false){
+ofxGuiGroup::ofxGuiGroup(){
 }
 
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & config)
@@ -28,28 +17,14 @@ ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & co
 ,filename(config.filename)
 ,minimized(config.minimized)
 ,bShowHeader(config.showHeader)
-,bVertical(config.vertical)
 ,bExclusiveToggles(config.exclusiveToggles)
-,active_toggle_index(-1)
 ,bGuiActive(false)
+,active_toggle_index(-1)
 ,config(config){
 	addParametersFrom(_parameters);
 	parameters = _parameters;
 	registerMouseEvents();
 	setNeedsRedraw();
-}
-
-ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
-	minimized = false;
-	spacing = 1;
-	spacingNextElement = 3;
-	spacingFirstElement = 0;
-	header = defaultHeight;
-    bShowHeader = true;
-    bVertical = true;
-    bExclusiveToggles = false;
-    active_toggle_index = -1;
-	setup(parameters, filename, x, y);
 }
 
 ofxGuiGroup::~ofxGuiGroup(){
@@ -67,7 +42,6 @@ ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & parameters, const Conf
 	filename = config.filename;
 	minimized = config.minimized;
     bShowHeader = config.showHeader;
-    bVertical = config.vertical;
 	bGuiActive = false;
 	this->config = config;
 	addParametersFrom(parameters);
@@ -85,7 +59,12 @@ ofxGuiGroup & ofxGuiGroup::setup(const std::string& collectionName, const std::s
 ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y){
 	b.x = x;
 	b.y = y;
-	spacing = 1;
+    spacing = Config().spacing;
+    spacingNextElement = Config().spacingNextElement;
+    spacingFirstElement = Config().spacingFirstElement;
+    header = Config().header;
+    minimized = Config().minimized;
+    bShowHeader = Config().showHeader;
 	b.width = defaultWidth;
 	clear();
 	filename = _filename;
@@ -187,8 +166,8 @@ void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
 void ofxGuiGroup::add(ofxBaseGui * element){
 	collection.push_back(element);
 
-    if(bVertical || collection.size() == 1) {
-        if(bVertical){
+    if(layout == ofxBaseGui::Vertical || collection.size() == 1) {
+        if(layout == ofxBaseGui::Vertical){
             element->setSize(b.width-1, element->getHeight());
         }
         if(collection.size() == 1) {
@@ -240,8 +219,18 @@ void ofxGuiGroup::addOwned(ofxGuiGroup * element){
 	add(element);
 }
 
+void ofxGuiGroup::addSpacer(float size) {
+    ofxGuiSpacer::Config spacer_config;
+    if(layout == ofxBaseGui::Vertical){
+        spacer_config.shape.height = size;
+    }else {
+        spacer_config.shape.width = size;
+    }
+    add <ofxGuiSpacer>(spacer_config);
+}
+
 void ofxGuiGroup::setWidthElements(float w){
-    if(bVertical){
+    if(layout == ofxBaseGui::Vertical){
         for(auto & e: collection){
             e->setSize(w, e->getHeight());
             e->setPosition(b.x + b.width - w, e->getPosition().y);
@@ -476,7 +465,7 @@ void ofxGuiGroup::minimize(){
 
 void ofxGuiGroup::maximize(){
 	minimized = false;
-    if(bVertical) {
+    if(layout == ofxBaseGui::Vertical) {
         if(collection.size() > 0){
             b.height = collection.at(collection.size()-1)->getShape().getBottom() + 1 - b.y;
         }
@@ -514,15 +503,17 @@ void ofxGuiGroup::maximizeAll(){
 
 void ofxGuiGroup::sizeChangedCB(){
     float x = b.x;
-    float y = b.y + spacing + spacingFirstElement;
+    float y = b.y + spacingFirstElement;
     if(bShowHeader){
         y += header;
     }
 
-    if(bVertical){
+    if(layout == ofxBaseGui::Vertical){
         for(auto & e: collection){
             e->setPosition(e->getPosition().x,y + spacing);
-            e->setSize(b.width-1, e->getHeight(), false);
+            e->sizeChangedE.disable();
+            e->setSize(b.width-1, e->getHeight());
+            e->sizeChangedE.enable();
             y += e->getHeight()+spacing;
         }
         b.height = y - b.y;
@@ -541,16 +532,6 @@ void ofxGuiGroup::sizeChangedCB(){
     }
 	sizeChangedE.notify(this);
 	setNeedsRedraw();
-}
-
-void ofxGuiGroup::setAlignHorizontal() {
-    bVertical = false;
-    sizeChangedCB();
-}
-
-void ofxGuiGroup::setAlignVertical() {
-    bVertical = true;
-    sizeChangedCB();
 }
 
 void ofxGuiGroup::setShowHeader(bool show) {
@@ -594,27 +575,6 @@ void ofxGuiGroup::setPosition(float x, float y){
 	setPosition(ofVec2f(x, y));
 }
 
-void ofxGuiGroup::setSize(float w, float h, bool callback){
-    ofxBaseGui::setSize(w,h,callback);
-    if(callback) {
-        setWidthElements(w * .98);
-    }
-}
-
-void ofxGuiGroup::setShape(ofRectangle r, bool callback){
-    ofxBaseGui::setShape(r,callback);
-    if(callback) {
-        setWidthElements(r.width * .98);
-    }
-}
-
-void ofxGuiGroup::setShape(float x, float y, float w, float h, bool callback){
-    ofxBaseGui::setShape(x,y,w,h,callback);
-    if(callback) {
-        setWidthElements(w * .98);
-    }
-}
-
 bool ofxGuiGroup::processToggles(ofxToggle* toggle, ofMouseEventArgs a) {
     if(bExclusiveToggles) {
         if(!toggle->getParameter().cast<bool>().get()) {
@@ -635,7 +595,7 @@ void ofxGuiGroup::setExclusiveToggles(bool exclusive) {
 }
 
 bool ofxGuiGroup::setActiveToggle(ofxToggle* toggle) {
-    if(!toggle->getParameter().cast<bool>().get()) {
+    if(!(*toggle)) {
         *toggle = true;
         deactivateAllOtherToggles(toggle);
         return true;
@@ -680,6 +640,6 @@ void ofxGuiGroup::setOneToggleActive() {
 }
 
 
-int ofxGuiGroup::getActiveToggleIndex() {
+int ofxGuiGroup::getActiveToggleIndex() const {
     return active_toggle_index;
 }

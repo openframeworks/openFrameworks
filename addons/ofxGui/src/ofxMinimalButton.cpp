@@ -2,6 +2,8 @@
 #include "ofGraphics.h"
 using namespace std;
 
+ofxMinimalButton::ofxMinimalButton(){}
+
 ofxMinimalButton::ofxMinimalButton(const Config & config) :
 	ofxMinimalToggle(ofParameter <bool>(config.name, false), config){
 	value.setSerializable(false);
@@ -40,18 +42,6 @@ bool ofxMinimalButton::mouseReleased(ofMouseEventArgs & args){
 	}else{
 		return false;
 	}
-}
-
-bool ofxMinimalButton::mouseMoved(ofMouseEventArgs & args){
-	return ofxMinimalToggle::mouseMoved(args);
-}
-
-bool ofxMinimalButton::mousePressed(ofMouseEventArgs & args){
-	return ofxMinimalToggle::mousePressed(args);
-}
-
-bool ofxMinimalButton::mouseDragged(ofMouseEventArgs & args){
-	return ofxMinimalToggle::mouseDragged(args);
 }
 
 void ofxMinimalButton::valueChanged(bool & value){

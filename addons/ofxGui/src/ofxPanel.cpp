@@ -26,16 +26,6 @@ ofxPanel::ofxPanel(const ofParameterGroup & parameters, const Config & config)
 	setNeedsRedraw();
 }
 
-ofxPanel::ofxPanel(const ofParameterGroup & parameters, const std::string& filename, float x, float y)
-: ofxGuiGroup(parameters, filename, x, y)
-, bGrabbed(false){
-	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
-		loadIcons();
-	}
-	registerMouseEvents();
-	setNeedsRedraw();
-}
-
 ofxPanel::~ofxPanel(){
 	//
 }
@@ -80,7 +70,7 @@ void ofxPanel::generateDraw(){
 	border.clear();
     border.setFillColor(thisBorderColor);
     border.setFilled(true);
-	border.rectangle(b.x,b.y,b.width+1,b.height-spacingNextElement);
+    border.rectangle(b.x,b.y,b.width+1,b.height);
 
     if(bShowHeader){
         generateDrawHeader();

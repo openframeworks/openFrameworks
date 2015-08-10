@@ -3,22 +3,14 @@
 #include "ofxValuePlotter.h"
 
 class ofxFpsPlotter : public ofxValuePlotter {
-	public:
-		struct Config : public ofxValuePlotter::Config {
-			Config(){
-			}
-			Config(const ofxValuePlotter::Config & c) : ofxValuePlotter::Config(c){
-			}
-		};
+    public:
 		ofxFpsPlotter();
-		ofxFpsPlotter(const Config & config);
-		ofxFpsPlotter(float minValue, float maxValue, int plotSize = Config().plotSize, float width = defaultWidth, float height = defaultHeight);
+        ofxFpsPlotter(const ofxValuePlotter::Config & config);
 		virtual ~ofxFpsPlotter();
 
-		void update();
+        ofxFpsPlotter & setup(string label = "", float minValue = Config().minValue, float maxValue = Config().maxValue, int plotSize = Config().plotSize, float width = defaultWidth, float height = defaultHeight);
 
-		ofxFpsPlotter & setup(const Config & config);
-		ofxFpsPlotter & setup(float minValue = Config().minValue, float maxValue = Config().maxValue, int plotSize = Config().plotSize, float width = defaultWidth, float height = defaultHeight);
+        void update(ofEventArgs &);
 
 	protected:
 
