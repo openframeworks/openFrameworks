@@ -9,9 +9,6 @@ if [ "$currenthash" = "$lasthash" ]; then
     exit 0
 fi
 
-# delete older packages
-rm /var/www/versions/nightly/of_v*_nightly.*
-
 lastversion=$(date +%Y%m%d)
 echo $currenthash>lasthash.txt
 ./create_package.sh linux $lastversion master
@@ -24,6 +21,9 @@ echo $currenthash>lasthash.txt
 ./create_package.sh linuxarmv6l $lastversion master
 ./create_package.sh linuxarmv7l $lastversion master
 
+# delete older packages
+rm /var/www/versions/nightly/of_v*_nightly.*
+
 mv *.tar.gz /var/www/versions/nightly
 mv *.zip /var/www/versions/nightly
 rm /var/www/versions/nightly/of_latest_linux_release.tar.gz
@@ -35,16 +35,6 @@ rm /var/www/versions/nightly/of_latest_osx_release.zip
 rm /var/www/versions/nightly/of_latest_android_release.tar.gz
 rm /var/www/versions/nightly/of_latest_linuxarmv6l_release.tar.gz
 rm /var/www/versions/nightly/of_latest_linuxarmv7l_release.tar.gz
-
-rm /var/www/versions/nightly/of_latest_linux_nightly.tar.gz
-rm /var/www/versions/nightly/of_latest_linux64_nightly.tar.gz
-rm /var/www/versions/nightly/of_latest_win_cb_nightly.zip
-rm /var/www/versions/nightly/of_latest_vs_nightly.zip
-rm /var/www/versions/nightly/of_latest_ios_nightly.zip
-rm /var/www/versions/nightly/of_latest_osx_nightly.zip
-rm /var/www/versions/nightly/of_latest_android_nightly.tar.gz
-rm /var/www/versions/nightly/of_latest_linuxarmv6l_nightly.tar.gz
-rm /var/www/versions/nightly/of_latest_linuxarmv7l_nightly.tar.gz
 
 mv /var/www/versions/nightly/of_v${lastversion}_linux_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz
