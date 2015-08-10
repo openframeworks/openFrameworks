@@ -240,8 +240,8 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	// you need to cut in the middle. if the simpleApp
 	// doesn't produce audio, we pass silence instead of duplex...
 	
-	int nInputChannels = rtStreamPtr->getNumInputChannels();
-	int nOutputChannels = rtStreamPtr->getNumOutputChannels();
+	unsigned int nInputChannels = rtStreamPtr->getNumInputChannels();
+	unsigned int nOutputChannels = rtStreamPtr->getNumOutputChannels();
 	
 	if(nInputChannels > 0){
 		if( rtStreamPtr->soundInputPtr != nullptr ){
