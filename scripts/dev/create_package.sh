@@ -15,7 +15,7 @@ REPO=https://github.com/openframeworks/openFrameworks
 REPO_ALIAS=upstreamhttps
 BRANCH=$branch
 
-PG_REPO=https://github.com/ofZach/projectGeneratorSimple.git
+PG_REPO=https://github.com/openframeworks/projectGenerator.git
 PG_REPO_ALIAS=originhttps
 PG_BRANCH=master
 
@@ -56,11 +56,12 @@ if [ $gitfinishedok -ne 0 ]; then
 fi
 
 
-
-cd openFrameworks
-packageroot=$PWD
-cd apps/projectGenerator/projectGeneratorSimple
-git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
+if [ "$platform" != "linux" ] || [ "$platform" != "linux64" ] || [ "$platform" != "linuxarmv6l" ] || [ "$platform" != "linuxarmv7l" ]; then
+    cd openFrameworks
+    packageroot=$PWD
+    cd apps/projectGenerator
+    git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
+fi
 
 cd $packageroot
 
