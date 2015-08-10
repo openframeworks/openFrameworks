@@ -21,19 +21,24 @@ public:
 
 	ofxPanel & setup(const ofParameterGroup & parameters, const Config & config);
 	ofxPanel & setup(const std::string& collectionName="", const std::string& filename="settings.xml", float x = 10, float y = 10);
-	ofxPanel & setup(const ofParameterGroup & parameters, const std::string& filename="settings.xml", float x = 10, float y = 10);
+    ofxPanel & setup(const ofParameterGroup & parameters, const std::string& filename="settings.xml", float x = 10, float y = 10);
+
+    virtual void setSize(float w, float h);
+    virtual void setShape(ofRectangle r);
+    virtual void setShape(float x, float y, float w, float h);
 
 	bool mouseReleased(ofMouseEventArgs & args);
 
 	ofEvent<void> loadPressedE;
 	ofEvent<void> savePressedE;
 protected:
-	void render();
-    void renderHeader();
-	bool setValue(float mx, float my, bool bCheck);
-	void generateDraw();
-    void generateDrawHeader();
-	void loadIcons();
+    virtual void sizeChangedCB();
+    virtual void render();
+    virtual void renderHeader();
+    virtual bool setValue(float mx, float my, bool bCheck);
+    virtual void generateDraw();
+    virtual void generateDrawHeader();
+    virtual void loadIcons();
 private:
 	ofRectangle loadBox, saveBox;
 	static ofImage loadIcon, saveIcon;

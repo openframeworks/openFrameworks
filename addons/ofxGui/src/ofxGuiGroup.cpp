@@ -88,27 +88,27 @@ void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters){
 		}
 		string type = p->type();
 		if(type == typeid(ofParameter<int>).name()){
-			add(p->cast<int>(), config);
+            add(p->cast<int>());
 		}else if(type == typeid(ofParameter<float>).name()){
-			add(p->cast<float>(), config);
+            add(p->cast<float>());
 		}else if(type == typeid(ofParameter<bool>).name()){
-			add(p->cast<bool>(), config);
+            add(p->cast<bool>());
 		}else if(type == typeid(ofParameter<ofVec2f>).name()){
-			add(p->cast<ofVec2f>(), config);
+            add(p->cast<ofVec2f>());
 		}else if(type == typeid(ofParameter<ofVec3f>).name()){
-			add(p->cast<ofVec3f>(), config);
+            add(p->cast<ofVec3f>());
 		}else if(type == typeid(ofParameter<ofVec4f>).name()){
-			add(p->cast<ofVec4f>(), config);
+            add(p->cast<ofVec4f>());
 		}else if(type == typeid(ofParameter<ofColor>).name()){
-			add(p->cast<ofColor>(), config);
+            add(p->cast<ofColor>());
 		}else if(type == typeid(ofParameter<ofShortColor>).name()){
-			add(p->cast<ofShortColor>(), config);
+            add(p->cast<ofShortColor>());
 		}else if(type == typeid(ofParameter<ofFloatColor>).name()){
-			add(p->cast<ofFloatColor>(), config);
+            add(p->cast<ofFloatColor>());
 		}else if(type == typeid(ofParameter<string>).name()){
-			add(p->cast<string>(), config);
+            add(p->cast<string>());
 		}else if(type == typeid(ofParameterGroup).name()){
-			add(p->castGroup(), config);
+            add(p->castGroup());
 		}else{
 			ofLogWarning("ofxGui") << "Trying to add " << p->getName() << ": ofxBaseGroup; no control for parameter of type " << type;
 		}
@@ -125,43 +125,43 @@ void ofxGuiGroup::add(ofxGuiGroup & element){
 }
 
 void ofxGuiGroup::add(ofParameter <float> & parameter){
-	add(parameter, this->config);
+    add(parameter, ofxFloatSlider::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <int> & parameter){
-	add(parameter, this->config);
+    add(parameter, ofxIntSlider::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <bool> & parameter){
-	add(parameter, this->config);
+    add(parameter, ofxToggle::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <std::string> & parameter){
-	add(parameter, this->config);
+    add(parameter, ofxLabel::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec2f> & parameter){
-	add(parameter, this->config);
+    add(parameter, ofxVec2Slider::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec3f> & parameter){
-	add(parameter, this->config);
+    add(parameter, ofxVec3Slider::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <ofVec4f> & parameter){
-	add(parameter, this->config);
+    add(parameter, ofxVec4Slider::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <ofColor> & parameter){
-	add(parameter, this->config);
+    add(parameter, ofxColorSlider::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <ofShortColor> & parameter){
-	add(parameter, this->config);
+    add(parameter, ofxShortColorSlider::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <ofFloatColor> & parameter){
-	add(parameter, this->config);
+    add(parameter, ofxFloatColorSlider::Config());
 }
 
 void ofxGuiGroup::add(ofxBaseGui * element){
@@ -206,7 +206,8 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 
 void ofxGuiGroup::add(ofxGuiGroup * element){
 	element->spacingFirstElement = 3;
-	element->filename = filename;
+    element->filename = filename;
+    element->inContainer = true;
 	add(static_cast<ofxBaseGui*>(element));
 }
 
@@ -509,26 +510,31 @@ void ofxGuiGroup::sizeChangedCB(){
         y += header;
     }
 
-    if(layout == ofxBaseGui::Vertical){
-        for(auto & e: collection){
-            e->setPosition(e->getPosition().x,y + spacing);
-            e->sizeChangedE.disable();
-            e->setSize(b.width-1, e->getHeight());
-            e->sizeChangedE.enable();
-            y += e->getHeight()+spacing;
-        }
-        b.height = y - b.y;
-    }else{
-        float max_h = 0;
-        for(auto & e: collection){
-            e->setPosition(x,y + spacing);
-            x += e->getWidth() + spacing;
-            if(max_h < e->getHeight()){
-                max_h = e->getHeight();
+    if(!minimized){
+        if(layout == ofxBaseGui::Vertical){
+            for(auto & e: collection){
+                e->setPosition(e->getPosition().x,y + spacing);
+                e->sizeChangedE.disable();
+                e->setSize((b.width-1)*.98, e->getHeight());
+                e->sizeChangedE.enable();
+                y += e->getHeight()+spacing;
             }
+            b.height = y - b.y;
+        }else{
+            float max_h = 0;
+            for(auto & e: collection){
+                e->setPosition(x,y + spacing);
+                x += e->getWidth() + spacing;
+                if(max_h < e->getHeight()){
+                    max_h = e->getHeight();
+                }
+            }
+            y += max_h+spacing;
+            b.width = x - b.x;
+            b.height = y - b.y;
         }
-        y += max_h+spacing;
-        b.width = x - b.x;
+    }
+    else {
         b.height = y - b.y;
     }
 	sizeChangedE.notify(this);
@@ -574,6 +580,21 @@ void ofxGuiGroup::setPosition(ofPoint p){
 
 void ofxGuiGroup::setPosition(float x, float y){
 	setPosition(ofVec2f(x, y));
+}
+
+void ofxGuiGroup::setSize(float w, float h){
+    ofxBaseGui::setSize(w,h);
+    setWidthElements(w * .98);
+}
+
+void ofxGuiGroup::setShape(ofRectangle r){
+    ofxBaseGui::setShape(r);
+    setWidthElements(r.width * .98);
+}
+
+void ofxGuiGroup::setShape(float x, float y, float w, float h){
+    ofxBaseGui::setShape(x,y,w,h);
+    setWidthElements(w * .98);
 }
 
 bool ofxGuiGroup::processToggles(ofxToggle* toggle, ofMouseEventArgs a) {

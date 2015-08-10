@@ -13,14 +13,14 @@ void ofApp::setup(){
 
 	ofxBaseGui::Config labelconfig;
     labelconfig.showName = false;
-    panel1.add <ofxLabel>(label_param.set("LabelName", "label without labelname"), labelconfig);
+    panel1.add<ofxLabel>(label_param.set("LabelName", "label without labelname"), labelconfig);
 
     panel1.add<ofxFpsPlotter>();
 
 	/*
 	 * minimal button and toggle
 	 */
-	panel1.add <ofxMinimalToggle>(toggle_param.set("show header", true));
+    panel1.add<ofxMinimalToggle>(toggle_param.set("show header", true));
 	toggle_param.addListener(this, &ofApp::toggleGroupHeader);
 	panel1.add(button.setup("simple button"));
 

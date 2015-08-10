@@ -42,7 +42,7 @@ class ofxTabbedPages : public ofxGuiPage {
 		void updateContentShapes();
 		void setSizeToElement(ofxBaseGui * element);
 		virtual void sizeChangedCB();
-        virtual void add(ofxGuiPage * element);
+        virtual void add(ofxGuiGroup * element);
 
 	private:
 

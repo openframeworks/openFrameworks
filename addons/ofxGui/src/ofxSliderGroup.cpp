@@ -33,7 +33,7 @@ ofxVecSlider_<VecType> & ofxVecSlider_<VecType>::setup(ofParameter<VecType> valu
     VecType val = value;
     VecType min = value.getMin();
     VecType max = value.getMax();
-    ofxFloatSlider::Config config = this->config;
+    ofxFloatSlider::Config config = ofxFloatSlider::Config();
     for (int i=0; i<VecType::DIM; i++) {
     	ofParameter<float> p(names[i], val[i], min[i], max[i]);
         add(p,config);
@@ -130,7 +130,7 @@ ofxColorSlider_<ColorType> & ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
     ofColor_<ColorType> val = value;
     ofColor_<ColorType> min = value.getMin();
     ofColor_<ColorType> max = value.getMax();
-    typename ofxSlider<ColorType>::Config config = this->config;
+    typename ofxSlider<ColorType>::Config config = typename ofxSlider<ColorType>::Config();
     for (int i=0; i<4; i++) {
     	ofParameter<ColorType> p(names[i], val[i], min[i], max[i]);
         add<ofxSlider<ColorType>>(p,config);

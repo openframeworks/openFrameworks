@@ -32,7 +32,7 @@ ofxTabbedPages & ofxTabbedPages::setup(string collectionName, string filename, f
 	return *this;
 }
 
-void ofxTabbedPages::add(ofxGuiPage *element){
+void ofxTabbedPages::add(ofxGuiGroup *element){
 	collection.push_back(element);
 
 	parameters_tabs.push_back(ofParameter <bool>(element->getName(), false));

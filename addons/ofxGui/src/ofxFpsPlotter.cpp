@@ -30,6 +30,7 @@ ofxFpsPlotter & ofxFpsPlotter::setup(string label, float minValue, float maxValu
     }
     setDecimalPlace(0);
     ofAddListener(ofEvents().update,this,&ofxFpsPlotter::update);
+    return *this;
 }
 
 void ofxFpsPlotter::update(ofEventArgs &){

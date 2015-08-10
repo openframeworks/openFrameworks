@@ -11,18 +11,18 @@ void ofApp::setup(){
 
 	page.setup("single page");
 	page.setSize(300, 300);
-    page.ofxGuiGroup::add(panel3);
+    page.add(panel3);
 
 	page1.setup("page 1");
-    page1.ofxGuiGroup::add(panel1);
+    page1.add(panel1);
 
 	page2.setup("page 2");
-	page2.ofxGuiGroup::add(panel2);
+    page2.add(panel2);
 
 	tabbed_pages.setup("tabbed pages", "", page.getShape().getRight() + 10);
 	tabbed_pages.setSize(500, 300);
-    tabbed_pages.ofxGuiGroup::add(page1);
-    tabbed_pages.ofxGuiGroup::add(page2);
+    tabbed_pages.add(page1);
+    tabbed_pages.add(page2);
 
 }
 

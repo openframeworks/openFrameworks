@@ -7,9 +7,9 @@ class ofxGuiPage : public ofxPanel {
 
 		ofxGuiPage();
 		virtual ~ofxGuiPage(){
-		}
+        }
 
-		void add(ofxBaseGui * element);
+        using ofxPanel::add;
 
 		void clear();
 
@@ -19,6 +19,7 @@ class ofxGuiPage : public ofxPanel {
         virtual void scaleWidthElements(float factor);
 
 	protected:
+        virtual void add(ofxBaseGui * element);
 		virtual void sizeChangedCB();
 
 };

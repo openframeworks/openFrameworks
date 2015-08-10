@@ -190,3 +190,48 @@ bool ofxPanel::setValue(float mx, float my, bool bCheck){
 	}
 	return false;
 }
+
+void ofxPanel::sizeChangedCB(){
+    float x = b.x;
+    float y = b.y + spacingFirstElement;
+    if(bShowHeader){
+        y += header;
+    }
+
+    if(layout == ofxBaseGui::Vertical){
+        for(auto & e: collection){
+            e->setPosition(e->getPosition().x,y + spacing);
+            e->sizeChangedE.disable();
+            e->setSize(b.width-1, e->getHeight());
+            e->sizeChangedE.enable();
+            y += e->getHeight()+spacing;
+        }
+        b.height = y - b.y;
+    }else{
+        float max_h = 0;
+        for(auto & e: collection){
+            e->setPosition(x,y + spacing);
+            x += e->getWidth() + spacing;
+            if(max_h < e->getHeight()){
+                max_h = e->getHeight();
+            }
+        }
+        y += max_h+spacing;
+        b.width = x - b.x;
+        b.height = y - b.y;
+    }
+    sizeChangedE.notify(this);
+    setNeedsRedraw();
+}
+
+void ofxPanel::setSize(float w, float h){
+    ofxBaseGui::setSize(w,h);
+}
+
+void ofxPanel::setShape(ofRectangle r){
+    ofxBaseGui::setShape(r);
+}
+
+void ofxPanel::setShape(float x, float y, float w, float h){
+    ofxBaseGui::setShape(x,y,w,h);
+}

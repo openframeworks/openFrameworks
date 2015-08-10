@@ -34,18 +34,18 @@ class ofxGuiGroup : public ofxBaseGui {
 		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
 
 		void add(ofxBaseGui & element);
-		void add(ofxGuiGroup & element);
+        void add(ofxGuiGroup & element);
 
-		void add(ofParameter <float> & parameter);
-		void add(ofParameter <int> & parameter);
-		void add(ofParameter <bool> & parameter);
-		void add(ofParameter <std::string> & parameter);
-		void add(ofParameter <ofVec2f> & parameter);
-		void add(ofParameter <ofVec3f> & parameter);
-		void add(ofParameter <ofVec4f> & parameter);
-		void add(ofParameter <ofColor> & parameter);
-		void add(ofParameter <ofShortColor> & parameter);
-		void add(ofParameter <ofFloatColor> & parameter);
+        void add(ofParameter <float> & parameter);
+        void add(ofParameter <int> & parameter);
+        void add(ofParameter <bool> & parameter);
+        void add(ofParameter <std::string> & parameter);
+        void add(ofParameter <ofVec2f> & parameter);
+        void add(ofParameter <ofVec3f> & parameter);
+        void add(ofParameter <ofVec4f> & parameter);
+        void add(ofParameter <ofColor> & parameter);
+        void add(ofParameter <ofShortColor> & parameter);
+        void add(ofParameter <ofFloatColor> & parameter);
 
 		template<class GuiType, typename Type>
 		void add(ofParameter<Type> p);
@@ -53,35 +53,35 @@ class ofxGuiGroup : public ofxBaseGui {
 		template<class GuiType=ofxGuiGroup>
 		void add(ofParameterGroup p);
 
-		template<class Config>
-		void add(ofParameter <float> & parameter, const Config & config);
+        template<class Config>
+        void add(ofParameter <float> & parameter, const Config & config);
 
-		template<class Config>
-		void add(ofParameter <int> & parameter, const Config & config);
+        template<class Config>
+        void add(ofParameter <int> & parameter, const Config & config);
 
-		template<class Config>
-		void add(ofParameter <bool> & parameter, const Config & config);
+        template<class Config>
+        void add(ofParameter <bool> & parameter, const Config & config);
 
-		template<class Config>
-		void add(ofParameter <std::string> & parameter, const Config & config);
+        template<class Config>
+        void add(ofParameter <std::string> & parameter, const Config & config);
 
-		template<class Config>
-		void add(ofParameter <ofVec2f> & parameter, const Config & config);
+        template<class Config>
+        void add(ofParameter <ofVec2f> & parameter, const Config & config);
 
-		template<class Config>
-		void add(ofParameter <ofVec3f> & parameter, const Config & config);
+        template<class Config>
+        void add(ofParameter <ofVec3f> & parameter, const Config & config);
 
-		template<class Config>
-		void add(ofParameter <ofVec4f> & parameter, const Config & config);
+        template<class Config>
+        void add(ofParameter <ofVec4f> & parameter, const Config & config);
 
-		template<class Config>
-		void add(ofParameter <ofColor> & parameter, const Config & config);
+        template<class Config>
+        void add(ofParameter <ofColor> & parameter, const Config & config);
 
-		template<class Config>
-		void add(ofParameter <ofShortColor> & parameter, const Config & config);
+        template<class Config>
+        void add(ofParameter <ofShortColor> & parameter, const Config & config);
 
-		template<class Config>
-		void add(ofParameter <ofFloatColor> & parameter, const Config & config);
+        template<class Config>
+        void add(ofParameter <ofFloatColor> & parameter, const Config & config);
 
 		template<class GuiType, typename Type, class Config>
 		void add(ofParameter<Type> p, const Config & config);
@@ -127,8 +127,11 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		virtual ofAbstractParameter & getParameter();
 
-		virtual void setPosition(ofPoint p);
+        virtual void setPosition(ofPoint p);
         virtual void setPosition(float x, float y);
+        virtual void setSize(float w, float h);
+        virtual void setShape(ofRectangle r);
+        virtual void setShape(float x, float y, float w, float h);
 
         void setShowHeader(bool show);
 
