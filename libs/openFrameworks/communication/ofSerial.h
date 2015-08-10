@@ -1,5 +1,6 @@
 #pragma once
 
+#include <climits>
 #include "ofConstants.h"
 #include "ofTypes.h"
 

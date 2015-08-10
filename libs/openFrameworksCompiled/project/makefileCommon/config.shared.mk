@@ -217,7 +217,7 @@ else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
 endif
 
-PKG_CONFIG ?= pkg-config
+PLATFORM_PKG_CONFIG ?= pkg-config
 
 
 ################################ FLAGS #########################################
