@@ -186,10 +186,10 @@ PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-section
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3 -march=native -mtune=native
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 -march=native -mtune=native
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
