@@ -10,7 +10,7 @@
 FORMULA_TYPES=( "osx" "vs" "win_cb" )
 
 # define the version
-VER=44221
+VER=44456
 
 # tools for git use
 GIT_URL=
