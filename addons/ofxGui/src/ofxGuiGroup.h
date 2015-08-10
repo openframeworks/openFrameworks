@@ -9,7 +9,9 @@
 class ofxGuiGroup : public ofxBaseGui {
 	public:
 		struct Config: public ofxBaseGui::Config{
-			Config(){}
+            Config(){
+                this->layout = ofxBaseGui::Vertical;
+            }
 			Config(const ofxBaseGui::Config & c)
 			:ofxBaseGui::Config(c){}
 

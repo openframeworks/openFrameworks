@@ -8,7 +8,6 @@ class ofxSlider : public ofxBaseGui{
 public:	
 	struct Config: public ofxBaseGui::Config{
         Config(){
-            this->layout = ofxBaseGui::Horizontal;
         }
 		Config(const ofxBaseGui::Config & c)
         :ofxBaseGui::Config(c){

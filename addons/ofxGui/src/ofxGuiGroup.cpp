@@ -66,6 +66,7 @@ ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
     minimized = Config().minimized;
     bShowHeader = Config().showHeader;
 	b.width = defaultWidth;
+    layout = Config().layout;
 	clear();
 	filename = _filename;
 	bGuiActive = false;

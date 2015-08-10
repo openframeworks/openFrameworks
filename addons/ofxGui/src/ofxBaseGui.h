@@ -18,7 +18,7 @@ class ofxBaseGui {
 			ofColor borderColor = ofxBaseGui::borderColor;
 			ofColor textColor = ofxBaseGui::textColor;
 			ofColor fillColor = ofxBaseGui::fillColor;
-			Layout layout = Vertical;
+            Layout layout = Horizontal;
 			bool inContainer = false;
 			ofRectangle shape{0.0f, 0.0f, (float)defaultWidth, (float)defaultHeight};
             bool showName = true;
