@@ -127,7 +127,7 @@ ifeq ($(CXX),g++)
 	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \<= 7)
 	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
 	ifeq ("$(GCC_MAJOR_EQ_4)","1")
-		ifeq ("$(GCC_MINOR_GTEQ_7)","0")
+		ifeq ("$(GCC_MINOR_GTEQ_7)","1")
 			PLATFORM_CFLAGS = -Wall -std=c++0x -DHAS_TLS=0
 		else
 			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
