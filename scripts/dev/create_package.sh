@@ -41,11 +41,12 @@ if [ "$version" == "" ]; then
 fi
 
 
-libsnotinmac="unicap gstappsink glu quicktime videoInput kiss portaudio"
-libsnotinlinux="quicktime videoInput glut glu cairo"
-libsnotinwindows="unicap gstappsink kiss portaudio"
-libsnotinandroid="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio kiss portaudio cairo"
-libsnotinios="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio kiss portaudio cairo"
+libsnotinmac="glu quicktime videoInput kiss"
+libsnotinlinux="quicktime videoInput glut glu cairo glew openssl rtAudio"
+libsnotinvs="kiss"
+libsnotinmingw="kiss glut cairo glew openssl rtAudio"
+libsnotinandroid="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
+libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 
 rm -rf openFrameworks
 git clone $REPO --depth=1 --branch=$BRANCH
@@ -325,7 +326,9 @@ function createPackage {
         rm -Rf $libsnotinmac
     elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         rm -Rf $libsnotinlinux
-    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs" ]; then
+    elif [ "$pkg_platform" = "win_cb" ]; then
+        rm -Rf $libsnotinmingw
+    elif [ "$pkg_platform" = "vs" ]; then
         rm -Rf $libsnotinwindows
     elif [ "$pkg_platform" = "android" ]; then
         rm -Rf $libsnotinandroid
