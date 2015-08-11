@@ -24,8 +24,7 @@
 /// it was sent.
 ///
 /// If multiple threads attempt to send data using the same ofThreadChannel, the
-/// send method will block the calling thread until it is free. Sending and
-/// receiving data from the same thread may result in deadlocks.
+/// send method will block the calling thread until it is free.
 ///
 /// \sa https://github.com/openframeworks/ofBook/blob/master/chapters/threads/chapter.md
 /// \tparam T The data type sent by the ofThreadChannel.
@@ -87,9 +86,8 @@ public:
 	/// \brief If available, receive a new sent value without blocking.
 	///
 	/// ofThreadChannel::tryReceive is similar to ofThreadChannel::receive,
-	/// except that it will block the receiving thread as it waits for sent
-	/// data.  If no data is available, it will return false and continue
-	/// immediately.
+	/// except that it will not block the receiving thread.  If no data is
+    /// available, it will return false and continue immediately.
 	///
 	/// ofThreadChannel::tryReceive will not make a copy or reallocate data.
 	///
