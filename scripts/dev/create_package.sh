@@ -60,7 +60,7 @@ fi
 if [ "$platform" != "linux" ] || [ "$platform" != "linux64" ] || [ "$platform" != "linuxarmv6l" ] || [ "$platform" != "linuxarmv7l" ]; then
     cd openFrameworks
     packageroot=$PWD
-    cd apps/projectGenerator
+    cd apps
     git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
 fi
 
