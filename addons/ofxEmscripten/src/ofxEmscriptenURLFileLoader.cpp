@@ -25,7 +25,7 @@ int ofxEmscriptenURLFileLoader::getAsync(const string &  url, const string &  na
 #if __EMSCRIPTEN_major__>1 || (__EMSCRIPTEN_major__==1 && __EMSCRIPTEN_minor__>22)
 	emscripten_async_wget2_data(url.c_str(), "GET", "", req, true, &onload_cb, &onerror_cb, NULL);
 #endif
-	return req->getID();
+	return req->getId();
 }
 
 ofHttpResponse ofxEmscriptenURLFileLoader::saveTo(const string &  url, const string &  path){

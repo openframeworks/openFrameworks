@@ -42,7 +42,7 @@ void ofxEmscriptenVideoPlayer::close(){
 
 void ofxEmscriptenVideoPlayer::update(){
 	gotFirstFrame = pixels.isAllocated();
-	if(html5video_player_update(id,pixels.isAllocated() && usePixels,pixels.getPixels())){
+	if(html5video_player_update(id,pixels.isAllocated() && usePixels,pixels.getData())){
 		if(texture.texData.width!=html5video_player_width(id) || texture.texData.height!=html5video_player_height(id)){
 			texture.texData.width = html5video_player_width(id);
 			texture.texData.height = html5video_player_height(id);
