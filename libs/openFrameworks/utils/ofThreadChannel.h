@@ -100,7 +100,7 @@ public:
 			condition.wait(lock);
 		}
 		if(!closed){
-            std::swap(sentValue,queue.front());
+			std::swap(sentValue,queue.front());
 			queue.pop();
 			return true;
 		}else{
@@ -145,7 +145,7 @@ public:
 			return false;
 		}
 		if(!queue.empty()){
-            std::swap(sentValue,queue.front());
+			std::swap(sentValue,queue.front());
 			queue.pop();
 			return true;
 		}else{
@@ -197,7 +197,7 @@ public:
 		}
 
 		if(!closed){
-			swap(sentValue,queue.front());
+			std::swap(sentValue,queue.front());
 			queue.pop();
 			return true;
 		}else{
