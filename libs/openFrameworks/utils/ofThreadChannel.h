@@ -26,7 +26,7 @@
 /// it was sent.
 ///
 /// If multiple threads attempt to send data using the same ofThreadChannel, the
-/// send method will block the calling thread untill it is free. ofThreadChannel
+/// send method will block the calling thread until it is free. ofThreadChannel
 /// does not use recursive mutexes and is therefore not designed to send and
 /// receive data from the same thread. Doing will result in deadlocks.
 ///
