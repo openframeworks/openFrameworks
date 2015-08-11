@@ -44,8 +44,8 @@ public:
 	/// \brief Block the receiving thread until a new sent value is available.
 	///
 	/// The receiving thread will block until a new sent value is available. In
-    /// order to receive data, the user must create an instance of the data
-    /// type, and pass it to the receive method to be set.
+	/// order to receive data, the user must create an instance of the data
+	/// type, and pass it to the receive method to be set.
 	///
 	/// ofThreadChannel::receive will not make a copy or reallocate data.
 	///
@@ -88,8 +88,8 @@ public:
 	///
 	/// ofThreadChannel::tryReceive is similar to ofThreadChannel::receive,
 	/// except that it will block the receiving thread as it waits for sent
-    /// data.  If no data is available, it will return false and continue
-    /// immediately.
+	/// data.  If no data is available, it will return false and continue
+	/// immediately.
 	///
 	/// ofThreadChannel::tryReceive will not make a copy or reallocate data.
 	///
@@ -133,8 +133,8 @@ public:
 	///
 	/// ofThreadChannel::tryReceive is similar to ofThreadChannel::receive,
 	/// except that it will block the receiving thread for a maximum of
-    /// `timeoutMs` while it waits for sent data.  If no data is available
-    /// during that time, it will return false and continue.
+	/// `timeoutMs` while it waits for sent data.  If no data is available
+	/// during that time, it will return false and continue.
 	///
 	/// ofThreadChannel::tryReceive will not make a copy or reallocate data.
 	///
