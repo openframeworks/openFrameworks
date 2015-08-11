@@ -30,6 +30,7 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 	window = _window;
 	currentFramebufferId = 0;
 	defaultFramebufferId = 0;
+	path.setMode(ofPath::POLYLINES);
 }
 
 void ofGLRenderer::setup(){
