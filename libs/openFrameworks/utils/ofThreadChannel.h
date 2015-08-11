@@ -87,7 +87,7 @@ public:
 	///
 	/// ofThreadChannel::tryReceive is similar to ofThreadChannel::receive,
 	/// except that it will not block the receiving thread.  If no data is
-    /// available, it will return false and continue immediately.
+	/// available, it will return false and continue immediately.
 	///
 	/// ofThreadChannel::tryReceive will not make a copy or reallocate data.
 	///
