@@ -58,6 +58,8 @@ ofAppGLFWWindow::~ofAppGLFWWindow(){
 
 void ofAppGLFWWindow::close(){
 	if(windowP){
+		//hide the window before we destroy it stops a flicker on OS X on exit. 
+		glfwHideWindow(windowP);
 		glfwDestroyWindow(windowP);
 		windowP = nullptr;
 		events().disable();
@@ -203,9 +205,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 				setWindowIcon(iconPixels);
 			}
 		#endif
-		if(settings.visible){
-			glfwShowWindow(windowP);
-		}
 		if(settings.iconified){
 			iconify(true);
 		}
@@ -322,6 +321,11 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
 //--------------------------------------------
 void ofAppGLFWWindow::update(){
 	events().notifyUpdate();
+	
+	//show the window right before the first draw call.
+	if( settings.visible && windowP && ofGetFrameNum() == 0 ){
+		glfwShowWindow(windowP);
+	}
 }
 
 //--------------------------------------------
