@@ -218,6 +218,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
         ofLogError("ofAppGLFWWindow") << "couldn't create window";
         return;
     }
+	
+	//don't try and show a window if its been requsted to be hidden
+	bWindowNeedsShowing = settings.visible;
 
     glfwSetWindowUserPointer(windowP,this);
 	windowMode = requestedMode;
@@ -325,7 +328,7 @@ void ofAppGLFWWindow::update(){
 	events().notifyUpdate();
 	
 	//show the window right before the first draw call.
-	if( bWindowNeedsShowing && settings.visible && windowP ){
+	if( bWindowNeedsShowing && windowP ){
 		glfwShowWindow(windowP);
 		bWindowNeedsShowing = false;
 	}
