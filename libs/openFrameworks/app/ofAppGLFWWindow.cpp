@@ -36,6 +36,7 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
 	buttonInUse			= 0;
 	buttonPressed		= false;
     bMultiWindowFullscreen  = false;
+	bWindowNeedsShowing	= true;
 
 	orientation 		= OF_ORIENTATION_DEFAULT;
 	windowMode			= OF_WINDOW;
@@ -63,6 +64,7 @@ void ofAppGLFWWindow::close(){
 		glfwDestroyWindow(windowP);
 		windowP = nullptr;
 		events().disable();
+		bWindowNeedsShowing = true;
 	}
 }
 
@@ -323,8 +325,9 @@ void ofAppGLFWWindow::update(){
 	events().notifyUpdate();
 	
 	//show the window right before the first draw call.
-	if( settings.visible && windowP && ofGetFrameNum() == 0 ){
+	if( bWindowNeedsShowing && settings.visible && windowP ){
 		glfwShowWindow(windowP);
+		bWindowNeedsShowing = false;
 	}
 }
 
