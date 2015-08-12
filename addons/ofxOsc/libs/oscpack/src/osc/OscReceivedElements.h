@@ -100,7 +100,7 @@ public:
         : contents_( contents )
         , size_( ValidateSize( (osc_bundle_element_size_t)size ) ) {}
 
-#if !(defined(__x86_64__) || defined(_M_X64))
+#if !(defined(__x86_64__) || defined(_M_X64) || defined(__LP64__))
     ReceivedPacket( const char *contents, int size )
         : contents_( contents )
         , size_( ValidateSize( (osc_bundle_element_size_t)size ) ) {}
