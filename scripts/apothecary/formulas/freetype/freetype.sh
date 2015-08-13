@@ -321,6 +321,7 @@ function build() {
 	        echo "error emscripten is not installed or environment not set"
 	        exit 1
 	    fi
+	    patch -p0 -u < $FORMULA_DIR/emscripten.patch
 	    local BUILD_TO_DIR=$BUILD_DIR/freetype/build/$TYPE
 	    ./configure --prefix=$BUILD_TO_DIR --with-harfbuzz=no --enable-static=yes --enable-shared=no --with-zlib=no --with-png=no
 	    make clean
