@@ -5,6 +5,12 @@ using namespace std;
 ofxGuiPage::ofxGuiPage() : ofxPanel(){
 }
 
+ofxGuiPage::~ofxGuiPage(){
+    for(auto e: collection){
+        ofRemoveListener(e->sizeChangedE,this,&ofxGuiPage::sizeChangedCB);
+    }
+}
+
 void ofxGuiPage::add(ofxBaseGui * element){
 	collection.push_back(element);
 

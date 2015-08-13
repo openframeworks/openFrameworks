@@ -513,10 +513,10 @@ void ofxGuiGroup::sizeChangedCB(){
     if(!minimized){
         if(layout == ofxBaseGui::Vertical){
             for(auto & e: collection){
-                e->setPosition(e->getPosition().x,y + spacing);
                 e->sizeChangedE.disable();
                 e->setSize((b.width-1)*.98, e->getHeight());
                 e->sizeChangedE.enable();
+                e->setPosition(b.getRight()-e->getWidth()-1,y + spacing);
                 y += e->getHeight()+spacing;
             }
             b.height = y - b.y;

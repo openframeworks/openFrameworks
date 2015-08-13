@@ -6,8 +6,7 @@ class ofxGuiPage : public ofxPanel {
 	public:
 
 		ofxGuiPage();
-		virtual ~ofxGuiPage(){
-        }
+        virtual ~ofxGuiPage();
 
         using ofxPanel::add;
 
