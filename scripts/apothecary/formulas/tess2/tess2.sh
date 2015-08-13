@@ -333,6 +333,9 @@ function copy() {
 	elif [ "$TYPE" == "osx" ]; then
 		cp -v build/libtess2.a $1/lib/$TYPE/tess2.a
 
+	elif [ "$TYPE" == "emscripten" ]; then
+		cp -v build/libtess2.a $1/lib/$TYPE/libtess2.a
+		
 	else
 		cp -v build/$TYPE/libtess2.a $1/lib/$TYPE/libtess2.a
 	fi
