@@ -275,13 +275,13 @@ function createPackage {
 	#download and uncompress PG
 	cd $pkg_ofroot
 	rm -rf projectGenerator
-    if [ "$pkg_platform" = "win_cb" ]; then
-		rm projectGenerator_wincb.zip
-		wget http://www.openframeworks.cc/pgSimple/projectGenerator_wincb.zip
-		unzip projectGenerator_wincb.zip
-		rm projectGenerator_wincb.zip
-		rm -Rf __MACOSX
-	fi
+    #if [ "$pkg_platform" = "win_cb" ]; then
+	#	rm projectGenerator_wincb.zip
+	#	wget http://www.openframeworks.cc/pgSimple/projectGenerator_wincb.zip
+	#	unzip projectGenerator_wincb.zip
+	#	rm projectGenerator_wincb.zip
+	#	rm -Rf __MACOSX
+	#fi
     if [ "$pkg_platform" = "vs" ]; then
 		rm projectGenerator_winvs.zip
 		wget http://www.openframeworks.cc/pgSimple/projectGenerator_winvs.zip
