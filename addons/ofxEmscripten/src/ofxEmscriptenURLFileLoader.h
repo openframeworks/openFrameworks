@@ -12,10 +12,10 @@ class ofxEmscriptenURLFileLoader: public ofBaseURLFileLoader {
 public:
 	ofxEmscriptenURLFileLoader();
 	virtual ~ofxEmscriptenURLFileLoader();
-	ofHttpResponse get(string url);
-	int getAsync(string url, string name=""); // returns id
-	ofHttpResponse saveTo(string url, string path);
-	int saveAsync(string url, string path);
+	ofHttpResponse get(const string &  url);
+	int getAsync(const string &  url, const string &  name=""); // returns id
+	ofHttpResponse saveTo(const string &  url, const string &  path);
+	int saveAsync(const string &  url, const string &  path);
 	ofHttpResponse handleRequest(ofHttpRequest request);
 	void remove(int id);
 	void clear();

@@ -9,28 +9,14 @@ ofxGuiGroup::ofxGuiGroup(){
 }
 
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & config)
-:ofxBaseGui(config)
-,spacing(config.spacing)
-,spacingNextElement(config.spacingNextElement)
-,spacingFirstElement(config.spacingFirstElement)
-,header(config.header)
-,filename(config.filename)
-,minimized(config.minimized)
-,bShowHeader(config.showHeader)
-,bExclusiveToggles(config.exclusiveToggles)
-,bGuiActive(false)
-,active_toggle_index(-1)
-,config(config){
-	addParametersFrom(_parameters);
-	parameters = _parameters;
-	registerMouseEvents();
-	setNeedsRedraw();
+:ofxBaseGui(config){
+    setup(parameters, config);
 }
 
 ofxGuiGroup::~ofxGuiGroup(){
 	for(auto e: collection){
 		ofRemoveListener(e->sizeChangedE,this,&ofxGuiGroup::sizeChangedCB);
-	}
+    }
 }
 
 ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & parameters, const Config & config){
@@ -58,7 +44,7 @@ ofxGuiGroup & ofxGuiGroup::setup(const std::string& collectionName, const std::s
 
 ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std::string& _filename, float x, float y){
 	b.x = x;
-	b.y = y;
+    b.y = y;
     spacing = Config().spacing;
     spacingNextElement = Config().spacingNextElement;
     spacingFirstElement = Config().spacingFirstElement;
@@ -78,7 +64,6 @@ ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 
 	return *this;
 }
-
 
 void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters){
 	for(auto & p: parameters){
@@ -111,12 +96,13 @@ void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters){
             add(p->castGroup());
 		}else{
 			ofLogWarning("ofxGui") << "Trying to add " << p->getName() << ": ofxBaseGroup; no control for parameter of type " << type;
+
 		}
 	}
 }
 
 void ofxGuiGroup::add(ofxBaseGui & element){
-	add(&element);
+    add(&element);
 }
 
 
@@ -559,7 +545,7 @@ ofxBaseGui * ofxGuiGroup::getControl(std::size_t num){
 	if(num < collection.size()){
 		return collection[num];
 	}else{
-		return NULL;
+		return nullptr;
 	}
 }
 

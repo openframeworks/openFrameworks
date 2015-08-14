@@ -15,7 +15,7 @@ REPO=https://github.com/openframeworks/openFrameworks
 REPO_ALIAS=upstreamhttps
 BRANCH=$branch
 
-PG_REPO=https://github.com/ofZach/projectGeneratorSimple.git
+PG_REPO=https://github.com/openframeworks/projectGenerator.git
 PG_REPO_ALIAS=originhttps
 PG_BRANCH=master
 
@@ -41,11 +41,12 @@ if [ "$version" == "" ]; then
 fi
 
 
-libsnotinmac="unicap gstappsink glu quicktime videoInput kiss portaudio"
-libsnotinlinux="quicktime videoInput glut glu cairo"
-libsnotinwindows="unicap gstappsink kiss portaudio"
-libsnotinandroid="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio kiss portaudio cairo"
-libsnotinios="glut unicap gstappsink quicktime videoInput fmodex glee rtAudio kiss portaudio cairo"
+libsnotinmac="glu quicktime videoInput kiss"
+libsnotinlinux="quicktime videoInput glut glu cairo glew openssl rtAudio"
+libsnotinvs="kiss"
+libsnotinmingw="kiss glut cairo glew openssl rtAudio"
+libsnotinandroid="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
+libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 
 rm -rf openFrameworks
 git clone $REPO --depth=1 --branch=$BRANCH
@@ -56,11 +57,12 @@ if [ $gitfinishedok -ne 0 ]; then
 fi
 
 
-
-cd openFrameworks
-packageroot=$PWD
-cd apps/projectGenerator/projectGeneratorSimple
-git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
+if [ "$platform" != "linux" ] || [ "$platform" != "linux64" ] || [ "$platform" != "linuxarmv6l" ] || [ "$platform" != "linuxarmv7l" ]; then
+    cd openFrameworks
+    packageroot=$PWD
+    cd apps
+    git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
+fi
 
 cd $packageroot
 
@@ -100,7 +102,30 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    projectGenerator --allexamples --${pkg_platform}
+    if [ "$pkg_platform" == "win_cb" ]; then
+
+	    # copy all examples to pkg_ofroot
+	    cp -Rf $packageroot/examples $pkg_ofroot
+	
+	    # copy config.make and Makefile into every subfolder
+	    for d in `find ${pkg_ofroot}/examples -maxdepth 2 -type d`; do
+	      cp $packageroot/scripts/win_cb/template/config.make ${d}
+	      cp $packageroot/scripts/win_cb/template/Makefile ${d}
+	    done
+	
+	    # remove config.make and Makefile from level 1
+      for d in `find ${pkg_ofroot}/examples -maxdepth 1 -type d`; do
+	      rm "${d}/config.make"
+	      rm "${d}/Makefile"
+	    done
+	
+	    # remove config.make and Makefile from level 0
+	    rm "$pkg_ofroot/examples/config.make"
+	    rm "$pkg_ofroot/examples/Makefile"
+      
+    else
+      projectGenerator --allexamples --${pkg_platform}
+    fi
 }
 
 function createPackage {
@@ -267,10 +292,7 @@ function createPackage {
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "osx" ]; then
-		rm projectGenerator_osx.zip
-		wget http://www.openframeworks.cc/pgSimple/projectGenerator_osx.zip
-		unzip projectGenerator_osx.zip
-		rm projectGenerator_osx.zip
+		cp -r /home/tests/projectGeneratorSimple_osx projectGenerator
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "ios" ]; then
@@ -304,7 +326,9 @@ function createPackage {
         rm -Rf $libsnotinmac
     elif [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         rm -Rf $libsnotinlinux
-    elif [ "$pkg_platform" = "win_cb" ] || [ "$pkg_platform" = "vs" ]; then
+    elif [ "$pkg_platform" = "win_cb" ]; then
+        rm -Rf $libsnotinmingw
+    elif [ "$pkg_platform" = "vs" ]; then
         rm -Rf $libsnotinwindows
     elif [ "$pkg_platform" = "android" ]; then
         rm -Rf $libsnotinandroid

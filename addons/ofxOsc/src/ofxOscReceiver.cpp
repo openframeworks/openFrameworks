@@ -39,10 +39,20 @@ ofxOscReceiver::ofxOscReceiver()
 	listen_socket = NULL;
 }
 
-void ofxOscReceiver::setup( int listen_port, bool allowReuse )
+void ofxOscReceiver::setup( int listen_port )
 {
-    if( UdpSocket::GetUdpBufferSize() == 0 ){
-        UdpSocket::SetUdpBufferSize(65535);
+	setup(new osc::UdpListeningReceiveSocket( osc::IpEndpointName( osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, false ));
+}
+
+void ofxOscReceiver::setupWithSocketReuse( int listen_port )
+{
+	setup(new osc::UdpListeningReceiveSocket( osc::IpEndpointName( osc::IpEndpointName::ANY_ADDRESS, listen_port ), this, true ));
+}
+
+
+void ofxOscReceiver::setup(osc::UdpListeningReceiveSocket * socket){
+    if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
+    	osc::UdpSocket::SetUdpBufferSize(65535);
     }
     
 	// if we're already running, shutdown before running again
@@ -58,7 +68,7 @@ void ofxOscReceiver::setup( int listen_port, bool allowReuse )
 	
 	// create socket
 	socketHasShutdown = false;
-	listen_socket = new UdpListeningReceiveSocket( IpEndpointName( IpEndpointName::ANY_ADDRESS, listen_port ), this, allowReuse );
+	listen_socket = socket;
 
 	// start thread
 	#ifdef TARGET_WIN32
@@ -134,7 +144,7 @@ ofxOscReceiver::startThread( void* receiverInstance )
     #endif
 }
 
-void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndpointName& remoteEndpoint )
+void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const osc::IpEndpointName& remoteEndpoint )
 {
 
 	// convert the message to an ofxOscMessage
@@ -144,7 +154,7 @@ void ofxOscReceiver::ProcessMessage( const osc::ReceivedMessage &m, const IpEndp
 	ofMessage->setAddress( m.AddressPattern() );
     
 	// set the sender ip/host
-	char endpoint_host[ IpEndpointName::ADDRESS_STRING_LENGTH ];
+	char endpoint_host[ osc::IpEndpointName::ADDRESS_STRING_LENGTH ];
 	remoteEndpoint.AddressAsString( endpoint_host );
     ofMessage->setRemoteEndpoint( endpoint_host, remoteEndpoint.port );
 

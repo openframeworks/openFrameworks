@@ -42,6 +42,7 @@
 #include <cstring>
 
 
+namespace osc{
 static LONG initCount_ = 0;
 static bool winsockInitialized_ = false;
 
@@ -92,4 +93,5 @@ unsigned long GetHostByName( const char *name )
     }
 
     return result;
+}
 }

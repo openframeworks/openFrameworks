@@ -99,7 +99,7 @@ void ofxTabbedPages::render(){
 
     /*
      * TODO: call the first part when a tab toggle is clicked
-     * in this case coll needsRedraw
+     * in this case call needsRedraw
      * move the second part to generateDraw
      */
     for(int i = 1; i < (int)collection.size(); i++){

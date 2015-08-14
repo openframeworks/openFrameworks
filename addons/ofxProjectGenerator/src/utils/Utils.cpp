@@ -60,8 +60,9 @@ string generateUUID(string input){
     HMACEngine<MD5Engine> hmac(passphrase); // we'll compute a MD5 Hash
     hmac.update(input);
 
-    const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
-    std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
+	const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
+	std::string digestString;
+	digestString = DigestEngine::digestToHex(digest); // convert to a string of hexadecimal numbers
 
     digestString = digestString.substr(0,24);
     digestString = StringToUpper(digestString);

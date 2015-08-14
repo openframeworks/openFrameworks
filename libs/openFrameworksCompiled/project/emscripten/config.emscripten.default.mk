@@ -64,7 +64,7 @@ PLATFORM_REQUIRED_ADDONS = ofxEmscripten
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -Wall -std=c++11
+PLATFORM_CFLAGS = -Wall -std=c++14 -Wno-warn-absolute-paths
 
 
 ################################################################################
@@ -81,11 +81,12 @@ else
 	PLATFORM_EMSCRIPTEN_TOTAL_MEMORY=134217728
 endif
 
-PLATFORM_LDFLAGS = -Wl,--as-needed -Wl,--gc-sections --preload-file bin/data@data 
+PLATFORM_LDFLAGS = -Wl,--as-needed -Wl,--gc-sections --preload-file bin/data@data --emrun
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5video/lib/emscripten/library_html5video.js
 PLATFORM_LDFLAGS += --js-library $(OF_ADDONS_PATH)/ofxEmscripten/libs/html5audio/lib/emscripten/library_html5audio.js
+PLATFORM_LDFLAGS += --shell-file $(OF_LIBS_PATH)/openFrameworksCompiled/project/emscripten/template.html
 
-PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s OUTLINING_LIMIT=100000 -s AGGRESSIVE_VARIABLE_ELIMINATION=1 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) --memory-init-file 1 
+PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -O3 -s OUTLINING_LIMIT=100000 -s TOTAL_MEMORY=$(PLATFORM_EMSCRIPTEN_TOTAL_MEMORY) --memory-init-file 1 
 
 PLATFORM_OPTIMIZATION_LDFLAGS_DEBUG = -g3 -s TOTAL_MEMORY=134217728 --memory-init-file 1 
 

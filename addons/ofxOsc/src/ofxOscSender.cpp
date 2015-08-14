@@ -47,16 +47,26 @@ ofxOscSender::~ofxOscSender()
 		shutdown();
 }
 
-void ofxOscSender::setup( std::string hostname, int port, bool enableBroadcast )
+void ofxOscSender::setup( std::string hostname, int port )
 {
-    if( UdpSocket::GetUdpBufferSize() == 0 ){
-        UdpSocket::SetUdpBufferSize(65535);
+	setup(new osc::UdpTransmitSocket(osc::IpEndpointName( hostname.c_str(), port), false));
+}
+
+void ofxOscSender::setupForBroadcast( std::string broadcastAddr, int port )
+{
+	setup(new osc::UdpTransmitSocket(osc::IpEndpointName( broadcastAddr.c_str(), port), true));
+}
+
+void ofxOscSender::setup(osc::UdpTransmitSocket * socket)
+{
+    if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
+    	osc::UdpSocket::SetUdpBufferSize(65535);
     }
 
-	if ( socket )
+	if ( this->socket )
 		shutdown();
 	
-    socket = new UdpTransmitSocket(IpEndpointName( hostname.c_str(), port), enableBroadcast);
+    this->socket = socket;
 }
 
 void ofxOscSender::shutdown()
@@ -125,7 +135,7 @@ void ofxOscSender::appendParameter( ofxOscBundle & _bundle, const ofAbstractPara
 	if(parameter.type()==typeid(ofParameterGroup).name()){
 		ofxOscBundle bundle;
 		const ofParameterGroup & group = static_cast<const ofParameterGroup &>(parameter);
-		for(int i=0;i<group.size();i++){
+		for(std::size_t i=0;i<group.size();i++){
 			const ofAbstractParameter & p = group[i];
 			if(p.isSerializable()){
 				appendParameter(bundle,p,address+group.getEscapedName()+"/");

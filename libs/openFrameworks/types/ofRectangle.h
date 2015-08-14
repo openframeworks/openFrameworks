@@ -481,7 +481,7 @@ public:
     /// rectangles.
     ///
     /// \param targetRect The target rectangle to align this rectangle to.
-    /// \param thisHorzAnchor The common edge of the rectangles to align.
+    /// \param sharedAnchor The common edge of the rectangles to align.
     void alignToHorz(const ofRectangle& targetRect,
                      ofAlignHorz sharedAnchor = OF_ALIGN_HORZ_CENTER);
 

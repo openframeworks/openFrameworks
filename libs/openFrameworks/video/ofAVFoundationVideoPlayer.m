@@ -8,47 +8,24 @@
 
 #define IS_OS_6_OR_LATER    ([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0)
 
-#define USE_VIDEO_OUTPUT (defined(MAC_OS_X_VERSION_10_8) || defined(iOS6))
+
 
 static NSString * const kTracksKey = @"tracks";
-static NSString * const kPlayableKey = @"playable";
 static NSString * const kStatusKey = @"status";
 static NSString * const kRateKey = @"rate";
-static NSString * const kCurrentItemKey = @"currentItem";
-
-@interface ofAVFoundationVideoPlayer ()
-{
-	AVAssetReader * _assetReader;
-	AVAssetReaderTrackOutput * _assetReaderVideoTrackOutput;
-	AVAssetReaderTrackOutput * _assetReaderAudioTrackOutput;
-	
-	CMVideoFormatDescriptionRef _videoInfo;
-	dispatch_queue_t _myVideoOutputQueue;
-}
-
-@property (nonatomic, retain) AVAssetReader * assetReader;
-@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
-@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
-
-#if USE_VIDEO_OUTPUT
-@property (nonatomic, retain) AVPlayerItemVideoOutput *videoOutput;
-#endif
-
-@end
-
-
 
 //---------------------------------------------------------- video player.
 @implementation ofAVFoundationVideoPlayer
 
 @synthesize player = _player;
+@synthesize asset = _asset;
 @synthesize playerItem = _playerItem;
 
 @synthesize assetReader = _assetReader;
 @synthesize assetReaderVideoTrackOutput = _assetReaderVideoTrackOutput;
 @synthesize assetReaderAudioTrackOutput = _assetReaderAudioTrackOutput;
 #if USE_VIDEO_OUTPUT
-@synthesize videoOutput;
+@synthesize videoOutput = _videoOutput;
 #endif
 
 
@@ -68,17 +45,17 @@ static const NSString * ItemStatusContext;
 					 context:nil];
 		
 		
+#if USE_VIDEO_OUTPUT
 		// create videooutput queue
 		_myVideoOutputQueue = dispatch_queue_create(NULL, NULL);
 		
-#if USE_VIDEO_OUTPUT
 		// create videooutput
 		[self createVideoOutput];
+		
+		_videoInfo = nil;
 #endif
 	
 		
-		
-		_videoInfo = nil;
 		timeObserver = nil;
 		
 		videoSampleBuffer = nil;
@@ -154,10 +131,9 @@ static const NSString * ItemStatusContext;
 	if (self.videoOutput != nil) {
 		self.videoOutput = nil;
 	}
-#endif
-	
 	
 	dispatch_release(_myVideoOutputQueue);
+#endif
 	
 	[super dealloc];
 }
@@ -508,10 +484,12 @@ static const NSString * ItemStatusContext;
 	
 	[self removeTimeObserverFromPlayer];
 	
+#if USE_VIDEO_OUTPUT
 	// destroy video info
 	if (_videoInfo) {
 		CFRelease(_videoInfo);
 	}
+#endif
 }
 
 //---------------------------------------------------------- player callbacks.
@@ -645,7 +623,7 @@ static const NSString * ItemStatusContext;
 			err = CMVideoFormatDescriptionCreateForImageBuffer(NULL, buffer, &_videoInfo);
 		}
 		if (err) {
-			NSLog(@"Error at CMVideoFormatDescriptionCreateForImageBuffer %d", err);
+			NSLog(@"Error at CMVideoFormatDescriptionCreateForImageBuffer %ld", err);
 			bNewFrame = NO;
 			return;
 		}
@@ -674,7 +652,7 @@ static const NSString * ItemStatusContext;
 												 &sampleTimingInfo,
 												 &videoSampleBuffer);
 		if (err) {
-			NSLog(@"Error at CMSampleBufferCreateForImageBuffer %d", err);
+			NSLog(@"Error at CMSampleBufferCreateForImageBuffer %ld", err);
 			bNewFrame = NO;
 			return;
 		}

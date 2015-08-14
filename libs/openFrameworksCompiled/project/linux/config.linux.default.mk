@@ -26,17 +26,3 @@
 ################################################################################
 
 include $(OF_SHARED_MAKEFILES_PATH)/config.linux.common.mk
-
-
-################################################################################
-# PLATFORM CFLAGS
-#   This is a list of fully qualified CFLAGS required when compiling for this 
-#   platform. These flags will always be added when compiling a project or the 
-#   core library.  These flags are presented to the compiler AFTER the 
-#   PLATFORM_OPTIMIZATION_CFLAGS below. 
-#
-#   Note: Leave a leading space when adding list items with the += operator
-################################################################################
-
-PLATFORM_CFLAGS += -march=native
-PLATFORM_CFLAGS += -mtune=native

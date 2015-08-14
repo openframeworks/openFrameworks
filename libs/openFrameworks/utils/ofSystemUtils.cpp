@@ -374,27 +374,18 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 		ofn.lStructSize = sizeof(ofn);
 		HWND hwnd = WindowFromDC(wglGetCurrentDC());
 		ofn.hwndOwner = hwnd;
-#ifdef __MINGW32__
-		char szFileName[MAX_PATH];
-        memset(szFileName,0,260);
-		if(defaultPath!=""){
-            strcpy(szFileName,ofToDataPath(defaultPath).c_str());
-		}
 
-		ofn.lpstrFilter = "All\0";
-		ofn.lpstrFile = szFileName;
-#else // Visual Studio
 		wchar_t szFileName[MAX_PATH];
 		wchar_t szTitle[MAX_PATH];
 		if(defaultPath!=""){
-			wcscpy_s(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
+			wcscpy(szFileName,convertNarrowToWide(ofToDataPath(defaultPath)).c_str());
 		}else{
 		    //szFileName = L"";
 			memset(szFileName,  0, sizeof(szFileName));
 		}
 
 		if (windowTitle != "") {
-			wcscpy_s(szTitle, convertNarrowToWide(windowTitle).c_str());
+			wcscpy(szTitle, convertNarrowToWide(windowTitle).c_str());
 			ofn.lpstrTitle = szTitle;
 		} else {
 			ofn.lpstrTitle = nullptr;
@@ -402,24 +393,13 @@ ofFileDialogResult ofSystemLoadDialog(string windowTitle, bool bFolderSelection,
 
 		ofn.lpstrFilter = L"All\0";
 		ofn.lpstrFile = szFileName;
-#endif
 		ofn.nMaxFile = MAX_PATH;
 		ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 		ofn.lpstrDefExt = 0;
-        
-#ifdef __MINGW32__
-		ofn.lpstrTitle = windowTitle.c_str();
-#else
 		ofn.lpstrTitle = windowTitleW.c_str();
-#endif 
 
 		if(GetOpenFileName(&ofn)) {
-#ifdef __MINGW32__
-			results.filePath = string(szFileName);
-#else
 			results.filePath = convertWideToNarrow(szFileName);
-#endif
-
 		}
 
 	} else {
@@ -630,9 +610,6 @@ string ofSystemTextBoxDialog(string question, string text){
 	WNDCLASSEX wc;
 	MSG Msg;
 
-	//we have to do this because mingw wants non wide strings and vs wants wide strings
-    #ifdef _MSC_VER
-
         #define TMP_STR_CONVERT LPCWSTR
 
 		const LPCWSTR g_szClassName = L"myWindowClass\0";
@@ -752,131 +729,6 @@ string ofSystemTextBoxDialog(string question, string text){
 
 		 DestroyWindow(dialog);
 		 EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
-
-	#else
-
-		const LPCSTR g_szClassName = "myWindowClass\0";
-
-		//Step 1: Registering the Window Class
-		wc.cbSize        = sizeof(WNDCLASSEX);
-		wc.style         = CS_HREDRAW | CS_VREDRAW;
-		wc.lpfnWndProc   = WndProc;
-		wc.cbClsExtra    = 0;
-		wc.cbWndExtra    = 0;
-		wc.hInstance     = GetModuleHandle(0);
-		wc.lpszClassName = g_szClassName;
-		wc.hbrBackground = (HBRUSH)(COLOR_3DFACE + 1);
-		wc.lpszMenuName  = nullptr;
-		wc.hCursor       = LoadCursor(nullptr, IDC_ARROW);
-		wc.hIcon         = LoadIcon(nullptr, IDI_APPLICATION);
-		wc.hIconSm       = LoadIcon(nullptr, IDI_APPLICATION);
-		if(!RegisterClassEx(&wc))
-		{
-
-		    DWORD err=GetLastError();
-            if ((err==ERROR_CLASS_ALREADY_EXISTS)){
-                ; // we are ok
-                // http://stackoverflow.com/questions/5791996/re-registering-user-defined-window-class-c
-            } else {
-			MessageBox(nullptr, "Window Registration Failed!\0", "Error!\0",
-				MB_ICONEXCLAMATION | MB_OK);
-			return text;
-		}
-
-
-		}
-
-		HWND dialog = CreateWindowEx(WS_EX_DLGMODALFRAME,
-			g_szClassName,
-			question.c_str(),
-			WS_POPUP | WS_CAPTION | DS_MODALFRAME | WS_SYSMENU,
-			CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
-			WindowFromDC(wglGetCurrentDC()), nullptr, GetModuleHandle(0),nullptr);
-
-		if(dialog == nullptr)
-		{
-			MessageBox(nullptr, "Window Creation Failed!\0", "Error!\0",
-				MB_ICONEXCLAMATION | MB_OK);
-			return text;
-		}
-
-		EnableWindow(WindowFromDC(wglGetCurrentDC()), FALSE);
-		HWND hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, "EDIT\0", text.c_str(),
-			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-			10, 10, 210, 40, dialog, (HMENU)101, GetModuleHandle(nullptr), nullptr);
-
-
-		HWND okButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON\0", "OK\0",
-			WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-			10, 60, 60, 30, dialog, (HMENU)IDOK, GetModuleHandle(nullptr), nullptr);
-
-		HWND cancelButton = CreateWindowEx(WS_EX_CLIENTEDGE, "BUTTON\0", "Cancel\0",
-			WS_CHILD | WS_VISIBLE,
-			80, 60, 60, 30, dialog, (HMENU)IDCANCEL, GetModuleHandle(nullptr), nullptr);
-
-		SetFocus( hEdit );
-
-		ShowWindow(dialog, SW_SHOWNORMAL);
-		bool bFirstEmpty = true;
-		while (true){
-			 if (!PeekMessageW( &Msg, 0, 0, 0, PM_REMOVE )){
-				 if (bFirstEmpty){
-					 // ShowWindow the first time the queue goes empty
-					 ShowWindow( dialog, SW_SHOWNORMAL );
-					 bFirstEmpty = FALSE;
-				 }
-				 if (!(GetWindowLongW( dialog, GWL_STYLE ) & DS_NOIDLEMSG)){
-					 // No message present -> send ENTERIDLE and wait
-					 SendMessageW( WindowFromDC(wglGetCurrentDC()), WM_ENTERIDLE, MSGF_DIALOGBOX, (LPARAM)dialog );
-				 }
-				 GetMessageW( &Msg, 0, 0, 0 );
-			 }
-
-			 if (Msg.message == WM_QUIT){
-				 PostQuitMessage( Msg.wParam );
-				 if (!IsWindow( dialog )){
-					EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
-					return text;
-				 }
-				 break;
-			 }
-
-			 if (!IsWindow( dialog )){
-				EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
-				return text;
-			 }
-
-			 TranslateMessage( &Msg );
-			 DispatchMessageW( &Msg );
-
-			 if((Msg.hwnd == okButton && Msg.message==WM_LBUTTONUP) || (Msg.message==WM_KEYUP && Msg.wParam==13)){
-				 break;
-			 }else if((Msg.hwnd == cancelButton && Msg.message==WM_LBUTTONUP) ||  (Msg.message==WM_KEYUP && Msg.wParam==27)){
-				 EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
-				 DestroyWindow(dialog);
-				 return text;
-			 }
-
-			 if (!IsWindow( dialog )){
-				EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
-				return text;
-			 }
-
-			 if (bFirstEmpty && Msg.message == WM_TIMER){
-				 ShowWindow( dialog, SW_SHOWNORMAL );
-				 bFirstEmpty = FALSE;
-			 }
-		 }
-
-		 char buf[16384];
-		 GetDlgItemTextA( dialog, 101, buf, 16384 );
-		 text = buf;
-
-		 DestroyWindow(dialog);
-		 EnableWindow(WindowFromDC(wglGetCurrentDC()), TRUE);
-
-	#endif
-
 
 #endif
 

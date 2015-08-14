@@ -179,7 +179,7 @@ string ofGetTimestampString(const string& timestampFormat){
 	// so we have to filter out %i (which is not supported by vs)
 	// earlier.
 	auto tmpTimestampFormat = timestampFormat;
-	ofStringReplace(tmpTimestampFormat, "%i", ofToString(ms));
+	ofStringReplace(tmpTimestampFormat, "%i", ofToString(ms, 3, '0'));
 	
 	if (strftime(buf,bufsize, tmpTimestampFormat.c_str(),&tm) != 0){
 		str << buf;
@@ -823,14 +823,8 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	}
 
 	#ifdef TARGET_WIN32
-		#if (_MSC_VER)
-		// microsoft visual studio yaks about strings, wide chars, unicode, etc
 		ShellExecuteA(nullptr, "open", uri.toString().c_str(),
                 nullptr, nullptr, SW_SHOWNORMAL);
-		#else
-		ShellExecute(nullptr, "open", uri.toString().c_str(),
-                nullptr, nullptr, SW_SHOWNORMAL);
-		#endif
 	#endif
 
 	#ifdef TARGET_OSX

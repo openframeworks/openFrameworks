@@ -36,7 +36,9 @@ an ofxOscSender sends messages to a single host/port
 
 */
 
-class UdpTransmitSocket;
+namespace osc{
+	class UdpTransmitSocket;
+}
 #include <string>
 #include "OscTypes.h"
 #include "OscOutboundPacketStream.h"
@@ -55,7 +57,8 @@ public:
 	~ofxOscSender();
 
 	/// send messages to hostname and port
-	void setup( std::string hostname, int port, bool enableBroadcast = true );
+	void setup( std::string hostname, int port );
+	void setupForBroadcast( std::string broadcastAddr, int port );
 
 	/// send the given message
 	void sendMessage( ofxOscMessage& message, bool wrapInBundle = true );
@@ -66,6 +69,7 @@ public:
 
 
 private:
+	void setup(osc::UdpTransmitSocket * socket);
 	void shutdown();
 		
 	// helper methods for constructing messages
@@ -74,5 +78,5 @@ private:
 	void appendParameter( ofxOscBundle & bundle, const ofAbstractParameter & parameter, string address);
 	void appendParameter( ofxOscMessage & msg, const ofAbstractParameter & parameter, string address);
 
- 	UdpTransmitSocket * socket;
+ 	osc::UdpTransmitSocket * socket;
 };

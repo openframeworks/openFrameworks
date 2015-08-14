@@ -43,8 +43,9 @@ class ofxBaseGui {
 		std::string getName();
 		void setName(const std::string& name);
 
-		virtual void setPosition(ofPoint p);
-        virtual void setPosition(float x, float y);
+
+		virtual void setPosition(const ofPoint & p);
+		virtual void setPosition(float x, float y);
 
 		virtual void setSize(float w, float h);
 		virtual void setShape(ofRectangle r);

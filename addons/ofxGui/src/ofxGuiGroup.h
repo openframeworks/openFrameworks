@@ -8,6 +8,7 @@
 
 class ofxGuiGroup : public ofxBaseGui {
 	public:
+
 		struct Config: public ofxBaseGui::Config{
             Config(){
                 this->layout = ofxBaseGui::Vertical;

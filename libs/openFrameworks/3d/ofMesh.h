@@ -120,12 +120,12 @@ public:
 	/// \}
  	/// \name Primitive constructor helper methods
 	/// \{
-    static ofMesh plane(float width, float height, int columns=2, int rows=2, 
-    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
-    static ofMesh sphere(float radius, int res=12, 
-    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
-    static ofMesh icosahedron(float radius);
-    static ofMesh icosphere(float radius, std::size_t iterations=2);
+	static ofMesh plane(float width, float height, int columns=2, int rows=2,
+		ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+	static ofMesh sphere(float radius, int res=12,
+		ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+	static ofMesh icosahedron(float radius);
+	static ofMesh icosphere(float radius, std::size_t iterations=2);
   	///
 	///	\brief A helper method that returns a cylinder made of triangles. 
 	/// The resolution settings for the radius, height, and cap are optional 
@@ -140,9 +140,9 @@ public:
 	///	
 	///	![image of a simple cylinder](3d/cylinder.jpg)
   	///
-    static ofMesh cylinder(float radius, float height, int radiusSegments=12, 
-    	int heightSegments=6, int numCapSegments=2, bool bCapped = true, 
-    	ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
+	static ofMesh cylinder(float radius, float height, int radiusSegments=12,
+		int heightSegments=6, int numCapSegments=2, bool bCapped = true,
+		ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
 
 	/// \brief A helper method that returns a cone made of triangles. 
 	/// The resolution settings for the radius, height, and cap are optional 
@@ -177,7 +177,7 @@ public:
 	/// \}
 	/// \name Vertices
 	/// \{
-    
+
 	/// \brief Add a new vertex at the end of the current list of vertices. 
 	/// It is important to remember that the order the vertices are added to 
 	/// the list determines how they link they form the polygons and strips 
@@ -236,11 +236,11 @@ public:
 	/// \brief Add the vertices, normals, texture coordinates and indices of one mesh onto another mesh. 
 	/// Everything from the referenced mesh is simply added at the end 
 	/// of the current mesh's lists.
-    void append(const ofMesh & mesh);
+	void append(const ofMesh & mesh);
 
-    void mergeDuplicateVertices();
+	void mergeDuplicateVertices();
 
-    /// \returns a ofVec3f defining the centroid of all the vetices in the mesh.
+	/// \returns a ofVec3f defining the centroid of all the vetices in the mesh.
 	ofVec3f getCentroid() const;
 
 
@@ -278,7 +278,7 @@ public:
 	/// \brief Remove a normal.
 	void removeNormal(ofIndexType index);
 
-	/// \todo
+	/// \todo Documentation.
 	void setNormal(ofIndexType index, const ofVec3f& n);
 
 	/// \brief Remove all the normals.
@@ -311,42 +311,43 @@ public:
 	bool hasNormals() const;
 
 	/// \brief Enable mesh normals. 
-    /// Use disableNormals() to turn normals off. 
-    /// Normals are enabled by default when they are added to the mesh.
-    virtual void enableNormals();
-    /// \brief Disable mesh normals. 
-    /// Use enableNormals() to turn normals back on.
-    virtual void disableNormals();
-    virtual bool usingNormals() const;
-    
-    void smoothNormals( float angle );
+	/// Use disableNormals() to turn normals off.
+	/// Normals are enabled by default when they are added to the mesh.
+	virtual void enableNormals();
+	/// \brief Disable mesh normals.
+	/// Use enableNormals() to turn normals back on.
+	virtual void disableNormals();
+	virtual bool usingNormals() const;
 
-    /// \}
-    /// \name Faces
-    /// \{
+	void smoothNormals( float angle );
+
+	/// \}
+	/// \name Faces
+	/// \{
 
 	/// \returns the vector that contains all of the faces of the mesh. This isn't currently implemented.
-    ofMeshFace getFace(ofIndexType faceId) const;
+	ofMeshFace getFace(ofIndexType faceId) const;
 
-    /// \brief Get normals for each face
-    /// As a default it only calculates the normal for the face as a whole but 
-    /// by setting (perVertex = true) it will return the same normal value for 
-    /// each of the three vertices making up a face.
-    /// \returns a vector containing the calculated normals of each face in the mesh. 
-    vector<ofVec3f> getFaceNormals( bool perVetex=false) const;
+	/// \brief Get normals for each face
+	/// As a default it only calculates the normal for the face as a whole but
+	/// by setting (perVertex = true) it will return the same normal value for
+	/// each of the three vertices making up a face.
+	/// \returns a vector containing the calculated normals of each face in the mesh.
+	vector<ofVec3f> getFaceNormals( bool perVetex=false) const;
 
-    /// \returns the mesh as a vector of unique ofMeshFaces
-    /// a list of triangles that do not share vertices or indices 
-    const vector<ofMeshFace> & getUniqueFaces() const;
+	/// \returns the mesh as a vector of unique ofMeshFaces
+	/// a list of triangles that do not share vertices or indices
+	const vector<ofMeshFace> & getUniqueFaces() const;
 
 	/// \}
 	/// \name Colors
 	/// \{
 
-	/// \brief \returns the color at the index in the colors vector.
+	/// \brief Get the color at the index in the colors vector.
+    /// \returns the color at the index in the colors vector.
 	ofFloatColor getColor(ofIndexType i) const;
 
-	/// \brief This adds a color to the mesh, 
+	/// \brief This adds a color to the mesh,
 	/// the color will be associated with the vertex in the same position.
 	void addColor(const ofFloatColor& c);
 
@@ -393,12 +394,12 @@ public:
 	/// \brief Enable mesh colors. 
 	/// Use disableColors() to turn colors off. 
 	/// Colors are enabled by default when they are added to the mesh.
-    virtual void enableColors();
+	virtual void enableColors();
 
-    /// \brief Disable mesh colors. 
-    /// Use enableColors() to turn colors back on.
-    virtual void disableColors();
-    virtual bool usingColors() const;
+	/// \brief Disable mesh colors.
+	/// Use enableColors() to turn colors back on.
+	virtual void disableColors();
+	virtual bool usingColors() const;
 
 	/// \}
 
@@ -464,14 +465,14 @@ public:
 	bool hasTexCoords() const;
 
 	/// \brief Enable mesh textures. 
-    /// Use disableTextures() to turn textures off. 
-    /// Textures are enabled by default when they are added to the mesh.
-    virtual void enableTextures();
-    
-    /// \brief Disable mesh textures. 
-    /// Use enableTextures() to turn textures back on.
-    virtual void disableTextures();
-    virtual bool usingTextures() const;
+	/// Use disableTextures() to turn textures off.
+	/// Textures are enabled by default when they are added to the mesh.
+	virtual void enableTextures();
+
+	/// \brief Disable mesh textures.
+	/// Use enableTextures() to turn textures back on.
+	virtual void disableTextures();
+	virtual bool usingTextures() const;
 
 
 	/// \}
@@ -557,23 +558,23 @@ public:
 	/// This is an easy way to create triangles in the mesh. The indices refer to the index of the vertex in the vector of vertices.
   	void addTriangle(ofIndexType index1, ofIndexType index2, ofIndexType index3);
 
-    /// \brief Enable mesh indices. 
-    /// Use disableIndices() to turn indices off. 
-    /// Indices are enabled by default when they are added to the mesh.
-    virtual void enableIndices();
+	/// \brief Enable mesh indices.
+	/// Use disableIndices() to turn indices off.
+	/// Indices are enabled by default when they are added to the mesh.
+	virtual void enableIndices();
 
-    /// \brief Disable mesh indices. 
-    /// Use enableIndices() to turn indices back on.
-    virtual void disableIndices();
-    virtual bool usingIndices() const;
+	/// \brief Disable mesh indices.
+	/// Use enableIndices() to turn indices back on.
+	virtual void disableIndices();
+	virtual bool usingIndices() const;
 
-    void setColorForIndices( ofIndexType startIndex, ofIndexType endIndex, ofColor color );
+	void setColorForIndices( ofIndexType startIndex, ofIndexType endIndex, ofColor color );
 
-    /// The new mesh includes the mesh mode, colors, textures, and normals of the original mesh (assuming any were added).
-    /// \returns a mesh made up of a range of indices from startIndex to the endIndex. 
-    ofMesh getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex ) const;
-    ofMesh getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex, ofIndexType startVertIndex, ofIndexType endVertIndex ) const;
-    
+	/// The new mesh includes the mesh mode, colors, textures, and normals of the original mesh (assuming any were added).
+	/// \returns a mesh made up of a range of indices from startIndex to the endIndex.
+	ofMesh getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex ) const;
+	ofMesh getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex, ofIndexType startVertIndex, ofIndexType endVertIndex ) const;
+
 	
 	/// \}
 	/// \name Drawing
@@ -601,21 +602,21 @@ public:
 	/// \{
 
 	/// \brief Loads a mesh from a file located at the provided path into the mesh.
-    /// This will replace any existing data within the mesh.
-    /// 
-    /// It expects that the file will be in the [PLY Format](http://en.wikipedia.org/wiki/PLY_(file_format)).
-    /// It will only load meshes saved in the PLY ASCII format; the binary format is not supported.
+	/// This will replace any existing data within the mesh.
+	///
+	/// It expects that the file will be in the [PLY Format](http://en.wikipedia.org/wiki/PLY_(file_format)).
+	/// It will only load meshes saved in the PLY ASCII format; the binary format is not supported.
 	void load(string path);
 
-    ///  \brief Saves the mesh at the passed path in the [PLY Format](http://en.wikipedia.org/wiki/PLY_(file_format)).
-    ///  
-    ///  There are two format options for PLY: a binary format and an ASCII format.
-    ///  By default, it will save using the ASCII format.
-    ///  Passing ``true`` into the ``useBinary`` parameter will save it in the binary format.
-    ///  
-    ///  If you're planning on reloading the mesh into ofMesh, ofMesh currently only supports loading the ASCII format.
-    ///  
-    ///  For more information, see the [PLY format specification](http://paulbourke.net/dataformats/ply/).
+	///  \brief Saves the mesh at the passed path in the [PLY Format](http://en.wikipedia.org/wiki/PLY_(file_format)).
+	///
+	///  There are two format options for PLY: a binary format and an ASCII format.
+	///  By default, it will save using the ASCII format.
+	///  Passing ``true`` into the ``useBinary`` parameter will save it in the binary format.
+	///
+	///  If you're planning on reloading the mesh into ofMesh, ofMesh currently only supports loading the ASCII format.
+	///
+	///  For more information, see the [PLY format specification](http://paulbourke.net/dataformats/ply/).
 	void save(string path, bool useBinary = false) const;
 	
 	/// \}
@@ -637,10 +638,10 @@ private:
 		bIndicesChanged;
 	ofPrimitiveMode mode;
 
-    bool useColors;
-    bool useTextures;
-    bool useNormals;
-    bool useIndices;
+	bool useColors;
+	bool useTextures;
+	bool useNormals;
+	bool useIndices;
 
 //	ofMaterial *mat;
 };
@@ -663,40 +664,40 @@ private:
 /// this is always a triangle
 class ofMeshFace {
 public:
-    ofMeshFace();
+	ofMeshFace();
 
-    const ofVec3f & getFaceNormal() const;
+	const ofVec3f & getFaceNormal() const;
 
-    void setVertex( ofIndexType index, const ofVec3f& v );
-    const ofVec3f& getVertex( ofIndexType index ) const;
+	void setVertex( ofIndexType index, const ofVec3f& v );
+	const ofVec3f& getVertex( ofIndexType index ) const;
 
-    void setNormal( ofIndexType index, const ofVec3f& n );
-    const ofVec3f& getNormal( ofIndexType  index ) const;
+	void setNormal( ofIndexType index, const ofVec3f& n );
+	const ofVec3f& getNormal( ofIndexType  index ) const;
 
-    void setColor( ofIndexType index, const ofFloatColor& color );
-    const ofFloatColor& getColor(ofIndexType  index) const;
+	void setColor( ofIndexType index, const ofFloatColor& color );
+	const ofFloatColor& getColor(ofIndexType  index) const;
 
-    void setTexCoord( ofIndexType index, const ofVec2f& tCoord );
-    const ofVec2f& getTexCoord( ofIndexType index ) const;
+	void setTexCoord( ofIndexType index, const ofVec2f& tCoord );
+	const ofVec2f& getTexCoord( ofIndexType index ) const;
 
-    void setHasColors( bool bColors );
-    void setHasNormals( bool bNormals );
-    void setHasTexcoords( bool bTexcoords );
+	void setHasColors( bool bColors );
+	void setHasNormals( bool bNormals );
+	void setHasTexcoords( bool bTexcoords );
 
-    bool hasColors() const;
-    bool hasNormals() const;
-    bool hasTexcoords() const;
+	bool hasColors() const;
+	bool hasNormals() const;
+	bool hasTexcoords() const;
 
 private:
-    void calculateFaceNormal() const;
-    bool bHasNormals, bHasColors, bHasTexcoords;
+	void calculateFaceNormal() const;
+	bool bHasNormals, bHasColors, bHasTexcoords;
 
 	// this variables are only caches and returned always as const
 	// mutable allows to change them from const methods
-    mutable bool bFaceNormalDirty;
-    mutable ofVec3f faceNormal;
-    ofVec3f vertices[3];
-    ofVec3f normals[3];
-    ofFloatColor colors[3];
-    ofVec2f texCoords[3];
+	mutable bool bFaceNormalDirty;
+	mutable ofVec3f faceNormal;
+	ofVec3f vertices[3];
+	ofVec3f normals[3];
+	ofFloatColor colors[3];
+	ofVec2f texCoords[3];
 };

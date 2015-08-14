@@ -45,11 +45,11 @@ bool ofxGuiPage::mouseDragged(ofMouseEventArgs & args){
 					ofClamp(
 						collection[i]->getPosition().x,
 						b.getLeft(),
-						b.getRight() - collection[i]->getWidth()),
+                        b.getRight() - collection[i]->getWidth() - 1),
 					ofClamp(
 						collection[i]->getPosition().y,
 						b.getTop() + tmp_header,
-						b.getBottom() - collection[i]->getHeight())
+                        b.getBottom() - collection[i]->getHeight() - 1)
 					);
 				return true;
 			}

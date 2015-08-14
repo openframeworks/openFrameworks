@@ -26,12 +26,10 @@ public:
 	/// \brief Copy-constructor for ofBaseEvent.
 	///
 	/// \see ofBaseEvent::ofBaseEvent()
-	ofBaseEvent(const ofBaseEvent & mom): enabled(mom.enabled){
+	ofBaseEvent(const ofBaseEvent & mom)
+	:enabled(mom.enabled){
 		std::unique_lock<Mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
-		std::transform(functions.begin(), functions.end(),std::back_inserter(functions),
-			[&](Function&f){
-				return std::unique_ptr<Function>(new Function(*f));
-			});
+		functions = mom.functions;
 	}
 
 	/// \brief Overloading the assignment operator.
@@ -109,7 +107,33 @@ namespace priv{
 		void unlock(){}
 	};
 
-	class BaseFunctionId{};
+	class BaseFunctionId{
+	public:
+		virtual ~BaseFunctionId(){};
+		virtual bool operator==(const BaseFunctionId &) const = 0;
+		virtual BaseFunctionId * clone() const = 0;
+	};
+
+	template <class T>
+	class clone_ptr : public std::unique_ptr<T> {
+	public:
+		clone_ptr(T * t)
+		  :std::unique_ptr<T>(t) { };
+
+		clone_ptr(std::unique_ptr<T> && t)
+		  :std::unique_ptr<T>(std::move(t)) { };
+
+		clone_ptr(clone_ptr<T> && other) = default;
+		clone_ptr<T> & operator=(clone_ptr<T> && other) = default;
+
+		clone_ptr(const clone_ptr<T> & other)
+		  :std::unique_ptr<T>(other->clone()) { }
+
+		clone_ptr & operator=(const clone_ptr<T> & other) {
+			this->reset(other->clone());
+			return *this;
+		}
+	};
 
 	template<typename T>
 	class Function{
@@ -119,15 +143,13 @@ namespace priv{
 		,function(function)
 		,id(std::move(id)){}
 
-		template<typename F>
-		bool operator==(const F & f1) const{
-			const auto * thisAsF = dynamic_cast<const F*>(this);
-			return thisAsF && f1.priority == priority && id == f1.id;
+		bool operator==(const Function<T> & f) const{
+			return f.priority == priority && *id == *f.id;
 		}
 
 		int priority;
 		std::function<bool(const void*,T&)> function;
-		std::unique_ptr<BaseFunctionId> id;
+		clone_ptr<BaseFunctionId> id;
 	};
 
 	template<>
@@ -138,15 +160,13 @@ namespace priv{
 		,function(function)
 		,id(std::move(id)){}
 
-		template<typename F>
-		bool operator==(const F & f1) const{
-			const auto * thisAsF = dynamic_cast<const F*>(this);
-			return thisAsF && f1.priority == priority && id == f1.id;
+		bool operator==(const Function<void> & f) const{
+			return f.priority == priority && *id == *f.id;
 		}
 
 		int priority;
 		std::function<bool(const void*)> function;
-		std::unique_ptr<BaseFunctionId> id;
+		clone_ptr<BaseFunctionId> id;
 	};
 }
 }
@@ -168,9 +188,18 @@ protected:
 
 		}
 
+		BaseFunctionId * clone() const{
+			return new FunctionId<TObj,TMethod>(listener, method);
+		}
+
 		template<typename F>
 		bool operator==(const F & f1) const{
 			return f1.listener == this->listener && f1.method == this->method;
+		}
+
+		bool operator==(const BaseFunctionId & f) const{
+			const auto * other = dynamic_cast<const FunctionId<TObj,TMethod>*>(&f);
+			return other && other->listener == this->listener && other->method == this->method;
 		}
 	};
 
@@ -187,7 +216,7 @@ protected:
 	template<class TObj>
 	of::priv::Function<T> make_function(TObj * listener, void (TObj::*method)(T&), int priority){
 		return of::priv::Function<T>(priority, [listener, method](const void*, T&t){
-			std::bind(method,listener,std::placeholders::_1)(t);
+			((listener)->*(method))(t);
 			return false;
 		}, make_function_id(listener,method));
 	}
@@ -248,11 +277,11 @@ public:
 	}
 
 	inline void notify(const void* sender, T & param){
-		if(this->template enabled && !this->template functions.empty()){
+		if(ofEvent<T,Mutex>::enabled && !ofEvent<T,Mutex>::functions.empty()){
 			std::vector<of::priv::Function<T>*> functions_copy;
 			{
-				std::unique_lock<Mutex> lck(this->template mtx);
-				std::transform(this->template functions.begin(), this->template functions.end(),
+				std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::mtx);
+				std::transform(ofEvent<T,Mutex>::functions.begin(), ofEvent<T,Mutex>::functions.end(),
 						std::back_inserter(functions_copy),
 						[&](of::priv::Function<T>&f){return &f;});
 			}
@@ -281,9 +310,18 @@ protected:
 
 		}
 
+		BaseFunctionId * clone() const{
+			return new FunctionId<TObj,TMethod>(listener, method);
+		}
+
 		template<typename F>
 		bool operator==(const F & f1) const{
 			return f1.listener == this->listener && f1.method == this->method;
+		}
+
+		bool operator==(const BaseFunctionId & f) const{
+			const auto * other = dynamic_cast<const FunctionId<TObj,TMethod>*>(&f);
+			return other && other->listener == this->listener && other->method == this->method;
 		}
 	};
 
@@ -362,11 +400,11 @@ public:
 	}
 
 	void notify(const void* sender){
-		if(this->template enabled && !this->template functions.empty()){
+		if(ofEvent<void,Mutex>::enabled && !ofEvent<void,Mutex>::functions.empty()){
 			std::vector<of::priv::Function<void>*> functions_copy;
 			{
-				std::unique_lock<Mutex> lck(this->template mtx);
-				std::transform(this->template functions.begin(), this->template functions.end(),
+				std::unique_lock<Mutex> lck(ofEvent<void,Mutex>::mtx);
+				std::transform(ofEvent<void,Mutex>::functions.begin(), ofEvent<void,Mutex>::functions.end(),
 						std::back_inserter(functions_copy),
 						[&](of::priv::Function<void> & f){return &f;});
 			}
@@ -385,8 +423,8 @@ template<typename T>
 class ofFastEvent: public ofEvent<T,of::priv::NoopMutex>{
 public:
 	inline void notify(const void* sender, T & param){
-		if(this->template enabled && !this->template functions.empty()){
-			for(auto & f: this->template functions){
+		if(ofFastEvent::enabled && !ofFastEvent::functions.empty()){
+			for(auto & f: ofFastEvent::functions){
 				if(f.function(sender,param)){
 					throw ofEventAttendedException();
 				}
