@@ -130,19 +130,19 @@ ofxBaseGui::~ofxBaseGui(){
 	unregisterMouseEvents();
 }
 
-void ofxBaseGui::registerMouseEvents(){
+void ofxBaseGui::registerMouseEvents(int priority){
 	if(bRegisteredForMouseEvents == true){
 		return; // already registered.
 	}
 	bRegisteredForMouseEvents = true;
-	ofRegisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+    ofRegisterMouseEvents(this, priority);
 }
 
-void ofxBaseGui::unregisterMouseEvents(){
+void ofxBaseGui::unregisterMouseEvents(int priority){
 	if(bRegisteredForMouseEvents == false){
 		return; // not registered.
 	}
-	ofUnregisterMouseEvents(this, OF_EVENT_ORDER_BEFORE_APP);
+    ofUnregisterMouseEvents(this, priority);
 	bRegisteredForMouseEvents = false;
 }
 

@@ -87,8 +87,8 @@ class ofxBaseGui {
 		static void loadFont(const std::string& filename, int fontsize, bool _bAntiAliased = true, bool _bFullCharacterSet = false, int dpi = 0);
 		static void setUseTTF(bool bUseTTF);
 
-		void registerMouseEvents();
-		void unregisterMouseEvents();
+        void registerMouseEvents(int priority = OF_EVENT_ORDER_BEFORE_APP);
+        void unregisterMouseEvents(int priority = OF_EVENT_ORDER_BEFORE_APP);
 
 		virtual bool mouseMoved(ofMouseEventArgs & args) = 0;
 		virtual bool mousePressed(ofMouseEventArgs & args) = 0;

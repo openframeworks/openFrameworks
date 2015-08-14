@@ -22,10 +22,8 @@ ofxTabbedPages & ofxTabbedPages::setup(string collectionName, string filename, f
 	tabs.setDefaultBorderColor(thisBorderColor);
 	tabs.setDefaultFillColor(thisBackgroundColor);
 	tabHeight = 20;
-	tabWidth = 0;
-	updateContentShapes();
-    tabs.setShape(tabShape);
-	sizeChangedCB();
+    tabWidth = 0;
+    sizeChangedCB();
 	collection.push_back(&tabs);
 	tabs.unregisterMouseEvents();
 	parameters.add(tabs.getParameter());
@@ -180,20 +178,20 @@ void ofxTabbedPages::setSizeToElement(ofxBaseGui * element){
 			b.height += spacing + header;
 		}
 	}
-	updateContentShapes();
 	sizeChangedCB();
 }
 
 void ofxTabbedPages::sizeChangedCB(){
-	tabs.setShape(tabShape);
+    updateContentShapes();
+    tabs.setShape(tabShape);
 
     for(int i = 1; i < (int)collection.size(); i++){
         collection[i]->sizeChangedE.disable();
         collection[i]->setShape(pagesShape);
         collection[i]->sizeChangedE.enable();
-	}
+    }
     ofNotifyEvent(sizeChangedE,this);
-	setNeedsRedraw();
+    setNeedsRedraw();
 }
 
 void ofxTabbedPages::setActiveTab(int index){
