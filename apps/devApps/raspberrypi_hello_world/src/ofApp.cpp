@@ -30,7 +30,7 @@ void ofApp::draw() {
     ofTranslate(ofGetWidth()/2.0f,ofGetHeight()/2.0f);
     ofRotateZ(angle);
     ofEnableAlphaBlending();
-    rpiLogo.draw(-rpiLogo.width/2.0f,-rpiLogo.height/2.0f);
+    rpiLogo.draw(-rpiLogo.getWidth()/2.0f,-rpiLogo.getHeight()/2.0f);
     ofDisableAlphaBlending();
     ofPopMatrix();
 
