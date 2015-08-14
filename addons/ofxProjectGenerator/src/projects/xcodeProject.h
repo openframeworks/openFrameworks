@@ -29,7 +29,7 @@ public:
     void addCPPFLAG(string cppflag, LibType libType = RELEASE_LIB); // Other C++ Flags
     
     // specific to OSX
-    void addFramework(string name, string path);
+    void addFramework(string name, string path, string folder="");  // folder if for non system frameworks
     
         
     

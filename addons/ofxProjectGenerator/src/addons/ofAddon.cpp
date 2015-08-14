@@ -373,6 +373,7 @@ void ofAddon::fromFS(string path, string platform){
     	srcFiles[i] = pathToOF + srcFiles[i];
     	filesToFolders[srcFiles[i]] = folder;
     }
+    
 
     string libsPath = path + "/libs";
     vector < string > libFiles;
@@ -426,19 +427,50 @@ void ofAddon::fromFS(string path, string platform){
 
     for (int i = 0; i < (int)frameworks.size(); i++){
 
-        // does libs[] have any path ? let's fix if so.
-#ifdef TARGET_WIN32
-    	int end = frameworks[i].rfind("\\");
-#else
-        int end = frameworks[i].rfind("/");
-#endif
-        if (end > 0){
-
-            frameworks[i].erase (frameworks[i].begin(), frameworks[i].begin()+ofRootPath.length());
-            frameworks[i] = pathToOF + frameworks[i];
+        // knowing if we are system framework or not is important....
+        
+        bool bIsSystemFramework = false;
+        size_t foundUnixPath = frameworks[i].find('/');
+        size_t foundWindowsPath = frameworks[i].find('\\');
+        if (foundUnixPath==std::string::npos &&
+            foundWindowsPath==std::string::npos){
+            bIsSystemFramework = true;                  // we have no "path" so we are system
         }
+        
+        if (bIsSystemFramework){
+            
+            ; // do we need to do anything here?
+            
+        } else {
+            
+            
+           
+            // erease out the OF root path.  this assumes the frames is *in* the OF folder....
+            frameworks[i].erase (frameworks[i].begin(), frameworks[i].begin()+ofRootPath.length());
+            
+            
+            
+            int init = 0;
+#ifdef TARGET_WIN32
+            int end = frameworks[i].rfind("\\");
+#else
+            int end = frameworks[i].rfind("/");
+#endif
+            
+            string folder = frameworks[i].substr(init,end);
+            frameworks[i] = pathToOF + frameworks[i];
+            filesToFolders[frameworks[i]] = folder;
+            
+            
+            
+        }
+        
+       
 
     }
+
+
+
 
 
 

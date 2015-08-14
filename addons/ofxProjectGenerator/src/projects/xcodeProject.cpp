@@ -72,6 +72,26 @@ STRINGIFY(
 
 );
 
+//-----------------------------------------------------------------
+const char PBXFileReferenceWithoutEncoding[] =
+STRINGIFY(
+          
+          <key>FILEUUID</key>
+          <dict>
+          <key>explicitFileType</key>
+          <string>FILETYPE</string>
+          <key>isa</key>
+          <string>PBXFileReference</string>
+          <key>name</key>
+          <string>FILENAME</string>
+          <key>path</key>
+          <string>FILEPATH</string>
+          <key>sourceTree</key>
+          <string>SOURCE_ROOT</string>
+          </dict>
+          
+          );
+
 
 //-----------------------------------------------------------------
 const char PBXFileReferenceXib[] =
@@ -173,14 +193,14 @@ void xcodeProject::setup(){
 		addonUUID		= "BB4B014C10F69532006C3DED";
 		buildPhaseUUID	= "E4B69E200A3A1BDC003C02F2";
 		resourcesUUID	= "";
-        frameworksUUID  = "E7E077E715D3B6510020DFD4";   //PBXFrameworksBuildPhase
-	}else{
+        frameworksUUID  = "E4328149138ABC9F0047C5CB";   //PBXFrameworksBuildPhase
+    }else{
 		srcUUID			= "E4D8936A11527B74007E1F53";
 		addonUUID		= "BB16F26B0F2B646B00518274";
 		buildPhaseUUID	= "E4D8936E11527B74007E1F53";
 		resourcesUUID   = "BB24DD8F10DA77E000E9C588";
         buildPhaseResourcesUUID = "BB24DDCA10DA781C00E9C588";
-        frameworksUUID  = "E7E077E715D3B6510020DFD4";   //PBXFrameworksBuildPhase  // todo: check this?
+        frameworksUUID  = "E41D421413B3A95300A75A5D";   //PBXFrameworksBuildPhase  // todo: check this?
 	}
 }
 
@@ -188,7 +208,10 @@ void xcodeProject::setup(){
 void xcodeProject::saveScheme(){
 
 	string schemeFolder = projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/";
-    ofDirectory::removeDirectory(schemeFolder, true);
+    
+    if (ofDirectory::doesDirectoryExist(schemeFolder)){
+        ofDirectory::removeDirectory(schemeFolder, true);
+    }
 	ofDirectory::createDirectory(schemeFolder, false, true);
     
 	string schemeToD = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + " Debug.xcscheme";
@@ -212,8 +235,15 @@ void xcodeProject::saveWorkspaceXML(){
 	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
 	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
 
-	ofFile::removeFile(xcodeProjectWorkspace);
-	ofDirectory::removeDirectory(workspaceFolder, true);
+    
+    if (ofFile::doesFileExist(xcodeProjectWorkspace)){
+        ofFile::removeFile(xcodeProjectWorkspace);
+    }
+    
+    if (ofDirectory::doesDirectoryExist(workspaceFolder)){
+        ofDirectory::removeDirectory(workspaceFolder, true);
+    }
+    
 	ofDirectory::createDirectory(workspaceFolder, false, true);
     ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
     findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
@@ -233,7 +263,10 @@ bool xcodeProject::createProjectFile(){
     // todo: some error checking.
 
     string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
-    ofDirectory::removeDirectory(xcodeProject, true);
+    
+    if (ofDirectory::doesDirectoryExist(xcodeProject)){
+        ofDirectory::removeDirectory(xcodeProject, true);
+    }
    
 	ofDirectory xcodeDir(xcodeProject);
 	xcodeDir.create(true);
@@ -349,6 +382,7 @@ bool xcodeProject::saveProjectFile(){
 }
 
 
+
 bool xcodeProject::findArrayForUUID(string UUID, pugi::xml_node & nodeMe){
     char query[255];
     sprintf(query, "//string[contains(.,'%s')]", UUID.c_str());
@@ -437,7 +471,7 @@ pugi::xml_node xcodeProject::findOrMakeFolderSet(pugi::xml_node nodeToAddTo, vec
         nodeWithThisName = doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(pbxDoc.first_child().next_sibling());
         doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(pbxDoc.first_child());
 
-
+        
 
         // add to array
         char queryArray[255];
@@ -464,70 +498,26 @@ pugi::xml_node xcodeProject::findOrMakeFolderSet(pugi::xml_node nodeToAddTo, vec
 
 // todo: frameworks
 //
-void xcodeProject::addFramework(string name, string path){
+void xcodeProject::addFramework(string name, string path, string folder){
     
-    
-    /*
-    //-----------------------------------------------------------------
-    const char PBXFileReference[] =
-    STRINGIFY(
-              
-              <key>FILEUUID</key>
-              <dict>
-              <key>explicitFileType</key>
-              <string>FILETYPE</string>
-              <key>fileEncoding</key>
-              <string>30</string>
-              <key>isa</key>
-              <string>PBXFileReference</string>
-              <key>name</key>
-              <string>FILENAME</string>
-              <key>path</key>
-              <string>FILEPATH</string>
-              <key>sourceTree</key>
-              <string>SOURCE_ROOT</string>
-              </dict>
-              
-              );
-    */
-    
-//    <key>FDA58C7417AD2D5A00BC9CD1</key>
-//    <dict>
-//    <key>isa</key>
-//    <string>PBXFileReference</string>
-//    <key>lastKnownFileType</key>
-//    <string>wrapper.framework</string>
-//    <key>name</key>
-//    <string>AudioToolbox.framework</string>
-//    <key>path</key>
-//    <string>../../../../../../../../System/Library/Frameworks/AudioToolbox.framework</string>
-//    <key>sourceTree</key>
-//    <string>&lt;group&gt;</string>
-//    </dict>
-//    <key>FDA58C7517AD2D5A00BC9CD1</key>
-//    <dict>
-//    <key>fileRef</key>
-//    <string>FDA58C7417AD2D5A00BC9CD1</string>
-//    <key>isa</key>
-//    <string>PBXBuildFile</string>
-//    </dict>
-//     
-    
-    
-    string buildUUID;
+    // name = name of the framework
+    // path = the full path (w name) of this framework
+    // folder = the path in the addon (in case we want to add this to the file browser -- we don't do that for system libs);
     
     //-----------------------------------------------------------------
     // based on the extension make some choices about what to do:
     //-----------------------------------------------------------------
     
-    //bool addToResources = true;
-    bool addToBuild = true;
-   
     //-----------------------------------------------------------------
     // (A) make a FILE REF
     //-----------------------------------------------------------------
     
-    string pbxfileref = string(PBXFileReference);
+    // encoding may be messing up for frameworks... so I switched to a pbx file ref without encoding fields
+    
+    string pbxfileref = string(PBXFileReferenceWithoutEncoding);
+    
+    // make a uuid for the framework file.
+    
     string UUID = generateUUID( name );
 
     findandreplace( pbxfileref, "FILEUUID", UUID);
@@ -540,12 +530,13 @@ void xcodeProject::addFramework(string name, string path){
     pugi::xml_document fileRefDoc;
     pugi::xml_parse_result result = fileRefDoc.load_buffer(pbxfileref.c_str(), strlen(pbxfileref.c_str()));
     
-    // insert it at <plist><dict><dict>
+    // insert near the top of the file <plist><dict><dict>
     doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child().next_sibling());   // UUID FIRST
     doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child());                  // DICT SECOND
     
+    // files need build refs, here we make 2....
 
-    buildUUID = generateUUID(name + "-build");
+    string buildUUID = generateUUID(name + "-build");
     string pbxbuildfile = string(PBXBuildFile);
     findandreplace( pbxbuildfile, "FILEUUID", UUID);
     findandreplace( pbxbuildfile, "BUILDUUID", buildUUID);
@@ -553,16 +544,104 @@ void xcodeProject::addFramework(string name, string path){
     doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child().next_sibling());   // UUID FIRST
     doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child());                  // DICT SECOND
     
+    string buildUUID2 = generateUUID(name + "-build2");
+    pbxbuildfile = string(PBXBuildFile);
+    findandreplace( pbxbuildfile, "FILEUUID", UUID);
+    findandreplace( pbxbuildfile, "BUILDUUID", buildUUID2);
+    fileRefDoc.load_buffer(pbxbuildfile.c_str(), strlen(pbxbuildfile.c_str()));
+    doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child().next_sibling());   // UUID FIRST
+    doc.select_single_node("/plist[1]/dict[1]/dict[2]").node().prepend_copy(fileRefDoc.first_child());                  // DICT SECOND
     
-    // add it to the system frameworks array....
+    // we add one of the build refs to the list of frameworks
+    
     pugi::xml_node array;
     findArrayForUUID(frameworksUUID, array);    // this is the build array (all build refs get added here)
-    array.append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
+    array.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID.c_str());
 
+    // we add the second to a final build phase for copying the framework into app.   we need to make sure we *don't* do this for system frameworks
+    
+    if (folder.size() != 0){
+        pugi::xpath_node xpathResult = doc.select_node("//string[contains(.,'PBXCopyFilesBuildPhase')]/../array");
+        pugi::xml_node node = xpathResult.node();
+        node.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID2.c_str());
+    }
+    
+    // now, we get the path for this framework without the name
+
+    string pathWithoutName;
+    vector < string > pathSplit = ofSplitString(path, "/");
+    for (int i = 0; i < pathSplit.size()-1; i++){
+        if (i != 0) pathWithoutName += "/";
+        pathWithoutName += pathSplit[i];
+    }
+    
+    // then, we are going to add this to "FRAMEWORK_SEARCH_PATHS" -- we do this twice, once for debug once for release.
+    
+    pugi::xpath_node_set frameworkSearchPaths = doc.select_nodes("//string[contains(.,'FRAMEWORK_SEARCH_PATHS')]/..");
+    
+    if (frameworkSearchPaths.size() > 0){
+        for (pugi::xpath_node_set::const_iterator it = frameworkSearchPaths.begin(); it != frameworkSearchPaths.end(); ++it){
+            pugi::xpath_node xpathNode = *it;
+            pugi::xml_node  xmlNode = xpathNode.node();
+            xmlNode.append_child("string").append_child(pugi::node_pcdata).set_value(pathWithoutName.c_str());
+        }
+    }
+    
+    // finally, this is for making folders based on the frameworks position in the addon. so it can appear in the sidebar / file explorer
+    
+    if (folder.size() > 0){
+        
+        vector < string > folders = ofSplitString(folder, "/", true);
+        
+        if (folders.size() > 1){
+            if (folders[0] == "src"){
+                string xmlStr = "//key[contains(.,'"+srcUUID+"')]/following-sibling::node()[1]";
+                
+                folders.erase(folders.begin());
+                pugi::xml_node node = doc.select_single_node(xmlStr.c_str()).node();
+                pugi::xml_node nodeToAddTo = findOrMakeFolderSet( node, folders, "src");
+                nodeToAddTo.child("array").append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
+                
+            } else if (folders[0] == "addons"){
+                string xmlStr = "//key[contains(.,'"+addonUUID+"')]/following-sibling::node()[1]";
+                
+                folders.erase(folders.begin());
+                pugi::xml_node node = doc.select_single_node(xmlStr.c_str()).node();
+                pugi::xml_node nodeToAddTo = findOrMakeFolderSet( node, folders, "addons");
+                
+                nodeToAddTo.child("array").append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
+                
+            } else {
+                string xmlStr = "//key[contains(.,'"+srcUUID+"')]/following-sibling::node()[1]";
+                
+                pugi::xml_node node = doc.select_single_node(xmlStr.c_str()).node();
+                
+                // I'm not sure the best way to proceed;
+                // we should maybe find the rootest level and add it there.
+                // TODO: fix this.
+            }
+        };
+        
+    } else {
+        
+        
+        pugi::xml_node array;
+		string xmlStr = "//key[contains(.,'"+srcUUID+"')]/following-sibling::node()[1]";
+        pugi::xml_node node = doc.select_single_node(xmlStr.c_str()).node();
+        node.child("array").append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
+        //nodeToAddTo.child("array").append_child("string").append_child(pugi::node_pcdata).set_value(UUID.c_str());
+        
+    }
+
+    
+    
+    //PBXCopyFilesBuildPhase
+    
+    
     // add it to the build phases...
-    pugi::xml_node arrayBuild;
-    findArrayForUUID(frameworksBuildPhaseUUID, arrayBuild);    // this is the build array (all build refs get added here)
-    arrayBuild.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID.c_str());
+//    pugi::xml_node arrayBuild;
+//    findArrayForUUID(frameworksBuildPhaseUUID, arrayBuild);    // this is the build array (all build refs get added here)
+//    arrayBuild.append_child("string").append_child(pugi::node_pcdata).set_value(buildUUID.c_str());
 
 }
 
@@ -1035,11 +1114,28 @@ void xcodeProject::addAddon(ofAddon & addon){
         
         size_t found=addon.frameworks[i].find('/');
         if (found==std::string::npos){
-             addFramework( addon.frameworks[i] + ".framework", "/System/Library/Frameworks/" + addon.frameworks[i] + ".framework");
+             addFramework( addon.frameworks[i] + ".framework", "/System/Library/Frameworks/" + addon.frameworks[i] + ".framework", "addons/" + addon.name + "/frameworks");
         } else {
-            vector < string > pathSplit = ofSplitString(addon.frameworks[i], "/");
-            addFramework(pathSplit[pathSplit.size()-1], addon.frameworks[i]);
+            
+            if (ofIsStringInString(addon.frameworks[i], "/System/Library")){
+                
+                vector < string > pathSplit = ofSplitString(addon.frameworks[i], "/");
+                
+                addFramework(pathSplit[pathSplit.size()-1],
+                             addon.frameworks[i],
+                             "addons/" + addon.name + "/frameworks");
+                
+            } else {
+            
+                vector < string > pathSplit = ofSplitString(addon.frameworks[i], "/");
+                
+                addFramework(pathSplit[pathSplit.size()-1],
+                             addon.frameworks[i],
+                             addon.filesToFolders[addon.frameworks[i]]);
+            }
         }
+                                                                                            
+                                                                                            //
             
     }
     
