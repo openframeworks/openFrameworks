@@ -2,7 +2,7 @@
 <?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="0.1456782960">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="0.1456782960" moduleId="org.eclipse.cdt.core.settings" name="Linux">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="0.1456782960" moduleId="org.eclipse.cdt.core.settings" name="Desktop">
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -14,14 +14,14 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildProperties="" description="" id="0.1456782960" name="Linux" parent="org.eclipse.cdt.build.core.prefbase.cfg">
+				<configuration artifactName="${ProjName}" buildProperties="" description="" id="0.1456782960" name="Desktop" parent="org.eclipse.cdt.build.core.prefbase.cfg">
 					<folderInfo id="0.1456782960." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.base.469731035" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base.412468616" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-							<builder arguments="-C ../openFrameworksCompiled/project/" command="make" id="cdt.managedbuild.target.gnu.builder.base.1246466611" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.target.gnu.builder.base"/>
+							<builder buildPath="${workspace_loc:/../openFrameworksCompiled/project}/" id="cdt.managedbuild.target.gnu.builder.base.1246466611" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.984233275" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.805416021" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
-								<option id="gnu.cpp.compiler.option.include.paths.1277340839" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath"/>
+								<option id="gnu.cpp.compiler.option.include.paths.1277340839" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1246423939" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__cplusplus=201103L"/>
 								</option>
@@ -31,7 +31,7 @@
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.518106271" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.98792688" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
-								<option id="gnu.c.compiler.option.include.paths.1184621842" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath"/>
+								<option id="gnu.c.compiler.option.include.paths.1184621842" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.2144568513" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.base.2023833267" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base"/>
@@ -42,10 +42,7 @@
 								</inputType>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.assembler.base.1764811117" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base">
-								<option id="gnu.both.asm.option.include.paths.676215593" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libs}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../${PARENT-1-ProjDirPath}&quot;"/>
-								</option>
+								<option id="gnu.both.asm.option.include.paths.676215593" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1615584604" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
@@ -75,7 +72,7 @@
 					<folderInfo id="0.1456782960.417897956." name="/" resourcePath="">
 						<toolChain errorParsers="" id="com.android.toolchain.gcc.1678797551" name="Android GCC">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.ELF" id="com.android.targetPlatform.1942526953" isAbstract="false"/>
-							<builder cleanBuildTarget="-C ../openFrameworksCompiled/project PLATFORM_OS=Android clean" id="cdt.managedbuild.target.gnu.builder.base.1136356062" incrementalBuildTarget="-C ../openFrameworksCompiled/project PLATFORM_OS=Android all" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="4" superClass="cdt.managedbuild.target.gnu.builder.base"/>
+							<builder buildPath="${workspace_loc:/../openFrameworksCompiled/project}/" cleanBuildTarget="PLATFORM_OS=Android clean" id="cdt.managedbuild.target.gnu.builder.base.1136356062" incrementalBuildTarget="PLATFORM_OS=Android all" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 						</toolChain>
 					</folderInfo>
 				</configuration>
@@ -101,7 +98,7 @@
 					<folderInfo id="0.1456782960.221203273." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.base.865508909" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base.1846980319" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-							<builder arguments="make -C ../openFrameworksCompiled/project/" cleanBuildTarget="clean PLATFORM_OS=emscripten PLATFORM_ARCH=" command="emmake" id="cdt.managedbuild.target.gnu.builder.base.1277726396" incrementalBuildTarget="all PLATFORM_OS=emscripten PLATFORM_ARCH=" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.target.gnu.builder.base"/>
+							<builder arguments="make" buildPath="${workspace_loc:/../openFrameworksCompiled/project}/" cleanBuildTarget="clean" command="emmake" id="cdt.managedbuild.target.gnu.builder.base.1277726396" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.979071685" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1987762544" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 								<option id="gnu.cpp.compiler.option.include.paths.176740210" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
@@ -145,6 +142,9 @@
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Linux">
+			<resource resourceType="PROJECT" workspacePath="/openFrameworks"/>
+		</configuration>
+		<configuration configurationName="Desktop">
 			<resource resourceType="PROJECT" workspacePath="/openFrameworks"/>
 		</configuration>
 		<configuration configurationName="Android">
