@@ -84,6 +84,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 void ofApp::mousePressed(int x, int y, int button){
 	ofxOscMessage m;
 	m.setAddress("/mouse/button");
+	m.addIntArg(button);
 	m.addStringArg("down");
 	sender.sendMessage(m, false);
 }
@@ -92,6 +93,7 @@ void ofApp::mousePressed(int x, int y, int button){
 void ofApp::mouseReleased(int x, int y, int button){
 	ofxOscMessage m;
 	m.setAddress("/mouse/button");
+	m.addIntArg(button);
 	m.addStringArg("up");
 	sender.sendMessage(m, false);
 
