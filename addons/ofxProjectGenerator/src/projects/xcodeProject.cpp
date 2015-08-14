@@ -200,7 +200,7 @@ void xcodeProject::setup(){
 		buildPhaseUUID	= "E4D8936E11527B74007E1F53";
 		resourcesUUID   = "BB24DD8F10DA77E000E9C588";
         buildPhaseResourcesUUID = "BB24DDCA10DA781C00E9C588";
-        frameworksUUID  = "E41D421413B3A95300A75A5D";   //PBXFrameworksBuildPhase  // todo: check this?
+        frameworksUUID  = "E41D421413B3A95300A75A5D";   //PBXFrameworksBuildPhase
 	}
 }
 
