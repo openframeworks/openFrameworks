@@ -16,8 +16,11 @@ class ofxGuiGroup : public ofxBaseGui {
 
 		void add(ofxBaseGui * element);
 		void add(const ofParameterGroup & parameters);
-		void add(ofParameter <float> & parameter);
-		void add(ofParameter <int> & parameter);
+
+		template<typename T>
+		typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p){
+			add(new ofxSlider<T>(p));
+		}
 		void add(ofParameter <bool> & parameter);
 		void add(ofParameter <std::string> & parameter);
 		void add(ofParameter <ofVec2f> & parameter);

@@ -39,7 +39,7 @@ ofxGuiGroup * ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	filename = _filename;
 	bGuiActive = false;
 
-	for(int i = 0; i < _parameters.size(); i++){
+	for(std::size_t i = 0; i < _parameters.size(); i++){
 		string type = _parameters.getType(i);
 		if(type == typeid(ofParameter <int> ).name()){
 			ofParameter <int> p = _parameters.getInt(i);
@@ -133,14 +133,6 @@ void ofxGuiGroup::add(const ofParameterGroup & parameters){
 	ofxGuiGroup * panel = new ofxGuiGroup(parameters);
 	panel->parent = this;
 	add(panel);
-}
-
-void ofxGuiGroup::add(ofParameter <float> & parameter){
-	add(new ofxFloatSlider(parameter, b.width));
-}
-
-void ofxGuiGroup::add(ofParameter <int> & parameter){
-	add(new ofxIntSlider(parameter, b.width));
 }
 
 void ofxGuiGroup::add(ofParameter <bool> & parameter){
