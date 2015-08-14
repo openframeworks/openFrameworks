@@ -486,7 +486,8 @@ public:
 	/// ofVec2f v2 = v1.getRotated( 45 ); // v2 is (√2, √2)
 	/// ofVec3f v3 = v2.getRotated( 45 ); // v3 is (0, 1)
 	/// ~~~~
-	/// 
+	///
+	/// \note The 3rd vector is actually (0, 0.99999994) due to numerical impression.
 	/// \sa getRotatedRad()
 	/// \sa rotate()
     ofVec2f  getRotated( float angle ) const;
