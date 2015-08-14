@@ -290,7 +290,10 @@ function createPackage {
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "osx" ]; then
-		cp -r /home/tests/projectGeneratorSimple_osx projectGenerator
+		rm projectGenerator_osx.zip
+		wget http://192.237.185.151/projectGenerator/projectGenerator_osx.zip
+		unzip projectGenerator_osx.zip
+		rm projectGenerator_osx.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "ios" ]; then
