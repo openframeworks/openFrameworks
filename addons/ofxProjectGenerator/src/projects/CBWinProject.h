@@ -21,14 +21,14 @@ public:
     bool loadProjectFile();
     bool saveProjectFile();
 
-	void addSrc(string srcName, string folder, SrcType type=DEFAULT);
-	void addInclude(string includeName);
-	void addLibrary(string libraryName, LibType libType = RELEASE_LIB);
+	void addSrc(std::string srcName, string folder, SrcType type=DEFAULT);
+	void addInclude(std::string includeName);
+	void addLibrary(std::string libraryName, LibType libType = RELEASE_LIB);
 
-	string getName();
-	string getPath();
+	std::string getName();
+	std::string getPath();
 
-	static string LOG_NAME;
+	static std::string LOG_NAME;
 
 private:
 

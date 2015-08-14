@@ -6,6 +6,7 @@
 
 #include "ofAddon.h"
 #include "Utils.h"
+#include "ofConstants.h"
 
 class baseProject {
 
@@ -48,25 +49,25 @@ private:
 
 public:
 
-    virtual void addSrc(string srcFile, string folder, SrcType type=DEFAULT) = 0;
-    virtual void addInclude(string includeName) = 0;
-    virtual void addLibrary(string libraryName, LibType libType = RELEASE_LIB) = 0;
-    virtual void addLDFLAG(string ldflag, LibType libType = RELEASE_LIB){}
-    virtual void addCFLAG(string cflag, LibType libType = RELEASE_LIB){}; // C_FLAGS
-    virtual void addCPPFLAG(string cppflag, LibType libType = RELEASE_LIB){}; // CXX_FLAGS
+    virtual void addSrc(std::string srcFile, string folder, SrcType type=DEFAULT) = 0;
+    virtual void addInclude(std::string includeName) = 0;
+    virtual void addLibrary(std::string libraryName, LibType libType = RELEASE_LIB) = 0;
+    virtual void addLDFLAG(std::string ldflag, LibType libType = RELEASE_LIB){}
+    virtual void addCFLAG(std::string cflag, LibType libType = RELEASE_LIB){}; // C_FLAGS
+    virtual void addCPPFLAG(std::string cppflag, LibType libType = RELEASE_LIB){}; // CXX_FLAGS
 
 	virtual void addAddon(ofAddon & addon);
 
-    string getName() { return projectName;};
-	string getPath() { return projectDir; };
+	std::string getName() { return projectName;};
+	std::string getPath() { return projectDir; };
 
     pugi::xml_document doc;
     bool bLoaded;
 
-    string projectDir;
-    string projectName;
-    string templatePath;
-    string target;
+    std::string projectDir;
+    std::string projectName;
+    std::string templatePath;
+    std::string target;
 
 private:
 
