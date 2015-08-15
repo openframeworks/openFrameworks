@@ -8,6 +8,7 @@ ofxValuePlotter::ofxValuePlotter(){
 ofxValuePlotter::ofxValuePlotter(ofParameter<float> value, const Config & config = Config()) :
 	ofxBaseGui(config){
 	setup(config);
+    setName(value.getName());
 }
 
 ofxValuePlotter::~ofxValuePlotter(){

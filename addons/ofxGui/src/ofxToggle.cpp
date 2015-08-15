@@ -25,6 +25,18 @@ ofxToggle::~ofxToggle(){
 	value.removeListener(this,&ofxToggle::valueChanged);
 }
 
+ofxToggle & ofxToggle::setup(ofParameter<bool> _bVal, const Config & config){
+    ofxBaseGui::setup(config);
+    bGuiActive = false;
+    value.makeReferenceTo(_bVal);
+    checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+    value.addListener(this,&ofxToggle::valueChanged);
+    registerMouseEvents();
+    setNeedsRedraw();
+
+    return *this;
+}
+
 ofxToggle & ofxToggle::setup(ofParameter<bool> _bVal, float width, float height){
 	b.x = 0;
 	b.y = 0;

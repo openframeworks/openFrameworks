@@ -19,6 +19,22 @@ ofxGuiGroup::~ofxGuiGroup(){
     }
 }
 
+ofxGuiGroup & ofxGuiGroup::setup(const Config & config){
+    ofxBaseGui::setup(config);
+    spacing = config.spacing;
+    spacingNextElement = config.spacingNextElement;
+    spacingFirstElement = config.spacingFirstElement;
+    header = config.header;
+    filename = config.filename;
+    minimized = config.minimized;
+    bShowHeader = config.showHeader;
+    bGuiActive = false;
+    this->config = config;
+    registerMouseEvents();
+    setNeedsRedraw();
+    return *this;
+}
+
 ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & parameters, const Config & config){
 	ofxBaseGui::setup(config);
 	spacing = config.spacing;

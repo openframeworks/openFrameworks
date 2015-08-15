@@ -7,18 +7,19 @@ class ofxGuiGroup;
 class ofxPanel : public ofxGuiGroup {
 public:
 	struct Config: public ofxGuiGroup::Config{
-		Config(){
+        Config():ofxGuiGroup::Config(){
 			shape.x = 10;
 			shape.y = 10;
 		}
-		Config(const ofxGuiGroup::Config & config){}
-		Config(const ofxBaseGui::Config & config){}
+        Config(const ofxGuiGroup::Config & config):ofxGuiGroup::Config(config){}
+        Config(const ofxBaseGui::Config & config):ofxGuiGroup::Config(config){}
 	};
 
 	ofxPanel();
 	ofxPanel(const ofParameterGroup & parameters, const Config & config);
     ~ofxPanel();
 
+    ofxPanel & setup(const Config & config);
 	ofxPanel & setup(const ofParameterGroup & parameters, const Config & config);
 	ofxPanel & setup(const std::string& collectionName="", const std::string& filename="settings.xml", float x = 10, float y = 10);
     ofxPanel & setup(const ofParameterGroup & parameters, const std::string& filename="settings.xml", float x = 10, float y = 10);

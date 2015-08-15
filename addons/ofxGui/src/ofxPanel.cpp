@@ -30,6 +30,10 @@ ofxPanel::~ofxPanel(){
 	//
 }
 
+ofxPanel & ofxPanel::setup(const Config & config){
+    return (ofxPanel&)ofxGuiGroup::setup(config);
+}
+
 ofxPanel & ofxPanel::setup(const ofParameterGroup & parameters, const Config & config){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();

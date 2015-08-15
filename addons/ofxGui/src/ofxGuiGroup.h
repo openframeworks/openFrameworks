@@ -30,6 +30,7 @@ class ofxGuiGroup : public ofxBaseGui {
         ofxGuiGroup(const ofParameterGroup & parameters, const Config & config = Config());
 		virtual ~ofxGuiGroup();
 
+        virtual ofxGuiGroup & setup(const Config & config);
 		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const Config & config);
 		virtual ofxGuiGroup & setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
 		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
@@ -224,7 +225,6 @@ template<class GuiType, class C>
 void ofxGuiGroup::add(ofParameterGroup p, const C & config){
 	auto inContainerConfig = config;
 	inContainerConfig.inContainer = true;
-//	inContainerConfig.layout = this->layout;
 	addOwned(new GuiType(p,inContainerConfig));
 }
 
@@ -232,15 +232,13 @@ template<class GuiType, class C>
 void ofxGuiGroup::add(const C & config){
 	auto inContainerConfig = config;
 	inContainerConfig.inContainer = true;
-//	inContainerConfig.layout = this->layout;
 	addOwned(new GuiType(inContainerConfig));
 }
 
 template<class GuiType>
 void ofxGuiGroup::add(){
-    typename GuiType::Config inContainerConfig = config;
-	inContainerConfig.inContainer = true;
-//	inContainerConfig.layout = this->layout;
+    typename GuiType::Config inContainerConfig;
+    inContainerConfig.inContainer = true;
 	addOwned(new GuiType(inContainerConfig));
 }
 

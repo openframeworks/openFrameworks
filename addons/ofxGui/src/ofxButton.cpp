@@ -12,8 +12,20 @@ ofxButton::~ofxButton(){
     value.removeListener(this,&ofxButton::valueChanged);
 }
 
-ofxButton & ofxButton::setup(const std::string& toggleName, float width, float height){
-	setName(toggleName);
+ofxButton & ofxButton::setup(const std::string& buttonName, const Config & config){
+    setName(buttonName);
+    ofxBaseGui::setup(config);
+    bGuiActive = false;
+    value = false;
+    checkboxRect.set(1, 1, b.height - 2, b.height - 2);
+    registerMouseEvents();
+    value.addListener(this,&ofxButton::valueChanged);
+
+    return *this;
+}
+
+ofxButton & ofxButton::setup(const std::string& buttonName, float width, float height){
+    setName(buttonName);
 	b.x = 0;
 	b.y = 0;
 	b.width = width;
