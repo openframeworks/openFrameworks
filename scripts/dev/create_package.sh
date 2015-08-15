@@ -283,10 +283,10 @@ function createPackage {
 	#	rm -Rf __MACOSX
 	#fi
     if [ "$pkg_platform" = "vs" ]; then
-		rm projectGenerator_winvs.zip
-		wget http://www.openframeworks.cc/pgSimple/projectGenerator_winvs.zip
-		unzip projectGenerator_winvs.zip
-		rm projectGenerator_winvs.zip
+		rm projectGenerator_vs.zip
+		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip
+		unzip projectGenerator_vs.zip
+		rm projectGenerator_vs.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "osx" ]; then
