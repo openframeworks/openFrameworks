@@ -1164,7 +1164,7 @@ ofMesh ofMesh::getMeshForIndices( ofIndexType startIndex, ofIndexType endIndex, 
 		else mesh.disableNormals();
 	}
 
-	int offsetIndex = getIndex(startIndex);
+	ofIndexType offsetIndex = getIndex(startIndex);
 	bool bFoundLessThanZero = false;
 	for(ofIndexType i = startIndex; i < endIndex; i++) {
 		ofIndexType index;
