@@ -369,7 +369,7 @@ void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int
 	if(vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
-        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)offsetbytes));
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void *)offsetbytes);
 #else
         glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void *)offsetbytes);
 #endif
