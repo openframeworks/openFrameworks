@@ -436,7 +436,7 @@ void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, 
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
 #ifdef TARGET_OPENGLES
-        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void*)offsetbytes));
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void*)offsetbytes);
 #else
         glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void*)offsetbytes);
 #endif
