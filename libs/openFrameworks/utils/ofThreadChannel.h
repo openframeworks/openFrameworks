@@ -268,6 +268,16 @@ public:
 		condition.notify_all();
 	}
 
+
+	/// \brief Queries empty channel.
+	///
+	/// This call is only an approximation, since messages come from a different
+	/// thread the channel can return true when calling empty() and then receive
+	/// a message right afterwards
+	bool empty() const{
+		return queue.empty();
+	}
+
 private:
 	/// \brief The FIFO data queue.
 	std::queue<T> queue;
