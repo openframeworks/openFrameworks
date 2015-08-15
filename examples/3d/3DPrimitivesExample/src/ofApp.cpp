@@ -112,7 +112,7 @@ void ofApp::draw() {
         float planeAngleX = ofGetElapsedTimef()*3.6;
         float planeAngleInc = 3.f/(float)planeDims.x;
         ofVec3f vert;
-        for(int i = 0; i < deformPlane.getNumIndices(); i++ ) {
+        for(size_t i = 0; i < deformPlane.getNumIndices(); i++ ) {
             planeAngleX += planeAngleInc;
             int ii = deformPlane.getIndex( i );
             vert = deformPlane.getVertex( ii );
@@ -199,7 +199,7 @@ void ofApp::draw() {
             float angle = ofGetElapsedTimef()*3.2;
             float strength = (sin( angle+.25 )) * .5f * 5.f;
             ofVec3f faceNormal;
-            for(int i = 0; i < triangles.size(); i++ ) {
+            for(size_t i = 0; i < triangles.size(); i++ ) {
                 // store the face normal here.
                 // we change the vertices, which makes the face normal change
                 // every time that we call getFaceNormal //
@@ -239,7 +239,7 @@ void ofApp::draw() {
         if(mode == 3) {
             float angle = (ofGetElapsedTimef() * 1.4);
             ofVec3f faceNormal;
-            for(int i = 0; i < triangles.size(); i++ ) {
+            for(size_t i = 0; i < triangles.size(); i++ ) {
                 float frc = ofSignedNoise(angle* (float)i * .1, angle*.05) * 4;
                 faceNormal = triangles[i].getFaceNormal();
                 for(int j = 0; j < 3; j++ ) {
