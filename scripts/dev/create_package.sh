@@ -256,15 +256,15 @@ function createPackage {
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios android"
     fi
 
     if [ "$pkg_platform" = "vs" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx win_cb ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx win_cb ios android"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l win_cb vs android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l win_cb vs android"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
