@@ -298,7 +298,7 @@ function createPackage {
 	fi
     if [ "$pkg_platform" = "ios" ]; then
 		rm projectGenerator_ios.zip
-		wget http://www.openframeworks.cc/pgSimple/projectGenerator_ios.zip
+		wget http://192.237.185.151/projectGenerator/projectGenerator_ios.zip
 		unzip projectGenerator_ios.zip
 		rm projectGenerator_ios.zip
 		rm -Rf __MACOSX
