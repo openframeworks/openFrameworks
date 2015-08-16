@@ -358,7 +358,12 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// finally, if we do want an absolute path and we don't already have one
 	if (makeAbsolute) {
 		// then we return the absolute form of the path
-		return std::filesystem::canonical(std::filesystem::absolute(outputPath)).string();
+		auto p = std::filesystem::absolute(outputPath);
+		if(std::filesystem::exists(p)){
+			return std::filesystem::canonical(p).string();
+		}else{
+			return p.string();
+		}
 	} else {
 		// or output the relative path
 		return outputPath.string();

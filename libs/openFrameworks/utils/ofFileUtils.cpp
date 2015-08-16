@@ -940,7 +940,11 @@ string ofDirectory::path() const {
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getAbsolutePath() const {
-	return std::filesystem::canonical(std::filesystem::absolute(myDir)).string();
+	try{
+		return std::filesystem::canonical(std::filesystem::absolute(myDir)).string();
+	}catch(...){
+		return std::filesystem::absolute(myDir).string();
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1420,12 +1424,13 @@ bool ofFilePath::createEnclosingDirectory(const std::string& filePath, bool bRel
 string ofFilePath::getAbsolutePath(const std::string& _path, bool bRelativeToData){
 	std::string path = _path;
 	if(bRelativeToData){
-		path = ofToDataPath(path);
-	}
-	try{
-		return std::filesystem::canonical(path).string();
-	}catch(...){
-		return path;
+		return ofToDataPath(path, true);
+	}else{
+		try{
+			return std::filesystem::canonical(std::filesystem::absolute(path)).string();
+		}catch(...){
+			return std::filesystem::absolute(path).string();
+		}
 	}
 }
 

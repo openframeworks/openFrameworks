@@ -4,6 +4,15 @@
 
 class ofApp: public ofxUnitTestsApp{
 	void run(){
+		ofDirectory dir(".");
+		for(auto f: dir){
+			f.setWriteable(true);
+			if(f.isDirectory()){
+				ofDirectory(f.path()).remove(true);
+			}else{
+				f.remove();
+			}
+		}
 		test(ofDirectory(".").getFiles().empty(),"removing old tests files","other tests will fail too");
 
 		ofLogNotice() << "testing ofFile";
@@ -139,7 +148,7 @@ class ofApp: public ofxUnitTestsApp{
 		test(std::filesystem::exists(ofDirectory("d1")), "ofDirectory cast to filesystem::path");
 
 		// clean test files
-		ofDirectory dir(".");
+		dir.open(".");
 		for(auto f: dir){
 			f.setWriteable(true);
 			if(f.isDirectory()){
@@ -155,7 +164,7 @@ class ofApp: public ofxUnitTestsApp{
 #include "ofAppNoWindow.h"
 #include "ofAppRunner.h"
 //========================================================================
-int main( ){
+	int main( ){
 	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();
 	ofRunApp(window, app);
