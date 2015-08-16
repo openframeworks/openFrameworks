@@ -188,6 +188,7 @@ void baseProject::parseAddons(){
 	while(!addonsMakeMem.isLastLine()){
 	    string line = addonsMakeMem.getNextLine();
 	    if(line[0] == '#') continue;
+        if(ofTrim(line) == "") continue;
 		ofAddon addon;
 		cout << projectDir << endl;
 		addon.pathToOF = getOFRelPath(projectDir);
