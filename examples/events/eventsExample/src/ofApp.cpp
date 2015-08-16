@@ -17,9 +17,6 @@ void ofApp::draw(){
 	
 	timeString = "time: " + ofGetTimestampString("%H:%M:%S") + "\nelapsed time: " + ofToString(ofGetElapsedTimeMillis());
 	
-	float w = vagRounded.stringWidth(eventString);
-	float h = vagRounded.stringHeight(eventString);
-	
 	ofSetHexColor(0xffffff);
 	vagRounded.drawString(eventString, 98,198);
 	

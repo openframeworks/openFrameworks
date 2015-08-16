@@ -134,7 +134,7 @@ class ofxAssimpModelLoader{
         void updateGLResources();
     
         void getBoundingBoxWithMinVector( aiVector3D* min, aiVector3D* max);
-        void getBoundingBoxForNode(const aiNode* nd,  aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo);
+        void getBoundingBoxForNode(const ofxAssimpMeshHelper & mesh,  aiVector3D* min, aiVector3D* max);
 
         ofFile file;
 

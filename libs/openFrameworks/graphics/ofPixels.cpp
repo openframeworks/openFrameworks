@@ -16,37 +16,37 @@ static ofImageType getImageTypeFromChannels(int channels){
 }
 
 template<typename PixelType>
-static float pixelBytesFromPixelFormat(ofPixelFormat format){
+static int pixelBitsFromPixelFormat(ofPixelFormat format){
 	switch(format){
 		case OF_PIXELS_RGB:
 		case OF_PIXELS_BGR:
-			return 3 * sizeof(PixelType);
+			return 3 * sizeof(PixelType) * 8;
 
 		case OF_PIXELS_RGBA:
 		case OF_PIXELS_BGRA:
-			return 4 * sizeof(PixelType);
+			return 4 * sizeof(PixelType) * 8;
 
 		case OF_PIXELS_GRAY:
 		case OF_PIXELS_Y:
 		case OF_PIXELS_U:
 		case OF_PIXELS_V:
-			return 1 * sizeof(PixelType);
+			return 1 * sizeof(PixelType) * 8;
 
 		case OF_PIXELS_NV12:
 		case OF_PIXELS_NV21:
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
-			return 1.5;
+			return 4;
 
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
 		case OF_PIXELS_GRAY_ALPHA:
-			return 2 * sizeof(PixelType);
+			return 2 * sizeof(PixelType) * 8;
 
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
 		case OF_PIXELS_RGB565:
-			return 2;
+			return 16;
 			break;
 		default:
 			return 0;
@@ -56,7 +56,7 @@ static float pixelBytesFromPixelFormat(ofPixelFormat format){
 
 template<typename PixelType>
 static int bytesFromPixelFormat(int w, int h, ofPixelFormat format){
-	return w*h*pixelBytesFromPixelFormat<PixelType>(format);
+	return w*h*pixelBitsFromPixelFormat<PixelType>(format)/8;
 }
 
 static int channelsFromPixelFormat(ofPixelFormat format){
@@ -243,9 +243,7 @@ void ofPixels_<PixelType>::set(int channel,PixelType val){
 		case OF_PIXELS_BGRA:
 		case OF_PIXELS_GRAY:
 		case OF_PIXELS_GRAY_ALPHA:{
-			Pixels pixels = getPixelsIter();
-			Pixel _end = pixels.end();
-			for(Pixel pixel=pixels.begin();pixel!=_end;pixel++){
+			for(auto pixel: getPixelsIter()){
 				pixel[channel] = val;
 			}
 		}
@@ -322,7 +320,7 @@ void ofPixels_<PixelType>::setFromAlignedPixels(const PixelType * newPixels, int
 		return;
 	}
 	allocate(width, height, _pixelFormat);
-	int dstStride = width * pixelBytesFromPixelFormat<PixelType>(_pixelFormat);
+	int dstStride = width * pixelBitsFromPixelFormat<PixelType>(_pixelFormat)/8;
 	const unsigned char* src = (unsigned char*) newPixels;
 	unsigned char* dst =  (unsigned char*) pixels;
 	for(int i = 0; i < height; i++) {
@@ -419,9 +417,7 @@ void ofPixels_<PixelType>::swapRgb(){
 	case OF_PIXELS_BGR:
 	case OF_PIXELS_RGBA:
 	case OF_PIXELS_BGRA:{
-		Pixels pixels = getPixelsIter();
-		Pixel _end = pixels.end();
-		for(Pixel pixel=pixels.begin();pixel!=_end;pixel++){
+		for(auto pixel: getPixelsIter()){
 			std::swap(pixel[0],pixel[2]);
 		}
 	}
@@ -581,9 +577,7 @@ template<typename PixelType>
 void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 	switch(pixelFormat){
 		case OF_PIXELS_RGB:{
-			Pixels pixels = getPixelsIter();
-			Pixel _end = pixels.end();
-			for(Pixel pixel=pixels.begin();pixel!=_end;pixel++){
+			for(auto pixel: getPixelsIter()){
 				pixel[0] = color.r;
 				pixel[1] = color.g;
 				pixel[2] = color.b;
@@ -591,9 +585,7 @@ void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 		}
 		break;
 		case OF_PIXELS_BGR:{
-			Pixels pixels = getPixelsIter();
-			Pixel _end = pixels.end();
-			for(Pixel pixel=pixels.begin();pixel!=_end;pixel++){
+			for(auto pixel: getPixelsIter()){
 				pixel[0] = color.b;
 				pixel[1] = color.g;
 				pixel[2] = color.r;
@@ -601,9 +593,7 @@ void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 		}
 		break;
 		case OF_PIXELS_RGBA:{
-			Pixels pixels = getPixelsIter();
-			Pixel _end = pixels.end();
-			for(Pixel pixel=pixels.begin();pixel!=_end;pixel++){
+			for(auto pixel: getPixelsIter()){
 				pixel[0] = color.r;
 				pixel[1] = color.g;
 				pixel[2] = color.b;
@@ -612,9 +602,7 @@ void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 		}
 		break;
 		case OF_PIXELS_BGRA:{
-			Pixels pixels = getPixelsIter();
-			Pixel _end = pixels.end();
-			for(Pixel pixel=pixels.begin();pixel!=_end;pixel++){
+			for(auto pixel: getPixelsIter()){
 				pixel[0] = color.b;
 				pixel[1] = color.g;
 				pixel[2] = color.r;
@@ -631,9 +619,7 @@ void ofPixels_<PixelType>::setColor(const ofColor_<PixelType>& color) {
 		break;
 		case OF_PIXELS_GRAY_ALPHA:{
 			PixelType b = color.getBrightness();
-			Pixels pixels = getPixelsIter();
-			Pixel _end = pixels.end();
-			for(Pixel pixel=pixels.begin();pixel!=_end;pixel++){
+			for(auto pixel: getPixelsIter()){
 				pixel[0] = b;
 				pixel[1] = color.a;
 			}
@@ -685,12 +671,12 @@ int ofPixels_<PixelType>::getHeight() const{
 
 template<typename PixelType>
 int ofPixels_<PixelType>::getBytesPerPixel() const{
-	return pixelBytesFromPixelFormat<PixelType>(pixelFormat);
+	return pixelBitsFromPixelFormat<PixelType>(pixelFormat)/8;
 }
 
 template<typename PixelType>
 int ofPixels_<PixelType>::getBitsPerPixel() const{
-	return pixelBytesFromPixelFormat<PixelType>(pixelFormat)*8;
+	return pixelBitsFromPixelFormat<PixelType>(pixelFormat);
 }
 
 template<typename PixelType>
@@ -705,7 +691,7 @@ int ofPixels_<PixelType>::getBitsPerChannel() const{
 
 template<typename PixelType>
 int ofPixels_<PixelType>::getBytesStride() const{
-	return pixelBytesFromPixelFormat<PixelType>(pixelFormat) * width;
+	return pixelBitsFromPixelFormat<PixelType>(pixelFormat) * width / 8;
 }
 
 template<typename PixelType>

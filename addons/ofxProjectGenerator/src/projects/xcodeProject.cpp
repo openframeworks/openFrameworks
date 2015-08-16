@@ -299,7 +299,6 @@ bool xcodeProject::createProjectFile(){
         string relPath2 = relRoot;
         relPath2.erase(relPath2.end()-1);
         findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../..", relPath2);
-        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", relRoot);
         findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
     }
 

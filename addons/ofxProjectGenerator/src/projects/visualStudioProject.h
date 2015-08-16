@@ -10,7 +10,7 @@ class visualStudioProject : public baseProject {
 
 public:
 
-    void setup(string ofRoot= "../../../");
+    void setup(std::string ofRoot= "../../../");
 
     void setup();
 
@@ -18,20 +18,20 @@ public:
     bool loadProjectFile();
     bool saveProjectFile();
 
-    void addSrc(string srcFile, string folder, SrcType type=DEFAULT);
-    void addInclude(string includeName);
-    void addLibrary(string libraryName, LibType libType);
-    void addCFLAG(string cflag, LibType libType = RELEASE_LIB); // C
-    void addCPPFLAG(string cppflag, LibType libType = RELEASE_LIB); // C++
+    void addSrc(std::string srcFile, string folder, SrcType type=DEFAULT);
+    void addInclude(std::string includeName);
+    void addLibrary(std::string libraryName, LibType libType);
+    void addCFLAG(std::string cflag, LibType libType = RELEASE_LIB); // C
+    void addCPPFLAG(std::string cppflag, LibType libType = RELEASE_LIB); // C++
 
     void addAddon(ofAddon & addon);
 
-	static string LOG_NAME;
+	static std::string LOG_NAME;
 
 	pugi::xml_document filterXmlDoc;
 
 
-	void appendFilter(string folderName);
+	void appendFilter(std::string folderName);
 
 private:
 

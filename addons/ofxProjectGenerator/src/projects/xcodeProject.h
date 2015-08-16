@@ -21,15 +21,15 @@ private:
 
 public:
 
-    void addSrc(string srcFile, string folder, SrcType type=DEFAULT);
-    void addInclude(string includeName);
-    void addLibrary(string libraryName, LibType libType = RELEASE_LIB);
-    void addLDFLAG(string ldflag, LibType libType = RELEASE_LIB);
-    void addCFLAG(string cflag, LibType libType = RELEASE_LIB); // Other C Flags
-    void addCPPFLAG(string cppflag, LibType libType = RELEASE_LIB); // Other C++ Flags
+    void addSrc(std::string srcFile, std::string folder, SrcType type=DEFAULT);
+    void addInclude(std::string includeName);
+    void addLibrary(std::string libraryName, LibType libType = RELEASE_LIB);
+    void addLDFLAG(std::string ldflag, LibType libType = RELEASE_LIB);
+    void addCFLAG(std::string cflag, LibType libType = RELEASE_LIB); // Other C Flags
+    void addCPPFLAG(std::string cppflag, LibType libType = RELEASE_LIB); // Other C++ Flags
     
     // specific to OSX
-    void addFramework(string name, string path);
+    void addFramework(std::string name, std::string path);
     
         
     
@@ -39,19 +39,19 @@ public:
     void saveScheme();
     void renameProject();
 
-	string srcUUID;
-	string addonUUID;
-	string resourcesUUID;
-	string buildPhaseUUID;
-    string frameworksUUID;
-    string buildPhaseResourcesUUID;
-    string frameworksBuildPhaseUUID;
+    std::string srcUUID;
+    std::string addonUUID;
+    std::string resourcesUUID;
+    std::string buildPhaseUUID;
+    std::string frameworksUUID;
+    std::string buildPhaseResourcesUUID;
+    std::string frameworksBuildPhaseUUID;
     
 
-    pugi::xml_node findOrMakeFolderSet( pugi::xml_node nodeToAddTo, vector < string > & folders, string pathForHash);
+    pugi::xml_node findOrMakeFolderSet( pugi::xml_node nodeToAddTo, std::vector < std::string > & folders, std::string pathForHash);
 	pugi::xml_node insertPoint;         // where are we inserting items (at the second dict tag,
                                         // /plist[1]/dict[1]/dict[2])
-    bool findArrayForUUID(string UUID, pugi::xml_node & nodeMe);
+    bool findArrayForUUID(std::string UUID, pugi::xml_node & nodeMe);
 
 };
 

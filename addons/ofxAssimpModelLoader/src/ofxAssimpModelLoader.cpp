@@ -83,9 +83,9 @@ bool ofxAssimpModelLoader::processScene() {
     normalizeFactor = ofGetWidth() / 2.0;
     
     if(scene){
-        calculateDimensions();
         loadGLResources();
         update();
+        calculateDimensions();
         
         if(getAnimationCount())
             ofLogVerbose("ofxAssimpModelLoader") << "loadModel(): scene has " << getAnimationCount() << "animations";
@@ -604,7 +604,7 @@ ofxAssimpMeshHelper & ofxAssimpModelLoader::getMeshHelper(int meshIndex) {
 }
 
 //-------------------------------------------
-void ofxAssimpModelLoader::getBoundingBoxWithMinVector( aiVector3D* min, aiVector3D* max)
+void ofxAssimpModelLoader::getBoundingBoxWithMinVector( aiVector3D* min, aiVector3D* max )
 {
     aiMatrix4x4 trafo;
 	aiIdentityMatrix4(&trafo);
@@ -612,40 +612,24 @@ void ofxAssimpModelLoader::getBoundingBoxWithMinVector( aiVector3D* min, aiVecto
 	min->x = min->y = min->z =  1e10f;
 	max->x = max->y = max->z = -1e10f;
 
-    this->getBoundingBoxForNode(scene->mRootNode, min, max, &trafo);
+	for(auto & mesh: modelMeshes){
+		this->getBoundingBoxForNode(mesh, min, max);
+	}
 }
 
 //-------------------------------------------
-void ofxAssimpModelLoader::getBoundingBoxForNode(const aiNode* nd, aiVector3D* min, aiVector3D* max, aiMatrix4x4* trafo)
-{
-    aiMatrix4x4 prev;
-	unsigned int n = 0, t;
+void ofxAssimpModelLoader::getBoundingBoxForNode(const ofxAssimpMeshHelper & mesh, aiVector3D* min, aiVector3D* max){
+	for (auto & animPos: mesh.animatedPos){
+		auto tmp = ofVec3f(animPos.x,animPos.y,animPos.z) * mesh.matrix;
+		
+		min->x = MIN(min->x,tmp.x);
+		min->y = MIN(min->y,tmp.y);
+		min->z = MIN(min->z,tmp.z);
 
-	prev = *trafo;
-	aiMultiplyMatrix4(trafo,&nd->mTransformation);
-
-	for (; n < nd->mNumMeshes; ++n){
-		const struct aiMesh* mesh = scene->mMeshes[nd->mMeshes[n]];
-		for (t = 0; t < mesh->mNumVertices; ++t){
-            aiVector3D tmp = mesh->mVertices[t];
-			aiTransformVecByMatrix4(&tmp,trafo);
-
-
-			min->x = MIN(min->x,tmp.x);
-			min->y = MIN(min->y,tmp.y);
-			min->z = MIN(min->z,tmp.z);
-
-			max->x = MAX(max->x,tmp.x);
-			max->y = MAX(max->y,tmp.y);
-			max->z = MAX(max->z,tmp.z);
-		}
+		max->x = MAX(max->x,tmp.x);
+		max->y = MAX(max->y,tmp.y);
+		max->z = MAX(max->z,tmp.z);
 	}
-
-	for (n = 0; n < nd->mNumChildren; ++n){
-		this->getBoundingBoxForNode(nd->mChildren[n], min, max, trafo);
-	}
-
-	*trafo = prev;
 }
 
 //-------------------------------------------

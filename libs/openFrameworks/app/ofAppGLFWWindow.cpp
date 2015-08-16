@@ -36,6 +36,7 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
 	buttonInUse			= 0;
 	buttonPressed		= false;
     bMultiWindowFullscreen  = false;
+	bWindowNeedsShowing	= true;
 
 	orientation 		= OF_ORIENTATION_DEFAULT;
 	windowMode			= OF_WINDOW;
@@ -58,9 +59,12 @@ ofAppGLFWWindow::~ofAppGLFWWindow(){
 
 void ofAppGLFWWindow::close(){
 	if(windowP){
+		//hide the window before we destroy it stops a flicker on OS X on exit. 
+		glfwHideWindow(windowP);
 		glfwDestroyWindow(windowP);
 		windowP = nullptr;
 		events().disable();
+		bWindowNeedsShowing = true;
 	}
 }
 
@@ -203,9 +207,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 				setWindowIcon(iconPixels);
 			}
 		#endif
-		if(settings.visible){
-			glfwShowWindow(windowP);
-		}
 		if(settings.iconified){
 			iconify(true);
 		}
@@ -217,6 +218,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
         ofLogError("ofAppGLFWWindow") << "couldn't create window";
         return;
     }
+	
+	//don't try and show a window if its been requsted to be hidden
+	bWindowNeedsShowing = settings.visible;
 
     glfwSetWindowUserPointer(windowP,this);
 	windowMode = requestedMode;
@@ -322,6 +326,12 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
 //--------------------------------------------
 void ofAppGLFWWindow::update(){
 	events().notifyUpdate();
+	
+	//show the window right before the first draw call.
+	if( bWindowNeedsShowing && windowP ){
+		glfwShowWindow(windowP);
+		bWindowNeedsShowing = false;
+	}
 }
 
 //--------------------------------------------
