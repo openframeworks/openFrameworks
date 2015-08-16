@@ -23,6 +23,7 @@ ofxAndroid/ofAndroidLib/gen
 !ofxXmlSettings
 !ofxEmscripten
 !ofxGPS
+!ofxUnitTests
 
 # don't ignore the .gitignore file
 !.gitignore
