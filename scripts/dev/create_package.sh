@@ -44,7 +44,7 @@ fi
 libsnotinmac="glu quicktime videoInput kiss"
 libsnotinlinux="quicktime videoInput glut glu cairo glew openssl rtAudio"
 libsnotinvs="kiss"
-libsnotinmingw="kiss glut cairo glew openssl rtAudio"
+libsnotinmingw="kiss glut cairo glew openssl"
 libsnotinandroid="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 

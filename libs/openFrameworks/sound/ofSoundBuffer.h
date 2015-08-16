@@ -190,16 +190,16 @@ public:
 	void hermiteResampleTo(ofSoundBuffer & buffer, std::size_t fromFrame, std::size_t numFrames, float speed, bool loop) const;
 	
 	/// fills the buffer with random noise between -amplitude and amplitude. useful for debugging.
-	void fillWithNoise(float amplitude = 1);
+	void fillWithNoise(float amplitude = 1.0f);
 	
 	/// fills the buffer with a sine wave. useful for debugging.
-	float fillWithTone(float pitchHz = 440., float phase = 0);
+	float fillWithTone(float pitchHz = 440.0f, float phase = 0.0f);
 	
 	/// amplifies samples so that the maximum amplitude is equal to 'level'
 	void normalize(float level = 1);
 	
 	/// removes initial / ending silence from the buffer
-	bool trimSilence(float threshold = 0.0001, bool trimStart = true, bool trimEnd = true);
+	bool trimSilence(float threshold = 0.0001f, bool trimStart = true, bool trimEnd = true);
 	
 	/// return the total number of samples in this buffer (==getNumFrames()*getNumChannels())
 	std::size_t size() const { return buffer.size(); }
@@ -219,7 +219,7 @@ public:
 protected:
 
 	// checks that size() and number of channels are consistent, logs a warning if not. returns consistency check result.
-	bool checkSizeAndChannelsConsistency( string function="" );  
+	bool checkSizeAndChannelsConsistency(const std::string& function="" );
 
 	vector<float> buffer;
 	std::size_t channels;
