@@ -25,7 +25,7 @@ GIT_REV=24e4bdd4158909e9720422208ab0a0aca788e700
 
 # download the source code and unpack it into LIB_NAME
 function download() {
-	curl -L $GIT_URL/archive/$GIT_REV.tar.gz -o libtess2-$GIT_REV.tar.gz
+	curl --insecure -L $GIT_URL/archive/$GIT_REV.tar.gz -o libtess2-$GIT_REV.tar.gz
 	tar -xf libtess2-$GIT_REV.tar.gz
 	mv libtess2-$GIT_REV tess2
 	rm libtess2*.tar.gz
@@ -300,8 +300,11 @@ function build() {
     	cd build
     	emcmake cmake .. -DCMAKE_C_FLAGS=-DNDEBUG
     	emmake make -j${PARALLEL_MAKE}
-	else 
-		cmake -G "Unix Makefiles" --build build/$TYPE ../../
+		
+	else
+		mkdir -p build/$TYPE
+		cd build/$TYPE
+		cmake -G "Unix Makefiles" -DCMAKE_CXX_COMPILER=/mingw32/bin/clang++.exe -DCMAKE_C_COMPILER=/mingw32/bin/clang.exe -DCMAKE_CXX_FLAGS=-DNDEBUG -DCMAKE_C_FLAGS=-DNDEBUG ../../
 		make
 	fi
 }
@@ -327,14 +330,14 @@ function copy() {
 	elif [ "$TYPE" == "ios" ] ; then 
 		cp -v lib/$TYPE/libtess2.a $1/lib/$TYPE/tess2.a
 
-	elif [ "$TYPE" == "android" ] ; then
-		echoWarning "TODO: copy android lib"
+	elif [ "$TYPE" == "osx" ]; then
+		cp -v build/libtess2.a $1/lib/$TYPE/tess2.a
 
-	elif [ "$TYPE" == "emscripten" ] ; then
+	elif [ "$TYPE" == "emscripten" ]; then
 		cp -v build/libtess2.a $1/lib/$TYPE/libtess2.a
-
+		
 	else
-		cp -v libtess2.a $1/lib/$TYPE/tess2.a
+		cp -v build/$TYPE/libtess2.a $1/lib/$TYPE/libtess2.a
 	fi
 
 	# copy license files

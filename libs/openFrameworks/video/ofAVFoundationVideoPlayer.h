@@ -19,6 +19,9 @@
 #define TARGET_OSX
 #endif
 
+
+#define USE_VIDEO_OUTPUT (defined(MAC_OS_X_VERSION_10_8) || defined(iOS6))
+
 // so we are independend from oF in this class
 typedef enum _playerLoopType{
     LOOP_NONE=0x01,
@@ -33,6 +36,18 @@ typedef enum _playerLoopType{
     AVPlayer * _player;
 	AVAsset * _asset;
     AVPlayerItem * _playerItem;
+	
+	
+	AVAssetReader * _assetReader;
+	AVAssetReaderTrackOutput * _assetReaderVideoTrackOutput;
+	AVAssetReaderTrackOutput * _assetReaderAudioTrackOutput;
+	
+#if USE_VIDEO_OUTPUT
+	CMVideoFormatDescriptionRef _videoInfo;
+	dispatch_queue_t _myVideoOutputQueue;
+	AVPlayerItemVideoOutput * _videoOutput;
+#endif
+	
 	
     id timeObserver;
     
@@ -71,6 +86,16 @@ typedef enum _playerLoopType{
 @property (nonatomic, retain) AVPlayer * player;
 @property (nonatomic, retain) AVAsset * asset;
 @property (nonatomic, retain) AVPlayerItem * playerItem;
+
+
+@property (nonatomic, retain) AVAssetReader * assetReader;
+@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
+@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
+
+#if USE_VIDEO_OUTPUT
+@property (nonatomic, retain) AVPlayerItemVideoOutput *videoOutput;
+#endif
+
 
 - (BOOL)loadWithFile:(NSString*)file async:(BOOL)bAsync;
 - (BOOL)loadWithPath:(NSString*)path async:(BOOL)bAsync;

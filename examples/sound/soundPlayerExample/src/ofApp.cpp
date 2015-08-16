@@ -2,6 +2,10 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	
+	// on OSX: if you want to use ofSoundPlayer together with ofSoundStream you need to synchronize buffersizes.
+	// use ofFmodSetBuffersize(bufferSize) to set the buffersize in fmodx prior to loading a file.
+	
 	synth.load("sounds/synth.wav");
 	beats.load("sounds/1085.mp3");
 	vocals.load("sounds/Violet.mp3");

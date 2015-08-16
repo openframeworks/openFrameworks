@@ -43,6 +43,7 @@
 #include "IpEndpointName.h"
 
 
+namespace osc{
 class PacketListener;
 class TimerListener;
 
@@ -81,6 +82,7 @@ class UdpSocket{
     Implementation *impl_;
     
 	friend class SocketReceiveMultiplexer::Implementation;
+	static unsigned long maxBufferSize;
     
 public:
 
@@ -88,6 +90,20 @@ public:
 	// initializing the socket.
 	UdpSocket();
 	virtual ~UdpSocket();
+
+	// Enable broadcast addresses (e.g. x.x.x.255)
+	// Sets SO_BROADCAST socket option.
+	void SetEnableBroadcast( bool enableBroadcast );
+
+	// Enable multiple listeners for a single port on same 
+	// network interface*
+	// Sets SO_REUSEADDR (also SO_REUSEPORT on OS X).
+	// [*] The exact behavior of SO_REUSEADDR and 
+	// SO_REUSEPORT is undefined for some common cases 
+	// and may have drastically different behavior on different
+	// operating systems.
+	void SetAllowReuse( bool allowReuse );
+
 
 	// The socket is created in an unbound, unconnected state
 	// such a socket can only be used to send to an arbitrary
@@ -115,21 +131,6 @@ public:
     
     static void SetUdpBufferSize( unsigned long bufferSize );
     static unsigned long GetUdpBufferSize();
-    
-protected:
-	// Enable broadcast addresses (e.g. x.x.x.255)
-	// Sets SO_BROADCAST socket option.
-	void SetEnableBroadcast( bool enableBroadcast );
-
-	// Enable multiple listeners for a single port on same 
-	// network interface*
-	// Sets SO_REUSEADDR (also SO_REUSEPORT on OS X).
-	// [*] The exact behavior of SO_REUSEADDR and 
-	// SO_REUSEPORT is undefined for some common cases 
-	// and may have drastically different behavior on different
-	// operating systems.
-	void SetAllowReuse( bool allowReuse );
-    static unsigned long maxBufferSize;
 };
 
 
@@ -175,6 +176,6 @@ public:
     void Break() { mux_.Break(); }
     void AsynchronousBreak() { mux_.AsynchronousBreak(); }
 };
-
+}
 
 #endif /* INCLUDED_OSCPACK_UDPSOCKET_H */

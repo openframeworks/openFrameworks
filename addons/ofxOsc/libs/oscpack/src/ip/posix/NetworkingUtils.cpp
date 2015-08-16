@@ -44,6 +44,7 @@
 
 
 
+namespace osc{
 NetworkInitializer::NetworkInitializer() {}
 
 NetworkInitializer::~NetworkInitializer() {}
@@ -61,4 +62,5 @@ unsigned long GetHostByName( const char *name )
     }
 
     return result;
+}
 }

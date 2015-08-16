@@ -533,14 +533,14 @@ void ofCylinderPrimitive::set(float _radius, float _height, int radiusSegments, 
     bCapped = _bCapped;
     resolution.set( radiusSegments, heightSegments, capSegments );
     
-    int resX = getResolution().x;
-    int resY = getResolution().y-1;
-    int resZ = getResolution().z-1;
+    int resX = std::max(getResolution().x,0.0f);
+    int resY = std::max(getResolution().y-1,0.0f);
+    int resZ = std::max(getResolution().z-1,0.0f);
     
     int indexStep = 2;
     if(mode == OF_PRIMITIVE_TRIANGLES) {
         indexStep = 6;
-        resX = resX-1;
+        resX = std::max(resX-1,0);
     }
     
     // 0 -> top cap
@@ -762,14 +762,14 @@ void ofConePrimitive::set( float _radius, float _height, int radiusSegments, int
     height = _height;
     resolution.set(radiusSegments, heightSegments, capSegments);
     
-    int resX = getResolution().x;
-    int resY = getResolution().y-1;
-    int resZ = getResolution().z-1;
+    int resX = std::max(getResolution().x, 0.0f);
+    int resY = std::max(getResolution().y-1, 0.0f);
+    int resZ = std::max(getResolution().z-1, 0.0f);
     
     int indexStep = 2;
     if(mode == OF_PRIMITIVE_TRIANGLES) {
         indexStep = 6;
-        resX = resX-1;
+        resX = std::max(resX-1, 0);
     }
     
     strides[ 0 ][0] = 0;
