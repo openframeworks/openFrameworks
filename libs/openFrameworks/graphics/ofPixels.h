@@ -253,8 +253,8 @@ public:
 
 	/// \brief Get number of bits per pixel
 	///
-	/// If you have RGB pixel data, this will return 3, if you have RGBA,
-	/// you'll have 4, if you have grayscale, this will return 1.
+	/// If you have RGB pixel data, this will return 24, if you have RGBA,
+	/// you'll have 32, if you have grayscale, this will return 8.
 	int getBitsPerPixel() const;
 	
 	/// \brief Get how large each channel of a pixel is

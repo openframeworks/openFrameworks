@@ -17,41 +17,41 @@ public:
 	
     ofAddon();
     
-	void fromFS(string path, string platform);
-	void fromXML(string installXmlName);
+	void fromFS(std::string path, std::string platform);
+	void fromXML(std::string installXmlName);
 	void clear();
 
     // this is source files:
-    map < string, string > filesToFolders;      //the addons has had, for each file,
+	std::map < std::string, std::string > filesToFolders;      //the addons has had, for each file,
                                                 //sometimes a listing of what folder to put it in, such as "addons/ofxOsc/src"
 
-    vector < string > srcFiles;
-    vector < string > csrcFiles;
-    vector < string > cppsrcFiles;
-    vector < string > headersrcFiles;
-    vector < string > objcsrcFiles;
-    vector < string > libs;
-    vector < string > dllsToCopy;
-    vector < string > includePaths;
+    std::vector < std::string > srcFiles;
+    std::vector < std::string > csrcFiles;
+    std::vector < std::string > cppsrcFiles;
+    std::vector < std::string > headersrcFiles;
+    std::vector < std::string > objcsrcFiles;
+    std::vector < std::string > libs;
+    std::vector < std::string > dllsToCopy;
+    std::vector < std::string > includePaths;
     
     // From addon_config.mk
-    vector < string > dependencies;
-    vector < string > cflags;   // C_FLAGS
-    vector < string > cppflags; // CXX_FLAGS
-    vector < string > ldflags;
-    vector < string > pkgConfigLibs; 	// linux only
-    vector < string > frameworks;		// osx only
-    vector < string > data;
+    std::vector < std::string > dependencies;
+    std::vector < std::string > cflags;   // C_FLAGS
+    std::vector < std::string > cppflags; // CXX_FLAGS
+    std::vector < std::string > ldflags;
+    std::vector < std::string > pkgConfigLibs; 	// linux only
+    std::vector < std::string > frameworks;		// osx only
+    std::vector < std::string > data;
 
     // metadata
-    string name;
-    string description;
-    string author;
-    vector<string> tags;
-    string url;
+    std::string name;
+    std::string description;
+    std::string author;
+    std::vector<std::string> tags;
+    std::string url;
     
     
-    string pathToOF;
+    std::string pathToOF;
 
     bool operator <(const ofAddon & addon) const{
     	return addon.name < name;
@@ -76,22 +76,22 @@ private:
     } currentParseState;
 
     void parseConfig();
-    void parseVariableValue(string variable, string value, bool addToValue, string line, int lineNum);
-    void addReplaceString(string & variable, string value, bool addToVariable);
-    void addReplaceStringVector(vector<string> & variable, string value, string prefix, bool addToVariable);
-    void exclude(vector<string> & variable, vector<string> exclusions);
-    ConfigParseState stateFromString(string name);
-    string stateName(ConfigParseState state);
-    bool checkCorrectVariable(string variable, ConfigParseState state);
+    void parseVariableValue(std::string variable, std::string value, bool addToValue, std::string line, int lineNum);
+    void addReplaceString(std::string & variable, std::string value, bool addToVariable);
+    void addReplaceStringVector(std::vector<std::string> & variable, std::string value, std::string prefix, bool addToVariable);
+    void exclude(std::vector<std::string> & variable, std::vector<std::string> exclusions);
+    ConfigParseState stateFromString(std::string name);
+    std::string stateName(ConfigParseState state);
+    bool checkCorrectVariable(std::string variable, ConfigParseState state);
     bool checkCorrectPlatform(ConfigParseState state);
 
-    string platform;
+    std::string platform;
 
-    vector<string> excludeLibs;
-    vector<string> excludeSources;
-    vector<string> excludeIncludes;
+    std::vector<std::string> excludeLibs;
+    std::vector<std::string> excludeSources;
+    std::vector<std::string> excludeIncludes;
 
-    string addonPath;
+    std::string addonPath;
 };
 
 #endif /* OFADDON_H_ */

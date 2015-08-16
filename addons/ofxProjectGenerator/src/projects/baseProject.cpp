@@ -9,6 +9,8 @@
 #include "baseProject.h"
 #include "ofFileUtils.h"
 #include "ofLog.h"
+#include "ofConstants.h"
+using namespace std;
 
 void baseProject::setup(string _target){
     target = _target;
@@ -17,9 +19,11 @@ void baseProject::setup(string _target){
 }
 
 bool baseProject::create(string path){
-
     addons.clear();
 
+    if(!ofFilePath::isAbsolute(path)){
+    	path = (std::filesystem::current_path() / std::filesystem::path(path)).string();
+    }
     projectDir = ofFilePath::addTrailingSlash(path);
     projectName = ofFilePath::getFileName(path);
     bool bDoesDirExist = false;
