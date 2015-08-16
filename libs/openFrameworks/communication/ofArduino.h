@@ -24,11 +24,8 @@
  */
 #pragma once
 
-#include <climits>
 #include <list>
-#include <vector>
-#include <string>
-#include <iostream>
+#include "ofConstants.h"
 
 #include "ofEvents.h"
 

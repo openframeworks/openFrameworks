@@ -23,10 +23,10 @@ public:
     void setup();
 
     bool createProjectFile();
-    void addInclude(string includeName){};
-    void addLibrary(string libraryName, LibType libType = RELEASE_LIB){};
+    void addInclude(std::string includeName){};
+    void addLibrary(std::string libraryName, LibType libType = RELEASE_LIB){};
 
-	static string LOG_NAME;
+	static std::string LOG_NAME;
 
 private:
 

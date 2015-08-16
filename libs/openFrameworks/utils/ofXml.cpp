@@ -64,8 +64,8 @@ void ofXml::serialize(const ofAbstractParameter & parameter){
 		}
 		setTo(name);
 		ofLogVerbose("ofXml") << "group " << name;
-		for(int i=0;i<group.size();i++){
-			serialize(group.get(i));
+		for(auto & p: group){
+			serialize(*p);
 		}
 		ofLogVerbose("ofXml") << "end group " << name;
 		setToParent();
@@ -86,8 +86,8 @@ void ofXml::deserialize(ofAbstractParameter & parameter){
 	if(parameter.type()==typeid(ofParameterGroup).name()){
 		ofParameterGroup & group = static_cast<ofParameterGroup&>(parameter);
 		if(setTo(name)){
-			for(int i=0;i<group.size();i++){
-				deserialize(group.get(i));
+			for(auto & p: group){
+				deserialize(*p);
 			}
 			setToParent();
 		}
@@ -305,7 +305,7 @@ bool ofXml::reset() {
     return false;
 }
 
-bool ofXml::setToChild(int index)
+bool ofXml::setToChild(unsigned long index)
 {
     
     if(!element) {

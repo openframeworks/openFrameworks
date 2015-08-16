@@ -35,3 +35,10 @@ if [ $exit_code != 0 ]; then
     echo "if the error persists, please report an issue in github: http://github.com/openframeworks/openFrameworks/issues"
 	exit $exit_code
 fi
+
+OS_CODENAME=$(cat /etc/os-release | grep VERSION= | sed "s/VERSION\=\"\(.*\)\"/\1/")
+
+if [ "$OS_CODENAME" = "7 (wheezy)" ]; then
+    echo "detected wheezy, installing g++4.8 for c++11 compatibility"
+    apt-get install g++-4.8
+fi
