@@ -11,8 +11,8 @@ for group in *; do
 		for test in $group/*; do
 			if [ -d $test ]; then
 				cd $test
-				cp ../../../osx/template/Makefile .
-				cp ../../../osx/template/config.make . 
+				cp ../../../scripts/osx/template/Makefile .
+				cp ../../../scripts/osx/template/config.make . 
 				make Debug
 				make RunDebug 
 			fi
