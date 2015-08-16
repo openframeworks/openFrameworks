@@ -301,16 +301,16 @@ public:
     /// \brief Returns whether the ofImage has a texture or not.
     ///
     /// If the ofImage doesn't have a texture, nothing will be drawn to the screen.
-    /// \returns Returns whether the ofImage has a texture or not.
+    /// \returns true if the ofImage is using a texture.
     bool isUsingTexture() const;
     
-    /// \brief Returns the texture that the ofImage contains.
+    /// \brief Returns a reference to the texture that the ofImage contains.
     ///
     /// You can use this to directly manipulate the texture itself, but keep in
     /// mind that if you manipulate the texture directly, there is no simple way
     /// to copy the data from the texture back to the pixels and keep the ofImage in sync.
     ///
-    /// \returns Returns the texture that the ofImage contains.
+    /// \returns A reference to the texture that the ofImage contains.
     ofTexture & getTexture();
     const ofTexture & getTexture() const;
     OF_DEPRECATED_MSG("Use getTexture",ofTexture & getTextureReference());
