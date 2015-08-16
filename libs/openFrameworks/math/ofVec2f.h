@@ -244,7 +244,7 @@ public:
 	/// This is handy if, for example, you want to find out when a point becomes
 	/// *close enough* to another point to trigger an event.
 	/// 
-    bool match( const ofVec2f& vec, float tolerance=0.0001 ) const;
+    bool match( const ofVec2f& vec, float tolerance = 0.0001f ) const;
     
 	/// \brief Determine if two vectors are aligned
     /// 
@@ -256,13 +256,13 @@ public:
     /// \param vec The vector to compare alignment with
     /// \param tolerance an angle tolerance/threshold (specified in degrees) for deciding if the vectors are sufficiently aligned.
     /// \returns true if both vectors are aligned (pointing in the same direction). 
-    bool isAligned( const ofVec2f& vec, float tolerance=0.0001 ) const;
+    bool isAligned( const ofVec2f& vec, float tolerance = 0.0001f ) const;
     
     /// \brief Determine if two vectors are aligned with tolerance in radians
     /// \param vec The vector to compare alignment with
     /// \param tolerance an angle tolerance/threshold (specified in radians) for deciding if the vectors are sufficiently aligned.
     /// \sa isAligned()
-    bool isAlignedRad( const ofVec2f& vec, float tolerance=0.0001 ) const;
+    bool isAlignedRad( const ofVec2f& vec, float tolerance = 0.0001f ) const;
 
     /// \brief Determine if two vectors are aligned
     /// 
@@ -274,13 +274,13 @@ public:
     /// \param vec The vector to compare alignment with
     /// \param tolerance an angle tolerance/threshold (specified in degrees) for deciding if the vectors are sufficiently aligned.
     /// \returns true if both vectors are aligned (pointing in the same direction). 
-    bool align( const ofVec2f& vec, float tolerance=0.0001 ) const;
+    bool align( const ofVec2f& vec, float tolerance = 0.0001f ) const;
 
     /// \brief Determine if two vectors are aligned with tolerance in radians
     /// \param vec The vector to compare alignment with
     /// \param tolerance an angle tolerance/threshold (specified in radians) for deciding if the vectors are sufficiently aligned.
     /// \sa align()
-    bool alignRad( const ofVec2f& vec, float tolerance=0.0001 ) const;
+    bool alignRad( const ofVec2f& vec, float tolerance = 0.0001f ) const;
 	
 	/// \}
 

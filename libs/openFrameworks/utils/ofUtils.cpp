@@ -507,7 +507,7 @@ template <> string ofToBinary(const string& value) {
 	stringstream out;
 	std::size_t numBytes = value.size();
 	for(std::size_t i = 0; i < numBytes; i++) {
-		bitset<8> bitBuffer(value[i]);
+		std::bitset<8> bitBuffer(value[i]);
 		out << bitBuffer;
 	}
 	return out.str();
@@ -523,21 +523,21 @@ string ofToBinary(const char* value) {
 //----------------------------------------
 int ofBinaryToInt(const string& value) {
 	const int intSize = sizeof(int) * 8;
-	bitset<intSize> binaryString(value);
+	std::bitset<intSize> binaryString(value);
 	return (int) binaryString.to_ulong();
 }
 
 //----------------------------------------
 char ofBinaryToChar(const string& value) {
 	const int charSize = sizeof(char) * 8;
-	bitset<charSize> binaryString(value);
+	std::bitset<charSize> binaryString(value);
 	return (char) binaryString.to_ulong();
 }
 
 //----------------------------------------
 float ofBinaryToFloat(const string& value) {
 	const int floatSize = sizeof(float) * 8;
-	bitset<floatSize> binaryString(value);
+	std::bitset<floatSize> binaryString(value);
 	union ulongFloatUnion {
 			unsigned long result;
 			float f;
@@ -549,7 +549,7 @@ float ofBinaryToFloat(const string& value) {
 string ofBinaryToString(const string& value) {
 	ostringstream out;
 	stringstream stream(value);
-	bitset<8> byteString;
+	std::bitset<8> byteString;
 	std::size_t numBytes = value.size() / 8;
 	for(std::size_t i = 0; i < numBytes; i++) {
 		stream >> byteString;
