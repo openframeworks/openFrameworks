@@ -11,13 +11,16 @@ class ofxGuiGroup : public ofxBaseGui {
 		ofxGuiGroup(const ofParameterGroup & parameters, const std::string& _filename = "settings.xml", float x = 10, float y = 10);
 		virtual ~ofxGuiGroup(){
 		}
-		virtual ofxGuiGroup * setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
-		virtual ofxGuiGroup * setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
+		ofxGuiGroup * setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
+		ofxGuiGroup * setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
 
 		void add(ofxBaseGui * element);
 		void add(const ofParameterGroup & parameters);
-		void add(ofParameter <float> & parameter);
-		void add(ofParameter <int> & parameter);
+
+		template<typename T>
+		typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p){
+			add(new ofxSlider<T>(p));
+		}
 		void add(ofParameter <bool> & parameter);
 		void add(ofParameter <std::string> & parameter);
 		void add(ofParameter <ofVec2f> & parameter);

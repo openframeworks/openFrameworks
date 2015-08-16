@@ -523,11 +523,7 @@
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string>rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
-
-
-
-</string>
+			<string>rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"</string>
 		</dict>
 		<key>BB16E9930F2B1E5900518274</key>
 		<dict>
@@ -682,10 +678,10 @@
 				<string>libc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
-				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
-				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
 				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
+				<string></string>
 				<key>COMPRESS_PNG_FILES</key>
 				<string>NO</string>
 				<key>GCC_C_LANGUAGE_STANDARD</key>
@@ -738,10 +734,10 @@
 				<string>libc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
-				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
-				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
 				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
+				<string></string>
 				<key>COMPRESS_PNG_FILES</key>
 				<string>NO</string>
 				<key>GCC_C_LANGUAGE_STANDARD</key>
