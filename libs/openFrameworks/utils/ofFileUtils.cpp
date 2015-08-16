@@ -1252,7 +1252,7 @@ bool ofDirectory::doesDirectoryExist(const std::string& _dirPath, bool bRelative
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
-	return std::filesystem::exists(dirPath);
+	return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
 }
 
 //------------------------------------------------------------------------------------------------------------
