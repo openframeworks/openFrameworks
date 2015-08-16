@@ -1,4 +1,5 @@
-#include "ofMain.h"
+#include "ofFileUtils.h"
+#include "ofUtils.h"
 #include "ofxUnitTests.h"
 
 class ofApp: public ofxUnitTestsApp{
@@ -149,6 +150,7 @@ class ofApp: public ofxUnitTestsApp{
 
 
 #include "ofAppNoWindow.h"
+#include "ofAppRunner.h"
 //========================================================================
 int main( ){
 	auto window = std::make_shared<ofAppNoWindow>();
