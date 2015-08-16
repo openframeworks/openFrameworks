@@ -12,7 +12,6 @@
 #include "ofAppRunner.h"
 #include <string>
 
-
 class ofColorsLoggerChannel: public ofBaseLoggerChannel{
 	std::string CON_DEFAULT="\033[0m";
 	std::string CON_BOLD="\033[1m";
@@ -77,29 +76,40 @@ class ofxUnitTestsApp: public ofBaseApp{
 	virtual void run() = 0;
 
 protected:
-	void test(bool test, const std::string & testName, const std::string & msg=""){
+	void test(bool test, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(test){
 			ofLogNotice() << testName << " passed";
 			numTestsPassed++;
 		}else{
 			ofLogError() << testName << " failed " << msg;
+			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 		}
 	}
 
+	void test(bool test, const std::string & testName, const std::string & file, int line){
+		this->test(test,testName,"",file,line);
+	}
+
 	template<typename T1, typename T2>
-	void test_eq(T1 t1, T2 t2, const std::string & testName, const std::string & msg=""){
+	void test_eq(T1 t1, T2 t2, const std::string & testName, const std::string & msg, const std::string & file, int line){
 		numTestsTotal++;
 		if(t1==t2){
 			ofLogNotice() << testName << " passed";
 			numTestsPassed++;
 		}else{
 			ofLogError() << testName << " failed " << msg;
-			ofLogError() << "value1 " << t1 << msg;
-			ofLogError() << "value2 " << t2 << msg;
+			ofLogError() << "value1 " << t1;
+			ofLogError() << "value2 " << t2;
+			ofLogError() << file << ": " << line;
 			numTestsFailed++;
 		}
+	}
+
+	template<typename T1, typename T2>
+	void test_eq(T1 t1, T2 t2, const std::string & testName, const std::string & file, int line){
+		test_eq(t1,t2,testName,"",file,line);
 	}
 
 private:
@@ -107,3 +117,6 @@ private:
 	int numTestsPassed = 0;
 	int numTestsFailed = 0;
 };
+
+#define test(x, ...) this->test(x,__VA_ARGS__,__FILE__,__LINE__)
+#define test_eq(x, ...) this->test_eq(x,__VA_ARGS__,__FILE__,__LINE__)
