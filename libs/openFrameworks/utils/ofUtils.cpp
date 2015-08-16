@@ -337,7 +337,12 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	
 	// if path is already absolute, just return it
 	if (inputPath.is_absolute()) {
-		return path;
+		try {
+			return std::filesystem::canonical(inputPath).string();
+		}
+		catch (...) {
+			return inputPath.string();
+		}
 	}
 	
 	// here we check whether path already refers to the data folder by looking for common elements
@@ -358,11 +363,11 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// finally, if we do want an absolute path and we don't already have one
 	if (makeAbsolute) {
 		// then we return the absolute form of the path
-		auto p = std::filesystem::absolute(outputPath);
-		if(std::filesystem::exists(p)){
-			return std::filesystem::canonical(p).string();
-		}else{
-			return p.string();
+		try {
+			return std::filesystem::canonical(std::filesystem::absolute(outputPath)).string();
+		}
+		catch (...) {
+			return std::filesystem::absolute(outputPath).string();
 		}
 	} else {
 		// or output the relative path
