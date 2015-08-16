@@ -13,15 +13,6 @@ echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/li
 cd libs/openFrameworksCompiled/project
 make Debug
 
-echo "Building emptyExample"
-cd $ROOT
-cp scripts/linux/template/linux64/Makefile examples/empty/emptyExample/
-cp scripts/linux/template/linux64/config.make examples/empty/emptyExample/
-cd examples/empty/emptyExample
-# this is not even necessary if we include that in the default.mk above
-# echo "PROJECT_CFLAGS = $CUSTOMFLAGS" >> config.make
-make Debug
-
 echo "Unit tests"
 cd $ROOT/tests
 for group in *; do
