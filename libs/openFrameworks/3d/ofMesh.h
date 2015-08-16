@@ -140,8 +140,8 @@ public:
 	///	
 	///	![image of a simple cylinder](3d/cylinder.jpg)
   	///
-	static ofMesh cylinder(float radius, float height, int radiusSegments=12, 
-		int heightSegments=6, int numCapSegments=2, bool bCapped = true, 
+	static ofMesh cylinder(float radius, float height, int radiusSegments=12,
+		int heightSegments=6, int numCapSegments=2, bool bCapped = true,
 		ofPrimitiveMode mode=OF_PRIMITIVE_TRIANGLE_STRIP);
 
 	/// \brief A helper method that returns a cone made of triangles. 
@@ -314,7 +314,7 @@ public:
 	/// Use disableNormals() to turn normals off.
 	/// Normals are enabled by default when they are added to the mesh.
 	virtual void enableNormals();
-	/// \brief Disable mesh normals. 
+	/// \brief Disable mesh normals.
 	/// Use enableNormals() to turn normals back on.
 	virtual void disableNormals();
 	virtual bool usingNormals() const;

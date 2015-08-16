@@ -237,11 +237,13 @@ void ofxSlider<Type>::valueChanged(Type & value){
     setNeedsRedraw();
 }
 
-template class ofxSlider<int>;
-template class ofxSlider<unsigned int>;
+template class ofxSlider<int8_t>;
+template class ofxSlider<uint8_t>;
+template class ofxSlider<int16_t>;
+template class ofxSlider<uint16_t>;
+template class ofxSlider<int32_t>;
+template class ofxSlider<uint32_t>;
+template class ofxSlider<int64_t>;
+template class ofxSlider<uint64_t>;
 template class ofxSlider<float>;
 template class ofxSlider<double>;
-template class ofxSlider<signed char>;
-template class ofxSlider<unsigned char>;
-template class ofxSlider<unsigned short>;
-template class ofxSlider<short>;

@@ -124,11 +124,11 @@ PLATFORM_REQUIRED_ADDONS =
 ifeq ($(CXX),g++)
 	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
 	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
-	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 7)
+	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \<= 7)
 	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
 	ifeq ("$(GCC_MAJOR_EQ_4)","1")
-		ifeq ("$(GCC_MINOR_GTEQ_7)","0")
-			PLATFORM_CFLAGS = -Wall -std=c++0x
+		ifeq ("$(GCC_MINOR_GTEQ_7)","1")
+			PLATFORM_CFLAGS = -Wall -std=c++0x -DHAS_TLS=0
 		else
 			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
 				PLATFORM_CFLAGS = -Wall -std=c++14
@@ -138,11 +138,11 @@ ifeq ($(CXX),g++)
 		endif
 	endif
 	ifeq ("$(GCC_MAJOR_GT_4)","1")
-		PLATFORM_CFLAGS = -Wall -std=c++14
+		PLATFORM_CFLAGS = -Wall -std=c++14 -D_GLIBCXX_USE_CXX11_ABI=0
 	endif
 else
 	ifeq ($(CXX),g++-5)
-		PLATFORM_CFLAGS = -Wall -std=c++14
+		PLATFORM_CFLAGS = -Wall -std=c++14 -D_GLIBCXX_USE_CXX11_ABI=0
 	else
 	    ifeq ($(CXX),g++-4.9)
 		    PLATFORM_CFLAGS = -Wall -std=c++14
@@ -186,10 +186,10 @@ PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-section
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3 -march=native -mtune=native
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 -march=native -mtune=native
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS

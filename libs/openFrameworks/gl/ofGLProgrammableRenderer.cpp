@@ -73,6 +73,8 @@ ofGLProgrammableRenderer::ofGLProgrammableRenderer(const ofAppBaseWindow * _wind
 
 	currentFramebufferId = 0;
 	defaultFramebufferId = 0;
+	path.setMode(ofPath::POLYLINES);
+	path.setUseShapeColor(false);
 
 }
 
@@ -1315,8 +1317,8 @@ void ofGLProgrammableRenderer::end(const ofFbo & fbo){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bind(const ofFbo & fbo){
 	if (currentFramebufferId == fbo.getId()){
-		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
-			"Most probably you forgot to end() the current framebuffer before calling begin() again.";
+		ofLogWarning() << "Framebuffer with id: " << fbo.getId() << " cannot be bound onto itself. \n" <<
+			"Most probably you forgot to end() the current framebuffer before calling begin() again or you forgot to allocate() before calling begin().";
 		return;
 	}
 	// this method could just as well have been placed in ofBaseGLRenderer
@@ -1333,7 +1335,7 @@ void ofGLProgrammableRenderer::bind(const ofFbo & fbo){
 //----------------------------------------------------------
 void ofGLProgrammableRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint){
 	if (currentFramebufferId == fboSrc.getId()){
-		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
+		ofLogWarning() << "Framebuffer with id: " << fboSrc.getId() << " cannot be bound onto itself. \n" <<
 			"Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
 	}
@@ -2552,6 +2554,7 @@ void ofGLProgrammableRenderer::saveScreen(int x, int y, int w, int h, ofPixels &
 	pixels.allocate(w, h, OF_PIXELS_RGBA);
 
 	switch(matrixStack.getOrientation()){
+	case OF_ORIENTATION_UNKNOWN:
 	case OF_ORIENTATION_DEFAULT:
 
 		if(isVFlipped()){

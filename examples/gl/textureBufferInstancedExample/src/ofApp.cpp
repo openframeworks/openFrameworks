@@ -34,7 +34,7 @@ void ofApp::setup(){
 	// we want each box to have a different color so let's add
 	// as many colors as boxes
 	mesh.getColors().resize(matrices.size());
-	for(int i=0;i<mesh.getColors().size();i++){
+	for(size_t i=0;i<mesh.getColors().size();i++){
 		mesh.getColors()[i] = ofColor::fromHsb(i % 255, 255, 255);
 	}
 
@@ -55,7 +55,7 @@ void ofApp::update(){
 	float spacing = 0.5;
 	float now = ofGetElapsedTimef();
 	float cloudSize = ofGetWidth()*4;
-	for(int i=0;i<matrices.size();i++){
+	for(size_t i=0;i<matrices.size();i++){
 		ofNode node;
 
 		float t = (now + i * spacing) * movementSpeed;

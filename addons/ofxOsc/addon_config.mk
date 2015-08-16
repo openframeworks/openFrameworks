@@ -71,24 +71,12 @@ common:
 win_cb:
 	# when parsing the file system looking for sources exclude this for all or
 	# a specific platform
-	ADDON_SOURCES_EXCLUDE += libs/oscpack/src/ip/posix/%
-	
-	# source files, these will be usually parsed from the file system looking
-	# in the src folders in libs and the root of the addon. if your addon needs
-	# to include files in different places or a different set of files per platform
-	# they can be specified here
-	ADDON_SOURCES += libs/oscpack/src/ip/win32/%
+	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/posix/%
 	
 vs: 
 	# when parsing the file system looking for sources exclude this for all or
 	# a specific platform
-	ADDON_SOURCES_EXCLUDE += libs/oscpack/src/ip/posix/%
-	
-	# source files, these will be usually parsed from the file system looking
-	# in the src folders in libs and the root of the addon. if your addon needs
-	# to include files in different places or a different set of files per platform
-	# they can be specified here
-	ADDON_SOURCES += libs/oscpack/src/ip/win32/%
+	ADDON_SOURCES_EXCLUDE = libs/oscpack/src/ip/posix/%
 	
 	
 

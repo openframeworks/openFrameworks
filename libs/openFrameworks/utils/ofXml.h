@@ -81,7 +81,7 @@ public:
     string          getName() const;
     bool            reset();
 
-    bool            setToChild(int index);
+    bool            setToChild(unsigned long index);
     bool            setTo(const string& path);
     bool            setToParent();
     bool            setToParent(int numLevelsUp);

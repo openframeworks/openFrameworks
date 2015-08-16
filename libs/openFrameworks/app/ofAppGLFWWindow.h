@@ -233,7 +233,8 @@ private:
 	bool			buttonPressed;
 
 	int 			nFramesSinceWindowResized;
-    bool            bMultiWindowFullscreen; 
+    bool            bMultiWindowFullscreen;
+	bool			bWindowNeedsShowing;
 
 	GLFWwindow* 	windowP;
     

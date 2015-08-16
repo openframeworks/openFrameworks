@@ -5,8 +5,13 @@
 #include "ofGLRenderer.h"
 
 #ifdef TARGET_WIN32
-	#define GLUT_BUILDING_LIB
-	#include "glut.h"
+	#if (_MSC_VER) 
+		#define GLUT_BUILDING_LIB
+		#include "glut.h"
+	#else
+		#include <GL/glut.h>
+		#include <GL/freeglut_ext.h>
+	#endif
 #endif
 #ifdef TARGET_OSX
     #include <OpenGL/OpenGL.h>
@@ -79,7 +84,6 @@ void HandleFiles(WPARAM wParam)
     // the current file being queried.
     int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
 
-	#ifdef _MSC_VER
     // Here we go through all the files that were drag and dropped then display them
     for(int i = 0; i < count; i++)
     {
@@ -101,23 +105,6 @@ void HandleFiles(WPARAM wParam)
         // Bring up a message box that displays the current file being processed
         //MessageBox(GetForegroundWindow(), szName, L"Current file received", MB_OK);
     }
-#else
-
-    HDROP hdrop = (HDROP)(wParam);
-	int index, length;
-	count = DragQueryFile(hdrop, 0xFFFFFFFF, nullptr, 0);
-	for (index=0; index<count; ++index) {
-	  length = DragQueryFile(hdrop, index, nullptr, 0);
-	  if (length > 0) {
-	    TCHAR* lpstr = new TCHAR[length+1];
-	    DragQueryFile(hdrop, index, lpstr, length+1);
-	    string temp = lpstr;
-	    info.files.push_back(temp);
-	    delete[] lpstr;
-	  }
-	}
-
-	#endif
 
     // Finally, we destroy the HDROP handle so the extra memory
     // allocated by the application is released.

@@ -257,13 +257,15 @@ void ofAddon::exclude(vector<string> & variable, vector<string> exclusions){
 	for(int i=0;i<(int)exclusions.size();i++){
 		string exclusion = exclusions[i];
 		//ofStringReplace(exclusion,"/","\\/");
-		ofStringReplace(exclusion,"\\","\\\\");
+		ofStringReplace(exclusion,"\\","/");
 		ofStringReplace(exclusion,".","\\.");
 		ofStringReplace(exclusion,"%",".*");
 		exclusion =".*"+ exclusion;
 		Poco::RegularExpression regExp(exclusion);
 		for(int j=0;j<(int)variable.size();j++){
-			if(regExp.match(variable[j])){
+			auto forwardSlashedVariable = variable[j];
+			ofStringReplace(forwardSlashedVariable, "\\", "/");
+			if(regExp.match(forwardSlashedVariable)){
 				variable.erase(variable.begin()+j);
 				j--;
 			}

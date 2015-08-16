@@ -216,7 +216,7 @@ protected:
 	template<class TObj>
 	of::priv::Function<T> make_function(TObj * listener, void (TObj::*method)(T&), int priority){
 		return of::priv::Function<T>(priority, [listener, method](const void*, T&t){
-			std::bind(method,listener,std::placeholders::_1)(t);
+			((listener)->*(method))(t);
 			return false;
 		}, make_function_id(listener,method));
 	}

@@ -4,11 +4,12 @@
 #include "ofUtils.h"
 
 
-bool bFmodInitialized_ = false;
-bool bUseSpectrum_ = false;
-float fftValues_[8192];			//
-float fftInterpValues_[8192];			//
-float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmodex....
+static bool bFmodInitialized_ = false;
+static bool bUseSpectrum_ = false;
+static float fftValues_[8192];			//
+static float fftInterpValues_[8192];			//
+static float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmodex....
+static unsigned int buffersize = 1024;
 
 
 // ---------------------  static vars
@@ -124,6 +125,10 @@ float * ofFmodSoundGetSpectrum(int nBands){
 	return fftInterpValues_;
 }
 
+void ofFmodSetBuffersize(unsigned int bs){
+	buffersize = bs;
+}
+
 // ------------------------------------------------------------
 // ------------------------------------------------------------
 
@@ -151,7 +156,15 @@ ofFmodSoundPlayer::~ofFmodSoundPlayer(){
 // this should only be called once
 void ofFmodSoundPlayer::initializeFmod(){
 	if(!bFmodInitialized_){
+		
 		FMOD_System_Create(&sys);
+		
+		// set buffersize, keep number of buffers
+		unsigned int bsTmp;
+		int nbTmp;
+		FMOD_System_GetDSPBufferSize(sys, &bsTmp, &nbTmp);
+		FMOD_System_SetDSPBufferSize(sys, buffersize, nbTmp);
+
 		#ifdef TARGET_LINUX
 			FMOD_System_SetOutput(sys,FMOD_OUTPUTTYPE_ALSA);
 		#endif
@@ -160,6 +173,8 @@ void ofFmodSoundPlayer::initializeFmod(){
 		bFmodInitialized_ = true;
 	}
 }
+
+
 
 
 //---------------------------------------

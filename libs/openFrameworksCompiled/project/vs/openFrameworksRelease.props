@@ -20,7 +20,7 @@
       <IgnoreSpecificDefaultLibraries>PocoFoundationd.lib;atlthunk.lib;LIBC.lib;LIBCMT</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>robocopy "$(OF_ROOT)/export/vs/$(Platform_Actual)/" "$(ProjectDir)bin/" "*.dll" /njs /njh /np /fp /bytes
+      <Command>robocopy "$(OF_ROOT)/export/vs/Win32/" "$(ProjectDir)bin/" "*.dll" /njs /njh /np /fp /bytes
 if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
