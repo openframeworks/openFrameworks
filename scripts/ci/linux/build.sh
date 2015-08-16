@@ -21,3 +21,19 @@ cd examples/empty/emptyExample
 # this is not even necessary if we include that in the default.mk above
 # echo "PROJECT_CFLAGS = $CUSTOMFLAGS" >> config.make
 make Debug
+
+echo "Unit tests"
+cd $ROOT/tests
+for group in *: do
+	if [ -d $group ]; then
+		for test in $group/*; do
+			if [ -d $test ]; then
+				cd $test
+				cp ../../../linux/template/linux/Makefile .
+				cp ../../../linux/template/linux/config.make . 
+				make Debug
+				make RunDebug 
+			fi
+		done
+	fi
+done
