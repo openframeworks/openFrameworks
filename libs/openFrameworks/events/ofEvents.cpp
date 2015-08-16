@@ -169,22 +169,22 @@ bool ofCoreEvents::getKeyPressed(int key) const{
 }
 
 //--------------------------------------
-int ofCoreEvents::getMouseX() const{
+float ofCoreEvents::getMouseX() const{
 	return currentMouseX;
 }
 
 //--------------------------------------
-int ofCoreEvents::getMouseY() const{
+float ofCoreEvents::getMouseY() const{
 	return currentMouseY;
 }
 
 //--------------------------------------
-int ofCoreEvents::getPreviousMouseX() const{
+float ofCoreEvents::getPreviousMouseX() const{
 	return previousMouseX;
 }
 
 //--------------------------------------
-int ofCoreEvents::getPreviousMouseY() const{
+float ofCoreEvents::getPreviousMouseY() const{
 	return previousMouseY;
 }
 
@@ -323,7 +323,7 @@ void ofCoreEvents::notifyMouseEvent(const ofMouseEventArgs & mouseEvent){
 }
 
 //------------------------------------------
-void ofCoreEvents::notifyMousePressed(int x, int y, int button){
+void ofCoreEvents::notifyMousePressed(float x, float y, int button){
     if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -343,7 +343,7 @@ void ofCoreEvents::notifyMousePressed(int x, int y, int button){
 }
 
 //------------------------------------------
-void ofCoreEvents::notifyMouseReleased(int x, int y, int button){
+void ofCoreEvents::notifyMouseReleased(float x, float y, int button){
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -362,7 +362,7 @@ void ofCoreEvents::notifyMouseReleased(int x, int y, int button){
 }
 
 //------------------------------------------
-void ofCoreEvents::notifyMouseDragged(int x, int y, int button){
+void ofCoreEvents::notifyMouseDragged(float x, float y, int button){
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -380,7 +380,7 @@ void ofCoreEvents::notifyMouseDragged(int x, int y, int button){
 }
 
 //------------------------------------------
-void ofCoreEvents::notifyMouseMoved(int x, int y){
+void ofCoreEvents::notifyMouseMoved(float x, float y){
 	if( bPreMouseNotSet ){
 		previousMouseX	= x;
 		previousMouseY	= y;
@@ -408,13 +408,13 @@ void ofCoreEvents::notifyMouseScrolled(float x, float y){
 }
 
 //------------------------------------------
-void ofCoreEvents::notifyMouseEntered(int x, int y){
+void ofCoreEvents::notifyMouseEntered(float x, float y){
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Entered,x,y);
 	ofNotifyEvent( mouseEntered, mouseEventArgs );
 }
 
 //------------------------------------------
-void ofCoreEvents::notifyMouseExited(int x, int y){
+void ofCoreEvents::notifyMouseExited(float x, float y){
 	ofMouseEventArgs mouseEventArgs(ofMouseEventArgs::Exited,x,y);
 	ofNotifyEvent( mouseExited, mouseEventArgs );
 }

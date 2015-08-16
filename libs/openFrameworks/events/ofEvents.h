@@ -226,10 +226,10 @@ class ofCoreEvents {
 
 	bool getMousePressed(int button=-1) const;
 	bool getKeyPressed(int key=-1) const;
-	int getMouseX() const;
-	int getMouseY() const;
-	int getPreviousMouseX() const;
-	int getPreviousMouseY() const;
+	float getMouseX() const;
+	float getMouseY() const;
+	float getPreviousMouseX() const;
+	float getPreviousMouseY() const;
 
 	//  event notification only for internal OF use
 	void notifySetup();
@@ -240,13 +240,13 @@ class ofCoreEvents {
 	void notifyKeyReleased(int key, int keycode=-1, int scancode=-1, int codepoint=-1);
 	void notifyKeyEvent(const ofKeyEventArgs & keyEvent);
 
-	void notifyMousePressed(int x, int y, int button);
-	void notifyMouseReleased(int x, int y, int button);
-	void notifyMouseDragged(int x, int y, int button);
-	void notifyMouseMoved(int x, int y);
+	void notifyMousePressed(float x, float y, int button);
+	void notifyMouseReleased(float x, float y, int button);
+	void notifyMouseDragged(float x, float y, int button);
+	void notifyMouseMoved(float x, float y);
 	void notifyMouseScrolled(float x, float y);
-	void notifyMouseEntered(int x, int y);
-	void notifyMouseExited(int x, int y);
+	void notifyMouseEntered(float x, float y);
+	void notifyMouseExited(float x, float y);
 	void notifyMouseEvent(const ofMouseEventArgs & mouseEvent);
 
 	void notifyExit();
@@ -260,8 +260,8 @@ private:
 	ofTimer timer;
 	ofFpsCounter fps;
 
-	int	currentMouseX, currentMouseY;
-	int	previousMouseX, previousMouseY;
+	float	currentMouseX, currentMouseY;
+	float	previousMouseX, previousMouseY;
 	bool bPreMouseNotSet;
 	set<int> pressedMouseButtons;
 	set<int> pressedKeys;
