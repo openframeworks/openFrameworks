@@ -24,7 +24,7 @@ make Debug
 
 echo "Unit tests"
 cd $ROOT/tests
-for group in *: do
+for group in *; do
 	if [ -d $group ]; then
 		for test in $group/*; do
 			if [ -d $test ]; then
