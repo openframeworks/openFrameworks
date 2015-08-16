@@ -147,12 +147,12 @@ class ofApp: public ofxUnitTestsApp{
 	}
 };
 
+
+#include "ofAppNoWindow.h"
 //========================================================================
 int main( ){
-	ofSetupOpenGL(1024,768,OF_WINDOW);			// <-------- setup the GL context
-
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	return ofRunApp(new ofApp());
+	auto window = std::make_shared<ofAppNoWindow>();
+	auto app = std::make_shared<ofApp>();
+	ofRunApp(window, app);
+	return ofRunMainLoop();
 }
