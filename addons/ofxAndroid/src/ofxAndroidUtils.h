@@ -21,6 +21,8 @@ jmethodID ofxJavaGetStaticMethodID(jclass classID, std::string methodName, std::
 std::string ofxJavaGetClassName(jclass classID);
 jclass ofxJavaGetClassID(std::string className);
 jfieldID ofxJavaGetStaticFieldID(jclass classID, std::string fieldName, std::string fieldType);
+void ofxJavaGetJString(const std::string& str, jstring &jstr);
+void ofxJstringToString(JNIEnv * env, jstring jstr, std::string &str);
 
 jobject ofxJavaGetStaticObjectField(jclass classID, std::string fieldName, std::string fieldType);
 jobject ofxJavaGetStaticObjectField(std::string className, std::string fieldName, std::string fieldType);
