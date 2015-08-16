@@ -940,7 +940,7 @@ string ofDirectory::path() const {
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getAbsolutePath() const {
-	return std::filesystem::absolute(myDir).string();
+	return std::filesystem::canonical(std::filesystem::absolute(myDir)).string();
 }
 
 //------------------------------------------------------------------------------------------------------------
