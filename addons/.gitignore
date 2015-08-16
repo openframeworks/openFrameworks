@@ -22,6 +22,7 @@ ofxAndroid/ofAndroidLib/gen
 !ofxVectorGraphics
 !ofxXmlSettings
 !ofxEmscripten
+!ofxGPS
 
 # don't ignore the .gitignore file
 !.gitignore
