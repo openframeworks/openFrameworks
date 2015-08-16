@@ -7,6 +7,9 @@
 #pragma once
 
 #include "ofConstants.h"
+#include "ofLog.h"
+#include "ofBaseApp.h"
+#include "ofAppRunner.h"
 #include <string>
 
 
