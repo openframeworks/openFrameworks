@@ -100,7 +100,7 @@ class ofApp: public ofxUnitTestsApp{
 		test(ofDirectory("d4").remove(true),"ofDirectory::remove recursive");
 		test(!ofDirectory("d4").exists(),"!ofDirectory::exists after remove");
 
-		test(ofDirectory::createDirectory("d5/d1",true,true),"ofDirectory::create recursive");
+		test(ofDirectory::createDirectory("d5/d1",true,true),"ofDirectory::create recursive, tests #4285");
 
 
 
