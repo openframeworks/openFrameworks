@@ -456,7 +456,7 @@ ofBitmapFont::ofBitmapFont(){
 
 ofBitmapFont::~ofBitmapFont(){
 #ifdef TARGET_ANDROID
-	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofBitmapFont::unloadTexture);
+	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofBitmapFont::unloadTexture);
 #endif
 }
 
