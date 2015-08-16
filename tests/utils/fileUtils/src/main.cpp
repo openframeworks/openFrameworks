@@ -110,10 +110,13 @@ class ofApp: public ofxUnitTestsApp{
 		test(ofDirectory("d4").remove(true),"ofDirectory::remove recursive");
 		test(!ofDirectory("d4").exists(),"!ofDirectory::exists after remove");
 
+
 		ofLogNotice() << "";
 		ofLogNotice() << "tests #4285";
 		test(!ofDirectory::doesDirectoryExist("d5/d1"),"!ofDirectory::doesDirectoryExist");
 		test(ofDirectory::createDirectory("d5/d1",true,true),"ofDirectory::create recursive");
+		test(ofDirectory::createDirectory(ofToDataPath("d5/d2",true),false,true),"ofDirectory::create recursive");
+		test(ofDirectory::createDirectory(ofToDataPath("d5/d3"),false,true),"ofDirectory::create recursive");
 
 
 
