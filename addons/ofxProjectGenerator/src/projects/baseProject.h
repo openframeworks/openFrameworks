@@ -51,7 +51,7 @@ public:
 
     virtual void addSrc(std::string srcFile, string folder, SrcType type=DEFAULT) = 0;
     virtual void addInclude(std::string includeName) = 0;
-    virtual void addLibrary(std::string libraryName, LibType libType = RELEASE_LIB) = 0;
+    virtual void addLibrary(const LibraryBinary & lib) = 0;
     virtual void addLDFLAG(std::string ldflag, LibType libType = RELEASE_LIB){}
     virtual void addCFLAG(std::string cflag, LibType libType = RELEASE_LIB){}; // C_FLAGS
     virtual void addCPPFLAG(std::string cppflag, LibType libType = RELEASE_LIB){}; // CXX_FLAGS

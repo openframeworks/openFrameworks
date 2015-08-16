@@ -144,7 +144,7 @@ void baseProject::addAddon(ofAddon & addon){
         addInclude(addon.includePaths[i]);
     }
     for(int i=0;i<(int)addon.libs.size();i++){
-        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
+        ofLogVerbose() << "adding addon libs: " << addon.libs[i].path;
         addLibrary(addon.libs[i]);
     }
     for(int i=0;i<(int)addon.cflags.size();i++){
