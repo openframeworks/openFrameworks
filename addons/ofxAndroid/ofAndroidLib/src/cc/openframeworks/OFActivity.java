@@ -4,6 +4,7 @@ import cc.openframeworks.OFAndroidLifeCycle.ILifeCycleCallback;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 
 public abstract class OFActivity extends Activity implements ILifeCycleCallback{
@@ -99,4 +100,22 @@ public abstract class OFActivity extends Activity implements ILifeCycleCallback{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (OFAndroid.keyDown(keyCode, event)) {
+		    return true;
+		} else {
+		    return super.onKeyDown(keyCode, event);
+		}
+    }
+    
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if (OFAndroid.keyUp(keyCode, event)) {
+		    return true;
+		} else {
+		    return super.onKeyUp(keyCode, event);
+		}
+    }
 }
