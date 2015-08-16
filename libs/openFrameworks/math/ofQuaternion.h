@@ -408,14 +408,14 @@ ofQuaternion& ofQuaternion::operator*=(const ofQuaternion& rhs) {
 
 //----------------------------------------
 ofQuaternion ofQuaternion::operator /(float rhs) const {
-    float div = 1.0 / rhs;
+    float div = 1.0f / rhs;
     return ofQuaternion(_v.x*div, _v.y*div, _v.z*div, _v.w*div);
 }
 
 
 //----------------------------------------
 ofQuaternion& ofQuaternion::operator /=(float rhs) {
-    float div = 1.0 / rhs;
+    float div = 1.0f / rhs;
     _v.x *= div;
     _v.y *= div;
     _v.z *= div;
