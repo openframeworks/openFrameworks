@@ -93,6 +93,8 @@ protected:
 			numTestsPassed++;
 		}else{
 			ofLogError() << testName << " failed " << msg;
+			ofLogError() << "value1 " << t1 << msg;
+			ofLogError() << "value2 " << t2 << msg;
 			numTestsFailed++;
 		}
 	}
