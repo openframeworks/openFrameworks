@@ -1421,8 +1421,7 @@ bool ofFilePath::createEnclosingDirectory(const std::string& filePath, bool bRel
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getAbsolutePath(const std::string& _path, bool bRelativeToData){
-	std::string path = _path;
+string ofFilePath::getAbsolutePath(const std::string& path, bool bRelativeToData){
 	if(bRelativeToData){
 		return ofToDataPath(path, true);
 	}else{
