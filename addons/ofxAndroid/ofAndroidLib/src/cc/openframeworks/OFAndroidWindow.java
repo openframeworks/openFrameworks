@@ -243,8 +243,14 @@ class OFGLSurfaceView extends GLSurfaceView{
 
     @Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		super.surfaceDestroyed(holder);
-    	OFAndroid.onSurfaceDestroyed();
+    	super.surfaceDestroyed(holder);
+    	
+			
+			
+				// TODO Auto-generated method stub
+				OFAndroid.onSurfaceDestroyed();
+			
+//    	OFAndroid.onSurfaceDestroyed();
 	}
     
     boolean isSetup(){
@@ -297,6 +303,10 @@ class OFAndroidWindow implements GLSurfaceView.Renderer {
 		}catch(Exception e){
 			Log.e("OF","couldn call onGLSurfaceCreated",e);
 		}
+    }
+    
+    public static void exit() {
+    	setup = false;
     }
     
     @Override
