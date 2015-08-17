@@ -21,7 +21,7 @@ elif [ $(expr $MAJOR_VERSION \< 13 ) -eq 1 ]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes
     add-apt-repository ppa:gstreamer-developers/ppa --yes
     add-apt-repository ppa:boost-latest/ppa --yes
-    CXX_VER=-4.9
+    CXX_VER=-5
     BOOST_VER=1.55
 elif [ $(expr $MAJOR_VERSION \< 14 ) -eq 1 ]; then
     add-apt-repository ppa:ubuntu-toolchain-r/test --yes

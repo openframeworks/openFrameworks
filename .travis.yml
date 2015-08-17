@@ -37,7 +37,7 @@ before_install:
     # remove this when switching to newer Ubuntu with appropriate gcc version.
     - if [ "$TARGET" == "docs" ] || [ "$TARGET" == "linux" ]; then
         scripts/ci/$TARGET/before_install.sh;
-        export CXX=g++-4.9;
+        export CXX=g++-5;
       fi
 install:
     if [ "$TARGET" == "android" ]; then scripts/ci/$TARGET/install.sh; fi
