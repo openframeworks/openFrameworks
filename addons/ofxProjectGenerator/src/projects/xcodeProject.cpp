@@ -827,7 +827,7 @@ void xcodeProject::addInclude(string includeName){
 }
 
 
-void xcodeProject::addLibrary(string libraryName, LibType libType){
+void xcodeProject::addLibrary(const LibraryBinary & lib){
 
     char query[255];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'OTHER_LDFLAGS')]/following-sibling::node()[1]");
@@ -837,7 +837,7 @@ void xcodeProject::addLibrary(string libraryName, LibType libType){
     if (headerArray.size() > 0){
         for (pugi::xpath_node_set::const_iterator it = headerArray.begin(); it != headerArray.end(); ++it){
             pugi::xpath_node node = *it;
-            node.node().append_child("string").append_child(pugi::node_pcdata).set_value(libraryName.c_str());
+            node.node().append_child("string").append_child(pugi::node_pcdata).set_value(lib.path.c_str());
         }
 
     } else {
@@ -863,7 +863,7 @@ void xcodeProject::addLibrary(string libraryName, LibType libType){
         }
 
         // now that we have it, try again...
-        addLibrary(libraryName);
+        addLibrary(lib);
     }
 
     //saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
@@ -1008,7 +1008,7 @@ void xcodeProject::addAddon(ofAddon & addon){
         addInclude(addon.includePaths[i]);
     }
     for(int i=0;i<(int)addon.libs.size();i++){
-        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
+        ofLogVerbose() << "adding addon libs: " << addon.libs[i].path;
         addLibrary(addon.libs[i]);
     }
     for(int i=0;i<(int)addon.cflags.size();i++){

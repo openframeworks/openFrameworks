@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-echo "inserting gstreamer 1.0 repository"
-rm /etc/apt/sources.list.d/gstreamer.list
-touch /etc/apt/sources.list.d/gstreamer.list
-echo "updating apt database"
 apt-get update
 
 GSTREAMER_VERSION=1.0

@@ -44,7 +44,7 @@ fi
 libsnotinmac="glu quicktime videoInput kiss"
 libsnotinlinux="quicktime videoInput glut glu cairo glew openssl rtAudio"
 libsnotinvs="kiss"
-libsnotinmingw="kiss glut cairo glew openssl rtAudio"
+libsnotinmingw="kiss glut cairo glew openssl"
 libsnotinandroid="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 
@@ -350,23 +350,30 @@ function createPackage {
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
 		rm -Rf ofxAndroid
+		rm -Rf ofxUnitTests
 	fi
 	#delete ofxiPhone in non ios
 	if [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxiPhone
 		rm -Rf ofxiOS
+		rm -Rf ofxUnitTests
 	fi
 	
 	#delete ofxMultiTouch & ofxAccelerometer in non mobile
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxMultiTouch
 		rm -Rf ofxAccelerometer
+		rm -Rf ofxUnitTests
 	fi
 	
 	if [ "$pkg_platform" == "ios" ] || [ "$pkg_platform" == "android" ]; then
 	    rm -Rf ofxVectorGraphics
    	    rm -Rf ofxKinect
+		rm -Rf ofxUnitTests
 	fi
+	
+	#delete unit tests by now
+	rm -Rf ${pkg_root}/tests
 
 	#delete eclipse projects
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
