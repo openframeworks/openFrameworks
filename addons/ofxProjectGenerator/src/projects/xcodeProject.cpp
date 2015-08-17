@@ -188,7 +188,9 @@ void xcodeProject::setup(){
 void xcodeProject::saveScheme(){
 
 	string schemeFolder = projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/";
-    ofDirectory::removeDirectory(schemeFolder, true);
+    if (ofDirectory::doesDirectoryExist(schemeFolder)){
+        ofDirectory::removeDirectory(schemeFolder, true);
+    }
 	ofDirectory::createDirectory(schemeFolder, false, true);
     
 	string schemeToD = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + " Debug.xcscheme";
@@ -207,18 +209,7 @@ void xcodeProject::saveScheme(){
 }
 
 
-void xcodeProject::saveWorkspaceXML(){
 
-	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
-	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
-
-	ofFile::removeFile(xcodeProjectWorkspace);
-	ofDirectory::removeDirectory(workspaceFolder, true);
-	ofDirectory::createDirectory(workspaceFolder, false, true);
-    ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
-    findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
-
-}
 
 void xcodeProject::saveMakefile(){
     string makefile = ofFilePath::join(projectDir,"Makefile");
@@ -233,7 +224,10 @@ bool xcodeProject::createProjectFile(){
     // todo: some error checking.
 
     string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
-    ofDirectory::removeDirectory(xcodeProject, true);
+    
+    if (ofDirectory::doesDirectoryExist(xcodeProject)){
+        ofDirectory::removeDirectory(xcodeProject, true);
+    }
    
 	ofDirectory xcodeDir(xcodeProject);
 	xcodeDir.create(true);
@@ -289,7 +283,7 @@ bool xcodeProject::createProjectFile(){
 
     // this is for xcode 4 scheme issues. but I'm not sure this is right.
 
-    saveWorkspaceXML();
+    //saveWorkspaceXML();
     saveScheme();
     saveMakefile();
 
