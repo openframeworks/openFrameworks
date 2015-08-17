@@ -1022,9 +1022,8 @@ void xcodeProject::addAddon(ofAddon & addon){
         addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
     }
     
-    ofLogNotice() << "adding " << addon.frameworks.size() << " frameworks";
     for(int i=0;i<(int)addon.frameworks.size(); i++){
-        ofLogNotice() << "adding addon frameworks: " << addon.frameworks[i];
+        ofLogVerbose() << "adding addon frameworks: " << addon.frameworks[i];
         
         size_t found=addon.frameworks[i].find('/');
         if (found==std::string::npos){
