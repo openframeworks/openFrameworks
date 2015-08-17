@@ -343,6 +343,7 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 ################################################################################
 #PLATFORM_CC=
 
+APP_VERSION ?= 0.01
 
 afterplatform: $(TARGET_NAME)
 	@rm -rf bin/$(BIN_NAME).app
@@ -364,7 +365,7 @@ afterplatform: $(TARGET_NAME)
 	@echo '  <key>CFBundleName</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <string>$(BIN_NAME)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleShortVersionString</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	@echo '  <string>0.01</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
+	@echo '  <string>$(APP_VERSION)</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundleInfoDictionaryVersion</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <string>6.0</string>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '  <key>CFBundlePackageType</key>' >> bin/$(BIN_NAME).app/Contents/Info.plist
