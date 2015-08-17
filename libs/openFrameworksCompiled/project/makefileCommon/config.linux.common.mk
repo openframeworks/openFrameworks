@@ -185,11 +185,19 @@ PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-section
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-# RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3 -march=native -mtune=native
+ifndef PROJECT_OPTIMIZATION_CFLAGS_RELEASE
+	# RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
+	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
+	
+	ifneq ($(LINUX_ARM),1)
+		PLATFORM_OPTIMIZATION_CFLAGS_RELEASE += -march=native -mtune=native
+	endif
+endif
 
-# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 -march=native -mtune=native
+ifndef PROJECT_OPTIMIZATION_CFLAGS_DEBUG
+	# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
+	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+endif
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
