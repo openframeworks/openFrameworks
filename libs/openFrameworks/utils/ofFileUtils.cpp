@@ -1223,31 +1223,45 @@ bool ofDirectory::removeDirectory(const std::string& _path, bool deleteIfNotEmpt
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::createDirectory(const std::string& _dirPath, bool bRelativeToData, bool recursive){
+	
 	std::string dirPath = _dirPath;
 
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
-
-	bool success = false;
-	try{
-		if(!recursive){
-			success = std::filesystem::create_directory(dirPath);
-		}else{
-			success = std::filesystem::create_directories(dirPath);
+	
+	
+	// on OSX,std::filesystem::create_directories seems to return false *if* the path has folders that already exist
+	// and true if it doesn't
+	// so to avoid unnecessary warnings on OSX, we check if it exists here:
+	
+	bool bDoesExistAlready = ofDirectory::doesDirectoryExist(dirPath);
+	
+	if (!bDoesExistAlready){
+		
+		bool success = false;
+		try{
+			if(!recursive){
+				success = std::filesystem::create_directory(dirPath);
+			}else{
+				success = std::filesystem::create_directories(dirPath);
+			}
+		} catch(std::exception & except){
+			ofLogError("ofDirectory") << "createDirectory(): couldn't create directory \"" << dirPath << "\": " << except.what();
+			return false;
 		}
-	}
-	catch(std::exception & except){
-		ofLogError("ofDirectory") << "createDirectory(): couldn't create directory \"" << dirPath << "\": " << except.what();
-		return false;
-	}
-
-	if(!success){
+		return success;
+		
+	} else {
+			
 		ofLogWarning("ofDirectory") << "createDirectory(): directory already exists: \"" << dirPath << "\"";
-		success = true;
+		return true;
+	
 	}
 
-	return success;
+
+
+	
 }
 
 //------------------------------------------------------------------------------------------------------------
