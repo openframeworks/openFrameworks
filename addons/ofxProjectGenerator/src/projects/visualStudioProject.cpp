@@ -220,7 +220,7 @@ void visualStudioProject::addInclude(string includeName){
     //appendValue(doc, "Add", "directory", includeName);
 }
 
-void addLibraryPath(pugi::xpath_node_set & nodes, std::string libFolder) {
+void addLibraryPath(const pugi::xpath_node_set & nodes, std::string libFolder) {
 	for (auto & node : nodes) {
 		string includes = node.node().first_child().value();
 		vector < string > strings = ofSplitString(includes, ";");
@@ -238,7 +238,7 @@ void addLibraryPath(pugi::xpath_node_set & nodes, std::string libFolder) {
 	}
 }
 
-void addLibraryName(pugi::xpath_node_set & nodes, std::string libName) {
+void addLibraryName(const pugi::xpath_node_set & nodes, std::string libName) {
 
 	for (auto & node : nodes) {
 
