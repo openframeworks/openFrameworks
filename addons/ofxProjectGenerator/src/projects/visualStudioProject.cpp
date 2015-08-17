@@ -10,6 +10,7 @@ void visualStudioProject::setup() {
     ;
 }
 
+
 bool visualStudioProject::createProjectFile(){
 
     string project = ofFilePath::join(projectDir,projectName + ".vcxproj");
@@ -284,8 +285,12 @@ void visualStudioProject::addLibrary(const LibraryBinary & lib){
 	else {
 		linkPath = "//Link";
 	}
-	addLibraryPath(doc.select_nodes((linkPath + "AdditionalLibraryDirectories").c_str()), libFolder);
-	addLibraryName(doc.select_nodes((linkPath + "AdditionalDependencies").c_str()), libName);
+    
+    pugi::xpath_node_set addlLibsDir = doc.select_nodes((linkPath + "AdditionalLibraryDirectories").c_str());
+	addLibraryPath(addlLibsDir, libFolder);
+    
+    pugi::xpath_node_set addlDeps = doc.select_nodes((linkPath + "AdditionalDependencies").c_str());
+	addLibraryName(addlDeps, libName);
 
 }
 
