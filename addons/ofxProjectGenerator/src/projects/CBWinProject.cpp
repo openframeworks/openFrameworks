@@ -87,9 +87,8 @@ void CBWinProject::addInclude(string includeName){
     appendValue(doc, "Add", "directory", includeName);
 }
 
-void CBWinProject::addLibrary(string libraryName, LibType libType){
-    ofLogNotice() << "adding library " << libraryName;
-    appendValue(doc, "Add", "library", libraryName, true);
+void CBWinProject::addLibrary(const LibraryBinary & lib){
+    appendValue(doc, "Add", "library", lib.path, true);
     // overwriteMultiple for a lib if it's there (so libsorder.make will work)
     // this is because we might need to say libosc, then ws2_32
 }
