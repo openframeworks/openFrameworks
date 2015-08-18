@@ -141,6 +141,7 @@ class ofxGuiGroup : public ofxBaseGui {
         bool setActiveToggle(int index);
         bool setActiveToggle(ofxToggle* toggle);
         int getActiveToggleIndex() const;
+		ofEvent<int> activeToggleChanged;
 
 	protected:
 		virtual void render();

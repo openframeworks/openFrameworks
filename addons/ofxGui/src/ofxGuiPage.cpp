@@ -16,7 +16,7 @@ void ofxGuiPage::add(ofxBaseGui * element){
 
 	ofPoint newpos = element->getPosition() + this->getPosition();
 	if(bShowHeader){
-		newpos.y += header;
+		newpos.y += header + spacing;
 	}
 	element->setPosition(newpos);
 	b.width = max(element->getShape().getRight() - b.x + 1, b.width);
@@ -34,23 +34,29 @@ bool ofxGuiPage::mouseDragged(ofMouseEventArgs & args){
 	}
 	if(bGuiActive){
 		ofMouseEventArgs a = args;
-		for(int i = 0; i < (int)collection.size(); i++){
-			if(collection[i]->mouseDragged(a)){
+		for(auto & e: collection){
+			if(e->mouseDragged(a)){
 				//collection is only allowed to be moved within page boundaries
 				float tmp_header = 0;
 				if(bShowHeader){
 					tmp_header += header + spacing;
 				}
-				collection[i]->setPosition(
-					ofClamp(
-						collection[i]->getPosition().x,
-						b.getLeft(),
-                        b.getRight() - collection[i]->getWidth() - 1),
-					ofClamp(
-						collection[i]->getPosition().y,
-						b.getTop() + tmp_header,
-                        b.getBottom() - collection[i]->getHeight() - 1)
-					);
+				ofPoint pos = e->getPosition();
+				if(e->getShape().getLeft() < b.getLeft()){
+					pos.x = b.getLeft();
+				}else {
+					if(e->getShape().getRight() > b.getRight()-1){
+						pos.x = b.getRight()-1 - e->getWidth();
+					}
+				}
+				if(e->getShape().getTop() < b.getTop()+tmp_header){
+					pos.y = b.getTop()+tmp_header;
+				}else {
+					if(e->getShape().getBottom() > b.getBottom()-1){
+						pos.y = b.getBottom()-1 - e->getHeight();
+					}
+				}
+				e->setPosition(pos);
 				return true;
 			}
 		}

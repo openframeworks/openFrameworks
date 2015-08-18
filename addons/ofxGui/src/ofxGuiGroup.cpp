@@ -10,7 +10,7 @@ ofxGuiGroup::ofxGuiGroup(){
 
 ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & config)
 :ofxBaseGui(config){
-    setup(parameters, config);
+	setup(_parameters, config);
 }
 
 ofxGuiGroup::~ofxGuiGroup(){
@@ -646,6 +646,7 @@ void ofxGuiGroup::deactivateAllOtherToggles(ofxToggle *toggle) {
                 }
                 else {
                     active_toggle_index = i;
+					ofNotifyEvent(activeToggleChanged, i);
                 }
             }
         }

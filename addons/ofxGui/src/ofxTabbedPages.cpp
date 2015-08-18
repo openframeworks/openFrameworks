@@ -27,6 +27,7 @@ ofxTabbedPages & ofxTabbedPages::setup(string collectionName, string filename, f
 	collection.push_back(&tabs);
 	tabs.unregisterMouseEvents();
 	parameters.add(tabs.getParameter());
+	updateContentShapes();
 	return *this;
 }
 
@@ -58,7 +59,7 @@ void ofxTabbedPages::add(ofxGuiGroup *element){
 		setActiveTab(0);
 	}
 
-    setNeedsRedraw();
+	setNeedsRedraw();
 }
 
 void ofxTabbedPages::clear(){
@@ -86,7 +87,7 @@ void ofxTabbedPages::generateDraw(){
 	border.setStrokeColor(thisBorderColor);
 	border.setStrokeWidth(1);
 	border.setFilled(false);
-    border.rectangle(pagesShape.x - 1, pagesShape.y + 1, pagesShape.width + 2, pagesShape.height + 2);
+	border.rectangle(pagesShape.x, pagesShape.y + 1, pagesShape.width + 1, pagesShape.height);
 
     if(bShowHeader){
         generateDrawHeader();
@@ -151,26 +152,25 @@ void ofxTabbedPages::render(){
 }
 
 void ofxTabbedPages::updateContentShapes(){
-	ofPoint newpos = b.getPosition() + spacing;
+	ofPoint newpos = b.getPosition();
 	if(bShowHeader){
-		newpos.y += header;
+		newpos.y += header + spacing;
 	}
 
 	tabShape.setPosition(newpos);
 	tabShape.setWidth(b.width);
 	tabShape.setHeight(tabHeight);
 
-	newpos.x += 1 /*border*/;
 	newpos.y += tabHeight;
 	pagesShape.setPosition(newpos);
-	pagesShape.setWidth(b.width - 2 /*border*/);
+	pagesShape.setWidth(b.width - 1 /*border*/);
 	pagesShape.setHeight(b.getBottom() - newpos.y);
 }
 
 void ofxTabbedPages::setSizeToElement(ofxBaseGui * element){
 	updateContentShapes();
 	if(element->getWidth() > pagesShape.width){
-		b.width = element->getWidth() + 2 /*border*/;
+		b.width = element->getWidth() + 1 /*border*/;
 	}
 	if(element->getHeight() > pagesShape.getHeight()){
 		b.height = element->getHeight() + tabHeight + 1 /*border*/;
@@ -209,8 +209,10 @@ ofxGuiPage * ofxTabbedPages::getActiveTab(){
 
 void ofxTabbedPages::setTabHeight(int h){
 	tabHeight = h;
+	sizeChangedCB();
 }
 
 void ofxTabbedPages::setTabWidth(int w){
 	tabWidth = w;
+	sizeChangedCB();
 }
