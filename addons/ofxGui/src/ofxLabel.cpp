@@ -2,37 +2,43 @@
 #include "ofGraphics.h"
 using namespace std;
 
-ofxLabel::ofxLabel()
+template<typename Type>
+ofxValueLabel<Type>::ofxValueLabel()
 :ofxBaseGui(Config()){
 
 }
 
-ofxLabel::ofxLabel(ofParameter<std::string> _label, const Config & config)
+template<typename Type>
+ofxValueLabel<Type>::ofxValueLabel(ofParameter<Type> _label, const Config & config)
 :ofxBaseGui(config){
     label.makeReferenceTo(_label);
     setNeedsRedraw();
-    label.addListener(this,&ofxLabel::valueChanged);
+	label.addListener(this,&ofxValueLabel::valueChanged);
 }
 
-ofxLabel::~ofxLabel(){
-    label.removeListener(this,&ofxLabel::valueChanged);
+template<typename Type>
+ofxValueLabel<Type>::~ofxValueLabel(){
+	label.removeListener(this,&ofxValueLabel::valueChanged);
 }
 
-ofxLabel & ofxLabel::setup(ofParameter<string> _label, float width, float height) {
+template<typename Type>
+ofxValueLabel<Type> & ofxValueLabel<Type>::setup(ofParameter<Type> _label, float width, float height) {
     label.makeReferenceTo(_label);
     b.width  = width;
     b.height = height;
     setNeedsRedraw();
-    label.addListener(this,&ofxLabel::valueChanged);
+	label.addListener(this,&ofxValueLabel::valueChanged);
     return *this;
 }
 
-ofxLabel & ofxLabel::setup(const std::string& labelName, string _label, float width, float height) {
+template<typename Type>
+ofxValueLabel<Type> & ofxValueLabel<Type>::setup(const string& labelName, const Type& _label, float width, float height) {
     label.set(labelName,_label);
     return setup(label,width,height);
 }
 
-void ofxLabel::generateDraw(){
+template<typename Type>
+void ofxValueLabel<Type>::generateDraw(){
 	bg.clear();
 
 	bg.setFillColor(thisBackgroundColor);
@@ -44,13 +50,14 @@ void ofxLabel::generateDraw(){
         if(!getName().empty()){
             name = getName() + ": ";
         }
-        textMesh = getTextMesh(name + (string)label, b.x + textPadding, b.y + b.height / 2 + 4);
+		textMesh = getTextMesh(name + label.toString(), b.x + textPadding, b.y + b.height / 2 + 4);
     }else {
-        textMesh = getTextMesh((string)label, b.x + textPadding, b.y + b.height / 2 + 4);
+		textMesh = getTextMesh(label.toString(), b.x + textPadding, b.y + b.height / 2 + 4);
     }
 }
 
-void ofxLabel::render() {
+template<typename Type>
+void ofxValueLabel<Type>::render() {
 	ofColor c = ofGetStyle().color;
 
 	bg.draw();
@@ -71,10 +78,17 @@ void ofxLabel::render() {
 	}
 }
 
-ofAbstractParameter & ofxLabel::getParameter(){
+template<typename Type>
+ofAbstractParameter & ofxValueLabel<Type>::getParameter(){
 	return label;
 }
 
-void ofxLabel::valueChanged(string & value){
+template<typename Type>
+void ofxValueLabel<Type>::valueChanged(Type & value){
     setNeedsRedraw();
 }
+
+template class ofxValueLabel<std::string>;
+template class ofxValueLabel<int>;
+template class ofxValueLabel<float>;
+template class ofxValueLabel<bool>;

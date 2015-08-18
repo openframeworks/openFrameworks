@@ -35,26 +35,22 @@ ofxGuiGroup & ofxGuiGroup::setup(const Config & config){
     return *this;
 }
 
+ofxGuiGroup & ofxGuiGroup::setup(const std::string& collectionName, const Config & config){
+	setup(config);
+	setName(collectionName);
+	return *this;
+}
+
+
 ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & parameters, const Config & config){
-	ofxBaseGui::setup(config);
-	spacing = config.spacing;
-	spacingNextElement = config.spacingNextElement;
-	spacingFirstElement = config.spacingFirstElement;
-	header = config.header;
-	filename = config.filename;
-	minimized = config.minimized;
-    bShowHeader = config.showHeader;
-	bGuiActive = false;
-	this->config = config;
+	setup(config);
 	addParametersFrom(parameters);
 	this->parameters = parameters;
-	registerMouseEvents();
-	setNeedsRedraw();
 	return *this;
 }
 
 ofxGuiGroup & ofxGuiGroup::setup(const std::string& collectionName, const std::string& filename, float x, float y){
-	parameters.setName(collectionName);
+	setName(collectionName);
 	return setup(parameters, filename, x, y);
 }
 

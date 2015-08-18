@@ -3,7 +3,8 @@
 #include "ofxBaseGui.h"
 #include "ofParameter.h"
 
-class ofxLabel: public ofxBaseGui {
+template<typename Type>
+class ofxValueLabel: public ofxBaseGui {
 public:
 	struct Config: public ofxBaseGui::Config{
 		Config(){}
@@ -11,12 +12,13 @@ public:
 		:ofxBaseGui::Config(c){}
 	};
 
-    ofxLabel();
-    ofxLabel(ofParameter<std::string> _label, const Config & config = Config());
-    virtual ~ofxLabel();
+	ofxValueLabel();
 
-    ofxLabel & setup(ofParameter<std::string> _label, float width = defaultWidth, float height = defaultHeight);
-    ofxLabel & setup(const std::string& labelName, std::string label, float width = defaultWidth, float height = defaultHeight);
+	ofxValueLabel(ofParameter<Type> _label, const Config & config = Config());
+	virtual ~ofxValueLabel();
+
+	ofxValueLabel & setup(ofParameter<Type> _label, float width = defaultWidth, float height = defaultHeight);
+	ofxValueLabel & setup(const std::string& labelName, const Type & label, float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!
     virtual bool mouseMoved(ofMouseEventArgs & args){return false;}
@@ -40,17 +42,22 @@ public:
 	}
 
 
-	std::string operator=(std::string v) { label = v; return v; }
-    operator const std::string & ()       { return label; }
+	Type operator=(Type v) { label = v; return v; }
+	operator const Type & ()       { return label; }
 
     ofAbstractParameter & getParameter();
 
 protected:
     void render();
-    ofParameter<std::string> label;
+	ofParameter<Type> label;
     void generateDraw();
-    void valueChanged(std::string & value);
+	void valueChanged(Type & value);
     bool setValue(float mx, float my, bool bCheckBounds){return false;}
     ofPath bg;
     ofVboMesh textMesh;
 };
+
+typedef ofxValueLabel<std::string> ofxLabel;
+typedef ofxValueLabel<int> ofxIntLabel;
+typedef ofxValueLabel<float> ofxFloatLabel;
+typedef ofxValueLabel<bool> ofxBoolLabel;

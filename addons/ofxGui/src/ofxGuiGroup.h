@@ -31,6 +31,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		virtual ~ofxGuiGroup();
 
         virtual ofxGuiGroup & setup(const Config & config);
+		virtual ofxGuiGroup & setup(const std::string& collectionName, const Config & config);
 		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const Config & config);
 		virtual ofxGuiGroup & setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
 		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
