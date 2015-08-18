@@ -20,6 +20,7 @@ echo "Building OF core"
 cd $ROOT
 # this carries over to subsequent compilations of examples
 echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux64/config.linux64.default.mk
+sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g0/" libs/openFrameworksCompiled/project/makefileCommon/config.linux.common.mk
 cd libs/openFrameworksCompiled/project
 make Debug
 
@@ -46,9 +47,9 @@ for group in *; do
 			if [ -d $test ]; then
 				cd $test
 				cp ../../../scripts/linux/template/linux/Makefile .
-				cp ../../../scripts/linux/template/linux/config.make . 
+				cp ../../../scripts/linux/template/linux/config.make .
 				make Debug
-				make RunDebug 
+				make RunDebug
 			fi
 		done
 	fi
