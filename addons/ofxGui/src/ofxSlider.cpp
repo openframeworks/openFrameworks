@@ -220,7 +220,7 @@ void ofxSlider<Type>::generateText(){
 template<>
 void ofxSlider<unsigned char>::generateText(){
     if(layout == ofxBaseGui::Horizontal){
-		string valStr = ofToString(value.get(), decimalPlace);
+        string valStr = ofToString((int)value, decimalPlace);
         textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
         textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
     }else{
@@ -232,7 +232,7 @@ void ofxSlider<unsigned char>::generateText(){
             }
             textMesh.append(getTextMesh(nameStr, b.x + textPadding, b.y + textPadding + getTextBoundingBox(nameStr, 0, 0).height));
         }
-		string valStr = ofToString(value.get(), decimalPlace);
+        string valStr = ofToString((int)value, decimalPlace);
         while(getTextBoundingBox(valStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && valStr.length() > 1){
             valStr = valStr.substr(0, valStr.size() - 1);
         }
