@@ -16,7 +16,7 @@ sudo /etc/init.d/postgresql stop
 echo "Memory usage debugging output"
 ps aux --sort -rss | head -n10
 
-echo "Building OF core"
+echo "**** Building OF core ****"
 cd $ROOT
 # this carries over to subsequent compilations of examples
 echo "PLATFORM_CFLAGS += $CUSTOMFLAGS" >> libs/openFrameworksCompiled/project/linux64/config.linux64.default.mk
@@ -24,7 +24,7 @@ sed -i "s/PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = .*/PLATFORM_OPTIMIZATION_CFLAGS_D
 cd libs/openFrameworksCompiled/project
 make Debug
 
-echo "Building emptyExample"
+echo "**** Building emptyExample ****"
 cd $ROOT
 cp scripts/linux/template/linux64/Makefile examples/empty/emptyExample/
 cp scripts/linux/template/linux64/config.make examples/empty/emptyExample/
@@ -32,25 +32,9 @@ cd examples/empty/emptyExample
 make Debug
 
 # skip this for now as too many parts don't work (due to 12.04?)
-#echo "Building allAddonsExample"
+#echo "**** Building allAddonsExample ****"
 #cd $ROOT
 #cp scripts/linux/template/linux64/Makefile examples/addons/allAddonsExample/
 #cp scripts/linux/template/linux64/config.make examples/addons/allAddonsExample/
 #cd examples/addons/allAddonsExample/
 #make Debug
-
-echo "Unit tests"
-cd $ROOT/tests
-for group in *; do
-	if [ -d $group ]; then
-		for test in $group/*; do
-			if [ -d $test ]; then
-				cd $test
-				cp ../../../scripts/linux/template/linux/Makefile .
-				cp ../../../scripts/linux/template/linux/config.make .
-				make Debug
-				make RunDebug
-			fi
-		done
-	fi
-done
