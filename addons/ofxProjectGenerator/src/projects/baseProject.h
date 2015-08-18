@@ -33,7 +33,7 @@ public:
 
     void setup(string _target);
 
-    bool create(string path);
+    bool create(string path, bool bParseAddonsDotMake = true);
     bool save(bool createMakeFile);
 
     // this shouldn't be called by anyone.  call "create(...), save" etc
