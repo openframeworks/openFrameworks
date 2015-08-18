@@ -24,11 +24,11 @@ class ofApp : public ofBaseApp {
 
 	private:
 
-        ofxPanel panel1, panel2, panel3;
+        ofxPanel panel1, panel2, panel3, panel4;
 		ofxGuiGroup rotary;
         ofxGuiMatrix matrix;
-
-        ofImage img;
+        ofParameter<string> matrix_active_name;
+        ofParameter<int> matrix_active_index;
 
         ofxMinimalButton button;
 
@@ -41,6 +41,7 @@ class ofApp : public ofBaseApp {
 		ofParameterGroup g;
 
 		void toggleGroupHeader(bool & val);
+        void updateMatrixIndex(int& index);
 
 };
 

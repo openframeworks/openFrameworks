@@ -17,7 +17,7 @@ ofxSlider<Type>::~ofxSlider(){
 template<typename Type>
 ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, const Config & config)
 :ofxBaseGui(config)
-,decimalPlace(config.decimalPlace)
+,precision(config.precision)
 ,bUpdateOnReleaseOnly(config.updateOnReleaseOnly)
 ,bGuiActive(false)
 ,mouseInside(false){
@@ -41,7 +41,7 @@ ofxSlider<Type> & ofxSlider<Type>::setup(ofParameter<Type> _val, float width, fl
     b.y = 0;
     b.width = width;
     b.height = height;
-    decimalPlace = Config().decimalPlace;
+    precision = Config().precision;
     bGuiActive = false;
     setNeedsRedraw();
 
@@ -77,8 +77,8 @@ Type ofxSlider<Type>::getMax(){
 }
 
 template<typename Type>
-void ofxSlider<Type>::setDecimalPlace(int place){
-    decimalPlace = place;
+void ofxSlider<Type>::setPrecision(int precision){
+    this->precision = precision;
 }
 
 template<typename Type>
@@ -197,7 +197,7 @@ void ofxSlider<Type>::generateDraw(){
 template<typename Type>
 void ofxSlider<Type>::generateText(){
     if(layout == ofxBaseGui::Horizontal){
-		string valStr = ofToString(value.get(), decimalPlace);
+        string valStr = ofToString(value.get(), precision);
         textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
         textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
     }else{
@@ -209,7 +209,7 @@ void ofxSlider<Type>::generateText(){
 			}
             textMesh.append(getTextMesh(nameStr, b.x + textPadding, b.y + textPadding + getTextBoundingBox(nameStr, 0, 0).height));
         }
-		string valStr = ofToString(value.get(), decimalPlace);
+        string valStr = ofToString(value.get(), precision);
 		while(getTextBoundingBox(valStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && valStr.length() > 1){
 			valStr = valStr.substr(0, valStr.size() - 1);
 		}
@@ -220,7 +220,7 @@ void ofxSlider<Type>::generateText(){
 template<>
 void ofxSlider<unsigned char>::generateText(){
     if(layout == ofxBaseGui::Horizontal){
-        string valStr = ofToString((int)value, decimalPlace);
+        string valStr = ofToString((int)value, precision);
         textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
         textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
     }else{
@@ -232,7 +232,7 @@ void ofxSlider<unsigned char>::generateText(){
             }
             textMesh.append(getTextMesh(nameStr, b.x + textPadding, b.y + textPadding + getTextBoundingBox(nameStr, 0, 0).height));
         }
-        string valStr = ofToString((int)value, decimalPlace);
+        string valStr = ofToString((int)value, precision);
         while(getTextBoundingBox(valStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && valStr.length() > 1){
             valStr = valStr.substr(0, valStr.size() - 1);
         }
@@ -306,11 +306,13 @@ void ofxSlider<Type>::valueChanged(Type & value){
     setNeedsRedraw();
 }
 
-template class ofxSlider<int>;
-template class ofxSlider<unsigned int>;
+template class ofxSlider<int8_t>;
+template class ofxSlider<uint8_t>;
+template class ofxSlider<int16_t>;
+template class ofxSlider<uint16_t>;
+template class ofxSlider<int32_t>;
+template class ofxSlider<uint32_t>;
+template class ofxSlider<int64_t>;
+template class ofxSlider<uint64_t>;
 template class ofxSlider<float>;
 template class ofxSlider<double>;
-template class ofxSlider<signed char>;
-template class ofxSlider<unsigned char>;
-template class ofxSlider<unsigned short>;
-template class ofxSlider<short>;

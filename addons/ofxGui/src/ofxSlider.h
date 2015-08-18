@@ -11,7 +11,7 @@ public:
 		Config(const ofxBaseGui::Config & c)
         :ofxBaseGui::Config(c){}
 		bool updateOnReleaseOnly = false;
-        unsigned int decimalPlace = 6;
+        unsigned int precision = 6;
 	};
 
 	ofxSlider();
@@ -25,7 +25,7 @@ public:
 	void setMax(Type max);
 	Type getMax();
 
-    void setDecimalPlace(int place);
+    void setPrecision(int precision);
 
 	virtual bool mouseMoved(ofMouseEventArgs & args);
 	virtual bool mousePressed(ofMouseEventArgs & args);
@@ -57,7 +57,7 @@ public:
 protected:
 	virtual void render();
 	ofParameter<Type> value;
-    unsigned int decimalPlace;
+    unsigned int precision;
 	bool bUpdateOnReleaseOnly;
 	bool bGuiActive;
 	bool mouseInside;
