@@ -40,7 +40,6 @@ matrix:
   allow_failures:
     # temporary until we find out how to prevent (spurious) build failures
     - env: TARGET="docs"
-    - env: TARGET="linux"
 before_install:
     - if [ "$TARGET" == "docs" ] || [ "$TARGET" == "linux" ]; then
         scripts/ci/$TARGET/before_install.sh;
