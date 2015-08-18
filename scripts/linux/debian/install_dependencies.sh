@@ -52,9 +52,19 @@ if [ $exit_code != 0 ]; then
 	exit $exit_code
 fi
 
+if [ -f /opt/vc/include/bcm_host.h ]; then
+    echo "detected Raspberry Pi"
+    echo "installing gstreamer omx"
+    apt-get install  gstreamer${GSTREAMER_VERSION}-omx
+fi
+
 OS_CODENAME=$(cat /etc/os-release | grep VERSION= | sed "s/VERSION\=\"\(.*\)\"/\1/")
 
 if [ "$OS_CODENAME" = "7 (wheezy)" ]; then
     echo "detected wheezy, installing g++4.8 for c++11 compatibility"
     apt-get install g++-4.8
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 20
+    sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
+    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 20
+    sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 fi
