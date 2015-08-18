@@ -35,7 +35,6 @@ public:
     
     void addAddon(ofAddon & addon);
 
-    void saveWorkspaceXML();
     void saveScheme();
     void renameProject();
 
