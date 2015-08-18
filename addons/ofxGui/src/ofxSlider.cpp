@@ -17,6 +17,7 @@ ofxSlider<Type>::~ofxSlider(){
 template<typename Type>
 ofxSlider<Type>::ofxSlider(ofParameter<Type> _val, const Config & config)
 :ofxBaseGui(config)
+,decimalPlace(config.decimalPlace)
 ,bUpdateOnReleaseOnly(config.updateOnReleaseOnly)
 ,bGuiActive(false)
 ,mouseInside(false){
@@ -40,6 +41,7 @@ ofxSlider<Type> & ofxSlider<Type>::setup(ofParameter<Type> _val, float width, fl
     b.y = 0;
     b.width = width;
     b.height = height;
+    decimalPlace = Config().decimalPlace;
     bGuiActive = false;
     setNeedsRedraw();
 
@@ -72,6 +74,11 @@ void ofxSlider<Type>::setMax(Type max){
 template<typename Type>
 Type ofxSlider<Type>::getMax(){
     return value.getMax();
+}
+
+template<typename Type>
+void ofxSlider<Type>::setDecimalPlace(int place){
+    decimalPlace = place;
 }
 
 template<typename Type>
@@ -190,46 +197,46 @@ void ofxSlider<Type>::generateDraw(){
 template<typename Type>
 void ofxSlider<Type>::generateText(){
     if(layout == ofxBaseGui::Horizontal){
-        string valStr = ofToString(value);
+		string valStr = ofToString(value.get(), decimalPlace);
         textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
         textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
     }else{
-        this->textMesh.clear();
-        if(this->bShowName){
-            string nameStr = this->getName();
-            while(this->getTextBoundingBox(nameStr, 0, 0).getWidth() + this->textPadding * 2 > this->b.getWidth() && nameStr.length() > 1){
-                nameStr = nameStr.substr(0, nameStr.size() - 1);
-            }
-            this->textMesh.append(this->getTextMesh(nameStr, this->b.x + this->textPadding, this->b.y + this->textPadding + this->getTextBoundingBox(nameStr, 0, 0).height));
+        textMesh.clear();
+        if(bShowName){
+			string nameStr = getName();
+			while(getTextBoundingBox(nameStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && nameStr.length() > 1){
+				nameStr = nameStr.substr(0, nameStr.size() - 1);
+			}
+            textMesh.append(getTextMesh(nameStr, b.x + textPadding, b.y + textPadding + getTextBoundingBox(nameStr, 0, 0).height));
         }
-        string valStr = ofToString(this->value);
-        while(this->getTextBoundingBox(valStr, 0, 0).getWidth() + this->textPadding * 2 > this->b.getWidth() && valStr.length() > 1){
-            valStr = valStr.substr(0, valStr.size() - 1);
-        }
-        this->textMesh.append(this->getTextMesh(valStr, this->b.x + this->textPadding, this->b.y + this->b.height - this->textPadding));
+		string valStr = ofToString(value.get(), decimalPlace);
+		while(getTextBoundingBox(valStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && valStr.length() > 1){
+			valStr = valStr.substr(0, valStr.size() - 1);
+		}
+        textMesh.append(getTextMesh(valStr, b.x + textPadding, b.y + b.height - textPadding));
     }
 }
 
 template<>
 void ofxSlider<unsigned char>::generateText(){
     if(layout == ofxBaseGui::Horizontal){
-        string valStr = ofToString(value);
+		string valStr = ofToString(value.get(), decimalPlace);
         textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
         textMesh.append(getTextMesh(valStr, b.x + b.width - textPadding - getTextBoundingBox(valStr,0,0).width, b.y + b.height / 2 + 4));
     }else{
-        this->textMesh.clear();
-        if(this->bShowName){
-            string nameStr = this->getName();
-            while(this->getTextBoundingBox(nameStr, 0, 0).getWidth() + this->textPadding * 2 > this->b.getWidth() && nameStr.length() > 1){
+        textMesh.clear();
+        if(bShowName){
+            string nameStr = getName();
+            while(getTextBoundingBox(nameStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && nameStr.length() > 1){
                 nameStr = nameStr.substr(0, nameStr.size() - 1);
             }
-            this->textMesh.append(this->getTextMesh(nameStr, this->b.x + this->textPadding, this->b.y + this->textPadding + this->getTextBoundingBox(nameStr, 0, 0).height));
+            textMesh.append(getTextMesh(nameStr, b.x + textPadding, b.y + textPadding + getTextBoundingBox(nameStr, 0, 0).height));
         }
-        string valStr = ofToString(this->value);
-        while(this->getTextBoundingBox(valStr, 0, 0).getWidth() + this->textPadding * 2 > this->b.getWidth() && valStr.length() > 1){
+		string valStr = ofToString(value.get(), decimalPlace);
+        while(getTextBoundingBox(valStr, 0, 0).getWidth() + textPadding * 2 > b.getWidth() && valStr.length() > 1){
             valStr = valStr.substr(0, valStr.size() - 1);
         }
-        this->textMesh.append(this->getTextMesh(valStr, this->b.x + this->textPadding, this->b.y + this->b.height - this->textPadding));
+        textMesh.append(getTextMesh(valStr, b.x + textPadding, b.y + b.height - textPadding));
     }
 }
 

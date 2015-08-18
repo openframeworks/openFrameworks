@@ -38,7 +38,7 @@ void ofxRotarySlider <Type>::generateDraw(){
 
 template <typename Type>
 void ofxRotarySlider <Type>::generateText(){
-	string valStr = ofToString(this->value);
+	string valStr = ofToString(this->value.get(), this->decimalPlace);
     this->textMesh.clear();
     if(this->bShowName){
         this->textMesh.append(this->getTextMesh(this->getName(), this->b.x + this->textPadding, this->b.y + this->b.height - this->textPadding));
@@ -48,7 +48,7 @@ void ofxRotarySlider <Type>::generateText(){
 
 template <>
 void ofxRotarySlider <unsigned char>::generateText(){
-    string valStr = ofToString(this->value);
+	string valStr = ofToString(this->value.get(), decimalPlace);
     this->textMesh.clear();
     if(this->bShowName){
         this->textMesh.append(this->getTextMesh(this->getName(), this->b.x + this->textPadding, this->b.y + this->b.height - this->textPadding));
