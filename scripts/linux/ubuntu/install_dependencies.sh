@@ -90,7 +90,7 @@ if [ $exit_code != 0 ]; then
 fi
 
 if [ $(expr $MAJOR_VERSION \< 13 ) -eq 1 ]; then
-    echo "detected ubuntu 12.xx setting gcc-4.8 as default compiler" 
+    echo "detected ubuntu 12.xx setting gcc-${CXX_VER} as default compiler" 
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 20
     sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc${CXX_VER} 50
     sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.6 20
