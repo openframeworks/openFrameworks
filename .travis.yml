@@ -2,8 +2,6 @@ language: c++
 compiler: gcc
 sudo: true
 env:
-  global:
-    - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
   matrix:
     - TARGET="linux"
 matrix:
@@ -30,7 +28,9 @@ matrix:
         - ~/android-ndk-r10e
     - os: linux
       sudo: false
-      env: TARGET="docs"
+      env:
+      - TARGET="docs"
+      - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
       addons:
         apt:
           packages:
