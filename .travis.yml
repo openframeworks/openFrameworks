@@ -79,7 +79,9 @@ matrix:
           # not whitelisted: libraw1394-dev, libassimp-dev, librtaudio-dev
   allow_failures:
     # temporary until we find out how to prevent (spurious) build failures
-    - env: TARGET="docs"
+    - env:
+      - TARGET="docs"
+      - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
     - env: TARGET="linux"
 before_install:
     - if [ "$TARGET" == "docs" ] || [ "$TARGET" == "linux" ]; then
