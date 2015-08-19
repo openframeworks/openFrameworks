@@ -1,4 +1,5 @@
 #!/bin/bash
 set -ev
+ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 # run linux script so DRY is followed
-../linux/build.sh
+$ROOT/scripts/ci/linux/build.sh
