@@ -7,15 +7,6 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 #export CXXFLAGS="$(CXXFLAGS) --param ftrack-macro-expansion=0"
 CUSTOMFLAGS="-ftrack-macro-expansion=0"
 
-echo "Stop services started by default to save memory"
-# use this instead of sudo service stop because that fails on travis sometimes
-# see http://stackoverflow.com/a/27410479/599884
-# maybe can switch when 14.04 dist gets activated
-sudo /etc/init.d/mysql stop
-sudo /etc/init.d/postgresql stop
-echo "Memory usage debugging output"
-ps aux --sort -rss | head -n10
-
 echo "**** Building OF core ****"
 cd $ROOT
 # this carries over to subsequent compilations of examples
