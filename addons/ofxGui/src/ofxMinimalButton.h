@@ -19,7 +19,8 @@ class ofxMinimalButton : public ofxMinimalToggle {
         ofxMinimalButton();
         ofxMinimalButton(const Config & config);
 		~ofxMinimalButton();
-		ofxMinimalButton & setup(const std::string & toggleName, float width = defaultWidth, float height = defaultHeight);
+		ofxMinimalButton & setup(const std::string& buttonName, const Config & config);
+		ofxMinimalButton & setup(const std::string& buttonName, float width = defaultWidth, float height = defaultHeight);
 
         virtual bool mouseReleased(ofMouseEventArgs & args);
 

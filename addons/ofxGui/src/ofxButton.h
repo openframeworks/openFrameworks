@@ -14,7 +14,8 @@ public:
 		std::string name;
 	};
 
-	ofxButton(const Config & config = Config());
+	ofxButton();
+	ofxButton(const Config & config);
 	~ofxButton();
     ofxButton & setup(const std::string& buttonName, const Config & config);
     ofxButton & setup(const std::string& buttonName, float width = defaultWidth, float height = defaultHeight);

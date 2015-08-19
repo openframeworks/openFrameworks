@@ -22,6 +22,12 @@ ofxValueLabel<Type>::~ofxValueLabel(){
 }
 
 template<typename Type>
+ofxValueLabel<Type> & ofxValueLabel<Type>::setup(ofParameter<Type> _label, const Config & config){
+	ofxBaseGui::setup(config);
+	return setup(_label, config.shape.width, config.shape.height);
+}
+
+template<typename Type>
 ofxValueLabel<Type> & ofxValueLabel<Type>::setup(ofParameter<Type> _label, float width, float height) {
     label.makeReferenceTo(_label);
     b.width  = width;
@@ -29,6 +35,12 @@ ofxValueLabel<Type> & ofxValueLabel<Type>::setup(ofParameter<Type> _label, float
     setNeedsRedraw();
 	label.addListener(this,&ofxValueLabel::valueChanged);
     return *this;
+}
+
+template<typename Type>
+ofxValueLabel<Type> & ofxValueLabel<Type>::setup(const string& labelName, const Type& _label, const Config & config) {
+	label.set(labelName,_label);
+	return setup(label,config);
 }
 
 template<typename Type>

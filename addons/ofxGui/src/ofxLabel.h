@@ -17,7 +17,9 @@ public:
 	ofxValueLabel(ofParameter<Type> _label, const Config & config = Config());
 	virtual ~ofxValueLabel();
 
+	ofxValueLabel & setup(ofParameter<Type> _label, const Config & config);
 	ofxValueLabel & setup(ofParameter<Type> _label, float width = defaultWidth, float height = defaultHeight);
+	ofxValueLabel & setup(const std::string& labelName, const Type & label, const Config & config);
 	ofxValueLabel & setup(const std::string& labelName, const Type & label, float width = defaultWidth, float height = defaultHeight);
 
     // Abstract methods we must implement, but have no need for!

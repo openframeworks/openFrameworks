@@ -14,6 +14,21 @@ ofxMinimalButton::~ofxMinimalButton(){
 	value.removeListener(this, &ofxMinimalButton::valueChanged);
 }
 
+ofxMinimalButton & ofxMinimalButton::setup(const std::string& buttonName, const Config & config){
+	setName(buttonName);
+	ofxBaseGui::setup(config);
+	if(b.width == 0){
+		b.width = getTextWidth(buttonName, b.height);
+	}
+	bGuiActive = false;
+	value = false;
+	checkboxRect.set(1, 1, b.width - 2, b.height - 2);
+	registerMouseEvents();
+	value.addListener(this,&ofxMinimalButton::valueChanged);
+
+	return *this;
+}
+
 ofxMinimalButton & ofxMinimalButton::setup(const string & toggleName, float width, float height){
 	if(width == 0){
 		width = getTextWidth(toggleName, height);
