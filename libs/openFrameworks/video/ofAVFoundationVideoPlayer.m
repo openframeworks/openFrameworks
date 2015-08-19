@@ -623,7 +623,7 @@ static const NSString * ItemStatusContext;
 			err = CMVideoFormatDescriptionCreateForImageBuffer(NULL, buffer, &_videoInfo);
 		}
 		if (err) {
-			NSLog(@"Error at CMVideoFormatDescriptionCreateForImageBuffer %ld", err);
+			NSLog(@"Error at CMVideoFormatDescriptionCreateForImageBuffer %ld", (long)err);
 			bNewFrame = NO;
 			return;
 		}
@@ -652,7 +652,7 @@ static const NSString * ItemStatusContext;
 												 &sampleTimingInfo,
 												 &videoSampleBuffer);
 		if (err) {
-			NSLog(@"Error at CMSampleBufferCreateForImageBuffer %ld", err);
+			NSLog(@"Error at CMSampleBufferCreateForImageBuffer %ld", (long)err);
 			bNewFrame = NO;
 			return;
 		}
