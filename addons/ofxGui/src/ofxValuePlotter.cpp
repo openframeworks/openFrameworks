@@ -16,7 +16,7 @@ ofxValuePlotter::~ofxValuePlotter(){
 }
 
 ofxValuePlotter & ofxValuePlotter::setup(const Config & config){
-	return setup("", config.minValue, config.maxValue, config.plotSize);
+	return setup("", config.minValue, config.maxValue, config.plotSize, config.shape.width, config.shape.height);
 }
 
 ofxValuePlotter & ofxValuePlotter::setup(string label, float minValue, float maxValue, int plotSize, float width, float height){
