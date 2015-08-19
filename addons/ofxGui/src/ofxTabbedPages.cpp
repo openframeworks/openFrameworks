@@ -37,6 +37,7 @@ void ofxTabbedPages::add(ofxGuiGroup *element){
 	parameters_tabs.push_back(ofParameter <bool>(element->getName(), false));
 	ofxMinimalToggle::Config config;
 	config.shape.setSize(tabWidth, tabHeight);
+	config.textLayout = ofxBaseGui::Centered;
 	if(element->getBackgroundColor() != thisBackgroundColor){
 		config.backgroundColor = element->getBackgroundColor();
 		config.borderColor = element->getBackgroundColor();

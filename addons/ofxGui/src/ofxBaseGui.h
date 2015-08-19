@@ -12,6 +12,11 @@ class ofxBaseGui {
 			Horizontal,
 			Vertical
 		};
+		enum TextLayout{
+			Left,
+			Right,
+			Centered
+		};
 		struct Config{
 			ofColor headerBackgroundColor = ofxBaseGui::headerBackgroundColor;
 			ofColor backgroundColor = ofxBaseGui::backgroundColor;
@@ -19,6 +24,7 @@ class ofxBaseGui {
 			ofColor textColor = ofxBaseGui::textColor;
 			ofColor fillColor = ofxBaseGui::fillColor;
             Layout layout = Horizontal;
+			TextLayout textLayout = Left;
 			bool inContainer = false;
 			ofRectangle shape{0.0f, 0.0f, (float)defaultWidth, (float)defaultHeight};
             bool showName = true;
@@ -52,7 +58,9 @@ class ofxBaseGui {
 		virtual void setShape(float x, float y, float w, float h);
 		virtual void setInContainer(bool inContainer=true);
         virtual void setLayout(Layout layout=Vertical);
+		virtual void setTextLayout(TextLayout textLayout=Left);
         Layout getLayout() const;
+		TextLayout getTextLayout() const;
 
 		ofPoint getPosition() const;
 		ofRectangle getShape() const;
@@ -131,6 +139,7 @@ class ofxBaseGui {
 		ofColor thisFillColor;
 		bool inContainer;
 		Layout layout;
+		TextLayout textLayout;
 
 		static int textPadding;
 		static int defaultWidth;

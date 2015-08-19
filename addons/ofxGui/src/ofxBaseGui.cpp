@@ -76,6 +76,7 @@ ofxBaseGui::ofxBaseGui()
 ,thisFillColor(Config().fillColor)
 ,inContainer(Config().inContainer)
 ,layout(Config().layout)
+,textLayout(Config().textLayout)
 ,bShowName(Config().showName)
 ,needsRedraw(true)
 ,currentFrame(ofGetFrameNum())
@@ -95,6 +96,7 @@ ofxBaseGui::ofxBaseGui(const Config & config)
 ,thisFillColor(config.fillColor)
 ,inContainer(config.inContainer)
 ,layout(config.layout)
+,textLayout(config.textLayout)
 ,bShowName(config.showName)
 ,needsRedraw(true)
 ,currentFrame(ofGetFrameNum())
@@ -111,6 +113,7 @@ void ofxBaseGui::setup(const Config & config){
 	thisFillColor = config.fillColor;
 	inContainer = config.inContainer;
 	layout = config.layout;
+	textLayout = config.textLayout;
 }
 
 void ofxBaseGui::loadFont(const std::string& filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, int dpi){
@@ -274,6 +277,10 @@ void ofxBaseGui::setLayout(Layout layout){
 	this->layout = layout;
 }
 
+void ofxBaseGui::setTextLayout(TextLayout textLayout){
+	this->textLayout = textLayout;
+}
+
 ofPoint ofxBaseGui::getPosition() const {
 	return ofPoint(b.x, b.y);
 }
@@ -288,6 +295,14 @@ float ofxBaseGui::getWidth() const {
 
 float ofxBaseGui::getHeight() const {
 	return b.height;
+}
+
+ofxBaseGui::Layout ofxBaseGui::getLayout() const {
+	return layout;
+}
+
+ofxBaseGui::TextLayout ofxBaseGui::getTextLayout() const {
+	return textLayout;
 }
 
 ofColor ofxBaseGui::getHeaderBackgroundColor() const {

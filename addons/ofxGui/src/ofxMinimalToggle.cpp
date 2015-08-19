@@ -52,7 +52,21 @@ void ofxMinimalToggle::generateDraw(){
 	border.rectangle(b.getPosition() + checkboxRect.getTopLeft(), checkboxRect.width, checkboxRect.height);
 
     if(bShowName){
-        textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+		float textWidth = getTextWidth(getName(), b.height);
+		switch(textLayout){
+			default:
+			case ofxBaseGui::Left:
+				textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+				break;
+			case ofxBaseGui::Right:
+				textMesh = getTextMesh(getName(), b.getRight() - textWidth - textPadding, b.y + b.height / 2 + 4);
+				break;
+			case ofxBaseGui::Centered:
+				textMesh = getTextMesh(getName(), b.getCenter().x - textWidth/2, b.y + b.height / 2 + 4);
+				break;
+
+		}
+
     }
 }
 
