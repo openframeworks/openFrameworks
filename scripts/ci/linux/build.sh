@@ -22,10 +22,9 @@ cp scripts/linux/template/linux64/config.make examples/empty/emptyExample/
 cd examples/empty/emptyExample
 make Debug
 
-# skip this for now as too many parts don't work (due to 12.04?)
-#echo "**** Building allAddonsExample ****"
-#cd $ROOT
-#cp scripts/linux/template/linux64/Makefile examples/addons/allAddonsExample/
-#cp scripts/linux/template/linux64/config.make examples/addons/allAddonsExample/
-#cd examples/addons/allAddonsExample/
-#make Debug
+echo "**** Building allAddonsExample ****"
+cd $ROOT
+cp scripts/linux/template/linux64/Makefile examples/addons/allAddonsExample/
+cp scripts/linux/template/linux64/config.make examples/addons/allAddonsExample/
+cd examples/addons/allAddonsExample/
+make Debug
