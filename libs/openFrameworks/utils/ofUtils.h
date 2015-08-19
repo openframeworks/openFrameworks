@@ -3,7 +3,6 @@
 #include "ofConstants.h"
 #include "utf8.h"
 #include <bitset> // For ofToBinary.
-#include <limits.h>
 
 #include "ofLog.h"
 
@@ -735,7 +734,7 @@ char ofToChar(const string& charString);
 /// \returns a binary string.
 template <class T>
 string ofToBinary(const T& value) {
-	return std::bitset<CHAR_BIT * sizeof(T)>(*reinterpret_cast<const uint64_t*>(&value)).to_string();
+	return std::bitset<8 * sizeof(T)>(*reinterpret_cast<const uint64_t*>(&value)).to_string();
 }
 
 /// \brief Converts a string value to a string of only 1s and 0s.
