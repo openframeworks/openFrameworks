@@ -82,7 +82,7 @@ void ofxTabbedPages::generateDraw(){
 	bg.clear();
 	bg.setFillColor(thisBackgroundColor);
 	bg.setFilled(true);
-	bg.rectangle(pagesShape.x, pagesShape.y, pagesShape.width, pagesShape.height);
+	bg.rectangle(pagesShape.x, pagesShape.y, pagesShape.width + 1, pagesShape.height);
 
 	border.clear();
 	border.setStrokeColor(thisBorderColor);
@@ -216,4 +216,15 @@ void ofxTabbedPages::setTabHeight(int h){
 void ofxTabbedPages::setTabWidth(int w){
 	tabWidth = w;
 	sizeChangedCB();
+}
+
+void ofxTabbedPages::setBorderColor(const ofColor &color){
+	ofxGuiPage::setBorderColor(color);
+	tabs.setDefaultBackgroundColor(color);
+	tabs.setDefaultBorderColor(thisBorderColor);
+}
+
+void ofxTabbedPages::setBackgroundColor(const ofColor &color){
+	ofxGuiPage::setBackgroundColor(color);
+	tabs.setDefaultFillColor(color);
 }

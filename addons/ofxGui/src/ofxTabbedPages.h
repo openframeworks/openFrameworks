@@ -36,6 +36,9 @@ class ofxTabbedPages : public ofxGuiPage {
 		void setTabHeight(int h);
         void setTabWidth(int w);
 
+		void setBorderColor(const ofColor &color);
+		void setBackgroundColor(const ofColor &color);
+
 	protected:
 		void render();
 		void generateDraw();
