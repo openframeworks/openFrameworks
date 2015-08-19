@@ -63,34 +63,34 @@ vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList() const{
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::setDeviceID(int _deviceID) {
+void ofRtAudioSoundStream::setDeviceID(int _deviceID){
 	inDeviceID = outDeviceID = _deviceID;
 }
 
-int ofRtAudioSoundStream::getDeviceID()  const {
+int ofRtAudioSoundStream::getDeviceID()  const{
 	return inDeviceID;
 }
 
-void ofRtAudioSoundStream::setInDeviceID(int _deviceID) {
+void ofRtAudioSoundStream::setInDeviceID(int _deviceID){
 	inDeviceID = _deviceID;
 }
 
-void ofRtAudioSoundStream::setOutDeviceID(int _deviceID) {
+void ofRtAudioSoundStream::setOutDeviceID(int _deviceID){
 	outDeviceID = _deviceID;
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::setInput(ofBaseSoundInput * soundInput) {
+void ofRtAudioSoundStream::setInput(ofBaseSoundInput * soundInput){
 	soundInputPtr		= soundInput;
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
+void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 	soundOutputPtr		= soundOutput;
 }
 
 //------------------------------------------------------------------------------
-bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers) {
+bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers){
 	if( audio != nullptr ){
 		close();
 	}
@@ -172,7 +172,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 }
 
 //------------------------------------------------------------------------------
-bool ofRtAudioSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers) {
+bool ofRtAudioSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
 	setInput(app);
 	setOutput(app);
 	return setup(outChannels,inChannels,sampleRate,bufferSize,nBuffers);
