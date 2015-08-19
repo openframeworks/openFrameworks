@@ -164,7 +164,7 @@ void ofxTabbedPages::updateContentShapes(){
 	newpos.y += tabHeight;
 	pagesShape.setPosition(newpos);
 	pagesShape.setWidth(b.width - 1 /*border*/);
-	pagesShape.setHeight(b.getBottom() - newpos.y);
+    pagesShape.setHeight(b.getBottom() - newpos.y - 1 /*border*/);
 }
 
 void ofxTabbedPages::setSizeToElement(ofxBaseGui * element){
