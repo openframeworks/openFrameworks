@@ -44,52 +44,11 @@ matrix:
           - python-software-properties
           - doxygen
           - ncftp
-    - os: linux
-      sudo: false
-      env: TARGET="linux_docker"
-      addons:
-        apt:
-          sources:
-          - ubuntu-toolchain-r-test
-          - boost-latest
-          packages:
-          - g++-4.9
-          - libboost-filesystem1.55-dev
-          - libgtk-3-dev
-          - freeglut3-dev
-          - libasound2-dev
-          - libxmu-dev
-          - libxxf86vm-dev
-          - libgl1-mesa-dev
-          - libglu1-mesa-dev
-          - libudev-dev
-          - libdrm-dev
-          - libglew-dev
-          - libopenal-dev
-          - libsndfile1-dev
-          - libfreeimage-dev
-          - libcairo2-dev
-          - libfreetype6-dev
-          - libssl-dev
-          - libpulse-dev
-          - libusb-1.0-0-dev
-          - libopencv-dev
-          - libgstreamer1.0-dev
-          - libgstreamer-plugins-base1.0-dev
-          - gstreamer1.0-libav
-          - gstreamer1.0-pulseaudio
-          - gstreamer1.0-x
-          - gstreamer1.0-plugins-bad
-          - gstreamer1.0-alsa
-          - gstreamer1.0-plugins-base
-          - gstreamer1.0-plugins-good
-          # not whitelisted: libraw1394-dev, libassimp-dev, librtaudio-dev
   allow_failures:
     # temporary until we find out how to prevent (spurious) build failures
     - env:
       - TARGET="docs"
       - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
-    - env: TARGET="linux"
     - env: TARGET="no-op"
 before_install:
     - if [ "$TARGET" == "docs" ] || [ "$TARGET" == "linux" ]; then
@@ -107,7 +66,7 @@ install:
       fi
 script:
     - scripts/ci/$TARGET/build.sh $OPT
-    - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "linux_docker" ]; then
+    - if [ "$TARGET" == "osx" ] || [ "$TARGET" == "linux" ]; then
         scripts/ci/$TARGET/run_tests.sh;
       fi
 after_success:
