@@ -3,6 +3,7 @@
 #include "ofConstants.h"
 #include "utf8.h"
 #include <bitset> // For ofToBinary.
+#include <limits.h>
 
 #include "ofLog.h"
 
