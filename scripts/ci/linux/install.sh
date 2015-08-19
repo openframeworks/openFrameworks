@@ -2,7 +2,7 @@
 set -ev
 ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 
-# Docker builds don't have databases running - disable this
+# Trusty/14.04 builds don't have databases running - disable this
 # echo "Memory usage debugging output"
 # ps aux --sort -rss | head -n10
 # echo "Stop services started by default to save memory on Travis"
