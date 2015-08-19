@@ -1,13 +1,14 @@
 language: c++
 compiler: gcc
 sudo: true
-env:
-  matrix:
-    - TARGET="linux"
 matrix:
   include:
     # fully specify builds, include can't dynamically expand matrix entries
     # relative order of sudo and env is important so that addons: is recognized
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: TARGET="linux"
     - os: osx
       compiler: clang
       env: TARGET="osx"
