@@ -9,7 +9,7 @@
 
 
 //------------------------------------------------------------------------------
-ofRtAudioSoundStream::ofRtAudioSoundStream() {
+ofRtAudioSoundStream::ofRtAudioSoundStream(){
 	outDeviceID		= -1;
 	inDeviceID		= -1;
 	soundOutputPtr	= nullptr;
@@ -22,7 +22,7 @@ ofRtAudioSoundStream::ofRtAudioSoundStream() {
 }
 
 //------------------------------------------------------------------------------
-ofRtAudioSoundStream::~ofRtAudioSoundStream() {
+ofRtAudioSoundStream::~ofRtAudioSoundStream(){
 	stop();
 	close();
 }
@@ -39,7 +39,7 @@ vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList() const {
 	int deviceCount = audioTemp->getDeviceCount();
 	RtAudio::DeviceInfo info;
 	vector<ofSoundDevice> deviceList;
-	for (int i=0; i< deviceCount; i++) {
+	for (int i=0; i< deviceCount; i++){
 		try {
 			info = audioTemp->getDeviceInfo(i);
 		} catch (std::exception &error) {
@@ -91,7 +91,7 @@ void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput) {
 
 //------------------------------------------------------------------------------
 bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers) {
-	if( audio != nullptr ) {
+	if( audio != nullptr ){
 		close();
 	}
 
@@ -108,14 +108,14 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 
 #ifdef TARGET_LINUX
 		//get available APIs
-		if(const char* currrentDesktop = std::getenv("XDG_CURRENT_DESKTOP")) {
+		if(const char* currrentDesktop = std::getenv("XDG_CURRENT_DESKTOP")){
 			//detect GNOME and use pulseaudio API
 			if(strcmp(currrentDesktop, "GNOME") == 0) {
 
 				//check if the pulseaudio api is available
 				std::vector<RtAudio::Api> apis;
 				RtAudio::getCompiledApi(apis);
-				if(std::find(apis.begin(), apis.end(), RtAudio::Api::LINUX_PULSE) != apis.end()) {
+				if(std::find(apis.begin(), apis.end(), RtAudio::Api::LINUX_PULSE) != apis.end()){
 					//use pulseaudio
 					rApi = RtAudio::Api::LINUX_PULSE;
 				} else {
@@ -134,7 +134,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	RtAudio::StreamParameters outputParameters;
 	RtAudio::StreamParameters inputParameters;
 	if(nInputChannels>0) {
-		if( inDeviceID >= 0 ) {
+		if( inDeviceID >= 0 ){
 			inputParameters.deviceId = inDeviceID;
 		} else {
 			inputParameters.deviceId = audio->getDefaultInputDevice();
@@ -143,7 +143,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	}
 
 	if(nOutputChannels>0) {
-		if( outDeviceID >= 0 ) {
+		if( outDeviceID >= 0 ){
 			outputParameters.deviceId = outDeviceID;
 		} else {
 			outputParameters.deviceId = audio->getDefaultOutputDevice();
@@ -179,7 +179,7 @@ bool ofRtAudioSoundStream::setup(ofBaseApp * app, int outChannels, int inChannel
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::start() {
+void ofRtAudioSoundStream::start(){
 	if( audio == nullptr ) return;
 
 	try {
@@ -190,11 +190,11 @@ void ofRtAudioSoundStream::start() {
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::stop() {
+void ofRtAudioSoundStream::stop(){
 	if( audio == nullptr ) return;
 
 	try {
-		if(audio->isStreamRunning()) {
+		if(audio->isStreamRunning()){
 			audio->stopStream();
 		}
 	} catch (std::exception &error) {
@@ -203,11 +203,11 @@ void ofRtAudioSoundStream::stop() {
 }
 
 //------------------------------------------------------------------------------
-void ofRtAudioSoundStream::close() {
+void ofRtAudioSoundStream::close(){
 	if( audio == nullptr ) return;
 
 	try {
-		if(audio->isStreamOpen()) {
+		if(audio->isStreamOpen()){
 			audio->closeStream();
 		}
 	} catch (std::exception &error) {
@@ -247,7 +247,7 @@ int ofRtAudioSoundStream::getBufferSize() const {
 int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer, unsigned int nFramesPerBuffer, double streamTime, RtAudioStreamStatus status, void *data) {
 	ofRtAudioSoundStream * rtStreamPtr = (ofRtAudioSoundStream *)data;
 
-	if ( status ) {
+	if ( status ){
 		ofLogWarning("ofRtAudioSoundStream") << "stream over/underflow detected";
 	}
 
@@ -266,7 +266,7 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	unsigned int nOutputChannels = rtStreamPtr->getNumOutputChannels();
 
 	if(nInputChannels > 0) {
-		if( rtStreamPtr->soundInputPtr != nullptr ) {
+		if( rtStreamPtr->soundInputPtr != nullptr ){
 			rtStreamPtr->inputBuffer.copyFrom(fPtrIn, nFramesPerBuffer, nInputChannels, rtStreamPtr->getSampleRate());
 			rtStreamPtr->inputBuffer.setTickCount(rtStreamPtr->tickCount);
 			rtStreamPtr->soundInputPtr->audioIn(rtStreamPtr->inputBuffer);
@@ -276,9 +276,9 @@ int ofRtAudioSoundStream::rtAudioCallback(void *outputBuffer, void *inputBuffer,
 	}
 
 	if (nOutputChannels > 0) {
-		if( rtStreamPtr->soundOutputPtr != nullptr ) {
+		if( rtStreamPtr->soundOutputPtr != nullptr ){
 
-			if ( rtStreamPtr->outputBuffer.size() != nFramesPerBuffer*nOutputChannels || rtStreamPtr->outputBuffer.getNumChannels()!=nOutputChannels ) {
+			if ( rtStreamPtr->outputBuffer.size() != nFramesPerBuffer*nOutputChannels || rtStreamPtr->outputBuffer.getNumChannels()!=nOutputChannels ){
 				rtStreamPtr->outputBuffer.setNumChannels(nOutputChannels);
 				rtStreamPtr->outputBuffer.resize(nFramesPerBuffer*nOutputChannels);
 			}
