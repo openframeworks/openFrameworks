@@ -734,16 +734,7 @@ char ofToChar(const string& charString);
 /// \returns a binary string.
 template <class T>
 string ofToBinary(const T& value) {
-	ostringstream out;
-	const uint64_t* data = static_cast<uint64_t*>(&value);
-	// the number of bytes is determined by the datatype
-	std::size_t numBytes = sizeof(T);
-	// the bytes are stored backwards (least significant first)
-	for (std::size_t i = numBytes; i-- > 0;){
-		std::bitset<8> cur(data[i]);
-		out << cur;
-	}
-	return out.str();
+	return std::bitset<8 * sizeof(T)>(value).to_string();
 }
 
 /// \brief Converts a string value to a string of only 1s and 0s.
