@@ -118,7 +118,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 				if(std::find(apis.begin(), apis.end(), RtAudio::Api::LINUX_PULSE) != apis.end()){
 					//use pulseaudio
 					rApi = RtAudio::Api::LINUX_PULSE;
-				} else {
+				}else{
 					ofLogWarning() << "Using RtAudio on gnome shell, may require the linux pulse API. This API could not be found. If you run into any problems, configure and recompile rtAudio using --with-pulse .";
 				}
 			}
@@ -136,7 +136,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	if(nInputChannels>0) {
 		if( inDeviceID >= 0 ){
 			inputParameters.deviceId = inDeviceID;
-		} else {
+		}else{
 			inputParameters.deviceId = audio->getDefaultInputDevice();
 		}
 		inputParameters.nChannels = nInputChannels;
@@ -145,7 +145,7 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	if(nOutputChannels>0) {
 		if( outDeviceID >= 0 ){
 			outputParameters.deviceId = outDeviceID;
-		} else {
+		}else{
 			outputParameters.deviceId = audio->getDefaultOutputDevice();
 		}
 		outputParameters.nChannels = nOutputChannels;
