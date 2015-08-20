@@ -57,12 +57,8 @@ matrix:
       - TARGET="docs"
       - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
     - env: TARGET="no-op"
-before_install:
-    - if [ "$TARGET" == "docs" ]; then
-        scripts/ci/$TARGET/before_install.sh;
-      fi
 install:
-    - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ]; then
+    - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "docs" ]; then
         scripts/ci/$TARGET/install.sh;
       fi
 script:
