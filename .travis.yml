@@ -15,6 +15,13 @@ matrix:
       dist: trusty
       sudo: required
       env: TARGET="linux"
+      addons:
+        apt:
+          sources:
+          - ubuntu-toolchain-r-test
+          packages:
+          - gcc-4.9
+          - g++-4.9
     - os: osx
       compiler: clang
       env: TARGET="osx"
@@ -51,18 +58,12 @@ matrix:
       - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
     - env: TARGET="no-op"
 before_install:
-    - if [ "$TARGET" == "docs" ] || [ "$TARGET" == "linux" ]; then
+    - if [ "$TARGET" == "docs" ]; then
         scripts/ci/$TARGET/before_install.sh;
       fi
 install:
     - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ]; then
         scripts/ci/$TARGET/install.sh;
-      fi
-      # should source before_install.sh so we can export CXX in the linux script.
-      # instead, export CXX here, because sourcing messes up Travis log output
-      # TODO: remove this when switching to newer Ubuntu with appropriate gcc version.
-    - if [ "$TARGET" == "linux" ]; then
-        export CXX=g++-4.9;
       fi
 script:
     - scripts/ci/$TARGET/build.sh $OPT
