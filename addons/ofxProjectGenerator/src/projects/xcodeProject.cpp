@@ -188,7 +188,9 @@ void xcodeProject::setup(){
 void xcodeProject::saveScheme(){
 
 	string schemeFolder = projectDir + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/";
-    ofDirectory::removeDirectory(schemeFolder, true);
+    if (ofDirectory::doesDirectoryExist(schemeFolder)){
+        ofDirectory::removeDirectory(schemeFolder, true);
+    }
 	ofDirectory::createDirectory(schemeFolder, false, true);
     
 	string schemeToD = projectDir  + projectName + ".xcodeproj" + "/xcshareddata/xcschemes/" + projectName + " Debug.xcscheme";
@@ -207,18 +209,7 @@ void xcodeProject::saveScheme(){
 }
 
 
-void xcodeProject::saveWorkspaceXML(){
 
-	string workspaceFolder = projectDir + projectName + ".xcodeproj" + "/project.xcworkspace/";
-	string xcodeProjectWorkspace = workspaceFolder + "contents.xcworkspacedata";    
-
-	ofFile::removeFile(xcodeProjectWorkspace);
-	ofDirectory::removeDirectory(workspaceFolder, true);
-	ofDirectory::createDirectory(workspaceFolder, false, true);
-    ofFile::copyFromTo(templatePath + "/emptyExample.xcodeproj/project.xcworkspace/contents.xcworkspacedata", xcodeProjectWorkspace);
-    findandreplaceInTexfile(xcodeProjectWorkspace, "PROJECTNAME", projectName);
-
-}
 
 void xcodeProject::saveMakefile(){
     string makefile = ofFilePath::join(projectDir,"Makefile");
@@ -233,7 +224,10 @@ bool xcodeProject::createProjectFile(){
     // todo: some error checking.
 
     string xcodeProject = ofFilePath::join(projectDir , projectName + ".xcodeproj");
-    ofDirectory::removeDirectory(xcodeProject, true);
+    
+    if (ofDirectory::doesDirectoryExist(xcodeProject)){
+        ofDirectory::removeDirectory(xcodeProject, true);
+    }
    
 	ofDirectory xcodeDir(xcodeProject);
 	xcodeDir.create(true);
@@ -289,7 +283,7 @@ bool xcodeProject::createProjectFile(){
 
     // this is for xcode 4 scheme issues. but I'm not sure this is right.
 
-    saveWorkspaceXML();
+    //saveWorkspaceXML();
     saveScheme();
     saveMakefile();
 
@@ -299,7 +293,6 @@ bool xcodeProject::createProjectFile(){
         string relPath2 = relRoot;
         relPath2.erase(relPath2.end()-1);
         findandreplaceInTexfile(projectDir + projectName + ".xcodeproj/project.pbxproj", "../../..", relPath2);
-        findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../../", relRoot);
         findandreplaceInTexfile(projectDir + "Project.xcconfig", "../../..", relPath2);
     }
 
@@ -828,7 +821,7 @@ void xcodeProject::addInclude(string includeName){
 }
 
 
-void xcodeProject::addLibrary(string libraryName, LibType libType){
+void xcodeProject::addLibrary(const LibraryBinary & lib){
 
     char query[255];
     sprintf(query, "//key[contains(.,'baseConfigurationReference')]/parent::node()//key[contains(.,'OTHER_LDFLAGS')]/following-sibling::node()[1]");
@@ -838,7 +831,7 @@ void xcodeProject::addLibrary(string libraryName, LibType libType){
     if (headerArray.size() > 0){
         for (pugi::xpath_node_set::const_iterator it = headerArray.begin(); it != headerArray.end(); ++it){
             pugi::xpath_node node = *it;
-            node.node().append_child("string").append_child(pugi::node_pcdata).set_value(libraryName.c_str());
+            node.node().append_child("string").append_child(pugi::node_pcdata).set_value(lib.path.c_str());
         }
 
     } else {
@@ -864,7 +857,7 @@ void xcodeProject::addLibrary(string libraryName, LibType libType){
         }
 
         // now that we have it, try again...
-        addLibrary(libraryName);
+        addLibrary(lib);
     }
 
     //saveFile(projectDir + "/" + projectName + ".xcodeproj" + "/project.pbxproj");
@@ -1009,7 +1002,7 @@ void xcodeProject::addAddon(ofAddon & addon){
         addInclude(addon.includePaths[i]);
     }
     for(int i=0;i<(int)addon.libs.size();i++){
-        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
+        ofLogVerbose() << "adding addon libs: " << addon.libs[i].path;
         addLibrary(addon.libs[i]);
     }
     for(int i=0;i<(int)addon.cflags.size();i++){
@@ -1029,9 +1022,8 @@ void xcodeProject::addAddon(ofAddon & addon){
         addSrc(addon.srcFiles[i],addon.filesToFolders[addon.srcFiles[i]]);
     }
     
-    ofLogNotice() << "adding " << addon.frameworks.size() << " frameworks";
     for(int i=0;i<(int)addon.frameworks.size(); i++){
-        ofLogNotice() << "adding addon frameworks: " << addon.frameworks[i];
+        ofLogVerbose() << "adding addon frameworks: " << addon.frameworks[i];
         
         size_t found=addon.frameworks[i].find('/');
         if (found==std::string::npos){

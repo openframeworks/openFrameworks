@@ -10,6 +10,7 @@ void visualStudioProject::setup() {
     ;
 }
 
+
 bool visualStudioProject::createProjectFile(){
 
     string project = ofFilePath::join(projectDir,projectName + ".vcxproj");
@@ -220,9 +221,47 @@ void visualStudioProject::addInclude(string includeName){
     //appendValue(doc, "Add", "directory", includeName);
 }
 
-void visualStudioProject::addLibrary(string libraryName, LibType libType){
+void addLibraryPath(const pugi::xpath_node_set & nodes, std::string libFolder) {
+	for (auto & node : nodes) {
+		string includes = node.node().first_child().value();
+		vector < string > strings = ofSplitString(includes, ";");
+		bool bAdd = true;
+		for (int i = 0; i < (int)strings.size(); i++) {
+			if (strings[i].compare(libFolder) == 0) {
+				bAdd = false;
+			}
+		}
+		if (bAdd == true) {
+			strings.push_back(libFolder);
+			string libPathsNew = unsplitString(strings, ";");
+			node.node().first_child().set_value(libPathsNew.c_str());
+		}
+	}
+}
 
-	cout << "adding library " << libType << "  " << libraryName << endl;
+void addLibraryName(const pugi::xpath_node_set & nodes, std::string libName) {
+
+	for (auto & node : nodes) {
+
+		string includes = node.node().first_child().value();
+		vector < string > strings = ofSplitString(includes, ";");
+		bool bAdd = true;
+		for (int i = 0; i < (int)strings.size(); i++) {
+			if (strings[i].compare(libName) == 0) {
+				bAdd = false;
+			}
+		}
+
+		if (bAdd == true) {
+			strings.push_back(libName);
+			string libsNew = unsplitString(strings, ";");
+			node.node().first_child().set_value(libsNew.c_str());
+		}
+	}
+}
+
+void visualStudioProject::addLibrary(const LibraryBinary & lib){
+	auto libraryName = lib.path;
     fixSlashOrder(libraryName);
 
     // ok first, split path and library name.
@@ -233,56 +272,25 @@ void visualStudioProject::addLibrary(string libraryName, LibType libType){
     // do the path, then the library
 
     // paths for libraries
-    pugi::xpath_node_set source = doc.select_nodes("//Link/AdditionalLibraryDirectories");
-    for (pugi::xpath_node_set::const_iterator it = source.begin(); it != source.end(); ++it){
-        pugi::xpath_node node = *it;
-        string includes = node.node().first_child().value();
-        vector < string > strings = ofSplitString(includes, ";");
-        bool bAdd = true;
-        for (int i = 0; i < (int)strings.size(); i++){
-            if (strings[i].compare(libFolder) == 0){
-                bAdd = false;
-            }
-        }
-        if (bAdd == true){
-            strings.push_back(libFolder);
-            string libPathsNew = unsplitString(strings, ";");
-            node.node().first_child().set_value(libPathsNew.c_str());
-        }
-    }
-
-    // libs
-    source = doc.select_nodes("//Link/AdditionalDependencies");
-    int platformCounter = 0;
-    for (pugi::xpath_node_set::const_iterator it = source.begin(); it != source.end(); ++it){
-
-        // still ghetto, but getting better
-        // TODO: iterate by <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='BUILD TYPE|SOME PLATFORM'">
-        // instead of making the weak assumption that VS projects do Debug|Win32 then Release|Win32
-
-		if(libType != platformCounter){
-			platformCounter++;
-			continue;
-		}
-
-        pugi::xpath_node node = *it;
-        string includes = node.node().first_child().value();
-        vector < string > strings = ofSplitString(includes, ";");
-        bool bAdd = true;
-        for (int i = 0; i < (int)strings.size(); i++){
-            if (strings[i].compare(libName) == 0){
-                bAdd = false;
-            }
-        }
-
-        if (bAdd == true){
-            strings.push_back(libName);
-            string libsNew = unsplitString(strings, ";");
-            node.node().first_child().set_value(libsNew.c_str());
-        }
-		platformCounter++;
-
-    }
+	string linkPath;
+	if (!lib.target.empty() && !lib.arch.empty()) {
+		linkPath = "//ItemDefinitionGroup[contains(@Condition,'" + lib.target + "') and contains(@Condition,'" + lib.arch + "')]/Link/";
+	}
+	else if (!lib.target.empty()) {
+		linkPath = "//ItemDefinitionGroup[contains(@Condition,'" + lib.target + "')]/Link/";
+	}
+	else if (!lib.arch.empty()) {
+		linkPath = "//ItemDefinitionGroup[contains(@Condition,'" + lib.arch + "')]/Link/";
+	}
+	else {
+		linkPath = "//Link";
+	}
+    
+    pugi::xpath_node_set addlLibsDir = doc.select_nodes((linkPath + "AdditionalLibraryDirectories").c_str());
+	addLibraryPath(addlLibsDir, libFolder);
+    
+    pugi::xpath_node_set addlDeps = doc.select_nodes((linkPath + "AdditionalDependencies").c_str());
+	addLibraryName(addlDeps, libName);
 
 }
 
@@ -291,10 +299,11 @@ void visualStudioProject::addCFLAG(string cflag, LibType libType){
 	for(int i=0;i<items.size();i++){
 		pugi::xml_node additionalOptions;
 		bool found=false;
-		if(libType==RELEASE_LIB && string(items[i].node().attribute("Condition").value())=="'$(Configuration)|$(Platform)'=='Release|Win32'"){
+		std::string condition(items[i].node().attribute("Condition").value());
+		if (libType == RELEASE_LIB && condition.find("Release") != std::string::npos) {
 			additionalOptions = items[i].node().child("ClCompile").child("AdditionalOptions");
 			found = true;
-		}else if(libType==DEBUG_LIB && string(items[i].node().attribute("Condition").value())=="'$(Configuration)|$(Platform)'=='Debug|Win32'"){
+		}else if(libType==DEBUG_LIB && condition.find("Debug") != std::string::npos){
 			additionalOptions = items[i].node().child("ClCompile").child("AdditionalOptions");
 			found = true;
 		}
@@ -313,10 +322,11 @@ void visualStudioProject::addCPPFLAG(string cppflag, LibType libType){
 	for(int i=0;i<items.size();i++){
 		pugi::xml_node additionalOptions;
 		bool found=false;
-		if(libType==RELEASE_LIB && string(items[i].node().attribute("Condition").value())=="'$(Configuration)|$(Platform)'=='Release|Win32'"){
+		std::string condition(items[i].node().attribute("Condition").value());
+		if(libType==RELEASE_LIB && condition.find("Debug") != std::string::npos){
 			additionalOptions = items[i].node().child("ClCompile").child("AdditionalOptions");
 			found = true;
-		}else if(libType==DEBUG_LIB && string(items[i].node().attribute("Condition").value())=="'$(Configuration)|$(Platform)'=='Debug|Win32'"){
+		}else if(libType==DEBUG_LIB && condition.find("Release") != std::string::npos){
 			additionalOptions = items[i].node().child("ClCompile").child("AdditionalOptions");
 			found = true;
 		}
@@ -350,73 +360,10 @@ void visualStudioProject::addAddon(ofAddon & addon){
     // at the end -> this is not great as many
     // libs compile with the d somewhere in the middle of the name...
 
-    vector <string> debugLibs;
-    vector <string> releaseLibs;
-
     vector <string> possibleReleaseOrDebugOnlyLibs;
 
-    for(int i = 0; i < addon.libs.size(); i++){
-
-        size_t found = 0;
-
-        // get the full lib name
-#ifdef TARGET_WIN32
-    	found = addon.libs[i].find_last_of("\\");
-#else
-        found = addon.libs[i].find_last_of("/");
-#endif
-
-        string libName = addon.libs[i].substr(found+1);
-        // get the first part of a lib name ie., libodd.lib -> libodd OR liboddd.lib -> liboddd
-        found = libName.find_last_of(".");
-        string firstPart = libName.substr(0,found);
-
-        // check this lib name against every other lib name
-        for(int j = 0; j < addon.libs.size(); j++){
-            // check if this lib name is contained within another lib name and is not the same name
-            if(ofIsStringInString(addon.libs[j], firstPart) && addon.libs[i] != addon.libs[j]){
-                // if it is then add respecitive libs to debug and release
-                if(!isInVector(addon.libs[j], debugLibs)){
-                    //cout << "adding to DEBUG " << addon.libs[j] << endl;
-                    debugLibs.push_back(addon.libs[j]);
-                }
-                if(!isInVector(addon.libs[i], releaseLibs)){
-                    //cout << "adding to RELEASE " << addon.libs[i] << endl;
-                    releaseLibs.push_back(addon.libs[i]);
-                }
-                // stop searching
-                break;
-            }else{
-                // if we only have a release or only have a debug lib
-                // we'll want to add it to both releaseLibs and debugLibs
-                // NB: all debug libs will get added to this vector,
-                // but we catch that once all pairs have been added
-                // since we cannot guarantee the order of parsing libs
-                // although this is innefficient it fixes issues on linux
-                if(!isInVector(addon.libs[i], possibleReleaseOrDebugOnlyLibs)){
-                    possibleReleaseOrDebugOnlyLibs.push_back(addon.libs[i]);
-                }
-                // keep searching...
-            }
-        }
-    }
-
-    for(int i=0;i<(int)possibleReleaseOrDebugOnlyLibs.size();i++){
-         if(!isInVector(possibleReleaseOrDebugOnlyLibs[i], debugLibs) && !isInVector(possibleReleaseOrDebugOnlyLibs[i], releaseLibs)){
-            ofLogVerbose() << "RELEASE ONLY LIBS FOUND " << possibleReleaseOrDebugOnlyLibs[i] << endl;
-            debugLibs.push_back(possibleReleaseOrDebugOnlyLibs[i]);
-            releaseLibs.push_back(possibleReleaseOrDebugOnlyLibs[i]);
-         }
-    }
-
-    for(int i=0;i<(int)debugLibs.size();i++){
-        ofLogVerbose() << "adding addon debug libs: " << debugLibs[i];
-        addLibrary(debugLibs[i], DEBUG_LIB);
-    }
-
-    for(int i=0;i<(int)releaseLibs.size();i++){
-        ofLogVerbose() << "adding addon release libs: " << releaseLibs[i];
-        addLibrary(releaseLibs[i], RELEASE_LIB);
+    for(auto & lib: addon.libs){
+		addLibrary(lib);
     }
 
     for(int i=0;i<(int)addon.srcFiles.size(); i++){

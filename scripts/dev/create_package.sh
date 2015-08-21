@@ -44,7 +44,7 @@ fi
 libsnotinmac="glu quicktime videoInput kiss"
 libsnotinlinux="quicktime videoInput glut glu cairo glew openssl rtAudio"
 libsnotinvs="kiss"
-libsnotinmingw="kiss glut cairo glew openssl rtAudio"
+libsnotinmingw="kiss glut cairo glew openssl"
 libsnotinandroid="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 
@@ -103,7 +103,6 @@ function deleteEclipse {
 
 function createProjectFiles {
     if [ "$pkg_platform" == "win_cb" ]; then
-
 	    # copy all examples to pkg_ofroot
 	    cp -Rf $packageroot/examples $pkg_ofroot
 	
@@ -114,7 +113,7 @@ function createProjectFiles {
 	    done
 	
 	    # remove config.make and Makefile from level 1
-      for d in `find ${pkg_ofroot}/examples -maxdepth 1 -type d`; do
+        for d in `find ${pkg_ofroot}/examples -maxdepth 1 -type d`; do
 	      rm "${d}/config.make"
 	      rm "${d}/Makefile"
 	    done
@@ -122,9 +121,8 @@ function createProjectFiles {
 	    # remove config.make and Makefile from level 0
 	    rm "$pkg_ofroot/examples/config.make"
 	    rm "$pkg_ofroot/examples/Makefile"
-      
     else
-      projectGenerator --allexamples --${pkg_platform}
+        PG_OF_PATH=$pkg_ofroot projectGenerator --recursive -p ${pkg_platform} $pkg_ofroot/examples
     fi
 }
 
@@ -258,15 +256,15 @@ function createPackage {
     fi
 
     if [ "$pkg_platform" = "win_cb" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx vs ios android"
     fi
 
     if [ "$pkg_platform" = "vs" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx win_cb ios android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l osx win_cb ios android"
     fi
 
     if [ "$pkg_platform" = "ios" ]; then
-        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l win_cb vs android makefileCommon"
+        otherplatforms="linux linux64 linuxarmv6l linuxarmv7l win_cb vs android"
     fi
 
     if [ "$pkg_platform" = "android" ]; then
@@ -277,27 +275,30 @@ function createPackage {
 	#download and uncompress PG
 	cd $pkg_ofroot
 	rm -rf projectGenerator
-    if [ "$pkg_platform" = "win_cb" ]; then
-		rm projectGenerator_wincb.zip
-		wget http://www.openframeworks.cc/pgSimple/projectGenerator_wincb.zip
-		unzip projectGenerator_wincb.zip
-		rm projectGenerator_wincb.zip
-		rm -Rf __MACOSX
-	fi
+    #if [ "$pkg_platform" = "win_cb" ]; then
+	#	rm projectGenerator_wincb.zip
+	#	wget http://www.openframeworks.cc/pgSimple/projectGenerator_wincb.zip
+	#	unzip projectGenerator_wincb.zip
+	#	rm projectGenerator_wincb.zip
+	#	rm -Rf __MACOSX
+	#fi
     if [ "$pkg_platform" = "vs" ]; then
-		rm projectGenerator_winvs.zip
-		wget http://www.openframeworks.cc/pgSimple/projectGenerator_winvs.zip
-		unzip projectGenerator_winvs.zip
-		rm projectGenerator_winvs.zip
+		rm projectGenerator_vs.zip
+		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip
+		unzip projectGenerator_vs.zip
+		rm projectGenerator_vs.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "osx" ]; then
-		cp -r /home/tests/projectGeneratorSimple_osx projectGenerator
+		rm projectGenerator_osx.zip
+		wget http://192.237.185.151/projectGenerator/projectGenerator_osx.zip
+		unzip projectGenerator_osx.zip
+		rm projectGenerator_osx.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "ios" ]; then
 		rm projectGenerator_ios.zip
-		wget http://www.openframeworks.cc/pgSimple/projectGenerator_ios.zip
+		wget http://192.237.185.151/projectGenerator/projectGenerator_ios.zip
 		unzip projectGenerator_ios.zip
 		rm projectGenerator_ios.zip
 		rm -Rf __MACOSX
@@ -349,23 +350,30 @@ function createPackage {
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
 		rm -Rf ofxAndroid
+		rm -Rf ofxUnitTests
 	fi
 	#delete ofxiPhone in non ios
 	if [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxiPhone
 		rm -Rf ofxiOS
+		rm -Rf ofxUnitTests
 	fi
 	
 	#delete ofxMultiTouch & ofxAccelerometer in non mobile
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxMultiTouch
 		rm -Rf ofxAccelerometer
+		rm -Rf ofxUnitTests
 	fi
 	
 	if [ "$pkg_platform" == "ios" ] || [ "$pkg_platform" == "android" ]; then
 	    rm -Rf ofxVectorGraphics
    	    rm -Rf ofxKinect
+		rm -Rf ofxUnitTests
 	fi
+	
+	#delete unit tests by now
+	rm -Rf ${pkg_root}/tests
 
 	#delete eclipse projects
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
@@ -428,11 +436,6 @@ function createPackage {
     #delete omap4 scripts for non armv7l
 	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv6l" ]; then
 	    rm -Rf linux/ubuntu-omap4
-	fi
-	
-    #delete armv6 scripts for non armv6l
-	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
-	    rm -Rf linux/debian_armv6l
 	fi
 	
 	if [ "$pkg_platform" == "ios" ]; then
