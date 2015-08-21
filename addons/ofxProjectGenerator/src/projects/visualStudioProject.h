@@ -9,9 +9,6 @@
 class visualStudioProject : public baseProject {
 
 public:
-
-    void setup(std::string ofRoot= "../../../");
-
     void setup();
 
     bool createProjectFile();
@@ -20,7 +17,7 @@ public:
 
     void addSrc(std::string srcFile, string folder, SrcType type=DEFAULT);
     void addInclude(std::string includeName);
-    void addLibrary(std::string libraryName, LibType libType);
+    void addLibrary(const LibraryBinary & lib);
     void addCFLAG(std::string cflag, LibType libType = RELEASE_LIB); // C
     void addCPPFLAG(std::string cppflag, LibType libType = RELEASE_LIB); // C++
 
@@ -32,6 +29,7 @@ public:
 
 
 	void appendFilter(std::string folderName);
+    
 
 private:
 
