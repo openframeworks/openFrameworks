@@ -173,7 +173,7 @@
         return YES;
     } else if([self.delegate respondsToSelector:@selector(soundStreamError:error:)]) {
 		NSString * errorCode = [self stringForAudioUnitError:status];
-		NSString * fullErrorString = [errorCode stringByAppendingFormat:@" (%li)", status];
+		NSString * fullErrorString = [errorCode stringByAppendingFormat:@" (%i)", (int)status];
 		[self.delegate soundStreamError:self error:fullErrorString];
 	}
     return NO;
