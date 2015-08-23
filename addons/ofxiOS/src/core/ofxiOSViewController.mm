@@ -53,7 +53,7 @@
     // so now when we call setup in our OF app, a reference to ofxiOSViewController will exists.
     
     [self.view addSubview:self.glView];
-    [self.glView setup];
+    [self.glView performSelector:@selector(setup) withObject:nil afterDelay:0];
     [self.glView startAnimation];
 }
 
