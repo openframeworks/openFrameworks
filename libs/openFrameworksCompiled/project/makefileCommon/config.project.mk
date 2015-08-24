@@ -156,7 +156,7 @@ ifdef B_PROCESS_ADDONS
     # (to escape # in make, you must use \#)
     # sed '/^$/d' removes all empty lines
     # (to escape $ in make, you must use $$)
-    REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d' )
+    REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d')
 
     # deal with platform specfic addons
     # remove any platform specific addons that were already added to the addons.make file
@@ -179,8 +179,10 @@ ifdef B_PROCESS_ADDONS
     VALID_PROJECT_ADDONS = $(filter $(REQUESTED_PROJECT_ADDONS),$(ALL_INSTALLED_ADDONS))
 
     # create a list of the invalid addons
-    INVALID_PROJECT_ADDONS = $(filter-out $(VALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
+    INVALID_GLOBAL_ADDONS = $(filter-out $(VALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
+	INVALID_PROJECT_ADDONS = $(filter-out $(INVALID_GLOBAL_ADDONS), $(wildcard $(INVALID_GLOBAL_ADDONS)))
+	
     # if any invalid addons are found, throw a warning, but don't cause an error
     ifneq ($(INVALID_PROJECT_ADDONS),)
         $(warning The following unknown addons will be ignored:)
@@ -205,6 +207,9 @@ ifdef B_PROCESS_ADDONS
     ifneq ($(PROJECT_ADDONS),)
 		include $(OF_SHARED_MAKEFILES_PATH)/config.addons.mk
     endif
+    
+    PROJECT_ADDON_PATHS = $(call remove-dupes-func,$(ADDON_PATHS)) 
+    $(info $(PROJECT_ADDON_PATHS))
 endif
 
 # generate the list of core libraries
