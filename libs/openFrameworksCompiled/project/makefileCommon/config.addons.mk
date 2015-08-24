@@ -65,7 +65,14 @@ endef
 # 5. if the line matches %: but it's not common or platform: set PROCESS_NEXT to false
 # 6: if PROCESS_NEXT eval the line to put the variable in the makefile space
 define parse_addon
-	$(eval addon=$(addprefix $(OF_ADDONS_PATH)/, $1)) \
+	$(if $(wildcard $(PROJECT_ROOT)/$1), \
+		$(eval addon=$(realpath $(addprefix $(PROJECT_ROOT)/, $1))) \
+		$(eval addon_obj_path=$(PROJECT_ROOT)) \
+		$(eval ADDON_PATHS+= $(dir $(addon))) \
+	, \
+		$(eval addon=$(realpath $(addprefix $(OF_ADDONS_PATH)/, $1))) \
+		$(eval addon_obj_path=$(OF_ADDONS_PATH)) \
+	) \
 	$(eval ADDON_DEPENDENCIES= ) \
 	$(eval ADDON_DATA= ) \
 	$(eval ADDON_CFLAGS= ) \
@@ -128,7 +135,7 @@ define parse_addon
 		$(foreach addon_src, $(strip $(ADDON_SOURCES_FILTERED)), \
 			$(if $(filter $(addon)%, $(addon_src)), \
 				$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
-				$(eval SRC_OBJ_FILE=$(addprefix $(OF_ADDONS_PATH)/,$(strip $(call src_to_obj, $(addon_src:$(addon)/%=%), $1/)))) \
+				$(eval SRC_OBJ_FILE=$(addprefix $(addon_obj_path)/,$(strip $(call src_to_obj, $(addon_src:$(addon)/%=%), $(notdir $1)/)))) \
 				$(eval PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
 			, \
 				$(if $(filter $(OF_ROOT)%, $(addon_src)), \
@@ -153,7 +160,7 @@ endef
 
 
 $(foreach addon_to_parse, $(PROJECT_ADDONS), \
-	$(call parse_addon, $(addon_to_parse)) \
+	$(call parse_addon,$(addon_to_parse)) \
 )
 
 
