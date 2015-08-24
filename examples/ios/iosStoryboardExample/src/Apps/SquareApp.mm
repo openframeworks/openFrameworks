@@ -38,7 +38,7 @@ void SquareApp::draw() {
     int p = 0;
     
 	ofSetColor(ofColor::red);
-    ofRect(x, y, w, h);
+    ofDrawRectangle(x, y, w, h);
     
     x = ofGetWidth()  * 0.2;
     y = ofGetHeight() * 0.11;
