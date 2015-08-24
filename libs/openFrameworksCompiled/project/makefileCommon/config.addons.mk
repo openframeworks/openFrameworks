@@ -52,7 +52,7 @@ space :=
 space += 
 
 define src_to_obj
-	$(addsuffix .o,$(basename $(filter %.c %.cpp %.cc %.cxx %.cc %.s %.S, $(addprefix $(OF_PROJECT_OBJ_OUTPUT_PATH)addons/,$(addprefix $2,$1)))))
+	$(addsuffix .o,$(basename $(filter %.c %.cpp %.cc %.cxx %.cc %.s %.S, $(addprefix $3,$(addprefix $2,$1)))))
 endef
 
 # PARSE addon_config.mk FILES
@@ -69,9 +69,11 @@ define parse_addon
 		$(eval addon=$(realpath $(addprefix $(PROJECT_ROOT)/, $1))) \
 		$(eval addon_obj_path=$(PROJECT_ROOT)) \
 		$(eval ADDON_PATHS+= $(dir $(addon))) \
+		$(eval obj_prefix=$(OF_PROJECT_OBJ_OUTPUT_PATH)addons/) \
 	, \
 		$(eval addon=$(realpath $(addprefix $(OF_ADDONS_PATH)/, $1))) \
 		$(eval addon_obj_path=$(OF_ADDONS_PATH)) \
+		$(eval obj_prefix=$(OF_PROJECT_OBJ_OUTPUT_PATH)) \
 	) \
 	$(eval ADDON_DEPENDENCIES= ) \
 	$(eval ADDON_DATA= ) \
@@ -135,12 +137,12 @@ define parse_addon
 		$(foreach addon_src, $(strip $(ADDON_SOURCES_FILTERED)), \
 			$(if $(filter $(addon)%, $(addon_src)), \
 				$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
-				$(eval SRC_OBJ_FILE=$(addprefix $(addon_obj_path)/,$(strip $(call src_to_obj, $(addon_src:$(addon)/%=%), $(notdir $1)/)))) \
+				$(eval SRC_OBJ_FILE=$(addprefix $(addon_obj_path)/,$(strip $(call src_to_obj, $(addon_src:$(addon)/%=%),$(notdir $1)/,$(obj_prefix))))) \
 				$(eval PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
 			, \
 				$(if $(filter $(OF_ROOT)%, $(addon_src)), \
 					$(eval PROJECT_ADDONS_SOURCE_FILES += $(addon_src)) \
-					$(eval SRC_OBJ_FILE=$(strip $(call src_to_obj, $(addon_src:$(OF_ROOT)/%=%),))) \
+					$(eval SRC_OBJ_FILE=$(strip $(call src_to_obj, $(addon_src:$(OF_ROOT)/%=%),,$(obj_prefix)))) \
 					$(eval PROJECT_ADDONS_OBJ_FILES += $(SRC_OBJ_FILE)) \
 				,$(error cannot find addon source file $(addon_src)) \
 				) \
