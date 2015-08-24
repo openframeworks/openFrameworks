@@ -1212,7 +1212,7 @@ void ofCairoRenderer::pushStyle(){
 
 void ofCairoRenderer::popStyle(){
 	if( styleHistory.size() ){
-		setStyle(styleHistory.front());
+		setStyle(styleHistory.back());
 		styleHistory.pop_back();
 	}
 }
