@@ -211,7 +211,6 @@ ifdef B_PROCESS_ADDONS
     ifdef ADDON_PATHS
     	PROJECT_ADDON_PATHS = $(addsuffix /,$(call remove-dupes-func,$(ADDON_PATHS:%/=%)))
     endif
-    $(info PROJECT_ADDON_PATHS $(PROJECT_ADDON_PATHS))
 endif
 
 # generate the list of core libraries
