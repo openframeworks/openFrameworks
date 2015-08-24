@@ -264,7 +264,7 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S
 
 
 PROJECT_ADDONS_CPPS=$(addsuffix %.cpp,$(PROJECT_ADDON_PATHS))
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_CPPS)
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))addons/%.o: $(PROJECT_ADDONS_CPPS)
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -272,7 +272,7 @@ ifdef PROJECT_ADDON_PATHS
 endif
 
 PROJECT_ADDONS_CXXS=$(addsuffix %.cxx,$(PROJECT_ADDON_PATHS))
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_CXXS)
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))addons/%.o: $(PROJECT_ADDONS_CXXS)
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -280,7 +280,7 @@ ifdef PROJECT_ADDON_PATHS
 endif
 
 PROJECT_ADDONS_MS=$(addsuffix %.m,$(PROJECT_ADDON_PATHS))
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_MS)
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))addons/%.o: $(PROJECT_ADDONS_MS)
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -288,7 +288,7 @@ ifdef PROJECT_ADDON_PATHS
 endif
 
 PROJECT_ADDONS_MMS=$(addsuffix %.mm,$(PROJECT_ADDON_PATHS))
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_MMS)
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))addons/%.o: $(PROJECT_ADDONS_MMS)
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -296,7 +296,7 @@ ifdef PROJECT_ADDON_PATHS
 endif
 
 PROJECT_ADDONS_CCS=$(addsuffix %.cc,$(PROJECT_ADDON_PATHS))
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_CCS)
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))addons/%.o: $(PROJECT_ADDONS_CCS)
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
@@ -304,7 +304,7 @@ ifdef PROJECT_ADDON_PATHS
 endif
 
 PROJECT_ADDONS_SS=$(addsuffix %.S,$(PROJECT_ADDON_PATHS))
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_SS)
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))addons/%.o: $(PROJECT_ADDONS_SS)
 ifdef PROJECT_ADDON_PATHS
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
