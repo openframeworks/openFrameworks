@@ -222,8 +222,8 @@ public:
 	void Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false )
 	{
 		SockaddrFromIpEndpointName( connectedAddr_, remoteEndpoint );
-        
-        SetEnableBroadcast(enableBroadcast);
+
+		SetEnableBroadcast(enableBroadcast);
 
 		if (connect(socket_, (struct sockaddr *)&connectedAddr_, sizeof(connectedAddr_)) < 0) {
 			throw std::runtime_error("unable to connect udp socket\n");

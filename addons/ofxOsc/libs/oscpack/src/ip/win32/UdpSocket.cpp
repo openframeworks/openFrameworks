@@ -211,7 +211,7 @@ public:
 		return IpEndpointNameFromSockaddr( sockAddr );
 	}
 
-    void Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false )
+	void Connect( const IpEndpointName& remoteEndpoint, bool enableBroadcast = false )
 	{
 		SockaddrFromIpEndpointName( connectedAddr_, remoteEndpoint );
        
