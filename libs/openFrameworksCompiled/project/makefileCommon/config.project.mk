@@ -208,8 +208,10 @@ ifdef B_PROCESS_ADDONS
 		include $(OF_SHARED_MAKEFILES_PATH)/config.addons.mk
     endif
     
-    PROJECT_ADDON_PATHS = $(call remove-dupes-func,$(ADDON_PATHS)) 
-    $(info $(PROJECT_ADDON_PATHS))
+    ifdef ADDON_PATHS
+    	PROJECT_ADDON_PATHS = $(addsuffix /,$(call remove-dupes-func,$(ADDON_PATHS:%/=%)))
+    endif
+    $(info PROJECT_ADDON_PATHS $(PROJECT_ADDON_PATHS))
 endif
 
 # generate the list of core libraries
