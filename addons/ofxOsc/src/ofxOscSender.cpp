@@ -158,7 +158,7 @@ void ofxOscSender::sendParameter( const ofAbstractParameter & parameter){
 int ofxOscSender::getLocalPort()
 {
 	if ( socket ) {
-		IpEndpointName localEndpoint = socket->LocalEndpointForConnectedRemoteEndpoint();
+		osc::IpEndpointName localEndpoint = socket->LocalEndpointForConnectedRemoteEndpoint();
 		return localEndpoint.port;
 	}
 	return -1;
