@@ -263,38 +263,38 @@ $(OF_PROJECT_OBJ_OUTPUT_PATH)%.o: $(PROJECT_EXTERNAL_SOURCE_PATHS)/%.S
 
 
 
-
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(addsuffix %.cpp,$(PROJECT_ADDON_PATHS))
+PROJECT_ADDONS_CPPS=$(addsuffix %.cpp,$(PROJECT_ADDON_PATHS))
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_CPPS)
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))%.o: $(addsuffix %.cxx, $(PROJECT_ADDON_PATHS))
+PROJECT_ADDONS_CXXS=$(addsuffix %.cxx,$(PROJECT_ADDON_PATHS))
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_CXXS)
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	@$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))%.o: $(addsuffix %.cc, $(PROJECT_ADDON_PATHS))
+PROJECT_ADDONS_MS=$(addsuffix %.m,$(PROJECT_ADDON_PATHS))
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_MS)
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))%.o: $(addsuffix %.m, $(PROJECT_ADDON_PATHS))
+PROJECT_ADDONS_MMS=$(addsuffix %.mm,$(PROJECT_ADDON_PATHS))
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_MMS)
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))%.o: $(addsuffix %.mm, $(PROJECT_ADDON_PATHS))
-	@echo "Compiling" $<
-	@mkdir -p $(@D)
-	$(CXX) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
-
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))%.o: $(addsuffix %.cc, $(PROJECT_ADDON_PATHS))
+PROJECT_ADDONS_CCS=$(addsuffix %.cc,$(PROJECT_ADDON_PATHS))
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_CCS)
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
-$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))%.o: $(addsuffix %.S, $(PROJECT_ADDON_PATHS))
+PROJECT_ADDONS_SS=$(addsuffix %.S,$(PROJECT_ADDON_PATHS))
+$(realpath $(OF_PROJECT_OBJ_OUTPUT_PATH))/%.o: $(PROJECT_ADDONS_SS)
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
 	$(CC) -c $(OPTIMIZATION_CFLAGS) $(CFLAGS) -MMD -MP -MF $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.d -MT $(OF_PROJECT_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
