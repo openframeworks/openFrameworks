@@ -131,7 +131,7 @@ ifeq ($(CXX),g++)
 			PLATFORM_CFLAGS = -Wall -std=c++0x -DHAS_TLS=0
 		else
 			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
-				PLATFORM_CFLAGS = -Wall -std=c++14
+				PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
 			else
 				PLATFORM_CFLAGS = -Wall -std=c++11
 			endif
