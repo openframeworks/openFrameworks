@@ -23,7 +23,7 @@ public:
 
     void addSrc(std::string srcFile, std::string folder, SrcType type=DEFAULT);
     void addInclude(std::string includeName);
-    void addLibrary(std::string libraryName, LibType libType = RELEASE_LIB);
+    void addLibrary(const LibraryBinary & lib);
     void addLDFLAG(std::string ldflag, LibType libType = RELEASE_LIB);
     void addCFLAG(std::string cflag, LibType libType = RELEASE_LIB); // Other C Flags
     void addCPPFLAG(std::string cppflag, LibType libType = RELEASE_LIB); // Other C++ Flags
@@ -35,7 +35,6 @@ public:
     
     void addAddon(ofAddon & addon);
 
-    void saveWorkspaceXML();
     void saveScheme();
     void renameProject();
 
