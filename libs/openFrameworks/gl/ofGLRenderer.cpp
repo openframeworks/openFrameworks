@@ -1273,7 +1273,7 @@ void ofGLRenderer::pushStyle(){
 
 void ofGLRenderer::popStyle(){
 	if( styleHistory.size() ){
-		setStyle(styleHistory.front());
+		setStyle(styleHistory.back());
 		styleHistory.pop_back();
 	}
 }
