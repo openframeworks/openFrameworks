@@ -1,12 +1,6 @@
 language: c++
 compiler: gcc
 sudo: true
-# A superfluous build occurs if we fully specify the build matrix with matrix.include
-# see https://github.com/travis-ci/travis-ci/issues/1228
-# this workaround names an inoperative build, to ignore it with allow_failures
-env:
-  matrix:
-    - TARGET="no-op"
 matrix:
   include:
     # fully specify builds, include can't dynamically expand matrix entries
@@ -51,12 +45,15 @@ matrix:
           - python-software-properties
           - doxygen
           - ncftp
+  # Exclude the default build that would otherwise be generated
+  # see https://github.com/travis-ci/travis-ci/issues/1228
+  exclude:
+    - compiler: gcc
   allow_failures:
     # temporary until we find out how to prevent (spurious) build failures
     - env:
       - TARGET="docs"
       - secure: kjz286d6rs2VHpv4WnxAOYXcdTIaTaABZ0SNXf27r5H+NDu5qx8ZSeCmj/9op/sDjTtpkLKhi2a0njUCWwak28RAWP3dNkT92MkUPVKBkevznSxWeqwLHoUos3AJnhPMB+cwrWvmRC+Ljt5K1q8SxQsS/HXM9pzKL3DG3qxM+eo=
-    - env: TARGET="no-op"
 install:
     - if [ "$TARGET" == "android" ] || [ "$TARGET" == "linux" ] || [ "$TARGET" == "docs" ]; then
         scripts/ci/$TARGET/install.sh;
