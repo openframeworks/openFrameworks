@@ -300,6 +300,16 @@ static std::filesystem::path & dataPathRoot(){
 void ofSetWorkingDirectoryToDefault(){
 	defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
 }
+
+//--------------------------------------------------
+bool ofRestoreWorkingDirectoryToDefault(){
+    try{
+        std::filesystem::current_path(defaultWorkingDirectory());
+        return true;
+    }catch(...){
+        return false;
+    }
+}
 	
 //--------------------------------------------------
 void ofSetDataPathRoot(const string& newRoot){
@@ -315,8 +325,8 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 #ifdef TARGET_WIN32
 	if (defaultWorkingDirectory() != std::filesystem::current_path()) {
 		// change our cwd back to where it was on app load
-		int ret = chdir(defaultWorkingDirectory().string().c_str());
-		if(ret==-1){
+		bool ret = ofRestoreWorkingDirectoryToDefault();
+		if(!ret){
 			ofLogWarning("ofUtils") << "ofToDataPath: error while trying to change back to default working directory " << defaultWorkingDirectory();
 		}
 	}

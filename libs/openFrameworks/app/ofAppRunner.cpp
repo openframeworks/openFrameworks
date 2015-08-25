@@ -44,6 +44,7 @@ static bool & initialized(){
 
 void ofExitCallback();
 void ofURLFileLoaderShutdown();
+void ofSetWorkingDirectoryToDefault();
 
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
 	#include <signal.h>
