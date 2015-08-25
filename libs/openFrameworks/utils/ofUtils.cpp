@@ -268,13 +268,19 @@ void ofDisableDataPath(){
 //--------------------------------------------------
 string defaultDataPath(){
 #if defined TARGET_OSX
-	return string("../../../data/");
+    try{
+        return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/")).string();
+    }catch(...){
+        return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "../../../data/");
+    }
 #elif defined TARGET_ANDROID
 	return string("sdcard/");
-#elif defined(TARGET_LINUX) || defined(TARGET_WIN32)
-	return string(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/"));
 #else
-	return string("data/");
+	try{
+	    return std::filesystem::canonical(ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/")).string();
+	}catch(...){
+	    return ofFilePath::join(ofFilePath::getCurrentExeDir(),  "data/");
+	}
 #endif
 }
 
@@ -292,20 +298,6 @@ static std::filesystem::path & dataPathRoot(){
 
 //--------------------------------------------------
 void ofSetWorkingDirectoryToDefault(){
-#ifdef TARGET_OSX
-	#ifndef TARGET_OF_IOS
-		char path[MAXPATHLEN];
-		uint32_t size = sizeof(path);
-		
-		if (_NSGetExecutablePath(path, &size) == 0){
-			std::filesystem::path classPath(path);
-			classPath = classPath.parent_path();
-			chdir( classPath.native().c_str() );
-		}else{
-			ofLogFatalError("ofUtils") << "ofSetDataPathRoot(): path buffer too small, need size " << (unsigned int) size;
-		}
-	#endif
-#endif
 	defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
 }
 	
