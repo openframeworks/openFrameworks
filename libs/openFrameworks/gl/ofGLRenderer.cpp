@@ -93,15 +93,20 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		}
 
 		if(vertexData.getNumTexCoords() && useTextures){
-			set<int>::iterator textureLocation = textureLocationsEnabled.begin();
-			for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
-				glActiveTexture(GL_TEXTURE0+*textureLocation);
-				glClientActiveTexture(GL_TEXTURE0+*textureLocation);
-				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-			}
-			glActiveTexture(GL_TEXTURE0);
-			glClientActiveTexture(GL_TEXTURE0);
+            if(textureLocationsEnabled.size() == 0){
+                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+            }else{
+                set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+                for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+                    glActiveTexture(GL_TEXTURE0+*textureLocation);
+                    glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+                }
+                glActiveTexture(GL_TEXTURE0);
+                glClientActiveTexture(GL_TEXTURE0);
+            }
 		}
 
 		if(vertexData.getNumIndices()){
@@ -139,15 +144,20 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		}
 
 		if(vertexData.getNumTexCoords() && useTextures){
-			set<int>::iterator textureLocation = textureLocationsEnabled.begin();
-			for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
-				glActiveTexture(GL_TEXTURE0+*textureLocation);
-				glClientActiveTexture(GL_TEXTURE0+*textureLocation);
-				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-			}
-			glActiveTexture(GL_TEXTURE0);
-			glClientActiveTexture(GL_TEXTURE0);
+            if(textureLocationsEnabled.size() == 0){
+                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+            }else{
+                set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+                for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+                    glActiveTexture(GL_TEXTURE0+*textureLocation);
+                    glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+                }
+                glActiveTexture(GL_TEXTURE0);
+                glClientActiveTexture(GL_TEXTURE0);
+            }
 		}
 
 		GLenum drawMode;
