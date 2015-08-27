@@ -18,7 +18,7 @@ int main(){
     shared_ptr<ofAppBaseWindow> windowBase = ofCreateWindow(settings);
     ofAppiOSWindow* window = static_cast<ofAppiOSWindow*>(windowBase.get());
     
-    bool bUseNative = false;
+    bool bUseNative = true;
     if (bUseNative){
         /**
          *

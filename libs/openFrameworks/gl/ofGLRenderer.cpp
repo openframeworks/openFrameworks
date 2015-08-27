@@ -93,15 +93,20 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		}
 
 		if(vertexData.getNumTexCoords() && useTextures){
-			set<int>::iterator textureLocation = textureLocationsEnabled.begin();
-			for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
-				glActiveTexture(GL_TEXTURE0+*textureLocation);
-				glClientActiveTexture(GL_TEXTURE0+*textureLocation);
-				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-			}
-			glActiveTexture(GL_TEXTURE0);
-			glClientActiveTexture(GL_TEXTURE0);
+            if(textureLocationsEnabled.size() == 0){
+                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+            }else{
+                set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+                for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+                    glActiveTexture(GL_TEXTURE0+*textureLocation);
+                    glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+                }
+                glActiveTexture(GL_TEXTURE0);
+                glClientActiveTexture(GL_TEXTURE0);
+            }
 		}
 
 		if(vertexData.getNumIndices()){
@@ -139,15 +144,20 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		}
 
 		if(vertexData.getNumTexCoords() && useTextures){
-			set<int>::iterator textureLocation = textureLocationsEnabled.begin();
-			for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
-				glActiveTexture(GL_TEXTURE0+*textureLocation);
-				glClientActiveTexture(GL_TEXTURE0+*textureLocation);
-				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-				glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
-			}
-			glActiveTexture(GL_TEXTURE0);
-			glClientActiveTexture(GL_TEXTURE0);
+            if(textureLocationsEnabled.size() == 0){
+                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+            }else{
+                set<int>::iterator textureLocation = textureLocationsEnabled.begin();
+                for(;textureLocation!=textureLocationsEnabled.end();textureLocation++){
+                    glActiveTexture(GL_TEXTURE0+*textureLocation);
+                    glClientActiveTexture(GL_TEXTURE0+*textureLocation);
+                    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                    glTexCoordPointer(2, GL_FLOAT, sizeof(ofVec2f), &vertexData.getTexCoordsPointer()->x);
+                }
+                glActiveTexture(GL_TEXTURE0);
+                glClientActiveTexture(GL_TEXTURE0);
+            }
 		}
 
 		GLenum drawMode;
@@ -474,8 +484,8 @@ void ofGLRenderer::end(const ofFbo & fbo){
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofFbo & fbo){
 	if (currentFramebufferId == fbo.getId()){
-		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
-			"Most probably you forgot to end() the current framebuffer before calling begin() again.";
+		ofLogWarning() << "Framebuffer with id: " << fbo.getId() << " cannot be bound onto itself. \n" <<
+			"Most probably you forgot to end() the current framebuffer before calling begin() again or you forgot to allocate() before calling begin().";
 		return;
 	}
 	// this method could just as well have been placed in ofBaseGLRenderer
@@ -492,7 +502,7 @@ void ofGLRenderer::bind(const ofFbo & fbo){
 //----------------------------------------------------------
 void ofGLRenderer::bindForBlitting(const ofFbo & fboSrc, ofFbo & fboDst, int attachmentPoint){
 	if (currentFramebufferId == fboSrc.getId()){
-		ofLogWarning() << "Framebuffer with id:" << " cannot be bound onto itself. \n" <<
+		ofLogWarning() << "Framebuffer with id: " << fboSrc.getId() << " cannot be bound onto itself. \n" <<
 			"Most probably you forgot to end() the current framebuffer before calling getTexture().";
 		return;
 	}
@@ -1273,7 +1283,7 @@ void ofGLRenderer::pushStyle(){
 
 void ofGLRenderer::popStyle(){
 	if( styleHistory.size() ){
-		setStyle(styleHistory.front());
+		setStyle(styleHistory.back());
 		styleHistory.pop_back();
 	}
 }

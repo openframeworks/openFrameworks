@@ -248,7 +248,7 @@ static const NSString * ItemStatusContext;
                 videoHeight = CVPixelBufferGetHeight(imageBuffer);
                 CVPixelBufferUnlockBaseAddress(imageBuffer,0);
                 
-                NSLog(@"video loaded at %i x %i", videoWidth, videoHeight);
+                NSLog(@"video loaded at %i x %i", (int)videoWidth, (int)videoHeight);
                 
                 CGRect playerViewFrame = self.playerView.frame;
                 playerViewFrame.size.width = videoWidth;

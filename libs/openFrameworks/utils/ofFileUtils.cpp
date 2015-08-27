@@ -940,7 +940,11 @@ string ofDirectory::path() const {
 
 //------------------------------------------------------------------------------------------------------------
 string ofDirectory::getAbsolutePath() const {
-	return std::filesystem::absolute(myDir).string();
+	try{
+		return std::filesystem::canonical(std::filesystem::absolute(myDir)).string();
+	}catch(...){
+		return std::filesystem::absolute(myDir).string();
+	}
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1219,31 +1223,45 @@ bool ofDirectory::removeDirectory(const std::string& _path, bool deleteIfNotEmpt
 
 //------------------------------------------------------------------------------------------------------------
 bool ofDirectory::createDirectory(const std::string& _dirPath, bool bRelativeToData, bool recursive){
+	
 	std::string dirPath = _dirPath;
 
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
-
-	bool success = false;
-	try{
-		if(!recursive){
-			success = std::filesystem::create_directory(dirPath);
-		}else{
-			success = std::filesystem::create_directories(dirPath);
+	
+	
+	// on OSX,std::filesystem::create_directories seems to return false *if* the path has folders that already exist
+	// and true if it doesn't
+	// so to avoid unnecessary warnings on OSX, we check if it exists here:
+	
+	bool bDoesExistAlready = ofDirectory::doesDirectoryExist(dirPath);
+	
+	if (!bDoesExistAlready){
+		
+		bool success = false;
+		try{
+			if(!recursive){
+				success = std::filesystem::create_directory(dirPath);
+			}else{
+				success = std::filesystem::create_directories(dirPath);
+			}
+		} catch(std::exception & except){
+			ofLogError("ofDirectory") << "createDirectory(): couldn't create directory \"" << dirPath << "\": " << except.what();
+			return false;
 		}
-	}
-	catch(std::exception & except){
-		ofLogError("ofDirectory") << "createDirectory(): couldn't create directory \"" << dirPath << "\": " << except.what();
-		return false;
-	}
-
-	if(!success){
+		return success;
+		
+	} else {
+			
 		ofLogWarning("ofDirectory") << "createDirectory(): directory already exists: \"" << dirPath << "\"";
-		success = true;
+		return true;
+	
 	}
 
-	return success;
+
+
+	
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1252,7 +1270,7 @@ bool ofDirectory::doesDirectoryExist(const std::string& _dirPath, bool bRelative
 	if(bRelativeToData){
 		dirPath = ofToDataPath(dirPath);
 	}
-	return std::filesystem::exists(dirPath);
+	return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1417,15 +1435,15 @@ bool ofFilePath::createEnclosingDirectory(const std::string& filePath, bool bRel
 }
 
 //------------------------------------------------------------------------------------------------------------
-string ofFilePath::getAbsolutePath(const std::string& _path, bool bRelativeToData){
-	std::string path = _path;
+string ofFilePath::getAbsolutePath(const std::string& path, bool bRelativeToData){
 	if(bRelativeToData){
-		path = ofToDataPath(path);
-	}
-	try{
-		return std::filesystem::canonical(path).string();
-	}catch(...){
-		return path;
+		return ofToDataPath(path, true);
+	}else{
+		try{
+			return std::filesystem::canonical(std::filesystem::absolute(path)).string();
+		}catch(...){
+			return std::filesystem::absolute(path).string();
+		}
 	}
 }
 

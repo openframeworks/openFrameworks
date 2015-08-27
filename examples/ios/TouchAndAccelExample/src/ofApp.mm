@@ -59,27 +59,27 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-    ofLog(OF_LOG_VERBOSE, "touch %d down at (%d,%d)", touch.id, touch.x, touch.y);
+    ofLog(OF_LOG_VERBOSE, "touch %d down at (%i,%i)", touch.id, (int)touch.x, (int)touch.y);
 	balls[touch.id].moveTo(touch.x, touch.y);
 	balls[touch.id].bDragged = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(ofTouchEventArgs & touch){
-    ofLog(OF_LOG_VERBOSE, "touch %d moved at (%d,%d)", touch.id, touch.x, touch.y);
+    ofLog(OF_LOG_VERBOSE, "touch %d moved at (%i,%i)", touch.id, (int)touch.x, (int)touch.y);
 	balls[touch.id].moveTo(touch.x, touch.y);
 	balls[touch.id].bDragged = true;	
 }
 
 //--------------------------------------------------------------
 void ofApp::touchUp(ofTouchEventArgs & touch){
-    ofLog(OF_LOG_VERBOSE, "touch %d up at (%d,%d)", touch.id, touch.x, touch.y);
+    ofLog(OF_LOG_VERBOSE, "touch %d up at (%i,%i)", touch.id, (int)touch.x, (int)touch.y);
 	balls[touch.id].bDragged = false;
 }
 
 //--------------------------------------------------------------
 void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
-    ofLog(OF_LOG_VERBOSE, "touch %d double tap at (%d,%d)", touch.id, touch.x, touch.y);
+    ofLog(OF_LOG_VERBOSE, "touch %d double tap at (%i,%i)", touch.id, (int)touch.x, (int)touch.y);
 }
 
 //--------------------------------------------------------------
