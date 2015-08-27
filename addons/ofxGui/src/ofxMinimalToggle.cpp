@@ -11,7 +11,7 @@ ofxMinimalToggle::ofxMinimalToggle(ofParameter <bool> val, const Config & config
 :ofxToggle(val,config){
 	thisBorderColor = thisFillColor;
     if(b.width == 0) {
-        b. width = getTextWidth(val.getName(), config.shape.height);
+        b.width = ofxBaseGui::getTextWidth(val.getName(), config.shape.height);
     }
 }
 
@@ -21,7 +21,7 @@ ofxMinimalToggle::~ofxMinimalToggle(){
 ofxMinimalToggle & ofxMinimalToggle::setup(ofParameter <bool> val, float width, float height){
     ofxToggle::setup(val,width,height);
     if(b.width == 0){
-        b.width = getTextWidth(val.getName(), height);
+        b.width = ofxBaseGui::getTextWidth(val.getName(), height);
     }
 
 	return *this;
@@ -52,7 +52,7 @@ void ofxMinimalToggle::generateDraw(){
 	border.rectangle(b.getPosition() + checkboxRect.getTopLeft(), checkboxRect.width, checkboxRect.height);
 
     if(bShowName){
-		float textWidth = getTextWidth(getName(), b.height);
+        float textWidth = ofxBaseGui::getTextWidth(getName(), b.height);
 		switch(textLayout){
 			default:
 			case ofxBaseGui::Left:
@@ -97,15 +97,4 @@ void ofxMinimalToggle::render(){
     }
 }
 
-float ofxMinimalToggle::getTextWidth(std::string text, float _height){
-	float _width = 0;
-	ofVboMesh mesh = getTextMesh(text, 0, _height / 2 + 4);
-	for(unsigned int i = 0; i < mesh.getVertices().size(); i++){
-		if(mesh.getVertex(i).x > _width){
-			_width = mesh.getVertex(i).x;
-		}
-	}
-	_width += textPadding * 2;
-	return _width;
-}
 

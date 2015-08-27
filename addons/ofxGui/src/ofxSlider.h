@@ -17,6 +17,7 @@ public:
 	ofxSlider();
 	~ofxSlider();
     ofxSlider(ofParameter<Type> _val, const Config & config = Config());
+    ofxSlider & setup(ofParameter<Type> _val, const Config & config);
 	ofxSlider & setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
 	ofxSlider & setup(const std::string& sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	

@@ -18,7 +18,7 @@ ofxMinimalButton & ofxMinimalButton::setup(const std::string& buttonName, const 
 	setName(buttonName);
 	ofxBaseGui::setup(config);
 	if(b.width == 0){
-		b.width = getTextWidth(buttonName, b.height);
+        b.width = ofxBaseGui::getTextWidth(buttonName, b.height);
 	}
 	bGuiActive = false;
 	value = false;
@@ -31,7 +31,7 @@ ofxMinimalButton & ofxMinimalButton::setup(const std::string& buttonName, const 
 
 ofxMinimalButton & ofxMinimalButton::setup(const string & toggleName, float width, float height){
 	if(width == 0){
-		width = getTextWidth(toggleName, height);
+        width = ofxBaseGui::getTextWidth(toggleName, height);
 	}
 	setName(toggleName);
 	b.x = 0;

@@ -2,14 +2,7 @@
 #include "ofGraphics.h"
 using namespace std;
 
-ofxToggle::ofxToggle()
-:ofxBaseGui(Config())
-,bGuiActive(false){
-	checkboxRect.set(1, 1, b.height - 2, b.height - 2);
-	value.addListener(this,&ofxToggle::valueChanged);
-	registerMouseEvents();
-	setNeedsRedraw();
-}
+ofxToggle::ofxToggle():ofxBaseGui(){}
 
 ofxToggle::ofxToggle(ofParameter<bool> _bVal, const Config & config)
 :ofxBaseGui(config)

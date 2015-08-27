@@ -28,6 +28,7 @@ ofxGuiGroup & ofxGuiGroup::setup(const Config & config){
     filename = config.filename;
     minimized = config.minimized;
     bShowHeader = config.showHeader;
+	bExclusiveToggles = config.exclusiveToggles;
     bGuiActive = false;
     this->config = config;
     registerMouseEvents();
@@ -65,6 +66,7 @@ ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
     bShowHeader = Config().showHeader;
 	b.width = defaultWidth;
     layout = Config().layout;
+	bExclusiveToggles = Config().exclusiveToggles;
 	clear();
 	filename = _filename;
 	bGuiActive = false;

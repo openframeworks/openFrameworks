@@ -118,6 +118,7 @@ class ofxBaseGui {
 		void unbindFontTexture();
 		ofMesh getTextMesh(const std::string & text, float x, float y);
 		ofRectangle getTextBoundingBox(const std::string & text, float x, float y);
+        float getTextWidth(const std::string & text, float height);
 
 		ofRectangle b;
 		static ofTrueTypeFont font;
