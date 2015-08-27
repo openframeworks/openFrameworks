@@ -46,7 +46,10 @@ vector<ofSoundDevice> ofSoundStreamListDevices(){
 	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
 	return deviceList;
 }
-
+//------------------------------------------------------------
+ofSoundStream& ofGetSoundStream(){
+	return soundStreamOutput;
+}
 //------------------------------------------------------------
 ofSoundStream::ofSoundStream(){
 	#ifdef OF_SOUND_STREAM_TYPE

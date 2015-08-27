@@ -88,6 +88,10 @@ std::vector<ofSoundDevice> ofSoundStreamListDevices();
 ///
 /// \warning Be aware that audioIn() and audioOut() will be called on a different
 /// thread from your app's update() / draw() thread.
+
+class ofSoundStream;
+ofSoundStream& ofGetSoundStream();
+
 class ofSoundStream{
 public:
 	ofSoundStream();
