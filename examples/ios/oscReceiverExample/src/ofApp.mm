@@ -31,7 +31,7 @@ void ofApp::update(){
 	while( receiver.hasWaitingMessages() ){
 		// get the next message
 		ofxOscMessage m;
-		receiver.getNextMessage( &m );
+		receiver.getNextMessage(m);
 
 		// check for mouse moved message
 		if( m.getAddress() == "/mouse/position" ){

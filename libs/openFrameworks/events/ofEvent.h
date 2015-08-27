@@ -80,7 +80,7 @@ protected:
 		for(; it!=functions.end(); ++it){
 			if(it->priority>f.priority) break;
 		}
-		functions.emplace(it, std::move(f));
+		functions.emplace(it, f);
 	}
 
 	template<typename TFunction>

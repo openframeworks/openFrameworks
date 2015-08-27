@@ -72,6 +72,7 @@ ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	bGuiActive = false;
 
 	addParametersFrom(_parameters);
+
 	parameters = _parameters;
 	registerMouseEvents();
 	setNeedsRedraw();
@@ -86,10 +87,26 @@ void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters){
 			continue;
 		}
 		string type = p->type();
-		if(type == typeid(ofParameter<int>).name()){
+        if(type == typeid(ofParameter <int32_t> ).name()){
             add(p->cast<int>());
-		}else if(type == typeid(ofParameter<float>).name()){
+        }else if(type == typeid(ofParameter <uint32_t> ).name()){
+            add(p->cast<uint32_t>());
+        }else if(type == typeid(ofParameter <int64_t> ).name()){
+            add(p->cast<int64_t>());
+        }else if(type == typeid(ofParameter <uint64_t> ).name()){
+            add(p->cast<uint64_t>());
+        }else if(type == typeid(ofParameter <int8_t> ).name()){
+            add(p->cast<int8_t>());
+        }else if(type == typeid(ofParameter <uint8_t> ).name()){
+            add(p->cast<uint8_t>());
+        }else if(type == typeid(ofParameter <int16_t> ).name()){
+            add(p->cast<int16_t>());
+        }else if(type == typeid(ofParameter <uint16_t> ).name()){
+            add(p->cast<uint16_t>());
+        }else if(type == typeid(ofParameter<float>).name()){
             add(p->cast<float>());
+        }else if(type == typeid(ofParameter <double> ).name()){
+            add(p->cast<double>());
 		}else if(type == typeid(ofParameter<bool>).name()){
             add(p->cast<bool>());
 		}else if(type == typeid(ofParameter<ofVec2f>).name()){
@@ -122,14 +139,6 @@ void ofxGuiGroup::add(ofxBaseGui & element){
 
 void ofxGuiGroup::add(ofxGuiGroup & element){
 	add(&element);
-}
-
-void ofxGuiGroup::add(ofParameter <float> & parameter){
-    add(parameter, ofxFloatSlider::Config());
-}
-
-void ofxGuiGroup::add(ofParameter <int> & parameter){
-    add(parameter, ofxIntSlider::Config());
 }
 
 void ofxGuiGroup::add(ofParameter <bool> & parameter){

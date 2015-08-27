@@ -5,7 +5,6 @@
 
 
 static bool bFmodInitialized_ = false;
-static bool bUseSpectrum_ = false;
 static float fftValues_[8192];			//
 static float fftInterpValues_[8192];			//
 static float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmodex....

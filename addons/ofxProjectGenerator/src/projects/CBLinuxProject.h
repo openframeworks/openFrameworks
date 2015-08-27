@@ -11,6 +11,7 @@
 #include "ofConstants.h"
 #include "ofAddon.h"
 #include "CBWinProject.h"
+#include "LibraryBinary.h"
 
 class CBLinuxProject: public CBWinProject {
 public:
@@ -23,10 +24,10 @@ public:
     void setup();
 
     bool createProjectFile();
-    void addInclude(string includeName){};
-    void addLibrary(string libraryName, LibType libType = RELEASE_LIB){};
+    void addInclude(std::string includeName){};
+    void addLibrary(const LibraryBinary & lib){};
 
-	static string LOG_NAME;
+	static std::string LOG_NAME;
 
 private:
 

@@ -15,6 +15,7 @@
 #include "ofLog.h"
 #include "ofUtils.h"
 #include "ofSystemUtils.h"
+#include "LibraryBinary.h"
 
 
 string generateUUID(string input);
@@ -33,7 +34,7 @@ pugi::xml_node appendValue(pugi::xml_document & doc, string tag, string attribut
 
 void getFoldersRecursively(const string & path, vector < string > & folderNames, string platform);
 void getFilesRecursively(const string & path, vector < string > & fileNames);
-void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform = "" );
+void getLibsRecursively(const string & path, vector < string > & libFiles, vector < LibraryBinary > & libLibs, string platform = "", string arch = "", string target = "");
 void getFrameworksRecursively( const string & path, vector < string > & frameworks,  string platform = "" );
 
 
@@ -50,6 +51,8 @@ string getOFRelPath(string from);
 bool checkConfigExists();
 bool askOFRoot();
 string getOFRootFromConfig();
+
+string platformFSSeparator();
 
 template <class T>
 inline bool isInVector(T item, vector<T> & vec){

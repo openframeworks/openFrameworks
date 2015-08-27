@@ -7,7 +7,7 @@
 #include "ofParameterGroup.h"
 
 class ofxGuiGroup : public ofxBaseGui {
-	public:
+    public:
 
 		struct Config: public ofxBaseGui::Config{
             Config(){
@@ -39,8 +39,11 @@ class ofxGuiGroup : public ofxBaseGui {
 		void add(ofxBaseGui & element);
         void add(ofxGuiGroup & element);
 
-        void add(ofParameter <float> & parameter);
-        void add(ofParameter <int> & parameter);
+        template<typename T>
+        typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p){
+            add(new ofxSlider<T>(p, typename ofxSlider<T>::Config()));
+        }
+
         void add(ofParameter <bool> & parameter);
         void add(ofParameter <std::string> & parameter);
         void add(ofParameter <ofVec2f> & parameter);

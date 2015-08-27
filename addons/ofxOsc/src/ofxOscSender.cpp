@@ -37,47 +37,69 @@
 #include <assert.h>
 
 ofxOscSender::ofxOscSender()
+:broadcast(true)
+,port(0)
 {
-	socket = NULL;
 }
 
-ofxOscSender::~ofxOscSender()
-{
-	if ( socket )
-		shutdown();
+ofxOscSender::ofxOscSender(const ofxOscSender & mom)
+:broadcast(mom.broadcast)
+,hostname(mom.hostname)
+,port(mom.port){
+	if(mom.socket){
+		setup(hostname,port);
+	}
+}
+
+ofxOscSender & ofxOscSender::operator=(const ofxOscSender & mom){
+	if(this == &mom) return *this;
+
+	broadcast = mom.broadcast;
+	hostname = mom.hostname;
+	port = mom.port;
+	if(mom.socket){
+		setup(hostname,port);
+	}
+	return *this;
 }
 
 void ofxOscSender::setup( std::string hostname, int port )
-{
-	setup(new osc::UdpTransmitSocket(osc::IpEndpointName( hostname.c_str(), port), false));
-}
-
-void ofxOscSender::setupForBroadcast( std::string broadcastAddr, int port )
-{
-	setup(new osc::UdpTransmitSocket(osc::IpEndpointName( broadcastAddr.c_str(), port), true));
-}
-
-void ofxOscSender::setup(osc::UdpTransmitSocket * socket)
 {
     if( osc::UdpSocket::GetUdpBufferSize() == 0 ){
     	osc::UdpSocket::SetUdpBufferSize(65535);
     }
 
-	if ( this->socket )
-		shutdown();
-	
-    this->socket = socket;
+    socket.reset(new osc::UdpTransmitSocket(osc::IpEndpointName( hostname.c_str(), port), broadcast));
+    this->hostname = hostname;
+    this->port = port;
+}
+
+void ofxOscSender::disableBroadcast()
+{
+	broadcast = false;
+	if(socket){
+		setup(hostname, port);
+	}
+}
+
+void ofxOscSender::enableBroadcast()
+{
+	broadcast = true;
+	if(socket){
+		setup(hostname, port);
+	}
 }
 
 void ofxOscSender::shutdown()
 {
-	if ( socket )
-		delete socket;
-	socket = NULL;
+	socket.reset();
 }
 
 void ofxOscSender::sendBundle( ofxOscBundle& bundle )
 {
+	if(!socket){
+		ofLogError("ofxOscSender") << "trying to send before setup";
+	}
     //setting this much larger as it gets trimmed down to the size its using before being sent.
     //TODO: much better if we could make this dynamic? Maybe have ofxOscBundle return its size?
 	static const int OUTPUT_BUFFER_SIZE = 327680;
@@ -92,6 +114,9 @@ void ofxOscSender::sendBundle( ofxOscBundle& bundle )
 
 void ofxOscSender::sendMessage( ofxOscMessage& message, bool wrapInBundle )
 {
+	if(!socket){
+		ofLogError("ofxOscSender") << "trying to send before setup";
+	}
     //setting this much larger as it gets trimmed down to the size its using before being sent.
     //TODO: much better if we could make this dynamic? Maybe have ofxOscMessage return its size?
     static const int OUTPUT_BUFFER_SIZE = 327680;
