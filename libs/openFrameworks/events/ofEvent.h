@@ -21,7 +21,7 @@ public:
 	/// \see ofBaseEvent::isEnabled()
 	ofBaseEvent()
 	:enabled(true)
-,notifying(false){
+    ,notifying(false){
 	}
 
 	/// \brief Copy-constructor for ofBaseEvent.
@@ -42,6 +42,7 @@ public:
 		std::unique_lock<Mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
 		functions = mom.functions;
 		enabled = mom.enabled;
+        notifying = mom.notifying;
 		return *this;
 	}
 
@@ -89,7 +90,7 @@ protected:
 	void remove(const TFunction & function){
 		std::unique_lock<Mutex> lck(mtx);
 		if(notifying){
-            for(auto f: functions){
+            for(auto & f: functions){
                 auto found = f == function;
                 if(found){
                     f.function = nullptr;
@@ -292,15 +293,20 @@ public:
 			std::vector<of::priv::Function<T>*> functions_copy;
 			{
 				std::unique_lock<Mutex> lck(ofEvent<T,Mutex>::mtx);
+				functions_copy.resize(ofEvent<T,Mutex>::functions.size());
 				std::transform(ofEvent<T,Mutex>::functions.begin(), ofEvent<T,Mutex>::functions.end(),
-						std::back_inserter(functions_copy),
+						functions_copy.begin(),
 						[&](of::priv::Function<T>&f){return &f;});
 			}
 			ofEvent<T,Mutex>::notifying = true;
 			for(auto & f: functions_copy){
-				if(f->function(sender,param)){
-					throw ofEventAttendedException();
-				}
+                bool ret = false;
+                try{
+                    ret = f->function(sender,param);
+                }catch(std::bad_function_call &){}
+                if(ret){
+                    throw ofEventAttendedException();
+                }
 			}
 			ofEvent<T,Mutex>::notifying = false;
 		}
@@ -423,7 +429,11 @@ public:
 			}
 			ofEvent<void,Mutex>::notifying = true;
 			for(auto & f: functions_copy){
-				if(f->function(sender)){
+			    bool ret = false;
+			    try{
+			        ret = f->function(sender);
+			    }catch(std::bad_function_call &){}
+				if(ret){
 					throw ofEventAttendedException();
 				}
 			}
@@ -441,9 +451,13 @@ public:
 		if(ofFastEvent::enabled && !ofFastEvent::functions.empty()){
 		    ofFastEvent<T>::notifying = true;
 			for(auto & f: ofFastEvent::functions){
-				if(f.function(sender,param)){
-					throw ofEventAttendedException();
-				}
+                bool ret = false;
+                try{
+                    ret = f->function(sender,param);
+                }catch(std::bad_function_call &){}
+                if(ret){
+                    throw ofEventAttendedException();
+                }
 			}
 			ofFastEvent<T>::notifying = false;
 		}
