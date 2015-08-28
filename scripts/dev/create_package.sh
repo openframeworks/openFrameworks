@@ -201,7 +201,12 @@ function createPackage {
         rm -Rf gl/gpuParticleSystemExample
         rm -Rf gl/vboMeshDrawInstancedExample
         rm -Rf gl/shaderExample
-        
+        rm -Rf gl/computeShaderParticlesExample
+        rm -Rf gl/computeShaderTextureExample
+        rm -Rf gl/pixelBufferExample
+        rm -Rf gl/textureBufferInstancedExample
+        rm -Rf gl/threadedPixelBufferExample
+  
         rm -Rf utils/systemSpeakExample
         rm -Rf utils/fileBufferLoadingCSVExample
         
@@ -221,6 +226,8 @@ function createPackage {
 	
 	if [ "$pkg_platform" == "osx" ]; then
 	    rm -Rf gles
+	    rm -Rf gl/computeShaderParticlesExample
+	    rm -Rf gl/computeShaderTextureExample
 	fi
 	
 	
@@ -350,23 +357,30 @@ function createPackage {
 	#delete ofxAndroid in non android
 	if [ "$pkg_platform" != "android" ]; then
 		rm -Rf ofxAndroid
+		rm -Rf ofxUnitTests
 	fi
 	#delete ofxiPhone in non ios
 	if [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxiPhone
 		rm -Rf ofxiOS
+		rm -Rf ofxUnitTests
 	fi
 	
 	#delete ofxMultiTouch & ofxAccelerometer in non mobile
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "ios" ]; then
 		rm -Rf ofxMultiTouch
 		rm -Rf ofxAccelerometer
+		rm -Rf ofxUnitTests
 	fi
 	
 	if [ "$pkg_platform" == "ios" ] || [ "$pkg_platform" == "android" ]; then
 	    rm -Rf ofxVectorGraphics
    	    rm -Rf ofxKinect
+		rm -Rf ofxUnitTests
 	fi
+	
+	#delete unit tests by now
+	rm -Rf ${pkg_root}/tests
 
 	#delete eclipse projects
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
@@ -429,11 +443,6 @@ function createPackage {
     #delete omap4 scripts for non armv7l
 	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv6l" ]; then
 	    rm -Rf linux/ubuntu-omap4
-	fi
-	
-    #delete armv6 scripts for non armv6l
-	if [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
-	    rm -Rf linux/debian_armv6l
 	fi
 	
 	if [ "$pkg_platform" == "ios" ]; then
