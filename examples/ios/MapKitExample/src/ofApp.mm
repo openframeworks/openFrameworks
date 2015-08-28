@@ -81,7 +81,7 @@ void ofApp::draw() {
 		// draw black circle in middle of screen
 		ofSetColor(0, 0, 0);
 		ofNoFill();
-		ofCircle(ofGetWidth()/2, ofGetHeight()/2, 10);
+		ofDrawCircle(ofGetWidth()/2, ofGetHeight()/2, 10);
 		ofFill();
 		
 

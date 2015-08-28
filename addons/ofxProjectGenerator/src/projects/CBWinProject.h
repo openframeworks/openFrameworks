@@ -23,7 +23,7 @@ public:
 
 	void addSrc(std::string srcName, string folder, SrcType type=DEFAULT);
 	void addInclude(std::string includeName);
-	void addLibrary(std::string libraryName, LibType libType = RELEASE_LIB);
+	void addLibrary(const LibraryBinary & lib);
 
 	std::string getName();
 	std::string getPath();

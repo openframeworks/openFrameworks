@@ -80,15 +80,19 @@ protected:
 		for(; it!=functions.end(); ++it){
 			if(it->priority>f.priority) break;
 		}
-		functions.emplace(it, std::move(f));
+		functions.emplace(it, f);
 	}
 
 	template<typename TFunction>
 	void remove(const TFunction & function){
 		std::unique_lock<Mutex> lck(mtx);
 		functions.erase(std::remove_if(functions.begin(), functions.end(),
-			[&](const Function & f){
-				return f == function;
+			[&](Function & f){
+				auto found = f == function;
+				if(found){
+				    f.function = nullptr;
+				}
+				return found;
 			}), functions.end());
 	}
 
