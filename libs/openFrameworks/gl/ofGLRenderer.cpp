@@ -1269,7 +1269,7 @@ void ofGLRenderer::setBitmapTextMode(ofDrawBitmapMode mode){
 }
 
 ofStyle ofGLRenderer::getStyle() const{
-	return setCircle;
+	return currentStyle;
 }
 
 void ofGLRenderer::pushStyle(){
