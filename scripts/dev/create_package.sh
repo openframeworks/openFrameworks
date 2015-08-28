@@ -201,7 +201,12 @@ function createPackage {
         rm -Rf gl/gpuParticleSystemExample
         rm -Rf gl/vboMeshDrawInstancedExample
         rm -Rf gl/shaderExample
-        
+        rm -Rf gl/computeShaderParticlesExample
+        rm -Rf gl/computeShaderTextureExample
+        rm -Rf gl/pixelBufferExample
+        rm -Rf gl/textureBufferInstancedExample
+        rm -Rf gl/threadedPixelBufferExample
+  
         rm -Rf utils/systemSpeakExample
         rm -Rf utils/fileBufferLoadingCSVExample
         
@@ -221,6 +226,8 @@ function createPackage {
 	
 	if [ "$pkg_platform" == "osx" ]; then
 	    rm -Rf gles
+	    rm -Rf gl/computeShaderParticlesExample
+	    rm -Rf gl/computeShaderTextureExample
 	fi
 	
 	
