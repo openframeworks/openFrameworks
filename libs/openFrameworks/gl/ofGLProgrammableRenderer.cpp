@@ -666,6 +666,7 @@ void ofGLProgrammableRenderer::setCircleResolution(int res){
 		circleMesh.getVertices() = circlePolyline.getVertices();
 		path.setCircleResolution(res);
 	}
+	currentStyle.circleResolution = res; 
 }
 
 void ofGLProgrammableRenderer::setPolyMode(ofPolyWindingMode mode){
