@@ -383,8 +383,9 @@ void ofPixels_<PixelType>::allocate(int w, int h, ofPixelFormat format){
 	}
 
 	int newSize = bytesFromPixelFormat<PixelType>(w,h,format);
+	int oldSize = getTotalBytes();
 	//we check if we are already allocated at the right size
-	if(bAllocated && newSize==getTotalBytes()){
+	if(bAllocated && newSize==oldSize){
         pixelFormat = format;
         width = w;
         height = h;

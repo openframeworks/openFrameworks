@@ -42,6 +42,13 @@ PLATFORM_PKG_CONFIG = $(MSYS2_ROOT)/bin/pkg-config
 #endif
 #endif
 
+
+PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug.exe
+PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME).exe
+PLATFORM_PROJECT_RELEASE_TARGET = bin/$(BIN_NAME)
+PLATFORM_PROJECT_DEBUG_TARGET = bin/$(BIN_NAME)
+PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
+
 ##########################################################################################
 # PLATFORM DEFINES
 #   Create a list of DEFINES for this platform.  The list will be converted into 
@@ -282,6 +289,16 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 #    Don't want to use a default compiler?
 ################################################################################
 #PLATFORM_CC=
-
-afterplatform: after
-	@echo 
+	
+afterplatform: $(TARGET_NAME)
+	@echo
+	@echo "     compiling done"
+	@echo "     to launch the application"
+	@echo
+	@echo "     cd bin"
+	@echo "     ./$(BIN_NAME)"
+	@echo ""
+	@echo "     - or -"
+	@echo ""
+	@echo "     make $(RUN_TARGET)"
+	@echo

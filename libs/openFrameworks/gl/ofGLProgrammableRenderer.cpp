@@ -1129,7 +1129,7 @@ void ofGLProgrammableRenderer::pushStyle(){
 
 void ofGLProgrammableRenderer::popStyle(){
 	if( styleHistory.size() ){
-		setStyle(styleHistory.front());
+		setStyle(styleHistory.back());
 		styleHistory.pop_back();
 	}
 }
