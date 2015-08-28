@@ -91,8 +91,7 @@ protected:
 		std::unique_lock<Mutex> lck(mtx);
 		if(notifying){
             for(auto & f: functions){
-                auto found = f == function;
-                if(found){
+                if(f == function){
                     f.function = nullptr;
                 }
             }
@@ -297,8 +296,8 @@ public:
 				std::transform(ofEvent<T,Mutex>::functions.begin(), ofEvent<T,Mutex>::functions.end(),
 						functions_copy.begin(),
 						[&](of::priv::Function<T>&f){return &f;});
+	            ofEvent<T,Mutex>::notifying = true;
 			}
-			ofEvent<T,Mutex>::notifying = true;
 			for(auto & f: functions_copy){
                 bool ret = false;
                 try{
@@ -426,8 +425,8 @@ public:
 				std::transform(ofEvent<void,Mutex>::functions.begin(), ofEvent<void,Mutex>::functions.end(),
 						std::back_inserter(functions_copy),
 						[&](of::priv::Function<void> & f){return &f;});
+	            ofEvent<void,Mutex>::notifying = true;
 			}
-			ofEvent<void,Mutex>::notifying = true;
 			for(auto & f: functions_copy){
 			    bool ret = false;
 			    try{
