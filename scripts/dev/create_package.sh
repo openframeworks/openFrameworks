@@ -221,6 +221,8 @@ function createPackage {
 	
 	if [ "$pkg_platform" == "osx" ]; then
 	    rm -Rf gles
+	    rm -Rf gl/computeShaderParticlesExample
+	    rm -Rf gl/computeShaderTextureExample
 	fi
 	
 	
