@@ -60,21 +60,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         windowSize = new ofVec3f();
         windowPos = new ofVec3f();
         [self updateDimensions];
-        
-        if(window->isProgrammableRenderer()){
-            static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(window->getSettings().glesVersion, 0);
-        } else{
-            static_cast<ofGLRenderer*>(window->renderer().get())->setup();
-        }
-        
-        if(app != ofGetAppPtr()) {      // check if already running.
-			appSharedPtr = shared_ptr<ofBaseApp>(app);
-            ofRunApp(appSharedPtr);		// this fallback only case occurs when app not created in main().
-        }
-        ofxiOSAlerts.addListener(app);
-
-        ofDisableTextureEdgeHack();
-        
+		
         bInit = YES;
     }
     
@@ -82,12 +68,27 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (void)setup {
-    if(window != NULL){
-        window->events().notifySetup();
-        window->renderer()->clear();
-    } else {
-        ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView setup. Failed setup. window is NULL");
-    }
+	if(window == NULL) {
+		ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView setup. Failed setup. window is NULL");
+		return;
+	}
+	
+	if(window->isProgrammableRenderer() == true) {
+		static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(window->getSettings().glesVersion, 0);
+	} else{
+		static_cast<ofGLRenderer*>(window->renderer().get())->setup();
+	}
+	
+	if(app != ofGetAppPtr()) {      // check if already running.
+		appSharedPtr = shared_ptr<ofBaseApp>(app);
+		ofRunApp(appSharedPtr);		// this fallback only case occurs when app not created in main().
+	}
+	ofxiOSAlerts.addListener(app);
+	
+	ofDisableTextureEdgeHack();
+	
+	window->events().notifySetup();
+	window->renderer()->clear();
 }
 
 - (void)destroy {

@@ -262,6 +262,62 @@ namespace priv{
 		static ofColor_<T> min() { return ofColor_<T>(0,0); };
 		static ofColor_<T> max() { return ofColor_<T>(ofColor_<T>::limit(),ofColor_<T>::limit()); };
 	};
+
+
+	// detection of stream operators
+	typedef char yes;
+	typedef char (&no)[2];
+
+	struct anyx { template <class T> anyx(const T &); };
+
+	no operator << (const anyx &, const anyx &);
+	no operator >> (const anyx &, const anyx &);
+
+
+	template <class T> yes check(T const&);
+	no check(no);
+
+	template <typename T>
+	struct has_loading_support {
+	    static istream & stream;
+	    static T & x;
+	    static const bool value = sizeof(check(stream >> x)) == sizeof(yes);
+	};
+
+	template <typename T>
+	struct has_saving_support {
+	    static ostream & stream;
+	    static T & x;
+	    static const bool value = sizeof(check(stream << x)) == sizeof(yes);
+	};
+
+	template <typename T>
+	struct has_stream_operators {
+	    static const bool can_load = has_loading_support<T>::value;
+	    static const bool can_save = has_saving_support<T>::value;
+	    static const bool value = can_load && can_save;
+	};
+
+	template<typename ParameterType>
+	typename std::enable_if<of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType & value){
+	    return ofToString(value);
+	}
+
+	template<typename ParameterType>
+	typename std::enable_if<!of::priv::has_saving_support<ParameterType>::value, std::string>::type toStringImpl(const ParameterType & value){
+	    throw std::exception();
+	}
+
+	template<typename ParameterType>
+	typename std::enable_if<of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string & str){
+	    return ofFromString<ParameterType>(str);
+	}
+
+	template<typename ParameterType>
+	typename std::enable_if<!of::priv::has_loading_support<ParameterType>::value, ParameterType>::type fromStringImpl(const std::string & str){
+	    throw std::exception();
+
+	}
 }
 }
 /*! \endcond */
@@ -297,7 +353,9 @@ public:
 
 	ParameterType getMax() const;
 
-	string toString() const;
+
+	std::string toString() const;
+    void fromString(const std::string & name);
 
 	template<class ListenerClass, typename ListenerMethod>
 	void addListener(ListenerClass * listener, ListenerMethod method, int prio=OF_EVENT_ORDER_AFTER_APP){
@@ -355,8 +413,6 @@ public:
 
 	void setMin(const ParameterType & min);
 	void setMax(const ParameterType & max);
-
-	void fromString(const string & name);
 
 	void setSerializable(bool serializable);
 	shared_ptr<ofAbstractParameter> newReference() const;
@@ -558,7 +614,7 @@ void ofParameter<ParameterType>::setSerializable(bool serializable){
 
 template<typename ParameterType>
 bool ofParameter<ParameterType>::isSerializable() const{
-	return obj->serializable;
+	return of::priv::has_stream_operators<ParameterType>::value && obj->serializable;
 }
 
 template<typename ParameterType>
@@ -602,16 +658,23 @@ string ofParameter<ParameterType>::getName() const{
 }
 
 template<typename ParameterType>
-string ofParameter<ParameterType>::toString() const{
-	return ofToString(obj->value);
+inline std::string ofParameter<ParameterType>::toString() const{
+    try{
+        return of::priv::toStringImpl(obj->value);
+    }catch(...){
+        ofLogError("ofParameter") << "Trying to serialize non-serializable parameter";
+        return "";
+    }
 }
-
 
 template<typename ParameterType>
-void ofParameter<ParameterType>::fromString(const string & str){
-	set(ofFromString<ParameterType>(str));
+inline void ofParameter<ParameterType>::fromString(const std::string & str){
+    try{
+        set(of::priv::fromStringImpl<ParameterType>(str));
+    }catch(...){
+        ofLogError("ofParameter") << "Trying to de-serialize non-serializable parameter";
+    }
 }
-
 
 template<typename ParameterType>
 void ofParameter<ParameterType>::enableEvents(){
