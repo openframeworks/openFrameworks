@@ -20,14 +20,16 @@ public:
 	/// \see ofBaseEvent::disable()
 	/// \see ofBaseEvent::isEnabled()
 	ofBaseEvent()
-	:enabled(true){
+	:enabled(true)
+,notifying(false){
 	}
 
 	/// \brief Copy-constructor for ofBaseEvent.
 	///
 	/// \see ofBaseEvent::ofBaseEvent()
 	ofBaseEvent(const ofBaseEvent & mom)
-	:enabled(mom.enabled){
+	:enabled(mom.enabled)
+	,notifying(false){
 		std::unique_lock<Mutex> lck(const_cast<ofBaseEvent&>(mom).mtx);
 		functions = mom.functions;
 	}
@@ -86,20 +88,25 @@ protected:
 	template<typename TFunction>
 	void remove(const TFunction & function){
 		std::unique_lock<Mutex> lck(mtx);
-		functions.erase(std::remove_if(functions.begin(), functions.end(),
-			[&](Function & f){
-				auto found = f == function;
-				if(found){
-				    f.function = nullptr;
-				}
-				return found;
-			}), functions.end());
+		if(notifying){
+            for(auto f: functions){
+                auto found = f == function;
+                if(found){
+                    f.function = nullptr;
+                }
+            }
+		}else{
+            functions.erase(std::remove_if(functions.begin(), functions.end(),
+                [&](Function & f){
+                    return f.function == nullptr || f == function;
+                }), functions.end());
+		}
 	}
 
 	Mutex mtx;
 	std::vector<Function> functions;
 	bool enabled;
-
+	bool notifying;
 };
 
 /*! \cond PRIVATE */
@@ -289,11 +296,13 @@ public:
 						std::back_inserter(functions_copy),
 						[&](of::priv::Function<T>&f){return &f;});
 			}
+			ofEvent<T,Mutex>::notifying = true;
 			for(auto & f: functions_copy){
 				if(f->function(sender,param)){
 					throw ofEventAttendedException();
 				}
 			}
+			ofEvent<T,Mutex>::notifying = false;
 		}
 	}
 };
@@ -412,11 +421,13 @@ public:
 						std::back_inserter(functions_copy),
 						[&](of::priv::Function<void> & f){return &f;});
 			}
+			ofEvent<void,Mutex>::notifying = true;
 			for(auto & f: functions_copy){
 				if(f->function(sender)){
 					throw ofEventAttendedException();
 				}
 			}
+			ofEvent<void,Mutex>::notifying = false;
 		}
 	}
 };
@@ -428,11 +439,13 @@ class ofFastEvent: public ofEvent<T,of::priv::NoopMutex>{
 public:
 	inline void notify(const void* sender, T & param){
 		if(ofFastEvent::enabled && !ofFastEvent::functions.empty()){
+		    ofFastEvent<T>::notifying = true;
 			for(auto & f: ofFastEvent::functions){
 				if(f.function(sender,param)){
 					throw ofEventAttendedException();
 				}
 			}
+			ofFastEvent<T>::notifying = false;
 		}
 	}
 };
