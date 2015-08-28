@@ -12,7 +12,7 @@ void ofApp::setup(){
 		ofPath p = svg.getPathAt(i);
 		// svg defaults to non zero winding which doesn't look so good as contours
 		p.setPolyWindingMode(OF_POLY_WINDING_ODD);
-		vector<ofPolyline>& lines = p.getOutline();
+		vector<ofPolyline>& lines = const_cast<vector<ofPolyline>&>(p.getOutline());
 		for(int j=0;j<(int)lines.size();j++){
 			outlines.push_back(lines[j].getResampledBySpacing(1));
 		}

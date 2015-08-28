@@ -219,6 +219,10 @@ public:
 	operator std::filesystem::path(){
 		return myFile;
 	}
+
+    operator const std::filesystem::path() const{
+        return myFile;
+    }
 	
 
 	//-------
@@ -309,6 +313,10 @@ public:
 	operator std::filesystem::path(){
 		return myDir;
 	}
+
+    operator const std::filesystem::path() const{
+        return myDir;
+    }
 
 	//-------
 	//static helpers

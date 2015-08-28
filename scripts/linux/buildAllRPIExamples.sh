@@ -15,9 +15,9 @@ do
 			ret=$?
 			if [ $ret -ne 0 ];
 			then
-				echo "error compiling: " + $example
+				echo "error compiling: " + $j
 			else
-				echo "successfully compiled :" + $example
+				echo "successfully compiled :" + $j
 			fi
 			cd ../
 		done

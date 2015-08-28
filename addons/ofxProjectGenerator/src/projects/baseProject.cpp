@@ -18,7 +18,9 @@ void baseProject::setup(string _target){
     setup(); // call the inherited class setup(), now that target is set.
 }
 
-bool baseProject::create(string path){
+// todo: this bool param should be removed.
+bool baseProject::create(string path,  bool bParseAddonsDotMake){
+    
     addons.clear();
 
     if(!ofFilePath::isAbsolute(path)){
@@ -87,7 +89,7 @@ bool baseProject::create(string path){
 //		}
 
 #if defined(TARGET_LINUX) || defined(TARGET_OSX)
-    		parseAddons();
+    		if (bParseAddonsDotMake) parseAddons();
 #endif
         // get a unique list of the paths that are needed for the includes.
         list < string > paths;
@@ -123,10 +125,14 @@ bool baseProject::save(bool createMakeFile){
     // way it can be distributed and re-used by others with the PG
 
     if(createMakeFile){
+        
+        ofLog(OF_LOG_NOTICE) << "saving addons.make";
         ofFile addonsMake(ofFilePath::join(projectDir,"addons.make"), ofFile::WriteOnly);
         for(int i = 0; i < addons.size(); i++){
             addonsMake << addons[i].name << endl;
         }
+        
+        
     }
 
 	return saveProjectFile();
@@ -144,7 +150,7 @@ void baseProject::addAddon(ofAddon & addon){
         addInclude(addon.includePaths[i]);
     }
     for(int i=0;i<(int)addon.libs.size();i++){
-        ofLogVerbose() << "adding addon libs: " << addon.libs[i];
+        ofLogVerbose() << "adding addon libs: " << addon.libs[i].path;
         addLibrary(addon.libs[i]);
     }
     for(int i=0;i<(int)addon.cflags.size();i++){
@@ -188,6 +194,7 @@ void baseProject::parseAddons(){
 	while(!addonsMakeMem.isLastLine()){
 	    string line = addonsMakeMem.getNextLine();
 	    if(line[0] == '#') continue;
+        if(ofTrim(line) == "") continue;
 		ofAddon addon;
 		cout << projectDir << endl;
 		addon.pathToOF = getOFRelPath(projectDir);
