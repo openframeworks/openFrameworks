@@ -860,9 +860,8 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(int channel) const{
 	channelPixels.allocate(width,height,1);
 	channel = ofClamp(channel,0,channels-1);
 	iterator channelPixel = channelPixels.begin();
-	const_iterator _end = end();
-	for(const_iterator i=begin()+channel;i<_end;i+=channels,++channelPixel){
-		*channelPixel = *i;
+	for(auto p: getConstPixelsIter()){
+		*channelPixel++ = p[channel];
 	}
 	return channelPixels;
 }
@@ -870,13 +869,12 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getChannel(int channel) const{
 template<typename PixelType>
 void ofPixels_<PixelType>::setChannel(int channel, const ofPixels_<PixelType> channelPixels){
 	int channels = channelsFromPixelFormat(pixelFormat);
-	if(channels==0) return;
+    if(channels==0) return;
 
-	channel = ofClamp(channel,0,channels-1);
+    channel = ofClamp(channel,0,channels-1);
 	const_iterator channelPixel = channelPixels.begin();
-	iterator _end = end();
-	for(iterator i=begin()+channel;i<_end;i+=channels,++channelPixel){
-		*i = *channelPixel;
+	for(auto p: getPixelsIter()){
+	    p[channel] = *channelPixel++;
 	}
 
 }
@@ -916,10 +914,10 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int
 		int maxY = MIN(y+_height, height);
 
 
-		iterator newPixel = toPix.begin();
-		for(ConstLine line = getConstLines().begin()+minY; line!=getConstLines().begin()+maxY; ++line ){
-			for(const_iterator pixel = line.begin()+minX; pixel<line.begin()+maxX; ++pixel){
-				*newPixel++ = *pixel;
+		auto newPixel = toPix.getPixelsIter().begin();
+		for(auto line: getConstLines(minY, maxY - minY)){
+			for(auto pixel: line.getPixels(minX, maxX - minX)){
+				newPixel++ = pixel;
 			}
 		}
 	}
