@@ -155,7 +155,7 @@ define parse_addon
 	$(foreach addon_dep, $(strip $(ADDON_DEPENDENCIES)), \
 		$(if $(filter-out $(PROJECT_ADDONS),$(addon_dep)), \
 			$(eval PROJECT_ADDONS += $(addon_dep)) \
-			$(call parse_addon, $(addon_dep)) \
+			$(call parse_addon,$(addon_dep)) \
 		) \
 	) 
 endef
