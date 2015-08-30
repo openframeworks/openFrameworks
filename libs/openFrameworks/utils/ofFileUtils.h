@@ -178,7 +178,7 @@ public:
 	void setExecutable(bool executable=true);
 	
 	//these all work for files and directories
-	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false) const;
 	bool moveTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
 	bool renameTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
 	
