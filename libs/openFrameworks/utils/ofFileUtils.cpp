@@ -687,18 +687,18 @@ void ofFile::setExecutable(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite){
+bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite) const{
 	std::string path = _path;
 
 	if(isDirectory()){
 		return ofDirectory(myFile).copyTo(path,bRelativeToData,overwrite);
 	}
 	if(path.empty()){
-		ofLogError("ofFile") << "copyTo(): destination path is empty";
+		ofLogError("ofFile") << "copyTo(): destination path " << _path << " is empty";
 		return false;
 	}
 	if(!exists()){
-		ofLogError("ofFile") << "copyTo(): source file does not exist";
+		ofLogError("ofFile") << "copyTo(): source file " << this->path() << " does not exist";
 		return false;
 	}
 

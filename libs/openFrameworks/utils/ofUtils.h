@@ -928,3 +928,13 @@ private:
 };
 
 /// \}
+
+
+
+/*! \cond PRIVATE */
+namespace of{
+namespace priv{
+    void setWorkingDirectoryToDefault();
+}
+}
+/*! \endcond */

@@ -296,9 +296,13 @@ static std::filesystem::path & dataPathRoot(){
 	return *dataPathRoot;
 }
 
-//--------------------------------------------------
-void ofSetWorkingDirectoryToDefault(){
-	defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
+namespace of{
+namespace priv{
+    //--------------------------------------------------
+    void setWorkingDirectoryToDefault(){        
+        defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
+    }
+}
 }
 
 //--------------------------------------------------
@@ -728,27 +732,21 @@ string ofToUpper(const string & src, const string & locale){
 
 //--------------------------------------------------
 string ofTrimFront(const string & src, const string& locale){
-	std::locale loc = getLocale(locale);
-	auto it = ofUTF8Iterator(src);
-	auto front = std::find_if_not(it.begin(),it.end(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);});
-	return std::string(front,it.end());
+    auto dst = src;
+    dst.erase(dst.begin(),std::find_if_not(dst.begin(),dst.end(),std::ptr_fun<int, int>(std::isspace)));
+    return dst;
 }
 
 //--------------------------------------------------
 string ofTrimBack(const string & src, const string& locale){
-	std::locale loc = getLocale(locale);
-	auto it = ofUTF8Iterator(src);
-	auto back = std::find_if_not(it.rbegin(),it.rend(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base().base();
-	return std::string(it.begin().base(),back);
+    auto dst = src;
+	dst.erase(std::find_if_not(dst.rbegin(),dst.rend(),std::ptr_fun<int, int>(std::isspace)).base(), dst.end());
+	return dst;
 }
 
 //--------------------------------------------------
 string ofTrim(const string & src, const string& locale){
-	std::locale loc = getLocale(locale);
-	auto it = ofUTF8Iterator(src);
-	auto front = std::find_if_not(it.begin(),it.end(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base();
-	auto back = std::find_if_not(it.rbegin(), it.rend(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base().base();
-	return (back<=front ? std::string() : std::string(front,back));
+    return ofTrimFront(ofTrimBack(src));
 }
 
 //--------------------------------------------------
