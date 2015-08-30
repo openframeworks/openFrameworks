@@ -583,8 +583,8 @@ class DirectShowVideo : public ISampleGrabberCB{
     
             AM_MEDIA_TYPE mt;
             ZeroMemory(&mt,sizeof(AM_MEDIA_TYPE));
-
-            m_pGrabber->GetConnectedMediaType(&mt);
+			
+            hr = m_pGrabber->GetConnectedMediaType(&mt);
             if (FAILED(hr)){
                 printf("unable to call GetConnectedMediaType\n");
                 tearDown(); 
@@ -604,7 +604,7 @@ class DirectShowVideo : public ISampleGrabberCB{
             IPin* pinIn = 0;
             IPin* pinOut = 0;
 
-            m_pGraph->FindFilterByName(L"Video Renderer", &m_pVideoRenderer);
+            hr = m_pGraph->FindFilterByName(L"Video Renderer", &m_pVideoRenderer);
             if (FAILED(hr)){
                 printf("failed to find the video renderer\n");
                 tearDown();

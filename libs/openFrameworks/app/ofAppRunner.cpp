@@ -71,7 +71,6 @@ namespace{
 
 void ofExitCallback();
 void ofURLFileLoaderShutdown();
-void ofSetWorkingDirectoryToDefault();
 
 void ofInit(){
 	if(initialized()) return;
@@ -108,7 +107,7 @@ void ofInit(){
 
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
-	ofSetWorkingDirectoryToDefault();
+	of::priv::setWorkingDirectoryToDefault();
 
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){
