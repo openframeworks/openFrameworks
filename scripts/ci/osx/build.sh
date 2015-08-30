@@ -4,7 +4,7 @@ ROOT=${TRAVIS_BUILD_DIR:-"$( cd "$(dirname "$0")/../../.." ; pwd -P )"}
 echo "**** Building oF + emptyExample - OSX Template Project ****"
 mkdir -p $ROOT/apps/myApps
 cp -r "$ROOT/scripts/osx/template/standard" "$ROOT/apps/myApps/emptyExample"
-xcodebuild -configuration Release -target emptyExample -project "$ROOT/apps/myApps/emptyExample.xcodeproj"
+xcodebuild -configuration Release -target emptyExample -project "$ROOT/apps/myApps/emptyExample/emptyExample.xcodeproj"
 
 echo "**** Building allAddonsExample ****"
 cd $ROOT
