@@ -733,14 +733,16 @@ string ofToUpper(const string & src, const string & locale){
 //--------------------------------------------------
 string ofTrimFront(const string & src, const string& locale){
     auto dst = src;
-    dst.erase(dst.begin(),std::find_if_not(dst.begin(),dst.end(),std::ptr_fun<int, int>(std::isspace)));
+    std::locale loc = getLocale(locale);
+    dst.erase(dst.begin(),std::find_if_not(dst.begin(),dst.end(),[&](char & c){return std::isspace<char>(c,loc);}));
     return dst;
 }
 
 //--------------------------------------------------
 string ofTrimBack(const string & src, const string& locale){
     auto dst = src;
-	dst.erase(std::find_if_not(dst.rbegin(),dst.rend(),std::ptr_fun<int, int>(std::isspace)).base(), dst.end());
+    std::locale loc = getLocale(locale);
+	dst.erase(std::find_if_not(dst.rbegin(),dst.rend(),[&](char & c){return std::isspace<char>(c,loc);}).base(), dst.end());
 	return dst;
 }
 
