@@ -9,8 +9,8 @@ for group in *; do
 		for test in $group/*; do
 			if [ -d $test ]; then
 				cd $test
-				cp ../../../scripts/linux/template/linux/Makefile .
-				cp ../../../scripts/linux/template/linux/config.make .
+				cp ../../../scripts/linux/template/linux/standard/Makefile .
+				cp ../../../scripts/linux/template/linux/standard/config.make .
 				make Debug
 				make RunDebug
 			fi
