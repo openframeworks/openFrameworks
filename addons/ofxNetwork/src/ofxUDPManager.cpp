@@ -160,7 +160,9 @@ bool ofxUDPManager::ConnectMcast(char* pMcast, unsigned short usPort)
 	if (!Bind(usPort))
 	{
 #ifdef _DEBUG
+#ifdef TARGET_WIN32
 		ofLogError("ofxUDPManager") << "ConnectMcast(): couldn't bind to " << usPort<< ", err " << WSAGetLastError();
+#endif
 #endif
 		return false;
 	}
@@ -169,14 +171,18 @@ bool ofxUDPManager::ConnectMcast(char* pMcast, unsigned short usPort)
 	if (!SetTTL(1))
 	{
 #ifdef _DEBUG
+#ifdef TARGET_WIN32
 		ofLogWarning("ofxUDPManager") << "ConnectMcast(): couldn't set TTL: err " << WSAGetLastError() << ", contining anyway";
+#endif
 #endif
 	}
 
 	if (!Connect(pMcast, usPort))
 	{
 #ifdef _DEBUG
+#ifdef TARGET_WIN32
 		ofLogError("ofxUDPManager") << " ConnectMcast(): couldn't connect to socket: err " << WSAGetLastError();
+#endif
 #endif
 		return false;
 	}
@@ -516,7 +522,9 @@ int ofxUDPManager::GetTTL()
 	if (getsockopt(m_hSocket, IPPROTO_IP, IP_MULTICAST_TTL, (char FAR *) &nTTL, &nSize) == SOCKET_ERROR)
 	{
 #ifdef _DEBUG
+#ifdef TARGET_WIN32
 		ofLogError("ofxUDPManager") << "GetTTL(): getsockopt failed: err " << WSAGetLastError();
+#endif
 #endif
 		ofxNetworkCheckError();
 		return -1;
@@ -534,7 +542,9 @@ bool ofxUDPManager::SetTTL(int nTTL)
 	if (setsockopt(m_hSocket, IPPROTO_IP, IP_MULTICAST_TTL, (char FAR *)&nTTL, sizeof (int)) == SOCKET_ERROR)
 	{
 #ifdef _DEBUG
+#ifdef TARGET_WIN32
 		ofLogError("ofxUDPManager") << "SetTTL(): setsockopt failed: err " << WSAGetLastError();
+#endif
 #endif
 		ofxNetworkCheckError();
 		return false;
