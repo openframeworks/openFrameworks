@@ -15,8 +15,10 @@ function compilation_cores() {
 			if [ $sys_cores -gt 1 ]; then
 				echo $(($sys_cores-1))
 			else
-				echo ${OF_COMPILATION_CORES}
+				echo 1
 			fi
+		else
+			echo ${OF_COMPILATION_CORES}
 		fi
 	fi
 }
