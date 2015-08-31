@@ -36,16 +36,17 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
 	buttonInUse			= 0;
 	buttonPressed		= false;
     bMultiWindowFullscreen  = false;
+	bWindowNeedsShowing	= true;
 
 	orientation 		= OF_ORIENTATION_DEFAULT;
 	windowMode			= OF_WINDOW;
 
-	ofAppPtr			= NULL;
+	ofAppPtr			= nullptr;
 
     pixelScreenCoordScale = 1;
 	nFramesSinceWindowResized = 0;
 	iconSet = false;
-	windowP = NULL;
+	windowP = nullptr;
 	windowW = 0;
 	windowH = 0;
 
@@ -58,9 +59,12 @@ ofAppGLFWWindow::~ofAppGLFWWindow(){
 
 void ofAppGLFWWindow::close(){
 	if(windowP){
+		//hide the window before we destroy it stops a flicker on OS X on exit. 
+		glfwHideWindow(windowP);
 		glfwDestroyWindow(windowP);
-		windowP = NULL;
+		windowP = nullptr;
 		events().disable();
+		bWindowNeedsShowing = true;
 	}
 }
 
@@ -139,6 +143,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwWindowHint(GLFW_ALPHA_BITS, settings.alphaBits);
 	glfwWindowHint(GLFW_DEPTH_BITS, settings.depthBits);
 	glfwWindowHint(GLFW_STENCIL_BITS, settings.stencilBits);
+	glfwWindowHint(GLFW_STEREO, settings.stereo);
 	glfwWindowHint(GLFW_VISIBLE,GL_FALSE);
 #ifndef TARGET_OSX
 	glfwWindowHint(GLFW_AUX_BUFFERS,settings.doubleBuffering?1:0);
@@ -170,7 +175,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 	#endif
 
-	GLFWwindow * sharedContext = NULL;
+	GLFWwindow * sharedContext = nullptr;
 	if(settings.shareContextWith){
 		sharedContext = (GLFWwindow*)settings.shareContextWith->getWindowContext();
 	}
@@ -185,7 +190,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 			return;
 		}
 	}else{
-		windowP = glfwCreateWindow(settings.width, settings.height, "", NULL, sharedContext);
+		windowP = glfwCreateWindow(settings.width, settings.height, "", nullptr, sharedContext);
 		if(!windowP){
 			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 		}
@@ -202,9 +207,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 				setWindowIcon(iconPixels);
 			}
 		#endif
-		if(settings.visible){
-			glfwShowWindow(windowP);
-		}
 		if(settings.iconified){
 			iconify(true);
 		}
@@ -216,6 +218,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
         ofLogError("ofAppGLFWWindow") << "couldn't create window";
         return;
     }
+	
+	//don't try and show a window if its been requsted to be hidden
+	bWindowNeedsShowing = settings.visible;
 
     glfwSetWindowUserPointer(windowP,this);
 	windowMode = requestedMode;
@@ -321,6 +326,12 @@ shared_ptr<ofBaseRenderer> & ofAppGLFWWindow::renderer(){
 //--------------------------------------------
 void ofAppGLFWWindow::update(){
 	events().notifyUpdate();
+	
+	//show the window right before the first draw call.
+	if( bWindowNeedsShowing && windowP ){
+		glfwShowWindow(windowP);
+		bWindowNeedsShowing = false;
+	}
 }
 
 //--------------------------------------------
@@ -648,12 +659,6 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
 #elif defined(TARGET_OSX)
 	if( windowMode == OF_FULLSCREEN){
-        int nonFullScreenX = getWindowPosition().x;
-        int nonFullScreenY = getWindowPosition().y;
- 
-		int nonFullScreenW = getWindowSize().x;
-		int nonFullScreenH = getWindowSize().y;
- 
 		//----------------------------------------------------
 		[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
 		NSWindow * cocoaWindow = glfwGetCocoaWindow(windowP);
@@ -1123,7 +1128,7 @@ string ofAppGLFWWindow::getClipboardString() {
 //------------------------------------------------------------
 void ofAppGLFWWindow::listVideoModes(){
 	int numModes;
-	const GLFWvidmode * vidModes = glfwGetVideoModes(NULL, &numModes );
+	const GLFWvidmode * vidModes = glfwGetVideoModes(nullptr, &numModes );
 	for(int i=0; i<numModes; i++){
 		ofLogNotice() << vidModes[i].width << " x " << vidModes[i].height
 		<< vidModes[i].redBits+vidModes[i].greenBits+vidModes[i].blueBits << "bit";

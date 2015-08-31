@@ -6,14 +6,8 @@
 #include <numeric>
 #include <locale>
 
-#if defined(TARGET_OF_IOS)
-#include "Poco/String.h"
-#include "Poco/UTF8String.h"
-#include "Poco/LocalDateTime.h"
-#include "Poco/DateTimeFormatter.h"
+#if !defined(TARGET_EMSCRIPTEN)
 #include "Poco/URI.h"
-#else
-#include <network/uri.hpp>
 #endif
 
 
@@ -87,7 +81,7 @@ void ofGetMonotonicTime(uint64_t & seconds, uint64_t & nanoseconds){
 	nanoseconds = (counter.QuadPart % freq.QuadPart)*1000000000/freq.QuadPart;
 #else
 	struct timeval now;
-	gettimeofday( &now, NULL );
+	gettimeofday( &now, nullptr );
 	seconds = now.tv_sec;
 	nanoseconds = now.tv_usec * 1000;
 #endif
@@ -144,7 +138,7 @@ uint64_t ofGetSystemTimeMicros( ) {
 
 //--------------------------------------------------
 unsigned int ofGetUnixTime(){
-	return (unsigned int)time(NULL);
+	return (unsigned int)time(nullptr);
 }
 
 
@@ -185,7 +179,7 @@ string ofGetTimestampString(const string& timestampFormat){
 	// so we have to filter out %i (which is not supported by vs)
 	// earlier.
 	auto tmpTimestampFormat = timestampFormat;
-	ofStringReplace(tmpTimestampFormat, "%i", ofToString(ms));
+	ofStringReplace(tmpTimestampFormat, "%i", ofToString(ms, 3, '0'));
 	
 	if (strftime(buf,bufsize, tmpTimestampFormat.c_str(),&tm) != 0){
 		str << buf;
@@ -343,7 +337,12 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	
 	// if path is already absolute, just return it
 	if (inputPath.is_absolute()) {
-		return path;
+		try {
+			return std::filesystem::canonical(inputPath).string();
+		}
+		catch (...) {
+			return inputPath.string();
+		}
 	}
 	
 	// here we check whether path already refers to the data folder by looking for common elements
@@ -364,7 +363,12 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// finally, if we do want an absolute path and we don't already have one
 	if (makeAbsolute) {
 		// then we return the absolute form of the path
-		return std::filesystem::absolute(outputPath).string();
+		try {
+			return std::filesystem::canonical(std::filesystem::absolute(outputPath)).string();
+		}
+		catch (...) {
+			return std::filesystem::absolute(outputPath).string();
+		}
 	} else {
 		// or output the relative path
 		return outputPath.string();
@@ -389,8 +393,8 @@ template <>
 string ofToHex(const string& value) {
 	ostringstream out;
 	// how many bytes are in the string
-	int numBytes = value.size();
-	for(int i = 0; i < numBytes; i++) {
+	std::size_t numBytes = value.size();
+	for(std::size_t i = 0; i < numBytes; i++) {
 		// print each byte as a 2-character wide hex value
 		out << setfill('0') << setw(2) << hex << (unsigned int) ((unsigned char)value[i]);
 	}
@@ -445,8 +449,8 @@ string ofHexToString(const string& stringHexString) {
 	stringstream out;
 	stringstream stream(stringHexString);
 	// a hex string has two characters per byte
-	int numBytes = stringHexString.size() / 2;
-	for(int i = 0; i < numBytes; i++) {
+	std::size_t numBytes = stringHexString.size() / 2;
+	for(std::size_t i = 0; i < numBytes; i++) {
 		string curByte;
 		// grab two characters from the hex string
 		stream >> setw(2) >> curByte;
@@ -478,6 +482,14 @@ double ofToDouble(const string& doubleString) {
 }
 
 //----------------------------------------
+int64_t ofToInt64(const string& intString) {
+	int64_t x = 0;
+	istringstream cur(intString);
+	cur >> x;
+	return x;
+}
+
+//----------------------------------------
 bool ofToBool(const string& boolString) {
 	auto lower = ofToLower(boolString);
 	if(lower == "true") {
@@ -503,9 +515,9 @@ char ofToChar(const string& charString) {
 //----------------------------------------
 template <> string ofToBinary(const string& value) {
 	stringstream out;
-	int numBytes = value.size();
-	for(int i = 0; i < numBytes; i++) {
-		bitset<8> bitBuffer(value[i]);
+	std::size_t numBytes = value.size();
+	for(std::size_t i = 0; i < numBytes; i++) {
+		std::bitset<8> bitBuffer(value[i]);
 		out << bitBuffer;
 	}
 	return out.str();
@@ -521,21 +533,21 @@ string ofToBinary(const char* value) {
 //----------------------------------------
 int ofBinaryToInt(const string& value) {
 	const int intSize = sizeof(int) * 8;
-	bitset<intSize> binaryString(value);
+	std::bitset<intSize> binaryString(value);
 	return (int) binaryString.to_ulong();
 }
 
 //----------------------------------------
 char ofBinaryToChar(const string& value) {
 	const int charSize = sizeof(char) * 8;
-	bitset<charSize> binaryString(value);
+	std::bitset<charSize> binaryString(value);
 	return (char) binaryString.to_ulong();
 }
 
 //----------------------------------------
 float ofBinaryToFloat(const string& value) {
 	const int floatSize = sizeof(float) * 8;
-	bitset<floatSize> binaryString(value);
+	std::bitset<floatSize> binaryString(value);
 	union ulongFloatUnion {
 			unsigned long result;
 			float f;
@@ -547,9 +559,9 @@ float ofBinaryToFloat(const string& value) {
 string ofBinaryToString(const string& value) {
 	ostringstream out;
 	stringstream stream(value);
-	bitset<8> byteString;
-	int numBytes = value.size() / 8;
-	for(int i = 0; i < numBytes; i++) {
+	std::bitset<8> byteString;
+	std::size_t numBytes = value.size() / 8;
+	for(std::size_t i = 0; i < numBytes; i++) {
 		stream >> byteString;
 		out << (char) byteString.to_ulong();
 	}
@@ -614,7 +626,7 @@ bool ofIsStringInString(const string& haystack, const string& needle){
 }
 
 //--------------------------------------------------
-int ofStringTimesInString(const string& haystack, const string& needle){
+std::size_t ofStringTimesInString(const string& haystack, const string& needle){
 	const size_t step = needle.size();
 
 	size_t count(0);
@@ -632,30 +644,64 @@ int ofStringTimesInString(const string& haystack, const string& needle){
 ofUTF8Iterator::ofUTF8Iterator(const string & str){
 	try{
 		utf8::replace_invalid(str.begin(),str.end(),back_inserter(src_valid));
-		_begin = utf8::iterator<const char*>(&src_valid.front(), &src_valid.front(), (&src_valid.back())+1);
-		_end = utf8::iterator<const char*>((&src_valid.back())+1, &src_valid.front(), (&src_valid.back())+1);
 	}catch(...){
-		_begin = utf8::iterator<const char*>();
-		_end = utf8::iterator<const char*>();
 	}
 }
 
-utf8::iterator<const char*> ofUTF8Iterator::begin() const{
-	return _begin;
+utf8::iterator<std::string::const_iterator> ofUTF8Iterator::begin() const{
+	try {
+		return utf8::iterator<std::string::const_iterator>(src_valid.begin(), src_valid.begin(), src_valid.end());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_iterator>();
+	}
 }
 
-utf8::iterator<const char*> ofUTF8Iterator::end() const{
-	return _end;
+utf8::iterator<std::string::const_iterator> ofUTF8Iterator::end() const{
+	try {
+		return utf8::iterator<std::string::const_iterator>(src_valid.end(), src_valid.begin(), src_valid.end());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_iterator>();
+	}
+}
+
+utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rbegin() const {
+	try {
+		return utf8::iterator<std::string::const_reverse_iterator>(src_valid.rbegin(), src_valid.rbegin(), src_valid.rend());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_reverse_iterator>();
+	}
+}
+
+utf8::iterator<std::string::const_reverse_iterator> ofUTF8Iterator::rend() const {
+	try {
+		return utf8::iterator<std::string::const_reverse_iterator>(src_valid.rbegin(), src_valid.rbegin(), src_valid.rend());
+	}
+	catch (...) {
+		return utf8::iterator<std::string::const_reverse_iterator>();
+	}
+}
+
+
+//--------------------------------------------------
+// helper method to get locale from name
+static std::locale getLocale(const string & locale) {
+	std::locale loc;
+	try {
+		loc = std::locale(locale.c_str());
+	}
+	catch (...) {
+		ofLogWarning("ofUtils") << "Couldn't create locale " << locale << " using default, " << loc.name();
+	}
+	return loc;
 }
 
 //--------------------------------------------------
 string ofToLower(const string & src, const string & locale){
 	std::string dst;
-	std::locale loc;
-	try{
-		loc = std::locale(locale.c_str());
-	}catch(...){
-	}
+	std::locale loc = getLocale(locale);
 	try{
 		for(auto c: ofUTF8Iterator(src)){
 			utf8::append(std::tolower<wchar_t>(c, loc), back_inserter(dst));
@@ -668,11 +714,7 @@ string ofToLower(const string & src, const string & locale){
 //--------------------------------------------------
 string ofToUpper(const string & src, const string & locale){
 	std::string dst;
-	std::locale loc;
-	try{
-		loc = std::locale(locale.c_str());
-	}catch(...){
-	}
+	std::locale loc = getLocale(locale);
 	try{
 		for(auto c: ofUTF8Iterator(src)){
 			utf8::append(std::toupper<wchar_t>(c, loc), back_inserter(dst));
@@ -682,22 +724,32 @@ string ofToUpper(const string & src, const string & locale){
 	return dst;
 }
 
-string ofTrimFront(const string & src){
-	auto front = std::find_if_not(src.begin(),src.end(),[](int c){return std::isspace(c);});
-	return std::string(front,src.end());
+//--------------------------------------------------
+string ofTrimFront(const string & src, const string& locale){
+	std::locale loc = getLocale(locale);
+	auto it = ofUTF8Iterator(src);
+	auto front = std::find_if_not(it.begin(),it.end(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);});
+	return std::string(front,it.end());
 }
 
-string ofTrimBack(const string & src){
-	auto back = std::find_if_not(src.rbegin(),src.rend(),[](int c){return std::isspace(c);}).base();
-	return std::string(src.begin(),back);
+//--------------------------------------------------
+string ofTrimBack(const string & src, const string& locale){
+	std::locale loc = getLocale(locale);
+	auto it = ofUTF8Iterator(src);
+	auto back = std::find_if_not(it.rbegin(),it.rend(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base().base();
+	return std::string(it.begin().base(),back);
 }
 
-string ofTrim(const string & src){
-	auto front = std::find_if_not(src.begin(),src.end(),[](int c){return std::isspace(c);});
-	auto back = std::find_if_not(src.rbegin(),src.rend(),[](int c){return std::isspace(c);}).base();
+//--------------------------------------------------
+string ofTrim(const string & src, const string& locale){
+	std::locale loc = getLocale(locale);
+	auto it = ofUTF8Iterator(src);
+	auto front = std::find_if_not(it.begin(),it.end(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base();
+	auto back = std::find_if_not(it.rbegin(), it.rend(),[&loc](uint32_t c){return std::isspace<wchar_t>(c,loc);}).base().base();
 	return (back<=front ? std::string() : std::string(front,back));
 }
 
+//--------------------------------------------------
 void ofAppendUTF8(string & str, int utf8){
 	try{
 		utf8::append(utf8, back_inserter(str));
@@ -710,14 +762,14 @@ string ofVAArgsToString(const char * format, ...){
 	// http://www.codeproject.com/KB/string/string_format.aspx
 	char aux_buffer[10000];
 	string retStr("");
-	if (NULL != format){
+	if (nullptr != format){
 
 		va_list marker;
 
 		// initialize variable arguments
 		va_start(marker, format);
 
-		// Get formatted string length adding one for NULL
+		// Get formatted string length adding one for nullptr
 		size_t len = vsprintf(aux_buffer, format, marker) + 1;
 
 		// Reset variable arguments
@@ -746,9 +798,9 @@ string ofVAArgsToString(const char * format, va_list args){
 	// http://www.codeproject.com/KB/string/string_format.aspx
 	char aux_buffer[10000];
 	string retStr("");
-	if (NULL != format){
+	if (nullptr != format){
 
-		// Get formatted string length adding one for NULL
+		// Get formatted string length adding one for nullptr
 		vsprintf(aux_buffer, format, args);
 		retStr = aux_buffer;
 
@@ -756,16 +808,14 @@ string ofVAArgsToString(const char * format, va_list args){
 	return retStr;
 }
 
+#ifndef TARGET_EMSCRIPTEN
 //--------------------------------------------------
 void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
-	
-	
-#if defined(TARGET_OF_IOS)
 	Poco::URI uri;
 	try {
 		uri = Poco::URI(url);
-	} catch(const Poco::SyntaxException& exc) {
-		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.displayText();
+	} catch(const std::exception & exc) {
+		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
 		return;
 	}
 	
@@ -781,54 +831,15 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.toString() << "\"";
 		return;
 	}
-#else
-    network::uri uri;
-	
-    try {
-        if(uriEncodeQuery) {
-        	auto pos_q = url.find("?");
-        	if(pos_q!=std::string::npos){
-				std::string encoded;
-				network::uri::encode_query(url.begin() + pos_q + 1, url.end(), std::back_inserter(encoded));
-				cout << encoded << endl;
-				uri = network::uri_builder(network::uri(url.begin(), url.begin() + pos_q))
-					.query(encoded)
-					.uri();
-        	}else{
-                uri = network::uri(url);
-        	}
-        }else{
-            uri = network::uri(url);
-        }
-    } catch(const std::exception& exc) {
-        ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
-        return;
-    }
-        
-	// http://support.microsoft.com/kb/224816
-	// make sure it is a properly formatted url:
-	//   some platforms, like Android, require urls to start with lower-case http/https
-    //   Poco::URI automatically converts the scheme to lower case
-	if(uri.scheme() != boost::none && uri.scheme().get() != "http" && uri.scheme().get() != "https"){
-		ofLogError("ofUtils") << "ofLaunchBrowser(): url does not begin with http:// or https://: \"" << uri.string() << "\"";
-		return;
-	}
-#endif
 
 	#ifdef TARGET_WIN32
-		#if (_MSC_VER)
-		// microsoft visual studio yaks about strings, wide chars, unicode, etc
-		ShellExecuteA(NULL, "open", uri.string().c_str(),
-                NULL, NULL, SW_SHOWNORMAL);
-		#else
-		ShellExecute(NULL, "open", uri.string().c_str(),
-                NULL, NULL, SW_SHOWNORMAL);
-		#endif
+		ShellExecuteA(nullptr, "open", uri.toString().c_str(),
+                nullptr, nullptr, SW_SHOWNORMAL);
 	#endif
 
 	#ifdef TARGET_OSX
         // could also do with LSOpenCFURLRef
-		string commandStr = "open \"" + uri.string() + "\"";
+		string commandStr = "open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
         if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -836,8 +847,7 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_LINUX
-        cout << uri.string() << endl;
-		string commandStr = "xdg-open \"" + uri.string() + "\"";
+		string commandStr = "xdg-open \"" + uri.toString() + "\"";
 		int ret = system(commandStr.c_str());
 		if(ret!=0) {
 			ofLogError("ofUtils") << "ofLaunchBrowser(): couldn't open browser, commandStr \"" << commandStr << "\"";
@@ -845,13 +855,14 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 	#endif
 
 	#ifdef TARGET_OF_IOS
-		ofxiOSLaunchBrowser(url);
+		ofxiOSLaunchBrowser(uri.toString());
 	#endif
 
 	#ifdef TARGET_ANDROID
-		ofxAndroidLaunchBrowser(url);
+		ofxAndroidLaunchBrowser(uri.toString());
 	#endif
 }
+#endif
 
 //--------------------------------------------------
 string ofGetVersionInfo(){
@@ -926,7 +937,7 @@ void ofSaveFrame(bool bUseViewport){
 
 //--------------------------------------------------
 string ofSystem(const string& command){
-	FILE * ret = NULL;
+	FILE * ret = nullptr;
 #ifdef TARGET_WIN32
 	ret = _popen(command.c_str(),"r");
 #else 
@@ -936,7 +947,7 @@ string ofSystem(const string& command){
 	string strret;
 	int c;
 
-	if (ret == NULL){
+	if (ret == nullptr){
 		ofLogError("ofUtils") << "ofSystem(): error opening return file for command \"" << command  << "\"";
 	}else{
 		c = fgetc (ret);

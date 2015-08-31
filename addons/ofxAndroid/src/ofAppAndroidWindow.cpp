@@ -38,7 +38,7 @@ static ofAppAndroidWindow * window;
 static ofOrientation orientation = OF_ORIENTATION_DEFAULT;
 
 static queue<ofTouchEventArgs> touchEventArgsQueue;
-static ofMutex mtx;
+static std::mutex mtx;
 static bool threadedTouchEvents = false;
 static bool appSetup = false;
 static bool accumulateTouchEvents = false;

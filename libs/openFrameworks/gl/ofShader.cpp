@@ -11,35 +11,7 @@
 #include "ofVec4f.h"
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
-
-#if HAS_CPP11
-	#include <regex>
-#else
-	#include "Poco/RegularExpression.h"
-	namespace std{
-		typedef Poco::RegularExpression regex;
-		class regmatch{
-			string str;
-		public:
-			regmatch(const string & str, Poco::RegularExpression::Match pocomatch)
-			:str(str.substr(pocomatch.offset, pocomatch.length)){}
-
-			operator string() const{
-				return str;
-			}
-		};
-		typedef vector<regmatch> smatch;
-		bool regex_match(const string & str, smatch & matches, const regex & re){
-			Poco::RegularExpression::MatchVec pocomatches;
-			auto ret = re.match( str, 0, pocomatches );
-			matches.clear();
-			for(const auto & m: pocomatches){
-				matches.push_back(regmatch(str,m));
-			}
-			return ret;
-		}
-	}
-#endif
+#include <regex>
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
@@ -264,18 +236,55 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 	stringstream output;
 	stringstream input;
 	input << source;
+
+	auto match_pragma_include = [](const std::string& s_, std::string& filename_) -> bool {
+		filename_ = "";
+		std::istringstream s(s_);
+		s >> std::ws; // eat up any leading whitespace.
+		
+		if (s.peek() != '#') return false;
+		// -----| invariant: found '#'
+		s.seekg(1, std::ios::cur); // move forward one character
+		
+		std::string p, i, f;
+		
+		// while skipping whitespace, read in tokens for: pragma, include, and filename
+		s >> std::skipws >> p >> i >> f;
+		
+		if (p.empty() || i.empty() || (f.size() < 2) ) return false;
+		// -----| invariant: all tokens have values
+		
+		if (p != "pragma") return false;
+		if (i != "include") return false;
+		
+		// first and last character of filename token must match and be either
+		// '<' and '>', or '"
+		
+		if (f[0] == '<' && f[f.size()-1] != '>') return false; //< mismatching brackets
+		
+		if ((f[0] == '"' || f[0] == '\'') && (f[0] != f[f.size()-1])) return false; // mismatching quotes
+		
+		// invariant: filename properly quoted.
+		
+		filename_ = f.substr(1,f.size()-2);
+		
+		return true;
+	};
 	
-	std::regex re("^\\s*#\\s*pragma\\s+include\\s+[\"<](.*)[\">].*");
-	std::smatch matches;
+	// once std::regex is available across the board, use this regex in favour of the above lambda:
+	// std::regex re("^\\s*#\\s*pragma\\s+include\\s+[\"<](.*)[\">].*");
+	
 	string line;
 	while( std::getline( input, line ) ) {
-		std::regex_match( line, matches, re );
-		if ( matches.size() < 2 ) {
+
+		string include;
+		
+		if (!match_pragma_include(line, include)){
 			output << line << endl;
 			continue;
-		}
+		};
 		
-		string include = matches[1];
+		// --------| invariant: '#pragma include' has been requested
 		
 		if ( std::find( included.begin(), included.end(), include ) != included.end() ) {
 			ofLogVerbose("ofShader") << include << " already included";
@@ -286,7 +295,6 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 		
 		include = ofFile(ofFilePath::join(sourceDirectoryPath, include)).getAbsolutePath();
 		included.push_back( include );
-		
 		
 		ofBuffer buffer = ofBufferFromFile( include );
 		if ( !buffer.size() ) {
@@ -374,13 +382,14 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
 		ofLog(logLevel, "ofShader: %s shader reports:\n%s", nameForType(type).c_str(), infoBuffer);
+#if (!defined(TARGET_LINUX) || defined(GCC_HAS_REGEX))
 		if (shaderSource.find(type) != shaderSource.end()) {
 			// The following regexp should match shader compiler error messages by Nvidia and ATI.
 			// Unfortunately, each vendor's driver formats error messages slightly different.
 			std::regex nvidia_ati("^.*[(:]{1}(\\d+)[:)]{1}.*");
 			std::regex intel("^[0-9]+:([0-9]+)\\([0-9]+\\):.*$");
 			std::smatch matches;
-			string infoString = (infoBuffer != NULL) ? ofTrim(infoBuffer): "";
+			string infoString = (infoBuffer != nullptr) ? ofTrim(infoBuffer): "";
 			if (std::regex_search(infoString, matches, intel) || std::regex_search(infoString, matches, nvidia_ati)){
 				ofBuffer buf = shaderSource[type];
 				ofBuffer::Line line = buf.getLines().begin();
@@ -398,6 +407,15 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 				ofLog(logLevel) << shaderSource[type];
 			}
 		}
+#else
+		// Raspberry pi gcc is assumed to be < 4.9, which does not support std::regex.
+		// see: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53631
+		// Also, it appears that RPi only reports shader errors whilst linking, so
+		// the check here might be superfluous.
+		if (shaderSource.find(type) != shaderSource.end()) {
+			ofLog(logLevel) << shaderSource[type];
+		}
+#endif
 		delete [] infoBuffer;
 	}
 }
@@ -409,29 +427,13 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 	if (infoLength > 1) {
 		GLchar* infoBuffer = new GLchar[infoLength];
 		glGetProgramInfoLog(program, infoLength, &infoLength, infoBuffer);
+		// TODO: it appears that Raspberry Pi only reports shader errors whilst linking,
+		// but then it becomes hard to figure out whether the fragment or the
+		// vertex shader caused the error.
+		// We need to find a robust way of extracing this information from
+		// the log, and unfortunately can't use regex whilst gcc on RPi is assumed to
+		// be < 4.9, which is the first version fully supporting this c++11 feature.
 		string msg = "ofShader: program reports:\n";
-#ifdef TARGET_RASPBERRYPI
-		if (shaderSource.find(GL_FRAGMENT_SHADER) != shaderSource.end()) {
-			std::regex re(",.line.([^\\)]*)");
-			std::smatch matches;
-			string infoString = (infoBuffer != NULL) ? string(infoBuffer): "";
-			std::regex_match(infoString, matches, re);
-			ofBuffer buf = shaderSource[GL_FRAGMENT_SHADER];
-			ofBuffer::Line line = buf.getLines().begin();
-			if (!matches.empty()){
-			int  offendingLineNumber = ofToInt(infoString.substr(matches[1].offset, matches[1].length));
-				ostringstream msg;
-				msg << "ofShader: " + nameForType(GL_FRAGMENT_SHADER) + ", offending line " << offendingLineNumber << " :"<< endl;
-				for(int i=0; line != buf.getLines().end(); line++, i++ ){
-					string s = *line;
-					if ( i >= offendingLineNumber -3 && i < offendingLineNumber + 2 ){
-						msg << "\t" << setw(5) << (i+1) << "\t" << s << endl;
-					}
-				}
-				ofLogError("ofShader") << msg.str();
-			}
-		}
-#endif
 		ofLogError("ofShader", msg + infoBuffer);
 		delete [] infoBuffer;
 	}
@@ -730,7 +732,7 @@ void ofShader::setUniform4fv(const string & name, const float* v, int count)  co
 
 //--------------------------------------------------------------
 void ofShader::setUniforms(const ofParameterGroup & parameters) const{
-	for(int i=0;i<parameters.size();i++){
+	for(std::size_t i=0;i<parameters.size();i++){
 		if(parameters[i].type()==typeid(ofParameter<int>).name()){
 			setUniform1i(parameters[i].getEscapedName(),parameters[i].cast<int>());
 		}else if(parameters[i].type()==typeid(ofParameter<float>).name()){

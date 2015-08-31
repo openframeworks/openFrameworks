@@ -122,15 +122,15 @@ void ofApp::draw(){
 
 		//draw a red circle
 		ofSetColor(255,0, 0);
-		ofCircle(-50, -25, 100);
+		ofDrawCircle(-50, -25, 100);
 
 		//draw a green circle
 		ofSetColor(0,255, 0);
-		ofCircle(50, -25, 100);
+		ofDrawCircle(50, -25, 100);
 
 		//draw a blue circle
 		ofSetColor(0, 0, 255);
-		ofCircle(0, 57, 100);
+		ofDrawCircle(0, 57, 100);
 	ofPopMatrix();
 
 

@@ -48,13 +48,15 @@ function prepare() {
 		git reset --hard $SHA
 	fi
 	
-	# manually prepare dependencies
-	apothecaryDependencies download
-	apothecaryDependencies prepare
+	if [ "$TYPE" != "win_cb" ] && [ "$TYPE" != "linux" ]; then
+		# manually prepare dependencies
+		apothecaryDependencies download
+		apothecaryDependencies prepare
 
-	# Build and copy all dependencies in preparation
-	apothecaryDepend build openssl
-	apothecaryDepend copy openssl
+		# Build and copy all dependencies in preparation
+		apothecaryDepend build openssl
+		apothecaryDepend copy openssl
+	fi
 
 	# make backups of the ios config files since we need to edit them
 	if [ "$TYPE" == "ios" ] ; then
@@ -112,6 +114,13 @@ function prepare() {
 		sed -i.tmp "s|%OPENSSL_DIR%\\\lib;.*|%OPENSSL_DIR%\\\lib\\\vs|g" buildwin.cmd
 	elif [ "$TYPE" == "android" ] ; then
 		installAndroidToolchain
+		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/android.patch 2>/dev/null ; then
+			patch -p0 -u < $FORMULA_DIR/android.patch
+		fi
+		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/android.config.patch 2>/dev/null ; then
+			patch -p0 -u < $FORMULA_DIR/android.config.patch
+		fi
+
 	fi
 
 }
@@ -211,26 +220,17 @@ function build() {
 			cmd //c buildwin.cmd ${VS_VER}0 build static_md both x64 nosamples notests
 		fi
 	elif [ "$TYPE" == "win_cb" ] ; then
-		local BUILD_OPTS="--no-tests --no-samples --static --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
-
-		# Locate the path of the openssl libs distributed with openFrameworks.
-		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
-
-		# get the absolute path to the included openssl libs
-		local OF_LIBS_OPENSSL_ABS_PATH=$(cd $(dirname $OF_LIBS_OPENSSL); pwd)/$(basename $OF_LIBS_OPENSSL)
-
-		local OPENSSL_INCLUDE=$OF_LIBS_OPENSSL_ABS_PATH/include
-		local OPENSSL_LIBS=$OF_LIBS_OPENSSL_ABS_PATH/lib/win_cb
+	    cp $FORMULA_DIR/MinGWConfig64 build/config/MinGW
+		local BUILD_OPTS="--no-tests --no-samples --static  --no-sharedlibs --omit=CppUnit,CppUnit/WinTestRunner,Data/MySQL,Data/ODBC,PageCompiler,PageCompiler/File2Page,CppParser,PDF,PocoDoc,ProGen"
 
 		./configure $BUILD_OPTS \
-					--include-path=$OPENSSL_INCLUDE \
-					--library-path=$OPENSSL_LIBS \
 					--config=MinGW
 
 		make -j${PARALLEL_MAKE}
 
 		# Delete debug libs.
-		lib/MinGW/i686/*d.a
+		rm -f lib/MinGW/i686/*d.a
+		rm -f lib/MinGW/x86_64/*d.a
 
 	elif [ "$TYPE" == "ios" ] ; then
 
@@ -404,7 +404,7 @@ function build() {
 
 		local OLD_PATH=$PATH
 
-		export PATH=$PATH:$BUILD_DIR/Toolchains/Android/androideabi/bin:$BUILD_DIR/Toolchains/Android/x86/bin
+		export PATH=$PATH:$BUILD_DIR/Toolchains/Android/arm/bin:$BUILD_DIR/Toolchains/Android/x86/bin
 
 		local OF_LIBS_OPENSSL="$LIBS_DIR/openssl/"
 
@@ -418,28 +418,20 @@ function build() {
 
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
-					--library-path=$OPENSSL_LIBS/armeabi \
-					--config=Android
-
-		make ANDROID_ABI=armeabi
-
-		./configure $BUILD_OPTS \
-					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/armeabi-v7a \
 					--config=Android
-
+        make clean ANDROID_ABI=armeabi-v7a
 		make -j${PARALLEL_MAKE} ANDROID_ABI=armeabi-v7a
-
+		
 		./configure $BUILD_OPTS \
 					--include-path=$OPENSSL_INCLUDE \
 					--library-path=$OPENSSL_LIBS/x86 \
 					--config=Android
-
+        make clean ANDROID_ABI=x86
 		make -j${PARALLEL_MAKE} ANDROID_ABI=x86
 
 		echo `pwd`
 
-		rm -v lib/Android/armeabi/*d.a
 		rm -v lib/Android/armeabi-v7a/*d.a
 		rm -v lib/Android/x86/*d.a
 
@@ -493,7 +485,8 @@ function copy() {
 		
 	elif [ "$TYPE" == "win_cb" ] ; then
 		mkdir -p $1/lib/$TYPE
-		cp -v lib/MinGW/i686/*.a $1/lib/$TYPE
+		cp -vf lib/MinGW/i686/*.a $1/lib/$TYPE
+		#cp -vf lib/MinGW/x86_64/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "linux" ] ; then
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/$(uname -m)/*.a $1/lib/$TYPE
@@ -507,9 +500,6 @@ function copy() {
 		mkdir -p $1/lib/$TYPE
 		cp -v lib/Linux/armv7l/*.a $1/lib/$TYPE
 	elif [ "$TYPE" == "android" ] ; then
-		mkdir -p $1/lib/$TYPE/armeabi
-		cp -v lib/Android/armeabi/*.a $1/lib/$TYPE/armeabi
-
 		mkdir -p $1/lib/$TYPE/armeabi-v7a
 		cp -v lib/Android/armeabi-v7a/*.a $1/lib/$TYPE/armeabi-v7a
 

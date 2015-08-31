@@ -23,8 +23,19 @@ fi
 WHO=`who am i`;ID=`echo ${WHO%% *}`
 GROUP_ID=`id --group -n ${ID}`
 
-cd ../../libs/openFrameworksCompiled/project
+pushd `dirname $0` > /dev/null
+SCRIPTPATH=`pwd`
+popd > /dev/null
 
+BUILD="install"
+while getopts t opt ; do
+	case "$opt" in
+		t) # testing, only build Debug
+		   BUILD="test" ;;
+	esac
+done
+
+cd ${SCRIPTPATH}/../../libs/openFrameworksCompiled/project
 make -j`compilation_cores` Debug
 exit_code=$?
 if [ $exit_code != 0 ]; then
@@ -34,13 +45,15 @@ if [ $exit_code != 0 ]; then
   exit $exit_code
 fi
 
-make -j`compilation_cores` Release
-exit_code=$?
-if [ $exit_code != 0 ]; then
-  echo "there has been a problem compiling Release OF library"
-  echo "please report this problem in the forums"
-  chown -R $ID:$GROUP_ID ../lib/*
-  exit $exit_code
+if [ "$BUILD" == "install" ]; then
+    make -j`compilation_cores` Release
+    exit_code=$?
+    if [ $exit_code != 0 ]; then
+      echo "there has been a problem compiling Release OF library"
+      echo "please report this problem in the forums"
+      chown -R $ID:$GROUP_ID ../lib/*
+      exit $exit_code
+    fi
 fi
 
 chown -R $ID:$GROUP_ID ../lib/*

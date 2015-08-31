@@ -5,7 +5,7 @@
 #include "of3dGraphics.h"
 
 ofNode::ofNode()
-:parent(NULL)
+:parent(nullptr)
 ,legacyCustomDrawOverrided(true){
 	setPosition(ofVec3f(0, 0, 0));
 	setOrientation(ofVec3f(0, 0, 0));
@@ -15,22 +15,22 @@ ofNode::ofNode()
 //----------------------------------------
 void ofNode::setParent(ofNode& parent, bool bMaintainGlobalTransform) {
     if(bMaintainGlobalTransform) {
-        ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
-        this->parent = &parent;
-        setTransformMatrix(globalTransform);
-    } else {
-        this->parent = &parent;
-    }
+		ofMatrix4x4 postParentGlobalTransform = getGlobalTransformMatrix() * parent.getGlobalTransformMatrix().getInverse();
+		this->parent = &parent;
+		setTransformMatrix(postParentGlobalTransform);
+	} else {
+		this->parent = &parent;
+	}
 }
 
 //----------------------------------------
 void ofNode::clearParent(bool bMaintainGlobalTransform) {
     if(bMaintainGlobalTransform) {
         ofMatrix4x4 globalTransform(getGlobalTransformMatrix());
-        this->parent = NULL;
+        this->parent = nullptr;
         setTransformMatrix(globalTransform);
     } else {
-        this->parent = NULL;
+        this->parent = nullptr;
     }
 }
 
@@ -71,7 +71,7 @@ void ofNode::setGlobalPosition(float px, float py, float pz) {
 
 //----------------------------------------
 void ofNode::setGlobalPosition(const ofVec3f& p) {
-	if(parent == NULL) {
+	if(parent == nullptr) {
 		setPosition(p);
 	} else {
 		setPosition(p * ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix()));
@@ -112,7 +112,7 @@ void ofNode::setOrientation(const ofVec3f& eulerAngles) {
 
 //----------------------------------------
 void ofNode::setGlobalOrientation(const ofQuaternion& q) {
-	if(parent == NULL) {
+	if(parent == nullptr) {
 		setOrientation(q);
 	} else {
 		ofMatrix4x4 invParent(ofMatrix4x4::getInverseOf(parent->getGlobalTransformMatrix()));
@@ -333,16 +333,13 @@ ofVec3f ofNode::getGlobalScale() const {
 
 //----------------------------------------
 void ofNode::orbit(float longitude, float latitude, float radius, const ofVec3f& centerPoint) {
-	ofMatrix4x4 m;
-
-	// find position
-	ofVec3f p(0, 0, radius);
-	p.rotate(ofClamp(latitude, -89, 89), ofVec3f(1, 0, 0));
-	p.rotate(longitude, ofVec3f(0, 1, 0));
-	p += centerPoint;
-	setPosition(p);
 	
-	lookAt(centerPoint);//, v - centerPoint);
+	ofQuaternion q(latitude, ofVec3f(1,0,0), longitude, ofVec3f(0,1,0), 0, ofVec3f(0,0,1));
+	setPosition((ofVec3f(0,0,radius)-centerPoint)*q +centerPoint);
+	setOrientation(q);
+	onOrientationChanged();
+	onPositionChanged();
+//	lookAt(centerPoint);//, v - centerPoint);
 }
 
 //----------------------------------------
@@ -377,7 +374,7 @@ void ofNode::customDraw(){
 
 //----------------------------------------
 void ofNode::transformGL(ofBaseRenderer * renderer) const {
-	if( renderer == NULL ) {
+	if( renderer == nullptr ) {
 		renderer = ofGetCurrentRenderer().get();
 	}
 	renderer->pushMatrix();
@@ -386,7 +383,7 @@ void ofNode::transformGL(ofBaseRenderer * renderer) const {
 
 //----------------------------------------
 void ofNode::restoreTransformGL(ofBaseRenderer * renderer) const {
-	if( renderer == NULL ) {
+	if( renderer == nullptr ) {
 		renderer = ofGetCurrentRenderer().get();
 	}
 	renderer->popMatrix();

@@ -1,0 +1,144 @@
+From 5af357ae531632a4ea4991863f4ba77c3366eda2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jukka=20Jyl=C3=A4nki?= <jujjyl@gmail.com>
+Date: Thu, 19 Sep 2013 13:45:29 +0300
+Subject: [PATCH] Fix function pointer signature cast mismatches that affect
+ compiling FreeType to Emscripten asm.js target. See
+ https://groups.google.com/forum/#!topic/emscripten-discuss/rLphBQHFs6o and
+ https://github.com/kripken/emscripten/pull/1104 for more information on this
+ topic.
+
+---
+ src/autofit/afdummy.c |  4 +++-
+ src/autofit/aftypes.h |  2 +-
+ src/cid/cidload.c     | 28 +++++++++++++---------------
+ 3 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/src/autofit/afdummy.c b/src/autofit/afdummy.c
+index 03ca25f..26e19e9 100644
+--- a/src/autofit/afdummy.c
++++ b/src/autofit/afdummy.c
+@@ -39,10 +39,12 @@
+ 
+   static FT_Error
+   af_dummy_hints_apply( AF_GlyphHints  hints,
+-                        FT_Outline*    outline )
++                        FT_Outline*    outline,
++                        AF_StyleMetrics  metrics )
+   {
+     FT_Error  error;
+ 
++    FT_UNUSED(metrics);
+ 
+     error = af_glyph_hints_reload( hints, outline );
+     if ( !error )
+diff --git a/src/autofit/aftypes.h b/src/autofit/aftypes.h
+index 78e3fd7..6fd61e0 100644
+--- a/src/autofit/aftypes.h
++++ b/src/autofit/aftypes.h
+@@ -214,7 +214,7 @@ extern void*  _af_debug_hints;
+   (*AF_WritingSystem_InitHintsFunc)( AF_GlyphHints    hints,
+                                      AF_StyleMetrics  metrics );
+ 
+-  typedef void
++  typedef FT_Error
+   (*AF_WritingSystem_ApplyHintsFunc)( AF_GlyphHints    hints,
+                                       FT_Outline*      outline,
+                                       AF_StyleMetrics  metrics );
+diff --git a/src/cid/cidload.c b/src/cid/cidload.c
+index 6f35860..51341c9 100644
+--- a/src/cid/cidload.c
++++ b/src/cid/cidload.c
+@@ -146,7 +146,7 @@
+   }
+ 
+ 
+-  FT_CALLBACK_DEF( FT_Error )
++  FT_CALLBACK_DEF( void )
+   cid_parse_font_matrix( CID_Face     face,
+                          CID_Parser*  parser )
+   {
+@@ -170,14 +170,18 @@
+       result = cid_parser_to_fixed_array( parser, 6, temp, 3 );
+ 
+       if ( result < 6 )
+-        return FT_THROW( Invalid_File_Format );
++      {
++        FT_THROW( Invalid_File_Format );
++        return;
++      }
+ 
+       temp_scale = FT_ABS( temp[3] );
+ 
+       if ( temp_scale == 0 )
+       {
+         FT_ERROR(( "cid_parse_font_matrix: invalid font matrix\n" ));
+-        return FT_THROW( Invalid_File_Format );
++        FT_THROW( Invalid_File_Format );
++        return;
+       }
+ 
+       /* Set Units per EM based on FontMatrix values.  We set the value to */
+@@ -206,12 +210,10 @@
+       offset->x  = temp[4] >> 16;
+       offset->y  = temp[5] >> 16;
+     }
+-
+-    return FT_Err_Ok;
+   }
+ 
+ 
+-  FT_CALLBACK_DEF( FT_Error )
++  FT_CALLBACK_DEF( void )
+   parse_fd_array( CID_Face     face,
+                   CID_Parser*  parser )
+   {
+@@ -225,8 +227,8 @@
+     if ( num_dicts < 0 )
+     {
+       FT_ERROR(( "parse_fd_array: invalid number of dictionaries\n" ));
+-      error = FT_THROW( Invalid_File_Format );
+-      goto Exit;
++      FT_THROW( Invalid_File_Format );
++      return;
+     }
+ 
+     if ( !cid->font_dicts )
+@@ -235,7 +237,7 @@
+ 
+ 
+       if ( FT_NEW_ARRAY( cid->font_dicts, num_dicts ) )
+-        goto Exit;
++        return;
+ 
+       cid->num_dicts = num_dicts;
+ 
+@@ -249,9 +251,7 @@
+         dict->private_dict.lenIV = 4;
+       }
+     }
+-
+-  Exit:
+-    return error;
++    FT_UNUSED(error);
+   }
+ 
+ 
+@@ -259,7 +259,7 @@
+   /* and CID_FaceDictRec (both are public header files and can't  */
+   /* changed); we simply copy the value                           */
+ 
+-  FT_CALLBACK_DEF( FT_Error )
++  FT_CALLBACK_DEF( void )
+   parse_expansion_factor( CID_Face     face,
+                           CID_Parser*  parser )
+   {
+@@ -273,8 +273,6 @@
+       dict->expansion_factor              = cid_parser_to_fixed( parser, 0 );
+       dict->private_dict.expansion_factor = dict->expansion_factor;
+     }
+-
+-    return FT_Err_Ok;
+   }
+ 
+ 
+

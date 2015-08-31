@@ -253,8 +253,8 @@ public:
 
 	/// \brief Get number of bits per pixel
 	///
-	/// If you have RGB pixel data, this will return 3, if you have RGBA,
-	/// you'll have 4, if you have grayscale, this will return 1.
+	/// If you have RGB pixel data, this will return 24, if you have RGBA,
+	/// you'll have 32, if you have grayscale, this will return 8.
 	int getBitsPerPixel() const;
 	
 	/// \brief Get how large each channel of a pixel is
@@ -515,9 +515,11 @@ public:
 
 	Line getLine(int line);
 	Lines getLines();
+    Lines getLines(int first, int numLines);
 	Pixels getPixelsIter();
 	ConstLine getConstLine(int line) const;
 	ConstLines getConstLines() const;
+	ConstLines getConstLines(int first, int numLines);
 	ConstPixels getConstPixelsIter() const;
 
     /// \endcond
@@ -565,7 +567,7 @@ ofPixels_<PixelType>::ofPixels_(const ofPixels_<SrcType> & mom){
 	bAllocated = false;
 	pixelsOwner = false;
 	pixelsSize = 0;
-	pixels = NULL;
+	pixels = nullptr;
 	width = 0;
 	height = 0;
 	pixelFormat = OF_PIXELS_UNKNOWN;
@@ -959,7 +961,7 @@ inline int ofPixels_<PixelType>::Line::getLineNum() const{
 template<typename PixelType>
 inline ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels(){
 	ofPixels_<PixelType> pixels;
-	pixels.setFromExternalPixels(_begin,stride,pixelFormat,1);
+	pixels.setFromExternalPixels(_begin,stride,1,pixelFormat);
 	return pixels;
 }
 
@@ -967,7 +969,7 @@ inline ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels(){
 template<typename PixelType>
 inline const ofPixels_<PixelType> ofPixels_<PixelType>::Line::asPixels() const{
 	ofPixels_<PixelType> pixels;
-	pixels.setFromExternalPixels(_begin,stride,pixelFormat,1);
+	pixels.setFromExternalPixels(_begin,stride,1,pixelFormat);
 	return pixels;
 }
 
@@ -1020,8 +1022,14 @@ inline typename ofPixels_<PixelType>::Lines ofPixels_<PixelType>::getLines(){
 
 //----------------------------------------------------------------------
 template<typename PixelType>
+inline typename ofPixels_<PixelType>::Lines ofPixels_<PixelType>::getLines(int first, int numLines){
+    return Lines(getLine(first).begin(),getLine(first+numLines).begin(),width*getNumChannels(),getNumChannels(),numLines,pixelFormat);
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
 inline typename ofPixels_<PixelType>::Pixels ofPixels_<PixelType>::getPixelsIter(){
-	return Pixels(begin(),end(),getNumChannels(),pixelFormat);
+	return Pixels(begin(),end()-getNumChannels(),getNumChannels(),pixelFormat);
 }
 
 //----------------------------------------------------------------------
@@ -1311,6 +1319,12 @@ inline typename ofPixels_<PixelType>::ConstLine ofPixels_<PixelType>::getConstLi
 template<typename PixelType>
 inline typename ofPixels_<PixelType>::ConstLines ofPixels_<PixelType>::getConstLines() const{
 	return ConstLines(begin(),end(),width*getNumChannels(),getNumChannels(),getHeight(),pixelFormat);
+}
+
+//----------------------------------------------------------------------
+template<typename PixelType>
+inline typename ofPixels_<PixelType>::ConstLines ofPixels_<PixelType>::getConstLines(int first, int numLines){
+    return ConstLines(getConstLine(first).begin(),getConstLine(first+numLines).begin(),width*getNumChannels(),getNumChannels(),numLines,pixelFormat);
 }
 
 //----------------------------------------------------------------------

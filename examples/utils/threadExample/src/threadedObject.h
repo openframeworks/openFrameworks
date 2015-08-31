@@ -82,9 +82,9 @@ public:
     /// it includes OpenGL calls (ofDrawBitmapString).
     void draw()
     {
-        std::stringstream ss;
+        stringstream ss;
 
-        ss << "I am a slowly increasing thread. " << std::endl;
+        ss << "I am a slowly increasing thread. " << endl;
         ss << "My current count is: ";
 
         if(lock())
@@ -108,10 +108,10 @@ public:
         ofDrawBitmapString(ss.str(), 50, 56);
     }
 
-    // Use ofScopedLock to protect a copy of count while getting a copy.
+    // Use unique_lock to protect a copy of count while getting a copy.
     int getCount()
     {
-        ofScopedLock lock(mutex);
+        unique_lock<std::mutex> lock(mutex);
         return count;
     }
 

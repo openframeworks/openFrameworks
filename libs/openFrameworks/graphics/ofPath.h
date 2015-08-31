@@ -300,19 +300,13 @@ public:
 	/// \{
 
 	/// \brief Get an ofPolyline representing the outline of the ofPath.
-	vector<ofPolyline> & getOutline();
 	const vector<ofPolyline> & getOutline() const;
 
 	void tessellate();
 
-	ofMesh & getTessellation();
 	const ofMesh & getTessellation() const;
 
-	void simplify(float tolerance=0.3);
-
-	// only needs to be called when path is modified externally
-	void flagShapeChanged();
-	bool hasChanged();
+	void simplify(float tolerance=0.3f);
 
 	void translate(const ofPoint & p);
 	void rotate(float az, const ofVec3f& axis );
@@ -379,6 +373,10 @@ private:
 	ofPolyline & lastPolyline();
 	void addCommand(const Command & command);
 	void generatePolylinesFromCommands();
+
+	// only needs to be called when path is modified externally
+	void flagShapeChanged();
+	bool hasChanged();
 
 	// path description
 	//vector<ofSubPath>		paths;

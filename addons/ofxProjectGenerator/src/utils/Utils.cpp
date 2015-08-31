@@ -60,8 +60,9 @@ string generateUUID(string input){
     HMACEngine<MD5Engine> hmac(passphrase); // we'll compute a MD5 Hash
     hmac.update(input);
 
-    const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
-    std::string digestString(DigestEngine::digestToHex(digest)); // convert to a string of hexadecimal numbers
+	const DigestEngine::Digest& digest = hmac.digest(); // finish HMAC computation and obtain digest
+	std::string digestString;
+	digestString = DigestEngine::digestToHex(digest); // convert to a string of hexadecimal numbers
 
     digestString = digestString.substr(0,24);
     digestString = StringToUpper(digestString);
@@ -281,160 +282,87 @@ void getFrameworksRecursively( const string & path, vector < string > & framewor
 
 
 
-void getLibsRecursively(const string & path, vector < string > & libFiles, vector < string > & libLibs, string platform ){
-    
-    
-    
-    
-    if (ofFile::doesFileExist(ofFilePath::join(path, "libsorder.make"))){
-        
-        bool platformFound = false;
-        
-#ifdef TARGET_WIN32
-        vector<string> splittedPath = ofSplitString(path,"\\");
-#else
-        vector<string> splittedPath = ofSplitString(path,"/");
-#endif
+void getLibsRecursively(const string & path, vector < string > & libFiles, vector < LibraryBinary > & libLibs, string platform, string arch, string target){
+    ofDirectory dir;
+    dir.listDir(path);
+
         
         
-        if(platform!=""){
-            for(int j=0;j<(int)splittedPath.size();j++){
-                if(splittedPath[j]==platform){
-                    platformFound = true;
-                    // break;
-                }
-            }
-        }
-        
-        
-        if (platformFound == true){
-            vector < string > libsInOrder;
-            ofFile libsorderMake(ofFilePath::join(path, "libsorder.make"));
-            ofBuffer libsorderMakeBuff;
-            libsorderMake >> libsorderMakeBuff;
-            while(!libsorderMakeBuff.isLastLine() && libsorderMakeBuff.size() > 0){
-                string line = libsorderMakeBuff.getNextLine();
-                if (ofFile::doesFileExist(ofFilePath::join(path , line))){
-                    
-                    libLibs.push_back(ofFilePath::join(path , line) );
-                } else {
-                    libLibs.push_back(line);        // this might be something like ws2_32 or other libs no in this project
-                }
-            }
-        }
-        
-    } else {
-        
-        
-        ofDirectory dir;
-        dir.listDir(path);
-        
-        
-        for (int i = 0; i < dir.size(); i++){
+    for (int i = 0; i < dir.size(); i++){
             
-#ifdef TARGET_WIN32
-            vector<string> splittedPath = ofSplitString(dir.getPath(i),"\\");
-#else
-            vector<string> splittedPath = ofSplitString(dir.getPath(i),"/");
-#endif
+        vector<string> splittedPath = ofSplitString(dir.getPath(i), std::filesystem::path("/").make_preferred().string());
             
-            ofFile temp(dir.getFile(i));
+        ofFile temp(dir.getFile(i));
             
-            if (temp.isDirectory()){
-                //getLibsRecursively(dir.getPath(i), folderNames);
+        if (temp.isDirectory()){
+            //getLibsRecursively(dir.getPath(i), folderNames);
                 
-                // on osx, framework is a directory, let's not parse it....
-                string ext = "";
-                string first = "";
-                splitFromLast(dir.getPath(i), ".", first, ext);
-                if (ext != "framework")
-                    getLibsRecursively(dir.getPath(i), libFiles, libLibs, platform);
+            // on osx, framework is a directory, let's not parse it....
+            string ext = "";
+            string first = "";
+			auto stem = std::filesystem::path(dir.getFile(i)).stem();
+            splitFromLast(dir.getPath(i), ".", first, ext);
+			if (ext != "framework") {
+				auto archFound = std::find(LibraryBinary::archs.begin(), LibraryBinary::archs.end(), stem);
+				if (archFound != LibraryBinary::archs.end()) {
+					arch = *archFound;
+				} else {
+					auto targetFound = std::find(LibraryBinary::targets.begin(), LibraryBinary::targets.end(), stem);
+					if (targetFound != LibraryBinary::targets.end()) {
+						target = *targetFound;
+					}
+				}
+				getLibsRecursively(dir.getPath(i), libFiles, libLibs, platform, arch, target);
+			}
                 
-            } else {
+        } else {
                 
                 
-                bool platformFound = false;
+            bool platformFound = false;
                 
-                if(platform!=""){
-                    for(int j=0;j<(int)splittedPath.size();j++){
-                        if(splittedPath[j]==platform){
-                            platformFound = true;
-                        }
+            if(platform!=""){
+                for(int j=0;j<(int)splittedPath.size();j++){
+                    if(splittedPath[j]==platform){
+                        platformFound = true;
                     }
                 }
+            }              
                 
+            //string ext = ofFilePath::getFileExt(temp.getFile(i));
+            string ext;
+            string first;
+            splitFromLast(dir.getPath(i), ".", first, ext);
                 
-                
-                
-                //string ext = ofFilePath::getFileExt(temp.getFile(i));
-                string ext;
-                string first;
-                splitFromLast(dir.getPath(i), ".", first, ext);
-                
-                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
-                    if (platformFound){
-						libLibs.push_back(dir.getPath(i));
+            if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so" || ext == "dll"){
+                if (platformFound){
+					libLibs.push_back({ dir.getPath(i), arch, target });
 						
-						//TODO: THEO hack
-						if( platform == "ios" ){ //this is so we can add the osx libs for the simulator builds
+					//TODO: THEO hack
+					if( platform == "ios" ){ //this is so we can add the osx libs for the simulator builds
 							
-							string currentPath = dir.getPath(i);
+						string currentPath = dir.getPath(i);
 							
-							//TODO: THEO double hack this is why we need install.xml - custom ignore ofxOpenCv 
-							if( currentPath.find("ofxOpenCv") == string::npos ){
-								ofStringReplace(currentPath, "ios", "osx");
-								if( ofFile::doesFileExist(currentPath) ){
-									libLibs.push_back(currentPath);
-								}
+						//TODO: THEO double hack this is why we need install.xml - custom ignore ofxOpenCv 
+						if( currentPath.find("ofxOpenCv") == string::npos ){
+							ofStringReplace(currentPath, "ios", "osx");
+							if( ofFile::doesFileExist(currentPath) ){
+								libLibs.push_back({ currentPath,arch,target });
 							}
 						}
 					}
-                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc" || ext == "cxx" || ext == "m" || ext == "mm"){
-                    libFiles.push_back(dir.getPath(i));
-                }
-                
+				}
+            } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc" || ext == "cxx" || ext == "m" || ext == "mm"){
+                libFiles.push_back(dir.getPath(i));
             }
+                
         }
         
     }
     
-    
-    
-    //folderNames.push_back(path);
-    
-    
-    
-    //    DirectoryIterator end;
-    //        for (DirectoryIterator it(path); it != end; ++it){
-    //            if (!it->isDirectory()){
-    //            	string ext = ofFilePath::getFileExt(it->path());
-    //            	vector<string> splittedPath = ofSplitString(ofFilePath::getEnclosingDirectory(it->path()),"/");
-    //
-    //                if (ext == "a" || ext == "lib" || ext == "dylib" || ext == "so"){
-    //
-    //                	if(platform!=""){
-    //                		bool platformFound = false;
-    //                		for(int i=0;i<(int)splittedPath.size();i++){
-    //                			if(splittedPath[i]==platform){
-    //                				platformFound = true;
-    //                				break;
-    //                			}
-    //                		}
-    //                		if(!platformFound){
-    //                			continue;
-    //                		}
-    //                	}
-    //                    libLibs.push_back(it->path());
-    //                } else if (ext == "h" || ext == "hpp" || ext == "c" || ext == "cpp" || ext == "cc"){
-    //                    libFiles.push_back(it->path());
-    //                }
-    //            }
-    //
-    //            if (it->isDirectory()){
-    //                getLibsRecursively(it->path(), libFiles, libLibs, platform);
-    //            }
-    //        }
-    
+}
+
+string platformFSSeparator() {
+	return std::filesystem::path("/").make_preferred().string();
 }
 
 

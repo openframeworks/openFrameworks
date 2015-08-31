@@ -1,6 +1,6 @@
 export ABI=$1
 export LIBSPATH=android/$ABI
-export NDK_PLATFORM=android-21
+export NDK_PLATFORM=$ANDROID_PLATFORM
 export HOST_PLATFORM=linux-x86_64
 export TOOLCHAIN_VERSION=4.9
 if [ $ABI = armeabi-v7a ] || [ $ABI = armeabi ]; then

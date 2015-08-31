@@ -65,10 +65,10 @@ class ofTrueTypeFont{
 public:
 
 
-	/// \todo
+	/// \brief Construct a default ofTrueTypeFont.
 	ofTrueTypeFont();
 
-	/// \todo
+	/// \brief Destroy the ofTrueTypeFont.
 	virtual ~ofTrueTypeFont();
 
 	/// \name Load Font
@@ -86,23 +86,24 @@ public:
     /// \param fontsize The size in pixels to load the font.
     /// \param _bAntiAliased true if the font should be anti-aliased.
     /// \param _bFullCharacterSet true if the full character set should be cached.
-    /// \param makeControus true if the vector contours should be cached.
+    /// \param makeContours true if the vector contours should be cached.
     /// \param simplifyAmt the amount to simplify the vector contours.  Larger number means more simplified.
     /// \param dpi the dots per inch used to specify rendering size.
 	/// \returns true if the font was loaded correctly.
-	bool load(string filename,
+	bool load(const std::string& filename,
                   int fontsize,
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=true,
                   bool makeContours=false,
-                  float simplifyAmt=0.3,
+                  float simplifyAmt=0.3f,
                   int dpi=0);
+
 	OF_DEPRECATED_MSG("Use load instead",bool loadFont(string filename,
                   int fontsize,
                   bool _bAntiAliased=true,
                   bool _bFullCharacterSet=false,
                   bool makeContours=false,
-                  float simplifyAmt=0.3,
+                  float simplifyAmt=0.3f,
                   int dpi=0));
 	
 	/// \brief Has the font been loaded successfully?
@@ -113,8 +114,7 @@ public:
 	/// \name Font Settings
 	/// \{
 	
-	// set the default dpi for all typefaces.
-	/// \todo
+	/// \brief Set the default dpi for all typefaces.
 	static void setGlobalDpi(int newDpi);
 	
 	/// \brief Is the font anti-aliased?
@@ -125,13 +125,13 @@ public:
 	/// \returns true if the font was allocated with a full character set.
 	bool hasFullCharacterSet() const;
 	
-	/// \brief Get the number characters in the loaded character set.
+	/// \brief Get the number of characters in the loaded character set.
 	/// 
 	/// If you allocate the font using different parameters, you can load in partial 
 	/// and full character sets, this helps you know how many characters it can represent.
 	///
 	/// \returns Number of characters in loaded character set.
-	int	getNumCharacters();	
+	int	getNumCharacters() const;
 
 	/// \}
 	/// \name Font Size
@@ -142,7 +142,7 @@ public:
 	int getSize() const;
 	
 	/// \brief Computes line height based on font size.
-	/// \returns Returns current line height.
+	/// \returns the current line height.
 	float getLineHeight() const;
 
 	/// \brief Sets line height for text drawn on screen. 
@@ -158,7 +158,7 @@ public:
 	/// The meaning of "character" coordinate depends on the font. Some fonts take accents into account,
 	/// others do not, and still others define it simply to be the highest coordinate over all glyphs.
 	///
-	/// \returns Returns font ascender height in pixels.
+	/// \returns the font ascender height in pixels.
 	float getAscenderHeight() const;
 
 	/// \brief Get the descender distance for this font.
@@ -168,7 +168,7 @@ public:
 	/// others do not, and still others define it simply to be the lowest coordinate over all glyphs.
 	/// This value will be negative for descenders below the baseline (which is typical).
 	///
-	/// \returns Returns font descender height in pixels.
+	/// \returns the font descender height in pixels.
 	float getDescenderHeight() const;
 
 	/// \brief Get the global bounding box for this font.
@@ -177,7 +177,7 @@ public:
     /// Glyphs are drawn starting from (0,0) in the returned box (though note that the box can
     /// extend in any direction out from the origin).
     ///
-	/// \returns Returns font descender height in pixels.
+	/// \returns the font descender height in pixels.
     const ofRectangle & getGlyphBBox() const;
 
 	/// \brief Returns letter spacing of font object.
@@ -185,7 +185,7 @@ public:
 	/// You can control this by the ofTrueTypeFont::setLetterSpacing() function. 1.0 = default spacing, 
 	/// less then 1.0 would be tighter spacing, greater then 1.0 would be wider spacing.
 	///
-	/// \returns Returns letter spacing of font object.
+	/// \returns the letter spacing of font object.
 	float getLetterSpacing() const;
 
 	/// \brief Sets the letter spacing of the font object.
@@ -199,7 +199,7 @@ public:
 	/// It's a scalar for the width of the letter 'p', so 1.0 means that a space will be the size of the lower 
 	/// case 'p' of that font. 2.0 means that it's 2 times the size of the lower case 'p', etc.
 	///
-	/// \returns Returns a variable that represents how wide spaces are.
+	/// \returns the width of the space.
 	float getSpaceSize() const;
 
 	/// \brief Sets the size of the space ' ' character. 
@@ -214,23 +214,23 @@ public:
 	/// This is essentially the width component of the ofTrueTypeFont::getStringBoundingBox() rectangle.
 	///
 	/// \param s The string to get the width of.
-	/// \returns Returns the string width. 
-	float stringWidth(string s) const;
+	/// \returns the string width. 
+	float stringWidth(const std::string& s) const;
 
 	/// \brief Returns the string height.
 	///
 	/// This is essentially the height component of the ofTrueTypeFont::getStringBoundingBox() rectangle.
 	///
 	/// \param s The string to get the height of.
-	/// \returns Returns the string height. 
-	float stringHeight(string s) const;
+	/// \returns the string height.
+	float stringHeight(const std::string& s) const;
 
 	/// \brief Returns the bounding box of a string as a rectangle.
 	/// \param s The string to get bounding box of.
 	/// \param x X position of returned rectangle.
 	/// \param y Y position of returned rectangle.
-	/// \returns Returns the bounding box of a string as a rectangle.
-	ofRectangle getStringBoundingBox(string s, float x, float y, bool vflip=true) const;
+	/// \returns the bounding box of a string as a rectangle.
+	ofRectangle getStringBoundingBox(const std::string& s, float x, float y, bool vflip=true) const;
 
 	/// \}
 	/// \name Drawing
@@ -240,7 +240,7 @@ public:
 	/// \param s String to draw
 	/// \param x X position of string
 	/// \param y Y position of string
-	void drawString(string s, float x, float y) const;
+	void drawString(const std::string& s, float x, float y) const;
 
 	/// \brief Draws the string as if it was geometrical shapes.
 	/// 
@@ -248,20 +248,12 @@ public:
 	/// 
 	/// \param x X position of shapes
 	/// \param y Y position of shapes
-	void drawStringAsShapes(string s, float x, float y) const;
+	void drawStringAsShapes(const std::string& s, float x, float y) const;
 
-	/// \brief Get the num chars in the loaded character set.
-	/// 
-	/// If you allocate the font using different paramters, you can load in partial 
-	/// and full character sets, this helps you know how many characters it can represent.
-	///
-	/// \returns Number of characters in loaded character set.
-	int	getNumCharacters() const;
-	
-	/// \todo
+	/// \todo Documentation.
 	ofTTFCharacter getCharacterAsPoints(int character, bool vflip=true, bool filled=true) const;
-	vector<ofTTFCharacter> getStringAsPoints(string str, bool vflip=true, bool filled=true) const;
-	const ofMesh & getStringMesh(string s, float x, float y, bool vflip=true) const;
+	vector<ofTTFCharacter> getStringAsPoints(const std::string& str, bool vflip=true, bool filled=true) const;
+	const ofMesh & getStringMesh(const std::string& s, float x, float y, bool vflip=true) const;
 	const ofTexture & getFontTexture() const;
 
 	/// \}
@@ -297,9 +289,9 @@ protected:
     int getKerning(int c, int prevC) const;
 	void drawChar(int c, float x, float y, bool vFlipped) const;
 	void drawCharAsShape(int c, float x, float y, bool vFlipped, bool filled) const;
-	void createStringMesh(string s, float x, float y, bool vFlipped) const;
+	void createStringMesh(const std::string& s, float x, float y, bool vFlipped) const;
 	
-	string filename;
+	std::string filename;
 
 	ofTexture texAtlas;
 	mutable ofMesh stringQuads;

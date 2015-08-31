@@ -9,7 +9,7 @@ class ofxButton : public ofxToggle{
 public:
 	ofxButton();
 	~ofxButton();
-	ofxButton* setup(string toggleName, float width = defaultWidth, float height = defaultHeight);
+    ofxButton* setup(const std::string& toggleName, float width = defaultWidth, float height = defaultHeight);
 
 	virtual bool mouseReleased(ofMouseEventArgs & args);
 	virtual bool mouseMoved(ofMouseEventArgs & args);

@@ -148,6 +148,39 @@ void ofAddon::addReplaceStringVector(vector<string> & variable, string value, st
 	}
 }
 
+void ofAddon::addReplaceStringVector(vector<LibraryBinary> & variable, string value, string prefix, bool addToVariable) {
+	vector<string> values;
+	if (value.find("\"") != string::npos) {
+		values = ofSplitString(value, "\"", true, true);
+	}
+	else {
+		values = ofSplitString(value, " ", true, true);
+	}
+
+	if (!addToVariable) variable.clear();
+	Poco::RegularExpression regEX("(?<=\\$\\()[^\\)]*");
+	for (int i = 0; i<(int)values.size(); i++) {
+		if (values[i] != "") {
+			Poco::RegularExpression::Match match;
+			if (int pos = regEX.match(values[i], match)) {
+				string varName = values[i].substr(match.offset, match.length);
+				string varValue;
+				if (getenv(varName.c_str())) {
+					varValue = getenv(varName.c_str());
+				}
+				ofStringReplace(values[i], "$(" + varName + ")", varValue);
+				cout << varName << endl << values[i] << endl;
+			}
+
+			if (prefix == "" || values[i].find(pathToOF) == 0 || ofFilePath::isAbsolute(values[i])) {
+				variable.push_back({ values[i], "", "" });
+			} else {
+				variable.push_back({ ofFilePath::join(prefix, values[i]), "", "" });
+			}
+		}
+	}
+}
+
 void ofAddon::parseVariableValue(string variable, string value, bool addToValue, string line, int lineNum){
 	if(variable == "ADDON_NAME"){
 		if(value!=name){
@@ -257,14 +290,36 @@ void ofAddon::exclude(vector<string> & variable, vector<string> exclusions){
 	for(int i=0;i<(int)exclusions.size();i++){
 		string exclusion = exclusions[i];
 		//ofStringReplace(exclusion,"/","\\/");
-		ofStringReplace(exclusion,"\\","\\\\");
+		ofStringReplace(exclusion,"\\","/");
 		ofStringReplace(exclusion,".","\\.");
 		ofStringReplace(exclusion,"%",".*");
 		exclusion =".*"+ exclusion;
 		Poco::RegularExpression regExp(exclusion);
 		for(int j=0;j<(int)variable.size();j++){
-			if(regExp.match(variable[j])){
+			auto forwardSlashedVariable = variable[j];
+			ofStringReplace(forwardSlashedVariable, "\\", "/");
+			if(regExp.match(forwardSlashedVariable)){
 				variable.erase(variable.begin()+j);
+				j--;
+			}
+		}
+	}
+}
+
+void ofAddon::exclude(vector<LibraryBinary> & variable, vector<string> exclusions) {
+	for (int i = 0; i<(int)exclusions.size(); i++) {
+		string exclusion = exclusions[i];
+		//ofStringReplace(exclusion,"/","\\/");
+		ofStringReplace(exclusion, "\\", "/");
+		ofStringReplace(exclusion, ".", "\\.");
+		ofStringReplace(exclusion, "%", ".*");
+		exclusion = ".*" + exclusion;
+		Poco::RegularExpression regExp(exclusion);
+		for (int j = 0; j<(int)variable.size(); j++) {
+			auto forwardSlashedVariable = variable[j].path;
+			ofStringReplace(forwardSlashedVariable, "\\", "/");
+			if (regExp.match(forwardSlashedVariable)) {
+				variable.erase(variable.begin() + j);
 				j--;
 			}
 		}
@@ -362,11 +417,7 @@ void ofAddon::fromFS(string path, string platform){
     	srcFiles[i].erase (srcFiles[i].begin(), srcFiles[i].begin()+ofRootPath.length());
 		//ofLogVerbose() << " srcFiles " << srcFiles[i];
     	int init = 0;
-#ifdef TARGET_WIN32
-    	int end = srcFiles[i].rfind("\\");
-#else
-        int end = srcFiles[i].rfind("/");
-#endif
+    	int end = srcFiles[i].rfind(std::filesystem::path("/").make_preferred().string());
     	string folder = srcFiles[i].substr(init,end);
     	srcFiles[i] = pathToOF + srcFiles[i];
     	filesToFolders[srcFiles[i]] = folder;
@@ -409,15 +460,10 @@ void ofAddon::fromFS(string path, string platform){
     for (int i = 0; i < (int)libs.size(); i++){
 
         // does libs[] have any path ? let's fix if so.
-#ifdef TARGET_WIN32
-    	int end = libs[i].rfind("\\");
-#else
-        int end = libs[i].rfind("/");
-#endif
+    	int end = libs[i].path.rfind(platformFSSeparator());
         if (end > 0){
-
-            libs[i].erase (libs[i].begin(), libs[i].begin()+ofRootPath.length());
-            libs[i] = pathToOF + libs[i];
+            libs[i].path.erase (libs[i].path.begin(), libs[i].path.begin()+ofRootPath.length());
+            libs[i].path = pathToOF + libs[i].path;
         }
 
     }
@@ -425,11 +471,7 @@ void ofAddon::fromFS(string path, string platform){
     for (int i = 0; i < (int)frameworks.size(); i++){
 
         // does libs[] have any path ? let's fix if so.
-#ifdef TARGET_WIN32
-    	int end = frameworks[i].rfind("\\");
-#else
-        int end = frameworks[i].rfind("/");
-#endif
+    	int end = frameworks[i].rfind(platformFSSeparator());
         if (end > 0){
 
             frameworks[i].erase (frameworks[i].begin(), frameworks[i].begin()+ofRootPath.length());
@@ -444,11 +486,7 @@ void ofAddon::fromFS(string path, string platform){
     list < string > paths;
     for (int i = 0; i < (int)srcFiles.size(); i++){
         size_t found;
-#ifdef TARGET_WIN32
-    	found = srcFiles[i].find_last_of("\\");
-#else
-        found = srcFiles[i].find_last_of("/");
-#endif
+    	found = srcFiles[i].find_last_of(platformFSSeparator());
         paths.push_back(srcFiles[i].substr(0,found));
     }
 

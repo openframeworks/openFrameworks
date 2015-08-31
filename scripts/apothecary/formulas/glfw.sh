@@ -50,6 +50,18 @@ function build() {
 			cmake .. -G "Visual Studio $VS_VER Win64"
 			vs-build "GLFW.sln" Build "Release|x64"
 		fi
+	elif [ "$TYPE" == "win_cb" ]; then
+	
+		# *nix build system
+		cmake . -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$BUILD_ROOT_DIR \
+				-DGLFW_BUILD_DOCS=OFF \
+				-DGLFW_BUILD_TESTS=OFF \
+				-DGLFW_BUILD_EXAMPLES=OFF \
+				-DBUILD_SHARED_LIBS=OFF \
+				-DCMAKE_C_COMPILER=/mingw32/bin/clang.exe
+
+ 		make -j${PARALLEL_MAKE}
+ 		make install
 	else
 		# *nix build system
 
@@ -66,7 +78,6 @@ function build() {
 
  		make clean
  		make -j${PARALLEL_MAKE}
- 		make install
 	fi
 }
 
@@ -88,12 +99,19 @@ function copy() {
 			cp -v build_vs_64/src/Release/glfw3.lib $1/lib/$TYPE/x64/glfw3.lib
 		fi
 	    
-	else
+	elif [ "$TYPE" == "osx" ]; then
 		# Standard *nix style copy.
 		# copy headers
 		cp -Rv $BUILD_ROOT_DIR/include/GLFW/* $1/include/GLFW/
 		# copy lib
 		cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/glfw3.a
+		
+	else
+		# Standard *nix style copy.
+		# copy headers
+		cp -Rv $BUILD_ROOT_DIR/include/GLFW/* $1/include/GLFW/
+		# copy lib
+		cp -Rv $BUILD_ROOT_DIR/lib/libglfw3.a $1/lib/$TYPE/libglfw3.a
 	fi
 
 	# copy license file
