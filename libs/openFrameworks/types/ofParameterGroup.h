@@ -8,4 +8,6 @@
 #ifndef OFXPARAMETERGROUP_H_
 #define OFXPARAMETERGROUP_H_
 
+#include "ofParameter.h"
+
 #endif /* OFXPARAMETERGROUP_H_ */

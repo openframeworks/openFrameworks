@@ -96,6 +96,7 @@ enum ofTargetPlatform{
 #ifdef TARGET_WIN32
 
 	#define GLEW_STATIC
+	#define GLEW_NO_GLU
 	#include "GL/glew.h"
 	#include "GL/wglew.h"
    	#include "glu.h"
@@ -294,7 +295,7 @@ typedef TESSindex ofIndexType;
         #define OF_VIDEO_PLAYER_ANDROID
     #elif defined(TARGET_OF_IOS)
         #define OF_VIDEO_PLAYER_IOS
-	#elif defined(TARGET_WIN32) && !defined(__MINGW32__)
+	#elif defined(TARGET_WIN32)
         #define OF_VIDEO_PLAYER_DIRECTSHOW
     #elif defined(TARGET_OSX)
         //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
@@ -348,12 +349,14 @@ typedef TESSindex ofIndexType;
 #endif
 
 //------------------------------------------------ thread local storage
-// xcode has a bug where it won't support tls on some versions even
+// clang has a bug where it won't support tls on some versions even
 // on c++11, this is a workaround that bug
-#if !defined(TARGET_OSX) && !defined(TARGET_OF_IOS)
-	#define HAS_TLS 1
-#elif __clang__
-	#if __has_feature(cxx_thread_local)
+#ifndef HAS_TLS
+	#if __clang__
+		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__)
+			#define HAS_TLS 1
+		#endif
+	#else
 		#define HAS_TLS 1
 	#endif
 #endif

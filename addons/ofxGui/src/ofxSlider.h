@@ -12,7 +12,7 @@ public:
 	~ofxSlider();
 	ofxSlider(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
 	ofxSlider* setup(ofParameter<Type> _val, float width = defaultWidth, float height = defaultHeight);
-	ofxSlider* setup(std::string sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
+	ofxSlider* setup(const std::string& sliderName, Type _val, Type _min, Type _max, float width = defaultWidth, float height = defaultHeight);
 	
 	void setMin(Type min);
 	Type getMin();
@@ -54,8 +54,8 @@ protected:
 	bool bGuiActive;
 	bool mouseInside;
 	bool setValue(float mx, float my, bool bCheck);
-	void generateDraw();
-	void generateText();
+	virtual void generateDraw();
+	virtual void generateText();
 	void valueChanged(Type & value);
 	ofPath bg, bar;
 	ofVboMesh textMesh;

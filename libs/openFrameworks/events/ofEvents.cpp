@@ -25,7 +25,7 @@ double ofGetLastFrameTime(){
 }
 
 //--------------------------------------
-int ofGetFrameNum(){
+uint64_t ofGetFrameNum(){
 	return ofEvents().getFrameNum();
 }
 
@@ -131,7 +131,7 @@ void ofCoreEvents::setFrameRate(int _targetRate){
 	}else{
 		bFrameRateSet	= true;
 		targetRate		= _targetRate;
-		unsigned long long nanosPerFrame = 1000000000.0 / (double)targetRate;
+		uint64_t nanosPerFrame = 1000000000.0 / (double)targetRate;
 		timer.setPeriodicEvent(nanosPerFrame);
 	}
 }
@@ -152,7 +152,7 @@ double ofCoreEvents::getLastFrameTime() const{
 }
 
 //--------------------------------------
-int ofCoreEvents::getFrameNum() const{
+uint64_t ofCoreEvents::getFrameNum() const{
 	return fps.getNumFrames();
 }
 

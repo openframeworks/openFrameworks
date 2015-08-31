@@ -626,7 +626,7 @@ bool invert_4x3( const ofMatrix4x4& src, ofMatrix4x4 & dst )
 		return invert_4x3(tm,dst);
     }
 
-    register float r00, r01, r02,
+    float r00, r01, r02,
 	r10, r11, r12,
 	r20, r21, r22;
 	// Copy rotation components directly into registers for speed
@@ -640,7 +640,7 @@ bool invert_4x3( const ofMatrix4x4& src, ofMatrix4x4 & dst )
     dst._mat[0][2] = r01*r12 - r02*r11;
 
 	// Compute determinant of rot from 3 elements just computed
-    register float one_over_det = 1.0/(r00*dst._mat[0][0] + r10*dst._mat[0][1] + r20*dst._mat[0][2]);
+    float one_over_det = 1.0/(r00*dst._mat[0][0] + r10*dst._mat[0][1] + r20*dst._mat[0][2]);
     r00 *= one_over_det; r10 *= one_over_det; r20 *= one_over_det;  // Saves on later computations
 
 	// Finish computing inverse of rot

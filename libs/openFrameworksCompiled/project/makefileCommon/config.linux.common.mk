@@ -124,24 +124,36 @@ PLATFORM_REQUIRED_ADDONS =
 ifeq ($(CXX),g++)
 	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
 	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
-	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 7)
+	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \<= 7)
 	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
 	ifeq ("$(GCC_MAJOR_EQ_4)","1")
-		ifeq ("$(GCC_MINOR_GTEQ_7)","0")
-			PLATFORM_CFLAGS = -Wall -std=c++0x
+		ifeq ("$(GCC_MINOR_GTEQ_7)","1")
+			PLATFORM_CFLAGS = -Wall -std=c++0x -DHAS_TLS=0
 		else
 			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
-				PLATFORM_CFLAGS = -Wall -std=c++14
+				PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
 			else
 				PLATFORM_CFLAGS = -Wall -std=c++11
 			endif
 		endif
 	endif
 	ifeq ("$(GCC_MAJOR_GT_4)","1")
-		PLATFORM_CFLAGS = -Wall -std=c++14
+		PLATFORM_CFLAGS = -Wall -std=c++14 -D_GLIBCXX_USE_CXX11_ABI=0
 	endif
 else
-	PLATFORM_CFLAGS = -Wall -std=c++11
+	ifeq ($(CXX),g++-5)
+		PLATFORM_CFLAGS = -Wall -std=c++14 -D_GLIBCXX_USE_CXX11_ABI=0 -DGCC_HAS_REGEX
+	else
+	    ifeq ($(CXX),g++-4.9)
+		    PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
+	    else
+	        ifeq ($(CXX),g++-4.8)
+		        PLATFORM_CFLAGS = -Wall -std=c++11
+	        else
+	            PLATFORM_CFLAGS = -Wall -std=c++11
+	        endif
+	    endif
+	endif
 endif
 
 
@@ -173,11 +185,19 @@ PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-section
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-# RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
+ifndef PROJECT_OPTIMIZATION_CFLAGS_RELEASE
+	# RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
+	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
+	
+	ifneq ($(LINUX_ARM),1)
+		PLATFORM_OPTIMIZATION_CFLAGS_RELEASE += -march=native -mtune=native
+	endif
+endif
 
-# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+ifndef PROJECT_OPTIMIZATION_CFLAGS_DEBUG
+	# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
+	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+endif
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -297,9 +317,9 @@ PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPoco
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoJSON.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoMongoDB.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoDataSQLite.a
-PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoData.a
+#PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoMongoDB.a
+#PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoDataSQLite.a
+#PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoData.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a

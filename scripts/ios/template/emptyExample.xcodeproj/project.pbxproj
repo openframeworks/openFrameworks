@@ -144,6 +144,8 @@
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>ofxiOS_Prefix.pch</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
+				<string>NO</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
@@ -166,6 +168,8 @@
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>ofxiOS_Prefix.pch</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
+				<string>NO</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
@@ -523,11 +527,7 @@
 			<key>shellPath</key>
 			<string>/bin/sh</string>
 			<key>shellScript</key>
-			<string>rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
-
-
-
-</string>
+			<string>rsync -avz --exclude='.DS_Store' "${SRCROOT}/bin/data/" "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"</string>
 		</dict>
 		<key>BB16E9930F2B1E5900518274</key>
 		<dict>
@@ -682,10 +682,10 @@
 				<string>libc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
-				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
-				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
 				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
+				<string></string>
 				<key>COMPRESS_PNG_FILES</key>
 				<string>NO</string>
 				<key>GCC_C_LANGUAGE_STANDARD</key>
@@ -693,6 +693,8 @@
 				<key>GCC_OPTIMIZATION_LEVEL</key>
 				<string>0</string>
 				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
+				<string>NO</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
 				<string>NO</string>
 				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
 				<string>NO</string>
@@ -738,10 +740,10 @@
 				<string>libc++</string>
 				<key>CODE_SIGN_IDENTITY</key>
 				<string></string>
-				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
-				<string></string>
 				<key>CODE_SIGN_IDENTITY[sdk=iphoneos*]</key>
 				<string>iPhone Developer</string>
+				<key>CODE_SIGN_IDENTITY[sdk=iphonesimulator*]</key>
+				<string></string>
 				<key>COMPRESS_PNG_FILES</key>
 				<string>NO</string>
 				<key>GCC_C_LANGUAGE_STANDARD</key>
@@ -755,6 +757,8 @@
 				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
 				<string>NO</string>
 				<key>GCC_THUMB_SUPPORT</key>
+				<string>NO</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
 				<string>NO</string>
 				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
 				<string>YES</string>

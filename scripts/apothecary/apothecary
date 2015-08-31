@@ -47,7 +47,7 @@ TYPE= # library build type ("osx", "ios", "vs", etc)
 ARCH=32 # library build arch, 32 or 64 bit (not used for some build types)
 
 # full path to this script's dir
-APOTHECARY_DIR=.
+APOTHECARY_DIR=$(pwd)
 
 # full path to the dir of the current formula
 FORMULA_DIR=
@@ -65,7 +65,7 @@ PARALLEL_MAKE=1
 ### Xcode/ios specific settings
 
 # xcode Developer root
-if [ "$(./ostype.sh)" == "osx" ]; then
+if [ "$(${APOTHECARY_DIR}/ostype.sh)" == "osx" ]; then
     XS="xcode-select -print-path" # stupid hack to keep my syntax highlighting from breaking :P
     XCODE_DEV_ROOT=
 
@@ -88,7 +88,7 @@ VS_64_BIT_ENV='VC\bin\x86_amd64\vcvarsx86_amd64.bat'
 # paths to android SDK, etc
 ANDROID_NDK_ROOT=
 ANDROID_SDK_ROOT=
-ANDROID_PLATFORM=android-21
+ANDROID_PLATFORM=android-19
 
 ################################################################################
 ### PRIVATE VARS, for internal use
@@ -898,7 +898,9 @@ function apothecaryDepend() {
 function apothecaryDependencies() {
 	if [ ${#FORMULA_DEPENDS[@]} -gt 0 ] ; then
 		for depend in "${FORMULA_DEPENDS[@]}" ; do
+			pushd ../..
 			apothecaryDepend $1 $depend
+			popd
 		done
 	fi
 }

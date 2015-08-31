@@ -16,7 +16,7 @@ ofImage ofxPanel::saveIcon;
 ofxPanel::ofxPanel()
 :bGrabbed(false){}
 
-ofxPanel::ofxPanel(const ofParameterGroup & parameters, string filename, float x, float y)
+ofxPanel::ofxPanel(const ofParameterGroup & parameters, const std::string& filename, float x, float y)
 : ofxGuiGroup(parameters, filename, x, y)
 , bGrabbed(false){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
@@ -30,7 +30,7 @@ ofxPanel::~ofxPanel(){
 	//
 }
 
-ofxPanel * ofxPanel::setup(string collectionName, string filename, float x, float y){
+ofxPanel * ofxPanel::setup(const std::string& collectionName, const std::string& filename, float x, float y){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
@@ -38,7 +38,7 @@ ofxPanel * ofxPanel::setup(string collectionName, string filename, float x, floa
 	return (ofxPanel*)ofxGuiGroup::setup(collectionName,filename,x,y);
 }
 
-ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, string filename, float x, float y){
+ofxPanel * ofxPanel::setup(const ofParameterGroup & parameters, const std::string& filename, float x, float y){
 	if(!loadIcon.isAllocated() || !saveIcon.isAllocated()){
 		loadIcons();
 	}
@@ -108,7 +108,7 @@ void ofxPanel::render(){
 		ofEnableTextureEdgeHack();
 	}
 
-	for(int i = 0; i < (int)collection.size(); i++){
+	for(std::size_t i = 0; i < collection.size(); i++){
 		collection[i]->draw();
 	}
 

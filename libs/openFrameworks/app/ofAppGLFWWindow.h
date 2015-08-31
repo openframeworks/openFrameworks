@@ -27,6 +27,7 @@ public:
 	,alphaBits(8)
 	,depthBits(24)
 	,stencilBits(0)
+	,stereo(false)
 	,visible(true)
 	,iconified(false)
 	,decorated(true)
@@ -44,6 +45,7 @@ public:
 	,alphaBits(8)
 	,depthBits(24)
 	,stencilBits(0)
+	,stereo(false)
 	,visible(true)
 	,iconified(false)
 	,decorated(true)
@@ -60,6 +62,7 @@ public:
 	,alphaBits(8)
 	,depthBits(24)
 	,stencilBits(0)
+	,stereo(false)
 	,visible(true)
 	,iconified(false)
 	,decorated(true)
@@ -75,6 +78,7 @@ public:
 	int alphaBits;
 	int depthBits;
 	int stencilBits;
+	bool stereo;
 	bool visible;
 	bool iconified;
 	bool decorated;
@@ -229,7 +233,8 @@ private:
 	bool			buttonPressed;
 
 	int 			nFramesSinceWindowResized;
-    bool            bMultiWindowFullscreen; 
+    bool            bMultiWindowFullscreen;
+	bool			bWindowNeedsShowing;
 
 	GLFWwindow* 	windowP;
     

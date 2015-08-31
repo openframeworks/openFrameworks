@@ -222,7 +222,7 @@ class ofCoreEvents {
 	float getFrameRate() const;
 	float getTargetFrameRate() const;
 	double getLastFrameTime() const;
-	int getFrameNum() const;
+	uint64_t getFrameNum() const;
 
 	bool getMousePressed(int button=-1) const;
 	bool getKeyPressed(int key=-1) const;
