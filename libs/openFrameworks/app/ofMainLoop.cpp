@@ -60,8 +60,8 @@ shared_ptr<ofAppBaseWindow> ofMainLoop::createWindow(const ofWindowSettings & se
 	shared_ptr<ofAppGLFWWindow> window = shared_ptr<ofAppGLFWWindow>(new ofAppGLFWWindow());
 	#endif
 #endif
-	addWindow(window);
 	window->setup(settings);
+	addWindow(window);
 	return window;
 }
 

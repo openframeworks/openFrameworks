@@ -17,7 +17,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 @interface ofxiOSEAGLView() {
     BOOL bInit;
-	shared_ptr<ofBaseApp> appSharedPtr;
+	shared_ptr<ofAppiOSWindow> window;
+	shared_ptr<ofxiOSApp> app;
 }
 - (void)updateDimensions;
 @end
@@ -33,12 +34,14 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
-    
-    window = ofAppiOSWindow::getInstance();
-    if(window == NULL) {
+	
+	window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
+	
+    if(window.get() == NULL) {
         ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView::initWithFrame - window is NULL");
         return nil;
     }
+	
     ESRendererVersion preferedRendererVersion = (ESRendererVersion)window->getSettings().glesVersion;
     
     self = [self initWithFrame:frame
@@ -53,7 +56,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         
         _instanceRef = self;
         
-        app = appPtr;
+        app = shared_ptr<ofxiOSApp>(appPtr);
         activeTouches = [[NSMutableDictionary alloc] init];
                 
         screenSize = new ofVec3f();
@@ -68,9 +71,22 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (void)setup {
-	if(window == NULL) {
+	if(window.get() == NULL) {
 		ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView setup. Failed setup. window is NULL");
 		return;
+	}
+	
+	if(app.get() != ofGetAppPtr()) { // check if already running.
+		
+		ofSetMainLoop(shared_ptr<ofMainLoop>(NULL)); // destroy old main loop.
+		
+		auto mainLoop = std::make_shared<ofMainLoop>(); // make new main loop.
+		mainLoop->addWindow(window);
+		ofSetMainLoop(mainLoop);
+		
+		window->setup();
+
+		ofRunApp(app);
 	}
 	
 	if(window->isProgrammableRenderer() == true) {
@@ -79,11 +95,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		static_cast<ofGLRenderer*>(window->renderer().get())->setup();
 	}
 	
-	if(app != ofGetAppPtr()) {      // check if already running.
-		appSharedPtr = shared_ptr<ofBaseApp>(app);
-		ofRunApp(appSharedPtr);		// this fallback only case occurs when app not created in main().
-	}
-	ofxiOSAlerts.addListener(app);
+	ofxiOSAlerts.addListener(app.get());
 	
 	ofDisableTextureEdgeHack();
 	
@@ -98,24 +110,22 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 	window->events().notifyExit();
 	
+    ofxiOSAlerts.removeListener(app.get());
+
 	ofGetMainLoop()->exit();
 	
-    [activeTouches release];
-    
-    delete screenSize;
-    screenSize = NULL;
-    delete windowSize;
-    windowSize = NULL;
-    delete windowPos;
-    windowPos = NULL;
-    
-    ofxiOSAlerts.removeListener(app);
-
-	appSharedPtr = shared_ptr<ofBaseApp>((app = NULL));
-	ofSetAppPtr(appSharedPtr);
-    
-    window = NULL;
-    
+	app = NULL;
+	window = NULL;
+	
+	[activeTouches release];
+	
+	delete screenSize;
+	screenSize = NULL;
+	delete windowSize;
+	windowSize = NULL;
+	delete windowPos;
+	windowPos = NULL;
+	
     _instanceRef = nil;
     
     bInit = NO;
