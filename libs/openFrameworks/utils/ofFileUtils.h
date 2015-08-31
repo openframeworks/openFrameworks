@@ -129,6 +129,8 @@ public:
 	static string getCurrentExeDir();
 
 	static string getUserHomeDir();
+
+	static string makeRelative(const std::string & from, const std::string & to);
 };
 
 class ofFile: public fstream{
