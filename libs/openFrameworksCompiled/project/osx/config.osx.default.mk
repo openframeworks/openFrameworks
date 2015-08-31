@@ -383,6 +383,10 @@ afterplatform: $(TARGET_NAME)
 
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/$(BIN_NAME).app/Contents/MacOS
+	
+ifdef PROJECT_AFTER_OSX
+	${PROJECT_AFTER_OSX}
+endif	
 
 	@echo
 	@echo "     compiling done"
