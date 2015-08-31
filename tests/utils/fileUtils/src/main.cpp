@@ -166,6 +166,11 @@ class ofApp: public ofxUnitTestsApp{
         ofLogNotice() << "";
         ofLogNotice() << "tests #4299";
         test_eq(std::filesystem::path(ofFilePath::getCurrentWorkingDirectory()), initial_cwd, "ofFilePath::getCurrentWorkingDirectory()");
+#ifdef TARGET_OSX
+        test_eq(ofToDataPath("",false),"../../../data","ofToDataPath relative");
+#else
+        test_eq(ofToDataPath("",false),"data","ofToDataPath relative");
+#endif
 
 
         //========================================================================

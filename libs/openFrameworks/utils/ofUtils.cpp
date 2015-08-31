@@ -358,24 +358,31 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
 	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
 	
-	if (inputPath.string().find(strippedDataPath) != 0) {
+	auto relativeStrippedDataPath = ofFilePath::makeRelative(std::filesystem::current_path().string(),dataPath.string());
+	relativeStrippedDataPath  = ofFilePath::removeTrailingSlash(relativeStrippedDataPath);
+
+	if (inputPath.string().find(strippedDataPath) != 0 && inputPath.string().find(relativeStrippedDataPath)!=0) {
 		// inputPath doesn't contain data path already, so we build the output path as the inputPath relative to the dataPath
-		outputPath = dataPath / inputPath;
+	    if(makeAbsolute){
+	        outputPath = dataPath / inputPath;
+	    }else{
+	        outputPath = relativeStrippedDataPath / inputPath;
+	    }
 	} else {
 		// inputPath already contains data path, so no need to change
 		outputPath = inputPath;
 	}
-	
-	// finally, if we do want an absolute path and we don't already have one
-	if (makeAbsolute) {
-		// then we return the absolute form of the path
-		try {
-			return std::filesystem::canonical(std::filesystem::absolute(outputPath)).string();
-		}
-		catch (...) {
-			return std::filesystem::absolute(outputPath).string();
-		}
-	} else {
+
+    // finally, if we do want an absolute path and we don't already have one
+	if(makeAbsolute){
+	    // then we return the absolute form of the path
+	    try {
+	        return std::filesystem::canonical(std::filesystem::absolute(outputPath)).string();
+	    }
+	    catch (std::exception &) {
+	        return std::filesystem::absolute(outputPath).string();
+	    }
+	}else{
 		// or output the relative path
 		return outputPath.string();
 	}
