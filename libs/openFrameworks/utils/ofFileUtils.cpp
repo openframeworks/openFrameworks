@@ -687,18 +687,18 @@ void ofFile::setExecutable(bool flag){
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite){
+bool ofFile::copyTo(const string& _path, bool bRelativeToData, bool overwrite) const{
 	std::string path = _path;
 
 	if(isDirectory()){
 		return ofDirectory(myFile).copyTo(path,bRelativeToData,overwrite);
 	}
 	if(path.empty()){
-		ofLogError("ofFile") << "copyTo(): destination path is empty";
+		ofLogError("ofFile") << "copyTo(): destination path " << _path << " is empty";
 		return false;
 	}
 	if(!exists()){
-		ofLogError("ofFile") << "copyTo(): source file does not exist";
+		ofLogError("ofFile") << "copyTo(): source file " << this->path() << " does not exist";
 		return false;
 	}
 
@@ -1455,20 +1455,7 @@ bool ofFilePath::isAbsolute(const std::string& path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentWorkingDirectory(){
-	#ifdef TARGET_OSX
-		char pathOSX[FILENAME_MAX];
-		uint32_t size = sizeof(pathOSX);
-		if(_NSGetExecutablePath(pathOSX, &size) != 0){
-			ofLogError("ofFilePath") << "getCurrentWorkingDirectory(): path buffer too small, need size " <<  size;
-		}
-		string pathOSXStr = string(pathOSX);
-		string pathWithoutApp;
-		size_t found = pathOSXStr.find_last_of("/");
-		pathWithoutApp = pathOSXStr.substr(0, found);
-		return pathWithoutApp;
-	#else
-		return std::filesystem::current_path().string();
-	#endif
+	return std::filesystem::current_path().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1525,4 +1512,24 @@ string ofFilePath::getUserHomeDir(){
 	#else
 		return "";
 	#endif
+}
+
+string ofFilePath::makeRelative(const std::string & from, const std::string & to){
+    auto pathFrom = std::filesystem::absolute( from );
+    auto pathTo = std::filesystem::absolute( to );
+    std::filesystem::path ret;
+    std::filesystem::path::const_iterator itrFrom( pathFrom.begin() ), itrTo( pathTo.begin() );
+    // Find common base
+    for( std::filesystem::path::const_iterator toEnd( pathTo.end() ), fromEnd( pathFrom.end() ) ; itrFrom != fromEnd && itrTo != toEnd && *itrFrom == *itrTo; ++itrFrom, ++itrTo );
+    // Navigate backwards in directory to reach previously found base
+    for( std::filesystem::path::const_iterator fromEnd( pathFrom.end() ); itrFrom != fromEnd; ++itrFrom )
+    {
+        if( (*itrFrom) != "." )
+            ret /= "..";
+    }
+    // Now navigate down the directory branch
+    for( ; itrTo != pathTo.end() ; ++itrTo )
+        ret /= *itrTo;
+
+    return ret.string();
 }
