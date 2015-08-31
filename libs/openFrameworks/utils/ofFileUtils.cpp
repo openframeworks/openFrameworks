@@ -1455,20 +1455,7 @@ bool ofFilePath::isAbsolute(const std::string& path){
 
 //------------------------------------------------------------------------------------------------------------
 string ofFilePath::getCurrentWorkingDirectory(){
-	#ifdef TARGET_OSX
-		char pathOSX[FILENAME_MAX];
-		uint32_t size = sizeof(pathOSX);
-		if(_NSGetExecutablePath(pathOSX, &size) != 0){
-			ofLogError("ofFilePath") << "getCurrentWorkingDirectory(): path buffer too small, need size " <<  size;
-		}
-		string pathOSXStr = string(pathOSX);
-		string pathWithoutApp;
-		size_t found = pathOSXStr.find_last_of("/");
-		pathWithoutApp = pathOSXStr.substr(0, found);
-		return pathWithoutApp;
-	#else
-		return std::filesystem::current_path().string();
-	#endif
+	return std::filesystem::current_path().string();
 }
 
 //------------------------------------------------------------------------------------------------------------
