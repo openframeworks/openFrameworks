@@ -141,6 +141,7 @@ public:
     void setup(const ofWindowSettings & _settings);
     void setup(const ofGLESWindowSettings & _settings);
     void setup(const ofiOSWindowSettings & _settings);
+	void setup();
     
     void run(ofBaseApp * appPtr);
     OF_DEPRECATED_MSG("Use setup(const ofiOSWindowSettings & settings); instead.", virtual void setupOpenGL(int w, int h, ofWindowMode screenMode) );
