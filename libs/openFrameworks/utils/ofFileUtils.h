@@ -305,12 +305,12 @@ public:
 	OF_DEPRECATED_MSG("Use size() instead.", int numFiles());
 
 	//this allows to compare dirs by their paths, also provides sorting and use as key in stl containers
-	bool operator==(const ofDirectory & dir);
-	bool operator!=(const ofDirectory & dir);
-	bool operator<(const ofDirectory & dir);
-	bool operator<=(const ofDirectory & dir);
-	bool operator>(const ofDirectory & dir);
-	bool operator>=(const ofDirectory & dir);
+	bool operator==(const ofDirectory & dir) const;
+	bool operator!=(const ofDirectory & dir) const;
+	bool operator<(const ofDirectory & dir) const;
+	bool operator<=(const ofDirectory & dir) const;
+	bool operator>(const ofDirectory & dir) const;
+	bool operator>=(const ofDirectory & dir) const;
 
 	operator std::filesystem::path(){
 		return myDir;

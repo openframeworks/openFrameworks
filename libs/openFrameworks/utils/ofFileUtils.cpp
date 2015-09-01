@@ -1287,32 +1287,32 @@ bool ofDirectory::isDirectoryEmpty(const std::string& _dirPath, bool bRelativeTo
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator==(const ofDirectory & dir){
+bool ofDirectory::operator==(const ofDirectory & dir) const{
 	return getAbsolutePath() == dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator!=(const ofDirectory & dir){
+bool ofDirectory::operator!=(const ofDirectory & dir) const{
 	return getAbsolutePath() != dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator<(const ofDirectory & dir){
+bool ofDirectory::operator<(const ofDirectory & dir) const{
 	return getAbsolutePath() < dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator<=(const ofDirectory & dir){
+bool ofDirectory::operator<=(const ofDirectory & dir) const{
 	return getAbsolutePath() <= dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator>(const ofDirectory & dir){
+bool ofDirectory::operator>(const ofDirectory & dir) const{
 	return getAbsolutePath() > dir.getAbsolutePath();
 }
 
 //------------------------------------------------------------------------------------------------------------
-bool ofDirectory::operator>=(const ofDirectory & dir){
+bool ofDirectory::operator>=(const ofDirectory & dir) const{
 	return getAbsolutePath() >= dir.getAbsolutePath();
 }
 
