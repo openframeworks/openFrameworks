@@ -89,11 +89,20 @@ void ofAppiOSWindow::setup(const ofGLESWindowSettings & _settings) {
 
 void ofAppiOSWindow::setup(const ofiOSWindowSettings & _settings) {
     settings = _settings;
-    if(settings.glesVersion >= ESRendererVersion_20) {
-        currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
-    } else {
-        currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
-    }
+	setup();
+}
+
+void ofAppiOSWindow::setup() {
+	
+	coreEvents = shared_ptr<ofCoreEvents>(new ofCoreEvents());
+	
+	if(settings.glesVersion >= ESRendererVersion_20) {
+		currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+	} else {
+		currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+	}
+	
+	hasExited = false;
 }
 
 //----------------------------------------------------------------------------------- opengl setup.
@@ -399,7 +408,7 @@ int	ofAppiOSWindow::getAntiAliasingSampleCount() {
 }
 
 ofCoreEvents & ofAppiOSWindow::events(){
-    return coreEvents;
+	return *coreEvents.get();
 }
 
 //--------------------------------------------
