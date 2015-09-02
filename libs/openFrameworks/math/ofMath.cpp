@@ -6,21 +6,9 @@
 	#include <sys/time.h>
 #endif
 
-#include <random> 
 #include "ofNoise.h"
 #include "ofPolyline.h"
 
-#if HAS_TLS
-static thread_local std::default_random_engine generator;
-static thread_local std::normal_distribution<float> nDistribution(0, 1);
-static thread_local std::uniform_real_distribution<float> ufDistribution(-1.0, 1.0);
-static thread_local std::uniform_int_distribution<int> uiDistribution(-100, 100);
-#else
-static std::default_random_engine generator;
-static std::normal_distribution<float> nDistribution(0, 1);
-static std::uniform_real_distribution<float> ufDistribution(-1.0, 1.0);
-static std::uniform_int_distribution<int> uiDistribution(-100, 100);
-#endif
 //--------------------------------------------------
 int ofNextPow2(int a){
 	// from nehe.gamedev.net lesson 43
@@ -36,105 +24,46 @@ void ofSeedRandom() {
 	// http://stackoverflow.com/questions/322938/recommended-way-to-initialize-srand
 
 	#ifdef TARGET_WIN32
-		//srand(GetTickCount());
-		generator.seed(GetTickCount());
+		srand(GetTickCount());
 	#elif !defined(TARGET_EMSCRIPTEN)
 		// use XOR'd second, microsecond precision AND pid as seed
 		struct timeval tv;
 		gettimeofday(&tv, 0);
 		long int n = (tv.tv_sec ^ tv.tv_usec) ^ getpid();
-		generator.seed(n);
-		//srand(n);
+		srand(n);
 	#else
 		struct timeval tv;
 		gettimeofday(&tv, 0);
 		long int n = (tv.tv_sec ^ tv.tv_usec);
-		generator.seed(n);
-		//srand(n);
+		srand(n);
 	#endif
 }
 
 //--------------------------------------------------
 void ofSeedRandom(int val) {
-	//srand((long) val);
-	generator.seed(val);
+	srand((long) val);
 }
 
 //--------------------------------------------------
 float ofRandom(float max) {
-	if (ufDistribution.max() != max || uiDistribution.min() != 0) {
-		std::uniform_real_distribution<float>::param_type _param(0, max);
-		ufDistribution.param(_param);
-	}
-	return ufDistribution(generator);
-	//return (max * rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
+	return (max * rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //--------------------------------------------------
 float ofRandom(float x, float y) {
 	float high = MAX(x, y);
 	float low = MIN(x, y);
-	if (ufDistribution.max() != high || uiDistribution.min() != low) {
-		std::uniform_real_distribution<float>::param_type _param(low, high);
-		ufDistribution.param(_param);
-	}
-	return ufDistribution(generator);
-	//return max(low, (low + ((high - low) * rand() / float(RAND_MAX))) * (1.0f - std::numeric_limits<float>::epsilon()));
+	return max(low, (low + ((high - low) * rand() / float(RAND_MAX))) * (1.0f - std::numeric_limits<float>::epsilon()));
 }
 
 //--------------------------------------------------
 float ofRandomf() {
-	if (ufDistribution.max() != 1 || uiDistribution.min() != -1) {
-		std::uniform_real_distribution<float>::param_type _param(-1, 1);
-		ufDistribution.param(_param);
-	}
-	return ufDistribution(generator);
-	//return -1.0f + (2.0f * rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
+	return -1.0f + (2.0f * rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //--------------------------------------------------
 float ofRandomuf() {
-	if (ufDistribution.max() != 1 || uiDistribution.min() != 0) {
-		std::uniform_real_distribution<float>::param_type _param(0, 1);
-		ufDistribution.param(_param);
-	}
-	return ufDistribution(generator);
-	//return (rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
-}
-
-int ofRandomi() {
-	return uiDistribution(generator);
-}
-
-int ofRandomi(int max) {
-	if (uiDistribution.max() != max || uiDistribution.min() != 0) {
-		std::uniform_int_distribution<int>::param_type _param(0, max);
-		uiDistribution.param(_param);
-	}
-	return uiDistribution(generator);
-}
-
-float ofRandomi(int x, int y) {
-	
-	int high = MAX(x, y);
-	int low = MIN(x, y);
-	if (uiDistribution.max() != high || uiDistribution.min() != low) {
-		std::uniform_int_distribution<int>::param_type _param(low, high);
-		uiDistribution.param(_param);
-	}
-	return uiDistribution(generator);
-}
-
-float ofRandomGaussian(float mean, float stddev) {
-	if (nDistribution.mean() != mean || nDistribution.stddev() != stddev) {
-		std::normal_distribution<float>::param_type _param(mean, stddev);
-		nDistribution.param(_param);
-	}
-	return nDistribution(generator);
-}
-
-float ofRandomGaussian() {
-	return nDistribution(generator);
+	return (rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //---- new to 006
