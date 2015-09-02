@@ -51,14 +51,15 @@ ofAppiOSWindow::ofAppiOSWindow() : hasExited(false) {
         ofLog(OF_LOG_ERROR, "ofAppiOSWindow instantiated more than once");
     }
     
-    orientation = OF_ORIENTATION_UNKNOWN;
-    
+	orientation = OF_ORIENTATION_DEFAULT;
+	
     bRetinaSupportedOnDevice = false;
     bRetinaSupportedOnDeviceChecked = false;
 }
 
 ofAppiOSWindow::~ofAppiOSWindow() {
     close();
+	_instance = NULL;
 }
 
 void ofAppiOSWindow::close() {
@@ -89,11 +90,18 @@ void ofAppiOSWindow::setup(const ofGLESWindowSettings & _settings) {
 
 void ofAppiOSWindow::setup(const ofiOSWindowSettings & _settings) {
     settings = _settings;
-    if(settings.glesVersion >= ESRendererVersion_20) {
-        currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
-    } else {
-        currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
-    }
+	setup();
+}
+
+void ofAppiOSWindow::setup() {
+	
+	if(settings.glesVersion >= ESRendererVersion_20) {
+		currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
+	} else {
+		currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
+	}
+	
+	hasExited = false;
 }
 
 //----------------------------------------------------------------------------------- opengl setup.
@@ -398,11 +406,12 @@ int	ofAppiOSWindow::getAntiAliasingSampleCount() {
     return settings.numOfAntiAliasingSamples;
 }
 
+//-----------------------------------------------------------------------------------
 ofCoreEvents & ofAppiOSWindow::events(){
     return coreEvents;
 }
 
-//--------------------------------------------
+//-----------------------------------------------------------------------------------
 shared_ptr<ofBaseRenderer> & ofAppiOSWindow::renderer(){
     return currentRenderer;
 }
