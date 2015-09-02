@@ -299,6 +299,7 @@ public:
 
 	void reset(); //equivalent to close, just here for bw compatibility with ofxDirList
 	void sort();
+    ofDirectory getSorted();
 
 	std::size_t size() const;
 

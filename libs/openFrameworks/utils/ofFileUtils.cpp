@@ -1165,7 +1165,7 @@ ofFile ofDirectory::operator[](std::size_t position) const {
 
 //------------------------------------------------------------------------------------------------------------
 const vector<ofFile> & ofDirectory::getFiles() const{
-	if(files.empty()){
+	if(files.empty() && !myDir.empty()){
 		const_cast<ofDirectory*>(this)->listDir();
 	}
 	return files;
@@ -1194,7 +1194,18 @@ static bool natural(const ofFile& a, const ofFile& b) {
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::sort(){
+    if(files.empty() && !myDir.empty()){
+        listDir();
+    }
 	ofSort(files, natural);
+}
+
+//------------------------------------------------------------------------------------------------------------
+ofDirectory ofDirectory::getSorted(){
+    ofDirectory sorted(*this);
+    sorted.listDir();
+    sorted.sort();
+    return sorted;
 }
 
 //------------------------------------------------------------------------------------------------------------
