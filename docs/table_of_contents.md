@@ -22,6 +22,11 @@ About
 * [Libraries](libraries.md) — Details about libraries.
 * [Serial](serial.md) — Details about serial communication.
 
+Contributing
+----
+* [Contributing](../contributing.md) — How to help improve openFrameworks.
+* [Git Workflow](git_workflow.md) — How we use git to work together.
+
 More
 ----
 * [Wiki](http://wiki.openframeworks.cc) — Going further with openFrameworks.
