@@ -65,6 +65,12 @@ enum ofImageFormat {
     OF_IMAGE_FORMAT_RAW     = 34
 };
 
+enum ofImageJpegLoadingOption {
+    OF_IMAGE_JPEG_LOADING_OPTION_DEFAULT  = 0, // == FreeImage::JPEG_DEFAULT
+    OF_IMAGE_JPEG_LOADING_OPTION_FAST     = 1, // == FreeImage::JPEG_FAST
+    OF_IMAGE_JPEG_LOADING_OPTION_ACCURATE = 2  // == FreeImage::JPEG_ACCURATE
+};
+
 //----------------------------------------------------
 // FreeImage based stuff
 
@@ -101,6 +107,8 @@ void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format = 
 /// Used internally during shutdown.
 void ofCloseFreeImage();
 
+ofImageJpegLoadingOption ofGetJpegImageLoadingOption();
+void ofSetJpegImageLoadingOption(ofImageJpegLoadingOption option);
 
 /// \brief A class representing an image using memory and gpu based pixels.
 /// \tparam PixelType The data type used to represent a single pixel value.
@@ -579,6 +587,7 @@ public:
     
     /// \}
     ///< \sa ofImageType
+    
 protected:
     /// \cond INTERNAL
     void changeTypeOfPixels(ofPixels_<PixelType> &pix, ofImageType type);
