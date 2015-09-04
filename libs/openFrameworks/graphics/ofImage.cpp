@@ -167,6 +167,16 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 #endif
 }
 
+ofImageJpegLoadingOption jpegLoadingOption = OF_IMAGE_JPEG_LOADING_OPTION_DEFAULT;
+
+ofImageJpegLoadingOption ofGetJpegImageLoadingOption() {
+	return jpegLoadingOption;
+}
+
+void ofSetJpegImageLoadingOption(ofImageJpegLoadingOption option) {
+	jpegLoadingOption = option;
+}
+
 template<typename PixelType>
 static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 	ofInitFreeImage();
@@ -195,7 +205,11 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 		fif = FreeImage_GetFIFFromFilename(fileName.c_str());
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
-		bmp = FreeImage_Load(fif, fileName.c_str(), 0);
+		if(fif == FIF_JPEG) {
+			bmp = FreeImage_Load(fif, fileName.c_str(), (int)jpegLoadingOption);
+		} else {
+			bmp = FreeImage_Load(fif, fileName.c_str(), 0);
+		}
 
 		if (bmp != nullptr){
 			bLoaded = true;
