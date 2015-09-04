@@ -837,6 +837,7 @@ void ofGLRenderer::setCircleResolution(int res){
 		circlePoints.resize(circlePolyline.size());
 		path.setCircleResolution(res);
 	}
+	currentStyle.circleResolution = res; 
 }
 
 void ofGLRenderer::setPolyMode(ofPolyWindingMode mode){

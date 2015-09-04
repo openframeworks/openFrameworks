@@ -2,6 +2,8 @@
 #include "ofUtils.h"
 #include "ofxUnitTests.h"
 
+std::filesystem::path initial_cwd;
+
 class ofApp: public ofxUnitTestsApp{
 	void run(){
 		ofDirectory dir(".");
@@ -15,6 +17,9 @@ class ofApp: public ofxUnitTestsApp{
 		}
 		test(ofDirectory(".").getFiles().empty(),"removing old tests files","other tests will fail too");
 
+
+
+		//========================================================================
 		ofLogNotice() << "testing ofFile";
 		{
 			ofFile("test.txt").create();
@@ -66,6 +71,7 @@ class ofApp: public ofxUnitTestsApp{
 
 
 
+		//========================================================================
 		ofLogNotice() << "";
 		ofLogNotice() << "testing ofDirectory";
 		test_eq(ofDirectory(".").getFiles().size(),size_t(3),"ofDirectory::ofDirectory with path",ofToString(ofDirectory(".").getFiles().size()));
@@ -111,15 +117,8 @@ class ofApp: public ofxUnitTestsApp{
 		test(!ofDirectory("d4").exists(),"!ofDirectory::exists after remove");
 
 
-		ofLogNotice() << "";
-		ofLogNotice() << "tests #4285";
-		test(!ofDirectory::doesDirectoryExist("d5/d1"),"!ofDirectory::doesDirectoryExist");
-		test(ofDirectory::createDirectory("d5/d1",true,true),"ofDirectory::create recursive");
-		test(ofDirectory::createDirectory(ofToDataPath("d5/d2",true),false,true),"ofDirectory::create recursive");
-		test(ofDirectory::createDirectory(ofToDataPath("d5/d3"),false,true),"ofDirectory::create recursive");
 
-
-
+		//========================================================================
 		ofLogNotice() << "";
 		ofLogNotice() << "testing ofFilePath";
 		test_eq(ofFilePath::getFileExt("test.txt"),"txt","ofFilePath::getFileExt");
@@ -150,6 +149,31 @@ class ofApp: public ofxUnitTestsApp{
 		test(std::filesystem::exists(ofFile("test.txt")), "ofFile cast to filesystem::path");
 		test(std::filesystem::exists(ofDirectory("d1")), "ofDirectory cast to filesystem::path");
 
+
+
+
+
+		//========================================================================
+        ofLogNotice() << "";
+        ofLogNotice() << "tests #4285";
+        test(!ofDirectory::doesDirectoryExist("d5/d1"),"!ofDirectory::doesDirectoryExist");
+        test(ofDirectory::createDirectory("d5/d1",true,true),"ofDirectory::create recursive");
+        test(ofDirectory::createDirectory(ofToDataPath("d5/d2",true),false,true),"ofDirectory::create recursive");
+        test(ofDirectory::createDirectory(ofToDataPath("d5/d3"),false,true),"ofDirectory::create recursive");
+
+
+        //========================================================================
+        ofLogNotice() << "";
+        ofLogNotice() << "tests #4299";
+        test_eq(std::filesystem::path(ofFilePath::getCurrentWorkingDirectory()), initial_cwd, "ofFilePath::getCurrentWorkingDirectory()");
+#ifdef TARGET_OSX
+        test_eq(ofToDataPath("",false),"../../../data","ofToDataPath relative");
+#else
+        test_eq(ofToDataPath("",false),"data","ofToDataPath relative");
+#endif
+
+
+        //========================================================================
 		// clean test files
 		dir.open(".");
 		for(auto f: dir){
@@ -167,7 +191,8 @@ class ofApp: public ofxUnitTestsApp{
 #include "ofAppNoWindow.h"
 #include "ofAppRunner.h"
 //========================================================================
-	int main( ){
+int main( ){
+    initial_cwd = std::filesystem::current_path();
 	auto window = std::make_shared<ofAppNoWindow>();
 	auto app = std::make_shared<ofApp>();
 	ofRunApp(window, app);
