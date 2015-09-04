@@ -113,43 +113,44 @@
     }
     
     BOOL bIsPortrait = UIInterfaceOrientationIsPortrait( iOrient );
-    
+	
+	CGRect frame = [[UIScreen mainScreen] bounds];
+	
+	if( (!bIsPortrait && bDoesHWOrientation)) {
+		float tWidth    = frame.size.width;
+		float tHeight   = frame.size.height;
+		frame.size.width    = tHeight;
+		frame.size.height   = tWidth;
+	}
+	
+	ofOrientation defaultOrient = OF_ORIENTATION_UNKNOWN;
+	if(bDoesHWOrientation) {
+		// update the window orientation based on the orientation of the device //
+		switch (iOrient) {
+			case UIInterfaceOrientationPortrait:
+				defaultOrient = OF_ORIENTATION_DEFAULT;
+				break;
+			case UIInterfaceOrientationPortraitUpsideDown:
+				defaultOrient = OF_ORIENTATION_180;
+				break;
+			case UIInterfaceOrientationLandscapeLeft:
+				defaultOrient = OF_ORIENTATION_90_RIGHT;
+				break;
+			case UIInterfaceOrientationLandscapeRight:
+				defaultOrient = OF_ORIENTATION_90_LEFT;
+				break;
+		}
+	} else {
+		defaultOrient = OF_ORIENTATION_DEFAULT;
+	}
+	
+	ofSetOrientation(defaultOrient);
+	
     // check if app delegate is being extended.
     // if not, create a new view controller.
     NSString * appDelegateClassName = [[self class] description];
     if ([appDelegateClassName isEqualToString:@"ofxiOSAppDelegate"]) { // app delegate is not being extended.
-        CGRect frame = [[UIScreen mainScreen] bounds];
-        
-        if( (!bIsPortrait && bDoesHWOrientation)) {
-            float tWidth    = frame.size.width;
-            float tHeight   = frame.size.height;
-            frame.size.width    = tHeight;
-            frame.size.height   = tWidth;
-        }
-        
-        ofOrientation defaultOrient = OF_ORIENTATION_UNKNOWN;
-        if(bDoesHWOrientation) {
-            // update the window orientation based on the orientation of the device //
-            switch (iOrient) {
-                case UIInterfaceOrientationPortrait:
-                    defaultOrient = OF_ORIENTATION_DEFAULT;
-                    break;
-                case UIInterfaceOrientationPortraitUpsideDown:
-                    defaultOrient = OF_ORIENTATION_180;
-                    break;
-                case UIInterfaceOrientationLandscapeLeft:
-                    defaultOrient = OF_ORIENTATION_90_RIGHT;
-                    break;
-                case UIInterfaceOrientationLandscapeRight:
-                    defaultOrient = OF_ORIENTATION_90_LEFT;
-                    break;
-            }
-        } else {
-            defaultOrient = OF_ORIENTATION_DEFAULT;
-        }
-        
-        ofSetOrientation(defaultOrient);
-        
+		
         self.glViewController = [[[ofxiOSViewController alloc] initWithFrame:frame app:(ofxiOSApp *)ofGetAppPtr()] autorelease];
         self.window.rootViewController = self.glViewController;
         
