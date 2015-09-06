@@ -908,8 +908,8 @@ void ofPixels_<PixelType>::cropTo(ofPixels_<PixelType> &toPix, int x, int y, int
 		}
 
 		// this prevents having to do a check for bounds in the for loop;
-		int minX = MAX(x, 0) * getNumChannels();
-		int maxX = MIN(x+_width, width) * getNumChannels();
+		int minX = MAX(x, 0);
+		int maxX = MIN(x+_width, width);
 		int minY = MAX(y, 0);
 		int maxY = MIN(y+_height, height);
 
