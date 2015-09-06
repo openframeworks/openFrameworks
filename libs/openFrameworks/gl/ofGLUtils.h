@@ -178,7 +178,7 @@ void ofDisableGLDebugLog();
 			#define GL_DEPTH_COMPONENT32					GL_DEPTH_COMPONENT32_OES
 		#endif
     #endif
-	
+
 	#ifndef GL_RGBA32F
 		#ifdef GL_RGBA32F_EXT
 			#define GL_RGBA32F								GL_RGBA32F_EXT
