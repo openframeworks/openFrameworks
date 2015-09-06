@@ -290,10 +290,12 @@ enum ofTargetPlatform{
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
-	#if defined(GL_ES_VERSION_3_0)
-	#include "GLES3/gl3.h"
-	#include "GLES3/gl31.h" // only works on Android-21+
-	#include "GLES3/gl3ext.h"
+	#if __ANDROID_API__ >= 21
+		#if defined(GL_ES_VERSION_3_0)
+		#include "GLES3/gl3.h"
+		#include "GLES3/gl31.h" // only works on Android-21+
+		#include "GLES3/gl3ext.h"
+		#endif
 	#endif
 	#ifndef __gl3_h_
 	#include <GLES2/gl2.h>
