@@ -635,7 +635,11 @@ GLuint ofFbo::createAndAttachRenderbuffer(GLenum internalFormat, GLenum attachme
 		glRenderbufferStorageMultisample(GL_RENDERBUFFER, settings.numSamples, internalFormat, settings.width, settings.height);
 	}
 #else
-	glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, ofNextPow2(settings.width), ofNextPow2(settings.height));
+	if(ofGLSupportsNPOTTextures()){
+		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, settings.width, settings.height);
+	}else{
+		glRenderbufferStorage(GL_RENDERBUFFER, internalFormat, ofNextPow2(settings.width), ofNextPow2(settings.height));
+	}
 #endif
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachmentPoint, GL_RENDERBUFFER, buffer);
 	return buffer;
