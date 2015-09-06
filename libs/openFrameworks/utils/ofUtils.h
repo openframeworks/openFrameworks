@@ -185,9 +185,12 @@ string ofToDataPath(const string& path, bool absolute=false);
 
 /// \brief Reset the working directory to the platform default.
 ///
-/// The default working directory is usually in a data/ folder next to the
-/// openFrameworks application.
-void ofSetWorkingDirectoryToDefault();
+/// The default working directory is where the application was started from
+/// or the exe directory in case of osx bundles. GLUT might change the default
+/// working directory to the resources directory in the bundle in osx. This
+/// will restore it to the exe dir or whatever was the current dir when the
+/// application was started
+bool ofRestoreWorkingDirectoryToDefault();
 
 /// \brief Set the relative path to the data/ folder from the executable.
 ///
@@ -925,3 +928,13 @@ private:
 };
 
 /// \}
+
+
+
+/*! \cond PRIVATE */
+namespace of{
+namespace priv{
+    void setWorkingDirectoryToDefault();
+}
+}
+/*! \endcond */
