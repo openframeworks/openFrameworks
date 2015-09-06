@@ -230,6 +230,12 @@ enum ofTargetPlatform{
 
 		#include <GLES/gl.h>
 		#include <GLES/glext.h>
+		#if defined(GL_ES_VERSION_3_0)
+		#include <GLES3/gl3.h>
+		#endif
+		#if defined(GL_ES_VERSION_3_1)
+		#include "GLES3/gl31.h"
+		#endif
 		#include <GLES2/gl2.h>
 		#include <GLES2/gl2ext.h>
 
@@ -280,13 +286,19 @@ enum ofTargetPlatform{
 
 #ifdef TARGET_ANDROID
 	#include <typeinfo>
+	#include <unistd.h>
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
-
+	#if defined(GL_ES_VERSION_3_0)
+	#include "GLES3/gl3.h"
+	#include "GLES3/gl31.h" // only works on Android-21+
+	#include "GLES3/gl3ext.h"
+	#endif
+	#ifndef __gl3_h_
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
-
+	#endif
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
@@ -294,14 +306,17 @@ enum ofTargetPlatform{
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/gl.h>
 	#include <GLES/glext.h>
+	#if defined(GL_ES_VERSION_3_0)
+	#include <GLES3/gl3.h>
+	#endif
+	#if defined(GL_ES_VERSION_3_1)
+	#include "GLES3/gl31.h"
+	#endif
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
-	#include <GLES3/gl3.h>
 	#include <GL/glew.h>
-
 	#include "EGL/egl.h"
 	#include "EGL/eglext.h"
-
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
