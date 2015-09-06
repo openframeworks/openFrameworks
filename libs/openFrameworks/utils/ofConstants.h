@@ -209,12 +209,19 @@ enum ofTargetPlatform{
 #ifdef TARGET_ANDROID
 	#include <typeinfo>
 	#include <unistd.h>
+
 	#include <GLES/gl.h>
 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
 
+	// we have to include the GLES 3 headers first since gl2.h and gl3.h are incompatible due to glShaderSource
+	#include "GLES3/gl3.h"
+	#include "GLES3/gl31.h" // only works on Android-21+
+	#include "GLES3/gl3ext.h"
+#ifndef __gl3_h_
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
+#endif
 
 	#define TARGET_LITTLE_ENDIAN
 #endif

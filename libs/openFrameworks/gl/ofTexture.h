@@ -681,7 +681,9 @@ class ofTexture : public ofBaseDraws {
 	///
 	void unbind(int textureLocation=0) const;
 
-#if !defined(TARGET_OPENGLES) && defined(glBindImageTexture)
+    // note: defined(someMethod) doesn't actually always work
+    //       there is no reliable way to check for a function being defined just with the preprocessor
+#if (!defined(TARGET_OPENGLES) && defined(glBindImageTexture)) || defined(GL_ES_VERSION_3_1)
 	/// Calls glBindImageTexture on the texture
 	///
 	/// Binds the texture as an read or write image, only available since OpenGL 4.2

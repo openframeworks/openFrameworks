@@ -70,7 +70,7 @@ void ofBufferObject::unbind(GLenum target) const{
 	glBindBuffer(target, 0);
 }
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 void ofBufferObject::bindBase(GLenum target,GLuint index) const{
 	if(data){
 		glBindBufferBase(target,index,data->id);
@@ -152,7 +152,9 @@ void * ofBufferObject::map(GLenum access){
 	}
 	return glMapBuffer(data->lastTarget,access);
 }
+#endif
 
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 void ofBufferObject::unmap(){
 	if(!this->data) return;
 

@@ -38,7 +38,7 @@ public:
 	/// binds the passed target to buffer 0
 	void unbind(GLenum target) const;
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	/// glBindBufferBase: https://www.opengl.org/sdk/docs/man4/html/glBindBufferBase.xhtml
 	void bindBase(GLenum target,GLuint index) const;
 
@@ -91,18 +91,21 @@ public:
 	/// for this buffer and mapping that target
 	void * map(GLenum access);
 
-	/// glUnmapNamedBuffer: https://www.opengl.org/sdk/docs/man4/html/glUnmapBuffer.xhtml
-	/// before GL 4.5 emulates glUnmapNamedBuffer by unmapping and unbinding
-	/// the last known target for this buffer
-	void unmap();
-
 	/// typed version of map, returns an array of T when used like:
 	/// buffer.map<Type>(access)
 	template<typename T>
 	T * map(GLenum access){
 		return static_cast<T*>(map(access));
 	}
+   
+#endif
 
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+    	/// glUnmapNamedBuffer: https://www.opengl.org/sdk/docs/man4/html/glUnmapBuffer.xhtml
+	/// before GL 4.5 emulates glUnmapNamedBuffer by unmapping and unbinding
+	/// the last known target for this buffer
+	void unmap();
+    
 	/// glMapNamedBufferRange: https://www.opengl.org/sdk/docs/man4/html/glMapBufferRange.xhtml
 	/// before GL 4.5 emulates glMapNamedBufferRange by binding to last known target
 	/// for this buffer and mapping that target

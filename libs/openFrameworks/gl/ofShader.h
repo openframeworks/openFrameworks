@@ -44,8 +44,8 @@ public:
 
 	void begin() const;
 	void end() const;
-	
-#if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
+
+#ifdef GL_COMPUTE_SHADER
 	void dispatchCompute(GLuint x, GLuint y, GLuint z) const;
 #endif
 

@@ -541,7 +541,7 @@ void ofShader::end()  const{
 	ofGetGLRenderer()->unbind(*this);
 }
 
-#if !defined(TARGET_OPENGLES) && defined(glDispatchCompute)
+#ifdef GL_COMPUTE_SHADER
 //--------------------------------------------------------------
 void ofShader::dispatchCompute(GLuint x, GLuint y, GLuint z) const{
     glDispatchCompute(x,y,z);
@@ -989,9 +989,9 @@ string ofShader::nameForType(GLenum type){
 		case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
 		#ifndef TARGET_OPENGLES
 		case GL_GEOMETRY_SHADER_EXT: return "GL_GEOMETRY_SHADER_EXT";
-		#ifdef glDispatchCompute
+                #endif
+                #if (!defined(TARGET_OPENGLES) && defined(glDispatchCompute)) || defined(GL_ES_VERSION_3_1)
 		case GL_COMPUTE_SHADER: return "GL_COMPUTE_SHADER";
-		#endif
 		#endif
 		default: return "UNKNOWN SHADER TYPE";
 	}

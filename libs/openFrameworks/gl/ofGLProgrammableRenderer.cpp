@@ -435,7 +435,7 @@ void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, 
 	if(vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
-#ifdef TARGET_OPENGLES
+#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_2_0)
         glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, nullptr);
 #else
         glDrawElements(drawMode, amt, GL_UNSIGNED_INT, nullptr);
@@ -449,9 +449,7 @@ void ofGLProgrammableRenderer::drawInstanced(const ofVbo & vbo, GLuint drawMode,
 	if(vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
-#ifdef TARGET_OPENGLES
-		// todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-		// unfortunately there is currently no easy way within oF to query the current OpenGL version.
+#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
 		// https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
 		ofLogWarning("ofVbo") << "drawInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
 		// glDrawArraysInstanced(drawMode, first, total, primCount);
@@ -467,7 +465,7 @@ void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint d
 	if(vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
-#ifdef TARGET_OPENGLES
+#if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
         // todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
         // unfortunately there is currently no easy way within oF to query the current OpenGL version.
         // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
