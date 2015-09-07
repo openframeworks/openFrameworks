@@ -65,10 +65,14 @@ enum ofImageFormat {
     OF_IMAGE_FORMAT_RAW     = 34
 };
 
+/// \todo Needs documentation.
 enum ofImageJpegLoadingOption {
-    OF_IMAGE_JPEG_LOADING_OPTION_DEFAULT  = 0, // == FreeImage::JPEG_DEFAULT
-    OF_IMAGE_JPEG_LOADING_OPTION_FAST     = 1, // == FreeImage::JPEG_FAST
-    OF_IMAGE_JPEG_LOADING_OPTION_ACCURATE = 2  // == FreeImage::JPEG_ACCURATE
+    OF_IMAGE_JPEG_LOADING_OPTION_DEFAULT    = 0x0, // == FreeImage::JPEG_DEFAULT (means JPEG_FAST)
+    OF_IMAGE_JPEG_LOADING_OPTION_FAST       = 0x1, // == FreeImage::JPEG_FAST
+    OF_IMAGE_JPEG_LOADING_OPTION_ACCURATE   = 0x2, // == FreeImage::JPEG_ACCURATE
+    OF_IMAGE_JPEG_LOADING_OPTION_CMYK	    = 0x4, // == FreeImage::JPEG_CMYK (load separated CMYK
+    OF_IMAGE_JPEG_LOADING_OPTION_EXIFROTATE = 0x8, // == FreeImage::JPEG_EXIFROTATE (rotate according to Exif 'Orientation' tag if available)
+    OF_IMAGE_JPEG_LOADING_OPTION_GREYSCALE  = 0x10 // == FreeImage::JPEG_GREYSCALE (load and convert to a 8-bit greyscale image)
 };
 
 //----------------------------------------------------
@@ -107,8 +111,15 @@ void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format = 
 /// Used internally during shutdown.
 void ofCloseFreeImage();
 
-ofImageJpegLoadingOption ofGetJpegImageLoadingOption();
-void ofSetJpegImageLoadingOption(ofImageJpegLoadingOption option);
+/// \brief Get current FreeImage jpeg loading option.
+///
+/// See ofImageJpegLoadingOption
+int ofGetJpegImageLoadingOption();
+
+/// \brief Set FreeImage jpeg loading option
+///
+/// See ofImageJpegLoadingOption
+void ofSetJpegImageLoadingOption(int option);
 
 /// \brief A class representing an image using memory and gpu based pixels.
 /// \tparam PixelType The data type used to represent a single pixel value.

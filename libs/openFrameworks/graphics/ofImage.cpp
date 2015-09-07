@@ -167,13 +167,13 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 #endif
 }
 
-ofImageJpegLoadingOption jpegLoadingOption = OF_IMAGE_JPEG_LOADING_OPTION_DEFAULT;
+int jpegLoadingOption = OF_IMAGE_JPEG_LOADING_OPTION_DEFAULT;
 
-ofImageJpegLoadingOption ofGetJpegImageLoadingOption() {
+int ofGetJpegImageLoadingOption() {
 	return jpegLoadingOption;
 }
 
-void ofSetJpegImageLoadingOption(ofImageJpegLoadingOption option) {
+void ofSetJpegImageLoadingOption(int option) {
 	jpegLoadingOption = option;
 }
 
