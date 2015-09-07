@@ -167,18 +167,18 @@ void putBmpIntoPixels(FIBITMAP * bmp, ofPixels_<PixelType> &pix, bool swapForLit
 #endif
 }
 
-int jpegLoadingOption = OF_IMAGE_JPEG_LOADING_OPTION_DEFAULT;
-
-int ofGetJpegImageLoadingOption() {
-	return jpegLoadingOption;
-}
-
-void ofSetJpegImageLoadingOption(int option) {
-	jpegLoadingOption = option;
+/// internal
+static int getOptionFromJpegImageLoadSetting(const ofImageLoadSettings &settings) {
+	int option = 0;
+	if(settings.accurate)     option |= JPEG_ACCURATE;
+	if(settings.exifRotate)   option |= JPEG_EXIFROTATE;
+	if(settings.grayscale)    option |= JPEG_GREYSCALE;
+	if(settings.separateCMYK) option |= JPEG_CMYK;
+	return option;
 }
 
 template<typename PixelType>
-static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
+static bool loadImage(ofPixels_<PixelType> & pix, string fileName, const ofImageLoadSettings &settings){
 	ofInitFreeImage();
 
 #ifndef TARGET_EMSCRIPTEN
@@ -206,7 +206,8 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 	}
 	if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
 		if(fif == FIF_JPEG) {
-			bmp = FreeImage_Load(fif, fileName.c_str(), (int)jpegLoadingOption);
+			int option = getOptionFromJpegImageLoadSetting(settings);
+			bmp = FreeImage_Load(fif, fileName.c_str(), option);
 		} else {
 			bmp = FreeImage_Load(fif, fileName.c_str(), 0);
 		}
@@ -230,7 +231,7 @@ static bool loadImage(ofPixels_<PixelType> & pix, string fileName){
 }
 
 template<typename PixelType>
-static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
+static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings){
 	ofInitFreeImage();
 	bool bLoaded = false;
 	FIBITMAP* bmp = nullptr;
@@ -252,7 +253,12 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 
 
 	//make the image!!
-	bmp = FreeImage_LoadFromMemory(fif, hmem, 0);
+	if(fif == FIF_JPEG) {
+		int option = getOptionFromJpegImageLoadSetting(settings);
+		bmp = FreeImage_LoadFromMemory(fif, hmem, option);
+	} else {
+		bmp = FreeImage_LoadFromMemory(fif, hmem, 0);
+	}
 	
 	if( bmp != nullptr ){
 		bLoaded = true;
@@ -277,40 +283,40 @@ static bool loadImage(ofPixels_<PixelType> & pix, const ofBuffer & buffer){
 
 
 //----------------------------------------------------
-bool ofLoadImage(ofPixels & pix, string fileName) {
-	return loadImage(pix,fileName);
+bool ofLoadImage(ofPixels & pix, string fileName, const ofImageLoadSettings &settings) {
+	return loadImage(pix, fileName, settings);
 }
 
 //----------------------------------------------------
-bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer) {
-	return loadImage(pix,buffer);
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings) {
+	return loadImage(pix, buffer, settings);
 }
 
 //----------------------------------------------------
-bool ofLoadImage(ofFloatPixels & pix, string path){
-	return loadImage(pix,path);
+bool ofLoadImage(ofFloatPixels & pix, string path, const ofImageLoadSettings &settings){
+	return loadImage(pix, path, settings);
 }
 
 //----------------------------------------------------
-bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer){
-	return loadImage(pix,buffer);
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings){
+	return loadImage(pix, buffer, settings);
 }
 
 //----------------------------------------------------
-bool ofLoadImage(ofShortPixels & pix, string path){
-	return loadImage(pix,path);
+bool ofLoadImage(ofShortPixels & pix, string path, const ofImageLoadSettings &settings){
+	return loadImage(pix, path, settings);
 }
 
 //----------------------------------------------------
-bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer){
-	return loadImage(pix,buffer);
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings){
+	return loadImage(pix, buffer, settings);
 }
 
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofTexture & tex, string path){
+bool ofLoadImage(ofTexture & tex, string path, const ofImageLoadSettings &settings){
 	ofPixels pixels;
-	bool loaded = ofLoadImage(pixels,path);
+	bool loaded = ofLoadImage(pixels, path, settings);
 	if(loaded){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 		tex.loadData(pixels);
@@ -319,9 +325,9 @@ bool ofLoadImage(ofTexture & tex, string path){
 }
 
 //----------------------------------------------------------------
-bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer){
+bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings){
 	ofPixels pixels;
-	bool loaded = ofLoadImage(pixels,buffer);
+	bool loaded = ofLoadImage(pixels, buffer, settings);
 	if(loaded){
 		tex.allocate(pixels.getWidth(), pixels.getHeight(), ofGetGlInternalFormat(pixels));
 		tex.loadData(pixels);
@@ -559,7 +565,7 @@ ofImage_<PixelType>::ofImage_(const ofPixels_<PixelType> & pix){
 }
 
 template<typename PixelType>
-ofImage_<PixelType>::ofImage_(const ofFile & file){
+ofImage_<PixelType>::ofImage_(const ofFile & file, const ofImageLoadSettings &settings){
 	width						= 0;
 	height						= 0;
 	bpp							= 0;
@@ -570,11 +576,11 @@ ofImage_<PixelType>::ofImage_(const ofFile & file){
 	ofInitFreeImage();
 
 
-	load(file);
+	load(file, settings);
 }
 
 template<typename PixelType>
-ofImage_<PixelType>::ofImage_(const string & filename){
+ofImage_<PixelType>::ofImage_(const string & filename, const ofImageLoadSettings &settings){
 	width						= 0;
 	height						= 0;
 	bpp							= 0;
@@ -585,7 +591,7 @@ ofImage_<PixelType>::ofImage_(const string & filename){
 	ofInitFreeImage();
 
 
-	load(filename);
+	load(filename, settings);
 }
 
 //----------------------------------------------------------
@@ -622,8 +628,8 @@ ofImage_<PixelType>::~ofImage_(){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::load(const ofFile & file){
-	return load(file.getAbsolutePath());
+bool ofImage_<PixelType>::load(const ofFile & file, const ofImageLoadSettings &settings){
+	return load(file.getAbsolutePath(), settings);
 }
 
 //----------------------------------------------------------
@@ -634,12 +640,12 @@ bool ofImage_<PixelType>::loadImage(const ofFile & file){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::load(const string& fileName){
+bool ofImage_<PixelType>::load(const string& fileName, const ofImageLoadSettings &settings){
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
 	#endif
-	bool bLoadedOk = ofLoadImage(pixels, fileName);
+	bool bLoadedOk = ofLoadImage(pixels, fileName, settings);
 	if (!bLoadedOk) {
 		ofLogError("ofImage") << "loadImage(): couldn't load image from \"" << fileName << "\"";
 		clear();
@@ -657,12 +663,12 @@ bool ofImage_<PixelType>::loadImage(string fileName){
 
 //----------------------------------------------------------
 template<typename PixelType>
-bool ofImage_<PixelType>::load(const ofBuffer & buffer){
+bool ofImage_<PixelType>::load(const ofBuffer & buffer, const ofImageLoadSettings &settings){
 	#if defined(TARGET_ANDROID)
 	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofImage_<PixelType>::unloadTexture);
 	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofImage_<PixelType>::update);
 	#endif
-	bool bLoadedOk = ofLoadImage(pixels, buffer);
+	bool bLoadedOk = ofLoadImage(pixels, buffer, settings);
 	if (!bLoadedOk) {
 		ofLogError("ofImage") << "loadImage(): couldn't load image from ofBuffer";
 		clear();
