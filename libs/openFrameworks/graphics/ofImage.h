@@ -66,33 +66,36 @@ enum ofImageFormat {
 };
 
 /// \todo Needs documentation.
-enum ofImageJpegLoadingOption {
-    OF_IMAGE_JPEG_LOADING_OPTION_DEFAULT    = 0x0, // == FreeImage::JPEG_DEFAULT (means JPEG_FAST)
-    OF_IMAGE_JPEG_LOADING_OPTION_FAST       = 0x1, // == FreeImage::JPEG_FAST
-    OF_IMAGE_JPEG_LOADING_OPTION_ACCURATE   = 0x2, // == FreeImage::JPEG_ACCURATE
-    OF_IMAGE_JPEG_LOADING_OPTION_CMYK	    = 0x4, // == FreeImage::JPEG_CMYK (load separated CMYK
-    OF_IMAGE_JPEG_LOADING_OPTION_EXIFROTATE = 0x8, // == FreeImage::JPEG_EXIFROTATE (rotate according to Exif 'Orientation' tag if available)
-    OF_IMAGE_JPEG_LOADING_OPTION_GREYSCALE  = 0x10 // == FreeImage::JPEG_GREYSCALE (load and convert to a 8-bit greyscale image)
+struct ofImageLoadSettings {
+    ofImageLoadSettings(bool accurate = false, bool exifRotate = false, bool grayscale = false, bool separateCMYK = false)
+    : accurate(accurate)
+    , exifRotate(exifRotate)
+    , grayscale(grayscale)
+    , separateCMYK(separateCMYK) {}
+    bool accurate;
+    bool exifRotate;
+    bool grayscale;
+    bool separateCMYK;
 };
 
 //----------------------------------------------------
 // FreeImage based stuff
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofPixels & pix, string path);
-bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer);
+bool ofLoadImage(ofPixels & pix, string path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofFloatPixels & pix, string path);
-bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer);
+bool ofLoadImage(ofFloatPixels & pix, string path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofFloatPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofShortPixels & pix, string path);
-bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer);
+bool ofLoadImage(ofShortPixels & pix, string path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofShortPixels & pix, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
-bool ofLoadImage(ofTexture & tex, string path);
-bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer);
+bool ofLoadImage(ofTexture & tex, string path, const ofImageLoadSettings &settings = ofImageLoadSettings());
+bool ofLoadImage(ofTexture & tex, const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
 
 /// \todo Needs documentation.
 void ofSaveImage(ofPixels & pix, string path, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST);
@@ -111,31 +114,19 @@ void ofSaveImage(ofShortPixels & pix, ofBuffer & buffer, ofImageFormat format = 
 /// Used internally during shutdown.
 void ofCloseFreeImage();
 
-/// \brief Get current FreeImage jpeg loading option.
-///
-/// See ofImageJpegLoadingOption
-int ofGetJpegImageLoadingOption();
-
-/// \brief Set FreeImage jpeg loading option
-///
-/// See ofImageJpegLoadingOption
-void ofSetJpegImageLoadingOption(int option);
-
 /// \brief A class representing an image using memory and gpu based pixels.
 /// \tparam PixelType The data type used to represent a single pixel value.
 template<typename PixelType>
 class ofImage_ : public ofBaseImage_<PixelType>{
 public:
-    
-    
     /// \name Image Construction
     /// \{
     
     ofImage_();
     
     ofImage_(const ofPixels_<PixelType> & pix);
-    ofImage_(const ofFile & file);
-    ofImage_(const string & filename);
+    ofImage_(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings());
+    ofImage_(const string & filename, const ofImageLoadSettings &settings = ofImageLoadSettings());
     ofImage_(const ofImage_<PixelType>& mom);
     
     template<typename SrcType>
@@ -183,22 +174,23 @@ public:
     /// \brief Loads an image given by fileName.
     /// \param fileName Program looks for image given by fileName, relative to
     /// the data folder.
+    /// \param settings Load options
     /// \returns true if image loaded correctly.
-    bool load(const string& fileName);
+    bool load(const string& fileName, const ofImageLoadSettings &settings = ofImageLoadSettings());
     
     /// \brief Loads an image from an ofBuffer instance created by, for
     /// instance, ofFile::readToBuffer().
     ///
     /// This actually loads the image data into an ofPixels object and then
     /// into the texture.
-    bool load(const ofBuffer & buffer);
+    bool load(const ofBuffer & buffer, const ofImageLoadSettings &settings = ofImageLoadSettings());
     
     /// \brief Loads an image from an ofFile instance created by, for
     /// instance, ofDirectory::getFiles().
     ///
     /// This actually loads the image data into an ofPixels object and then
     /// into the texture.
-    bool load(const ofFile & file);
+    bool load(const ofFile & file, const ofImageLoadSettings &settings = ofImageLoadSettings());
     
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(string fileName));
     OF_DEPRECATED_MSG("Use load instead",bool loadImage(const ofBuffer & buffer));
