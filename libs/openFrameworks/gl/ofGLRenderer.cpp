@@ -15,6 +15,7 @@
 
 const string ofGLRenderer::TYPE="GL";
 
+#if !defined(TARGET_OPENGLES) || !defined(TARGET_PROGRAMMABLE_GL)
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 :matrixStack(_window)
@@ -129,7 +130,8 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
 		glPolygonMode(GL_FRONT_AND_BACK, currentStyle.bFill ?  GL_FILL : GL_LINE);
-#else
+#else // note: basically, you can't use the standard ofGLRenderer with GLES and TARGET_PROGRAMMABLE_GL (and why should you?)
+	#ifndef TARGET_PROGRAMMABLE_GL
 		if(vertexData.getNumVertices()){
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(3, GL_FLOAT, sizeof(ofVec3f), vertexData.getVerticesPointer());
@@ -190,6 +192,7 @@ void ofGLRenderer::draw(const ofMesh & vertexData, ofPolyRenderMode renderType, 
 		if(vertexData.getNumTexCoords() && useTextures){
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		}
+	#endif
 #endif
 		if (currentStyle.smoothing) const_cast<ofGLRenderer*>(this)->endSmoothing();
 }
@@ -1943,3 +1946,5 @@ const of3dGraphics & ofGLRenderer::get3dGraphics() const{
 of3dGraphics & ofGLRenderer::get3dGraphics(){
 	return graphics3d;
 }
+
+#endif

@@ -495,7 +495,7 @@ int ofGetGLInternalFormatFromPixelFormat(ofPixelFormat pixelFormat){
 		return GL_RGB;
 #endif
     case OF_PIXELS_RGB565:
-	#if defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)
+	#if (defined(TARGET_ANDROID) || defined(TARGET_RASPBERRY_PI)) && defined(GL_RGB565_OES)
 		return GL_RGB565_OES;
 	#elif defined(GL_RGB565)
 		return GL_RGB565;
@@ -730,7 +730,14 @@ bool ofGLSupportsNPOTTextures(){
 
 string ofGLSLVersionFromGL(int major, int minor){
 #ifdef TARGET_OPENGLES
-	return "ES1";
+    if(major == 1) {
+        return "ES1"; // ???
+    }
+    else if(major == 2) {
+        return "100"; // yes
+    }else { //  if(major == 3){
+        return ofToString(major*100+minor*10);
+    }
 #else
 	switch(major){
 	case 3:

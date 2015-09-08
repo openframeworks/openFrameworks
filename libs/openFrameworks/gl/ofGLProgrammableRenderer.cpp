@@ -466,8 +466,6 @@ void ofGLProgrammableRenderer::drawElementsInstanced(const ofVbo & vbo, GLuint d
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
 #if defined(TARGET_OPENGLES) && !defined(GL_ES_VERSION_3_0)
-        // todo: activate instancing once OPENGL ES supports instancing, starting with version 3.0
-        // unfortunately there is currently no easy way within oF to query the current OpenGL version.
         // https://www.khronos.org/opengles/sdk/docs/man3/xhtml/glDrawElementsInstanced.xml
         ofLogWarning("ofVbo") << "drawElementsInstanced(): hardware instancing is not supported on OpenGL ES < 3.0";
         // glDrawElementsInstanced(drawMode, amt, GL_UNSIGNED_SHORT, nullptr, primCount);
@@ -1794,19 +1792,40 @@ void ofGLProgrammableRenderer::drawString(const ofTrueTypeFont & font, string te
 // http://www.opengl.org/registry/doc/GLSLangSpec.1.50.09.pdf
 
 #ifdef TARGET_OPENGLES
+#ifdef GL_ES_VERSION_3_0
 static const string vertex_shader_header =
+    	"#version %glsl_version% es\n"
+		"precision mediump float;\n"
+		"#define IN in\n"
+		"#define OUT out\n"
+		"#define TEXTURE texture\n"
+		"#define TARGET_OPENGLES\n";
+static const string fragment_shader_header =
+    	"#version %glsl_version% es\n"
+		"precision mediump float;\n"
+		"#define IN in\n"
+		"#define OUT out\n"
+		"#define TEXTURE texture\n"
+		"#define FRAG_COLOR outputColor\n"
+		"#define TARGET_OPENGLES\n"
+		"out vec4 outputColor;\n";
+#else // GLSL ES 100
+static const string vertex_shader_header =
+    	"#version %glsl_version%\n"
 		"precision mediump float;\n"
 		"#define IN attribute\n"
 		"#define OUT varying\n"
 		"#define TEXTURE texture2D\n"
 		"#define TARGET_OPENGLES\n";
 static const string fragment_shader_header =
+    	"#version %glsl_version%\n"
 		"precision mediump float;\n"
 		"#define IN varying\n"
 		"#define OUT\n"
 		"#define TEXTURE texture2D\n"
 		"#define FRAG_COLOR gl_FragColor\n"
 		"#define TARGET_OPENGLES\n";
+#endif
 #else
 static const string vertex_shader_header =
 		"#version %glsl_version%\n"

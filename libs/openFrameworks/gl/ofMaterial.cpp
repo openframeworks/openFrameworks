@@ -102,6 +102,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 		string vertex2DHeader = renderer.defaultVertexShaderHeader(GL_TEXTURE_2D);
 		string fragment2DHeader = renderer.defaultFragmentShaderHeader(GL_TEXTURE_2D);
 		shaderLights = ofLightsData().size();
+#ifdef TARGET_PROGRAMMABLE_GL
 		shaderNoTexture.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertex2DHeader,shaderLights,false));
 		shaderNoTexture.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,false));
 		shaderNoTexture.bindDefaults();
@@ -111,6 +112,7 @@ void ofMaterial::initShaders(ofGLProgrammableRenderer & renderer) const{
 		shaderTexture2D.setupShaderFromSource(GL_FRAGMENT_SHADER,fragmentSource(fragment2DHeader,shaderLights,true));
 		shaderTexture2D.bindDefaults();
 		shaderTexture2D.linkProgram();
+#endif
 
 #ifndef TARGET_OPENGLES
 		shaderTextureRect.setupShaderFromSource(GL_VERTEX_SHADER,vertexSource(vertexRectHeader,shaderLights,true));

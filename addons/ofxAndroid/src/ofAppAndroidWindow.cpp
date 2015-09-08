@@ -43,6 +43,9 @@ static bool threadedTouchEvents = false;
 static bool appSetup = false;
 static bool accumulateTouchEvents = false;
 
+static int sGLESVersionMajor = 2;
+static int sGLESVersionMinor = 0;
+
 
 void ofExitCallback();
 
@@ -100,9 +103,21 @@ jobject ofGetOFActivityObject(){
 
 
 ofAppAndroidWindow::ofAppAndroidWindow()
-:currentRenderer(new ofGLRenderer(this))
-,glesVersion(1){
-	window = this;
+#ifdef TARGET_PROGRAMMABLE_GL
+    :currentRenderer(new ofGLProgrammableRenderer(this)) {
+    #ifdef GL_ES_VERSION_3_0
+        sGLESVersionMajor = 3;
+        #ifdef GL_ES_VERSION_3_1
+            sGLESVersionMinor = 1;
+        #endif
+    #else
+        sGLESVersionMajor = 2;
+    #endif
+#else
+        :currentRenderer(new ofGLRenderer(this)) {
+    sGLESVersionMajor = 1;
+#endif
+    window = this;
 
 }
 
@@ -111,13 +126,15 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 }
 
 void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
-	glesVersion = settings.glesVersion;
-	ofLogError() << "setup gles" << glesVersion;
-	if(glesVersion<2){
+    sGLESVersionMajor = settings.glesVersionMajor();
+    sGLESVersionMinor = settings.glesVersionMinor();
+    ofLogError() << "setup gles" << sGLESVersionMajor << "." << sGLESVersionMinor;
+#ifndef TARGET_PROGRAMMABLE_GL
+	if(sGLESVersionMajor<2){
 		currentRenderer = make_shared<ofGLRenderer>(this);
-	}else{
+	}else
+#endif
 		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
-	}
 
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
 
@@ -132,13 +149,12 @@ void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
 		return;
 	}
 
-	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion);
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,sGLESVersionMajor);
 
-    if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
-    	static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersion,0);
-    }else{
-    	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
-    }
+        // note: we used to call renderer->setup here, but this is both wrong
+        //       (because we most likely don't yet have a working GLES context)
+        //       and superfluous, because we call setup in onSurfaceCreated
+        //       (where the context exists, by definition)
 }
 
 void ofAppAndroidWindow::update(){
@@ -306,11 +322,15 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		ofPopStyle();
 		surfaceDestroyed = false;
 	}else{
+#ifndef TARGET_PROGRAMMABLE_GL
 	    if(window->renderer()->getType()==ofGLProgrammableRenderer::TYPE){
-	    	static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(2,0);
+#endif
+	    	static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(sGLESVersionMajor,sGLESVersionMinor);
+#ifndef TARGET_PROGRAMMABLE_GL
 	    }else{
 	    	static_cast<ofGLRenderer*>(window->renderer().get())->setup();
 	    }
+#endif
 	    ofLogNotice() << "renderer created";
 	}
 }

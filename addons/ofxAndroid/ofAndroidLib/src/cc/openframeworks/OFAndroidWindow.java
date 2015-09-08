@@ -22,15 +22,19 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         mAlphaSize = a;
         mDepthSize = depth;
         mStencilSize = stencil;
+        mGLESVersion = 0;
     }
     
     public static void setGLESVersion(int version){
     	if(version==1) EGL_OPENGL_ES_BIT=1;
-    	else EGL_OPENGL_ES_BIT=4;
+    	else EGL_OPENGL_ES_BIT=4; // == EGL_OPENGL_ES2_BIT
+    	mGLESVersion = version;
     }
     
     public static int getGLESVersion(){
-    	return EGL_OPENGL_ES_BIT==1?1:2;
+    	if(mGLESVersion == 0)
+            throw new IllegalStateException("You need to set the GLES version!");
+    	return mGLESVersion;
     }
 
     /* This EGL config specification is used to specify 1.x rendering.
@@ -213,6 +217,7 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     protected int mAlphaSize;
     protected int mDepthSize;
     protected int mStencilSize;
+    protected static int mGLESVersion;
     private int[] mValue = new int[1];
 }
 
@@ -220,9 +225,7 @@ class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
-        if(OFEGLConfigChooser.getGLESVersion()==2){
-        	setEGLContextClientVersion(2);
-        }
+        setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersion());
         getHolder().setFormat( PixelFormat.OPAQUE );
         OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0);
         setEGLConfigChooser(configChooser);
@@ -232,9 +235,7 @@ class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context,AttributeSet attributes) {
         super(context,attributes);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
-        if(OFEGLConfigChooser.getGLESVersion()==2){
-        	setEGLContextClientVersion(2);
-        }
+        setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersion());
         getHolder().setFormat( PixelFormat.OPAQUE );
         OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0);
         setEGLConfigChooser(configChooser);

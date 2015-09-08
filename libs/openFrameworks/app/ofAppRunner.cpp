@@ -165,7 +165,19 @@ int ofRunMainLoop(){
 void ofSetupOpenGL(int w, int h, ofWindowMode screenMode){
 #ifdef TARGET_OPENGLES
 	ofGLESWindowSettings settings;
-	settings.glesVersion = 1;
+	#ifdef GL_ES_VERSION_3_0
+		#ifdef GL_ES_VERSION_3_1
+                settings.setGLESVersion(3,1);
+		#else
+                settings.setGLESVersion(3,0);
+		#endif
+    #else
+    	#ifdef GL_ES_VERSION_2_0
+        	settings.setGLESVersion(2);
+		#else
+			settings.setGLESVersion(1);
+		#endif
+	#endif
 #else
 	ofGLWindowSettings settings;
 	settings.glVersionMajor = 2;
