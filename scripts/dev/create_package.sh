@@ -47,8 +47,6 @@ echo --------------------------------------------------------------------------
 echo "Creating package $version for $platform"
 echo --------------------------------------------------------------------------
 echo
-echo
-echo
 
 libsnotinmac="glu quicktime videoInput kiss"
 libsnotinlinux="quicktime videoInput glut glu cairo glew openssl rtAudio"
@@ -58,7 +56,8 @@ libsnotinandroid="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 
 rm -rf openFrameworks
-git clone $REPO --depth=1 --branch=$BRANCH
+echo "Cloning OF from $REPO $BRANCH" 
+git clone $REPO --depth=1 --branch=$BRANCH > /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
@@ -70,7 +69,13 @@ if [ "$platform" != "linux" ] || [ "$platform" != "linux64" ] || [ "$platform" !
     cd openFrameworks
     packageroot=$PWD
     cd apps
-    git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
+    echo "Cloning project generator from $PG_REPO $PG_BRANCH" 
+    git clone $PG_REPO --depth=1 --branch=$PG_BRANCH > /dev/null
+    gitfinishedok=$?
+    if [ $gitfinishedok -ne 0 ]; then
+        echo "Error connecting to github"
+        exit
+    fi
 fi
 
 cd $packageroot
@@ -316,6 +321,8 @@ function createPackage {
 	fi
 
     #delete libraries for other platforms
+    echo ----------------------------------------------------------------------
+    echo "deleting libraries from other platforms"
     cd $pkg_ofroot/libs  
     for lib in $( find . -maxdepth 1 -mindepth 1 -type d )
     do
@@ -344,7 +351,6 @@ function createPackage {
     for lib in $( ls -d */libs/*/lib/ )
     do
         cd ${lib}
-        echo $PWD
         echo deleting $lib
         rm -Rf $otherplatforms
         cd $pkg_ofroot/addons
@@ -464,6 +470,9 @@ function createPackage {
 	if [ "$pkg_platform" != "osx" ] && [ "$pkg_platform" != "ios" ]; then
 		rm -Rf "xcode templates"
 	fi
+    echo ----------------------------------------------------------------------
+    echo
+    echo
     
     #choose readme
     cd $pkg_ofroot
@@ -502,11 +511,13 @@ function createPackage {
     
     #create compressed package
     if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
+        echo "compressing package to of_v${pkg_version}_${pkg_platform}_release.tar.gz"
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
         COPYFILE_DISABLE=true tar czf of_v${pkg_version}_${pkg_platform}_release.tar.gz of_v${pkg_version}_${pkg_platform}_release
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     else
+        echo "compressing package to of_v${pkg_version}_${pkg_platform}_release.zip"
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
         zip -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
