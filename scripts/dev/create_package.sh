@@ -540,7 +540,8 @@ if [ "$platform" = "all" ]; then
         mkdir of_v${version}_${eachplatform}
         cp -R addons apps export libs other scripts of_v${version}_${eachplatform}
         cd of_v${version}_${eachplatform}
-        createPackage $eachplatform $2 $PWD
+        of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
+        createPackage $eachplatform $2 $PWD $ofroot
     done
     
     cd $packageroot
@@ -552,7 +553,7 @@ if [ "$platform" = "all" ]; then
     mv * $packageroot/..
     #rm -Rf $packageroot
 else
-    of_root=$(cat ~/.ofprojectgenerator/config)
+    of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
     createPackage $platform $version $packageroot $ofroot    
 fi
 
