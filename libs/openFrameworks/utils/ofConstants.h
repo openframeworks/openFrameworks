@@ -288,7 +288,7 @@ enum ofTargetPlatform{
 	#include <typeinfo>
 	#include <unistd.h>
 	#include <GLES/gl.h>
-	#define GL_GLEXT_PROTOTYPES
+ 	#define GL_GLEXT_PROTOTYPES
 	#include <GLES/glext.h>
 	#if __ANDROID_API__ >= 21
 		#if defined(GL_ES_VERSION_3_0)
