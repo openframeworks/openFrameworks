@@ -65,7 +65,7 @@ if [ $gitfinishedok -ne 0 ]; then
 fi
 
 
-if [ "$platform" != "linux" ] || [ "$platform" != "linux64" ] || [ "$platform" != "linuxarmv6l" ] || [ "$platform" != "linuxarmv7l" ]; then
+if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ]; then
     cd openFrameworks
     packageroot=$PWD
     cd apps
