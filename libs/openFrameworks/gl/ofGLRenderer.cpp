@@ -20,6 +20,7 @@ using std::vector;
 
 const std::string ofGLRenderer::TYPE = "GL";
 
+#if !defined(TARGET_OPENGLES) || !defined(TARGET_PROGRAMMABLE_GL)
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 	: matrixStack(_window)
@@ -2027,3 +2028,5 @@ const of3dGraphics & ofGLRenderer::get3dGraphics() const {
 of3dGraphics & ofGLRenderer::get3dGraphics() {
 	return graphics3d;
 }
+
+#endif
