@@ -40,6 +40,15 @@ if [ "$version" == "" ]; then
     exit 1
 fi
 
+echo
+echo
+echo
+echo --------------------------------------------------------------------------
+echo "Creating package $version for $platform"
+echo --------------------------------------------------------------------------
+echo
+echo
+echo
 
 libsnotinmac="glu quicktime videoInput kiss"
 libsnotinlinux="quicktime videoInput glut glu cairo glew openssl rtAudio"
@@ -70,7 +79,6 @@ cd $packageroot
 function deleteCodeblocks {
     #delete codeblock files
     rm *.cbp
-    rm *.sh
     rm *.workspace
 }
 
@@ -104,7 +112,7 @@ function deleteEclipse {
 function createProjectFiles {
     if [ "$pkg_platform" == "win_cb" ]; then	
 	    # copy config.make and Makefile into every subfolder
-	    for example in examples/*/*; do
+	    for example in $pkg_ofroot/examples/*/*; do
 	        cp $pkg_ofroot/scripts/templates/win_cb/config.make ${example}
 	        cp $pkg_ofroot/scripts/templates/win_cb/Makefile ${example}
 	    done
@@ -277,23 +285,23 @@ function createPackage {
 	#	rm -Rf __MACOSX
 	#fi
     if [ "$pkg_platform" = "vs" ]; then
-		rm projectGenerator_vs.zip
 		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip
-		unzip projectGenerator_vs.zip
+		echo "Uncomptessing projectGenerator_vs.zip"
+		unzip projectGenerator_vs.zip > /dev/null
 		rm projectGenerator_vs.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "osx" ]; then
-		rm projectGenerator_osx.zip
 		wget http://192.237.185.151/projectGenerator/projectGenerator_osx.zip
-		unzip projectGenerator_osx.zip
+		echo "Uncomptessing projectGenerator_osx.zip"
+		unzip projectGenerator_osx.zip > /dev/null
 		rm projectGenerator_osx.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "ios" ]; then
-		rm projectGenerator_ios.zip
 		wget http://192.237.185.151/projectGenerator/projectGenerator_ios.zip
-		unzip projectGenerator_ios.zip
+		echo "Uncomptessing projectGenerator_ios.zip"
+		unzip projectGenerator_ios.zip > /dev/null
 		rm projectGenerator_ios.zip
 		rm -Rf __MACOSX
 	fi
@@ -311,11 +319,12 @@ function createPackage {
     cd $pkg_ofroot/libs  
     for lib in $( find . -maxdepth 1 -mindepth 1 -type d )
     do
-        echo $PWD
-        echo deleting $lib/lib
-        cd $lib/lib
-        rm -Rf $otherplatforms
-        cd $pkg_ofroot/libs 
+        if [ -d $lib/lib ]; then
+            echo deleting $lib/lib
+            cd $lib/lib
+            rm -Rf $lib/lib/$otherplatforms
+            cd $pkg_ofroot/libs
+        fi
     done
     if [ "$pkg_platform" = "osx" ]; then
         rm -Rf $libsnotinmac
@@ -373,7 +382,9 @@ function createPackage {
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
 		cd ${pkg_ofroot}
 		deleteEclipse
-		rm -R libs/openFrameworks/.settings
+		if [ -f libs/openFrameworks/.settings ]; then
+    		rm -R libs/openFrameworks/.settings
+    	fi
 	fi
 	
 	#android, move paths.default.make to paths.make
@@ -397,12 +408,12 @@ function createPackage {
 
 	cd ${pkg_ofroot}/libs
 	#delete specific include folders non-android
-	if [ "$pkg_platform" != "android" ]; then
+	if [ "$pkg_platform" != "android" ] && [ -d */include_android ]; then
 		rm -Rf $( ls -d */include_android )
 	fi
 
 	#delete specific include folders for non-ios
-	if [ "$pkg_platform" != "ios" ]; then
+	if [ "$pkg_platform" != "ios" ] && [ -d */include_ios ]; then
 		rm -Rf $( ls -d */include_ios )
 	fi
 
@@ -453,23 +464,6 @@ function createPackage {
 	if [ "$pkg_platform" != "osx" ] && [ "$pkg_platform" != "ios" ]; then
 		rm -Rf "xcode templates"
 	fi
-	
-	
-	#download and copy OF compiled
-	#cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
-    	#if [ "$pkg_platform" = "win_cb" ]; then
-	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
-	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
-	#fi
-
-
-    #if snow leopard change 10.4u to 10.5
-    #if [ $runOSXSLScript = 1 ]; then
-    #    cd $pkg_ofroot
-    #    echo "replacing 10.4u with 10.5 for snow leopard"
-    #    find . -name '*.pbxproj' | xargs perl -pi -e 's/10\.4u/10\.5/g'
-    #    pkg_platform="osxSL"
-    #fi
     
     #choose readme
     cd $pkg_ofroot
@@ -516,7 +510,6 @@ function createPackage {
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
         zip -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
-        mv of_v${pkg_version}_${pkg_platform}_release of_v${pkg_version}_${pkg_platform}_release        
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     fi
 }
