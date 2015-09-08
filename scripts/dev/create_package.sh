@@ -122,7 +122,12 @@ function createProjectFiles {
 	        cp $pkg_ofroot/scripts/templates/win_cb/Makefile ${example}
 	    done
     else
-        projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples
+        cd ${main_ofroot}/apps/projectGenerator
+        git pull origin master
+        cd commandline
+        make -j2
+        cd ${pkg_ofroot}
+        ${main_ofroot}/apps/projectGenerator/commandline/bin/projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples
     fi
 }
 
@@ -130,6 +135,7 @@ function createPackage {
     pkg_platform=$1
     pkg_version=$2
     pkg_ofroot=$3
+    main_ofroot=$4
     
     #remove previously created package 
     cd $pkg_ofroot/..
@@ -546,10 +552,7 @@ if [ "$platform" = "all" ]; then
     #rm -Rf $packageroot
 else
     of_root=$(cat ~/.ofprojectgenerator/config)
-    echo $packageroot > ~/.ofprojectgenerator/config
-    createPackage $platform $version $packageroot
-    echo $of_root > ~/.ofprojectgenerator/config
-    
+    createPackage $platform $version $packageroot $ofroot    
 fi
 
 
