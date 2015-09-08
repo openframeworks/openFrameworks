@@ -54,6 +54,8 @@ static bool accumulateAxisEvents = false;
 static bool multiWindowMode = false;
 
 AAssetManager* assetManager;
+static int sGLESVersionMajor = 2;
+static int sGLESVersionMinor = 0;
 
 void ofExitCallback();
 
@@ -122,7 +124,21 @@ ofAppAndroidWindow::ofAppAndroidWindow()  {
 	window = this;
 	msaaSamples = 1;
 	glesVersion = 2;
-
+#ifdef TARGET_PROGRAMMABLE_GL
+    :currentRenderer(new ofGLProgrammableRenderer(this)) {
+    #ifdef GL_ES_VERSION_3_0
+        sGLESVersionMajor = 3;
+        #ifdef GL_ES_VERSION_3_1
+            sGLESVersionMinor = 1;
+        #endif
+    #else
+        sGLESVersionMajor = 2;
+    #endif
+#else
+        :currentRenderer(new ofGLRenderer(this)) {
+    sGLESVersionMajor = 1;
+#endif
+    window = this;
 	ofGetMainLoop()->setCurrentWindow(this);
 }
 
@@ -164,17 +180,22 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
+<<<<<<< HEAD
 bool ofAppAndroidWindow::isSurfaceDestroyed() {
 	return surfaceDestroyed;
 }
 
 void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings)
 {
+	sGLESVersionMajor = settings.glesVersionMajor();
+    sGLESVersionMinor = settings.glesVersionMinor();
 	setup( (const ofxAndroidWindowSettings &)settings );
 }
 
 void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 
+	sGLESVersionMajor = settings.glesVersionMajor();
+    sGLESVersionMinor = settings.glesVersionMinor();
 	if(window == nullptr) {
 		ofLogError("ofAppAndroidWindow") << "Setup and Window is nullptr ! Fixing";
 		setCurrentWindow();
@@ -186,25 +207,18 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 	}else{
 		currentRenderer = std::make_shared<ofGLProgrammableRenderer>(this);
 	}
-
 	jclass javaClass = ofGetJNIEnv()->FindClass("cc/openframeworks/OFAndroid");
-
 	if(javaClass==nullptr){
 		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid java class";
 		return;
 	}
-
 	makeCurrent();
-
 	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(IZ)V");
 	if(!method){
 		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid setupGL method";
 		return;
 	}
-
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion,settings.preserveContextOnPause);
-
-
 }
 
 void ofAppAndroidWindow::update(){
@@ -465,7 +479,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		else
 		{
 			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
-			dynamic_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion,0);
+			dynamic_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion,sGLESVersionMinor);
 		}
 
 	}else{
@@ -478,7 +492,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 			} else {
 				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
 				dynamic_cast<ofGLProgrammableRenderer *>(window->renderer().get())->setup(
-						glesVersion, 0);
+						glesVersion, sGLESVersionMinor);
 			}
 		}
 	}
@@ -554,24 +568,18 @@ Java_cc_openframeworks_OFAndroid_setAssetManager(JNIEnv *env, jclass thiz,
 		jobject jAssetManager) {
 
 	env->NewGlobalRef(jAssetManager);
-
 	AAssetManager *aaAssetManager = AAssetManager_fromJava(env, jAssetManager);
 	if (aaAssetManager == nullptr) {
 		ofLogError("ofAppAndroidWindow") << "Could not obtain the AAssetManager";
 		return;
 	}
-
 	assetManager = aaAssetManager;
 
 	if(window == nullptr || (window != nullptr && window->renderer() == nullptr)) {
 		ofLogVerbose("ofAppAndroidWindow") << "setAssetManager window is null";
 		return;
 	}
-
 	window->setAssetManager(assetManager);
-
-
-
 
 }
 

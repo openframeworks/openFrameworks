@@ -844,21 +844,22 @@ bool ofGLSupportsNPOTTextures(){
 
 string ofGLSLVersionFromGL(int major, int minor){
 #ifdef TARGET_OPENGLES
+
 	#ifdef TARGET_EMSCRIPTEN
-	if( major >= 2 ) { // for emscripten major version refers to WEBGL version
-		return "300 es";
-	} else {
-		return "ES1";
-	}
+	if(major >= 2) { // for emscripten major version refers to WEBGL version
+        return "300";   // WebGL2 = GLSL ES 3.00 (header adds " es")
+    } else {
+        return "100";
+    }
 	#else
 		if(major == 1){
 			return "ES1";
 		}else if(major == 2){
-			return "ES2";
+			return "100";
 		}else if(major == 3){
-			return "ES3";
+			return "300";
 		}else {
-			return "ES1";
+			return ofToString(major*100+minor*10);
 		}
 	#endif
 #else
@@ -884,7 +885,7 @@ string ofGLSLVersionFromGL(int major, int minor){
 string ofGLSLVersionFromGL(){
     int major = 0;
     int minor = 0;
-    
+
     auto glRenderer = std::dynamic_pointer_cast<ofBaseGLRenderer>(ofGetCurrentRenderer());
     if( glRenderer ){
         major = glRenderer->getGLVersionMajor();
@@ -898,11 +899,11 @@ string ofGLSLGetDefaultHeader(){
     string header = "";
 
     auto glRenderer = std::dynamic_pointer_cast<ofBaseGLRenderer>(ofGetCurrentRenderer());
-    
+
     if( glRenderer ){
         string versionStr = ofGLSLVersionFromGL(glRenderer->getGLVersionMajor(), glRenderer->getGLVersionMinor());
         header = "#version "+versionStr+"\n";
-        
+
         #ifdef TARGET_OPENGLES
             if( versionStr != "ES1" ){
                 header += "#extension GL_OES_standard_derivatives : enable\n";
