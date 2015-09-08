@@ -192,11 +192,15 @@ ifndef PROJECT_OPTIMIZATION_CFLAGS_RELEASE
 	ifneq ($(LINUX_ARM),1)
 		PLATFORM_OPTIMIZATION_CFLAGS_RELEASE += -march=native -mtune=native
 	endif
+else
+	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
 endif
 
 ifndef PROJECT_OPTIMIZATION_CFLAGS_DEBUG
 	# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+else
+	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
 endif
 
 ################################################################################
