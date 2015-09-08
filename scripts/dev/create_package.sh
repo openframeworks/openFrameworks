@@ -58,17 +58,17 @@ libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 
 rm -rf openFrameworks
 echo "Cloning OF from $REPO $BRANCH" 
-git clone $REPO --depth=1 --branch=$BRANCH > /dev/null
+git clone $REPO --depth=1 --branch=$BRANCH openFrameworks> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
     exit
 fi
 
+cd openFrameworks
+packageroot=$PWD
 
 if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ]; then
-    cd openFrameworks
-    packageroot=$PWD
     cd apps
     echo "Cloning project generator from $PG_REPO $PG_BRANCH" 
     git clone $PG_REPO --depth=1 --branch=$PG_BRANCH > /dev/null
@@ -131,6 +131,7 @@ function createProjectFiles {
         cd ${pkg_ofroot}
         ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples
     fi
+    cd ${pkg_ofroot}
 }
 
 function createPackage {
