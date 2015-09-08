@@ -127,7 +127,7 @@ function createProjectFiles {
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin master
         cd commandLine
-        make -j2
+        PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O3 make -j2
         cd ${pkg_ofroot}
         ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples
     fi
