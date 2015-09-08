@@ -4,6 +4,7 @@
 
 platform=$1
 version=$2
+of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
 
 if [ $# -eq 3 ]; then
 branch=$3
@@ -540,8 +541,7 @@ if [ "$platform" = "all" ]; then
         mkdir of_v${version}_${eachplatform}
         cp -R addons apps export libs other scripts of_v${version}_${eachplatform}
         cd of_v${version}_${eachplatform}
-        of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
-        createPackage $eachplatform $2 $PWD $ofroot
+        createPackage $eachplatform $2 $PWD $of_root
     done
     
     cd $packageroot
@@ -553,8 +553,7 @@ if [ "$platform" = "all" ]; then
     mv * $packageroot/..
     #rm -Rf $packageroot
 else
-    of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
-    createPackage $platform $version $packageroot $ofroot    
+    createPackage $platform $version $packageroot $of_root    
 fi
 
 
