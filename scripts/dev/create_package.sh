@@ -115,6 +115,7 @@ function deleteEclipse {
 
 
 function createProjectFiles {
+    echo "creating project files"
     if [ "$pkg_platform" == "win_cb" ]; then	
 	    # copy config.make and Makefile into every subfolder
 	    for example in $pkg_ofroot/examples/*/*; do
@@ -124,10 +125,10 @@ function createProjectFiles {
     else
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin master
-        cd commandline
+        cd commandLine
         make -j2
         cd ${pkg_ofroot}
-        ${main_ofroot}/apps/projectGenerator/commandline/bin/projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples
     fi
 }
 
