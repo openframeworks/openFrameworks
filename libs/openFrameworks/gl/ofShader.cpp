@@ -393,7 +393,7 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 			if (std::regex_search(infoString, matches, intel) || std::regex_search(infoString, matches, nvidia_ati)){
 				ofBuffer buf = shaderSource[type];
 				ofBuffer::Line line = buf.getLines().begin();
-				int  offendingLineNumber = ofToInt(matches[1]);
+				int  offendingLineNumber = ofToInt(matches[1]) + 1;
 				ostringstream msg;
 				msg << "ofShader: " + nameForType(type) + ", offending line " << offendingLineNumber << " :"<< endl;
 				for(int i=0; line != buf.getLines().end(); line++, i++ ){

@@ -72,7 +72,7 @@ bool ofBuffer::writeTo(ostream & stream) const {
 		return false;
 	}
 	stream.write(&(buffer[0]), buffer.size() - 1);
-	return true;
+	return stream.good();
 }
 
 //--------------------------------------------------
@@ -341,20 +341,14 @@ istream & operator>>(istream & istr, ofBuffer & buf){
 
 //--------------------------------------------------
 ofBuffer ofBufferFromFile(const string & path, bool binary){
-	ios_base::openmode mode = binary ? ifstream::binary : ios_base::in;
-	ifstream istr(ofToDataPath(path, true).c_str(), mode);
-	ofBuffer buffer(istr);
-	istr.close();
-	return buffer;
+	ofFile f(path,ofFile::ReadOnly, binary);
+	return ofBuffer(f);
 }
 
 //--------------------------------------------------
 bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary){
-	ios_base::openmode mode = binary ? ofstream::binary : ios_base::out;
-	ofstream ostr(ofToDataPath(path, true).c_str(), mode);
-	bool ret = buffer.writeTo(ostr);
-	ostr.close();
-	return ret;
+	ofFile f(path, ofFile::WriteOnly, binary);
+	return buffer.writeTo(f);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -484,9 +478,11 @@ bool ofFile::create(){
 	bool success = false;
 
 	if(!myFile.string().empty()){
-		auto mode = this->mode;
+		auto oldmode = this->mode;
+		auto oldpath = path();
 		success = open(path(),ofFile::WriteOnly);
-		open(path(),mode);
+		close();
+		open(oldpath,oldmode,binary);
 	}
 
 	return success;
@@ -792,6 +788,9 @@ bool ofFile::remove(bool recursive){
 	}
 
 	try{
+		if(mode!=Reference){
+			open(path(),Reference,binary);
+		}
 		if(recursive){
 			std::filesystem::remove_all(myFile);
 		}else{
@@ -1264,10 +1263,9 @@ bool ofDirectory::createDirectory(const std::string& _dirPath, bool bRelativeToD
 		return success;
 		
 	} else {
-			
-		ofLogWarning("ofDirectory") << "createDirectory(): directory already exists: \"" << dirPath << "\"";
+		
+		// no need to create it - it already exists.
 		return true;
-	
 	}
 
 
