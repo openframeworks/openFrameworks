@@ -1263,10 +1263,9 @@ bool ofDirectory::createDirectory(const std::string& _dirPath, bool bRelativeToD
 		return success;
 		
 	} else {
-			
-		ofLogWarning("ofDirectory") << "createDirectory(): directory already exists: \"" << dirPath << "\"";
+		
+		// no need to create it - it already exists.
 		return true;
-	
 	}
 
 
