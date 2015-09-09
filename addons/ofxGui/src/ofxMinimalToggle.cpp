@@ -55,15 +55,17 @@ void ofxMinimalToggle::generateDraw(){
         float textWidth = ofxBaseGui::getTextWidth(getName(), b.height);
 		switch(textLayout){
 			default:
+            case ofxBaseGui::Centered:
+                if(b.getCenter().x - textWidth/2 > b.x+textPadding){
+                    textMesh = getTextMesh(getName(), b.getCenter().x - textWidth/2, b.y + b.height / 2 + 4);
+                    break;
+                }
 			case ofxBaseGui::Left:
-				textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
+                textMesh = getTextMesh(getName(), b.x + textPadding, b.y + b.height / 2 + 4);
 				break;
 			case ofxBaseGui::Right:
 				textMesh = getTextMesh(getName(), b.getRight() - textWidth - textPadding, b.y + b.height / 2 + 4);
-				break;
-			case ofxBaseGui::Centered:
-				textMesh = getTextMesh(getName(), b.getCenter().x - textWidth/2, b.y + b.height / 2 + 4);
-				break;
+                break;
 
 		}
 
