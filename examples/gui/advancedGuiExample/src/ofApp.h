@@ -24,7 +24,7 @@ class ofApp : public ofBaseApp {
 
 	private:
 
-        ofxPanel panel1, panel2, panel3, panel4;
+        ofxPanel panel1, panel2, panel3, panel4, panel5;
 		ofxGuiGroup rotary;
         ofxGuiMatrix matrix;
         ofParameter<string> matrix_active_name;
@@ -39,6 +39,13 @@ class ofApp : public ofBaseApp {
 		ofParameter <float> slider1_param, slider2_param, slider3_param, slider4_param;
 		vector <ofParameter <bool> > matrix_params;
 		ofParameterGroup g;
+
+        ofParameterGroup cameraMatrixParameters;
+        ofParameter<bool> cam0;
+        ofParameter<bool> cam2;
+        ofParameter<bool> cam3;
+        ofParameter<bool> cam1;
+        ofxGuiMatrix matrixCam;
 
 		void toggleGroupHeader(bool & val);
         void updateMatrixIndex(int& index);

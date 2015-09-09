@@ -105,6 +105,18 @@ void ofApp::setup(){
     panel4.add <ofxFloatSlider>(slider3_param, slider_config2);
     panel4.add <ofxFloatSlider>(slider4_param, slider_config2);
 
+
+    cameraMatrixParameters.setName("cameras");
+    cameraMatrixParameters.add(cam0.set("cam0",false));
+    cameraMatrixParameters.add(cam1.set("cam1",false));
+    cameraMatrixParameters.add(cam2.set("cam2",false));
+    cameraMatrixParameters.add(cam3.set("cam3",false));
+
+    panel5.setup("ofParameterGroup", "", 260, 440);
+    matrixCam.setup(cameraMatrixParameters, 4);
+    matrixCam.setExclusiveToggles(true);
+    panel5.add(matrixCam);
+
 }
 
 //--------------------------------------------------------------
@@ -140,6 +152,7 @@ void ofApp::draw(){
 	panel2.draw();
     panel3.draw();
     panel4.draw();
+    panel5.draw();
 
 }
 
@@ -150,6 +163,7 @@ void ofApp::toggleGroupHeader(bool & val){
 	panel2.setShowHeader(val);
     panel3.setShowHeader(val);
     panel4.setShowHeader(val);
+    panel5.setShowHeader(val);
 }
 
 void ofApp::updateMatrixIndex(int &index){

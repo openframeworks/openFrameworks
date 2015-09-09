@@ -8,9 +8,9 @@ using namespace std;
 ofxGuiGroup::ofxGuiGroup(){
 }
 
-ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & config)
-:ofxBaseGui(config){
-	setup(_parameters, config);
+ofxGuiGroup::ofxGuiGroup(const ofParameterGroup & _parameters, const Config & groupConfig, const Config & itemConfig)
+:ofxBaseGui(groupConfig){
+    setup(_parameters, groupConfig, itemConfig);
 }
 
 ofxGuiGroup::~ofxGuiGroup(){
@@ -43,10 +43,18 @@ ofxGuiGroup & ofxGuiGroup::setup(const std::string& collectionName, const Config
 }
 
 
-ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & parameters, const Config & config){
-	setup(config);
-	addParametersFrom(parameters);
+ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & parameters, const Config & groupConfig, const Config & itemConfig){
+    setup(groupConfig);
+    addParametersFrom(parameters, itemConfig);
 	this->parameters = parameters;
+    if(layout == ofxBaseGui::Horizontal){
+        for(auto e: collection){
+            e->sizeChangedE.disable();
+            e->setSize(getWidth()/collection.size()-spacingNextElement, e->getHeight());
+            e->sizeChangedE.enable();
+        }
+        setNeedsRedraw();
+    }
 	return *this;
 }
 
@@ -80,7 +88,7 @@ ofxGuiGroup & ofxGuiGroup::setup(const ofParameterGroup & _parameters, const std
 	return *this;
 }
 
-void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters){
+void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters, const Config & config){
 	for(auto & p: parameters){
 		if(p->isReadOnly()){
 			ofLogWarning("ofxGui") << "Trying to add " << p->getName() << ": read only parameters not supported yet in ofxGui";
@@ -88,43 +96,43 @@ void ofxGuiGroup::addParametersFrom(const ofParameterGroup & parameters){
 		}
 		string type = p->type();
         if(type == typeid(ofParameter <int32_t> ).name()){
-            add(p->cast<int>());
+            add(p->cast<int>(), config);
         }else if(type == typeid(ofParameter <uint32_t> ).name()){
-            add(p->cast<uint32_t>());
+            add(p->cast<uint32_t>(), config);
         }else if(type == typeid(ofParameter <int64_t> ).name()){
-            add(p->cast<int64_t>());
+            add(p->cast<int64_t>(), config);
         }else if(type == typeid(ofParameter <uint64_t> ).name()){
-            add(p->cast<uint64_t>());
+            add(p->cast<uint64_t>(), config);
         }else if(type == typeid(ofParameter <int8_t> ).name()){
-            add(p->cast<int8_t>());
+            add(p->cast<int8_t>(), config);
         }else if(type == typeid(ofParameter <uint8_t> ).name()){
-            add(p->cast<uint8_t>());
+            add(p->cast<uint8_t>(), config);
         }else if(type == typeid(ofParameter <int16_t> ).name()){
-            add(p->cast<int16_t>());
+            add(p->cast<int16_t>(), config);
         }else if(type == typeid(ofParameter <uint16_t> ).name()){
-            add(p->cast<uint16_t>());
+            add(p->cast<uint16_t>(), config);
         }else if(type == typeid(ofParameter<float>).name()){
-            add(p->cast<float>());
+            add(p->cast<float>(), config);
         }else if(type == typeid(ofParameter <double> ).name()){
-            add(p->cast<double>());
+            add(p->cast<double>(), config);
 		}else if(type == typeid(ofParameter<bool>).name()){
-            add(p->cast<bool>());
+            add(p->cast<bool>(), config);
 		}else if(type == typeid(ofParameter<ofVec2f>).name()){
-            add(p->cast<ofVec2f>());
+            add(p->cast<ofVec2f>(), config);
 		}else if(type == typeid(ofParameter<ofVec3f>).name()){
-            add(p->cast<ofVec3f>());
+            add(p->cast<ofVec3f>(), config);
 		}else if(type == typeid(ofParameter<ofVec4f>).name()){
-            add(p->cast<ofVec4f>());
+            add(p->cast<ofVec4f>(), config);
 		}else if(type == typeid(ofParameter<ofColor>).name()){
-            add(p->cast<ofColor>());
+            add(p->cast<ofColor>(), config);
 		}else if(type == typeid(ofParameter<ofShortColor>).name()){
-            add(p->cast<ofShortColor>());
+            add(p->cast<ofShortColor>(), config);
 		}else if(type == typeid(ofParameter<ofFloatColor>).name()){
-            add(p->cast<ofFloatColor>());
+            add(p->cast<ofFloatColor>(), config);
 		}else if(type == typeid(ofParameter<string>).name()){
-            add(p->cast<string>());
+            add(p->cast<string>(), config);
 		}else if(type == typeid(ofParameterGroup).name()){
-            add(p->castGroup());
+            add(p->castGroup(), config);
 		}else{
 			ofLogWarning("ofxGui") << "Trying to add " << p->getName() << ": ofxBaseGroup; no control for parameter of type " << type;
 
@@ -178,7 +186,11 @@ void ofxGuiGroup::add(ofxBaseGui * element){
 
     if(layout == ofxBaseGui::Vertical || collection.size() == 1) {
         if(layout == ofxBaseGui::Vertical){
-            element->setSize(b.width-1, element->getHeight());
+            if(element->getWidth() < b.width-1) {
+                element->sizeChangedE.disable();
+                element->setSize(b.width-1, element->getHeight());
+                element->sizeChangedE.enable();
+            }
         }
         if(collection.size() == 1) {
             if(bShowHeader){

@@ -27,12 +27,12 @@ class ofxGuiGroup : public ofxBaseGui {
 		};
 
         ofxGuiGroup();
-        ofxGuiGroup(const ofParameterGroup & parameters, const Config & config = Config());
+        ofxGuiGroup(const ofParameterGroup & parameters, const Config & groupConfig = Config(), const Config &itemConfig = ofxBaseGui::Config());
 		virtual ~ofxGuiGroup();
 
         virtual ofxGuiGroup & setup(const Config & config);
 		virtual ofxGuiGroup & setup(const std::string& collectionName, const Config & config);
-		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const Config & config);
+        virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const Config & groupConfig, const Config &itemConfig);
 		virtual ofxGuiGroup & setup(const std::string& collectionName = "", const std::string& filename = "settings.xml", float x = 10, float y = 10);
 		virtual ofxGuiGroup & setup(const ofParameterGroup & parameters, const std::string& filename = "settings.xml", float x = 10, float y = 10);
 
@@ -59,11 +59,10 @@ class ofxGuiGroup : public ofxBaseGui {
 		template<class GuiType=ofxGuiGroup>
 		void add(ofParameterGroup p);
 
-        template<class Config>
-        void add(ofParameter <float> & parameter, const Config & config);
-
-        template<class Config>
-        void add(ofParameter <int> & parameter, const Config & config);
+        template<typename T, class Config>
+        typename std::enable_if<std::is_arithmetic<T>::value, void>::type add(ofParameter<T> & p, const Config & config){
+            add(new ofxSlider<T>(p, config));
+        }
 
         template<class Config>
         void add(ofParameter <bool> & parameter, const Config & config);
@@ -92,8 +91,8 @@ class ofxGuiGroup : public ofxBaseGui {
 		template<class GuiType, typename Type, class Config>
 		void add(ofParameter<Type> p, const Config & config);
 
-		template<class GuiType=ofxGuiGroup, class Config>
-		void add(ofParameterGroup p, const Config & config);
+        template<class GuiType=ofxGuiGroup, class CGroup, class CItem=ofxBaseGui::Config>
+        void add(ofParameterGroup p, const CGroup & groupConfig, const CItem & itemConfig = ofxBaseGui::Config());
 
 		template<class GuiType, class Config>
 		void add(const Config & config);
@@ -158,7 +157,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		template <class ControlType>
 		ControlType & getControlType(const std::string& name);
 		void setWidthElements(float w);
-        void addParametersFrom(const ofParameterGroup & parameters);
+        void addParametersFrom(const ofParameterGroup & parameters, const Config &config = ofxBaseGui::Config());
 
 		float spacing, spacingNextElement, spacingFirstElement;
 		float header;
@@ -199,16 +198,6 @@ ControlType & ofxGuiGroup::getControlType(const std::string& name){
 }
 
 template<class C>
-void ofxGuiGroup::add(ofParameter <float> & parameter, const C & config){
-	add<ofxFloatSlider>(parameter, config);
-}
-
-template<class C>
-void ofxGuiGroup::add(ofParameter <int> & parameter, const C & config){
-	add<ofxIntSlider>(parameter, config);
-}
-
-template<class C>
 void ofxGuiGroup::add(ofParameter <bool> & parameter, const C & config){
 	add<ofxToggle>(parameter, config);
 }
@@ -226,11 +215,11 @@ void ofxGuiGroup::add(ofParameter<Type> p, const C & config){
 	addOwned(new GuiType(p,inContainerConfig));
 }
 
-template<class GuiType, class C>
-void ofxGuiGroup::add(ofParameterGroup p, const C & config){
-	auto inContainerConfig = config;
-	inContainerConfig.inContainer = true;
-	addOwned(new GuiType(p,inContainerConfig));
+template<class GuiType, class CGroup, class CItem>
+void ofxGuiGroup::add(ofParameterGroup p, const CGroup & groupConfig, const CItem & itemConfig){
+    auto inContainerConfig = groupConfig;
+    inContainerConfig.inContainer = true;
+    addOwned(new GuiType(p,inContainerConfig, itemConfig));
 }
 
 template<class GuiType, class C>

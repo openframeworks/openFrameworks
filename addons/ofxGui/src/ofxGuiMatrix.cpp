@@ -4,37 +4,30 @@ using namespace std;
 
 ofxGuiMatrix::ofxGuiMatrix() :
 	ofxGuiGroup()
-	,
-	numCol(Config().columnCount)
-	,
-	w_matrix(Config().shape.width)
-	,
-	w_element(0)
-	,
-	h_element(Config().rowHeight){
+    ,numCol(Config().columnCount)
+    ,w_matrix(Config().shape.width)
+    ,w_element(0)
+    ,h_element(Config().rowHeight){
 	sizeChangedCB();
 	setNeedsRedraw();
 }
 
-ofxGuiMatrix::ofxGuiMatrix(const ofParameterGroup & parameters, const Config & config) :
-	ofxGuiGroup(parameters, config)
-	,
-	numCol(config.columnCount)
-	,
-	w_matrix(config.shape.width)
-	,
-	w_element(0)
-	,
-	h_element(config.rowHeight){
+ofxGuiMatrix::ofxGuiMatrix(const ofParameterGroup & parameters, const Config & groupConfig, const Config &itemConfig) :
+    ofxGuiGroup(parameters, groupConfig, itemConfig)
+    ,numCol(groupConfig.columnCount)
+    ,w_matrix(groupConfig.shape.width)
+    ,w_element(0)
+    ,h_element(groupConfig.rowHeight){
 	sizeChangedCB();
 	setNeedsRedraw();
 }
 
-ofxGuiMatrix & ofxGuiMatrix::setup(const ofParameterGroup & parameters, const Config & config){
-	ofxGuiGroup::setup(parameters, config);
-	setColNum(config.columnCount);
-	setElementHeight(config.rowHeight);
+ofxGuiMatrix & ofxGuiMatrix::setup(const ofParameterGroup & parameters, const Config & groupConfig, const Config & itemConfig){
+    ofxGuiGroup::setup(parameters, groupConfig, itemConfig);
+    setColNum(groupConfig.columnCount);
+    setElementHeight(groupConfig.rowHeight);
 	w_matrix = b.width;
+    sizeChangedCB();
 	return *this;
 }
 
@@ -42,6 +35,7 @@ ofxGuiMatrix & ofxGuiMatrix::setup(const std::string & collectionName, int cols,
 	setColNum(cols);
 	ofxGuiGroup::setup(collectionName, filename, x, y);
 	w_matrix = b.width;
+    sizeChangedCB();
 	return *this;
 }
 

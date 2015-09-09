@@ -16,11 +16,11 @@ public:
 	};
 
 	ofxPanel();
-	ofxPanel(const ofParameterGroup & parameters, const Config & config);
+    ofxPanel(const ofParameterGroup & parameters, const Config & groupConfig = ofxPanel::Config(), const Config &itemConfig = ofxBaseGui::Config());
     ~ofxPanel();
 
     ofxPanel & setup(const Config & config);
-	ofxPanel & setup(const ofParameterGroup & parameters, const Config & config);
+    ofxPanel & setup(const ofParameterGroup & parameters, const Config & groupConfig = ofxPanel::Config(), const Config &itemConfig = ofxBaseGui::Config());
 	ofxPanel & setup(const std::string& collectionName="", const std::string& filename="settings.xml", float x = 10, float y = 10);
     ofxPanel & setup(const ofParameterGroup & parameters, const std::string& filename="settings.xml", float x = 10, float y = 10);
 

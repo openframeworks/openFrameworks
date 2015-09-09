@@ -16,10 +16,10 @@ class ofxGuiMatrix : public ofxGuiGroup {
 		};
 
 		ofxGuiMatrix();
-        ofxGuiMatrix(const ofParameterGroup & parameters, const Config & config = Config());
+        ofxGuiMatrix(const ofParameterGroup & parameters, const Config & groupConfig = ofxGuiMatrix::Config(), const Config &itemConfig = ofxBaseGui::Config());
 		virtual ~ofxGuiMatrix(){
 		}
-		virtual ofxGuiMatrix & setup(const ofParameterGroup & parameters, const Config & config);
+        virtual ofxGuiMatrix & setup(const ofParameterGroup & parameters, const Config & groupConfig = ofxGuiMatrix::Config(), const Config &itemConfig = ofxBaseGui::Config());
 		virtual ofxGuiMatrix & setup(const std::string & collectionName = "", int cols = 0, const std::string & filename = "settings.xml", float x = 10, float y = 10);
 		virtual ofxGuiMatrix & setup(const ofParameterGroup & parameters, int cols = 0, const std::string & filename = "settings.xml", float x = 10, float y = 10);
 
