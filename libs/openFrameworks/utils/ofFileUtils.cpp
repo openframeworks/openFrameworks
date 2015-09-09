@@ -72,7 +72,7 @@ bool ofBuffer::writeTo(ostream & stream) const {
 		return false;
 	}
 	stream.write(&(buffer[0]), buffer.size() - 1);
-	return true;
+	return stream.good();
 }
 
 //--------------------------------------------------
@@ -341,20 +341,14 @@ istream & operator>>(istream & istr, ofBuffer & buf){
 
 //--------------------------------------------------
 ofBuffer ofBufferFromFile(const string & path, bool binary){
-	ios_base::openmode mode = binary ? ifstream::binary : ios_base::in;
-	ifstream istr(ofToDataPath(path, true).c_str(), mode);
-	ofBuffer buffer(istr);
-	istr.close();
-	return buffer;
+	ofFile f(path,ofFile::ReadOnly, binary);
+	return ofBuffer(f);
 }
 
 //--------------------------------------------------
 bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary){
-	ios_base::openmode mode = binary ? ofstream::binary : ios_base::out;
-	ofstream ostr(ofToDataPath(path, true).c_str(), mode);
-	bool ret = buffer.writeTo(ostr);
-	ostr.close();
-	return ret;
+	ofFile f(path, ofFile::WriteOnly, binary);
+	return buffer.writeTo(f);
 }
 
 //------------------------------------------------------------------------------------------------------------
