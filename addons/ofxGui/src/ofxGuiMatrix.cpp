@@ -31,6 +31,15 @@ ofxGuiMatrix & ofxGuiMatrix::setup(const ofParameterGroup & parameters, const Co
 	return *this;
 }
 
+ofxGuiMatrix & ofxGuiMatrix::setup(const std::string & collectionName, const Config & config){
+	ofxGuiGroup::setup(collectionName, config);
+	setColNum(config.columnCount);
+	setElementHeight(config.rowHeight);
+	w_matrix = b.width;
+	sizeChangedCB();
+	return *this;
+}
+
 ofxGuiMatrix & ofxGuiMatrix::setup(const std::string & collectionName, int cols, const std::string & filename, float x, float y){
 	setColNum(cols);
 	ofxGuiGroup::setup(collectionName, filename, x, y);

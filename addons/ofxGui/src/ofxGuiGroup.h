@@ -156,7 +156,7 @@ class ofxGuiGroup : public ofxBaseGui {
 		virtual void add(ofxGuiGroup * element);
 		template <class ControlType>
 		ControlType & getControlType(const std::string& name);
-		void setWidthElements(float w);
+		virtual void setWidthElements(float w);
         void addParametersFrom(const ofParameterGroup & parameters, const Config &config = ofxBaseGui::Config());
 
 		float spacing, spacingNextElement, spacingFirstElement;
