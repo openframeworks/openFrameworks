@@ -2061,7 +2061,7 @@ static const string uniqueVertexShader = vertex_shader_header + STRINGIFY(
 	void main(){
 		gl_Position = modelViewProjectionMatrix * position;
 		if(usingTexture>.5) texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
-		if(usingColors>.5) colorVarying = color*globalColor;
+		if(usingColors>.5) colorVarying = color;
 		else colorVarying = globalColor;
 	}
 );
