@@ -4,6 +4,7 @@
 
 platform=$1
 version=$2
+of_root=$(readlink -f "$(dirname "$(readlink -f "$0")")/../..")
 
 if [ $# -eq 3 ]; then
 branch=$3
@@ -40,6 +41,13 @@ if [ "$version" == "" ]; then
     exit 1
 fi
 
+echo
+echo
+echo
+echo --------------------------------------------------------------------------
+echo "Creating package $version for $platform"
+echo --------------------------------------------------------------------------
+echo
 
 libsnotinmac="glu quicktime videoInput kiss"
 libsnotinlinux="quicktime videoInput glut glu cairo glew openssl rtAudio"
@@ -49,19 +57,26 @@ libsnotinandroid="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 
 rm -rf openFrameworks
-git clone $REPO --depth=1 --branch=$BRANCH
+echo "Cloning OF from $REPO $BRANCH" 
+git clone $REPO --depth=1 --branch=$BRANCH openFrameworks> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
     exit
 fi
 
+cd openFrameworks
+packageroot=$PWD
 
-if [ "$platform" != "linux" ] || [ "$platform" != "linux64" ] || [ "$platform" != "linuxarmv6l" ] || [ "$platform" != "linuxarmv7l" ]; then
-    cd openFrameworks
-    packageroot=$PWD
+if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ]; then
     cd apps
-    git clone $PG_REPO --depth=1 --branch=$PG_BRANCH
+    echo "Cloning project generator from $PG_REPO $PG_BRANCH" 
+    git clone $PG_REPO --depth=1 --branch=$PG_BRANCH > /dev/null
+    gitfinishedok=$?
+    if [ $gitfinishedok -ne 0 ]; then
+        echo "Error connecting to github"
+        exit
+    fi
 fi
 
 cd $packageroot
@@ -70,7 +85,6 @@ cd $packageroot
 function deleteCodeblocks {
     #delete codeblock files
     rm *.cbp
-    rm *.sh
     rm *.workspace
 }
 
@@ -102,34 +116,29 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    if [ "$pkg_platform" == "win_cb" ]; then
-	    # copy all examples to pkg_ofroot
-	    cp -Rf $packageroot/examples $pkg_ofroot
-	
+    echo "creating project files"
+    if [ "$pkg_platform" == "win_cb" ]; then	
 	    # copy config.make and Makefile into every subfolder
-	    for d in `find ${pkg_ofroot}/examples -maxdepth 2 -type d`; do
-	      cp $packageroot/scripts/win_cb/template/config.make ${d}
-	      cp $packageroot/scripts/win_cb/template/Makefile ${d}
+	    for example in $pkg_ofroot/examples/*/*; do
+	        cp $pkg_ofroot/scripts/templates/win_cb/config.make ${example}
+	        cp $pkg_ofroot/scripts/templates/win_cb/Makefile ${example}
 	    done
-	
-	    # remove config.make and Makefile from level 1
-        for d in `find ${pkg_ofroot}/examples -maxdepth 1 -type d`; do
-	      rm "${d}/config.make"
-	      rm "${d}/Makefile"
-	    done
-	
-	    # remove config.make and Makefile from level 0
-	    rm "$pkg_ofroot/examples/config.make"
-	    rm "$pkg_ofroot/examples/Makefile"
     else
-        PG_OF_PATH=$pkg_ofroot projectGenerator --recursive -p ${pkg_platform} $pkg_ofroot/examples
+        cd ${main_ofroot}/apps/projectGenerator
+        git pull origin master
+        cd commandLine
+        PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O3 make -j2
+        cd ${pkg_ofroot}
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples
     fi
+    cd ${pkg_ofroot}
 }
 
 function createPackage {
     pkg_platform=$1
     pkg_version=$2
     pkg_ofroot=$3
+    main_ofroot=$4
     
     #remove previously created package 
     cd $pkg_ofroot/..
@@ -290,23 +299,23 @@ function createPackage {
 	#	rm -Rf __MACOSX
 	#fi
     if [ "$pkg_platform" = "vs" ]; then
-		rm projectGenerator_vs.zip
 		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip
-		unzip projectGenerator_vs.zip
+		echo "Uncomptessing projectGenerator_vs.zip"
+		unzip projectGenerator_vs.zip > /dev/null
 		rm projectGenerator_vs.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "osx" ]; then
-		rm projectGenerator_osx.zip
 		wget http://192.237.185.151/projectGenerator/projectGenerator_osx.zip
-		unzip projectGenerator_osx.zip
+		echo "Uncomptessing projectGenerator_osx.zip"
+		unzip projectGenerator_osx.zip > /dev/null
 		rm projectGenerator_osx.zip
 		rm -Rf __MACOSX
 	fi
     if [ "$pkg_platform" = "ios" ]; then
-		rm projectGenerator_ios.zip
 		wget http://192.237.185.151/projectGenerator/projectGenerator_ios.zip
-		unzip projectGenerator_ios.zip
+		echo "Uncomptessing projectGenerator_ios.zip"
+		unzip projectGenerator_ios.zip > /dev/null
 		rm projectGenerator_ios.zip
 		rm -Rf __MACOSX
 	fi
@@ -321,14 +330,17 @@ function createPackage {
 	fi
 
     #delete libraries for other platforms
+    echo ----------------------------------------------------------------------
+    echo "deleting libraries from other platforms"
     cd $pkg_ofroot/libs  
     for lib in $( find . -maxdepth 1 -mindepth 1 -type d )
     do
-        echo $PWD
-        echo deleting $lib/lib
-        cd $lib/lib
-        rm -Rf $otherplatforms
-        cd $pkg_ofroot/libs 
+        if [ -d $lib/lib ]; then
+            echo deleting $lib/lib
+            cd $lib/lib
+            rm -Rf $lib/lib/$otherplatforms
+            cd $pkg_ofroot/libs
+        fi
     done
     if [ "$pkg_platform" = "osx" ]; then
         rm -Rf $libsnotinmac
@@ -348,7 +360,6 @@ function createPackage {
     for lib in $( ls -d */libs/*/lib/ )
     do
         cd ${lib}
-        echo $PWD
         echo deleting $lib
         rm -Rf $otherplatforms
         cd $pkg_ofroot/addons
@@ -386,7 +397,9 @@ function createPackage {
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
 		cd ${pkg_ofroot}
 		deleteEclipse
-		rm -R libs/openFrameworks/.settings
+		if [ -f libs/openFrameworks/.settings ]; then
+    		rm -R libs/openFrameworks/.settings
+    	fi
 	fi
 	
 	#android, move paths.default.make to paths.make
@@ -410,12 +423,12 @@ function createPackage {
 
 	cd ${pkg_ofroot}/libs
 	#delete specific include folders non-android
-	if [ "$pkg_platform" != "android" ]; then
+	if [ "$pkg_platform" != "android" ] && [ -d */include_android ]; then
 		rm -Rf $( ls -d */include_android )
 	fi
 
 	#delete specific include folders for non-ios
-	if [ "$pkg_platform" != "ios" ]; then
+	if [ "$pkg_platform" != "ios" ] && [ -d */include_ios ]; then
 		rm -Rf $( ls -d */include_ios )
 	fi
 
@@ -466,23 +479,9 @@ function createPackage {
 	if [ "$pkg_platform" != "osx" ] && [ "$pkg_platform" != "ios" ]; then
 		rm -Rf "xcode templates"
 	fi
-	
-	
-	#download and copy OF compiled
-	#cd $pkg_ofroot/libs/openFrameworksCompiled/lib/${pkg_platform}
-    	#if [ "$pkg_platform" = "win_cb" ]; then
-	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworks.lib
-	#	wget http://openframeworks.cc/git_pkgs/OF_compiled/${pkg_platform}/openFrameworksDebug.lib
-	#fi
-
-
-    #if snow leopard change 10.4u to 10.5
-    #if [ $runOSXSLScript = 1 ]; then
-    #    cd $pkg_ofroot
-    #    echo "replacing 10.4u with 10.5 for snow leopard"
-    #    find . -name '*.pbxproj' | xargs perl -pi -e 's/10\.4u/10\.5/g'
-    #    pkg_platform="osxSL"
-    #fi
+    echo ----------------------------------------------------------------------
+    echo
+    echo
     
     #choose readme
     cd $pkg_ofroot
@@ -521,15 +520,16 @@ function createPackage {
     
     #create compressed package
     if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
+        echo "compressing package to of_v${pkg_version}_${pkg_platform}_release.tar.gz"
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
         COPYFILE_DISABLE=true tar czf of_v${pkg_version}_${pkg_platform}_release.tar.gz of_v${pkg_version}_${pkg_platform}_release
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     else
+        echo "compressing package to of_v${pkg_version}_${pkg_platform}_release.zip"
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
         zip -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
-        mv of_v${pkg_version}_${pkg_platform}_release of_v${pkg_version}_${pkg_platform}_release        
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     fi
 }
@@ -542,7 +542,7 @@ if [ "$platform" = "all" ]; then
         mkdir of_v${version}_${eachplatform}
         cp -R addons apps export libs other scripts of_v${version}_${eachplatform}
         cd of_v${version}_${eachplatform}
-        createPackage $eachplatform $2 $PWD
+        createPackage $eachplatform $2 $PWD $of_root
     done
     
     cd $packageroot
@@ -554,11 +554,7 @@ if [ "$platform" = "all" ]; then
     mv * $packageroot/..
     #rm -Rf $packageroot
 else
-    of_root=$(cat ~/.ofprojectgenerator/config)
-    echo $packageroot > ~/.ofprojectgenerator/config
-    createPackage $platform $version $packageroot
-    echo $of_root > ~/.ofprojectgenerator/config
-    
+    createPackage $platform $version $packageroot $of_root    
 fi
 
 
