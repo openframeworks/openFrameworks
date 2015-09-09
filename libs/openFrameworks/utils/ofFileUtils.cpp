@@ -484,9 +484,11 @@ bool ofFile::create(){
 	bool success = false;
 
 	if(!myFile.string().empty()){
-		auto mode = this->mode;
+		auto oldmode = this->mode;
+		auto oldpath = path();
 		success = open(path(),ofFile::WriteOnly);
-		open(path(),mode);
+		close();
+		open(oldpath,oldmode,binary);
 	}
 
 	return success;
@@ -792,6 +794,9 @@ bool ofFile::remove(bool recursive){
 	}
 
 	try{
+		if(mode!=Reference){
+			open(path(),Reference,binary);
+		}
 		if(recursive){
 			std::filesystem::remove_all(myFile);
 		}else{
