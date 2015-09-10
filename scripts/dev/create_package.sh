@@ -12,8 +12,8 @@ else
 branch=stable
 fi
 
-REPO=https://github.com/openframeworks/openFrameworks
-REPO_ALIAS=upstreamhttps
+REPO=../..
+REPO_ALIAS=originlocal
 BRANCH=$branch
 
 PG_REPO=https://github.com/openframeworks/projectGenerator.git
