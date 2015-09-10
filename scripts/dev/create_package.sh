@@ -58,7 +58,7 @@ libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 
 rm -rf openFrameworks
 echo "Cloning OF from $REPO $BRANCH" 
-git clone $REPO --depth=1 --branch=$BRANCH openFrameworks> /dev/null
+git clone $REPO --depth=1 --branch=$BRANCH openFrameworks 2> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
@@ -68,15 +68,13 @@ fi
 cd openFrameworks
 packageroot=$PWD
 
-if [ "$platform" = "linux" ] || [ "$platform" = "linux64" ] || [ "$platform" = "linuxarmv6l" ] || [ "$platform" = "linuxarmv7l" ]; then
-    cd apps
-    echo "Cloning project generator from $PG_REPO $PG_BRANCH" 
-    git clone $PG_REPO --depth=1 --branch=$PG_BRANCH > /dev/null
-    gitfinishedok=$?
-    if [ $gitfinishedok -ne 0 ]; then
-        echo "Error connecting to github"
-        exit
-    fi
+cd apps
+echo "Cloning project generator from $PG_REPO $PG_BRANCH" 
+git clone $PG_REPO --depth=1 --branch=$PG_BRANCH 2> /dev/null
+gitfinishedok=$?
+if [ $gitfinishedok -ne 0 ]; then
+    echo "Error connecting to github"
+    exit
 fi
 
 cd $packageroot
@@ -299,34 +297,64 @@ function createPackage {
 	#	rm -Rf __MACOSX
 	#fi
     if [ "$pkg_platform" = "vs" ]; then
-		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip
-		echo "Uncomptessing projectGenerator_vs.zip"
-		unzip projectGenerator_vs.zip > /dev/null
-		rm projectGenerator_vs.zip
-		rm -Rf __MACOSX
+		cd apps/projectGenerator/projectGeneratorElectron
+		npm install
+		npm run build:vs
+		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-vs
+		cd ${pkg_ofroot}
+		rm -r apps/projectGenerator
+		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.exe -O projectGenerator-vs/resources/app/app/projectGenerator.exe 2> /dev/null
+		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "osx" ]; then
-		wget http://192.237.185.151/projectGenerator/projectGenerator_osx.zip
-		echo "Uncomptessing projectGenerator_osx.zip"
-		unzip projectGenerator_osx.zip > /dev/null
-		rm projectGenerator_osx.zip
-		rm -Rf __MACOSX
+		cd apps/projectGenerator/projectGeneratorElectron
+		npm install
+		npm run build:osx
+		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
+		cd ${pkg_ofroot}
+		rm -r apps/projectGenerator
+		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "ios" ]; then
-		wget http://192.237.185.151/projectGenerator/projectGenerator_ios.zip
-		echo "Uncomptessing projectGenerator_ios.zip"
-		unzip projectGenerator_ios.zip > /dev/null
-		rm projectGenerator_ios.zip
-		rm -Rf __MACOSX
+		cd apps/projectGenerator/projectGeneratorElectron
+		npm install
+		npm run build:osx
+		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
+		cd ${pkg_ofroot}
+		rm -r apps/projectGenerator
+		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
+	fi
+	
+	if [ "$pkg_platform" = "linux" ]; then
+		cd apps/projectGenerator/projectGeneratorElectron
+		npm install
+		npm run build:linux
+		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
+		cd ${pkg_ofroot}
+		sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
+	fi
+	
+	if [ "$pkg_platform" = "linux64" ] then
+		cd apps/projectGenerator/projectGeneratorElectron
+		npm install
+		npm run build:linux64
+		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
+		cd ${pkg_ofroot}
+		sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
 	fi
 	
 	# linux remove other platform projects from PG source and copy ofxGui
 	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
-		cd apps/projectGenerator/projectGeneratorSimple
+		mv apps/projectGenerator/commandLine .
+		rm -r apps/projectGenerator
+		mkdir apps/projectGenerator
+		mv commandLine apps/projectGenerator/
+		cd apps/projectGenerator/commandLine
 		deleteCodeblocks
 		deleteVS
 		deleteXcode
-		rm -Rf .git*
 	fi
 
     #delete libraries for other platforms
