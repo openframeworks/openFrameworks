@@ -336,7 +336,7 @@ function createPackage {
 		sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
 	fi
 	
-	if [ "$pkg_platform" = "linux64" ] then
+	if [ "$pkg_platform" = "linux64" ]; then
 		cd apps/projectGenerator/projectGeneratorElectron
 		npm install
 		npm run build:linux64
