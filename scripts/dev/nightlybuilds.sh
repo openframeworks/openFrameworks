@@ -42,7 +42,7 @@ echo $currenthash>lasthash.txt
 ./create_package.sh linuxarmv7l $lastversion master
 
 # delete older packages
-rm /var/www/versions/nightly/of_v*_nightly.*
+rm -f /var/www/versions/nightly/of_v*_nightly.*
 
 mv *.tar.gz /var/www/versions/nightly
 mv *.zip /var/www/versions/nightly
