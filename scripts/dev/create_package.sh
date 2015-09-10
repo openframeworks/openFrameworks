@@ -302,7 +302,7 @@ function createPackage {
 		npm run build:vs
 		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-vs
 		cd ${pkg_ofroot}
-		rm -r apps/projectGenerator
+		rm -rf apps/projectGenerator
 		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.exe -O projectGenerator-vs/resources/app/app/projectGenerator.exe 2> /dev/null
 		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
 	fi
@@ -312,7 +312,7 @@ function createPackage {
 		npm run build:osx
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
 		cd ${pkg_ofroot}
-		rm -r apps/projectGenerator
+		rm -rf apps/projectGenerator
 		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
@@ -322,7 +322,7 @@ function createPackage {
 		npm run build:osx
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
 		cd ${pkg_ofroot}
-		rm -r apps/projectGenerator
+		rm -rf apps/projectGenerator
 		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
@@ -348,7 +348,7 @@ function createPackage {
 	# linux remove other platform projects from PG source and copy ofxGui
 	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
 		mv apps/projectGenerator/commandLine .
-		rm -r apps/projectGenerator
+		rm -rf apps/projectGenerator
 		mkdir apps/projectGenerator
 		mv commandLine apps/projectGenerator/
 		cd apps/projectGenerator/commandLine
