@@ -43,7 +43,7 @@ public:
 	void draw(const ofTexture & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh) const;
     void draw(const ofBaseVideoDraws & video, float x, float y, float w, float h) const;
 	void draw(const ofVbo & vbo, GLuint drawMode, int first, int total) const;
-	void drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const;
+	void drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements = 0) const;
 	void drawInstanced(const ofVbo & vbo, GLuint drawMode, int first, int total, int primCount) const;
 	void drawElementsInstanced(const ofVbo & vbo, GLuint drawMode, int amt, int primCount) const;
 	void draw(const ofVboMesh & mesh, ofPolyRenderMode renderType) const;

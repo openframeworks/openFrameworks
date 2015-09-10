@@ -1,4 +1,24 @@
 #!/bin/bash
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   # set -u : exit the script if you try to use an uninitialized variable
+set -o errexit   # set -e : exit the script if any statement returns a non-true return value
+
+error() {
+  local parent_lineno="$1"
+  if [[ "$#" = "3" ]] ; then
+    local message="$2"
+    local code="${3:-1}"
+    echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
+  else
+    local code="${2:-1}"
+    echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
+  fi
+  exit "${code}"
+}
+trap 'error ${LINENO}' ERR
+
 cd $(cat ~/.ofprojectgenerator/config)
 git fetch upstreamhttps
 git reset --hard upstreamhttps/master
@@ -22,19 +42,10 @@ echo $currenthash>lasthash.txt
 ./create_package.sh linuxarmv7l $lastversion master
 
 # delete older packages
-rm /var/www/versions/nightly/of_v*_nightly.*
+rm -f /var/www/versions/nightly/of_v*_nightly.*
 
 mv *.tar.gz /var/www/versions/nightly
 mv *.zip /var/www/versions/nightly
-rm /var/www/versions/nightly/of_latest_linux_release.tar.gz
-rm /var/www/versions/nightly/of_latest_linux64_release.tar.gz
-rm /var/www/versions/nightly/of_latest_win_cb_release.zip
-rm /var/www/versions/nightly/of_latest_vs_release.zip
-rm /var/www/versions/nightly/of_latest_ios_release.zip
-rm /var/www/versions/nightly/of_latest_osx_release.zip
-rm /var/www/versions/nightly/of_latest_android_release.tar.gz
-rm /var/www/versions/nightly/of_latest_linuxarmv6l_release.tar.gz
-rm /var/www/versions/nightly/of_latest_linuxarmv7l_release.tar.gz
 
 mv /var/www/versions/nightly/of_v${lastversion}_linux_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz
