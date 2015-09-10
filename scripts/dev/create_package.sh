@@ -150,7 +150,7 @@ function createPackage {
     rm -r $pkg_ofroot/apps/devApps
     
     #remove projectGenerator folder
-    if [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ]; then
+    if [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "win_cb" ]; then
     	rm -rf $pkg_ofroot/apps/projectGenerator
     fi
 
