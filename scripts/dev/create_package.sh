@@ -296,6 +296,8 @@ function createPackage {
 	#	rm projectGenerator_wincb.zip
 	#	rm -Rf __MACOSX
 	#fi
+	mkdir $HOME/.tmp
+	export TMPDIR=$HOME/.tmp
     if [ "$pkg_platform" = "vs" ]; then
 		cd apps/projectGenerator/projectGeneratorElectron
 		npm install
