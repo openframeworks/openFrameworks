@@ -46,15 +46,6 @@ rm /var/www/versions/nightly/of_v*_nightly.*
 
 mv *.tar.gz /var/www/versions/nightly
 mv *.zip /var/www/versions/nightly
-rm /var/www/versions/nightly/of_latest_linux_release.tar.gz
-rm /var/www/versions/nightly/of_latest_linux64_release.tar.gz
-rm /var/www/versions/nightly/of_latest_win_cb_release.zip
-rm /var/www/versions/nightly/of_latest_vs_release.zip
-rm /var/www/versions/nightly/of_latest_ios_release.zip
-rm /var/www/versions/nightly/of_latest_osx_release.zip
-rm /var/www/versions/nightly/of_latest_android_release.tar.gz
-rm /var/www/versions/nightly/of_latest_linuxarmv6l_release.tar.gz
-rm /var/www/versions/nightly/of_latest_linuxarmv7l_release.tar.gz
 
 mv /var/www/versions/nightly/of_v${lastversion}_linux_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux_nightly.tar.gz
 mv /var/www/versions/nightly/of_v${lastversion}_linux64_release.tar.gz /var/www/versions/nightly/of_v${lastversion}_linux64_nightly.tar.gz
