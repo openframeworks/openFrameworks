@@ -56,16 +56,18 @@ libsnotinmingw="kiss glut cairo glew openssl"
 libsnotinandroid="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 
-rm -rf openFrameworks
+pkgfolder=openFrameworks_pkg_creation
+
+rm -rf ${pkgfolder}
 echo "Cloning OF from $REPO $BRANCH" 
-git clone $REPO --depth=1 --branch=$BRANCH openFrameworks 2> /dev/null
+git clone $REPO --depth=1 --branch=$BRANCH ${pkgfolder} 2> /dev/null
 gitfinishedok=$?
 if [ $gitfinishedok -ne 0 ]; then
     echo "Error connecting to github"
     exit
 fi
 
-cd openFrameworks
+cd ${pkgfolder}
 packageroot=$PWD
 
 cd apps
@@ -538,27 +540,27 @@ function createPackage {
     rm CONTRIBUTING.md
 
     #copy empty example
-    cd $pkg_ofroot/..
-    mkdir -p openFrameworks/apps/myApps 
+    cd $pkg_ofroot
+    mkdir -p apps/myApps 
     if [ "$pkg_platform" = "android" ]; then
-        cp -r openFrameworks/examples/android/androidEmptyExample openFrameworks/apps/myApps 
+        cp -r examples/android/androidEmptyExample apps/myApps/
     elif [ "$pkg_platform" = "ios" ]; then
-        cp -r openFrameworks/examples/ios/emptyExample openFrameworks/apps/myApps 
+        cp -r examples/ios/emptyExample apps/myApps/
     else
-        cp -r openFrameworks/examples/empty/emptyExample openFrameworks/apps/myApps 
+        cp -r examples/empty/emptyExample apps/myApps/
     fi
     
     #create compressed package
     if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         echo "compressing package to of_v${pkg_version}_${pkg_platform}_release.tar.gz"
         mkdir of_v${pkg_version}_${pkg_platform}_release
-        mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
+        mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}_release
         COPYFILE_DISABLE=true tar czf of_v${pkg_version}_${pkg_platform}_release.tar.gz of_v${pkg_version}_${pkg_platform}_release
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     else
         echo "compressing package to of_v${pkg_version}_${pkg_platform}_release.zip"
         mkdir of_v${pkg_version}_${pkg_platform}_release
-        mv openFrameworks/* of_v${pkg_version}_${pkg_platform}_release
+        mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}_release
         zip -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     fi
@@ -589,4 +591,4 @@ fi
 
 
 cd $packageroot/.. 
-rm -rf openFrameworks   
+rm -rf ${pkgfolder}   
