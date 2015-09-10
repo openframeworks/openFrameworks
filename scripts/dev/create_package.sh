@@ -136,7 +136,7 @@ function createProjectFiles {
 	        cp $pkg_ofroot/scripts/templates/win_cb/config.make ${example}
 	        cp $pkg_ofroot/scripts/templates/win_cb/Makefile ${example}
 	    done
-    else
+    else if ["$pkg_platform" != "android" ]; then
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin master
         cd commandLine
@@ -597,7 +597,6 @@ error() {
     local code="${2:-1}"
     echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
   fi
-  cleanup
   exit "${code}"
 }
 trap 'error ${LINENO}' ERR
