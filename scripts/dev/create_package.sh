@@ -28,7 +28,7 @@ PG_BRANCH=master
 
 hostArch=`uname`
 
-if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ] && [ "$platform" != "all" ]; then
+if [ "$platform" != "win_cb" ] && [ "$platform" != "linux" ] && [ "$platform" != "linux64" ] && [ "$platform" != "linuxarmv6l" ] && [ "$platform" != "linuxarmv7l" ] && [ "$platform" != "vs" ] && [ "$platform" != "osx" ] && [ "$platform" != "android" ] && [ "$platform" != "ios" ]; then
     echo usage: 
     echo ./create_package.sh platform version
     echo platform:
@@ -580,29 +580,26 @@ function createPackage {
     fi
 }
 
+cleanup() {
+    cd $packageroot/..  
+    rm -rf ${pkgfolder} 
+}
+trap cleanup 0
 
-if [ "$platform" = "all" ]; then
-    for eachplatform in win_cb linux linux64 vs osx 
-    do
-        cd $packageroot
-        mkdir of_v${version}_${eachplatform}
-        cp -R addons apps export libs other scripts of_v${version}_${eachplatform}
-        cd of_v${version}_${eachplatform}
-        createPackage $eachplatform $2 $PWD $of_root
-    done
-    
-    cd $packageroot
-    echo dir: $PWD
-    mkdir of_v${version}_all
-    mv addons apps export libs other scripts $packageroot/of_v${version}_all
-    COPYFILE_DISABLE=true tar czf of_v$version_all_FAT.tar.gz of_v${version}_all
-    rm -Rf of_v${version}_all
-    mv * $packageroot/..
-    #rm -Rf $packageroot
-else
-    createPackage $platform $version $packageroot $of_root    
-fi
+error() {
+  local parent_lineno="$1"
+  local message="$2"
+  local code="${3:-1}"
+  if [[ -n "$message" ]] ; then
+    echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
+  else
+    echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
+  fi
+  cleanup
+  exit "${code}"
+}
+trap 'error ${LINENO}' ERR
 
+createPackage $platform $version $packageroot $of_root    
 
-cd $packageroot/.. 
-rm -rf ${pkgfolder}   
+ 
