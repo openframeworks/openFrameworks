@@ -315,7 +315,7 @@ function createPackage {
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip 2> /dev/null
+		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip
 		unzip projectGenerator_vs.zip > /dev/null
 		rm projectGenerator_vs.zip
 		cd ${pkg_ofroot}
@@ -328,7 +328,7 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator
 		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "ios" ]; then
@@ -338,7 +338,7 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator
 		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
 	
@@ -579,6 +579,11 @@ function createPackage {
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     fi
 }
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   # set -u : exit the script if you try to use an uninitialized variable
+set -o errexit   # set -e : exit the script if any statement returns a non-true return value
 
 cleanup() {
     cd $packageroot/..  
