@@ -593,9 +593,9 @@ trap cleanup 0
 
 error() {
   local parent_lineno="$1"
-  local message="$2"
   local code="${3:-1}"
-  if [[ -n "$message" ]] ; then
+  if [[ -n "$2" ]] ; then
+    local message="$2"
     echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
   else
     echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
@@ -603,7 +603,7 @@ error() {
   cleanup
   exit "${code}"
 }
-trap 'error ${LINENO}' "error" ERR
+trap 'error ${LINENO}' ERR
 
 createPackage $platform $version $packageroot $of_root    
 
