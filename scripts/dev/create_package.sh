@@ -315,7 +315,7 @@ function createPackage {
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		wget http://192.237.185.151/projectGenerator/projectGenerator-vs.zip
+		wget http://192.237.185.151/projectGenerator/projectGenerator-vs.zip 2> /dev/null
 		unzip projectGenerator-vs.zip 2> /dev/null
 		rm projectGenerator-vs.zip
 		cd ${pkg_ofroot}
@@ -328,7 +328,7 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator
+		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "ios" ]; then
@@ -338,7 +338,7 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator
+		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
 	
@@ -484,10 +484,6 @@ function createPackage {
     #delete dynamic libraries for other platforms
     cd $pkg_ofroot/export
     rm -Rf $otherplatforms
-    if [ "$pkg_platform" = "osx" ]; then
-        cd $pkg_ofroot
-        rmdir export
-    fi
 
     #delete scripts
     cd $pkg_ofroot/scripts
@@ -593,11 +589,12 @@ trap cleanup 0
 
 error() {
   local parent_lineno="$1"
-  local code="${3:-1}"
-  if [[ -n "$2" ]] ; then
+  if [[ "$#" = "3" ]] ; then
     local message="$2"
+    local code="${3:-1}"
     echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
   else
+    local code="${2:-1}"
     echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
   fi
   cleanup
