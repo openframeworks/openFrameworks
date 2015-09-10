@@ -316,7 +316,7 @@ function createPackage {
 		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
 		wget http://192.237.185.151/projectGenerator/projectGenerator-vs.zip
-		unzip projectGenerator-vs.zip > /dev/null
+		unzip projectGenerator-vs.zip 2> /dev/null
 		rm projectGenerator-vs.zip
 		cd ${pkg_ofroot}
 		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
