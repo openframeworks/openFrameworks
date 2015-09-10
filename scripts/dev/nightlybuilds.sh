@@ -1,4 +1,24 @@
 #!/bin/bash
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   # set -u : exit the script if you try to use an uninitialized variable
+set -o errexit   # set -e : exit the script if any statement returns a non-true return value
+
+error() {
+  local parent_lineno="$1"
+  if [[ "$#" = "3" ]] ; then
+    local message="$2"
+    local code="${3:-1}"
+    echo "Error on or near line ${parent_lineno}: ${message}; exiting with status ${code}"
+  else
+    local code="${2:-1}"
+    echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
+  fi
+  exit "${code}"
+}
+trap 'error ${LINENO}' ERR
+
 cd $(cat ~/.ofprojectgenerator/config)
 git fetch upstreamhttps
 git reset --hard upstreamhttps/master
