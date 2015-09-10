@@ -333,8 +333,8 @@ function createPackage {
 	fi
     if [ "$pkg_platform" = "ios" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
-		npm install
-		npm run build:osx
+		npm install > /dev/null
+		npm run build:osx > /dev/null
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
