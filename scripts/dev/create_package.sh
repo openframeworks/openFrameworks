@@ -338,7 +338,7 @@ function createPackage {
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-osx/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
+		wget http://192.237.185.151/projectGenerator/projectGenerator_osx -O projectGenerator-ios/projectGenerator.app/Contents/Resources/app/app/projectGenerator 2> /dev/null
 		sed -i "s/osx/ios/g" projectGenerator-ios/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
 	
