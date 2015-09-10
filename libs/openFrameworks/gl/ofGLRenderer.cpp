@@ -24,6 +24,7 @@ ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 	linePoints.resize(2);
 	rectPoints.resize(4);
 	triPoints.resize(3);
+	colorMaterialEnabled = false;
 	normalsEnabled = false;
 	lightingEnabled = false;
 	alphaMaskTextureTarget = GL_TEXTURE_2D;
@@ -535,6 +536,9 @@ void ofGLRenderer::unbind(const ofFbo & fbo){
 
 //----------------------------------------------------------
 void ofGLRenderer::bind(const ofBaseMaterial & material){
+	colorMaterialEnabled = glIsEnabled(GL_COLOR_MATERIAL);
+	glDisable(GL_COLOR_MATERIAL);
+	
 	ofFloatColor diffuse = material.getDiffuseColor();
 	ofFloatColor specular = material.getSpecularColor();
 	ofFloatColor ambient = material.getAmbientColor();
@@ -586,6 +590,10 @@ void ofGLRenderer::unbind(const ofBaseMaterial & material){
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &defaultData.emissive.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &defaultData.shininess);
 #endif
+	
+	if (colorMaterialEnabled) {
+		glEnable(GL_COLOR_MATERIAL);
+	}
 }
 
 //----------------------------------------------------------

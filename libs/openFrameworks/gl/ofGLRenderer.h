@@ -230,6 +230,7 @@ private:
 	ofPolyline circlePolyline;
 
 	ofMatrixStack matrixStack;
+	bool colorMaterialEnabled;
 	bool normalsEnabled;
 	bool lightingEnabled;
 	set<int> textureLocationsEnabled;
