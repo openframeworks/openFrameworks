@@ -129,8 +129,8 @@ function deleteEclipse {
 
 
 function createProjectFiles {
-    echo "creating project files"
     if [ "$pkg_platform" == "win_cb" ]; then	
+        echo "Creating project files"
 	    # copy config.make and Makefile into every subfolder
 	    for example in $pkg_ofroot/examples/*/*; do
 	        cp $pkg_ofroot/scripts/templates/win_cb/config.make ${example}
@@ -159,7 +159,7 @@ function createPackage {
     cd $pkg_ofroot/..
 	rm -Rf of_v${pkg_version}_${pkg_platform}.*
 	rm -Rf of_v${pkg_version}_${pkg_platform}_*
-    echo "creating package $pkg_platform $version in $pkg_ofroot"
+    echo "Creating package $pkg_platform $version in $pkg_ofroot"
     
     #remove devApps folder
     rm -r $pkg_ofroot/apps/devApps
@@ -374,13 +374,12 @@ function createPackage {
 	fi
 
     #delete libraries for other platforms
-    echo ----------------------------------------------------------------------
-    echo "deleting libraries from other platforms"
+    echo "Deleting core libraries from other platforms"
     cd $pkg_ofroot/libs  
     for lib in $( find . -maxdepth 1 -mindepth 1 -type d )
     do
         if [ -d $lib/lib ]; then
-            echo deleting $lib/lib
+            #echo deleting $lib/lib
             cd $lib/lib
             rm -Rf $lib/lib/$otherplatforms
             cd $pkg_ofroot/libs
@@ -401,10 +400,11 @@ function createPackage {
     fi
     
     cd ${pkg_ofroot}/addons
+    echo "Deleting addon libraries from other platforms"
     for lib in $( ls -d */libs/*/lib/ )
     do
         cd ${lib}
-        echo deleting $lib
+        #echo deleting $lib
         rm -Rf $otherplatforms
         cd $pkg_ofroot/addons
     done
