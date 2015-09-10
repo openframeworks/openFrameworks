@@ -435,7 +435,7 @@ function createPackage {
 	fi
 	
 	#delete unit tests by now
-	rm -Rf ${pkg_root}/tests
+	rm -Rf ${pkg_ofroot}/tests
 
 	#delete eclipse projects
 	if [ "$pkg_platform" != "android" ] && [ "$pkg_platform" != "linux" ] && [ "$pkg_platform" != "linux64" ] && [ "$pkg_platform" != "linuxarmv6l" ] && [ "$pkg_platform" != "linuxarmv7l" ]; then
