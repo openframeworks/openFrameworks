@@ -392,7 +392,7 @@ function createPackage {
     elif [ "$pkg_platform" = "win_cb" ]; then
         rm -Rf $libsnotinmingw
     elif [ "$pkg_platform" = "vs" ]; then
-        rm -Rf $libsnotinwindows
+        rm -Rf $libsnotinvs
     elif [ "$pkg_platform" = "android" ]; then
         rm -Rf $libsnotinandroid
     elif [ "$pkg_platform" = "ios" ]; then
