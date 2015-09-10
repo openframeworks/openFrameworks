@@ -545,12 +545,14 @@ function createPackage {
     #create compressed package
     if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "android" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
         echo "compressing package to of_v${pkg_version}_${pkg_platform}_release.tar.gz"
+        cd $pkg_ofroot/..
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}_release
         COPYFILE_DISABLE=true tar czf of_v${pkg_version}_${pkg_platform}_release.tar.gz of_v${pkg_version}_${pkg_platform}_release
         rm -Rf of_v${pkg_version}_${pkg_platform}_release
     else
         echo "compressing package to of_v${pkg_version}_${pkg_platform}_release.zip"
+        cd $pkg_ofroot/..
         mkdir of_v${pkg_version}_${pkg_platform}_release
         mv ${pkgfolder}/* of_v${pkg_version}_${pkg_platform}_release
         zip -r of_v${pkg_version}_${pkg_platform}_release.zip of_v${pkg_version}_${pkg_platform}_release > /dev/null
