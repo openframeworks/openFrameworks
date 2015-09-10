@@ -136,7 +136,7 @@ function createProjectFiles {
 	        cp $pkg_ofroot/scripts/templates/win_cb/config.make ${example}
 	        cp $pkg_ofroot/scripts/templates/win_cb/Makefile ${example}
 	    done
-    elif ["$pkg_platform" != "android" ]; then
+    elif [ "$pkg_platform" != "android" ]; then
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin master
         cd commandLine
