@@ -1,6 +1,12 @@
 #!/bin/bash
 # $1 -> platform: win_cb, linux, linux64, vs, osx, ios, all
 # $2 -> version number: 006
+#
+# This script removes folders clones the openFrameworks repo 
+# and deletes parts of it to create the final package.
+# Do not try to modify it to run over your local install of
+# openFrameworks or it'll remove it along with any projects it
+# might contain.
 
 platform=$1
 version=$2
@@ -56,6 +62,13 @@ libsnotinmingw="kiss glut cairo glew openssl"
 libsnotinandroid="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 libsnotinios="glut quicktime videoInput fmodex glee rtAudio kiss cairo"
 
+# This script removes folders clones the openFrameworks repo 
+# and deletes parts of it to create the final package.
+# Do not try to modify it to run over your local install of
+# openFrameworks or it'll remove it along with any projects it
+# might contain.
+# Instead we download it in a folder with a different name so it's
+# safe to delete it completely at the end
 pkgfolder=openFrameworks_pkg_creation
 
 rm -rf ${pkgfolder}
@@ -298,7 +311,11 @@ function createPackage {
 		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-vs
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
-		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.exe -O projectGenerator-vs/resources/app/app/projectGenerator.exe 2> /dev/null
+		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
+		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip
+		unzip projectGenerator_vs.zip
+		rm projectGenerator_vs.zip
+		cd ${pkg_ofroot}
 		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "osx" ]; then
