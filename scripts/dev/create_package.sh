@@ -315,9 +315,9 @@ function createPackage {
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip
-		unzip projectGenerator_vs.zip > /dev/null
-		rm projectGenerator_vs.zip
+		wget http://192.237.185.151/projectGenerator/projectGenerator-vs.zip
+		unzip projectGenerator-vs.zip > /dev/null
+		rm projectGenerator-vs.zip
 		cd ${pkg_ofroot}
 		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
 	fi
@@ -603,7 +603,7 @@ error() {
   cleanup
   exit "${code}"
 }
-trap 'error ${LINENO}' ERR
+trap 'error ${LINENO}' "error" ERR
 
 createPackage $platform $version $packageroot $of_root    
 
