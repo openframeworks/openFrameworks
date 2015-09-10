@@ -289,19 +289,10 @@ function createPackage {
     
     
 	#download and uncompress PG
-	cd $pkg_ofroot
-	rm -rf projectGenerator
-    #if [ "$pkg_platform" = "win_cb" ]; then
-	#	rm projectGenerator_wincb.zip
-	#	wget http://www.openframeworks.cc/pgSimple/projectGenerator_wincb.zip
-	#	unzip projectGenerator_wincb.zip
-	#	rm projectGenerator_wincb.zip
-	#	rm -Rf __MACOSX
-	#fi
-	mkdir $HOME/.tmp
+	mkdir -p $HOME/.tmp
 	export TMPDIR=$HOME/.tmp
     if [ "$pkg_platform" = "vs" ]; then
-		cd apps/projectGenerator/projectGeneratorElectron
+		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
 		npm install
 		npm run build:vs
 		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-vs
@@ -311,7 +302,7 @@ function createPackage {
 		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "osx" ]; then
-		cd apps/projectGenerator/projectGeneratorElectron
+		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
 		npm install
 		npm run build:osx
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
@@ -321,7 +312,7 @@ function createPackage {
 		sed -i "s/osx/osx/g" projectGenerator-osx/projectGenerator.app/Contents/Resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "ios" ]; then
-		cd apps/projectGenerator/projectGeneratorElectron
+		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
 		npm install
 		npm run build:osx
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-ios
@@ -332,7 +323,7 @@ function createPackage {
 	fi
 	
 	if [ "$pkg_platform" = "linux" ]; then
-		cd apps/projectGenerator/projectGeneratorElectron
+		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
 		npm install
 		npm run build:linux
 		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
@@ -341,7 +332,7 @@ function createPackage {
 	fi
 	
 	if [ "$pkg_platform" = "linux64" ]; then
-		cd apps/projectGenerator/projectGeneratorElectron
+		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
 		npm install
 		npm run build:linux64
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
@@ -351,6 +342,7 @@ function createPackage {
 	
 	# linux remove other platform projects from PG source and copy ofxGui
 	if [ "$pkg_platform" = "linux" ] || [ "$pkg_platform" = "linux64" ] || [ "$pkg_platform" = "linuxarmv6l" ] || [ "$pkg_platform" = "linuxarmv7l" ]; then
+	    cd ${pkg_ofroot}
 		mv apps/projectGenerator/commandLine .
 		rm -rf apps/projectGenerator
 		mkdir apps/projectGenerator
