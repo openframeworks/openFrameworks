@@ -140,9 +140,11 @@ function createProjectFiles {
         cd ${main_ofroot}/apps/projectGenerator
         git pull origin master
         cd commandLine
-        PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O3 make -j2
+        echo "Recompiling command line PG"
+        PROJECT_OPTIMIZATION_CFLAGS_RELEASE=-O3 make -j2 > /dev/null
         cd ${pkg_ofroot}
-        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples
+        echo "Creating project files for $pkg_platform"
+        ${main_ofroot}/apps/projectGenerator/commandLine/bin/projectGenerator --recursive -p ${pkg_platform} -o $pkg_ofroot $pkg_ofroot/examples > /dev/null
     fi
     cd ${pkg_ofroot}
 }
@@ -302,26 +304,27 @@ function createPackage {
     
     
 	#download and uncompress PG
+	echo "Creating projectGenerator"
 	mkdir -p $HOME/.tmp
 	export TMPDIR=$HOME/.tmp
     if [ "$pkg_platform" = "vs" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
-		npm install
-		npm run build:vs
+		npm install > /dev/null
+		npm run build:vs > /dev/null
 		mv dist/projectGenerator-win32-ia32 ${pkg_ofroot}/projectGenerator-vs
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
 		cd ${pkg_ofroot}/projectGenerator-vs/resources/app/app/
-		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip
-		unzip projectGenerator_vs.zip
+		wget http://192.237.185.151/projectGenerator/projectGenerator_vs.zip 2> /dev/null
+		unzip projectGenerator_vs.zip > /dev/null
 		rm projectGenerator_vs.zip
 		cd ${pkg_ofroot}
 		sed -i "s/osx/vs/g" projectGenerator-vs/resources/app/settings.json
 	fi
     if [ "$pkg_platform" = "osx" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
-		npm install
-		npm run build:osx
+		npm install > /dev/null
+		npm run build:osx > /dev/null
 		mv dist/projectGenerator-darwin-x64 ${pkg_ofroot}/projectGenerator-osx
 		cd ${pkg_ofroot}
 		rm -rf apps/projectGenerator
@@ -341,8 +344,8 @@ function createPackage {
 	
 	if [ "$pkg_platform" = "linux" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
-		npm install
-		npm run build:linux
+		npm install > /dev/null
+		npm run build:linux > /dev/null
 		mv dist/projectGenerator-linux-ia32 ${pkg_ofroot}/projectGenerator-linux
 		cd ${pkg_ofroot}
 		sed -i "s/osx/linux/g" projectGenerator-linux/resources/app/settings.json
@@ -350,8 +353,8 @@ function createPackage {
 	
 	if [ "$pkg_platform" = "linux64" ]; then
 		cd ${pkg_ofroot}/apps/projectGenerator/projectGeneratorElectron
-		npm install
-		npm run build:linux64
+		npm install > /dev/null
+		npm run build:linux64 > /dev/null
 		mv dist/projectGenerator-linux-x64 ${pkg_ofroot}/projectGenerator-linux64
 		cd ${pkg_ofroot}
 		sed -i "s/osx/linux64/g" projectGenerator-linux64/resources/app/settings.json
