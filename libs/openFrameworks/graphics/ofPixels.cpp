@@ -36,7 +36,7 @@ static int pixelBitsFromPixelFormat(ofPixelFormat format){
 		case OF_PIXELS_NV21:
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
-			return 4;
+			return 12;
 
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
