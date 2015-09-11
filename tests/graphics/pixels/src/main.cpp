@@ -304,9 +304,9 @@ class ofApp: public ofxUnitTestsApp{
 			if(hasWorkingIterators(pixelFormat)){
 				test_eq(pixels.getLine(0).begin(),pixels.getData(),"getLine(0).begin()==getData() " + format);
 				test_eq(pixels.getLine(0).end(),pixels.getData()+(w*bpp/8),"getLine(0).end()==getData()+(w*3) " + format);
-				test_eq(pixels.getLine(h-1).begin(),pixels.getData()+(w*bpp/8*(h-1)),"getLine(h-1).begin()==getData()+(w*numChannels*(h-1)) " + format);
+				test_eq(pixels.getLine(h-1).begin(),pixels.getData()+(w*bpp/8*(h-1)),"getLine(h-1).begin()==getData()+(w*bpp/8*(h-1)) " + format);
 				test_eq(pixels.getLine(h-1).end(),pixels.end(),"getLine(h-1).end()==end() " + format);
-				test_eq(&pixels.getLine(0).getPixel(10)[0],pixels.getData()+(10*bpp/8),"getLine(0).getPixels(3)[0]==pixels.getData()+(10*numChannels)");
+				test_eq(&pixels.getLine(0).getPixel(10)[0],pixels.getData()+(10*bpp/8),"getLine(0).getPixel(10)[0]==pixels.getData()+(10*bpp/8)");
 			}
 		}
 	}
