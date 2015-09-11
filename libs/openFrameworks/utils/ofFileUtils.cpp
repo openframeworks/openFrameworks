@@ -19,9 +19,6 @@
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
-
-size_t ofBuffer::ioSize = 1024;
-
 //--------------------------------------------------
 ofBuffer::ofBuffer()
 :currentLine(end(),end()){
@@ -43,13 +40,13 @@ ofBuffer::ofBuffer(const string & text)
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(istream & stream)
+ofBuffer::ofBuffer(istream & stream, size_t ioBlockSize)
 :currentLine(end(),end()){
-	set(stream);
+	set(stream, ioBlockSize);
 }
 
 //--------------------------------------------------
-bool ofBuffer::set(istream & stream){
+bool ofBuffer::set(istream & stream, size_t ioBlockSize){
 	if(stream.bad()){
 		clear();
 		return false;
@@ -57,9 +54,9 @@ bool ofBuffer::set(istream & stream){
 		buffer.clear();
 	}
 
-	vector<char> aux_buffer(ioSize);
+	vector<char> aux_buffer(ioBlockSize);
 	while(stream.good()){
-		stream.read(&aux_buffer[0], ioSize);
+		stream.read(&aux_buffer[0], ioBlockSize);
 		buffer.insert(buffer.end(),aux_buffer.begin(),aux_buffer.begin()+stream.gcount());
 	}
 	buffer.push_back(0);
@@ -161,11 +158,6 @@ long ofBuffer::size() const {
 	}
 	//we always add a 0 at the end to avoid problems with strings
 	return buffer.size() - 1;
-}
-
-//--------------------------------------------------
-void ofBuffer::setIOBufferSize(size_t _ioSize){
-	ioSize = _ioSize;
 }
 
 //--------------------------------------------------
