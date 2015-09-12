@@ -187,7 +187,7 @@ PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-section
 
 ifndef PROJECT_OPTIMIZATION_CFLAGS_RELEASE
 	# RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3
+	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3 -DNDEBUG
 	
 	ifneq ($(LINUX_ARM),1)
 		PLATFORM_OPTIMIZATION_CFLAGS_RELEASE += -march=native -mtune=native
@@ -198,7 +198,7 @@ endif
 
 ifndef PROJECT_OPTIMIZATION_CFLAGS_DEBUG
 	# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 -D_GLIBCXX_DEBUG -D_LIBCPP_DEBUG
 else
 	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
 endif
