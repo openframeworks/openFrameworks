@@ -132,35 +132,34 @@ ofxAndroidVideoGrabber::Data::~Data(){
 }
 
 void ofxAndroidVideoGrabber::Data::loadTexture(){
-	ofTextureData td;
-	GLuint texId[1];
-	glGenTextures(1, texId);
+    ofTextureData td;
+    GLuint texId[1];
+    glGenTextures(1, texId);
 
-	glEnable(GL_TEXTURE_EXTERNAL_OES);
-	glBindTexture(GL_TEXTURE_EXTERNAL_OES, texId[0]);
+    glEnable(GL_TEXTURE_EXTERNAL_OES);
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, texId[0]);
 
-	glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	if (!ofIsGLProgrammableRenderer()) {
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	}
+    glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	glDisable(GL_TEXTURE_EXTERNAL_OES);
+#ifndef TARGET_PROGRAMMABLE_GL
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+#endif
 
-	// Set the externally created texture reference
-	texture.setUseExternalTextureID(texId[0]);
-	texture.texData.width = width;
-	texture.texData.height = height;
-	texture.texData.tex_w = width;
-	texture.texData.tex_h = height;
-	texture.texData.tex_t = 1; // Hack!
-	texture.texData.tex_u = 1;
-	texture.texData.textureTarget = GL_TEXTURE_EXTERNAL_OES;
-	texture.texData.glInternalFormat = GL_RGBA;
+    glDisable(GL_TEXTURE_EXTERNAL_OES);
 
-
+    // Set the externally created texture reference
+    texture.setUseExternalTextureID(texId[0]);
+    texture.texData.width = width;
+    texture.texData.height = height;
+    texture.texData.tex_w = width;
+    texture.texData.tex_h = height;
+    texture.texData.tex_t = 1; // Hack!
+    texture.texData.tex_u = 1;
+    texture.texData.textureTarget = GL_TEXTURE_EXTERNAL_OES;
+    texture.texData.glInternalFormat = GL_RGBA;
 }
 
 
@@ -262,7 +261,7 @@ void ofxAndroidVideoGrabber::close(){
     } else {
         ofLogError("ofxAndroidVideoGrabber") << "close(): couldn't get OFAndroidVideoGrabber close grabber method";
     }
-    
+
     data->bGrabberInited = false;
 }
 
