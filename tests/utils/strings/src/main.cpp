@@ -57,6 +57,16 @@ class ofApp: public ofxUnitTestsApp{
 
 		test_eq(ofToLower("AbCéÉBbCcc"),"abcéébbccc","tolower");
 		test_eq(ofToUpper("AbCéÉBbCcc"),"ABCÉÉBBCCC","toupper");
+
+		// test #4363
+		std::vector<string> strs;
+		strs.push_back("hi");
+		strs.push_back("this");
+		strs.push_back("is");
+		strs.push_back("a");
+		strs.push_back("join");
+		strs.push_back("test");
+		test_eq(ofJoinString(strs,","),"hi,this,is,a,join,test","test #4363");
 	}
 };
 
