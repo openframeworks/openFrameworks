@@ -496,36 +496,34 @@ void ofFbo::destroy() {
 
 //--------------------------------------------------------------
 bool ofFbo::checkGLSupport() {
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+    // Desktop + GLES 3.0+ (FBO is core spec — no extension check needed on ES3)
+    if (!ofIsGLProgrammableRenderer()){
+        if(ofGLCheckExtension("GL_EXT_framebuffer_object")){
+            ofLogVerbose("ofFbo") << "GL frame buffer object supported";
+        }else{
+            ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
+            return false;
+        }
+    }
+    glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
+    glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
 
-	if (!ofIsGLProgrammableRenderer()){
-		if(ofGLCheckExtension("GL_EXT_framebuffer_object")){
-			ofLogVerbose("ofFbo") << "GL frame buffer object supported";
-		}else{
-			ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
-			return false;
-		}
-	}
-
-	glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &_maxColorAttachments);
-	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &_maxDrawBuffers);
-	glGetIntegerv(GL_MAX_SAMPLES, &_maxSamples);
-
-	ofLogVerbose("ofFbo") << "checkGLSupport(): "
-                          << "maxColorAttachments: " << _maxColorAttachments << ", "
-                          << "maxDrawBuffers: " << _maxDrawBuffers << ", "
-                          << "maxSamples: " << _maxSamples;
+    ofLogVerbose("ofFbo") << "checkGLSupport(): "
+                           << "maxColorAttachments: " << _maxColorAttachments << ", "
+                           << "maxDrawBuffers: " << _maxDrawBuffers << ", "
+                           << "maxSamples: " << _maxSamples;
 #else
-
-	if(ofIsGLProgrammableRenderer() || ofGLCheckExtension("GL_OES_framebuffer_object")){
-		ofLogVerbose("ofFbo") << "GL frame buffer object supported";
-	}else{
-		ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
-		return false;
-	}
+    // GLES 2.0 — FBO is still an extension (GL_OES_framebuffer_object)
+    if(ofIsGLProgrammableRenderer() || ofGLCheckExtension("GL_OES_framebuffer_object")){
+        ofLogVerbose("ofFbo") << "GL frame buffer object supported";
+    }else{
+        ofLogError("ofFbo") << "GL frame buffer object not supported by this graphics card";
+        return false;
+    }
 #endif
-
-	return true;
+    return true;
 }
 
 
@@ -669,6 +667,7 @@ void ofFbo::allocate(ofFboSettings _settings) {
     settings.minFilter = _settings.minFilter;
 
 	// if we want MSAA, create a new fbo for textures
+    // FIXME: it is in fact possible to do multisampling with newer OpenGL ES (2.0+ ?)
 	#ifndef TARGET_OPENGLES
 		if(_settings.numSamples){
 			glGenFramebuffers(1, &fboTextures);
@@ -942,7 +941,7 @@ int ofFbo::getNumTextures() const {
 //----------------------------------------------------------
 void ofFbo::setActiveDrawBuffer(int i){
 	if(!bIsAllocated) return;
-#ifndef TARGET_OPENGLES
+#ifndef TARGET_OPENGLES || defined(GL_ES_VERSION_3_0)
 	vector<int> activebuffers(1, i);
 	setActiveDrawBuffers(activebuffers);
 #endif
@@ -951,7 +950,7 @@ void ofFbo::setActiveDrawBuffer(int i){
 //----------------------------------------------------------
 void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
 	if(!bIsAllocated) return;
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
     int numBuffers = activeDrawBuffers.size();
 	activeDrawBuffers.clear();
 	activeDrawBuffers.resize(numBuffers, GL_NONE); // we initialise the vector with GL_NONE, so a buffer will not be written to unless activated.
@@ -972,7 +971,7 @@ void ofFbo::setActiveDrawBuffers(const vector<int>& ids){
 //----------------------------------------------------------
 void ofFbo::activateAllDrawBuffers(){
 	if(!bIsAllocated) return;
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
     vector<int> activeBuffers(getNumTextures(),0);
     for(int i=0; i < getNumTextures(); i++){
     	activeBuffers[i] = i;
