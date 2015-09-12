@@ -27,20 +27,22 @@ namespace ofxCv {
 	
 	class Intrinsics {
 	public:
-		// kinect is 6.66mm(H) x 5.32mm(V)
-		void setup(Mat cameraMatrix, cv::Size imageSize, cv::Size sensorSize = cv::Size(0, 0));
+        void setup(float focalLengthMm, cv::Size imageSizePx, cv::Size2d sensorSizeMm, cv::Point2d principalPointPct = cv::Point2d(.5,.5));
+		void setup(Mat cameraMatrix, cv::Size imageSizePx, cv::Size2d sensorSizeMm = cv::Size2d(0, 0));
 		void setImageSize(cv::Size imgSize);
 		Mat getCameraMatrix() const;
 		cv::Size getImageSize() const;
-		cv::Size getSensorSize() const;
+		cv::Size2d getSensorSize() const;
 		cv::Point2d getFov() const;
 		double getFocalLength() const;
 		double getAspectRatio() const;
 		Point2d getPrincipalPoint() const;
 		void loadProjectionMatrix(float nearDist = 10., float farDist = 10000., cv::Point2d viewportOffset = cv::Point2d(0, 0)) const;
 	protected:
+        void updateValues();
 		Mat cameraMatrix;
-		cv::Size imageSize, sensorSize;
+        cv::Size imageSize;
+        cv::Size2d sensorSize;
 		cv::Point2d fov;
 		double focalLength, aspectRatio;
 		Point2d principalPoint;
@@ -67,7 +69,8 @@ namespace ofxCv {
 		bool calibrate();
 		bool calibrateFromDirectory(string directory);
 		bool findBoard(Mat img, vector<Point2f> &pointBuf, bool refine = true);
-		void setIntrinsics(Intrinsics& distortedIntrinsics, Mat& distortionCoefficients);
+		void setIntrinsics(Intrinsics& distortedIntrinsics);
+        void setDistortionCoefficients(float k1, float k2, float p1, float p2, float k3=0, float k4=0, float k5=0, float k6=0);
         
 		void undistort(Mat img, int interpolationMode = INTER_NEAREST);
 		void undistort(Mat src, Mat dst, int interpolationMode = INTER_NEAREST);
