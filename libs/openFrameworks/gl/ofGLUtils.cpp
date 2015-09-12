@@ -255,6 +255,8 @@ int ofGetGlTypeFromInternal(int glInternalFormat){
 #ifndef TARGET_OPENGLES
 		case GL_LUMINANCE32F_ARB:
 		case GL_LUMINANCE_ALPHA32F_ARB:
+#endif
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 		case GL_R16F:
 		case GL_RG16F:
 		case GL_RGB16F:

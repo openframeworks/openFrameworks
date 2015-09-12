@@ -529,7 +529,7 @@ class ofTexture : public ofBaseDraws {
 	/// \param glFormat GL pixel type: GL_RGBA, GL_LUMINANCE, etc.
 	void loadData(const ofFloatPixels & pix, int glFormat);
 
-#ifndef TARGET_OPENGLES
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	/// \brief Load pixels from an ofBufferObject
 	///
 	/// This is different to allocate(ofBufferObject,internal). That
@@ -681,9 +681,10 @@ class ofTexture : public ofBaseDraws {
 	///
 	void unbind(int textureLocation=0) const;
 
-    // note: defined(someMethod) doesn't actually always work
-    //       there is no reliable way to check for a function being defined just with the preprocessor
-#if (!defined(TARGET_OPENGLES) && defined(glBindImageTexture)) || defined(GL_ES_VERSION_3_1)
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_1)
+// TODO: check for availability of glBindImageTexture in a valid way
+//       defined(glBindImageTexture) does not actually work!
+//       there is no reliable way to check for a function being defined just with the preprocessor
 	/// Calls glBindImageTexture on the texture
 	///
 	/// Binds the texture as an read or write image, only available since OpenGL 4.2
