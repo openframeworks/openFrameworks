@@ -14,7 +14,7 @@ namespace ofxCv {
 		fs << "Mat" << mat;
 	}
 	
-	void saveImage(Mat& mat, string filename, ofImageQualityType qualityLevel = OF_IMAGE_QUALITY_BEST) {
+	void saveImage(Mat& mat, string filename, ofImageQualityType qualityLevel) {
 		if(mat.depth() == CV_8U) {
 			ofPixels pix8u;
 			toOf(mat, pix8u);
