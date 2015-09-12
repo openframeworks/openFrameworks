@@ -275,26 +275,36 @@ int ofGetGLTypeFromInternal(int glInternalFormat){
 		break;
 #endif
 
-#if !defined(TARGET_OPENGLES) || defined(TARGET_EMSCRIPTEN)
-		case GL_LUMINANCE32F_ARB:
-		case GL_LUMINANCE_ALPHA32F_ARB:
-		case GL_R32F:
-		case GL_RG32F:
-		case GL_RGB32F:
-		case GL_RGBA32F:
-			return GL_FLOAT;
 
-		case GL_R16F:
-		case GL_RG16F:
-		case GL_RGB16F:
-		case GL_RGBA16F:
-		case GL_LUMINANCE16:
-		case GL_LUMINANCE16_ALPHA16:
-		case GL_R16:
-		case GL_RG16:
-		case GL_RGB16:
-		case GL_RGBA16:
-			return GL_HALF_FLOAT;
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+    // === HALF-FLOAT (16F) — these four formats ===
+    case GL_R16F:
+    case GL_RG16F:
+    case GL_RGB16F:
+    case GL_RGBA16F:
+        #ifdef GL_HALF_FLOAT
+        return GL_HALF_FLOAT;          // core in GLES 3.0+
+        #else
+        return GL_HALF_FLOAT_OES;      // fallback for older headers
+        #endif
+    // === FULL-FLOAT (32F) ===
+    case GL_R32F:
+    case GL_RG32F:
+    case GL_RGB32F:
+    case GL_RGBA32F:
+        return GL_FLOAT;
+#endif
+#ifndef TARGET_OPENGLES
+    case GL_LUMINANCE32F_ARB:
+    case GL_LUMINANCE_ALPHA32F_ARB:
+        return GL_FLOAT;
+    case GL_LUMINANCE16:
+    case GL_LUMINANCE16_ALPHA16:
+    case GL_R16:
+    case GL_RG16:
+    case GL_RGB16:
+    case GL_RGBA16:
+        return GL_UNSIGNED_SHORT;
 #endif
 
 		case GL_DEPTH_STENCIL:
