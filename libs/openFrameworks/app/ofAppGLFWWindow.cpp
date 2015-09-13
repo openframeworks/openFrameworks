@@ -191,6 +191,12 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 	}else{
 		windowP = glfwCreateWindow(settings.width, settings.height, "", nullptr, sharedContext);
+		if(requestedMode==OF_FULLSCREEN){
+			auto size = getScreenSize();
+			settings.width = size.x;
+			settings.height = size.y;
+			setWindowShape(settings.width, settings.height);
+		}
 		if(!windowP){
 			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
 		}
@@ -465,7 +471,7 @@ ofPoint ofAppGLFWWindow::getScreenSize(){
 			if( orientation == OF_ORIENTATION_DEFAULT || orientation == OF_ORIENTATION_180 ){
 				return ofVec3f(desktopMode->width*pixelScreenCoordScale, desktopMode->height*pixelScreenCoordScale,0);
 			}else{
-				return ofPoint(0,0); //NOTE: shouldn't this be ofVec3f(desktopMode->height*pixelScreenCoordScale, desktopMode->width*pixelScreenCoordScale, 0);
+				return ofVec3f(desktopMode->height*pixelScreenCoordScale, desktopMode->width*pixelScreenCoordScale, 0);
 			}
 		}else{
 			return ofPoint(0,0);
