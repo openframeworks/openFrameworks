@@ -92,7 +92,7 @@ class ofxTCPServer : public ofThread{
 
 		ofxTCPManager			TCPServer;
 		map<int,ofPtr<ofxTCPClient> >	TCPConnections;
-		std::mutex					mConnectionsLock;
+		std::recursive_mutex					mConnectionsLock;
 
 		bool			connected;
 		string			str;
