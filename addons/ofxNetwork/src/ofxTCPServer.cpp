@@ -58,7 +58,6 @@ bool ofxTCPServer::close(){
 		for(it=TCPConnections.begin(); it!=TCPConnections.end(); it++){
 			it->second->close();
 		}
-		stopThread();
 		connected = false;
 		TCPConnections.clear();
 	}
