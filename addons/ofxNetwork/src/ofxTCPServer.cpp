@@ -266,6 +266,7 @@ bool ofxTCPServer::isClientSetup(int clientID){
 
 //--------------------------
 bool ofxTCPServer::isClientConnected(int clientID){
+	std::unique_lock<std::mutex> Lock( mConnectionsLock );
 	return isClientSetup(clientID) && getClient(clientID).isConnected();
 }
 
