@@ -82,7 +82,7 @@ ofxTCPClient & ofxTCPServer::getClient(int clientID){
 
 //--------------------------
 bool ofxTCPServer::disconnectClient(int clientID){
-	std::lock_guard<recursive_mutex> lock( mConnectionsLock );
+	std::lock_guard<std::recursive_mutex> lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "disconnectClient(): client " << clientID << " doesn't exist";
 		return false;
@@ -95,7 +95,7 @@ bool ofxTCPServer::disconnectClient(int clientID){
 
 //--------------------------
 bool ofxTCPServer::send(int clientID, string message){
-	std::lock_guard<recursive_mutex> lock( mConnectionsLock );
+	std::lock_guard<std::recursive_mutex> lock( mConnectionsLock );
 	if( !isClientSetup(clientID) ){
 		ofLogWarning("ofxTCPServer") << "send(): client " << clientID << " doesn't exist";
 		return false;
