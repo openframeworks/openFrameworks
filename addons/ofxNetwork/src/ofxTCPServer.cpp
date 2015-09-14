@@ -307,14 +307,11 @@ void ofxTCPServer::threadedFunction(){
 	}
 	idCount = 0;
 	std::unique_lock<std::mutex> Lock( mConnectionsLock );
-	if(connected)
-	{
-		for(auto & conn: TCPConnections){
-			conn.second->close();
-		}
-		connected = false;
+	for(auto & conn: TCPConnections){
+		conn.second->close();
 	}
 	TCPConnections.clear();
+	connected = false;
 	ofLogVerbose("ofxTCPServer") << "listening thread stopped";
 }
 
