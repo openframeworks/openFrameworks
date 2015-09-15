@@ -35,7 +35,6 @@ ofAppGLFWWindow::ofAppGLFWWindow(){
 	bEnableSetupScreen	= true;
 	buttonInUse			= 0;
 	buttonPressed		= false;
-    bMultiWindowFullscreen  = false;
 	bWindowNeedsShowing	= true;
 
 	orientation 		= OF_ORIENTATION_DEFAULT;
@@ -75,7 +74,7 @@ void ofAppGLFWWindow::setNumSamples(int _samples){
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::setMultiDisplayFullscreen(bool bMultiFullscreen){
-    bMultiWindowFullscreen = bMultiFullscreen; 
+    settings.multiMonitorFullScreen = bMultiFullscreen;
 }
 
 //------------------------------------------------------------
@@ -190,6 +189,10 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 	}else{
 		windowP = glfwCreateWindow(settings.width, settings.height, "", nullptr, sharedContext);
+		if(!windowP){
+			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
+			return;
+		}
 		if(settings.windowMode==OF_FULLSCREEN){
 			if(!settings.isPositionSet()){
 				int count = 0;
@@ -218,9 +221,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 			}
 		}
-		if(!windowP){
-			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
-		}
 		#ifdef TARGET_LINUX
 			if(!iconSet){
 				ofPixels iconPixels;
@@ -237,14 +237,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		if(settings.iconified){
 			iconify(true);
 		}
-		/*if(requestedMode==OF_FULLSCREEN){
-			setFullscreen(true);
-		}*/
 	}
-    if(!windowP) {
-        ofLogError("ofAppGLFWWindow") << "couldn't create window";
-        return;
-    }
 	
 	//don't try and show a window if its been requsted to be hidden
 	bWindowNeedsShowing = settings.visible;
@@ -596,7 +589,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 	int monitorCount;
 	GLFWmonitor** monitors = glfwGetMonitors(&monitorCount);
  
-	if( bMultiWindowFullscreen && monitorCount > 1 ){
+	if( settings.multiMonitorFullScreen && monitorCount > 1 ){
 		// find the monitors at the edges of the virtual desktop
 		int minx=numeric_limits<int>::max();
 		int miny=numeric_limits<int>::max();
