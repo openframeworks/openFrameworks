@@ -1,5 +1,8 @@
 #!/bin/bash
 
+lastversion=$(date +%Y%m%d)
+echo "Building nightly builds $lastversion"
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   # set -u : exit the script if you try to use an uninitialized variable
@@ -19,6 +22,7 @@ error() {
 }
 trap 'error ${LINENO}' ERR
 
+
 cd $(cat ~/.ofprojectgenerator/config)
 git fetch upstreamhttps
 git reset --hard upstreamhttps/master
@@ -29,7 +33,6 @@ if [ "$currenthash" = "$lasthash" ]; then
     exit 0
 fi
 
-lastversion=$(date +%Y%m%d)
 echo $currenthash>lasthash.txt
 ./create_package.sh linux $lastversion master
 ./create_package.sh linux64 $lastversion master
