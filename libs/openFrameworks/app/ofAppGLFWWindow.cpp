@@ -692,7 +692,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
  
 		ofRectangle allScreensSpace;
  
-        if( bMultiWindowFullscreen && monitorCount > 1 ){
+        if( settings.multiMonitorFullScreen && monitorCount > 1 ){
  
 			//calc the sum Rect of all the monitors
 			for(int i = 0; i < monitorCount; i++){
@@ -777,7 +777,7 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
         int xpos = 0;
         int ypos = 0;
  
-        if( bMultiWindowFullscreen ){
+        if( settings.multiMonitorFullScreen ){
 
 			int minX = 0;
 			int maxX = 0;
