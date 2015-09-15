@@ -231,7 +231,7 @@ all:
 	
 	
 .compiler_flags$(TARGET_NAME): force
-	echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' | cmp -s - $@ || echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' > $@
+	@echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' | cmp -s - $@ || echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' > $@
 	
 
 #This rule does the compilation
