@@ -1144,11 +1144,26 @@ string ofAppGLFWWindow::getClipboardString() {
 
 //------------------------------------------------------------
 void ofAppGLFWWindow::listVideoModes(){
+	glfwInit();
 	int numModes;
 	const GLFWvidmode * vidModes = glfwGetVideoModes(nullptr, &numModes );
 	for(int i=0; i<numModes; i++){
 		ofLogNotice() << vidModes[i].width << " x " << vidModes[i].height
 		<< vidModes[i].redBits+vidModes[i].greenBits+vidModes[i].blueBits << "bit";
+	}
+}
+
+//------------------------------------------------------------
+void ofAppGLFWWindow::listMonitors(){
+	glfwInit();
+	int count;
+	const auto monitors = glfwGetMonitors(&count);
+	for(int i = 0; i<count; i++){
+		auto monitor = monitors[i];
+		int w,h,x,y;
+		glfwGetMonitorPhysicalSize(monitor,&w,&h);
+		glfwGetMonitorPos(monitor,&x,&y);
+		ofLogNotice() << i << ": " << glfwGetMonitorName(monitor) << ", physical size: " << w << "x" << h << "mm at " << x << ", " << y;
 	}
 }
 
