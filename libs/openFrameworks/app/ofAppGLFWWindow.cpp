@@ -135,7 +135,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 
 //	ofLogNotice("ofAppGLFWWindow") << "WINDOW MODE IS " << screenMode;
 
-	ofWindowMode requestedMode = _settings.windowMode;
 	glfwDefaultWindowHints();
 	glfwWindowHint(GLFW_RED_BITS, settings.redBits);
 	glfwWindowHint(GLFW_GREEN_BITS, settings.greenBits);
@@ -180,7 +179,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		sharedContext = (GLFWwindow*)settings.shareContextWith->getWindowContext();
 	}
 
-	if(requestedMode==OF_GAME_MODE){
+	if(settings.windowMode==OF_GAME_MODE){
 		int count;
 		GLFWmonitor** monitors = glfwGetMonitors(&count);
 		if(count>settings.monitor){
@@ -191,11 +190,33 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		}
 	}else{
 		windowP = glfwCreateWindow(settings.width, settings.height, "", nullptr, sharedContext);
-		if(requestedMode==OF_FULLSCREEN){
-			auto size = getScreenSize();
-			settings.width = size.x;
-			settings.height = size.y;
-			setWindowShape(settings.width, settings.height);
+		if(settings.windowMode==OF_FULLSCREEN){
+			if(!settings.isPositionSet()){
+				int count = 0;
+				auto monitors = glfwGetMonitors(&count);
+				if(count > 0){
+					int x = 0, y = 0;
+					settings.monitor = ofClamp(settings.monitor,0,count-1);
+					glfwGetMonitorPos(monitors[settings.monitor],&x,&y);
+					settings.setPosition(ofVec2f(x,y));
+					setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+					auto mode = glfwGetVideoMode(monitors[settings.monitor]);
+					settings.width = mode->width;
+					settings.height = mode->height;
+					setWindowShape(settings.width, settings.height);
+				}
+			}else{
+				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+				auto size = getScreenSize();
+				settings.width = size.x;
+				settings.height = size.y;
+				setWindowShape(settings.width, settings.height);
+			}
+			setFullscreen(true);
+		}else{
+			if (settings.isPositionSet()) {
+				setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+			}
 		}
 		if(!windowP){
 			ofLogError("ofAppGLFWWindow") << "couldn't create GLFW window";
@@ -216,9 +237,9 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 		if(settings.iconified){
 			iconify(true);
 		}
-		if(requestedMode==OF_FULLSCREEN){
+		/*if(requestedMode==OF_FULLSCREEN){
 			setFullscreen(true);
-		}
+		}*/
 	}
     if(!windowP) {
         ofLogError("ofAppGLFWWindow") << "couldn't create window";
@@ -229,7 +250,7 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	bWindowNeedsShowing = settings.visible;
 
     glfwSetWindowUserPointer(windowP,this);
-	windowMode = requestedMode;
+	windowMode = settings.windowMode;
 
 	glfwGetWindowSize( windowP, &settings.width, &settings.height );
 
@@ -286,9 +307,6 @@ void ofAppGLFWWindow::setup(const ofGLFWWindowSettings & _settings){
 	glfwSetWindowCloseCallback(windowP, exit_cb);
 	glfwSetScrollCallback(windowP, scroll_cb);
 	glfwSetDropCallback(windowP, drop_cb);
-	if (settings.isPositionSet()) {
-		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
-	}
 }
 
 #ifdef TARGET_LINUX
