@@ -599,7 +599,9 @@ void ofAppGLFWWindow::setFullscreen(bool fullscreen){
 		int monitorLeft=0, monitorRight=0, monitorTop=0, monitorBottom=0;
         for(int i = 0; i < monitorCount; i++){
             glfwGetMonitorPos(monitors[i],&x,&y);
-            glfwGetMonitorPhysicalSize(monitors[i],&w,&h);
+            auto videoMode = glfwGetVideoMode(monitors[i]);
+            w = videoMode->width;
+            h = videoMode->height;
             if(x<minx){
             	monitorLeft = i;
             	minx = x;
