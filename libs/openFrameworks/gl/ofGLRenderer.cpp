@@ -1717,12 +1717,22 @@ void ofGLRenderer::enableLighting(){
 	glEnable(GL_NORMALIZE);
 	lightingEnabled = true;
 
+	int matrixMode;
+	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadMatrixf(matrixStack.getViewMatrix().getPtr());
 	for(size_t i=0;i<ofLightsData().size();i++){
 		shared_ptr<ofLight::Data> lightData = ofLightsData()[i].lock();
 		if(lightData && lightData->isEnabled){
 			glLightfv(GL_LIGHT0 + lightData->glIndex, GL_POSITION, &lightData->position.x);
+			if(lightData->lightType == OF_LIGHT_SPOT || lightData->lightType == OF_LIGHT_AREA) {
+				glLightfv(GL_LIGHT0 + lightData->glIndex, GL_SPOT_DIRECTION, &lightData->direction.x);
+			}
 		}
 	}
+	glPopMatrix();
+	glMatrixMode(matrixMode);
 }
 
 //----------------------------------------------------------
