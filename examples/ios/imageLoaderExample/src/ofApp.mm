@@ -8,7 +8,7 @@ void ofApp::setup(){
 	gears.load("images/gears.gif");
 	tdf.load("images/tdf_1972_poster.jpg");
 	tdfSmall.load("images/tdf_1972_poster.jpg");
-	tdfSmall.resize(tdf.width / 4, tdf.height / 4);
+	tdfSmall.resize(tdf.getWidth() / 4, tdf.getHeight() / 4);
 	tdfSmall.setImageType(OF_IMAGE_GRAYSCALE);
 	transparency.load("images/transparency.png");
 	bikeIcon.load("images/bike_icon.png");
@@ -43,14 +43,14 @@ void ofApp::draw(){
 	
 	// getting the pixels out of an image, 
 	// and then use the values to draw circles
-	unsigned char * pixels = bikeIcon.getPixels();
-	int w = bikeIcon.width;
-	int h = bikeIcon.height;
+    unsigned char * pixels = bikeIcon.getPixels().getData();
+	int w = bikeIcon.getWidth();
+	int h = bikeIcon.getHeight();
 	for (int i = 0; i < w; i++){
 		for (int j = 0; j < h; j++){
 			int value = pixels[j * w + i];
 			float pct = 1 - (value / 255.0f);
-			ofCircle(i*10,500 + j*10,1 + 5*pct);		
+			ofDrawCircle(i*10,500 + j*10,1 + 5*pct);
 		}
 	}
 	

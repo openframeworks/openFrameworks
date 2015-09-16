@@ -53,7 +53,7 @@ bool ofxAssimpModelLoader::loadModel(ofBuffer & buffer, bool optimize, const cha
     unsigned int flags = initImportProperties(optimize);
     
     // loads scene from memory buffer - note this will not work for multipart files (obj, md3, etc)
-    scene = shared_ptr<const aiScene>(aiImportFileFromMemoryWithProperties(buffer.getBinaryBuffer(), buffer.size(), flags, extension, store.get()), aiReleaseImport);
+    scene = shared_ptr<const aiScene>(aiImportFileFromMemoryWithProperties(buffer.getData(), buffer.size(), flags, extension, store.get()), aiReleaseImport);
     
     bool bOk = processScene();
     return bOk;
