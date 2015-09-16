@@ -129,6 +129,8 @@ public:
 	static string getCurrentExeDir();
 
 	static string getUserHomeDir();
+
+	static string makeRelative(const std::string & from, const std::string & to);
 };
 
 class ofFile: public fstream{
@@ -178,7 +180,7 @@ public:
 	void setExecutable(bool executable=true);
 	
 	//these all work for files and directories
-	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false) const;
 	bool moveTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
 	bool renameTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
 	
@@ -303,12 +305,12 @@ public:
 	OF_DEPRECATED_MSG("Use size() instead.", int numFiles());
 
 	//this allows to compare dirs by their paths, also provides sorting and use as key in stl containers
-	bool operator==(const ofDirectory & dir);
-	bool operator!=(const ofDirectory & dir);
-	bool operator<(const ofDirectory & dir);
-	bool operator<=(const ofDirectory & dir);
-	bool operator>(const ofDirectory & dir);
-	bool operator>=(const ofDirectory & dir);
+	bool operator==(const ofDirectory & dir) const;
+	bool operator!=(const ofDirectory & dir) const;
+	bool operator<(const ofDirectory & dir) const;
+	bool operator<=(const ofDirectory & dir) const;
+	bool operator>(const ofDirectory & dir) const;
+	bool operator>=(const ofDirectory & dir) const;
 
 	operator std::filesystem::path(){
 		return myDir;
