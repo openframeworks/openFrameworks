@@ -1840,7 +1840,14 @@ void ofGLRenderer::setLightPosition(int lightIndex, const ofVec4f & position){
 //----------------------------------------------------------
 void ofGLRenderer::setLightSpotDirection(int lightIndex, const ofVec4f & direction){
 	if(lightIndex==-1) return;
+	int matrixMode;
+	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadMatrixf(matrixStack.getViewMatrix().getPtr());
 	glLightfv(GL_LIGHT0 + lightIndex, GL_SPOT_DIRECTION, &direction.x);
+	glPopMatrix();
+	glMatrixMode(matrixMode);
 }
 
 int ofGLRenderer::getGLVersionMajor(){
