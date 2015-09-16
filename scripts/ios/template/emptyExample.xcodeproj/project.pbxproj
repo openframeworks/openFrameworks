@@ -144,6 +144,8 @@
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>ofxiOS_Prefix.pch</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
+				<string>NO</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
@@ -166,6 +168,8 @@
 				<string>YES</string>
 				<key>GCC_PREFIX_HEADER</key>
 				<string>ofxiOS_Prefix.pch</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
+				<string>NO</string>
 				<key>INFOPLIST_FILE</key>
 				<string>ofxiOS-Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
@@ -690,6 +694,8 @@
 				<string>0</string>
 				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
 				<string>NO</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
+				<string>NO</string>
 				<key>GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO</key>
 				<string>NO</string>
 				<key>GCC_WARN_ABOUT_POINTER_SIGNEDNESS</key>
@@ -751,6 +757,8 @@
 				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
 				<string>NO</string>
 				<key>GCC_THUMB_SUPPORT</key>
+				<string>NO</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION[arch=*64]</key>
 				<string>NO</string>
 				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
 				<string>YES</string>
