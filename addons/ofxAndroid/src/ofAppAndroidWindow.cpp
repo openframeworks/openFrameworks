@@ -180,7 +180,7 @@ ofAppAndroidWindow::~ofAppAndroidWindow() {
 	// TODO Auto-generated destructor stub
 }
 
-<<<<<<< HEAD
+
 bool ofAppAndroidWindow::isSurfaceDestroyed() {
 	return surfaceDestroyed;
 }
@@ -219,6 +219,8 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion,settings.preserveContextOnPause);
+
+
 }
 
 void ofAppAndroidWindow::update(){
@@ -458,46 +460,33 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 }
 
 JNIEXPORT void JNICALL
-Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
-	if(appSetup){
-		ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated";
-		if(!surfaceDestroyed){
-			ofNotifyEvent(ofxAndroidEvents().unloadGL);
-		}
-		ofNotifyEvent(ofxAndroidEvents().reloadGL);
-		window->renderer()->pushStyle();
-		window->renderer()->setupGraphicDefaults();
-		window->renderer()->popStyle();
-		window->setThreadedEvents(false);
-        int glesVersion = window->getGlesVersion();
-		bSetupScreen = true;
-		if( glesVersion < 2 )
-		{
-			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
-			dynamic_cast<ofGLRenderer*>(window->renderer().get())->setup();
-		}
-		else
-		{
-			ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
-			dynamic_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion,sGLESVersionMinor);
-		}
+Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv* env, jclass thiz ){
+    ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated";
 
-	}else{
-		if(window != nullptr) {
-			int glesVersion = window->getGlesVersion();
-			bSetupScreen = true;
-			if (glesVersion < 2) {
-				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
-				dynamic_cast<ofGLRenderer *>(window->renderer().get())->setup();
-			} else {
-				ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0";
-				dynamic_cast<ofGLProgrammableRenderer *>(window->renderer().get())->setup(
-						glesVersion, sGLESVersionMinor);
-			}
-		}
-	}
+    if(!surfaceDestroyed && appSetup){
+        ofNotifyEvent(ofxAndroidEvents().unloadGL);
+    }
+    ofNotifyEvent(ofxAndroidEvents().reloadGL);
 
-	surfaceDestroyed = false;
+    if(appSetup){
+        window->renderer()->pushStyle();
+        window->renderer()->setupGraphicDefaults();
+        window->renderer()->popStyle();
+        window->setThreadedEvents(false);
+    }
+
+    bSetupScreen = true;
+    int glesVersion = window->getGlesVersion();
+
+    if(glesVersion < 2){
+        ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 1";
+        dynamic_cast<ofGLRenderer*>(window->renderer().get())->setup();
+    }else{
+        ofLogVerbose("ofAppAndroidWindow") << "onSurfaceCreated OpenGLES 2.0+";
+        dynamic_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(glesVersion, sGLESVersionMinor);
+    }
+
+    surfaceDestroyed = false;
 }
 
 JNIEXPORT jboolean JNICALL
