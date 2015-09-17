@@ -466,10 +466,10 @@ bool ofShader::linkProgram() {
 	} else {
 		checkAndCreateProgram();
 
-		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
-			GLuint shader = it->second;
+		for(auto it: shaders){
+			GLuint shader = it.second;
 			if(shader) {
-				ofLogVerbose("ofShader") << "linkProgram(): attaching " << nameForType(it->first) << " shader to program " << program;
+				ofLogVerbose("ofShader") << "linkProgram(): attaching " << nameForType(it.first) << " shader to program " << program;
 				glAttachShader(program, shader);
 			}
 		}
@@ -477,6 +477,24 @@ bool ofShader::linkProgram() {
 		glLinkProgram(program);
 
 		checkProgramLinkStatus(program);
+
+
+		// Pre-cache all active uniforms
+		GLint numUniforms = 0;
+		glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &numUniforms);
+
+		GLint uniformMaxLength = 0;
+		glGetProgramiv(program, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformMaxLength);
+
+		GLint count = -1;
+		GLenum type = 0;
+		GLsizei length;
+		vector<GLchar> uniformName(uniformMaxLength);
+		for(GLint i = 0; i < numUniforms; i++) {
+			glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName.data());
+			string name(uniformName.begin(), uniformName.begin()+length);
+			uniformLocations[name] = glGetUniformLocation(program, name.c_str());
+		}
 
 		// bLoaded means we have loaded shaders onto the graphics card;
 		// it doesn't necessarily mean that these shaders have compiled and linked successfully.
@@ -664,6 +682,11 @@ void ofShader::setUniform3f(const string & name, const ofVec3f & v) const{
 //--------------------------------------------------------------
 void ofShader::setUniform4f(const string & name, const ofVec4f & v) const{
 	setUniform4f(name,v.x,v.y,v.z,v.w);
+}
+
+//--------------------------------------------------------------
+void ofShader::setUniform4f(const string & name, const ofFloatColor & v) const{
+	setUniform4f(name,v.r,v.g,v.b,v.a);
 }
 
 //--------------------------------------------------------------
@@ -890,17 +913,13 @@ GLint ofShader::getAttributeLocation(const string & name)  const{
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const string & name)  const{
 	if(!bLoaded) return -1;
-	GLint loc = -1;
-
 	// tig: caching uniform locations gives the RPi a 17% boost on average
-	unordered_map<string, GLint>::iterator it = uniformLocations.find(name);
+	auto it = uniformLocations.find(name);
 	if (it == uniformLocations.end()){
-		loc = glGetUniformLocation(program, name.c_str());
-		uniformLocations[name] = loc;
+		return -1;
 	} else {
-		loc = it->second;
+		return it->second;
 	}
-	return loc;
 }
 
 //--------------------------------------------------------------
@@ -915,19 +934,17 @@ void ofShader::printActiveUniforms()  const{
 	GLint count = -1;
 	GLenum type = 0;
 	GLchar* uniformName = new GLchar[uniformMaxLength];
-	stringstream line;
 	for(GLint i = 0; i < numUniforms; i++) {
+		stringstream line;
 		GLsizei length;
 		glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName);
 		line << "[" << i << "] ";
 		for(int j = 0; j < length; j++) {
 			line << uniformName[j];
 		}
-		line << " @ index " << getUniformLocation(uniformName);
+		line << " @ index " << glGetUniformLocation(program, uniformName);
 		ofLogNotice("ofShader") << line.str();
-		line.str("");
 	}
-	delete [] uniformName;
 }
 
 //--------------------------------------------------------------
