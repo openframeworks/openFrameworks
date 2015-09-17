@@ -230,6 +230,7 @@ all:
 	@$(MAKE) --no-print-directory Release
 	
 $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags: force
+	@mkdir -p $(OF_CORE_OBJ_OUTPUT_PATH)
 	@echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' | cmp -s - $@ || echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' > $@
 	
 
