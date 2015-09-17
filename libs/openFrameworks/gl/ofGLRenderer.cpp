@@ -20,7 +20,6 @@ using std::vector;
 
 const std::string ofGLRenderer::TYPE = "GL";
 
-#if !defined(TARGET_OPENGLES) || !defined(TARGET_PROGRAMMABLE_GL)
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 	: matrixStack(_window)

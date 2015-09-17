@@ -154,11 +154,88 @@ string ofGetGLInternalFormatName(int glInternalFormat) {
 }
 
 int ofGetGLFormatFromInternal(int glInternalFormat){
-    switch(glInternalFormat) {
-    case GL_RGBA:
-    #if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
-    case GL_RGBA8:
-    case GL_RGBA16F:
+	switch(glInternalFormat) {
+			case GL_RGBA:
+	#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+			case GL_RGBA8:
+			case GL_RGBA16F:
+            #ifndef TARGET_OPENGLES
+			case GL_RGBA16:
+			case GL_RGBA32F_ARB:
+            #endif
+	#endif
+				 return GL_RGBA;
+
+
+			case GL_RGB:
+	#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+			case GL_RGB8:
+            #ifndef TARGET_OPENGLES
+			case GL_RGB16:
+			case GL_RGB32F_ARB:
+            #endif
+	#endif
+				return GL_RGB;
+
+
+			case GL_LUMINANCE:
+	#ifndef TARGET_OPENGLES
+			case GL_LUMINANCE8:
+			case GL_LUMINANCE16:
+            #ifndef TARGET_OPENGLES
+			case GL_LUMINANCE32F_ARB:
+            #endif
+	#endif
+				 return GL_LUMINANCE;
+
+			case GL_LUMINANCE_ALPHA:
+	#ifndef TARGET_OPENGLES
+			case GL_LUMINANCE8_ALPHA8:
+			case GL_LUMINANCE16_ALPHA16:
+            #ifndef TARGET_OPENGLES
+			case GL_LUMINANCE_ALPHA32F_ARB:
+            #endif
+	#endif
+				return GL_LUMINANCE_ALPHA;
+
+
+			case GL_DEPTH_STENCIL:
+				 return GL_DEPTH_STENCIL;
+
+			case GL_DEPTH_COMPONENT:
+	#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_2_0) || defined(GL_ES_VERSION_3_0)
+			case GL_DEPTH_COMPONENT16:
+	#endif
+	#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+			case GL_DEPTH_COMPONENT24:
+	#endif
+	#if defined(TARGET_OPENGLES) && defined(GL_ES_VERSION_3_0)
+			case GL_DEPTH_COMPONENT32F:
+	#endif
+	#ifndef TARGET_OPENGLES
+			case GL_DEPTH_COMPONENT32:
+	#endif
+				return GL_DEPTH_COMPONENT;
+
+			case GL_STENCIL_INDEX:
+				return GL_STENCIL_INDEX;
+
+	#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+			case GL_R8:
+			case GL_R16F:
+			case GL_R32F:
+#ifndef TARGET_OPENGLES
+			case GL_R16:
+#endif
+				return GL_RED;
+	#endif
+
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
+			case GL_RG8:
+			case GL_RG16F:
+			case GL_RG32F:
+    #ifndef TARGET_OPENGLES
+			case GL_RG16:
     #endif
     #ifndef TARGET_OPENGLES
     case GL_RGBA16:
