@@ -28,7 +28,7 @@ In the event that Android Studio does not come with an SDK, you can install it f
 
 ### Install the Android NDK
 
-For the current version of openFrameworks, you need to install Android NDK revision r10b or earlier. r10c breaks compatibility with some libraries, and should (at this time) be avoided.
+For the current version of openFrameworks, you need to install Android NDK revision r10b or earlier. r10c breaks compatibility with some libraries, and should (at this time) be avoided. If you use openFrameworks 0.9.0 or higher you will be fine with using the latest NDK. See the troubleshooting section if you run into errors.
 
 Here are download links for r9d, which has been tested and works fine:
 
@@ -91,6 +91,7 @@ Press the Play button next to the `androidEmptyExample` shown in the toolbar. Wi
 
 - If you get strange linker errors (e.g. errors about a missing `__srget`), try using the r9d version of the NDK. Newer NDKs (particularly r10c and up) don't work with some versions of OpenFrameworks.
 - If you get strange linker errors when running the Android Simulator (e.g. `java.lang.UnsatisfiedLinkError: dalvik.system.PathClassLoader[DexPathList`) make sure that your simulator is using the `armeabi-v7a`, not the `x86` or `x86_64` architecture.  You can check your setup by opening your Android Virtual Device Manager and editing the device (**Tools ➞ Android ➞ AVD Manager** or click the AVD Manager icon in the toolbar).  You may be prompted to download an appropriate system image for `armeabi-v7a`.
+- When you use openFramework 0.9.0 or newer you will have to use Android NDK r10e and add a file called "gradle.properties" in the Android project directory ("openFrameworks/libs/openFrameworksCompiled/project/android") and add this line to it: "android.useDeprecatedNdk=true". The file is only needed when using Android Studio 1.3.0 or newer.
 
 Eclipse
 =======
