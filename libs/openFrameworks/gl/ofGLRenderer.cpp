@@ -15,7 +15,6 @@
 
 const string ofGLRenderer::TYPE="GL";
 
-#if !defined(TARGET_OPENGLES) || !defined(TARGET_PROGRAMMABLE_GL)
 //----------------------------------------------------------
 ofGLRenderer::ofGLRenderer(const ofAppBaseWindow * _window)
 :matrixStack(_window)
@@ -1947,4 +1946,3 @@ of3dGraphics & ofGLRenderer::get3dGraphics(){
 	return graphics3d;
 }
 
-#endif

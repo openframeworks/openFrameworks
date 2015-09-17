@@ -2298,6 +2298,7 @@ string ofGLProgrammableRenderer::defaultFragmentShaderHeader(GLenum textureTarge
 }
 
 void ofGLProgrammableRenderer::setup(int _major, int _minor){
+    ofLogNotice("ofGLProgrammableRenderer") << " setup.";
 	glGetError();
 #ifdef TARGET_OPENGLES
 	// OpenGL ES might have set a default frame buffer for

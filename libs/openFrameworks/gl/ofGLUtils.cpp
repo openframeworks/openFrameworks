@@ -185,11 +185,11 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
 			case GL_R8:
 			case GL_R16F:
 			case GL_R32F:
-	#endif
 #ifndef TARGET_OPENGLES
 			case GL_R16:
 #endif
 				return GL_RED;
+	#endif
 
 #if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 			case GL_RG8:
