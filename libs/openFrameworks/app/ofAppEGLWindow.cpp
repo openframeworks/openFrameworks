@@ -259,7 +259,8 @@ ofAppEGLWindow::ofAppEGLWindow() {
 	x11Display = NULL;
 	x11Screen = NULL;
 	x11ScreenNum = 0l;
-	glesVersion = 1;
+	glesVersionMajor = 1;
+        glesVersionMinor = 0;
 
 	if(instance!=NULL){
 		ofLogError("ofAppEGLWindow") << "trying to create more than one instance";
@@ -402,7 +403,8 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 	eglConfig  = NULL;
 	eglVersionMajor = -1;
 	eglVersionMinor = -1;
-	glesVersion = 1;
+	glesVersionMajor = 1;
+        glesVersionMinor = 0;
 
 	// X11 check
 	// char * pDisplay;
@@ -439,7 +441,8 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 
 	initNative();
 
-	glesVersion = settings.glesVersion;
+	glesVersionMajor = settings.glesVersionMajor();
+        glesVersionMinor = settings.glesVersionMinor();
 	// we set this here, and if we need to make a fullscreen
 	// app, we do it during the first loop.
 	windowMode = settings.windowMode;
@@ -477,7 +480,7 @@ void ofAppEGLWindow::setup(const ofAppEGLWindowSettings & _settings) {
 
 	makeCurrent();
 	if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
-		static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersion,0);
+            static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersionMajor(),settings.glesVersionMinor());
 	}else{
 		static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
 	}
@@ -547,7 +550,7 @@ bool ofAppEGLWindow::createSurface() {
 		// success!
 	}
 
-	EGLint glesVersion;
+	EGLint glesVersionBit;
 	int glesVersionForContext;
 
 	if(ofGetCurrentRenderer()) {
@@ -556,12 +559,12 @@ bool ofAppEGLWindow::createSurface() {
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): no current renderer selected";
 	}
 
-	if(this->glesVersion==2){
-		glesVersion = EGL_OPENGL_ES2_BIT;
-		glesVersionForContext = 2;
-		ofLogNotice("ofAppEGLWindow") << "createSurface(): GLES2 renderer detected";
+	if(this->glesVersionMajor>=2){
+		glesVersionBit = EGL_OPENGL_ES2_BIT;
+		glesVersionForContext = this->glesVersionMajor;
+		ofLogNotice("ofAppEGLWindow") << "createSurface(): GLES" << glesVersionForContext << " renderer detected";
 	}else{
-		glesVersion = EGL_OPENGL_ES_BIT;
+		glesVersionBit = EGL_OPENGL_ES_BIT;
 		glesVersionForContext = 1;
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): default renderer detected";
 	}
@@ -580,7 +583,7 @@ bool ofAppEGLWindow::createSurface() {
 		attribute_list_framebuffer_config[i++] = iter->second;
 	}
 	attribute_list_framebuffer_config[i++] = EGL_RENDERABLE_TYPE;
-	attribute_list_framebuffer_config[i++] = glesVersion; //openGL ES version
+	attribute_list_framebuffer_config[i++] = glesVersionBit; //openGL ES version
 	attribute_list_framebuffer_config[i] = EGL_NONE; // add the terminator
 
 	EGLint num_configs;
@@ -1424,7 +1427,7 @@ void ofAppEGLWindow::setupNativeInput(){
 	tc.c_lflag &= ~ECHO;
 	tc.c_lflag |= ECHONL;
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &tc);
-	
+
 	mb.mouseButtonState = 0;
 
 	kb.shiftPressed = false;
@@ -1492,7 +1495,7 @@ void ofAppEGLWindow::printInput(){
 
 void ofAppEGLWindow::destroyNativeInput(){
 	ofLogNotice("ofAppEGLWindow") << "destroyNativeInput()";
-	
+
 	for(device::iterator iter = inputDevices.begin(); iter != inputDevices.end(); iter++){
 		if(iter->second >= 0){
             ::close(iter->second);
@@ -1514,7 +1517,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 	static ofMouseEventArgs mouseEvent;
 	struct input_event ev;
 	char key = 0;
-	
+
 	bool pushKeyEvent = false;
 	bool pushMouseEvent = false;
 	bool pushTouchEvent = false;
@@ -1564,7 +1567,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 					pushMouseEvent = true;
 				}
 			}else if(ev.code == BTN_TOUCH){
-				if(ev.value == 0){ // release	
+				if(ev.value == 0){ // release
 					touchEvent.type = ofTouchEventArgs::up;
 					touchEvent.id = 0;
 					mt[touchEvent.id] = 0;
@@ -1728,7 +1731,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 						}else{
 							ofLogNotice("ofAppEGLWindow") << "readKeyboardEvents(): input_event.code is outside of our small range";
 						}
-				}	
+				}
 			}
 		}else if (ev.type == EV_REL){
 			int axis = ev.code;
@@ -1779,7 +1782,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 							pushTouchEvent = true;
 						}
 					}
-					else 
+					else
 					{
 						if (mt[touchEvent.id] == 0){
 							touchEvent.type = ofTouchEventArgs::down;
@@ -1837,8 +1840,8 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 			}
 		}
 
-		
-		
+
+
 
 		if(pushKeyEvent){
 			lock();
@@ -1846,7 +1849,7 @@ void ofAppEGLWindow::processInput(int fd, const char * node){
 			unlock();
 			pushKeyEvent = false;
 		}
-		
+
 		if(pushMouseEvent){
 			// lock the thread for a moment while we copy the data
 			lock();
@@ -1922,7 +1925,7 @@ void ofAppEGLWindow::readNativeUDevEvents() {
 					removeInput(devnode);
                 }
             }
-			
+
 			udev_device_unref(dev);
 		}else{
 			ofLogNotice("ofAppEGLWindow") << "readNativeUDevEvents(): device returned by receive_device() is NULL";
