@@ -68,6 +68,7 @@ public:
 	void setUniform2f(const string & name, const ofVec2f & v) const;
 	void setUniform3f(const string & name, const ofVec3f & v) const;
 	void setUniform4f(const string & name, const ofVec4f & v) const;
+	void setUniform4f(const string & name, const ofFloatColor & v) const;
 
 	// set an array of uniform values
 	void setUniform1iv(const string & name, const int* v, int count = 1) const;

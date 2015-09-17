@@ -180,12 +180,12 @@ string ofGetTimestampString(const string& timestampFormat){
 	// earlier.
 	auto tmpTimestampFormat = timestampFormat;
 	ofStringReplace(tmpTimestampFormat, "%i", ofToString(ms, 3, '0'));
-	
+
 	if (strftime(buf,bufsize, tmpTimestampFormat.c_str(),&tm) != 0){
 		str << buf;
 	}
 	auto ret = str.str();
-	
+
 
     return ret;
 }
@@ -299,7 +299,7 @@ static std::filesystem::path & dataPathRoot(){
 namespace of{
 namespace priv{
     //--------------------------------------------------
-    void setWorkingDirectoryToDefault(){        
+    void setWorkingDirectoryToDefault(){
         defaultWorkingDirectory() = std::filesystem::absolute(std::filesystem::current_path());
     }
 }
@@ -314,7 +314,7 @@ bool ofRestoreWorkingDirectoryToDefault(){
         return false;
     }
 }
-	
+
 //--------------------------------------------------
 void ofSetDataPathRoot(const string& newRoot){
 	dataPathRoot() = newRoot;
@@ -324,7 +324,7 @@ void ofSetDataPathRoot(const string& newRoot){
 string ofToDataPath(const string& path, bool makeAbsolute){
 	if (!enableDataPath)
 		return path;
-	
+
 	// if our Current Working Directory has changed (e.g. file open dialog)
 #ifdef TARGET_WIN32
 	if (defaultWorkingDirectory() != std::filesystem::current_path()) {
@@ -336,11 +336,11 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 	}
 #endif
 	// this could be performed here, or wherever we might think we accidentally change the cwd, e.g. after file dialogs on windows
-	
+
 	const auto  & dataPath = dataPathRoot();
 	std::filesystem::path inputPath(path);
 	std::filesystem::path outputPath;
-	
+
 	// if path is already absolute, just return it
 	if (inputPath.is_absolute()) {
 		try {
@@ -350,14 +350,14 @@ string ofToDataPath(const string& path, bool makeAbsolute){
 			return inputPath.string();
 		}
 	}
-	
+
 	// here we check whether path already refers to the data folder by looking for common elements
 	// if the path begins with the full contents of dataPathRoot then the data path has already been added
 	// we compare inputPath.toString() rather that the input var path to ensure common formatting against dataPath.toString()
 	auto strippedDataPath = dataPath.string();
 	// also, we strip the trailing slash from dataPath since `path` may be input as a file formatted path even if it is a folder (i.e. missing trailing slash)
 	strippedDataPath = ofFilePath::removeTrailingSlash(strippedDataPath);
-	
+
 	auto relativeStrippedDataPath = ofFilePath::makeRelative(std::filesystem::current_path().string(),dataPath.string());
 	relativeStrippedDataPath  = ofFilePath::removeTrailingSlash(relativeStrippedDataPath);
 
@@ -607,15 +607,23 @@ vector <string> ofSplitString(const string & source, const string & delimiter, b
 }
 
 //--------------------------------------------------
-string ofJoinString(const vector<string>& stringElements, const string & delimiter){
+string ofJoinString(const vector<string>& stringElements, const string& delimiter){
+	string str;
 	if(stringElements.empty()){
-		return "";
+		return str;
 	}
-	return std::accumulate(stringElements.cbegin() + 1, stringElements.cend(), stringElements[0],
-		[delimiter](std::string a, std::string b) -> const char *{
-			return (a + delimiter + b).c_str();
-		}
-	);
+	auto numStrings = stringElements.size();
+	string::size_type strSize = delimiter.size() * (numStrings - 1);
+	for (const string &s : stringElements) {
+		strSize += s.size();
+	}
+	str.reserve(strSize);
+	str += stringElements[0];
+	for (decltype(numStrings) i = 1; i < numStrings; ++i) {
+		str += delimiter;
+		str += stringElements[i];
+	}
+	return str;
 }
 
 //--------------------------------------------------
@@ -827,11 +835,11 @@ void ofLaunchBrowser(const string& url, bool uriEncodeQuery){
 		ofLogError("ofUtils") << "ofLaunchBrowser(): malformed url \"" << url << "\": " << exc.what();
 		return;
 	}
-	
+
 	if(uriEncodeQuery) {
 		uri.setQuery(uri.getRawQuery()); // URI encodes during set
 	}
-	
+
 	// http://support.microsoft.com/kb/224816
 	// make sure it is a properly formatted url:
 	//   some platforms, like Android, require urls to start with lower-case http/https
@@ -949,10 +957,10 @@ string ofSystem(const string& command){
 	FILE * ret = nullptr;
 #ifdef TARGET_WIN32
 	ret = _popen(command.c_str(),"r");
-#else 
+#else
 	ret = popen(command.c_str(),"r");
 #endif
-	
+
 	string strret;
 	int c;
 
