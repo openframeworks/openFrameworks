@@ -31,13 +31,16 @@ In the event that Android Studio does not come with an SDK, you can install it f
 Download and Install the latest Android NDK for your plattform. Last known working version is r10e.
 https://developer.android.com/ndk/downloads/index.html
 
-### Download openFrameworks
+### Download openFrameworks 0.9.0 or later
 
 Download it from the downloads page:
 
 http://openframeworks.cc/download
 
 You may also check out the openFrameworks source from GitHub (under master branch): http://github.com/openframeworks/openFrameworks
+
+Or download the latest nightly:
+http://openframeworks.cc/download (bottom of the page)
 
 ### Import the project
 
