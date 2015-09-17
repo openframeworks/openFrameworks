@@ -84,3 +84,8 @@ echo '</body>' >> /var/www/nightlybuilds.html
 echo '</html>' >> /var/www/nightlybuilds.html
 
 #wget http://openframeworks.cc/nightly_hook.php?version=${lastversion} -O /dev/null
+
+echo 
+echo
+echo "Successfully created nightly builds for ${lastversion}"
+echo
