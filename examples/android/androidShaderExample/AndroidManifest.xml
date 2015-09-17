@@ -10,6 +10,7 @@
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-feature android:glEsVersion="0x00030001"/>
 
     <application
         android:allowBackup="true"
