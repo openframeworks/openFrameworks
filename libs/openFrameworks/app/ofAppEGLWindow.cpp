@@ -273,7 +273,8 @@ ofAppEGLWindow::ofAppEGLWindow() {
 	x11Display = NULL;
 	x11Screen = NULL;
 	x11ScreenNum = 0l;
-	glesVersion = 1;
+	glesVersionMajor = 1;
+        glesVersionMinor = 0;
 
 	if(instance!=NULL){
 		ofLogError("ofAppEGLWindow") << "trying to create more than one instance";
@@ -415,7 +416,8 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 	eglConfig  = NULL;
 	eglVersionMinor = -1;
 	eglVersionMinor = -1;
-	glesVersion = 1;
+	glesVersionMajor = 1;
+        glesVersionMinor = 0;
 
 	// X11 check
 	// char * pDisplay;
@@ -452,7 +454,8 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 
 	initNative();
 
-	glesVersion = settings.glesVersion;
+	glesVersionMajor = settings.glesVersionMajor();
+        glesVersionMinor = settings.glesVersionMinor();
 	// we set this here, and if we need to make a fullscreen
 	// app, we do it during the first loop.
 	windowMode = settings.windowMode;
@@ -482,7 +485,7 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 
 	nFramesSinceWindowResized = 0;
 
-	if(settings.glesVersion>1){
+	if(settings.glesVersionMajor()>1){
 		currentRenderer = make_shared<ofGLProgrammableRenderer>(this);
 	}else{
 		currentRenderer = make_shared<ofGLRenderer>(this);
@@ -490,7 +493,7 @@ void ofAppEGLWindow::setup(const Settings & _settings) {
 
 	makeCurrent();
 	if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
-		static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersion,0);
+            static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersionMajor(),settings.glesVersionMinor());
 	}else{
 		static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
 	}
@@ -560,7 +563,7 @@ bool ofAppEGLWindow::createSurface() {
 		// success!
 	}
 
-	EGLint glesVersion;
+	EGLint glesVersionBit;
 	int glesVersionForContext;
 
 	if(ofGetCurrentRenderer()) {
@@ -569,12 +572,12 @@ bool ofAppEGLWindow::createSurface() {
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): no current renderer selected";
 	}
 
-	if(this->glesVersion==2){
-		glesVersion = EGL_OPENGL_ES2_BIT;
-		glesVersionForContext = 2;
-		ofLogNotice("ofAppEGLWindow") << "createSurface(): GLES2 renderer detected";
+	if(this->glesVersionMajor>=2){
+		glesVersionBit = EGL_OPENGL_ES2_BIT;
+		glesVersionForContext = this->glesVersionMajor;
+		ofLogNotice("ofAppEGLWindow") << "createSurface(): GLES" << glesVersionForContext << " renderer detected";
 	}else{
-		glesVersion = EGL_OPENGL_ES_BIT;
+		glesVersionBit = EGL_OPENGL_ES_BIT;
 		glesVersionForContext = 1;
 		ofLogNotice("ofAppEGLWindow") << "createSurface(): default renderer detected";
 	}
@@ -593,7 +596,7 @@ bool ofAppEGLWindow::createSurface() {
 		attribute_list_framebuffer_config[i++] = iter->second;
 	}
 	attribute_list_framebuffer_config[i++] = EGL_RENDERABLE_TYPE;
-	attribute_list_framebuffer_config[i++] = glesVersion; //openGL ES version
+	attribute_list_framebuffer_config[i++] = glesVersionBit; //openGL ES version
 	attribute_list_framebuffer_config[i] = EGL_NONE; // add the terminator
 
 	EGLint num_configs;
