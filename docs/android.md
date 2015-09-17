@@ -28,16 +28,8 @@ In the event that Android Studio does not come with an SDK, you can install it f
 
 ### Install the Android NDK
 
-For the current version of openFrameworks, you need to install Android NDK revision r10b or earlier. r10c breaks compatibility with some libraries, and should (at this time) be avoided.
-
-Here are download links for r9d, which has been tested and works fine:
-
-- Windows 32-bit: http://dl.google.com/android/ndk/android-ndk-r9d-windows-x86.zip
-- Windows 64-bit: http://dl.google.com/android/ndk/android-ndk-r9d-windows-x86_64.zip
-- Mac OS X 32-bit: http://dl.google.com/android/ndk/android-ndk-r9d-darwin-x86.tar.bz2
-- Mac OS X 64-bit: http://dl.google.com/android/ndk/android-ndk-r9d-darwin-x86_64.tar.bz2
-- Linux 32-bit (x86): http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86.tar.bz2
-- Linux 64-bit (x86): http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86_64.tar.bz2 
+Download and Install the latest Android NDK for your plattform. Last known working version is r10e.
+https://developer.android.com/ndk/downloads/index.html
 
 ### Download openFrameworks
 
@@ -58,6 +50,9 @@ At this point you will get an error about the NDK not being configured. Onto the
 Edit the file `local.properties` and add a line like this:
 
     ndk.dir=/path/to/the/ndk
+
+On newer versions of Android Studio you will also have to add a `gradle.properties` in the Android project directory ("openFrameworks/libs/openFrameworksCompiled/project/android") and add this line to it: `android.useDeprecatedNdk=true`. This modification is only needed when using Android Studio 1.3.0 or newer.
+Upcoming versions might fix this with an updated Gradle plugin, for now this hotfix is needed.
 
 Save and resync the project (either press the "Try Again" link on the "Gradle project sync failed" banner, or use **Tools ➞ Android ➞ Sync Project with Gradle Files**).
 
