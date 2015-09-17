@@ -269,7 +269,7 @@ protected:
 	void readNativeUDevEvents();
 	void readNativeInputEvents();
 
-	void processInput(int fd, const char * node);	
+	void processInput(int fd, const char * node);
 	void addInput(const char * node, bool isMouse);
 	void removeInput(const char * node);
 	void printInput();
@@ -279,6 +279,7 @@ protected:
 private:
 	ofAppEGLWindowSettings settings;
 	int glesVersion;  ///< \brief Indicate the version of OpenGL for Embedded Systems.
+    int glesVersionMinor;
 	bool keyboardDetected;
 	bool mouseDetected;
 	long threadTimeout;
