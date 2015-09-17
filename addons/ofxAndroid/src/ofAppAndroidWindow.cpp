@@ -143,18 +143,21 @@ void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
 		return;
 	}
 
-	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(I)V");
+	jmethodID method = ofGetJNIEnv()->GetStaticMethodID(javaClass,"setupGL","(II)V"); // (II)V = void(int,int)
 	if(!method){
 		ofLogError("ofAppAndroidWindow") << "setupOpenGL(): couldn't find OFAndroid setupGL method";
 		return;
 	}
 
-	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,sGLESVersionMajor);
+        // note: setup is called in onSurfaceCreated and we most likely don't yet have a working OpenGL ES context here
+        //       so it might be both wrong and unnecessary to call setup() here
 
-        // note: we used to call renderer->setup here, but this is both wrong
-        //       (because we most likely don't yet have a working GLES context)
-        //       and superfluous, because we call setup in onSurfaceCreated
-        //       (where the context exists, by definition)
+	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,sGLESVersionMajor,sGLESVersionMinor);
+        if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
+            static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersionMajor(),settings.glesVersionMinor());
+        }else{
+            static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
+        }
 }
 
 void ofAppAndroidWindow::update(){
@@ -321,18 +324,19 @@ Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
 		window->renderer()->setupGraphicDefaults();
 		ofPopStyle();
 		surfaceDestroyed = false;
-	}else{
-#ifndef TARGET_PROGRAMMABLE_GL
-	    if(window->renderer()->getType()==ofGLProgrammableRenderer::TYPE){
-#endif
-	    	static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(sGLESVersionMajor,sGLESVersionMinor);
-#ifndef TARGET_PROGRAMMABLE_GL
-	    }else{
-	    	static_cast<ofGLRenderer*>(window->renderer().get())->setup();
-	    }
-#endif
-	    ofLogNotice() << "renderer created";
 	}
+
+        // with programmable renderers, we need to (re)create all shaders e.g after pause() was called
+        // which is why we call setup() here.
+        if(window->renderer()->getType()==ofGLProgrammableRenderer::TYPE){
+            static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(sGLESVersionMajor,sGLESVersionMinor);
+            ofLogNotice() << "programmable renderer created";
+        }else{
+            if(! appSetup) {
+                static_cast<ofGLRenderer*>(window->renderer().get())->setup();
+                ofLogNotice() << "renderer created";
+            }
+        }
 }
 
 void

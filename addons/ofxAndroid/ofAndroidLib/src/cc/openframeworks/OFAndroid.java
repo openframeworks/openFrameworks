@@ -1077,14 +1077,15 @@ public class OFAndroid {
 		}
 	}
 	
-	public static void setupGL(int version){	
-		final int finalversion = version;
+    public static void setupGL(int versionMajor, int versionMinor){	
+		final int finalVersionMajor = versionMajor;
+                final int finalVersionMinor = versionMinor;
 		ofActivity.runOnUiThread(new Runnable() {
 			
 			@Override
 			public void run() {
 				gestureListener = new OFGestureListener(ofActivity);
-		        OFEGLConfigChooser.setGLESVersion(finalversion);
+                                OFEGLConfigChooser.setGLESVersion(finalVersionMajor, finalVersionMinor);
 		        initView();
 		        instance.resume();
 				
