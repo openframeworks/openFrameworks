@@ -230,7 +230,7 @@ PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
 PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -s
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g -D_DEBUG #-D_GLIBCXX_DEBUG
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g3 -DANDROID_NDK -D_DEBUG #-D_GLIBCXX_DEBUG
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -505,12 +505,14 @@ afterplatform:$(RESFILE)
 	else \
 		rm -r libs/armeabi 2> /dev/null; \
 	fi; \
-	if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ] || [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
+	if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ] && [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
 		ABIS="$$ABIS armeabi-v7a"; \
 	elif [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ]; then \
+		ABIS="$$ABIS armeabi-v7a"; \
 		rm libs/armeabi-v7a/libOFAndroidApp_neon.so 2> /dev/null; \
 		rm libs/armeabi-v7a/libneondetection.so 2> /dev/null; \
 	elif [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
+		ABIS="$$ABIS armeabi-v7a"; \
 		rm libs/armeabi-v7a/libOFAndroidApp.so 2> /dev/null; \
 	else \
 		rm -r libs/armeabi-v7a 2> /dev/null; \
