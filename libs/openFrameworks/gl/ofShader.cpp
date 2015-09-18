@@ -12,6 +12,9 @@
 #include "ofParameterGroup.h"
 #include "ofParameter.h"
 #include <regex>
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
 
 static const string COLOR_ATTRIBUTE="color";
 static const string POSITION_ATTRIBUTE="position";
@@ -94,13 +97,18 @@ ofShader::~ofShader() {
 ofShader::ofShader(const ofShader & mom) :
 program(mom.program),
 bLoaded(mom.bLoaded),
-shaders(mom.shaders){
+shaders(mom.shaders),
+uniformsCache(mom.uniformsCache),
+attributesBindingsCache(mom.attributesBindingsCache){
 	if(mom.bLoaded){
 		retainProgram(program);
-		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
-			GLuint shader = it->second;
-			retainShader(shader);
+		for(auto it: shaders){
+			auto shader = it.second;
+			retainShader(shader.id);
 		}
+#ifdef TARGET_ANDROID
+		ofAddListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
+#endif
 	}
 }
 
@@ -115,12 +123,17 @@ ofShader & ofShader::operator=(const ofShader & mom){
 	program = mom.program;
 	bLoaded = mom.bLoaded;
 	shaders = mom.shaders;
+	attributesBindingsCache = mom.attributesBindingsCache;
+	uniformsCache = mom.uniformsCache;
 	if(mom.bLoaded){
 		retainProgram(program);
-		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it){
-			GLuint shader = it->second;
-			retainShader(shader);
+		for(auto it: shaders){
+			auto shader = it.second;
+			retainShader(shader.type);
 		}
+#ifdef TARGET_ANDROID
+		ofAddListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
+#endif
 	}
 	return *this;
 }
@@ -179,9 +192,6 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
 	// parse for includes
 	string src = parseForIncludes( source , sourceDirectoryPath);
 	
-	// store source code (that's the expanded source with all includes copied in)
-	shaderSource[type] = src;
-	
 	// compile shader
 	const char* sptr = src.c_str();
 	int ssize = src.size();
@@ -209,8 +219,10 @@ bool ofShader::setupShaderFromSource(GLenum type, string source, string sourceDi
 		checkShaderInfoLog(shader, type, OF_LOG_ERROR);
 		return false;
 	}
+
 	
-	shaders[type] = shader;
+	// store source code (that's the expanded source with all includes copied in)
+	shaders[type] = {type, shader, source, src, sourceDirectoryPath};
 	retainShader(shader);
 
 	return true;
@@ -311,9 +323,9 @@ string ofShader::parseForIncludes( const string& source, vector<string>& include
 
 //--------------------------------------------------------------
 string ofShader::getShaderSource(GLenum type)  const{
-	unordered_map<GLenum,string>::const_iterator source = shaderSource.find(type);
-	if ( source != shaderSource.end()) {
-		return source->second;
+	auto source = shaders.find(type);
+	if ( source != shaders.end()) {
+		return source->second.expandedSource;
 	} else {
 		ofLogError("ofShader") << "No shader source for shader of type: " << nameForType(type);
 		return "";
@@ -379,19 +391,20 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 	GLsizei infoLength;
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLength);
 	if (infoLength > 1) {
-		GLchar* infoBuffer = new GLchar[infoLength];
-		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer);
-		ofLog(logLevel, "ofShader: %s shader reports:\n%s", nameForType(type).c_str(), infoBuffer);
+		ofBuffer infoBuffer;
+		infoBuffer.allocate(infoLength);
+		glGetShaderInfoLog(shader, infoLength, &infoLength, infoBuffer.getData());
+		ofLog(logLevel, "ofShader: %s shader reports:\n%s", nameForType(type).c_str(), infoBuffer.getText().c_str());
 #if (!defined(TARGET_LINUX) || defined(GCC_HAS_REGEX))
-		if (shaderSource.find(type) != shaderSource.end()) {
+		if (shaders.find(type) != shaders.end()) {
 			// The following regexp should match shader compiler error messages by Nvidia and ATI.
 			// Unfortunately, each vendor's driver formats error messages slightly different.
 			std::regex nvidia_ati("^.*[(:]{1}(\\d+)[:)]{1}.*");
 			std::regex intel("^[0-9]+:([0-9]+)\\([0-9]+\\):.*$");
 			std::smatch matches;
-			string infoString = (infoBuffer != nullptr) ? ofTrim(infoBuffer): "";
+			string infoString = ofTrim(infoBuffer);
 			if (std::regex_search(infoString, matches, intel) || std::regex_search(infoString, matches, nvidia_ati)){
-				ofBuffer buf = shaderSource[type];
+				ofBuffer buf = shaders[type].expandedSource;
 				ofBuffer::Line line = buf.getLines().begin();
 				int  offendingLineNumber = ofToInt(matches[1]) + 1;
 				ostringstream msg;
@@ -404,19 +417,10 @@ void ofShader::checkShaderInfoLog(GLuint shader, GLenum type, ofLogLevel logLeve
 				}
 				ofLog(logLevel) << msg.str();
 			}else{
-				ofLog(logLevel) << shaderSource[type];
+				ofLog(logLevel) << shaders[type].expandedSource;
 			}
 		}
-#else
-		// Raspberry pi gcc is assumed to be < 4.9, which does not support std::regex.
-		// see: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=53631
-		// Also, it appears that RPi only reports shader errors whilst linking, so
-		// the check here might be superfluous.
-		if (shaderSource.find(type) != shaderSource.end()) {
-			ofLog(logLevel) << shaderSource[type];
-		}
 #endif
-		delete [] infoBuffer;
 	}
 }
 
@@ -425,8 +429,9 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 	GLsizei infoLength;
 	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLength);
 	if (infoLength > 1) {
-		GLchar* infoBuffer = new GLchar[infoLength];
-		glGetProgramInfoLog(program, infoLength, &infoLength, infoBuffer);
+		ofBuffer infoBuffer;
+		infoBuffer.allocate(infoLength);
+		glGetProgramInfoLog(program, infoLength, &infoLength, infoBuffer.getData());
 		// TODO: it appears that Raspberry Pi only reports shader errors whilst linking,
 		// but then it becomes hard to figure out whether the fragment or the
 		// vertex shader caused the error.
@@ -434,8 +439,12 @@ void ofShader::checkProgramInfoLog(GLuint program) {
 		// the log, and unfortunately can't use regex whilst gcc on RPi is assumed to
 		// be < 4.9, which is the first version fully supporting this c++11 feature.
 		string msg = "ofShader: program reports:\n";
-		ofLogError("ofShader", msg + infoBuffer);
-		delete [] infoBuffer;
+		ofLogError("ofShader") << msg + infoBuffer.getText();
+#ifdef TARGET_RAPSBERRY_PI
+		for(auto it: shaders){
+			ofLogNotice("ofShader") << it.second.expandedSource;
+		}
+#endif
 	}
 }
 
@@ -467,10 +476,10 @@ bool ofShader::linkProgram() {
 		checkAndCreateProgram();
 
 		for(auto it: shaders){
-			GLuint shader = it.second;
-			if(shader) {
+			auto shader = it.second;
+			if(shader.id>0) {
 				ofLogVerbose("ofShader") << "linkProgram(): attaching " << nameForType(it.first) << " shader to program " << program;
-				glAttachShader(program, shader);
+				glAttachShader(program, shader.id);
 			}
 		}
 
@@ -493,8 +502,12 @@ bool ofShader::linkProgram() {
 		for(GLint i = 0; i < numUniforms; i++) {
 			glGetActiveUniform(program, i, uniformMaxLength, &length, &count, &type, uniformName.data());
 			string name(uniformName.begin(), uniformName.begin()+length);
-			uniformLocations[name] = glGetUniformLocation(program, name.c_str());
+			uniformsCache[name] = glGetUniformLocation(program, name.c_str());
 		}
+
+#ifdef TARGET_ANDROID
+		ofAddListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
+#endif
 
 		// bLoaded means we have loaded shaders onto the graphics card;
 		// it doesn't necessarily mean that these shaders have compiled and linked successfully.
@@ -503,7 +516,46 @@ bool ofShader::linkProgram() {
 	return bLoaded;
 }
 
+
+//--------------------------------------------------------------
+#ifdef TARGET_ANDROID
+void ofShader::unloadGL(){
+	for(auto it: shaders) {
+		auto shader = it.second;
+		if(shader.id) {
+			releaseShader(program,shader.id);
+		}
+	}
+
+	if (program) {
+		releaseProgram(program);
+		program = 0;
+	}
+	bLoaded = false;
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofShader::reloadGL);
+}
+
+void ofShader::reloadGL(){
+	auto source = shaders;
+	auto bindings = attributesBindingsCache;
+	shaders.clear();
+	uniformsCache.clear();
+	attributesBindingsCache.clear();
+	for(auto & shader: source){
+		auto type = shader.second.type;
+		auto source = shader.second.expandedSource;
+		setupShaderFromSource(type,source);
+	}
+	for(auto binding: bindings){
+		bindAttribute(binding.second, binding.first);
+	}
+	linkProgram();
+}
+#endif
+
+//--------------------------------------------------------------
 void ofShader::bindAttribute(GLuint location, const string & name) const{
+	attributesBindingsCache[name] = location;
 	glBindAttribLocation(program,location,name.c_str());
 }
 
@@ -525,11 +577,11 @@ bool ofShader::bindDefaults() const{
 //--------------------------------------------------------------
 void ofShader::unload() {
 	if(bLoaded) {
-		for(unordered_map<GLenum, GLuint>::const_iterator it = shaders.begin(); it != shaders.end(); ++it) {
-			GLuint shader = it->second;
-			if(shader) {
-				ofLogVerbose("ofShader") << "unload(): detaching and deleting " << nameForType(it->first) << " shader from program " << program;
-				releaseShader(program,shader);
+		for(auto it: shaders) {
+			auto shader = it.second;
+			if(shader.id) {
+				ofLogVerbose("ofShader") << "unload(): detaching and deleting " << nameForType(shader.type) << " shader from program " << program;
+				releaseShader(program,shader.id);
 			}
 		}
 
@@ -539,7 +591,12 @@ void ofShader::unload() {
 		}
 
 		shaders.clear();
-		uniformLocations.clear();
+		uniformsCache.clear();
+		attributesBindingsCache.clear();
+#ifdef TARGET_ANDROID
+		ofRemoveListener(ofxAndroidEvents().reloadGL,this,&ofShader::reloadGL);
+		ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofShader::unloadGL);
+#endif
 	}
 	bLoaded = false;
 }
@@ -913,9 +970,8 @@ GLint ofShader::getAttributeLocation(const string & name)  const{
 //--------------------------------------------------------------
 GLint ofShader::getUniformLocation(const string & name)  const{
 	if(!bLoaded) return -1;
-	// tig: caching uniform locations gives the RPi a 17% boost on average
-	auto it = uniformLocations.find(name);
-	if (it == uniformLocations.end()){
+	auto it = uniformsCache.find(name);
+	if (it == uniformsCache.end()){
 		return -1;
 	} else {
 		return it->second;
@@ -981,9 +1037,9 @@ GLuint ofShader::getProgram() const{
 
 //--------------------------------------------------------------
 GLuint ofShader::getShader(GLenum type) const{
-	unordered_map<GLenum,GLuint>::const_iterator shader = shaders.find(type);
+	auto shader = shaders.find(type);
 	if(shader!=shaders.end()){
-		return shader->second;
+		return shader->second.id;
 	}else{
 		return 0;
 	}
