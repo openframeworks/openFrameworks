@@ -62,7 +62,7 @@ https://developer.android.com/ndk/downloads/index.html
 - Windows 32: http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86.exe
 - Windows 64: http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86_64.exe
 
-Uncompress this also to any place in your hard disk. We'll tell openFrameworks where to find it later.
+On Windows, you will also need to install MinGW in order to build openFrameworks. MinGW provides some essential build tools which are not included in the NDK. Follow just the "Installing the MinGW and Msys" instructions on this page: http://www.multigesture.net/articles/how-to-install-mingw-msys-and-eclipse-on-windows/.
 
 **d) openFrameworks for Android package**: Download it from the downloads page:
 

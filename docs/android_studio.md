@@ -30,16 +30,15 @@ In the event that Android Studio does not come with an SDK, you can install it f
 
 ### Install the Android NDK
 
-For the current version of openFrameworks, you need to install Android NDK revision r10b or earlier. r10c breaks compatibility with some libraries, and should (at this time) be avoided.
+This is the C/C++ compiler, headers and libraries for Android. OF 0.9.0 has been tested with the NDK version r10e, newer versions might work but it's not guaranteed.
 
-Here are download links for r9d, which has been tested and works fine:
+https://developer.android.com/ndk/downloads/index.html
 
-- Windows 32-bit: http://dl.google.com/android/ndk/android-ndk-r9d-windows-x86.zip
-- Windows 64-bit: http://dl.google.com/android/ndk/android-ndk-r9d-windows-x86_64.zip
-- Mac OS X 32-bit: http://dl.google.com/android/ndk/android-ndk-r9d-darwin-x86.tar.bz2
-- Mac OS X 64-bit: http://dl.google.com/android/ndk/android-ndk-r9d-darwin-x86_64.tar.bz2
-- Linux 32-bit (x86): http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86.tar.bz2
-- Linux 64-bit (x86): http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86_64.tar.bz2
+- OS X: http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin
+- Linux 32: http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86.bin
+- Linux 64: http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin
+- Windows 32: http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86.exe
+- Windows 64: http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86_64.exe
 
 On Windows, you will also need to install MinGW in order to build openFrameworks. MinGW provides some essential build tools which are not included in the NDK. Follow just the "Installing the MinGW and Msys" instructions on this page: http://www.multigesture.net/articles/how-to-install-mingw-msys-and-eclipse-on-windows/.
 
