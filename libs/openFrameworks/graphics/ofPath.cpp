@@ -764,6 +764,19 @@ void ofPath::scale(float x, float y){
 	flagShapeChanged();
 }
 
+void ofPath::append(const ofPath & path){
+	if(mode==COMMANDS){
+		for(auto & command: path.getCommands()){
+			addCommand(command);
+		}
+	}else{
+		for(auto & poly: path.getOutline()){
+			polylines.push_back(poly);
+		}
+	}
+	flagShapeChanged();
+}
+
 void ofPath::addCommand(const ofPath::Command & command){
 	if((commands.empty() || commands.back().type==Command::close) && command.type!=Command::moveTo){
 		commands.push_back(Command(Command::moveTo,command.to));
