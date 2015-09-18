@@ -50,6 +50,9 @@ http://openframeworks.cc/download
 
 You may also check out the openFrameworks source from GitHub (under master branch): http://github.com/openframeworks/openFrameworks
 
+Or download the latest nightly:
+http://openframeworks.cc/download (bottom of the page)
+
 ### Import the project
 
 At the Android Studio welcome screen select **Import Project**, or use the **File ➞ Import Project** menu item. Browse to  the `settings.gradle` file in the `libs/openFrameworksCompiled/project/android` directory. Accept all the prompts and wait for Android Studio to set up the project.
