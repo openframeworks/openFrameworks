@@ -14,7 +14,7 @@ Android studio support in openFrameworks is still experimental. The latest versi
 Setting up openFrameworks with Android Studio is fairly straightforward. The basic steps are:
 
 - Install Android Studio and the Android SDK
-- Install the Android NDK (r10b or lower)
+- Install the Android NDK (actually tested version is r10e)
 - Download openFrameworks from the download page or from git
 - In Android Studio, use **File ➞ Import Project** and select the `settings.gradle` file in the root of the openFrameworks directory
 - Set the path to the NDK in local.properties (`ndk.dir`)
