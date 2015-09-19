@@ -3,7 +3,7 @@
 Android
 =======
 
-The Android distribution of openFrameworks is setup to work with either the Eclipse IDE or the newer Android Studio IDE. The projects are currently using a custom toolchain based on Makefiles to compile and install applications.
+The Android distribution of openFrameworks is setup to work with either the Eclipse IDE or experimentally Android Studio IDE. The projects are currently using a custom toolchain based on Makefiles to compile and install applications.
 
 # Android Studio
 
