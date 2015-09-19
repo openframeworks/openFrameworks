@@ -64,12 +64,10 @@ on using the C-compiler to compile .c files (this happens with MSVC versions pri
 2010). To work around this, just set the "Compile As" to "Default", click "Apply" and
 then set it back to "Compile as C++ Code (/TP)", click "Apply" and then "OK".
 
-Another problem is that Visual C++ does not offer the <unistd.h> and <stdbool.h>
-headers. However, they are pretty simple to be emulated; the <stdbool.h> will
-actually be a dummy header because C++ already defines the "bool" type semantics,
-while the <unistd.h> has to simply #include <stdint.h> and define the "ssize_t"
-type. The implementation of these headers are located at:
-  "libfreenect\platform\windows"
+Another problem is that Visual C++ does not offer <unistd.h>. However, it
+can be emulated by #include <stdint.h> and defining the "ssize_t" type.
+The implementation of <unistd.h> is located at:
+  "libfreenect\platform\windows\unistd.h"
 
 NOTE: MSVC versions prior to 2010 do not provide the <stdint.h> header. An ISO C9x
 compilant <stdint.h> header for such MSVC versions can be found at the wikipedia entry

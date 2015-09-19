@@ -1,0 +1,41 @@
+diff --git a/Include/tesselator.h b/Include/tesselator.h
+index c27541e..eafb0aa 100755
+--- a/Include/tesselator.h
++++ b/Include/tesselator.h
+@@ -36,6 +36,10 @@
+ extern "C" {
+ #endif
+ 
++#if defined( __APPLE_CC__)
++	#include <TargetConditionals.h>
++#endif
++
+ // See OpenGL Red Book for description of the winding rules
+ // http://www.glprogramming.com/red/chapter11.html
+ enum TessWindingRule
+@@ -115,7 +119,11 @@ enum TessElementType
+ };
+ 
+ typedef float TESSreal;
+-typedef int TESSindex;
++#if TARGET_OS_IPHONE || ANDROID || __ARMEL__ || EMSCRIPTEN
++	typedef unsigned short TESSindex;
++#else
++	typedef unsigned int TESSindex;
++#endif
+ typedef struct TESStesselator TESStesselator;
+ typedef struct TESSalloc TESSalloc;
+ 
+diff --git a/Source/tess.c b/Source/tess.c
+index 67c038f..93061bb 100755
+--- a/Source/tess.c
++++ b/Source/tess.c
+@@ -976,7 +976,7 @@ int tessGetElementCount( TESStesselator *tess )
+ 	return tess->elementCount;
+ }
+ 
+-const int* tessGetElements( TESStesselator *tess )
++const TESSindex* tessGetElements( TESStesselator *tess )
+ {
+ 	return tess->elements;
+ }

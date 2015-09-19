@@ -19,9 +19,9 @@ void ofApp::setup(){
 	gui.add(ringButton.setup("ring"));
 	gui.add(screenSize.set("screenSize", ""));
 	
-	bHide = true;
+	bHide = false;
 
-	ring.loadSound("ring.wav");
+	ring.load("ring.wav");
 }
 
 //--------------------------------------------------------------
@@ -55,13 +55,13 @@ void ofApp::draw(){
 
 	ofSetColor(color);
 	if(twoCircles){
-		ofCircle(center->x-radius*.5, center->y, radius );
-		ofCircle(center->x+radius*.5, center->y, radius );
+		ofDrawCircle(center->x-radius*.5, center->y, radius );
+		ofDrawCircle(center->x+radius*.5, center->y, radius );
 	}else{
-		ofCircle((ofVec2f)center, radius );
+		ofDrawCircle((ofVec2f)center, radius );
 	}
 	
-	if( bHide ){
+	if( !bHide ){
 		gui.draw();
 	}
 }
@@ -104,6 +104,16 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
 	
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

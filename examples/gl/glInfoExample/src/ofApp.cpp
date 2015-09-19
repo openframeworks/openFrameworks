@@ -51,7 +51,7 @@ print_extension_list(char *ext)
         return;
 
     width = indent;
-    printf("%s", indentString);
+    cout << indentString;
     i = j = 0;
     while (1) {
         if (ext[j] == ' ' || ext[j] == 0) {
@@ -59,13 +59,13 @@ print_extension_list(char *ext)
             const int len = j - i;
             if (width + len > max) {
                 /* start a new line */
-                printf("\n");
+                cout << "\n";
                 width = indent;
-                printf("%s", indentString);
+                cout << indentString;
             }
             /* print the extension name between ext[i] and ext[j] */
             while (i < j) {
-                printf("%c", ext[i]);
+                cout << ext[i];
                 i++;
             }
             /* either we're all done, or we'll continue with next extension */
@@ -78,13 +78,13 @@ print_extension_list(char *ext)
                 j++;
                 if (ext[j] == 0)
                     break;
-                printf(", ");
+                cout << ", ";
                 width += 2;
             }
         }
         j++;
     }
-    printf("\n");
+    cout << "\n";
 }
 
 static void
@@ -122,14 +122,14 @@ print_limits(void)
         { 0, (GLenum) 0, NULL }
     };
     GLint i, max[2];
-    printf("OpenGL limits:\n");
+    cout << "OpenGL limits:\n";
     for (i = 0; openglLimits[i].count; i++) {
         glGetIntegerv(openglLimits[i].token, max);
         if (glGetError() == GL_NONE) {
             if (openglLimits[i].count == 1)
-                printf("    %s = %d\n", openglLimits[i].name, max[0]);
+                cout << "    " << openglLimits[i].name << " = " << max[0] << "\n";
             else /* XXX fix if we ever query something with more than 2 values */
-                printf("    %s = %d, %d\n", openglLimits[i].name, max[0], max[1]);
+                cout << "    " << openglLimits[i].name << " = " << max[0] << ", " << max[1] << "\n";
         }
     }
 }
@@ -146,14 +146,14 @@ void printShaderLimits(){
     };
 
     GLint i, max[2];
-    printf("Shader limits:\n");
+    cout << "Shader limits:\n";
     for (i = 0; lll[i].count; i++) {
         glGetIntegerv(lll[i].token, max);
         if (glGetError() == GL_NONE) {
             if (lll[i].count == 1)
-                printf("    %s = %d\n", lll[i].name, max[0]);
+                cout << "    " << lll[i].name << " = " << max[0] << "\n";
             else /* XXX fix if we ever query something with more than 2 values */
-                printf("    %s = %d, %d\n", lll[i].name, max[0], max[1]);
+                cout << "    " << lll[i].name << " = " << max[0] << ", " << max[1] << "\n";
         }
     }
 }
@@ -172,8 +172,7 @@ void printGLInfo(){
     vendor =      (char*)glGetString(GL_VENDOR);
     renderer =    (char*)glGetString(GL_RENDERER);
 
-    printf("version=%s\nvendor=%s\nrenderer=%s\n",
-           version,vendor,renderer);
+    cout << "version=" << version << "\nvendor=" << vendor << "\nrenderer=" << renderer << "\n";
 
 }
 
@@ -253,34 +252,34 @@ void ofApp::keyPressed(int key){
 
 
         if((fp=freopen(ofToDataPath("openglReport.txt").c_str(), "w" ,stdout))==NULL) {
-            printf("Cannot open file.\n");
+            cout << "Cannot open file.\n";
             return;
         }
 
 
-        printf("-------------------------------------------------\n");
-        printf("opengl info\n");
-        printf("-------------------------------------------------\n");
+        cout << "-------------------------------------------------\n";
+        cout << "opengl info\n";
+        cout << "-------------------------------------------------\n";
 
         printGLInfo();
 
-        printf("-------------------------------------------------\n");
-        printf("opengl limits\n");
-        printf("-------------------------------------------------\n");
+        cout << "-------------------------------------------------\n";
+        cout << "opengl limits\n";
+        cout << "-------------------------------------------------\n";
 
 
         print_limits();
 
-        printf("-------------------------------------------------\n");
-        printf("shader limits\n");
-        printf("-------------------------------------------------\n");
+        cout << "-------------------------------------------------\n";
+        cout << "shader limits\n";
+        cout << "-------------------------------------------------\n";
 
         printShaderLimits();
 
 
-        printf("-------------------------------------------------\n");
-        printf("available extensions\n");
-        printf("-------------------------------------------------\n");
+        cout << "-------------------------------------------------\n";
+        cout << "available extensions\n";
+        cout << "-------------------------------------------------\n";
 
         const GLubyte * strExt;
         strExt = glGetString (GL_EXTENSIONS);
@@ -291,9 +290,9 @@ void ofApp::keyPressed(int key){
 
         //isShade = gluCheckExtension ((const GLubyte*)"GL_ARB_shading_language_100", strExt);
 
-        printf("-------------------------------------------------\n");
-        printf("opengl calls available\n");
-        printf("-------------------------------------------------\n");
+        cout << "-------------------------------------------------\n";
+        cout << "opengl calls available\n";
+        cout << "-------------------------------------------------\n";
 
 
         printGlewInfo();
@@ -336,6 +335,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

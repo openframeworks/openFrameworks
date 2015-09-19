@@ -1,5 +1,5 @@
 #include "ofPolyline.h"
-#include "ofGraphics.h"
+#include "ofAppRunner.h"
 
 //----------------------------------------------------------
 ofPolyline::ofPolyline(){
@@ -162,7 +162,7 @@ void ofPolyline::setCircleResolution(int res){
 // should always be radians?  or should this take degrees?
 // used internally, so perhaps not as important
 float ofPolyline::wrapAngle(float angleRadians) {
-	return ofWrap(angleRadians, 0.0, TWO_PI);
+	return ofWrap(angleRadians, 0.0f, TWO_PI);
 }
 
 //----------------------------------------------------------
@@ -492,7 +492,7 @@ ofPolyline ofPolyline::getResampledByCount(int count) const {
 static ofPoint getClosestPointUtil(const ofPoint& p1, const ofPoint& p2, const ofPoint& p3, float* normalizedPosition) {
 	// if p1 is coincident with p2, there is no line
 	if(p1 == p2) {
-		if(normalizedPosition != NULL) {
+		if(normalizedPosition != nullptr) {
 			*normalizedPosition = 0;
 		}
 		return p1;
@@ -510,7 +510,7 @@ static ofPoint getClosestPointUtil(const ofPoint& p1, const ofPoint& p2, const o
 	} else if(u < 0) {
 		u = 0;
 	}
-	if(normalizedPosition != NULL) {
+	if(normalizedPosition != nullptr) {
 		*normalizedPosition = u;
 	}
 	return p1.getInterpolated(p2, u);
@@ -523,7 +523,7 @@ ofPoint ofPolyline::getClosestPoint(const ofPoint& target, unsigned int* nearest
 	const ofPolyline & polyline = *this;
     
 	if(polyline.size() < 2) {
-		if(nearestIndex != NULL) {
+		if(nearestIndex != nullptr) {
 			nearestIndex = 0;
 		}
 		return target;
@@ -554,7 +554,7 @@ ofPoint ofPolyline::getClosestPoint(const ofPoint& target, unsigned int* nearest
 		}
 	}
 	
-	if(nearestIndex != NULL) {
+	if(nearestIndex != nullptr) {
 		if(normalizedPosition > .5) {
 			nearest++;
 			if(nearest == polyline.size()) {
@@ -737,7 +737,7 @@ void ofPolyline::simplify(float tol){
 }
 
 //--------------------------------------------------
-void ofPolyline::draw(){
+void ofPolyline::draw() const{
 	ofGetCurrentRenderer()->draw(*this);
 }
 
@@ -773,7 +773,7 @@ float ofPolyline::getIndexAtLength(float length) const {
         distAt1 = lengths[i1];
         if(distAt1 <= length) {         // if Length at i1 is less than desired Length (this is good)
             distAt2 = lengths[i1+1];
-            if(distAt2 > length) {
+            if(distAt2 >= length) {
                 float t = ofMap(length, distAt1, distAt2, 0, 1);
                 return i1 + t;
             } else {
@@ -833,7 +833,7 @@ ofPoint ofPolyline::getPointAtIndexInterpolated(float findex) const {
     getInterpolationParams(findex, i1, i2, t);
     ofPoint leftPoint(points[i1]);
     ofPoint rightPoint(points[i2]);
-    return leftPoint.interpolated(rightPoint, t);
+    return leftPoint.getInterpolated(rightPoint, t);
 }
 
 
@@ -866,7 +866,7 @@ ofVec3f ofPolyline::getRotationAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-    return getRotationAtIndex(i1).interpolated(getRotationAtIndex(i2), t);
+    return getRotationAtIndex(i1).getInterpolated(getRotationAtIndex(i2), t);
 }
 
 //--------------------------------------------------
@@ -882,7 +882,7 @@ ofVec3f ofPolyline::getTangentAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-    return getTangentAtIndex(i1).interpolated(getTangentAtIndex(i2), t);
+    return getTangentAtIndex(i1).getInterpolated(getTangentAtIndex(i2), t);
 }
 
 //--------------------------------------------------
@@ -898,7 +898,7 @@ ofVec3f ofPolyline::getNormalAtIndexInterpolated(float findex) const {
     int i1, i2;
     float t;
     getInterpolationParams(findex, i1, i2, t);
-    return getNormalAtIndex(i1).interpolated(getNormalAtIndex(i2), t);
+    return getNormalAtIndex(i1).getInterpolated(getNormalAtIndex(i2), t);
 }
 
 
@@ -920,7 +920,7 @@ void ofPolyline::calcData(int index, ofVec3f &tangent, float &angle, ofVec3f &ro
     tangent = (v2 - v1);
     tangent.normalize();
     
-    rotation = v1.crossed(v2);
+    rotation = v1.getCrossed(v2);
     angle = 180 - ofRadToDeg(acos(ofClamp(v1.x * v2.x + v1.y * v2.y + v1.z * v2.z, -1, 1)));
 
     normal = rightVector.getCrossed(tangent);
@@ -965,19 +965,22 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
         }
         area += points[points.size()-1].x * points[0].y - points[0].x * points[points.size()-1].y;
         area *= 0.5;
-
         
-        // centroid
-        // TODO: doesn't seem to work on all concave shapes
-        for(int i=0;i<(int)points.size()-1;i++){
-            centroid2D.x += (points[i].x + points[i+1].x) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
-            centroid2D.y += (points[i].y + points[i+1].y) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+        if(fabsf(area) < FLT_EPSILON) {
+            centroid2D = getBoundingBox().getCenter();
+        } else {
+            // centroid
+            // TODO: doesn't seem to work on all concave shapes
+            for(int i=0;i<(int)points.size()-1;i++){
+                centroid2D.x += (points[i].x + points[i+1].x) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+                centroid2D.y += (points[i].y + points[i+1].y) * (points[i].x*points[i+1].y - points[i+1].x*points[i].y);
+            }
+            centroid2D.x += (points[points.size()-1].x + points[0].x) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
+            centroid2D.y += (points[points.size()-1].y + points[0].y) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
+            
+            centroid2D.x /= (6*area);
+            centroid2D.y /= (6*area);
         }
-        centroid2D.x += (points[points.size()-1].x + points[0].x) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
-        centroid2D.y += (points[points.size()-1].y + points[0].y) * (points[points.size()-1].x*points[0].y - points[0].x*points[points.size()-1].y);
-        
-        centroid2D.x /= (6*area);
-        centroid2D.y /= (6*area);
 
         
         // per vertex cache
@@ -1007,5 +1010,46 @@ void ofPolyline::updateCache(bool bForceUpdate) const {
         
         if(isClosed()) lengths.push_back(length);
     }
+}
+
+
+//--------------------------------------------------
+vector<ofPoint>::iterator ofPolyline::begin(){
+	return points.begin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::iterator ofPolyline::end(){
+	return points.end();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_iterator ofPolyline::begin() const{
+	return points.begin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_iterator ofPolyline::end() const{
+	return points.end();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::reverse_iterator ofPolyline::rbegin(){
+	return points.rbegin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::reverse_iterator ofPolyline::rend(){
+	return points.rend();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_reverse_iterator ofPolyline::rbegin() const{
+	return points.rbegin();
+}
+
+//--------------------------------------------------
+vector<ofPoint>::const_reverse_iterator ofPolyline::rend() const{
+	return points.rend();
 }
 

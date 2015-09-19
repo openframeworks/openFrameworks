@@ -9,6 +9,7 @@ public:
 	ofVboMesh();
 	ofVboMesh(const ofMesh & mom);
 	void operator=(const ofMesh & mom);
+	virtual ~ofVboMesh();
 	void setUsage(int usage);
 
     void enableColors();
@@ -26,14 +27,20 @@ public:
     virtual bool usingNormals() const;
     virtual bool usingIndices() const;
 
-	void draw(ofPolyRenderMode drawMode);
-	void drawInstanced(ofPolyRenderMode drawMode, int primCount);
+	void draw(ofPolyRenderMode drawMode) const;
+	void drawInstanced(ofPolyRenderMode drawMode, int primCount) const;
 	
 	ofVbo & getVbo();
+	const ofVbo & getVbo() const;
 	
 private:
 	void updateVbo();
+	void unloadVbo();
 	ofVbo vbo;
 	int usage;
-	int vboNumVerts, vboNumIndices, vboNumNormals, vboNumTexCoords, vboNumColors;
+	std::size_t vboNumVerts;
+	std::size_t vboNumIndices;
+	std::size_t vboNumNormals;
+	std::size_t vboNumTexCoords;
+	std::size_t vboNumColors;
 };

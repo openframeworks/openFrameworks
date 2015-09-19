@@ -4,11 +4,11 @@
 #include "ofUtils.h"
 
 
-bool bFmodInitialized_ = false;
-bool bUseSpectrum_ = false;
-float fftValues_[8192];			//
-float fftInterpValues_[8192];			//
-float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmodex....
+static bool bFmodInitialized_ = false;
+static float fftValues_[8192];			//
+static float fftInterpValues_[8192];			//
+static float fftSpectrum_[8192];		// maximum #ofFmodSoundPlayer is 8192, in fmodex....
+static unsigned int buffersize = 1024;
 
 
 // ---------------------  static vars
@@ -124,6 +124,10 @@ float * ofFmodSoundGetSpectrum(int nBands){
 	return fftInterpValues_;
 }
 
+void ofFmodSetBuffersize(unsigned int bs){
+	buffersize = bs;
+}
+
 // ------------------------------------------------------------
 // ------------------------------------------------------------
 
@@ -142,7 +146,7 @@ ofFmodSoundPlayer::ofFmodSoundPlayer(){
 }
 
 ofFmodSoundPlayer::~ofFmodSoundPlayer(){
-	unloadSound();
+	unload();
 }
 
 
@@ -151,15 +155,25 @@ ofFmodSoundPlayer::~ofFmodSoundPlayer(){
 // this should only be called once
 void ofFmodSoundPlayer::initializeFmod(){
 	if(!bFmodInitialized_){
+		
 		FMOD_System_Create(&sys);
+		
+		// set buffersize, keep number of buffers
+		unsigned int bsTmp;
+		int nbTmp;
+		FMOD_System_GetDSPBufferSize(sys, &bsTmp, &nbTmp);
+		FMOD_System_SetDSPBufferSize(sys, buffersize, nbTmp);
+
 		#ifdef TARGET_LINUX
 			FMOD_System_SetOutput(sys,FMOD_OUTPUTTYPE_ALSA);
 		#endif
-		FMOD_System_Init(sys, 32, FMOD_INIT_NORMAL, NULL);  //do we want just 32 channels?
+		FMOD_System_Init(sys, 32, FMOD_INIT_NORMAL, nullptr);  //do we want just 32 channels?
 		FMOD_System_GetMasterChannelGroup(sys, &channelgroup);
 		bFmodInitialized_ = true;
 	}
 }
+
+
 
 
 //---------------------------------------
@@ -171,7 +185,7 @@ void ofFmodSoundPlayer::closeFmod(){
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::loadSound(string fileName, bool stream){
+bool ofFmodSoundPlayer::load(string fileName, bool stream){
 
 	fileName = ofToDataPath(fileName);
 
@@ -192,7 +206,7 @@ bool ofFmodSoundPlayer::loadSound(string fileName, bool stream){
 	// & prevent user-created memory leaks
 	// if they call "loadSound" repeatedly, for example
 
-	unloadSound();
+	unload();
 
 	// [3] load sound
 
@@ -200,7 +214,7 @@ bool ofFmodSoundPlayer::loadSound(string fileName, bool stream){
 	int fmodFlags =  FMOD_SOFTWARE;
 	if(stream)fmodFlags =  FMOD_SOFTWARE | FMOD_CREATESTREAM;
 
-	result = FMOD_System_CreateSound(sys, fileName.c_str(),  fmodFlags, NULL, &sound);
+	result = FMOD_System_CreateSound(sys, fileName.c_str(),  fmodFlags, nullptr, &sound);
 
 	if (result != FMOD_OK){
 		bLoadedOk = false;
@@ -215,16 +229,16 @@ bool ofFmodSoundPlayer::loadSound(string fileName, bool stream){
 }
 
 //------------------------------------------------------------
-void ofFmodSoundPlayer::unloadSound(){
+void ofFmodSoundPlayer::unload(){
 	if (bLoadedOk){
 		stop();						// try to stop the sound
-		if(!isStreaming)FMOD_Sound_Release(sound);
+		FMOD_Sound_Release(sound);
 		bLoadedOk = false;
 	}
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::getIsPlaying(){
+bool ofFmodSoundPlayer::isPlaying() const{
 
 	if (!bLoadedOk) return false;
 
@@ -234,28 +248,28 @@ bool ofFmodSoundPlayer::getIsPlaying(){
 }
 
 //------------------------------------------------------------
-float ofFmodSoundPlayer::getSpeed(){
+float ofFmodSoundPlayer::getSpeed() const{
 	return speed;
 }
 
 //------------------------------------------------------------
-float ofFmodSoundPlayer::getPan(){
+float ofFmodSoundPlayer::getPan() const{
 	return pan;
 }
 
 //------------------------------------------------------------
-float ofFmodSoundPlayer::getVolume(){
+float ofFmodSoundPlayer::getVolume() const{
 	return volume;
 }
 
 //------------------------------------------------------------
-bool ofFmodSoundPlayer::isLoaded(){
+bool ofFmodSoundPlayer::isLoaded() const{
 	return bLoadedOk;
 }
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setVolume(float vol){
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		FMOD_Channel_SetVolume(channel, vol);
 	}
 	volume = vol;
@@ -263,21 +277,21 @@ void ofFmodSoundPlayer::setVolume(float vol){
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setPosition(float pct){
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		int sampleToBeAt = (int)(length * pct);
 		FMOD_Channel_SetPosition(channel, sampleToBeAt, FMOD_TIMEUNIT_PCM);
 	}
 }
 
 void ofFmodSoundPlayer::setPositionMS(int ms) {
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		FMOD_Channel_SetPosition(channel, ms, FMOD_TIMEUNIT_MS);
 	}
 }
 
 //------------------------------------------------------------
-float ofFmodSoundPlayer::getPosition(){
-	if (getIsPlaying() == true){
+float ofFmodSoundPlayer::getPosition() const{
+	if (isPlaying()){
 		unsigned int sampleImAt;
 
 		FMOD_Channel_GetPosition(channel, &sampleImAt, FMOD_TIMEUNIT_PCM);
@@ -293,8 +307,8 @@ float ofFmodSoundPlayer::getPosition(){
 }
 
 //------------------------------------------------------------
-int ofFmodSoundPlayer::getPositionMS(){
-	if (getIsPlaying() == true){
+int ofFmodSoundPlayer::getPositionMS() const{
+	if (isPlaying()){
 		unsigned int sampleImAt;
 
 		FMOD_Channel_GetPosition(channel, &sampleImAt, FMOD_TIMEUNIT_MS);
@@ -309,7 +323,7 @@ int ofFmodSoundPlayer::getPositionMS(){
 void ofFmodSoundPlayer::setPan(float p){
 	pan = p;
 	p = ofClamp(p, -1, 1);
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		FMOD_Channel_SetPan(channel,p);
 	}
 }
@@ -317,7 +331,7 @@ void ofFmodSoundPlayer::setPan(float p){
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setPaused(bool bP){
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		FMOD_Channel_SetPaused(channel,bP);
 		bPaused = bP;
 	}
@@ -326,7 +340,7 @@ void ofFmodSoundPlayer::setPaused(bool bP){
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setSpeed(float spd){
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 			FMOD_Channel_SetFrequency(channel, internalFreq * spd);
 	}
 	speed = spd;
@@ -335,7 +349,7 @@ void ofFmodSoundPlayer::setSpeed(float spd){
 
 //------------------------------------------------------------
 void ofFmodSoundPlayer::setLoop(bool bLp){
-	if (getIsPlaying() == true){
+	if (isPlaying()){
 		FMOD_Channel_SetMode(channel,  (bLp == true) ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
 	}
 	bLoop = bLp;

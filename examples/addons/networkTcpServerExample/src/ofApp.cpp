@@ -32,7 +32,7 @@ void ofApp::draw(){
 	ofDrawBitmapString("TCP SERVER Example \n\nconnect on port: "+ofToString(TCP.getPort()), 10, 20);
 
 	ofSetHexColor(0x000000);
-	ofRect(10, 60, ofGetWidth()-24, ofGetHeight() - 65 - 15);
+	ofDrawRectangle(10, 60, ofGetWidth()-24, ofGetHeight() - 65 - 15);
 
 	ofSetHexColor(0xDDDDDD);
 
@@ -102,6 +102,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

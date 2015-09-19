@@ -1,1 +1,0 @@
-libpng15/pnglibconf.h

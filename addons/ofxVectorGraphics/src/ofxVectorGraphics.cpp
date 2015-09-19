@@ -233,7 +233,7 @@ void ofxVectorGraphics::rect(float x1,float y1, float w, float h){
 	if(bDraw){
 		if(bCenter)ofSetRectMode(OF_RECTMODE_CENTER);
 		else ofSetRectMode(OF_RECTMODE_CORNER);
-		ofRect(x1, y1, w, h);
+		ofDrawRectangle(x1, y1, w, h);
 	}
 	if(bRecord){
 		if(bCenter){
@@ -249,7 +249,7 @@ void ofxVectorGraphics::rect(float x1,float y1, float w, float h){
 //----------------------------------------------------------
 void ofxVectorGraphics::triangle(float x1,float y1, float x2, float y2, float x3, float y3){
 	if(bDraw){
-		ofTriangle(x1, y1,  x2,  y2,  x3,  y3);
+		ofDrawTriangle(x1, y1,  x2,  y2,  x3,  y3);
 	}
 	if(bRecord){
 		creeps.startPath(x1, y1);
@@ -264,7 +264,7 @@ void ofxVectorGraphics::triangle(float x1,float y1, float x2, float y2, float x3
 //----------------------------------------------------------
 void ofxVectorGraphics::circle(float x1,float y1, float radius){
 	if(bDraw){
-		ofCircle(x1, y1, radius);
+		ofDrawCircle(x1, y1, radius);
 	}
 	if(bRecord){
 		if(bFill) creeps.disk(x1, y1, radius); 
@@ -275,7 +275,7 @@ void ofxVectorGraphics::circle(float x1,float y1, float radius){
 //----------------------------------------------------------
 void ofxVectorGraphics::ellipse(float x1,float y1, float w, float h){
 	if(bDraw){
-		ofEllipse(x1, y1, w, h);
+		ofDrawEllipse(x1, y1, w, h);
 	}
 	if(bRecord){
 		if(bFill){
@@ -291,7 +291,7 @@ void ofxVectorGraphics::ellipse(float x1,float y1, float w, float h){
 //----------------------------------------------------------
 void ofxVectorGraphics::line(float x1,float y1, float x2, float y2){
 	if(bDraw){
-		ofLine(x1, y1, x2, y2);
+		ofDrawLine(x1, y1, x2, y2);
 	}
 	if(bRecord){
 		creeps.line(x1, y1, x2, y2);
@@ -358,7 +358,7 @@ void ofxVectorGraphics::arc(float x, float y, float radius, float offsetAngleDeg
 //----------------------------------------------------------
 void ofxVectorGraphics::bezier(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4){
 	if(bDraw){
-		ofBezier(x1, y1, x2, y2, x3, y3, x4, y4);
+		ofDrawBezier(x1, y1, x2, y2, x3, y3, x4, y4);
 	}
 	if(bRecord){
 		if(bFill){
@@ -374,7 +374,7 @@ void ofxVectorGraphics::bezier(float x1, float y1, float x2, float y2, float x3,
 //----------------------------------------------------------
 void ofxVectorGraphics::curve(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4){
 	if(bDraw){
-		ofCurve(x1, y1, x2, y2, x3, y3, x4, y4);						
+		ofDrawCurve(x1, y1, x2, y2, x3, y3, x4, y4);
 	}
 	if(bRecord){
 	

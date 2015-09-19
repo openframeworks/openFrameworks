@@ -12,33 +12,38 @@ public:
 	
 	ofxiOSVideoPlayer();
 	~ofxiOSVideoPlayer();
-	    
-    bool loadMovie(string name);
+	   
+    void enableTextureCache();
+    void disableTextureCache();
+    
+    bool load(string name);
     void close();
     void update();
 	
-	bool			setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat 	getPixelFormat();
+	bool setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat getPixelFormat() const;
 	
     void play();
     void stop();
 	
-    bool isFrameNew();
-    unsigned char * getPixels();
-    ofPixelsRef	getPixelsRef();
-    ofTexture *	getTexture();
+    bool isFrameNew() const;
+    ofPixels & getPixels();
+    const ofPixels & getPixels() const;
+    ofTexture * getTexturePtr();
+    void initTextureCache();
+    void killTextureCache();
 	
-    float getWidth();
-    float getHeight();
+    float getWidth() const;
+    float getHeight() const;
 	
-    bool isPaused();
-    bool isLoaded();
-    bool isPlaying();
+    bool isPaused() const;
+    bool isLoaded() const;
+    bool isPlaying() const;
 	
-    float getPosition();
-    float getSpeed();
-    float getDuration();
-    bool getIsMovieDone();
+    float getPosition() const;
+    float getSpeed() const;
+    float getDuration() const;
+    bool getIsMovieDone() const;
 	
     void setPaused(bool bPause);
     void setPosition(float pct);
@@ -47,9 +52,9 @@ public:
     void setSpeed(float speed);
     void setFrame(int frame);  // frame 0 = first frame...
 	
-    int	getCurrentFrame();
-    int	getTotalNumFrames();
-    ofLoopType	getLoopState();
+    int	getCurrentFrame() const;
+    int	getTotalNumFrames() const;
+    ofLoopType	getLoopState() const;
 	
     void firstFrame();
     void nextFrame();
@@ -57,24 +62,24 @@ public:
     
 	void * getAVFoundationVideoPlayer();
     
+    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::loadMovie() is deprecated, use load() instead.", bool loadMovie(string name));
+    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.", ofPixels & getPixelsRef());
+    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getPixelsRef() is deprecated, use getPixels() instead.", const ofPixels & getPixelsRef() const);
+    OF_DEPRECATED_MSG("ofxiOSVideoPlayer::getTexture() is deprecated, use getTexturePtr() instead.", ofTexture * getTexture());
+    
 protected:
     
-    void updatePixelsToRGB();
-	
 	void * videoPlayer; // super hack to forward declare an objective c class inside a header file that can only handle c classes.
 	
     bool bFrameNew;
     bool bResetPixels;
-    bool bResetTexture;
     bool bUpdatePixels;
-    bool bUpdatePixelsToRgb;
     bool bUpdateTexture;
     bool bTextureCacheSupported;
+    bool bTextureCacheEnabled;
 	
-	GLubyte * pixelsRGB;
-    GLubyte * pixelsRGBA;
-    GLint internalGLFormat;
-	ofPixelFormat internalPixelFormat;
+    ofPixels pixels;
+	ofPixelFormat pixelFormat;
 	ofTexture videoTexture;
 };
 

@@ -1,3 +1,4 @@
+#ifdef OF_VIDEO_PLAYER_QTKIT
 
 #import "ofQTKitMovieRenderer.h"
 #import <Accelerate/Accelerate.h>
@@ -9,25 +10,30 @@
 - (QTTime)keyframeStartTime:(QTTime)atTime;
 @end
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+#if defined(MAC_OS_X_VERSION_10_9)
+	#warning Using QTKit, which is deprecated in OSX 10.9
+#endif
+
 //--------------------------------------------------------------
 //This method is called whenever a new frame comes in from the visual context
 //it's called on the back thread so locking is performed in Renderer class
 static void frameAvailable(QTVisualContextRef _visualContext, const CVTimeStamp *frameTime, void *refCon)
 {
+	@autoreleasepool {
+		CVImageBufferRef	currentFrame;
+		OSStatus			err;
+		QTKitMovieRenderer		*renderer	= (QTKitMovieRenderer *)refCon;
 
-	NSAutoreleasePool	*pool		= [[NSAutoreleasePool alloc] init];
-	CVImageBufferRef	currentFrame;
-	OSStatus			err;
-	QTKitMovieRenderer		*renderer	= (QTKitMovieRenderer *)refCon;
-	
-	if ((err = QTVisualContextCopyImageForTime(_visualContext, NULL, frameTime, &currentFrame)) == kCVReturnSuccess) {
-		[renderer frameAvailable:currentFrame];
+		if ((err = QTVisualContextCopyImageForTime(_visualContext, NULL, frameTime, &currentFrame)) == kCVReturnSuccess) {
+			[renderer frameAvailable:currentFrame];
+		}
+		else{
+			[renderer frameFailed];
+		}
 	}
-	else{
-		[renderer frameFailed];
-	}
-	
-	[pool release];
 }
 
 
@@ -75,7 +81,7 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     
 
     // build the movie URL
-    NSString *movieURL;
+    NSURL *movieURL;
     if (isURL) {
         movieURL = [NSURL URLWithString:moviePath];
     }
@@ -84,11 +90,11 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
     }
 
 	NSError* error;
-	NSMutableDictionary* movieAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                            movieURL, QTMovieURLAttribute,
-                                            [NSNumber numberWithBool:NO], QTMovieOpenAsyncOKAttribute,
-                                            nil];
-    
+	NSDictionary* movieAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                        movieURL, QTMovieURLAttribute,
+                                        [NSNumber numberWithBool:NO], QTMovieOpenAsyncOKAttribute,
+                                        nil];
+
 	_movie = [[QTMovie alloc] initWithAttributes:movieAttributes 
 										   error: &error];
 	
@@ -698,4 +704,8 @@ typedef struct OpenGLTextureCoordinates OpenGLTextureCoordinates;
 	return !self.loops && !self.palindrome && _movie.currentTime.timeValue == movieDuration.timeValue;
 }
 
+#pragma clang diagnostic pop
+
 @end
+
+#endif

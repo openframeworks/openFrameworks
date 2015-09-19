@@ -6,21 +6,31 @@ class ofVec3f;
 
 class ofVec4f {
 public:
-	float x, y, z, w;
-    
+    /// \cond INTERNAL
     static const int DIM = 4;
+    /// \endcond
 	
+	float x;
+	float y;
+	float z;
+	float w;
+
+	//---------------------
+	/// \name Construct a 4D vector
+	/// \{
+    
 	ofVec4f();
 	explicit ofVec4f( float _scalar );
 	ofVec4f( float _x, float _y, float _z, float _w );
 	ofVec4f( const ofVec2f& vec);
 	ofVec4f( const ofVec3f& vec);
-	
-    // Getters and Setters.
-    //
-	void set( float _scalar );
-    void set( float _x, float _y, float _z, float _w );
-    void set( const ofVec4f& vec );
+
+    /// \}
+
+	//---------------------
+	/// \name Access components
+	/// \{
+
 	
 	float * getPtr() {
 		return (float*)&x;
@@ -36,124 +46,228 @@ public:
 	float operator[]( int n ) const {
 		return getPtr()[n];
 	}
+
+	void set( float _scalar );
+    void set( float _x, float _y, float _z, float _w );
+    void set( const ofVec4f& vec );
 	
 	
-    // Check similarity/equality.
-    //
+	/// \}
+
+    //---------------------
+	/// \name Comparison 
+	/// \{
+
+
     bool operator==( const ofVec4f& vec ) const;
     bool operator!=( const ofVec4f& vec ) const;
-    bool match( const ofVec4f& vec, float tolerance=0.0001) const;
+    bool match( const ofVec4f& vec, float tolerance = 0.0001f) const;
 	
-	
-    // Additions and Subtractions.
-    //
+	/// \}
+
+	//---------------------
+	/// \name Operators
+	/// \{
+
     ofVec4f  operator+( const ofVec4f& vec ) const;
-    ofVec4f& operator+=( const ofVec4f& vec );
-    ofVec4f  operator-( const float f ) const;
-    ofVec4f& operator-=( const float f );
-    ofVec4f  operator-( const ofVec4f& vec ) const;
-    ofVec4f& operator-=( const ofVec4f& vec );
     ofVec4f  operator+( const float f ) const;
+    ofVec4f& operator+=( const ofVec4f& vec );
     ofVec4f& operator+=( const float f );
+    ofVec4f  operator-( const float f ) const;
+    ofVec4f  operator-( const ofVec4f& vec ) const;
     ofVec4f  operator-() const;
+    ofVec4f& operator-=( const float f );
+    ofVec4f& operator-=( const ofVec4f& vec );
 	
 	
-    // Scalings
-    //
     ofVec4f  operator*( const ofVec4f& vec ) const;
-    ofVec4f& operator*=( const ofVec4f& vec );
     ofVec4f  operator*( const float f ) const;
+    ofVec4f& operator*=( const ofVec4f& vec );
     ofVec4f& operator*=( const float f );
     ofVec4f  operator/( const ofVec4f& vec ) const;
-    ofVec4f& operator/=( const ofVec4f& vec );
     ofVec4f  operator/( const float f ) const;
+    ofVec4f& operator/=( const ofVec4f& vec );
     ofVec4f& operator/=( const float f );
-	
+	    
+	/// \cond INTERNAL
 	friend ostream& operator<<(ostream& os, const ofVec4f& vec);
 	friend istream& operator>>(istream& is, const ofVec4f& vec);
+	/// \endcond
+
+    /// \}
 	
-	
+	//---------------------
+	/// \name Simple manipulations
+	/// \{
+
+    /// \brief Returns a new ofVec4f that is the result of scaling this vector up or down so that it has the requested length.
+    ///
+    /// \param length The desired length of the new ofVec4f object.
+    /// \returns The result of scaling the this vector up or down.
     ofVec4f  getScaled( const float length ) const;
+    
+    /// \brief Scales this vector up or down so that it has the requested length.
+    ///
+    /// \param length The desired length of the vector.
     ofVec4f& scale( const float length );
 	
+	/// \}
 	
-    // Distance between two points.
-    //
+	
+	//---------------------
+	/// \name Distance
+	/// \{
+
+    /// \brief Treats this vector and 'pnt' as points in 4D space and calculates the distance between them.
+    ///
+    /// \param pnt The vector used in the distance calculation with the current vector.
+    /// \returns The distance between the two vectors in 4D space.
     float distance( const ofVec4f& pnt) const;
     float squareDistance( const ofVec4f& pnt ) const;
 	
-	
-    // Linear interpolation.
-    //
-    /**
-	 * p==0.0 results in this point, p==0.5 results in the
-	 * midpoint, and p==1.0 results in pnt being returned.
-	 */
+	/// \}
+
+	//---------------------
+	/// \name Interpolation
+	/// \{
+
+
+    /// \brief Performs a linear interpolation of this vector towards 'pnt'.
+    ///
+    /// \param pnt The vector the interpolation will be performed on. 
+    /// \param p The amount to move towards 'pnt'; 'p' is normally between 0 and 1 and where 0 means stay the original position and 1 means move all the way to 'pnt', but you can also have 'p' greater than 1 overshoot 'pnt', or less than 0 to move backwards away from 'pnt'.
+    /// \returns The interpolation as an ofVec4f. 
     ofVec4f   getInterpolated( const ofVec4f& pnt, float p ) const;
-    ofVec4f&  interpolate( const ofVec4f& pnt, float p );
-    ofVec4f   getMiddle( const ofVec4f& pnt ) const;
-    ofVec4f&  middle( const ofVec4f& pnt );
-    ofVec4f&  average( const ofVec4f* points, int num );
     
-	
-    // Normalization
-    //
+    /// \brief Performs a linear interpolation of this vector towards 'pnt'. This modifies the current vector to the interpolated value.
+    ///
+    /// \param pnt The vector the interpolation will be performed on. 
+    /// \param p The amount to move towards 'pnt'; 'p' is normally between 0 and 1 and where 0 means stay the original position and 1 means move all the way to 'pnt', but you can also have 'p' greater than 1 overshoot 'pnt', or less than 0 to move backwards away from 'pnt'.
+    ofVec4f&  interpolate( const ofVec4f& pnt, float p );
+    
+    /// \brief Calculates and returns the midpoint (as a vector) between this vector and 'pnt'.
+    ///
+    /// \param pnt The vector used in the midpoint calculation with this vector.
+    /// \returns The midpoint between this vector and 'pnt' as an ofVec4f.
+    ofVec4f   getMiddle( const ofVec4f& pnt ) const;
+    
+    /// \brief Calculates and returns the midpoint (as a vector) between this vector and 'pnt'. This modifies the current vector to the midpoint value.
+    ///
+    /// \param pnt The vector used in the midpoint calculation with this vector.
+    /// \returns The midpoint between this vector and 'pnt' as an ofVec4f.
+    ofVec4f&  middle( const ofVec4f& pnt );
+    
+    /// \brief Sets this vector to be the average (center of gravity or centroid) of a given array of 'ofVec4f's.
+    /// 
+    /// \param points The array of 'ofVec4f's used in the average calculation.
+    /// \param num The number of ofVec4f objects in the array.
+    ofVec4f&  average( const ofVec4f* points, int num );
+
+    /// \}
+
+    //---------------------
+	/// \name Limit
+	/// \{
+    
+    /// \brief Returns a normalized copy of this vector.
+    ///
+    /// Normalization means to scale the vector so that its length (magnitude) is exactly 1, 
+    /// at which stage all that is left is the direction. A normalized vector is usually called 
+    /// a unit vector, and can be used to represent a pure direction (heading).
+    ///
+    /// \returns The normalized copy of the current vector.
     ofVec4f  getNormalized() const;
+    
+    /// \brief Normalizes the vector. This changes the current vector to its normalized value. 
+    ///
+    /// Normalization means to scale the vector so that its length (magnitude) is exactly 1, 
+    /// at which stage all that is left is the direction. A normalized vector is usually called 
+    /// a unit vector, and can be used to represent a pure direction (heading).
     ofVec4f& normalize();
 	
 	
-    // Limit length.
-    //
-	ofVec4f  getLimited(float max) const;
+    /// \brief Returns a copy of this vector with its length (magnitude) restricted to a maximum of 'max' units by scaling down if necessary.
+    ///
+    /// \param max The maximum length of the new vector. 
+    /// \returns A copy of the current vector that is at most 'max' units long. 
+    ofVec4f  getLimited(float max) const;
+    /// \brief Restrict the length (magnitude) of this vector to a maximum of 'max' units by scaling down if necessary.
+    ///
+    /// \param max The maximum length of the current vector.
     ofVec4f& limit(float max);
 	
+	/// \}
+
+	//---------------------
+	/// \name Measurement
+	/// \{
 	
-    // Length
-    //
+    /// \brief Returns the length (magnitude) of this vector.
+    ///
+    /// \returns The magnitude of the current vector. 
     float length() const;
     float lengthSquared() const;
 
-    /**
-	 * Dot Product.
-	 */
+
+  	/// \}
+
+	//---------------------
+	/// \name Calculations
+	/// \{
+
+
+    /// \brief Calculates and returns the dot product of this vector with 'vec'.
+    ///
+    /// Dot product (less commonly known as Euclidean inner product) expresses the angular 
+    /// relationship between two vectors. In other words it is a measure of how parallel two vectors 
+    /// are. If they are completely perpendicular the dot product is 0; if they are completely parallel 
+    /// their dot product is either 1 if they are pointing in the same direction, or -1 if they are pointing 
+    /// in opposite directions.
+    /// 
+    /// \param vec The vector used in the dot product calculation with this vector.
+    /// \returns The dot product of this vector with 'vec'. 
     float dot( const ofVec4f& vec ) const;
-	
+		
+	/// \}
+
 	
 	
 	
     //---------------------------------------
     // this methods are deprecated in 006 please use:
+	/// \cond INTERNAL
 	
     // getScaled
-    ofVec4f rescaled( const float length ) const;
+    OF_DEPRECATED_MSG("Use member method getScaled() instead.", ofVec4f rescaled( const float length ) const);
 	
     // scale
-    ofVec4f& rescale( const float length );
+    OF_DEPRECATED_MSG("Use member method scale() instead.", ofVec4f& rescale( const float length ));
 	
     // getNormalized
-    ofVec4f normalized() const;
+    OF_DEPRECATED_MSG("Use member method getNormalized() instead.", ofVec4f normalized() const);
 	
     // getLimited
-    ofVec4f limited(float max) const;
+    OF_DEPRECATED_MSG("Use member method getLimited() instead.", ofVec4f limited(float max) const);
 	
     // use squareDistance
-    float  distanceSquared( const ofVec4f& pnt ) const;
+    OF_DEPRECATED_MSG("Use member method squareDistance() instead.", float  distanceSquared( const ofVec4f& pnt ) const);
 	
     // use getInterpolated
-    ofVec4f 	interpolated( const ofVec4f& pnt, float p ) const;
+    OF_DEPRECATED_MSG("Use member method getInterpolated() instead.", ofVec4f interpolated( const ofVec4f& pnt, float p ) const);
 	
     // use getMiddle
-    ofVec4f 	middled( const ofVec4f& pnt ) const;    
+    OF_DEPRECATED_MSG("Use member method getMiddle() instead.", ofVec4f middled( const ofVec4f& pnt ) const);
     
     // return all zero vector
     static ofVec4f zero() { return ofVec4f(0, 0, 0, 0); }
     
     // return all one vector
     static ofVec4f one() { return ofVec4f(1, 1, 1, 1); }
-
+    /// \endcond
 };
 
 
+/// \cond INTERNAL
 
 
 // Non-Member operators
@@ -174,8 +288,8 @@ ofVec4f operator/( float f, const ofVec4f& vec );
 // Implementation
 /////////////////
 
-inline ofVec4f::ofVec4f(): x(0), y(0), z(0), w(0) {};
-inline ofVec4f::ofVec4f(float _s): x(_s), y(_s), z(_s), w(_s) {};
+inline ofVec4f::ofVec4f(): x(0), y(0), z(0), w(0) {}
+inline ofVec4f::ofVec4f(float _s): x(_s), y(_s), z(_s), w(_s) {}
 inline ofVec4f::ofVec4f( float _x,
 						float _y,
 						float _z,
@@ -184,6 +298,13 @@ inline ofVec4f::ofVec4f( float _x,
 // Getters and Setters.
 //
 //
+inline void ofVec4f::set( float _scalar) {
+	x = _scalar;
+	y = _scalar;
+	z = _scalar;
+	w = _scalar;
+}
+
 inline void ofVec4f::set( float _x, float _y, float _z, float _w ) {
 	x = _x;
 	y = _y;
@@ -579,5 +700,5 @@ inline ofVec4f operator/( float f, const ofVec4f& vec ) {
 }
 
 
-
+/// \endcond
 

@@ -1,5 +1,4 @@
-#ifndef LIBUSBEMU_FAIL_GUARD_H
-#define LIBUSBEMU_FAIL_GUARD_H
+#pragma once
 
 namespace libusbemu
 {
@@ -12,5 +11,3 @@ namespace libusbemu
     const bool Abort();
   }
 }
-
-#endif//LIBUSBEMU_FAIL_GUARD_H

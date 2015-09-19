@@ -24,8 +24,7 @@
 * either License.
 */
 
-#ifndef LIBUSBEMU_THREAD_INTERFACE_WRAPPER_FOR_WIN32_THREADS_H
-#define LIBUSBEMU_THREAD_INTERFACE_WRAPPER_FOR_WIN32_THREADS_H
+#pragma once
 
 #include <windows.h>
 #include <stdio.h>
@@ -320,5 +319,3 @@ struct EventList
 };
 
 } //end of 'namespace libusbemu'
-
-#endif//LIBUSBEMU_THREAD_INTERFACE_WRAPPER_FOR_WIN32_THREADS_H

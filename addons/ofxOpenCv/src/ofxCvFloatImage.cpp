@@ -29,8 +29,6 @@ ofxCvFloatImage::ofxCvFloatImage( const ofxCvFloatImage& _mom ) {
 void ofxCvFloatImage::init() {
     ipldepth = IPL_DEPTH_32F;
     iplchannels = 1;
-    gldepth = GL_FLOAT;
-    glchannels = GL_LUMINANCE;
     bFloatPixelsDirty = true;
     cvGrayscaleImage = NULL;
     scaleMin = 0.0f;
@@ -478,6 +476,18 @@ IplImage*  ofxCvFloatImage::getCv8BitsImage() {
 	return cvGrayscaleImage;
 }
 
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::allocateTexture(){
+	tex.allocate(floatPixels);
+	tex.setRGToRGBASwizzles(true);
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvFloatImage::allocatePixels(int w, int h){
+	floatPixels.allocate(w,h,OF_PIXELS_GRAY);
+}
+
 //--------------------------------------------------------------------------------
 IplImage*  ofxCvFloatImage::getCv8BitsRoiImage() {
 	if( !bAllocated ){
@@ -503,7 +513,7 @@ float*  ofxCvFloatImage::getPixelsAsFloats(){
 		ofLogWarning("ofxCvFloatImage") << "getPixelsAsFloats(): image not allocated";
 	}
 	
-	return getFloatPixelsRef().getPixels();
+	return getFloatPixelsRef().getData();
 }
 //--------------------------------------------------------------------------------
 ofFloatPixels &	ofxCvFloatImage::getFloatPixelsRef(){
@@ -526,7 +536,7 @@ float*  ofxCvFloatImage::getRoiPixelsAsFloats(){
 		ofLogWarning("ofxCvFloatImage") << "getRoiPixelsAsFloats(): image not allocated";
 	}
 	
-	return getRoiFloatPixelsRef().getPixels();
+	return getRoiFloatPixelsRef().getData();
 }
 
 //--------------------------------------------------------------------------------

@@ -1,4 +1,9 @@
 #include "ofVboMesh.h"
+#include "ofBaseTypes.h"
+
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
 
 ofVboMesh::ofVboMesh(){
 	usage= GL_STATIC_DRAW;
@@ -23,6 +28,12 @@ ofVboMesh::ofVboMesh(const ofMesh & mom)
 void ofVboMesh::operator=(const ofMesh & mom)
 {
 	((ofMesh&)(*this)) = mom;
+}
+
+ofVboMesh::~ofVboMesh(){
+#ifdef TARGET_ANDROID
+	ofRemoveListener(ofxAndroidEvents().unloadGL,this,&ofVboMesh::unloadVbo);
+#endif
 }
 
 void ofVboMesh::setUsage(int _usage){
@@ -78,61 +89,34 @@ bool ofVboMesh::usingIndices() const {
 }
 
 ofVbo & ofVboMesh::getVbo() {
+	updateVbo();
 	return vbo;
 };
 
-void ofVboMesh::drawInstanced(ofPolyRenderMode drawMode, int primCount){
-	if(getNumVertices()==0) return;
-	updateVbo();
-	GLuint mode = ofGetGLPrimitiveMode(getMode());
-#ifndef TARGET_OPENGLES
-	if (!ofIsGLProgrammableRenderer()) {
-		// this is deprecated in GL3.2+
-		glPushAttrib(GL_POLYGON_BIT);
-	}
-	glPolygonMode(GL_FRONT_AND_BACK, ofGetGLPolyMode(drawMode));
-	if(getNumIndices() && drawMode!=OF_MESH_POINTS){
-		if (primCount <= 1) {
-			vbo.drawElements(mode,getNumIndices());
-		} else {
-			vbo.drawElementsInstanced(mode,getNumIndices(),primCount);
-		}
-	}else{
-		if (primCount <= 1) {
-			vbo.draw(mode,0,getNumVertices());
-		} else {
-			vbo.drawInstanced(mode,0,getNumVertices(),primCount);
-		}
-	}
-	if (!ofIsGLProgrammableRenderer()){
-		glPopAttrib();
-	}
-#else
-	if(drawMode == OF_MESH_POINTS){
-		vbo.draw(GL_POINTS,0,getNumVertices());
-	}else if(drawMode == OF_MESH_WIREFRAME){
-		if(getNumIndices()){
-			vbo.drawElements(GL_LINES,getNumIndices());
-		}else{
-			vbo.draw(GL_LINES,0,getNumVertices());
-		}
-	}else{
-		if(getNumIndices()){
-			vbo.drawElements(mode,getNumIndices());
-		}else{
-			vbo.draw(mode,0,getNumVertices());
-		}
-	}
-#endif
+const ofVbo & ofVboMesh::getVbo() const{
+	const_cast<ofVboMesh*>(this)->updateVbo();
+	return vbo;
 }
 
-void ofVboMesh::draw(ofPolyRenderMode drawMode){
+void ofVboMesh::drawInstanced(ofPolyRenderMode drawMode, int primCount) const{
+	if(getNumVertices()==0) return;
+	ofGetGLRenderer()->drawInstanced(*this,drawMode,primCount);
+}
+
+void ofVboMesh::draw(ofPolyRenderMode drawMode) const{
 	if(getNumVertices()==0) return;
 	drawInstanced(drawMode, 1);
 }
 
+void ofVboMesh::unloadVbo(){
+	vbo.clear();
+}
+
 void ofVboMesh::updateVbo(){
 	if(!vbo.getIsAllocated()){
+		#ifdef TARGET_ANDROID
+			ofAddListener(ofxAndroidEvents().unloadGL,this,&ofVboMesh::unloadVbo);
+		#endif
 		if(getNumVertices()){
 			vbo.setVertexData(getVerticesPointer(),getNumVertices(),usage);
 		}
@@ -153,6 +137,14 @@ void ofVboMesh::updateVbo(){
 		vboNumColors = getNumColors();
 		vboNumTexCoords = getNumTexCoords();
 		vboNumNormals = getNumNormals();
+
+		// we need to call these to reset the changed flags or else next frame
+		// data will be updated again.
+		haveVertsChanged();
+		haveColorsChanged();
+		haveNormalsChanged();
+		haveTexCoordsChanged();
+		haveIndicesChanged();
 	}else{
 
 		if(haveVertsChanged()){

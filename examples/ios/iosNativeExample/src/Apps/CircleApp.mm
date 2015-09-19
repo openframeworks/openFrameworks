@@ -18,7 +18,7 @@ void CircleApp::setup() {
     if (ofxiOSGetOFWindow()-> isRetinaSupportedOnDevice())
         fontSize *= 2;
     
-    font.loadFont("fonts/mono0755.ttf", fontSize);
+    font.load("fonts/mono0755.ttf", fontSize);
 }
 
 //--------------------------------------------------------------
@@ -34,7 +34,7 @@ void CircleApp::draw() {
     int p = 0;
     
 	ofSetColor(ofColor::red);
-    ofCircle(x, y, r);
+    ofDrawCircle(x, y, r);
     
     x = ofGetWidth()  * 0.2;
     y = ofGetHeight() * 0.11;

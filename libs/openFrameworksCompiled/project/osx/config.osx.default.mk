@@ -21,7 +21,7 @@
 #   This is a platform defined section to create internal flags to enable or disable
 #   the addition of various features within this makefile.  For instance, on Linux,
 #   we check to see if there GTK+-2.0 is defined, allowing us to include that library
-#   and generate DEFINES that are interpreted as ifdefs within the openFrameworks 
+#   and generate DEFINES that are interpreted as ifdefs within the openFrameworks
 #   core source code.
 ##########################################################################################
 
@@ -31,26 +31,26 @@ PLATFORM_RUN_COMMAND = cd bin/$(BIN_NAME).app/Contents/MacOS/;./$(BIN_NAME)
 
 ##########################################################################################
 # PLATFORM DEFINES
-#   Create a list of DEFINES for this platform.  The list will be converted into 
+#   Create a list of DEFINES for this platform.  The list will be converted into
 #   CFLAGS with the "-D" flag later in the makefile.  An example of fully qualified flag
 #   might look something like this: -DTARGET_OPENGLES2
 #
 #   DEFINES are used throughout the openFrameworks code, especially when making
-#   #ifdef decisions for cross-platform compatibility.  For instance, when chosing a 
+#   #ifdef decisions for cross-platform compatibility.  For instance, when chosing a
 #   video playback framework, the openFrameworks base classes look at the DEFINES
 #   to determine what source files to include or what default player to use.
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_DEFINES =__MACOSX_CORE__
+PLATFORM_DEFINES = __MACOSX_CORE__
 
 ##########################################################################################
 # PLATFORM REQUIRED ADDON
 #   This is a list of addons required for this platform.  This list is used to EXCLUDE
 #   addon source files when compiling projects, while INCLUDING their header files.
 #   During core library compilation, this is used to include required addon header files
-#   as needed within the core. 
+#   as needed within the core.
 #
 #   For instance, if you are compiling for Android, you would add ofxAndroid here.
 #   If you are compiling for Raspberry Pi, you would add ofxRaspberryPi here.
@@ -64,43 +64,52 @@ PLATFORM_REQUIRED_ADDONS =
 # PLATFORM CFLAGS
 #   This is a list of fully qualified CFLAGS required when compiling for this platform.
 #   These flags will always be added when compiling a project or the core library.  These
-#   Flags are presented to the compiler AFTER the PLATFORM_OPTIMIZATION_CFLAGS below. 
+#   Flags are presented to the compiler AFTER the PLATFORM_OPTIMIZATION_CFLAGS below.
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
+ifndef MAC_OS_MIN_VERSION
+	MAC_OS_MIN_VERSION = 10.7
+endif
+
+ifndef MAC_OS_STD_LIB
+	MAC_OS_STD_LIB = libc++
+endif
+
+# Link against libstdc++ to silence tr1/memory errors on latest versions of osx
+PLATFORM_CFLAGS = -stdlib=$(MAC_OS_STD_LIB)
+
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS = -Wall
+PLATFORM_CFLAGS += -Wall
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
 PLATFORM_CFLAGS += -fexceptions
 
-MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
+ifeq ($(shell xcode-select -print-path 2> /dev/null; echo $$?),0)
+	MAC_OS_XCODE_ROOT=$(shell xcode-select -print-path)
 
-ifeq ($(findstring .app, $(MAC_OS_XCODE_ROOT)),.app)
-    MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
-else
-	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/SDKs
-endif
+	MAC_OS_SDK_PATH=$(MAC_OS_XCODE_ROOT)/Platforms/MacOSX.platform/Developer/SDKs
 
-#ifeq ($(wildcard /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer),/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer)
-#	MAC_OS_SDK_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
-#else
-#    MAC_OS_SDK_PATH=/Developer/SDKs
-#endif
-
-ifndef MAC_OS_SDK
-    ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
-		MAC_OS_SDK=10.8
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
-		MAC_OS_SDK=10.7
-	else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.6.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.6.sdk)
-		MAC_OS_SDK=10.6
+	ifndef MAC_OS_SDK
+		ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.10.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.10.sdk)
+			MAC_OS_SDK=10.10
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.9.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.9.sdk)
+			MAC_OS_SDK=10.9
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.8.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.8.sdk)
+			MAC_OS_SDK=10.8
+		else ifeq ($(wildcard $(MAC_OS_SDK_PATH)/MacOSX10.7.sdk),$(MAC_OS_SDK_PATH)/MacOSX10.7.sdk)
+			MAC_OS_SDK=10.7
+		endif
 	endif
+
+	ifndef MAC_OS_SDK_ROOT
+		MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
+	endif
+else
+	# xcode-select was not set, assume command line tools are installed
+	MAC_OS_SDK_ROOT=
 endif
-
-MAC_OS_SDK_ROOT = $(MAC_OS_SDK_PATH)/MacOSX$(MAC_OS_SDK).sdk
-
 
 # Architecture / Machine Flags (http://gcc.gnu.org/onlinedocs/gcc/Submodel-Options.html)
 ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo $$?),0)
@@ -109,57 +118,53 @@ ifeq ($(shell gcc -march=native -S -o /dev/null -xc /dev/null 2> /dev/null; echo
 endif
 
 # Optimization options (http://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
-PLATFORM_CFLAGS += -finline-functions
+#PLATFORM_CFLAGS += -finline-functions
 #PLATFORM_CFLAGS += -funroll-all-loops
 #PLATFORM_CFLAGS += -Os
 
-PLATFORM_CFLAGS += -arch i386
+#PLATFORM_CFLAGS += -arch i386
 
 # other osx
 PLATFORM_CFLAGS += -fpascal-strings
 
-PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
-PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
-PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
+ifdef MAC_OS_SDK_ROOT
+	PLATFORM_CFLAGS += -isysroot $(MAC_OS_SDK_ROOT)
+	PLATFORM_CFLAGS += -F$(MAC_OS_SDK_ROOT)/System/Library/Frameworks
+endif
 
-PLATFORM_CFLAGS += -fasm-blocks 
-PLATFORM_CFLAGS += -funroll-loops 
+PLATFORM_CFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION)
+
+PLATFORM_CFLAGS += -fasm-blocks
+PLATFORM_CFLAGS += -funroll-loops
 PLATFORM_CFLAGS += -mssse3
 PLATFORM_CFLAGS += -fmessage-length=0
 
-ifeq ($(MAC_OS_SDK),10.6)
-PLATFORM_CFLAGS += -pipe 
-PLATFORM_CFLAGS += -Wno-trigraphs 
-PLATFORM_CFLAGS += -fasm-blocks 
-PLATFORM_CFLAGS += -Wno-deprecated-declarations 
-PLATFORM_CFLAGS += -Wno-invalid-offsetof 
-PLATFORM_CFLAGS += -gdwarf-2
-endif
-
 PLATFORM_CXXFLAGS += -x objective-c++
+PLATFORM_CXXFLAGS += -std=c++11
 
 ifeq ($(USE_GST),1)
-PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
+	PLATFORM_CFLAGS += -I/Library/Frameworks/Gstreamer.framework/Headers
 endif
 
 
 ################################################################################
 # PLATFORM LDFLAGS
-#   This is a list of fully qualified LDFLAGS required when linking for this 
+#   This is a list of fully qualified LDFLAGS required when linking for this
 #   platform. These flags will always be added when linking a project.
 #
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
+PLATFORM_LDFLAGS = -stdlib=$(MAC_OS_STD_LIB)
 
-PLATFORM_LDFLAGS += -arch i386
-PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
-PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
+#PLATFORM_LDFLAGS += -arch i386
+#PLATFORM_LDFLAGS += -F$(OF_LIBS_PATH)/glut/lib/osx/
 
+PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -v
 
 ##########################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
-#   These are lists of CFLAGS that are target-specific.  While any flags could be 
+#   These are lists of CFLAGS that are target-specific.  While any flags could be
 #   conditionally added, they are usually limited to optimization flags.  These flags are
 #   added BEFORE the PLATFORM_CFLAGS.
 #
@@ -171,14 +176,14 @@ PLATFORM_LDFLAGS += -mmacosx-version-min=$(MAC_OS_SDK)
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
 PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
 
 ##########################################################################################
 # PLATFORM CORE EXCLUSIONS
-#   During compilation, these makefiles will generate lists of sources, headers and 
+#   During compilation, these makefiles will generate lists of sources, headers and
 #   third party libraries to be compiled and linked into a program or core library.
 #   The PLATFORM_CORE_EXCLUSIONS is a list of fully qualified file paths that will be used
 #   to exclude matching paths and files during list generation.
@@ -194,6 +199,7 @@ PLATFORM_CORE_EXCLUSIONS =
 
 # core sources
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 ifneq ($(USE_GST),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
@@ -207,21 +213,17 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/videoInput/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/quicktime/%
 
 # third party static libs (this may not matter due to exclusions in poco's libsorder.make)
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoCrypto.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoData.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataMySQL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataODBC.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoDataSQLite.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoNetSSL.a
-PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/$(PLATFORM_LIB_SUBPATH)/libPocoZip.a
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/lib/$(PLATFORM_LIB_SUBPATH)/%
+
 
 ##########################################################################################
 # PLATFORM HEADER SEARCH PATHS
-#   These are header search paths that are platform specific and are specified 
+#   These are header search paths that are platform specific and are specified
 #   using fully-qualified paths.  The include flag (i.e. -I) is prefixed automatically.
 #   These are usually not required, but may be required by some experimental platforms
 #   such as the raspberry pi or other other embedded architectures.
@@ -233,7 +235,7 @@ PLATFORM_HEADER_SEARCH_PATHS =
 
 ##########################################################################################
 # PLATFORM LIBRARIES
-#   These are library names/paths that are platform specific and are specified 
+#   These are library names/paths that are platform specific and are specified
 #   using names or paths.  The library flag (i.e. -l) is prefixed automatically.
 #
 #   PLATFORM_LIBRARIES are libraries that can be found in the library search paths.
@@ -249,26 +251,23 @@ PLATFORM_HEADER_SEARCH_PATHS =
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_LIBRARIES =
-ifneq ($(MAC_OS_SDK),10.6)
-    PLATFORM_LIBRARIES += objc
-endif
+PLATFORM_LIBRARIES = objc
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
 
-# shared libraries 
+# shared libraries
 PLATFORM_SHARED_LIBRARIES =
 
 
 ##########################################################################################
 # PLATFORM LIBRARY SEARCH PATHS
-#   These are library search paths that are platform specific and are specified 
+#   These are library search paths that are platform specific and are specified
 #   using fully-qualified paths.  The lib search flag (i.e. -L) is prefixed automatically.
 #   The -L paths are used to find libraries defined above with the -l flag.
 #
 #   See the the following link for more information on the -L flag:
-#       http://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html 
+#       http://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
@@ -277,39 +276,37 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 
 ##########################################################################################
 # PLATFORM FRAMEWORKS
-#   These are a list of platform frameworks.  
+#   These are a list of platform frameworks.
 #   These are used exclusively with Darwin/OSX.
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
 ##########################################################################################
 
-PLATFORM_FRAMEWORKS = 
+PLATFORM_FRAMEWORKS =
 PLATFORM_FRAMEWORKS += Accelerate
 PLATFORM_FRAMEWORKS += QTKit
 PLATFORM_FRAMEWORKS += GLUT
 PLATFORM_FRAMEWORKS += AGL
 PLATFORM_FRAMEWORKS += ApplicationServices
 PLATFORM_FRAMEWORKS += AudioToolbox
-PLATFORM_FRAMEWORKS += Carbon
 PLATFORM_FRAMEWORKS += CoreAudio
 PLATFORM_FRAMEWORKS += CoreFoundation
 PLATFORM_FRAMEWORKS += CoreServices
 PLATFORM_FRAMEWORKS += OpenGL
-PLATFORM_FRAMEWORKS += QuickTime
 PLATFORM_FRAMEWORKS += IOKit
 PLATFORM_FRAMEWORKS += Cocoa
-
-ifneq ($(MAC_OS_SDK),10.6)
 PLATFORM_FRAMEWORKS += CoreVideo
-endif
+PLATFORM_FRAMEWORKS += AVFoundation
+PLATFORM_FRAMEWORKS += CoreMedia
+PLATFORM_FRAMEWORKS += QuartzCore
 
 ifeq ($(USE_GST),1)
-PLATFORM_FRAMEWORKS += GStreamer
+	PLATFORM_FRAMEWORKS += GStreamer
 endif
 
 ##########################################################################################
 # PLATFORM FRAMEWORK SEARCH PATHS
-#   These are a list of platform framework search paths.  
+#   These are a list of platform framework search paths.
 #   These are used exclusively with Darwin/OSX.
 #
 # Note: Be sure to leave a leading space when using a += operator to add items to the list
@@ -321,13 +318,14 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 # LOW LEVEL CONFIGURATION BELOW
 #   The following sections should only rarely be modified.  They are meant for developers
 #   why need fine control when, for instance, creating a platform specific makefile for
-#   a new openFrameworks platform, such as raspberry pi. 
+#   a new openFrameworks platform, such as raspberry pi.
 ##########################################################################################
 
 ##########################################################################################
 # PLATFORM CONFIGURATIONS
 #   These will override the architecture vars generated by configure.platform.make
 ##########################################################################################
+
 #PLATFORM_ARCH =
 #PLATFORM_OS =
 #PLATFORM_LIBS_PATH =
@@ -337,15 +335,7 @@ PLATFORM_FRAMEWORKS_SEARCH_PATHS = /System/Library/Frameworks
 #    Don't want to use a default compiler?
 ################################################################################
 
-
-#ifeq ($(MAC_OS_SDK),10.6)
-#    PLATFORM_CXX = g++ 
-#    PLATFORM_CC = gcc
-#else
-#	PLATFORM_CXX = clang
-#    PLATFORM_CC = clang 
-#endif
-
+# PLATFORM_CXX =
 
 ################################################################################
 # PLATFORM CC
@@ -360,7 +350,7 @@ afterplatform: $(TARGET_NAME)
 	@mkdir -p bin/$(BIN_NAME).app/Contents
 	@mkdir -p bin/$(BIN_NAME).app/Contents/MacOS
 	@mkdir -p bin/$(BIN_NAME).app/Contents/Resources
-	
+
 	@echo '<?xml version="1.0" encoding="UTF-8"?>' > bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '<plist version="1.0">' >> bin/$(BIN_NAME).app/Contents/Info.plist
@@ -385,15 +375,19 @@ afterplatform: $(TARGET_NAME)
 	@echo '  <integer>1</integer>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '</dict>' >> bin/$(BIN_NAME).app/Contents/Info.plist
 	@echo '</plist>' >> bin/$(BIN_NAME).app/Contents/Info.plist
-	
+
 	@echo TARGET=$(TARGET)
-	
+
 	@install_name_tool -change ./libfmodex.dylib @executable_path/libs/libfmodex.dylib $(TARGET)
 	@install_name_tool -change @executable_path/../Frameworks/GLUT.framework/Versions/A/GLUT @executable_path/Frameworks/GLUT.framework/Versions/A/GLUT $(TARGET)
-	
+
 	@mv $(TARGET) bin/$(BIN_NAME).app/Contents/MacOS
 	@cp -r $(OF_EXPORT_PATH)/$(ABI_LIB_SUBPATH)/* bin/$(BIN_NAME).app/Contents/MacOS
 	
+ifdef PROJECT_AFTER_OSX
+	${PROJECT_AFTER_OSX}
+endif	
+
 	@echo
 	@echo "     compiling done"
 	@echo "     to launch the application"
@@ -405,4 +399,3 @@ afterplatform: $(TARGET_NAME)
 	@echo "     "
 	@echo "     make $(RUN_TARGET)"
 	@echo
-	

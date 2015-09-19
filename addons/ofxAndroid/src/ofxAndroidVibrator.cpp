@@ -7,6 +7,7 @@
 
 #include "ofxAndroidVibrator.h"
 #include "ofxAndroidUtils.h"
+#include "ofLog.h"
 #include <jni.h>
 
 ofxAndroidVibrator::ofxAndroidVibrator() {

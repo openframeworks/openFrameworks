@@ -9,7 +9,7 @@ void ofApp::setup(){
 	synth.setVolume(0.75f);
 	beats.setVolume(0.75f);
 	vocals.setVolume(0.5f);
-	font.loadFont("Sudbury_Basin_3D.ttf", 32);
+	font.load("Sudbury_Basin_3D.ttf", 32);
 	beats.setMultiPlay(false);
 	vocals.setMultiPlay(true);
 }
@@ -24,16 +24,16 @@ void ofApp::update(){
 void ofApp::draw(){
 	ofBackground(255,255,255);
 	
-	char tempStr[255];
+	string tempStr;
 	
 	// draw the background colors:
 	float widthDiv = ofGetWidth() / 3.0f;
 	ofSetHexColor(0xeeeeee);
-	ofRect(0,0,widthDiv,ofGetHeight()); 
+	ofDrawRectangle(0,0,widthDiv,ofGetHeight()); 
 	ofSetHexColor(0xffffff);
-	ofRect(widthDiv,0,widthDiv,ofGetHeight()); 
+	ofDrawRectangle(widthDiv,0,widthDiv,ofGetHeight()); 
 	ofSetHexColor(0xdddddd);
-	ofRect(widthDiv*2,0,widthDiv,ofGetHeight()); 
+	ofDrawRectangle(widthDiv*2,0,widthDiv,ofGetHeight()); 
 	
 
 	//---------------------------------- synth:
@@ -42,7 +42,7 @@ void ofApp::draw(){
 	font.drawString("synth !!", 50,50);
 	
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play\npct done: %f\nspeed: %f\npan: %f", synth.getPosition(),  synth.getSpeed(), synth.getPan());
+	tempStr = "click to play\npct done: " + ofToString(synth.getPosition()) + "\nspeed: " + ofToString(synth.getSpeed()) + "\npan: " + ofToString(synth.getPan());
 	ofDrawBitmapString(tempStr, 50,ofGetHeight()-50);
 
 
@@ -53,7 +53,7 @@ void ofApp::draw(){
 	font.drawString("beats !!", widthDiv+50,50);
 
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click and drag\npct done: %f\nspeed: %f", beats.getPosition(),  beats.getSpeed());
+	tempStr = "click and drag\npct done: " + ofToString(beats.getPosition()) + "\nspeed: " + ofToString(beats.getSpeed());
 	ofDrawBitmapString(tempStr, widthDiv+50,ofGetHeight()-50);
 
 	//---------------------------------- vocals:
@@ -62,7 +62,7 @@ void ofApp::draw(){
 	font.drawString("vocals !!", widthDiv*2+50,50);
 
 	ofSetHexColor(0x000000);
-	sprintf(tempStr, "click to play (multiplay)\npct done: %f\nspeed: %f\npan: %f", vocals.getPosition(),  vocals.getSpeed(), vocals.getPan());
+	tempStr = "click to play (multiplay)\npct done: " + ofToString(vocals.getPosition()) + "\nspeed: " + ofToString(vocals.getSpeed()) + "\npan: " + ofToString(vocals.getPan());
 	ofDrawBitmapString(tempStr, widthDiv*2+50,ofGetHeight()-50);
 	
 }

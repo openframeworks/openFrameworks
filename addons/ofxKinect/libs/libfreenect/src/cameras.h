@@ -24,8 +24,7 @@
  * either License.
  */
 
-#ifndef CAMERAS_H
-#define CAMERAS_H
+#pragma once
 
 #include "libfreenect.h"
 
@@ -35,6 +34,3 @@
 // camera-specific protocol support.
 int freenect_camera_init(freenect_device *dev);
 int freenect_camera_teardown(freenect_device *dev);
-
-#endif
-

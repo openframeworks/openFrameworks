@@ -1,6 +1,6 @@
 #include <cfloat>
 #include "ofRectangle.h"
- 
+
 //----------------------------------------------------------
 ofRectangle::ofRectangle() : x(position.x), y(position.y) {
     set(0,0,0,0);
@@ -50,12 +50,12 @@ void ofRectangle::set(const ofRectangle& rect){
 //----------------------------------------------------------
 void ofRectangle::set(const ofPoint& p0, const ofPoint& p1) {
     float x0,y0,x1,y1;
-    
+
     x0 = MIN(p0.x, p1.x);
     x1 = MAX(p0.x, p1.x);
     y0 = MIN(p0.y, p1.y);
     y1 = MAX(p0.y, p1.y);
-    
+
     float w = x1 - x0;
     float h = y1 - y0;
 
@@ -92,6 +92,13 @@ void ofRectangle::setPosition(float px, float py) {
 void ofRectangle::setPosition(const ofPoint& p) {
     position = p;
 }
+
+//----------------------------------------------------------
+void ofRectangle::setSize(float w, float h) {
+	width = w;
+	height = h;
+}
+
 
 //----------------------------------------------------------
 void ofRectangle::setFromCenter(float px, float py, float w, float h) {
@@ -165,15 +172,15 @@ void ofRectangle::scaleFromCenter(float sX, float sY) {
 //----------------------------------------------------------
 void ofRectangle::scaleFromCenter(const ofPoint& s) {
     if(s.x == 1.0f && s.y == 1.0f) return; // nothing to do
-    
+
     float newWidth  = width  * s.x;
     float newHeight = height * s.y;
 
     ofPoint center = getCenter();
-    
+
     x = center.x - newWidth  / 2.0f;
-    y = center.y - newHeight / 2.0f; 
-    
+    y = center.y - newHeight / 2.0f;
+
     width  = newWidth;
     height = newHeight;
 }
@@ -181,7 +188,7 @@ void ofRectangle::scaleFromCenter(const ofPoint& s) {
 //----------------------------------------------------------
 void ofRectangle::scaleTo(const ofRectangle& targetRect,
                           ofScaleMode scaleMode) {
-    
+
     if(scaleMode == OF_SCALEMODE_FIT) {
         scaleTo(targetRect,
                 OF_ASPECT_RATIO_KEEP,
@@ -278,7 +285,7 @@ void ofRectangle::alignToHorz(const float& targetX,
 //----------------------------------------------------------
 void ofRectangle::alignToHorz(const ofRectangle& targetRect,
                               ofAlignHorz sharedAnchor) {
-    
+
     alignToHorz(targetRect, sharedAnchor, sharedAnchor);
 }
 
@@ -286,7 +293,7 @@ void ofRectangle::alignToHorz(const ofRectangle& targetRect,
 void ofRectangle::alignToHorz(const ofRectangle& targetRect,
                               ofAlignHorz targetHorzAnchor,
                               ofAlignHorz thisHorzAnchor) {
-    
+
     if(targetHorzAnchor != OF_ALIGN_HORZ_IGNORE &&
        thisHorzAnchor   != OF_ALIGN_HORZ_IGNORE) {
         alignToHorz(targetRect.getHorzAnchor(targetHorzAnchor),thisHorzAnchor);
@@ -297,7 +304,7 @@ void ofRectangle::alignToHorz(const ofRectangle& targetRect,
             ofLogVerbose("ofRectangle") << "alignToHorz(): thisHorzAnchor == OF_ALIGN_HORZ_IGNORE, no alignment applied";
         }
     }
-    
+
 }
 
 //----------------------------------------------------------
@@ -314,7 +321,7 @@ void ofRectangle::alignToVert(const float& targetY,
 //----------------------------------------------------------
 void ofRectangle::alignToVert(const ofRectangle& targetRect,
                               ofAlignVert sharedAnchor) {
-    
+
     alignToVert(targetRect,sharedAnchor,sharedAnchor);
 }
 
@@ -332,7 +339,7 @@ void ofRectangle::alignToVert(const ofRectangle& targetRect,
         } else {
             ofLogVerbose("ofRectangle") << "alignToVert(): thisVertAnchor == OF_ALIGN_VERT_IGNORE, no alignment applied";
         }
-        
+
     }
 }
 
@@ -375,7 +382,7 @@ bool ofRectangle::inside(float px, float py) const {
 
 //----------------------------------------------------------
 bool ofRectangle::inside(const ofPoint& p) const {
-    return p.x > getMinX() && p.y > getMinY() && 
+    return p.x > getMinX() && p.y > getMinY() &&
            p.x < getMaxX() && p.y < getMaxY();
 }
 
@@ -401,12 +408,12 @@ bool ofRectangle::intersects(const ofRectangle& rect) const {
 bool ofRectangle::intersects(const ofPoint& p0, const ofPoint& p1) const {
     // check for a line intersection
     ofPoint p;
-    
+
     ofPoint topLeft     = getTopLeft();
     ofPoint topRight    = getTopRight();
     ofPoint bottomRight = getBottomRight();
     ofPoint bottomLeft  = getBottomLeft();
-    
+
     return inside(p0) || // check end inside
            inside(p1) || // check end inside
            ofLineSegmentIntersection(p0, p1, topLeft,     topRight,    p) || // cross top
@@ -453,16 +460,16 @@ ofRectangle ofRectangle::getIntersection(const ofRectangle& rect) const {
 
     float x0 = MAX(getMinX(),rect.getMinX());
     float x1 = MIN(getMaxX(),rect.getMaxX());
-    
+
     float w = x1 - x0;
     if(w < 0.0f) return ofRectangle(0,0,0,0); // short circuit if needed
-    
+
     float y0 = MAX(getMinY(),rect.getMinY());
     float y1 = MIN(getMaxY(),rect.getMaxY());
-    
+
     float h = y1 - y0;
     if(h < 0.0f) return ofRectangle(0,0,0,0);  // short circuit if needed
-    
+
     return ofRectangle(x0,y0,w,h);
 }
 
@@ -477,12 +484,12 @@ ofRectangle ofRectangle::getUnion(const ofRectangle& rect) const {
 void ofRectangle::standardize() {
     if(width < 0.0f) {
         x += width;
-        width = -1.0 * width;
-    } 
-    
+        width = -1.0f * width;
+    }
+
     if(height < 0.0f) {
         y += height;
-        height = -1.0 * height;
+        height = -1.0f * height;
     }
 }
 
@@ -683,8 +690,21 @@ ofRectangle ofRectangle::operator + (const ofPoint & point){
 }
 
 //----------------------------------------------------------
+ofRectangle ofRectangle::operator - (const ofPoint & point){
+	ofRectangle rect=*this;
+	rect.x -= point.x;
+	rect.y -= point.y;
+	return rect;
+}
+
+//----------------------------------------------------------
 bool ofRectangle::operator == (const ofRectangle& rect) const {
 	return (x == rect.x) && (y == rect.y) && (width == rect.width) && (height == rect.height);
+}
+
+//----------------------------------------------------------
+bool ofRectangle::isZero() const{
+	return (x == 0) && (y == 0) && (width == 0) && (height == 0);
 }
 
 //----------------------------------------------------------

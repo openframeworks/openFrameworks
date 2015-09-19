@@ -2,45 +2,40 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	
-    ofBackground(0);
+    ofBackground(170);
+    ofSetOrientation(OF_ORIENTATION_DEFAULT);
     
-    ofSetOrientation(OF_ORIENTATION_90_RIGHT);
-	
-    camera = NULL;
-	
-    imgPos.x=ofGetWidth()/2;
-	imgPos.y=ofGetHeight()/2;
-	
-	photo.loadImage("images/instructions.png");
+    camImg.load("images/camera.png");
+    libImg.load("images/library.png");
+    
+    camRect.set(20, 20, camImg.getWidth(), camImg.getHeight());
+    libRect.set(camImg.getWidth() + 40, 20, libImg.getWidth(), libImg.getHeight());
+
 }
 
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    if(camera) {
-        if(camera->imageUpdated){
-            
-            int cameraW = camera->width;
-            int cameraH = camera->height;
-            unsigned const char * cameraPixels = camera->pixels;
-            
-            photo.setFromPixels(cameraPixels, cameraW, cameraH, OF_IMAGE_COLOR_ALPHA);
-            
-            imgPos.x = ofGetWidth()/2;
-            imgPos.y = ofGetHeight()/2;
-            
-            camera->close();
-            delete camera;
-            camera = NULL;
-        }
+    if(camera.getImageUpdated()){
+        
+        photo.setFromPixels(camera.getPixelsRef());
+        
+        imgPos.x = 0;
+        imgPos.y = camRect.getBottom() + 20;
+        
+        camera.close();
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    int x = imgPos.x - photo.width / 2;
-    int y = imgPos.y - photo.height / 2;
-	photo.draw(x, y);
+
+    if(photo.isAllocated()){
+        photo.draw(imgPos);
+    }
+    
+    camImg.draw(camRect);
+    libImg.draw(libRect);
 }
 
 //--------------------------------------------------------------
@@ -50,25 +45,26 @@ void ofApp::exit() {
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-	if(touch.id == 1){
-		
-        if(!camera) {
-            camera = new ofxiOSImagePicker();
-            camera->setMaxDimension(MAX(ofGetWidth(), ofGetHeight())); // max the photo taken at the size of the screen.
-            camera->openCamera();
-//            camera->showCameraOverlay();
-        }
-        
-		imgPos.x=ofGetWidth()/2;
-		imgPos.y=ofGetHeight()/2;
-	}
+	if( camRect.inside(touch.x, touch.y) ){
+        camera.setMaxDimension(MAX(1024, ofGetHeight()));
+        camera.openCamera();
+    }else if( libRect.inside(touch.x, touch.y) ){
+        camera.setMaxDimension(MAX(1024, ofGetHeight()));
+        camera.openLibrary();
+    }else{
+        prePoint.x = touch.x;
+        prePoint.y = touch.y;
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(ofTouchEventArgs & touch){
 	if(touch.id == 0){
-		imgPos.x=touch.x;
-		imgPos.y=touch.y;
+		imgPos.x += touch.x-prePoint.x;
+		imgPos.y += touch.y-prePoint.y;
+        
+        prePoint.x = touch.x;
+        prePoint.y = touch.y;
 	}		
 }
 

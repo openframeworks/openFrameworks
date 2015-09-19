@@ -1,5 +1,6 @@
 #include "ofxLabel.h"
 #include "ofGraphics.h"
+using namespace std;
 
 ofxLabel::ofxLabel(ofParameter<string> _label, float width, float height){
 	setup(_label,width,height);
@@ -13,12 +14,12 @@ ofxLabel* ofxLabel::setup(ofParameter<string> _label, float width, float height)
     label.makeReferenceTo(_label);
     b.width  = width;
     b.height = height;
-    generateDraw();
+    setNeedsRedraw();
     label.addListener(this,&ofxLabel::valueChanged);
     return this;
 }
 
-ofxLabel* ofxLabel::setup(string labelName, string _label, float width, float height) {
+ofxLabel* ofxLabel::setup(const std::string& labelName, string _label, float width, float height) {
     label.set(labelName,_label);
     return setup(label,width,height);
 }
@@ -64,5 +65,5 @@ ofAbstractParameter & ofxLabel::getParameter(){
 }
 
 void ofxLabel::valueChanged(string & value){
-	generateDraw();
+    setNeedsRedraw();
 }

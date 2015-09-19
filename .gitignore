@@ -9,6 +9,9 @@ openFrameworksUniversal.a
 libs/openFrameworksCompiled/lib/*/*
 !libs/openFrameworksCompiled/lib/*/.gitkeep
 
+# apothecary
+scripts/apothecary/build
+
 # rule to avoid non-official addons going into git
 # see addons/.gitignore
 addons/*
@@ -26,8 +29,8 @@ apps/*
 [Bb]uild/
 [Oo]bj/
 *.o
-[Dd]ebug*/
-[Rr]elease*/
+examples/**/[Dd]ebug*/
+examples/**/[Rr]elease*/
 *.mode*
 *.app/
 *.pyc
@@ -96,9 +99,11 @@ Desktop.ini
 .csettings
 /libs/openFrameworksCompiled/project/android/paths.make
 
+# Android Studio
+*.iml
+
 #########################
 # miscellaneous
 #########################
 
 .mailmap
-

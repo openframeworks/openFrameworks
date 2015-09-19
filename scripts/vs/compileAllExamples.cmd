@@ -1,2 +1,2 @@
 @echo off
-setupCommandLine 110 build both devenv
+setupCommandLine 140 build both Win32 devenv

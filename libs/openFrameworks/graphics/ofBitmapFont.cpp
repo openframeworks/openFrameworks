@@ -1,7 +1,9 @@
 
 #include "ofBitmapFont.h"
-#include "ofGraphics.h"
 
+#ifdef TARGET_ANDROID
+#include "ofxAndroidUtils.h"
+#endif
 
 // ==============================================================
 // this license below is from freeGlut, (freeglut_font_data.c)
@@ -172,39 +174,39 @@ static const unsigned char bmpChar_8x13_123[] = {  8,  0,  0,  0, 14, 16, 16,  8
 static const unsigned char bmpChar_8x13_124[] = {  8,  0,  0,  0, 16, 16, 16, 16, 16, 16, 16, 16, 16,  0,  0};
 static const unsigned char bmpChar_8x13_125[] = {  8,  0,  0,  0,112,  8,  8, 16, 12, 16,  8,  8,112,  0,  0};
 static const unsigned char bmpChar_8x13_126[] = {  8,  0,  0,  0,  0,  0,  0,  0,  0,  0, 72, 84, 36,  0,  0};
-static const unsigned char bmpChar_8x13_127[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_128[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_129[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_130[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_131[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_132[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_133[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_134[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_135[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_136[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_137[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_138[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_139[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_140[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_141[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_142[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_143[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_144[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_145[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_146[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_147[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_148[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_149[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_150[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_151[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_152[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_153[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_154[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_155[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_156[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_157[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_158[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
-static const unsigned char bmpChar_8x13_159[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_127[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_128[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_129[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_130[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_131[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_132[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_133[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_134[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_135[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_136[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_137[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_138[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_139[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_140[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_141[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_142[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_143[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_144[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_145[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_146[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_147[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_148[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_149[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_150[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_151[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_152[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_153[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_154[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_155[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_156[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_157[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_158[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
+//static const unsigned char bmpChar_8x13_159[] = {  9,  0,  0,  0,  0,  0,  0,170,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,130,  0,  0,  0,170,  0,  0,  0,  0,  0};
 static const unsigned char bmpChar_8x13_160[] = {  8,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
 static const unsigned char bmpChar_8x13_161[] = {  8,  0,  0,  0, 16, 16, 16, 16, 16, 16, 16,  0, 16,  0,  0};
 static const unsigned char bmpChar_8x13_162[] = {  8,  0,  0,  0,  0, 16, 56, 84, 80, 80, 84, 56, 16,  0,  0};
@@ -318,80 +320,35 @@ static const unsigned char* bmpChar_8x13_Map[] = {	bmpChar_8x13_000,bmpChar_8x13
 													bmpChar_8x13_192,bmpChar_8x13_193,bmpChar_8x13_194,bmpChar_8x13_195,bmpChar_8x13_196,bmpChar_8x13_197,bmpChar_8x13_198,bmpChar_8x13_199,bmpChar_8x13_200,bmpChar_8x13_201,bmpChar_8x13_202,bmpChar_8x13_203,bmpChar_8x13_204,bmpChar_8x13_205,bmpChar_8x13_206,bmpChar_8x13_207,
 													bmpChar_8x13_208,bmpChar_8x13_209,bmpChar_8x13_210,bmpChar_8x13_211,bmpChar_8x13_212,bmpChar_8x13_213,bmpChar_8x13_214,bmpChar_8x13_215,bmpChar_8x13_216,bmpChar_8x13_217,bmpChar_8x13_218,bmpChar_8x13_219,bmpChar_8x13_220,bmpChar_8x13_221,bmpChar_8x13_222,bmpChar_8x13_223,
 													bmpChar_8x13_224,bmpChar_8x13_225,bmpChar_8x13_226,bmpChar_8x13_227,bmpChar_8x13_228,bmpChar_8x13_229,bmpChar_8x13_230,bmpChar_8x13_231,bmpChar_8x13_232,bmpChar_8x13_233,bmpChar_8x13_234,bmpChar_8x13_235,bmpChar_8x13_236,bmpChar_8x13_237,bmpChar_8x13_238,bmpChar_8x13_239,
-													bmpChar_8x13_240,bmpChar_8x13_241,bmpChar_8x13_242,bmpChar_8x13_243,bmpChar_8x13_244,bmpChar_8x13_245,bmpChar_8x13_246,bmpChar_8x13_247,bmpChar_8x13_248,bmpChar_8x13_249,bmpChar_8x13_250,bmpChar_8x13_251,bmpChar_8x13_252,bmpChar_8x13_253,bmpChar_8x13_254,bmpChar_8x13_255,NULL};
+													bmpChar_8x13_240,bmpChar_8x13_241,bmpChar_8x13_242,bmpChar_8x13_243,bmpChar_8x13_244,bmpChar_8x13_245,bmpChar_8x13_246,bmpChar_8x13_247,bmpChar_8x13_248,bmpChar_8x13_249,bmpChar_8x13_250,bmpChar_8x13_251,bmpChar_8x13_252,bmpChar_8x13_253,bmpChar_8x13_254,bmpChar_8x13_255,nullptr};
 
 
 
 #include "ofTexture.h"
-#include "ofGLProgrammableRenderer.h"
+static const float widthTex = 8.0f/256.0f;
+static const float heightTex = 14.0f/256.0f;
+ofPixels ofBitmapFont::pixels;
 
-static bool				bBitmapTexturePrepared = false;
-static ofTexture		bitmappedFontTexture;
-
-#ifdef TARGET_OPENGLES
-//---------------------------------------------------------------------
-// tig: does this actually do anything?
-void ofUpdateBitmapCharacterTexture(){
-	bBitmapTexturePrepared = false;
-}
-#endif
-
-static ofPixels myLetterPixels;
-static float widthTex = 8.0f/256.0f;
-static float heightTex = 14.0f/256.0f;
-static ofMesh charMesh;
-static int vC = 0;
-
-//---------------------------------------------------------------------
-static void prepareBitmapTexture(){
-
-			
-	
-	if (!bBitmapTexturePrepared){
-		myLetterPixels.allocate(16*16, 16*16, 4); // letter size:8x14pixels, texture size:16x8letters, gl_rgba: 4bytes/1pixel
-        myLetterPixels.set(0);
-
-		bitmappedFontTexture.allocate(16*16, 16*16, GL_RGBA, false);
-		
-		bBitmapTexturePrepared = true;
-		
-		for (int i = 0; i < 256; i++) {
-			
-			const unsigned char * face = bmpChar_8x13_Map[i];
-			
-			for (int j = 1; j < 15; j++){
-				for (int k = 0; k < 8; k++){
-					if ( ((face[15-j] << k) & (128)) > 0 ){
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4] = 255;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+1] = 255;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+2] = 255;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+3] = 255;
-					}else{
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4] = 0;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+1] = 0;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+2] = 0;
-						myLetterPixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*4+3] = 0;
-					}
+void ofBitmapFont::init(){
+	if(pixels.isAllocated()) return;
+	pixels.allocate(16*16, 16*16, OF_PIXELS_GRAY_ALPHA); // letter size:8x14pixels, texture size:16x8letters, gl_r: 1bytes/1pixel
+	pixels.set(0);
+	for (int i = 0; i < 256; i++) {
+		const unsigned char * face = bmpChar_8x13_Map[i];
+		for (int j = 1; j < 15; j++){
+			for (int k = 0; k < 8; k++){
+				if ( ((face[15-j] << k) & (128)) > 0 ){
+					pixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2] = 255;
+					pixels[(((int)(i/16))*16*16*16+(i%16)*16 + (j-1)*16*16 + k)*2+1] = 255;
 				}
 			}
 		}
-		
-		bitmappedFontTexture.loadData(myLetterPixels);
-		bitmappedFontTexture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
-
-		charMesh.setMode(OF_PRIMITIVE_TRIANGLES);
-		
 	}
 
 }
 		
 //---------------------------------------------------------------------
-void  ofDrawBitmapCharacter(int character, int x , int y){
-
-	if(!bBitmapTexturePrepared){
-		prepareBitmapTexture();
-	}
-		
+static void addBitmapCharacter(ofMesh & charMesh, int & vertexCount, int character, int x , int y, bool vFlipped){
 	if (character < 128) {		
 
 		float posTexW = (float)(character % 16)/16.0f;
@@ -404,7 +361,7 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 		//old ofDrawBitmapString was 3 pixels higher, so this version renders text in a different position.
 		//3 pixel adjustment corrects that when y is flpped 5 when it's not.
 		int yOffset = 14;
-		if(!ofIsVFlipped()){
+		if(!vFlipped){
 			y += 5;
 			y += yOffset;
 			yOffset *= -1;
@@ -412,7 +369,7 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 			y -= 3;
 		}
 
-
+		int vC = vertexCount;
 		charMesh.getTexCoords()[vC].set(posTexW,texY1);
 		charMesh.getTexCoords()[vC+1].set(posTexW + widthTex,texY1);
 		charMesh.getTexCoords()[vC+2].set(posTexW+widthTex,texY2);
@@ -428,108 +385,101 @@ void  ofDrawBitmapCharacter(int character, int x , int y){
 		charMesh.getVertices()[vC+3].set(x+8,y+yOffset);
 		charMesh.getVertices()[vC+4].set(x,y+yOffset);
 		charMesh.getVertices()[vC+5].set(x,y);
-			
-		vC += 6;
+
+		vertexCount += 6;
 	}	
 }
 
-//---------------------------------------------------------------------
-void ofDrawBitmapCharacterStart(int stringLength){
-	charMesh.getVertices().resize(6 * stringLength);
-	charMesh.getTexCoords().resize(6 * stringLength);
-
-	if(!bBitmapTexturePrepared){
-		prepareBitmapTexture();
-	}
-	
-	vC = 0;
-}
-
-//---------------------------------------------------------------------
-void ofDrawBitmapCharacterEnd(){
-	if( vC > 0 ){
-		charMesh.getVertices().resize(vC);
-		charMesh.getTexCoords().resize(vC);
-		bitmappedFontTexture.bind();
-
-		ofPtr<ofGLProgrammableRenderer> programmableRenderer = ofGetGLProgrammableRenderer();
-
-		if (!programmableRenderer){
-			#ifndef TARGET_OPENGLES
-				// this temporarily enables alpha testing,
-				// which discards pixels unless their alpha is 1.0f
-				glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
-				glEnable(GL_ALPHA_TEST);
-				glAlphaFunc(GL_GREATER, 0);
-			#endif
-		}else{
-			// glPush/PopAttrib is deprecated + we are doing the alpha test through a shader
-			programmableRenderer->setAlphaBitmapText(true);
-		}
-
-		charMesh.draw();
-
-		if (!programmableRenderer){
-			#ifndef TARGET_OPENGLES
-				glPopAttrib();
-			#endif
-		}else{
-			programmableRenderer->setAlphaBitmapText(false);
-		}
-
-		bitmappedFontTexture.unbind();
-	}
-
-}
-
-ofMesh & ofBitmapStringGetMesh(const string & text, int x, int y){
-
+ofMesh ofBitmapFont::getMesh(const string & text, int x, int y, ofDrawBitmapMode mode, bool vFlipped) const{
 	int len = (int)text.length();
-	//float yOffset = 0;
 	float fontSize = 8.0f;
-	bool bOrigin = false;
+
+	ofMesh charMesh;
+	charMesh.setMode(OF_PRIMITIVE_TRIANGLES);
+	charMesh.getVertices().resize(6 * len);
+	charMesh.getTexCoords().resize(6 * len);
+
+	int vertexCount = 0;
+	int column = 0;
+	float lineHeight = fontSize*1.7f;
+	int newLineDirection = 1.0f;
+
+	if(!vFlipped){
+		newLineDirection  = -1;
+		// this would align multiline texts to the last line when vflip is disabled
+		//int lines = ofStringTimesInString(textString,"\n");
+		//y = lines*lineHeight;
+	}
 
 	float sx = x;
 	float sy = y-fontSize;
 
-	ofDrawBitmapCharacterStart(text.size());
-
 	for(int c = 0; c < len; c++){
 		if(text[c] == '\n'){
 
-			sy += bOrigin ? -1 : 1 * (fontSize*1.7);
-			sx = x;
+			sy += lineHeight*newLineDirection;
+			if(mode == OF_BITMAPMODE_SIMPLE) {
+				sx = x;
+			} else {
+				sx = 0;
+			}
 
-			//glRasterPos2f(x,y + (int)yOffset);
+			column = 0;
+		} else if (text[c] == '\t'){
+			//move the cursor to the position of the next tab
+			//8 is the default tab spacing in osx terminal and windows	 command line
+			int out = column + 8 - (column % 8);
+			sx += fontSize * (out-column);
+			column = out;
 		} else if (text[c] >= 32){
 			// < 32 = control characters - don't draw
 			// solves a bug with control characters
 			// getting drawn when they ought to not be
-			ofDrawBitmapCharacter(text[c], (int)sx, (int)sy);
+			addBitmapCharacter(charMesh, vertexCount, text[c], (int)sx, (int)sy, vFlipped);
 
 			sx += fontSize;
+			column++;
 		}
 	}
 	//We do this because its way faster
-	charMesh.getVertices().resize(vC);
-	charMesh.getTexCoords().resize(vC);
+	charMesh.getVertices().resize(vertexCount);
+	charMesh.getTexCoords().resize(vertexCount);
 	return charMesh;
 
 }
 
-ofTexture & ofBitmapStringGetTextureRef(){
-	if(!bBitmapTexturePrepared){
-		prepareBitmapTexture();
+ofBitmapFont::ofBitmapFont(){
+#ifdef TARGET_ANDROID
+	ofAddListener(ofxAndroidEvents().unloadGL,this,&ofBitmapFont::unloadTexture);
+#endif
+}
+
+ofBitmapFont::~ofBitmapFont(){
+#ifdef TARGET_ANDROID
+	ofAddListener(ofxAndroidEvents().reloadGL,this,&ofBitmapFont::unloadTexture);
+#endif
+}
+
+void ofBitmapFont::unloadTexture(){
+	texture.clear();
+}
+
+const ofTexture & ofBitmapFont::getTexture() const{
+	if(!texture.isAllocated()){
+		ofBitmapFont::init();
+		texture.allocate(pixels,false);
+		texture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
+		texture.setRGToRGBASwizzles(true);
 	}
-	return bitmappedFontTexture;
+	return texture;
 }
 
 
-ofRectangle ofBitmapStringGetBoundingBox(const string & text, int x, int y){
-	const ofMesh & mesh = ofBitmapStringGetMesh(text,x,y);
+ofRectangle ofBitmapFont::getBoundingBox(const string & text, int x, int y) const{
+	const ofMesh & mesh = getMesh(text,x,y);
 	ofVec2f max(numeric_limits<float>::min(),numeric_limits<float>::min());
 	ofVec2f min(numeric_limits<float>::max(),numeric_limits<float>::max());
-	for(int i=0;i< mesh.getNumVertices(); i++){
+	for(std::size_t i=0;i< mesh.getNumVertices(); i++){
 		const ofVec3f & p = mesh.getVertex(i);
 		if(p.x<min.x) min.x = p.x;
 		if(p.y<min.y) min.y = p.y;

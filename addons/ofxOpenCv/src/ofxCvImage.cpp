@@ -45,7 +45,8 @@ void ofxCvImage::allocate( int w, int h ) {
 	bAllocated = true;
 
     if( bUseTexture ) {
-        tex.allocate( width, height, glchannels );
+    	allocatePixels(w,h);
+        allocateTexture();
         bTextureDirty = true;
     }
 }
@@ -75,12 +76,12 @@ void ofxCvImage::clear() {
 }
 
 //--------------------------------------------------------------------------------
-float ofxCvImage::getWidth(){
+float ofxCvImage::getWidth() const{
 	return width;
 }
 
 //--------------------------------------------------------------------------------
-float ofxCvImage::getHeight(){
+float ofxCvImage::getHeight() const{
 	return height;
 }
 
@@ -89,8 +90,27 @@ void ofxCvImage::setUseTexture( bool bUse ) {
 	bUseTexture = bUse;
 }
 
+bool ofxCvImage::isUsingTexture() const{
+	return bUseTexture;
+}
+
+//--------------------------------------------------------------------------------
+ofTexture& ofxCvImage::getTexture() {
+	return tex;
+}
+
+//--------------------------------------------------------------------------------
+const ofTexture & ofxCvImage::getTexture() const{
+	return tex;
+}
+
 //--------------------------------------------------------------------------------
 ofTexture& ofxCvImage::getTextureReference() {
+	return tex;
+}
+
+//--------------------------------------------------------------------------------
+const ofTexture & ofxCvImage::getTextureReference() const{
 	return tex;
 }
 
@@ -128,7 +148,7 @@ void ofxCvImage::setROI( const ofRectangle& rect ) {
 }
 
 //--------------------------------------------------------------------------------
-ofRectangle ofxCvImage::getROI() {
+ofRectangle ofxCvImage::getROI() const {
     CvRect rect = cvGetImageROI(cvImage);
     return ofRectangle((float)rect.x, (float)rect.y, (float)rect.width, (float)rect.height);
 }
@@ -374,18 +394,18 @@ void  ofxCvImage::drawBlobIntoMe( ofxCvBlob& blob, int color ) {
 // Draw Image
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::draw( float x, float y ) {
+void ofxCvImage::draw( float x, float y ) const {
     draw( x,y, width, height );
 }
 
 //----------------------------------------------------------
-void ofxCvImage::draw(const ofPoint & point){
+void ofxCvImage::draw(const ofPoint & point) const{
 	draw(point.x, point.y);
 }
 
 
 //----------------------------------------------------------
-void ofxCvImage::draw(const ofRectangle & rect){
+void ofxCvImage::draw(const ofRectangle & rect) const{
 	draw(rect.x, rect.y, rect.width, rect.height);
 }
 
@@ -396,80 +416,37 @@ void ofxCvImage::updateTexture(){
 		ofLogWarning("ofxCvImage") << "updateTexture(): image not allocated";	
 	} else if(bUseTexture ) {
 		if( bTextureDirty ) {
-			if(tex.getWidth() != width || tex.getHeight() != height) {
-				//ROI was changed
-				// reallocating texture - this could be faster with ROI support
-				tex.clear();
-				tex.allocate( width, height, glchannels );
-			}
-			tex.loadData( getPixelsRef() );
+			tex.loadData( getPixels() );
 			bTextureDirty = false;
 		}
 	}
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::draw( float x, float y, float w, float h ) {
+void ofxCvImage::draw( float x, float y, float w, float h ) const {
     if( bUseTexture ) {
-    	updateTexture();
+    	ofxCvImage* mutImage = const_cast<ofxCvImage*>(this);
+    	mutImage->updateTexture();
         tex.draw(x,y, w,h);
-    } else {
-        #ifdef TARGET_OPENGLES
-            ofLogError("ofxCvImage") << "draw(): textureless drawing mode not supported in OpenGL ES";
-        #else
-            // this is slower than the typical draw method based on textures
-            // but useful when dealing with threads GL textures often don't work
-            ofLogNotice("ofxCvImage") << "draw(): using textureless drawing mode";
-            ofLogNotice("ofxCvImage") << "draw(): drawing is slower, aligned to the window, & does not support rotation";
-
-            if( x == 0) {
-                ofLogNotice("ofxCvImage") << "draw(): x position cannot be 0 in textureless drawing mode, setting to 0.01";
-				x += 0.01;
-            }
-
-            if(bAnchorIsPct){
-                x -= anchor.x * w;
-                y -= anchor.y * h;
-            }else{
-                x -= anchor.x;
-                y -= anchor.y;
-            }
-
-            glRasterPos2f( x, y+h );
-
-            IplImage* tempImg;
-            tempImg = cvCreateImage( cvSize((int)w, (int)h), ipldepth, iplchannels );
-            cvResize( cvImage, tempImg, CV_INTER_NN );
-            cvFlip( tempImg, tempImg, 0 );
-            glDrawPixels( tempImg->width, tempImg->height ,
-                          glchannels, gldepth, tempImg->imageData );
-            cvReleaseImage( &tempImg );
-        #endif
     }
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::drawROI( float x, float y ) {
+void ofxCvImage::drawROI( float x, float y ) const {
     ofRectangle roi = getROI();
     drawROI( x,y, roi.width, roi.height );
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvImage::drawROI( float x, float y, float w, float h ) {
+void ofxCvImage::drawROI( float x, float y, float w, float h ) const {
     if( bUseTexture ) {
         ofRectangle roi = getROI();
         if( bTextureDirty ) {
-            if(tex.getWidth() != roi.width || tex.getHeight() != roi.height) {
-                //ROI was changed
-                // reallocating texture - this could be faster with ROI support
-                tex.clear();
-                tex.allocate( (int)roi.width, (int)roi.height, glchannels );
-            }
-            tex.loadData( getRoiPixelsRef() );
+            tex.loadData( getRoiPixels() );
             bTextureDirty = false;
         }
 
-        tex.draw(x,y, w,h);
+        tex.drawSubsection(x,y, w,h,0,0,roi.width,roi.height);
 
     } else {
         ofLogError("ofxCvImage") << "drawROI(): textureless drawing mode not implemented";
@@ -854,24 +831,19 @@ void  ofxCvImage::resetImageROI( IplImage* img ) {
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::setFromPixels( const ofPixels & pixels ){
-	setFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight());
+	setFromPixels(pixels.getData(),pixels.getWidth(),pixels.getHeight());
 }
 
 //--------------------------------------------------------------------------------
 void ofxCvImage::setRoiFromPixels( const ofPixels & pixels ){
-	setRoiFromPixels(pixels.getPixels(),pixels.getWidth(),pixels.getHeight());
+	setRoiFromPixels(pixels.getData(),pixels.getWidth(),pixels.getHeight());
 }
 
 //--------------------------------------------------------------------------------
-unsigned char*  ofxCvImage::getPixels(){
-	return getPixelsRef().getPixels();
-}
-
-//--------------------------------------------------------------------------------
-ofPixelsRef ofxCvImage::getPixelsRef(){
+ofPixels& ofxCvImage::getPixels(){
 	if(!bAllocated) {
-		ofLogWarning("ofxCvImage") << "getPixelsRef(): image not allocated";	
-	} else if(bRoiPixelsDirty) {
+		ofLogWarning("ofxCvImage") << "getPixels(): image not allocated";
+	} else if(bPixelsDirty) {
 		IplImage * cv8bit= getCv8BitsImage();
 
 		//Note this possible introduces a bug where pixels doesn't contain the current image.
@@ -888,16 +860,9 @@ ofPixelsRef ofxCvImage::getPixelsRef(){
 }
 
 //--------------------------------------------------------------------------------
-unsigned char*  ofxCvImage::getRoiPixels(){
-	return getRoiPixelsRef().getPixels();
-}
-
-
-
-//--------------------------------------------------------------------------------
-ofPixelsRef  ofxCvImage::getRoiPixelsRef(){
+ofPixels& ofxCvImage::getRoiPixels(){
 	if(!bAllocated) {
-		ofLogWarning("ofxCvImage") << "getRoiPixelsRef(): image not allocated";	
+		ofLogWarning("ofxCvImage") << "getRoiPixels(): image not allocated";
 	} else if(bRoiPixelsDirty) {
 		IplImage * cv8bit= getCv8BitsRoiImage();
 		ofRectangle roi = getROI();
@@ -907,3 +872,17 @@ ofPixelsRef  ofxCvImage::getRoiPixelsRef(){
 	}
 	return roiPixels;
 }
+
+//--------------------------------------------------------------------------------
+const ofPixels& ofxCvImage::getPixels() const{
+	ofxCvImage* mutImage = const_cast<ofxCvImage*>(this);
+	return mutImage->getPixels();
+}
+
+//--------------------------------------------------------------------------------
+const ofPixels& ofxCvImage::getRoiPixels() const{
+	ofxCvImage* mutImage = const_cast<ofxCvImage*>(this);
+	return mutImage->getRoiPixels();
+}
+
+//--------------------------------------------------------------------------------

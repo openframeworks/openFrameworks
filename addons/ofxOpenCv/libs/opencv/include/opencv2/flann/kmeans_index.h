@@ -674,7 +674,7 @@ private:
         }
         delete[] centers_idx;
 
-        DistanceType* radiuses = new DistanceType[branching];
+        std::vector<DistanceType> radiuses(branching);
         int* count = new int[branching];
         for (int i=0; i<branching; ++i) {
             radiuses[i] = 0;
@@ -759,10 +759,13 @@ private:
 
                     for (int k=0; k<indices_length; ++k) {
                         if (belongs_to[k]==j) {
-                            belongs_to[k] = i;
-                            count[j]--;
-                            count[i]++;
-                            break;
+                            // for cluster j, we move the furthest element from the center to the empty cluster i
+                            if ( distance_(dataset_[indices[k]], dcenters[j], veclen_) == radiuses[j] ) {
+                                belongs_to[k] = i;
+                                count[j]--;
+                                count[i]++;
+                                break;
+                            }
                         }
                     }
                     converged = false;
@@ -775,7 +778,7 @@ private:
 
         for (int i=0; i<branching; ++i) {
             centers[i] = new DistanceType[veclen_];
-            memoryCounter_ += veclen_*sizeof(DistanceType);
+            memoryCounter_ += (int)(veclen_*sizeof(DistanceType));
             for (size_t k=0; k<veclen_; ++k) {
                 centers[i][k] = (DistanceType)dcenters[i][k];
             }
@@ -817,7 +820,6 @@ private:
 
         delete[] dcenters.data;
         delete[] centers;
-        delete[] radiuses;
         delete[] count;
         delete[] belongs_to;
     }

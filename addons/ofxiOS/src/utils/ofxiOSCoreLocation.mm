@@ -279,7 +279,6 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 
 //--------------------------------------------------------------
 
-#ifdef __IPHONE_3_0
 //called when the heading is updated
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
@@ -290,7 +289,6 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 	trueHeading = newHeading.trueHeading;
 	headingAccuracy = newHeading.headingAccuracy;
 }
-#endif
 
 //--------------------------------------------------------------
 
@@ -327,13 +325,13 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 				// We shouldn't ever get an unknown error code, but just in case...
 				//
 			default:
-				[errorString appendFormat:@"%@ %d\n", NSLocalizedString(@"GenericLocationError", nil), [error code]];
+				[errorString appendFormat:@"%@ %i\n", NSLocalizedString(@"GenericLocationError", nil), (int)[error code]];
 				break;
 		}
 	} else {
 		// We handle all non-CoreLocation errors here
 		// (we depend on localizedDescription for localization)
-		[errorString appendFormat:@"Error domain: \"%@\"  Error code: %d\n", [error domain], [error code]];
+		[errorString appendFormat:@"Error domain: \"%@\"  Error code: %i\n", [error domain], (int)[error code]];
 		[errorString appendFormat:@"Description: \"%@\"\n", [error localizedDescription]];
 	}
 	

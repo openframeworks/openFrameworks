@@ -40,6 +40,11 @@
 #include <iomanip>
 #include <limits.h>
 // TODO as soon as we use C++0x, use the code in USE_UNORDERED_MAP
+#ifdef __GXX_EXPERIMENTAL_CXX0X__
+#  define USE_UNORDERED_MAP 1
+#else
+#  define USE_UNORDERED_MAP 0
+#endif
 #if USE_UNORDERED_MAP
 #include <unordered_map>
 #else
@@ -95,7 +100,7 @@ struct LshStats
  */
 inline std::ostream& operator <<(std::ostream& out, const LshStats& stats)
 {
-    size_t w = 20;
+    int w = 20;
     out << "Lsh Table Stats:\n" << std::setw(w) << std::setiosflags(std::ios::right) << "N buckets : "
     << stats.n_buckets_ << "\n" << std::setw(w) << std::setiosflags(std::ios::right) << "mean size : "
     << std::setiosflags(std::ios::left) << stats.bucket_size_mean_ << "\n" << std::setw(w)
@@ -151,7 +156,7 @@ public:
     LshTable(unsigned int /*feature_size*/, unsigned int /*key_size*/)
     {
         std::cerr << "LSH is not implemented for that type" << std::endl;
-        throw;
+        assert(0);
     }
 
     /** Add a feature to the table
@@ -161,7 +166,7 @@ public:
     void add(unsigned int value, const ElementType* feature)
     {
         // Add the value to the corresponding bucket
-        BucketKey key = getKey(feature);
+        BucketKey key = (lsh::BucketKey)getKey(feature);
 
         switch (speed_level_) {
         case kArray:
@@ -188,7 +193,7 @@ public:
     void add(Matrix<ElementType> dataset)
     {
 #if USE_UNORDERED_MAP
-        if (!use_speed_) buckets_space_.rehash((buckets_space_.size() + dataset.rows) * 1.2);
+        buckets_space_.rehash((buckets_space_.size() + dataset.rows) * 1.2);
 #endif
         // Add the features to the table
         for (unsigned int i = 0; i < dataset.rows; ++i) add(i, dataset[i]);
@@ -232,7 +237,7 @@ public:
     size_t getKey(const ElementType* /*feature*/) const
     {
         std::cerr << "LSH is not implemented for that type" << std::endl;
-        throw;
+        assert(0);
         return 1;
     }
 
@@ -256,8 +261,18 @@ private:
      */
     void initialize(size_t key_size)
     {
+        const size_t key_size_lower_bound = 1;
+        //a value (size_t(1) << key_size) must fit the size_t type so key_size has to be strictly less than size of size_t
+        const size_t key_size_upper_bound = std::min(sizeof(BucketKey) * CHAR_BIT + 1, sizeof(size_t) * CHAR_BIT);
+        if (key_size < key_size_lower_bound || key_size >= key_size_upper_bound)
+        {
+            std::stringstream errorMessage;
+            errorMessage << "Invalid key_size (=" << key_size << "). Valid values for your system are " << key_size_lower_bound << " <= key_size < " << key_size_upper_bound << ".";
+            CV_Error(CV_StsBadArg, errorMessage.str());
+        }
+
         speed_level_ = kHash;
-        key_size_ = key_size;
+        key_size_ = (unsigned)key_size;
     }
 
     /** Optimize the table for speed/space
@@ -268,10 +283,10 @@ private:
         if (speed_level_ == kArray) return;
 
         // Use an array if it will be more than half full
-        if (buckets_space_.size() > (unsigned int)((1 << key_size_) / 2)) {
+        if (buckets_space_.size() > ((size_t(1) << key_size_) / 2)) {
             speed_level_ = kArray;
             // Fill the array version of it
-            buckets_speed_.resize(1 << key_size_);
+            buckets_speed_.resize(size_t(1) << key_size_);
             for (BucketsSpace::const_iterator key_bucket = buckets_space_.begin(); key_bucket != buckets_space_.end(); ++key_bucket) buckets_speed_[key_bucket->first] = key_bucket->second;
 
             // Empty the hash table
@@ -282,9 +297,9 @@ private:
         // If the bitset is going to use less than 10% of the RAM of the hash map (at least 1 size_t for the key and two
         // for the vector) or less than 512MB (key_size_ <= 30)
         if (((std::max(buckets_space_.size(), buckets_speed_.size()) * CHAR_BIT * 3 * sizeof(BucketKey)) / 10
-             >= size_t(1 << key_size_)) || (key_size_ <= 32)) {
+             >= (size_t(1) << key_size_)) || (key_size_ <= 32)) {
             speed_level_ = kBitsetHash;
-            key_bitset_.resize(1 << key_size_);
+            key_bitset_.resize(size_t(1) << key_size_);
             key_bitset_.reset();
             // Try with the BucketsSpace
             for (BucketsSpace::const_iterator key_bucket = buckets_space_.begin(); key_bucket != buckets_space_.end(); ++key_bucket) key_bitset_.set(key_bucket->first);
@@ -371,7 +386,7 @@ inline size_t LshTable<unsigned char>::getKey(const unsigned char* feature) cons
 {
     // no need to check if T is dividable by sizeof(size_t) like in the Hamming
     // distance computation as we have a mask
-    const size_t* feature_block_ptr = reinterpret_cast<const size_t*> (feature);
+    const size_t* feature_block_ptr = reinterpret_cast<const size_t*> ((const void*)feature);
 
     // Figure out the subsignature of the feature
     // Given the feature ABCDEF, and the mask 001011, the output will be
@@ -414,7 +429,7 @@ inline LshStats LshTable<unsigned char>::getStats() const
 
     if (!buckets_speed_.empty()) {
         for (BucketsSpeed::const_iterator pbucket = buckets_speed_.begin(); pbucket != buckets_speed_.end(); ++pbucket) {
-            stats.bucket_sizes_.push_back(pbucket->size());
+            stats.bucket_sizes_.push_back((lsh::FeatureIndex)pbucket->size());
             stats.bucket_size_mean_ += pbucket->size();
         }
         stats.bucket_size_mean_ /= buckets_speed_.size();
@@ -422,7 +437,7 @@ inline LshStats LshTable<unsigned char>::getStats() const
     }
     else {
         for (BucketsSpace::const_iterator x = buckets_space_.begin(); x != buckets_space_.end(); ++x) {
-            stats.bucket_sizes_.push_back(x->second.size());
+            stats.bucket_sizes_.push_back((lsh::FeatureIndex)x->second.size());
             stats.bucket_size_mean_ += x->second.size();
         }
         stats.bucket_size_mean_ /= buckets_space_.size();

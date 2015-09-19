@@ -10,30 +10,38 @@ HEADER_GLEW = "$(OF_PATH)/libs/glew/include"
 HEADER_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/include"
 HEADER_TESS2 = "$(OF_PATH)/libs/tess2/include"
 HEADER_RTAUDIO = "$(OF_PATH)/libs/rtaudio/include"
-HEADER_GLU = "$(OF_PATH)/libs/glu/include_ios"
 HEADER_SSL = "$(OF_PATH)/libs/openssl/include"
+HEADER_BOOST = "$(OF_PATH)/libs/boost/include"
+HEADER_UTF8 = "$(OF_PATH)/libs/utf8cpp/include"
 
-LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/osx/freeimage.a"
-LIB_TESS = "$(OF_PATH)/libs/tess2/lib/osx/tess2.a"
-LIB_GLU = "$(OF_PATH)/libs/glu/lib/ios/glu.a"
-LIB_SSL = "$(OF_PATH)/libs/openssl/lib/osx/ssl.a"
-LIB_CRYPTO = "$(OF_PATH)/libs/openssl/lib/osx/crypto.a"
+//------- Libraries
+LIB_FREEIMAGE = "$(OF_PATH)/libs/FreeImage/lib/ios/freeimage.a"
+LIB_FREETYPE = "$(OF_PATH)/libs/freetype/lib/ios/freetype.a"
+LIB_TESS = "$(OF_PATH)/libs/tess2/lib/ios/tess2.a"
+LIB_OPENSSL_1 = "$(OF_PATH)/libs/openssl/lib/ios/ssl.a"
+LIB_OPENSSL_2 = "$(OF_PATH)/libs/openssl/lib/ios/crypto.a"
+LIB_OPENSSL = $(LIB_OPENSSL_1) $(LIB_OPENSSL_2)
+LIB_POCO_0 = "$(OF_PATH)/libs/poco/lib/ios/PocoCrypto.a"
+LIB_POCO_1 = "$(OF_PATH)/libs/poco/lib/ios/PocoData.a"
+LIB_POCO_2 = "$(OF_PATH)/libs/poco/lib/ios/PocoDataSQLite.a"
+LIB_POCO_3 = "$(OF_PATH)/libs/poco/lib/ios/PocoJSON.a"
+LIB_POCO_4 = "$(OF_PATH)/libs/poco/lib/ios/PocoUtil.a"
+LIB_POCO_5 = "$(OF_PATH)/libs/poco/lib/ios/PocoXML.a"
+LIB_POCO_6 = "$(OF_PATH)/libs/poco/lib/ios/PocoNet.a"
+LIB_POCO_7 = "$(OF_PATH)/libs/poco/lib/ios/PocoNetSSL.a"
+LIB_POCO_8 = "$(OF_PATH)/libs/poco/lib/ios/PocoZip.a"
+LIB_POCO_9 = "$(OF_PATH)/libs/poco/lib/ios/PocoFoundation.a"
+LIB_POCO = $(LIB_POCO_0) $(LIB_POCO_1) $(LIB_POCO_2) $(LIB_POCO_3) $(LIB_POCO_4) $(LIB_POCO_5) $(LIB_POCO_6) $(LIB_POCO_7) $(LIB_POCO_8) $(LIB_POCO_9)
+LIB_BOOST_SYSTEM = "$(OF_PATH)/libs/boost/lib/ios/boost_system.a"
+LIB_BOOST_FS = "$(OF_PATH)/libs/boost/lib/ios/boost_filesystem.a"
+LIB_BOOST = $(LIB_BOOST_SYSTEM) $(LIB_BOOST_FS)
 
-LIB_FREEIMAGE_IPHONE = "$(OF_PATH)/libs/FreeImage/lib/ios/freeimage.a"
-LIB_FREETYPE_IPHONE = "$(OF_PATH)/libs/freetype/lib/ios/freetype.a"
-LIB_POCOFOUNDATION_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoFoundation.a"
-LIB_POCONET_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoNet.a"
-LIB_POCONETSSL_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoNetSSL.a"
-LIB_POCOCRYPTO_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoCrypto.a"
-LIB_POCOUTIL_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoUtil.a"
-LIB_POCOXML_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoXML.a"
-LIB_POCOZIP_IPHONE = "$(OF_PATH)/libs/poco/lib/ios/PocoZip.a"
-LIB_TESS_IPHONE = "$(OF_PATH)/libs/tess2/lib/ios/tess2.a"
-LIB_GLU_IPHONE = "$(OF_PATH)/libs/glu/lib/ios/glu-ios.a"
-LIB_SSL_IPHONE = "$(OF_PATH)/libs/openssl/lib/ios/ssl.a"
-LIB_CRYPTO_IPHONE = "$(OF_PATH)/libs/openssl/lib/ios/crypto.a"
 
 MISC_FLAGS = "-ObjC"
 
-OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_FREETYPE) $(LIB_FREEIMAGE) $(LIB_POCOFOUNDATION) $(LIB_POCONET) $(LIB_POCONETSSL) $(LIB_POCOCRYPTO) $(LIB_POCOXML) $(LIB_POCOZIP) $(LIB_POCOUTIL) $(LIB_FREETYPE_IPHONE) $(LIB_FREEIMAGE_IPHONE) $(LIB_POCONET_IPHONE) $(LIB_POCONETSSL_IPHONE) $(LIB_POCOCRYPTO_IPHONE) $(LIB_POCOXML_IPHONE) $(LIB_POCOZIP_IPHONE) $(LIB_POCOUTIL_IPHONE) $(LIB_POCOFOUNDATION_IPHONE) $(LIB_TESS_IPHONE) $(LIB_GLU) $(LIB_GLU_IPHONE) $(LIB_SSL_IPHONE) $(LIB_CRYPTO_IPHONE)
-OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_OFXMULTITOUCH) $(HEADER_OFXACCELEROMETER) $(HEADER_POCO) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_GLU) $(HEADER_SSL)
+OF_CORE_LIBS = $(MISC_FLAGS) $(LIB_POCO) $(LIB_BOOST) $(LIB_FREEIMAGE) $(LIB_FREETYPE) $(LIB_OPENSSL) $(LIB_TESS)
+OF_CORE_HEADERS = $(HEADER_OF) $(HEADER_OFXIOS) $(HEADER_OFXMULTITOUCH) $(HEADER_OFXACCELEROMETER) $(HEADER_POCO) $(HEADER_BOOST) $(HEADER_UTF8) $(HEADER_FREETYPE) $(HEADER_FREETYPE2) $(HEADER_FMODEX) $(HEADER_GLEW) $(HEADER_FREEIMAGE) $(HEADER_TESS2) $(HEADER_RTAUDIO) $(HEADER_SSL)
+ 
+// once all libraries are compiled for libc++ / all architectures
+CLANG_CXX_LIBRARY = libc++
+CLANG_CXX_LANGUAGE_STANDARD = c++11

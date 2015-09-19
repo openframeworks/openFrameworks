@@ -1,8 +1,12 @@
 #include "ofApp.h"
 #include "MyGuiView.h"
 
-MyGuiView * myGuiViewController;
+//  Note:
+//      If the app is not compiling, try removing the MyGuiView.xib reference
+//      from the xcode project and adding it back to the project.
+//      Set the deployment target in project / General / Deployment Target >= 5.1
 
+MyGuiView * myGuiViewController;
 
 //--------------------------------------------------------------
 void ofApp::setup(){	

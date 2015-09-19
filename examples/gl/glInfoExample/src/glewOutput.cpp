@@ -4,18 +4,17 @@
 
 void glewPrintExt (const char* name, GLboolean def1, GLboolean def2, GLboolean def3){
     unsigned int i;
-    printf( "\n%s:", name);
-    for (i=0; i<62-strlen(name); i++) printf( " ");
-    printf( "%s ", def1 ? "OK" : "MISSING");
+    cout << "\n" << name << ":";
+    for (i=0; i<62-strlen(name); i++) cout << " ";
+    cout << ( def1 ? "OK" : "MISSING" ) << " ";
     if (def1 != def2)
-        printf( "[%s] ", def2 ? "OK" : "MISSING");
+        cout << "[" << ( def2 ? "OK" : "MISSING" ) << "] ";
     if (def1 != def3)
-        printf( "[%s]\n", def3 ? "OK" : "MISSING");
+        cout << "[" << ( def3 ? "OK" : "MISSING" ) << "] ";
     else
-        printf( "\n");
-    for (i=0; i<strlen(name)+1; i++) printf( "-");
-    printf( "\n");
-    
+        cout << "\n";
+    for (i=0; i<strlen(name)+1; i++) cout << "-";
+    cout << "\n";
 }
 
 void glewInfoFunc (const char* name, GLint undefined){

@@ -29,6 +29,12 @@ ifdef PROJECT_AR
     AR = $(PROJECT_AR)
 endif
 
+ifdef PLATFORM_ARFLAGS
+	ARFLAGS = $(PLATFORM_ARFLAGS)
+else
+	ARFLAGS = -cr
+endif
+
 ################################################################################
 # CFLAGS
 ################################################################################
@@ -152,24 +158,24 @@ endif
 
 # define the subdirectory for our target name
 ifdef ABI
-	OF_CORE_OBJ_OUPUT_PATH = $(OF_CORE_LIB_PATH)/obj/$(ABI)/$(TARGET_NAME)/
+	OF_CORE_OBJ_OUTPUT_PATH = $(OF_CORE_LIB_PATH)/obj/$(ABI)/$(TARGET_NAME)/
 else
-	OF_CORE_OBJ_OUPUT_PATH = $(OF_CORE_LIB_PATH)/obj/$(TARGET_NAME)/
+	OF_CORE_OBJ_OUTPUT_PATH = $(OF_CORE_LIB_PATH)/obj/$(TARGET_NAME)/
 endif
 
 # create a named list of dependency files
 # 1. create a list of .d dependency files based on the current list of 
 #  OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.d,$(OF_CORE_SOURCE_FILES))
-# 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
-#  $(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(patsubst $(OF_ROOT)/%.mm,%.d,$(patsubst $(OF_ROOT)/%.m,%.d,$(OF_CORE_SOURCE_FILES)))))
+# 2. Add the OF_CORE_OBJ_OUTPUT_PATH as a prefix 
+#  $(addprefix $(OF_CORE_OBJ_OUTPUT_PATH), ...)
+OF_CORE_DEPENDENCY_FILES = $(addprefix $(OF_CORE_OBJ_OUTPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.d,$(patsubst $(OF_ROOT)/%.mm,%.d,$(patsubst $(OF_ROOT)/%.m,%.d,$(OF_CORE_SOURCE_FILES)))))
 
 # create a named list of object files
 # 1. create a list of object files based on the current list of
 #   OF_CORE_SOURCE_FILES $(patsubst $(OF_ROOT)/%.cpp,%.o,$(OF_CORE_SOURCE_FILES)
-# 2. Add the OF_CORE_OBJ_OUPUT_PATH as a prefix 
-#	$(addprefix $(OF_CORE_OBJ_OUPUT_PATH), ...)
-OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(patsubst $(OF_ROOT)/%.mm,%.o,$(patsubst $(OF_ROOT)/%.m,%.o,$(OF_CORE_SOURCE_FILES)))))
+# 2. Add the OF_CORE_OBJ_OUTPUT_PATH as a prefix 
+#	$(addprefix $(OF_CORE_OBJ_OUTPUT_PATH), ...)
+OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUTPUT_PATH),$(patsubst $(OF_ROOT)/%.cpp,%.o,$(patsubst $(OF_ROOT)/%.mm,%.o,$(patsubst $(OF_ROOT)/%.m,%.o,$(OF_CORE_SOURCE_FILES)))))
 
     
 ################################################################################
@@ -177,7 +183,7 @@ OF_CORE_OBJ_FILES = $(addprefix $(OF_CORE_OBJ_OUPUT_PATH),$(patsubst $(OF_ROOT)/
 ################################################################################
 ifdef MAKEFILE_DEBUG
     $(info ========================= compile.core.make flags ========================)
-    $(info OF_CORE_OBJ_OUPUT_PATH=$(OF_CORE_OBJ_OUPUT_PATH))
+    $(info OF_CORE_OBJ_OUTPUT_PATH=$(OF_CORE_OBJ_OUTPUT_PATH))
     
     $(info ---OF_CORE_DEPENDENCY_FILES---)
     $(foreach v, $(OF_CORE_DEPENDENCY_FILES),$(info $(v)))
@@ -192,7 +198,7 @@ endif
 # targets that are "recipe" only -- that is recipes that respond to specific
 # requests, not filenames or lists of filenames.  .PNONY targets are used to 
 # avoid conflict with files of the same name and to improve performance.
-.PHONY: all Debug Release after clean CleanDebug CleanRelease help
+.PHONY: all Debug Release after clean CleanDebug CleanRelease help force
 
 Release: 
 ifndef ABIS_TO_COMPILE_RELEASE
@@ -222,31 +228,47 @@ DebugABI: $(TARGET)
 all: 
 	@$(MAKE) --no-print-directory Debug
 	@$(MAKE) --no-print-directory Release
+	
+$(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags: force
+	@mkdir -p $(OF_CORE_OBJ_OUTPUT_PATH)
+	@echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' | cmp -s - $@ || echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' > $@
+	
 
 #This rule does the compilation
-$(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.cpp 
+$(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.cpp $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
-	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
-$(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.mm
+$(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.mm $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
-	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	$(CXX) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
-$(OF_CORE_OBJ_OUPUT_PATH)%.o: $(OF_ROOT)/%.m
+$(OF_CORE_OBJ_OUTPUT_PATH)%.o: $(OF_ROOT)/%.m $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Compiling" $<
 	@mkdir -p $(@D)
-	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUPUT_PATH)$*.o -o $@ -c $<
+	$(CC) $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) -MMD -MP -MF $(OF_CORE_OBJ_OUTPUT_PATH)$*.d -MT$(OF_CORE_OBJ_OUTPUT_PATH)$*.o -o $@ -c $<
 
 # this target does the linking of the library
 # $(TARGET) : $(OF_CORE_OBJ_FILES) means that each of the items in the 
 # $(OF_CORE_OBJ_FILES) must be processed first  
-$(TARGET) : $(OF_CORE_OBJ_FILES) 
+ifeq ($(SHAREDCORE),1)
+$(TARGET) : $(OF_CORE_OBJ_FILES) $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
 	@echo "Creating library " $(TARGET)
 	@mkdir -p $(@D)
-	$(AR) -cr "$@" $(OF_CORE_OBJ_FILES)
-
+	$(CC) -shared $(OF_CORE_OBJ_FILES) -o $@  
+else ifeq ($(BYTECODECORE),1)
+$(TARGET) : $(OF_CORE_OBJ_FILES) $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
+	@echo "Creating library " $(TARGET)
+	@mkdir -p $(@D)
+	$(CC) $(OF_CORE_OBJ_FILES) -o $@  
+else
+$(TARGET) : $(OF_CORE_OBJ_FILES) $(OF_CORE_OBJ_OUTPUT_PATH).compiler_flags
+	@echo "Creating library " $(TARGET)
+	@mkdir -p $(@D)
+	$(AR) ${ARFLAGS} "$@" $(OF_CORE_OBJ_FILES)
+endif
 -include $(OF_CORE_DEPENDENCY_FILES)
 
 #.PHONY: clean CleanDebug CleanRelease
@@ -257,8 +279,8 @@ clean:
 	$(MAKE) CleanDebug
 
 $(CLEANTARGET)ABI:
-	@echo "Removing object files in " $(OF_CORE_OBJ_OUPUT_PATH)
-	rm -Rf $(OF_CORE_OBJ_OUPUT_PATH)
+	@echo "Removing object files in " $(OF_CORE_OBJ_OUTPUT_PATH)
+	rm -Rf $(OF_CORE_OBJ_OUTPUT_PATH)
 	@echo "Removing " $(TARGET)
 	rm -f $(TARGET)
 	

@@ -50,7 +50,8 @@
     
 @protected
     id <ESRenderer> renderer;
-	int scaleFactor;
+    CGFloat scaleFactor;
+    CGFloat scaleFactorPref;
     
     BOOL bUseDepth;
     BOOL bUseFSAA;
@@ -76,12 +77,13 @@
 @property (nonatomic) float animationFrameInterval;
 @property (nonatomic) float animationFrameRate;
 
-- (id) initWithFrame:(CGRect)frame
- andPreferedRenderer:(ESRendererVersion)rendererVersion
-            andDepth:(bool)depth
-               andAA:(bool)fsaaEnabled
-       andNumSamples:(int)samples
-           andRetina:(bool)retinaEnabled;
+- (id)initWithFrame:(CGRect)frame
+andPreferedRenderer:(ESRendererVersion)rendererVersion
+           andDepth:(bool)depth
+              andAA:(bool)fsaaEnabled
+      andNumSamples:(int)samples
+          andRetina:(bool)retinaEnabled
+     andRetinaScale:(CGFloat)retinaScale;
 
 - (void) startAnimation;
 - (void) stopAnimation;

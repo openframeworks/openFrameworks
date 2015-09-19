@@ -31,6 +31,8 @@ static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
     IBOutlet UILabel * topLabel;
     IBOutlet UILabel * bottomLabel;
     IBOutlet UILabel * newFrameLabel;
+    CGRect controlsFrameShow;
+    CGRect controlsFrameHide;
     BOOL bShow;
 }
 
@@ -72,6 +74,16 @@ static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
     [self setPlay:YES];
     [self setNative:NO];
     [self setLoop:NO];
+    
+    CGRect screenRect = [UIScreen mainScreen].bounds;
+    self.view.frame = screenRect;
+    
+    controlsFrameShow = controls.frame;
+    controlsFrameShow.origin.y = screenRect.size.height - controlsFrameShow.size.height;
+    controlsFrameHide = controlsFrameShow;
+    if(screenRect.size.height <= 640) {
+        controlsFrameHide.origin.y += controlsFrameHide.size.height;
+    }
     
     UITapGestureRecognizer * tapGesture;
     tapGesture = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognised:)] autorelease];
@@ -243,15 +255,11 @@ static NSString * kMuteOffButtonLabelText = @"MUTE OFF";
     bShow = !bShow;
     if(bShow) {
         [UIView animateWithDuration:0.3 animations:^{
-            CGRect controlsFrame = controls.frame;
-            controlsFrame.origin.y = 392;
-            controls.frame = controlsFrame;
+            controls.frame = controlsFrameShow;
         }];
     } else {
         [UIView animateWithDuration:0.3 animations:^{
-            CGRect controlsFrame = controls.frame;
-            controlsFrame.origin.y = 480;
-            controls.frame = controlsFrame;
+            controls.frame = controlsFrameHide;
         }];
     }
 }

@@ -18,13 +18,13 @@ public:
 	~ofxOscParameterSync();
 
 	/// the remote and local ports must be different to avoid collisions
-	void setup(ofParameterGroup & group, int localPort, string remoteHost, int remotePort);
+	void setup(ofParameterGroup & group, int localPort, const string& remoteHost, int remotePort);
 	void update();
 
 private:
 	void parameterChanged( ofAbstractParameter & parameter );
 	ofxOscSender sender;
 	ofxOscReceiver receiver;
-	ofParameterGroup * syncGroup;
+	ofParameterGroup syncGroup;
 	bool updatingParameter;
 };

@@ -28,8 +28,8 @@ void ofApp::draw(){
 	// draw the left:
 	ofFill();
 	ofSetHexColor(0x333333);
-	ofRect(20,100,256,100);
-	ofRect(20,250,256,100);
+	ofDrawRectangle(20,100,256,100);
+	ofDrawRectangle(20,250,256,100);
 	ofSetHexColor(0xFFFFFF);
 	ofNoFill();
 	ofBeginShape();

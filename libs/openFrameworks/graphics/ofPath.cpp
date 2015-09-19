@@ -1,8 +1,12 @@
 #include "ofPath.h"
-#include "ofGraphics.h"
+#include "ofAppRunner.h"
 #include "ofTessellator.h"
 
-ofTessellator ofPath::tessellator;
+#if defined(TARGET_EMSCRIPTEN)
+	ofTessellator ofPath::tessellator;
+#elif HAS_TLS
+    thread_local ofTessellator ofPath::tessellator;
+#endif
 
 ofPath::Command::Command(Type type)
 :type(type){
@@ -48,6 +52,7 @@ ofPath::ofPath(){
 	bHasChanged = false;
 	bUseShapeColor = true;
 	bNeedsPolylinesGeneration = false;
+	cachedTessellationValid = true;
 	clear();
 }
 
@@ -449,6 +454,8 @@ ofPolyline & ofPath::lastPolyline(){
 vector<ofPath::Command> & ofPath::getCommands(){
 	if(mode==POLYLINES){
 		ofLogWarning("ofPath") << "getCommands(): trying to get path commands from shape with polylines only";
+	}else{
+		flagShapeChanged();
 	}
 	return commands;
 }
@@ -547,69 +554,30 @@ void ofPath::tessellate(){
 }
 
 //----------------------------------------------------------
-vector<ofPolyline> & ofPath::getOutline() {
+const vector<ofPolyline> & ofPath::getOutline() const{
 	if(windingMode!=OF_POLY_WINDING_ODD){
-		tessellate();
+		const_cast<ofPath*>(this)->tessellate();
 		return tessellatedContour;
 	}else{
-		generatePolylinesFromCommands();
+		const_cast<ofPath*>(this)->generatePolylinesFromCommands();
 		return polylines;
 	}
 }
 
 //----------------------------------------------------------
-ofMesh & ofPath::getTessellation(){
-	tessellate();
+const ofMesh & ofPath::getTessellation() const{
+	const_cast<ofPath*>(this)->tessellate();
 	return cachedTessellation;
 }
 
 //----------------------------------------------------------
-void ofPath::draw(float x, float y){
-	ofPushMatrix();
-	ofTranslate(x,y);
-	draw();
-	ofPopMatrix();
+void ofPath::draw(float x, float y) const{
+	ofGetCurrentRenderer()->draw(*this,x,y);
 }
 
 //----------------------------------------------------------
-void ofPath::draw(){
-	if(mode == ofPath::COMMANDS && ofGetCurrentRenderer()->rendersPathPrimitives()){
-		ofGetCurrentRenderer()->draw(*this);
-	}else{
-		tessellate();
-
-
-		ofColor prevColor;
-		if(bUseShapeColor){
-			prevColor = ofGetStyle().color;
-		}
-
-		if(bFill && !cachedTessellation.getVertices().empty()){
-			if(bUseShapeColor){
-				ofSetColor(fillColor);
-			}
-			cachedTessellation.draw();
-			//ofGetCurrentRenderer()->draw(cachedTessellation,bUseShapeColor,false,false);
-
-		}
-
-		if(hasOutline()){
-			float lineWidth = ofGetStyle().lineWidth;
-			if(bUseShapeColor){
-				ofSetColor(strokeColor);
-			}
-			ofSetLineWidth( strokeWidth );
-			vector<ofPolyline> & polys = getOutline();
-			for(int i=0;i<(int)polys.size();i++){
-				ofGetCurrentRenderer()->draw(polys[i]);
-			}
-			ofSetLineWidth(lineWidth);
-		}
-
-		if(bUseShapeColor){
-			ofSetColor(prevColor);
-		}
-	}
+void ofPath::draw() const{
+	ofGetCurrentRenderer()->draw(*this);
 }
 
 //----------------------------------------------------------
@@ -645,6 +613,11 @@ ofPath::Mode ofPath::getMode(){
 //----------------------------------------------------------
 void ofPath::setCurveResolution(int _curveResolution){
 	curveResolution = _curveResolution;
+}
+
+//----------------------------------------------------------
+int ofPath::getCurveResolution() const {
+	return curveResolution;
 }
 
 //----------------------------------------------------------
@@ -786,6 +759,19 @@ void ofPath::scale(float x, float y){
 				polylines[i][j].x*=x;
 				polylines[i][j].y*=y;
 			}
+		}
+	}
+	flagShapeChanged();
+}
+
+void ofPath::append(const ofPath & path){
+	if(mode==COMMANDS){
+		for(auto & command: path.getCommands()){
+			addCommand(command);
+		}
+	}else{
+		for(auto & poly: path.getOutline()){
+			polylines.push_back(poly);
 		}
 	}
 	flagShapeChanged();

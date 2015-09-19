@@ -17,6 +17,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
 
 @interface ofxiOSEAGLView() {
     BOOL bInit;
+	shared_ptr<ofAppiOSWindow> window;
+	shared_ptr<ofxiOSApp> app;
 }
 - (void)updateDimensions;
 @end
@@ -32,53 +34,36 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (id)initWithFrame:(CGRect)frame andApp:(ofxiOSApp *)appPtr {
-    
-    ESRendererVersion preferedRendererVersion = ESRendererVersion_11;
-    if(ofIsGLProgrammableRenderer()) {
-        preferedRendererVersion = ESRendererVersion_20;
+	
+	window = dynamic_pointer_cast<ofAppiOSWindow>(ofGetMainLoop()->getCurrentWindow());
+	
+    if(window.get() == NULL) {
+        ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView::initWithFrame - window is NULL");
+        return nil;
     }
+	
+    ESRendererVersion preferedRendererVersion = (ESRendererVersion)window->getSettings().glesVersion;
     
     self = [self initWithFrame:frame
            andPreferedRenderer:preferedRendererVersion
-                      andDepth:ofAppiOSWindow::getInstance()->isDepthBufferEnabled()
-                         andAA:ofAppiOSWindow::getInstance()->isAntiAliasingEnabled()
-                 andNumSamples:ofAppiOSWindow::getInstance()->getAntiAliasingSampleCount()
-                     andRetina:ofAppiOSWindow::getInstance()->isRetinaEnabled()];
+                      andDepth:window->isDepthBufferEnabled()
+                         andAA:window->isAntiAliasingEnabled()
+                 andNumSamples:window->getAntiAliasingSampleCount()
+                     andRetina:window->isRetinaEnabled()
+                andRetinaScale:window->getRetinaScale()];
     
     if(self) {
         
         _instanceRef = self;
         
-        if(rendererVersion == ESRendererVersion_20) {
-            if(ofAppiOSWindow::getInstance()->isRendererES2() == false) {
-                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLProgrammableRenderer(false)));
-            }
-            ((ofGLProgrammableRenderer *)ofGetCurrentRenderer().get())->setup();
-        } else if(rendererVersion == ESRendererVersion_11) {
-            if(ofAppiOSWindow::getInstance()->isRendererES1() == false) {
-                ofSetCurrentRenderer(ofPtr<ofBaseRenderer>(new ofGLRenderer(false)));
-            }
-        }
-        
-        app = appPtr;
+        app = shared_ptr<ofxiOSApp>(appPtr);
         activeTouches = [[NSMutableDictionary alloc] init];
                 
         screenSize = new ofVec3f();
         windowSize = new ofVec3f();
         windowPos = new ofVec3f();
         [self updateDimensions];
-        
-        if(app != ofGetAppPtr()) {              // check if already running.
-            ofRunApp(ofPtr<ofBaseApp>(app));    // this case occurs when app is created in main().
-        }
-        ofRegisterTouchEvents(app);
-        ofxiOSAlerts.addListener(app);
-
-        ofDisableTextureEdgeHack();
-
-        ofGLReadyCallback();
-        ofReloadGLResources();
-        
+		
         bInit = YES;
     }
     
@@ -86,52 +71,62 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (void)setup {
-    
-    ofNotifySetup();
-    
-    glClearColor(ofBgColorPtr()[0], 
-                 ofBgColorPtr()[1], 
-                 ofBgColorPtr()[2], 
-                 ofBgColorPtr()[3]); // clear background.
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if(window.get() == NULL) {
+		ofLog(OF_LOG_FATAL_ERROR, "ofxiOSEAGLView setup. Failed setup. window is NULL");
+		return;
+	}
+	
+	if(app.get() != ofGetAppPtr()) { // check if already running.
+		
+		ofSetMainLoop(shared_ptr<ofMainLoop>(NULL)); // destroy old main loop.
+		auto mainLoop = std::make_shared<ofMainLoop>(); // make new main loop.
+		ofSetMainLoop(mainLoop);
+		
+		ofiOSWindowSettings windowSettings = window->getSettings();
+		window = NULL;
+
+		window = dynamic_pointer_cast<ofAppiOSWindow>(ofCreateWindow(windowSettings));
+
+		ofRunApp(app);
+	}
+	
+	if(window->isProgrammableRenderer() == true) {
+		static_cast<ofGLProgrammableRenderer*>(window->renderer().get())->setup(window->getSettings().glesVersion, 0);
+	} else{
+		static_cast<ofGLRenderer*>(window->renderer().get())->setup();
+	}
+	
+	ofxiOSAlerts.addListener(app.get());
+	
+	ofDisableTextureEdgeHack();
+	
+	window->events().notifySetup();
+	window->renderer()->clear();
 }
 
 - (void)destroy {
     if(!bInit) {
         return;
     }
-    
-    ofNotifyExit();
-    
-    [activeTouches release];
-    
-    delete screenSize;
-    screenSize = NULL;
-    delete windowSize;
-    windowSize = NULL;
-    delete windowPos;
-    windowPos = NULL;
-    
-    ofBaseApp * baseAppPtr = ofGetAppPtr();
-    ofRemoveListener(ofEvents().setup,          baseAppPtr, &ofBaseApp::setup,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().update,         baseAppPtr, &ofBaseApp::update,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().draw,           baseAppPtr, &ofBaseApp::draw,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().exit,           baseAppPtr, &ofBaseApp::exit,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().keyPressed,     baseAppPtr, &ofBaseApp::keyPressed,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().keyReleased,    baseAppPtr, &ofBaseApp::keyReleased,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().mouseMoved,     baseAppPtr, &ofBaseApp::mouseMoved,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().mouseDragged,   baseAppPtr, &ofBaseApp::mouseDragged,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().mousePressed,   baseAppPtr, &ofBaseApp::mousePressed,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().mouseReleased,  baseAppPtr, &ofBaseApp::mouseReleased,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().windowResized,  baseAppPtr, &ofBaseApp::windowResized,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().windowEntered,  baseAppPtr, &ofBaseApp::windowEntry,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().messageEvent,   baseAppPtr, &ofBaseApp::messageReceived,OF_EVENT_ORDER_APP);
-    ofRemoveListener(ofEvents().fileDragEvent,  baseAppPtr, &ofBaseApp::dragged,OF_EVENT_ORDER_APP);
-    
-    ofUnregisterTouchEvents(app);
-    ofxiOSAlerts.removeListener(app);
-    ofSetAppPtr(ofPtr<ofBaseApp>((app = NULL)));
-    
+
+	window->events().notifyExit();
+	
+    ofxiOSAlerts.removeListener(app.get());
+
+	ofGetMainLoop()->exit();
+	
+	app = NULL;
+	window = NULL;
+	
+	[activeTouches release];
+	
+	delete screenSize;
+	screenSize = NULL;
+	delete windowSize;
+	windowSize = NULL;
+	delete windowPos;
+	windowPos = NULL;
+	
     _instanceRef = nil;
     
     bInit = NO;
@@ -149,7 +144,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
     [self updateDimensions];
     
     [super notifyResized];
-    ofNotifyWindowResized(ofGetWidth(), ofGetHeight());
+    window->events().notifyWindowResized(ofGetWidth(), ofGetHeight());
 }
 
 - (void)updateDimensions {
@@ -169,42 +164,26 @@ static ofxiOSEAGLView * _instanceRef = nil;
 }
 
 - (void)drawView {
-    
-    ofNotifyUpdate();
-    
+    window->events().notifyUpdate();
+
     //------------------------------------------
     
     [self lockGL];
     [self startRender];
     
-    ofGLProgrammableRenderer * es2Renderer = NULL;
-    if(ofIsGLProgrammableRenderer()) {
-        es2Renderer = (ofGLProgrammableRenderer *)(ofGetCurrentRenderer().get());
-        es2Renderer->startRender();
-    }
-
-    ofViewport(ofRectangle(0, 0, ofGetWidth(), ofGetHeight()));
+    window->renderer()->startRender();
     
-    float * bgPtr = ofBgColorPtr();
-    bool bClearAuto = ofbClearBg();
-    if(bClearAuto == true) {
-        glClearColor(bgPtr[0], bgPtr[1], bgPtr[2], bgPtr[3]);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-    
-    if(ofAppiOSWindow::getInstance()->isSetupScreenEnabled()) {
-        ofSetupScreen();
+    if(window->isSetupScreenEnabled()) {
+        window->renderer()->setupScreen();
     }
     
     //------------------------------------------ draw.
     
-    ofNotifyDraw();
+    window->events().notifyDraw();
     
     //------------------------------------------
     
-    if(es2Renderer != NULL) {
-        es2Renderer->finishRender();
-    }
+    window->renderer()->finishRender();
     
     [self finishRender];
     [self unlockGL];
@@ -276,7 +255,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchPoint = [self orientateTouchPoint:touchPoint];
 		
 		if( touchIndex==0 ){
-			ofNotifyMousePressed(touchPoint.x, touchPoint.y, 0);
+            window->events().notifyMousePressed(touchPoint.x, touchPoint.y, 0);
 		}
 		
 		ofTouchEventArgs touchArgs;
@@ -284,8 +263,12 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
-		if([touch tapCount] == 2) ofNotifyEvent(ofEvents().touchDoubleTap,touchArgs);	// send doubletap
-		ofNotifyEvent(ofEvents().touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
+        if([touch tapCount] == 2){
+			touchArgs.type = ofTouchEventArgs::doubleTap;
+			ofNotifyEvent(window->events().touchDoubleTap,touchArgs);	// send doubletap
+        }
+		touchArgs.type = ofTouchEventArgs::down;
+		ofNotifyEvent(window->events().touchDown,touchArgs);	// but also send tap (upto app programmer to ignore this if doubletap came that frame)
 	}	
 }
 
@@ -309,14 +292,15 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchPoint = [self orientateTouchPoint:touchPoint];
 		
 		if( touchIndex==0 ){
-			ofNotifyMouseDragged(touchPoint.x, touchPoint.y, 0);			
+            window->events().notifyMouseDragged(touchPoint.x, touchPoint.y, 0);
 		}		
 		ofTouchEventArgs touchArgs;
 		touchArgs.numTouches = [[event touchesForView:self] count];
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
-		ofNotifyEvent(ofEvents().touchMoved, touchArgs);
+		touchArgs.type = ofTouchEventArgs::move;
+		ofNotifyEvent(window->events().touchMoved, touchArgs);
 	}
 }
 
@@ -342,7 +326,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchPoint = [self orientateTouchPoint:touchPoint];
 		
 		if( touchIndex==0 ){
-			ofNotifyMouseReleased(touchPoint.x, touchPoint.y, 0);						
+			window->events().notifyMouseReleased(touchPoint.x, touchPoint.y, 0);
 		}
 		
 		ofTouchEventArgs touchArgs;
@@ -350,7 +334,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
-		ofNotifyEvent(ofEvents().touchUp, touchArgs);
+		touchArgs.type = ofTouchEventArgs::up;
+		ofNotifyEvent(window->events().touchUp, touchArgs);
 	}
 }
 
@@ -378,7 +363,8 @@ static ofxiOSEAGLView * _instanceRef = nil;
 		touchArgs.x = touchPoint.x;
 		touchArgs.y = touchPoint.y;
 		touchArgs.id = touchIndex;
-		ofNotifyEvent(ofEvents().touchCancelled, touchArgs);
+		touchArgs.type = ofTouchEventArgs::cancel;
+		ofNotifyEvent(window->events().touchCancelled, touchArgs);
 	}
 	
 	[self touchesEnded:touches withEvent:event];

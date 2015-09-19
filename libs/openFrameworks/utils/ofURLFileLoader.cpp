@@ -1,37 +1,73 @@
-#include "Poco/Net/HTTPSession.h"
-#include "Poco/Net/HTTPClientSession.h"
-#include "Poco/Net/HTTPSClientSession.h"
-#include "Poco/Net/HTTPRequest.h"
-#include "Poco/Net/HTTPResponse.h"
-#include "Poco/StreamCopier.h"
-#include "Poco/Path.h"
-#include "Poco/URI.h"
-#include "Poco/Exception.h"
-#include "Poco/URIStreamOpener.h"
-#include "Poco/Net/HTTPStreamFactory.h"
-#include "Poco/Net/HTTPSStreamFactory.h"
-#include "Poco/Net/SSLManager.h"
-#include "Poco/Net/KeyConsoleHandler.h"
-#include "Poco/Net/ConsoleCertificateHandler.h"
-
 #include "ofURLFileLoader.h"
+#include "ofBaseTypes.h"
 #include "ofAppRunner.h"
 #include "ofUtils.h"
 
-using namespace Poco::Net;
-
-using namespace Poco;
-
 #include "ofConstants.h"
 
-static bool factoryLoaded = false;
+#ifndef TARGET_IMPLEMENTS_URL_LOADER
+	#include "Poco/Net/HTTPSession.h"
+	#include "Poco/Net/HTTPClientSession.h"
+	#include "Poco/Net/HTTPSClientSession.h"
+	#include "Poco/Net/HTTPRequest.h"
+	#include "Poco/Net/HTTPResponse.h"
+	#include "Poco/StreamCopier.h"
+	#include "Poco/Path.h"
+	#include "Poco/URI.h"
+	#include "Poco/Exception.h"
+	#include "Poco/URIStreamOpener.h"
+	#include "Poco/Net/HTTPStreamFactory.h"
+	#include "Poco/Net/HTTPSStreamFactory.h"
+	#include "Poco/Net/SSLManager.h"
+	#include "Poco/Net/KeyConsoleHandler.h"
+	#include "Poco/Net/ConsoleCertificateHandler.h"
+
+	#include "ofThreadChannel.h"
+
+	#include "ofThread.h"
+
+	using namespace Poco::Net;
+	using namespace Poco;
+
+	static bool factoryLoaded = false;
+#endif
+
 int	ofHttpRequest::nextID = 0;
+
 ofEvent<ofHttpResponse> & ofURLResponseEvent(){
 	static ofEvent<ofHttpResponse> * event = new ofEvent<ofHttpResponse>;
 	return *event;
 }
 
-ofURLFileLoader::ofURLFileLoader() {
+#ifndef TARGET_IMPLEMENTS_URL_LOADER
+class ofURLFileLoaderImpl: public ofThread, public ofBaseURLFileLoader{
+public:
+	ofURLFileLoaderImpl();
+    ofHttpResponse get(const string& url);
+    int getAsync(const string& url, const string& name=""); // returns id
+    ofHttpResponse saveTo(const string& url, const string& path);
+    int saveAsync(const string& url, const string& path);
+	void remove(int id);
+	void clear();
+    void stop();
+	ofHttpResponse handleRequest(ofHttpRequest request);
+
+protected:
+	// threading -----------------------------------------------
+	void threadedFunction();
+    void start();
+    void update(ofEventArgs & args);  // notify in update so the notification is thread safe
+
+private:
+	// perform the requests on the thread
+
+	ofThreadChannel<ofHttpRequest> requests;
+	ofThreadChannel<ofHttpResponse> responses;
+	ofThreadChannel<int> cancelRequestQueue;
+	set<int> cancelledRequests;
+};
+
+ofURLFileLoaderImpl::ofURLFileLoaderImpl() {
 	if(!factoryLoaded){
 		try {
 			HTTPStreamFactory::registerFactory();
@@ -45,133 +81,117 @@ ofURLFileLoader::ofURLFileLoader() {
 		catch (Poco::SystemException & PS) {
 			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
 		}
+		catch (Poco::ExistsException & PS) {
+			ofLogError("ofURLFileLoader") << "couldn't create factory: " << PS.displayText();
+		}
 	}
 }
 
-ofHttpResponse ofURLFileLoader::get(string url) {
+ofHttpResponse ofURLFileLoaderImpl::get(const string& url) {
     ofHttpRequest request(url,url);
     return handleRequest(request);
 }
 
 
-int ofURLFileLoader::getAsync(string url, string name){
-	if(name=="") name=url;
-	ofHttpRequest request(url,name);
-	lock();
-	requests.push_back(request);
-	unlock();
+int ofURLFileLoaderImpl::getAsync(const string& url, const string& name){
+    ofHttpRequest request(url, name.empty() ? url : name);
+	requests.send(request);
 	start();
-	return request.getID();
+	return request.getId();
 }
 
 
-ofHttpResponse ofURLFileLoader::saveTo(string url, string path){
+ofHttpResponse ofURLFileLoaderImpl::saveTo(const string& url, const string& path){
     ofHttpRequest request(url,path,true);
     return handleRequest(request);
 }
 
-int ofURLFileLoader::saveAsync(string url, string path){
+int ofURLFileLoaderImpl::saveAsync(const string& url, const string& path){
 	ofHttpRequest request(url,path,true);
-	lock();
-	requests.push_back(request);
-	unlock();
+	requests.send(request);
 	start();
-	return request.getID();
+	return request.getId();
 }
 
-void ofURLFileLoader::remove(int id){
-	Poco::ScopedLock<ofMutex> lock(mutex);
-	for(int i=0;i<(int)requests.size();i++){
-		if(requests[i].getID()==id){
-			requests.erase(requests.begin()+i);
-			return;
-		}
-	}
-	ofLogError("ofURLFileLoader") << "remove(): request " <<  id << " not found";
+void ofURLFileLoaderImpl::remove(int id){
+	cancelRequestQueue.send(id);
 }
 
-void ofURLFileLoader::clear(){
-	Poco::ScopedLock<ofMutex> lock(mutex);
-	requests.clear();
-	while(!responses.empty()) responses.pop();
+void ofURLFileLoaderImpl::clear(){
+	ofHttpResponse resp;
+	ofHttpRequest req;
+	while(requests.tryReceive(req)){}
+	while(responses.tryReceive(resp)){}
 }
 
-void ofURLFileLoader::start() {
-     if (isThreadRunning() == false){
-		ofAddListener(ofEvents().update,this,&ofURLFileLoader::update);
-        startThread(true, false);   // blocking, verbose
-    }else{
-    	ofLogVerbose("ofURLFileLoader") << "start(): signaling new request condition";
-    	condition.signal();
+void ofURLFileLoaderImpl::start() {
+     if (!isThreadRunning()){
+		ofAddListener(ofEvents().update,this,&ofURLFileLoaderImpl::update);
+        startThread();
     }
 }
 
-void ofURLFileLoader::stop() {
-    lock();
+void ofURLFileLoaderImpl::stop() {
     stopThread();
-    condition.signal();
-    unlock();
+    requests.close();
+    responses.close();
+    waitForThread();
 }
 
-void ofURLFileLoader::threadedFunction() {
-	ofLogVerbose("ofURLFileLoader") << "threadedFunction(): starting thread";
-	lock();
-	while( isThreadRunning() == true ){
-		if(requests.size()>0){
-	    	ofLogVerbose("ofURLFileLoader") << "threadedFunction(): querying request " << requests.front().name;
-			ofHttpRequest request(requests.front());
-			unlock();
-
-			ofHttpResponse response(handleRequest(request));
-
-			lock();
-			if(response.status!=-1){
-				// double-check that the request hasn't been removed from the queue
-				if( (requests.size()==0) || (requests.front().getID()!=request.getID()) ){
-					// this request has been removed from the queue
-					ofLogVerbose("ofURLFileLoader") << "threadedFunction(): request " << requests.front().name
-					<< " is missing from the queue, must have been removed/cancelled";
+void ofURLFileLoaderImpl::threadedFunction() {
+	thread.setName("ofURLFileLoader " + thread.name());
+	while( isThreadRunning() ){
+		int cancelled;
+		while(cancelRequestQueue.tryReceive(cancelled)){
+			cancelledRequests.insert(cancelled);
+		}
+		ofHttpRequest request;
+		if(requests.receive(request)){
+			if(cancelledRequests.find(request.getId())==cancelledRequests.end()){
+				ofHttpResponse response(handleRequest(request));
+				int status = response.status;
+				if(!responses.send(move(response))){
+					break;
 				}
-				else{
-					ofLogVerbose("ofURLFileLoader") << "threadedFunction(): got response to request "
-					<< requests.front().name << " status " <<response.status;
-					responses.push(response);
-					requests.pop_front();
+				if(status==-1){
+					// retry
+					requests.send(request);
 				}
 			}else{
-				responses.push(response);
-		    	ofLogVerbose("ofURLFileLoader") << "threadedFunction(): failed getting request " << requests.front().name;
+				cancelledRequests.erase(cancelled);
 			}
 		}else{
-			ofLogVerbose("ofURLFileLoader") << "threadedFunction(): stopping on no requests condition";
-			condition.wait(mutex);
+			break;
 		}
 	}
 }
 
-ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
+ofHttpResponse ofURLFileLoaderImpl::handleRequest(ofHttpRequest request) {
 	try {
 		URI uri(request.url);
 		std::string path(uri.getPathAndQuery());
 		if (path.empty()) path = "/";
 
 		HTTPRequest req(HTTPRequest::HTTP_GET, path, HTTPMessage::HTTP_1_1);
+		for(map<string,string>::iterator it = request.headers.begin(); it!=request.headers.end(); it++){
+			req.add(it->first,it->second);
+		}
 		HTTPResponse res;
-		ofPtr<HTTPSession> session;
+		shared_ptr<HTTPSession> session;
 		istream * rs;
 		if(uri.getScheme()=="https"){
 			 //const Poco::Net::Context::Ptr context( new Poco::Net::Context( Poco::Net::Context::CLIENT_USE, "", "", "rootcert.pem" ) );
 			HTTPSClientSession * httpsSession = new HTTPSClientSession(uri.getHost(), uri.getPort());//,context);
-			httpsSession->setTimeout(Poco::Timespan(20,0));
+			httpsSession->setTimeout(Poco::Timespan(120,0));
 			httpsSession->sendRequest(req);
 			rs = &httpsSession->receiveResponse(res);
-			session = ofPtr<HTTPSession>(httpsSession);
+			session = shared_ptr<HTTPSession>(httpsSession);
 		}else{
 			HTTPClientSession * httpSession = new HTTPClientSession(uri.getHost(), uri.getPort());
-			httpSession->setTimeout(Poco::Timespan(20,0));
+			httpSession->setTimeout(Poco::Timespan(120,0));
 			httpSession->sendRequest(req);
 			rs = &httpSession->receiveResponse(res);
-			session = ofPtr<HTTPSession>(httpSession);
+			session = shared_ptr<HTTPSession>(httpSession);
 		}
 		if(!request.saveTo){
 			return ofHttpResponse(request,*rs,res.getStatus(),res.getReason());
@@ -205,38 +225,125 @@ ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest request) {
 	
 }	
 
-void ofURLFileLoader::update(ofEventArgs & args){
-	lock();
-	while(!responses.empty()){
-		ofHttpResponse response(responses.front());
-		ofLogVerbose("ofURLLoader") << "update(): new response " << response.request.name;
-		responses.pop();
-		unlock();
+void ofURLFileLoaderImpl::update(ofEventArgs & args){
+	ofHttpResponse response;
+	while(responses.tryReceive(response)){
 		ofNotifyEvent(ofURLResponseEvent(),response);
-		lock();
 	}
-	unlock();
 
 }
 
+ofURLFileLoader::ofURLFileLoader()
+:impl(new ofURLFileLoaderImpl){}
+
+#elif defined(TARGET_EMSCRIPTEN)
+#include "ofxEmscriptenURLFileLoader.h"
+ofURLFileLoader::ofURLFileLoader()
+:impl(new ofxEmscriptenURLFileLoader){}
+#endif
+
+ofHttpResponse ofURLFileLoader::get(const string& url){
+	return impl->get(url);
+}
+
+int ofURLFileLoader::getAsync(const string& url, const string& name){
+	return impl->getAsync(url,name);
+}
+
+ofHttpResponse ofURLFileLoader::saveTo(const string& url, const string& path){
+	return impl->saveTo(url,path);
+}
+
+int ofURLFileLoader::saveAsync(const string& url, const string& path){
+	return impl->saveAsync(url,path);
+}
+
+void ofURLFileLoader::remove(int id){
+	impl->remove(id);
+}
+
+void ofURLFileLoader::clear(){
+	impl->clear();
+}
+
+void ofURLFileLoader::stop(){
+	impl->stop();
+}
+
+ofHttpResponse ofURLFileLoader::handleRequest(ofHttpRequest & request){
+	return impl->handleRequest(request);
+}
+
+static bool initialized = false;
 static ofURLFileLoader & getFileLoader(){
 	static ofURLFileLoader * fileLoader = new ofURLFileLoader;
+	initialized = true;
 	return *fileLoader;
 }
 
-ofHttpResponse ofLoadURL(string url){
+
+ofHttpRequest::ofHttpRequest()
+:saveTo(false)
+,id(nextID++)
+{
+}
+
+ofHttpRequest::ofHttpRequest(const string& url, const string& name,bool saveTo)
+:url(url)
+,name(name)
+,saveTo(saveTo)
+,id(nextID++)
+{
+}
+
+int ofHttpRequest::getId() const {
+	return id;
+}
+
+int ofHttpRequest::getID(){
+	return id;
+}
+
+
+ofHttpResponse::ofHttpResponse()
+:status(0)
+{
+}
+
+ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, const ofBuffer& data, int status, const string& error)
+:request(request)
+,data(data)
+,status(status)
+,error(error)
+{
+}
+
+ofHttpResponse::ofHttpResponse(const ofHttpRequest& request, int status, const string& error)
+:request(request)
+,status(status)
+,error(error)
+{
+}
+
+ofHttpResponse::operator ofBuffer&(){
+	return data;
+}
+
+
+
+ofHttpResponse ofLoadURL(const string& url){
 	return getFileLoader().get(url);
 }
 
-int ofLoadURLAsync(string url, string name){
+int ofLoadURLAsync(const string&  url, const string&  name){
 	return getFileLoader().getAsync(url,name);
 }
 
-ofHttpResponse ofSaveURLTo(string url, string path){
+ofHttpResponse ofSaveURLTo(const string& url, const string& path){
 	return getFileLoader().saveTo(url,path);
 }
 
-int ofSaveURLAsync(string url, string path){
+int ofSaveURLAsync(const string& url, const string& path){
 	return getFileLoader().saveAsync(url,path);
 }
 
@@ -250,4 +357,14 @@ void ofRemoveAllURLRequests(){
 
 void ofStopURLLoader(){
 	getFileLoader().stop();
+}
+
+void ofURLFileLoaderShutdown(){
+	if(initialized){
+		ofRemoveAllURLRequests();
+		ofStopURLLoader();
+		#ifndef TARGET_IMPLEMENTS_URL_LOADER
+			Poco::Net::uninitializeSSL();
+		#endif
+	}
 }

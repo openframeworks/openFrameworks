@@ -48,7 +48,7 @@
 #define __OPENCV_TRACKING_HPP__
 
 #include "opencv2/core/core.hpp"
-#include "opencv2/imgproc/imgproc_c.h"
+#include "opencv2/imgproc/imgproc.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,21 +59,6 @@ extern "C" {
 \****************************************************************************************/
 
 /************************************ optical flow ***************************************/
-
-/* Calculates optical flow for 2 images using classical Lucas & Kanade algorithm */
-CVAPI(void)  cvCalcOpticalFlowLK( const CvArr* prev, const CvArr* curr,
-                                  CvSize win_size, CvArr* velx, CvArr* vely );
-
-/* Calculates optical flow for 2 images using block matching algorithm */
-CVAPI(void)  cvCalcOpticalFlowBM( const CvArr* prev, const CvArr* curr,
-                                  CvSize block_size, CvSize shift_size,
-                                  CvSize max_range, int use_previous,
-                                  CvArr* velx, CvArr* vely );
-
-/* Calculates Optical flow for 2 images using Horn & Schunck algorithm */
-CVAPI(void)  cvCalcOpticalFlowHS( const CvArr* prev, const CvArr* curr,
-                                  int use_previous, CvArr* velx, CvArr* vely,
-                                  double lambda, CvTermCriteria criteria );
 
 #define  CV_LKFLOW_PYR_A_READY       1
 #define  CV_LKFLOW_PYR_B_READY       2
@@ -236,13 +221,13 @@ CVAPI(const CvMat*)  cvKalmanCorrect( CvKalman* kalman, const CvMat* measurement
 
 #define cvKalmanUpdateByTime  cvKalmanPredict
 #define cvKalmanUpdateByMeasurement cvKalmanCorrect
-    
+
 #ifdef __cplusplus
 }
 
 namespace cv
 {
-    
+
 //! updates motion history image using the current silhouette
 CV_EXPORTS_W void updateMotionHistory( InputArray silhouette, InputOutputArray mhi,
                                        double timestamp, double duration );
@@ -272,7 +257,7 @@ CV_EXPORTS_W int meanShift( InputArray probImage, CV_OUT CV_IN_OUT Rect& window,
 
 /*!
  Kalman filter.
- 
+
  The class implements standard Kalman filter \url{http://en.wikipedia.org/wiki/Kalman_filter}.
  However, you can modify KalmanFilter::transitionMatrix, KalmanFilter::controlMatrix and
  KalmanFilter::measurementMatrix to get the extended Kalman filter functionality.
@@ -302,7 +287,7 @@ public:
     Mat errorCovPre;        //!< priori error estimate covariance matrix (P'(k)): P'(k)=A*P(k-1)*At + Q)*/
     Mat gain;               //!< Kalman gain matrix (K(k)): K(k)=P'(k)*Ht*inv(H*P'(k)*Ht+R)
     Mat errorCovPost;       //!< posteriori error estimate covariance matrix (P(k)): P(k)=(I-K(k)*H)*P'(k)
-    
+
     // temporary matrices
     Mat temp1;
     Mat temp2;
@@ -311,20 +296,26 @@ public:
     Mat temp5;
 };
 
+enum
+{
+    OPTFLOW_USE_INITIAL_FLOW = CV_LKFLOW_INITIAL_GUESSES,
+    OPTFLOW_LK_GET_MIN_EIGENVALS = CV_LKFLOW_GET_MIN_EIGENVALS,
+    OPTFLOW_FARNEBACK_GAUSSIAN = 256
+};
 
-enum { OPTFLOW_USE_INITIAL_FLOW=4, OPTFLOW_FARNEBACK_GAUSSIAN=256 };
+//! constructs a pyramid which can be used as input for calcOpticalFlowPyrLK
+CV_EXPORTS_W int buildOpticalFlowPyramid(InputArray img, OutputArrayOfArrays pyramid,
+                                         Size winSize, int maxLevel, bool withDerivatives = true,
+                                         int pyrBorder = BORDER_REFLECT_101, int derivBorder = BORDER_CONSTANT,
+                                         bool tryReuseInputImage = true);
 
 //! computes sparse optical flow using multi-scale Lucas-Kanade algorithm
 CV_EXPORTS_W void calcOpticalFlowPyrLK( InputArray prevImg, InputArray nextImg,
                            InputArray prevPts, CV_OUT InputOutputArray nextPts,
                            OutputArray status, OutputArray err,
                            Size winSize=Size(21,21), int maxLevel=3,
-                           TermCriteria criteria=TermCriteria(
-                            TermCriteria::COUNT+TermCriteria::EPS,
-                            30, 0.01),
-                           double derivLambda=0.5,
-                           int flags=0,
-                           double minEigThreshold=1e-4);
+                           TermCriteria criteria=TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 30, 0.01),
+                           int flags=0, double minEigThreshold=1e-4);
 
 //! computes dense optical flow using Farneback algorithm
 CV_EXPORTS_W void calcOpticalFlowFarneback( InputArray prev, InputArray next,
@@ -335,7 +326,46 @@ CV_EXPORTS_W void calcOpticalFlowFarneback( InputArray prev, InputArray next,
 // that maps one 2D point set to another or one image to another.
 CV_EXPORTS_W Mat estimateRigidTransform( InputArray src, InputArray dst,
                                          bool fullAffine);
-    
+
+//! computes dense optical flow using Simple Flow algorithm
+CV_EXPORTS_W void calcOpticalFlowSF(Mat& from,
+                                    Mat& to,
+                                    Mat& flow,
+                                    int layers,
+                                    int averaging_block_size,
+                                    int max_flow);
+
+CV_EXPORTS_W void calcOpticalFlowSF(Mat& from,
+                                    Mat& to,
+                                    Mat& flow,
+                                    int layers,
+                                    int averaging_block_size,
+                                    int max_flow,
+                                    double sigma_dist,
+                                    double sigma_color,
+                                    int postprocess_window,
+                                    double sigma_dist_fix,
+                                    double sigma_color_fix,
+                                    double occ_thr,
+                                    int upscale_averaging_radius,
+                                    double upscale_sigma_dist,
+                                    double upscale_sigma_color,
+                                    double speed_up_thr);
+
+class CV_EXPORTS DenseOpticalFlow : public Algorithm
+{
+public:
+    virtual void calc(InputArray I0, InputArray I1, InputOutputArray flow) = 0;
+    virtual void collectGarbage() = 0;
+};
+
+// Implementation of the Zach, Pock and Bischof Dual TV-L1 Optical Flow method
+//
+// see reference:
+//   [1] C. Zach, T. Pock and H. Bischof, "A Duality Based Approach for Realtime TV-L1 Optical Flow".
+//   [2] Javier Sanchez, Enric Meinhardt-Llopis and Gabriele Facciolo. "TV-L1 Optical Flow Estimation".
+CV_EXPORTS Ptr<DenseOpticalFlow> createOptFlow_DualTVL1();
+
 }
 
 #endif

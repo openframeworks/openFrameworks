@@ -49,13 +49,11 @@
 
 - (void)receivedRotate:(NSNotification*)notification;
 
-#ifdef __IPHONE_4_3
 - (BOOL)createExternalWindowWithPreferredMode;
 - (BOOL)createExternalWindowWithScreenModeIndex:(NSInteger)screenModeIndex;
 - (BOOL)destroyExternalWindow;
 - (BOOL)displayOnScreenWithIndex:(NSInteger)screenIndex
               andScreenModeIndex:(NSInteger)screenModeIndex;
-#endif
 
 @end
 

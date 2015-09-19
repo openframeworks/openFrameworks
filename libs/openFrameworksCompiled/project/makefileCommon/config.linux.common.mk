@@ -24,9 +24,11 @@ endif
 
 #check if gtk exists and add it
 ifeq ($(CROSS_COMPILING),1)
-	HAS_SYSTEM_GTK = $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gtk+-2.0 --exists; echo $$?)
+	HAS_SYSTEM_GTK3 = $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gtk+-3.0 --exists; echo $$?)
+	HAS_SYSTEM_GTK2 = $(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config gtk+-2.0 --exists; echo $$?)
 else
-	HAS_SYSTEM_GTK = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
+	HAS_SYSTEM_GTK3 = $(shell pkg-config gtk+-3.0 --exists; echo $$?)
+	HAS_SYSTEM_GTK2 = $(shell pkg-config gtk+-2.0 --exists; echo $$?)
 endif
 
 #check if mpg123 exists and add it
@@ -74,7 +76,10 @@ endif
 PLATFORM_DEFINES =
 
 # add OF_USING_GTK define IF we have it defined as a system library
-ifeq ($(HAS_SYSTEM_GTK),0)
+ifeq ($(HAS_SYSTEM_GTK2),0)
+    PLATFORM_DEFINES += OF_USING_GTK
+endif
+ifeq ($(HAS_SYSTEM_GTK3),0)
     PLATFORM_DEFINES += OF_USING_GTK
 endif
 
@@ -111,7 +116,45 @@ PLATFORM_REQUIRED_ADDONS =
 ################################################################################
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS = -Wall 
+# find out version of gcc:
+# < 4.7.x  c++0x
+# >= 4.7.x c++11
+# >= 4.9.x c++14
+# other compilers c++11 by now
+ifeq ($(CXX),g++)
+	GCC_MAJOR_EQ_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \= 4)
+	GCC_MAJOR_GT_4 := $(shell expr `gcc -dumpversion | cut -f1 -d.` \> 4)
+	GCC_MINOR_GTEQ_7 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \<= 7)
+	GCC_MINOR_GTEQ_9 := $(shell expr `gcc -dumpversion | cut -f2 -d.` \>= 9)
+	ifeq ("$(GCC_MAJOR_EQ_4)","1")
+		ifeq ("$(GCC_MINOR_GTEQ_7)","1")
+			PLATFORM_CFLAGS = -Wall -std=c++0x -DHAS_TLS=0
+		else
+			ifeq ("$(GCC_MINOR_GTEQ_9)","1")
+				PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
+			else
+				PLATFORM_CFLAGS = -Wall -std=c++11
+			endif
+		endif
+	endif
+	ifeq ("$(GCC_MAJOR_GT_4)","1")
+		PLATFORM_CFLAGS = -Wall -std=c++14 -D_GLIBCXX_USE_CXX11_ABI=0
+	endif
+else
+	ifeq ($(CXX),g++-5)
+		PLATFORM_CFLAGS = -Wall -std=c++14 -D_GLIBCXX_USE_CXX11_ABI=0 -DGCC_HAS_REGEX
+	else
+	    ifeq ($(CXX),g++-4.9)
+		    PLATFORM_CFLAGS = -Wall -std=c++14 -DGCC_HAS_REGEX
+	    else
+	        ifeq ($(CXX),g++-4.8)
+		        PLATFORM_CFLAGS = -Wall -std=c++11
+	        else
+	            PLATFORM_CFLAGS = -Wall -std=c++11
+	        endif
+	    endif
+	endif
+endif
 
 
 ################################################################################
@@ -142,11 +185,23 @@ PLATFORM_LDFLAGS = -Wl,-rpath=./libs:./bin/libs -Wl,--as-needed -Wl,--gc-section
 #   Note: Leave a leading space when adding list items with the += operator
 ################################################################################
 
-# RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+ifndef PROJECT_OPTIMIZATION_CFLAGS_RELEASE
+	# RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
+	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -O3 -DNDEBUG
+	
+	ifneq ($(LINUX_ARM),1)
+		PLATFORM_OPTIMIZATION_CFLAGS_RELEASE += -march=native -mtune=native
+	endif
+else
+	PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = $(PROJECT_OPTIMIZATION_CFLAGS_RELEASE)
+endif
 
-# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+ifndef PROJECT_OPTIMIZATION_CFLAGS_DEBUG
+	# DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
+	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
+else
+	PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = $(PROJECT_OPTIMIZATION_CFLAGS_DEBUG)
+endif
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -173,6 +228,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 
 ifeq ($(LINUX_ARM),1)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/app/ofAppGlutWindow.cpp
@@ -182,7 +238,9 @@ endif
 
 # third party
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glew/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/cairo/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glu/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/CppUnit
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/include/Poco/%
@@ -193,6 +251,9 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/freetype/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/FreeImage/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/assimp/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/glut/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/%
 
 ifeq ($(USE_FMOD),0)
 	PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/fmodex/%
@@ -235,24 +296,36 @@ PLATFORM_LIBRARIES =
 
 ifneq ($(LINUX_ARM),1)
 	PLATFORM_LIBRARIES += glut
+	
+	#PLATFORM_LIBRARIES += gstgl-1.0 
+	#PLATFORM_LIBRARIES += SM 
+	#PLATFORM_LIBRARIES += ICE
 endif
 ifneq ($(PLATFORM_ARCH),armv6l)
     PLATFORM_LIBRARIES += X11 
     PLATFORM_LIBRARIES += Xrandr
     PLATFORM_LIBRARIES += Xxf86vm 
     PLATFORM_LIBRARIES += Xi 
+    PLATFORM_LIBRARIES += Xcursor 
     PLATFORM_LIBRARIES += dl 
     PLATFORM_LIBRARIES += pthread
 endif
     
 PLATFORM_LIBRARIES += freeimage
+PLATFORM_LIBRARIES += rtaudio
+PLATFORM_LIBRARIES += boost_filesystem
+PLATFORM_LIBRARIES += boost_system
 
 #static libraries (fully qualified paths)
 PLATFORM_STATIC_LIBRARIES =
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+#PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoMongoDB.a
+#PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoDataSQLite.a
+#PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoData.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoJSON.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
 
@@ -261,39 +334,41 @@ PLATFORM_SHARED_LIBRARIES =
 
 #openframeworks core third party
 
-#ifneq ($(CROSS_COMPILING),1)
-	PLATFORM_PKG_CONFIG_LIBRARIES =
-	PLATFORM_PKG_CONFIG_LIBRARIES += cairo
-	PLATFORM_PKG_CONFIG_LIBRARIES += zlib
-	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
-	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
-	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
-	PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-$(GST_VERSION)
-	PLATFORM_PKG_CONFIG_LIBRARIES += libudev
-	PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
-	PLATFORM_PKG_CONFIG_LIBRARIES += fontconfig
-	PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
-	PLATFORM_PKG_CONFIG_LIBRARIES += openal
-	PLATFORM_PKG_CONFIG_LIBRARIES += openssl
-	PLATFORM_PKG_CONFIG_LIBRARIES += libpulse-simple
-	PLATFORM_PKG_CONFIG_LIBRARIES += alsa
+PLATFORM_PKG_CONFIG_LIBRARIES =
+PLATFORM_PKG_CONFIG_LIBRARIES += cairo
+PLATFORM_PKG_CONFIG_LIBRARIES += zlib
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-app-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-video-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += gstreamer-base-$(GST_VERSION)
+PLATFORM_PKG_CONFIG_LIBRARIES += libudev
+PLATFORM_PKG_CONFIG_LIBRARIES += freetype2
+PLATFORM_PKG_CONFIG_LIBRARIES += fontconfig
+PLATFORM_PKG_CONFIG_LIBRARIES += sndfile
+PLATFORM_PKG_CONFIG_LIBRARIES += openal
+PLATFORM_PKG_CONFIG_LIBRARIES += openssl
+PLATFORM_PKG_CONFIG_LIBRARIES += libpulse-simple
+PLATFORM_PKG_CONFIG_LIBRARIES += alsa
 
-	ifneq ($(LINUX_ARM),1)
-		PLATFORM_PKG_CONFIG_LIBRARIES += gl
-		PLATFORM_PKG_CONFIG_LIBRARIES += glu
-		PLATFORM_PKG_CONFIG_LIBRARIES += glew
-	endif
-	
-	# conditionally add GTK
-	ifeq ($(HAS_SYSTEM_GTK),0)
+ifneq ($(LINUX_ARM),1)
+	PLATFORM_PKG_CONFIG_LIBRARIES += gl
+	PLATFORM_PKG_CONFIG_LIBRARIES += glu
+	PLATFORM_PKG_CONFIG_LIBRARIES += glew
+endif
+
+# conditionally add GTK
+ifeq ($(HAS_SYSTEM_GTK3),0)
+    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-3.0
+else
+	ifeq ($(HAS_SYSTEM_GTK2),0)
 	    PLATFORM_PKG_CONFIG_LIBRARIES += gtk+-2.0
 	endif
-	
-	# conditionally add mpg123
-	ifeq ($(HAS_SYSTEM_MPG123),0)
-	    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
-	endif
-#endif
+endif
+
+# conditionally add mpg123
+ifeq ($(HAS_SYSTEM_MPG123),0)
+    PLATFORM_PKG_CONFIG_LIBRARIES += libmpg123
+endif
 
 ################################################################################
 # PLATFORM LIBRARY SEARCH PATHS

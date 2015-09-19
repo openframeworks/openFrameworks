@@ -32,11 +32,19 @@ ofxCvGrayscaleImage::ofxCvGrayscaleImage( const ofxCvGrayscaleImage& _mom ) {
 void ofxCvGrayscaleImage::init() {
     ipldepth = IPL_DEPTH_8U;
     iplchannels = 1;
-    gldepth = GL_UNSIGNED_BYTE;
-    glchannels = GL_LUMINANCE;
     briConLutMatrix = cvCreateMat(1,256,CV_8UC1);
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::allocateTexture(){
+	tex.allocate(pixels);
+	tex.setRGToRGBASwizzles(true);
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvGrayscaleImage::allocatePixels(int w, int h){
+	pixels.allocate(w,h,OF_PIXELS_GRAY);
+}
 
 // Set Pixel Data - Arrays
 //-------------------------------------------------------------------------------------
@@ -117,8 +125,8 @@ void ofxCvGrayscaleImage::setRoiFromPixels( const unsigned char* _pixels, int w,
 }
 
 //--------------------------------------------------------------------------------
-void ofxCvGrayscaleImage::operator = ( unsigned char* _pixels ) {
-    setFromPixels( _pixels, width, height );
+void ofxCvGrayscaleImage::operator = ( const ofPixels & _pixels ) {
+    setFromPixels( _pixels);
 }
 
 //--------------------------------------------------------------------------------
@@ -249,11 +257,11 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
                                    ofxCvGrayscaleImage& dad ) {
 
 	if( !mom.bAllocated ){
-		ofLogError("ofxCvGrayscaleImage") << "absDiff(): source image mom not allocated";	
+		ofLogError("ofxCvGrayscaleImage") << "absDiff(): first source image (mom) not allocated";
 		return;	
 	}
 	if( !dad.bAllocated ){
-		ofLogError("ofxCvGrayscaleImage") << "absDiff(): source image dad not allocated";
+		ofLogError("ofxCvGrayscaleImage") << "absDiff(): second source image (dad) not allocated";
 		return;	
 	}	
 	if( !bAllocated ){
@@ -271,7 +279,7 @@ void ofxCvGrayscaleImage::absDiff( ofxCvGrayscaleImage& mom,
         cvAbsDiff( mom.getCvImage(), dad.getCvImage(), cvImage );
         flagImageChanged();
     } else {
-        ofLogError("ofxCvGrayscaleImage") << "absDiff(): source image size mismatch between mom & dad";
+        ofLogError("ofxCvGrayscaleImage") << "absDiff(): source image size mismatch between first (mom) & second (dad) image";
     }
 
 }

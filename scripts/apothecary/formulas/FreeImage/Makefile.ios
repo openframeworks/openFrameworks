@@ -1,0 +1,34 @@
+# Configuration for  iOS, making static libs
+# this will generate target architecures set via exports in oF Apothecary
+
+include Makefile.srcs
+
+ACFLAGS=-MMD -MT -MF $(INCLUDE)
+FCFLAGS=$(CFLAGS) $(ACFLAGS)
+FCXXFLAGS=$(CXXFLAGS) $(CFLAGS) $(ACFLAGS)
+
+
+.SUFFIXES: .o-$(ARCH)
+MODULES_IOS = $(SRCS:.c=.o-$(ARCH))
+MODULES_IOS := $(MODULES_IOS:.cpp=.o-$(ARCH))
+
+default: all
+
+all: dist
+
+dist: FreeImage
+	cp Source/FreeImage.h Dist
+
+FreeImage: $(TARGET_NAME)
+
+.c.o-$(ARCH):
+	$(CC) $(FCFLAGS) -c $< -o $@
+
+.cpp.o-$(ARCH):
+	$(CXX) $(FCXXFLAGS) -c $< -o $@
+
+$(TARGET_NAME): $(MODULES_IOS)
+	$(LIBTOOL) -arch_only $(ARCH) -o $@ $(MODULES_IOS)
+
+clean:
+	rm -f core Dist/*.* u2dtmp* $(MODULES_IOS)

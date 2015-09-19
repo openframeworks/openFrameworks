@@ -32,9 +32,8 @@
 #pragma once
 
 #include "ofMain.h"
-#include "libfreenect.h"
 
-#include "ofxBase3DVideo.h"
+#include "libfreenect.h"
 
 #if defined(_MSC_VER) || defined(_WIN32) || defined(WIN32) || defined(__MINGW32__)
     // do windows stuff
@@ -42,6 +41,9 @@
     // mac and linux need this
     #include <libusb.h>
 #endif
+
+
+#include "ofxBase3DVideo.h"
 
 class ofxKinectContext;
 
@@ -83,11 +85,11 @@ public:
 
 	/// open the connection and start grabbing images
 	///
-	/// set the id to choose a kinect, see numAvailableDevices()
-	/// if you don't set the id (ie id=-1), the first available kinect will be used
+	/// set the deviceIndex to choose a kinect, see numAvailableDevices()
+	/// if you don't set the index (ie index=-1), the first available kinect will be used
 	///
-	/// note: this is the freenct bus id and may change each time the app is run
-	bool open(int id=-1);
+	/// note: this has changed so that a deviceIndex of 0 will also open the same device, regardless of the order in which it was plugged in
+	bool open(int deviceIndex=-1);
 	
 	/// open using a kinect unique serial number
 	///
@@ -99,12 +101,16 @@ public:
 	void close();
 
 	/// is the connection currently open?
-	bool isConnected();
+	bool isConnected() const;
+	bool isInitialized() const;
 
 	/// is the current frame new?
-	bool isFrameNew();
-	bool isFrameNewVideo();
-	bool isFrameNewDepth();
+	bool isFrameNew() const;
+	bool isFrameNewVideo() const;
+	bool isFrameNewDepth() const;
+
+	bool setPixelFormat(ofPixelFormat pixelFormat);
+	ofPixelFormat getPixelFormat() const;
 
 	/// updates the pixel buffers and textures
 	///
@@ -114,14 +120,14 @@ public:
 /// \section Depth Data
 
 	/// get the calulated distance for a depth point
-	float getDistanceAt(int x, int y);
-	float getDistanceAt(const ofPoint & p);
+	float getDistanceAt(int x, int y) const;
+	float getDistanceAt(const ofPoint & p) const;
 
 	/// calculates the coordinate in the world for the depth point (perspective calculation)
 	///
 	/// center of image is (0.0)
-	ofVec3f getWorldCoordinateAt(int cx, int cy);
-	ofVec3f getWorldCoordinateAt(float cx, float cy, float wz);
+	ofVec3f getWorldCoordinateAt(int cx, int cy) const;
+	ofVec3f getWorldCoordinateAt(float cx, float cy, float wz) const;
 
 /// \section Intrinsic IR Sensor Parameters
 
@@ -131,54 +137,54 @@ public:
 	/// they could also be useful for real world accurate point clouds ... weee!
 	
 	/// get the distance between the IR sensor and IR emitter in cm
-	float getSensorEmitterDistance();
+	float getSensorEmitterDistance() const;
 	
 	/// get the distance between the IR sensor and the RGB camera in cm
-	float getSensorCameraDistance();
+	float getSensorCameraDistance() const;
 	
 	/// get the size of a single pixel on the zero plane in mm
-	float getZeroPlanePixelSize();
+	float getZeroPlanePixelSize() const;
 	
 	/// get the focal length of the IR sensor in mm
-	float getZeroPlaneDistance();
+	float getZeroPlaneDistance() const;
 
 /// \section RGB Data
 
 	/// get the RGB value for a depth point
 	///
 	/// see setRegistration() for calibrated depth->RGB points
-	ofColor getColorAt(int x, int y);
-	ofColor getColorAt(const ofPoint & p);
+	ofColor getColorAt(int x, int y) const;
+	ofColor getColorAt(const ofPoint & p) const;
 
 /// \section Pixel Data
 
-	/// get the pixels of the most recent rgb frame
+	/// get the video pixels reference
 	///
 	/// see setRegistration() for a calibrated depth->RGB image
-	unsigned char* getPixels();
+	ofPixels & getPixels();
+	const ofPixels & getPixels() const;
 
 	/// get the pixels of the most recent depth frame
-	unsigned char* getDepthPixels();       ///< grayscale values
-	unsigned short* getRawDepthPixels();   ///< raw 11 bit values
+	ofPixels & getDepthPixels();       	///< grayscale values
+	const ofPixels & getDepthPixels() const;       	///< grayscale values
+	ofShortPixels & getRawDepthPixels();	///< raw 11 bit values
+	const ofShortPixels & getRawDepthPixels() const;	///< raw 11 bit values
 
 	/// get the distance in millimeters to a given point as a float array
-	float* getDistancePixels();
-
-	/// get the video pixels reference
-	ofPixels & getPixelsRef();
-
-	/// get the pixels of the most recent depth frame
-	ofPixels & getDepthPixelsRef();       	///< grayscale values
-	ofShortPixels & getRawDepthPixelsRef();	///< raw 11 bit values
-
-	/// get the distance in millimeters to a given point as a float array
-	ofFloatPixels & getDistancePixelsRef();
+	ofFloatPixels & getDistancePixels();
+	const ofFloatPixels & getDistancePixels() const;
 
 	/// get the video (ir or rgb) texture
-	ofTexture& getTextureReference();
+	ofTexture& getTexture();
+	const ofTexture& getTexture() const;
+	OF_DEPRECATED_MSG("Use getTexture() instead", ofTexture& getTextureReference());
+	OF_DEPRECATED_MSG("Use getTexture() instead", const ofTexture& getTextureReference() const);
 
 	/// get the grayscale depth texture
-	ofTexture& getDepthTextureReference();
+	ofTexture& getDepthTexture();
+	const ofTexture& getDepthTexture() const;
+	OF_DEPRECATED_MSG("Use getDepthTexture() instead", ofTexture& getDepthTextureReference());
+	OF_DEPRECATED_MSG("Use getDepthTexture() instead", const ofTexture& getDepthTextureReference() const);
 
 /// \section Grayscale Depth Value
 
@@ -187,7 +193,7 @@ public:
 	/// bEnabled = true:  pixels closer to the camera are brighter (default)
 	/// bEnabled = false: pixels closer to the camera are darker
 	void enableDepthNearValueWhite(bool bEnabled=true);
-	bool isDepthNearValueWhite();
+	bool isDepthNearValueWhite() const;
 
 	/// set the clipping planes for the depth calculations in millimeters
 	///
@@ -197,17 +203,17 @@ public:
 	/// default is 50cm - 4m
 	/// note: you won't get any data < 50cm and distances > 4m start to get noisy
 	void setDepthClipping(float nearClip=500, float farClip=4000);
-	float getNearClipping();
-	float getFarClipping();
+	float getNearClipping() const;
+	float getFarClipping() const;
 
 /// \section Query Capabilities
 
 	/// check for device capabilites ...
 	/// motor, led, or accelerometer control isn't currently supported 
 	/// by libfreenect with newer Kinect models (> 1414)
-	bool hasAccelControl();
-	bool hasCamTiltControl();
-	bool hasLedControl();
+	bool hasAccelControl() const;
+	bool hasCamTiltControl() const;
+	bool hasLedControl() const;
 
 /// \section Accelerometer Data
 
@@ -216,7 +222,7 @@ public:
 	/// ... yes, the kinect has an accelerometer
 	
 	/// raw axis values
-	ofPoint getRawAccel();
+	ofPoint getRawAccel() const;
 	
 	/// axis-based gravity adjusted accelerometer values
 	///
@@ -226,14 +232,14 @@ public:
 	///
 	/// http://www.kionix.com/Product%20Sheets/KXSD9%20Product%20Brief.pdf
 	///
-	ofPoint getMksAccel();
+	ofPoint getMksAccel() const;
 
     /// get the current pitch (x axis) & roll (z axis) of the kinect in degrees
     ///
     /// useful to correct the 3d scene based on the camera inclination
     ///
-	float getAccelPitch();
-	float getAccelRoll();
+	float getAccelPitch() const;
+	float getAccelRoll() const;
 
 /// \section Camera Tilt Motor
 
@@ -242,10 +248,10 @@ public:
 	bool setCameraTiltAngle(float angleInDegrees);
 
 	/// get the current angle
-	float getCurrentCameraTiltAngle();
+	float getCurrentCameraTiltAngle() const;
 
 	/// get the target angle (if the camera is currently moving)
-	float getTargetCameraTiltAngle();
+	float getTargetCameraTiltAngle() const;
         
 /// \section LED
     
@@ -267,37 +273,38 @@ public:
 
 	/// enable/disable frame loading into textures on update()
 	void setUseTexture(bool bUse);
+	bool isUsingTexture() const;
 
 	/// draw the video texture
-	void draw(float x, float y, float w, float h);
-	void draw(float x, float y);
-	void draw(const ofPoint& point);
-	void draw(const ofRectangle& rect);
+	void draw(float x, float y, float w, float h) const;
+	void draw(float x, float y) const;
+	void draw(const ofPoint& point) const;
+	void draw(const ofRectangle& rect) const;
 
 	/// draw the grayscale depth texture
-	void drawDepth(float x, float y, float w, float h);
-	void drawDepth(float x, float y);
-	void drawDepth(const ofPoint& point);
-	void drawDepth(const ofRectangle& rect);
+	void drawDepth(float x, float y, float w, float h) const;
+	void drawDepth(float x, float y) const;
+	void drawDepth(const ofPoint& point) const;
+	void drawDepth(const ofRectangle& rect) const;
 
 /// \section Util
 
 	/// get the device id
 	/// returns -1 if not connected
-	int getDeviceId();
+	int getDeviceId() const;
 	
 	/// get the unique serial number
 	/// returns an empty string "" if not connected
 	///
 	/// NOTE: currently, libfreenect returns a serial number with all 0s for
 	/// kinect models > 1414, so this will only work with the original xbox kinect
-	string getSerial();
+	string getSerial() const;
 
 	/// static kinect image size
 	const static int width = 640;
 	const static int height = 480;
-	float getHeight();
-	float getWidth();
+	float getHeight() const;
+	float getWidth() const;
 
 /// \section Static global kinect context functions
 
@@ -387,6 +394,7 @@ private:
 
 	bool bIsVideoInfrared;  ///< is the video image infrared or RGB?
 	int videoBytesPerPixel; ///< how many bytes per pixel in the video image
+	ofPixelFormat pixelFormat;
 
 	/// libfreenect callbacks
 	static void grabDepthFrame(freenect_device* dev, void* depth, uint32_t timestamp);
@@ -462,6 +470,14 @@ public:
 	/// get the deviceList index from an id
 	/// returns -1 if not found
 	int getDeviceIndex(string serial);
+
+	/// get the deviceList id from an index
+	/// returns -1 if not found
+    int getDeviceId(int index);
+
+	/// get the deviceList id from a serial
+	/// returns -1 if not found
+    int getDeviceId(string serial);
 
 	/// is a device with this id already connected?
 	bool isConnected(int id);

@@ -24,8 +24,7 @@
 * either License.
 */
 
-#ifndef LIBUSBEMU_THREAD_INTERFACE_WRAPPER_H
-#define LIBUSBEMU_THREAD_INTERFACE_WRAPPER_H
+#pragma once
 
 // Wrappers for platform-specific thread/synchronization objects:
 // * Thread
@@ -56,6 +55,4 @@ struct RAIIMutex
   ~RAIIMutex() { m_mutex.Leave(); }
 };
 
-};
-
-#endif//LIBUSBEMU_THREAD_INTERFACE_WRAPPER_H
+}

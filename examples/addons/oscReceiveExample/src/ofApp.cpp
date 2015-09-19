@@ -29,8 +29,8 @@ void ofApp::update(){
 	while(receiver.hasWaitingMessages()){
 		// get the next message
 		ofxOscMessage m;
-		receiver.getNextMessage(&m);
-
+		receiver.getNextMessage(m);
+        
 		// check for mouse moved message
 		if(m.getAddress() == "/mouse/position"){
 			// both the arguments are int32's
@@ -42,6 +42,11 @@ void ofApp::update(){
 			// the single argument is a string
 			mouseButtonState = m.getArgAsString(0);
 		}
+        // check for an image being sent (note: the size of the image depends greatly on your network buffer sizes - if an image is too big the message won't come through ) 
+        else if(m.getAddress() == "/image" ){
+            ofBuffer buffer = m.getArgAsBlob(0);
+            receivedImage.load(buffer);
+        }
 		else{
 			// unrecognized message: display on the bottom of the screen
 			string msg_string;
@@ -83,6 +88,11 @@ void ofApp::draw(){
 	string buf;
 	buf = "listening for osc messages on port" + ofToString(PORT);
 	ofDrawBitmapString(buf, 10, 20);
+    
+    if(receivedImage.getWidth() > 0){
+        ofDrawBitmapString("Image:", 10, 160);
+        receivedImage.draw(10, 180);
+    }
 
 	// draw mouse state
 	buf = "mouse: " + ofToString(mouseX, 4) +  " " + ofToString(mouseY, 4);
@@ -123,6 +133,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

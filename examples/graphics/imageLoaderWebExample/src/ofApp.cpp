@@ -7,13 +7,13 @@ void ofApp::setup(){
 	ofRegisterURLNotification(this);
 	
 	//to load synchronously
-	//image.loadImage("http://blah.com/img.jpg");
+	//image.load("http://blah.com/img.jpg");
 }
 
 //--------------------------------------------------------------
 void ofApp::urlResponse(ofHttpResponse & response){
 	if(response.status==200 && response.request.name == "tsingy_forest"){
-		img.loadImage(response.data);
+		img.load(response.data);
 		loading=false;
 	}else{
 		cout << response.status << " " << response.error << endl;
@@ -35,13 +35,13 @@ void ofApp::draw(){
 		ofDrawBitmapString("loading...", 10, ofGetHeight()+20);
 	float divider = ofMap( mouseX, 0, ofGetWidth(), 1, 48, true );
 	
-	if(img.bAllocated()){
+	if(img.isAllocated()){
 		for(int y = 0; y < img.getHeight(); y+= divider){
 			for(int x = 0; x < img.getWidth(); x+=divider){
 				ofColor c = img.getColor(x, y);
 				
 				ofSetColor( c.r, c.g, c.b );
-				ofCircle( x, y, divider/2 );
+				ofDrawCircle( x, y, divider/2 );
 			}
 		}
 		
@@ -84,6 +84,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

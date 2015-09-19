@@ -221,7 +221,7 @@ void ofApp::draw(){
 		for (int i = 0; i < nCurveVertices; i++){
 			if (curveVertices[i].bOver == true) ofFill();
 			else ofNoFill();
-			ofCircle(curveVertices[i].x, curveVertices[i].y,4);
+			ofDrawCircle(curveVertices[i].x, curveVertices[i].y,4);
 		}
 	ofDisableAlphaBlending();
 	//-------------------------------------
@@ -258,10 +258,10 @@ void ofApp::draw(){
 	ofEnableAlphaBlending();
 		ofFill();
 		ofSetColor(0,0,0,40);
-		ofCircle(x0,y0,4);
-		ofCircle(x1,y1,4);
-		ofCircle(x2,y2,4);
-		ofCircle(x3,y3,4);
+		ofDrawCircle(x0,y0,4);
+		ofDrawCircle(x1,y1,4);
+		ofDrawCircle(x2,y2,4);
+		ofDrawCircle(x3,y3,4);
 	ofDisableAlphaBlending();
 	
 	
@@ -275,7 +275,7 @@ void ofApp::draw(){
 	//
 	ofFill();
 	ofSetHexColor(0xd3ffd3);
-	ofRect(80,480,140,70);
+	ofDrawRectangle(80,480,140,70);
 	ofSetHexColor(0xff00ff);
 	
 	ofBeginShape();

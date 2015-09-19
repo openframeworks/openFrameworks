@@ -61,7 +61,7 @@ class ofxAssimpModelLoader{
         void setRotation(int which, float angle, float rot_x, float rot_y, float r_z);
 
         // Scale the model to the screen automatically.
-        void setScaleNomalization(bool normalize);
+        void setScaleNormalization(bool normalize);
         void setNormalizationFactor(float factor);
 
         vector<string> getMeshNames();
@@ -120,8 +120,9 @@ class ofxAssimpModelLoader{
         void updateBones();
         void updateModelMatrix();
     
-        // the main Asset Import scene that does the magic.
-        const aiScene * scene;
+        // ai scene setup
+        unsigned int initImportProperties(bool optimize);
+        bool processScene();
 
         // Initial VBO creation, etc
         void loadGLResources();
@@ -132,16 +133,16 @@ class ofxAssimpModelLoader{
         // updates the *actual GL resources* for the current animation
         void updateGLResources();
     
-        void getBoundingBoxWithMinVector(struct aiVector3D* min, struct aiVector3D* max);
-        void getBoundingBoxForNode(const struct aiNode* nd,  struct aiVector3D* min, struct aiVector3D* max, struct aiMatrix4x4* trafo);
+        void getBoundingBoxWithMinVector( aiVector3D* min, aiVector3D* max);
+        void getBoundingBoxForNode(const ofxAssimpMeshHelper & mesh,  aiVector3D* min, aiVector3D* max);
 
         ofFile file;
-        
+
         aiVector3D scene_min, scene_max, scene_center;
-    
+
         bool normalizeScale;
-        double normalizedScale;    
-        
+        double normalizedScale;
+
         vector<float> rotAngle;
         vector<ofPoint> rotAxis;
         ofPoint scale;
@@ -149,7 +150,7 @@ class ofxAssimpModelLoader{
         ofMatrix4x4 modelMatrix;
 
         vector<ofLight> lights;
-        vector<ofxAssimpTexture *> textures;
+        vector<ofxAssimpTexture> textures;
         vector<ofxAssimpMeshHelper> modelMeshes;
         vector<ofxAssimpAnimation> animations;
         int currentAnimation; // DEPRECATED - to be removed with deprecated animation functions.
@@ -159,4 +160,8 @@ class ofxAssimpModelLoader{
         bool bUsingColors;
         bool bUsingMaterials;
         float normalizeFactor;
+
+        // the main Asset Import scene that does the magic.
+        shared_ptr<const aiScene> scene;
+        shared_ptr<aiPropertyStore> store; 
 };

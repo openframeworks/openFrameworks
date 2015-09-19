@@ -87,7 +87,7 @@ void ofApp::draw() {
     
 
     ofSetColor(0);
-    ofRect(0, 0, 250, 90);
+    ofDrawRectangle(0, 0, 250, 90);
     ofSetColor(255);
     ofDrawBitmapString("Mode "+ofToString(mode), 20, 20);
     ofDrawBitmapString("FPS "+ofToString(ofGetFrameRate(), 0), 20, 40);
@@ -145,6 +145,16 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
     
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

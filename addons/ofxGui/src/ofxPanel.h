@@ -7,11 +7,11 @@ class ofxGuiGroup;
 class ofxPanel : public ofxGuiGroup {
 public:
 	ofxPanel();
-	ofxPanel(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
+	ofxPanel(const ofParameterGroup & parameters, const std::string& filename="settings.xml", float x = 10, float y = 10);
 	~ofxPanel();
 
-	ofxPanel * setup(string collectionName="", string filename="settings.xml", float x = 10, float y = 10);
-	ofxPanel * setup(const ofParameterGroup & parameters, string filename="settings.xml", float x = 10, float y = 10);
+	ofxPanel * setup(const std::string& collectionName="", const std::string& filename="settings.xml", float x = 10, float y = 10);
+	ofxPanel * setup(const ofParameterGroup & parameters, const std::string& filename="settings.xml", float x = 10, float y = 10);
 
 	bool mouseReleased(ofMouseEventArgs & args);
 

@@ -39,6 +39,7 @@
 #import <UIKit/UIKit.h>
 #import "ofMain.h"
 #import "ofxiOS.h"
+#import "ofxiOSConstants.h"
 #import "ofAppiOSWindow.h"
 #import "ofxiOSAppDelegate.h"
 #import "ofxiOSEAGLView.h"
@@ -49,34 +50,19 @@
 #include <sys/sysctl.h>
 
 
-enum ofxiOSDeviceType {
-	ofxiOS_DEVICE_IPHONE,
-	ofxiOS_DEVICE_IPODTOUCH,
-	ofxiOS_DEVICE_IPAD,
-    ofxiOS_UNKNOWN_DEVICE
+// this is the new way for getting device info.
+// we can add other parameters later.
+// maybe also methods for checking if device is newer or older than a certain model.
+class ofxiOSDeviceInfo{
+public:
+    ofxiOSDeviceType deviceType;
+    string deviceString;
+    int versionMajor;
+    int versionMinor;
 };
 
+//-------------------------------------------------------------------------------
 
-// possible return values for ofxiOSGetDeviceRevision
-#define ofxiOS_DEVICE_IPHONE_2G		"iPhone1,1"
-#define ofxiOS_DEVICE_IPHONE_3G		"iPhone1,2"
-#define ofxiOS_DEVICE_IPHONE_3GS		"iPhone2,1"
-#define ofxiOS_DEVICE_IPHONE_4		"iPhone3,1"
-
-#define ofxiOS_DEVICE_IPOD_1STGEN	"iPod1,1"
-#define ofxiOS_DEVICE_IPOD_2NDGEN	"iPod2,1"
-#define ofxiOS_DEVICE_IPOD_3RDGEN	"iPod3,1"
-#define ofxiOS_DEVICE_IPOD_4THGEN	"iPod4,1"
-
-#define ofxiOS_DEVICE_IPAD_1STGEN	"iPad1,1"
-
-
-// possible values for iPhoneSetOrientation or iPhoneGetOrientation
-#define ofxiOS_ORIENTATION_PORTRAIT          OF_ORIENTATION_DEFAULT  // UIDeviceOrientationPortrait
-#define ofxiOS_ORIENTATION_UPSIDEDOWN        OF_ORIENTATION_180      // UIDeviceOrientationPortraitUpsideDown
-#define ofxiOS_ORIENTATION_LANDSCAPE_RIGHT   OF_ORIENTATION_90_RIGHT // UIDeviceOrientationLandscapeRight
-#define ofxiOS_ORIENTATION_LANDSCAPE_LEFT    OF_ORIENTATION_90_LEFT  // UIDeviceOrientationLandscapeLeft
- 
 // whether device has audio in
 bool ofxiOSHasAudioIn();
 
@@ -84,10 +70,13 @@ bool ofxiOSHasAudioIn();
 float ofxiOSGetMicAverageLevel();
 
 // return device type
-ofxiOSDeviceType	ofxiOSGetDeviceType();
+ofxiOSDeviceType ofxiOSGetDeviceType();
 
 // return device revision
 string ofxiOSGetDeviceRevision();
+
+// return device revision and type parsd from string
+ofxiOSDeviceInfo ofxiOSGetDeviceInfo();
 
 // return application key UIWindow
 UIWindow *ofxiOSGetUIWindow();
@@ -193,12 +182,9 @@ void ofxiOSLaunchBrowser(string url);
 void ofxiOSSetClipboardString(string clipboardString);
 string ofxiOSGetClipboardString();
 
-//-------------------------------------------------------------------------------
-// backwards compatibility
-//
-
+// backwards compatibility < 0.8.0
 #define ofxiPhoneHasAudioIn ofxiOSHasAudioIn
-#define ofxiPhoneGetMicAverageLevel  ofxiOSGetMicAverageLevel
+#define ofxiPhoneGetMicAverageLevel ofxiOSGetMicAverageLevel
 #define ofxiPhoneGetDeviceType ofxiOSGetDeviceType
 #define ofxiPhoneGetDeviceRevision ofxiOSGetDeviceRevision
 #define ofxiPhoneGetUIWindow ofxiOSGetUIWindow
@@ -228,4 +214,3 @@ string ofxiOSGetClipboardString();
 #define ofxiPhoneLaunchBrowser ofxiOSLaunchBrowser
 #define ofxNSStringToString ofxiOSNSStringToString
 #define ofxStringToNSString ofxiOSStringToNSString
-

@@ -1,5 +1,6 @@
 #include "ofxAndroidSoundPlayer.h"
 #include "ofxAndroidUtils.h"
+#include "ofUtils.h"
 #include "ofLog.h"
 
 //------------------------------------------------------------
@@ -42,7 +43,7 @@ ofxAndroidSoundPlayer::~ofxAndroidSoundPlayer(){
 
 
 //------------------------------------------------------------
-bool ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
+bool ofxAndroidSoundPlayer::load(string fileName, bool stream){
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "loadSound(): java SoundPlayer not loaded";
 		return false;
@@ -62,7 +63,7 @@ bool ofxAndroidSoundPlayer::loadSound(string fileName, bool stream){
 }
 
 //------------------------------------------------------------
-void ofxAndroidSoundPlayer::unloadSound(){
+void ofxAndroidSoundPlayer::unload(){
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "unloadSound(): java SoundPlayer not loaded";
 		return;
@@ -302,7 +303,7 @@ void ofxAndroidSoundPlayer::setPositionMS(int ms){
 }
 
 //------------------------------------------------------------
-float ofxAndroidSoundPlayer::getPosition(){
+float ofxAndroidSoundPlayer::getPosition() const{
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "getPosition(): java SoundPlayer not loaded";
 		return 0;
@@ -323,7 +324,7 @@ float ofxAndroidSoundPlayer::getPosition(){
 }
 
 //------------------------------------------------------------
-int ofxAndroidSoundPlayer::getPositionMS(){
+int ofxAndroidSoundPlayer::getPositionMS() const{
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "getPositionMS(): java SoundPlayer not loaded";
 		return 0;
@@ -345,7 +346,7 @@ int ofxAndroidSoundPlayer::getPositionMS(){
 }
 
 //------------------------------------------------------------
-bool ofxAndroidSoundPlayer::getIsPlaying(){
+bool ofxAndroidSoundPlayer::isPlaying() const{
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "getIsPlaying(): java SoundPlayer not loaded";
 		return 0;
@@ -367,7 +368,7 @@ bool ofxAndroidSoundPlayer::getIsPlaying(){
 }
 
 //------------------------------------------------------------
-float ofxAndroidSoundPlayer::getSpeed(){
+float ofxAndroidSoundPlayer::getSpeed() const{
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "getSpeed(): java SoundPlayer not loaded";
 		return 0;
@@ -389,7 +390,7 @@ float ofxAndroidSoundPlayer::getSpeed(){
 }
 
 //------------------------------------------------------------
-float ofxAndroidSoundPlayer::getPan(){
+float ofxAndroidSoundPlayer::getPan() const{
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "getPan(): java SoundPlayer not loaded";
 		return 0;
@@ -411,7 +412,7 @@ float ofxAndroidSoundPlayer::getPan(){
 }
 
 //------------------------------------------------------------
-bool ofxAndroidSoundPlayer::getIsPaused(){
+bool ofxAndroidSoundPlayer::isPaused() const{
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "getIsPaused(): java SoundPlayer not loaded";
 		return 0;
@@ -432,7 +433,7 @@ bool ofxAndroidSoundPlayer::getIsPaused(){
 
 }
 
-float ofxAndroidSoundPlayer::getVolume(){
+float ofxAndroidSoundPlayer::getVolume() const{
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "getVolume(): java SoundPlayer not loaded";
 		return 0;
@@ -443,7 +444,7 @@ float ofxAndroidSoundPlayer::getVolume(){
 		return 0;
 	}
 
-	jmethodID javaVolumeMethod = env->GetMethodID(javaClass,"getVolume","(V)F");
+	jmethodID javaVolumeMethod = env->GetMethodID(javaClass,"getVolume","()F");
 	if(!javaVolumeMethod){
 		ofLogError("ofxAndroidSoundPlayer") << "getVolume(): couldn't get java getVolume for SoundPlayer";
 		return 0;
@@ -453,7 +454,7 @@ float ofxAndroidSoundPlayer::getVolume(){
 }
 
 
-bool ofxAndroidSoundPlayer::isLoaded(){
+bool ofxAndroidSoundPlayer::isLoaded() const{
 	if(!javaSoundPlayer){
 		ofLogError("ofxAndroidSoundPlayer") << "isLoaded(): java SoundPlayer not loaded";
 		return 0;

@@ -1,71 +1,131 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5837595D-ACA9-485C-8E76-729040CE4B0B}</ProjectGuid>
     <RootNamespace>openframeworksLib</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(ProjectDir)\openFrameworksCommon.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(ProjectDir)\openFrameworksCommon.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(ProjectDir)\openFrameworksCommon.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(ProjectDir)\openFrameworksCommon.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\..\lib\vs\</OutDir>
-    <IntDir>obj\$(Configuration)\</IntDir>
+    <OutDir>..\..\lib\vs\$(Platform)\</OutDir>
+    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_debug</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\..\lib\vs\$(Platform)\</OutDir>
+    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\..\lib\vs\</OutDir>
-    <IntDir>obj\$(Configuration)\</IntDir>
+    <OutDir>..\..\lib\vs\$(Platform)\</OutDir>
+    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\..\lib\vs\$(Platform)\</OutDir>
+    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\openFrameworks;..\..\..\openFrameworks\graphics;..\..\..\openFrameworks\app;..\..\..\openFrameworks\sound;..\..\..\openFrameworks\utils;..\..\..\openFrameworks\communication;..\..\..\openFrameworks\video;..\..\..\openFrameworks\types;..\..\..\openFrameworks\math;..\..\..\openFrameworks\3d;..\..\..\openFrameworks\gl;..\..\..\openFrameworks\events;..\..\..\glut\include;..\..\..\rtAudio\include;..\..\..\quicktime\include;..\..\..\freetype\include;..\..\..\freetype\include\freetype2;..\..\..\freeImage\include;..\..\..\fmodex\include;..\..\..\videoInput\include;..\..\..\glew\include\;..\..\..\glu\include;..\..\..\tess2\include;..\..\..\cairo\include\cairo;..\..\..\poco\include;..\..\..\glfw\include;..\..\..\gl\include;..\..\..\openssl\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\openFrameworks;..\..\..\openFrameworks\graphics;..\..\..\openFrameworks\app;..\..\..\openFrameworks\sound;..\..\..\openFrameworks\utils;..\..\..\openFrameworks\communication;..\..\..\openFrameworks\video;..\..\..\openFrameworks\types;..\..\..\openFrameworks\math;..\..\..\openFrameworks\3d;..\..\..\openFrameworks\gl;..\..\..\openFrameworks\events;..\..\..\glut\include;..\..\..\rtAudio\include;..\..\..\quicktime\include;..\..\..\freetype\include;..\..\..\freetype\include\freetype2;..\..\..\freeImage\include;..\..\..\fmodex\include;..\..\..\videoInput\include;..\..\..\glew\include\;..\..\..\glu\include;..\..\..\tess2\include;..\..\..\cairo\include\cairo;..\..\..\poco\include;..\..\..\glfw\include;..\..\..\boost\include;..\..\..\utf8cpp\include;..\..\..\gl\include;..\..\..\openssl\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level1</WarningLevel>
-      <BrowseInformation>true</BrowseInformation>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
-    <Bscmake>
-      <PreserveSbr>true</PreserveSbr>
-    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\..\openFrameworks;..\..\..\openFrameworks\graphics;..\..\..\openFrameworks\app;..\..\..\openFrameworks\sound;..\..\..\openFrameworks\utils;..\..\..\openFrameworks\communication;..\..\..\openFrameworks\video;..\..\..\openFrameworks\types;..\..\..\openFrameworks\math;..\..\..\openFrameworks\3d;..\..\..\openFrameworks\gl;..\..\..\openFrameworks\events;..\..\..\glut\include;..\..\..\rtAudio\include;..\..\..\quicktime\include;..\..\..\freetype\include;..\..\..\freetype\include\freetype2;..\..\..\freeImage\include;..\..\..\fmodex\include;..\..\..\videoInput\include;..\..\..\glew\include\;..\..\..\glu\include;..\..\..\tess2\include;..\..\..\cairo\include\cairo;..\..\..\poco\include;..\..\..\glfw\include;..\..\..\boost\include;..\..\..\utf8cpp\include;..\..\..\gl\include;..\..\..\openssl\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <BrowseInformation>true</BrowseInformation>
+      <CompileAs>CompileAsCpp</CompileAs>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\..\openFrameworks;..\..\..\openFrameworks\graphics;..\..\..\openFrameworks\app;..\..\..\openFrameworks\sound;..\..\..\openFrameworks\utils;..\..\..\openFrameworks\communication;..\..\..\openFrameworks\video;..\..\..\openFrameworks\types;..\..\..\openFrameworks\math;..\..\..\openFrameworks\3d;..\..\..\openFrameworks\gl;..\..\..\openFrameworks\events;..\..\..\glut\include;..\..\..\rtAudio\include;..\..\..\quicktime\include;..\..\..\freetype\include;..\..\..\freetype\include\freetype2;..\..\..\freeImage\include;..\..\..\fmodex\include;..\..\..\videoInput\include;..\..\..\glew\include\;..\..\..\glu\include;..\..\..\tess2\include;..\..\..\cairo\include\cairo;..\..\..\poco\include;..\..\..\glfw\include;..\..\..\openssl\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\openFrameworks;..\..\..\openFrameworks\graphics;..\..\..\openFrameworks\app;..\..\..\openFrameworks\sound;..\..\..\openFrameworks\utils;..\..\..\openFrameworks\communication;..\..\..\openFrameworks\video;..\..\..\openFrameworks\types;..\..\..\openFrameworks\math;..\..\..\openFrameworks\3d;..\..\..\openFrameworks\gl;..\..\..\openFrameworks\events;..\..\..\glut\include;..\..\..\rtAudio\include;..\..\..\quicktime\include;..\..\..\freetype\include;..\..\..\freetype\include\freetype2;..\..\..\freeImage\include;..\..\..\fmodex\include;..\..\..\videoInput\include;..\..\..\glew\include\;..\..\..\glu\include;..\..\..\tess2\include;..\..\..\cairo\include\cairo;..\..\..\poco\include;..\..\..\glfw\include;..\..\..\boost\include;..\..\..\utf8cpp\include;..\..\..\openssl\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>..\..\..\openFrameworks;..\..\..\openFrameworks\graphics;..\..\..\openFrameworks\app;..\..\..\openFrameworks\sound;..\..\..\openFrameworks\utils;..\..\..\openFrameworks\communication;..\..\..\openFrameworks\video;..\..\..\openFrameworks\types;..\..\..\openFrameworks\math;..\..\..\openFrameworks\3d;..\..\..\openFrameworks\gl;..\..\..\openFrameworks\events;..\..\..\glut\include;..\..\..\rtAudio\include;..\..\..\quicktime\include;..\..\..\freetype\include;..\..\..\freetype\include\freetype2;..\..\..\freeImage\include;..\..\..\fmodex\include;..\..\..\videoInput\include;..\..\..\glew\include\;..\..\..\glu\include;..\..\..\tess2\include;..\..\..\cairo\include\cairo;..\..\..\poco\include;..\..\..\glfw\include;..\..\..\boost\include;..\..\..\utf8cpp\include;..\..\..\openssl\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level1</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -79,6 +139,10 @@
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppGLFWWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofAppNoWindow.h" />
     <ClInclude Include="..\..\..\openFrameworks\app\ofBaseApp.h" />
+    <ClInclude Include="..\..\..\openFrameworks\app\ofMainLoop.h" />
+    <ClInclude Include="..\..\..\openFrameworks\app\ofWindowSettings.h" />
+    <ClInclude Include="..\..\..\openFrameworks\events\ofEvent.h" />
+    <ClInclude Include="..\..\..\openFrameworks\gl\ofBufferObject.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofFbo.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLRenderer.h" />
     <ClInclude Include="..\..\..\openFrameworks\gl\ofGLUtils.h" />
@@ -126,18 +190,19 @@
     <ClInclude Include="..\..\..\openFrameworks\types\ofTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofConstants.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofFileUtils.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofFpsCounter.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofLog.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofMatrixStack.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofNoise.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofSystemUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofThread.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofThreadChannel.h" />
+    <ClInclude Include="..\..\..\openFrameworks\utils\ofTimer.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofURLFileLoader.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofUtils.h" />
     <ClInclude Include="..\..\..\openFrameworks\utils\ofXml.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.h" />
-    <ClInclude Include="..\..\..\openFrameworks\video\ofQtUtils.h" />
-    <ClInclude Include="..\..\..\openFrameworks\video\ofQuickTimeGrabber.h" />
-    <ClInclude Include="..\..\..\openFrameworks\video\ofQuickTimePlayer.h" />
+    <ClInclude Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofVideoGrabber.h" />
     <ClInclude Include="..\..\..\openFrameworks\video\ofVideoPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\communication\ofArduino.h" />
@@ -156,7 +221,9 @@
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppGlutWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppNoWindow.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\app\ofAppRunner.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\app\ofMainLoop.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\events\ofEvents.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\gl\ofBufferObject.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofFbo.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLRenderer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\gl\ofGLUtils.cpp" />
@@ -184,8 +251,10 @@
     <ClCompile Include="..\..\..\openFrameworks\math\ofQuaternion.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofVec2f.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\math\ofVec4f.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofBaseSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofFmodSoundPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundBuffer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\sound\ofSoundStream.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofBaseTypes.cpp" />
@@ -194,17 +263,17 @@
     <ClCompile Include="..\..\..\openFrameworks\types\ofParameterGroup.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\types\ofRectangle.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofFileUtils.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofFpsCounter.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofLog.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofMatrixStack.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofSystemUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofThread.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\utils\ofTimer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofURLFileLoader.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofUtils.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\utils\ofXml.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowGrabber.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\video\ofQtUtils.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\video\ofQuickTimeGrabber.cpp" />
-    <ClCompile Include="..\..\..\openFrameworks\video\ofQuickTimePlayer.cpp" />
+    <ClCompile Include="..\..\..\openFrameworks\video\ofDirectShowPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofVideoGrabber.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\video\ofVideoPlayer.cpp" />
     <ClCompile Include="..\..\..\openFrameworks\communication\ofArduino.cpp" />

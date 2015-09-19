@@ -7,7 +7,7 @@ void ofApp::setup(){
 	
 	ofSetOrientation(OF_ORIENTATION_90_RIGHT);//Set iOS to Orientation Landscape Right
 	
-	vagRounded.loadFont("vag.ttf", 18);
+	vagRounded.load("vag.ttf", 18);
 	ofBackground(50,50,50);	
 }
 
@@ -21,7 +21,7 @@ void ofApp::draw(){
 
 	ofTranslate(-60, -60, 0);
 
-	sprintf (timeString, "time: %0.2i:%0.2i:%0.2i \nelapsed time %i", ofGetHours(), ofGetMinutes(), ofGetSeconds(), ofGetElapsedTimeMillis());
+    timeString  = ofGetTimestampString("%H:%M:%S.%i") + "\n";
 	
 	ofSetHexColor(0xffffff);
 	vagRounded.drawString(eventString, 98,198);
@@ -33,7 +33,7 @@ void ofApp::draw(){
 	vagRounded.drawString(timeString, 98,98);
 	
 	ofSetColor(255,122,220);
-	vagRounded.drawString(timeString, 100,100);	
+	vagRounded.drawString(timeString, 100,100);
 }
 
 //--------------------------------------------------------------
@@ -43,46 +43,46 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-	sprintf(eventString, "touchDown = (%2.0f, %2.0f - id %i)", touch.x, touch.y, touch.id);
+    eventString = "touchDown = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2) + " - id " + ofToString(touch.id);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchMoved(ofTouchEventArgs & touch){
-	sprintf(eventString, "touchMoved = (%2.0f, %2.0f - id %i)", touch.x, touch.y, touch.id);
+    eventString = "touchMoved = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2) + " - id " + ofToString(touch.id);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchUp(ofTouchEventArgs & touch){
-	sprintf(eventString, "touchUp = (%2.0f, %2.0f - id %i)",touch.x, touch.y, touch.id);
+    eventString = "touchUp = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2) + " - id " + ofToString(touch.id);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchDoubleTap(ofTouchEventArgs & touch){
-	sprintf(eventString, "doubleTap at (%2.0f, %2.0f)",touch.x, touch.y);
+    eventString = "doubleTap at = " + ofToString(touch.x, 2) + ", " + ofToString(touch.y, 2);
 }
 
 //--------------------------------------------------------------
 void ofApp::touchCancelled(ofTouchEventArgs & touch){
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::lostFocus(){
-	sprintf(eventString, "alert - lost focus");
+    eventString = "alert - lost focus";
 }
 
 //--------------------------------------------------------------
 void ofApp::gotFocus(){
-	sprintf(eventString, "alert - got focus");
+    eventString = "alert - got focus";
 }
 
 //--------------------------------------------------------------
 void ofApp::gotMemoryWarning(){
-	sprintf(eventString, "alert - memory warning");
+    eventString = "alert - memory warning";
 }
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-	sprintf(eventString, "alert - orientation change to %i", newOrientation);
+    eventString = "alert - orientation change to " + ofToString(newOrientation);
 }
 

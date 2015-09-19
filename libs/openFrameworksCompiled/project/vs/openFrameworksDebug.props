@@ -1,23 +1,45 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="openFrameworksCommon.props" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_PropertySheetDisplayName>openFrameworksDebug</_PropertySheetDisplayName>
     <OutDir>$(SolutionDir)bin\</OutDir>
   </PropertyGroup>
-  <ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\..\libs\openFrameworks;..\..\..\libs\openFrameworks\graphics;..\..\..\libs\openFrameworks\app;..\..\..\libs\openFrameworks\sound;..\..\..\libs\openFrameworks\utils;..\..\..\libs\openFrameworks\communication;..\..\..\libs\openFrameworks\video;..\..\..\libs\openFrameworks\types;..\..\..\libs\openFrameworks\math;..\..\..\libs\openFrameworks\3d;..\..\..\libs\openFrameworks\gl;..\..\..\libs\openFrameworks\events;..\..\..\libs\glut\include;..\..\..\libs\rtAudio\include;..\..\..\libs\quicktime\include;..\..\..\libs\freetype\include;..\..\..\libs\freetype\include\freetype2;..\..\..\libs\freeImage\include;..\..\..\libs\fmodex\include;..\..\..\libs\videoInput\include;..\..\..\libs\glew\include\;..\..\..\libs\glu\include;..\..\..\libs\tess2\include;..\..\..\libs\cairo\include\cairo;..\..\..\libs\poco\include;..\..\..\libs\glfw\include;..\..\..\libs\openssl\include;..\..\..\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworks;$(OF_ROOT)\libs\openFrameworks\graphics;$(OF_ROOT)\libs\openFrameworks\app;$(OF_ROOT)\libs\openFrameworks\sound;$(OF_ROOT)\libs\openFrameworks\utils;$(OF_ROOT)\libs\openFrameworks\communication;$(OF_ROOT)\libs\openFrameworks\video;$(OF_ROOT)\libs\openFrameworks\types;$(OF_ROOT)\libs\openFrameworks\math;$(OF_ROOT)\libs\openFrameworks\3d;$(OF_ROOT)\libs\openFrameworks\gl;$(OF_ROOT)\libs\openFrameworks\events;$(OF_ROOT)\libs\glut\include;$(OF_ROOT)\libs\rtAudio\include;$(OF_ROOT)\libs\quicktime\include;$(OF_ROOT)\libs\freetype\include;$(OF_ROOT)\libs\freetype\include\freetype2;$(OF_ROOT)\libs\freeImage\include;$(OF_ROOT)\libs\fmodex\include;$(OF_ROOT)\libs\videoInput\include;$(OF_ROOT)\libs\glew\include\;$(OF_ROOT)\libs\glu\include;$(OF_ROOT)\libs\tess2\include;$(OF_ROOT)\libs\cairo\include\cairo;$(OF_ROOT)\libs\poco\include;$(OF_ROOT)\libs\glfw\include;$(OF_ROOT)\libs\openssl\include;$(OF_ROOT)\libs\utf8cpp\include;$(OF_ROOT)\libs\boost\include;$(OF_ROOT)\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>..\..\..\libs\glut\lib\vs;..\..\..\libs\glfw\lib\vs;..\..\..\libs\rtAudio\lib\vs;..\..\..\libs\FreeImage\lib\vs;..\..\..\libs\freetype\lib\vs;..\..\..\libs\quicktime\lib\vs;..\..\..\libs\fmodex\lib\vs;..\..\..\libs\videoInput\lib\vs;..\..\..\libs\cairo\lib\vs;..\..\..\libs\glew\lib\vs;..\..\..\libs\glu\lib\vs;..\..\..\libs\openssl\lib\vs;..\..\..\libs\Poco\lib\vs;..\..\..\libs\tess2\lib\vs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cairo-static.lib;pixman-1.lib;msimg32.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;Vfw32.lib;comctl32.lib;glut32.lib;rtAudioD.lib;videoInputD.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;glew32s.lib;fmodex_vc.lib;glu32.lib;ssleay32MD.lib;libeay32MD.lib;crypt32.lib;PocoFoundationmdd.lib;PocoNetmdd.lib;PocoUtilmdd.lib;PocoXMLmdd.lib;Ws2_32.lib;tess2.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OF_ROOT)\libs\glut\lib\vs\Win32;$(OF_ROOT)\libs\glfw\lib\vs\Win32;$(OF_ROOT)\libs\rtAudio\lib\vs\Win32;$(OF_ROOT)\libs\FreeImage\lib\vs\Win32;$(OF_ROOT)\libs\freetype\lib\vs\Win32;$(OF_ROOT)\libs\quicktime\lib\vs\Win32;$(OF_ROOT)\libs\fmodex\lib\vs\Win32;$(OF_ROOT)\libs\videoInput\lib\vs\Win32;$(OF_ROOT)\libs\cairo\lib\vs\Win32;$(OF_ROOT)\libs\glew\lib\vs\Win32;$(OF_ROOT)\libs\glu\lib\vs\Win32;$(OF_ROOT)\libs\openssl\lib\vs\Win32;$(OF_ROOT)\libs\Poco\lib\vs\Win32;$(OF_ROOT)\libs\tess2\lib\vs\Win32;$(OF_ROOT)\libs\boost\lib\vs\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cairo-static.lib;pixman-1.lib;libpng.lib;msimg32.lib;OpenGL32.lib;GLu32.lib;kernel32.lib;setupapi.lib;Vfw32.lib;comctl32.lib;glut32.lib;rtAudioD.lib;videoInputD.lib;libfreetype.lib;FreeImage.lib;qtmlClient.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;glew32s.lib;fmodex_vc.lib;glu32.lib;ssleay32MD.lib;libeay32MD.lib;crypt32.lib;PocoFoundationmdd.lib;PocoNetmdd.lib;PocoUtilmdd.lib;PocoXMLmdd.lib;Ws2_32.lib;tess2.lib;glfw3.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
       <IgnoreSpecificDefaultLibraries>PocoFoundationmdd.lib;atlthunk.lib;msvcrt;libcmt;LIBC;LIBCMTD</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /e /i /y "$(ProjectDir)..\..\..\export\vs\*.dll" "$(ProjectDir)bin"</Command>
+      <Command>robocopy "$(OF_ROOT)/export/vs/$(Platform_Actual)/" "$(ProjectDir)bin/" "*.dll" /njs /njh /np /fp /bytes
+if errorlevel 1 exit 0 else exit %errorlevel%</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworks;$(OF_ROOT)\libs\openFrameworks\graphics;$(OF_ROOT)\libs\openFrameworks\app;$(OF_ROOT)\libs\openFrameworks\sound;$(OF_ROOT)\libs\openFrameworks\utils;$(OF_ROOT)\libs\openFrameworks\communication;$(OF_ROOT)\libs\openFrameworks\video;$(OF_ROOT)\libs\openFrameworks\types;$(OF_ROOT)\libs\openFrameworks\math;$(OF_ROOT)\libs\openFrameworks\3d;$(OF_ROOT)\libs\openFrameworks\gl;$(OF_ROOT)\libs\openFrameworks\events;$(OF_ROOT)\libs\glut\include;$(OF_ROOT)\libs\rtAudio\include;$(OF_ROOT)\libs\quicktime\include;$(OF_ROOT)\libs\freetype\include;$(OF_ROOT)\libs\freetype\include\freetype2;$(OF_ROOT)\libs\freeImage\include;$(OF_ROOT)\libs\fmodex\include;$(OF_ROOT)\libs\videoInput\include;$(OF_ROOT)\libs\glew\include\;$(OF_ROOT)\libs\glu\include;$(OF_ROOT)\libs\tess2\include;$(OF_ROOT)\libs\cairo\include\cairo;$(OF_ROOT)\libs\poco\include;$(OF_ROOT)\libs\glfw\include;$(OF_ROOT)\libs\openssl\include;$(OF_ROOT)\libs\utf8cpp\include;$(OF_ROOT)\libs\boost\include;$(OF_ROOT)\addons;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;POCO_STATIC;CAIRO_WIN32_STATIC_BUILD;DISABLE_SOME_FLOATING_POINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(OF_ROOT)\libs\glut\lib\vs\x64;$(OF_ROOT)\libs\glfw\lib\vs\x64;$(OF_ROOT)\libs\rtAudio\lib\vs\x64;$(OF_ROOT)\libs\FreeImage\lib\vs\x64;$(OF_ROOT)\libs\freetype\lib\vs\x64;$(OF_ROOT)\libs\fmodex\lib\vs\x64;$(OF_ROOT)\libs\videoInput\lib\vs\x64;$(OF_ROOT)\libs\cairo\lib\vs\x64;$(OF_ROOT)\libs\glew\lib\vs\x64;$(OF_ROOT)\libs\glu\lib\vs\x64;$(OF_ROOT)\libs\openssl\lib\vs\x64;$(OF_ROOT)\libs\Poco\lib\vs\x64;$(OF_ROOT)\libs\tess2\lib\vs\x64;$(OF_ROOT)\libs\boost\lib\vs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glut32.lib;cairo-static.lib;pixman-1.lib;libpng.lib;msimg32.lib;OpenGL32.lib;kernel32.lib;setupapi.lib;Vfw32.lib;comctl32.lib;rtAudioD.lib;videoInputD.lib;libfreetype.lib;FreeImage.lib;dsound.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;glew32s.lib;fmodex64_vc.lib;ssleay32MD.lib;libeay32MD.lib;crypt32.lib;PocoFoundationmdd.lib;PocoNetmdd.lib;PocoUtilmdd.lib;PocoXMLmdd.lib;Ws2_32.lib;tess2.lib;glfw3.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreSpecificDefaultLibraries>PocoFoundationmdd.lib;atlthunk.lib;msvcrt;libcmt;LIBC;LIBCMTD</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>robocopy "$(OF_ROOT)/export/vs/$(Platform_Actual)/" "$(ProjectDir)bin/" "*.dll" /njs /njh /np /fp /bytes
+if errorlevel 1 exit 0 else exit %errorlevel%</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup />

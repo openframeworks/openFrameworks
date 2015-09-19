@@ -224,7 +224,7 @@ class OFGLSurfaceView extends GLSurfaceView{
         	setEGLContextClientVersion(2);
         }
         getHolder().setFormat( PixelFormat.OPAQUE );
-        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(5,6,5,0,16,0);
+        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0);
         setEGLConfigChooser(configChooser);
         setRenderer(mRenderer);
     }
@@ -236,7 +236,7 @@ class OFGLSurfaceView extends GLSurfaceView{
         	setEGLContextClientVersion(2);
         }
         getHolder().setFormat( PixelFormat.OPAQUE );
-        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(5,6,5,0,16,0);
+        OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0);
         setEGLConfigChooser(configChooser);
         setRenderer(mRenderer);
     }

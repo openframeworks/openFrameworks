@@ -25,6 +25,8 @@ class ofxSVG {
 			return paths[n];
 		}
 
+		const vector <ofPath> & getPaths() const;
+
 	private:
 
 		float width, height;

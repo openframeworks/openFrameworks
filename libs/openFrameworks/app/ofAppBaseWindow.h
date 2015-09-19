@@ -2,12 +2,14 @@
 
 #include "ofPoint.h"
 #include "ofTypes.h"
-
+#include "ofEvents.h"
+#include "ofWindowSettings.h"
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 #include <X11/Xlib.h>
 #endif
 
 class ofBaseApp;
+class ofBaseRenderer;
 
 class ofAppBaseWindow{
 
@@ -16,9 +18,21 @@ public:
 	ofAppBaseWindow(){};
 	virtual ~ofAppBaseWindow(){};
 
-	virtual void setupOpenGL(int w, int h, int screenMode) {}
-	virtual void initializeWindow() {}
-	virtual void runAppViaInfiniteLoop(ofBaseApp * appPtr) {}
+	virtual void setup(const ofWindowSettings & settings)=0;
+	virtual void update()=0;
+	virtual void draw()=0;
+	virtual bool getWindowShouldClose(){
+		return false;
+	}
+	virtual void setWindowShouldClose(){
+		close();
+	}
+	virtual void close(){
+		events().notifyExit();
+		events().disable();
+	}
+	virtual ofCoreEvents & events() = 0;
+	virtual shared_ptr<ofBaseRenderer> & renderer() = 0;
 
 	virtual void hideCursor() {}
 	virtual void showCursor() {}
@@ -40,7 +54,7 @@ public:
 
 	virtual void	setWindowTitle(string title){}
 
-	virtual int		getWindowMode() {return 0;}
+	virtual ofWindowMode	getWindowMode() {return OF_WINDOW ;}
 
 	virtual void	setFullscreen(bool fullscreen){}
 	virtual void	toggleFullscreen(){}
@@ -49,9 +63,15 @@ public:
 	virtual void	disableSetupScreen(){}
 	
 	virtual void	setVerticalSync(bool enabled){};
+    virtual void    setClipboardString(const string& text) {}
+    virtual string  getClipboardString() { return ""; }
+
+    virtual void makeCurrent(){};
+
+    virtual void * getWindowContext(){return nullptr;};
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
-	virtual Display* getX11Display(){return NULL;}
+	virtual Display* getX11Display(){return nullptr;}
 	virtual Window  getX11Window() {return 0;}
 #endif
 
@@ -66,8 +86,8 @@ public:
 #endif
 
 #if defined(TARGET_OSX)
-	virtual void * getNSGLContext(){return NULL;}
-	virtual void * getCocoaWindow(){return NULL;}
+	virtual void * getNSGLContext(){return nullptr;}
+	virtual void * getCocoaWindow(){return nullptr;}
 #endif
 
 #if defined(TARGET_WIN32)
@@ -76,3 +96,30 @@ public:
 #endif
 };
 
+class ofAppBaseGLWindow: public ofAppBaseWindow{
+public:
+	virtual ~ofAppBaseGLWindow(){}
+	virtual void setup(const ofGLWindowSettings & settings)=0;
+	void setup(const ofWindowSettings & settings){
+		const ofGLWindowSettings * glSettings = dynamic_cast<const ofGLWindowSettings*>(&settings);
+		if(glSettings){
+			setup(*glSettings);
+		}else{
+			setup(ofGLWindowSettings(settings));
+		}
+	}
+};
+
+class ofAppBaseGLESWindow: public ofAppBaseWindow{
+public:
+	virtual ~ofAppBaseGLESWindow(){}
+	virtual void setup(const ofGLESWindowSettings & settings)=0;
+	void setup(const ofWindowSettings & settings){
+		const ofGLESWindowSettings * glSettings = dynamic_cast<const ofGLESWindowSettings*>(&settings);
+		if(glSettings){
+			setup(*glSettings);
+		}else{
+			setup(ofGLESWindowSettings(settings));
+		}
+	}
+};

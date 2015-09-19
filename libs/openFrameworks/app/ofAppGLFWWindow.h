@@ -3,12 +3,7 @@
 #include "ofConstants.h"
 
 #define GLFW_INCLUDE_NONE
-
-#if (_MSC_VER)
-#include <GLFW/glfw3.h>
-#else
 #include "GLFW/glfw3.h"
-#endif
 
 #include "ofAppBaseWindow.h"
 #include "ofEvents.h"
@@ -17,43 +12,88 @@
 //class ofVec3f;
 class ofBaseApp;
 
-class ofAppGLFWWindow : public ofAppBaseWindow {
+#ifdef TARGET_OPENGLES
+class ofGLFWWindowSettings: public ofGLESWindowSettings{
+#else
+class ofGLFWWindowSettings: public ofGLWindowSettings{
+#endif
+public:
+	ofGLFWWindowSettings(){}
 
-	static GLFWwindow* windowP;
+#ifdef TARGET_OPENGLES
+	ofGLFWWindowSettings(const ofGLESWindowSettings & settings)
+	:ofGLESWindowSettings(settings){}
+#else
+	ofGLFWWindowSettings(const ofGLWindowSettings & settings)
+	:ofGLWindowSettings(settings){}
+#endif
+
+	int numSamples = 4;
+	bool doubleBuffering = true;
+	int redBits = 8;
+	int greenBits = 8;
+	int blueBits = 8;
+	int alphaBits = 8;
+	int depthBits = 24;
+	int stencilBits = 0;
+	bool stereo = false;
+	bool visible = true;
+	bool iconified = false;
+	bool decorated = true;
+	bool resizable = true;
+	int monitor = 0;
+	bool multiMonitorFullScreen = false;
+	shared_ptr<ofAppBaseWindow> shareContextWith;
+};
+
+#ifdef TARGET_OPENGLES
+class ofAppGLFWWindow : public ofAppBaseGLESWindow{
+#else
+class ofAppGLFWWindow : public ofAppBaseGLWindow {
+#endif
 
 public:
 
 	ofAppGLFWWindow();
-	~ofAppGLFWWindow(){}
+	~ofAppGLFWWindow();
 
+	// Can't be copied, use shared_ptr
+	ofAppGLFWWindow(ofAppGLFWWindow & w) = delete;
+	ofAppGLFWWindow & operator=(ofAppGLFWWindow & w) = delete;
 
-	// window settings, this functions can be called from main before calling ofSetupOpenGL
-	void 		setNumSamples(int samples);
-	void 		setDoubleBuffering(bool doubleBuff);
-	void 		setColorBits(int r, int g, int b);
-	void		setAlphaBits(int a);
-	void		setDepthBits(int depth);
-	void		setStencilBits(int stencil);
-	void		listVideoModes();
-	bool		isWindowIconified();
-	bool		isWindowActive();
-	bool		isWindowResizeable();
-	void		iconify(bool bIconify);
-    void        setMultiDisplayFullscreen(bool bMultiFullscreen); //note this just enables the mode, you have to toggle fullscreen to activate it.
+	static void loop(){};
+	static bool doesLoop(){ return false; }
+	static bool allowsMultiWindow(){ return true; }
+	static bool needsPolling(){ return true; }
+	static void pollEvents(){ glfwPollEvents(); }
 
 
     // this functions are only meant to be called from inside OF don't call them from your code
-	void setOpenGLVersion(int major, int minor);
-	void setupOpenGL(int w, int h, int screenMode);
-	void initializeWindow();
-	void runAppViaInfiniteLoop(ofBaseApp * appPtr);
+    using ofAppBaseWindow::setup;
+#ifdef TARGET_OPENGLES
+	void setup(const ofGLESWindowSettings & settings);
+#else
+	void setup(const ofGLWindowSettings & settings);
+#endif
+	void setup(const ofGLFWWindowSettings & settings);
+	void update();
+	void draw();
+	bool getWindowShouldClose();
+	void setWindowShouldClose();
 
+	void close();
 
 	void hideCursor();
 	void showCursor();
 
 	int getHeight();
 	int getWidth();
+
+	ofCoreEvents & events();
+	shared_ptr<ofBaseRenderer> & renderer();
+    
+    GLFWwindow* getGLFWWindow();
+    void * getWindowContext(){return getGLFWWindow();}
 
 	ofVec3f		getWindowSize();
 	ofVec3f		getScreenSize();
@@ -66,7 +106,7 @@ public:
 	void			setOrientation(ofOrientation orientation);
 	ofOrientation	getOrientation();
 
-	int			getWindowMode();
+	ofWindowMode	getWindowMode();
 
 	void		setFullscreen(bool fullscreen);
 	void		toggleFullscreen();
@@ -75,6 +115,29 @@ public:
 	void		disableSetupScreen();
 
 	void		setVerticalSync(bool bSync);
+
+    void        setClipboardString(const string& text);
+    string      getClipboardString();
+
+    int         getPixelScreenCoordScale();
+
+    void 		makeCurrent();
+
+	static void listVideoModes();
+	static void listMonitors();
+	bool isWindowIconified();
+	bool isWindowActive();
+	bool isWindowResizeable();
+	void iconify(bool bIconify);
+
+	// window settings, this functions can only be called from main before calling ofSetupOpenGL
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setNumSamples(int samples));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setDoubleBuffering(bool doubleBuff));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setColorBits(int r, int g, int b));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setAlphaBits(int a));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setDepthBits(int depth));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setStencilBits(int stencil));
+	OF_DEPRECATED_MSG("use ofGLFWWindowSettings to create the window instead", void setMultiDisplayFullscreen(bool bMultiFullscreen)); //note this just enables the mode, you have to toggle fullscreen to activate it.
 
 #if defined(TARGET_LINUX) && !defined(TARGET_RASPBERRY_PI)
 	Display* 	getX11Display();
@@ -102,58 +165,46 @@ public:
 #endif
 
 private:
-	// callbacks
-	void			display(void);
-
+	static ofAppGLFWWindow * setCurrent(GLFWwindow* windowP);
 	static void 	mouse_cb(GLFWwindow* windowP_, int button, int state, int mods);
 	static void 	motion_cb(GLFWwindow* windowP_, double x, double y);
-	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, int action, int mods);
+	static void 	entry_cb(GLFWwindow* windowP_, int entered);
+	static void 	keyboard_cb(GLFWwindow* windowP_, int key, int scancode, unsigned int codepoint, int action, int mods);
 	static void 	resize_cb(GLFWwindow* windowP_, int w, int h);
 	static void 	exit_cb(GLFWwindow* windowP_);
 	static void		scroll_cb(GLFWwindow* windowP_, double x, double y);
-	static void 	drop_cb(GLFWwindow* windowP_, const char* dropString);
+	static void 	drop_cb(GLFWwindow* windowP_, int numFiles, const char** dropString);
 	static void		error_cb(int errorCode, const char* errorDescription);
-	static void 	exitApp();
 
 #ifdef TARGET_LINUX
 	void setWindowIcon(const string & path);
 	void setWindowIcon(const ofPixels & iconPixels);
 #endif
 
-	//utils
-	int				samples;
-	int				rBits,gBits,bBits,aBits,depthBits,stencilBits;
+	ofCoreEvents coreEvents;
+	shared_ptr<ofBaseRenderer> currentRenderer;
+	ofGLFWWindowSettings settings;
 
-	int				windowMode;
+	ofWindowMode	windowMode;
 
 	bool			bEnableSetupScreen;
-
-	int				requestedWidth;
-	int				requestedHeight;
-
-	int 			nonFullScreenW;
-	int 			nonFullScreenH;
-	int 			nonFullScreenX;
-	int 			nonFullScreenY;
+	int				windowW, windowH;
 
 	int				buttonInUse;
 	bool			buttonPressed;
 
-	int				windowW;
-	int				windowH;
-
 	int 			nFramesSinceWindowResized;
-	bool			bDoubleBuffered;
-    bool            bMultiWindowFullscreen; 
+	bool			bWindowNeedsShowing;
+
+	GLFWwindow* 	windowP;
     
 	int				getCurrentMonitor();
-	
-	static ofAppGLFWWindow	* instance;
-	static ofBaseApp *	ofAppPtr;
+
+	ofBaseApp *	ofAppPtr;
+
+    int pixelScreenCoordScale; 
 
 	ofOrientation orientation;
-
-	int glVersionMinor, glVersionMajor;
 
 	bool iconSet;
 

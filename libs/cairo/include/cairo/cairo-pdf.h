@@ -45,14 +45,14 @@ CAIRO_BEGIN_DECLS
 
 /**
  * cairo_pdf_version_t:
- * @CAIRO_PDF_VERSION_1_4: The version 1.4 of the PDF specification.
- * @CAIRO_PDF_VERSION_1_5: The version 1.5 of the PDF specification.
+ * @CAIRO_PDF_VERSION_1_4: The version 1.4 of the PDF specification. (Since 1.10)
+ * @CAIRO_PDF_VERSION_1_5: The version 1.5 of the PDF specification. (Since 1.10)
  *
  * #cairo_pdf_version_t is used to describe the version number of the PDF
  * specification that a generated PDF file will conform to.
  *
- * Since 1.10
- */
+ * Since: 1.10
+ **/
 typedef enum _cairo_pdf_version {
     CAIRO_PDF_VERSION_1_4,
     CAIRO_PDF_VERSION_1_5

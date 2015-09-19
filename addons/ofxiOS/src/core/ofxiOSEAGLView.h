@@ -10,13 +10,12 @@
 
 class ofxiOSApp;
 class ofVec3f;
+class ofAppiOSWindow;
 
 @interface ofxiOSEAGLView : EAGLView {
 
 @protected
     NSMutableDictionary	* activeTouches;
-    ofxiOSApp * app;
-    
 	ofVec3f * screenSize;   // because ofVec3f is forward declared,
 	ofVec3f * windowSize;   // these values have to be pointers.
 	ofVec3f * windowPos;

@@ -31,18 +31,9 @@
 
 include $(OF_ROOT)/libs/openFrameworksCompiled/project/android/paths.make
 ARCH = android
-ifeq ($(shell uname),Darwin)
-	HOST_PLATFORM = darwin-x86
-else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
-	HOST_PLATFORM = windows
-	PWD = $(shell pwd)
-else
-	HOST_PLATFORM = linux-$(shell uname -m)
-endif
-
 
 ifndef ABIS_TO_COMPILE_RELEASE
-	ABIS_TO_COMPILE_RELEASE = armv5 armv7 neon x86
+	ABIS_TO_COMPILE_RELEASE = armv7 neon x86
 endif
 
 ifndef ABIS_TO_COMPILE_DEBUG
@@ -69,15 +60,15 @@ PLATFORM_DEFINES =
 PLATFORM_DEFINES = ANDROID
 
 ifndef $(NDK_PLATFORM)
-	NDK_PLATFORM = android-17
+	NDK_PLATFORM = android-19
 endif
 
 ifndef $(SDK_TARGET)
-	SDK_TARGET = android-17
+	SDK_TARGET = android-21
 endif
 
 ifndef $(GCC_VERSION)
-	GCC_VERSION = 4.8
+	GCC_VERSION = 4.9
 endif
 
 PROJECT_PATH=$(PWD)
@@ -91,6 +82,27 @@ else
 ANDROID_PREFIX=arm-linux-androideabi-
 TOOLCHAIN=$(ANDROID_PREFIX)$(GCC_VERSION)
 SYSROOT=$(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/
+endif
+
+ifeq ($(shell uname),Darwin)
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/darwin-x86_64),)
+	HOST_PLATFORM = darwin-x86_64
+else
+	HOST_PLATFORM = darwin-x86
+endif
+else ifneq (,$(findstring MINGW32_NT,$(shell uname)))
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/windows-x86_64),)
+	HOST_PLATFORM = windows-x86_64
+else
+	HOST_PLATFORM = windows
+endif
+	PWD = $(shell pwd)
+else
+ifneq ($(wildcard $(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/linux-x86_64),)
+	HOST_PLATFORM = linux-x86_64
+else
+	HOST_PLATFORM = linux-x86
+endif
 endif
 
 TOOLCHAIN_PATH=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/
@@ -159,10 +171,10 @@ PLATFORM_REQUIRED_ADDONS = ofxAndroid
 ################################################################################
 
 # Warning Flags (http://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html)
-PLATFORM_CFLAGS = -Wall
+PLATFORM_CFLAGS = -Wall -std=c++14
 
 # Code Generation Option Flags (http://gcc.gnu.org/onlinedocs/gcc/Code-Gen-Options.html)
-PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums
+PLATFORM_CFLAGS += -nostdlib --sysroot=$(SYSROOT) -fno-short-enums -ffunction-sections -fdata-sections
 
 
 ifeq ($(ABI),armv7)
@@ -194,7 +206,7 @@ PLATFORM_LDFLAGS += --sysroot=$(SYSROOT) -nostdlib -L"$(NDK_ROOT)/sources/cxx-st
 ifneq ($(ABI),x86)
 PLATFORM_LDFLAGS += -Wl,--fix-cortex-a8 
 endif
-PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
+PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections -Wl,--exclude-libs,ALL
 
 ################################################################################
 # PLATFORM OPTIMIZATION CFLAGS
@@ -212,10 +224,13 @@ PLATFORM_LDFLAGS += -shared -Wl,--no-undefined -Wl,--as-needed -Wl,--gc-sections
 ################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
+
+# RELEASE options
+PLATFORM_OPTIMIZATION_LDFLAGS_RELEASE = -s
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -O0 -g3 -DANDROID_NDK -D_DEBUG #-D_GLIBCXX_DEBUG
 
 ################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -242,6 +257,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQtUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimeGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofQuickTimePlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowGrabber.cpp
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofDirectShowPlayer.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstUtils.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoGrabber.cpp
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openFrameworks/video/ofGstVideoPlayer.cpp
@@ -269,6 +285,7 @@ PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/portaudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/rtAudio/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/poco/lib/%
 PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/openssl/lib/%
+PLATFORM_CORE_EXCLUSIONS += $(OF_LIBS_PATH)/boost/include/boost/%
 
 # android project folders
 PROJECT_EXCLUSIONS += ./gen
@@ -325,6 +342,7 @@ PLATFORM_HEADER_SEARCH_PATHS += "$(OF_ROOT)/addons/ofxAndroid/src"
 ################################################################################
 
 PLATFORM_LIBRARIES = 
+PLATFORM_LIBRARIES += OpenSLES
 PLATFORM_LIBRARIES += supc++ 
 PLATFORM_LIBRARIES += z 
 PLATFORM_LIBRARIES += GLESv1_CM 
@@ -341,6 +359,10 @@ PLATFORM_STATIC_LIBRARIES =
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNetSSL.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoNet.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoCrypto.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoJSON.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoMongoDB.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoDataSQLite.a
+PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoData.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoUtil.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoXML.a
 PLATFORM_STATIC_LIBRARIES += $(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)/libPocoFoundation.a
@@ -416,6 +438,9 @@ PLATFORM_CC=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(
 PLATFORM_CXX=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)g++
 PLATFORM_AR=$(NDK_ROOT)/toolchains/$(TOOLCHAIN)/prebuilt/$(HOST_PLATFORM)/bin/$(ANDROID_PREFIX)ar
 
+#ifeq (,$(findstring MINGW32_NT,$(shell uname)))
+ZIPWINDOWS=..\\..\\..\\..\\..\\libs\\openFrameworksCompiled\\project\\android\\windows\\zip -r ../../res/raw/$(RESFILE)
+#endif
 
 afterplatform:$(RESFILE)
 	@if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi
@@ -442,6 +467,7 @@ afterplatform:$(RESFILE)
 	@if [ "$(findstring armv5,$(ABIS_TO_COMPILE))" = "armv5" ]; then \
 		echo create gdb.setup for armeabi; \
 		echo "set solib-search-path $(PWD)/obj/local/armeabi:$(PWD)/libs/armeabi" > libs/armeabi/gdb.setup; \
+		echo "set sysroot $(SYSROOT)" >> libs/armeabi/gdb.setup; \
 		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi/gdb.setup; \
 		echo "directory $(PWD)/src" >> libs/armeabi/gdb.setup; \
 		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi/gdb.setup; \
@@ -452,6 +478,7 @@ afterplatform:$(RESFILE)
 	@if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ]; then \
 		echo create gdb.setup for armeabi-v7a; \
 		echo "set solib-search-path $(PWD)/obj/local/armeabi-v7a:$(PWD)/libs/armeabi-v7a" > libs/armeabi-v7a/gdb.setup; \
+		echo "set sysroot $(SYSROOT)" >> libs/armeabi-v7a/gdb.setup; \
 		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/armeabi-v7a/gdb.setup; \
 		echo "directory $(PWD)/src" >> libs/armeabi-v7a/gdb.setup; \
 		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/armeabi-v7a/gdb.setup; \
@@ -462,6 +489,7 @@ afterplatform:$(RESFILE)
 	@if [ "$(findstring x86,$(ABIS_TO_COMPILE))" = "x86" ]; then \
 		echo create gdb.setup for x86; \
 		echo "set solib-search-path $(PWD)/obj/local/x86:$(PWD)/libs/x86" > libs/x86/gdb.setup; \
+		echo "set sysroot $(SYSROOT)" >> libs/x86/gdb.setup; \
 		echo "directory $(NDK_ROOT)/platforms/$(NDK_PLATFORM)/arch-arm/usr/include" >> libs/x86/gdb.setup; \
 		echo "directory $(PWD)/src" >> libs/x86/gdb.setup; \
 		echo "directory $(NDK_ROOT)/sources/cxx-stl/system" >> libs/x86/gdb.setup; \
@@ -477,12 +505,14 @@ afterplatform:$(RESFILE)
 	else \
 		rm -r libs/armeabi 2> /dev/null; \
 	fi; \
-	if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ] || [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
+	if [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ] && [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
 		ABIS="$$ABIS armeabi-v7a"; \
 	elif [ "$(findstring armv7,$(ABIS_TO_COMPILE))" = "armv7" ]; then \
+		ABIS="$$ABIS armeabi-v7a"; \
 		rm libs/armeabi-v7a/libOFAndroidApp_neon.so 2> /dev/null; \
 		rm libs/armeabi-v7a/libneondetection.so 2> /dev/null; \
 	elif [ "$(findstring neon,$(ABIS_TO_COMPILE))" = "neon" ]; then \
+		ABIS="$$ABIS armeabi-v7a"; \
 		rm libs/armeabi-v7a/libOFAndroidApp.so 2> /dev/null; \
 	else \
 		rm -r libs/armeabi-v7a 2> /dev/null; \
@@ -515,29 +545,39 @@ afterplatform:$(RESFILE)
 	
 $(RESFILE): $(DATA_FILES)
 	@echo compressing and copying resources from bin/data into res
-	cd $(PROJECT_PATH); \
+	cd "$(PROJECT_PATH)"; \
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
 		cd bin/data; \
-		zip -r ../../res/raw/$(RESNAME).zip *; \
+		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+			echo "Windows Platform. Running Zip..."; \
+			cmd //c $(ZIPWINDOWS) * && exit; \
+		else \
+			zip -r ../../res/raw/$(RESNAME).zip *; \
+		fi; \
 		cd ../..; \
 	fi
 
 install:	
-	cd $(OF_ROOT)/addons/ofxAndroid/ofAndroidLib; \
+	cd "$(OF_ROOT)/addons/ofxAndroid/ofAndroidLib"; \
 	echo installing on $(HOST_PLATFORM); \
 	if [ "$(HOST_PLATFORM)" = "windows" ]; then \
 	cmd //c $(SDK_ROOT)/tools/android.bat update project --target $(SDK_TARGET) --path .; \
 	else \
 	$(SDK_ROOT)/tools/android update project --target $(SDK_TARGET) --path .; \
 	fi 
-	cd $(PROJECT_PATH); \
+	cd "$(PROJECT_PATH)"; \
 	if [ -d "bin/data" ]; then \
 		mkdir -p res/raw; \
 		rm res/raw/$(RESNAME).zip; \
 		cd bin/data; \
-		zip -r ../../res/raw/$(RESNAME).zip *; \
+		if [ "$(HOST_PLATFORM)" = "windows" ]; then \
+			echo "Windows Platform. Running Zip..."; \
+			cmd //c $(ZIPWINDOWS) * && exit; \
+		else \
+			zip -r ../../res/raw/$(RESNAME).zip; *; \
+		fi; \
 		cd ../..; \
 	fi 
 	if [ -f obj/$(BIN_NAME) ]; then rm obj/$(BIN_NAME); fi

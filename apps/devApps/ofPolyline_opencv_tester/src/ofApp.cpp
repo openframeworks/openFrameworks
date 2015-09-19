@@ -31,7 +31,7 @@ void ofApp::update(){
     int num = contourFinder.findContours(cvImgGrayscale, 64 * 64, camWidth * camHeight, 5, false, true);
     if(num>=1){
         cur.clear();
-        cur.addVertexes(contourFinder.blobs[0].pts);
+        cur.addVertices(contourFinder.blobs[0].pts);
         cur.close();
         cur.simplify(0.5);
         poly.clear();

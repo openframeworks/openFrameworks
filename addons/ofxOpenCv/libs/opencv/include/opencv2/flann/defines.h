@@ -65,7 +65,7 @@
 
 #undef FLANN_PLATFORM_32_BIT
 #undef FLANN_PLATFORM_64_BIT
-#if __amd64__ || __x86_64__ || _WIN64 || _M_X64
+#if defined __amd64__ || defined __x86_64__ || defined _WIN64 || defined _M_X64
 #define FLANN_PLATFORM_64_BIT
 #else
 #define FLANN_PLATFORM_32_BIT
@@ -120,7 +120,7 @@ enum flann_log_level_t
     FLANN_LOG_FATAL = 1,
     FLANN_LOG_ERROR = 2,
     FLANN_LOG_WARN = 3,
-    FLANN_LOG_INFO = 4,
+    FLANN_LOG_INFO = 4
 };
 
 enum flann_distance_t
@@ -137,6 +137,7 @@ enum flann_distance_t
     FLANN_DIST_CS         = 7,
     FLANN_DIST_KULLBACK_LEIBLER  = 8,
     FLANN_DIST_KL                = 8,
+    FLANN_DIST_HAMMING          = 9,
 
     // deprecated constants, should use the FLANN_DIST_* ones instead
     EUCLIDEAN = 1,

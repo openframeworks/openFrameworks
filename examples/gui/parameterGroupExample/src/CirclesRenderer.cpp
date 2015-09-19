@@ -31,6 +31,6 @@ void CirclesRenderer::draw(){
 	frameNum ++;
 	ofSetColor(color);
 	for(int i=0;i<number;i++){
-		ofCircle(position.get().x-size*((number-1)*0.5-i), position.get().y, size);
+		ofDrawCircle(position.get().x-size*((number-1)*0.5-i), position.get().y, size);
 	}
 }

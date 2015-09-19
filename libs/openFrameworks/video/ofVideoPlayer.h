@@ -20,6 +20,16 @@
 	#define OF_VID_PLAYER_TYPE ofQTKitPlayer
 #endif
 
+#ifdef OF_VIDEO_PLAYER_AVFOUNDATION
+    #include "ofAVFoundationPlayer.h"
+    #define OF_VID_PLAYER_TYPE ofAVFoundationPlayer
+#endif
+
+#ifdef OF_VIDEO_PLAYER_DIRECTSHOW
+    #include "ofDirectShowPlayer.h"
+    #define OF_VID_PLAYER_TYPE ofDirectShowPlayer
+#endif
+
 #ifdef OF_VIDEO_PLAYER_IOS
 	#include "ofxiOSVideoPlayer.h"
 	#define OF_VID_PLAYER_TYPE ofxiOSVideoPlayer
@@ -30,6 +40,11 @@
 	#define OF_VID_PLAYER_TYPE ofxAndroidVideoPlayer
 #endif
 
+#ifdef OF_VIDEO_PLAYER_EMSCRIPTEN
+	#include "ofxEmscriptenVideoPlayer.h"
+	#define OF_VID_PLAYER_TYPE ofxEmscriptenVideoPlayer
+#endif
+
 //---------------------------------------------
 class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
@@ -37,14 +52,15 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		ofVideoPlayer ();
 
-		void						setPlayer(ofPtr<ofBaseVideoPlayer> newPlayer);
-		ofPtr<ofBaseVideoPlayer>	getPlayer();
 
-		bool 				loadMovie(string name);
-	    string				getMoviePath();
+		bool 				load(string name);
+		void				loadAsync(string name);
+		OF_DEPRECATED_MSG("Use load instead",bool loadMovie(string name));
+
+		string				getMoviePath() const;
 
 		bool				setPixelFormat(ofPixelFormat pixelFormat);
-		ofPixelFormat		getPixelFormat(); 
+		ofPixelFormat		getPixelFormat() const;
 		
 		void 				closeMovie();
 		void 				close();		
@@ -53,26 +69,37 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 		void 				play();
 		void 				stop();
 
-		bool 				isFrameNew();
-		unsigned char * 	getPixels();
-		ofPixelsRef			getPixelsRef();
-		float 				getPosition();
-		float 				getSpeed();
-		float 				getDuration();
-		bool				getIsMovieDone();
+		bool 				isFrameNew() const;
+		ofPixels& 			getPixels();
+		const ofPixels&		getPixels() const;
+        OF_DEPRECATED_MSG("Use getPixels() instead", ofPixels&	getPixelsRef());
+        OF_DEPRECATED_MSG("Use getPixels() instead", const ofPixels&  getPixelsRef() const);
+		float 				getPosition() const;
+		float 				getSpeed() const;
+		float 				getDuration() const;
+		bool				getIsMovieDone() const;
 
 		void 				setPosition(float pct);
 		void 				setVolume(float volume); // 0..1
 		void 				setLoopState(ofLoopType state);
-		ofLoopType			getLoopState();
+		ofLoopType			getLoopState() const;
 		void   				setSpeed(float speed);
 		void				setFrame(int frame);  // frame 0 = first frame...
 
 		void 				setUseTexture(bool bUse);
-		ofTexture &			getTextureReference();
-		void 				draw(float x, float y, float w, float h);
-		void 				draw(float x, float y);
+		bool 				isUsingTexture() const;
+		ofTexture &			getTexture();
+		const ofTexture &	getTexture() const;
+		OF_DEPRECATED_MSG("Use getTexture",ofTexture &			getTextureReference());
+		OF_DEPRECATED_MSG("Use getTexture",const ofTexture &	getTextureReference() const);
+		vector<ofTexture> & getTexturePlanes();
+		const vector<ofTexture> & getTexturePlanes() const;
+		void 				draw(float x, float y, float w, float h) const;
+		void 				draw(float x, float y) const;
 		using ofBaseDraws::draw;
+
+		void 				bind() const;
+		void 				unbind() const;
 
 		//the anchor is the point the image is drawn around.
 		//this can be useful if you want to rotate an image around a particular point.
@@ -82,31 +109,43 @@ class ofVideoPlayer : public ofBaseVideoPlayer,public ofBaseVideoDraws{
 
 		void 				setPaused(bool bPause);
 
-		int					getCurrentFrame();
-		int					getTotalNumFrames();
+		int					getCurrentFrame() const;
+		int					getTotalNumFrames() const;
 
 		void				firstFrame();
 		void				nextFrame();
 		void				previousFrame();
 
-		float 				getHeight();
-		float 				getWidth();
+		float 				getHeight() const;
+		float 				getWidth() const;
 
-		bool				isPaused();
-		bool				isLoaded();
-		bool				isPlaying();
+		bool				isPaused() const;
+		bool				isLoaded() const;
+		bool				isPlaying() const;
+		bool 				isInitialized() const;
 
-		//this is kept as legacy to support people accessing width and height directly. 
-		int					height;
-		int					width;
+		void				setPlayer(shared_ptr<ofBaseVideoPlayer> newPlayer);
+		shared_ptr<ofBaseVideoPlayer>	getPlayer();
+		const shared_ptr<ofBaseVideoPlayer>	getPlayer() const;
+
+		template<typename PlayerType>
+		shared_ptr<PlayerType> getPlayer(){
+			return dynamic_pointer_cast<PlayerType>(getPlayer());
+		}
+
+		template<typename PlayerType>
+		const shared_ptr<PlayerType> getPlayer() const{
+			return dynamic_pointer_cast<PlayerType>(getPlayer());
+		}
 
 	private:
-		ofPtr<ofBaseVideoPlayer>		player;
+		void initDefaultPlayer();
+		shared_ptr<ofBaseVideoPlayer>		player;
 		
-		ofTexture tex;
+		vector<ofTexture> tex;
 		ofTexture * playerTex; // a seperate texture that may be optionally implemented by the player to avoid excessive pixel copying.
 		bool bUseTexture;
-		ofPixelFormat internalPixelFormat;
+		mutable ofPixelFormat internalPixelFormat;
 	    string moviePath;
 };
 

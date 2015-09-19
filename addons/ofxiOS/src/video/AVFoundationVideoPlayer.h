@@ -8,6 +8,7 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import <Accelerate/Accelerate.h>
 
 @class AVPlayer;
 @class AVPlayerItem;
@@ -25,8 +26,10 @@
 
 //---------------------------------------------------------- video player delegate.
 @protocol AVFoundationVideoPlayerDelegate <NSObject>
+@optional
 - (void)playerReady;
 - (void)playerDidProgress;
+- (void)playerDidFinishSeeking;
 - (void)playerDidFinishPlayingVideo;
 @end
 
@@ -41,7 +44,8 @@
 @property (nonatomic, retain) AVPlayerItem * playerItem;
 @property (nonatomic, retain) AVAsset * asset;
 @property (nonatomic, retain) AVAssetReader * assetReader;
-@property (nonatomic, retain) AVAssetReaderOutput * assetReaderVideoOutput;
+@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderVideoTrackOutput;
+@property (nonatomic, retain) AVAssetReaderTrackOutput * assetReaderAudioTrackOutput;
 
 - (BOOL)loadWithFile:(NSString*)file;
 - (BOOL)loadWithPath:(NSString*)path;
@@ -66,6 +70,16 @@
 - (BOOL)isNewFrame;
 - (BOOL)isFinished;
 
+- (void)setEnableVideoSampling:(BOOL)value;
+- (void)setEnableAudioSampling:(BOOL)value;
+- (void)setSynchSampleTime:(CMTime)time;
+- (void)setSynchSampleTimeInSec:(double)time;
+- (CMTime)getVideoSampleTime;
+- (double)getVideoSampleTimeInSec;
+- (CMTime)getAudioSampleTime;
+- (double)getAudioSampleTimeInSec;
+- (CMSampleBufferRef)getVideoSampleBuffer;
+- (CMSampleBufferRef)getAudioSampleBuffer;
 - (CVImageBufferRef)getCurrentFrame;
 
 - (NSInteger)getWidth;

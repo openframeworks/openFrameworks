@@ -65,7 +65,7 @@ void ofApp::draw(){
 		height *= 50;
 
 		//lets draw it!
-		ofRect(i, ofGetHeight(), 50, -height);
+		ofDrawRectangle(i, ofGetHeight(), 50, -height);
 
 		//this variable makes sure that each
 		//rect has a unique height otherwise
@@ -79,7 +79,7 @@ void ofApp::draw(){
 	k = 0;
 	for(int i = 0; i < ofGetWidth(); i+= 50)
 	{
-		ofRect(i+5, ofGetHeight(), 50, -50 * (sin(1.4 * counter - k) + 1.0));
+		ofDrawRectangle(i+5, ofGetHeight(), 50, -50 * (sin(1.4 * counter - k) + 1.0));
 		k += 0.4;
 	}
 
@@ -96,7 +96,7 @@ void ofApp::draw(){
 	for (int i = 0; i < 20; i++){
 		//Lets make a cheesy sunset
 		ofSetColor(255 - i * 10, 255 - i * 20, 0);
-		ofLine(0, i * 4, ofGetWidth(), i * 4);
+		ofDrawLine(0, i * 4, ofGetWidth(), i * 4);
 	}
 
 	ofScale(0.5, 0.5, 1);
@@ -122,15 +122,15 @@ void ofApp::draw(){
 
 		//draw a red circle
 		ofSetColor(255,0, 0);
-		ofCircle(-50, -25, 100);
+		ofDrawCircle(-50, -25, 100);
 
 		//draw a green circle
 		ofSetColor(0,255, 0);
-		ofCircle(50, -25, 100);
+		ofDrawCircle(50, -25, 100);
 
 		//draw a blue circle
 		ofSetColor(0, 0, 255);
-		ofCircle(0, 57, 100);
+		ofDrawCircle(0, 57, 100);
 	ofPopMatrix();
 
 
@@ -173,7 +173,7 @@ void ofApp::draw(){
 
 		//We add the position we want them to be osicalting around
 		//and draw the rects as small 2 pixel by 2 pixel squares
-		ofRect(300 + x, 320 + y, 2, 2);
+		ofDrawRectangle(300 + x, 320 + y, 2, 2);
 	}
 
 	//---------------------------

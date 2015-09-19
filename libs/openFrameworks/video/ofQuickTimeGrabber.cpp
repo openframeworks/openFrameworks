@@ -34,8 +34,8 @@ ofQuickTimeGrabber::ofQuickTimeGrabber(){
 
 		initializeQuicktime();
 		bSgInited				= false;
-		gSeqGrabber				= NULL;
-		offscreenGWorldPixels	= NULL;
+		gSeqGrabber				= nullptr;
+		offscreenGWorldPixels	= nullptr;
 
 	//---------------------------------
 	#endif
@@ -49,7 +49,7 @@ ofQuickTimeGrabber::ofQuickTimeGrabber(){
 	deviceID				= 0;
 	//width 					= 320;	// default setting
 	//height 					= 240;	// default setting
-	//pixels					= NULL;
+	//pixels					= nullptr;
 	attemptFramerate		= -1;
 
 }
@@ -63,9 +63,9 @@ ofQuickTimeGrabber::~ofQuickTimeGrabber(){
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
 	//---------------------------------
-		if (offscreenGWorldPixels != NULL){
+		if (offscreenGWorldPixels != nullptr){
 			delete[] offscreenGWorldPixels;
-			offscreenGWorldPixels = NULL;
+			offscreenGWorldPixels = nullptr;
 		}
 	//---------------------------------
 	#endif
@@ -100,13 +100,13 @@ bool ofQuickTimeGrabber::setPixelFormat(ofPixelFormat pixelFormat){
 }
 
 //---------------------------------------------------------------------------
-ofPixelFormat ofQuickTimeGrabber::getPixelFormat(){
+ofPixelFormat ofQuickTimeGrabber::getPixelFormat() const {
 	//note if you support more than one pixel format you will need to return a ofPixelFormat variable. 
 	return OF_PIXELS_RGB;
 }
 
 //--------------------------------------------------------------------
-bool ofQuickTimeGrabber::initGrabber(int w, int h){
+bool ofQuickTimeGrabber::setup(int w, int h){
 
 	//---------------------------------
 	#ifdef OF_VIDEO_CAPTURE_QUICKTIME
@@ -133,13 +133,13 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 		pixels.allocate(w, h, OF_IMAGE_COLOR);
 		
 		#if defined(TARGET_OSX) && defined(__BIG_ENDIAN__)
-			QTNewGWorldFromPtr (&(videogworld), k32ARGBPixelFormat, &(videoRect), NULL, NULL, 0, (offscreenGWorldPixels), 4 * w);		
+			QTNewGWorldFromPtr (&(videogworld), k32ARGBPixelFormat, &(videoRect), nullptr, nullptr, 0, (offscreenGWorldPixels), 4 * w);
 		#else
-			QTNewGWorldFromPtr (&(videogworld), k24RGBPixelFormat, &(videoRect), NULL, NULL, 0, (pixels.getPixels()), 3 * w);
+			QTNewGWorldFromPtr (&(videogworld), k24RGBPixelFormat, &(videoRect), nullptr, nullptr, 0, (pixels.getPixels()), 3 * w);
 		#endif		
 		
 		LockPixels(GetGWorldPixMap(videogworld));
-		SetGWorld (videogworld, NULL);
+		SetGWorld (videogworld, nullptr);
 		SGSetGWorld(gSeqGrabber, videogworld, nil);
 
 		
@@ -246,7 +246,12 @@ bool ofQuickTimeGrabber::initGrabber(int w, int h){
 }
 
 //--------------------------------------------------------------------
-vector<ofVideoDevice> ofQuickTimeGrabber::listDevices(){
+bool ofQuickTimeGrabber::isInitialized() const{
+    return bGrabberInited;
+}
+
+//--------------------------------------------------------------------
+vector<ofVideoDevice> ofQuickTimeGrabber::listDevices() const{
 
     vector <ofVideoDevice> devices; 
     
@@ -392,27 +397,27 @@ void ofQuickTimeGrabber::update(){
 }
 
 //---------------------------------------------------------------------------
-unsigned char * ofQuickTimeGrabber::getPixels(){
-	return pixels.getPixels();
-}
-
-//---------------------------------------------------------------------------
-ofPixelsRef ofQuickTimeGrabber::getPixelsRef(){
+ofPixels& ofQuickTimeGrabber::getPixels(){
 	return pixels;
 }
 
 //---------------------------------------------------------------------------
-bool  ofQuickTimeGrabber::isFrameNew(){
+const ofPixels& ofQuickTimeGrabber::getPixels() const {
+	return pixels;
+}
+
+//---------------------------------------------------------------------------
+bool  ofQuickTimeGrabber::isFrameNew() const {
 	return bIsFrameNew;
 }
 
 //--------------------------------------------------------------------
-float ofQuickTimeGrabber::getWidth(){
+float ofQuickTimeGrabber::getWidth() const {
 	return pixels.getWidth();
 }	
 
 //--------------------------------------------------------------------
-float ofQuickTimeGrabber::getHeight(){
+float ofQuickTimeGrabber::getHeight() const {
 	return pixels.getHeight();
 }
 
@@ -483,7 +488,7 @@ void ofQuickTimeGrabber::videoSettings(void){
 			//save any changed settings to file
 			saveSettings();
 		#else
-			SGSettingsDialog(gSeqGrabber, gVideoChannel, 0, nil, seqGrabSettingsPreviewOnly, NULL, 0);
+			SGSettingsDialog(gSeqGrabber, gVideoChannel, 0, nil, seqGrabSettingsPreviewOnly, nullptr, 0);
 		#endif
 
 		SGSetChannelBounds(gVideoChannel, &videoRect);
@@ -506,7 +511,7 @@ bool ofQuickTimeGrabber::saveSettings(){
 		if (bGrabberInited != true) return false;
 		ComponentResult	err;
 
-		UserData mySGVideoSettings = NULL;
+		UserData mySGVideoSettings = nullptr;
 		// get the SGChannel settings cofigured by the user
 		err = SGGetChannelSettings(gSeqGrabber, gVideoChannel, &mySGVideoSettings, 0);
 		if ( err != noErr ){
@@ -529,7 +534,7 @@ bool ofQuickTimeGrabber::loadSettings(){
    if (bGrabberInited != true || deviceName.length() == 0) return false;
 
    ComponentResult   err;
-   UserData mySGVideoSettings = NULL;
+   UserData mySGVideoSettings = nullptr;
 
    // get the settings using the key "ofVideoSettings-the name of the device"
    string pref = "ofVideoSettings-"+deviceName;
@@ -596,14 +601,14 @@ bool ofQuickTimeGrabber::qtInitSeqGrabber(){
 			// this seems to work instead (got it from hackTV)
 			// -----------------------------------------
 			theDesc.componentType = SeqGrabComponentType;
-			theDesc.componentSubType = NULL;
+			theDesc.componentSubType = nullptr;
 			theDesc.componentManufacturer = 'appl';
-			theDesc.componentFlags = NULL;
-			theDesc.componentFlagsMask = NULL;
-			sgCompID = FindNextComponent (NULL, &theDesc);
+			theDesc.componentFlags = nullptr;
+			theDesc.componentFlagsMask = nullptr;
+			sgCompID = FindNextComponent (nullptr, &theDesc);
 			// -----------------------------------------
 
-			if (sgCompID == NULL){
+			if (sgCompID == nullptr){
 				ofLogError("ofQuickTimeGrabber") << "qtInitSeqGrabber(): findNextComponent did not return a valid component";
 				return false;
 			}
@@ -611,7 +616,7 @@ bool ofQuickTimeGrabber::qtInitSeqGrabber(){
 			gSeqGrabber = OpenComponent(sgCompID);
 
 			err = GetMoviesError();
-			if (gSeqGrabber == NULL || err) {
+			if (gSeqGrabber == nullptr || err) {
 				ofLogError("ofQuickTimeGrabber") << "qtInitSeqGrabber(): couldn't get default sequence grabber component: OSErr " << err;
 				return false;
 			}
@@ -653,10 +658,10 @@ bool ofQuickTimeGrabber::qtInitSeqGrabber(){
 //--------------------------------------------------------------------
 bool ofQuickTimeGrabber::qtCloseSeqGrabber(){
 
-	if (gSeqGrabber != NULL){
+	if (gSeqGrabber != nullptr){
 		SGStop (gSeqGrabber);
 		CloseComponent (gSeqGrabber);
-		gSeqGrabber = NULL;
+		gSeqGrabber = nullptr;
 		bSgInited = false;
 		return true;
 	}

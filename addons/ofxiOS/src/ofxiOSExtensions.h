@@ -7,7 +7,6 @@
 
 #pragma once
 
-void ofGLReadyCallback();
 void ofReloadGLResources();
 
 void ofUpdateBitmapCharacterTexture();

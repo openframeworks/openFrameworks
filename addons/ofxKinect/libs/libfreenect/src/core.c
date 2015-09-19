@@ -43,7 +43,7 @@ FREENECTAPI int freenect_init(freenect_context **ctx, freenect_usb_context *usb_
 	int res;
 
 	*ctx = (freenect_context*)malloc(sizeof(freenect_context));
-	if (!ctx)
+	if (*ctx == NULL)
 		return -1;
 
 	memset(*ctx, 0, sizeof(freenect_context));
@@ -293,3 +293,17 @@ FN_INTERNAL void fn_log(freenect_context *ctx, freenect_loglevel level, const ch
 		va_end(ap);
 	}
 }
+
+
+FREENECTAPI void freenect_set_fw_address_nui(freenect_context * ctx, unsigned char * fw_ptr, unsigned int num_bytes)
+{
+    ctx->fn_fw_nui_ptr = fw_ptr;
+    ctx->fn_fw_nui_size = num_bytes;
+}
+
+FREENECTAPI void freenect_set_fw_address_k4w(freenect_context * ctx, unsigned char * fw_ptr, unsigned int num_bytes)
+{
+    ctx->fn_fw_k4w_ptr = fw_ptr;
+    ctx->fn_fw_k4w_size = num_bytes;
+}
+

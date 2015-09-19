@@ -50,7 +50,7 @@ float& ofMatrix3x3::operator[]( const int& index ) {
 }
 
 
-/**
+/*
  * Transpose:
  * This changes the matrix.
  * [ a b c ]T    [ a d g ]
@@ -64,7 +64,7 @@ void ofMatrix3x3::transpose() {
 	f += h; h = f - h; f -= h; //swap f and h
 }
 
-/**
+/*
 * Transpose without changing the matrix.
 * Uses the "swap" method with additions and subtractions to swap the elements that aren't on the main diagonal.
 * @return transposed matrix.
@@ -78,7 +78,7 @@ ofMatrix3x3 ofMatrix3x3::transpose(const ofMatrix3x3& A) {
 
 
 
-/**
+/*
 * Determinant: http://mathworld.wolfram.com/Determinant.html
 */
 
@@ -98,7 +98,7 @@ float ofMatrix3x3::determinant(const ofMatrix3x3& A) {
 
 
 
-/**
+/*
 * Inverse of a 3x3 matrix
   the inverse is the adjoint divided through the determinant
   find the matrix of minors (minor = determinant of 2x2 matrix of the 2 rows/colums current element is NOT in)
@@ -133,7 +133,7 @@ ofMatrix3x3 ofMatrix3x3::inverse(const ofMatrix3x3& A) {
 
 
 
-/**
+/*
 * Add two matrices
 */
 ofMatrix3x3 ofMatrix3x3::operator+(const ofMatrix3x3& B) {
@@ -162,7 +162,7 @@ void ofMatrix3x3::operator+=(const ofMatrix3x3& B) {
 	i += B.i;
 }
 
-/**
+/*
 * Subtract two matrices
 */
 ofMatrix3x3 ofMatrix3x3::operator-(const ofMatrix3x3& B) {
@@ -192,7 +192,7 @@ void ofMatrix3x3::operator-=(const ofMatrix3x3& B) {
 }
 
 
-/**
+/*
 * Multiply a matrix with a scalar
 */
 ofMatrix3x3 ofMatrix3x3::operator*(float scalar) {
@@ -240,7 +240,7 @@ void ofMatrix3x3::operator*=(float scalar) {
 	i *= scalar;
 }
 
- /**
+ /*
  * Multiply a 3x3 matrix with a 3x3 matrix
  */
 ofMatrix3x3 ofMatrix3x3::operator*(const ofMatrix3x3& B) {
@@ -257,7 +257,7 @@ ofMatrix3x3 ofMatrix3x3::operator*(const ofMatrix3x3& B) {
 	return C;
 }
 
-/**
+/*
 * Divide a matrix through a scalar
 */
 ofMatrix3x3 ofMatrix3x3::operator/(float scalar) {

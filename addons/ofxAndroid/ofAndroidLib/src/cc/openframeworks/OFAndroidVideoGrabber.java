@@ -21,20 +21,12 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	
 	
 	public OFAndroidVideoGrabber(){
-		id=nextId++;
-		camera_instances.put(id, this);
+		instanceId=nextId++;
+		camera_instances.put(instanceId, this);
 	}
 	
 	public int getId(){
-		return id;
-	}
-	
-	public static OFAndroidVideoGrabber getInstance(int id){
-		return camera_instances.get(id);
-	}
-	
-	public void setDeviceID(int id){
-		deviceID = id;
+		return instanceId;
 	}
 	
 	public static boolean supportsTextureRendering(){
@@ -117,8 +109,15 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		
 		Log.i("OF", "Grabber default format: " + config.getPreviewFormat());
 		Log.i("OF", "Grabber default preview size: " + config.getPreviewSize().width + "," + config.getPreviewSize().height);
+		config.setPictureSize(w, h);
 		config.setPreviewSize(w, h);
 		config.setPreviewFormat(ImageFormat.NV21);
+        try{
+			Method setRecordingHint = config.getClass().getMethod("setRecordingHint",boolean.class);
+			setRecordingHint.invoke(config, true);
+        }catch(Exception e){
+        	Log.i("OF","couldn't set recording hint");
+        }
 		try{
 			camera.setParameters(config);
 		}catch(Exception e){
@@ -261,7 +260,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 		//Log.i("OF","video buffer length: " + data.length);
 		//Log.i("OF", "size: " + camera.getParameters().getPreviewSize().width + "x" + camera.getParameters().getPreviewSize().height);
 		//Log.i("OF", "format " + camera.getParameters().getPreviewFormat());
-		newFrame(data, width, height);
+		newFrame(data, width, height, instanceId);
 		if(addBufferMethod!=null){
 			try {
 				addBufferMethod.invoke(camera, buffer);
@@ -306,37 +305,33 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	}
 
 	private class OrientationListener extends OrientationEventListener{
+		private int rotation = -1;
 
 		public OrientationListener(Context context) {
 			super(context);
-			// TODO Auto-generated constructor stub
 		}
 
 		@Override
 		public void onOrientationChanged(int orientation) {
 			if (orientation == ORIENTATION_UNKNOWN) return;
 			try{
-				Camera.Parameters config = camera.getParameters();
-				/*Camera.CameraInfo info =
-				        new Camera.CameraInfo();*/
-				//Camera.getCameraInfo(camera, info);
 				orientation = (orientation + 45) / 90 * 90;
-				int rotation = orientation % 360;
-				//if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
-				    //rotation = (info.orientation - orientation + 360) % 360;
-				/*} else {  // back-facing camera
-				    rotation = (info.orientation + orientation) % 360;
-				}*/
-				config.setRotation(rotation);
-				camera.setParameters(config);
-			}catch(Exception e){
+				int newRotation = orientation % 360;
+
+				if (newRotation != rotation) {
+					rotation = newRotation;
+					Camera.Parameters config = camera.getParameters();
+					config.setRotation(rotation);
+					camera.setParameters(config);
+				}
+			} catch(Exception e) {
 				
 			}
 		}
 		
 	}
 	
-	public static native int newFrame(byte[] data, int width, int height);
+	public static native int newFrame(byte[] data, int width, int height, int cameraId);
 	
 	
 
@@ -345,7 +340,7 @@ public class OFAndroidVideoGrabber extends OFAndroidObject implements Runnable, 
 	private byte[] buffer;
 	private int width, height, targetFps;
 	private Thread thread;
-	private int id;
+	private int instanceId;
 	private static int nextId=0;
 	public static Map<Integer,OFAndroidVideoGrabber> camera_instances = new HashMap<Integer,OFAndroidVideoGrabber>();
 	//private static OFCameraSurface cameraSurface = null;
