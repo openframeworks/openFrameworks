@@ -90,6 +90,7 @@ bool ofVideoPlayer::load(string name){
         		playerTex = player->getTexturePtr();
         	}
         }
+		setLoopState(OF_LOOP_NORMAL);
     }
 	
 	return bOk;

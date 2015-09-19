@@ -13,6 +13,7 @@ for group in *; do
 				cp ../../../scripts/templates/osx/config.make .
 				make Debug
 				make RunDebug
+                                cd $ROOT/tests
 			fi
 		done
 	fi

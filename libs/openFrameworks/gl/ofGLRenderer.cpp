@@ -375,13 +375,13 @@ void ofGLRenderer::draw(const ofVbo & vbo, GLuint drawMode, int first, int total
 }
 
 //----------------------------------------------------------
-void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const{
+void ofGLRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements) const{
 	if(vbo.getUsingVerts()) {
 		vbo.bind();
 #ifdef TARGET_OPENGLES
-        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, nullptr);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void*)(sizeof(ofIndexType) * offsetelements));
 #else
-        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void*)(sizeof(ofIndexType) * offsetelements));
 #endif
 		vbo.unbind();
 	}
@@ -640,7 +640,7 @@ void ofGLRenderer::bind(const ofCamera & camera, const ofRectangle & _viewport){
 	viewport(_viewport);
 	setOrientation(matrixStack.getOrientation(),camera.isVFlipped());
 	matrixMode(OF_MATRIX_PROJECTION);
-	loadMatrix(camera.getProjectionMatrix(_viewport).getPtr());
+	loadMatrix(camera.getProjectionMatrix(_viewport));
 	matrixMode(OF_MATRIX_MODELVIEW);
 	loadViewMatrix(camera.getModelViewMatrix());
 }
@@ -997,6 +997,9 @@ void ofGLRenderer::loadViewMatrix(const ofMatrix4x4 & m){
 			shared_ptr<ofLight::Data> lightData = ofLightsData()[i].lock();
 			if(lightData && lightData->isEnabled){
 				glLightfv(GL_LIGHT0 + lightData->glIndex, GL_POSITION, &lightData->position.x);
+				if(lightData->lightType == OF_LIGHT_SPOT || lightData->lightType == OF_LIGHT_AREA) {
+					glLightfv(GL_LIGHT0 + lightData->glIndex, GL_SPOT_DIRECTION, &lightData->direction.x);
+				}
 			}
 		}
 	}
@@ -1701,7 +1704,8 @@ void ofGLRenderer::disableAlphaMask(){
 void ofGLRenderer::enableLighting(){
 	glEnable(GL_LIGHTING);
 #ifndef TARGET_OPENGLES  //TODO: fix this
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+	glColorMaterial(GL_BACK, GL_AMBIENT_AND_DIFFUSE);
 #endif
 	glEnable(GL_COLOR_MATERIAL);
 
@@ -1712,6 +1716,23 @@ void ofGLRenderer::enableLighting(){
 	normalsEnabled = glIsEnabled( GL_NORMALIZE );
 	glEnable(GL_NORMALIZE);
 	lightingEnabled = true;
+
+	int matrixMode;
+	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadMatrixf(matrixStack.getViewMatrix().getPtr());
+	for(size_t i=0;i<ofLightsData().size();i++){
+		shared_ptr<ofLight::Data> lightData = ofLightsData()[i].lock();
+		if(lightData && lightData->isEnabled){
+			glLightfv(GL_LIGHT0 + lightData->glIndex, GL_POSITION, &lightData->position.x);
+			if(lightData->lightType == OF_LIGHT_SPOT || lightData->lightType == OF_LIGHT_AREA) {
+				glLightfv(GL_LIGHT0 + lightData->glIndex, GL_SPOT_DIRECTION, &lightData->direction.x);
+			}
+		}
+	}
+	glPopMatrix();
+	glMatrixMode(matrixMode);
 }
 
 //----------------------------------------------------------
@@ -1819,7 +1840,14 @@ void ofGLRenderer::setLightPosition(int lightIndex, const ofVec4f & position){
 //----------------------------------------------------------
 void ofGLRenderer::setLightSpotDirection(int lightIndex, const ofVec4f & direction){
 	if(lightIndex==-1) return;
+	int matrixMode;
+	glGetIntegerv(GL_MATRIX_MODE,&matrixMode);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadMatrixf(matrixStack.getViewMatrix().getPtr());
 	glLightfv(GL_LIGHT0 + lightIndex, GL_SPOT_DIRECTION, &direction.x);
+	glPopMatrix();
+	glMatrixMode(matrixMode);
 }
 
 int ofGLRenderer::getGLVersionMajor(){
