@@ -1,6 +1,6 @@
-#ifndef _OF_IOS_VIDEO_GRABBER
-#define _OF_IOS_VIDEO_GRABBER
 
+
+#pragma once
 
 class AVFoundationVideoGrabber;
 
@@ -8,43 +8,67 @@ class AVFoundationVideoGrabber;
 
 class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	
-	public :
+public:
 	
 	ofxiOSVideoGrabber();
+	~ofxiOSVideoGrabber();
 	
-	//needs implementing
-	vector <ofVideoDevice> listDevices();	
-	void getDeviceList(){};
-	bool initGrabber(int w, int h);
-	
-	bool			setPixelFormat(ofPixelFormat pixelFormat);
-	ofPixelFormat 	getPixelFormat();	
+    //---------------------------------------
+    // inherited from ofBaseVideoGrabber
+    //---------------------------------------
+    
+	vector<ofVideoDevice> listDevices() const;
+    bool setup(int w, int h);
 
-	bool isFrameNew();
-	
-	unsigned char * getPixels();
-	ofPixelsRef		getPixelsRef();
-	
-	void close();	
-	
-	float getHeight();
-	float getWidth();
-	
+	float getHeight() const;
+	float getWidth() const;
+    
+    ofTexture * getTexturePtr();
+    
+    void setVerbose(bool bTalkToMe);
+    void setDeviceID(int deviceID);
+    void setDesiredFrameRate(int framerate);
+    void videoSettings();
+    
+    //---------------------------------------
+    // inherited from ofBaseVideo
+    //---------------------------------------
+    
+    bool isFrameNew() const;
+    void close();
+    bool isInitialized() const;
+    
+    bool setPixelFormat(ofPixelFormat pixelFormat);
+    ofPixelFormat getPixelFormat() const;
+    
+    //---------------------------------------
+    // inherited from ofBaseHasPixels
+    //---------------------------------------
+    
+	ofPixels & getPixels();
+	const ofPixels & getPixels() const;
+    
+    //---------------------------------------
+    // inherited from ofBaseUpdates
+    //---------------------------------------
+    
 	void update();
-	
-	void setDeviceID(int _deviceID);
-	
-	void setDesiredFrameRate(int framerate);
-	
-	//should implement!
-	/*void setVerbose(bool bTalkToMe);
-	
-	void videoSettings();*/
-	
+    
+    //---------------------------------------
+    // deprecated.
+    //---------------------------------------
+    
+    OF_DEPRECATED_MSG("ofxiOSVideoGrabber::initGrabber(int w, int h) is deprecated, use setup(int w, int h) instead.", bool initGrabber(int w, int h));
+    OF_DEPRECATED_MSG("ofxiOSVideoGrabber::getDeviceList() is deprecated, use listDevices() instead.", void getDeviceList() const);
+    OF_DEPRECATED_MSG("ofxiOSVideoGrabber::getPixelsRef() is deprecated, use getPixels() instead.", ofPixels&	getPixelsRef());
+    OF_DEPRECATED_MSG("ofxiOSVideoGrabber::getPixelsRef() is deprecated, use getPixels() instead.", const ofPixels&  getPixelsRef() const);
+    
 protected:
-	ofPtr<AVFoundationVideoGrabber> grabber;
+    
+	shared_ptr<AVFoundationVideoGrabber> grabber;
+    
+    ofPixels pixels;
+    
 };
-
-#endif
 
 #define ofxiPhoneVideoGrabber ofxiOSVideoGrabber

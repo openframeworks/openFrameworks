@@ -13,8 +13,8 @@ static bool bScrubbing = false;
 void ofApp::setup() {
 	ofSetFrameRate(30);
 	ofBackground(225, 225, 225);
-    
-	video.loadMovie("hands.m4v");
+
+	video.load("hands.m4v");
 	video.play();
     
     controls = [[VideoPlayerControls alloc] init];
@@ -55,23 +55,28 @@ void ofApp::update(){
 void ofApp::draw(){
 	
 	ofSetColor(255);
-    video.getTexture()->draw(0, 0);
+    video.getTexturePtr()->draw(0, 0);
     
 	if(video.isLoaded()){
         
         // let's move through the "RGB" char array
         // using the red pixel to control the size of a circle.
         
-        unsigned char * pixels = video.getPixels();
-        int videoW = video.getWidth();
-        int videoH = video.getHeight();
+        ofPixels & pixels = video.getPixels();
+        int videoW = pixels.getWidth();
+        int videoH = pixels.getHeight();
+        int dotRadius = 4;
+        int dotDiameter = dotRadius * 2;
         
 		ofSetColor(54);
-		for (int i = 4; i < videoW; i+=8){
-			for (int j = 4; j < videoH; j+=8){
-				unsigned char r = pixels[(j * 320 + i)*3];
-				float val = 1 - ((float)r / 255.0f);
-				ofCircle(i, 240 + j, 4 * val);
+		for(int x=0; x<videoW; x+=dotDiameter) {
+			for(int y=0; y<videoH; y+=dotDiameter) {
+                ofFloatColor color = pixels.getColor(x, y);
+				float val = 1.0 - color.r;
+                float cx = x + dotRadius;
+                float cy = y + dotRadius + 240;
+                float radius = dotRadius * val;
+				ofDrawCircle(cx, cy, radius);
 			}
 		}
     }
@@ -118,7 +123,7 @@ void ofApp::scrubEnd() {
 }
 
 void ofApp::loadPressed() {
-    video.loadMovie("hands.m4v");
+    video.load("hands.m4v");
     video.play();
     
     AVFoundationVideoPlayer * avVideoPlayer;

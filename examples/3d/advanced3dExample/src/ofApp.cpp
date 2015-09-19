@@ -136,7 +136,7 @@ void ofApp::draw(){
 	ofDisableDepthTest();
 	ofPushStyle();
 	ofSetColor(100, 100, 100);
-	ofRect(viewGrid[iMainCamera]);
+	ofDrawRectangle(viewGrid[iMainCamera]);
 	ofPopStyle();
 	ofEnableDepthTest();
 
@@ -193,10 +193,10 @@ void ofApp::draw(){
 	ofSetColor(255, 255, 255);
 	//
 	for(int i = 0; i < N_CAMERAS; i++){
-		ofRect(viewGrid[i]);
+		ofDrawRectangle(viewGrid[i]);
 	}
 	//
-	ofRect(viewMain);
+	ofDrawRectangle(viewMain);
 
 	// restore the GL depth function
 	glDepthFunc(GL_LESS);
@@ -326,7 +326,7 @@ void ofApp::drawScene(int iCameraDraw){
 	if(iMainCamera == 0 && iCameraDraw != 0){
 		ofPushStyle();
 		ofSetColor(100, 100, 255);
-		ofLine(ray[0], ray[1]);
+		ofDrawLine(ray[0], ray[1]);
 		ofPopStyle();
 	}
 
@@ -392,6 +392,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

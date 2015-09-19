@@ -1,4 +1,5 @@
 #include "ofxSliderGroup.h"
+using namespace std;
 
 template<class VecType>
 ofxVecSlider_<VecType>::ofxVecSlider_(ofParameter<VecType> value, float width, float height){
@@ -33,7 +34,7 @@ ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(ofParameter<VecType> valu
 }
 
 template<class VecType>
-ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(string controlName, const VecType & v, const VecType & min, const VecType & max, float width, float height){
+ofxVecSlider_<VecType> * ofxVecSlider_<VecType>::setup(const std::string& controlName, const VecType & v, const VecType & min, const VecType & max, float width, float height){
 	value.set(controlName,v,min,max);
 	return setup(value,width,height);
 }
@@ -118,7 +119,7 @@ ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(ofParameter<ofCol
 
 
 template<class ColorType>
-ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(string controlName, const ofColor_<ColorType> & v, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width, float height){
+ofxColorSlider_<ColorType> * ofxColorSlider_<ColorType>::setup(const std::string& controlName, const ofColor_<ColorType> & v, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width, float height){
     value.set(controlName, v, min, max);
 	return setup(value,width,height);
 }

@@ -24,6 +24,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		bIsFrameNew = false;
 		bAutoResume = false;
 		bIsMoviedone = false;
+		bIsLooping = false;
 		
 		// TODO Get movie FPS to implement Frame methods
 		// movieFPS = 16;
@@ -74,6 +75,8 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 		try {
 			if(mediaPlayer == null) {
 				mediaPlayer = new MediaPlayer();
+				mediaPlayer.reset();
+				mediaPlayer.setLooping(bIsLooping);
 				mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 					public void onPrepared(MediaPlayer mp) {
 						bIsLoaded = true;
@@ -132,6 +135,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	void unloadMovie(){
 		if(mediaPlayer!=null){
 			mediaPlayer.setSurface(null);
+			mediaPlayer.reset();
 			mediaPlayer.release();
 			mediaPlayer = null;
 		}
@@ -184,6 +188,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	void setLoopState(boolean bL){
 		if(mediaPlayer==null) return;
 		mediaPlayer.setLooping(bL);
+		bIsLooping = bL;
 	}
 	
 	boolean getLoopState(){
@@ -326,6 +331,7 @@ public class OFAndroidVideoPlayer extends OFAndroidObject implements OnFrameAvai
 	private boolean bIsPaused;
 	private boolean bIsMoviedone;
 	private boolean bIsFrameNew;
+	private boolean bIsLooping;
 	
 	//private int movieFPS;
 	//private int nFrames;

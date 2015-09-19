@@ -1083,12 +1083,13 @@ class OpenALObject
 				
 		OSStatus UnloadEffect(UInt32 inEffectID)
 		{
-			mEffectsMap->Remove(inEffectID); //remove pointer from structure first
-			SoundEngineEffect *theEffect = mEffectsMap->Get(inEffectID); //then delete
+			SoundEngineEffect *theEffect = mEffectsMap->Get(inEffectID);
 			if (theEffect){
 				delete theEffect;
+				theEffect = NULL;
 			}
-			return 0;
+			mEffectsMap->Remove(inEffectID);
+			return AL_NO_ERROR;
 		}
 
 		bool checkToRelease(ALuint sourceID, int mSource)

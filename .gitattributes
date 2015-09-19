@@ -15,3 +15,7 @@
 # Denote all files that are truly binary and should not be modified.
 *.png binary
 *.jpg binary
+
+# Exclude .patch files in apothecary from EOL normalization
+scripts/apothecary/**/*.patch -text
+

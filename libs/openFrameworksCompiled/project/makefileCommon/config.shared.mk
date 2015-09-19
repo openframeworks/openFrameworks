@@ -22,12 +22,16 @@ ifndef SHELL
 endif
 
 ifndef OF_ROOT
-    OF_ROOT=../../..
+    OF_ROOT=$(realpath ../../..)
 endif
 
 # if the user has not specified a special variant, then use the default variant
 ifndef PLATFORM_VARIANT
     PLATFORM_VARIANT = default
+endif
+
+ifeq ($(CC),$(EMSCRIPTEN)/emcc)
+	PLATFORM_OS=emscripten
 endif
 
 # if not defined, determine this platform's operating system via uname -s
@@ -36,6 +40,7 @@ ifndef PLATFORM_OS
     PLATFORM_OS=$(shell uname -s)
 endif
 HOST_OS=$(shell uname -s)
+$(info HOST_OS=${HOST_OS})
 
 # if not defined, determine this platform's architecture via uname -m
 ifndef PLATFORM_ARCH
@@ -43,6 +48,7 @@ ifndef PLATFORM_ARCH
     PLATFORM_ARCH=$(shell uname -m)
 endif
 HOST_ARCH=$(shell uname -m)
+$(info HOST_ARCH=${HOST_ARCH})
 
 ifneq ($(HOST_ARCH),$(PLATFORM_ARCH))
 	CROSS_COMPILING=1
@@ -73,10 +79,18 @@ ifndef PLATFORM_LIB_SUBPATH
         else
             $(error This makefile does not support your architecture $(PLATFORM_ARCH))
         endif
+    else ifneq (,$(findstring MINGW32_NT,$(PLATFORM_OS)))
+        PLATFORM_LIB_SUBPATH=win_cb
+    else ifneq (,$(findstring MSYS_NT,$(PLATFORM_OS)))
+        PLATFORM_LIB_SUBPATH=win_cb
+    else ifneq (,$(findstring MINGW64_NT,$(PLATFORM_OS)))
+        PLATFORM_LIB_SUBPATH=win_cb
     else ifeq ($(PLATFORM_OS),Android)
         PLATFORM_LIB_SUBPATH=android
     else ifeq ($(PLATFORM_OS),Darwin)
         PLATFORM_LIB_SUBPATH=osx
+    else ifeq ($(PLATFORM_OS),emscripten)
+        PLATFORM_LIB_SUBPATH=emscripten
     else
         $(error This makefile does not support your operating system)
     endif
@@ -203,6 +217,8 @@ else
 	ABI_LIB_SUBPATH=$(PLATFORM_LIB_SUBPATH)
 endif
 
+PLATFORM_PKG_CONFIG ?= pkg-config
+
 
 ################################ FLAGS #########################################
 # define the location of the core path
@@ -256,13 +272,13 @@ CORE_PKG_CONFIG_LIBRARIES += $(PROJECT_PKG_CONFIG_LIBRARIES)
 
 ifneq ($(strip $(CORE_PKG_CONFIG_LIBRARIES)),)
 $(info checking pkg-config libraries: $(CORE_PKG_CONFIG_LIBRARIES))
-	ifneq ($(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --exists; echo $$?),0)
+	ifneq ($(shell $(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --exists; echo $$?),0)
 $(error couldn't find some pkg-config packages, did you run the latest install_dependencies.sh?)
 	endif
 	ifeq ($(CROSS_COMPILING),1)
-		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
+		OF_CORE_INCLUDES_CFLAGS += $(patsubst -I%,-I$(SYSROOT)% ,$(shell export PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR);$(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags))
 	else
-		OF_CORE_INCLUDES_CFLAGS += $(shell pkg-config "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
+		OF_CORE_INCLUDES_CFLAGS += $(shell $(PLATFORM_PKG_CONFIG) "$(CORE_PKG_CONFIG_LIBRARIES)" --cflags)
 	endif
 endif
 

@@ -275,7 +275,7 @@ void ofApp::draw(){
 	//
 	ofFill();
 	ofSetHexColor(0xd3ffd3);
-	ofRect(80,480,140,70);
+	ofDrawRectangle(80,480,140,70);
 	ofSetHexColor(0xff00ff);
 	
 	ofBeginShape();

@@ -19,7 +19,7 @@ class ofFbo;
 
 class ofMatrixStack {
 public:
-	ofMatrixStack(const ofAppBaseWindow & window);
+	ofMatrixStack(const ofAppBaseWindow * window);
 
 	void setRenderSurface(const ofFbo & fbo);
 	void setRenderSurface(const ofAppBaseWindow & window);
@@ -27,12 +27,14 @@ public:
 	void setOrientation(ofOrientation orientation, bool vFlip);
 	ofOrientation getOrientation() const;
 
-	void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped());
+	void viewport(float x, float y, float width, float height, bool vflip);
 	void nativeViewport(ofRectangle viewport);
-	ofRectangle getCurrentViewport();
-	ofRectangle getNativeViewport();
+	ofRectangle getCurrentViewport() const;
+	ofRectangle getNativeViewport() const;
+	ofRectangle getFullSurfaceViewport() const;
 
 	const ofMatrix4x4 & getProjectionMatrix() const;
+	const ofMatrix4x4 & getViewMatrix() const;
 	const ofMatrix4x4 & getModelViewMatrix() const;
 	const ofMatrix4x4 & getModelViewProjectionMatrix() const;
 	const ofMatrix4x4 & getTextureMatrix() const;
@@ -58,11 +60,15 @@ public:
 	void rotate(float degrees, float vecX, float vecY, float vecZ);
 	void matrixMode(ofMatrixMode mode);
 	void loadIdentityMatrix (void);
+	
 	void loadMatrix (const float * m);
 	void multMatrix (const float * m);
 
-	void clearStacks();
+	void loadViewMatrix(const ofMatrix4x4 & matrix);
+	void multViewMatrix(const ofMatrix4x4 & matrix);
 
+	void clearStacks();
+	bool doesHardwareOrientation() const;
 
 private:
 	bool vFlipped;
@@ -74,6 +80,7 @@ private:
 
     ofMatrixMode currentMatrixMode;
 
+    ofMatrix4x4 viewMatrix;
 	ofMatrix4x4	modelViewMatrix;
 	ofMatrix4x4	projectionMatrix;
 	ofMatrix4x4	textureMatrix;
@@ -85,6 +92,7 @@ private:
 	ofMatrix4x4 * currentMatrix;
 
 	stack <ofRectangle> viewportHistory;
+	stack <ofMatrix4x4> viewMatrixStack;
 	stack <ofMatrix4x4> modelViewMatrixStack;
 	stack <ofMatrix4x4> projectionMatrixStack;
 	stack <ofMatrix4x4> textureMatrixStack;
@@ -93,7 +101,7 @@ private:
 	int getRenderSurfaceWidth() const;
 	int getRenderSurfaceHeight() const;
 	bool doesHWOrientation() const;
-	void updatedRelatedMatrices();
+	inline void updatedRelatedMatrices();
 
 };
 

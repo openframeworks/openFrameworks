@@ -11,7 +11,8 @@ int main( ){
         settings.frameBufferAttributes[EGL_DEPTH_SIZE]   = 0; // 0 bits for depth
         settings.frameBufferAttributes[EGL_STENCIL_SIZE] = 0; // 0 bits for stencil
 	
-	ofAppEGLWindow window(settings);
+	ofAppEGLWindow window;
+        window.setup(settings);
 
 	ofSetupOpenGL(&window, 1024,768, OF_FULLSCREEN);// <-------- setup the GL context
 

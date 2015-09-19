@@ -33,7 +33,7 @@ void ofApp::searchGoogleImages() {
     // create the google url string
     string term         = "openframeworks";
     string googleImgURL = "http://www.google.com/search?q="+term+"&tbm=isch&sout=1&tbs=isz&&start="+ofToString(page);
-    cout << "seraching for " << googleImgURL << endl;
+    cout << "searching for " << googleImgURL << endl;
     
     ofHttpResponse res = ofLoadURL(googleImgURL);
     if(res.status > 0) {
@@ -44,8 +44,8 @@ void ofApp::searchGoogleImages() {
         // first we want to get the search contents tag
         // in the webpage there is a table for all the images. we
         // want to get the content in the table using 
-        // the <table> (.*?) </table> expression
-        RegularExpression regEx("<table class=\"images_table\" width=\"100%\" style=\"table-layout:fixed\">(.*?)</table>");
+        // the <table> (.*?) </table> expression        
+        RegularExpression regEx("<table class=\"images_table\" style=\"table-layout:fixed\" [^>]+>(.*?)</table>");
         RegularExpression::Match match;
         int found = regEx.match(rawData, match);
         
@@ -115,7 +115,7 @@ void ofApp::searchGoogleImages() {
 void ofApp::update(){
     for(unsigned int i=0; i<images.size(); i++) {
         if(!images[i].bDoneLoading) {
-            images[i].loadImage(images[i].url);
+            images[i].load(images[i].url);
             images[i].bDoneLoading = true;
             break;
         }
@@ -188,6 +188,16 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
     
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

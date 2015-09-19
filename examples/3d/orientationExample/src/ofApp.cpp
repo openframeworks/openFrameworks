@@ -75,11 +75,13 @@ void ofApp::draw(){
 	
 	// draw a line connecting the box to the grid
 	ofSetColor(yellow);
-	ofLine(current.x, current.y, current.z, current.x, 0, current.z);
+	ofDrawLine(current.x, current.y, current.z, current.x, 0, current.z);
 	
 	// translate and rotate to the current position and orientation
 	ofTranslate(current.x, current.y, current.z);
-	rotateToNormal(current - previous);
+    if( (current - previous ).length() > 0.0 ){
+        rotateToNormal(current - previous);
+    }
 	ofSetColor(255);
 	ofDrawBox(32);
 	ofDrawAxis(32);
@@ -114,6 +116,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

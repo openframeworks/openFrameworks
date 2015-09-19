@@ -311,7 +311,7 @@ void ofApp::draw(){
 	ofFill();
 	ofSetRectMode(OF_RECTMODE_CORNER);
 	ofSetHexColor(0x000000);
-	ofRect(60, 630, 200,60);
+	ofDrawRectangle(60, 630, 200,60);
 
 	//some text to explain whats what
 	ofSetHexColor(0xDDDDDD);
@@ -364,6 +364,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

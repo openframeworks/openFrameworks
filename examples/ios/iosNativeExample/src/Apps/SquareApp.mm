@@ -18,7 +18,7 @@ void SquareApp::setup() {
     if (ofxiOSGetOFWindow()->isRetinaSupportedOnDevice())
         fontSize *= 2;
 
-    font.loadFont("fonts/mono0755.ttf", fontSize);
+    font.load("fonts/mono0755.ttf", fontSize);
 }
 
 //--------------------------------------------------------------
@@ -37,7 +37,7 @@ void SquareApp::draw() {
     int p = 0;
     
 	ofSetColor(ofColor::red);
-    ofRect(x, y, w, h);
+    ofDrawRectangle(x, y, w, h);
     
     x = ofGetWidth()  * 0.2;
     y = ofGetHeight() * 0.11;

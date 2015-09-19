@@ -16,9 +16,9 @@ static map<string,ofLogLevel> & getModules(){
 static void noopDeleter(ofBaseLoggerChannel*){}
 #ifdef TARGET_ANDROID
 	#include "ofxAndroidLogChannel.h"
-	ofPtr<ofBaseLoggerChannel> ofLog::channel = ofPtr<ofxAndroidLogChannel>(new ofxAndroidLogChannel,std::ptr_fun(noopDeleter));
+	shared_ptr<ofBaseLoggerChannel> ofLog::channel = shared_ptr<ofxAndroidLogChannel>(new ofxAndroidLogChannel,std::ptr_fun(noopDeleter));
 #else
-	ofPtr<ofBaseLoggerChannel> ofLog::channel = ofPtr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter));
+	shared_ptr<ofBaseLoggerChannel> ofLog::channel = shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter));
 #endif
 
 //--------------------------------------------------
@@ -38,12 +38,12 @@ ofLogLevel ofGetLogLevel(){
 
 //--------------------------------------------------
 void ofLogToFile(const string & path, bool append){
-	ofLog::setChannel(ofPtr<ofFileLoggerChannel>(new ofFileLoggerChannel(path,append)));
+	ofLog::setChannel(shared_ptr<ofFileLoggerChannel>(new ofFileLoggerChannel(path,append)));
 }
 
 //--------------------------------------------------
 void ofLogToConsole(){
-	ofLog::setChannel(ofPtr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter)));
+	ofLog::setChannel(shared_ptr<ofConsoleLoggerChannel>(new ofConsoleLoggerChannel,std::ptr_fun(noopDeleter)));
 }
 
 //--------------------------------------------------
@@ -223,11 +223,11 @@ ofLogFatalError::ofLogFatalError(const string & module, const char* format, ...)
 }
 
 //--------------------------------------------------
-void ofLog::setChannel(ofPtr<ofBaseLoggerChannel> _channel){
+void ofLog::setChannel(shared_ptr<ofBaseLoggerChannel> _channel){
 	channel = _channel;
 }
 
-void ofSetLoggerChannel(ofPtr<ofBaseLoggerChannel> loggerChannel){
+void ofSetLoggerChannel(shared_ptr<ofBaseLoggerChannel> loggerChannel){
 	ofLog::setChannel(loggerChannel);
 }
 

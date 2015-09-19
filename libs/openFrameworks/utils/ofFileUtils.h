@@ -1,7 +1,14 @@
 #pragma once
 
 #include "ofConstants.h"
-#include "Poco/File.h"
+#if !_MSC_VER
+#define BOOST_NO_CXX11_SCOPED_ENUMS
+#define BOOST_NO_SCOPED_ENUMS
+#endif
+#include <boost/filesystem.hpp>
+namespace std {
+	namespace filesystem = boost::filesystem;
+}
 
 //----------------------------------------------------------
 // ofBuffer
@@ -11,44 +18,80 @@ class ofBuffer{
 	
 public:
 	ofBuffer();
-	ofBuffer(const char * buffer, unsigned int size);
+	ofBuffer(const char * buffer, std::size_t size);
 	ofBuffer(const string & text);
-	ofBuffer(istream & stream);
-	ofBuffer(const ofBuffer & buffer_);
+	ofBuffer(istream & stream, size_t ioBlockSize = 1024);
 
-	~ofBuffer();
-
-	void set(const char * _buffer, unsigned int _size);
+	void set(const char * _buffer, std::size_t _size);
 	void set(const string & text);
-	bool set(istream & stream);
+	bool set(istream & stream, size_t ioBlockSize = 1024);
 	void append(const string& _buffer);
-	void append(const char * _buffer, unsigned int _size);
+	void append(const char * _buffer, std::size_t _size);
 
 	bool writeTo(ostream & stream) const;
 
 	void clear();
 
-	void allocate(long _size);
+	void allocate(std::size_t _size);
 
-	char * getBinaryBuffer();
-	const char * getBinaryBuffer() const;
+	char * getData();
+	const char * getData() const;
+	OF_DEPRECATED_MSG("Use getData instead",char * getBinaryBuffer());
+	OF_DEPRECATED_MSG("Use getData instead",const char * getBinaryBuffer() const);
 
 	string getText() const;
 	operator string() const;  // cast to string, to use a buffer as a string
 	ofBuffer & operator=(const string & text);
 
 	long size() const;
-	string getNextLine();
-    string getFirstLine();
-	bool isLastLine();
-    void resetLineReader();
+
+	OF_DEPRECATED_MSG("use a lines iterator instead",string getNextLine());
+	OF_DEPRECATED_MSG("use a lines iterator instead",string getFirstLine());
+	OF_DEPRECATED_MSG("use a lines iterator instead",bool isLastLine());
+	OF_DEPRECATED_MSG("use a lines iterator instead",void resetLineReader());
     
 	friend ostream & operator<<(ostream & ostr, const ofBuffer & buf);
 	friend istream & operator>>(istream & istr, ofBuffer & buf);
 
+	vector<char>::iterator begin();
+	vector<char>::iterator end();
+	vector<char>::const_iterator begin() const;
+	vector<char>::const_iterator end() const;
+	vector<char>::reverse_iterator rbegin();
+	vector<char>::reverse_iterator rend();
+	vector<char>::const_reverse_iterator rbegin() const;
+	vector<char>::const_reverse_iterator rend() const;
+
+	struct Line: public std::iterator<std::forward_iterator_tag,Line>{
+		Line(vector<char>::iterator _begin, vector<char>::iterator _end);
+        const string & operator*() const;
+        const string * operator->() const;
+        const string & asString() const;
+        Line& operator++();
+        Line operator++(int);
+        bool operator!=(Line const& rhs) const;
+        bool operator==(Line const& rhs) const;
+        bool empty() const;
+
+	private:
+        string line;
+        vector<char>::iterator _current, _begin, _end;
+	};
+
+	struct Lines{
+		Lines(vector<char> & buffer);
+        Line begin();
+        Line end();
+
+	private:
+        vector<char>::iterator _begin, _end;
+	};
+
+	Lines getLines();
+
 private:
 	vector<char> 	buffer;
-	long 			nextLinePos;
+	Line			currentLine;
 };
 
 //--------------------------------------------------
@@ -62,37 +105,33 @@ bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary=false);
 class ofFilePath{
 public:
 		
-	static string getFileExt(string filename);
-	static string removeExt(string filename);
-	static string addLeadingSlash(string path);
-	static string addTrailingSlash(string path);
-	static string removeTrailingSlash(string path);
-	static string getPathForDirectory(string path);
-	static string getAbsolutePath(string path, bool bRelativeToData = true);
+	static string getFileExt(const std::string& filename);
+	static string removeExt(const std::string& filename);
+	static string addLeadingSlash(const std::string& path);
+	static string addTrailingSlash(const std::string& path);
+	static string removeTrailingSlash(const std::string& path);
+	static string getPathForDirectory(const std::string& path);
+	static string getAbsolutePath(const std::string& path, bool bRelativeToData = true);
 
-	static bool isAbsolute(string path);
+	static bool isAbsolute(const std::string& path);
 	
-	static string getFileName(string filePath, bool bRelativeToData = true);	
-	static string getBaseName(string filePath); // filename without extension
+	static string getFileName(const std::string& filePath, bool bRelativeToData = true);
+	static string getBaseName(const std::string& filePath); // filename without extension
 
-	static string getEnclosingDirectory(string filePath, bool bRelativeToData = true);
-	static bool createEnclosingDirectory(string filePath, bool bRelativeToData = true, bool bRecursive = true); 
+	static string getEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true);
+	static bool createEnclosingDirectory(const std::string& filePath, bool bRelativeToData = true, bool bRecursive = true);
 	static string getCurrentWorkingDirectory();
-	static string join(string path1,string path2);
+	static string join(const std::string& path1, const std::string& path2);
 	
 	static string getCurrentExePath();
 	static string getCurrentExeDir();
 
 	static string getUserHomeDir();
+
+	static string makeRelative(const std::string & from, const std::string & to);
 };
 
 class ofFile: public fstream{
-
-#ifdef _MSC_VER
-	// http://stackoverflow.com/questions/14487241/avoiding-an-inheritance-by-dominance-warning-for-a-mocked-stdfstream-class
-	void _Add_vtordisp1() { }
-	void _Add_vtordisp2() { }
-#endif
 
 public:
 	
@@ -105,12 +144,12 @@ public:
 	};
 
 	ofFile();
-	ofFile(string filePath, Mode mode=ReadOnly, bool binary=false);
+	ofFile(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=true);
 	ofFile(const ofFile & mom);
 	ofFile & operator= (const ofFile & mom);
 	~ofFile();
 
-	bool open(string path, Mode mode=ReadOnly, bool binary=false);
+	bool open(const std::filesystem::path & path, Mode mode=ReadOnly, bool binary=false);
 	bool changeMode(Mode mode, bool binary=false); // reopens a file to the same path with a different mode;
 	void close();
 	bool create();
@@ -139,18 +178,15 @@ public:
 	void setExecutable(bool executable=true);
 	
 	//these all work for files and directories
-	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
-	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);
-	bool renameTo(string path, bool bRelativeToData = true, bool overwrite = false);
+	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false) const;
+	bool moveTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool renameTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
 	
 	
 	//be careful! this deletes a file or folder :) 
 	bool remove(bool recursive=false);
 
 	uint64_t getSize() const;
-
-	//if you want access to a few other things
-	Poco::File & getPocoFile();
 
 	//this allows to compare files by their paths, also provides sorting and use as key in stl containers
 	bool operator==(const ofFile & file) const;
@@ -180,23 +216,31 @@ public:
 	// write_file << file.getFileBuffer();
 	filebuf * getFileBuffer() const;
 	
+	operator std::filesystem::path(){
+		return myFile;
+	}
+
+    operator const std::filesystem::path() const{
+        return myFile;
+    }
 	
+
 	//-------
 	//static helpers
 	//-------
 
-	static bool copyFromTo(string pathSrc, string pathDst, bool bRelativeToData = true,  bool overwrite = false);
+	static bool copyFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData = true,  bool overwrite = false);
 
 	//be careful with slashes here - appending a slash when moving a folder will causes mad headaches in osx
-	static bool moveFromTo(string pathSrc, string pathDst, bool bRelativeToData = true, bool overwrite = false);
-	static bool doesFileExist(string fPath,  bool bRelativeToData = true);
-	static bool removeFile(string path, bool bRelativeToData = true);
+	static bool moveFromTo(const std::string& pathSrc, const std::string& pathDst, bool bRelativeToData = true, bool overwrite = false);
+	static bool doesFileExist(const std::string& fPath,  bool bRelativeToData = true);
+	static bool removeFile(const std::string& path, bool bRelativeToData = true);
 
 private:
 	bool isWriteMode();
 	bool openStream(Mode _mode, bool binary);
 	void copyFrom(const ofFile & mom);
-	Poco::File myFile;
+	std::filesystem::path myFile;
 	Mode mode;
 	bool binary;
 };
@@ -205,9 +249,9 @@ class ofDirectory{
 
 public:
 	ofDirectory();
-	ofDirectory(string path);
+	ofDirectory(const std::filesystem::path & path);
 
-	void open(string path);
+	void open(const std::filesystem::path & path);
 	void close();
 	bool create(bool recursive = false);
 
@@ -227,9 +271,9 @@ public:
 	void setExecutable(bool executable=true);
 	void setShowHidden(bool showHidden);
 
-	bool copyTo(string path, bool bRelativeToData = true, bool overwrite = false);
-	bool moveTo(string path, bool bRelativeToData = true, bool overwrite = false);
-	bool renameTo(string path, bool bRelativeToData = true, bool overwrite = false);
+	bool copyTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool moveTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool renameTo(const string& path, bool bRelativeToData = true, bool overwrite = false);
 
 	//be careful! this deletes a file or folder :)
 	bool remove(bool recursive);
@@ -237,52 +281,60 @@ public:
 	//-------------------
 	// dirList operations
 	//-------------------
-	void allowExt(string extension);
-	int listDir(string path);
-	int listDir();
+	void allowExt(const string& extension);
+	std::size_t listDir(const string& path);
+	std::size_t listDir();
 
-	string getOriginalDirectory();
-	string getName(unsigned int position); // e.g., "image.png"
-	string getPath(unsigned int position);
-	ofFile getFile(unsigned int position, ofFile::Mode mode=ofFile::Reference, bool binary=false);
-	vector<ofFile> getFiles();
+	string getOriginalDirectory() const;
+	string getName(std::size_t position) const; // e.g., "image.png"
+	string getPath(std::size_t position) const;
+	ofFile getFile(std::size_t position, ofFile::Mode mode=ofFile::Reference, bool binary=false) const;
+	const vector<ofFile> & getFiles() const;
 
-	ofFile operator[](unsigned int position);
+	ofFile operator[](std::size_t position) const;
 
-	bool getShowHidden();
+	bool getShowHidden() const;
 
 	void reset(); //equivalent to close, just here for bw compatibility with ofxDirList
 	void sort();
+    ofDirectory getSorted();
 
-	unsigned int size();
-	int numFiles(); // numFiles is deprecated, use size()
+	std::size_t size() const;
 
-
-
-	//if you want access to a few other things
-	Poco::File & getPocoFile();
+	OF_DEPRECATED_MSG("Use size() instead.", int numFiles());
 
 	//this allows to compare dirs by their paths, also provides sorting and use as key in stl containers
-	bool operator==(const ofDirectory & dir);
-	bool operator!=(const ofDirectory & dir);
-	bool operator<(const ofDirectory & dir);
-	bool operator<=(const ofDirectory & dir);
-	bool operator>(const ofDirectory & dir);
-	bool operator>=(const ofDirectory & dir);
+	bool operator==(const ofDirectory & dir) const;
+	bool operator!=(const ofDirectory & dir) const;
+	bool operator<(const ofDirectory & dir) const;
+	bool operator<=(const ofDirectory & dir) const;
+	bool operator>(const ofDirectory & dir) const;
+	bool operator>=(const ofDirectory & dir) const;
 
+	operator std::filesystem::path(){
+		return myDir;
+	}
+
+    operator const std::filesystem::path() const{
+        return myDir;
+    }
 
 	//-------
 	//static helpers
 	//-------
 
-	static bool createDirectory(string dirPath, bool bRelativeToData = true, bool recursive = false);
-	static bool isDirectoryEmpty(string dirPath, bool bRelativeToData = true );
-	static bool doesDirectoryExist(string dirPath, bool bRelativeToData = true);
-	static bool removeDirectory(string path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
+	static bool createDirectory(const std::string& dirPath, bool bRelativeToData = true, bool recursive = false);
+	static bool isDirectoryEmpty(const std::string& dirPath, bool bRelativeToData = true );
+	static bool doesDirectoryExist(const std::string& dirPath, bool bRelativeToData = true);
+	static bool removeDirectory(const std::string& path, bool deleteIfNotEmpty,  bool bRelativeToData = true);
 
+	vector<ofFile>::const_iterator begin() const;
+	vector<ofFile>::const_iterator end() const;
+	vector<ofFile>::const_reverse_iterator rbegin() const;
+	vector<ofFile>::const_reverse_iterator rend() const;
 
 private:
-	Poco::File myDir;
+	std::filesystem::path myDir;
 	string originalDirectory;
 	vector <string> extensions;
 	vector <ofFile> files;

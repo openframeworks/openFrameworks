@@ -12,11 +12,12 @@
  * Adapted for FLANN by Marius Muja
  */
 
+#include "defines.h"
 #include <stdexcept>
 #include <ostream>
 #include <typeinfo>
 
-namespace cdiggins
+namespace cvflann
 {
 
 namespace anyimpl
@@ -30,11 +31,12 @@ struct empty_any
 {
 };
 
-    inline std::ostream& operator <<(std::ostream& out, const empty_any&){
-        out<<"[empty_any]";
-        return out;
-    }    
-    
+inline std::ostream& operator <<(std::ostream& out, const empty_any&)
+{
+    out << "[empty_any]";
+    return out;
+}
+
 struct base_any_policy
 {
     virtual void static_delete(void** x) = 0;
@@ -42,15 +44,19 @@ struct base_any_policy
     virtual void clone(void* const* src, void** dest) = 0;
     virtual void move(void* const* src, void** dest) = 0;
     virtual void* get_value(void** src) = 0;
-    virtual size_t get_size() = 0;
+    virtual ::size_t get_size() = 0;
     virtual const std::type_info& type() = 0;
     virtual void print(std::ostream& out, void* const* src) = 0;
+
+#ifdef OPENCV_CAN_BREAK_BINARY_COMPATIBILITY
+    virtual ~base_any_policy() {}
+#endif
 };
 
 template<typename T>
 struct typed_base_any_policy : base_any_policy
 {
-    virtual size_t get_size() { return sizeof(T); }
+    virtual ::size_t get_size() { return sizeof(T); }
     virtual const std::type_info& type() { return typeid(T); }
 
 };
@@ -93,6 +99,16 @@ struct big_any_policy : typed_base_any_policy<T>
     virtual void print(std::ostream& out, void* const* src) { out << *reinterpret_cast<T const*>(*src); }
 };
 
+template<> inline void big_any_policy<flann_centers_init_t>::print(std::ostream& out, void* const* src)
+{
+    out << int(*reinterpret_cast<flann_centers_init_t const*>(*src));
+}
+
+template<> inline void big_any_policy<flann_algorithm_t>::print(std::ostream& out, void* const* src)
+{
+    out << int(*reinterpret_cast<flann_algorithm_t const*>(*src));
+}
+
 template<typename T>
 struct choose_policy
 {
@@ -119,7 +135,7 @@ struct choose_policy<any>
 #define SMALL_POLICY(TYPE) \
     template<> \
     struct choose_policy<TYPE> { typedef small_any_policy<TYPE> type; \
-    };
+    }
 
 SMALL_POLICY(signed char);
 SMALL_POLICY(unsigned char);
@@ -239,8 +255,7 @@ public:
     const T& cast() const
     {
         if (policy->type() != typeid(T)) throw anyimpl::bad_any_cast();
-        void* obj = const_cast<void*>(object);
-        T* r = reinterpret_cast<T*>(policy->get_value(&obj));
+        T* r = reinterpret_cast<T*>(policy->get_value(const_cast<void **>(&object)));
         return *r;
     }
 

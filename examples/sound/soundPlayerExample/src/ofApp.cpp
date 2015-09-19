@@ -2,13 +2,17 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	synth.loadSound("sounds/synth.wav");
-	beats.loadSound("sounds/1085.mp3");
-	vocals.loadSound("sounds/Violet.mp3");
+	
+	// on OSX: if you want to use ofSoundPlayer together with ofSoundStream you need to synchronize buffersizes.
+	// use ofFmodSetBuffersize(bufferSize) to set the buffersize in fmodx prior to loading a file.
+	
+	synth.load("sounds/synth.wav");
+	beats.load("sounds/1085.mp3");
+	vocals.load("sounds/Violet.mp3");
 	synth.setVolume(0.75f);
 	beats.setVolume(0.75f);
 	vocals.setVolume(0.5f);
-	font.loadFont("Sudbury_Basin_3D.ttf", 32);
+	font.load("Sudbury_Basin_3D.ttf", 32);
 	beats.setMultiPlay(false);
 	vocals.setMultiPlay(true);
 }
@@ -29,15 +33,15 @@ void ofApp::draw(){
 	// draw the background colors:
 	float widthDiv = ofGetWidth() / 3.0f;
 	ofSetHexColor(0xeeeeee);
-	ofRect(0,0,widthDiv,ofGetHeight());
+	ofDrawRectangle(0,0,widthDiv,ofGetHeight());
 	ofSetHexColor(0xffffff);
-	ofRect(widthDiv,0,widthDiv,ofGetHeight());
+	ofDrawRectangle(widthDiv,0,widthDiv,ofGetHeight());
 	ofSetHexColor(0xdddddd);
-	ofRect(widthDiv*2,0,widthDiv,ofGetHeight());
+	ofDrawRectangle(widthDiv*2,0,widthDiv,ofGetHeight());
 
 
 	//---------------------------------- synth:
-	if (synth.getIsPlaying()) ofSetHexColor(0xFF0000);
+	if (synth.isPlaying()) ofSetHexColor(0xFF0000);
 	else ofSetHexColor(0x000000);
 	font.drawString("synth !!", 50,50);
 
@@ -48,7 +52,7 @@ void ofApp::draw(){
 
 
 	//---------------------------------- beats:
-	if (beats.getIsPlaying()) ofSetHexColor(0xFF0000);
+	if (beats.isPlaying()) ofSetHexColor(0xFF0000);
 	else ofSetHexColor(0x000000);
 	font.drawString("beats !!", widthDiv+50,50);
 
@@ -57,7 +61,7 @@ void ofApp::draw(){
 	ofDrawBitmapString(tempStr, widthDiv+50,ofGetHeight()-50);
 
 	//---------------------------------- vocals:
-	if (vocals.getIsPlaying()) ofSetHexColor(0xFF0000);
+	if (vocals.isPlaying()) ofSetHexColor(0xFF0000);
 	else ofSetHexColor(0x000000);
 	font.drawString("vocals !!", widthDiv*2+50,50);
 
@@ -112,6 +116,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

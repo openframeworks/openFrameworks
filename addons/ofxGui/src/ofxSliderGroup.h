@@ -12,7 +12,7 @@ public:
     ofxVecSlider_(ofParameter<VecType> value, float width = defaultWidth, float height = defaultHeight);
 
     ofxVecSlider_ * setup(ofParameter<VecType> value, float width = defaultWidth, float height = defaultHeight);
-    ofxVecSlider_ * setup(string controlName, const VecType & value, const VecType & min, const VecType & max, float width = defaultWidth, float height = defaultHeight);
+    ofxVecSlider_ * setup(const std::string& controlName, const VecType & value, const VecType & min, const VecType & max, float width = defaultWidth, float height = defaultHeight);
 
     ofAbstractParameter & getParameter();
 
@@ -41,7 +41,7 @@ public:
 	ofxColorSlider_(ofParameter<ofColor_<ColorType> > value, float width = defaultWidth, float height = defaultHeight);
 
 	ofxColorSlider_ * setup(ofParameter<ofColor_<ColorType> > value, float width = defaultWidth, float height = defaultHeight);
-	ofxColorSlider_ * setup(string controlName, const ofColor_<ColorType> & value, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width = defaultWidth, float height = defaultHeight);
+	ofxColorSlider_ * setup(const std::string& controlName, const ofColor_<ColorType> & value, const ofColor_<ColorType> & min, const ofColor_<ColorType> & max, float width = defaultWidth, float height = defaultHeight);
 
 	ofAbstractParameter & getParameter();
 

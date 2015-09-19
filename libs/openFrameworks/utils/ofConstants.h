@@ -1,10 +1,11 @@
 #pragma once
-		#include <stdint.h>
+#include <stdint.h>
 
 //-------------------------------
 #define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 8
+#define OF_VERSION_MINOR 9
 #define OF_VERSION_PATCH 0
+#define OF_VERSION_PRE_RELEASE "master"
 
 //-------------------------------
 
@@ -24,6 +25,7 @@ enum ofTargetPlatform{
 	OF_TARGET_LINUX64,
 	OF_TARGET_LINUXARMV6L, // arm v6 little endian
 	OF_TARGET_LINUXARMV7L, // arm v7 little endian
+	OF_TARGET_EMSCRIPTEN
 };
 
 #ifndef OF_TARGET_IPHONE
@@ -39,9 +41,11 @@ enum ofTargetPlatform{
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated))
     #endif
 	#define OF_DEPRECATED(func) func __attribute__ ((deprecated))
+	#define OF_INTERNAL_DEPRECATED(func) func __attribute__ ((deprecated("OF core deprecated")))
 #elif defined(_MSC_VER)
 	#define OF_DEPRECATED_MSG(message, func) __declspec(deprecated(message)) func
 	#define OF_DEPRECATED(func) __declspec(deprecated) func
+	#define OF_INTERNAL_DEPRECATED(func) __declspec(deprecated("OF core deprecated")) func
 #else
 	#pragma message("WARNING: You need to implement DEPRECATED for this compiler")
 	#define OF_DEPRECATED_MSG(message, func) func
@@ -58,12 +62,14 @@ enum ofTargetPlatform{
 #if defined( __WIN32__ ) || defined( _WIN32 )
 	#define TARGET_WIN32
 #elif defined( __APPLE_CC__)
-	#include <TargetConditionals.h>
+    #define __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES 0
+    #include <TargetConditionals.h>
 
-	#if (TARGET_OS_IPHONE_SIMULATOR) || (TARGET_OS_IPHONE) || (TARGET_IPHONE)
+	#if TARGET_OS_IPHONE_SIMULATOR || TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE || TARGET_IPHONE
 		#define TARGET_OF_IPHONE
         #define TARGET_OF_IOS
 		#define TARGET_OPENGLES
+        #include <unistd.h>
 	#else
 		#define TARGET_OSX
 	#endif
@@ -74,6 +80,12 @@ enum ofTargetPlatform{
 	#define TARGET_LINUX
 	#define TARGET_OPENGLES
 	#define TARGET_LINUX_ARM
+#elif defined(__EMSCRIPTEN__)
+	#define TARGET_EMSCRIPTEN
+	#define TARGET_OPENGLES
+	#define TARGET_NO_THREADS
+	#define TARGET_PROGRAMMABLE_GL
+	#define TARGET_IMPLEMENTS_URL_LOADER
 #else
 	#define TARGET_LINUX
 #endif
@@ -82,36 +94,30 @@ enum ofTargetPlatform{
 
 // then the the platform specific includes:
 #ifdef TARGET_WIN32
-	//this is for TryEnterCriticalSection
-	//http://www.zeroc.com/forums/help-center/351-ice-1-2-tryentercriticalsection-problem.html
-	#ifndef _WIN32_WINNT
-		#define _WIN32_WINNT 0x500
-	#endif
-	#define WIN32_LEAN_AND_MEAN
 
-	#if (_MSC_VER)
-		#define NOMINMAX		
-		//http://stackoverflow.com/questions/1904635/warning-c4003-and-errors-c2589-and-c2059-on-x-stdnumeric-limitsintmax
-	#endif
-
-	#include <windows.h>
 	#define GLEW_STATIC
-	#include "GL\glew.h"
-	#include "GL\wglew.h"
+	#define GLEW_NO_GLU
+	#include "GL/glew.h"
+	#include "GL/wglew.h"
    	#include "glu.h"
 	#define __WINDOWS_DS__
 	#define __WINDOWS_MM__
 	#if (_MSC_VER)       // microsoft visual studio
 		#include <stdint.h>
 		#include <functional>
-		#pragma warning(disable : 4018)		// signed/unsigned mismatch (since vector.size() is a size_t)
 		#pragma warning(disable : 4068)		// unknown pragmas
-		#pragma warning(disable : 4101)		// unreferenced local variable
-		#pragma warning(disable : 4267)		// conversion from size_t to Size warning... possible loss of data
-		#pragma warning(disable : 4311)		// type cast pointer truncation (qt vp)
-		#pragma warning(disable : 4312)		// type cast conversion (in qt vp)
+		#pragma warning(disable : 4756)		// overflow in constant arithmetic
 		#pragma warning(disable : 4800)		// 'Boolean' : forcing value to bool 'true' or 'false'
+
+		// make microsoft visual studio complain less about double / float conversion and
+		// truncation
+		#pragma warning(disable : 4244)
+		#pragma warning(disable : 4305)
 		// warnings: http://msdn.microsoft.com/library/2c8f766e.aspx
+
+		// NOMINMAX doesn't seem to work anymore in vs2015 so let's just remove them
+		#undef min
+		#undef max
 	#endif
 
 	#define TARGET_LITTLE_ENDIAN			// intel cpu
@@ -121,7 +127,7 @@ enum ofTargetPlatform{
 	#define GL_BGR_EXT 0x80E0
 	#endif
 
-	// #define WIN32_HIGH_RES_TIMING
+	#define WIN32_HIGH_RES_TIMING
 
 	// note: this is experimental!
 	// uncomment to turn this on (only for windows machines)
@@ -213,11 +219,13 @@ enum ofTargetPlatform{
 	#define TARGET_LITTLE_ENDIAN
 #endif
 
-#ifdef TARGET_OPENGLES
-//	#include "glu.h"
-	//typedef GLushort ofIndexType ;
-#else
-	//typedef GLuint ofIndexType;
+#ifdef TARGET_EMSCRIPTEN
+	#include <GLES2/gl2.h>
+	#include <GLES2/gl2ext.h>
+	#include "EGL/egl.h"
+	#include "EGL/eglext.h"
+
+	#define TARGET_LITTLE_ENDIAN
 #endif
 
 #include "tesselator.h"
@@ -267,6 +275,10 @@ typedef TESSindex ofIndexType;
 
 		#define OF_VIDEO_CAPTURE_ANDROID
 
+	#elif defined(TARGET_EMSCRIPTEN)
+
+		#define OF_VIDEO_CAPTURE_EMSCRIPTEN
+
 	#elif defined(TARGET_OF_IOS)
 
 		#define OF_VIDEO_CAPTURE_IOS
@@ -276,52 +288,78 @@ typedef TESSindex ofIndexType;
 
 //------------------------------------------------  video player
 // check if any video player system is already defined from the compiler
-#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_QUICKTIME)
-	#ifdef TARGET_LINUX
-		#define OF_VIDEO_PLAYER_GSTREAMER
-	#elif defined(TARGET_ANDROID)
-		#define OF_VIDEO_PLAYER_ANDROID
-	#elif defined(TARGET_OF_IOS)
-		#define OF_VIDEO_PLAYER_IOS
-	#elif defined(TARGET_OSX)
-		//for 10.7 and 10.8 users we use QTKit for 10.6 users we use QuickTime
-		#ifndef MAC_OS_X_VERSION_10_7
-			#define OF_VIDEO_PLAYER_QUICKTIME
-		#else
-			#define OF_VIDEO_PLAYER_QTKIT
-		#endif
-	#else
-		#define OF_VIDEO_PLAYER_QUICKTIME
-	#endif
+#if !defined(OF_VIDEO_PLAYER_GSTREAMER) && !defined(OF_VIDEO_PLAYER_IOS) && !defined(OF_VIDEO_PLAYER_DIRECTSHOW) && !defined(OF_VIDEO_PLAYER_QUICKTIME) && !defined(OF_VIDEO_PLAYER_AVFOUNDATION) && !defined(OF_VIDEO_PLAYER_EMSCRIPTEN)
+    #ifdef TARGET_LINUX
+        #define OF_VIDEO_PLAYER_GSTREAMER
+    #elif defined(TARGET_ANDROID)
+        #define OF_VIDEO_PLAYER_ANDROID
+    #elif defined(TARGET_OF_IOS)
+        #define OF_VIDEO_PLAYER_IOS
+	#elif defined(TARGET_WIN32)
+        #define OF_VIDEO_PLAYER_DIRECTSHOW
+    #elif defined(TARGET_OSX)
+        //for 10.8 and 10.9 users we use AVFoundation, for 10.7 we use QTKit, for 10.6 users we use QuickTime
+        #ifndef MAC_OS_X_VERSION_10_7
+            #define OF_VIDEO_PLAYER_QUICKTIME
+        #elif !defined(MAC_OS_X_VERSION_10_8)
+            #define OF_VIDEO_PLAYER_QTKIT
+        #else
+            #define OF_VIDEO_PLAYER_AVFOUNDATION
+        #endif
+    #elif defined(TARGET_EMSCRIPTEN)
+        #define OF_VIDEO_PLAYER_EMSCRIPTEN
+    #else
+        #define OF_VIDEO_PLAYER_QUICKTIME
+    #endif
 #endif
 
 //------------------------------------------------ soundstream
 // check if any soundstream api is defined from the compiler
-#if !defined(OF_SOUNDSTREAM_PORTAUDIO) && !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID)
+#if !defined(OF_SOUNDSTREAM_RTAUDIO) && !defined(OF_SOUNDSTREAM_ANDROID) && !defined(OF_SOUNDSTREAM_IOS) && !defined(OF_SOUNDSTREAM_EMSCRIPTEN)
 	#if defined(TARGET_LINUX) || defined(TARGET_WIN32) || defined(TARGET_OSX)
 		#define OF_SOUNDSTREAM_RTAUDIO
 	#elif defined(TARGET_ANDROID)
 		#define OF_SOUNDSTREAM_ANDROID
 	#elif defined(TARGET_OF_IOS)
 		#define OF_SOUNDSTREAM_IOS
+	#elif defined(TARGET_EMSCRIPTEN)
+		#define OF_SOUNDSTREAM_EMSCRIPTEN
 	#endif
 #endif
 
 //------------------------------------------------ soundplayer
 // check if any soundplayer api is defined from the compiler
-#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL)
+#if !defined(OF_SOUND_PLAYER_QUICKTIME) && !defined(OF_SOUND_PLAYER_FMOD) && !defined(OF_SOUND_PLAYER_OPENAL) && !defined(OF_SOUND_PLAYER_EMSCRIPTEN)
   #ifdef TARGET_OF_IOS
   	#define OF_SOUND_PLAYER_IPHONE
-  #elif defined TARGET_LINUX
+  #elif defined(TARGET_LINUX)
   	#define OF_SOUND_PLAYER_OPENAL
+  #elif defined(TARGET_EMSCRIPTEN)
+	#define OF_SOUND_PLAYER_EMSCRIPTEN
   #elif !defined(TARGET_ANDROID)
   	#define OF_SOUND_PLAYER_FMOD
   #endif
 #endif
 
-// comment out this line to disable all poco related code
-#define OF_USING_POCO
+//------------------------------------------------ c++11
+// check if the compiler supports c++11. vs hasn't updated the value
+// of __cplusplus so we need to check for vs >= 2012 (1700)
+#if __cplusplus>=201103 || _MSC_VER >= 1700
+#define HAS_CPP11 1
+#endif
 
+//------------------------------------------------ thread local storage
+// clang has a bug where it won't support tls on some versions even
+// on c++11, this is a workaround that bug
+#ifndef HAS_TLS
+	#if __clang__
+		#if __has_feature(cxx_thread_local) && !defined(__MINGW64__) && !defined(__MINGW32__)
+			#define HAS_TLS 1
+		#endif
+	#else
+		#define HAS_TLS 1
+	#endif
+#endif
 
 //we don't want to break old code that uses ofSimpleApp
 //so we forward declare ofBaseApp and make ofSimpleApp mean the same thing
@@ -347,6 +385,11 @@ typedef ofBaseApp ofSimpleApp;
 #include <fstream>
 #include <algorithm>
 #include <cfloat>
+#include <map>
+#include <stack>
+#include <unordered_map>
+#include <memory>
+
 using namespace std;
 
 #ifndef PI
@@ -458,15 +501,6 @@ enum ofImageType{
  	OF_IMAGE_COLOR			= 0x01,
  	OF_IMAGE_COLOR_ALPHA	= 0x02,
  	OF_IMAGE_UNDEFINED		= 0x03
-};
-
-enum ofPixelFormat{
-	OF_PIXELS_MONO = 0, 
-	OF_PIXELS_RGB,
-	OF_PIXELS_RGBA,
-	OF_PIXELS_BGRA,
-	OF_PIXELS_RGB565,
-	OF_PIXELS_UNKNOWN
 };
 
 #define		OF_MAX_STYLE_HISTORY	32
@@ -641,6 +675,46 @@ enum ofMatrixMode {OF_MATRIX_MODELVIEW=0, OF_MATRIX_PROJECTION, OF_MATRIX_TEXTUR
 	#define OF_CONSOLE_COLOR_WHITE (37)
 
 #endif
+
+
+enum ofPixelFormat{
+	// grayscale
+	OF_PIXELS_GRAY = 0,
+	OF_PIXELS_GRAY_ALPHA = 1,
+
+	// rgb (can be 8,16 or 32 bpp depending on pixeltype)
+	OF_PIXELS_RGB=2,
+	OF_PIXELS_BGR=3,
+	OF_PIXELS_RGBA=4,
+	OF_PIXELS_BGRA=5,
+
+	// rgb 16bit
+	OF_PIXELS_RGB565=6,
+
+	// yuv
+	OF_PIXELS_NV12=7,
+	OF_PIXELS_NV21=8,
+	OF_PIXELS_YV12=9,
+	OF_PIXELS_I420=10,
+	OF_PIXELS_YUY2=11,
+	OF_PIXELS_UYVY=12,
+
+	// yuv planes
+	OF_PIXELS_Y,
+	OF_PIXELS_U,
+	OF_PIXELS_V,
+	OF_PIXELS_UV,
+	OF_PIXELS_VU,
+
+	OF_PIXELS_NUM_FORMATS,
+
+	OF_PIXELS_UNKNOWN=-1,
+	OF_PIXELS_NATIVE=-2
+};
+
+#define OF_PIXELS_MONO OF_PIXELS_GRAY
+#define OF_PIXELS_R OF_PIXELS_GRAY
+#define OF_PIXELS_RG OF_PIXELS_GRAY_ALPHA
 
 
 //--------------------------------------------

@@ -34,6 +34,7 @@ class ofApp : public ofxAndroidApp{
 		void cancelPressed();
 
 
+		ofPath text;
 		ofTrueTypeFont font;
 		ofShader shader;
 		bool doShader;

@@ -19,13 +19,7 @@ void ofApp::setup(){
         model.setPausedForAllAnimations(true);
     }
     
-    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
-
-	ofEnableDepthTest();
-
-    glShadeModel(GL_SMOOTH); //some model / light stuff
-    light.enable();
-    ofEnableSeparateSpecularLight();
+    
 }
 
 //--------------------------------------------------------------
@@ -42,6 +36,15 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofSetColor(255);
+    
+    ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+    
+	ofEnableDepthTest();
+#ifndef TARGET_PROGRAMMABLE_GL    
+    glShadeModel(GL_SMOOTH); //some model / light stuff
+#endif
+    light.enable();
+    ofEnableSeparateSpecularLight();
 
     ofPushMatrix();
     ofTranslate(model.getPosition().x+100, model.getPosition().y, 0);
@@ -49,13 +52,9 @@ void ofApp::draw(){
     ofTranslate(-model.getPosition().x, -model.getPosition().y, 0);
     model.drawFaces();
     ofPopMatrix();
-
-   if(ofGetGLProgrammableRenderer()){
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    }
+#ifndef TARGET_PROGRAMMABLE_GL    
     glEnable(GL_NORMALIZE);
-
+#endif
     ofPushMatrix();
     ofTranslate(model.getPosition().x-300, model.getPosition().y, 0);
     ofRotate(-mouseX, 0, 1, 0);
@@ -68,20 +67,22 @@ void ofApp::draw(){
     
     ofMaterial & material = meshHelper.material;
     if(meshHelper.hasTexture()){
-        meshHelper.getTexturePtr()->bind();
+        meshHelper.getTextureRef().bind();
     }
     material.begin();
     mesh.drawWireframe();
     material.end();
     if(meshHelper.hasTexture()){
-        meshHelper.getTexturePtr()->unbind();
+        meshHelper.getTextureRef().unbind();
     }
     ofPopMatrix();
-
-    if(ofGetGLProgrammableRenderer()){
-    	glPopAttrib();
-    }
-
+    
+    ofDisableDepthTest();
+    light.disable();
+    ofDisableLighting();
+    ofDisableSeparateSpecularLight();
+    
+    ofSetColor(255, 255, 255 );
     ofDrawBitmapString("fps: "+ofToString(ofGetFrameRate(), 2), 10, 15);
     ofDrawBitmapString("keys 1-5 load models, spacebar to trigger animation", 10, 30);
     ofDrawBitmapString("drag to control animation with mouseY", 10, 45);
@@ -166,6 +167,16 @@ void ofApp::mouseReleased(int x, int y, int button){
         model.setPausedForAllAnimations(false);
     }
     bAnimateMouse = false;
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

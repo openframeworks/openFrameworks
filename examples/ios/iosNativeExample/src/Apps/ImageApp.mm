@@ -18,9 +18,9 @@ void ImageApp::setup() {
     if (ofxiOSGetOFWindow()->isRetinaSupportedOnDevice())
         fontSize *= 2;
     
-    font.loadFont("fonts/mono0755.ttf", fontSize);
+    font.load("fonts/mono0755.ttf", fontSize);
     
-    image.loadImage("images/dive.jpg");
+    image.load("images/dive.jpg");
 }
 
 //--------------------------------------------------------------
@@ -30,8 +30,8 @@ void ImageApp::update(){
 
 //--------------------------------------------------------------
 void ImageApp::draw() {
-    int x = (ofGetWidth()  - image.width)  * 0.5;
-    int y = (ofGetHeight() - image.height) * 0.5;
+    int x = (ofGetWidth()  - image.getWidth())  * 0.5;
+    int y = (ofGetHeight() - image.getHeight()) * 0.5;
     int p = 0;
     
 	ofSetColor(ofColor::white);

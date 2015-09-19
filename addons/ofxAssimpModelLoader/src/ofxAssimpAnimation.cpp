@@ -4,10 +4,8 @@
 //
 
 #include "ofxAssimpAnimation.h"
-#include "assimp.h"
-#include "aiScene.h"
 
-ofxAssimpAnimation::ofxAssimpAnimation(const aiScene * scene, aiAnimation * animation) {
+ofxAssimpAnimation::ofxAssimpAnimation(shared_ptr<const aiScene> scene, aiAnimation * animation) {
     this->scene = scene;
     this->animation = animation;
     animationCurrTime = 0;
@@ -39,6 +37,8 @@ aiAnimation * ofxAssimpAnimation::getAnimation() {
 void ofxAssimpAnimation::update() {
     animationPrevTime = animationCurrTime;
     animationCurrTime = ofGetElapsedTimef();
+    double tps = animation->mTicksPerSecond ? animation->mTicksPerSecond : 25.f;
+    animationCurrTime *= tps;
     
     if(!bPlay || bPause) {
         return;

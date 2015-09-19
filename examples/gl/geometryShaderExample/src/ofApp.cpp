@@ -13,7 +13,7 @@ void ofApp::setup(){
 	shader.setGeometryOutputCount(4);
 	shader.load("shaders/vert.glsl", "shaders/frag.glsl", "shaders/geom.glsl"); 
 	
-	printf("Maximum number of output vertices support is: %i\n", shader.getGeometryMaxOutputCount());
+	ofLog() << "Maximum number of output vertices support is: " << shader.getGeometryMaxOutputCount();
 	
 	// create a bunch of random points
 	float r = ofGetHeight()/2;
@@ -51,7 +51,7 @@ void ofApp::draw(){
 	ofRotateY(mouseX);
 
 	for(unsigned int i=1; i<points.size(); i++) {
-		ofLine(points[i-1], points[i]);
+		ofDrawLine(points[i-1], points[i]);
 	}
 	
 	if(doShader) shader.end();
@@ -90,6 +90,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	font.loadFont("frabk.ttf",14);
+	font.load("frabk.ttf",14);
 	ofBackground(255,255,255);
 	ofSetColor(0,0,0);
 }

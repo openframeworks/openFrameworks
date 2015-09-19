@@ -22,13 +22,16 @@ void ofApp::setup(){
 	lAudio.assign(bufferSize, 0.0);
 	rAudio.assign(bufferSize, 0.0);
 	
-	//soundStream.listDevices();
+	soundStream.printDeviceList();
 	
 	//if you want to set the device id to be different than the default
 	//soundStream.setDeviceID(1); 	//note some devices are input only and some are output only 
 
 	soundStream.setup(this, 2, 0, sampleRate, bufferSize, 4);
 
+	// on OSX: if you want to use ofSoundPlayer together with ofSoundStream you need to synchronize buffersizes.
+	// use ofFmodSetBuffersize(bufferSize) to set the buffersize in fmodx prior to loading a file.
+	
 	ofSetFrameRate(60);
 }
 
@@ -56,7 +59,7 @@ void ofApp::draw(){
 		ofDrawBitmapString("Left Channel", 4, 18);
 		
 		ofSetLineWidth(1);	
-		ofRect(0, 0, 900, 200);
+		ofDrawRectangle(0, 0, 900, 200);
 
 		ofSetColor(245, 58, 135);
 		ofSetLineWidth(3);
@@ -80,7 +83,7 @@ void ofApp::draw(){
 		ofDrawBitmapString("Right Channel", 4, 18);
 		
 		ofSetLineWidth(1);	
-		ofRect(0, 0, 900, 200);
+		ofDrawRectangle(0, 0, 900, 200);
 
 		ofSetColor(245, 58, 135);
 		ofSetLineWidth(3);
@@ -158,6 +161,16 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
 	bNoise = false;
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

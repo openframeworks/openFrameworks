@@ -29,7 +29,6 @@
  * ***********************************************************************/ 
 
 #include <Availability.h>
-#ifdef __IPHONE_3_0
 
 
 #import "ofxiOSMapKitDelegate.h"
@@ -76,5 +75,3 @@
 
 
 @end
-
-#endif

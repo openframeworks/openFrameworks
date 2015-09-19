@@ -24,8 +24,7 @@
  * either License.
  */
 
-#ifndef _WINDOWS_UNISTD_EMULATED_H_
-#define _WINDOWS_UNISTD_EMULATED_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -36,5 +35,3 @@
 #define _SSIZE_T_
 typedef long ssize_t;
 #endif // _SSIZE_T_
-
-#endif//_WINDOWS_UNISTD_EMULATED_H_

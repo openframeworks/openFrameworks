@@ -6,7 +6,9 @@
 #pragma once
 
 #include "ofMain.h"
-#include "assimp.h"
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 #include "ofxAssimpTexture.h"
 
 class aiMesh;
@@ -16,16 +18,15 @@ class ofxAssimpMeshHelper {
 public:
 
 	ofxAssimpMeshHelper();
-    ~ofxAssimpMeshHelper();
     
     bool hasTexture();
-    ofTexture * getTexturePtr();
+    ofTexture & getTextureRef();
     
     aiMesh * mesh; // pointer to the aiMesh we represent.
 
     ofVbo vbo;
     
-    ofxAssimpTexture * assimpTexture;
+    ofxAssimpTexture assimpTexture;
     vector<ofIndexType> indices;
     
     ofMaterial material;

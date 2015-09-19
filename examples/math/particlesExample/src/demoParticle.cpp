@@ -171,6 +171,6 @@ void demoParticle::draw(){
 		ofSetColor(103, 160, 237);
 	}
 			
-	ofCircle(pos.x, pos.y, scale * 4.0);
+	ofDrawCircle(pos.x, pos.y, scale * 4.0);
 }
 

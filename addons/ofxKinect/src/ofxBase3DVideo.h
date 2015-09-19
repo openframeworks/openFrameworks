@@ -31,11 +31,14 @@ class ofxBase3DVideo: public ofBaseVideo {
 public:
     
     /// get the pixels of the most recent depth frame
-    virtual unsigned char* getDepthPixels()=0;
+    virtual ofPixels& getDepthPixels()=0;
+    virtual const ofPixels& getDepthPixels() const=0;
     
     /// get the distance in millimeters to a given point as a float array
-    virtual float* getDistancePixels()=0;
+    virtual ofFloatPixels& getDistancePixels()=0;
+    virtual const ofFloatPixels& getDistancePixels() const=0;
     
     /// get the grayscale depth texture
-    virtual ofTexture& getDepthTextureReference()=0;
+    virtual ofTexture& getDepthTexture()=0;
+    virtual const ofTexture& getDepthTexture() const=0;
 };

@@ -90,14 +90,14 @@ void ofApp::draw() {
 		ofVec3f mid = points[i];
 		mid.normalize();
 		mid *= 300;
-		ofLine(points[i], mid);
+		ofDrawLine(points[i], mid);
 	} 
 	camera.end();
 	
 	glDepthMask(GL_TRUE);
 	
 	ofSetColor(255, 100);
-	ofRect(0, 0, 250, 90);
+	ofDrawRectangle(0, 0, 250, 90);
 	ofSetColor(0);
 	string info = "FPS "+ofToString(ofGetFrameRate(), 0) + "\n";
 	info += "Total Points "+ofToString((int)points.size())+"\n";
@@ -175,6 +175,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

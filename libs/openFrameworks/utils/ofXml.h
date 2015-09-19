@@ -1,7 +1,10 @@
 
 #pragma once
 
-#include "ofMain.h"
+#include "ofConstants.h"
+#include "ofParameter.h"
+#include "ofParameterGroup.h"
+#include "ofBaseTypes.h"
 
 #include <numeric>
 
@@ -35,7 +38,7 @@ public:
     ofXml( const string & path );
     ofXml( const ofXml& rhs );
     const ofXml& operator =( const ofXml& rhs );
-    
+
 	bool load(const string & path);
 	bool save(const string & path);
 
@@ -46,6 +49,8 @@ public:
     string          getValue(const string & path) const;
     int				getIntValue() const;
     int				getIntValue(const string & path) const;
+    int64_t getInt64Value() const;
+    int64_t getInt64Value(const string& path) const;
     float			getFloatValue() const;
     float			getFloatValue(const string & path) const;
     bool			getBoolValue() const;
@@ -76,7 +81,7 @@ public:
     string          getName() const;
     bool            reset();
 
-    bool            setToChild(int index);
+    bool            setToChild(unsigned long index);
     bool            setTo(const string& path);
     bool            setToParent();
     bool            setToParent(int numLevelsUp);
@@ -128,7 +133,7 @@ public:
         if(tokens.size() > 1)
         {
             // don't 'push' down into the new nodes
-            Poco::XML::Element* firstElement=NULL, *lastElement=NULL;
+            Poco::XML::Element* firstElement=nullptr, *lastElement=nullptr;
             if(element) {
                 lastElement = element;
             }
@@ -137,7 +142,7 @@ public:
                 firstElement = lastElement;
             }
             
-            for(int i = 0; i < (int)tokens.size(); i++)
+			for(std::size_t i = 0; i < tokens.size(); i++)
             {
                 Poco::XML::Element* newElement = getPocoDocument()->createElement(tokens.at(i));
                 
@@ -202,22 +207,21 @@ public:
     // templated to be anything
     template <class T> T getValue(const string& path, T returnVal=T()) const
     {
-        if(path == "")
-        {
-            if(element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
-                return ofFromString<T>(element->innerText());
-            } else {
-                ofLogWarning("ofXml") << "getValue(): path \"" << path<< "\" not found when getting value";
-                return returnVal; // hmm. this could be a problem
-            }
-        }
-        else
-        {
-            Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
-            if(e) {
-                return ofFromString<T>(e->innerText());
-            }
-        }
+    	if(element){
+			if(path == ""){
+				if(element->firstChild() && element->firstChild()->nodeType() == Poco::XML::Node::TEXT_NODE) {
+					return ofFromString<T>(element->innerText());
+				} else {
+					ofLogWarning("ofXml") << "getValue(): path \"" << path<< "\" not found when getting value";
+					return returnVal; // hmm. this could be a problem
+				}
+			} else {
+				Poco::XML::Element *e = (Poco::XML::Element*) element->getNodeByPath(path);
+				if(e) {
+					return ofFromString<T>(e->innerText());
+				}
+			}
+    	}
         
         return T();
     }

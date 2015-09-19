@@ -2,14 +2,14 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){	
-	ofxiOSSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT);
+    ofSetOrientation( OF_ORIENTATION_90_RIGHT );
 	
 	finder.setup("haarcascade_frontalface_default.xml");
 	
 	#ifdef USE_CAMERA 
 		ofSetFrameRate(20);
 		grabber.setDesiredFrameRate(20);
-		grabber.initGrabber(480, 360);
+		grabber.setup(480, 360);
 		
 		int w = grabber.getWidth();
 		int h = grabber.getHeight();
@@ -23,7 +23,7 @@ void ofApp::setup(){
 		finder.setNeighbors(1);
 		finder.setScaleHaar(1.5);
 	#else 
-		img.loadImage("test.jpg");
+		img.load("test.jpg");
 	#endif 
 
 }
@@ -68,13 +68,13 @@ void ofApp::draw(){
 		ofSetColor(255, 0, 255);
 		for(int k = 0; k < faces.size(); k++){
 			ofRectangle rect(faces[k].boundingRect.x * scaleFactor, faces[k].boundingRect.y * scaleFactor, faces[k].boundingRect.width * scaleFactor, faces[k].boundingRect.width * scaleFactor);
-			ofRect(rect);
+			ofDrawRectangle(rect);
 		}
 	ofPopStyle();
 	
 	ofEnableAlphaBlending();
 	ofSetColor(230, 0, 255, 200);
-	ofRect(0, 0, ofGetWidth(), 16);
+	ofDrawRectangle(0, 0, ofGetWidth(), 16);
 	ofSetColor(255, 255, 255);
 	ofDrawBitmapString("face detector: hold this way up", 5, 12);
 }

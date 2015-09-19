@@ -13,7 +13,7 @@ void ofApp::setup(){
 
 	// you can now iterate through the files and load them into the ofImage vector
 	for(int i = 0; i < (int)dir.size(); i++){
-		images[i].loadImage(dir.getPath(i));
+		images[i].load(dir.getPath(i));
 	}
 	currentImage = 0;
 
@@ -82,6 +82,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

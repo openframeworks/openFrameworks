@@ -14,7 +14,7 @@ void ofApp::setup(){
 
 	gui.loadFromFile("settings.xml");
 
-	font.loadFont("Regular",9,true,true);
+	font.load( OF_TTF_SANS,9,true,true);
 	ofEnableAlphaBlending();
 }
 
@@ -83,6 +83,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

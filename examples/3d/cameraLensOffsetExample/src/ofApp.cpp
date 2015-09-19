@@ -5,7 +5,7 @@ void ofApp::setup(){
 	ofEnableSmoothing();
 	ofSetVerticalSync(true);
 	
-	video.initGrabber(320, 240);
+	video.setup(320, 240);
 	finder.setup("haarcascade_frontalface_default.xml");
 	usePreview = false;
 	
@@ -40,7 +40,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
 	video.update();
-	finder.findHaarObjects(video.getPixelsRef());
+	finder.findHaarObjects(video.getPixels());
 	
 	ofVec3f headPosition(0,0,viewerDistance);
 	
@@ -101,10 +101,8 @@ void ofApp::drawScene(bool isPreview){
 		
 		ofMultMatrix(headTrackedCamera.getProjectionMatrix().getInverse());
 		
-		ofPushStyle();
 		ofNoFill();
 		ofDrawBox(2.0f);
-		ofPopStyle();
 		
 		headTrackedCamera.restoreTransformGL();
 		//
@@ -123,6 +121,7 @@ void ofApp::drawScene(bool isPreview){
 		window.drawVertices();
 		//
 		//--
+        ofPopStyle();
 	}
 	
 	ofPushStyle();
@@ -131,7 +130,7 @@ void ofApp::drawScene(bool isPreview){
 	for (float z = 0.0f; z > -40.0f; z-= 0.1f){
 		col.setHue(int(-z * 100.0f + ofGetElapsedTimef() * 10.0f) % 360);
 		ofSetColor(col);
-		ofRect(-windowWidth / 2.0f, -windowHeight / 2.0f, z, windowWidth, windowHeight);
+		ofDrawRectangle(-windowWidth / 2.0f, -windowHeight / 2.0f, z, windowWidth, windowHeight);
 	}
 	ofPopStyle();
 	
@@ -184,7 +183,7 @@ void ofApp::draw(){
 	ofNoFill();
 	for(unsigned int i = 0; i < finder.blobs.size(); i++) {
 		ofRectangle cur = finder.blobs[i].boundingRect;
-		ofRect(cur.x, cur.y, cur.width, cur.height);
+		ofDrawRectangle(cur.x, cur.y, cur.width, cur.height);
 	}
 	ofPopStyle();
 	
@@ -198,7 +197,7 @@ void ofApp::draw(){
 		
 		ofPushStyle();
 		ofSetColor(0);
-		ofRect(bottomLeft);
+		ofDrawRectangle(bottomLeft);
 		ofPopStyle();
 		
 		headTrackedCamera.begin(bottomLeft);
@@ -237,6 +236,16 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
 
 }
 

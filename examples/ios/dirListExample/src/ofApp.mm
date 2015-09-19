@@ -9,7 +9,7 @@ void ofApp::setup(){
  	images = new ofImage[nImages];
     //you can now iterate through the files as you like
     for(int i = 0; i < nImages; i++){
-		images[i].loadImage(DIR.getPath(i));
+		images[i].load(DIR.getPath(i));
     }
     currentImage = 0;
 
@@ -29,13 +29,13 @@ void ofApp::draw(){
 	
     if (nImages > 0){
         ofSetHexColor(0xffffff);
-        images[currentImage].draw(210, textSpace,  images[currentImage].width/1.5,  images[currentImage].height/1.5);
+        images[currentImage].draw(210, textSpace,  images[currentImage].getWidth()/1.5,  images[currentImage].getHeight()/1.5);
         ofSetHexColor(0x999999);
         string pathInfo = "current path is: ";
 		pathInfo += DIR.getPath(currentImage);
 				
 		ofDrawBitmapString(pathInfo, 20, 20);
-		ofDrawBitmapString("touch screen to advance image \n\nmany thanks to hikaru furuhashi\nfor the OFs!" , 210, images[currentImage].height/1.5 + 20 + textSpace);
+		ofDrawBitmapString("touch screen to advance image \n\nmany thanks to hikaru furuhashi\nfor the OFs!" , 210, images[currentImage].getHeight()/1.5 + 20 + textSpace);
     }
 
     ofSetHexColor(0x000000);

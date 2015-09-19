@@ -32,17 +32,17 @@ void ofApp::setup() {
     int nFiles = dir.listDir("plops");
     if(nFiles) {
         
-        for(int i=0; i<dir.numFiles(); i++) { 
+        for(int i=0; i<dir.size(); i++) { 
             
             // add the image to the vector
             string filePath = dir.getPath(i);
             images.push_back(ofImage());
-            images.back().loadImage(filePath);
+            images.back().load(filePath);
             
         }
         
     } 
-    else printf("Could not find folder\n");
+    else ofLog(OF_LOG_WARNING) << "Could not find folder";
     
     // this toggle will tell the sequence
     // be be indepent of the app fps
@@ -77,9 +77,8 @@ void ofApp::draw() {
     // this is the total time of the animation based on fps
     //float totalTime = images.size() / sequenceFPS;
     
-    
-    int frameIndex = 0;
-    
+    uint64_t frameIndex = 0;
+
     if(bFrameIndependent) {
         // calculate the frame index based on the app time
         // and the desired sequence fps. then mod to wrap
@@ -108,7 +107,7 @@ void ofApp::draw() {
     
     // how fast is the app running and some other info
     ofSetColor(50);
-    ofRect(0, 0, 200, 200);
+    ofDrawRectangle(0, 0, 200, 200);
     ofSetColor(200);
     string info;
     info += ofToString(frameIndex)+" sequence index\n";
@@ -161,6 +160,16 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
     
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

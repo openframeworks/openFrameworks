@@ -2,7 +2,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	image.loadImage("images/bikers.jpg");
+	image.load("images/bikers.jpg");
 	ofBackground(255,255,255);
 	ofSetColor(255,255,255);
 }

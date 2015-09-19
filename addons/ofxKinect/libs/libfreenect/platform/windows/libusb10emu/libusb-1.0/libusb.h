@@ -24,8 +24,7 @@
 * either License.
 */
 
-#ifndef LIBUSB_1_0_INTERFACE_EMULATOR_FOR_LIBUSB_0_1_H
-#define LIBUSB_1_0_INTERFACE_EMULATOR_FOR_LIBUSB_0_1_H
+#pragma once
 
 // This interface emulator requires the libusb-win32 v1.2.2.1 (snapshot)
 // or later. Prior win32 versions of the library were not conformal to
@@ -199,5 +198,3 @@ enum libusb_error
 #ifdef __cplusplus
   }
 #endif
-
-#endif//LIBUSB_1_0_INTERFACE_EMULATOR_FOR_LIBUSB_0_1_H

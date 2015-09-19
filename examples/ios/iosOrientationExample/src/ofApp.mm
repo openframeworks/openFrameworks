@@ -7,6 +7,7 @@ void ofApp::setup(){
 	ofBackground(70);
     
     ofSetOrientation(OF_ORIENTATION_90_LEFT);
+    
     bAuto = false;
 }
 
@@ -32,19 +33,19 @@ void ofApp::draw(){
     ofPushMatrix();
     ofTranslate(p1.x, p1.y);
     ofRotate(45);
-    ofLine(0, 0, 0, -10);
+    ofDrawLine(0, 0, 0, -10);
     ofRotate(90);
-    ofLine(0, 0, 0, -10);
+    ofDrawLine(0, 0, 0, -10);
     ofPopMatrix();
     
     ofPushMatrix();
     ofTranslate(p2.x, p2.y);
     ofRotate(-45);
-    ofLine(0, 0, 0, -10);
+    ofDrawLine(0, 0, 0, -10);
     ofRotate(-90);
-    ofLine(0, 0, 0, -10);
+    ofDrawLine(0, 0, 0, -10);
     ofPopMatrix();
-    ofLine( p1.x, p1.y, p2.x, p2.y);
+    ofDrawLine( p1.x, p1.y, p2.x, p2.y);
     ofDrawBitmapString(ofToString(ofGetWidth()), ofGetWidth()*0.5-10, ofGetHeight()-20);
     
     //-- draw height arrow.
@@ -56,19 +57,19 @@ void ofApp::draw(){
     ofPushMatrix();
     ofTranslate(p1.x, p1.y);
     ofRotate(-135);
-    ofLine(0, 0, 0, -10);
+    ofDrawLine(0, 0, 0, -10);
     ofRotate(-90);
-    ofLine(0, 0, 0, -10);
+    ofDrawLine(0, 0, 0, -10);
     ofPopMatrix();
     
     ofPushMatrix();
     ofTranslate(p2.x, p2.y);
     ofRotate(-45);
-    ofLine(0, 0, 0, -10);
+    ofDrawLine(0, 0, 0, -10);
     ofRotate(-270);
-    ofLine(0, 0, 0, -10);
+    ofDrawLine(0, 0, 0, -10);
     ofPopMatrix();
-    ofLine( p1.x, p1.y, p2.x, p2.y);
+    ofDrawLine( p1.x, p1.y, p2.x, p2.y);
     ofDrawBitmapString(ofToString(ofGetHeight()), ofGetWidth()-40, ofGetHeight()*0.5-5);
     
     ofSetColor(ofColor::white);
@@ -76,7 +77,7 @@ void ofApp::draw(){
     string currentOrientation = "";
     string currentOrientationSyntax = "";
     
-    switch (ofxiOSGetOrientation()) {
+    switch (ofGetOrientation()) {
         case OF_ORIENTATION_DEFAULT:
             currentOrientation = "Portrait";
             currentOrientationSyntax = "OF_ORIENTATION_DEFAULT";
@@ -193,7 +194,7 @@ void ofApp::gotMemoryWarning(){
 
 //--------------------------------------------------------------
 void ofApp::deviceOrientationChanged(int newOrientation){
-    if(bAuto) {
+    if( bAuto ) {
         ofSetOrientation((ofOrientation)newOrientation);
     }
 }

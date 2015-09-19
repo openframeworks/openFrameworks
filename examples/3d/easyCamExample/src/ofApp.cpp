@@ -73,7 +73,7 @@ void ofApp::drawInteractionArea(){
 	ofSetColor(255, 255, 0);
 	ofNoFill();
 	glDepthMask(false);
-	ofCircle(x, y, r);
+	ofDrawCircle(x, y, r);
 	glDepthMask(true);
 	ofPopStyle();
 }
@@ -120,6 +120,16 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
 	
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
 }
 
 //--------------------------------------------------------------

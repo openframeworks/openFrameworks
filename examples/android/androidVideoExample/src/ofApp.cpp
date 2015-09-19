@@ -3,7 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
 
-	player.loadMovie("hands.mp4");
+	player.load("hands.mp4");
 	player.play();
 
 }

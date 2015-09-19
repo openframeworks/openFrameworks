@@ -1,8 +1,8 @@
 /*
-	oscpack -- Open Sound Control packet manipulation library
-	http://www.audiomulch.com/~rossb/oscpack
+	oscpack -- Open Sound Control (OSC) packet manipulation library
+    http://www.rossbencina.com/code/oscpack
 
-	Copyright (c) 2004-2005 Ross Bencina <rossb@audiomulch.com>
+    Copyright (c) 2004-2013 Ross Bencina <rossb@audiomulch.com>
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files
@@ -15,10 +15,6 @@
 	The above copyright notice and this permission notice shall be
 	included in all copies or substantial portions of the Software.
 
-	Any person wishing to distribute modifications to the Software is
-	requested to send the modifications to the original developer so that
-	they can be incorporated into the canonical version.
-
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 	MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -27,13 +23,29 @@
 	CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
+
+/*
+	The text above constitutes the entire oscpack license; however, 
+	the oscpack developer(s) also make the following non-binding requests:
+
+	Any person wishing to distribute modifications to the Software is
+	requested to send the modifications to the original developer so that
+	they can be incorporated into the canonical version. It is also 
+	requested that these non-binding requests be included whenever the
+	above license is reproduced.
+*/
 #include "OscPrintReceivedElements.h"
 
+#include <cstring>
+#include <ctime>
 #include <iostream>
 #include <iomanip>
-#include <ctime>
-#include <cstring>
 
+#if defined(__BORLANDC__) // workaround for BCB4 release build intrinsics bug
+namespace std {
+using ::__strcpy__;  // avoid error: E2316 '__strcpy__' is not a member of 'std'.
+}
+#endif
 
 namespace osc{
 
@@ -109,20 +121,17 @@ std::ostream& operator<<( std::ostream & os,
 
         case TIME_TAG_TYPE_TAG:
             {
-                os << "OSC-timetag:" << arg.AsTimeTagUnchecked();
+                os << "OSC-timetag:" << arg.AsTimeTagUnchecked() << " ";
 
                 std::time_t t =
                         (unsigned long)( arg.AsTimeTagUnchecked() >> 32 );
 
-                // strip trailing newline from string returned by ctime
                 const char *timeString = std::ctime( &t );
-                size_t len = strlen( timeString );
-                char *s = new char[ len + 1 ];
-                strcpy( s, timeString );
-                if( len )
-                    s[ len - 1 ] = '\0';
-                    
-                os << " " << s;
+                size_t len = std::strlen( timeString );
+
+                // -1 to omit trailing newline from string returned by ctime()
+                if( len > 1 )
+                    os.write( timeString, len - 1 );
             }
             break;
                 
@@ -140,12 +149,12 @@ std::ostream& operator<<( std::ostream & os,
 
         case BLOB_TYPE_TAG:
             {
-                unsigned long size;
                 const void *data;
+                osc_bundle_element_size_t size;
                 arg.AsBlobUnchecked( data, size );
                 os << "OSC-blob:<<" << std::hex << std::setfill('0');
                 unsigned char *p = (unsigned char*)data;
-                for( unsigned long i = 0; i < size; ++i ){
+                for( osc_bundle_element_size_t i = 0; i < size; ++i ){
                     os << "0x" << std::setw(2) << int(p[i]);
                     if( i != size-1 )
                         os << ' ';
@@ -153,6 +162,14 @@ std::ostream& operator<<( std::ostream & os,
                 os.unsetf(std::ios::basefield);
                 os << ">>" << std::setfill(' ');
             }
+            break;
+
+        case ARRAY_BEGIN_TYPE_TAG:
+            os << "[";
+            break;
+
+        case ARRAY_END_TYPE_TAG:
+            os << "]";
             break;
 
         default:

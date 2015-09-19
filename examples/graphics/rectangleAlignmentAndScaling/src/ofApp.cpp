@@ -38,7 +38,7 @@ void ofApp::setup(){
     
     bUseImage = true;
     
-    img.loadImage("resolution_test_1080_mini.png");
+    img.load("resolution_test_1080_mini.png");
 
     targetColor  = ofColor(255,0,0);
     subjectColor = ofColor(255,255,0);
@@ -95,24 +95,24 @@ void ofApp::draw(){
     // draw original subject in lower left-hand corner
     if(!bUseImage) {
         ofFill(); ofSetColor(subjectColor, 80);
-        ofRect(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
+        ofDrawRectangle(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
     } else {
         ofFill(); ofSetColor(255);
         img.draw(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
     }
     // draw original subject frame in lower left-hand corner
     ofNoFill(); ofSetColor(subjectColor, 120);
-    ofRect(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
+    ofDrawRectangle(10, ofGetHeight() - subjectRect.height - 10, subjectRect.width, subjectRect.height);
     // draw original subject label
     ofSetColor(255);
     ofDrawBitmapStringHighlight("SUBJECT", 16, ofGetHeight() - 20);
     
     // draw original target in lower right-hand corner
     ofFill(); ofSetColor(targetColor, 80);
-    ofRect(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
+    ofDrawRectangle(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
     // draw original target frame in lower right-hand corner
     ofNoFill(); ofSetColor(targetColor, 120);
-    ofRect(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
+    ofDrawRectangle(ofGetWidth() - targetRect.width - 10, ofGetHeight() - targetRect.height - 10, targetRect.width, targetRect.height);
     ofSetColor(255);
     ofDrawBitmapStringHighlight("TARGET", ofGetWidth() - 65, ofGetHeight() - 20);    
     
@@ -240,12 +240,12 @@ void ofApp::drawAlignRect(const ofRectangle& rect,
         img.draw(rect);
     } else {
         ofSetColor(color, 80);
-        ofRect(rect);
+        ofDrawRectangle(rect);
     }
     
     ofNoFill();
     ofSetColor(color, 120);
-    ofRect(rect);
+    ofDrawRectangle(rect);
     
     // draw the alignment marks if applicable
     if(isAligning && !isRectScaling) {
@@ -259,8 +259,8 @@ void ofApp::drawHorzAlignMark(const ofRectangle& rect, const ofColor& color, ofA
     if(hAlign != OF_ALIGN_HORZ_IGNORE) {
         float hAnchor = rect.getHorzAnchor(hAlign);
         ofSetColor(color,120);
-        ofLine(hAnchor, rect.getTop()    - 13, hAnchor, rect.getTop()    - 3);
-        ofLine(hAnchor, rect.getBottom() + 13, hAnchor, rect.getBottom() + 3);
+        ofDrawLine(hAnchor, rect.getTop()    - 13, hAnchor, rect.getTop()    - 3);
+        ofDrawLine(hAnchor, rect.getBottom() + 13, hAnchor, rect.getBottom() + 3);
     }
 }
 
@@ -269,8 +269,8 @@ void ofApp::drawVertAlignMark(const ofRectangle& rect, const ofColor& color, ofA
     if(vAlign != OF_ALIGN_VERT_IGNORE) {
         float vAnchor = rect.getVertAnchor(vAlign);
         ofSetColor(color,120);
-        ofLine(rect.getLeft()  - 13, vAnchor, rect.getLeft()  - 3, vAnchor);
-        ofLine(rect.getRight() + 13, vAnchor, rect.getRight() + 3, vAnchor);
+        ofDrawLine(rect.getLeft()  - 13, vAnchor, rect.getLeft()  - 3, vAnchor);
+        ofDrawLine(rect.getRight() + 13, vAnchor, rect.getRight() + 3, vAnchor);
     }
 }
 

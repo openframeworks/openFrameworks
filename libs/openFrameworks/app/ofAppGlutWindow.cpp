@@ -1,34 +1,35 @@
 #include "ofAppGlutWindow.h"
 #include "ofBaseApp.h"
-#include "ofEvents.h"
-#include "ofUtils.h"
-#include "ofGraphics.h"
-#include "ofAppRunner.h"
 #include "ofConstants.h"
-#include "ofGLProgrammableRenderer.h"
+#include "ofPixels.h"
+#include "ofGLRenderer.h"
 
 #ifdef TARGET_WIN32
-	#define GLUT_BUILDING_LIB
-	#include "glut.h"
+	#if (_MSC_VER) 
+		#define GLUT_BUILDING_LIB
+		#include "glut.h"
+	#else
+		#include <GL/glut.h>
+		#include <GL/freeglut_ext.h>
+	#endif
 #endif
 #ifdef TARGET_OSX
     #include <OpenGL/OpenGL.h>
 	#include "../../../libs/glut/lib/osx/GLUT.framework/Versions/A/Headers/glut.h"
-	#include <Carbon/Carbon.h>
+    #include <Cocoa/Cocoa.h>
 #endif
 #ifdef TARGET_LINUX
 	#include <GL/glut.h>
 	#include "ofIcon.h"
 	#include "ofImage.h"
 	#include <X11/Xatom.h>
+	#include <GL/freeglut_ext.h>
 #endif
-
-void ofGLReadyCallback();
 
 
 // glut works with static callbacks UGH, so we need static variables here:
 
-static int			windowMode;
+static ofWindowMode windowMode;
 static bool			bNewScreenMode;
 static int			buttonInUse;
 static bool			bEnableSetupScreen;
@@ -42,7 +43,7 @@ static int			windowW;
 static int			windowH;
 static int          nFramesSinceWindowResized;
 static ofOrientation	orientation;
-static ofBaseApp *  ofAppPtr;
+static ofAppGlutWindow * instance;
 
 #ifdef TARGET_WIN32
 
@@ -55,7 +56,7 @@ static ofBaseApp *  ofAppPtr;
 //------------------------------------------------
 
 static WNDPROC currentWndProc;
-static HWND handle  = NULL;
+static HWND handle  = nullptr;
 
 // This function takes in a wParam from the WM_DROPFILES message and
 // prints all the files to a message box.
@@ -83,7 +84,6 @@ void HandleFiles(WPARAM wParam)
     // the current file being queried.
     int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
 
-	#ifdef _MSC_VER
     // Here we go through all the files that were drag and dropped then display them
     for(int i = 0; i < count; i++)
     {
@@ -105,29 +105,12 @@ void HandleFiles(WPARAM wParam)
         // Bring up a message box that displays the current file being processed
         //MessageBox(GetForegroundWindow(), szName, L"Current file received", MB_OK);
     }
-#else
-
-    HDROP hdrop = (HDROP)(wParam);
-	int index, length;
-	count = DragQueryFile(hdrop, 0xFFFFFFFF, NULL, 0);
-	for (index=0; index<count; ++index) {
-	  length = DragQueryFile(hdrop, index, NULL, 0);
-	  if (length > 0) {
-	    TCHAR* lpstr = new TCHAR[length+1];
-	    DragQueryFile(hdrop, index, lpstr, length+1);
-	    string temp = lpstr;
-	    info.files.push_back(temp);
-	    delete[] lpstr;
-	  }
-	}
-
-	#endif
 
     // Finally, we destroy the HDROP handle so the extra memory
     // allocated by the application is released.
     DragFinish(hDrop);
 
-	ofAppPtr->dragEvent(info);
+	instance->events().notifyDragEvent(info);
 
 }
 
@@ -169,10 +152,10 @@ static void fixCloseWindowOnWin32(){
 	DragAcceptFiles (handle, TRUE);
 
 	//store the current message event handler for the window
-	currentWndProc = (WNDPROC)GetWindowLongPtr(handle, GWL_WNDPROC);
+	currentWndProc = (WNDPROC)GetWindowLongPtr(handle, GWLP_WNDPROC);
 
 	//tell the window to now use our event handler!
-	SetWindowLongPtr(handle, GWL_WNDPROC, (long)winProc);
+	SetWindowLongPtr(handle, GWLP_WNDPROC, (LONG_PTR)winProc);
 }
 
 #endif
@@ -195,7 +178,8 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	orientation			= OF_ORIENTATION_DEFAULT;
 	bDoubleBuffered = true; // LIA
 	iconSet = false;
-
+	instance = this;
+	windowId = 0;
 }
 
 //lets you enable alpha blending using a display string like:
@@ -206,15 +190,13 @@ ofAppGlutWindow::ofAppGlutWindow(){
 	displayString = displayStr;
  }
 
-
+ //------------------------------------------------------------
 void ofAppGlutWindow::setDoubleBuffering(bool _bDoubleBuffered){ 
 	bDoubleBuffered = _bDoubleBuffered;
 }
 
-
-
 //------------------------------------------------------------
-void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
+void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 
 	int argc = 1;
 	char *argv = (char*)"openframeworks";
@@ -231,17 +213,17 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 		}
 	}
 
-	windowMode = screenMode;
+	windowMode = settings.windowMode;
 	bNewScreenMode = true;
 
 	if (windowMode == OF_FULLSCREEN){
 		glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
-		glutCreateWindow("");
+		windowId = glutCreateWindow("");
 		
-		requestedWidth  = w;
-		requestedHeight = h;
+		requestedWidth  = settings.width;
+		requestedHeight = settings.height;
 	} else if (windowMode != OF_GAME_MODE){
-		glutInitWindowSize(w, h);
+		glutInitWindowSize(settings.width, settings.height);
 		glutCreateWindow("");
 
 		/*
@@ -265,7 +247,7 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 
     	// w x h, 32bit pixel depth, 60Hz refresh rate
 		char gameStr[64];
-		sprintf( gameStr, "%dx%d:%d@%d", w, h, 32, 60 );
+		sprintf( gameStr, "%dx%d:%d@%d", settings.width, settings.height, 32, 60 );
 
     	glutGameModeString(gameStr);
 
@@ -278,11 +260,21 @@ void ofAppGlutWindow::setupOpenGL(int w, int h, int screenMode){
 	windowW = glutGet(GLUT_WINDOW_WIDTH);
 	windowH = glutGet(GLUT_WINDOW_HEIGHT);
 
-	ofGLReadyCallback();
-}
+	currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLRenderer(this));
 
-//------------------------------------------------------------
-void ofAppGlutWindow::initializeWindow(){
+
+#ifndef TARGET_OPENGLES
+	glewExperimental = GL_TRUE;
+	GLenum err = glewInit();
+	if (GLEW_OK != err)
+	{
+		/* Problem: glewInit failed, something is seriously wrong. */
+		ofLogError("ofAppRunner") << "couldn't init GLEW: " << glewGetErrorString(err);
+		return;
+	}
+#endif
+	static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
+	setVerticalSync(true);
 
 
     //----------------------
@@ -301,6 +293,9 @@ void ofAppGlutWindow::initializeWindow(){
 
     glutReshapeFunc(resize_cb);
 	glutEntryFunc(entry_cb);
+#ifdef TARGET_LINUX
+	glutCloseFunc(exit_cb);
+#endif
 
 #ifdef TARGET_OSX
 	glutDragEventFunc(dragEvent);
@@ -319,13 +314,22 @@ void ofAppGlutWindow::initializeWindow(){
 		ofPixels iconPixels;
 		#ifdef DEBUG
 			iconPixels.allocate(ofIconDebug.width,ofIconDebug.height,ofIconDebug.bytes_per_pixel);
-			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
+			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIconDebug.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIconDebug.bytes_per_pixel);
 		#else
 			iconPixels.allocate(ofIcon.width,ofIcon.height,ofIcon.bytes_per_pixel);
-			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getPixels(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
+			GIMP_IMAGE_RUN_LENGTH_DECODE(iconPixels.getData(),ofIcon.rle_pixel_data,iconPixels.getWidth()*iconPixels.getHeight(),ofIcon.bytes_per_pixel);
 		#endif
 		setWindowIcon(iconPixels);
     }
+#endif
+	if (settings.isPositionSet()) {
+		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
+	}
+
+#ifdef TARGET_OSX
+	// The osx implementation of glut changes the cwd, this restores it
+	// to wherever it was when the app was started
+	ofRestoreWorkingDirectoryToDefault();
 #endif
 }
 
@@ -356,17 +360,36 @@ void ofAppGlutWindow::setWindowIcon(const ofPixels & iconPixels){
 
 	XChangeProperty(m_display, m_window, XInternAtom(m_display, "_NET_WM_ICON", False), XA_CARDINAL, 32,
 						 PropModeReplace,  (const unsigned char*)buffer,  length);
+	delete[] buffer;
 	XFlush(m_display);
 }
 #endif
 
 //------------------------------------------------------------
-void ofAppGlutWindow::runAppViaInfiniteLoop(ofBaseApp * appPtr){
-	ofAppPtr = appPtr;
+void ofAppGlutWindow::update(){
+	idle_cb();
+}
 
-	ofNotifySetup();
-	ofNotifyUpdate();
+//------------------------------------------------------------
+void ofAppGlutWindow::draw(){
+	display();
+}
 
+//------------------------------------------------------------
+void ofAppGlutWindow::close(){
+	events().notifyExit();
+	events().disable();
+#ifdef TARGET_LINUX
+	glutLeaveMainLoop();
+#else
+	std::exit(0);
+#endif
+}
+
+//------------------------------------------------------------
+void ofAppGlutWindow::loop(){
+	instance->events().notifySetup();
+	instance->events().notifyUpdate();
 	glutMainLoop();
 }
 
@@ -444,7 +467,7 @@ void ofAppGlutWindow::setWindowShape(int w, int h){
 //------------------------------------------------------------
 void ofAppGlutWindow::hideCursor(){
 	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
-		 CGDisplayHideCursor(NULL);
+		 CGDisplayHideCursor(0);
 	#else
 		glutSetCursor(GLUT_CURSOR_NONE);
 	#endif
@@ -453,14 +476,14 @@ void ofAppGlutWindow::hideCursor(){
 //------------------------------------------------------------
 void ofAppGlutWindow::showCursor(){
 	#if defined(TARGET_OSX) && defined(MAC_OS_X_VERSION_10_7)
-		 CGDisplayShowCursor(NULL);
+		 CGDisplayShowCursor(0);
 	#else
 		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
 	#endif
 }
 
 //------------------------------------------------------------
-int ofAppGlutWindow::getWindowMode(){
+ofWindowMode ofAppGlutWindow::getWindowMode(){
 	return windowMode;
 }
 
@@ -552,6 +575,16 @@ void ofAppGlutWindow::setVerticalSync(bool bSync){
 }
 
 //------------------------------------------------------------
+ofCoreEvents & ofAppGlutWindow::events(){
+	return coreEvents;
+}
+
+//------------------------------------------------------------
+shared_ptr<ofBaseRenderer> & ofAppGlutWindow::renderer(){
+	return currentRenderer;
+}
+
+//------------------------------------------------------------
 void ofAppGlutWindow::display(void){
 
 	//--------------------------------
@@ -575,14 +608,10 @@ void ofAppGlutWindow::display(void){
 				glutFullScreen();
 
 				#ifdef TARGET_OSX
-					SetSystemUIMode(kUIModeAllHidden,NULL);
+					[NSApp setPresentationOptions:NSApplicationPresentationHideMenuBar | NSApplicationPresentationHideDock];
 					#ifdef MAC_OS_X_VERSION_10_7 //needed for Lion as when the machine reboots the app is not at front level
-						if( ofGetFrameNum() <= 10 ){  //is this long enough? too long?
-							ProcessSerialNumber psn;							
-							OSErr err = GetCurrentProcess( &psn );
-							if ( err == noErr ){
-								SetFrontProcess( &psn );
-							}
+						if( instance->events().getFrameNum() <= 10 ){  //is this long enough? too long?
+							[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
 						}
 					#endif
 				#endif
@@ -594,56 +623,34 @@ void ofAppGlutWindow::display(void){
 				//----------------------------------------------------
 				// if we have recorded the screen posion, put it there
 				// if not, better to let the system do it (and put it where it wants)
-				if (ofGetFrameNum() > 0){
+				if (instance->events().getFrameNum() > 0){
 					glutPositionWindow(nonFullScreenX,nonFullScreenY);
 				}
 				//----------------------------------------------------
 
 				#ifdef TARGET_OSX
-					SetSystemUIMode(kUIModeNormal,NULL);
+					[NSApp setPresentationOptions:NSApplicationPresentationDefault];
 				#endif
 			}
 			bNewScreenMode = false;
 		}
 	}
 
+	instance->currentRenderer->startRender();
 
-	ofPtr<ofGLProgrammableRenderer> renderer = ofGetGLProgrammableRenderer();
-	if(renderer){
-		renderer->startRender();
-	}
+	if( bEnableSetupScreen ) instance->currentRenderer->setupScreen();
 
-	// set viewport, clear the screen
-	ofViewport();		// used to be glViewport( 0, 0, width, height );
-	float * bgPtr = ofBgColorPtr();
-	bool bClearAuto = ofbClearBg();
-
-    // to do non auto clear on PC for now - we do something like "single" buffering --
-    // it's not that pretty but it work for the most part
+	instance->events().notifyDraw();
 
     #ifdef TARGET_WIN32
-    if (bClearAuto == false){
-        glDrawBuffer (GL_FRONT);
-    }
-    #endif
-
-	if ( bClearAuto == true || ofGetFrameNum() < 3){
-		ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
-	}
-
-	if( bEnableSetupScreen )ofSetupScreen();
-
-	ofNotifyDraw();
-
-    #ifdef TARGET_WIN32
-    if (bClearAuto == false){
+    if (instance->currentRenderer->getBackgroundAuto() == false){
         // on a PC resizing a window with this method of accumulation (essentially single buffering)
         // is BAD, so we clear on resize events.
         if (nFramesSinceWindowResized < 3){
-        	ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
+            instance->currentRenderer->clear();
         } else {
-            if ( (ofGetFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
-            else                                                     glFlush();
+            if ( (instance->events().getFrameNum() < 3 || nFramesSinceWindowResized < 3) && bDoubleBuffered)    glutSwapBuffers();
+            else  glFlush();
         }
     } else {
         if(bDoubleBuffered){
@@ -653,10 +660,10 @@ void ofAppGlutWindow::display(void){
 		}
     }
     #else
-		if (bClearAuto == false){
+		if (instance->currentRenderer->getBackgroundAuto() == false){
 			// in accum mode resizing a window is BAD, so we clear on resize events.
 			if (nFramesSinceWindowResized < 3){
-				ofClear(bgPtr[0]*255,bgPtr[1]*255,bgPtr[2]*255, bgPtr[3]*255);
+				instance->currentRenderer->clear();
 			}
 		}
 		if(bDoubleBuffered){
@@ -666,32 +673,30 @@ void ofAppGlutWindow::display(void){
 		}
     #endif
 
-	if(renderer){
-		renderer->finishRender();
-	}
+	instance->currentRenderer->finishRender();
 
     nFramesSinceWindowResized++;
 
 }
 
 //------------------------------------------------------------
-static void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
+static void rotateMouseXY(ofOrientation orientation, int w, int h, int &x, int &y) {
 	int savedY;
 	switch(orientation) {
 		case OF_ORIENTATION_180:
-			x = ofGetWidth() - x;
-			y = ofGetHeight() - y;
+			x = w - x;
+			y = h - y;
 			break;
 
 		case OF_ORIENTATION_90_RIGHT:
 			savedY = y;
 			y = x;
-			x = ofGetWidth()-savedY;
+			x = w-savedY;
 			break;
 
 		case OF_ORIENTATION_90_LEFT:
 			savedY = y;
-			y = ofGetHeight() - x;
+			y = h - x;
 			x = savedY;
 			break;
 
@@ -703,7 +708,7 @@ static void rotateMouseXY(ofOrientation orientation, int &x, int &y) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
-	rotateMouseXY(orientation, x, y);
+	rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
     
 
 	switch(button){
@@ -718,11 +723,11 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 		break;
 	}
     
-	if (ofGetFrameNum() > 0){
+	if (instance->events().getFrameNum() > 0){
 		if (state == GLUT_DOWN) {
-			ofNotifyMousePressed(x, y, button);
+			instance->events().notifyMousePressed(x, y, button);
 		} else if (state == GLUT_UP) {
-			ofNotifyMouseReleased(x, y, button);
+			instance->events().notifyMouseReleased(x, y, button);
 		}
 
 		buttonInUse = button;
@@ -731,20 +736,20 @@ void ofAppGlutWindow::mouse_cb(int button, int state, int x, int y) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::motion_cb(int x, int y) {
-	rotateMouseXY(orientation, x, y);
+	rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
 
-	if (ofGetFrameNum() > 0){
-		ofNotifyMouseDragged(x, y, buttonInUse);
+	if (instance->events().getFrameNum() > 0){
+		instance->events().notifyMouseDragged(x, y, buttonInUse);
 	}
 
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::passive_motion_cb(int x, int y) {
-	rotateMouseXY(orientation, x, y);
+	rotateMouseXY(orientation, instance->getWidth(), instance->getHeight(), x, y);
 
-	if (ofGetFrameNum() > 0){
-		ofNotifyMouseMoved(x, y);
+	if (instance->events().getFrameNum() > 0){
+		instance->events().notifyMouseMoved(x, y);
 	}
 }
 
@@ -754,21 +759,20 @@ void ofAppGlutWindow::dragEvent(char ** names, int howManyFiles, int dragX, int 
 	// TODO: we need position info on mac passed through
 	ofDragInfo info;
 	info.position.x = dragX;
-	info.position.y = ofGetHeight()-dragY;
+	info.position.y = instance->getHeight()-dragY;
 
 	for (int i = 0; i < howManyFiles; i++){
 		string temp = string(names[i]);
 		info.files.push_back(temp);
 	}
 
-	ofNotifyDragEvent(info);
+	instance->events().notifyDragEvent(info);
 }
 
 
 //------------------------------------------------------------
 void ofAppGlutWindow::idle_cb(void) {
-
-	ofNotifyUpdate();
+	instance->events().notifyUpdate();
 
 	glutPostRedisplay();
 }
@@ -776,22 +780,22 @@ void ofAppGlutWindow::idle_cb(void) {
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_cb(unsigned char key, int x, int y) {
-	ofNotifyKeyPressed(key);
+	instance->events().notifyKeyPressed(key);
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::keyboard_up_cb(unsigned char key, int x, int y){
-	ofNotifyKeyReleased(key);
+	instance->events().notifyKeyReleased(key);
 }
 
 //------------------------------------------------------
 void ofAppGlutWindow::special_key_cb(int key, int x, int y) {
-	ofNotifyKeyPressed(key | OF_KEY_MODIFIER);
+	instance->events().notifyKeyPressed(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
 void ofAppGlutWindow::special_key_up_cb(int key, int x, int y) {
-	ofNotifyKeyReleased(key | OF_KEY_MODIFIER);
+	instance->events().notifyKeyReleased(key | OF_KEY_MODIFIER);
 }
 
 //------------------------------------------------------------
@@ -799,13 +803,22 @@ void ofAppGlutWindow::resize_cb(int w, int h) {
 	windowW = w;
 	windowH = h;
 
-	ofNotifyWindowResized(w, h);
+	instance->events().notifyWindowResized(w, h);
 
 	nFramesSinceWindowResized = 0;
 }
 
-void ofAppGlutWindow::entry_cb( int state ) {
-	
-	ofNotifyWindowEntry( state );
-	
+//------------------------------------------------------------
+void ofAppGlutWindow::entry_cb(int state) {
+	if (state == GLUT_ENTERED){
+		instance->events().notifyMouseEntered(instance->events().getMouseX(), instance->events().getMouseY());
+	}else if (state == GLUT_LEFT){
+		instance->events().notifyMouseExited(instance->events().getMouseX(), instance->events().getMouseY());
+	}
+}
+
+//------------------------------------------------------------
+void ofAppGlutWindow::exit_cb() {
+	instance->events().notifyExit();
+	instance->events().disable();
 }

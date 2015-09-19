@@ -1,6 +1,5 @@
 #include "ofMath.h"
 #include "ofUtils.h"
-#include "ofAppRunner.h"
 #include "float.h"
 
 #ifndef TARGET_WIN32
@@ -26,11 +25,16 @@ void ofSeedRandom() {
 
 	#ifdef TARGET_WIN32
 		srand(GetTickCount());
-	#else
+	#elif !defined(TARGET_EMSCRIPTEN)
 		// use XOR'd second, microsecond precision AND pid as seed
 		struct timeval tv;
 		gettimeofday(&tv, 0);
 		long int n = (tv.tv_sec ^ tv.tv_usec) ^ getpid();
+		srand(n);
+	#else
+		struct timeval tv;
+		gettimeofday(&tv, 0);
+		long int n = (tv.tv_sec ^ tv.tv_usec);
 		srand(n);
 	#endif
 }
@@ -42,35 +46,24 @@ void ofSeedRandom(int val) {
 
 //--------------------------------------------------
 float ofRandom(float max) {
-	return max * rand() / (RAND_MAX + 1.0f);
+	return (max * rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //--------------------------------------------------
 float ofRandom(float x, float y) {
-
-	float high = 0;
-	float low = 0;
-	float randNum = 0;
-	// if there is no range, return the value
-	if (x == y) return x; 			// float == ?, wise? epsilon?
-	high = MAX(x,y);
-	low = MIN(x,y);
-	randNum = low + ((high-low) * rand()/(RAND_MAX + 1.0));
-	return randNum;
+	float high = MAX(x, y);
+	float low = MIN(x, y);
+	return max(low, (low + ((high - low) * rand() / float(RAND_MAX))) * (1.0f - std::numeric_limits<float>::epsilon()));
 }
 
 //--------------------------------------------------
 float ofRandomf() {
-	float randNum = 0;
-	randNum = (rand()/(RAND_MAX + 1.0)) * 2.0 - 1.0;
-	return randNum;
+	return -1.0f + (2.0f * rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //--------------------------------------------------
 float ofRandomuf() {
-	float randNum = 0;
-	randNum = rand()/(RAND_MAX + 1.0);
-	return randNum;
+	return (rand() / float(RAND_MAX)) * (1.0f - std::numeric_limits<float>::epsilon());
 }
 
 //---- new to 006
@@ -86,7 +79,6 @@ float ofNormalize(float value, float min, float max){
 float ofMap(float value, float inputMin, float inputMax, float outputMin, float outputMax, bool clamp) {
 
 	if (fabs(inputMin - inputMax) < FLT_EPSILON){
-		ofLogWarning("ofMath") << "ofMap(): avoiding possible divide by zero, check inputMin and inputMax: " << inputMin << " " << inputMax;
 		return outputMin;
 	} else {
 		float outVal = ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
@@ -107,7 +99,12 @@ float ofMap(float value, float inputMin, float inputMax, float outputMin, float 
 
 //--------------------------------------------------
 float ofDist(float x1, float y1, float x2, float y2) {
-	return sqrt(double((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+}
+
+//--------------------------------------------------
+float ofDist(float x1, float y1, float z1, float x2, float y2, float z2) {
+	return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
 }
 
 //--------------------------------------------------
@@ -116,11 +113,15 @@ float ofDistSquared(float x1, float y1, float x2, float y2) {
 }
 
 //--------------------------------------------------
+float ofDistSquared(float x1, float y1, float z1, float x2, float y2, float z2) {
+	return ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2) );
+}
+
+//--------------------------------------------------
 float ofClamp(float value, float min, float max) {
 	return value < min ? min : value > max ? max : value;
 }
 
-// return sign of the number
 //--------------------------------------------------
 int ofSign(float n) {
 	if( n > 0 ) return 1;
@@ -180,16 +181,6 @@ float ofLerpRadians(float currentAngle, float targetAngle, float pct) {
 }
 
 //--------------------------------------------------
-float ofRandomWidth() {
-	return ofRandom(0, ofGetWidth());
-}
-
-//--------------------------------------------------
-float ofRandomHeight() {
-	return ofRandom(0, ofGetHeight());
-}
-
-//--------------------------------------------------
 float ofNoise(float x){
 	return _slang_library_noise1(x)*0.5f + 0.5f;
 }
@@ -200,13 +191,28 @@ float ofNoise(float x, float y){
 }
 
 //--------------------------------------------------
+float ofNoise(const ofVec2f& p){
+	return ofNoise( p.x, p.y );
+}
+
+//--------------------------------------------------
 float ofNoise(float x, float y, float z){
 	return _slang_library_noise3(x,y,z)*0.5f + 0.5f;
 }
 
 //--------------------------------------------------
+float ofNoise(const ofVec3f& p){
+	return ofNoise( p.x, p.y, p.z );
+}
+
+//--------------------------------------------------
 float ofNoise(float x, float y, float z, float w){
 	return _slang_library_noise4(x,y,z,w)*0.5f + 0.5f;
+}
+
+//--------------------------------------------------
+float ofNoise(const ofVec4f& p){
+	return ofNoise( p.x, p.y, p.z, p.w );
 }
 
 //--------------------------------------------------
@@ -220,8 +226,18 @@ float ofSignedNoise(float x, float y){
 }
 
 //--------------------------------------------------
+float ofSignedNoise(const ofVec2f& p){
+	return ofSignedNoise( p.x, p.y );
+}
+
+//--------------------------------------------------
 float ofSignedNoise(float x, float y, float z){
 	return _slang_library_noise3(x,y,z);
+}
+
+//--------------------------------------------------
+float ofSignedNoise(const ofVec3f& p){
+	return ofSignedNoise( p.x, p.y, p.z );
 }
 
 //--------------------------------------------------
@@ -230,17 +246,22 @@ float ofSignedNoise(float x, float y, float z, float w){
 }
 
 //--------------------------------------------------
-bool ofInsidePoly(float x, float y, const vector<ofPoint> & polygon){
+float ofSignedNoise(const ofVec4f& p){
+	return ofSignedNoise( p.x, p.y, p.z, p.w );
+}
+
+//--------------------------------------------------
+bool ofInsidePoly(float x, float y, const vector<ofPoint>& polygon){
     return ofPolyline::inside(x,y, ofPolyline(polygon));
 }
 
 //--------------------------------------------------
-bool ofInsidePoly(const ofPoint & p, const vector<ofPoint> & poly){
+bool ofInsidePoly(const ofPoint& p, const vector<ofPoint>& poly){
     return ofPolyline::inside(p.x,p.y, ofPolyline(poly));
 }
 
 //--------------------------------------------------
-bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint line2Start, ofPoint line2End, ofPoint & intersection){
+bool ofLineSegmentIntersection(const ofPoint& line1Start, const ofPoint& line1End, const ofPoint& line2Start, const ofPoint& line2End, ofPoint& intersection){
 	ofPoint diffLA, diffLB;
 	float compareA, compareB;
 	diffLA = line1End - line1Start;
@@ -270,13 +291,13 @@ bool ofLineSegmentIntersection(ofPoint line1Start, ofPoint line1End, ofPoint lin
 }
 
 //--------------------------------------------------
-ofPoint ofBezierPoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
-    float tp = 1.0 - t;
+ofPoint ofBezierPoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
+    float tp = 1.0f - t;
     return a*tp*tp*tp + b*3*t*tp*tp + c*3*t*t*tp + d*t*t*t;
 }
 
 //--------------------------------------------------
-ofPoint ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+ofPoint ofCurvePoint(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
     ofPoint pt;
     float t2 = t * t;
     float t3 = t2 * t;
@@ -292,12 +313,12 @@ ofPoint ofCurvePoint( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
 }
 
 //--------------------------------------------------
-ofPoint ofBezierTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+ofPoint ofBezierTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
     return (d-a-c*3+b*3)*(t*t)*3 + (a+c-b*2)*t*6 - a*3+b*3;
 }
 
 //--------------------------------------------------
-ofPoint ofCurveTangent( ofPoint a, ofPoint b, ofPoint c, ofPoint d, float t){
+ofPoint ofCurveTangent(const ofPoint& a, const ofPoint& b, const ofPoint& c, const ofPoint& d, float t){
     ofPoint v0 = ( c - a )*0.5;
     ofPoint v1 = ( d - b )*0.5;
     return ( b*2 -c*2 + v0 + v1)*(3*t*t) + ( c*3 - b*3 - v1 - v0*2 )*( 2*t) + v0;
