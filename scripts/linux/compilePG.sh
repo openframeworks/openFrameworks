@@ -4,19 +4,6 @@ export LC_ALL=C
 
 OF_ROOT=../..
 
-make Release -C ${OF_ROOT}/apps/projectGenerator/projectGeneratorSimple
-ret=$?
-if [ $ret -ne 0 ]; then
-  echo "there has been a problem compiling the projectGenerator"
-  echo "please report this problem in the forums"
-  exit $ret
-fi
-rm -rf ${OF_ROOT}/projectGenerator
-mkdir ${OF_ROOT}/projectGenerator 2> /dev/null
-cp -Rf ${OF_ROOT}/apps/projectGenerator/projectGeneratorSimple/bin/* ${OF_ROOT}/projectGenerator/
-mv ${OF_ROOT}/projectGenerator/projectGeneratorSimple ${OF_ROOT}/projectGenerator/projectGenerator
-mv ${OF_ROOT}/projectGenerator/data/projectGeneratorSettings_production.xml ${OF_ROOT}/projectGenerator/data/projectGeneratorSettings.xml
-
 make Release -C ${OF_ROOT}/apps/projectGenerator/commandLine
 ret=$?
 if [ $ret -ne 0 ]; then
@@ -46,7 +33,6 @@ fi
 
 echo
 echo
-echo "GUI project generator was correctly installed in ${PG_OF_PATH}/projectGenerator"
 if [ $CORRECT_PATH -eq 0 ]; then
     echo "Command line project generator was correctly installed"
     echo "But there was a previous OF install in $PREV_OF_PATH" 
