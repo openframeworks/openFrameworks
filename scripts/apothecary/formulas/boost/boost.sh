@@ -25,6 +25,11 @@ function download() {
 	mv boost_${VERSION_UNDERSCORES} boost
 	rm ${TARBALL}
 
+	if [ "$VERSION" == "1.58.0" ]; then
+                cp -v boost/boost/config/compiler/visualc.hpp boost/boost/config/compiler/visualc.hpp.orig # back this up as we manually patch it
+                cp -v boost/libs/filesystem/src/operations.cpp boost/libs/filesystem/src/operations.cpp.orig # back this up as we manually patch it
+	fi
+
 	if [ "$TYPE" == "ios" ]; then
 		cp -v boost/tools/build/example/user-config.jam boost/tools/build/example/user-config.jam.orig # back this up as we manually patch it
 	fi
@@ -32,6 +37,16 @@ function download() {
 
 # prepare the build environment, executed inside the lib src dir
 function prepare() {
+	if [ "$VERSION" == "1.58.0" ]; then 
+		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/operations.cpp.patch_1.58 2>/dev/null ; then
+               	    patch -p0 -u < $FORMULA_DIR/operations.cpp.patch_1.58
+                fi
+                
+		if patch -p0 -u -N --dry-run --silent < $FORMULA_DIR/visualc.hpp.patch_1.58 2>/dev/null ; then
+                    patch -p0 -u < $FORMULA_DIR/visualc.hpp.patch_1.58
+                fi
+	fi
+
 	if [ "$TYPE" == "osx" ] || [ "$TYPE" == "emscripten" ]; then
 		./bootstrap.sh --with-toolset=clang --with-libraries=filesystem
 	elif [ "$TYPE" == "ios" ]; then

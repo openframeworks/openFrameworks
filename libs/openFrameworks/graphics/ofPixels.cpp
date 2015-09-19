@@ -36,7 +36,7 @@ static int pixelBitsFromPixelFormat(ofPixelFormat format){
 		case OF_PIXELS_NV21:
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
-			return 4;
+			return 12;
 
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
@@ -125,6 +125,7 @@ static ofImageType ofImageTypeFromPixelFormat(ofPixelFormat pixelFormat){
 		break;
 	case OF_PIXELS_BGR:
 	case OF_PIXELS_RGB:
+	case OF_PIXELS_RGB565:
 		return OF_IMAGE_COLOR;
 		break;
 	case OF_PIXELS_BGRA:
@@ -714,6 +715,7 @@ int ofPixels_<PixelType>::getNumPlanes() const{
 		case OF_PIXELS_RGBA:
 		case OF_PIXELS_BGRA:
 		case OF_PIXELS_GRAY:
+		case OF_PIXELS_GRAY_ALPHA:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
 		case OF_PIXELS_Y:
@@ -722,18 +724,18 @@ int ofPixels_<PixelType>::getNumPlanes() const{
 		case OF_PIXELS_UV:
 		case OF_PIXELS_VU:
 			return 1;
-			break;
 		case OF_PIXELS_NV12:
 		case OF_PIXELS_NV21:
 			return 2;
-			break;
 		case OF_PIXELS_YV12:
 		case OF_PIXELS_I420:
 			return 3;
-			break;
-		default:
+		case OF_PIXELS_NUM_FORMATS:
+		case OF_PIXELS_NATIVE:
+		case OF_PIXELS_UNKNOWN:
 			return 0;
 	}
+	return 0;
 }
 
 template<typename PixelType>
@@ -747,8 +749,14 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(int planeIdx){
 		case OF_PIXELS_RGBA:
 		case OF_PIXELS_BGRA:
 		case OF_PIXELS_GRAY:
+		case OF_PIXELS_GRAY_ALPHA:
 		case OF_PIXELS_YUY2:
 		case OF_PIXELS_UYVY:
+		case OF_PIXELS_Y:
+		case OF_PIXELS_U:
+		case OF_PIXELS_V:
+		case OF_PIXELS_UV:
+		case OF_PIXELS_VU:
 			plane.setFromExternalPixels(pixels,width,height,pixelFormat);
 			break;
 		case OF_PIXELS_NV12:
@@ -797,7 +805,9 @@ ofPixels_<PixelType> ofPixels_<PixelType>::getPlane(int planeIdx){
 				break;
 			}
 			break;
-		default:
+		case OF_PIXELS_NUM_FORMATS:
+		case OF_PIXELS_NATIVE:
+		case OF_PIXELS_UNKNOWN:
 			break;
 	}
 	return plane;

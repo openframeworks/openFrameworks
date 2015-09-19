@@ -19,9 +19,6 @@
 //------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------
 
-
-size_t ofBuffer::ioSize = 1024;
-
 //--------------------------------------------------
 ofBuffer::ofBuffer()
 :currentLine(end(),end()){
@@ -43,13 +40,13 @@ ofBuffer::ofBuffer(const string & text)
 }
 
 //--------------------------------------------------
-ofBuffer::ofBuffer(istream & stream)
+ofBuffer::ofBuffer(istream & stream, size_t ioBlockSize)
 :currentLine(end(),end()){
-	set(stream);
+	set(stream, ioBlockSize);
 }
 
 //--------------------------------------------------
-bool ofBuffer::set(istream & stream){
+bool ofBuffer::set(istream & stream, size_t ioBlockSize){
 	if(stream.bad()){
 		clear();
 		return false;
@@ -57,9 +54,9 @@ bool ofBuffer::set(istream & stream){
 		buffer.clear();
 	}
 
-	vector<char> aux_buffer(ioSize);
+	vector<char> aux_buffer(ioBlockSize);
 	while(stream.good()){
-		stream.read(&aux_buffer[0], ioSize);
+		stream.read(&aux_buffer[0], ioBlockSize);
 		buffer.insert(buffer.end(),aux_buffer.begin(),aux_buffer.begin()+stream.gcount());
 	}
 	buffer.push_back(0);
@@ -72,7 +69,7 @@ bool ofBuffer::writeTo(ostream & stream) const {
 		return false;
 	}
 	stream.write(&(buffer[0]), buffer.size() - 1);
-	return true;
+	return stream.good();
 }
 
 //--------------------------------------------------
@@ -161,11 +158,6 @@ long ofBuffer::size() const {
 	}
 	//we always add a 0 at the end to avoid problems with strings
 	return buffer.size() - 1;
-}
-
-//--------------------------------------------------
-void ofBuffer::setIOBufferSize(size_t _ioSize){
-	ioSize = _ioSize;
 }
 
 //--------------------------------------------------
@@ -341,20 +333,14 @@ istream & operator>>(istream & istr, ofBuffer & buf){
 
 //--------------------------------------------------
 ofBuffer ofBufferFromFile(const string & path, bool binary){
-	ios_base::openmode mode = binary ? ifstream::binary : ios_base::in;
-	ifstream istr(ofToDataPath(path, true).c_str(), mode);
-	ofBuffer buffer(istr);
-	istr.close();
-	return buffer;
+	ofFile f(path,ofFile::ReadOnly, binary);
+	return ofBuffer(f);
 }
 
 //--------------------------------------------------
 bool ofBufferToFile(const string & path, ofBuffer & buffer, bool binary){
-	ios_base::openmode mode = binary ? ofstream::binary : ios_base::out;
-	ofstream ostr(ofToDataPath(path, true).c_str(), mode);
-	bool ret = buffer.writeTo(ostr);
-	ostr.close();
-	return ret;
+	ofFile f(path, ofFile::WriteOnly, binary);
+	return buffer.writeTo(f);
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -484,9 +470,11 @@ bool ofFile::create(){
 	bool success = false;
 
 	if(!myFile.string().empty()){
-		auto mode = this->mode;
+		auto oldmode = this->mode;
+		auto oldpath = path();
 		success = open(path(),ofFile::WriteOnly);
-		open(path(),mode);
+		close();
+		open(oldpath,oldmode,binary);
 	}
 
 	return success;
@@ -792,6 +780,9 @@ bool ofFile::remove(bool recursive){
 	}
 
 	try{
+		if(mode!=Reference){
+			open(path(),Reference,binary);
+		}
 		if(recursive){
 			std::filesystem::remove_all(myFile);
 		}else{
@@ -1165,7 +1156,7 @@ ofFile ofDirectory::operator[](std::size_t position) const {
 
 //------------------------------------------------------------------------------------------------------------
 const vector<ofFile> & ofDirectory::getFiles() const{
-	if(files.empty()){
+	if(files.empty() && !myDir.empty()){
 		const_cast<ofDirectory*>(this)->listDir();
 	}
 	return files;
@@ -1194,7 +1185,18 @@ static bool natural(const ofFile& a, const ofFile& b) {
 
 //------------------------------------------------------------------------------------------------------------
 void ofDirectory::sort(){
+    if(files.empty() && !myDir.empty()){
+        listDir();
+    }
 	ofSort(files, natural);
+}
+
+//------------------------------------------------------------------------------------------------------------
+ofDirectory ofDirectory::getSorted(){
+    ofDirectory sorted(*this);
+    sorted.listDir();
+    sorted.sort();
+    return sorted;
 }
 
 //------------------------------------------------------------------------------------------------------------
@@ -1253,10 +1255,9 @@ bool ofDirectory::createDirectory(const std::string& _dirPath, bool bRelativeToD
 		return success;
 		
 	} else {
-			
-		ofLogWarning("ofDirectory") << "createDirectory(): directory already exists: \"" << dirPath << "\"";
+		
+		// no need to create it - it already exists.
 		return true;
-	
 	}
 
 

@@ -327,18 +327,15 @@ void ofLight::onPositionChanged() {
 //----------------------------------------
 void ofLight::onOrientationChanged() {
 	if(data->glIndex==-1) return;
-	// if we are a directional light and not positional, update light position (direction)
 	if(getIsDirectional()) {
-		// (tig) takes into account global orientation should node be parented.
-		ofVec3f lookAtDir = ( getGlobalTransformMatrix().getInverse() * ofVec4f(0,0,-1, 1) ).getNormalized();
+		// if we are a directional light and not positional, update light position (direction)
+		ofVec3f lookAtDir = ( ofVec4f(0,0,-1, 1) * getGlobalOrientation() ).getNormalized();
 		data->position = ofVec4f(lookAtDir.x,lookAtDir.y,lookAtDir.z,0);
 		ofGetGLRenderer()->setLightPosition(data->glIndex,data->position);
 	}else if(getIsSpotlight() || getIsAreaLight()) {
-		// determines the axis of the cone light //
-
-		// (tig) takes into account global orientation should node be parented.
-		ofVec3f lookAtDir = ( getGlobalTransformMatrix().getInverse() * ofVec4f(0,0,-1, 1) ).getNormalized();
-		data->direction = ofVec3f(lookAtDir.x,lookAtDir.y,lookAtDir.z);
+		// determines the axis of the cone light
+		ofVec3f lookAtDir = ( ofVec4f(0,0,-1, 1) * getGlobalOrientation() ).getNormalized();
+		data->direction = lookAtDir;
 		ofGetGLRenderer()->setLightSpotDirection(data->glIndex,data->direction);
 	}
 	if(getIsAreaLight()){
