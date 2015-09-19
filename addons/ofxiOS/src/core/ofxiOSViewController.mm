@@ -127,6 +127,13 @@
 - (void)rotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
                             animated:(BOOL)animated {
 	bAnimated = animated;
+	
+	//borg
+	//if 8+ ignore, else gets delayed crop
+	if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] != NSOrderedAscending ) {
+		return;
+	}
+	
     if(bReadyToRotate == NO) {
         pendingInterfaceOrientation = interfaceOrientation;
         
@@ -194,7 +201,7 @@
     float rot3 = rot2 - rot1;
     CGAffineTransform rotate = CGAffineTransformMakeRotation(rot3);
     rotate = CGAffineTransformConcat(rotate, self.glView.transform);
-    
+	
     if(animated) {
         NSTimeInterval duration = 0.3;
         if((UIInterfaceOrientationIsLandscape(currentInterfaceOrientation) && UIInterfaceOrientationIsLandscape(interfaceOrientation)) ||
@@ -280,25 +287,18 @@
 	}
 }
 
-#ifdef __IPHONE_8_0
 // iOS8+ version of willAnimateRotationToInterfaceOrientation
+//NOTE: Only called if actually resizing and not masked
+//http://stackoverflow.com/questions/25935006/ios8-interface-rotation-methods-not-called
+
+//borg
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
-	CGSize screenSize = size;
-	
+
 	CGPoint center;
-	// Is the iOS version less than 8?
-	if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
-		if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
-			center.x = screenSize.height * 0.5;
-			center.y = screenSize.width * 0.5;
-		} else {
-			center.x = screenSize.width * 0.5;
-			center.y = screenSize.height * 0.5;
-		}
-	} else {
-		center.x = screenSize.width * 0.5;
-		center.y = screenSize.height * 0.5;
-	}
+	
+	center.x = size.width * 0.5;
+	center.y = size.height * 0.5;
+
 	
 	if(bAnimated) {
 		NSTimeInterval duration = 0.3;
@@ -306,13 +306,15 @@
 		[UIView animateWithDuration:duration animations:^{
 			self.glView.center = center;
 			self.glView.transform = CGAffineTransformMakeRotation(0);
+			self.glView.frame = CGRectMake(0, 0, size.width,size.height);
 		}];
 	} else {
 		self.glView.center = center;
 		self.glView.transform = CGAffineTransformMakeRotation(0);
+		self.glView.frame = CGRectMake(0, 0, size.width,size.height);
 	}
 }
-#endif
+
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
 

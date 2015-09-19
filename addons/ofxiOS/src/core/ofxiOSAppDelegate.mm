@@ -225,11 +225,15 @@
 - (void)receivedRotate:(NSNotification*)notification {
 	UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
     ofLogVerbose("ofxiOSAppDelegate") << "device orientation changed to " << deviceOrientation;
-	if(deviceOrientation != UIDeviceOrientationUnknown && deviceOrientation != UIDeviceOrientationFaceUp && deviceOrientation != UIDeviceOrientationFaceDown ) {
-        if([self.glViewController isReadyToRotate]) {
+	if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
+		//iOS7-
+		if(deviceOrientation != UIDeviceOrientationUnknown && deviceOrientation != UIDeviceOrientationFaceUp && deviceOrientation != UIDeviceOrientationFaceDown ) {
+			if([self.glViewController isReadyToRotate]) {
             ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
-        }
-        
+			}
+		}
+	}else {
+        ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
     }
 }
 
