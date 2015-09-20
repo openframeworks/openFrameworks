@@ -25,7 +25,11 @@
     currentInterfaceOrientation = pendingInterfaceOrientation = UIInterfaceOrientationPortrait;
     if((self = [super init])) {
         currentInterfaceOrientation = pendingInterfaceOrientation = self.interfaceOrientation;
-        bReadyToRotate  = NO;
+		if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
+			bReadyToRotate  = NO;
+		}else{
+			bReadyToRotate  = YES;
+		}
         bFirstUpdate    = NO;
 		bAnimated		= NO;
         
@@ -68,10 +72,11 @@
     // rotation of the glView only works properly after viewDidAppear.
     // this is something to do with either the bounds, center or transform properties not being initialised earlier.
     // so now that glView is ready, we rotate it to the pendingInterfaceOrientation.
-    
-    bReadyToRotate  = YES;
-    bFirstUpdate    = YES;
-    [self rotateToInterfaceOrientation:pendingInterfaceOrientation animated:NO];
+    if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
+		bReadyToRotate  = YES;
+		bFirstUpdate    = YES;
+		[self rotateToInterfaceOrientation:pendingInterfaceOrientation animated:NO];
+	}
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -127,12 +132,7 @@
 - (void)rotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
                             animated:(BOOL)animated {
 	bAnimated = animated;
-	
-	//borg
-	//if 8+ ignore, else gets delayed crop
-	if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] != NSOrderedAscending ) {
-		return;
-	}
+
 	
     if(bReadyToRotate == NO) {
         pendingInterfaceOrientation = interfaceOrientation;
@@ -150,7 +150,8 @@
         
         return;
     }
-    
+ 
+	
     if(currentInterfaceOrientation == interfaceOrientation && !bFirstUpdate) {
         return;
     }
@@ -170,7 +171,7 @@
     CGPoint center;
     CGRect bounds = CGRectMake(0, 0, screenSize.width, screenSize.height);
 	
-	if(UIInterfaceOrientationIsLandscape(self.interfaceOrientation)) {
+	if(UIInterfaceOrientationIsLandscape(interfaceOrientation)) {
 		center.x = screenSize.height * 0.5;
 		center.y = screenSize.width * 0.5;
 	} else {
@@ -194,6 +195,17 @@
 			bounds.size.width = screenSize.width;
 			bounds.size.height = screenSize.height;
 		}
+		//borg
+		//NSLog(@"w %f h %f",[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height);
+		//assumes Portrait orientation
+		if(screenSize.width>screenSize.height){
+			center.x = screenSize.height * 0.5;
+			center.y = screenSize.width * 0.5;
+		}else{
+			center.x = screenSize.width * 0.5;
+			center.y = screenSize.height * 0.5;
+		}
+		//NSLog(@"rotating to portrait %i, is portrait %i, currentInterfaceOrientation %i, bound: w %f h %f",UIInterfaceOrientationIsPortrait(interfaceOrientation),UIInterfaceOrientationIsPortrait(self.interfaceOrientation),UIInterfaceOrientationIsPortrait(currentInterfaceOrientation),bounds.size.width,bounds.size.height);
 	}
 	
     float rot1 = [self rotationForOrientation:currentInterfaceOrientation];

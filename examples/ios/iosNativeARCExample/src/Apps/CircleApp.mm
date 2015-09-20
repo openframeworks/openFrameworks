@@ -24,9 +24,6 @@ void CircleApp::setup() {
     
     font.load("fonts/frabk.ttf", fontSize);
     
-    
-    ofSetOrientation(OF_ORIENTATION_DEFAULT);
-
 }
 
 //--------------------------------------------------------------
@@ -62,8 +59,13 @@ void CircleApp::exit() {
 
 //--------------------------------------------------------------
 void CircleApp::touchDown(ofTouchEventArgs &touch){
-
-
+    int orient = ofGetOrientation();
+    if(orient<4){
+        orient++;
+    }else{
+        orient = 1;
+    }
+    ofSetOrientation((ofOrientation)orient);
 }
 
 //--------------------------------------------------------------
