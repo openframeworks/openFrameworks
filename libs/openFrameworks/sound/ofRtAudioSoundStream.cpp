@@ -115,10 +115,11 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	bufferSize = ofNextPow2(_bufferSize);	// must be pow2
 
 	try {
-		if (api == OF_RT_API_UNSPECIFIED)
-			audio = shared_ptr<RtAudio>(new RtAudio());
+		if (api == OF_RT_API_UNSPECIFIED) {
+			audio = std::make_shared<RtAudio>();
+		}
 		else {
-			audio = shared_ptr<RtAudio>(new RtAudio((RtAudio::Api)api));
+			audio = std::make_shared<RtAudio>((RtAudio::Api)api);
 		}
 	}
 	catch (std::exception &error) {
