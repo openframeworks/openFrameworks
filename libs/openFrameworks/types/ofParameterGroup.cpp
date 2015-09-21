@@ -122,12 +122,12 @@ const ofParameter<ofFloatColor> & ofParameterGroup::getFloatColor(std::size_t po
 
 const ofParameterGroup & ofParameterGroup::getGroup(std::size_t pos) const{
 	if(pos>=size()){
-		throw std::out_of_range(("get(): " + std::to_string(pos) + "out of bounds").c_str());
+		throw std::out_of_range(("get(): " + ofToString(pos) + "out of bounds").c_str());
 	}else{
 		if(getType(pos)==typeid(ofParameterGroup).name()){
 			return *static_cast<ofParameterGroup* >(obj->parameters[pos].get());
 		}else{
-			throw std::runtime_error(("get():  bad type for pos " + std::to_string(pos) + ", returning empty group").c_str());
+			throw std::runtime_error(("get():  bad type for pos " + ofToString(pos) + ", returning empty group").c_str());
 		}
 	}
 }
@@ -235,12 +235,12 @@ ofParameter<ofFloatColor> & ofParameterGroup::getFloatColor(std::size_t pos){
 
 ofParameterGroup & ofParameterGroup::getGroup(std::size_t pos){
 	if(pos>=size()){
-		throw std::out_of_range(("get(): " + std::to_string(pos) + "out of bounds").c_str());
+		throw std::out_of_range(("get(): " + ofToString(pos) + "out of bounds").c_str());
 	}else{
 		if(getType(pos)==typeid(ofParameterGroup).name()){
 			return *static_cast<ofParameterGroup* >(obj->parameters[pos].get());
 		}else{
-			throw std::runtime_error(("get():  bad type for pos " + std::to_string(pos) + ", returning empty group").c_str());
+			throw std::runtime_error(("get():  bad type for pos " + ofToString(pos) + ", returning empty group").c_str());
 		}
 	}
 }
