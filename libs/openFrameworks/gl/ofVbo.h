@@ -112,7 +112,7 @@ public:
 	bool getUsingIndices() const;
 	
 	void draw(int drawMode, int first, int total) const;
-	void drawElements(int drawMode, int amt) const;
+	void drawElements(int drawMode, int amt, int offsetelements = 0) const;
 	
 	void drawInstanced(int drawMode, int first, int total, int primCount) const;
 	void drawElementsInstanced(int drawMode, int amt, int primCount) const;
