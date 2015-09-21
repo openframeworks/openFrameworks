@@ -3,97 +3,7 @@
 Android
 =======
 
-The Android distribution of openFrameworks is setup to work with either the Eclipse IDE or the newer Android Studio IDE. The projects are currently using a custom toolchain based on Makefiles to compile and install applications.
-
-# Android Studio
-
-## Summary
-
-Setting up openFrameworks with Android Studio is fairly straightforward. The basic steps are:
-
-- Install Android Studio and the Android SDK
-- Install the Android NDK (r10b or lower)
-- Download openFrameworks from the download page or from git
-- In Android Studio, use **File ➞ Import Project** and select the `settings.gradle` file in the root of the openFrameworks directory
-- Set the path to the NDK in local.properties (`ndk.dir`)
-- Build and run
-
-## Installation
-
-### Install Android Studio and the SDK
-
-Download and install Android Studio from http://tools.android.com/download/studio/stable (you need Android Studio 1.0 or higher). It should come with (or automatically install) a recent SDK, though you can customize the SDK version later from within Android Studio using **Tools ➞ Android ➞ SDK Manager**.
-
-In the event that Android Studio does not come with an SDK, you can install it from http://developer.android.com/sdk/index.html (under "Get the SDK for an existing IDE").
-
-### Install the Android NDK
-
-For the current version of openFrameworks, you need to install Android NDK revision r10b or earlier. r10c breaks compatibility with some libraries, and should (at this time) be avoided.
-
-Here are download links for r9d, which has been tested and works fine:
-
-- Windows 32-bit: http://dl.google.com/android/ndk/android-ndk-r9d-windows-x86.zip
-- Windows 64-bit: http://dl.google.com/android/ndk/android-ndk-r9d-windows-x86_64.zip
-- Mac OS X 32-bit: http://dl.google.com/android/ndk/android-ndk-r9d-darwin-x86.tar.bz2
-- Mac OS X 64-bit: http://dl.google.com/android/ndk/android-ndk-r9d-darwin-x86_64.tar.bz2
-- Linux 32-bit (x86): http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86.tar.bz2
-- Linux 64-bit (x86): http://dl.google.com/android/ndk/android-ndk-r9d-linux-x86_64.tar.bz2
-
-On Windows, you will also need to install MinGW in order to build openFrameworks. MinGW provides some essential build tools which are not included in the NDK. Follow just the "Installing the MinGW and Msys" instructions on this page: http://www.multigesture.net/articles/how-to-install-mingw-msys-and-eclipse-on-windows/.
-
-### Download openFrameworks
-
-Download it from the downloads page:
-
-http://openframeworks.cc/download
-
-You may also check out the openFrameworks source from GitHub (under master branch): http://github.com/openframeworks/openFrameworks
-
-### Import the project
-
-At the Android Studio welcome screen select **Import Project**, or use the **File ➞ Import Project** menu item. Browse to  the `settings.gradle` file in the `libs/openFrameworksCompiled/project/android` directory. Accept all the prompts and wait for Android Studio to set up the project.
-
-At this point you will get an error about the NDK not being configured. Onto the next step...
-
-### Configure the NDK
-
-Edit the file `local.properties` and add a line like this:
-
-    ndk.dir=/path/to/the/ndk
-
-Save and resync the project (either press the "Try Again" link on the "Gradle project sync failed" banner, or use **Tools ➞ Android ➞ Sync Project with Gradle Files**).
-
-You'll have to wait a bit: the first sync will automatically build openFrameworks. If it doesn't work (Gradle sync still fails), try looking at the Troubleshooting tips.  In some cases, clicking on the error in the console window will take you to a solution, such as installing various versions of the Android SDK.  In some cases, you may have to do this several times to solve several missing dependencies.
-
-### Build and run
-
-Press the Play button next to the `androidEmptyExample` shown in the toolbar. With any luck, it should build the app, and momentarily deploy it to your Android device (or prompt you to deploy it on a suitable emulator). If the app runs, congratulations! You have setup openFrameworks.
-
-## Creating new projects
-
-1. Copy the provided example app (make sure to put it in a subdirectory of `apps`, at the same level as the sample)
-2. Double-click on `build.gradle` and press "Add Now..."
-3. If that doesn't work, add a line to `settings.gradle` including your project manually.
-4. Perform a project sync (it should prompt you to do this).
-
-## Creating projects from examples
-
-1. Copy the `build.gradle` file from `androidEmptyExample` into the directory of the example you want to use.
-2. Follow steps 2-4 above.
-
-## Troubleshooting
-
-- You may need to adjust the following numbers to match your installed Android Studio and Android SDK. Android Studio should offer to fix these values for you when you open the appropriate build files.
-
-    - The Gradle version specified in `/build.gradle`
-    - The `compileSdkVersion`, `buildToolsVersion`, `minSdkVersion`, `targetSdkVersion` values
-        in `/addons/ofxAndroid/ofAndroidLib/build.gradle` and `/apps/myApps/androidEmptyExample/build.gradle`
-
-- If you get strange linker errors (e.g. errors about a missing `__srget`), try using the r9d version of the NDK. Newer NDKs (particularly r10c and up) don't work with some versions of OpenFrameworks.
-- If you get strange linker errors when running the Android Simulator (e.g. `java.lang.UnsatisfiedLinkError: dalvik.system.PathClassLoader[DexPathList`) make sure that your simulator is using the `armeabi-v7a`, not the `x86` or `x86_64` architecture.  You can check your setup by opening your Android Virtual Device Manager and editing the device (**Tools ➞ Android ➞ AVD Manager** or click the AVD Manager icon in the toolbar).  You may be prompted to download an appropriate system image for `armeabi-v7a`.
-
-Eclipse
-=======
+The Android distribution of openFrameworks is setup to work with either the Eclipse IDE or experimentally with the newer Android Studio IDE. The projects are currently using a custom toolchain based on Makefiles to compile and install applications.
 
 This information is also online: http://openframeworks.cc/setup/android-eclipse
 
@@ -122,42 +32,37 @@ These instructions go into a lot of important detail, but the main steps are:
 Installation
 ------------
 
-**a) Eclipse**: download the C/C++ edition of Eclipse 4.2 (Juno) for your platform from here:
+**a) Eclipse**: download the C/C++ edition of Eclipse 4.5 (Mars) or later for your platform from here:
 
-http://www.eclipse.org/downloads/packages/eclipse-ide-cc-developers/junosr1
-
-These instructions were originally written using Eclipse 3.6 (Helios), but have been used for setting up Eclipse 4.2 (Juno).
-
-Ubuntu users: If downloading from the repositories, double check that the version of Eclipse is 3.6 (Helios) or higher.
+http://www.eclipse.org/downloads/packages/eclipse-ide-cc-developers/marsr
 
 You will need Java to use Eclipse, you can download it from java.com.
 
 For Linux, it will probably be in the official repositories. For example, in Ubuntu:
 
-    sudo apt-get install openjdk-6-jdk
+    sudo apt-get install openjdk-7-jdk
 
 or
 
-    sudo apt-get install sun-java6-jdk (this doesn't exist as of Ubuntu 10.10 (Maverick Meerkat))
+    sudo apt-get install oracle-java8-installer
 
 **b) Android SDK**: This is the software that allows you to write Android apps. openFrameworks apps are written in C/C++, but you will still need this to interact with the NDK. You can download it from:
 
 http://developer.android.com/sdk/index.html
 
-Uncompress it in any folder on your hard disk. Later you'll need to tell the openFrameworks makefiles where to find it.
+Uncompress it in any folder on your hard disk. Later you'll need to tell eclipse where to find it.
 
-**c) Android NDK**: This is the C/C++ compiler, headers and libraries for Android.
+**c) Android NDK**: This is the C/C++ compiler, headers and libraries for Android. OF 0.9.0 has been tested with the NDK version r10e, newer versions might work but it's not guaranteed.
 
-- OS X: http://dl.google.com/android/ndk/android-ndk-r8d-darwin-x86.tar.bz2
-- Linux: http://dl.google.com/android/ndk/android-ndk-r8d-linux-x86.tar.bz2
-- Windows: http://dl.google.com/android/ndk/android-ndk-r8d-windows.zip
+https://developer.android.com/ndk/downloads/index.html
 
-Other versions are available here, but we recommend using r8d for now:
-http://developer.android.com/sdk/ndk/index.html
+- OS X: http://dl.google.com/android/ndk/android-ndk-r10e-darwin-x86_64.bin
+- Linux 32: http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86.bin
+- Linux 64: http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin
+- Windows 32: http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86.exe
+- Windows 64: http://dl.google.com/android/ndk/android-ndk-r10e-windows-x86_64.exe
 
-There's a bug in the official NDK that makes apps crash on Android 2.1 and lower versions of Android so by now openFrameworks for Android will only work on Android 2.2 and above.
-
-Uncompress this also to any place in your hard disk. We'll tell openFrameworks where to find it later.
+On Windows, you will also need to install MinGW in order to build openFrameworks. MinGW provides some essential build tools which are not included in the NDK. Follow just the "Installing the MinGW and Msys" instructions on this page: http://www.multigesture.net/articles/how-to-install-mingw-msys-and-eclipse-on-windows/.
 
 **d) openFrameworks for Android package**: Download it from the downloads page:
 
@@ -170,10 +75,6 @@ You may also check out the openFrameworks source from GitHub (under master branc
 This build tool is used to build, install and run applications on the Android device from the command line:
 
 - Ubuntu:
-
-    sudo apt-get install ant-1.8
-
-or for newer distributions:
 
     sudo apt-get install ant
 
@@ -198,11 +99,29 @@ Edit this file:
 This will tell openFrameworks where to find the SDK, NDK and Ant.
 If you don't have this file, create it from the paths.make.default template in the same directory.
 
-- Set the values of SDK_ROOT and NDK_ROOT to their install paths
+- Set the values of NDK_ROOT to their install paths
 
 - Set ANT_HOME:
--- Linux: /usr  
--- OS X: Set it to the folder where you uncompressed Ant before.
+-- Only for OS X: Set it to the folder where you uncompressed Ant before.
+
+The final file in Linux has to look something like:
+
+```
+# Default paths.make file.
+# Enter the correct paths for your system and save this file as paths.make
+
+NDK_ROOT=/home/arturo/Code/android-ndk-r10e
+```
+
+And in OSX:
+
+```
+# Default paths.make file.
+# Enter the correct paths for your system and save this file as paths.make
+
+NDK_ROOT=/Users/arturo/Code/android-ndk-r10e
+ANT_HOME=/Users/arturo/Code/ant-1.8
+```
 
 **g) Start Eclipse**: You will see a pop up asking you what workspace to use. Just point it to:
 openFrameworks/examples/android.
@@ -225,13 +144,6 @@ You will see the SDK plugin in the list called "Developer Tools".
 
 Select it and press 'Next' until you get to the "Review Licenses" screen. Check the "I accept the terms of the license" checkbox and press 'Finish'. Eclipse will download and install the Android plugin. Once it finishes press 'Yes' in the popup to restart Eclipse.
 
-**i) Set Eclipse Java compiler compliance to 1.6:**
-
-In the last version of Eclipse the Java compatibility should be set to version 6. You can check this in Window > Preferences > Java > Compiler. (Preferences is in the Eclipse menu for OS X.)
-
-The compiler compliance settings should be set to 1.6.
-
-
 
 **j) Configuring the Android plugin**:
 
@@ -253,16 +165,15 @@ File > Import and select General > Existing projects in the workspace...
 
 Import in this order:
 
-- openFrameworks/libs  
-- openFrameworks/libs/openFrameworks  
-- openFrameworks/addons/ofxAndroid/ofAndroidLib  
-- openFrameworks/examples/android
+- openFrameworks/libs/openFrameworks
+- openFrameworks/addons/ofxAndroid/ofAndroidLib
+- openFrameworks/examples/android/androidEmptyExample
+
+You can later import more examples if you want but it's recommended to not have many examples opened at the same time so eclipse works faster
 
 **l) Compile openFrameworks**:
 
 In the "Project Explorer" on the left side of the window, select the openFrameworks project. Choose the Android target in Project > Build Configurations > Set Active, and then click Project > Build Project. You can also do this from the toolbar by switching to the C/C++ perspective and clicking the toolbar button with a hammer.
-
-OS X seems to be missing pkg-config. Currently this doesn't seem to affect the build, since these commands were only important in detecting Linux libraries.
 
 **m) Enable development in your device:**
 

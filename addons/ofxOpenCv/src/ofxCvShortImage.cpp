@@ -29,8 +29,6 @@ ofxCvShortImage::ofxCvShortImage( const ofxCvShortImage& _mom ) {
 void ofxCvShortImage::init() {
     ipldepth = IPL_DEPTH_16U;
     iplchannels = 1;
-    gldepth = GL_UNSIGNED_SHORT;
-    glchannels = GL_LUMINANCE;
     cvGrayscaleImage = NULL;
     bShortPixelsDirty = true;
 }
@@ -51,6 +49,15 @@ void ofxCvShortImage::flagImageChanged() {
     ofxCvImage::flagImageChanged();
 }
 
+//--------------------------------------------------------------------------------
+void ofxCvShortImage::allocateTexture(){
+	tex.allocate(shortPixels);
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvShortImage::allocatePixels(int w, int h){
+	pixels.allocate(w,h,OF_PIXELS_GRAY);
+}
 
 //--------------------------------------------------------------------------------
 void ofxCvShortImage::convertShortToGray( IplImage* shortImg, IplImage* grayImg ) {
