@@ -122,11 +122,11 @@ task ofNdkSetup {
  * Helper function to run make with a given set of options
  */
 def ofRunMake(List opts) {
-    def num_parallel = rootProject.ofNdkSetup.ext.num_parallel
+    def num_parallel = ofNdkSetup.ext.num_parallel
     if (num_parallel > 1) {
         opts.add(0, "-j$num_parallel")
     }
-    List cmd = [rootProject.ofNdkSetup.ext.make] + opts
+    List cmd = [ofNdkSetup.ext.make] + opts
     logger.info("Executing make command " + cmd)
     def proc = cmd.execute()
     proc.in.eachLine {line ->
@@ -145,4 +145,16 @@ def ofRunMake(List opts) {
     if(proc.exitValue() != 0) {
         throw new GradleException("make failed with exit status " + proc.exitValue())
     }
+}
+
+task compileDebugOF {
+    ofRunMake(["-C", rootProject.projectDir.absolutePath, "PLATFORM_OS=Android", "Debug"])
+}
+
+task compileReleaseOF {
+    ofRunMake(["-C", rootProject.projectDir.absolutePath, "PLATFORM_OS=Android", "Release"])
+}
+
+task clean(dependsOn: ofNdkSetup) << {
+    ofRunMake(["-C", rootProject.projectDir.absolutePath, "PLATFORM_OS=Android", "clean"])
 }
