@@ -388,7 +388,9 @@ void ofTrueTypeFont::unloadTextures(){
 }
 
 void ofTrueTypeFont::reloadTextures(){
-	if(bLoadedOk) load(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
+	if(bLoadedOk){
+		load(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
+	}
 }
 
 static bool loadFontFace(const std::string& _fontname, int _fontSize, FT_Face & face, std::string& filename){
