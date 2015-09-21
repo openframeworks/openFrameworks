@@ -29,9 +29,20 @@ task ofNdkSetup {
     logger.lifecycle name
 
     /* Find NDK directory */
-    def localProperties = new File(project.projectDir, "local.properties")
+    def pathsmake = new File(project.projectDir, "paths.make")
+    if (!pathsmake.exists()) {
+        throw new GradleException("pathsmake is missing!")
+    }
+
+
+    def localProperties = new File(rootProject.projectDir, "local.properties")
     if (!localProperties.exists()) {
         throw new GradleException("local.properties is missing!")
+    }
+
+    Properties ndkProperties = new Properties()
+    pathsmake.withInputStream { instr ->
+        ndkProperties.load(instr)
     }
 
     Properties properties = new Properties()
@@ -39,9 +50,9 @@ task ofNdkSetup {
         properties.load(instr)
     }
     String sdkDirectory = properties.get("sdk.dir")
-    String ndkDirectory = properties.get("ndk.dir")
+    String ndkDirectory = ndkProperties.get("NDK_ROOT")
     if (ndkDirectory == null) {
-        throw new GradleException("NDK not configured. Add ndk.dir=/path/to/ndk to local.properties.")
+        throw new GradleException("NDK not configured. Add NDK_ROOT=/path/to/ndk to paths.make.")
     }
     if (ndkDirectory.contains(' ')) {
         // Make really hates spaces in filenames, so we have to avoid them.
@@ -49,7 +60,7 @@ task ofNdkSetup {
     }
     def ndkDir = new File(ndkDirectory)
     if (!ndkDir.directory) {
-        throw new GradleException("NDK directory is invalid. Check ndk.dir path in local.properties.")
+        throw new GradleException("NDK directory is invalid. Check NDK_ROOT path in paths.make.")
     }
 
     /* Find suitable make executable */
