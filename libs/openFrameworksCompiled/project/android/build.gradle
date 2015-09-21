@@ -29,7 +29,7 @@ task ofNdkSetup {
     logger.lifecycle name
 
     /* Find NDK directory */
-    def localProperties = new File(rootDir, "local.properties")
+    def localProperties = new File(project.projectDir, "local.properties")
     if (!localProperties.exists()) {
         throw new GradleException("local.properties is missing!")
     }
