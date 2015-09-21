@@ -91,39 +91,58 @@ void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 
 //------------------------------------------------------------------------------
 bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers){
-	if( audio != nullptr ){
+	return setup(outChannels, inChannels, _sampleRate, _bufferSize, nBuffers, OF_RT_API_UNSPECIFIED);
+}
+
+//------------------------------------------------------------------------------
+bool ofRtAudioSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
+	setInput(app);
+	setOutput(app);
+	return setup(outChannels,inChannels,sampleRate,bufferSize,nBuffers, OF_RT_API_UNSPECIFIED);
+}
+
+bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers, ofRtAPI api)
+{
+	if (audio != nullptr) {
 		close();
 	}
 
-	nInputChannels		= inChannels;
-	nOutputChannels		= outChannels;
+	nInputChannels = inChannels;
+	nOutputChannels = outChannels;
 
-	sampleRate			=  _sampleRate;
-	tickCount			=  0;
-	bufferSize			= ofNextPow2(_bufferSize);	// must be pow2
+	sampleRate = _sampleRate;
+	tickCount = 0;
+	bufferSize = ofNextPow2(_bufferSize);	// must be pow2
 
 	try {
-		audio = shared_ptr<RtAudio>(new RtAudio());
-	} catch (std::exception &error) {
-   		ofLogError() << error.what();
+		if (api == OF_RT_API_UNSPECIFIED)
+			audio = shared_ptr<RtAudio>(new RtAudio());
+		else {
+			audio = shared_ptr<RtAudio>(new RtAudio((RtAudio::Api)api));
+		}
+	}
+	catch (std::exception &error) {
+		ofLogError() << error.what();
 		return false;
 	}
 
 	RtAudio::StreamParameters outputParameters;
 	RtAudio::StreamParameters inputParameters;
-	if(nInputChannels>0){
-		if( inDeviceID >= 0 ){
+	if (nInputChannels>0) {
+		if (inDeviceID >= 0) {
 			inputParameters.deviceId = inDeviceID;
-		}else{
+		}
+		else {
 			inputParameters.deviceId = audio->getDefaultInputDevice();
 		}
 		inputParameters.nChannels = nInputChannels;
 	}
 
-	if(nOutputChannels>0){
-		if( outDeviceID >= 0 ){
+	if (nOutputChannels>0) {
+		if (outDeviceID >= 0) {
 			outputParameters.deviceId = outDeviceID;
-		}else{
+		}
+		else {
 			outputParameters.deviceId = audio->getDefaultOutputDevice();
 		}
 		outputParameters.nChannels = nOutputChannels;
@@ -139,21 +158,15 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	inputBuffer.setDeviceID(inDeviceID);
 
 	try {
-		audio ->openStream( (nOutputChannels>0)?&outputParameters:nullptr, (nInputChannels>0)?&inputParameters:nullptr, RTAUDIO_FLOAT32,
-							sampleRate, &bufferFrames, &rtAudioCallback, this, &options);
+		audio->openStream((nOutputChannels>0) ? &outputParameters : nullptr, (nInputChannels>0) ? &inputParameters : nullptr, RTAUDIO_FLOAT32,
+			sampleRate, &bufferFrames, &rtAudioCallback, this, &options);
 		audio->startStream();
-	} catch (std::exception &error) {
-   		ofLogError() << error.what();
-   		return false;
- 	}
+	}
+	catch (std::exception &error) {
+		ofLogError() << error.what();
+		return false;
+	}
 	return true;
-}
-
-//------------------------------------------------------------------------------
-bool ofRtAudioSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
-	setInput(app);
-	setOutput(app);
-	return setup(outChannels,inChannels,sampleRate,bufferSize,nBuffers);
 }
 
 //------------------------------------------------------------------------------
