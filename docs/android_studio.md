@@ -63,11 +63,11 @@ With a text editor, edit the file `libs/openFrameworksCompiled/project/android/p
 
 At the Android Studio welcome screen select **Open an Existing Android Studio Project**.
 
-[!](images/android/open-existing-project.png)
+![](images/android/open-existing-project.png)
 
 Then browse to any of the android examples in `examples/android`.
 
-[!Opening androidEmptyExample](images/android/androidEmptyExample.png)
+![Opening androidEmptyExample](images/android/androidEmptyExample.png)
 
 Accept all the prompts and wait for Android Studio to set up the project.
 
@@ -81,9 +81,9 @@ Press the Play button next to the `androidEmptyExample` shown in the toolbar. Wi
 
 Android studio in it's version 1.3 still has very limited support for c++ source code editing. In any case to work with openFrameworks, you'll want to switch from the Android view to the Project one where you can see all the files in the project including the C++ source code:
 
-[!Project view](images/android/projectview.png)
-[!Project view](images/android/ofApp.png)
-[!Project view](images/android/full.png)
+![Project view](images/android/projectview.png)
+![Opening ofApp](images/android/ofApp.png)
+![Full view](images/android/full.png)
 
 ## Creating new projects
 
