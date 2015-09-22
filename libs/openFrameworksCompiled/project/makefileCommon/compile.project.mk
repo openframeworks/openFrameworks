@@ -186,12 +186,12 @@ endif
 
 $(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags$(TARGET_NAME): force
 	@mkdir -p $(OF_PROJECT_OBJ_OUTPUT_PATH)
-	@if [ "$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS)" != "$$(cat $@)" ]; then echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS)' > $@; fi
+	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS))" != "$(strip $$(cat $@))" ]; then echo '$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS) $(PROJECT_INCLUDE_CFLAGS) $(OPTIMIZATION_LDFLAGS) $(LDFLAGS))' > $@; fi
 
 $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH).compiler_flags$(TARGET_NAME): force
 	@mkdir -p $(OF_PROJECT_OBJ_OUTPUT_PATH)
 	@mkdir -p $(OF_ADDONS_PATH)/$(OF_PROJECT_OBJ_OUTPUT_PATH)
-	@if [ "$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)" != "$$(cat $@)" ]; then echo '$(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)' > $@; fi
+	@if [ "$(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS))" != "$(strip $$(cat $@))" ]; then echo $(strip $(OPTIMIZATION_CFLAGS) $(CFLAGS) $(CXXFLAGS)) > $@; fi
 
 # Rules to compile the project sources
 #$(OBJS): $(SOURCES)
