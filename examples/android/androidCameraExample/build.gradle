@@ -55,7 +55,6 @@ dependencies {
 
 clean.dependsOn(":openFrameworksProject:clean")
 
-project.afterEvaluate {
-    compileDebugNdk.dependsOn(":openFrameworksProject:compileDebugOF")
-    compileReleaseNdk.dependsOn(":openFrameworksProject:compileReleaseOF")
-}
+assembleDebug.dependsOn(":openFrameworksProject:compileDebugOF")
+
+assembleRelease.dependsOn(":openFrameworksProject:compileReleaseOF")
