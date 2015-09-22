@@ -7,7 +7,6 @@
 #include "ofSoundBuffer.h"
 #include "RtAudio.h"
 
-class RtAudio;
 typedef unsigned int RtAudioStreamStatus;
 
 class ofRtAudioSoundStream : public ofBaseSoundStream{
