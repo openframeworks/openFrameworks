@@ -5,7 +5,6 @@
 #include "ofSoundStream.h"
 #include "ofMath.h"
 #include "ofUtils.h"
-#include "RtAudio.h"
 
 
 //------------------------------------------------------------------------------
@@ -91,17 +90,17 @@ void ofRtAudioSoundStream::setOutput(ofBaseSoundOutput * soundOutput){
 
 //------------------------------------------------------------------------------
 bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers){
-	return setup(outChannels, inChannels, _sampleRate, _bufferSize, nBuffers, OF_RT_API_UNSPECIFIED);
+	return setup(outChannels, inChannels, _sampleRate, _bufferSize, nBuffers, RtAudio::Api::UNSPECIFIED);
 }
 
 //------------------------------------------------------------------------------
 bool ofRtAudioSoundStream::setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers){
 	setInput(app);
 	setOutput(app);
-	return setup(outChannels,inChannels,sampleRate,bufferSize,nBuffers, OF_RT_API_UNSPECIFIED);
+	return setup(outChannels,inChannels,sampleRate,bufferSize,nBuffers, RtAudio::Api::UNSPECIFIED);
 }
 
-bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers, ofRtAPI api)
+bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRate, int _bufferSize, int nBuffers, RtAudio::Api api)
 {
 	if (audio != nullptr) {
 		close();
@@ -115,11 +114,11 @@ bool ofRtAudioSoundStream::setup(int outChannels, int inChannels, int _sampleRat
 	bufferSize = ofNextPow2(_bufferSize);	// must be pow2
 
 	try {
-		if (api == OF_RT_API_UNSPECIFIED) {
+		if (api == RtAudio::Api::UNSPECIFIED) {
 			audio = std::make_shared<RtAudio>();
 		}
 		else {
-			audio = std::make_shared<RtAudio>((RtAudio::Api)api);
+			audio = std::make_shared<RtAudio>(api);
 		}
 	}
 	catch (std::exception &error) {
