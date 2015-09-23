@@ -20,6 +20,8 @@ error() {
     local code="${2:-1}"
     echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
   fi
+  rm -f *.tar.gz
+  rm -f *.zip
   exit "${code}"
 }
 trap 'error ${LINENO}' ERR
