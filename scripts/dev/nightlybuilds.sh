@@ -34,6 +34,7 @@ cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 lasthash=$(cat lasthash.txt)
 currenthash=$(git rev-parse HEAD)
 if [ "$currenthash" = "$lasthash" ]; then
+    echo "Exiting, no changes found"
     exit 0
 fi
 
