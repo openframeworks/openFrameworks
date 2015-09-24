@@ -1,8 +1,8 @@
 #include "ofEvents.h"
 
-
 static ofEventArgs voidEventArgs;
-
+std::mutex of::priv::StdFunctionId::mtx;
+uint64_t of::priv::StdFunctionId::nextId = 0;
 
 //--------------------------------------
 void ofSetFrameRate(int targetRate){

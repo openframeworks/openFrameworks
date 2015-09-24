@@ -7,13 +7,6 @@
 #include <stdlib.h>
 
 
-
-enum ofEventOrder{
-	OF_EVENT_ORDER_BEFORE_APP=0,
-	OF_EVENT_ORDER_APP=100,
-	OF_EVENT_ORDER_AFTER_APP=200
-};
-
 //----------------------------------------------------
 // register any method of any class to an event.
 // the method must provide one of the following
