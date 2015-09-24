@@ -163,7 +163,7 @@ ofMatrix4x4 ofCamera::getProjectionMatrix(ofRectangle viewport) const {
 
 //----------------------------------------
 ofMatrix4x4 ofCamera::getModelViewMatrix() const {
-	return ofMatrix4x4::getInverseOf(getGlobalTransformMatrix());
+	return getGlobalTransformMatrix().getInverse();
 }
 
 //----------------------------------------

@@ -32,7 +32,7 @@ PLATFORM_RUN_COMMAND =
 MSYS2_ROOT = /mingw32
 PLATFORM_CFLAGS += -std=gnu++14 -I$(MSYS2_ROOT)/include/cairo -I$(MSYS2_ROOT)/include/glib-2.0 -I$(MSYS2_ROOT)/lib/glib-2.0/include -I$(MSYS2_ROOT)/include/pixman-1 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/freetype2 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/harfbuzz -I$(MSYS2_ROOT)/include/libpng16 -DUNICODE -D_UNICODE -DPOCO_STATIC 
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER 
-PLATFORM_LDFLAGS += -L$(MSYS_ROOT)/lib -L$(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)
+PLATFORM_LDFLAGS += -L$(MSYS_ROOT)/lib -L$(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH) -lpthread
 #ifeq ($(PLATFORM_ARCH),x86_64)
 CC = $(MSYS2_ROOT)/bin/clang
 CXX = $(MSYS2_ROOT)/bin/clang++
@@ -41,6 +41,13 @@ PLATFORM_LD = $(MSYS2_ROOT)/bin/ld
 PLATFORM_PKG_CONFIG = $(MSYS2_ROOT)/bin/pkg-config
 #endif
 #endif
+
+
+PLATFORM_PROJECT_DEBUG_BIN_NAME=$(APPNAME)_debug.exe
+PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME).exe
+PLATFORM_PROJECT_RELEASE_TARGET = bin/$(BIN_NAME)
+PLATFORM_PROJECT_DEBUG_TARGET = bin/$(BIN_NAME)
+PLATFORM_RUN_COMMAND = cd bin;./$(BIN_NAME)
 
 ##########################################################################################
 # PLATFORM DEFINES
@@ -123,10 +130,10 @@ endif
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
 
 ##########################################################################################
 # PLATFORM CORE EXCLUSIONS
@@ -282,6 +289,16 @@ PLATFORM_LIBRARY_SEARCH_PATHS =
 #    Don't want to use a default compiler?
 ################################################################################
 #PLATFORM_CC=
-
-afterplatform: after
-	@echo 
+	
+afterplatform: $(TARGET_NAME)
+	@echo
+	@echo "     compiling done"
+	@echo "     to launch the application"
+	@echo
+	@echo "     cd bin"
+	@echo "     ./$(BIN_NAME)"
+	@echo ""
+	@echo "     - or -"
+	@echo ""
+	@echo "     make $(RUN_TARGET)"
+	@echo

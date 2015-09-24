@@ -1,8 +1,9 @@
 #include "ofSoundStream.h"
 #include "ofAppRunner.h"
 
-ofSoundStream soundStreamInput;
-ofSoundStream soundStreamOutput;	
+namespace{
+    ofSoundStream systemSoundStream;
+}
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr){
@@ -19,30 +20,27 @@ void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate,
 
 //------------------------------------------------------------
 void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers){
-	soundStreamOutput.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
+    systemSoundStream.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStop(){
-	soundStreamOutput.stop();
-	soundStreamInput.stop();
+    systemSoundStream.stop();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamStart(){
-	soundStreamOutput.start();
-	soundStreamInput.start();
+    systemSoundStream.start();
 }
 
 //------------------------------------------------------------
 void ofSoundStreamClose(){
-	soundStreamOutput.close();
-	soundStreamInput.close();
+    systemSoundStream.close();
 }
 
 //------------------------------------------------------------
 vector<ofSoundDevice> ofSoundStreamListDevices(){
-	vector<ofSoundDevice> deviceList = soundStreamOutput.getDeviceList();
+	vector<ofSoundDevice> deviceList = systemSoundStream.getDeviceList();
 	ofLogNotice("ofSoundStreamListDevices") << std::endl << deviceList;
 	return deviceList;
 }

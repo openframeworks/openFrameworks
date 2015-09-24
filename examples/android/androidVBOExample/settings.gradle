@@ -1,0 +1,12 @@
+// openFrameworks-relative root directories (don't touch)
+def ofRoot = '../../../'
+
+include ':ofAndroidLib'
+project(':ofAndroidLib').projectDir = new File(ofRoot + 'addons/ofxAndroid/ofAndroidLib')
+
+include ':openFrameworksProject'
+project(':openFrameworksProject').projectDir = new File(ofRoot + 'libs/openFrameworksCompiled/project/android')
+
+include ':openFrameworks'
+project(':openFrameworks').projectDir = new File(ofRoot + 'libs/openFrameworks')
+
