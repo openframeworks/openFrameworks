@@ -22,12 +22,21 @@ ofxCvColorImage::ofxCvColorImage( const ofxCvColorImage& _mom ) {
     }
 }
 
+
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::allocateTexture(){
+	tex.allocate(pixels);
+}
+
+//--------------------------------------------------------------------------------
+void ofxCvColorImage::allocatePixels(int w, int h){
+	pixels.allocate(w,h,OF_PIXELS_RGB);
+}
+
 //--------------------------------------------------------------------------------
 void ofxCvColorImage::init() {
     ipldepth = IPL_DEPTH_8U;
     iplchannels = 3;
-    gldepth = GL_UNSIGNED_BYTE;
-    glchannels = GL_RGB;
     cvGrayscaleImage = NULL;
 }
 

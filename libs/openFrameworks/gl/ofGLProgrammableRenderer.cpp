@@ -431,14 +431,14 @@ void ofGLProgrammableRenderer::draw(const ofVbo & vbo, GLuint drawMode, int firs
 }
 
 //----------------------------------------------------------
-void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt) const{
+void ofGLProgrammableRenderer::drawElements(const ofVbo & vbo, GLuint drawMode, int amt, int offsetelements) const{
 	if(vbo.getUsingVerts()) {
 		vbo.bind();
 		const_cast<ofGLProgrammableRenderer*>(this)->setAttributes(vbo.getUsingVerts(),vbo.getUsingColors(),vbo.getUsingTexCoords(),vbo.getUsingNormals());
 #ifdef TARGET_OPENGLES
-        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, nullptr);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_SHORT, (void*)(sizeof(ofIndexType) * offsetelements));
 #else
-        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(drawMode, amt, GL_UNSIGNED_INT, (void*)(sizeof(ofIndexType) * offsetelements));
 #endif
 		vbo.unbind();
 	}
@@ -666,6 +666,7 @@ void ofGLProgrammableRenderer::setCircleResolution(int res){
 		circleMesh.getVertices() = circlePolyline.getVertices();
 		path.setCircleResolution(res);
 	}
+	currentStyle.circleResolution = res; 
 }
 
 void ofGLProgrammableRenderer::setPolyMode(ofPolyWindingMode mode){
@@ -1129,7 +1130,7 @@ void ofGLProgrammableRenderer::pushStyle(){
 
 void ofGLProgrammableRenderer::popStyle(){
 	if( styleHistory.size() ){
-		setStyle(styleHistory.front());
+		setStyle(styleHistory.back());
 		styleHistory.pop_back();
 	}
 }
@@ -1473,7 +1474,7 @@ void ofGLProgrammableRenderer::beginDefaultShader(){
 	if(!uniqueShader || currentMaterial){
 		if(currentMaterial){
 			nextShader = &currentMaterial->getShader(currentTextureTarget,*this);
-			currentMaterial->updateMaterial(*nextShader,*this);
+
 		}else if(bitmapStringEnabled){
 			nextShader = &bitmapStringShader;
 
@@ -2060,7 +2061,7 @@ static const string uniqueVertexShader = vertex_shader_header + STRINGIFY(
 	void main(){
 		gl_Position = modelViewProjectionMatrix * position;
 		if(usingTexture>.5) texCoordVarying = (textureMatrix*vec4(texcoord.x,texcoord.y,0,1)).xy;
-		if(usingColors>.5) colorVarying = color*globalColor;
+		if(usingColors>.5) colorVarying = color;
 		else colorVarying = globalColor;
 	}
 );

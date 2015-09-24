@@ -295,6 +295,7 @@ protected:
 
 	ofTexture texAtlas;
 	mutable ofMesh stringQuads;
+	bool useKerning;
 
 	/// \endcond
 

@@ -316,6 +316,8 @@ public:
 	/// scaling by 0,0 zeros out all data.
 	void scale(float x, float y);
 
+	void append(const ofPath & path);
+
 	/// \}
 	/// \name Path Mode
 	/// \{

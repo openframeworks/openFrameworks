@@ -325,6 +325,12 @@ void ofAppGlutWindow::setup(const ofGLWindowSettings & settings){
 	if (settings.isPositionSet()) {
 		setWindowPosition(settings.getPosition().x,settings.getPosition().y);
 	}
+
+#ifdef TARGET_OSX
+	// The osx implementation of glut changes the cwd, this restores it
+	// to wherever it was when the app was started
+	ofRestoreWorkingDirectoryToDefault();
+#endif
 }
 
 #ifdef TARGET_LINUX

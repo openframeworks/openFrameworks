@@ -469,7 +469,6 @@ const ofTexture & ofBitmapFont::getTexture() const{
 		ofBitmapFont::init();
 		texture.allocate(pixels,false);
 		texture.setTextureMinMagFilter(GL_LINEAR,GL_NEAREST);
-		texture.setRGToRGBASwizzles(true);
 	}
 	return texture;
 }

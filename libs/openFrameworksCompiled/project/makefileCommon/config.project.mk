@@ -156,7 +156,7 @@ ifdef B_PROCESS_ADDONS
     # (to escape # in make, you must use \#)
     # sed '/^$/d' removes all empty lines
     # (to escape $ in make, you must use $$)
-    REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d' )
+    REQUESTED_PROJECT_ADDONS := $(shell cat $(PROJECT_ROOT)/addons.make 2> /dev/null | sed 's/[ ]*\#.*//g' | sed '/^$$/d')
 
     # deal with platform specfic addons
     # remove any platform specific addons that were already added to the addons.make file
@@ -179,8 +179,10 @@ ifdef B_PROCESS_ADDONS
     VALID_PROJECT_ADDONS = $(filter $(REQUESTED_PROJECT_ADDONS),$(ALL_INSTALLED_ADDONS))
 
     # create a list of the invalid addons
-    INVALID_PROJECT_ADDONS = $(filter-out $(VALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
+    INVALID_GLOBAL_ADDONS = $(filter-out $(VALID_PROJECT_ADDONS),$(REQUESTED_PROJECT_ADDONS))
 
+	INVALID_PROJECT_ADDONS = $(filter-out $(INVALID_GLOBAL_ADDONS), $(wildcard $(INVALID_GLOBAL_ADDONS)))
+	
     # if any invalid addons are found, throw a warning, but don't cause an error
     ifneq ($(INVALID_PROJECT_ADDONS),)
         $(warning The following unknown addons will be ignored:)
@@ -204,6 +206,10 @@ ifdef B_PROCESS_ADDONS
     # if the addons list is NOT empty ...
     ifneq ($(PROJECT_ADDONS),)
 		include $(OF_SHARED_MAKEFILES_PATH)/config.addons.mk
+    endif
+    
+    ifdef ADDON_PATHS
+    	PROJECT_ADDON_PATHS = $(addsuffix /,$(call remove-dupes-func,$(ADDON_PATHS:%/=%)))
     endif
 endif
 
@@ -249,10 +255,13 @@ OF_PROJECT_EXCLUSIONS := $(strip $(PROJECT_EXCLUSIONS))
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin%
-OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj%
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/bin/%
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/obj/%
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/.git/%
 OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/%.xcodeproj/%
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/build
+OF_PROJECT_EXCLUSIONS += $(PROJECT_ROOT)/build/%
 
 
 ################################################################################
@@ -293,10 +302,8 @@ OF_PROJECT_SOURCE_FILES = $(shell find $(OF_PROJECT_SOURCE_PATHS) -maxdepth 1 -n
 # PROJECT HEADER INCLUDES (-I ...)
 ################################################################################
 
-OF_PROJECT_INCLUDES := $(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(OF_PROJECT_SOURCE_PATHS))
-OF_PROJECT_INCLUDES += $(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(PROJECT_ADDONS_INCLUDES))
-
-OF_PROJECT_INCLUDES_CFLAGS = $(addprefix -I,$(OF_PROJECT_INCLUDES))
+OF_PROJECT_INCLUDES_CFLAGS := $(addprefix -I,$(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(OF_PROJECT_SOURCE_PATHS)))
+OF_ADDON_INCLUDES_CFLAGS += $(addprefix -I,$(filter-out $(PROJECT_INCLUDE_EXCLUSIONS),$(PROJECT_ADDONS_INCLUDES)))
 
 ifdef MAKEFILE_DEBUG
     $(info ---OF_PROJECT_INCLUDES_CFLAGS---)
@@ -335,9 +342,6 @@ OF_PROJECT_CFLAGS += $(PROJECT_CFLAGS)
 OF_PROJECT_CFLAGS += $(PROJECT_ADDONS_CFLAGS)
 OF_PROJECT_CFLAGS += $(USER_CFLAGS) # legacy
 OF_PROJECT_CFLAGS += $(OF_PROJECT_DEFINES_CFLAGS)
-OF_PROJECT_CFLAGS += $(OF_PROJECT_INCLUDES_CFLAGS)
-OF_PROJECT_CFLAGS += $(OF_CORE_INCLUDES_CFLAGS)
-
 OF_PROJECT_CXXFLAGS = $(OF_CORE_BASE_CXXFLAGS)
 
 
@@ -406,6 +410,9 @@ CFLAGS = $(strip $(ALL_CFLAGS))
 
 # clean up all extra whitespaces in the CFLAGS
 CXXFLAGS = $(strip $(ALL_CXXFLAGS))
+
+PROJECT_INCLUDE_CFLAGS = $(strip $(OF_CORE_INCLUDES_CFLAGS) $(OF_PROJECT_INCLUDES_CFLAGS) $(OF_ADDON_INCLUDES_CFLAGS))
+ADDON_INCLUDE_CFLAGS = $(strip $(OF_CORE_INCLUDES_CFLAGS) $(OF_ADDON_INCLUDES_CFLAGS))
 
 ################################################################################
 # LDFLAGS

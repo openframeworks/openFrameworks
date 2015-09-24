@@ -370,6 +370,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	lineHeight = 0;
 	nCharacters = 0;
 	simplifyAmt = 0;
+	useKerning = false;
 }
 
 //------------------------------------------------------------------
@@ -388,7 +389,9 @@ void ofTrueTypeFont::unloadTextures(){
 }
 
 void ofTrueTypeFont::reloadTextures(){
-	if(bLoadedOk) load(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
+	if(bLoadedOk){
+		load(filename, fontSize, bAntiAliased, bFullCharacterSet, bMakeContours, simplifyAmt, dpi);
+	}
 }
 
 static bool loadFontFace(const std::string& _fontname, int _fontSize, FT_Face & face, std::string& filename){
@@ -485,6 +488,7 @@ bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAn
 				  face->bbox.yMin * fontUnitScale,
 				  (face->bbox.xMax - face->bbox.xMin) * fontUnitScale,
 				  (face->bbox.yMax - face->bbox.yMin) * fontUnitScale);
+	useKerning = FT_HAS_KERNING( face );
 
 	//------------------------------------------------------
 	//kerning would be great to support:
@@ -686,7 +690,6 @@ bool ofTrueTypeFont::load(const std::string& _filename, int _fontSize, bool _bAn
 		x+= sortedCopy[i].tW + border*2;
 	}
 	texAtlas.allocate(atlasPixelsLuminanceAlpha,false);
-	texAtlas.setRGToRGBASwizzles(true);
 
 	if(bAntiAliased && fontSize>20){
 		texAtlas.setTextureMinMagFilter(GL_LINEAR,GL_LINEAR);
@@ -843,9 +846,9 @@ void ofTrueTypeFont::drawChar(int c, float x, float y, bool vFlipped) const{
 
 //-----------------------------------------------------------
 int ofTrueTypeFont::getKerning(int c, int prevC) const{
-    if(FT_HAS_KERNING( face ) && prevC>0 && prevC<nCharacters && c>0 && c<nCharacters){
+    if(useKerning){
         FT_Vector kerning;
-        FT_Get_Kerning(face, FT_Get_Char_Index(face, cps[prevC].glyph), FT_Get_Char_Index(face, cps[c].glyph), FT_KERNING_UNFITTED, &kerning);
+        FT_Get_Kerning(face, FT_Get_Char_Index(face, prevC), FT_Get_Char_Index(face, c), FT_KERNING_UNFITTED, &kerning);
         return kerning.x>>6;
     }else{
         return 0;
@@ -873,24 +876,24 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(const std::string& str,
 	}
 
 	try{
-		int prevCy = -1;
+		int prevC = -1;
 		for(auto c: ofUTF8Iterator(str)){
 			int cy = c - NUM_CHARACTER_TO_START;
-			if (cy < nCharacters){ 			// full char set or not?
-				if (c == '\n') {
-					Y += lineHeight*newLineDirection;
-					X = 0 ; //reset X Pos back to zero
-				} else if(cy > -1){
-					shapes.push_back(getCharacterAsPoints(c,vflip,filled));
+			if (c == '\n') {
+				Y += lineHeight*newLineDirection;
+				X = 0 ; //reset X Pos back to zero
+			} else if(cy >=0 && cy<nCharacters) {
+				shapes.push_back(getCharacterAsPoints(c,vflip,filled));
 
-					X += getKerning(cy,prevCy);
-
-					shapes.back().translate(ofPoint(X,Y));
-
-					X += cps[cy].advance * letterSpacing;
+				if(prevC > -1) {
+					X += getKerning(c,prevC) * letterSpacing;
 				}
+
+				shapes.back().translate(ofPoint(X,Y));
+
+				X += cps[cy].advance * letterSpacing;
 			}
-			prevCy = cy;
+			prevC = c;
 		}
 	}catch(...){
 
@@ -964,22 +967,22 @@ void ofTrueTypeFont::createStringMesh(const std::string& str, float x, float y, 
 		newLineDirection = -1;
 	}
 
-	int prevCy = -1;
+	int prevC = -1;
 	try{
 		for(auto c: ofUTF8Iterator(str)){
 			int cy = c - NUM_CHARACTER_TO_START;
-			if (cy < nCharacters){ 			// full char set or not?
-				if (c == '\n') {
-					Y += lineHeight*newLineDirection;
-					X = x ; //reset X Pos back to zero
-					prevCy = -1;
-				} else if(cy > -1){
-					X += getKerning(cy,prevCy);
-					drawChar(cy, X, Y, vFlipped);
-					X += cps[cy].advance * letterSpacing;
+			if (c == '\n') {
+				Y += lineHeight*newLineDirection;
+				X = x ; //reset X Pos back to zero
+				prevC = -1;
+			} else if(cy >=0 && cy<nCharacters) {
+				if(prevC > -1) {
+					X += getKerning(c,prevC) * letterSpacing;
 				}
+				drawChar(cy, X, Y, vFlipped);
+				X += cps[cy].advance * letterSpacing;
 			}
-			prevCy = cy;
+			prevC = c;
 		}
 	}catch(...){
 
@@ -1032,22 +1035,22 @@ void ofTrueTypeFont::drawStringAsShapes(const std::string& str, float x, float y
 		newLineDirection = -1;
 	}
 
-    int prevCy = -1;
+    int prevC = -1;
     try{
 		for(auto c: ofUTF8Iterator(str)){
 			int cy = c - NUM_CHARACTER_TO_START;
-			if (cy < nCharacters){ 			// full char set or not?
-			  if (c == '\n') {
-					Y += lineHeight*newLineDirection;
-					X = x ; //reset X Pos back to zero
-					prevCy = -1;
-			  } else if(cy > -1){
-					X += getKerning(cy,prevCy);
-					drawCharAsShape(c, X, Y, ofIsVFlipped(), ofGetStyle().bFill);
-					X += cps[cy].advance * letterSpacing;
-			  }
+			if (c == '\n') {
+				Y += lineHeight*newLineDirection;
+				X = x ; //reset X Pos back to zero
+				prevC = -1;
+			} else if(cy >=0 && cy<nCharacters){
+				if(prevC > -1) {
+					X += getKerning(c,prevC) * letterSpacing;
+				}
+				drawCharAsShape(c, X, Y, ofIsVFlipped(), ofGetStyle().bFill);
+				X += cps[cy].advance * letterSpacing;
 			}
-			prevCy = cy;
+			prevC = c;
 		}
     }catch(...){
     }

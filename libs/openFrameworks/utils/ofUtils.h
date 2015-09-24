@@ -185,9 +185,12 @@ string ofToDataPath(const string& path, bool absolute=false);
 
 /// \brief Reset the working directory to the platform default.
 ///
-/// The default working directory is usually in a data/ folder next to the
-/// openFrameworks application.
-void ofSetWorkingDirectoryToDefault();
+/// The default working directory is where the application was started from
+/// or the exe directory in case of osx bundles. GLUT might change the default
+/// working directory to the resources directory in the bundle in osx. This
+/// will restore it to the exe dir or whatever was the current dir when the
+/// application was started
+bool ofRestoreWorkingDirectoryToDefault();
 
 /// \brief Set the relative path to the data/ folder from the executable.
 ///
@@ -734,16 +737,7 @@ char ofToChar(const string& charString);
 /// \returns a binary string.
 template <class T>
 string ofToBinary(const T& value) {
-	ostringstream out;
-	const uint64_t* data = static_cast<uint64_t*>(&value);
-	// the number of bytes is determined by the datatype
-	std::size_t numBytes = sizeof(T);
-	// the bytes are stored backwards (least significant first)
-	for (std::size_t i = numBytes; i-- > 0;){
-		std::bitset<8> cur(data[i]);
-		out << cur;
-	}
-	return out.str();
+	return std::bitset<8 * sizeof(T)>(*reinterpret_cast<const uint64_t*>(&value)).to_string();
 }
 
 /// \brief Converts a string value to a string of only 1s and 0s.
@@ -934,3 +928,13 @@ private:
 };
 
 /// \}
+
+
+
+/*! \cond PRIVATE */
+namespace of{
+namespace priv{
+    void setWorkingDirectoryToDefault();
+}
+}
+/*! \endcond */
