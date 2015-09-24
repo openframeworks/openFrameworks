@@ -104,3 +104,10 @@ Android studio in it's version 1.3 still has very limited support for c++ source
 
 - If you get strange linker errors, check that you are using the 10e version of the NDK. Newer NDKs might work but usually there's some always some fixes that need to be done when moving to a new NDK version.
 
+- If your connected device is not recognized by Android Studio, restart adb
+  with `adb kill-server && adb start-server`
+
+- If, when syncronizing a project for the first time, clicking on the console
+  messages does not solves the problem regarding a missing dependency of the
+  android API (like for example Android API 22), open the sdk from the console,
+   select the missing API and install it
