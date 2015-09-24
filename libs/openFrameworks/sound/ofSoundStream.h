@@ -8,49 +8,51 @@
 #include <climits>
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
-	#include "ofRtAudioSoundStream.h"
-	#define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream
+#include "ofRtAudioSoundStream.h"
+#define OF_SOUND_STREAM_TYPE ofRtAudioSoundStream
 #elif defined(OF_SOUNDSTREAM_ANDROID)
-	#include "ofxAndroidSoundStream.h"
-	#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
+#include "ofxAndroidSoundStream.h"
+#define OF_SOUND_STREAM_TYPE ofxAndroidSoundStream
 #elif defined(OF_SOUNDSTREAM_IOS)
-	#include "ofxiOSSoundStream.h"
-	#define OF_SOUND_STREAM_TYPE ofxiOSSoundStream
+#include "ofxiOSSoundStream.h"
+#define OF_SOUND_STREAM_TYPE ofxiOSSoundStream
 #elif defined(OF_SOUNDSTREAM_EMSCRIPTEN)
-	#include "ofxEmscriptenSoundStream.h"
-	#define OF_SOUND_STREAM_TYPE ofxEmscriptenSoundStream
+#include "ofxEmscriptenSoundStream.h"
+#define OF_SOUND_STREAM_TYPE ofxEmscriptenSoundStream
 #endif
 
 
-/// \brief Sets up and starts a global ofSoundStream.
-///
-/// This will set up a sound stream with a default sample rate of 44100, a
-/// buffer size of 256 samples, and a queue of 4 buffers.
-///
-/// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
-/// \param nInputChannels number of requested input channels.
-/// \param appPtr pointer to the app which will own the sound stream (optional).
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = nullptr);
+///// \brief Sets up and starts a global ofSoundStream.
+/////
+///// This will set up a sound stream with a default sample rate of 44100, a
+///// buffer size of 256 samples, and a queue of 4 buffers.
+/////
+///// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
+///// \param nInputChannels number of requested input channels.
+///// \param appPtr pointer to the app which will own the sound stream (optional).
+//void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr = nullptr);
+//
+///// \brief Sets up and starts a global ofSoundStream.
+///// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
+///// \param nInputChannels number of requested input channels.
+///// \param sampleRate requested sample rate (44100 is typical).
+///// \param bufferSize requested buffer size (256 is typical). Smaller values
+/////        will be more responsive, but less stable.
+///// \param nBuffers number of buffers to queue. Less buffers will be more responsive, but less stable.
+//void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers);
+//
+///// \brief Sets up and starts a global ofSoundStream.
+///// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
+///// \param nInputChannels number of requested input channels.
+///// \param appPtr pointer to the app which will own the sound stream (optional).
+///// \param sampleRate requested sample rate (44100 is typical).
+///// \param bufferSize requested buffer size (256 is typical). Smaller values
+/////        will be more responsive, but less stable.
+///// \param nBuffers number of buffers to queue. Less buffers will be more
+/////        responsive, but less stable.
+//void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers);
 
-/// \brief Sets up and starts a global ofSoundStream.
-/// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
-/// \param nInputChannels number of requested input channels.
-/// \param sampleRate requested sample rate (44100 is typical).
-/// \param bufferSize requested buffer size (256 is typical). Smaller values
-///        will be more responsive, but less stable.
-/// \param nBuffers number of buffers to queue. Less buffers will be more responsive, but less stable.
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, int sampleRate, int bufferSize, int nBuffers);
-
-/// \brief Sets up and starts a global ofSoundStream.
-/// \param nOutputChannels number of requested output channels (i.e. 2 for stereo).
-/// \param nInputChannels number of requested input channels.
-/// \param appPtr pointer to the app which will own the sound stream (optional).
-/// \param sampleRate requested sample rate (44100 is typical).
-/// \param bufferSize requested buffer size (256 is typical). Smaller values
-///        will be more responsive, but less stable.
-/// \param nBuffers number of buffers to queue. Less buffers will be more
-///        responsive, but less stable.
-void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers);
+void ofSoundStreamSetup(ofBaseSoundStream::ofBaseStreamSettings & settings);
 
 /// \brief Stops the sound stream (audioIn() / audioOut() will stop being called)
 void ofSoundStreamStop();
@@ -88,72 +90,206 @@ std::vector<ofSoundDevice> ofSoundStreamListDevices();
 ///
 /// \warning Be aware that audioIn() and audioOut() will be called on a different
 /// thread from your app's update() / draw() thread.
-class ofSoundStream{
+class ofSoundStream {
 public:
+
+	class ofSoundStreamSettings : public ofBaseSoundStream::ofBaseStreamSettings {
+	public:
+		ofSoundStreamSettings()
+			:sampleRate(44100)
+			, bufferSize(1024)
+			, numBuffers(4)
+			, outDeviceID(-1)
+			, inDeviceID(-1)
+			, soundOutputPtr(nullptr)
+			, soundInputPtr(nullptr)
+			, tickCount(0)
+			, numOutputChannels(0)
+			, numInputChannels(0) {};
+
+		~ofSoundStreamSettings() {};
+
+		void setSampleRate(const int sampleRate) {
+			this->sampleRate = sampleRate;
+		}
+
+		const int & getSampleRate() const {
+			return sampleRate;
+		}
+
+		void setBufferSize(const int bufferSize) {
+			this->bufferSize = bufferSize;
+		}
+
+		const int & getBufferSize() const {
+			return bufferSize;
+		}
+
+		void setNumBuffers(const int numBuffers) {
+			this->numBuffers = numBuffers;
+		}
+
+		const int & getNumBuffers() const {
+			return numBuffers;
+		}
+
+		void setOutDeviceID(const int outDeviceID) {
+			this->outDeviceID = outDeviceID;
+		}
+
+		const int & getOutDeviceID() const {
+			return outDeviceID;
+		}
+
+		void setInDeviceID(const int inDeviceID) {
+			this->inDeviceID = inDeviceID;
+		}
+
+		const int & getInDeviceID() const {
+			return inDeviceID;
+		}
+
+		void setNumInputChannels(const int numInputChannels) {
+			this->numInputChannels = numInputChannels;
+		}
+
+		const int & getNumInputChannels() const {
+			return numInputChannels;
+		}
+
+		void setNumOutputChannels(const int numOutputChannels) {
+			this->numOutputChannels = numOutputChannels;
+		}
+
+		const int & getNumOutputChannels() const {
+			return numOutputChannels;
+		}
+
+		void setSoundInputPtr(ofBaseSoundInput * soundInputPtr) {
+			this->soundInputPtr = soundInputPtr;
+		}
+
+		const ofBaseSoundInput & getSoundInputPtr() const {
+			return *soundInputPtr;
+		}
+
+		void setSoundOutputPtr(ofBaseSoundOutput * soundOutputPtr) {
+			this->soundOutputPtr = soundOutputPtr;
+		}
+
+		const ofBaseSoundOutput & getSoundOutputPtr() const {
+			return *soundOutputPtr;
+		}
+
+		//void setInputBuffer(const ofSoundBuffer inputBuffer) {
+		//	this->inputBuffer = inputBuffer;
+		//}
+
+		//const ofSoundBuffer & getInputBuffer() const {
+		//	return inputBuffer;
+		//}
+
+		//void setOutputBuffer(const ofSoundBuffer outputBuffer) {
+		//	this->outputBuffer = outputBuffer;
+		//}
+
+		//const ofSoundBuffer & getOutputBuffer() const {
+		//	return outputBuffer;
+		//}
+
+		void setTickCount(const long unsigned long tickCount) {
+			this->tickCount = tickCount;
+		}
+
+		const long unsigned long & getTickCount() const {
+			return tickCount;
+		}
+
+	protected:
+		int sampleRate;
+		int outDeviceID;
+		int inDeviceID;
+		int bufferSize;
+		int numBuffers;
+		int numInputChannels;
+		int numOutputChannels;
+		ofBaseSoundInput * soundInputPtr;
+		ofBaseSoundOutput * soundOutputPtr;
+		//ofSoundBuffer inputBuffer;
+		//ofSoundBuffer outputBuffer;
+		long unsigned long tickCount;
+	};
+
 	ofSoundStream();
-	
+
 	void setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr);
 	shared_ptr<ofBaseSoundStream> getSoundStream();
-	
+
 	/// \brief Prints a list of available audio devices to the console
 	void printDeviceList() const;
-	
+
 	/// \brief Retrieves a list of available audio devices
 	std::vector<ofSoundDevice> getDeviceList() const;
-	
+
 	/// \brief Get all devices which match the arguments (name can be a partial match)
 	std::vector<ofSoundDevice> getMatchingDevices(const std::string& name, unsigned int inChannels = UINT_MAX, unsigned int outChannels = UINT_MAX) const;
-	
+
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
 	void setDeviceID(int deviceID);
-	
+
 	/// \brief sets the device represented by the stream, see ofSoundStream::getDeviceList().
 	void setDevice(const ofSoundDevice& device);
-	
-	/// \brief Sets up and starts the stream.
-	/// \param app pointer to the app which will own the sound stream.
-	/// \param outChannels number of requested output channels (i.e. 2 for stereo).
-	/// \param inChannels number of requested input channels.
-	/// \param sampleRate requested sample rate (44100 is typical).
-	/// \param bufferSize requested buffer size (256 is typical). Smaller
-	///        values will be more responsive, but less stable.
-	/// \param nBuffers number of buffers to queue. Less buffers will be more
-	///        responsive, but less stable.
-	/// \return true on success
-	bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
-	
-	/// \brief Sets up and starts the stream.
-	/// \param outChannels number of requested output channels (i.e. 2 for stereo).
-	/// \param inChannels number of requested input channels.
-	/// \param sampleRate requested sample rate (44100 is typical).
-	/// \param bufferSize requested buffer size (256 is typical). Smaller values
-	///        will be more responsive, but less stable.
-	/// \param nBuffers number of buffers to queue. Less buffers will be more
-	///        responsive, but less stable.
-	/// \return true on success
-	bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
-	
+
+	bool setup(const ofSoundStreamSettings & settings);
+
+	bool setup(const ofBaseSoundStream::ofBaseStreamSettings & settings) {
+		const ofSoundStreamSettings * soundSettings = dynamic_cast<const ofSoundStreamSettings*>(&settings);
+		setup(*soundSettings);
+	}
+	///// \brief Sets up and starts the stream.
+	///// \param app pointer to the app which will own the sound stream.
+	///// \param outChannels number of requested output channels (i.e. 2 for stereo).
+	///// \param inChannels number of requested input channels.
+	///// \param sampleRate requested sample rate (44100 is typical).
+	///// \param bufferSize requested buffer size (256 is typical). Smaller
+	/////        values will be more responsive, but less stable.
+	///// \param nBuffers number of buffers to queue. Less buffers will be more
+	/////        responsive, but less stable.
+	///// \return true on success
+	//bool setup(ofBaseApp * app, int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+
+	///// \brief Sets up and starts the stream.
+	///// \param outChannels number of requested output channels (i.e. 2 for stereo).
+	///// \param inChannels number of requested input channels.
+	///// \param sampleRate requested sample rate (44100 is typical).
+	///// \param bufferSize requested buffer size (256 is typical). Smaller values
+	/////        will be more responsive, but less stable.
+	///// \param nBuffers number of buffers to queue. Less buffers will be more
+	/////        responsive, but less stable.
+	///// \return true on success
+	//bool setup(int outChannels, int inChannels, int sampleRate, int bufferSize, int nBuffers);
+
 	/// \brief Sets the object which will have audioIn() called when the device receives audio.
 	void setInput(ofBaseSoundInput * soundInput);
-	
+
 	/// \brief Sets the object which will have audioIn() called when the device receives audio.
 	void setInput(ofBaseSoundInput &soundInput);
-	
+
 	/// \brief Sets the object which will have audioOut() called when the device requests audio.
 	void setOutput(ofBaseSoundOutput * soundOutput);
-	
+
 	/// \brief Sets the object which will have audioOut() called when the device requests audio.
 	void setOutput(ofBaseSoundOutput &soundOutput);
-	
+
 	/// \brief Starts a stream (note that setup() will start the stream on its own).
 	void start();
-	
+
 	/// \brief Stops the stream.
 	void stop();
-	
+
 	/// \brief stops the stream and cleans up its resources.
 	void close();
-	
+
 	/// \brief Queries the number of "ticks" passed since the stream started.
 	///
 	/// This is a representation of how many buffers have passed through the
@@ -164,28 +300,28 @@ public:
 	///
 	/// \return number of buffers passed through the stream since it started.
 	long unsigned long getTickCount() const;
-	
+
 	/// \brief Queries the stream's number of input channels.
 	/// \return the number of input channels (e.g. 2 for stereo).
 	int getNumInputChannels() const;
-	
+
 	/// \brief Queries the stream's number of output channels.
 	/// \return the number of output channels (e.g. 2 for stereo).
 	int getNumOutputChannels() const;
-	
+
 	/// \brief Queries the stream's sample rate
 	/// \return the current sample rate of the stream
 	/// \note The returned sample rate may differ from the requested sample rate.
 	int getSampleRate() const;
-	
+
 	/// \brief Queries the stream's buffer size.
 	/// \return the current buffer size of the stream.
 	int getBufferSize() const;
-	
+
 	/// \brief Retrieves a list of available audio devices and prints device descriptions to the console
 	OF_DEPRECATED_MSG("Use printDeviceList instead", std::vector<ofSoundDevice> listDevices() const);
-	
+
 protected:
 	shared_ptr<ofBaseSoundStream> soundStream;
-	
+
 };
