@@ -52,8 +52,8 @@ Using ofxCv requires:
 Your linker will also need to know where the OpenCv headers are. In XCode this means modifying one line in Project.xconfig:
 
 	HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS) "../../../addons/ofxOpenCv/libs/opencv/include/" "../../../addons/ofxCv/libs/ofxCv/include/"
-	
-Alternatively, I recommend using [OFPlugin](https://github.com/admsyn/OFPlugin) to add ofxCv to your project.
+
+Alternatively, I recommend using [OFXCodeMenu](https://github.com/openframeworks/OFXcodeMenu) to add ofxCv to your project.
 
 ## Including ofxCv
 
