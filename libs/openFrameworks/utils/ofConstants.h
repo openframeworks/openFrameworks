@@ -35,7 +35,7 @@ enum ofTargetPlatform{
 // Cross-platform deprecation warning
 #ifdef __GNUC__
 	// clang also has this defined. deprecated(message) is only for gcc>=4.5
-	#if (__GNUC__ >= 4) && (__GNUC_MINOR__ >= 5)
+	#if (__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 5))
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated(message)))
     #else
         #define OF_DEPRECATED_MSG(message, func) func __attribute__ ((deprecated))
