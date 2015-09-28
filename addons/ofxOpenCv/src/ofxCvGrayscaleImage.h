@@ -41,7 +41,6 @@ class ofxCvGrayscaleImage : public ofxCvImage {
     //                                          ofRectangle& rec2 );          // inbase class
     
     
-    
     // Set Pixel Data
     //
     virtual void  set( float value );
@@ -153,5 +152,7 @@ class ofxCvGrayscaleImage : public ofxCvImage {
 	CvMat*		briConLutMatrix;
 	
     void init();
+    void allocateTexture();
+    void allocatePixels(int w, int h);
     
 };

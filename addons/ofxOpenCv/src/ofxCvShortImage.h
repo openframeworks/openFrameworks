@@ -24,6 +24,7 @@ class ofxCvShortImage : public ofxCvImage {
     // virtual void  allocate( int w, int h );                                //in base class
     virtual void  clear();
     virtual void  flagImageChanged();
+
 	//virtual float getWidth();                                               //in base class
 	//virtual float getHeight();                                              //in base class    
     // virtual void  setUseTexture( bool bUse );                              //in base class 
@@ -120,7 +121,9 @@ class ofxCvShortImage : public ofxCvImage {
     ofShortPixels & getRoiShortPixelsRef();
 
   protected:
-    
+
+    void allocatePixels(int w, int h);
+    void allocateTexture();
     void init();
     virtual void convertShortToGray( IplImage* floatImg, IplImage* grayImg );
     virtual void convertGrayToShort( IplImage* grayImg, IplImage* floatImg );
