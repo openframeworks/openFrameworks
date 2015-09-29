@@ -541,6 +541,7 @@ void ofGLRenderer::bind(const ofBaseMaterial & material){
 	ofFloatColor ambient = material.getAmbientColor();
 	ofFloatColor emissive = material.getEmissiveColor();
     float shininess = material.getShininess();
+    glDisable(GL_COLOR_MATERIAL);
 #ifndef TARGET_OPENGLES
     // Material colors and properties
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, &diffuse.r);
@@ -554,15 +555,12 @@ void ofGLRenderer::bind(const ofBaseMaterial & material){
 	glMaterialfv(GL_BACK, GL_AMBIENT, &ambient.r);
 	glMaterialfv(GL_BACK, GL_EMISSION, &emissive.r);
     glMaterialfv(GL_BACK, GL_SHININESS, &shininess);
-    glDisable(GL_COLOR_MATERIAL);
 #else
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, &diffuse.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, &specular.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, &ambient.r);
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, &emissive.r);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
-    glDisable(GL_COLOR_MATERIAL);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, &shininess);
 #endif
     materialBound = true;
 }
