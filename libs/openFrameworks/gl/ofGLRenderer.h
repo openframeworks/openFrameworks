@@ -232,6 +232,7 @@ private:
 	ofMatrixStack matrixStack;
 	bool normalsEnabled;
 	bool lightingEnabled;
+        bool materialBound;
 	set<int> textureLocationsEnabled;
 
 	int alphaMaskTextureTarget;
