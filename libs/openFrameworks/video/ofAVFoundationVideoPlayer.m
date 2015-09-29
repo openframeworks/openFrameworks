@@ -664,7 +664,7 @@ static const NSString * ItemStatusContext;
 		}
 		
 		// release temp buffer
-		CFRelease(buffer);
+		CVBufferRelease(buffer);
 		
 		videoSampleTime = time;
 		
