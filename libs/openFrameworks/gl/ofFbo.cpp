@@ -787,7 +787,7 @@ int ofFbo::getNumTextures() const {
 //----------------------------------------------------------
 void ofFbo::setActiveDrawBuffer(int i){
 	if(!bIsAllocated) return;
-#ifndef TARGET_OPENGLES || defined(GL_ES_VERSION_3_0)
+#if !defined(TARGET_OPENGLES) || defined(GL_ES_VERSION_3_0)
 	vector<int> activebuffers(1, i);
 	setActiveDrawBuffers(activebuffers);
 #endif

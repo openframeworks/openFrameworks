@@ -123,6 +123,8 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
             #ifndef TARGET_OPENGLES 
 			case GL_RGBA16:
 			case GL_RGBA32F_ARB:
+            #else
+			case GL_RGBA32F:
             #endif
 	#endif
 				 return GL_RGBA;
@@ -134,6 +136,8 @@ int ofGetGLFormatFromInternal(int glInternalFormat){
             #ifndef TARGET_OPENGLES
 			case GL_RGB16:
 			case GL_RGB32F_ARB:
+            #else
+			case GL_RGB32F:
             #endif
 	#endif
 				return GL_RGB;
@@ -372,6 +376,7 @@ ofImageType ofGetImageTypeFromGLType(int glType){
 #endif
 		return OF_IMAGE_COLOR_ALPHA;
 	}
+        ofLogError("ofGLUtils") << "ofGetImageTypeFromGLType(): unknown type " << glType << ", returning OF_IMAGE_UNDEFINED";
 	return OF_IMAGE_UNDEFINED;
 }
 
@@ -393,6 +398,7 @@ GLuint ofGetGLPolyMode(ofPolyRenderMode m){
 			break;
 	}
 #else
+        ofLogError("ofGLUtils") << "ofGetGLPolyMode(): poly modes not supported in GLES";
 	return 0;
 #endif
 }
@@ -415,6 +421,7 @@ ofPolyRenderMode ofGetOFPolyMode(GLuint m){
 			break;
 	}
 #else
+        ofLogError("ofGLUtils") << "ofGetOFPolyMode(): poly modes not supported in GLES. Returning OF_MESH_FILL";
 	return OF_MESH_FILL;
 #endif
 }
