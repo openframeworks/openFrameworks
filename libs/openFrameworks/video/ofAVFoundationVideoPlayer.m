@@ -663,6 +663,9 @@ static const NSString * ItemStatusContext;
 			return;
 		}
 		
+		// release temp buffer
+		CVBufferRelease(buffer);
+		
 		videoSampleTime = time;
 		
 		
@@ -878,7 +881,7 @@ static const NSString * ItemStatusContext;
 	if (frames < 0) {
 
 		double timeSec = CMTimeGetSeconds(currentTime) - (1.0/frameRate);
-		[self seekToTime:CMTimeMakeWithSeconds(timeSec, NSEC_PER_SEC)];
+		[self seekToTime:CMTimeMakeWithSeconds(timeSec, NSEC_PER_SEC) withTolerance:kCMTimeZero];
 		
 	} else if (![self isFinished] && frames > 0) {
 
