@@ -153,11 +153,13 @@ void ofAppAndroidWindow::setup(const ofGLESWindowSettings & settings){
         //       so it might be both wrong and unnecessary to call setup() here
 
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,sGLESVersionMajor,sGLESVersionMinor);
+        /*
         if(currentRenderer->getType()==ofGLProgrammableRenderer::TYPE){
             static_cast<ofGLProgrammableRenderer*>(currentRenderer.get())->setup(settings.glesVersionMajor(),settings.glesVersionMinor());
         }else{
             static_cast<ofGLRenderer*>(currentRenderer.get())->setup();
         }
+        */
 }
 
 void ofAppAndroidWindow::update(){
@@ -314,7 +316,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 
 void
 Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv*  env, jclass  thiz ){
-	if(appSetup){
+	if(true){
 		ofLogNotice("ofAppAndroidWindow") << "onSurfaceCreated";
 		if(!surfaceDestroyed){
 			ofNotifyEvent(ofxAndroidEvents().unloadGL);
