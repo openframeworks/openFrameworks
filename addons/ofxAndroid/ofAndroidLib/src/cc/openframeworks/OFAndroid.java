@@ -262,6 +262,7 @@ public class OFAndroid {
 
 											while ((entry = resourceszip.getNextEntry()) != null){
 												String name = entry.getName();
+                                                                                                Log.i("OF","handling " + name);
 										        if( entry.isDirectory() )
 										        {
 										        	OFZipUtil.mkdirs(outdir,name);

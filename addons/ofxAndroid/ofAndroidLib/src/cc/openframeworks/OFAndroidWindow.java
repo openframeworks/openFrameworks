@@ -22,8 +22,8 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
         mAlphaSize = a;
         mDepthSize = depth;
         mStencilSize = stencil;
-        mGLESVersionMajor = 0;
-        mGLESVersionMinor = 0;
+        mGLESVersionMajor = 3;
+        mGLESVersionMinor = 1;
     }
     
     public static void setGLESVersion(int versionMajor, int versionMinor){ // versionMinor not needed, just here for consistency
@@ -37,13 +37,13 @@ class OFEGLConfigChooser implements GLSurfaceView.EGLConfigChooser {
     }
     
     public static int getGLESVersionMajor(){
-    	if(mGLESVersionMajor == 0)
-            throw new IllegalStateException("You need to set the GLES version!");
+    	// if(mGLESVersionMajor == 0)
+        //     throw new IllegalStateException("You need to set the GLES version!");
     	return mGLESVersionMajor;
     }
     public static int getGLESVersionMinor(){
-    	if(mGLESVersionMajor == 0) // yes
-            throw new IllegalStateException("You need to set the GLES version!");
+    	// if(mGLESVersionMajor == 0) // yes
+        //     throw new IllegalStateException("You need to set the GLES version!");
     	return mGLESVersionMinor;
     }
 
@@ -236,6 +236,7 @@ class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context) {
         super(context);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
+        Log.i("OF"," setting context version " + OFEGLConfigChooser.getGLESVersionMajor());
         setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersionMajor());
         getHolder().setFormat( PixelFormat.OPAQUE );
         OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0);
@@ -246,6 +247,7 @@ class OFGLSurfaceView extends GLSurfaceView{
 	public OFGLSurfaceView(Context context,AttributeSet attributes) {
         super(context,attributes);
         mRenderer = new OFAndroidWindow(getWidth(),getHeight());
+        Log.i("OF"," setting context version " + OFEGLConfigChooser.getGLESVersionMajor());
         setEGLContextClientVersion(OFEGLConfigChooser.getGLESVersionMajor());
         getHolder().setFormat( PixelFormat.OPAQUE );
         OFEGLConfigChooser configChooser = new OFEGLConfigChooser(8,8,8,0,16,0);
