@@ -219,8 +219,6 @@ void ofAppAndroidWindow::setup(const ofxAndroidWindowSettings & settings){
 		return;
 	}
 	ofGetJNIEnv()->CallStaticVoidMethod(javaClass,method,glesVersion,settings.preserveContextOnPause);
-
-
 }
 
 void ofAppAndroidWindow::update(){
@@ -458,6 +456,7 @@ Java_cc_openframeworks_OFAndroid_onSurfaceDestroyed( JNIEnv*  env, jclass  thiz 
 		ofLogVerbose("ofAppAndroidWindow") << "onSurfaceDestroyed already destroyed though";
 	}
 }
+
 
 JNIEXPORT void JNICALL
 Java_cc_openframeworks_OFAndroid_onSurfaceCreated( JNIEnv* env, jclass thiz ){
