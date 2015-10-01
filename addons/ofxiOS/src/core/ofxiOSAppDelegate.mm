@@ -123,28 +123,7 @@
 		frame.size.height   = tWidth;
 	}
 	
-	ofOrientation defaultOrient = OF_ORIENTATION_UNKNOWN;
-	if(bDoesHWOrientation) {
-		// update the window orientation based on the orientation of the device //
-		switch (iOrient) {
-			case UIInterfaceOrientationPortrait:
-				defaultOrient = OF_ORIENTATION_DEFAULT;
-				break;
-			case UIInterfaceOrientationPortraitUpsideDown:
-				defaultOrient = OF_ORIENTATION_180;
-				break;
-			case UIInterfaceOrientationLandscapeLeft:
-				defaultOrient = OF_ORIENTATION_90_RIGHT;
-				break;
-			case UIInterfaceOrientationLandscapeRight:
-				defaultOrient = OF_ORIENTATION_90_LEFT;
-				break;
-		}
-	} else {
-		defaultOrient = OF_ORIENTATION_DEFAULT;
-	}
-	
-	ofSetOrientation(defaultOrient);
+	ofOrientation defaultOrient = ofGetOrientation();
 	
     // check if app delegate is being extended.
     // if not, create a new view controller.
@@ -225,11 +204,15 @@
 - (void)receivedRotate:(NSNotification*)notification {
 	UIDeviceOrientation deviceOrientation = [[UIDevice currentDevice] orientation];
     ofLogVerbose("ofxiOSAppDelegate") << "device orientation changed to " << deviceOrientation;
-	if(deviceOrientation != UIDeviceOrientationUnknown && deviceOrientation != UIDeviceOrientationFaceUp && deviceOrientation != UIDeviceOrientationFaceDown ) {
-        if([self.glViewController isReadyToRotate]) {
+	if( [[[UIDevice currentDevice] systemVersion] compare:@"8.0" options:NSNumericSearch] == NSOrderedAscending ) {
+		//iOS7-
+		if(deviceOrientation != UIDeviceOrientationUnknown && deviceOrientation != UIDeviceOrientationFaceUp && deviceOrientation != UIDeviceOrientationFaceDown ) {
+			if([self.glViewController isReadyToRotate]) {
             ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
-        }
-        
+			}
+		}
+	}else {
+        ofxiOSAlerts.deviceOrientationChanged( deviceOrientation );
     }
 }
 
