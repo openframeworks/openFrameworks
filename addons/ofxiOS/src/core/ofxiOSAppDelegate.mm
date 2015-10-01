@@ -123,28 +123,7 @@
 		frame.size.height   = tWidth;
 	}
 	
-	ofOrientation defaultOrient = OF_ORIENTATION_UNKNOWN;
-	if(bDoesHWOrientation) {
-		// update the window orientation based on the orientation of the device //
-		switch (iOrient) {
-			case UIInterfaceOrientationPortrait:
-				defaultOrient = OF_ORIENTATION_DEFAULT;
-				break;
-			case UIInterfaceOrientationPortraitUpsideDown:
-				defaultOrient = OF_ORIENTATION_180;
-				break;
-			case UIInterfaceOrientationLandscapeLeft:
-				defaultOrient = OF_ORIENTATION_90_RIGHT;
-				break;
-			case UIInterfaceOrientationLandscapeRight:
-				defaultOrient = OF_ORIENTATION_90_LEFT;
-				break;
-		}
-	} else {
-		defaultOrient = OF_ORIENTATION_DEFAULT;
-	}
-	
-	ofSetOrientation(defaultOrient);
+	ofOrientation defaultOrient = ofGetOrientation();
 	
     // check if app delegate is being extended.
     // if not, create a new view controller.
