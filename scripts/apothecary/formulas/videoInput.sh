@@ -40,9 +40,8 @@ function build() {
 			vs-build "videoInput.sln" Build "Debug|x64"
 		fi
 	elif [ "$TYPE" == "win_cb" ] ; then
-		cd CodeBlocks-compileAsLib/videoInputLib
-		# run CodeBlocks on videoInputLib.cpb somehow
-		echoWarning "TODO: win_cb build"
+		cd msys2
+		make 
 	fi
 }
 
@@ -66,7 +65,8 @@ function copy() {
 		
 
 	else
-		echoWarning "TODO: $TYPE copy"
+		mkdir -p $1/lib/$TYPE
+		cp -v compiledLib/msys2/libvideoinput.a $1/lib/$TYPE/
 	fi
 
 	echoWarning "TODO: License Copy"
@@ -79,6 +79,7 @@ function clean() {
 		cd videoInputSrcAndDemos/VS-videoInputcompileAsLib
 		vs-clean "videoInput.sln"
 	elif [ "$TYPE" == "win_cb" ] ; then
-		echoWarning "TODO: clean win_cb"
+		cd videoInputSrcAndDemos/msys2
+		make clean
 	fi
 }
