@@ -20,6 +20,8 @@ error() {
     local code="${2:-1}"
     echo "Error on or near line ${parent_lineno}; exiting with status ${code}"
   fi
+  rm -f *.tar.gz
+  rm -f *.zip
   exit "${code}"
 }
 trap 'error ${LINENO}' ERR
@@ -32,6 +34,7 @@ cd $(cat ~/.ofprojectgenerator/config)/scripts/dev
 lasthash=$(cat lasthash.txt)
 currenthash=$(git rev-parse HEAD)
 if [ "$currenthash" = "$lasthash" ]; then
+    echo "Exiting, no changes found"
     exit 0
 fi
 
