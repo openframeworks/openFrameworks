@@ -50,9 +50,6 @@ ofAppiOSWindow::ofAppiOSWindow() : hasExited(false) {
     } else {
         ofLog(OF_LOG_ERROR, "ofAppiOSWindow instantiated more than once");
     }
-    
-	orientation = OF_ORIENTATION_DEFAULT;
-	
     bRetinaSupportedOnDevice = false;
     bRetinaSupportedOnDeviceChecked = false;
 }
@@ -95,6 +92,8 @@ void ofAppiOSWindow::setup(const ofiOSWindowSettings & _settings) {
 
 void ofAppiOSWindow::setup() {
 	
+	
+	setOrientation(settings.setupOrientation);
 	if(settings.glesVersion >= ESRendererVersion_20) {
 		currentRenderer = shared_ptr<ofBaseRenderer>(new ofGLProgrammableRenderer(this));
 	} else {
