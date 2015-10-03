@@ -357,7 +357,7 @@ ofTrueTypeFont::ofTrueTypeFont(){
 	bLoadedOk		= false;
 	bMakeContours	= false;
 	letterSpacing = 1;
-	spaceSize = 1;
+    spaceSize = 0;
 
 	stringQuads.setMode(OF_PRIMITIVE_TRIANGLES);
 	face = nullptr;
@@ -882,7 +882,12 @@ vector<ofTTFCharacter> ofTrueTypeFont::getStringAsPoints(const std::string& str,
 			if (c == '\n') {
 				Y += lineHeight*newLineDirection;
 				X = 0 ; //reset X Pos back to zero
-			} else if(cy >=0 && cy<nCharacters) {
+            } else if( c == ' ' && spaceSize>0 ) {
+                X += spaceSize;
+                if(prevC > -1) {
+                    X += getKerning(c,prevC) * letterSpacing;
+                }
+            } else if(cy >=0 && cy<nCharacters) {
 				shapes.push_back(getCharacterAsPoints(c,vflip,filled));
 
 				if(prevC > -1) {
@@ -975,7 +980,12 @@ void ofTrueTypeFont::createStringMesh(const std::string& str, float x, float y, 
 				Y += lineHeight*newLineDirection;
 				X = x ; //reset X Pos back to zero
 				prevC = -1;
-			} else if(cy >=0 && cy<nCharacters) {
+            } else if( c == ' ' && spaceSize>0 ) {
+                X += spaceSize;
+                if(prevC > -1) {
+                    X += getKerning(c,prevC) * letterSpacing;
+                }
+            } else if(cy >=0 && cy<nCharacters) {
 				if(prevC > -1) {
 					X += getKerning(c,prevC) * letterSpacing;
 				}
@@ -1043,7 +1053,12 @@ void ofTrueTypeFont::drawStringAsShapes(const std::string& str, float x, float y
 				Y += lineHeight*newLineDirection;
 				X = x ; //reset X Pos back to zero
 				prevC = -1;
-			} else if(cy >=0 && cy<nCharacters){
+            } else if( c == ' ' && spaceSize>0 ) {
+                X += spaceSize;
+                if(prevC > -1) {
+                    X += getKerning(c,prevC) * letterSpacing;
+                }
+            } else if(cy >=0 && cy<nCharacters){
 				if(prevC > -1) {
 					X += getKerning(c,prevC) * letterSpacing;
 				}
