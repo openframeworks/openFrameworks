@@ -1,8 +1,6 @@
 #include "ofRtAudioSoundStream.h"
-#include "ofConstants.h"
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
-#include "ofSoundStream.h"
 #include "ofMath.h"
 #include "ofUtils.h"
 
@@ -18,6 +16,7 @@ ofRtAudioSoundStream::ofRtAudioSoundStream() {
 	nInputChannels = 0;
 	bufferSize = 0;
 	sampleRate = 0;
+	//setup(_settings);
 }
 
 //------------------------------------------------------------------------------
@@ -95,6 +94,8 @@ bool ofRtAudioSoundStream::setup(const ofRtSoundStreamSettings & settings)
 	if (audio != nullptr) {
 		close();
 	}
+
+	_settings = settings;
 
 	nInputChannels = settings.getNumInputChannels();
 	nOutputChannels = settings.getNumOutputChannels();
