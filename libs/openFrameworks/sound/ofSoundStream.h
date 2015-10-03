@@ -5,6 +5,7 @@
 #include "ofBaseApp.h"
 #include "ofTypes.h"
 #include "ofBaseSoundStream.h"
+#include "ofSoundStreamSettings.h"
 #include <climits>
 
 #ifdef OF_SOUNDSTREAM_RTAUDIO
@@ -52,7 +53,7 @@
 /////        responsive, but less stable.
 //void ofSoundStreamSetup(int nOutputChannels, int nInputChannels, ofBaseApp * appPtr, int sampleRate, int bufferSize, int nBuffers);
 
-void ofSoundStreamSetup(ofBaseSoundStream::ofBaseStreamSettings & settings);
+void ofSoundStreamSetup(ofBaseStreamSettings & settings);
 
 /// \brief Stops the sound stream (audioIn() / audioOut() will stop being called)
 void ofSoundStreamStop();
@@ -92,134 +93,6 @@ std::vector<ofSoundDevice> ofSoundStreamListDevices();
 /// thread from your app's update() / draw() thread.
 class ofSoundStream {
 public:
-
-	class ofSoundStreamSettings : public ofBaseSoundStream::ofBaseStreamSettings {
-	public:
-		ofSoundStreamSettings()
-			:sampleRate(44100)
-			, bufferSize(1024)
-			, numBuffers(4)
-			, outDeviceID(-1)
-			, inDeviceID(-1)
-			, soundOutputPtr(nullptr)
-			, soundInputPtr(nullptr)
-			, tickCount(0)
-			, numOutputChannels(0)
-			, numInputChannels(0) {};
-
-		~ofSoundStreamSettings() {};
-
-		void setSampleRate(const int sampleRate) {
-			this->sampleRate = sampleRate;
-		}
-
-		const int & getSampleRate() const {
-			return sampleRate;
-		}
-
-		void setBufferSize(const int bufferSize) {
-			this->bufferSize = bufferSize;
-		}
-
-		const int & getBufferSize() const {
-			return bufferSize;
-		}
-
-		void setNumBuffers(const int numBuffers) {
-			this->numBuffers = numBuffers;
-		}
-
-		const int & getNumBuffers() const {
-			return numBuffers;
-		}
-
-		void setOutDeviceID(const int outDeviceID) {
-			this->outDeviceID = outDeviceID;
-		}
-
-		const int & getOutDeviceID() const {
-			return outDeviceID;
-		}
-
-		void setInDeviceID(const int inDeviceID) {
-			this->inDeviceID = inDeviceID;
-		}
-
-		const int & getInDeviceID() const {
-			return inDeviceID;
-		}
-
-		void setNumInputChannels(const int numInputChannels) {
-			this->numInputChannels = numInputChannels;
-		}
-
-		const int & getNumInputChannels() const {
-			return numInputChannels;
-		}
-
-		void setNumOutputChannels(const int numOutputChannels) {
-			this->numOutputChannels = numOutputChannels;
-		}
-
-		const int & getNumOutputChannels() const {
-			return numOutputChannels;
-		}
-
-		void setSoundInputPtr(ofBaseSoundInput * soundInputPtr) {
-			this->soundInputPtr = soundInputPtr;
-		}
-
-		const ofBaseSoundInput & getSoundInputPtr() const {
-			return *soundInputPtr;
-		}
-
-		void setSoundOutputPtr(ofBaseSoundOutput * soundOutputPtr) {
-			this->soundOutputPtr = soundOutputPtr;
-		}
-
-		const ofBaseSoundOutput & getSoundOutputPtr() const {
-			return *soundOutputPtr;
-		}
-
-		//void setInputBuffer(const ofSoundBuffer inputBuffer) {
-		//	this->inputBuffer = inputBuffer;
-		//}
-
-		//const ofSoundBuffer & getInputBuffer() const {
-		//	return inputBuffer;
-		//}
-
-		//void setOutputBuffer(const ofSoundBuffer outputBuffer) {
-		//	this->outputBuffer = outputBuffer;
-		//}
-
-		//const ofSoundBuffer & getOutputBuffer() const {
-		//	return outputBuffer;
-		//}
-
-		/*void setTickCount(const long unsigned long tickCount) {
-			this->tickCount = tickCount;
-		}
-
-		const long unsigned long & getTickCount() const {
-			return tickCount;
-		}*/
-
-	protected:
-		int sampleRate;
-		int outDeviceID;
-		int inDeviceID;
-		int bufferSize;
-		int numBuffers;
-		int numInputChannels;
-		int numOutputChannels;
-		ofBaseSoundInput * soundInputPtr;
-		ofBaseSoundOutput * soundOutputPtr;
-		//ofSoundBuffer inputBuffer;
-		//ofSoundBuffer outputBuffer;
-		long unsigned long tickCount;
-	};
-
 	ofSoundStream();
 
 	void setSoundStream(shared_ptr<ofBaseSoundStream> soundStreamPtr);
@@ -242,7 +115,7 @@ public:
 
 	bool setup(const ofSoundStreamSettings & settings);
 
-	bool setup(const ofBaseSoundStream::ofBaseStreamSettings & settings) {
+	bool setup(const ofBaseStreamSettings & settings) {
 		const ofSoundStreamSettings * soundSettings = dynamic_cast<const ofSoundStreamSettings*>(&settings);
 		return setup(*soundSettings);
 	}

@@ -1,5 +1,6 @@
 #pragma once
 #include "ofConstants.h"
+#include "ofSoundStreamSettings.h"
 
 class ofBaseSoundInput;
 class ofBaseSoundOutput;
@@ -40,64 +41,6 @@ public:
 
 class ofBaseSoundStream {
 public:
-	class ofBaseStreamSettings {
-	public:
-		virtual ~ofBaseStreamSettings() {}
-
-		virtual void setSampleRate(const int sampleRate) = 0;
-
-		virtual const int & getSampleRate() const = 0;
-
-		virtual void setBufferSize(const int bufferSize) = 0;
-
-		virtual const int & getBufferSize() const = 0;
-
-		virtual void setNumBuffers(const int numBuffers) = 0;
-
-		virtual const int & getNumBuffers() const = 0;
-
-		virtual void setOutDeviceID(const int outDeviceID) = 0;
-
-		virtual const int & getOutDeviceID() const = 0;
-
-		virtual void setInDeviceID(const int inDeviceID) = 0;
-
-		virtual const int & getInDeviceID() const = 0;
-
-		/*virtual void setNumInputChannels(const int numInputChannels) = 0;
-
-		virtual const int & getNumInputChannels() const = 0;
-
-		virtual void setNumOutputChannels(const int numOutputChannels) = 0;
-
-		virtual const int & getNumOutputChannels() const = 0;
-
-		virtual void setSoundInputPtr(ofBaseSoundInput * soundInputPtr) = 0;
-
-		virtual const ofBaseSoundInput & getSoundInputPtr() const = 0;
-
-		virtual void setSoundOutputPtr(ofBaseSoundOutput * soundOutputPtr) = 0;
-
-		virtual const ofBaseSoundOutput & getSoundOutputPtr() const = 0;*/
-
-		//void setInputBuffer(const ofSoundBuffer inputBuffer) {
-		//	this->inputBuffer = inputBuffer;
-		//}
-
-		//const ofSoundBuffer & getInputBuffer() const {
-		//	return inputBuffer;
-		//}
-
-		//void setOutputBuffer(const ofSoundBuffer outputBuffer) {
-		//	this->outputBuffer = outputBuffer;
-		//}
-
-		//const ofSoundBuffer & getOutputBuffer() const {
-		//	return outputBuffer;
-		//}
-	};
-
-
 	virtual ~ofBaseSoundStream() {}
 
 	virtual void setDeviceID(int deviceID) = 0;

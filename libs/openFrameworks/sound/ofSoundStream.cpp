@@ -23,7 +23,7 @@ namespace{
 //    systemSoundStream.setup(appPtr, nOutputChannels, nInputChannels, sampleRate, bufferSize, nBuffers);
 //}
 
-void ofSoundStreamSetup(ofSoundStream::ofSoundStreamSettings & settings) {
+void ofSoundStreamSetup(ofSoundStreamSettings & settings) {
 	systemSoundStream.setup(settings);
 }
 
