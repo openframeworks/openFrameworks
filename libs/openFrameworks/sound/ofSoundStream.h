@@ -197,13 +197,13 @@ public:
 		//	return outputBuffer;
 		//}
 
-		void setTickCount(const long unsigned long tickCount) {
+		/*void setTickCount(const long unsigned long tickCount) {
 			this->tickCount = tickCount;
 		}
 
 		const long unsigned long & getTickCount() const {
 			return tickCount;
-		}
+		}*/
 
 	protected:
 		int sampleRate;
@@ -244,7 +244,7 @@ public:
 
 	bool setup(const ofBaseSoundStream::ofBaseStreamSettings & settings) {
 		const ofSoundStreamSettings * soundSettings = dynamic_cast<const ofSoundStreamSettings*>(&settings);
-		setup(*soundSettings);
+		return setup(*soundSettings);
 	}
 	///// \brief Sets up and starts the stream.
 	///// \param app pointer to the app which will own the sound stream.
