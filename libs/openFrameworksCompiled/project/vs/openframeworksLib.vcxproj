@@ -181,6 +181,7 @@
     <ClInclude Include="..\..\..\openFrameworks\sound\ofRtAudioSoundStream.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundPlayer.h" />
     <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundStream.h" />
+    <ClInclude Include="..\..\..\openFrameworks\sound\ofSoundStreamSettings.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofBaseTypes.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameter.h" />
     <ClInclude Include="..\..\..\openFrameworks\types\ofParameterGroup.h" />

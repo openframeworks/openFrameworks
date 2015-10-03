@@ -3,19 +3,20 @@
 #ifdef OF_SOUNDSTREAM_RTAUDIO
 #include "ofMath.h"
 #include "ofUtils.h"
+#include "ofAppRunner.h"
 
 
 //------------------------------------------------------------------------------
 ofRtAudioSoundStream::ofRtAudioSoundStream() {
-	outDeviceID = -1;
-	inDeviceID = -1;
+	/*outDeviceID = -1;
+	inDeviceID = -1;*/
 	soundOutputPtr = nullptr;
 	soundInputPtr = nullptr;
 	tickCount = 0;
-	nOutputChannels = 0;
+	/*nOutputChannels = 0;
 	nInputChannels = 0;
 	bufferSize = 0;
-	sampleRate = 0;
+	sampleRate = 0;*/
 	//setup(_settings);
 }
 
@@ -29,7 +30,12 @@ ofRtAudioSoundStream::~ofRtAudioSoundStream() {
 vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList() const {
 	shared_ptr<RtAudio> audioTemp;
 	try {
-		audioTemp = shared_ptr<RtAudio>(new RtAudio());
+		if (_settings.getApi() == RtAudio::Api::UNSPECIFIED) {
+			audioTemp = std::make_shared<RtAudio>();
+		}
+		else {
+			audioTemp = std::make_shared<RtAudio>(_settings.getApi());
+		}
 	}
 	catch (std::exception &error) {
 		ofLogError() << error.what();
@@ -64,19 +70,23 @@ vector<ofSoundDevice> ofRtAudioSoundStream::getDeviceList() const {
 
 //------------------------------------------------------------------------------
 void ofRtAudioSoundStream::setDeviceID(int _deviceID) {
-	inDeviceID = outDeviceID = _deviceID;
+	_settings.setInDeviceID(_deviceID);
+	_settings.setOutDeviceID(_deviceID);
+	//inDeviceID = outDeviceID = _deviceID;
 }
 
 int ofRtAudioSoundStream::getDeviceID()  const {
-	return inDeviceID;
+	return _settings.getInDeviceID();//inDeviceID;
 }
 
 void ofRtAudioSoundStream::setInDeviceID(int _deviceID) {
-	inDeviceID = _deviceID;
+	_settings.setInDeviceID(_deviceID); 
+	//inDeviceID = _deviceID;
 }
 
 void ofRtAudioSoundStream::setOutDeviceID(int _deviceID) {
-	outDeviceID = _deviceID;
+	_settings.setOutDeviceID(_deviceID); 
+	//outDeviceID = _deviceID;
 }
 
 //------------------------------------------------------------------------------
@@ -97,12 +107,12 @@ bool ofRtAudioSoundStream::setup(const ofRtSoundStreamSettings & settings)
 
 	_settings = settings;
 
-	nInputChannels = settings.getNumInputChannels();
+	/*nInputChannels = settings.getNumInputChannels();
 	nOutputChannels = settings.getNumOutputChannels();
 
-	sampleRate = settings.getSampleRate();
+	sampleRate = settings.getSampleRate();*/
 	tickCount = 0;
-	bufferSize = ofNextPow2(settings.getBufferSize());	// must be pow2
+	//bufferSize = ofNextPow2(settings.getBufferSize());	// must be pow2
 
 	try {
 		if (settings.getApi() == RtAudio::Api::UNSPECIFIED) {
@@ -119,38 +129,40 @@ bool ofRtAudioSoundStream::setup(const ofRtSoundStreamSettings & settings)
 
 	RtAudio::StreamParameters outputParameters;
 	RtAudio::StreamParameters inputParameters;
-	if (nInputChannels > 0) {
-		if (inDeviceID >= 0) {
-			inputParameters.deviceId = inDeviceID;
+	if (settings.getNumInputChannels() > 0) {
+		if (settings.getInDeviceID() >= 0) {
+			inputParameters.deviceId = settings.getInDeviceID();
 		}
 		else {
 			inputParameters.deviceId = audio->getDefaultInputDevice();
 		}
-		inputParameters.nChannels = nInputChannels;
+		inputParameters.nChannels = settings.getNumInputChannels();
+		setInput(ofGetAppPtr());
 	}
 
-	if (nOutputChannels > 0) {
-		if (outDeviceID >= 0) {
-			outputParameters.deviceId = outDeviceID;
+	if (settings.getNumOutputChannels() > 0) {
+		if (settings.getOutDeviceID() >= 0) {
+			outputParameters.deviceId = settings.getOutDeviceID();
 		}
 		else {
 			outputParameters.deviceId = audio->getDefaultOutputDevice();
 		}
-		outputParameters.nChannels = nOutputChannels;
+		outputParameters.nChannels = settings.getNumOutputChannels();
+		setOutput(ofGetAppPtr());
 	}
 
-	unsigned int bufferFrames = (unsigned int)bufferSize; // 256 sample frames
+	unsigned int bufferFrames = (unsigned int)settings.getBufferSize(); // 256 sample frames
 
 	RtAudio::StreamOptions options;
 	options.flags = RTAUDIO_SCHEDULE_REALTIME;
 	options.numberOfBuffers = settings.getNumBuffers();
 	options.priority = 1;
-	outputBuffer.setDeviceID(outDeviceID);
-	inputBuffer.setDeviceID(inDeviceID);
+	outputBuffer.setDeviceID(settings.getOutDeviceID());
+	inputBuffer.setDeviceID(settings.getInDeviceID());
 
 	try {
-		audio->openStream((nOutputChannels > 0) ? &outputParameters : nullptr, (nInputChannels > 0) ? &inputParameters : nullptr, RTAUDIO_FLOAT32,
-			sampleRate, &bufferFrames, &rtAudioCallback, this, &options);
+		audio->openStream((settings.getNumOutputChannels() > 0) ? &outputParameters : nullptr, (settings.getNumInputChannels() > 0) ? &inputParameters : nullptr, RTAUDIO_FLOAT32,
+			settings.getSampleRate(), &bufferFrames, &rtAudioCallback, this, &options);
 		audio->startStream();
 	}
 	catch (std::exception &error) {
@@ -291,22 +303,23 @@ long unsigned long ofRtAudioSoundStream::getTickCount() const {
 
 //------------------------------------------------------------------------------
 int ofRtAudioSoundStream::getNumInputChannels() const {
-	return nInputChannels;
+	return _settings.getNumInputChannels();
+	//nInputChannels;
 }
 
 //------------------------------------------------------------------------------
 int ofRtAudioSoundStream::getNumOutputChannels() const {
-	return nOutputChannels;
+	return  _settings.getNumOutputChannels();  //nOutputChannels;
 }
 
 //------------------------------------------------------------------------------
 int ofRtAudioSoundStream::getSampleRate() const {
-	return sampleRate;
+	return _settings.getSampleRate(); // sampleRate;
 }
 
 //------------------------------------------------------------------------------
 int ofRtAudioSoundStream::getBufferSize() const {
-	return bufferSize;
+	return _settings.getBufferSize();// bufferSize;
 }
 
 //------------------------------------------------------------------------------
