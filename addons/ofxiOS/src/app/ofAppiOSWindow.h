@@ -47,6 +47,7 @@ public:
     ,enableHardwareOrientationAnimation(false)
     ,enableSetupScreen(true) {
         windowMode = OF_FULLSCREEN;
+		setupOrientation = OF_ORIENTATION_DEFAULT;
         glesVersion = 1;
     }
     
@@ -76,6 +77,7 @@ public:
             enableHardwareOrientation = iosSettings->enableHardwareOrientation;
             enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
             enableSetupScreen = iosSettings->enableSetupScreen;
+			setupOrientation = iosSettings->setupOrientation;
         } else {
             enableRetina = false;
             retinaScale = 0;
@@ -85,6 +87,7 @@ public:
             enableHardwareOrientation = false;
             enableHardwareOrientationAnimation = false;
             enableSetupScreen = true;
+			setupOrientation = OF_ORIENTATION_DEFAULT;
         }
     }
 
@@ -108,6 +111,7 @@ public:
             enableHardwareOrientation = iosSettings->enableHardwareOrientation;
             enableHardwareOrientationAnimation = iosSettings->enableHardwareOrientationAnimation;
             enableSetupScreen = iosSettings->enableSetupScreen;
+			setupOrientation = iosSettings->setupOrientation;
         }
     }
 
@@ -121,6 +125,8 @@ public:
     bool enableHardwareOrientation;
     bool enableHardwareOrientationAnimation;
     bool enableSetupScreen;
+	ofOrientation setupOrientation;
+	
 };
 
 
