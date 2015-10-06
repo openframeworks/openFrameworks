@@ -30,6 +30,8 @@
 
 #pragma once
 
+#ifdef TARGET_IOS
+
 #import <MapKit/MapKit.h>
 
 class ofxiOSMapKit;
@@ -48,3 +50,5 @@ class ofxiOSMapKit;
 - (void)mapViewDidFailLoadingMap:(MKMapView *)mapView withError:(NSError *)error;
 
 @end
+
+#endif

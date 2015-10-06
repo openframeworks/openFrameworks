@@ -124,8 +124,9 @@ andPreferedRenderer:(ESRendererVersion)version
             
             
         }
-		
+#ifdef TARGET_IOS
 		self.multipleTouchEnabled = true;
+#endif
 		self.opaque = true;
         
 		animating = NO;

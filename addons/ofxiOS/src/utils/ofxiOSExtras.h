@@ -160,9 +160,11 @@ bool ofxiOSUIImageToOFTexture(UIImage * uiImage, ofTexture & outTexture, int tar
 
 bool ofxiOSCGImageToPixels(CGImageRef & ref, unsigned char * pixels);
 
+#ifdef TARGET_IOS
 // save current opengl screen to photos app
 // based on code from http://www.bit-101.com/blog/?p=1861
 void ofxiOSScreenGrab(id delegate);
+#endif
 
 
 // utility fuctions for converting strings and NSStrings back and forth

@@ -1,6 +1,8 @@
 #include "ofxiOSVideoGrabber.h"
 #include "AVFoundationVideoGrabber.h"
 
+#ifdef TARGET_IOS
+
 ofxiOSVideoGrabber::ofxiOSVideoGrabber() {
 	grabber = shared_ptr<AVFoundationVideoGrabber>(new AVFoundationVideoGrabber());
 }
@@ -114,4 +116,6 @@ ofPixels& ofxiOSVideoGrabber::getPixelsRef(){
 const ofPixels& ofxiOSVideoGrabber::getPixelsRef() const{
 	return getPixels();
 }
+
+#endif
 
