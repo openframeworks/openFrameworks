@@ -216,12 +216,12 @@ void ofxiOSSetOrientation(ofOrientation orientation) {
     ofSetOrientation(orientation);
 }
 
-
+#ifdef TARGET_IOS
 //--------------------------------------------------------------
 UIDeviceOrientation ofxiOSGetOrientation() {
     return (UIDeviceOrientation)ofGetOrientation();
 }
-
+#endif
 
 //--------------------------------------------------------------
 bool ofxiOSBundleImageToGLTexture(NSString * filename, GLuint * spriteTexture) {
@@ -484,6 +484,7 @@ void ofxiOSLaunchBrowser(string url) {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:ofxStringToNSString(url)]];
 }
 
+#ifdef TARGET_IOS
 //--------------------------------------------------------------
 void ofxiOSSetClipboardString(string clipboardString) {
     [UIPasteboard generalPasteboard].string = [NSString stringWithUTF8String:clipboardString.c_str()];
@@ -492,6 +493,7 @@ void ofxiOSSetClipboardString(string clipboardString) {
 string ofxiOSGetClipboardString() {
     return [[UIPasteboard generalPasteboard].string UTF8String];
 }
+#endif
 
 /******************** ofxiOSScreenGrab *********************/
 
@@ -531,7 +533,7 @@ void releaseData(void *info, const void *data, size_t dataSize) {
 	free((void*)data);		// free the 
 }
 
-
+#ifdef TARGET_IOS
 void ofxiOSScreenGrab(id delegate) {
 	CGRect rect = [[UIScreen mainScreen] bounds];
 	
@@ -574,5 +576,6 @@ void ofxiOSScreenGrab(id delegate) {
 	saveDelegate.delegate = delegate;
 	UIImageWriteToSavedPhotosAlbum(imageLossless, saveDelegate, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
+#endif
 
 

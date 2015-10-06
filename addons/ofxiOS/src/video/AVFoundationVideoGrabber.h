@@ -4,6 +4,8 @@
 
 #pragma once
 
+#ifdef TARGET_IOS
+
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <CoreGraphics/CoreGraphics.h>
@@ -91,6 +93,8 @@ class AVFoundationVideoGrabber{
 		iOSVideoGrabber * grabber;
 		GLubyte *pixelsTmp;
 };
+
+#endif
 
 
 
