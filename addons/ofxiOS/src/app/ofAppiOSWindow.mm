@@ -202,7 +202,7 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
     bool bResized = bOrientationPortraitOne != bOrientationPortraitTwo;
 
     orientation = toOrientation;
-    
+#ifdef TARGET_IOS
     UIInterfaceOrientation interfaceOrientation = UIInterfaceOrientationPortrait;
     switch (orientation) {
         case OF_ORIENTATION_DEFAULT:
@@ -219,6 +219,7 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
             break;
     }
 
+
     id<UIApplicationDelegate> appDelegate = [UIApplication sharedApplication].delegate;
     if([appDelegate respondsToSelector:@selector(glViewController)] == NO) {
         // check app delegate has glViewController,
@@ -227,7 +228,7 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
     }
     ofxiOSViewController * glViewController = ((ofxiOSAppDelegate *)appDelegate).glViewController;
     ofxiOSEAGLView * glView = glViewController.glView;
-    
+	
     if(settings.enableHardwareOrientation == true) {
         [glViewController rotateToInterfaceOrientation:interfaceOrientation animated:settings.enableHardwareOrientationAnimation];
     } else {
@@ -236,6 +237,7 @@ void ofAppiOSWindow::setOrientation(ofOrientation toOrientation) {
             [glView layoutSubviews]; // calling layoutSubviews so window resize notification is fired.
         }
     }
+#endif
 }
 
 ofOrientation ofAppiOSWindow::getOrientation() {
@@ -252,7 +254,9 @@ void ofAppiOSWindow::setWindowTitle(string title) {
 }
 
 void ofAppiOSWindow::setFullscreen(bool fullscreen) {
+#ifdef TARGET_IOS
     [[UIApplication sharedApplication] setStatusBarHidden:fullscreen withAnimation:UIStatusBarAnimationSlide];
+#endif
 	if(fullscreen) {
         settings.windowMode = OF_FULLSCREEN;
     } else {

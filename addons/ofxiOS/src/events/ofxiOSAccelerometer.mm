@@ -29,6 +29,7 @@
  *
  * ***********************************************************************/ 
 
+#ifdef TARGET_IOS
 
 #import "ofxAccelerometer.h"
 #import "ofMain.h"
@@ -86,3 +87,5 @@ void ofxAccelerometerHandler::exit() {
 }
 
 @end
+
+#endif

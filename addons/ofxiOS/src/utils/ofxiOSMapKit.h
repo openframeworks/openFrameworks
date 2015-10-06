@@ -30,6 +30,8 @@
 
 #pragma once
 
+#ifdef TARGET_IOS
+
 #include <Availability.h>
 
 #include "ofMain.h"
@@ -159,3 +161,4 @@ protected:
 #define ofxiPhoneMapKit ofxiOSMapKit
 //-------------------------------------------------------------------------------
 
+#endif

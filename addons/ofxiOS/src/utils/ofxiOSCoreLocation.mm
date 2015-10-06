@@ -17,6 +17,8 @@
  *
  */
 
+#ifdef TARGET_IOS
+
 #import "ofxiOSCoreLocation.h"
 
 //C++ class implementations
@@ -340,3 +342,5 @@ double ofxiOSCoreLocation::getHeadingAccuracy()
 }
 
 @end
+
+#endif

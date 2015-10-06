@@ -6,6 +6,8 @@
  *
  */
 
+#ifdef TARGET_IOS
+
 #import <UIKit/UIKit.h>
 #import <OpenGLES/ES1/gl.h>
 #import "ofMain.h"
@@ -30,6 +32,7 @@ public:
 - (void)takePhoto:(id)sender;
 @end
 
+
 //-----------------------------------------------------------
 @interface ofxiOSImagePickerDelegate : NSObject <UINavigationControllerDelegate, UIImagePickerControllerDelegate>
 {
@@ -53,6 +56,7 @@ public:
 - (void) imagePickerControllerDidCancel:(UIImagePickerController *)picker;
 
 - (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info;
+
 
 - (CGImageRef) getCGImage;
 
@@ -81,6 +85,8 @@ public:
 @end
 
 #define ofxiPhoneImagePickerDelegate ofxiOSImagePickerDelegate
+
+
 
 
 class ofxiOSImagePicker : public canLoadPixels
@@ -134,3 +140,5 @@ protected:
 };
 
 #define ofxiPhoneImagePicker ofxiOSImagePicker; 
+
+#endif

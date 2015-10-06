@@ -6,6 +6,8 @@
  *
  */
 
+#ifdef TARGET_IOS
+
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
 #import "ofMain.h"
@@ -107,4 +109,6 @@ class ofxiOSCoreLocation
 };
 
 #define ofxiPhoneCoreLocation ofxiOSCoreLocation
+
+#endif
 

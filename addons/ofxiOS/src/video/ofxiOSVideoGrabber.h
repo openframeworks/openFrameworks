@@ -6,6 +6,7 @@ class AVFoundationVideoGrabber;
 
 #include "ofVideoGrabber.h"
 
+
 class ofxiOSVideoGrabber : public ofBaseVideoGrabber {
 	
 public:
@@ -72,3 +73,4 @@ protected:
 };
 
 #define ofxiPhoneVideoGrabber ofxiOSVideoGrabber
+
