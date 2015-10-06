@@ -120,7 +120,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8446395C1BC343E000F24926 /* libtvOS+OFLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libtvOS+OFLib.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8446395C1BC343E000F24926 /* libtvOS+OFLib_Debug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libtvOS+OFLib_Debug.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		844639681BC3442400F24926 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CoreOF.xcconfig; sourceTree = "<group>"; };
 		844639691BC3442400F24926 /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		8446396A1BC3442400F24926 /* Release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -374,7 +374,7 @@
 		8446395D1BC343E000F24926 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8446395C1BC343E000F24926 /* libtvOS+OFLib.a */,
+				8446395C1BC343E000F24926 /* libtvOS+OFLib_Debug.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -839,7 +839,7 @@
 			);
 			name = "tvOS+OFLib";
 			productName = "tvOS+OFLib";
-			productReference = 8446395C1BC343E000F24926 /* libtvOS+OFLib.a */;
+			productReference = 8446395C1BC343E000F24926 /* libtvOS+OFLib_Debug.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1063,8 +1063,9 @@
 		844639661BC343E000F24926 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "$(TARGET_NAME)_Debug";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1073,7 +1074,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "$(TARGET_NAME)_Release";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
