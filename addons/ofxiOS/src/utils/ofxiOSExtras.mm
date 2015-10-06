@@ -48,7 +48,9 @@ ofxiOSDeviceType ofxiOSGetDeviceType() {
         return OFXIOS_DEVICE_IPAD;
     } else if( [dev hasPrefix:@"ipod"] ) {
         return OFXIOS_DEVICE_IPODTOUCH;
-    } else {
+	} else if( [dev hasPrefix:@"apple tv"] ) {
+		return OFXIOS_DEVICE_APPLETV;
+	} else {
         return OFXIOS_DEVICE_UNKNOWN;   // this would need to be declared
     }
 }
