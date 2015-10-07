@@ -34,6 +34,12 @@
 /*/*/.project
 /*/*/.settings/
 
+# QtCreator
+/*/*/*.qbs
+/*/*/*.qbs.user
+/*/*/*.pro
+/*/*/*.pro.user
+
 #########################
 # operating system
 #########################
