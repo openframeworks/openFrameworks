@@ -23,6 +23,8 @@ Module{
             }else{
                 throw(qbs.architecture + " not supported yet")
             }
+        }else if(qbs.targetOS.indexOf("windows")>-1){
+            return "win_cb";
         }else{
             throw(qbs.targetOS + " not supported yet")
         }
@@ -47,27 +49,35 @@ Module{
     ]
 
     readonly property stringList PKG_CONFIGS: {
-        return [
-            "cairo",
-            "gstreamer-1.0",
-            "zlib",
-            "gstreamer-app-1.0",
-            "gstreamer-video-1.0",
-            "gstreamer-base-1.0",
-            "libudev",
-            "freetype2",
-            "fontconfig",
-            "sndfile",
-            "openal",
-            "openssl",
-            "libpulse-simple",
-            "alsa",
-            "gl",
-            "glu",
-            "glew",
-            "gtk+-3.0",
-            "libmpg123",
-        ].concat(pkgConfigs)
+        if(qbs.targetOS.indexOf("linux")!=-1){
+            return [
+                "cairo",
+                "gstreamer-1.0",
+                "zlib",
+                "gstreamer-app-1.0",
+                "gstreamer-video-1.0",
+                "gstreamer-base-1.0",
+                "libudev",
+                "freetype2",
+                "fontconfig",
+                "sndfile",
+                "openal",
+                "openssl",
+                "libpulse-simple",
+                "alsa",
+                "gl",
+                "glu",
+                "glew",
+                "gtk+-3.0",
+                "libmpg123",
+            ].concat(pkgConfigs)
+        }else if(qbs.targetOS.indexOf("windows")!=-1){
+            return [
+                "zlib",
+                "openssl",
+                "glew",
+            ].concat(pkgConfigs)
+        }
     }
 
     readonly property stringList ADDITIONAL_LIBS: [
@@ -100,13 +110,13 @@ Module{
     }
 
     readonly property pathList INCLUDE_PATHS: {
-        var includes = Helpers.listDirsRecursive(ofRoot + "/libs/openFrameworks");
+        var includes = Helpers.listDirsRecursive(ofRoot + "/libs/openFrameworks",ofRoot);
         var libs = Helpers.listDir(ofRoot + '/libs/');
         for(var lib in libs){
             if(LIBS_EXCEPTIONS.indexOf(libs[lib])==-1){
                 var libpath = ofRoot + '/libs/' + libs[lib];
                 var include_path = libpath + "/include"
-                var include_paths = Helpers.listDirsRecursive(include_path);
+                var include_paths = Helpers.listDirsRecursive(include_path,ofRoot);
                 includes = includes.concat(include_paths);
             }
         }
@@ -169,7 +179,7 @@ Module{
         var includes = [];
         for(var addon in ADDONS){
             var addonPath = ADDONS[addon];
-            var addonIncludes = Helpers.addonIncludes(addonPath);
+            var addonIncludes = Helpers.addonIncludes(addonPath, ofRoot);
             addonIncludes = Helpers.parseAddonConfig(addonPath, "ADDON_INCLUDES", addonIncludes, platform, addonPath+"/");
             var addonIncludesExcludes = Helpers.parseAddonConfig(addonPath, "ADDON_INCLUDES_EXCLUDE", [], platform, addonPath+"/");
             if(addonIncludesExcludes.length>0){
@@ -194,7 +204,7 @@ Module{
         var sources = [];
         for(var addon in ADDONS){
             var addonPath = ADDONS[addon];
-            var addonSources = Helpers.addonSources(addonPath);
+            var addonSources = Helpers.addonSources(addonPath, ofRoot);
             addonSources = Helpers.parseAddonConfig(addonPath, "ADDON_SOURCES", addonSources, platform, addonPath+"/");
             var addonSourcesExcludes = Helpers.parseAddonConfig(addonPath, "ADDON_SOURCES_EXCLUDE", [], platform, addonPath+"/");
             if(addonSourcesExcludes.length>0){
