@@ -294,16 +294,16 @@ Module{
         name: "cpp"
     }
 
-    //cpp.cxxLanguageVersion: "c++14"
+    cpp.cxxLanguageVersion: "c++14"
     cpp.warningLevel: 'default'
     cpp.cFlags: PKG_CONFIG_CFLAGS
-        .concat(['-Wno-unused-parameter', '-std=c++14'])
+        .concat(['-Wno-unused-parameter'])
         .concat(ADDON_PKG_CONFIG_CFLAGS)
         .concat(ADDON_CFLAGS)
         .concat(cFlags)
 
     cpp.cxxFlags: PKG_CONFIG_CFLAGS
-        .concat(['-Wno-unused-parameter', '-std=c++14'])
+        .concat(['-Wno-unused-parameter'])
         .concat(ADDON_PKG_CONFIG_CFLAGS)
         .concat(ADDON_CFLAGS)
         .concat(cxxFlags)
