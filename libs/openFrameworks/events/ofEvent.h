@@ -10,7 +10,7 @@
 class ofEventAttendedException: public std::exception{};
 
 
-template<typename Function, typename Mutex=std::mutex>
+template<typename Function, typename Mutex=std::recursive_mutex>
 class ofBaseEvent{
 public:
 	/// \brief Basic constructor enabling an ofBaseEvent.
@@ -188,7 +188,7 @@ namespace priv{
 }
 /*! \endcond */
 
-template<typename T, typename Mutex=std::mutex>
+template<typename T, typename Mutex=std::recursive_mutex>
 class ofEvent: public ofBaseEvent<of::priv::Function<T,Mutex>,Mutex>{
 protected:
 	typedef of::priv::Function<T,Mutex> Function;
