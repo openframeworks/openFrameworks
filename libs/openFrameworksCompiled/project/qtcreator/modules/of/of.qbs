@@ -110,13 +110,13 @@ Module{
     }
 
     readonly property pathList INCLUDE_PATHS: {
-        var includes = Helpers.listDirsRecursive(ofRoot + "/libs/openFrameworks",ofRoot);
+        var includes = Helpers.listDirsRecursive(ofRoot + "/libs/openFrameworks");
         var libs = Helpers.listDir(ofRoot + '/libs/');
         for(var lib in libs){
             if(LIBS_EXCEPTIONS.indexOf(libs[lib])==-1){
                 var libpath = ofRoot + '/libs/' + libs[lib];
                 var include_path = libpath + "/include"
-                var include_paths = Helpers.listDirsRecursive(include_path,ofRoot);
+                var include_paths = Helpers.listDirsRecursive(include_path);
                 includes = includes.concat(include_paths);
             }
         }
@@ -179,7 +179,7 @@ Module{
         var includes = [];
         for(var addon in ADDONS){
             var addonPath = ADDONS[addon];
-            var addonIncludes = Helpers.addonIncludes(addonPath, ofRoot);
+            var addonIncludes = Helpers.addonIncludes(addonPath);
             addonIncludes = Helpers.parseAddonConfig(addonPath, "ADDON_INCLUDES", addonIncludes, platform, addonPath+"/");
             var addonIncludesExcludes = Helpers.parseAddonConfig(addonPath, "ADDON_INCLUDES_EXCLUDE", [], platform, addonPath+"/");
             if(addonIncludesExcludes.length>0){
@@ -204,7 +204,7 @@ Module{
         var sources = [];
         for(var addon in ADDONS){
             var addonPath = ADDONS[addon];
-            var addonSources = Helpers.addonSources(addonPath, ofRoot);
+            var addonSources = Helpers.addonSources(addonPath);
             addonSources = Helpers.parseAddonConfig(addonPath, "ADDON_SOURCES", addonSources, platform, addonPath+"/");
             var addonSourcesExcludes = Helpers.parseAddonConfig(addonPath, "ADDON_SOURCES_EXCLUDE", [], platform, addonPath+"/");
             if(addonSourcesExcludes.length>0){
