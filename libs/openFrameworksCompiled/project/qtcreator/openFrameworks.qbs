@@ -16,7 +16,7 @@ Product{
     // setting this variable to true will build OF using
     // qbs instead of makefiles which helps catching errors...
     // but will build on each application rebuild instead of in
-    // a coomon directory
+    // a common directory
     readonly property bool qbsBuild: false
 
     Properties{
@@ -60,7 +60,7 @@ Product{
     }
 
     files: {
-        var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'),of.ofRoot);
+        var source = Helpers.findSourceRecursive(FileInfo.joinPaths(of.ofRoot, '/libs/openFrameworks'));
         var filteredSource = source.filter(function filterExcludes(path){
             for(exclude in FILES_EXCLUDE){
                 var patt = new RegExp(FILES_EXCLUDE[exclude]);

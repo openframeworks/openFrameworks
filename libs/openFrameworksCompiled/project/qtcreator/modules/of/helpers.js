@@ -1,13 +1,3 @@
-function toolsPath(ofRoot){
-    try{
-        var pathsconfig = new TextFile(ofRoot +  "/libs/openFrameworksCompiled/project/qtcreator/paths.config" );
-        return FileInfo.joinPaths(pathsconfig.readLine().trim(), "usr/bin/");
-    }catch(e){
-        throw ofRoot + e;
-        return "";
-    }
-}
-
 function listDir(dir){
     var ls = new Process();
     ls.exec("ls", [dir]);
@@ -25,15 +15,15 @@ function listDir(dir){
     return(ret)
 }
 
-function listDirsRecursive(dir,ofRoot){
+function listDirsRecursive(dir){
     var ret = []
     if(!File.exists(dir)){
         return ret;
     }
     var find = new Process();
-    var command = toolsPath(ofRoot) + "find";
+    var command = "find " + dir + " -type d";
 
-    find.exec(command, [dir, '-type', 'd'])
+    find.exec("sh", ['-c',command])
     if(find.exitCode()!==0){
         var error = find.readStdErr();
         throw("error: " + error)
@@ -70,22 +60,22 @@ function findLibsRecursive(dir, platform, exclude){
     return(ret)
 }
 
-function findSourceRecursive(dir,ofRoot){
+function findSourceRecursive(dir){
     var ret = []
     if(!File.exists(dir)){
         return ret;
     }
     var find = new Process();
-    var command = toolsPath(ofRoot) + "find";
-    find.exec(command, [dir,'-name','*.cpp'
-              ,'-or','-name','*.h'
-              ,'-or','-name','*.hpp'
-              ,'-or','-name','*.cxx'
-              ,'-or','-name','*.cc'
-              ,'-or','-name','*.c++'
-              ,'-or','-name','*.s'
-              ,'-or','-name','*.S'
-              ,'-or','-name','*.c']);
+    var command = 'find ' + dir + ' -name *.cpp'
+              +' -or -name *.h'
+              +' -or -name *.hpp'
+              +' -or -name *.cxx'
+              +' -or -name *.cc'
+              +' -or -name *.c++'
+              +' -or -name *.s'
+              +' -or -name *.S'
+              +' -or -name *.c';
+    find.exec("sh", ['-c',command])
     if(find.exitCode()!==0){
         var error = find.readStdErr();
         throw("error: " + error)
@@ -115,8 +105,8 @@ function pkgconfig(pkgs,parameters){
     });
 }
 
-function addonIncludes(addon, ofRoot){
-    var includes = listDirsRecursive(addon + '/src', ofRoot)
+function addonIncludes(addon){
+    var includes = listDirsRecursive(addon + '/src')
     try{
         var libs = Helpers.listDir(addon + '/libs');
         var libsIncludes = [];
@@ -124,12 +114,12 @@ function addonIncludes(addon, ofRoot){
             var libpath = addon + '/libs/' + libs[lib];
             var include_path = libpath + "/include"
             try{
-                var include_paths = listDirsRecursive(libpath, ofRoot);
+                var include_paths = listDirsRecursive(libpath);
                 libsIncludes = libsIncludes.concat(include_paths);
             }catch(e){}
         }
         if(File.exists(addon + '/libs') && libsIncludes.length==0){
-            includes = includes.concat(listDirsRecursive(addon + '/libs', ofRoot));
+            includes = includes.concat(listDirsRecursive(addon + '/libs'));
         }else{
             includes = includes.concat(libsIncludes);
         }
@@ -137,10 +127,10 @@ function addonIncludes(addon, ofRoot){
     return includes;
 }
 
-function addonSources(addon, ofRoot){
-    var sources = findSourceRecursive(addon + '/src', ofRoot)
+function addonSources(addon){
+    var sources = findSourceRecursive(addon + '/src')
     try{
-        sources = sources.concat(Helpers.findSourceRecursive(addon + '/libs', ofRoot));
+        sources = sources.concat(Helpers.findSourceRecursive(addon + '/libs'));
     }catch(e){}
     return sources;
 }
