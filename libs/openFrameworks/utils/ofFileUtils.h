@@ -20,11 +20,11 @@ public:
 	ofBuffer();
 	ofBuffer(const char * buffer, std::size_t size);
 	ofBuffer(const string & text);
-	ofBuffer(istream & stream);
+	ofBuffer(istream & stream, size_t ioBlockSize = 1024);
 
 	void set(const char * _buffer, std::size_t _size);
 	void set(const string & text);
-	bool set(istream & stream);
+	bool set(istream & stream, size_t ioBlockSize = 1024);
 	void append(const string& _buffer);
 	void append(const char * _buffer, std::size_t _size);
 
@@ -44,7 +44,6 @@ public:
 	ofBuffer & operator=(const string & text);
 
 	long size() const;
-	static void setIOBufferSize(size_t ioSize);
 
 	OF_DEPRECATED_MSG("use a lines iterator instead",string getNextLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",string getFirstLine());
@@ -93,7 +92,6 @@ public:
 private:
 	vector<char> 	buffer;
 	Line			currentLine;
-	static size_t	ioSize;
 };
 
 //--------------------------------------------------

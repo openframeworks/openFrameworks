@@ -739,7 +739,7 @@ bool ofGstVideoGrabber::setup(int w, int h){
 	string pipeline_string;
 	string format_str_pipeline;
 	string fix_v4l2_316;
-#if defined(TARGET_LINUX) && !defined(OF_USE_GST_GL) && GST_VERSION_MAJOR>0 && GST_VERSION_MINOR>2
+#if defined(TARGET_LINUX) && !defined(OF_USE_GST_GL) && GST_VERSION_MAJOR>0 && GST_VERSION_MINOR>2 && GST_VERSION_MINOR<5
 	videoUtils.setCopyPixels(true);
 #endif
 	if(internalPixelFormat!=OF_PIXELS_NATIVE){

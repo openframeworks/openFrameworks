@@ -32,7 +32,7 @@ PLATFORM_RUN_COMMAND =
 MSYS2_ROOT = /mingw32
 PLATFORM_CFLAGS += -std=gnu++14 -I$(MSYS2_ROOT)/include/cairo -I$(MSYS2_ROOT)/include/glib-2.0 -I$(MSYS2_ROOT)/lib/glib-2.0/include -I$(MSYS2_ROOT)/include/pixman-1 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/freetype2 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/harfbuzz -I$(MSYS2_ROOT)/include/libpng16 -DUNICODE -D_UNICODE -DPOCO_STATIC 
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER 
-PLATFORM_LDFLAGS += -L$(MSYS_ROOT)/lib -L$(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)
+PLATFORM_LDFLAGS += -L$(MSYS_ROOT)/lib -L$(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH) -lpthread
 #ifeq ($(PLATFORM_ARCH),x86_64)
 CC = $(MSYS2_ROOT)/bin/clang
 CXX = $(MSYS2_ROOT)/bin/clang++
@@ -130,10 +130,10 @@ endif
 ##########################################################################################
 
 # RELEASE Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os
+PLATFORM_OPTIMIZATION_CFLAGS_RELEASE = -Os -DNDEBUG
 
 # DEBUG Debugging options (http://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html)
-PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3
+PLATFORM_OPTIMIZATION_CFLAGS_DEBUG = -g3 #-D_GLIBCXX_DEBUG
 
 ##########################################################################################
 # PLATFORM CORE EXCLUSIONS
