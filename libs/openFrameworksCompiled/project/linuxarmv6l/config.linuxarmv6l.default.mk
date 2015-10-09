@@ -220,6 +220,6 @@ ifeq ($(CROSS_COMPILING),1)
 	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/usr/lib/$(GCC_PREFIX) 
 	PLATFORM_LDFLAGS += -Wl,-rpath=$(SYSROOT)/lib/$(GCC_PREFIX) 
 	 
-	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/$(GCC_PREFIX)/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
+	PKG_CONFIG_LIBDIR=$(SYSROOT)/usr/lib/pkgconfig:$(SYSROOT)/usr/lib/arm-linux-gnueabihf/pkgconfig:$(SYSROOT)/usr/share/pkgconfig
 	
 endif
