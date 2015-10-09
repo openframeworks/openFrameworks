@@ -128,7 +128,8 @@ class ofxCvColorImage : public ofxCvImage {
 
 
   protected:
-  
+    void allocateTexture();
+    void allocatePixels(int w, int h);
     void init();
     IplImage*  cvGrayscaleImage;    // internal helper grayscale, allocated on demand
       

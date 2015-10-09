@@ -62,6 +62,7 @@ static ofxiOSEAGLView * _instanceRef = nil;
         screenSize = new ofVec3f();
         windowSize = new ofVec3f();
         windowPos = new ofVec3f();
+		ofSetOrientation(window->getOrientation());
         [self updateDimensions];
 		
         bInit = YES;
