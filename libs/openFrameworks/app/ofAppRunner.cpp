@@ -31,45 +31,46 @@
 
 
 //--------------------------------------
-shared_ptr<ofMainLoop> & mainLoop(){
-	static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
-	return *mainLoop;
+namespace{
+    shared_ptr<ofMainLoop> & mainLoop(){
+        static shared_ptr<ofMainLoop> * mainLoop(new shared_ptr<ofMainLoop>(new ofMainLoop));
+        return *mainLoop;
+    }
+
+    bool & initialized(){
+        static bool * initialized = new bool(false);
+        return *initialized;
+    }
+
+    #if defined(TARGET_LINUX) || defined(TARGET_OSX)
+        #include <signal.h>
+        #include <string.h>
+        void ofSignalHandler(int signum){
+            char* pSignalString = strsignal(signum);
+
+            if(pSignalString){
+                ofLogVerbose("ofSignalHandler") << pSignalString;
+            }else{
+                ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
+            }
+
+            signal(SIGTERM, nullptr);
+            signal(SIGQUIT, nullptr);
+            signal(SIGINT,  nullptr);
+            signal(SIGHUP,  nullptr);
+            signal(SIGABRT, nullptr);
+
+            if(mainLoop()){
+                mainLoop()->shouldClose(signum);
+            }
+        }
+    #endif
 }
 
 
-static bool & initialized(){
-	static bool * initialized = new bool(false);
-	return *initialized;
-}
 
 void ofExitCallback();
 void ofURLFileLoaderShutdown();
-
-#if defined(TARGET_LINUX) || defined(TARGET_OSX)
-	#include <signal.h>
-	#include <string.h>
-
-	static void ofSignalHandler(int signum){
-
-		char* pSignalString = strsignal(signum);
-
-		if(pSignalString){
-			ofLogVerbose("ofSignalHandler") << pSignalString;
-		}else{
-			ofLogVerbose("ofSignalHandler") << "Unknown: " << signum;
-		}
-
-		signal(SIGTERM, nullptr);
-		signal(SIGQUIT, nullptr);
-		signal(SIGINT,  nullptr);
-		signal(SIGHUP,  nullptr);
-		signal(SIGABRT, nullptr);
-
-		if(mainLoop()){
-			mainLoop()->shouldClose(signum);
-		}
-	}
-#endif
 
 void ofInit(){
 	if(initialized()) return;
@@ -106,7 +107,7 @@ void ofInit(){
 
 	ofSeedRandom();
 	ofResetElapsedTimeCounter();
-	ofSetWorkingDirectoryToDefault();
+	of::priv::setWorkingDirectoryToDefault();
 
 #ifdef TARGET_LINUX
 	if(std::locale().name() == "C"){

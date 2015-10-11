@@ -20,11 +20,11 @@ public:
 	ofBuffer();
 	ofBuffer(const char * buffer, std::size_t size);
 	ofBuffer(const string & text);
-	ofBuffer(istream & stream);
+	ofBuffer(istream & stream, size_t ioBlockSize = 1024);
 
 	void set(const char * _buffer, std::size_t _size);
 	void set(const string & text);
-	bool set(istream & stream);
+	bool set(istream & stream, size_t ioBlockSize = 1024);
 	void append(const string& _buffer);
 	void append(const char * _buffer, std::size_t _size);
 
@@ -44,7 +44,6 @@ public:
 	ofBuffer & operator=(const string & text);
 
 	long size() const;
-	static void setIOBufferSize(size_t ioSize);
 
 	OF_DEPRECATED_MSG("use a lines iterator instead",string getNextLine());
 	OF_DEPRECATED_MSG("use a lines iterator instead",string getFirstLine());
@@ -93,7 +92,6 @@ public:
 private:
 	vector<char> 	buffer;
 	Line			currentLine;
-	static size_t	ioSize;
 };
 
 //--------------------------------------------------
@@ -129,6 +127,8 @@ public:
 	static string getCurrentExeDir();
 
 	static string getUserHomeDir();
+
+	static string makeRelative(const std::string & from, const std::string & to);
 };
 
 class ofFile: public fstream{
@@ -178,7 +178,7 @@ public:
 	void setExecutable(bool executable=true);
 	
 	//these all work for files and directories
-	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
+	bool copyTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false) const;
 	bool moveTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
 	bool renameTo(const std::string& path, bool bRelativeToData = true, bool overwrite = false);
 	
@@ -297,18 +297,19 @@ public:
 
 	void reset(); //equivalent to close, just here for bw compatibility with ofxDirList
 	void sort();
+    ofDirectory getSorted();
 
 	std::size_t size() const;
 
 	OF_DEPRECATED_MSG("Use size() instead.", int numFiles());
 
 	//this allows to compare dirs by their paths, also provides sorting and use as key in stl containers
-	bool operator==(const ofDirectory & dir);
-	bool operator!=(const ofDirectory & dir);
-	bool operator<(const ofDirectory & dir);
-	bool operator<=(const ofDirectory & dir);
-	bool operator>(const ofDirectory & dir);
-	bool operator>=(const ofDirectory & dir);
+	bool operator==(const ofDirectory & dir) const;
+	bool operator!=(const ofDirectory & dir) const;
+	bool operator<(const ofDirectory & dir) const;
+	bool operator<=(const ofDirectory & dir) const;
+	bool operator>(const ofDirectory & dir) const;
+	bool operator>=(const ofDirectory & dir) const;
 
 	operator std::filesystem::path(){
 		return myDir;

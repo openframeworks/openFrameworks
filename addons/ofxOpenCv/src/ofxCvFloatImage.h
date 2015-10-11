@@ -140,7 +140,8 @@ class ofxCvFloatImage : public ofxCvImage {
     
 
   protected:
-
+    void allocateTexture();
+    void allocatePixels(int w, int h);
     void init();
     virtual void convertFloatToGray( IplImage* floatImg, IplImage* grayImg );
     virtual void convertGrayToFloat( IplImage* grayImg, IplImage* floatImg );

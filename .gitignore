@@ -72,6 +72,14 @@ ipch/
 local.properties
 .externalToolBuilders
 
+# Android Studio
+.idea
+.gradle
+gradle
+gradlew
+gradlew.bat
+
+
 #########################
 # operating system
 #########################

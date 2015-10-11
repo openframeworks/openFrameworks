@@ -16,15 +16,12 @@ cd libs/openFrameworksCompiled/project
 make Debug
 
 echo "**** Building emptyExample ****"
-cd $ROOT
-cp scripts/linux/template/linux64/Makefile examples/empty/emptyExample/
-cp scripts/linux/template/linux64/config.make examples/empty/emptyExample/
-cd examples/empty/emptyExample
+cd $ROOT/scripts/templates/linux64
 make Debug
 
 echo "**** Building allAddonsExample ****"
 cd $ROOT
-cp scripts/linux/template/linux64/Makefile examples/addons/allAddonsExample/
-cp scripts/linux/template/linux64/config.make examples/addons/allAddonsExample/
+cp scripts/templates/linux64/Makefile examples/addons/allAddonsExample/
+cp scripts/templates/linux64/config.make examples/addons/allAddonsExample/
 cd examples/addons/allAddonsExample/
 make Debug

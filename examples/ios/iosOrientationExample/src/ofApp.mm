@@ -6,7 +6,6 @@
 void ofApp::setup(){
 	ofBackground(70);
     
-    ofSetOrientation(OF_ORIENTATION_90_LEFT);
     
     bAuto = false;
 }
