@@ -653,28 +653,15 @@ void ofShader::setUniformTexture(const string & name, const ofTexture& tex, int 
 		if (!ofIsGLProgrammableRenderer()){
 			glEnable(texData.textureTarget);
 			glBindTexture(texData.textureTarget, texData.textureID);
+			if (texData.bufferId != 0) {
+				glTexBuffer(GL_TEXTURE_BUFFER, texData.glInternalFormat, texData.bufferId);
+			}
 			glDisable(texData.textureTarget);
 		} else {
 			glBindTexture(texData.textureTarget, texData.textureID);
-		}
-		setUniform1i(name, textureLocation);
-		glActiveTexture(GL_TEXTURE0);
-	}
-}
-
-//--------------------------------------------------------------
-void ofShader::setUniformTextureBuffer(const string & name, const ofTexture& tex, const ofBufferObject & buffer, int textureLocation)  const {
-	if (bLoaded) {
-		ofTextureData texData = tex.getTextureData();
-		glActiveTexture(GL_TEXTURE0 + textureLocation);
-		if (!ofIsGLProgrammableRenderer()) {
-			glEnable(texData.textureTarget);
-			glBindTexture(texData.textureTarget, texData.textureID);
-			glDisable(texData.textureTarget);
-		}
-		else {
-			glBindTexture(texData.textureTarget, texData.textureID);
-			glTexBuffer(GL_TEXTURE_BUFFER, texData.glInternalFormat, buffer.getId());
+			if (texData.bufferId != 0) {
+				glTexBuffer(GL_TEXTURE_BUFFER, texData.glInternalFormat, texData.bufferId);
+			}
 		}
 		setUniform1i(name, textureLocation);
 		glActiveTexture(GL_TEXTURE0);
