@@ -30,12 +30,12 @@ PLATFORM_PROJECT_RELEASE_BIN_NAME=$(APPNAME)
 PLATFORM_RUN_COMMAND = 
 #ifneq (,$(findstring MINMGW64_NT,$(PLATFORM_OS)))
 MSYS2_ROOT = /mingw32
-PLATFORM_CFLAGS += -std=gnu++14 -I$(MSYS2_ROOT)/include/cairo -I$(MSYS2_ROOT)/include/glib-2.0 -I$(MSYS2_ROOT)/lib/glib-2.0/include -I$(MSYS2_ROOT)/include/pixman-1 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/freetype2 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/harfbuzz -I$(MSYS2_ROOT)/include/libpng16 -DUNICODE -D_UNICODE -DPOCO_STATIC 
+PLATFORM_CFLAGS += -std=gnu++14 -I$(MSYS2_ROOT)/include/cairo -I$(MSYS2_ROOT)/include/glib-2.0 -I$(MSYS2_ROOT)/lib/glib-2.0/include -I$(MSYS2_ROOT)/include/pixman-1 -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include -I$(MSYS2_ROOT)/include/freetype2 -I$(MSYS2_ROOT)/include/harfbuzz -I$(MSYS2_ROOT)/include/libpng16 -DUNICODE -D_UNICODE -DPOCO_STATIC 
 #PLATFORM_CFLAGS += -IC:/msys64/mingw32/include/gstreamer-1.0 -DOF_VIDEO_PLAYER_GSTREAMER 
 PLATFORM_LDFLAGS += -L$(MSYS_ROOT)/lib -L$(OF_LIBS_PATH)/poco/lib/$(ABI_LIB_SUBPATH)
 #ifeq ($(PLATFORM_ARCH),x86_64)
-CC = $(MSYS2_ROOT)/bin/clang
-CXX = $(MSYS2_ROOT)/bin/clang++
+CC = $(MSYS2_ROOT)/bin/gcc
+CXX = $(MSYS2_ROOT)/bin/g++
 PLATFORM_AR = $(MSYS2_ROOT)/bin/ar
 PLATFORM_LD = $(MSYS2_ROOT)/bin/ld
 PLATFORM_PKG_CONFIG = $(MSYS2_ROOT)/bin/pkg-config
